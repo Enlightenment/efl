@@ -1241,12 +1241,16 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 	XSetWindowAttributes attr;
 	
 	attr.backing_store = NotUseful;
+	attr.override_redirect = True;
 	attr.colormap = einfo->func.best_colormap_get(ecore_x_display_get(), DefaultScreen(ecore_x_display_get()));
 	attr.border_pixel = 0;
 	attr.background_pixmap = None;
 	attr.event_mask =
+	  KeyPressMask | KeyReleaseMask |
 	  ExposureMask | ButtonPressMask | ButtonReleaseMask | 
-	  PointerMotionMask | StructureNotifyMask;
+	  EnterWindowMask | LeaveWindowMask |
+	  PointerMotionMask | StructureNotifyMask | VisibilityChangeMask |
+	  FocusChangeMask | PropertyChangeMask | ColormapChangeMask;
 	attr.bit_gravity = ForgetGravity;
 	
 	ee->engine.x.win = 
@@ -1259,7 +1263,8 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 			einfo->func.best_visual_get(ecore_x_display_get(), DefaultScreen(ecore_x_display_get())),
 			CWBackingStore | CWColormap |
 			CWBackPixmap | CWBorderPixel |
-			CWBitGravity | CWEventMask,
+			CWBitGravity | CWEventMask |
+			CWOverrideRedirect,
 			&attr);
 	einfo->info.display  = ecore_x_display_get();
 	einfo->info.visual   = einfo->func.best_visual_get(ecore_x_display_get(), DefaultScreen(ecore_x_display_get()));
