@@ -108,15 +108,27 @@ gl_includes=""
 AC_CHECK_HEADER(GL/gl.h,
 gl_includes="-I/usr/include -I/usr/local/include"
 AC_CHECK_LIB(GL, glBindTexture, AC_DEFINE(HAVE_GL) ,[
-echo "... no GL found"
-], -L/usr/local/lib -lGL $X_LDFLAGS $X_EXTRA_LIBS $X_LIBS)
-)
 AC_CHECK_HEADER($x_includes"/GL/gl.h",
 gl_includes="-I/usr/include -I/usr/local/include -I/usr/X11R6/include/"
 AC_CHECK_LIB(GL, glBindTexture, AC_DEFINE(HAVE_GL) ,[
 echo "... no GL found"
 ], -L/usr/local/lib -lGL $X_LDFLAGS $X_EXTRA_LIBS $X_LIBS)
 )
+], -L/usr/local/lib -lGL $X_LDFLAGS $X_EXTRA_LIBS $X_LIBS)
+)
+#### Find out about OpenGL's GLU
+AC_CHECK_HEADER(GL/glu.h,
+gl_includes=$gl_includes" -I/usr/include -I/usr/local/include"
+AC_CHECK_LIB(GLU, gluBuild2DMipmaps, AC_DEFINE(HAVE_GLU) ,[
+AC_CHECK_HEADER($x_includes"/GL/glu.h",
+gl_includes=$gl_includes" -I/usr/include -I/usr/local/include -I/usr/X11R6/include/"
+AC_CHECK_LIB(GLU, gluBuild2DMipmaps, AC_DEFINE(HAVE_GLU) ,[
+echo "... no GLU found"
+], -L/usr/local/lib -lGL -lGLU $X_LDFLAGS $X_EXTRA_LIBS $X_LIBS)
+)
+], -L/usr/local/lib -lGL -lGLU $X_LDFLAGS $X_EXTRA_LIBS $X_LIBS)
+)
+
 AC_SUBST(gl_includes)
 
 AC_OUTPUT(Makefile src/Makefile test/Makefile)
