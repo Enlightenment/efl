@@ -366,11 +366,12 @@ evas_render_updates(Evas e)
 	for (ll = layer->objects; ll; ll = ll->next)
 	  {
 	     Evas_Object_Any o;
-	     int real_change, prop_change, clip_change;
+	     int real_change, prop_change, clip_change, fill_change;
 
 	     real_change = 0;
 	     prop_change = 0;
 	     clip_change = 0;
+	     fill_change = 0;
 	     o = ll->data;
 	     
 	     if (o->delete_me) 
@@ -447,10 +448,6 @@ evas_render_updates(Evas e)
 				     (oo->current.border.r != oo->previous.border.r) ||
 				     (oo->current.border.t != oo->previous.border.t) ||
 				     (oo->current.border.b != oo->previous.border.b) ||
-				     (oo->current.fill.x != oo->previous.fill.x) ||
-				     (oo->current.fill.y != oo->previous.fill.y) ||
-				     (oo->current.fill.w != oo->previous.fill.w) ||
-				     (oo->current.fill.h != oo->previous.fill.h) ||
 				     (oo->current.color.r != oo->previous.color.r) ||
 				     (oo->current.color.g != oo->previous.color.g) ||
 				     (oo->current.color.b != oo->previous.color.b) ||
@@ -465,8 +462,15 @@ evas_render_updates(Evas e)
 					   prop_change = 0;
 					}
 				      else
-					real_change = 1;
+					{
+					   prop_change = 1;
+					}
 				   }
+				 if ((oo->current.fill.x != oo->previous.fill.x) ||
+				     (oo->current.fill.y != oo->previous.fill.y) ||
+				     (oo->current.fill.w != oo->previous.fill.w) ||
+				     (oo->current.fill.h != oo->previous.fill.h))
+				   fill_change = 1;
 				 oo->current.new_data = 0;
 				 oo->previous = oo->current;
 			      }
@@ -493,7 +497,7 @@ evas_render_updates(Evas e)
 					   prop_change = 0;
 					}
 				      else
-					real_change = 1;
+					prop_change = 1;
 				   }
 				 oo->previous = oo->current;
 			      }
@@ -560,7 +564,7 @@ evas_render_updates(Evas e)
 				 oo = o;
 				 if ((oo->current.new_gradient) ||
 				     (oo->current.angle != oo->previous.angle))
-				    real_change = 1;
+				    prop_change = 1;
 				 oo->current.new_gradient = 0;
 				 oo->previous = oo->current;
 			      }
@@ -594,13 +598,13 @@ evas_render_updates(Evas e)
 			 }
 		    }
 	       }
-	     if ((real_change) || (prop_change))
+	     if ((real_change) || (prop_change) || (fill_change))
 	       {
 		  int x, y, w, h;
 		  int img_tile_ch;
 		  
 		  img_tile_ch = 1;
-		  if (o->type == OBJECT_IMAGE)
+		  if ((o->type == OBJECT_IMAGE) && (!prop_change))
 		    {
 		       Evas_Object_Image oo;
 		       double fx, fy, fxx, fyy;
