@@ -11,7 +11,10 @@
 #include <limits.h>
 #include <stdarg.h>
 #include <string.h>
+
+#if HAVE_ALLOCA_H
 #include <alloca.h>
+#endif
 
 typedef enum _Embryo_Opcode Embryo_Opcode;
 
