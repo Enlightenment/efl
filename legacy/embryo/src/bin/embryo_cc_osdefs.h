@@ -56,6 +56,10 @@
 # define BYTE_ORDER LITTLE_ENDIAN
 #endif
 
+#ifdef HAVE_STDINT_H
+#include <stdint.h>
+#endif
+
 /* _MAX_PATH is sometimes called differently and it may be in limits.h instead
  * stdio.h.
  */
