@@ -141,6 +141,7 @@ _ecore_config_db_key_int_get(Ecore_Config_DB_File *db, char *key, int *dest)
 	*dest = atoi(data + l + 1);
 	if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
 	free(data);
+	return 1;
      }
    return 0;
 }
@@ -179,6 +180,7 @@ _ecore_config_db_key_float_get(Ecore_Config_DB_File *db, char *key, double *dest
 	*dest = atof(data + l + 1);
 	if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
 	free(data);
+	return 1;
      }
    return 0;
 }
@@ -282,10 +284,8 @@ _ecore_config_db_key_float_set(Ecore_Config_DB_File *db, char *key, double val)
    prev_locale = setlocale(LC_NUMERIC, "C");
    num = snprintf(buf, sizeof(buf), "%s %16.16f ", "float", val);
    if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
-   printf("WRITE \"%s\"\n", buf);
    buf[5] = 0;
    buf[num - 1] = 0;
-   printf("--P2 \"%s\"\n", buf + 6);
    eet_write(db->ef, key, buf, num, 1);
 }
 
