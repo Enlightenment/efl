@@ -10,6 +10,7 @@
  * 
  * things to add:
  * 
+ * * height increased by 3 (or 1) even if no underline on last line - fix
  * * finish off current api where it is unfinished
  * * get native extents
  * * styles (outline, glow, etxra glow, shadow, soft shadow, etc.)

@@ -337,7 +337,11 @@ evas_object_smart_cleanup(Evas_Object *obj)
    
    s = obj->smart.smart;
    while (obj->smart.contained)
-     obj->smart.contained = evas_list_remove(obj->smart.contained, obj->smart.contained->data);
+     {
+	/* null out smart parent object - maybe a hole to creep through? */
+	((Evas_Object *)obj->smart.contained->data)->smart.parent = NULL;
+	obj->smart.contained = evas_list_remove(obj->smart.contained, obj->smart.contained->data);
+     }
    while (obj->smart.callbacks)
      {
 	Evas_Smart_Callback *cb;
