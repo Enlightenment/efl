@@ -1547,7 +1547,7 @@ __evas_gl_text_get_character_at_pos(Evas_GL_Font *fn, char *text, int x, int y, 
 }
 
 void
-__evas_gl_text_get_character_pos(Evas_GL_Font *fn, char *text, int num, int *cx, int *cy, int *cw, int *ch)
+__evas_gl_text_get_character_number(Evas_GL_Font *fn, char *text, int num, int *cx, int *cy, int *cw, int *ch)
 {
    int                 i, px, ppx;
    TT_Glyph_Metrics    gmetrics;

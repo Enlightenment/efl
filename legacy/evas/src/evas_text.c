@@ -169,7 +169,7 @@ evas_text_at_position(Evas e, Evas_Object o, double x, double y,
 								(int)(y - o->current.y),
 								char_x, char_y, 
 								char_w, char_h);
-		  __evas_imlib_font_free(fn);
+		  __evas_imlib_text_font_free(fn);
 		  return ret;
 	       }
 	  }
@@ -189,7 +189,7 @@ evas_text_at_position(Evas e, Evas_Object o, double x, double y,
 							     (int)(y - o->current.y),
 							     char_x, char_y, 
 							     char_w, char_h);
-		  __evas_gl_font_free(fn);
+		  __evas_gl_text_font_free(fn);
 		  return ret;
 	       }
 	  }
@@ -222,7 +222,7 @@ evas_text_at(Evas e, Evas_Object o, int index,
 							 index,
 							 char_x, char_y, 
 							 char_w, char_h);
-		  __evas_imlib_font_free(fn);
+		  __evas_imlib_text_font_free(fn);
 	       }
 	  }
 	break;
@@ -239,7 +239,7 @@ evas_text_at(Evas e, Evas_Object o, int index,
 						      index,
 						      char_x, char_y, 
 						      char_w, char_h);
-		  __evas_gl_font_free(fn);
+		  __evas_gl_text_font_free(fn);
 	       }
 	  }
 	break;
