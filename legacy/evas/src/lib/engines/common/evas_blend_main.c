@@ -4,7 +4,7 @@
 #include "evas_mmx.h"
 #endif
 
-static void blend_init__evas_pow_lut(void);
+static void evas_blend_init_evas_pow_lut(void);
 
 DATA8        _evas_pow_lut[256][256];
 const DATA16 _evas_const_c1[4]       = {1, 1, 1, 1};
@@ -22,11 +22,11 @@ evas_common_blend_init(void)
    
    evas_common_cpu_can_do(&mmx, &sse, &sse2);
    
-   blend_init__evas_pow_lut();   
+   evas_blend_init_evas_pow_lut();
 }
 
 void
-blend_init__evas_pow_lut(void)
+evas_blend_init_evas_pow_lut(void)
 {
    int i, j;
    

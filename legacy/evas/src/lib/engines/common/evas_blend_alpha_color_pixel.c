@@ -169,8 +169,7 @@ evas_common_blend_alpha_color_rgba_to_rgba_c (DATA8 *src, DATA32 *dst, int len, 
 	     BLEND_COLOR(a, B_VAL(dst_ptr), 
 			 B_VAL(&col), B_VAL(dst_ptr), 
 			 tmp);
-	     BLEND_COLOR(A_VAL(src),A_VAL(dst),255,A_VAL(dst),tmp);
-/*	     A_VAL(dst_ptr) = A_VAL(dst_ptr) + ((aa * (255 - A_VAL(dst_ptr))) / 255);*/
+	     A_VAL(dst_ptr) = A_VAL(dst_ptr) + ((aa * (255 - A_VAL(dst_ptr))) / 255);
 	     break;
 	  }
 	src_ptr++;
