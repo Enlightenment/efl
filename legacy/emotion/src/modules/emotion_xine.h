@@ -5,12 +5,14 @@
 
 typedef struct _Emotion_Xine_Video       Emotion_Xine_Video;
 typedef struct _Emotion_Xine_Video_Frame Emotion_Xine_Video_Frame;
+typedef struct _Emotion_Xine_Event Emotion_Xine_Event;
 
 struct _Emotion_Xine_Video
 {
    xine_video_port_t        *video;
    xine_audio_port_t        *audio;
    xine_stream_t            *stream;
+   xine_event_queue_t       *queue;
    int                       fd;
    double                    len;
    double                    pos;
@@ -40,6 +42,12 @@ struct _Emotion_Xine_Video_Frame
    void         (*done_func)(void *data);
    void          *done_data;
    void          *frame;
+};
+
+struct _Emotion_Xine_Event
+{
+   int type;
+   char *xine_event;
 };
 
 Emotion_Video_Module *module_open (void);

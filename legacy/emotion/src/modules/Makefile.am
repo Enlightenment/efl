@@ -2,7 +2,7 @@
 
 SUBDIRS = xine
 
-AUTOMAKE_OPTIONS     = 1.4 foreign
+#AUTOMAKE_OPTIONS     = 1.4 foreign
 
 MAINTAINERCLEANFILES = Makefile.in
 
@@ -22,6 +22,6 @@ emotion_xine.h
 emotion_decoder_xine_la_LIBADD       = @my_libs@ @xine_libs@
 emotion_decoder_xine_la_LDFLAGS      = \
 $(LDFLAGS) \
--no-undefined -module -avoid-version \
+-module -avoid-version \
 -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
 emotion_decoder_xine_la_DEPENDENCIES = $(top_builddir)/config.h

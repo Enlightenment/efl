@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-AUTOMAKE_OPTIONS     = 1.4 foreign
+#AUTOMAKE_OPTIONS     = 1.4 foreign
 
 MAINTAINERCLEANFILES = Makefile.in
 
@@ -20,6 +20,6 @@ emotion_xine_vo_out.c
 xineplug_vo_out_emotion_la_LIBADD       = @xine_libs@
 xineplug_vo_out_emotion_la_LDFLAGS      = \
 $(LDFLAGS) \
--no-undefined -module -avoid-version \
+-module -avoid-version \
 -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
 xineplug_vo_out_emotion_la_DEPENDENCIES = $(top_builddir)/config.h
