@@ -7,7 +7,6 @@ static void st_images_image(void);
 
 static void ob_fonts(void);
 
-static void ob_fonts_font(void);
 static void st_fonts_font(void);
 
 static void st_data_item(void);
@@ -158,7 +157,7 @@ New_Object_Handler object_handlers[] =
      {"images", ob_images},
      {"images.image", ob_images_image},
      {"fonts", ob_fonts},
-     {"fonts.font", ob_fonts_font},
+     {"fonts.font", NULL},
      {"data", NULL},
      {"data.item", NULL},
      {"collections", ob_collections},
@@ -318,18 +317,6 @@ ob_fonts(void)
 }
 
 static void
-ob_fonts_font(void)
-{
-   Edje_Font_Directory_Entry *fnt;
-   
-   fnt = mem_alloc(SZ(Edje_Font_Directory_Entry));
-   if (edje_file->font_dir)
-     edje_file->font_dir->entries = evas_list_append(edje_file->font_dir->entries, fnt);
-   else
-     printf("hmm, no font dir?\n");
-}
-
-static void
 st_fonts_font(void)
 {
    Font *fn;
@@ -341,10 +328,11 @@ st_fonts_font(void)
    fonts = evas_list_append(fonts, fn);
   
    if (edje_file->font_dir)
-   {
-     fnt = evas_list_data(evas_list_last(edje_file->font_dir->entries));
-     if(fnt) fnt->entry = mem_strdup(fn->name);
-   }
+     {
+	fnt = mem_alloc(SZ(Edje_Font_Directory_Entry));
+	edje_file->font_dir->entries = evas_list_append(edje_file->font_dir->entries, fnt);
+	fnt->entry = mem_strdup(fn->name);
+     }
    else
      fprintf(stderr, "%s: Error. parse error %s:%i. Trying to a font outside of a fonts block?\n", progname, file_in, line);
 }
