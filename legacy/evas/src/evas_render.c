@@ -170,9 +170,16 @@ evas_render(Evas e)
    void (*func_poly_draw) (Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, Evas_List points, int r, int g, int b, int a);
    
    if (!e) return;
+   if ((e->current.render_method == RENDER_METHOD_IMAGE) &&
+       (!e->current.image))
+      return;
+   if ((e->current.render_method != RENDER_METHOD_IMAGE) &&
+       ((!e->current.display) ||
+	(!e->current.visual) ||
+	(!e->current.colormap) ||
+	(!e->current.drawable))) 
+      return;
    if ((!e->changed) || 
-       (!e->current.display) || 
-       (!e->current.drawable) ||
        (e->current.drawable_width <= 0) || 
        (e->current.drawable_height <= 0) ||
        (e->current.viewport.w <= 0) || 

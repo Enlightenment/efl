@@ -817,10 +817,6 @@ __evas_image_flush_draw(Display *disp, Imlib_Image dstim, Window win)
 {
    Evas_List l;
    
-   imlib_context_set_display(disp);
-   imlib_context_set_visual(__evas_visual);
-   imlib_context_set_colormap(__evas_cmap);
-   imlib_context_set_drawable(win);
    imlib_context_set_dither(1);
    imlib_context_set_blend(1);
    
@@ -863,8 +859,8 @@ __evas_image_flush_draw(Display *disp, Imlib_Image dstim, Window win)
    drawable_list = NULL;
 }
 
-   
-   int
+
+int
 __evas_image_capable(Display *disp)
 {
    return 1;
