@@ -1,0 +1,22 @@
+/** 
+@file
+@brief Eet Data Handling Library Public API Calls
+ 
+These routines are used for Eet Library interaction
+*/
+
+/**
+
+@mainpage Eet Library Documentation
+@image html  eet.png
+@version 0.0.1
+@author Carsten Haitzler <raster@rasterman.com>
+@date 2000-2002
+
+@section intro What is Eet?
+
+Eet is a small library for encodeing, decoding, sotring and retrieving data.
+
+@todo Complete documentation of API
+
+*/

@@ -1,0 +1,10 @@
+#!/bin/sh
+cp ./eet.c.in ./eet.c
+cat ./src/lib/Eet.h >> ./eet.c
+for I in `find ./src/lib -name "*.c" -print`; do
+  cat $I >> ./evas.c
+done
+rm -rf ./doc/html ./doc/latex ./doc/man
+doxygen
+cp doc/img/eet_small.png doc/html/eet_small.png
+exit 0

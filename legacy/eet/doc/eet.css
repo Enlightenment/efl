@@ -1,0 +1,55 @@
+H1 { text-align: center; color: #333333}
+CAPTION { font-weight: bold }
+A:link { text-decoration: none; color: #444444; }
+A:visited { text-decoration: none; color: #666666; }
+A:hover { text-decoration: none; color: #ffffff; }
+A.qindex { text-decoration: none; }
+A.qindexRef { text-decoration: none; }
+A.el { text-decoration: none; color: #555555; }
+A.elRef { text-decoration: none; color: #555555; }
+A.code { text-decoration: none; font-weight: normal; color: #555555; }
+A.codeRef { text-decoration: none; font-weight: normal; color: #555555; }
+DL.el { margin-left: -1cm }
+DIV.fragment { width: 100%; border: none; background-color: #dddddd }
+DIV.ah { background-color: black; color: #eeeeee; margin-bottom: 3px; margin-top: 3px }
+TD.md { background-color: #aaaaaa; color: #000088; }
+TD.mdname1 { color: #880000; }
+TD.mdname { color: #880000; width: 600px; }
+DIV.groupHeader { margin-left: 10px; margin-top: 10px; margin-bottom: 10px; font-weight: bold }
+DIV.groupText { margin-left: 10px; font-style: italic; font-size: smaller }
+BODY { 
+   background: #999999;
+   color:      #222222;
+   font-family: times;
+}
+TD.indexkey { 
+   background-color: #99aaaa; 
+   font-weight: bold; 
+   padding-right  : 10px; 
+   padding-top    : 2px; 
+   padding-left   : 10px; 
+   padding-bottom : 2px; 
+   margin-left    : 0px; 
+   margin-right   : 0px; 
+   margin-top     : 2px; 
+   margin-bottom  : 2px  
+}
+TD.indexvalue { 
+   background-color: #aa99aa; 
+   font-style: italic; 
+   padding-right  : 10px; 
+   padding-top    : 2px; 
+   padding-left   : 10px; 
+   padding-bottom : 2px; 
+   margin-left    : 0px; 
+   margin-right   : 0px; 
+   margin-top     : 2px; 
+   margin-bottom  : 2px  
+}
+span.keyword       { color: #008000 }
+span.keywordtype   { color: #604020 }
+span.keywordflow   { color: #e08000 }
+span.comment       { color: #800000 }
+span.preprocessor  { color: #806020 }
+span.stringliteral { color: #002080 }
+span.charliteral   { color: #008080 }
