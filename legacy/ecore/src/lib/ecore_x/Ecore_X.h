@@ -592,11 +592,11 @@ void             ecore_x_io_error_handler_set(void (*func) (void *data), const v
 int              ecore_x_error_request_get(void);
 int              ecore_x_error_code_get(void);
 
-int              ecore_x_selection_primary_set(Ecore_X_Window w, char *data, int len);
+int              ecore_x_selection_primary_set(Ecore_X_Window w, char *data, int size);
 int              ecore_x_selection_primary_clear(void);
-int              ecore_x_selection_secondary_set(Ecore_X_Window w, char *data, int len);
+int              ecore_x_selection_secondary_set(Ecore_X_Window w, char *data, int size);
 int              ecore_x_selection_secondary_clear(void);
-int              ecore_x_selection_clipboard_set(Ecore_X_Window w, char *data, int len);
+int              ecore_x_selection_clipboard_set(Ecore_X_Window w, char *data, int size);
 int              ecore_x_selection_clipboard_clear(void);
 void             ecore_x_selection_primary_request(Ecore_X_Window w, char *target);
 void             ecore_x_selection_secondary_request(Ecore_X_Window w, char *target);

@@ -55,6 +55,15 @@ _ecore_x_selection_request_data_get(Ecore_X_Atom selection, void **buf, int *len
    return;
 }
 
+/**
+ * Fetch the data returned by a PRIMARY selection request.
+ * @param buf A pointer to hold the selection data
+ * @param len The size of the data
+ *
+ * Get the converted data from a previous PRIMARY selection
+ * request. The buffer must be freed when done with.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
 void
 ecore_x_selection_primary_request_data_get(void **buf, int *len)
 {
@@ -62,6 +71,15 @@ ecore_x_selection_primary_request_data_get(void **buf, int *len)
                                        buf, len);
 }
 
+/**
+ * Fetch the data returned by a SECONDARY selection request.
+ * @param buf A pointer to hold the selection data
+ * @param len The size of the data
+ *
+ * Get the converted data from a previous SECONDARY selection
+ * request. The buffer must be freed when done with.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
 void
 ecore_x_selection_secondary_request_data_get(void **buf, int *len)
 {
@@ -69,6 +87,15 @@ ecore_x_selection_secondary_request_data_get(void **buf, int *len)
                                        buf, len);
 }
 
+/**
+ * Fetch the data returned by a CLIPBOARD selection request.
+ * @param buf A pointer to hold the selection data
+ * @param len The size of the data
+ *
+ * Get the converted data from a previous CLIPBOARD selection
+ * request. The buffer must be freed when done with.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
 void
 ecore_x_selection_clipboard_request_data_get(void **buf, int *len)
 {
@@ -106,7 +133,7 @@ _ecore_x_selection_get(Atom selection)
 }
 
 int 
-_ecore_x_selection_set(Window w, char *data, int len, Atom selection)
+_ecore_x_selection_set(Window w, char *data, int size, Atom selection)
 {
    int in;
    char *buf = NULL;
@@ -126,11 +153,11 @@ _ecore_x_selection_set(Window w, char *data, int len, Atom selection)
    {
       selections[in].win = w;
       selections[in].selection = selection;
-      selections[in].length = len;
+      selections[in].length = size;
       selections[in].time = _ecore_x_event_last_time;
       
-      buf = malloc(sizeof(char) * len);
-      memcpy(buf, data, sizeof(char) * len);
+      buf = malloc(size);
+      memcpy(buf, data, size);
       selections[in].data = buf;
    }
    else
@@ -142,41 +169,96 @@ _ecore_x_selection_set(Window w, char *data, int len, Atom selection)
       }
    }
    
-   /* ecore_x_window_prop_property_set(_ecore_x_disp, w, selection, 
-         XA_STRING, 8, data, len); */
    return 1;
 }
 
+/**
+ * Claim ownership of the PRIMARY selection and set its data.
+ * @param w    The window to which this selection belongs
+ * @param data The data associated with the selection
+ * @param size The size of the data buffer in bytes
+ * @return     Returns 1 if the ownership of the selection was successfully 
+ *             claimed, or 0 if unsuccessful.
+ *
+ * Get the converted data from a previous PRIMARY selection
+ * request. The buffer must be freed when done with.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
 int 
-ecore_x_selection_primary_set(Ecore_X_Window w, char *data, int len)
+ecore_x_selection_primary_set(Ecore_X_Window w, char *data, int size)
 {
-   return _ecore_x_selection_set(w, data, len, _ecore_x_atom_selection_primary);
+   return _ecore_x_selection_set(w, data, size, _ecore_x_atom_selection_primary);
 }
 
+/**
+ * Release ownership of the primary selection
+ * @return     Returns 1 if the selection was successfully cleared,
+ *             or 0 if unsuccessful.
+ *
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
 int 
 ecore_x_selection_primary_clear(void)
 {
    return _ecore_x_selection_set(None, NULL, 0, _ecore_x_atom_selection_primary);
 }
 
+/**
+ * Claim ownership of the SECONDARY selection and set its data.
+ * @param w    The window to which this selection belongs
+ * @param data The data associated with the selection
+ * @param size The size of the data buffer in bytes
+ * @return     Returns 1 if the ownership of the selection was successfully 
+ *             claimed, or 0 if unsuccessful.
+ *
+ * Get the converted data from a previous SECONDARY selection
+ * request. The buffer must be freed when done with.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
 int 
-ecore_x_selection_secondary_set(Ecore_X_Window w, char *data, int len)
+ecore_x_selection_secondary_set(Ecore_X_Window w, char *data, int size)
 {
-   return _ecore_x_selection_set(w, data, len, _ecore_x_atom_selection_secondary);
+   return _ecore_x_selection_set(w, data, size, _ecore_x_atom_selection_secondary);
 }
 
+/**
+ * Release ownership of the secondary selection
+ * @return     Returns 1 if the selection was successfully cleared,
+ *             or 0 if unsuccessful.
+ *
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
 int 
 ecore_x_selection_secondary_clear(void)
 {
    return _ecore_x_selection_set(None, NULL, 0, _ecore_x_atom_selection_secondary);
 }
 
+/**
+ * Claim ownership of the CLIPBOARD selection and set its data.
+ * @param w    The window to which this selection belongs
+ * @param data The data associated with the selection
+ * @param size The size of the data buffer in bytes
+ * @return     Returns 1 if the ownership of the selection was successfully 
+ *             claimed, or 0 if unsuccessful.
+ *
+ * Get the converted data from a previous CLIPBOARD selection
+ * request. The buffer must be freed when done with.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
 int 
-ecore_x_selection_clipboard_set(Ecore_X_Window w, char *data, int len)
+ecore_x_selection_clipboard_set(Ecore_X_Window w, char *data, int size)
 {
-   return _ecore_x_selection_set(w, data, len, _ecore_x_atom_selection_clipboard);
+   return _ecore_x_selection_set(w, data, size, _ecore_x_atom_selection_clipboard);
 }
 
+/**
+ * Release ownership of the clipboard selection
+ * @return     Returns 1 if the selection was successfully cleared,
+ *             or 0 if unsuccessful.
+ *
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
 int 
 ecore_x_selection_clipboard_clear(void)
 {
