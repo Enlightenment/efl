@@ -259,6 +259,17 @@ __evas_imlib_text_draw(Evas_Imlib_Font *fn, Display *disp, Window win,
      }
 }
 
+void
+__evas_imlib_text_get_size(Evas_Imlib_Font *fn, char *text, int *w, int *h)
+{
+   if ((!fn) || (!text)) 
+      {
+	 *w = 0; *h = 0;
+	 return;
+      }
+   imlib_context_set_font((Imlib_Font)fn);
+   imlib_get_text_size(text, w, h);
+}
 
 
 

@@ -35,6 +35,7 @@ static void __evas_gl_text_font_destroy(Evas_GL_Font *font);
 static void __evas_gl_text_paste(Evas_GL_Font *f, char *text,
 				 Display *disp, Window w, int win_w, int win_h,
 				 int x, int y, int r, int g, int b, int a);
+static void __evas_gl_text_cache_flush(void);
 
 
 static XVisualInfo *__evas_vi               = NULL;
@@ -1140,6 +1141,7 @@ __evas_gl_text_font_destroy(Evas_GL_Font *font)
 {
    int                 i;
 
+   __evas_font_cache_used += 256 * 128 * font->num_textures;
    /* free freetype instance stuff */
    TT_Done_Instance(font->instance);
    TT_Close_Face(font->face);
@@ -1152,11 +1154,40 @@ __evas_gl_text_font_destroy(Evas_GL_Font *font)
    /* free glyph info */
    free(font->glyphs);
    free(font->glyphinfo);
+   if (font->textures) 
+     {
+	glDeleteTextures(font->num_textures, font->textures);
+	free(font->textures);
+      }
    /* free font struct & name */
    free(font->file);
    free(font);
 }
 
+static void
+__evas_gl_text_cache_flush(void)
+{
+   while (__evas_font_cache_used > __evas_font_cache_max)
+     {
+	Evas_List l;
+	Evas_GL_Font *last_f;
+	
+	last_f = NULL;
+	for (l = __evas_fonts; l; l = l->next)
+	  {
+	     Evas_GL_Font *f;
+	     
+	     f = l->data;
+	     if (f->references == 0)
+		last_f = f;
+	  }
+	if (last_f)
+	  {
+	     __evas_fonts = evas_list_remove(__evas_fonts, last_f);
+	     __evas_gl_text_font_destroy(last_f);
+	  }	   
+     }
+}
 
 
 /*****************************************************************************/
@@ -1227,6 +1258,10 @@ __evas_gl_text_font_new(Display *disp, char *font, int size)
 void
 __evas_gl_text_font_free(Evas_GL_Font *fn)
 {
+   fn->references--;
+   if (fn->references == 0)
+      __evas_font_cache_used += 256 * 128 * fn->num_textures;
+   __evas_gl_text_cache_flush();
 }
 
 void
@@ -1250,16 +1285,40 @@ __evas_gl_text_font_list_paths(int *count)
 void
 __evas_gl_text_cache_empty(Display *disp)
 {
+   Evas_List l;
+   Evas_GL_Font *last_f;
+   
+   last_f = (Evas_GL_Font *)1;
+   while (last_f)
+     {
+	last_f = NULL;
+	for (l = __evas_fonts; l; l = l->next)
+	  {
+	     Evas_GL_Font *f;
+	     
+	     f = l->data;
+	     if (f->references == 0)
+		last_f = f;
+	  }
+	if (last_f)
+	  {
+	     __evas_fonts = evas_list_remove(__evas_fonts, last_f);
+	     __evas_gl_text_font_destroy(last_f);
+	  }	   
+     }
 }
 
 void
 __evas_gl_text_cache_set_size(Display *disp, int size)
 {
+   __evas_font_cache_max = size;
+   __evas_gl_text_cache_flush();
 }
 
 int
 __evas_gl_text_cache_get_size(Display *disp)
 {
+   return __evas_font_cache_max;
 }
 
 void
@@ -1271,7 +1330,16 @@ __evas_gl_text_draw(Evas_GL_Font *fn, Display *disp, Window win,
    __evas_gl_text_paste(fn, text, disp, win, win_w, win_h, x, y, r, g, b, a);
 }
 
-
+void
+__evas_gl_text_get_size(Evas_GL_Font *fn, char *text, int *w, int *h)
+{
+   if ((!fn) || (!text)) 
+      {
+	 *w = 0; *h = 0;
+	 return;
+      }
+   __evas_gl_text_calc_size(fn, w, h, text);
+}
 
 
 
