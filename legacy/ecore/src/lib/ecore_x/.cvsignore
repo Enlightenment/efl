@@ -10,4 +10,5 @@ ecore_x_pixmap.lo
 ecore_x_window.lo
 ecore_x_window_prop.lo
 ecore_x_window_shape.lo
+ecore_x_selection.lo
 libecore_x.la

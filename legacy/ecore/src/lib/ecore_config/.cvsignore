@@ -1,0 +1,10 @@
+.deps
+.libs
+Makefile
+Makefile.in
+ecore_config.lo
+ipc_main.lo
+ipc_ecore.lo
+util.lo
+edb.lo
+libecore_config.la

@@ -18,3 +18,5 @@ missing
 mkinstalldirs
 stamp-h
 stamp-h.in
+autom4te.cache
+stamp-h1
