@@ -181,9 +181,6 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
 							    o->engine_data,
 							    o->cur.text,
 							    &w, &h);
-	obj->cur.geometry.w = w;
-        obj->cur.geometry.h = h;
-        obj->cur.cache.geometry.validity = 0;
 	o->ascent = obj->layer->evas->engine.func->font_ascent_get(obj->layer->evas->engine.data.output,
 								   o->engine_data);
 	o->descent = obj->layer->evas->engine.func->font_descent_get(obj->layer->evas->engine.data.output,
@@ -192,12 +189,12 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
 									   o->engine_data);
 	o->max_descent = obj->layer->evas->engine.func->font_max_descent_get(obj->layer->evas->engine.data.output,
 									     o->engine_data);
+	obj->cur.geometry.w = w;
+	obj->cur.geometry.h = o->max_ascent + o->max_descent;
+        obj->cur.cache.geometry.validity = 0;
      }
    else
      {
-	obj->cur.geometry.w = 0;
-        obj->cur.geometry.h = o->max_ascent + o->max_descent;
-        obj->cur.cache.geometry.validity = 0;
 	if (o->engine_data)
 	  {
 	     o->ascent = obj->layer->evas->engine.func->font_ascent_get(obj->layer->evas->engine.data.output,
@@ -216,6 +213,9 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
 	     o->max_ascent = 0;
 	     o->max_descent = 0;
 	  }
+	obj->cur.geometry.w = 0;
+	obj->cur.geometry.h = o->max_ascent + o->max_descent;
+	obj->cur.cache.geometry.validity = 0;
      }
    o->changed = 1;
    evas_object_change(obj);
