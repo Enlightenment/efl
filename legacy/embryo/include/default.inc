@@ -36,8 +36,10 @@ enum Float_Angle_Mode
 native numargs();
 /* varags - get arg no "arg" */
 native getarg(arg, index=0);
+native Float:getfarg(arg, index=0);
 /* varags - set arg no "arg" */
 native setarg(arg, index=0, value);
+native setfarg(arg, index=0, Float:value);
 
 /* Convert a string into a floating point value */
 native Float:atof(const string[]);

@@ -98,7 +98,7 @@ main()
    printf("Done. Return value of testfn() was %i\n", ret);
    
    printf("Test varargs...\n");
-   vargs(1, 2, "hello", "there", 8, 9);
+   vargs(1, 2, "hello", "there", 8, 77, 5.0, 7.77);
    
    printf("\n\n");
    
@@ -113,6 +113,7 @@ vargs(a, b, ...)
    for (new i = 2; i < numargs(); i++)
      {
 	new val;
+	new Float:fval;
 	new str[100];
 	
 	printf("  GET ARG... %i\n", i);
@@ -125,10 +126,15 @@ vargs(a, b, ...)
 	       }
 	     printf("    ARG: %s [max %i]\n", str, sizeof(str));
 	  }
-	else
+	else if (i < 6)
 	  {
 	     val = getarg(i);
 	     printf("    ARG: %i\n", val);
+	  }
+	else if (i < 8)
+	  {
+	     fval = getfarg(i);
+	     printf("    FARG: %f\n", fval);
 	  }
      }
    printf("ARGS DONE.\n");

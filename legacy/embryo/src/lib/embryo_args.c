@@ -59,4 +59,6 @@ _embryo_args_init(Embryo_Program *ep)
    embryo_program_native_call_add(ep, "numargs",  _embryo_args_numargs);
    embryo_program_native_call_add(ep, "getarg", _embryo_args_getarg);
    embryo_program_native_call_add(ep, "setarg", _embryo_args_setarg);
+   embryo_program_native_call_add(ep, "getfarg", _embryo_args_getarg);
+   embryo_program_native_call_add(ep, "setfarg", _embryo_args_setarg);
 }
