@@ -174,7 +174,7 @@ int ecore_config_mod_init(char *pipe_name, void **data) {
   struct stat        st;
   char              *p;
   int                port=0;
-  char              *str = NULL;
+  char               socket[PATH_MAX];
 
   if(!server)
     return ECORE_CONFIG_ERR_FAIL;
@@ -187,16 +187,13 @@ int ecore_config_mod_init(char *pipe_name, void **data) {
     return ECORE_CONFIG_ERR_FAIL;
 
   if((p=getenv("HOME"))) {  /* debug-only ### FIXME */
-    char buf[PATH_MAX];
     int stale;
-    str=malloc(1000*sizeof(char));
     stale=1;
     while (stale) {
-      sprintf(str,"%s/.ecore/%s/%d",p,pipe_name,port);
-      snprintf(buf,PATH_MAX,str);
+      snprintf(socket,PATH_MAX,"%s/.ecore/%s/%d",p,pipe_name,port);
 
-      if(!stat(buf,&st)) {
-        E(0,"IPC/eCore: pipe \"%s\" already exists!?\n",buf);
+      if(!stat(socket,&st)) {
+        E(0,"IPC/eCore: pipe \"%s\" already exists!?\n",socket);
 /*      if(unlink(buf))
   	E(0,"IPC/eCore: could not remove pipe \"%s\": %d\n",buf,errno); }}*/
         port++;
@@ -210,9 +207,8 @@ int ecore_config_mod_init(char *pipe_name, void **data) {
   ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_DEL, ipc_client_del, server);
   ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_DATA,ipc_client_sent,server);
 
-  if(str) {
-    sprintf(str,"IPC/eCore: Server is listening on %s.\n", pipe_name);
-    E(1,str);
+  if(socket) {
+    E(1,"IPC/eCore: Server is listening on %s.\n", pipe_name);
   }
 
   return ECORE_CONFIG_ERR_SUCC; }
