@@ -3,7 +3,11 @@
 INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_ipc \
--I$(top_srcdir)/ @evas_cflags@ @edb_cflags@
+-I$(top_srcdir)/ \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_ipc \
+-I$(top_builddir)/ \
+@evas_cflags@ @edb_cflags@
 
 CLEANFILES = $(DB)
 

@@ -3,6 +3,10 @@
 INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_con \
+-I$(top_srcdir)/src/lib/ecore_ipc \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_con \
+-I$(top_builddir)/src/lib/ecore_ipc \
 @SSL_CFLAGS@
 
 libecore_ipc_la_LDFLAGS = -version-info 1:0:0 \

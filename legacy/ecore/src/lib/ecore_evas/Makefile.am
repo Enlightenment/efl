@@ -22,6 +22,9 @@ endif
 
 INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_evas \
+-I$(top_builddir)/src/lib/ecore_evas \
 $(ECORE_X_INC) \
 $(ECORE_FB_INC) \
 @evas_cflags@ 
