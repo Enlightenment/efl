@@ -14,4 +14,5 @@ fi
 --enable-ecore-job \
 --enable-ecore-con \
 --enable-ecore-ipc \
+--enable-ecore-txt \
 $@

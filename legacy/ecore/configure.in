@@ -263,6 +263,34 @@ AC_ARG_ENABLE(ecore-ipc,
 AC_SUBST(ecore_ipc_cflags)
 AC_SUBST(ecore_ipc_libs)
 
+
+AC_MSG_CHECKING(whether ecore_txt module is to be built)
+
+# FIXME: detect if we need -liconv or not for iconv_libs
+iconv_cflags=""
+iconv_libs=""
+
+ecore_txt_cflags="";
+ecore_txt_libs="";
+
+AC_ARG_ENABLE(ecore-txt, 
+[  --enable-ecore-txt              enable the ecore_txt module], [
+  AC_MSG_RESULT(yes)
+  AM_CONDITIONAL(BUILD_ECORE_TXT, test "$enableval" = "yes")
+  AC_DEFINE(BUILD_ECORE_TXT)
+  ecore_txt_libs="-lecore_txt"  
+], [
+  AC_MSG_RESULT(no)
+  AM_CONDITIONAL(BUILD_ECORE_TXT, false)
+]
+)
+
+AC_SUBST(iconv_cflags)
+AC_SUBST(iconv_libs)
+
+AC_SUBST(ecore_txt_cflags)
+AC_SUBST(ecore_txt_libs)
+
 AC_OUTPUT([
 Makefile
 ecore-config
@@ -276,6 +304,7 @@ src/lib/ecore_fb/Makefile
 src/lib/ecore_evas/Makefile
 src/lib/ecore_con/Makefile
 src/lib/ecore_ipc/Makefile
+src/lib/ecore_txt/Makefile
 debian/Makefile
 ], [
 chmod +x ecore-config

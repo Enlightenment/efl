@@ -6,4 +6,5 @@ ecore_x \
 ecore_fb \
 ecore_evas \
 ecore_con \
-ecore_ipc
+ecore_ipc \
+ecore_txt

@@ -9,3 +9,4 @@
 #undef BUILD_ECORE_X
 #undef BUILD_ECORE_CON
 #undef BUILD_ECORE_IPC
+#undef BUILD_ECORE_TXT

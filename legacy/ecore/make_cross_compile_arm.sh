@@ -6,7 +6,8 @@ make clean distclean
 --enable-ecore-evas \
 --enable-ecore-job \
 --enable-ecore-con \
---enable-ecore-ipc
+--enable-ecore-ipc \
+--enable-ecore-txt
 
 CC="/skiff/local/bin/arm-linux-gcc"
 ST="/skiff/local/bin/arm-linux-strip"
@@ -26,13 +27,13 @@ pushd src
 
  pushd lib
 
- for I in ecore ecore_fb ecore_job ecore_evas ecore_con ecore_ipc; do
+ for I in ecore ecore_fb ecore_job ecore_evas ecore_con ecore_ipc ecore_txt; do
   LIB=$I
   pushd $LIB
    $CC \
    *.c \
    $CFLAGS \
-   -I. -I../ecore -I../ecore_x -I../ecore_fb -I../ecore_job -I../ecore_evas -I../ecore_con -I../ecore_ipc \
+   -I. -I../ecore -I../ecore_x -I../ecore_fb -I../ecore_job -I../ecore_evas -I../ecore_con -I../ecore_ipc -I../ecore_txt \
    -I../../.. \
    -I/skiff/local/include \
    -shared -fPIC -DPIC \
@@ -56,10 +57,10 @@ pushd src
   BIN="ecore_test"
    $CC $BIN".c" \
    -I../.. -I../lib \
-   -I. -I../lib/ecore -I../lib/ecore_x -I../lib/ecore_fb -I../lib/ecore_job -I../lib/ecore_evas -I../lib/ecore_con -I../lib/ecore_ipc \
+   -I. -I../lib/ecore -I../lib/ecore_x -I../lib/ecore_fb -I../lib/ecore_job -I../lib/ecore_evas -I../lib/ecore_con -I../lib/ecore_ipc -I../lib/ecore_txt \
    -I/skiff/local/include \
-   -L. -L../lib/ecore -L../lib/ecore_x -L../lib/ecore_fb -L../lib/ecore_job -L../lib/ecore_evas -L../lib/ecore_con -L../lib/ecore_ipc \
-   -lecore -lecore_evas -lecore_fb -lecore_job -lecore_con -lecore_ipc -levas -lfreetype -ljpeg -lpng -lz -lm \
+   -L. -L../lib/ecore -L../lib/ecore_x -L../lib/ecore_fb -L../lib/ecore_job -L../lib/ecore_evas -L../lib/ecore_con -L../lib/ecore_ipc -L../lib/ecore_txt \
+   -lecore -lecore_evas -lecore_fb -lecore_job -lecore_con -lecore_ipc -lecore_txt -levas -lfreetype -ljpeg -lpng -lz -lm \
    -o $BIN
    $ST $BIN
    cp -a $BIN $DST"/bin";
@@ -70,10 +71,10 @@ pushd src
    ecore_evas_test_bg.c \
    ecore_evas_test_calibrate.c \
    -I../.. -I../lib \
-   -I. -I../lib/ecore -I../lib/ecore_x -I../lib/ecore_fb -I../lib/ecore_job -I../lib/ecore_evas -I../lib/ecore_con -I../lib/ecore_ipc \
+   -I. -I../lib/ecore -I../lib/ecore_x -I../lib/ecore_fb -I../lib/ecore_job -I../lib/ecore_evas -I../lib/ecore_con -I../lib/ecore_ipc -I../lib/ecore_txt \
    -I/skiff/local/include \
-   -L. -L../lib/ecore -L../lib/ecore_x -L../lib/ecore_fb -L../lib/ecore_job -L../lib/ecore_evas -L../lib/ecore_con -L../lib/ecore_ipc \
-   -lecore -lecore_evas -lecore_fb -lecore_con -lecore_con -lecore_ipc -levas -lfreetype -ljpeg -lpng -lz -lm \
+   -L. -L../lib/ecore -L../lib/ecore_x -L../lib/ecore_fb -L../lib/ecore_job -L../lib/ecore_evas -L../lib/ecore_con -L../lib/ecore_ipc -L../lib/ecore_txt \
+   -lecore -lecore_evas -lecore_fb -lecore_con -lecore_con -lecore_ipc -lecore_txt -levas -lfreetype -ljpeg -lpng -lz -lm \
    -o $BIN
    $ST $BIN
    cp -a $BIN $DST"/bin";
