@@ -137,6 +137,8 @@ struct _Ecore_Fd_Handler
    void                    *data;
    int                    (*buf_func) (void *data, Ecore_Fd_Handler *fd_handler);
    void                    *buf_data;
+   void                   (*prep_func) (void *data, Ecore_Fd_Handler *fd_handler);
+   void                    *prep_data;
 };
 
 struct _Ecore_Event_Handler

@@ -165,6 +165,19 @@ ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
    return fd_handler->data;
 }
 
+void
+ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler, void (*func) (void *data, Ecore_Fd_Handler *fd_handler), const void *data)
+{
+   if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
+     {
+	ECORE_MAGIC_FAIL(fd_handler, ECORE_MAGIC_FD_HANDLER, 
+			 "ecore_main_fd_handler_prepare_callback_set");
+	return;
+     }
+   fd_handler->prep_func = func;
+   fd_handler->prep_data = data;
+}
+
 /**
  * Retrieves the file descriptor that the given handler is handling.
  * @param   fd_handler The given FD handler.
@@ -287,6 +300,17 @@ _ecore_main_select(double timeout)
    FD_ZERO(&rfds);
    FD_ZERO(&wfds);
    FD_ZERO(&exfds);
+
+   /* call the prepare callback for all handlers */
+   for (l = (Ecore_Oldlist *)fd_handlers; l; l = l->next)
+     {
+	Ecore_Fd_Handler *fdh;
+	
+	fdh = (Ecore_Fd_Handler *)l;
+
+	if (fdh->prep_func)
+		fdh->prep_func (fdh->prep_data, fdh);
+     }
    for (l = (Ecore_Oldlist *)fd_handlers; l; l = l->next)
      {
 	Ecore_Fd_Handler *fdh;

@@ -231,6 +231,7 @@ extern "C" {
    EAPI void              ecore_main_loop_begin(void);
    EAPI void              ecore_main_loop_quit(void);
    EAPI Ecore_Fd_Handler *ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, int (*func) (void *data, Ecore_Fd_Handler *fd_handler), const void *data, int (*buf_func) (void *buf_data, Ecore_Fd_Handler *fd_handler), const void *buf_data);
+   EAPI void              ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler, void (*func) (void *data, Ecore_Fd_Handler *fd_handler), const void *data);
    EAPI void             *ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler);
    EAPI int               ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler);
    EAPI int               ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
