@@ -805,6 +805,7 @@ evas_object_text_inset_get(Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
    return 0;
    MAGIC_CHECK_END();
+   if (!o->engine_data) return 0;
    return obj->layer->evas->engine.func->font_inset_get(obj->layer->evas->engine.data.output,
 							o->engine_data,
 							o->cur.text);
@@ -828,6 +829,7 @@ evas_object_text_horiz_advance_get(Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
    return 0;
    MAGIC_CHECK_END();
+   if (!o->engine_data) return 0;
    return obj->layer->evas->engine.func->font_h_advance_get(obj->layer->evas->engine.data.output,
 							    o->engine_data,
 							    o->cur.text);
@@ -851,6 +853,7 @@ evas_object_text_vert_advance_get(Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
    return 0;
    MAGIC_CHECK_END();
+   if (!o->engine_data) return 0;
    return obj->layer->evas->engine.func->font_v_advance_get(obj->layer->evas->engine.data.output,
 							    o->engine_data,
 							    o->cur.text);
@@ -876,6 +879,7 @@ evas_object_text_char_pos_get(Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Co
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
    return 0;
    MAGIC_CHECK_END();
+   if (!o->engine_data) return 0;
    inset = 
      obj->layer->evas->engine.func->font_inset_get(obj->layer->evas->engine.data.output,
 						   o->engine_data,
@@ -929,6 +933,7 @@ evas_object_text_char_coords_get(Evas_Object *obj, Evas_Coord x, Evas_Coord y, E
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
    return -1;
    MAGIC_CHECK_END();
+   if (!o->engine_data) return -1;
    inset = 
      obj->layer->evas->engine.func->font_inset_get(obj->layer->evas->engine.data.output,
 						   o->engine_data,
