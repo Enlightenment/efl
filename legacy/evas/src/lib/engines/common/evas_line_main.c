@@ -33,6 +33,53 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
    
    if ((dx == 0) && (dy == 0))
      {
+	if ((x1 < 0) ||
+	    (y1 < 0) ||
+	    (x1 >= dst->image->w) ||
+	    (y1 >= dst->image->h))
+	  return;
+	if (dc->clip.use)
+	  {
+	     if ((x1 < dc->clip.x) ||
+		 (y1 < dc->clip.y) ||
+		 (x1 >= (dc->clip.x + dc->clip.w)) ||
+		 (y1 >= (dc->clip.y + dc->clip.h)))
+	       return;
+	  }
+	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
+	  {
+	     DATA32 __blend_tmp;                       
+	     DATA8  __blend_a;                                  
+	     
+	     ptr = dst->image->data + (y1 * dst->image->w) + x1;
+	     __blend_a = _evas_pow_lut[A_VAL(&(col))][A_VAL(ptr)]; 
+	     
+	     BLEND_COLOR(__blend_a, R_VAL(ptr), 
+			 R_VAL(&(col)), R_VAL(ptr), 
+			 __blend_tmp);                 
+	     BLEND_COLOR(__blend_a, G_VAL(ptr), 
+			 G_VAL(&(col)), G_VAL(ptr), 
+			 __blend_tmp);                 
+	     BLEND_COLOR(__blend_a, B_VAL(ptr), 
+			 B_VAL(&(col)), B_VAL(ptr), 
+			 __blend_tmp);                 
+	     A_VAL(ptr) = A_VAL(ptr) + ((A_VAL(&(col)) * (255 - A_VAL(ptr))) / 255);
+	  }
+	else
+	  {
+	     DATA32 __blend_tmp;                       
+	     
+	     ptr = dst->image->data + (y1 * dst->image->w) + x1;
+	     BLEND_COLOR(A_VAL(&(col)), R_VAL(ptr), 
+			 R_VAL(&(col)), R_VAL(ptr), 
+			 __blend_tmp);                 
+	     BLEND_COLOR(A_VAL(&(col)), G_VAL(ptr), 
+			 G_VAL(&(col)), G_VAL(ptr), 
+			 __blend_tmp);                 
+	     BLEND_COLOR(A_VAL(&(col)), B_VAL(ptr), 
+			 B_VAL(&(col)), B_VAL(ptr), 
+			 __blend_tmp);                 
+	  }
 	/* point draw */
 	return;
      }

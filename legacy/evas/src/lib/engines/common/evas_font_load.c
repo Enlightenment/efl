@@ -78,13 +78,6 @@ evas_common_font_source_find(const char *name)
 {
    Evas_Object_List *l;
 
-#if 1 
-   /* this effectively disables sharing out loaded outlines between */
-   /* multiple sizes of the same font. because FT_Set_Char_Size() needs */
-   /* to be called to update the fonts size output and caluclations */
-   /* for a different face size, but this can be SLOOOW */
-   return NULL;
-#endif   
    if (!name) return NULL;
    for (l = fonts_src; l; l = l->next)
      {
@@ -120,8 +113,7 @@ void
 evas_common_font_size_use(RGBA_Font *fn)
 {
    if (fn->src->current_size == fn->real_size) return;
-   /* This call is evil and SLOW! */
-   FT_Set_Char_Size(fn->src->ft.face, 0, fn->real_size, 96, 96);
+   FT_Activate_Size(fn->ft.size);
    fn->src->current_size = fn->real_size;
 }
 
@@ -180,6 +172,13 @@ evas_common_font_load_init(RGBA_Font *fn)
 {
    int error;
    
+   if (fn->src->references == 1)
+     fn->ft.size = fn->src->ft.face->size;
+   else
+     {
+	error = FT_New_Size(fn->src->ft.face, &(fn->ft.size));
+	FT_Activate_Size(fn->ft.size);
+     }
    fn->real_size = fn->size * 64;
    error = FT_Set_Char_Size(fn->src->ft.face, 0, fn->real_size, 96, 96);
    if (error)
@@ -254,7 +253,6 @@ evas_common_font_load_init(RGBA_Font *fn)
 	  }
  */
      }
-   
    fn->glyphs = NULL;
    fn->usage = 0;
    fn->references = 1;
@@ -350,6 +348,8 @@ evas_common_font_flush_last(void)
 	if (fn_tmp->references == 0) fn = fn_tmp;
      }
    if (!fn) return;
+   
+   if (fn->src->references > 1) FT_Done_Size(fn->ft.size);
    
    fonts = evas_object_list_remove(fonts, fn);
    evas_common_font_modify_cache_by(fn, -1);

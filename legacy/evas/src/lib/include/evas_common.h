@@ -338,6 +338,10 @@ struct _RGBA_Font
 
    int               size;
    int               real_size;
+
+   struct {
+      FT_Size       size;
+   } ft;
    
    Evas_Hash       *glyphs;
 
