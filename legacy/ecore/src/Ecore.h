@@ -742,6 +742,7 @@ extern              "C"
   void                ecore_focus_window_set(Window win);
   Window              ecore_focus_window_get(void);
   void                ecore_focus_to_window(Window win);
+  void                ecore_focus_mode_reset(void);
   Atom                ecore_atom_get(char *name);
 
 

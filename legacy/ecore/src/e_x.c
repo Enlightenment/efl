@@ -482,6 +482,8 @@ ecore_window_set_background_pixmap(Window win, Pixmap pmap)
 {
   if (!disp)
     return;
+  if (win == 0)
+    win = default_root;
   XSetWindowBackgroundPixmap(disp, win, pmap);
 }
 
@@ -615,7 +617,8 @@ ecore_window_clear(Window win)
 {
   if (!disp)
     return;
-
+  if (win == 0)
+    win = default_root;
   XClearWindow(disp, win);
 }
 
@@ -624,7 +627,8 @@ ecore_window_clear_area(Window win, int x, int y, int w, int h)
 {
   if (!disp)
     return;
-
+  if (win == 0)
+    win = default_root;
   XClearArea(disp, win, x, y, w, h, False);
 }
 
@@ -1691,6 +1695,13 @@ ecore_focus_to_window(Window win)
   if (win == 0)
     win = default_root;
   XSetInputFocus(disp, win, RevertToNone, CurrentTime);
+}
+
+void
+ecore_focus_mode_reset(void)
+{
+   if (!disp) return;
+   XSetInputFocus(disp, default_root, RevertToPointerRoot, CurrentTime);
 }
 
 Atom
