@@ -42,23 +42,28 @@ evas_shutdown(void)
 }
 
 /**
- * Allocate and new Evas empty canvas.
- * @return A zeroed out Evas, or NULL on failure
- * 
- * This function creates a new Evas Canvas object that is completely 
- * uninitialised. You cannot sensibly use this until it has been initialised.
- * You need to set up the rendering engine for the canvas before you can add any
- * objects to the canvas or render it.
- * 
- * This function will always succeed and return a valid canvas pointer unless
- * the memory allocation fails, in which case NULL will be returned.
- * 
- * Example:
- * @code
- * Evas *evas;
- * 
- * evas = evas_new();
- * @endcode
+ * @defgroup Evas_Canvas Evas Canvas
+ *
+ * Functions that deal with the basic evas object.  They are the
+ * functions you need to use at a minimum to get a working evas, and
+ * to destroy it.
+ *
+ */
+
+/**
+ * Creates a new empty evas.
+ *
+ * Note that before you can use the evas, you will to at a minimum:
+ * @li Set its render method with @ref evas_output_method_set .
+ * @li Set its viewport size with @ref evas_output_viewport_set .
+ * @li Set its size of the canvas with @ref evas_output_size_set .
+ * @li Ensure that the render engine is given the correct settings with
+ *     @ref evas_engine_info_set .
+ *
+ * This function should only fail if the memory allocation fails.
+ *
+ * @return  A new uninitialised Evas canvas on success.  Otherwise, @c NULL.
+ * @ingroup Evas_Canvas
  */
 Evas *
 evas_new(void)
@@ -76,18 +81,13 @@ evas_new(void)
 }
 
 /**
- * Free an Evas.
- * @param e The Pointer to the Evas to be freed
- * 
- * When called this function frees the Evas Canvas @p e and all Evas Objects
- * created on this canvas. As the objects are freed any that have 'free'
- * callbacks will have them called during the execution of this function.
- * Example:
- * @code
- * extern Evas *evas;
- * 
- * evas_free(evas);
- * @endcode
+ * Frees the given evas and any objects created on it.
+ *
+ * Any objects with 'free' callbacks will have those callbacks called
+ * in this function.
+ *
+ * @param   e The given evas.
+ * @ingroup Evas_Canvas
  */
 void
 evas_free(Evas *e)
@@ -163,24 +163,43 @@ evas_free(Evas *e)
 }
 
 /**
- * Set the output method (engine) for the Evas.
- * @param e The pointer to the Evas Canvas have its engine set
- * @param render_method The numeric engine value to use.
- * 
- * This call sets up which engine an Evas Canvas is to use. This can only be
- * done once and following calls of this function will do nothing. The @p
- * render_method numeric value can be obtained using the
- * evas_render_method_lookup() call.
- * 
- * Example:
+ * @defgroup Evas_Output_Method Evas Render Engine Functions
+ *
+ * Functions that are used to set the render engine for a given function, and
+ * then get that engine working.
+ *
+ * The following code snippet shows how they can be used to
+ * initialise an evas that uses the X11 software engine:
  * @code
- * int engine_id;
  * Evas *evas;
+ * Evas_Engine_Info_Software_X11 *einfo;
+ * extern Display *display;
+ * extern Window win;
  * 
  * evas = evas_new();
- * engine_id = evas_render_method_lookup("software_x11");
- * evas_output_method_set(evas, engine_id);
+ * evas_output_method_set(evas, evas_render_method_lookup("software_x11"));
+ * evas_output_size_set(evas, 640, 480);
+ * evas_output_viewport_set(evas, 0, 0, 640, 480);
+ * einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(evas);
+ * einfo->info.display = display;
+ * einfo->info.visual = DefaultVisual(display, DefaultScreen(display));
+ * einfo->info.colormap = DefaultColormap(display, DefaultScreen(display));
+ * einfo->info.drawable = win;
+ * einfo->info.depth = DefaultDepth(display, DefaultScreen(display));
+ * evas_engine_info_set(evas, (Evas_Engine_Info *)einfo);
  * @endcode
+ */
+
+/**
+ * Sets the output engine for the given evas.
+ *
+ * Once the output engine for an evas is set, any attempt to change it
+ * will be ignored.  The value for @p render_method can be found using
+ * @ref evas_render_method_lookup .
+ *
+ * @param   e             The given evas.
+ * @param   render_method The numeric engine value to use.
+ * @ingroup Evas_Output_Method
  */
 void
 evas_output_method_set(Evas *e, int render_method)
@@ -239,22 +258,11 @@ evas_output_method_set(Evas *e, int render_method)
 }
 
 /**
- * Get the output method (engine) for the Evas.
- * @param e The pointer to the Evas Canvas
- * @return A numeric engine value
- * 
- * This function returns the rendering engine currently used by the given Evas
- * Canvas. On success the numeric value of the rendering engine used
- * by the Canvas is returned. On failure 0 is returned.
- * 
- * Example:
- * @code
- * extern Evas *evas;
- * int engine_id;
- * 
- * engine_id = evas_output_method_get(evas);
- * 
- * @endcode
+ * Retrieves the number of the output engine used for the given evas.
+ * @param   e The given evas.
+ * @return  The ID number of the output engine being used.  @c 0 is
+ *          returned if there is an error.
+ * @ingroup Evas_Output_Method
  */
 int
 evas_output_method_get(Evas *e)
@@ -267,42 +275,17 @@ evas_output_method_get(Evas *e)
 }
 
 /**
- * Get the render engine info struct from the canvas.
- * @param e The pointer to the Evas Canvas
- * @return A pointer to the Engine Info structure
- * 
- * Calling this function returns a pointer to a publicly modifiable structure
- * that the rendering engine for the given canvas has set up. Calling this
- * function before the rendering engine has been set will result in NULL being
- * returned, as will calling this function on an invalid canvas. The caller does
- * not need to free this structure and should only assume that the pointer is
- * valid until evas_engine_info_set() is called or until evas_render() is
- * called. After these calls the contents of this structure and the pointer to
- * it are not guaranteed to be valid.
- * 
- * With some engines, calling this function and modifying structure parameters
- * before calling evas_engine_info_set() is the method to modify engine
- * parameters whilst the canvas is alive.
- * 
- * Example:
- * @code
- * Evas *evas;
- * Evas_Engine_Info_Software_X11 *einfo;
- * extern Display *display;
- * extern Window win;
- * 
- * evas = evas_new();
- * evas_output_method_set(evas, evas_render_method_lookup("software_x11"));
- * evas_output_size_set(evas, 640, 480);
- * evas_output_viewport_set(evas, 0, 0, 640, 480);
- * einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(evas);
- * einfo->info.display = display;
- * einfo->info.visual = DefaultVisual(display, DefaultScreen(display));
- * einfo->info.colormap = DefaultColormap(display, DefaultScreen(display));
- * einfo->info.drawable = win;
- * einfo->info.depth = DefaultDepth(display, DefaultScreen(display));
- * evas_engine_info_set(evas, (Evas_Engine_Info *)einfo);
- * @endcode
+ * Retrieves the current render engine info struct from the given evas.
+ *
+ * The returned structure is publicly modifiable.  The contents are valid
+ * until either @ref evas_engine_info_set or @ref evas_render are called.
+ *
+ * This structure does not need to be freed by the caller.
+ *
+ * @param   e The given evas.
+ * @return  A pointer to the Engine Info structure.  @c NULL is returned if
+ *          an engine has not yet been assigned.
+ * @ingroup Evas_Output_Method
  */
 Evas_Engine_Info *
 evas_engine_info_get(Evas *e)
@@ -322,43 +305,24 @@ evas_engine_info_get(Evas *e)
 }
 
 /**
- * Set up the Engine Info from the info structure.
- * @param e The pointer to the Evas Canvas
- * @param info The pointer to the Engine Info to use
- * 
- * This function takes any parameters set in the provided info structure and
- * applies them to the rendering engine. You need to use the Engine Info
- * structure pointer provided by evas_engine_info_get() and not anything else.
- * 
- * You need to set up the Engine Info at least once before doing any rendering
- * or creating any objects on the Evas Canvas. Some engines support the changing
- * of engine parameters during runtime and so the application should call
- * evas_engine_info_get(), modify parameters that need to be modified, and then
- * call this function to have those changes take effect.
- * 
- * Once evas_engine_info_set() is called the Engine Info structure pointer
- * should be considered invalid and should not be used again. Use 
- * evas_engine_info_get() to fetch it again if needed.
+ * Applies the engine settings for the given evas from the given @c
+ * Evas_Engine_Info structure.
+ *
+ * To get the Evas_Engine_Info structure to use, call @ref
+ * evas_engine_info_get .  Do not try to obtain a pointer to an
+ * @c Evas_Engine_Info structure in any other way.
+ *
+ * You will need to call this function at least once before you can
+ * create objects on an evas or render that evas.  Some engines allow
+ * their settings to be changed more than once.
+ *
+ * Once called, the @p info pointer should be considered invalid.
  * 
  * Example:
- * @code
- * Evas *evas;
- * Evas_Engine_Info_Software_X11 *einfo;
- * extern Display *display;
- * extern Window win;
- * 
- * evas = evas_new();
- * evas_output_method_set(evas, evas_render_method_lookup("software_x11"));
- * evas_output_size_set(evas, 640, 480);
- * evas_output_viewport_set(evas, 0, 0, 640, 480);
- * einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(evas);
- * einfo->info.display = display;
- * einfo->info.visual = DefaultVisual(display, DefaultScreen(display));
- * einfo->info.colormap = DefaultColormap(display, DefaultScreen(display));
- * einfo->info.drawable = win;
- * einfo->info.depth = DefaultDepth(display, DefaultScreen(display));
- * evas_engine_info_set(evas, (Evas_Engine_Info *)einfo);
- * @endcode
+ *
+ * @param   e    The pointer to the Evas Canvas
+ * @param   info The pointer to the Engine Info to use
+ * @ingroup Evas_Output_Method
  */
 void
 evas_engine_info_set(Evas *e, Evas_Engine_Info *info)
@@ -373,23 +337,25 @@ evas_engine_info_set(Evas *e, Evas_Engine_Info *info)
 }
 
 /**
- * Set the render engine's output size in output units.
- * @param e The pointer to the Evas Canvas
- * @param w The width in output units
- * @param h The height in output units
- * 
- * This function sets the output display size for the Evas Canvas indicated (for
- * most engines these values are in pixels). The Canvas will render to a
- * rectangle of this size on the output target once this call is called. This is
- * independent of the viewport (view into the canvas world) and will simply
- * stretch the viewport to fill the rectangle indicated by this call.
- * 
- * Example:
- * @code
- * extern Evas *evas;
- * 
- * evas_output_size_set(evas, 640, 480);
- * @endcode
+ * @defgroup Evas_Output_Size Evas Output and Viewport Resizing Functions
+ *
+ * Functions that set and retrieve the output and viewport size of an evas.
+ */
+
+/**
+ * Sets the output size of the render engine of the given evas.
+ *
+ * The evas will render to a rectangle of the given size once this
+ * function is called.  The output size is independent of the viewport
+ * size.  The viewport will be stretched to fill the given rectangle.
+ *
+ * The units used for @p w and @p h depend on the engine used by the
+ * evas.
+ *
+ * @param   e The given evas.
+ * @param   w The width in output units, usually pixels.
+ * @param   h The height in output units, usually pixels.
+ * @ingroup Evas_Output_Size
  */
 void
 evas_output_size_set(Evas *e, int w, int h)
@@ -409,24 +375,18 @@ evas_output_size_set(Evas *e, int w, int h)
 }
 
 /**
- * Get the render engine's output size in output units.
- * @param e The pointer to the Evas Canvas
- * @param w The pointer to a width variable to be filled in
- * @param h The pointer to a height variable to be filled in
- * 
- * Calling this function writes the current canvas output size values into the
- * variables pointed to by @p w and @p h. On success the variables have the
- * output size values written to them in output units. If either @p w or @p h
- * is NULL, it will not be written to. If @p e is invalid, the results are
- * undefined.
- * 
- * Example:
- * @code
- * extern Evas *evas;
- * int width, height;
- * 
- * evas_output_size_get(evas, &width, &height);
- * @endcode
+ * Retrieve the output size of the render engine of the given evas.
+ *
+ * The output size is given in whatever the output units are for the
+ * engine.
+ *
+ * If either @p w or @p h is @c NULL, then it is ignored.  If @p e is
+ * invalid, the returned results are undefined.
+ *
+ * @param   e The given evas.
+ * @param   w The pointer to an integer to store the width in.
+ * @param   h The pointer to an integer to store the height in.
+ * @ingroup Evas_Output_Size
  */
 void
 evas_output_size_get(Evas *e, int *w, int *h)
@@ -442,29 +402,22 @@ evas_output_size_get(Evas *e, int *w, int *h)
 }
 
 /**
- * Set the render engine's output viewport in canvas units.
- * @param e The pointer to the Evas Canvas
- * @param x The top-left corner x value of the viewport
- * @param y The top-left corner y value of the viewport
- * @param w The width of the viewport
- * @param h The height of the viewport
- * 
- * This function sets the viewport (in canvas co-ordinate space) that will
- * be visible in the canvas ouput. The width and height of the viewport must
- * both be strictly greater than 0. The rectangle described by the co-ordinates
- * is the rectangular region of the canvas co-ordinate space that is visibly
- * mapped and stretched to fill the output target of the canvas when rendering
- * is performed.
- * 
- * Co-ordinates do not have to map 1-to-1, but it is generally advised for ease
- * of use that canvas co-ordinates match output target units (e.g. pixels). 
- * 
- * Example:
- * @code
- * extern Evas *evas;
- * 
- * evas_output_viewport_set(evas, 0, 0, 640, 480);
- * @endcode
+ * Sets the output viewport of the given evas in evas units.
+ *
+ * The output viewport is the area of the evas that will be visible to the
+ * viewer.  The viewport will be stretched to fit the output target of the
+ * evas when rendering is performed.
+ *
+ * @note The coordinate values do not have to map 1-to-1 with the output
+ *       target.  However, it is generally advised that it is done for ease
+ *       of use.
+ *
+ * @param   e The given evas.
+ * @param   x The top-left corner x value of the viewport.
+ * @param   y The top-left corner y value of the viewport.
+ * @param   w The width of the viewport.  Must be greater than 0.
+ * @param   h The height of the viewport.  Must be greater than 0.
+ * @ingroup Evas_Output_Size
  */
 void
 evas_output_viewport_set(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
@@ -493,6 +446,7 @@ evas_output_viewport_set(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas
  * @param y The pointer to a y variable to be filled in
  * @param w The pointer to a width variable to be filled in
  * @param h The pointer to a height variable to be filled in
+ * @ingroup Evas_Output_Size
  * 
  * Calling this function writes the current canvas output viewport size and
  * location values into the variables pointed to by @p x, @p y, @p w and @p h.
@@ -526,11 +480,19 @@ evas_output_viewport_get(Evas *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, E
 }
 
 /**
+ * @defgroup Evas_Coord_Mapping_Group Evas Coordinate Mapping Functions
+ *
+ * Functions that are used to map coordinates from the canvas to the
+ * screen or the screen to the canvas.
+ */
+
+/**
  * Convert/scale an ouput screen co-ordinate into canvas co-ordinates
  * 
  * @param e The pointer to the Evas Canvas
  * @param x The screen/output x co-ordinate
  * @return The screen co-ordinate translated to canvas unit co-ordinates
+ * @ingroup Evas_Coord_Mapping_Group
  * 
  * This function takes in a horizontal co-ordinate as the @p x parameter and
  * converts it into canvas units, accounting for output size, viewport size
@@ -562,6 +524,7 @@ evas_coord_screen_x_to_world(Evas *e, int x)
  * @param e The pointer to the Evas Canvas
  * @param y The screen/output y co-ordinate
  * @return The screen co-ordinate translated to canvas unit co-ordinates
+ * @ingroup Evas_Coord_Mapping_Group
  * 
  * This function takes in a vertical co-ordinate as the @p y parameter and
  * converts it into canvas units, accounting for output size, viewport size
@@ -593,6 +556,7 @@ evas_coord_screen_y_to_world(Evas *e, int y)
  * @param e The pointer to the Evas Canvas
  * @param x The canvas x co-ordinate
  * @return The output/screen co-ordinate translated to output co-ordinates
+ * @ingroup Evas_Coord_Mapping_Group
  * 
  * This function takes in a horizontal co-ordinate as the @p x parameter and
  * converts it into output units, accounting for output size, viewport size
@@ -624,6 +588,7 @@ evas_coord_world_x_to_screen(Evas *e, Evas_Coord x)
  * @param e The pointer to the Evas Canvas
  * @param y The canvas y co-ordinate
  * @return The output/screen co-ordinate translated to output co-ordinates
+ * @ingroup Evas_Coord_Mapping_Group
  * 
  * This function takes in a vertical co-ordinate as the @p x parameter and
  * converts it into output units, accounting for output size, viewport size
@@ -654,6 +619,7 @@ evas_coord_world_y_to_screen(Evas *e, Evas_Coord y)
  * 
  * @param name The string name of an engine
  * @return A numeric (opaque) ID for the rendering engine
+ * @ingroup Evas_Output_Method
  * 
  * This function looks up a numeric return value for the named engine in the
  * string @p name. This is a normal C string, NUL byte terminated. The name
@@ -718,6 +684,7 @@ evas_render_method_lookup(const char *name)
  * List all the rendering engines compiled into the copy of the Evas library
  * 
  * @return A linked list whose data members are C strings of engine names
+ * @ingroup Evas_Output_Method
  * 
  * Calling this will return a handle (pointer) to an Evas linked list. Each node
  * in the linked list will have the data pointer be a (char *) pointer to the
@@ -782,6 +749,7 @@ evas_render_method_list(void)
  * This function should be called to free a list of engine names
  * 
  * @param list The Evas_List base pointer for the engine list to be freed
+ * @ingroup Evas_Output_Method
  * 
  * When this function is called it will free the engine list passed in as
  * @p list. The list should only be a list of engines generated by calling
@@ -819,11 +787,18 @@ evas_render_method_list_free(Evas_List *list)
 }
 
 /**
+ * @defgroup Evas_Pointer_Group Evas Pointer Functions
+ *
+ * Functions that deal with the status of the pointer.
+ */
+
+/**
  * This function returns the current known pointer co-ordinates
  * 
  * @param e The pointer to the Evas Canvas
  * @param x The pointer to an integer to be filled in
  * @param y The pointer to an integer to be filled in
+ * @ingroup Evas_Pointer_Group
  * 
  * This function returns the current known screen/output co-ordinates of the
  * mouse pointer and sets the contents of the integers pointed to by @p x
@@ -857,6 +832,7 @@ evas_pointer_output_xy_get(Evas *e, int *x, int *y)
  * @param e The pointer to the Evas Canvas
  * @param x The pointer to a Evas_Coord to be filled in
  * @param y The pointer to a Evas_Coord to be filled in
+ * @ingroup Evas_Pointer_Group
  * 
  * This function returns the current known canvas unit co-ordinates of the
  * mouse pointer and sets the contents of the Evas_Coords pointed to by @p x
@@ -889,6 +865,7 @@ evas_pointer_canvas_xy_get(Evas *e, Evas_Coord *x, Evas_Coord *y)
  * 
  * @param e The pointer to the Evas Canvas
  * @return A bitmask of the currently depressed buttons on the cavas
+ * @ingroup Evas_Pointer_Group
  * 
  * Calling this function will return a 32-bit integer with the appropriate bits
  * set to 1 that correspond to a mouse button being depressed. This limits
@@ -933,6 +910,7 @@ evas_pointer_button_down_mask_get(Evas *e)
  * 
  * @param e The pointer to the Evas Canvas
  * @return An integer that is 1 if the mouse is inside the canvas, 0 otherwise
+ * @ingroup Evas_Pointer_Group
  * 
  * When this function is called it will return a value of either 0 or 1,
  * depending on if evas_event_feed_mouse_in(), evas_event_feed_mouse_in_data(),
