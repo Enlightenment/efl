@@ -241,6 +241,7 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
 {
    Edje *ed;
    Edje_Real_Part *rp;
+   char *type;
 
    ed = _edje_fetch(obj);   
    if ((!ed) || (!part)) return;
@@ -248,6 +249,9 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
    if (!rp) return;
    if (rp->swallowed_object)
      {
+	evas_object_event_callback_del(rp->swallowed_object, 
+				       EVAS_CALLBACK_FREE, 
+				       _edje_object_part_swallow_free_cb);
 	evas_object_clip_unset(rp->swallowed_object);
 	rp->swallowed_object = NULL;
      }
@@ -255,8 +259,73 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
    rp->swallowed_object = obj_swallow;
    evas_object_clip_set(rp->swallowed_object, ed->clipper);
    evas_object_stack_above(rp->swallowed_object, rp->object);
+   evas_object_event_callback_add(rp->swallowed_object,
+				  EVAS_CALLBACK_FREE, 
+				  _edje_object_part_swallow_free_cb,
+				  obj);
+   type = (char *)evas_object_type_get(obj_swallow);
+   if ((type) && (!strcmp(type, "edje")))
+     {
+	double w, h;
+	
+	edje_object_size_min_get(obj_swallow, &w, &h);
+	rp->swallow_params.min.w = w;
+	rp->swallow_params.min.h = h;
+	edje_object_size_max_get(obj_swallow, &w, &h);
+	rp->swallow_params.max.w = w;
+	rp->swallow_params.max.h = h;
+     }
+   else
+     {
+	rp->swallow_params.min.w = 
+	  (int)evas_object_data_get(obj_swallow, "\377 edje.minw");
+	rp->swallow_params.min.h =
+	  (int)evas_object_data_get(obj_swallow, "\377 edje.minh");
+	rp->swallow_params.max.w =
+	  (int)evas_object_data_get(obj_swallow, "\377 edje.maxw");
+	rp->swallow_params.max.h =
+	  (int)evas_object_data_get(obj_swallow, "\377 edje.maxh");
+     }
    ed->dirty = 1;
    _edje_recalc(ed);   
+}
+
+void
+edje_extern_object_min_size_set(Evas_Object *obj, double minw, double minh)
+{
+   int mw, mh;
+   
+   mw = minw;
+   if (mw < 0) mw = 0;
+   mh = minh;
+   if (mh < 0) mh = 0;
+   if (mw > 0)
+     evas_object_data_set(obj, "\377 edje.minw", (void *)mw);
+   else
+     evas_object_data_del(obj, "\377 edje.minw");
+   if (mh > 0)
+     evas_object_data_set(obj, "\377 edje.minh", (void *)mh);
+   else
+     evas_object_data_del(obj, "\377 edje.maxw");
+}
+
+void
+edje_extern_object_max_size_set(Evas_Object *obj, double maxw, double maxh)
+{
+   int mw, mh;
+   
+   mw = maxw;
+   if (mw < 0) mw = 0;
+   mh = maxh;
+   if (mh < 0) mh = 0;
+   if (mw > 0)
+     evas_object_data_set(obj, "\377 edje.maxw", (void *)mw);
+   else
+     evas_object_data_del(obj, "\377 edje.maxw"); 
+   if (mh > 0)
+     evas_object_data_set(obj, "\377 edje.maxh", (void *)mh);
+   else
+     evas_object_data_del(obj, "\377 edje.maxh");
 }
 
 void
@@ -276,6 +345,10 @@ edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
 	  {
 	     evas_object_clip_unset(rp->swallowed_object);
 	     rp->swallowed_object = NULL;
+	     rp->swallow_params.min.w = 0;
+	     rp->swallow_params.min.h = 0;
+	     rp->swallow_params.max.w = 0;
+	     rp->swallow_params.max.h = 0;
 	     ed->dirty = 1;
 	     _edje_recalc(ed);
 	     return;
@@ -300,11 +373,63 @@ void
 edje_object_size_min_get(Evas_Object *obj, double *minw, double *minh)
 {
    Edje *ed;
+   
+   ed = _edje_fetch(obj);
+   if (!ed)
+     {
+	if (minw) *minw = 0;
+	if (minh) *minh = 0;
+	return;
+     }
+   if (minw) *minw = ed->collection->prop.min.w;
+   if (minh) *minh = ed->collection->prop.min.h;
+}
+
+void
+edje_object_size_max_get(Evas_Object *obj, double *maxw, double *maxh)
+{
+   Edje *ed;
+   
+   ed = _edje_fetch(obj);
+   if (!ed)
+     {
+	if (maxw) *maxw = 0;
+	if (maxh) *maxh = 0;
+	return;
+     }
+   if (ed->collection->prop.max.w == 0)
+     {
+	if (maxw) *maxw = 1e+37;
+     }
+   else
+     {
+	if (maxw) *maxw = ed->collection->prop.max.w;
+     }
+   if (ed->collection->prop.max.h == 0)
+     {
+	if (maxh) *maxh = 1e+37;
+     }
+   else
+     {
+	if (maxh) *maxh = ed->collection->prop.max.h;
+     }
+}
+
+void
+edje_object_size_min_calc(Evas_Object *obj, double *minw, double *minh)
+{
+   Edje *ed;
    double pw, ph;   
    int maxw, maxh;
    int ok;
    
    ed = _edje_fetch(obj);
+   if (!ed)
+     {
+	if (minw) *minw = 0;
+	if (minh) *minh = 0;
+	return;
+     }
    ed->calc_only = 1;
    pw = ed->w;
    ph = ed->h;
@@ -485,3 +610,13 @@ _edje_thaw(Edje *ed)
      _edje_recalc(ed);
    return ed->freeze;
 }
+
+void
+_edje_object_part_swallow_free_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *edje_obj;
+   
+   edje_obj = data;
+   edje_object_part_unswallow(edje_obj, obj);
+}
+

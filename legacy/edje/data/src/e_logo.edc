@@ -126,6 +126,8 @@ images {
 
 collections {
    group {
+	min, 32 32;
+	max, 1024 768;
       name, "test";
       parts {
 	 part {

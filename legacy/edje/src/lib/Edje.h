@@ -13,6 +13,9 @@ extern "C" {
    void         edje_freeze                     (void);
    void         edje_thaw                       (void);
    
+   void         edje_extern_object_min_size_set (Evas_Object *obj, double minw, double minh);
+   void         edje_extern_object_max_size_set (Evas_Object *obj, double maxw, double maxh);
+   
    Evas_Object *edje_object_add                 (Evas *evas);
    void         edje_object_file_set            (Evas_Object *o, const char *file, const char *part);
    void         edje_object_file_get            (Evas_Object *o, const char **file, const char **part);
@@ -28,6 +31,8 @@ extern "C" {
    void         edje_object_color_class_set     (Evas_Object *o, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
    void         edje_object_text_class_set      (Evas_Object *o, const char *text_class, const char *font, double size);
    void         edje_object_size_min_get        (Evas_Object *o, double *minw, double *minh);
+   void         edje_object_size_max_get        (Evas_Object *o, double *maxw, double *maxh);
+   void         edje_object_size_min_calc       (Evas_Object *o, double *minw, double *minh);
    int          edje_object_part_exists         (Evas_Object *o, const char *part);
    void         edje_object_part_geometry_get   (Evas_Object *o, const char *part, double *x, double *y, double *w, double *h);
    void         edje_object_part_text_set       (Evas_Object *o, const char *part, const char *text);

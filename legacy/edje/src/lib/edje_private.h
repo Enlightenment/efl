@@ -17,16 +17,12 @@
 
 /* FIXME:
  * 
- * free stuff - no more leaks
- * 
  * dragables have to work
  * drag start/top signals etc.
  * drag needs to have signals with relative pos as arg.
  * drag vals should be 0.0 -> 1.0 if drag is confined. "rest" pos = 0.0.
  * query dragable for its relative pos value
  * dragable needs to be able to affext rel/abs values of other parts
- * 
- * swallowed objects need to be able to advertise min/max size
  * 
  * need to be able to list collections in an eet file
  * 
@@ -182,7 +178,14 @@ struct _Edje_Part_Collection
    
    int        id; /* the collection id */
    
+   struct {
+      struct {
+	 int w, h;
+      } min, max;
+   } prop;
+   
    int        references;
+   
    struct {
       Evas_Hash                   *no_matches;
       Evas_Hash                   *matches;
@@ -362,6 +365,11 @@ struct _Edje_Real_Part
    Evas_Object              *object;
    Evas_List                *extra_objects;
    Evas_Object              *swallowed_object;
+   struct {
+      struct {
+	 int                 w, h;
+      } min, max;
+   } swallow_params;
    unsigned char             calculated : 1;
    unsigned char             still_in   : 1;
    int                       clicked_button;
@@ -519,6 +527,7 @@ Edje             *_edje_fetch(Evas_Object *obj);
 int               _edje_glob_match(char *str, char *glob);
 int               _edje_freeze(Edje *ed);
 int               _edje_thaw(Edje *ed);
+void              _edje_object_part_swallow_free_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 
 extern Eet_Data_Descriptor *_edje_edd_edje_file;

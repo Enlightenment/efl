@@ -201,7 +201,7 @@ _edje_part_recalc_single(Edje *ed,
 			 Edje_Real_Part *confine_to,
 			 Edje_Calc_Params *params)
 {
-   int minw, minh;
+   int minw, minh, maxw, maxh;
 
    /* relative coords of top left & bottom right */
    if (rel1_to)
@@ -322,6 +322,8 @@ _edje_part_recalc_single(Edje *ed,
      }
    minw = desc->min.w;
    minh = desc->min.h;
+   if (ep->swallow_params.min.w > desc->min.w) minw = ep->swallow_params.min.w;
+   if (ep->swallow_params.min.h > desc->min.h) minh = ep->swallow_params.min.h;
    /* if we have text that wants to make the min size the text size... */
    if ((chosen_desc) && (ep->part->type == EDJE_PART_TYPE_TEXT))
      {
@@ -385,23 +387,29 @@ _edje_part_recalc_single(Edje *ed,
 	     params->h = minh;
 	  }
      }
+   maxw = desc->max.w;
+   maxh = desc->max.h;
+   if ((ep->swallow_params.max.w > 0) &&
+       (ep->swallow_params.max.w < maxw)) maxw = ep->swallow_params.max.w;
+   if ((ep->swallow_params.max.h > 0) &&
+       (ep->swallow_params.max.h < maxh)) maxh = ep->swallow_params.max.h;
    /* adjust for max size */
-   if (desc->max.w >= 0)
+   if (maxw >= 0)
      {
-	if (params->w > desc->max.w)
+	if (params->w > maxw)
 	  {
 	     params->x = params->x + 
-	       ((params->w - desc->max.w) * desc->align.x);
-	     params->w = desc->max.w;
+	       ((params->w - maxw) * desc->align.x);
+	     params->w = maxw;
 	  }
      }
-   if (desc->max.h >= 0)
+   if (maxh >= 0)
      {
-	if (params->h > desc->max.h)
+	if (params->h > maxh)
 	  {
 	     params->y = params->y + 
-	       ((params->h - desc->max.h) * desc->align.y);
-	     params->h = desc->max.h;
+	       ((params->h - maxh) * desc->align.y);
+	     params->h = maxh;
 	  }
      }
    /* confine */

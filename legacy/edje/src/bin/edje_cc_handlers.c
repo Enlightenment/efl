@@ -9,6 +9,8 @@ static void ob_collections(void);
 
 static void ob_collections_group(void);
 static void st_collections_group_name(void);
+static void st_collections_group_min(void);
+static void st_collections_group_max(void);
 
 static void ob_collections_group_parts(void);
 
@@ -74,6 +76,8 @@ New_Statement_Handler statement_handlers[] =
 {
      {"images.image", st_images_image},
      {"collections.group.name", st_collections_group_name},
+     {"collections.group.min", st_collections_group_min},
+     {"collections.group.max", st_collections_group_max},
      {"collections.group.parts.part.name", st_collections_group_parts_part_name},
      {"collections.group.parts.part.type", st_collections_group_parts_part_type},
      {"collections.group.parts.part.effect", st_collections_group_parts_part_effect},
@@ -131,6 +135,8 @@ New_Object_Handler object_handlers[] =
      {"collections", ob_collections},
      {"collections.group", ob_collections_group},
      {"collections.group.name", NULL},
+     {"collections.group.min", NULL},
+     {"collections.group.max", NULL},
      {"collections.group.parts", ob_collections_group_parts},
      {"collections.group.parts.part", ob_collections_group_parts_part},
      {"collections.group.parts.part.name", NULL},
@@ -292,6 +298,26 @@ st_collections_group_name(void)
    
    de = evas_list_data(evas_list_last(edje_file->collection_dir->entries));
    de->entry = parse_str(0);
+}
+
+static void
+st_collections_group_min(void)
+{
+   Edje_Part_Collection *pc;
+   
+   pc = evas_list_data(evas_list_last(edje_collections));
+   pc->prop.min.w = parse_int_range(0, 0, 0x7fffffff);
+   pc->prop.min.h = parse_int_range(1, 0, 0x7fffffff);
+}
+
+static void
+st_collections_group_max(void)
+{
+   Edje_Part_Collection *pc;
+   
+   pc = evas_list_data(evas_list_last(edje_collections));
+   pc->prop.max.w = parse_int_range(0, 0, 0x7fffffff);
+   pc->prop.max.h = parse_int_range(1, 0, 0x7fffffff);
 }
 
 static void
