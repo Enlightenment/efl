@@ -104,6 +104,8 @@ struct _Evas_Object_Any
       int        zoomscale;
    } current, previous;
    Evas_List *groups;
+   
+   void      *renderer_data;
 };
 
 struct _Evas_Object_Image
