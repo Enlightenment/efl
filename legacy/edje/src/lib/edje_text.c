@@ -389,20 +389,14 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
 		  break;
 	       }
 	  }
-	else
+	else if (c1 >= orig_len || c2 == 0)
 	  {
-	     if (c1 >= orig_len)
-	       {
-		  buf[0] = 0;
-		  break;
-	       }
-	     else if (c2 == 0)
-	       {
-		  buf[0] = 0;
-		  break;
-	       }
+	     buf[0] = 0;
+	     break;
 	  }
+
 	buf[0] = 0;
+
 	if (c1 >= 0)
 	  {
 	     strcpy(buf, "...");
