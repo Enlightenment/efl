@@ -461,7 +461,6 @@ extern "C" {
    int ecore_sheap_change(Ecore_Sheap *heap, void *item, void *newval);
    int ecore_sheap_set_compare(Ecore_Sheap *heap, Ecore_Compare_Cb compare);
    void ecore_sheap_set_order(Ecore_Sheap *heap, char order);
-   void ecore_sheap_destroy(Ecore_Sheap *heap);
    void ecore_sheap_sort(Ecore_Sheap *heap);
    
    inline void *ecore_sheap_item(Ecore_Sheap *heap, int i);
