@@ -1,11 +1,11 @@
 CFLAGS_X      = @x_cflags@
 CFLAGS_EXTRA  = -I$(includedir) -I$(top_srcdir) -I$(top_srcdir)/src -I/usr/local/include
 
-CFLGAS_ALL    = $(CFLAGS_X) $(CFLAGS_EXTRA)
+CFLAGS_ALL    = $(CFLAGS_X) $(CFLAGS_EXTRA)
 
 SUBDIRS       = fnt img
 
-INCLUDES = $(CFLGAS_ALL) \
+INCLUDES = $(CFLAGS_ALL) \
            -DLIBDIR=\"$(libdir)\" \
 	   -DBINDIR=\"$(bindir)\" \
 	   -DDATADIR=\"$(datadir)\"
