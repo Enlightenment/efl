@@ -19,3 +19,5 @@ stamp-h1
 depcomp
 install-sh
 missing
+doc
+*.tar.gz

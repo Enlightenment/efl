@@ -23,3 +23,5 @@ stamp-h
 stamp-h.in
 autom4te.cache
 stamp-h1
+doc
+*.tar.gz

@@ -2,7 +2,7 @@ config.guess
 config.sub
 ltmain.sh
 aclocal.m4
-autom4te.cache
+*.cache
 config.h.in
 Makefile.in
 configure
@@ -19,3 +19,5 @@ compile
 depcomp
 missing
 install-sh
+doc
+*.tar.gz

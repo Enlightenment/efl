@@ -20,3 +20,5 @@ depcomp
 edje.pc
 install-sh
 missing
+doc
+*.tar.gz

@@ -26,3 +26,5 @@ mkinstalldirs
 stamp-h1
 autom4te.cache
 depcomp
+doc
+*.tar.gz
