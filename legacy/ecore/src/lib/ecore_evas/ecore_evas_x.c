@@ -496,11 +496,6 @@ _ecore_evas_idle_enter(void *data)
 	       }
 	     if (ee->engine.x.damages)
 	       {
-		  XSetRegion(ecore_x_display_get(), ee->engine.x.gc, ee->engine.x.damages);
-		  ecore_x_pixmap_paste(ee->engine.x.pmap, ee->engine.x.win, ee->engine.x.gc,
-				       0, 0, ee->w, ee->h, 0, 0);
-		  XDestroyRegion(ee->engine.x.damages);
-		  ee->engine.x.damages = 0;
 		  if ((ee->shaped) && (updates))
 		    {
 		       if (ee->prop.fullscreen)
@@ -508,6 +503,11 @@ _ecore_evas_idle_enter(void *data)
 		       else
 			 ecore_x_window_shape_mask_set(ee->engine.x.win_container, ee->engine.x.mask);
 		    }
+		  XSetRegion(ecore_x_display_get(), ee->engine.x.gc, ee->engine.x.damages);
+		  ecore_x_pixmap_paste(ee->engine.x.pmap, ee->engine.x.win, ee->engine.x.gc,
+				       0, 0, ee->w, ee->h, 0, 0);
+		  XDestroyRegion(ee->engine.x.damages);
+		  ee->engine.x.damages = 0;
 		  if (updates) evas_render_updates_free(updates);
 	       }
 	  }
