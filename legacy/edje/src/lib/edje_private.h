@@ -20,6 +20,7 @@
  * more example edje files
  * 
  * ? programs need to be able to cycle part states given a list of states
+ * ? programs can do multiple actions from one signal
  * ? programs need to be able to set/get/add/sub and compare variables
  *   ie: 
  *     action, INT "active_state" = INT 1;
