@@ -26,7 +26,6 @@ edje_object_add(Evas *evas)
 {
    if (!_edje_smart)
      {
-	edje_init();
 	_edje_smart = evas_smart_new("edje",
 				     _edje_smart_add,
 				     _edje_smart_del,
