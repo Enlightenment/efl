@@ -144,7 +144,14 @@ native custom_state(part_id, state[], Float:state_val = 0.0);
 
 enum State_Param
 {
-	STATE_ALIGNMENT = 1
+	STATE_ALIGNMENT = 1,
+	STATE_MIN = 2,
+	STATE_MAX = 3,
+	STATE_STEP = 4,
+	STATE_ASPECT = 5,
+	STATE_COLOR = 6,
+	STATE_COLOR2 = 7,
+	STATE_COLOR3 = 8
 };
 
 native set_state_val(part_id, State_Param:p, ...);

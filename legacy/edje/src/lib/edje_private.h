@@ -126,7 +126,14 @@ typedef struct _Edje_Part_Description                Edje_Part_Description;
 
 #define EDJE_STATE_PARAM_NONE         0
 #define EDJE_STATE_PARAM_ALIGNMENT    1
-#define EDJE_STATE_PARAM_LAST         2
+#define EDJE_STATE_PARAM_MIN          2
+#define EDJE_STATE_PARAM_MAX          3
+#define EDJE_STATE_PARAM_STEP         4
+#define EDJE_STATE_PARAM_ASPECT       5
+#define EDJE_STATE_PARAM_COLOR        6
+#define EDJE_STATE_PARAM_COLOR2       7
+#define EDJE_STATE_PARAM_COLOR3       8
+#define EDJE_STATE_PARAM_LAST         9
 
 /*----------*/
 

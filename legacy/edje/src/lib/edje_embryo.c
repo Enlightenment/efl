@@ -125,7 +125,15 @@
  * set_state_val(part_id, State_Param:param, ...)
  * get_state_val(part_id, State_Param:param, ...)
  *
- * Supported parameters: align[Float:x, Float:y]
+ * Supported parameters:
+ * align[Float:x, Float:y]
+ * min[w, h]
+ * max[w, h]
+ * step[x,y]
+ * aspect[Float:min, Float:max]
+ * color[r,g,b,a]
+ * color2[r,g,b,a]
+ * color3[r,g,b,a]
  *
  * ** part_id and program_id need to be able to be "found" from strings
  * 
@@ -148,11 +156,7 @@
  * Need to implement support for the following properties
  * in get/set_state_val():
  *
- * min[w,h]
- * max[w,h]
- * step[x,y]
- * aspect[min,max]
- * apsetc_preference
+ * aspect_preference
  * rel1[relx,rely,part_id,part_id]
  * rel1[offx,offy]
  * rel2[relx,rely,part_id,part_id]
@@ -163,9 +167,6 @@
  * fill[pos_relx,pos_rely,pos_offx,pos_offy]
  * fill[sz_relx,sz_rely,sz_offx,sz_offy]
  * color_class
- * color[r,g,b,a]
- * color2[r,g,b,a]
- * color3[r,g,b,a]
  * text[text_class]
  * text[font]
  * text[size]
@@ -186,6 +187,14 @@
    ___l = embryo_data_string_length_get(ep, ___cptr); \
    if (((str) = alloca(___l + 1))) \
    embryo_data_string_get(ep, ___cptr, (str));}}
+#define GETFLOAT(val, par) { \
+   float *___cptr; \
+   if ((___cptr = (float *)embryo_data_address_get(ep, (par)))) { \
+   val = *___cptr;}}
+#define GETINT(val, par) { \
+   int *___cptr; \
+   if ((___cptr = (int *)embryo_data_address_get(ep, (par)))) { \
+   val = *___cptr;}}
 #define SETSTR(str, par) { \
    Embryo_Cell *___cptr; \
    if ((___cptr = embryo_data_address_get(ep, (par)))) { \
@@ -1506,13 +1515,63 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
       case EDJE_STATE_PARAM_ALIGNMENT:
 	 CHKPARAM(4);
 
-	 cptr = embryo_data_address_get(ep, params[3]);
-	 if (cptr)
-	   rp->custom.description->align.x = EMBRYO_CELL_TO_FLOAT(*cptr);
+	 GETFLOAT(rp->custom.description->align.x, params[3]);
+	 GETFLOAT(rp->custom.description->align.y, params[4]);
 
-	 cptr = embryo_data_address_get(ep, params[4]);
-	 if (cptr)
-	   rp->custom.description->align.y = EMBRYO_CELL_TO_FLOAT(*cptr);
+	 break;
+      case EDJE_STATE_PARAM_MIN:
+	 CHKPARAM(4);
+
+	 GETINT(rp->custom.description->min.w, params[3]);
+	 GETINT(rp->custom.description->min.h, params[4]);
+
+	 break;
+      case EDJE_STATE_PARAM_MAX:
+	 CHKPARAM(4);
+
+	 GETINT(rp->custom.description->max.w, params[3]);
+	 GETINT(rp->custom.description->max.h, params[4]);
+
+	 break;
+      case EDJE_STATE_PARAM_STEP:
+	 CHKPARAM(4);
+
+	 GETINT(rp->custom.description->step.x, params[3]);
+	 GETINT(rp->custom.description->step.y, params[4]);
+
+	 break;
+      case EDJE_STATE_PARAM_ASPECT:
+	 CHKPARAM(4);
+
+	 GETFLOAT(rp->custom.description->aspect.min, params[3]);
+	 GETFLOAT(rp->custom.description->aspect.max, params[4]);
+
+	 break;
+     case EDJE_STATE_PARAM_COLOR:
+	 CHKPARAM(6);
+
+	 GETINT(rp->custom.description->color.r, params[3]);
+	 GETINT(rp->custom.description->color.g, params[4]);
+	 GETINT(rp->custom.description->color.b, params[5]);
+	 GETINT(rp->custom.description->color.a, params[6]);
+
+	 break;
+     case EDJE_STATE_PARAM_COLOR2:
+	 CHKPARAM(6);
+
+	 GETINT(rp->custom.description->color2.r, params[3]);
+	 GETINT(rp->custom.description->color2.g, params[4]);
+	 GETINT(rp->custom.description->color2.b, params[5]);
+	 GETINT(rp->custom.description->color2.a, params[6]);
+
+	 break;
+     case EDJE_STATE_PARAM_COLOR3:
+	 CHKPARAM(6);
+
+	 GETINT(rp->custom.description->color3.r, params[3]);
+	 GETINT(rp->custom.description->color3.g, params[4]);
+	 GETINT(rp->custom.description->color3.b, params[5]);
+	 GETINT(rp->custom.description->color3.a, params[6]);
 
 	 break;
       default:
@@ -1550,19 +1609,63 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
       case EDJE_STATE_PARAM_ALIGNMENT:
 	 CHKPARAM(4);
 
-	 cptr = embryo_data_address_get(ep, params[3]);
-	 if (cptr)
-	   {
-	      f = rp->custom.description->align.x;
-	      *cptr = EMBRYO_FLOAT_TO_CELL(f);
-	   }
+	 SETFLOAT(rp->custom.description->align.x, params[3]);
+	 SETFLOAT(rp->custom.description->align.y, params[4]);
 
-	 cptr = embryo_data_address_get(ep, params[4]);
-	 if (cptr)
-	   {
-	      f = rp->custom.description->align.y;
-	      *cptr = EMBRYO_FLOAT_TO_CELL(f);
-	   }
+	 break;
+      case EDJE_STATE_PARAM_MIN:
+	 CHKPARAM(4);
+
+	 SETINT(rp->custom.description->min.w, params[3]);
+	 SETINT(rp->custom.description->min.h, params[4]);
+
+	 break;
+      case EDJE_STATE_PARAM_MAX:
+	 CHKPARAM(4);
+
+	 SETINT(rp->custom.description->max.w, params[3]);
+	 SETINT(rp->custom.description->max.h, params[4]);
+
+	 break;
+      case EDJE_STATE_PARAM_STEP:
+	 CHKPARAM(4);
+
+	 SETINT(rp->custom.description->step.x, params[3]);
+	 SETINT(rp->custom.description->step.y, params[4]);
+
+	 break;
+      case EDJE_STATE_PARAM_ASPECT:
+	 CHKPARAM(4);
+
+	 SETFLOAT(rp->custom.description->aspect.min, params[3]);
+	 SETFLOAT(rp->custom.description->aspect.max, params[4]);
+
+	 break;
+     case EDJE_STATE_PARAM_COLOR:
+	 CHKPARAM(6);
+
+	 SETINT(rp->custom.description->color.r, params[3]);
+	 SETINT(rp->custom.description->color.g, params[4]);
+	 SETINT(rp->custom.description->color.b, params[5]);
+	 SETINT(rp->custom.description->color.a, params[6]);
+
+	 break;
+     case EDJE_STATE_PARAM_COLOR2:
+	 CHKPARAM(6);
+
+	 SETINT(rp->custom.description->color2.r, params[3]);
+	 SETINT(rp->custom.description->color2.g, params[4]);
+	 SETINT(rp->custom.description->color2.b, params[5]);
+	 SETINT(rp->custom.description->color2.a, params[6]);
+
+	 break;
+     case EDJE_STATE_PARAM_COLOR3:
+	 CHKPARAM(6);
+
+	 SETINT(rp->custom.description->color3.r, params[3]);
+	 SETINT(rp->custom.description->color3.g, params[4]);
+	 SETINT(rp->custom.description->color3.b, params[5]);
+	 SETINT(rp->custom.description->color3.a, params[6]);
 
 	 break;
       default:
