@@ -98,16 +98,31 @@ evas_key_grab_find(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask mod
 void
 evas_object_grabs_cleanup(Evas_Object *obj)
 {
-   while (obj->grabs)
+   if (obj->layer->evas->walking_grabs)
      {
-	Evas_Key_Grab *g;
-
-	g = obj->grabs->data;
-	if (g->keyname) free(g->keyname);
-	free(g);
-	obj->layer->evas->grabs = evas_list_remove(obj->layer->evas->grabs, g);
-	obj->grabs = evas_list_remove(obj->grabs, g);
-     }  
+	Evas_List *l;
+	
+	for (l = obj->grabs; l; l = l->next)
+	  {
+	     Evas_Key_Grab *g;
+	     
+	     g = l->data;
+	     g->delete_me = 1;
+	  }
+     }
+   else
+     {
+	while (obj->grabs)
+	  {
+	     Evas_Key_Grab *g;
+	     
+	     g = obj->grabs->data;
+	     if (g->keyname) free(g->keyname);
+	     free(g);
+	     obj->layer->evas->grabs = evas_list_remove(obj->layer->evas->grabs, g);
+	     obj->grabs = evas_list_remove(obj->grabs, g);
+	  }  
+     }
 }
 
 void
@@ -119,6 +134,7 @@ evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask mod
    g = evas_key_grab_find(obj, keyname, modifiers, not_modifiers, 0);
    if (!g) return;
    g->object->grabs = evas_list_remove(g->object->grabs, g);
+   obj->layer->evas->grabs = evas_list_remove(obj->layer->evas->grabs, g);
    if (g->keyname) free(g->keyname);
    free(g);
 }
