@@ -10,7 +10,11 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-   
+
+/* Convenience macros */
+#define ECORE_MIN(x, y)          (((x) > (y)) ? (y) : (x))
+#define ECORE_MAX(x, y)          (((x) > (y)) ? (x) : (y))
+
 #define ECORE_EVENT_NONE         0
 #define ECORE_EVENT_EXE_EXIT     1 /**< Spawned Exe has exit event */
 #define ECORE_EVENT_SIGNAL_USER  2 /**< User signal event */
