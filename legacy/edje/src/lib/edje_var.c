@@ -984,8 +984,7 @@ _edje_var_anim_add(Edje *ed, double len, char *fname, int val)
    ea->edje = ed;
    ea->func = fn;
    ea->val = val;
-   if (!_edje_anim_list)
-     _edje_anim_list = evas_list_append(_edje_anim_list, ed);
+   _edje_anim_list = evas_list_append(_edje_anim_list, ed);
    ed->var_pool->animators = evas_list_prepend(ed->var_pool->animators, ea);
    if (!_edje_animator)
      _edje_animator = ecore_animator_add(_edje_var_anim_cb, NULL);
