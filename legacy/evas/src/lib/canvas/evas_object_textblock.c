@@ -967,6 +967,8 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
    Evas_Object_Textblock *o;
    Layout layout;
    Layout_Command command;
+   Node *node = NULL;
+   Layout_Node *lnode = NULL;
    Evas_Object_List *l, *ll, *layout_nodes = NULL;
    Layout_Node *line_start = NULL;
    int text_pos = 0, fw = 0, fh = 0, last_mdescent = 0, line = 0, last_line = 0;
@@ -983,8 +985,6 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
    evas_object_textblock_command_init(&command);
    for (l = (Evas_Object_List *)o->nodes; l; l = l->next)
      {
-        Node *node;
-	
 	node = (Node *)l;
 	if (node->format)
 	  {
@@ -1052,7 +1052,6 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 //   printf("RE-LAYOUT %ix%i!\n", w, h);
    for (l = (Evas_Object_List *)o->nodes; l; l = l->next)
      {
-	Layout_Node *lnode;
 	Node *node;
 	
 	/* FIXME: we cant do this - we need to be able to qury text
@@ -1575,6 +1574,24 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 	  }
      }
    /*breakout:*/
+   if (!layout_nodes)
+     {
+        void *font = NULL;
+	int ascent = 0, descent = 0;
+
+	lnode = calloc(1, sizeof(Layout_Node));
+	lnode->source_node = node;
+	lnode->line = line;
+	lnode->text_pos = text_pos;	
+	last_line = line;
+	evas_object_textblock_layout_copy(&layout, &(lnode->layout));
+	if (layout.font.name)
+	  layout.font.font = evas_font_load(obj->layer->evas, layout.font.name, layout.font.source, layout.font.size);
+	if (layout.font.font) ascent = ENFN->font_max_ascent_get(ENDT, layout.font.font);
+	if (layout.font.font) descent = ENFN->font_max_descent_get(ENDT, layout.font.font);
+	fh = layout.line.y + ascent + descent;
+	layout_nodes = evas_object_list_append(layout_nodes, lnode);
+     }
    evas_object_textblock_layout_clear(obj, &layout);
    *line_count = last_line + 1;
    fw += pad_r;
