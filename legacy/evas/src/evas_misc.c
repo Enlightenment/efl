@@ -88,6 +88,49 @@ evas_set_color(Evas e, Evas_Object o, int r, int g, int b, int a)
 }
 
 void
+evas_get_color(Evas e, Evas_Object o, int *r, int *g, int *b, int *a)
+{
+   switch (o->type)
+     {
+     case OBJECT_TEXT:
+	  {
+	     Evas_Object_Text oo;
+	     
+	     oo = (Evas_Object_Text)o;
+	     *r = oo->current.r;
+	     *g = oo->current.g;
+	     *b = oo->current.b;
+	     *a = oo->current.a;
+	  }
+	break;
+     case OBJECT_RECTANGLE:
+	  {
+	     Evas_Object_Rectangle oo;
+	     
+	     oo = (Evas_Object_Rectangle)o;
+	     *r = oo->current.r;
+	     *g = oo->current.g;
+	     *b = oo->current.b;
+	     *a = oo->current.a;
+	  }
+	break;
+     case OBJECT_LINE:
+	  {
+	     Evas_Object_Line oo;
+	     
+	     oo = (Evas_Object_Line)o;
+	     *r = oo->current.r;
+	     *g = oo->current.g;
+	     *b = oo->current.b;
+	     *a = oo->current.a;
+	  }
+	break;
+     default:
+	break;
+     }
+}
+
+void
 evas_set_text(Evas e, Evas_Object o, char *text)
 {
    switch (o->type)
@@ -421,14 +464,56 @@ evas_font_del_path(Evas e, char *path)
 }
 
 void
-evas_stick_data(Evas e, Evas_Object o, char *key, void *data)
+evas_put_data(Evas e, Evas_Object o, char *key, void *data)
 {
-   /* FIXME: impliment */
+   Evas_Data d;
+   
+   if (!key) return;
+   d = malloc(sizeof(struct _Evas_Data));
+   d->key = strdup(key);
+   d->data = data;
+   o->data = evas_list_append(o->data, d);
 }
 
 void *
-evas_fetch_data(Evas e, Evas_Object o, char *key)
+evas_get_data(Evas e, Evas_Object o, char *key)
 {
-   /* FIXME: impliment */
+   Evas_List l;
+   
+   for (l = o->data; l; l = l->next)
+     {
+	Evas_Data d;
+	
+	d = l->data;
+	if (!strcmp(d->key, key)) return d->data;
+     }
+   return NULL;
 }
 
+int
+evas_world_x_to_screen(Evas e, double x)
+{
+   return (int)((x - e->current.viewport.x) *
+		((double)e->current.drawable_width / e->current.viewport.w));
+}
+
+int
+evas_world_y_to_screen(Evas e, double y)
+{
+   return (int)((y - e->current.viewport.y) *
+		((double)e->current.drawable_height / e->current.viewport.h));
+}
+
+double
+evas_screen_x_to_world(Evas e, int x)
+{
+   return (double)((double)x * (e->current.viewport.w / (double)e->current.drawable_width));
+   + e->current.viewport.x;
+}
+
+double
+evas_screen_y_to_world(Evas e, int y)
+{
+   return (double)((double)y * (e->current.viewport.h / (double)e->current.drawable_height));
+   + e->current.viewport.y;
+}

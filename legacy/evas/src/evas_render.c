@@ -194,6 +194,10 @@ evas_render(Evas e)
 				     ((!oo->current.file) && (oo->previous.file)) ||
 				     (oo->current.new_data) ||
 				     (oo->current.scale != oo->previous.scale) ||
+				     (oo->current.border.l != oo->previous.border.l) ||
+				     (oo->current.border.r != oo->previous.border.r) ||
+				     (oo->current.border.t != oo->previous.border.t) ||
+				     (oo->current.border.b != oo->previous.border.b) ||
 				     (oo->current.fill.x != oo->previous.fill.x) ||
 				     (oo->current.fill.y != oo->previous.fill.y) ||
 				     (oo->current.fill.w != oo->previous.fill.w) ||

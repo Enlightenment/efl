@@ -20,6 +20,43 @@ _evas_get_object_layer(Evas e, Evas_Object o)
 }
 
 void
+_evas_remove_data(Evas e, Evas_Object o)
+{
+   Evas_List l;
+
+   if (o->data)
+     {
+	for (l = o->data; l; l = l->next)
+	  {
+	     Evas_Data d;
+	     
+	     d = l->data;
+	     free(d->key);
+	     free(d);
+	  }
+	evas_list_free(o->data);   
+     }
+}
+
+void
+_evas_remove_callbacks(Evas e, Evas_Object o)
+{
+   Evas_List l;
+
+   if (o->callbacks)
+     {
+	for (l = o->callbacks; l; l = l->next)
+	  {
+	     Evas_Callback cb;
+	     
+	     cb = l->data;
+	     free(cb);
+	  }
+	evas_list_free(o->callbacks);
+     }
+}
+
+void
 _evas_real_del_object(Evas e, Evas_Object o)
 {
    Evas_List l;
@@ -32,6 +69,9 @@ _evas_real_del_object(Evas e, Evas_Object o)
 	if (layer->layer == o->current.layer)
 	  {
 	     layer->objects = evas_list_remove(layer->objects, o);
+	     _evas_callback_call(e, o, CALLBACK_FREE, 0, 0, 0);
+	     _evas_remove_callbacks(e, o);
+	     _evas_remove_data(e, o);
 	     o->object_renderer_data_free(e, o);
 	     o->object_free(o);
 	     return;

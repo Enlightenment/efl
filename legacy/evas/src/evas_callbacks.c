@@ -4,14 +4,61 @@
 #include <unistd.h>
 #include <string.h>
 
+void
+_evas_callback_call(Evas e, Evas_Object o, Evas_Callback_Type callback,
+		    int b, int x, int y)
+{
+   Evas_List l;
+   
+   if (o->callbacks)
+     {
+	for (l = o->callbacks; l; l = l->next)
+	  {
+	     Evas_Callback cb;
+	     
+	     cb = l->data;
+	     if (cb->type == callback)
+		cb->callback(cb->data, e, o, b, x, y);
+	  }
+	evas_list_free(o->callbacks);
+     }   
+}
+
 /* callbacks */
 void
 evas_callback_add(Evas e, Evas_Object o, Evas_Callback_Type callback, void (*func) (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y), void *data)
 
 {
+   Evas_Callback cb;
+   
+   cb = malloc(sizeof(struct _Evas_Callback));
+   cb->type = callback;
+   cb->data = data;
+   cb->callback = func;
+   o->callbacks = evas_list_append(o->callbacks, cb);
 }
 
 void
 evas_callback_del(Evas e, Evas_Object o, Evas_Callback_Type callback)
 {
+   Evas_List l;
+   int have_cb;
+   
+   have_cb = 1;
+   while (have_cb)
+     {
+	for (l = o->callbacks; l; l = l->next)
+	  {
+	     Evas_Callback cb;
+	     
+	     cb = l->data;
+	     if (cb->type == callback)
+	       {
+		  o->callbacks = evas_list_remove(o->callbacks, cb);
+		  free(cb);
+		  have_cb = 1;
+		  break;
+	       }
+	  }
+     }   
 }

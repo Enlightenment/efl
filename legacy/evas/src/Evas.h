@@ -13,6 +13,7 @@ typedef int                                Evas_Image_Format;
 typedef int                                Evas_Render_Method;
 typedef struct _Evas_Render_Data           Evas_Render_Data;
 typedef struct _Evas_List *                Evas_List;
+typedef struct _Evas_Data *                Evas_Data;
 typedef struct _Evas_Layer *               Evas_Layer;
 typedef struct _Evas_Color_Point *         Evas_Color_Point;
 typedef struct _Evas_Callback *            Evas_Callback;
@@ -33,6 +34,7 @@ typedef struct _Evas_Object_Gradient_Box * Evas_Object_Gradient_Box;
 #define CALLBACK_MOUSE_OUT  1
 #define CALLBACK_MOUSE_DOWN 2
 #define CALLBACK_MOUSE_UP   3
+#define CALLBACK_FREE       4
 
 #define IMAGE_FORMAT_BGRA   0
 #define IMAGE_FORMAT_ARGB   1
@@ -75,7 +77,9 @@ struct _Evas
       int in;
       int x, y;
       int buttons;
+      Evas_Object object, button_object;
    } mouse;
+   
    
    void (*evas_renderer_data_free) (Evas _e);
    
@@ -107,6 +111,12 @@ struct _Evas_Rectangle
    int x, y, w, h;
 };
 
+struct _Evas_Data
+{
+   char *key;
+   void *data;
+};
+
 struct _Evas_Layer
 {
    int        layer;
@@ -123,7 +133,7 @@ struct _Evas_Callback
 {
    Evas_Callback_Type type;
    void *data;
-   void (*callback) (void *_data, Evas _e, char *_class, Evas_Object _o, int _b, int _x, int _y);
+   void (*callback) (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y);
 };
 
 struct _Evas_Object_Any
@@ -145,6 +155,7 @@ struct _Evas_Object_Any
    void (*object_renderer_data_free) (Evas _e, Evas_Object _o);
    
    Evas_List  callbacks;
+   Evas_List  data;
    
    Evas_Render_Data renderer_data;
    
@@ -163,6 +174,9 @@ struct _Evas_Object_Image
       struct {
 	 double x, y, w, h;
       } fill;
+      struct {
+	 int l, r, t, b
+      } border;
    } current, previous;
 };
 
@@ -247,6 +261,7 @@ Evas_Object evas_add_gradient_box(Evas e);
 void evas_set_image_file(Evas e, Evas_Object o, char *file);
 void evas_set_image_data(Evas e, Evas_Object o, void *data, Evas_Image_Format format, int w, int h);
 void evas_set_image_fill(Evas e, Evas_Object o, double x, double y, double w, double h);
+void evas_set_image_border(Evas e, Evas_Object o, int l, int r, int t, int b);
 void evas_set_color(Evas e, Evas_Object o, int r, int g, int b, int a);
 void evas_set_text(Evas e, Evas_Object o, char *text);
 void evas_set_font(Evas e, Evas_Object o, char *font, int size);
@@ -293,10 +308,29 @@ void evas_hide(Evas e, Evas_Object o);
 
 /* image query ops */
 void evas_get_image_size(Evas e, Evas_Object o, int *w, int *h);
+void evas_get_image_border(Evas e, Evas_Object o, int *l, int *r, int *t, int *b);
 
+/* coordinate space transforms */
+int evas_world_x_to_screen(Evas e, double x);
+int evas_world_y_to_screen(Evas e, double y);
+double evas_screen_x_to_world(Evas e, int x);
+double evas_screen_y_to_world(Evas e, int y);
+	 
+/* text query ops */
+char *evas_get_text_string(Evas e, Evas_Object o);
+char *evas_get_text_font(Evas e, Evas_Object o);
+int  evas_get_text_size(Evas e, Evas_Object o);
+int  evas_text_at_position(Evas e, Evas_Object o, double x, double y, int *char_x, int *char_y, int *char_w, int *char_h);
+void evas_text_at(Evas e, Evas_Object o, int index, int *char_x, int *char_y, int *char_w, int *char_h);
+
+/* object query ops */
+void evas_get_color(Evas e, Evas_Object o, int *r, int *g, int *b, int *a);
+Evas_Object evas_get_object_under_mouse(Evas e);
+Evas_Object evas_get_object_at_pos(Evas e, double x, double y);
+	 
 /* data attachment ops */
-void evas_stick_data(Evas e, Evas_Object o, char *key, void *data);
-void *evas_fetch_data(Evas e, Evas_Object o, char *key);  
+void evas_put_data(Evas e, Evas_Object o, char *key, void *data);
+void *evas_get_data(Evas e, Evas_Object o, char *key);  
    
 /* events */
 void evas_event_button_down(Evas e, int x, int y, int b);

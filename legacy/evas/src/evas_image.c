@@ -169,3 +169,29 @@ evas_get_image_size(Evas e, Evas_Object o, int *w, int *h)
    if (w) *w = oo->current.image.w;
    if (h) *h = oo->current.image.h;
 }
+
+void
+evas_set_image_border(Evas e, Evas_Object o, int l, int r, int t, int b)
+{
+   Evas_Object_Image oo;
+   
+   oo = o;
+   oo->current.border.l = l;
+   oo->current.border.r = r;
+   oo->current.border.t = t;
+   oo->current.border.b = b;
+   o->changed = 1;
+   e->changed = 1;   
+}
+
+void
+evas_get_image_border(Evas e, Evas_Object o, int *l, int *r, int *t, int *b)
+{
+   Evas_Object_Image oo;
+   
+   oo = o;
+   if (l) *l = oo->current.border.l;
+   if (r) *r = oo->current.border.r;
+   if (t) *t = oo->current.border.t;
+   if (b) *b = oo->current.border.b;
+}
