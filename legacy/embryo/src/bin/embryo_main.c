@@ -127,6 +127,42 @@ exported_printf(Embryo_Program *ep, Embryo_Cell *params)
    return EMBRYO_ERROR_NONE;
 }
 
+static Embryo_Cell
+exported_rec(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Embryo_Cell *cptr;
+   Embryo_Function fn;
+   Embryo_Cell ret, arg1, arg2;
+   
+   // params[0] = number of bytes of params passed 
+   if (params[0] != 3 * sizeof(Embryo_Cell)) return -1;
+   arg1 = params[1];
+   arg2 = params[3];
+   arg1++;
+
+   if (arg1 > 7)
+     {
+	printf("arg1 == %i\n", arg1);
+	return arg1;
+     }
+   
+   // call the rec1 again
+   fn = embryo_program_function_find(ep, "rec1");
+   if (fn != EMBRYO_FUNCTION_NONE)
+     {
+	char buf[128];
+	
+	printf("... recurse!\n");
+	snprintf(buf, sizeof(buf), "SMELLY %i", arg1);
+	embryo_parameter_cell_push(ep, arg1);
+	embryo_parameter_string_push(ep, buf);
+	embryo_parameter_cell_push(ep, arg2);
+	while (embryo_program_run(ep, fn) == EMBRYO_PROGRAM_SLEEP);
+	ret = embryo_program_return_value_get(ep);
+     }
+   return ret + 1;
+}
+
 /* another example native call */
 /*
 static Embryo_Cell
@@ -209,6 +245,7 @@ main(int argc,char *argv[])
 	exit(-1);
      }
    embryo_program_native_call_add(ep, "printf", exported_printf);
+   embryo_program_native_call_add(ep, "native_rec", exported_rec);
    embryo_program_vm_push(ep);
 
    if (args > 0)

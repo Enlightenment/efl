@@ -626,7 +626,7 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
    Embryo_Header    *hdr;
    Embryo_Func_Stub *func;
    unsigned char    *code, *data;
-   Embryo_Cell      pri, alt, stk, frm, hea;
+   Embryo_Cell      pri, alt, stk, frm, hea, hea_start;
    Embryo_Cell      reset_stk, reset_hea, *cip;
    Embryo_UCell     codesize;
    int              i;
@@ -635,10 +635,8 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
    int              num;
 
    if (!ep) return EMBRYO_PROGRAM_FAIL;
-   if (ep->run_count > 0) return EMBRYO_PROGRAM_BUSY;
    if (!(ep->flags & EMBRYO_FLAG_RELOC))
      {
-   
 	ep->error = EMBRYO_ERROR_INIT;
 	return EMBRYO_PROGRAM_FAIL;
      }
@@ -647,13 +645,19 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 	ep->error = EMBRYO_ERROR_INIT;
 	return EMBRYO_PROGRAM_FAIL;
      }
+   if (ep->run_count > 0)
+     {
+	/* return EMBRYO_PROGRAM_BUSY; */
+	/* FIXME: test C->vm->C->vm recursion more fully */
+	/* it seems to work... just fine!!! - strange! */
+     }
    
    /* set up the registers */
    hdr = (Embryo_Header *)ep->base;
    codesize = (Embryo_UCell)(hdr->dat - hdr->cod);
    code = ep->base + (int)hdr->cod;
    data = ep->base + (int)hdr->dat;
-   hea = ep->hea;
+   hea_start = hea = ep->hea;
    stk = ep->stk;
    reset_stk = stk;
    reset_hea = hea;
@@ -773,6 +777,7 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
    /* check stack/heap before starting to run */
    CHKMARGIN();
 
+   /* track recursion depth */
    ep->run_count++;
    
    /* start running */
@@ -1500,6 +1505,10 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 	  }
      }
    ep->run_count--;
+   
+   //
+   ep->hea = hea_start;
+   
    return EMBRYO_PROGRAM_OK;
 }
 

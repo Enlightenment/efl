@@ -1,10 +1,5 @@
 #ifndef _EMBRYO_H
 #define _EMBRYO_H
-/*
- * FIXME:
- * handle the case where:
- * [C] -> [vm] -> [native call] -> [same or other func in same vm]
- */
 
 #ifdef  __cplusplus
 extern "C" {
