@@ -30,7 +30,7 @@ ecore_txt_convert(char *enc_from, char *enc_to, char *text)
    for (;;)
      {
 	size_t count;
-	
+
 	tob = outb;
 	count = iconv(ic, &inp, &inb, &outp, &outb);
 	outlen += tob - outb;
@@ -41,6 +41,18 @@ ecore_txt_convert(char *enc_from, char *enc_to, char *text)
 		  new_txt = realloc(new_txt, outalloc + 64);
 		  outalloc += 64;
 		  outb += 64;
+	       }
+	     else if (errno == EILSEQ)
+	       {
+		  if (new_txt) free(new_txt);
+		  new_txt = NULL;
+		  break;
+	       }
+	     else if (errno == EINVAL)
+	       {
+		  if (new_txt) free(new_txt);
+		  new_txt = NULL;
+		  break;
 	       }
 	  }
 	if (inb == 0)
