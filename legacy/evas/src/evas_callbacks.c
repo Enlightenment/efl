@@ -65,7 +65,7 @@ evas_callback_del(Evas e, Evas_Object o, Evas_Callback_Type callback)
 	       {
 		  o->callbacks = evas_list_remove(o->callbacks, cb);
 		  free(cb);
-		  have_cb = 1;
+		  have_cb = 0;
 		  break;
 	       }
 	  }
