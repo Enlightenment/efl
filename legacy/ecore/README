@@ -2,7 +2,6 @@
  E C O R E - 1 . 0 . 0
 -------------------------------------------------------------------------------
 
-
 Fast:
 How ot build and install Ecore from this tarball?
 ./configure \
