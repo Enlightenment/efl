@@ -2461,6 +2461,7 @@ __evas_gl_init(Display *disp, int screen, int colors)
    /* direct rendering client */
    __evas_gl_cx = glXCreateContext(disp, __evas_vi, NULL, GL_TRUE);
    /* GLX indirect */
+   if (!__evas_gl_cx) glXCreateContext(disp, __evas_vi, NULL, GL_FALSE);   
 /*   __evas_gl_cx = glXCreateContext(disp, __evas_vi, NULL, GL_FALSE);*/
 }
 
