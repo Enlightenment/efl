@@ -125,7 +125,7 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
    cc = evas_hash_find(_edje_color_class_hash, color_class);
    if (!cc)
      {
-        cc = malloc(sizeof(Edje_Color_Class));
+        cc = calloc(1, sizeof(Edje_Color_Class));
 	if (!cc) return;
 	cc->name = strdup(color_class);
 	if (!cc->name)
