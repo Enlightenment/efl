@@ -816,7 +816,7 @@ _edje_embryo_fn_set_state(Embryo_Program *ep, Embryo_Cell *params)
    if (rp)
      {
 	if (rp->program) _edje_program_end(ed, rp->program);
-	 _edje_part_description_apply(ed, rp, state, value, NULL, 0.0);
+	_edje_part_description_apply(ed, rp, state, value, NULL, 0.0);
 	_edje_part_pos_set(ed, rp, EDJE_TWEEN_MODE_LINEAR, 0.0);
      }
    return 0;

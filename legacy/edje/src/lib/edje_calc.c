@@ -88,7 +88,7 @@ _edje_part_description_find(Edje *ed, Edje_Real_Part *rp, char *name,
 }
 
 void
-_edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1, char *d2, double v2)
+_edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char *d1, double v1, char *d2, double v2)
 {
    if (!d1) d1 = "default";
    if (!d2) d2 = "default";
