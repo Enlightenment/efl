@@ -1342,7 +1342,7 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 						    obj->cur.cache.clip.g,
 						    obj->cur.cache.clip.b,
 						    obj->cur.cache.clip.a);
-   if (o->engine_data)
+   if ((o->engine_data) && (o->cur.text))
      obj->layer->evas->engine.func->font_draw(output,
 					      context,
 					      surface,
