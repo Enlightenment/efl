@@ -105,7 +105,7 @@ AC_MSG_CHECKING(whether ecore_txt module is to be built)
 iconv_cflags=""
 iconv_libs=""
 
-have_ecore_txt="";
+have_ecore_txt="no";
 ecore_txt_cflags="";
 ecore_txt_libs="";
 
@@ -150,7 +150,7 @@ if test "x$have_ecore_txt" = "xyes"; then
                   ], [
                     AC_MSG_RESULT("no - disabling ecore_txt")
                     AM_CONDITIONAL(BUILD_ECORE_TXT, false)
-                    have_ecore_txt=""
+                    have_ecore_txt="no"
                   ]
                 ),
            )
@@ -167,7 +167,7 @@ AC_SUBST(iconv_libs)
 AC_SUBST(ecore_txt_cflags)
 AC_SUBST(ecore_txt_libs)
 
-have_ecore_x="";
+have_ecore_x="no";
 ecore_x_cflags="";
 ecore_x_libs="";
 
@@ -219,7 +219,7 @@ AC_SUBST(ecore_x_libs)
 
 AC_MSG_CHECKING(whether ecore_job module is to be built)
 
-have_ecore_job="";
+have_ecore_job="no";
 ecore_job_cflags="";
 ecore_job_libs="";
 
@@ -248,7 +248,7 @@ fi
 AC_SUBST(ecore_job_cflags)
 AC_SUBST(ecore_job_libs)
 
-have_ecore_fb="";
+have_ecore_fb="no";
 ecore_fb_cflags="";
 ecore_fb_libs="";
 
@@ -302,6 +302,8 @@ AC_ARG_WITH(evas-config,
   AC_PATH_PROG(PROG_CONFIG, $PROG, "", $PATH)
 ])
 EVAS_CONFIG=$PROG_CONFIG
+
+have_ecore_evas="no"
 
 AC_MSG_CHECKING(whether ecore_evas module is to be built)
 AC_ARG_ENABLE(ecore-evas, 
@@ -404,7 +406,7 @@ fi
 
 AC_MSG_CHECKING(whether ecore_con module is to be built)
 
-have_ecore_con="";
+have_ecore_con="no";
 ecore_con_cflags="";
 ecore_con_libs="";
 
@@ -433,7 +435,7 @@ fi
 AC_SUBST(ecore_con_cflags)
 AC_SUBST(ecore_con_libs)
 
-have_ecore_ipc="";
+have_ecore_ipc="no";
 ecore_ipc_cflags="";
 ecore_ipc_libs="";
 
@@ -470,7 +472,7 @@ AC_SUBST(ecore_ipc_libs)
 
 AC_MSG_CHECKING(whether ecore_config module is to be built)
 
-have_ecore_config="";
+have_ecore_config="no";
 ecore_config_cflags="";
 ecore_config_libs="";
 
@@ -546,3 +548,20 @@ debian/Makefile
 chmod +x ecore-config
 ]
 )
+
+echo
+echo "$PACKAGE $VERSION"
+echo
+echo "Optional Modules:"
+echo
+echo "  Ecore Evas...........: $have_ecore_evas"
+echo "  Ecore Job............: $have_ecore_job"
+echo "  Ecore Text...........: $have_ecore_txt"
+echo "  Ecore X..............: $have_ecore_x"
+echo "  Ecore FB.............: $have_ecore_fb"
+echo "  Ecore IPC............: $have_ecore_ipc"
+echo "  Ecore Config.........: $have_ecore_config"
+echo "  Ecore Con............: $have_ecore_con"
+echo
+echo "Now type 'make' ('gmake' on some systems) to compile $PACKAGE."
+echo
