@@ -1436,6 +1436,66 @@ __evas_gl_text_font_get_descent(Evas_GL_Font *fn)
    return fn->descent;
 }
 
+int
+__evas_gl_text_font_get_max_ascent(Evas_GL_Font *fn)
+{
+   return fn->max_ascent / 64;
+}
+
+int
+__evas_gl_text_font_get_max_descent(Evas_GL_Font *fn)
+{
+   return fn->max_descent / 64;
+}
+
+void
+__evas_gl_text_font_get_advances(Evas_GL_Font *fn, char *text, 
+				 int *advance_horiz,
+				 int *advance_vert)
+{
+   int                 i, ascent, descent, pw, ph;
+   TT_Glyph_Metrics    gmetrics;
+   
+   ascent = fn->ascent;
+   descent = fn->descent;
+   pw = 0;
+   ph = ascent + descent;
+   
+   for (i = 0; text[i]; i++)
+     {
+	unsigned char       j;
+	
+	j = text[i];
+	if (!TT_VALID(fn->glyphs[j]))
+	   continue;
+	TT_Get_Glyph_Metrics(fn->glyphs[j], &gmetrics);
+	if (i == 0)
+	   pw += ((-gmetrics.bearingX) / 64);
+	pw += gmetrics.advance / 64;
+     }
+   *advance_horiz = pw;
+   *advance_vert = ph;
+}
+
+int
+__evas_gl_text_font_get_first_inset(Evas_GL_Font *fn, char *text)
+{
+   int                 i;
+   TT_Glyph_Metrics    gmetrics;
+
+   for (i = 0; text[i]; i++)
+     {
+	unsigned char       j;
+	
+	j = text[i];
+	if (!TT_VALID(fn->glyphs[j]))
+	   continue;
+	TT_Get_Glyph_Metrics(fn->glyphs[j], &gmetrics);
+	return ((-gmetrics.bearingX) / 64);
+     }
+   return 0;
+}
+
 void
 __evas_gl_text_font_add_path(char *path)
 {

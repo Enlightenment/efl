@@ -200,6 +200,36 @@ __evas_imlib_text_font_get_descent(Evas_Imlib_Font *fn)
    return imlib_get_font_descent();
 }
 
+int
+__evas_imlib_text_font_get_max_ascent(Evas_Imlib_Font *fn)
+{
+   imlib_context_set_font((Imlib_Font)fn);
+   return imlib_get_maximum_font_ascent();
+}
+
+int
+__evas_imlib_text_font_get_max_descent(Evas_Imlib_Font *fn)
+{
+   imlib_context_set_font((Imlib_Font)fn);
+   return imlib_get_maximum_font_descent();
+}
+
+void
+__evas_imlib_text_font_get_advances(Evas_Imlib_Font *fn, char *text,
+				    int *advance_horiz,
+				    int *advance_vert)
+{
+   imlib_context_set_font((Imlib_Font)fn);
+   imlib_get_text_advance(text, advance_horiz, advance_vert);
+}
+
+int
+__evas_imlib_text_font_get_first_inset(Evas_Imlib_Font *fn, char *text)
+{
+   imlib_context_set_font((Imlib_Font)fn);
+   return imlib_get_text_inset(text);
+}
+
 void
 __evas_imlib_text_font_add_path(char *path)
 {
