@@ -68,6 +68,11 @@ __evas_imlib_image_draw(Evas_Imlib_Image *im,
 {
    Evas_List l;
    
+   imlib_context_set_angle(0.0);
+   imlib_context_set_operation(IMLIB_OP_COPY);
+   imlib_context_set_color_modifier(NULL);
+   imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
+   imlib_context_set_anti_alias(1);
    for(l = drawable_list; l; l = l->next)
      {
 	Evas_Imlib_Drawable *dr;
@@ -93,7 +98,7 @@ __evas_imlib_image_draw(Evas_Imlib_Image *im,
 		       imlib_context_set_image(up->image);
 		       imlib_blend_image_onto_image(im, 0,
 						    src_x, src_y, src_w, src_h,
-						    dst_x, dst_y, dst_w, dst_h);
+						    dst_x - up->x, dst_y - up->y, dst_w, dst_h);
 		    }
 	       }
 	  }
@@ -212,6 +217,46 @@ __evas_imlib_text_draw(Evas_Imlib_Font *fn, Display *disp, Window win,
 		       int win_w, int win_h, int x, int y, char *text, 
 		       int r, int g, int b, int a)
 {
+   Evas_List l;
+   int w, h;
+   
+   if ((!fn) || (!text)) return;
+   imlib_context_set_color(r, g, b, a);
+   imlib_context_set_font((Imlib_Font)fn);
+   imlib_context_set_angle(0.0);
+   imlib_context_set_operation(IMLIB_OP_COPY);
+   imlib_context_set_color_modifier(NULL);
+   imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
+   imlib_context_set_anti_alias(1);
+   imlib_get_text_size(text, &w, &h);
+   for(l = drawable_list; l; l = l->next)
+     {
+	Evas_Imlib_Drawable *dr;
+	
+	dr = l->data;
+	
+	if ((dr->win == win) && (dr->disp == disp))
+	  {
+	     Evas_List ll;
+	     
+	     for (ll = dr->tmp_images; ll; ll = ll->next)
+	       {
+		  Evas_Imlib_Update *up;
+
+		  up = ll->data;
+		  
+		  /* if image intersects image update - render */
+		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
+				      x, y, w, h))
+		    {
+		       if (!up->image)
+			  up->image = imlib_create_image(up->w, up->h);
+		       imlib_context_set_image(up->image);
+		       imlib_text_draw(x, y, text);
+		    }
+	       }
+	  }
+     }
 }
 
 

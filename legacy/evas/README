@@ -4,7 +4,7 @@
 
 This is the ``E Canvas'' - a rip off of some of the other canvas's floating
 about - Tk and gnome too. it's at the Xlib level. it's intended to be
-accelerated byhardware or highly optimised software where possible. It is
+accelerated by hardware or highly optimised software where possible. It is
 intended to be simple and allow for the building of interfaces ontop of it.
 
 if you got this from cvs do:
@@ -22,4 +22,42 @@ make install
 in the test directory you will find a test program:
 cd test
 ./evas_test
+
+
+-------------------------------------------------------------------------------
+MORE DETAILED DESCRIPTION:
+-------------------------------------------------------------------------------
+
+Evas? Canvas? What? OK.. you're baffled as to what that stuff is. Time to
+explain.
+
+A canvas is a high-level rendering engine. Instead of a program having to
+handle exposes or updates then redraw bit by bit (draw line, draw box, 
+paste image etc.) after having figured out what has changed and what need to
+be re-rendered - what data loaded in maps to what... then finally order the
+draw in the right way to optimize it - a canvas provides a high-level API to
+this kind of thing and handles all the smarts inside.
+
+The result is an application creates an Evas & attaches that evas to a window.
+Now it just creates objects - create an image object, a text object, a line
+object, a rectangle object etc. It just moves and resizes these objects around
+by calling routines in Evas - Evas handles redrawing, scaling, ordering the
+draws to acount for layers , clipping objects out that don't exist in the
+visible Evas area etc.
+
+This means less headache for tha application programmer. Now why do this as
+a whole new library? Well - because the library can render the Evas as fast
+as possible. It uses Imlib2 to do the grunt work of loading images - and
+beyond that it can currently use either imlib2 or OpenGL to render to the
+Evas - if you have decent hardware that's supported by OpenGL you will see
+in the area of 10-50 times (in future even higher) speedups in rendering
+using the GL backend instead of the Imlib2 one (even though Imlib2 is a
+highly optimized software rendering engine). The good thing here is that the
+application can choose what system to use. If that system isn't available or 
+Evas didn't compile with it, it will fall back to the nearest approximation 
+(it will ALWAYS have Imlib2 and X11 rendering backends - Imlib2 being able to
+actually alpha blend, but X11 keeping the rendering server-side with pixmaps
+and clip masks) so this means a highly optimized rendering subsystem to build
+more complex things ontop of.
+
 
