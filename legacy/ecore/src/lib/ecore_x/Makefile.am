@@ -2,6 +2,7 @@
 
 INCLUDES = \
 @Xcursor_cflags@ \
+@Xinerama_cflags@ \
 @x_cflags@ \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_txt \
@@ -37,10 +38,12 @@ ecore_x_window_prop.c \
 ecore_x_window_shape.c \
 ecore_x_pixmap.c \
 ecore_x_gc.c \
+ecore_x_xinerama.c \
 ecore_x_private.h
 
 libecore_x_la_LIBADD = \
 @Xcursor_libs@ \
+@Xinerama_libs@ \
 @x_ldflags@ \
 @x_libs@ \
 $(top_builddir)/src/lib/ecore/libecore.la \

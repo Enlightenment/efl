@@ -20,6 +20,9 @@
 #ifdef ECORE_XCURSOR
 #include <X11/Xcursor/Xcursor.h>
 #endif
+#ifdef ECORE_XINERAMA
+#include <X11/extensions/Xinerama.h>
+#endif
 
 #include "Ecore_X.h"
 
