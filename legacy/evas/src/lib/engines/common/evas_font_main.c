@@ -31,23 +31,27 @@ evas_common_font_shutdown(void)
 int
 evas_common_font_ascent_get(RGBA_Font *fn)
 {
-   int val;
+   int val, dv;
    int ret;
    
    evas_common_font_size_use(fn);
    val = (int)fn->src->ft.face->size->metrics.ascender;
-   return val;
+   dv = (fn->src->ft.orig_upem * 2048) / fn->src->ft.face->units_per_EM; 
+   ret = (val * fn->src->ft.face->size->metrics.y_scale) / (dv * dv);
+   return ret;
 }
 
 int
 evas_common_font_descent_get(RGBA_Font *fn)
 {
-   int val;
+   int val, dv;
    int ret;
    
    evas_common_font_size_use(fn);
    val = -(int)fn->src->ft.face->size->metrics.descender;
-   return val;
+   dv = (fn->src->ft.orig_upem * 2048) / fn->src->ft.face->units_per_EM; 
+   ret = (val * fn->src->ft.face->size->metrics.y_scale) / (dv * dv);
+   return ret;
 }
 
 int
