@@ -144,7 +144,7 @@ _ecore_timer_call(double when)
 	  {
 	     timers = _ecore_list_remove(timers, timer);
 	     _ecore_timer_call(when);
-	     if ((!timer->delete_me) && (timer->func(timer->data))))
+	     if ((!timer->delete_me) && (timer->func(timer->data)))
 	       _ecore_timer_set(timer, timer->at + timer->in, timer->in, timer->func, timer->data);
 	     else
 	       free(timer);
