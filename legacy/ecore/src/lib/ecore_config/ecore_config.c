@@ -487,7 +487,7 @@ int ecore_config_deaf(const char *name,const char *key,
     return ECORE_CONFIG_ERR_NOTFOUND;
 
   for(p=NULL,l=e->listeners;l;p=l,l=l->next) {
-    if(!strcmp(l->name,name)||(l->listener==listener)) {
+    if((name&&!strcmp(l->name,name))||(l->listener==listener)) {
       ret=ECORE_CONFIG_ERR_SUCC;
       if(!p)
         e->listeners=e->listeners->next;
