@@ -8,6 +8,7 @@ static void main_help(void);
 
 Evas_List *img_dirs = NULL;
 Evas_List *fnt_dirs = NULL;
+Evas_List *defines = NULL;
 char      *file_in = NULL;
 char      *file_out = NULL;
 char      *progname = NULL;
@@ -42,6 +43,7 @@ main_help(void)
       "-scale-lossy VAL         Scale lossy image pixels by this percentage factor (0 - 100)\n"
       "-scale-comp VAL          Scale lossless compressed image pixels by this percentage factor (0 - 100)\n"
       "-scale-raw VAL           Scale uncompressed (raw) image pixels by this percentage factor (0 - 100)\n"
+      "-Ddefine_val=to          CPP style define to define input macro definitions to the .edc source\n"
       ,progname);
 }
 
@@ -122,6 +124,10 @@ main(int argc, char **argv)
 	     scale_raw = atoi(argv[i]);
 	     if (scale_raw < 0) scale_raw = 0;
 	     if (scale_raw > 100) scale_raw = 100;
+	  }
+	else if (!strncmp(argv[i], "-D", 2))
+	  {
+	     defines = evas_list_append(defines, mem_strdup(argv[i]));
 	  }
 	else if (!file_in)
 	  file_in = argv[i];

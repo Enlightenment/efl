@@ -150,6 +150,7 @@ extern Edje_File             *edje_file;
 extern Evas_List             *edje_collections;
 extern Evas_List             *fonts;
 extern Evas_List             *codes;
+extern Evas_List             *defines;
 extern New_Object_Handler     object_handlers[];
 extern New_Statement_Handler  statement_handlers[];
 

@@ -552,18 +552,40 @@ compile(void)
    if (fd >= 0)
      {
 	int ret;
+	char *def;
         
 	clean_file = tmpn;
 	close(fd);
 	atexit(clean_tmp_file);
-	snprintf(buf, sizeof(buf), "cat %s | cpp -E -o %s", file_in, tmpn);
+	if (!defines)
+	  def = mem_strdup("");
+	else
+	  {
+	     Evas_List *l;
+	     int len;
+	     
+	     len = 0;
+	     for (l = defines; l; l = l->next)
+	       {
+		  len += strlen(l->data) + 1;
+	       }
+	     def = mem_alloc(len + 1);
+	     def[0] = 0;
+	     for (l = defines; l; l = l->next)
+	       {
+		  strcat(def, l->data);
+		  strcat(def, " ");
+	       }
+	  }
+	snprintf(buf, sizeof(buf), "cat %s | cpp %s -E -o %s", file_in, def, tmpn);
 	ret = system(buf);
 	if (ret < 0)
 	  {
-	     snprintf(buf, sizeof(buf), "gcc -E -o %s %s", tmpn, file_in);
+	     snprintf(buf, sizeof(buf), "gcc %s -E -o %s %s", def, tmpn, file_in);
 	     ret = system(buf);
 	  }
 	if (ret >= 0) file_in = tmpn;
+	free(def);
      }
    fd = open(file_in, O_RDONLY);
    if (fd < 0)
