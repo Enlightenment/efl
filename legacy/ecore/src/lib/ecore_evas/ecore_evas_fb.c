@@ -57,9 +57,9 @@ _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y)
 static Ecore_Evas *
 _ecore_evas_fb_match(void)
 {
-   Ecore_List *l;
+   Ecore_Oldlist *l;
    
-   for (l = (Ecore_List *)ecore_evases; l; l = l->next)
+   for (l = (Ecore_Oldlist *)ecore_evases; l; l = l->next)
      {
 	Ecore_Evas *ee;
 	
@@ -72,9 +72,9 @@ _ecore_evas_fb_match(void)
 static void
 _ecore_evas_fb_lose(void *data)
 {
-   Ecore_List *l;
+   Ecore_Oldlist *l;
 
-   for (l = (Ecore_List *)ecore_evases; l; l = l->next)
+   for (l = (Ecore_Oldlist *)ecore_evases; l; l = l->next)
      {
 	Ecore_Evas *ee;
 	
@@ -86,9 +86,9 @@ _ecore_evas_fb_lose(void *data)
 static void
 _ecore_evas_fb_gain(void *data)
 {
-   Ecore_List *l;
+   Ecore_Oldlist *l;
 
-   for (l = (Ecore_List *)ecore_evases; l; l = l->next)
+   for (l = (Ecore_Oldlist *)ecore_evases; l; l = l->next)
      {
 	Ecore_Evas *ee;
 	
@@ -168,14 +168,15 @@ _ecore_evas_event_mouse_move(void *data, int type, void *event)
 static int
 _ecore_evas_idle_enter(void *data)
 {
-   Ecore_List *l;
-   double t1, t2;
+   Ecore_Oldlist *l;
+   double t1 = 0.;
+   double t2 = 0.;
 
    if (_ecore_evas_fps_debug)
      {
 	t1 = ecore_time_get();
      }
-   for (l = (Ecore_List *)ecore_evases; l; l = l->next)
+   for (l = (Ecore_Oldlist *)ecore_evases; l; l = l->next)
      {
 	Ecore_Evas *ee;
 	

@@ -1444,7 +1444,7 @@ ecore_evas_sticky_get(Ecore_Evas *ee)
 /* fps debug calls - for debugging how much time your app actually spends */
 /* rendering graphics... :) */
 
-static _ecore_evas_fps_debug_init_count = 0;
+static int _ecore_evas_fps_debug_init_count = 0;
 static int _ecore_evas_fps_debug_fd = -1;
 unsigned int *_ecore_evas_fps_rendertime_mmap = NULL;
 
