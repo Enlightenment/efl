@@ -292,18 +292,18 @@ evas_object_text_font_get(Evas_Object *obj, char **font, double *size)
    Evas_Object_Text *o;
       
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   *font = "";
-   *size = 0;
+   if (font) *font = "";
+   if (size) *size = 0;
    return;
    MAGIC_CHECK_END();
    o = (Evas_Object_Text *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
-   *font = "";
-   *size = 0;
+   if (font) *font = "";
+   if (size) *size = 0;
    return;
    MAGIC_CHECK_END();
-   *font = o->cur.font;
-   *size = o->cur.size;
+   if (font) *font = o->cur.font;
+   if (size) *size = o->cur.size;
 }
 
 /**
