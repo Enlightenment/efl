@@ -259,7 +259,7 @@ _edje_part_recalc_single(Edje *ed,
 			 Edje_Calc_Params *params,
 			 int flags)
 {
-   int minw, minh, maxw, maxh;
+   int minw = 0, minh = 0, maxw = 0, maxh = 0;
 
    flags = FLAG_XY;
    /* relative coords of top left & bottom right */
