@@ -275,20 +275,65 @@ extern "C" {
    void     *eet_data_image_encode(void *data, int *size_ret, int w, int h, int alpha, int compress, int quality, int lossy);
 /***************************************************************************/
    
-   /* 
-    * To Be Documented
+   /**
+    * To be documented.
+    *
+    * FIXME: To be fixed.
+    * 
     */
    Eet_Data_Descriptor *eet_data_descriptor_new(char *name, int size, void *(*func_list_next) (void *l), void *(*func_list_append) (void *l, void *d), void *(*func_list_data) (void *l), void  (*func_hash_foreach) (void *h, int (*func) (void *h, const char *k, void *dt, void *fdt), void *fdt), void *(*func_hash_add) (void *h, const char *k, void *d));
+   /**
+    * To be documented.
+    *
+    * FIXME: To be fixed.
+    * 
+    */
    void                 eet_data_descriptor_free(Eet_Data_Descriptor *edd);
    
+   /**
+    * To be documented.
+    *
+    * FIXME: To be fixed.
+    * 
+    */
    void  eet_data_descriptor_element_add(Eet_Data_Descriptor *edd, char *name, int type, int group_type, int offset, int count, char *counter_name, Eet_Data_Descriptor *subtype);
    
+   /**
+    * To be documented.
+    *
+    * FIXME: To be fixed.
+    * 
+    */
    void *eet_data_read(Eet_File *ef, Eet_Data_Descriptor *edd, char *name);
+   /**
+    * To be documented.
+    *
+    * FIXME: To be fixed.
+    * 
+    */
    int   eet_data_write(Eet_File *ef, Eet_Data_Descriptor *edd, char *name, void *data, int compress);
    
+   /**
+    * To be documented.
+    *
+    * FIXME: To be fixed.
+    * 
+    */
    void *eet_data_descriptor_decode(Eet_Data_Descriptor *edd, void *data_in, int size_in);
+   /**
+    * To be documented.
+    *
+    * FIXME: To be fixed.
+    * 
+    */
    void *eet_data_descriptor_encode(Eet_Data_Descriptor *edd, void *data_in, int *size_ret);
 
+   /**
+    * To be documented.
+    *
+    * FIXME: To be fixed.
+    * 
+    */
 #define EET_DATA_DESCRIPTOR_ADD_BASIC(edd, struct_type, name, member, type) \
      { \
 	struct_type ___ett; \
@@ -297,6 +342,12 @@ extern "C" {
 					(char *)(&(___ett.member)) - (char *)(&(___ett)), \
 					0, NULL, NULL); \
      }
+   /**
+    * To be documented.
+    *
+    * FIXME: To be fixed.
+    * 
+    */
 #define EET_DATA_DESCRIPTOR_ADD_SUB(edd, struct_type, name, member, subtype) \
      { \
 	struct_type ___ett; \
@@ -305,6 +356,12 @@ extern "C" {
 					(char *)(&(___ett.member)) - (char *)(&(___ett)), \
 					0, NULL, subtype); \
      }
+   /**
+    * To be documented.
+    *
+    * FIXME: To be fixed.
+    * 
+    */
 #define EET_DATA_DESCRIPTOR_ADD_LIST(edd, struct_type, name, member, subtype) \
      { \
 	struct_type ___ett; \
