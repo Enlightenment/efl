@@ -93,6 +93,16 @@ _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	    (ev->cur.canvas.x >= (x + w)) || (ev->cur.canvas.y >= (y + h)))
 	  rp->still_in = 0;
      }
+   else
+     {
+	double x, y, w, h;
+	
+	evas_object_geometry_get(obj, &x, &y, &w, &h);
+	if ((ev->cur.canvas.x >= x) && (ev->cur.canvas.y >= y) && 
+	    (ev->cur.canvas.x < (x + w)) && (ev->cur.canvas.y < (y + h)))
+	  rp->still_in = 1;
+     }
+     
    _edje_emit(ed, "mouse,move", rp->part->name);
 }
 
