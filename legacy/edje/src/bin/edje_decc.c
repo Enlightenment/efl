@@ -282,7 +282,7 @@ output(void)
 #endif
 
 	printf("\n*** CAUTION ***\n"
-	      "Please check the build script for anythin malicious "
+	      "Please check the build script for anything malicious "
 	      "before running it!\n\n");
      }
    eet_close(ef);
