@@ -110,10 +110,10 @@ ecore_ipc_server_add(Ecore_Ipc_Type compl_type, char *name, int port, const void
    switch (type)
      {
       case ECORE_IPC_LOCAL_USER:
-	svr->server = ecore_con_server_add(ECORE_CON_LOCAL_USER, name, port, svr);
+	svr->server = ecore_con_server_add(ECORE_CON_LOCAL_USER | extra, name, port, svr);
 	break;
       case ECORE_IPC_LOCAL_SYSTEM:
-	svr->server = ecore_con_server_add(ECORE_CON_LOCAL_SYSTEM, name, port, svr);
+	svr->server = ecore_con_server_add(ECORE_CON_LOCAL_SYSTEM | extra, name, port, svr);
 	break;
       case ECORE_IPC_REMOTE_SYSTEM:
 	svr->server = ecore_con_server_add(ECORE_CON_REMOTE_SYSTEM | extra, name, port, svr);
@@ -155,10 +155,10 @@ ecore_ipc_server_connect(Ecore_Ipc_Type compl_type, char *name, int port, const 
    switch (type)
      {
       case ECORE_IPC_LOCAL_USER:
-	svr->server = ecore_con_server_connect(ECORE_CON_LOCAL_USER, name, port, svr);
+	svr->server = ecore_con_server_connect(ECORE_CON_LOCAL_USER | extra, name, port, svr);
 	break;
       case ECORE_IPC_LOCAL_SYSTEM:
-	svr->server = ecore_con_server_connect(ECORE_CON_LOCAL_SYSTEM, name, port, svr);
+	svr->server = ecore_con_server_connect(ECORE_CON_LOCAL_SYSTEM | extra, name, port, svr);
 	break;
       case ECORE_IPC_REMOTE_SYSTEM:
 	svr->server = ecore_con_server_connect(ECORE_CON_REMOTE_SYSTEM | extra, name, port, svr);
