@@ -4,8 +4,8 @@
 #include <sys/types.h>
 #include <assert.h>
 
-/* uncomment this is partial buffer swaps fail - problem with glcopypixels? */
-#define GLSWB 1 
+/* uncomment this is partial buffer swaps slow - problem with glcopypixels? */
+#define GLSWB 1
 /* uncomment if your GL implimentation is CRAP at clipping */
 /* #define GLNOCLIP 1 */
 
@@ -410,6 +410,7 @@ __evas_gl_window_swap_rect(Evas_GL_Window *w, int rx, int ry, int rw, int rh)
    __evas_gl_window_blend(w, 0);
    __evas_gl_window_clip(w, 0, 0, 0, 0, 0);
    __evas_gl_window_dither(w, 0);
+   ry = w->h - ry - rh;
    glRasterPos2i(rx, w->h - ry);
    glCopyPixels(rx, ry, rw, rh, GL_COLOR);
 }
@@ -1786,7 +1787,12 @@ __evas_gl_text_draw(Evas_GL_Font *fn, Display *disp, Imlib_Image dstim, Window w
 	     if (text[0] == 0) return;
 	     glyph = ((unsigned char *)text)[0];
 	     g = __evas_gl_text_font_get_glyph(fn, glyph);
-	     if (!TT_VALID(g->glyph)) continue;
+	     if (!TT_VALID(g->glyph)) 
+#ifndef GLNOCLIP	       
+	       continue;
+#else
+	       return;
+#endif	     
 	     x_offset = 0;
 	     if (g) x_offset = - (g->metrics.bearingX / 64);
 	     y_offset = -(fn->max_descent / 64);
