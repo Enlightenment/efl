@@ -183,8 +183,6 @@ void                e_window_no_ignore(Window win);
 int                 e_window_is_ignored(Window win);
 Window              e_window_get_at_xy(int x, int y);
 
-char               *e_selection_get_data(Window win, Atom prop);
-
 int                 e_window_dnd_capable(Window win);
 void                e_window_dnd_handle_motion(Window source_win, int x, int y,
 
@@ -274,6 +272,8 @@ char               *e_window_get_title(Window win);
 void                e_keyboard_grab(Window win);
 void                e_keyboard_ungrab(void);
 
+
+char               *e_selection_get_data(Window win, Atom prop);
 Window              e_selection_request(void);
 Window              e_selection_set(char *string);
 
@@ -321,6 +321,7 @@ typedef struct _ev_dnd_drop Ev_Dnd_Drop;
 typedef struct _ev_dnd_drop_status Ev_Dnd_Drop_Status;
 typedef struct _ev_dnd_data_request Ev_Dnd_Data_Request;
 typedef struct _ev_paste_request Ev_Paste_Request;
+typedef struct _ev_clear_selection Ev_Clear_Selection;
 
 enum _eev_stack_detail
 {
@@ -379,6 +380,7 @@ enum _eev_type
    EV_DND_DROP_STATUS,
    EV_DND_DATA_REQUEST,
    EV_PASTE_REQUEST,
+   EV_CLEAR_SELECTION,
 
    EV_CHILD,
    EV_USER,
@@ -634,6 +636,12 @@ struct _ev_paste_request
 {
    Window              win, root, source_win;
    char               *string;
+};
+
+struct _ev_clear_selection
+{
+   Window              win, root;
+   Atom                selection;
 };
 
 struct _ev_dnd_drop_request

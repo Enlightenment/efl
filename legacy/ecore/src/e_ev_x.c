@@ -37,6 +37,7 @@ static void         e_ev_x_handle_circulate_request(XEvent * xevent);
 static void         e_ev_x_handle_property_notify(XEvent * xevent);
 static void         e_ev_x_handle_colormap_notify(XEvent * xevent);
 static void         e_ev_x_handle_selection_notify(XEvent * xevent);
+static void         e_ev_x_handle_selection_clear(XEvent * xevent);
 static void         e_ev_x_handle_selection_request(XEvent * xevent);
 static void         e_ev_x_handle_client_message(XEvent * xevent);
 static void         e_ev_x_handle_shape_change(XEvent * xevent);
@@ -97,6 +98,7 @@ e_ev_x_init(void)
    event_translator[ColormapNotify] = e_ev_x_handle_colormap_notify;
    event_translator[ClientMessage] = e_ev_x_handle_client_message;
    event_translator[SelectionNotify] = e_ev_x_handle_selection_notify;
+   event_translator[SelectionClear] = e_ev_x_handle_selection_clear;
    event_translator[SelectionRequest] = e_ev_x_handle_selection_request;
    event_translator[shape_event_id] = e_ev_x_handle_shape_change;
 
@@ -885,6 +887,19 @@ e_ev_x_handle_selection_notify(XEvent * xevent)
      }
    e_add_event(EV_DND_DROP_REQUEST, e, e_ev_dnd_drop_request_free);
    ev_drop_request_pending = NULL;
+}
+
+static void
+e_ev_x_handle_selection_clear(XEvent * xevent)
+{
+   Ev_Clear_Selection *e;
+   
+   e = NEW(Ev_Clear_Selection, 1);
+   e->win = xevent->xselectionclear.window;
+   printf("%x\n", e->win);
+   e->root = e_window_get_root(e->win);
+   e->selection = xevent->xselectionclear.selection;
+   e_add_event(EV_CLEAR_SELECTION, e, e_ev_generic_free);
 }
 
 static void
