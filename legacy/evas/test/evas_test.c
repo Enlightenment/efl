@@ -55,6 +55,7 @@ main(int argc, char **argv)
 	int a = 0;
 	double t1, t2;
 	Evas_GL_Image *i[4], *bg, *l;
+	Evas_GL_Font *fn[4];
 	
 	bg = __evas_gl_image_new_from_file(d, "img/sky001.png");
 	i[0] = __evas_gl_image_new_from_file(d, "img/fog1001.png");
@@ -62,6 +63,11 @@ main(int argc, char **argv)
 	i[2] = __evas_gl_image_new_from_file(d, "img/fog3001.png");
 	i[3] = __evas_gl_image_new_from_file(d, "img/fog4001.png");
 	l = __evas_gl_image_new_from_file(d, "img/logo001.png");
+	__evas_gl_text_font_add_path("./fnt");
+	fn[0] = __evas_gl_text_font_new(d, "cinema", 24);
+	fn[1] = __evas_gl_text_font_new(d, "grunge", 16);
+	fn[2] = __evas_gl_text_font_new(d, "morpheus", 24);
+	fn[3] = __evas_gl_text_font_new(d, "notepad", 24);
 	if (!bg)
 	  {
 	     printf("cannot find images!\n");
@@ -96,6 +102,18 @@ main(int argc, char **argv)
 					     0, 0, __evas_gl_image_get_width(i[j]), __evas_gl_image_get_height(i[j]),
 					     xx - win_w, yy, win_w, win_h);
 	       }
+	     __evas_gl_text_draw(fn[0], d, win, win_w, win_h, 30, 50, 
+				 "This is a line...", 
+				 255, 255, 255, 255);
+	     __evas_gl_text_draw(fn[1], d, win, win_w, win_h, 30, 100, 
+				 "Of anti-aliased text drawn nicely...", 
+				 255, 100, 100, 255);
+	     __evas_gl_text_draw(fn[2], d, win, win_w, win_h, 30, 150, 
+				 "With evas... Oh goodie isn't this fun!", 
+				 100, 100, 255, 200);
+	     __evas_gl_text_draw(fn[3], d, win, win_w, win_h, 30, 200, 
+				 "With Lots of colors & transparency too!", 
+				 50, 200, 100, 100);
 	     __evas_gl_flush_draw(d, win);
 	     a++;
 	     if (a == (win_w * 4)) 
