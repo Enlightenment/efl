@@ -119,9 +119,9 @@ extern "C" {
    EAPI int               ecore_con_init(void);
    EAPI int               ecore_con_shutdown(void);
    
-   EAPI Ecore_Con_Server *ecore_con_server_add(Ecore_Con_Type type, char *name, int port, const void *data);
+   EAPI Ecore_Con_Server *ecore_con_server_add(Ecore_Con_Type type, const char *name, int port, const void *data);
    
-   EAPI Ecore_Con_Server *ecore_con_server_connect(Ecore_Con_Type type, char *name, int port, const void *data);
+   EAPI Ecore_Con_Server *ecore_con_server_connect(Ecore_Con_Type type, const char *name, int port, const void *data);
    EAPI void             *ecore_con_server_del(Ecore_Con_Server *svr);
    EAPI void             *ecore_con_server_data_get(Ecore_Con_Server *svr);
    EAPI int               ecore_con_server_connected_get(Ecore_Con_Server *svr);

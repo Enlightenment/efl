@@ -1,4 +1,5 @@
 /* by Azundris, with thanks to Corey Donohoe <atmos@atmos.org> */
+#include "ecore_private.h"
 #include "ecore_config_ipc.h"
 #include "ecore_config_util.h"
 #include "ecore_config_private.h"
@@ -19,7 +20,7 @@
 #include "Ecore_Config.h"
 #include "config.h"
 
-#if 1 /* FIXME - No prototypes? */
+
 /*****************************************************************************/
 
 static int
@@ -46,7 +47,7 @@ _ecore_config_ipc_ecore_string_get(char **m, char **r)
 }
 
 static char               *
-_ecore_config_ipc_global_prop_list(Ecore_Config_Server * srv, const long serial)
+_ecore_config_ipc_global_prop_list(Ecore_Config_Server * srv __UNUSED__, long serial __UNUSED__)
 {
    Ecore_Config_DB_File  *db;
    char                 **keys;
@@ -227,7 +228,7 @@ _ecore_config_ipc_ecore_handle_request(Ecore_Ipc_Server * server,
 /*****************************************************************************/
 
 static int
-_ecore_config_ipc_client_add(void *data, int type, void *event)
+_ecore_config_ipc_client_add(void *data, int type __UNUSED__, void *event)
 {
    Ecore_Ipc_Server  **server;
    Ecore_Ipc_Event_Client_Data *e;
@@ -243,7 +244,7 @@ _ecore_config_ipc_client_add(void *data, int type, void *event)
 }
 
 static int
-_ecore_config_ipc_client_del(void *data, int type, void *event)
+_ecore_config_ipc_client_del(void *data, int type __UNUSED__, void *event)
 {
    Ecore_Ipc_Server  **server;
    Ecore_Ipc_Event_Client_Data *e;
@@ -259,7 +260,7 @@ _ecore_config_ipc_client_del(void *data, int type, void *event)
 }
 
 static int
-_ecore_config_ipc_client_sent(void *data, int type, void *event)
+_ecore_config_ipc_client_sent(void *data, int type __UNUSED__, void *event)
 {
    Ecore_Ipc_Server  **server;
    Ecore_Ipc_Event_Client_Data *e;
@@ -277,7 +278,7 @@ _ecore_config_ipc_client_sent(void *data, int type, void *event)
 /*****************************************************************************/
 
 int
-_ecore_config_mod_init(char *pipe_name, void **data)
+_ecore_config_mod_init(const char *pipe_name, void **data)
 {
    Ecore_Ipc_Server  **server;
    struct stat         st;
@@ -376,4 +377,3 @@ _ecore_config_mod_poll(void **data)
 }
 
 /*****************************************************************************/
-#endif

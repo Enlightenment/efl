@@ -8,6 +8,10 @@ extern int               DEBUG;
 
 typedef struct _Ecore_Config_DB_File Ecore_Config_DB_File;
 
+int                   _ecore_config_mod_init(const char *pipe_name, void **data);
+int                   _ecore_config_mod_exit(void **data);
+int                   _ecore_config_mod_poll(void **data);
+
 Ecore_Config_DB_File *_ecore_config_db_open_read(const char *file);
 Ecore_Config_DB_File *_ecore_config_db_open_write(const char *file);
 void                  _ecore_config_db_close(Ecore_Config_DB_File *db);

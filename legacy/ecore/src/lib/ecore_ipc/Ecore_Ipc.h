@@ -104,7 +104,7 @@ extern "C" {
    EAPI int               ecore_ipc_shutdown(void);
    
    /* FIXME: need to add protocol type parameter */
-   EAPI Ecore_Ipc_Server *ecore_ipc_server_add(Ecore_Ipc_Type type, char *name, int port, const void *data);
+   EAPI Ecore_Ipc_Server *ecore_ipc_server_add(Ecore_Ipc_Type type, const char *name, int port, const void *data);
    
    /* FIXME: need to add protocol type parameter */
    EAPI Ecore_Ipc_Server *ecore_ipc_server_connect(Ecore_Ipc_Type type, char *name, int port, const void *data);

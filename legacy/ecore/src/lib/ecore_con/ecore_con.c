@@ -137,7 +137,7 @@ ecore_con_shutdown(void)
  */
 Ecore_Con_Server *
 ecore_con_server_add(Ecore_Con_Type compl_type,
-		     char *name,
+		     const char *name,
 		     int port,
 		     const void *data)
 {
@@ -356,7 +356,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
  */
 Ecore_Con_Server *
 ecore_con_server_connect(Ecore_Con_Type compl_type,
-			 char *name,
+			 const char *name,
 			 int port,
 			 const void *data)
 {

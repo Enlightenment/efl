@@ -271,7 +271,7 @@ ecore_ipc_shutdown(void)
  * @todo    Need to add protocol type parameter to this function.
  */
 Ecore_Ipc_Server *
-ecore_ipc_server_add(Ecore_Ipc_Type compl_type, char *name, int port, const void *data)
+ecore_ipc_server_add(Ecore_Ipc_Type compl_type, const char *name, int port, const void *data)
 {
    Ecore_Ipc_Server *svr;
    Ecore_Ipc_Type type;
