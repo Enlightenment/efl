@@ -24,13 +24,24 @@
 ((SPANS_COMMON((x), (w), (xx), (ww))) && (SPANS_COMMON((y), (h), (yy), (hh))))
 #endif
 
-typedef void Evas_Imlib_Image;
 typedef void Evas_Imlib_Font;
 
+typedef struct _evas_imlib_image Evas_Imlib_Image;
 typedef struct _evas_imlib_drawable Evas_Imlib_Drawable;
 typedef struct _evas_imlib_update Evas_Imlib_Update;
 typedef struct _evas_imlib_color Evas_Imlib_Color;
 typedef struct _evas_imlib_gradient Evas_Imlib_Graident;
+
+struct _evas_imlib_image
+{
+   char *file;
+   Imlib_Image image;
+   struct {
+      int aa;
+      Imlib_Image image;
+   } scaled;
+   int references;
+};
 
 struct _evas_imlib_drawable
 {

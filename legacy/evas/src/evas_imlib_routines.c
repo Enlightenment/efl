@@ -1,9 +1,16 @@
 
+
 #include "evas_imlib_routines.h"
 
 static void __evas_imlib_image_cache_flush(Display *disp);
+static void __evas_imlib_image_cache_clean(void);
+static Evas_Imlib_Image *__evas_imlib_image_cache_find(char *file);
 static int  __evas_anti_alias = 1;
+static int  __evas_image_cache = 8 * 1024 * 1024;
+static int  __evas_image_cache_used = 0;
 static Evas_List drawable_list = NULL;
+
+static Evas_List images = NULL;
 
 /* the current clip region and color */
 static int       __evas_clip            = 0;
@@ -23,11 +30,68 @@ static int       __evas_clip_a          = 0;
 static void
 __evas_imlib_image_cache_flush(Display *disp)
 {
-   int size;
+   __evas_imlib_image_cache_empty(disp);
+}
+
+static void
+__evas_imlib_image_cache_clean(void)
+{
+   while (__evas_image_cache_used > __evas_image_cache)
+     {
+	Evas_Imlib_Image *last;
+	Evas_List l;
+	
+	for (l = images; l; l = l->next)
+	  {
+	     if (!l->next) last = l->data;
+	  }
+	images = evas_list_remove(images, last);
+	imlib_context_set_image(last->image);
+	__evas_image_cache_used -= 
+	  imlib_image_get_width() * 
+	  imlib_image_get_height() * 4;	
+	if (last->scaled.image)
+	  {
+	     imlib_context_set_image(last->scaled.image);
+	     __evas_image_cache_used -= 
+	       imlib_image_get_width() * 
+	       imlib_image_get_height() * 4;	
+	  }
+	imlib_free_image();
+	free(last->file);
+	free(last);
+     }
+}
+
+static Evas_Imlib_Image *
+__evas_imlib_image_cache_find(char *file)
+{
+   Evas_Imlib_Image *im;
+   Evas_List l;
    
-   size = imlib_get_cache_size();
-   imlib_set_cache_size(0);
-   imlib_set_cache_size(size);
+   for (l = images; l; l = l->next)
+     {
+	im = l->data;
+	if (!strcmp(im->file, file))
+	  {
+	     im->references++;
+	     images = evas_list_remove(images, im);
+	     images = evas_list_prepend(images, im);
+	     imlib_context_set_image(im->image);
+	     __evas_image_cache_used -=
+	       imlib_image_get_width() *
+	       imlib_image_get_height() * 4;
+	     if (im->scaled.image)
+	       {
+		  imlib_context_set_image(im->scaled.image);
+		  __evas_image_cache_used -= 
+		    imlib_image_get_width() * 
+		    imlib_image_get_height() * 4;	
+	       }
+	     return im;
+	  }
+     }
+   return NULL;
 }
 
 /*****************************************************************************/
@@ -36,15 +100,44 @@ __evas_imlib_image_cache_flush(Display *disp)
 
 Evas_Imlib_Image *
 __evas_imlib_image_new_from_file(Display *disp, char *file)
-{	
-   return (Evas_Imlib_Image *)imlib_load_image(file);
+{
+   Evas_Imlib_Image *im;
+   Imlib_Image image;
+   
+   im = __evas_imlib_image_cache_find(file);
+   if (im) return im;
+   
+   image = imlib_load_image(file);
+   if (!image) return NULL;
+   im = malloc(sizeof(Evas_Imlib_Image));
+   im->file = strdup(file);
+   im->image = image;
+   im->scaled.aa = 0;
+   im->scaled.image = NULL;
+   im->references = 1;
+   images = evas_list_prepend(images, im);   
+   return im;
 }
 
 void
 __evas_imlib_image_free(Evas_Imlib_Image *im)
 {
-   imlib_context_set_image((Imlib_Image)im);
-   imlib_free_image();
+   im->references--;
+   if (im->references == 0)
+     {
+	imlib_context_set_image(im->image);
+	__evas_image_cache_used += 
+	  imlib_image_get_width() * 
+	  imlib_image_get_height() * 4;
+	if (im->scaled.image)
+	  {
+	     imlib_context_set_image(im->scaled.image);
+	     __evas_image_cache_used +=
+	       imlib_image_get_width() * 
+	       imlib_image_get_height() * 4;	
+	  }
+	__evas_imlib_image_cache_clean();
+     }
 }
 
 void
@@ -52,21 +145,23 @@ __evas_imlib_image_cache_empty(Display *disp)
 {
    int size;
    
-   size = imlib_get_cache_size();
-   imlib_set_cache_size(0);
-   imlib_set_cache_size(size);
+   size = __evas_image_cache;
+   __evas_image_cache = 0;
+   __evas_imlib_image_cache_clean();
+   __evas_image_cache = size;
 }
 
 void
 __evas_imlib_image_cache_set_size(Display *disp, int size)
 {
-   imlib_set_cache_size(size);
+   __evas_image_cache = size;
+   __evas_imlib_image_cache_clean();
 }
 
 int
 __evas_imlib_image_cache_get_size(Display *disp)
 {
-   return imlib_get_cache_size();
+   return __evas_image_cache;
 }
 
 void
@@ -134,16 +229,144 @@ __evas_imlib_image_draw(Evas_Imlib_Image *im,
 		       if (__evas_clip) 
 			 imlib_context_set_cliprect(__evas_clip_x - up->x, 
 						    __evas_clip_y - up->y, 
-						    __evas_clip_w, 
+						    __evas_clip_w,
 						    __evas_clip_h);
 		       else imlib_context_set_cliprect(0, 0, 0, 0);
 		       
 		       if (!up->image)
 			  up->image = imlib_create_image(up->w, up->h);
-		       imlib_context_set_image(up->image);
-		       imlib_blend_image_onto_image(im, 0,
-						    src_x, src_y, src_w, src_h,
-						    dst_x - up->x, dst_y - up->y, dst_w, dst_h);
+		       /* if our src and dest are 1:1 scaling.. use original */
+		       if ((dst_w == src_w) && (dst_h == src_h))
+			 {
+			    imlib_context_set_image(up->image);
+			    imlib_blend_image_onto_image(im->image, 0,
+							 src_x, src_y, src_w, src_h,
+							 dst_x - up->x, dst_y - up->y, dst_w, dst_h);
+			    if (im->scaled.image)
+			      {
+				 imlib_context_set_image(im->scaled.image);
+				 imlib_free_image();
+				 im->scaled.image = NULL;
+			      }
+			 }
+		       /* if we have a scaled image stored... */
+		       else if ((im->scaled.image) && (im->scaled.aa == __evas_anti_alias))
+			 {
+			    Imlib_Border bd;
+			    
+			    /* if the image has any border scaling... dont do it */
+			    imlib_context_set_image(im->image);
+			    imlib_image_get_border(&bd);
+			    if ((bd.left != 0) ||
+				(bd.right != 0) ||
+				(bd.top != 0) ||
+				(bd.bottom != 0))
+			      {
+				 imlib_context_set_image(up->image);
+				 imlib_blend_image_onto_image(im->image, 0,
+							      src_x, src_y, src_w, src_h,
+							      dst_x - up->x, dst_y - up->y, dst_w, dst_h);
+			      }
+			    else
+			      {
+				 int scw, sch, iw, ih;
+				 
+				 imlib_context_set_image(im->image);			    
+				 iw = imlib_image_get_width();
+				 ih = imlib_image_get_height();
+				 imlib_context_set_image(im->scaled.image);
+				 scw = imlib_image_get_width();
+				 sch = imlib_image_get_height();
+				 /* if the scaled image is the same scaled output as needed here use it */
+				 /* if we are using the WHOLE src image */
+				 if ((src_x == 0) && (src_y == 0) && 
+				     (src_w == iw) && (src_h == ih) &&
+				     /* if our destination lies withint the output viewport and clip */
+				     ((dst_x >= 0) && (dst_y >= 0) && 
+				      (dst_w + dst_x <= win_w) && (dst_h + dst_y <= win_h) &&
+				      ((!__evas_clip) ||
+				       ((dst_x >= __evas_clip_x) && (dst_y >= __evas_clip_y) &&
+					(dst_w + dst_x <= __evas_clip_w) && (dst_h + dst_y <= __evas_clip_h)))))
+				   {
+				      if ((scw == dst_w) && (sch == dst_h))
+					{
+					   imlib_context_set_image(up->image);
+					   imlib_blend_image_onto_image(im->scaled.image, 0,
+									0, 0, dst_w, dst_h,
+									dst_x - up->x, dst_y - up->y, dst_w, dst_h);
+					}
+				      else
+					{
+					   imlib_context_set_image(im->scaled.image);
+					   imlib_free_image();
+					   im->scaled.image = NULL;
+					   imlib_context_set_image(im->image);
+					   im->scaled.image = imlib_create_cropped_scaled_image(0, 0, iw, ih,
+												dst_w, dst_h);
+					   im->scaled.aa = __evas_anti_alias;
+					   imlib_context_set_image(up->image);
+					   imlib_blend_image_onto_image(im->scaled.image, 0,
+									0, 0, dst_w, dst_h,
+									dst_x - up->x, dst_y - up->y, dst_w, dst_h);
+					}
+				   }
+				 /* just draw normally */
+				 else
+				   {
+				      imlib_context_set_image(up->image);
+				      imlib_blend_image_onto_image(im->image, 0,
+								   src_x, src_y, src_w, src_h,
+								   dst_x - up->x, dst_y - up->y, dst_w, dst_h);
+				   }
+			      }
+			 }
+		       /* if we dont and the image isnt clipped and its not original size */
+		       else
+			 {
+			    int iw, ih;
+			    
+			    if (im->scaled.image)
+			      {
+				 int scw, sch;
+				 
+				 imlib_context_set_image(im->scaled.image);
+				 scw = imlib_image_get_width();
+				 sch = imlib_image_get_height();
+				 imlib_context_set_image(im->scaled.image);
+				 imlib_free_image();
+				 im->scaled.image = NULL;
+			      }
+			    imlib_context_set_image(im->image);			    
+			    iw = imlib_image_get_width();
+			    ih = imlib_image_get_height();
+			    
+			    /* if we are using the WHOLE src image */
+			    if ((src_x == 0) && (src_y == 0) && 
+				(src_w == iw) && (src_h == ih) &&
+				/* if our destination lies withint the output viewport and clip */
+				((dst_x >= 0) && (dst_y >= 0) && 
+				 (dst_w + dst_x <= win_w) && (dst_h + dst_y <= win_h) &&
+				 ((!__evas_clip) ||
+				  ((dst_x >= __evas_clip_x) && (dst_y >= __evas_clip_y) &&
+				   (dst_w + dst_x <= __evas_clip_w) && (dst_h + dst_y <= __evas_clip_h)))))
+			      {
+				 imlib_context_set_image(im->image);
+				 im->scaled.image = imlib_create_cropped_scaled_image(0, 0, iw, ih,
+										      dst_w, dst_h);
+				 im->scaled.aa = __evas_anti_alias;
+				 imlib_context_set_image(up->image);
+				 imlib_blend_image_onto_image(im->scaled.image, 0,
+							      0, 0, dst_w, dst_h,
+							      dst_x - up->x, dst_y - up->y, dst_w, dst_h);
+			      }
+			    else
+			      {
+				 imlib_context_set_image(up->image);
+				 imlib_blend_image_onto_image(im->image, 0,
+							      src_x, src_y, src_w, src_h,
+							      dst_x - up->x, dst_y - up->y, dst_w, dst_h);
+			      }
+			 }
 		    }
 	       }
 	  }
@@ -158,14 +381,14 @@ __evas_imlib_image_draw(Evas_Imlib_Image *im,
 int
 __evas_imlib_image_get_width(Evas_Imlib_Image *im)
 {
-   imlib_context_set_image((Imlib_Image)im);
+   imlib_context_set_image(im->image);
    return imlib_image_get_width();
 }
 
 int
 __evas_imlib_image_get_height(Evas_Imlib_Image *im)
 {
-   imlib_context_set_image((Imlib_Image)im);
+   imlib_context_set_image(im->image);
    return imlib_image_get_height();
 }
 
@@ -175,7 +398,7 @@ __evas_imlib_image_set_borders(Evas_Imlib_Image *im, int left, int right,
 {
    Imlib_Border bd;
    
-   imlib_context_set_image((Imlib_Image)im);
+   imlib_context_set_image(im->image);
    bd.left = left;
    bd.right = right;
    bd.top = top;
@@ -949,8 +1172,6 @@ __evas_imlib_init(Display *disp, int screen, int colors)
    if (!initted)
      {
 	imlib_set_color_usage(colors);
-	imlib_set_font_cache_size(1024 * 1024);
-	imlib_set_cache_size(8 * 1024 * 1024);
 	initted = 1;
      }
    imlib_set_color_usage(colors);
