@@ -37,10 +37,8 @@
 
 #if defined LINUX
   #include <unistd.h>
+  #include "embryo_cc_osdefs.h"
   #include <embryo_cc_sclinux.h>
-//
-  #include "config.h"
-//
 #endif
 
 #if defined FORTIFY

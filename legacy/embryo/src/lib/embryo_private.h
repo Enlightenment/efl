@@ -2,6 +2,7 @@
 #define _EMBRYO_PRIVATE_H
 
 #include "Embryo.h"
+#include "config.h"
 
 #include <stdio.h>
 #include <stdlib.h>

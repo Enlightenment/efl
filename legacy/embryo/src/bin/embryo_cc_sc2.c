@@ -26,6 +26,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <math.h>
+#include "embryo_cc_osdefs.h"
 #include "embryo_cc_sc.h"
 #if defined LINUX
   #include <embryo_cc_sclinux.h>

@@ -26,10 +26,11 @@
 #include <string.h>
 #include <ctype.h>
 #if defined LINUX
-  #include <embryo_cc_sclinux.h>
+# include "embryo_cc_osdefs.h"
+# include <embryo_cc_sclinux.h>
 #endif
 #if defined FORTIFY
-  #include "fortify.h"
+# include "fortify.h"
 #endif
 #include "embryo_cc_sc.h"
 

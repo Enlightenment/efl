@@ -7,6 +7,8 @@ MAINTAINERCLEANFILES = Makefile.in
 
 LDFLAGS		     = 
 INCLUDES	     = -I. \
+		       -I$(top_srcdir) \
+		       -I$(top_builddir) \
                        -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include 
 					      

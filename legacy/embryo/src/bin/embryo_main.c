@@ -215,7 +215,6 @@ main(int argc,char *argv[])
      {
 	for (i = args; i < argc; i++)
 	  {
-	     printf("%i\n", i);
 	     if (argv[i][0] == 's')
 		  embryo_parameter_string_push(ep, argv[i] + 1);
 	     else if (argv[i][0] == 'i')

@@ -16,6 +16,27 @@
  * So we stick to getchar at the moment... (one needs to key ctrl-d to terminate input if getch is called with a controlling
  * terminal driven by a tty having -raw)
  */
+#if defined LINUX
+  #include "config.h"
+#endif
+
+/* Linux NOW has these */
+#if !defined BIG_ENDIAN
+  #define BIG_ENDIAN    4321
+#endif
+#if !defined LITTLE_ENDIAN
+  #define LITTLE_ENDIAN 1234
+#endif
+
+/* educated guess, BYTE_ORDER is undefined, i386 is common => little endian */
+#ifdef WORDS_BIGENDIAN
+# undef BYTE_ORDER
+# define BYTE_ORDER BIG_ENDIAN
+#else
+# undef BYTE_ORDER
+# define BYTE_ORDER LITTLE_ENDIAN
+#endif
+
 #define getch           getchar
 #define	stricmp(a,b)    strcasecmp(a,b)
 #define	strnicmp(a,b,c) strncasecmp(a,b,c)
@@ -35,9 +56,13 @@
 # include <stdlib.h>
 #endif
 
-#if defined __OpenBSD__
+#ifndef __BYTE_ORDER
 # define __BYTE_ORDER    BYTE_ORDER
+#endif
+#ifndef __LITTLE_ENDIAN
 # define __LITTLE_ENDIAN LITTLE_ENDIAN
+#endif
+#ifndef __BIG_ENDIAN
 # define __BIG_ENDIAN    BIG_ENDIAN
 #endif
 

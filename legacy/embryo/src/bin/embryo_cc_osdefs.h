@@ -36,7 +36,7 @@
 #endif
 
 #if defined LINUX
-  #include <endian.h>
+  #include "config.h"
 #endif
 
 /* Linux NOW has these */
@@ -48,12 +48,12 @@
 #endif
 
 /* educated guess, BYTE_ORDER is undefined, i386 is common => little endian */
-#if !defined BYTE_ORDER
-  #if defined UCLINUX
-    #define BYTE_ORDER BIG_ENDIAN
-  #else
-    #define BYTE_ORDER LITTLE_ENDIAN
-  #endif
+#ifdef WORDS_BIGENDIAN
+# undef BYTE_ORDER
+# define BYTE_ORDER BIG_ENDIAN
+#else
+# undef BYTE_ORDER
+# define BYTE_ORDER LITTLE_ENDIAN
 #endif
 
 /* _MAX_PATH is sometimes called differently and it may be in limits.h instead

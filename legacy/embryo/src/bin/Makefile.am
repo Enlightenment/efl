@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-INCLUDES = -DLINUX -I$(top_srcdir)/src/lib
+INCLUDES = -DLINUX -I$(top_srcdir)/src/lib -I$(top_srcdir) -I$(top_builddir)
 
 bin_PROGRAMS = embryo embryo_cc
 
