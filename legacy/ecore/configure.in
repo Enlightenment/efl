@@ -573,7 +573,7 @@ if test "x$have_ecore_config" = "xyes"; then
    [ EET_CONFIG=$withval;
      echo "using "$EET_CONFIG" for eet-config"; ],
    [ if test -z "$EET_CONFIG"; then
-       AC_PATH_PROG(PROG_EET_CONFIG, "eet-config", "", $PATH)
+       AC_PATH_PROG(EET_CONFIG, "eet-config", "", $PATH)
      fi
    ])
    eet_cflags=`$EET_CONFIG --cflags`

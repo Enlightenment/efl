@@ -301,7 +301,7 @@ extern "C" {
    void ecore_hash_dump_graph(Ecore_Hash *hash);
    
    
-   inline void ecore_print_warning(char *function, char *sparam);
+   inline void ecore_print_warning(const char *function, char *sparam);
    
    /* Wrappers around free() that helps debug free() bugs such as freeing NULL
     * or accessing a pointer that has already been freed */
