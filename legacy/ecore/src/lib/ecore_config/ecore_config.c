@@ -594,14 +594,20 @@ int ecore_config_init(char *name) {
   
   __app_name = strdup(name);
   __server_local = ecore_config_init_local(name);
+  if (!__server_local) 
+    return ECORE_CONFIG_ERR_FAIL;
+
   __server_global = ecore_config_init_global(ECORE_CONFIG_GLOBAL_ID);
-  
+  if (!__server_global)
+    return ECORE_CONFIG_ERR_FAIL;
+
   __bundle_local = ecore_config_bundle_new(__server_local, "config");
 
   if((p=getenv("HOME"))) {  /* debug-only ### FIXME */
     if ((buf=malloc(PATH_MAX*sizeof(char)))) {
       snprintf(buf,PATH_MAX,"%s/.e/config.db",p);
-      ecore_config_load_file(buf);
+      if (ecore_config_load_file(buf) != 0)
+        return ECORE_CONFIG_ERR_NOFILE;
     }
     free(buf);
   }
