@@ -476,8 +476,9 @@ __evas_gl_texture_new(Evas_GL_Window *w, Imlib_Image im, int ix, int iy, int iw,
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
    prev_im = imlib_context_get_image();
    imlib_context_set_image(im);
-   data = malloc(tw * th * 4);
    im_data = imlib_image_get_data_for_reading_only();
+   if (!im_data)  return tex;
+   data = malloc(tw * th * 4);   
    im_w = imlib_image_get_width();
    im_h = imlib_image_get_height();
    for (ty = 0; ty < ih; ty++)
