@@ -2,8 +2,8 @@ Source: edje
 Section: libs
 Priority: optional
 Maintainer: Laurence J. Lane <ljlane@debian.org>
-Build-Depends: debhelper (>= 3.0)
-Standards-Version: 3.2.1.0
+Build-Depends: debhelper (>= 3.0), libimlib2-dev, libeet0-dev, libecore1-dev
+Standards-Version: 3.6.1.0
 
 Package: libedje0
 Architecture: any

@@ -16,23 +16,26 @@ DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 cfg:=--prefix=/usr --build=$(DEB_BUILD_GNU_TYPE) --host=$(DEB_HOST_GNU_TYPE)
 
 
+CFLAGS = -Wall -g
 CFLAGS += -I/usr/include/freetype2 -include /usr/include/png.h -include /usr/include/freetype2/freetype/freetype.h -include /usr/include/freetype2/freetype/internal/ftobjs.h
 ifeq (opengl,$(EVAS_TARGET))
-	cfg += --enable-gl-x11 --enable-image-loader-png --enable-image-loader-jpeg --enable-cpu-p2-only --enable-cpu-mmx --enable-cpu-sse --enable-cpu-c --enable-scale-smooth --enable-scale-sample
+	cfg += --enable-gl-x11 --enable-image-loader-png --enable-image-loader-jpeg --enable-image-loader-edb --enable-image-loader-eet --enable-cpu-p2-only --enable-cpu-mmx --enable-cpu-sse --enable-cpu-c --enable-scale-smooth --enable-scale-sample
 else
 	cfg += --enable-software-x11 --enable-image-loader-png --enable-image-loader-jpeg --enable-image-loader-eet --enable-image-loader-edb --enable-fmemopen --enable-cpu-p2-only --enable-cpu-mmx --enable-cpu-sse --enable-cpu-c --enable-scale-smooth --enable-scale-sample --enable-convert-8-rgb-332 --enable-convert-8-rgb-666 --enable-convert-8-rgb-232 --enable-convert-8-rgb-222 --enable-convert-8-rgb-221 --enable-convert-8-rgb-121 --enable-convert-8-rgb-111 --enable-convert-16-rgb-565 --enable-convert-16-rgb-555 --enable-convert-16-rgb-rot-0 --enable-convert-32-rgb-8888 --enable-convert-32-rgbx-8888 --enable-convert-32-bgr-8888 --enable-convert-32-bgrx-8888 --enable-convert-32-rgb-rot-0
 endif
-ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
-	CFLAGS += -g
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+	CFLAGS += -O0
+else
+ifneq (,$(EVAS_ARCH))
+	CFLAGS += -O3 -mcpu=$(EVAS_ARCH) -march=$(EVAS_ARCH)
+else
+	CFLAGS += -O3 -mcpu=pentiumpro
+endif
 endif
 ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
 	INSTALL_PROGRAM += -s
 endif
-
-version=`ls src/.libs/lib*.so.* | \
- awk '{if (match($$0,/[0-9]+\.[0-9]+\.[0-9]+$$/)) print substr($$0,RSTART)}'`
-major=`ls src/.libs/lib*.so.* | \
- awk '{if (match($$0,/\.so\.[0-9]+$$/)) print substr($$0,RSTART+4)}'`
+export CFLAGS
 
 configure: configure-stamp
 configure-stamp:
@@ -41,8 +44,8 @@ configure-stamp:
 	touch configure-stamp
 
 
-build: build-stamp
-build-stamp: configure-stamp 
+build: configure build-stamp
+build-stamp:
 	dh_testdir
 
 	$(MAKE)
@@ -76,12 +79,6 @@ binary-arch: build install
 
 	dh_installdocs NEWS README TODO
 	dh_installman
-	dh_undocumented -plibevas2-dev evas-config.1
-ifeq (opengl,$(EVAS_TARGET))
-	dh_undocumented -pevas2-test evas_gl_x11_test.1
-else
-	dh_undocumented -pevas2-test evas_software_x11_test.1 evas_software_x11_perf_test.1 evas_software_x11_perf_load.1
-endif
 	dh_installchangelogs ChangeLog
 	dh_link
 	dh_strip

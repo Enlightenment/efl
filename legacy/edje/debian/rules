@@ -49,6 +49,7 @@ install: build
 	dh_installdirs
 
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/$(package)/
+	find $(CURDIR)/debian/$(package) -name CVS -a -type d -print0 |xargs -0 rm -rf
 	
 	$(INSTALL) -d debian/$(package)-dev/usr/lib
 	mv debian/$(package)/usr/include debian/$(package)/usr/bin \

@@ -1,5 +1,5 @@
-edje (0.0.1cvs2003071501) unstable; urgency=low
+edje (0.0.1-0cvs20030820) unstable; urgency=low
 
   * a CVS release
   
- -- Laurence J. Lane <ljlane@debian.org>  Tue, 30 Oct 2001 13:22:53 +0000
+ -- Sytse Wielinga <s.b.wielinga@student.utwente.nl>  Wed, 20 Aug 2003 16:51:21 +0200

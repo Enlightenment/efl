@@ -2,15 +2,14 @@ Source: evas2
 Section: libs
 Priority: optional
 Maintainer: Sytse Wielinga <s.b.wielinga@student.utwente.nl>
-Build-Depends: debhelper (>> 3.0.0), xlibs-dev, xlibmesa-dev, libttf-dev
+Build-Depends: debhelper (>> 3.0.0), libedb1-dev, libeet0-dev, libfreetype6-dev, libpng12-0-dev | libpng-dev, xlibs-dev, zlib1g-dev | libz-dev
 Standards-Version: 3.5.7.0
 
 Package: libevas2-dev
 Section: devel
 Architecture: any
-Depends: libevas2 (= ${Source-Version}), libc6-dev | libc-dev
+Depends: libevas2 (= ${Source-Version}), libedb1-dev, libeet0-dev, libfreetype6-dev, libpng12-0-dev | libpng-dev, xlibs-dev, zlib1g-dev | libz-dev, libc6-dev | libc-dev
 Conflicts: libevas-dev, libevas0-dev
-Replaces: libevas-dev, libevas0-dev
 Provides: libevas-dev, libevas0-dev
 Description: enlightenment advanced canvas library development files
  This package provides headers and static libraries required to develop against
@@ -32,8 +31,6 @@ Package: libevas2
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}
-Conflicts: libevas0
-Replaces: libevas0
 Description: enlightenment advanced canvas library
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
