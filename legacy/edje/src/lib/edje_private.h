@@ -249,7 +249,6 @@ struct _Edje_Part
       
       int                 confine_id; /* dragging within this bit, -1 = no */
    } dragable;
-   int                    load_error;
 };
 
 struct _Edje_Part_Image_Id

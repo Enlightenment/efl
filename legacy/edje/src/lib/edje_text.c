@@ -236,6 +236,7 @@ _edje_text_part_on_del(Edje *ed, Edje_Part *pt)
    if ((pt->default_desc) && (pt->default_desc->text.text_class))
      {
         _edje_text_class_member_del(ed, pt->default_desc->text.text_class);
+	free(pt->default_desc->text.text_class);
 	pt->default_desc->text.text_class = NULL;
      }
    for (tmp = pt->other_desc; tmp; tmp = tmp->next)
@@ -246,6 +247,7 @@ _edje_text_part_on_del(Edje *ed, Edje_Part *pt)
 	 if (desc->text.text_class)
 	   {
 	      _edje_text_class_member_del(ed, desc->text.text_class);
+	      free(desc->text.text_class);
 	      desc->text.text_class = NULL;
 	   }
      }

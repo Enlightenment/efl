@@ -623,10 +623,10 @@ _edje_collection_free_part_description_free(Edje_Part_Description *desc)
 	desc->image.tween_list = evas_list_remove(desc->image.tween_list, pi);
 	free(pi);
      }
-   if (desc->text.text) free(desc->text.text);
+   if (desc->color_class)     free(desc->color_class);
+   if (desc->text.text)       free(desc->text.text);
    if (desc->text.text_class) free(desc->text.text_class);
-   if (desc->text.font) free(desc->text.font);
-   if (desc->color_class) free(desc->color_class);
+   if (desc->text.font)       free(desc->text.font);
    free(desc);
 }
 
