@@ -33,10 +33,16 @@
   /* The ISO C99 defines the int16_t and int_32t types. If the compiler got
    * here, these types are probably undefined.
    */
-# ifndef __uint32_t_defined
+# ifndef __int16_t_defined
 typedef short int           int16_t;
+# endif
+# ifndef __uint16_t_defined
 typedef unsigned short int  uint16_t;
+# endif
+# ifndef __int32_t_defined
 typedef int                 int32_t;
+# endif
+# ifndef __uint32_t_defined
 typedef unsigned int        uint32_t;
 # endif
 #endif
