@@ -91,6 +91,7 @@ ecore_del_child(Window win, Window child)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return;
   if (XFindContext(disp, win, xid_context, (XPointer *) & xid) == XCNOENT)
     return;
   if (xid)
@@ -118,6 +119,7 @@ ecore_add_child(Window win, Window child)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return;
   if (XFindContext(disp, win, xid_context, (XPointer *) & xid) == XCNOENT)
     return;
   if (xid)
@@ -144,6 +146,7 @@ ecore_raise_child(Window win, Window child)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return;
   if (XFindContext(disp, win, xid_context, (XPointer *) & xid) == XCNOENT)
     return;
   if (xid)
@@ -170,6 +173,7 @@ ecore_lower_child(Window win, Window child)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return;
   if (XFindContext(disp, win, xid_context, (XPointer *) & xid) == XCNOENT)
     return;
   if (xid)
@@ -223,6 +227,7 @@ ecore_validate_xid(Window win)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return NULL;
   if (XFindContext(disp, win, xid_context, (XPointer *) & xid) == XCNOENT)
     {
       XWindowAttributes   att;
@@ -284,6 +289,7 @@ ecore_unvalidate_xid(Window win)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return;
   if (XFindContext(disp, win, xid_context, (XPointer *) & xid) == XCNOENT)
     return;
   if (xid)
@@ -302,12 +308,14 @@ ecore_unvalidate_xid(Window win)
 void
 ecore_sync(void)
 {
+   if (!disp) return;
   XSync(disp, False);
 }
 
 void
 ecore_flush(void)
 {
+   if (!disp) return;
   XFlush(disp);
 }
 
@@ -317,6 +325,7 @@ ecore_window_new(Window parent, int x, int y, int w, int h)
   Window              win;
   XSetWindowAttributes attr;
 
+   if (!disp) return 0;
   if (!parent)
     parent = default_root;
   attr.backing_store = NotUseful;
@@ -344,6 +353,7 @@ ecore_window_override_new(Window parent, int x, int y, int w, int h)
   Window              win;
   XSetWindowAttributes attr;
 
+   if (!disp) return 0;
   if (!parent)
     parent = default_root;
   attr.backing_store = NotUseful;
@@ -371,6 +381,7 @@ ecore_window_input_new(Window parent, int x, int y, int w, int h)
   Window              win;
   XSetWindowAttributes attr;
 
+   if (!disp) return 0;
   if (!parent)
     parent = default_root;
   attr.override_redirect = True;
@@ -390,6 +401,7 @@ ecore_window_set_events_propagate(Window win, int propagate)
 {
   XSetWindowAttributes attr;
 
+   if (!disp) return;
   if (!win)
     win = default_root;
   if (!propagate)
@@ -404,6 +416,7 @@ ecore_window_show(Window win)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return;
   xid = ecore_validate_xid(win);
   if (xid)
     {
@@ -419,6 +432,7 @@ ecore_window_hide(Window win)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return;
   xid = ecore_validate_xid(win);
   if (xid)
     {
@@ -432,6 +446,7 @@ ecore_window_hide(Window win)
 Pixmap
 ecore_pixmap_new(Window win, int w, int h, int dep)
 {
+   if (!disp) return 0;
   if (!win)
     win = default_win;
   if (dep == 0)
@@ -442,6 +457,7 @@ ecore_pixmap_new(Window win, int w, int h, int dep)
 void
 ecore_pixmap_free(Pixmap pmap)
 {
+   if (!disp) return;
   if (!pmap)
     return;
   XFreePixmap(disp, pmap);
@@ -450,24 +466,28 @@ ecore_pixmap_free(Pixmap pmap)
 void
 ecore_window_set_background_pixmap(Window win, Pixmap pmap)
 {
+   if (!disp) return;
   XSetWindowBackgroundPixmap(disp, win, pmap);
 }
 
 void
 ecore_window_set_shape_mask(Window win, Pixmap mask)
 {
+   if (!disp) return;
   XShapeCombineMask(disp, win, ShapeBounding, 0, 0, mask, ShapeSet);
 }
 
 void
 ecore_window_add_shape_mask(Window win, Pixmap mask)
 {
+   if (!disp) return;
   XShapeCombineMask(disp, win, ShapeBounding, 0, 0, mask, ShapeUnion);
 }
 
 void
 ecore_window_set_shape_window(Window win, Window src, int x, int y)
 {
+   if (!disp) return;
   XShapeCombineShape(disp, win, ShapeBounding, x, y, src, ShapeBounding,
 		     ShapeSet);
 }
@@ -475,6 +495,7 @@ ecore_window_set_shape_window(Window win, Window src, int x, int y)
 void
 ecore_window_add_shape_window(Window win, Window src, int x, int y)
 {
+   if (!disp) return;
   XShapeCombineShape(disp, win, ShapeBounding, x, y, src, ShapeBounding,
 		     ShapeUnion);
 }
@@ -484,6 +505,7 @@ ecore_window_set_shape_rectangle(Window win, int x, int y, int w, int h)
 {
   XRectangle          rect;
 
+   if (!disp) return;
   rect.x = x;
   rect.y = y;
   rect.width = w;
@@ -497,6 +519,7 @@ ecore_window_add_shape_rectangle(Window win, int x, int y, int w, int h)
 {
   XRectangle          rect;
 
+   if (!disp) return;
   rect.x = x;
   rect.y = y;
   rect.width = w;
@@ -508,6 +531,7 @@ ecore_window_add_shape_rectangle(Window win, int x, int y, int w, int h)
 void
 ecore_window_set_shape_rectangles(Window win, XRectangle * rect, int num)
 {
+   if (!disp) return;
   XShapeCombineRectangles(disp, win, ShapeBounding, 0, 0, rect, num, ShapeSet,
 			  Unsorted);
 }
@@ -515,6 +539,7 @@ ecore_window_set_shape_rectangles(Window win, XRectangle * rect, int num)
 void
 ecore_window_add_shape_rectangles(Window win, XRectangle * rect, int num)
 {
+   if (!disp) return;
   XShapeCombineRectangles(disp, win, ShapeBounding, 0, 0, rect, num, ShapeUnion,
 			  Unsorted);
 }
@@ -524,6 +549,7 @@ ecore_window_clip_shape_by_rectangle(Window win, int x, int y, int w, int h)
 {
   XRectangle          rect;
 
+   if (!disp) return;
   rect.x = x;
   rect.y = y;
   rect.width = w;
@@ -537,30 +563,35 @@ ecore_window_get_shape_rectangles(Window win, int *num)
 {
   int                 ord;
 
+   if (!disp) return NULL;
   return XShapeGetRectangles(disp, win, ShapeBounding, num, &ord);
 }
 
 void
 ecore_window_select_shape_events(Window win)
 {
+   if (!disp) return;
   XShapeSelectInput(disp, win, ShapeNotifyMask);
 }
 
 void
 ecore_window_unselect_shape_events(Window win)
 {
+   if (!disp) return;
   XShapeSelectInput(disp, win, 0);
 }
 
 void
 ecore_window_clear(Window win)
 {
+   if (!disp) return;
   XClearWindow(disp, win);
 }
 
 void
 ecore_window_clear_area(Window win, int x, int y, int w, int h)
 {
+   if (!disp) return;
   XClearArea(disp, win, x, y, w, h, False);
 }
 
@@ -571,6 +602,7 @@ ecore_pointer_xy(Window win, int *x, int *y)
   unsigned int        dm;
   int                 wx, wy;
 
+   if (!disp) return;
   if (win == 0)
     win = default_root;
   XQueryPointer(disp, win, &dw, &dw, &mouse_x, &mouse_y, &wx, &wy, &dm);
@@ -583,6 +615,7 @@ ecore_pointer_xy(Window win, int *x, int *y)
 void
 ecore_pointer_xy_set(int x, int y)
 {
+   if (!disp) return;
   mouse_x = x;
   mouse_y = y;
 }
@@ -590,6 +623,7 @@ ecore_pointer_xy_set(int x, int y)
 void
 ecore_pointer_xy_get(int *x, int *y)
 {
+   if (!disp) return;
   if (x)
     *x = mouse_x;
   if (y)
@@ -599,6 +633,7 @@ ecore_pointer_xy_get(int *x, int *y)
 void
 ecore_window_set_events(Window win, long mask)
 {
+   if (!disp) return;
   if (win == 0)
     win = default_root;
   XSelectInput(disp, win, mask);
@@ -609,6 +644,7 @@ ecore_window_remove_events(Window win, long mask)
 {
   XWindowAttributes   att;
 
+   if (!disp) return;
   if (win == 0)
     win = default_root;
   if (XGetWindowAttributes(disp, win, &att) == True)
@@ -623,6 +659,7 @@ ecore_window_add_events(Window win, long mask)
 {
   XWindowAttributes   att;
 
+   if (!disp) return;
   if (win == 0)
     win = default_root;
   if (XGetWindowAttributes(disp, win, &att) == True)
@@ -637,6 +674,7 @@ ecore_window_move(Window win, int x, int y)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return;
   xid = ecore_validate_xid(win);
   if (xid)
     {
@@ -720,6 +758,7 @@ ecore_window_resize(Window win, int w, int h)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return;
   xid = ecore_validate_xid(win);
   if (xid)
     {
@@ -741,6 +780,7 @@ ecore_window_move_resize(Window win, int x, int y, int w, int h)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return;
   xid = ecore_validate_xid(win);
   if (xid)
     {
@@ -762,18 +802,21 @@ ecore_window_move_resize(Window win, int x, int y, int w, int h)
 int
 ecore_x_get_fd(void)
 {
+   if (!disp) return 0;
   return ConnectionNumber(disp);
 }
 
 void
 ecore_set_error_handler(Ecore_Error_Function func)
 {
+   if (!disp) return;
   XSetErrorHandler((XErrorHandler) func);
 }
 
 void
 ecore_reset_error_handler(void)
 {
+   if (!disp) return;
   XSetErrorHandler((XErrorHandler) ecore_handle_x_error);
 }
 
@@ -828,14 +871,14 @@ ecore_display_init(char *display)
 int
 ecore_events_pending(void)
 {
-  if (!disp)
-    return 0;
+  if (!disp) return 0;
   return XPending(disp);
 }
 
 void
 ecore_get_next_event(XEvent * event)
 {
+   if (!disp) return;
   XNextEvent(disp, event);
 }
 
@@ -844,6 +887,7 @@ ecore_event_shape_get_id(void)
 {
   int                 base = -1, err_base;
 
+   if (!disp) return 0;
   XShapeQueryExtension(disp, &base, &err_base);
   base += ShapeNotify;
   return base;
@@ -852,6 +896,7 @@ ecore_event_shape_get_id(void)
 KeySym
 ecore_key_get_keysym_from_keycode(KeyCode keycode)
 {
+   if (!disp) return 0;
   return XKeycodeToKeysym(disp, keycode, 0);
 }
 
@@ -860,6 +905,7 @@ ecore_key_get_string_from_keycode(KeyCode keycode)
 {
   char               *str;
 
+   if (!disp) return strdup("");
   str = XKeysymToString(ecore_key_get_keysym_from_keycode(keycode));
   if (!str)
     return strdup("");
@@ -869,6 +915,7 @@ ecore_key_get_string_from_keycode(KeyCode keycode)
 void
 ecore_event_allow(int mode, Time t)
 {
+   if (!disp) return;
   XAllowEvents(disp, mode, t);
 }
 
@@ -885,6 +932,7 @@ ecore_lock_mask_scroll_get(void)
     Mod4Mask, Mod5Mask
   };
 
+   if (!disp) return 0;
   if (have_mask)
     return mask;
   mod = XGetModifierMapping(disp);
@@ -926,6 +974,7 @@ ecore_lock_mask_num_get(void)
     Mod4Mask, Mod5Mask
   };
 
+   if (!disp) return 0;
   if (have_mask)
     return mask;
   mod = XGetModifierMapping(disp);
@@ -967,6 +1016,7 @@ ecore_lock_mask_caps_get(void)
     Mod4Mask, Mod5Mask
   };
 
+   if (!disp) return 0;
   if (have_mask)
     return mask;
   mod = XGetModifierMapping(disp);
@@ -1008,6 +1058,7 @@ ecore_mod_mask_shift_get(void)
     Mod4Mask, Mod5Mask
   };
 
+   if (!disp) return 0;
   if (have_mask)
     return mask;
   mod = XGetModifierMapping(disp);
@@ -1049,6 +1100,7 @@ ecore_mod_mask_ctrl_get(void)
     Mod4Mask, Mod5Mask
   };
 
+   if (!disp) return 0;
   if (have_mask)
     return mask;
   mod = XGetModifierMapping(disp);
@@ -1090,6 +1142,7 @@ ecore_mod_mask_alt_get(void)
     Mod4Mask, Mod5Mask
   };
 
+   if (!disp) return 0;
   if (have_mask)
     return mask;
   mod = XGetModifierMapping(disp);
@@ -1131,6 +1184,7 @@ ecore_mod_mask_win_get(void)
     Mod4Mask, Mod5Mask
   };
 
+   if (!disp) return 0;
   if (have_mask)
     return mask;
   mod = XGetModifierMapping(disp);
@@ -1171,6 +1225,7 @@ ecore_lock_mask_get(void)
   int                 root_x_ret, root_y_ret, win_x_ret, win_y_ret;
   unsigned int        mask_ret;
 
+   if (!disp) return 0;
   if (!mask)
     mask = ecore_lock_mask_scroll_get() | ecore_lock_mask_num_get() |
       ecore_lock_mask_caps_get();
@@ -1186,6 +1241,7 @@ ecore_modifier_mask_get(void)
   int                 root_x_ret, root_y_ret, win_x_ret, win_y_ret;
   unsigned int        mask_ret;
 
+   if (!disp) return 0;
   XQueryPointer(disp, default_root, &root_ret, &child_ret, &root_x_ret,
 		&root_y_ret, &win_x_ret, &win_y_ret, &mask_ret);
   return (mask_ret);
@@ -1194,6 +1250,7 @@ ecore_modifier_mask_get(void)
 Window
 ecore_get_key_grab_win(void)
 {
+   if (!disp) return 0;
   return grabkey_win;
 }
 
@@ -1203,6 +1260,7 @@ ecore_key_grab(char *key, Ecore_Event_Key_Modifiers mods, int anymod, int sync)
   KeyCode             keycode;
   int                 i, mod, mask_scroll, mask_num, mask_caps, masks[8], mode;
 
+   if (!disp) return;
   keycode = ecore_key_get_keycode(key);
   mod = 0;
   mode = GrabModeAsync;
@@ -1243,6 +1301,7 @@ ecore_key_ungrab(char *key, Ecore_Event_Key_Modifiers mods, int anymod)
 {
   KeyCode             keycode;
 
+   if (!disp) return;
   keycode = ecore_key_get_keycode(key);
   if (anymod)
     XUngrabKey(disp, keycode, AnyModifier, default_root);
@@ -1278,12 +1337,14 @@ ecore_key_ungrab(char *key, Ecore_Event_Key_Modifiers mods, int anymod)
 KeyCode
 ecore_key_get_keycode(char *key)
 {
+   if (!disp) return 0;
   return XKeysymToKeycode(disp, XStringToKeysym(key));
 }
 
 void
 ecore_window_destroy(Window win)
 {
+   if (!disp) return;
   ecore_unvalidate_xid(win);
   XDestroyWindow(disp, win);
 }
@@ -1293,6 +1354,7 @@ ecore_window_reparent(Window win, Window parent, int x, int y)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return;
   xid = ecore_validate_xid(win);
   if (xid)
     {
@@ -1312,6 +1374,7 @@ ecore_window_raise(Window win)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return;
   xid = ecore_validate_xid(win);
   if (xid)
     {
@@ -1325,6 +1388,7 @@ ecore_window_lower(Window win)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return;
   xid = ecore_validate_xid(win);
   if (xid)
     {
@@ -1338,6 +1402,7 @@ ecore_window_get_geometry(Window win, int *x, int *y, int *w, int *h)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return;
   if (win == 0)
     win = default_root;
   xid = ecore_validate_xid(win);
@@ -1383,6 +1448,7 @@ ecore_window_get_depth(Window win)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return 0;
   if (win == 0)
     win = default_root;
   xid = ecore_validate_xid(win);
@@ -1396,6 +1462,7 @@ ecore_window_exists(Window win)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return 0;
   xid = ecore_validate_xid(win);
   if (xid)
     return 1;
@@ -1407,6 +1474,7 @@ ecore_window_get_parent(Window win)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return 0;
   xid = ecore_validate_xid(win);
   if (xid)
     return xid->parent;
@@ -1418,6 +1486,7 @@ ecore_window_get_children(Window win, int *num)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return NULL;
   if (win == 0)
     win = default_root;
   xid = ecore_validate_xid(win);
@@ -1442,6 +1511,7 @@ ecore_window_mouse_in(Window win)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return 0;
   if (win == 0)
     win = default_root;
   xid = ecore_validate_xid(win);
@@ -1455,6 +1525,7 @@ ecore_window_mouse_set_in(Window win, int in)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return;
   if (win == 0)
     win = default_root;
   xid = ecore_validate_xid(win);
@@ -1473,6 +1544,7 @@ ecore_window_get_root(Window win)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return 0;
   xid = ecore_validate_xid(win);
   if (xid)
     return xid->root;
@@ -1578,6 +1650,7 @@ ecore_focus_window_get(void)
 void
 ecore_focus_to_window(Window win)
 {
+   if (!disp) return;
   if (win == 0)
     win = default_root;
   XSetInputFocus(disp, win, RevertToPointerRoot, CurrentTime);
@@ -1586,6 +1659,7 @@ ecore_focus_to_window(Window win)
 Atom
 ecore_atom_get(char *name)
 {
+   if (!disp) return 0;
   return XInternAtom(disp, name, False);
 }
 
@@ -1594,6 +1668,7 @@ ecore_window_set_delete_inform(Window win)
 {
   static Atom         protocols[1] = { 0 };
 
+   if (!disp) return;
   ECORE_ATOM(protocols[0], "WM_DELETE_WINDOW");
   XSetWMProtocols(disp, win, protocols, 1);
 }
@@ -1602,6 +1677,7 @@ void
 ecore_window_property_set(Window win, Atom type, Atom format, int size,
 			  void *data, int number)
 {
+   if (!disp) return;
   if (win == 0)
     win = default_root;
   if (size != 32)
@@ -1631,6 +1707,7 @@ ecore_window_property_get(Window win, Atom type, Atom format, int *size)
   int                 format_ret;
   void               *data = NULL;
 
+   if (!disp) return;
   retval = NULL;
   if (win == 0)
     win = default_root;
@@ -1682,6 +1759,7 @@ ecore_window_dnd_advertise(Window win)
   static Atom         atom_xdndaware = 0;
   int                 dnd_version = 3;
 
+   if (!disp) return;
   ECORE_ATOM(atom_xdndaware, "XdndAware");
   ecore_window_property_set(win, atom_xdndaware, XA_ATOM, 32, &dnd_version, 1);
 }
@@ -1689,6 +1767,7 @@ ecore_window_dnd_advertise(Window win)
 void
 ecore_grab(void)
 {
+   if (!disp) return;
   x_grabs++;
   if (x_grabs == 1)
     XGrabServer(disp);
@@ -1697,6 +1776,7 @@ ecore_grab(void)
 void
 ecore_ungrab(void)
 {
+   if (!disp) return;
   x_grabs--;
   if (x_grabs == 0)
     {
@@ -1710,6 +1790,7 @@ ecore_window_ignore(Window win)
 {
   Window_List        *w;
 
+   if (!disp) return;
   if (win == 0)
     win = default_root;
   w = NEW(Window_List, 1);
@@ -1723,6 +1804,7 @@ ecore_window_no_ignore(Window win)
 {
   Window_List        *w, *pw;
 
+   if (!disp) return;
   if (win == 0)
     win = default_root;
   for (pw = NULL, w = ignore_wins; w; pw = w, w = w->next)
@@ -1744,6 +1826,7 @@ ecore_window_is_ignored(Window win)
 {
   Window_List        *w;
 
+   if (!disp) return 0;
   if (win == 0)
     win = default_root;
   for (w = ignore_wins; w; w = w->next)
@@ -1764,6 +1847,7 @@ ecore_window_at_xy_0(Window base, int bx, int by, int x, int y)
   unsigned int        ww, wh, num;
   int                 wx, wy;
 
+   if (!disp) return 0;
   if ((!XGetWindowAttributes(disp, base, &att)) ||
       (att.map_state != IsViewable))
     return 0;
@@ -1806,6 +1890,7 @@ ecore_window_get_at_xy(int x, int y)
 {
   Window              child;
 
+   if (!disp) return 0;
   ecore_grab();
   child = ecore_window_at_xy_0(default_root, 0, 0, x, y);
   if (child)
@@ -1825,6 +1910,7 @@ ecore_window_dnd_capable(Window win)
   int                *atom_ret;
   int                 size = 0;
 
+   if (!disp) return 0;
   ECORE_ATOM(atom_xdndaware, "XdndAware");
   atom_ret = ecore_window_property_get(win, atom_xdndaware, XA_ATOM, &size);
   if ((atom_ret) && (size >= (int)sizeof(int)))
@@ -1855,6 +1941,7 @@ ecore_window_dnd_handle_motion(Window source_win, int x, int y, int dragging)
   Window              win;
   XEvent              xevent;
 
+   if (!disp) return;
   win = ecore_window_get_at_xy(x, y);
   while ((win) && (!ecore_window_dnd_capable(win)))
     win = ecore_window_get_parent(win);
@@ -1964,6 +2051,7 @@ ecore_dnd_selection_convert(Window win, Window req, Atom type)
   static Atom         atom_xdndselection = 0;
   static Atom         atom_jxselectionwindowproperty = 0;
 
+   if (!disp) return;
   ECORE_ATOM(atom_xdndselection, "XdndSelection");
   ECORE_ATOM(atom_jxselectionwindowproperty, "JXSelectionWindowProperty");
   if (win == XGetSelectionOwner(disp, atom_xdndselection))
@@ -1982,6 +2070,7 @@ ecore_dnd_selection_get(Window win, Window req, Atom type, int *size)
   long                bytes_read;
   unsigned long       remaining = 1;
 
+   if (!disp) return NULL;
   *size = 0;
   bytes_read = 0;
   while (remaining)
@@ -2031,6 +2120,7 @@ ecore_dnd_set_data(Window win)
   static Atom         atom_xdndactionlist = 0;
   static Atom         atom_xdndselection = 0;
 
+   if (!disp) return;
   ECORE_ATOM(atom_xdndactioncopy, "XdndActionCopy");
   ECORE_ATOM(atom_xdndactionmove, "XdndActionMove");
   ECORE_ATOM(atom_xdndactionlink, "XdndActionLink");
@@ -2062,6 +2152,7 @@ ecore_dnd_send_data(Window win, Window source_win, void *data, int size,
   static Atom         atom_xdndselection = 0;
   Atom                target;
 
+   if (!disp) return;
   ECORE_ATOM(atom_xdndselection, "XdndSelection");
   ECORE_ATOM(atom_text_uri_list, "text/uri-list");
   ECORE_ATOM(atom_text_plain, "text/plain");
@@ -2119,6 +2210,7 @@ ecore_dnd_own_selection(Window win)
   static Atom         atom_xdndselection = 0;
   static Atom         atom_jxselectionwindowproperty = 0;
 
+   if (!disp) return;
   ECORE_ATOM(atom_xdndselection, "XdndSelection");
   ECORE_ATOM(atom_jxselectionwindowproperty, "JXSelectionWindowProperty");
 
@@ -2132,6 +2224,7 @@ ecore_dnd_send_drop(Window win, Window source_win)
   static Atom         atom_xdnddrop = 0;
   XEvent              xevent;
 
+   if (!disp) return;
   ECORE_ATOM(atom_xdnddrop, "XdndDrop");
 
   ecore_dnd_own_selection(source_win);
@@ -2162,6 +2255,7 @@ ecore_window_dnd_send_status_ok(Window source_win, Window win, int x, int y,
   static Atom         atom_xdndactionask = 0;
   XEvent              xevent;
 
+   if (!disp) return;
   ECORE_ATOM(atom_xdndstatus, "XdndStatus");
   ECORE_ATOM(atom_xdndactioncopy, "XdndActionCopy");
   ECORE_ATOM(atom_xdndactionmove, "XdndActionMove");
@@ -2196,6 +2290,7 @@ ecore_window_dnd_send_finished(Window source_win, Window win)
   static Atom         atom_xdndfinished = 0;
   XEvent              xevent;
 
+   if (!disp) return;
   ECORE_ATOM(atom_xdndfinished, "XdndFinished");
   memset(&xevent, 0, sizeof(xevent));
 
@@ -2228,6 +2323,7 @@ ecore_window_dnd_finished(void)
 void
 ecore_window_set_title(Window win, char *title)
 {
+   if (!disp) return;
   XStoreName(disp, win, title);
 }
 
@@ -2236,6 +2332,7 @@ ecore_window_set_name_class(Window win, char *name, char *class)
 {
   XClassHint          hint;
 
+   if (!disp) return;
   hint.res_name = name;
   hint.res_class = class;
   XSetClassHint(disp, win, &hint);
@@ -2246,6 +2343,7 @@ ecore_window_get_name_class(Window win, char **name, char **class)
 {
   XClassHint          xch;
 
+   if (!disp) return;
   if (name)
     *name = NULL;
   if (class)
@@ -2274,6 +2372,7 @@ ecore_window_get_hints(Window win, int *accepts_focus, int *initial_state,
 {
   XWMHints           *hints;
 
+   if (!disp) return;
   hints = XGetWMHints(disp, win);
   if (hints)
     {
@@ -2313,6 +2412,7 @@ ecore_window_get_machine(Window win)
 {
   XTextProperty       xtp;
 
+   if (!disp) return NULL;
   if (XGetWMClientMachine(disp, win, &xtp))
     {
       char               *s;
@@ -2332,6 +2432,7 @@ ecore_window_get_command(Window win)
    int                 cargc;
    char              **cargv;
    
+   if (!disp) return NULL;
    if (XGetCommand(disp, win, &cargv, &cargc))
      {
 	if (cargc > 0)
@@ -2366,6 +2467,7 @@ ecore_window_get_icon_name(Window win)
 {
   XTextProperty       xtp;
 
+   if (!disp) return NULL;
   if (XGetWMIconName(disp, win, &xtp))
     {
       char               *s;
@@ -2385,6 +2487,7 @@ ecore_window_set_min_size(Window win, int w, int h)
   XSizeHints          hints;
   long                ret;
 
+   if (!disp) return;
   memset(&hints, 0, sizeof(XSizeHints));
   XGetWMNormalHints(disp, win, &hints, &ret);
   hints.flags |= PMinSize | PSize | USSize;
@@ -2399,6 +2502,7 @@ ecore_window_set_max_size(Window win, int w, int h)
   XSizeHints          hints;
   long                ret;
 
+   if (!disp) return;
   memset(&hints, 0, sizeof(XSizeHints));
   XGetWMNormalHints(disp, win, &hints, &ret);
   hints.flags |= PMaxSize | PSize | USSize;
@@ -2413,6 +2517,7 @@ ecore_window_set_xy_hints(Window win, int x, int y)
   XSizeHints          hints;
   long                ret;
 
+   if (!disp) return;
   memset(&hints, 0, sizeof(XSizeHints));
   XGetWMNormalHints(disp, win, &hints, &ret);
   hints.flags |= PPosition | USPosition | PSize | USSize;
@@ -2427,6 +2532,7 @@ ecore_window_get_frame_size(Window win, int *l, int *r, int *t, int *b)
   static Atom         atom_e_frame_size = 0;
   int                *data, size;
 
+   if (!disp) return;
   ECORE_ATOM(atom_e_frame_size, "_E_FRAME_SIZE");
   data = ecore_window_property_get(win, atom_e_frame_size, XA_CARDINAL, &size);
   if (data)
@@ -2474,6 +2580,7 @@ ecore_window_save_under(Window win)
   XSetWindowAttributes att;
   XWindowAttributes   gatt;
 
+   if (!disp) return 0;
   att.save_under = True;
   XChangeWindowAttributes(disp, win, CWSaveUnder, &att);
   XGetWindowAttributes(disp, win, &gatt);
@@ -2485,6 +2592,7 @@ ecore_gc_new(Drawable d)
 {
   XGCValues           gcv;
 
+   if (!disp) return 0;
   if (d == 0)
     d = default_root;
   return XCreateGC(disp, d, 0, &gcv);
@@ -2493,36 +2601,42 @@ ecore_gc_new(Drawable d)
 void
 ecore_gc_free(GC gc)
 {
+   if (!disp) return;
   XFreeGC(disp, gc);
 }
 
 void
 ecore_gc_set_fg(GC gc, int val)
 {
+   if (!disp) return;
   XSetForeground(disp, gc, val);
 }
 
 void
 ecore_fill_rectangle(Drawable d, GC gc, int x, int y, int w, int h)
 {
+   if (!disp) return;
   XFillRectangle(disp, d, gc, x, y, w, h);
 }
 
 void
 ecore_draw_rectangle(Drawable d, GC gc, int x, int y, int w, int h)
 {
+   if (!disp) return;
   XDrawRectangle(disp, d, gc, x, y, w - 1, h - 1);
 }
 
 void
 ecore_draw_line(Drawable d, GC gc, int x1, int y1, int x2, int y2)
 {
+   if (!disp) return;
   XDrawLine(disp, d, gc, x1, y1, x2, y2);
 }
 
 void
 ecore_draw_point(Drawable d, GC gc, int x, int y)
 {
+   if (!disp) return;
   XDrawPoint(disp, d, gc, x, y);
 }
 
@@ -2531,6 +2645,7 @@ ecore_window_hint_set_layer(Window win, int layer)
 {
   static Atom         atom_win_layer = 0;
 
+   if (!disp) return;
   ECORE_ATOM(atom_win_layer, "_WIN_LAYER");
   ecore_window_property_set(win, atom_win_layer, XA_CARDINAL, 32, &layer, 1);
 }
@@ -2542,6 +2657,7 @@ ecore_window_hint_set_sticky(Window win, int sticky)
   static Atom         atom_win_hints = 0;
   int                 data;
 
+   if (!disp) return;
   ECORE_ATOM(atom_win_state, "_WIN_STATE");
   ECORE_ATOM(atom_win_hints, "_WIN_HINTS");
   if (sticky)
@@ -2565,6 +2681,7 @@ ecore_window_hint_set_borderless(Window win)
   static Atom         atom_motif_wm_hints = 0;
   int                 data[5];
 
+   if (!disp) return;
   ECORE_ATOM(atom_motif_wm_hints, "_MOTIF_WM_HINTS");
   data[0] = 0x3;
   data[1] = 0x0;
@@ -2580,6 +2697,7 @@ ecore_grab_mouse(Window win, int confine, Cursor cursor)
 {
   int                 ret;
 
+   if (!disp) return;
   if (confine)
     ret = XGrabPointer(disp, win, False,
 		       XEV_BUTTON | XEV_MOUSE_MOVE | XEV_IN_OUT,
@@ -2595,6 +2713,7 @@ ecore_grab_mouse(Window win, int confine, Cursor cursor)
 void
 ecore_ungrab_mouse(void)
 {
+   if (!disp) return;
   XUngrabPointer(disp, CurrentTime);
   grab_pointer_win = 0;
 }
@@ -2610,6 +2729,7 @@ ecore_window_get_gravity(Window win)
 {
   XWindowAttributes   att;
 
+   if (!disp) return;
   XGetWindowAttributes(disp, win, &att);
   return att.win_gravity;
 }
@@ -2619,6 +2739,7 @@ ecore_window_gravity_reset(Window win)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return;
   xid = ecore_validate_xid(win);
   if (xid)
     {
@@ -2639,6 +2760,7 @@ ecore_window_gravity_set(Window win, int gravity)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return;
   xid = ecore_validate_xid(win);
   if (xid)
     {
@@ -2659,6 +2781,7 @@ ecore_window_bit_gravity_set(Window win, int gravity)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return;
   xid = ecore_validate_xid(win);
   if (xid)
     {
@@ -2672,12 +2795,14 @@ ecore_window_bit_gravity_set(Window win, int gravity)
 void
 ecore_pointer_warp_by(int dx, int dy)
 {
+   if (!disp) return;
   XWarpPointer(disp, None, None, 0, 0, 0, 0, dx, dy);
 }
 
 void
 ecore_pointer_warp_to(int x, int y)
 {
+   if (!disp) return;
   XWarpPointer(disp, None, default_root, 0, 0, 0, 0, x, y);
 }
 
@@ -2686,6 +2811,7 @@ ecore_gc_set_include_inferiors(GC gc)
 {
   XGCValues           gcv;
 
+   if (!disp) return;
   gcv.subwindow_mode = IncludeInferiors;
   XChangeGC(disp, gc, GCSubwindowMode, &gcv);
 }
@@ -2694,6 +2820,7 @@ void
 ecore_area_copy(Drawable src, Drawable dest, GC gc,
 		int sx, int sy, int sw, int sh, int dx, int dy)
 {
+   if (!disp) return;
   if (src == 0)
     src = default_root;
   if (dest == 0)
@@ -2713,6 +2840,7 @@ ecore_window_get_virtual_area(Window win, int *area_x, int *area_y)
   static Atom         atom_win_area = 0;
   int                *data, size;
 
+   if (!disp) return;
   ECORE_ATOM(atom_win_area, "_WIN_AREA");
   data = ecore_window_property_get(win, atom_win_area, XA_CARDINAL, &size);
   if (data)
@@ -2734,9 +2862,9 @@ ecore_get_virtual_area(int *area_x, int *area_y)
   static Atom         atom_win_area = 0;
   int                *data, size;
 
+   if (!disp) return;
   ECORE_ATOM(atom_win_area, "_WIN_AREA");
-  data =
-    ecore_window_property_get(default_root, atom_win_area, XA_CARDINAL, &size);
+  data = ecore_window_property_get(default_root, atom_win_area, XA_CARDINAL, &size);
   if (data)
     {
       if (size == (sizeof(int) * 2))
@@ -2757,6 +2885,7 @@ ecore_window_get_root_relative_location(Window win, int *x, int *y)
   Window              parent;
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return;
   if (win == 0)
     win = default_root;
   if (win == default_root)
@@ -2808,6 +2937,7 @@ ecore_window_button_grab_auto_replay_set(Window win, int on)
 {
   Ecore_XID *xid = NULL;
 
+   if (!disp) return;
   xid = ecore_validate_xid(win);
   if (!xid) return;
   xid->grab_button_auto_replay = on;
@@ -2818,6 +2948,7 @@ ecore_window_button_grab_auto_replay_get(Window win)
 {
   Ecore_XID *xid = NULL;
 
+   if (!disp) return 0;
   xid = ecore_validate_xid(win);
   if (!xid) return 0;
   return xid->grab_button_auto_replay;
@@ -2832,6 +2963,7 @@ ecore_button_grab(Window win, int button, int events,
   unsigned int        locks[8];
   int                 i;
 
+   if (!disp) return;
   b = button;
   if (b == 0)
     b = AnyButton;
@@ -2873,6 +3005,7 @@ ecore_button_ungrab(Window win, int button, Ecore_Event_Key_Modifiers mod,
   unsigned int        locks[8];
   int                 i;
 
+   if (!disp) return;
   b = button;
   if (b == 0)
     b = AnyButton;
@@ -2907,6 +3040,7 @@ ecore_button_ungrab(Window win, int button, Ecore_Event_Key_Modifiers mod,
 void
 ecore_pointer_replay(Time t)
 {
+   if (!disp) return;
   XSync(disp, False);
   XAllowEvents(disp, ReplayPointer, t);
   XSync(disp, False);
@@ -2915,6 +3049,7 @@ ecore_pointer_replay(Time t)
 void
 ecore_pointer_grab(Window win, Time t)
 {
+   if (!disp) return;
   XGrabPointer(disp, win, False, XEV_BUTTON | XEV_MOUSE_MOVE | XEV_IN_OUT,
 	       GrabModeAsync, GrabModeAsync, None, None, t);
 }
@@ -2922,6 +3057,7 @@ ecore_pointer_grab(Window win, Time t)
 void
 ecore_pointer_ungrab(Time t)
 {
+   if (!disp) return;
   XUngrabPointer(disp, t);
 }
 
@@ -2930,6 +3066,7 @@ ecore_window_send_event_move_resize(Window win, int x, int y, int w, int h)
 {
   XEvent              ev;
 
+   if (!disp) return;
   ev.type = ConfigureNotify;
   ev.xconfigure.display = disp;
   ev.xconfigure.event = win;
@@ -2950,6 +3087,7 @@ ecore_window_send_client_message(Window win, Atom type, int format, void *data)
   XClientMessageEvent ev;
   int                 i;
 
+   if (!disp) return;
   ev.type = ClientMessage;
   ev.window = win;
   ev.message_type = type;
@@ -2975,18 +3113,21 @@ ecore_window_send_client_message(Window win, Atom type, int format, void *data)
 void
 ecore_window_add_to_save_set(Window win)
 {
+   if (!disp) return;
   XAddToSaveSet(disp, win);
 }
 
 void
 ecore_window_del_from_save_set(Window win)
 {
+   if (!disp) return;
   XRemoveFromSaveSet(disp, win);
 }
 
 void
 ecore_window_kill_client(Window win)
 {
+   if (!disp) return;
   XKillClient(disp, (XID) win);
 }
 
@@ -2995,6 +3136,7 @@ ecore_window_set_border_width(Window win, int bw)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return;
   xid = ecore_validate_xid(win);
   if (xid)
     {
@@ -3008,6 +3150,7 @@ ecore_window_get_border_width(Window win)
 {
   Ecore_XID          *xid = NULL;
 
+   if (!disp) return;
   xid = ecore_validate_xid(win);
   if (xid)
     {
@@ -3022,6 +3165,7 @@ ecore_window_get_wm_size_hints(Window win, XSizeHints * hints, int *mask)
   long                sup_ret;
   Status              ok;
 
+   if (!disp) return;
   ok = XGetWMNormalHints(disp, win, hints, &sup_ret);
   *mask = (int)sup_ret;
   return ok;
@@ -3032,6 +3176,7 @@ ecore_window_is_visible(Window win)
 {
   XWindowAttributes   att;
 
+   if (!disp) return;
   if (win == 0)
     win = default_root;
   if (XGetWindowAttributes(disp, win, &att) == True)
@@ -3048,6 +3193,7 @@ ecore_window_is_normal(Window win)
 {
   XWindowAttributes   att;
 
+   if (!disp) return;
   if (win == 0)
     win = default_root;
   if (XGetWindowAttributes(disp, win, &att) == True)
@@ -3064,6 +3210,7 @@ ecore_window_is_manageable(Window win)
 {
   XWindowAttributes   att;
 
+   if (!disp) return;
   if (win == 0)
     win = default_root;
   if (XGetWindowAttributes(disp, win, &att) == True)
@@ -3079,6 +3226,7 @@ ecore_window_is_manageable(Window win)
 void
 ecore_windows_restack(Window * wins, int num)
 {
+   if (!disp) return;
   XRestackWindows(disp, wins, num);
 }
 
@@ -3087,6 +3235,7 @@ ecore_window_stack_above(Window win, Window above)
 {
   XWindowChanges      xwc;
 
+   if (!disp) return;
   if (win == 0)
     win = default_root;
   xwc.sibling = above;
@@ -3099,6 +3248,7 @@ ecore_window_stack_below(Window win, Window below)
 {
   XWindowChanges      xwc;
 
+   if (!disp) return;
   if (win == 0)
     win = default_root;
   xwc.sibling = below;
@@ -3111,6 +3261,7 @@ ecore_window_get_title(Window win)
 {
   XTextProperty       xtp;
 
+   if (!disp) return;
   if (win == 0)
     win = default_root;
   if (XGetWMName(disp, win, &xtp))
@@ -3146,6 +3297,7 @@ ecore_keyboard_grab(Window win)
 {
   int                 status;
 
+   if (!disp) return;
   if (keyboard_grab_win)
     return;
   if (win == 0)
@@ -3161,6 +3313,7 @@ ecore_keyboard_grab(Window win)
 void
 ecore_keyboard_ungrab(void)
 {
+   if (!disp) return;
   if (!keyboard_grab_win)
     return;
   keyboard_grab_win = 0;
@@ -3174,6 +3327,7 @@ ecore_selection_set(char *string)
   static Atom         dest = 0;
   Atom                selection;
 
+   if (!disp) return 0;
   selection = X_CLIPBOARD_SELECTION;
   ECORE_ATOM(dest, "TEXT_SELECTION");
   target = ecore_window_new(0, 0, 0, 77, 7);
@@ -3196,6 +3350,7 @@ ecore_selection_request(void)
   Atom                selection;
   Window              target = 0;
 
+   if (!disp) return 0;
   selection = X_CLIPBOARD_SELECTION;
   ECORE_ATOM(dest, "TEXT_SELECTION");
   target = ecore_window_new(0, 0, 0, 7, 77);
@@ -3214,6 +3369,7 @@ ecore_selection_get_data(Window win, Atom prop)
   Atom                actual_type;
   int                 actual_fmt;
 
+   if (!disp) return NULL;
   if (prop == None)
     return NULL;
   for (nread = 0, bytes_after = 1; bytes_after > 0;)
@@ -3294,6 +3450,7 @@ ecore_set_blank_pointer(Window w)
   GC                  gc;
   XGCValues           gcv;
 
+   if (!disp) return;
   if (w == 0)
     w = default_root;
   p = XCreatePixmap(disp, w, 1, 1, 1);
@@ -3315,6 +3472,7 @@ ecore_cursor_new(Pixmap pmap, Pixmap mask, int x, int y, int fr, int fg, int fb,
 {
   XColor              cl1, cl2;
 
+   if (!disp) return 0;
   cl1.pixel = 0;
   cl1.red = fr << 8 | fr;
   cl1.green = fg << 8 | fg;
@@ -3331,12 +3489,14 @@ ecore_cursor_new(Pixmap pmap, Pixmap mask, int x, int y, int fr, int fg, int fb,
 void
 ecore_cursor_free(Cursor c)
 {
+   if (!disp) return;
   XFreeCursor(disp, c);
 }
 
 void
 ecore_cursor_set(Window win, Cursor c)
 {
+   if (!disp) return;
   if (win == 0)
     win = default_root;
   XDefineCursor(disp, win, c);
