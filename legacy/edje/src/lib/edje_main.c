@@ -1,5 +1,10 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include "Edje.h"
 #include "edje_private.h"
+#include <time.h>
 
 static int initted = 0;
 
@@ -15,6 +20,7 @@ edje_init(void)
    initted++;
    if (initted == 1)
      {
+	srand(time(NULL));
 	_edje_edd_setup();
 	_edje_text_init();
 	embryo_init();
