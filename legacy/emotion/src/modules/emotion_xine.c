@@ -338,8 +338,19 @@ em_file_close(void *ef)
    pthread_cond_broadcast(&(ev->get_pos_len_cond));
    while (ev->seek_to);
    while (ev->get_poslen);
-   printf("EX pause...\n");
-//   xine_set_param(ev->stream, XINE_PARAM_SPEED, XINE_SPEED_PAUSE);
+   printf("EX pause end...\n");
+   if (!emotion_object_play_get(ev->obj))
+//   if (xine_get_param(ev->stream, XINE_PARAM_SPEED) == XINE_SPEED_PAUSE)
+     {
+	printf("sync...\n");
+	while (xine_get_param(ev->stream, XINE_PARAM_SPEED) == XINE_SPEED_NORMAL);
+	printf("sync...\n");
+	while (xine_get_param(ev->stream, XINE_PARAM_SPEED) == XINE_SPEED_PAUSE)
+	  {
+	     printf("  ... unpause\n");
+	     xine_set_param(ev->stream, XINE_PARAM_SPEED, XINE_SPEED_NORMAL);
+	  }
+     }
    printf("EX stop\n");
    xine_stop(ev->stream);
    printf("EX close\n");

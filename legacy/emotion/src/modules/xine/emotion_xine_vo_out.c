@@ -123,7 +123,6 @@ _emotion_class_init(xine_t *xine, void *visual)
    cl->config                       = xine->config;
    cl->xine                         = xine;
 
-   printf("VO class init\n");
    return cl;
 }
 
@@ -134,7 +133,6 @@ _emotion_class_dispose(video_driver_class_t *driver_class)
    
    cl = (Emotion_Class *)driver_class;
    free(cl);
-   printf("VO class dispose\n");
 }
 
 static char *
@@ -185,7 +183,6 @@ _emotion_open(video_driver_class_t *driver_class, const void *visual)
    dv->vo_driver.dispose              = _emotion_dispose;
    dv->vo_driver.redraw_needed        = _emotion_redraw;
    dv->ev                             = (Emotion_Xine_Video *)visual;
-   printf("VO open\n");
    return &dv->vo_driver;
 }    
 
@@ -197,7 +194,6 @@ _emotion_dispose(vo_driver_t *vo_driver)
    dv = (Emotion_Driver *)vo_driver;
 //   printf("emotion: _emotion_dispose()\n");
    free(dv);
-   printf("VO dispose\n");
 }
 
 /***************************************************************************/
@@ -323,7 +319,6 @@ _emotion_frame_alloc(vo_driver_t *vo_driver)
    fr->vo_frame.dispose    = _emotion_frame_dispose;
    fr->vo_frame.driver     = vo_driver;
    
-   printf("VO frame alloc\n");
    return (vo_frame_t *)fr;
 }
 
@@ -333,7 +328,6 @@ _emotion_frame_dispose(vo_frame_t *vo_frame)
    Emotion_Frame *fr;
    
    fr = (Emotion_Frame *)vo_frame;
-   printf("VO frame dispose\n");
 //   printf("emotion: _emotion_frame_dispose()\n");
    _emotion_frame_data_free(fr);  
    free(fr);
