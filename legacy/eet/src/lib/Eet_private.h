@@ -3,7 +3,6 @@
 
 #include "config.h"
 
-#define _GNU_SOURCE /* need this for fmemopen & open_memstream */
 #include <stdio.h>
 #include <unistd.h>
 #include <limits.h>
@@ -17,7 +16,6 @@
 #include <fnmatch.h>
 #include <jpeglib.h>
 #include <setjmp.h>
-#include <zlib.h>
 #include <locale.h>
 
 FILE *_eet_memfile_read_open(void *data, size_t size);

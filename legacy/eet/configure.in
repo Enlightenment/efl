@@ -15,6 +15,10 @@ AC_C_CONST
 AM_ENABLE_SHARED
 AM_PROG_LIBTOOL
 
+dnl These are needed for fmemopen/open_memstream
+AC_DEFINE(_GNU_SOURCE, , [Enable GNU extensions])
+AC_DEFINE(__USE_GNU, , [Enable GNU extensions])
+
 AC_CHECK_FUNCS(fmemopen)
 AC_CHECK_FUNCS(open_memstream)
 
