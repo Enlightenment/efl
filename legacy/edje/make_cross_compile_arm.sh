@@ -1,72 +1,83 @@
 #!/bin/sh
 
+PROJ="edje"
+
+SKIFF="/skiff/local"
+HOSTARCH="i686-pc-linux-gnu"
+TARGETCPU="arm"
+TARGETARCH=$TARGETCPU"-pc-linux-gnu"
+
+export EDB_CONFIG=$SKIFF"/"$TARGETCPU"-linux/bin/edb-config"
+export EET_CONFIG=$SKIFF"/"$TARGETCPU"-linux/bin/eet-config"
+export FREETYPE_CONFIG=$SKIFF"/"$TARGETCPU"-linux/bin/freetype-config"
+export EVAS_CONFIG=$SKIFF"/"$TARGETCPU"-linux/bin/evas-config"
+export ECORE_CONFIG=$SKIFF"/"$TARGETCPU"-linux/bin/ecore-config"
+
 make clean distclean
-./configure
+export CC=/skiff/local/bin/arm-linux-gcc
+export CFLAGS=-O9
+./configure \
+--host=$HOSTARCH \
+--build=$TARGETARCH \
+--target=$TARGETARCH \
+--disable-edje-cc \
+--enable-fb-only
 
-CC="/skiff/local/bin/arm-linux-gcc"
-ST="/skiff/local/bin/arm-linux-strip"
-CFLAGS="-O2"
+INST="/tmp/"$PROJ"-instroot"
+sudo rm -rf $INST
 
-rm -rf "build"
-mkdir "build"
-DST=`pwd`"/build";
+make
 
-mkdir $DST"/lib";
-mkdir $DST"/bin";
-mkdir $DST"/include";
-mkdir $DST"/share";
-mkdir $DST"/share/edje";
+for I in  `find . -name "*.la" -print`; do
+  sed s:"/usr/local":$INST:g < $I > "/tmp/.sed.tmp"
+  sudo cp "/tmp/.sed.tmp" $I
+  rm -f "/tmp/.sed.tmp"
+done
 
-pushd src
+sudo \
+make \
+prefix=$INST \
+exec_prefix=$INST \
+bindir=$INST"/bin" \
+sbindir=$INST"/sbin" \
+sysconfdir=$INST"/etc" \
+datadir=$INST"/share" \
+includedir=$INST"/include" \
+libdir=$INST"/lib" \
+libexecdir=$INST"/libexec" \
+localstatedir=$INST"/var/run" \
+mandir=$INST"/share/man" \
+infodir=$INST"/share/info" \
+install
 
- pushd lib
-  LIB="edje"
-  $CC \
-  *.c \
-  -DEDJE_FB_ONLY \
-  $CFLAGS \
-  -I. \
-  -I../.. \
-  -I/skiff/local/include \
-  -shared -fPIC -DPIC \
-  -Wl,-soname -Wl,"lib"$LIB".so.0" \
-  -o "lib"$LIB".so.0.0.1"
-  $ST -g "lib"$LIB".so.0.0.1"
-  rm -f "lib"$LIB".so"
-  ln -s "lib"$LIB".so.0.0.1" "lib"$LIB".so"
-  rm -f "lib"$LIB".so.0"
-  ln -s "lib"$LIB".so.0.0.1" "lib"$LIB".so.0"
-  rm -f "lib"$LIB".so.0.0"
-  ln -s "lib"$LIB".so.0.0.1" "lib"$LIB".so.0.0"
-  cp -a "lib"$LIB".so"* $DST"/lib";
-  cp -a Edje.h $DST"/include";
- popd
+## FIXUPS
+for I in $INST"/bin/"* $INST"/sbin/"* $INST"/libexec/"*; do
+  J=`echo $I | sed s:$TARGETARCH"-"::g`
+  sudo mv $I $J
+done
 
- pushd bin
-  BIN="edje"
-   $CC edje_main.c \
-   -DEDJE_FB_ONLY \
-   -I../.. -I../lib \
-   -I. \
-   -I/skiff/local/include \
-   -L. -L../lib \
-   -L/skiff/local/lib \
-   -ledje \
-   -lecore -lecore_evas -lecore_fb -lecore_ipc -lecore_con -lecore_job \
-   -levas -leet -ljpeg -lpng -lfreetype -lm -lz \
-   -o $BIN
-   $ST $BIN
-   cp -a $BIN $DST"/bin";
- popd
-popd
+CF=$INST"/bin/"$PROJ"-config"
+sed s:"/usr/local":$SKIFF"/"$TARGETCPU"-linux":g < $CF > "/tmp/.sed.tmp"
+sudo cp "/tmp/.sed.tmp" $CF
+rm -f "/tmp/.sed.tmp"
 
-mkdir $DST"/share/edje/data"
-cp -ar data/test data/e_logo.eet $DST"/share/edje/data"
+for I in  $INST"/lib/"*.la; do
+  sed s:"/usr/local":$SKIFF"/"$TARGETCPU"-linux":g < $I > "/tmp/.sed.tmp"
+  sudo cp "/tmp/.sed.tmp" $I
+  rm -f "/tmp/.sed.tmp"
+done
+      
+## package it all up
+PACK=$PROJ"-"$TARGETCPU"-inst.tar.gz"
 
-PD=`pwd`
-pushd "build"
- tar zcvf $PD"/data.tar.gz" *
- pushd "/skiff/local"
-  sudo tar zxvf $PD"/data.tar.gz"
- popd
-popd
+DIR=$PWD
+cd $INST
+sudo tar zcvf $DIR"/"$PACK *
+sudo chown $USER $DIR"/"$PACK
+cd $DIR
+sudo rm -rf $INST
+
+## install it in our skiff tree
+cd $SKIFF"/"$TARGETCPU"-linux"
+sudo tar zxvf $DIR"/"$PACK
+  

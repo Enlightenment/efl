@@ -4,10 +4,13 @@ dnl Process this file with autoconf to produce a configure script.
 rm -f config.cache
 
 AC_INIT(configure.in)
+AC_CANONICAL_BUILD
+AC_CANONICAL_HOST
+AC_CANONICAL_TARGET
+AC_ISC_POSIX
 AM_INIT_AUTOMAKE(edje, 0.0.1)
 AM_CONFIG_HEADER(config.h)
 
-AC_ISC_POSIX
 AC_PROG_CC
 AM_PROG_CC_STDC
 AC_HEADER_STDC
@@ -80,33 +83,89 @@ dnl Set PACKAGE_SOURCE_DIR in config.h.
 packagesrcdir=`cd $srcdir && pwd`
 AC_DEFINE_UNQUOTED(PACKAGE_SOURCE_DIR, "${packagesrcdir}", [Source code directory])
 
+AC_MSG_CHECKING(whether to build only fb support)
+have_fb_only="no"
+AC_ARG_ENABLE(fb-only, [  --enable-fb-only        enable building of fb support only ], [
+     if [ test "$enableval" = "yes" ]; then
+       AC_MSG_RESULT(yes)
+       have_fb_only="yes"
+     else
+       AC_MSG_RESULT(no)
+       have_fb_only="no"
+     fi
+   ], [
+      AC_MSG_RESULT($have_fb_only)
+   ]
+)
+
+AC_MSG_CHECKING(whether to build edje_cc)
+have_edje_cc="yes"
+AC_ARG_ENABLE(edje-cc, [  --disable-edje-cc       disable building of edje_cc ], [
+     if [ test "$enableval" = "yes" ]; then
+       AC_MSG_RESULT(yes)
+       have_edje_cc="yes"
+     else
+       AC_MSG_RESULT(no)
+       have_edje_cc="no"
+     fi
+   ], [
+      AC_MSG_RESULT($have_edje_cc)
+   ]
+)
+
+edje_def=""
+if test "x$have_fb_only" = "xyes"; then
+  edje_def="-DEDJE_FB_ONLY"
+fi
+AC_SUBST(edje_def)
+
+EDJE_CC_PRG=""
+if test "x$have_edje_cc" = "xyes"; then
+  AM_CONDITIONAL(BUILD_EDJE_CC, true)
+  EDJE_CC_PRG="edje_cc"
+else
+  AM_CONDITIONAL(BUILD_EDJE_CC, false)
+fi
+AC_SUBST(EDJE_CC_PRG)
+
 AC_ARG_WITH(eet,
         [  --with-eet=DIR          use eet in <DIR>],
         [CFLAGS="$CFLAGS -I$withval/include"
-         LIBS="-L$withval/lib $LIBS"])
+        LIBS="-L$withval/lib $LIBS"])
+			 
+have_eet="no";
+AC_CHECK_HEADER(Eet.h,
+  [ have_eet="yes" ],
+  [ have_eet="no" ]
+)
 
-AC_PATH_GENERIC(eet, , [
-    AC_SUBST(eet_libs)
-    AC_SUBST(eet_cflags)],
-    AC_MSG_ERROR(Cannot find eet: Is eet-config in path?))
-eet_libs=`eet-config --libs`
-eet_cflags=`eet-config --cflags`
+if test "x$have_eet" = "xyes"; then
+  if [ test -z "$EET_CONFIG" ]; then EET_CONFIG="eet-config"; fi
+  eet_cflags=`$EET_CONFIG --cflags`
+  eet_libs=`$EET_CONFIG --libs`
+else
+  AC_MSG_ERROR(Cannot find Eet.h)
+  exit -1
+fi
 
 AC_SUBST(eet_cflags)
 AC_SUBST(eet_libs)
 
-AC_ARG_WITH(imlib2,
-        [  --with-imlib2=DIR          use imlib2 in <DIR>],
-        [CFLAGS="$CFLAGS -I$withval/include"
-         LIBS="-L$withval/lib $LIBS"])
+imlib2_cflags=""
+imlib2_libs=""
+if test "x$have_edje_cc" = "xyes"; then
+  AC_ARG_WITH(imlib2,
+          [  --with-imlib2=DIR          use imlib2 in <DIR>],
+          [CFLAGS="$CFLAGS -I$withval/include"
+           LIBS="-L$withval/lib $LIBS"])
 
-AC_PATH_GENERIC(imlib2, , [
-    AC_SUBST(imlib2_libs)
-    AC_SUBST(imlib2_cflags)],
-    AC_MSG_ERROR(Cannot find imlib2: Is imlib2-config in path?))
-imlib2_libs=`imlib2-config --libs`
-imlib2_cflags=`imlib2-config --cflags`
-
+  AC_PATH_GENERIC(imlib2, , [
+      AC_SUBST(imlib2_libs)
+      AC_SUBST(imlib2_cflags)],
+      AC_MSG_ERROR(Cannot find imlib2: Is imlib2-config in path?))
+  imlib2_libs=`imlib2-config --libs`
+  imlib2_cflags=`imlib2-config --cflags`
+fi
 AC_SUBST(imlib2_cflags)
 AC_SUBST(imlib2_libs)
 
@@ -119,8 +178,10 @@ AC_PATH_GENERIC(evas, , [
     AC_SUBST(evas_libs)
     AC_SUBST(evas_cflags)],
     AC_MSG_ERROR(Cannot find evas: Is evas-config in path?))
-evas_libs=`evas-config --libs`
-evas_cflags=`evas-config --cflags`
+
+if [ test -z "$EVAS_CONFIG" ]; then EVAS_CONFIG="evas-config"; fi
+evas_cflags=`$EVAS_CONFIG --cflags`
+evas_libs=`$EVAS_CONFIG --libs`
 
 AC_SUBST(evas_cflags)
 AC_SUBST(evas_libs)
@@ -133,6 +194,10 @@ AC_CHECK_HEADERS(Evas_Engine_GL_X11.h, [], [], [
    #include <Evas.h>
    ])
 
+AC_CHECK_HEADERS(Evas_Engine_FB.h, [], [], [
+   #include <Evas.h>
+   ])
+
 AC_ARG_WITH(ecore,
         [  --with-ecore=DIR          use ecore in <DIR>],
         [CFLAGS="$CFLAGS -I$withval/include"
@@ -142,8 +207,10 @@ AC_PATH_GENERIC(ecore, , [
     AC_SUBST(ecore_libs)
     AC_SUBST(ecore_cflags)],
     AC_MSG_ERROR(Cannot find ecore: Is ecore-config in path?))
-ecore_libs=`ecore-config --libs`
-ecore_cflags=`ecore-config --cflags`
+
+if [ test -z "$ECORE_CONFIG" ]; then ECORE_CONFIG="ecore-config"; fi
+ecore_cflags=`$ECORE_CONFIG --cflags`
+ecore_libs=`$ECORE_CONFIG --libs`
 
 AC_SUBST(ecore_cflags)
 AC_SUBST(ecore_libs)

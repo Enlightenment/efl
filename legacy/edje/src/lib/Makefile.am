@@ -5,9 +5,8 @@ AUTOMAKE_OPTIONS     = 1.4 foreign
 # A list of all the files in the current directory which can be regenerated
 MAINTAINERCLEANFILES = Makefile.in
 
-LDFLAGS		     = -L/usr/local/lib
+LDFLAGS		     =
 INCLUDES	     = \
--I/usr/local/include \
 -I$(top_srcdir) \
 -I$(top_builddir) \
 -I$(includedir) \
@@ -30,5 +29,6 @@ edje_util.c \
 edje_private.h
 
 libedje_la_LIBADD       = $(LDFLAGS) -lm @evas_libs@ @ecore_libs@ @eet_libs@
+libedje_la_CPPFLAGS     = @edje_def@
 libedje_la_DEPENDENCIES = $(top_builddir)/config.h
 libedje_la_LDFLAGS      = -version-info 0:1:0
