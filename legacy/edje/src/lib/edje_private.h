@@ -12,7 +12,6 @@
 
 /* FIXME:
  * add a smooth scale option to fill params
- * reference count programs since the tmp lists can be screwed if a program is ended by another
  * need "random" signals and events for hooking to, and "random" durations
  * free stuff - no more leaks
  * dragables have to work
@@ -24,19 +23,17 @@
  * text and color classes need to work
  * reduce linked list walking and list_nth calls
  * named parts need to be able to be "replaced" with new evas objects
+ * part replacement with object callbacks should be possible
  * real part size and "before min/max limit" sizes need to be stored per part
  * need to be able to calculate min & max size of a whole edje
- * add code to list collections in an eet file
+ * need to be able to list collections in an eet file
  * externally sourced images need to be supported in edje_cc and edje
- * part replacement with object callbacks should be possible
  * part queries for geometry etc.
  * need to be able to "pause" edjes from API
  * need to be able to force anim times to 0.0 from API to turn off animation
- * need to detect relative loops
- * need to detect clip_to loops
+ * need to detect relative part loops
+ * need to detect clip_to part loops
  * need to detect anim time 0.0 loops
- * need to check frametime 0.0 works
- * need to check mouse_events flag works
  * edje_cc should be able to force lossy, lossless, min and max quality and compression of encoded images
  * edje_cc needs to prune out unused images
  * edje_cc might need an option for limiting number of tween images
@@ -342,6 +339,10 @@ struct _Edje
    double                x, y, w, h;
    unsigned char         dirty : 1;
    unsigned char         recalc : 1;
+   unsigned char         walking_callbacks : 1;
+   unsigned char         delete_callbacks : 1;
+   unsigned char         just_added_callbacks : 1;
+   unsigned char         have_objects : 1;
    Evas                 *evas; /* the evas this edje belongs to */
    Evas_Object          *obj; /* the smart object */
    Evas_Object          *clipper; /* a big rect to clip this edje to */
@@ -351,6 +352,7 @@ struct _Edje
    Evas_List            *actions; /* currently running actions */   
    Evas_List            *callbacks;
    int                   freeze;
+   int                   references;
 };
 
 struct _Edje_Real_Part
@@ -396,6 +398,8 @@ struct _Edje_Signal_Callback
    char  *source;
    void (*func) (void *data, Evas_Object *o, const char *emission, const char *source);
    void  *data;
+   int    just_added : 1;
+   int    delete_me : 1;
 };
 
 struct _Edje_Calc_Params
@@ -440,7 +444,11 @@ void  _edje_collection_free(Edje_Part_Collection *ec);
 
 Edje *_edje_add(Evas_Object *obj);
 void  _edje_del(Edje *ed);
-
+void  _edje_clean_part_objects(Edje *ed);
+void  _edje_clean_objects(Edje *ed);
+void  _edje_ref(Edje *ed);
+void  _edje_unref(Edje *ed);
+    
 int   _edje_program_run_iterate(Edje_Running_Program *runp, double tim);
 void  _edje_program_end(Edje *ed, Edje_Running_Program *runp);
 void  _edje_program_run(Edje *ed, Edje_Program *pr);

@@ -41,6 +41,11 @@ edje_signal_callback_add(Evas_Object *obj, const char *emission, const char *sou
    escb->func = func;
    escb->data = data;
    ed->callbacks = evas_list_append(ed->callbacks, escb);
+   if (ed->walking_callbacks)
+     {
+	escb->just_added = 1;
+	ed->just_added_callbacks = 1;
+     }
 }
 
 void *
@@ -64,9 +69,18 @@ edje_signal_callback_del(Evas_Object *obj, const char *emission, const char *sou
 	     void *data;
 	     
 	     data = escb->data;
-	     free(escb->signal);
-	     free(escb->source);
-	     free(escb);
+	     if (ed->walking_callbacks)
+	       {
+		  escb->delete_me = 1;
+		  ed->delete_callbacks = 1;
+	       }
+	     else
+	       {
+		  ed->callbacks = evas_list_remove_list(ed->callbacks, l);
+		  free(escb->signal);
+		  free(escb->source);
+		  free(escb);
+	       }
 	     return data;
 	  }
      }
@@ -92,6 +106,7 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
    double t, total;
    Evas_List *l;
 
+   _edje_ref(runp->edje);
    _edje_freeze(runp->edje);
    t = tim - runp->start_time;
    total = runp->program->tween.time;
@@ -143,11 +158,13 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 	     if (pr) _edje_program_run(runp->edje, pr);
 	  }
 	_edje_thaw(runp->edje);
+	_edje_unref(runp->edje);
 	free(runp);
 	return  0;
      }
    _edje_recalc(runp->edje);
    _edje_thaw(runp->edje);
+   _edje_unref(runp->edje);
    return 1;
 }
 
@@ -156,6 +173,7 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
 {
    Evas_List *l;
 
+   _edje_ref(runp->edje);
    _edje_freeze(runp->edje);
    for (l = runp->program->targets; l; l = l->next)
      {
@@ -183,6 +201,7 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
      _edje_animators = evas_list_remove(_edje_animators, runp->edje);
    _edje_emit(runp->edje, "program,stop", runp->program->name);
    _edje_thaw(runp->edje);
+   _edje_unref(runp->edje);   
    free(runp);
 }
    
@@ -192,6 +211,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr)
    Evas_List *l;
 
    _edje_freeze(ed);
+   _edje_ref(ed);
    _edje_emit(ed, "program,start", pr->name);
    if (pr->action == EDJE_ACTION_TYPE_STATE_SET)
      {
@@ -280,6 +300,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr)
      {
 	_edje_emit(ed, pr->state, pr->state2);
      }
+   _edje_unref(ed);
    _edje_thaw(ed);
 }
 
@@ -290,6 +311,7 @@ _edje_emit(Edje *ed, char *sig, char *src)
    static Evas_List *emissions = NULL;
    Edje_Emission *ee;
 
+   _edje_ref(ed);
    _edje_freeze(ed);
    printf("EMIT \"%s\" \"%s\"\n", sig, src);
    ee = calloc(1, sizeof(Edje_Emission));
@@ -300,6 +322,7 @@ _edje_emit(Edje *ed, char *sig, char *src)
      {
 	emissions = evas_list_append(emissions, ee);
 	_edje_thaw(ed);
+	_edje_unref(ed);
 	return;
      }
    else
@@ -319,14 +342,41 @@ _edje_emit(Edje *ed, char *sig, char *src)
 		      (_edje_glob_match(ee->source, pr->source)))
 		    _edje_program_run(ed, pr);
 	       }
+	     ed->walking_callbacks = 1;
 	     for (l = ed->callbacks; l; l = l->next)
 	       {
 		  Edje_Signal_Callback *escb;
 		  
 		  escb = l->data;
-		  if ((_edje_glob_match(ee->signal, escb->signal)) &&
+		  if ((!escb->just_added) &&
+		      (!escb->delete_me) &&
+		      (_edje_glob_match(ee->signal, escb->signal)) &&
 		      (_edje_glob_match(ee->source, escb->source)))
-	       escb->func(escb->data, ed->obj, ee->signal, ee->source);
+		    escb->func(escb->data, ed->obj, ee->signal, ee->source);
+	       }
+	     ed->walking_callbacks = 0;
+	     if ((ed->delete_callbacks) || (ed->just_added_callbacks))
+	       {
+		  ed->delete_callbacks = 0;
+		  ed->just_added_callbacks = 0;
+		  for (l = ed->callbacks; l;)
+		    {
+		       Edje_Signal_Callback *escb;
+		       Evas_List *next_l;
+		       
+		       escb = l->data;		       
+		       next_l = l->next;
+		       if (escb->just_added)
+			 escb->just_added = 0;
+		       if (escb->delete_me)
+			 {
+			    ed->callbacks = evas_list_remove_list(ed->callbacks, l);
+			    free(escb->signal);
+			    free(escb->source);
+			    free(escb);
+			 }
+		       l = next_l;
+		    }
 	       }
 	  }
 	free(ee->signal);
@@ -334,4 +384,5 @@ _edje_emit(Edje *ed, char *sig, char *src)
 	free(ee);
      }
    _edje_thaw(ed);
+   _edje_unref(ed);
 }

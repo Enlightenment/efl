@@ -65,7 +65,8 @@ _edje_smart_del(Evas_Object * obj)
 
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
-   _edje_del(ed);
+   _edje_clean_objects(ed);
+   _edje_unref(ed);
 }
 
 static void

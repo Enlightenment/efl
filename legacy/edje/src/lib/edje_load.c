@@ -72,6 +72,8 @@ edje_file_set(Evas_Object *obj, const char *file, const char *part)
 						 ed);
 		  evas_object_data_set(rp->object, "real_part", rp);
 	       }
+	     else
+	       evas_object_pass_events_set(rp->object, 1);
 	     evas_object_clip_set(rp->object, ed->clipper);
 	     evas_object_show(rp->object);
 	     rp->part = ep;
@@ -89,7 +91,10 @@ edje_file_set(Evas_Object *obj, const char *file, const char *part)
 	       {
 		  rp->clip_to = evas_list_nth(ed->parts, rp->part->clip_to_id);
 		  if (rp->clip_to)
-		    evas_object_clip_set(rp->object, rp->clip_to->object);
+		    {
+		       evas_object_pass_events_set(rp->clip_to->object, 1);
+		       evas_object_clip_set(rp->object, rp->clip_to->object);
+		    }
 	       }
 	  }
 	ed->dirty = 1;
@@ -110,7 +115,6 @@ _edje_file_add(Edje *ed)
    Evas_List *l;
    int id = -1;
 
-   /* FIXME: look in hash table first */   
    ed->file = evas_hash_find(_edje_file_hash, ed->path);
    if (ed->file)
      {
@@ -128,7 +132,7 @@ _edje_file_add(Edje *ed)
 	ed->file->path = strdup(ed->path);
 	if (!ed->file->collection_dir)
 	  {
-	     /* FIXME: free up ed->file */
+	     _edje_file_free(ed->file);
 	     ed->file = NULL;
 	     goto out;
 	  }
@@ -166,6 +170,13 @@ _edje_file_add(Edje *ed)
 	     if (!ed->collection) goto out;
 	     ed->collection->references = 1;
 	     ed->file->collection_hash = evas_hash_add(ed->file->collection_hash, ed->part, ed->collection);
+	  }
+	else
+	  {
+	     ed->file->references--;
+	     if (ed->file->references <= 0)
+	       _edje_file_free(ed->file);
+	     ed->file = NULL;
 	  }
      }
    out:
@@ -206,8 +217,16 @@ _edje_file_del(Edje *ed)
      }
    if (ed->actions)
      {
-//	printf("FIXME: leak!\n");
-	ed->actions = NULL;
+	while (ed->actions)
+	  {
+	     Edje_Running_Program *runp;
+	     
+	     _edje_anim_count--;
+	     runp = ed->actions->data;
+	     ed->actions = evas_list_remove(ed->actions, runp);
+	     free(runp);
+	  }
+	_edje_animators = evas_list_remove(_edje_animators, ed);
      }
 }
 

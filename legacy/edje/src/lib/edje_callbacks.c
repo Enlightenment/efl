@@ -128,13 +128,17 @@ _edje_timer_cb(void *data)
    double t;
    Evas_List *l;
    Evas_List *animl = NULL;
+   Edje *ed;
    
    t = ecore_time_get();
    for (l = _edje_animators; l; l = l->next)
-     animl = evas_list_append(animl, l->data);
+     {
+	ed = l->data;
+	_edje_ref(ed);
+	animl = evas_list_append(animl, l->data);
+     }
    while (animl)
      {
-	Edje *ed;
 	Evas_List *newl = NULL;
 	
 	ed = animl->data;
@@ -151,6 +155,7 @@ _edje_timer_cb(void *data)
 	     _edje_program_run_iterate(runp, t);
 	  }
 	_edje_thaw(ed);
+	_edje_unref(ed);
      }
    if (_edje_anim_count > 0) return 1;
    _edje_timer = NULL;
