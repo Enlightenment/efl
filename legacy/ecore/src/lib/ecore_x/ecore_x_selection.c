@@ -15,6 +15,8 @@ _ecore_x_selection_data_init(void)
    /* Initialize converters */
    ecore_x_selection_converter_atom_add(_ecore_x_atom_text, 
          _ecore_x_selection_converter_text);
+   ecore_x_selection_converter_atom_add(_ecore_x_atom_utf8_string, 
+         _ecore_x_selection_converter_text);
    ecore_x_selection_converter_atom_add(_ecore_x_atom_compound_text,
          _ecore_x_selection_converter_text);
    ecore_x_selection_converter_atom_add(_ecore_x_atom_string,
