@@ -114,6 +114,7 @@ int ecore_config_save_file(char *file) {
   }
   
   e_db_close(db);
+  e_db_flush();
   return 1;
 }
 
