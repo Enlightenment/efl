@@ -261,6 +261,43 @@ data_write(void)
 		       imlib_context_set_image(im);
 		       im_w = imlib_image_get_width();
 		       im_h = imlib_image_get_height();
+		       if ((img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT) &&
+			   (img->source_param == 0) &&
+			   (scale_raw != 100))
+			 {
+			    im = imlib_create_cropped_scaled_image(0, 0,
+								   im_w, im_h,
+								   (im_w * scale_raw) / 100,
+								   (im_h * scale_raw) / 100);
+			    imlib_free_image();
+			    imlib_context_set_image(im);
+			    im_w = imlib_image_get_width();
+			    im_h = imlib_image_get_height();
+			 }
+		       else if ((img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT) &&
+				(img->source_param == 1) &&
+				(scale_comp != 100))
+			 {
+			    im = imlib_create_cropped_scaled_image(0, 0,
+								   im_w, im_h,
+								   (im_w * scale_comp) / 100,
+								   (im_h * scale_comp) / 100);
+			    imlib_free_image();
+			    imlib_context_set_image(im);
+			    im_w = imlib_image_get_width();
+			    im_h = imlib_image_get_height();
+			 }
+		       else if (scale_lossy != 100)
+			 {
+			    im = imlib_create_cropped_scaled_image(0, 0,
+								   im_w, im_h,
+								   (im_w * scale_lossy) / 100,
+								   (im_h * scale_lossy) / 100);
+			    imlib_free_image();
+			    imlib_context_set_image(im);
+			    im_w = imlib_image_get_width();
+			    im_h = imlib_image_get_height();
+			 }
 		       im_alpha = imlib_image_has_alpha();
 		       im_data = imlib_image_get_data_for_reading_only();
 		       if ((im_data) && (im_w > 0) && (im_h > 0))
