@@ -1,8 +1,19 @@
 #include "Edje.h"
 #include "edje_private.h"
 
-Edje *_edje_fetch(Evas_Object *obj);
+Edje      *_edje_fetch(Evas_Object *obj);
+Edje      *_edje_add(Evas_Object *obj);
+void       _edje_del(Edje *ed);
+void       _edje_file_add(Edje *ed);
+void       _edje_file_del(Edje *ed);
+void       _edje_file_free(Edje_File *edf);
+void       _edje_collection_free(Edje_Part_Collection *ec);
 
+static void _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos);
+static void _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1, char *d2, double v2);
+static void _edje_part_recalc_single(Edje *ed, Edje_Real_Part *ep, Edje_Part_Description *desc, Edje_Part_Description *chosen_desc, Edje_Real_Part *rel1_to, Edje_Real_Part *rel2_to, Edje_Real_Part *confine_to, Edje_Calc_Params *params);
+static void _edje_part_recalc(Edje *ed, Edje_Real_Part *ep);
+static void _edje_recalc(Edje *ed);
 static void _edje_edd_setup(void);
 
 static void _edje_smart_add(Evas_Object * obj);
@@ -77,69 +88,21 @@ edje_file_set(Evas_Object *obj, const char *file, const char *part)
    
    ed = _edje_fetch(obj);
    if (!ed) return;
-   
-   /* FIXME: THIS IS A MESS! this nmeeds to be done properly. I've only done */
-   /* a quick hack here to "bootstrap" edje to display at all.. anything! */
-   /* as a matter of fact it does quite well so far! :) */
-   if (ed->collection)
-     {
-	printf("FIXME: leak!\n");
-     }
-   if (ed->file)
-     {
-	printf("FIXME: leak!\n");
-     }
-   /*****/
-     {
-	Eet_File *ef;	
-	Edje_Part_Collection *pc;
-	
-	ef = eet_open(file, EET_FILE_MODE_READ);
-	if (!ef) return;
-	ed->file = eet_data_read(ef, _edje_edd_edje_file, "edje_file");
-	if (ed->file)
-	  {
-	     Evas_List *l;
-	     int id;
-	     
-	     ed->file->path = strdup(file);
-	     printf("images...!\n");
-	     for (l = ed->file->image_dir->entries; l; l = l->next)
-	       {
-		  Edje_Image_Directory_Entry *ie;
-		  
-		  ie = l->data;
-		  printf("img: \"%s\" type=%i param=%i id=%i\n", 
-			 ie->entry, ie->source_type, ie->source_param, ie->id);
-	       }
-	     id = -1;
-	     for (l = ed->file->collection_dir->entries; l; l = l->next)
-	       {
-		  Edje_Part_Collection_Directory_Entry *ce;
-		  
-		  ce = l->data;
-		  if ((ce->entry) && (!strcmp(ce->entry, part)))
-		    {
-		       id = ce->id;
-		       break;
-		    }
-	       }
-	     if (id >= 0)
-	       {
-		  char buf[256];
-		  
-		  snprintf(buf, sizeof(buf), "collections/%i", id);
-		  printf("need %s\n", buf);
-		  ed->collection = eet_data_read(ef, _edje_edd_edje_part_collection, buf);
-	       }
-	  }
-	eet_close(ef);
-     }
+   if (!file) return;
+   if (!part) return;
+   if (((ed->path) && (!strcmp(file, ed->path))) &&
+	(ed->part) && (!strcmp(part, ed->part)))
+     return;
+   _edje_file_del(ed);
+   if (ed->path) free(ed->path);
+   ed->path = strdup(file);
+   if (ed->part) free(ed->part);
+   ed->part = strdup(part);
+   _edje_file_add(ed);
    if (ed->collection)
      {
 	Evas_List *l;
 	
-	printf("LOAD done... build\n");
 	for (l = ed->collection->parts; l; l = l->next)
 	  {
 	     Edje_Part *ep;
@@ -148,47 +111,346 @@ edje_file_set(Evas_Object *obj, const char *file, const char *part)
 	     
 	     ep = l->data;
 	     rp = calloc(1, sizeof(Edje_Real_Part));
-	     if (!rp)
-	       {
-		  /* FIXME: memory error! */
-		  return;
-	       }
+	     if (!rp) return;
 	     ed->parts = evas_list_append(ed->parts, rp);
-	     rp->part = ep;
-	     printf("part %s\n", rp->part->name);
-	     rp->param1.description =  rp->part->default_desc;
-	     rp->object = evas_object_image_add(ed->evas);
+	     rp->param1.description =  ep->default_desc;
+	     if (ep->type == EDJE_PART_TYPE_RECTANGLE)
+	       rp->object = evas_object_rectangle_add(ed->evas);
+	     else if (ep->type == EDJE_PART_TYPE_IMAGE)
+	       rp->object = evas_object_image_add(ed->evas);
+	     else if (ep->type == EDJE_PART_TYPE_TEXT)
+	       rp->object = evas_object_text_add(ed->evas);
 	     evas_object_clip_set(rp->object, ed->clipper);
 	     evas_object_show(rp->object);
-	     snprintf(buf, sizeof(buf), "images/%i", rp->part->default_desc->image.id);
-	     evas_object_image_file_set(rp->object, ed->file->path, buf);
+	     rp->part = ep;
 	  }
 	for (l = ed->parts; l; l = l->next)
 	  {
+	     Edje_Real_Part *rp;
+	     
+	     rp = l->data;
+	     if (rp->param1.description->rel1.id >= 0)
+	       rp->param1.rel1_to = evas_list_nth(ed->parts, rp->param1.description->rel1.id);
+	     if (rp->param1.description->rel2.id >= 0)
+	       rp->param1.rel2_to = evas_list_nth(ed->parts, rp->param1.description->rel2.id);
 	  }
+	ed->dirty = 1;
+	_edje_recalc(ed);
      }
 }
 
 /*** internal calls ***/
 
+/* utility functions we will use a lot */
+
+Edje *
+_edje_fetch(Evas_Object *obj)
+{
+   Edje *ed;
+   char *type;
+   
+   type = (char *)evas_object_type_get(obj);
+   if (!type) return NULL;
+   if (strcmp(type, "edje")) return NULL;
+   ed = evas_object_smart_data_get(obj);
+   return ed;
+}
+
+Edje *
+_edje_add(Evas_Object *obj)
+{
+   Edje *ed;
+   
+   ed = calloc(1, sizeof(Edje));
+   if (!ed) return NULL;
+   ed->evas = evas_object_evas_get(obj);
+   ed->clipper = evas_object_rectangle_add(ed->evas);
+   evas_object_smart_member_add(ed->clipper, obj);
+   evas_object_color_set(ed->clipper, 255, 255, 255, 255);
+   evas_object_move(ed->clipper, 0, 0);
+   evas_object_resize(ed->clipper, 0, 0);
+   return ed;
+}
+
+void
+_edje_del(Edje *ed)
+{
+   evas_object_del(ed->clipper);
+   free(ed);
+}
+
+static Evas_Hash *_edje_file_hash = NULL;
+
+void
+_edje_file_add(Edje *ed)
+{
+   Eet_File *ef = NULL;
+   Edje_Part_Collection *pc = NULL;
+   Evas_List *l;
+   int id = -1;
+
+   /* FIXME: look in hash table first */   
+   ed->file = evas_hash_find(_edje_file_hash, ed->path);
+   if (ed->file)
+     {
+	ed->file->references++;
+     }
+   else
+     {
+	ef = eet_open(ed->path, EET_FILE_MODE_READ);
+	if (!ef) return;
+   
+	ed->file = eet_data_read(ef, _edje_edd_edje_file, "edje_file");
+	if (!ed->file) goto out;
+
+	ed->file->references = 1;   
+	ed->file->path = strdup(ed->path);
+	if (!ed->file->collection_dir)
+	  {
+	     /* FIXME: free up ed->file */
+	     ed->file = NULL;
+	     goto out;
+	  }
+	_edje_file_hash = evas_hash_add(_edje_file_hash, ed->path, ed->file);
+     }
+   
+   ed->collection = evas_hash_find(ed->file->collection_hash, ed->part);
+   if (ed->collection)
+     {
+	ed->collection->references++;
+     }
+   else
+     {
+	for (l = ed->file->collection_dir->entries; l; l = l->next)
+	  {
+	     Edje_Part_Collection_Directory_Entry *ce;
+	     
+	     ce = l->data;
+	     if ((ce->entry) && (!strcmp(ce->entry, ed->part)))
+	       {
+		  id = ce->id;
+		  break;
+	       }
+	  }
+	if (id >= 0)
+	  {
+	     char buf[256];
+	     
+	     snprintf(buf, sizeof(buf), "collections/%i", id);
+	     if (!ef) eet_open(ed->path, EET_FILE_MODE_READ);
+	     if (!ef) goto out;
+	     ed->collection = eet_data_read(ef, 
+					    _edje_edd_edje_part_collection, 
+					    buf);
+	     if (!ed->collection) goto out;
+	     ed->collection->references = 1;
+	     ed->file->collection_hash = evas_hash_add(ed->file->collection_hash, ed->part, ed->collection);
+	  }
+     }
+   out:
+   if (ef) eet_close(ef);
+}
+
+void
+_edje_file_del(Edje *ed)
+{
+   if (ed->collection)
+     {
+	ed->collection->references--;
+	if (ed->collection->references <= 0)
+	  _edje_collection_free(ed->collection);
+	ed->collection = NULL;
+     }
+   if (ed->file)
+     {
+	ed->file->references--;
+	if (ed->file->references <= 0)
+	  _edje_file_free(ed->file);
+	ed->file = NULL;
+     }
+   if (ed->parts)
+     {
+	while (ed->parts)
+	  {
+	     Edje_Real_Part *rp;
+	     
+	     rp = ed->parts->data;
+	     evas_object_del(rp->object);
+	     if (rp->text.text) free(rp->text.text);
+	     if (rp->text.font) free(rp->text.font);
+	     free(rp);
+	     ed->parts = evas_list_remove(ed->parts, ed->parts->data);
+	  }
+	ed->parts = NULL;
+     }
+   if (ed->actions)
+     {
+//	printf("FIXME: leak!\n");
+	ed->actions = NULL;
+     }
+}
+
+void
+_edje_file_free(Edje_File *edf)
+{
+   printf("FIXME: leak!\n");
+}
+
+void
+_edje_collection_free(Edje_Part_Collection *ec)
+{
+   printf("FIXME: leak!\n");
+}
+
 /* manipulation calls */
 
 static void
-_edje_part_description_apply(Edje *ed, 
-			     Edje_Real_Part *ep, 
-			     Edje_Part_Description *de1, 
-			     Edje_Part_Description *de2, 
-			     double pos)
+_edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos)
 {
-   if ((ep->param1.description == de1) && 
-       (ep->param2.description == de2) && 
-       (ep->description_pos == pos))
-     return;
+   double npos;
    
-   ep->param1.description = de1;
-   ep->param2.description = de2;
-   ep->description_pos = pos;
+   if (pos > 1.0) pos = 1.0;
+   else if (pos < 0.0) pos = 0.0;
+   npos = 0.0;
+   /* take linear pos along timescale and use interpolation method */
+   switch (mode)
+     {
+      case EDJE_TWEEN_MODE_SINUSOIDAL:
+	npos = (1.0 - cos(pos * PI)) / 2.0;
+	break;
+      case EDJE_TWEEN_MODE_ACCELERATE:
+	npos = 1.0 - sin((PI / 2.0) + (pos * PI / 2.0));
+	break;
+      case EDJE_TWEEN_MODE_DECELERATE:
+	npos = sin(pos * PI / 2.0);
+	break;
+      case EDJE_TWEEN_MODE_LINEAR:
+      default:
+	npos = ep->description_pos;
+	break;
+     }
+   if (npos == ep->description_pos) return;
    
+   ep->description_pos = npos;
+   
+   ed->dirty = 1;
+   ep->dirty = 1;   
+}
+
+static void
+_edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1, char *d2, double v2)
+{
+   char *cd1 = "default", *cd2 = "default";
+   double cv1 = 0.0, cv2 = 0.0;
+   int d1_change = 0;
+   int d2_change = 0;
+   
+   if (!d1) d1 = "default";
+   if (!d2) d2 = "default";
+   if (ep->param1.description)
+     {
+	cd1 = ep->param1.description->state.name;
+	cv1 = ep->param1.description->state.value;
+     }
+   if (ep->param2.description)
+     {
+	cd2 = ep->param2.description->state.name;
+	cv2 = ep->param2.description->state.value;
+     }
+   if ((v1 != cv1) || (strcmp(d1, cd1))) d1_change = 1;
+   if ((v2 != cv2) || (strcmp(d2, cd2))) d2_change = 1;
+   if ((!d1_change) && (!d2_change)) return;
+   
+   if (d1_change)
+     {
+	if (!strcmp(d1, "default") && (v1 == 0.0))
+	  ep->param1.description = ep->part->default_desc;
+	else
+	  {
+	     Evas_List *l;
+	     double min_dst = 999.0;
+	     Edje_Part_Description *desc_found = NULL;
+	     
+	     for (l = ep->part->other_desc; l; l = l->next)
+	       {
+		  Edje_Part_Description *desc;
+		  
+		  desc = l->data;
+		  if (!strcmp(desc->state.name, d1))
+		    {
+		       double dst;
+		       
+		       dst = desc->state.value - v1;
+		       if (dst == 0.0)
+			 {
+			    desc_found = desc;
+			    break;
+			 }
+		       if (dst < 0.0) dst = -dst;
+		       if (dst < min_dst)
+			 {
+			    desc_found = desc;
+			    min_dst = dst;
+			 }
+		    }
+	       }
+	     ep->param1.description = desc_found;
+	  }
+	ep->param1.rel1_to = NULL;
+	ep->param1.rel2_to = NULL;
+	if (ep->param1.description)
+	  {
+	     if (ep->param1.description->rel1.id >= 0)
+	       ep->param1.rel1_to = evas_list_nth(ed->parts, ep->param1.description->rel1.id);
+	     if (ep->param1.description->rel2.id >= 0)
+	       ep->param1.rel2_to = evas_list_nth(ed->parts, ep->param1.description->rel2.id);
+	  }
+     }
+   if (d2_change)
+     {
+	if (!strcmp(d2, "default") && (v2 == 0.0))
+	  ep->param2.description = ep->part->default_desc;
+	else
+	  {
+	     Evas_List *l;
+	     double min_dst = 999.0;
+	     Edje_Part_Description *desc_found = NULL;
+	     
+	     for (l = ep->part->other_desc; l; l = l->next)
+	       {
+		  Edje_Part_Description *desc;
+		  
+		  desc = l->data;
+		  if (!strcmp(desc->state.name, d2))
+		    {
+		       double dst;
+		       
+		       dst = desc->state.value - v2;
+		       if (dst == 0.0)
+			 {
+			    desc_found = desc;
+			    break;
+			 }
+		       if (dst < 0.0) dst = -dst;
+		       if (dst < min_dst)
+			 {
+			    desc_found = desc;
+			    min_dst = dst;
+			 }
+		    }
+	       }
+	     ep->param2.description = desc_found;
+	  }
+	ep->param2.rel1_to = NULL;
+	ep->param2.rel2_to = NULL;
+	if (ep->param2.description)
+	  {
+	     if (ep->param2.description->rel2.id >= 0)
+	       ep->param2.rel1_to = evas_list_nth(ed->parts, ep->param2.description->rel1.id);
+	     if (ep->param2.description->rel2.id >= 0)
+	       ep->param2.rel2_to = evas_list_nth(ed->parts, ep->param2.description->rel2.id);
+	  }
+     }
    ed->dirty = 1;
    ep->dirty = 1;
 }
@@ -642,21 +904,6 @@ _edje_recalc(Edje *ed)
    ed->dirty = 0;
 }
 
-/* utility functions we will use a lot */
-
-Edje *
-_edje_fetch(Evas_Object *obj)
-{
-   Edje *ed;
-   char *type;
-   
-   type = (char *)evas_object_type_get(obj);
-   if (!type) return NULL;
-   if (strcmp(type, "edje")) return NULL;
-   ed = evas_object_smart_data_get(obj);
-   return ed;
-}
-
 static void
 _edje_edd_setup(void)
 {
@@ -855,24 +1102,6 @@ _edje_edd_setup(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection, Edje_Part_Collection, "id", id, EET_T_INT);
 }
 
-/*
-Edje_File *
-_edje_add(Evas (evas)
-{
-   Edje *ed;
-     
-   ed = calloc(1, sizeof(Edje));
-   ed->evas = evas;
-   return ed;
-}
-
-void
-_edje_free(Edje *ed)
-{
-   free(ed);
-}
-*/
-
 /* evas smart object methods - required by evas smart objects to do the */
 /* dirty work on smrt objects */
 
@@ -880,16 +1109,10 @@ static void
 _edje_smart_add(Evas_Object * obj)
 {
    Edje *ed;
-   
-   ed = calloc(1, sizeof(Edje));
+
+   ed = _edje_add(obj);
    if (!ed) return;
    evas_object_smart_data_set(obj, ed);
-   ed->evas = evas_object_evas_get(obj);
-   ed->clipper = evas_object_rectangle_add(ed->evas);
-   evas_object_smart_member_add(ed->clipper, obj);
-   evas_object_color_set(ed->clipper, 255, 255, 255, 255);
-   evas_object_move(ed->clipper, 0, 0);
-   evas_object_resize(ed->clipper, 0, 0);
 }
 
 static void
@@ -899,8 +1122,7 @@ _edje_smart_del(Evas_Object * obj)
 
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
-   evas_object_del(ed->clipper);
-   free(ed);
+   _edje_del(ed);
 }
 
 static void

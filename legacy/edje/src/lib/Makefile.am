@@ -19,6 +19,6 @@ libedje_la_SOURCES  = \
 edje_main.c \
 edje_private.h
 
-libedje_la_LIBADD       = $(LDFLAGS) @my_libs@
+libedje_la_LIBADD       = $(LDFLAGS) -lm @my_libs@
 libedje_la_DEPENDENCIES = $(top_builddir)/config.h
 libedje_la_LDFLAGS      = -version-info 0:1:0

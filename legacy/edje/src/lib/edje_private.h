@@ -7,6 +7,8 @@
 #include <Ecore.h>
 #include <Eet.h>
 
+#include <math.h>
+
 /* HOW THIS ALL WORKS:
  * -------------------
  * 
@@ -55,6 +57,8 @@ typedef struct _Edje_Part                            Edje_Part;
 typedef struct _Edje_Part_Image_Id                   Edje_Part_Image_Id;
 typedef struct _Edje_Part_Description                Edje_Part_Description;
 
+#define PI 3.14159265358979323846
+
 #define EDJE_IMAGE_SOURCE_TYPE_NONE           0
 #define EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT 1
 #define EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY   2
@@ -95,8 +99,7 @@ struct _Edje_File
    Edje_Image_Directory           *image_dir;
    Edje_Part_Collection_Directory *collection_dir;
    
-   Evas_List                      *collection_loaded;
-   
+   Evas_Hash                      *collection_hash;
    int                             references;
 };
 
@@ -290,7 +293,9 @@ typedef struct _Edje_Real_Part Edje_Real_Part;
 
 struct _Edje
 {
+   char                 *path;
    char                 *part;
+   
    int                   layer;
    int                   x, y, w, h;
    unsigned char         dirty : 1;
