@@ -309,6 +309,9 @@ struct _Edje_Real_Part
    unsigned char          calculated : 1;
    unsigned char          dirty : 1;
    Edje_Part             *part;
+   struct {
+      int x, y;
+   } drag;
    double                 description_pos;
    struct {
       Edje_Part_Description *description;
@@ -330,6 +333,11 @@ struct _Edje_Calc_Params
    struct {
       unsigned char r, g, b, a;
    } color, color2, color3;
+   struct {   
+      int l, r, t, b;
+   } border;
+   
+   char visible : 1;
 };
 
 #endif

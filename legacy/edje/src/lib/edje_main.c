@@ -87,31 +87,220 @@ _edje_part_recalc_single(Edje *ed,
 			 Edje_Real_Part *confine_to,
 			 Edje_Calc_Params *params)
 {
-   /* horiz */
+   /* relative coords of top left & bottom right */
    if (rel1_to)
      {
 	params->x = desc->rel1.offset_x +
 	  rel1_to->x + (desc->rel1.relative_x * rel1_to->w);
+	params->y = desc->rel1.offset_y +
+	  rel1_to->y + (desc->rel1.relative_y * rel1_to->h);
      }
    else
      {
 	params->x = desc->rel1.offset_x +
 	  (desc->rel1.relative_x * ed->w);
+	params->y = desc->rel1.offset_y +
+	  (desc->rel1.relative_y * ed->h);
      }
    if (rel2_to)
      {
 	params->w = desc->rel2.offset_x +
 	  rel2_to->x + (desc->rel2.relative_x * rel2_to->w) -
 	  params->x;
+	params->h = desc->rel2.offset_y +
+	  rel2_to->y + (desc->rel2.relative_y * rel2_to->h) -
+	  params->y;
      }
    else
      {
 	params->w = desc->rel2.offset_x +
 	  (desc->rel2.relative_x * ed->w) -
 	  params->x;
-     }
+	params->h = desc->rel2.offset_y +
+	  (desc->rel2.relative_y * ed->h) -
+	  params->y;
+     }   
+   /* aspect */
+   if (params->h > 0)
+     {
+	double aspect;
+	int new_h;
    
-   /* vert */
+	new_h = params->h;
+	aspect = (double)params->w / (double)params->h;
+	/* adjust for max aspect (width / height) */
+	if ((desc->aspect.max > 0.0) && (aspect > desc->aspect.max))
+	  {
+	     new_h = (int)((double)params->w / desc->aspect.max);
+	  }
+	/* adjust for min aspect (width / height) */
+	if ((desc->aspect.min > 0.0) && (aspect < desc->aspect.min))
+	  {
+	     new_h = (int)((double)params->w / desc->aspect.min);
+	  }
+	/* do real adjustment */
+	if (params->h < new_h)
+	  {
+	     params->y = params->y +
+	       ((params->h - new_h) * (1.0 - desc->align.y));
+	     params->h = new_h;
+	  }
+	else if (params->h > new_h)
+	  {
+	     params->y = params->y +
+	       ((params->h - new_h) * desc->align.y);
+	     params->h = new_h;
+	  }	  
+     }
+   /* size step */
+   if (desc->step.x > 0)
+     {
+	int steps;
+	int new_w;
+	
+	steps = params->w / desc->step.x;
+	new_w = desc->step.x * steps;
+	if (params->w > new_w)
+	  {
+	     params->x = params->x +
+	       ((params->w - new_w) * desc->align.x);
+	     params->w = new_w;
+	  }	
+     }
+   if (desc->step.y > 0)
+     {
+	int steps;
+	int new_h;
+	
+	steps = params->h / desc->step.y;
+	new_h = desc->step.y * steps;
+	if (params->h > new_h)
+	  {
+	     params->y = params->y +
+	       ((params->h - new_h) * desc->align.y);
+	     params->h = new_h;
+	  }	
+     }
+   /* adjust for max size */
+   if (desc->max.w >= 0)
+     {
+	if (params->w > desc->max.w)
+	  {
+	     params->x = params->x + 
+	       ((params->w - desc->max.w) * desc->align.x);
+	     params->w = desc->max.w;
+	  }
+     }
+   if (desc->max.h >= 0)
+     {
+	if (params->h > desc->max.h)
+	  {
+	     params->y = params->y + 
+	       ((params->h - desc->max.h) * desc->align.y);
+	     params->h = desc->max.h;
+	  }
+     }
+   /* adjust for min size */
+   if (desc->min.w >= 0)
+     {
+	if (params->w < desc->min.w)
+	  {
+	     params->x = params->x + 
+	       ((params->w - desc->min.w) * (1.0 - desc->align.x));
+	     params->w = desc->min.w;
+	  }
+     }
+   if (desc->min.h >= 0)
+     {
+	if (params->h < desc->min.h)
+	  {
+	     params->y = params->y + 
+	       ((params->h - desc->min.h) * (1.0 - desc->align.y));
+	     params->h = desc->min.h;
+	  }
+     }
+   /* confine */
+   if (confine_to)
+     {
+	int offset;
+	int step;
+	
+	/* complex dragable params */
+	offset = params->x + ep->drag.x - confine_to->x;
+	if (desc->dragable.step_x > 0)
+	  {
+	     params->x = confine_to->x + 
+	       ((offset / desc->dragable.step_x) * desc->dragable.step_x);
+	  }
+	else if (desc->dragable.count_x > 0)
+	  {
+	     step = (confine_to->w - params->w) / desc->dragable.count_x;
+	     params->x = confine_to->x +
+	       ((offset / step) * step);	       
+	  }
+	offset = params->y + ep->drag.y - confine_to->y;
+	if (desc->dragable.step_y > 0)
+	  {
+	     params->y = confine_to->y + 
+	       ((offset / desc->dragable.step_y) * desc->dragable.step_y);
+	  }
+	else if (desc->dragable.count_y > 0)
+	  {
+	     step = (confine_to->h - params->h) / desc->dragable.count_y;
+	     params->y = confine_to->y +
+	       ((offset / step) * step);	       
+	  }
+	/* limit to confine */
+	if (params->x < confine_to->x)
+	  {
+	     params->x = confine_to->x;
+	  }
+	if ((params->x + params->w) > (confine_to->x + confine_to->w))
+	  {
+	     params->x = confine_to->w - params->w;
+	  }
+	if (params->y < confine_to->y)
+	  {
+	     params->y = confine_to->y;
+	  }
+	if ((params->y + params->h) > (confine_to->y + confine_to->h))
+	  {
+	     params->y = confine_to->h - params->y;
+	  }
+     }
+   else
+     {
+	/* simple dragable params */
+	params->x += ep->drag.x;
+	params->y += ep->drag.y;
+     }
+   /* fill */
+   params->fill.x = desc->fill.pos_abs_x + (params->w * desc->fill.pos_rel_x);
+   params->fill.w = desc->fill.abs_x + (params->w * desc->fill.rel_x);
+   params->fill.y = desc->fill.pos_abs_y + (params->h * desc->fill.pos_rel_y);
+   params->fill.h = desc->fill.abs_y + (params->h * desc->fill.rel_y);
+   /* colors */
+   params->color.r = desc->color.r;
+   params->color.g = desc->color.g;
+   params->color.b = desc->color.b;
+   params->color.a = desc->color.a;
+   params->color2.r = desc->color2.r;
+   params->color2.g = desc->color2.g;
+   params->color2.b = desc->color2.b;
+   params->color2.a = desc->color2.a;
+   params->color3.r = desc->color3.r;
+   params->color3.g = desc->color3.g;
+   params->color3.b = desc->color3.b;
+   params->color3.a = desc->color3.a;
+   /* visible */
+   params->visible = desc->visible;
+   /* border */
+   params->border.l = desc->border.l;
+   params->border.r = desc->border.r;
+   params->border.t = desc->border.t;
+   params->border.b = desc->border.b;
+   /* text */
+   /* FIXME: do */   
 }
 
 static void
