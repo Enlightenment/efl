@@ -1897,8 +1897,6 @@ st_collections_group_programs_program_action(void)
    Edje_Part_Collection *pc;
    Edje_Program *ep;
 
-   check_arg_count(3);
-
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->programs));
    ep->action = parse_enum(0,
@@ -1935,6 +1933,17 @@ st_collections_group_programs_program_action(void)
 	ep->value = parse_float(1);
 	ep->value2 = parse_float(2);
      }
+
+   switch (ep->action) {
+      case EDJE_ACTION_TYPE_ACTION_STOP:
+	 check_arg_count(1);
+	 break;
+      case EDJE_ACTION_TYPE_SCRIPT:
+	 /* FIXME: what's this? people usually just use script{}, no? */
+	 break;
+      default:
+	 check_arg_count(3);
+   }
 }
 
 static void
