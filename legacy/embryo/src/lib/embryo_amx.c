@@ -824,7 +824,6 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 	   case EMBRYO_OP_LODB_I:
 	     GETPARAM(offs);
 	     CHKMEM(pri);
-	     /* FIXME: handle unaligned access for 2 & 4 bytes */
 	     switch (offs)
 	       {
 		case 1:
@@ -912,7 +911,7 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 		default:
 		  ABORT(ep, EMBRYO_ERROR_INVINSTR);
 		  break;
-	       } /* switch */
+	       }
 	     break;
 	   case EMBRYO_OP_LIDX:
 	     offs = (pri * sizeof(Embryo_Cell)) + alt;
@@ -1025,8 +1024,7 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 	     break;
 	   case EMBRYO_OP_PUSH_R:
 	     GETPARAM(offs);
-	     while (offs--)
-	       PUSH(pri);
+	     while (offs--) PUSH(pri);
 	     break;
 	   case EMBRYO_OP_PUSH:
 	     GETPARAM(offs);
@@ -1064,7 +1062,6 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 	   case EMBRYO_OP_RET:
 	     POP(frm);
 	     POP(offs);
-	     /* verify the return address */
 	     if ((Embryo_UCell)offs >= codesize)
 	       ABORT(ep, EMBRYO_ERROR_MEMACCESS);
 	     cip = (Embryo_Cell *)(code + (int)offs);
@@ -1072,7 +1069,6 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 	   case EMBRYO_OP_RETN:
 	     POP(frm);
 	     POP(offs);
-	     /* verify the return address */
 	     if ((Embryo_UCell)offs >= codesize)
 	       ABORT(ep, EMBRYO_ERROR_MEMACCESS);
 	     cip = (Embryo_Cell *)(code + (int)offs);
