@@ -1,6 +1,23 @@
 #ifndef _EMBRYO_H
 #define _EMBRYO_H
 
+#ifdef EAPI
+#undef EAPI
+#endif
+#ifdef WIN32
+# ifdef BUILDING_DLL
+#  define EAPI __declspec(dllexport)
+# else
+#  define EAPI __declspec(dllimport)
+# endif
+#else
+# ifdef GCC_HASCLASSVISIBILITY
+#  define EAPI __attribute__ ((visibility("default")))
+# else
+#  define EAPI
+# endif
+#endif
+
 #ifdef  __cplusplus
 extern "C" {
 #endif
@@ -64,42 +81,42 @@ extern "C" {
 /** Embryo_Cell to float */
 #define EMBRYO_CELL_TO_FLOAT(c) ((FloatEmbryoCell) c).f
    
-   int              embryo_init(void);
-   int              embryo_shutdown(void);
+   EAPI int              embryo_init(void);
+   EAPI int              embryo_shutdown(void);
    
-   Embryo_Program  *embryo_program_new(void *data, int size);
-   Embryo_Program  *embryo_program_const_new(void *data, int size);
-   Embryo_Program  *embryo_program_load(char *file);
-   void             embryo_program_free(Embryo_Program *ep);
-   void             embryo_program_native_call_add(Embryo_Program *ep, char *name, Embryo_Cell (*func) (Embryo_Program *ep, Embryo_Cell *params));
-   void             embryo_program_vm_reset(Embryo_Program *ep);
-   void             embryo_program_vm_push(Embryo_Program *ep);
-   void             embryo_program_vm_pop(Embryo_Program *ep);
-   void             embryo_swap_16(unsigned short *v);
-   void             embryo_swap_32(unsigned int *v);
-   Embryo_Function  embryo_program_function_find(Embryo_Program *ep, char *name);
-   Embryo_Cell      embryo_program_variable_find(Embryo_Program *ep, char *name);
-   int              embryo_program_variable_count_get(Embryo_Program *ep);
-   Embryo_Cell      embryo_program_variable_get(Embryo_Program *ep, int num);
-   void             embryo_program_error_set(Embryo_Program *ep, int error);
-   int              embryo_program_error_get(Embryo_Program *ep);
-   void             embryo_program_data_set(Embryo_Program *ep, void *data);
-   void            *embryo_program_data_get(Embryo_Program *ep);
-   const char      *embryo_error_string_get(int error);
-   int              embryo_data_string_length_get(Embryo_Program *ep, Embryo_Cell *str_cell);
-   void             embryo_data_string_get(Embryo_Program *ep, Embryo_Cell *str_cell, char *dst);
-   void             embryo_data_string_set(Embryo_Program *ep, char *src, Embryo_Cell *str_cell);
-   Embryo_Cell     *embryo_data_address_get(Embryo_Program *ep, Embryo_Cell addr);
-   Embryo_Cell      embryo_data_heap_push(Embryo_Program *ep, int cells);
-   void             embryo_data_heap_pop(Embryo_Program *ep, Embryo_Cell down_to);
-   int              embryo_program_recursion_get(Embryo_Program *ep);
-   int              embryo_program_run(Embryo_Program *ep, Embryo_Function func);
-   Embryo_Cell      embryo_program_return_value_get(Embryo_Program *ep);
-   void             embryo_program_max_cycle_run_set(Embryo_Program *ep, int max);
-   int              embryo_program_max_cycle_run_get(Embryo_Program *ep);
-   int              embryo_parameter_cell_push(Embryo_Program *ep, Embryo_Cell cell);
-   int              embryo_parameter_string_push(Embryo_Program *ep, char *str);
-   int              embryo_parameter_cell_array_push(Embryo_Program *ep, Embryo_Cell *cells, int num);
+   EAPI Embryo_Program  *embryo_program_new(void *data, int size);
+   EAPI Embryo_Program  *embryo_program_const_new(void *data, int size);
+   EAPI Embryo_Program  *embryo_program_load(char *file);
+   EAPI void             embryo_program_free(Embryo_Program *ep);
+   EAPI void             embryo_program_native_call_add(Embryo_Program *ep, char *name, Embryo_Cell (*func) (Embryo_Program *ep, Embryo_Cell *params));
+   EAPI void             embryo_program_vm_reset(Embryo_Program *ep);
+   EAPI void             embryo_program_vm_push(Embryo_Program *ep);
+   EAPI void             embryo_program_vm_pop(Embryo_Program *ep);
+   EAPI void             embryo_swap_16(unsigned short *v);
+   EAPI void             embryo_swap_32(unsigned int *v);
+   EAPI Embryo_Function  embryo_program_function_find(Embryo_Program *ep, char *name);
+   EAPI Embryo_Cell      embryo_program_variable_find(Embryo_Program *ep, char *name);
+   EAPI int              embryo_program_variable_count_get(Embryo_Program *ep);
+   EAPI Embryo_Cell      embryo_program_variable_get(Embryo_Program *ep, int num);
+   EAPI void             embryo_program_error_set(Embryo_Program *ep, int error);
+   EAPI int              embryo_program_error_get(Embryo_Program *ep);
+   EAPI void             embryo_program_data_set(Embryo_Program *ep, void *data);
+   EAPI void            *embryo_program_data_get(Embryo_Program *ep);
+   EAPI const char      *embryo_error_string_get(int error);
+   EAPI int              embryo_data_string_length_get(Embryo_Program *ep, Embryo_Cell *str_cell);
+   EAPI void             embryo_data_string_get(Embryo_Program *ep, Embryo_Cell *str_cell, char *dst);
+   EAPI void             embryo_data_string_set(Embryo_Program *ep, char *src, Embryo_Cell *str_cell);
+   EAPI Embryo_Cell     *embryo_data_address_get(Embryo_Program *ep, Embryo_Cell addr);
+   EAPI Embryo_Cell      embryo_data_heap_push(Embryo_Program *ep, int cells);
+   EAPI void             embryo_data_heap_pop(Embryo_Program *ep, Embryo_Cell down_to);
+   EAPI int              embryo_program_recursion_get(Embryo_Program *ep);
+   EAPI int              embryo_program_run(Embryo_Program *ep, Embryo_Function func);
+   EAPI Embryo_Cell      embryo_program_return_value_get(Embryo_Program *ep);
+   EAPI void             embryo_program_max_cycle_run_set(Embryo_Program *ep, int max);
+   EAPI int              embryo_program_max_cycle_run_get(Embryo_Program *ep);
+   EAPI int              embryo_parameter_cell_push(Embryo_Program *ep, Embryo_Cell cell);
+   EAPI int              embryo_parameter_string_push(Embryo_Program *ep, char *str);
+   EAPI int              embryo_parameter_cell_array_push(Embryo_Program *ep, Embryo_Cell *cells, int num);
    
 #ifdef  __cplusplus
 }         

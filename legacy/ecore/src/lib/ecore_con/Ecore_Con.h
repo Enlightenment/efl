@@ -1,6 +1,23 @@
 #ifndef _ECORE_CON_H
 #define _ECORE_CON_H
 
+#ifdef EAPI
+#undef EAPI
+#endif
+#ifdef WIN32
+# ifdef BUILDING_DLL
+#  define EAPI __declspec(dllexport)
+# else
+#  define EAPI __declspec(dllimport)
+# endif
+#else
+# ifdef GCC_HASCLASSVISIBILITY
+#  define EAPI __attribute__ ((visibility("default")))
+# else
+#  define EAPI
+# endif
+#endif
+
 /**
  * @file Ecore_Con.h
  * @brief Sockets functions.
@@ -99,24 +116,24 @@ extern "C" {
    extern int ECORE_CON_EVENT_CLIENT_DATA;
    extern int ECORE_CON_EVENT_SERVER_DATA;
    
-   int               ecore_con_init(void);
-   int               ecore_con_shutdown(void);
+   EAPI int               ecore_con_init(void);
+   EAPI int               ecore_con_shutdown(void);
    
-   Ecore_Con_Server *ecore_con_server_add(Ecore_Con_Type type, char *name, int port, const void *data);
+   EAPI Ecore_Con_Server *ecore_con_server_add(Ecore_Con_Type type, char *name, int port, const void *data);
    
-   Ecore_Con_Server *ecore_con_server_connect(Ecore_Con_Type type, char *name, int port, const void *data);
-   void             *ecore_con_server_del(Ecore_Con_Server *svr);
-   void             *ecore_con_server_data_get(Ecore_Con_Server *svr);
-   int               ecore_con_server_connected_get(Ecore_Con_Server *svr);
-   int               ecore_con_server_send(Ecore_Con_Server *svr, void *data, int size);
+   EAPI Ecore_Con_Server *ecore_con_server_connect(Ecore_Con_Type type, char *name, int port, const void *data);
+   EAPI void             *ecore_con_server_del(Ecore_Con_Server *svr);
+   EAPI void             *ecore_con_server_data_get(Ecore_Con_Server *svr);
+   EAPI int               ecore_con_server_connected_get(Ecore_Con_Server *svr);
+   EAPI int               ecore_con_server_send(Ecore_Con_Server *svr, void *data, int size);
    
-   int               ecore_con_client_send(Ecore_Con_Client *cl, void *data, int size);
-   Ecore_Con_Server *ecore_con_client_server_get(Ecore_Con_Client *cl);
-   void             *ecore_con_client_del(Ecore_Con_Client *cl);
-   void              ecore_con_client_data_set(Ecore_Con_Client *cl, const void *data);
-   void             *ecore_con_client_data_get(Ecore_Con_Client *cl);
+   EAPI int               ecore_con_client_send(Ecore_Con_Client *cl, void *data, int size);
+   EAPI Ecore_Con_Server *ecore_con_client_server_get(Ecore_Con_Client *cl);
+   EAPI void             *ecore_con_client_del(Ecore_Con_Client *cl);
+   EAPI void              ecore_con_client_data_set(Ecore_Con_Client *cl, const void *data);
+   EAPI void             *ecore_con_client_data_get(Ecore_Con_Client *cl);
    
-   int               ecore_con_ssl_available_get(void);
+   EAPI int               ecore_con_ssl_available_get(void);
 
    
 #ifdef __cplusplus

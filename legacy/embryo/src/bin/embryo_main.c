@@ -285,7 +285,8 @@ main(int argc,char *argv[])
 	     fn = EMBRYO_FUNCTION_MAIN;
 	  }
      }
-   embryo_program_max_cycle_run_set(ep, 100000000);
+   if (!getenv("NOMAX"))
+     embryo_program_max_cycle_run_set(ep, 100000000);
    for (;;)
      {
 	r = embryo_program_run(ep, fn);

@@ -1,6 +1,23 @@
 #ifndef _ECORE_CONFIG_H
 # define _ECORE_CONFIG_H
 
+#ifdef EAPI
+#undef EAPI
+#endif
+#ifdef WIN32
+# ifdef BUILDING_DLL
+#  define EAPI __declspec(dllexport)
+# else
+#  define EAPI __declspec(dllimport)
+# endif
+#else
+# ifdef GCC_HASCLASSVISIBILITY
+#  define EAPI __attribute__ ((visibility("default")))
+# else
+#  define EAPI
+# endif
+#endif
+
 /**
  * @file 
  * @brief Provides the Enlightened Property Library.
@@ -112,92 +129,92 @@ extern              "C"
 # endif
 
 /* global ptrs to save passing them through the API */
-   extern Ecore_Config_Server *__ecore_config_server_global;
-   extern Ecore_Config_Server *__ecore_config_server_local;
-   extern Ecore_Config_Bundle *__ecore_config_bundle_local;
-   extern char        *__ecore_config_app_name;
+   extern EAPI Ecore_Config_Server *__ecore_config_server_global;
+   extern EAPI Ecore_Config_Server *__ecore_config_server_local;
+   extern EAPI Ecore_Config_Bundle *__ecore_config_bundle_local;
+   extern EAPI char        *__ecore_config_app_name;
 
-   Ecore_Config_Prop  *ecore_config_get(const char *key);
-   const char         *ecore_config_type_get(const Ecore_Config_Prop * e);
-   int                ecore_config_boolean_get(const char *key);
-   void               *ecore_config_data_get(const char *key);
-   char               *ecore_config_string_get(const char *key);
-   long                ecore_config_int_get(const char *key);
-   int                 ecore_config_rgb_get(const char *key, int *r, int *g,
+   EAPI Ecore_Config_Prop  *ecore_config_get(const char *key);
+   EAPI const char         *ecore_config_type_get(const Ecore_Config_Prop * e);
+   EAPI int                ecore_config_boolean_get(const char *key);
+   EAPI void               *ecore_config_data_get(const char *key);
+   EAPI char               *ecore_config_string_get(const char *key);
+   EAPI long                ecore_config_int_get(const char *key);
+   EAPI int                 ecore_config_rgb_get(const char *key, int *r, int *g,
 					    int *b);
-   int                 ecore_config_argb_get(const char *key, int *a, int *r,
+   EAPI int                 ecore_config_argb_get(const char *key, int *a, int *r,
 					     int *g, int *b);
-   char               *ecore_config_rgbstr_get(const char *key);
-   char               *ecore_config_argbstr_get(const char *key);
-   float               ecore_config_float_get(const char *key);
-   char               *ecore_config_theme_get(const char *key);
-   char               *ecore_config_as_string_get(const char *key);
-   int                 ecore_config_describe(const char *key, char *desc);
-   int                 ecore_config_short_opt_set(const char *key,
+   EAPI char               *ecore_config_rgbstr_get(const char *key);
+   EAPI char               *ecore_config_argbstr_get(const char *key);
+   EAPI float               ecore_config_float_get(const char *key);
+   EAPI char               *ecore_config_theme_get(const char *key);
+   EAPI char               *ecore_config_as_string_get(const char *key);
+   EAPI int                 ecore_config_describe(const char *key, char *desc);
+   EAPI int                 ecore_config_short_opt_set(const char *key,
 						  char short_opt);
-   int                 ecore_config_long_opt_set(const char *key,
+   EAPI int                 ecore_config_long_opt_set(const char *key,
 						 char *long_opt);
-   int                 ecore_config_set(const char *key, char *val);
-   int                 ecore_config_typed_set(const char *key, void *val,
+   EAPI int                 ecore_config_set(const char *key, char *val);
+   EAPI int                 ecore_config_typed_set(const char *key, void *val,
 					      int type);
-   int                 ecore_config_boolean_set(const char *key, int val);
-   int                 ecore_config_string_set(const char *key, char *val);
-   int                 ecore_config_int_set(const char *key, int val);
-   int                 ecore_config_rgb_set(const char *key, char *val);
-   int                 ecore_config_argb_set(const char *key, char *val);
-   int                 ecore_config_float_set(const char *key, float val);
-   int                 ecore_config_theme_set(const char *key, char *val);
-   int                 ecore_config_theme_preview_group_set(const char *key,
+   EAPI int                 ecore_config_boolean_set(const char *key, int val);
+   EAPI int                 ecore_config_string_set(const char *key, char *val);
+   EAPI int                 ecore_config_int_set(const char *key, int val);
+   EAPI int                 ecore_config_rgb_set(const char *key, char *val);
+   EAPI int                 ecore_config_argb_set(const char *key, char *val);
+   EAPI int                 ecore_config_float_set(const char *key, float val);
+   EAPI int                 ecore_config_theme_set(const char *key, char *val);
+   EAPI int                 ecore_config_theme_preview_group_set(const char *key,
 							    char *group);
-   int                 ecore_config_as_string_set(const char *key, char *val);
+   EAPI int                 ecore_config_as_string_set(const char *key, char *val);
 
-   int                 ecore_config_default(const char *key, char *val,
+   EAPI int                 ecore_config_default(const char *key, char *val,
 					    float lo, float hi, float step);
-   int                 ecore_config_typed_default(const char *key, void *val,
+   EAPI int                 ecore_config_typed_default(const char *key, void *val,
 						  int type);
-   int                 ecore_config_boolean_default(const char *key, int val);
-   int                 ecore_config_int_default(const char *key, int val);
-   int                 ecore_config_int_default_bound(const char *key, int val,
+   EAPI int                 ecore_config_boolean_default(const char *key, int val);
+   EAPI int                 ecore_config_int_default(const char *key, int val);
+   EAPI int                 ecore_config_int_default_bound(const char *key, int val,
 						      int lo, int hi, int step);
-   int                 ecore_config_string_default(const char *key, char *val);
-   int                 ecore_config_float_default(const char *key, float val);
-   int                 ecore_config_float_default_bound(const char *key,
+   EAPI int                 ecore_config_string_default(const char *key, char *val);
+   EAPI int                 ecore_config_float_default(const char *key, float val);
+   EAPI int                 ecore_config_float_default_bound(const char *key,
 							float val, float lo,
 							float hi, float step);
-   int                 ecore_config_rgb_default(const char *key, char *val);
-   int                 ecore_config_argb_default(const char *keym, char *val);
-   int                 ecore_config_theme_default(const char *key, char *val);
+   EAPI int                 ecore_config_rgb_default(const char *key, char *val);
+   EAPI int                 ecore_config_argb_default(const char *keym, char *val);
+   EAPI int                 ecore_config_theme_default(const char *key, char *val);
 
-   int                 ecore_config_listen(const char *name, const char *key,
+   EAPI int                 ecore_config_listen(const char *name, const char *key,
 					   Ecore_Config_Listener listener,
 					   int tag, void *data);
-   int                 ecore_config_deaf(const char *name, const char *key,
+   EAPI int                 ecore_config_deaf(const char *name, const char *key,
 					 Ecore_Config_Listener listener);
-   Ecore_Config_Prop  *ecore_config_dst(Ecore_Config_Prop * e);
-   int                 ecore_config_type_guess(const char *key, char *val);
+   EAPI Ecore_Config_Prop  *ecore_config_dst(Ecore_Config_Prop * e);
+   EAPI int                 ecore_config_type_guess(const char *key, char *val);
 
-   Ecore_Config_Bundle *ecore_config_bundle_new(Ecore_Config_Server * srv,
+   EAPI Ecore_Config_Bundle *ecore_config_bundle_new(Ecore_Config_Server * srv,
 						const char *id);
-   Ecore_Config_Bundle *ecore_config_bundle_1st_get(Ecore_Config_Server * srv);
-   Ecore_Config_Bundle *ecore_config_bundle_next_get(Ecore_Config_Bundle * ns);
-   Ecore_Config_Bundle *ecore_config_bundle_by_serial_get(Ecore_Config_Server *
+   EAPI Ecore_Config_Bundle *ecore_config_bundle_1st_get(Ecore_Config_Server * srv);
+   EAPI Ecore_Config_Bundle *ecore_config_bundle_next_get(Ecore_Config_Bundle * ns);
+   EAPI Ecore_Config_Bundle *ecore_config_bundle_by_serial_get(Ecore_Config_Server *
 							  srv, long serial);
-   Ecore_Config_Bundle *ecore_config_bundle_by_label_get(Ecore_Config_Server *
+   EAPI Ecore_Config_Bundle *ecore_config_bundle_by_label_get(Ecore_Config_Server *
 							 srv,
 							 const char *label);
-   long                ecore_config_bundle_serial_get(Ecore_Config_Bundle * ns);
-   char               *ecore_config_bundle_label_get(Ecore_Config_Bundle * ns);
+   EAPI long                ecore_config_bundle_serial_get(Ecore_Config_Bundle * ns);
+   EAPI char               *ecore_config_bundle_label_get(Ecore_Config_Bundle * ns);
 
-   int                 ecore_config_init(char *name);
-   int                 ecore_config_shutdown(void);
+   EAPI int                 ecore_config_init(char *name);
+   EAPI int                 ecore_config_shutdown(void);
 
-   int                 ecore_config_system_init(void);
-   int                 ecore_config_system_shutdown(void);
+   EAPI int                 ecore_config_system_init(void);
+   EAPI int                 ecore_config_system_shutdown(void);
 
-   int                 ecore_config_load(void);
-   int                 ecore_config_file_load(char *file);
-   int                 ecore_config_save(void);
-   int                 ecore_config_file_save(char *file);
+   EAPI int                 ecore_config_load(void);
+   EAPI int                 ecore_config_file_load(char *file);
+   EAPI int                 ecore_config_save(void);
+   EAPI int                 ecore_config_file_save(char *file);
 
 /* error codes */
 # define ECORE_CONFIG_ERR_NOTSUPP     (-16)
@@ -224,51 +241,51 @@ extern              "C"
 
 /* convenience mathods in convenience.c */
    /* FIXME: this should only be included if evas is present */
-   int                 ecore_config_evas_font_path_apply(Evas * evas);
-   char               *ecore_config_theme_search_path_get(void);
-   char               *ecore_config_theme_default_path_get(void);
-   char               *ecore_config_theme_with_path_from_name_get(char *name);
-   char               *ecore_config_theme_with_path_get(const char *key);
-   void                ecore_config_args_display(void);
-   int                 ecore_config_args_parse(void);
-   void                ecore_config_app_describe(char *description);
+   EAPI int                 ecore_config_evas_font_path_apply(Evas * evas);
+   EAPI char               *ecore_config_theme_search_path_get(void);
+   EAPI char               *ecore_config_theme_default_path_get(void);
+   EAPI char               *ecore_config_theme_with_path_from_name_get(char *name);
+   EAPI char               *ecore_config_theme_with_path_get(const char *key);
+   EAPI void                ecore_config_args_display(void);
+   EAPI int                 ecore_config_args_parse(void);
+   EAPI void                ecore_config_app_describe(char *description);
 
-   int                 ecore_config_create(const char *key, void *val,
+   EAPI int                 ecore_config_create(const char *key, void *val,
 					   char short_opt, char *long_opt,
 					   char *desc);
-   int                 ecore_config_typed_create(const char *key, void *val,
+   EAPI int                 ecore_config_typed_create(const char *key, void *val,
 						 int type, char short_opt,
 						 char *long_opt, char *desc);
-   int                 ecore_config_boolean_create(const char *key, int val,
+   EAPI int                 ecore_config_boolean_create(const char *key, int val,
                       char short_opt, char *long_opt,
                       char *desc);
-   int                 ecore_config_int_create(const char *key, int val,
+   EAPI int                 ecore_config_int_create(const char *key, int val,
 					       char short_opt, char *long_opt,
 					       char *desc);
-   int                 ecore_config_int_create_bound(const char *key, int val,
+   EAPI int                 ecore_config_int_create_bound(const char *key, int val,
 						     int low, int high,
 						     int step, char short_opt,
 						     char *long_opt,
 						     char *desc);
-   int                 ecore_config_string_create(const char *key, char *val,
+   EAPI int                 ecore_config_string_create(const char *key, char *val,
 						  char short_opt,
 						  char *long_opt, char *desc);
-   int                 ecore_config_float_create(const char *key, float val,
+   EAPI int                 ecore_config_float_create(const char *key, float val,
 						 char short_opt, char *long_opt,
 						 char *desc);
-   int                 ecore_config_float_create_bound(const char *key,
+   EAPI int                 ecore_config_float_create_bound(const char *key,
 						       float val, float low,
 						       float high, float step,
 						       char short_opt,
 						       char *long_opt,
 						       char *desc);
-   int                 ecore_config_rgb_create(const char *key, char *val,
+   EAPI int                 ecore_config_rgb_create(const char *key, char *val,
 					       char short_opt, char *long_opt,
 					       char *desc);
-   int                 ecore_config_argb_create(const char *key, char *val,
+   EAPI int                 ecore_config_argb_create(const char *key, char *val,
 						char short_opt, char *long_opt,
 						char *desc);
-   int                 ecore_config_theme_create(const char *key, char *val,
+   EAPI int                 ecore_config_theme_create(const char *key, char *val,
 						 char short_opt, char *long_opt,
 						 char *desc);
 

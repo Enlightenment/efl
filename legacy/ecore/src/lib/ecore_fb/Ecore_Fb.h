@@ -1,6 +1,23 @@
 #ifndef _ECORE_FB_H
 #define _ECORE_FB_H
 
+#ifdef EAPI
+#undef EAPI
+#endif
+#ifdef WIN32
+# ifdef BUILDING_DLL
+#  define EAPI __declspec(dllexport)
+# else
+#  define EAPI __declspec(dllimport)
+# endif
+#else
+# ifdef GCC_HASCLASSVISIBILITY
+#  define EAPI __attribute__ ((visibility("default")))
+# else
+#  define EAPI
+# endif
+#endif
+
 /**
  * @file
  * @brief Ecore frame buffer system functions.
@@ -60,33 +77,33 @@ struct _Ecore_Fb_Event_Mouse_Move /** FB Mouse Move event */
    int     y; /**< Mouse co-ordinates where the mouse cursor moved to */
 };
 
-int    ecore_fb_init(const char *name);
-int    ecore_fb_shutdown(void);
+EAPI int    ecore_fb_init(const char *name);
+EAPI int    ecore_fb_shutdown(void);
    
-void   ecore_fb_double_click_time_set(double t);
-double ecore_fb_double_click_time_get(void);
+EAPI void   ecore_fb_double_click_time_set(double t);
+EAPI double ecore_fb_double_click_time_get(void);
 
-void   ecore_fb_size_get(int *w, int *h);   
+EAPI void   ecore_fb_size_get(int *w, int *h);   
    
-void   ecore_fb_touch_screen_calibrate_set(int xscale, int xtrans, int yscale, int ytrans, int xyswap);
-void   ecore_fb_touch_screen_calibrate_get(int *xscale, int *xtrans, int *yscale, int *ytrans, int *xyswap);
+EAPI void   ecore_fb_touch_screen_calibrate_set(int xscale, int xtrans, int yscale, int ytrans, int xyswap);
+EAPI void   ecore_fb_touch_screen_calibrate_get(int *xscale, int *xtrans, int *yscale, int *ytrans, int *xyswap);
 
-void   ecore_fb_backlight_set(int on);
-int    ecore_fb_backlight_get(void);
+EAPI void   ecore_fb_backlight_set(int on);
+EAPI int    ecore_fb_backlight_get(void);
 
-void   ecore_fb_backlight_brightness_set(double br);
-double ecore_fb_backlight_brightness_get(void);
+EAPI void   ecore_fb_backlight_brightness_set(double br);
+EAPI double ecore_fb_backlight_brightness_get(void);
 
-void   ecore_fb_led_set(int on);
-void   ecore_fb_led_blink_set(double speed);
+EAPI void   ecore_fb_led_set(int on);
+EAPI void   ecore_fb_led_blink_set(double speed);
 
-void   ecore_fb_contrast_set(double cr);
-double ecore_fb_contrast_get(void);
+EAPI void   ecore_fb_contrast_set(double cr);
+EAPI double ecore_fb_contrast_get(void);
 
-double ecore_fb_light_sensor_get(void);
+EAPI double ecore_fb_light_sensor_get(void);
 
-void ecore_fb_callback_gain_set(void (*func) (void *data), void *data);
-void ecore_fb_callback_lose_set(void (*func) (void *data), void *data);
+EAPI void ecore_fb_callback_gain_set(void (*func) (void *data), void *data);
+EAPI void ecore_fb_callback_lose_set(void (*func) (void *data), void *data);
        
 #ifdef __cplusplus
 }

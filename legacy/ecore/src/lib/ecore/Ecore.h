@@ -1,6 +1,23 @@
 #ifndef _ECORE_H
 #define _ECORE_H
 
+#ifdef EAPI
+#undef EAPI
+#endif
+#ifdef WIN32
+# ifdef BUILDING_DLL
+#  define EAPI __declspec(dllexport)
+# else
+#  define EAPI __declspec(dllimport)
+# endif
+#else
+# ifdef GCC_HASCLASSVISIBILITY
+#  define EAPI __attribute__ ((visibility("default")))
+# else
+#  define EAPI
+# endif
+#endif
+
 /**
  * @file Ecore.h
  * @brief The file that provides the program utility, main loop and timer
@@ -170,64 +187,64 @@ extern "C" {
 #endif
      };
 
-   int  ecore_init(void);
-   int  ecore_shutdown(void);
+   EAPI int  ecore_init(void);
+   EAPI int  ecore_shutdown(void);
        
-   void ecore_app_args_set(int argc, const char **argv);
-   void ecore_app_args_get(int *argc, char ***argv);
-   void ecore_app_restart(void);
+   EAPI void ecore_app_args_set(int argc, const char **argv);
+   EAPI void ecore_app_args_get(int *argc, char ***argv);
+   EAPI void ecore_app_restart(void);
 
-   Ecore_Event_Handler *ecore_event_handler_add(int type, int (*func) (void *data, int type, void *event), const void *data);
-   void                *ecore_event_handler_del(Ecore_Event_Handler *event_handler);
-   Ecore_Event         *ecore_event_add(int type, void *ev, void (*func_free) (void *data, void *ev), void *data);
-   void                *ecore_event_del(Ecore_Event *event);
-   int                  ecore_event_type_new(void);
-   Ecore_Event_Filter  *ecore_event_filter_add(void * (*func_start) (void *data), int (*func_filter) (void *data, void *loop_data, int type, void *event), void (*func_end) (void *data, void *loop_data), const void *data);
-   void                *ecore_event_filter_del(Ecore_Event_Filter *ef);
-   int                  ecore_event_current_type_get(void);
-   void                *ecore_event_current_event_get(void);
+   EAPI Ecore_Event_Handler *ecore_event_handler_add(int type, int (*func) (void *data, int type, void *event), const void *data);
+   EAPI void                *ecore_event_handler_del(Ecore_Event_Handler *event_handler);
+   EAPI Ecore_Event         *ecore_event_add(int type, void *ev, void (*func_free) (void *data, void *ev), void *data);
+   EAPI void                *ecore_event_del(Ecore_Event *event);
+   EAPI int                  ecore_event_type_new(void);
+   EAPI Ecore_Event_Filter  *ecore_event_filter_add(void * (*func_start) (void *data), int (*func_filter) (void *data, void *loop_data, int type, void *event), void (*func_end) (void *data, void *loop_data), const void *data);
+   EAPI void                *ecore_event_filter_del(Ecore_Event_Filter *ef);
+   EAPI int                  ecore_event_current_type_get(void);
+   EAPI void                *ecore_event_current_event_get(void);
        
        
 #ifndef WIN32
-   Ecore_Exe *ecore_exe_run(const char *exe_cmd, const void *data);
-   void      *ecore_exe_free(Ecore_Exe *exe);
-   pid_t      ecore_exe_pid_get(Ecore_Exe *exe);
-   void      *ecore_exe_data_get(Ecore_Exe *exe);
-   void       ecore_exe_pause(Ecore_Exe *exe);
-   void       ecore_exe_continue(Ecore_Exe *exe);
-   void       ecore_exe_terminate(Ecore_Exe *exe);
-   void       ecore_exe_kill(Ecore_Exe *exe);
-   void       ecore_exe_signal(Ecore_Exe *exe, int num);
-   void       ecore_exe_hup(Ecore_Exe *exe);
+   EAPI Ecore_Exe *ecore_exe_run(const char *exe_cmd, const void *data);
+   EAPI void      *ecore_exe_free(Ecore_Exe *exe);
+   EAPI pid_t      ecore_exe_pid_get(Ecore_Exe *exe);
+   EAPI void      *ecore_exe_data_get(Ecore_Exe *exe);
+   EAPI void       ecore_exe_pause(Ecore_Exe *exe);
+   EAPI void       ecore_exe_continue(Ecore_Exe *exe);
+   EAPI void       ecore_exe_terminate(Ecore_Exe *exe);
+   EAPI void       ecore_exe_kill(Ecore_Exe *exe);
+   EAPI void       ecore_exe_signal(Ecore_Exe *exe, int num);
+   EAPI void       ecore_exe_hup(Ecore_Exe *exe);
 #endif
        
-   Ecore_Idler *ecore_idler_add(int (*func) (void *data), const void *data);
-   void        *ecore_idler_del(Ecore_Idler *idler);
+   EAPI Ecore_Idler *ecore_idler_add(int (*func) (void *data), const void *data);
+   EAPI void        *ecore_idler_del(Ecore_Idler *idler);
    
-   Ecore_Idle_Enterer *ecore_idle_enterer_add(int (*func) (void *data), const void *data);
-   void               *ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer);
+   EAPI Ecore_Idle_Enterer *ecore_idle_enterer_add(int (*func) (void *data), const void *data);
+   EAPI void               *ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer);
 
-   Ecore_Idle_Exiter *ecore_idle_exiter_add(int (*func) (void *data), const void *data);
-   void              *ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
+   EAPI Ecore_Idle_Exiter *ecore_idle_exiter_add(int (*func) (void *data), const void *data);
+   EAPI void              *ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
 
-   void              ecore_main_loop_iterate(void);
-   void              ecore_main_loop_begin(void);
-   void              ecore_main_loop_quit(void);
-   Ecore_Fd_Handler *ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, int (*func) (void *data, Ecore_Fd_Handler *fd_handler), const void *data, int (*buf_func) (void *buf_data, Ecore_Fd_Handler *fd_handler), const void *buf_data);
-   void             *ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler);
-   int               ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler);
-   int               ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
-   void              ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
+   EAPI void              ecore_main_loop_iterate(void);
+   EAPI void              ecore_main_loop_begin(void);
+   EAPI void              ecore_main_loop_quit(void);
+   EAPI Ecore_Fd_Handler *ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, int (*func) (void *data, Ecore_Fd_Handler *fd_handler), const void *data, int (*buf_func) (void *buf_data, Ecore_Fd_Handler *fd_handler), const void *buf_data);
+   EAPI void             *ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler);
+   EAPI int               ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler);
+   EAPI int               ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
+   EAPI void              ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
    
-   double ecore_time_get(void);
+   EAPI double ecore_time_get(void);
        
-   Ecore_Timer *ecore_timer_add(double in, int (*func) (void *data), const void *data);
-   void        *ecore_timer_del(Ecore_Timer *timer);
+   EAPI Ecore_Timer *ecore_timer_add(double in, int (*func) (void *data), const void *data);
+   EAPI void        *ecore_timer_del(Ecore_Timer *timer);
    
-   Ecore_Animator *ecore_animator_add(int (*func) (void *data), const void *data);
-   void           *ecore_animator_del(Ecore_Animator *animator);
-   void            ecore_animator_frametime_set(double frametime);
-   double          ecore_animator_frametime_get(void);
+   EAPI Ecore_Animator *ecore_animator_add(int (*func) (void *data), const void *data);
+   EAPI void           *ecore_animator_del(Ecore_Animator *animator);
+   EAPI void            ecore_animator_frametime_set(double frametime);
+   EAPI double          ecore_animator_frametime_get(void);
        
 #ifdef __cplusplus
 }

@@ -1,6 +1,23 @@
 #ifndef _ECORE_IPC_H
 #define _ECORE_IPC_H
 
+#ifdef EAPI
+#undef EAPI
+#endif
+#ifdef WIN32
+# ifdef BUILDING_DLL
+#  define EAPI __declspec(dllexport)
+# else
+#  define EAPI __declspec(dllimport)
+# endif
+#else
+# ifdef GCC_HASCLASSVISIBILITY
+#  define EAPI __attribute__ ((visibility("default")))
+# else
+#  define EAPI
+# endif
+#endif
+
 /**
  * @file Ecore_Ipc.h
  * @brief Ecore inter-process communication functions.
@@ -83,29 +100,31 @@ extern "C" {
    extern int ECORE_IPC_EVENT_CLIENT_DATA;
    extern int ECORE_IPC_EVENT_SERVER_DATA;
    
-   int               ecore_ipc_init(void);
-   int               ecore_ipc_shutdown(void);
+   EAPI int               ecore_ipc_init(void);
+   EAPI int               ecore_ipc_shutdown(void);
    
    /* FIXME: need to add protocol type parameter */
-   Ecore_Ipc_Server *ecore_ipc_server_add(Ecore_Ipc_Type type, char *name, int port, const void *data);
+   EAPI Ecore_Ipc_Server *ecore_ipc_server_add(Ecore_Ipc_Type type, char *name, int port, const void *data);
    
    /* FIXME: need to add protocol type parameter */
-   Ecore_Ipc_Server *ecore_ipc_server_connect(Ecore_Ipc_Type type, char *name, int port, const void *data);
-   void             *ecore_ipc_server_del(Ecore_Ipc_Server *svr);
-   void             *ecore_ipc_server_data_get(Ecore_Ipc_Server *svr);
-   int               ecore_ipc_server_connected_get(Ecore_Ipc_Server *svr);
+   EAPI Ecore_Ipc_Server *ecore_ipc_server_connect(Ecore_Ipc_Type type, char *name, int port, const void *data);
+   EAPI void             *ecore_ipc_server_del(Ecore_Ipc_Server *svr);
+   EAPI void             *ecore_ipc_server_data_get(Ecore_Ipc_Server *svr);
+   EAPI int               ecore_ipc_server_connected_get(Ecore_Ipc_Server *svr);
    /* FIXME: this needs to become an ipc message */
-   int               ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int ref_to, int response, void *data, int size);
+   EAPI int               ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int ref_to, int response, void *data, int size);
 
    /* FIXME: this needs to become an ipc message */
-   int               ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int ref_to, int response, void *data, int size);
-   Ecore_Ipc_Server *ecore_ipc_client_server_get(Ecore_Ipc_Client *cl);
-   void             *ecore_ipc_client_del(Ecore_Ipc_Client *cl);
-   void              ecore_ipc_client_data_set(Ecore_Ipc_Client *cl, const void *data);
-   void             *ecore_ipc_client_data_get(Ecore_Ipc_Client *cl);
+   EAPI int               ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int ref_to, int response, void *data, int size);
+   EAPI Ecore_Ipc_Server *ecore_ipc_client_server_get(Ecore_Ipc_Client *cl);
+   EAPI void             *ecore_ipc_client_del(Ecore_Ipc_Client *cl);
+   EAPI void              ecore_ipc_client_data_set(Ecore_Ipc_Client *cl, const void *data);
+   EAPI void             *ecore_ipc_client_data_get(Ecore_Ipc_Client *cl);
    
-   int               ecore_ipc_ssl_available_get(void);
-       
+   EAPI int               ecore_ipc_ssl_available_get(void);
+   /* FIXME: need to add a callback to "ok" large ipc messages greater than */
+   /*        a certain size (seurity/DOS attack safety) */
+   
 #ifdef __cplusplus
 }
 #endif
