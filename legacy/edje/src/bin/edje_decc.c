@@ -23,6 +23,7 @@ void       output(void);
 int        e_file_is_dir(char *file);
 int        e_file_mkdir(char *dir);
 int        e_file_mkpath(char *path);
+static int compiler_cmd_is_sane();
 
 static void
 main_help(void)
@@ -87,6 +88,16 @@ decomp(void)
    if (!edje_file)
      {
 	printf("ERROR: %s does not appear to be an edje file\n", file_in);
+	eet_close(ef);
+	return 0;
+     }
+   if (!edje_file->compiler)
+     {
+	edje_file->compiler = strdup("edje_cc");
+     }
+   else if (!compiler_cmd_is_sane())
+     {
+	printf("ERROR: invalid compiler executable: '%s'\n", edje_file->compiler);
 	eet_close(ef);
 	return 0;
      }
@@ -263,7 +274,7 @@ output(void)
 	  }
 	f = fopen(out, "w");
 	fprintf(f, "#!/bin/sh\n");
-	fprintf(f, "edje_cc $@ -id . -fd . main_edje_source.edc -o %s.eet\n", outdir);
+	fprintf(f, "%s $@ -id . -fd . main_edje_source.edc -o %s.eet\n", edje_file->compiler, outdir);
 	fclose(f);
 
 #ifndef WIN32
@@ -319,5 +330,27 @@ e_file_mkpath(char *path)
      }
    if (!e_file_is_dir(ss)) e_file_mkdir(ss);
    else if (!e_file_is_dir(ss)) return 0;
+   return 1;
+}
+
+static int
+compiler_cmd_is_sane()
+{
+   char *c = edje_file->compiler, *ptr;
+
+   if (!c || !*c)
+     {
+	return 0;
+     }
+
+   for (ptr = c; ptr && *ptr; ptr++)
+     {
+	/* only allow [a-z][A-Z][0-9]_- */
+	if (!isalnum(*ptr) && *ptr != '_' && *ptr != '-')
+	  {
+	     return 0;
+	  }
+     }
+
    return 1;
 }

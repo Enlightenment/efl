@@ -151,6 +151,7 @@ struct _Edje_File
    
    Evas_Hash                      *collection_hash;
    int                             references;
+   char                           *compiler;
    int                             version;
    int                             feature_ver;
 };

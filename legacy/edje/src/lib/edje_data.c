@@ -105,6 +105,7 @@ _edje_edd_setup(void)
    _edje_edd_edje_file = 
      NEWD("Edje_File", 
 	  Edje_File);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_file, Edje_File, "compiler", compiler, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_file, Edje_File, "version", version, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_file, Edje_File, "feature_ver", feature_ver, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "font_dir", font_dir, _edje_edd_edje_font_directory);
