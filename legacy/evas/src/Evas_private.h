@@ -80,66 +80,68 @@ struct _Evas
       Drawable      drawable;
       Visual       *visual;
       Colormap      colormap;
-      int           created_window;
-      int           screen;
-      int           colors;
+      unsigned char created_window;
+      unsigned char screen;
+      unsigned short colors;
       Imlib_Image   image;
       
-      int           drawable_width, drawable_height;
+      unsigned short drawable_width, drawable_height;
       
       struct  {
 	 double     x, y, w, h;
-      } viewport;
+      } __attribute__ ((packed)) viewport;
       
       struct {
 	 double     mult_x, mult_y;
-      } val_cache;
+      } __attribute__ ((packed)) val_cache;
       
       Evas_Render_Method render_method;
       
       Evas_Render_Data renderer_data;
       
-   } current, previous;
+   }
+   __attribute__ ((packed)) current, 
+   __attribute__ ((packed)) previous;
    
    struct {
-      int in;
+      unsigned char in;
       int x, y;
       int buttons;
       Evas_Object object, button_object;
-   } mouse;
+   } __attribute__ ((packed)) mouse;
    
    
    void (*evas_renderer_data_free) (Evas _e);
    
-   int changed;
+   unsigned char changed;
    
    Evas_List     layers;
    Imlib_Updates updates;
    Imlib_Updates obscures;
-};
+} __attribute__ ((packed));
 
 struct _Evas_Color_Point
 {
-   int r, g, b, a;
+   unsigned char r, g, b, a;
    int distance;
-};
+} __attribute__ ((packed));
 
 struct _Evas_Gradient
 {
    Evas_List  color_points;
    int        references;
-};
+} __attribute__ ((packed));
 
 struct _Evas_Rectangle
 {
    int x, y, w, h;
-};
+} __attribute__ ((packed));
 
 struct _Evas_Data
 {
    char *key;
    void *data;
-};
+} __attribute__ ((packed));
 
 struct _Evas_Layer
 {
@@ -147,35 +149,37 @@ struct _Evas_Layer
    Evas_List  objects;
    
    struct  {
-      int        store;
-   } current, previous;
+      unsigned char        store;
+   } __attribute__ ((packed)) current, __attribute__ ((packed)) previous;
    
    Evas_Render_Data renderer_data;
-};
+} __attribute__ ((packed));
 
 struct _Evas_Callback
 {
    Evas_Callback_Type type;
    void *data;
    void (*callback) (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y);
-};
+} __attribute__ ((packed));
 
 struct _Evas_Object_Any
 {
-   int        type;
+   unsigned short type;
    struct  {
       double     x, y, w, h;
-      int        zoomscale;
+      unsigned char zoomscale;
       int        layer;
-      int        visible;
-      int        stacking;
-   } current, previous;
+      unsigned char visible;
+      unsigned char stacking;
+   } 
+   __attribute__ ((packed)) current, 
+   __attribute__ ((packed)) previous;
 
-   int changed;
+   unsigned char changed;
    
-   int delete_me;
+   unsigned char delete_me;
    
-   int pass_events;
+   unsigned char pass_events;
    
    void (*object_free) (Evas_Object _o);
    void (*object_renderer_data_free) (Evas _e, Evas_Object _o);
@@ -186,37 +190,37 @@ struct _Evas_Object_Any
    struct {
       Evas_List   list;
       Evas_Object object;
-      int         changed;
-   } clip;
+      unsigned char changed;
+   } __attribute__ ((packed)) clip;
    
    Evas_Render_Data renderer_data;
    
    char *name;
-};
+} __attribute__ ((packed));
 
 struct _Evas_Object_Image
 {
    struct _Evas_Object_Any object;
    struct  {
       char *file;
-      int   new_data;
-      int   scale;
-      int   alpha;
+      unsigned char   new_data;
+      unsigned char   scale;
+      unsigned char   alpha;
       struct {
-	 int w, h;
-      } image;
+	 unsigned short w, h;
+      } __attribute__ ((packed)) image;
       struct {
 	 double x, y, w, h;
-      } fill;
+      } __attribute__ ((packed)) fill;
       struct {
-	 int l, r, t, b;
-      } border;
+	 unsigned short l, r, t, b;
+      } __attribute__ ((packed)) border;
       struct {
-	 int r, g, b, a;
-      } color;
+	 unsigned char r, g, b, a;
+      } __attribute__ ((packed)) color;
    } current, previous;
    Imlib_Load_Error load_error;
-};
+} __attribute__ ((packed));
 
 struct _Evas_Object_Text
 {
@@ -224,49 +228,59 @@ struct _Evas_Object_Text
    struct  {
       char *text;
       char *font;
-      int   size;
+      unsigned short   size;
       struct {
 	 int w, h;
-      } string;
-      int r, g, b, a;
-   } current, previous;
-};
+      } __attribute__ ((packed)) string;
+      unsigned char r, g, b, a;
+   } 
+   __attribute__ ((packed)) current, 
+   __attribute__ ((packed)) previous;
+} __attribute__ ((packed));
 
 struct _Evas_Object_Rectangle
 {
    struct _Evas_Object_Any object;
    struct  {
-      int r, g, b, a;
-   } current, previous;
-};
+      unsigned char r, g, b, a;
+   } 
+   __attribute__ ((packed)) current, 
+   __attribute__ ((packed)) previous;
+} __attribute__ ((packed));
 
 struct _Evas_Object_Line
 {
    struct _Evas_Object_Any object;
    struct  {
       double x1, y1, x2, y2;
-      int r, g, b, a;
-   } current, previous;
-};
+      unsigned char r, g, b, a;
+   } 
+   __attribute__ ((packed)) current, 
+   __attribute__ ((packed)) previous;
+} __attribute__ ((packed));
 
 struct _Evas_Object_Gradient_Box
 {
    struct _Evas_Object_Any object;
    struct  {
       Evas_Gradient gradient;
-      int    new_gradient;
+      unsigned char    new_gradient;
       double angle;
-   } current, previous;
-};
+   }
+   __attribute__ ((packed)) current, 
+   __attribute__ ((packed)) previous;
+} __attribute__ ((packed));
 
 struct _Evas_Object_Poly
 {
    struct _Evas_Object_Any object;
    struct  {
-      int r, g, b, a;
+      unsigned char r, g, b, a;
       Evas_List points;
-   } current, previous;
-};
+   }
+   __attribute__ ((packed)) current,
+   __attribute__ ((packed)) previous;
+} __attribute__ ((packed));
 
 static void
 _evas_get_current_clipped_geometry(Evas e, Evas_Object o, double *x, double *y, double *w, double *h)
