@@ -24,6 +24,10 @@
 #define ABS(x) (x < 0 ? -x : x)
 #endif
 
+#ifndef CLAMP
+#define CLAMP(x, min, max) (((x) > (max)) ? (max) : (((x) < (min)) ? (min) : (x)))
+#endif
+
 /* increment this when the EET data descriptors have changed and old
  * EETs cannot be loaded/used correctly anymore.
  */

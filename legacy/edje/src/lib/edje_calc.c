@@ -18,8 +18,8 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos)
 {
    double npos;
    
-   if (pos > 1.0) pos = 1.0;
-   else if (pos < 0.0) pos = 0.0;
+   pos = CLAMP(pos, 0.0, 1.0);
+
    npos = 0.0;
    /* take linear pos along timescale and use interpolation method */
    switch (mode)
@@ -193,22 +193,19 @@ _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, double *x, double *y)
 	if (ep->confine_to)
 	  {
 	     double dx, dy, dw, dh;
-	     int ret;
+	     int ret = 0;
 	     
-	     ret = 0;
 	     if ((ep->part->dragable.x != 0) && 
 		 (ep->part->dragable.y != 0 )) ret = 3;
 	     else if (ep->part->dragable.x != 0) ret = 1;
 	     else if (ep->part->dragable.y != 0) ret = 2;
 	     
 	     dx = ep->x - ep->confine_to->x;
-	     dw = ep->confine_to->w - ep->w;
-	     if (dw < 1) dw = 1;
+	     dw = MAX(ep->confine_to->w - ep->w, 1);
 	     dx /= dw;
 	     
 	     dy = ep->y - ep->confine_to->y;
-	     dh = ep->confine_to->h - ep->h;
-	     if (dh < 1) dh = 1;
+	     dh = MAX(ep->confine_to->h - ep->h, 1);
 	     dy /= dh;
 	     
 	     if (x) *x = dx;
@@ -854,26 +851,13 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	
 	/* visible is special */
 	if ((p1.visible) && (!p2.visible))
-	  {
-	     if (pos == 1.0)
-	       p3.visible = 0;
-	     else
-	       p3.visible = 1;
-	  }
+	  p3.visible = (pos != 1.0);
 	else if ((!p1.visible) && (p2.visible))
-	  {
-	     if (pos == 0.0)
-	       p3.visible = 0;
-	     else
-	       p3.visible = 1;
-	  }
+	  p3.visible = (pos != 0.0);
 	else
 	  p3.visible = p1.visible;
 
-	if (pos < 0.5)
-	  p3.smooth = p1.smooth;
-	else
-	  p3.smooth = p2.smooth;
+	p3.smooth = (pos < 0.5) ? p1.smooth : p2.smooth;
 
 	/* FIXME: do x and y separately base on flag */
 	p3.x = (p1.x * (1.0 - pos)) + (p2.x * (pos));
