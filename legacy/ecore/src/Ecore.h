@@ -214,7 +214,7 @@ extern              "C"
   void                ecore_window_set_name_class(Window win, char *name,
 						  char *);
   void                ecore_window_get_name_class(Window win, char **name,
-						  char **class);
+						  char **name_class);
   char               *ecore_window_get_machine(Window win);
   char               *ecore_window_get_command(Window win);
   char               *ecore_window_get_icon_name(Window win);
