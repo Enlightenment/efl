@@ -11,6 +11,10 @@
  *    RADIAN, DEGREES, GRADES
  * };
  * 
+ * numargs();
+ * getarg(arg, index=0);
+ * setarg(arg, index=0, value);
+ * 
  * Float:atof(string[]);
  * Float:fract(Float:value);
  *       round(Float:value, Float_Round_Method:method=ROUND);
@@ -136,8 +140,14 @@
  */
 /* MODIFY STATE VALUES
  * 
- * set_state_val(part_id, state[], Float:state_val, Param:param, ...)
- * get_state_val(part_id, state[], Float:state_val, Param:param, ...)
+ * THIS COPIES THE STATE VALUES OF THE GIVEN STATE/VAL TO CREATE A CUSTOM STATE
+ * 
+ * custom_state(part_id, state[], Float:state_val)
+ * 
+ * THESE ALWAYS WORK ON THE CUTSOM STATE ONLY
+ * 
+ * set_state_val(part_id, Param:param, ...)
+ * get_state_val(part_id, Param:param, ...)
  * 
  * FOR THESE PROPERTIES:
  * 
@@ -147,16 +157,16 @@
  * max[w,h]
  * step[x,y]
  * aspect[min,max]
- * rel1[rx,ry,part_id,part_id]
- * rel1[x,y]
- * rel2[rx,ry,part_id,part_id]
- * rel2[x,y]
- * image[id]
- * image[tween_list...] (get???)
+ * apsetc_preference
+ * rel1[relx,rely,part_id,part_id]
+ * rel1[offx,offy]
+ * rel2[relx,rely,part_id,part_id]
+ * rel2[offx,offy]
+ * image[image_id] <- all images have an Id not name in the edje
  * border[l,r,t,b]
  * fill[smooth]
- * fill[pos_rx,pos_ry,pos_x,pos_y]
- * fill[sz_rx,sz_ry,sz_x,sz_y]
+ * fill[pos_relx,pos_rely,pos_offx,pos_offy]
+ * fill[sz_relx,sz_rely,sz_offx,sz_offy]
  * color_class
  * color[r,g,b,a]
  * color2[r,g,b,a]
@@ -167,9 +177,8 @@
  * text[fit_x,fit_y]
  * text[min_x,min_y]
  * text[align_x,align_y]
- */
-
-/* FUTURE: KEYS???
+ * 
+ * ADD/DEL CUSTOM OBJECTS UNDER SOLE EMBRYO SCRIPT CONTROL
  * 
  */
 
