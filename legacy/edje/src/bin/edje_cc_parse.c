@@ -77,7 +77,7 @@ new_statement(void)
 static int
 isdelim(char c)
 {
-   const char *delims = "{},;";
+   const char *delims = "{},;:";
    char *d;
 		  
    d = (char *)delims;
@@ -308,7 +308,7 @@ parse(char *data, off_t size)
      {
 	if (delim)
 	  {
-	     if (!strcmp(token, ",")) do_params = 1;
+	     if ((!strcmp(token, ",")) || (!strcmp(token, ":"))) do_params = 1;
 	     else if (!strcmp(token, "}"))
 	       {
 		  if (do_params)

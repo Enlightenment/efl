@@ -13,6 +13,7 @@ images
 // data can be attached to the edje file as a whole. string key, value style
 data
 {
+   item: "Key" "This is a"" continued string";
    item, "My Data" "The string to attach to this data";
    item, "The Key" "String data attached to the key";
 }
