@@ -2207,6 +2207,10 @@ __evas_gl_gradient_draw(Evas_GL_Graident *gr,
    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
    glBindTexture(GL_TEXTURE_2D, gr->texture);   
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
    
    t[0] = cos(((-angle + 45 + 90) * 2 * 3.141592654) / 360);
    t[1] = sin(((-angle + 45 + 90) * 2 * 3.141592654) / 360);
