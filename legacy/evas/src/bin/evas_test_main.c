@@ -62,6 +62,17 @@ get_time(void)
 }
 #endif
 
+static int did_setup = 0;
+static double time_start = 0.0;
+static int frames = 0;
+
+static Evas_Object *p_s[16];
+static Evas_Object *p_i[2];
+static Evas_Object *p_r[8];
+static Evas_Object *p_p[2];
+static Evas_Object *p_g[2];
+static Evas_Object *p_t[16];
+
 void
 loop(void)
 {
@@ -109,9 +120,165 @@ loop(void)
 	evas_object_color_set(evas_logo, 255, 255, 255,
 			      (int)(255 * (((6.0) - t) / 4.0)));
      }
-   else if (t <= 16.0)
+   else if (t <= 26.0)
+     {
+	int i;
+	     
+	if (!did_setup)
+	  {
+	     frames = 0;
+	     time_start = t;
+	     for (i = 0; i < 16; i++)
+	       {
+		  Evas_Object        *ob;
+		  
+		  ob = evas_object_image_add(evas);
+		  if (i & 0x1)
+		    {
+		       evas_object_image_file_set(ob, IM "t1.png", NULL);
+		       evas_object_image_smooth_scale_set(ob, 1);
+		    }
+		  else
+		    {
+		       evas_object_image_file_set(ob, IM "t2.png", NULL);
+		       evas_object_image_smooth_scale_set(ob, 0);
+		    }
+		  evas_object_resize(ob, 48, 48);
+		  evas_object_image_fill_set(ob, 0, 0, 48, 48);
+		  evas_object_layer_set(ob, 5);
+		  evas_object_clip_set(ob, panel_clip);
+		  evas_object_show(ob);
+		  p_s[i] = ob;
+	       }
+	     for (i = 0; i < 2; i++)
+	       {
+		  Evas_Object        *ob;
+		  
+		  ob = evas_object_image_add(evas);
+		  evas_object_image_file_set(ob, IM "test_pattern.png", NULL);
+		  evas_object_layer_set(ob, 5);
+		  evas_object_clip_set(ob, panel_clip);
+		  evas_object_show(ob);
+		  p_i[i] = ob;
+	       }
+	     evas_object_image_smooth_scale_set(p_i[1], 0);	
+	     for (i = 0; i < 16; i++)
+	       {
+		  Evas_Object        *ob;
+
+		  ob = evas_object_text_add(evas);
+		  evas_object_text_font_set(ob, "arial", (i * 2) + 4);
+		  evas_object_text_text_set(ob, "A Test String");
+		  evas_object_layer_set(ob, 5);
+		  evas_object_clip_set(ob, panel_clip);
+		  evas_object_color_set(ob, 0, 0, 0, 255);
+		  evas_object_show(ob);
+		  p_t[i] = ob;
+	       }
+	     for (i = 0; i < 8; i++)
+	       {
+		  Evas_Object        *ob;
+		  
+		  ob = evas_object_rectangle_add(evas);
+		  evas_object_color_set(ob, 100 + (i * 16), 255 - (i * 16), i * 64, i * 32);
+		  evas_object_layer_set(ob, 5);
+		  evas_object_clip_set(ob, panel_clip);
+		  evas_object_show(ob);		  
+		  p_r[i] = ob;
+	       }
+	     did_setup = 1;
+	  }
+	for (i = 0; i < 16; i++)
+	  {
+	     double              x, y;
+	     double              v;
+	     
+	     v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
+	     x = cos(v * (double)i / 3) * ((240 - 48) / 2);
+	     y = sin(v * (double)i / 3) * ((240 - 48) / 2);
+	     evas_object_move(p_s[i], 120 + x - 24, win_h - 120 + y - 24);
+	     if (i & 0x1)
+	       {
+		  v = (((t - 6.0) / 35.0) * EVAS_PI * 2) * 2;
+		  x = (cos(v * (double)i / 3) * 48) + 50;
+		  y = (sin(v * (double)i / 3) * 48) + 50;
+		  evas_object_resize(p_s[i], x, y);
+		  evas_object_image_fill_set(p_s[i], 0, 0, x, y);
+	       }
+	  }
+	for (i = 0; i < 2; i++)
+	  {
+	     int iw, ih;
+	     double              x, y;
+	     double              v;
+	     
+	     evas_object_image_size_get(p_i[i], &iw, &ih);
+	     v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
+	     x = cos(v * (double)(i + 1) * 3) * ((240 - iw) / 2);
+	     y = sin(v * (double)(i + 1) * 2) * ((240 - ih) / 2);
+	     evas_object_move(p_i[i], 120 + x - 80, win_h - 120 + y - 80);
+	     v = (((t - 6.0) / 35.0) * EVAS_PI * 2) * 2;
+	     x = (cos(v * (double)(i + 1)  * 7) * iw) + iw;
+	     y = (sin(v * (double)(i + 1)  * 6) * ih) + ih;
+	     evas_object_resize(p_i[i], x, y);
+	     evas_object_image_fill_set(p_i[i], 0, 0, x, y);
+	  }
+	for (i = 0; i < 16; i++)
+	  {
+	     double              x, y;
+	     double              v;
+	     
+	     v = (((t - 6.0) / 24.0) * EVAS_PI * 2) * 2;
+	     x = cos(v * (double)i / 3) * ((240 - 48) / 2);
+	     y = sin(v * (double)i / 2) * ((240 - 48) / 2);
+	     evas_object_move(p_t[i], 120 + x - 80, win_h - 120 + y - 24);
+	  }
+	for (i = 0; i < 8; i++)
+	  {
+	     double              x, y;
+	     double              v;
+	     
+	     v = (((t - 6.0) / 29.0) * EVAS_PI * 2) * 2;
+	     x = cos(v * (double)i / 2) * ((240 - 48) / 2);
+	     y = sin(v * (double)i / 3) * ((240 - 48) / 2);
+	     evas_object_move(p_r[i], 120 + x - 24, win_h - 120 + y - 24);
+	     if (i & 0x1)
+	       {
+		  v = (((t - 6.0) / 31.0) * EVAS_PI * 2) * 2;
+		  x = (cos(v * (double)i * 2) * 48) + 50;
+		  y = (sin(v * (double)i *5) * 48) + 50;
+		  evas_object_resize(p_r[i], x, y);
+	       }
+	  }
+	frames++;
+     }
+   else if (t <= 36.0)
      {
 	double              tw, th;
+	static              did_fps = 0;
+	
+	if (!did_fps)
+	  {
+	     int i;
+	     
+	     did_fps = 1;
+	     printf("####################################################\n");
+	     printf("# Performance Test. Your system scores...\n");
+	     printf("####################################################\n");
+	     printf("# FRAME COUNT: %i frames\n", frames);
+	     printf("# TIME:        %3.3f seconds\n", (t - time_start));
+	     printf("# AVERAGE FPS: %3.3f fps\n", (double)frames / (t - time_start));
+	     printf("####################################################\n");
+	     printf("# Your system Evas Benchmark:\n");
+	     printf("#\n");
+	     printf("# EVAS BENCH: %3.3f\n", ((double)frames / (t - time_start)) / 60.0);
+	     printf("#\n");
+	     printf("####################################################\n");
+	     for (i = 0; i < 16; i++) evas_object_del(p_s[i]);
+	     for (i = 0; i < 2; i++) evas_object_del(p_i[i]);
+	     for (i = 0; i < 16; i++) evas_object_del(p_t[i]);
+	     for (i = 0; i < 8; i++) evas_object_del(p_r[i]);
+	  }
 
 	if (evas_logo)
 	  {
@@ -182,7 +349,7 @@ loop(void)
 	   evas_object_move(t2, 120 + x - 24, win_h - 120 + y - 24);
 	}
      }
-   else if (t <= 26.0)
+   else if (t <= 46.0)
      {
 	double              tw, th;
 
@@ -204,7 +371,7 @@ loop(void)
 	}
      }
 
-   else if (t <= 36.0)
+   else if (t <= 56.0)
      {
 	double              tw, th;
 
@@ -228,7 +395,7 @@ loop(void)
 	   evas_object_image_fill_set(t2, 0, 0, x, y);
 	}
      }
-   else if (t <= 46.0)
+   else if (t <= 66.0)
      {
 	double              tw, th;
 
@@ -255,7 +422,7 @@ loop(void)
 	}
      }
 
-   else if (t <= 56.0)
+   else if (t <= 76.0)
      {
 	double              tw, th;
 
@@ -281,7 +448,7 @@ loop(void)
 	   evas_object_image_fill_set(t2, 0, 0, x, y);
 	}
      }
-   else if (t <= 76.0)
+   else if (t <= 96.0)
      {
 	double              tw, th;
 	int                 iw, ih;
@@ -337,7 +504,7 @@ loop(void)
 	   evas_object_image_fill_set(test_pattern, 0, 0, x, y);
 	}
      }
-   else if (t <= 86.0)
+   else if (t <= 106.0)
      {
 	double              tw, th;
 	int                 iw, ih;
@@ -371,7 +538,7 @@ loop(void)
 	     evas_object_raise(t1);
 	  }
      }
-   else if (t <= 96.0)
+   else if (t <= 116.0)
      {
 	double              tw, th;
 	int                 iw, ih;
@@ -407,7 +574,7 @@ loop(void)
 	     evas_object_layer_set(t2, 5);
 	  }
      }
-   else if (t <= 106.0)
+   else if (t <= 126.0)
      {
 	double              tw, th;
 	int                 iw, ih;
@@ -441,7 +608,7 @@ loop(void)
 	     evas_object_hide(t1);
 	  }
      }
-   else if (t <= 136.0)
+   else if (t <= 156.0)
      {
 	double              tw, th;
 	int                 iw, ih;
@@ -469,7 +636,7 @@ loop(void)
 	     evas_object_show(ob);
 	     test_pattern = ob;
 	  }
-	if (t <= 116.0)
+	if (t <= 136.0)
 	  {
 	     int                 iw, ih;
 	     int                 x, y;
@@ -493,7 +660,7 @@ loop(void)
 		  evas_object_image_data_set(test_pattern, data);
 	       }
 	  }
-	else if (t <= 126.0)
+	else if (t <= 146.0)
 	  {
 	     int                 iw, ih;
 	     int                 x, y;
@@ -531,7 +698,7 @@ loop(void)
 	       }
 	  }
      }
-   else if (t <= 146.0)
+   else if (t <= 166.0)
      {
 	double              tw, th;
 
@@ -599,7 +766,7 @@ loop(void)
 	       }
 	  }
      }
-   else if (t <= 156.0)
+   else if (t <= 176.0)
      {
 	double              tw, th;
 
@@ -649,7 +816,7 @@ loop(void)
 	       }
 	  }
      }
-   else if (t <= 166.0)
+   else if (t <= 186.0)
      {
 	double              tw, th;
 
@@ -701,7 +868,7 @@ loop(void)
 	       }
 	  }
      }
-   else if (t <= 176.0)
+   else if (t <= 196.0)
      {
 	double              tw, th;
 
@@ -759,7 +926,7 @@ loop(void)
 	       }
 	  }
      }
-   else if (t <= 186.0)
+   else if (t <= 206.0)
      {
 	double              tw, th;
 
@@ -813,7 +980,7 @@ loop(void)
 	       }
 	  }
      }
-   else if (t <= 196.0)
+   else if (t <= 216.0)
      {
 	double              tw, th;
 
@@ -865,7 +1032,7 @@ loop(void)
 	       }
 	  }
      }
-   else if (t <= 197.0)
+   else if (t <= 217.0)
      {
 	if (t1)
 	   evas_object_del(t1);
@@ -874,7 +1041,7 @@ loop(void)
 	   evas_object_del(t2);
 	t2 = NULL;
      }
-   else if (t <= 207.0)
+   else if (t <= 227.0)
      {
 	double              tw, th;
 
@@ -953,7 +1120,7 @@ loop(void)
 	   evas_object_move(t2, 120 + x - 24, win_h - 120 + y - 24);
 	}
      }
-   else if (t <= 217.0)
+   else if (t <= 237.0)
      {
 	double              tw, th;
 
@@ -976,7 +1143,7 @@ loop(void)
 	   evas_object_move(t2, 120 + x - 24, win_h - 120 + y - 24);
 	}
      }
-   else if (t <= 227.0)
+   else if (t <= 247.0)
      {
 	double              tw, th;
 
@@ -1000,7 +1167,7 @@ loop(void)
 	   evas_object_move(cv2, 120 + x - 90, win_h - 120 + y - 90);
 	}
      }
-   else if (t <= 237.0)
+   else if (t <= 257.0)
      {
 	double              tw, th;
 
@@ -1026,7 +1193,7 @@ loop(void)
 	   evas_object_resize(cv2, 90 + x, 90 + y);
 	}
      }
-   else if (t <= 247.0)
+   else if (t <= 267.0)
      {
 	double              tw, th;
 
@@ -1075,7 +1242,7 @@ loop(void)
 	     evas_object_hide(cv2);
 	  }
      }
-   else if (t <= 257.0)
+   else if (t <= 277.0)
      {
 	double              tw, th;
 
@@ -1105,7 +1272,7 @@ loop(void)
 	     evas_object_clip_set(t2, c2);
 	  }
      }
-   else if (t <= 267.0)
+   else if (t <= 287.0)
      {
 	double              tw, th;
 
@@ -1139,7 +1306,7 @@ loop(void)
 	  {
 	     evas_object_clip_set(t2, c2);
 	  }
-	if (t < 262.0)
+	if (t < 282.0)
 	  {
 	     evas_object_text_text_set(comment, "Destroy yellow");
 	     if (c1)
@@ -1160,7 +1327,7 @@ loop(void)
 	     cv2 = NULL;
 	  }
      }
-   else if (t <= 268.0)
+   else if (t <= 288.0)
      {
 	if (t1)
 	   evas_object_del(t1);
@@ -1169,7 +1336,7 @@ loop(void)
 	   evas_object_del(t2);
 	t2 = NULL;
      }
-   else if (t <= 278.0)
+   else if (t <= 298.0)
      {
 	double              tw, th;
 
@@ -1211,7 +1378,7 @@ loop(void)
 				       "All Evas text objects use UTF-8 Unicode");
 	  }
      }
-   else if (t <= 288.0)
+   else if (t <= 308.0)
      {
 	double              tw, th;
 
@@ -1221,7 +1388,7 @@ loop(void)
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
 	evas_object_text_font_set(t1, "arial", (t - 278.0 + 0.5) * 8.0);
      }
-   else if (t <= 298.0)
+   else if (t <= 318.0)
      {
 	double              tw, th;
 
@@ -1242,7 +1409,7 @@ loop(void)
 	   evas_object_move(t1, 120 + x - (tw / 2), win_h - 120 + y - (th / 2));
 	}
      }
-   else if (t <= 308.0)
+   else if (t <= 328.0)
      {
 	double              tw, th;
 
@@ -1270,7 +1437,7 @@ loop(void)
 	evas_object_geometry_get(t1, NULL, NULL, &tw, &th);
 	evas_object_move(t1, 120 - (tw / 2), win_h - 120 - (th / 2));
      }
-   else if (t <= 318.0)
+   else if (t <= 338.0)
      {
 	double              tw, th;
 
@@ -1287,7 +1454,7 @@ loop(void)
 			      ((int)(t * 200)) & 0xff,
 			      ((int)(t * 133)) & 0xff, ((int)(t * 128)) & 0xff);
      }
-   else if (t <= 319.0)
+   else if (t <= 339.0)
      {
 	if (t1)
 	   evas_object_del(t1);
@@ -1296,7 +1463,7 @@ loop(void)
 	   evas_object_del(t2);
 	t2 = NULL;
      }
-   else if (t <= 329.0)
+   else if (t <= 349.0)
      {
 	double              tw, th;
 
@@ -1333,7 +1500,7 @@ loop(void)
 	   evas_object_move(t1, 120 + x - (tw / 2), win_h - 120 + y - (th / 2));
 	}
      }
-   else if (t <= 339.0)
+   else if (t <= 359.0)
      {
 	double              tw, th;
 
@@ -1352,7 +1519,7 @@ loop(void)
 	   evas_object_resize(t1, x + 110, y + 110);
 	}
      }
-   else if (t <= 349.0)
+   else if (t <= 369.0)
      {
 	double              tw, th;
 
@@ -1372,7 +1539,7 @@ loop(void)
 	   evas_object_gradient_angle_set(t1, t * 60);
 	}
      }
-   else if (t <= 359.0)
+   else if (t <= 379.0)
      {
 	double              tw, th;
 
@@ -1438,7 +1605,7 @@ loop(void)
 				 ((int)(t * 230)) & 0xff);
 	}
      }
-   else if (t <= 370.0)
+   else if (t <= 390.0)
      {
 	if (t1)
 	   evas_object_del(t1);
@@ -1447,7 +1614,7 @@ loop(void)
 	   evas_object_del(t2);
 	t2 = NULL;
      }
-   else if (t <= 380.0)
+   else if (t <= 400.0)
      {
 	double              tw, th;
 
@@ -1488,7 +1655,7 @@ loop(void)
 				 ((int)(t * 230)) & 0xff);
 	}
      }
-   else if (t <= 381.0)
+   else if (t <= 401.0)
      {
 	if (t1)
 	   evas_object_del(t1);
@@ -1497,7 +1664,7 @@ loop(void)
 	   evas_object_del(t2);
 	t2 = NULL;
      }
-   else if (t <= 391.0)
+   else if (t <= 411.0)
      {
 	double              tw, th;
 
@@ -1540,7 +1707,7 @@ loop(void)
 				 ((int)(t * 230)) & 0xff);
 	}
      }
-   else if (t <= 401.0)
+   else if (t <= 421.0)
      {
 	double              tw, th;
 
@@ -1569,7 +1736,7 @@ loop(void)
 				 ((int)(t * 230)) & 0xff);
 	}
      }
-   else if (t <= 402.0)
+   else if (t <= 422.0)
      {
 	if (t1)
 	   evas_object_del(t1);
@@ -1578,7 +1745,7 @@ loop(void)
 	   evas_object_del(t2);
 	t2 = NULL;
      }
-   else if (t <= 412.0)
+   else if (t <= 432.0)
      {
 	double              tw, th;
 
@@ -1631,7 +1798,7 @@ loop(void)
 				 ((int)(t * 230)) & 0xff);
 	}
      }
-   else if (t <= 422.0)
+   else if (t <= 442.0)
      {
 	double              tw, th;
 
@@ -1660,7 +1827,7 @@ loop(void)
 				 ((int)(t * 230)) & 0xff);
 	}
      }
-   else if (t <= 423.0)
+   else if (t <= 443.0)
      {
 	if (t1)
 	   evas_object_del(t1);
@@ -1669,7 +1836,7 @@ loop(void)
 	   evas_object_del(t2);
 	t2 = NULL;
      }
-   else if (t <= 433.0)
+   else if (t <= 453.0)
      {
 	double              tw, th;
 
@@ -1679,13 +1846,8 @@ loop(void)
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
      }
-   else if (t <= 443.0)
+   else if (t <= 463.0)
      {
-	printf("####################################################\n");
-	printf("# FRAME COUNT: %i frames\n", loop_count);
-	printf("# TIME:        %3.3f seconds\n", t);
-	printf("# AVERAGE FPS: %3.3f fps\n", (double)loop_count / t);
-	printf("####################################################\n");
 	printf("################ evas free\n");
 	evas_free(evas);
 	printf("evas freed. DONE\n");
