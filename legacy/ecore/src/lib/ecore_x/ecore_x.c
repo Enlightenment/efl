@@ -88,6 +88,7 @@ int ECORE_X_EVENT_WINDOW_SHAPE = 0;
 
 int ECORE_X_EVENT_WINDOW_DELETE_REQUEST = 0;
 int ECORE_X_EVENT_WINDOW_PROP_TITLE_CHANGE = 0;
+int ECORE_X_EVENT_WINDOW_PROP_VISIBLE_TITLE_CHANGE = 0;
 int ECORE_X_EVENT_WINDOW_PROP_NAME_CLASS_CHANGE = 0;
 
 int ECORE_X_MODIFIER_SHIFT = 0;
@@ -204,9 +205,10 @@ ecore_x_init(const char *name)
 	ECORE_X_EVENT_CLIENT_MESSAGE           = ecore_event_type_new();
 	ECORE_X_EVENT_WINDOW_SHAPE             = ecore_event_type_new();
 	
-	ECORE_X_EVENT_WINDOW_DELETE_REQUEST         = ecore_event_type_new();
-	ECORE_X_EVENT_WINDOW_PROP_TITLE_CHANGE      = ecore_event_type_new();
-        ECORE_X_EVENT_WINDOW_PROP_NAME_CLASS_CHANGE = ecore_event_type_new();
+	ECORE_X_EVENT_WINDOW_DELETE_REQUEST            = ecore_event_type_new();
+	ECORE_X_EVENT_WINDOW_PROP_TITLE_CHANGE         = ecore_event_type_new();
+	ECORE_X_EVENT_WINDOW_PROP_VISIBLE_TITLE_CHANGE = ecore_event_type_new();
+        ECORE_X_EVENT_WINDOW_PROP_NAME_CLASS_CHANGE    = ecore_event_type_new();
      }
    
    ECORE_X_MODIFIER_SHIFT = _ecore_x_key_mask_get(XK_Shift_L);

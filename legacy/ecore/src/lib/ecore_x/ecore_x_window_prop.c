@@ -111,7 +111,7 @@ ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom type, char *str)
  * @param win The window
  * @param type The property
  * 
- * Get a window string property
+ * Return window string property of a window. String must be free'd when done.
  * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 char *
@@ -175,6 +175,37 @@ ecore_x_window_prop_title_get(Ecore_X_Window win)
 
    title = ecore_x_window_prop_string_get(win, _ecore_x_atom_net_wm_name);
    if (!title) title = ecore_x_window_prop_string_get(win, _ecore_x_atom_wm_name);
+   return title;
+}
+
+/**
+ * Set a window visible title.
+ * @param win The window
+ * @param t The visible title string
+ * 
+ * Set a window visible title
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_prop_visible_title_set(Ecore_X_Window win, const char *t)
+{
+   ecore_x_window_prop_string_set(win, _ecore_x_atom_net_wm_visible_name, t);
+}
+
+/**
+ * Get a window visible title.
+ * @param win The window
+ * @return The windows visible title string
+ * 
+ * Return the visible title of a window. String must be free'd when done with.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+char *
+ecore_x_window_prop_visible_title_get(Ecore_X_Window win)
+{
+   char *title;
+
+   title = ecore_x_window_prop_string_get(win, _ecore_x_atom_net_wm_visible_name);
    return title;
 }
 

@@ -99,9 +99,10 @@ typedef struct _Ecore_X_Event_Selection_Notify         Ecore_X_Event_Selection_N
 typedef struct _Ecore_X_Event_Client_Message           Ecore_X_Event_Client_Message;
 typedef struct _Ecore_X_Event_Window_Shape             Ecore_X_Event_Window_Shape;
 
-typedef struct _Ecore_X_Event_Window_Delete_Request         Ecore_X_Event_Window_Delete_Request;
-typedef struct _Ecore_X_Event_Window_Prop_Title_Change      Ecore_X_Event_Window_Prop_Title_Change;
-typedef struct _Ecore_X_Event_Window_Prop_Name_Class_Change Ecore_X_Event_Window_Prop_Name_Class_Change;
+typedef struct _Ecore_X_Event_Window_Delete_Request            Ecore_X_Event_Window_Delete_Request;
+typedef struct _Ecore_X_Event_Window_Prop_Title_Change         Ecore_X_Event_Window_Prop_Title_Change;
+typedef struct _Ecore_X_Event_Window_Prop_Visible_Title_Change Ecore_X_Event_Window_Prop_Visible_Title_Change;
+typedef struct _Ecore_X_Event_Window_Prop_Name_Class_Change    Ecore_X_Event_Window_Prop_Name_Class_Change;
      
 struct _Ecore_X_Event_Key_Down
 {
@@ -369,6 +370,13 @@ struct _Ecore_X_Event_Window_Prop_Title_Change
    Ecore_X_Time    time;
 };
 
+struct _Ecore_X_Event_Window_Prop_Visible_Title_Change
+{
+   Ecore_X_Window  win;
+   char   *title;
+   Ecore_X_Time    time;
+};
+
 struct _Ecore_X_Event_Window_Prop_Name_Class_Change
 {
    Ecore_X_Window  win;
@@ -413,6 +421,7 @@ extern int ECORE_X_EVENT_WINDOW_SHAPE;
 
 extern int ECORE_X_EVENT_WINDOW_DELETE_REQUEST;
 extern int ECORE_X_EVENT_WINDOW_PROP_TITLE_CHANGE;
+extern int ECORE_X_EVENT_WINDOW_PROP_VISIBLE_TITLE_CHANGE;
 extern int ECORE_X_EVENT_WINDOW_PROP_NAME_CLASS_CHANGE;
    
 extern int ECORE_X_MODIFIER_SHIFT;
@@ -493,6 +502,8 @@ void             ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom
 char            *ecore_x_window_prop_string_get(Ecore_X_Window win, Ecore_X_Atom type);
 void             ecore_x_window_prop_title_set(Ecore_X_Window win, const char *t);
 char            *ecore_x_window_prop_title_get(Ecore_X_Window win);
+void             ecore_x_window_prop_visible_title_set(Ecore_X_Window win, const char *t);
+char            *ecore_x_window_prop_visible_title_get(Ecore_X_Window win);
 void             ecore_x_window_prop_name_class_set(Ecore_X_Window win, const char *n, const char *c);
 void             ecore_x_window_prop_name_class_get(Ecore_X_Window win, char **n, char **c);
 void             ecore_x_window_prop_protocol_set(Ecore_X_Window win, Ecore_X_WM_Protocol protocol, int on);
