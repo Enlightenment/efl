@@ -477,6 +477,7 @@ void              __evas_x11_rectangle_draw(Display *disp, Imlib_Image dstim, Wi
 			    XSetTile(disp, dr->gc, None);
 			 }
 		       XFillRectangle(disp, up->p, dr->gc, x - up->x, y - up->y, w, h);
+		       if (s_mask) XFreePixmap(disp, s_mask);
 		    }
 	       }
 	  }
@@ -484,7 +485,6 @@ void              __evas_x11_rectangle_draw(Display *disp, Imlib_Image dstim, Wi
    if (im) 
      {
 	if (pmap) imlib_free_pixmap_and_mask(pmap);	
-	if (s_mask) XFreePixmap(disp, s_mask);
 	imlib_context_set_image(im);
 	imlib_free_image();
      }
