@@ -624,6 +624,7 @@ e_window_move(Window win, int x, int y)
 	  }
 	xid->x = x;
 	xid->y = y;
+	xid->coords_invalid = 0;
 	XMoveWindow(disp, win, x, y);
      }
 }
@@ -640,7 +641,13 @@ if (xid->children) \
 	xid2 = e_validate_xid(xid->children[j]); \
 	if (xid2) \
 	  { \
-	     switch (xid2->gravity) \
+             xid2->coords_invalid = 1; \
+          } \
+     } \
+}
+
+#if 0
+             switch (xid2->gravity) \
 	       { \
 		case UnmapGravity: \
                   xid2->mapped = 0; \
@@ -683,6 +690,7 @@ if (xid->children) \
 	  } \
      } \
 }
+#endif
 
 void
 e_window_resize(Window win, int w, int h)
