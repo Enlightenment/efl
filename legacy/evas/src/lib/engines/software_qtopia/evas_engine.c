@@ -1001,14 +1001,15 @@ evas_engine_software_qtopia_font_draw(void *data, void *context, void *surface, 
 	     RGBA_Image *im;
 	     
 	     dc->col.col = dc_in->col.col;
-	     im = evas_common_image_create(ow, oh);
+	     int inset = evas_common_font_query_inset( font, text);
+	     im = evas_common_image_create(ow+inset, oh);
 	     if (im)
 	       {
 		  int max_ascent;
 		  int i, j;
 		  
 		  im->flags |= RGBA_IMAGE_HAS_ALPHA;
-		  j = ow * oh;
+		  j = (ow+inset) * oh;
 		  memset(im->image->data, 0, j * sizeof(DATA32));
 		  
 		  max_ascent = evas_common_font_max_ascent_get(font);
@@ -1016,8 +1017,8 @@ evas_engine_software_qtopia_font_draw(void *data, void *context, void *surface, 
 		  evas_common_font_draw(im, dc, font, 0, max_ascent, text);
 		  evas_common_cpu_end_opt();
 		  evas_common_scale_rgba_in_to_out_clip_smooth(im, surface, context, 
-						   0, 0, ow, oh, 
-						   x, y - ((max_ascent * h) / oh), 
+						   inset, 0, ow, oh, 
+						   x + ((inset * w) / ow), y - ((max_ascent * h) / oh), 
 						   w, h);
 		  evas_common_image_free(im);
 	       }

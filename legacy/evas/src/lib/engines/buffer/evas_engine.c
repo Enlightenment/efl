@@ -1076,18 +1076,20 @@ evas_engine_buffer_font_draw(void *data, void *context, void *surface, void *fon
 	     render_w = (ow * mult) / divv;
 	     render_h = (oh * mult) / divv;
 	     
+	     newfont = evas_common_font_load( ((RGBA_Font *)font)->src->name, (((RGBA_Font *)font)->size*mult)/divv);
+	     
 	     dc->col.col = dc_in->col.col;
-	     im = evas_common_image_create(render_w, render_h);
+	     int inset = evas_common_font_query_inset( font, text);
+	     im = evas_common_image_create(render_w+inset, render_h);
 	     if (im)
 	       {
 		  int max_ascent;
 		  int i, j;
 		  
 		  im->flags |= RGBA_IMAGE_HAS_ALPHA;
-		  j = render_w * render_h;
+		  j = (render_w+inset) * render_h;
 		  for (i = 0; i < j; i++) im->image->data[i] = (dc->col.col & 0xffffff);
 		  
-		  newfont = evas_common_font_load( ((RGBA_Font *)font)->src->name, (((RGBA_Font *)font)->size*mult)/divv);
 		  if (newfont)
 		    {
 		       max_ascent = evas_common_font_max_ascent_get(newfont);
@@ -1095,8 +1097,8 @@ evas_engine_buffer_font_draw(void *data, void *context, void *surface, void *fon
 		       evas_common_font_draw(im, dc, newfont, 0, max_ascent, text);
 		       evas_common_cpu_end_opt();
 		       evas_common_scale_rgba_in_to_out_clip_smooth(im, surface, context, 
-								    0, 0, render_w, render_h,
-								    x, y - ((max_ascent * h) / render_h),
+								    inset, 0, render_w, render_h,
+								    x + ((inset * w) / render_w), y - ((max_ascent * h) / render_h),
 								    w, h);
 		       evas_common_font_free(newfont);
 		    }
