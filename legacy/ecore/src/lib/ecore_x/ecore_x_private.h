@@ -120,6 +120,7 @@ extern Window   _ecore_x_event_last_win;
 extern int      _ecore_x_event_last_root_x;
 extern int      _ecore_x_event_last_root_y;
 
+extern Atom     _ecore_x_atom_wm_state;
 extern Atom     _ecore_x_atom_wm_delete_window;
 extern Atom     _ecore_x_atom_wm_take_focus;
 extern Atom     _ecore_x_atom_wm_protocols;

@@ -28,6 +28,7 @@ int      _ecore_x_event_last_root_y = 0;
 /*
  * ICCCM and Motif hints.
  */
+Atom     _ecore_x_atom_wm_state = 0;
 Atom     _ecore_x_atom_wm_delete_window = 0;
 Atom     _ecore_x_atom_wm_take_focus = 0;
 Atom     _ecore_x_atom_wm_protocols = 0;
@@ -365,6 +366,7 @@ ecore_x_init(const char *name)
 	return 0;
      }
    _ecore_x_filter_handler = ecore_event_filter_add(_ecore_x_event_filter_start, _ecore_x_event_filter_filter, _ecore_x_event_filter_end, NULL);
+   _ecore_x_atom_wm_state                 = XInternAtom(_ecore_x_disp, "WM_STATE", False);
    _ecore_x_atom_wm_delete_window         = XInternAtom(_ecore_x_disp, "WM_DELETE_WINDOW", False);
    _ecore_x_atom_wm_take_focus            = XInternAtom(_ecore_x_disp, "WM_TAKE_FOCUS", False);
    _ecore_x_atom_wm_protocols             = XInternAtom(_ecore_x_disp, "WM_PROTOCOLS", False);
@@ -1269,6 +1271,64 @@ ecore_x_ungrab(void)
       XSync(_ecore_x_disp, False);
    }
 }
+
+
+/**
+ * Send client message with given type and format 32.
+ *
+ * @param win     The window the message is sent to.
+ * @param type    The client message type.
+ * @param d0...d4 The client message data items.
+ *
+ * @return !0 on success.
+ */
+int
+ecore_x_client_message32_send(Ecore_X_Window win, Ecore_X_Atom type,
+			      long d0, long d1, long d2, long d3, long d4)
+{
+    XEvent xev;
+
+    xev.xclient.window = win;
+    xev.xclient.type = ClientMessage;
+    xev.xclient.message_type = type;
+    xev.xclient.format = 32;
+    xev.xclient.data.l[0] = d0;
+    xev.xclient.data.l[1] = d1;
+    xev.xclient.data.l[2] = d2;
+    xev.xclient.data.l[3] = d3;
+    xev.xclient.data.l[4] = d4;
+
+    return XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
+}
+
+/**
+ * Send client message with given type and format 8.
+ *
+ * @param win     The window the message is sent to.
+ * @param type    The client message type.
+ * @param data    Data to be sent.
+ * @param len     Number of data bytes, max 20.
+ *
+ * @return !0 on success.
+ */
+int
+ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom type,
+			     const void *data, int len)
+{
+    XEvent xev;
+
+    xev.xclient.window = win;
+    xev.xclient.type = ClientMessage;
+    xev.xclient.message_type = type;
+    xev.xclient.format = 8;
+    if (len > 20)
+        len = 20;
+    memcpy(xev.xclient.data.b, data, len);
+    memset(xev.xclient.data.b + len, 0, 20 - len);
+
+    return XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
+}
+
 
 /*****************************************************************************/
 /*****************************************************************************/
