@@ -257,9 +257,12 @@ evas_object_smart_cleanup(Evas_Object *obj)
 	
 	cb = obj->smart.callbacks->data;
 	obj->smart.callbacks = evas_list_remove(obj->smart.callbacks, cb);
-	if (cb->event) free (cb->event);
+	if (cb->event) free(cb->event);
 	free(cb);
      }
+   obj->smart.parent;
+   obj->smart.data = NULL;
+   obj->smart.smart = NULL;
    if (s) evas_object_smart_unuse(s);
 }
 

@@ -3,6 +3,8 @@
 #include "Evas.h"
 
 static void evas_object_event_callback_list_free(Evas_Object_List **list);
+static void evas_object_event_callback_list_post_free(Evas_Object_List **list);
+static void evas_object_event_callback_clear(Evas_Object *obj);
 
 static void
 evas_object_event_callback_list_free(Evas_Object_List **list)
@@ -16,6 +18,50 @@ evas_object_event_callback_list_free(Evas_Object_List **list)
 	*list = evas_object_list_remove(*list, fn);
 	free(fn);
      }
+}
+
+static void
+evas_object_event_callback_list_post_free(Evas_Object_List **list)
+{
+   Evas_Object_List *l;
+   
+   /* MEM OK */
+   for (l = *list; l;)
+     {
+	Evas_Func_Node *fn;
+	
+	fn = (Evas_Func_Node *)l;
+	l = l->next;
+	if (fn->delete_me)
+	  {
+	     *list = evas_object_list_remove(*list, fn);
+	     free(fn);
+	  }
+     }
+}
+
+static void
+evas_object_event_callback_clear(Evas_Object *obj)
+{
+   Evas_Callback_Type t;
+   
+   if (!obj->callbacks.deletions_waiting) return;
+   obj->callbacks.deletions_waiting = 0;
+   evas_object_event_callback_list_post_free(&(obj->callbacks.in));
+   evas_object_event_callback_list_post_free(&(obj->callbacks.out));
+   evas_object_event_callback_list_post_free(&(obj->callbacks.down));
+   evas_object_event_callback_list_post_free(&(obj->callbacks.up));
+   evas_object_event_callback_list_post_free(&(obj->callbacks.move));
+   evas_object_event_callback_list_post_free(&(obj->callbacks.free));
+   evas_object_event_callback_list_post_free(&(obj->callbacks.key_down));
+   evas_object_event_callback_list_post_free(&(obj->callbacks.key_up));
+   evas_object_event_callback_list_post_free(&(obj->callbacks.obj_focus_in));
+   evas_object_event_callback_list_post_free(&(obj->callbacks.obj_focus_out));
+   evas_object_event_callback_list_post_free(&(obj->callbacks.obj_show));
+   evas_object_event_callback_list_post_free(&(obj->callbacks.obj_hide));
+   evas_object_event_callback_list_post_free(&(obj->callbacks.obj_move));
+   evas_object_event_callback_list_post_free(&(obj->callbacks.obj_resize));
+   evas_object_event_callback_list_post_free(&(obj->callbacks.obj_restack));
 }
 
 void
@@ -96,13 +142,19 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
 	return;
 	break;
      }
+   obj->callbacks.walking_list++;
    for (l = *l_mod; l; l = l->next)
      {
 	Evas_Func_Node *fn;
 	
 	fn = (Evas_Func_Node *)l;
-	fn->func(fn->data, obj->layer->evas, obj, event_info);
+	if (!fn->delete_me)
+	  fn->func(fn->data, obj->layer->evas, obj, event_info);
+	if (obj->delete_me) break;
      }
+   obj->callbacks.walking_list--;
+   if (!obj->callbacks.walking_list)
+     evas_object_event_callback_clear(obj);
 }
 
 /**
@@ -427,8 +479,10 @@ evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (
 	     void *data;
 	     
 	     data = fn->data;
-	     *l_mod = evas_object_list_remove(*l_mod, fn);
-	     free(fn);
+	     fn->delete_me = 1;
+	     obj->callbacks.deletions_waiting = 1;
+	     if (!obj->callbacks.walking_list)
+	       evas_object_event_callback_clear(obj);
 	     return data;
 	  }
      }

@@ -328,6 +328,8 @@ struct _Evas_Object
    Evas_List *grabs;
    
    struct {
+      int               deletions_waiting : 1;
+      int               walking_list : 1;
       Evas_Object_List *in;
       Evas_Object_List *out;
       Evas_Object_List *down;
@@ -365,8 +367,8 @@ struct _Evas_Object
 
 struct _Evas_Func_Node
 {
-   Evas_Object_List  _list_data;
-   
+   Evas_Object_List  _list_data;   
+   int  delete_me : 1;
    void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info);
    void *data;
 };

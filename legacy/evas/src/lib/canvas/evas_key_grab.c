@@ -10,7 +10,7 @@
 
 static Evas_Key_Grab *evas_key_grab_new  (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, int exclusive);
 static void           evas_key_grab_free (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
-static Evas_Key_Grab *evas_key_grab_find (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
+static Evas_Key_Grab *evas_key_grab_find (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, int exclusive);
 
 static Evas_Key_Grab *
 evas_key_grab_new(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, int exclusive)
@@ -77,7 +77,7 @@ evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask mod
    /* MEM OK */
    Evas_Key_Grab *g;
    
-   g = evas_key_grab_find(obj, keyname, modifiers, not_modifiers);
+   g = evas_key_grab_find(obj, keyname, modifiers, not_modifiers, 0);
    if (!g) return;
    g->object->grabs = evas_list_remove(g->object->grabs, g);
    if (g->keyname) free(g->keyname);
@@ -85,11 +85,11 @@ evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask mod
 }
 
 static Evas_Key_Grab *
-evas_key_grab_find(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
+evas_key_grab_find(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, int exclusive)
 {
    /* MEM OK */
    Evas_List *l;
-   
+
    for (l = obj->layer->evas->grabs; l; l = l->next)
      {
 	Evas_Key_Grab *g;
@@ -99,7 +99,7 @@ evas_key_grab_find(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask mod
 	    (g->not_modifiers == not_modifiers) &&
 	    (!strcmp(g->keyname, keyname)))
 	  {
-	     if ((!obj) ||  (obj == g->object)) return g;
+	     if ((exclusive) ||  (obj == g->object)) return g;
 	  }
      }
    return NULL;
@@ -135,7 +135,7 @@ evas_object_key_grab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask m
    MAGIC_CHECK_END();
    if (exclusive)
      {
-	g = evas_key_grab_find(NULL, keyname, modifiers, not_modifiers);
+	g = evas_key_grab_find(obj, keyname, modifiers, not_modifiers, exclusive);
 	if (g) return 0;
      }
    g = evas_key_grab_new(obj, keyname, modifiers, not_modifiers, exclusive);
@@ -152,7 +152,7 @@ evas_object_key_ungrab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   g = evas_key_grab_find(obj, keyname, modifiers, not_modifiers);
+   g = evas_key_grab_find(obj, keyname, modifiers, not_modifiers, 0);
    if (!g) return;
    evas_key_grab_free(g->object, keyname, modifiers, not_modifiers);
 }
