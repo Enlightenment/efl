@@ -453,10 +453,14 @@ extern "C" {
    EAPI void                   evas_object_textblock_text_del             (Evas_Object *obj, int len);
    EAPI void                   evas_object_textblock_format_insert        (Evas_Object *obj, const char *format);
    EAPI int                    evas_object_textblock_format_next_pos_get  (Evas_Object *obj);
+   EAPI int                    evas_object_textblock_format_next_count_get(Evas_Object *obj);
+   EAPI const char            *evas_object_textblock_format_next_get      (Evas_Object *obj, int n);
+   EAPI void                   evas_object_textblock_format_next_del      (Evas_Object *obj, int n);
    EAPI int                    evas_object_textblock_format_prev_pos_get  (Evas_Object *obj);
-   EAPI char                  *evas_object_textblock_format_get           (Evas_Object *obj);
+   EAPI int                    evas_object_textblock_format_prev_count_get(Evas_Object *obj);
+   EAPI const char            *evas_object_textblock_format_prev_get      (Evas_Object *obj, int n);
+   EAPI void                   evas_object_textblock_format_prev_del      (Evas_Object *obj, int n);
    EAPI char                  *evas_object_textblock_current_format_get   (Evas_Object *obj);
-   EAPI void                   evas_object_textblock_format_del           (Evas_Object *obj);
    EAPI void                   evas_object_textblock_format_direction_set (Evas_Object *obj, Evas_Format_Direction dir);
    EAPI Evas_Format_Direction  evas_object_textblock_format_direction_get (Evas_Object *obj);
    EAPI void                   evas_object_textblock_format_size_get      (Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);

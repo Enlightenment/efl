@@ -11,7 +11,6 @@
  * things to add:
  * 
  * * finish off current api where it is unfinished
- * * height increased by 3 (or 1) even if no underline on last line - fix
  * * get native extents
  * * styles (outline, glow, etxra glow, shadow, soft shadow, etc.)
  * * if a word (or char) doesnt fit at all do something sensible
@@ -401,11 +400,12 @@ evas_object_textblock_layout_format_apply(Layout *layout, char *key, char *data)
      }
 }
 
-static void
-evas_object_textblock_layout_format_modify(Layout *layout, const char *format)
+static Evas_List *
+evas_object_textblock_format_parse(const char *format)
 {
    const char *p, *k1 = NULL, *k2 = NULL, *d1 = NULL, *d2 = NULL;
    int inquote = 0, inescape = 0;
+   Evas_List *params = NULL;
    
    if (!format) return;
    p = format - 1;
@@ -482,13 +482,34 @@ evas_object_textblock_layout_format_modify(Layout *layout, const char *format)
 		  k1 = k2 = d1 = d2 = NULL;
 		  inquote = 0;
 		  inescape = 0;
-		  evas_object_textblock_layout_format_apply(layout, key, data);
-		  free(key);
-		  free(data);
+		  params = evas_list_append(params, key);
+		  params = evas_list_append(params, data);
 	       }
 	  }
      }
    while (*p);
+   return params;
+}
+
+static void
+evas_object_textblock_layout_format_modify(Layout *layout, const char *format)
+{
+   Evas_List *params;
+   
+   params = evas_object_textblock_format_parse(format);
+   while (params)
+     {
+	char *key;
+	char *data;
+	
+	key = params->data;
+	params = evas_list_remove_list(params, params);
+	data = params->data;
+	params = evas_list_remove_list(params, params);
+	evas_object_textblock_layout_format_apply(layout, key, data);
+	free(key);
+	free(data);
+     }
 }
 
 static void
@@ -625,6 +646,7 @@ evas_object_textblock_layout(Evas_Object *obj)
    Evas_Coord w, h;
    Layout_Node *line_start = NULL;
    int text_pos = 0, fh = 0, last_mdescent = 0, line = 0, last_line = 0;
+   int last_line_underline = 0, last_line_double_underline = 0;
 
    o = (Evas_Object_Textblock *)(obj->object_data);
    evas_object_textblock_layout_init(&layout);
@@ -659,6 +681,8 @@ evas_object_textblock_layout(Evas_Object *obj)
 		    {
 		       /* FIXME: this node would overflow to the next textblock */
 		    }
+		  last_line_underline = 0;
+		  last_line_double_underline = 0;
 		  line++;
 		  layout.line.y += layout.line.mascent + layout.line.mdescent;
 		  fh = layout.line.y;
@@ -666,7 +690,11 @@ evas_object_textblock_layout(Evas_Object *obj)
 		  line_start = NULL;
 	       }
 	     else
-	       evas_object_textblock_layout_format_modify(&layout, node->format);
+	       {
+		  evas_object_textblock_layout_format_modify(&layout, node->format);
+		  if (layout.underline) last_line_underline = 1;
+		  if (layout.second_underline) last_line_double_underline = 1;
+	       }
 	  }
 	if (node->text)
 	  {
@@ -857,6 +885,8 @@ evas_object_textblock_layout(Evas_Object *obj)
 			 {
 			    /* FIXME: this node would overflow to the next textblock */
 			 }
+		       last_line_underline = 0;
+		       last_line_double_underline = 0;
 		       line++;
 		       layout.line.y += layout.line.mascent + layout.line.mdescent;
 		       fh = layout.line.y;
@@ -875,7 +905,14 @@ evas_object_textblock_layout(Evas_Object *obj)
    evas_object_textblock_layout_clear(obj, &layout);
    o->lines = last_line + 1;
    o->format.w = w;
-   if (last_mdescent < 3) fh += 3 - last_mdescent;
+   if (last_line_double_underline)
+     {
+	if (last_mdescent < 3) fh += 3 - last_mdescent;
+     }
+   else if (last_line_underline)
+     {
+	if (last_mdescent < 1) fh += 1 - last_mdescent;
+     }
    o->format.h = fh;
    o->format.dirty = 0;
 }
@@ -1684,7 +1721,6 @@ evas_object_textblock_text_del(Evas_Object *obj, int len)
 	else
 	  {
 	     Evas_List *freenodes = NULL, *formatnodes = NULL;
-	     Evas_List *ll;
 	     Node *node_start = NULL, *node_end = NULL, *format_start = NULL;
 	     Evas_Object_List *l;
 	     
@@ -1764,30 +1800,10 @@ evas_object_textblock_text_del(Evas_Object *obj, int len)
 		  if (node->format) free(node->format);
 		  free(node);
 	       }
-	     /* remove formatnodes for now... */
-	     /* FIXME: remove */
+	     /* remove formatnodes for now... dont do anything... */
              while (formatnodes)
 	       formatnodes = evas_list_remove_list(formatnodes, formatnodes);
-#if 0	     
-	     /* find all format nodes leading up to the deleted set of
-	      * format nodes
-	      */
-	     for (l = (Evas_Object_List *)format_node_start; l; l = l->prev)
-	       {
-		  node = (Node *)l;		  
-		  if (node->format)
-		    formatnodes = evas_list_prepend(formatnodes, node);
-		  else
-		    break;
-	       }
-	     /* go from last to start and once we have seen a format node
-	      * for a ceretain key, mark it as seen then remove occurances
-	      * earlier on in the list as we go to the start
-	      */
-	     for (ll = evas_list_last(formatnodes); ll; ll = ll->prev)
-	       {
-	       }
-#endif	     
+	     /* FIXME: merge format nodes... */
 	  }
      }
    o->native.dirty = 1;
@@ -1882,6 +1898,8 @@ int
 evas_object_textblock_format_next_pos_get(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
+   Node *node;
+   int ps, pos;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return -1;
@@ -1890,14 +1908,143 @@ evas_object_textblock_format_next_pos_get(Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
    return -1;
    MAGIC_CHECK_END();
-   /* FIXME: DO */
+   node = evas_object_textblock_node_pos_get(obj, o->pos, &ps);
+   pos = ps;
+   if (node)
+     {
+	pos += node->text_len;
+	node = (Node *)(((Evas_Object_List *)node)->next);
+	while ((node) && (node->text))
+	  {
+	     pos += node->text_len;
+	     node = (Node *)(((Evas_Object_List *)node)->next);
+	  }
+	return pos;
+     }
    return -1;
 }
+
+int
+evas_object_textblock_format_next_count_get(Evas_Object *obj)
+{
+   Evas_Object_Textblock *o;
+   Node *node;
+   int ps, num;
+   
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
+   return 0;
+   MAGIC_CHECK_END();
+   node = evas_object_textblock_node_pos_get(obj, o->pos, &ps);
+   if (node)
+     {
+	node = (Node *)(((Evas_Object_List *)node)->next);
+	while ((node) && (node->text))
+	  node = (Node *)(((Evas_Object_List *)node)->next);
+	num = 0;
+	while ((node) && (!node->text))
+	  {
+	     num++;
+	     node = (Node *)(((Evas_Object_List *)node)->next);
+	  }
+	return num;
+     }
+   return 0;
+}
+
+const char *
+evas_object_textblock_format_next_get(Evas_Object *obj, int n)
+{
+   Evas_Object_Textblock *o;
+   Node *node;
+   int ps, num;
+   
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return NULL;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
+   return NULL;
+   MAGIC_CHECK_END();
+   node = evas_object_textblock_node_pos_get(obj, o->pos, &ps);
+   if (node)
+     {
+	node = (Node *)(((Evas_Object_List *)node)->next);
+	while ((node) && (node->text))
+	  node = (Node *)(((Evas_Object_List *)node)->next);
+	num = 0;
+	while ((node) && (!node->text))
+	  {
+	     if (num == n) return node->format;
+	     num++;
+	     node = (Node *)(((Evas_Object_List *)node)->next);
+	  }
+     }
+   return NULL;
+}
+
+void
+evas_object_textblock_format_next_del(Evas_Object *obj, int n)
+{
+   Evas_Object_Textblock *o;
+   Node *node;
+   int ps, num;
+   
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
+   return;
+   MAGIC_CHECK_END();
+   node = evas_object_textblock_node_pos_get(obj, o->pos, &ps);
+   if (node)
+     {
+	node = (Node *)(((Evas_Object_List *)node)->next);
+	while ((node) && (node->text))
+	  node = (Node *)(((Evas_Object_List *)node)->next);
+	num = 0;
+	while ((node) && (!node->text))
+	  {
+	     if (num == n)
+	       {
+		  o->nodes = evas_object_list_remove(o->nodes, node);
+		  if (node->format) free(node->format);
+		  free(node);
+		  o->native.dirty = 1;
+		  o->format.dirty = 1;
+		  o->changed = 1;
+		  evas_object_change(obj);
+		  return;
+	       }
+	     num++;
+	     node = (Node *)(((Evas_Object_List *)node)->next);
+	  }
+     }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 int
 evas_object_textblock_format_prev_pos_get(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
+   Node *node;
+   int ps, pos;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return -1;
@@ -1906,14 +2053,58 @@ evas_object_textblock_format_prev_pos_get(Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
    return -1;
    MAGIC_CHECK_END();
-   /* FIXME: DO */
+   node = evas_object_textblock_node_pos_get(obj, o->pos, &ps);
+   pos = ps;
+   if (node)
+     {
+	node = (Node *)(((Evas_Object_List *)node)->prev);
+	while ((node) && (node->text))
+	  {
+	     pos -= node->text_len;
+	     node = (Node *)(((Evas_Object_List *)node)->prev);
+	  }
+	return pos;
+     }
    return -1;
 }
 
-char *
-evas_object_textblock_format_get(Evas_Object *obj)
+int
+evas_object_textblock_format_prev_count_get(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
+   Node *node;
+   int ps, num;
+   
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
+   return 0;
+   MAGIC_CHECK_END();
+   node = evas_object_textblock_node_pos_get(obj, o->pos, &ps);
+   if (node)
+     {
+	node = (Node *)(((Evas_Object_List *)node)->prev);
+	while ((node) && (node->text))
+	  node = (Node *)(((Evas_Object_List *)node)->prev);
+	num = 0;
+	while ((node) && (!node->text))
+	  {
+	     num++;
+	     node = (Node *)(((Evas_Object_List *)node)->prev);
+	  }
+	return num;
+     }
+   return 0;
+}
+
+const char *
+evas_object_textblock_format_prev_get(Evas_Object *obj, int n)
+{
+   Evas_Object_Textblock *o;
+   Node *node;
+   int ps, num;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
@@ -1922,9 +2113,70 @@ evas_object_textblock_format_get(Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
    return NULL;
    MAGIC_CHECK_END();
-   /* FIXME: DO */
+   node = evas_object_textblock_node_pos_get(obj, o->pos, &ps);
+   if (node)
+     {
+	node = (Node *)(((Evas_Object_List *)node)->prev);
+	while ((node) && (node->text))
+	  node = (Node *)(((Evas_Object_List *)node)->prev);
+	num = 0;
+	while ((node) && (!node->text))
+	  {
+	     if (num == n) return node->format;
+	     num++;
+	     node = (Node *)(((Evas_Object_List *)node)->prev);
+	  }
+     }
    return NULL;
 }
+
+void
+evas_object_textblock_format_prev_del(Evas_Object *obj, int n)
+{
+   Evas_Object_Textblock *o;
+   Node *node;
+   int ps, num;
+   
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
+   return;
+   MAGIC_CHECK_END();
+   node = evas_object_textblock_node_pos_get(obj, o->pos, &ps);
+   if (node)
+     {
+	node = (Node *)(((Evas_Object_List *)node)->prev);
+	while ((node) && (node->text))
+	  node = (Node *)(((Evas_Object_List *)node)->prev);
+	num = 0;
+	while ((node) && (!node->text))
+	  {
+	     if (num == n)
+	       {
+		  o->nodes = evas_object_list_remove(o->nodes, node);
+		  if (node->format) free(node->format);
+		  free(node);
+		  o->native.dirty = 1;
+		  o->format.dirty = 1;
+		  o->changed = 1;
+		  evas_object_change(obj);
+		  return;
+	       }
+	     num++;
+	     node = (Node *)(((Evas_Object_List *)node)->prev);
+	  }
+     }
+}
+
+
+
+
+
+
+
+
 
 char *
 evas_object_textblock_current_format_get(Evas_Object *obj)
@@ -1939,26 +2191,17 @@ evas_object_textblock_current_format_get(Evas_Object *obj)
    return NULL;
    MAGIC_CHECK_END();
    /* FIXME: DO */
+   /* so what do we do eh? do we return 1 string with all "stateful" format
+    * data in it (font, size, color, underline etc.) space delimited... or
+    * what? i am tempted to opt for this solution right now - caller must
+    * free the string when done with free()
+    * 
+    * so to do this. find the layout node at the current pos, check the
+    * layout params, and snprintf all that are not a default value (that u can
+    * set via format parameters), then return a strdup of the buffer. if the
+    * buffer is too small - resize and snprintf again.
+    */
    return NULL;
-}
-
-void
-evas_object_textblock_format_del(Evas_Object *obj)
-{
-   Evas_Object_Textblock *o;
-   
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   o = (Evas_Object_Textblock *)(obj->object_data);
-   MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
-   return;
-   MAGIC_CHECK_END();
-   /* FIXME: DO */
-   o->native.dirty = 1;
-   o->format.dirty = 1;
-   o->changed = 1;
-   evas_object_change(obj);
 }
 
 void
@@ -2112,7 +2355,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 	  evas_object_textblock_format_calc(obj);
 	o->changed = 0;
      }
-#if 0   
+#if 0 /* using for some debugging. will go soon */
     obj->layer->evas->engine.func->context_color_set(output,
                                                      context,
                                                      230, 160, 30, 100);
@@ -2216,7 +2459,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 			       ((double)((lnode->layout.line.mascent + 
 					  lnode->layout.line.mdescent) -
 					 (lnode->layout.line.ascent + 
-					  lnode->layout.line.descent)) * 
+					  lnode->layout.line.descent) - 1) * 
 					 lnode->layout.valign) +
 			       lnode->layout.line.ascent,
 			       lnode->w,
