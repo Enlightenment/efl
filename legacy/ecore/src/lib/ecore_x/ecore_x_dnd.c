@@ -170,8 +170,8 @@ _ecore_x_dnd_drag(int x, int y)
 
    if (win)
    {
-      _xdnd->version = ECORE_MIN(ECORE_X_DND_VERSION, 
-                                 ecore_x_dnd_version_get(win));
+      _xdnd->version = MIN(ECORE_X_DND_VERSION, 
+                           ecore_x_dnd_version_get(win));
       if (win != _xdnd->dest)
       {
          int i;
@@ -186,7 +186,7 @@ _ecore_x_dnd_drag(int x, int y)
             xev.xclient.data.l[1] &= 0xfffffffeUL;
          xev.xclient.data.l[1] |= ((unsigned long) _xdnd->version) << 24;
          
-         for (i = 0; i < ECORE_MIN(_xdnd->num_types, 3); ++i)
+         for (i = 0; i < MIN(_xdnd->num_types, 3); ++i)
             xev.xclient.data.l[i + 2] = _xdnd->types[i];
          XSendEvent(_ecore_x_disp, win, False, 0, &xev);
          _xdnd->await_status = 0;
