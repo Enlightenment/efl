@@ -978,7 +978,8 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 	     
 	     ydy = idy;
 	     ix = idx;
-	     if (o->cur.fill.w == obj->cur.geometry.w)
+	     if ((o->cur.fill.w == obj->cur.geometry.w) && 
+		 (o->cur.fill.x == 0.0))
 	       {
 		  dobreak_w = 1;
 		  iw = obj->cur.cache.geometry.w;
@@ -990,7 +991,8 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 		  int dobreak_h = 0;
 		  
 		  iy = idy;
-		  if (o->cur.fill.h == obj->cur.geometry.h)
+		  if ((o->cur.fill.h == obj->cur.geometry.h) &&
+		      (o->cur.fill.y == 0.0))
 		    {
 		       ih = obj->cur.cache.geometry.h;
 		       dobreak_h = 1;
