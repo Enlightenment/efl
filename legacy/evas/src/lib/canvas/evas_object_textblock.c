@@ -118,7 +118,6 @@ struct _Evas_Object_Textblock
    char                   changed : 1;
    
    int                    pos, len, lines;
-   Evas_Format_Direction  format_dir;
    Node                  *nodes;
    Layout_Node           *layout_nodes;
    Evas_Coord             last_w, last_h;
@@ -2379,41 +2378,6 @@ evas_object_textblock_current_format_get(Evas_Object *obj)
     * buffer is too small - resize and snprintf again.
     */
    return NULL;
-}
-
-void
-evas_object_textblock_format_direction_set(Evas_Object *obj, Evas_Format_Direction dir)
-{
-   Evas_Object_Textblock *o;
-   
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return;
-   MAGIC_CHECK_END();
-   o = (Evas_Object_Textblock *)(obj->object_data);
-   MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
-   return;
-   MAGIC_CHECK_END();
-   if (o->format_dir == dir) return;
-   /* FIXME: DOES NOTHING YET - FUTURE FEATRUE */
-   o->native.dirty = 1;
-   o->format.dirty = 1;
-   o->changed = 1;
-   evas_object_change(obj);
-}
-
-Evas_Format_Direction
-evas_object_textblock_format_direction_get(Evas_Object *obj)
-{
-   Evas_Object_Textblock *o;
-   
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return EVAS_FORMAT_DIRECTION_VERTICAL;
-   MAGIC_CHECK_END();
-   o = (Evas_Object_Textblock *)(obj->object_data);
-   MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
-   return EVAS_FORMAT_DIRECTION_VERTICAL;
-   MAGIC_CHECK_END();
-   return o->format_dir;
 }
 
 void

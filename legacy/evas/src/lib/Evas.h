@@ -53,13 +53,6 @@ typedef enum _Evas_Button_Flags
    EVAS_BUTTON_TRIPLE_CLICK = (1 << 1) /**< This mouse button press was the 3rd press of a triple click */
 } Evas_Button_Flags; /**< Flags for Mouse Button events */
 
-typedef enum _Evas_Format_Direction
-{
-   EVAS_FORMAT_DIRECTION_VERTICAL = 0,
-     EVAS_FORMAT_DIRECTION_HORIZONTAL = 1
-} Evas_Format_Direction;
-
-
 typedef struct _Evas_List             Evas_List; /**< A generic linked list node handle */
 typedef struct _Evas_Rectangle        Evas_Rectangle; /**< A generic rectangle handle */
 typedef struct _Evas_Smart_Class      Evas_Smart_Class; /**< A smart object base class */
@@ -461,8 +454,6 @@ extern "C" {
    EAPI const char            *evas_object_textblock_format_prev_get      (Evas_Object *obj, int n);
    EAPI void                   evas_object_textblock_format_prev_del      (Evas_Object *obj, int n);
    EAPI char                  *evas_object_textblock_current_format_get   (Evas_Object *obj);
-   EAPI void                   evas_object_textblock_format_direction_set (Evas_Object *obj, Evas_Format_Direction dir);
-   EAPI Evas_Format_Direction  evas_object_textblock_format_direction_get (Evas_Object *obj);
    EAPI void                   evas_object_textblock_format_size_get      (Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
    EAPI void                   evas_object_textblock_native_size_get      (Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
    EAPI int                    evas_object_textblock_native_lines_get     (Evas_Object *obj);
