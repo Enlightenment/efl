@@ -80,7 +80,7 @@ typedef struct Ecore_Config_Listener_List {
 typedef struct Ecore_Config_Prop {
   char                  *key;
   char                  *description;
-  void                  *ptr;
+  char                  *ptr;
   Ecore_Config_Type            type;
   long                   val,lo,hi,step;
   Ecore_Config_Flag            flags;
