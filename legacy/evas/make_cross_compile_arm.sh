@@ -32,7 +32,7 @@ pushd src
  pushd lib
   LIB="evas"
   $CC \
-  canvas/*.c data/*.c engines/fb/*.c file/*.c \
+  main.c canvas/*.c data/*.c engines/fb/*.c file/*.c \
   engines/common/evas_blend_alpha_color_pixel.c \
   engines/common/evas_blend_color_pixel.c \
   engines/common/evas_blend_main.c \
