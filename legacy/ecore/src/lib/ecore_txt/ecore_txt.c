@@ -59,6 +59,12 @@ ecore_txt_convert(char *enc_from, char *enc_to, char *text)
 		  new_txt = NULL;
 		  break;
 	       }
+	     else
+	       {
+		  if (new_txt) free(new_txt);
+		  new_txt = NULL;
+		  break;
+	       }
 	  }
 	if (inb == 0)
 	  {

@@ -324,9 +324,93 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
    return 1;
 }
 
+void
+ecore_x_icccm_title_set(Ecore_X_Window win, const char *t)
+{
+   char *list[1];
+   XTextProperty xprop;
+   int ret;
+   
+#ifdef X_HAVE_UTF8_STRING
+   list[0] = strdup(t);
+   ret = Xutf8TextListToTextProperty(_ecore_x_disp, list, 1, XUTF8StringStyle, &xprop);
+#else
+   list[0] = strdup(t);
+   ret = XmbTextListToTextProperty(_ecore_x_disp, list, 1, XStdICCTextStyle, &xprop);
+#endif
+   if (ret >= Success)
+     {
+	XSetWMName(_ecore_x_disp, win, &xprop);
+	XFree(xprop.value);
+     }
+   else
+     {
+	if (XStringListToTextProperty(list, 1, &xprop) >= Success)
+	  {
+	     XSetWMName(_ecore_x_disp, win, &xprop);
+	     XFree(xprop.value);
+	  }
+     }
+   free(list[0]);
+}
+
+char *
+ecore_x_icccm_title_get(Ecore_X_Window win)
+{
+   XTextProperty xprop;   
+   
+   if (XGetWMName(_ecore_x_disp, win, &xprop))
+     {
+	if (xprop.value)
+	  {
+	     char **list = NULL;
+	     char *t = NULL;
+	     int num = 0;
+	     
+	     if (xprop.encoding == _ecore_x_atom_string)
+	       {
+		  t = strdup(xprop.value);
+	       }
+	     else if (xprop.encoding == _ecore_x_atom_utf8_string)
+	       {
+		  t = strdup(xprop.value);
+	       }
+	     else
+	       {
+		  int ret;
+		  
+#ifdef X_HAVE_UTF8_STRING
+		  ret = Xutf8TextPropertyToTextList(_ecore_x_disp, &xprop, 
+						    &list, &num);
+#else		  
+		  ret = XmbTextPropertyToTextList(_ecore_x_disp, &xprop, 
+						  &list, &num);
+#endif		  
+		  if ((ret == XLocaleNotSupported) ||
+		      (ret == XNoMemory) ||
+		      (ret == XConverterNotFound))
+		    {
+		       t = strdup(xprop.value);
+		    }
+		  else if (ret >= Success)
+		    {
+		       if ((num >= 1) && (list))
+			 {
+			    /* FIXME: convert to utf8 */
+			    t = strdup(list[0]);
+			 }
+		       if (list) XFreeStringList(list);
+		    }
+	       }
+	     XFree(xprop.value);
+	     return t;
+	  }
+     }
+   return NULL;
+}
+
 /* FIXME: move these things in here as they are icccm related */
 /* get/set wm protocols */
-/* get/set title */
 /* get/set name/class */
 /* get/set machine */
 /* get/set command */

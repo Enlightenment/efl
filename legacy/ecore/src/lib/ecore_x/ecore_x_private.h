@@ -19,6 +19,7 @@
 
 /* FIXME: this is for simulation only */
 #include "Ecore_Job.h"
+#include "Ecore_Txt.h"
 
 typedef struct _Ecore_X_Reply Ecore_X_Reply;
 

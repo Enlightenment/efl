@@ -719,3 +719,21 @@ ecore_x_window_background_color_set(Ecore_X_Window win, unsigned long color)
    attr.background_pixel      = color;
    XChangeWindowAttributes(_ecore_x_disp, win, CWBackPixel, &attr);
 }
+
+void
+ecore_x_window_gravity_set(Ecore_X_Window win, Ecore_X_Gravity grav)
+{
+   XSetWindowAttributes att;
+   
+   att.win_gravity = grav;
+   XChangeWindowAttributes(_ecore_x_disp, win, CWWinGravity, &att);
+}
+
+void
+ecore_x_window_pixel_gravity_set(Ecore_X_Window win, Ecore_X_Gravity grav)
+{
+   XSetWindowAttributes att;
+   
+   att.bit_gravity = grav;
+   XChangeWindowAttributes(_ecore_x_disp, win, CWBitGravity, &att);
+}

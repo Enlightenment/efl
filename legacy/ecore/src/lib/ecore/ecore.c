@@ -1,5 +1,7 @@
 #include "ecore_private.h"
 #include "Ecore.h"
+#include <locale.h>
+#include <langinfo.h>
 
 static const char *_ecore_magic_string_get(Ecore_Magic m);
 static int _ecore_init_count = 0;
@@ -35,6 +37,11 @@ ecore_init(void)
 {
    if (++_ecore_init_count == 1)
      {
+	setlocale(LC_CTYPE, "");
+	if (strcmp(nl_langinfo(CODESET), "UTF-8"))
+	  {
+	     printf("WARNING: not a utf8 locale!\n");
+	  }
 #ifndef WIN32
 	if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
 	if (_ecore_fps_debug) _ecore_fps_debug_init();

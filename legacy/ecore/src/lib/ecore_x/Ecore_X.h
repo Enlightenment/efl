@@ -105,7 +105,22 @@ typedef enum _Ecore_X_Event_Mask
    ECORE_X_EVENT_MASK_WINDOW_FOCUS_IN        = (1L << 30),
    ECORE_X_EVENT_MASK_WINDOW_FOCUS_OUT       = (1L << 31)
 } Ecore_X_Event_Mask;
-   
+
+   typedef enum _Ecore_X_Gravity {
+      ECORE_X_GRAVITY_FORGET = 0,
+	ECORE_X_GRAVITY_UNMAP = 0,
+	ECORE_X_GRAVITY_NW = 1,
+	ECORE_X_GRAVITY_N = 2,
+	ECORE_X_GRAVITY_NE = 3,
+	ECORE_X_GRAVITY_W = 4,
+	ECORE_X_GRAVITY_CENTER = 5,
+	ECORE_X_GRAVITY_E = 6,
+	ECORE_X_GRAVITY_SW = 7,
+	ECORE_X_GRAVITY_S = 8,
+	ECORE_X_GRAVITY_SE = 9,
+	ECORE_X_GRAVITY_STATIC = 10
+   } Ecore_X_Gravity;
+
 typedef struct _Ecore_X_Event_Key_Down                 Ecore_X_Event_Key_Down;
 typedef struct _Ecore_X_Event_Key_Up                   Ecore_X_Event_Key_Up;
 typedef struct _Ecore_X_Event_Mouse_Button_Down        Ecore_X_Event_Mouse_Button_Down;
@@ -806,7 +821,11 @@ Ecore_X_Window   ecore_x_window_parent_get(Ecore_X_Window win);
 
 void             ecore_x_window_background_color_set(Ecore_X_Window win,
                                                      unsigned long color);
-
+void             ecore_x_window_gravity_set(Ecore_X_Window win,
+					    Ecore_X_Gravity grav);
+void             ecore_x_window_pixel_gravity_set(Ecore_X_Window win,
+						  Ecore_X_Gravity grav);
+       
 Ecore_X_Atom     ecore_x_window_prop_any_type(void);
 void             ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Atom format, int size, void *data, int number);
 int              ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecore_X_Atom type, int size, unsigned char **data, int *num);
@@ -905,20 +924,6 @@ int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom t
    void            ecore_x_window_client_sniff(Ecore_X_Window win);
    Ecore_X_Atom    ecore_x_atom_get(char *name);
 
-   typedef enum _Ecore_X_Gravity {
-      ECORE_X_GRAVITY_FORGET = 0,
-	ECORE_X_GRAVITY_UNMAP = 0,
-	ECORE_X_GRAVITY_NW = 1,
-	ECORE_X_GRAVITY_N = 2,
-	ECORE_X_GRAVITY_NE = 3,
-	ECORE_X_GRAVITY_W = 4,
-	ECORE_X_GRAVITY_CENTER = 5,
-	ECORE_X_GRAVITY_E = 6,
-	ECORE_X_GRAVITY_SW = 7,
-	ECORE_X_GRAVITY_S = 8,
-	ECORE_X_GRAVITY_SE = 9,
-	ECORE_X_GRAVITY_STATIC = 10
-   } Ecore_X_Gravity;
    void
      ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state);
    void
@@ -969,6 +974,10 @@ int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom t
 				      int *step_x, int *step_y,
 				      double *min_aspect,
 				      double *max_aspect);
+   void
+     ecore_x_icccm_title_set(Ecore_X_Window win, const char *t);
+   char *
+     ecore_x_icccm_title_get(Ecore_X_Window win);
        
    void                ecore_x_netwm_init(void);
    void                ecore_x_netwm_wm_identify(Ecore_X_Window root, Ecore_X_Window check, const char *wm_name);

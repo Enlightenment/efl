@@ -1,6 +1,6 @@
-#include <Ecore.h>
+#include "Ecore.h"
 #include "ecore_x_private.h"
-#include <Ecore_X.h>
+#include "Ecore_X.h"
 
 static Ecore_X_Selection_Data _xdnd_selection;
 static Ecore_X_DND_Protocol *_xdnd;

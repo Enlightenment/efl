@@ -85,6 +85,7 @@ struct _Ecore_Evas_Engine
       Ecore_X_Pixmap mask;
       Ecore_X_GC     gc;
       Region         damages;
+      unsigned char  direct_resize : 1;
    } x;
 #endif   
 #ifdef BUILD_ECORE_EVAS_FB

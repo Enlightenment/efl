@@ -1,7 +1,6 @@
-#include <Ecore.h>
+#include "Ecore.h"
 #include "ecore_x_private.h"
-#include <Ecore_X.h>
-#include <Ecore_Txt.h>
+#include "Ecore_X.h"
 
 static Ecore_X_Selection_Data selections[3] = {{0}};
 static Ecore_X_Selection_Data request_data[3] = {{0}};

@@ -356,7 +356,7 @@ _ecore_evas_event_window_configure(void *data, int type, void *event)
 	ee->w = e->w;
 	ee->h = e->h;
 	if (e->win == ee->engine.x.win_container)
-	  ecore_x_window_resize(ee->engine.x.win, ee->w, ee->h);
+	  ecore_x_window_move_resize(ee->engine.x.win, 0, 0, ee->w, ee->h);
 	if ((ee->rotation == 90) || (ee->rotation == 270))
 	  {
 	     evas_output_size_set(ee->evas, ee->h, ee->w);
@@ -618,12 +618,70 @@ static void
 _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 {
    ecore_x_window_resize(ee->engine.x.win_container, w, h);
+   if (ee->engine.x.direct_resize)
+     {
+	ecore_x_window_move_resize(ee->engine.x.win, 0, 0, w, h);
+	if ((ee->w != w) || (ee->h != h))
+	  {
+	     ee->w = w;
+	     ee->h = h;
+	     if ((ee->rotation == 90) || (ee->rotation == 270))
+	       {
+		  evas_output_size_set(ee->evas, ee->h, ee->w);
+		  evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+	       }
+	     else
+	       {
+		  evas_output_size_set(ee->evas, ee->w, ee->h);
+		  evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+	       }
+	     if (ee->prop.avoid_damage)
+	       {
+		  ecore_evas_avoid_damage_set(ee, 0);
+		  ecore_evas_avoid_damage_set(ee, 1);
+	       }
+	     if (ee->shaped)
+	       {
+		  ecore_evas_shaped_set(ee, 0);
+		  ecore_evas_shaped_set(ee, 1);
+	       }
+	  }
+     }
 }
 
 static void
 _ecore_evas_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 {
    ecore_x_window_move_resize(ee->engine.x.win_container, x, y, w, h);
+   if (ee->engine.x.direct_resize)
+     {
+	ecore_x_window_move_resize(ee->engine.x.win, 0, 0, w, h);
+	if ((ee->w != w) || (ee->h != h))
+	  {
+	     ee->w = w;
+	     ee->h = h;
+	     if ((ee->rotation == 90) || (ee->rotation == 270))
+	       {
+		  evas_output_size_set(ee->evas, ee->h, ee->w);
+		  evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+	       }
+	     else
+	       {
+		  evas_output_size_set(ee->evas, ee->w, ee->h);
+		  evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+	       }
+	     if (ee->prop.avoid_damage)
+	       {
+		  ecore_evas_avoid_damage_set(ee, 0);
+		  ecore_evas_avoid_damage_set(ee, 1);
+	       }
+	     if (ee->shaped)
+	       {
+		  ecore_evas_shaped_set(ee, 0);
+		  ecore_evas_shaped_set(ee, 1);
+	       }
+	  }
+     }
 }
 
 static void
@@ -965,7 +1023,7 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
 	int rw, rh;
 	
 	ecore_x_window_size_get(0, &rw, &rh);
-	ecore_x_window_resize(ee->engine.x.win, rw, rh);
+	ecore_x_window_move_resize(ee->engine.x.win, 0, 0, rw, rh);
 	ecore_x_window_reparent(ee->engine.x.win, 0, 0, 0);
 	ecore_x_window_raise(ee->engine.x.win);
 	ecore_x_window_show(ee->engine.x.win);
@@ -988,13 +1046,13 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
 	
 	ecore_x_window_size_get(ee->engine.x.win_container, &pw, &ph);
 	ecore_x_window_reparent(ee->engine.x.win, ee->engine.x.win_container, 0, 0);
-	ecore_x_window_resize(ee->engine.x.win, pw, ph);
+	ecore_x_window_move_resize(ee->engine.x.win, 0, 0, pw, ph);
 	ecore_x_window_shape_mask_set(ee->engine.x.win, 0);
 	if (ee->should_be_visible) ecore_x_window_show(ee->engine.x.win_container);
 	ee->w = pw;
 	ee->h = ph;
      }
-   ecore_x_window_resize(ee->engine.x.win, ee->w, ee->h);
+   ecore_x_window_move_resize(ee->engine.x.win, 0, 0, ee->w, ee->h);
    if ((ee->rotation == 90) || (ee->rotation == 270))
      {
 	evas_output_size_set(ee->evas, ee->h, ee->w);
@@ -1250,6 +1308,56 @@ ecore_evas_software_x11_window_get(Ecore_Evas *ee)
 #endif   
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+Ecore_X_Window
+ecore_evas_software_x11_subwindow_get(Ecore_Evas *ee)
+{
+#ifdef BUILD_ECORE_X
+   return ee->engine.x.win;
+#else
+   return 0;
+#endif   
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+void
+ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, int on)
+{
+#ifdef BUILD_ECORE_X
+   ee->engine.x.direct_resize = on;
+#else
+   return;
+#endif   
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+int
+ecore_evas_software_x11_direct_resize_get(Ecore_Evas *ee)
+{
+#ifdef BUILD_ECORE_X
+   return ee->engine.x.direct_resize;
+#else
+   return 0;
+#endif   
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
 Ecore_Evas *
 ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent, 
 		      int x, int y, int w, int h)
@@ -1390,3 +1498,49 @@ ecore_evas_gl_x11_window_get(Ecore_Evas *ee)
    return 0;
 #endif
 }
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+Ecore_X_Window
+ecore_evas_gl_x11_subwindow_get(Ecore_Evas *ee)
+{
+#ifdef BUILD_ECORE_X
+   return ee->engine.x.win;
+#else
+   return 0;
+#endif   
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+void
+ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee, int on)
+{
+#ifdef BUILD_ECORE_X
+   ee->engine.x.direct_resize = on;
+#else
+   return;
+#endif   
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+int
+ecore_evas_gl_x11_direct_resize_get(Ecore_Evas *ee)
+{
+#ifdef BUILD_ECORE_X
+   return ee->engine.x.direct_resize;
+#else
+   return 0;
+#endif   
+}
+
