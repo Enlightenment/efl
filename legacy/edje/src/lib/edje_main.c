@@ -23,7 +23,7 @@ edje_init(void)
    return initted;
 }
 
-/** Shutdown the EET library.
+/** Shutdown the EDJE library.
  *
  * @return The new init count.
  */
