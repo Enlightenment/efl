@@ -28,7 +28,7 @@ static void calibrate_cb_move(void *data, Evas *e, Evas_Object *obj, void *event
 void
 calibrate_pos_set(int pos)
 {
-   double w, h;
+   Evas_Coord w, h;
    int x, y, ow, oh;
    
    cal_pos = pos;
