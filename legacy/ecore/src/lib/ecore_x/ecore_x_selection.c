@@ -471,6 +471,8 @@ _ecore_x_selection_convert(Atom selection, Atom target, void **data_ret)
    return -1;
 }
 
+/* TODO: We need to work out a mechanism for automatic conversion to any requested
+ * locale using Ecore_Txt functions */
 /* Converter for standard non-utf8 text targets */
 static int _ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret)
 {
