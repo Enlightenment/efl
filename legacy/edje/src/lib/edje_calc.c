@@ -334,7 +334,7 @@ _edje_part_recalc_single(Edje *ed,
 	if ((desc->aspect.min > 0.0) && (aspect < desc->aspect.min))
 	  {
 	     new_h = (params->w / desc->aspect.min);
-	     new_w = (params->w * desc->aspect.min);
+	     new_w = (params->h * desc->aspect.min);
 	  }
 	/* do real adjustment */
 	if ((params->h - new_h) > (params->w - new_w))

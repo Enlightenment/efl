@@ -116,8 +116,8 @@ main_start(int argc, char **argv)
    ecore_evas_name_class_set(ecore_evas, "edje", "main");
    ecore_evas_show(ecore_evas);
    evas = ecore_evas_get(ecore_evas);
-   evas_image_cache_set(evas, 16 * 1024 * 1024);
-   evas_font_cache_set(evas, 1 * 1024 * 1024);
+   evas_image_cache_set(evas, 2 * 1024 * 1024);
+   evas_font_cache_set(evas, 512 * 1024);
    evas_font_path_append(evas, DAT"data/test/fonts");
    evas_font_path_append(evas, "fonts");
    return 1;
