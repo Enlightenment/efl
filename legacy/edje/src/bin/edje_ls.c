@@ -48,7 +48,7 @@ int main(int argc, char **argv)
    if (argc < 2)
      {
 	main_help();
-	exit(0);
+	exit(1);
      }
 
    edje_init();
@@ -74,7 +74,7 @@ int main(int argc, char **argv)
    if (!collections)
      {
         main_help();
-	exit(0);
+	exit(1);
      }
 
    if (file_out)
