@@ -528,7 +528,8 @@ _edje_file_del(Edje *ed)
 		  evas_object_event_callback_del(rp->swallowed_object,
 						 EVAS_CALLBACK_FREE,
 						 _edje_object_part_swallow_free_cb);
-		  evas_object_del(rp->swallowed_object);
+/* I think it would be better swallowed objects dont get deleted */
+/*		  evas_object_del(rp->swallowed_object);*/
 	       }
 	     if (rp->text.text) free(rp->text.text);
 	     if (rp->text.font) free(rp->text.font);

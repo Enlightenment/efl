@@ -342,7 +342,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	     int psize;
 	     
 	     psize = size;
-	     while ((tw > sw) && (size > 0))
+	     while ((tw > sw) && (size > 0) && (tw != 0))
 	       {
 		  psize = size;
 		  size = (size * sw) / tw;
@@ -357,7 +357,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	     int psize;
 	     
 	     psize = size;
-	     while ((tw < sw) && (size > 0))
+	     while ((tw < sw) && (size > 0) && (tw != 0))
 	       {
 		  psize = size;
 		  size = (size * sw) / tw;
