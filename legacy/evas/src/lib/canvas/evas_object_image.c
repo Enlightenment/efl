@@ -33,6 +33,7 @@ struct _Evas_Object_Image
    char              changed : 1;
    char              dirty_pixels : 1;
    
+   int               pixels_checked_out;
    int               load_error;
    Evas_List        *pixel_updates;
    
@@ -530,9 +531,11 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
      o->engine_data = obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
 								     o->engine_data,
 								     o->cur.has_alpha);
+   if (o->pixels_checked_out > 0) o->pixels_checked_out--;
    if (p_data != o->engine_data)
      {
 	EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o);
+	o->pixels_checked_out = 0;
      }
    o->changed = 1;
    evas_object_change(obj);   
@@ -563,7 +566,11 @@ evas_object_image_data_get(Evas_Object *obj, Evas_Bool for_writing)
 								  o->engine_data,
 								  for_writing, 
 								  &data);
-   EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o);
+   o->pixels_checked_out++;
+   if (for_writing)
+     {
+	EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o);
+     }
    
    return data;
 }
@@ -600,6 +607,7 @@ evas_object_image_data_copy_set(Evas_Object *obj, void *data)
      o->engine_data = obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
 								     o->engine_data,
 								     o->cur.has_alpha);
+   o->pixels_checked_out = 0;
    EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o);
 }
 
@@ -1038,7 +1046,8 @@ evas_object_image_unload(Evas_Object *obj)
    
    o = (Evas_Object_Image *)(obj->object_data);
    
-   if (!o->cur.file) return;
+   if ((!o->cur.file) || 
+       (o->pixels_checked_out > 0)) return;
    if (o->engine_data)
      o->engine_data = obj->layer->evas->engine.func->image_dirty_region(obj->layer->evas->engine.data.output,
 									o->engine_data,
