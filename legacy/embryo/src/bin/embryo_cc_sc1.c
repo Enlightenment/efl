@@ -562,7 +562,7 @@ resetglobals(void)
    intest = 0;			/* true if inside a test */
    sideeffect = 0;		/* true if an expression causes a side-effect */
    stmtindent = 0;		/* current indent of the statement */
-   indent_nowarn = FALSE;	/* do not skip warning "217 loose indentation" */
+   indent_nowarn = TRUE;	/* do not skip warning "217 loose indentation" */
    sc_allowtags = TRUE;		/* allow/detect tagnames */
    sc_status = statIDLE;
 }
@@ -3373,7 +3373,7 @@ statement(int *lastindent, int allow_decl)
 	    !indent_nowarn && sc_tabsize > 0)
 	   error(217);		/* loose indentation */
 	*lastindent = stmtindent;
-	indent_nowarn = FALSE;	/* if warning was blocked, re-enable it */
+	indent_nowarn = TRUE;	/* if warning was blocked, re-enable it */
      }				/* if */
    switch (tok)
      {

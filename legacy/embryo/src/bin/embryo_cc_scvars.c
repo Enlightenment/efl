@@ -73,7 +73,7 @@ int      fcurrent = 0;	/* current file being processed (debugging) */
 int      intest = 0;	/* true if inside a test */
 int      sideeffect = 0;	/* true if an expression causes a side-effect */
 int      stmtindent = 0;	/* current indent of the statement */
-int      indent_nowarn = FALSE;	/* skip warning "217 loose indentation" */
+int      indent_nowarn = TRUE;	/* skip warning "217 loose indentation" */
 int      sc_tabsize = 8;	/* number of spaces that a TAB represents */
 int      sc_allowtags = TRUE;	/* allow/detect tagnames in lex() */
 int      sc_status;	/* read/write status */
