@@ -863,10 +863,10 @@ evas_list_sort(Evas_List *list, int size, int (*func)(void *, void *))
 	if(ll->prev)
 	{
 	    list->last = ll->prev;
-	    list->count = size - range;
+	    list->count = range;
 	}
 	ll->prev->next = NULL;
-	ll->count = range;
+	ll->count = size - range;
 
 	/* merge sort */
 	l = evas_list_sort(list, range, func);
