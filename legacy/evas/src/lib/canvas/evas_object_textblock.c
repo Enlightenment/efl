@@ -10,7 +10,6 @@
  * 
  * things to add:
  * 
- * * jump/align to spot (N spaces, N pixels, N% (set or adjust by +/-))
  * * left and right margins
  * * anchors (for inline objects other than text - images etc.) - variable size ones too
  * * if a word (or char) doesnt fit at all do something sensible
@@ -49,12 +48,24 @@
 #define STYLE_SOFT_SHADOW 7
 #define STYLE_FAR_SOFT_SHADOW 8
 
+#define CMD_NONE 0
+#define CMD_TABSTOP_REL 1
+#define CMD_TABSTOP_ABS 2
+#define CMD_TABSTOP_REL_ADD 3
+#define CMD_TABSTOP_ABS_ADD 4
+#define CMD_RIGHTTABSTOP_REL 5
+#define CMD_RIGHTTABSTOP_ABS 6
+#define CMD_RIGHTTABSTOP_REL_ADD 7
+#define CMD_RIGHTTABSTOP_ABS_ADD 8
+
 /* private magic number for textblock objects */
 static const char o_type[] = "textblock";
 
 /* private struct for textblock object internal data */
 typedef struct _Evas_Object_Textblock      Evas_Object_Textblock;
 typedef struct _Layout                     Layout;
+typedef struct _Layout_Command             Layout_Command;
+typedef struct _Command                    Command;
 typedef struct _Node                       Node;
 typedef struct _Layout_Node                Layout_Node;
 
@@ -93,6 +104,19 @@ struct _Layout
    unsigned char        second_underline : 1;
    unsigned char        strikethrough : 1;
    unsigned char        backing : 1;
+};
+
+struct _Layout_Command
+{
+   Evas_Object_List *commands;
+};
+
+struct _Command
+{
+   Evas_Object_List _list_data;
+   int              cmd;
+   int              i1, i2;
+   double           f1, f2;
 };
 
 /* a node of formatting data */
@@ -191,6 +215,25 @@ evas_object_textblock_format_merge(char *ofmt, char *fmt)
    return strdup(fmt);
 }
 
+static void
+evas_object_textblock_command_init(Layout_Command *command)
+{
+   command->commands = NULL;
+}
+
+static void
+evas_object_textblock_command_clear(Layout_Command *command)
+{
+   while (command->commands)
+     {
+	Command *cmd;
+	
+	cmd = (Command *)command->commands;
+	command->commands = evas_object_list_remove(command->commands, cmd);
+	free(cmd);
+     }
+}
+
 static int
 evas_object_textblock_hex_string_get(char ch)
 {
@@ -201,7 +244,7 @@ evas_object_textblock_hex_string_get(char ch)
 }
 
 static void
-evas_object_textblock_layout_format_apply(Layout *layout, char *key, char *data)
+evas_object_textblock_layout_format_apply(Layout *layout, Layout_Command *command, char *key, char *data)
 {
    if (!strcmp(key, "font"))
      {
@@ -429,6 +472,190 @@ evas_object_textblock_layout_format_apply(Layout *layout, char *key, char *data)
 	else if (!strcmp(data, "far_soft_shadow")) layout->style = STYLE_FAR_SOFT_SHADOW;
 	else layout->style = STYLE_PLAIN;
      }
+   /* FIXME: finish off left and right margins */
+   else if (!strcmp(key, "leftmargin"))
+     {
+	if (!strcmp(data, "off"))
+	  {
+	     
+	  }
+	else
+	  {
+	     int len;
+	     
+	     len = strlen(data);
+	     if (len > 0)
+	       {
+		  char lastchar, *num = NULL;
+		  
+		  lastchar = data[len - 1];
+		  num = strdup(data);
+		  if (lastchar == '%')
+		    {
+		       len = strlen(num);
+		       if (len > 0) num[len - 1] = 0;
+		    }
+		  else
+		    {
+		    }
+		  free(num);
+	       }
+	  }
+     }
+   else if (!strcmp(key, "rightmargin"))
+     {
+	if (!strcmp(data, "off"))
+	  layout->backing = 0;
+	else
+	  {
+	  }
+     }
+   else if (!strcmp(key, "tabstop"))
+     {
+	int len;
+	
+	len = strlen(data);
+	if (len > 0)
+	  {
+	     char firstchar, lastchar, *num = NULL;
+	     Command *cmd;
+	     
+	     firstchar = data[0];
+	     lastchar = data[len - 1];
+	     /* possible formats:
+	      * 88    - jump to x pos 88 from the left
+	      * 47%   - jump to x pos 47% of width from the left
+	      * +91   - add 91 to x pos
+	      * -12   - sub 12 from x pos
+	      * +16%  - add 16% of width to x pos
+	      * -25%  - sub 25% of width from x pos
+	      */
+	     if ((firstchar != '+') && (firstchar != '-'))
+	       num = strdup(data);
+	     else
+	       num = strdup(data + 1);
+	     if (lastchar == '%')
+	       {
+		  len = strlen(num);
+		  if (len > 0) num[len - 1] = 0;
+	       }
+	     cmd = calloc(1, sizeof(Command));
+	     if (firstchar == '+')
+	       {
+		  if (lastchar == '%')
+		    {
+		       cmd->cmd = CMD_TABSTOP_REL_ADD;
+		       cmd->f1 = atof(num);
+		    }
+		  else
+		    {
+		       cmd->cmd = CMD_TABSTOP_ABS_ADD;
+		       cmd->i1 = atoi(num);
+		    }
+	       }
+	     else if (firstchar == '-')
+	       {
+		  if (lastchar == '%')
+		    {
+		       cmd->cmd = CMD_TABSTOP_REL_ADD;
+		       cmd->f1 = -atof(num);
+		    }
+		  else
+		    {
+		       cmd->cmd = CMD_TABSTOP_ABS_ADD;
+		       cmd->i1 = -atoi(num);
+		    }
+	       }
+	     else
+	       {
+		  if (lastchar == '%')
+		    {
+		       cmd->cmd = CMD_TABSTOP_REL;
+		       cmd->f1 = atof(num);
+		    }
+		  else
+		    {
+		       cmd->cmd = CMD_TABSTOP_ABS;
+		       cmd->i1 = atoi(num);
+		    }
+	       }
+	     free(num);
+	     command->commands = evas_object_list_append(command->commands, cmd);
+	  }
+     }
+   else if (!strcmp(key, "righttabstop"))
+     {
+	int len;
+	
+	len = strlen(data);
+	if (len > 0)
+	  {
+	     char firstchar, lastchar, *num = NULL;
+	     Command *cmd;
+	     
+	     firstchar = data[0];
+	     lastchar = data[len - 1];
+	     /* possible formats:
+	      * 88    - jump to x pos 88 from the left
+	      * 47%   - jump to x pos 47% of width from the left
+	      * +91   - add 91 to x pos
+	      * -12   - sub 12 from x pos
+	      * +16%  - add 16% of width to x pos
+	      * -25%  - sub 25% of width from x pos
+	      */
+	     if ((firstchar != '+') && (firstchar != '-'))
+	       num = strdup(data);
+	     else
+	       num = strdup(data + 1);
+	     if (lastchar == '%')
+	       {
+		  len = strlen(num);
+		  if (len > 0) num[len - 1] = 0;
+	       }
+	     cmd = calloc(1, sizeof(Command));
+	     if (firstchar == '+')
+	       {
+		  if (lastchar == '%')
+		    {
+		       cmd->cmd = CMD_RIGHTTABSTOP_REL_ADD;
+		       cmd->f1 = atof(num);
+		    }
+		  else
+		    {
+		       cmd->cmd = CMD_RIGHTTABSTOP_ABS_ADD;
+		       cmd->i1 = atoi(num);
+		    }
+	       }
+	     else if (firstchar == '-')
+	       {
+		  if (lastchar == '%')
+		    {
+		       cmd->cmd = CMD_RIGHTTABSTOP_REL_ADD;
+		       cmd->f1 = -atof(num);
+		    }
+		  else
+		    {
+		       cmd->cmd = CMD_RIGHTTABSTOP_ABS_ADD;
+		       cmd->i1 = -atoi(num);
+		    }
+	       }
+	     else
+	       {
+		  if (lastchar == '%')
+		    {
+		       cmd->cmd = CMD_RIGHTTABSTOP_REL;
+		       cmd->f1 = atof(num);
+		    }
+		  else
+		    {
+		       cmd->cmd = CMD_RIGHTTABSTOP_ABS;
+		       cmd->i1 = atoi(num);
+		    }
+	       }
+	     free(num);
+	     command->commands = evas_object_list_append(command->commands, cmd);
+	  }
+     }
 }
 
 static Evas_List *
@@ -523,7 +750,7 @@ evas_object_textblock_format_parse(const char *format)
 }
 
 static void
-evas_object_textblock_layout_format_modify(Layout *layout, const char *format)
+evas_object_textblock_layout_format_modify(Layout *layout, Layout_Command *command, const char *format)
 {
    Evas_List *params;
    
@@ -537,7 +764,7 @@ evas_object_textblock_layout_format_modify(Layout *layout, const char *format)
 	params = evas_list_remove_list(params, params);
 	data = params->data;
 	params = evas_list_remove_list(params, params);
-	evas_object_textblock_layout_format_apply(layout, key, data);
+	evas_object_textblock_layout_format_apply(layout, command, key, data);
 	free(key);
 	free(data);
      }
@@ -680,6 +907,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 {
    Evas_Object_Textblock *o;
    Layout layout;
+   Layout_Command command;
    Evas_Object_List *l, *ll, *layout_nodes = NULL;
    Layout_Node *line_start = NULL;
    int text_pos = 0, fw = 0, fh = 0, last_mdescent = 0, line = 0, last_line = 0;
@@ -691,6 +919,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
    ww = w;
    hh = h;
    evas_object_textblock_layout_init(&layout);
+   evas_object_textblock_command_init(&command);
    for (l = (Evas_Object_List *)o->nodes; l; l = l->next)
      {
         Node *node;
@@ -698,7 +927,8 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 	node = (Node *)l;
 	if (node->format)
 	  {
-	     evas_object_textblock_layout_format_modify(&layout, node->format);
+	     evas_object_textblock_layout_format_modify(&layout, &command, node->format);
+	     evas_object_textblock_command_clear(&command);
 	     if (layout.style == STYLE_SHADOW)
 	       {
 		  if (pad_r < 1) pad_r = 1;
@@ -783,6 +1013,24 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		  if (lnode)
 		    lnode->line_end = 1;
 		  layout.line.x = pad_l;
+		  if (layout.line.mascent + layout.line.mdescent <= 0)
+		    {
+		       int ascent = 0, descent = 0;
+		       
+		       if (layout.font.name)
+			 layout.font.font = evas_font_load(obj->layer->evas, layout.font.name, layout.font.source, layout.font.size);
+		       if (layout.font.font) ascent = ENFN->font_max_ascent_get(ENDT, layout.font.font);
+		       if (layout.font.font) descent = ENFN->font_max_descent_get(ENDT, layout.font.font);
+		       layout.line.ascent = ascent;
+		       layout.line.descent = descent;
+		       if (layout.line.mascent < layout.line.ascent)
+			 layout.line.mascent = layout.line.ascent;
+		       if (layout.line.mdescent < layout.line.descent)
+			 layout.line.mdescent = layout.line.descent;
+		       if (layout.font.font)
+			 ENFN->font_free(ENDT, layout.font.font);
+		       layout.font.font = NULL;
+		    }
 		  if ((layout.line.y + layout.line.mascent + layout.line.mdescent) > hh)
 		    {
 		       /* FIXME: this node would overflow to the next textblock */
@@ -791,27 +1039,27 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		  last_line_double_underline = 0;
 		  line++;
 		  layout.line.y += layout.line.mascent + layout.line.mdescent;
+		  layout.line.mascent = 0;
+		  layout.line.mdescent = 0;
 		  fh = layout.line.y;
 		  last_mdescent = 3;
 		  line_start = NULL;
 	       }
 	     else if (node->format[0] == '\t')
 	       {
-		  int hadvance = 0, ascent = 0, descent = 0, inset = 0;
-		  void *font;
+		  int hadvance = 0, inset = 0;
 		  
 		  lnode = calloc(1, sizeof(Layout_Node));
 		  lnode->source_node = node;
 		  lnode->line = line;
 		  lnode->text_pos = text_pos;	
 		  last_line = line;
-		  evas_object_textblock_layout_copy(&layout, &(lnode->layout));
 		  if (lnode->layout.font.name)
-		    font = evas_font_load(obj->layer->evas, lnode->layout.font.name, lnode->layout.font.source, lnode->layout.font.size);
-		  /* if this is at the start of the line... */
+		    layout.font.font = evas_font_load(obj->layer->evas, layout.font.name, layout.font.source, layout.font.size);
+		  evas_object_textblock_layout_copy(&layout, &(lnode->layout));
 		  if ((layout.line.x == pad_l) || (!line_start))
 		    {
-		       if (font) inset = ENFN->font_inset_get(ENDT, font, "        ");
+		       if (layout.font.font) inset = ENFN->font_inset_get(ENDT, layout.font.font, "        ");
 		       layout.line.inset = inset;
 		       layout.line.x = pad_l - inset + (layout.line.x - pad_l);
 		       layout.line.mascent = 0;
@@ -819,18 +1067,20 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		       line_start = lnode;
 		       lnode->line_start = 1;
 		    }
-		  lnode->layout.font.font = font;
-		  if (font) ascent = ENFN->font_max_ascent_get(ENDT, font);
-		  if (font) descent = ENFN->font_max_descent_get(ENDT, font);
-		  if (font) hadvance = ENFN->font_h_advance_get(ENDT, font, "        ");
-		  lnode->layout.line.ascent = ascent;
-		  lnode->layout.line.descent = descent;
-		  layout.line.ascent = ascent;
-		  layout.line.descent = descent;
-		  if (layout.line.mascent < ascent) layout.line.mascent = ascent;
-		  if (layout.line.mdescent < descent) layout.line.mdescent = descent;
+		    {
+		       int ascent = 0, descent = 0;
+		       if (layout.font.font) ascent = ENFN->font_max_ascent_get(ENDT, layout.font.font);
+		       if (layout.font.font) descent = ENFN->font_max_descent_get(ENDT, layout.font.font);
+		       layout.line.ascent = lnode->layout.line.ascent = ascent;
+		       layout.line.descent = lnode->layout.line.descent = descent;
+		       if (layout.line.mascent < layout.line.ascent)
+			 layout.line.mascent = layout.line.ascent;
+		       if (layout.line.mdescent < layout.line.descent)
+			 layout.line.mdescent = layout.line.descent;
+		    }
+		  if (layout.font.font) hadvance = ENFN->font_h_advance_get(ENDT, layout.font.font, "        ");
 		  lnode->w = hadvance;
-		  lnode->h = ascent + descent;
+		  lnode->h = layout.line.ascent + layout.line.descent;
 		  lnode->spacer = 1;
 		  layout_nodes = evas_object_list_append(layout_nodes, lnode);
 		  if ((layout.line.x + hadvance) > fw)
@@ -844,7 +1094,92 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 	       }
 	     else
 	       {
-		  evas_object_textblock_layout_format_modify(&layout, node->format);
+		  evas_object_textblock_layout_format_modify(&layout, &command, node->format);
+		  if (command.commands)
+		    {
+		       Evas_Object_List *l2;
+		       
+		       for (l2 = command.commands; l2; l2 = l2->next)
+			 {
+			    Command *cmd;
+			    
+			    cmd = (Command *)l2;
+			    switch (cmd->cmd)
+			      {
+			       case CMD_TABSTOP_REL:
+				 layout.line.x = pad_l + (cmd->f1 * (ww - pad_l) / 100.0);
+				 if (layout.line.x < pad_l)
+				   layout.line.x = pad_l;
+				 if (w > 0)
+				   {
+				      if (layout.line.x >= ww) goto newline;
+				   }
+				 break;
+			       case CMD_TABSTOP_ABS:
+				 layout.line.x = cmd->i1;
+				 if (w > 0)
+				   {
+				      if (layout.line.x >= ww) goto newline;
+				   }
+				 break;
+			       case CMD_TABSTOP_REL_ADD:
+				 layout.line.x += (cmd->f1 * (ww - pad_l) / 100.0);
+				 if (layout.line.x < pad_l)
+				   layout.line.x = pad_l;
+				 if (w > 0)
+				   {
+				      if (layout.line.x >= ww) goto newline;
+				   }
+				 break;
+			       case CMD_TABSTOP_ABS_ADD:
+				 layout.line.x += cmd->i1;
+				 if (layout.line.x < pad_l)
+				   layout.line.x = pad_l;
+				 if (w > 0)
+				   {
+				      if (layout.line.x >= ww) goto newline;
+				   }
+				 break;
+			       case CMD_RIGHTTABSTOP_REL:
+				 layout.line.x = w - pad_r + (cmd->f1 * (ww - pad_l) / 100.0);
+				 if (layout.line.x < pad_l)
+				   layout.line.x = pad_l;
+				 if (w > 0)
+				   {
+				      if (layout.line.x >= ww) goto newline;
+				   }
+				 break;
+			       case CMD_RIGHTTABSTOP_ABS:
+				 layout.line.x = w - pad_r - cmd->i1;
+				 if (w > 0)
+				   {
+				      if (layout.line.x >= ww) goto newline;
+				   }
+				 break;
+			       case CMD_RIGHTTABSTOP_REL_ADD:
+				 layout.line.x -= (cmd->f1 * (ww - pad_l) / 100.0);
+				 if (layout.line.x < pad_l)
+				   layout.line.x = pad_l;
+				 if (w > 0)
+				   {
+				      if (layout.line.x >= ww) goto newline;
+				   }
+				 break;
+			       case CMD_RIGHTTABSTOP_ABS_ADD:
+				 layout.line.x -= cmd->i1;
+				 if (layout.line.x < pad_l)
+				   layout.line.x = pad_l;
+				 if (w > 0)
+				   {
+				      if (layout.line.x >= ww) goto newline;
+				   }
+				 break;
+			       default:
+				 break;
+			      }
+			 }
+		    }
+		  evas_object_textblock_command_clear(&command);
 		  if (layout.underline) last_line_underline = 1;
 		  if (layout.second_underline) last_line_double_underline = 1;
 	       }
@@ -1057,6 +1392,8 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 			    last_line_double_underline = 0;
 			    line++;
 			    layout.line.y += layout.line.mascent + layout.line.mdescent;
+			    layout.line.mascent = 0;
+			    layout.line.mdescent = 0;
 			    fh = layout.line.y;
 			    line_start = NULL;
 			    goto new_node;
@@ -1112,9 +1449,15 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		       text = text2;
 		       /* still more text to go */
 		       if ((layout.line.mascent + layout.line.mdescent) > 0)
-			 goto new_node;
+			 {
+			    layout.line.mascent = 0;
+			    layout.line.mdescent = 0;
+			    goto new_node;
+			 }
 		       else
 			 free(text);
+		       layout.line.mascent = 0;
+		       layout.line.mdescent = 0;
 		    }
 	       }
 	  }
