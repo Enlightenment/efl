@@ -140,7 +140,7 @@ Atom     _ecore_x_atom_text = 0;
 Atom     _ecore_x_atom_utf8_string = 0;
 Atom     _ecore_x_atom_compound_text = 0;
 
-Atom     _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM] = {0};
+Atom     _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
 
 /* Xdnd atoms that need to be exposed to the application interface */
 Ecore_X_Atom  ECORE_X_DND_ACTION_COPY = 0;
