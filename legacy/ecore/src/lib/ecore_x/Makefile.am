@@ -31,14 +31,14 @@ ecore_x_private.h
 
 libecore_x_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
-$(top_builddir)/src/lib/ecore_job/libecore_txt.la \
+$(top_builddir)/src/lib/ecore_txt/libecore_txt.la \
 $(top_builddir)/src/lib/ecore_job/libecore_job.la \
 @x_ldflags@ \
 @x_libs@
 
 libecore_x_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la \
-$(top_builddir)/src/lib/ecore_job/libecore_txt.la \
+$(top_builddir)/src/lib/ecore_txt/libecore_txt.la \
 $(top_builddir)/src/lib/ecore_job/libecore_job.la
 
 endif
