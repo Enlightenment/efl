@@ -4,6 +4,11 @@
 #ifndef EVAS_COMMON_H
 #ifndef EVAS_PRIVATE_H
 
+/**
+ * @file
+ * @brief These routines are used for Evas library interaction.
+ */
+
 enum _Evas_Callback_Type
 {
    EVAS_CALLBACK_MOUSE_IN, /**< Mouse In Event */

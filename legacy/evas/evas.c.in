@@ -1,10 +1,3 @@
-/** 
-@file
-@brief Evas Client-side Library Public API Calls
- 
-These routines are used for Evas Library interaction
-*/
-
 /**
 
 @mainpage Evas
@@ -21,18 +14,6 @@ These routines are used for Evas Library interaction
 @author Nathan Ingersoll <ningerso\@d.umn.edu>
 @author Willem Monsuwe <willem\@stack.nl>
 @date 2000-2003
-
-
-
-
-
-
-
-
-
-
-
-
 
 @section intro What is Evas?
 
@@ -55,22 +36,6 @@ the features you need for your target platform if you so wish, thus keeping
 it small and lean. It has several display back-ends, letting it display on
 several display systems, making it portable for cross-device and
 cross-platform development.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 @section work How does Evas work?
@@ -157,20 +122,6 @@ but does very little high-level logic such as scrollbars, sliders, push
 buttons etc.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @section compiling How to compile using Evas?
 
 Evas is a library your application links to. The proceedure for this is very
@@ -203,20 +154,6 @@ compile commands that your application may need as well. The above example
 is only guaranteed to make Evas add it's own requirements.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 @section install How is it installed?
 
 Simple:
@@ -228,19 +165,6 @@ su -
 ...
 make install
 @endverbatim
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 @todo (1.0) Document API
