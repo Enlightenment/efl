@@ -374,6 +374,11 @@ AC_ARG_ENABLE(ecore-config,
 AC_SUBST(ecore_config_cflags)
 AC_SUBST(ecore_config_libs)
 
+edb_libs=`edb-config --libs`
+edb_cflags=`edb-config --cflags`
+AC_SUBST(edb_libs)
+AC_SUBST(edb_cflags)
+
 AC_OUTPUT([
 Makefile
 ecore-config
