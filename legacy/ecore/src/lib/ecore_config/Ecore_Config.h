@@ -29,13 +29,13 @@
  */
 typedef enum Ecore_Config_Type
 {
-   PT_NIL = 0,			/* Property with no value. */
-   PT_INT = 1,			/* Integer property type. */
-   PT_FLT = 2,			/* Float property type. */
-   PT_STR = 3,			/* String property type. */
-   PT_RGB = 4,			/* Colour property type. */
-   PT_THM = 5,			/* Theme property type. */
-   PT_BLN = 6,			///
+   PT_NIL = 0,			/**< Property with no value. */
+   PT_INT = 1,			/**< Integer property type. */
+   PT_FLT = 2,			/**< Float property type. */
+   PT_STR = 3,			/**< String property type. */
+   PT_RGB = 4,			/**< Colour property type. */
+   PT_THM = 5,			/**< Theme property type. */
+   PT_BLN = 6,			/**< Boolean property type. */
 } Ecore_Config_Type;
 
 typedef enum Ecore_Config_Flag
