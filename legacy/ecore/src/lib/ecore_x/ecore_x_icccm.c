@@ -325,13 +325,12 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
 }
 
 /* FIXME: move these things in here as they are icccm related */
-/* get/set min.max etc. size */
+/* get/set wm protocols */
 /* get/set title */
 /* get/set name/class */
 /* get/set machine */
 /* get/set command */
 /* get/set icon name */
-/* get/set wm protocols */
 /* get/set colormap windows */
 /* get/set window role */
 /* get/set client leader */

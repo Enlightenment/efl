@@ -500,80 +500,83 @@ _ecore_main_loop_iterate_internal(int once_only)
 	in_main_loop--;
 	return;
      }
-   /* init flags */
-   have_event = have_signal = 0;
-   next_time = _ecore_timer_next_get();	
-   /* no timers */
-   if (next_time < 0)
+   if (!_ecore_event_exist())
      {
-	/* no idlers */
-	if (!_ecore_idler_exist())
+	/* init flags */
+	have_event = have_signal = 0;
+	next_time = _ecore_timer_next_get();	
+	/* no timers */
+	if (next_time < 0)
 	  {
-	     int ret;
-	     
-	     ret = _ecore_main_select(-1);
-	     if (ret > 0) have_event = 1;
-#ifndef WIN32
-	     if (_ecore_signal_count_get() > 0) have_signal = 1;
-#endif
-	  }
-	/* idlers */
-	else
-	  {
-	     for (;;)
+	     /* no idlers */
+	     if (!_ecore_idler_exist())
 	       {
 		  int ret;
 		  
-		  if (!_ecore_idler_call()) goto start_loop;
-		  if (_ecore_event_exist()) break;
-		  ret = _ecore_main_select(0);
+		  ret = _ecore_main_select(-1);
 		  if (ret > 0) have_event = 1;
 #ifndef WIN32
 		  if (_ecore_signal_count_get() > 0) have_signal = 1;
 #endif
-		  if (have_event || have_signal) break;
-		  next_time = _ecore_timer_next_get();
-		  if (next_time >= 0) goto start_loop;
-		  if (do_quit) break;
+	       }
+	     /* idlers */
+	     else
+	       {
+		  for (;;)
+		    {
+		       int ret;
+		       
+		       if (!_ecore_idler_call()) goto start_loop;
+		       if (_ecore_event_exist()) break;
+		       ret = _ecore_main_select(0);
+		       if (ret > 0) have_event = 1;
+#ifndef WIN32
+		       if (_ecore_signal_count_get() > 0) have_signal = 1;
+#endif
+		       if (have_event || have_signal) break;
+		       next_time = _ecore_timer_next_get();
+		       if (next_time >= 0) goto start_loop;
+		       if (do_quit) break;
+		    }
 	       }
 	  }
-     }
-   /* timers */
-   else
-     {
-	/* no idlers */
-	if (!_ecore_idler_exist())
-	  {
-	     int ret;
-	     
-	     ret = _ecore_main_select(next_time);
-	     if (ret > 0) have_event = 1;
-#ifndef WIN32
-	     if (_ecore_signal_count_get() > 0) have_signal = 1;
-#endif
-	  }
-	/* idlers */
+	/* timers */
 	else
 	  {
-	     for (;;)
+	     /* no idlers */
+	     if (!_ecore_idler_exist())
 	       {
-		  double cur_time, t;
 		  int ret;
 		  
-		  if (!_ecore_idler_call()) goto start_loop;
-		  if (_ecore_event_exist()) break;
-		  ret = _ecore_main_select(0);
+		  ret = _ecore_main_select(next_time);
 		  if (ret > 0) have_event = 1;
 #ifndef WIN32
 		  if (_ecore_signal_count_get() > 0) have_signal = 1;
 #endif
-		  if ((have_event) || (have_signal)) break;
-		  cur_time = ecore_time_get();
-		  t = ecore_time_get() - cur_time;
-		  if (t >= next_time) break;
-		  next_time = _ecore_timer_next_get();
-		  if (next_time < 0) goto start_loop;
-		  if (do_quit) break;
+	       }
+	     /* idlers */
+	     else
+	       {
+		  for (;;)
+		    {
+		       double cur_time, t;
+		       int ret;
+		       
+		       if (!_ecore_idler_call()) goto start_loop;
+		       if (_ecore_event_exist()) break;
+		       ret = _ecore_main_select(0);
+		       if (ret > 0) have_event = 1;
+#ifndef WIN32
+		       if (_ecore_signal_count_get() > 0) have_signal = 1;
+#endif
+		       if ((have_event) || (have_signal)) break;
+		       cur_time = ecore_time_get();
+		       t = ecore_time_get() - cur_time;
+		       if (t >= next_time) break;
+		       next_time = _ecore_timer_next_get();
+		       if (next_time < 0) goto start_loop;
+		       if (do_quit) break;
+		    }
 	       }
 	  }
      }

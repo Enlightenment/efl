@@ -716,6 +716,14 @@ typedef enum _Ecore_X_Window_Configure_Mask {
    ECORE_X_WINDOW_CONFIGURE_MASK_STACK_MODE     = (1 << 6)
 } Ecore_X_Window_Configure_Mask;
 
+typedef enum _Ecore_X_Window_Stack_Mode {
+   ECORE_X_WINDOW_STACK_ABOVE = 0,
+   ECORE_X_WINDOW_STACK_BELOW = 1,
+   ECORE_X_WINDOW_STACK_TOP_IF = 2,
+   ECORE_X_WINDOW_STACK_BOTTOM_IF = 3,
+   ECORE_X_WINDOW_STACK_OPPOSITE = 4
+} Ecore_X_Window_Stack_Mode;
+
 /* Window layer constants */
 #define ECORE_X_WINDOW_LAYER_BELOW 2
 #define ECORE_X_WINDOW_LAYER_NORMAL 4
