@@ -255,13 +255,16 @@ _edje_message_process(Edje_Message *em)
 		  Embryo_Function fn;
 		  
 		  _edje_embryo_script_reset(em->edje);
-		  fn = embryo_program_function_find(em->edje->collection->script, "_msg");
+		  fn = embryo_program_function_find(em->edje->collection->script, "message");
 		  if (fn != EMBRYO_FUNCTION_NONE)
 		    {
 		       void *pdata;
 		       Embryo_Cell cell;
 		       
 //		       embryo_parameter_string_push(em->edje->collection->script, sig);
+		       /* first param is the message type - always */
+		       cell = em->type;
+		       embryo_parameter_cell_push(em->edje->collection->script, cell);
 		       /* first param is the integer of the event id - always there */
 		       cell = em->id;
 		       embryo_parameter_cell_push(em->edje->collection->script, cell);

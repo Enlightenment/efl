@@ -56,6 +56,40 @@ collections
 			 emit("SMELLY", "Fish");
 		    }
 	       }
+	     
+	     tst()
+	       {
+		  return 0;
+	       }
+
+// a special function for handling app messages - put it here if you want to
+// handle messages from apps
+	     public message(Msg_Type:type, id, ...)
+	       {
+		  if (type == MSG_NONE)
+		    {
+		    }
+		  else if (type == MSG_STRING)
+		    {
+		       new str[100];
+		       
+		       for (new j = 0; j < (sizeof(str) - 1); j++)
+			 {
+			    str[j] = getarg(2, j);
+			    if (str[j] == 0) break;
+			 }
+		    }
+		  else if (type == MSG_INT_SET)
+		    {
+		       for (new i = 2; i < numargs(); i++)
+			 {
+			    new val;
+			    
+			    val = getarg(i);
+			    if (val > 9999) break;
+			 }
+		    }
+	       }
 	  }
 	parts
 	  {
@@ -225,7 +259,7 @@ collections
 // for this group or functions exported
 		  script
 		    {
-		       var i = 5;
+		       new i = 5;
 		       
 		       while (i > 0)
 			 {

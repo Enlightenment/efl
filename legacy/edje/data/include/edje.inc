@@ -82,4 +82,17 @@ native       stop_programs_on (part_id);
 native       set_min_size     (part_id, Float:w, Float:h);
 native       set_max_size     (part_id, Float:w, Float:h);
 
-
+enum Msg_Type
+{
+   MSG_NONE = 0,
+     MSG_STRING = 2,
+     MSG_INT = 3,
+     MSG_FLOAT = 4,
+     MSG_STRING_SET = 5,
+     MSG_INT_SET = 6,
+     MSG_FLOAT_SET = 7,
+     MSG_STRING_INT = 8,
+     MSG_INT_FLOAT = 9,
+     MSG_STRING_INT_SET = 10,
+     MSG_INT_FLOAT_SET = 11
+};
