@@ -51,15 +51,14 @@ fb_init_palette_332(FB_Mode *mode)
 {
   int r, g, b, i;
   
-  /* generate the palette */
   if (mode->fb_var.bits_per_pixel != 8)
     return;
   i = 0;
-  /* set colormap */
 
   if (ioctl(fb, FBIOGETCMAP, &cmap) == -1)
     perror("ioctl FBIOGETCMAP");
-   
+  
+  /* generate the palette */ 
   for (r = 0; r < 8; r++)
     {
       for (g = 0; g < 8; g++)
@@ -79,6 +78,7 @@ fb_init_palette_332(FB_Mode *mode)
 	}
     }
 
+  /* set colormap */
   if (ioctl(fb, FBIOPUTCMAP, &cmap) == -1)
     perror("ioctl FBIOPUTCMAP");
    
@@ -89,19 +89,21 @@ fb_init_palette_linear(FB_Mode *mode)
 {
   int i;
   
-  /* generate the palette */
   if (mode->fb_var.bits_per_pixel != 8)
     return;
+
+  if (ioctl(fb, FBIOGETCMAP, &cmap) == -1)
+    perror("ioctl FBIOGETCMAP");
+
+  /* generate the palette */
   for (i = 0; i < 256; i++)
     red[i] = (i << 8) | i;
   for (i = 0; i < 256; i++)
     green[i] = (i << 8) | i;
   for (i = 0; i < 256; i++)
     blue[i] = (i << 8) | i;
+  
   /* set colormap */
-
-  if (ioctl(fb, FBIOGETCMAP, &cmap) == -1)
-    perror("ioctl FBIOGETCMAP");
   if (ioctl(fb, FBIOPUTCMAP, &cmap) == -1)
     perror("ioctl FBIOPUTCMAP");
    
