@@ -32,10 +32,12 @@ o_software, o_hardware, o_x11,
 o_box1, o_box2, o_box3, 
 o_brush, o_paint,
 o_bubble1, o_shadow1, o_bubble2, o_shadow2, o_bubble3, o_shadow3,
-o_fps;
+o_fps, o_avg_fps;
 int         mouse_x, mouse_y;
 int         framecount = -1;
 double      last_time = 0;
+unsigned long long totalframes = 0;
+double             totaltime = 0;
 
 /* prototypes  */
 double get_time       (void);
@@ -871,11 +873,18 @@ setup_view(Evas_Render_Method method)
    
    e = evas_view;
    
-   o = evas_add_text(e, "andover", 20, "FPS:");
+   o = evas_add_text(e, "andover", 20, "FPS: ???");
    evas_set_color(e, o, 255,  255,  255, 100);
    evas_move(e, o, 0, 0);
    evas_show(e, o);
    o_fps = o;
+
+   o = evas_add_text(e, "andover", 20, "Total Average FPS: ???");
+   evas_set_color(e, o, 255,  255,  255, 100);
+   evas_get_geometry(e, o, NULL, NULL, NULL, &y);
+   evas_move(e, o, 0, 768 - y);
+   evas_show(e, o);
+   o_avg_fps = o;
    
    o = evas_add_image_from_file(e, IMGDIR"evas_test_view_bg.png");
    evas_move(e, o, 0, 0);
@@ -1448,10 +1457,24 @@ handle_events(void)
 	/* display any changes */
 	evas_render(evas_control);
 	evas_render(evas_view);
+	totalframes++;
 	/* caluclate time taken since the last render */
 	t2 = get_time();
 	val += t2 - t1;
+	totaltime += t2 - t1;
 	t1 = t2;
+	if (totaltime > texts_loop)
+	  {
+	     double fps;
+	     char buf[256];
+	     
+	     fps = (double)totalframes / totaltime;
+	     sprintf(buf, "Total Average FPS: %3.2f", fps);
+	     evas_set_text(evas_view, o_avg_fps, buf);
+	     printf("Total Average FPS: %3.2f\n", fps);
+	     totalframes = 0;
+	     totaltime = 0;
+	  }
      }
 }
 
