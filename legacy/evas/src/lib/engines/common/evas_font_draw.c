@@ -126,6 +126,12 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	     data = fg->glyph_out->bitmap.buffer;
 	     j = fg->glyph_out->bitmap.pitch;
 	     w = fg->glyph_out->bitmap.width;
+	     /* BUG: freetype 2.1.3 has a bug - workaround */
+	     /* ft2.1.3 is giving me rowstrides for some fonts in */
+	     /* some point sises of.... 1 !!!! this is wrong. */
+	     /* second guess it and "fixup" here */
+	     if (j < w) j = w;
+	     /* end BUG workaround */
 	     h = fg->glyph_out->bitmap.rows;
 	     if ((j > 0) && (chr_x + w > ext_x))
 	       {
