@@ -17,8 +17,10 @@ evas_common_cpu_catch_ill(void)
 void
 evas_common_cpu_mmx_test(void)
 {
+#ifdef BUILD_MMX
    pxor_r2r(mm4, mm4);
    evas_common_cpu_end_opt();
+#endif   
 }
 
 void
