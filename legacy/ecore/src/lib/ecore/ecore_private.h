@@ -9,8 +9,14 @@
 #include <signal.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <sys/mman.h>
 
+#ifndef WIN32
+#include <sys/mman.h>
+#endif
+
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #define ECORE_MAGIC_NONE            0x1234fedc
 #define ECORE_MAGIC_EXE             0xf7e812f5
@@ -49,7 +55,9 @@ enum _Ecore_Fd_Handler_Flags
 };
 typedef enum _Ecore_Fd_Handler_Flags Ecore_Fd_Handler_Flags;
 
+#ifndef WIN32
 typedef struct _Ecore_Exe           Ecore_Exe;
+#endif
 typedef struct _Ecore_Timer         Ecore_Timer;
 typedef struct _Ecore_Idler         Ecore_Idler;
 typedef struct _Ecore_Idle_Enterer  Ecore_Idle_Enterer;
@@ -60,6 +68,7 @@ typedef struct _Ecore_Event_Filter  Ecore_Event_Filter;
 typedef struct _Ecore_Event         Ecore_Event;
 typedef struct _Ecore_Animator      Ecore_Animator;
 
+#ifndef WIN32
 struct _Ecore_Exe
 {
    Ecore_Oldlist   __list_data;
@@ -67,6 +76,7 @@ struct _Ecore_Exe
    pid_t        pid;
    void        *data;
 };
+#endif
 
 struct _Ecore_Timer
 {
@@ -193,8 +203,10 @@ Ecore_Event  *_ecore_event_add(int type, void *ev, void (*func_free) (void *data
 void         *_ecore_event_del(Ecore_Event *event);
 void          _ecore_event_call(void);
 
+#ifndef WIN32
 void         *_ecore_event_exe_exit_new(void);
 void          _ecore_event_exe_exit_free(void *data, void *ev);
+#endif
 void         *_ecore_event_signal_user_new(void);
 void         *_ecore_event_signal_hup_new(void);
 void         *_ecore_event_signal_exit_new(void);
@@ -208,9 +220,11 @@ void          _ecore_signal_init(void);
 int           _ecore_signal_count_get(void);
 void          _ecore_signal_call(void);
 
+#ifndef WIN32
 void          _ecore_exe_shutdown(void);
 Ecore_Exe    *_ecore_exe_find(pid_t pid);
 void         *_ecore_exe_free(Ecore_Exe *exe);
+#endif
 
 void          _ecore_animator_shutdown(void);
     

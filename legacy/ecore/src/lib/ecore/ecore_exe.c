@@ -5,6 +5,7 @@
 #include <signal.h>
 #include <unistd.h>
 
+#ifndef WIN32
 static Ecore_Exe *exes = NULL;
 
 /**
@@ -259,3 +260,4 @@ _ecore_exe_free(Ecore_Exe *exe)
    free(exe);
    return data;
 }
+#endif

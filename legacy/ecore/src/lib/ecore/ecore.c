@@ -4,7 +4,9 @@
 static const char *_ecore_magic_string_get(Ecore_Magic m);
 static int _ecore_init_count = 0;
 
+#ifndef WIN32
 int _ecore_fps_debug = 0;
+#endif
 
 /**
  * Set up connections, signal handlers, sockets etc.
@@ -33,9 +35,11 @@ ecore_init(void)
 {
    if (++_ecore_init_count == 1)
      {
+#ifndef WIN32
 	if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
 	if (_ecore_fps_debug) _ecore_fps_debug_init();
 	_ecore_signal_init();
+#endif
      }
 
    return _ecore_init_count;
@@ -57,16 +61,22 @@ ecore_shutdown(void)
    if (--_ecore_init_count)
       return _ecore_init_count;
 
+#ifndef WIN32
    if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
+#endif
    _ecore_animator_shutdown();
+#ifndef WIN32
    _ecore_exe_shutdown();
+#endif
    _ecore_idle_enterer_shutdown();
    _ecore_idle_exiter_shutdown();
    _ecore_idler_shutdown();
    _ecore_timer_shutdown();
    _ecore_event_shutdown();
    _ecore_main_shutdown();
+#ifndef WIN32
    _ecore_signal_shutdown();
+#endif
 
    return _ecore_init_count;
 }
@@ -134,6 +144,7 @@ _ecore_magic_string_get(Ecore_Magic m)
    return "<UNKNOWN>";
 }
 
+#ifndef WIN32
 /* fps debug calls - for debugging how much time your app actually spends */
 /* "running" (and the inverse being time spent running)... this does not */
 /* account for other apps and multitasking... */
@@ -207,3 +218,4 @@ _ecore_fps_debug_runtime_add(double t)
 	*(_ecore_fps_runtime_mmap) += tm;
      }
 }
+#endif

@@ -5,7 +5,11 @@
 #include "ecore_ipc_private.h"
 #include "Ecore_Ipc.h"
 
+#ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
+#elif WIN32
+#include <winsock.h>
+#endif
 
 #define DLT_ZERO   0
 #define DLT_ONE    1

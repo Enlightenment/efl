@@ -417,6 +417,7 @@ _ecore_event_call(void)
    event_handlers_delete_me = 0;
 }
 
+#ifndef WIN32
 void *
 _ecore_event_exe_exit_new(void)
 {
@@ -435,6 +436,7 @@ _ecore_event_exe_exit_free(void *data, void *ev)
    if (e->exe) _ecore_exe_free(e->exe);
    free(e);
 }
+#endif
 
 void *
 _ecore_event_signal_user_new(void)

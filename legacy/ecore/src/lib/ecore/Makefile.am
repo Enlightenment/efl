@@ -30,5 +30,5 @@ ecore_tree.c \
 ecore_value.c \
 ecore_private.h
 
-libecore_la_LIBADD = -lm @dlopen_libs@
+libecore_la_LIBADD = -lm @dlopen_libs@ @winsock_libs@
 libecore_la_LDFLAGS = -version-info 1:0:0

@@ -1,5 +1,8 @@
 #include <Ecore.h>
 
+#ifndef WIN32
+#include <dlfcn.h>
+
 static Ecore_List *loaded_plugins = NULL;
 
 /**
@@ -103,3 +106,4 @@ ecore_plugin_call(Ecore_Plugin * plugin, char *symbol_name)
 
 	return ret;
 }
+#endif

@@ -8,7 +8,12 @@
 #include "ecore_con_private.h"
 #include "Ecore_Con.h"
 
+#ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>
+#elif WIN32
+#include <winsock.h>
+#endif
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <arpa/inet.h>

@@ -1,6 +1,10 @@
 #include "ecore_private.h"
 #include "Ecore.h"
 
+#ifdef WIN32
+#include <winsock.h>
+#endif
+
 #define FIX_HZ 1   
 
 #include <sys/time.h>
@@ -304,7 +308,9 @@ _ecore_main_select(double timeout)
 	     if (fdh->fd > max_fd) max_fd = fdh->fd;
 	  }
      }
+#ifndef WIN32
    if (_ecore_signal_count_get()) return -1;
+#endif
    ret = select(max_fd + 1, &rfds, &wfds, &exfds, t);
    if (ret < 0)
      {
@@ -429,8 +435,10 @@ _ecore_main_loop_iterate_internal(int once_only)
      }
    /* any timers re-added as a result of these are allowed to go */
    _ecore_timer_enable_new();
+#ifndef WIN32
    /* process signals into events .... */
    while (_ecore_signal_count_get()) _ecore_signal_call();
+#endif
    if (_ecore_event_exist())
      {
 	int ret;
@@ -451,7 +459,9 @@ _ecore_main_loop_iterate_internal(int once_only)
 	ret = _ecore_main_select(0);
 
 	if (ret > 0) have_event = 1;
+#ifndef WIN32
 	if (_ecore_signal_count_get() > 0) have_signal = 1;
+#endif
 
 	if (have_signal || have_event)
 	  goto process_events;
@@ -476,12 +486,14 @@ _ecore_main_loop_iterate_internal(int once_only)
 	return;
      }
    
+#ifndef WIN32
    if (_ecore_fps_debug)
      {
 	t2 = ecore_time_get();
 	if ((t1 > 0.0) && (t2 > 0.0))
 	  _ecore_fps_debug_runtime_add(t2 - t1);
      }
+#endif
    start_loop:
    if (do_quit) 
      {
@@ -501,7 +513,9 @@ _ecore_main_loop_iterate_internal(int once_only)
 	     
 	     ret = _ecore_main_select(-1);
 	     if (ret > 0) have_event = 1;
+#ifndef WIN32
 	     if (_ecore_signal_count_get() > 0) have_signal = 1;
+#endif
 	  }
 	/* idlers */
 	else
@@ -514,7 +528,9 @@ _ecore_main_loop_iterate_internal(int once_only)
 		  if (_ecore_event_exist()) break;
 		  ret = _ecore_main_select(0);
 		  if (ret > 0) have_event = 1;
+#ifndef WIN32
 		  if (_ecore_signal_count_get() > 0) have_signal = 1;
+#endif
 		  if (have_event || have_signal) break;
 		  next_time = _ecore_timer_next_get();
 		  if (next_time >= 0) goto start_loop;
@@ -532,7 +548,9 @@ _ecore_main_loop_iterate_internal(int once_only)
 	     
 	     ret = _ecore_main_select(next_time);
 	     if (ret > 0) have_event = 1;
+#ifndef WIN32
 	     if (_ecore_signal_count_get() > 0) have_signal = 1;
+#endif
 	  }
 	/* idlers */
 	else
@@ -546,7 +564,9 @@ _ecore_main_loop_iterate_internal(int once_only)
 		  if (_ecore_event_exist()) break;
 		  ret = _ecore_main_select(0);
 		  if (ret > 0) have_event = 1;
+#ifndef WIN32
 		  if (_ecore_signal_count_get() > 0) have_signal = 1;
+#endif
 		  if ((have_event) || (have_signal)) break;
 		  cur_time = ecore_time_get();
 		  t = ecore_time_get() - cur_time;
@@ -557,10 +577,12 @@ _ecore_main_loop_iterate_internal(int once_only)
 	       }
 	  }
      }
+#ifndef WIN32
    if (_ecore_fps_debug)
      {
 	t1 = ecore_time_get();
      }
+#endif
    /* we came out of our "wait state" so idle has exited */
    if (!once_only)
      _ecore_idle_exiter_call();
@@ -571,8 +593,10 @@ _ecore_main_loop_iterate_internal(int once_only)
    if (have_event) _ecore_main_fd_handlers_call();
    do
      {
+#ifndef WIN32
 	/* process signals into events .... */
 	while (_ecore_signal_count_get()) _ecore_signal_call();
+#endif
 	
 	/* handle events ... */
 	_ecore_event_call();	

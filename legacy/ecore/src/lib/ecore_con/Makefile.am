@@ -22,7 +22,7 @@ ecore_con_private.h
 
 libecore_con_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
-@SSL_LIBS@
+@SSL_LIBS@ @winsock_libs@
 
 libecore_con_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la

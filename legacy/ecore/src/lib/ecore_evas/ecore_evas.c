@@ -1476,6 +1476,7 @@ ecore_evas_sticky_get(Ecore_Evas *ee)
       return ee->prop.sticky ? 1:0;
 }
 
+#ifndef WIN32
 /* fps debug calls - for debugging how much time your app actually spends */
 /* rendering graphics... :) */
 
@@ -1548,3 +1549,4 @@ _ecore_evas_fps_debug_rendertime_add(double t)
 	*(_ecore_evas_fps_rendertime_mmap) += tm;
      }
 }
+#endif

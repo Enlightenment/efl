@@ -29,7 +29,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
-#include <dlfcn.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <dirent.h>
@@ -80,7 +79,9 @@ extern "C" {
      };
    typedef enum _Ecore_Fd_Handler_Flags Ecore_Fd_Handler_Flags;
    
+#ifndef WIN32
    typedef void Ecore_Exe; /**< A handle for spawned processes */
+#endif
    typedef void Ecore_Timer; /**< A handle for timers */
    typedef void Ecore_Idler; /**< A handle for idlers */
    typedef void Ecore_Idle_Enterer; /**< A handle for idle enterers */
@@ -98,6 +99,7 @@ extern "C" {
    typedef struct _Ecore_Event_Signal_Power Ecore_Event_Signal_Power; /**< Power signal event */
    typedef struct _Ecore_Event_Signal_Realtime Ecore_Event_Signal_Realtime; /**< Realtime signal event */
 
+#ifndef WIN32
    struct _Ecore_Event_Exe_Exit /** Process exit event */
      {
 	pid_t      pid; /**< The process ID of the process that exited */
@@ -109,18 +111,25 @@ extern "C" {
 	void      *ext_data; /**< Extension data - not used */
 	siginfo_t  data; /**< Signal info */
      };
+#endif
 
    struct _Ecore_Event_Signal_User /** User signal event */
      {
 	int   number; /**< The signal number. Either 1 or 2 */
 	void *ext_data; /**< Extension data - not used */
+
+#ifndef WIN32
 	siginfo_t data; /**< Signal info */
+#endif
      };
    
    struct _Ecore_Event_Signal_Hup /** Hup signal event */
      {
 	void *ext_data; /**< Extension data - not used */
+
+#ifndef WIN32
 	siginfo_t data; /**< Signal info */
+#endif
      };
    
    struct _Ecore_Event_Signal_Exit /** Exit request event */
@@ -129,19 +138,28 @@ extern "C" {
 	int   quit      : 1; /**< set if the exit request was a quit signal */
 	int   terminate : 1; /**< Set if the exit request was a terminate singal */
 	void *ext_data;	/**< Extension data - not used */
+
+#ifndef WIN32
 	siginfo_t data; /**< Signal info */
+#endif
      };
 
    struct _Ecore_Event_Signal_Power /** Power event */
      {
 	void *ext_data;	/**< Extension data - not used */
+
+#ifndef WIN32
 	siginfo_t data; /**< Signal info */
+#endif
      };
 
    struct _Ecore_Event_Signal_Realtime /** Realtime event */
      {
 	int num; /**< The realtime signal's number */
+
+#ifndef WIN32
 	siginfo_t data; /**< Signal info */
+#endif
      };
 
    int  ecore_init(void);
@@ -162,7 +180,7 @@ extern "C" {
    void                *ecore_event_current_event_get(void);
        
        
-
+#ifndef WIN32
    Ecore_Exe *ecore_exe_run(const char *exe_cmd, const void *data);
    void      *ecore_exe_free(Ecore_Exe *exe);
    pid_t      ecore_exe_pid_get(Ecore_Exe *exe);
@@ -173,6 +191,7 @@ extern "C" {
    void       ecore_exe_kill(Ecore_Exe *exe);
    void       ecore_exe_signal(Ecore_Exe *exe, int num);
    void       ecore_exe_hup(Ecore_Exe *exe);
+#endif
        
    Ecore_Idler *ecore_idler_add(int (*func) (void *data), const void *data);
    void        *ecore_idler_del(Ecore_Idler *idler);

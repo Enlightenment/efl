@@ -1,6 +1,8 @@
 #include "ecore_private.h"
 #include "Ecore.h"
 
+#ifndef WIN32
+
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <signal.h>
@@ -444,4 +446,5 @@ _ecore_signal_callback_sigrt(int sig, siginfo_t *si, void *foo)
    sigrt_count[sig - SIGRTMIN]++;
    sig_count++;
 }
+#endif
 #endif
