@@ -9,5 +9,8 @@
 #include "edje_private.h"
 /* ... end testing */
 #include "Edje.h"
+#include "config.h"
+
+#define DAT PACKAGE_DATA_DIR"/"
 
 #endif
