@@ -86,3 +86,5 @@ edje_ls_CPPFLAGS = @edje_def@
 edje_ls_LDFLAGS =
 
 edje_ls_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
+
+EXTRA_DIST = edje_recc
