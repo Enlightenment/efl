@@ -8,7 +8,7 @@ INCLUDES = \
 
 libecore_x_la_LDFLAGS = -version-info 1:0:0 \
 -L$(top_builddir)/src/lib/ecore/.libs \
--L$(top_builddir)/src/lib/ecore_txt/.libs
+-L$(top_builddir)/src/lib/ecore_txt/.libs \
 -L$(top_builddir)/src/lib/ecore_job/.libs
 
 if BUILD_ECORE_X
