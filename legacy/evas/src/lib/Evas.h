@@ -53,24 +53,6 @@ typedef enum _Evas_Button_Flags
    EVAS_BUTTON_TRIPLE_CLICK = (1 << 1) /**< This mouse button press was the 3rd press of a triple click */
 } Evas_Button_Flags; /**< Flags for Mouse Button events */
 
-typedef enum _Evas_Format_Type
-{
-   EVAS_FORMAT_NONE = 0,
-     EVAS_FORMAT_FONT,
-     EVAS_FORMAT_SIZE,
-     EVAS_FORMAT_COLOR,
-     EVAS_FORMAT_COLOR2,
-     EVAS_FORMAT_COLOR3,
-     EVAS_FORMAT_ALIGN,
-     EVAS_FORMAT_STYLE,
-     EVAS_FORMAT_UNDERLINE,
-     EVAS_FORMAT_NEWLINE,
-     EVAS_FORMAT_TAB,
-     EVAS_FORMAT_L2R,
-     EVAS_FORMAT_R2L,
-     EVAS_FORMAT_ANCHOR
-} Evas_Format_Type;
-
 typedef enum _Evas_Format_Direction
 {
    EVAS_FORMAT_DIRECTION_VERTICAL = 0,
@@ -454,8 +436,23 @@ extern "C" {
    EAPI void              evas_font_cache_set               (Evas *e, int size);
    EAPI int               evas_font_cache_get               (Evas *e);
    
-   EAPI Evas_Object      *evas_object_textblock_add         (Evas *e);
-   
+   EAPI Evas_Object            *evas_object_textblock_add                 (Evas *e);
+   EAPI void                   evas_object_textblock_clear                (Evas_Object *obj);
+   EAPI void                   evas_object_textblock_cursor_pos_set       (Evas_Object *obj, int pos);
+   EAPI int                    evas_object_textblock_cursor_pos_get       (Evas_Object *obj);
+   EAPI int                    evas_object_textblock_length_get           (Evas_Object *obj);
+   EAPI void                   evas_object_textblock_text_insert          (Evas_Object *obj, const char *text);
+   EAPI char                  *evas_object_textblock_text_get             (Evas_Object *obj, int len);
+   EAPI void                   evas_object_textblock_text_del             (Evas_Object *obj, int len);
+   EAPI void                   evas_object_textblock_format_insert        (Evas_Object *obj, const char *format);
+   EAPI int                    evas_object_textblock_format_next_pos_get  (Evas_Object *obj);
+   EAPI int                    evas_object_textblock_format_prev_pos_get  (Evas_Object *obj);
+   EAPI char                  *evas_object_textblock_format_get           (Evas_Object *obj);
+   EAPI void                   evas_object_textblock_format_del           (Evas_Object *obj);
+   EAPI void                   evas_object_textblock_format_direction_set (Evas_Object *obj, Evas_Format_Direction dir);
+   EAPI Evas_Format_Direction  evas_object_textblock_format_direction_get (Evas_Object *obj);
+   EAPI void                   evas_object_textblock_native_size_get      (Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
+       
    EAPI void              evas_object_del                   (Evas_Object *obj);
 
    EAPI const char       *evas_object_type_get              (Evas_Object *obj);

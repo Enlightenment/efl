@@ -261,7 +261,7 @@ evas_common_copy_pixels_rgba_to_rgba_mmx2(DATA32 *src, DATA32 *dst, int len)
    
    while (dst_ptr < dst_end_ptr_pre)
      {
-	MOVE_16DWORDS_MMX2(src_ptr, dst_ptr);
+	MOVE_16DWORDS_MMX(src_ptr, dst_ptr);
 	src_ptr+=16;
 	dst_ptr+=16;
      }
