@@ -210,6 +210,7 @@ evas_engine_directfb_output_free(void *data)
    free(re);
 
    evas_common_font_shutdown();
+   evas_common_image_shutdown();
 }
 
 void

@@ -55,6 +55,17 @@ image_debug(void)
 void
 evas_common_image_init(void)
 {
+#ifdef BUILD_LOADER_EET
+   eet_init();
+#endif
+}
+
+void
+evas_common_image_shutdown(void)
+{
+#ifdef BUILD_LOADER_EET
+   eet_shutdown();
+#endif
 }
 
 RGBA_Surface *

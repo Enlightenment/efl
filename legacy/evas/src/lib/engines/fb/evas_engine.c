@@ -244,6 +244,7 @@ evas_engine_fb_output_free(void *data)
    free(re);
 
    evas_common_font_shutdown();
+   evas_common_image_shutdown();
 }
 
 static void

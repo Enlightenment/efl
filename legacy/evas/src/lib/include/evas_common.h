@@ -742,6 +742,7 @@ void evas_common_scale_rgba_in_to_out_clip_sample      (RGBA_Image *src, RGBA_Im
 
 /****/
 void          evas_common_image_init              (void);
+void          evas_common_image_shutdown          (void);
 
 RGBA_Surface *evas_common_image_surface_new       (void);
 void          evas_common_image_surface_free      (RGBA_Surface *is);
