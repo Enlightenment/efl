@@ -32,11 +32,11 @@ static void                *ecore_raw_event_event =  NULL;
  * structure that is specific to that event type, and a data pointer that is 
  * provided in this call as the @p data parameter.
  * 
- * When the callback @p func is called, it must return 1 or 0. If it returns
- * 1, It will keep being called as per normal, when events come into the event
- * queue. If it returns 0, it will be removed from the list of event handlers
- * and be destroyed. If this happens the event handler object returned is no
- * longer valid, and the handler will not be called again after it returns 0.
+ * When the callback @p func is called, it must return 1 or 0. If it returns 
+ * 1, It will keep being called as per normal, when events come into the event 
+ * queue. If it returns 0, it will be removed from the list of event handlers 
+ * and be destroyed. If this happens the event handler object returned is no 
+ * longer valid, and the handler will not be called again after it returns 0. 
  * 
  * @code
  * #include <Ecore.h>
@@ -433,7 +433,7 @@ _ecore_event_call(void)
 		       if (eh->type == e->type)
 			 {
 			    if (!eh->func(eh->data, e->type, e->event))
-			      break;
+			      break;  /* 0 == "call no further handlers" */
 			 }
 		    }
 	       }
