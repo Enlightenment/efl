@@ -183,27 +183,54 @@ ecore_x_selection_clipboard_clear(void)
    return _ecore_x_selection_set(None, NULL, 0, _ecore_x_atom_selection_clipboard);
 }
 
+Atom
+_ecore_x_selection_target_atom_get(char *target)
+{
+   Atom x_target;
+   
+   if (!strcmp(target, ECORE_X_SELECTION_TARGET_TEXT))
+      x_target = _ecore_x_atom_text;
+   else if (!strcmp(target, ECORE_X_SELECTION_TARGET_COMPOUND_TEXT))
+      x_target = _ecore_x_atom_compound_text;
+   else if (!strcmp(target, ECORE_X_SELECTION_TARGET_STRING))
+      x_target = _ecore_x_atom_string;
+   else if (!strcmp(target, ECORE_X_SELECTION_TARGET_UTF8_STRING))
+      x_target = _ecore_x_atom_utf8_string;
+   else if (!strcmp(target, ECORE_X_SELECTION_TARGET_FILENAME))
+      x_target = _ecore_x_atom_file_name;
+   else
+   {
+      char *atom_name;
+      atom_name = malloc(strlen(target) + 4);
+      sprintf(atom_name, "_E_%s", target);
+      x_target = XInternAtom(_ecore_x_disp, atom_name, False);
+      free(atom_name);
+   }
+
+   return x_target;
+}
+
+char *
+_ecore_x_selection_target_get(Atom target)
+{
+   if (target == _ecore_x_atom_file_name)
+      return strdup(ECORE_X_SELECTION_TARGET_FILENAME);
+   else if (target == _ecore_x_atom_string)
+      return strdup(ECORE_X_SELECTION_TARGET_STRING);
+   else if (target == _ecore_x_atom_utf8_string)
+      return strdup(ECORE_X_SELECTION_TARGET_UTF8_STRING);
+   else if (target == _ecore_x_atom_text)
+      return strdup(ECORE_X_SELECTION_TARGET_TEXT);
+   else
+      return strdup(ECORE_X_SELECTION_TARGET_TEXT);
+}
+
 static void 
-_ecore_x_selection_request(Ecore_X_Window w, Ecore_X_Atom selection, Ecore_X_Selection_Target t) 
+_ecore_x_selection_request(Ecore_X_Window w, Ecore_X_Atom selection, char *target_str) 
 {
    Ecore_X_Atom target, prop;
 
-   switch (t) {
-      case ECORE_X_SELECTION_TARGET_FILENAME:
-         target = _ecore_x_atom_file_name;
-         break;
-      case ECORE_X_SELECTION_TARGET_STRING:
-         target = _ecore_x_atom_string;
-         break;
-      case ECORE_X_SELECTION_TARGET_UTF8_STRING:
-         target = _ecore_x_atom_utf8_string;
-         break;
-      case ECORE_X_SELECTION_TARGET_TEXT:
-         target = _ecore_x_atom_text;
-         break;
-      default:
-         target = _ecore_x_atom_text;
-   }
+   target = _ecore_x_selection_target_atom_get(target_str);
    
    if (selection == _ecore_x_atom_selection_primary)
       prop = _ecore_x_atom_selection_prop_primary;
@@ -217,36 +244,21 @@ _ecore_x_selection_request(Ecore_X_Window w, Ecore_X_Atom selection, Ecore_X_Sel
 }
 
 void 
-ecore_x_selection_primary_request(Ecore_X_Window w, Ecore_X_Selection_Target t)
+ecore_x_selection_primary_request(Ecore_X_Window w, char *target)
 {
-   _ecore_x_selection_request(w, _ecore_x_atom_selection_primary, t);
+   _ecore_x_selection_request(w, _ecore_x_atom_selection_primary, target);
 }
 
 void 
-ecore_x_selection_secondary_request(Ecore_X_Window w, Ecore_X_Selection_Target t)
+ecore_x_selection_secondary_request(Ecore_X_Window w, char *target)
 {
-   _ecore_x_selection_request(w, _ecore_x_atom_selection_secondary, t);
+   _ecore_x_selection_request(w, _ecore_x_atom_selection_secondary, target);
 }
 
 void 
-ecore_x_selection_clipboard_request(Ecore_X_Window w, Ecore_X_Selection_Target t)
+ecore_x_selection_clipboard_request(Ecore_X_Window w, char *target)
 {
-   _ecore_x_selection_request(w, _ecore_x_atom_selection_clipboard, t);
-}
-
-Ecore_X_Selection_Target
-ecore_x_selection_target_get(Ecore_X_Atom target)
-{
-   if (target == _ecore_x_atom_file_name)
-      return ECORE_X_SELECTION_TARGET_FILENAME;
-   else if (target == _ecore_x_atom_string)
-      return ECORE_X_SELECTION_TARGET_STRING;
-   else if (target == _ecore_x_atom_utf8_string)
-      return ECORE_X_SELECTION_TARGET_UTF8_STRING;
-   else if (target == _ecore_x_atom_text)
-      return ECORE_X_SELECTION_TARGET_TEXT;
-   else
-      return ECORE_X_SELECTION_TARGET_TEXT;
+   _ecore_x_selection_request(w, _ecore_x_atom_selection_clipboard, target);
 }
 
 void
@@ -287,30 +299,12 @@ ecore_x_selection_converter_add(char *target,
       int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret))
 {
    Ecore_X_Atom x_target;
-   char *atom_name;
    
    if (!func || !target)
       return;
 
-   /* FIXME: Some of these are just made up because I can't find
-    * standard "mime type" strings for them at the moment" */
-   if (!strcmp(target, "TEXT"))
-      x_target = _ecore_x_atom_text;
-   else if (!strcmp(target, "COMPOUND_TEXT"))
-      x_target = _ecore_x_atom_compound_text;
-   else if (!strcmp(target, "STRING"))
-      x_target = _ecore_x_atom_string;
-   else if (!strcmp(target, "UTF8_STRING"))
-      x_target = _ecore_x_atom_utf8_string;
-   else if (!strcmp(target, "FILENAME"))
-      x_target = _ecore_x_atom_file_name;
-   else
-   {
-      atom_name = malloc(strlen(target) + 4);
-      sprintf(atom_name, "_E_%s", target);
-      x_target = XInternAtom(_ecore_x_disp, atom_name, False);
-   }
-
+   x_target = _ecore_x_selection_target_atom_get(target);
+   
    ecore_x_selection_converter_atom_add(x_target, func);
 }
 
@@ -352,35 +346,18 @@ void
 ecore_x_selection_converter_del(char *target)
 {
    Ecore_X_Atom x_target;
-   char *atom_name;
    
    if (!target)
       return;
    
-   if (!strcmp(target, "TEXT"))
-      x_target = _ecore_x_atom_text;
-   else if (!strcmp(target, "COMPOUND_TEXT"))
-      x_target = _ecore_x_atom_compound_text;
-   else if (!strcmp(target, "STRING"))
-      x_target = _ecore_x_atom_string;
-   else if (!strcmp(target, "UTF8_STRING"))
-      x_target = _ecore_x_atom_utf8_string;
-   else if (!strcmp(target, "FILENAME"))
-      x_target = _ecore_x_atom_file_name;
-   else
-   {
-      atom_name = malloc(strlen(target) + 4);
-      sprintf(atom_name, "_E_%s", target);
-      x_target = XInternAtom(_ecore_x_disp, atom_name, False);
-   }
-
+   x_target = _ecore_x_selection_target_atom_get(target);
    ecore_x_selection_converter_atom_del(x_target);
 }
 
 
 /* Locate and run conversion callback for specified selection target */
 int
-_ecore_x_selection_convert(Ecore_X_Atom selection, Ecore_X_Atom target, void **data_ret)
+_ecore_x_selection_convert(Atom selection, Atom target, void **data_ret)
 {
    Ecore_X_Selection_Data *sel;
    Ecore_X_Selection_Converter *cnv;
@@ -389,23 +366,7 @@ _ecore_x_selection_convert(Ecore_X_Atom selection, Ecore_X_Atom target, void **d
    char *tgt_str;
    
    sel = _ecore_x_selection_get(selection);
-   /* COMPOUND_TEXT will be the default format for text requests */
-   if (target == _ecore_x_atom_text)
-      tgt_str = strdup("TEXT");
-   else if (target == _ecore_x_atom_compound_text)
-      tgt_str = strdup("COMPOUND_TEXT");
-   else if (target == _ecore_x_atom_string)
-      tgt_str = strdup("STRING");
-   else if (target == _ecore_x_atom_utf8_string)
-      tgt_str = strdup("UTF8_STRING");
-   else if (target == _ecore_x_atom_file_name)
-      tgt_str = strdup("FILENAME");
-   else
-   {
-      char *atom_name = XGetAtomName(_ecore_x_disp, target);
-      tgt_str = strdup(atom_name);
-      XFree(atom_name);
-   }
+   tgt_str = _ecore_x_selection_target_get(target);
    
    for (cnv = converters; cnv; cnv = cnv->next)
    {
@@ -423,6 +384,8 @@ _ecore_x_selection_convert(Ecore_X_Atom selection, Ecore_X_Atom target, void **d
       }
    }
 
+   free(tgt_str);
+
    return -1;
 }
 
@@ -436,11 +399,11 @@ static int _ecore_x_selection_converter_text(char *target, void *data, int size,
    if (!data || !size)
       return 0;
 
-   if (!strcmp(target, "TEXT"))
+   if (!strcmp(target, ECORE_X_SELECTION_TARGET_TEXT))
       style = XTextStyle;
-   else if (!strcmp(target, "COMPOUND_TEXT"))
+   else if (!strcmp(target, ECORE_X_SELECTION_TARGET_COMPOUND_TEXT))
       style = XCompoundTextStyle;
-   else if (!strcmp(target, "STRING"))
+   else if (!strcmp(target, ECORE_X_SELECTION_TARGET_STRING))
       style = XStringStyle;
    else
       return 0;

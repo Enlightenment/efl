@@ -22,12 +22,11 @@ extern "C" {
 typedef void Ecore_X_Reply;   
 #endif
 
-typedef enum _Ecore_X_Selection_Target {
-   ECORE_X_SELECTION_TARGET_FILENAME,
-   ECORE_X_SELECTION_TARGET_STRING,
-   ECORE_X_SELECTION_TARGET_UTF8_STRING,
-   ECORE_X_SELECTION_TARGET_TEXT
-} Ecore_X_Selection_Target;
+#define ECORE_X_SELECTION_TARGET_TEXT "TEXT"
+#define ECORE_X_SELECTION_TARGET_COMPOUND_TEXT "COMPOUND_TEXT"
+#define ECORE_X_SELECTION_TARGET_STRING "STRING"
+#define ECORE_X_SELECTION_TARGET_UTF8_STRING "UTF8_STRING"
+#define ECORE_X_SELECTION_TARGET_FILENAME "FILENAME"
 
 typedef enum _Ecore_X_Selection {
    ECORE_X_SELECTION_PRIMARY,
@@ -376,7 +375,7 @@ struct _Ecore_X_Event_Selection_Notify
    Ecore_X_Window             win;
    Ecore_X_Time               time;
    Ecore_X_Selection          selection;
-   Ecore_X_Selection_Target   target;
+   char                       *target;
 };
 
 struct _Ecore_X_Event_Client_Message
@@ -599,14 +598,12 @@ int              ecore_x_selection_secondary_set(Ecore_X_Window w, char *data, i
 int              ecore_x_selection_secondary_clear(void);
 int              ecore_x_selection_clipboard_set(Ecore_X_Window w, char *data, int len);
 int              ecore_x_selection_clipboard_clear(void);
-void             ecore_x_selection_primary_request(Ecore_X_Window w, Ecore_X_Selection_Target t);
-void             ecore_x_selection_secondary_request(Ecore_X_Window w, Ecore_X_Selection_Target t);
-void             ecore_x_selection_clipboard_request(Ecore_X_Window w, Ecore_X_Selection_Target t);
+void             ecore_x_selection_primary_request(Ecore_X_Window w, char *target);
+void             ecore_x_selection_secondary_request(Ecore_X_Window w, char *target);
+void             ecore_x_selection_clipboard_request(Ecore_X_Window w, char *target);
 void             ecore_x_selection_primary_request_data_get(void **buf, int *len);
 void             ecore_x_selection_secondary_request_data_get(void **buf, int *len);
 void             ecore_x_selection_clipboard_request_data_get(void **buf, int *len);
-Ecore_X_Selection_Target
-                 ecore_x_selection_target_get(Ecore_X_Atom target);
 void             ecore_x_selection_converter_add(char *target, int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret));
 void             ecore_x_selection_converter_atom_add(Ecore_X_Atom target, int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret));
 void             ecore_x_selection_converter_del(char *target);

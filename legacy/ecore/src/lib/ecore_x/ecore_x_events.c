@@ -119,6 +119,16 @@ _ecore_x_event_free_key_up(void *data, void *ev)
 }
 
 static void
+_ecore_x_event_free_selection_notify(void *data, void *ev)
+{
+   Ecore_X_Event_Selection_Notify *e;
+
+   e = ev;
+   if (e->target) free(e->target);
+   free(e);
+}
+
+static void
 _ecore_x_event_free_generic(void *data, void *ev)
 {
    free(ev);
@@ -900,7 +910,7 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
    Ecore_X_Selection_Data           *sd;
    XSelectionEvent                  xnotify;
    XEvent                           *xev;
-   char                             *data;
+   void                             *data;
 
    xev = calloc(1, sizeof(XEvent));
    
@@ -914,8 +924,6 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
    if((sd = _ecore_x_selection_get(xnotify.selection)) 
          && (sd->win == xevent->xselectionrequest.owner))
    {
-      /* TODO: Use predefined/user-definable callback functions
-       * to convert selections */
       if (_ecore_x_selection_convert(xnotify.selection, xnotify.target,
                &data) == -1)
       {
@@ -956,7 +964,7 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
    e = calloc(1, sizeof(Ecore_X_Event_Selection_Notify));
    e->win = xevent->xselection.requestor;
    e->time = xevent->xselection.time;
-   e->target = ecore_x_selection_target_get(xevent->xselection.target);
+   e->target = _ecore_x_selection_target_get(xevent->xselection.target);
    selection = xevent->xselection.selection;
    if (selection == _ecore_x_atom_selection_primary)
       e->selection = ECORE_X_SELECTION_PRIMARY;
@@ -982,7 +990,7 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
    sel_data.data = data;
    sel_data.length = num_ret;
    _ecore_x_selection_request_data_set(sel_data);
-   ecore_event_add(ECORE_X_EVENT_SELECTION_NOTIFY, e, _ecore_x_event_free_generic, NULL);
+   ecore_event_add(ECORE_X_EVENT_SELECTION_NOTIFY, e, _ecore_x_event_free_selection_notify, NULL);
 
 }
 
