@@ -115,13 +115,14 @@ static unsigned char _clip_lut[1024];
 void
 evas_common_convert_yuv_420p_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
 {
-#if defined BUILD_MMX || defined BUILD_SSE
    int mmx, sse, sse2;
+#if defined BUILD_MMX || defined BUILD_SSE
 
    evas_common_cpu_can_do(&mmx, &sse, &sse2);
 #endif   
 #ifndef BUILD_SSE
    sse = 0;
+   sse2 = 0;
 #endif
 #ifndef BUILD_MMX
    mmx = 0;
