@@ -1,7 +1,7 @@
 #include "evas_gl_common.h"
 
 /* nvidia extensions */
-extern void PixelDataRangeNV(int target, int length, void *pointer);
+extern void glPixelDataRangeNV(int target, int length, void *pointer);
 #define GL_WRITE_PIXEL_DATA_RANGE_NV 0x8878
 #define GL_READ_PIXEL_DATA_RANGE_NV 0x8879
 #define GL_TEXTURE_RECTANGLE_NV 0x84f5
@@ -449,6 +449,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
 	glEnable(GL_TEXTURE_RECTANGLE_NV);
 	glBindTexture(GL_TEXTURE_RECTANGLE_NV, tex->texture);
 
+/*	
 	if (!tex->opt)
 	  {
 	     glPixelDataRangeNV(GL_WRITE_PIXEL_DATA_RANGE_NV, 
@@ -456,6 +457,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
 			 im->image->data);
 	     tex->opt = 1;
 	  }
+*/
 	
 	if (tex->gc->texture) tex->gc->texture->references--;
 	tex->gc->texture = tex;
@@ -494,6 +496,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
    tex->gc->change.texture = 1;
    tex->references++;
 
+   /*
    if (!tex->opt)
      {
 	glPixelDataRangeNV(GL_WRITE_PIXEL_DATA_RANGE_NV, 
@@ -501,6 +504,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
 			 im->image->data);
 	tex->opt = 1;
      }
+   */
    
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
