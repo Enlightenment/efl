@@ -7,7 +7,7 @@ SECTION = "e/libs"
 PRIORITY = "optional"
 DEPENDS = "libpng jpeg eet freetype"
 PV = "evas-1.0.0_pre13"
-PR = "1"
+PR = "2"
 
 do_prepsources () {
   make clean distclean || true
@@ -61,6 +61,7 @@ EXTRA_OECONF = "--enable-fb			\
 		--disable-convert-32-rgb-rot-90	\
 		--disable-convert-32-rgb-rot-270"
 
+export CFLAGS="-O3 -mcpu=xscale -mtune=xscale"
 export FREETYPE_CONFIG = "${STAGING_BINDIR}/freetype-config"
 export EET_CONFIG = "${STAGING_BINDIR}/eet-config"
 
