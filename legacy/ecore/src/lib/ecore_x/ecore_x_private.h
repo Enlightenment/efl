@@ -61,16 +61,26 @@ typedef struct _Ecore_X_DND_Protocol
    Window source, dest;
    
    enum {
-      ECORE_X_DND_OUT,
-      ECORE_X_DND_IN,
+      ECORE_X_DND_IDLE,
+      ECORE_X_DND_DRAGGING,
+      ECORE_X_DND_ENTERED,
+      ECORE_X_DND_TARGET_ENTERED,
+      ECORE_X_DND_TARGET_CONVERTING,
       ECORE_X_DND_FINISHED
    } state;
 
    struct {
-      int x, y, w, h;
-   } status_rect;
+      short x, y;
+      unsigned short width, height;
+   } rectangle;
 
-   Atom types[256];
+   struct {
+      int x, y;
+   } pos;
+   
+   Atom *types;
+   Atom action;
+   int num_types;
    
    struct {
       Ecore_Event_Handler *mouse_move;
@@ -185,8 +195,6 @@ extern Atom     _ecore_x_atom_xdnd_action_description;
 extern Atom     _ecore_x_atom_xdnd_status;
 extern Atom     _ecore_x_atom_xdnd_drop;
 extern Atom     _ecore_x_atom_xdnd_finished;
-
-extern Ecore_X_DND_Protocol *_xdnd;
 
 void _ecore_x_error_handler_init(void);
 void _ecore_x_event_handle_key_press(XEvent *xevent);

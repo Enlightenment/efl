@@ -22,6 +22,11 @@ extern "C" {
 typedef void Ecore_X_Reply;   
 #endif
 
+typedef struct _Ecore_X_Rectangle {
+   int x, y;
+   unsigned int width, height;
+} Ecore_X_Rectangle;
+
 #define ECORE_X_SELECTION_TARGET_TEXT "TEXT"
 #define ECORE_X_SELECTION_TARGET_COMPOUND_TEXT "COMPOUND_TEXT"
 #define ECORE_X_SELECTION_TARGET_STRING "STRING"
@@ -30,13 +35,11 @@ typedef void Ecore_X_Reply;
 
 #define ECORE_X_DND_VERSION 5
 
-typedef enum _Ecore_X_DND_Action {
-   ECORE_X_DND_ACTION_COPY,
-   ECORE_X_DND_ACTION_MOVE,
-   ECORE_X_DND_ACTION_LINK,
-   ECORE_X_DND_ACTION_ASK,
-   ECORE_X_DND_ACTION_PRIVATE
-} Ecore_X_DND_Action;
+extern Ecore_X_Atom ECORE_X_DND_ACTION_COPY;
+extern Ecore_X_Atom ECORE_X_DND_ACTION_MOVE;
+extern Ecore_X_Atom ECORE_X_DND_ACTION_LINK;
+extern Ecore_X_Atom ECORE_X_DND_ACTION_ASK;
+extern Ecore_X_Atom ECORE_X_DND_ACTION_PRIVATE;
 
 typedef enum _Ecore_X_Selection {
    ECORE_X_SELECTION_PRIMARY,
@@ -407,14 +410,14 @@ struct _Ecore_X_Event_Xdnd_Position
       int x, y;
    } position;
    Ecore_X_Time         time;
-   Ecore_X_DND_Action   action;
+   Ecore_X_Atom         action;
 };
 
 struct _Ecore_X_Event_Xdnd_Status
 {
    Ecore_X_Window       win, target;
    int                  drop_accept;
-   Ecore_X_DND_Action   action;
+   Ecore_X_Atom         action;
 };
 
 struct _Ecore_X_Event_Xdnd_Leave
@@ -426,7 +429,7 @@ struct _Ecore_X_Event_Xdnd_Drop
 {
    Ecore_X_Window       win, source;
    Ecore_X_Time         time;
-   Ecore_X_DND_Action   action;
+   Ecore_X_Atom         action;
    struct {
       int x, y;
    } position;
@@ -436,7 +439,7 @@ struct _Ecore_X_Event_Xdnd_Finished
 {
    Ecore_X_Window       win, target;
    int                  completed;
-   Ecore_X_DND_Action   action;
+   Ecore_X_Atom         action;
 };
 
 struct _Ecore_X_Event_Client_Message
@@ -557,6 +560,13 @@ extern int ECORE_X_EVENT_WINDOW_PROP_CLIENT_MACHINE_CHANGE;
 extern int ECORE_X_EVENT_WINDOW_PROP_NAME_CLASS_CHANGE;
 extern int ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE;
 extern int ECORE_X_EVENT_WINDOW_PROP_DESKTOP_CHANGE;
+
+extern int ECORE_X_EVENT_XDND_ENTER;
+extern int ECORE_X_EVENT_XDND_POSITION;
+extern int ECORE_X_EVENT_XDND_STATUS;
+extern int ECORE_X_EVENT_XDND_LEAVE;
+extern int ECORE_X_EVENT_XDND_DROP;
+extern int ECORE_X_EVENT_XDND_FINISHED;
    
 extern int ECORE_X_MODIFIER_SHIFT;
 extern int ECORE_X_MODIFIER_CTRL;
@@ -684,6 +694,9 @@ void             ecore_x_selection_converter_atom_add(Ecore_X_Atom target, int (
 void             ecore_x_selection_converter_del(char *target);
 void             ecore_x_selection_converter_atom_del(Ecore_X_Atom target);
 
+void             ecore_x_dnd_aware_set(Ecore_X_Window win, int on);
+int              ecore_x_dnd_version_get(Ecore_X_Window win);
+int              ecore_x_dnd_begin (Ecore_X_Window source, unsigned char *data, int size);
                  
 Ecore_X_Window   ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h);
 Ecore_X_Window   ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h);

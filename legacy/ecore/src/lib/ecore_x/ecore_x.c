@@ -51,10 +51,13 @@ Atom     _ecore_x_atom_xdnd_enter = 0;
 Atom     _ecore_x_atom_xdnd_type_list = 0;
 Atom     _ecore_x_atom_xdnd_position = 0;
 Atom     _ecore_x_atom_xdnd_action_copy = 0;
+Atom     _ecore_x_atom_xdnd_action_move = 0;
+Atom     _ecore_x_atom_xdnd_action_link = 0;
 Atom     _ecore_x_atom_xdnd_action_private = 0;
 Atom     _ecore_x_atom_xdnd_action_ask = 0;
 Atom     _ecore_x_atom_xdnd_action_list = 0;
 Atom     _ecore_x_atom_xdnd_action_description = 0;
+Atom     _ecore_x_atom_xdnd_proxy = 0;
 Atom     _ecore_x_atom_xdnd_status = 0;
 Atom     _ecore_x_atom_xdnd_drop = 0;
 Atom     _ecore_x_atom_xdnd_finished = 0;
@@ -134,6 +137,13 @@ Atom     _ecore_x_atom_compound_text = 0;
 
 Atom     _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM] = {0};
 
+/* Xdnd atoms that need to be exposed to the application interface */
+Ecore_X_Atom  ECORE_X_DND_ACTION_COPY = 0;
+Ecore_X_Atom  ECORE_X_DND_ACTION_MOVE = 0;
+Ecore_X_Atom  ECORE_X_DND_ACTION_LINK = 0;
+Ecore_X_Atom  ECORE_X_DND_ACTION_ASK = 0;
+Ecore_X_Atom  ECORE_X_DND_ACTION_PRIVATE = 0;
+
 int ECORE_X_EVENT_KEY_DOWN = 0;
 int ECORE_X_EVENT_KEY_UP = 0;
 int ECORE_X_EVENT_MOUSE_BUTTON_DOWN = 0;
@@ -177,6 +187,13 @@ int ECORE_X_EVENT_WINDOW_PROP_VISIBLE_ICON_NAME_CHANGE = 0;
 int ECORE_X_EVENT_WINDOW_PROP_CLIENT_MACHINE_CHANGE = 0;
 int ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE = 0;
 int ECORE_X_EVENT_WINDOW_PROP_DESKTOP_CHANGE = 0;
+
+int ECORE_X_EVENT_XDND_ENTER = 0;
+int ECORE_X_EVENT_XDND_POSITION = 0;
+int ECORE_X_EVENT_XDND_STATUS = 0;
+int ECORE_X_EVENT_XDND_LEAVE = 0;
+int ECORE_X_EVENT_XDND_DROP = 0;
+int ECORE_X_EVENT_XDND_FINISHED = 0;
 
 int ECORE_X_MODIFIER_SHIFT = 0;
 int ECORE_X_MODIFIER_CTRL = 0;
@@ -301,6 +318,13 @@ ecore_x_init(const char *name)
 	ECORE_X_EVENT_WINDOW_PROP_CLIENT_MACHINE_CHANGE    = ecore_event_type_new();
 	ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE               = ecore_event_type_new();
 	ECORE_X_EVENT_WINDOW_PROP_DESKTOP_CHANGE               = ecore_event_type_new();
+
+   ECORE_X_EVENT_XDND_ENTER               = ecore_event_type_new();
+   ECORE_X_EVENT_XDND_POSITION            = ecore_event_type_new();
+   ECORE_X_EVENT_XDND_STATUS              = ecore_event_type_new();
+   ECORE_X_EVENT_XDND_LEAVE               = ecore_event_type_new();
+   ECORE_X_EVENT_XDND_DROP                = ecore_event_type_new();
+   ECORE_X_EVENT_XDND_FINISHED            = ecore_event_type_new();
      }
    
    ECORE_X_MODIFIER_SHIFT = _ecore_x_key_mask_get(XK_Shift_L);
@@ -352,14 +376,24 @@ ecore_x_init(const char *name)
    _ecore_x_atom_xdnd_enter               = XInternAtom(_ecore_x_disp, "XdndEnter", False);
    _ecore_x_atom_xdnd_position            = XInternAtom(_ecore_x_disp, "XdndPosition", False);
    _ecore_x_atom_xdnd_action_copy         = XInternAtom(_ecore_x_disp, "XdndActionCopy", False);
+   _ecore_x_atom_xdnd_action_move         = XInternAtom(_ecore_x_disp, "XdndActionMove", False);
    _ecore_x_atom_xdnd_action_private      = XInternAtom(_ecore_x_disp, "XdndActionPrivate", False);
    _ecore_x_atom_xdnd_action_ask          = XInternAtom(_ecore_x_disp, "XdndActionAsk", False);
    _ecore_x_atom_xdnd_action_list         = XInternAtom(_ecore_x_disp, "XdndActionList", False);
+   _ecore_x_atom_xdnd_action_link         = XInternAtom(_ecore_x_disp, "XdndActionLink", False);
    _ecore_x_atom_xdnd_action_description  = XInternAtom(_ecore_x_disp, "XdndActionDescription", False);
+   _ecore_x_atom_xdnd_proxy               = XInternAtom(_ecore_x_disp, "XdndProxy", False);
    _ecore_x_atom_xdnd_status              = XInternAtom(_ecore_x_disp, "XdndStatus", False);
    _ecore_x_atom_xdnd_leave               = XInternAtom(_ecore_x_disp, "XdndLeave", False);
    _ecore_x_atom_xdnd_drop                = XInternAtom(_ecore_x_disp, "XdndDrop", False);
    _ecore_x_atom_xdnd_finished            = XInternAtom(_ecore_x_disp, "XdndFinished", False);
+
+   /* Initialize the globally defined xdnd atoms */
+   ECORE_X_DND_ACTION_COPY                = _ecore_x_atom_xdnd_action_copy;
+   ECORE_X_DND_ACTION_MOVE                = _ecore_x_atom_xdnd_action_move;
+   ECORE_X_DND_ACTION_LINK                = _ecore_x_atom_xdnd_action_link;
+   ECORE_X_DND_ACTION_ASK                 = _ecore_x_atom_xdnd_action_ask;
+   ECORE_X_DND_ACTION_PRIVATE             = _ecore_x_atom_xdnd_action_private;
    
    _ecore_x_atom_net_supported            = XInternAtom(_ecore_x_disp, "_NET_SUPPORTED", False);
    _ecore_x_atom_net_supporting_wm_check  = XInternAtom(_ecore_x_disp, "_NET_SUPPORTING_WM_CHECK", False);

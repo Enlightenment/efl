@@ -1042,34 +1042,83 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
    {
       Ecore_X_Event_Xdnd_Enter *e;
       Ecore_X_DND_Protocol *_xdnd;
-      short *ldata;
+      unsigned long three;
       
       _xdnd = _ecore_x_dnd_protocol_get();
       _xdnd->source = xevent->xclient.data.l[0];
       _xdnd->dest = xevent->xclient.window;
-      /* gcc won't let us do this */
-      /* _xdnd->version = (int) (xevent->xclient.data.l >> 24); */
-      ldata = (short *) &(xevent->xclient.data.l);
-      _xdnd->version = (int) ldata[0];
+      _xdnd->version = (int) (xevent->xclient.data.l[1] >> 24);
       if (_xdnd->version > ECORE_X_DND_VERSION)
-         return 0;
+      {
+         printf("DND: Requested version %d, we only support up to %d\n", _xdnd->version,
+                ECORE_X_DND_VERSION);
+         return;
+      }
       
-      if (xevent->xclient.data.l[1] & 0x0001)
+      if ((three = xevent->xclient.data.l[1] & 0x1UL))
       {
          /* source supports more than 3 types, fetch property */
+         unsigned char *data;
+         Atom *types;
+         int i, num_ret;
+         if (!(ecore_x_window_prop_property_get(_xdnd->source, 
+                                              _ecore_x_atom_xdnd_type_list,
+                                              XA_ATOM,
+                                              32,
+                                              &data,
+                                              &num_ret)))
+         {
+            printf("DND: Could not fetch data type list from source window, aborting.\n");
+            return;
+         }
+         types = (Atom *) data;
+         _xdnd->types = calloc(num_ret + 1, sizeof(Atom));
+         for (i = 0; i < num_ret; i++)
+            _xdnd->types[i] = types[i];
+         _xdnd->num_types = num_ret;
+         free(types);
       }
       else
       {
+         _xdnd->types = calloc(4, sizeof(Atom));
          _xdnd->types[0] = xevent->xclient.data.l[2];
          _xdnd->types[1] = xevent->xclient.data.l[3];
          _xdnd->types[2] = xevent->xclient.data.l[4];
+         _xdnd->num_types = 3;
       }
+
+      _xdnd->state = ECORE_X_DND_TARGET_ENTERED;
 
       e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Enter));
       if (!e) return;
       e->win = _xdnd->dest;
       e->source = _xdnd->source;
       e->time = CurrentTime;
+      ecore_event_add(ECORE_X_EVENT_XDND_ENTER, e, _ecore_x_event_free_generic, NULL);
+   }
+   
+   else if (xevent->xclient.message_type == _ecore_x_atom_xdnd_position)
+   {
+      Ecore_X_Event_Xdnd_Position *e;
+      Ecore_X_DND_Protocol *_xdnd;
+
+      _xdnd = _ecore_x_dnd_protocol_get();
+      _xdnd->source = xevent->xclient.data.l[0];
+      _xdnd->dest = xevent->xclient.window;
+      _xdnd->pos.x = xevent->xclient.data.l[2] >> 16;
+      _xdnd->pos.y = xevent->xclient.data.l[2] & 0x00FF;
+      _xdnd->action = xevent->xclient.data.l[4]; /* Version 2 */
+      /* TODO: Resolve a suitable method for enumerating Xdnd actions */
+
+      e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Position));
+      if (!e) return;
+      e->win = _xdnd->dest;
+      e->source = _xdnd->source;
+      e->position.x = _xdnd->pos.x;
+      e->position.y = _xdnd->pos.y;
+      e->time = xevent->xclient.data.l[3]; /* Version 1 */
+      e->action = _xdnd->action;
+      ecore_event_add(ECORE_X_EVENT_XDND_POSITION, e, _ecore_x_event_free_generic, NULL);
    }
    else
    {
