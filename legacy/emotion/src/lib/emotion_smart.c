@@ -42,6 +42,8 @@ struct _Smart_Data
    double         seek_pos;
    double         len;
    
+   Ecore_Job     *job;
+   
    unsigned char  play : 1;
    unsigned char  seek : 1;
    
@@ -62,6 +64,7 @@ struct _Smart_Data
 
 static void _mouse_move(void *data, Evas *ev, Evas_Object *obj, void *event_info);
 static void _mouse_down(void *data, Evas *ev, Evas_Object *obj, void *event_info);
+static void _pos_set_job(void *data);
 static void _pixels_get(void *data, Evas_Object *obj);
 
 static void _smart_init(void);
@@ -238,7 +241,10 @@ emotion_object_position_set(Evas_Object *obj, double sec)
    if (!sd->module) return;
    if (!sd->video) return;
    sd->seek_pos = sec;
-   sd->module->pos_set(sd->video, sd->seek_pos);
+   sd->seek = 1;
+   sd->pos = sd->seek_pos;
+   if (sd->job) ecore_job_del(sd->job);
+   sd->job = ecore_job_add(_pos_set_job, obj);
 }
 
 double
@@ -874,6 +880,22 @@ _mouse_down(void *data, Evas *ev, Evas_Object *obj, void *event_info)
    sd->module->event_mouse_button_feed(sd->video, 1, x, y);
 }
 
+static void
+_pos_set_job(void *data)
+{
+   Evas_Object *obj;
+   Smart_Data *sd;
+   
+   obj = data;
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   sd->job = NULL;
+   if (sd->seek)
+     {
+	sd->module->pos_set(sd->video, sd->seek_pos);
+	sd->seek = 0;
+     }
+}
+
 /* called by evas when it needs pixels for the image object */
 static void
 _pixels_get(void *data, Evas_Object *obj)
@@ -971,6 +993,7 @@ _smart_del(Evas_Object * obj)
    if (sd->module) _emotion_module_close(sd->module);
    evas_object_del(sd->obj);
    if (sd->file) free(sd->file);
+   if (sd->job) ecore_job_del(sd->job);
    if (sd->progress.info) free(sd->progress.info);
    if (sd->ref.file) free(sd->ref.file);
    free(sd);
