@@ -184,6 +184,7 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
 }
 
 /** Sets the object color class
+ * @param obj A valid Evas_Object handle
  * @param color_class
  * @param r Object Red value
  * @param g Object Green value
@@ -338,6 +339,7 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
 }
 
 /** Sets Edje text class
+ * @param obj A vaild Evas_Object handle
  * @param text_class The text class name
  * @param font Font name
  * @param size Font Size
@@ -1132,7 +1134,7 @@ edje_object_part_drag_step_get(Evas_Object *obj, const char *part, double *dx, d
  * @param obj A valid Evas_Object handle
  * @param part The part name
  * @param dx The x page step increment
- * @param df The y page step increment
+ * @param dy The y page step increment
  *
  * Sets the x,y page step increment values.
  */

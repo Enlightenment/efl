@@ -39,6 +39,7 @@ edje_frametime_get(void)
  * @param emission Signal to activate callback FIXDOC: Naming Convention?
  * @param source Source of signal
  * @param func The function to be executed when the callback is signaled
+ * @param data ? FIXDOC
  *
  * Creates a callback for the object to execute the given function.
  */
@@ -70,6 +71,7 @@ edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const ch
  * @param obj A valid Evas_Object handle
  * @param emission ? FIXDOC
  * @param source ? FIXDOC
+ * @param func ? FIXDOC
  *
  * Deletes an existing callback
  */
@@ -115,7 +117,7 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
 
 /* FIXDOC: Verify/Expand */
 /** Send a signal to the Edje
- * @param A vaild Evas_Object handle
+ * @param obj A vaild Evas_Object handle
  * @param emission The signal
  * @param source The signal source
  *
