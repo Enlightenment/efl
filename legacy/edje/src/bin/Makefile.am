@@ -17,11 +17,13 @@ edje \
 edje_ls \
 edje_test \
 @EDJE_CC_PRG@ \
-@EDJE_DECC_PRG@
+@EDJE_DECC_PRG@ \
+@EDJE_THUMB_PRG@
 
 EXTRA_PROGRAMS = \
 edje_cc \
-edje_decc
+edje_decc \
+edje_thumb
 
 edje_SOURCES = \
 edje_main.c \
@@ -60,6 +62,17 @@ $(top_builddir)/src/lib/libedje.la \
 @imlib2_libs@
 
 edje_decc_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
+
+
+edje_thumb_SOURCES = \
+edje_thumb.c \
+edje_thumb.h
+
+edje_thumb_LDADD = \
+$(top_builddir)/src/lib/libedje.la \
+@imlib2_libs@
+
+edje_thumb_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 
 
 

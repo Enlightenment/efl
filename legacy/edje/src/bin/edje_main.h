@@ -1,5 +1,5 @@
-#ifndef EDJE_H
-#define EDJE_H
+#ifndef EDJE_MAIN_H
+#define EDJE_MAIN_H
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
