@@ -886,7 +886,7 @@ _edje_embryo_fn_get_drag_page(Embryo_Program *ep, Embryo_Cell *params)
    return 0;
 }
 
-/* get_geometry(pard_id, &Float:x, &Float:y, &Float:w, &Float:h) */
+/* get_geometry(pard_id, &x, &y, &w, &h) */
 static Embryo_Cell
 _edje_embryo_fn_get_geometry(Embryo_Program *ep, Embryo_Cell *params)
 {
