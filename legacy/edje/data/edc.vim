@@ -15,7 +15,7 @@ endif
 syn keyword	cStatement	images data fonts collections group
 syn keyword	cStatement	part parts dragable description rel1 rel2
 syn keyword	cStatement	text image font fill origin size
-syn keyword	cStatement	programs program
+syn keyword	cStatement	programs program script
 syn match	cType		"+ + +;" contained 
 
 syn keyword	cLabel		item name min max type effect
