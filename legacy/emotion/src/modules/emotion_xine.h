@@ -1,0 +1,48 @@
+#ifndef EMOTION_XINE_H
+#define EMOTION_XINE_H
+
+#include <xine.h>
+
+typedef struct _Emotion_Xine_Video       Emotion_Xine_Video;
+typedef struct _Emotion_Xine_Video_Frame Emotion_Xine_Video_Frame;
+
+struct _Emotion_Xine_Video
+{
+   xine_video_port_t        *video;
+   xine_audio_port_t        *audio;
+   xine_stream_t            *stream;
+   int                       fd;
+   double                    len;
+   double                    pos;
+   double                    fps;
+   double                    ratio;
+   int                       w, h;
+   Evas_Object              *obj;
+   Emotion_Xine_Video_Frame *cur_frame;
+   int                       seek_to;
+   double                    seek_to_pos;
+   Ecore_Timer              *timer;
+   unsigned char             play : 1;
+   unsigned char             just_loaded : 1;
+   unsigned char             video_mute : 1;
+   unsigned char             audio_mute : 1;
+   unsigned char             spu_mute : 1;
+};
+
+struct _Emotion_Xine_Video_Frame
+{
+   int            w, h;
+   double         ratio;
+   unsigned char *y, *u, *v;
+   int            y_stride, u_stride, v_stride;
+   Evas_Object   *obj;
+   double         timestamp;
+   void         (*done_func)(void *data);
+   void          *done_data;
+   void          *frame;
+};
+
+Emotion_Video_Module *module_open (void);
+void                  module_close(Emotion_Video_Module *module);
+
+#endif

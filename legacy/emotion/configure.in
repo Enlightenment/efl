@@ -1,0 +1,175 @@
+dnl Process this file with autoconf to produce a configure script.
+
+# get rid of that stupid cache mechanism
+rm -f config.cache
+
+AC_INIT(configure.in)
+AM_INIT_AUTOMAKE(emotion, 0.0.1)
+AM_CONFIG_HEADER(config.h)
+
+AC_C_BIGENDIAN
+AC_ISC_POSIX
+AC_PROG_CC
+AM_PROG_CC_STDC
+AC_HEADER_STDC
+AC_C_CONST
+AM_ENABLE_SHARED
+AM_PROG_LIBTOOL
+
+if test "x${exec_prefix}" = "xNONE"; then
+  if test "x${prefix}" = "xNONE"; then
+    bindir="${ac_default_prefix}/bin";
+  else
+    bindir="${prefix}/bin";
+  fi
+else
+  if test "x${prefix}" = "xNONE"; then
+    bindir="${ac_default_prefix}/bin";
+  else
+    bindir="${prefix}/bin";
+  fi
+fi
+
+if test "x${exec_prefix}" = "xNONE"; then
+  if test "x${prefix}" = "xNONE"; then
+    libdir="${ac_default_prefix}/lib";
+  else
+    libdir="${prefix}/lib";
+  fi
+else
+  if test "x${prefix}" = "xNONE"; then
+    libdir="${ac_default_prefix}/lib";
+  else
+    libdir="${prefix}/lib";
+  fi
+fi
+
+dnl Set PACKAGE_DATA_DIR in config.h.
+if test "x${datadir}" = 'x${prefix}/share'; then
+  if test "x${prefix}" = "xNONE"; then
+    AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${ac_default_prefix}/share/${PACKAGE}", [Package Data Directory])
+  else
+    AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${prefix}/share/${PACKAGE}", [Package Data Directory])
+  fi
+else
+  AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${datadir}/${PACKAGE}", [Package Data Directory])
+fi
+	  
+dnl Set PACKAGE_BIN_DIR in config.h.
+if test "x${bindir}" = 'xNONE'; then
+  if test "x${prefix}" = "xNONE"; then
+    AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${ac_default_prefix}/bin", [Install Location for Executables])
+  else
+    AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${prefix}/bin", [Install Location for Executables])
+  fi
+else
+  AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${bindir}". [Install Location for Executables])
+fi
+
+dnl Set PACKAGE_LIB_DIR in config.h.
+if test "x${libdir}" = 'xNONE'; then
+  if test "x${prefix}" = "xNONE"; then
+    AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${ac_default_prefix}/lib", [Install Location for Libraries])
+  else
+    AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${prefix}/lib", [Install Location for Libraries])
+  fi
+else
+  AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${libdir}", [Install Location for Libraries])
+fi
+
+dnl Set PACKAGE_SOURCE_DIR in config.h.
+packagesrcdir=`cd $srcdir && pwd`
+AC_DEFINE_UNQUOTED(PACKAGE_SOURCE_DIR, "${packagesrcdir}", [Source Directory])
+
+function vser
+{
+  v=$1
+  VSTART=`echo $v | awk -F_ '{printf("%s", $1);}'`
+  V1=`echo $VSTART | awk -F\. '{printf("%s", $1);}'`
+  V2=`echo $VSTART | awk -F\. '{printf("%s", $2);}'`
+  V3=`echo $VSTART | awk -F\. '{printf("%s", $3);}'`
+  V4="0"
+  VEND=`echo $v | awk -F_ '{printf("%s", $2);}'`
+  if test -n "$VEND"; then
+    V4=`echo $VEND | sed s/pre//`
+  fi
+  V3=$(( $V3 * 100  ));
+  V2=$(( $V2 * 10000  ));
+  V1=$(( $V1 * 1000000  ));
+  V=$(( $V4 + $V3 + $V2 + $V1 ));
+  echo $V
+}
+
+if [ test -z "$EET_CONFIG" ]; then EET_CONFIG="eet-config"; fi
+if [ test -z "$EVAS_CONFIG" ]; then EVAS_CONFIG="evas-config"; fi
+if [ test -z "$EDJE_CONFIG" ]; then EDJE_CONFIG="edje-config"; fi
+if [ test -z "$ECORE_CONFIG" ]; then ECORE_CONFIG="ecore-config"; fi
+if [ test -z "$EMBRYO_CONFIG" ]; then EMBRYO_CONFIG="embryo-config"; fi
+if [ test -z "$XINE_CONFIG" ]; then XINE_CONFIG="xine-config"; fi
+
+V=`$ECORE_CONFIG --version`
+VV=`vser $V`
+VM="1.0.0_pre7"
+VVM=`vser $VM`
+if test $VV -lt $VVM; then
+  echo "Error. Ecore is not at least "$VM". It is "$V". Abort."
+  exit -1
+fi
+
+V=`$EVAS_CONFIG --version`
+VV=`vser $V`
+VM="1.0.0_pre13"
+VVM=`vser $VM`
+if test $VV -lt $VVM; then
+  echo "Error. Evas is not at least "$VM". It is "$V". Abort."
+  exit -1
+fi
+
+V=`$EDJE_CONFIG --version`
+VV=`vser $V`
+VM="0.5.0"
+VVM=`vser $VM`
+if test $VV -lt $VVM; then
+  echo "Error. Edje is not at least "$VM". It is "$V". Abort."
+  exit -1
+fi
+
+V=`$XINE_CONFIG --version`
+VV=`vser $V`
+VM="1.0.0"
+VVM=`vser $VM`
+if test $VV -lt $VVM; then
+  echo "Error. Xine is not at least "$VM". It is "$V". Abort."
+  exit -1
+fi
+
+my_cflags=`$EVAS_CONFIG --cflags`" "`$ECORE_CONFIG --cflags`
+my_libs=`$EVAS_CONFIG --libs`" "`$ECORE_CONFIG --libs`
+AC_SUBST(my_cflags)
+AC_SUBST(my_libs)
+
+edje_cflags=`$EDJE_CONFIG --cflags`
+edje_libs=`$EDJE_CONFIG --libs`
+AC_SUBST(edje_cflags)
+AC_SUBST(edje_libs)
+
+xine_cflags=`$XINE_CONFIG --cflags`
+xine_libs=`$XINE_CONFIG --libs`
+xine_plugins=`$XINE_CONFIG --plugindir`
+
+AC_SUBST(xine_cflags)
+AC_SUBST(xine_libs)
+AC_SUBST(xine_plugins)
+
+AC_OUTPUT([
+Makefile
+src/Makefile
+src/lib/Makefile
+src/modules/Makefile
+src/modules/xine/Makefile
+src/bin/Makefile
+data/Makefile
+emotion-config
+],[
+chmod +x emotion-config
+])
