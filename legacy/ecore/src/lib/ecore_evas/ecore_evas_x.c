@@ -345,6 +345,8 @@ _ecore_evas_event_window_configure(void *data __UNUSED__, int type __UNUSED__, v
    ee = _ecore_evas_x_match(e->win);
    if (!ee) return 1; /* pass on event */
    if ((ee->prop.fullscreen) && (e->win == ee->engine.x.win_container)) return 0;
+   if (ee->engine.x.direct_resize) return 0;
+   
    if ((e->from_wm) || (ee->prop.fullscreen) || (ee->prop.override))
      {
 	if ((ee->x != e->x) || (ee->y != e->y))
@@ -473,6 +475,16 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
 	     Evas_List *updates, *l;
 	     
 	     updates = evas_render_updates(ee->evas);
+#if 0
+	     for (l = updates; l; l = l->next)
+	       {
+		  Evas_Rectangle *r;
+		  
+		  r = l->data;
+		  printf("DMG render [%i %i %ix%i]\n",
+			 r->x, r->y, r->w, r->h);
+	       }
+#endif		       
 	     for (l = updates; l; l = l->next)
 	       {
 		  Evas_Rectangle *r;
@@ -557,11 +569,11 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
 		  updates = evas_render_updates(ee->evas);
 		  if (updates)
 		    {
-#if 0		       
+#if 0
 		       Evas_List *l;
 
-		       printf("RENDER [%p] [%ix%i]\n",
-			      ee, ee->w, ee->h);
+		       printf("RENDER [%p] [%i] [%ix%i]\n",
+			      ee, ee->visible, ee->w, ee->h);
 		       for (l = updates; l; l = l->next)
 			 {
 			    Evas_Rectangle *r;
