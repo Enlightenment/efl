@@ -445,7 +445,9 @@ fb_init(int vt, int device)
    char dev[32];
    
    tty = 0;
+#if 0   
    if (vt != 0) fb_setvt(vt);
+#endif
    sprintf(dev, "/dev/fb%i", device);
    if ((fb = open(dev, O_RDWR)) == -1) 
      {  
@@ -476,6 +478,7 @@ fb_init(int vt, int device)
 	  }
 	
      }
+#if 0
    if (isatty(0)) 
       tty = 0;
    else if ((tty = open("/dev/tty",O_RDWR)) == -1) 
@@ -496,6 +499,7 @@ fb_init(int vt, int device)
 	     exit(1);
 	  }
      }   
+#endif   
 }
 
 int
@@ -535,7 +539,7 @@ fb_postinit(FB_Mode *mode)
 	  fb_cleanup();
 	}       
     }
-
+#if 0
    if (tty)
      {
 	if (ioctl(tty,KDSETMODE, KD_GRAPHICS) == -1) 
@@ -544,7 +548,7 @@ fb_postinit(FB_Mode *mode)
 	     fb_cleanup();
 	  }
      }
-   
+#endif
   mode->fb_fd = fb;
   return fb;
 }
