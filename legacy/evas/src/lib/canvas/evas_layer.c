@@ -119,10 +119,18 @@ evas_layer_del(Evas_Layer *lay)
 /* public functions */
 
 /**
- * To be documented.
+ * @defgroup Evas_Object_Layer_Group Object Layer Functions
  *
- * FIXME: To be fixed.
+ * Functions that retrieve and set the layer that an evas object is on.
  * 
+ * @todo Document which way layers go.
+ */
+
+/**
+ * Sets the layer of the evas that the given object will be part of.
+ * @param   obj The given evas object.
+ * @param   l   The number of the layer to place the object on.
+ * @ingroup Evas_Object_Layer_Group
  */
 void
 evas_object_layer_set(Evas_Object *obj, int l)
@@ -167,10 +175,10 @@ evas_object_layer_set(Evas_Object *obj, int l)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Retrieves the layer of the evas that the given object is part of.
+ * @param   obj The given evas object.
+ * @return  Number of the layer.
+ * @ingroup Evas_Object_Layer_Group
  */
 int
 evas_object_layer_get(Evas_Object *obj)

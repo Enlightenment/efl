@@ -3,10 +3,16 @@
 #include "Evas.h"
 
 /**
- * To be documented.
+ * @defgroup Evas_Object_Name_Group Object Name Function
  *
- * FIXME: To be fixed.
- * 
+ * Functions that retrieve and set the name of an evas object.
+ */
+
+/**
+ * Sets the name of the given evas object to the given name.
+ * @param   obj  The given object.
+ * @param   name The given name.
+ * @ingroup Evas_Object_Name_Group
  */
 void
 evas_object_name_set(Evas_Object *obj, const char *name)
@@ -28,10 +34,11 @@ evas_object_name_set(Evas_Object *obj, const char *name)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Retrieves the name of the given evas object.
+ * @param   obj The given object.
+ * @return  The name of the object.  @c NULL if no name has been given
+ *          to the object.
+ * @ingroup Evas_Object_Name_Group
  */
 const char *
 evas_object_name_get(Evas_Object *obj)
@@ -43,10 +50,12 @@ evas_object_name_get(Evas_Object *obj)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Retrieves the object on the given evas with the given name.
+ * @param   e    The given evas.
+ * @param   name The given name.
+ * @return  If successful, the evas object with the given name.  Otherwise,
+ *          @c NULL.
+ * @ingroup Evas_Object_Name_Group
  */
 Evas_Object *
 evas_object_name_find(Evas *e, const char *name)

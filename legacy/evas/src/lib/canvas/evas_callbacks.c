@@ -193,6 +193,17 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
 }
 
 /**
+ * @defgroup Evas_Object_Callback_Group Object Callback Functions
+ *
+ * Functions that add and remove callbacks to evas objects.
+ */
+
+/**
+ * @todo Move this next code example and most of the documentation for
+ * this next function into the group documentation.
+ */
+
+/**
  * Add a callback function to an object
  * @param obj Object to attach a callback to
  * @param type The type of event that will trigger the callback
@@ -347,6 +358,7 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
  *     exit(-1);
  *   }
  * @endcode
+ * @ingroup Evas_Object_Callback_Group
  */
 void
 evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), const void *data)
@@ -453,6 +465,7 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (
  * 
  * my_data = evas_object_event_callback_del(object, EVAS_CALLBACK_MOUSE_UP, up_callback);
  * @endcode
+ * @ingroup Evas_Object_Callback_Group
  */
 void *
 evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info))

@@ -56,10 +56,10 @@ static Evas_Object_Func object_func =
 /* it has no other api calls as all properties are standard */
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Adds a rectangle to the given evas.
+ * @param   e The given evas.
+ * @return  The new rectangle object.
+ * @todo Find a documentation group to put this under.
  */
 Evas_Object *
 evas_object_rectangle_add(Evas *e)

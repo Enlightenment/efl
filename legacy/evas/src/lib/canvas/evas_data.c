@@ -3,6 +3,13 @@
 #include "Evas.h"
 
 /**
+ * @defgroup Evas_Object_Data_Group Object Data Functions
+ *
+ * Functions that retrieve and set data associated attached to an evas
+ * object.
+ */
+
+/**
  * Set an attached data pointer to an object with a given string key.
  * @param obj The object to attach the data pointer to
  * @param key The string key for the data to access it
@@ -32,6 +39,7 @@
  * evas_object_data_set(obj, "name_of_data", my_data);
  * printf("The data that was attached was %p\n", evas_object_data_get(obj, "name_of_data"));
  * @endcode
+ * @ingroup Evas_Object_Data_Group
  */
 void
 evas_object_data_set(Evas_Object *obj, const char *key, const void *data)
@@ -75,6 +83,8 @@ evas_object_data_set(Evas_Object *obj, const char *key, const void *data)
  * my_data = evas_object_data_get(obj, "name_of_my_data");
  * if (my_data) printf("Data stored was %p\n", my_data);
  * else printf("No data was stored on the object\n");
+ * @endcode
+ * @ingroup Evas_Object_Data_Group
  */
 void *
 evas_object_data_get(Evas_Object *obj, const char *key)
@@ -119,6 +129,7 @@ evas_object_data_get(Evas_Object *obj, const char *key)
  * 
  * my_data = evas_object_data_del(obj, "name_of_my_data");
  * @endcode
+ * @ingroup Evas_Object_Data_Group
  */
 void *
 evas_object_data_del(Evas_Object *obj, const char *key)
