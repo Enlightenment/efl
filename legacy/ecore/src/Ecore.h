@@ -274,7 +274,7 @@ void                e_keyboard_ungrab(void);
 
 void                e_ev_ipc_init(char *path);
 void                e_ev_ipc_cleanup(void);
-void                e_add_ipc_service(int service, char *(*func) (char *argv));
+void                e_add_ipc_service(int service, void (*func) (int fd));
 void                e_del_ipc_service(int service);
 
 
@@ -703,7 +703,7 @@ struct _ev_user
 struct _ev_ipc_service
 {
    int                service;
-   char               *(*func) (char *argv);
+   void               (*func) (int fd);
    Ev_Ipc_Service     *next;
 };
 

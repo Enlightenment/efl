@@ -9,7 +9,9 @@ void e_ipc_init(char *path);
 void e_ipc_cleanup(void);
 static void e_ipc_connect_handler(int fd);
 static void e_ipc_client_handler(int fd);
-void e_add_ipc_service(int service, char *(*func) (char *argv));
+void e_ipc_get_data(int fd, void *buf);
+void e_ipc_send_data(int fd, void *buf, int size);
+void e_add_ipc_service(int service, void (*func) (int fd));
 void e_del_ipc_service(int service);
 
 Ev_Ipc_Service     *ipc_services = NULL;
@@ -24,10 +26,11 @@ e_ev_ipc_init(char *path)
     return;
 
   /* a UNIX domain, stream socket */
-  if((fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) {
-    printf("Cannot create ipc socket... disabling ipc.\n");
-    return;
-  }
+  if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) < 0) 
+    {
+      printf("Cannot create ipc socket... disabling ipc.\n");
+      return;
+    }
 
   /* create the address we will be binding to */
   saun.sun_family = AF_UNIX;
@@ -37,16 +40,18 @@ e_ev_ipc_init(char *path)
   unlink(path);
   len = sizeof(saun.sun_family) + strlen(saun.sun_path);
 
-  if(bind(fd, &saun, len) < 0) {
-     printf("Cannot bind ipc socket... disabling ipc.\n");
-    return;
-  }
+  if (bind(fd, &saun, len) < 0) 
+    {
+      printf("Cannot bind ipc socket... disabling ipc.\n");
+      return;
+    }
 
   /* listen on the socket */
-  if (listen(fd, 5) < 0) {
-    printf("Cannot listen on ipc socket... disabling ipc.\n");
-    return;
-  }
+  if (listen(fd, 5) < 0)
+    {
+      printf("Cannot listen on ipc socket... disabling ipc.\n");
+      return;
+    }
 
   /* add ipc listener */
   e_add_event_ipc(fd, e_ipc_connect_handler);
@@ -73,16 +78,11 @@ e_ipc_connect_handler(int fd)
   /* accept ipc connection */
   fromlen = sizeof(fsaun);
 
-  if ((nfd = accept(fd, &fsaun, &fromlen)) < 0) {
-    printf("Cannot accept ipc connection... ignoring connection attempt.\n");
-        return;
-  }
-
-  /* set nonblocking */
-  if (fcntl(nfd, F_SETFL, O_NONBLOCK) < 0) {
-    printf("Cannot fcntl ipc connection... ignoring connection attempt.\n");
-    return;
-  }
+  if ((nfd = accept(fd, &fsaun, &fromlen)) < 0)
+    {
+      printf("Cannot accept ipc connection... ignoring connection attempt.\n");
+      return;
+    }
 
   /* add ipc client */
   e_add_event_ipc(nfd, e_ipc_client_handler);
@@ -92,37 +92,72 @@ static void
 e_ipc_client_handler(int fd)
 {
   int nread, service;
-  char ptr[4096];
   Ev_Ipc_Service *ipc_s;
 
-  /* in no way done here yet, lots to do */
-  if ((nread = read(fd, ptr, sizeof(ptr))) == 0)
+  if ((nread = read(fd, &service, sizeof(service))) == 0)
     {
       close(fd);
       e_del_event_ipc(fd);
     }
   else if (nread > 0)
     {
-      printf("IPC Client sent %d bytes\n", nread); fflush(stdout);
-      service = atoi(&ptr[0]);
-
+      /* call the service function */
       for (ipc_s = ipc_services; ipc_s; ipc_s = ipc_s->next)
          {
            if (ipc_s->service == service)
              {
-               ipc_s->func("TESTING");
+               ipc_s->func(fd);
                break;
              }
          }
     }
   else
     {
-      printf("error\n"); fflush(stdout);
+      printf("ipc error in read service.\n"); fflush(stdout);
     }
 }
 
 void
-e_add_ipc_service(int service, char *(*func) (char *argv))
+e_ipc_get_data(int fd, void *buf)
+{
+  int readn, nread;
+
+  /* read number of bytes being sent */
+  if ((nread = read(fd, &readn, sizeof(readn))) == -1) 
+    {
+      printf("ipc error in get data.\n"); fflush(stdout);
+      return;
+    }
+
+  /* get data structure */
+  if ((nread = read(fd, buf, readn)) == -1) 
+    {
+      printf("ipc error in get data.\n"); fflush(stdout);
+      return;
+    }
+}
+
+void
+e_ipc_send_data(int fd, void *buf, int size)
+{
+  int n;
+  /* send length of data being sent */
+  if ((n = write(fd, &size, sizeof(size))) == -1)
+    {
+      printf("ipc error in send data length.\n"); fflush(stdout);
+      return;
+    }
+
+  /* send data */
+  if ((n = write(fd, buf, size)) == -1)
+    {
+      printf("ipc error in send data.\n"); fflush(stdout);
+      return;
+    }
+}
+
+void
+e_add_ipc_service(int service, void (*func) (int fd))
 {
    Ev_Ipc_Service     *ipc_s;
 
