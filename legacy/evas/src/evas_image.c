@@ -67,7 +67,8 @@ evas_add_image_from_file(Evas e, char *file)
    
    if (file)
      {
-	oo->current.file = strdup(file);
+	oo->current.file = malloc(strlen(file) + 1);
+	strcpy(oo->current.file, file);
 	  {
 	     Imlib_Image im;
 	     
@@ -144,7 +145,8 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
 	if (oo->current.file)
 	   free(oo->current.file);
 	oo->previous.file = NULL;
-	oo->current.file = strdup(file);
+	oo->current.file = malloc(strlen(file) + 1);
+	strcpy(oo->current.file, file);
 	  {
 	     Imlib_Image im;
 	     

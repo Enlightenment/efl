@@ -59,7 +59,8 @@ __evas_render_image_new_from_file(Display *disp, char *file)
    fmt.type = PictTypeDirect;
    format_color = XRenderFindFormat(disp, PictFormatType | PictFormatDepth, &fmt, 0);
    
-   im->file = strdup(file);
+   im->file = malloc(strlen(file) + 1);
+   strcpy(im->file, file);
    im->references = 1;
    im->disp = disp;
    im->has_alpha = imlib_image_has_alpha();

@@ -102,6 +102,7 @@ _evas_layer_free(Evas e, Evas_Layer layer)
 	     
 	     o = l->data;
 	     _evas_callback_call(e, o, CALLBACK_FREE, 0, 0, 0);
+	     _evas_cleanup_clip(e, o);
 	     if (e->mouse.object == o) e->mouse.object = NULL;
 	     if (e->mouse.button_object == o) e->mouse.button_object = NULL;
 	     _evas_remove_callbacks(e, o);
@@ -696,7 +697,10 @@ evas_object_set_name(Evas e, Evas_Object o, char *name)
    if (o->name) free(o->name);
    o->name = NULL;
    if (name)
-      o->name = strdup(name);
+     {
+	o->name = malloc(strlen(name) + 1);
+	strcpy(o->name, name);
+     }
 }
 
 char *

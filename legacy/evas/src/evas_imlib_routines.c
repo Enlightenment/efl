@@ -116,7 +116,8 @@ __evas_imlib_image_new_from_file(Display *disp, char *file)
    image = imlib_load_image(file);
    if (!image) return NULL;
    im = malloc(sizeof(Evas_Imlib_Image));
-   im->file = strdup(file);
+   im->file = malloc(strlen(file) + 1);
+   strcpy(im->file, file);
    im->image = image;
    im->scaled.aa = 0;
    im->scaled.w = 0;

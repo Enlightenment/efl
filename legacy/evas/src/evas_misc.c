@@ -26,7 +26,6 @@ evas_new_all(Display *display, Window parent_window,
    Colormap colormap;
    
    e = evas_new();
-   e->current.created_window = 1;
    evas_set_output_method(e, render_method);
    evas_set_output_colors(e, colors);
    visual = evas_get_optimal_visual(e, display);
@@ -43,6 +42,7 @@ evas_new_all(Display *display, Window parent_window,
 			  visual,
 			  CWColormap | CWBorderPixel | CWEventMask | CWBackPixmap,
 			  &att);
+   e->current.created_window = window;
    if (font_dir) evas_font_add_path(e, font_dir);
    evas_set_output(e, display, window, visual, colormap);
    evas_set_output_size(e, w, h);
@@ -140,13 +140,12 @@ evas_free(Evas e)
 
    if (!e) return;
    if ((e->current.display) && 
-       (e->current.created_window) && 
-       (e->current.drawable))
+       (e->current.created_window))
      {
 	XErrorHandler prev_handler;
 	
 	prev_handler = XSetErrorHandler((XErrorHandler)_evas_x_err);
-	XDestroyWindow(e->current.display, e->current.drawable);
+	XDestroyWindow(e->current.display, e->current.created_window);
 	XSync(e->current.display, False);
 	XSetErrorHandler(prev_handler);
      }
@@ -159,6 +158,7 @@ evas_free(Evas e)
      }
    if (e->layers) evas_list_free(e->layers);
    if (e->updates) imlib_updates_free(e->updates);
+   if (e->obscures) imlib_updates_free(e->obscures);
    free(e);
 }
 
@@ -563,7 +563,8 @@ evas_put_data(Evas e, Evas_Object o, char *key, void *data)
 	   }
      }
    d = malloc(sizeof(struct _Evas_Data));
-   d->key = strdup(key);
+   d->key = malloc(strlen(key) + 1);
+   strcpy(d->key, key);
    d->data = data;
    o->data = evas_list_prepend(o->data, d);
 }

@@ -759,7 +759,8 @@ __evas_gl_image_alloc(char *file)
    im = imlib_load_image(file);
    if (!im) return NULL;
    image = malloc(sizeof(Evas_GL_Image));
-   image->file = strdup(file);
+   image->file = malloc(strlen(file) + 1);
+   strcpy(image->file, file);
    image->im = im;
    prev_im = imlib_context_get_image();
    imlib_context_set_image(im);
@@ -1107,14 +1108,28 @@ __evas_gl_font_find(char *font)
    for (i = 0; i < 3; i++)
      {
 	sprintf(buf, "%s%s", font, ext[i]);
-	if (__evas_gl_is_file(buf)) return strdup(buf);
+	if (__evas_gl_is_file(buf)) 
+	  {
+	     char *f;
+	     
+	     f = malloc(strlen(buf) + 1);
+	     strcpy(f, buf);
+	     return f;
+	  }
      }
    for (j = 0; j < __evas_fpath_num; j++)
      {
 	for (i = 0; i < 3; i++)
 	  {
 	     sprintf(buf, "%s/%s%s", __evas_fpath[j], font, ext[i]);
-	     if (__evas_gl_is_file(buf)) return strdup(buf);
+	     if (__evas_gl_is_file(buf)) 
+	       {
+		  char *f;
+		  
+		  f = malloc(strlen(buf) + 1);
+		  strcpy(f, buf);
+		  return f;
+	       }
 	  }
      }
    return NULL;
@@ -1138,7 +1153,8 @@ __evas_gl_font_load(char *font, int size)
 	__evas_have_tt_engine = 1;	
      }
    fn = malloc(sizeof(Evas_GL_Font));
-   fn->font = strdup(font);
+   fn->font = malloc(strlen(font) + 1);
+   strcpy(fn->font, font);
    fn->size = size;
    fn->engine = __evas_tt_engine;
    error = TT_Open_Face(fn->engine, file, &fn->face);
@@ -1876,7 +1892,8 @@ __evas_gl_text_font_add_path(char *path)
    if (!__evas_fpath) __evas_fpath = malloc(sizeof(char *));
    else __evas_fpath = realloc(__evas_fpath, 
 			       (__evas_fpath_num * sizeof(char *)));
-   __evas_fpath[__evas_fpath_num - 1] = strdup(path);
+   __evas_fpath[__evas_fpath_num - 1] = malloc(strlen(path) + 1);
+   strcpy(__evas_fpath[__evas_fpath_num - 1], path);
 }
 
 void

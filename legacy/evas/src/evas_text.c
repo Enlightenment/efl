@@ -18,6 +18,7 @@ _evas_free_text(Evas_Object o)
    IF_OBJ(o, OBJECT_TEXT) return;
    oo = o;
    if (oo->current.text) free(oo->current.text);
+   if (oo->current.font) free(oo->current.font);
    free(o);
 }
 
@@ -67,8 +68,10 @@ evas_add_text(Evas e, char *font, int size, char *text)
    o->object_free = _evas_free_text;
    o->object_renderer_data_free = _evas_free_text_renderer_data;
 
-   oo->current.text = strdup(text);
-   oo->current.font = strdup(font);
+   oo->current.text = malloc(strlen(text) + 1);
+   strcpy(oo->current.text, text);
+   oo->current.font = malloc(strlen(font) + 1);
+   strcpy(oo->current.font, font);
    oo->current.size = size;
    
      {
@@ -829,9 +832,15 @@ evas_set_text(Evas e, Evas_Object o, char *text)
 	     if (oo->current.text) free(oo->current.text);
 	     oo->current.text = NULL;
 	     if (text)
-		oo->current.text = strdup(text);
+	       {
+		  oo->current.text = malloc(strlen(text) + 1);
+		  strcpy(oo->current.text, text);
+	       }
 	     else
-	       oo->current.text = strdup("");	     
+	       {
+		  oo->current.text = malloc(strlen("") + 1);
+		  strcpy(oo->current.text, "");
+	       }
 	     oo->previous.text = NULL;
 	       {	     
 		  switch (e->current.render_method)
@@ -965,7 +974,8 @@ evas_set_font(Evas e, Evas_Object o, char *font, int size)
 		return;
 	     _evas_free_text_renderer_data(e, o);
 	     if (oo->current.font) free(oo->current.font);
-	     oo->current.font = strdup(font);
+	     oo->current.font = malloc(strlen(font) + 1);
+	     strcpy(oo->current.font, font);
 	     oo->previous.font = NULL;
 	     oo->current.size = size;
 	       {	     
