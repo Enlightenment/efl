@@ -1374,6 +1374,30 @@ _edje_color_class_members_free(void)
    _edje_color_class_member_hash = NULL;
 }
 
+static Evas_Bool color_class_hash_list_free(Evas_Hash *hash, 
+                                            const char *key, void *data,
+                                            void *fdata)
+{
+  Edje_Color_Class *cc;
+
+  cc = data;
+  if (cc->name) free(cc->name);
+  free(cc);
+  
+  return 1;
+}
+
+void
+_edje_color_class_hash_free(void)
+{
+  if (!_edje_color_class_hash) return;
+
+  evas_hash_foreach(_edje_color_class_hash, color_class_hash_list_free,
+                    NULL);
+  evas_hash_free(_edje_color_class_hash);
+  _edje_color_class_hash = NULL;
+}
+
 void
 _edje_color_class_on_del(Edje *ed, Edje_Part *ep)
 {
@@ -1445,6 +1469,31 @@ _edje_text_class_members_free(void)
                      NULL);
    evas_hash_free(_edje_text_class_member_hash);
    _edje_text_class_member_hash = NULL;
+}
+
+static Evas_Bool text_class_hash_list_free(Evas_Hash *hash, 
+                                            const char *key, void *data,
+                                            void *fdata)
+{
+  Edje_Text_Class *tc;
+
+  tc = data;
+  if (tc->name) free(tc->name);
+  if (tc->font) free(tc->font);
+  free(tc);
+  
+  return 1;
+}
+
+void
+_edje_text_class_hash_free(void)
+{
+  if (!_edje_text_class_hash) return;
+
+  evas_hash_foreach(_edje_text_class_hash, text_class_hash_list_free,
+                    NULL);
+  evas_hash_free(_edje_text_class_hash);
+  _edje_text_class_hash = NULL;
 }
 
 Edje *
