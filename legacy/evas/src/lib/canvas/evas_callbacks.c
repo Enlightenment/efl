@@ -51,6 +51,7 @@ evas_object_event_callback_clear(Evas_Object *obj)
    evas_object_event_callback_list_post_free(&(obj->callbacks->down));
    evas_object_event_callback_list_post_free(&(obj->callbacks->up));
    evas_object_event_callback_list_post_free(&(obj->callbacks->move));
+   evas_object_event_callback_list_post_free(&(obj->callbacks->wheel));
    evas_object_event_callback_list_post_free(&(obj->callbacks->free));
    evas_object_event_callback_list_post_free(&(obj->callbacks->key_down));
    evas_object_event_callback_list_post_free(&(obj->callbacks->key_up));
@@ -66,6 +67,7 @@ evas_object_event_callback_clear(Evas_Object *obj)
        (!obj->callbacks->down) &&
        (!obj->callbacks->up) &&
        (!obj->callbacks->move) &&
+       (!obj->callbacks->wheel) &&
        (!obj->callbacks->free) &&
        (!obj->callbacks->key_down) &&
        (!obj->callbacks->key_up) &&
@@ -92,6 +94,7 @@ evas_object_event_callback_cleanup(Evas_Object *obj)
    evas_object_event_callback_list_free(&(obj->callbacks->down));
    evas_object_event_callback_list_free(&(obj->callbacks->up));
    evas_object_event_callback_list_free(&(obj->callbacks->move));
+   evas_object_event_callback_list_free(&(obj->callbacks->wheel));
    evas_object_event_callback_list_free(&(obj->callbacks->free));
    evas_object_event_callback_list_free(&(obj->callbacks->key_down));
    evas_object_event_callback_list_free(&(obj->callbacks->key_up));
