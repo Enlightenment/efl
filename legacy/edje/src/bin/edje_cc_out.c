@@ -473,6 +473,27 @@ data_write(void)
 	       }
  */
 	  }
+
+	for (ll = pc->programs; ll; ll = ll->next)
+	  {
+	     Edje_Program *ep = ll->data;
+
+	     switch (ep->action) {
+		  case EDJE_ACTION_TYPE_STATE_SET:
+		  case EDJE_ACTION_TYPE_ACTION_STOP:
+		  case EDJE_ACTION_TYPE_DRAG_VAL_SET:
+		  case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
+		  case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
+		     if (!ep->targets) {
+		       fprintf(stderr, "%s: Error. Target missing in program %s\n",
+			     progname, ep->name);
+		       ABORT_WRITE(ef, file_out);
+		     }
+		     break;
+		  default:
+		     break;
+	     }
+	  }
      }
    for (l = edje_collections; l; l = l->next)
      {
