@@ -368,10 +368,10 @@ eet_data_image_jpeg_rgb_decode(void *data, int size, int *w, int *h)
 	  }
      }
    free(tdata);
-   _eet_memfile_read_close(f);
    /* end data decoding */
    jpeg_finish_decompress(&cinfo);
    jpeg_destroy_decompress(&cinfo);
+   _eet_memfile_read_close(f);
    return d;
 }
 
@@ -387,6 +387,15 @@ eet_data_image_jpeg_alpha_decode(void *data, int size, unsigned int *d, int *w, 
    
    f = _eet_memfile_read_open(data, (size_t)size);
    if (!f) return NULL;
+
+   if (0)
+     {
+	char buf[1];
+	
+	while (fread(buf, 1, 1, f));
+	_eet_memfile_read_close(f);
+	return d;
+     }
    cinfo.err = jpeg_std_error(&(jerr.pub));
    jerr.pub.error_exit = _JPEGFatalErrorHandler;
    jerr.pub.emit_message = _JPEGErrorHandler2;
@@ -445,7 +454,7 @@ eet_data_image_jpeg_alpha_decode(void *data, int size, unsigned int *d, int *w, 
 	for (l = 0; l < (*h); l += cinfo.rec_outbuf_height)
 	  {
 	     jpeg_read_scanlines(&cinfo, line, cinfo.rec_outbuf_height);
-	                  scans = cinfo.rec_outbuf_height;
+	     scans = cinfo.rec_outbuf_height;
 	     if (((*h) - l) < scans) scans = (*h) - l;
 	     ptr = tdata;
 	     for (y = 0; y < scans; y++)
@@ -485,10 +494,10 @@ eet_data_image_jpeg_alpha_decode(void *data, int size, unsigned int *d, int *w, 
 	  }
      }
    free(tdata);
-   _eet_memfile_read_close(f);
    /* end data decoding */
    jpeg_finish_decompress(&cinfo);
    jpeg_destroy_decompress(&cinfo);
+   _eet_memfile_read_close(f);
    return d;
 }
 
