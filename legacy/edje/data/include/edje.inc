@@ -114,9 +114,9 @@ enum Msg_Type
      MSG_INT_SET = 6,
      MSG_FLOAT_SET = 7,
      MSG_STRING_INT = 8,
-     MSG_INT_FLOAT = 9,
+     MSG_STRING_FLOAT = 9,
      MSG_STRING_INT_SET = 10,
-     MSG_INT_FLOAT_SET = 11
+     MSG_STRING_FLOAT_SET = 11
 };
 
 native send_message(Msg_Type:type, id, ...);

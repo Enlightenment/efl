@@ -15,6 +15,7 @@ bin_SCRIPTS = \
 bin_PROGRAMS = \
 edje \
 edje_ls \
+edje_test \
 @EDJE_CC_PRG@ \
 @EDJE_DECC_PRG@
 
@@ -69,6 +70,17 @@ edje_ls_LDADD = \
 $(top_builddir)/src/lib/libedje.la
 
 edje_ls_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
+
+
+
+edje_test_SOURCES = \
+edje_test_main.c
+
+edje_test_LDADD = \
+$(top_builddir)/src/lib/libedje.la
+
+edje_test_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
+
 
 EXTRA_SCRIPTS = edje_recc
 

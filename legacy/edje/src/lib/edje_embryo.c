@@ -1210,6 +1210,7 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
    Edje *ed;
    Edje_Message_Type type;
    int id, i, n;
+   Embryo_Cell *ptr;
    
    if (params[0] < (sizeof(Embryo_Cell) * (2))) return 0;
    ed = embryo_program_data_get(ep);
@@ -1247,17 +1248,19 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
 	     Edje_Message_Int *emsg;
 	     
 	     emsg = alloca(sizeof(Edje_Message_Int));
-	     emsg->val = (int)params[3];
+	     ptr = embryo_data_address_get(ep, params[3]);
+	     emsg->val = (int)*ptr;
 	     _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
 	  }
 	break;
       case EDJE_MESSAGE_FLOAT:
 	  {
-	     Edje_Message_Int *emsg;
+	     Edje_Message_Float *emsg;
 	     float f;
 	     
-	     emsg = alloca(sizeof(Edje_Message_Int));
-	     f = EMBRYO_CELL_TO_FLOAT(params[3]);
+	     emsg = alloca(sizeof(Edje_Message_Float));
+	     ptr = embryo_data_address_get(ep, params[3]);
+	     f = EMBRYO_CELL_TO_FLOAT(*ptr);
 	     emsg->val = (double)f;
 	     _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
 	  }
@@ -1266,7 +1269,7 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
 	  {
 	     Edje_Message_String_Set *emsg;
 	     
-	     n = (params[0] / sizeof(Embryo_Cell));
+	     n = (params[0] / sizeof(Embryo_Cell)) + 1;
 	     emsg = alloca(sizeof(Edje_Message_String_Set) + ((n - 3 - 1) * sizeof(char *)));
 	     emsg->count = n - 3;
 	     for (i = 3; i < n; i++)
@@ -1292,11 +1295,14 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
 	  {
 	     Edje_Message_Int_Set *emsg;
 	     
-	     n = (params[0] / sizeof(Embryo_Cell));
+	     n = (params[0] / sizeof(Embryo_Cell)) + 1;
 	     emsg = alloca(sizeof(Edje_Message_Int_Set) + ((n - 3 - 1) * sizeof(int)));
 	     emsg->count = n - 3;
 	     for (i = 3; i < n; i++)
-	       emsg->val[i - 3] = (int)params[i];
+	       {
+		  ptr = embryo_data_address_get(ep, params[i]);
+		  emsg->val[i - 3] = (int)*ptr;
+	       }
 	     _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
 	  }
 	break;
@@ -1304,14 +1310,15 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
 	  {
 	     Edje_Message_Float_Set *emsg;
 	     
-	     n = (params[0] / sizeof(Embryo_Cell));
+	     n = (params[0] / sizeof(Embryo_Cell)) + 1;
 	     emsg = alloca(sizeof(Edje_Message_Float_Set) + ((n - 3 - 1) * sizeof(double)));
 	     emsg->count = n - 3;
 	     for (i = 3; i < n; i++)
 	       {
 		  float f;
 		  
-		  f = EMBRYO_CELL_TO_FLOAT(params[i]);
+		  ptr = embryo_data_address_get(ep, params[i]);
+		  f = EMBRYO_CELL_TO_FLOAT(*ptr);
 		  emsg->val[i - 3] = (double)f;
 	       }
 	     _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
@@ -1333,7 +1340,8 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
 		  embryo_data_string_get(ep, cptr, s);
 		  emsg = alloca(sizeof(Edje_Message_String_Int));
 		  emsg->str = s;
-		  emsg->val = (int)params[4];
+		  ptr = embryo_data_address_get(ep, params[4]);
+		  emsg->val = (int)*ptr;
 		  _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
 	       }
 	  }
@@ -1355,7 +1363,8 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
 		  embryo_data_string_get(ep, cptr, s);
 		  emsg = alloca(sizeof(Edje_Message_String_Float));
 		  emsg->str = s;
-		  f = EMBRYO_CELL_TO_FLOAT(params[4]);
+		  ptr = embryo_data_address_get(ep, params[4]);
+		  f = EMBRYO_CELL_TO_FLOAT(*ptr);
 		  emsg->val = (double)f;
 		  _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
 	       }
@@ -1375,12 +1384,15 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
 		  l = embryo_data_string_length_get(ep, cptr);
 		  s = alloca(l + 1);
 		  embryo_data_string_get(ep, cptr, s);
-		  n = (params[0] / sizeof(Embryo_Cell));
+		  n = (params[0] / sizeof(Embryo_Cell)) + 1;
 		  emsg = alloca(sizeof(Edje_Message_String_Int_Set) + ((n - 4 - 1) * sizeof(int)));
 		  emsg->str = s;
 		  emsg->count = n - 4;
 		  for (i = 4; i < n; i++)
-		    emsg->val[i - 4] = (int)params[i];
+		    {
+		       ptr = embryo_data_address_get(ep, params[i]);
+		       emsg->val[i - 4] = (int)*ptr;
+		    }
 		  _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
 	       }
 	  }
@@ -1399,7 +1411,7 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
 		  l = embryo_data_string_length_get(ep, cptr);
 		  s = alloca(l + 1);
 		  embryo_data_string_get(ep, cptr, s);
-		  n = (params[0] / sizeof(Embryo_Cell));
+		  n = (params[0] / sizeof(Embryo_Cell)) + 1;
 		  emsg = alloca(sizeof(Edje_Message_String_Float_Set) + ((n - 4 - 1) * sizeof(double)));
 		  emsg->str = s;
 		  emsg->count = n - 4;
@@ -1407,7 +1419,8 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
 		    {
 		       float f;
 		       
-		       f = EMBRYO_CELL_TO_FLOAT(params[i]);
+		       ptr = embryo_data_address_get(ep, params[i]);
+		       f = EMBRYO_CELL_TO_FLOAT(*ptr);
 		       emsg->val[i - 4] = (double)f;
 		    }
 		  _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);

@@ -439,16 +439,21 @@ _edje_message_process(Edje_Message *em)
 				     ((Edje_Message_String *)em->msg)->str);
 	break;
       case EDJE_MESSAGE_INT:
-	embryo_parameter_cell_push(em->edje->collection->script, 
-				   (Embryo_Cell)((Edje_Message_Int *)em->msg)->val);
+	  {
+	     Embryo_Cell v;
+	     
+	     v = (Embryo_Cell)((Edje_Message_Int *)em->msg)->val;
+	     embryo_parameter_cell_array_push(em->edje->collection->script, &v, 1);
+	  }
 	break;
       case EDJE_MESSAGE_FLOAT:
 	  {
-	     float v;
+	     Embryo_Cell v;
+	     float fv;
 	     
-	     v = (Embryo_Cell)((Edje_Message_Float *)em->msg)->val;
-	     embryo_parameter_cell_push(em->edje->collection->script, 
-					(Embryo_Cell)EMBRYO_FLOAT_TO_CELL(v));
+	     fv = ((Edje_Message_Float *)em->msg)->val;
+	     v = EMBRYO_FLOAT_TO_CELL(fv);
+	     embryo_parameter_cell_array_push(em->edje->collection->script, &v, 1);
 	  }
 	break;
       case EDJE_MESSAGE_STRING_SET:
@@ -458,53 +463,68 @@ _edje_message_process(Edje_Message *em)
 	break;
       case EDJE_MESSAGE_INT_SET:
 	for (i = 0; i < ((Edje_Message_Int_Set *)em->msg)->count; i++)
-	  embryo_parameter_cell_push(em->edje->collection->script, 
-				     (Embryo_Cell)((Edje_Message_Int_Set *)em->msg)->val[i]);
+	  {
+	     Embryo_Cell v;
+	     
+	     v = (Embryo_Cell)((Edje_Message_Int_Set *)em->msg)->val[i];
+	     embryo_parameter_cell_array_push(em->edje->collection->script, &v, 1);
+	  }
 	break;
       case EDJE_MESSAGE_FLOAT_SET:
 	for (i = 0; i < ((Edje_Message_Float_Set *)em->msg)->count; i++)
 	  {
-	     float v;
+	     Embryo_Cell v;
+	     float fv;
 	     
-	     v = ((Edje_Message_Float_Set *)em->msg)->val[i];
-	     embryo_parameter_cell_push(em->edje->collection->script, 
-					(Embryo_Cell)EMBRYO_FLOAT_TO_CELL(v));
+	     fv = ((Edje_Message_Float_Set *)em->msg)->val[i];
+	     v = EMBRYO_FLOAT_TO_CELL(fv);
+	     embryo_parameter_cell_array_push(em->edje->collection->script, &v, 1);
 	  }
 	break;
       case EDJE_MESSAGE_STRING_INT:
 	embryo_parameter_string_push(em->edje->collection->script, 
 				     ((Edje_Message_String_Int *)em->msg)->str);
-	embryo_parameter_cell_push(em->edje->collection->script, 
-				   (Embryo_Cell)((Edje_Message_String_Int *)em->msg)->val);
+	  {
+	     Embryo_Cell v;
+	     
+	     v = (Embryo_Cell)((Edje_Message_String_Int *)em->msg)->val;
+	     embryo_parameter_cell_array_push(em->edje->collection->script, &v, 1);
+	  }
 	break;
       case EDJE_MESSAGE_STRING_FLOAT:
 	embryo_parameter_string_push(em->edje->collection->script, 
 				     ((Edje_Message_String_Float *)em->msg)->str);
 	  {
-	     float v;
+	     Embryo_Cell v;
+	     float fv;
 	     
-	     v = (Embryo_Cell)((Edje_Message_String_Float *)em->msg)->val;
-	     embryo_parameter_cell_push(em->edje->collection->script, 
-					(Embryo_Cell)EMBRYO_FLOAT_TO_CELL(v));
+	     fv = ((Edje_Message_String_Float *)em->msg)->val;
+	     v = EMBRYO_FLOAT_TO_CELL(fv);
+	     embryo_parameter_cell_array_push(em->edje->collection->script, &v, 1);
 	  }
 	break;
       case EDJE_MESSAGE_STRING_INT_SET:
 	embryo_parameter_string_push(em->edje->collection->script, 
 				     ((Edje_Message_String_Int_Set *)em->msg)->str);
 	for (i = 0; i < ((Edje_Message_String_Int_Set *)em->msg)->count; i++)
-	  embryo_parameter_cell_push(em->edje->collection->script, 
-				     (Embryo_Cell)((Edje_Message_String_Int_Set *)em->msg)->val[i]);
+	  {
+	     Embryo_Cell v;
+	     
+	     v = (Embryo_Cell)((Edje_Message_String_Int_Set *)em->msg)->val[i];
+	     embryo_parameter_cell_array_push(em->edje->collection->script, &v, 1);
+	  }
 	break;
       case EDJE_MESSAGE_STRING_FLOAT_SET:
 	embryo_parameter_string_push(em->edje->collection->script, 
 				     ((Edje_Message_String_Float_Set *)em->msg)->str);
 	for (i = 0; i < ((Edje_Message_String_Float_Set *)em->msg)->count; i++)
 	  {
-	     float v;
+	     Embryo_Cell v;
+	     float fv;
 	     
-	     v = ((Edje_Message_String_Float_Set *)em->msg)->val[i];
-	     embryo_parameter_cell_push(em->edje->collection->script, 
-					(Embryo_Cell)EMBRYO_FLOAT_TO_CELL(v));
+	     fv = ((Edje_Message_String_Float_Set *)em->msg)->val[i];
+	     v = EMBRYO_FLOAT_TO_CELL(fv);
+	     embryo_parameter_cell_array_push(em->edje->collection->script, &v, 1);
 	  }
 	break;
       default:
