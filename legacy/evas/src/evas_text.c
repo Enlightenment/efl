@@ -242,7 +242,6 @@ evas_get_text_height(Evas e, Evas_Object o)
 
    if (!e) return 0;
    o = TO_OBJECT(e, o);
-   o = TO_OBJECT(e, o);
    if (!o) return 0;
    IF_OBJ(o, OBJECT_TEXT) return 0;
    oo = o;
@@ -591,7 +590,6 @@ evas_text_get_max_ascent_descent(Evas e, Evas_Object o,
    Evas_Object_Text oo;
    
    if (!e) return;
-   o = TO_OBJECT(e, o);
    o = TO_OBJECT(e, o);
    if (!o) return;
    IF_OBJ(o, OBJECT_TEXT) return;

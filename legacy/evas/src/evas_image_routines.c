@@ -35,8 +35,16 @@ __evas_image_image_cache_flush(Display *disp)
 
 Evas_Image_Image *
 __evas_image_image_new_from_file(Display *disp, char *file)
-{	
-   return (Evas_Image_Image *)imlib_load_image(file);
+{
+   Imlib_Image im;
+   
+   im = imlib_load_image(file);
+   if (im)
+     {
+	imlib_context_set_image(im);
+	imlib_image_set_changes_on_disk();
+     }   
+   return (Evas_Image_Image *)im;
 }
 
 void

@@ -519,7 +519,6 @@ evas_stack_below(Evas e, Evas_Object o, Evas_Object below)
    
    if (!e) return;
    o = TO_OBJECT(e, o);
-   o = TO_OBJECT(e, o);
    if (!o) return;
    layer = _evas_get_object_layer(e, o);
    if (layer)

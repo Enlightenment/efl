@@ -630,7 +630,11 @@ __evas_gl_make_image_textures(Evas_GL_Window *w, Evas_GL_Image *image)
    image->textures = evas_list_prepend(image->textures, tm);
    
    if ((!image->im) && (image->file))
-     image->im = imlib_load_image(image->file);
+     {
+	image->im = imlib_load_image(image->file);
+	imlib_context_set_image(image->im);
+	imlib_image_set_changes_on_disk();
+     }
 
    tx = (image->w - 2) / (w->context->max_texture_size - 2);
    ex = (image->w - 1) - (tx * (w->context->max_texture_size - 2));
@@ -763,6 +767,8 @@ __evas_gl_image_alloc(char *file)
    
    im = imlib_load_image(file);
    if (!im) return NULL;
+   imlib_context_set_image(im);
+   imlib_image_set_changes_on_disk();
    image = malloc(sizeof(Evas_GL_Image));
    image->file = malloc(strlen(file) + 1);
    strcpy(image->file, file);

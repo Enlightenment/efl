@@ -308,7 +308,6 @@ evas_set_image_border(Evas e, Evas_Object o, int l, int r, int t, int b)
    
    if (!e) return;
    o = TO_OBJECT(e, o);
-   o = TO_OBJECT(e, o);
    if (!o) return;
    IF_OBJ(o, OBJECT_IMAGE) return;
    oo = o;
@@ -330,7 +329,6 @@ evas_get_image_border(Evas e, Evas_Object o, int *l, int *r, int *t, int *b)
    Evas_Object_Image oo;
    
    if (!e) return;
-   o = TO_OBJECT(e, o);
    o = TO_OBJECT(e, o);
    if (!o) return;
    IF_OBJ(o, OBJECT_IMAGE) return;

@@ -145,6 +145,7 @@ __evas_x11_image_new_from_file(Display *disp, char *file)
    strcpy(im->file, file);
    im->references = 1;
    imlib_context_set_image(im->image);
+   imlib_image_set_changes_on_disk();
    im->w = imlib_image_get_width();
    im->h = imlib_image_get_height();
    im->has_alpha =  imlib_image_has_alpha();

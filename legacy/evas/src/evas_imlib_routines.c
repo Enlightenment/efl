@@ -44,6 +44,8 @@ __evas_imlib_image_new_from_file(Display *disp, char *file)
    
    image = imlib_load_image(file);
    if (!image) return NULL;
+   imlib_context_set_image(image);
+   imlib_image_set_changes_on_disk();
    im = malloc(sizeof(Evas_Imlib_Image));
    im->file = malloc(strlen(file) + 1);
    strcpy(im->file, file);
