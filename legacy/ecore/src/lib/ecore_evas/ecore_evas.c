@@ -40,6 +40,8 @@ ecore_evas_shutdown(void)
 #ifdef BUILD_ECORE_EVAS_FB
 	while (_ecore_evas_fb_shutdown());
 #endif
+
+    evas_shutdown(); 
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
    return _ecore_evas_init_count;
