@@ -114,6 +114,8 @@ static struct vt_mode _ecore_fb_vt_prev_mode;
 static int _ecore_fb_current_vt = 0;
 static int _ecore_fb_ctrl = 0;
 static int _ecore_fb_alt = 0;
+static int _ecore_fb_shift = 0;
+static int _ecore_fb_lock = 0;
 
 static void (*_ecore_fb_func_fb_lost) (void *data) = NULL;
 static void *_ecore_fb_func_fb_lost_data = NULL;
@@ -126,136 +128,9 @@ static void  _ecore_fb_event_filter_end(void *data, void *loop_data);
 					  
 static double _ecore_fb_double_click_time = 0.25;
 
-static char *_ecore_fb_kbd_syms[128] =
+static char *_ecore_fb_kbd_syms[128 * 6] =
 {
-   "0x00",
-     "Escape", 
-     "1", 
-     "2", 
-     "3", 
-     "4", 
-     "5", 
-     "6",
-     "7", 
-     "8", 
-     "9", 
-     "0", 
-     "-", 
-     "=", 
-     "BackSpace", 
-     "Rab",
-     "q", 
-     "w", 
-     "e", 
-     "r", 
-     "t", 
-     "y", 
-     "u", 
-     "i",
-     "o", 
-     "p", 
-     "bracketleft", 
-     "bracketright",
-     "Return",
-     "Control_L",
-     "a", 
-     "s", 
-     "d", 
-     "f", 
-     "g", 
-     "h", 
-     "j", 
-     "k", 
-     "l", 
-     "semicolon",
-     "apostrophe", 
-     "0x29", 
-     "Shift_L", 
-     "backslash", 
-     "z", 
-     "x", 
-     "c", 
-     "v",
-     "b", 
-     "n", 
-     "m", 
-     "comma", 
-     "period", 
-     "slash", 
-     "Shift_R", 
-     "KP_Multiply",
-     "Alt_L", 
-     "space", 
-     "Caps_Lock", 
-     "F1", 
-     "F2", 
-     "F3", 
-     "F4", 
-     "F5",
-     "F6", 
-     "F7", 
-     "F8", 
-     "F9", 
-     "F10", 
-     "Num_Lock", 
-     "Scroll_Lock", 
-     "KP_Home",
-     "KP_Up", 
-     "KP_Prior", 
-     "KP_Subtract", 
-     "KP_Left", 
-     "KP_Begin", 
-     "KP_Right", 
-     "KP_Add", 
-     "KP_End",
-     "KP_Down", 
-     "KP_Next", 
-     "KP_Insert", 
-     "KP_Delete", 
-     "0x54", 
-     "0x55", 
-     "0x56", 
-     "F11",
-     "F12", 
-     "0x59", 
-     "0x5a", 
-     "0x5b", 
-     "0x5c", 
-     "0x5d", 
-     "0x5e", 
-     "0x5f",
-     "KP_Enter", 
-     "Control_R", 
-     "KP_Divide", 
-     "Print", 
-     "Alt_R", 
-     "0x65", 
-     "Home", 
-     "Up",
-     "Prior", 
-     "Left", 
-     "right", 
-     "End", 
-     "Down", 
-     "Next", 
-     "Insert", 
-     "Delete",
-     "0x70", 
-     "0x71", 
-     "0x72", 
-     "0x73", 
-     "0x74", 
-     "0x75", 
-     "0x76", 
-     "Pause",
-     "0x78", 
-     "0x79", 
-     "0x7a", 
-     "0x7b", 
-     "0x7c", 
-     "Super_L", 
-     "Super_R", 
-     "0x7f"
+#include "ecore_fb_keytab.h"
 };
 
 static char *_ecore_fb_btn_syms[128] =
@@ -999,7 +874,15 @@ _ecore_fb_kbd_fd_handler(Ecore_Fd_Handler *fd_handler, void *data)
 	     e = calloc(1, sizeof(Ecore_Fb_Event_Key_Down));
 	     if (!e) goto retry;
 	     if (_ecore_fb_kbd_fd == _ecore_fb_tty_fd)
-	       e->keyname = strdup(_ecore_fb_kbd_syms[buf & 0x7f]);
+	       {
+		  int add = 0;
+		  
+		  if (_ecore_fb_shift) add = 1;
+		  else if (_ecore_fb_lock) add = 2;
+		  e->keyname = strdup(_ecore_fb_kbd_syms[(buf & 0x7f) * 6]);
+		  e->keysymbol = strdup(_ecore_fb_kbd_syms[((buf & 0x7f) * 6) + add]);
+		  e->key_compose = strdup(_ecore_fb_kbd_syms[((buf & 0x7f) * 6) + 3 + add]);
+	       }
 	     else
 	       e->keyname = strdup(_ecore_fb_btn_syms[buf & 0x7f]);
 	     if (!e->keyname)
@@ -1010,12 +893,18 @@ _ecore_fb_kbd_fd_handler(Ecore_Fd_Handler *fd_handler, void *data)
 	     ecore_event_add(ECORE_FB_EVENT_KEY_DOWN, e, _ecore_fb_event_free_key_down, NULL);
 	     if (!strcmp(e->keyname, "Control_L"))
 	       _ecore_fb_ctrl++;
-	     if (!strcmp(e->keyname, "Control_R"))
+	     else if (!strcmp(e->keyname, "Control_R"))
 	       _ecore_fb_ctrl++;
 	     else if (!strcmp(e->keyname, "Alt_L"))
 	       _ecore_fb_alt++;
 	     else if (!strcmp(e->keyname, "Alt_R"))
 	       _ecore_fb_alt++;
+	     else if (!strcmp(e->keyname, "Shift_L"))
+	       _ecore_fb_shift++;
+	     else if (!strcmp(e->keyname, "Shift_R"))
+	       _ecore_fb_shift++;
+	     else if (!strcmp(e->keyname, "Caps_Lock"))
+	       _ecore_fb_lock++;
 	     else if (!strcmp(e->keyname, "F1")) vt_switch = 0;
 	     else if (!strcmp(e->keyname, "F2")) vt_switch = 1;
 	     else if (!strcmp(e->keyname, "F3")) vt_switch = 2;
@@ -1043,7 +932,15 @@ _ecore_fb_kbd_fd_handler(Ecore_Fd_Handler *fd_handler, void *data)
 	     e = calloc(1, sizeof(Ecore_Fb_Event_Key_Up));
 	     if (!e) goto retry;
 	     if (_ecore_fb_kbd_fd == _ecore_fb_tty_fd)
-	       e->keyname = strdup(_ecore_fb_kbd_syms[buf & 0x7f]);
+	       {
+		  int add = 0;
+		  
+		  if (_ecore_fb_shift) add = 1;
+		  else if (_ecore_fb_lock) add = 2;
+		  e->keyname = strdup(_ecore_fb_kbd_syms[(buf & 0x7f) * 6]);
+		  e->keysymbol = strdup(_ecore_fb_kbd_syms[((buf & 0x7f) * 6) + add]);
+		  e->key_compose = strdup(_ecore_fb_kbd_syms[((buf & 0x7f) * 6) + 3 + add]);
+	       }
 	     else
 	       e->keyname = strdup(_ecore_fb_btn_syms[buf & 0x7f]);
 	     if (!e->keyname)
@@ -1054,14 +951,22 @@ _ecore_fb_kbd_fd_handler(Ecore_Fd_Handler *fd_handler, void *data)
 	     ecore_event_add(ECORE_FB_EVENT_KEY_UP, e, _ecore_fb_event_free_key_up, NULL);
 	     if (!strcmp(e->keyname, "Control_L"))
 	       _ecore_fb_ctrl--;
-	     if (!strcmp(e->keyname, "Control_R"))
+	     else if (!strcmp(e->keyname, "Control_R"))
 	       _ecore_fb_ctrl--;
 	     else if (!strcmp(e->keyname, "Alt_L"))
 	       _ecore_fb_alt--;
 	     else if (!strcmp(e->keyname, "Alt_R"))
 	       _ecore_fb_alt--;
+	     else if (!strcmp(e->keyname, "Shift_L"))
+	       _ecore_fb_shift--;
+	     else if (!strcmp(e->keyname, "Shift_R"))
+	       _ecore_fb_shift--;
+	     else if (!strcmp(e->keyname, "Caps_Lock"))
+	       _ecore_fb_lock--;
 	     if (_ecore_fb_ctrl < 0) _ecore_fb_ctrl = 0;
 	     if (_ecore_fb_alt < 0) _ecore_fb_alt = 0;
+	     if (_ecore_fb_shift < 0) _ecore_fb_shift = 0;
+	     if (_ecore_fb_lock < 0) _ecore_fb_lock = 0;
 	  }
 	retry:
 	;
@@ -1184,6 +1089,8 @@ _ecore_fb_event_free_key_down(void *data, void *ev)
    
    e = ev;
    free(e->keyname);
+   if (e->keysymbol) free(e->keysymbol);
+   if (e->key_compose) free(e->key_compose);
    free(e);
 }
 
@@ -1194,6 +1101,8 @@ _ecore_fb_event_free_key_up(void *data, void *ev)
    
    e = ev;
    free(e->keyname);
+   if (e->keysymbol) free(e->keysymbol);
+   if (e->key_compose) free(e->key_compose);
    free(e);
 }
 

@@ -15,7 +15,8 @@ Ecore_Fb.h
 
 libecore_fb_la_SOURCES = \
 ecore_fb.c \
-ecore_fb_private.h
+ecore_fb_private.h \
+ecore_fb_keytab.h
 
 libecore_fb_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la
