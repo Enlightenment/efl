@@ -457,7 +457,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
 	     Edje_Part_Image_Id *imid;
 	     
 	     imid = evas_list_nth(ep->param2.description->image.tween_list, image_num - 1);
-	     if (imid) image_id = imid->image_id;
+	     if (imid) image_id = imid->id;
 	  }
 	
 	snprintf(buf, sizeof(buf), "/images/%i", image_id);

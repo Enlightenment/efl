@@ -1,10 +1,29 @@
 #include "edje_cc.h"
 
+typedef struct _Part_Lookup Part_Lookup;
+typedef struct _Image_Lookup Image_Lookup;
+
+struct _Part_Lookup
+{
+   Edje_Part_Collection *pc;
+   char *name;
+   int *dest;
+};
+
+struct _Image_Lookup
+{
+   char *name;
+   int *dest;
+};
+
 Edje_File *edje_file = NULL;
 
-static Eet_Data_Descriptor *edd_edje_file;
-static Eet_Data_Descriptor *edd_edje_image_directory;
-static Eet_Data_Descriptor *edd_edje_image_directory_entry;
+static Eet_Data_Descriptor *edd_edje_file = NULL;
+static Eet_Data_Descriptor *edd_edje_image_directory = NULL;
+static Eet_Data_Descriptor *edd_edje_image_directory_entry = NULL;
+
+static Evas_List *part_lookups = NULL;
+static Evas_List *image_lookups = NULL;
 
 void
 data_setup(void)
@@ -105,4 +124,89 @@ data_write(void)
 	  }
      }
    eet_close(ef);
+}
+
+void
+data_queue_part_lookup(Edje_Part_Collection *pc, char *name, int *dest)
+{
+   Part_Lookup *pl;
+   
+   pl = mem_alloc(SZ(Part_Lookup));
+   part_lookups = evas_list_append(part_lookups, pl);
+   pl->pc = pc;
+   pl->name = mem_strdup(name);
+   pl->dest = dest;
+}
+
+void
+data_queue_image_lookup(char *name, int *dest)
+{
+   Image_Lookup *il;
+   
+   il = mem_alloc(SZ(Image_Lookup));
+   image_lookups = evas_list_append(image_lookups, il);
+   il->name = mem_strdup(name);
+   il->dest = dest;
+}
+
+void
+data_process_lookups(void)
+{
+   Evas_List *l;
+   
+   while (part_lookups)
+     {
+	Part_Lookup *pl;
+	
+	pl = part_lookups->data;
+	
+	for (l = pl->pc->parts; l; l = l->next)
+	  {
+	     Edje_Part *ep;
+	     
+	     ep = l->data;
+	     if ((ep->name) && (!strcmp(ep->name, pl->name)))
+	       {
+		  *(pl->dest) = ep->id;
+		  break;
+	       }
+	  }
+	if (!l)
+	  {
+	     fprintf(stderr, "%s: Error. unable find part name %s\n",
+		     progname, pl->name);
+	     exit(-1);
+	  }
+	part_lookups = evas_list_remove(part_lookups, pl);
+	free(pl->name);
+	free(pl);
+     }
+
+   while (image_lookups)
+     {
+	Image_Lookup *il;
+	
+	il = image_lookups->data;
+	
+	for (l = edje_file->image_dir->entries; l; l = l->next)
+	  {
+	     Edje_Image_Directory_Entry *de;
+	     
+	     de = l->data;
+	     if ((de->entry) && (!strcmp(de->entry, il->name)))
+	       {
+		  *(il->dest) = de->id;
+		  break;
+	       }
+	  }
+	if (!l)
+	  {
+	     fprintf(stderr, "%s: Error. unable find image name %s\n",
+		     progname, il->name);
+	     exit(-1);
+	  }
+	image_lookups = evas_list_remove(image_lookups, il);
+	free(il->name);
+	free(il);
+     }
 }

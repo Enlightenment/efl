@@ -194,7 +194,7 @@ struct _Edje_Part
 
 struct _Edje_Part_Image_Id
 {
-   int image_id;
+   int id;
 };
 
 struct _Edje_Part_Description

@@ -20,12 +20,87 @@ static void st_collections_group_parts_part_color_class(void);
 
 static void ob_collections_group_parts_part_description(void);
 static void st_collections_group_parts_part_description_state(void);
-    
+static void st_collections_group_parts_part_description_visible(void);
+static void st_collections_group_parts_part_description_dragable_x(void);
+static void st_collections_group_parts_part_description_dragable_y(void);
+static void st_collections_group_parts_part_description_dragable_confine(void);
+static void st_collections_group_parts_part_description_align(void);
+static void st_collections_group_parts_part_description_min(void);
+static void st_collections_group_parts_part_description_max(void);
+static void st_collections_group_parts_part_description_step(void);
+static void st_collections_group_parts_part_description_aspect(void);
+static void st_collections_group_parts_part_description_rel1_relative(void);
+static void st_collections_group_parts_part_description_rel1_offset(void);
+static void st_collections_group_parts_part_description_rel1_to(void);
+static void st_collections_group_parts_part_description_rel2_relative(void);
+static void st_collections_group_parts_part_description_rel2_offset(void);
+static void st_collections_group_parts_part_description_rel2_to(void);
+static void st_collections_group_parts_part_description_image_normal(void);
+static void st_collections_group_parts_part_description_image_tween(void);
+static void st_collections_group_parts_part_description_border(void);
+static void st_collections_group_parts_part_description_fill_origin_relative(void);
+static void st_collections_group_parts_part_description_fill_origin_offset(void);
+static void st_collections_group_parts_part_description_fill_size_relative(void);
+static void st_collections_group_parts_part_description_fill_size_offset(void);
+static void st_collections_group_parts_part_description_color(void);
+static void st_collections_group_parts_part_description_color2(void);
+static void st_collections_group_parts_part_description_color3(void);
+static void st_collections_group_parts_part_description_text_text(void);
+static void st_collections_group_parts_part_description_text_font(void);
+static void st_collections_group_parts_part_description_text_size(void);
+static void st_collections_group_parts_part_description_text_effect(void);
+static void st_collections_group_parts_part_description_text_fit(void);
+static void st_collections_group_parts_part_description_text_min(void);
+static void st_collections_group_parts_part_description_text_align(void);
+
 static void ob_collections_group_programs(void);
 
 static void ob_collections_group_programs_program(void);
 
 /*****/
+
+New_Statement_Handler statement_handlers[] =
+{
+     {"images.image", st_images_image},
+     {"collections.group.name", st_collections_group_name},
+     {"collections.group.parts.part.name", st_collections_group_parts_part_name},
+     {"collections.group.parts.part.type", st_collections_group_parts_part_type},
+     {"collections.group.parts.part.mouse_events", st_collections_group_parts_part_mouse_events},
+     {"collections.group.parts.part.color_class", st_collections_group_parts_part_color_class},
+     {"collections.group.parts.part.description.state", st_collections_group_parts_part_description_state},
+     {"collections.group.parts.part.description.visible", st_collections_group_parts_part_description_visible},
+     {"collections.group.parts.part.description.dragable.x", st_collections_group_parts_part_description_dragable_x},
+     {"collections.group.parts.part.description.dragable.y", st_collections_group_parts_part_description_dragable_y},
+     {"collections.group.parts.part.description.dragable.confine", st_collections_group_parts_part_description_dragable_confine},
+     {"collections.group.parts.part.description.align", st_collections_group_parts_part_description_align},
+     {"collections.group.parts.part.description.min", st_collections_group_parts_part_description_min},
+     {"collections.group.parts.part.description.max", st_collections_group_parts_part_description_max},
+     {"collections.group.parts.part.description.step", st_collections_group_parts_part_description_step},
+     {"collections.group.parts.part.description.aspect", st_collections_group_parts_part_description_aspect},
+     {"collections.group.parts.part.description.rel1.relative", st_collections_group_parts_part_description_rel1_relative},
+     {"collections.group.parts.part.description.rel1.offset", st_collections_group_parts_part_description_rel1_offset},
+     {"collections.group.parts.part.description.rel1.to", st_collections_group_parts_part_description_rel1_to},
+     {"collections.group.parts.part.description.rel2.relative", st_collections_group_parts_part_description_rel2_relative},
+     {"collections.group.parts.part.description.rel2.offset", st_collections_group_parts_part_description_rel2_offset},
+     {"collections.group.parts.part.description.rel2.to", st_collections_group_parts_part_description_rel2_to},
+     {"collections.group.parts.part.description.image.normal", st_collections_group_parts_part_description_image_normal},
+     {"collections.group.parts.part.description.image.tween", st_collections_group_parts_part_description_image_tween},
+     {"collections.group.parts.part.description.border", st_collections_group_parts_part_description_border},
+     {"collections.group.parts.part.description.fill.origin.relative", st_collections_group_parts_part_description_fill_origin_relative},
+     {"collections.group.parts.part.description.fill.origin.offset", st_collections_group_parts_part_description_fill_origin_offset},
+     {"collections.group.parts.part.description.fill.size.relative", st_collections_group_parts_part_description_fill_size_relative},
+     {"collections.group.parts.part.description.fill.size.offset", st_collections_group_parts_part_description_fill_size_offset},
+     {"collections.group.parts.part.description.color", st_collections_group_parts_part_description_color},
+     {"collections.group.parts.part.description.color2", st_collections_group_parts_part_description_color2},
+     {"collections.group.parts.part.description.color3", st_collections_group_parts_part_description_color3},
+     {"collections.group.parts.part.description.text.text", st_collections_group_parts_part_description_text_text},
+     {"collections.group.parts.part.description.text.font", st_collections_group_parts_part_description_text_font},
+     {"collections.group.parts.part.description.text.size", st_collections_group_parts_part_description_text_size},
+     {"collections.group.parts.part.description.text.effect", st_collections_group_parts_part_description_text_effect},
+     {"collections.group.parts.part.description.text.fit", st_collections_group_parts_part_description_text_fit},
+     {"collections.group.parts.part.description.text.min", st_collections_group_parts_part_description_text_min},
+     {"collections.group.parts.part.description.text.align", st_collections_group_parts_part_description_text_align}
+};
 
 New_Object_Handler object_handlers[] =
 {
@@ -47,23 +122,43 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.dragable.x", NULL},
      {"collections.group.parts.part.description.dragable.y", NULL},
      {"collections.group.parts.part.description.dragable.confine", NULL},
+     {"collections.group.parts.part.description.align", NULL},
+     {"collections.group.parts.part.description.min", NULL},
+     {"collections.group.parts.part.description.max", NULL},
+     {"collections.group.parts.part.description.step", NULL},
+     {"collections.group.parts.part.description.aspect", NULL},
+     {"collections.group.parts.part.description.rel1", NULL},
+     {"collections.group.parts.part.description.rel1.relative", NULL},
+     {"collections.group.parts.part.description.rel1.offset", NULL},
+     {"collections.group.parts.part.description.rel1.to", NULL},
+     {"collections.group.parts.part.description.rel2", NULL},
+     {"collections.group.parts.part.description.rel2.relative", NULL},
+     {"collections.group.parts.part.description.rel2.offset", NULL},
+     {"collections.group.parts.part.description.rel2.to", NULL},
+     {"collections.group.parts.part.description.image", NULL},
+     {"collections.group.parts.part.description.image.normal", NULL},
+     {"collections.group.parts.part.description.image.tween", NULL},
+     {"collections.group.parts.part.description.border", NULL},
+     {"collections.group.parts.part.description.fill", NULL},
+     {"collections.group.parts.part.description.fill.origin", NULL},
+     {"collections.group.parts.part.description.fill.origin.relative", NULL},
+     {"collections.group.parts.part.description.fill.origin.offset", NULL},
+     {"collections.group.parts.part.description.fill.size", NULL},
+     {"collections.group.parts.part.description.fill.size.relative", NULL},
+     {"collections.group.parts.part.description.fill.size.offset", NULL},
+     {"collections.group.parts.part.description.color", NULL},
+     {"collections.group.parts.part.description.color2", NULL},
+     {"collections.group.parts.part.description.color3", NULL},
+     {"collections.group.parts.part.description.text", NULL},
+     {"collections.group.parts.part.description.text.text", NULL},
+     {"collections.group.parts.part.description.text.font", NULL},
+     {"collections.group.parts.part.description.text.size", NULL},
+     {"collections.group.parts.part.description.text.effect", NULL},
+     {"collections.group.parts.part.description.text.fit", NULL},
+     {"collections.group.parts.part.description.text.min", NULL},
+     {"collections.group.parts.part.description.text.align", NULL},
      {"collections.group.programs", ob_collections_group_programs},
      {"collections.group.programs.program", ob_collections_group_programs_program}
-};
-
-New_Statement_Handler statement_handlers[] =
-{
-     {"images.image", st_images_image},
-     {"collections.group.name", st_collections_group_name},
-     {"collections.group.parts.part.name", st_collections_group_parts_part_name},
-     {"collections.group.parts.part.type", st_collections_group_parts_part_type},
-     {"collections.group.parts.part.mouse_events", st_collections_group_parts_part_mouse_events},
-     {"collections.group.parts.part.color_class", st_collections_group_parts_part_color_class},
-     {"collections.group.parts.part.description.state", st_collections_group_parts_part_description_state},
-     {"collections.group.parts.part.description.visible", NULL},
-     {"collections.group.parts.part.description.dragable.x", NULL},
-     {"collections.group.parts.part.description.dragable.y", NULL},
-     {"collections.group.parts.part.description.dragable.confine", NULL}
 };
 
 /*****/
@@ -203,6 +298,7 @@ st_collections_group_parts_part_type(void)
    pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
    ep = evas_list_data(evas_list_last(pc->parts));
    ep->type = parse_enum(0, 
+			 "NONE", EDJE_PART_TYPE_NONE,
 			 "RECT", EDJE_PART_TYPE_RECTANGLE,
 			 "TEXT", EDJE_PART_TYPE_TEXT,
 			 "IMAGE", EDJE_PART_TYPE_IMAGE,
@@ -261,6 +357,526 @@ st_collections_group_parts_part_description_state(void)
    ed->state.name = parse_str(0);
    ed->state.value = parse_float_range(1, 0.0, 1.0);
 }
+
+static void
+st_collections_group_parts_part_description_visible(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+   
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));   
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->visible = parse_int_range(0, 0, 1);
+}
+
+static void
+st_collections_group_parts_part_description_dragable_x(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->dragable.x = parse_int_range(0, 0, 1);
+   ed->dragable.step_x = parse_int_range(1, 1, 0x7fffffff);
+   ed->dragable.count_x = parse_int_range(2, 1, 0x7fffffff);
+}
+
+static void
+st_collections_group_parts_part_description_dragable_y(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->dragable.y = parse_int_range(0, 0, 1);
+   ed->dragable.step_y = parse_int_range(1, 1, 0x7fffffff);
+   ed->dragable.count_y = parse_int_range(2, 1, 0x7fffffff);
+}
+
+static void
+st_collections_group_parts_part_description_dragable_confine(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+     {
+	char *name;
+	
+	name = parse_str(0);
+	data_queue_part_lookup(pc, name, &(ed->dragable.confine_id));
+	free(name);
+     }
+}
+
+static void
+st_collections_group_parts_part_description_align(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->align.x = parse_float_range(0, 0.0, 1.0);
+   ed->align.y = parse_float_range(1, 0.0, 1.0);
+}
+
+static void
+st_collections_group_parts_part_description_min(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->min.w = parse_float_range(0, 0, 0x7fffffff);
+   ed->min.h = parse_float_range(1, 0, 0x7fffffff);
+}
+
+static void
+st_collections_group_parts_part_description_max(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->max.w = parse_float_range(0, 0, 0x7fffffff);
+   ed->max.h = parse_float_range(1, 0, 0x7fffffff);
+}
+
+static void
+st_collections_group_parts_part_description_step(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->step.x = parse_float_range(0, 0, 0x7fffffff);
+   ed->step.y = parse_float_range(1, 0, 0x7fffffff);
+}
+
+static void
+st_collections_group_parts_part_description_aspect(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->aspect.min = parse_float_range(0, 0.0, 999999999.0);
+   ed->aspect.max = parse_float_range(1, 0.0, 999999999.0);
+}
+
+static void
+st_collections_group_parts_part_description_rel1_relative(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->rel1.relative_x = parse_float_range(0, 0.0, 1.0);
+   ed->rel1.relative_y = parse_float_range(1, 0.0, 1.0);
+}
+
+static void
+st_collections_group_parts_part_description_rel1_offset(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->rel1.offset_x = parse_int(0);
+   ed->rel1.offset_y = parse_int(1);
+}
+
+static void
+st_collections_group_parts_part_description_rel1_to(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+     {
+	char *name;
+	
+	name = parse_str(0);
+	data_queue_part_lookup(pc, name, &(ed->rel1.id));
+	free(name);
+     }
+}
+
+static void
+st_collections_group_parts_part_description_rel2_relative(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->rel2.relative_x = parse_float_range(0, 0.0, 1.0);
+   ed->rel2.relative_y = parse_float_range(1, 0.0, 1.0);
+}
+
+static void
+st_collections_group_parts_part_description_rel2_offset(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->rel2.offset_x = parse_int(0);
+   ed->rel2.offset_y = parse_int(1);
+}
+
+static void
+st_collections_group_parts_part_description_rel2_to(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+     {
+	char *name;
+	
+	name = parse_str(0);
+	data_queue_part_lookup(pc, name, &(ed->rel2.id));
+	free(name);
+     }
+}
+
+static void
+st_collections_group_parts_part_description_image_normal(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+     {
+	char *name;
+	
+	name = parse_str(0);
+	data_queue_image_lookup(name, &(ed->image.id));
+	free(name);
+     }
+}
+
+static void
+st_collections_group_parts_part_description_image_tween(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+     {
+	char *name;
+	Edje_Part_Image_Id *iid;
+	
+	iid = mem_alloc(SZ(Edje_Part_Image_Id));
+	ed->image.tween_list = evas_list_append(ed->image.tween_list, iid);
+	name = parse_str(0);
+	data_queue_image_lookup(name, &(iid->id));
+	free(name);
+     }
+}
+
+static void
+st_collections_group_parts_part_description_border(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->border.l = parse_int_range(0, 0, 0x7fffffff);
+   ed->border.r = parse_int_range(1, 0, 0x7fffffff);
+   ed->border.t = parse_int_range(2, 0, 0x7fffffff);
+   ed->border.b = parse_int_range(3, 0, 0x7fffffff);   
+}
+
+static void
+st_collections_group_parts_part_description_fill_origin_relative(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->fill.pos_rel_x = parse_float_range(0, 0.0, 999999999.0);   
+   ed->fill.pos_rel_y = parse_float_range(1, 0.0, 999999999.0);   
+}
+
+static void
+st_collections_group_parts_part_description_fill_origin_offset(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->fill.pos_abs_x = parse_int(0);
+   ed->fill.pos_abs_y = parse_int(1);
+}
+
+static void
+st_collections_group_parts_part_description_fill_size_relative(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->fill.rel_x = parse_float_range(0, 0.0, 999999999.0);   
+   ed->fill.rel_y = parse_float_range(1, 0.0, 999999999.0);   
+}
+
+static void
+st_collections_group_parts_part_description_fill_size_offset(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->fill.abs_x = parse_int(0);
+   ed->fill.abs_y = parse_int(1);
+}
+
+static void
+st_collections_group_parts_part_description_color(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->color.r = parse_int_range(0, 0, 255);
+   ed->color.g = parse_int_range(1, 0, 255);
+   ed->color.b = parse_int_range(2, 0, 255);
+   ed->color.a = parse_int_range(3, 0, 255);
+}
+
+static void
+st_collections_group_parts_part_description_color2(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->color2.r = parse_int_range(0, 0, 255);
+   ed->color2.g = parse_int_range(1, 0, 255);
+   ed->color2.b = parse_int_range(2, 0, 255);
+   ed->color2.a = parse_int_range(3, 0, 255);
+}
+
+static void
+st_collections_group_parts_part_description_color3(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->color3.r = parse_int_range(0, 0, 255);
+   ed->color3.g = parse_int_range(1, 0, 255);
+   ed->color3.b = parse_int_range(2, 0, 255);
+   ed->color3.a = parse_int_range(3, 0, 255);
+}
+
+static void
+st_collections_group_parts_part_description_text_text(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->text.text = parse_str(0);
+}
+
+static void
+st_collections_group_parts_part_description_text_font(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->text.font = parse_str(0);
+}
+
+static void
+st_collections_group_parts_part_description_text_size(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->text.size = parse_int_range(0, 0, 255);
+}
+
+static void
+st_collections_group_parts_part_description_text_effect(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->text.effect = parse_enum(0, 
+				"NONE", EDJE_TEXT_EFFECT_NONE,
+				"PLAIN", EDJE_TEXT_EFFECT_PLAIN,
+				"OUTLINE", EDJE_TEXT_EFFECT_OUTLINE,
+				"SHADOW", EDJE_TEXT_EFFECT_SHADOW,
+				"SHADOW_OUTLINE", EDJE_TEXT_EFFECT_OUTLINE_SHADOW,
+				NULL);
+}
+
+static void
+st_collections_group_parts_part_description_text_fit(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->text.fit_x = parse_int_range(0, 0, 1);
+   ed->text.fit_y = parse_int_range(1, 0, 1);
+}
+
+static void
+st_collections_group_parts_part_description_text_min(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->text.min_x = parse_int_range(0, 0, 1);
+   ed->text.min_y = parse_int_range(1, 0, 1);
+}
+
+static void
+st_collections_group_parts_part_description_text_align(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->text.align.x = parse_float_range(0, 0.0, 1.0);
+   ed->text.align.y = parse_float_range(1, 0.0, 1.0);
+}
+
 
 static void
 ob_collections_group_programs(void)

@@ -36,7 +36,11 @@ struct _New_Statement_Handler
 /* global fn calls */
 void    data_setup(void);
 void    data_write(void);
-
+void    data_queue_part_lookup(Edje_Part_Collection *pc, char *name, int *dest);
+void    data_queue_image_lookup(char *name, int *dest);
+void    data_process_lookups(void);
+    
+    
 void    compile(void);
 char   *parse_str(int n);
 int     parse_enum(int n, ...);

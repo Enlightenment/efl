@@ -60,6 +60,7 @@ main(int argc, char **argv)
    
    data_setup();   
    compile();
+   data_process_lookups();
    data_write();
    
    return 0;
