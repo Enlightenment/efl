@@ -412,13 +412,14 @@ struct _Evas_Object
       char           deletions_waiting : 1;
    } smart;
    
+   int                         mouse_grabbed;
+   
    short                       store : 1;
    short                       pass_events : 1;
    short                       repeat_events : 1;
    short                       restack : 1;
    short                       changed : 1;
    short                       mouse_in : 1;
-   short                       mouse_grabbed : 1;
    short                       pre_render_done : 1;
    short                       intercepted : 1;
    short                       focused : 1;

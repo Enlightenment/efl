@@ -174,7 +174,7 @@ evas_event_feed_mouse_down_data(Evas *e, int b, const void *data)
 	Evas_Event_Mouse_Down ev;
 	
 	obj = l->data;
-	obj->mouse_grabbed = 1;
+	obj->mouse_grabbed++;
 	e->pointer.mouse_grabbed++;
 		       
 	ev.button = b;
@@ -259,8 +259,8 @@ evas_event_feed_mouse_up_data(Evas *e, int b, const void *data)
 	Evas_Event_Mouse_Up ev;
 	
 	obj = l->data;
-	if (!e->pointer.button) obj->mouse_grabbed = 0;
-	e->pointer.mouse_grabbed--;
+	if (obj->mouse_grabbed > 0) obj->mouse_grabbed--;
+	if (e->pointer.mouse_grabbed > 0) e->pointer.mouse_grabbed--;
 	ev.button = b;
 	ev.output.x = e->pointer.x;
 	ev.output.y = e->pointer.y;
@@ -287,7 +287,6 @@ evas_event_feed_mouse_up_data(Evas *e, int b, const void *data)
 	     Evas_Object *obj;
 	     
 	     obj = l->data;
-	     obj->mouse_grabbed = 0;
 	     if (!evas_list_find(ins, obj))
 	       {
 		  Evas_Event_Mouse_Out ev;
