@@ -211,17 +211,13 @@ _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, double x, double y)
 {
    if ((ep->part->dragable.x) || (ep->part->dragable.y))
      {
-	if (ep->confine_to)
-	  {
-	     ep->drag.x = x;
-	     ep->drag.y = y;
-	  }
-	else
-	  {
-	     ep->drag.x = x;
-	     ep->drag.y = y;
-	  }
+	ep->drag.x = x;
+	ep->drag.y = y;
      }
+
+   /* FIXME: is this right? shouldn't we only request a recalc if we
+    *        actually changed the values?
+    */
    ed->dirty = 1;
    _edje_recalc(ed);   
 }
