@@ -592,6 +592,8 @@ void             ecore_x_io_error_handler_set(void (*func) (void *data), const v
 int              ecore_x_error_request_get(void);
 int              ecore_x_error_code_get(void);
 
+void             ecore_x_event_mask_set(Ecore_X_Window w, long mask);
+
 int              ecore_x_selection_primary_set(Ecore_X_Window w, char *data, int size);
 int              ecore_x_selection_primary_clear(void);
 int              ecore_x_selection_secondary_set(Ecore_X_Window w, char *data, int size);

@@ -15,6 +15,12 @@ static void _ecore_x_event_free_key_down(void *data, void *ev);
 static void _ecore_x_event_free_key_up(void *data, void *ev);
 static void _ecore_x_event_free_generic(void *data, void *ev);
 
+void
+ecore_x_event_mask_set(Ecore_X_Window w, long mask)
+{
+   XSelectInput(_ecore_x_disp, w, mask);
+}
+
 static void
 _ecore_x_event_free_window_prop_name_class_change(void *data, void *ev)
 {
