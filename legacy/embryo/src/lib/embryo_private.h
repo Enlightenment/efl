@@ -157,15 +157,26 @@ enum _Embryo_Opcode
      EMBRYO_OP_NUM_OPCODES
 };
 
-#define NUMENTRIES(hdr,field,nextfield) \
-  (int)(((hdr)->nextfield - (hdr)->field) / (hdr)->defsize)
-#define GETENTRY(hdr,table,index) \
-  (Embryo_Func_Stub *)((unsigned char*)(hdr) + \
-   (int)(hdr)->table + index * (hdr)->defsize)
-#define GETENTRYNAME(hdr,entry) \
-  (((hdr)->defsize == 2 * sizeof(unsigned int)) \
-   ? (char *)((unsigned char*)(hdr) + *((unsigned int *)(entry) + 1)) \
-   : (entry)->name)
+#define NUMENTRIES(hdr, field, nextfield) \
+(int)(((hdr)->nextfield - (hdr)->field) / (hdr)->defsize)
+#define GETENTRY(hdr, table, index) \
+(Embryo_Func_Stub *)((unsigned char*)(hdr) + \
+(int)(hdr)->table + index * (hdr)->defsize)
+#ifdef WORDS_BIGENDIAN
+# define GETENTRYNAME(hdr, entry) \
+(((hdr)->defsize == 2 * sizeof(unsigned int)) \
+? (char *)((unsigned char*)(hdr) + *((unsigned int *)(entry) + 1)) \
+: (entry)->name)
+#else
+static int __inline __entryswap32(int v) \
+{int vv; vv = v; embryo_swap_32((unsigned int *)&vv); return vv;}
+# define GETENTRYNAME(hdr, entry) \
+(((hdr)->defsize == 2 * sizeof(unsigned int)) \
+? (char *)((unsigned char*)(hdr) + \
+__entryswap32(*((unsigned int *)(entry) + 1))) \
+: (entry)->name)
+#endif
+
 #define CUR_FILE_VERSION    7      /* current file version; also the current Embryo_Program version */
 #define MIN_FILE_VERSION    7      /* lowest supported file format version for the current Embryo_Program version */
 #define MIN_AMX_VERSION     7      /* minimum Embryo_Program version needed to support the current file format */
