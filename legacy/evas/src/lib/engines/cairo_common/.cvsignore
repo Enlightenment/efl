@@ -1,0 +1,14 @@
+Makefile.in
+Makefile
+.deps
+.libs
+libevas_engine_gl_common.la
+evas_gl_font.lo
+evas_gl_gradient.lo
+evas_gl_image.lo
+evas_gl_line.lo
+evas_gl_misc.lo
+evas_gl_polygon.lo
+evas_gl_texture.lo
+evas_gl_context.lo
+evas_gl_rectangle.lo
