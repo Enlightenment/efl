@@ -269,7 +269,7 @@ data_write(void)
 			 }
 		       else
 			 {
-			    fprintf(stderr, "%s: Error. unable to write image part \"%s\" as \"%s\" part entry to %s \n",
+			    fprintf(stderr, "%s: Error. unable to load image for image part \"%s\" as \"%s\" part entry to %s \n",
 				    progname, img->entry, buf, file_out);	
 			    ABORT_WRITE(ef, file_out);
 			 }
@@ -374,7 +374,37 @@ data_write(void)
 	char buf[4096];
 	
 	pc = l->data;
-	
+
+	/* FIXME: hack!!!! */
+	  {
+	     FILE *f;
+	     
+	     f = fopen("test.amx", "r");
+	     if (f)
+	       {
+		  int size;
+		  void *data;
+		  
+		  fseek(f, 0, SEEK_END);
+		  size = ftell(f);
+		  rewind(f);
+		  if (size > 0)
+		    {
+		       int bt;
+		       
+		       data = malloc(size);
+		       if (data)
+			 {
+			    fread(data, size, 1, f);
+			    snprintf(buf, sizeof(buf), "scripts/%i", pc->id);
+			    bt = eet_write(ef, buf, data, size, 1);
+			    free(data);
+			    printf("WROTE %i bytes of AMX!\n", bt);
+			 }
+		    }
+		  fclose(f);
+	       }
+	  }
 	snprintf(buf, sizeof(buf), "collections/%i", pc->id);
 	bytes = eet_data_write(ef, edd_edje_part_collection, buf, pc, 1);
 	if (bytes <= 0)

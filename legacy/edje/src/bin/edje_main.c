@@ -733,10 +733,10 @@ test_setup(char *file, char *name)
    de->title = o;
    
    o = edje_object_add(evas);
-   edje_object_file_set(o, file, name);
 //   edje_object_signal_callback_add(o, "do_it", "the_source", cb, NULL);
 //   edje_object_signal_callback_add(o, "mouse,*", "logo", cb, NULL);
    edje_object_signal_callback_add(o, "*", "*", cb, NULL);
+   edje_object_file_set(o, file, name);
    edje_object_part_drag_size_set(o, "dragable", 0.01, 0.5);
 //   edje_object_part_drag_value_set(o, "dragable", 0.5, 0.5);
 edje_object_part_drag_step_set(o, "dragable", 0.1, 0.1);

@@ -591,6 +591,9 @@ _edje_part_recalc_single(Edje *ed,
    params->border.r = desc->border.r;
    params->border.t = desc->border.t;
    params->border.b = desc->border.b;
+   /* text.align */
+   params->text.align.x = desc->text.align.x;
+   params->text.align.y = desc->text.align.y;
 }
 
 static void
@@ -702,6 +705,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
 	p3.border.r = (p1.border.r * (1.0 - pos)) + (p2.border.r * (pos));
 	p3.border.t = (p1.border.t * (1.0 - pos)) + (p2.border.t * (pos));
 	p3.border.b = (p1.border.b * (1.0 - pos)) + (p2.border.b * (pos));
+
+	p3.text.align.x = (p1.text.align.x * (1.0 - pos)) + (p2.text.align.x * (pos));
+	p3.text.align.y = (p1.text.align.y * (1.0 - pos)) + (p2.text.align.y * (pos));
      }
    else
      p3 = p1;

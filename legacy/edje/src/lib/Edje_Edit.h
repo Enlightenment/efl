@@ -9,6 +9,12 @@
 #include <Ecore_Fb.h>
 #endif
 #include <Eet.h>
+#include <Embryo.h>
+
+/* Cache result of program glob matches - this uses up extra ram withthe gain
+ * of faster program matching if a part has LOTS of programs.
+#define EDJE_PROGRAM_CACHE
+*/
 
 typedef struct _Edje_File                            Edje_File;
 typedef struct _Edje_Data                            Edje_Data;
@@ -227,11 +233,14 @@ struct _Edje_Part_Collection
    } prop;
    
    int        references;
-   
+#ifdef EDJE_PROGRAM_CACHE   
    struct {
       Evas_Hash                   *no_matches;
       Evas_Hash                   *matches;
    } prog_cache;
+#endif   
+   
+   Embryo_Program   *script; /* all the embryo script code for this group */
 };
 
 struct _Edje_Part
@@ -506,6 +515,11 @@ struct _Edje_Calc_Params
    struct {   
       int           l, r, t, b;
    } border;
+   struct {
+      struct {
+         double      x, y; /* text alignment within bounds */
+      } align;
+   } text;
 };
 
 struct _Edje_Emission

@@ -12,6 +12,7 @@ export EET_CONFIG=$SKIFF"/"$TARGETCPU"-linux/bin/eet-config"
 export FREETYPE_CONFIG=$SKIFF"/"$TARGETCPU"-linux/bin/freetype-config"
 export EVAS_CONFIG=$SKIFF"/"$TARGETCPU"-linux/bin/evas-config"
 export ECORE_CONFIG=$SKIFF"/"$TARGETCPU"-linux/bin/ecore-config"
+export EMBRYO_CONFIG=$SKIFF"/"$TARGETCPU"-linux/bin/embryo-config"
 
 make clean distclean
 export CC=/skiff/local/bin/arm-linux-gcc

@@ -151,6 +151,24 @@ fi
 AC_SUBST(eet_cflags)
 AC_SUBST(eet_libs)
 
+have_embryo="no";
+AC_CHECK_HEADER(Embryo.h,
+  [ have_embryo="yes" ],
+  [ have_embryo="no" ]
+)
+
+if test "x$have_embryo" = "xyes"; then
+  if [ test -z "$EMBRYO_CONFIG" ]; then EMBRYO_CONFIG="embryo-config"; fi
+  embryo_cflags=`$EMBRYO_CONFIG --cflags`
+  embryo_libs=`$EMBRYO_CONFIG --libs`
+else
+  AC_MSG_ERROR(Cannot find Embryo.h)
+  exit -1
+fi
+
+AC_SUBST(embryo_cflags)
+AC_SUBST(embryo_libs)
+
 imlib2_cflags=""
 imlib2_libs=""
 if test "x$have_edje_cc" = "xyes"; then

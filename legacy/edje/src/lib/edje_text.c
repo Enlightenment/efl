@@ -322,7 +322,9 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
        (ep->text.cache.in_h == sh) &&
        (ep->text.cache.in_str) &&
        (text) &&
-       (!strcmp(ep->text.cache.in_str, text)))
+       (!strcmp(ep->text.cache.in_str, text)) &&
+       (chosen_desc->text.align.x == params->text.align.x) &&
+       (chosen_desc->text.align.y == params->text.align.y))
      {
 	text = ep->text.cache.out_str;
 	size = ep->text.cache.out_size;
@@ -415,17 +417,17 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	evas_object_text_font_set(ep->object, font, size);
 	evas_object_text_text_set(ep->object, text);
 	evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
-	p = ((sw - tw) * chosen_desc->text.align.x);
+	p = ((sw - tw) * params->text.align.x);
 	c1 = -1;
 	c2 = -1;
 	/* chop chop */
 	if (tw > sw)
 	  {
-	     if (chosen_desc->text.align.x != 0.0)
+	     if (params->text.align.x != 0.0)
 	       c1 = evas_object_text_char_coords_get(ep->object,
 						     -p, th / 2,
 						     NULL, NULL, NULL, NULL);
-	     if (chosen_desc->text.align.x != 1.0)
+	     if (params->text.align.x != 1.0)
 	       c2 = evas_object_text_char_coords_get(ep->object,
 						     -p + sw, th / 2,
 						     NULL, NULL, NULL, NULL);
@@ -539,8 +541,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    evas_object_text_font_set(ep->object, font, size);
    evas_object_text_text_set(ep->object, text);
    evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
-   ep->offset.x = ox + ((sw - tw) * chosen_desc->text.align.x);
-   ep->offset.y = oy + ((sh - th) * chosen_desc->text.align.y);
+   ep->offset.x = ox + ((sw - tw) * params->text.align.x);
+   ep->offset.y = oy + ((sh - th) * params->text.align.y);
    evas_object_move(ep->object,
 		    ed->x + params->x + ep->offset.x,
 		    ed->y + params->y + ep->offset.y);

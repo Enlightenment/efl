@@ -4,7 +4,9 @@
 static Evas_Hash   *_edje_file_hash = NULL;
 
 static void _edje_collection_free_part_description_free(Edje_Part_Description *desc);
+#ifdef EDJE_PROGRAM_CACHE
 static int  _edje_collection_free_prog_cache_matches_free_cb(Evas_Hash *hash, const char *key, void *data, void *fdata);
+#endif
 
 /* API Routines */
 int
@@ -184,6 +186,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	_edje_ref(ed);
 	_edje_block(ed);
 	_edje_freeze(ed);
+	if (ed->collection->script) _edje_embryo_script_init(ed);
 	_edje_emit(ed, "load", "");
 	for (l = ed->parts; l; l = l->next)
 	  {
@@ -403,6 +406,8 @@ _edje_file_add(Edje *ed)
 	if (id >= 0)
 	  {
 	     char buf[256];
+	     int  size;
+	     void *data;
 	     
 	     snprintf(buf, sizeof(buf), "collections/%i", id);
 	     if (!ef) ef = eet_open(ed->path, EET_FILE_MODE_READ);
@@ -421,6 +426,13 @@ _edje_file_add(Edje *ed)
 	       }
 	     ed->collection->references = 1;
 	     ed->file->collection_hash = evas_hash_add(ed->file->collection_hash, ed->part, ed->collection);
+	     snprintf(buf, sizeof(buf), "scripts/%i", id);
+	     data = eet_read(ef, buf, &size);
+	     if (data)
+	       {
+		  ed->collection->script = embryo_program_new(data, size);
+		  free(data);
+	       }
 	  }
 	else
 	  {
@@ -444,6 +456,7 @@ _edje_file_del(Edje *ed)
 	ed->collection->references--;
 	if (ed->collection->references <= 0)
 	  {
+	     _edje_embryo_script_shutdown(ed);
 	     ed->file->collection_hash = evas_hash_del(ed->file->collection_hash, ed->part, ed->collection);
 	     _edje_collection_free(ed, ed->collection);
 	  }
@@ -621,6 +634,7 @@ _edje_collection_free(Edje *ed, Edje_Part_Collection *ec)
 	  }
 	free(ep);
      }
+#ifdef EDJE_PROGRAM_CACHE
    if (ec->prog_cache.no_matches) evas_hash_free(ec->prog_cache.no_matches);
    if (ec->prog_cache.matches)
      {
@@ -629,6 +643,7 @@ _edje_collection_free(Edje *ed, Edje_Part_Collection *ec)
 			  NULL);
 	evas_hash_free(ec->prog_cache.matches);
      }
+#endif   
    free(ec);
 }
 
@@ -651,6 +666,7 @@ _edje_collection_free_part_description_free(Edje_Part_Description *desc)
    free(desc);
 }
 
+#ifdef EDJE_PROGRAM_CACHE
 static int
 _edje_collection_free_prog_cache_matches_free_cb(Evas_Hash *hash, const char *key, void *data, void *fdata)
 {
@@ -659,3 +675,4 @@ _edje_collection_free_prog_cache_matches_free_cb(Evas_Hash *hash, const char *ke
    hash = NULL;
    fdata = NULL;
 }
+#endif

@@ -697,11 +697,14 @@ _edje_emit(Edje *ed, char *sig, char *src)
 	if (ed->collection)
 	  {
 	     Edje_Part_Collection *ec;
+#ifdef EDJE_PROGRAM_CACHE
 	     char *tmps;
+#endif	     
 	     int l1, l2;
 	     int done;
 	     
 	     ec = ed->collection;
+#ifdef EDJE_PROGRAM_CACHE
 	     l1 = strlen(ee->signal);
 	     l2 = strlen(ee->source);
 	     tmps = malloc(l1 + l2 + 2);
@@ -712,8 +715,10 @@ _edje_emit(Edje *ed, char *sig, char *src)
 		  tmps[l1] = '\377';
 		  strcpy(&(tmps[l1 + 1]), ee->source);
 	       }
+#endif	     
 	     done = 0;
 	     
+#ifdef EDJE_PROGRAM_CACHE
 	     if (tmps)
 	       {
 		  Evas_List *matches;
@@ -741,10 +746,13 @@ _edje_emit(Edje *ed, char *sig, char *src)
 		       done = 1;
 		    }
 	       }
+#endif
 	     if (!done)
 	       {
+#ifdef EDJE_PROGRAM_CACHE
 		  int matched = 0;
 		  Evas_List *matches = NULL;
+#endif
 		  
 		  for (l = ed->collection->programs; l; l = l->next)
 		    {
@@ -756,19 +764,26 @@ _edje_emit(Edje *ed, char *sig, char *src)
 			   (_edje_glob_match(ee->signal, pr->signal)) &&
 			   (_edje_glob_match(ee->source, pr->source)))
 			 {
+#ifdef EDJE_PROGRAM_CACHE
 			    matched++;
+#endif			    
 			    _edje_program_run(ed, pr, 0);
 			    if (_edje_block_break(ed))
 			      {
+#ifdef EDJE_PROGRAM_CACHE
 				 if (tmps) free(tmps);
 				 evas_list_free(matches);
+#endif				 
 				 if (!ed->dont_clear_signals)
 				   _edje_emit(ed, NULL, NULL);
 				 goto break_prog;
 			      }
+#ifdef EDJE_PROGRAM_CACHE
 			    matches = evas_list_append(matches, pr);
+#endif			    
 			 }
 		    }
+#ifdef EDJE_PROGRAM_CACHE
 		  if (tmps)
 		    {
 		       if (matched == 0)
@@ -778,17 +793,22 @@ _edje_emit(Edje *ed, char *sig, char *src)
 			 ec->prog_cache.matches =
 			 evas_hash_add(ec->prog_cache.matches, tmps, matches);
 		    }
+#endif		    
 	       }
 	     _edje_emit_cb(ed, ee->signal, ee->source);
 	     if (_edje_block_break(ed))
 	       {
+#ifdef EDJE_PROGRAM_CACHE
 		  if (tmps) free(tmps);
+#endif		  
 		  if (!ed->dont_clear_signals)		    
 		    _edje_emit(ed, NULL, NULL);
 		  goto break_prog;
 	       }
+#ifdef EDJE_PROGRAM_CACHE
 	     if (tmps) free(tmps);
 	     tmps = NULL;
+#endif	     
 	  }
 
 	_edje_emission_free(ee);

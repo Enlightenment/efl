@@ -207,5 +207,6 @@ data needed.
 
 @todo See src/lib/edje_private.h for a list of FIXME's
 @todo Complete documentation of API
+@todo Bytecode language for extending programs... but what/how?
 
 */
