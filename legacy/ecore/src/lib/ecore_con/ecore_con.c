@@ -725,6 +725,21 @@ ecore_con_client_data_get(Ecore_Con_Client *cl)
    return cl->data;
 }
 
+/**
+ * Returns if SSL support is available
+ * @return  1 if SSL is available, 0 if it is not.
+ * @ingroup Ecore_Con_Client_Group
+ */
+int
+ecore_con_ssl_available_get(void)
+{
+#if USE_OPENSSL
+   return 1;
+#else
+   return 0;
+#endif   
+}
+
 static void
 _ecore_con_server_free(Ecore_Con_Server *svr)
 {

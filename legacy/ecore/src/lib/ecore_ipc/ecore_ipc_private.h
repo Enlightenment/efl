@@ -1,6 +1,10 @@
 #ifndef _ECORE_IPC_PRIVATE_H
 #define _ECORE_IPC_PRIVATE_H
 
+#if USE_OPENSSL
+#include <openssl/ssl.h>
+#endif
+
 #define ECORE_MAGIC_IPC_SERVER             0x87786556
 #define ECORE_MAGIC_IPC_CLIENT             0x78875665
 

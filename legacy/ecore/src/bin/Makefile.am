@@ -89,8 +89,6 @@ $(ECORE_IPC_LIB) \
 $(ECORE_TXT_LIB) \
 -lm @iconv_libs@
 
-#ecore_test_LDFLAGS =
-
 ecore_test_CFLAGS = \
 $(CFLAGS) \
 $(INCLUDES)
@@ -122,8 +120,6 @@ $(ECORE_CON_LIB) \
 $(ECORE_IPC_LIB) \
 $(ECORE_TXT_LIB) \
 -lm @iconv_libs@
-
-#ecore_evas_test_LDFLAGS =
 
 ecore_evas_test_CFLAGS = \
 $(CFLAGS) \

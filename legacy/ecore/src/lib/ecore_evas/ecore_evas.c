@@ -7,6 +7,47 @@
 static int _ecore_evas_init_count = 0;
 
 /**
+ * Query if a particular renginering engine target has support
+ * @param  engine The engine to check support for
+ * @return 1 if the particualr engine is supported, 0 if it is not
+ * 
+ * Query if engine @param engine is supported by ecore_evas. 1 is returned if
+ * it is, and 0 is returned if it is not supported.
+ */
+int
+ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
+{
+   switch (engine)
+     {
+      case ECORE_EVAS_ENGINE_SOFTWARE_X11:
+#ifdef BUILD_ECORE_X
+	return 1;
+#else
+	return 0;
+#endif	
+	break;
+      case ECORE_EVAS_ENGINE_SOFTWARE_FB:
+#ifdef BUILD_ECORE_EVAS_FB
+	return 1;
+#else
+	return 0;
+#endif	
+	break;
+      case ECORE_EVAS_ENGINE_GL_X11:
+#ifdef BUILD_ECORE_EVAS_GL
+	return 1;
+#else
+	return 0;
+#endif	
+	break;
+      default:
+	return 0;
+	break;
+     };
+   return 0;
+}
+
+/**
  * Init the Evas system.
  * @return greater than 0 on success, 0 on failure
  * 
@@ -16,8 +57,7 @@ int
 ecore_evas_init(void)
 {
    if (_ecore_evas_init_count == 0)
-	evas_init ();
-
+     evas_init ();
    return ++_ecore_evas_init_count;
 }
 
@@ -39,8 +79,7 @@ ecore_evas_shutdown(void)
 #ifdef BUILD_ECORE_EVAS_FB
 	while (_ecore_evas_fb_shutdown());
 #endif
-
-    evas_shutdown(); 
+	evas_shutdown(); 
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
    return _ecore_evas_init_count;

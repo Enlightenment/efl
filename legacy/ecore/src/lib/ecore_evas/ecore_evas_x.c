@@ -3,8 +3,11 @@
 #include "ecore_private.h"
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
+#ifdef BUILD_ECORE_X
 #include "Ecore_X.h"
+#endif
 
+#ifdef BUILD_ECORE_X
 static int _ecore_evas_init_count = 0;
 
 static int _ecore_evas_fps_debug = 0;
@@ -1114,6 +1117,7 @@ static const Ecore_Evas_Engine_Func _ecore_x_engine_func =
      _ecore_evas_withdrawn_set,
      _ecore_evas_sticky_set
 };
+#endif
 
 /**
  * To be documented.
@@ -1124,6 +1128,7 @@ Ecore_Evas *
 ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent, 
 			    int x, int y, int w, int h)
 {
+#ifdef BUILD_ECORE_X
    Evas_Engine_Info_Software_X11 *einfo;
    Ecore_Evas *ee;
    int rmethod;
@@ -1187,6 +1192,9 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 
    ecore_evases = _ecore_list_prepend(ecore_evases, ee);
    return ee;
+#else
+   return NULL;
+#endif   
 }
 
 /**
@@ -1197,14 +1205,18 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 Ecore_X_Window
 ecore_evas_software_x11_window_get(Ecore_Evas *ee)
 {
+#ifdef BUILD_ECORE_X
    return ee->engine.x.win_container;
+#else
+   return 0;
+#endif   
 }
 
-#ifdef BUILD_ECORE_EVAS_GL 
 Ecore_Evas *
 ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent, 
 		      int x, int y, int w, int h)
 {
+#ifdef BUILD_ECORE_EVAS_GL 
    Evas_Engine_Info_GL_X11 *einfo;
    Ecore_Evas *ee;
    int rmethod;
@@ -1292,6 +1304,9 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 
    ecore_evases = _ecore_list_prepend(ecore_evases, ee);
    return ee;
+#else
+   return NULL;
+#endif
 }
 
 /**
@@ -1302,6 +1317,9 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 Ecore_X_Window
 ecore_evas_gl_x11_window_get(Ecore_Evas *ee)
 {
+#ifdef BUILD_ECORE_EVAS_GL 
    return ee->engine.x.win_container;
-}
+#else
+   return 0;
 #endif
+}

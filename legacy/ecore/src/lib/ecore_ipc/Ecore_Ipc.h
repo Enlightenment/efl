@@ -6,12 +6,6 @@
  * @brief Ecore inter-process communication functions.
  */
 
-#define HAVE_ECORE_IPC_OPENSSL @USE_OPENSSL@
-
-#if HAVE_ECORE_IPC_OPENSSL
-#include <openssl/ssl.h>
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -25,10 +19,8 @@ extern "C" {
      {
 	ECORE_IPC_LOCAL_USER,
 	  ECORE_IPC_LOCAL_SYSTEM,
-	  ECORE_IPC_REMOTE_SYSTEM
-#if HAVE_ECORE_IPC_OPENSSL
-          ,ECORE_IPC_USE_SSL = 16
-#endif
+	  ECORE_IPC_REMOTE_SYSTEM,
+          ECORE_IPC_USE_SSL = 16
      } Ecore_Ipc_Type;
    
    typedef struct _Ecore_Ipc_Event_Client_Add  Ecore_Ipc_Event_Client_Add;
@@ -111,6 +103,8 @@ extern "C" {
    void             *ecore_ipc_client_del(Ecore_Ipc_Client *cl);
    void              ecore_ipc_client_data_set(Ecore_Ipc_Client *cl, const void *data);
    void             *ecore_ipc_client_data_get(Ecore_Ipc_Client *cl);
+   
+   int               ecore_ipc_ssl_available_get(void);
        
 #ifdef __cplusplus
 }

@@ -648,11 +648,8 @@ src/lib/ecore/Makefile
 src/lib/ecore_job/Makefile
 src/lib/ecore_x/Makefile
 src/lib/ecore_fb/Makefile
-src/lib/ecore_evas/Ecore_Evas.h
 src/lib/ecore_evas/Makefile
-src/lib/ecore_con/Ecore_Con.h
 src/lib/ecore_con/Makefile
-src/lib/ecore_ipc/Ecore_Ipc.h
 src/lib/ecore_ipc/Makefile
 src/lib/ecore_txt/Makefile
 src/lib/ecore_config/Makefile

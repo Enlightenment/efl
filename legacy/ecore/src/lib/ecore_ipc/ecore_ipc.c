@@ -280,10 +280,8 @@ ecore_ipc_server_add(Ecore_Ipc_Type compl_type, char *name, int port, const void
    svr = calloc(1, sizeof(Ecore_Ipc_Server));
    if (!svr) return NULL;
    type = compl_type;
-#if USE_OPENSSL
    type &= ~ECORE_IPC_USE_SSL;
    if (compl_type & ECORE_IPC_USE_SSL) extra = ECORE_CON_USE_SSL;
-#endif   
    switch (type)
      {
       case ECORE_IPC_LOCAL_USER:
@@ -337,10 +335,8 @@ ecore_ipc_server_connect(Ecore_Ipc_Type compl_type, char *name, int port, const 
    svr = calloc(1, sizeof(Ecore_Ipc_Server));
    if (!svr) return NULL;
    type = compl_type;
-#if USE_OPENSSL
    type &= ~ECORE_IPC_USE_SSL;
    if (compl_type & ECORE_IPC_USE_SSL) extra = ECORE_CON_USE_SSL;
-#endif   
    switch (type)
      {
       case ECORE_IPC_LOCAL_USER:
@@ -702,6 +698,16 @@ ecore_ipc_client_data_get(Ecore_Ipc_Client *cl)
    return cl->data;
 }
 
+/**
+ *  * Returns if SSL support is available
+ *  * @return  1 if SSL is available, 0 if it is not.
+ *  * @ingroup Ecore_Con_Client_Group
+ *  */
+int
+ecore_ipc_ssl_available_get(void)
+{
+   return ecore_con_ssl_available_get();
+}
 
 
 static int

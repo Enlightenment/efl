@@ -29,7 +29,7 @@ $(ECORE_X_INC) \
 $(ECORE_FB_INC) \
 @evas_cflags@ 
 
-libecore_evas_la_LDFLAGS = -version-info 1:0:0 \
+libecore_evas_la_LDFLAGS = $(LDFLAGS) -version-info 1:0:0 \
 $(ECORE_X_LDF) \
 $(ECORE_FB_LDF) \
 -L$(top_builddir)/src/lib/ecore/.libs
@@ -60,7 +60,6 @@ $(top_builddir)/src/lib/ecore/libecore.la
 endif
 
 EXTRA_DIST = \
-Ecore_Evas.h.in \
 ecore_evas.c \
 ecore_evas_x.c \
 ecore_evas_fb.c \

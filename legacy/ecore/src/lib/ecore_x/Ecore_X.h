@@ -867,12 +867,25 @@ void             ecore_x_gc_del(Ecore_X_GC gc);
 int              ecore_x_client_message32_send(Ecore_X_Window win, Ecore_X_Atom type, long d0, long d1, long d2, long d3, long d4);
 int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom type, const void *data, int len);
 
-void             ecore_x_icccm_window_state_set_iconic(Ecore_X_Window win);
-void             ecore_x_icccm_window_state_set_normal(Ecore_X_Window win);
-void             ecore_x_icccm_window_state_set_withdrawn(Ecore_X_Window win);
-void             ecore_x_icccm_send_delete_window(Ecore_X_Window win);
-void             ecore_x_icccm_send_take_focus(Ecore_X_Window win);
-
+   void
+     ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state);
+   void
+     ecore_x_icccm_delete_window_send(Ecore_X_Window win);
+   void
+     ecore_x_icccm_take_focus_send(Ecore_X_Window win);
+   void
+     ecore_x_icccm_save_yourself_send(Ecore_X_Window win);
+   void
+     ecore_x_icccm_move_resize_send(Ecore_X_Window win, 
+				    int x, int y, int w, int h);
+   int
+     ecore_x_icccm_basic_hints_get(Ecore_X_Window win,
+				   int *accepts_focus,
+				   Ecore_X_Window_State_Hint *initial_state,
+				   Ecore_X_Pixmap *icon_pixmap,
+				   Ecore_X_Pixmap *icon_mask,
+				   Ecore_X_Window *icon_window,
+				   Ecore_X_Window *window_group);
    
    
    /* FIXME: these funcs need categorising */
@@ -922,16 +935,6 @@ void             ecore_x_icccm_send_take_focus(Ecore_X_Window win);
      ecore_x_window_save_set_del(Ecore_X_Window win);
    Ecore_X_Window *
      ecore_x_window_children_get(Ecore_X_Window win, int *num);
-   void
-     ecore_x_window_synthetic_move_resize_send(Ecore_X_Window win, int x, int y, int w, int h);
-   void
-     ecore_x_window_basic_hints_get(Ecore_X_Window win,
-				    int *accepts_focus,
-				    Ecore_X_Window_State_Hint *initial_state,
-				    Ecore_X_Pixmap *icon_pixmap,
-				    Ecore_X_Pixmap *icon_mask,
-				    Ecore_X_Window *icon_window,
-				    Ecore_X_Window *window_group);
    
    Ecore_X_Cursor
      ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int hot_y);

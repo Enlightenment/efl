@@ -33,12 +33,6 @@
  * @li @ref Ecore_Con_Client_Group
  */
 
-#define HAVE_ECORE_CON_OPENSSL @USE_OPENSSL@
-
-#if HAVE_ECORE_CON_OPENSSL
-#include <openssl/ssl.h>
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -51,10 +45,8 @@ extern "C" {
      {
 	  ECORE_CON_LOCAL_USER,
 	  ECORE_CON_LOCAL_SYSTEM,
-	  ECORE_CON_REMOTE_SYSTEM
-#if HAVE_ECORE_CON_OPENSSL 
-	  ,ECORE_CON_USE_SSL = 16
-#endif
+	  ECORE_CON_REMOTE_SYSTEM,
+	  ECORE_CON_USE_SSL = 16
      } Ecore_Con_Type;
    
 #endif
@@ -123,6 +115,9 @@ extern "C" {
    void             *ecore_con_client_del(Ecore_Con_Client *cl);
    void              ecore_con_client_data_set(Ecore_Con_Client *cl, const void *data);
    void             *ecore_con_client_data_get(Ecore_Con_Client *cl);
+   
+   int               ecore_con_ssl_available_get(void);
+
    
 #ifdef __cplusplus
 }
