@@ -1,6 +1,6 @@
 #include "evas_test_main.h"
 
-#include <directfb.h>
+#include <directfb/directfb.h>
 
 #include "Evas.h"
 #include "Evas_Engine_DirectFB.h"
@@ -56,7 +56,7 @@ main(int argc, char *argv[])
 
    DFBCHECK(dfb->GetInputDevice(dfb, DIDID_KEYBOARD, &keyboard));
    DFBCHECK(dfb->GetInputDevice(dfb, DIDID_MOUSE, &mouse));
-   DFBCHECK(dfb->CreateEventBuffer(dfb, DICAPS_ALL, &buffer));
+   DFBCHECK(dfb->CreateEventBuffer(dfb, &buffer));
 
    evas = evas_new();
    evas_output_method_set(evas, evas_render_method_lookup("directfb"));

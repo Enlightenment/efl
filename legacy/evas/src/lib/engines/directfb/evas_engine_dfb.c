@@ -167,6 +167,11 @@ evas_engine_directfb_output_setup(int w, int h, IDirectFB * dfb,
 
    if (dfb->CreateSurface(dfb, &dsc, &buf) == DFB_OK)
       re->backbuf = buf;
+   if (!buf)
+     {
+	printf("DFB engine: cannot create backbuf\n");
+	exit(-1);
+     }
    /* FIXME else exit with error. */
 
    re->backbuf->SetDrawingFlags(re->backbuf, flags);

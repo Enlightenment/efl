@@ -34,7 +34,7 @@
 #include <math.h>
 #include <time.h>
 
-#include <directfb.h>
+#include <directfb/directfb.h>
 #include "config.h"
 #include "Evas.h"
 #include "Evas_Engine_DirectFB.h"
