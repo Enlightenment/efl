@@ -134,10 +134,7 @@ ecore_add_child(Window win, Window child)
 	    return;
 	}
       xid->children_num++;
-      if (!xid->children)
-	xid->children = NEW(Window, xid->children_num);
-      else
-	REALLOC(xid->children, Window, xid->children_num);
+      REALLOC(xid->children, Window, xid->children_num);
       xid->children[xid->children_num - 1] = child;
     }
   xid = ecore_validate_xid(child);
