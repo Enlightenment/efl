@@ -9,3 +9,4 @@ util.lo
 edb.lo
 libecore_config.la
 ecore_config_ipc_ecore.la
+system.db

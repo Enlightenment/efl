@@ -5,18 +5,23 @@ INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore_ipc \
 -I$(top_srcdir)/
 
+DB = system.db
+CLEANFILES = $(DB)
+
 libecore_config_la_LDFLAGS = -version-info 1:0:0 \
 -L$(top_builddir)/src/lib/ecore/.libs
 
 ecore_config_ipc_ecore_la_LDFLAGS          = -no-undefined -module \
 -avoid-version -rdynamic -shared
 
-
 if BUILD_ECORE_CONFIG
 
 lib_LTLIBRARIES = libecore_config.la ecore_config_ipc_ecore.la
 include_HEADERS = \
 Ecore_Config.h
+
+config_DATA = $(DB)
+configdir = $(sysconfdir)
 
 libecore_config_la_SOURCES = \
 ecore_config.c \
@@ -43,6 +48,8 @@ $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
 $(top_builddir)/src/lib/ecore_config/libecore_config.la \
 -ledb
 
+$(DB):
+	sh build_$(DB).sh
 
 endif
 
@@ -55,3 +62,6 @@ ipc.h \
 util.c \
 util.h \
 edb.c
+
+CLEANFILES = $(DB)
+
