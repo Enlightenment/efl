@@ -396,11 +396,11 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
 	     _edje_emit(ed, "program,stop", pr->name);
 	     if (pr->after >= 0)
 	       {
-		  Edje_Program *pr;
+		  Edje_Program *pr2;
 		  
-		  pr = evas_list_nth(ed->collection->programs, 
+		  pr2 = evas_list_nth(ed->collection->programs, 
 				     pr->after);
-		  if (pr) _edje_program_run(ed, pr, 0);
+		  if (pr2) _edje_program_run(ed, pr2, 0);
 	       }
 	     _edje_recalc(ed);
 	  }
