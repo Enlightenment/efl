@@ -161,7 +161,7 @@ char          *ecore_config_bundle_get_label(Ecore_Config_Bundle *ns);
                       
 
 int            ecore_config_init(char *name);
-int            ecore_config_exit(void);
+int            ecore_config_shutdown(void);
 
 int            ecore_config_load(void);
 int            ecore_config_load_file(char *file);

@@ -381,7 +381,6 @@ int ecore_config_set_theme_preview_group(const char *key, char *group) {
       return ECORE_CONFIG_ERR_FAIL;
     }
   if (e->data) free(e->data);
-  printf("Set group of %s on key %s\n", group, key);
   e->data=strdup(group);
 
   return ret; }
@@ -596,7 +595,7 @@ Ecore_Config_Bundle *ecore_config_bundle_new(Ecore_Config_Server *srv,const char
   if((t=malloc(sizeof(Ecore_Config_Bundle)))) {
     memset(t,0,sizeof(Ecore_Config_Bundle));
 
-    t->identifier=identifier;
+    t->identifier=(char *)identifier;
     t->serial=++ss;
     t->owner=srv->name;
     t->next=srv->bundles;
@@ -679,7 +678,7 @@ int ecore_config_init(char *name) {
   return ECORE_CONFIG_ERR_SUCC;
 }
 
-int ecore_config_exit(void) {
+int ecore_config_shutdown(void) {
   int ret;
   ret = _ecore_config_ipc_exit();
   free(__ecore_config_app_name);
