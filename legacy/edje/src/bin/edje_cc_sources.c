@@ -60,8 +60,9 @@ static void
 source_fetch_file(char *fil, char *filname)
 {
    FILE *f;
-   char buf[256 * 1024];
+   char buf[256 * 1024], *dir = NULL;
    long sz;
+   ssize_t dir_len = 0;
    SrcFile *sf;
    
    f = fopen(fil, "rb");
@@ -136,28 +137,28 @@ source_fetch_file(char *fil, char *filname)
 			      forgetit = 1;
 			    else
 			      {
-				 char *slash, *dir = NULL;
-				 ssize_t dir_len = 0, l = 0;
+				 char *slash;
+				 ssize_t l = 0;
 
-				 /* get the directory of the current file */
-				 if (strrchr (filname, '/'))
+				 /* get the directory of the current file
+				  * if we haven't already done so
+				  */
+				 if (!dir && strrchr (filname, '/'))
 				   {
 				      dir = mem_strdup(filname);
 				      slash = strrchr (dir, '/');
 				      *slash = '\0';
 				      dir_len = strlen (dir);
-				      l++; /* one extra char for the delimiter */
 				   }
 
-				 l += pp - p + dir_len;
+				 l = pp - p + dir_len + 1;
 				 file = mem_alloc(l);
 
 				 if (!dir_len)
-				   snprintf(file, l, "%s", p + 1);
+				   snprintf(file, l - 1, "%s", p + 1);
 				 else
 				   snprintf(file, l, "%s/%s", dir, p + 1);
 
-				 free (dir);
 				 forgetit = 1;
 			      }
 			 }
@@ -176,6 +177,7 @@ source_fetch_file(char *fil, char *filname)
 	     free(file);
 	  }
      }
+   free (dir);
    fclose(f);
 }
 
