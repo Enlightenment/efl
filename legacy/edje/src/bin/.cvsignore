@@ -5,3 +5,4 @@ Makefile.in
 edje
 edje_ls
 edje_cc
+edje_decc
