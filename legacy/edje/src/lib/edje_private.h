@@ -15,7 +15,10 @@
 
 #include <math.h>
 #include <fnmatch.h>
+
+#ifdef HAVE_ALLOCA_H
 #include <alloca.h>
+#endif
 
 #include "Edje_Edit.h"
 
