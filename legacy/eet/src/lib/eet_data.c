@@ -817,7 +817,7 @@ eet_data_image_jpeg_alpha_convert(int *size, void *data, int w, int h, int alpha
      {
 	int i;
 	
-	for (i = 0; i < ((w * h) + 3); i++) SWAP32(header[i]);
+	for (i = 0; i < 3; i++) SWAP32(header[i]);
      }
    memcpy(d + 12, d1, sz1);
    memcpy(d + 12 + sz1, d2, sz2);
