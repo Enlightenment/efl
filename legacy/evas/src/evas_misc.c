@@ -116,14 +116,30 @@ evas_new(void)
    return e;
 }
 
+static void
+_evas_x_err(Display *display, XErrorEvent *ev)
+{
+   display = NULL;
+   ev = NULL;
+}
+
 void
 evas_free(Evas e)
 {
    Evas_List l;
 
    if (!e) return;
-   if (e->current.created_window)
-      XDestroyWindow(e->current.display, e->current.drawable);
+   if ((e->current.display) && 
+       (e->current.created_window) && 
+       (e->current.drawable))
+     {
+	XErrorHandler prev_handler;
+	
+	prev_handler = XSetErrorHandler((XErrorHandler)_evas_x_err);
+	XDestroyWindow(e->current.display, e->current.drawable);
+	XSync(e->current.display, False);
+	XSetErrorHandler(prev_handler);
+     }
    for (l = e->layers; l; l = l->next)
      {
 	Evas_Layer layer;

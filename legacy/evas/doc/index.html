@@ -14,6 +14,9 @@ alink=#ccaacc>
 <b>Documentation for programming using Evas</b><br>
 By Carsten Haitzler<br>
 Copyright (C) 2000<br>
+<br>
+VA Linux Systems<br>
+<br>
 </center>
 </font>
 <hr>
@@ -102,7 +105,16 @@ Assembly optimizations for the core routines.
 <p>
 <blockquote>
 <p>
+Before you embark on any programming using Evas, it is highly recommended
+that you read this API refernce to become familiar with the interface
+provided to Evas before first using it. The documentation for each function
+call in Evas not only documents it but also gives insight into sibtle side
+effects it may have, and other aspects of its use that are not necessarily
+completely part of that call's specific use.
+<p>
 <b>Basic Types</b>
+<p>
+<blockquote>
 <p>
 Here is a list of the basic types of objects Evas deals with and can
 generate. It is small to keep things simple.
@@ -169,19 +181,348 @@ for.
 <p>
 This is an enumerated type to specify what kind of event would trigger a
 callback to be called when attaching a callback to an object. Legal values
-for this are CALLBACK_MOUSE_IN (when the mouse enters the bounds of this 
-object), CALLBACK_MOUSE_OUT (when the mouse leaves the bounadry of this 
-object), CALLBACK_MOUSE_DOWN (when a mouse button is pressed in this object),
-CALLBACK_MOUSE_UP (when a mouse button is raised in this object),
-CALLBACK_MOUSE_MOVE (when the mouse mpoves around in this object) and
-CALLBACK_FREE (when this object is actually freed so the application can
-find free and data attached to the object if it needs to).
+for this are <b>CALLBACK_MOUSE_IN</b> (when the mouse enters the bounds of 
+this object), <b>CALLBACK_MOUSE_OUT</b> (when the mouse leaves the bounadry 
+of this object), <b>CALLBACK_MOUSE_DOWN</b> (when a mouse button is pressed 
+in this object), <b>CALLBACK_MOUSE_UP</b> (when a mouse button is raised in 
+this object), <b>CALLBACK_MOUSE_MOVE</b> (when the mouse mpoves around in 
+this object) and <b>CALLBACK_FREE</b> (when this object is actually freed so 
+the application can find free and data attached to the object if it needs to).
 <p>
 <font color=#442244>Evas_Image_Format</font>:
 <p>
+Currently this is not useful as you cannot create an image from application
+provided data yet.
 <p>
 <font color=#442244>Evas_Render_Method</font>:
 <p>
+This is an enumerated type specifying the rendering subsystem to be used for
+rendering.
+<p>
+<blockquote>
+<p>
+<b>RENDER_METHOD_ALPHA_SOFTWARE</b> when specified requests that henceforth
+the evas use optimized software rendering for display. This is the default.
+It uses Imlib2 to do this rendering. This form of rendering, if on a local X
+display is almost compleyely bound by CPU speed, and toa slightly lesser
+extent memory bandwidth and graphics bus bandwidth. Not much else really
+affects the speed (graphics card included).
+<p>
+<b>RENDER_METHOD_BASIC_HARDWARE</b> when used, used basic X primities to do
+rendering. This means lines, rectangles, pixmaps etc. It is necessary to
+create some of the building blocks of these primitives via Imlib2 when they
+are first needed, but therafter the windowing system, X, is responsible for
+pasting pixmaps, drawing rectangles, lines etc. The speed of this may vary
+depending how much new data needs to be generated as pixmaps, how much can
+be recycled, the speed of your CPU, the amount of hardware acceleration your
+X Server is able to use to perform these operations, the speed of the
+graphics hardware and so on. This rendering method is probably very good for
+situations where the data is readily recyclable (i.e. images don't change size
+much and there are not many gradients), and the host machine has a slow cpu,
+but a reasonable graphics card and reasonably well accelerated X Server. You
+lose alpha blending when using this rendering engine, as if smooth scaling
+is turned on it will apporoximate using dithering, so quality will
+definitely suffer, but in situations it may bring speed increases.
+<p>
+<b>RENDER_METHOD_3D_HARDWARE</b> is a rendering back end that uses OpenGL to
+perform the dirty work of blending, scaling, drawing lines, rectangles, text
+etc. when used. If you have an X Server that supports OpenGL, accelerates
+it well through the graphics hardware, this rendering method could give you
+massive speed increases, even over software, as well as retain quality of
+display. With good graphics cards and good acceleration this could mean an
+easy 10-100 fold speedup of rendering. This will depend on the combination
+of X Server and graphics hardware. If you only have software OpenGL
+available be prepared for a shock. Unlike what may almost be logical,
+software OpenGL is not like Imlib2 software rendering. It is many many many
+tmes slower. Imlib2 software rendering should easily be 50-100 times faster.
+If you are experiencing massively slow displays in Evas when using this
+rendering mode, it is because your OpenGL support is software only. If when
+Evas was compiled, it could not find OpenGL on the system it was building
+on, OpenGL support will be disabled and silently fall back to software
+Imlib2 rendering. If the X Server Evas is displaying on does not support OpenGL
+it will also fall back silently to Imlib2 software rendering. Unlike the
+Imlib2 software and X11 primitive engine rendering this subsystem can only
+render to a window, and not to a pixmap.
+<p>
+<b>RENDER_METHOD_ALPHA_HARDWARE</b> is currently unimplimented - it is
+intended for use when an actual alpha blending/rendering extension exists in
+X (it is being worked on at the current time).
+<p>
+<b>RENDER_METHOD_IMAGE</b> is used for rendering to a virtual Imlib2 image.
+This is useful for when your display of an Evas is destined for something
+other than a window - for example being able to render a canvas and save it
+to disk as a jpeg or png file, or to be able to take this Image and process
+it later. This rendering method is about half the speed of Imlib2 software
+rendering as some optimizations cannot be performed (due to the nature of it
+being able to render a canvas on top of already existing graphic data in the
+destination image).
+<p>
+</blockquote>
+<p>
+</blockquote>
+<p>
+<b>Function Calls</b>
+<p>
+<blockquote>
+<p>
+<pre><font face=fixed color=#442244><pre>
+Evas evas_new_all(Display *display, 
+                  Window parent_window,
+                  int x, 
+		  int y, 
+		  int w, 
+		  int h,
+                  Evas_Render_Method render_method,
+                  int colors, 
+		  int font_cache, 
+		  int image_cache,
+		  char *font_dir);
+</font></pre>
+<p>
+This function creates a new Evas, a window for it, initialises it's
+rendering mode, font and image cache sizes, font path, the number of colors
+it will use and on success returns a valid Evas handle. The Evas is
+completely empty to begin and the window is not mapped. You do not need to
+destroy the window yourself when you free this Evas as Evas will destroy it
+for you. If it fails it will return NULL. The window it creates will be a
+child of the <em>parent_window</em>, and be of size <em>w</em> x <em>h</em>
+with a top-left corner at <em>x</em>, <em>y</em>. It will have a border width 
+of 0. It is suggested you set an event mask on this window after creation and 
+check for expose events as well as mouse events, handing them back to Evas 
+with its event and update handling functions to ensure the evas gets redrawn 
+and handles events properly. If you resize this window you need to tell evas 
+of the resize too by setting the output size and where needed adjusting the 
+output viewport. You cannot change the rendering method or number of colors 
+allocated once the evas has been created. The <em>image_cache</em> is the size
+of the image cache in bytes. The <em>font_cache</em> is also in bytes. 
+Remember that Evas totally relies on the caches for all rendering - all 
+images and fonts are loaded from cache every time they need rendering and 
+freed afterwards. If your cache is small, perfromance will be horrid - 
+regardless of rendering method. If memory is low or you know you do not need 
+to render again for a while you can flush the caches. You can adjust cache 
+size any time you like, growing it or shrinking it as available
+memory varies for best perfromance. The <em>font_dir</em> is a directory on
+the host system where truetype font files can be found for Evas to use for text
+rendering. The <em>display</em> is the X display on which the Evas will
+reside.
+<p>
+<pre><font face=fixed color=#442244><pre>
+Window evas_get_window(Evas e);
+</font></pre>
+<p>
+This is a simple function. It returns the X Window ID of the window the Evas
+<em>e</em> is using. If you created the evas with evas_new_all() the Window ID
+returned will be the window created by Evas. If Evas created the window you
+should not destroy it yourself. It will be destroyed when the Evas is freed.
+You may map, unmap set properties on this window, resize, reparent, move
+etc. as you please.
+<p>
+<pre><font face=fixed color=#442244><pre>
+Display *evas_get_display(Evas e);
+</font></pre>
+<p>
+This function uses the current display pointer being used by the Evas
+<em>e</em>. If no display is being used NULL is returned.
+<p>
+<pre><font face=fixed color=#442244><pre>
+Visual *evas_get_visual(Evas e);
+</font></pre>
+<p>
+This function returns the currently used X Visual for the Evas <em>e</em> - 
+if this is not used or set NULL is returned.
+<p>
+<pre><font face=fixed color=#442244><pre>
+Colormap evas_get_colormap(Evas e);
+</font></pre>
+<p>
+This returns the X Colormap being used for the Evas <em>e</em>, if there is a
+Colormap being used.
+<p>
+<pre><font face=fixed color=#442244><pre>
+int evas_get_colors(Evas e);
+</font></pre>
+<p>
+This returns the maximum number of color entries the Evas <em>e</em> can 
+allocate when on a pseudo-color display (i.e. 8 bit color). Evas may allocate 
+fewer colors than this if fewer are available on the display.
+<p>
+<pre><font face=fixed color=#442244><pre>
+Imlib_Image evas_get_image(Evas e);
+</font></pre>
+<p>
+Calling this function will return the Imlib_Image the Evas <em>e</em> is 
+rendering onto (if there is one), otherwise it returns NULL.
+<p>
+<pre><font face=fixed color=#442244><pre>
+Evas_Render_Method evas_get_render_method(Evas e);
+</font></pre>
+<p>
+This returns the current Rendering Method the Evas <em>e</em> is using. You may
+not change this any time after Evas first renders this Evas.
+<p>
+<pre><font face=fixed color=#442244><pre>
+Evas evas_new(void);
+</font></pre>
+<p>
+This function creates a new Evas which is completely uninitialized. It
+returns a handle to the Evas when complete.
+<p>
+<pre><font face=fixed color=#442244><pre>
+void evas_free(Evas e);
+</font></pre>
+<p>
+Calling this function frees the Evas <em>e</em>. After freeing it the Evas 
+handle <em>e</em> is no longer valid and should not be used. If Evas created 
+a window for you for this Evas it will be destroyed at this time.
+<p>
+<pre><font face=fixed color=#442244><pre>
+void evas_update_rect(Evas e, int x, int y, int w, int h);
+</font></pre>
+<p>
+Call this function for the Evas <em>e</em> when the rectangle <em>x
+<p>
+<pre><font face=fixed color=#442244><pre>
+void evas_render(Evas e);
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+<pre><font face=fixed color=#442244><pre>
+</font></pre>
+<p>
+<p>
+</blockquote>
 <p>
 </blockquote>
 </font>
