@@ -1312,7 +1312,7 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 		  int len;
 		  Embryo_Cell ep_addr, *addr;
 		  
-		  len = strlen(pr->string);
+		  len = pr->cell_array_size;
 		  ep_addr = embryo_data_heap_push(ep, len + 1);
 		  if (ep_addr == EMBRYO_CELL_NONE)
 		    {

@@ -4,4 +4,4 @@
 #define TEST_INC
 
 native printf(format[], ...);
-native call(string[], string2[], val);
+native native_rec(arg1, str[], arg2);

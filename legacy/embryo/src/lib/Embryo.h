@@ -71,15 +71,16 @@ extern "C" {
    typedef struct _Embryo_Program      Embryo_Program;
    typedef int                         Embryo_Function;
 
-   typedef union {
-      float f;
-      Embryo_Cell c;
-   } FloatEmbryoCell;
+   typedef union
+     {
+	float       f;
+	Embryo_Cell c;
+     } Embryo_Float_Cell;
 
 /** Float to Embryo_Cell */
-#define EMBRYO_FLOAT_TO_CELL(f) ((FloatEmbryoCell) f).c
+#define EMBRYO_FLOAT_TO_CELL(f) ((Embryo_Float_Cell) f).c
 /** Embryo_Cell to float */
-#define EMBRYO_CELL_TO_FLOAT(c) ((FloatEmbryoCell) c).f
+#define EMBRYO_CELL_TO_FLOAT(c) ((Embryo_Float_Cell) c).f
    
    EAPI int              embryo_init(void);
    EAPI int              embryo_shutdown(void);

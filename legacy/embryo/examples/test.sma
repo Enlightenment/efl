@@ -102,7 +102,17 @@ main()
    
    printf("\n\n");
    
+   printf("native_rec(1, 77)\n");
+   native_rec(1, "Smelly", 77);
+   printf("native_rec() done\n");
+   
    return 7;
+}
+
+public rec1(arg1, str[], arg2)
+{
+  printf("arg1=%i str=%s arg2=%i\n", arg1, str, arg2);
+  return native_rec(arg1 + 1, str, arg2);
 }
 
 vargs(a, b, ...)
