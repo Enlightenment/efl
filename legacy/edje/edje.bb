@@ -35,6 +35,6 @@ PACKAGES += "edje-tools edje-compiler"
 
 FILES_${PN} = "${libdir}/libedje*.so*"
 FILES_${PN}-dev += "${bindir}/edje-config ${libdir}/pkgconfig"
-FILES_${PN}-compiler = "${bindir}/edje_cc ${datadir}/edje/data/include"
+FILES_${PN}-compiler = "${bindir}/edje_cc ${datadir}/edje/include"
 FILES_${PN}-tools = "${bindir}/edje ${bindir}/edje_ls ${datadir}/edje/data/test"
 

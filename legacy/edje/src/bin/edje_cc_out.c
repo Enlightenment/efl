@@ -670,7 +670,7 @@ data_write(void)
 		    {
 		       snprintf(buf, sizeof(buf),
 				EMBRYO_PREFIX"/bin/embryo_cc -i %s -o %s %s", 
-				DAT"data/include", tmpo, tmpn);
+				DAT"include", tmpo, tmpn);
 		       ret = system(buf);
 		       if (ret != 0)
 			 {
