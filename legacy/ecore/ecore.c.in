@@ -18,9 +18,64 @@ These routines are used for Ecore Library interaction
 @author Chris Ross <chris\@darkrock.co.uk>
 @author Term <term\@twistedpath.org>
 @author Tilman Sauerbeck <tilman\@code-monkey.de>
-@date 2000-2003
+@date 2000-2004
 
+@section intro Introduction
 
+Ecore is a library of convenience functions.
+
+Currently, Ecore provides the following modules:
+@li @ref Ecore_Main_Loop_Page
+@li @ref Ecore_Config_Page
+@li @ref X_Window_System_Page
+
+@section compiling How to compile using Ecore?
+
+This section has to be documented. Below is just a quick line to handle all
+Ecore modules at once.
+
+@verbatim
+gcc *.c \
+-I/usr/local/include -I/usr/X11R6/include \
+-L/usr/local/lib -L/usr/X11R6/lib \
+-lecore -lecore_evas -lecore_x -lecore_fb -lecore_job \
+`evas-config --cflags --libs`
+@endverbatim
+
+@section install How is it installed?
+
+Suggested configure options for evas for a Linux desktop X display:
+
+@verbatim
+./configure \
+--enable-ecore-x \
+--enable-ecore-fb \
+--enable-ecore-evas \
+--enable-ecore-evas-gl \
+--enable-ecore-job \
+--enable-ecore-con \
+--enable-ecore-ipc \
+--enable-ecore-txt
+make CFLAGS="-O9 -mpentiumpro -march=pentiumpro -mcpu=pentiumpro"
+@endverbatim
+
+@section tutorial Ecore Tutorial
+
+You will find a more comprehensive @ref tut here, going through many examples
+with tips and hints as to how best do some things.
+
+@todo (1.0) Document API
+
+*/
+
+/** @page tut Ecore Tutorial
+
+Here is a tutotial for using Ecore...
+
+*/
+
+/**
+@page Ecore_Main_Loop_Page The Ecore Main Loop
 
 @section intro What is Ecore?
 
@@ -141,125 +196,198 @@ things, but in principle, programs don't get any more complex. You add more
 event handlers, for more events, will have more timers and such, BUT it all
 follows the same principles as shown in this example.
 
-
-
-@section compiling How to compile using Ecore?
-
-This section has to be documented. Below is just a quick line to handle all
-Ecore modules at once.
-
-@verbatim
-gcc *.c \
--I/usr/local/include -I/usr/X11R6/include \
--L/usr/local/lib -L/usr/X11R6/lib \
--lecore -lecore_evas -lecore_x -lecore_fb -lecore_job \
-`evas-config --cflags --libs`
-@endverbatim
-
-
-
-@section install How is it installed?
-
-Suggested configure options for evas for a Linux desktop X display:
-
-@verbatim
-./configure \
---enable-ecore-x \
---enable-ecore-fb \
---enable-ecore-evas \
---enable-ecore-evas-gl \
---enable-ecore-job \
---enable-ecore-con \
---enable-ecore-ipc \
---enable-ecore-txt
-make CFLAGS="-O9 -mpentiumpro -march=pentiumpro -mcpu=pentiumpro"
-@endverbatim
-
-
-
-@section tutorial Ecore Tutorial
-
-You will find a more comprehensive @ref tut here, going through many examples
-with tips and hints as to how best do some things.
-
-
-
-
-
-@todo (1.0) Document API
-
-*/
-
-/** @page tut Ecore Tutorial
-
-Here is a tutotial for using Ecore...
-
 */
 
 /**
-@page The Enlightened Property Library
+@page Ecore_Config_Page The Enlightened Property Library
 
 The Enlightened Property Library (Ecore_Config) is an adbstraction
 from the complexities of writing your own configuration. It provides
 many features using the Enlightenment 17 development libraries.
 
+To use the library, you:
+@li Set the default values of your properties.
+@li Load the configuration from a file.  You must set the default values
+    first, so that the library knows the correct type of each argument.
 
+See @ref config_basic_example.c for an example.
+*/
 
- */
+/**
+@page Ecore_ADT_Page Ecore Abstract Data Types
+
+This page briefly describes the different abstract data types
+that are provided by the Ecore library for general usage.  You need to
+include the @link Ecore_Data.h Ecore_Data.h @endlink to use them.
+
+@section Ecore_ADT_List List
+
+A list is a simple data type where one each piece of data points to
+another piece of data.
+
+Associated modules include the following:
+@li @ref Ecore_Data_List_Add_Item_Group
+
+@section Ecore_ADT_DList Doubly Linked List
+
+A doubly linked list is like a linked list, only each piece of data
+can also point to the piece before it.
+
+@section Ecore_ADT_Hash Hash
+
+@todo Finish this.
+*/
+
+/**
+@page X_Window_System_Page X Window System
+
+The Ecore library includes a wrapper for handling the X window system.
+This page briefly explains what the X window system is and various terms
+that are used.
+*/
 
 // GROUP DEFINITIONS
 
 /**
- * @defgroup Ecore_Main_Loop_Group Main Loop Functions
- *
- * Functions used to control the main loop.
+@defgroup Ecore_Main_Loop_Group Main Loop Functions
+
+Functions used to control the main loop.
+*/
+
+/**
+@defgroup Ecore_Timer_Group Ecore Timer
+
+The timer allows callbacks to be called at specific intervals.
  */
 
 /**
- * @defgroup Ecore_Timer_Group Ecore Timer
- *
- * The timer allows callbacks to be called at specific intervals.
- */
+@defgroup Ecore_Job_Group Ecore Jobs
+
+You can queue jobs that are to be done by the main loop when the current
+event is dealt with.
+*/
 
 /**
- * @defgroup Idle_Group Idle Handlers
- *
- * Callbacks that are called when the program enters or exits an idle state.
- *
- * The ecore main loop enters an idle state when it is waiting for
- * timers to time out, data to come in on a file descriptor or any
- * other event to occur.  You can set callbacks to be called when the
- * main loop enters an idle state, during an idle state or just after
- * the program wakes up.
- *
- * Enterer callbacks are good for updating your program's state, if it
- * has a state engine.  Once all of the enterer handlers are called,
- * the program will enter a "sleeping" state.
- *
- * Idler callbacks are called when the main loop has called all
- * enterer handlers.  They are useful for interfaces that require
- * polling and timers would be too slow to use.
- *
- * If no idler callbacks are specified, then the process literally
- * goes to sleep.  Otherwise, the idler callbacks are called
- * continuously while the loop is "idle", using as much CPU as is
- * available to the process.
- *
- * Exiter callbacks are called when the main loop wakes up from an idle
- * state.
- */
+@defgroup Idle_Group Idle Handlers
+
+Callbacks that are called when the program enters or exits an idle state.
+
+The ecore main loop enters an idle state when it is waiting for timers
+to time out, data to come in on a file descriptor or any other event
+to occur.  You can set callbacks to be called when the main loop
+enters an idle state, during an idle state or just after the program
+wakes up.
+
+Enterer callbacks are good for updating your program's state, if it
+has a state engine.  Once all of the enterer handlers are called, the
+program will enter a "sleeping" state.
+
+Idler callbacks are called when the main loop has called all enterer
+handlers.  They are useful for interfaces that require polling and
+timers would be too slow to use.
+
+If no idler callbacks are specified, then the process literally goes
+to sleep.  Otherwise, the idler callbacks are called continuously
+while the loop is "idle", using as much CPU as is available to the
+process.
+
+Exiter callbacks are called when the main loop wakes up from an idle
+state.
+
+*/
+
+/**
+@defgroup Ecore_Data_List_Creation_Group List Creation/Destruction Functions
+
+Functions that create, initialize and destory Ecore_Lists.
+*/
+
+/**
+@defgroup Ecore_Data_List_Add_Item_Group List Item Adding Functions
+
+Functions that are used to add nodes to an Ecore_List.
+*/
+
+/**
+@defgroup Ecore_Data_List_Remove_Item_Group List Item Removing Functions
+
+Functions that remove nodes from an Ecore_List.
+*/
+
+/**
+@defgroup Ecore_Data_List_Traverse_Group List Traversal Functions
+
+Functions that can be used to traverse an Ecore_List.
+*/
+
+/**
+@defgroup Ecore_Data_List_Node_Group List Node Functions
+
+Functions that are used in the creation, maintenance and destruction of
+Ecore_List nodes.
+*/
+
+/**
+@defgroup Ecore_Config_Lib_Group Ecore Config Library Functions
+
+Functions that are used to start up and shutdown the Ecore Configuration
+Library.
+*/
+
+/**
+@defgroup Ecore_Config_Property_Group Ecore Config Property Functions
+
+Functions that retrieve or set the attributes relating to a property.
+*/
+
+/**
+@defgroup Ecore_Config_Get_Group Ecore Config Retrievers
+
+Functions that return the value of a property, based on its key.
+*/
+
+/**
+@defgroup Ecore_Config_Default_Group Ecore Config Defaults
+
+Functions that are used to set the default values of properties.
+*/
+
+/**
+@defgroup Ecore_Config_Create_Group Ecore Config Create Functions
+
+Convenience functions that set default values, bounds, option values and
+descriptions in one call.
+*/
+
+/**
+@defgroup Ecore_Config_Set_Group Ecore Config Setters
+
+Functions that set the value of a property.
+*/
+
+/**
+@defgroup Ecore_Config_Listeners_Group Ecore Config Listeners
+
+Functions that set and unset property listener callbacks.
+*/
+
+/**
+@defgroup Ecore_Config_File_Group Ecore Config File Functions
+
+Functions that are used to load and save properties from and to files.
+*/
 
 // EXAMPLES
 
 /**
- * @example args_example.c
- * Shows how to set and retrieve the program arguments.
- */
+@example args_example.c
+Shows how to set and retrieve the program arguments.
+*/
 
 /**
- * @example event_handler_example.c
- * Shows how to use event handlers.
- */
+@example event_handler_example.c
+Shows how to use event handlers.
+*/
 
 /**
  * @example timer_example.c

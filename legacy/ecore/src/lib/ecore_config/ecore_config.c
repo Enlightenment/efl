@@ -27,7 +27,7 @@ static char        *_ecore_config_type[] =
 /**
  * Removes the given property from the local configuration and destroys it.
  * @param  e Property to destroy.
- * @return NULL
+ * @return @c NULL
  */
 Ecore_Config_Prop  *
 ecore_config_dst(Ecore_Config_Prop * e)
@@ -78,11 +78,11 @@ ecore_config_dst(Ecore_Config_Prop * e)
 }
 
 /**
- * Returns the property of the config bundle with the given key.
- * @param  t   Ecore_Config_Bundle to search.
- * @param  key The unique name of the wanted property.
- * @return The property that corresponds to tnhe given key.  NULL if the key
- *         could not be found.
+ * Returns the property with the given key.
+ * @param   key The unique name of the wanted property.
+ * @return  The property that corresponds to the given key.  @c NULL if the
+ *          key could not be found.
+ * @ingroup Ecore_Config_Get_Group
  */
 Ecore_Config_Prop  *
 ecore_config_get(const char *key)
@@ -108,6 +108,7 @@ ecore_config_get(const char *key)
  * @param   e Property to get the type of.
  * @returns The type of the property.  If the property is invalid, then the
  *          string "not found" is returned.
+ * @ingroup Ecore_Config_Property_Group
  */
 const char         *
 ecore_config_type_get(const Ecore_Config_Prop * e)
@@ -121,8 +122,9 @@ ecore_config_type_get(const Ecore_Config_Prop * e)
 
 /**
  * Obtains the data pointed to by the specified property.
- * @param  key The property key.
- * @return Data pointer used by the property.
+ * @param   key The property key.
+ * @return  Data pointer used by the property.
+ * @ingroup Ecore_Config_Get_Group
  */
 void               *
 ecore_config_data_get(const char *key)
@@ -136,9 +138,10 @@ ecore_config_data_get(const char *key)
 
 /**
  * Returns the specified property as a string.
- * @param  key The property key.
- * @return The string value of the property.  The function returns NULL if the
- *         property is not a string or is not set.
+ * @param   key The property key.
+ * @return  The string value of the property.  The function returns @c NULL if
+ *          the property is not a string or is not set.
+ * @ingroup Ecore_Config_Get_Group
  */
 char               *
 ecore_config_string_get(const char *key)
@@ -151,9 +154,10 @@ ecore_config_string_get(const char *key)
 
 /**
  * Returns the specified property as a long integer.
- * @param  key The property key.
- * @return The integer value of the property.  The function returns 0 if the
- *         property is not an integer or is not set.
+ * @param   key The property key.
+ * @return  The integer value of the property.  The function returns 0 if the
+ *          property is not an integer or is not set.
+ * @ingroup Ecore_Config_Get_Group
  */
 long
 ecore_config_int_get(const char *key)
@@ -166,9 +170,10 @@ ecore_config_int_get(const char *key)
 
 /**
  * Returns the specified property as a float.
- * @param  key The property key.
- * @return The float value of the property.  The function returns 0.0 if the 
- *         property is not a float or is not set.
+ * @param   key The property key.
+ * @return  The float value of the property.  The function returns 0.0 if the 
+ *          property is not a float or is not set.
+ * @ingroup Ecore_Config_Get_Group
  */
 float
 ecore_config_float_get(const char *key)
@@ -183,12 +188,13 @@ ecore_config_float_get(const char *key)
 
 /**
  * Finds the red, green and blue values of a color property.
- * @param  key The property key.
- * @param  r   A pointer to an integer to store the red value into.
- * @param  g   A pointer to an integer to store the green value into.
- * @param  b   A pointer to an integer to store the blue value into.
- * @return @a ECORE_CONFIG_ERR_SUCC on success.  @a ECORE_CONFIG_ERR_FAIL
- *         otherwise.
+ * @param   key The property key.
+ * @param   r   A pointer to an integer to store the red value into.
+ * @param   g   A pointer to an integer to store the green value into.
+ * @param   b   A pointer to an integer to store the blue value into.
+ * @return  @c ECORE_CONFIG_ERR_SUCC on success.  @c ECORE_CONFIG_ERR_FAIL
+ *          otherwise.
+ * @ingroup Ecore_Config_Get_Group
  */
 int
 ecore_config_rgb_get(const char *key, int *r, int *g, int *b)
@@ -209,8 +215,9 @@ ecore_config_rgb_get(const char *key, int *r, int *g, int *b)
 
 /**
  * Returns a color property as a string of hexadecimal characters.
- * @param  key The property key.
- * @return A string of hexadecimal characters in the format #rrggbb.
+ * @param   key The property key.
+ * @return  A string of hexadecimal characters in the format #rrggbb.
+ * @ingroup Ecore_Config_Get_Group
  */
 char               *
 ecore_config_rgbstr_get(const char *key)
@@ -224,9 +231,10 @@ ecore_config_rgbstr_get(const char *key)
 
 /**
  * Returns a theme property.
- * @param  key The property key.
- * @return The name of the theme the property refers to.  The function returns
- *         NULL if the property is not a theme or is not set.
+ * @param   key The property key.
+ * @return  The name of the theme the property refers to.  The function returns
+ *          @c NULL if the property is not a theme or is not set.
+ * @ingroup Ecore_Config_Get_Group
  */
 char               *
 ecore_config_theme_get(const char *key)
@@ -239,9 +247,10 @@ ecore_config_theme_get(const char *key)
 
 /**
  * Retrieves the key as a string.
- * @param  key The property key.
- * @return Returns a character array in the form of 'key:type=value'.  NULL is
- *         returned if the property does not exist.
+ * @param   key The property key.
+ * @return  Returns a character array in the form of 'key:type=value'.  @c NULL
+ *          is returned if the property does not exist.
+ * @ingroup Ecore_Config_Get_Group
  */
 char               *
 ecore_config_as_string_get(const char *key)
@@ -346,12 +355,12 @@ ecore_config_bound(Ecore_Config_Prop * e)
  *
  * This function first checks to see if the property exists.  If it does, then
  * the type of the stored property is returned.  Otherwise, the function tries
- * to guess the type of the property based on @a val.
+ * to guess the type of the property based on @p val.
  *
  * @param  key The property key.
  * @param  val The value in string form.
  * @return The type of the property determined by the function.  Note that if
- *         val is NULL, PT_NIL will be returned.
+ *         val is @c NULL, @c PT_NIL will be returned.
  */
 int
 ecore_config_type_guess(const char *key, char *val)
@@ -504,8 +513,9 @@ ecore_config_add(const char *key, char *val)
  * Sets the description field of the indicated property.
  * @param  key  The property key.
  * @param  desc Description string.
- * @note The description string is copied for the property's use.  You can
- *       free @a desc once this function is called.
+ * @note   The description string is copied for the property's use.  You can
+ *         free @p desc once this function is called.
+ * @ingroup Ecore_Config_Property_Group
  */
 int
 ecore_config_describe(const char *key, char *desc)
@@ -518,6 +528,14 @@ ecore_config_describe(const char *key, char *desc)
    return ECORE_CONFIG_ERR_SUCC;
 }
 
+/**
+ * Set the short option character of a property.
+ * @param  key       The property key.
+ * @param  short_opt Character used to indicate the value of a property
+ *                   given on the command line.
+ * @return @c ECORE_CONFIG_ERR_SUCC on success.  @c ECORE_CONFIG_ERR_NODATA
+ *         is returned if the property does not exist.
+ */
 int
 ecore_config_short_opt_set(const char *key, char short_opt)
 {
@@ -529,6 +547,14 @@ ecore_config_short_opt_set(const char *key, char short_opt)
    return ECORE_CONFIG_ERR_SUCC;
 }
 
+/**
+ * Set the long option string of the property.
+ * @param  key      The property key.
+ * @param  long_opt String used to indicate the value of a property given
+ *                  on the command line.
+ * @return @c ECORE_CONFIG_ERR_SUCC on success.  @c ECORE_CONFIG_ERR_NODATA
+ *         is returned if the property does not exist.
+ */
 int
 ecore_config_long_opt_set(const char *key, char *long_opt)
 {
@@ -544,11 +570,10 @@ ecore_config_long_opt_set(const char *key, char *long_opt)
 
 /**
  * Sets the indicated property to the given value and type.
- * @param  t    Configuration bundle to use.
  * @param  key  The property key.
  * @param  val  A pointer to the value to set the property to.
  * @param  type The type of the property.
- * @return ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @return @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
  */
 int
 ecore_config_typed_set(const char *key, void *val, int type)
@@ -573,7 +598,7 @@ ecore_config_typed_set(const char *key, void *val, int type)
    if ((ret = ecore_config_typed_val(e, val, type)) == ECORE_CONFIG_ERR_SUCC)
      {
 	for (l = e->listeners; l; l = l->next)
-	   l->listener(e->key, e->type, l->tag, l->data);
+ 	   l->listener(e->key, e->type, l->tag, l->data);
      }
    else
      {
@@ -587,10 +612,10 @@ ecore_config_typed_set(const char *key, void *val, int type)
 
 /**
  * Sets the indicated property to the value indicated by @a val.
- * @param  t   Configuration bundle to use.
- * @param  key The property key.
- * @param  val String representation of value to set.
- * @return ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @param   key The property key.
+ * @param   val String representation of value to set.
+ * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @ingroup Ecore_Config_Set_Group
  */
 int
 ecore_config_set(const char *key, char *val)
@@ -616,9 +641,10 @@ ecore_config_set(const char *key, char *val)
 
 /**
  * Sets the indicated property to the value given in the string.
- * @param  key The property key.
- * @param  val String representation of the value.
- * @return ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @param   key The property key.
+ * @param   val String representation of the value.
+ * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @ingroup Ecore_Config_Set_Group
  */
 int
 ecore_config_as_string_set(const char *key, char *val)
@@ -628,9 +654,10 @@ ecore_config_as_string_set(const char *key, char *val)
 
 /**
  * Sets the indicated property to the given integer.
- * @param  key The property key.
- * @param  val Integer to set the property to.
- * @return ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @param   key The property key.
+ * @param   val Integer to set the property to.
+ * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @ingroup Ecore_Config_Set_Group
  */
 int
 ecore_config_int_set(const char *key, int val)
@@ -640,9 +667,10 @@ ecore_config_int_set(const char *key, int val)
 
 /**
  * Sets the indicated property to the given string.
- * @param  key The property key.
- * @param  val String to set the property to.
- * @return ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @param   key The property key.
+ * @param   val String to set the property to.
+ * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @ingroup Ecore_Config_Set_Group
  */
 int
 ecore_config_string_set(const char *key, char *val)
@@ -652,9 +680,10 @@ ecore_config_string_set(const char *key, char *val)
 
 /**
  * Sets the indicated property to the given float value.
- * @param  key The property key.
- * @param  val Float to set the property to.
- * @return ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @param   key The property key.
+ * @param   val Float to set the property to.
+ * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @ingroup Ecore_Config_Set_Group
  */
 int
 ecore_config_float_set(const char *key, float val)
@@ -664,9 +693,10 @@ ecore_config_float_set(const char *key, float val)
 
 /**
  * Sets the indicated property to a color value.
- * @param  key The property key
- * @param  val Color value in RGB format.
- * @return ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @param   key The property key
+ * @param   val Color value in RGB format.
+ * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @ingroup Ecore_Config_Set_Group
  */
 int
 ecore_config_rgb_set(const char *key, char *val)
@@ -676,9 +706,10 @@ ecore_config_rgb_set(const char *key, char *val)
 
 /**
  * Sets the indicated property to a theme name.
- * @param  key The property key.
- * @param  val String giving the name of the theme.
- * @return ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @param   key The property key.
+ * @param   val String giving the name of the theme.
+ * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @ingroup Ecore_Config_Set_Group
  */
 int
 ecore_config_theme_set(const char *key, char *val)
@@ -688,9 +719,10 @@ ecore_config_theme_set(const char *key, char *val)
 
 /**
  * Sets the theme preview group of an indicated property.
- * @param  key   The property key.
- * @param  group The group name.
- * @return ECORE_CONFIG_ERR_SUCC on success.
+ * @param   key   The property key.
+ * @param   group The group name.
+ * @return  @c ECORE_CONFIG_ERR_SUCC on success.
+ * @ingroup Ecore_Config_Set_Group
  */
 int
 ecore_config_theme_preview_group_set(const char *key, char *group)
@@ -735,14 +767,15 @@ ecore_config_typed_default(const char *key, void *val, int type)
 
 /**
  * Sets the indicated property if it has not already been set or loaded.
- * @param  key  The property key.
- * @param  val  Default value of the key.
- * @param  lo   Lowest valid value for the key.
- * @param  hi   Highest valid value for the key.
- * @param  step Used by integer and float values.
- * @return ECORE_CONFIG_ERR_SUCC if there are no errors.
- * @note The lo, hi and step parameters are only used when storing integer and
- *       float properties.
+ * @param   key  The property key.
+ * @param   val  Default value of the key.
+ * @param   lo   Lowest valid value for the key.
+ * @param   hi   Highest valid value for the key.
+ * @param   step Used by integer and float values.
+ * @return  @c ECORE_CONFIG_ERR_SUCC if there are no errors.
+ * @note    The @p lo, @p hi and @p step parameters are only used when storing
+ *          integer and float properties.
+ * @ingroup Ecore_Config_Default_Group
  */
 int
 ecore_config_default(const char *key, char *val, float lo, float hi, float step)
@@ -779,9 +812,10 @@ ecore_config_default(const char *key, char *val, float lo, float hi, float step)
 /**
  * Sets the indicated property to the given integer if the property has not yet
  * been set.
- * @param  key The property key.
- * @param  val Integer to set the value to.
- * @return ECORE_CONFIG_ERR_SUCC if there are no problems.
+ * @param   key The property key.
+ * @param   val Integer to set the value to.
+ * @return  @c ECORE_CONFIG_ERR_SUCC if there are no problems.
+ * @ingroup Ecore_Config_Default_Group
  */
 int
 ecore_config_int_default(const char *key, int val)
@@ -795,12 +829,13 @@ ecore_config_int_default(const char *key, int val)
  *
  * The bounds and step values are set regardless.
  *
- * @param  key  The property key.
- * @param  val  Integer to set the property to.
- * @param  low  Lowest valid integer value for the property.
- * @param  high Highest valid integer value for the property.
- * @param  step Increment value for the property.
- * @return ECORE_CONFIG_ERR_SUCC if there were no problems.
+ * @param   key  The property key.
+ * @param   val  Integer to set the property to.
+ * @param   low  Lowest valid integer value for the property.
+ * @param   high Highest valid integer value for the property.
+ * @param   step Increment value for the property.
+ * @return  @c ECORE_CONFIG_ERR_SUCC if there were no problems.
+ * @ingroup Ecore_Config_Default_Group
  */
 int
 ecore_config_int_default_bound(const char *key, int val, int low, int high,
@@ -826,9 +861,10 @@ ecore_config_int_default_bound(const char *key, int val, int low, int high,
 /**
  * Sets the indicated property to the given string if the property has not yet
  * been set.
- * @param  key The property key.
- * @param  val String to set the property to.
- * @return ECORE_CONFIG_ERR_SUCC if there were no problems.
+ * @param   key The property key.
+ * @param   val String to set the property to.
+ * @return  @c ECORE_CONFIG_ERR_SUCC if there were no problems.
+ * @ingroup Ecore_Config_Default_Group
  */
 int
 ecore_config_string_default(const char *key, char *val)
@@ -839,9 +875,10 @@ ecore_config_string_default(const char *key, char *val)
 /**
  * Sets the indicated property to the given float if the property has not yet
  * been set.
- * @param  key The property key.
- * @param  val Float to set the property to.
- * @return ECORE_CONFIG_ERR_SUCC if there were no problems.
+ * @param   key The property key.
+ * @param   val Float to set the property to.
+ * @return  @c ECORE_CONFIG_ERR_SUCC if there were no problems.
+ * @ingroup Ecore_Config_Default_Group
  */
 int
 ecore_config_float_default(const char *key, float val)
@@ -855,12 +892,13 @@ ecore_config_float_default(const char *key, float val)
  *
  * The bounds and step values are set regardless.
  *
- * @param  key  The property key.
- * @param  val  Float to set the property to.
- * @param  low  Lowest valid integer value for the property.
- * @param  high Highest valid float value for the property.
- * @param  step Increment value for the property.
- * @return ECORE_CONFIG_ERR_SUCC if there were no problems.
+ * @param   key  The property key.
+ * @param   val  Float to set the property to.
+ * @param   low  Lowest valid integer value for the property.
+ * @param   high Highest valid float value for the property.
+ * @param   step Increment value for the property.
+ * @return  @c ECORE_CONFIG_ERR_SUCC if there were no problems.
+ * @ingroup Ecore_Config_Default_Group
  */
 int
 ecore_config_float_default_bound(const char *key, float val, float low,
@@ -888,7 +926,8 @@ ecore_config_float_default_bound(const char *key, float val, float low,
  * been set.
  * @param  key The property key.
  * @param  val Color value in RGB format.
- * @return ECORE_CONFIG_ERR_SUCC if there are no problems.
+ * @return @c ECORE_CONFIG_ERR_SUCC if there are no problems.
+ * @ingroup Ecore_Config_Default_Group
  */
 int
 ecore_config_rgb_default(const char *key, char *val)
@@ -899,9 +938,10 @@ ecore_config_rgb_default(const char *key, char *val)
 /**
  * Sets the indicated property to a theme name if the property has not yet
  * been set.
- * @param  key The property key.
- * @param  val String giving the name of the theme.
- * @return ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @param   key The property key.
+ * @param   val String giving the name of the theme.
+ * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @ingroup Ecore_Config_Default_Group
  */
 int
 ecore_config_theme_default(const char *key, char *val)
@@ -912,12 +952,13 @@ ecore_config_theme_default(const char *key, char *val)
 /**
  * Adds a callback function to the list of functions called when a property
  * changes.
- * @param  name     Name of the callback.
- * @param  key      The key of the property to listen to.
- * @param  listener Listener callback function.
- * @param  tag      Tag to pass to the callback when it is called.
- * @param  data     Data to pass to the callback when it is called.
- * @return ECORE_CONFIG_ERR_SUCC if successful in setting up the callback.
+ * @param   name     Name of the callback.
+ * @param   key      The key of the property to listen to.
+ * @param   listener Listener callback function.
+ * @param   tag      Tag to pass to @p listener when it is called.
+ * @param   data     Data to pass to @p listener when it is called.
+ * @return  @c ECORE_CONFIG_ERR_SUCC if successful in setting up the callback.
+ * @ingroup Ecore_Config_Listeners_Group
  */
 int
 ecore_config_listen(const char *name, const char *key,
@@ -980,10 +1021,11 @@ ecore_config_listen(const char *name, const char *key,
  * @param  name     Name of the callback to remove.
  * @param  key      The property key the callback is listening to.
  * @param  listener The callback function to remove.
- * @return ECORE_CONFIG_ERR_SUCC if successful in removing the callback.
+ * @return @c ECORE_CONFIG_ERR_SUCC if successful in removing the callback.
  *         If no callback matches the given parameters, then
- *         ECORE_CONFIG_ERR_NOTFOUND is returned.  If NULL is passed for NULL,
- *         ECORE_CONFIG_ERR_NODATA is returned.
+ *         @c ECORE_CONFIG_ERR_NOTFOUND is returned.  If @c NULL is passed
+ *         for the key pointer, @c ECORE_CONFIG_ERR_NODATA is returned.
+ * @ingroup Ecore_Config_Listeners_Group
  */
 int
 ecore_config_deaf(const char *name, const char *key,
@@ -1077,8 +1119,8 @@ ecore_config_bundle_by_serial_get(Ecore_Config_Server * srv, long serial)
  * server.
  * @param  srv   The configuration server.
  * @param  label The bundle's identifier string.
- * @return The bundle with the given identifier string, or NULL if it could not
- *         be found.
+ * @return The bundle with the given identifier string, or @c NULL if it
+ *         could not be found.
  */
 Ecore_Config_Bundle *
 ecore_config_bundle_by_label_get(Ecore_Config_Server * srv, const char *label)
@@ -1099,7 +1141,7 @@ ecore_config_bundle_by_label_get(Ecore_Config_Server * srv, const char *label)
 /**
  * Retrieves the bundle's serial number.
  * @param  ns The configuration bundle.
- * @return The bundle's identifier string, or -1 if ns is NULL.
+ * @return The bundle's identifier string, or -1 if ns is @c NULL.
  */
 long
 ecore_config_bundle_serial_get(Ecore_Config_Bundle * ns)
@@ -1122,7 +1164,7 @@ ecore_config_bundle_label_get(Ecore_Config_Bundle * ns)
  * Creates a new Ecore_Config_Bundle.
  * @param  srv        Config server.
  * @param  identifier Identifier string for the new bundle.
- * @return A pointer to a new Ecore_Config_Bundle.  NULL is returned if the
+ * @return A pointer to a new Ecore_Config_Bundle.  @c NULL is returned if the
  *         structure couldn't be allocated.
  */
 Ecore_Config_Bundle *
@@ -1198,14 +1240,15 @@ ecore_config_init_global(char *name)
 /**
  * Initializes the Enlightened Property Library.
  *
- * This function must be run before any other function in the Enlightened
- * Property Library, even if you have run ecore_init().  The name given is
- * used to determine the default configuration to load.
+ * This function must be run before any other function in the
+ * Enlightened Property Library, even if you have run @ref ecore_init .
+ * The name given is used to determine the default configuration to
+ * load.
  *
  * @param  name Application name
- * @return ECORE_CONFIG_ERR_SUCC if the library is successfully set up.
- *         ECORE_CONFIG_ERR_FAIL otherwise.
- * @todo FIXME in here to, er, fix.
+ * @return @c ECORE_CONFIG_ERR_SUCC if the library is successfully set up.
+ *         @c ECORE_CONFIG_ERR_FAIL otherwise.
+ * @ingroup Ecore_Config_Lib_Group
  */
 int
 ecore_config_init(char *name)
@@ -1252,7 +1295,8 @@ ecore_config_init(char *name)
 
 /**
  * Frees memory and shuts down the library.
- * @return ECORE_CONFIG_ERR_IGNORED
+ * @return @c ECORE_CONFIG_ERR_IGNORED
+ * @ingroup Ecore_Config_Lib_Group
  */
 int
 ecore_config_shutdown(void)

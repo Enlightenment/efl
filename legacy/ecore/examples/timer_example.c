@@ -31,7 +31,6 @@ int timer1_tick(void *data) {
  
 int main(int argc, char **argv) {
   ecore_init();
-  ecore_app_args_set(argc, argv);
   timer1 = ecore_timer_add(5.0, timer1_tick, data1);
   timer2 = ecore_timer_add(0.5, timer2_tick, data2);
   timer3 = ecore_timer_add(1.0, timer3_tick, data3);

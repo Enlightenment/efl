@@ -210,11 +210,19 @@ int ECORE_X_LOCK_NUM = 0;
 int ECORE_X_LOCK_CAPS = 0;
 
 /**
- * Init the X display connection.
- * @param name Display target name
- * @return greater than 1 on success, 0 on failure
- * 
- * Set up an X display connection and event handlers for event processing
+ * @defgroup Ecore_X_Init_Group Ecore X Library Init and Shutdown Functions
+ *
+ * Functions that start and shut down the Ecore X Library.
+ */
+
+/**
+ * Initialize the X display connection to the given display.
+ *
+ * @param   name Display target name.  If @c NULL, the default display is
+ *               assumed.
+ * @return  The number of times the library has been initialized without
+ *          being shut down.  0 is returned if an error occurs.
+ * @ingroup Ecore_X_Init_Group
  */
 int
 ecore_x_init(const char *name)
@@ -476,10 +484,14 @@ ecore_x_init(const char *name)
 }
 
 /**
- * Shut down the X syystem.
- * @return The number of times ecore X has left to be shut down
- * 
- * This closes the X display connection and removes the handlers for it.
+ * Shuts down the Ecore X library.
+ *
+ * In shutting down the library, the X display connection is terminated
+ * and any event handlers for it are removed.
+ *
+ * @return  The number of times the library has been initialized without
+ *          being shut down.
+ * @ingroup Ecore_X_Init_Group
  */
 int
 ecore_x_shutdown(void)
@@ -501,10 +513,15 @@ ecore_x_shutdown(void)
 }
 
 /**
- * Get the X display pointer handle.
- * @return The X Display handle
- * 
- * This returns the X Display handle used for the X connection.
+ * @defgroup Ecore_X_Display_Attr_Group Ecore X Display Attributes
+ *
+ * Functions that set and retrieve X display attributes.
+ */
+
+/**
+ * Retrieves the Ecore_X_Display handle used for the current X connection.
+ * @return  The current X display.
+ * @ingroup Ecore_X_Display_Attr_Group
  */
 Ecore_X_Display *
 ecore_x_display_get(void)
@@ -513,10 +530,9 @@ ecore_x_display_get(void)
 }
 
 /**
- * Get the X display fd.
- * @return The X Display fd
- * 
- * This returns the X Display file descriptor.
+ * Retrieves the X display file descriptor.
+ * @return  The current X display file descriptor.
+ * @ingroup Ecore_X_Display_Attr_Group
  */
 int
 ecore_x_fd_get(void)
@@ -525,12 +541,14 @@ ecore_x_fd_get(void)
 }
 
 /**
- * Set the timeout for double/triple click to be flagged.
- * @param t The time in seconds
+ * Set the timeout for a double and triple clicks to be flagged.
  * 
- * This sets the time between clicks before the double_click flag is set in a 
- * button down event. If 3 clicks occur within double this time then the 
- * triple_click flag is also set.
+ * This sets the time between clicks before the double_click flag is
+ * set in a button down event. If 3 clicks occur within double this
+ * time, the triple_click flag is also set.
+ *
+ * @param   t The time in seconds
+ * @ingroup Ecore_X_Display_Attr_Group
  */
 void
 ecore_x_double_click_time_set(double t)
@@ -540,10 +558,12 @@ ecore_x_double_click_time_set(double t)
 }
 
 /**
- * Get the double/triple click timeout.
- * @return The timeout for double clicks in seconds
- * 
- * This returns the tiemout that can be set by ecore_x_double_click_time_set()
+ * Get the double and triple click flag timeout.
+ *
+ * See @ref ecore_x_double_click_time_set for more information.
+ *
+ * @return  The timeout for double clicks in seconds.
+ * @ingroup Ecore_X_Display_Attr_Group
  */
 double
 ecore_x_double_click_time_get(void)
@@ -552,9 +572,15 @@ ecore_x_double_click_time_get(void)
 }
 
 /**
- * Flush the command buffer.
- * 
- * This flushes the x command buffer
+ * @defgroup Ecore_X_Flush_Group Ecore X Synchronization Functions
+ *
+ * Functions that ensure that all commands that have been issued by the
+ * Ecore X library have been sent to the server.
+ */
+
+/**
+ * Sends all X commands in the X Display buffer.
+ * @ingroup Ecore_X_Flush_Group
  */
 void
 ecore_x_flush(void)
@@ -563,9 +589,9 @@ ecore_x_flush(void)
 }
 
 /**
- * Sync with the server.
- * 
- * This flushes the command buffer and waits for a round trip from the server
+ * Flushes the command buffer and waits until all requests have been
+ * processed by the server.
+ * @ingroup Ecore_X_Flush_Group
  */
 void
 ecore_x_sync(void)
@@ -574,13 +600,13 @@ ecore_x_sync(void)
 }
 
 /**
- * Kill all clients under a specified root window.
- * @param root The root window whose children will be killed.
+ * Kill all clients with subwindows under a given window.
  *
- * This function will start from the given root window and kill the owner of
- * every child window under it. To kill all clients connected to an X server,
- * use the ecore_x_window_root_list() function to obtain an array of root
- * windows, and then pass each window to this function.
+ * You can kill all clients connected to the X server by using
+ * @ref ecore_x_window_root_list to get a list of root windows, and
+ * then passing each root window to this function.
+ *
+ * @param root The window whose children will be killed.
  */
 void
 ecore_x_killall(Ecore_X_Window root)
@@ -804,6 +830,14 @@ ecore_x_drawable_depth_get(Ecore_X_Drawable d)
    return (int) depth_ret;
 }
 
+/**
+ * Get a list of all the root windows on the server.
+ *
+ * @note   The returned array will need to be freed after use.
+ * @param  num_ret Pointer to integer to put number of windows returned in.
+ * @return An array of all the root windows.  @c NULL is returned if memory
+ *         could not be allocated for the list, or if @p num_ret is @c NULL.
+ */
 Ecore_X_Window *
 ecore_x_window_root_list(int *num_ret)
 {

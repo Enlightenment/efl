@@ -8,15 +8,14 @@ static int _ecore_job_event_handler(void *data, int type, void *ev);
 static int ecore_event_job_type = 0;
 
 /**
- * Add a job to the event queue
- * @param func The function to be called when the job gets handled
- * @param data The data to be passed to the job function
- * @return A job handle
- * 
- * Add a job to the queue to be executed by the event system later on and
- * return a pointer to the job handle. When the job is to be executed, the 
- * function @p func is called and passed the pointer @p data. once the job has
- * been executed the job handle is no longer valid.
+ * Add a job to the event queue.
+ * @param   func The function to call when the job gets handled.
+ * @param   data Data pointer to be passed to the job function when the job is
+ *               handled.
+ * @return  The handle of the job.  @c NULL is returned if the job could not be
+ *          added to the queue.
+ * @ingroup Ecore_Job_Group
+ * @note    Once the job has been executed, the job handle is invalid.
  */
 Ecore_Job *
 ecore_job_add(void (*func) (void *data), const void *data)
@@ -44,12 +43,10 @@ ecore_job_add(void (*func) (void *data), const void *data)
 }
 
 /**
- * Delete a queued job
- * @param job The job to delete
- * @return The data pointer to be passed to the job
- * 
- * This removed a job from the queue (if it hasn't been executed yet) and
- * returns the data pointer that was to be passed to it.
+ * Delete a queued job that has not yet been executed.
+ * @param   job  Handle of the job to delete.
+ * @return  The data pointer that was to be passed to the job.
+ * @ingroup Ecore_Job_Group
  */
 void *
 ecore_job_del(Ecore_Job *job)

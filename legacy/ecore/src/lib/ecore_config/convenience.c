@@ -10,6 +10,22 @@ extern int          ecore_config_bound(Ecore_Config_Prop * e);
 
 /* shorthand prop setup code to make client apps a little smaller ;) */
 
+/**
+ * Creates a new property, if it does not already exist, and sets its
+ * attributes to those given.
+ *
+ * The type of the property is guessed from the key and the value
+ * given.
+ *
+ * @param   key       The property key.
+ * @param   val       Pointer to default value of key.
+ * @param   short_opt Short option used to set the property from command
+ *                    line.
+ * @param   long_opt  Long option used to set the property from command line.
+ * @param   desc      String description of property.
+ * @return  @c ECORE_CONFIG_ERR_SUCC on success.
+ * @ingroup Ecore_Config_Create_Group
+ */
 int
 ecore_config_create(const char *key, void *val, char short_opt, char *long_opt,
 		    char *desc)
@@ -19,6 +35,19 @@ ecore_config_create(const char *key, void *val, char short_opt, char *long_opt,
    return ecore_config_typed_create(key, val, type, short_opt, long_opt, desc);
 }
 
+/**
+ * Creates a new property, if it does not already exist, and sets its
+ * attributes to those given.
+ * @param   key       The property key.
+ * @param   val       Pointer to default value of key.
+ * @param   type      Type of the property.
+ * @param   short_opt Short option used to set the property from
+ *                    command line.
+ * @param   long_opt  Long option used to set the property from command line.
+ * @param   desc      String description of property.
+ * @return  @c ECORE_CONFIG_ERR_SUCC on success.
+ * @ingroup Ecore_Config_Create_Group
+ */
 int
 ecore_config_typed_create(const char *key, void *val, int type, char short_opt,
 			  char *long_opt, char *desc)
@@ -38,6 +67,18 @@ ecore_config_typed_create(const char *key, void *val, int type, char short_opt,
    return ret;
 }
 
+/**
+ * Creates a new integer property, if it does not already exist, and sets its
+ * attributes to those given.
+ * @param   key       The property key.
+ * @param   val       Default integer value of key.
+ * @param   short_opt Short option used to set the property from command
+ *                    line.
+ * @param   long_opt  Long option used to set the property from command line.
+ * @param   desc      String description of property.
+ * @return  @c ECORE_CONFIG_ERR_SUCC on success.
+ * @ingroup Ecore_Config_Create_Group
+ */
 int
 ecore_config_int_create(const char *key, int val, char short_opt,
 			char *long_opt, char *desc)
@@ -47,6 +88,21 @@ ecore_config_int_create(const char *key, int val, char short_opt,
 				desc);
 }
 
+/**
+ * Creates a new integer property, if it does not already exist, and sets its
+ * attributes to those given.
+ * @param   key       The property key.
+ * @param   val       Default integer value of key.
+ * @param   low       Lowest valid integer value for the property.
+ * @param   high      Highest valid integer value for the property.
+ * @param   step      Increment value for the property.
+ * @param   short_opt Short option used to set the property from command
+ *                    line.
+ * @param   long_opt  Long option used to set the property from command line.
+ * @param   desc      String description of property.
+ * @return  @c ECORE_CONFIG_ERR_SUCC on success.
+ * @ingroup Ecore_Config_Create_Group
+ */
 int
 ecore_config_int_create_bound(const char *key, int val, int low, int high,
 			      int step, char short_opt, char *long_opt,
@@ -72,6 +128,18 @@ ecore_config_int_create_bound(const char *key, int val, int low, int high,
    return ret;
 }
 
+/**
+ * Creates a new string property, if it does not already exist, and sets its
+ * attributes to those given.
+ * @param   key       The property key.
+ * @param   val       Default value of key.
+ * @param   short_opt Short option used to set the property from command
+ *                    line.
+ * @param   long_opt  Long option used to set the property from command line.
+ * @param   desc      String description of property.
+ * @return  @c ECORE_CONFIG_ERR_SUCC on success.
+ * @ingroup Ecore_Config_Create_Group
+ */
 int
 ecore_config_string_create(const char *key, char *val, char short_opt,
 			   char *long_opt, char *desc)
@@ -81,6 +149,18 @@ ecore_config_string_create(const char *key, char *val, char short_opt,
 				desc);
 }
 
+/**
+ * Creates a new float property, if it does not already exist, and sets its
+ * attributes to those given.
+ * @param   key       The property key.
+ * @param   val       Default float value of key.
+ * @param   short_opt Short option used to set the property from command
+ *                    line.
+ * @param   long_opt  Long option used to set the property from command line.
+ * @param   desc      String description of property.
+ * @return  @c ECORE_CONFIG_ERR_SUCC on success.
+ * @ingroup Ecore_Config_Create_Group
+ */
 int
 ecore_config_float_create(const char *key, float val, char short_opt,
 			  char *long_opt, char *desc)
@@ -90,6 +170,21 @@ ecore_config_float_create(const char *key, float val, char short_opt,
 				desc);
 }
 
+/**
+ * Creates a new float property, if it does not already exist, and sets its
+ * attributes to those given.
+ * @param   key       The property key.
+ * @param   val       Default float value of key.
+ * @param   low       Lowest valid float value for the property.
+ * @param   high      Highest valid float value for the property.
+ * @param   step      Increment value for the property.
+ * @param   short_opt Short option used to set the property from command
+ *                    line.
+ * @param   long_opt  Long option used to set the property from command line.
+ * @param   desc      String description of property.
+ * @return  @c ECORE_CONFIG_ERR_SUCC on success.
+ * @ingroup Ecore_Config_Create_Group
+ */
 int
 ecore_config_float_create_bound(const char *key, float val, float low,
 				float high, float step, char short_opt,
@@ -113,6 +208,18 @@ ecore_config_float_create_bound(const char *key, float val, float low,
    return ret;
 }
 
+/**
+ * Creates a new color property, if it does not already exist, and sets its
+ * attributes to those given.
+ * @param   key       The property key.
+ * @param   val       Default color value of key, as a hexadecimal string.
+ * @param   short_opt Short option used to set the property from command
+ *                    line.
+ * @param   long_opt  Long option used to set the property from command line.
+ * @param   desc      String description of property.
+ * @return  @c ECORE_CONFIG_ERR_SUCC on success.
+ * @ingroup Ecore_Config_Create_Group
+ */
 int
 ecore_config_rgb_create(const char *key, char *val, char short_opt,
 			char *long_opt, char *desc)
@@ -122,6 +229,18 @@ ecore_config_rgb_create(const char *key, char *val, char short_opt,
 				desc);
 }
 
+/**
+ * Creates a new theme property, if it does not already exist, and sets its
+ * attributes to those given.
+ * @param   key       The property key.
+ * @param   val       Default theme name for the property.
+ * @param   short_opt Short option used to set the property from command
+ *                    line.
+ * @param   long_opt  Long option used to set the property from command line.
+ * @param   desc      String description of property.
+ * @return  @c ECORE_CONFIG_ERR_SUCC on success.
+ * @ingroup Ecore_Config_Create_Group
+ */
 int
 ecore_config_theme_create(const char *key, char *val, char short_opt,
 			  char *long_opt, char *desc)
@@ -134,10 +253,10 @@ ecore_config_theme_create(const char *key, char *val, char short_opt,
 /* this should only be built if evas is present */
 
 /**
- * Calls evas_font_path_append on @evas for each of the font names stored
+ * Calls evas_font_path_append on @p evas for each of the font names stored
  * in the property "/e/font/path".
  * @param  evas Evas object to append the font names to.
- * @return ECORE_CONFIG_ERR_SUCC on success.  ECORE_CONFIG_ERR_NODATA
+ * @return @c ECORE_CONFIG_ERR_SUCC on success.  @c ECORE_CONFIG_ERR_NODATA
  *         is returned if the property has not been set.
  */
 int
@@ -206,7 +325,7 @@ ecore_config_args_display(void)
      }
 }
 
-int
+static int
 ecore_config_parse_set(Ecore_Config_Prop * prop, char *arg, char *opt,
 		       char opt2)
 {
@@ -223,6 +342,15 @@ ecore_config_parse_set(Ecore_Config_Prop * prop, char *arg, char *opt,
    return ECORE_CONFIG_PARSE_CONTINUE;
 }
 
+/**
+ * Parse the arguments set by @ref ecore_app_args_set and set properties
+ * accordingly.
+ *
+ * @return ECORE_CONFIG_PARSE_CONTINUE if successful.
+ *         ECORE_CONFIG_PARSE_EXIT is returned if an unrecognised option
+ *         is found.  ECORE_CONFIG_PARSE_HELP is returned if help was
+ *         displayed.
+ */
 int
 ecore_config_args_parse(void)
 {
@@ -331,6 +459,10 @@ ecore_config_args_parse(void)
    return ECORE_CONFIG_PARSE_CONTINUE;
 }
 
+/**
+ * Sets the description string used by @ref ecore_config_args_display .
+ * @param description Description of application.
+ */
 void
 ecore_config_app_describe(char *description)
 {

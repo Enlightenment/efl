@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-bin_PROGRAMS = \
+noinst_PROGRAMS = \
 timer_example \
 event_handler_example \
 args_example \

@@ -12,8 +12,9 @@
 
 /**
  * Loads the default configuration.
- * @return ECORE_CONFIG_ERR_SUCC on success.  ECORE_CONFIG_ERR_NODATA is
- *         returned if the file cannot be loaded.
+ * @return  @c ECORE_CONFIG_ERR_SUCC on success.  @c ECORE_CONFIG_ERR_NODATA
+ *          is returned if the file cannot be loaded.
+ * @ingroup Ecore_Config_File_Group
  */
 int
 ecore_config_load(void)
@@ -27,8 +28,10 @@ ecore_config_load(void)
 
 /**
  * Saves the current configuration to the default file.
- * @return ECORE_CONFIG_ERR_SUCC is returned on success.
- *         ECORE_CONFIG_ERR_FAIL is returned if the data cannot be saved.
+ * @return  @c ECORE_CONFIG_ERR_SUCC is returned on success.
+ *          @c ECORE_CONFIG_ERR_FAIL is returned if the data cannot be
+ *          saved.
+ * @ingroup Ecore_Config_File_Group
  */
 int
 ecore_config_save(void)
@@ -42,9 +45,10 @@ ecore_config_save(void)
 
 /**
  * Load the given configuration file to the local configuration.
- * @param  file Name of the file to load.
- * @return ECORE_CONFIG_ERR_SUCC on success.  ECORE_CONFIG_ERR_NODATA is
- *         returned if the file cannot be loaded.
+ * @param   file Name of the file to load.
+ * @return  @c ECORE_CONFIG_ERR_SUCC on success.  @c ECORE_CONFIG_ERR_NODATA
+ *          is returned if the file cannot be loaded.
+ * @ingroup Ecore_Config_File_Group
  */
 int
 ecore_config_file_load(char *file)
@@ -160,9 +164,11 @@ _ecore_config_recurse_mkdir(char *file)
 
 /**
  * Saves the local configuration to the given file.
- * @param  file Name of the file to save to.
- * @return ECORE_CONFIG_ERR_SUCC is returned on success.
- *         ECORE_CONFIG_ERR_FAIL is returned if the data cannot be saved.
+ * @param   file Name of the file to save to.
+ * @return  @c ECORE_CONFIG_ERR_SUCC is returned on success.
+ *          @c ECORE_CONFIG_ERR_FAIL is returned if the data cannot be
+ *          saved.
+ * @ingroup Ecore_Config_File_Group
  */
 int
 ecore_config_file_save(char *file)
