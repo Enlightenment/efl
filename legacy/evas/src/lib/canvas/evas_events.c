@@ -372,6 +372,7 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
    e->pointer.y = y;
    e->pointer.canvas_x = evas_coord_screen_x_to_world(e, x);
    e->pointer.canvas_y = evas_coord_screen_y_to_world(e, y);
+   printf("mov %i %i\n", x, y);
    if ((!e->pointer.inside) && (e->pointer.mouse_grabbed == 0)) return;
    /* if our mouse button is grabbed to any objects */   
    if (e->pointer.mouse_grabbed != 0)
@@ -386,6 +387,7 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
 	     Evas_Object *obj;
 	     
 	     obj = l->data;
+	     printf("int %p\n", obj);
 	     if ((obj->cur.visible) &&
 		 (evas_object_clippers_is_visible(obj)) &&
 		 (!evas_event_passes_through(obj)) &&
@@ -407,7 +409,8 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
 		       ev.prev.canvas.y = pcy;
 		       ev.data = (void *)data;
 		       ev.modifiers = &(e->modifiers);
-		       ev.locks = &(e->locks);		       
+		       ev.locks = &(e->locks);
+		       printf("mov %p\n", obj);
 		       if (!e->events_frozen)
 			 evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_MOVE, &ev);
 		    }
@@ -435,6 +438,7 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
 		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);
+		  printf("out %p\n", obj);
 		  if (!e->events_frozen)
 		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }	     
@@ -553,6 +557,8 @@ evas_event_feed_mouse_in_data(Evas *e, const void *data)
    e->pointer.inside = 1;
 
    if (e->events_frozen > 0) return;
+
+   if (e->pointer.mouse_grabbed != 0) return;
    
    /* get new list of ins */
    ins = evas_event_objects_event_list(e, NULL, e->pointer.x, e->pointer.y);
@@ -602,12 +608,14 @@ evas_event_feed_mouse_out_data(Evas *e, const void *data)
    
    if (e->events_frozen > 0) return;
    
+   printf("try to feed mouse out\n");
    /* if our mouse button is grabbed to any objects */   
    if (e->pointer.mouse_grabbed == 0)
      {
 	/* go thru old list of in objects */
 	Evas_List *l, *copy;
 
+	printf("not grabbed!\n");
 	copy = evas_event_list_copy(e->pointer.object.in);
 	for (l = copy; l; l = l->next)
 	  {
@@ -630,9 +638,9 @@ evas_event_feed_mouse_out_data(Evas *e, const void *data)
 		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }
 	  }
+	/* free our old list of ins */
+	e->pointer.object.in =  evas_list_free(e->pointer.object.in);
      }
-   /* free our old list of ins */
-   e->pointer.object.in =  evas_list_free(e->pointer.object.in);
 }
 
 /**
