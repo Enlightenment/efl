@@ -30,7 +30,7 @@ edje_LDADD = \
 $(top_builddir)/src/lib/libedje.la
 
 #edje_LDFLAGS = -static
-edje_LDFLAGS =
+#edje_LDFLAGS =
 
 edje_CPPFLAGS = @edje_def@
 
@@ -52,7 +52,7 @@ $(top_builddir)/src/lib/libedje.la \
 
 edje_cc_CPPFLAGS = @edje_def@
 
-edje_cc_LDFLAGS =
+#edje_cc_LDFLAGS =
 
 edje_cc_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 
@@ -69,7 +69,7 @@ $(top_builddir)/src/lib/libedje.la \
 
 edje_decc_CPPFLAGS = @edje_def@
 
-edje_decc_LDFLAGS =
+#edje_decc_LDFLAGS =
 
 edje_decc_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 
@@ -83,7 +83,7 @@ $(top_builddir)/src/lib/libedje.la
 
 edje_ls_CPPFLAGS = @edje_def@
 
-edje_ls_LDFLAGS =
+#edje_ls_LDFLAGS =
 
 edje_ls_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 
