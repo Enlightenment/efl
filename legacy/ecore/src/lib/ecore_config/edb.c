@@ -208,6 +208,7 @@ ecore_config_file_save(char *file)
 	switch (next->type)
 	  {
 	  case PT_INT:
+    case PT_BLN:
 	     e_db_int_set(db, next->key, ecore_config_int_get(next->key));
 	     break;
 	  case PT_FLT:
