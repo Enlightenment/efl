@@ -15,6 +15,7 @@ typedef int                                Evas_Blend_Mode;
 typedef struct _Evas_List *                Evas_List;
 typedef struct _Evas_Layer *               Evas_Layer;
 typedef struct _Evas_Color_Point *         Evas_Color_Point;
+typedef struct _Evas_Callback *            Evas_Callback;
 typedef struct _Evas_Object_Image *        Evas_Object_Image;
 typedef struct _Evas_Object_Text *         Evas_Object_Text;
 typedef struct _Evas_Object_Rectangle *    Evas_Object_Rectangle;
@@ -53,7 +54,7 @@ struct _Evas
 	 double     x, y, w, h;
       } viewport;
       
-      Evas_List    *layers;
+      Evas_List     layers;
       
       int           render_method;
       
@@ -62,7 +63,7 @@ struct _Evas
    } current, previous;
    
    /* externally provided updates for drawable relative rects */
-   Evas_List    *updates;
+   Evas_List     updates;
 };
 
 struct _Evas_Color_Point
@@ -73,26 +74,33 @@ struct _Evas_Color_Point
 
 struct _Evas_Gradient
 {
-   Evas_List *color_points;
+   Evas_List  color_points;
 };
 
 struct _Evas_List
 {
-   Evas_List *prev, *next;
+   Evas_List  prev, next;
    void      *data;
 };
 
 struct _Evas_Layer
 {
    int        layer;
-   Evas_List *objects;
-   Evas_List *groups;
+   Evas_List  objects;
+   Evas_List  groups;
    
    struct  {
       int        store;
    } current, previous;
    
    void      *renderer_data;
+};
+
+struct _Evas_Callback
+{
+   Evas_Callback_Type type;
+   void *data;
+   void (*callback) (void *_data, Evas _e, char *_class, Evas_Object _o, int _b, int _x, int _y);
 };
 
 struct _Evas_Object_Any
@@ -103,9 +111,12 @@ struct _Evas_Object_Any
       Evas_Blend_Mode mode;
       int        zoomscale;
    } current, previous;
-   Evas_List *groups;
+   
+   Evas_List  groups;
+   Evas_List  callbacks;
    
    void      *renderer_data;
+   
 };
 
 struct _Evas_Object_Image
@@ -270,6 +281,15 @@ void evas_event_leave(Evas e);
 void evas_callback_add(Evas e, Evas_Object o, Evas_Callback_Type callback, void (*func) (void *_data, Evas _e, char *_class, Evas_Object _o, int _b, int _x, int _y), void *data);
 void evas_callback_del(Evas e, Evas_Object o, Evas_Callback_Type callback);
 
+/* list ops */
+Evas_List evas_list_append(Evas_List list, void *data);
+Evas_List evas_list_prepend(Evas_List list, void *data);
+Evas_List evas_list_append_relative(Evas_List list, void *data, void *relative);
+Evas_List evas_list_prepend_relative(Evas_List list, void *data, void *relative);
+Evas_List evas_list_remove(Evas_List list, void *data);
+void * evas_list_find(Evas_List list, void *data);
+Evas_List evas_list_free(Evas_List list);
+	
 #ifdef __cplusplus
 }
 #endif
