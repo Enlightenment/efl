@@ -14,7 +14,7 @@ cfg = --datadir=/usr/share --prefix=/usr
 configure: $(BUILDDIR)/configure-stamp
 $(BUILDDIR)/configure-stamp:
 	$(INSTALL) -d $(BUILDDIR)
-	cd $(BUILDDIR); datadir=/usr/share  ../../configure $(cfg)
+	cd $(BUILDDIR); datadir=/usr/share  $(CURDIR)/autogen.sh $(cfg)
 	$(stamp)
 
 build: configure $(BUILDDIR)/build-stamp
