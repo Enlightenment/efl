@@ -22,6 +22,10 @@
 #include <alloca.h>
 #endif
 
+#ifndef ABS
+#define ABS(x) x < 0 ? -x : x
+#endif
+
 /* types */
 typedef struct _New_Object_Handler    New_Object_Handler;
 typedef struct _New_Statement_Handler New_Statement_Handler;
@@ -86,6 +90,8 @@ void    data_write(void);
 void    data_queue_part_lookup(Edje_Part_Collection *pc, char *name, int *dest);
 void    data_queue_program_lookup(Edje_Part_Collection *pc, char *name, int *dest);
 void    data_queue_image_lookup(char *name, int *dest);
+void    data_queue_part_slave_lookup(int *master, int *slave);
+void    data_queue_image_slave_lookup(int *master, int *slave);
 void    data_process_lookups(void);
 void    data_process_scripts(void);
 void    data_process_script_lookups(void);

@@ -32,6 +32,7 @@ static void st_collections_group_parts_part_dragable_y(void);
 static void st_collections_group_parts_part_dragable_confine(void);
 
 static void ob_collections_group_parts_part_description(void);
+static void st_collections_group_parts_part_description_inherit(void);
 static void st_collections_group_parts_part_description_state(void);
 static void st_collections_group_parts_part_description_visible(void);
 static void st_collections_group_parts_part_description_align(void);
@@ -120,6 +121,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.images.image", st_images_image}, /* dup */
      {"collections.group.parts.part.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.fonts.font", st_fonts_font}, /* dup */
+     {"collections.group.parts.part.description.inherit", st_collections_group_parts_part_description_inherit},
      {"collections.group.parts.part.description.state", st_collections_group_parts_part_description_state},
      {"collections.group.parts.part.description.visible", st_collections_group_parts_part_description_visible},
      {"collections.group.parts.part.description.align", st_collections_group_parts_part_description_align},
@@ -741,6 +743,115 @@ ob_collections_group_parts_part_description(void)
    ed->text.align.y = 0.5;
    ed->text.id_source = -1;
    ed->text.id_text_source = -1;
+}
+
+static void
+st_collections_group_parts_part_description_inherit(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed, *parent = NULL;
+   Evas_List *l;
+   char *parent_name, *state_name;
+   double parent_val, state_val;
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+
+   /* inherit may not be used in the default description */
+   if (!ep->other_desc)
+     {
+	fprintf(stderr, "part %s: "
+	      "inherit may not be used in the default description!\n",
+	      ep->name);
+	exit(-1);
+     }
+
+   ed = evas_list_data(evas_list_last(ep->other_desc));
+
+   if (!ed->state.name)
+     {
+	fprintf(stderr, "part %s: "
+	      "inherit may only be used after state!\n",
+	      ep->name);
+	exit(-1);
+     }
+
+   /* find the description that we inherit from */
+   parent_name = parse_str(0);
+   parent_val = parse_float_range(1, 0.0, 1.0);
+
+   if (!strcmp (parent_name, "default") && parent_val == 0.0)
+     parent = ep->default_desc;
+   else
+     {
+	double min_dst = 999.0;
+
+	if (!strcmp(parent_name, "default"))
+	  {
+	     parent = ep->default_desc;
+	     min_dst = ABS(ep->default_desc->state.value - parent_val);
+	  }
+
+	for (l = ep->other_desc; l; l = l->next)
+	  {
+	     Edje_Part_Description *d = l->data;
+
+	     if (!strcmp (d->state.name, parent_name))
+	       {
+		  double dst;
+
+		  dst = ABS(d->state.value - parent_val);
+		  if (dst < min_dst)
+		    {
+		       parent = d;
+		       min_dst = dst;
+		    }
+	       }
+	  }
+     }
+
+   if (!parent)
+     {
+	fprintf (stderr, "part %s: "
+	      "cannot find referenced part state %s %lf\n",
+	      ep->name, parent_name, parent_val);
+	exit(-1);
+     }
+
+   free (parent_name);
+
+   /* now do a full copy, only state info will be kept */
+   state_name = ed->state.name;
+   state_val = ed->state.value;
+
+   *ed = *parent;
+
+   ed->state.name = state_name;
+   ed->state.value = state_val;
+
+   data_queue_part_slave_lookup(&parent->rel1.id_x, &ed->rel1.id_x);
+   data_queue_part_slave_lookup(&parent->rel1.id_y, &ed->rel1.id_y);
+   data_queue_part_slave_lookup(&parent->rel2.id_x, &ed->rel2.id_x);
+   data_queue_part_slave_lookup(&parent->rel2.id_y, &ed->rel2.id_y);
+   data_queue_image_slave_lookup(&parent->image.id, &ed->image.id);
+
+   /* make sure all the allocated memory is getting copied, not just
+    * referenced
+    */
+   ed->image.tween_list = NULL;
+
+   for (l = parent->image.tween_list; l; l = l->next)
+     ed->image.tween_list = evas_list_append(ed->image.tween_list, l->data);
+
+#define STRDUP(x) x ? strdup(x) : NULL
+
+   ed->color_class = STRDUP(ed->color_class);
+   ed->text.text = STRDUP(ed->text.text);
+   ed->text.text_class = STRDUP(ed->text.text_class);
+   ed->text.font = STRDUP(ed->text.font);
+
+#undef STRDUP
 }
 
 static void

@@ -7,6 +7,7 @@
 typedef struct _Part_Lookup Part_Lookup;
 typedef struct _Program_Lookup Program_Lookup;
 typedef struct _Image_Lookup Image_Lookup;
+typedef struct _Slave_Lookup Slave_Lookup;
 typedef struct _Code_Lookup Code_Lookup;
 
 struct _Part_Lookup
@@ -27,6 +28,12 @@ struct _Image_Lookup
 {
    char *name;
    int *dest;
+};
+
+struct _Slave_Lookup
+{
+   int *master;
+   int *slave;
 };
 
 struct _Code_Lookup
@@ -60,6 +67,8 @@ static Eet_Data_Descriptor *edd_edje_part_image_id = NULL;
 static Evas_List *part_lookups = NULL;
 static Evas_List *program_lookups = NULL;
 static Evas_List *image_lookups = NULL;
+static Evas_List *part_slave_lookups = NULL;
+static Evas_List *image_slave_lookups= NULL;
 
 #define ABORT_WRITE(eet_file, file) \
    eet_close(eet_file); \
@@ -709,6 +718,42 @@ data_queue_image_lookup(char *name, int *dest)
 }
 
 void
+data_queue_part_slave_lookup(int *master, int *slave)
+{
+   Slave_Lookup *sl;
+
+   sl = mem_alloc(SZ(Slave_Lookup));
+   part_slave_lookups = evas_list_append(part_slave_lookups, sl);
+   sl->master = master;
+   sl->slave = slave;
+}
+
+void
+data_queue_image_slave_lookup(int *master, int *slave)
+{
+   Slave_Lookup *sl;
+
+   sl = mem_alloc(SZ(Slave_Lookup));
+   image_slave_lookups = evas_list_append(image_slave_lookups, sl);
+   sl->master = master;
+   sl->slave = slave;
+}
+
+void
+handle_slave_lookup(Evas_List *list, int *master, int value)
+{
+   Evas_List *l;
+
+   for (l = list; l; l = l->next)
+   {
+      Slave_Lookup *sl = l->data;
+
+      if (sl->master == master)
+	 *sl->slave = value;
+   }
+}
+
+void
 data_process_lookups(void)
 {
    Evas_List *l;
@@ -726,6 +771,7 @@ data_process_lookups(void)
 	     ep = l->data;
 	     if ((ep->name) && (!strcmp(ep->name, pl->name)))
 	       {
+		  handle_slave_lookup(part_slave_lookups, pl->dest, ep->id);
 		  *(pl->dest) = ep->id;
 		  break;
 	       }
@@ -786,6 +832,7 @@ data_process_lookups(void)
 		  de = l->data;
 		  if ((de->entry) && (!strcmp(de->entry, il->name)))
 		    {
+		       handle_slave_lookup(image_slave_lookups, il->dest, de->id);
 		       *(il->dest) = de->id;
 		       break;
 		    }
@@ -801,6 +848,18 @@ data_process_lookups(void)
 	image_lookups = evas_list_remove(image_lookups, il);
 	free(il->name);
 	free(il);
+     }
+
+   while (part_slave_lookups)
+     {
+	free(part_slave_lookups->data);
+	part_slave_lookups = evas_list_remove_list(part_slave_lookups, part_slave_lookups);
+     }
+
+   while (image_slave_lookups)
+     {
+	free(image_slave_lookups->data);
+	image_slave_lookups = evas_list_remove_list(image_slave_lookups, image_slave_lookups);
      }
 }
 
