@@ -168,9 +168,10 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
 	int w, h;
 	
 	sd->file = strdup(file);
-	if (sd->video)
+	if ((sd->video) && (sd->module))
 	  {
 	     sd->module->file_close(sd->video);
+	     sd->video = NULL;
 	     evas_object_image_size_set(sd->obj, 0, 0);
 	  }
 	if (sd->module) _emotion_module_close(sd->module);
@@ -191,6 +192,7 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
 	if (sd->video)
 	  {
 	     sd->module->file_close(sd->video);
+	     sd->video = NULL;
 	     evas_object_image_size_set(sd->obj, 0, 0);
 	  }
 	if (sd->module) _emotion_module_close(sd->module);

@@ -3,7 +3,6 @@
 #include "emotion_xine.h"
 
 static int        init_count = 0;
-static xine_t    *decoder = NULL;
 
 static int em_init(void);
 static int em_shutdown(void);
@@ -66,22 +65,6 @@ em_init(void)
 {
    init_count++;
    if (init_count > 1) return init_count;
-   decoder = xine_new();
-   if (decoder)
-     {
-	/* load config... */
-	if (0)
-	  {
-	     xine_cfg_entry_t entry;
-	     
-	     if (xine_config_lookup_entry(decoder, "video.num_buffers", &entry))
-	       {
-		  entry.num_value = 1;
-		  xine_config_update_entry(decoder, &entry);
-	       }
-	  }
-	xine_init(decoder);
-     }
    return init_count;
 }
 
@@ -90,11 +73,6 @@ em_shutdown(void)
 {
    init_count--;
    if (init_count > 0) return init_count;
-   if (decoder)
-     {
-	xine_exit(decoder);
-	decoder = NULL;
-     }
    return 0;
 }
 
@@ -111,13 +89,20 @@ em_file_open(const char *file, Evas_Object *obj)
    if (!ev) return NULL;
    ev->obj = obj;
 
+   ev->decoder = xine_new();
+   if (!ev->decoder)
+     {
+	free(ev);
+	return NULL;
+     }
+   xine_init(ev->decoder);
    if (1)
      {
 	xine_cfg_entry_t cf;
-	if (xine_config_lookup_entry(decoder, "input.dvd_use_readahead", &cf))
+	if (xine_config_lookup_entry(ev->decoder, "input.dvd_use_readahead", &cf))
 	  {
 	     cf.num_value = 1; // 0 or 1
-	     xine_config_update_entry(decoder, &cf);
+	     xine_config_update_entry(ev->decoder, &cf);
 	  }
      }
    /* some notes on parameters we could swizzle for certain inputs */
@@ -125,77 +110,82 @@ em_file_open(const char *file, Evas_Object *obj)
      {
 	xine_cfg_entry_t cf;
 	
-	if (xine_config_lookup_entry(decoder, "input.dvd_device", &cf))
+	if (xine_config_lookup_entry(ev->decoder, "video.num_buffers", &cf))
+	  {
+	     cf.num_value = 1;
+	     xine_config_update_entry(ev->decoder, &cf);
+	  }
+	if (xine_config_lookup_entry(ev->decoder, "input.dvd_device", &cf))
 	  {
 	     cf.str_value = "/dev/dvd";
-	     xine_config_update_entry(decoder, &cf);
+	     xine_config_update_entry(ev->decoder, &cf);
 	  }
-	if (xine_config_lookup_entry(decoder, "input.css_decryption_method", &cf))
+	if (xine_config_lookup_entry(ev->decoder, "input.css_decryption_method", &cf))
 	  {
 	     cf.str_value = "key"; // "key" "disk" "title"
-	     xine_config_update_entry(decoder, &cf);
+	     xine_config_update_entry(ev->decoder, &cf);
 	  }
-	if (xine_config_lookup_entry(decoder, "input.dvd_region", &cf))
+	if (xine_config_lookup_entry(ev->decoder, "input.dvd_region", &cf))
 	  {
 	     cf.num_value = 0; // 0 ... 1 - 8
-	     xine_config_update_entry(decoder, &cf);
+	     xine_config_update_entry(ev->decoder, &cf);
 	  }
-	if (xine_config_lookup_entry(decoder, "input.dvd_use_readahead", &cf))
+	if (xine_config_lookup_entry(ev->decoder, "input.dvd_use_readahead", &cf))
 	  {
 	     cf.num_value = 1; // 0 or 1
-	     xine_config_update_entry(decoder, &cf);
+	     xine_config_update_entry(ev->decoder, &cf);
 	  }
 	// these are used any time in runtime - so changing affects all dvd's
-	if (xine_config_lookup_entry(decoder, "input.dvd_skip_behaviour", &cf))
+	if (xine_config_lookup_entry(ev->decoder, "input.dvd_skip_behaviour", &cf))
 	  {
 	     cf.str_value = "skip program"; // "skip program" "skip part" "skip title"
-	     xine_config_update_entry(decoder, &cf);
+	     xine_config_update_entry(ev->decoder, &cf);
 	  }
 	// these are used any time in runtime - so changing affects all dvd's
-	if (xine_config_lookup_entry(decoder, "input.dvd_seek_behaviour", &cf))
+	if (xine_config_lookup_entry(ev->decoder, "input.dvd_seek_behaviour", &cf))
 	  {
 	     cf.str_value = "seek in program chain"; // "seek in program chain" "seek in program"
-	     xine_config_update_entry(decoder, &cf);
+	     xine_config_update_entry(ev->decoder, &cf);
 	  }
-	if (xine_config_lookup_entry(decoder, "input.v4l_video_device_path", &cf))
+	if (xine_config_lookup_entry(ev->decoder, "input.v4l_video_device_path", &cf))
 	  {
 	     cf.str_value = "/dev/video0";
-	     xine_config_update_entry(decoder, &cf);
+	     xine_config_update_entry(ev->decoder, &cf);
 	  }
-	if (xine_config_lookup_entry(decoder, "input.cdda_use_cddb", &cf))
+	if (xine_config_lookup_entry(ev->decoder, "input.cdda_use_cddb", &cf))
 	  {
 	     cf.num_value = 0; // 0 or 1
-	     xine_config_update_entry(decoder, &cf);
+	     xine_config_update_entry(ev->decoder, &cf);
 	  }
-	if (xine_config_lookup_entry(decoder, "input.cdda_device", &cf))
+	if (xine_config_lookup_entry(ev->decoder, "input.cdda_device", &cf))
 	  {
 	     cf.str_value = "/dev/cdrom";
-	     xine_config_update_entry(decoder, &cf);
+	     xine_config_update_entry(ev->decoder, &cf);
 	  }
-	if (xine_config_lookup_entry(decoder, "audio.oss_device_name", &cf))
+	if (xine_config_lookup_entry(ev->decoder, "audio.oss_device_name", &cf))
 	  {
 	     cf.str_value = "/dev/dsp";
-	     xine_config_update_entry(decoder, &cf);
+	     xine_config_update_entry(ev->decoder, &cf);
 	  }
-	if (xine_config_lookup_entry(decoder, "audio.oss_device_number", &cf))
+	if (xine_config_lookup_entry(ev->decoder, "audio.oss_device_number", &cf))
 	  {
 	     cf.num_value = -1; // -1 or 0 1 2 ...
-	     xine_config_update_entry(decoder, &cf);
+	     xine_config_update_entry(ev->decoder, &cf);
 	  }
-	if (xine_config_lookup_entry(decoder, "audio.alsa_mmap_enable", &cf))
+	if (xine_config_lookup_entry(ev->decoder, "audio.alsa_mmap_enable", &cf))
 	  {
 	     cf.num_value = 1; // 0 or 1
-	     xine_config_update_entry(decoder, &cf);
+	     xine_config_update_entry(ev->decoder, &cf);
 	  }
-	if (xine_config_lookup_entry(decoder, "codec.a52_surround_downmix", &cf))
+	if (xine_config_lookup_entry(ev->decoder, "codec.a52_surround_downmix", &cf))
 	  {
 	     cf.num_value = 1; // 0 or 1
-	     xine_config_update_entry(decoder, &cf);
+	     xine_config_update_entry(ev->decoder, &cf);
 	  }
-	if (xine_config_lookup_entry(decoder, "vcd.default_device", &cf))
+	if (xine_config_lookup_entry(ev->decoder, "vcd.default_device", &cf))
 	  {
 	     cf.str_value = "/dev/cdrom";
-	     xine_config_update_entry(decoder, &cf);
+	     xine_config_update_entry(ev->decoder, &cf);
 	  }
      }
    if (0)
@@ -203,7 +193,7 @@ em_file_open(const char *file, Evas_Object *obj)
 	xine_mrl_t **mrls;
 	int mrls_num;
 	
-	mrls = xine_get_browse_mrls(decoder, "dvd", "dvd://", &mrls_num);
+	mrls = xine_get_browse_mrls(ev->decoder, "dvd", "dvd://", &mrls_num);
 	printf("mrls = %p\n", mrls);
 	if (mrls)
 	  {
@@ -222,7 +212,7 @@ em_file_open(const char *file, Evas_Object *obj)
 	char **auto_play_mrls;
 	int auto_play_num;
 	
-	auto_play_mrls = xine_get_autoplay_mrls(decoder, "dvd", &auto_play_num);
+	auto_play_mrls = xine_get_autoplay_mrls(ev->decoder, "dvd", &auto_play_num);
 	printf("auto_play_mrls = %p\n", auto_play_mrls);
 	if (auto_play_mrls)
 	  {
@@ -268,12 +258,12 @@ em_file_open(const char *file, Evas_Object *obj)
      }
    ev->fd = ev->fd_write;
 
-   ev->video = xine_open_video_driver(decoder, "emotion", XINE_VISUAL_TYPE_NONE, ev);
-   ev->audio = xine_open_audio_driver(decoder, "oss", ev); 
-//   ev->audio = xine_open_audio_driver(decoder, "alsa", ev);
-//   ev->audio = xine_open_audio_driver(decoder, "arts", ev);
-//   ev->audio = xine_open_audio_driver(decoder, "esd", ev);
-   ev->stream = xine_stream_new(decoder, ev->audio, ev->video);
+   ev->video = xine_open_video_driver(ev->decoder, "emotion", XINE_VISUAL_TYPE_NONE, ev);
+   ev->audio = xine_open_audio_driver(ev->decoder, "oss", ev); 
+//   ev->audio = xine_open_audio_driver(ev->decoder, "alsa", ev);
+//   ev->audio = xine_open_audio_driver(ev->decoder, "arts", ev);
+//   ev->audio = xine_open_audio_driver(ev->decoder, "esd", ev);
+   ev->stream = xine_stream_new(ev->decoder, ev->audio, ev->video);
    ev->queue = xine_event_new_queue(ev->stream);
    xine_event_create_listener_thread(ev->queue, _em_event, ev);
    if (!xine_open(ev->stream, file))
@@ -285,8 +275,8 @@ em_file_open(const char *file, Evas_Object *obj)
 	close(ev->fd_ev_write);
 	close(ev->fd_ev_read);
 	xine_dispose(ev->stream);
-	if (ev->video) xine_close_video_driver(decoder, ev->video);
-	if (ev->audio) xine_close_audio_driver(decoder, ev->audio);
+	if (ev->video) xine_close_video_driver(ev->decoder, ev->video);
+	if (ev->audio) xine_close_audio_driver(ev->decoder, ev->audio);
 	xine_event_dispose_queue(ev->queue);
 	free(ev);
 	return NULL;
@@ -369,9 +359,9 @@ em_file_close(void *ef)
    printf("EX dispose evq\n");
    xine_event_dispose_queue(ev->queue);
    printf("EX close video drv\n");
-   if (ev->video) xine_close_video_driver(decoder, ev->video);
+   if (ev->video) xine_close_video_driver(ev->decoder, ev->video);
    printf("EX close audio drv\n");
-   if (ev->audio) xine_close_audio_driver(decoder, ev->audio);
+   if (ev->audio) xine_close_audio_driver(ev->decoder, ev->audio);
    printf("EX del timer\n");
    if (ev->timer) ecore_timer_del(ev->timer);
    printf("EX del fds\n");
@@ -381,6 +371,7 @@ em_file_close(void *ef)
    ecore_main_fd_handler_del(ev->fd_ev_handler);
    close(ev->fd_ev_write);
    close(ev->fd_ev_read);
+   xine_exit(ev->decoder);
    free(ev);
 }
 
@@ -1132,7 +1123,7 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 		    {
 		       xine_ui_data_t *e;
 		       
-		       e = eev->xine_event;
+		       e = (xine_ui_data_t *)eev->xine_event;
 		       _emotion_title_set(ev->obj, e->str);
 		    }
 		  break;
@@ -1140,14 +1131,14 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 		    {
 		       xine_format_change_data_t *e;
 		       
-		       e = eev->xine_event;
+		       e = (xine_format_change_data_t *)eev->xine_event;
 		    }
 		  break;
 		case XINE_EVENT_UI_MESSAGE:
 		    {
 		       xine_ui_message_data_t *e;
 		       
-		       e = eev->xine_event;
+		       e = (xine_ui_message_data_t *)eev->xine_event;
 		       printf("EV: UI Message [FIXME: break this out to emotion api]\n");
 		       // e->type = error type(XINE_MSG_NO_ERROR, XINE_MSG_GENERAL_WARNING, XINE_MSG_UNKNOWN_HOST etc.)
 		       // e->messages is a list of messages DOUBLE null terminated
@@ -1157,7 +1148,7 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 		    {
 		       xine_audio_level_data_t *e;
 	     
-		       e = eev->xine_event;
+		       e = (xine_audio_level_data_t *)eev->xine_event;
 		       printf("EV: Audio Level [FIXME: break this out to emotion api]\n");
 		       // e->left (0->100) 
 		       // e->right
@@ -1168,15 +1159,15 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 		    {
 		       xine_progress_data_t *e;
 		       
-		       e = eev->xine_event;
-		       _emotion_progress_set(ev->obj, e->description, (double)e->percent / 100.0);
+		       e = (xine_progress_data_t *)eev->xine_event;
+		       _emotion_progress_set(ev->obj, (char *)e->description, (double)e->percent / 100.0);
 		    }
 		  break;
 		case XINE_EVENT_MRL_REFERENCE:
 		    {
 		       xine_mrl_reference_data_t *e;
 		       
-		       e = eev->xine_event;
+		       e = (xine_mrl_reference_data_t *)eev->xine_event;
 		       _emotion_file_ref_set(ev->obj, e->mrl, e->alternative);
 		    }
 		  break;
@@ -1184,7 +1175,7 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 		    {
 		       xine_ui_data_t *e;
 		       
-		       e = eev->xine_event;
+		       e = (xine_ui_data_t *)eev->xine_event;
 		       _emotion_spu_button_num_set(ev->obj, e->num_buttons);
 		    }
 		  break;
@@ -1192,7 +1183,7 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 		    {
 		       xine_spu_button_t *e;
 		       
-		       e = eev->xine_event;
+		       e = (xine_spu_button_t *)eev->xine_event;
 		       if (e->direction == 1)
 			 _emotion_spu_button_set(ev->obj, e->button);
 		       else
@@ -1203,7 +1194,7 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 		    {
 		       xine_dropped_frames_t *e;
 		       
-		       e = eev->xine_event;
+		       e = (xine_dropped_frames_t *)eev->xine_event;
 		       printf("EV: Dropped Frames (skipped %i) (discarded %i) [FIXME: break this out to the emotion api]\n", e->skipped_frames, e->discarded_frames);
 		       // e->skipped_frames = % frames skipped * 10
 		       // e->discarded_frames = % frames skipped * 10

@@ -12,6 +12,7 @@ typedef struct _Emotion_Xine_Event Emotion_Xine_Event;
 
 struct _Emotion_Xine_Video
 {
+   xine_t                   *decoder;
    xine_video_port_t        *video;
    xine_audio_port_t        *audio;
    xine_stream_t            *stream;
