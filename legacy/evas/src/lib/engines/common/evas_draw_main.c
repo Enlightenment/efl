@@ -532,7 +532,42 @@ evas_common_draw_func_blend_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
 	  }
 	else
 	  {
-#ifdef BUILD_SSE	     
+#if 1
+
+# ifdef BUILD_MMX
+# ifdef BUILD_C
+	     if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
+# endif	       
+	       return evas_common_copy_pixels_rgba_to_rgba_mmx2;
+# ifdef BUILD_SSE
+	     else
+# endif
+#endif
+#ifdef BUILD_SSE
+# ifdef BUILD_C
+	       if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 64 * 64))
+# endif
+		 return evas_common_copy_pixels_rgba_to_rgba_sse;
+# ifdef BUILD_MMX
+	     else
+# endif
+#endif
+#ifdef BUILD_MMX
+# ifdef BUILD_C
+	       if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+# endif		 
+		 return evas_common_copy_pixels_rgba_to_rgba_mmx;
+# ifdef BUILD_C
+	     else
+# endif	       
+#endif	       
+#ifdef BUILD_C
+	       return evas_common_copy_pixels_rgba_to_rgba_c;	     
+#endif	       
+
+#else	     
+
+# ifdef BUILD_SSE	     
 	     if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 256 * 256))
 	       return evas_common_copy_pixels_rgba_to_rgba_sse;
 # ifdef BUILD_MMX	     
@@ -554,6 +589,8 @@ evas_common_draw_func_blend_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
 #endif
 #ifdef BUILD_C
 	       return evas_common_copy_pixels_rgba_to_rgba_c;
+#endif
+
 #endif	     
 	  }
      }
@@ -596,7 +633,7 @@ evas_common_draw_func_blend_color_get(DATA32 src, RGBA_Image *dst, int pixels)
 	else
 	  {
 #ifdef  BUILD_SSE	     
-	     if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 256 * 256))
+	     if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 64 * 64))
 	       return evas_common_copy_color_rgba_to_rgba_sse;
 #endif
 #ifdef BUILD_MMX
@@ -755,25 +792,66 @@ evas_common_draw_func_copy_get(int pixels, int reverse)
      }
    else
      {
-#ifdef  BUILD_SSE	     
-	if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 256 * 256))
-	  return evas_common_copy_pixels_rgba_to_rgba_sse;
+#if 1
+
+# ifdef BUILD_MMX
+# ifdef BUILD_C
+	     if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
+# endif	       
+	       return evas_common_copy_pixels_rgba_to_rgba_mmx2;
+# ifdef BUILD_SSE
+	     else
+# endif
+#endif
+#ifdef BUILD_SSE
+# ifdef BUILD_C
+	       if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 64 * 64))
+# endif
+		 return evas_common_copy_pixels_rgba_to_rgba_sse;
+# ifdef BUILD_MMX
+	     else
+# endif
 #endif
 #ifdef BUILD_MMX
-# ifdef BUILD_SSE	     
-	else
+# ifdef BUILD_C
+	       if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+# endif		 
+		 return evas_common_copy_pixels_rgba_to_rgba_mmx;
+# ifdef BUILD_C
+	     else
 # endif	       
-	  if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
-	    return evas_common_copy_pixels_rgba_to_rgba_mmx2;
-	  else if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
-	    return evas_common_copy_pixels_rgba_to_rgba_mmx;
+#endif	       
+#ifdef BUILD_C
+	       return evas_common_copy_pixels_rgba_to_rgba_c;	     
+#endif	       
+
+#else	     
+
+# ifdef BUILD_SSE	     
+	     if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 256 * 256))
+	       return evas_common_copy_pixels_rgba_to_rgba_sse;
+# ifdef BUILD_MMX	     
+	     else
+# endif	       
+#endif	       
+#ifdef BUILD_MMX
+# ifdef BUILD_C
+	       if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
+# endif	       
+		 return evas_common_copy_pixels_rgba_to_rgba_mmx2;
+# ifdef BUILD_C
+	       else if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+# endif	       
+		 return evas_common_copy_pixels_rgba_to_rgba_mmx;
+# ifdef BUILD_C
+	     else
+# endif	       
 #endif
 #ifdef BUILD_C
-# ifdef BUILD_MMX	     
-	else
-# endif	       
-	  return evas_common_copy_pixels_rgba_to_rgba_c;
-#endif	       
+	       return evas_common_copy_pixels_rgba_to_rgba_c;
+#endif
+
+#endif	     
      }
    if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
 #ifdef BUILD_C

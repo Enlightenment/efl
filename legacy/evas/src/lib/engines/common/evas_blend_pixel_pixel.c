@@ -4,6 +4,8 @@
 #include "evas_mmx.h"
 #endif
 
+#define ALIGN_FIX
+
 extern DATA8       *_evas_pow_lut;
 extern const DATA16 _evas_const_c1[4];
 
@@ -171,6 +173,7 @@ void
 evas_common_copy_pixels_rgba_to_rgba_mmx(DATA32 *src, DATA32 *dst, int len)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr, *dst_end_ptr_pre;
+#ifdef ALIGN_FIX   
    int src_align;
    int dst_align;
 
@@ -196,6 +199,8 @@ evas_common_copy_pixels_rgba_to_rgba_mmx(DATA32 *src, DATA32 *dst, int len)
 #endif
 	return;
      }
+#endif   
+   
    src_ptr = src;
    dst_ptr = dst;
    dst_end_ptr = dst + len;
@@ -221,6 +226,7 @@ void
 evas_common_copy_pixels_rgba_to_rgba_mmx2(DATA32 *src, DATA32 *dst, int len)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr, *dst_end_ptr_pre;
+#ifdef ALIGN_FIX   
    int src_align;
    int dst_align;
 
@@ -246,6 +252,8 @@ evas_common_copy_pixels_rgba_to_rgba_mmx2(DATA32 *src, DATA32 *dst, int len)
 #endif
 	return;
      }
+#endif
+   
    src_ptr = src;
    dst_ptr = dst;
    dst_end_ptr = dst + len;
@@ -271,6 +279,7 @@ void
 evas_common_copy_pixels_rgba_to_rgba_sse(DATA32 *src, DATA32 *dst, int len)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr, *dst_end_ptr_pre;
+#ifdef ALIGN_FIX   
    int src_align;
    int dst_align;
 
@@ -296,6 +305,7 @@ evas_common_copy_pixels_rgba_to_rgba_sse(DATA32 *src, DATA32 *dst, int len)
 #endif
 	return;
      }
+#endif
    
    src_ptr = src;
    dst_ptr = dst;
