@@ -11,11 +11,11 @@
  * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
-ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Atom format, int size, void *data, int number)
+ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom property, Ecore_X_Atom type, int size, void *data, int number)
 {
    if (win == 0) win = DefaultRootWindow(_ecore_x_disp);
    if (size != 32)
-     XChangeProperty(_ecore_x_disp, win, type, format, size, PropModeReplace,
+     XChangeProperty(_ecore_x_disp, win, property, type, size, PropModeReplace,
 		     (unsigned char *)data, number);
    else
      {
@@ -26,7 +26,7 @@ ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_
 	if (dat)
 	  {
 	     for (ptr = (int *)data, i = 0; i < number; i++) dat[i] = ptr[i];
-	     XChangeProperty(_ecore_x_disp, win, type, format, size, 
+	     XChangeProperty(_ecore_x_disp, win, property, type, size, 
 			     PropModeReplace, (unsigned char *)dat, number);
 	     free(dat);
 	  }
@@ -40,7 +40,7 @@ ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_
  * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
-ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Atom format, int size, unsigned char **data, int *num)
+ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecore_X_Atom type, int size, unsigned char **data, int *num)
 {
    Atom type_ret = 0;
    int ret, size_ret = 0;
@@ -49,7 +49,7 @@ ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_
    
    if (!win) win = DefaultRootWindow(_ecore_x_disp);
 
-   ret = XGetWindowProperty(_ecore_x_disp, win, type, 0, LONG_MAX, False, format, &type_ret, &size_ret, &num_ret, &bytes, &prop_ret);
+   ret = XGetWindowProperty(_ecore_x_disp, win, property, 0, LONG_MAX, False, type, &type_ret, &size_ret, &num_ret, &bytes, &prop_ret);
    if (ret != Success)
      {
 	*data = NULL;
