@@ -1,8 +1,0 @@
-.icons
-Makefile
-Makefile.in
-.libs
-.deps
-libevas.la
-evas_main.lo
-*.lo
