@@ -398,7 +398,7 @@ evas_common_image_unstore(RGBA_Image *im)
 RGBA_Image *
 evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
 {
-   char *real_filename;
+   char *real_filename = NULL;
    Evas_Object_List *l;
    RGBA_Image *im;
    char *str;
@@ -407,7 +407,7 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
    
    if ((!filename) && (!key)) return NULL;
    if (!filename) return NULL;
-   real_filename = evas_file_path_resolve((char *)filename);
+//   real_filename = evas_file_path_resolve((char *)filename);
    l1 = 0;
    if (real_filename) l1 = strlen(real_filename);
    else if (filename) l1 = strlen(filename);
@@ -442,7 +442,7 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
 	
 	im = (RGBA_Image *)l;
 	ok = 0;
-	if (real_filename)
+	if ((real_filename) && (im->info.real_file))
 	  {
              if ((im->info.real_file) &&
 		 (real_filename) &&

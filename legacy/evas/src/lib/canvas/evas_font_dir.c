@@ -7,6 +7,19 @@
 
 /* font dir cache */
 static Evas_Hash *font_dirs = NULL;
+static Evas_List *fonts_cache = NULL;
+static Evas_List *fonts_zero = NULL;
+
+typedef struct _Fndat Fndat;
+
+struct _Fndat
+{
+   char *name;
+   char *source;
+   int   size;
+   void *font;
+   int   ref;
+};
 
 /* private methods for font dir cache */
 static Evas_Bool font_cache_dir_free(Evas_Hash *hash, const char *key, void *data, void *fdata);
@@ -27,6 +40,30 @@ evas_font_dir_cache_free(void)
    evas_hash_foreach (font_dirs, font_cache_dir_free, NULL);
    evas_hash_free (font_dirs);
    font_dirs = NULL;
+/*   
+   while (fonts_cache)
+     {
+	Fndat *fd;
+	
+	fd = evas_list_data(fonts_cache);
+	fonts_cache = evas_list_remove_list(fonts_cache, fonts_cache);
+	if (fd->name) free(fd->name);
+	if (fd->source) free(fd->source);
+	evas->engine.func->font_free(evas->engine.data.output, fd->font);
+	free(fd);
+     }
+   while (fonts_zero)
+     {
+	Fndat *fd;
+	
+	fd = evas_list_data(fonts_zero);
+	fonts_zero = evas_list_remove_list(fonts_zero, fonts_zero);
+	if (fd->name) free(fd->name);
+	if (fd->source) free(fd->source);
+	evas->engine.func->font_free(evas->engine.data.output, fd->font);
+	free(fd);
+     }
+ */
 }
 
 char *
@@ -41,7 +78,10 @@ evas_font_dir_cache_find(char *dir, char *font)
 	Evas_Font *fn;
 	
 	fn = object_text_font_cache_font_find(fd, font);
-	if (fn) return fn->path;
+	if (fn)
+	  {
+	     return fn->path;
+	  }
      }
    return NULL;
 }
@@ -76,12 +116,85 @@ evas_font_set_get(char *name)
    return fonts;
 }
 
+void
+evas_font_free(Evas *evas, void *font)
+{
+   Evas_List *l;
+   
+   for (l = fonts_cache; l; l = l->next)
+     {
+	Fndat *fd;
+	
+	fd = l->data;
+	if (fd->font == font)
+	  {
+	     fd->ref--;
+	     if (fd->ref == 0)
+	       {
+		  fonts_cache = evas_list_remove_list(fonts_cache, l);
+		  fonts_zero = evas_list_append(fonts_zero, fd);
+	       }
+	     break;
+	  }
+     }
+   while ((fonts_zero) && 
+	  (evas_list_count(fonts_zero) > 4)) /* 4 is arbitrary */
+     {
+	Fndat *fd;
+	
+	fd = evas_list_data(fonts_zero);
+	if (fd->ref != 0) break;
+	fonts_zero = evas_list_remove_list(fonts_zero, fonts_zero);
+	if (fd->name) free(fd->name);
+	if (fd->source) free(fd->source);
+	evas->engine.func->font_free(evas->engine.data.output, fd->font);
+	free(fd);
+     }
+}
+
 void *
 evas_font_load(Evas *evas, char *name, char *source, int size)
 {
    void *font = NULL;
    Evas_List *fonts, *l;
-   
+   Fndat *fd;
+
+   for (l = fonts_cache; l; l = l->next)
+     {
+	fd = l->data;
+	if (!strcmp(name, fd->name))
+	  {
+	     if (((!source) && (!fd->source)) ||
+		 ((source) && (fd->source) && (!strcmp(source, fd->source))))
+	       {
+		  if (size == fd->size)
+		    {
+		       fonts_cache = evas_list_remove_list(fonts_cache, l);
+		       fonts_cache = evas_list_prepend(fonts_cache, fd);
+		       fd->ref++;
+		       return fd->font;
+		    }
+	       }
+	  }
+     }
+   for (l = fonts_zero; l; l = l->next)
+     {
+	fd = l->data;
+	if (!strcmp(name, fd->name))
+	  {
+	     if (((!source) && (!fd->source)) ||
+		 ((source) && (fd->source) && (!strcmp(source, fd->source))))
+	       {
+		  if (size == fd->size)
+		    {
+		       fonts_zero = evas_list_remove_list(fonts_zero, l);
+		       fonts_cache = evas_list_prepend(fonts_cache, fd);
+		       fd->ref++;
+		       return fd->font;
+		    }
+	       }
+	  }
+     }
    fonts = evas_font_set_get(name);
    for (l = fonts; l; l = l->next)
      {
@@ -211,6 +324,16 @@ evas_font_load(Evas *evas, char *name, char *source, int size)
 	free(nm);
      }
    evas_list_free(fonts);
+   fd = calloc(1, sizeof(Fndat));
+   if (fd)
+     {
+	fd->name = strdup(name);
+	if (source) fd->source = strdup(source);
+	fd->size = size;
+	fd->font = font;
+	fd->ref = 1;
+	fonts_cache = evas_list_prepend(fonts_cache, fd);
+     }
    return font;
 }
 
@@ -220,7 +343,6 @@ static Evas_Bool
 font_cache_dir_free(Evas_Hash *hash, const char *key, void *data, void *fdata)
 {
    object_text_font_cache_dir_del((char *) key, data);
-
    return 1;
 }
 

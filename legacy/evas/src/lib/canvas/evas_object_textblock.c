@@ -842,7 +842,7 @@ evas_object_textblock_layout_clear(Evas_Object *obj, Layout *layout)
 {
    if (layout->font.name) free(layout->font.name);
    if (layout->font.source) free(layout->font.source);
-   if (layout->font.font) ENFN->font_free(ENDT, layout->font.font);
+   if (layout->font.font) evas_font_free(obj->layer->evas, layout->font.font);
    memset(layout, 0, sizeof(Layout));
 }
 
@@ -876,7 +876,7 @@ evas_object_textblock_layout_fonts_hold_clean(Evas_Object *obj)
    
    while (o->font_hold)
      {
-	ENFN->font_free(ENDT, o->font_hold->data);
+	evas_font_free(obj->layer->evas, o->font_hold->data);
 	o->font_hold = evas_list_remove_list(o->font_hold, o->font_hold);
      }
 }
@@ -1086,7 +1086,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		       if (layout.line.mdescent < layout.line.descent)
 			 layout.line.mdescent = layout.line.descent;
 		       if (layout.font.font)
-			 ENFN->font_free(ENDT, layout.font.font);
+			 evas_font_free(obj->layer->evas, layout.font.font);
 		       layout.font.font = NULL;
 		    }
 		  if ((layout.line.y + layout.line.mascent + layout.line.mdescent) > hh)

@@ -160,8 +160,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
    /* DO IT */
    if (o->engine_data)
      {
-	obj->layer->evas->engine.func->font_free(obj->layer->evas->engine.data.output,
-						 o->engine_data);
+	evas_font_free(obj->layer->evas, o->engine_data);
 	o->engine_data = NULL;
      }
    o->engine_data = evas_font_load(obj->layer->evas, font, o->cur.source, size);
@@ -826,9 +825,7 @@ evas_object_text_free(Evas_Object *obj)
    if (o->cur.text) free(o->cur.text);
    if (o->cur.font) free(o->cur.font);
    if (o->cur.source) free(o->cur.source);
-   if (o->engine_data)
-     obj->layer->evas->engine.func->font_free(obj->layer->evas->engine.data.output,
-					      o->engine_data);
+   if (o->engine_data) evas_font_free(obj->layer->evas, o->engine_data);
    o->magic = 0;
    free(o);
 }
