@@ -330,7 +330,6 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
    recursions++;
    _edje_freeze(ed);
    _edje_ref(ed);
-   _edje_emit(ed, "program,start", pr->name);
    if (pr->action == EDJE_ACTION_TYPE_STATE_SET)
      {
 	if ((pr->tween.time > 0.0) && (!ed->no_anim))
@@ -358,6 +357,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
 		       rp->program = runp;
 		    }
 	       }
+	     _edje_emit(ed, "program,start", pr->name);
 	     
 	     if (!ed->actions)
 	       _edje_animators = evas_list_append(_edje_animators, ed);
@@ -390,12 +390,14 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
 		       _edje_part_pos_set(ed, rp, pr->tween.mode, 0.0);
 		    }
 	       }
+	     _edje_emit(ed, "program,start", pr->name);
 	     _edje_emit(ed, "program,stop", pr->name);
 	     _edje_recalc(ed);
 	  }
      }
    else if (pr->action == EDJE_ACTION_TYPE_ACTION_STOP)
      {
+	_edje_emit(ed, "program,start", pr->name);
 	for (l = pr->targets; l; l = l->next)
 	  {
 	     Edje_Program_Target *pt;
@@ -414,10 +416,13 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
 		    }
 	       }
 	  }
+	_edje_emit(ed, "program,stop", pr->name);
      }
    else if (pr->action == EDJE_ACTION_TYPE_SIGNAL_EMIT)
      {
+	_edje_emit(ed, "program,start", pr->name);
 	_edje_emit(ed, pr->state, pr->state2);
+	_edje_emit(ed, "program,start", pr->name);
      }
    _edje_unref(ed);
    _edje_thaw(ed);
