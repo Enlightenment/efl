@@ -12,9 +12,26 @@ public global2 = 77;
 
 main()
 {
-   testfn(12345, "Panties!!!!", 7);
+   new Float:t;
    
+   testfn(12345, "Panties!!!!", 7);
+   t = seconds();
+   printf("SECONDS = %f\n", t);
+   testdate();
    return 77;
+}
+
+testdate()
+{
+  new       year, month, day, yearday, weekday, hour, minute;
+  new Float:second;
+  
+  date(year, month, day, yearday, weekday, hour, minute, second);
+  printf("%i/%i/%i\n", day, month, year);
+  printf("%i:%i:%f\n", hour, minute, second);
+  printf("yearday: %i, weekday: %i\n", yearday, weekday);
+  printf("frand: %f\n", randf());
+  printf("rand: %X\n", rand());
 }
 
 tester(arg1=0, str[]="", arg2=0)

@@ -4,9 +4,13 @@
  * Written by Greg Garner (gmg@artran.com)
  * Modified in March 2001 to include user defined
  * operators for the floating point functions.
+ * (c) Copyright 2004, Carsten Haitzler
  * Modified March 2004 by Carsten Haitzler <raster@rasterman.com> to conform
  * to E coding style
  * Became default include for embryo...
+ * Added string functions
+ * Added rand functions
+ * Added time functions
  *
  * This file is provided as is (no warranties).
  */
@@ -34,25 +38,86 @@ native Float:atof(const string[]);
 native Float:fract(Float:value);
 /* Round a float into a integer value */
 native       round(Float:value, Float_Round_Method:method=ROUND);
-/* Return the square root of the input value, same as float_power(value, 0.5) */
+/* Return the square root of value, same as float_power(value, 0.5) */
 native Float:sqrt(Float:value);
 /* Return the value raised to the power of the exponent */
 native Float:pow(Float:value, Float:exponent);
 /* Return the logarithm */
 native Float:log(Float:value, Float:base=10.0);
-/* Return the sine, cosine or tangent. The input angle may be in radian, degrees or grades. */
+/* Return the sine, cosine or tangent. The input angle may be in radian*/
+/* degrees or grades. */
 native Float:sin(Float:value, Float_Angle_Mode:mode=RADIAN);
 native Float:cos(Float:value, Float_Angle_Mode:mode=RADIAN);
 native Float:tan(Float:value, Float_Angle_Mode:mode=RADIAN);
 /* Return the absolute value */
 native Float:abs(Float:value);
+/* return integer from string */
+native       atoi(str[]);
+/* return 0 if string matches glob, non-zero otherwise */
+native       fnmatch(glob[], str[]);
+/* same as strcmp() */
+native       strcmp(str1[], str2[]);
+/* same as strncmp */
+native       strncmp(str1[], str2[]);
+/* same as strcpy */
+native       strcpy(dst[], src[]);
+/* same as strncpy  except it nul terminates */
+native       strncpy(dst[], src[], n);
+/* same as strlen */
+native       strlen(str[]);
+/* same as strcat */
+native       strcat(dst[], src[]);
+/* same as strncat except it nul terminates */
+native       strncat(dst[], src[], n);
+/* prepends src string onto start of dst string */
+native       strprep(dst[], src[]);
+/* prepends at most n chars from src string onto dst string */
+native       strnprep(dst[], src[], n);
+/* cuts chars from char n to (not including) n2, and puts them in str */
+native       strcut(dst[], str[], n, n2);
+/* same as snprintf, except only supports %%, %c, %i, %d, %f, %x, %X, %s, \n and \t */
+native       snprintf(dst[], dstn, fmt[], ...);
+/* same as strstr */
+native       strstr(str[], ndl[]);
+/* same as strchr, except ch must be a 1 charater long string, and returns string index */
+native       strchr(str[], ch[]);
+/* same as strrchr, except ch must be a 1 charater long string and returns string index */
+native       strrchr(str[], ch[]);
+/* return random number 0 - 65535 */
+native       rand();
+/* return random number 0.0 - 1.0 */
+native Float:randf();
+/* return seconds since midnight as a float */
+native Float:seconds();
+/* return the current date, year, time etc. in the variables provided */
+native       date(&year, &month, &day, &yearday, &weekday, &hr, &min, &Float:sec);
 
-
-
-
-
-
-
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
+/*****************************************************************************/
 
 /**************************************************/
 /* Hidden calls - all are overloaded on operators */

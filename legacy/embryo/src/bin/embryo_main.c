@@ -213,6 +213,7 @@ main(int argc,char *argv[])
    char *file = NULL;
    char *func = NULL;
 
+   embryo_init();
    for (i = 1; i < argc; i++)
      {
 	if (argv[i][0] != '-')
@@ -304,5 +305,6 @@ main(int argc,char *argv[])
      }
    printf("Program returned %i\n", (int)embryo_program_return_value_get(ep));
    embryo_program_free(ep);
+   embryo_shutdown();
    return 0;
 }

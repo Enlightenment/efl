@@ -19,6 +19,9 @@ libembryo_la_SOURCES  = \
 embryo_amx.c \
 embryo_float.c \
 embryo_main.c \
+embryo_rand.c \
+embryo_str.c \
+embryo_time.c \
 embryo_private.h
 
 libembryo_la_LIBADD       = $(LDFLAGS) -lm

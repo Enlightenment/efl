@@ -276,5 +276,8 @@ struct _Embryo_Header
 } __attribute__((packed));
 
 void _embryo_fp_init(Embryo_Program *ep);
+void _embryo_rand_init(Embryo_Program *ep);
+void _embryo_str_init(Embryo_Program *ep);
+void _embryo_time_init(Embryo_Program *ep);
     
 #endif
