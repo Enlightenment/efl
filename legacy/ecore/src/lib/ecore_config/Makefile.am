@@ -39,7 +39,6 @@ ecore_config_private.h
 
 libecore_config_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
--ldl \
 @edb_libs@ \
 @evas_libs@
 
