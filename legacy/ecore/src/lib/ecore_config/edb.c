@@ -23,7 +23,12 @@ int ecore_config_load_file(Ecore_Config_Bundle *b, char *file) {
   char **keys;
   int key_count;
   int x;
-  char *type = NULL;
+  int itmp;
+  float ftmp;
+  char *type;
+  char *data;
+  type = NULL;
+  data = NULL;
   
   db = e_db_open_read(file);
   if (!db) {
@@ -37,19 +42,15 @@ int ecore_config_load_file(Ecore_Config_Bundle *b, char *file) {
     type = e_db_type_get(db, keys[x]);
     if (!type) type = "?";
 
-    char *data = NULL;
-
     if (!strcmp(type, "int")) {
-      int tmp;
-      if (e_db_int_get(db, keys[x], &tmp)) {
-        ecore_config_set_int(b, keys[x], tmp);
+      if (e_db_int_get(db, keys[x], &itmp)) {
+        ecore_config_set_int(b, keys[x], itmp);
       } else {
         E(0, "Could not read key %s!\n", keys[x]);
       }
     } else if (!strcmp(type, "float")) {
-      float tmp;
-      if (e_db_float_get(db, keys[x], &tmp)) {
-        ecore_config_set_float(b, keys[x], tmp);
+      if (e_db_float_get(db, keys[x], &ftmp)) {
+        ecore_config_set_float(b, keys[x], ftmp);
       } else {
         E(0, "Could not read key %s!\n", keys[x]);
       }
