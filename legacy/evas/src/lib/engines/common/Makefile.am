@@ -47,9 +47,17 @@ evas_rectangle_main.c \
 evas_scale_main.c \
 evas_scale_sample.c \
 evas_scale_smooth.c \
-evas_tiler.c
+evas_tiler.c \
+evas_blend_ops.h
 
-EXTRA_DIST = evas_scale_smooth_scaler.c
+EXTRA_DIST = \
+evas_scale_smooth_scaler.c \
+evas_scale_smooth_scaler_down.c \
+evas_scale_smooth_scaler_downx.c \
+evas_scale_smooth_scaler_downx_downy.c \
+evas_scale_smooth_scaler_downy.c \
+evas_scale_smooth_scaler_noscale.c \
+evas_scale_smooth_scaler_up.c
 
 libevas_engine_common_la_LIBADD       = \
 $(LDFLAGS)

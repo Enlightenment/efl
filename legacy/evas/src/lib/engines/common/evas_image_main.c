@@ -147,12 +147,6 @@ evas_common_image_free(RGBA_Image *im)
    int i;
    
    if (im->image) evas_common_image_surface_free(im->image);
-   for (i = 0; i < im->mipmaps.num; i++)
-     {
-	if (im->mipmaps.levels[i])
-	  evas_common_image_surface_free(im->mipmaps.levels[i]);
-     }
-   if (im->mipmaps.levels) free(im->mipmaps.levels);
    if (im->info.file) free(im->info.file);
    if (im->info.real_file) free(im->info.real_file);
    if (im->info.key) free(im->info.key);
@@ -404,12 +398,6 @@ evas_common_image_ram_usage(RGBA_Image *im)
    if (im->info.comment) ram += strlen(im->info.comment);
    if ((im->image) && (im->image->data) && (!im->image->no_free))
      ram += im->image->w * im->image->h * sizeof(DATA32);
-   ram += im->mipmaps.num * sizeof(RGBA_Surface);
-   for (i = 0; i < im->mipmaps.num; i++)
-     {
-	if ((im->mipmaps.levels[i]) && (im->mipmaps.levels[i]->data) && (!im->mipmaps.levels[i]->no_free))
-	  ram += im->mipmaps.levels[i]->w * im->mipmaps.levels[i]->h * sizeof(DATA32);
-     }
    return ram;
 }
 
@@ -420,7 +408,5 @@ evas_common_image_dirty(RGBA_Image *im)
    
    evas_common_image_unstore(im);
    im->flags |= RGBA_IMAGE_IS_DIRTY;
-   for (i = 0; i < im->mipmaps.num; i++)
-     evas_common_image_surface_dealloc(im->mipmaps.levels[i]);
 }
 

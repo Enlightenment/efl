@@ -296,11 +296,6 @@ struct _RGBA_Image
    RGBA_Image_Flags     flags;
    struct 
      {
-	int             num;
-	RGBA_Surface  **levels;
-     } mipmaps;
-   struct 
-     {
 	int             format;
 	char           *file;
 	char           *real_file;
@@ -751,11 +746,6 @@ void evas_common_scale_rgb_mipmap_down_1x2_c           (DATA32 *src, DATA32 *dst
 void evas_common_scale_rgba_mipmap_down_2x2_mmx        (DATA32 *src, DATA32 *dst, int src_w, int src_h);
 void evas_common_scale_rgba_mipmap_down_2x1_mmx        (DATA32 *src, DATA32 *dst, int src_w, int src_h);
 void evas_common_scale_rgba_mipmap_down_1x2_mmx        (DATA32 *src, DATA32 *dst, int src_w, int src_h);
-
-void evas_common_scale_rgba_gen_mipmap_table            (RGBA_Image *src);
-void evas_common_scale_rgba_gen_mipmap_level            (RGBA_Image *src, int l);
-int  evas_common_scale_rgba_get_mipmap_surfaces         (RGBA_Image *src, int src_region_w, int src_region_h, int dst_region_w, int dst_region_h, RGBA_Surface **srf1, RGBA_Surface **srf2);
-RGBA_Surface *evas_common_scale_rgba_get_mipmap_surface (RGBA_Image *src, int src_region_w, int src_region_h, int dst_region_w, int dst_region_h);
   
 void evas_common_scale_rgba_in_to_out_clip_smooth_mmx  (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
 void evas_common_scale_rgba_in_to_out_clip_smooth_c    (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);

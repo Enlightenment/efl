@@ -3,6 +3,11 @@
 #include "evas_mmx.h"
 #endif
 
+#include "evas_blend_ops.h"
+
+extern DATA8        _evas_pow_lut[256][256];
+extern const DATA16 _evas_const_c1[4];
+
 static DATA32 **scale_calc_y_points(DATA32 *src, int sw, int sh, int dh);
 static int     *scale_calc_x_points(int sw, int dw);
 static int     *scale_calc_a_points(int s, int d);
@@ -425,220 +430,6 @@ evas_common_scale_rgba_mipmap_down_1x2_mmx(DATA32 *src, DATA32 *dst, int src_w, 
 #endif
 
 #ifdef BUILD_SCALE_SMOOTH
-void
-evas_common_scale_rgba_gen_mipmap_table(RGBA_Image *src)
-{
-   int w, h, i;
-   
-   w = src->image->w;
-   h = src->image->h;
-   do
-     {
-	w >>= 1;
-	h >>= 1;
-	if (w < 1) w = 1;
-	if (h < 1) h = 1;
-	src->mipmaps.num++;
-     }
-   while ((w > 1) && (h > 1));
-   if (src->mipmaps.num <= 0) return;
-   src->mipmaps.levels = malloc(sizeof(RGBA_Surface) * src->mipmaps.num);
-   w = src->image->w;
-   h = src->image->h;
-   for (i = 0; i < src->mipmaps.num; i++)
-     {
-        w >>= 1;
-	h >>= 1;
-	if (w < 1) w = 1;
-	if (h < 1) h = 1;	
-	src->mipmaps.levels[i] = evas_common_image_surface_new();
-	src->mipmaps.levels[i]->w = w;
-	src->mipmaps.levels[i]->h = h;
-     }
-}
-#endif
-
-#ifdef BUILD_SCALE_SMOOTH
-void
-evas_common_scale_rgba_gen_mipmap_level(RGBA_Image *src, int l)
-{
-   RGBA_Surface *s_srf, *d_srf;
-#ifdef BUILD_MMX
-   int mmx, sse, sse2;
-#endif   
-   
-   if (src->mipmaps.levels[l]->data) return;
-   evas_common_image_surface_alloc(src->mipmaps.levels[l]);
-   if (l > 0)
-     evas_common_scale_rgba_gen_mipmap_level(src, l - 1);
-   if (l > 0)
-     s_srf = src->mipmaps.levels[l - 1];
-   else
-     s_srf = src->image;
-   d_srf = src->mipmaps.levels[l];
-#ifdef BUILD_MMX
-   evas_common_cpu_can_do(&mmx, &sse, &sse2);
-   if (mmx)
-     {
-	if ((s_srf->w > 1) && (s_srf->h > 1))
-	  evas_common_scale_rgba_mipmap_down_2x2_mmx(s_srf->data, d_srf->data, s_srf->w, s_srf->h);
-	else if ((s_srf->w > 1) && (s_srf->h <= 1))
-	  evas_common_scale_rgba_mipmap_down_2x1_mmx(s_srf->data, d_srf->data, s_srf->w, s_srf->h);
-	else if ((s_srf->w <= 1) && (s_srf->h > 1))
-	  evas_common_scale_rgba_mipmap_down_1x2_mmx(s_srf->data, d_srf->data, s_srf->w, s_srf->h);
-     }
-   else
-     {
-#endif   
-#ifdef BUILD_C
-	if (src->flags & RGBA_IMAGE_HAS_ALPHA)
-	  {
-	     if ((s_srf->w > 1) && (s_srf->h > 1))
-	       evas_common_scale_rgba_mipmap_down_2x2_c(s_srf->data, d_srf->data, s_srf->w, s_srf->h);
-	     else if ((s_srf->w > 1) && (s_srf->h <= 1))
-	       evas_common_scale_rgba_mipmap_down_2x1_c(s_srf->data, d_srf->data, s_srf->w, s_srf->h);
-	     else if ((s_srf->w <= 1) && (s_srf->h > 1))
-	       evas_common_scale_rgba_mipmap_down_1x2_c(s_srf->data, d_srf->data, s_srf->w, s_srf->h);
-	  }
-	else
-	  {
-	     if ((s_srf->w > 1) && (s_srf->h > 1))
-	       evas_common_scale_rgb_mipmap_down_2x2_c(s_srf->data, d_srf->data, s_srf->w, s_srf->h);
-	     else if ((s_srf->w > 1) && (s_srf->h <= 1))
-	       evas_common_scale_rgb_mipmap_down_2x1_c(s_srf->data, d_srf->data, s_srf->w, s_srf->h);
-	     else if ((s_srf->w <= 1) && (s_srf->h > 1))
-	       evas_common_scale_rgb_mipmap_down_1x2_c(s_srf->data, d_srf->data, s_srf->w, s_srf->h);
-	  }
-#endif	
-#ifdef BUILD_MMX
-     }
-#endif
-}
-#endif
-
-#ifdef BUILD_SCALE_SMOOTH
-#ifdef BUILD_SCALE_TRILINEAR
-int
-evas_common_scale_rgba_get_mipmap_surfaces(RGBA_Image *src, int src_region_w, int src_region_h, int dst_region_w, int dst_region_h, RGBA_Surface **srf1, RGBA_Surface **srf2)
-{
-   int scale_x, scale_y;
-   int l, l1, l2;
-   int mix, pw, ph;
-   int w, h;
-   int dw, dh;
-   
-   scale_x = (dst_region_w << 16) / src_region_w;
-   scale_y = (dst_region_h << 16) / src_region_h;
-
-   mix = 0;
-   l1 = -1;
-   l2 = -1;
-   w = src->image->w;
-   h = src->image->h;
-   dw = (dst_region_w * src->image->w) / src_region_w;
-   dh = (dst_region_h * src->image->h) / src_region_h;
-   
-   /* if we prefer smoothened use smaller scaling axis */
-   if (scale_x < scale_y)
-     /* use x axis */
-     {
-	for (l = 0; l < src->mipmaps.num; l++)
-	  {
-	     pw = w;
-	     w >>=1;
-	     if (dw > w)
-	       {
-		  mix = ((dw - w) << 8) / (pw - w);
-		  l1 = l - 1;
-		  l2 = l;
-		  break;
-	       }
-	  }
-     }
-   else
-     /* use y axis */
-     {
-	for (l = 0; l < src->mipmaps.num; l++)
-	  {
-	     ph = h;
-	     h >>=1;
-	     if (dh > h)
-	       {
-		  mix = ((dh - h) << 8) / (ph - h);
-		  l1 = l - 1;
-		  l2 = l;
-		  break;
-	       }
-	  }
-     }
-   if (l1 == -1) *srf1 = src->image;
-   else
-     {
-	evas_common_scale_rgba_gen_mipmap_level(src, l1);
-	*srf1 = src->mipmaps.levels[l1];
-     }
-   if (l2 == -1) *srf2 = src->image;
-   else
-     {
-	evas_common_scale_rgba_gen_mipmap_level(src, l2);
-	*srf2 = src->mipmaps.levels[l2];
-     }
-   return mix;
-}
-#else
-RGBA_Surface *
-evas_common_scale_rgba_get_mipmap_surface(RGBA_Image *src, int src_region_w, int src_region_h, int dst_region_w, int dst_region_h)
-{
-   int scale_x, scale_y;
-   int l;
-   int pw, ph;
-   int w, h;
-   int dw, dh;
-   RGBA_Surface *srf;
-   
-   scale_x = (dst_region_w << 16) / src_region_w;
-   scale_y = (dst_region_h << 16) / src_region_h;
-
-   w = src->image->w;
-   h = src->image->h;
-   dw = (dst_region_w * src->image->w) / src_region_w;
-   dh = (dst_region_h * src->image->h) / src_region_h;
-   
-   /* if we prefer smoothened use larger scaling axis */
-   if (scale_x > scale_y)
-     /* use x axis */
-     {
-	for (l = 0; l < src->mipmaps.num; l++)
-	  {
-	     pw = w;
-	     w >>=1;
-	     if (dw > w) break;
-	  }
-     }
-   else
-     /* use y axis */
-     {
-	for (l = 0; l < src->mipmaps.num; l++)
-	  {
-	     ph = h;
-	     h >>=1;
-	     if (dh > h) break;
-	  }
-     }
-   l--;
-   srf = src->image;
-   if (l == -1) srf = src->image;
-   else
-     {
-	evas_common_scale_rgba_gen_mipmap_level(src, l);
-	srf = src->mipmaps.levels[l];
-     }
-   return srf;
-}
-#endif
-#endif
-
-#ifdef BUILD_SCALE_SMOOTH
 # ifdef BUILD_MMX
 #  undef SCALE_FUNC
 #  define SCALE_FUNC evas_common_scale_rgba_in_to_out_clip_smooth_mmx
@@ -661,9 +452,7 @@ evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
 				 int dst_region_w, int dst_region_h)
 {
 # ifdef BUILD_MMX
-#  ifndef BUILD_SCALE_TRILINEAR   
    int mmx, sse, sse2;
-#  endif
 # endif   
    int c, cx, cy, cw, ch;
    Cutout_Rect *rects, *r;
@@ -674,15 +463,12 @@ evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
    if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h, 0, 0, dst->image->w, dst->image->h)))
      return;
 # ifdef BUILD_MMX
-#  ifndef BUILD_SCALE_TRILINEAR   
    evas_common_cpu_can_do(&mmx, &sse, &sse2);
-#  endif
 # endif   
    /* no cutouts - cut right to the chase */
    if (!dc->cutout.rects)
      {
 # ifdef BUILD_MMX
-#  ifndef BUILD_SCALE_TRILINEAR   
 	if (mmx)
 	  evas_common_scale_rgba_in_to_out_clip_smooth_mmx(src, dst, dc, 
 					       src_region_x, src_region_y, 
@@ -690,7 +476,6 @@ evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
 					       dst_region_x, dst_region_y,
 					       dst_region_w, dst_region_h);
 	else
-#  endif	
 # endif
 # ifdef BUILD_C
 	  evas_common_scale_rgba_in_to_out_clip_smooth_c(src, dst, dc, 
@@ -717,7 +502,6 @@ evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
 	r = (Cutout_Rect *)l;
 	evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
 # ifdef BUILD_MMX
-#  ifndef BUILD_SCALE_TRILINEAR   
 	if (mmx)
 	  evas_common_scale_rgba_in_to_out_clip_smooth_mmx(src, dst, dc, 
 					       src_region_x, src_region_y, 
@@ -725,7 +509,6 @@ evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
 					       dst_region_x, dst_region_y,
 					       dst_region_w, dst_region_h);
 	else
-#  endif	
 # endif
 # ifdef BUILD_C
 	  evas_common_scale_rgba_in_to_out_clip_smooth_c(src, dst, dc, 
