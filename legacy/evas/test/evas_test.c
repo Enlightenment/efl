@@ -68,7 +68,7 @@ static TextBlock texts[] =
      { 52.0, 54.0, 58.0, 60.0, "Yes ..."},
      { 60.0, 64.0, 70.0, 74.0, "EVAS"}
 };
-static double texts_loop = 0;
+static double texts_loop = 75;
 
 /* functions */
 double

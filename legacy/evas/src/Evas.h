@@ -206,7 +206,8 @@ void evas_event_leave(Evas e);
 int  evas_pointer_in(Evas e);
 void evas_pointer_pos(Evas e, int *x, int *y);
 int  evas_pointer_buttons(Evas e);
-	 
+void evas_pinter_ungrab(Evas e);
+   
 /* callbacks */
 void evas_callback_add(Evas e, Evas_Object o, Evas_Callback_Type callback, void (*func) (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y), void *data);
 void evas_callback_del(Evas e, Evas_Object o, Evas_Callback_Type callback);

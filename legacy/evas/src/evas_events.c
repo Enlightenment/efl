@@ -202,3 +202,10 @@ evas_pointer_buttons(Evas e)
    if (!e) return 0;
    return e->mouse.buttons;
 }
+
+void
+evas_pinter_ungrab(Evas e)
+{
+   e->mouse.buttons = 0;
+   e->mouse.button_object = NULL;
+}
