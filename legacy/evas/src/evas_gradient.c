@@ -180,3 +180,23 @@ evas_gradient_add_color(Evas_Gradient grad, int r, int g, int b, int a, int dist
    col->distance = dist;
    grad->color_points = evas_list_append(grad->color_points, col);
 }
+
+void
+evas_set_angle(Evas e, Evas_Object o, double angle)
+{
+   switch (o->type)
+     {
+     case OBJECT_GRADIENT_BOX:
+	  {
+	     Evas_Object_Gradient_Box oo;
+	     
+	     oo = (Evas_Object_Gradient_Box)o;
+	     oo->current.angle = angle;
+	  }
+	o->changed = 1;
+	e->changed = 1;
+	break;
+     default:
+	break;
+     }
+}

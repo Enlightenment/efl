@@ -249,3 +249,147 @@ evas_text_at(Evas e, Evas_Object o, int index,
 	break;
      }
 }
+
+
+void
+evas_set_text(Evas e, Evas_Object o, char *text)
+{
+   switch (o->type)
+     {
+     case OBJECT_TEXT:
+	  {
+	     Evas_Object_Text oo;
+	     
+	     oo = (Evas_Object_Text)o;
+	     if (oo->current.text) free(oo->current.text);
+	     oo->current.text = strdup(text);
+	     oo->previous.text = NULL;
+	       {	     
+		  switch (e->current.render_method)
+		    {
+		    case RENDER_METHOD_ALPHA_SOFTWARE:
+			 {
+			    Evas_Imlib_Font *fn;
+			    
+			    fn = __evas_imlib_text_font_new (e->current.display,
+							     oo->current.font,
+							     oo->current.size);
+			    if (fn)
+			      {
+				 __evas_imlib_text_get_size(fn, oo->current.text,
+							    &oo->current.string.w,
+							    &oo->current.string.h);
+				 o->current.w = (double)oo->current.string.w;
+				 o->current.h = (double)oo->current.string.h;
+				 __evas_imlib_text_font_free(fn);
+			      }
+			 }
+		       break;
+		    case RENDER_METHOD_BASIC_HARDWARE:
+		       break;
+		    case RENDER_METHOD_3D_HARDWARE:
+			 {
+			    Evas_GL_Font *fn;
+			    
+			    fn = __evas_gl_text_font_new (e->current.display,
+							  oo->current.font,
+							  oo->current.size);
+			    if (fn)
+			      {
+				 __evas_gl_text_get_size(fn, oo->current.text,
+							 &oo->current.string.w,
+							 &oo->current.string.h);
+				 o->current.w = (double)oo->current.string.w;
+				 o->current.h = (double)oo->current.string.h;
+				 __evas_gl_text_font_free(fn);
+			      }
+			 }
+		       break;
+		    case RENDER_METHOD_ALPHA_HARDWARE:
+		       break;
+		    default:
+		       break;
+		    }
+	       }
+	     o->current.w = (double)oo->current.string.w;
+	     o->current.h = (double)oo->current.string.h;
+	  }
+	o->changed = 1;
+	e->changed = 1;
+	break;
+     default:
+	break;
+     }
+}
+
+void
+evas_set_font(Evas e, Evas_Object o, char *font, int size)
+{
+   switch (o->type)
+     {
+     case OBJECT_TEXT:
+	  {
+	     Evas_Object_Text oo;
+	     
+	     oo = (Evas_Object_Text)o;
+	     if (oo->current.font) free(oo->current.font);
+	     oo->current.font = strdup(font);
+	     oo->previous.font = NULL;
+	     oo->current.size = size;
+	       {	     
+		  switch (e->current.render_method)
+		    {
+		    case RENDER_METHOD_ALPHA_SOFTWARE:
+			 {
+			    Evas_Imlib_Font *fn;
+			    
+			    fn = __evas_imlib_text_font_new (e->current.display,
+							     oo->current.font,
+							     oo->current.size);
+			    if (fn)
+			      {
+				 __evas_imlib_text_get_size(fn, oo->current.text,
+							    &oo->current.string.w,
+							    &oo->current.string.h);
+				 o->current.w = (double)oo->current.string.w;
+				 o->current.h = (double)oo->current.string.h;
+				 __evas_imlib_text_font_free(fn);
+			      }
+			 }
+		       break;
+		    case RENDER_METHOD_BASIC_HARDWARE:
+		       break;
+		    case RENDER_METHOD_3D_HARDWARE:
+			 {
+			    Evas_GL_Font *fn;
+			    
+			    fn = __evas_gl_text_font_new (e->current.display,
+							  oo->current.font,
+							  oo->current.size);
+			    if (fn)
+			      {
+				 __evas_gl_text_get_size(fn, oo->current.text,
+							 &oo->current.string.w,
+							 &oo->current.string.h);
+				 o->current.w = (double)oo->current.string.w;
+				 o->current.h = (double)oo->current.string.h;
+				 __evas_gl_text_font_free(fn);
+			      }
+			 }
+		       break;
+		    case RENDER_METHOD_ALPHA_HARDWARE:
+		       break;
+		    default:
+		       break;
+		    }
+	       }
+	     o->current.w = (double)oo->current.string.w;
+	     o->current.h = (double)oo->current.string.h;
+	  }
+	o->changed = 1;
+	e->changed = 1;
+	break;
+     default:
+	break;
+     }
+}

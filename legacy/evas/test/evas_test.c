@@ -26,7 +26,7 @@ main(int argc, char **argv)
    int win_w, win_h;
    int i, a, w, h;
    Evas e;
-   Evas_Object o[128], o_rect, o_line, o_grad;
+   Evas_Object o[128], o_rect, o_line, o_grad, o_fps;
    Evas_Gradient grad;
    int down;
    double t1, t2;
@@ -129,6 +129,12 @@ main(int argc, char **argv)
    evas_gradient_add_color(grad, 255, 0  , 0,   150, 8);
    evas_gradient_add_color(grad, 0  , 0  , 0,   0,   8);
    evas_set_gradient(e, o_grad, grad);
+
+   o_fps = evas_add_text(e, "morpheus", 16, "FPS...");
+   evas_set_color(e, o_fps, 255, 255, 255, 120);
+   evas_move(e, o_fps, win_w, win_h); 
+   evas_show(e, o_fps);
+   evas_set_layer(e, o_fps, 500);
    
    evas_raise(e, o[1]);
    evas_move(e, o[0], 0, 0);
@@ -209,9 +215,15 @@ main(int argc, char **argv)
 	a++;
 	if ((a % 25) == 0)
 	  {
+	     char buf[64];
+	     double gw, gh;
+	     
 	      t2 = get_time() - t1;
 	      t1 = get_time();
-	      printf("%3.1f fps\n", 25 / t2);
+	     sprintf(buf, "FPS: %3.1f", 25 / t2);
+	     evas_set_text(e, o_fps, buf);
+	     evas_get_geometry(e, o_fps, NULL, NULL, &gw, &gh);
+	     evas_move(e, o_fps, win_w - gw, win_h - gh);
 	  }
 	if (a >= 1000) 
 	   {
