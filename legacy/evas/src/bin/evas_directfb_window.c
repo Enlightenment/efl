@@ -366,9 +366,33 @@ int main( int argc, char *argv[] )
                                    (sin( myclock()/300.0 ) * 85) + 170 );
           }
 	  loop();
-	  evas_render(evas);
+	  {
+	     Evas_List *updates;
+	     
+	     updates = evas_render_updates(evas);
+	     /* efficient update.. only flip the rectangle regions that changed! */
+	     if (updates)
+	       {
+		  DFBRegion region;
+		  Evas_List *l;
+		  
+		  for (l = updates; l; l = l->next)
+		    {
+		       Evas_Rectangle *rect;
+		       
+		       rect = l->data;
+		       region.x1 = rect->x;
+		       region.y1 = rect->y;
+		       region.x2 = rect->x + rect->w - 1;
+		       region.y2 = rect->y + rect->h - 1;
+		       window_surface1->Flip(window_surface1, &region,
+					     DSFLIP_BLIT);
+		    }
+		  evas_render_updates_free(updates);
+	       }
+	  }
      }
-
+   
      buffer->Release( buffer );
      window_surface2->Release( window_surface2 );
      window_surface1->Release( window_surface1 );
