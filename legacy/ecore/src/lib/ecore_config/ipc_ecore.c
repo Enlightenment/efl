@@ -62,7 +62,7 @@ char *_ecore_config_ipc_global_prop_list(Ecore_Config_Server *srv, const long se
       db=e_db_open_read(buf);
       if (!(db=e_db_open_read(buf)))
         if (!(db=e_db_open_read(buf=PACKAGE_DATA_DIR "/system.db")))
-          return ECORE_CONFIG_ERR_NOFILE;
+          return NULL;
       }
     }
   
