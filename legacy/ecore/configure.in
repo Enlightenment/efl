@@ -381,6 +381,14 @@ else
   AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, false)
 fi
 
+if test "x$have_ecore_evas_gl" = "xyes"; then
+	BUILD_ECORE_EVAS_GL=1
+else
+	BUILD_ECORE_EVAS_GL=0
+fi
+
+AC_SUBST(BUILD_ECORE_EVAS_GL)
+
 have_ecore_evas_fb="no";
 
 AC_MSG_CHECKING(whether ecore_evas fb support is to be built)
@@ -414,6 +422,14 @@ if test "x$have_ecore_evas_fb" = "xyes"; then
 else
   AM_CONDITIONAL(BUILD_ECORE_EVAS_FB, false)
 fi
+
+if test "x$have_ecore_evas_fb" = "xyes"; then
+	BUILD_ECORE_EVAS_FB=1
+else
+	BUILD_ECORE_EVAS_FB=0
+fi
+
+AC_SUBST(BUILD_ECORE_EVAS_FB)
 
 AC_MSG_CHECKING(whether ecore_con module is to be built)
 
@@ -546,6 +562,7 @@ src/lib/ecore/Makefile
 src/lib/ecore_job/Makefile
 src/lib/ecore_x/Makefile
 src/lib/ecore_fb/Makefile
+src/lib/ecore_evas/Ecore_Evas.h
 src/lib/ecore_evas/Makefile
 src/lib/ecore_con/Makefile
 src/lib/ecore_ipc/Makefile

@@ -1,5 +1,6 @@
 .deps
 .libs
+Ecore_Evas.h
 Makefile
 Makefile.in
 ecore_evas.lo

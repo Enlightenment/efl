@@ -19,6 +19,9 @@
 extern "C" {
 #endif
 
+#define HAVE_ECORE_EVAS_FB @BUILD_ECORE_EVAS_FB@
+#define HAVE_ECORE_EVAS_GL @BUILD_ECORE_EVAS_GL@
+
 #ifndef _ECORE_X_H
 #define _ECORE_X_WINDOW_PREDEF
 typedef unsigned int Ecore_X_Window;
@@ -35,9 +38,15 @@ int         ecore_evas_shutdown(void);
 
 /* engine/target specific init calls */
 Ecore_Evas     *ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
-Ecore_Evas     *ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
 Ecore_X_Window  ecore_evas_software_x11_window_get(Ecore_Evas *ee);
+
+#if HAVE_ECORE_EVAS_GL
+Ecore_Evas     *ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
+#endif
+
+#if HAVE_ECORE_EVAS_FB
 Ecore_Evas     *ecore_evas_fb_new(char *disp_name, int rotation, int w, int h);
+#endif
 
 /* generic manipulation calls */
 void        ecore_evas_free(Ecore_Evas *ee);

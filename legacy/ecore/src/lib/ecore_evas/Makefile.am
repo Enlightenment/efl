@@ -57,7 +57,7 @@ $(top_builddir)/src/lib/ecore/libecore.la
 endif
 
 EXTRA_DIST = \
-Ecore_Evas.h \
+Ecore_Evas.h.in \
 ecore_evas.c \
 ecore_evas_x.c \
 ecore_evas_fb.c \
