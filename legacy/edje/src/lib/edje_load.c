@@ -679,6 +679,7 @@ _edje_file_free(Edje_File *edf)
    _edje_file_hash = evas_hash_del(_edje_file_hash, edf->path, edf);
    
    if (edf->path) free(edf->path);
+   if (edf->compiler) free(edf->compiler);
    if (edf->font_dir)
      {
 	while (edf->font_dir->entries)
