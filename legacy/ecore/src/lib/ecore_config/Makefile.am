@@ -2,21 +2,21 @@
 
 INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore \
--I$(top_srcdir)/src/lib/ecore_ipc
+-I$(top_srcdir)/src/lib/ecore_ipc \
+-I$(top_srcdir)/
 
 libecore_config_la_LDFLAGS = -version-info 1:0:0 \
 -L$(top_builddir)/src/lib/ecore/.libs
 
 if BUILD_ECORE_CONFIG
 
-lib_LTLIBRARIES = libecore_config.la
+lib_LTLIBRARIES = libecore_config.la ecore_config_ipc_ecore.la
 include_HEADERS = \
 Ecore_Config.h
 
 libecore_config_la_SOURCES = \
 ecore_config.c \
 ipc_main.c \
-ipc_ecore.c \
 util.c \
 edb.c
 
@@ -25,6 +25,18 @@ $(top_builddir)/src/lib/ecore/libecore.la -ldl
 
 libecore_config_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la
+
+
+ecore_config_ipc_ecore_la_DEPENDENCIES     = \
+$(top_builddir)/config.h \
+$(top_builddir)/src/lib/ecore/libecore.la \
+$(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la
+ecore_config_ipc_ecore_la_SOURCES          = ipc_ecore.c
+ecore_config_ipc_ecore_la_LIBADD           = \
+$(top_builddir)/src/lib/ecore/libecore.la \
+$(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la
+ecore_config_ipc_ecore_la_LDFLAGS          = -no-undefined -module -avoid-version -rdynamic -shared
+
 
 endif
 
