@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=3:noexpandtab
+ */
+
 #include "edje_cc.h"
 
 static void st_images_image(void);
@@ -555,6 +559,23 @@ st_collections_group_parts_part_name(void)
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ep->name = parse_str(0);
+
+   {
+	Evas_List *l;
+	
+	for (l = pc->parts; l; l = l->next)
+	  {
+	     Edje_Part *lep;
+	     
+	     lep = l->data;
+	     if ((lep != ep) && (!strcmp(lep->name, ep->name)))
+	       {
+		  fprintf(stderr, "%s: Error. parse error %s:%i. There is already a part of the name %s\n",
+			  progname, file_in, line, ep->name);
+		  exit(-1);
+	       }
+	  }
+   }
 }
 
 static void
