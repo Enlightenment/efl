@@ -863,7 +863,7 @@ int
 evas_object_text_char_pos_get(Evas_Object *obj, int pos, double *cx, double *cy, double *cw, double *ch)
 {
    Evas_Object_Text *o;
-   int ret, x, y, w, h;
+   int ret, x = 0, y = 0, w = 0, h = 0;
    int inset;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -916,7 +916,7 @@ int
 evas_object_text_char_coords_get(Evas_Object *obj, double x, double y, double *cx, double *cy, double *cw, double *ch)
 {
    Evas_Object_Text *o;
-   int ret, rx, ry, rw, rh;
+   int ret, rx = 0, ry = 0, rw = 0, rh = 0;
    int inset;
       
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
