@@ -1,10 +1,12 @@
 #!/bin/sh
 cp ./eet.c.in ./eet.c
-cat ./src/lib/Eet.h >> ./eet.c
-for I in `find ./src/lib -name "*.c" -print`; do
-  cat $I >> ./evas.c
+for I in `find ./src/lib -name "Eet.h" -print`; do
+  cat $I >> ./eet.c
 done
+#for I in `find ./src/lib -name "*.c" -print`; do
+#  cat $I >> ./eet.c
+#done
 rm -rf ./doc/html ./doc/latex ./doc/man
 doxygen
-cp doc/img/eet_small.png doc/html/eet_small.png
+cp doc/img/*.png doc/html/
 exit 0
