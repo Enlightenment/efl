@@ -898,7 +898,21 @@ int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom t
 			     Ecore_X_Window *icon_window,
 			     Ecore_X_Window *window_group,
 			     int *is_urgent);
-   
+
+#if 0 /* ??? */
+   void                ecore_x_netwm_init(void);
+#endif
+   void                ecore_x_netwm_desk_count_set(Ecore_X_Window root, int n_desks);
+   void                ecore_x_netwm_desk_roots_set(Ecore_X_Window root, int n_desks, Ecore_X_Window * vroots);
+   void                ecore_x_netwm_desk_names_set(Ecore_X_Window root, int n_desks, const char **names);
+   void                ecore_x_netwm_desk_size_set(Ecore_X_Window root, int width, int height);
+   void                ecore_x_netwm_desk_workareas_set(Ecore_X_Window root, int n_desks, int *areas);
+   void                ecore_x_netwm_desk_current_set(Ecore_X_Window root, int desk);
+   void                ecore_x_netwm_desk_viewports_set(Ecore_X_Window root, int n_desks, int *origins);
+   void                ecore_x_netwm_showing_desktop_set(Ecore_X_Window root, int on);
+   void                ecore_x_netwm_client_list_set(Ecore_X_Window root, int n_clients, Ecore_X_Window * p_clients);
+   void                ecore_x_netwm_client_list_stacking_set(Ecore_X_Window root, int n_clients, Ecore_X_Window * p_clients);
+   void                ecore_x_netwm_client_active_set(Ecore_X_Window root, Ecore_X_Window win);
    
    /* FIXME: these funcs need categorising */
    void            ecore_x_drawable_geometry_get(Ecore_X_Drawable d, int *x, int *y, int *w, int *h);
