@@ -265,17 +265,47 @@ data_write(void)
 		       im_data = imlib_image_get_data_for_reading_only();
 		       if ((im_data) && (im_w > 0) && (im_h > 0))
 			 {
+			    int mode, qual;
+			    
 			    snprintf(buf, sizeof(buf), "images/%i", img->id);
-			    if (img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT)
+			    mode = 2;
+			    if ((img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT) &&
+				(img->source_param == 0))
+			      mode = 0; /* RAW */
+			    else if ((img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT) &&
+				     (img->source_param == 1))
+			      mode = 1; /* COMPRESS */
+			    else
+			      mode = 2; /* LOSSY */
+			    if ((mode == 0) && (no_raw)) mode = 1; /* promote compression */
+			    if ((mode == 2) && (no_lossy)) mode = 1; /* demote compression */
+			    if ((mode == 1) && (no_comp))
+			      {
+				 if (no_lossy) mode = 0; /* demote compression */
+				 else if (no_raw) mode = 2; /* no choice. lossy */
+			      }
+			    qual = 80;
+			    if (mode == 2)
+			      {
+				 qual = img->source_param;
+				 if (qual < min_quality) qual = min_quality;
+				 if (qual > max_quality) qual = max_quality;
+			      }
+			    if (mode == 0)
 			      bytes = eet_data_image_write(ef, buf, 
 							   im_data, im_w, im_h,
 							   im_alpha, 
-							   img->source_param, 0, 0);
-			    else
+							   0, 0, 0);
+			    else if (mode == 1)
+			      bytes = eet_data_image_write(ef, buf, 
+							   im_data, im_w, im_h,
+							   im_alpha, 
+							   1, 0, 0);
+			    else if (mode == 2)
 			      bytes = eet_data_image_write(ef, buf, 
 							   im_data, im_w, im_h,
 							   im_alpha,
-							   0, img->source_param, 1);
+							   0, qual, 1);
 			    if (bytes <= 0)
 			      {
 				 fprintf(stderr, "%s: Error. unable to write image part \"%s\" as \"%s\" part entry to %s \n",

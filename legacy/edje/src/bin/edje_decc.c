@@ -251,7 +251,7 @@ output(void)
 	  }
 	f = fopen(out, "w");
 	fprintf(f, "#!/bin/sh\n");
-	fprintf(f, "edje_cc -id . -fd . main_edje_source.edc %s.eet\n", outdir);
+	fprintf(f, "edje_cc $@ -id . -fd . main_edje_source.edc %s.eet\n", outdir);
 	fclose(f);
 	chmod(out, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP);
      }

@@ -128,6 +128,11 @@ extern char                  *file_in;
 extern char                  *file_out;
 extern char                  *progname;
 extern int                    verbose;
+extern int                    no_lossy;
+extern int                    no_comp;
+extern int                    no_raw;
+extern int                    min_quality;
+extern int                    max_quality;
 extern int                    line;
 extern Evas_List             *stack;
 extern Evas_List             *params;
@@ -137,5 +142,6 @@ extern Evas_List             *fonts;
 extern Evas_List             *codes;
 extern New_Object_Handler     object_handlers[];
 extern New_Statement_Handler  statement_handlers[];
+
 
 #endif
