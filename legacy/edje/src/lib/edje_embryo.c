@@ -122,6 +122,7 @@
  * get_drag_count(part_id, &Float:dx, &Float:&dy)
  * set_drag_count(part_id, Float:dx, Float:dy)
  * set_drag_confine(part_id, confine_part_id)
+ * get_size(&w, &h);
  * resize_request(w, h)
  * get_mouse_buttons()
  * //set_type(part_id, Type:type)
