@@ -152,30 +152,35 @@ _embryo_program_init(Embryo_Program *ep, void *code)
    if ((hdr->flags & EMBRYO_FLAG_COMPACT)) return 0;
    
 #ifdef WORDS_BIGENDIAN
-   /* also align all addresses in the public function, public variable and */
-   /* public tag tables */
-   fs = GETENTRY(hdr, publics, 0);
-   num = NUMENTRIES(hdr, publics, natives);
-   for (i = 0; i < num; i++)
      {
-	embryo_swap_32(&(fs->address));
-	fs = (Embryo_Func_Stub *)((unsigned char *)fs + hdr->defsize);
-     }
-   
-   fs = GETENTRY(hdr, pubvars, 0);
-   num = NUMENTRIES(hdr, pubvars, tags);
-   for (i = 0; i < num; i++)
-     {
-	embryo_swap_32(&(fs->address));
-	fs = (Embryo_Func_Stub *)((unsigned char *)fs + hdr->defsize);
-     }
-   
-   fs = GETENTRY(hdr, tags, 0);
-   num = NUMENTRIES(hdr, tags, nametable);
-   for (i = 0; i < num; i++)
-     {
-	embryo_swap_32(&(fs->address));
-	fs = (Embryo_Func_Stub *)((unsigned char *)fs + hdr->defsize);
+	Embryo_Func_Stub *fs;
+	int i, num;
+	
+	/* also align all addresses in the public function, public variable and */
+	/* public tag tables */
+	fs = GETENTRY(hdr, publics, 0);
+	num = NUMENTRIES(hdr, publics, natives);
+	for (i = 0; i < num; i++)
+	  {
+	     embryo_swap_32(&(fs->address));
+	     fs = (Embryo_Func_Stub *)((unsigned char *)fs + hdr->defsize);
+	  }
+	
+	fs = GETENTRY(hdr, pubvars, 0);
+	num = NUMENTRIES(hdr, pubvars, tags);
+	for (i = 0; i < num; i++)
+	  {
+	     embryo_swap_32(&(fs->address));
+	     fs = (Embryo_Func_Stub *)((unsigned char *)fs + hdr->defsize);
+	  }
+	
+	fs = GETENTRY(hdr, tags, 0);
+	num = NUMENTRIES(hdr, tags, nametable);
+	for (i = 0; i < num; i++)
+	  {
+	     embryo_swap_32(&(fs->address));
+	     fs = (Embryo_Func_Stub *)((unsigned char *)fs + hdr->defsize);
+	  }
      }
 #endif   
    ep->flags = EMBRYO_FLAG_RELOC;
