@@ -237,7 +237,7 @@ AC_SUBST(ecore_libs)
 AC_MSG_CHECKING([for location of Vim data files])
 install_vim="yes";
 AC_ARG_WITH(vim,
-    [  --with-vim=DIR          Location of Vim data files (PREFIX/share/vim)],
+    [  --with-vim=DIR          Location of Vim data files [[autodetect]]],
     [if test -d "${withval}"; then
        vimdir="${withval}"
     fi])
