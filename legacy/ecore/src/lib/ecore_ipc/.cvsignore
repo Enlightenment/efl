@@ -1,7 +1,6 @@
-eet
-eet-config
-libeet.so.0.0.0
 .deps
 .libs
 Makefile
 Makefile.in
+ecore_ipc.lo
+libecore_ipc.la

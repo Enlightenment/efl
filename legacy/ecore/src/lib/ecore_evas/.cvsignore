@@ -1,0 +1,8 @@
+.deps
+.libs
+Makefile
+Makefile.in
+ecore_evas.lo
+ecore_evas_fb.lo
+ecore_evas_x.lo
+libecore_evas.la

@@ -1,8 +1,7 @@
-.config
-build-stamp
 Makefile
 Makefile.in
 aclocal.m4
+build-stamp
 config.guess
 config.h
 config.h.in
@@ -11,13 +10,11 @@ config.status
 config.sub
 configure
 configure-stamp
-eet-config
-eet.pc
-eet_docs.tar.gz
+ecore-config
+install-sh
 libtool
 ltmain.sh
-stamp-h
-stamp-h.in
-install-sh
 missing
 mkinstalldirs
+stamp-h
+stamp-h.in

@@ -1,0 +1,13 @@
+.deps
+.libs
+Makefile
+Makefile.in
+ecore_x.lo
+ecore_x_error.lo
+ecore_x_events.lo
+ecore_x_gc.lo
+ecore_x_pixmap.lo
+ecore_x_window.lo
+ecore_x_window_prop.lo
+ecore_x_window_shape.lo
+libecore_x.la

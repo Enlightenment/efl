@@ -1,3 +1,5 @@
 eet
 eet-config
 libeet.so.0.0.0
+Makefile
+Makefile.in
