@@ -936,7 +936,6 @@ evas_render_updates(Evas e)
 						else ww = 1 + ((visw + tilex) / tilew);
 						
 						pointsx = malloc(ww * sizeof(struct _points));
-						printf("r\n");
 						for (xx = 0; xx < ww; xx++)
 						  {
 						     if (xx == 0)
