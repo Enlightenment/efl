@@ -87,6 +87,7 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
    im_w = dst->image->w;
    im_h = dst->image->h;   
    col = dc->col.col;
+   if (!A_VAL(&(col))) return;
 
    ext_x = 0; ext_y = 0; ext_w = im_w; ext_h = im_h;
    if (dc->clip.use)
