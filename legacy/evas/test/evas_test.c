@@ -78,7 +78,7 @@ static TextBlock texts[] =
      { 52.0, 54.0, 58.0, 60.0, "Yes ...", NULL, NULL},
      { 60.0, 64.0, 70.0, 74.0, "Rancid Cheese", NULL, NULL},
 
-     { 76.0, 78.0, 80.0, 82.0, "But for those of you who ant to code ...", NULL, NULL},
+     { 76.0, 78.0, 80.0, 82.0, "But for those of you who want to code ...", NULL, NULL},
      { 80.0, 82.0, 84.0, 86.0, "There is ...", NULL, NULL},
      { 88.0, 90.0, 94.0, 98.0, "EVAS", NULL, NULL}
 };
