@@ -132,7 +132,7 @@ evas_common_cpu_init(void)
 #endif /* __SPARC__ */
 }
 
-inline int
+int
 evas_common_cpu_has_feature(unsigned int feature)
 {
    return (cpu_feature_mask & feature);
