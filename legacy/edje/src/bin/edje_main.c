@@ -108,8 +108,11 @@ main_start(int argc, char **argv)
      }
    if (mode == 0)
      ecore_evas = ecore_evas_software_x11_new(NULL, 0,  0, 0, startw, starth);
+#if HAVE_ECORE_EVAS_GL
    else if (mode == 1)
      ecore_evas = ecore_evas_gl_x11_new(NULL, 0, 0, 0, startw, starth);
+#endif
+
 #else
    ecore_evas = ecore_evas_fb_new(NULL, 270,  startw, starth);
 #endif
