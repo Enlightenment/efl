@@ -75,10 +75,12 @@ e_event_filter_events_handle(Eevent * ev)
      {
 	Ev_Handler         *h;
 
-	for (h = handler[evp->type]; h; h = h->next)
+	if (!evp->ignore)
 	  {
-	     if ((!evp->ignore) && (h->func))
-		h->func(evp);
+	     for (h = handler[evp->type]; h; h = h->next)
+	       {
+		  if (h->func) h->func(evp);
+	       }
 	  }
      }
 }
