@@ -238,6 +238,8 @@ To be documented...
 
 
 @todo Document API
+@todo Add callback "piggyback" handlers for move, resize, show and hide
+@todo Add generic object method call system
 @todo Add keyboard callbacks/event feeds and focus
 @todo Make freetype optional and put in optional graymap font engine
 @todo Add ability to check image comments & disk format
@@ -250,8 +252,8 @@ To be documented...
 @todo Add memory use reduction code if any allocations fail
 @todo If image loads fails due to memory allocatue failure, load reduced res version
 @todo If image load fails due to memory allocation failure, try split it up into tiles and demand-load them
-@todo Add auto-detection of what engines to build based on system/libs etc.
-@todo Add overall engine configure parameters (so you can configure an engine with defaults with 1 configure option)
+@todo Add auto-detection of what engines to build based on system/libs etc. for configure script
+@todo Add overall engine configure parameters (so you can configure an engine with defaults with 1 configure option) to configure script
 @todo Document Engine API
 @todo Add external image loaders (application provided callbacks to load)
 @todo Add loadable image loader module support (evas loads file.so)

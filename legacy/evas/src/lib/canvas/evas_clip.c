@@ -84,6 +84,28 @@ evas_object_clippers_was_visible(Evas_Object *obj)
 
 /* public functions */
 
+/**
+ * Clip one object to another
+ * @param obj The object to be clipped
+ * @param clip The object to clip @p obj by
+ * 
+ * This function will clip the object @p obj to the area occupied by the
+ * object @p clipper.
+ * 
+ * Example:
+ * @code
+ * extern Evas *evas;
+ * extern Evas_Object *obj;
+ * Evas_Object *clipper;
+ * 
+ * clipper = evas_object_rectangle_add(evas);
+ * evas_object_color_ser(clipper, 255, 255, 255, 255);
+ * evas_object_move(clipper, 10, 10);
+ * evas_object_resize(clipper, 20, 50);
+ * evas_object_clip_set(obj, clipper);
+ * evas_object_show(clipper);
+ * @endcode
+ */
 void
 evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
 {
