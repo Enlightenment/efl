@@ -23,7 +23,8 @@ extern "C" {
    enum _Ecore_Fd_Handler_Flags
      {
 	ECORE_FD_READ = 1, /**< Fd Read mask */
-	ECORE_FD_WRITE = 2 /**< Fd Write mask */
+	ECORE_FD_WRITE = 2, /**< Fd Write mask */
+	ECORE_FD_ERROR = 4 /**< Fd Error mask */
      };
    typedef enum _Ecore_Fd_Handler_Flags Ecore_Fd_Handler_Flags;
    

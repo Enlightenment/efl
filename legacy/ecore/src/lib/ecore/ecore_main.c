@@ -104,6 +104,7 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, int (*func) (voi
    fdh->flags = flags;
    fdh->read_active = 0;
    fdh->write_active = 0;
+   fdh->error_active = 0;
    fdh->delete_me = 0;
    fdh->func = func;
    fdh->data = (void *)data;
@@ -182,6 +183,7 @@ ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_
    ret = 0;
    if ((flags & ECORE_FD_READ) && (fd_handler->read_active)) ret = 1;
    if ((flags & ECORE_FD_WRITE) && (fd_handler->write_active)) ret = 1;
+   if ((flags & ECORE_FD_ERROR) && (fd_handler->error_active)) ret = 1;
    return ret;
 }
 
@@ -231,7 +233,7 @@ static int
 _ecore_main_select(double timeout)
 {
    struct timeval tv, *t;
-   fd_set         rfds, wfds;
+   fd_set         rfds, wfds, exfds;
    int            max_fd;
    int            ret;
    Ecore_List    *l;
@@ -256,6 +258,7 @@ _ecore_main_select(double timeout)
    max_fd = 0;
    FD_ZERO(&rfds);
    FD_ZERO(&wfds);
+   FD_ZERO(&exfds);
    for (l = (Ecore_List *)fd_handlers; l; l = l->next)
      {
 	Ecore_Fd_Handler *fdh;
@@ -271,9 +274,14 @@ _ecore_main_select(double timeout)
 	     FD_SET(fdh->fd, &wfds);
 	     if (fdh->fd > max_fd) max_fd = fdh->fd;
 	  }
+    if (fdh->flags & ECORE_FD_ERROR)
+	  {
+         FD_SET(fdh->fd, &exfds);
+         if (fdh->fd > max_fd) max_fd = fdh->fd;
+	  }
      }
    if (_ecore_signal_count_get()) return -1;
-   ret = select(max_fd + 1, &rfds, &wfds, NULL, t);
+   ret = select(max_fd + 1, &rfds, &wfds, &exfds, t);
    if (ret < 0)
      {
 	if (errno == EINTR) return -1;
@@ -291,6 +299,8 @@ _ecore_main_select(double timeout)
 		    fdh->read_active = 1;
 		  if (FD_ISSET(fdh->fd, &wfds))
 		    fdh->write_active = 1;
+		  if (FD_ISSET(fdh->fd, &exfds))
+		    fdh->error_active = 1;
 	       }
 	  }
 	_ecore_main_fd_handlers_cleanup();
@@ -333,7 +343,7 @@ _ecore_main_fd_handlers_call(void)
 	fdh = (Ecore_Fd_Handler *)l;
 	if (!fdh->delete_me)
 	  {
-	     if ((fdh->read_active) || (fdh->write_active))
+	     if ((fdh->read_active) || (fdh->write_active) || (fdh->error_active))
 	       {
 		  if (!fdh->func(fdh->data, fdh))
 		    {
@@ -342,6 +352,7 @@ _ecore_main_fd_handlers_call(void)
 		    }
 		  fdh->read_active = 0;
 		  fdh->write_active = 0;
+		  fdh->error_active = 0;
 	       }
 	  }
      }

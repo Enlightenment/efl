@@ -38,7 +38,8 @@ struct _Ecore_List
 enum _Ecore_Fd_Handler_Flags
 {
    ECORE_FD_READ = 1,
-     ECORE_FD_WRITE = 2
+   ECORE_FD_WRITE = 2,
+   ECORE_FD_ERROR = 4
 };
 typedef enum _Ecore_Fd_Handler_Flags Ecore_Fd_Handler_Flags;
 
@@ -97,6 +98,7 @@ struct _Ecore_Fd_Handler
    Ecore_Fd_Handler_Flags   flags;
    int                      read_active : 1;
    int                      write_active : 1;
+   int                      error_active : 1;
    int                      delete_me : 1;
    int                    (*func) (void *data, Ecore_Fd_Handler *fd_handler);
    void                    *data;
