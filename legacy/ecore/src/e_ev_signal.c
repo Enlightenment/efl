@@ -261,12 +261,12 @@ e_ev_signal_init(void)
    sa.sa_flags = SA_RESTART;
    sigemptyset(&sa.sa_mask);
    sigaction(SIGPIPE, &sa, (struct sigaction *)0);
-
+/*
    sa.sa_handler = e_ev_signal_handle_sigsegv;
    sa.sa_flags = SA_RESTART;
    sigemptyset(&sa.sa_mask);
    sigaction(SIGSEGV, &sa, (struct sigaction *)0);
-
+*/
    sa.sa_handler = e_ev_signal_handle_sigfpe;
    sa.sa_flags = SA_RESTART;
    sigemptyset(&sa.sa_mask);

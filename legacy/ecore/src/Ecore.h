@@ -289,6 +289,8 @@ char               *e_selection_get_data(Window win, Atom prop);
 Window              e_selection_request(void);
 Window              e_selection_set(char *string);
 
+void                e_set_blank_pointer(Window w);
+   
 typedef struct _eev Eevent;
 typedef struct _ev_fd_handler Ev_Fd_Handler;
 typedef struct _ev_pid_handler Ev_Pid_Handler;

@@ -3073,3 +3073,24 @@ e_selection_get_data(Window win, Atom prop)
    return string;
 }
 
+void
+e_set_blank_pointer(Window w)
+{
+   Cursor c;
+   XColor cl;
+   Pixmap p, m;
+   GC gc;
+   XGCValues gcv;
+   
+   p = XCreatePixmap(disp, w, 1, 1, 1);
+   m = XCreatePixmap(disp, w, 1, 1, 1);
+   gc = XCreateGC(disp, m, 0, &gcv);
+   XSetForeground(disp, gc, 0);
+   XDrawPoint(disp, m, gc, 0, 0);
+   XFreeGC(disp, gc);
+   c = XCreatePixmapCursor(disp, p, m, &cl, &cl, 0, 0);
+   XDefineCursor(disp, w, c);
+   XFreeCursor(disp, c);
+   XFreePixmap(disp, p);
+   XFreePixmap(disp, m);
+}
