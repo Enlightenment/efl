@@ -161,7 +161,7 @@ else
 fi
 CPPFLAGS=$PREV_CPPFLAGS
 
-imlib2_inlcudes=`$IMLIB2_CONFIG --cflags`
+imlib2_includes=`$IMLIB2_CONFIG --cflags`
 imlib2_libs=`$IMLIB2_CONFIG --libs`
 
 AC_SUBST(x_cflags)
