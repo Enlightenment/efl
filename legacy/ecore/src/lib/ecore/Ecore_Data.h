@@ -114,7 +114,7 @@ struct _ecore_list_node {
 	void *data;
 	struct _ecore_list_node *next;
 
-	ECORE_DECLARE_LOCKS;
+	ECORE_DECLARE_LOCKS
 };
 
 struct _ecore_list {
@@ -127,7 +127,7 @@ struct _ecore_list {
 	int nodes;		/* The number of nodes in the list */
 	int index;		/* The position from the front of the
 				   list of current node */
-	ECORE_DECLARE_LOCKS;
+	ECORE_DECLARE_LOCKS
 };
 
 
@@ -468,7 +468,7 @@ struct _Ecore_Tree_Node {
 	int max_right;
 	int max_left;
 
-	ECORE_DECLARE_LOCKS;
+	ECORE_DECLARE_LOCKS
 };
 
 typedef struct _Ecore_Tree Ecore_Tree;
@@ -483,7 +483,7 @@ struct _Ecore_Tree {
 	/* Callback for freeing node data, default is NULL */
 	Ecore_Free_Cb free_func;
 
-	ECORE_DECLARE_LOCKS;
+	ECORE_DECLARE_LOCKS
 };
 
 /* Some basic tree functions */
