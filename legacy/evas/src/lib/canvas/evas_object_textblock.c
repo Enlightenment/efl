@@ -974,7 +974,8 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
    int pad_l = 0, pad_r = 0, pad_t = 0, pad_b = 0;
    int marginl = 0, marginr = 0;
    int ww, hh;
-   
+   int just_wrapped = 0;
+
    o = (Evas_Object_Textblock *)(obj->object_data);
    ww = w;
    hh = h;
@@ -1266,6 +1267,16 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 
 	     text = strdup(node->text);
 	     new_node:
+	     if (just_wrapped)
+	       {
+		  int pos, chr;
+		  
+		  pos = 0;
+		  chr = evas_common_font_utf8_get_next(text, &pos);
+		  if (evas_object_textblock_char_is_white(chr))
+		    strcpy(text, text + pos);
+	       }
+	     just_wrapped = 0;
 	     /* FIXME: we cant do this - we need to be able to qury text
 	      * overflow amounts */
 	     /*
@@ -1408,23 +1419,33 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 			      }
 			    else
 			      {
-				 chr = evas_common_font_utf8_get_next(text, &ppos);
-				 if (ppos < 0) ppos = 0;
-				 chrpos = ppos;
-				 while ((evas_object_textblock_char_is_white(chr))
-					&&
-					(pos >= 0) && 
-					(chr > 0))
+				 if (ppos == 0)
 				   {
-				      ppos = pos;
-				      chr = evas_common_font_utf8_get_prev(text, &pos);
+				      nchrpos = 0;
+				      chrpos--;
 				   }
-				 chr = evas_common_font_utf8_get_next(text, &ppos);
-				 if (ppos < 0) ppos = 0;
-				 nchrpos = ppos;
+				 else
+				   {
+				      chr = evas_common_font_utf8_get_next(text, &ppos);
+				      if (ppos < 0) ppos = 0;
+				      chrpos = ppos;
+				      while 
+					((evas_object_textblock_char_is_white(chr))
+					 &&
+					 (pos >= 0) && 
+					 (chr > 0))
+					{
+					   ppos = pos;
+					   chr = evas_common_font_utf8_get_prev(text, &pos);
+					}
+				      chr = evas_common_font_utf8_get_next(text, &ppos);
+				      if (ppos < 0) ppos = 0;
+				      nchrpos = ppos;
+				   }
 			      }
 			 }
 		    }
+		  just_wrapped = 1;
 		  /* if the first char in the line can't fit!!! */
 		  if ((chrpos == 0) && (lnode == line_start))
 		    {
