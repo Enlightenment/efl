@@ -36,3 +36,26 @@ _edje_thaw(Edje *ed)
      _edje_recalc(ed);
    return ed->freeze;
 }
+
+void
+edje_part_geometry_get(Evas_Object *o, char *part, int *x, int *y, int *w, int *h )
+{
+  Evas_List *l;
+  Edje *ed;
+
+  ed = _edje_fetch(o);
+
+  for (l = ed->parts; l; l = l->next)
+  {
+    Edje_Real_Part *rp;
+    rp = l->data;
+
+    if (!strcmp(rp->part->name, part) && rp->calculated)
+    {
+      if (x) *x = rp->x; 
+      if (y) *y = rp->y; 
+      if (w) *w = rp->w; 
+      if (h) *h = rp->h; 
+    }
+  }
+}
