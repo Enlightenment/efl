@@ -137,7 +137,7 @@ _ecore_magic_string_get(Ecore_Magic m)
 /* "running" (and the inverse being time spent running)... this does not */
 /* account for other apps and multitasking... */
 
-static _ecore_fps_debug_init_count = 0;
+static int _ecore_fps_debug_init_count = 0;
 static int _ecore_fps_debug_fd = -1;
 unsigned int *_ecore_fps_runtime_mmap = NULL;
 

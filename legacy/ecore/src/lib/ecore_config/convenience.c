@@ -31,5 +31,7 @@ printf("appending font %s\n", font_path_tmp);
     }
 
   free (font_path);
+
+  return ECORE_CONFIG_ERR_SUCC;
 }
 
