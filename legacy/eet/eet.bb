@@ -21,7 +21,7 @@ S = "${WORKDIR}/eet"
 inherit autotools pkgconfig binconfig
 
 do_stage () {
-  oe_libinstall -C src/lib libeet ${STAGING_LIBDIR}/
+  bb_libinstall -C src/lib libeet ${STAGING_LIBDIR}/
   install -m 0644 ${S}/src/lib/Eet.h ${STAGING_INCDIR}/
 }
 
