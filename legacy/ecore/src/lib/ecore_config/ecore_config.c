@@ -1454,8 +1454,9 @@ ecore_config_init_global(char *name)
 int
 ecore_config_init(char *name)
 {
-   char               *path;
-   Ecore_Config_Prop  *list;
+   char                *path;
+   Ecore_Config_Prop   *list;
+   Ecore_Config_Bundle *temp;
    _ecore_config_system_init_no_load();
 
    __ecore_config_app_name = strdup(name);
@@ -1463,11 +1464,12 @@ ecore_config_init(char *name)
    if (!__ecore_config_server_local)
       return ECORE_CONFIG_ERR_FAIL;
 
-  /* FIXME should free __ecore_config_bundle_local */
+   temp = __ecore_config_bundle_local;
    list = __ecore_config_bundle_local->data;
    __ecore_config_bundle_local =
       ecore_config_bundle_new(__ecore_config_server_local, "config");
    __ecore_config_bundle_local->data = list;
+   free(temp);
 
    path = ecore_config_theme_default_path_get();
 	 ecore_config_string_default("/e/themes/search_path", path);

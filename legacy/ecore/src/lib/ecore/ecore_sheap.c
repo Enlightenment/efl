@@ -63,14 +63,36 @@ int ecore_sheap_init(Ecore_Sheap *heap, Ecore_Compare_Cb compare, int size)
  */
 void ecore_sheap_destroy(Ecore_Sheap *heap)
 {
+	int i;
+
 	CHECK_PARAM_POINTER("heap", heap);
 
 	/*
-	 * FIXME: Need to setup destructor callbacks for this class.
+	 * Free data in heap
 	 */
+	if (heap->free_func)
+		for (i = 0; i < heap->size; i++)
+			heap->free_func(heap->data[i]);
+
 	FREE(heap->data);
 
 	FREE(heap);
+}
+
+/**
+ * Set the function for freeing data.
+ * @param  heap      The heap that will use this function when nodes are
+ *                   destroyed.
+ * @param  free_func The function that will free the key data.
+ * @return @c TRUE on successful set, @c FALSE otherwise.
+ */
+int ecore_sheap_set_free_cb(Ecore_Sheap *heap, Ecore_Free_Cb free_func)
+{
+	CHECK_PARAM_POINTER_RETURN("heap", heap, FALSE);
+
+	heap->free_func = free_func;
+
+	return TRUE;
 }
 
 /**
@@ -215,7 +237,7 @@ int ecore_sheap_change(Ecore_Sheap *heap, void *item, void *newval)
 
 	CHECK_PARAM_POINTER_RETURN("heap", heap, FALSE);
 
-	for (i = 0; i < heap->size && heap->compare(heap->data[i], item); heap++);
+	for (i = 0; i < heap->size && heap->compare(heap->data[i], item); i++);
 
 	if (i < heap->size)
 		heap->data[i] = newval;

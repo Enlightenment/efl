@@ -442,12 +442,17 @@ extern "C" {
       
       char order, sorted;
       
+      /* Callback for comparing node values, default is direct comparison */
       Ecore_Compare_Cb compare;
+
+      /* Callback for freeing node data, default is NULL */
+      Ecore_Free_Cb free_func;
    };
    
    Ecore_Sheap *ecore_sheap_new(Ecore_Compare_Cb compare, int size);
    void ecore_sheap_destroy(Ecore_Sheap *heap);
    int ecore_sheap_init(Ecore_Sheap *heap, Ecore_Compare_Cb compare, int size);
+   int ecore_sheap_set_free_cb(Ecore_Sheap *heap, Ecore_Free_Cb free_func);
    int ecore_sheap_insert(Ecore_Sheap *heap, void *data);
    void *ecore_sheap_extract(Ecore_Sheap *heap);
    void *ecore_sheap_extreme(Ecore_Sheap *heap);
