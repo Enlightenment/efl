@@ -552,11 +552,23 @@ _ecore_evas_idle_enter(void *data)
 	       }
 	     else
 	       {
-		  Evas_List *updates;
+		  Evas_List *updates, *l;
 		  
 		  updates = evas_render_updates(ee->evas);
 		  if (updates)
 		    {
+#if 0		       
+		       printf("RENDER [%p] [%ix%i]\n",
+			      ee, ee->w, ee->h);
+		       for (l = updates; l; l = l->next)
+			 {
+			    Evas_Rectangle *r;
+			    
+			    r = l->data;
+			    printf("   render [%i %i %ix%i]\n",
+				   r->x, r->y, r->w, r->h);
+			 }
+#endif		       
 		       evas_render_updates_free(updates);
 		    }
 	       }

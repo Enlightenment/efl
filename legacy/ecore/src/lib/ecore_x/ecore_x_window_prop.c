@@ -1,7 +1,6 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
-
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
@@ -86,17 +85,17 @@ ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecor
    }
 
    for (i = 0; i < num_ret; i++)
-      switch (size) {
-         case 8:
-            (*data)[i] = prop_ret[i];
-            break;
-		 case 16:
-			((uint16_t *) *data)[i] = ((uint16_t *) prop_ret)[i];
-			break;
-         case 32:
-			((uint32_t *) *data)[i] = ((uint32_t *) prop_ret)[i];
-			break;
-      }
+     switch (size) {
+	case 8:
+	   (*data)[i] = prop_ret[i];
+	   break;
+	case 16:
+	   ((uint16_t *) *data)[i] = ((uint16_t *) prop_ret)[i];
+	   break;
+	case 32:
+	   ((uint32_t *) *data)[i] = ((uint32_t *) prop_ret)[i];
+	   break;
+     }
 
    XFree(prop_ret);
 
@@ -1156,6 +1155,8 @@ _ecore_x_window_prop_state_atom_get(Ecore_X_Window_State s)
          return ECORE_X_ATOM_NET_WM_STATE_ABOVE;
       case ECORE_X_WINDOW_STATE_BELOW:
          return ECORE_X_ATOM_NET_WM_STATE_BELOW;
+      case ECORE_X_WINDOW_STATE_DEMANDS_ATTENTION:
+         return ECORE_X_ATOM_NET_WM_STATE_DEMANDS_ATTENTION;
       default:
          return 0;
    }
