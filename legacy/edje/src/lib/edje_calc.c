@@ -380,7 +380,6 @@ _edje_part_recalc_single(Edje *ed,
 	aspect = (double)params->w / (double)params->h;
 	if (desc->aspect.prefer == EDJE_ASPECT_PREFER_NONE) /* keep both dimensions in check */
 	  {
-	     printf("%s: neither\n", ep->part->name);
 	     /* adjust for max aspect (width / height) */
 	     if ((desc->aspect.max > 0.0) && (aspect > desc->aspect.max))
 	       {
