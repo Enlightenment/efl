@@ -57,7 +57,7 @@ struct _Ecore_Con_Server
    char              connecting : 1;
 
    /* put the read buffer here to play nice with OpenSSL */
-   unsigned char     read_buf[READBUFSIZ];
+   unsigned char    *read_buf;
 
 #if USE_OPENSSL
    SSL_CTX          *ssl_ctx;

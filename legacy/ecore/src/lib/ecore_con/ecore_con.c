@@ -664,6 +664,7 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
 #endif
    if (svr->name) free(svr->name);
    if (svr->path) free(svr->path);
+   if (svr->read_buf) free(svr->read_buf);
    if (svr->fd_handler) ecore_main_fd_handler_del(svr->fd_handler);
    free(svr);
 }
@@ -821,6 +822,9 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	     if (!svr->ssl)
 	       {
 #endif
+		  /* FIXME: why is read_buf in the server struct now??? */
+		  /* yes play nice with ssl - WHY? */
+		  if (!svr->read_buf) svr->read_buf = malloc(READBUFSIZ);
 		  if ((num = read(svr->fd, svr->read_buf, READBUFSIZ)) < 1)
 		    lost_server = (errno == EIO || errno == EBADF ||
 				   errno == EPIPE || errno == EINVAL ||
@@ -829,6 +833,7 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	       }
 	     else
 	       {
+		  if (!svr->read_buf) svr->read_buf = malloc(READBUFSIZ);
 		  num = SSL_read(svr->ssl, svr->read_buf, READBUFSIZ);
 		  if (num < 1)
 		    {
@@ -870,6 +875,11 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 		       svr->dead = 1;
 		       ecore_main_fd_handler_del(svr->fd_handler);
 		       svr->fd_handler = NULL;
+		       if (svr->read_buf)
+			 {
+			    free(svr->read_buf);
+			    svr->read_buf = NULL;
+			 }
 		       return 1;
 		    }
 		  break;
@@ -898,16 +908,35 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	       {
 #endif
 		  if (!svr_try_connect(svr))
-		    return 1;
+		    {
+		       if (svr->read_buf)
+			 {
+			    free(svr->read_buf);
+			    svr->read_buf = NULL;
+			 }
+		       return 1;
+		    }
 #if USE_OPENSSL
 	       }
 	     else if ((svr_try_connect_ssl(svr)) && (!svr_try_connect(svr)))
-	       return 1;
+	       {
+		  if (svr->read_buf)
+		    {
+		       free(svr->read_buf);
+		       svr->read_buf = NULL;
+		    }
+		  return 1;
+	       }
 #endif
 	  }
 	_ecore_con_server_flush(svr);
      }
 
+   if (svr->read_buf)
+     {
+	free(svr->read_buf);
+	svr->read_buf = NULL;
+     }
    return 1;
 }
 
