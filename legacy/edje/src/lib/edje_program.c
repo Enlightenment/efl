@@ -373,7 +373,6 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
    _edje_block(ed);
    _edje_ref(ed);
    _edje_freeze(ed);
-   printf("run program %s\n", pr->name);
    if (pr->action == EDJE_ACTION_TYPE_STATE_SET)
      {
 	if ((pr->tween.time > 0.0) && (!ed->no_anim))
@@ -527,7 +526,6 @@ _edje_emit(Edje *ed, char *sig, char *src)
 
    if ((!sig) && (!src))
      {
-	printf("clear signals! %p\n", ed->emissions);
 	while (ed->emissions)
 	  {
 	     ee = ed->emissions->data;
@@ -548,7 +546,6 @@ _edje_emit(Edje *ed, char *sig, char *src)
    printf("EDJE EMIT: signal: \"%s\" source: \"%s\"\n", sig, src);
    if ((sig) && (src))
      {
-	printf("queue emission\n");
 	ee = calloc(1, sizeof(Edje_Emission));
 	if (!ee)
 	  {
@@ -560,7 +557,6 @@ _edje_emit(Edje *ed, char *sig, char *src)
 	ee->source = strdup(src);
 	if ((ed->emissions) || (_edje_block_break(ed)))
 	  {
-	     printf("append signal & leave\n");
 	     ed->emissions = evas_list_append(ed->emissions, ee);
 	     recursions--;
 	     if (recursions == 0) recursion_limit = 0;
@@ -577,7 +573,6 @@ _edje_emit(Edje *ed, char *sig, char *src)
      {
 	ee = ed->emissions->data;
 	ed->emissions = evas_list_remove(ed->emissions, ee);
-	printf("EDJE: handle emission \"%s\" \"%s\"\n", ee->signal, ee->source);
 	if (ed->collection)
 	  {
 	     Edje_Part_Collection *ec;

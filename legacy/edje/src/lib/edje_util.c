@@ -782,7 +782,6 @@ _edje_unblock(Edje *ed)
    if (ed->block == 0)
      {
 	ed->block_break = 0;
-	printf("unblock!!! ed->emissions = %p\n", ed->emissions);
 	ed->dont_clear_signals = 0;
 	if (ed->emissions) _edje_emit(ed, "", NULL);
      }
