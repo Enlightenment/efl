@@ -276,6 +276,7 @@ if test "x$have_ecore_fb" = "xyes"; then
       ecore_fb_libs="-lecore_fb";
     ], [
       AM_CONDITIONAL(BUILD_ECORE_FB, false)
+      have_ecore_fb="no"
     ]
   )
 else
@@ -342,7 +343,7 @@ AC_SUBST(evas_libs)
 AC_SUBST(ecore_evas_cflags)
 AC_SUBST(ecore_evas_libs)
 
-have_ecore_evas_gl="";
+have_ecore_evas_gl="no";
 
 AC_MSG_CHECKING(whether ecore_evas gl support is to be built)
 
@@ -361,19 +362,22 @@ AC_ARG_ENABLE(ecore-evas-gl,
 )
 
 if test "x$have_ecore_evas_gl" = "xyes"; then
-  AC_CHECK_HEADERS(Evas_Engine_GL_X11.h,
+  AC_CHECK_HEADER(Evas_Engine_GL_X11.h,
     [
       AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, true)
       AC_DEFINE(BUILD_ECORE_EVAS_GL)
-    ], AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, false),
-    [
+    ], [
+      AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, false)
+      have_ecore_evas_gl="no"
+    ], [
       #include <Evas.h>
-    ])
+    ]
+  )
 else
   AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, false)
 fi
 
-have_ecore_evas_fb="";
+have_ecore_evas_fb="no";
 
 AC_MSG_CHECKING(whether ecore_evas fb support is to be built)
 
@@ -392,14 +396,17 @@ AC_ARG_ENABLE(ecore-evas-fb,
 )
 
 if test "x$have_ecore_evas_fb" = "xyes"; then
-  AC_CHECK_HEADERS(Evas_Engine_FB.h,
+  AC_CHECK_HEADER(Evas_Engine_FB.h,
     [
       AM_CONDITIONAL(BUILD_ECORE_EVAS_FB, true)
       AC_DEFINE(BUILD_ECORE_EVAS_FB)
-    ], AM_CONDITIONAL(BUILD_ECORE_EVAS_FB, false),
-    [
+    ], [
+      AM_CONDITIONAL(BUILD_ECORE_EVAS_FB, false)
+      have_ecore_evas_fb="no"
+    ], [
       #include <Evas.h>
-    ])
+    ]
+  )
 else
   AM_CONDITIONAL(BUILD_ECORE_EVAS_FB, false)
 fi
@@ -517,8 +524,10 @@ if test "x$have_ecore_config" = "xyes"; then
        AC_SUBST(edb_libs)
        AC_SUBST(edb_cflags)
      ],
-     [echo "I can't find Edb, so I won't build ecore_config."
+     [
+      AC_MSG_RESULT(I can't find Edb, so I won't build ecore_config.)
       AM_CONDITIONAL(BUILD_ECORE_CONFIG, false)
+      have_ecore_config="no"
      ]
    )
 else
@@ -554,14 +563,16 @@ echo "$PACKAGE $VERSION"
 echo
 echo "Optional Modules:"
 echo
-echo "  Ecore Evas...........: $have_ecore_evas"
-echo "  Ecore Job............: $have_ecore_job"
-echo "  Ecore Text...........: $have_ecore_txt"
-echo "  Ecore X..............: $have_ecore_x"
-echo "  Ecore FB.............: $have_ecore_fb"
-echo "  Ecore IPC............: $have_ecore_ipc"
-echo "  Ecore Config.........: $have_ecore_config"
-echo "  Ecore Con............: $have_ecore_con"
+echo "  Ecore_Job...............: $have_ecore_job"
+echo "  Ecore_Con...............: $have_ecore_con"
+echo "  Ecore_Txt...............: $have_ecore_txt"
+echo "  Ecore_X.................: $have_ecore_x"
+echo "  Ecore_FB................: $have_ecore_fb"
+echo "  Ecore_Evas..............: $have_ecore_evas"
+echo "  Ecore_Evas GL Support...: $have_ecore_evas_gl"
+echo "  Ecore_Evas FB Support...: $have_ecore_evas_fb"
+echo "  Ecore_Ipc...............: $have_ecore_ipc"
+echo "  Ecore_Config............: $have_ecore_config"
 echo
 echo "Now type 'make' ('gmake' on some systems) to compile $PACKAGE."
 echo
