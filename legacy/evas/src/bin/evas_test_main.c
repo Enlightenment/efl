@@ -236,7 +236,7 @@ loop(void)
 		  Evas_Object        *ob;
 
 		  ob = evas_object_text_add(evas);
-		  evas_object_text_font_set(ob, "arial", (i * 2) + 4);
+		  evas_object_text_font_set(ob, "Vera", (i * 2) + 4);
 /*		  evas_object_text_font_set(ob, "-*-Timmons-bold-r-*-*-*-*-*-*-*-*-*-*", (i * 2) + 4); */
 		  evas_object_text_text_set(ob, "A Test String");
 		  evas_object_layer_set(ob, 5);
@@ -380,7 +380,7 @@ loop(void)
 	     evas_object_show(ob);
 	     t2 = ob;
 	     ob = evas_object_text_add(evas);
-	     evas_object_text_font_set(ob, "arial", 8);
+	     evas_object_text_font_set(ob, "Vera", 8);
 	     evas_object_geometry_get(ob, NULL, NULL, &tw, &th);
 	     evas_object_move(ob, (win_w - tw) / 2, win_h - th);
 	     evas_object_color_set(ob, 0, 0, 0, 255);
@@ -389,7 +389,7 @@ loop(void)
 	     evas_object_show(ob);
 	     title = ob;
 	     ob = evas_object_text_add(evas);
-	     evas_object_text_font_set(ob, "arial", 8);
+	     evas_object_text_font_set(ob, "Vera", 8);
 	     evas_object_geometry_get(ob, NULL, NULL, &tw, &th);
 	     evas_object_move(ob, 0, win_h - 240);
 	     evas_object_color_set(ob, 0, 0, 0, 255);
@@ -1069,7 +1069,7 @@ loop(void)
 		  evas_object_text_text_set(comment,
 					    "Destroy text blue, create red");
 		  ob = evas_object_text_add(evas);
-		  evas_object_text_font_set(ob, "arial", 12);
+		  evas_object_text_font_set(ob, "Vera", 12);
 		  evas_object_text_text_set(ob, "Red test string");
 		  evas_object_move(ob, (win_w / 2) - 50, win_h - 120);
 		  evas_object_layer_set(ob, 5);
@@ -1091,7 +1091,7 @@ loop(void)
 		  evas_object_text_text_set(comment,
 					    "Destroy text red, create blue");
 		  ob = evas_object_text_add(evas);
-		  evas_object_text_font_set(ob, "arial", 12);
+		  evas_object_text_font_set(ob, "Vera", 12);
 		  evas_object_text_text_set(ob, "Blue test string");
 		  evas_object_move(ob, (win_w / 2) - 50, win_h - 120);
 		  evas_object_layer_set(ob, 5);
@@ -1422,7 +1422,7 @@ loop(void)
 	     ob = evas_object_text_add(evas);
 	     evas_object_move(ob, 10, win_h - 240 + 60);
 	     evas_object_color_set(ob, 0, 0, 0, 255);
-	     evas_object_text_font_set(ob, "arial", 8);
+	     evas_object_text_font_set(ob, "Vera", 8);
 	     evas_object_text_text_set(ob, "Hello World [\xe2\x88\x9e]");
 	     evas_object_clip_set(ob, panel_clip);
 	     evas_object_layer_set(ob, 5);
@@ -1456,7 +1456,7 @@ loop(void)
 	evas_object_text_text_set(title, "Test 25: Set Text Object Size");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
-	evas_object_text_font_set(t1, "arial", (t - 278.0 + 0.5) * 8.0);
+	evas_object_text_font_set(t1, "Vera", (t - 278.0 + 0.5) * 8.0);
      }
    else if (t <= 318.0)
      {
@@ -1466,7 +1466,7 @@ loop(void)
 	evas_object_text_text_set(title, "Test 26: Move Text Object");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
-	evas_object_text_font_set(t1, "arial", 24);
+	evas_object_text_font_set(t1, "Vera", 24);
 	evas_object_text_text_set(t1, "Evas");
 	{
 	   Evas_Coord              x, y;
@@ -1489,19 +1489,19 @@ loop(void)
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
 	if ((((int)(t * 4)) & 0x3) == 0)
 	  {
-	     evas_object_text_font_set(t1, "arial", 48);
+	     evas_object_text_font_set(t1, "Vera", 48);
 	  }
 	else if ((((int)(t * 4)) & 0x3) == 1)
 	  {
-	     evas_object_text_font_set(t1, "notepad", 48);
+	     evas_object_text_font_set(t1, "Vera-Serif", 48);
 	  }
 	else if ((((int)(t * 4)) & 0x3) == 2)
 	  {
-	     evas_object_text_font_set(t1, "grunge", 48);
+	     evas_object_text_font_set(t1, "Vera-Italic", 48);
 	  }
 	else if ((((int)(t * 4)) & 0x3) == 3)
 	  {
-	     evas_object_text_font_set(t1, "morpheus", 48);
+	     evas_object_text_font_set(t1, "Vera-Serif-Bold", 48);
 	  }
 	evas_object_text_text_set(t1, "Evas");
 	evas_object_geometry_get(t1, NULL, NULL, &tw, &th);
@@ -1515,7 +1515,7 @@ loop(void)
 	evas_object_text_text_set(title, "Test 28: Set Text Object Color");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
-	evas_object_text_font_set(t1, "grunge", 48);
+	evas_object_text_font_set(t1, "Vera-Serif-Bold", 48);
 	evas_object_text_text_set(t1, "Evas");
 	evas_object_geometry_get(t1, NULL, NULL, &tw, &th);
 	evas_object_move(t1, 120 - (tw / 2), win_h - 120 - (th / 2));
@@ -2288,7 +2288,7 @@ i3 = ob;
 ob = evas_object_text_add(evas);
 evas_object_move(ob, 10, 10);
 evas_object_color_set(ob, 0, 0, 0, 255);
-evas_object_text_font_set(ob, "arial", 14);
+evas_object_text_font_set(ob, "Vera", 14);
 evas_object_text_text_set(ob, "Hello World [\xe2\x88\x9e]");
 /* the 2 following commented out sections dont display japanese */
 /* and i'm not sure why they don't. something deep down in the font rendering */
