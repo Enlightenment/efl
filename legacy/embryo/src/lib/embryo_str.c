@@ -3,6 +3,7 @@
 
 #define STRGET(ep, str, par) { \
    Embryo_Cell *___cptr; \
+   str = NULL; \
    if ((___cptr = embryo_data_address_get(ep, par))) { \
 	int ___l; \
 	___l = embryo_data_string_length_get(ep, ___cptr); \
