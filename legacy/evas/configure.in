@@ -106,37 +106,39 @@ fi
 
 gl_includes=""
 #### Find out about OpenGL
-AC_CHECK_HEADER(GL/gl.h,
-gl_includes="-I/usr/include -I/usr/local/include"
-AC_CHECK_LIB(GL, glBindTexture, AC_DEFINE(HAVE_GL) ,[
-AC_CHECK_HEADER($x_includes"/GL/gl.h",
-gl_includes="-I/usr/include -I/usr/local/include -I/usr/X11R6/include/"
-AC_CHECK_LIB(GL, glBindTexture, AC_DEFINE(HAVE_GL) ,[
-echo "WARNING:......."
-echo "no OpenGL libraries /  headers found. This means no GL support will be"
-echo "built into Evas. This means much slower rendering perfromance."
-echo "Please read the config.log file for more information as to why this library"
-echo "was not found."
+PREV_CPPFLAGS=$CPPFLAGS
+CPPFLAGS=$CPPFLAGS" -I/usr/include -I/usr/local/include "$x_cflags
+AC_TRY_CPP(GL/gl.h,
+echo "checking for GL/gl.h... yes"
+gl_includes="-I/usr/include -I/usr/local/include "$x_cflags
+AC_CHECK_LIB(GL, glBindTexture, have_gl=yes,[
 ], -L/usr/local/lib -lGL $X_LDFLAGS $X_EXTRA_LIBS $X_LIBS)
 )
-], -L/usr/local/lib -lGL $X_LDFLAGS $X_EXTRA_LIBS $X_LIBS)
-)
-#### Find out about OpenGL's GLU
-AC_CHECK_HEADER(GL/glu.h,
-gl_includes=$gl_includes" -I/usr/include -I/usr/local/include"
-AC_CHECK_LIB(GLU, gluBuild2DMipmaps, AC_DEFINE(HAVE_GLU) ,[
-AC_CHECK_HEADER($x_includes"/GL/glu.h",
-gl_includes=$gl_includes" -I/usr/include -I/usr/local/include -I/usr/X11R6/include/"
-AC_CHECK_LIB(GLU, gluBuild2DMipmaps, AC_DEFINE(HAVE_GLU) ,[
-echo "WARNING:......."
-echo "no libGLU was found. This means filtered (anti-aliased) scaling down"
-echo "of images will be disabled."
-echo "Please read the config.log file for more information as to why this library"
-echo "was not found."
-], -L/usr/local/lib -lGL -lGLU $X_LDFLAGS $X_EXTRA_LIBS $X_LIBS)
-)
-], -L/usr/local/lib -lGL -lGLU $X_LDFLAGS $X_EXTRA_LIBS $X_LIBS)
-)
+if test "x$have_gl" = "xyes"; then
+  AC_DEFINE(HAVE_GL)
+  AC_TRY_CPP(GL/glu.h,
+  echo "checking for GL/glu.h... yes"
+  gl_includes="-I/usr/include -I/usr/local/include "$x_cflags
+  AC_CHECK_LIB(GLU, gluBuild2DMipmaps, have_glu=yes,[
+  ], -L/usr/local/lib -lGL -lGLU $X_LDFLAGS $X_EXTRA_LIBS $X_LIBS)
+  )
+  if test "x$have_glu" = "xyes"; then
+    AC_DEFINE(HAVE_GLU)
+  else
+    echo "WARNING:......."
+    echo "no libGLU was found. This means filtered (anti-aliased) scaling down"
+    echo "of images will be disabled."
+    echo "Please read the config.log file for more information as to why this library"
+    echo "was not found."
+  fi
+else
+  echo "WARNING:......."
+  echo "no OpenGL libraries /  headers found. This means no GL support will be"
+  echo "built into Evas. This means much slower rendering perfromance."
+  echo "Please read the config.log file for more information as to why this library"
+  echo "was not found."
+fi
+CPPFLAGS=$PREV_CPPFLAGS
 
 AC_SUBST(gl_includes)
 

@@ -71,6 +71,12 @@ struct _Evas
       
    } current, previous;
    
+   struct {
+      int in;
+      int x, y;
+      int buttons;
+   } mouse;
+   
    void (*evas_renderer_data_free) (Evas _e);
    
    int changed;
