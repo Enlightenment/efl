@@ -258,20 +258,31 @@ ecore_x_init(const char *name)
 	ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE               = ecore_event_type_new();
 	ECORE_X_EVENT_WINDOW_PROP_DESKTOP_CHANGE               = ecore_event_type_new();
 
-   ECORE_X_EVENT_XDND_ENTER               = ecore_event_type_new();
-   ECORE_X_EVENT_XDND_POSITION            = ecore_event_type_new();
-   ECORE_X_EVENT_XDND_STATUS              = ecore_event_type_new();
-   ECORE_X_EVENT_XDND_LEAVE               = ecore_event_type_new();
-   ECORE_X_EVENT_XDND_DROP                = ecore_event_type_new();
-   ECORE_X_EVENT_XDND_FINISHED            = ecore_event_type_new();
+	ECORE_X_EVENT_XDND_ENTER               = ecore_event_type_new();
+	ECORE_X_EVENT_XDND_POSITION            = ecore_event_type_new();
+	ECORE_X_EVENT_XDND_STATUS              = ecore_event_type_new();
+	ECORE_X_EVENT_XDND_LEAVE               = ecore_event_type_new();
+	ECORE_X_EVENT_XDND_DROP                = ecore_event_type_new();
+	ECORE_X_EVENT_XDND_FINISHED            = ecore_event_type_new();
      }
    
+   /* everything has these... unless its like a pda... :) */
    ECORE_X_MODIFIER_SHIFT = _ecore_x_key_mask_get(XK_Shift_L);
    ECORE_X_MODIFIER_CTRL  = _ecore_x_key_mask_get(XK_Control_L);
+   
+   /* apple's xdarwin has no alt!!!! */
    ECORE_X_MODIFIER_ALT   = _ecore_x_key_mask_get(XK_Alt_L);
+   if (!ECORE_X_MODIFIER_ALT) 
+     ECORE_X_MODIFIER_ALT = _ecore_x_key_mask_get(XK_Meta_L);
+   if (!ECORE_X_MODIFIER_ALT) 
+     ECORE_X_MODIFIER_ALT = _ecore_x_key_mask_get(XK_Super_L);   
+   
+   /* the windows key... a valid modifier :) */
    ECORE_X_MODIFIER_WIN   = _ecore_x_key_mask_get(XK_Super_L);
    if (!ECORE_X_MODIFIER_WIN) 
-     ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(XK_Meta_L);   
+     ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(XK_Mode_switch);   
+   if (!ECORE_X_MODIFIER_WIN) 
+     ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(XK_Meta_L);
    
    ECORE_X_LOCK_SCROLL    = _ecore_x_key_mask_get(XK_Scroll_Lock);
    ECORE_X_LOCK_NUM       = _ecore_x_key_mask_get(XK_Num_Lock);
