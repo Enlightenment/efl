@@ -98,6 +98,7 @@ ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom type, char *str)
 {
    XTextProperty       xtp;
 
+   if (win == 0) win = DefaultRootWindow(_ecore_x_disp);
    xtp.value = str;
    xtp.format = 8;
    xtp.encoding = XA_STRING;
@@ -119,6 +120,7 @@ ecore_x_window_prop_string_get(Ecore_X_Window win, Ecore_X_Atom type)
    XTextProperty       xtp;
    char               *str = NULL;
 
+   if (win == 0) win = DefaultRootWindow(_ecore_x_disp);
    if (XGetTextProperty(_ecore_x_disp, win, &xtp, type))
      {
 	int      items;
