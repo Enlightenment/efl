@@ -381,7 +381,7 @@ bottom_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    ev = event_info;
    if (de->down_bottom)
      {
-	Evas_Coord x, y, w, h, tw, th;
+	Evas_Coord x, y, w, h;
 	Evas_Coord minw, minh;
 	int hdir, vdir;
 	
@@ -571,7 +571,6 @@ test_list(char *file)
    if (entries)
      {
 	Evas_List *l;
-	Evas_Coord x = 0, y = 0;
 	
 	for (l = entries; l; l = l->next)
 	  {
