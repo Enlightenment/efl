@@ -2046,10 +2046,10 @@ setup(void)
    int                 iw, ih;
 
    evas_font_path_prepend(evas, FN);
-   //  evas_image_cache_set(evas, 1024 * 1024);
-   //  evas_font_cache_set(evas, 256 * 1024);
-   evas_image_cache_set(evas, 0);
-   evas_font_cache_set(evas, 0);
+   evas_image_cache_set(evas, 2048 * 1024);
+   evas_font_cache_set(evas, 1024 * 1024);
+//   evas_image_cache_set(evas, 0);
+//   evas_font_cache_set(evas, 0);
 
    ob = evas_object_image_add(evas);
    evas_object_image_file_set(ob, IM "backdrop.png", NULL);

@@ -77,7 +77,14 @@ RGBA_Font_Source *
 evas_common_font_source_find(const char *name)
 {
    Evas_Object_List *l;
-   
+
+#if 1 
+   /* this effectively disables sharing out loaded outlines between */
+   /* multiple sizes of the same font. because FT_Set_Char_Size() needs */
+   /* to be called to update the fonts size output and caluclations */
+   /* for a different face size, but this can be SLOOOW */
+   return NULL;
+#endif   
    if (!name) return NULL;
    for (l = fonts_src; l; l = l->next)
      {
@@ -113,6 +120,7 @@ void
 evas_common_font_size_use(RGBA_Font *fn)
 {
    if (fn->src->current_size == fn->real_size) return;
+   /* This call is evil and SLOW! */
    FT_Set_Char_Size(fn->src->ft.face, 0, fn->real_size, 96, 96);
    fn->src->current_size = fn->real_size;
 }
@@ -173,11 +181,11 @@ evas_common_font_load_init(RGBA_Font *fn)
    int error;
    
    fn->real_size = fn->size * 64;
-   error = FT_Set_Char_Size(fn->src->ft.face, 0, (fn->size * 64), 96, 96);
+   error = FT_Set_Char_Size(fn->src->ft.face, 0, fn->real_size, 96, 96);
    if (error)
      {
-	error = FT_Set_Pixel_Sizes(fn->src->ft.face, 0, fn->size);
 	fn->real_size = fn->size;
+	error = FT_Set_Pixel_Sizes(fn->src->ft.face, 0, fn->real_size);
      }
    if (error)
      {
@@ -202,12 +210,12 @@ evas_common_font_load_init(RGBA_Font *fn)
 	       }
 	     if (d == 0) break;
 	  }
-	error = FT_Set_Pixel_Sizes(fn->src->ft.face, chosen_width, chosen_size);
+	fn->real_size = chosen_size;
+	error = FT_Set_Pixel_Sizes(fn->src->ft.face, chosen_width, fn->real_size);
 	if (error)
 	  {
 	     /* couldn't choose the size anyway... what now? */
 	  }
-	fn->real_size = chosen_size;
      }
    fn->src->current_size = fn->real_size;
 

@@ -34,6 +34,7 @@ evas_common_font_ascent_get(RGBA_Font *fn)
    int val;
    int ret;
    
+   evas_common_font_size_use(fn);
    val = (int)fn->src->ft.face->ascender;
    fn->src->ft.face->units_per_EM = 2048; /* nasy hack - need to have correct val */
    ret = (val * fn->src->ft.face->size->metrics.y_scale) / (fn->src->ft.face->units_per_EM * fn->src->ft.face->units_per_EM);

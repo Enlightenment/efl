@@ -104,6 +104,9 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (gl == 0) break;
 	index = FT_Get_Char_Index(fn->src->ft.face, gl);
+	/* hmmm kerning means i can't sanely do my own cached metric tables! */
+	/* grrr - this means font face sharing is kinda... not an option if */
+	/* you want performance */
 	if ((use_kerning) && (prev_index) && (index))
 	  {
 	     FT_Vector delta;
