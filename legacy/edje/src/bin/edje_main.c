@@ -511,7 +511,7 @@ list_head_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 cb (void *data, Evas_Object *o, const char *sig, const char *src)
 {
-   printf("CALLBACK for %p %p \"%s\" \"%s\"\n", data, o, sig, src);
+   printf("CALLBACK for \"%s\" \"%s\"\n", sig, src);
    if (!strcmp(sig, "drag"))
      {
 	double x, y;
