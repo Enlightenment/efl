@@ -17,7 +17,9 @@ static void *evas_engine_buffer_output_setup(int   w,
 					     int   alpha_threshold,
 					     int   color_key_r,
 					     int   color_key_g,
-					     int   color_key_b
+					     int   color_key_b,
+					     void * (*new_update_region) (int x, int y, int w, int h, int *row_bytes),
+					     void   (*free_update_region) (int x, int y, int w, int h, void *data)
 					     );
 static void evas_engine_buffer_output_free(void *data);
 static void evas_engine_buffer_output_resize(void *data, int w, int h);
@@ -207,7 +209,9 @@ evas_engine_buffer_setup(Evas *e, void *in)
 					info->info.alpha_threshold,
 					info->info.color_key_r,
 					info->info.color_key_g,
-					info->info.color_key_b);
+					info->info.color_key_b,
+					info->info.func.new_update_region,
+					info->info.func.free_update_region);
    e->engine.data.output = re;
    if (!e->engine.data.output) return;
    e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
@@ -223,7 +227,9 @@ evas_engine_buffer_output_setup(int   w,
 				int   alpha_threshold,
 				int   color_key_r,
 				int   color_key_g,
-				int   color_key_b
+				int   color_key_b,
+				void * (*new_update_region) (int x, int y, int w, int h, int *row_bytes),
+				void   (*free_update_region) (int x, int y, int w, int h, void *data)
 				)
 {
    Render_Engine *re;
@@ -246,7 +252,6 @@ evas_engine_buffer_output_setup(int   w,
    
    evas_buffer_outbuf_buf_init();
    
-   /* get any stored performance metrics from device (xserver) */
      {
 	Outbuf_Depth dep;
 	DATA32 color_key;
@@ -271,7 +276,9 @@ evas_engine_buffer_output_setup(int   w,
 						 dest_buffer_row_bytes,
 						 use_color_key, 
 						 color_key, 
-						 alpha_threshold);
+						 alpha_threshold,
+						 new_update_region,
+						 free_update_region);
      }
    re->tb = evas_common_tilebuf_new(w, h);
    /* in preliminary tests 16x16 gave highest framerates */
@@ -298,20 +305,23 @@ evas_engine_buffer_output_resize(void *data, int w, int h)
    
    re = (Render_Engine *)data;
      {
-	int             depth;
-	void           *dest;
-	int             dest_row_bytes;
-	int             alpha_level;
-	DATA32          color_key;
-	char            use_color_key;
-
+	int      depth;
+	void    *dest;
+	int      dest_row_bytes;
+	int      alpha_level;
+	DATA32   color_key;
+	char     use_color_key;
+	void * (*new_update_region) (int x, int y, int w, int h, int *row_bytes);
+	void   (*free_update_region) (int x, int y, int w, int h, void *data);
+	
 	depth = re->ob->depth;
 	dest = re->ob->dest;
 	dest_row_bytes = re->ob->dest_row_bytes;
 	alpha_level = re->ob->alpha_level;
 	color_key = re->ob->color_key;
 	use_color_key = re->ob->use_color_key;
-	
+	new_update_region = re->ob->func.new_update_region;
+	free_update_region = re->ob->func.free_update_region;
 	evas_buffer_outbuf_buf_free(re->ob);
 	re->ob = evas_buffer_outbuf_buf_setup_fb(w,
 						 h,
@@ -320,7 +330,9 @@ evas_engine_buffer_output_resize(void *data, int w, int h)
 						 dest_row_bytes,
 						 use_color_key,
 						 color_key,
-						 alpha_level);
+						 alpha_level,
+						 new_update_region,
+						 free_update_region);
      }
    evas_common_tilebuf_free(re->tb);
    re->tb = evas_common_tilebuf_new(w, h);

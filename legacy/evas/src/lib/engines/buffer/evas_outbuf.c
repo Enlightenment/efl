@@ -15,7 +15,10 @@ evas_buffer_outbuf_buf_free(Outbuf *buf)
 }
 
 Outbuf *
-evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, int dest_row_bytes, int use_color_key, DATA32 color_key, int alpha_level)
+evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, int dest_row_bytes, int use_color_key, DATA32 color_key, int alpha_level,
+				void * (*new_update_region) (int x, int y, int w, int h, int *row_bytes),
+				void   (*free_update_region) (int x, int y, int w, int h, void *data)
+				)
 {
    Outbuf *buf;
    
@@ -32,7 +35,9 @@ evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, in
    buf->alpha_level = alpha_level;
    buf->color_key = color_key;
    buf->use_color_key = use_color_key;
-   
+
+   buf->func.new_update_region = new_update_region;
+   buf->func.free_update_region = free_update_region;
    return buf;
 }
 
@@ -68,17 +73,26 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 	  {
 	     DATA8 thresh;
 	     int xx, yy;
+	     int row_bytes;
+	     DATA8 *dest;
 	     DATA32 colorkey;
 	     DATA32 *src;
 	     DATA8 *dst;
 	     
 	     colorkey = buf->color_key;
 	     thresh = buf->alpha_level;
+	     row_bytes = buf->dest_row_bytes;
+	     dest = (DATA8 *)(buf->dest) + (y * row_bytes) + (x * 3);
+	     if (buf->func.new_update_region)
+	       {
+		  dest = buf->func.new_update_region(x, y, w, h, &row_bytes);
+	       }
+	     if (!dest) break;
 	     if (buf->use_color_key)
 	       {
 		  for (yy = 0; yy < h; yy++)
 		    {
-		       dst = (DATA8 *)(buf->dest) + ((y + yy) * buf->dest_row_bytes) + (x * 3);
+		       dst = dest + (yy * row_bytes);
 		       src = update->image->data + (yy * update->image->w);
 		       for (xx = 0; xx < w; xx++)
 			 {
@@ -102,7 +116,7 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 	       {
 		  for (yy = 0; yy < h; yy++)
 		    {
-		       dst = (DATA8 *)(buf->dest) + ((y + yy) * buf->dest_row_bytes) + (x * 3);
+		       dst = dest + (yy * row_bytes);
 		       src = update->image->data + (yy * update->image->w);
 		       for (xx = 0; xx < w; xx++)
 			 {
@@ -112,6 +126,10 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 			    src++;
 			 }
 		    }
+	       }
+	     if (buf->func.free_update_region)
+	       {
+		  buf->func.free_update_region(x, y, w, h, dest);
 	       }
 	  }
 	break;
@@ -120,17 +138,26 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 	  {
 	     DATA8 thresh;
 	     int xx, yy;
+	     int row_bytes;
+	     DATA8 *dest;
 	     DATA32 colorkey;
 	     DATA32 *src;
 	     DATA8 *dst;
 	     
 	     colorkey = buf->color_key;
 	     thresh = buf->alpha_level;
+	     row_bytes = buf->dest_row_bytes;
+	     dest = (DATA8 *)(buf->dest) + (y * row_bytes) + (x * 3);
+	     if (buf->func.new_update_region)
+	       {
+		  dest = buf->func.new_update_region(x, y, w, h, &row_bytes);
+	       }
+	     if (!dest) break;
 	     if (buf->use_color_key)
 	       {
 		  for (yy = 0; yy < h; yy++)
 		    {
-		       dst = (DATA8 *)(buf->dest) + ((y + yy) * buf->dest_row_bytes) + (x * 3);
+		       dst = dest + (yy * row_bytes);
 		       src = update->image->data + (yy * update->image->w);
 		       for (xx = 0; xx < w; xx++)
 			 {
@@ -154,7 +181,7 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 	       {
 		  for (yy = 0; yy < h; yy++)
 		    {
-		       dst = (DATA8 *)(buf->dest) + ((y + yy) * buf->dest_row_bytes) + (x * 3);
+		       dst = dest + (yy * row_bytes);
 		       src = update->image->data + (yy * update->image->w);
 		       for (xx = 0; xx < w; xx++)
 			 {
@@ -164,6 +191,10 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 			    src++;
 			 }
 		    }
+	       }
+	     if (buf->func.free_update_region)
+	       {
+		  buf->func.free_update_region(x, y, w, h, dest);
 	       }
 	  }
 	break;
