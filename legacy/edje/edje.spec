@@ -58,6 +58,7 @@ rm -rf $RPM_BUILD_ROOT
 %{_datadir}/edje
 
 %files devel
+%defattr(-, root, root)
 %doc edje_docs.tar.gz
 %{_libdir}/libedje.a
 %{_libdir}/libedje.la
