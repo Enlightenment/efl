@@ -76,6 +76,7 @@ void
 evas_free(Evas *e)
 {
    Evas_Object_List *l;
+   int i;
    
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -116,6 +117,14 @@ evas_free(Evas *e)
    e->engine.func->info_free(e, e->engine.info);
    e->engine.func->context_free(e->engine.data.output, e->engine.data.context);
    e->engine.func->output_free(e->engine.data.output);
+   
+   for (i = 0; i < e->modifiers.mod.count; i++)
+     free(e->modifiers.mod.list[i]);
+   if (e->modifiers.mod.list) free(e->modifiers.mod.list);
+
+   for (i = 0; i < e->locks.lock.count; i++)
+     free(e->locks.lock.list[i]);
+   if (e->locks.lock.list) free(e->locks.lock.list);
    
    e->magic = 0;
    free(e);

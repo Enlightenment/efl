@@ -315,7 +315,7 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
    else if (filename) l1 = strlen(filename);
    l2 = 0;
    if (key) l2 = strlen(key);
-   sprintf(buf, "%llx", timestamp);
+   snprintf(buf, sizeof(buf), "%llx", timestamp);
    l3 = strlen(buf);
    str = malloc(l1 + 5 + l2 + 5 + l3 +1);
    if (!str)
