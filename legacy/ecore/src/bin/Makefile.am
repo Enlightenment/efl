@@ -60,24 +60,11 @@ INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore_config \
 @evas_cflags@ \
 @x_cflags@ \
-@ewl_cflags@ \
 @edb_cflags@
 
-if BUILD_ECORE_CONFIG
-bin_PROGRAMS = \
-ecore_test \
-exsh \
-ecore_evas_test
-
-# You FOOOOOOOOLS! examine requires ewl. ewl requires ecore. see the circular
-# dependancy? NO NO NO!
-#examine \
-
-else
 bin_PROGRAMS = \
 ecore_test \
 ecore_evas_test
-endif
 
 ecore_test_SOURCES = \
 ecore_test.c
@@ -142,44 +129,4 @@ $(ECORE_EVAS_LIB) \
 $(ECORE_CON_LIB) \
 $(ECORE_IPC_LIB) \
 $(ECORE_TXT_LIB)
-
-exsh_SOURCES = \
-exsh.c \
-ecore_config_client.c \
-ecore_config_client.h
-
-exsh_LDADD = \
-$(top_builddir)/src/lib/ecore/libecore.la \
-$(ECORE_IPC_LIB) \
-$(ECORE_CONFIG_LIB) \
-@edb_libs@ -ldl
-
-exsh_LDFLAGS =
-
-exsh_CFLAGS = \
-$(CFLAGS) \
-$(INCLUDES) \
--I$(top_builddir)/src/lib/ecore_config/ \
-@edb_cflags@
-
-exsh_DEPENDENCIES = \
-$(top_builddir)/src/lib/ecore/libecore.la \
-$(ECORE_CONFIG_LIB)
-
-examine_SOURCES = \
-examine.c \
-ecore_config_client.c \
-ecore_config_client.h 
-
-examine_LDADD = \
-@ewl_libs@ -ldl
-
-examine_LDFLAGS =
-
-examine_CFLAGS = \
-$(CFLAGS) \
-$(INCLUDES) \
-@ewl_cflags@
-
-examine_DEPENDENCIES = 
 

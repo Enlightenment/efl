@@ -498,11 +498,6 @@ have_ecore_config="no";
 ecore_config_cflags="";
 ecore_config_libs="";
 
-ewl_cflags=`ewl-config --cflags`
-ewl_libs=`ewl-config --libs`
-AC_SUBST(ewl_cflags)
-AC_SUBST(ewl_libs)
-
 AC_ARG_ENABLE(ecore-config, 
 [  --disable-ecore-config              disable the ecore_config module], [
   if [ test "$enableval" = "yes" ]; then  
