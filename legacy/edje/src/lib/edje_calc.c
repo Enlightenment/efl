@@ -386,22 +386,12 @@ _edje_part_recalc_single(Edje *ed,
 		  new_h = (params->w / desc->aspect.max);
 		  new_w = (params->h * desc->aspect.max);
 	       }
-	     printf("[a] %s [%3.3f -> %3.3f] (%ix%i) -> (%3.3fx%3.3f)\n", 
-		    ep->part->name, 
-		    desc->aspect.min, desc->aspect.max,
-		    params->w, params->h,
-		    new_w, new_h);
 	     /* adjust for min aspect (width / height) */
 	     if ((desc->aspect.min > 0.0) && (aspect < desc->aspect.min))
 	       {
 		  new_h = (params->w / desc->aspect.min);
 		  new_w = (params->h * desc->aspect.min);
 	       }
-	     printf("  [b] %s [%3.3f -> %3.3f] (%ix%i) -> (%3.3fx%3.3f)\n", 
-		    ep->part->name, 
-		    desc->aspect.min, desc->aspect.max,
-		    params->w, params->h,
-		    new_w, new_h);
 	  } /* prefer vertical size as determiner */
 	else if (desc->aspect.prefer == EDJE_ASPECT_PREFER_VERTICAL) /* keep both dimensions in check */
 	  {
@@ -410,21 +400,11 @@ _edje_part_recalc_single(Edje *ed,
 	       {
 		  new_w = (params->h * desc->aspect.max);
 	       }
-	     printf("[a] %s [%3.3f -> %3.3f] (%ix%i) -> (%3.3fx%3.3f)\n", 
-		    ep->part->name, 
-		    desc->aspect.min, desc->aspect.max,
-		    params->w, params->h,
-		    new_w, new_h);
 	     /* adjust for min aspect (width / height) */
 	     if ((desc->aspect.min > 0.0) && (aspect < desc->aspect.min))
 	       {
 		  new_w = (params->h * desc->aspect.min);
 	       }
-	     printf("  [b] %s [%3.3f -> %3.3f] (%ix%i) -> (%3.3fx%3.3f)\n", 
-		    ep->part->name, 
-		    desc->aspect.min, desc->aspect.max,
-		    params->w, params->h,
-		    new_w, new_h);
 	  } /* prefer horizontal size as determiner */
 	else if (desc->aspect.prefer == EDJE_ASPECT_PREFER_HORIZONTAL) /* keep both dimensions in check */
 	  {
@@ -433,21 +413,11 @@ _edje_part_recalc_single(Edje *ed,
 	       {
 		  new_h = (params->w / desc->aspect.max);
 	       }
-	     printf("[a] %s [%3.3f -> %3.3f] (%ix%i) -> (%3.3fx%3.3f)\n", 
-		    ep->part->name, 
-		    desc->aspect.min, desc->aspect.max,
-		    params->w, params->h,
-		    new_w, new_h);
 	     /* adjust for min aspect (width / height) */
 	     if ((desc->aspect.min > 0.0) && (aspect < desc->aspect.min))
 	       {
 		  new_h = (params->w / desc->aspect.min);
 	       }
-	     printf("  [b] %s [%3.3f -> %3.3f] (%ix%i) -> (%3.3fx%3.3f)\n", 
-		    ep->part->name, 
-		    desc->aspect.min, desc->aspect.max,
-		    params->w, params->h,
-		    new_w, new_h);
 	  }
 	/* do real adjustment */
 	if ((params->h - new_h) > (params->w - new_w))
