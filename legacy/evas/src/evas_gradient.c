@@ -59,6 +59,7 @@ evas_add_gradient_box(Evas e)
    Evas_List                l;
    Evas_Layer               layer;
 
+   if (!e) return NULL;
    o = oo = malloc(sizeof(struct _Evas_Object_Gradient_Box));
    memset(o, 0, sizeof(struct _Evas_Object_Gradient_Box));
    o->type = OBJECT_GRADIENT_BOX;
@@ -95,10 +96,13 @@ evas_set_gradient(Evas e, Evas_Object o, Evas_Gradient grad)
 {
    Evas_Object_Gradient_Box oo;
 
+   if (!e) return;
+   if (!o) return;
+   if (!grad) return;
    IF_OBJ(o, OBJECT_GRADIENT_BOX) return;
    oo = o;
-   if (oo->current.gradient)
-      evas_gradient_free(oo->current.gradient);
+   grad->references++;
+   if (oo->current.gradient) evas_gradient_free(oo->current.gradient);
    oo->current.gradient = grad;
    switch (e->current.render_method)
      {
@@ -196,6 +200,7 @@ evas_gradient_new(void)
    
    gr = malloc(sizeof(struct _Evas_Gradient));
    gr->color_points = NULL;
+   gr->references = 1;
    return gr;
 }
 
@@ -204,6 +209,9 @@ evas_gradient_free(Evas_Gradient grad)
 {
    Evas_List l;
    
+   if (!grad) return;
+   grad->references--;
+   if (grad->references > 0) return;
    if (grad->color_points)
      {
 	for (l = grad->color_points; l; l = l->next)
@@ -218,6 +226,7 @@ evas_gradient_add_color(Evas_Gradient grad, int r, int g, int b, int a, int dist
 {
    Evas_Color_Point col;
    
+   if (!grad) return;
    col = malloc(sizeof(struct _Evas_Color_Point));
    col->r = r;
    col->g = g;
@@ -230,6 +239,8 @@ evas_gradient_add_color(Evas_Gradient grad, int r, int g, int b, int a, int dist
 void
 evas_set_angle(Evas e, Evas_Object o, double angle)
 {
+   if (!e) return;
+   if (!o) return;
    switch (o->type)
      {
      case OBJECT_GRADIENT_BOX:

@@ -43,6 +43,7 @@ evas_add_rectangle(Evas e)
    Evas_List             l;
    Evas_Layer            layer;
    
+   if (!e) return NULL;
    o = oo = malloc(sizeof(struct _Evas_Object_Rectangle));
    memset(o, 0, sizeof(struct _Evas_Object_Rectangle));
    o->type = OBJECT_RECTANGLE;

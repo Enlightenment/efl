@@ -1,0 +1,189 @@
+<html>
+<head>
+<title>Evas - Documentation</title>
+</head>
+<body
+bgcolor=#ffffff
+text=#000000
+link=#9933aa
+vlink=#aa66bb
+alink=#ccaacc>
+<center>
+<font face=lucida,helvetica,arial size=4>
+<img src=logo.gif width=512 height=160 alt=Evas><br>
+<b>Documentation for programming using Evas</b><br>
+By Carsten Haitzler<br>
+Copyright (C) 2000<br>
+</center>
+</font>
+<hr>
+<font face=lucida,helvetica,arial size=4>
+<p>
+<b>Introduction</b>
+<p>
+<blockquote>
+<p>
+Evas is a canvas library, designed to work with the X Window System. It is
+designed to be able to take advantage of any graphics hardwre or CPU
+processing power you may have, or to adjust for the lack of it. It has a
+simplistic API to access the features of a canvas to aid in making
+development using Evas easy.
+<p>
+First it is necessary to explain what a canvas is and how in principle it
+works. For those used to doing the drawing themselves, it is a new way of
+looking at the problem of drawing displays that contain lots of information
+an application may have to keep track of. This may be in the form of
+primities (lines, circles, rectangles, polygons and text) or may be a
+mixture of these and more complex objects such as gradients, images etc. An
+application normally needs to hold all this data and when required, redraw
+the data do a window or pixmap if the data changes, or the window contents
+become damaged and need a redraw to restore them. To do this optimally the
+application would also need to figure out what exactly canged, which parts
+of the window or pixmap this data mapped to and then order the drawing so
+all objects are drawn in the right order, and only the part of the window
+that needs redrawing is drawn to to save excess processing. For a large
+range of objects and data this become a fairly involved problem all on it's
+own. Thus came the evolution of the canvas.
+<p>
+Some of the better known canvas systems around are the Tk Canvas and the
+GNOME canvas. In principle a canvas works on an object level. Like windows
+in X11, you create objects, move them, resize them show them, hide them,
+change their properties etc. The canvas figures out what objects changed and
+how only when it comes to it's draw cycle - not every time you do something.
+This means moving, resizing and changing object properties is a very fast
+and inexpensive operation since only attribute values change, rather than
+any drawing being done, unlike when you move and resize windows in X11 which
+happens instantly, not later. This means higher efficiency for the
+application's rendering, as long ad evas render calls are only called when
+the application has hit an idle state (nothing left in it's queue of things
+to do for the moment). This also means object maintinence is now left up to
+the canvas - the application only needs to keep a handle to that object
+aroun so it can be uniquely identified.
+<p>
+The best way to use Evas is as follows (simplistic pseudo-code):
+<p>
+<blockquote><font face=fixed color=#442244><pre>
+Initialise program
+...
+Create canvas
+Add objects to canvas (fill in with some content)
+...
+Infinite loop ...
+  while input events are pending ...
+    if event is for evas window then pass onto evas
+  ... (no more input events in queue awaiting processing)
+  modify, add or delete  objects in evas to reflect new state
+  call evas render function
+... continue program infinite loop
+</pre></font></blockquote>
+<p>
+In a naievely written program an event loop may have many re-renderins and
+re-drawings going on as things are modified, otherwise the application needs
+to retain state like evas does and ten handle draws in idle time too, which
+means applications need to do the work Evas does themselves, as well as the
+optimizations already in place in Evas.
+<p>
+The major advantages arise out of the fact that Evas does not only handle
+the logic of such object management and rendering for you, and optimize it,
+it also provides and abstraction layer that allows evas to render not just
+solid objects, but temi-transparent objects and images that can be
+alpha-blended, anti-aliased text and much more. It not only does these and
+does them fast (using Imlib2 as the core rendering engine to do this), but
+is able to instantly take advantage of hardware acceleration (for example
+OpenGL) quietly for you to blend and scale images, speeding up rendering
+many times over, without you having to know a single line of OpenGL. Evas's
+Software rotuines alone are many many many times faster than Mesa's software
+OpenGL rendering, as Imlib2's code is purpose written for 2D operations with
+Assembly optimizations for the core routines.
+<p>
+</blockquote>
+<p>
+<b>API Reference</b>
+<p>
+<blockquote>
+<p>
+<b>Basic Types</b>
+<p>
+Here is a list of the basic types of objects Evas deals with and can
+generate. It is small to keep things simple.
+<p>
+<blockquote><font face=fixed color=#442244><pre>
+Evas
+Evas_Gradient
+Evas_Object
+Evas_List
+Evas_Callback_Type
+Evas_Image_Format
+Evas_Render_Method
+</pre></font></blockquote>
+<p>
+<font color=#442244>Evas</font>:
+<p>
+This is the basic type of an Evas itself. When you create a new evas this
+type will be returned (not a pointer to it - the Evas type itself.  It is
+intended to be completely opaque to the application and may change its nature
+over time - it may be a void pointer now and tomorrow a hashe'd ID or
+anything else). All functions dealing with Evas's and their contents will
+require you use this handle to denote what Evas you are talking about.
+<p>
+<font color=#442244>Evas_Gradient</font>:
+<p>
+This is the basic type use to build a gradient object from or modify its
+colors. You need to create a new one of these before you can create any
+useful gradient object. You add colors to the gradient, each one (after the
+first color added) are added a certain ``distance'' from the previous color
+which will determine relative distances between colors in the gradient. The
+larger the distance number, the more of the total gradient length the
+transition between the previous color and the one being added will take.
+Once you hve filled the gradient with colors, create a gradient object, or
+multiple gradient objects and set the gradient to those gradient objects.
+When you are done and don't need that gradient anymore, simply free the
+gradient. If you wish to change the colors or distances between them in a
+gradient object simply build a new gradient, set it to the object then free
+the gradient you created.
+<p>
+<font color=#442244>Evas_Object</font>:
+<p>
+This is the fundamental building block that makes the contents of an Evas
+have meaning. Without any objects in an Evas it will not draw anything, or
+draw usless garbage where no objects exist. Whenever you create an object
+you will get this type of handle back. If you wish to modify an object's
+geoemtry, show, hide, change its properties or delete it you will need to
+use this as the handle to addess it by.
+<p>
+<font color=#442244>Evas_List</font>:
+<p>
+This is the only non-opaque data type. It is for conevenience of Evas, and
+for the application to use to. This type is a doubly-linked list of data.
+You may traverse the list using loops and using the next and prev members of
+this structure. Do not modify these though as this could mean memory leaks
+and losing parts of the list. If prev is NULL, you are at the start of the
+list and if next is NULL you are at the end. The data member poitns to
+whatever data was inserted at that place in the list. You may read this and
+cast it to whatever makes sense in the situation. If Evas returns an
+Evas_List of things the data member will be of the type specified by the
+function. You may use Evas_List's yourself for anything you find them useful
+for.
+<p>
+<font color=#442244>Evas_Callback_Type</font>:
+<p>
+This is an enumerated type to specify what kind of event would trigger a
+callback to be called when attaching a callback to an object. Legal values
+for this are CALLBACK_MOUSE_IN (when the mouse enters the bounds of this 
+object), CALLBACK_MOUSE_OUT (when the mouse leaves the bounadry of this 
+object), CALLBACK_MOUSE_DOWN (when a mouse button is pressed in this object),
+CALLBACK_MOUSE_UP (when a mouse button is raised in this object),
+CALLBACK_MOUSE_MOVE (when the mouse mpoves around in this object) and
+CALLBACK_FREE (when this object is actually freed so the application can
+find free and data attached to the object if it needs to).
+<p>
+<font color=#442244>Evas_Image_Format</font>:
+<p>
+<p>
+<font color=#442244>Evas_Render_Method</font>:
+<p>
+<p>
+</blockquote>
+</font>
+</body>
+</html>

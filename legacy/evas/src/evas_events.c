@@ -9,7 +9,8 @@ int
 _evas_point_in_object(Evas e, Evas_Object o, int x, int y)
 {
    int ox, oy, ow, oh;
-   
+
+   if (o->delete_me) return 0;
    _evas_object_get_current_translated_coords(e, o, &ox, &oy, &ow, &oh);
    if ((x >= ox) && (x < (ox + ow)) && (y >= oy) && (y < (oy + oh)))
       return 1;
@@ -33,7 +34,7 @@ _evas_highest_object_at_point(Evas e, int x, int y)
 	     Evas_Object ob;
 	     
 	     ob = ll->data;
-	     if ((ob->current.visible) && (!ob->pass_events))
+	     if ((ob->current.visible) && (!ob->pass_events) && (!ob->delete_me))
 	       {
 		  if (_evas_point_in_object(e, ob, x, y)) 
 		     o = ob;
@@ -59,7 +60,7 @@ _evas_objects_at_point(Evas e, int x, int y)
 	     Evas_Object ob;
 	     
 	     ob = ll->data;
-	     if ((ob->current.visible) && (!ob->pass_events))
+	     if ((ob->current.visible) && (!ob->pass_events) && (!ob->delete_me))
 	       {
 		  if (_evas_point_in_object(e, ll->data, x, y))
 		     objs = evas_list_prepend(objs, ll->data);
@@ -75,6 +76,7 @@ evas_event_button_down(Evas e, int x, int y, int b)
 {
    Evas_Object o;
    
+   if (!e) return;
    if ((b < 1) || (b > 32)) return;
    if (!e->mouse.buttons) 
       {
@@ -94,6 +96,7 @@ evas_event_button_up(Evas e, int x, int y, int b)
 {
    Evas_Object o;
    
+   if (!e) return;
    if ((b < 1) || (b > 32)) return;
    e->mouse.buttons &= ~(1 << (b - 1));
    e->mouse.x = x;
@@ -115,6 +118,7 @@ evas_event_move(Evas e, int x, int y)
 {
    Evas_Object o;
 
+   if (!e) return;
    o = _evas_highest_object_at_point(e, e->mouse.x, e->mouse.y);
    if (o != e->mouse.object)
      {
@@ -159,23 +163,20 @@ evas_event_move(Evas e, int x, int y)
 void
 evas_event_enter(Evas e)
 {
+   if (!e) return;
    e->mouse.in = 1;
 }
 
 void
 evas_event_leave(Evas e)
 {
+   if (!e) return;
    e->mouse.in = 0;
 }
 
 Evas_Object
 evas_get_object_under_mouse(Evas e)
 {
+   if (!e) return NULL;
    return _evas_highest_object_at_point(e, e->mouse.x, e->mouse.y);
-}
-
-Evas_Object
-evas_get_object_at_pos(Evas e, double x, double y)
-{
-   return _evas_highest_object_at_point(e, x, y);
 }

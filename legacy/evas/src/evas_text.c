@@ -48,6 +48,7 @@ evas_add_text(Evas e, char *font, int size, char *text)
    Evas_List         l;
    Evas_Layer        layer;
    
+   if (!e) return NULL;
    o = oo = malloc(sizeof(struct _Evas_Object_Text));
    memset(o, 0, sizeof(struct _Evas_Object_Text));
    o->type = OBJECT_TEXT;
@@ -160,6 +161,8 @@ evas_get_text_string(Evas e, Evas_Object o)
 {
    Evas_Object_Text oo;
 
+   if (!e) return NULL;
+   if (!o) return NULL;
    IF_OBJ(o, OBJECT_TEXT) return "";
    oo = o;
    return oo->current.text;
@@ -170,6 +173,8 @@ evas_get_text_font(Evas e, Evas_Object o)
 {
    Evas_Object_Text oo;
 
+   if (!e) return NULL;
+   if (!o) return NULL;
    IF_OBJ(o, OBJECT_TEXT) return "";
    oo = o;
    return oo->current.font;
@@ -180,6 +185,8 @@ evas_get_text_size(Evas e, Evas_Object o)
 {
    Evas_Object_Text oo;
 
+   if (!e) return 0;
+   if (!o) return 0;
    IF_OBJ(o, OBJECT_TEXT) return 0;
    oo = o;
    return oo->current.size;
@@ -191,6 +198,8 @@ evas_text_at_position(Evas e, Evas_Object o, double x, double y,
 {
    Evas_Object_Text oo;
    
+   if (!e) return -1;
+   if (!o) return -1;
    IF_OBJ(o, OBJECT_TEXT) return -1;
    oo = o;
    switch (e->current.render_method)
@@ -281,6 +290,8 @@ evas_text_at(Evas e, Evas_Object o, int index,
 {
    Evas_Object_Text oo;
    
+   if (!e) return;
+   if (!o) return;
    IF_OBJ(o, OBJECT_TEXT) return;
    oo = o;
    switch (e->current.render_method)
@@ -359,6 +370,8 @@ evas_text_get_ascent_descent(Evas e, Evas_Object o,
    int a, d;
    Evas_Object_Text oo;
    
+   if (!e) return;
+   if (!o) return;
    IF_OBJ(o, OBJECT_TEXT) return;
    oo = o;
    a = 0; d = 0;
@@ -432,6 +445,8 @@ evas_text_get_max_ascent_descent(Evas e, Evas_Object o,
    int a, d;
    Evas_Object_Text oo;
    
+   if (!e) return;
+   if (!o) return;
    IF_OBJ(o, OBJECT_TEXT) return;
    oo = o;
    a = 0; d = 0;
@@ -505,6 +520,8 @@ evas_text_get_advance(Evas e, Evas_Object o,
    int a, d;
    Evas_Object_Text oo;
    
+   if (!e) return;
+   if (!o) return;
    IF_OBJ(o, OBJECT_TEXT) return;
    oo = o;
    a = 0; d = 0;
@@ -573,7 +590,9 @@ evas_text_get_inset(Evas e, Evas_Object o)
    Evas_Object_Text oo;
    int inset;
    
-   IF_OBJ(o, OBJECT_TEXT) return 0.0;
+   if (!e) return 0;
+   if (!o) return 0;
+   IF_OBJ(o, OBJECT_TEXT) return 0;
    oo = o;
    switch (e->current.render_method)
      {
@@ -640,6 +659,8 @@ evas_text_get_inset(Evas e, Evas_Object o)
 void
 evas_set_text(Evas e, Evas_Object o, char *text)
 {
+   if (!e) return;
+   if (!o) return;
    switch (o->type)
      {
      case OBJECT_TEXT:
@@ -647,8 +668,12 @@ evas_set_text(Evas e, Evas_Object o, char *text)
 	     Evas_Object_Text oo;
 	     
 	     oo = (Evas_Object_Text)o;
+	     if ((text) && (oo->current.text) && (!strcmp(oo->current.text, text)))
+		return;
 	     if (oo->current.text) free(oo->current.text);
-	     oo->current.text = strdup(text);
+	     oo->current.text = NULL;
+	     if (text)
+		oo->current.text = strdup(text);
 	     oo->previous.text = NULL;
 	       {	     
 		  switch (e->current.render_method)
@@ -749,6 +774,10 @@ evas_set_text(Evas e, Evas_Object o, char *text)
 void
 evas_set_font(Evas e, Evas_Object o, char *font, int size)
 {
+   if (!e) return;
+   if (!o) return;
+   if (!font) return;
+   if (size < 0) size = 0;
    switch (o->type)
      {
      case OBJECT_TEXT:
@@ -756,6 +785,8 @@ evas_set_font(Evas e, Evas_Object o, char *font, int size)
 	     Evas_Object_Text oo;
 	     
 	     oo = (Evas_Object_Text)o;
+	     if ((oo->current.font) && (!strcmp(oo->current.font, font)))
+		return;
 	     if (oo->current.font) free(oo->current.font);
 	     oo->current.font = strdup(font);
 	     oo->previous.font = NULL;

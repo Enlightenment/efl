@@ -53,27 +53,12 @@ _evas_object_get_previous_translated_coords(Evas e, Evas_Object o,
 void
 evas_update_rect(Evas e, int x, int y, int w, int h)
 {
+   if (!e) return;
+   if (w <= 0) return;
+   if (h <= 0) return;
    e->updates = imlib_update_append_rect(e->updates, x, y, w, h);
    e->changed = 1;
 }
-
-#if 0
-switch (e->current.render_method)
-{
-case RENDER_METHOD_ALPHA_SOFTWARE:
-   break;
-case RENDER_METHOD_BASIC_HARDWARE:
-   break;
-case RENDER_METHOD_3D_HARDWARE:
-   break;
-case RENDER_METHOD_ALPHA_HARDWARE:
-   break;
-case RENDER_METHOD_IMAGE:
-   break;
-default:
-   break;
-}
-#endif
 
 /* drawing */
 void
@@ -98,6 +83,7 @@ evas_render(Evas e)
    void (*func_line_draw) (Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x1, int y1, int x2, int y2, int r, int g, int b, int a);
    void (*func_gradient_draw) (void *gr, Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x, int y, int w, int h, double angle);
    
+   if (!e) return;
    if ((!e->changed) || 
        (!e->current.display) || 
        (!e->current.drawable) ||
@@ -652,6 +638,8 @@ evas_render(Evas e)
 Visual *
 evas_get_optimal_visual(Evas e, Display *disp)
 {
+   if (!e) return NULL;
+   if (!disp) return NULL;
    switch (e->current.render_method)
      {
      case RENDER_METHOD_ALPHA_SOFTWARE:
@@ -696,6 +684,8 @@ evas_get_optimal_visual(Evas e, Display *disp)
 Colormap
 evas_get_optimal_colormap(Evas e, Display *disp)
 {
+   if (!e) return 0;
+   if (!disp) return 0;
    switch (e->current.render_method)
      {
      case RENDER_METHOD_ALPHA_SOFTWARE:
@@ -740,6 +730,7 @@ evas_get_optimal_colormap(Evas e, Display *disp)
 void
 evas_get_drawable_size(Evas e, int *w, int *h)
 {
+   if (!e) return;
    if (w) *w = e->current.drawable_width;
    if (h) *h = e->current.drawable_height;
 }
@@ -747,6 +738,7 @@ evas_get_drawable_size(Evas e, int *w, int *h)
 void
 evas_get_viewport(Evas e, double *x, double *y, double *w, double *h)
 {
+   if (!e) return;
    if (x) *x = e->current.viewport.x;
    if (y) *y = e->current.viewport.y;
    if (w) *w = e->current.viewport.w;
@@ -757,6 +749,7 @@ evas_get_viewport(Evas e, double *x, double *y, double *w, double *h)
 void
 evas_set_output(Evas e, Display *disp, Drawable d, Visual *v, Colormap c)
 {
+   if (!e) return;
    e->current.display = disp;
    e->current.drawable = d;
    e->current.visual = v;
@@ -767,6 +760,7 @@ evas_set_output(Evas e, Display *disp, Drawable d, Visual *v, Colormap c)
 void
 evas_set_output_image(Evas e, Imlib_Image image)
 {
+   if (!e) return;
    e->current.image = image;
    e->changed = 1;   
 }
@@ -774,6 +768,9 @@ evas_set_output_image(Evas e, Imlib_Image image)
 void
 evas_set_output_colors(Evas e, int colors)
 {
+   if (!e) return;
+   if (colors < 2) colors = 1;
+   else if (colors > 256) colors = 256;
    e->current.colors = colors;
    e->changed = 1;
 }
@@ -781,6 +778,9 @@ evas_set_output_colors(Evas e, int colors)
 void
 evas_set_output_size(Evas e, int w, int h)
 {
+   if (!e) return;
+   if (w < 1) w = 1;
+   if (h < 1) h = 1;
    e->current.drawable_width = w;
    e->current.drawable_height = h;
    e->changed = 1;
@@ -789,6 +789,7 @@ evas_set_output_size(Evas e, int w, int h)
 void
 evas_set_output_viewport(Evas e, double x, double y, double w, double h)
 {
+   if (!e) return;
    e->current.viewport.x = x;
    e->current.viewport.y = y;
    e->current.viewport.w = w;
@@ -799,6 +800,13 @@ evas_set_output_viewport(Evas e, double x, double y, double w, double h)
 void
 evas_set_output_method(Evas e, Evas_Render_Method method)
 {
+   if (!e) return;
+   if ((method != RENDER_METHOD_ALPHA_SOFTWARE) &&
+       (method != RENDER_METHOD_BASIC_HARDWARE) &&
+       (method != RENDER_METHOD_3D_HARDWARE) &&
+       (method != RENDER_METHOD_ALPHA_HARDWARE) &&
+       (method != RENDER_METHOD_IMAGE))
+      return;
    if (!e->current.display)
      {
 	e->current.render_method = method;
@@ -809,6 +817,9 @@ evas_set_output_method(Evas e, Evas_Render_Method method)
 void
 evas_set_scale_smoothness(Evas e, int smooth)
 {
+   if (!e) return;
+   if (smooth <= 0) smooth = 0;
+   else smooth = 1;
    switch (e->current.render_method)
      {
      case RENDER_METHOD_ALPHA_SOFTWARE:

@@ -44,24 +44,28 @@ evas_add_image_from_file(Evas e, char *file)
    Evas_Object_Any   o;
    Evas_List         l;
    Evas_Layer        layer;
-   
+
+   if (!e) return NULL;
    o = oo = malloc(sizeof(struct _Evas_Object_Image));
    memset(o, 0, sizeof(struct _Evas_Object_Image));
    o->type = OBJECT_IMAGE;
    o->object_free = _evas_free_image;
    o->object_renderer_data_free = _evas_free_image_renderer_data;
 
-   oo->current.file = strdup(file);
+   if (file)
      {
-	Imlib_Image im;
-	
-	im = imlib_load_image(file);
-	if (im)
+	oo->current.file = strdup(file);
 	  {
-	     imlib_context_set_image(im);
-	     oo->current.image.w = imlib_image_get_width();
-	     oo->current.image.h = imlib_image_get_height();
-	     imlib_free_image();
+	     Imlib_Image im;
+	     
+	     im = imlib_load_image(file);
+	     if (im)
+	       {
+		  imlib_context_set_image(im);
+		  oo->current.image.w = imlib_image_get_width();
+		  oo->current.image.h = imlib_image_get_height();
+		  imlib_free_image();
+	       }
 	  }
      }
    oo->current.fill.x = 0;
@@ -108,44 +112,66 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
 {
    Evas_Object_Image oo;
    
+   if (!e) return;
+   if (!o) return;
+   IF_OBJ(o, OBJECT_IMAGE) return;
    oo = o;
-   if (oo->current.file)
-      free(oo->current.file);
-   oo->previous.file = NULL;
-   oo->current.file = strdup(file);
+   if ((oo->current.file) && (file) && (strcmp(file, oo->current.file)))
      {
-	Imlib_Image im;
-	
-	im = imlib_load_image(file);
-	if (im)
+	if (oo->current.file)
+	   free(oo->current.file);
+	oo->previous.file = NULL;
+	oo->current.file = strdup(file);
 	  {
-	     imlib_context_set_image(im);
-	     oo->current.image.w = imlib_image_get_width();
-	     oo->current.image.h = imlib_image_get_height();
-	     imlib_free_image();
-	     evas_resize(e, o, 
-			 (double)oo->current.image.w,
-			 (double)oo->current.image.h);
-	     oo->current.fill.x = 0;
-	     oo->current.fill.y = 0;
-	     oo->current.fill.w = (double)oo->current.image.w;
-	     oo->current.fill.h = (double)oo->current.image.h;
+	     Imlib_Image im;
+	     
+	     im = imlib_load_image(file);
+	     if (im)
+	       {
+		  imlib_context_set_image(im);
+		  oo->current.image.w = imlib_image_get_width();
+		  oo->current.image.h = imlib_image_get_height();
+		  imlib_free_image();
+		  evas_resize(e, o, 
+			      (double)oo->current.image.w,
+			      (double)oo->current.image.h);
+		  oo->current.fill.x = 0;
+		  oo->current.fill.y = 0;
+		  oo->current.fill.w = (double)oo->current.image.w;
+		  oo->current.fill.h = (double)oo->current.image.h;
+	       }
+	     else
+	       {
+		  oo->current.image.w = 0;
+		  oo->current.image.h = 0;
+		  evas_resize(e, o, 
+			      (double)oo->current.image.w,
+			      (double)oo->current.image.h);
+		  oo->current.fill.x = 0;
+		  oo->current.fill.y = 0;
+		  oo->current.fill.w = (double)oo->current.image.w;
+		  oo->current.fill.h = (double)oo->current.image.h;
+	       }
+	  }
+	o->changed = 1;
+	e->changed = 1;
+     }
+   else
+     {
+	if (!file) 
+	  {
+	     oo->current.file = NULL;
+	     o->changed = 1;
+	     e->changed = 1;
 	  }
 	else
 	  {
-	     oo->current.image.w = 0;
-	     oo->current.image.h = 0;
-	     evas_resize(e, o, 
-			 (double)oo->current.image.w,
-			 (double)oo->current.image.h);
 	     oo->current.fill.x = 0;
 	     oo->current.fill.y = 0;
 	     oo->current.fill.w = (double)oo->current.image.w;
 	     oo->current.fill.h = (double)oo->current.image.h;
 	  }
      }
-   o->changed = 1;
-   e->changed = 1;
 }
 
 void
@@ -159,6 +185,8 @@ evas_set_image_fill(Evas e, Evas_Object o, double x, double y, double w, double 
 {
    Evas_Object_Image oo;
    
+   if (!e) return;
+   if (!o) return;
    IF_OBJ(o, OBJECT_IMAGE) return;
    oo = o;
    oo->current.fill.x = x;
@@ -175,6 +203,8 @@ evas_get_image_size(Evas e, Evas_Object o, int *w, int *h)
 {
    Evas_Object_Image oo;
    
+   if (!e) return;
+   if (!o) return;
    IF_OBJ(o, OBJECT_IMAGE) return;
    oo = o;
    if (w) *w = oo->current.image.w;
@@ -186,8 +216,14 @@ evas_set_image_border(Evas e, Evas_Object o, int l, int r, int t, int b)
 {
    Evas_Object_Image oo;
    
+   if (!e) return;
+   if (!o) return;
    IF_OBJ(o, OBJECT_IMAGE) return;
    oo = o;
+   if (l < 0) l = 0;
+   if (r < 0) r = 0;
+   if (t < 0) t = 0;
+   if (b < 0) b = 0;
    oo->current.border.l = l;
    oo->current.border.r = r;
    oo->current.border.t = t;
@@ -201,6 +237,8 @@ evas_get_image_border(Evas e, Evas_Object o, int *l, int *r, int *t, int *b)
 {
    Evas_Object_Image oo;
    
+   if (!e) return;
+   if (!o) return;
    IF_OBJ(o, OBJECT_IMAGE) return;
    oo = o;
    if (l) *l = oo->current.border.l;

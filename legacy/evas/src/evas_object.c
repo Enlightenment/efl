@@ -114,6 +114,8 @@ _evas_layer_free(Evas e, Evas_Layer layer)
 void
 evas_del_object(Evas e, Evas_Object o)
 {
+   if (!e) return;
+   if (!o) return;
    o->delete_me = 1;
    evas_hide(e, o);
 }
@@ -126,6 +128,8 @@ evas_set_layer(Evas e, Evas_Object o, int layer_num)
    Evas_List         l;
    int removed;
 
+   if (!e) return;
+   if (!o) return;
    if (layer_num == o->current.layer) return;
    removed = 0;
    for (l = e->layers; l; l = l->next)
@@ -184,6 +188,7 @@ evas_set_layer(Evas e, Evas_Object o, int layer_num)
 void
 evas_set_layer_store(Evas e, int l, int store)
 {
+   if (!e) return;
 /* FIXME: find layer and set store flag */
 /*   e->changed = 1; */
 }
@@ -194,6 +199,9 @@ evas_objects_in_rect(Evas e, double x, double y, double w, double h)
    Evas_List l, ll, objs;
    Evas_Layer layer;
    
+   if (!e) return NULL;
+   if (w < 0) w = 0;
+   if (h < 0) h = 0;
    objs = NULL;
    for (l = e->layers; l ; l = l->next)
      {
@@ -204,7 +212,7 @@ evas_objects_in_rect(Evas e, double x, double y, double w, double h)
 	     Evas_Object ob;
 	     
 	     ob = ll->data;
-	     if ((ob->current.visible) && (!ob->pass_events))
+	     if ((ob->current.visible) && (!ob->pass_events) && (!ob->delete_me))
 	       {
 		  if (RECTS_INTERSECT(x, y, w, h, 
 				     ob->current.x, ob->current.y, 
@@ -222,6 +230,7 @@ evas_objects_at_position(Evas e, double x, double y)
    Evas_List l, ll, objs;
    Evas_Layer layer;
    
+   if (!e) return NULL;
    objs = NULL;
    for (l = e->layers; l ; l = l->next)
      {
@@ -232,7 +241,7 @@ evas_objects_at_position(Evas e, double x, double y)
 	     Evas_Object ob;
 	     
 	     ob = ll->data;
-	     if ((ob->current.visible) && (!ob->pass_events))
+	     if ((ob->current.visible) && (!ob->pass_events) && (!ob->delete_me))
 	       {
 		  if (RECTS_INTERSECT(x, y, 1, 1, 
 				     ob->current.x, ob->current.y, 
@@ -251,6 +260,7 @@ evas_object_in_rect(Evas e, double x, double y, double w, double h)
    Evas_Layer layer;
    Evas_Object o;
    
+   if (!e) return NULL;
    o = NULL;
    for (l = e->layers; l ; l = l->next)
      {
@@ -261,7 +271,7 @@ evas_object_in_rect(Evas e, double x, double y, double w, double h)
 	     Evas_Object ob;
 	     
 	     ob = ll->data;
-	     if ((ob->current.visible) && (!ob->pass_events))
+	     if ((ob->current.visible) && (!ob->pass_events) && (!ob->delete_me))
 	       {
 		  if (RECTS_INTERSECT(x, y, w, h, 
 				      ob->current.x, ob->current.y, 
@@ -280,6 +290,7 @@ evas_object_at_position(Evas e, double x, double y)
    Evas_Layer layer;
    Evas_Object o;
    
+   if (!e) return NULL;
    o = NULL;
    for (l = e->layers; l ; l = l->next)
      {
@@ -290,7 +301,7 @@ evas_object_at_position(Evas e, double x, double y)
 	     Evas_Object ob;
 	     
 	     ob = ll->data;
-	     if ((ob->current.visible) && (!ob->pass_events))
+	     if ((ob->current.visible) && (!ob->pass_events) && (!ob->delete_me))
 	       {
 		  if (RECTS_INTERSECT(x, y, 1, 1, 
 				     ob->current.x, ob->current.y, 
@@ -308,6 +319,8 @@ evas_raise(Evas e, Evas_Object o)
 {
    Evas_Layer layer;
    
+   if (!e) return;
+   if (!o) return;
    layer = _evas_get_object_layer(e, o);
    if (layer)
      {
@@ -327,6 +340,8 @@ evas_lower(Evas e, Evas_Object o)
 {
    Evas_Layer layer;
    
+   if (!e) return;
+   if (!o) return;
    layer = _evas_get_object_layer(e, o);
    if (layer)
      {
@@ -346,6 +361,8 @@ evas_stack_above(Evas e, Evas_Object o, Evas_Object above)
 {
    Evas_Layer layer;
    
+   if (!e) return;
+   if (!o) return;
    layer = _evas_get_object_layer(e, o);
    if (layer)
      {
@@ -361,16 +378,18 @@ evas_stack_above(Evas e, Evas_Object o, Evas_Object above)
 }
 
 void
-evas_stack_below(Evas e, Evas_Object o, Evas_Object above)
+evas_stack_below(Evas e, Evas_Object o, Evas_Object below)
 {
    Evas_Layer layer;
    
+   if (!e) return;
+   if (!o) return;
    layer = _evas_get_object_layer(e, o);
    if (layer)
      {
 	o->current.stacking = 1;
 	layer->objects = evas_list_remove(layer->objects, o);
-	layer->objects = evas_list_prepend_relative(layer->objects, o, above);
+	layer->objects = evas_list_prepend_relative(layer->objects, o, below);
 	o->changed = 1;
 	e->changed = 1;
 	if ((o->current.visible) && 
@@ -385,6 +404,8 @@ evas_move(Evas e, Evas_Object o, double x, double y)
 {
    int event_update = 0;
    
+   if (!e) return;
+   if (!o) return;
    if ((o->type == OBJECT_LINE)) return;
    if ((o->current.visible) && 
        (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)))
@@ -404,11 +425,15 @@ evas_resize(Evas e, Evas_Object o, double w, double h)
 {
    int event_update = 0;
    
+   if (!e) return;
+   if (!o) return;
    if ((o->type == OBJECT_LINE)) return;
    if ((o->type == OBJECT_TEXT)) return;
    if ((o->current.visible) && 
        (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)))
       event_update = 1;
+   if (w < 0) w = 0;
+   if (h < 0) h = 0;
    o->current.w = w;
    o->current.h = h;
    o->changed = 1;
@@ -422,6 +447,8 @@ evas_resize(Evas e, Evas_Object o, double w, double h)
 void
 evas_get_geometry(Evas e, Evas_Object o, double *x, double *y, double *w, double *h)
 {
+   if (!e) return;
+   if (!o) return;
    if (x) *x = o->current.x;
    if (y) *y = o->current.y;
    if (w) *w = o->current.w;
@@ -433,6 +460,8 @@ evas_get_geometry(Evas e, Evas_Object o, double *x, double *y, double *w, double
 void
 evas_show(Evas e, Evas_Object o)
 {
+   if (!e) return;
+   if (!o) return;
    o->current.visible = 1;
    o->changed = 1;
    e->changed = 1;
@@ -443,9 +472,12 @@ evas_show(Evas e, Evas_Object o)
 void
 evas_hide(Evas e, Evas_Object o)
 {
+   if (!e) return;
+   if (!o) return;
    o->current.visible = 0;
    o->changed = 1;
    e->changed = 1;
+   if (e->mouse.button_object == o) e->mouse.button_object = NULL;
    if (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y))
       evas_event_move(e, e->mouse.x, e->mouse.y);
 }
@@ -466,7 +498,10 @@ evas_object_get_named(Evas e, char *name)
 	for (ll = layer->objects; ll; ll = ll->next)
 	  {
 	     o = ll->data;
-	     if ((o->name) && (!strcmp(name, o->name))) return o;
+	     if (!o->delete_me)
+	       {
+		  if ((o->name) && (!strcmp(name, o->name))) return o;
+	       }
 	  }
      }
    return NULL;
@@ -475,6 +510,8 @@ evas_object_get_named(Evas e, char *name)
 void
 evas_object_set_name(Evas e, Evas_Object o, char *name)
 {
+   if (!e) return;
+   if (!o) return;
    if (o->name) free(o->name);
    o->name = NULL;
    if (name)
@@ -484,5 +521,7 @@ evas_object_set_name(Evas e, Evas_Object o, char *name)
 char *
 evas_object_get_name(Evas e, Evas_Object o)
 {
+   if (!e) return NULL;
+   if (!o) return NULL;
    return o->name;
 }

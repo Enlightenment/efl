@@ -83,6 +83,7 @@ struct _Evas_Color_Point
 struct _Evas_Gradient
 {
    Evas_List  color_points;
+   int        references;
 };
 
 struct _Evas_Rectangle

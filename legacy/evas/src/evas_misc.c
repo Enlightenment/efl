@@ -54,42 +54,49 @@ evas_new_all(Display *display, Window parent_window,
 Window
 evas_get_window(Evas e)
 {
+   if (!e) return 0;
    return e->current.drawable;
 }
 
 Display *
 evas_get_display(Evas e)
 {
+   if (!e) return NULL;
    return e->current.display;
 }
 
 Visual *
 evas_get_visual(Evas e)
 {
+   if (!e) return NULL;
    return e->current.visual;
 }
 
 Colormap
 evas_get_colormap(Evas e)
 {
+   if (!e) return 0;
    return e->current.colormap;
 }
 
 int
 evas_get_colors(Evas e)
 {
+   if (!e) return 0;
    return e->current.colors;
 }
 
 Imlib_Image
 evas_get_image(Evas e)
 {
+   if (!e) return NULL;
    return e->current.image;
 }
 
 Evas_Render_Method
 evas_get_render_method(Evas e)
 {
+   if (!e) return RENDER_METHOD_ALPHA_SOFTWARE;
    return e->current.render_method;
 }
 
@@ -105,7 +112,7 @@ evas_new(void)
    e->current.viewport.w = 0.0;
    e->current.viewport.h = 0.0;
    e->current.render_method = RENDER_METHOD_ALPHA_SOFTWARE;
-   e->current.colors = 128;
+   e->current.colors = 216;
    return e;
 }
 
@@ -114,6 +121,7 @@ evas_free(Evas e)
 {
    Evas_List l;
 
+   if (!e) return;
    if (e->current.created_window)
       XDestroyWindow(e->current.display, e->current.drawable);
    for (l = e->layers; l; l = l->next)
@@ -131,6 +139,16 @@ evas_free(Evas e)
 void
 evas_set_color(Evas e, Evas_Object o, int r, int g, int b, int a)
 {
+   if (!e) return;
+   if (!o) return;
+   if (r < 0) r = 0;
+   else if (r > 255) r = 255;
+   if (g < 0) g = 0;
+   else if (g > 255) g = 255;
+   if (b < 0) b = 0;
+   else if (b > 255) b = 255;
+   if (a < 0) a = 0;
+   else if (a > 255) a = 255;
    switch (o->type)
      {
      case OBJECT_IMAGE:
@@ -193,8 +211,21 @@ evas_set_color(Evas e, Evas_Object o, int r, int g, int b, int a)
 void
 evas_get_color(Evas e, Evas_Object o, int *r, int *g, int *b, int *a)
 {
+   if (!e) return;
+   if (!o) return;
    switch (o->type)
      {
+     case OBJECT_IMAGE:
+	  {
+	     Evas_Object_Image oo;
+	     
+	     oo = (Evas_Object_Image)o;
+	     if (r) *r = oo->current.color.r;
+	     if (g) *g = oo->current.color.g;
+	     if (b) *b = oo->current.color.b;
+	     if (a) *a = oo->current.color.a;
+	  }
+	break;
      case OBJECT_TEXT:
 	  {
 	     Evas_Object_Text oo;
@@ -236,6 +267,8 @@ evas_get_color(Evas e, Evas_Object o, int *r, int *g, int *b, int *a)
 void
 evas_set_zoom_scale(Evas e, Evas_Object o, int scale)
 {
+   if (!e) return;
+   if (!o) return;
    o->current.zoomscale = scale;
    o->changed = 1;
    e->changed = 1;
@@ -244,12 +277,15 @@ evas_set_zoom_scale(Evas e, Evas_Object o, int scale)
 void
 evas_set_pass_events(Evas e, Evas_Object o, int pass_events)
 {
+   if (!e) return;
+   if (!o) return;
    o->pass_events = 1;
 }
 
 void
 evas_set_font_cache(Evas e, int size)
 {
+   if (!e) return;
    switch (e->current.render_method)
      {
      case RENDER_METHOD_ALPHA_SOFTWARE:
@@ -275,6 +311,7 @@ evas_set_font_cache(Evas e, int size)
 int
 evas_get_font_cache(Evas e)
 {
+   if (!e) return 0;
    switch (e->current.render_method)
      {
      case RENDER_METHOD_ALPHA_SOFTWARE:
@@ -301,6 +338,7 @@ evas_get_font_cache(Evas e)
 void
 evas_flush_font_cache(Evas e)
 {
+   if (!e) return;
    switch (e->current.render_method)
      {
      case RENDER_METHOD_ALPHA_SOFTWARE:
@@ -326,6 +364,7 @@ evas_flush_font_cache(Evas e)
 void
 evas_set_image_cache(Evas e, int size)
 {
+   if (!e) return;
    switch (e->current.render_method)
      {
      case RENDER_METHOD_ALPHA_SOFTWARE:
@@ -351,6 +390,7 @@ evas_set_image_cache(Evas e, int size)
 int
 evas_get_image_cache(Evas e)
 {
+   if (!e) return 0;
    switch (e->current.render_method)
      {
      case RENDER_METHOD_ALPHA_SOFTWARE:
@@ -377,6 +417,7 @@ evas_get_image_cache(Evas e)
 void
 evas_flush_image_cache(Evas e)
 {
+   if (!e) return;
    switch (e->current.render_method)
      {
      case RENDER_METHOD_ALPHA_SOFTWARE:
@@ -402,6 +443,8 @@ evas_flush_image_cache(Evas e)
 void
 evas_font_add_path(Evas e, char *path)
 {
+   if (!e) return;
+   if (!path) return;
    evas_font_del_path(e, path);
    switch (e->current.render_method)
      {
@@ -428,6 +471,8 @@ evas_font_add_path(Evas e, char *path)
 void
 evas_font_del_path(Evas e, char *path)
 {
+   if (!e) return;
+   if (!path) return;
    switch (e->current.render_method)
      {
      case RENDER_METHOD_ALPHA_SOFTWARE:
@@ -456,6 +501,8 @@ evas_put_data(Evas e, Evas_Object o, char *key, void *data)
    Evas_Data d;
    Evas_List l;
    
+   if (!e) return;
+   if (!o) return;
    if (!key) return;
    for (l = o->data; l; l = l->next)
      {
@@ -479,6 +526,8 @@ evas_get_data(Evas e, Evas_Object o, char *key)
 {
    Evas_List l;
    
+   if (!e) return NULL;
+   if (!o) return NULL;
    if (!key) return NULL;
    for (l = o->data; l; l = l->next)
      {
@@ -495,6 +544,8 @@ evas_remove_data(Evas e, Evas_Object o, char *key)
 {
    Evas_List l;
    
+   if (!e) return NULL;
+   if (!o) return NULL;
    if (!key) return NULL;
    for (l = o->data; l; l = l->next)
      {
@@ -518,6 +569,7 @@ evas_remove_data(Evas e, Evas_Object o, char *key)
 int
 evas_world_x_to_screen(Evas e, double x)
 {
+   if (!e) return 0;
    return (int)((x - e->current.viewport.x) *
 		((double)e->current.drawable_width / e->current.viewport.w));
 }
@@ -525,6 +577,7 @@ evas_world_x_to_screen(Evas e, double x)
 int
 evas_world_y_to_screen(Evas e, double y)
 {
+   if (!e) return 0;
    return (int)((y - e->current.viewport.y) *
 		((double)e->current.drawable_height / e->current.viewport.h));
 }
@@ -532,6 +585,7 @@ evas_world_y_to_screen(Evas e, double y)
 double
 evas_screen_x_to_world(Evas e, int x)
 {
+   if (!e) return 0;
    return (double)((double)x * (e->current.viewport.w / (double)e->current.drawable_width));
    + e->current.viewport.x;
 }
@@ -539,6 +593,7 @@ evas_screen_x_to_world(Evas e, int x)
 double
 evas_screen_y_to_world(Evas e, int y)
 {
+   if (!e) return 0;
    return (double)((double)y * (e->current.viewport.h / (double)e->current.drawable_height));
    + e->current.viewport.y;
 }

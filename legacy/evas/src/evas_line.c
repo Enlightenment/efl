@@ -43,6 +43,7 @@ evas_add_line(Evas e)
    Evas_List        l;
    Evas_Layer       layer;
 
+   if (!e) return NULL;
    o = oo = malloc(sizeof(struct _Evas_Object_Line));
    memset(o, 0, sizeof(struct _Evas_Object_Line));
    o->type = OBJECT_LINE;
@@ -83,6 +84,8 @@ evas_set_line_xy(Evas e, Evas_Object o, double x1, double y1, double x2, double 
    Evas_Object_Line oo;
    int event_update = 0;
    
+   if (!e) return;
+   if (!o) return;
    IF_OBJ(o, OBJECT_LINE) return;
    oo = (Evas_Object_Line)o;
    if ((o->current.visible) &&

@@ -27,11 +27,11 @@ struct _Evas_List
 #define RENDER_METHOD_COUNT 5
 enum _Evas_Render_Method
 {
-   RENDER_METHOD_ALPHA_SOFTWARE,
-   RENDER_METHOD_BASIC_HARDWARE,
-   RENDER_METHOD_3D_HARDWARE,
-   RENDER_METHOD_ALPHA_HARDWARE,
-   RENDER_METHOD_IMAGE
+   RENDER_METHOD_ALPHA_SOFTWARE, /* imlib2 rendering to any drawable */
+   RENDER_METHOD_BASIC_HARDWARE, /* X11 pixmap rendering to any drawable */
+   RENDER_METHOD_3D_HARDWARE,    /* oepngl rendering to windows only */
+   RENDER_METHOD_ALPHA_HARDWARE, /* unimplimented */
+   RENDER_METHOD_IMAGE           /* imlib2 rendering to imlib image target */
 };
 
 enum _Evas_Callback_Type
@@ -188,7 +188,6 @@ double evas_text_get_inset(Evas e, Evas_Object o);
 /* object query ops */
 void evas_get_color(Evas e, Evas_Object o, int *r, int *g, int *b, int *a);
 Evas_Object evas_get_object_under_mouse(Evas e);
-Evas_Object evas_get_object_at_pos(Evas e, double x, double y);
 	 
 /* data attachment ops */
 void evas_put_data(Evas e, Evas_Object o, char *key, void *data);

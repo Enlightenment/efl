@@ -35,6 +35,8 @@ evas_callback_add(Evas e, Evas_Object o, Evas_Callback_Type callback, void (*fun
 {
    Evas_Callback cb;
    
+   if (!e) return;
+   if (!o) return;
    cb = malloc(sizeof(struct _Evas_Callback));
    cb->type = callback;
    cb->data = data;
@@ -48,6 +50,8 @@ evas_callback_del(Evas e, Evas_Object o, Evas_Callback_Type callback)
    Evas_List l;
    int have_cb;
    
+   if (!e) return;
+   if (!o) return;
    have_cb = 1;
    while (have_cb)
      {

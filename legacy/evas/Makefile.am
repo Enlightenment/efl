@@ -9,7 +9,7 @@ MAINTAINERCLEANFILES = INSTALL Makefile.in aclocal.m4 config.guess \
 		       ltconfig ltmain.sh missing mkinstalldirs \
 		       stamp-h.in
 
-SUBDIRS		     = src test
+SUBDIRS		     = src test doc
 
 bin_SCRIPTS = evas-config
 
