@@ -120,6 +120,7 @@ typedef struct _Ecore_X_Event_Window_Prop_Visible_Icon_Name_Change Ecore_X_Event
 typedef struct _Ecore_X_Event_Window_Prop_Client_Machine_Change      Ecore_X_Event_Window_Prop_Client_Machine_Change;
 typedef struct _Ecore_X_Event_Window_Prop_Name_Class_Change        Ecore_X_Event_Window_Prop_Name_Class_Change;
 typedef struct _Ecore_X_Event_Window_Prop_Pid_Change      Ecore_X_Event_Window_Prop_Pid_Change;
+typedef struct _Ecore_X_Event_Window_Prop_Desktop_Change      Ecore_X_Event_Window_Prop_Desktop_Change;
      
 struct _Ecore_X_Event_Key_Down
 {
@@ -446,6 +447,13 @@ struct _Ecore_X_Event_Window_Prop_Pid_Change
    Ecore_X_Time    time;
 };
 
+struct _Ecore_X_Event_Window_Prop_Desktop_Change
+{
+   Ecore_X_Window  win;
+   long    desktop;
+   Ecore_X_Time    time;
+};
+
 extern int ECORE_X_EVENT_KEY_DOWN;
 extern int ECORE_X_EVENT_KEY_UP;
 extern int ECORE_X_EVENT_MOUSE_BUTTON_DOWN;
@@ -488,6 +496,7 @@ extern int ECORE_X_EVENT_WINDOW_PROP_VISIBLE_ICON_NAME_CHANGE;
 extern int ECORE_X_EVENT_WINDOW_PROP_CLIENT_MACHINE_CHANGE;
 extern int ECORE_X_EVENT_WINDOW_PROP_NAME_CLASS_CHANGE;
 extern int ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE;
+extern int ECORE_X_EVENT_WINDOW_PROP_DESKTOP_CHANGE;
    
 extern int ECORE_X_MODIFIER_SHIFT;
 extern int ECORE_X_MODIFIER_CTRL;
@@ -626,6 +635,8 @@ void             ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom
 char            *ecore_x_window_prop_string_get(Ecore_X_Window win, Ecore_X_Atom type);
 void             ecore_x_window_prop_title_set(Ecore_X_Window win, const char *t);
 char            *ecore_x_window_prop_title_get(Ecore_X_Window win);
+void             ecore_x_window_prop_command_set(Ecore_X_Window win, int argc, char **argv);
+void             ecore_x_window_prop_command_get(Ecore_X_Window win, int *argc, char ***argv);
 void             ecore_x_window_prop_visible_title_set(Ecore_X_Window win, const char *t);
 char            *ecore_x_window_prop_visible_title_get(Ecore_X_Window win);
 void             ecore_x_window_prop_icon_name_set(Ecore_X_Window win, const char *t);

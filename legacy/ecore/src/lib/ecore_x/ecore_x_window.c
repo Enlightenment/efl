@@ -180,6 +180,8 @@ ecore_x_window_defaults_set(Ecore_X_Window win)
 {
    long pid;
    char buf[MAXHOSTNAMELEN];
+   int argc;
+   char **argv;
 
    /*
     * Set WM_CLIENT_MACHINE.
@@ -197,6 +199,9 @@ ecore_x_window_defaults_set(Ecore_X_Window win)
 		                    32, &pid, 1);
 
    ecore_x_window_prop_window_type_normal_set(win);
+
+   ecore_app_args_get(&argc, &argv);
+   ecore_x_window_prop_command_set(win, argc, argv);
 }
 
 /**

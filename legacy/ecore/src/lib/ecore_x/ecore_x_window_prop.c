@@ -217,6 +217,36 @@ ecore_x_window_prop_title_get(Ecore_X_Window win)
 }
 
 /**
+ * Set a window command.
+ * @param win The window
+ * @param t The command string
+ * 
+ * Set a window command
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_prop_command_set(Ecore_X_Window win, int argc, char **argv)
+{
+   XSetCommand(_ecore_x_disp, win, argv, argc);
+}
+
+/**
+ * Get a window command.
+ * @param win The window
+ * @return The windows command string
+ * 
+ * Return the command of a window. String must be free'd when done with.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_prop_command_get(Ecore_X_Window win, int *argc, char ***argv)
+{
+   XGetCommand(_ecore_x_disp, win, argv, argc);
+}
+
+
+
+/**
  * Set a window visible title.
  * @param win The window
  * @param t The visible title string
