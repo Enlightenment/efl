@@ -46,6 +46,7 @@ static int          mouse_x = 0, mouse_y = 0;
 
 static Window       current_dnd_win = 0;
 static int          current_dnd_target_ok = 0;
+static int          dnd_await_target_status = 0;
 
 static int          x_grabs = 0;
 
@@ -2048,26 +2049,32 @@ ecore_window_dnd_handle_motion(Window source_win, int x, int y, int dragging)
 	  xevent.xclient.data.l[3] = atom_text_plain;
 	  xevent.xclient.data.l[4] = atom_text_moz_url;
 	  XSendEvent(disp, win, False, 0, &xevent);
+	  ecore_clear_target_status();
 	}
-      /* send position information */
-      xevent.xany.type = ClientMessage;
-      xevent.xany.display = disp;
-      xevent.xclient.window = win;
-      xevent.xclient.message_type = atom_xdndposition;
-      xevent.xclient.format = 32;
-      xevent.xclient.data.l[0] = source_win;
-      xevent.xclient.data.l[1] = (3 << 24);
-      xevent.xclient.data.l[2] = ((x << 16) & 0xffff0000) | (y & 0xffff);
-      xevent.xclient.data.l[3] = CurrentTime;
-      if (dnd_copy)
-	xevent.xclient.data.l[4] = atom_xdndactioncopy;
-      else if (dnd_link)
-	xevent.xclient.data.l[4] = atom_xdndactionlink;
-      else if (dnd_move)
-	xevent.xclient.data.l[4] = atom_xdndactionmove;
-      else
-	xevent.xclient.data.l[4] = atom_xdndactionask;
-      XSendEvent(disp, win, False, 0, &xevent);
+      /* kjb cep */
+      if(!dnd_await_target_status)
+	{
+	  /* send position information */
+	  xevent.xany.type = ClientMessage;
+	  xevent.xany.display = disp;
+	  xevent.xclient.window = win;
+	  xevent.xclient.message_type = atom_xdndposition;
+	  xevent.xclient.format = 32;
+	  xevent.xclient.data.l[0] = source_win;
+	  xevent.xclient.data.l[1] = (3 << 24);
+	  xevent.xclient.data.l[2] = ((x << 16) & 0xffff0000) | (y & 0xffff);
+	  xevent.xclient.data.l[3] = CurrentTime;
+	  if (dnd_copy)
+	    xevent.xclient.data.l[4] = atom_xdndactioncopy;
+	  else if (dnd_link)
+	    xevent.xclient.data.l[4] = atom_xdndactionlink;
+	  else if (dnd_move)
+	    xevent.xclient.data.l[4] = atom_xdndactionmove;
+	  else
+	    xevent.xclient.data.l[4] = atom_xdndactionask;
+	  XSendEvent(disp, win, False, 0, &xevent);
+	  dnd_await_target_status = 1;
+	}
     }
   if (!dragging)
     {
@@ -2106,6 +2113,14 @@ ecore_window_dnd_handle_motion(Window source_win, int x, int y, int dragging)
     }
   current_dnd_win = win;
 }
+
+
+void
+ecore_clear_target_status(void)
+{
+  dnd_await_target_status = 0;
+}
+
 
 int
 ecore_dnd_selection_convert(Window win, Window req, Atom type)

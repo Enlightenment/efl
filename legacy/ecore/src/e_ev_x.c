@@ -1044,6 +1044,7 @@ ecore_event_x_handle_client_message(XEvent * xevent)
   static Atom         atom_xdndactioncopy = 0;
   static Atom         atom_xdndactionlink = 0;
   static Atom         atom_xdndactionmove = 0;
+  static Atom         atom_xdndactionprivate = 0;
 
   /* setup some known atoms to translate this message into a sensible event */
   ECORE_ATOM(atom_wm_delete_window, "WM_DELETE_WINDOW");
@@ -1057,6 +1058,7 @@ ecore_event_x_handle_client_message(XEvent * xevent)
   ECORE_ATOM(atom_xdndactioncopy, "XdndActionCopy");
   ECORE_ATOM(atom_xdndactionlink, "XdndActionLink");
   ECORE_ATOM(atom_xdndactionmove, "XdndActionMove");
+  ECORE_ATOM(atom_xdndactionprivate, "XdndActionPrivate");
   ECORE_ATOM(atom_text_uri_list, "text/uri-list");
    
   /* first type = delete event sent to client */
@@ -1131,6 +1133,7 @@ ecore_event_x_handle_client_message(XEvent * xevent)
     {
       Ecore_Event_Dnd_Drop_Status *e;
 
+      ecore_clear_target_status();
       e = NEW(Ecore_Event_Dnd_Drop_Status, 1);
       e->win = xevent->xclient.window;
       e->root = ecore_window_get_root(e->win);
@@ -1139,10 +1142,25 @@ ecore_event_x_handle_client_message(XEvent * xevent)
       e->y = xevent->xclient.data.l[2] & 0xffff;
       e->w = (xevent->xclient.data.l[3] >> 16) & 0xffff;
       e->h = xevent->xclient.data.l[3] & 0xffff;
+
+      e->copy = e->link = e->move = e->private = 0;
+      if( xevent->xclient.data.l[4] == atom_xdndactioncopy )
+	e->copy = 1;
+      else if( xevent->xclient.data.l[4] == atom_xdndactionlink )
+	e->link = 1;
+      else if( xevent->xclient.data.l[4] == atom_xdndactionmove )
+	e->move = 1;
+      else if( xevent->xclient.data.l[4] == atom_xdndactionprivate )
+	e->private = 1;
+
       if (xevent->xclient.data.l[1] & 0x1)
 	e->ok = 1;
       else
 	e->ok = 0;
+      if (xevent->xclient.data.l[1] & 0x2)
+	e->all_position_msgs = 1;
+      else
+	e->all_position_msgs = 0;
       ecore_add_event(ECORE_EVENT_DND_DROP_STATUS, e, ecore_event_generic_free);
     }
   else if ((xevent->xclient.message_type == atom_xdndfinished) &&

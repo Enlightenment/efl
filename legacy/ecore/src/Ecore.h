@@ -457,6 +457,8 @@ extern              "C"
   {
     Window              win, root, source_win;
     int                 x, y, w, h;
+    int                 copy, link, move, private;
+    int                 all_position_msgs;
     int                 ok;
   } Ecore_Event_Dnd_Drop_Status;
 
@@ -825,6 +827,7 @@ extern              "C"
   void                ecore_dnd_own_selection(Window win);
   void                ecore_dnd_send_drop(Window win, Window source_win);
   void                ecore_get_virtual_area(int *area_x, int *area_y);
+  void                ecore_clear_target_status(void);
 
 
   /* ---------------- IPC CALLS */
