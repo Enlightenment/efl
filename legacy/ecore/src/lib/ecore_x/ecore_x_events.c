@@ -1116,12 +1116,16 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
 		    }
 		  else
 		    {
-		       if (data[is] != '\n')
+		       if ((data[is] != '\r')
+			   && (data[is] != '\n'))
 			 {
-			    tmp[i++] = data[is];
+			    tmp[i++] = data[is++];
 			 }
 		       else
 			 {
+			    while ((data[is] == '\r')
+				   || (data[is] == '\n'))
+			      is++;
 			    tmp[i] = 0;
 			    e->num_files++;
 			    e->files = realloc(e->files, e->num_files * sizeof(char *));
@@ -1129,7 +1133,6 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
 			    tmp[0] = 0;
 			    i = 0;
 			 }
-		       is++;
 		    }
 	       }
 	     if (i > 0)
