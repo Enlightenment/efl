@@ -422,6 +422,8 @@ evas_object_del(Evas_Object *obj)
    evas_object_change(obj);
    obj->delete_me = 1;
    if (obj->smart.smart) evas_object_smart_del(obj);
+   evas_object_smart_cleanup(obj);
+   obj->smart.smart = NULL;
 }
 
 void

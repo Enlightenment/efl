@@ -45,6 +45,20 @@ evas_layer_new(Evas *e)
 }
 
 void
+evas_layer_pre_free(Evas_Layer *lay)
+{
+   Evas_Object_List *l;
+   
+   for (l = (Evas_Object_List *)lay->objects; l; l = l->next)
+     {
+	Evas_Object *obj;
+	
+	obj = (Evas_Object *)l;
+	evas_object_del(obj);
+     }
+}
+
+void
 evas_layer_free(Evas_Layer *lay)
 {
    while (lay->objects)
@@ -52,7 +66,6 @@ evas_layer_free(Evas_Layer *lay)
 	Evas_Object *obj;
 	
 	obj = (Evas_Object *)lay->objects;
-	if (obj->smart.smart) evas_object_smart_del(obj);	
 	evas_object_free(obj, 0);
      }
    free(lay);

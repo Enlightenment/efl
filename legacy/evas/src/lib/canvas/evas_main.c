@@ -72,13 +72,19 @@ evas_new(void)
 void
 evas_free(Evas *e)
 {
+   Evas_Object_List *l;
+   
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
 
-   evas_object_font_path_clear(e);
-   
-   e->pointer.object.in = evas_list_free(e->pointer.object.in);
+   for (l = (Evas_Object_List *)(e->layers); l; l = l->next)
+     {
+	Evas_Layer *lay;
+	
+	lay = (Evas_Layer *)l;
+	evas_layer_pre_free(lay);
+     }
    while (e->layers)
      {
 	Evas_Layer *lay;
@@ -87,6 +93,9 @@ evas_free(Evas *e)
 	evas_layer_del(lay);
 	evas_layer_free(lay);
      }
+   
+   evas_object_font_path_clear(e);   
+   e->pointer.object.in = evas_list_free(e->pointer.object.in);
    
    if (e->name_hash) evas_hash_free(e->name_hash);
    
