@@ -160,6 +160,8 @@ struct _Evas_Key_Grab
    Evas_Modifier_Mask  not_modifiers;
    Evas_Object        *object;
    char                exclusive : 1;
+   char                just_added : 1;
+   char                delete_me : 1;
 };
 
 struct _Evas_Intercept_Func
@@ -296,7 +298,9 @@ struct _Evas
       void *info;
       int   info_magic;
    } engine;
-   
+
+   int            delete_grabs;
+   int            walking_grabs;
    Evas_List     *grabs;
    
    Evas_List     *font_path;
@@ -584,7 +588,8 @@ int evas_object_intercept_call_stack_above(Evas_Object *obj, Evas_Object *above)
 int evas_object_intercept_call_stack_below(Evas_Object *obj, Evas_Object *below);
 int evas_object_intercept_call_layer_set(Evas_Object *obj, int l);
 void evas_object_grabs_cleanup(Evas_Object *obj);
-       
+void evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
+   
 extern int _evas_alloc_error;
    
 #ifdef __cplusplus

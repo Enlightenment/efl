@@ -515,7 +515,9 @@ evas_event_feed_key_down_data(Evas *e, const char *keyname, const void *data)
    if (e->events_frozen > 0) return;
      {
 	Evas_Event_Key_Down ev;
+	int exclusive;
 	
+	exclusive = 0;
 	ev.keyname = (char *)keyname;
 	ev.data = (void *)data;
 	ev.modifiers = &(e->modifiers);
@@ -524,11 +526,18 @@ evas_event_feed_key_down_data(Evas *e, const char *keyname, const void *data)
 	  {
 	     Evas_List *l;
 	     
+	     e->walking_grabs++;
 	     for (l = e->grabs; l; l= l->next)
 	       {
 		  Evas_Key_Grab *g;
 		  
 		  g = l->data;
+		  if (g->just_added)
+		    {
+		       g->just_added = 0;
+		       continue;
+		    }
+		  if (g->delete_me) continue;
 		  if (((e->modifiers.mask & g->modifiers) ||
 		       (g->modifiers == e->modifiers.mask)) &&
 		      (!((e->modifiers.mask & g->not_modifiers) ||
@@ -537,11 +546,32 @@ evas_event_feed_key_down_data(Evas *e, const char *keyname, const void *data)
 		    {
 		       if (!e->events_frozen)
 			 evas_object_event_callback_call(g->object, EVAS_CALLBACK_KEY_DOWN, &ev);
-		       if (g->exclusive) return;
-		    }		      
+		       if (g->exclusive) exclusive = 1;
+		    }
+	       }
+	     e->walking_grabs--;
+	     if (e->walking_grabs <= 0)
+	       {
+		  while (e->delete_grabs > 0)
+		    {
+		       Evas_List *l;
+		       
+		       e->delete_grabs--;
+		       for (l = e->grabs; l; l= l->next)
+			 {
+			    Evas_Key_Grab *g;
+			    
+			    g = l->data;
+			    if (g->delete_me)
+			      {
+				 evas_key_grab_free(g->object, g->keyname, g->modifiers, g->not_modifiers);
+				 continue;
+			      }
+			 }
+		    }
 	       }
 	  }
-	if (e->focused)
+	if ((e->focused) && (!exclusive))
 	  {
 	     if (!e->events_frozen)
 	       evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_DOWN, &ev);
@@ -565,7 +595,9 @@ evas_event_feed_key_up_data(Evas *e, const char *keyname, const void *data)
    if (e->events_frozen > 0) return;
      {
 	Evas_Event_Key_Up ev;
+	int exclusive;
 	
+	exclusive = 0;	
 	ev.keyname = (char *)keyname;
 	ev.data = (void *)data;
 	ev.modifiers = &(e->modifiers);
@@ -574,11 +606,18 @@ evas_event_feed_key_up_data(Evas *e, const char *keyname, const void *data)
 	  {
 	     Evas_List *l;
 	     
+	     e->walking_grabs++;
 	     for (l = e->grabs; l; l= l->next)
 	       {
 		  Evas_Key_Grab *g;
 		  
 		  g = l->data;
+		  if (g->just_added)
+		    {
+		       g->just_added = 0;
+		       continue;
+		    }
+		  if (g->delete_me) continue;
 		  if (((e->modifiers.mask & g->modifiers) ||
 		       (g->modifiers == e->modifiers.mask)) &&
 		      (!((e->modifiers.mask & g->not_modifiers) ||
@@ -587,11 +626,32 @@ evas_event_feed_key_up_data(Evas *e, const char *keyname, const void *data)
 		    {
 		       if (!e->events_frozen)
 			 evas_object_event_callback_call(g->object, EVAS_CALLBACK_KEY_UP, &ev);
-		       if (g->exclusive) return;
+		       if (g->exclusive) exclusive = 1;
 		    }		      
 	       }
+	     e->walking_grabs--;
+	     if (e->walking_grabs <= 0)
+	       {
+		  while (e->delete_grabs > 0)
+		    {
+		       Evas_List *l;
+		       
+		       e->delete_grabs--;
+		       for (l = e->grabs; l; l= l->next)
+			 {
+			    Evas_Key_Grab *g;
+			    
+			    g = l->data;
+			    if (g->delete_me)
+			      {
+				 evas_key_grab_free(g->object, g->keyname, g->modifiers, g->not_modifiers);
+				 continue;
+			      }
+			 }
+		    }
+	       }
 	  }
-	if (e->focused)
+	if ((e->focused) && (!exclusive))
 	  {
 	     if (!e->events_frozen)
 	       evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_UP, &ev);
