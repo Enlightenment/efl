@@ -732,6 +732,7 @@ void                e_add_event_ipc(int ipc, void (*func) (int ipc));
 void                e_del_event_ipc(int ipc);
 
 void                e_event_loop(void);
+void                e_event_loop_quit(void);
 
 void                e_add_event_timer(char *name, double in,
 				      void (*func) (int val, void *data),

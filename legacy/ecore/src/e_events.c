@@ -14,6 +14,8 @@ Ev_Timer           *timers = NULL;
 Eevent             *events = NULL;
 Eevent             *last_event = NULL;
 
+int                 __quit_ev_loop = 0;
+
 /* local functions for event handling */
 static void         e_handle_event_timer(void);
 static void         e_handle_zero_event_timer(void);
@@ -177,7 +179,7 @@ e_event_loop(void)
    time1 = e_get_time();
    time2 = time1 - prev_time;
    prev_time = time1;
-   for (;;)
+   while( __quit_ev_loop == 0 )
      {
 	/* state setup */
 	timed_out = 0;
@@ -311,6 +313,14 @@ e_event_loop(void)
 	time2 = time1 - prev_time;
 	prev_time = time1;
      }
+}
+
+/* set a flag to 0 so that we can quit the event loop and shutdown 
+ * properly */
+void 
+e_event_loop_quit(void)
+{
+   __quit_ev_loop = 1;
 }
 
 /* add a timeout funcitont o be called in "in" seconds with name name */

@@ -94,11 +94,14 @@ e_event_filter_idle_handle(void)
       h->func(h->data);
 }
 
+extern int __quit_ev_loop;
+
 void
 e_event_filter_init(void)
 {
    int                 i;
 
+   __quit_ev_loop = 0;
    for (i = 0; i < EV_MAX; i++)
       handler[i] = NULL;
 }
