@@ -437,7 +437,7 @@ void
 _embryo_str_init(Embryo_Program *ep)
 {
    embryo_program_native_call_add(ep, "atoi",     _embryo_str_atoi);
-   embryo_program_native_call_add(ep, "fnmtach",  _embryo_str_fnmatch);
+   embryo_program_native_call_add(ep, "fnmatch",  _embryo_str_fnmatch);
    embryo_program_native_call_add(ep, "strcmp",   _embryo_str_strcmp);
    embryo_program_native_call_add(ep, "strncmp",  _embryo_str_strncmp);
    embryo_program_native_call_add(ep, "strcpy",   _embryo_str_strcpy);
