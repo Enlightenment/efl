@@ -265,17 +265,20 @@ struct _Ecore_X_Event_Window_Destroy
 struct _Ecore_X_Event_Window_Hide
 {
    Ecore_X_Window  win;
+   Ecore_X_Time    time;
 };
 
 struct _Ecore_X_Event_Window_Show
 {
    Ecore_X_Window  win;
+   Ecore_X_Time    time;
 };
 
 struct _Ecore_X_Event_Window_Show_Request
 {
    Ecore_X_Window  win;
    Ecore_X_Window  parent;
+   Ecore_X_Time    time;
 };
 
 struct _Ecore_X_Event_Window_Reparent
@@ -299,26 +302,31 @@ struct _Ecore_X_Event_Window_Configure
 struct _Ecore_X_Event_Window_Configure_Request
 {
    Ecore_X_Window  win;
+   Ecore_X_Time    time;
 };
 
 struct _Ecore_X_Event_Window_Gravity
 {
    Ecore_X_Window  win;
+   Ecore_X_Time    time;
 };
 
 struct _Ecore_X_Event_Window_Resize_Request
 {
    Ecore_X_Window  win;
+   Ecore_X_Time    time;
 };
 
 struct _Ecore_X_Event_Window_Stack
 {
    Ecore_X_Window  win;
+   Ecore_X_Time    time;
 };
 
 struct _Ecore_X_Event_Window_Stack_Request
 {
    Ecore_X_Window  win;
+   Ecore_X_Time    time;
 };
 
 struct _Ecore_X_Event_Window_Property
@@ -339,26 +347,31 @@ struct _Ecore_X_Event_Window_Colormap
 struct _Ecore_X_Event_Selection_Clear
 {
    Ecore_X_Window  win;
+   Ecore_X_Time    time;
 };
 
 struct _Ecore_X_Event_Selection_Request
 {
    Ecore_X_Window  win;
+   Ecore_X_Time    time;
 };
 
 struct _Ecore_X_Event_Selection_Notify
 {
    Ecore_X_Window  win;
+   Ecore_X_Window  time;
 };
 
 struct _Ecore_X_Event_Client_Message
 {
    Ecore_X_Window  win;
+   Ecore_X_Time    time;
 };
 
 struct _Ecore_X_Event_Window_Shape
 {
    Ecore_X_Window  win;
+   Ecore_X_Time    time;
 };
 
 struct _Ecore_X_Event_Window_Delete_Request

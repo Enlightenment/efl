@@ -535,6 +535,7 @@ _ecore_x_event_handle_focus_in(XEvent *xevent)
    else if (xevent->xfocus.detail == NotifyPointerRoot)      e->detail = ECORE_X_EVENT_DETAIL_POINTER_ROOT;
    else if (xevent->xfocus.detail == NotifyDetailNone)       e->detail = ECORE_X_EVENT_DETAIL_DETAIL_NONE;
    e->time = _ecore_x_event_last_time;
+   _ecore_x_event_last_time = e->time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_FOCUS_IN, e, _ecore_x_event_free_generic, NULL);
 }
 
@@ -559,6 +560,7 @@ _ecore_x_event_handle_focus_out(XEvent *xevent)
    else if (xevent->xfocus.detail == NotifyPointerRoot)      e->detail = ECORE_X_EVENT_DETAIL_POINTER_ROOT;
    else if (xevent->xfocus.detail == NotifyDetailNone)       e->detail = ECORE_X_EVENT_DETAIL_DETAIL_NONE;
    e->time = _ecore_x_event_last_time;
+   _ecore_x_event_last_time = e->time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_FOCUS_OUT, e, _ecore_x_event_free_generic, NULL);
 }
 
@@ -655,6 +657,7 @@ _ecore_x_event_handle_unmap_notify(XEvent *xevent)
    e = calloc(1, sizeof(Ecore_X_Event_Window_Hide));
    if (!e) return;
    e->win = xevent->xunmap.window;
+   e->time = _ecore_x_event_last_time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_HIDE, e, _ecore_x_event_free_generic, NULL);
 }
 
@@ -666,6 +669,7 @@ _ecore_x_event_handle_map_notify(XEvent *xevent)
    e = calloc(1, sizeof(Ecore_X_Event_Window_Show));
    if (!e) return;
    e->win = xevent->xmap.window;
+   e->time = _ecore_x_event_last_time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_SHOW, e, _ecore_x_event_free_generic, NULL);
 }
 
@@ -677,6 +681,7 @@ _ecore_x_event_handle_map_request(XEvent *xevent)
    e = calloc(1, sizeof(Ecore_X_Event_Window_Show_Request));
    if (!e) return;
    e->win = xevent->xmaprequest.window;
+   e->time = _ecore_x_event_last_time;
    e->parent = xevent->xmaprequest.parent;
    ecore_event_add(ECORE_X_EVENT_WINDOW_SHOW_REQUEST, e, _ecore_x_event_free_generic, NULL);
 }
@@ -755,6 +760,8 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
 	if (!e) return;
 	ecore_x_window_prop_name_class_get(xevent->xproperty.window, 
 					   &(e->name), &(e->clas));
+   e->time = xevent->xproperty.time;
+   _ecore_x_event_last_time = e->time;
 	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_NAME_CLASS_CHANGE, e, _ecore_x_event_free_window_prop_name_class_change, NULL);
      }
    else if ((xevent->xproperty.atom == _ecore_x_atom_wm_name) || (xevent->xproperty.atom == _ecore_x_atom_net_wm_name))
@@ -764,6 +771,8 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
 	e = calloc(1, sizeof(Ecore_X_Event_Window_Prop_Title_Change));
 	if (!e) return;
 	e->title = ecore_x_window_prop_title_get(xevent->xproperty.window);
+   e->time = xevent->xproperty.time;
+   _ecore_x_event_last_time = e->time;
 	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_TITLE_CHANGE, e, _ecore_x_event_free_window_prop_title_change, NULL);
      }
    else if (xevent->xproperty.atom == _ecore_x_atom_net_wm_visible_name)
@@ -773,6 +782,8 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
 	e = calloc(1, sizeof(Ecore_X_Event_Window_Prop_Visible_Title_Change));
 	if (!e) return;
 	e->title = ecore_x_window_prop_visible_title_get(xevent->xproperty.window);
+   e->time = xevent->xproperty.time;
+   _ecore_x_event_last_time = e->time;
 	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_VISIBLE_TITLE_CHANGE, e, _ecore_x_event_free_window_prop_visible_title_change, NULL);
      }
    else if ((xevent->xproperty.atom == _ecore_x_atom_wm_icon_name) || (xevent->xproperty.atom == _ecore_x_atom_net_wm_icon_name))
@@ -782,6 +793,8 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
 	e = calloc(1, sizeof(Ecore_X_Event_Window_Prop_Icon_Name_Change));
 	if (!e) return;
 	e->name = ecore_x_window_prop_icon_name_get(xevent->xproperty.window);
+   e->time = xevent->xproperty.time;
+   _ecore_x_event_last_time = e->time;
 	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_ICON_NAME_CHANGE, e, _ecore_x_event_free_window_prop_icon_name_change, NULL);
      }
    else if (xevent->xproperty.atom == _ecore_x_atom_net_wm_visible_icon_name)
@@ -791,6 +804,8 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
 	e = calloc(1, sizeof(Ecore_X_Event_Window_Prop_Visible_Icon_Name_Change));
 	if (!e) return;
 	e->name = ecore_x_window_prop_visible_icon_name_get(xevent->xproperty.window);
+   e->time = xevent->xproperty.time;
+   _ecore_x_event_last_time = e->time;
 	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_VISIBLE_ICON_NAME_CHANGE, e, _ecore_x_event_free_window_prop_visible_icon_name_change, NULL);
      }
    else if (xevent->xproperty.atom == _ecore_x_atom_wm_client_machine)
@@ -800,6 +815,8 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
 	e = calloc(1, sizeof(Ecore_X_Event_Window_Prop_Client_Machine_Change));
 	if (!e) return;
 	e->name = ecore_x_window_prop_client_machine_get(xevent->xproperty.window);
+   e->time = xevent->xproperty.time;
+   _ecore_x_event_last_time = e->time;
 	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_CLIENT_MACHINE_CHANGE, e, _ecore_x_event_free_window_prop_client_machine_change, NULL);
      }
    else if (xevent->xproperty.atom == _ecore_x_atom_net_wm_pid)
@@ -809,6 +826,8 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
 	e = calloc(1, sizeof(Ecore_X_Event_Window_Prop_Pid_Change));
 	if (!e) return;
 	e->pid = ecore_x_window_prop_pid_get(xevent->xproperty.window);
+   e->time = xevent->xproperty.time;
+   _ecore_x_event_last_time = e->time;
 	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE, e, _ecore_x_event_free_window_prop_pid_change, NULL);
      }
    else 
@@ -820,7 +839,6 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
       e->win = xevent->xproperty.window;
       e->atom = xevent->xproperty.atom;
       e->time = xevent->xproperty.time;
-      e->time = xevent->xproperty.time;      
       _ecore_x_event_last_time = e->time;
       ecore_event_add(ECORE_X_EVENT_WINDOW_PROPERTY, e, _ecore_x_event_free_generic, NULL);
    }
