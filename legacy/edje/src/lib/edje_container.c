@@ -136,7 +136,7 @@ edje_item_del(Edje_Item *ei)
 /* an arbitary data pointer to use to track other data */
 
 void
-edje_item_data_wet(Edje_Item *ei, void *data)
+edje_item_data_set(Edje_Item *ei, void *data)
 {
 }
 
@@ -147,23 +147,23 @@ edje_item_data_get(Edje_Item *ei)
 
 /* this object covers the entire item */
 void
+edje_item_overlay_object_set(Edje_Item *ei, Evas_Object *obj)
+{
+}
+
+Evas_Object *
+edje_item_overlay_object_get(Edje_Item *ei)
+{
+}
+
+/* this object goes under entire item */
+void
 edje_item_object_set(Edje_Item *ei, Evas_Object *obj)
 {
 }
 
 Evas_Object *
 edje_item_object_get(Edje_Item *ei)
-{
-}
-
-/* this object goes under entire item */
-void
-edje_item_underlay_object_set(Edje_Item *ei, Evas_Object *obj)
-{
-}
-
-Evas_Object *
-edje_item_underlay_object_get(Edje_Item *ei)
 {
 }
 
@@ -197,12 +197,12 @@ edje_item_thaw(Edje_Item *ei)
 
 /* column info */
 void
-edje_item_columns_set(Edje_Item *ei, int cols)
+edje_item_column_size_set(Edje_Item *ei, int col, Evas_Coord minw, Evas_Coord maxw, Evas_Coord minh, Evas_Coord maxh)
 {
 }
 
 void
-edje_item_column_size_set(Edje_Item *ei, int col, Evas_Coord minw, Evas_Coord maxw, Evas_Coord minh, Evas_Coord maxh)
+edje_item_column_size_get(Edje_Item *ei, int col, Evas_Coord *minw, Evas_Coord *maxw, Evas_Coord *minh, Evas_Coord *maxh)
 {
 }
 
@@ -239,6 +239,118 @@ edje_item_disable(Edje_Item *ei)
 {
 }
 
+/* item utils */
+Edje_Item *
+edje_item_next_get(Edje_Item *ei)
+{
+}
+
+Edje_Item *
+edje_item_prev_get(Edje_Item *ei)
+{
+}
+
+int
+edje_item_selected_get(Edje_Item *ei)
+{
+}
+
+int
+edje_item_focused_get(Edje_Item *ei)
+{
+}
+
+int
+edje_item_disabled_get(Edje_Item *ei)
+{
+}
+
+void
+edje_item_geometry_get(Edje_Item *ei, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+{
+}
+
+double
+edje_item_position_get(Edje_Item *ei)
+{
+}
+
+void
+edje_item_offset_set(Edje_Item *ei, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
+{
+}
+
+/***** container calls *****/
+
+void
+edje_container_columns_set(Evas_Object *obj, int cols)
+{
+}
+
+int
+edje_container_columns_get(Evas_Object *obj)
+{
+}
+
+void
+edje_container_min_size_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
+{
+}
+
+void
+edje_container_max_size_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
+{
+}
+
+int
+edje_container_count_get(Evas_Object *obj)
+{
+}
+
+Edje_Item *
+edje_container_item_first_get(Evas_Object *obj)
+{
+}
+
+Edje_Item *
+edje_container_item_last_get(Evas_Object *obj)
+{
+}
+
+Edje_Item *
+edje_container_item_n_get(Evas_Object *obj, int n)
+{
+}
+
+void
+edje_container_homogenous_size_set(Evas_Object *obj, int homog)
+{
+}
+
+int
+edje_container_homogenous_size_get(Evas_Object *obj)
+{
+}
+
+void
+edje_container_orientation_set(Evas_Object *obj, int orient)
+{
+}
+
+int
+edje_container_orientation_get(Evas_Object *obj)
+{
+}
+
+void
+edje_container_scroll_set(Evas_Object *obj, double pos, double shift)
+{
+}
+
+void
+edje_container_scroll_get(Evas_Object *obj, double *pos, double *shift)
+{
+}
 
 #define E_SMART_OBJ_GET(smart, o, type) \
      { \
@@ -349,7 +461,7 @@ static void _smart_clip_unset(Evas_Object * obj);
 static Evas_Smart  *smart = NULL;
 
 Evas_Object *
-_edje_container_object_add(Evas *evas)
+edje_container_object_add(Evas *evas)
 {
    _smart_init();
    return evas_object_smart_add(evas, smart);

@@ -4,7 +4,6 @@
 #include <Evas.h>
 
 /* FIXDOC: Define these? */
-typedef enum _Edje_Message_Type Edje_Message_Type;
 enum _Edje_Message_Type
 {
    EDJE_MESSAGE_NONE = 0,
@@ -25,6 +24,7 @@ enum _Edje_Message_Type
      EDJE_MESSAGE_STRING_INT_SET = 10,
      EDJE_MESSAGE_STRING_FLOAT_SET = 11
 };
+typedef enum _Edje_Message_Type Edje_Message_Type;
 
 typedef struct _Edje_Message_String           Edje_Message_String;
 typedef struct _Edje_Message_Int              Edje_Message_Int;
