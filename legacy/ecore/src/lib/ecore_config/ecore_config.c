@@ -648,7 +648,8 @@ ecore_config_long_opt_set(const char *key, char *long_opt)
       return ECORE_CONFIG_ERR_NODATA;
    if (e->long_opt)
       free(e->long_opt);
-   e->long_opt = strdup(long_opt);
+   if (long_opt)
+      e->long_opt = strdup(long_opt);
    return ECORE_CONFIG_ERR_SUCC;
 }
 

@@ -543,7 +543,8 @@ ecore_config_args_display(void)
    props = __ecore_config_bundle_local->data;
    while (props)
      {
-	if (props->flags & PF_SYSTEM)
+	/* if it is a system prop, or cannot be set on command line hide it */
+	if (props->flags & PF_SYSTEM || (!props->short_opt && !props->long_opt))
 	  {
 	     props = props->next;
 	     continue;
