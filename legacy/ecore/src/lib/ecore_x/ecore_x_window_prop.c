@@ -731,7 +731,7 @@ ecore_x_window_prop_initial_state_set(Ecore_X_Window win, Ecore_X_Window_State_H
 void
 ecore_x_window_prop_borderless_set(Ecore_X_Window win, int borderless)
 {
-   unsigned int data[5] = {0};
+   unsigned int data[5] = {0, 0, 0, 0, 0};
 
    data[0] = 2; /* just set the decorations hint! */
    data[2] = !borderless;
