@@ -25,8 +25,8 @@
  * drag vals should be 0.0 -> 1.0 if drag is confined. "rest" pos = 0.0.
  * query dragable for its relative pos value
  * 
- * real part size and "before min/max limit" sizes need to be stored per part
- * need to be able to calculate min & max size of a whole edje
+ * need to be able to query "state" of an edje part
+ * need to be able to set callback on part state change
  * 
  * swallowed objects need to be able to advertise min/max size
  * 
@@ -39,8 +39,11 @@
  * need to detect clip_to part loops
  * need to detect confine_to part loops
  * 
+ * ? programs need to be able to "toggle" part states given a list of states
+ * ? programs could be extended further
  * ? reduce linked list walking and list_nth calls
  * ? add containering (hbox, vbox, table, wrapping multi-line hbox & vbox)
+ * ? text entry widget (single line)
  * ? add numeric params to conditions for progs (ranges etc.)
  * ? key/value pair config values per colelction and per edje file
  */
@@ -316,6 +319,9 @@ struct _Edje
    
    int                   layer;
    double                x, y, w, h;
+   struct {
+      double             w, h;
+   } min;
    unsigned short        dirty : 1;
    unsigned short        recalc : 1;
    unsigned short        walking_callbacks : 1;
@@ -324,6 +330,7 @@ struct _Edje
    unsigned short        have_objects : 1;
    unsigned short        paused : 1;
    unsigned short        no_anim : 1;
+   unsigned short        calc_only : 1;
    double                paused_at;
    Evas                 *evas; /* the evas this edje belongs to */
    Evas_Object          *obj; /* the smart object */
@@ -343,6 +350,9 @@ struct _Edje
 struct _Edje_Real_Part
 {
    int                       x, y, w, h;
+   struct {
+      int                    x, y, w, h;
+   } req;
    struct {
       int                    x, y;
    } offset;
@@ -401,6 +411,9 @@ struct _Edje_Signal_Callback
 struct _Edje_Calc_Params
 {
    double           x, y, w, h;
+   struct {
+      double        x, y, w, h;
+   } req;
    char             visible : 1; 
    char             smooth : 1;
    struct {

@@ -171,7 +171,7 @@ _edje_recalc(Edje *ed)
    if (ed->freeze)
      {
 	ed->recalc = 1;
-	return;
+	if (!ed->calc_only) return;
      }
    for (l = ed->parts; l; l = l->next)
      {
@@ -188,7 +188,7 @@ _edje_recalc(Edje *ed)
 	if (!ep->calculated) _edje_part_recalc(ed, ep);
      }
    ed->dirty = 0;
-   ed->recalc = 0;
+   if (!ed->calc_only) ed->recalc = 0;
 }
 
 static void
@@ -361,6 +361,11 @@ _edje_part_recalc_single(Edje *ed,
 	       _edje_text_styles[ep->part->effect].pad.b;
 	  }
      }
+   /* rememebr what our size is BEFORE we go limit it */
+   params->req.x = params->x;
+   params->req.y = params->y;
+   params->req.w = params->w;
+   params->req.h = params->h;
    /* adjust for min size */
    if (minw >= 0)
      {
@@ -538,6 +543,11 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
 	p3.y = (p1.y * (1.0 - pos)) + (p2.y * (pos));
 	p3.w = (p1.w * (1.0 - pos)) + (p2.w * (pos));
 	p3.h = (p1.h * (1.0 - pos)) + (p2.h * (pos));
+
+	p3.req.x = (p1.req.x * (1.0 - pos)) + (p2.req.x * (pos));
+	p3.req.y = (p1.req.y * (1.0 - pos)) + (p2.req.y * (pos));
+	p3.req.w = (p1.req.w * (1.0 - pos)) + (p2.req.w * (pos));
+	p3.req.h = (p1.req.h * (1.0 - pos)) + (p2.req.h * (pos));
 	
 	p3.fill.x = (p1.fill.x * (1.0 - pos)) + (p2.fill.x * (pos));
 	p3.fill.y = (p1.fill.y * (1.0 - pos)) + (p2.fill.y * (pos));
@@ -588,64 +598,65 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
 	     p3.color3.a = (((int)cc->a3 + 1) * p3.color3.a) >> 8;
 	  }
      }
-   
-   if (ep->part->type == EDJE_PART_TYPE_RECTANGLE)
-     {
-	evas_object_move(ep->object, ed->x + p3.x, ed->y + p3.y);
-	evas_object_resize(ep->object, p3.w, p3.h);
-	evas_object_color_set(ep->object, p3.color.r, p3.color.g, p3.color.b, p3.color.a);
-	if (p3.visible) evas_object_show(ep->object);
-	else evas_object_hide(ep->object);
-     }
-   else if (ep->part->type == EDJE_PART_TYPE_TEXT)
-     {
-	_edje_text_recalc_apply(ed, ep, &p3, chosen_desc);
-     }
-   else if (ep->part->type == EDJE_PART_TYPE_IMAGE)
-     {
-	char buf[4096];
-	int image_id;
-	int image_count, image_num;
 
-//	printf("loc %3.3f %3.3f %3.3fx%3.3f\n", p3.x, p3.y, p3.w, p3.h);
-	evas_object_move(ep->object, ed->x + p3.x, ed->y + p3.y);
-	evas_object_resize(ep->object, p3.w, p3.h);
-	evas_object_image_fill_set(ep->object, p3.fill.x, p3.fill.y, p3.fill.w, p3.fill.h);
-	evas_object_image_smooth_scale_set(ep->object, p3.smooth);
-//	printf("fill %3.3f %3.3f %3.3fx%3.3f\n", p3.fill.x, p3.fill.y, p3.fill.w, p3.fill.h);
-
-	evas_object_image_border_set(ep->object, p3.border.l, p3.border.r, p3.border.t, p3.border.b);
-	image_id = ep->param1.description->image.id;
-	image_count = 2;
-	if (ep->param2.description)
-	  image_count += evas_list_count(ep->param2.description->image.tween_list);
-	image_num = (pos * ((double)image_count - 0.5));
-	if (image_num > (image_count - 1))
-	  image_num = image_count - 1;
-	if (image_num == 0)
-	  image_id = ep->param1.description->image.id;
-	else if (image_num == (image_count - 1))
-	  image_id = ep->param2.description->image.id;
-	else
+   if (!ed->calc_only)
+     {
+	if (ep->part->type == EDJE_PART_TYPE_RECTANGLE)
 	  {
-	     Edje_Part_Image_Id *imid;
-	     
-	     imid = evas_list_nth(ep->param2.description->image.tween_list, image_num - 1);
-	     if (imid) image_id = imid->id;
+	     evas_object_move(ep->object, ed->x + p3.x, ed->y + p3.y);
+	     evas_object_resize(ep->object, p3.w, p3.h);
+	     evas_object_color_set(ep->object, p3.color.r, p3.color.g, p3.color.b, p3.color.a);
+	     if (p3.visible) evas_object_show(ep->object);
+	     else evas_object_hide(ep->object);
 	  }
-
-	snprintf(buf, sizeof(buf), "images/%i", image_id);
-	evas_object_image_file_set(ep->object, ed->file->path, buf);
-	evas_object_color_set(ep->object, p3.color.r, p3.color.g, p3.color.b, p3.color.a);
-	if (p3.visible) evas_object_show(ep->object);
-	else evas_object_hide(ep->object);
-     }
-   if (ep->swallowed_object)
-     {
-	evas_object_move(ep->swallowed_object, ed->x + p3.x, ed->y + p3.y);
-	evas_object_resize(ep->swallowed_object, p3.w, p3.h);
-	if (p3.visible) evas_object_show(ep->swallowed_object);
-	else evas_object_hide(ep->swallowed_object);
+	else if (ep->part->type == EDJE_PART_TYPE_TEXT)
+	  {
+	     _edje_text_recalc_apply(ed, ep, &p3, chosen_desc);
+	  }
+	else if (ep->part->type == EDJE_PART_TYPE_IMAGE)
+	  {
+	     char buf[4096];
+	     int image_id;
+	     int image_count, image_num;
+	     
+	     evas_object_move(ep->object, ed->x + p3.x, ed->y + p3.y);
+	     evas_object_resize(ep->object, p3.w, p3.h);
+	     evas_object_image_fill_set(ep->object, p3.fill.x, p3.fill.y, p3.fill.w, p3.fill.h);
+	     evas_object_image_smooth_scale_set(ep->object, p3.smooth);
+	     
+	     evas_object_image_border_set(ep->object, p3.border.l, p3.border.r, p3.border.t, p3.border.b);
+	     image_id = ep->param1.description->image.id;
+	     image_count = 2;
+	     if (ep->param2.description)
+	       image_count += evas_list_count(ep->param2.description->image.tween_list);
+	     image_num = (pos * ((double)image_count - 0.5));
+	     if (image_num > (image_count - 1))
+	       image_num = image_count - 1;
+	     if (image_num == 0)
+	       image_id = ep->param1.description->image.id;
+	     else if (image_num == (image_count - 1))
+	       image_id = ep->param2.description->image.id;
+	     else
+	       {
+		  Edje_Part_Image_Id *imid;
+		  
+		  imid = evas_list_nth(ep->param2.description->image.tween_list, image_num - 1);
+		  if (imid) image_id = imid->id;
+	       }
+	     
+	     snprintf(buf, sizeof(buf), "images/%i", image_id);
+	     evas_object_image_file_set(ep->object, ed->file->path, buf);
+	     evas_object_color_set(ep->object, p3.color.r, p3.color.g, p3.color.b, p3.color.a);
+	     if (p3.visible) evas_object_show(ep->object);
+	     else evas_object_hide(ep->object);
+	  }
+	if (ep->swallowed_object)
+	  {
+	     evas_object_move(ep->swallowed_object, ed->x + p3.x, ed->y + p3.y);
+	     evas_object_resize(ep->swallowed_object, p3.w, p3.h);
+	     if (p3.visible) evas_object_show(ep->swallowed_object);
+	     else evas_object_hide(ep->swallowed_object);
+	  }
      }
    
    ep->x = p3.x;

@@ -278,7 +278,69 @@ edje_object_part_swallow_get(Evas_Object *obj, const char *part)
    return rp->swallowed_object;
 }
 
-
+void
+edje_object_size_min_get(Evas_Object *obj, double *minw, double *minh)
+{
+   Edje *ed;
+   double pw, ph;   
+   int maxw, maxh;
+   int ok;
+   
+   ed = _edje_fetch(obj);
+   ed->calc_only = 1;
+   pw = ed->w;
+   ph = ed->h;
+   ed->w = 0;
+   ed->h = 0;
+   
+   maxw = 0;
+   maxh = 0;
+   
+   ok = 1;
+   while (ok)
+     {
+	Evas_List *l;
+	
+	ok = 0;
+	ed->dirty = 1;
+	_edje_recalc(ed);
+	for (l = ed->parts; l; l = l->next)
+	  {
+	     Edje_Real_Part *ep;
+	     int w, h;
+	     
+	     ep = l->data;
+	     w = ep->w - ep->req.w;
+	     h = ep->h - ep->req.h;
+	     if (w > maxw)
+	       {
+		  maxw = w;
+		  ok = 1;
+	       }
+	     if (h > maxh)
+	       {
+		  maxh = h;
+		  ok = 1;
+	       }
+	  }
+	if (ok)
+	  {
+	     ed->w += maxw;
+	     ed->h += maxh;
+	  }
+     }
+   ed->min.w = ed->w;
+   ed->min.h = ed->h;
+   
+   if (minw) *minw = ed->min.w;
+   if (minh) *minh = ed->min.h;
+   
+   ed->w = pw;
+   ed->h = ph;
+   ed->dirty = 1;
+   _edje_recalc(ed);
+   ed->calc_only = 0;
+}
 
 
 

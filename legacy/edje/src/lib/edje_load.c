@@ -32,6 +32,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	     Edje_Real_Part *rp;
 	     char buf[256];
 	     
+	     printf("PART!\n");
 	     ep = l->data;
 	     rp = calloc(1, sizeof(Edje_Real_Part));
 	     if (!rp) return;
@@ -45,6 +46,10 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	       rp->object = evas_object_image_add(ed->evas);
 	     else if (ep->type == EDJE_PART_TYPE_TEXT)
 	       rp->object = evas_object_text_add(ed->evas);
+	     else
+	       {
+		  printf("FIXME: ERROR! wrong part type!\n");
+	       }
 	     evas_object_smart_member_add(rp->object, ed->obj);
 	     if (ep->mouse_events)
 	       {

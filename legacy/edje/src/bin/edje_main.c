@@ -24,6 +24,7 @@ struct _Demo_Edje
    Evas_Object *title;
    Evas_Object *title_clip;
    Evas_Object *image;
+   double       minw, minh;
    int          down_top : 1;
    int          down_bottom : 1;
    int          hdir;
@@ -304,6 +305,7 @@ bottom_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    if (de->down_bottom)
      {
 	double x, y, w, h, tw, th;
+	double minw, minh;
 	int hdir, vdir;
 	
 	evas_object_geometry_get(de->edje, &x, &y, &w, &h);
@@ -313,34 +315,36 @@ bottom_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	y -= 20;
 	w += 20;
 	h += 30;
+	minw = 20 + de->minw;
+	minh = 30 + de->minh;
 	if (hdir > 0)
 	  {
 	     w += ev->cur.canvas.x - ev->prev.canvas.x;
-	     if (w < 20) w = 20;
+	     if (w < minw) w = minw;
 	  }
 	else
 	  {
 	     w -= ev->cur.canvas.x - ev->prev.canvas.x;
 	     x += ev->cur.canvas.x - ev->prev.canvas.x;
-	     if (w < 20)
+	     if (w < minw)
 	       {
-		  x += w - 20;
-		  w = 20;
+		  x += w - minw;
+		  w = minw;
 	       }
 	  }
 	if (vdir > 0)
 	  {
 	     h += ev->cur.canvas.y - ev->prev.canvas.y;
-	     if (h < 30) h = 30;
+	     if (h < minh) h = minh;
 	  }
 	else
 	  {
 	     h -= ev->cur.canvas.y - ev->prev.canvas.y;
 	     y += ev->cur.canvas.y - ev->prev.canvas.y;
-	     if (h < 30)
+	     if (h < minh)
 	       {
-		  y += h - 30;
-		  h = 30;
+		  y += h - minh;
+		  h = minh;
 	       }
 	  }
 	evas_object_move(de->left, x, y + 20);
@@ -459,6 +463,7 @@ test_setup(char *file, char *name)
    evas_object_move(o, 10 + 10, 10 + 20);
    evas_object_resize(o, 200, 240);
    evas_object_show(o);
+   edje_object_size_min_get(o, &(de->minw), &(de->minh));
    de->edje = o;
    
 /* test swallowing */

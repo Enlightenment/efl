@@ -32,7 +32,8 @@ extern "C" {
    void         edje_object_part_swallow        (Evas_Object *o, const char *part, Evas_Object *o_swallow);
    void         edje_object_part_unswallow      (Evas_Object *o, Evas_Object *o_swallow);
    Evas_Object *edje_object_part_swallow_get    (Evas_Object *o, const char *part);
-     
+   void         edje_object_size_min_get        (Evas_Object *o, double *minw, double *minh);
+       
 #ifdef __cplusplus
 }
 #endif
