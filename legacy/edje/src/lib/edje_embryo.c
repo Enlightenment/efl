@@ -950,7 +950,6 @@ _edje_embryo_test_run(Edje *ed, char *fname, char *sig, char *src)
 	     embryo_program_run(ed->collection->script, fn);
 	     embryo_program_data_set(ed->collection->script, pdata);
 	  }
-	embryo_program_run(ed->collection->script, fn);
 	printf("EDJE DEBUG: Done.\n");
      }
 }
