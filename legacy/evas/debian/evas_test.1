@@ -1,0 +1,78 @@
+.\" This -*- nroff -*- file has been generated from
+.\" DocBook SGML with docbook-to-man on Debian GNU/Linux.
+...\"
+...\"	transcript compatibility for postscript use.
+...\"
+...\"	synopsis:  .P! <file.ps>
+...\"
+.de P!
+\\&.
+.fl			\" force out current output buffer
+\\!%PB
+\\!/showpage{}def
+...\" the following is from Ken Flowers -- it prevents dictionary overflows
+\\!/tempdict 200 dict def tempdict begin
+.fl			\" prolog
+.sy cat \\$1\" bring in postscript file
+...\" the following line matches the tempdict above
+\\!end % tempdict %
+\\!PE
+\\!.
+.sp \\$2u	\" move below the image
+..
+.de pF
+.ie     \\*(f1 .ds f1 \\n(.f
+.el .ie \\*(f2 .ds f2 \\n(.f
+.el .ie \\*(f3 .ds f3 \\n(.f
+.el .ie \\*(f4 .ds f4 \\n(.f
+.el .tm ? font overflow
+.ft \\$1
+..
+.de fP
+.ie     !\\*(f4 \{\
+.	ft \\*(f4
+.	ds f4\"
+'	br \}
+.el .ie !\\*(f3 \{\
+.	ft \\*(f3
+.	ds f3\"
+'	br \}
+.el .ie !\\*(f2 \{\
+.	ft \\*(f2
+.	ds f2\"
+'	br \}
+.el .ie !\\*(f1 \{\
+.	ft \\*(f1
+.	ds f1\"
+'	br \}
+.el .tm ? font underflow
+..
+.ds f1\"
+.ds f2\"
+.ds f3\"
+.ds f4\"
+'\" t 
+.ta 8n 16n 24n 32n 40n 48n 56n 64n 72n  
+.TH "evas_test" "1" 
+.SH "NAME" 
+evas_test \(em evas library demonstartion program 
+.SH "SYNOPSIS" 
+.PP 
+\fBevas_test\fP 
+.SH "DESCRIPTION" 
+.PP 
+This manual page documents briefly the 
+\fBevas_test\fP command. 
+.PP 
+This manual page was written for the \fBDebian GNU/Linux\fP distribution 
+because the original program does not have a manual page. 
+ 
+.PP 
+\fBevas_test\fP and \fBevas_test_old\fP     are programs that demonstrate the capabilites of evas, the enlightenment  
+canvasing library. run "evas_test_old -h" for a description of command  
+line options. 
+.SH "AUTHOR" 
+.PP 
+This manual page was written by Laurence J. Lane (ljlane@debian.org) for 
+the \fBDebian GNU/Linux\fP system (but may be used by others). 
+...\" created by instant / docbook-to-man, Mon 28 May 2001, 15:04 
