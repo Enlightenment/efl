@@ -1,0 +1,30 @@
+/** 
+@file
+@brief Embryo virtual machine library & compiler
+ 
+These routines are used for Embryo library interaction
+*/
+
+/**
+
+@mainpage Embryo Library Documentation
+@image html  embryo.png
+@version 0.0.1
+@author Carsten Haitzler <raster@rasterman.com>
+@date 2004
+
+
+
+
+
+@section intro What is Embryo?
+
+It is a tiny library designed interpret limited small programs compiled by the
+included scmall compiler. This is mostly cleaning up and reduction in size of
+the original small abstract machine. the compiler itself has been left alone
+almost completely.
+
+@todo Document it all
+@todo Clean up compiler code.
+
+*/
