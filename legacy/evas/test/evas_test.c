@@ -308,9 +308,19 @@ animate(double val)
    Evas_Object o;
    
    o = evas_object_get_named(evas_view, "pointer");
-   if (o) evas_move(evas_view, o, mouse_x, mouse_y);
+   if (o) 
+     {
+	evas_move(evas_view, o, mouse_x, mouse_y);
+	if (evas_pointer_in(evas_view) || evas_pointer_in(evas_control))
+	   evas_show(evas_view, o);
+     }
    o = evas_object_get_named(evas_control, "pointer");
-   if (o) evas_move(evas_control, o, mouse_x + 128, mouse_y);
+   if (o) 
+      {
+	 evas_move(evas_control, o, mouse_x + 128, mouse_y);
+	if (evas_pointer_in(evas_view) || evas_pointer_in(evas_control))
+	    evas_show(evas_control, o);
+      }
    
    evas_get_image_size(evas_view, o_logo, &w, &h);
    if (val < 20)
