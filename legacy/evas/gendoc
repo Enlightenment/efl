@@ -1,0 +1,10 @@
+#!/bin/sh
+cp ./evas.c.in ./evas.c
+cat ./src/lib/Evas.h >> ./evas.c
+for I in `find ./src/lib -name "*.c" -print`; do
+  cat $I >> ./evas.c
+done
+rm -rf ./doc/html ./doc/latex ./doc/man
+doxygen
+cp doc/img/evas_small.png doc/html/evas_small.png
+exit 0

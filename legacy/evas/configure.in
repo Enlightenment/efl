@@ -1,0 +1,617 @@
+dnl Process this file with autoconf to produce a configure script.
+
+# get rid of that stupid cache mechanism
+rm -f config.cache
+
+AC_INIT(configure.in)
+AC_ISC_POSIX
+AM_INIT_AUTOMAKE(evas, 1.0.0-pre4)
+AM_CONFIG_HEADER(config.h)
+
+AC_C_BIGENDIAN
+AC_PROG_CC
+AC_PROG_CXX
+AM_PROG_CC_STDC
+AC_HEADER_STDC
+AC_C_CONST
+AM_ENABLE_SHARED
+AM_PROG_LIBTOOL
+
+dnl Add the languages which your application supports here.
+
+if test "x${exec_prefix}" = "xNONE"; then
+  if test "x${prefix}" = "xNONE"; then
+    bindir="${ac_default_prefix}/bin";
+  else
+    bindir="${prefix}/bin";
+  fi
+else
+  if test "x${prefix}" = "xNONE"; then
+    bindir="${ac_default_prefix}/bin";
+  else
+    bindir="${prefix}/bin";
+  fi
+fi
+
+if test "x${exec_prefix}" = "xNONE"; then
+  if test "x${prefix}" = "xNONE"; then
+    libdir="${ac_default_prefix}/lib";
+  else
+    libdir="${prefix}/lib";
+  fi
+else
+  if test "x${prefix}" = "xNONE"; then
+    libdir="${ac_default_prefix}/lib";
+  else
+    libdir="${prefix}/lib";
+  fi
+fi
+
+dnl Set PACKAGE_DATA_DIR in config.h.
+if test "x${datadir}" = 'x${prefix}/share'; then
+  if test "x${prefix}" = "xNONE"; then
+    AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${ac_default_prefix}/share/${PACKAGE}")
+  else
+    AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${prefix}/share/${PACKAGE}")
+  fi
+else
+  AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${datadir}/${PACKAGE}")
+fi
+
+dnl Set PACKAGE_BIN_DIR in config.h.
+if test "x${bindir}" = 'xNONE'; then
+  if test "x${prefix}" = "xNONE"; then
+    AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${ac_default_prefix}/bin")
+  else
+    AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${prefix}/bin")
+  fi
+else
+  AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${bindir}")
+fi
+
+dnl Set PACKAGE_LIB_DIR in config.h.
+if test "x${libdir}" = 'xNONE'; then
+  if test "x${prefix}" = "xNONE"; then
+    AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${ac_default_prefix}/lib")
+  else
+    AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${prefix}/lib")
+  fi
+else
+  AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${libdir}")
+fi
+
+dnl Set PACKAGE_SOURCE_DIR in config.h.
+packagesrcdir=`cd $srcdir && pwd`
+AC_DEFINE_UNQUOTED(PACKAGE_SOURCE_DIR, "${packagesrcdir}")
+
+x_dir=""
+x_cflags=""
+x_libs=""
+gl_dir=""
+gl_cflags=""
+gl_libs=""
+qt_dir=""
+qt_cflags=""
+qt_libs=""				 
+qt_moc=""
+
+# blah-config style checks
+# qtdir setting
+AC_ARG_WITH(qtdir,
+[  --with-qtdir=QT_DIR                       use qt directory specified ],
+[ 
+  qt_dir=$withval;
+  echo "using "$qt_dir" for qt directory.";
+],[
+  qt_dir="/opt/Qtopia";
+])
+# check for freetype
+AC_ARG_WITH(freetype-config,
+[  --with-freetype-config=FREETYPE_CONFIG    use freetype-config specified ],
+[ 
+  PROG_CONFIG=$withval;
+  echo "using "$PROG_CONFIG" for freetype-config";
+],[
+  PROG="freetype-config";
+  AC_PATH_PROG(PROG_CONFIG, $PROG, "", $PATH)
+])
+if [ test -z $PROG_CONFIG ]; then
+  echo $PROG " is not in your \$PATH. Please ensure it is.";
+  echo "You may need to install the librarya and/or development packages";
+  echo "that contain this configure-script.";
+  echo "FATAL ERROR. ABORT.";
+  exit -1;
+fi
+freetype_cflags=`$PROG_CONFIG --cflags`
+freetype_libs=`$PROG_CONFIG --libs`
+
+AC_MSG_CHECKING(whether software x11 backend is to be built)
+
+AC_ARG_ENABLE(software-x11, [  --enable-software-x11           enable the Software X11 rendering backend], [
+	   AC_MSG_RESULT(yes)
+	   AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_X11, test "$enableval" = "yes")
+	   AC_DEFINE(BUILD_ENGINE_SOFTWARE_X11)
+           x_dir="/usr/X11R6";
+           x_cflags="-I"$x_dir"/include"
+           x_libs="-L"$x_dir"/lib -lX11 -lXext"
+	   ENGINE_SOFTWARE_X11_PRG="evas_software_x11_test evas_software_x11_perf_test evas_software_x11_perf_load"
+        ], [
+	   AC_MSG_RESULT(no)
+	   AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_X11, false)
+	   ENGINE_SOFTWARE_X11_PRG=""
+	]
+)
+
+AC_MSG_CHECKING(whether directfb backend is to be built)
+
+AC_ARG_ENABLE(directfb, [  --enable-direcfb                enable the DirectFB rendering backend], [
+	   AC_MSG_RESULT(yes)
+	   AM_CONDITIONAL(BUILD_ENGINE_DIRECTFB, true)
+	   AC_DEFINE(BUILD_ENGINE_DIRECTFB)
+dnl	   PKG_CHECK_MODULES(DIRECTFB, directfb >= 0.9.13)
+	   PKG_CHECK_MODULES(DIRECTFB, directfb >= 0.9.12)
+	   ENGINE_DIRECTFB_PRG="evas_directfb_test evas_directfb_window"
+	], [
+	   AC_MSG_RESULT(no)
+	   AM_CONDITIONAL(BUILD_ENGINE_DIRECTFB, false)
+	   ENGINE_DIRECTFB_PRG=""
+	]
+)
+
+AC_MSG_CHECKING(whether fb backend is to be built)
+
+AC_ARG_ENABLE(fb, [  --enable-fb                     enable the FB rendering backend], [
+	   AC_MSG_RESULT(yes)
+	   AM_CONDITIONAL(BUILD_ENGINE_FB, true)
+	   AC_DEFINE(BUILD_ENGINE_FB)
+	   ENGINE_FB_PRG="evas_fb_test"
+	], [
+	   AC_MSG_RESULT(no)
+	   AM_CONDITIONAL(BUILD_ENGINE_FB, false)
+	   ENGINE_FB_PRG=""
+	]
+)
+
+AC_MSG_CHECKING(whether software qtopia backend is to be built)
+
+AC_ARG_ENABLE(software-qtopia, [  --enable-software-qtopia     enable the Software Qtopia rendering backend], [
+	   AC_MSG_RESULT(yes)
+	   AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_QTOPIA, test "$enableval" = "yes")
+	   AC_DEFINE(BUILD_ENGINE_SOFTWARE_QTOPIA)
+           qt_cflags="-fno-exceptions -fno-rtti -I"$qt_dir"/include"
+           qt_libs="-L"$qt_dir"/lib -lqte -lqpe"
+	   qt_moc=$qt_dir"/bin/moc"
+	   ENGINE_SOFTWARE_QTOPIA_PRG="evas_software_qtopia_test"
+        ], [
+	   AC_MSG_RESULT(no)
+	   AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_QTOPIA, false)
+	   ENGINE_SOFTWARE_QTOPIA_PRG=""
+	]
+)
+
+AC_MSG_CHECKING(whether gl x11 backend is to be built)
+
+AC_ARG_ENABLE(gl-x11, [  --enable-gl-x11              enable the OpenGL X11 display engine], [
+	   AC_MSG_RESULT(yes)
+	   AM_CONDITIONAL(BUILD_ENGINE_GL_X11, test "$enableval" = "yes")
+	   AC_DEFINE(BUILD_ENGINE_GL_X11)
+	   AM_CONDITIONAL(BUILD_ENGINE_GL_COMMON, test "$enableval" = "yes")
+	   AC_DEFINE(BUILD_ENGINE_GL_COMMON)
+           x_dir="/usr/X11R6";
+           x_cflags="-I"$x_dir"/include"
+           x_libs="-L"$x_dir"/lib -lX11 -lXext"
+           gl_cflags="-I/usr/include"
+           gl_libs="-L/usr/lib -lGL -lGLU"
+	   gl_dir=""
+	   ENGINE_GL_X11_PRG="evas_gl_x11_test"
+        ], [
+	   AC_MSG_RESULT(no)
+	   AM_CONDITIONAL(BUILD_ENGINE_GL_X11, false)
+	   AM_CONDITIONAL(BUILD_ENGINE_GL_COMMON, false)
+	   ENGINE_GL_X11_PRG=""
+	]
+)
+
+########### image loaders
+
+AC_MSG_CHECKING(whether to enable png image loader)
+
+AC_ARG_ENABLE(image-loader-png, 
+  [  --enable-image-loader-png       enable png image loader], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_LOADER_PNG)
+      png_cflags=""
+      png_libs="-lpng -lz"
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to enable jpeg image loader)
+
+AC_ARG_ENABLE(image-loader-jpeg, 
+  [  --enable-image-loader-jpeg      enable jpeg image loader], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_LOADER_JPEG)
+      jpeg_cflags=""
+      jpeg_libs="-ljpeg"
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to enable eet image loader)
+
+AC_ARG_ENABLE(image-loader-eet, 
+  [  --enable-image-loader-eet       enable eet image loader], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_LOADER_EET)
+      eet_cflags=`eet-config --cflags`
+      eet_libs=`eet-config --libs`" -lz"
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to enable edb image loader)
+
+AC_ARG_ENABLE(image-loader-edb, 
+  [  --enable-image-loader-edb       enable edb image loader], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_LOADER_EDB)
+      edb_cflags=`edb-config --cflags`
+      edb_libs=`edb-config --libs`" -lz"
+  ], AC_MSG_RESULT(no)
+)
+
+########### fmemopen support
+
+AC_MSG_CHECKING(whether to build memory fopen support)
+
+AC_ARG_ENABLE(fmemopen, 
+  [  --enable-fmemopen               enable C code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_FMEMOPEN)
+  ], AC_MSG_RESULT(no)
+)
+
+########### dither mask
+
+AC_MSG_CHECKING(whether to build small dither mask code)
+
+AC_ARG_ENABLE(small-dither-mask, 
+  [  --enable-small-dither-mask      enable small dither mask code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_SMALL_DITHER_MASK)
+  ], AC_MSG_RESULT(no)
+)
+
+########### hard coded cpu assumptions
+
+AC_MSG_CHECKING(whether to build code assuming a pentium2/amd and up)
+
+AC_ARG_ENABLE(cpu-p2-only, 
+  [  --enable-cpu-p2-only            enable assumption of pentium2/amd cpu], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(HARD_CODED_P2)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build code assuming a pentium3 and up)
+
+AC_ARG_ENABLE(cpu-p3-only, 
+  [  --enable-cpu-p3-only            enable assumption of pentium3 and up cpu], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(HARD_CODED_P3)
+  ], AC_MSG_RESULT(no)
+)
+
+########### cpu modes
+
+AC_MSG_CHECKING(whether to build mmx code)
+
+AC_ARG_ENABLE(cpu-mmx, 
+  [  --enable-cpu-mmx                enable mmx code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_MMX)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build sse code)
+
+AC_ARG_ENABLE(cpu-sse, 
+  [  --enable-cpu-sse                enable sse code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_SSE)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build c code)
+
+AC_ARG_ENABLE(cpu-c, 
+  [  --enable-cpu-c                  enable C code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_C)
+  ], AC_MSG_RESULT(no)
+)
+
+########### scaling modes
+
+AC_MSG_CHECKING(whether to build sampling scaler)
+
+AC_ARG_ENABLE(scale-sample, 
+  [  --enable-scale-sample           enable sampling scaler code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_SCALE_SAMPLE)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build smooth scaler)
+
+AC_ARG_ENABLE(scale-smooth, 
+  [  --enable-scale-smooth           enable sampling scaler code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_SCALE_SMOOTH)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build tri-linear scaler)
+
+AC_ARG_ENABLE(scale-trilinear, 
+  [  --enable-scale-trilinear        enable tri-linear scaler code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_SCALE_TRILINEAR)
+  ], AC_MSG_RESULT(no)
+)
+
+########### converter modes 
+
+AC_MSG_CHECKING(whether to build 8bpp 332 converter code)
+
+AC_ARG_ENABLE(convert-8-rgb-332, 
+  [  --enable-convert-8-rgb-332      enable 8bpp 332 converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_8_RGB_332)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build 8bpp 332 converter code)
+
+AC_ARG_ENABLE(convert-8-rgb-666, 
+  [  --enable-convert-8-rgb-666      enable 8bpp 666 converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_8_RGB_666)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build 8bpp 232 converter code)
+
+AC_ARG_ENABLE(convert-8-rgb-232, 
+  [  --enable-convert-8-rgb-232      enable 8bpp 232 converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_8_RGB_232)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build 8bpp 222 converter code)
+
+AC_ARG_ENABLE(convert-8-rgb-222, 
+  [  --enable-convert-8-rgb-222      enable 8bpp 222 converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_8_RGB_222)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build 8bpp 221 converter code)
+
+AC_ARG_ENABLE(convert-8-rgb-221, 
+  [  --enable-convert-8-rgb-221      enable 8bpp 221 converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_8_RGB_221)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build 8bpp 111 converter code)
+
+AC_ARG_ENABLE(convert-8-rgb-111, 
+  [  --enable-convert-8-rgb-111      enable 8bpp 111 converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_8_RGB_111)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build 16bpp 565 converter code)
+
+AC_ARG_ENABLE(convert-16-rgb-565, 
+  [  --enable-convert-16-rgb-565     enable 16bpp 565 converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_16_RGB_565)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build 16bpp 555 converter code)
+
+AC_ARG_ENABLE(convert-16-rgb-555, 
+  [  --enable-convert-16-rgb-555     enable 16bpp 555 converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_16_RGB_555)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build 16bpp 444 converter code)
+
+AC_ARG_ENABLE(convert-16-rgb-444, 
+  [  --enable-convert-16-rgb-444     enable 16bpp 444 converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_16_RGB_444)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build 16bpp 565 (444 ipaq) converter code)
+
+AC_ARG_ENABLE(convert-16-rgb-ipq, 
+  [  --enable-convert-16-rgb-ipq     enable 16bpp 565 (444 ipaq) converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_16_RGB_454645)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build 16bpp rotation 0 converter code)
+
+AC_ARG_ENABLE(convert-16-rgb-rot-0, 
+  [  --enable-convert-16-rgb-rot-0   enable 16bpp rotation 0 converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_16_RGB_ROT0)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build 16bpp rotation 270 converter code)
+
+AC_ARG_ENABLE(convert-16-rgb-rot-270, 
+  [  --enable-convert-16-rgb-rot-270 enable 16bpp rotation 270 converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_16_RGB_ROT270)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build 16bpp rotation 90 converter code)
+
+AC_ARG_ENABLE(convert-16-rgb-rot-90, 
+  [  --enable-convert-16-rgb-rot-90  enable 16bpp rotation 90 converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_16_RGB_ROT90)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build 24bpp 888 rgb converter code)
+
+AC_ARG_ENABLE(convert-24-rgb-888, 
+  [  --enable-convert-24-rgb-888     enable 24bpp rgb 888 converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_24_RGB_888)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build 24bpp 888 bgr converter code)
+
+AC_ARG_ENABLE(convert-24-bgr-888, 
+  [  --enable-convert-24-bgr-888     enable 24bpp bgr 888 converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_24_BGR_888)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build 32bpp 8888 rgb converter code)
+
+AC_ARG_ENABLE(convert-32-rgb-8888, 
+  [  --enable-convert-32-rgb-8888    enable 32bpp rgb 8888 converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_32_RGB_8888)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build 32bpp 8888 rgbx converter code)
+
+AC_ARG_ENABLE(convert-32-rgbx-8888, 
+  [  --enable-convert-32-rgbx-8888    enable 32bpp rgbx 8888 converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_32_RGBX_8888)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build 32bpp 8888 bgr converter code)
+
+AC_ARG_ENABLE(convert-32-bgr-8888, 
+  [  --enable-convert-32-bgr-8888    enable 32bpp bgr 8888 converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_32_BGR_8888)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build 32bpp 8888 bgrx converter code)
+
+AC_ARG_ENABLE(convert-32-bgrx-8888, 
+  [  --enable-convert-32-bgrx-8888    enable 32bpp bgrx 8888 converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_32_BGRX_8888)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build 32bpp rotation 0 converter code)
+
+AC_ARG_ENABLE(convert-32-rgb-rot-0, 
+  [  --enable-convert-32-rgb-rot-0   enable 32bpp rotation 0 converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_32_RGB_ROT0)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build 32bpp rotation 270 converter code)
+
+AC_ARG_ENABLE(convert-32-rgb-rot-270, 
+  [  --enable-convert-32-rgb-rot-270 enable 32bpp rotation 270 converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_32_RGB_ROT270)
+  ], AC_MSG_RESULT(no)
+)
+
+AC_MSG_CHECKING(whether to build 32bpp rotation 90 converter code)
+
+AC_ARG_ENABLE(convert-32-rgb-rot-90, 
+  [  --enable-convert-32-rgb-rot-90 enable 32bpp rotation 90 converter code], [
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_32_RGB_ROT90)
+  ], AC_MSG_RESULT(no)
+)
+
+
+
+AC_SUBST(freetype_cflags)
+AC_SUBST(freetype_libs)
+
+AC_SUBST(x_cflags)
+AC_SUBST(x_libs)
+
+AC_SUBST(gl_cflags)
+AC_SUBST(gl_libs)
+
+AC_SUBST(qt_cflags)
+AC_SUBST(qt_libs)
+AC_SUBST(qt_moc)
+
+AC_SUBST(png_cflags)
+AC_SUBST(png_libs)
+AC_SUBST(jpeg_cflags)
+AC_SUBST(jpeg_libs)
+AC_SUBST(eet_cflags)
+AC_SUBST(eet_libs)
+AC_SUBST(edb_cflags)
+AC_SUBST(edb_libs)
+
+AC_SUBST(ENGINE_SOFTWARE_X11_PRG)
+AC_SUBST(ENGINE_DIRECTFB_PRG)
+AC_SUBST(ENGINE_FB_PRG)
+AC_SUBST(ENGINE_SOFTWARE_QTOPIA_PRG)
+AC_SUBST(ENGINE_GL_X11_PRG)
+
+AC_OUTPUT([
+Makefile
+src/Makefile
+src/bin/Makefile
+src/bin/evas_software_win32/Makefile
+src/lib/Makefile
+src/lib/canvas/Makefile
+src/lib/data/Makefile
+src/lib/file/Makefile
+src/lib/engines/Makefile
+src/lib/engines/common/Makefile
+src/lib/engines/software_x11/Makefile
+src/lib/engines/fb/Makefile
+src/lib/engines/software_win32_gdi/Makefile
+src/lib/engines/software_qtopia/Makefile
+src/lib/engines/directfb/Makefile
+src/lib/engines/gl_common/Makefile
+src/lib/engines/gl_x11/Makefile
+src/lib/include/Makefile
+proj/Makefile
+proj/win32_gdi/Makefile
+evas-config
+],[
+chmod +x evas-config
+touch evas_docs.tar.gz
+])
+

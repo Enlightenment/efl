@@ -1,0 +1,8 @@
+COMPILING and INSTALLING:
+
+please see the README file.
+
+NB: you will need pkgconfig package (available for debian and for redhat -
+try www.rpmfind.net if you're lost, or go to the pkgconfig website:
+http://www.freedesktop.org/software/pkgconfig/ ) if your are taking this from 
+CVS and having to run ./autogen.sh)
