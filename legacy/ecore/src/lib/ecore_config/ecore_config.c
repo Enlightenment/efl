@@ -991,8 +991,8 @@ ecore_config_listen(const char *name, const char *key,
       if (!strcmp(l->name, name) || (l->listener == listener))
 	{
 	   E(1,
-	     "ecore_config_listen: %s is already listening for changes of %s in %s...\n",
-	     name, key, t->identifier ? t->identifier : "");
+	     "ecore_config_listen: %s is already listening for changes of %s...\n",
+	     name, key);
 	   return ECORE_CONFIG_ERR_IGNORED;
 	}
 
