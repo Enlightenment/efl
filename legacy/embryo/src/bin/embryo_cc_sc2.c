@@ -31,6 +31,7 @@
 #include <math.h>
 #include "embryo_cc_osdefs.h"
 #include "embryo_cc_sc.h"
+#include "Embryo.h"
 
 static int          match(char *st, int end);
 static cell         litchar(char **lptr, int rawmode);
@@ -633,17 +634,17 @@ ftoi(cell * val, char *curptr)
    else if (rational_digits == 0)
      {
 	/* floating point */
-	float               value = (float)fnum;
-
-	*val = *((cell *) & value);
+      *val = EMBRYO_FLOAT_TO_CELL((float) fnum);
 #if !defined NDEBUG
 	/* I assume that the C/C++ compiler stores "float" values in IEEE 754
 	 * format (as mandated in the ANSI standard). Test this assumption anyway.
 	 */
 	{
-	   float               test1 = 0.0, test2 = 50.0;
+	   float test1 = 0.0, test2 = 50.0;
+	   Embryo_Cell c1 = EMBRYO_FLOAT_TO_CELL(test1);
+	   Embryo_Cell c2 = EMBRYO_FLOAT_TO_CELL(test2);
 
-	   if (*(int *)&test1 != 0x00000000L)
+	   if (c1 != 0x00000000L)
 	     {
 		fprintf(stderr, 
 			"embryo_cc: WARNING! you compiler does not SEEM to interpret IEEE floating\n"
@@ -653,10 +654,9 @@ ftoi(cell * val, char *curptr)
 			"\n"
 			"this could be an issue with you compiling embryo with gcc 3.2.x that seems\n"
 			"to trigger this sanity check. we are not sure why yet, but gcc 3.3.x works\n"
-			, (int)(*(int *)&test1)
-			);
+			, c1);
 	     }
-	  else if (*(int *)&test2 != 0x42480000L)
+	  else if (c2 != 0x42480000L)
 	     {
 		fprintf(stderr, 
 			"embryo_cc: WARNING! you compiler does not SEEM to interpret IEEE floating\n"
@@ -666,10 +666,8 @@ ftoi(cell * val, char *curptr)
 			"\n"
 			"this could be an issue with you compiling embryo with gcc 3.2.x that seems\n"
 			"to trigger this sanity check. we are not sure why yet, but gcc 3.3.x works\n"
-			, (int)(*(int *)&test2)
-			);
+			, c2);
 	     }
-		
 	}
 #endif
      }
