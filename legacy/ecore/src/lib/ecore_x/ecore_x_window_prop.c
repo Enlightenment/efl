@@ -527,6 +527,36 @@ ecore_x_window_prop_protocol_set(Ecore_X_Window win,
 }
 
 /**
+ * Determines whether a protocol is set for a window.
+ * @param win The Window
+ * @param protocol The protocol to query
+ * @return 1 if the protocol is set, else 0.
+ */
+int
+ecore_x_window_prop_protocol_isset(Ecore_X_Window win,
+                                   Ecore_X_WM_Protocol protocol)
+{
+   Atom proto, *protos = NULL;
+   int i, ret = 0, protos_count = 0;
+
+   proto = _ecore_x_atoms_wm_protocols[protocol];
+
+   if (!XGetWMProtocols(_ecore_x_disp, win, &protos, &protos_count))
+	return ret;
+
+   for (i = 0; i < protos_count; i++)
+	if (protos[i] == proto)
+	  {
+	     ret = 1;
+	     break;
+	  }
+
+   XFree(protos);
+
+   return ret;
+}
+
+/**
  * To be documented.
  *
  * FIXME: To be fixed.

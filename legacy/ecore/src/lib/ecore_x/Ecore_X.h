@@ -781,6 +781,7 @@ pid_t            ecore_x_window_prop_pid_get(Ecore_X_Window win);
 void             ecore_x_window_prop_name_class_set(Ecore_X_Window win, const char *n, const char *c);
 void             ecore_x_window_prop_name_class_get(Ecore_X_Window win, char **n, char **c);
 void             ecore_x_window_prop_protocol_set(Ecore_X_Window win, Ecore_X_WM_Protocol protocol, int on);
+int              ecore_x_window_prop_protocol_isset(Ecore_X_Window win, Ecore_X_WM_Protocol protocol);
 void             ecore_x_window_prop_sticky_set(Ecore_X_Window win, int on);
 int              ecore_x_window_prop_input_mode_set(Ecore_X_Window win, Ecore_X_Window_Input_Mode mode);
 void             ecore_x_window_prop_min_size_set(Ecore_X_Window win, int w, int h);
