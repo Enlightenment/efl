@@ -1,6 +1,6 @@
 # this is NOT relocatable, unless you alter the patch!
 %define	name	evas
-%define	ver	0.0.2
+%define	ver	0.0.3
 %define	rel	1
 %define prefix  /usr
 
