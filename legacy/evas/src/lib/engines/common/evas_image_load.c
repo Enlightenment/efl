@@ -850,7 +850,6 @@ evas_common_load_image_from_file(const char *file, const char *key)
 //	if (real_file) free(real_file);
 	return im;
      }
-   printf("@@@@@@@@@ IMAGE LOAD\n");
    im = evas_common_image_new();
    if (!im)
      {
