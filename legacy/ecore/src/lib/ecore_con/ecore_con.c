@@ -96,12 +96,13 @@ ecore_con_shutdown(void)
  * FIXME: To be fixed.
  */
 Ecore_Con_Server *
-ecore_con_server_add(Ecore_Con_Type type,
+ecore_con_server_add(Ecore_Con_Type compl_type,
 		     char *name,
 		     int port,
 		     const void *data)
 {
    Ecore_Con_Server   *svr;
+   Ecore_Con_Type      type;
    struct sockaddr_in  socket_addr;
    struct sockaddr_un  socket_unix;
    struct linger       lin;
@@ -114,6 +115,12 @@ ecore_con_server_add(Ecore_Con_Type type,
    svr = calloc(1, sizeof(Ecore_Con_Server));
    if (!svr) return NULL;
 
+   type = compl_type;
+#if USE_OPENSSL
+   /* unset the SSL flag for the following checks */
+   type &= ~ECORE_CON_USE_SSL;
+#endif
+   
    if ((type == ECORE_CON_LOCAL_USER) ||
        (type == ECORE_CON_LOCAL_SYSTEM))
      {
@@ -241,6 +248,20 @@ ecore_con_server_add(Ecore_Con_Type type,
 						    NULL, NULL);
 	if (!svr->fd_handler) goto error;
      }
+
+#if USE_OPENSSL
+   if (compl_type & ECORE_CON_USE_SSL)
+     {
+	/* SSLv3 gives *weird* results on my box, don't use it yet */
+	if (!(svr->ssl_ctx = SSL_CTX_new(SSLv2_client_method())))
+	  goto error;
+	
+	if (!(svr->ssl = SSL_new(svr->ssl_ctx)))
+	  goto error;
+	
+	SSL_set_fd(svr->ssl, svr->fd);
+     }
+#endif
    
    svr->name = strdup(name);
    if (!svr->name) goto error;
@@ -258,6 +279,10 @@ ecore_con_server_add(Ecore_Con_Type type,
    if (svr->fd >= 0) close(svr->fd);
    if (svr->fd_handler) ecore_main_fd_handler_del(svr->fd_handler);
    if (svr->write_buf) free(svr->write_buf);
+#if USE_OPENSSL
+   if (svr->ssl) SSL_free(svr->ssl);
+   if (svr->ssl_ctx) SSL_CTX_free(svr->ssl_ctx);
+#endif
    free(svr);
    return NULL;
 }
@@ -274,7 +299,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 			 const void *data)
 {
    Ecore_Con_Server   *svr;
-   Ecore_Con_Type      type = compl_type;
+   Ecore_Con_Type      type;
    struct sockaddr_un  socket_unix;
    struct sockaddr_in  socket_addr;
    int                 curstate = 0;
@@ -287,7 +312,8 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    /* remote system socket: TCP/IP: [name]:[port] */
    svr = calloc(1, sizeof(Ecore_Con_Server));
    if (!svr) return NULL;
-
+   
+   type = compl_type;
 #if USE_OPENSSL
    /* unset the SSL flag for the following checks */
    type &= ~ECORE_CON_USE_SSL;
@@ -306,12 +332,12 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 	     snprintf(buf, sizeof(buf), "%s/.ecore/%s/%i", homedir, name, port);
 	  }
 	else if (type == ECORE_CON_LOCAL_SYSTEM)
-     {
-        if (name[0] == '/')
-          snprintf(buf, sizeof(buf), "%s|%i", name, port);
-        else
+	  {
+	     if (name[0] == '/')
+	       snprintf(buf, sizeof(buf), "%s|%i", name, port);
+	     else
 	       snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s|%i", name, port);
-     }
+	  }
 	svr->fd = socket(AF_UNIX, SOCK_STREAM, 0);
 	if (svr->fd < 0) goto error;
 	if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
@@ -375,19 +401,19 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
      }
 
 #if USE_OPENSSL
-	if (compl_type & ECORE_CON_USE_SSL)
-	  {
-	    /* SSLv3 gives *weird* results on my box, don't use it yet */
-	    if (!(svr->ssl_ctx = SSL_CTX_new(SSLv2_client_method())))
-	       goto error;
-
-	    if (!(svr->ssl = SSL_new(svr->ssl_ctx)))
-	       goto error;
-
-	    SSL_set_fd(svr->ssl, svr->fd);
-	  }
+   if (compl_type & ECORE_CON_USE_SSL)
+     {
+	/* SSLv3 gives *weird* results on my box, don't use it yet */
+	if (!(svr->ssl_ctx = SSL_CTX_new(SSLv2_client_method())))
+	  goto error;
+	
+	if (!(svr->ssl = SSL_new(svr->ssl_ctx)))
+	  goto error;
+	
+	SSL_set_fd(svr->ssl, svr->fd);
+     }
 #endif
-
+   
    svr->name = strdup(name);
    if (!svr->name) goto error;
    svr->type = type;
@@ -629,11 +655,11 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
    if ((svr->created) && (svr->path)) unlink(svr->path);
    if (svr->fd >= 0) close(svr->fd);
 #if USE_OPENSSL
-   if (svr->ssl) {
-      SSL_shutdown(svr->ssl);
-      SSL_free(svr->ssl);
-   }
-
+   if (svr->ssl)
+     {
+	SSL_shutdown(svr->ssl);
+	SSL_free(svr->ssl);
+     }
    if (svr->ssl_ctx) SSL_CTX_free(svr->ssl_ctx);
 #endif
    if (svr->name) free(svr->name);
@@ -683,8 +709,8 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	cl->server = svr;
 	cl->fd_handler = ecore_main_fd_handler_add(cl->fd,
 						   ECORE_FD_READ,
-						   _ecore_con_svr_cl_handler, cl,
-						   NULL, NULL);
+						   _ecore_con_svr_cl_handler, 
+						   cl, NULL, NULL);
 	ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
 	svr->clients = _ecore_list_append(svr->clients, cl);
 	  {
@@ -703,76 +729,63 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler)
 }
 
 #if USE_OPENSSL
-/**
- * Tries to connect a Ecore_Con_Server using a SSL connection.
- *
- * @param svr
- * @return Boolean success or failure.
- */
-static int svr_try_connect_ssl(Ecore_Con_Server *svr)
+static int
+svr_try_connect_ssl(Ecore_Con_Server *svr)
 {
    int res, ssl_err, flag = 0;
-
-   assert(svr);
-   assert(svr->connecting);
-   assert(svr->ssl);
-
-   if ((res = SSL_connect(svr->ssl)) == 1)
-      return 1;
-
+   
+   res = SSL_connect(svr->ssl);
+   if ((res = SSL_connect(svr->ssl)) == 1) return 1;
    ssl_err = SSL_get_error(svr->ssl, res);
-   assert (ssl_err != SSL_ERROR_NONE);
-
-   if (ssl_err == SSL_ERROR_WANT_READ)
-      flag = ECORE_FD_READ;
-   else if (ssl_err == SSL_ERROR_WANT_WRITE)
-      flag = ECORE_FD_WRITE;
-
-   if (flag)
-      ecore_main_fd_handler_active_set(svr->fd_handler, flag);
-
+   
+   if (ssl_err == SSL_ERROR_NONE) return 1;
+   if (ssl_err == SSL_ERROR_WANT_READ)       flag = ECORE_FD_READ;
+   else if (ssl_err == SSL_ERROR_WANT_WRITE) flag = ECORE_FD_WRITE;
+   if (flag) ecore_main_fd_handler_active_set(svr->fd_handler, flag);
    return 0;
 }
 #endif
 
-static int svr_try_connect(Ecore_Con_Server *svr)
+static int
+svr_try_connect(Ecore_Con_Server *svr)
 {
    int so_err = 0, size = sizeof(int);
 
-   assert(svr);
-   assert(svr->connecting);
-
    if (getsockopt(svr->fd, SOL_SOCKET, SO_ERROR, &so_err, &size) < 0)
-      so_err = -1;
-
-   if (so_err != 0) { /* we lost our server! */
-      Ecore_Con_Event_Server_Del *e;
-		  
-      e = calloc(1, sizeof(Ecore_Con_Event_Server_Del));
-      if (e) {
-         e->server = svr;
-         ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e,
-                         _ecore_con_event_server_del_free, NULL);
-      }
-
-      svr->dead = 1;
-      ecore_main_fd_handler_del(svr->fd_handler);
-      svr->fd_handler = NULL;
-   } else { /* we got our server! */
-      Ecore_Con_Event_Server_Add *e;
-
-      svr->connecting = 0;
-      e = calloc(1, sizeof(Ecore_Con_Event_Server_Add));
-      if (e) {
-         e->server = svr;
-         ecore_event_add(ECORE_CON_EVENT_SERVER_ADD, e,
-                         _ecore_con_event_server_add_free, NULL);
-      }
-
-      if (!svr->write_buf)
-         ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
-   }
-
+     so_err = -1;
+   
+   if (so_err != 0)
+     {
+	/* we lost our server! */
+	Ecore_Con_Event_Server_Del *e;
+	
+	e = calloc(1, sizeof(Ecore_Con_Event_Server_Del));
+	if (e)
+	  {
+	     e->server = svr;
+	     ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e,
+			     _ecore_con_event_server_del_free, NULL);
+	  }
+	svr->dead = 1;
+	ecore_main_fd_handler_del(svr->fd_handler);
+	svr->fd_handler = NULL;
+     }
+   else
+     {
+	/* we got our server! */
+	Ecore_Con_Event_Server_Add *e;
+	
+	svr->connecting = 0;
+	e = calloc(1, sizeof(Ecore_Con_Event_Server_Add));
+	if (e)
+	  {
+	     e->server = svr;
+	     ecore_event_add(ECORE_CON_EVENT_SERVER_ADD, e,
+			     _ecore_con_event_server_add_free, NULL);
+	  }
+	if (!svr->write_buf)
+	  ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
+     }
    return (!svr->dead);
 }
 
@@ -782,7 +795,7 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 {
    Ecore_Con_Server   *svr;
 #if USE_OPENSSL
-	int ssl_err = SSL_ERROR_NONE;
+   int ssl_err = SSL_ERROR_NONE;
 #endif
    
    svr = data;
@@ -793,9 +806,11 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	int            inbuf_num = 0;
 
 #if USE_OPENSSL
-    if (svr->ssl && svr->connecting && svr_try_connect_ssl(svr) &&
-        !svr_try_connect(svr))
-       return 1;
+	if ((svr->ssl) && 
+	    (svr->connecting) && 
+	    (svr_try_connect_ssl(svr)) &&
+	    (!svr_try_connect(svr)))
+	  return 1;
 #endif
 	
 	for (;;)
@@ -803,22 +818,26 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	     int num, lost_server = 0;
 
 #if USE_OPENSSL
-	     if (!svr->ssl) {
+	     if (!svr->ssl)
+	       {
 #endif
-            if ((num = read(svr->fd, svr->read_buf, READBUFSIZ)) < 1)
-               lost_server = (errno == EIO || errno == EBADF ||
-                              errno == EPIPE || errno == EINVAL ||
-                              errno == ENOSPC || num == 0); /* is num == 0 right? */
+		  if ((num = read(svr->fd, svr->read_buf, READBUFSIZ)) < 1)
+		    lost_server = (errno == EIO || errno == EBADF ||
+				   errno == EPIPE || errno == EINVAL ||
+				   errno == ENOSPC || num == 0); /* is num == 0 right? */
 #if USE_OPENSSL
-		 } else {
-            num = SSL_read(svr->ssl, svr->read_buf, READBUFSIZ);
-
-            if (num < 1) {
-               ssl_err = SSL_get_error(svr->ssl, num);
-               lost_server = (ssl_err == SSL_ERROR_ZERO_RETURN);
-            } else
-               ssl_err = SSL_ERROR_NONE;
-         }
+	       }
+	     else
+	       {
+		  num = SSL_read(svr->ssl, svr->read_buf, READBUFSIZ);
+		  if (num < 1)
+		    {
+		       ssl_err = SSL_get_error(svr->ssl, num);
+		       lost_server = (ssl_err == SSL_ERROR_ZERO_RETURN);
+		    }
+		  else
+		    ssl_err = SSL_ERROR_NONE;
+	       }
 #endif
 	     if (num < 1)
 	       {
@@ -864,27 +883,30 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	  }
 
 #if USE_OPENSSL
-      if (svr->ssl && ssl_err == SSL_ERROR_WANT_READ)
-         ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
-      else if (svr->ssl && ssl_err == SSL_ERROR_WANT_WRITE)
-         ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE);
+	if (svr->ssl && ssl_err == SSL_ERROR_WANT_READ)
+	  ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ);
+	else if (svr->ssl && ssl_err == SSL_ERROR_WANT_WRITE)
+	  ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_WRITE);
 #endif
      }
-   else if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE)) {
-      if (svr->connecting) {
+   else if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
+     {
+	if (svr->connecting)
+	  {
 #if USE_OPENSSL
-         if (!svr->ssl) {
+	     if (!svr->ssl)
+	       {
 #endif
-            if (!svr_try_connect(svr))
-               return 1;
+		  if (!svr_try_connect(svr))
+		    return 1;
 #if USE_OPENSSL
-		 } else if (svr_try_connect_ssl(svr) && !svr_try_connect(svr))
-            return 1;
+	       }
+	     else if ((svr_try_connect_ssl(svr)) && (!svr_try_connect(svr)))
+	       return 1;
 #endif
-       }
-
-      _ecore_con_server_flush(svr);
-   }
+	  }
+	_ecore_con_server_flush(svr);
+     }
 
    return 1;
 }
@@ -931,6 +953,7 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 		       /* we lost our client! */
 		       Ecore_Con_Event_Client_Del *e;
 		       
+		       printf("read ERR\n", num);
 		       e = calloc(1, sizeof(Ecore_Con_Event_Client_Del));
 		       if (e)
 			 {
@@ -975,57 +998,61 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
       return;
    
    num = svr->write_buf_size - svr->write_buf_offset;
-
 #if USE_OPENSSL
-   if (!svr->ssl) {
+   if (!svr->ssl)
+     {
 #endif
-      count = write(svr->fd, svr->write_buf + svr->write_buf_offset, num);
-
-      if (count < 1)
-         lost_server = (errno == EIO || errno == EBADF ||
-                        errno == EPIPE || errno == EINVAL ||
-                        errno == ENOSPC);
+	count = write(svr->fd, svr->write_buf + svr->write_buf_offset, num);
+	if (count < 1)
+	  lost_server = (errno == EIO || errno == EBADF ||
+			 errno == EPIPE || errno == EINVAL ||
+			 errno == ENOSPC);
 #if USE_OPENSSL
-   } else {
-      count = SSL_write(svr->ssl, svr->write_buf + svr->write_buf_offset, num);
-
-      if (count < 1) {
-         ssl_err = SSL_get_error(svr->ssl, count);
-         lost_server = (ssl_err == SSL_ERROR_ZERO_RETURN);
-      }
-   }
+     }
+   else 
+     {
+	count = SSL_write(svr->ssl, svr->write_buf + svr->write_buf_offset, num);
+	
+	if (count < 1)
+	  {
+	     ssl_err = SSL_get_error(svr->ssl, count);
+	     lost_server = (ssl_err == SSL_ERROR_ZERO_RETURN);
+	  }
+     }
 #endif
 
-   if (lost_server) {
-      /* we lost our server! */
-	  Ecore_Con_Event_Server_Del *e;
-	     
-      e = calloc(1, sizeof(Ecore_Con_Event_Server_Del));
-	  if (e)
-      {
-         e->server = svr;
-         ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e,
-                         _ecore_con_event_server_del_free, NULL);
-      }
+   if (lost_server)
+     {
+	/* we lost our server! */
+	Ecore_Con_Event_Server_Del *e;
+	
+	e = calloc(1, sizeof(Ecore_Con_Event_Server_Del));
+	if (e)
+	  {
+	     e->server = svr;
+	     ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e,
+			     _ecore_con_event_server_del_free, NULL);
+	  }
+	
+	svr->dead = 1;
+	ecore_main_fd_handler_del(svr->fd_handler);
+	svr->fd_handler = NULL;
+	return;
+     }
 
-      svr->dead = 1;
-      ecore_main_fd_handler_del(svr->fd_handler);
-      svr->fd_handler = NULL;
-	  return;
-   }
-
-   if (count < 1) {
+   if (count < 1)
+     {
 #if USE_OPENSSL
-      if (svr->ssl && ssl_err == SSL_ERROR_WANT_READ)
-         ecore_main_fd_handler_active_set(svr->fd_handler,
-                                          ECORE_FD_READ);
-      else if (svr->ssl && ssl_err == SSL_ERROR_WANT_WRITE)
-         ecore_main_fd_handler_active_set(svr->fd_handler,
-                                          ECORE_FD_WRITE);
+	if (svr->ssl && ssl_err == SSL_ERROR_WANT_READ)
+	  ecore_main_fd_handler_active_set(svr->fd_handler,
+					   ECORE_FD_READ);
+	else if (svr->ssl && ssl_err == SSL_ERROR_WANT_WRITE)
+	  ecore_main_fd_handler_active_set(svr->fd_handler,
+					   ECORE_FD_WRITE);
 #endif
-      return;
-   }
-
+	return;
+     }
+   
    svr->write_buf_offset += count;
    if (svr->write_buf_offset >= svr->write_buf_size)
      {

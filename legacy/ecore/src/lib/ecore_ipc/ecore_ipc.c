@@ -570,7 +570,7 @@ _ecore_ipc_event_client_data(void *data, int ev_type, void *ev)
 				       _ecore_ipc_event_client_data_free, NULL);
 		    }
 		  offset += (sizeof(Ecore_Ipc_Msg_Head) + size);
-		  if (cl->buf_size - offset >= sizeof(Ecore_Ipc_Msg_Head))
+		  if ((cl->buf_size - offset) >= sizeof(Ecore_Ipc_Msg_Head))
 		    {
 		       msg = (Ecore_Ipc_Msg_Head *)(cl->buf + offset);
 		       major    = ntohl(msg->major);
@@ -580,7 +580,7 @@ _ecore_ipc_event_client_data(void *data, int ev_type, void *ev)
 		       response = ntohl(msg->response);
 		       size     = ntohl(msg->size);
 		       if (size < 0) size = 0;
-		       if (cl->buf_size - offset >= (sizeof(Ecore_Ipc_Msg_Head) + size))
+		       if ((cl->buf_size - offset) >= (sizeof(Ecore_Ipc_Msg_Head) + size))
 			 goto redo;
 		    }
 		  /* remove data from our buffer and "scoll" the rest down */
@@ -596,7 +596,7 @@ _ecore_ipc_event_client_data(void *data, int ev_type, void *ev)
 			    cl->buf_size = 0;
 			    return 0;
 			 }
-		       memcpy(buf, cl->buf + offset + sizeof(Ecore_Ipc_Msg_Head), size);
+		       memcpy(buf, cl->buf + offset, size);
 		       free(cl->buf);
 		       cl->buf = buf;
 		       cl->buf_size = size;
