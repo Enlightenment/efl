@@ -25,13 +25,11 @@
  * drag vals should be 0.0 -> 1.0 if drag is confined. "rest" pos = 0.0.
  * query dragable for its relative pos value
  * 
- * text and color classes need to work
+ * real part size and "before min/max limit" sizes need to be stored per part
+ * need to be able to calculate min & max size of a whole edje
  * 
  * named parts need to be able to be "replaced" with new evas objects
  * part replacement with object callbacks should be possible
- * 
- * real part size and "before min/max limit" sizes need to be stored per part
- * need to be able to calculate min & max size of a whole edje
  * 
  * need to be able to list collections in an eet file
  * 
@@ -42,52 +40,10 @@
  * need to detect clip_to part loops
  * need to detect confine_to part loops
  * 
- * edje_cc should be able to force lossy, lossless, min and max quality and compression of encoded images
- * edje_cc needs to prune out unused images
- * edje_cc might need an option for limiting number of tween images
- * 
- * audit edje for corrupt/bad input files
- * 
  * ? reduce linked list walking and list_nth calls
  * ? add containering (hbox, vbox, table, wrapping multi-line hbox & vbox)
  * ? add numeric params to conditions for progs (ranges etc.)
  * ? key/value pair config values per colelction and per edje file
- */
-
-  
-/* HOW THIS ALL WORKS:
- * -------------------
- * 
- * A part file contains:
- * a list of images stored
- * the images
- * a list of part collections
- * the part collections
- * 
- * A part collection contains:
- * a list of programs
- * a list of actions
- * a list of parts
- * 
- * when a signal is emitted and matches the conditionals of a program a
- * specific action is started. that action may affect one or more parts in
- * a part collection and may operate over a period of time. it may also
- * spawn another action when it is done (able to loop!) over a period of
- * time. A part is set into a certain state and the calculated outputs of the
- * staret and end state are mixed based on the kind of tweening and time. a
- * tween time of 0.0 = do it right away. an image_id list for tweening is
- * also able ot be provided and shoudl be run through over time during the
- * tween to the new state.
- * 
- * the signals that can be emitted are:
- * "mouse,down"
- * "mouse,up"
- * "mouse,in"
- * "mouse,out"
- * "mouse,move"
- * "drag,start"
- * "drag"
- * "drag,stop"
  */
 
 typedef struct _Edje_File                            Edje_File;
@@ -351,6 +307,8 @@ typedef struct _Edje_Calc_Params Edje_Calc_Params;
 typedef struct _Edje_Emission Edje_Emission;
 typedef struct _Edje_Pending_Program Edje_Pending_Program;
 typedef struct _Ejde_Text_Style Ejde_Text_Style;
+typedef struct _Ejde_Color_Class Ejde_Color_Class;
+typedef struct _Ejde_Text_Class Ejde_Text_Class;
 
 struct _Edje
 {
@@ -377,6 +335,8 @@ struct _Edje
    Evas_List            *actions; /* currently running actions */   
    Evas_List            *callbacks;
    Evas_List            *pending_actions;
+   Evas_List            *color_classes;
+   Evas_List            *text_classes;
    int                   freeze;
    int                   references;
 };
@@ -390,7 +350,6 @@ struct _Edje_Real_Part
    Evas_Object              *object;
    Evas_List                *extra_objects;
    unsigned char             calculated : 1;
-   unsigned char             dirty      : 1;
    unsigned char             still_in   : 1;
    int                       clicked_button;
    Edje_Part                *part;
@@ -484,6 +443,21 @@ struct _Ejde_Text_Style
    } members[32];
 };
 
+struct _Ejde_Color_Class
+{
+   char          *name;
+   unsigned char  r, g, b, a;
+   unsigned char  r2, g2, b2, a2;
+   unsigned char  r3, g3, b3, a3;
+};
+
+struct _Ejde_Text_Class
+{
+   char   *name;
+   char   *font;
+   double  size;
+};
+
 void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos);
 void  _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1, char *d2, double v2);
 void  _edje_recalc(Edje *ed);
@@ -522,10 +496,12 @@ void  _edje_text_part_on_add_clippers(Edje *ed, Edje_Real_Part *ep);
 void  _edje_text_part_on_del(Edje *ed, Edje_Real_Part *ep);
 void  _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *params, Edje_Part_Description *chosen_desc);
     
-Edje *_edje_fetch(Evas_Object *obj);
-int   _edje_glob_match(char *str, char *glob);
-int   _edje_freeze(Edje *ed);
-int   _edje_thaw(Edje *ed);
+Ejde_Color_Class *_edje_color_class_find(Edje *ed, char *color_class);
+Ejde_Text_Class  *_edje_text_class_find(Edje *ed, char *text_class);
+Edje             *_edje_fetch(Evas_Object *obj);
+int               _edje_glob_match(char *str, char *glob);
+int               _edje_freeze(Edje *ed);
+int               _edje_thaw(Edje *ed);
 
 
 extern Eet_Data_Descriptor *_edje_edd_edje_file;

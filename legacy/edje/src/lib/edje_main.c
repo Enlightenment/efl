@@ -48,6 +48,25 @@ _edje_del(Edje *ed)
 	free(escb->source);
 	free(escb);
      }
+   while (ed->color_classes)
+     {
+	Ejde_Color_Class *cc;
+	
+	cc = ed->color_classes->data;
+	ed->color_classes = evas_list_remove(ed->color_classes, cc);
+	if (cc->name) free(cc->name);
+	free(cc);
+     }
+   while (ed->text_classes)
+     {
+	Ejde_Text_Class *tc;
+	
+	tc = ed->text_classes->data;
+	ed->text_classes = evas_list_remove(ed->text_classes, tc);
+	if (tc->name) free(tc->name);
+	if (tc->font) free(tc->font);
+	free(tc);
+     }
    free(ed);
 }
 

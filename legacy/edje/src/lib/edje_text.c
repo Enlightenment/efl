@@ -238,10 +238,20 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    double  tw, th;
    double  ox, oy, sw, sh;
    char    *buf = NULL;
-   
+
    text = chosen_desc->text.text;
    font = chosen_desc->text.font;
    size = chosen_desc->text.size;
+   
+   if ((ep->part->text_class) && (strlen(ep->part->text_class) > 0))
+     {
+	Ejde_Text_Class *tc;
+	
+	tc = _edje_text_class_find(ed, ep->part->text_class);
+	if (tc->font) font = tc->font;
+	if (tc->size > 0) size = tc->size;
+     }
+   
    if (ep->text.text) text = ep->text.text;
    if (ep->text.font) font = ep->text.font;
    if (ep->text.size > 0) size = ep->text.size;

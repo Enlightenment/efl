@@ -35,7 +35,6 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos)
    ep->description_pos = npos;
    
    ed->dirty = 1;
-   ep->dirty = 1;
 }
 
 void
@@ -161,7 +160,6 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1,
      }
    
    ed->dirty = 1;
-   ep->dirty = 1;
 }
 
 void
@@ -335,6 +333,16 @@ _edje_part_recalc_single(Edje *ed,
 	text = chosen_desc->text.text;
 	font = chosen_desc->text.font;
 	size = chosen_desc->text.size;
+	
+	if ((ep->part->text_class) && (strlen(ep->part->text_class) > 0))
+	  {
+	     Ejde_Text_Class *tc;
+	     
+	     tc = _edje_text_class_find(ed, ep->part->text_class);
+	     if (tc->font) font = tc->font;
+	     if (tc->size > 0) size = tc->size;
+	  }
+	
 	if (ep->text.text) text = ep->text.text;
 	if (ep->text.font) font = ep->text.font;
 	if (ep->text.size > 0) size = ep->text.size;
@@ -558,6 +566,29 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
      }
    else
      p3 = p1;
+   
+   if ((ep->part->color_class) && (strlen(ep->part->color_class) > 0))
+     {
+	Ejde_Color_Class *cc;
+	
+	cc = _edje_color_class_find(ed, ep->part->color_class);
+	if (cc)
+	  {
+	     p3.color.r = (((int)cc->r + 1) * p3.color.r) >> 8;
+	     p3.color.g = (((int)cc->g + 1) * p3.color.g) >> 8;
+	     p3.color.b = (((int)cc->b + 1) * p3.color.b) >> 8;
+	     p3.color.a = (((int)cc->a + 1) * p3.color.a) >> 8;
+	     p3.color2.r = (((int)cc->r2 + 1) * p3.color2.r) >> 8;
+	     p3.color2.g = (((int)cc->g2 + 1) * p3.color2.g) >> 8;
+	     p3.color2.b = (((int)cc->b2 + 1) * p3.color2.b) >> 8;
+	     p3.color2.a = (((int)cc->a2 + 1) * p3.color2.a) >> 8;
+	     p3.color3.r = (((int)cc->r3 + 1) * p3.color3.r) >> 8;
+	     p3.color3.g = (((int)cc->g3 + 1) * p3.color3.g) >> 8;
+	     p3.color3.b = (((int)cc->b3 + 1) * p3.color3.b) >> 8;
+	     p3.color3.a = (((int)cc->a3 + 1) * p3.color3.a) >> 8;
+	  }
+     }
+   
    if (ep->part->type == EDJE_PART_TYPE_RECTANGLE)
      {
 	evas_object_move(ep->object, ed->x + p3.x, ed->y + p3.y);
@@ -616,5 +647,4 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
    ep->h = p3.h;
    
    ep->calculated = 1;
-   ep->dirty = 0;
 }

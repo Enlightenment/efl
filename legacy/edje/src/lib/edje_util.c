@@ -79,7 +79,6 @@ edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
 		  if (rp->text.text) free(rp->text.text);
 		  rp->text.text = strdup(text);
 		  ed->dirty = 1;
-		  rp->dirty = 1;
 		  _edje_recalc(ed);
 	       }
 	     return;
@@ -107,6 +106,174 @@ edje_object_part_text_get(Evas_Object *obj, const char *part)
 	     else
 	       return NULL;
 	  }
+     }
+   return NULL;
+}
+
+int
+edje_object_freeze(Evas_Object *obj)
+{
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
+   if (!ed) return 0;
+   return _edje_freeze(ed);
+}
+
+int
+edje_object_thaw(Evas_Object *obj)
+{
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
+   if (!ed) return 0;
+   return _edje_thaw(ed);
+}
+
+void
+edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
+{
+   Edje *ed;
+   Evas_List *l;
+   Ejde_Color_Class *cc;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!color_class)) return;
+   if (r < 0)   r = 0;
+   if (r > 255) r = 255;
+   if (g < 0)   g = 0;
+   if (g > 255) g = 255;
+   if (b < 0)   b = 0;
+   if (b > 255) b = 255;
+   if (a < 0)   a = 0;
+   if (a > 255) a = 255;
+   for (l = ed->color_classes; l; l = l->next)
+     {
+	cc = l->data;
+	if (!strcmp(cc->name, color_class))
+	  {
+	     if ((cc->r == r) && (cc->g == g) && 
+		 (cc->b == b) && (cc->a == a) &&
+		 (cc->r2 == r2) && (cc->g2 == g2) && 
+		 (cc->b2 == b2) && (cc->a2 == a2) &&
+		 (cc->r3 == r3) && (cc->g3 == g3) && 
+		 (cc->b3 == b3) && (cc->a3 == a3))
+	       return;
+	     cc->r = r;
+	     cc->g = g;
+	     cc->b = b;
+	     cc->a = a;
+	     cc->r2 = r2;
+	     cc->g2 = g2;
+	     cc->b2 = b2;
+	     cc->a2 = a2;
+	     cc->r3 = r3;
+	     cc->g3 = g3;
+	     cc->b3 = b3;
+	     cc->a3 = a3;
+	     ed->dirty = 1;
+	     _edje_recalc(ed);
+	     return;
+	  }
+     }
+   cc = malloc(sizeof(Ejde_Color_Class));
+   cc->name = strdup(color_class);
+   if (!cc->name)
+     {
+	free(cc);
+	return;
+     }
+   cc->r = r;
+   cc->g = g;
+   cc->b = b;
+   cc->a = a;
+   cc->r2 = r2;
+   cc->g2 = g2;
+   cc->b2 = b2;
+   cc->a2 = a2;
+   cc->r3 = r3;
+   cc->g3 = g3;
+   cc->b3 = b3;
+   cc->a3 = a3;
+   ed->color_classes = evas_list_append(ed->color_classes, cc);
+   ed->dirty = 1;
+   _edje_recalc(ed);
+}
+
+void
+edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char *font, double size)
+{
+   Edje *ed;
+   Evas_List *l;
+   Ejde_Text_Class *tc;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!text_class)) return;
+   if (size < 0.0) size = 0.0;
+   for (l = ed->text_classes; l; l = l->next)
+     {
+	tc = l->data;
+	if (!strcmp(tc->name, text_class))
+	  {
+	     if ((tc->font) && (font) && 
+		 (!strcmp(tc->font, font)) &&
+		 (tc->size == size))
+	       return;
+	     if ((!tc->font) && (!font) && 
+		 (tc->size == size))
+	       return;
+	     if (tc->font) free(tc->font);
+	     if (font) tc->font = strdup(font);
+	     else tc->font = NULL;
+	     tc->size = size;
+	     ed->dirty = 1;
+	     _edje_recalc(ed);
+	     return;
+	  }
+     }
+   tc = malloc(sizeof(Ejde_Text_Class));
+   tc->name = strdup(text_class);
+   if (!tc->name)
+     {
+	free(tc);
+	return;
+     }
+   if (font) tc->font = strdup(font);
+   else tc->font = NULL;
+   tc->size = size;
+   ed->text_classes = evas_list_append(ed->text_classes, tc);
+   ed->dirty = 1;
+   _edje_recalc(ed);
+}
+
+Ejde_Color_Class *
+_edje_color_class_find(Edje *ed, char *color_class)
+{
+   Evas_List *l;
+   
+   if (!color_class) return NULL;
+   for (l = ed->color_classes; l; l = l->next)
+     {
+	Ejde_Color_Class *cc;
+	
+	cc = l->data;
+	if (!strcmp(color_class, cc->name)) return cc;
+     }
+   return NULL;
+}
+
+Ejde_Text_Class *
+_edje_text_class_find(Edje *ed, char *text_class)
+{
+   Evas_List *l;
+   
+   if (!text_class) return NULL;
+   for (l = ed->text_classes; l; l = l->next)
+     {
+	Ejde_Text_Class *tc;
+	
+	tc = l->data;
+	if (!strcmp(text_class, tc->name)) return tc;
      }
    return NULL;
 }
