@@ -33,7 +33,7 @@ Requires: evas-devel eet-devel
 Ecore development files
 
 %prep
-%setup -q -n %{name}-%{version}_pre7
+%setup -q -n %{name}-%{version}
 
 %build
 CFLAGS="-I/usr/kerberos/include -I/usr/X11R6/include/X11/extensions"
