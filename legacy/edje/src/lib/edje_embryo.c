@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=3:noexpandtab
+ */
+
 #include "Edje.h"
 #include "edje_private.h"
 
@@ -95,18 +99,19 @@
  * set_min_size(w, h)
  * set_max_size(w, h)
  * send_message(Msg_Type:type, id, ...)
- * 
+ *
+ * count(id)
+ * remove(id, n)
+ *
+ * append_int(id, v)
+ * prepend_int(id, v)
+ * insert_int(id, v, n)
+ * fetch_int(id, n)
+ *
  * still need to implement this:
  *
  * ######## lists/arrays for stored variables (to be implemented)
- * # count(id)
- * # remove(id, n)
- * #
- * # append_int(id, v)
- * # prepend_int(id, v)
- * # insert_int(id, v, n)
  * # replace_int(id, v, n)
- * # fetch_int(id, n)
  * #
  * # append_float(id, Float:v)
  * # prepend_float(id, Float:v)
@@ -325,6 +330,82 @@ _edje_embryo_fn_set_str(Embryo_Program *ep, Embryo_Cell *params)
 	_edje_var_str_set(ed, (int)params[1], s);
      }
    return 0;
+}
+
+/* count(id) */
+static Embryo_Cell
+_edje_embryo_fn_count(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+
+   CHKPARAM(1);
+
+   return (Embryo_Cell) _edje_var_list_count_get(ed, (int) params[1]);
+}
+
+/* remove(id, n) */
+static Embryo_Cell
+_edje_embryo_fn_remove(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+
+   CHKPARAM(2);
+
+   _edje_var_list_remove_nth(ed, (int) params[1], (int) params[2]);
+
+   return 0;
+}
+
+/* append_int(id, var) */
+static Embryo_Cell
+_edje_embryo_fn_append_int(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+
+   CHKPARAM(2);
+
+   _edje_var_list_int_append(ed, (int) params[1], (int) params[2]);
+
+   return 0;
+}
+
+/* prepend_int(id, var) */
+static Embryo_Cell
+_edje_embryo_fn_prepend_int(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+
+   CHKPARAM(2);
+
+   _edje_var_list_int_prepend(ed, (int) params[1], (int) params[2]);
+
+   return 0;
+}
+
+/* insert_int(id, pos, var) */
+static Embryo_Cell
+_edje_embryo_fn_insert_int(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+
+   CHKPARAM(3);
+
+   _edje_var_list_int_insert(ed, (int) params[1], (int) params[2],
+                             (int) params[3]);
+
+   return 0;
+}
+
+/* fetch_int(id, pos) */
+static Embryo_Cell
+_edje_embryo_fn_fetch_int(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+
+   CHKPARAM(2);
+
+   return _edje_var_list_nth_int_get(ed, (int) params[1],
+                                     (int) params[2]);
 }
 
 /* timer(Float:in, fname[], val) */
@@ -1168,6 +1249,12 @@ _edje_embryo_script_init(Edje *ed)
    embryo_program_native_call_add(ep, "get_str", _edje_embryo_fn_get_str);
    embryo_program_native_call_add(ep, "get_strlen", _edje_embryo_fn_get_strlen);
    embryo_program_native_call_add(ep, "set_str", _edje_embryo_fn_set_str);
+   embryo_program_native_call_add(ep, "count", _edje_embryo_fn_count);
+   embryo_program_native_call_add(ep, "remove", _edje_embryo_fn_remove);
+   embryo_program_native_call_add(ep, "append_int", _edje_embryo_fn_append_int);
+   embryo_program_native_call_add(ep, "prepend_int", _edje_embryo_fn_prepend_int);
+   embryo_program_native_call_add(ep, "insert_int", _edje_embryo_fn_insert_int);
+   embryo_program_native_call_add(ep, "fetch_int", _edje_embryo_fn_fetch_int);
 
    embryo_program_native_call_add(ep, "timer", _edje_embryo_fn_timer);
    embryo_program_native_call_add(ep, "cancel_timer", _edje_embryo_fn_cancel_timer);

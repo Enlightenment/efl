@@ -35,6 +35,16 @@ native       get_str   (id, dst[], maxlen);
 native       set_str   (id, str[]);
 
 /********************/
+/* Edje list calls */
+/********************/
+native       count      (id);
+native       remove     (id, n);
+native       append_int (id, v);
+native       prepend_int(id, v);
+native       insert_int (id, pos, v);
+native       fetch_int  (id, pos);
+
+/********************/
 /* Edje timer calls */
 /********************/
 native       timer       (Float:in, fname[], val);
