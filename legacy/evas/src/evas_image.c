@@ -235,8 +235,8 @@ evas_get_image_alpha(Evas e, Evas_Object o)
 {
    Evas_Object_Image oo;
    
-   if (!e) return;
-   if (!o) return;
+   if (!e) return 0;
+   if (!o) return 0;
    IF_OBJ(o, OBJECT_IMAGE) return 0;
    oo = o;
    return oo->current.alpha;
@@ -296,9 +296,9 @@ evas_get_image_load_error(Evas e, Evas_Object o)
 {
    Evas_Object_Image oo;
    
-   if (!e) return;
-   if (!o) return;
-   IF_OBJ(o, OBJECT_IMAGE) return;
+   if (!e) return IMLIB_LOAD_ERROR_NONE;
+   if (!o) return IMLIB_LOAD_ERROR_NONE;
+   IF_OBJ(o, OBJECT_IMAGE) return IMLIB_LOAD_ERROR_NONE;
    oo = o;
    
    return oo->load_error;

@@ -14,7 +14,6 @@ typedef struct _Evas_Object_Any *          Evas_Object_Any;
 typedef struct _Evas_Render_Data           Evas_Render_Data;
 typedef struct _Evas_Data *                Evas_Data;
 typedef struct _Evas_Layer *               Evas_Layer;
-typedef struct _Evas_Point *               Evas_Point;
 typedef struct _Evas_Color_Point *         Evas_Color_Point;
 typedef struct _Evas_Callback *            Evas_Callback;
 typedef struct _Evas_Rectangle *           Evas_Rectangle;
@@ -113,11 +112,6 @@ struct _Evas
    Evas_List     layers;
    Imlib_Updates updates;
    Imlib_Updates obscures;
-};
-
-struct _Evas_Point
-{
-   double x, y;
 };
 
 struct _Evas_Color_Point

@@ -83,6 +83,7 @@ evas_add_poly(Evas e)
 }
 
 /* modifying object */
+void
 evas_clear_points(Evas e, Evas_Object o)
 {
    Evas_Point p;

@@ -218,7 +218,7 @@ evas_get_text_size(Evas e, Evas_Object o)
    return oo->current.size;
 }
 
-int
+double
 evas_get_text_height(Evas e, Evas_Object o)
 {
    Evas_Object_Text oo;
@@ -228,10 +228,10 @@ evas_get_text_height(Evas e, Evas_Object o)
    IF_OBJ(o, OBJECT_TEXT) return 0;
    oo = o;
 
-   return oo->current.string.h;
+   return (double)oo->current.string.h;
 }
 
-int
+double
 evas_get_text_width(Evas e, Evas_Object o)
 {
    Evas_Object_Text oo;
@@ -241,14 +241,15 @@ evas_get_text_width(Evas e, Evas_Object o)
    IF_OBJ(o, OBJECT_TEXT) return 0;
    oo = o;
 
-   return oo->current.string.w;
+   return (double)oo->current.string.w;
 }
 
 int
 evas_text_at_position(Evas e, Evas_Object o, double x, double y, 
-		      int *char_x, int *char_y, int *char_w, int *char_h)
+		      double *char_x, double *char_y, double *char_w, double *char_h)
 {
    Evas_Object_Text oo;
+   int cx, cy, cw, ch;
    
    if (!e) return -1;
    if (!o) return -1;
@@ -267,8 +268,11 @@ evas_text_at_position(Evas e, Evas_Object o, double x, double y,
 		  ret =  __evas_imlib_text_get_character_at_pos(fn, oo->current.text,
 								(int)(x - o->current.x),
 								(int)(y - o->current.y),
-								char_x, char_y, 
-								char_w, char_h);
+								&cx, &cy, &cw, &ch);
+		  if (char_x) *char_x = (double)cx;
+		  if (char_y) *char_y = (double)cy;
+		  if (char_w) *char_w = (double)cw;
+		  if (char_h) *char_h = (double)ch;
 		  __evas_imlib_text_font_free(fn);
 		  return ret;
 	       }
@@ -285,8 +289,11 @@ evas_text_at_position(Evas e, Evas_Object o, double x, double y,
 		  ret =  __evas_x11_text_get_character_at_pos(fn, oo->current.text,
 							      (int)(x - o->current.x),
 							      (int)(y - o->current.y),
-							      char_x, char_y, 
-							      char_w, char_h);
+							      &cx, &cy, &cw, &ch);
+		  if (char_x) *char_x = (double)cx;
+		  if (char_y) *char_y = (double)cy;
+		  if (char_w) *char_w = (double)cw;
+		  if (char_h) *char_h = (double)ch;
 		  __evas_x11_text_font_free(fn);
 		  return ret;
 	       }
@@ -303,8 +310,11 @@ evas_text_at_position(Evas e, Evas_Object o, double x, double y,
 		  ret =  __evas_gl_text_get_character_at_pos(fn, oo->current.text,
 							     (int)(x - o->current.x),
 							     (int)(y - o->current.y),
-							     char_x, char_y, 
-							     char_w, char_h);
+							     &cx, &cy, &cw, &ch);
+		  if (char_x) *char_x = (double)cx;
+		  if (char_y) *char_y = (double)cy;
+		  if (char_w) *char_w = (double)cw;
+		  if (char_h) *char_h = (double)ch;
 		  __evas_gl_text_font_free(fn);
 		  return ret;
 	       }
@@ -321,8 +331,11 @@ evas_text_at_position(Evas e, Evas_Object o, double x, double y,
 		  ret =  __evas_render_text_get_character_at_pos(fn, oo->current.text,
 							     (int)(x - o->current.x),
 							     (int)(y - o->current.y),
-							     char_x, char_y, 
-							     char_w, char_h);
+							     &cx, &cy, &cw, &ch);
+		  if (char_x) *char_x = (double)cx;
+		  if (char_y) *char_y = (double)cy;
+		  if (char_w) *char_w = (double)cw;
+		  if (char_h) *char_h = (double)ch;
 		  __evas_gl_text_font_free(fn);
 		  return ret;
 	       }
@@ -339,8 +352,11 @@ evas_text_at_position(Evas e, Evas_Object o, double x, double y,
 		  ret =  __evas_image_text_get_character_at_pos(fn, oo->current.text,
 								(int)(x - o->current.x),
 								(int)(y - o->current.y),
-								char_x, char_y, 
-								char_w, char_h);
+								&cx, &cy, &cw, &ch);
+		  if (char_x) *char_x = (double)cx;
+		  if (char_y) *char_y = (double)cy;
+		  if (char_w) *char_w = (double)cw;
+		  if (char_h) *char_h = (double)ch;
 		  __evas_image_text_font_free(fn);
 		  return ret;
 	       }
@@ -354,9 +370,10 @@ evas_text_at_position(Evas e, Evas_Object o, double x, double y,
 
 void
 evas_text_at(Evas e, Evas_Object o, int index, 
-	     int *char_x, int *char_y, int *char_w, int *char_h)
+	     double *char_x, double *char_y, double *char_w, double *char_h)
 {
    Evas_Object_Text oo;
+   int cx, cy, cw, ch;
    
    if (!e) return;
    if (!o) return;
@@ -373,8 +390,11 @@ evas_text_at(Evas e, Evas_Object o, int index,
 	       {
 		  __evas_imlib_text_get_character_number(fn, oo->current.text,
 							 index,
-							 char_x, char_y, 
-							 char_w, char_h);
+							 &cx, &cy, &cw, &ch);
+		  if (char_x) *char_x = (double)cx;
+		  if (char_y) *char_y = (double)cy;
+		  if (char_w) *char_w = (double)cw;
+		  if (char_h) *char_h = (double)ch;
 		  __evas_imlib_text_font_free(fn);
 	       }
 	  }
@@ -388,8 +408,11 @@ evas_text_at(Evas e, Evas_Object o, int index,
 	       {
 		  __evas_x11_text_get_character_number(fn, oo->current.text,
 						       index,
-						       char_x, char_y, 
-						       char_w, char_h);
+						       &cx, &cy, &cw, &ch);
+		  if (char_x) *char_x = (double)cx;
+		  if (char_y) *char_y = (double)cy;
+		  if (char_w) *char_w = (double)cw;
+		  if (char_h) *char_h = (double)ch;
 		  __evas_x11_text_font_free(fn);
 	       }
 	  }
@@ -403,8 +426,11 @@ evas_text_at(Evas e, Evas_Object o, int index,
 	       {
 		  __evas_gl_text_get_character_number(fn, oo->current.text,
 						      index,
-						      char_x, char_y, 
-						      char_w, char_h);
+						      &cx, &cy, &cw, &ch);
+		  if (char_x) *char_x = (double)cx;
+		  if (char_y) *char_y = (double)cy;
+		  if (char_w) *char_w = (double)cw;
+		  if (char_h) *char_h = (double)ch;
 		  __evas_gl_text_font_free(fn);
 	       }
 	  }
@@ -417,9 +443,12 @@ evas_text_at(Evas e, Evas_Object o, int index,
 	     if (fn)
 	       {
 		  __evas_render_text_get_character_number(fn, oo->current.text,
-						      index,
-						      char_x, char_y, 
-						      char_w, char_h);
+							  index,
+							  &cx, &cy, &cw, &ch);
+		  if (char_x) *char_x = (double)cx;
+		  if (char_y) *char_y = (double)cy;
+		  if (char_w) *char_w = (double)cw;
+		  if (char_h) *char_h = (double)ch;
 		  __evas_render_text_font_free(fn);
 	       }
 	  }
@@ -433,8 +462,11 @@ evas_text_at(Evas e, Evas_Object o, int index,
 	       {
 		  __evas_image_text_get_character_number(fn, oo->current.text,
 							 index,
-							 char_x, char_y, 
-							 char_w, char_h);
+							 &cx, &cy, &cw, &ch);
+		  if (char_x) *char_x = (double)cx;
+		  if (char_y) *char_y = (double)cy;
+		  if (char_w) *char_w = (double)cw;
+		  if (char_h) *char_h = (double)ch;
 		  __evas_image_text_font_free(fn);
 	       }
 	  }

@@ -11,8 +11,14 @@ typedef void *                             Evas_Gradient;
 typedef void *                             Evas_Object;
 #endif
 typedef struct _Evas_List *                Evas_List;
+typedef struct _Evas_Point *               Evas_Point;
 
 /* public structs */
+struct _Evas_Point
+{
+   double x, y;
+};
+
 struct _Evas_List 
 {
    Evas_List  prev, next;
@@ -134,7 +140,8 @@ void evas_set_zoom_scale(Evas e, Evas_Object o, int scale);
 void evas_set_line_xy(Evas e, Evas_Object o, double x1, double y1, double x2, double y2);
 void evas_set_pass_events(Evas e, Evas_Object o, int pass_events);
 void evas_add_point(Evas e, Evas_Object o, double x, double y);
-      
+void evas_clear_points(Evas e, Evas_Object o);
+       
 /* cache settings for performance */
 void evas_set_font_cache(Evas e, int size);
 int  evas_get_font_cache(Evas e);
@@ -177,7 +184,7 @@ Evas_Object evas_object_get_named(Evas e, char *name);
 void evas_object_set_name(Evas e, Evas_Object o, char *name);   
 char *evas_object_get_name(Evas e, Evas_Object o);
 Evas_List evas_get_points(Evas e, Evas_Object o);
-	 
+
 /* object visibility */
 void evas_show(Evas e, Evas_Object o);
 void evas_hide(Evas e, Evas_Object o);
@@ -198,10 +205,10 @@ double evas_screen_y_to_world(Evas e, int y);
 char  *evas_get_text_string(Evas e, Evas_Object o);
 char  *evas_get_text_font(Evas e, Evas_Object o);
 int    evas_get_text_size(Evas e, Evas_Object o);
-int    evas_get_text_width(Evas e, Evas_Object o);
-int    evas_get_text_height(Evas e, Evas_Object o);
-int    evas_text_at_position(Evas e, Evas_Object o, double x, double y, int *char_x, int *char_y, int *char_w, int *char_h);
-void   evas_text_at(Evas e, Evas_Object o, int index, int *char_x, int *char_y, int *char_w, int *char_h);
+double evas_get_text_width(Evas e, Evas_Object o);
+double evas_get_text_height(Evas e, Evas_Object o);
+int    evas_text_at_position(Evas e, Evas_Object o, double x, double y, double *char_x, double *char_y, double *char_w, double *char_h);
+void   evas_text_at(Evas e, Evas_Object o, int index, double *char_x, double *char_y, double *char_w, double *char_h);
 void   evas_text_get_ascent_descent(Evas e, Evas_Object o, double *ascent, double *descent);
 void   evas_text_get_max_ascent_descent(Evas e, Evas_Object o, double *ascent, double *descent);
 void   evas_text_get_advance(Evas e, Evas_Object o, double *h_advance, double *v_advance);
@@ -217,7 +224,6 @@ void *evas_get_data(Evas e, Evas_Object o, char *key);
 void *evas_remove_data(Evas e, Evas_Object o, char *key);
 	 
 /* events */
-void evas_ungrab_button(Evas e);
 void evas_event_button_down(Evas e, int x, int y, int b);
 void evas_event_button_up(Evas e, int x, int y, int b);
 void evas_event_move(Evas e, int x, int y);

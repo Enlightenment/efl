@@ -25,14 +25,6 @@ _evas_objects_at_point(Evas e, int x, int y)
    return evas_objects_at_position(e, cx, cy);
 }	 
 
-void
-evas_ungrab_button(Evas e)
-{
-   if (e->mouse.button_object)
-      e->mouse.button_object = NULL;
-   e->mouse.buttons = 0;
-}
-
 /* events */
 void
 evas_event_button_down(Evas e, int x, int y, int b)
