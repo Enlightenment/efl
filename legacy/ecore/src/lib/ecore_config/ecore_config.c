@@ -1534,7 +1534,7 @@ ecore_config_system_shutdown(void)
    int                 ret;
 
    __ecore_config_system_init--;
-   if (__ecore_config_system_init > 1)
+   if (__ecore_config_system_init > 0)
       return ECORE_CONFIG_ERR_IGNORED;
 
    ret = _ecore_config_ipc_exit();
