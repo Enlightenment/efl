@@ -52,7 +52,7 @@ char *_ecore_config_ipc_global_prop_list(Ecore_Config_Server *srv, const long se
   int            key_count, x;
   estring       *s;
   int            f;
-  char          *buf, *p, *type;
+  char          *buf, *p, *type, *data;
 
   s=estring_new(8192);
   f=0;
@@ -73,8 +73,24 @@ char *_ecore_config_ipc_global_prop_list(Ecore_Config_Server *srv, const long se
     type = e_db_type_get(db, keys[x]);
     if (!type) type = "?";
 
-    estring_appendf(s,"%s%s: %s",f?"\n":"",keys[x],ecore_config_edb_to_ecore_config_type(type));
-
+    if (!strcmp(type, "int"))
+      estring_appendf(s,"%s%s: integer",f?"\n":"",keys[x]);
+    else if (!strcmp(type, "float"))
+      estring_appendf(s,"%s%s: float",f?"\n":"",keys[x]);
+    else if (!strcmp(type, "str")) {
+      data = e_db_str_get(db, keys[x]);
+      if (data) {
+        if (ecore_config_guess_type(data)==PT_RGB)
+          estring_appendf(s,"%s%s: colour",f?"\n":"",keys[x]);
+        else
+          estring_appendf(s,"%s%s: string",f?"\n":"",keys[x]);
+        free(data);
+      } else {
+        estring_appendf(s,"%s%s: string",f?"\n":"",keys[x]);
+      }
+    } else
+      estring_appendf(s,"%s%s: unknown",f?"\n":"",keys[x]);
+       
     if (type) free(type);
     f=1;
   }
