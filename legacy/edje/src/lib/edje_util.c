@@ -71,8 +71,7 @@ edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
 	  {
 	     if (rp->part->type == EDJE_PART_TYPE_TEXT)
 	       {
-		  if (((rp->text.text) && (text)) ||
-		      ((!rp->text.text) && (!text)))
+		  if ((!rp->text.text) && (!text))
 		    return;
 		  if ((rp->text.text) && (text) && 
 		      (!strcmp(rp->text.text, text)))
