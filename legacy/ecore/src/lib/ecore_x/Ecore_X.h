@@ -777,6 +777,7 @@ void             ecore_x_window_prop_borderless_set(Ecore_X_Window win, int bord
 int              ecore_x_window_prop_layer_set(Ecore_X_Window win, int layer);
 void             ecore_x_window_prop_withdrawn_set(Ecore_X_Window win, int withdrawn);
 void             ecore_x_window_prop_desktop_request(Ecore_X_Window win, long desktop);
+void             ecore_x_window_prop_state_request(Ecore_X_Window win, Ecore_X_Window_State state, int action);
 void             ecore_x_window_prop_desktop_set(Ecore_X_Window win, long desktop);
 long             ecore_x_window_prop_desktop_get(Ecore_X_Window win);
 /* API Change: use enum Ecore_X_Window_Type instead */
