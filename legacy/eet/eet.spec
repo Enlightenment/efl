@@ -72,12 +72,14 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%attr(755,root,root) %{prefix}/lib/libeet.so*
-%attr(755,root,root) %{prefix}/lib/libeet.la
+%attr(755,root,root) %{prefix}/lib/libeet.so.*
+%{prefix}/lib/libeet.la
+%attr(755,root,root) %{prefix}/bin/eet
 
 %files devel
+%attr(755,root,root) %{prefix}/lib/libeet.so
 %attr(755,root,root) %{prefix}/lib/libeet.a
-%attr(755,root,root) %{prefix}/bin/eet*
+%attr(755,root,root) %{prefix}/bin/eet-config
 %{prefix}/include/Eet*
 %doc AUTHORS
 %doc COPYING

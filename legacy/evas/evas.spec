@@ -99,16 +99,16 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%attr(755,root,root) %{prefix}/lib/libevas.so*
-%attr(755,root,root) %{prefix}/lib/libevas.la
+%attr(755,root,root) %{prefix}/lib/libevas.so.*
+%{prefix}/lib/libevas.la
 %attr(755,root,root) %{prefix}/bin/evas_*
-%attr(755,root,root) %{prefix}/share/evas
+%{prefix}/share/evas
 
 %files devel
+%attr(755,root,root) %{prefix}/lib/libevas.so
 %attr(755,root,root) %{prefix}/lib/libevas.a
 %attr(755,root,root) %{prefix}/bin/evas-config
 %{prefix}/include/Evas*
-%{prefix}/share/*
 %doc AUTHORS
 %doc COPYING
 %doc README
