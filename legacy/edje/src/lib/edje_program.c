@@ -665,7 +665,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, char *ssig, char *ssrc)
 		  if ((rp) && (rp->drag.down.count == 0))
 		    {
 		       rp->drag.val.x += pr->value * rp->drag.page.x * rp->part->dragable.x;
-		       rp->drag.val.y += pr->value2 * rp->drag.step.y * rp->part->dragable.y;
+		       rp->drag.val.y += pr->value2 * rp->drag.page.y * rp->part->dragable.y;
 		       if      (rp->drag.val.x < 0.0) rp->drag.val.x = 0.0;
 		       else if (rp->drag.val.x > 1.0) rp->drag.val.x = 1.0;
 		       if      (rp->drag.val.y < 0.0) rp->drag.val.y = 0.0;
