@@ -31,5 +31,5 @@ dist-hook:
 bin_SCRIPTS = edje-config
 
 EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN edje.spec edje.c.in gendoc Doxyfile edje_docs.tar.gz \
-make_cross_compile_arm.sh conf-e-x11.sh
+make_cross_compile_arm.sh
 
