@@ -212,22 +212,29 @@ evas_common_font_utf8_get_prev(unsigned char *buf, int *iindex)
 	r <<= 6;
 	r |= (d4 & 0x3f);	
      }
-   index = istart - 1;
-   d = buf[index];
-   if (!(d & 0x80))
-     *iindex = index;
-   else
+   if (istart > 0)
      {
-	while (index > 0)
+	index = istart - 1;
+	d = buf[index];
+	if (!(d & 0x80))
+	  *iindex = index;
+	else
 	  {
-	     index--;
-	     d = buf[index];
-	     if ((d & 0xc0) != 0x80)
+	     while (index > 0)
 	       {
-		  *iindex = index;
-		  return r;
+		  index--;
+		  d = buf[index];
+		  if ((d & 0xc0) != 0x80)
+		    {
+		       *iindex = index;
+		       return r;
+		    }
 	       }
 	  }
+     }
+   else
+     {
+	*iindex = -1;
      }
    return r;
 }

@@ -10,14 +10,12 @@
  * 
  * things to add:
  * 
- * * left and right margins
  * * anchors (for inline objects other than text - images etc.) - variable size ones too
  * * if a word (or char) doesnt fit at all do something sensible
- * * freeze thaw api
  * 
  * tough ones:
- * * directly accessible text spans (so you can track where that span is, how big it is after many inserts/deletes) and modify its formatting etc.
  * * overflow objects (overflow from this textblock can go into another)
+ * * directly accessible text spans (so you can track where that span is, how big it is after many inserts/deletes) and modify its formatting etc.
  * * on change figure out what node the change is in and figure out what line (nodes) it affects and only modify those nodes on that line or maybe others until changes dont happen further down
  * * obstacle objects to wrap around
  * * kerning control
@@ -97,6 +95,10 @@ struct _Layout
 	                advance;
    } line;
    double               align, valign;
+   struct {
+      int               l, r;
+      double            lf, rf;
+   } margin;
    unsigned char        style;
    
    unsigned char        word_wrap : 1;
@@ -201,6 +203,10 @@ evas_object_textblock_layout_init(Layout *layout)
    layout->line.advance = 0;
    layout->align = 0.0;
    layout->valign = -1.0;
+   layout->margin.l = 0;
+   layout->margin.lf = -1.0;
+   layout->margin.r = 0;
+   layout->margin.rf = -1.0;
    layout->style = STYLE_PLAIN;
    layout->word_wrap = 0;
    layout->underline = 0;
@@ -473,11 +479,12 @@ evas_object_textblock_layout_format_apply(Layout *layout, Layout_Command *comman
 	else layout->style = STYLE_PLAIN;
      }
    /* FIXME: finish off left and right margins */
-   else if (!strcmp(key, "leftmargin"))
+   else if (!strcmp(key, "left_margin"))
      {
 	if (!strcmp(data, "off"))
 	  {
-	     
+	     layout->margin.l = 0;
+	     layout->margin.lf = -1.0;
 	  }
 	else
 	  {
@@ -494,23 +501,59 @@ evas_object_textblock_layout_format_apply(Layout *layout, Layout_Command *comman
 		    {
 		       len = strlen(num);
 		       if (len > 0) num[len - 1] = 0;
+		       layout->margin.lf = atof(num) / 100.0;
+		       if (layout->margin.lf > 1.0) layout->margin.lf = -1.0;
+		       if (layout->margin.lf < 0.0) layout->margin.lf = -1.0;
+		       layout->margin.l = 0;
 		    }
 		  else
 		    {
+		       layout->margin.l = atoi(num);
+		       if (layout->margin.l < 0) layout->margin.l = 0;
+		       layout->margin.lf = -1.0;
 		    }
 		  free(num);
 	       }
 	  }
      }
-   else if (!strcmp(key, "rightmargin"))
+   else if (!strcmp(key, "right_margin"))
      {
 	if (!strcmp(data, "off"))
-	  layout->backing = 0;
+	  {
+	     layout->margin.l = 0;
+	     layout->margin.lf = -1.0;
+	  }
 	else
 	  {
+	     int len;
+	     
+	     len = strlen(data);
+	     if (len > 0)
+	       {
+		  char lastchar, *num = NULL;
+		  
+		  lastchar = data[len - 1];
+		  num = strdup(data);
+		  if (lastchar == '%')
+		    {
+		       len = strlen(num);
+		       if (len > 0) num[len - 1] = 0;
+		       layout->margin.lf = atof(num) / 100.0;
+		       if (layout->margin.rf > 1.0) layout->margin.rf = -1.0;
+		       if (layout->margin.rf < 0.0) layout->margin.rf = -1.0;
+		       layout->margin.r = 0;
+		    }
+		  else
+		    {
+		       layout->margin.r = atoi(num);
+		       if (layout->margin.r < 0) layout->margin.r = 0;
+		       layout->margin.rf = -1.0;
+		    }
+		  free(num);
+	       }
 	  }
      }
-   else if (!strcmp(key, "tabstop"))
+   else if (!strcmp(key, "left_tab_stop"))
      {
 	int len;
 	
@@ -583,7 +626,7 @@ evas_object_textblock_layout_format_apply(Layout *layout, Layout_Command *comman
 	     command->commands = evas_object_list_append(command->commands, cmd);
 	  }
      }
-   else if (!strcmp(key, "righttabstop"))
+   else if (!strcmp(key, "right_tab_stop"))
      {
 	int len;
 	
@@ -913,6 +956,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
    int text_pos = 0, fw = 0, fh = 0, last_mdescent = 0, line = 0, last_line = 0;
    int last_line_underline = 0, last_line_double_underline = 0;
    int pad_l = 0, pad_r = 0, pad_t = 0, pad_b = 0;
+   int marginl = 0, marginr = 0;
    int ww, hh;
    
    o = (Evas_Object_Textblock *)(obj->object_data);
@@ -1054,14 +1098,16 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		  lnode->line = line;
 		  lnode->text_pos = text_pos;	
 		  last_line = line;
-		  if (lnode->layout.font.name)
-		    layout.font.font = evas_font_load(obj->layer->evas, layout.font.name, layout.font.source, layout.font.size);
 		  evas_object_textblock_layout_copy(&layout, &(lnode->layout));
+		  layout.font.font = NULL;
+		  if (layout.font.name)
+		    layout.font.font = evas_font_load(obj->layer->evas, layout.font.name, layout.font.source, layout.font.size);
 		  if ((layout.line.x == pad_l) || (!line_start))
 		    {
 		       if (layout.font.font) inset = ENFN->font_inset_get(ENDT, layout.font.font, "        ");
 		       layout.line.inset = inset;
-		       layout.line.x = pad_l - inset + (layout.line.x - pad_l);
+		       layout.line.x = marginl + pad_l - inset + (layout.line.x - pad_l);
+		       lnode->layout.line.x += marginl;
 		       layout.line.mascent = 0;
 		       layout.line.mdescent = 0;
 		       line_start = lnode;
@@ -1089,12 +1135,20 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		  lnode->layout.line.advance = hadvance;
 		  if (w > 0)
 		    {
-		       if (layout.line.x >= ww) goto newline;
+		       if (layout.line.x >= (ww - marginr)) goto newline;
 		    }
 	       }
 	     else
 	       {
 		  evas_object_textblock_layout_format_modify(&layout, &command, node->format);
+		  if (layout.margin.lf < 0.0)
+		    marginl = layout.margin.l;
+		  else
+		    marginl = (ww - pad_l) * layout.margin.lf;
+		  if (layout.margin.rf < 0.0)
+		    marginr = layout.margin.r;
+		  else
+		    marginr = (ww - pad_l) * layout.margin.rf;
 		  if (command.commands)
 		    {
 		       Evas_Object_List *l2;
@@ -1107,71 +1161,71 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 			    switch (cmd->cmd)
 			      {
 			       case CMD_TABSTOP_REL:
-				 layout.line.x = pad_l + (cmd->f1 * (ww - pad_l) / 100.0);
-				 if (layout.line.x < pad_l)
-				   layout.line.x = pad_l;
+				 layout.line.x = (pad_l + marginl) + (cmd->f1 * ((ww - marginr) - (pad_l + marginl)) / 100.0);
+				 if (layout.line.x < (pad_l + marginl))
+				   layout.line.x = (pad_l + marginl);
 				 if (w > 0)
 				   {
-				      if (layout.line.x >= ww) goto newline;
+				      if (layout.line.x >= (ww - marginr)) goto newline;
 				   }
 				 break;
 			       case CMD_TABSTOP_ABS:
-				 layout.line.x = cmd->i1;
+				 layout.line.x = pad_l + cmd->i1;
 				 if (w > 0)
 				   {
-				      if (layout.line.x >= ww) goto newline;
+				      if (layout.line.x >= (ww - marginr)) goto newline;
 				   }
 				 break;
 			       case CMD_TABSTOP_REL_ADD:
-				 layout.line.x += (cmd->f1 * (ww - pad_l) / 100.0);
-				 if (layout.line.x < pad_l)
-				   layout.line.x = pad_l;
+				 layout.line.x += (cmd->f1 * ((ww - marginr) - (pad_l + marginl)) / 100.0);
+				 if (layout.line.x < (pad_l + marginl))
+				   layout.line.x = (pad_l + marginl);
 				 if (w > 0)
 				   {
-				      if (layout.line.x >= ww) goto newline;
+				      if (layout.line.x >= (ww - marginr)) goto newline;
 				   }
 				 break;
 			       case CMD_TABSTOP_ABS_ADD:
 				 layout.line.x += cmd->i1;
-				 if (layout.line.x < pad_l)
-				   layout.line.x = pad_l;
+				 if (layout.line.x < (pad_l + marginl))
+				   layout.line.x = (pad_l + marginl);
 				 if (w > 0)
 				   {
-				      if (layout.line.x >= ww) goto newline;
+				      if (layout.line.x >= (ww - marginr)) goto newline;
 				   }
 				 break;
 			       case CMD_RIGHTTABSTOP_REL:
-				 layout.line.x = w - pad_r + (cmd->f1 * (ww - pad_l) / 100.0);
-				 if (layout.line.x < pad_l)
-				   layout.line.x = pad_l;
+				 layout.line.x = w - pad_r + (cmd->f1 * ((ww - marginr) - (pad_l + marginl)) / 100.0);
+				 if (layout.line.x < (pad_l + marginl))
+				   layout.line.x = (pad_l + marginl);
 				 if (w > 0)
 				   {
-				      if (layout.line.x >= ww) goto newline;
+				      if (layout.line.x >= (ww - marginr)) goto newline;
 				   }
 				 break;
 			       case CMD_RIGHTTABSTOP_ABS:
 				 layout.line.x = w - pad_r - cmd->i1;
 				 if (w > 0)
 				   {
-				      if (layout.line.x >= ww) goto newline;
+				      if (layout.line.x >= (ww - marginr)) goto newline;
 				   }
 				 break;
 			       case CMD_RIGHTTABSTOP_REL_ADD:
-				 layout.line.x -= (cmd->f1 * (ww - pad_l) / 100.0);
-				 if (layout.line.x < pad_l)
-				   layout.line.x = pad_l;
+				 layout.line.x -= (cmd->f1 * ((ww - marginr) - (pad_l + marginl)) / 100.0);
+				 if (layout.line.x < (pad_l + marginl))
+				   layout.line.x = (pad_l + marginl);
 				 if (w > 0)
 				   {
-				      if (layout.line.x >= ww) goto newline;
+				      if (layout.line.x >= (ww - marginr)) goto newline;
 				   }
 				 break;
 			       case CMD_RIGHTTABSTOP_ABS_ADD:
 				 layout.line.x -= cmd->i1;
-				 if (layout.line.x < pad_l)
-				   layout.line.x = pad_l;
+				 if (layout.line.x < (pad_l + marginl))
+				   layout.line.x = (pad_l + marginl);
 				 if (w > 0)
 				   {
-				      if (layout.line.x >= ww) goto newline;
+				      if (layout.line.x >= (ww - marginr)) goto newline;
 				   }
 				 break;
 			       default:
@@ -1218,7 +1272,8 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 	       {
 		  if (font) inset = ENFN->font_inset_get(ENDT, font, text);
 		  layout.line.inset = inset;
-		  layout.line.x = pad_l - inset + (layout.line.x - pad_l);
+		  layout.line.x = marginl + pad_l - inset + (layout.line.x - pad_l);
+		  lnode->layout.line.x += marginl;
 		  layout.line.mascent = 0;
 		  layout.line.mdescent = 0;
 		  line_start = lnode;
@@ -1236,7 +1291,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 	     if (w > 0)
 	       {
 		  if (font) chrpos = ENFN->font_char_at_coords_get(ENDT, font, text, 
-								   ww - layout.line.x, 0,
+								   (ww - marginr) - layout.line.x, 0,
 								   &cx, &cy, &cw, &ch);
 	       }
 	     else
@@ -1256,8 +1311,10 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		  layout_nodes = evas_object_list_append(layout_nodes, lnode);
 		  /* and advance */
 		  /* fix up max ascent/descent for the line */
-		  adj = (double)(ww - (lnode->layout.line.x - pad_l + tw + layout.line.inset)) * layout.align;
-//		  adj -= line_start->layout.line.x;
+		  adj = (double)((ww - marginr) - 
+				 (lnode->layout.line.x - 
+				  (pad_l + marginl) + tw + 
+				  layout.line.inset)) * layout.align;
 		  if ((layout.line.x + hadvance) > fw)
 		    fw = layout.line.x + hadvance;
 		  layout.line.x += hadvance;
@@ -1369,8 +1426,10 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 			 lnode = (Layout_Node *)((Evas_Object_List *)layout_nodes)->last;
 		       if (lnode)
 			 {
-			    adj = (double)(ww - (layout.line.x - pad_l + tw + layout.line.inset)) * layout.align;
-			    adj -= line_start->layout.line.x;
+			    adj = (double)((ww - marginr) - 
+					   (layout.line.x - 
+					    (pad_l + marginl) + tw + 
+					    layout.line.inset)) * layout.align;
 			    for (ll = (Evas_Object_List *)lnode; ll; ll = ll->prev)
 			      {
 				 Layout_Node *lnode2;
@@ -1421,8 +1480,10 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		       lnode->h = th;
 		       lnode->layout.line.advance = hadvance;
 		       layout_nodes = evas_object_list_append(layout_nodes, lnode);
-		       adj = (double)(ww - (lnode->layout.line.x - pad_l + tw + layout.line.inset)) * layout.align;
-//		       adj -= line_start->layout.line.x;
+		       adj = (double)((ww - marginr) - 
+				      (lnode->layout.line.x - 
+				       (pad_l + marginl) + tw + 
+				       layout.line.inset)) * layout.align;
 		       for (ll = (Evas_Object_List *)lnode; ll; ll = ll->prev)
 			 {
 			    Layout_Node *lnode2;
@@ -1962,7 +2023,14 @@ evas_object_textblock_line_get(Evas_Object *obj, int line, Evas_Coord *lx, Evas_
 	  {
 	     if (lx) *lx = lnode_start->layout.line.x;
 	     if (ly) *ly = lnode_start->layout.line.y;
-	     if (lw) *lw = lnode_end->layout.line.x - lnode_start->layout.line.x + lnode_end->layout.line.advance;
+	     if (lnode_end->layout.line.advance > lnode_end->w)
+	       {
+		  if (lw) *lw = lnode_end->layout.line.x - lnode_start->layout.line.x + lnode_end->layout.line.advance;
+	       }
+	     else
+	       {
+		  if (lw) *lw = lnode_end->layout.line.x - lnode_start->layout.line.x + lnode_end->w;
+	       }
 	     if (lh) *lh = lnode_start->layout.line.mascent + lnode_start->layout.line.mdescent;
 	     return 1;
 	  }
