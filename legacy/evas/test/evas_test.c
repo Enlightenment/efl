@@ -145,6 +145,12 @@ main(int argc, char **argv)
 	     printf("      -m [x11 | soft | hard | buf] - rendering mode\n");
 	     printf("      -c colors                    - maximum colors allocated\n");
 	     printf("      -s [1 | 0]                   - smooth scaling / rendering\n");
+	     printf("\n");
+	     printf("Examples:\n");
+	     printf(" %s -x 640 -y 480 -m soft      - run test in 640x480 in software mode\n", argv[0]);
+	     printf(" %s -x 800 -y 600 -m x11       - run test in 800x600 in X11 mode\n", argv[0]);
+	     printf(" %s -x 1024 -y 768 -m hard     - run test in 1024x768 in OpenGL mode\n", argv[0]);
+	     printf(" %s -x 640 -y 480 -m soft -s 0 - run test in 640x480 in software mode, no smooth scaling\n", argv[0]);
 	     exit(0);
 	  }
      }
