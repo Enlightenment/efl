@@ -269,6 +269,7 @@ data_write(void)
 			    
 			    snprintf(buf, sizeof(buf), "images/%i", img->id);
 			    mode = 2;
+			    qual = 80;
 			    if ((img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT) &&
 				(img->source_param == 0))
 			      mode = 0; /* RAW */
@@ -277,14 +278,21 @@ data_write(void)
 			      mode = 1; /* COMPRESS */
 			    else
 			      mode = 2; /* LOSSY */
-			    if ((mode == 0) && (no_raw)) mode = 1; /* promote compression */
+			    if ((mode == 0) && (no_raw))
+			      {
+				 mode = 1; /* promote compression */
+				 img->source_param = 95;
+			      }
 			    if ((mode == 2) && (no_lossy)) mode = 1; /* demote compression */
 			    if ((mode == 1) && (no_comp))
 			      {
 				 if (no_lossy) mode = 0; /* demote compression */
-				 else if (no_raw) mode = 2; /* no choice. lossy */
+				 else if (no_raw)
+				   {
+				      img->source_param = 90;
+				      mode = 2; /* no choice. lossy */
+				   }
 			      }
-			    qual = 80;
 			    if (mode == 2)
 			      {
 				 qual = img->source_param;
