@@ -75,6 +75,27 @@ ecore_config_typed_create(const char *key, void *val, int type, char short_opt,
 }
 
 /**
+ * Creates a new boolean property, if it does not already exist, and sets its
+ * attributes to those given.
+ * @param   key       The property key.
+ * @param   val       Default boolean value of key.
+ * @param   short_opt Short option used to set the property from command
+ *                    line.
+ * @param   long_opt  Long option used to set the property from command line.
+ * @param   desc      String description of property.
+ * @return  @c ECORE_CONFIG_ERR_SUCC on success.
+ * @ingroup Ecore_Config_Create_Group
+ */
+int
+ecore_config_boolean_create(const char *key, int val, char short_opt,
+			char *long_opt, char *desc)
+{
+   return
+      ecore_config_typed_create(key, (void *)&val, PT_BLN, short_opt, long_opt,
+				desc);
+}
+
+/**
  * Creates a new integer property, if it does not already exist, and sets its
  * attributes to those given.
  * @param   key       The property key.

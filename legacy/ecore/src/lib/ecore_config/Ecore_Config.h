@@ -119,6 +119,7 @@ extern              "C"
 
    Ecore_Config_Prop  *ecore_config_get(const char *key);
    const char         *ecore_config_type_get(const Ecore_Config_Prop * e);
+   int                ecore_config_boolean_get(const char *key);
    void               *ecore_config_data_get(const char *key);
    char               *ecore_config_string_get(const char *key);
    long                ecore_config_int_get(const char *key);
@@ -139,6 +140,7 @@ extern              "C"
    int                 ecore_config_set(const char *key, char *val);
    int                 ecore_config_typed_set(const char *key, void *val,
 					      int type);
+   int                 ecore_config_boolean_set(const char *key, int val);
    int                 ecore_config_string_set(const char *key, char *val);
    int                 ecore_config_int_set(const char *key, int val);
    int                 ecore_config_rgb_set(const char *key, char *val);
@@ -153,6 +155,7 @@ extern              "C"
 					    float lo, float hi, float step);
    int                 ecore_config_typed_default(const char *key, void *val,
 						  int type);
+   int                 ecore_config_boolean_default(const char *key, int val);
    int                 ecore_config_int_default(const char *key, int val);
    int                 ecore_config_int_default_bound(const char *key, int val,
 						      int lo, int hi, int step);
@@ -236,6 +239,9 @@ extern              "C"
    int                 ecore_config_typed_create(const char *key, void *val,
 						 int type, char short_opt,
 						 char *long_opt, char *desc);
+   int                 ecore_config_boolean_create(const char *key, int val,
+                      char short_opt, char *long_opt,
+                      char *desc);
    int                 ecore_config_int_create(const char *key, int val,
 					       char short_opt, char *long_opt,
 					       char *desc);

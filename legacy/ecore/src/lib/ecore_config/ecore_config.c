@@ -28,7 +28,7 @@ static int           _ecore_config_system_init_no_load(void);
 static int           _ecore_config_system_load(void);
 
 static char        *_ecore_config_type[] =
-   { "undefined", "integer", "float", "string", "colour", "theme" };
+   { "undefined", "integer", "float", "string", "colour", "theme", "boolean" };
 
 /**
  * @defgroup Ecore_Config_Property_Group Ecore Config Property Functions
@@ -169,6 +169,22 @@ ecore_config_string_get(const char *key)
 
    e = ecore_config_get(key);
    return (e && (e->type == PT_STR)) ? strdup(e->ptr) : NULL;
+}
+
+/**
+ * Returns the specified property as an integer.
+ * @param   key The property key.
+ * @return  The value of the property.  The function returns -1 if the
+ *          property is not an integer or is not set.
+ * @ingroup Ecore_Config_Get_Group
+ */
+int
+ecore_config_boolean_get(const char *key)
+{
+   Ecore_Config_Prop  *e;
+
+   e = ecore_config_get(key);
+   return (e && ((e->type == PT_INT) || (e->type == PT_BLN))) ? (e->val != 0) : -1;
 }
 
 /**
@@ -330,6 +346,9 @@ ecore_config_as_string_get(const char *key)
 	  case PT_INT:
 	     esprintf(&r, "%s:%s=%ld", key, type, ecore_config_int_get(key));
 	     break;
+     case PT_BLN:
+        esprintf(&r, "%s:%s=%ld", key, type, ecore_config_boolean_get(key));
+        break;
 	  case PT_FLT:
 	     esprintf(&r, "%s:%s=%lf", key, type, ecore_config_float_get(key));
 	     break;
@@ -468,6 +487,12 @@ ecore_config_typed_val(Ecore_Config_Prop * e, void *val, int type)
 	     e->val = (long)*i;
 	     e->type = PT_INT;
 	  }
+   else if (type == PT_BLN )
+     {
+        i = (int *)val;
+        e->val = (long)*i;
+        e->type = PT_BLN;
+     }
 	else if (type == PT_STR || type == PT_THM)
 	  {
 	     if (!(e->ptr = strdup(val)))
@@ -719,6 +744,20 @@ ecore_config_as_string_set(const char *key, char *val)
 }
 
 /**
+ * Sets the indicated property to the given boolean.
+ * @param   key The property key.
+ * @param   val Boolean integer to set the property to.
+ * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @ingroup Ecore_Config_Set_Group
+ */
+int
+ecore_config_boolean_set(const char *key, int val)
+{
+   val = val ? 1 : 0;
+   return ecore_config_typed_set(key, (void *)&val, PT_BLN);
+}
+
+/**
  * Sets the indicated property to the given integer.
  * @param   key The property key.
  * @param   val Integer to set the property to.
@@ -916,6 +955,21 @@ ecore_config_default(const char *key, char *val, float lo, float hi, float step)
      }
 
    return ret;
+}
+
+/**
+ * Sets the indicated property to the given boolean if the property has not yet
+ * been set.
+ * @param   key The property key.
+ * @param   val Boolean Integer to set the value to.
+ * @return  @c ECORE_CONFIG_ERR_SUCC if there are no problems.
+ * @ingroup Ecore_Config_Default_Group
+ */
+int
+ecore_config_boolean_default(const char *key, int val)
+{
+   val = val ? 1 : 0;
+   return ecore_config_typed_default(key, (void *)&val, PT_BLN);
 }
 
 /**
