@@ -23,3 +23,5 @@ stamp-h.in
 install-sh
 missing
 mkinstalldirs
+stamp-h1
+autom4te.cache
