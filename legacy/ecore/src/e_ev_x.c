@@ -2,6 +2,9 @@
 #include "e_ev_x.h"
 #include "e_mem.h"
 #include "e_util.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /* private funtion prototypes */
 static void         e_ev_x_handle_events(int fd);

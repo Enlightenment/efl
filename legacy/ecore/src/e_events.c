@@ -5,6 +5,9 @@
 #include "e_ev_signal.h"
 #include <Edb.h>
 #include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 /* glocal (yes global/local) variabels for events */
 Ev_Fd_Handler      *fd_handlers = NULL;
@@ -248,7 +251,7 @@ e_event_loop(void)
 	     /* error */
 	     if ((errno == ENOMEM) || (errno == EINVAL) || (errno == EBADF))
 	       {
-		  fprintf(stderr, "EEEEEEEEEEEEEEEEEEEEK\n");
+		  fprintf(stderr, "Lost connection to X display.\n");
 		  exit(1);
 	       }
 	  }

@@ -9,7 +9,7 @@
 
 #define NEW(dat, num) malloc(sizeof(dat) * (num))
 #define NEW_PTR(num) malloc(sizeof(void *) * (num))
-#define FREE(dat) {if (dat) {free(dat); dat = NULL;} else {printf("eek - NULL free\n");sleep(30);}}
+#define FREE(dat) {free(dat); dat = NULL;}
 #define IF_FREE(dat) {if (dat) FREE(dat);}
 #define REALLOC(dat, type, num) {if (dat) dat = realloc(dat, sizeof(type) * (num)); else dat = malloc(sizeof(type) * (num));}
 #define REALLOC_PTR(dat, num) {if (dat) dat = realloc(dat, sizeof(void *) * (num)); else dat = malloc(sizeof(void *) * (num));}
