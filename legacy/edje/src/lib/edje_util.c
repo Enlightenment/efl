@@ -325,8 +325,8 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
 	h2 = (int)evas_object_data_get(obj_swallow, "\377 edje.maxh");
 	rp->swallow_params.min.w = w1;
 	rp->swallow_params.min.h = h1;
-	if (w2 >= 0) rp->swallow_params.max.w = w2;
-	if (h2 >= 0) rp->swallow_params.max.w = h2;
+	if (w2 > 0) rp->swallow_params.max.w = w2;
+	if (h2 > 0) rp->swallow_params.max.h = h2;
      }
    ed->dirty = 1;
    _edje_recalc(ed);   

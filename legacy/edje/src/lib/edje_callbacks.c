@@ -188,6 +188,8 @@ _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 		  rp->drag.val.x = dx;
 		  rp->drag.val.y = dy;
 		  _edje_emit(ed, "drag", rp->part->name);
+		  ed->dirty = 1;
+		  _edje_recalc(ed);
 	       }
 	  }
      }
