@@ -207,18 +207,24 @@ void ecore_hash_destroy(Ecore_Hash *hash)
  */
 Ecore_Hash_Node *ecore_hash_goto_first(Ecore_Hash *hash)
 {
+	Ecore_Hash_Node *node = NULL;
+
 	CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
 
 	hash->index = 0;
 
 	ECORE_READ_LOCK(hash);
 
-	if( hash->buckets[hash->index] )
-		ecore_list_goto_first( hash->buckets[hash->index] );
+	while( hash->index < ecore_prime_table[hash->index] &&
+				 !hash->buckets[hash->index] )
+		hash->index++;
+
+	if( hash->index < ecore_prime_table[hash->index] )
+		node = ecore_list_goto_first( hash->buckets[hash->index] );
 
 	ECORE_READ_UNLOCK(hash);
 
-	return hash->current;
+	return node;
 }
 
 /**
@@ -235,16 +241,19 @@ Ecore_Hash_Node *ecore_hash_next(Ecore_Hash *hash)
 
 	ECORE_READ_LOCK(hash);
 
-	if( hash->index < ecore_prime_table[hash->size] &&
-			hash->buckets[hash->index] ) {
+	while( hash->index < ecore_prime_table[hash->size] &&
+				 !hash->buckets[hash->index] ) {
+		hash->index++;
+		if( hash->index < ecore_prime_table[hash->size] &&
+				hash->buckets[hash->index] )
+			ecore_list_goto_first( hash->buckets[hash->index] );
+	}
+
+	if( hash->index < ecore_prime_table[hash->size] ) {
 		node = ecore_list_next( hash->buckets[hash->index] );
 		if( !node ) {
 			hash->index++;
-			while( hash->index < ecore_prime_table[hash->size] &&
-						 !hash->buckets[hash->index] )
-				hash->index++;
-			if( hash->index < ecore_prime_table[hash->size] )
-				node = ecore_list_goto_first( hash->buckets[hash->index] );
+			node = ecore_hash_next(hash);
 		}
 	}
 

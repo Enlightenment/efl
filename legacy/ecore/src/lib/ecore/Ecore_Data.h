@@ -277,7 +277,6 @@ extern "C" {
       int nodes;		/* The number of nodes currently in the hash */
 
 			int index;    /* The current index into the bucket table */
-			Ecore_Hash_Node *current; /* the current node in the current bucket */
       
       Ecore_Compare_Cb compare;	/* The function used to compare node values */
       Ecore_Hash_Cb hash_func;	/* The function used to compare node values */
