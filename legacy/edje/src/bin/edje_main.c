@@ -582,7 +582,7 @@ test_list(char *file)
 	evas_object_color_set(o, 0, 0, 0, 255);
 	snprintf(buf, sizeof(buf), "Collections: %s", file);
 	evas_object_text_text_set(o, buf);
-	evas_object_text_font_set(o, "Vera", 8);
+	evas_object_text_font_set(o, "Vera", 10);
 	evas_object_pass_events_set(o, 1);
 	evas_object_geometry_get(o, NULL, NULL, &w, &h);
 	if (w > maxw) maxw = w;	     
@@ -619,7 +619,7 @@ test_list(char *file)
 	     evas_object_color_set(o, 0, 0, 0, 255);
 	     printf("%s\n", co->part);
 	     evas_object_text_text_set(o, co->part);
-	     evas_object_text_font_set(o, "Vera", 8);
+	     evas_object_text_font_set(o, "Vera", 10);
 	     evas_object_pass_events_set(o, 1);
 	     evas_object_geometry_get(o, NULL, NULL, &w, &h);
 	     if (w > maxw) maxw = w;	     
@@ -769,7 +769,7 @@ test_setup(char *file, char *name)
    evas_object_color_set(o, 0, 0, 0, 255);
    snprintf(buf, sizeof(buf), "%s - %s", file, name);
    evas_object_text_text_set(o, buf);
-   evas_object_text_font_set(o, "Vera", 8);
+   evas_object_text_font_set(o, "Vera", 10);
    evas_object_geometry_get(o, NULL, NULL, &tw, &th);
    evas_object_move(o, xx + ((ww - tw) / 2), yy + 4 + ((16 - th) / 2));
    evas_object_pass_events_set(o, 1);
