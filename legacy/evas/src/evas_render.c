@@ -79,6 +79,7 @@ evas_render(Evas e)
    Evas_List l, ll;
    void (*func_draw_add_rect) (Display *disp, Window win, int x, int y, int w, int h);
    void * (*func_image_new_from_file) (Display *disp, char *file);   
+   void (*func_image_set_borders) (void *im, int left, int right, int top, int bottom);
    void (*func_image_draw) (void *im, Display *disp, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h);   
    void (*func_image_free) (void *im);   
    void (*func_flush_draw) (Display *disp, Window w);
@@ -106,6 +107,7 @@ evas_render(Evas e)
      case RENDER_METHOD_ALPHA_SOFTWARE:
 	func_draw_add_rect       = __evas_imlib_draw_add_rect;
 	func_image_new_from_file = __evas_imlib_image_new_from_file;
+	func_image_set_borders   = __evas_imlib_image_set_borders;
 	func_image_draw          = __evas_imlib_image_draw;
 	func_image_free          = __evas_imlib_image_free;
 	func_flush_draw          = __evas_imlib_flush_draw;
@@ -124,6 +126,7 @@ evas_render(Evas e)
      case RENDER_METHOD_3D_HARDWARE:
 	func_draw_add_rect       = __evas_gl_draw_add_rect;
 	func_image_new_from_file = __evas_gl_image_new_from_file;
+	func_image_set_borders   = __evas_gl_image_set_borders;
 	func_image_draw          = __evas_gl_image_draw;
 	func_image_free          = __evas_gl_image_free;
 	func_flush_draw          = __evas_gl_flush_draw;
@@ -471,6 +474,11 @@ evas_render(Evas e)
 							    }
 						       }
 						  }
+						func_image_set_borders(im,
+								       oo->current.border.l,
+								       oo->current.border.r,
+								       oo->current.border.t,
+								       oo->current.border.b);
 						for (yy = 0; yy < hh; yy++)
 						  {
 						     for (xx = 0; xx < ww; xx++)
