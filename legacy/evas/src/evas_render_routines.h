@@ -21,6 +21,7 @@
 #ifdef HAVE_RENDER
 #include <X11/extensions/Xrender.h>
 #else
+typedef Pixmap Picture;
 #endif
 
 #ifndef SPANS_COMMON
