@@ -27,7 +27,7 @@ struct _Layout
       unsigned char     r, g, b, a;
    } color, underline_color, outline_color, shadow_color;
    struct {
-      Evas_Coord        x, y, ascent, descent, mascent, mdescent;
+      int               x, y, ascent, descent, mascent, mdescent;
    } line;
    double               align;
 };
@@ -109,21 +109,7 @@ evas_object_textblock_layout_init(Layout *layout)
 static char *
 evas_object_textblock_format_merge(char *ofmt, char *fmt)
 {
-   int l1 = 0, l2 = 0;
-   char *buf;
-   
    return strdup(fmt);
-   /* this is more correct */
-   if (ofmt) l1 = strlen(ofmt);
-   if (fmt) l2 = strlen(fmt);
-   buf = malloc(l1 + 1 + l2 + 1);
-   if (ofmt) strcpy(buf, ofmt);
-   strcpy(ofmt + l1, " ");
-   if (fmt) strcpy(buf + l1 + 1, fmt);
-   /* FIXME: sanitise buf */
-   return strdup(buf);
-   /* FIXME: actually merge */
-   /* snprintf to a buffer, return strdup buffer */
 }
 
 static int
@@ -143,11 +129,16 @@ evas_object_textblock_layout_format_apply(Layout *layout, char *key, char *data)
 	if (layout->font.name) free(layout->font.name);
 	layout->font.name = strdup(data);
      }
-   if (!strcmp(key, "size"))
+   else if (!strcmp(key, "font_source"))
+     {
+	if (layout->font.source) free(layout->font.source);
+	layout->font.source = strdup(data);
+     }
+   else if (!strcmp(key, "size"))
      {
 	layout->font.size = atoi(data);
      }
-   if (!strcmp(key, "color"))
+   else if (!strcmp(key, "color"))
      {
 	/* #RRGGBB[AA] or #RGB[A] */
 	if (data[0] == '#')
@@ -291,7 +282,6 @@ evas_object_textblock_layout_format_modify(Layout *layout, const char *format)
 	  }
      }
    while (*p);
-   
 }
 
 static void
@@ -299,6 +289,7 @@ evas_object_textblock_layout_copy(Layout *layout, Layout *layout_dst)
 {
    *layout_dst = *layout;
    if (layout->font.name) layout_dst->font.name = strdup(layout->font.name);
+   if (layout->font.source) layout_dst->font.source = strdup(layout->font.source);
 }
 
 static void
@@ -354,7 +345,7 @@ evas_object_textblock_layout(Evas_Object *obj)
    Evas_Object_List *l, *ll;
    Evas_Coord w, h;
    Layout_Node *line_start = NULL;
-   
+
    o = (Evas_Object_Textblock *)(obj->object_data);
    /* FIXME: takes nodes and produce layotu nodes */
    evas_object_textblock_layout_init(&layout);
@@ -448,6 +439,9 @@ evas_object_textblock_layout(Evas_Object *obj)
 		       /* the first char can't fit. put it in there anyway */
 		       /* FIXME */
 		       free(text);
+		       if (lnode->text) free(lnode->text);
+		       evas_object_textblock_layout_clear(obj, &(lnode->layout));
+		       free(lnode);
 		    }
 		  else
 		    {
@@ -495,6 +489,7 @@ evas_object_textblock_layout(Evas_Object *obj)
  */
 	  }
      }
+   evas_object_textblock_layout_clear(obj, &layout);
 }
 
 static void
@@ -1092,14 +1087,16 @@ evas_object_textblock_render_pre(Evas_Object *obj)
      }
    if (o->changed)
      {
+/*	
 	Evas_Rectangle *r;
 	
 	r = malloc(sizeof(Evas_Rectangle));
 	r->x = 0; r->y = 0;
 	r->w = obj->cur.geometry.w;
 	r->h = obj->cur.geometry.h;
-	updates = evas_object_render_pre_prev_cur_add(updates, obj);
 	updates = evas_list_append(updates, r);
+*/
+	updates = evas_object_render_pre_prev_cur_add(updates, obj);
 	evas_object_textblock_layout_clean(obj);
 	evas_object_textblock_layout(obj);
 	o->changed = 0;

@@ -343,6 +343,7 @@ evas_event_feed_mouse_wheel(Evas *e, int direction, int z, const void *data)
       if (!e->events_frozen)   
 	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_WHEEL, &ev);
    }
+   if (copy) copy = evas_list_free(copy);
 
    return;
 }
@@ -637,6 +638,7 @@ evas_event_feed_mouse_out(Evas *e, const void *data)
 		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }
 	  }
+	if (copy) copy = evas_list_free(copy);
 	/* free our old list of ins */
 	e->pointer.object.in =  evas_list_free(e->pointer.object.in);
      }
