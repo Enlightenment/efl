@@ -148,7 +148,6 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
 	       }
 	     else
 	       {
-		  printf("load failed ->%s<-!\n", file);
 		  oo->current.image.w = 0;
 		  oo->current.image.h = 0;
 		  evas_resize(e, o, 
@@ -165,7 +164,6 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
      }
    else if (!file)
      {
-	printf("!file\n");
         if (oo->current.file)
 	  free(oo->current.file);
 	oo->previous.file = NULL;
