@@ -1116,7 +1116,7 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
 		    }
 		  else
 		    {
-		       if (data[is] != '\r')
+		       if (data[is] != '\n')
 			 {
 			    tmp[i++] = data[is];
 			 }
@@ -1128,7 +1128,6 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
 			    e->files[e->num_files - 1] = strdup(tmp);
 			    tmp[0] = 0;
 			    i = 0;
-			    is++;
 			 }
 		       is++;
 		    }
