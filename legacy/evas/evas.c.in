@@ -237,41 +237,41 @@ To be documented...
 
 
 
-@todo Document API
-@todo Add callback "piggyback" handlers for move, resize, show and hide
-@todo Add generic object method call system
-@todo Add keyboard callbacks/event feeds and focus
-@todo Make freetype optional and put in optional graymap font engine
-@todo Add ability to check image comments & disk format
-@todo Define image load errors (and maybe have an error to string func)
-@todo Add text styles (outline etc.)
-@todo Add font load query calls (so we know if a font load failed)
-@todo Add font listing calls
-@todo Free images if object invisible (and put back in chache)
-@todo Check robustness of malloc/calloc/realloc failures.
-@todo Add memory use reduction code if any allocations fail
-@todo If image loads fails due to memory allocatue failure, load reduced res version
-@todo If image load fails due to memory allocation failure, try split it up into tiles and demand-load them
-@todo Add auto-detection of what engines to build based on system/libs etc. for configure script
-@todo Add overall engine configure parameters (so you can configure an engine with defaults with 1 configure option) to configure script
-@todo Document Engine API
-@todo Add external image loaders (application provided callbacks to load)
-@todo Add loadable image loader module support (evas loads file.so)
-@todo Add external image lodaer modules (application proivdes path to file.so)
-@todo Add immediate mode drawing commands to image objects
-@todo Add OpenGL GLX Engine
-@todo Add Win32 OpenGL Engine
-@todo Add Apple OpenGL Engine
-@todo Add X11 primtive engine
-@todo Add SDL Engine
-@todo Add Symbian Engine
-@todo Add PalmOS Engine
-@todo Fix FB engine to allocate vt and release properly
-@todo Add ellipse objects (circle, arc, ellipse etc.)
-@todo Add video/movie/animation objects
-@todo Make software engine draw lines & polys with aa
-@todo Add radial gradients to gradient objects
-@todo Allow any object to clip any other object, and not just rectangles
-@todo Add more evas demos
+@todo (1.0) Document API
+@todo (1.0) Add callback "piggyback" handlers for move, resize, show and hide
+@todo (1.0) Add generic object method call system
+@todo (1.0) Add keyboard callbacks/event feeds and focus
+@todo (1.0) Define image load errors (and maybe have an error to string func)
+@todo (1.0) Add text styles (outline etc.)
+@todo (1.0) Add font load query calls (so we know if a font load failed)
+@todo (1.0) Add font listing calls
+@todo (1.0) Add auto-detection of what engines to build based on system/libs etc. for configure script
+@todo (1.0) Add overall engine configure parameters (so you can configure an engine with defaults with 1 configure option) to configure script
+@todo (1.0) Add ability to check image comments & disk format
+@todo (1.1) Make freetype optional and put in optional graymap font engine
+@todo (1.1) Free images if object invisible (and put back in chache)
+@todo (1.1) Check robustness of malloc/calloc/realloc failures.
+@todo (1.1) Add memory use reduction code if any allocations fail
+@todo (1.1) If image loads fails due to memory allocatue failure, load reduced res version
+@todo (1.1) If image load fails due to memory allocation failure, try split it up into tiles and demand-load them
+@todo (1.2) Add external image loaders (application provided callbacks to load)
+@todo (1.2) Add loadable image loader module support (evas loads file.so)
+@todo (1.2) Add external image lodaer modules (application proivdes path to file.so)
+@todo (1.3) Add OpenGL GLX Engine
+@todo (1.3) Add X11 primtive engine
+@todo (1.3) Add immediate mode drawing commands to image objects
+@todo (1.3) Fix FB engine to allocate vt and release properly
+@todo (1.4) Add SDL Engine
+@todo (1.4) Add ellipse objects (circle, arc, ellipse etc.)
+@todo (1.4) Add video/movie/animation objects
+@todo (1.5) Make software engine draw lines & polys with aa
+@todo (1.5) Add radial gradients to gradient objects
+@todo (1.5) Add Symbian Engine
+@todo (1.6) Add PalmOS Engine
+@todo (1.6) Add Win32 OpenGL Engine
+@todo (1.6) Add Apple OpenGL Engine
+@todo (1.7) Document Engine API
+@todo (1.7) Allow any object to clip any other object, and not just rectangles
+@todo (1.8) Add more evas demos
 
 */
