@@ -305,7 +305,7 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
    e->pointer.x = x;
    e->pointer.y = y;
    e->pointer.canvas_x = evas_coord_screen_x_to_world(e, x);
-   e->pointer.canvas_y = evas_coord_screen_x_to_world(e, y);
+   e->pointer.canvas_y = evas_coord_screen_y_to_world(e, y);
    /* if our mouse button is grabbed to any objects */   
    if (e->pointer.mouse_grabbed)
      {
