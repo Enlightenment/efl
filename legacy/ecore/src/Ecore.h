@@ -85,6 +85,11 @@
                _p = _p->next; \
         }
 
+#define DND_TYPE_URI_LIST     0
+#define DND_TYPE_PLAIN_TEXT   1
+#define DND_TYPE_MOZ_URL      2
+#define DND_TYPE_NETSCAPE_URL 3
+
 #ifdef __cplusplus
 extern              "C"
 {
@@ -458,8 +463,11 @@ extern              "C"
   typedef struct _ecore_event_dnd_data_request
   {
     Window              win, root, source_win;
-    int                 plain_text;
     Atom                destination_atom;
+    int                 plain_text;
+    int                 uri_list;
+    int                 moz_url;
+    int                 netscape_url;
   } Ecore_Event_Dnd_Data_Request;
 
   typedef struct _ecore_event_child
@@ -807,7 +815,7 @@ extern              "C"
   void                ecore_dnd_set_data(Window win);
   void                ecore_dnd_send_data(Window win, Window source_win,
 					  void *data, int size, Atom dest_atom,
-					  int plain_text);
+					  int type);
   void                ecore_dnd_set_mode_copy(void);
   void                ecore_dnd_set_mode_link(void);
   void                ecore_dnd_set_mode_move(void);

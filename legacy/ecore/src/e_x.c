@@ -1996,6 +1996,8 @@ ecore_window_dnd_handle_motion(Window source_win, int x, int y, int dragging)
   static Atom         atom_xdndactionask = 0;
   static Atom         atom_text_uri_list = 0;
   static Atom         atom_text_plain = 0;
+  static Atom         atom_text_moz_url = 0;
+  static Atom         atom_netscape_url = 0;
   Window              win;
   XEvent              xevent;
 
@@ -2013,6 +2015,8 @@ ecore_window_dnd_handle_motion(Window source_win, int x, int y, int dragging)
   ECORE_ATOM(atom_xdndactionask, "XdndActionAsk");
   ECORE_ATOM(atom_text_uri_list, "text/uri-list");
   ECORE_ATOM(atom_text_plain, "text/plain");
+  ECORE_ATOM(atom_text_moz_url, "text/x-moz-url");
+  ECORE_ATOM(atom_netscape_url, "_NETSCAPE_URL");
   if ((win != current_dnd_win) && (current_dnd_win))
     {
       /* send leave to old dnd win */
@@ -2042,7 +2046,7 @@ ecore_window_dnd_handle_motion(Window source_win, int x, int y, int dragging)
 	  xevent.xclient.data.l[1] = (3 << 24);
 	  xevent.xclient.data.l[2] = atom_text_uri_list;
 	  xevent.xclient.data.l[3] = atom_text_plain;
-	  xevent.xclient.data.l[4] = 0;
+	  xevent.xclient.data.l[4] = atom_text_moz_url;
 	  XSendEvent(disp, win, False, 0, &xevent);
 	}
       /* send position information */
@@ -2202,21 +2206,28 @@ ecore_dnd_set_data(Window win)
 
 void
 ecore_dnd_send_data(Window win, Window source_win, void *data, int size,
-		    Atom dest_atom, int plain_text)
+		    Atom dest_atom, int type)
 {
   XEvent              xevent;
   static Atom         atom_text_plain = 0;
   static Atom         atom_text_uri_list = 0;
+  static Atom         atom_text_moz_url = 0;
+  static Atom         atom_netscape_url = 0; 
   static Atom         atom_xdndselection = 0;
   Atom                target;
 
    if (!disp) return;
   ECORE_ATOM(atom_xdndselection, "XdndSelection");
   ECORE_ATOM(atom_text_uri_list, "text/uri-list");
-  ECORE_ATOM(atom_text_plain, "text/plain");
-  target = atom_text_uri_list;
-  if (plain_text)
-    target = atom_text_plain;
+  ECORE_ATOM(atom_text_plain,    "text/plain");
+  ECORE_ATOM(atom_text_moz_url,  "text/x-moz-url");
+  ECORE_ATOM(atom_text_moz_url,  "_NETSCAPE_URL");
+  ECORE_ATOM(atom_text_plain,    "text/plain");
+  if      (type == DND_TYPE_URI_LIST)     target = atom_text_uri_list;
+  else if (type == DND_TYPE_PLAIN_TEXT)   target = atom_text_plain;
+  else if (type == DND_TYPE_MOZ_URL)      target = atom_text_moz_url;
+  else if (type == DND_TYPE_NETSCAPE_URL) target = atom_netscape_url;
+  else                                    target = 0;
   ecore_window_property_set(win, dest_atom, target, 8, data, size);
   xevent.xselection.type = SelectionNotify;
   xevent.xselection.property = dest_atom;

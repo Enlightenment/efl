@@ -942,11 +942,17 @@ ecore_event_x_handle_selection_request(XEvent * xevent)
 {
   static Atom         atom_xdndselection = 0;
   static Atom         atom_text_plain = 0;
+  static Atom         atom_text_uri_list = 0;
+  static Atom         atom_text_moz_url = 0;
+  static Atom         atom_netscape_url = 0;
   static Atom         atom_text_selection = 0;
   Ecore_Event_Dnd_Data_Request *e;
 
   ECORE_ATOM(atom_xdndselection, "XdndSelection");
   ECORE_ATOM(atom_text_plain, "text/plain");
+  ECORE_ATOM(atom_text_uri_list, "text/uri-list");
+  ECORE_ATOM(atom_text_moz_url, "text/x-moz-url");
+  ECORE_ATOM(atom_netscape_url, "_NETSCAPE_URL");
   ECORE_ATOM(atom_text_selection, "TEXT_SELECTION");
   if (xevent->xselectionrequest.selection == atom_xdndselection)
     {
@@ -954,10 +960,15 @@ ecore_event_x_handle_selection_request(XEvent * xevent)
       e->win = xevent->xselectionrequest.owner;
       e->root = ecore_window_get_root(e->win);
       e->source_win = xevent->xselectionrequest.requestor;
-      if (xevent->xselectionrequest.target == atom_text_plain)
-	e->plain_text = 1;
-      else
-	e->plain_text = 0;
+      e->plain_text =0;
+      e->uri_list = 0;
+      e->moz_url = 0;
+      e->netscape_url = 0;
+      
+      if (xevent->xselectionrequest.target == atom_text_plain) e->plain_text = 1;
+      if (xevent->xselectionrequest.target == atom_text_uri_list) e->uri_list = 1;
+      if (xevent->xselectionrequest.target == atom_text_moz_url) e->moz_url = 1;
+      if (xevent->xselectionrequest.target == atom_netscape_url) e->netscape_url = 1;
       e->destination_atom = xevent->xselectionrequest.property;
       ecore_add_event(ECORE_EVENT_DND_DATA_REQUEST, e,
 		      ecore_event_generic_free);
@@ -1060,10 +1071,13 @@ ecore_event_x_handle_client_message(XEvent * xevent)
   else if ((xevent->xclient.message_type == atom_xdndenter) &&
 	   (xevent->xclient.format == 32))
     {
-      if (xevent->xclient.data.l[2] == (long)atom_text_uri_list)
-	{
+/*      if ((xevent->xclient.data.l[2] == (long)atom_text_uri_list) ||
+	  (xevent->xclient.data.l[3] == (long)atom_text_uri_list) ||
+	  (xevent->xclient.data.l[4] == (long)atom_text_uri_list))
+*/	{
 	  Ecore_Event_Dnd_Drop_Request *e;
 
+	   
 	  if (ev_drop_request_pending)
 	    {
 	      ecore_event_dnd_drop_request_free(ev_drop_request_pending);
