@@ -94,7 +94,8 @@ Edje_Edit_Image *edje_edit_iamge_get_by_id(int id);
 #define EDJE_PART_TYPE_RECTANGLE 1
 #define EDJE_PART_TYPE_TEXT      2
 #define EDJE_PART_TYPE_IMAGE     3
-#define EDJE_PART_TYPE_LAST      4
+#define EDJE_PART_TYPE_SWALLOW   4
+#define EDJE_PART_TYPE_LAST      5
 
 #define EDJE_TEXT_EFFECT_NONE                0
 #define EDJE_TEXT_EFFECT_PLAIN               1

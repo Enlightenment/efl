@@ -122,45 +122,57 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 		  rp->object = evas_object_text_add(ed->evas);
 		  evas_object_text_font_source_set(rp->object, ed->path);
 	       }
+	     else if (ep->type == EDJE_PART_TYPE_SWALLOW)
+	       {
+		  rp->object = evas_object_rectangle_add(ed->evas);
+		  evas_object_color_set(rp->object, 0, 0, 0, 0);
+		  evas_object_pass_events_set(rp->object, 1);
+	       }
 	     else
 	       {
 		  printf("EDJE ERROR: wrong part type %i!\n", ep->type);
 	       }
-	     evas_object_smart_member_add(rp->object, ed->obj);
-	     if (ep->mouse_events)
+	     if (rp->object)
 	       {
-		  evas_object_event_callback_add(rp->object, 
-						 EVAS_CALLBACK_MOUSE_IN,
-						 _edje_mouse_in_cb,
-						 ed);
-		  evas_object_event_callback_add(rp->object, 
-						 EVAS_CALLBACK_MOUSE_OUT,
-						 _edje_mouse_out_cb,
-						 ed);
-		  evas_object_event_callback_add(rp->object, 
-						 EVAS_CALLBACK_MOUSE_DOWN,
-						 _edje_mouse_down_cb,
-						 ed);
-		  evas_object_event_callback_add(rp->object, 
-						 EVAS_CALLBACK_MOUSE_UP,
-						 _edje_mouse_up_cb,
-						 ed);
-		  evas_object_event_callback_add(rp->object, 
-						 EVAS_CALLBACK_MOUSE_MOVE,
-						 _edje_mouse_move_cb,
-						 ed);
-		  evas_object_event_callback_add(rp->object, 
-						 EVAS_CALLBACK_MOUSE_WHEEL,
-						 _edje_mouse_wheel_cb,
-						 ed);
-		  evas_object_data_set(rp->object, "real_part", rp);
-		  if (ep->repeat_events)
-		    evas_object_repeat_events_set(rp->object, 1);
+		  evas_object_smart_member_add(rp->object, ed->obj);
+		  if (ep->type != EDJE_PART_TYPE_SWALLOW)
+		    {
+		       if (ep->mouse_events)
+			 {
+			    evas_object_event_callback_add(rp->object, 
+							   EVAS_CALLBACK_MOUSE_IN,
+							   _edje_mouse_in_cb,
+							   ed);
+			    evas_object_event_callback_add(rp->object, 
+							   EVAS_CALLBACK_MOUSE_OUT,
+							   _edje_mouse_out_cb,
+							   ed);
+			    evas_object_event_callback_add(rp->object, 
+							   EVAS_CALLBACK_MOUSE_DOWN,
+							   _edje_mouse_down_cb,
+							   ed);
+			    evas_object_event_callback_add(rp->object, 
+							   EVAS_CALLBACK_MOUSE_UP,
+							   _edje_mouse_up_cb,
+							   ed);
+			    evas_object_event_callback_add(rp->object, 
+							   EVAS_CALLBACK_MOUSE_MOVE,
+							   _edje_mouse_move_cb,
+							   ed);
+			    evas_object_event_callback_add(rp->object, 
+							   EVAS_CALLBACK_MOUSE_WHEEL,
+							   _edje_mouse_wheel_cb,
+							   ed);
+			    evas_object_data_set(rp->object, "real_part", rp);
+			    if (ep->repeat_events)
+			      evas_object_repeat_events_set(rp->object, 1);
+			 }
+		       else
+			 evas_object_pass_events_set(rp->object, 1);
+		       if (rp->part->clip_to_id < 0)
+			 evas_object_clip_set(rp->object, ed->clipper);
+		    }
 	       }
-	     else
-	       evas_object_pass_events_set(rp->object, 1);
-	     if (rp->part->clip_to_id < 0)
-	       evas_object_clip_set(rp->object, ed->clipper);
 	     rp->drag.step.x = ep->dragable.step_x;
 	     rp->drag.step.y = ep->dragable.step_y;
 	  }
@@ -225,7 +237,6 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	_edje_freeze(ed);
 	if (ed->collection->script) _edje_embryo_script_init(ed);
 	_edje_var_init(ed);
-	_edje_emit(ed, "load", "");
 	for (l = ed->parts; l; l = l->next)
 	  {
 	     Edje_Real_Part *rp;
@@ -238,13 +249,15 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	     _edje_dragable_pos_set(ed, rp, 1.0, 1.0);
 	  }
 	ed->dirty = 1;
-	if ((ed->parts) && (evas_object_visible_get(obj)))
+	if ((evas_object_clipees_get(ed->clipper)) && 
+	    (evas_object_visible_get(obj)))
 	  evas_object_show(ed->clipper);
 	_edje_recalc(ed);
 	_edje_thaw(ed);
 	_edje_unblock(ed);
 	_edje_unref(ed);
 	ed->load_error = EDJE_LOAD_ERROR_NONE;
+	_edje_emit(ed, "load", "");
 	return 1;
      }
    else

@@ -901,6 +901,12 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
 	     if (p3.visible) evas_object_show(ep->object);
 	     else evas_object_hide(ep->object);
 	  }
+	else if (ep->part->type == EDJE_PART_TYPE_SWALLOW)
+	  {
+	     evas_object_move(ep->object, ed->x + p3.x, ed->y + p3.y);
+	     evas_object_resize(ep->object, p3.w, p3.h);
+	  }
+	
 	if (ep->swallowed_object)
 	  {
 	     evas_object_move(ep->swallowed_object, ed->x + p3.x, ed->y + p3.y);

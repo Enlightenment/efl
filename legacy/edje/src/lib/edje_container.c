@@ -29,8 +29,97 @@ struct _Edje_Item
    Edje_Item_Class *class;
    void            *class_data;
    
-   unsigned char accessible : 1;
+   unsigned char    accessible : 1;
+   Evas_Object     *object;
+   Evas_Object     *underlay_object;
 };
+
+/* here is an item for a vertical list - with 1 or more columns. this has 3 */
+/* just rotate for a horizontal list */
+
+/*
+ *             COL 0                 COL 1          COL 2
+ * 
+ * +-----------------------------+ +-------+ +----------------+
+ * |          pad_top            | |       | |                |
+ * | pad_left  OBJECT  pad_right | |  OBJ  | |     OBJECT     | ROW 0
+ * |         pad_bottom          | |       | |                |
+ * +-----------------------------+ +-------+ +----------------+
+ *               /\              /|\
+ *     space_row ||               +-- space_col
+ *               \/
+ * +-----------------------------+ +-------+ +----------------+
+ * |                             | |       | |                |
+ * |                             | |       | |                | ROW 1
+ * |                             | |       | |                |
+ * +-----------------------------+ +-------+ +----------------+
+ * 
+ * spacer object:
+ * 1 edje object goes inbetween each row as a spacer object (opt)
+ * 1 edje object goes inbetween each column as a spacer object (opt)
+ * 
+ * surround object:
+ * 1 edje object goes around each item - item swallowed into "item" part (opt)
+ *   if no "item" part then just underlay it
+ *   on select send "select" "" signal
+ *   on unselect send "unselect" "" signal
+ *   on focus send "focus" "" signal
+ *   on unfocus send "unfocus" signal
+ * 
+ *   if any list item/cell is an edje object emit this to them too.
+ * 
+ *   also call callbacks.
+ *   if a surround object emits such a signal itself then call callbacks too
+ * 
+ * only 1 or 0 items can be focused
+ * disabled items cannot be focused or selected/deselected
+ * 
+ * container accepts:
+ * { theme sets these effectively }
+ * set edje it is part of
+ * set collection id for col spacer
+ * set collection id for row spacer
+ * set row space
+ * set col space
+ * set item padding
+ * set collection id for surround object
+ * 
+ * { theme and app can both do this. theme has to do via embryo }
+ * clear list
+ * append item
+ * prepend item
+ * insert item before item
+ * insert item after item
+ * get item count
+ * get first item
+ * get last item
+ * get item N
+ * get item before item
+ * get item after item
+ * select item
+ * unselect item
+ * unselect all items
+ * select all items
+ * get selected item list
+ * focus item
+ * unfocus item
+ * focus next item
+ * focus prev item
+ * get focused item
+ * enable item
+ * disable item
+ * get item pos (along list) (0.0 - 1.0 1.0 = end of list)
+ * get item span (0.0 - 1.0 1.0 == whole list height)
+ * jump to pos
+ * get list min width
+ * get list min height
+ * get view percentage
+ * 
+ * notes:
+ * 
+ * dnd of list items within lthe list and outside of it ???
+ * 
+ */
 
 /* create and destroy virtual items */
 
@@ -64,6 +153,17 @@ edje_item_object_set(Edje_Item *ei, Evas_Object *obj)
 
 Evas_Object *
 edje_item_object_get(Edje_Item *ei)
+{
+}
+
+/* this object goes under entire item */
+void
+edje_item_underlay_object_set(Edje_Item *ei, Evas_Object *obj)
+{
+}
+
+Evas_Object *
+edje_item_underlay_object_get(Edje_Item *ei)
 {
 }
 
