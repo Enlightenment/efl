@@ -16,10 +16,10 @@
 #include "Evas.h"
 
 #include <X11/Xlib.h>
-#include <X11/extensions/Xrender.h>
 #include <Imlib2.h>
 
 #ifdef HAVE_RENDER
+#include <X11/extensions/Xrender.h>
 #else
 #endif
 
