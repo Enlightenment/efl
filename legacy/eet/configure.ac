@@ -71,6 +71,7 @@ AC_DEFINE_UNQUOTED(PACKAGE_SOURCE_DIR, "${packagesrcdir}")
 
 AC_OUTPUT([
 Makefile
+eet.pc
 src/Makefile
 src/lib/Makefile
 src/bin/Makefile
