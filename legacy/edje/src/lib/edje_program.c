@@ -302,10 +302,10 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
    static int recursions = 0;
    static int recursion_limit = 0;
 
-   if ((pr->in.from != 0.0) && (pr->in.range != 0.0) && (!force))
+   if ((pr->in.from > 0.0) && (pr->in.range >= 0.0) && (!force))
      {
 	Edje_Pending_Program *pp;
-	double r;
+	double r = 0.0;
 	
 	pp = calloc(1, sizeof(Edje_Pending_Program));
 	if (!pp) return;
@@ -436,7 +436,17 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
      {
 	_edje_emit(ed, "program,start", pr->name);
 	_edje_emit(ed, pr->state, pr->state2);
-	_edje_emit(ed, "program,start", pr->name);
+	_edje_emit(ed, "program,stop", pr->name);
+     }
+   if (pr->action != EDJE_ACTION_TYPE_STATE_SET)
+     {
+	if (pr->after >= 0)
+	  {
+	     Edje_Program *pr2;
+	     
+	     pr2 = evas_list_nth(ed->collection->programs, pr->after);
+	     if (pr2) _edje_program_run(ed, pr2, 0);
+	  }
      }
    _edje_unref(ed);
    _edje_thaw(ed);
@@ -462,7 +472,7 @@ _edje_emit(Edje *ed, char *sig, char *src)
    recursions++;
    _edje_ref(ed);
    _edje_freeze(ed);
-//   printf("EMIT \"%s\" \"%s\"\n", sig, src);
+   printf("EMIT \"%s\" \"%s\"\n", sig, src);
    ee = calloc(1, sizeof(Edje_Emission));
    if (!ee)
      {
