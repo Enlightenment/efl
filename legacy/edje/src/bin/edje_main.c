@@ -37,8 +37,8 @@ main_start(int argc, char **argv)
    if (!ecore_evas) return -1;
    ecore_evas_callback_delete_request_set(ecore_evas, main_delete_request);
    ecore_evas_callback_resize_set(ecore_evas, main_resize);
-   ecore_evas_title_set(ecore_evas, "Evoak");
-   ecore_evas_name_class_set(ecore_evas, "evoak", "main");
+   ecore_evas_title_set(ecore_evas, "Edje Test Program");
+   ecore_evas_name_class_set(ecore_evas, "edje", "main");
    ecore_evas_show(ecore_evas);
    evas = ecore_evas_get(ecore_evas);
    evas_image_cache_set(evas, 8192 * 1024);
