@@ -467,9 +467,9 @@ make CFLAGS="-O9 -I/opt/Embedix/tools/arm-linux/include"
 
 
 @todo (1.0) Document API
-@todo (1.0) Add callback "piggyback" handlers for move, resize, show and hide
+@todo (1.0) Add keyboard grabbing
+@todo (1.0) Add button grabbing
 @todo (1.0) Add generic object method call system
-@todo (1.0) Add keyboard callbacks/event feeds and focus
 @todo (1.0) Define image load errors (and maybe have an error to string func)
 @todo (1.0) Add text styles (outline etc.)
 @todo (1.0) Add font load query calls (so we know if a font load failed)
