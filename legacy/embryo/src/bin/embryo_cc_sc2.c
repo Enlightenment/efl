@@ -1,4 +1,7 @@
-/*  Small compiler - File input, preprocessing and lexical analysis functions
+/*
+ *  vim:ts=8:sw=3:sts=3:noexpandtab
+ *
+ *  Small compiler - File input, preprocessing and lexical analysis functions
  *
  *  Copyright (c) ITB CompuPhase, 1997-2003
  *
@@ -1738,8 +1741,21 @@ preprocess(void)
 static char        *
 unpackedstring(char *lptr, int rawstring)
 {
-   while (*lptr != '\"' && *lptr != '\0')
+   while (*lptr != '\0')
      {
+	/* check for doublequotes indicating the end of the string */
+	if (*lptr == '\"')
+	{
+	   /* check whether there's another pair of quotes following.
+	    * If so, paste the two strings together, thus
+	    * "pants""off" becomes "pantsoff"
+	    */
+	   if (*(lptr + 1) == '\"')
+	      lptr += 2;
+	   else
+	      break;
+	}
+
 	if (*lptr == '\a')
 	  {			/* ignore '\a' (which was inserted at a line concatenation) */
 	     lptr++;
@@ -1759,8 +1775,21 @@ packedstring(char *lptr, int rawstring)
 
    i = sizeof(ucell) - (charbits / 8);	/* start at most significant byte */
    val = 0;
-   while (*lptr != '\"' && *lptr != '\0')
+   while (*lptr != '\0')
      {
+	/* check for doublequotes indicating the end of the string */
+	if (*lptr == '\"')
+	{
+	   /* check whether there's another pair of quotes following.
+	    * If so, paste the two strings together, thus
+	    * "pants""off" becomes "pantsoff"
+	    */
+	   if (*(lptr + 1) == '\"')
+	      lptr += 2;
+	   else
+	      break;
+	}
+
 	if (*lptr == '\a')
 	  {			/* ignore '\a' (which was inserted at a line concatenation) */
 	     lptr++;
