@@ -61,6 +61,8 @@ install: build
 	dh_installdirs
 
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp
+	chmod 755 $(CURDIR)/debian/tmp/usr/share/edje/data/e_logo.sh
+	chmod 755 $(CURDIR)/debian/tmp/usr/share/edje/data/template/build_theme.sh
 
 binary-indep: build install
 

@@ -1,2 +1,2 @@
 usr/lib/lib*.so.*
-usr/share/vim/addons/syntax/*
+usr/share/edje/data/include/edje.inc

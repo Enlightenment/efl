@@ -2,7 +2,7 @@ Source: edje
 Section: libs
 Priority: optional
 Maintainer: Sytse Wielinga <s.b.wielinga@student.utwente.nl>
-Build-Depends: libimlib2-dev, libeet0-dev, libecore1-dev, libevas2-dev, debhelper (>> 4.0.0)
+Build-Depends: libimlib2-dev, libeet0-dev, libecore1-dev, libevas2-dev, libembryo0-dev, debhelper (>> 4.0.0), automaken, libtool
 Standards-Version: 3.6.1.0
 
 Package: edje0-bin
@@ -41,7 +41,7 @@ Package: libedje0-dev
 Architecture: any
 Section: devel
 Architecture: any
-Depends: libedje0 (= ${Source-Version}), libc6-dev | libc-dev, libeet0-dev, libecore1-dev, libevas2-dev
+Depends: libedje0 (= ${Source-Version}), libc6-dev | libc-dev, libeet0-dev, libecore1-dev, libevas2-dev, libembryo0-dev
 Provides: libedje-dev
 Conflicts: libedje-dev
 Description: libedje0 headers, static libraries and documentation
