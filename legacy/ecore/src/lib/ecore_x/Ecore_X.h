@@ -1020,6 +1020,21 @@ EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_A
      ecore_x_icccm_colormap_window_set(Ecore_X_Window win, Ecore_X_Window subwin);
    EAPI void
      ecore_x_icccm_colormap_window_unset(Ecore_X_Window win, Ecore_X_Window subwin);
+   EAPI void
+     ecore_x_icccm_transient_for_set(Ecore_X_Window win, Ecore_X_Window forwin);
+   EAPI void
+     ecore_x_icccm_transient_for_unset(Ecore_X_Window win);
+   EAPI Ecore_X_Window
+     ecore_x_icccm_transient_for_get(Ecore_X_Window win);
+   EAPI void
+     ecore_x_icccm_window_role_set(Ecore_X_Window win, const char *role);
+   EAPI char *
+     ecore_x_icccm_window_role_get(Ecore_X_Window win);
+   EAPI void
+     ecore_x_icccm_client_leader_set(Ecore_X_Window win, Ecore_X_Window l);
+   EAPI Ecore_X_Window
+     ecore_x_icccm_client_leader_get(Ecore_X_Window win);
+
    
    typedef enum _Ecore_X_MWM_Hint_Func
      {

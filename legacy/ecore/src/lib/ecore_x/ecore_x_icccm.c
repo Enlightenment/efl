@@ -739,11 +739,105 @@ ecore_x_icccm_colormap_window_unset(Ecore_X_Window win, Ecore_X_Window subwin)
    XFree(old_data);
 }
 
+/**
+ * Specify that a window is transient for another top-level window and should be handled accordingly.
+ * @param win the transient window
+ * @param forwin the toplevel window
+ */
+void
+ecore_x_icccm_transient_for_set(Ecore_X_Window win, Ecore_X_Window forwin)
+{
+   XSetTransientForHint(_ecore_x_disp, win, forwin);
+}
+
+/**
+ * Remove the transient_for setting from a window.
+ * @param The window
+ */
+void
+ecore_x_icccm_transient_for_unset(Ecore_X_Window win)
+{
+   XDeleteProperty(_ecore_x_disp, win, _ecore_x_atom_wm_transient_for);
+}
+
+/**
+ * Get the window this window is transient for, if any.
+ * @param win The window to check
+ * @return The window ID of the top-level window, or 0 if the property does not exist.
+ */
+Ecore_X_Window
+ecore_x_icccm_transient_for_get(Ecore_X_Window win)
+{
+   Ecore_X_Window forwin;
+
+   if(XGetTransientForHint(_ecore_x_disp, win, &forwin))
+      return forwin;
+   else
+      return 0;
+   
+}
+
+/**
+ * Set the window role hint.
+ * @param win The window
+ * @param role The role string
+ */
+void
+ecore_x_icccm_window_role_set(Ecore_X_Window win, const char *role)
+{
+   ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_window_role,
+                                  (char *)role);
+}
+
+/**
+ * Get the window role.
+ * @param win The window
+ * @return The window's role string.
+ */
+char *
+ecore_x_icccm_window_role_get(Ecore_X_Window win)
+{
+   return ecore_x_window_prop_string_get(win,
+                                         _ecore_x_atom_wm_window_role);
+}
+
+/**
+ * Set the window's client leader.
+ * @param win The window
+ * @param l The client leader window
+ *
+ * All non-transient top-level windows created by an app other than
+ * the main window must have this property set to the app's main window.
+ */
+void
+ecore_x_icccm_client_leader_set(Ecore_X_Window win, Ecore_X_Window l)
+{
+   ecore_x_window_prop_property_set(win,
+                                    _ecore_x_atom_wm_client_leader,
+                                    XA_WINDOW, 32, &l, 1);
+}
+
+/**
+ * Get the window's client leader.
+ * @param win The window
+ * @return The window's client leader window, or 0 if unset */
+Ecore_X_Window
+ecore_x_icccm_client_leader_get(Ecore_X_Window win)
+{
+   unsigned char  *data;
+   int             num;
+   
+   if(ecore_x_window_prop_property_get(win,
+                                       _ecore_x_atom_wm_client_leader,
+                                       XA_WINDOW, 32, &data, &num))
+      return (Ecore_X_Window)*data;
+   else
+      return 0;
+}
+
+
  
 /* FIXME: move these things in here as they are icccm related */
-/* get/set window role */
-/* get/set client leader */
-/* get/set transient for */
 /* send iconify request */
 
 /* FIXME: there are older E hints, gnome hints and mwm hints and new netwm */
