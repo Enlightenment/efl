@@ -1,31 +1,31 @@
 images {
-  image: "tiles.png"               LOSSY 95;
+  image: "tiles.png"               COMP;
   image: "window_inner_shadow.png" LOSSY 70;
-/*  image: "e_logo.png"              LOSSY 95;*/
+/*  image: "e_logo.png"              COMP;*/
 
-  image: "h_slider.png"            LOSSY 95;
+  image: "h_slider.png"            COMP;
 /************/   
-  image: "video_frame_left.png"    LOSSY 95;
-  image: "video_frame_right.png"   LOSSY 95;
-  image: "video_frame_top.png"     LOSSY 95;
-  image: "video_frame_bottom.png"  LOSSY 95;
+  image: "video_frame_left.png"    COMP;
+  image: "video_frame_right.png"   COMP;
+  image: "video_frame_top.png"     COMP;
+  image: "video_frame_bottom.png"  COMP;
    
-  image: "knob.png"                LOSSY 95;
+  image: "knob.png"                COMP;
 
-  image: "fr1.png"                 LOSSY 95;
-  image: "fr2.png"                 LOSSY 95;
-  image: "fr3.png"                 LOSSY 95;
-  image: "fr4.png"                 LOSSY 95;
-  image: "fr5.png"                 LOSSY 95;
-  image: "fr6.png"                 LOSSY 95;
-  image: "fr7.png"                 LOSSY 95;
-  image: "sl.png"                  LOSSY 95;
-  image: "orb.png"                 LOSSY 95;
-  image: "whb.png"                 LOSSY 95;
-  image: "bpause.png"              LOSSY 95;
-  image: "bplay.png"               LOSSY 95;
-  image: "bstop.png"               LOSSY 95;
-  image: "pnl.png"                 LOSSY 95;
+  image: "fr1.png"                 COMP;
+  image: "fr2.png"                 COMP;
+  image: "fr3.png"                 COMP;
+  image: "fr4.png"                 COMP;
+  image: "fr5.png"                 COMP;
+  image: "fr6.png"                 COMP;
+  image: "fr7.png"                 COMP;
+  image: "sl.png"                  COMP;
+  image: "orb.png"                 COMP;
+  image: "whb.png"                 COMP;
+  image: "bpause.png"              COMP;
+  image: "bplay.png"               COMP;
+  image: "bstop.png"               COMP;
+  image: "pnl.png"                 COMP;
 }
 
 collections {

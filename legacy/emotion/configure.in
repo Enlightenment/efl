@@ -101,82 +101,82 @@ function vser
 }
 
 
-AC_ARG_WITH(eet-config,
-[  --with-eet-config=EET_CONFIG    use eet-config specified ],
-[
-  EET_CONFIG=$withval;
+AC_ARG_WITH(eet-config, [  --with-eet-config=EET_CONFIG    use eet-config specified ],
+[ EET_CONFIG=$withval;
   echo "using "$EET_CONFIG" for eet-config";
 ],[
-  if [ test -z "$EET_CONFIG" ]; then
+  if test -z "$EET_CONFIG"; then
     PROG="eet-config";
     AC_PATH_PROG(EET_CONFIG, $PROG, "", $PATH)
   fi
 ])
+eet_cflags=`$EET_CONFIG --cflags`
+eet_libs=`$EET_CONFIG --libs`
 
 
-AC_ARG_WITH(evas-config,
-[  --with-evas-config=EVAS_CONFIG    use evas-config specified ],
-[
-  EVAS_CONFIG=$withval;
+AC_ARG_WITH(evas-config, [  --with-evas-config=EVAS_CONFIG    use evas-config specified ],
+[ EVAS_CONFIG=$withval;
   echo "using "$EVAS_CONFIG" for evas-config";
 ],[
-  if [ test -z "$EVAS_CONFIG" ]; then
+  if test -z "$EVAS_CONFIG"; then
     PROG="evas-config";
     AC_PATH_PROG(EVAS_CONFIG, $PROG, "", $PATH)
   fi
 ])
+evas_cflags=`$EVAS_CONFIG --cflags`
+evas_libs=`$EVAS_CONFIG --libs`
 
 
-AC_ARG_WITH(edje-config,
-[  --with-edje-config=EDJE_CONFIG    use edje-config specified ],
-[
-  EDJE_CONFIG=$withval;
+AC_ARG_WITH(edje-config, [  --with-edje-config=EDJE_CONFIG    use edje-config specified ],
+[ EDJE_CONFIG=$withval;
   echo "using "$EDJE_CONFIG" for edje-config";
 ],[
-  if [ test -z "$EDJE_CONFIG" ]; then
+  if test -z "$EDJE_CONFIG"; then
     PROG="edje-config";
     AC_PATH_PROG(EDJE_CONFIG, $PROG, "", $PATH)
   fi
 ])
+edje_cflags=`$EDJE_CONFIG --cflags`
+edje_libs=`$EDJE_CONFIG --libs`
 
 
-AC_ARG_WITH(ecore-config,
-[  --with-ecore-config=ECORE_CONFIG    use ecore-config specified ],
-[
-  ECORE_CONFIG=$withval;
+AC_ARG_WITH(ecore-config, [  --with-ecore-config=ECORE_CONFIG    use ecore-config specified ],
+[ ECORE_CONFIG=$withval;
   echo "using "$ECORE_CONFIG" for ecore-config";
 ],[
-  if [ test -z "$ECORE_CONFIG" ]; then
+  if test -z "$ECORE_CONFIG"; then
     PROG="ecore-config";
     AC_PATH_PROG(ECORE_CONFIG, $PROG, "", $PATH)
   fi
 ])
+ecore_cflags=`$ECORE_CONFIG --cflags`
+ecore_libs=`$ECORE_CONFIG --libs`
 
 
-AC_ARG_WITH(embryo-config,
-[  --with-embryo-config=EMBRYO_CONFIG    use embryo-config specified ],
-[
-  EMBRYO_CONFIG=$withval;
+AC_ARG_WITH(embryo-config, [  --with-embryo-config=EMBRYO_CONFIG    use embryo-config specified ],
+[ EMBRYO_CONFIG=$withval;
   echo "using "$EMBRYO_CONFIG" for embryo-config";
 ],[
-  if [ test -z "$EMBRYO_CONFIG" ]; then
+  if test -z "$EMBRYO_CONFIG"; then
     PROG="embryo-config";
     AC_PATH_PROG(EMBRYO_CONFIG, $PROG, "", $PATH)
   fi
 ])
+embryo_cflags=`$EMBRYO_CONFIG --cflags`
+embryo_libs=`$EMBRYO_CONFIG --libs`
 
 
-AC_ARG_WITH(xine-config,
-[  --with-xine-config=XINE_CONFIG    use xine-config specified ],
-[
-  XINE_CONFIG=$withval;
+AC_ARG_WITH(xine-config, [  --with-xine-config=XINE_CONFIG    use xine-config specified ],
+[ XINE_CONFIG=$withval;
   echo "using "$XINE_CONFIG" for xine-config";
 ],[
-  if [ test -z "$XINE_CONFIG" ]; then
+  if test -z "$XINE_CONFIG"; then
     PROG="xine-config";
     AC_PATH_PROG(XINE_CONFIG, $PROG, "", $PATH)
   fi
 ])
+xine_cflags=`$XINE_CONFIG --cflags`
+xine_libs=`$XINE_CONFIG --libs`
 
 
 V=`$ECORE_CONFIG --version`
