@@ -15,4 +15,5 @@ fi
 --enable-ecore-con \
 --enable-ecore-ipc \
 --enable-ecore-txt \
+--enable-ecore-config \
 $@
