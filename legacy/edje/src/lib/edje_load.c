@@ -8,7 +8,18 @@ static void _edje_collection_free_part_description_free(Edje_Part_Description *d
 static int  _edje_collection_free_prog_cache_matches_free_cb(Evas_Hash *hash, const char *key, void *data, void *fdata);
 #endif
 
-/* API Routines */
+/************************** API Routines **************************/
+
+/* FIXDOC: Verify/expand doc */
+/** Sets the .eet file to be used
+ * @param obj A valid Evas_Object handle
+ * @param file The path to the .eet file
+ * @param part The group name in the eet
+ * @return 0 on Error\n
+ * 1 on Success and sets EDJE_LOAD_ERROR_NONE
+ *
+ * This loads the .eet file and sets up the Edje.
+ */
 int
 edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 {
@@ -244,6 +255,14 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
    return 1;
 }
 
+/* FIXDOC: Verify/expand doc. */
+/** Get the .eet location and group for the Evas Object. ?! Assuming eet file
+ * @param obj A valid Evas_Object handle
+ * @param file The .eet file location pointer
+ * @param part The eet part pointer
+ *
+ * This gets the .eet file location and group for the given Evas_Object.
+ */
 void
 edje_object_file_get(Evas_Object *obj, const char **file, const char **part)
 {
@@ -260,6 +279,20 @@ edje_object_file_get(Evas_Object *obj, const char **file, const char **part)
    if (part) *part = ed->part;
 }
 
+/* FIXDOC: Verify. return error? */
+/** Gets the Edje load error
+ * @param obj A valid Evas_Object handle
+ *
+ * @return The Edje load error:\n
+ * 0: No Error\n
+ * 1: Generic Error\n
+ * 2: Does not Exist\n
+ * 3: Permission Denied\n
+ * 4: Resource Allocation Failed\n
+ * 5: Corrupt File\n
+ * 6: Unknown Format\n
+ * 7: Incompatible File
+ */
 int
 edje_object_load_error_get(Evas_Object *obj)
 {
@@ -270,6 +303,12 @@ edje_object_load_error_get(Evas_Object *obj)
    return ed->load_error;
 }
 
+/* FIXDOC: Verify/expand */
+/** Get the collection list from the edje file ?
+ * @param file The file path?
+ *
+ * @return The Evas_List of files
+ */   
 Evas_List *
 edje_file_collection_list(const char *file)
 {
@@ -313,6 +352,12 @@ edje_file_collection_list(const char *file)
    return lst;
 }
 
+/* FIXDOC: Verify/Expand */
+/** Free file collection
+ * @param lst The Evas_List of files
+ *
+ * Frees the file collection.
+ */
 void
 edje_file_collection_list_free(Evas_List *lst)
 {
@@ -323,6 +368,12 @@ edje_file_collection_list_free(Evas_List *lst)
      }
 }
 
+/* FIXDOC: Verify/Expand */
+/** Get edje file data
+ * @param file The file
+ * @param key The data key
+ * @return The file data string
+ */
 char *
 edje_file_data_get(const char *file, const char *key)
 {

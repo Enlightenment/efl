@@ -3,6 +3,12 @@
 
 static int initted = 0;
 
+/************************** API Routines **************************/
+
+/** Initialize the EDJE library.
+ *
+ * @return The new init count.
+ */
 int
 edje_init(void)
 {
@@ -16,6 +22,10 @@ edje_init(void)
    return initted;
 }
 
+/** Shutdown the EET library.
+ *
+ * @return The new init count.
+ */
 int
 edje_shutdown(void)
 {
@@ -29,6 +39,8 @@ edje_shutdown(void)
    
    return 0;
 }
+
+/* Private Routines */
 
 Edje *
 _edje_add(Evas_Object *obj)

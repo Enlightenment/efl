@@ -7,6 +7,14 @@ Evas_Hash *_edje_color_class_member_hash = NULL;
 Evas_Hash *_edje_text_class_hash = NULL;
 Evas_Hash *_edje_text_class_member_hash = NULL;
 
+
+/************************** API Routines **************************/
+
+/* FIXDOC: These all need to be looked over, Verified/Expanded upon.  I just got lazy and stopped putting FIXDOC next to each function in this file. */
+
+/* FIXDOC: Expand */
+/** Freeze all objects in the Edje.
+ */
 void
 edje_freeze(void)
 {
@@ -16,6 +24,9 @@ edje_freeze(void)
      edje_object_freeze((Evas_Object *)(l->data));
 }
 
+/* FIXDOC: Expand */
+/** Thaw all objects in Edje
+ */
 void
 edje_thaw(void)
 {
@@ -25,6 +36,12 @@ edje_thaw(void)
      edje_object_thaw((Evas_Object *)(l->data));
 }
 
+/* FIXDOC: Verify/Expand */
+/** Get Edje object data
+ * @param obj A valid Evas_Object handle
+ * @param key The data key
+ * @return The data string
+ */
 const char *
 edje_object_data_get(Evas_Object *obj, const char *key)
 {
@@ -45,6 +62,14 @@ edje_object_data_get(Evas_Object *obj, const char *key)
    return NULL;
 }
 
+/* FIXDOC: Verify/Expand */
+/** Freeze object
+ * @param obj A valid Evas_Object handle
+ * @return The frozen state\n
+ * 0 on Error
+ *
+ * This puts all changes on hold.  Successive freezes will nest, requiring an equal number of thaws.
+ */
 int
 edje_object_freeze(Evas_Object *obj)
 {
@@ -55,6 +80,13 @@ edje_object_freeze(Evas_Object *obj)
    return _edje_freeze(ed);
 }
 
+/** Thaw object
+ * @param obj A valid Evas_Object handle
+ * @return The frozen state\n
+ * 0 on Error
+ *
+ * This allows frozen changes to occur.
+ */
 int
 edje_object_thaw(Evas_Object *obj)
 {
@@ -65,6 +97,23 @@ edje_object_thaw(Evas_Object *obj)
    return _edje_thaw(ed);
 }
 
+/** Set Edje color class
+ * @param color_class
+ * @param r Object Red value
+ * @param g Object Green value
+ * @param b Object Blue value
+ * @param a Object Alpha value
+ * @param r2 Outline Red value
+ * @param g2 Outline Green value
+ * @param b2 Outline Blue value
+ * @param a2 Outline Alpha value
+ * @param r3 Shadow Red value
+ * @param g3 Shadow Green value
+ * @param b3 Shadow Blue value
+ * @param a3 Shadow Alpha value
+ *
+ * Sets the color class for the Edje.
+ */   
 void
 edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
 {
@@ -134,6 +183,23 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
      }
 }
 
+/** Sets the object color class
+ * @param color_class
+ * @param r Object Red value
+ * @param g Object Green value
+ * @param b Object Blue value
+ * @param a Object Alpha value
+ * @param r2 Outline Red value
+ * @param g2 Outline Green value
+ * @param b2 Outline Blue value
+ * @param a2 Outline Alpha value
+ * @param r3 Shadow Red value
+ * @param g3 Shadow Green value
+ * @param b3 Shadow Blue value
+ * @param a3 Shadow Alpha value
+ *
+ * Applys the color class to the object, where the first color is the object, the second is the outline, and the third is the shadow.
+ */
 void
 edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
 {
@@ -205,6 +271,13 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
    _edje_recalc(ed);
 }
 
+/** Set the Edje text class
+ * @param text_class The text class name ?!
+ * @param font The font name
+ * @param size The font size
+ *
+ * This sets the Edje text class ?!
+ */
 void
 edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size size)
 {
@@ -264,6 +337,13 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
      }
 }
 
+/** Sets Edje text class
+ * @param text_class The text class name
+ * @param font Font name
+ * @param size Font Size
+ *
+ * Sets the text class for the Edje.
+ */
 void
 edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char *font, Evas_Font_Size size)
 {
@@ -311,6 +391,12 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
    _edje_recalc(ed);
 }
 
+/** Check if Edje part exists
+ * @param obj A valid Evas_Object handle
+ * @param part The part name to check
+ * @return 0 on Error\n
+ * 1 if Edje part exists
+ */
 int
 edje_object_part_exists(Evas_Object *obj, const char *part)
 {
@@ -324,6 +410,16 @@ edje_object_part_exists(Evas_Object *obj, const char *part)
    return 1;
 }
 
+/** Get Edje part geometry
+ * @param obj A valid Evas_Object handle
+ * @param part The Edje part
+ * @param x The x coordinate pointer
+ * @param y The y coordinate pointer
+ * @param w The width pointer
+ * @param h The height pointer
+ *
+ * Gets the Edje part geometry
+ */
 void
 edje_object_part_geometry_get(Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h )
 {
@@ -354,6 +450,7 @@ edje_object_part_geometry_get(Evas_Object *obj, const char *part, Evas_Coord *x,
    if (h) *h = rp->h;
 }
 
+/* FIXDOC: New Function */
 void
 edje_object_text_change_cb_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, const char *part), void *data)
 {
@@ -366,6 +463,11 @@ edje_object_text_change_cb_set(Evas_Object *obj, void (*func) (void *data, Evas_
    ed->text_change.data = data;
 }
 
+/** Sets the text for an object part
+ * @param obj A valid Evas Object handle
+ * @param part The part name
+ * @param text The text string
+ */
 void
 edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
 {
@@ -389,6 +491,11 @@ edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
    if (ed->text_change.func) ed->text_change.func(ed->text_change.data, obj, part);
 }
 
+/** Returns the text of the object part
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @return The text string
+ */
 const char *
 edje_object_part_text_get(Evas_Object *obj, const char *part)
 {
@@ -404,6 +511,13 @@ edje_object_part_text_get(Evas_Object *obj, const char *part)
    return NULL;
 }
 
+/** Swallows an object into the edje
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param obj_swallow The object to swallow
+ *
+ * Swallows the object into the edje part so that all geometry changes for the part affect the swallowed object. (e.g. resize, move, show, raise/lower, etc.)
+ */
 void
 edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_swallow)
 {
@@ -480,6 +594,13 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
    _edje_recalc(ed);   
 }
 
+/** Set the object minimum size
+ * @param obj A valid Evas_Object handle
+ * @param minw The minimum width
+ * @param minh The minimum height
+ *
+ * This sets the minimum size restriction for the object.
+ */
 void
 edje_extern_object_min_size_set(Evas_Object *obj, Evas_Coord minw, Evas_Coord minh)
 {
@@ -499,6 +620,13 @@ edje_extern_object_min_size_set(Evas_Object *obj, Evas_Coord minw, Evas_Coord mi
      evas_object_data_del(obj, "\377 edje.minh");
 }
 
+/** Set the object maximum size
+ * @param obj A vaild Evas_Object handle
+ * @param maxw The maximum width
+ * @param maxh The maximum height
+ *
+ * This sets the maximum size restriction for the object.
+ */
 void
 edje_extern_object_max_size_set(Evas_Object *obj, Evas_Coord maxw, Evas_Coord maxh)
 {
@@ -516,6 +644,12 @@ edje_extern_object_max_size_set(Evas_Object *obj, Evas_Coord maxw, Evas_Coord ma
      evas_object_data_del(obj, "\377 edje.maxh");
 }
 
+/** Unswallow an object
+ * @param obj A valid Evas_Object handle
+ * @param obj_swallow The swallowed object
+ *
+ * Causes the edje to regurgitate a previously swallowed object.  :)
+ */
 void
 edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
 {
@@ -548,6 +682,11 @@ edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
      }
 }
 
+/** Get the swallowed part ?!
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @return The swallowed object
+ */
 Evas_Object *
 edje_object_part_swallow_get(Evas_Object *obj, const char *part)
 {
@@ -561,6 +700,13 @@ edje_object_part_swallow_get(Evas_Object *obj, const char *part)
    return rp->swallowed_object;
 }
 
+/** Get the minimum size for an object
+ * @param obj A valid Evas_Object handle
+ * @param minw Minimum width pointer
+ * @param minh Minimum height pointer
+ *
+ * Gets the object's minimum size values from the Edje. These are set to zero if no Edje is connected to the Evas Object.
+ */
 void
 edje_object_size_min_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 {
@@ -577,6 +723,13 @@ edje_object_size_min_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
    if (minh) *minh = ed->collection->prop.min.h;
 }
 
+/** Get the maximum size for an object
+ * @param obj A valid Evas_Object handle
+ * @param maxw Maximum width pointer
+ * @param maxh Maximum height pointer
+ *
+ * Gets the object's maximum size values from the Edje.  These are set to zero if no Edje is connected to the Evas Object.
+ */
 void
 edje_object_size_max_get(Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh)
 {
@@ -607,6 +760,13 @@ edje_object_size_max_get(Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh)
      }
 }
 
+/** Calculate minimum size
+ * @param obj A valid Evas_Object handle
+ * @param minw Minimum width pointer
+ * @param minh Minimum height pointer
+ *
+ * Calculates the object's minimum size ?!
+ */
 void
 edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 {
@@ -677,6 +837,16 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
    ed->calc_only = 0;
 }
 
+/** Returns the state of the edje part
+ * @param obj A valid Evas_Objectart handle
+ * @param part The part name
+ * @param val_ret 
+ *
+ * @return The part state:\n
+ * "default" for the default state\n
+ * "" for other states
+ */
+/* FIXME: Correctly return other states */
 const char *
 edje_object_part_state_get(Evas_Object *obj, const char *part, double *val_ret)
 {
@@ -716,6 +886,15 @@ edje_object_part_state_get(Evas_Object *obj, const char *part, double *val_ret)
    return "";
 }
 
+/** Determine dragable directions
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ *
+ * @return 0: Not dragable\n
+ * 1: Dragable in X direction\n
+ * 2: Dragable in Y direction\n
+ * 3: Dragable in X & Y directions
+ */
 int
 edje_object_part_drag_dir_get(Evas_Object *obj, const char *part)
 {
@@ -738,6 +917,14 @@ edje_object_part_drag_dir_get(Evas_Object *obj, const char *part)
    return EDJE_DRAG_DIR_NONE;
 }
 
+/** Set the dragable object location
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param dx The x value
+ * @param dy The y value
+ *
+ * Places the dragable object at the given location.
+ */
 void
 edje_object_part_drag_value_set(Evas_Object *obj, const char *part, double dx, double dy)
 {
@@ -770,7 +957,15 @@ edje_object_part_drag_value_set(Evas_Object *obj, const char *part, double dx, d
    _edje_dragable_pos_set(ed, rp, dx, dy);
    _edje_emit(ed, "drag,set", rp->part->name);   
 }
-
+/** Get the dragable object location
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param dx The X value pointer
+ * @param dy The Y value pointer
+ *
+ * Gets the drag location values.
+ */
+/* FIXME: Should this be x and y instead of dx/dy? */
 void
 edje_object_part_drag_value_get(Evas_Object *obj, const char *part, double *dx, double *dy)
 {
@@ -800,6 +995,14 @@ edje_object_part_drag_value_get(Evas_Object *obj, const char *part, double *dx, 
    if (dy) *dy = ddy;
 }
 
+/** Set the dragable object size
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param dw The drag width
+ * @param dh The drag height
+ *
+ * Sets the size of the dragable object
+ */
 void
 edje_object_part_drag_size_set(Evas_Object *obj, const char *part, double dw, double dh)
 {
@@ -827,6 +1030,14 @@ edje_object_part_drag_size_set(Evas_Object *obj, const char *part, double dw, do
    _edje_recalc(ed);
 }
 
+/** Get the dragable object size
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param dw The drag width pointer
+ * @param dh The drag height pointer
+ *
+ * Gets the dragable object size.
+ */
 void
 edje_object_part_drag_size_get(Evas_Object *obj, const char *part, double *dw, double *dh)
 {
@@ -851,6 +1062,14 @@ edje_object_part_drag_size_get(Evas_Object *obj, const char *part, double *dw, d
    if (dh) *dh = rp->drag.size.y;
 }
 
+/** Sets the drag step increment
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param dx The x step ammount
+ * @param dy The y step ammount
+ *
+ * Sets the x,y step increments for a dragable object.
+ */
 void
 edje_object_part_drag_step_set(Evas_Object *obj, const char *part, double dx, double dy)
 {
@@ -876,6 +1095,14 @@ edje_object_part_drag_step_set(Evas_Object *obj, const char *part, double dx, do
    rp->drag.step.y = dy;
 }
 
+/** Gets the drag step increment values.
+ * @param obj A valid Evas_Object handle
+ * @param part The part
+ * @param dx The x step increment pointer
+ * @param dy The y step increment pointer
+ *
+ * Gets the x and y step increments for the dragable object.
+ */
 void
 edje_object_part_drag_step_get(Evas_Object *obj, const char *part, double *dx, double *dy)
 {
@@ -900,6 +1127,14 @@ edje_object_part_drag_step_get(Evas_Object *obj, const char *part, double *dx, d
    if (dy) *dy = rp->drag.step.y;
 }
 
+/** Sets the page step increments
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param dx The x page step increment
+ * @param df The y page step increment
+ *
+ * Sets the x,y page step increment values.
+ */
 void
 edje_object_part_drag_page_set(Evas_Object *obj, const char *part, double dx, double dy)
 {
@@ -925,6 +1160,14 @@ edje_object_part_drag_page_set(Evas_Object *obj, const char *part, double dx, do
    rp->drag.page.y = dy;
 }
 
+/** Gets the page step increments
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param dx The dx page increment pointer
+ * @param dy The dy page increment pointer
+ *
+ * Gets the x,y page step increments for the dragable object.
+ */
 void
 edje_object_part_drag_page_get(Evas_Object *obj, const char *part, double *dx, double *dy)
 {
@@ -949,6 +1192,14 @@ edje_object_part_drag_page_get(Evas_Object *obj, const char *part, double *dx, d
    if (dy) *dy = rp->drag.page.y;
 }
 
+/** Steps the dragable x,y steps
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param dx The x step
+ * @param dy The y step
+ *
+ * Steps x,y where the step increment is the ammount set by edje_object_part_drag_step_set.
+ */
 void
 edje_object_part_drag_step(Evas_Object *obj, const char *part, double dx, double dy)
 {
@@ -980,6 +1231,15 @@ edje_object_part_drag_step(Evas_Object *obj, const char *part, double dx, double
    _edje_emit(ed, "drag,step", rp->part->name);   
 }
 
+/** Pages x,y steps
+ * @param obj A valid Evas_Object handle
+ * @param part The part name
+ * @param dx The x step
+ * @param dy The y step
+ *
+ * Pages x,y where the increment is defined by edje_object_part_drag_page_set.\n
+ * WARNING: Paging is bugged!
+ */
 void
 edje_object_part_drag_page(Evas_Object *obj, const char *part, double dx, double dy)
 {
@@ -1013,7 +1273,7 @@ edje_object_part_drag_page(Evas_Object *obj, const char *part, double dx, double
 
 
 
-
+/* Private Routines */
 
 Edje_Real_Part *
 _edje_real_part_get(Edje *ed, char *part)

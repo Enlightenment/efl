@@ -9,7 +9,14 @@ int          _edje_anim_count = 0;
 Ecore_Timer *_edje_timer = NULL;
 Evas_List   *_edje_animators = NULL;
 
-/* API Routines */
+/************************** API Routines **************************/
+
+/* FIXDOC: Expand */
+/** Set the frametime
+ * @param t The frametime
+ *
+ * Sets the frametime in seconds, by default this is 1/60.
+ */
 void
 edje_frametime_set(double t)
 {
@@ -23,12 +30,27 @@ edje_frametime_set(double t)
    _edje_var_anim_frametime_reset();
 }
 
+/* FIXDOC: Expand */
+/** Get the frametime
+ * @return The frametime
+ *
+ * Returns the frametime in seconds, by default this is 1/60.
+ */
 double
 edje_frametime_get(void)
 {
    return _edje_frametime;
 }
 
+/* FIXDOC: Expand */
+/** Adds a callback for the object.
+ * @param obj A valid Evas_Object handle
+ * @param emission Signal to activate callback FIXDOC: Naming Convention?
+ * @param source Source of signal
+ * @param func The function to be executed when the callback is signaled
+ *
+ * Creates a callback for the object to execute the given function.
+ */
 void
 edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
 {
@@ -52,6 +74,14 @@ edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const ch
      }
 }
 
+/* FIXDOC: Expand */
+/** Delete an object's callback
+ * @param obj A valid Evas_Object handle
+ * @param emission ? FIXDOC
+ * @param source ? FIXDOC
+ *
+ * Deletes an existing callback
+ */
 void *
 edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source))
 {
@@ -92,6 +122,14 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
    return NULL;
 }
 
+/* FIXDOC: Verify/Expand */
+/** Send a signal to the Edje
+ * @param A vaild Evas_Object handle
+ * @param emission The signal
+ * @param source The signal source
+ *
+ * This sends a signal to the edje.  These are defined in the programs section of an edc.
+ */
 void
 edje_object_signal_emit(Evas_Object *obj, const char *emission, const char *source)
 {
@@ -104,6 +142,13 @@ edje_object_signal_emit(Evas_Object *obj, const char *emission, const char *sour
    _edje_emit(ed, (char *)emission, (char *)source);
 }
 
+/* FIXDOC: Verify/Expand */
+/** Set the Edje to play or pause
+ * @param obj A vaild Evas_Object handle
+ * @param play Play instruction (1 to play, 0 to pause)
+ *
+ * This sets the Edje to play or pause depending on the parameter.  This has no effect if the Edje is already in that state.
+ */
 void
 edje_object_play_set(Evas_Object *obj, int play)
 {
@@ -135,6 +180,12 @@ edje_object_play_set(Evas_Object *obj, int play)
      }
 }
 
+/* FIXDOC: Verify/Expand */
+/** Get the Edje play/pause state
+ * @param obj A valid Evas_Object handle
+ * @return 0 if Edje not connected, Edje delete_me, or Edje paused\n
+ * 1 if Edje set to play
+ */
 int 
 edje_object_play_get(Evas_Object *obj)
 {
@@ -147,6 +198,13 @@ edje_object_play_get(Evas_Object *obj)
    return 1;
 }
 
+/* FIXDOC: Verify/Expand */
+/** Set Animation state
+ * @param obj A valid Evas_Object handle
+ * @param on Animation State
+ *
+ * Stop or start an Edje animation.
+ */
 void
 edje_object_animation_set(Evas_Object *obj, int on)
 {
@@ -193,6 +251,12 @@ edje_object_animation_set(Evas_Object *obj, int on)
    _edje_unblock(ed);
 }
 
+/* FIXDOC: Verify/Expand */
+/** Get the animation state
+ * @param obj A valid Evas_Object handle
+ * @return 0 on Error or if not animated\n
+ * 1 if animated
+ */
 int
 edje_object_animation_get(Evas_Object *obj)
 {

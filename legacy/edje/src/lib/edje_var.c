@@ -231,7 +231,7 @@ _edje_var_string_id_get(Edje *ed, char *string)
    if (!ed) return 0;
    if (!ed->collection) return 0;
    if (!ed->collection->script) return 0;
-   if (!string) return;
+   if (!string) return 0;
    cell = embryo_program_variable_find(ed->collection->script, string);
    if (cell == EMBRYO_CELL_NONE) return  0;
    cptr = embryo_data_address_get(ed->collection->script, cell);
