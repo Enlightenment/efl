@@ -8,9 +8,12 @@
 
 #ifndef _WIN32_WCE
 
+#include <limits.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <sys/param.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <unistd.h>
 /* get the casefold feature! */
 #define _GNU_SOURCE
 #include <fnmatch.h>
@@ -120,6 +123,15 @@ evas_file_modified_time(const char *file)
    return 0;
 }
 
+char *
+evas_file_path_resolve(const char *file)
+{
+   char buf[PATH_MAX], *buf2;
+   
+   if (!realpath(file, buf)) return NULL;
+   buf2 = strdup(buf);
+   return buf2;
+}
 
 #else
 
@@ -327,7 +339,6 @@ evas_file_path_list(char *path, char *match, int match_case)
    return files;
 }
 
-
 DATA64
 evas_file_modified_time(const char *file)
 {
@@ -352,5 +363,11 @@ evas_file_modified_time(const char *file)
    modtime.u.LowPart = find.ftCreationTime.dwLowDateTime;
    
    return modtime.QuadPart;
+}
+
+char *
+evas_file_path_resolve(const char *file)
+{
+   return strdup(file);
 }
 #endif

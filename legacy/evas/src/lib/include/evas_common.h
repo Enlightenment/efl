@@ -265,6 +265,7 @@ struct _RGBA_Image
      {
 	int             format;
 	char           *file;
+	char           *real_file;
 	char           *key;
 	char           *comment;
      } info;

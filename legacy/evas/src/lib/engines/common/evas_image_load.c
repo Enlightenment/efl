@@ -1097,7 +1097,10 @@ evas_common_load_image_from_file(const char *file, const char *key)
      }
    im->timestamp = mod_time;
    if (file)
-     im->info.file = strdup(file);
+     {
+	im->info.file = strdup(file);
+	im->info.real_file = evas_file_path_resolve(file);
+     }
    if (key)
      im->info.key = strdup(key);
    evas_common_image_ref(im);

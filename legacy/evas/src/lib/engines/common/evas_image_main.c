@@ -138,6 +138,7 @@ evas_common_image_free(RGBA_Image *im)
      }
    if (im->mipmaps.levels) free(im->mipmaps.levels);
    if (im->info.file) free(im->info.file);
+   if (im->info.real_file) free(im->info.real_file);
    if (im->info.key) free(im->info.key);
    if (im->info.comment) free(im->info.comment);
    free(im);
@@ -244,7 +245,8 @@ evas_common_image_store(RGBA_Image *im)
    if (im->flags & RGBA_IMAGE_INDEXED) return;
    if ((!im->info.file) && (!im->info.key)) return;
    l1 = 0;
-   if (im->info.file) l1 = strlen(im->info.file);
+   if (im->info.real_file) l1 = strlen(im->info.real_file);
+   else if (im->info.file) l1 = strlen(im->info.file);
    l2 = 0;
    if (im->info.key) l2 = strlen(im->info.key);
    snprintf(buf, sizeof(buf), "%llx", im->timestamp);
@@ -252,7 +254,8 @@ evas_common_image_store(RGBA_Image *im)
    key = malloc(l1 + 3 + l2 + 3 + l3 +1);
    if (!key) return;
    key[0] = 0;
-   if (im->info.file) strcpy(key, im->info.file);
+   if (im->info.real_file) strcpy(key, im->info.real_file);
+   else if (im->info.file) strcpy(key, im->info.file);
    strcat(key, "/:/");
    if (im->info.key) strcat(key, im->info.key);
    strcat(key, "/:/");
@@ -272,7 +275,8 @@ evas_common_image_unstore(RGBA_Image *im)
    if (!(im->flags & RGBA_IMAGE_INDEXED)) return;
    if ((!im->info.file) && (!im->info.key)) return;
    l1 = 0;
-   if (im->info.file) l1 = strlen(im->info.file);
+   if (im->info.real_file) l1 = strlen(im->info.real_file);
+   else if (im->info.file) l1 = strlen(im->info.file);
    l2 = 0;
    if (im->info.key) l2 = strlen(im->info.key);
    snprintf(buf, sizeof(buf), "%llx", im->timestamp);
@@ -280,7 +284,8 @@ evas_common_image_unstore(RGBA_Image *im)
    key = malloc(l1 + 3 + l2 + 3 + l3 +1);
    if (!key) return;
    key[0] = 0;
-   if (im->info.file) strcpy(key, im->info.file);
+   if (im->info.real_file) strcpy(key, im->info.real_file);
+   else if (im->info.file) strcpy(key, im->info.file);
    strcat(key, "/:/");
    if (im->info.key) strcat(key, im->info.key);
    strcat(key, "/:/");
@@ -294,6 +299,7 @@ evas_common_image_unstore(RGBA_Image *im)
 RGBA_Image *
 evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
 {
+   char *real_filename;
    Evas_Object_List *l;
    RGBA_Image *im;
    char *str;
@@ -301,8 +307,10 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
    char buf[256];
    
    if ((!filename) && (!key)) return NULL;
+   real_filename = evas_file_path_resolve(filename);
    l1 = 0;
-   if (filename) l1 = strlen(filename);
+   if (real_filename) l1 = strlen(real_filename);
+   else if (filename) l1 = strlen(filename);
    l2 = 0;
    if (key) l2 = strlen(key);
    sprintf(buf, "%llx", timestamp);
@@ -325,11 +333,20 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
 	
 	im = (RGBA_Image *)l;
 	ok = 0;
-	if ((filename) && (im->info.file) && 
-	    (!strcmp(filename, im->info.file)))
-	  ok++;
-	if ((!filename) && (!im->info.file))
-	  ok++;
+	if (real_filename)
+	  {
+             if ((im->info.real_file) &&
+		 (!strcmp(real_filename, im->info.real_file)))
+	       ok++;
+	  }
+	else
+	  {
+	     if ((filename) && (im->info.file) && 
+		 (!strcmp(filename, im->info.file)))
+	       ok++;
+	     if ((!filename) && (!im->info.file))
+	       ok++;
+	  }
 	if ((key) && (im->info.key) && 
 	    (!strcmp(key, im->info.key)))
 	  ok++;
@@ -350,6 +367,7 @@ evas_common_image_ram_usage(RGBA_Image *im)
    
    ram += sizeof(struct _RGBA_Image);
    if (im->info.file) ram += strlen(im->info.file);
+   if (im->info.real_file) ram += strlen(im->info.real_file);
    if (im->info.key) ram += strlen(im->info.key);
    if (im->info.comment) ram += strlen(im->info.comment);
    if ((im->image) && (im->image->data) && (!im->image->no_free))

@@ -521,6 +521,7 @@ int evas_file_path_is_file(char *path);
 int evas_file_path_is_dir(char *path);
 Evas_List *evas_file_path_list(char *path, char *match, int match_case);
 DATA64 evas_file_modified_time(const char *file);
+char *evas_file_path_resolve(const char *file);
 int evas_mem_free(int mem_required);
 int evas_mem_degrade(int mem_required);
 void evas_debug_error(void);
