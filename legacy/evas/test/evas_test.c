@@ -75,7 +75,7 @@ main(int argc, char **argv)
    int win_w, win_h;
    int i, a, w, h;
    Evas e;
-   Evas_Object o[128], o_rect, o_line, o_grad, o_fps;
+   Evas_Object o[128], o_rect, o_line, o_grad, o_fps, o_text;
    Evas_Gradient grad;
    int down;
    double t1, t2;
@@ -199,6 +199,17 @@ main(int argc, char **argv)
    evas_callback_add(e, o_grad, CALLBACK_MOUSE_IN, mouse_in, NULL);
    evas_callback_add(e, o_grad, CALLBACK_MOUSE_OUT, mouse_out, NULL);
 
+   o_text = evas_add_text(e, "grunge", 24, "Click and Drag Objects...");
+   evas_set_color(e, o_text, 0, 0, 0, 160);
+   evas_move(e, o_text, 30, 60); 
+   evas_show(e, o_text);
+   evas_set_layer(e, o_text, 200);
+   evas_callback_add(e, o_text, CALLBACK_MOUSE_DOWN, mouse_down, NULL);
+   evas_callback_add(e, o_text, CALLBACK_MOUSE_UP, mouse_up, NULL);
+   evas_callback_add(e, o_text, CALLBACK_MOUSE_MOVE, mouse_move, NULL);
+   evas_callback_add(e, o_text, CALLBACK_MOUSE_IN, mouse_in, NULL);
+   evas_callback_add(e, o_text, CALLBACK_MOUSE_OUT, mouse_out, NULL);
+   
    o_fps = evas_add_text(e, "morpheus", 16, "FPS...");
    evas_set_color(e, o_fps, 255, 255, 255, 120);
    evas_move(e, o_fps, win_w, win_h); 
