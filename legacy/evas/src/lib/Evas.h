@@ -26,7 +26,7 @@
  * @brief These routines are used for Evas library interaction.
  */
 
-enum _Evas_Callback_Type
+typedef enum _Evas_Callback_Type
 {
    EVAS_CALLBACK_MOUSE_IN, /**< Mouse In Event */
    EVAS_CALLBACK_MOUSE_OUT, /**< Mouse Out Event */
@@ -44,16 +44,39 @@ enum _Evas_Callback_Type
    EVAS_CALLBACK_MOVE, /**< Move Event */
    EVAS_CALLBACK_RESIZE, /**< Resize Event */
    EVAS_CALLBACK_RESTACK /**< Restack Event */
-};
-typedef enum _Evas_Callback_Type Evas_Callback_Type; /**< The type of event to trigger the callback */
+} Evas_Callback_Type; /**< The type of event to trigger the callback */
 
-enum _Evas_Button_Flags
+typedef enum _Evas_Button_Flags
 {
    EVAS_BUTTON_NONE = 0, /**< No extra mouse button data */
    EVAS_BUTTON_DOUBLE_CLICK = (1 << 0), /**< This mouse button press was the 2nd press of a double click */
    EVAS_BUTTON_TRIPLE_CLICK = (1 << 1) /**< This mouse button press was the 3rd press of a triple click */
-};
-typedef enum _Evas_Button_Flags Evas_Button_Flags; /**< Flags for Mouse Button events */
+} Evas_Button_Flags; /**< Flags for Mouse Button events */
+
+typedef enum _Evas_Format_Type
+{
+   EVAS_FORMAT_NONE = 0,
+     EVAS_FORMAT_FONT,
+     EVAS_FORMAT_SIZE,
+     EVAS_FORMAT_COLOR,
+     EVAS_FORMAT_COLOR2,
+     EVAS_FORMAT_COLOR3,
+     EVAS_FORMAT_ALIGN,
+     EVAS_FORMAT_STYLE,
+     EVAS_FORMAT_UNDERLINE,
+     EVAS_FORMAT_NEWLINE,
+     EVAS_FORMAT_TAB,
+     EVAS_FORMAT_L2R,
+     EVAS_FORMAT_R2L,
+     EVAS_FORMAT_ANCHOR
+} Evas_Format_Type;
+
+typedef enum _Evas_Format_Direction
+{
+   EVAS_FORMAT_DIRECTION_VERTICAL = 0,
+     EVAS_FORMAT_DIRECTION_HORIZONTAL = 1
+} Evas_Format_Direction;
+
 
 typedef struct _Evas_List             Evas_List; /**< A generic linked list node handle */
 typedef struct _Evas_Rectangle        Evas_Rectangle; /**< A generic rectangle handle */

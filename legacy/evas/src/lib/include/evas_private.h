@@ -45,6 +45,30 @@ typedef enum _Evas_Button_Flags
    EVAS_BUTTON_TRIPLE_CLICK = (1 << 1)
 } Evas_Button_Flags;
 
+typedef enum _Evas_Format_Type
+{
+   EVAS_FORMAT_NONE = 0,
+   EVAS_FORMAT_FONT,
+   EVAS_FORMAT_SIZE,
+   EVAS_FORMAT_COLOR,
+   EVAS_FORMAT_COLOR2,
+   EVAS_FORMAT_COLOR3,
+   EVAS_FORMAT_ALIGN,
+   EVAS_FORMAT_STYLE,
+   EVAS_FORMAT_UNDERLINE,
+   EVAS_FORMAT_NEWLINE,
+   EVAS_FORMAT_TAB,
+   EVAS_FORMAT_L2R,
+   EVAS_FORMAT_R2L,
+   EVAS_FORMAT_ANCHOR
+} Evas_Format_Type;
+
+typedef enum _Evas_Format_Direction
+{
+   EVAS_FORMAT_DIRECTION_VERTICAL = 0,
+   EVAS_FORMAT_DIRECTION_HORIZONTAL = 1
+} Evas_Format_Direction;
+
 typedef struct _Evas_Rectangle              Evas_Rectangle;
 
 typedef struct _Evas                        Evas;
@@ -70,6 +94,7 @@ typedef struct _Evas_Intercept_Func_Int     Evas_Intercept_Func_Int;
 typedef struct _Evas_Key_Grab               Evas_Key_Grab;
 typedef struct _Evas_Callbacks              Evas_Callbacks;
 typedef struct _Evas_Smart_Class            Evas_Smart_Class;
+typedef struct _Evas_Format                 Evas_Format;
 #if 0 /* able to change co-ordinate systems to remove all fp ops */
 typedef double                              Evas_Coord;
 typedef double                              Evas_Font_Size;

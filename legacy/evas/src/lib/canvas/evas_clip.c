@@ -166,16 +166,14 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
 	obj->cur.clipper = NULL;	
      }
    /* clip me */
-   if (clip->clip.clipees == NULL && clip->cur.visible)
+   if ((clip->clip.clipees == NULL) && (clip->cur.visible))
      {
-	     /* Basically it just went invisible */
-	     clip->changed = 1;
-	     clip->layer->evas->changed = 1;
-	
-
-	     evas_damage_rectangle_add(clip->layer->evas,
-			     clip->cur.geometry.x, clip->cur.geometry.y,
-			     clip->cur.geometry.w, clip->cur.geometry.h);
+	/* Basically it just went invisible */
+	clip->changed = 1;
+	clip->layer->evas->changed = 1;
+	evas_damage_rectangle_add(clip->layer->evas,
+				  clip->cur.geometry.x, clip->cur.geometry.y,
+				  clip->cur.geometry.w, clip->cur.geometry.h);
      }
    obj->cur.clipper = clip;
    clip->clip.clipees = evas_list_append(clip->clip.clipees, obj);

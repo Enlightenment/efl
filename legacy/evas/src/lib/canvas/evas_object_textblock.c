@@ -77,7 +77,7 @@ evas_object_textblock_add(Evas *e)
 
 /* stubs of what we will need... */
 void
-evas_object_textblock_text_set(Evas_Object *obj, char *text)
+evas_object_textblock_clear(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
    
@@ -88,21 +88,6 @@ evas_object_textblock_text_set(Evas_Object *obj, char *text)
    MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXT);
    return;
    MAGIC_CHECK_END();
-}
-
-const char *
-evas_object_textblock_text_get(Evas_Object *obj)
-{
-   Evas_Object_Textblock *o;
-   
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return NULL;
-   MAGIC_CHECK_END();
-   o = (Evas_Object_Textblock *)(obj->object_data);
-   MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXT);
-   return NULL;
-   MAGIC_CHECK_END();
-   return NULL;
 }
 
 void
@@ -148,8 +133,62 @@ evas_object_textblock_text_insert(Evas_Object *obj, char *text)
    MAGIC_CHECK_END();
 }
 
+Evas_Format *
+evas_format_new(Evas *e)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return NULL;
+   MAGIC_CHECK_END();
+   return NULL;
+}
+
 void
-evas_object_textblock_newline_use_set(Evas_Object *obj, Evas_Bool use)
+evas_format_del(Evas_Format *fmt)
+{
+}
+
+void
+evas_format_retain_set(Evas_Format *fmt, Evas_Bool retain)
+{
+}
+
+void
+evas_format_resize(Evas_Format *fmt, Evas_Coord w, Evas_Coord h)
+{
+}
+
+void
+evas_format_type_set(Evas_Format *fmt, Evas_Format_Type ft)
+{
+}
+
+void
+evas_format_size_set(Evas_Format *fmt, Evas_Coord size)
+{
+}
+
+void
+evas_format_enabled_set(Evas_Format *fmt, Evas_Bool enabled)
+{
+}
+
+void
+evas_format_color_set(Evas_Format *fmt, int r, int g, int b, int a)
+{
+}
+
+void
+evas_format_string_set(Evas_Format *fmt, const char *str)
+{
+}
+
+void
+evas_format_align_set(Evas_Format *fmt, double align)
+{
+}
+
+void
+evas_object_textblock_format_insert(Evas_Object *obj, Evas_Format *fmt)
 {
    Evas_Object_Textblock *o;
    
@@ -162,21 +201,10 @@ evas_object_textblock_newline_use_set(Evas_Object *obj, Evas_Bool use)
    MAGIC_CHECK_END();
 }
 
-Evas_Bool
-evas_object_textblock_newline_use_get(Evas_Object *obj)
+void
+evas_object_textblock_format_direction_set(Evas_Object *obj, Evas_Format_Direction dir)
 {
-   Evas_Object_Textblock *o;
-   
-   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return 0;
-   MAGIC_CHECK_END();
-   o = (Evas_Object_Textblock *)(obj->object_data);
-   MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXT);
-   return 0;
-   MAGIC_CHECK_END();
-   return 0;
 }
-
 
 
 

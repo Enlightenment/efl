@@ -424,22 +424,25 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
 	     
 	     obj = outs->data;
 	     outs = evas_list_remove(outs, obj);
-	     e->pointer.object.in = evas_list_remove(e->pointer.object.in, obj);
+	     if (!obj->mouse_grabbed)
 	       {
-		  Evas_Event_Mouse_Out ev;
-		  
-		  obj->mouse_in = 0;
-		  ev.buttons = e->pointer.button;
-		  ev.output.x = e->pointer.x;
-		  ev.output.y = e->pointer.y;
-		  ev.canvas.x = e->pointer.canvas_x;
-		  ev.canvas.y = e->pointer.canvas_y;
-		  ev.data = (void *)data;
-		  ev.modifiers = &(e->modifiers);
-		  ev.locks = &(e->locks);
-		  if (!e->events_frozen)
-		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
-	       }	     
+		  e->pointer.object.in = evas_list_remove(e->pointer.object.in, obj);
+		    {
+		       Evas_Event_Mouse_Out ev;
+		       
+		       obj->mouse_in = 0;
+		       ev.buttons = e->pointer.button;
+		       ev.output.x = e->pointer.x;
+		       ev.output.y = e->pointer.y;
+		       ev.canvas.x = e->pointer.canvas_x;
+		       ev.canvas.y = e->pointer.canvas_y;
+		       ev.data = (void *)data;
+		       ev.modifiers = &(e->modifiers);
+		       ev.locks = &(e->locks);
+		       if (!e->events_frozen)
+			 evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
+		    }	     
+	       }
 	  }
      }
    else
