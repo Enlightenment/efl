@@ -434,8 +434,10 @@ evas_event_feed_key_down_data(Evas *e, const char *keyname, const void *data)
 		  Evas_Key_Grab *g;
 		  
 		  g = l->data;
-		  if ((e->modifiers.mask & g->modifiers) &&
-		      (!(e->modifiers.mask & g->not_modifiers)) &&
+		  if (((e->modifiers.mask & g->modifiers) ||
+		       (g->modifiers == e->modifiers.mask)) &&
+		      (!((e->modifiers.mask & g->not_modifiers) ||
+			 (g->not_modifiers == ~e->modifiers.mask))) &&
 		      (!strcmp(keyname, g->keyname)))
 		    {
 		       evas_object_event_callback_call(g->object, EVAS_CALLBACK_KEY_DOWN, &ev);
@@ -472,8 +474,10 @@ evas_event_feed_key_up_data(Evas *e, const char *keyname, const void *data)
 		  Evas_Key_Grab *g;
 		  
 		  g = l->data;
-		  if ((e->modifiers.mask & g->modifiers) &&
-		      (!(e->modifiers.mask & g->not_modifiers)) &&
+		  if (((e->modifiers.mask & g->modifiers) ||
+		       (g->modifiers == e->modifiers.mask)) &&
+		      (!((e->modifiers.mask & g->not_modifiers) ||
+			 (g->not_modifiers == ~e->modifiers.mask))) &&
 		      (!strcmp(keyname, g->keyname)))
 		    {
 		       evas_object_event_callback_call(g->object, EVAS_CALLBACK_KEY_UP, &ev);
