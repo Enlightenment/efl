@@ -1,0 +1,7 @@
+Makefile.in
+Makefile
+.deps
+.libs
+libevas_engine_buffer.la
+evas_engine.lo
+evas_outbuf.lo

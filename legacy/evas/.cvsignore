@@ -1,0 +1,17 @@
+config.guess
+config.sub
+ltmain.sh
+aclocal.m4
+autom4te.cache
+config.h.in
+Makefile.in
+configure
+config.log
+Makefile
+libtool
+config.status
+evas-config
+evas.pc
+config.h
+stamp-h1
+evas_docs.tar.gz
