@@ -414,15 +414,7 @@ e_ev_x_handle_button_press(XEvent * xevent)
 	       {
 		  if (xid->grab_button_auto_replay)
 		    {
-		       if ((xid->grab_button_button == 0) ||
-			   (xid->grab_button_button == e->button))
-			 {
-			    if ((xid->grab_button_any_mod) ||
-				(xid->grab_button_mods == e->mods))
-			      {
-				 e_pointer_replay(e->time);
-			      }
-			 }
+		       e_pointer_replay(e->time);
 		    }
 	       }
 	  }

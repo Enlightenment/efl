@@ -69,9 +69,6 @@ struct _e_xid
    int                 coords_invalid;
    int                 bw;
    int                 grab_button_auto_replay;
-   int                 grab_button_button;
-   Ev_Key_Modifiers    grab_button_mods;
-   int                 grab_button_any_mod;
 };
 
 #ifdef __cplusplus

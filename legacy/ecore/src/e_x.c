@@ -211,9 +211,6 @@ e_add_xid(Window win, int x, int y, int w, int h, int depth, Window parent)
    xid->gravity = e_window_get_gravity(win);
    xid->bw = 0;
    xid->grab_button_auto_replay = 0;
-   xid->grab_button_button = 0;
-   xid->grab_button_mods = EV_KEY_MODIFIER_NONE;
-   xid->grab_button_any_mod = 0;
    XSaveContext(disp, xid->win, xid_context, (XPointer) xid);
    e_add_child(parent, win);
    return xid;
@@ -274,9 +271,6 @@ e_validate_xid(Window win)
 	xid->gravity = att.win_gravity;
 	xid->bw = att.border_width;
 	xid->grab_button_auto_replay = 0;
-	xid->grab_button_button = 0;
-	xid->grab_button_mods = EV_KEY_MODIFIER_NONE;
-	xid->grab_button_any_mod = 0;
 	XSaveContext(disp, xid->win, xid_context, (XPointer) xid);
 	e_add_child(xid->parent, win);
      }
@@ -2836,9 +2830,6 @@ e_button_grab(Window win, int button, int events, Ev_Key_Modifiers mod, int any_
    locks[5] = e_lock_mask_caps_get() |                         e_lock_mask_scroll_get();
    locks[6] =                          e_lock_mask_num_get() | e_lock_mask_scroll_get();
    locks[7] = e_lock_mask_caps_get() | e_lock_mask_num_get() | e_lock_mask_scroll_get();
-   xid->grab_button_button = button;
-   xid->grab_button_any_mod = any_mod;
-   xid->grab_button_mods = m;
    for (i = 0; i < 8; i++)
       XGrabButton(disp, b, m | locks[i], 
 		  win, False, events, 
