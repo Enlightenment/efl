@@ -11,7 +11,7 @@
 static int _ecore_evas_init_count = 0;
 
 static Ecore_Evas *ecore_evases = NULL;
-static Ecore_Event_Handler *ecore_evas_event_handlers[15];
+static Ecore_Event_Handler *ecore_evas_event_handlers[16];
 static Ecore_Idle_Enterer *ecore_evas_idle_enterer = NULL;
 
 static void
