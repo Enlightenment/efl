@@ -38,6 +38,7 @@ __attribute__ ((aligned (8))) const volatile unsigned short _const_ymul  [4] = F
 __attribute__ ((aligned (8))) const volatile unsigned short _const_128   [4] = FOUR(128);
 __attribute__ ((aligned (8))) const volatile unsigned short _const_32    [4] = FOUR(RZ(OFF));
 __attribute__ ((aligned (8))) const volatile unsigned short _const_16    [4] = FOUR(16);
+__attribute__ ((aligned (8))) const volatile unsigned short _const_ff    [4] = FOUR(-1);
 
 #define CONST_CRVCRV *_const_crvcrv
 #define CONST_CBUCBU *_const_cbucbu
@@ -47,6 +48,7 @@ __attribute__ ((aligned (8))) const volatile unsigned short _const_16    [4] = F
 #define CONST_128    *_const_128
 #define CONST_32     *_const_32
 #define CONST_16     *_const_16
+#define CONST_FF     *_const_ff
 
 /* for C non aligned cleanup */
 const int _crv = RZ(CRV);   /* 1.596 */
@@ -211,7 +213,8 @@ _evas_yv12torgb_mmx(unsigned char **yuv, unsigned char *rgb, int w, int h)
 	     punpcklbw_r2r(mm5, mm7);
 	     por_r2r(mm7, mm0);
 	     
-	     pxor_r2r(mm1, mm1);
+//	     pxor_r2r(mm1, mm1);
+	     movq_m2r(CONST_FF, mm1);
 	     movq_r2r(mm0, mm5);
 	     movq_r2r(mm3, mm6);
 	     movq_r2r(mm2, mm7);
@@ -248,6 +251,7 @@ _evas_yv12torgb_mmx(unsigned char **yuv, unsigned char *rgb, int w, int h)
 		  u = (*up++) - 128;
 		  v = (*vp++) - 128;
 		  
+		  A_VAL(dp1) = 0xff;
 		  y = RZ(YMUL) * ((*yp1++) - 16);
 		  r = (y + (_crv * v)) >> RES;
 		  r = LUT_CLIP(r);
@@ -261,6 +265,7 @@ _evas_yv12torgb_mmx(unsigned char **yuv, unsigned char *rgb, int w, int h)
 		  
 		  dp1 += 4;
 		  
+		  A_VAL(dp1) = 0xff;
 		  y = RZ(YMUL) * ((*yp1++) - 16);
 		  r = (y + (_crv * v)) >> RES;
 		  r = LUT_CLIP(r);
@@ -340,6 +345,7 @@ _evas_yv12torgb_diz(unsigned char **yuv, unsigned char *rgb, int w, int h)
 	     
 	     /* do the top 2 pixels of the 2x2 block whcih shared u & v */
 	     /* yuv to rgb */
+	     A_VAL(dp1) = 0xff;
 	     y = YMUL * ((*yp1++) - 16);
 	     r = (y + (crv * v)) >> 16;
 	     r = LUT_CLIP(r);
@@ -354,6 +360,7 @@ _evas_yv12torgb_diz(unsigned char **yuv, unsigned char *rgb, int w, int h)
 	     dp1 += 4;
 	     
 	     /* yuv to rgb */
+	     A_VAL(dp1) = 0xff;
 	     y = YMUL * ((*yp1++) - 16);
 	     r = (y + (crv * v)) >> 16;
 	     r = LUT_CLIP(r);
@@ -369,6 +376,7 @@ _evas_yv12torgb_diz(unsigned char **yuv, unsigned char *rgb, int w, int h)
 	     
 	     /* do the bottom 2 pixels */
 	     /* yuv to rgb */
+	     A_VAL(dp2) = 0xff;
 	     y = YMUL * ((*yp2++) - 16);
 	     r = (y + (crv * v)) >> 16;
 	     r = LUT_CLIP(r);
@@ -383,6 +391,7 @@ _evas_yv12torgb_diz(unsigned char **yuv, unsigned char *rgb, int w, int h)
 	     dp2 += 4;
 	     
 	     /* yuv to rgb */
+	     A_VAL(dp2) = 0xff;
 	     y = YMUL * ((*yp2++) - 16);
 	     r = (y + (crv * v)) >> 16;
 	     r = LUT_CLIP(r);
@@ -446,6 +455,7 @@ _evas_yv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
 	     b = y + u;
 	     b = LUT_CLIP(b);
 	     
+	     A_VAL(dp1) = 0xff;
 	     R_VAL(dp1) = r;
 	     G_VAL(dp1) = g;
 	     B_VAL(dp1) = b;
@@ -461,6 +471,7 @@ _evas_yv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
 	     b = y + u;
 	     b = LUT_CLIP(b);
 	     
+	     A_VAL(dp1) = 0xff;
 	     R_VAL(dp1) = r;
 	     G_VAL(dp1) = g;
 	     B_VAL(dp1) = b;
@@ -477,6 +488,7 @@ _evas_yv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
 	     b = y + u;
 	     b = LUT_CLIP(b);
 	     
+	     A_VAL(dp2) = 0xff;
 	     R_VAL(dp2) = r;
 	     G_VAL(dp2) = g;
 	     B_VAL(dp2) = b;
@@ -492,6 +504,7 @@ _evas_yv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
 	     b = y + u;
 	     b = LUT_CLIP(b);
 	     
+	     A_VAL(dp2) = 0xff;
 	     R_VAL(dp2) = r;
 	     G_VAL(dp2) = g;
 	     B_VAL(dp2) = b;
