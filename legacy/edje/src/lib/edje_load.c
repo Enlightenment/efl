@@ -262,7 +262,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	     if (_edje_block_break(ed)) break;
 	     if (rp->part->dragable.x < 0) rp->drag.val.x = 1.0;
 	     if (rp->part->dragable.y < 0) rp->drag.val.x = 1.0;
-	     _edje_dragable_pos_set(ed, rp, 1.0, 1.0);
+	     _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
 	  }
 	ed->dirty = 1;
 	if ((evas_object_clipees_get(ed->clipper)) && 
