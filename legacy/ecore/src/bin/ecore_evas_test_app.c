@@ -69,7 +69,7 @@ app_finish(void)
 static void
 app_resize(Ecore_Evas *ee)
 {
-   double w, h;
+   Evas_Coord w, h;
    
    evas_output_viewport_get(evas, NULL, NULL, &w, &h);
    bg_resize(w, h);

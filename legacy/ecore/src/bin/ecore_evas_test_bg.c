@@ -177,8 +177,9 @@ static int
 bg_animate_obj_timer(void *data)
 {
    Evas_Object *o;
-   double x, y, sx, sy, v;
-   double w, h;
+   Evas_Coord x, y, sx, sy;
+   Evas_Coord w, h;
+   double v;
    int ow, oh;
    double t;
    int l, m, n;

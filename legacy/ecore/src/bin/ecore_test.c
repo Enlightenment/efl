@@ -594,9 +594,9 @@ int
 obj_timer(void *data)
 {
    Evas_Object *o;
-   double x, y;
-   double w, h;
-   double ow, oh;
+   Evas_Coord x, y;
+   Evas_Coord w, h;
+   Evas_Coord ow, oh;
    double t;
    int m, n;
    int i;
