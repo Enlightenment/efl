@@ -74,7 +74,7 @@ ecore_event_x_init(void)
   if (shape_event_id < SelectionRequest)
     {
        max_event_id = SelectionRequest;
-       fprintf(stderr, "ERROR: no shape extesion! This is BAD!\n");
+       fprintf(stderr, "ERROR: No shape extension! This is BAD!\n");
     }
   event_translator = NEW_PTR(max_event_id + 1);
   for (i = 0; i < max_event_id + 1; i++)
