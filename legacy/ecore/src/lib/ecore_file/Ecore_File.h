@@ -29,21 +29,21 @@
 #include <Evas.h>
 #include <time.h>
 
-EAPI int        ecore_file_init(void);
-EAPI int        ecore_file_shutdown(void);
-EAPI time_t     ecore_file_mod_time(char *file);
-EAPI int        ecore_file_exists(char *file);
-EAPI int        ecore_file_is_dir(char *file);
-EAPI int        ecore_file_mkdir(char *dir);
-EAPI int        ecore_file_mkpath(char *path);
-EAPI int        ecore_file_cp(char *src, char *dst);
-EAPI char      *ecore_file_realpath(char *file);
-EAPI char      *ecore_file_get_file(char *path);
-EAPI char      *ecore_file_get_dir(char *path);
+EAPI int        ecore_file_init     (void);
+EAPI int        ecore_file_shutdown (void);
+EAPI time_t     ecore_file_mod_time (const char *file);
+EAPI int        ecore_file_exists   (const char *file);
+EAPI int        ecore_file_is_dir   (const char *file);
+EAPI int        ecore_file_mkdir    (const char *dir);
+EAPI int        ecore_file_mkpath   (const char *path);
+EAPI int        ecore_file_cp       (const char *src, const char *dst);
+EAPI char      *ecore_file_realpath (const char *file);
+EAPI char      *ecore_file_get_file (const char *path);
+EAPI char      *ecore_file_get_dir  (const char *path);
 
-EAPI int        ecore_file_can_exec(char *file);
-EAPI char      *ecore_file_readlink(char *link);
-EAPI Evas_List *ecore_file_ls(char *dir);
+EAPI int        ecore_file_can_exec (const char *file);
+EAPI char      *ecore_file_readlink (const char *link);
+EAPI Evas_List *ecore_file_ls       (const char *dir);
 
 typedef struct _Ecore_File_Monitor       Ecore_File_Monitor;
 typedef struct _Ecore_File_Monitor_Event Ecore_File_Monitor_Event;
@@ -56,10 +56,10 @@ typedef enum {
 
 typedef enum {
      ECORE_FILE_EVENT_NONE,
+     ECORE_FILE_EVENT_EXISTS,
      ECORE_FILE_EVENT_CREATED,
      ECORE_FILE_EVENT_DELETED,
-     ECORE_FILE_EVENT_CHANGED,
-     ECORE_FILE_EVENT_EXISTS
+     ECORE_FILE_EVENT_CHANGED
 } Ecore_File_Event;
 
 struct _Ecore_File_Monitor {

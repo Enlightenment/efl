@@ -11,6 +11,7 @@
  * - Implement recursive as an option!
  * - Keep whole path or just name of file? (Memory or CPU...)
  * - Remove requests without files?
+ * - Change poll time
  */
 
 typedef struct _Ecore_File_Monitor_Poll Ecore_File_Monitor_Poll;
@@ -93,7 +94,7 @@ ecore_file_monitor_add(const char *path,
    em->path = strdup(path);
    len = strlen(em->path);
    if (em->path[len - 1] == '/')
-     em->path[len - 1] = '\0';
+     em->path[len - 1] = 0;
 
    em->func = func;
    em->data = data;
@@ -105,9 +106,7 @@ ecore_file_monitor_add(const char *path,
 		   ECORE_FILE_TYPE_DIRECTORY :
 		   ECORE_FILE_TYPE_FILE;
 
-#if 0
 	em->func(em->data, em, em->type, ECORE_FILE_EVENT_EXISTS, em->path);
-#endif
 	if (em->type == ECORE_FILE_TYPE_DIRECTORY)
 	  {
 	     /* Check for subdirs */
@@ -139,17 +138,11 @@ ecore_file_monitor_add(const char *path,
 	       }
 	     evas_list_free(files);
 	  }
-#if 0
-	else
-	  em->func(em->data, em, em->type, ECORE_FILE_EVENT_EXISTS, em->path);
-#endif
      }
    else
      {
 	em->type = ECORE_FILE_TYPE_NONE;
-#if 0
 	em->func(em->data, em, em->type, ECORE_FILE_EVENT_DELETED, em->path);
-#endif
      }
 
    _monitors = evas_list_append(_monitors, em);
@@ -259,9 +252,7 @@ _ecore_file_monitor_check(Ecore_File_Monitor *em)
 		   free(f);
 		}
 	      emf->files = evas_list_free(emf->files);
-#if 0
 	      em->func(em->data, em, em->type, ECORE_FILE_EVENT_DELETED, em->path);
-#endif
 	      em->type = ECORE_FILE_TYPE_NONE;
 	   }
 	 else
@@ -297,9 +288,6 @@ _ecore_file_monitor_check(Ecore_File_Monitor *em)
 		   Evas_List *files;
 
 		   /* Files have been added or removed */
-#if 0
-		   em->func(em->data, em, em->type, ECORE_FILE_EVENT_CHANGED, em->path);
-#endif
 		   files = ecore_file_ls(em->path);
 		   for (l = files; l; l = l->next)
 		     {
@@ -330,6 +318,7 @@ _ecore_file_monitor_check(Ecore_File_Monitor *em)
 			em->func(em->data, em, f->type, ECORE_FILE_EVENT_CREATED, buf);
 			emf->files = evas_list_append(emf->files, f);
 		     }
+		   em->func(em->data, em, em->type, ECORE_FILE_EVENT_CHANGED, em->path);
 		}
 	   }
 	 break;

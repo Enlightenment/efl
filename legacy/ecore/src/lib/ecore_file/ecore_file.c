@@ -1,8 +1,8 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
-#include "Ecore_File.h"
 #include "ecore_file_private.h"
+#include "Ecore_File.h"
 
 /* externally accessible functions */
 int
@@ -22,7 +22,7 @@ ecore_file_shutdown()
 }
 
 time_t
-ecore_file_mod_time(char *file)
+ecore_file_mod_time(const char *file)
 {
    struct stat st;
 
@@ -31,7 +31,7 @@ ecore_file_mod_time(char *file)
 }
 
 int
-ecore_file_exists(char *file)
+ecore_file_exists(const char *file)
 {
    struct stat st;
 
@@ -40,7 +40,7 @@ ecore_file_exists(char *file)
 }
 
 int
-ecore_file_is_dir(char *file)
+ecore_file_is_dir(const char *file)
 {
    struct stat st;
 
@@ -52,14 +52,14 @@ ecore_file_is_dir(char *file)
 static mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
 
 int
-ecore_file_mkdir(char *dir)
+ecore_file_mkdir(const char *dir)
 {
    if (mkdir(dir, default_mode) < 0) return 0;
    return 1;
 }
 
 int
-ecore_file_mkpath(char *path)
+ecore_file_mkpath(const char *path)
 {
    char ss[PATH_MAX];
    int  i, ii;
@@ -85,7 +85,7 @@ ecore_file_mkpath(char *path)
 }
 
 int
-ecore_file_cp(char *src, char *dst)
+ecore_file_cp(const char *src, const char *dst)
 {
    FILE               *f1, *f2;
    char                buf[16384];
@@ -106,7 +106,7 @@ ecore_file_cp(char *src, char *dst)
 }
 
 char *
-ecore_file_realpath(char *file)
+ecore_file_realpath(const char *file)
 {
    char  buf[PATH_MAX];
    struct stat st;
@@ -116,7 +116,7 @@ ecore_file_realpath(char *file)
 }
 
 char *
-ecore_file_get_file(char *path)
+ecore_file_get_file(const char *path)
 {
    char *result = NULL;
 
@@ -127,7 +127,7 @@ ecore_file_get_file(char *path)
 }
 
 char *
-ecore_file_get_dir(char *file)
+ecore_file_get_dir(const char *file)
 {
    char               *p;
    char                buf[PATH_MAX];
@@ -143,7 +143,7 @@ ecore_file_get_dir(char *file)
 }
 
 int
-ecore_file_can_exec(char *file)
+ecore_file_can_exec(const char *file)
 {
    static int          have_uid = 0;
    static uid_t        uid = -1;
@@ -174,7 +174,7 @@ ecore_file_can_exec(char *file)
 }
 
 char *
-ecore_file_readlink(char *link)
+ecore_file_readlink(const char *link)
 {
    char                buf[PATH_MAX];
    int                 count;
@@ -185,7 +185,7 @@ ecore_file_readlink(char *link)
 }
 
 Evas_List *
-ecore_file_ls(char *dir)
+ecore_file_ls(const char *dir)
 {
    DIR                *dirp;
    struct dirent      *dp;
