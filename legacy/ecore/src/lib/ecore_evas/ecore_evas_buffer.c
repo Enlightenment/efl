@@ -495,7 +495,7 @@ ecore_evas_buffer_new(int w, int h)
 #endif   
 }
 
-int *
+const int *
 ecore_evas_buffer_pixels_get(Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_EVAS_BUFFER

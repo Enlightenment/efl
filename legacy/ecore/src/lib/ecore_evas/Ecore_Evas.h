@@ -89,7 +89,7 @@ EAPI int             ecore_evas_gl_x11_direct_resize_get(Ecore_Evas *ee);
 EAPI Ecore_Evas     *ecore_evas_fb_new(char *disp_name, int rotation, int w, int h);
 
 EAPI Ecore_Evas     *ecore_evas_buffer_new(int w, int h);
-EAPI int            *ecore_evas_buffer_pixels_get(Ecore_Evas *ee);
+EAPI const int      *ecore_evas_buffer_pixels_get(Ecore_Evas *ee);
        
 EAPI Evas_Object    *ecore_evas_object_image_new(Ecore_Evas *ee_target);
 
