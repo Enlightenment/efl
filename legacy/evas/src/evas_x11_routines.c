@@ -1,5 +1,11 @@
 #include "evas_x11_routines.h"
 
+#define CLIP(x, y, w, h, xx, yy, ww, hh) \
+if (x < (xx)) {w += (x - (xx)); x = (xx);} \
+if (y < (yy)) {h += (y - (yy)); y = (yy);} \
+if ((x + w) > ((xx) + (ww))) {w = (ww) - (x - xx);} \
+if ((y + h) > ((yy) + (hh))) {h = (hh) - (y - yy);}
+
 static void __evas_x11_image_cache_flush(Display *disp);
 static int  __evas_anti_alias = 1;
 static Evas_List drawable_list = NULL;
@@ -72,6 +78,7 @@ __evas_x11_image_draw(Evas_X11_Image *im,
    Pixmap pmap = 0, mask = 0;
 
    if (ca == 0) return;
+   if ((src_w == 0) || (src_h == 0) || (dst_w == 0) || (dst_w == 0)) return;
 
    if ((cr != 255) || (cg != 255) || (cb != 255) || (ca != 255))
      {
@@ -379,14 +386,22 @@ void              __evas_x11_rectangle_draw(Display *disp, Imlib_Image dstim, Wi
 					      int r, int g, int b, int a)
 {
    Evas_List l;
+   DATA32 pixel;
+   Imlib_Image im = NULL;
+   Pixmap pmap = 0, mask = 0, s_mask = 0;
    
    imlib_context_set_color(r, g, b, a);
+   imlib_context_set_display(disp);
+   imlib_context_set_visual(__evas_visual);
+   imlib_context_set_colormap(__evas_cmap);
+   imlib_context_set_drawable(win);
+   imlib_context_set_dither_mask(1);
+   imlib_context_set_anti_alias(0);
+   imlib_context_set_blend(0);
    imlib_context_set_angle(0.0);
    imlib_context_set_operation(IMLIB_OP_COPY);
-   imlib_context_set_color_modifier(NULL);
    imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
-   imlib_context_set_anti_alias(__evas_anti_alias);
-   imlib_context_set_blend(1);
+   imlib_context_set_color_modifier(NULL);
    for(l = drawable_list; l; l = l->next)
      {
 	Evas_X11_Drawable *dr;
@@ -407,15 +422,71 @@ void              __evas_x11_rectangle_draw(Display *disp, Imlib_Image dstim, Wi
 		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
 				      x, y, w, h))
 		    {
-/*		       
-		       if (!up->image)
-			  up->image = imlib_create_image(up->w, up->h);
-		       imlib_context_set_image(up->image);
-		       imlib_image_fill_rectangle(x - up->x, y - up->y, w, h);
-*/
+		       if (!up->p)
+			  up->p = XCreatePixmap(disp, win, up->w, up->h, dr->depth);
+		       if (!im)
+			 {
+			    pixel = (a << 24) | (r << 16) | (g << 8) | b;
+			    im = imlib_create_image_using_data(1, 1, &pixel);
+			    imlib_context_set_image(im);
+			    if (a < 255)
+			       imlib_image_set_has_alpha(1);
+			    imlib_render_pixmaps_for_whole_image_at_size(&pmap, &mask,
+									 32, 32);
+			 }
+		       if (a < 255)
+			 {
+			    if (mask)
+			      {
+				 int xx, yy, ww, hh, x1, y1;
+				 GC gc;
+				 XGCValues gcv;
+				 
+				 xx = x - up->x;
+				 yy = y - up->y;
+				 ww = w;
+				 hh = h;
+				 CLIP(xx, yy, ww, hh, 0, 0, up->w, up->h);
+				 s_mask = XCreatePixmap(disp, win, ww, hh, 1);
+				 gc = XCreateGC(disp, s_mask, 0, &gcv);
+				 for (y1 = 0; y1 < hh; y1 += 32)
+				   {
+				      for (x1 = 0; x1 < ww; x1 += 32)
+					 XCopyArea(disp, mask, s_mask, gc,
+						   0, 0, 32, 32,
+						   x1, y1);
+				   }
+				 XSetClipMask(disp, dr->gc, s_mask);
+				 XSetClipOrigin(disp, dr->gc, xx, yy);
+				 XFreeGC(disp, gc);
+			      }
+			    else
+			      {
+				 XSetClipMask(disp, dr->gc, None);
+			      }
+			 }
+		       if (pmap)
+			 {
+			    XSetFillStyle(disp, dr->gc, FillTiled);
+			    XSetTile(disp, dr->gc, pmap);
+			    XSetTSOrigin(disp, dr->gc, x - up->x, y - up->y);
+			 }
+		       else
+			 {
+			    XSetFillStyle(disp, dr->gc, FillSolid);
+			    XSetTile(disp, dr->gc, None);
+			 }
+		       XFillRectangle(disp, up->p, dr->gc, x - up->x, y - up->y, w, h);
 		    }
 	       }
 	  }
+     }
+   if (im) 
+     {
+	if (pmap) imlib_free_pixmap_and_mask(pmap);	
+	if (s_mask) XFreePixmap(disp, s_mask);
+	imlib_context_set_image(im);
+	imlib_free_image();
      }
 }
 

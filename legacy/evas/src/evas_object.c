@@ -88,19 +88,22 @@ _evas_real_del_object(Evas e, Evas_Object o)
 void
 _evas_layer_free(Evas e, Evas_Layer layer)
 {
-   while (layer->objects)
+   if (layer->objects)
      {
-	Evas_Object o;
+	Evas_List         l;
 	
-	o = layer->objects->data;
-	layer->objects = evas_list_remove(layer->objects, o);
-	_evas_callback_call(e, o, CALLBACK_FREE, 0, 0, 0);
-	_evas_remove_callbacks(e, o);
-	_evas_remove_data(e, o);
-	if (o->object_renderer_data_free)
-	   o->object_renderer_data_free(e, o);
-	if (o->object_free)
-	   o->object_free(o);
+	for (l = layer->objects; l; l = l->next)
+	  {
+	     Evas_Object o;
+	     
+	     o = l->data;
+	     _evas_callback_call(e, o, CALLBACK_FREE, 0, 0, 0);
+	     _evas_remove_callbacks(e, o);
+	     _evas_remove_data(e, o);
+	     o->object_renderer_data_free(e, o);
+	     o->object_free(o);
+	  }
+	evas_list_free(layer->objects);
      }
    free(layer);
 }
