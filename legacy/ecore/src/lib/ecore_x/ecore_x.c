@@ -1,6 +1,7 @@
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
+#include "Ecore_X_Atoms.h"
 
 static int _ecore_x_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_x_fd_handler_buf(void *data, Ecore_Fd_Handler *fd_handler);
@@ -25,72 +26,48 @@ Window   _ecore_x_event_last_win = 0;
 int      _ecore_x_event_last_root_x = 0;
 int      _ecore_x_event_last_root_y = 0;
 
-/*
- * ICCCM hints.
- */
-Atom     _ecore_x_atom_wm_state = 0;
-Atom     _ecore_x_atom_wm_delete_window = 0;
-Atom     _ecore_x_atom_wm_take_focus = 0;
-Atom     _ecore_x_atom_wm_protocols = 0;
-Atom     _ecore_x_atom_wm_class = 0;
-Atom     _ecore_x_atom_wm_name = 0;
-Atom     _ecore_x_atom_wm_command = 0;
-Atom     _ecore_x_atom_wm_icon_name = 0;
-Atom     _ecore_x_atom_wm_client_machine = 0;
-Atom     _ecore_x_atom_wm_change_state = 0;
-Atom     _ecore_x_atom_wm_colormap_windows = 0;
-Atom     _ecore_x_atom_wm_window_role = 0;
-Atom     _ecore_x_atom_wm_hints = 0;
-Atom     _ecore_x_atom_wm_client_leader = 0;
-Atom     _ecore_x_atom_wm_transient_for = 0;
-Atom     _ecore_x_atom_wm_save_yourself = 0;
+/* FIXME - These are duplicates after making ecore atoms public */
+Ecore_X_Atom     ECORE_X_ATOM_FILE_NAME = 0;
+Ecore_X_Atom     ECORE_X_ATOM_STRING = 0;
+Ecore_X_Atom     ECORE_X_ATOM_TEXT = 0;
+Ecore_X_Atom     ECORE_X_ATOM_UTF8_STRING = 0;
+Ecore_X_Atom     ECORE_X_ATOM_COMPOUND_TEXT = 0;
 
-Atom     _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
-
-/*
- * Motif hints.
- */
-Atom     _ecore_x_atom_motif_wm_hints = 0;
+Ecore_X_Atom     _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
 
 /*
  * GNOME hints.
  */
-Atom     _ecore_x_atom_win_layer = 0;
+Ecore_X_Atom     ECORE_X_ATOM_WIN_LAYER = 0;
 
 /*
  * Other hints.
  */
-Atom     _ecore_x_atom_selection_primary = 0;
-Atom     _ecore_x_atom_selection_secondary = 0;
-Atom     _ecore_x_atom_selection_clipboard = 0;
-Atom     _ecore_x_atom_selection_prop_primary = 0;
-Atom     _ecore_x_atom_selection_prop_secondary = 0;
-Atom     _ecore_x_atom_selection_prop_clipboard = 0;
+Ecore_X_Atom     ECORE_X_ATOM_SELECTION_PRIMARY = 0;
+Ecore_X_Atom     ECORE_X_ATOM_SELECTION_SECONDARY = 0;
+Ecore_X_Atom     ECORE_X_ATOM_SELECTION_CLIPBOARD = 0;
+Ecore_X_Atom     ECORE_X_ATOM_SELECTION_PROP_PRIMARY = 0;
+Ecore_X_Atom     ECORE_X_ATOM_SELECTION_PROP_SECONDARY = 0;
+Ecore_X_Atom     ECORE_X_ATOM_SELECTION_PROP_CLIPBOARD = 0;
 
-Atom     _ecore_x_atom_selection_xdnd = 0;
-Atom     _ecore_x_atom_selection_prop_xdnd = 0;
-Atom     _ecore_x_atom_xdnd_aware = 0;
-Atom     _ecore_x_atom_xdnd_enter = 0;
-Atom     _ecore_x_atom_xdnd_type_list = 0;
-Atom     _ecore_x_atom_xdnd_position = 0;
-Atom     _ecore_x_atom_xdnd_action_copy = 0;
-Atom     _ecore_x_atom_xdnd_action_move = 0;
-Atom     _ecore_x_atom_xdnd_action_link = 0;
-Atom     _ecore_x_atom_xdnd_action_private = 0;
-Atom     _ecore_x_atom_xdnd_action_ask = 0;
-Atom     _ecore_x_atom_xdnd_action_list = 0;
-Atom     _ecore_x_atom_xdnd_action_description = 0;
-Atom     _ecore_x_atom_xdnd_proxy = 0;
-Atom     _ecore_x_atom_xdnd_status = 0;
-Atom     _ecore_x_atom_xdnd_drop = 0;
-Atom     _ecore_x_atom_xdnd_finished = 0;
-Atom     _ecore_x_atom_xdnd_leave = 0;
-
-Atom     _ecore_x_atom_file_name = 0;
-Atom     _ecore_x_atom_string = 0;
-Atom     _ecore_x_atom_text = 0;
-Atom     _ecore_x_atom_utf8_string = 0;
-Atom     _ecore_x_atom_compound_text = 0;
+Ecore_X_Atom     ECORE_X_ATOM_SELECTION_XDND = 0;
+Ecore_X_Atom     ECORE_X_ATOM_SELECTION_PROP_XDND = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_AWARE = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_ENTER = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_TYPE_LIST = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_POSITION = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_ACTION_COPY = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_ACTION_MOVE = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_ACTION_LINK = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_ACTION_PRIVATE = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_ACTION_ASK = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_ACTION_LIST = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_ACTION_DESCRIPTION = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_PROXY = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_STATUS = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_DROP = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_FINISHED = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_LEAVE = 0;
 
 /* Xdnd atoms that need to be exposed to the application interface */
 Ecore_X_Atom  ECORE_X_DND_ACTION_COPY = 0;
@@ -316,71 +293,71 @@ ecore_x_init(const char *name)
      }
    _ecore_x_filter_handler = ecore_event_filter_add(_ecore_x_event_filter_start, _ecore_x_event_filter_filter, _ecore_x_event_filter_end, NULL);
 
-   _ecore_x_atom_compound_text      = XInternAtom(_ecore_x_disp, "COMPOUND_TEXT", False);
-   _ecore_x_atom_utf8_string        = XInternAtom(_ecore_x_disp, "UTF8_STRING", False);
-   _ecore_x_atom_file_name          = XInternAtom(_ecore_x_disp, "FILE_NAME", False);
-   _ecore_x_atom_string             = XInternAtom(_ecore_x_disp, "STRING", False);
-   _ecore_x_atom_text               = XInternAtom(_ecore_x_disp, "TEXT", False);
+   ECORE_X_ATOM_COMPOUND_TEXT      = XInternAtom(_ecore_x_disp, "COMPOUND_TEXT", False);
+   ECORE_X_ATOM_UTF8_STRING        = XInternAtom(_ecore_x_disp, "UTF8_STRING", False);
+   ECORE_X_ATOM_FILE_NAME          = XInternAtom(_ecore_x_disp, "FILE_NAME", False);
+   ECORE_X_ATOM_STRING             = XInternAtom(_ecore_x_disp, "STRING", False);
+   ECORE_X_ATOM_TEXT               = XInternAtom(_ecore_x_disp, "TEXT", False);
 
-   _ecore_x_atom_wm_state                 = XInternAtom(_ecore_x_disp, "WM_STATE", False);
-   _ecore_x_atom_wm_delete_window         = XInternAtom(_ecore_x_disp, "WM_DELETE_WINDOW", False);
-   _ecore_x_atom_wm_take_focus            = XInternAtom(_ecore_x_disp, "WM_TAKE_FOCUS", False);
-   _ecore_x_atom_wm_protocols             = XInternAtom(_ecore_x_disp, "WM_PROTOCOLS", False);
-   _ecore_x_atom_wm_class                 = XInternAtom(_ecore_x_disp, "WM_CLASS", False);
-   _ecore_x_atom_wm_name                  = XInternAtom(_ecore_x_disp, "WM_NAME", False);
-   _ecore_x_atom_wm_command               = XInternAtom(_ecore_x_disp, "WM_COMMAND", False);
-   _ecore_x_atom_wm_icon_name             = XInternAtom(_ecore_x_disp, "WM_ICON_NAME", False);
-   _ecore_x_atom_wm_client_machine        = XInternAtom(_ecore_x_disp, "WM_CLIENT_MACHINE", False);
-   _ecore_x_atom_wm_change_state          = XInternAtom(_ecore_x_disp, "WM_CHANGE_STATE", False);
-   _ecore_x_atom_wm_colormap_windows      = XInternAtom(_ecore_x_disp, "WM_COLORMAP_WINDOWS", False);
-   _ecore_x_atom_wm_window_role           = XInternAtom(_ecore_x_disp, "WM_WINDOW_ROLE", False);
-   _ecore_x_atom_wm_hints                 = XInternAtom(_ecore_x_disp, "WM_HINTS", False);
-   _ecore_x_atom_wm_client_leader         = XInternAtom(_ecore_x_disp, "WM_CLIENT_LEADER", False);
-   _ecore_x_atom_wm_transient_for         = XInternAtom(_ecore_x_disp, "WM_TRANSIENT_FOR", False);
-   _ecore_x_atom_wm_save_yourself         = XInternAtom(_ecore_x_disp, "WM_SAVE_YOURSELF", False);
+   ECORE_X_ATOM_WM_STATE                 = XInternAtom(_ecore_x_disp, "WM_STATE", False);
+   ECORE_X_ATOM_WM_DELETE_WINDOW         = XInternAtom(_ecore_x_disp, "WM_DELETE_WINDOW", False);
+   ECORE_X_ATOM_WM_TAKE_FOCUS            = XInternAtom(_ecore_x_disp, "WM_TAKE_FOCUS", False);
+   ECORE_X_ATOM_WM_PROTOCOLS             = XInternAtom(_ecore_x_disp, "WM_PROTOCOLS", False);
+   ECORE_X_ATOM_WM_CLASS                 = XInternAtom(_ecore_x_disp, "WM_CLASS", False);
+   ECORE_X_ATOM_WM_NAME                  = XInternAtom(_ecore_x_disp, "WM_NAME", False);
+   ECORE_X_ATOM_WM_COMMAND               = XInternAtom(_ecore_x_disp, "WM_COMMAND", False);
+   ECORE_X_ATOM_WM_ICON_NAME             = XInternAtom(_ecore_x_disp, "WM_ICON_NAME", False);
+   ECORE_X_ATOM_WM_CLIENT_MACHINE        = XInternAtom(_ecore_x_disp, "WM_CLIENT_MACHINE", False);
+   ECORE_X_ATOM_WM_CHANGE_STATE          = XInternAtom(_ecore_x_disp, "WM_CHANGE_STATE", False);
+   ECORE_X_ATOM_WM_COLORMAP_WINDOWS      = XInternAtom(_ecore_x_disp, "WM_COLORMAP_WINDOWS", False);
+   ECORE_X_ATOM_WM_WINDOW_ROLE           = XInternAtom(_ecore_x_disp, "WM_WINDOW_ROLE", False);
+   ECORE_X_ATOM_WM_HINTS                 = XInternAtom(_ecore_x_disp, "WM_HINTS", False);
+   ECORE_X_ATOM_WM_CLIENT_LEADER         = XInternAtom(_ecore_x_disp, "WM_CLIENT_LEADER", False);
+   ECORE_X_ATOM_WM_TRANSIENT_FOR         = XInternAtom(_ecore_x_disp, "WM_TRANSIENT_FOR", False);
+   ECORE_X_ATOM_WM_SAVE_YOURSELF         = XInternAtom(_ecore_x_disp, "WM_SAVE_YOURSELF", False);
 
-   _ecore_x_atom_motif_wm_hints           = XInternAtom(_ecore_x_disp, "_MOTIF_WM_HINTS", False);
+   ECORE_X_ATOM_MOTIF_WM_HINTS           = XInternAtom(_ecore_x_disp, "_MOTIF_WM_HINTS", False);
 
-   _ecore_x_atom_win_layer                = XInternAtom(_ecore_x_disp, "_WIN_LAYER", False);
+   ECORE_X_ATOM_WIN_LAYER                = XInternAtom(_ecore_x_disp, "_WIN_LAYER", False);
 
    /* Set up the _NET_... hints */
    ecore_x_netwm_init();
 
    /* This is just to be anal about naming conventions */
-   _ecore_x_atom_selection_primary        = XA_PRIMARY;
-   _ecore_x_atom_selection_secondary      = XA_SECONDARY;
-   _ecore_x_atom_selection_clipboard      = XInternAtom(_ecore_x_disp, "CLIPBOARD", False);
-   _ecore_x_atom_selection_prop_primary   = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_PRIMARY", False);
-   _ecore_x_atom_selection_prop_secondary = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_SECONDARY", False);
-   _ecore_x_atom_selection_prop_clipboard = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_CLIPBOARD", False);
-   _ecore_x_atom_selection_prop_xdnd      = XInternAtom(_ecore_x_disp, "JXSelectionWindowProperty", False);
-   _ecore_x_atom_selection_xdnd           = XInternAtom(_ecore_x_disp, "XdndSelection", False);
-   _ecore_x_atom_xdnd_aware               = XInternAtom(_ecore_x_disp, "XdndAware", False);
-   _ecore_x_atom_xdnd_type_list           = XInternAtom(_ecore_x_disp, "XdndTypeList", False);
-   _ecore_x_atom_xdnd_enter               = XInternAtom(_ecore_x_disp, "XdndEnter", False);
-   _ecore_x_atom_xdnd_position            = XInternAtom(_ecore_x_disp, "XdndPosition", False);
-   _ecore_x_atom_xdnd_action_copy         = XInternAtom(_ecore_x_disp, "XdndActionCopy", False);
-   _ecore_x_atom_xdnd_action_move         = XInternAtom(_ecore_x_disp, "XdndActionMove", False);
-   _ecore_x_atom_xdnd_action_private      = XInternAtom(_ecore_x_disp, "XdndActionPrivate", False);
-   _ecore_x_atom_xdnd_action_ask          = XInternAtom(_ecore_x_disp, "XdndActionAsk", False);
-   _ecore_x_atom_xdnd_action_list         = XInternAtom(_ecore_x_disp, "XdndActionList", False);
-   _ecore_x_atom_xdnd_action_link         = XInternAtom(_ecore_x_disp, "XdndActionLink", False);
-   _ecore_x_atom_xdnd_action_description  = XInternAtom(_ecore_x_disp, "XdndActionDescription", False);
-   _ecore_x_atom_xdnd_proxy               = XInternAtom(_ecore_x_disp, "XdndProxy", False);
-   _ecore_x_atom_xdnd_status              = XInternAtom(_ecore_x_disp, "XdndStatus", False);
-   _ecore_x_atom_xdnd_leave               = XInternAtom(_ecore_x_disp, "XdndLeave", False);
-   _ecore_x_atom_xdnd_drop                = XInternAtom(_ecore_x_disp, "XdndDrop", False);
-   _ecore_x_atom_xdnd_finished            = XInternAtom(_ecore_x_disp, "XdndFinished", False);
+   ECORE_X_ATOM_SELECTION_PRIMARY        = XA_PRIMARY;
+   ECORE_X_ATOM_SELECTION_SECONDARY      = XA_SECONDARY;
+   ECORE_X_ATOM_SELECTION_CLIPBOARD      = XInternAtom(_ecore_x_disp, "CLIPBOARD", False);
+   ECORE_X_ATOM_SELECTION_PROP_PRIMARY   = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_PRIMARY", False);
+   ECORE_X_ATOM_SELECTION_PROP_SECONDARY = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_SECONDARY", False);
+   ECORE_X_ATOM_SELECTION_PROP_CLIPBOARD = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_CLIPBOARD", False);
+   ECORE_X_ATOM_SELECTION_PROP_XDND      = XInternAtom(_ecore_x_disp, "JXSelectionWindowProperty", False);
+   ECORE_X_ATOM_SELECTION_XDND           = XInternAtom(_ecore_x_disp, "XdndSelection", False);
+   ECORE_X_ATOM_XDND_AWARE               = XInternAtom(_ecore_x_disp, "XdndAware", False);
+   ECORE_X_ATOM_XDND_TYPE_LIST           = XInternAtom(_ecore_x_disp, "XdndTypeList", False);
+   ECORE_X_ATOM_XDND_ENTER               = XInternAtom(_ecore_x_disp, "XdndEnter", False);
+   ECORE_X_ATOM_XDND_POSITION            = XInternAtom(_ecore_x_disp, "XdndPosition", False);
+   ECORE_X_ATOM_XDND_ACTION_COPY         = XInternAtom(_ecore_x_disp, "XdndActionCopy", False);
+   ECORE_X_ATOM_XDND_ACTION_MOVE         = XInternAtom(_ecore_x_disp, "XdndActionMove", False);
+   ECORE_X_ATOM_XDND_ACTION_PRIVATE      = XInternAtom(_ecore_x_disp, "XdndActionPrivate", False);
+   ECORE_X_ATOM_XDND_ACTION_ASK          = XInternAtom(_ecore_x_disp, "XdndActionAsk", False);
+   ECORE_X_ATOM_XDND_ACTION_LIST         = XInternAtom(_ecore_x_disp, "XdndActionList", False);
+   ECORE_X_ATOM_XDND_ACTION_LINK         = XInternAtom(_ecore_x_disp, "XdndActionLink", False);
+   ECORE_X_ATOM_XDND_ACTION_DESCRIPTION  = XInternAtom(_ecore_x_disp, "XdndActionDescription", False);
+   ECORE_X_ATOM_XDND_PROXY               = XInternAtom(_ecore_x_disp, "XdndProxy", False);
+   ECORE_X_ATOM_XDND_STATUS              = XInternAtom(_ecore_x_disp, "XdndStatus", False);
+   ECORE_X_ATOM_XDND_LEAVE               = XInternAtom(_ecore_x_disp, "XdndLeave", False);
+   ECORE_X_ATOM_XDND_DROP                = XInternAtom(_ecore_x_disp, "XdndDrop", False);
+   ECORE_X_ATOM_XDND_FINISHED            = XInternAtom(_ecore_x_disp, "XdndFinished", False);
 
    /* Initialize the globally defined xdnd atoms */
-   ECORE_X_DND_ACTION_COPY                = _ecore_x_atom_xdnd_action_copy;
-   ECORE_X_DND_ACTION_MOVE                = _ecore_x_atom_xdnd_action_move;
-   ECORE_X_DND_ACTION_LINK                = _ecore_x_atom_xdnd_action_link;
-   ECORE_X_DND_ACTION_ASK                 = _ecore_x_atom_xdnd_action_ask;
-   ECORE_X_DND_ACTION_PRIVATE             = _ecore_x_atom_xdnd_action_private;
+   ECORE_X_DND_ACTION_COPY                = ECORE_X_ATOM_XDND_ACTION_COPY;
+   ECORE_X_DND_ACTION_MOVE                = ECORE_X_ATOM_XDND_ACTION_MOVE;
+   ECORE_X_DND_ACTION_LINK                = ECORE_X_ATOM_XDND_ACTION_LINK;
+   ECORE_X_DND_ACTION_ASK                 = ECORE_X_ATOM_XDND_ACTION_ASK;
+   ECORE_X_DND_ACTION_PRIVATE             = ECORE_X_ATOM_XDND_ACTION_PRIVATE;
 
-   _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_DELETE_REQUEST] = _ecore_x_atom_wm_delete_window;
-   _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_TAKE_FOCUS] = _ecore_x_atom_wm_take_focus;
+   _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_DELETE_REQUEST] = ECORE_X_ATOM_WM_DELETE_WINDOW;
+   _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_TAKE_FOCUS] = ECORE_X_ATOM_WM_TAKE_FOCUS;
 
    _ecore_x_selection_data_init();
    _ecore_x_dnd_init();
@@ -1231,7 +1208,7 @@ ecore_x_window_button_ungrab(Ecore_X_Window win, int button,
    unsigned int        b;
    unsigned int        m;
    unsigned int        locks[8];
-   int                 i, ev, shuffle = 0;
+   int                 i, shuffle = 0;
    
    b = button;
    if (b == 0) b = AnyButton;

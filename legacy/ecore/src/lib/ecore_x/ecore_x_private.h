@@ -16,6 +16,7 @@
 #include <X11/extensions/XShm.h>
 #include <X11/extensions/shape.h>
 
+#include "Ecore_X.h"
 
 /* FIXME: this is for simulation only */
 #include "Ecore_Job.h"
@@ -99,21 +100,6 @@ typedef struct _Ecore_X_DND_Protocol
    } handlers;
 } Ecore_X_DND_Protocol;
 
-typedef enum _Ecore_X_WM_Protocol {
-	/**
-	 * If enabled the window manager will be asked to send a
-	 * delete message instead of just closing (destroying) the window.
-	 */
-	ECORE_X_WM_PROTOCOL_DELETE_REQUEST,
-
-	/**
-	 * If enabled the window manager will be told that the window
-	 * explicitly sets input focus.
-	 */
-	ECORE_X_WM_PROTOCOL_TAKE_FOCUS,
-	ECORE_X_WM_PROTOCOL_NUM
-} Ecore_X_WM_Protocol;
-
 extern Display *_ecore_x_disp;
 extern double   _ecore_x_double_click_time;
 extern Time     _ecore_x_event_last_time;
@@ -121,114 +107,7 @@ extern Window   _ecore_x_event_last_win;
 extern int      _ecore_x_event_last_root_x;
 extern int      _ecore_x_event_last_root_y;
 
-extern Atom     _ecore_x_atom_wm_state;
-extern Atom     _ecore_x_atom_wm_delete_window;
-extern Atom     _ecore_x_atom_wm_take_focus;
-extern Atom     _ecore_x_atom_wm_protocols;
-extern Atom     _ecore_x_atom_wm_class;
-extern Atom     _ecore_x_atom_wm_name;
-extern Atom     _ecore_x_atom_wm_command;
-extern Atom     _ecore_x_atom_wm_icon_name;
-extern Atom     _ecore_x_atom_wm_client_machine;
-extern Atom     _ecore_x_atom_wm_change_state;
-extern Atom     _ecore_x_atom_wm_colormap_windows;
-extern Atom     _ecore_x_atom_wm_window_role;
-extern Atom     _ecore_x_atom_wm_hints;
-extern Atom     _ecore_x_atom_wm_client_leader;
-extern Atom     _ecore_x_atom_wm_transient_for;
-extern Atom     _ecore_x_atom_wm_save_yourself;
-
-extern Atom     _ecore_x_atom_motif_wm_hints;
-
-extern Atom     _ecore_x_atom_win_layer;
-
-extern Atom     _ecore_x_atom_net_number_of_desktops;
-extern Atom     _ecore_x_atom_net_virtual_roots;
-extern Atom     _ecore_x_atom_net_desktop_names;
-extern Atom     _ecore_x_atom_net_desktop_geometry;
-extern Atom     _ecore_x_atom_net_workarea;
-extern Atom     _ecore_x_atom_net_current_desktop;
-extern Atom     _ecore_x_atom_net_desktop_viewport;
-extern Atom     _ecore_x_atom_net_showing_desktop;
-
-extern Atom     _ecore_x_atom_net_client_list;
-extern Atom     _ecore_x_atom_net_client_list_stacking;
-extern Atom     _ecore_x_atom_net_active_window;
-
-extern Atom     _ecore_x_atom_net_wm_desktop;
-extern Atom     _ecore_x_atom_net_wm_state;
-extern Atom     _ecore_x_atom_net_wm_state_above;
-extern Atom     _ecore_x_atom_net_wm_state_below;
-
-extern Atom     _ecore_x_atom_net_wm_name;
-extern Atom     _ecore_x_atom_net_wm_visible_name;
-extern Atom     _ecore_x_atom_net_wm_icon_name;
-extern Atom     _ecore_x_atom_net_wm_visible_icon_name;
-extern Atom     _ecore_x_atom_net_wm_desktop;
-extern Atom     _ecore_x_atom_net_wm_window_type;
-extern Atom     _ecore_x_atom_net_wm_state;
-extern Atom     _ecore_x_atom_net_wm_allowed_actions;
-extern Atom     _ecore_x_atom_net_wm_strut;
-extern Atom     _ecore_x_atom_net_wm_strut_partial;
-extern Atom     _ecore_x_atom_net_wm_icon_geometry;
-extern Atom     _ecore_x_atom_net_wm_icon;
-extern Atom     _ecore_x_atom_net_wm_pid;
-extern Atom     _ecore_x_atom_net_wm_handle_icons;
-extern Atom     _ecore_x_atom_net_wm_user_time;
-
-extern Atom     _ecore_x_atom_net_wm_window_type_desktop;
-extern Atom     _ecore_x_atom_net_wm_window_type_dock;
-extern Atom     _ecore_x_atom_net_wm_window_type_toolbar;
-extern Atom     _ecore_x_atom_net_wm_window_type_menu;
-extern Atom     _ecore_x_atom_net_wm_window_type_utility;
-extern Atom     _ecore_x_atom_net_wm_window_type_splash;
-extern Atom     _ecore_x_atom_net_wm_window_type_dialog;
-extern Atom     _ecore_x_atom_net_wm_window_type_normal;
-
-extern Atom     _ecore_x_atom_net_wm_window_opacity;
-
-extern Atom     _ecore_x_atom_net_wm_state_modal;
-extern Atom     _ecore_x_atom_net_wm_state_sticky;
-extern Atom     _ecore_x_atom_net_wm_state_maximized_vert;
-extern Atom     _ecore_x_atom_net_wm_state_maximized_horz;
-extern Atom     _ecore_x_atom_net_wm_state_shaded;
-extern Atom     _ecore_x_atom_net_wm_state_skip_taskbar;
-extern Atom     _ecore_x_atom_net_wm_state_skip_pager;
-extern Atom     _ecore_x_atom_net_wm_state_hidden;
-extern Atom     _ecore_x_atom_net_wm_state_fullscreen;
-extern Atom     _ecore_x_atom_net_wm_state_above;
-extern Atom     _ecore_x_atom_net_wm_state_below;
-
-extern Atom     _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
-
-extern Atom     _ecore_x_atom_utf8_string;
-extern Atom     _ecore_x_atom_file_name;
-extern Atom     _ecore_x_atom_string;
-extern Atom     _ecore_x_atom_text;
-extern Atom     _ecore_x_atom_compound_text;
-
-extern Atom     _ecore_x_atom_selection_primary;
-extern Atom     _ecore_x_atom_selection_secondary;
-extern Atom     _ecore_x_atom_selection_clipboard;
-extern Atom     _ecore_x_atom_selection_prop_primary;
-extern Atom     _ecore_x_atom_selection_prop_secondary;
-extern Atom     _ecore_x_atom_selection_prop_clipboard;
-
-extern Atom     _ecore_x_atom_selection_xdnd;
-extern Atom     _ecore_x_atom_selection_prop_xdnd;
-extern Atom     _ecore_x_atom_xdnd_aware;
-extern Atom     _ecore_x_atom_xdnd_enter;
-extern Atom     _ecore_x_atom_xdnd_type_list;
-extern Atom     _ecore_x_atom_xdnd_position;
-extern Atom     _ecore_x_atom_xdnd_action_copy;
-extern Atom     _ecore_x_atom_xdnd_action_private;
-extern Atom     _ecore_x_atom_xdnd_action_ask;
-extern Atom     _ecore_x_atom_xdnd_action_list;
-extern Atom     _ecore_x_atom_xdnd_action_description;
-extern Atom     _ecore_x_atom_xdnd_status;
-extern Atom     _ecore_x_atom_xdnd_leave;
-extern Atom     _ecore_x_atom_xdnd_drop;
-extern Atom     _ecore_x_atom_xdnd_finished;
+extern Ecore_X_Atom     _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
 
 extern int      _ecore_window_grabs_num;
 extern Window  *_ecore_window_grabs;

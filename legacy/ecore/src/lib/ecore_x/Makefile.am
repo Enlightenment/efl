@@ -19,6 +19,7 @@ if BUILD_ECORE_X
 lib_LTLIBRARIES = libecore_x.la
 include_HEADERS = \
 Ecore_X.h \
+Ecore_X_Atoms.h \
 Ecore_X_Cursor.h
 
 libecore_x_la_SOURCES = \
@@ -53,6 +54,7 @@ endif
 
 EXTRA_DIST = \
 Ecore_X.h \
+Ecore_X_Atoms.h \
 Ecore_X_Cursor.h \
 ecore_x.c \
 ecore_x_dnd.c \

@@ -7,6 +7,25 @@
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
+#include "Ecore_X_Atoms.h"
+
+/* Atoms */
+Ecore_X_Atom        ECORE_X_ATOM_WM_STATE = 0;
+Ecore_X_Atom        ECORE_X_ATOM_WM_DELETE_WINDOW = 0;
+Ecore_X_Atom        ECORE_X_ATOM_WM_TAKE_FOCUS = 0;
+Ecore_X_Atom        ECORE_X_ATOM_WM_PROTOCOLS = 0;
+Ecore_X_Atom        ECORE_X_ATOM_WM_CLASS = 0;
+Ecore_X_Atom        ECORE_X_ATOM_WM_NAME = 0;
+Ecore_X_Atom        ECORE_X_ATOM_WM_COMMAND = 0;
+Ecore_X_Atom        ECORE_X_ATOM_WM_ICON_NAME = 0;
+Ecore_X_Atom        ECORE_X_ATOM_WM_CLIENT_MACHINE = 0;
+Ecore_X_Atom        ECORE_X_ATOM_WM_CHANGE_STATE = 0;
+Ecore_X_Atom        ECORE_X_ATOM_WM_COLORMAP_WINDOWS = 0;
+Ecore_X_Atom        ECORE_X_ATOM_WM_WINDOW_ROLE = 0;
+Ecore_X_Atom        ECORE_X_ATOM_WM_HINTS = 0;
+Ecore_X_Atom        ECORE_X_ATOM_WM_CLIENT_LEADER = 0;
+Ecore_X_Atom        ECORE_X_ATOM_WM_TRANSIENT_FOR = 0;
+Ecore_X_Atom        ECORE_X_ATOM_WM_SAVE_YOURSELF = 0;
 
 void
 ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state)
@@ -14,47 +33,46 @@ ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state)
    unsigned long       c[2];
 
    if (state == ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
-     c[0] = WithdrawnState;
+      c[0] = WithdrawnState;
    else if (state == ECORE_X_WINDOW_STATE_HINT_NORMAL)
-     c[0] = NormalState;
+      c[0] = NormalState;
    else if (state == ECORE_X_WINDOW_STATE_HINT_ICONIC)
-     c[0] = IconicState;
+      c[0] = IconicState;
    c[1] = 0;
-   XChangeProperty(_ecore_x_disp, win, _ecore_x_atom_wm_state,
-		   _ecore_x_atom_wm_state, 32, PropModeReplace,
+   XChangeProperty(_ecore_x_disp, win, ECORE_X_ATOM_WM_STATE,
+		   ECORE_X_ATOM_WM_STATE, 32, PropModeReplace,
 		   (unsigned char *)c, 2);
 }
 
 void
 ecore_x_icccm_delete_window_send(Ecore_X_Window win, Ecore_X_Time t)
 {
-   ecore_x_client_message32_send(win, _ecore_x_atom_wm_protocols,
-				 _ecore_x_atom_wm_delete_window,
+   ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS,
+				 ECORE_X_ATOM_WM_DELETE_WINDOW,
 				 CurrentTime, 0, 0, 0);
 }
 
 void
 ecore_x_icccm_take_focus_send(Ecore_X_Window win, Ecore_X_Time t)
 {
-   ecore_x_client_message32_send(win, _ecore_x_atom_wm_protocols,
-				 _ecore_x_atom_wm_take_focus,
+   ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS,
+				 ECORE_X_ATOM_WM_TAKE_FOCUS,
 				 CurrentTime, 0, 0, 0);
 }
 
 void
 ecore_x_icccm_save_yourself_send(Ecore_X_Window win, Ecore_X_Time t)
 {
-   ecore_x_client_message32_send(win, _ecore_x_atom_wm_protocols,
-				 _ecore_x_atom_wm_save_yourself,
+   ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS,
+				 ECORE_X_ATOM_WM_SAVE_YOURSELF,
 				 CurrentTime, 0, 0, 0);
 }
 
 void
-ecore_x_icccm_move_resize_send(Ecore_X_Window win,
-			       int x, int y, int w, int h)
+ecore_x_icccm_move_resize_send(Ecore_X_Window win, int x, int y, int w, int h)
 {
    XEvent              ev;
-   
+
    ev.type = ConfigureNotify;
    ev.xconfigure.display = _ecore_x_disp;
    ev.xconfigure.event = win;
@@ -67,7 +85,7 @@ ecore_x_icccm_move_resize_send(Ecore_X_Window win,
    ev.xconfigure.above = win;
    ev.xconfigure.override_redirect = False;
    XSendEvent(_ecore_x_disp, win, False, StructureNotifyMask, &ev);
-}                 
+}
 
 void
 ecore_x_icccm_hints_set(Ecore_X_Window win,
@@ -76,22 +94,22 @@ ecore_x_icccm_hints_set(Ecore_X_Window win,
 			Ecore_X_Pixmap icon_pixmap,
 			Ecore_X_Pixmap icon_mask,
 			Ecore_X_Window icon_window,
-			Ecore_X_Window window_group,
-			int is_urgent)
+			Ecore_X_Window window_group, int is_urgent)
 {
-   XWMHints *hints;
-   
+   XWMHints           *hints;
+
    hints = XAllocWMHints();
-   if (!hints) return;
-   
+   if (!hints)
+      return;
+
    hints->flags = InputHint | StateHint;
    hints->input = accepts_focus;
    if (initial_state == ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
-     hints->initial_state = WithdrawnState;
+      hints->initial_state = WithdrawnState;
    else if (initial_state == ECORE_X_WINDOW_STATE_HINT_NORMAL)
-     hints->initial_state = NormalState;
+      hints->initial_state = NormalState;
    else if (initial_state == ECORE_X_WINDOW_STATE_HINT_ICONIC)
-     hints->initial_state = IconicState;
+      hints->initial_state = IconicState;
    if (icon_pixmap != 0)
      {
 	hints->icon_pixmap = icon_pixmap;
@@ -113,7 +131,7 @@ ecore_x_icccm_hints_set(Ecore_X_Window win,
 	hints->flags |= WindowGroupHint;
      }
    if (is_urgent)
-     hints->flags |= XUrgencyHint;
+      hints->flags |= XUrgencyHint;
    XSetWMHints(_ecore_x_disp, win, hints);
    XFree(hints);
 }
@@ -121,40 +139,46 @@ ecore_x_icccm_hints_set(Ecore_X_Window win,
 int
 ecore_x_icccm_hints_get(Ecore_X_Window win,
 			int *accepts_focus,
-			Ecore_X_Window_State_Hint *initial_state,
-			Ecore_X_Pixmap *icon_pixmap,
-			Ecore_X_Pixmap *icon_mask,
-			Ecore_X_Window *icon_window,
-			Ecore_X_Window *window_group,
-			int *is_urgent)
+			Ecore_X_Window_State_Hint * initial_state,
+			Ecore_X_Pixmap * icon_pixmap,
+			Ecore_X_Pixmap * icon_mask,
+			Ecore_X_Window * icon_window,
+			Ecore_X_Window * window_group, int *is_urgent)
 {
    XWMHints           *hints;
 
-   if (accepts_focus) *accepts_focus = 0;
-   if (initial_state) *initial_state = ECORE_X_WINDOW_STATE_HINT_NORMAL;
-   if (icon_pixmap) *icon_pixmap = 0;
-   if (icon_mask) *icon_mask = 0;
-   if (icon_window) *icon_window = 0;
-   if (window_group) *window_group = 0;
-   if (is_urgent) *is_urgent = 0;
+   if (accepts_focus)
+      *accepts_focus = 0;
+   if (initial_state)
+      *initial_state = ECORE_X_WINDOW_STATE_HINT_NORMAL;
+   if (icon_pixmap)
+      *icon_pixmap = 0;
+   if (icon_mask)
+      *icon_mask = 0;
+   if (icon_window)
+      *icon_window = 0;
+   if (window_group)
+      *window_group = 0;
+   if (is_urgent)
+      *is_urgent = 0;
    hints = XGetWMHints(_ecore_x_disp, win);
    if (hints)
      {
 	if ((hints->flags & InputHint) && (accepts_focus))
 	  {
 	     if (hints->input)
-	       *accepts_focus = 1;
+		*accepts_focus = 1;
 	     else
-	       *accepts_focus = 0;
+		*accepts_focus = 0;
 	  }
 	if ((hints->flags & StateHint) && (initial_state))
 	  {
 	     if (hints->initial_state == WithdrawnState)
-	       *initial_state = ECORE_X_WINDOW_STATE_HINT_WITHDRAWN;
+		*initial_state = ECORE_X_WINDOW_STATE_HINT_WITHDRAWN;
 	     else if (hints->initial_state == NormalState)
-	       *initial_state = ECORE_X_WINDOW_STATE_HINT_NORMAL;
+		*initial_state = ECORE_X_WINDOW_STATE_HINT_NORMAL;
 	     else if (hints->initial_state == IconicState)
-	       *initial_state = ECORE_X_WINDOW_STATE_HINT_ICONIC;
+		*initial_state = ECORE_X_WINDOW_STATE_HINT_ICONIC;
 	  }
 	if ((hints->flags & IconPixmapHint) && (icon_pixmap))
 	  {
@@ -184,18 +208,17 @@ ecore_x_icccm_hints_get(Ecore_X_Window win,
 
 void
 ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
-                                 int request_pos,
+				 int request_pos,
 				 Ecore_X_Gravity gravity,
 				 int min_w, int min_h,
 				 int max_w, int max_h,
 				 int base_w, int base_h,
 				 int step_x, int step_y,
-				 double min_aspect,
-				 double max_aspect)
+				 double min_aspect, double max_aspect)
 {
    /* FIXME: working here */
-   XSizeHints hint;
-   
+   XSizeHints          hint;
+
    hint.flags = 0;
    if (request_pos)
      {
@@ -244,39 +267,43 @@ ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
 int
 ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
 				 int *request_pos,
-				 Ecore_X_Gravity *gravity,
+				 Ecore_X_Gravity * gravity,
 				 int *min_w, int *min_h,
 				 int *max_w, int *max_h,
 				 int *base_w, int *base_h,
 				 int *step_x, int *step_y,
-				 double *min_aspect,
-				 double *max_aspect)
+				 double *min_aspect, double *max_aspect)
 {
    XSizeHints          hint;
    long                mask;
-   
-   int minw = 0, minh = 0;
-   int maxw = 32767, maxh = 32767;
-   int basew = 0, baseh = 0;
-   int stepx = 1, stepy = 1;
-   double mina = 0.0, maxa = 0.0;
-   
-   if (XGetWMNormalHints(_ecore_x_disp, win, &hint, &mask) < Success) return 0;
+
+   int                 minw = 0, minh = 0;
+   int                 maxw = 32767, maxh = 32767;
+   int                 basew = 0, baseh = 0;
+   int                 stepx = 1, stepy = 1;
+   double              mina = 0.0, maxa = 0.0;
+
+   if (XGetWMNormalHints(_ecore_x_disp, win, &hint, &mask) < Success)
+      return 0;
    if ((hint.flags & USPosition) || ((hint.flags & PPosition)))
      {
-	if (request_pos) *request_pos = 1;
+	if (request_pos)
+	   *request_pos = 1;
      }
    else
      {
-	if (request_pos) *request_pos = 0;
+	if (request_pos)
+	   *request_pos = 0;
      }
    if (hint.flags & PWinGravity)
      {
-	if (gravity) *gravity = hint.win_gravity;
+	if (gravity)
+	   *gravity = hint.win_gravity;
      }
    else
      {
-	if (gravity) *gravity = ECORE_X_GRAVITY_NW;
+	if (gravity)
+	   *gravity = ECORE_X_GRAVITY_NW;
      }
    if (hint.flags & PMinSize)
      {
@@ -287,56 +314,76 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
      {
 	maxw = hint.max_width;
 	maxh = hint.max_height;
-	if (maxw < minw) maxw = minw;
-	if (maxh < minh) maxh = minh;
+	if (maxw < minw)
+	   maxw = minw;
+	if (maxh < minh)
+	   maxh = minh;
      }
    if (hint.flags & PBaseSize)
      {
 	basew = hint.base_width;
 	baseh = hint.base_height;
-	if (basew > minw) minw = basew;
-	if (baseh > minh) minh = baseh;
+	if (basew > minw)
+	   minw = basew;
+	if (baseh > minh)
+	   minh = baseh;
      }
    if (hint.flags & PResizeInc)
      {
 	stepx = hint.width_inc;
 	stepy = hint.height_inc;
-	if (stepx < 1) stepx = 1;
-	if (stepy < 1) stepy = 1;
+	if (stepx < 1)
+	   stepx = 1;
+	if (stepy < 1)
+	   stepy = 1;
      }
    if (hint.flags & PAspect)
      {
 	if (hint.min_aspect.y > 0)
-	  mina = ((double)hint.min_aspect.x) / ((double)hint.min_aspect.y);
+	   mina = ((double)hint.min_aspect.x) / ((double)hint.min_aspect.y);
 	if (hint.max_aspect.y > 0)
-	  maxa = ((double)hint.max_aspect.x) / ((double)hint.max_aspect.y);
+	   maxa = ((double)hint.max_aspect.x) / ((double)hint.max_aspect.y);
      }
-   if (min_w) *min_w = minw;
-   if (min_h) *min_h = minh;
-   if (max_w) *max_w = maxw;
-   if (max_h) *max_h = maxh;
-   if (base_w) *base_w = basew;
-   if (base_h) *base_h = baseh;
-   if (step_x) *step_x = stepx;
-   if (step_y) *step_y = stepy;
-   if (min_aspect) *min_aspect = mina;
-   if (max_aspect) *max_aspect = maxa;
+   if (min_w)
+      *min_w = minw;
+   if (min_h)
+      *min_h = minh;
+   if (max_w)
+      *max_w = maxw;
+   if (max_h)
+      *max_h = maxh;
+   if (base_w)
+      *base_w = basew;
+   if (base_h)
+      *base_h = baseh;
+   if (step_x)
+      *step_x = stepx;
+   if (step_y)
+      *step_y = stepy;
+   if (min_aspect)
+      *min_aspect = mina;
+   if (max_aspect)
+      *max_aspect = maxa;
    return 1;
 }
 
 void
 ecore_x_icccm_title_set(Ecore_X_Window win, const char *t)
 {
-   char *list[1];
-   XTextProperty xprop;
-   int ret;
-   
+   char               *list[1];
+   XTextProperty       xprop;
+   int                 ret;
+
 #ifdef X_HAVE_UTF8_STRING
    list[0] = strdup(t);
-   ret = Xutf8TextListToTextProperty(_ecore_x_disp, list, 1, XUTF8StringStyle, &xprop);
+   ret =
+      Xutf8TextListToTextProperty(_ecore_x_disp, list, 1, XUTF8StringStyle,
+				  &xprop);
 #else
    list[0] = strdup(t);
-   ret = XmbTextListToTextProperty(_ecore_x_disp, list, 1, XStdICCTextStyle, &xprop);
+   ret =
+      XmbTextListToTextProperty(_ecore_x_disp, list, 1, XStdICCTextStyle,
+				&xprop);
 #endif
    if (ret >= Success)
      {
@@ -354,41 +401,40 @@ ecore_x_icccm_title_set(Ecore_X_Window win, const char *t)
    free(list[0]);
 }
 
-char *
+char               *
 ecore_x_icccm_title_get(Ecore_X_Window win)
 {
-   XTextProperty xprop;   
-   
+   XTextProperty       xprop;
+
    if (XGetWMName(_ecore_x_disp, win, &xprop) >= Success)
      {
 	if (xprop.value)
 	  {
-	     char **list = NULL;
-	     char *t = NULL;
-	     int num = 0;
-	     
-	     if (xprop.encoding == _ecore_x_atom_string)
+	     char              **list = NULL;
+	     char               *t = NULL;
+	     int                 num = 0;
+
+	     if (xprop.encoding == ECORE_X_ATOM_STRING)
 	       {
 		  t = strdup(xprop.value);
 	       }
-	     else if (xprop.encoding == _ecore_x_atom_utf8_string)
+	     else if (xprop.encoding == ECORE_X_ATOM_UTF8_STRING)
 	       {
 		  t = strdup(xprop.value);
 	       }
 	     else
 	       {
-		  int ret;
-		  
+		  int                 ret;
+
 #ifdef X_HAVE_UTF8_STRING
-		  ret = Xutf8TextPropertyToTextList(_ecore_x_disp, &xprop, 
+		  ret = Xutf8TextPropertyToTextList(_ecore_x_disp, &xprop,
 						    &list, &num);
-#else		  
-		  ret = XmbTextPropertyToTextList(_ecore_x_disp, &xprop, 
+#else
+		  ret = XmbTextPropertyToTextList(_ecore_x_disp, &xprop,
 						  &list, &num);
-#endif		  
+#endif
 		  if ((ret == XLocaleNotSupported) ||
-		      (ret == XNoMemory) ||
-		      (ret == XConverterNotFound))
+		      (ret == XNoMemory) || (ret == XConverterNotFound))
 		    {
 		       t = strdup(xprop.value);
 		    }
@@ -399,7 +445,8 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
 			    /* FIXME: convert to utf8 */
 			    t = strdup(list[0]);
 			 }
-		       if (list) XFreeStringList(list);
+		       if (list)
+			  XFreeStringList(list);
 		    }
 	       }
 	     XFree(xprop.value);
@@ -417,14 +464,13 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
  */
 void
 ecore_x_icccm_protocol_set(Ecore_X_Window win,
-                           Ecore_X_WM_Protocol protocol,
-                           int on)
+			   Ecore_X_WM_Protocol protocol, int on)
 {
-   Atom *protos = NULL;
-   Atom  proto;
-   int   protos_count = 0;
-   int   already_set = 0;
-   int   i;
+   Atom               *protos = NULL;
+   Atom                proto;
+   int                 protos_count = 0;
+   int                 already_set = 0;
+   int                 i;
 
    /* Check for invalid values */
    if (protocol < 0 || protocol >= ECORE_X_WM_PROTOCOL_NUM)
@@ -433,61 +479,63 @@ ecore_x_icccm_protocol_set(Ecore_X_Window win,
    proto = _ecore_x_atoms_wm_protocols[protocol];
 
    if (!XGetWMProtocols(_ecore_x_disp, win, &protos, &protos_count))
-   {
-      protos = NULL;
-      protos_count = 0;
-   }
+     {
+	protos = NULL;
+	protos_count = 0;
+     }
 
    for (i = 0; i < protos_count; i++)
-   {
-      if (protos[i] == proto)
-      {
-         already_set = 1;
-         break;
-      }
-   }
+     {
+	if (protos[i] == proto)
+	  {
+	     already_set = 1;
+	     break;
+	  }
+     }
 
    if (on)
-   {
-      Atom *new_protos = NULL;
+     {
+	Atom               *new_protos = NULL;
 
-      if (already_set) goto leave;
-      new_protos = malloc((protos_count + 1) * sizeof(Atom));
-      if (!new_protos) goto leave;
-      for (i = 0; i < protos_count; i++)
-         new_protos[i] = protos[i];
-      new_protos[protos_count] = proto;
-      XSetWMProtocols(_ecore_x_disp, win, new_protos, protos_count + 1);
-      free(new_protos);
-   }
+	if (already_set)
+	   goto leave;
+	new_protos = malloc((protos_count + 1) * sizeof(Atom));
+	if (!new_protos)
+	   goto leave;
+	for (i = 0; i < protos_count; i++)
+	   new_protos[i] = protos[i];
+	new_protos[protos_count] = proto;
+	XSetWMProtocols(_ecore_x_disp, win, new_protos, protos_count + 1);
+	free(new_protos);
+     }
    else
-   {
-      if (!already_set) goto leave;
-      for (i = 0; i < protos_count; i++)
-      {
-         if (protos[i] == proto)
-         {
-            int j;
+     {
+	if (!already_set)
+	   goto leave;
+	for (i = 0; i < protos_count; i++)
+	  {
+	     if (protos[i] == proto)
+	       {
+		  int                 j;
 
-            for (j = i + 1; j < protos_count; j++)
-               protos[j-1] = protos[j];
-            if (protos_count > 1)
-               XSetWMProtocols(_ecore_x_disp, win, protos, 
-                               protos_count - 1);
-            else
-               XDeleteProperty(_ecore_x_disp, win,
-                               _ecore_x_atom_wm_protocols);
-            goto leave;
-         }
-      }
-   }
+		  for (j = i + 1; j < protos_count; j++)
+		     protos[j - 1] = protos[j];
+		  if (protos_count > 1)
+		     XSetWMProtocols(_ecore_x_disp, win, protos,
+				     protos_count - 1);
+		  else
+		     XDeleteProperty(_ecore_x_disp, win,
+				     ECORE_X_ATOM_WM_PROTOCOLS);
+		  goto leave;
+	       }
+	  }
+     }
 
-   leave:
+ leave:
    if (protos)
       XFree(protos);
 
 }
-
 
 /**
  * Determines whether a protocol is set for a window.
@@ -496,11 +544,10 @@ ecore_x_icccm_protocol_set(Ecore_X_Window win,
  * @return 1 if the protocol is set, else 0.
  */
 int
-ecore_x_icccm_protocol_isset(Ecore_X_Window win,
-                             Ecore_X_WM_Protocol protocol)
+ecore_x_icccm_protocol_isset(Ecore_X_Window win, Ecore_X_WM_Protocol protocol)
 {
-   Atom proto, *protos = NULL;
-   int i, ret = 0, protos_count = 0;
+   Atom                proto, *protos = NULL;
+   int                 i, ret = 0, protos_count = 0;
 
    /* check for invalid values */
    if (protocol < 0 || protocol >= ECORE_X_WM_PROTOCOL_NUM)
@@ -510,13 +557,13 @@ ecore_x_icccm_protocol_isset(Ecore_X_Window win,
 
    if (!XGetWMProtocols(_ecore_x_disp, win, &protos, &protos_count))
       return 0;
-   
+
    for (i = 0; i < protos_count; i++)
       if (protos[i] == proto)
-      {
-         ret = 1;
-         break;
-      }
+	{
+	   ret = 1;
+	   break;
+	}
 
    XFree(protos);
    return ret;
@@ -532,11 +579,9 @@ ecore_x_icccm_protocol_isset(Ecore_X_Window win,
  * Set a window name * class
  */
 void
-ecore_x_icccm_name_class_set(Ecore_X_Window win,
-                             const char *n,
-                             const char *c)
+ecore_x_icccm_name_class_set(Ecore_X_Window win, const char *n, const char *c)
 {
-   XClassHint *xch;
+   XClassHint         *xch;
 
    xch = XAllocClassHint();
    if (!xch)
@@ -554,12 +599,12 @@ ecore_x_icccm_name_class_set(Ecore_X_Window win,
  * 
  * Return the client machine of a window. String must be free'd when done with.
  */
-char *
+char               *
 ecore_x_icccm_client_machine_get(Ecore_X_Window win)
 {
-   char *name;
+   char               *name;
 
-   name = ecore_x_window_prop_string_get(win, _ecore_x_atom_wm_client_machine);
+   name = ecore_x_window_prop_string_get(win, ECORE_X_ATOM_WM_CLIENT_MACHINE);
    return name;
 }
 
@@ -601,8 +646,8 @@ ecore_x_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv)
 void
 ecore_x_icccm_icon_name_set(Ecore_X_Window win, const char *t)
 {
-   ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_icon_name, (char *)t);
-   ecore_x_window_prop_string_set(win, _ecore_x_atom_net_wm_icon_name,
+   ecore_x_window_prop_string_set(win, ECORE_X_ATOM_WM_ICON_NAME, (char *)t);
+   ecore_x_window_prop_string_set(win, ECORE_X_ATOM_NET_WM_ICON_NAME,
 				  (char *)t);
 }
 
@@ -613,13 +658,14 @@ ecore_x_icccm_icon_name_set(Ecore_X_Window win, const char *t)
  * 
  * Return the icon name of a window. String must be free'd when done with.
  */
-char *
+char               *
 ecore_x_icccm_icon_name_get(Ecore_X_Window win)
 {
-   char *name;
+   char               *name;
 
-   name = ecore_x_window_prop_string_get(win, _ecore_x_atom_net_wm_icon_name);
-   if (!name) name = ecore_x_window_prop_string_get(win, _ecore_x_atom_wm_icon_name);
+   name = ecore_x_window_prop_string_get(win, ECORE_X_ATOM_NET_WM_ICON_NAME);
+   if (!name)
+      name = ecore_x_window_prop_string_get(win, ECORE_X_ATOM_WM_ICON_NAME);
    return name;
 }
 
@@ -631,53 +677,49 @@ ecore_x_icccm_icon_name_get(Ecore_X_Window win)
 void
 ecore_x_icccm_colormap_window_set(Ecore_X_Window win, Ecore_X_Window subwin)
 {
-   int            num = 0, i;
-   unsigned char *old_data = NULL;
-   unsigned char *data = NULL;
-   Window        *oldset = NULL;
-   Window        *newset = NULL;
-   
-   if(!ecore_x_window_prop_property_get(win, 
-                                       _ecore_x_atom_wm_colormap_windows, 
-                                       XA_WINDOW,
-                                       32,
-                                       &old_data,
-                                       &num))
-   {
-      newset = calloc(1, sizeof(Window));
-      if (!newset) return;
-      newset[0] = subwin;
-      num = 1;
-      data = (unsigned char *)newset;
-   }
-   else
-   {
-      newset = calloc(num + 1, sizeof(Window));
-      oldset = (Window *) old_data;
-      if (!newset) return;
-      for (i = 0; i < num; ++i)
-      {
-         if (oldset[i] == subwin)
-         {
-            XFree(old_data);
-            free(newset);
-            return;
-         }
-         
-         newset[i] = oldset[i];
-      }
+   int                 num = 0, i;
+   unsigned char      *old_data = NULL;
+   unsigned char      *data = NULL;
+   Window             *oldset = NULL;
+   Window             *newset = NULL;
 
-      newset[num++] = subwin;
-      XFree(old_data);
-      data = (unsigned char *)newset;
-   }
-   
-   ecore_x_window_prop_property_set(win, 
-                                    _ecore_x_atom_wm_colormap_windows,
-                                    XA_WINDOW,
-                                    32,
-                                    data,
-                                    num);
+   if (!ecore_x_window_prop_property_get(win,
+					 ECORE_X_ATOM_WM_COLORMAP_WINDOWS,
+					 XA_WINDOW, 32, &old_data, &num))
+     {
+	newset = calloc(1, sizeof(Window));
+	if (!newset)
+	   return;
+	newset[0] = subwin;
+	num = 1;
+	data = (unsigned char *)newset;
+     }
+   else
+     {
+	newset = calloc(num + 1, sizeof(Window));
+	oldset = (Window *) old_data;
+	if (!newset)
+	   return;
+	for (i = 0; i < num; ++i)
+	  {
+	     if (oldset[i] == subwin)
+	       {
+		  XFree(old_data);
+		  free(newset);
+		  return;
+	       }
+
+	     newset[i] = oldset[i];
+	  }
+
+	newset[num++] = subwin;
+	XFree(old_data);
+	data = (unsigned char *)newset;
+     }
+
+   ecore_x_window_prop_property_set(win,
+				    ECORE_X_ATOM_WM_COLORMAP_WINDOWS,
+				    XA_WINDOW, 32, data, num);
    free(newset);
 }
 
@@ -689,53 +731,46 @@ ecore_x_icccm_colormap_window_set(Ecore_X_Window win, Ecore_X_Window subwin)
 void
 ecore_x_icccm_colormap_window_unset(Ecore_X_Window win, Ecore_X_Window subwin)
 {
-   int            num = 0, i, j, k = 0;
-   unsigned char *old_data = NULL;
-   unsigned char *data = NULL;
-   Window        *oldset = NULL;
-   Window        *newset = NULL;
+   int                 num = 0, i, j, k = 0;
+   unsigned char      *old_data = NULL;
+   unsigned char      *data = NULL;
+   Window             *oldset = NULL;
+   Window             *newset = NULL;
 
-   if (!ecore_x_window_prop_property_get(win, 
-                                         _ecore_x_atom_wm_colormap_windows,
-                                         XA_WINDOW,
-                                         32,
-                                         &old_data,
-                                         &num))
+   if (!ecore_x_window_prop_property_get(win,
+					 ECORE_X_ATOM_WM_COLORMAP_WINDOWS,
+					 XA_WINDOW, 32, &old_data, &num))
       return;
 
    oldset = (Window *) old_data;
    for (i = 0; i < num; i++)
-   {
-      if (oldset[i] == subwin)
-      {
-         if (num == 1)
-         {
-            XDeleteProperty(_ecore_x_disp, 
-                            win,
-                            _ecore_x_atom_wm_colormap_windows);
-            XFree(old_data);
-            return;
-         }
-         else
-         {
-            newset = calloc(num - 1, sizeof(Window));
-            data = (unsigned char *)newset;
-            for (j = 0; j < num; ++j)
-               if (oldset[j] != subwin)
-                  newset[k++] = oldset[j];
-            ecore_x_window_prop_property_set(win,
-                                             _ecore_x_atom_wm_colormap_windows,
-                                             XA_WINDOW,
-                                             32,
-                                             data,
-                                             k);
-            XFree(old_data);
-            free(newset);
-            return;
-         }
-      }
-   }
-   
+     {
+	if (oldset[i] == subwin)
+	  {
+	     if (num == 1)
+	       {
+		  XDeleteProperty(_ecore_x_disp,
+				  win, ECORE_X_ATOM_WM_COLORMAP_WINDOWS);
+		  XFree(old_data);
+		  return;
+	       }
+	     else
+	       {
+		  newset = calloc(num - 1, sizeof(Window));
+		  data = (unsigned char *)newset;
+		  for (j = 0; j < num; ++j)
+		     if (oldset[j] != subwin)
+			newset[k++] = oldset[j];
+		  ecore_x_window_prop_property_set(win,
+						   ECORE_X_ATOM_WM_COLORMAP_WINDOWS,
+						   XA_WINDOW, 32, data, k);
+		  XFree(old_data);
+		  free(newset);
+		  return;
+	       }
+	  }
+     }
+
    XFree(old_data);
 }
 
@@ -757,7 +792,7 @@ ecore_x_icccm_transient_for_set(Ecore_X_Window win, Ecore_X_Window forwin)
 void
 ecore_x_icccm_transient_for_unset(Ecore_X_Window win)
 {
-   XDeleteProperty(_ecore_x_disp, win, _ecore_x_atom_wm_transient_for);
+   XDeleteProperty(_ecore_x_disp, win, ECORE_X_ATOM_WM_TRANSIENT_FOR);
 }
 
 /**
@@ -768,13 +803,13 @@ ecore_x_icccm_transient_for_unset(Ecore_X_Window win)
 Ecore_X_Window
 ecore_x_icccm_transient_for_get(Ecore_X_Window win)
 {
-   Window forwin;
+   Window              forwin;
 
-   if(XGetTransientForHint(_ecore_x_disp, win, &forwin))
+   if (XGetTransientForHint(_ecore_x_disp, win, &forwin))
       return (Ecore_X_Window) forwin;
    else
       return 0;
-   
+
 }
 
 /**
@@ -785,8 +820,8 @@ ecore_x_icccm_transient_for_get(Ecore_X_Window win)
 void
 ecore_x_icccm_window_role_set(Ecore_X_Window win, const char *role)
 {
-   ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_window_role,
-                                  (char *)role);
+   ecore_x_window_prop_string_set(win, ECORE_X_ATOM_WM_WINDOW_ROLE,
+				  (char *)role);
 }
 
 /**
@@ -794,11 +829,10 @@ ecore_x_icccm_window_role_set(Ecore_X_Window win, const char *role)
  * @param win The window
  * @return The window's role string.
  */
-char *
+char               *
 ecore_x_icccm_window_role_get(Ecore_X_Window win)
 {
-   return ecore_x_window_prop_string_get(win,
-                                         _ecore_x_atom_wm_window_role);
+   return ecore_x_window_prop_string_get(win, ECORE_X_ATOM_WM_WINDOW_ROLE);
 }
 
 /**
@@ -813,8 +847,8 @@ void
 ecore_x_icccm_client_leader_set(Ecore_X_Window win, Ecore_X_Window l)
 {
    ecore_x_window_prop_property_set(win,
-                                    _ecore_x_atom_wm_client_leader,
-                                    XA_WINDOW, 32, &l, 1);
+				    ECORE_X_ATOM_WM_CLIENT_LEADER,
+				    XA_WINDOW, 32, &l, 1);
 }
 
 /**
@@ -824,19 +858,17 @@ ecore_x_icccm_client_leader_set(Ecore_X_Window win, Ecore_X_Window l)
 Ecore_X_Window
 ecore_x_icccm_client_leader_get(Ecore_X_Window win)
 {
-   unsigned char  *data;
-   int             num;
-   
-   if(ecore_x_window_prop_property_get(win,
-                                       _ecore_x_atom_wm_client_leader,
-                                       XA_WINDOW, 32, &data, &num))
-      return (Ecore_X_Window)*data;
+   unsigned char      *data;
+   int                 num;
+
+   if (ecore_x_window_prop_property_get(win,
+					ECORE_X_ATOM_WM_CLIENT_LEADER,
+					XA_WINDOW, 32, &data, &num))
+      return (Ecore_X_Window) * data;
    else
       return 0;
 }
 
-
- 
 /* FIXME: move these things in here as they are icccm related */
 /* send iconify request */
 

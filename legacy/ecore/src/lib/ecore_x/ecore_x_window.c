@@ -5,6 +5,7 @@
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
+#include "Ecore_X_Atoms.h"
 
 /**
  * @defgroup Ecore_X_Window_Create_Group X Window Creation Functions
@@ -208,7 +209,7 @@ ecore_x_window_defaults_set(Ecore_X_Window win)
    hostname[0] = buf;
    /* The ecore function uses UTF8 which Xlib may not like (especially
     * with older clients) */
-   /* ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_client_machine,
+   /* ecore_x_window_prop_string_set(win, ECORE_X_ATOM_WM_CLIENT_MACHINE,
 				  (char *)buf); */
    if (XStringListToTextProperty(hostname, 1, &xprop))
      {
@@ -220,7 +221,7 @@ ecore_x_window_defaults_set(Ecore_X_Window win)
     * Set _NET_WM_PID
     */
    pid = getpid();
-   ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_pid, XA_CARDINAL,
+   ecore_x_window_prop_property_set(win, ECORE_X_ATOM_NET_WM_PID, XA_CARDINAL,
 		                    32, &pid, 1);
 
    ecore_x_window_prop_window_type_set(win, ECORE_X_WINDOW_TYPE_NORMAL);
@@ -292,9 +293,9 @@ ecore_x_window_delete_request_send(Ecore_X_Window win)
    xev.xclient.type = ClientMessage;
    xev.xclient.display = _ecore_x_disp;
    xev.xclient.window = win;
-   xev.xclient.message_type = _ecore_x_atom_wm_protocols;
+   xev.xclient.message_type = ECORE_X_ATOM_WM_PROTOCOLS;
    xev.xclient.format = 32;
-   xev.xclient.data.l[0] = _ecore_x_atom_wm_delete_window;
+   xev.xclient.data.l[0] = ECORE_X_ATOM_WM_DELETE_WINDOW;
    xev.xclient.data.l[1] = CurrentTime;
 
    XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);

@@ -7,6 +7,7 @@
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
+#include "Ecore_X_Atoms.h"
 
 #define ECORE_X_MWM_HINTS_FUNCTIONS           (1 << 0)
 #define ECORE_X_MWM_HINTS_DECORATIONS         (1 << 1)
@@ -23,48 +24,51 @@ typedef struct _mwmhints
 }
 MWMHints;
 
+/* Atoms */
+Ecore_X_Atom        ECORE_X_ATOM_MOTIF_WM_HINTS = 0;
+
 int
 ecore_x_mwm_hints_get(Ecore_X_Window win,
-		      Ecore_X_MWM_Hint_Func *fhint,
-		      Ecore_X_MWM_Hint_Decor *dhint,
-		      Ecore_X_MWM_Hint_Input *ihint)
+		      Ecore_X_MWM_Hint_Func * fhint,
+		      Ecore_X_MWM_Hint_Decor * dhint,
+		      Ecore_X_MWM_Hint_Input * ihint)
 {
-   unsigned char *p = NULL;
-   MWMHints *mwmhints = NULL;
-   int num;
-   int ret;
-   
+   unsigned char      *p = NULL;
+   MWMHints           *mwmhints = NULL;
+   int                 num;
+   int                 ret;
+
    ret = 0;
    if (!ecore_x_window_prop_property_get(win,
-					 _ecore_x_atom_motif_wm_hints,
-					 _ecore_x_atom_motif_wm_hints,
+					 ECORE_X_ATOM_MOTIF_WM_HINTS,
+					 ECORE_X_ATOM_MOTIF_WM_HINTS,
 					 32, &p, &num))
-     return 0;
-   mwmhints = (MWMHints *)p;
+      return 0;
+   mwmhints = (MWMHints *) p;
    if (mwmhints)
      {
 	if (num >= 4)
 	  {
-	     if (dhint) 
+	     if (dhint)
 	       {
 		  if (mwmhints->flags & ECORE_X_MWM_HINTS_DECORATIONS)
-		    *dhint = mwmhints->decorations;
+		     *dhint = mwmhints->decorations;
 		  else
-		    *dhint = ECORE_X_MWM_HINT_DECOR_ALL;
+		     *dhint = ECORE_X_MWM_HINT_DECOR_ALL;
 	       }
 	     if (fhint)
 	       {
 		  if (mwmhints->flags & ECORE_X_MWM_HINTS_FUNCTIONS)
-		    *fhint = mwmhints->functions;
+		     *fhint = mwmhints->functions;
 		  else
-		    *fhint = ECORE_X_MWM_HINT_FUNC_ALL;
+		     *fhint = ECORE_X_MWM_HINT_FUNC_ALL;
 	       }
 	     if (ihint)
 	       {
 		  if (mwmhints->flags & ECORE_X_MWM_HINTS_INPUT_MODE)
-		    *ihint = mwmhints->inputmode;
+		     *ihint = mwmhints->inputmode;
 		  else
-		    *ihint = ECORE_X_MWM_HINT_INPUT_MODELESS;
+		     *ihint = ECORE_X_MWM_HINT_INPUT_MODELESS;
 	       }
 	     ret = 1;
 	  }

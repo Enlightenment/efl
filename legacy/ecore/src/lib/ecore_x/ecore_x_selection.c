@@ -1,6 +1,7 @@
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
+#include "Ecore_X_Atoms.h"
 
 static Ecore_X_Selection_Data selections[3] = {{0}};
 static Ecore_X_Selection_Data request_data[3] = {{0}};
@@ -12,15 +13,15 @@ void
 _ecore_x_selection_data_init(void)
 {
    /* Initialize converters */
-   ecore_x_selection_converter_atom_add(_ecore_x_atom_text, 
+   ecore_x_selection_converter_atom_add(ECORE_X_ATOM_TEXT, 
          _ecore_x_selection_converter_text);
 #ifdef X_HAVE_UTF8_STRING
-   ecore_x_selection_converter_atom_add(_ecore_x_atom_utf8_string, 
+   ecore_x_selection_converter_atom_add(ECORE_X_ATOM_UTF8_STRING, 
          _ecore_x_selection_converter_text);
 #endif
-   ecore_x_selection_converter_atom_add(_ecore_x_atom_compound_text,
+   ecore_x_selection_converter_atom_add(ECORE_X_ATOM_COMPOUND_TEXT,
          _ecore_x_selection_converter_text);
-   ecore_x_selection_converter_atom_add(_ecore_x_atom_string,
+   ecore_x_selection_converter_atom_add(ECORE_X_ATOM_STRING,
          _ecore_x_selection_converter_text);
 }
 
@@ -47,11 +48,11 @@ _ecore_x_selection_request_data_get(Ecore_X_Atom selection, void **buf, int *len
 {
    int i;
    char *data;
-   if (selection == _ecore_x_atom_selection_primary)
+   if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
       i = 0;
-   else if (selection == _ecore_x_atom_selection_secondary)
+   else if (selection == ECORE_X_ATOM_SELECTION_SECONDARY)
       i = 1;
-   else if (selection == _ecore_x_atom_selection_clipboard)
+   else if (selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
       i = 2;
    else
       return;
@@ -81,7 +82,7 @@ _ecore_x_selection_request_data_get(Ecore_X_Atom selection, void **buf, int *len
 void
 ecore_x_selection_primary_request_data_get(void **buf, int *len)
 {
-   _ecore_x_selection_request_data_get(_ecore_x_atom_selection_primary,
+   _ecore_x_selection_request_data_get(ECORE_X_ATOM_SELECTION_PRIMARY,
                                        buf, len);
 }
 
@@ -96,7 +97,7 @@ ecore_x_selection_primary_request_data_get(void **buf, int *len)
 void
 ecore_x_selection_secondary_request_data_get(void **buf, int *len)
 {
-   _ecore_x_selection_request_data_get(_ecore_x_atom_selection_secondary,
+   _ecore_x_selection_request_data_get(ECORE_X_ATOM_SELECTION_SECONDARY,
                                        buf, len);
 }
 
@@ -111,7 +112,7 @@ ecore_x_selection_secondary_request_data_get(void **buf, int *len)
 void
 ecore_x_selection_clipboard_request_data_get(void **buf, int *len)
 {
-   _ecore_x_selection_request_data_get(_ecore_x_atom_selection_clipboard,
+   _ecore_x_selection_request_data_get(ECORE_X_ATOM_SELECTION_CLIPBOARD,
                                        buf, len);
 }
 
@@ -119,11 +120,11 @@ void
 _ecore_x_selection_request_data_set(Ecore_X_Selection_Data data)
 {
    int i;
-   if (data.selection == _ecore_x_atom_selection_primary)
+   if (data.selection == ECORE_X_ATOM_SELECTION_PRIMARY)
       i = 0;
-   else if (data.selection == _ecore_x_atom_selection_secondary)
+   else if (data.selection == ECORE_X_ATOM_SELECTION_SECONDARY)
       i = 1;
-   else if (data.selection == _ecore_x_atom_selection_clipboard)
+   else if (data.selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
       i = 2;
    else
       return;
@@ -134,11 +135,11 @@ _ecore_x_selection_request_data_set(Ecore_X_Selection_Data data)
 Ecore_X_Selection_Data *
 _ecore_x_selection_get(Atom selection)
 {
-   if (selection == _ecore_x_atom_selection_primary)
+   if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
       return &selections[0];
-   else if (selection == _ecore_x_atom_selection_secondary)
+   else if (selection == ECORE_X_ATOM_SELECTION_SECONDARY)
       return &selections[1];
-   else if (selection == _ecore_x_atom_selection_clipboard)
+   else if (selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
       return &selections[2];
    else
       return NULL;
@@ -154,9 +155,9 @@ _ecore_x_selection_set(Window w, unsigned char *data, int size, Atom selection)
    if (XGetSelectionOwner(_ecore_x_disp, selection) != w)
       return 0;
    
-   if (selection == _ecore_x_atom_selection_primary)
+   if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
       in = 0;
-   else if (selection == _ecore_x_atom_selection_secondary)
+   else if (selection == ECORE_X_ATOM_SELECTION_SECONDARY)
       in = 1;
    else
       in = 2;
@@ -198,7 +199,7 @@ _ecore_x_selection_set(Window w, unsigned char *data, int size, Atom selection)
 int 
 ecore_x_selection_primary_set(Ecore_X_Window w, unsigned char *data, int size)
 {
-   return _ecore_x_selection_set(w, data, size, _ecore_x_atom_selection_primary);
+   return _ecore_x_selection_set(w, data, size, ECORE_X_ATOM_SELECTION_PRIMARY);
 }
 
 /**
@@ -210,7 +211,7 @@ ecore_x_selection_primary_set(Ecore_X_Window w, unsigned char *data, int size)
 int 
 ecore_x_selection_primary_clear(void)
 {
-   return _ecore_x_selection_set(None, NULL, 0, _ecore_x_atom_selection_primary);
+   return _ecore_x_selection_set(None, NULL, 0, ECORE_X_ATOM_SELECTION_PRIMARY);
 }
 
 /**
@@ -227,7 +228,7 @@ ecore_x_selection_primary_clear(void)
 int 
 ecore_x_selection_secondary_set(Ecore_X_Window w, unsigned char *data, int size)
 {
-   return _ecore_x_selection_set(w, data, size, _ecore_x_atom_selection_secondary);
+   return _ecore_x_selection_set(w, data, size, ECORE_X_ATOM_SELECTION_SECONDARY);
 }
 
 /**
@@ -239,7 +240,7 @@ ecore_x_selection_secondary_set(Ecore_X_Window w, unsigned char *data, int size)
 int 
 ecore_x_selection_secondary_clear(void)
 {
-   return _ecore_x_selection_set(None, NULL, 0, _ecore_x_atom_selection_secondary);
+   return _ecore_x_selection_set(None, NULL, 0, ECORE_X_ATOM_SELECTION_SECONDARY);
 }
 
 /**
@@ -256,7 +257,7 @@ ecore_x_selection_secondary_clear(void)
 int 
 ecore_x_selection_clipboard_set(Ecore_X_Window w, unsigned char *data, int size)
 {
-   return _ecore_x_selection_set(w, data, size, _ecore_x_atom_selection_clipboard);
+   return _ecore_x_selection_set(w, data, size, ECORE_X_ATOM_SELECTION_CLIPBOARD);
 }
 
 /**
@@ -268,7 +269,7 @@ ecore_x_selection_clipboard_set(Ecore_X_Window w, unsigned char *data, int size)
 int 
 ecore_x_selection_clipboard_clear(void)
 {
-   return _ecore_x_selection_set(None, NULL, 0, _ecore_x_atom_selection_clipboard);
+   return _ecore_x_selection_set(None, NULL, 0, ECORE_X_ATOM_SELECTION_CLIPBOARD);
 }
 
 Atom
@@ -277,15 +278,15 @@ _ecore_x_selection_target_atom_get(char *target)
    Atom x_target;
    
    if (!strcmp(target, ECORE_X_SELECTION_TARGET_TEXT))
-      x_target = _ecore_x_atom_text;
+      x_target = ECORE_X_ATOM_TEXT;
    else if (!strcmp(target, ECORE_X_SELECTION_TARGET_COMPOUND_TEXT))
-      x_target = _ecore_x_atom_compound_text;
+      x_target = ECORE_X_ATOM_COMPOUND_TEXT;
    else if (!strcmp(target, ECORE_X_SELECTION_TARGET_STRING))
-      x_target = _ecore_x_atom_string;
+      x_target = ECORE_X_ATOM_STRING;
    else if (!strcmp(target, ECORE_X_SELECTION_TARGET_UTF8_STRING))
-      x_target = _ecore_x_atom_utf8_string;
+      x_target = ECORE_X_ATOM_UTF8_STRING;
    else if (!strcmp(target, ECORE_X_SELECTION_TARGET_FILENAME))
-      x_target = _ecore_x_atom_file_name;
+      x_target = ECORE_X_ATOM_FILE_NAME;
    else
    {
       char *atom_name;
@@ -301,13 +302,13 @@ _ecore_x_selection_target_atom_get(char *target)
 char *
 _ecore_x_selection_target_get(Atom target)
 {
-   if (target == _ecore_x_atom_file_name)
+   if (target == ECORE_X_ATOM_FILE_NAME)
       return strdup(ECORE_X_SELECTION_TARGET_FILENAME);
-   else if (target == _ecore_x_atom_string)
+   else if (target == ECORE_X_ATOM_STRING)
       return strdup(ECORE_X_SELECTION_TARGET_STRING);
-   else if (target == _ecore_x_atom_utf8_string)
+   else if (target == ECORE_X_ATOM_UTF8_STRING)
       return strdup(ECORE_X_SELECTION_TARGET_UTF8_STRING);
-   else if (target == _ecore_x_atom_text)
+   else if (target == ECORE_X_ATOM_TEXT)
       return strdup(ECORE_X_SELECTION_TARGET_TEXT);
    else
       return strdup(ECORE_X_SELECTION_TARGET_TEXT);
@@ -320,14 +321,14 @@ _ecore_x_selection_request(Ecore_X_Window w, Ecore_X_Atom selection, char *targe
 
    target = _ecore_x_selection_target_atom_get(target_str);
    
-   if (selection == _ecore_x_atom_selection_primary)
-      prop = _ecore_x_atom_selection_prop_primary;
-   else if (selection == _ecore_x_atom_selection_secondary)
-      prop = _ecore_x_atom_selection_prop_secondary;
-   else if (selection == _ecore_x_atom_selection_xdnd)
-      prop = _ecore_x_atom_selection_prop_xdnd;
+   if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
+      prop = ECORE_X_ATOM_SELECTION_PROP_PRIMARY;
+   else if (selection == ECORE_X_ATOM_SELECTION_SECONDARY)
+      prop = ECORE_X_ATOM_SELECTION_PROP_SECONDARY;
+   else if (selection == ECORE_X_ATOM_SELECTION_XDND)
+      prop = ECORE_X_ATOM_SELECTION_PROP_XDND;
    else
-      prop = _ecore_x_atom_selection_prop_clipboard;
+      prop = ECORE_X_ATOM_SELECTION_PROP_CLIPBOARD;
 
    XConvertSelection(_ecore_x_disp, selection, target, prop,
                      w, _ecore_x_event_last_time);
@@ -336,19 +337,19 @@ _ecore_x_selection_request(Ecore_X_Window w, Ecore_X_Atom selection, char *targe
 void 
 ecore_x_selection_primary_request(Ecore_X_Window w, char *target)
 {
-   _ecore_x_selection_request(w, _ecore_x_atom_selection_primary, target);
+   _ecore_x_selection_request(w, ECORE_X_ATOM_SELECTION_PRIMARY, target);
 }
 
 void 
 ecore_x_selection_secondary_request(Ecore_X_Window w, char *target)
 {
-   _ecore_x_selection_request(w, _ecore_x_atom_selection_secondary, target);
+   _ecore_x_selection_request(w, ECORE_X_ATOM_SELECTION_SECONDARY, target);
 }
 
 void 
 ecore_x_selection_clipboard_request(Ecore_X_Window w, char *target)
 {
-   _ecore_x_selection_request(w, _ecore_x_atom_selection_clipboard, target);
+   _ecore_x_selection_request(w, ECORE_X_ATOM_SELECTION_CLIPBOARD, target);
 }
 
 void
@@ -410,9 +411,9 @@ ecore_x_selection_converter_atom_del(Ecore_X_Atom target)
    {
       if (cnv->target == target)
       {
-         if (target == _ecore_x_atom_text ||
-             target == _ecore_x_atom_compound_text ||
-             target == _ecore_x_atom_string)
+         if (target == ECORE_X_ATOM_TEXT ||
+             target == ECORE_X_ATOM_COMPOUND_TEXT ||
+             target == ECORE_X_ATOM_STRING)
          {
             cnv->convert = _ecore_x_selection_converter_text;
          }

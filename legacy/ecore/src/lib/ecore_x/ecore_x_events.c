@@ -5,6 +5,7 @@
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
+#include "Ecore_X_Atoms.h"
 
 #if 0
 static void _ecore_x_event_free_window_prop_name_class_change(void *data, void *ev);
@@ -871,7 +872,7 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
 #if 0 /* for now i disabled this. nice idea though this is - it leaves a lot
        * to be desired for efficiency that is better left to the app layer
        */
-   if (xevent->xproperty.atom == _ecore_x_atom_wm_class)
+   if (xevent->xproperty.atom == ECORE_X_ATOM_WM_CLASS)
      {
 	Ecore_X_Event_Window_Prop_Name_Class_Change *e;
 	
@@ -883,7 +884,7 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
    _ecore_x_event_last_time = e->time;
 	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_NAME_CLASS_CHANGE, e, _ecore_x_event_free_window_prop_name_class_change, NULL);
      }
-   else if ((xevent->xproperty.atom == _ecore_x_atom_wm_name) || (xevent->xproperty.atom == _ecore_x_atom_net_wm_name))
+   else if ((xevent->xproperty.atom == ECORE_X_ATOM_WM_NAME) || (xevent->xproperty.atom == ECORE_X_ATOM_NET_WM_NAME))
      {
 	Ecore_X_Event_Window_Prop_Title_Change *e;
 	
@@ -894,7 +895,7 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
    _ecore_x_event_last_time = e->time;
 	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_TITLE_CHANGE, e, _ecore_x_event_free_window_prop_title_change, NULL);
      }
-   else if (xevent->xproperty.atom == _ecore_x_atom_net_wm_visible_name)
+   else if (xevent->xproperty.atom == ECORE_X_ATOM_NET_WM_VISIBLE_NAME)
      {
 	Ecore_X_Event_Window_Prop_Visible_Title_Change *e;
 	
@@ -905,7 +906,7 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
    _ecore_x_event_last_time = e->time;
 	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_VISIBLE_TITLE_CHANGE, e, _ecore_x_event_free_window_prop_visible_title_change, NULL);
      }
-   else if ((xevent->xproperty.atom == _ecore_x_atom_wm_icon_name) || (xevent->xproperty.atom == _ecore_x_atom_net_wm_icon_name))
+   else if ((xevent->xproperty.atom == ECORE_X_ATOM_WM_ICON_NAME) || (xevent->xproperty.atom == ECORE_X_ATOM_NET_WM_ICON_NAME))
      {
 	Ecore_X_Event_Window_Prop_Icon_Name_Change *e;
 	
@@ -916,7 +917,7 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
    _ecore_x_event_last_time = e->time;
 	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_ICON_NAME_CHANGE, e, _ecore_x_event_free_window_prop_icon_name_change, NULL);
      }
-   else if (xevent->xproperty.atom == _ecore_x_atom_net_wm_visible_icon_name)
+   else if (xevent->xproperty.atom == ECORE_X_ATOM_NET_WM_VISIBLE_ICON_NAME)
      {
 	Ecore_X_Event_Window_Prop_Visible_Icon_Name_Change *e;
 	
@@ -927,7 +928,7 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
    _ecore_x_event_last_time = e->time;
 	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_VISIBLE_ICON_NAME_CHANGE, e, _ecore_x_event_free_window_prop_visible_icon_name_change, NULL);
      }
-   else if (xevent->xproperty.atom == _ecore_x_atom_wm_client_machine)
+   else if (xevent->xproperty.atom == ECORE_X_ATOM_WM_CLIENT_MACHINE)
      {
 	Ecore_X_Event_Window_Prop_Client_Machine_Change *e;
 	
@@ -938,7 +939,7 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
    _ecore_x_event_last_time = e->time;
 	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_CLIENT_MACHINE_CHANGE, e, _ecore_x_event_free_window_prop_client_machine_change, NULL);
      }
-   else if (xevent->xproperty.atom == _ecore_x_atom_net_wm_pid)
+   else if (xevent->xproperty.atom == ECORE_X_ATOM_NET_WM_PID)
      {
 	Ecore_X_Event_Window_Prop_Pid_Change *e;
 	
@@ -949,7 +950,7 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
    _ecore_x_event_last_time = e->time;
 	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE, e, NULL, NULL);
      }
-   else if (xevent->xproperty.atom == _ecore_x_atom_net_wm_desktop)
+   else if (xevent->xproperty.atom == ECORE_X_ATOM_NET_WM_DESKTOP)
      {
 	Ecore_X_Event_Window_Prop_Desktop_Change *e;
 	
@@ -993,9 +994,9 @@ _ecore_x_event_handle_selection_clear(XEvent *xevent)
    e->win = xevent->xselectionclear.window;
    e->time = xevent->xselectionclear.time;
    sel = xevent->xselectionclear.selection;
-   if (sel == _ecore_x_atom_selection_primary)
+   if (sel == ECORE_X_ATOM_SELECTION_PRIMARY)
       e->selection = ECORE_X_SELECTION_PRIMARY;
-   else if (sel == _ecore_x_atom_selection_secondary)
+   else if (sel == ECORE_X_ATOM_SELECTION_SECONDARY)
       e->selection = ECORE_X_SELECTION_SECONDARY;
    else
       e->selection = ECORE_X_SELECTION_CLIPBOARD;
@@ -1067,11 +1068,11 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
    e->time = xevent->xselection.time;
    e->target = _ecore_x_selection_target_get(xevent->xselection.target);
    selection = xevent->xselection.selection;
-   if (selection == _ecore_x_atom_selection_primary)
+   if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
       e->selection = ECORE_X_SELECTION_PRIMARY;
-   else if (selection == _ecore_x_atom_selection_secondary)
+   else if (selection == ECORE_X_ATOM_SELECTION_SECONDARY)
       e->selection = ECORE_X_SELECTION_SECONDARY;
-   else if (selection == _ecore_x_atom_selection_clipboard)
+   else if (selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
       e->selection = ECORE_X_SELECTION_CLIPBOARD;
    else
    {
@@ -1118,9 +1119,9 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
    /* checks here and generate synthetic events per special message known */
    /* otherwise generate generic client message event. this would handle*/
    /* netwm, ICCCM, gnomewm, old kde and mwm hint client message protocols */
-   if ((xevent->xclient.message_type == _ecore_x_atom_wm_protocols) &&
+   if ((xevent->xclient.message_type == ECORE_X_ATOM_WM_PROTOCOLS) &&
        (xevent->xclient.format == 32) &&
-       (xevent->xclient.data.l[0] == (long)_ecore_x_atom_wm_delete_window))
+       (xevent->xclient.data.l[0] == (long)ECORE_X_ATOM_WM_DELETE_WINDOW))
    {
 	   Ecore_X_Event_Window_Delete_Request *e;
 	
@@ -1133,7 +1134,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
    
    /* Xdnd Client Message Handling Begin */
    /* Message Type: XdndEnter */
-   else if (xevent->xclient.message_type == _ecore_x_atom_xdnd_enter)
+   else if (xevent->xclient.message_type == ECORE_X_ATOM_XDND_ENTER)
    {
       Ecore_X_Event_Xdnd_Enter *e;
       Ecore_X_DND_Protocol *_xdnd;
@@ -1157,7 +1158,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
          Atom *types;
          int i, num_ret;
          if (!(ecore_x_window_prop_property_get(_xdnd->source, 
-                                              _ecore_x_atom_xdnd_type_list,
+                                              ECORE_X_ATOM_XDND_TYPE_LIST,
                                               XA_ATOM,
                                               32,
                                               &data,
@@ -1194,7 +1195,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
    }
    
    /* Message Type: XdndPosition */
-   else if (xevent->xclient.message_type == _ecore_x_atom_xdnd_position)
+   else if (xevent->xclient.message_type == ECORE_X_ATOM_XDND_POSITION)
    {
       Ecore_X_Event_Xdnd_Position *e;
       Ecore_X_DND_Protocol *_xdnd;
@@ -1222,7 +1223,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
    }
    
    /* Message Type: XdndStatus */
-   else if (xevent->xclient.message_type == _ecore_x_atom_xdnd_status)
+   else if (xevent->xclient.message_type == ECORE_X_ATOM_XDND_STATUS)
    {
       Ecore_X_Event_Xdnd_Status *e;
       Ecore_X_DND_Protocol *_xdnd;
@@ -1258,7 +1259,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
    /* Message Type: XdndLeave */
    /* Pretend the whole thing never happened, sort of */
-   else if (xevent->xclient.message_type == _ecore_x_atom_xdnd_leave)
+   else if (xevent->xclient.message_type == ECORE_X_ATOM_XDND_LEAVE)
    {
       Ecore_X_Event_Xdnd_Leave *e;
       Ecore_X_DND_Protocol *_xdnd;
@@ -1280,7 +1281,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
       e->source = _xdnd->source;
       ecore_event_add(ECORE_X_EVENT_XDND_LEAVE, e, NULL, NULL);
    }
-   else if (xevent->xclient.message_type == _ecore_x_atom_xdnd_drop)
+   else if (xevent->xclient.message_type == ECORE_X_ATOM_XDND_DROP)
    {
       Ecore_X_Event_Xdnd_Drop *e;
       Ecore_X_DND_Protocol *_xdnd;
@@ -1295,8 +1296,8 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
       timestamp = (_xdnd->version >= 1) ? 
                      xevent->xclient.data.l[2] : _ecore_x_event_last_time;
       
-      XConvertSelection(_ecore_x_disp, _ecore_x_atom_selection_xdnd,
-            _xdnd->dest, _ecore_x_atom_selection_prop_xdnd, _xdnd->dest,
+      XConvertSelection(_ecore_x_disp, ECORE_X_ATOM_SELECTION_XDND,
+            _xdnd->dest, ECORE_X_ATOM_SELECTION_PROP_XDND, _xdnd->dest,
             timestamp);
 
       /* FIXME: Have to wait for SelectionNotify before we can send
@@ -1314,7 +1315,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
    }
 
    /* Message Type: XdndFinished */
-   else if (xevent->xclient.message_type == _ecore_x_atom_xdnd_finished)
+   else if (xevent->xclient.message_type == ECORE_X_ATOM_XDND_FINISHED)
    {
       Ecore_X_Event_Xdnd_Finished *e;
       Ecore_X_DND_Protocol *_xdnd;

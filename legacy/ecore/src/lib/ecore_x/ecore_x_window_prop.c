@@ -5,6 +5,7 @@
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
+#include "Ecore_X_Atoms.h"
 #include <inttypes.h>
 #include <limits.h>
 
@@ -164,7 +165,7 @@ ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom type, char *str)
    if (win == 0) win = DefaultRootWindow(_ecore_x_disp);
    xtp.value = str;
    xtp.format = 8;
-   xtp.encoding = _ecore_x_atom_utf8_string;
+   xtp.encoding = ECORE_X_ATOM_UTF8_STRING;
    xtp.nitems = strlen(str);
    XSetTextProperty(_ecore_x_disp, win, &xtp, type);
 }
@@ -227,14 +228,14 @@ ecore_x_window_prop_title_set(Ecore_X_Window win, const char *t)
    
    /* Xlib may not like the UTF8 String */
    /* FIXME convert utf8 to whatever encoding xlib prefers */
-   /* ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_name, (char *)t); */
+   /* ecore_x_window_prop_string_set(win, ECORE_X_ATOM_WM_NAME, (char *)t); */
    if (XStringListToTextProperty(list, 1, &xprop))
      {
       XSetWMName(_ecore_x_disp, win, &xprop);
       XFree(xprop.value);
      }
             
-   ecore_x_window_prop_string_set(win, _ecore_x_atom_net_wm_name, (char *)t);
+   ecore_x_window_prop_string_set(win, ECORE_X_ATOM_NET_WM_NAME, (char *)t);
 }
 
 /**
@@ -249,8 +250,8 @@ ecore_x_window_prop_title_get(Ecore_X_Window win)
 {
    char *title;
 
-/*   title = ecore_x_window_prop_string_get(win, _ecore_x_atom_net_wm_name);*/
-   title = ecore_x_window_prop_string_get(win, _ecore_x_atom_wm_name);
+/*   title = ecore_x_window_prop_string_get(win, ECORE_X_ATOM_NET_WM_NAME);*/
+   title = ecore_x_window_prop_string_get(win, ECORE_X_ATOM_WM_NAME);
    return title;
 }
 
@@ -298,7 +299,7 @@ ecore_x_window_prop_command_get(Ecore_X_Window win, int *argc, char ***argv)
 void
 ecore_x_window_prop_visible_title_set(Ecore_X_Window win, const char *t)
 {
-   ecore_x_window_prop_string_set(win, _ecore_x_atom_net_wm_visible_name,
+   ecore_x_window_prop_string_set(win, ECORE_X_ATOM_NET_WM_VISIBLE_NAME,
 				  (char *)t);
 }
 
@@ -314,7 +315,7 @@ ecore_x_window_prop_visible_title_get(Ecore_X_Window win)
 {
    char *title;
 
-   title = ecore_x_window_prop_string_get(win, _ecore_x_atom_net_wm_visible_name);
+   title = ecore_x_window_prop_string_get(win, ECORE_X_ATOM_NET_WM_VISIBLE_NAME);
    return title;
 }
 
@@ -330,8 +331,8 @@ ecore_x_window_prop_visible_title_get(Ecore_X_Window win)
 void
 ecore_x_window_prop_icon_name_set(Ecore_X_Window win, const char *t)
 {
-   ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_icon_name, (char *)t);
-   ecore_x_window_prop_string_set(win, _ecore_x_atom_net_wm_icon_name,
+   ecore_x_window_prop_string_set(win, ECORE_X_ATOM_WM_ICON_NAME, (char *)t);
+   ecore_x_window_prop_string_set(win, ECORE_X_ATOM_NET_WM_ICON_NAME,
 				  (char *)t);
 }
 
@@ -348,8 +349,8 @@ ecore_x_window_prop_icon_name_get(Ecore_X_Window win)
 {
    char *name;
 
-   name = ecore_x_window_prop_string_get(win, _ecore_x_atom_net_wm_icon_name);
-   if (!name) name = ecore_x_window_prop_string_get(win, _ecore_x_atom_wm_icon_name);
+   name = ecore_x_window_prop_string_get(win, ECORE_X_ATOM_NET_WM_ICON_NAME);
+   if (!name) name = ecore_x_window_prop_string_get(win, ECORE_X_ATOM_WM_ICON_NAME);
    return name;
 }
 
@@ -363,7 +364,7 @@ ecore_x_window_prop_icon_name_get(Ecore_X_Window win)
 void
 ecore_x_window_prop_visible_icon_name_set(Ecore_X_Window win, const char *t)
 {
-   ecore_x_window_prop_string_set(win, _ecore_x_atom_net_wm_visible_icon_name,
+   ecore_x_window_prop_string_set(win, ECORE_X_ATOM_NET_WM_VISIBLE_ICON_NAME,
 				  (char *)t);
 }
 
@@ -379,7 +380,7 @@ ecore_x_window_prop_visible_icon_name_get(Ecore_X_Window win)
 {
    char *name;
 
-   name = ecore_x_window_prop_string_get(win, _ecore_x_atom_net_wm_visible_icon_name);
+   name = ecore_x_window_prop_string_get(win, ECORE_X_ATOM_NET_WM_VISIBLE_ICON_NAME);
    return name;
 }
 
@@ -396,7 +397,7 @@ ecore_x_window_prop_client_machine_get(Ecore_X_Window win)
 {
    char *name;
 
-   name = ecore_x_window_prop_string_get(win, _ecore_x_atom_wm_client_machine);
+   name = ecore_x_window_prop_string_get(win, ECORE_X_ATOM_WM_CLIENT_MACHINE);
    return name;
 }
 
@@ -414,7 +415,7 @@ ecore_x_window_prop_pid_get(Ecore_X_Window win)
    pid_t          pid = 0;
    unsigned char *tmp = NULL;
 
-   ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_pid, XA_CARDINAL,
+   ecore_x_window_prop_property_get(win, ECORE_X_ATOM_NET_WM_PID, XA_CARDINAL,
 		                    32, &tmp, &num);
    if ((num) && (tmp))
      {
@@ -543,7 +544,7 @@ ecore_x_window_prop_protocol_set(Ecore_X_Window win,
 				    protos_count - 1);
 		  else
 		    XDeleteProperty(_ecore_x_disp, win, 
-				    _ecore_x_atom_wm_protocols);
+				    ECORE_X_ATOM_WM_PROTOCOLS);
 		  goto leave;
 	       }
 	  }
@@ -734,19 +735,19 @@ ecore_x_window_prop_sticky_set(Ecore_X_Window win, int on)
    unsigned char *data = NULL;
 
    if (on) {
-      ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_desktop,
+      ecore_x_window_prop_property_set(win, ECORE_X_ATOM_NET_WM_DESKTOP,
                                        XA_CARDINAL, 32, &val, 1);
       ecore_x_window_prop_state_set(win, ECORE_X_WINDOW_STATE_STICKY);
       return;
    }
    
    ecore_x_window_prop_state_unset(win, ECORE_X_WINDOW_STATE_STICKY);
-   ret = ecore_x_window_prop_property_get(0, _ecore_x_atom_net_current_desktop,
+   ret = ecore_x_window_prop_property_get(0, ECORE_X_ATOM_NET_CURRENT_DESKTOP,
                                          XA_CARDINAL, 32, &data, &num);
    if (!ret || !num)
 	   return;
 
-   ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_desktop,
+   ecore_x_window_prop_property_set(win, ECORE_X_ATOM_NET_WM_DESKTOP,
                                     XA_CARDINAL, 32, data, 1);
    free(data);
 }
@@ -836,8 +837,8 @@ ecore_x_window_prop_borderless_set(Ecore_X_Window win, int borderless)
    data[2] = !borderless;
    
    ecore_x_window_prop_property_set(win, 
-				    _ecore_x_atom_motif_wm_hints,
-				    _ecore_x_atom_motif_wm_hints,
+				    ECORE_X_ATOM_MOTIF_WM_HINTS,
+				    ECORE_X_ATOM_MOTIF_WM_HINTS,
 				    32, (void *)data, 5);
 }
 
@@ -854,8 +855,8 @@ ecore_x_window_prop_borderless_get(Ecore_X_Window win)
    int borderless = 0;
 
    ecore_x_window_prop_property_get(win,
-                                    _ecore_x_atom_motif_wm_hints,
-                                    _ecore_x_atom_motif_wm_hints,
+                                    ECORE_X_ATOM_MOTIF_WM_HINTS,
+                                    ECORE_X_ATOM_MOTIF_WM_HINTS,
                                     32, &data, &num);
 
    /* check for valid data. only read the borderless flag if the
@@ -904,7 +905,7 @@ ecore_x_window_prop_layer_set(Ecore_X_Window win, int layer)
    }
 
    /* set the gnome atom */	  
-   ecore_x_window_prop_property_set(win, _ecore_x_atom_win_layer,
+   ecore_x_window_prop_property_set(win, ECORE_X_ATOM_WIN_LAYER,
 				    XA_CARDINAL, 32, &layer, 1);
 
    return 1;
@@ -956,7 +957,7 @@ ecore_x_window_prop_desktop_request(Ecore_X_Window win, long desktop)
    xev.xclient.type = ClientMessage;
    xev.xclient.display = _ecore_x_disp;
    xev.xclient.window = win;
-   xev.xclient.message_type = _ecore_x_atom_net_wm_desktop;
+   xev.xclient.message_type = ECORE_X_ATOM_NET_WM_DESKTOP;
    xev.xclient.format = 32;
    xev.xclient.data.l[0] = desktop;
 
@@ -998,11 +999,11 @@ ecore_x_window_prop_state_request(Ecore_X_Window win, Ecore_X_Window_State state
       }
       if (action != 1)
 	 return;
-      xev.xclient.message_type = _ecore_x_atom_wm_change_state;
+      xev.xclient.message_type = ECORE_X_ATOM_WM_CHANGE_STATE;
       xev.xclient.data.l[0] = IconicState;
       break;
    default: /* The _NET_WM_STATE_... hints */
-      xev.xclient.message_type = _ecore_x_atom_net_wm_state;
+      xev.xclient.message_type = ECORE_X_ATOM_NET_WM_STATE;
       xev.xclient.data.l[0] = action;
       xev.xclient.data.l[1] = _ecore_x_window_prop_state_atom_get(state);
       break;
@@ -1023,7 +1024,7 @@ ecore_x_window_prop_state_request(Ecore_X_Window win, Ecore_X_Window_State state
 void
 ecore_x_window_prop_desktop_set(Ecore_X_Window win, long desktop)
 {
-   ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_desktop, 
+   ecore_x_window_prop_property_set(win, ECORE_X_ATOM_NET_WM_DESKTOP, 
                     XA_CARDINAL, 32, &desktop, 1);
 }
 
@@ -1040,7 +1041,7 @@ ecore_x_window_prop_desktop_get(Ecore_X_Window win)
    unsigned char *tmp;
    long           desktop = -1;
 
-   ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_desktop, 
+   ecore_x_window_prop_property_get(win, ECORE_X_ATOM_NET_WM_DESKTOP, 
                                     XA_CARDINAL, 32, &tmp, &num);
    if ((tmp) && (num))
      {
@@ -1058,21 +1059,21 @@ _ecore_x_window_prop_type_atom_get(Ecore_X_Window_Type type)
    switch (type)
    {
       case ECORE_X_WINDOW_TYPE_DESKTOP:
-         return _ecore_x_atom_net_wm_window_type_desktop;
+         return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DESKTOP;
       case ECORE_X_WINDOW_TYPE_DOCK:
-         return _ecore_x_atom_net_wm_window_type_dock;
+         return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DOCK;
       case ECORE_X_WINDOW_TYPE_TOOLBAR:
-         return _ecore_x_atom_net_wm_window_type_toolbar;
+         return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_TOOLBAR;
       case ECORE_X_WINDOW_TYPE_MENU:
-         return _ecore_x_atom_net_wm_window_type_menu;
+         return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_MENU;
       case ECORE_X_WINDOW_TYPE_UTILITY:
-         return _ecore_x_atom_net_wm_window_type_utility;
+         return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_UTILITY;
       case ECORE_X_WINDOW_TYPE_SPLASH:
-         return _ecore_x_atom_net_wm_window_type_splash;
+         return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_SPLASH;
       case ECORE_X_WINDOW_TYPE_DIALOG:
-         return _ecore_x_atom_net_wm_window_type_dialog;
+         return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DIALOG;
       case ECORE_X_WINDOW_TYPE_NORMAL:
-         return _ecore_x_atom_net_wm_window_type_normal;
+         return ECORE_X_ATOM_NET_WM_WINDOW_TYPE_NORMAL;
       default:
          return 0;
    }
@@ -1092,7 +1093,7 @@ ecore_x_window_prop_window_type_set(Ecore_X_Window win, Ecore_X_Window_Type type
 
    a = _ecore_x_window_prop_type_atom_get(type);
    if (a)
-      ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_window_type,
+      ecore_x_window_prop_property_set(win, ECORE_X_ATOM_NET_WM_WINDOW_TYPE,
 				       XA_ATOM, 32, (unsigned char*)&a, 1);
 }
 
@@ -1112,7 +1113,7 @@ ecore_x_window_prop_window_type_set(Ecore_X_Window win, Ecore_X_Atom type)
 	unsigned char *data = NULL;
 
 	if (ecore_x_window_prop_property_get(win,
-					     _ecore_x_atom_net_wm_window_type,
+					     ECORE_X_ATOM_NET_WM_WINDOW_TYPE,
 					     XA_ATOM, 32, &data, &num))
 	   XFree(data);
 
@@ -1121,7 +1122,7 @@ ecore_x_window_prop_window_type_set(Ecore_X_Window win, Ecore_X_Atom type)
 	  {
 	     ((Atom *)data)[0] = type;
 	     ecore_x_window_prop_property_set(win,
-					      _ecore_x_atom_net_wm_window_type,
+					      ECORE_X_ATOM_NET_WM_WINDOW_TYPE,
 					      XA_ATOM, 32, data, 1);
 	  }
 	free(data);
@@ -1134,27 +1135,27 @@ _ecore_x_window_prop_state_atom_get(Ecore_X_Window_State s)
    switch(s)
    {
       case ECORE_X_WINDOW_STATE_MODAL:
-         return _ecore_x_atom_net_wm_state_modal;
+         return ECORE_X_ATOM_NET_WM_STATE_MODAL;
       case ECORE_X_WINDOW_STATE_STICKY:
-         return _ecore_x_atom_net_wm_state_sticky;
+         return ECORE_X_ATOM_NET_WM_STATE_STICKY;
       case ECORE_X_WINDOW_STATE_MAXIMIZED_VERT:
-         return _ecore_x_atom_net_wm_state_maximized_vert;
+         return ECORE_X_ATOM_NET_WM_STATE_MAXIMIZED_VERT;
       case ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ:
-         return _ecore_x_atom_net_wm_state_maximized_horz;
+         return ECORE_X_ATOM_NET_WM_STATE_MAXIMIZED_HORZ;
       case ECORE_X_WINDOW_STATE_SHADED:
-         return _ecore_x_atom_net_wm_state_shaded;
+         return ECORE_X_ATOM_NET_WM_STATE_SHADED;
       case ECORE_X_WINDOW_STATE_SKIP_TASKBAR:
-         return _ecore_x_atom_net_wm_state_skip_taskbar;
+         return ECORE_X_ATOM_NET_WM_STATE_SKIP_TASKBAR;
       case ECORE_X_WINDOW_STATE_SKIP_PAGER:
-         return _ecore_x_atom_net_wm_state_skip_pager;
+         return ECORE_X_ATOM_NET_WM_STATE_SKIP_PAGER;
       case ECORE_X_WINDOW_STATE_HIDDEN:
-         return _ecore_x_atom_net_wm_state_skip_pager;
+         return ECORE_X_ATOM_NET_WM_STATE_SKIP_PAGER;
       case ECORE_X_WINDOW_STATE_FULLSCREEN:
-         return _ecore_x_atom_net_wm_state_fullscreen;
+         return ECORE_X_ATOM_NET_WM_STATE_FULLSCREEN;
       case ECORE_X_WINDOW_STATE_ABOVE:
-         return _ecore_x_atom_net_wm_state_above;
+         return ECORE_X_ATOM_NET_WM_STATE_ABOVE;
       case ECORE_X_WINDOW_STATE_BELOW:
-         return _ecore_x_atom_net_wm_state_below;
+         return ECORE_X_ATOM_NET_WM_STATE_BELOW;
       default:
          return 0;
    }
@@ -1179,7 +1180,7 @@ ecore_x_window_prop_state_set(Ecore_X_Window win, Ecore_X_Window_State s)
    
    state = _ecore_x_window_prop_state_atom_get(s);
 
-   ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_state,
+   ecore_x_window_prop_property_get(win, ECORE_X_ATOM_NET_WM_STATE,
                                     XA_ATOM, 32, &old_data, &num);
    oldset = (Atom *) old_data;
    newset = calloc(num + 1, sizeof(Atom));
@@ -1200,7 +1201,7 @@ ecore_x_window_prop_state_set(Ecore_X_Window win, Ecore_X_Window_State s)
    
    newset[num] = state;
    
-   ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_state,
+   ecore_x_window_prop_property_set(win, ECORE_X_ATOM_NET_WM_STATE,
                                     XA_ATOM, 32, data, num + 1);
    XFree(old_data);
    free(data);
@@ -1224,7 +1225,7 @@ ecore_x_window_prop_state_isset(Ecore_X_Window win, Ecore_X_Window_State s)
    Ecore_X_Atom   state;
 
    state = _ecore_x_window_prop_state_atom_get(s);
-   if (!ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_state,
+   if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_NET_WM_STATE,
                                          XA_ATOM, 32, &data, &num))
       return ret;
 
@@ -1267,7 +1268,7 @@ ecore_x_window_prop_state_unset(Ecore_X_Window win, Ecore_X_Window_State s)
       return;
    }
    
-   ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_state,
+   ecore_x_window_prop_property_get(win, ECORE_X_ATOM_NET_WM_STATE,
                                     XA_ATOM, 32, &old_data, &num);
    oldset = (Atom *) old_data;
    newset = calloc(num - 1, sizeof(Atom));
@@ -1276,7 +1277,7 @@ ecore_x_window_prop_state_unset(Ecore_X_Window win, Ecore_X_Window_State s)
       if (oldset[i] != state)
          newset[j++] = oldset[i];
 
-   ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_state,
+   ecore_x_window_prop_property_set(win, ECORE_X_ATOM_NET_WM_STATE,
                                     XA_ATOM, 32, data, j);
    XFree(oldset);
    free(newset);
@@ -1286,7 +1287,7 @@ ecore_x_window_prop_state_unset(Ecore_X_Window win, Ecore_X_Window_State s)
 void
 ecore_x_window_prop_window_type_utility_set(Ecore_X_Window win)
 {
-   ecore_x_window_prop_window_type_set(win, _ecore_x_atom_net_wm_window_type_utility);
+   ecore_x_window_prop_window_type_set(win, ECORE_X_ATOM_NET_WM_WINDOW_TYPE_UTILITY);
 }
 
 /**
@@ -1298,7 +1299,7 @@ ecore_x_window_prop_window_type_utility_set(Ecore_X_Window win)
 void
 ecore_x_window_prop_window_type_splash_set(Ecore_X_Window win)
 {
-   ecore_x_window_prop_window_type_set(win, _ecore_x_atom_net_wm_window_type_splash);
+   ecore_x_window_prop_window_type_set(win, ECORE_X_ATOM_NET_WM_WINDOW_TYPE_SPLASH);
 }
 
 /**
@@ -1310,7 +1311,7 @@ ecore_x_window_prop_window_type_splash_set(Ecore_X_Window win)
 void
 ecore_x_window_prop_window_type_dialog_set(Ecore_X_Window win)
 {
-   ecore_x_window_prop_window_type_set(win, _ecore_x_atom_net_wm_window_type_dialog);
+   ecore_x_window_prop_window_type_set(win, ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DIALOG);
 }
 
 /**
@@ -1322,7 +1323,7 @@ ecore_x_window_prop_window_type_dialog_set(Ecore_X_Window win)
 void
 ecore_x_window_prop_window_type_normal_set(Ecore_X_Window win)
 {
-   ecore_x_window_prop_window_type_set(win, _ecore_x_atom_net_wm_window_type_normal);
+   ecore_x_window_prop_window_type_set(win, ECORE_X_ATOM_NET_WM_WINDOW_TYPE_NORMAL);
 }
 
 #endif
@@ -1349,7 +1350,7 @@ void ecore_x_window_prop_window_opacity_set(Ecore_X_Window win, int opacity)
 
    tmp = (double) opacity/255. * 4294967295.;
    o_val = (unsigned long) tmp;
-   ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_window_opacity,
+   ecore_x_window_prop_property_set(win, ECORE_X_ATOM_NET_WM_WINDOW_OPACITY,
                                     XA_CARDINAL, 32, &o_val, 1);
 }
 
@@ -1366,7 +1367,7 @@ int ecore_x_window_prop_window_opacity_get(Ecore_X_Window win)
    int            ret_val = -1;
    int            num;
 
-   if(ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_window_opacity,
+   if(ecore_x_window_prop_property_get(win, ECORE_X_ATOM_NET_WM_WINDOW_OPACITY,
                                        XA_CARDINAL, 32, &data, &num))
    {
       if (data && num)

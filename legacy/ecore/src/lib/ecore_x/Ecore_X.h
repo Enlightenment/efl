@@ -639,7 +639,6 @@ extern EAPI int ECORE_X_LOCK_SCROLL;
 extern EAPI int ECORE_X_LOCK_NUM;
 extern EAPI int ECORE_X_LOCK_CAPS;
 
-#ifndef _ECORE_X_PRIVATE_H
 typedef enum _Ecore_X_WM_Protocol {
 	/**
 	 * If enabled the window manager will be asked to send a
@@ -651,9 +650,11 @@ typedef enum _Ecore_X_WM_Protocol {
 	 * If enabled the window manager will be told that the window
 	 * explicitly sets input focus.
 	 */
-	ECORE_X_WM_PROTOCOL_TAKE_FOCUS
+	ECORE_X_WM_PROTOCOL_TAKE_FOCUS,
+
+	/* Number of defined items */
+	ECORE_X_WM_PROTOCOL_NUM
 } Ecore_X_WM_Protocol;
-#endif
 
 typedef enum _Ecore_X_Window_Input_Mode {
 	/** The window can never be focused */
