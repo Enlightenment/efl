@@ -37,7 +37,6 @@ extern int  read_history();
 
 
 
-#include "errors.h"
 #include "ipc.h"
 #include "ecore_config_client.h"
 
@@ -552,7 +551,7 @@ reconnect:
 
   return ret; }
 
-print_usage(void) {
+void print_usage(void) {
   printf("Examine Shell - ecore_config Configuration Client\n");
   printf("Version 1.0.0 (Dec 6 2003)\n");
   printf("(c)2002-2003 by Azundris et al.\n");

@@ -11,7 +11,6 @@
 #include <dirent.h>
 
 
-#include "errors.h"
 #include "ipc.h"
 #include "ecore_config_client.h"
 
