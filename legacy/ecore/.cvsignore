@@ -2,6 +2,7 @@ Makefile
 Makefile.in
 aclocal.m4
 build-stamp
+compile
 config.guess
 config.h
 config.h.in
@@ -10,7 +11,9 @@ config.status
 config.sub
 configure
 configure-stamp
+depcomp
 ecore-config
+ecore.pc
 install-sh
 libtool
 ltmain.sh

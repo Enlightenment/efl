@@ -2,12 +2,7 @@
 .libs
 Makefile
 Makefile.in
-ecore_config.lo
-ecore_config_ipc_main.lo
-ecore_config_ipc_ecore.lo
-ecore_config_util.lo
-ecore_config_storage.lo
-ecore_config_extra.lo
+*.lo
 libecore_config.la
 ecore_config_ipc_ecore.la
 system.db
