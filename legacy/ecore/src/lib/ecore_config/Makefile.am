@@ -21,7 +21,7 @@ include_HEADERS = \
 Ecore_Config.h
 
 config_DATA = $(DB)
-configdir = $(sysconfdir)
+configdir = $(pkgdatadir)
 
 libecore_config_la_SOURCES = \
 ecore_config.c \
