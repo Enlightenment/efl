@@ -847,6 +847,10 @@ evas_common_load_image_from_file(const char *file, const char *key)
 //   mod_time = 0;
 //   if (real_file) mod_time = evas_file_modified_time(real_file);
 //   else if (file) mod_time = evas_file_modified_time(file);
+
+   if (file == NULL)
+        return NULL;
+   
    im = evas_common_image_find(file, key, 0);
    if (im)
      {
