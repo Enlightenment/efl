@@ -3,30 +3,29 @@
 
 static int initted = 0;
 
-void
+int
 edje_init(void)
 {
-   if (initted) return;
-   initted = 1;
-
-   eet_init();
-
-   _edje_edd_setup();
-   _edje_text_init();
+   initted++;
+   if (initted == 1)
+     {
+	_edje_edd_setup();
+	_edje_text_init();
+     }
+   return initted;
 }
 
-void
+int
 edje_shutdown(void)
 {
-   if (!initted) return;
+   initted--;
+   if (initted > 0) return initted;
 
    _edje_edd_free();
    _edje_color_class_members_free();
    _edje_text_class_members_free();
 
-   eet_shutdown();
-
-   initted = 0;
+   return 0;
 }
 
 Edje *

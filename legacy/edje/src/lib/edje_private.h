@@ -426,8 +426,8 @@ struct _Edje_Real_Part
       struct {
 	 int  x, y;
       } tmp;
-      double x, y;
-      char need_reset : 1;
+      double        x, y;
+      unsigned char need_reset : 1;
       struct {
 	 double x, y;
       } val, size, step, page;
@@ -474,8 +474,8 @@ struct _Edje_Signal_Callback
    char  *source;
    void (*func) (void *data, Evas_Object *o, const char *emission, const char *source);
    void  *data;
-   char   just_added : 1;
-   char   delete_me : 1;
+   unsigned char just_added : 1;
+   unsigned char delete_me : 1;
 };
 
 struct _Edje_Calc_Params
@@ -487,8 +487,8 @@ struct _Edje_Calc_Params
    struct {
       int           x, y, w, h;
    } req_drag;
-   char             visible : 1; 
-   char             smooth : 1;
+   unsigned char    visible : 1; 
+   unsigned char    smooth : 1;
    struct {
       int           x, y, w, h;
    } fill;

@@ -1,8 +1,6 @@
 #include "Edje.h"
 #include "edje_private.h"
 
-static Evas_Hash   *_edje_text_class_hash = NULL;
-
 Edje_Text_Style _edje_text_styles[EDJE_TEXT_EFFECT_LAST];
 
 void
@@ -239,6 +237,14 @@ _edje_text_part_on_del(Edje *ed, Edje_Part *pt)
 	free(pt->default_desc->text.text_class);
 	pt->default_desc->text.text_class = NULL;
      }
+
+   if (pt->default_desc && pt->default_desc->color_class)
+     {
+        _edje_color_class_member_del(ed, pt->default_desc->color_class);
+		free (pt->default_desc->color_class);
+		pt->default_desc->color_class = NULL;
+     }
+
    for (tmp = pt->other_desc; tmp; tmp = tmp->next)
      {
 	 Edje_Part_Description *desc;
@@ -250,6 +256,13 @@ _edje_text_part_on_del(Edje *ed, Edje_Part *pt)
 	      free(desc->text.text_class);
 	      desc->text.text_class = NULL;
 	   }
+
+	 if (desc->color_class)
+	   {
+          _edje_color_class_member_del(ed, desc->color_class);
+		  free(desc->color_class);
+		  desc->color_class = NULL;
+	   }
      }
    return;
 }
@@ -257,8 +270,6 @@ _edje_text_part_on_del(Edje *ed, Edje_Part *pt)
 void
 _edje_text_real_part_on_del(Edje *ed, Edje_Real_Part *ep)
 {
-   Evas_List *tmp;
-
    while (ep->extra_objects)
      {
 	Evas_Object *o;
