@@ -4,8 +4,8 @@
 #include "evas_mmx.h"
 #endif
 
-extern DATA8        pow_lut[256][256];
-extern const DATA16 const_c1[4];
+extern DATA8        _evas_pow_lut[256][256];
+extern const DATA16 _evas_const_c1[4];
 
 #ifdef BUILD_C
 void
@@ -44,7 +44,7 @@ evas_common_blend_color_rgba_to_rgb_mmx(DATA32 src, DATA32 *dst, int len)
    dst_end_ptr = dst + len;
    
    pxor_r2r(mm4, mm4);
-   movq_m2r(*const_c1, mm5);
+   movq_m2r(*_evas_const_c1, mm5);
    
    movd_m2r(src, mm6);
    
@@ -94,7 +94,7 @@ evas_common_blend_color_rgba_to_rgba_c(DATA32 src, DATA32 *dst, int len)
 	DATA32 tmp;
 	DATA8  a;
 	
-	a = pow_lut[A_VAL(&src)][A_VAL(dst_ptr)];
+	a = _evas_pow_lut[A_VAL(&src)][A_VAL(dst_ptr)];
 	
 	BLEND_COLOR(a, R_VAL(dst_ptr), 
 		    R_VAL(&src), R_VAL(dst_ptr), 

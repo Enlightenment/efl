@@ -1,6 +1,6 @@
 #include "evas_common.h"
 
-extern DATA8        pow_lut[256][256];
+extern DATA8        _evas_pow_lut[256][256];
 
 void
 evas_common_line_init(void)
@@ -96,7 +96,7 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
 			    DATA32 __blend_tmp;                       
 			    DATA8  __blend_a;                                  
 			    
-			    __blend_a = pow_lut[A_VAL(&(col))][A_VAL(ptr)]; 
+			    __blend_a = _evas_pow_lut[A_VAL(&(col))][A_VAL(ptr)]; 
 			    
 			    BLEND_COLOR(__blend_a, R_VAL(ptr), 
 					R_VAL(&(col)), R_VAL(ptr), 
@@ -133,7 +133,7 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
 			    DATA32 __blend_tmp;                       
 			    DATA8  __blend_a;                                  
 			    
-			    __blend_a = pow_lut[A_VAL(&(col))][A_VAL(ptr)]; 
+			    __blend_a = _evas_pow_lut[A_VAL(&(col))][A_VAL(ptr)]; 
 			    
 			    BLEND_COLOR(__blend_a, R_VAL(ptr), 
 					R_VAL(&(col)), R_VAL(ptr), 

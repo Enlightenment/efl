@@ -4,8 +4,8 @@
 #include "evas_mmx.h"
 #endif
 
-extern DATA8        pow_lut[256][256];
-extern const DATA16 const_c1[4];
+extern DATA8        _evas_pow_lut[256][256];
+extern const DATA16 _evas_const_c1[4];
 
 void
 evas_common_blend_pixels_cmod_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod)
@@ -55,7 +55,7 @@ evas_common_blend_pixels_cmod_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len, 
 	DATA32 tmp;
 	DATA8  a;
 	
-	a = pow_lut[amod[A_VAL(src_ptr)]][A_VAL(dst_ptr)];
+	a = _evas_pow_lut[amod[A_VAL(src_ptr)]][A_VAL(dst_ptr)];
 	if (a) /* hmmm - do we need this? */
 	  {
 	     BLEND_COLOR(a, R_VAL(dst_ptr), 
