@@ -587,7 +587,7 @@ data_write(void)
 		  fd = mkstemp(tmpo);
 		  if (fd >= 0)
 		    {
-		       snprintf(buf, sizeof(buf), "embryo_cc -i%s -o%s %s", 
+		       snprintf(buf, sizeof(buf), "embryo_cc -i %s -o %s %s", 
 				DAT"data/include", tmpo, tmpn);
 		       ret = system(buf);
 		       if (ret != 0)
