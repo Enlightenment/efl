@@ -1,7 +1,7 @@
 #include "Edje.h"
 #include "edje_private.h"
 
-Ejde_Text_Style _edje_text_styles[EDJE_TEXT_EFFECT_LAST];
+Edje_Text_Style _edje_text_styles[EDJE_TEXT_EFFECT_LAST];
 
 void
 _edje_text_init(void)
@@ -247,7 +247,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    
    if ((ep->part->text_class) && (strlen(ep->part->text_class) > 0))
      {
-	Ejde_Text_Class *tc;
+	Edje_Text_Class *tc;
 	
 	tc = _edje_text_class_find(ed, ep->part->text_class);
 	if (tc->font) font = tc->font;

@@ -351,9 +351,9 @@ typedef struct _Edje_Signal_Callback Edje_Signal_Callback;
 typedef struct _Edje_Calc_Params Edje_Calc_Params;
 typedef struct _Edje_Emission Edje_Emission;
 typedef struct _Edje_Pending_Program Edje_Pending_Program;
-typedef struct _Ejde_Text_Style Ejde_Text_Style;
-typedef struct _Ejde_Color_Class Ejde_Color_Class;
-typedef struct _Ejde_Text_Class Ejde_Text_Class;
+typedef struct _Edje_Text_Style Edje_Text_Style;
+typedef struct _Edje_Color_Class Edje_Color_Class;
+typedef struct _Edje_Text_Class Edje_Text_Class;
 
 struct _Edje
 {
@@ -514,7 +514,7 @@ struct _Edje_Pending_Program
    Ecore_Timer  *timer;
 };
 
-struct _Ejde_Text_Style
+struct _Edje_Text_Style
 {
    struct {
       unsigned char x, y;
@@ -530,7 +530,7 @@ struct _Ejde_Text_Style
    } members[32];
 };
 
-struct _Ejde_Color_Class
+struct _Edje_Color_Class
 {
    char          *name;
    unsigned char  r, g, b, a;
@@ -538,7 +538,7 @@ struct _Ejde_Color_Class
    unsigned char  r3, g3, b3, a3;
 };
 
-struct _Ejde_Text_Class
+struct _Edje_Text_Class
 {
    char   *name;
    char   *font;
@@ -585,8 +585,8 @@ void  _edje_text_part_on_del(Edje *ed, Edje_Real_Part *ep);
 void  _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *params, Edje_Part_Description *chosen_desc);
     
 Edje_Real_Part   *_edje_real_part_get(Edje *ed, char *part);
-Ejde_Color_Class *_edje_color_class_find(Edje *ed, char *color_class);
-Ejde_Text_Class  *_edje_text_class_find(Edje *ed, char *text_class);
+Edje_Color_Class *_edje_color_class_find(Edje *ed, char *color_class);
+Edje_Text_Class  *_edje_text_class_find(Edje *ed, char *text_class);
 Edje             *_edje_fetch(Evas_Object *obj);
 int               _edje_glob_match(char *str, char *glob);
 int               _edje_freeze(Edje *ed);
@@ -614,7 +614,7 @@ extern Eet_Data_Descriptor *_edje_edd_edje_part_image_id;
 extern int              _edje_anim_count;
 extern Ecore_Timer     *_edje_timer;
 extern Evas_List       *_edje_animators;
-extern Ejde_Text_Style  _edje_text_styles[EDJE_TEXT_EFFECT_LAST];
+extern Edje_Text_Style  _edje_text_styles[EDJE_TEXT_EFFECT_LAST];
 extern Evas_List       *_edje_edjes;
 
 #endif

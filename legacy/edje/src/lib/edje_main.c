@@ -51,7 +51,7 @@ _edje_del(Edje *ed)
      }
    while (ed->color_classes)
      {
-	Ejde_Color_Class *cc;
+	Edje_Color_Class *cc;
 	
 	cc = ed->color_classes->data;
 	ed->color_classes = evas_list_remove(ed->color_classes, cc);
@@ -60,7 +60,7 @@ _edje_del(Edje *ed)
      }
    while (ed->text_classes)
      {
-	Ejde_Text_Class *tc;
+	Edje_Text_Class *tc;
 	
 	tc = ed->text_classes->data;
 	ed->text_classes = evas_list_remove(ed->text_classes, tc);

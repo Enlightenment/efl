@@ -64,7 +64,7 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
 {
    Edje *ed;
    Evas_List *l;
-   Ejde_Color_Class *cc;
+   Edje_Color_Class *cc;
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!color_class)) return;
@@ -105,7 +105,7 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
 	     return;
 	  }
      }
-   cc = malloc(sizeof(Ejde_Color_Class));
+   cc = malloc(sizeof(Edje_Color_Class));
    cc->name = strdup(color_class);
    if (!cc->name)
      {
@@ -134,7 +134,7 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
 {
    Edje *ed;
    Evas_List *l;
-   Ejde_Text_Class *tc;
+   Edje_Text_Class *tc;
 
    ed = _edje_fetch(obj);
    if ((!ed) || (!text_class)) return;
@@ -160,7 +160,7 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
 	     return;
 	  }
      }
-   tc = malloc(sizeof(Ejde_Text_Class));
+   tc = malloc(sizeof(Edje_Text_Class));
    tc->name = strdup(text_class);
    if (!tc->name)
      {
@@ -871,7 +871,7 @@ _edje_real_part_get(Edje *ed, char *part)
    return NULL;
 }
 
-Ejde_Color_Class *
+Edje_Color_Class *
 _edje_color_class_find(Edje *ed, char *color_class)
 {
    Evas_List *l;
@@ -879,7 +879,7 @@ _edje_color_class_find(Edje *ed, char *color_class)
    if (!color_class) return NULL;
    for (l = ed->color_classes; l; l = l->next)
      {
-	Ejde_Color_Class *cc;
+	Edje_Color_Class *cc;
 	
 	cc = l->data;
 	if (!strcmp(color_class, cc->name)) return cc;
@@ -887,7 +887,7 @@ _edje_color_class_find(Edje *ed, char *color_class)
    return NULL;
 }
 
-Ejde_Text_Class *
+Edje_Text_Class *
 _edje_text_class_find(Edje *ed, char *text_class)
 {
    Evas_List *l;
@@ -895,7 +895,7 @@ _edje_text_class_find(Edje *ed, char *text_class)
    if (!text_class) return NULL;
    for (l = ed->text_classes; l; l = l->next)
      {
-	Ejde_Text_Class *tc;
+	Edje_Text_Class *tc;
 	
 	tc = l->data;
 	if (!strcmp(text_class, tc->name)) return tc;
