@@ -329,6 +329,7 @@ collections {
 	    signal,     "mouse,down,1";
 	    source,     "logo";
 	    action,     STATE_SET "clicked" 0.0;
+	    transition, DECELERATE, 0.25;
 	    target,     "logo";
 	 }
 	 program {
@@ -336,6 +337,7 @@ collections {
 	    signal,     "mouse,up,1";
 	    source,     "logo";
 	    action,     STATE_SET "default" 0.0;
+	    transition, DECELERATE, 0.25;
 	    target,     "logo";
 	 }
 	 program {

@@ -333,6 +333,8 @@ struct _Edje_Real_Part
       Edje_Real_Part        *rel2_to;
       Edje_Real_Part        *confine_to;
    } param1, param2;
+   
+   Edje_Running_Program     *program;
 };
 
 struct _Edje_Running_Program

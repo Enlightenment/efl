@@ -1,6 +1,19 @@
 #include "Edje.h"
 #include "edje_private.h"
 
+/* FIXME: finish ACTION_STOP action */
+/* FIXME: add a "SIGNAL_EMIT action to emit fake (or real) signals */
+/* FIXME: somehow handle double click? */
+/* FIXME: free stuff - no more leaks */
+/* FIXME: new prog starts while current program is running on part, stop old */
+/* FIXME: add numeric params to conditiosn for progs (ranges etc.) */
+/* FIXME: dragables havwe to work */
+/* FIXME: drag start/top signals etc. */
+/* FIXME: app has to be able to have callbacks called on signal emits */
+/* FIXME: app has to be able to emit signals */
+/* FIXME: named parts need to be able to be "replaceD" with new evas objects */
+/* FIXME; need to be able to calculate min & max size of a whole edje */
+
 Edje      *_edje_fetch(Evas_Object *obj);
 Edje      *_edje_add(Evas_Object *obj);
 void       _edje_del(Edje *ed);
@@ -17,6 +30,7 @@ static void _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *e
 static void _edje_mouse_wheel_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
 static int  _edje_timer_cb(void *data);
 static int  _edje_program_run_iterate(Edje_Running_Program *runp, double tim);
+static void _edje_program_end(Edje *ed, Edje_Running_Program *runp);
 static void _edje_program_run(Edje *ed, Edje_Program *pr);
 static void _edje_emit(Edje *ed, char *sig, char *src);
 static int  _edje_glob_match(char *str, char *glob);
@@ -531,6 +545,7 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 					       0.0);
 		  _edje_part_pos_set(runp->edje, rp, 
 				     runp->program->tween.mode, 0.0);
+		  rp->program = NULL;
 	       }
 	  }
 	_edje_recalc(runp->edje);
@@ -555,6 +570,39 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 }
 
 static void
+_edje_program_end(Edje *ed, Edje_Running_Program *runp)
+{
+   Evas_List *l;
+
+   for (l = runp->program->targets; l; l = l->next)
+     {
+	Edje_Real_Part *rp;
+	Edje_Program_Target *pt;
+	
+	pt = l->data;
+	rp = evas_list_nth(runp->edje->parts, pt->id);
+	if (rp)
+	  {
+	     _edje_part_description_apply(runp->edje, rp, 
+					  runp->program->state, 
+					  runp->program->value,
+					  NULL,
+					  0.0);
+	     _edje_part_pos_set(runp->edje, rp, 
+				runp->program->tween.mode, 0.0);
+	     rp->program = NULL;
+	  }
+     }
+   _edje_recalc(runp->edje);
+   _edje_anim_count--;
+   runp->edje->actions = evas_list_remove(runp->edje->actions, runp);
+   if (!runp->edje->actions)
+     _edje_animators = evas_list_remove(_edje_animators, runp->edje);
+   _edje_emit(runp->edje, "anim,stop", runp->program->name);
+   free(runp);
+}
+   
+static void
 _edje_program_run(Edje *ed, Edje_Program *pr)
 {
    Evas_List *l;
@@ -564,6 +612,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr)
      {
 	Edje_Running_Program *runp;
 
+	runp = calloc(1, sizeof(Edje_Running_Program));
 	for (l = pr->targets; l; l = l->next)
 	  {
 	     Edje_Real_Part *rp;
@@ -573,16 +622,18 @@ _edje_program_run(Edje *ed, Edje_Program *pr)
 	     rp = evas_list_nth(ed->parts, pt->id);
 	     if (rp)
 	       {
+		  if (rp->program)
+		    _edje_program_end(ed, rp->program);
 		  _edje_part_description_apply(ed, rp, 
 					       rp->param1.description->state.name,
 					       rp->param1.description->state.value, 
 					       pr->state, 
 					       pr->value);
 		  _edje_part_pos_set(ed, rp, pr->tween.mode, 0.0);
+		  rp->program = runp;
 	       }
 	  }
 	
-	runp = calloc(1, sizeof(Edje_Running_Program));
 	if (!ed->actions)
 	  _edje_animators = evas_list_append(_edje_animators, ed);
 	ed->actions = evas_list_append(ed->actions, runp);
@@ -700,117 +751,123 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1,
 {
    char *cd1 = "default", *cd2 = "default";
    double cv1 = 0.0, cv2 = 0.0;
-   int d1_change = 0;
-   int d2_change = 0;
    
    if (!d1) d1 = "default";
    if (!d2) d2 = "default";
+
+   if (!strcmp(d1, "default") && (v1 == 0.0))
+     ep->param1.description = ep->part->default_desc;
+   else
+     {
+	Evas_List *l;
+	double min_dst;
+	Edje_Part_Description *desc_found;
+
+	desc_found = NULL;
+	min_dst = 999.0;
+	if (!strcmp("default", d1))
+	  {
+	     desc_found = ep->part->default_desc;
+	     min_dst = ep->part->default_desc->state.value - v1;
+	     if (min_dst < 0) min_dst = -min_dst;
+	  }
+	for (l = ep->part->other_desc; l; l = l->next)
+	  {
+	     Edje_Part_Description *desc;
+	     
+	     desc = l->data;
+	     if (!strcmp(desc->state.name, d1))
+	       {
+		  double dst;
+		  
+		  dst = desc->state.value - v1;
+		  if (dst == 0.0)
+		    {
+		       desc_found = desc;
+		       break;
+		    }
+		  if (dst < 0.0) dst = -dst;
+		  if (dst < min_dst)
+		    {
+		       desc_found = desc;
+		       min_dst = dst;
+		    }
+	       }
+	  }
+	ep->param1.description = desc_found;
+     }
+   ep->param1.rel1_to = NULL;
+   ep->param1.rel2_to = NULL;
    if (ep->param1.description)
      {
-	cd1 = ep->param1.description->state.name;
-	cv1 = ep->param1.description->state.value;
+	if (ep->param1.description->rel1.id >= 0)
+	  ep->param1.rel1_to = evas_list_nth(ed->parts, ep->param1.description->rel1.id);
+	if (ep->param1.description->rel2.id >= 0)
+	  ep->param1.rel2_to = evas_list_nth(ed->parts, ep->param1.description->rel2.id);
      }
+   
+   if (!strcmp(d2, "default") && (v2 == 0.0))
+     ep->param2.description = ep->part->default_desc;
+   else
+     {
+	Evas_List *l;
+	double min_dst;
+	Edje_Part_Description *desc_found;
+	
+	desc_found = NULL;
+	min_dst = 999.0;
+	if (!strcmp("default", d2))
+	  {
+	     desc_found = ep->part->default_desc;
+	     min_dst = ep->part->default_desc->state.value - v2;
+	     if (min_dst < 0) min_dst = -min_dst;
+	  }
+	for (l = ep->part->other_desc; l; l = l->next)
+	  {
+	     Edje_Part_Description *desc;
+	     
+	     desc = l->data;
+	     if (!strcmp(desc->state.name, d2))
+	       {
+		  double dst;
+		  
+		  dst = desc->state.value - v2;
+		  if (dst == 0.0)
+		    {
+		       desc_found = desc;
+		       break;
+		    }
+		  if (dst < 0.0) dst = -dst;
+		  if (dst < min_dst)
+		    {
+		       desc_found = desc;
+		       min_dst = dst;
+		    }
+	       }
+	  }
+	ep->param2.description = desc_found;
+     }
+   if (!ep->param1.description)
+     ep->param1.description = ep->part->default_desc;
+   ep->param1.rel1_to = NULL;
+   ep->param1.rel2_to = NULL;
+   if (ep->param1.description)
+     {
+	if (ep->param1.description->rel1.id >= 0)
+	  ep->param1.rel1_to = evas_list_nth(ed->parts, ep->param1.description->rel1.id);
+	if (ep->param1.description->rel2.id >= 0)
+	  ep->param1.rel2_to = evas_list_nth(ed->parts, ep->param1.description->rel2.id);
+     }
+   ep->param2.rel1_to = NULL;
+   ep->param2.rel2_to = NULL;
    if (ep->param2.description)
      {
-	cd2 = ep->param2.description->state.name;
-	cv2 = ep->param2.description->state.value;
+	if (ep->param2.description->rel1.id >= 0)
+	  ep->param2.rel1_to = evas_list_nth(ed->parts, ep->param2.description->rel1.id);
+	if (ep->param2.description->rel2.id >= 0)
+	  ep->param2.rel2_to = evas_list_nth(ed->parts, ep->param2.description->rel2.id);
      }
-   d1_change = 1;
-   d2_change = 1;
-   if ((v1 != cv1) || (strcmp(d1, cd1))) d1_change = 1;
-   if ((v2 != cv2) || (strcmp(d2, cd2))) d2_change = 1;
-   if ((!d1_change) && (!d2_change)) return;
-
-   if (d1_change)
-     {
-	if (!strcmp(d1, "default") && (v1 == 0.0))
-	  ep->param1.description = ep->part->default_desc;
-	else
-	  {
-	     Evas_List *l;
-	     double min_dst = 999.0;
-	     Edje_Part_Description *desc_found = NULL;
-	     
-	     for (l = ep->part->other_desc; l; l = l->next)
-	       {
-		  Edje_Part_Description *desc;
-		  
-		  desc = l->data;
-		  if (!strcmp(desc->state.name, d1))
-		    {
-		       double dst;
-		       
-		       dst = desc->state.value - v1;
-		       if (dst == 0.0)
-			 {
-			    desc_found = desc;
-			    break;
-			 }
-		       if (dst < 0.0) dst = -dst;
-		       if (dst < min_dst)
-			 {
-			    desc_found = desc;
-			    min_dst = dst;
-			 }
-		    }
-	       }
-	     ep->param1.description = desc_found;
-	  }
-	ep->param1.rel1_to = NULL;
-	ep->param1.rel2_to = NULL;
-	if (ep->param1.description)
-	  {
-	     if (ep->param1.description->rel1.id >= 0)
-	       ep->param1.rel1_to = evas_list_nth(ed->parts, ep->param1.description->rel1.id);
-	     if (ep->param1.description->rel2.id >= 0)
-	       ep->param1.rel2_to = evas_list_nth(ed->parts, ep->param1.description->rel2.id);
-	  }
-     }
-   if (d2_change)
-     {
-	if (!strcmp(d2, "default") && (v2 == 0.0))
-	  ep->param2.description = ep->part->default_desc;
-	else
-	  {
-	     Evas_List *l;
-	     double min_dst = 999.0;
-	     Edje_Part_Description *desc_found = NULL;
-	     
-	     for (l = ep->part->other_desc; l; l = l->next)
-	       {
-		  Edje_Part_Description *desc;
-		  
-		  desc = l->data;
-		  if (!strcmp(desc->state.name, d2))
-		    {
-		       double dst;
-		       
-		       dst = desc->state.value - v2;
-		       if (dst == 0.0)
-			 {
-			    desc_found = desc;
-			    break;
-			 }
-		       if (dst < 0.0) dst = -dst;
-		       if (dst < min_dst)
-			 {
-			    desc_found = desc;
-			    min_dst = dst;
-			 }
-		    }
-	       }
-	     ep->param2.description = desc_found;
-	  }
-	ep->param2.rel1_to = NULL;
-	ep->param2.rel2_to = NULL;
-	if (ep->param2.description)
-	  {
-	     if (ep->param2.description->rel2.id >= 0)
-	       ep->param2.rel1_to = evas_list_nth(ed->parts, ep->param2.description->rel1.id);
-	     if (ep->param2.description->rel2.id >= 0)
-	       ep->param2.rel2_to = evas_list_nth(ed->parts, ep->param2.description->rel2.id);
-	  }
-     }
+   
    ed->dirty = 1;
    ep->dirty = 1;
 }
