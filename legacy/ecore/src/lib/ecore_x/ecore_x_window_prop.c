@@ -700,9 +700,11 @@ ecore_x_window_prop_borderless_set(Ecore_X_Window win, int borderless)
  * windowmanagers that are Gnome-compliant or support NetWM.
  * 
  * @param win
- * @param layer If < 0, @win will be put below all other windows.
- *              If > 0, @win will be "always-on-top"
- *              If = 0, @win will be put in the default layer.
+ * @param layer If < 3, @win will be put below all other windows.
+ *              If > 5, @win will be "always-on-top"
+ *              If = 4, @win will be put in the default layer.
+ *              Acceptable values range from 1 to 255 (0 reserved for
+ *              desktop windows)
  * @return 1 if the state could be set else 0
 	 *
  * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
@@ -710,22 +712,22 @@ ecore_x_window_prop_borderless_set(Ecore_X_Window win, int borderless)
 int
 ecore_x_window_prop_layer_set(Ecore_X_Window win, int layer)
 {
-   int val = 4; /* normal layer */
-
-   if (layer < 0) /* below */
-   {
+   if (layer <= 0 || layer > 255)
+      return 0;
+   
+   if (layer < 3) /* below */
       ecore_x_window_prop_state_set(win, ECORE_X_WINDOW_STATE_BELOW);
-	   val = 2;
-   }
-   else if (layer > 0) /* above */
-   {
+   else if (layer > 5) /* above */
       ecore_x_window_prop_state_set(win, ECORE_X_WINDOW_STATE_ABOVE);
-      val = 6;
+   else if (layer == 4)
+   {
+      ecore_x_window_prop_state_unset(win, ECORE_X_WINDOW_STATE_BELOW);
+      ecore_x_window_prop_state_unset(win, ECORE_X_WINDOW_STATE_ABOVE);
    }
 
    /* set the gnome atom */	  
    ecore_x_window_prop_property_set(win, _ecore_x_atom_win_layer,
-				    XA_CARDINAL, 32, &val, 1);
+				    XA_CARDINAL, 32, &layer, 1);
 
    return 1;
 }
