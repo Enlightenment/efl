@@ -38,7 +38,6 @@ evas_image.c \
 evas_imlib_routines.c \
 evas_line.c \
 evas_list.c \
-evas_main.c \
 evas_misc.c \
 evas_object.c \
 evas_rectangle.c \
