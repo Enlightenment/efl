@@ -79,6 +79,11 @@ ecore_event_handler_del(Ecore_Event_Handler *event_handler)
    return event_handler->data;
 }
 
+static void _ecore_event_generic_free (void *data, void *event)
+{
+   free (event);
+}
+
 /**
  * Add an event to the event queue.
  * @param type The event type to add to the end of the event queue
@@ -93,16 +98,17 @@ ecore_event_handler_del(Ecore_Event_Handler *event_handler)
  * ecore_event_handler_add(). The @p ev parameter will be a pointer to the event
  * private data that is specific to that event type. When the event is no
  * longer needed, @p func_free will be called and passed the private sructure
- * pointer for cleaning up. If @p func_free is NULL, nothnig will be called.
- * This function is passed @p data as its data parameter.
+ * pointer for cleaning up. If @p func_free is NULL, free() will be called
+ * with the private structure pointer.
+ * func_free is passed @p data as its data parameter.
  */
 Ecore_Event *
 ecore_event_add(int type, void *ev, void (*func_free) (void *data, void *ev), void *data)
 {
-   if (!func_free) return NULL;
    if (!ev) return NULL;
    if (type <= ECORE_EVENT_NONE) return NULL;
    if (type >= event_id_max) return NULL;
+   if (!func_free) func_free = _ecore_event_generic_free;
    return _ecore_event_add(type, ev, func_free, data);
 }
 
