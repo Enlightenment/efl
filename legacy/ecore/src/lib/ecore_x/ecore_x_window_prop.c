@@ -101,7 +101,7 @@ ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom type, char *str)
    if (win == 0) win = DefaultRootWindow(_ecore_x_disp);
    xtp.value = str;
    xtp.format = 8;
-   xtp.encoding = XA_STRING;
+   xtp.encoding = _ecore_x_atom_utf8_string;
    xtp.nitems = strlen(str);
    XSetTextProperty(_ecore_x_disp, win, &xtp, type);
 }
@@ -129,7 +129,7 @@ ecore_x_window_prop_string_get(Ecore_X_Window win, Ecore_X_Atom type)
 	
 	if (xtp.format == 8)
 	  {
-	     s = Xutf8TextPropertyToTextList(_ecore_x_disp, &xtp, &list, &items);
+	     s = XmbTextPropertyToTextList(_ecore_x_disp, &xtp, &list, &items);
 	     if ((s == Success) && (items > 0))
 	       {
 		  str = strdup(*list);
@@ -156,8 +156,8 @@ ecore_x_window_prop_string_get(Ecore_X_Window win, Ecore_X_Atom type)
 void
 ecore_x_window_prop_title_set(Ecore_X_Window win, const char *t)
 {
-   ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_name, t);
-   ecore_x_window_prop_string_set(win, _ecore_x_atom_net_wm_name, t);
+   ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_name, (char *)t);
+   ecore_x_window_prop_string_set(win, _ecore_x_atom_net_wm_name, (char *)t);
 }
 
 /**
@@ -189,7 +189,8 @@ ecore_x_window_prop_title_get(Ecore_X_Window win)
 void
 ecore_x_window_prop_visible_title_set(Ecore_X_Window win, const char *t)
 {
-   ecore_x_window_prop_string_set(win, _ecore_x_atom_net_wm_visible_name, t);
+   ecore_x_window_prop_string_set(win, _ecore_x_atom_net_wm_visible_name,
+				  (char *)t);
 }
 
 /**

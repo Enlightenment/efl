@@ -50,6 +50,8 @@ Atom     _ecore_x_atom_net_wm_pid = 0;
 Atom     _ecore_x_atom_net_wm_handle_icons = 0;
 Atom     _ecore_x_atom_net_wm_user_time = 0;
 
+Atom     _ecore_x_atom_utf8_string = 0;
+
 Atom     _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM] = {0};
 
 int ECORE_X_EVENT_KEY_DOWN = 0;
@@ -260,6 +262,8 @@ ecore_x_init(const char *name)
    _ecore_x_atom_net_wm_icon             = XInternAtom(_ecore_x_disp, "_NET_WM_ICON", False);
    _ecore_x_atom_net_wm_pid              = XInternAtom(_ecore_x_disp, "_NET_WM_PID", False);
    _ecore_x_atom_net_wm_user_time        = XInternAtom(_ecore_x_disp, "_NET_WM_USER_TIME", False);
+
+   _ecore_x_atom_utf8_string             = XInternAtom(_ecore_x_disp, "UTF8_STRING", False);
 
    _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_DELETE_REQUEST] = _ecore_x_atom_wm_delete_window;
    _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_TAKE_FOCUS] = _ecore_x_atom_wm_take_focus;
