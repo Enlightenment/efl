@@ -59,7 +59,8 @@ evas_new(void)
 
    e->magic = MAGIC_EVAS;
    e->output.render_method = RENDER_METHOD_INVALID;
-   
+   e->viewport.w = 1;
+   e->viewport.h = 1;
    return e;
 }
 
