@@ -354,6 +354,47 @@ ecore_config_theme_search_path_get(void)
 }
 
 /**
+ * Adds to the search path used to find themes. The current path is found and
+ * searches for occurrences of the appending item. If this item is not found it
+ * is appended to the search path wich is then saved back into the property
+ * "/e/themes/search_path".
+ * Note: This should be called after ecore_config_load() to allow a users
+ * overriding the default search path to be read.
+ * @return On success ECORE_CONFIG_ERR_SUCC, on fail ECORE_CONFIG_ERR_FAIL
+ * (appending item already in search path) or on NULL being passed in
+ * ECORE_CONFIG_ERR_NODATA
+*/
+int
+ecore_config_theme_search_path_append(char *path)
+{
+   char               *search_path, *loc, *new_search_path;
+   int                 len, search_len;
+
+   if (!path)
+     return ECORE_CONFIG_ERR_NODATA;
+   search_path = ecore_config_theme_search_path_get();
+
+   loc = strstr(search_path, path);
+   len = strlen(path);
+   search_len = strlen(search_path);
+   
+   if (loc == NULL || (loc != search_path && *(loc - 1) != '|') || 
+       (loc != (search_len - len) && *(loc + len - 1) != '|'))
+     {
+	new_search_path = malloc(search_len + len + 2); /* 2 = \0 + | */
+	strcpy(new_search_path, search_path);
+	strncat(new_search_path, "|", 1);
+	strncat(new_search_path, path, len);
+
+	ecore_config_string_set("/e/themes/search_path", new_search_path);
+	free(new_search_path);
+
+	return ECORE_CONFIG_ERR_SUCC;
+     }
+   return ECORE_CONFIG_ERR_FAIL;
+}
+
+/**
  * Get a theme files full path, as it is found according to the search path.
  * The theme searched for is @name (e.g. "winter").
  * The search path is defined by ecore_config_theme_search_path_get().
@@ -383,8 +424,9 @@ ecore_config_theme_with_path_from_name_get(char *name)
 
         file = malloc(strlen(search_path_tmp) + strlen(name) + 6);
            /* 6 = / + .eet + \0 */
+
         snprintf(file, strlen(search_path_tmp) + strlen(name) + 6, 
-			"%s/%s.eet", search_path_tmp, name);
+                      "%s/%s.eet", search_path_tmp, name);
 	
         if (stat(file, &st) == 0)
           {
