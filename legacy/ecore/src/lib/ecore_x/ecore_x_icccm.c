@@ -591,16 +591,156 @@ ecore_x_window_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv)
    XGetCommand(_ecore_x_disp, win, argv, argc);
 }
 
+/**
+ * Set a window icon name.
+ * @param win The window
+ * @param t The icon name string
+ * 
+ * Set a window icon name
+ */
+void
+ecore_x_icccm_icon_name_set(Ecore_X_Window win, const char *t)
+{
+   ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_icon_name, (char *)t);
+   ecore_x_window_prop_string_set(win, _ecore_x_atom_net_wm_icon_name,
+				  (char *)t);
+}
 
+/**
+ * Get a window icon name.
+ * @param win The window
+ * @return The windows icon name string
+ * 
+ * Return the icon name of a window. String must be free'd when done with.
+ */
+char *
+ecore_x_icccm_icon_name_get(Ecore_X_Window win)
+{
+   char *name;
+
+   name = ecore_x_window_prop_string_get(win, _ecore_x_atom_net_wm_icon_name);
+   if (!name) name = ecore_x_window_prop_string_get(win, _ecore_x_atom_wm_icon_name);
+   return name;
+}
+
+/**
+ * Add a subwindow to the list of windows that need a different colormap installed.
+ * @param win The toplevel window
+ * @param subwin The subwindow to be added to the colormap windows list
+ */
+void
+ecore_x_icccm_colormap_window_set(Ecore_X_Window win, Ecore_X_Window subwin)
+{
+   int            num = 0, i;
+   unsigned char *old_data = NULL;
+   unsigned char *data = NULL;
+   Window        *oldset = NULL;
+   Window        *newset = NULL;
+   
+   if(!ecore_x_window_prop_property_get(win, 
+                                       _ecore_x_atom_wm_colormap_windows, 
+                                       XA_WINDOW,
+                                       32,
+                                       &old_data,
+                                       &num))
+   {
+      newset = calloc(1, sizeof(Window));
+      if (!newset) return;
+      newset[0] = subwin;
+      num = 1;
+      data = (unsigned char *)newset;
+   }
+   else
+   {
+      newset = calloc(num + 1, sizeof(Window));
+      oldset = (Window *) old_data;
+      if (!newset) return;
+      for (i = 0; i < num; ++i)
+      {
+         if (oldset[i] == subwin)
+         {
+            XFree(old_data);
+            free(newset);
+            return;
+         }
+         
+         newset[i] = oldset[i];
+      }
+
+      newset[num++] = subwin;
+      XFree(old_data);
+      data = (unsigned char *)newset;
+   }
+   
+   ecore_x_window_prop_property_set(win, 
+                                    _ecore_x_atom_wm_colormap_windows,
+                                    XA_WINDOW,
+                                    32,
+                                    data,
+                                    num);
+   free(newset);
+}
+
+/**
+ * Remove a window from the list of colormap windows.
+ * @param win The toplevel window
+ * @param subwin The window to be removed from the colormap window list.
+ */
+void
+ecore_x_icccm_colormap_window_unset(Ecore_X_Window win, Ecore_X_Window subwin)
+{
+   int            num = 0, i, j, k = 0;
+   unsigned char *old_data = NULL;
+   unsigned char *data = NULL;
+   Window        *oldset = NULL;
+   Window        *newset = NULL;
+
+   if (!ecore_x_window_prop_property_get(win, 
+                                         _ecore_x_atom_wm_colormap_windows,
+                                         XA_WINDOW,
+                                         32,
+                                         &old_data,
+                                         &num))
+      return;
+
+   oldset = (Window *) old_data;
+   for (i = 0; i < num; i++)
+   {
+      if (oldset[i] == subwin)
+      {
+         if (num == 1)
+         {
+            XDeleteProperty(_ecore_x_disp, 
+                            win,
+                            _ecore_x_atom_wm_colormap_windows);
+            XFree(old_data);
+            return;
+         }
+         else
+         {
+            newset = calloc(num - 1, sizeof(Window));
+            data = (unsigned char *)newset;
+            for (j = 0; j < num; ++j)
+               if (oldset[j] != subwin)
+                  newset[k++] = oldset[j];
+            ecore_x_window_prop_property_set(win,
+                                             _ecore_x_atom_wm_colormap_windows,
+                                             XA_WINDOW,
+                                             32,
+                                             data,
+                                             k);
+            XFree(old_data);
+            free(newset);
+            return;
+         }
+      }
+   }
+   
+   XFree(old_data);
+}
 
  
 /* FIXME: move these things in here as they are icccm related */
-/* get/set wm protocols */
-/* get/set name/class */
-/* get/set machine */
-/* get/set command */
-/* get/set icon name */
-/* get/set colormap windows */
 /* get/set window role */
 /* get/set client leader */
 /* get/set transient for */

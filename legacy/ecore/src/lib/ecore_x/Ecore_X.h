@@ -1012,7 +1012,14 @@ EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_A
      ecore_x_icccm_command_set(Ecore_X_Window win, int argc, char **argv);
    EAPI void
      ecore_x_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv);
-   
+   EAPI char *
+     ecore_x_icccm_icon_name_get(Ecore_X_Window win);
+   EAPI void
+     ecore_x_icccm_icon_name_set(Ecore_X_Window win, const char *t);
+   EAPI void
+     ecore_x_icccm_colormap_window_set(Ecore_X_Window win, Ecore_X_Window subwin);
+   EAPI void
+     ecore_x_icccm_colormap_window_unset(Ecore_X_Window win, Ecore_X_Window subwin);
    
    typedef enum _Ecore_X_MWM_Hint_Func
      {

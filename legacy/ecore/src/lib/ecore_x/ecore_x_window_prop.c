@@ -324,6 +324,7 @@ ecore_x_window_prop_visible_title_get(Ecore_X_Window win)
  * @param t The icon name string
  * 
  * Set a window icon name
+ * DEPRECATED. Please use ecore_x_icccm_icon_name_set() instead.
  */
 void
 ecore_x_window_prop_icon_name_set(Ecore_X_Window win, const char *t)
@@ -339,6 +340,7 @@ ecore_x_window_prop_icon_name_set(Ecore_X_Window win, const char *t)
  * @return The windows icon name string
  * 
  * Return the icon name of a window. String must be free'd when done with.
+ * DEPRECATED. Please use ecore_x_icccm_icon_name_get() instead.
  */
 char *
 ecore_x_window_prop_icon_name_get(Ecore_X_Window win)
