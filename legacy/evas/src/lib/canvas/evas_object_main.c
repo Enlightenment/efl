@@ -285,13 +285,9 @@ evas_object_coords_recalc(Evas_Object *obj)
    obj->cur.cache.geometry.y = 
      evas_coord_world_y_to_screen(obj->layer->evas, obj->cur.geometry.y);
    obj->cur.cache.geometry.w = 
-     evas_coord_world_x_to_screen(obj->layer->evas, 
-				  obj->cur.geometry.x + obj->cur.geometry.w)
-       - obj->cur.cache.geometry.x;
+     evas_coord_world_x_to_screen(obj->layer->evas, obj->cur.geometry.w);
    obj->cur.cache.geometry.h = 
-     evas_coord_world_y_to_screen(obj->layer->evas, 
-				  obj->cur.geometry.y + obj->cur.geometry.h)
-       - obj->cur.cache.geometry.y;
+     evas_coord_world_y_to_screen(obj->layer->evas, obj->cur.geometry.h);
    if (obj->func->coords_recalc) obj->func->coords_recalc(obj);
    obj->cur.cache.geometry.validity = obj->layer->evas->output_validity;
 }
