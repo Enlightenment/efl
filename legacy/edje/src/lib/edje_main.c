@@ -1,8 +1,6 @@
 #include "Edje.h"
 #include "edje_private.h"
 
-/* FIXME: edje test need to make in-canvas move & resize controls on edjes */
-/* FIXME: edje test needs to load multiple edjes */
 /* FIXME: sub objects need to be added to smart object */
 /* FIXME: add clicked signal for a mouse up thats a real clicked */
 /* FIXME: free stuff - no more leaks */

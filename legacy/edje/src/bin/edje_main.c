@@ -1,5 +1,9 @@
 #include "edje.h"
 
+/* FIXME: need filename title and part name title */
+/* FIXME: need to look a bit prettier! */
+/* FIXME: edje test needs to load multiple edjes */
+
 static int  main_start(int argc, char **argv);
 static void main_stop(void);
 static void main_resize(Ecore_Evas *ee);
@@ -107,7 +111,174 @@ bg_resize(double w, double h)
    evas_object_resize(o_bg, w, h);
 }
 
-static Evas_Object *o_edje = NULL;
+typedef struct _Demo_Edje Demo_Edje;
+
+struct _Demo_Edje
+{
+   Evas_Object *edje;
+   Evas_Object *left;
+   Evas_Object *right;
+   Evas_Object *top;
+   Evas_Object *bottom;
+   Evas_Object *title_text;
+   int          down_top : 1;
+   int          down_bottom : 1;
+   int          hdir;
+   int          vdir;
+};
+
+static Evas_List *edjes = NULL;
+
+static void cb (void *data, Evas_Object *o, const char *sig, const char *src);
+
+static void
+top_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Demo_Edje *de;
+   
+   de = data;
+   de->down_top = 1;
+}
+
+static void
+top_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Demo_Edje *de;
+   
+   de = data;
+   de->down_top = 0;
+}
+
+static void
+top_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Demo_Edje *de;
+   Evas_Event_Mouse_Move *ev;
+   
+   de = data;
+   ev = event_info;
+   if (de->down_top)
+     {
+	double x, y;
+	
+	evas_object_geometry_get(de->left, &x, &y, NULL, NULL);
+	evas_object_move(de->left, 
+			 x + ev->cur.canvas.x - ev->prev.canvas.x,
+			 y + ev->cur.canvas.y - ev->prev.canvas.y);
+	evas_object_geometry_get(de->right, &x, &y, NULL, NULL);
+	evas_object_move(de->right, 
+			 x + ev->cur.canvas.x - ev->prev.canvas.x,
+			 y + ev->cur.canvas.y - ev->prev.canvas.y);
+	evas_object_geometry_get(de->top, &x, &y, NULL, NULL);
+	evas_object_move(de->top, 
+			 x + ev->cur.canvas.x - ev->prev.canvas.x,
+			 y + ev->cur.canvas.y - ev->prev.canvas.y);
+	evas_object_geometry_get(de->bottom, &x, &y, NULL, NULL);
+	evas_object_move(de->bottom, 
+			 x + ev->cur.canvas.x - ev->prev.canvas.x,
+			 y + ev->cur.canvas.y - ev->prev.canvas.y);
+	evas_object_geometry_get(de->edje, &x, &y, NULL, NULL);
+	evas_object_move(de->edje, 
+			 x + ev->cur.canvas.x - ev->prev.canvas.x,
+			 y + ev->cur.canvas.y - ev->prev.canvas.y);
+     }
+}
+
+static void
+bottom_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Demo_Edje *de;
+   Evas_Event_Mouse_Down *ev;
+   double x, y, w, h;
+   int hdir, vdir;
+   
+   de = data;
+   ev = event_info;
+   de->down_bottom = 1;
+   evas_object_geometry_get(de->edje, &x, &y, &w, &h);
+   hdir = 1;
+   vdir = 1;
+   x -= 10;
+   y -= 20;
+   w += 20;
+   h += 30;
+   if ((ev->canvas.x - x) < (w / 2)) hdir = 0;
+   if ((ev->canvas.y - y) < (h / 2)) vdir = 0;
+   de->hdir = hdir;
+   de->vdir = vdir;
+}
+
+static void
+bottom_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Demo_Edje *de;
+   
+   de = data;
+   de->down_bottom = 0;
+}
+
+static void
+bottom_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Demo_Edje *de;
+   Evas_Event_Mouse_Move *ev;
+   
+   de = data;
+   ev = event_info;
+   if (de->down_bottom)
+     {
+	double x, y, w, h;
+	int hdir, vdir;
+	
+	evas_object_geometry_get(de->edje, &x, &y, &w, &h);
+	hdir = de->hdir;
+	vdir = de->vdir;
+	x -= 10;
+	y -= 20;
+	w += 20;
+	h += 30;
+	if (hdir > 0)
+	  {
+	     w += ev->cur.canvas.x - ev->prev.canvas.x;
+	     if (w < 20) w = 20;
+	  }
+	else
+	  {
+	     w -= ev->cur.canvas.x - ev->prev.canvas.x;
+	     x += ev->cur.canvas.x - ev->prev.canvas.x;
+	     if (w < 20)
+	       {
+		  x += w - 20;
+		  w = 20;
+	       }
+	  }
+	if (vdir > 0)
+	  {
+	     h += ev->cur.canvas.y - ev->prev.canvas.y;
+	     if (h < 30) h = 30;
+	  }
+	else
+	  {
+	     h -= ev->cur.canvas.y - ev->prev.canvas.y;
+	     y += ev->cur.canvas.y - ev->prev.canvas.y;
+	     if (h < 30)
+	       {
+		  y += h - 30;
+		  h = 30;
+	       }
+	  }
+	evas_object_move(de->left, x, y + 20);
+	evas_object_resize(de->left, 10, h - 30);
+	evas_object_move(de->right, x + w - 10, y + 20);
+	evas_object_resize(de->right, 10, h - 30);
+	evas_object_move(de->top, x, y);
+	evas_object_resize(de->top, w, 20);
+	evas_object_move(de->bottom, x, y + (h - 10));
+	evas_object_resize(de->bottom, w, 10);
+	evas_object_move(de->edje, x + 10, y + 20);
+	evas_object_resize(de->edje, w - 20, h - 30);
+     }
+}
 
 static void
 cb (void *data, Evas_Object *o, const char *sig, const char *src)
@@ -119,22 +290,66 @@ void
 test_setup(char *file, char *name)
 {
    Evas_Object *o;
+   Demo_Edje *de;
+   
+   de = calloc(1, sizeof(Demo_Edje));
+   edjes = evas_list_append(edjes, de);
+
+   o = evas_object_rectangle_add(evas);
+   evas_object_color_set(o, 40, 60, 80, 180);
+   evas_object_move(o, 10, 10);
+   evas_object_resize(o, 220, 20);
+   evas_object_show(o);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, top_down_cb, de);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,   top_up_cb, de);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_MOVE, top_move_cb, de);
+   de->top = o;
+
+   o = evas_object_rectangle_add(evas);
+   evas_object_color_set(o, 40, 60, 80, 140);
+   evas_object_move(o, 10, 10 + 20 + 240);
+   evas_object_resize(o, 220, 10);
+   evas_object_show(o);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, bottom_down_cb, de);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,   bottom_up_cb, de);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_MOVE, bottom_move_cb, de);
+   de->bottom = o;
+
+   o = evas_object_rectangle_add(evas);
+   evas_object_color_set(o, 40, 60, 80, 140);
+   evas_object_move(o, 10, 10 + 20);
+   evas_object_resize(o, 10, 240);
+   evas_object_show(o);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, bottom_down_cb, de);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,   bottom_up_cb, de);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_MOVE, bottom_move_cb, de);
+   de->left = o;
+
+   o = evas_object_rectangle_add(evas);
+   evas_object_color_set(o, 40, 60, 80, 140);
+   evas_object_move(o, 10 + 10 + 200, 10 + 20);
+   evas_object_resize(o, 10, 240);
+   evas_object_show(o);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, bottom_down_cb, de);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,   bottom_up_cb, de);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_MOVE, bottom_move_cb, de);
+   de->right = o;
    
    o = edje_add(evas);
    edje_file_set(o, file, name);
    edje_signal_callback_add(o, "do_it", "the_source", cb, NULL);
    edje_signal_callback_add(o, "mouse,*", "logo", cb, NULL);
-   evas_object_move(o, 10, 10);
-   evas_object_resize(o, 220, 300);
+   evas_object_move(o, 10 + 10, 10 + 20);
+   evas_object_resize(o, 200, 240);
    evas_object_show(o);
-   o_edje = o;
+   de->edje = o;
 }
 
 void
 test_reize(double w, double h)
 {
-   evas_object_move(o_edje, 10, 10);   
-   evas_object_resize(o_edje, w - 20, h - 20);
+//   evas_object_move(o_edje, 10, 10);   
+//   evas_object_resize(o_edje, w - 20, h - 20);
 }
 
 int
