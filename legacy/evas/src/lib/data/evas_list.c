@@ -1,3 +1,6 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 #include "evas_common.h"
 #include "evas_private.h"
 #include "Evas.h"
@@ -698,12 +701,30 @@ evas_list_nth_list(Evas_List *list, int n)
 {
    int i;
    Evas_List *l;
-   
-   if (n < 0) return NULL;
-   for (i = 0, l = list; l; l = l->next, i++)
+
+   /* check for non-existing nodes */
+   if (n < 0 || n > list->count - 1) return NULL;
+
+   /* if the node is in the 2nd half of the list, search from the end
+    * else, search from the beginning.
+    */
+   if (n > list->count / 2)
      {
-	if (i == n) return l;
+	n = list->count - n - 1;
+
+	for (i = 0, l = list->last; l; l = l->prev, i++)
+	  {
+	     if (i == n) return l;
+	  }
      }
+   else
+     {
+	for (i = 0, l = list; l; l = l->next, i++)
+	  {
+	     if (i == n) return l;
+	  }
+     }
+
    return NULL;
 }
 
