@@ -17,3 +17,6 @@ ltmain.sh
 ltconfig
 config.h.in
 libltdl
+install-sh
+missing
+mkinstalldirs
