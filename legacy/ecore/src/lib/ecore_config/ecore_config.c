@@ -607,7 +607,8 @@ int ecore_config_init(char *name) {
     if ((buf=malloc(PATH_MAX*sizeof(char)))) {
       snprintf(buf,PATH_MAX,"%s/.e/config.db",p);
       if (ecore_config_load_file(buf) != 0)
-        return ECORE_CONFIG_ERR_NOFILE;
+        if (ecore_config_load_file(PACKAGE_DATA_DIR "/system.db") != 0)
+          return ECORE_CONFIG_ERR_NOFILE;
     }
     free(buf);
   }
