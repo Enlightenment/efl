@@ -363,7 +363,8 @@ e_window_show(Window win)
    if (xid)
      {
 	if (xid->mapped)
-	   xid->mapped = 1;
+	  return;
+	xid->mapped = 1;
 	XMapWindow(disp, win);
      }
 }
