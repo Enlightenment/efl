@@ -1690,7 +1690,7 @@ ecore_focus_to_window(Window win)
    if (!disp) return;
   if (win == 0)
     win = default_root;
-  XSetInputFocus(disp, win, RevertToPointerRoot, CurrentTime);
+  XSetInputFocus(disp, win, RevertToNone, CurrentTime);
 }
 
 Atom
