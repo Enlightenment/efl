@@ -805,7 +805,7 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 #if USE_OPENSSL
 	     if (!svr->ssl) {
 #endif
-            if ((num = read(svr->fd, svr->read_buf, READBUFSIZ)) < 0)
+            if ((num = read(svr->fd, svr->read_buf, READBUFSIZ)) < 1)
                lost_server = (errno == EIO || errno == EBADF ||
                               errno == EPIPE || errno == EINVAL ||
                               errno == ENOSPC || num == 0); /* is num == 0 right? */
