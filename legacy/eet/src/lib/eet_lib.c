@@ -643,6 +643,16 @@ eet_open(const char *file, Eet_File_Mode mode)
    return ef;
 }
 
+Eet_File_Mode
+eet_mode_get(Eet_File *ef)
+{
+   /* check to see its' an eet file pointer */   
+   if ((!ef) || (ef->magic != EET_MAGIC_FILE))
+     return EET_FILE_MODE_INVALID;
+   else
+     return ef->mode;
+}
+
 void
 eet_close(Eet_File *ef)
 {
