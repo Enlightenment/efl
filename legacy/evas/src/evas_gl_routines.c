@@ -173,6 +173,35 @@ void __evas_calc_tex_and_poly(Evas_GL_Image *im, int x, double *x1, double *x2,
       *x2 = (double)w;
 }
 
+void __evas_gl_set_conect_for_dest(Evas_GL_Image *im, Display *disp, Window w,
+				   int win_w, int win_h)
+{
+   if (im->buffer.dest != w)
+     {
+	im->buffer.dest = w;
+	glXMakeCurrent(disp, w, im->context);
+	glEnable(GL_BLEND);
+	glShadeModel(GL_FLAT);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+	/* why doesnt scissor work ? */
+	/*   
+	 glEnable(GL_SCISSOR_TEST);
+	 glScissor(dst_x, win_h - dst_y - 1, dst_w, dst_h); 
+	 */
+	glViewport(0, 0, win_w, win_h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, win_w, 0, win_h, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glScalef(1, -1, 1);
+	glTranslatef(0, -win_h, 0);   
+     }
+}
+
 void __evas_gl_render_to_window(Evas_GL_Image *im, 
 				Display *disp, Window w, int win_w, int win_h,
 				int src_x, int src_y, int src_w, int src_h,
@@ -180,34 +209,11 @@ void __evas_gl_render_to_window(Evas_GL_Image *im,
 {
    int x, y, i;   
    double dx, dy, dw, dh;
+   int done = 1;
    
    if (im->state != EVAS_STATE_TEXTURE)
       __evas_gl_move_state_data_to_texture(im);
-   glXMakeCurrent(disp, w, im->context);
-/*   
-   glClearColor(0.7, 0.7, 0.7, 1.0);
-   glClear(GL_COLOR_BUFFER_BIT);
-*/   
-   glEnable(GL_BLEND);
-   glShadeModel(GL_FLAT);
-   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
-   glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-/* why doesnt scissor work ? */
-/*   
-   glEnable(GL_SCISSOR_TEST);
-   glScissor(dst_x, win_h - dst_y - 1, dst_w, dst_h); 
-*/
-/* translate all poly coords in ints to normal X coord space */
-   glViewport(0, 0, win_w, win_h);
-   glMatrixMode(GL_PROJECTION);
-   glLoadIdentity();
-   glOrtho(0, win_w, 0, win_h, -1, 1);
-   glMatrixMode(GL_MODELVIEW);
-   glLoadIdentity();
-   glScalef(1, -1, 1);
-   glTranslatef(0, -win_h, 0);   
+   __evas_gl_set_conect_for_dest(im, disp, w, win_w, win_h);
    /* project src and dst rects to overall dest rect */
    dw = (((double)dst_w * (double)im->w)/ (double)src_w);
    dx = (double)dst_x - (((double)dst_w * (double)src_x)/ (double)src_w);

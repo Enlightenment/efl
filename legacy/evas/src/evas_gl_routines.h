@@ -47,7 +47,7 @@ struct _evas_gl_image
 	Display *display;
 	XVisualInfo *visual_info;
 	Colormap colormap;
-	Window window;
+	Window window, dest;
      } buffer;
 };
 
@@ -57,6 +57,8 @@ void __evas_gl_copy_image_rect_to_texture(Evas_GL_Image *im, int x, int y,
 void __evas_gl_move_state_data_to_texture(Evas_GL_Image *im);
 void __evas_calc_tex_and_poly(Evas_GL_Image *im, int x, double *x1, double *x2,
 			      int *tx, int *txx, double *dtx, double *dtxx, int tw, int w, int edge);
+void __evas_gl_set_conect_for_dest(Evas_GL_Image *im, Display *disp, Window w,
+				   int win_w, int win_h);
 void __evas_gl_render_to_window(Evas_GL_Image *im,
 				Display *disp, Window w, int win_w, int win_h,
 				int src_x, int src_y, int src_w, int src_h,
