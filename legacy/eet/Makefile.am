@@ -5,13 +5,30 @@ SUBDIRS = src
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
                        config.h.in config.sub configure install-sh \
 		       ltconfig ltmain.sh missing mkinstalldirs \
-		       stamp-h.in eet_docs.tar eet_docs.tar.gz eet.c
+		       stamp-h.in \
+		       eet_docs.tar.gz eet.c \
+		       eet.pc \
+		       eet.spec \
+		       eet.oe eet-native.oe \
+		       eet.bb eetXnative.bb \
+		       debian/changelog
 
 bin_SCRIPTS = eet-config
 
-EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN eet.spec eet.c.in \
-			gendoc Doxyfile doc eet.pc.in \
-			make_cross_compile_arm.sh
+EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN eet.spec eet.c.in gendoc \
+             Doxyfile doc eet_docs.tar.gz \
+	     eet.pc.in \
+	     eet.spec.in eet.spec \
+	     eet.oe.in eet.oe eet-native.oe.in eet-native.oe \
+	     eet.bb.in eet.bb eetXnative.bb.in eetXnative.bb \
+	     debian/changelog.in debian/changelog \
+	     debian/control \
+	     debian/copyright \
+	     debian/eet-config.1 \
+	     debian/eet.1 \
+	     debian/libeet0-dev.files \
+	     debian/libeet0.files \
+	     debian/rules
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = eet.pc

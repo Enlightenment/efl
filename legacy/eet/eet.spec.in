@@ -1,12 +1,12 @@
 %define _missing_doc_files_terminate_build 0
 
 Summary: Library for speedy data storage, retrieval, and compression.
-Name: eet
-Version: 0.9.9
-Release: 2.%(date '+%Y%m%d')
+Name: @PACKAGE@
+Version: @VERSION@
+Release: 1
 License: BSD
 Group: System Environment/Libraries
-Source: ftp://ftp.enlightenment.org/pub/eet/eet-%{version}.tar.gz
+Source: %{name}-%{version}.tar.gz
 Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
@@ -40,9 +40,9 @@ Headers, static libraries, test programs and documentation for Eet
 %setup -q
 
 %build
-%{configure} --prefix=%{_prefix}
+#%{configure} --prefix=%{_prefix}
+./configure --prefix=%{_prefix}
 %{__make} %{?_smp_mflags} %{?mflags}
-test -x `which doxygen` && sh gendoc || :
 
 %install
 %{__make} %{?mflags_install} DESTDIR=$RPM_BUILD_ROOT install
@@ -58,18 +58,18 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-, root, root)
-%doc AUTHORS COPYING README
-%{_libdir}/libeet.so.*
-%{_libdir}/libeet.la
+%doc AUTHORS COPYING COPYING-PLAIN README
+%{_libdir}/*.so.*
+%{_libdir}/*.la
 %{_bindir}/eet
 
 %files devel
 %defattr(-, root, root)
-%doc html
-%{_libdir}/libeet.so
-%{_libdir}/libeet.a
+%doc eet_docs.tar.gz
+%{_libdir}/*.so
+%{_libdir}/*.a
 %{_bindir}/eet-config
-%{_libdir}/pkgconfig/eet.pc
-%{_includedir}/Eet*
+%{_libdir}/pkgconfig/*
+%{_includedir}/*
 
 %changelog
