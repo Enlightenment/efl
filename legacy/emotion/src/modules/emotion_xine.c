@@ -1035,6 +1035,7 @@ _em_fd_active(void *data, Ecore_Fd_Handler *fdh)
 	       }
 	  }
      }
+   return 1;
 }
 
 static void
@@ -1187,6 +1188,7 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 	     free(eev);
 	  }
      }
+   return 1;
 }
 
 static int
