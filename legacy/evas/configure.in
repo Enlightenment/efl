@@ -584,6 +584,19 @@ AC_SUBST(eet_libs)
 AC_SUBST(edb_cflags)
 AC_SUBST(edb_libs)
 
+dnl Build the list of required libs for evas.pc.in. Only works for libs
+dnl which install a .pc file of course
+if test "x$eet_libs" != "x"; then
+	requirements=eet
+fi
+if test "x$edb_libs" != "x"; then
+	requirements="$requirements edb"
+fi
+if test "x$png_libs" != "x"; then
+	requirements="$requirements libpng12"
+fi
+AC_SUBST(requirements)
+
 AC_SUBST(ENGINE_SOFTWARE_X11_PRG)
 AC_SUBST(ENGINE_DIRECTFB_PRG)
 AC_SUBST(ENGINE_FB_PRG)
