@@ -562,6 +562,7 @@ evas_move(Evas e, Evas_Object o, double x, double y)
    if (!e) return;
    if (!o) return;
    if ((o->type == OBJECT_LINE)) return;
+   if ((x == o->current.x) && (y == o->current.y)) return;
    if ((o->current.visible) && 
        (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)))
       event_update = 1;
@@ -607,11 +608,12 @@ evas_resize(Evas e, Evas_Object o, double w, double h)
    if ((o->type == OBJECT_LINE)) return;
    if ((o->type == OBJECT_TEXT)) return;
    if ((o->type == OBJECT_POLYGON)) return;
+   if (w < 0) w = 0;
+   if (h < 0) h = 0;
+   if ((w == o->current.w) && (h == o->current.h)) return;
    if ((o->current.visible) && 
        (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)))
       event_update = 1;
-   if (w < 0) w = 0;
-   if (h < 0) h = 0;
    o->current.w = w;
    o->current.h = h;
    o->changed = 1;

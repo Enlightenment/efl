@@ -246,11 +246,7 @@ __evas_gl_window_current(Display *disp, Window win, int w, int h)
    if (!glw) return NULL;
    if (glw != __evas_current) 
      {
-	double dr, dg, db, da;
-	
 	__evas_current = glw;
-	glw->w = w;
-	glw->h = h;
 	glXMakeCurrent(glw->disp, glw->win, glw->context->context);
 	glShadeModel(GL_FLAT);
 	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
@@ -258,15 +254,6 @@ __evas_gl_window_current(Display *disp, Window win, int w, int h)
 	glEnable(GL_LINE_SMOOTH);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 	glPixelStorei(GL_PACK_ALIGNMENT, 1);
-	
-	glViewport(0, 0, glw->w, h);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, glw->w, 0, glw->h, -1, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glScalef(1, -1, 1);
-	glTranslatef(0, - glw->h, 0);	
 	if (glw->context->dither) glEnable(GL_DITHER);
 	else glDisable(GL_DITHER);
 	if (glw->context->blend) 
@@ -293,6 +280,22 @@ __evas_gl_window_current(Display *disp, Window win, int w, int h)
 	  glDisable(GL_SCISSOR_TEST);
 	if (glw->context->bound_texture)
 	  glBindTexture(GL_TEXTURE_2D, glw->context->bound_texture->texture);
+     }
+   if ((glw->w != w) || (glw->h != h))
+     {
+	double dr, dg, db, da;
+	
+	glw->w = w;
+	glw->h = h;
+	glViewport(0, 0, glw->w, h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, glw->w, 0, glw->h, -1, 1);
+	printf("%i %i\n", glw->w, glw->h);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glScalef(1, -1, 1);
+	glTranslatef(0, - glw->h, 0);
      }
    return glw;
 }
