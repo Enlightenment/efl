@@ -43,6 +43,7 @@ evas_line.c \
 evas_list.c \
 evas_misc.c \
 evas_object.c \
+evas_poly.c \
 evas_rectangle.c \
 evas_render.c \
 evas_text.c \

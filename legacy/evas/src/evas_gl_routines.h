@@ -194,6 +194,11 @@ void              __evas_gl_gradient_free(Evas_GL_Graident *gr);
 void              __evas_gl_gradient_color_add(Evas_GL_Graident *gr, int r, int g, int b, int a, int dist);
 void              __evas_gl_gradient_draw(Evas_GL_Graident *gr, Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x, int y, int w, int h, double angle);
 
+/************/
+/* polygons */
+/************/
+void              __evas_gl_poly_draw (Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, Evas_List points, int r, int g, int b, int a);
+
 /***********/
 /* drawing */
 /***********/

@@ -76,7 +76,7 @@ main(int argc, char **argv)
    int win_w, win_h;
    int i, a, w, h, m;
    Evas e;
-   Evas_Object o[128], o_rect, o_line, o_grad, o_fps, o_text;
+   Evas_Object o[128], o_rect, o_line, o_grad, o_fps, o_text, o_poly;
    Evas_Gradient grad;
    int down;
    double t1, t2;
@@ -234,6 +234,23 @@ main(int argc, char **argv)
    evas_callback_add(e, o_rect, CALLBACK_MOUSE_MOVE, mouse_move, NULL);
    evas_callback_add(e, o_rect, CALLBACK_MOUSE_IN, mouse_in, NULL);
    evas_callback_add(e, o_rect, CALLBACK_MOUSE_OUT, mouse_out, NULL);
+
+   o_poly = evas_add_poly(e);
+   evas_show(e, o_poly);
+   evas_add_point(e, o_poly, 100, 100);
+   evas_add_point(e, o_poly, 200, 150);
+   evas_add_point(e, o_poly, 300, 80);
+   evas_add_point(e, o_poly, 500, 150);
+   evas_add_point(e, o_poly, 200, 120);
+   evas_add_point(e, o_poly, 55, 190);
+   evas_add_point(e, o_poly, 130, 110);
+   evas_set_color(e, o_poly, rand()&0xff,  rand()&0xff,  rand()&0xff, 180);
+   evas_set_layer(e, o_poly, 150);
+   evas_callback_add(e, o_poly, CALLBACK_MOUSE_DOWN, mouse_down, NULL);
+   evas_callback_add(e, o_poly, CALLBACK_MOUSE_UP, mouse_up, NULL);
+   evas_callback_add(e, o_poly, CALLBACK_MOUSE_MOVE, mouse_move, NULL);
+   evas_callback_add(e, o_poly, CALLBACK_MOUSE_IN, mouse_in, NULL);
+   evas_callback_add(e, o_poly, CALLBACK_MOUSE_OUT, mouse_out, NULL);
    
    o_line = evas_add_line(e);
    evas_show(e, o_line);

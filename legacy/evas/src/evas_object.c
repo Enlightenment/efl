@@ -410,8 +410,30 @@ evas_move(Evas e, Evas_Object o, double x, double y)
    if ((o->current.visible) && 
        (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)))
       event_update = 1;
-   o->current.x = x;
-   o->current.y = y;
+   if ((o->type == OBJECT_POLYGON))
+     {
+	Evas_Object_Poly oo;
+	Evas_List l;
+	Evas_Point p;
+	double dx, dy;
+	
+	dx = x - o->current.x;
+	dy = y - o->current.y;
+        o->current.x = x;
+	o->current.y = y;
+	oo = o;
+	for (l = oo->current.points; l; l = l->next)
+	  {
+	     p = l->data;
+	     p->x += dx;
+	     p->y += dy;
+	  }
+     }
+   else
+     {
+	o->current.x = x;
+	o->current.y = y;
+     }
    o->changed = 1;
    e->changed = 1;
    if ((o->current.visible) &&
@@ -429,6 +451,7 @@ evas_resize(Evas e, Evas_Object o, double w, double h)
    if (!o) return;
    if ((o->type == OBJECT_LINE)) return;
    if ((o->type == OBJECT_TEXT)) return;
+   if ((o->type == OBJECT_POLYGON)) return;
    if ((o->current.visible) && 
        (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)))
       event_update = 1;

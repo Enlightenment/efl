@@ -807,6 +807,20 @@ __evas_x11_gradient_draw(Evas_X11_Graident *gr, Display *disp, Imlib_Image dstim
 
 
 
+/************/
+/* polygons */
+/************/
+void
+__evas_x11_poly_draw (Display *disp, Imlib_Image dstim, Window win, 
+		      int win_w, int win_h, 
+		      Evas_List points, 
+		      int r, int g, int b, int a)
+{
+}
+
+
+
+
 
 
 

@@ -104,7 +104,8 @@ Evas_Object evas_add_text(Evas e, char *font, int size, char *text);
 Evas_Object evas_add_rectangle(Evas e);
 Evas_Object evas_add_line(Evas e);
 Evas_Object evas_add_gradient_box(Evas e);
-
+Evas_Object evas_add_poly(Evas e);
+	 
 /* set object settings */
 void evas_set_image_file(Evas e, Evas_Object o, char *file);
 /* ** ** not implimented yet ** ** */void evas_set_image_data(Evas e, Evas_Object o, void *data, Evas_Image_Format format, int w, int h);
@@ -118,7 +119,8 @@ void evas_set_angle(Evas e, Evas_Object o, double angle);
 void evas_set_zoom_scale(Evas e, Evas_Object o, int scale);
 void evas_set_line_xy(Evas e, Evas_Object o, double x1, double y1, double x2, double y2);
 void evas_set_pass_events(Evas e, Evas_Object o, int pass_events);
-
+void evas_add_point(Evas e, Evas_Object o, double x, double y);
+      
 /* cache settings for performance */
 void evas_set_font_cache(Evas e, int size);
 int  evas_get_font_cache(Evas e);
@@ -159,6 +161,7 @@ Evas_Object evas_object_at_position(Evas e, double x, double y);
 Evas_Object evas_object_get_named(Evas e, char *name);
 void evas_object_set_name(Evas e, Evas_Object o, char *name);   
 char *evas_object_get_name(Evas e, Evas_Object o);
+Evas_List evas_get_points(Evas e, Evas_Object o);
 	 
 /* object visibility */
 void evas_show(Evas e, Evas_Object o);

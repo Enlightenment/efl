@@ -1,3 +1,4 @@
+
 #include "evas_imlib_routines.h"
 
 static void __evas_imlib_image_cache_flush(Display *disp);
@@ -481,8 +482,8 @@ void              __evas_imlib_line_draw(Display *disp, Imlib_Image dstim, Windo
    imlib_context_set_color_modifier(NULL);
    imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
    imlib_context_set_anti_alias(1);
-    imlib_context_set_blend(1);
-  w = x2 - x1;
+   imlib_context_set_blend(1);
+   w = x2 - x1;
    if (w < 0) w = -w;
    h = y2 - y1;
    if (h < 0) h = -h;
@@ -537,7 +538,7 @@ void              __evas_imlib_line_draw(Display *disp, Imlib_Image dstim, Windo
 
 
 
-/*****************************************************************************/
+/****************************************************************************/
 /* gradient externals ********************************************************/
 /*****************************************************************************/
 
@@ -608,6 +609,97 @@ __evas_imlib_gradient_draw(Evas_Imlib_Graident *gr, Display *disp, Imlib_Image d
 
 
 
+/************/
+/* polygons */
+/************/
+void
+__evas_imlib_poly_draw (Display *disp, Imlib_Image dstim, Window win, 
+			int win_w, int win_h, 
+			Evas_List points, 
+			int r, int g, int b, int a)
+{
+   Evas_List l, l2;
+   int x, y, w, h;
+
+   imlib_context_set_color(r, g, b, a);
+   imlib_context_set_angle(0.0);
+   imlib_context_set_operation(IMLIB_OP_COPY);
+   imlib_context_set_color_modifier(NULL);
+   imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
+   imlib_context_set_anti_alias(1);
+   imlib_context_set_blend(1);
+   
+   x = y = w = h = 0;
+   if (points)
+     {
+	Evas_Point p;
+	
+	p = points->data;
+	x = p->x;
+	y = p->y;
+	w = 1;
+	h = 1;
+     }
+   for (l2 = points; l2; l2 = l2->next)
+     {
+	Evas_Point p;
+	
+	p = l2->data;
+	if (p->x < x) 
+	   {
+	      w += x - p->x;
+	      x = p->x;
+	   }
+	if (p->x > (x + w)) 
+	   w = p->x - x;
+	if (p->y < y) 
+	   {
+	      h += y - p->y;
+	      y = p->y;
+	   }
+	if (p->y > (y + h)) 
+	   h = p->y - y;
+     }
+   for(l = drawable_list; l; l = l->next)
+     {
+	Evas_Imlib_Drawable *dr;
+	
+	dr = l->data;
+	
+	if ((dr->win == win) && (dr->disp == disp))
+	  {
+	     Evas_List ll;
+	     
+	     for (ll = dr->tmp_images; ll; ll = ll->next)
+	       {
+		  Evas_Imlib_Update *up;
+
+		  up = ll->data;
+		  
+		  /* if image intersects image update - render */
+		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
+				      x, y, w, h))
+		    {
+		       ImlibPolygon pol;
+		       
+		       if (!up->image)
+			  up->image = imlib_create_image(up->w, up->h);
+		       imlib_context_set_image(up->image);
+		       pol = imlib_polygon_new();
+		       for (l2 = points; l2; l2 = l2->next)
+			 {
+			    Evas_Point p;
+			    
+			    p = l2->data;
+			    imlib_polygon_add_point(pol, p->x - up->x, p->y - up->y);
+			 }
+		       imlib_image_fill_polygon(pol);
+		       imlib_polygon_free(pol);
+		    }
+	       }
+	  }
+     }
+}
 
 
 

@@ -11,6 +11,7 @@ typedef struct _Evas_Object_Any *          Evas_Object_Any;
 typedef struct _Evas_Render_Data           Evas_Render_Data;
 typedef struct _Evas_Data *                Evas_Data;
 typedef struct _Evas_Layer *               Evas_Layer;
+typedef struct _Evas_Point *               Evas_Point;
 typedef struct _Evas_Color_Point *         Evas_Color_Point;
 typedef struct _Evas_Callback *            Evas_Callback;
 typedef struct _Evas_Rectangle *           Evas_Rectangle;
@@ -19,12 +20,14 @@ typedef struct _Evas_Object_Text *         Evas_Object_Text;
 typedef struct _Evas_Object_Rectangle *    Evas_Object_Rectangle;
 typedef struct _Evas_Object_Line *         Evas_Object_Line;
 typedef struct _Evas_Object_Gradient_Box * Evas_Object_Gradient_Box;
+typedef struct _Evas_Object_Poly *         Evas_Object_Poly;
 
 #define OBJECT_IMAGE        1230
 #define OBJECT_TEXT         1231
 #define OBJECT_RECTANGLE    1232
 #define OBJECT_LINE         1233
 #define OBJECT_GRADIENT_BOX 1234
+#define OBJECT_POLYGON      1235
 
 #define IF_OBJ(_o, _t) if (((Evas_Object)_o)->type != _t)
 
@@ -72,6 +75,11 @@ struct _Evas
    
    Evas_List     layers;
    Imlib_Updates updates;
+};
+
+struct _Evas_Point
+{
+   double x, y;
 };
 
 struct _Evas_Color_Point
@@ -204,6 +212,15 @@ struct _Evas_Object_Gradient_Box
       Evas_Gradient gradient;
       int    new_gradient;
       double angle;
+   } current, previous;
+};
+
+struct _Evas_Object_Poly
+{
+   struct _Evas_Object_Any object;
+   struct  {
+      int r, g, b, a;
+      Evas_List points;
    } current, previous;
 };
 

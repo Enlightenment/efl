@@ -219,6 +219,19 @@ evas_set_color(Evas e, Evas_Object o, int r, int g, int b, int a)
 	o->changed = 1;
 	e->changed = 1;
 	break;
+     case OBJECT_POLYGON:
+	  {
+	     Evas_Object_Poly oo;
+	     
+	     oo = (Evas_Object_Poly)o;
+	     oo->current.r = r;
+	     oo->current.g = g;
+	     oo->current.b = b;
+	     oo->current.a = a;
+	  }
+	o->changed = 1;
+	e->changed = 1;
+	break;
      default:
 	break;
      }

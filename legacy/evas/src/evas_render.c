@@ -82,6 +82,7 @@ evas_render(Evas e)
    void (*func_rectangle_draw) (Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x, int y, int w, int h, int r, int g, int b, int a);
    void (*func_line_draw) (Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x1, int y1, int x2, int y2, int r, int g, int b, int a);
    void (*func_gradient_draw) (void *gr, Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x, int y, int w, int h, double angle);
+   void (*func_poly_draw) (Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, Evas_List points, int r, int g, int b, int a);
    
    if (!e) return;
    if ((!e->changed) || 
@@ -111,6 +112,7 @@ evas_render(Evas e)
 	func_rectangle_draw      = __evas_imlib_rectangle_draw;
 	func_line_draw           = __evas_imlib_line_draw;
 	func_gradient_draw       = __evas_imlib_gradient_draw;
+	func_poly_draw           = __evas_imlib_poly_draw;
 	break;
      case RENDER_METHOD_BASIC_HARDWARE:
 	func_draw_add_rect       = __evas_x11_draw_add_rect;
@@ -128,6 +130,7 @@ evas_render(Evas e)
 	func_rectangle_draw      = __evas_x11_rectangle_draw;
 	func_line_draw           = __evas_x11_line_draw;
 	func_gradient_draw       = __evas_x11_gradient_draw;
+	func_poly_draw           = __evas_x11_poly_draw;
 	break;
      case RENDER_METHOD_3D_HARDWARE:
 	func_draw_add_rect       = __evas_gl_draw_add_rect;
@@ -145,6 +148,7 @@ evas_render(Evas e)
 	func_rectangle_draw      = __evas_gl_rectangle_draw;
 	func_line_draw           = __evas_gl_line_draw;
 	func_gradient_draw       = __evas_gl_gradient_draw;
+	func_poly_draw           = __evas_gl_poly_draw;
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
 	break;
@@ -164,6 +168,7 @@ evas_render(Evas e)
 	func_rectangle_draw      = __evas_image_rectangle_draw;
 	func_line_draw           = __evas_image_line_draw;
 	func_gradient_draw       = __evas_image_gradient_draw;
+	func_poly_draw           = __evas_image_poly_draw;
 	break;
      default:
 	break;
@@ -192,6 +197,7 @@ evas_render(Evas e)
 
 	     real_change = 0;
 	     o = ll->data;
+	     
 	     if (o->delete_me) 
 		delete_objects = evas_list_append(delete_objects, o);
 	     if (o->changed)
@@ -208,6 +214,8 @@ evas_render(Evas e)
 			(o->current.stacking)))
 		      )
 		     real_change = 1;
+		  
+		  
 		  o->current.stacking = 0;
 		  if ((!real_change) && (o->current.visible))
 		    {
@@ -298,6 +306,20 @@ evas_render(Evas e)
 				     (oo->current.angle != oo->previous.angle))
 				    real_change = 1;
 				 oo->current.new_gradient = 0;
+				 oo->previous = oo->current;
+			      }
+			    break;
+			 case OBJECT_POLYGON:
+			      {
+				 Evas_Object_Poly oo;
+				 
+				 oo = o;
+				 if ((oo->previous.points != oo->current.points) ||
+				     (oo->current.r != oo->previous.r) ||
+				     (oo->current.g != oo->previous.g) ||
+				     (oo->current.b != oo->previous.b) ||
+				     (oo->current.a != oo->previous.a))
+				    real_change = 1;
 				 oo->previous = oo->current;
 			      }
 			    break;
@@ -619,6 +641,25 @@ evas_render(Evas e)
 								 o->current.w,
 								 o->current.h,
 								 oo->current.angle);
+					}
+				      break;
+				   case OBJECT_POLYGON:
+					{
+					   Evas_Object_Poly oo;
+					   
+					   oo = o;
+					   
+					   if (oo->current.points)
+					      func_poly_draw(e->current.display,
+							     e->current.image,
+							     e->current.drawable,
+							     e->current.drawable_width,
+							     e->current.drawable_height,
+							     oo->current.points,
+							     oo->current.r,
+							     oo->current.g,
+							     oo->current.b,
+							     oo->current.a);
 					}
 				      break;
 				   default:
