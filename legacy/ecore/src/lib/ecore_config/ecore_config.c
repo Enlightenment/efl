@@ -12,6 +12,11 @@
 #include <unistd.h>
 #include <util.h>
 
+Ecore_Config_Server *__server_global = NULL;
+Ecore_Config_Server *__server_local = NULL;
+Ecore_Config_Bundle *__bundle_local = NULL;
+char                *__app_name = NULL;
+
 Ecore_Config_Server *ipc_init(char *name);
 int ipc_exit(void);
 
