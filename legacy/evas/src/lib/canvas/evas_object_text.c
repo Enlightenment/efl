@@ -671,6 +671,7 @@ evas_object_text_char_pos_get(Evas_Object *obj, int pos, double *cx, double *cy,
 {
    Evas_Object_Text *o;
    int ret, x, y, w, h;
+   int inset;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
@@ -679,6 +680,10 @@ evas_object_text_char_pos_get(Evas_Object *obj, int pos, double *cx, double *cy,
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
    return 0;
    MAGIC_CHECK_END();
+   inset = 
+     obj->layer->evas->engine.func->font_inset_get(obj->layer->evas->engine.data.output,
+						   o->engine_data,
+						   o->cur.text);
    ret = obj->layer->evas->engine.func->font_char_coords_get(obj->layer->evas->engine.data.output,
 							     o->engine_data,
 							     o->cur.text,
@@ -686,6 +691,21 @@ evas_object_text_char_pos_get(Evas_Object *obj, int pos, double *cx, double *cy,
 							     &x, &y, 
 							     &w, &h);
    y += o->max_ascent;
+   x -= inset;
+   if (x < 0)
+     {
+	w += x;
+	x = 0;
+     }
+   if (x + w > obj->cur.geometry.w) w = obj->cur.geometry.w - x;
+   if (w < 0) w = 0;
+   if (y < 0)
+     {
+	h += y;
+	y = 0;
+     }
+   if (y + h > obj->cur.geometry.h) h = obj->cur.geometry.h - y;
+   if (h < 0) h = 0;
    if (cx) *cx = x;
    if (cy) *cy = y;
    if (cw) *cw = w;
@@ -704,21 +724,42 @@ evas_object_text_char_coords_get(Evas_Object *obj, double x, double y, double *c
 {
    Evas_Object_Text *o;
    int ret, rx, ry, rw, rh;
+   int inset;
       
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return 0;
+   return -1;
    MAGIC_CHECK_END();
    o = (Evas_Object_Text *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
-   return 0;
+   return -1;
    MAGIC_CHECK_END();
+   inset = 
+     obj->layer->evas->engine.func->font_inset_get(obj->layer->evas->engine.data.output,
+						   o->engine_data,
+						   o->cur.text);
    ret = obj->layer->evas->engine.func->font_char_at_coords_get(obj->layer->evas->engine.data.output,
 								o->engine_data,
 								o->cur.text,
-								x, y - o->max_ascent, 
+								x + inset,
+								y - o->max_ascent, 
 								&rx, &ry, 
 								&rw, &rh);
    ry += o->max_ascent;
+   rx -= inset;
+   if (rx < 0)
+     {
+	rw += rx;
+	rx = 0;
+     }
+   if (rx + rw > obj->cur.geometry.w) rw = obj->cur.geometry.w - rx;
+   if (rw < 0) rw = 0;
+   if (ry < 0)
+     {
+	rh += ry;
+	ry = 0;
+     }
+   if (ry + rh > obj->cur.geometry.h) rh = obj->cur.geometry.h - ry;
+   if (rh < 0) rh = 0;
    if (cx) *cx = rx;
    if (cy) *cy = ry;
    if (cw) *cw = rw;

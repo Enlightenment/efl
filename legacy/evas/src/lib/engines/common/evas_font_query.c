@@ -43,11 +43,11 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
 	chr_y = (pen_y >> 8)  + fg->glyph_out->top;
 	chr_w = fg->glyph_out->bitmap.width;
 	
-	if (chr_x < start_x) start_x = chr_x;
+	if (!prev_index) start_x = chr_x;
 	if ((chr_x + chr_w) > end_x) end_x = chr_x + chr_w;
 	
 	pen_x += fg->glyph->advance.x >> 8;
-	prev_index = index;	
+	prev_index = index;
      }
    if (w) *w = end_x - start_x;
    if (h) *h = evas_common_font_max_ascent_get(fn) + evas_common_font_max_descent_get(fn);
@@ -125,70 +125,18 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *text, int pos, int
 {
    int use_kerning;
    int pen_x, pen_y;
+   int prev_chr_end;
    int chr;
+   int asc, desc;
    FT_UInt prev_index;
    
    pen_x = 0;
    pen_y = 0;
    use_kerning = FT_HAS_KERNING(fn->ft.face);
    prev_index = 0;
-   for (chr = 0; text[chr];)
-     {
-	int pchr;
-	FT_UInt index;
-	RGBA_Font_Glyph *fg;
-	int chr_x, chr_y, chr_w;	
-        int gl;
-	FT_Vector delta;
-	
-	pchr = chr;
-	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
-	if (gl == 0) break;
-	index = FT_Get_Char_Index(fn->ft.face, gl);
-	if ((use_kerning) && (prev_index) && (index))
-	  {
-	     FT_Get_Kerning(fn->ft.face, prev_index, index,
-			    ft_kerning_default, &delta);
-	     pen_x += delta.x << 2;
-	  }
-	fg = evas_common_font_cache_glyph_get(fn, index);
-	if (!fg) continue;
-	
-	chr_x = (pen_x >> 8) + fg->glyph_out->left;
-	chr_y = (pen_y >> 8) + fg->glyph_out->top;
-	chr_w = fg->glyph_out->bitmap.width;
-	if (text[chr])
-	  {
-	     if (chr_w < (fg->glyph->advance.x >> 16))
-	       chr_w = fg->glyph->advance.x >> 16;
-	  }
-	if (pchr == pos)
-	  {
-	     if (cx) *cx = chr_x;
-	     if (cy) *cy = - evas_common_font_max_ascent_get(fn);
-	     if (cw) *cw = chr_w;
-	     if (ch) *ch = evas_common_font_max_ascent_get(fn) + evas_common_font_max_descent_get(fn);
-	     return 1;
-	  }
-	pen_x += fg->glyph->advance.x >> 8;
-	prev_index = index;
-     }
-   return 0;
-}
-
-/* char pos of text at xy pos */
-int
-evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y, int *cx, int *cy, int *cw, int *ch)
-{
-   int use_kerning;
-   int pen_x, pen_y;
-   int chr;
-   FT_UInt prev_index;
-   
-   pen_x = 0;
-   pen_y = 0;
-   use_kerning = FT_HAS_KERNING(fn->ft.face);
-   prev_index = 0;
+   prev_chr_end = 0;
+   asc = evas_common_font_max_ascent_get(fn);
+   desc = evas_common_font_max_descent_get(fn);
    for (chr = 0; text[chr];)
      {
 	int pchr;
@@ -207,32 +155,111 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y
 	  {
 	     FT_Get_Kerning(fn->ft.face, prev_index, index,
 			    ft_kerning_default, &delta);
-	     kern = delta.x << 6;
+	     kern = delta.x << 2;
 	     pen_x += kern;
 	  }
 	fg = evas_common_font_cache_glyph_get(fn, index);
 	if (!fg) continue;
 	
+	if (kern < 0) kern = 0;	
 	chr_x = ((pen_x - kern) >> 8) + fg->glyph_out->left;
 	chr_y = (pen_y >> 8) + fg->glyph_out->top;
 	chr_w = fg->glyph_out->bitmap.width + (kern >> 8);
 	if (text[chr])
 	  {
-	     if (chr_w < (((fg->glyph->advance.x + 0xffff) >> 16) + 
-			  (((pen_x & 0xff) + 0xff) >> 8) + 1))
-	       chr_w = ((fg->glyph->advance.x + 0xffff) >> 16) +
-		 (((pen_x & 0xff) + 0xff) >> 8) + 1;
+	     int advw;
+	     
+	     advw = ((fg->glyph->advance.x + (kern << 8)) >> 16);
+	     if (chr_w < advw) chr_w = advw;
 	  }
-	if ((x >= chr_x) && (x <= (chr_x + chr_w)) &&
-	    (y > - evas_common_font_max_ascent_get(fn)) &&
-	    (y < evas_common_font_max_descent_get(fn)))
+	if (chr_x > prev_chr_end)
+	  {
+	     chr_w += (chr_x - prev_chr_end);
+	     chr_x = prev_chr_end;
+	  }
+	if (pchr == pos)
 	  {
 	     if (cx) *cx = chr_x;
-	     if (cy) *cy = - evas_common_font_max_ascent_get(fn);
+	     if (cy) *cy = -asc;
 	     if (cw) *cw = chr_w;
-	     if (ch) *ch = evas_common_font_max_ascent_get(fn) + evas_common_font_max_descent_get(fn);
+	     if (ch) *ch = asc + desc;
+	     return 1;
+	  }
+	prev_chr_end = chr_x + chr_w;
+	pen_x += fg->glyph->advance.x >> 8;
+	prev_index = index;
+     }
+   return 0;
+}
+
+/* char pos of text at xy pos */
+int
+evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y, int *cx, int *cy, int *cw, int *ch)
+{
+   int use_kerning;
+   int pen_x, pen_y;
+   int prev_chr_end;
+   int chr;
+   int asc, desc;
+   FT_UInt prev_index;
+   
+   pen_x = 0;
+   pen_y = 0;
+   use_kerning = FT_HAS_KERNING(fn->ft.face);
+   prev_index = 0;
+   prev_chr_end = 0;
+   asc = evas_common_font_max_ascent_get(fn);
+   desc = evas_common_font_max_descent_get(fn);
+   for (chr = 0; text[chr];)
+     {
+	int pchr;
+	FT_UInt index;
+	RGBA_Font_Glyph *fg;
+	int chr_x, chr_y, chr_w;
+        int gl, kern;
+	FT_Vector delta;
+
+	pchr = chr;
+	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
+	if (gl == 0) break;
+	index = FT_Get_Char_Index(fn->ft.face, gl);
+	kern = 0;
+	if ((use_kerning) && (prev_index) && (index))
+	  {
+	     FT_Get_Kerning(fn->ft.face, prev_index, index,
+			    ft_kerning_default, &delta);
+	     kern = delta.x << 2;
+	     pen_x += kern;
+	  }
+	fg = evas_common_font_cache_glyph_get(fn, index);
+	if (!fg) continue;
+	
+	if (kern < 0) kern = 0;	
+	chr_x = ((pen_x - kern) >> 8) + fg->glyph_out->left;
+	chr_y = (pen_y >> 8) + fg->glyph_out->top;
+	chr_w = fg->glyph_out->bitmap.width + (kern >> 8);
+	if (text[chr])
+	  {
+	     int advw;
+	     
+	     advw = ((fg->glyph->advance.x + (kern << 8)) >> 16);
+	     if (chr_w < advw) chr_w = advw;
+	  }
+	if (chr_x > prev_chr_end)
+	  {
+	     chr_w += (chr_x - prev_chr_end);
+	     chr_x = prev_chr_end;
+	  }
+	if ((x >= chr_x) && (x <= (chr_x + chr_w)) &&
+	    (y > -asc) && (y < desc))
+	  {
+	     if (cx) *cx = chr_x;
+	     if (cy) *cy = -asc;
+	     if (cw) *cw = chr_w;
+	     if (ch) *ch = asc + desc;
 	     return pchr;
 	  }
+	prev_chr_end = chr_x + chr_w;
 	pen_x += fg->glyph->advance.x >> 8;
 	prev_index = index;
      }
