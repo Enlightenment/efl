@@ -22,7 +22,7 @@ Q: Is there a packaged version of SGI's GLU Implementation for my computer
    anywhere?
 
 A: At present SGI's GLU Implementation is available only in the form of a
-   Redhat package from http://www.mesa3d.org/download.html You should
+   Redhat package from http://www.mesa3d.org/downloads/sgi.html. You should
    download this package and convert it to whatever distribution you are
    on using "alien".
 

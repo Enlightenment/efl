@@ -162,7 +162,7 @@ if test "x$have_gl" = "xyes"; then
    echo ""
    echo "ERROR: evas needs a system with libGLU 1.3"
    echo "You can obtain it from:"
-   echo "  http://www.mesa3d.org/download.html"
+   echo "  http://www.mesa3d.org/downloads/sgi.html"
    echo "You will need to obtain the SGI'd libGLU."
    echo "debian: download the rpm and use alien to convert it"
    echo ""
