@@ -750,6 +750,9 @@ void             ecore_x_window_prop_withdrawn_set(Ecore_X_Window win, int withd
 void             ecore_x_window_prop_desktop_request(Ecore_X_Window win, long desktop);
 void             ecore_x_window_prop_desktop_set(Ecore_X_Window win, long desktop);
 long             ecore_x_window_prop_desktop_get(Ecore_X_Window win);
+/* API Change: use enum Ecore_X_Window_Type instead */
+void             ecore_x_window_prop_window_type_set(Ecore_X_Window win, Ecore_X_Window_Type type);
+#if 0
 void             ecore_x_window_prop_window_type_set(Ecore_X_Window win, Ecore_X_Atom type);
 void             ecore_x_window_prop_window_type_desktop_set(Ecore_X_Window win);
 void             ecore_x_window_prop_window_type_dock_set(Ecore_X_Window win);
@@ -759,6 +762,7 @@ void             ecore_x_window_prop_window_type_utility_set(Ecore_X_Window win)
 void             ecore_x_window_prop_window_type_splash_set(Ecore_X_Window win);
 void             ecore_x_window_prop_window_type_dialog_set(Ecore_X_Window win);
 void             ecore_x_window_prop_window_type_normal_set(Ecore_X_Window win);
+#endif
 void             ecore_x_window_prop_window_opacity_set(Ecore_X_Window win, int opacity);
 int              ecore_x_window_prop_window_opacity_get(Ecore_X_Window win);
 void             ecore_x_window_prop_state_set(Ecore_X_Window win, Ecore_X_Window_State s);

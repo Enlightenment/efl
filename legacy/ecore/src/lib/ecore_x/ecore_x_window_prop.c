@@ -843,7 +843,6 @@ ecore_x_window_prop_desktop_get(Ecore_X_Window win)
 }
 
 
-#if 0
 /*
  * Suggesting a slight change of API.
  * The ECORE_X_WINDOW_TYPE_...'s I think we want in Ecore_X.h anyway.
@@ -853,6 +852,7 @@ ecore_x_window_prop_desktop_get(Ecore_X_Window win)
  * Setting a window to type desktop would then become
  * ecore_x_window_prop_window_type_set(win, ECORE_X_WINDOW_TYPE_DESKTOP);
  * /Kim
+ * Addendum: API change enforced by xcomp
  */
 
 static Ecore_X_Atom 
@@ -899,8 +899,9 @@ ecore_x_window_prop_window_type_set(Ecore_X_Window win, Ecore_X_Window_Type type
       ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_window_type,
 				       XA_ATOM, 32, (unsigned char*)&a, 1);
 }
-#endif
 
+
+#if 0
 /**
  * Change a window's type.
  * @param win The Window
@@ -930,6 +931,7 @@ ecore_x_window_prop_window_type_set(Ecore_X_Window win, Ecore_X_Atom type)
 	  }
 	free(data);
 }
+#endif
 
 static Ecore_X_Atom 
 _ecore_x_window_prop_state_atom_get(Ecore_X_Window_State s)
