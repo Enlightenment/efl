@@ -459,6 +459,11 @@ _ecore_main_loop_iterate_internal(int once_only)
 	  _ecore_fps_debug_runtime_add(t2 - t1);
      }
    start_loop:
+   if (do_quit) 
+     {
+	in_main_loop--;
+	return;
+     }
    /* init flags */
    have_event = have_signal = 0;
    next_time = _ecore_timer_next_get();	
@@ -489,6 +494,7 @@ _ecore_main_loop_iterate_internal(int once_only)
 		  if (have_event || have_signal) break;
 		  next_time = _ecore_timer_next_get();
 		  if (next_time >= 0) goto start_loop;
+		  if (do_quit) break;
 	       }
 	  }
      }
@@ -523,6 +529,7 @@ _ecore_main_loop_iterate_internal(int once_only)
 		  if (t >= next_time) break;
 		  next_time = _ecore_timer_next_get();
 		  if (next_time < 0) goto start_loop;
+		  if (do_quit) break;
 	       }
 	  }
      }
