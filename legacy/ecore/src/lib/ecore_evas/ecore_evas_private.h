@@ -14,7 +14,7 @@
 #include <Evas_Engine_GL_X11.h>
 #endif
 #endif
-#ifdef BUILD_ECORE_FB
+#ifdef BUILD_ECORE_EVAS_FB
 #include <Evas_Engine_FB.h>
 #endif
 
@@ -79,7 +79,7 @@ struct _Ecore_Evas_Engine
       Region         damages;
    } x;
 #endif   
-#ifdef BUILD_ECORE_FB
+#ifdef BUILD_ECORE_EVAS_FB
    struct {
       int real_w;
       int real_h;
@@ -159,7 +159,7 @@ struct _Ecore_Evas
 #ifdef BUILD_ECORE_X
 int _ecore_evas_x_shutdown(void);
 #endif
-#ifdef BUILD_ECORE_FB
+#ifdef BUILD_ECORE_EVAS_FB
 int _ecore_evas_fb_shutdown(void);
 #endif
 

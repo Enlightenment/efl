@@ -37,7 +37,7 @@ ecore_evas_shutdown(void)
 #ifdef BUILD_ECORE_X
 	while (_ecore_evas_x_shutdown());
 #endif
-#ifdef BUILD_ECORE_FB
+#ifdef BUILD_ECORE_EVAS_FB
 	while (_ecore_evas_fb_shutdown());
 #endif
      }

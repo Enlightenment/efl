@@ -3,11 +3,11 @@
 #include "ecore_private.h"
 #include "ecore_evas_private.h"
 #include "Ecore_Evas.h"
-#ifdef BUILD_ECORE_FB
+#ifdef BUILD_ECORE_EVAS_FB
 #include "Ecore_Fb.h"
 #endif
 
-#ifdef BUILD_ECORE_FB
+#ifdef BUILD_ECORE_EVAS_FB
 static int _ecore_evas_init_count = 0;
 
 static Ecore_Evas *ecore_evases = NULL;
@@ -435,7 +435,7 @@ static const Ecore_Evas_Engine_Func _ecore_fb_engine_func =
 Ecore_Evas *
 ecore_evas_fb_new(char *disp_name, int rotation, int w, int h)
 {
-#ifdef BUILD_ECORE_FB
+#ifdef BUILD_ECORE_EVAS_FB
    Evas_Engine_Info_FB *einfo;
    Ecore_Evas *ee;
    int rmethod;

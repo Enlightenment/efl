@@ -366,6 +366,37 @@ else
   AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, false)
 fi
 
+have_ecore_evas_fb="";
+
+AC_MSG_CHECKING(whether ecore_evas fb support is to be built)
+
+AC_ARG_ENABLE(ecore-evas-fb, 
+[  --enable-ecore-evas-fb          enable fb in the ecore_evas module], [
+  if [ test "$enableval" = "yes" ]; then  
+    AC_MSG_RESULT(yes)
+    have_ecore_evas_fb="yes"
+  else
+    AC_MSG_RESULT(no)
+  fi
+], [
+  AC_MSG_RESULT(yes)
+  have_ecore_evas_fb="yes"
+]
+)
+
+if test "x$have_ecore_evas_fb" = "xyes"; then
+  AC_CHECK_HEADERS(Evas_Engine_FB.h,
+    [
+      AM_CONDITIONAL(BUILD_ECORE_EVAS_FB, true)
+      AC_DEFINE(BUILD_ECORE_EVAS_FB)
+    ], AM_CONDITIONAL(BUILD_ECORE_EVAS_FB, false),
+    [
+      #include <Evas.h>
+    ])
+else
+  AM_CONDITIONAL(BUILD_ECORE_EVAS_FB, false)
+fi
+
 AC_MSG_CHECKING(whether ecore_con module is to be built)
 
 have_ecore_con="";
