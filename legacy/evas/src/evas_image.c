@@ -119,7 +119,10 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
    IF_OBJ(o, OBJECT_IMAGE) return;
    oo = o;
    if (((oo->current.file) && (file) && (strcmp(file, oo->current.file))) ||
-       ((!oo->current.file) && (file)))
+       ((!oo->current.file) && (file)) ||
+       (oo->current.image.w == 0) ||
+       (oo->current.image.h == 0)
+       )
      {
 	if (oo->current.file)
 	   free(oo->current.file);
@@ -145,6 +148,7 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
 	       }
 	     else
 	       {
+		  printf("load failed ->%s<-!\n", file);
 		  oo->current.image.w = 0;
 		  oo->current.image.h = 0;
 		  evas_resize(e, o, 
@@ -161,6 +165,7 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
      }
    else if (!file)
      {
+	printf("!file\n");
         if (oo->current.file)
 	  free(oo->current.file);
 	oo->previous.file = NULL;
@@ -177,6 +182,9 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
 	oo->load_error = IMLIB_LOAD_ERROR_NONE;
 	o->changed = 1;
 	e->changed = 1;
+     }
+   else
+     {
      }
 }
 
