@@ -9,6 +9,17 @@ void       _edje_file_del(Edje *ed);
 void       _edje_file_free(Edje_File *edf);
 void       _edje_collection_free(Edje_Part_Collection *ec);
 
+static void _edje_mouse_in_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
+static void _edje_mouse_out_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
+static void _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
+static void _edje_mouse_up_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
+static void _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
+static void _edje_mouse_wheel_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
+static int  _edje_timer_cb(void *data);
+static int  _edje_program_run_iterate(Edje_Running_Program *runp, double tim);
+static void _edje_program_run(Edje *ed, Edje_Program *pr);
+static void _edje_emit(Edje *ed, char *sig, char *src);
+static int  _edje_glob_match(char *str, char *glob);
 static void _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos);
 static void _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1, char *d2, double v2);
 static void _edje_part_recalc_single(Edje *ed, Edje_Real_Part *ep, Edje_Part_Description *desc, Edje_Part_Description *chosen_desc, Edje_Real_Part *rel1_to, Edje_Real_Part *rel2_to, Edje_Real_Part *confine_to, Edje_Calc_Params *params);
@@ -43,6 +54,11 @@ Eet_Data_Descriptor *_edje_edd_edje_part = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_image_id = NULL;
 
+static int          _edje_anim_count = 0;
+static double       _edje_frametime = 1.0 / 60.0;
+static Ecore_Timer *_edje_timer = NULL;
+static Evas_List   *_edje_animators = NULL;
+
 static Evas_Smart *_edje_smart = NULL;
 
 void
@@ -53,6 +69,24 @@ edje_init(void)
    if (initted) return;
    initted = 1;
    _edje_edd_setup();
+}
+
+void
+edje_frametime_set(double t)
+{
+   if (t == _edje_frametime) return;
+   _edje_frametime = t;
+   if (_edje_timer)
+     {
+	ecore_timer_del(_edje_timer);
+	_edje_timer = ecore_timer_add(_edje_frametime, _edje_timer_cb, NULL);
+     }
+}
+
+double
+edje_frametime_get(void)
+{
+   return _edje_frametime;
 }
 
 Evas_Object *
@@ -120,6 +154,34 @@ edje_file_set(Evas_Object *obj, const char *file, const char *part)
 	       rp->object = evas_object_image_add(ed->evas);
 	     else if (ep->type == EDJE_PART_TYPE_TEXT)
 	       rp->object = evas_object_text_add(ed->evas);
+	     if (ep->mouse_events)
+	       {
+		  evas_object_event_callback_add(rp->object, 
+						 EVAS_CALLBACK_MOUSE_IN,
+						 _edje_mouse_in_cb,
+						 ed);
+		  evas_object_event_callback_add(rp->object, 
+						 EVAS_CALLBACK_MOUSE_OUT,
+						 _edje_mouse_out_cb,
+						 ed);
+		  evas_object_event_callback_add(rp->object, 
+						 EVAS_CALLBACK_MOUSE_DOWN,
+						 _edje_mouse_down_cb,
+						 ed);
+		  evas_object_event_callback_add(rp->object, 
+						 EVAS_CALLBACK_MOUSE_UP,
+						 _edje_mouse_up_cb,
+						 ed);
+		  evas_object_event_callback_add(rp->object, 
+						 EVAS_CALLBACK_MOUSE_MOVE,
+						 _edje_mouse_move_cb,
+						 ed);
+		  evas_object_event_callback_add(rp->object, 
+						 EVAS_CALLBACK_MOUSE_WHEEL,
+						 _edje_mouse_wheel_cb,
+						 ed);
+		  evas_object_data_set(rp->object, "real_part", rp);
+	       }
 	     evas_object_clip_set(rp->object, ed->clipper);
 	     evas_object_show(rp->object);
 	     rp->part = ep;
@@ -136,6 +198,7 @@ edje_file_set(Evas_Object *obj, const char *file, const char *part)
 	  }
 	ed->dirty = 1;
 	_edje_recalc(ed);
+	_edje_emit(ed, "load", ed->part);
      }
 }
 
@@ -175,6 +238,9 @@ _edje_add(Evas_Object *obj)
 void
 _edje_del(Edje *ed)
 {
+   _edje_file_del(ed);
+   if (ed->path) free(ed->path);
+   if (ed->part) free(ed->part);
    evas_object_del(ed->clipper);
    free(ed);
 }
@@ -305,6 +371,254 @@ _edje_collection_free(Edje_Part_Collection *ec)
 /* manipulation calls */
 
 static void
+_edje_mouse_in_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
+{
+   Evas_Event_Mouse_In *ev;
+   Edje *ed;
+   Edje_Real_Part *rp;
+   
+   ev = event_info;
+   ed = data;
+   rp = evas_object_data_get(obj, "real_part");
+   if (!rp) return;
+   _edje_emit(ed, "mouse,in", rp->part->name);
+}
+
+static void
+_edje_mouse_out_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
+{
+   Evas_Event_Mouse_Out *ev;
+   Edje *ed;
+   Edje_Real_Part *rp;
+   
+   ev = event_info;
+   ed = data;
+   rp = evas_object_data_get(obj, "real_part");
+   if (!rp) return;
+   _edje_emit(ed, "mouse,out", rp->part->name);
+}
+
+static void
+_edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
+{
+   Evas_Event_Mouse_Down *ev;
+   Edje *ed;
+   Edje_Real_Part *rp;
+   char buf[256];
+   
+   ev = event_info;
+   ed = data;
+   rp = evas_object_data_get(obj, "real_part");
+   if (!rp) return;
+   snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
+   _edje_emit(ed, buf, rp->part->name);
+}
+
+static void
+_edje_mouse_up_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
+{
+   Evas_Event_Mouse_Up *ev;
+   Edje *ed;
+   Edje_Real_Part *rp;
+   char buf[256];
+   
+   ev = event_info;
+   ed = data;
+   rp = evas_object_data_get(obj, "real_part");
+   if (!rp) return;
+   snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
+   _edje_emit(ed, buf, rp->part->name);
+}
+
+static void
+_edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
+{
+   Evas_Event_Mouse_Move *ev;
+   Edje *ed;
+   Edje_Real_Part *rp;
+   
+   ev = event_info;
+   ed = data;
+   rp = evas_object_data_get(obj, "real_part");
+   if (!rp) return;
+   _edje_emit(ed, "mouse,move", rp->part->name);
+}
+
+static void
+_edje_mouse_wheel_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
+{
+   Evas_Event_Mouse_Wheel *ev;
+   Edje *ed;
+   Edje_Real_Part *rp;
+   char buf[256];
+   
+   ev = event_info;
+   ed = data;
+   rp = evas_object_data_get(obj, "real_part");
+   if (!rp) return;
+   snprintf(buf, sizeof(buf), "mouse,wheel,%i,%i", ev->direction, (ev->z < 0) ? (-1) : (1));
+   _edje_emit(ed, buf, rp->part->name);
+}
+
+static int
+_edje_timer_cb(void *data)
+{
+   double t;
+   Evas_List *l;
+   Evas_List *animl = NULL;
+   
+   t = ecore_time_get();
+   for (l = _edje_animators; l; l = l->next)
+     animl = evas_list_append(animl, l->data);
+   while (animl)
+     {
+	Edje *ed;
+	Evas_List *ll, *newl = NULL;
+	
+	ed = animl->data;
+	animl = evas_list_remove(animl, animl->data);
+	for (ll = ed->actions; ll; ll = ll->next)
+	  newl = evas_list_append(newl, ll->data);
+	while (newl)
+	  {
+	     Edje_Running_Program *runp;
+	     
+	     runp = newl->data;
+	     newl = evas_list_remove(newl, newl->data);
+	     _edje_program_run_iterate(runp, t);
+	  }
+     }
+   if (_edje_anim_count > 0) return 1;
+   _edje_timer = NULL;
+   return 0;
+}
+
+static int
+_edje_program_run_iterate(Edje_Running_Program *runp, double tim)
+{
+   double t, total;
+   Evas_List *l;
+   
+   t = tim - runp->start_time;
+   total = runp->program->tween.time;
+   t /= total;
+   if (t > 1.0) t = 1.0;
+   for (l = runp->program->targets; l; l = l->next)
+     {
+	Edje_Real_Part *rp;
+	Edje_Program_Target *pt;
+	
+	pt = l->data;
+	rp = evas_list_nth(runp->edje->parts, pt->id);
+	if (rp) _edje_part_pos_set(runp->edje, rp, 
+				   runp->program->tween.mode, t);
+     }
+   if (t >= 1.0)
+     {
+	for (l = runp->program->targets; l; l = l->next)
+	  {
+	     Edje_Real_Part *rp;
+	     Edje_Program_Target *pt;
+	     
+	     pt = l->data;
+	     rp = evas_list_nth(runp->edje->parts, pt->id);
+	     if (rp)
+	       {
+		  _edje_part_description_apply(runp->edje, rp, 
+					       runp->program->state, 
+					       runp->program->value,
+					       NULL,
+					       0.0);
+		  _edje_part_pos_set(runp->edje, rp, 
+				     runp->program->tween.mode, 0.0);
+	       }
+	  }
+	_edje_recalc(runp->edje);
+	_edje_anim_count--;
+	runp->edje->actions = evas_list_remove(runp->edje->actions, runp);
+	if (!runp->edje->actions)
+	  _edje_animators = evas_list_remove(_edje_animators, runp->edje);
+	_edje_emit(runp->edje, "anim,stop", runp->program->name);
+	if (runp->program->after >= 0)
+	  {
+	     Edje_Program *pr;
+	     
+	     pr = evas_list_nth(runp->edje->collection->programs, 
+				runp->program->after);
+	     if (pr) _edje_program_run(runp->edje, pr);
+	  }
+	free(runp);
+	return  0;
+     }
+   _edje_recalc(runp->edje);
+   return 1;
+}
+
+static void
+_edje_program_run(Edje *ed, Edje_Program *pr)
+{
+   Evas_List *l;
+
+   for (l = pr->targets; l; l = l->next)
+     {
+	Edje_Real_Part *rp;
+	Edje_Program_Target *pt;
+	
+	pt = l->data;
+	rp = evas_list_nth(ed->parts, pt->id);
+	if (rp)
+	  {
+	     _edje_part_description_apply(ed, rp, 
+					  rp->param1.description->state.name,
+					  rp->param1.description->state.value, 
+					  pr->state, 
+					  pr->value);
+	     _edje_part_pos_set(ed, rp, pr->tween.mode, 0.0);
+	  }
+     }
+   _edje_emit(ed, "anim,start", pr->name);
+   if (pr->tween.time > 0.0)
+     {
+	Edje_Running_Program *runp;
+	
+	runp = calloc(1, sizeof(Edje_Running_Program));
+	if (!ed->actions)
+	  _edje_animators = evas_list_append(_edje_animators, ed);
+	ed->actions = evas_list_append(ed->actions, runp);
+	runp->start_time = ecore_time_get();
+	runp->edje = ed;
+	runp->program = pr;
+	if (!_edje_timer)
+	  _edje_timer = ecore_timer_add(_edje_frametime, _edje_timer_cb, NULL);
+	_edje_anim_count++;
+     }
+}
+
+static void
+_edje_emit(Edje *ed, char *sig, char *src)
+{
+   Evas_List *l;
+   
+   printf("EMIT %s %s\n", sig, src);
+   for (l = ed->collection->programs; l; l = l->next)
+     {
+	Edje_Program *pr;
+	
+	pr = l->data;
+	if ((_edje_glob_match(sig, pr->signal)) &&
+	    (_edje_glob_match(src, pr->source)))
+	  _edje_program_run(ed, pr);
+     }
+}
+
+static int
+_edje_glob_match(char *str, char *glob)
+{
+   if (!fnmatch(glob, str, 0)) return 1;
+   return 0;
+}
+
+static void
 _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos)
 {
    double npos;
@@ -325,16 +639,17 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos)
 	npos = sin(pos * PI / 2.0);
 	break;
       case EDJE_TWEEN_MODE_LINEAR:
+	npos = pos;
+	break;
       default:
-	npos = ep->description_pos;
 	break;
      }
    if (npos == ep->description_pos) return;
-   
+
    ep->description_pos = npos;
    
    ed->dirty = 1;
-   ep->dirty = 1;   
+   ep->dirty = 1;
 }
 
 static void
@@ -357,10 +672,12 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1,
 	cd2 = ep->param2.description->state.name;
 	cv2 = ep->param2.description->state.value;
      }
+   d1_change = 1;
+   d2_change = 1;
    if ((v1 != cv1) || (strcmp(d1, cd1))) d1_change = 1;
    if ((v2 != cv2) || (strcmp(d2, cd2))) d2_change = 1;
    if ((!d1_change) && (!d2_change)) return;
-   
+
    if (d1_change)
      {
 	if (!strcmp(d1, "default") && (v1 == 0.0))

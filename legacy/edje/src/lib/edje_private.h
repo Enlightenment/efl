@@ -8,6 +8,7 @@
 #include <Eet.h>
 
 #include <math.h>
+#include <fnmatch.h>
 
 /* HOW THIS ALL WORKS:
  * -------------------
@@ -290,6 +291,7 @@ struct _Edje_Part_Description
 
 typedef struct _Edje Edje;
 typedef struct _Edje_Real_Part Edje_Real_Part;
+typedef struct _Edje_Running_Program Edje_Running_Program;
 
 struct _Edje
 {
@@ -329,6 +331,13 @@ struct _Edje_Real_Part
       Edje_Real_Part        *rel2_to;
       Edje_Real_Part        *confine_to;
    } param1, param2;
+};
+
+struct _Edje_Running_Program
+{
+   Edje           *edje;
+   Edje_Program   *program;
+   double          start_time;
 };
 
 typedef struct _Edje_Calc_Params Edje_Calc_Params;

@@ -1,6 +1,127 @@
 images {
    image, "bg.png" LOSSY 98;
    image, "e.png"  LOSSY 98;
+   // used for anim
+   image, "e001.png" LOSSY 98;
+   image, "e002.png" LOSSY 98;
+   image, "e003.png" LOSSY 98;
+   image, "e004.png" LOSSY 98;
+   image, "e005.png" LOSSY 98;
+   image, "e006.png" LOSSY 98;
+   image, "e007.png" LOSSY 98;
+   image, "e008.png" LOSSY 98;
+   image, "e009.png" LOSSY 98;
+   image, "e010.png" LOSSY 98;
+   image, "e011.png" LOSSY 98;
+   image, "e012.png" LOSSY 98;
+   image, "e013.png" LOSSY 98;
+   image, "e014.png" LOSSY 98;
+   image, "e015.png" LOSSY 98;
+   image, "e016.png" LOSSY 98;
+   image, "e017.png" LOSSY 98;
+   image, "e018.png" LOSSY 98;
+   image, "e019.png" LOSSY 98;
+   image, "e020.png" LOSSY 98;
+   image, "e021.png" LOSSY 98;
+   image, "e022.png" LOSSY 98;
+   image, "e023.png" LOSSY 98;
+   image, "e024.png" LOSSY 98;
+   image, "e025.png" LOSSY 98;
+   image, "e026.png" LOSSY 98;
+   image, "e027.png" LOSSY 98;
+   image, "e028.png" LOSSY 98;
+   image, "e029.png" LOSSY 98;
+   image, "e030.png" LOSSY 98;
+   image, "e031.png" LOSSY 98;
+   image, "e032.png" LOSSY 98;
+   image, "e033.png" LOSSY 98;
+   image, "e034.png" LOSSY 98;
+   image, "e035.png" LOSSY 98;
+   image, "e036.png" LOSSY 98;
+   image, "e037.png" LOSSY 98;
+   image, "e038.png" LOSSY 98;
+   image, "e039.png" LOSSY 98;
+   image, "e040.png" LOSSY 98;
+   image, "e041.png" LOSSY 98;
+   image, "e042.png" LOSSY 98;
+   image, "e043.png" LOSSY 98;
+   image, "e044.png" LOSSY 98;
+   image, "e045.png" LOSSY 98;
+   image, "e046.png" LOSSY 98;
+   image, "e047.png" LOSSY 98;
+   image, "e048.png" LOSSY 98;
+   image, "e049.png" LOSSY 98;
+   image, "e050.png" LOSSY 98;
+   image, "e051.png" LOSSY 98;
+   image, "e052.png" LOSSY 98;
+   image, "e053.png" LOSSY 98;
+   image, "e054.png" LOSSY 98;
+   image, "e055.png" LOSSY 98;
+   image, "e056.png" LOSSY 98;
+   image, "e057.png" LOSSY 98;
+   image, "e058.png" LOSSY 98;
+   image, "e059.png" LOSSY 98;
+   image, "e060.png" LOSSY 98;
+   image, "e061.png" LOSSY 98;
+   image, "e062.png" LOSSY 98;
+   image, "e063.png" LOSSY 98;
+   image, "e064.png" LOSSY 98;
+   image, "e065.png" LOSSY 98;
+   image, "e066.png" LOSSY 98;
+   image, "e067.png" LOSSY 98;
+   image, "e068.png" LOSSY 98;
+   image, "e069.png" LOSSY 98;
+   image, "e070.png" LOSSY 98;
+   image, "e071.png" LOSSY 98;
+   image, "e072.png" LOSSY 98;
+   image, "e073.png" LOSSY 98;
+   image, "e074.png" LOSSY 98;
+   image, "e075.png" LOSSY 98;
+   image, "e076.png" LOSSY 98;
+   image, "e077.png" LOSSY 98;
+   image, "e078.png" LOSSY 98;
+   image, "e079.png" LOSSY 98;
+   image, "e080.png" LOSSY 98;
+   image, "e081.png" LOSSY 98;
+   image, "e082.png" LOSSY 98;
+   image, "e083.png" LOSSY 98;
+   image, "e084.png" LOSSY 98;
+   image, "e085.png" LOSSY 98;
+   image, "e086.png" LOSSY 98;
+   image, "e087.png" LOSSY 98;
+   image, "e088.png" LOSSY 98;
+   image, "e089.png" LOSSY 98;
+   image, "e090.png" LOSSY 98;
+   image, "e091.png" LOSSY 98;
+   image, "e092.png" LOSSY 98;
+   image, "e093.png" LOSSY 98;
+   image, "e094.png" LOSSY 98;
+   image, "e095.png" LOSSY 98;
+   image, "e096.png" LOSSY 98;
+   image, "e097.png" LOSSY 98;
+   image, "e098.png" LOSSY 98;
+   image, "e099.png" LOSSY 98;
+   image, "e100.png" LOSSY 98;
+   image, "e101.png" LOSSY 98;
+   image, "e102.png" LOSSY 98;
+   image, "e103.png" LOSSY 98;
+   image, "e104.png" LOSSY 98;
+   image, "e105.png" LOSSY 98;
+   image, "e106.png" LOSSY 98;
+   image, "e107.png" LOSSY 98;
+   image, "e108.png" LOSSY 98;
+   image, "e109.png" LOSSY 98;
+   image, "e110.png" LOSSY 98;
+   image, "e111.png" LOSSY 98;
+   image, "e112.png" LOSSY 98;
+   image, "e113.png" LOSSY 98;
+   image, "e114.png" LOSSY 98;
+   image, "e115.png" LOSSY 98;
+   image, "e116.png" LOSSY 98;
+   image, "e117.png" LOSSY 98;
+   image, "e118.png" LOSSY 98;
+   image, "e119.png" LOSSY 98;
+   image, "e120.png" LOSSY 98;
 }
 
 collections {
@@ -26,6 +147,7 @@ collections {
 	       border, 12 12 12 12;
 	    }
 	 }
+/*	 
 	 part {
 	    name,          "logo";
 	    description {
@@ -60,21 +182,171 @@ collections {
 	       }
 	    }
 	 }
+ */
+	 part {
+	    name,          "logo_anim";
+	    description {
+	       state,    "default" 0.0;
+	       max,      160 120;
+	       aspect,   1.3333 1.3333;
+	       rel1 {
+		  relative, 0.0  0.0;
+		  offset,   16   16;
+	       }
+	       rel2 {
+		  relative, 1.0  1.0;
+		  offset,   -17  -17;
+	       }
+	       image {
+		  normal, "e120.png";
+		  tween, "e001.png";
+		  tween, "e002.png";
+		  tween, "e003.png";
+		  tween, "e004.png";
+		  tween, "e005.png";
+		  tween, "e006.png";
+		  tween, "e007.png";
+		  tween, "e008.png";
+		  tween, "e009.png";
+		  tween, "e010.png";
+		  tween, "e011.png";
+		  tween, "e012.png";
+		  tween, "e013.png";
+		  tween, "e014.png";
+		  tween, "e015.png";
+		  tween, "e016.png";
+		  tween, "e017.png";
+		  tween, "e018.png";
+		  tween, "e019.png";
+		  tween, "e020.png";
+		  tween, "e021.png";
+		  tween, "e022.png";
+		  tween, "e023.png";
+		  tween, "e024.png";
+		  tween, "e025.png";
+		  tween, "e026.png";
+		  tween, "e027.png";
+		  tween, "e028.png";
+		  tween, "e029.png";
+		  tween, "e030.png";
+		  tween, "e031.png";
+		  tween, "e032.png";
+		  tween, "e033.png";
+		  tween, "e034.png";
+		  tween, "e035.png";
+		  tween, "e036.png";
+		  tween, "e037.png";
+		  tween, "e038.png";
+		  tween, "e039.png";
+		  tween, "e040.png";
+		  tween, "e041.png";
+		  tween, "e042.png";
+		  tween, "e043.png";
+		  tween, "e044.png";
+		  tween, "e045.png";
+		  tween, "e046.png";
+		  tween, "e047.png";
+		  tween, "e048.png";
+		  tween, "e049.png";
+		  tween, "e050.png";
+		  tween, "e051.png";
+		  tween, "e052.png";
+		  tween, "e053.png";
+		  tween, "e054.png";
+		  tween, "e055.png";
+		  tween, "e056.png";
+		  tween, "e057.png";
+		  tween, "e058.png";
+		  tween, "e059.png";
+		  tween, "e060.png";
+		  tween, "e061.png";
+		  tween, "e062.png";
+		  tween, "e063.png";
+		  tween, "e064.png";
+		  tween, "e065.png";
+		  tween, "e066.png";
+		  tween, "e067.png";
+		  tween, "e068.png";
+		  tween, "e069.png";
+		  tween, "e070.png";
+		  tween, "e071.png";
+		  tween, "e072.png";
+		  tween, "e073.png";
+		  tween, "e074.png";
+		  tween, "e075.png";
+		  tween, "e076.png";
+		  tween, "e077.png";
+		  tween, "e078.png";
+		  tween, "e079.png";
+		  tween, "e080.png";
+		  tween, "e081.png";
+		  tween, "e082.png";
+		  tween, "e083.png";
+		  tween, "e084.png";
+		  tween, "e085.png";
+		  tween, "e086.png";
+		  tween, "e087.png";
+		  tween, "e088.png";
+		  tween, "e089.png";
+		  tween, "e090.png";
+		  tween, "e091.png";
+		  tween, "e092.png";
+		  tween, "e093.png";
+		  tween, "e094.png";
+		  tween, "e095.png";
+		  tween, "e096.png";
+		  tween, "e097.png";
+		  tween, "e098.png";
+		  tween, "e099.png";
+		  tween, "e100.png";
+		  tween, "e101.png";
+		  tween, "e102.png";
+		  tween, "e103.png";
+		  tween, "e104.png";
+		  tween, "e105.png";
+		  tween, "e106.png";
+		  tween, "e107.png";
+		  tween, "e108.png";
+		  tween, "e109.png";
+		  tween, "e110.png";
+		  tween, "e111.png";
+		  tween, "e112.png";
+		  tween, "e113.png";
+		  tween, "e114.png";
+		  tween, "e115.png";
+		  tween, "e116.png";
+		  tween, "e117.png";
+		  tween, "e118.png";
+		  tween, "e119.png";
+	       }
+	    }
+	 }
       }
       programs {
+/*	 
 	 program {
 	    name,       "logo_click";
-	    signal,     "mouse-down-1";
+	    signal,     "mouse,down,1";
 	    source,     "logo";
 	    action,     STATE_SET "clicked" 0.0;
 	    target,     "logo";
 	 }
 	 program {
 	    name,       "logo_unclick";
-	    signal,     "mouse-up-1";
+	    signal,     "mouse,up,1";
 	    source,     "logo";
 	    action,     STATE_SET "default" 0.0;
 	    target,     "logo";
+	 }
+ */
+	 program {
+	    name,       "logo_animate";
+	    signal,     "load";
+	    source,     "test";
+	    action,     STATE_SET "default" 0.0;
+	    transition, LINEAR, 4.0;
+	    target,     "logo_anim";
+	    after,      "logo_animate"; // at end... loop
 	 }
       }
    }

@@ -47,8 +47,8 @@ main_start(int argc, char **argv)
    ecore_evas_name_class_set(ecore_evas, "edje", "main");
    ecore_evas_show(ecore_evas);
    evas = ecore_evas_get(ecore_evas);
-   evas_image_cache_set(evas, 8192 * 1024);
-   evas_font_cache_set(evas, 512 * 1024);
+   evas_image_cache_set(evas, 1024 * 1024);
+   evas_font_cache_set(evas, 256 * 1024);
 //   evas_font_path_append(evas, FN);
    return 1;
 }
@@ -133,6 +133,7 @@ main(int argc, char **argv)
    if (main_start(argc, argv) < 1) return -1;
 
    edje_init();
+   edje_frametime_set(1.0 / 60.0); /* 60 fps */
    
    bg_setup();
 
