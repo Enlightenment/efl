@@ -31,9 +31,16 @@ static char        *_ecore_config_type[] =
    { "undefined", "integer", "float", "string", "colour", "theme" };
 
 /**
+ * @defgroup Ecore_Config_Property_Group Ecore Config Property Functions
+ *
+ * Functions that retrieve or set the attributes relating to a property.
+ */
+
+/**
  * Removes the given property from the local configuration and destroys it.
- * @param  e Property to destroy.
- * @return @c NULL
+ * @param   e Property to destroy.
+ * @return  @c NULL
+ * @ingroup Ecore_Config_Property_Group
  */
 Ecore_Config_Prop  *
 ecore_config_dst(Ecore_Config_Prop * e)
@@ -555,10 +562,10 @@ ecore_config_add(const char *key, char *val)
 
 /**
  * Sets the description field of the indicated property.
- * @param  key  The property key.
- * @param  desc Description string.
- * @note   The description string is copied for the property's use.  You can
- *         free @p desc once this function is called.
+ * @param   key  The property key.
+ * @param   desc Description string.
+ * @note    The description string is copied for the property's use.  You can
+ *          free @p desc once this function is called.
  * @ingroup Ecore_Config_Property_Group
  */
 int
@@ -574,11 +581,12 @@ ecore_config_describe(const char *key, char *desc)
 
 /**
  * Set the short option character of a property.
- * @param  key       The property key.
- * @param  short_opt Character used to indicate the value of a property
- *                   given on the command line.
- * @return @c ECORE_CONFIG_ERR_SUCC on success.  @c ECORE_CONFIG_ERR_NODATA
- *         is returned if the property does not exist.
+ * @param   key       The property key.
+ * @param   short_opt Character used to indicate the value of a property
+ *                    given on the command line.
+ * @return  @c ECORE_CONFIG_ERR_SUCC on success.  @c ECORE_CONFIG_ERR_NODATA
+ *          is returned if the property does not exist.
+ * @ingroup Ecore_Config_Property_Group
  */
 int
 ecore_config_short_opt_set(const char *key, char short_opt)
@@ -593,11 +601,12 @@ ecore_config_short_opt_set(const char *key, char short_opt)
 
 /**
  * Set the long option string of the property.
- * @param  key      The property key.
- * @param  long_opt String used to indicate the value of a property given
- *                  on the command line.
- * @return @c ECORE_CONFIG_ERR_SUCC on success.  @c ECORE_CONFIG_ERR_NODATA
- *         is returned if the property does not exist.
+ * @param   key      The property key.
+ * @param   long_opt String used to indicate the value of a property given
+ *                   on the command line.
+ * @return  @c ECORE_CONFIG_ERR_SUCC on success.  @c ECORE_CONFIG_ERR_NODATA
+ *          is returned if the property does not exist.
+ * @ingroup Ecore_Config_Property_Group
  */
 int
 ecore_config_long_opt_set(const char *key, char *long_opt)
@@ -614,10 +623,11 @@ ecore_config_long_opt_set(const char *key, char *long_opt)
 
 /**
  * Sets the indicated property to the given value and type.
- * @param  key  The property key.
- * @param  val  A pointer to the value to set the property to.
- * @param  type The type of the property.
- * @return @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @param   key  The property key.
+ * @param   val  A pointer to the value to set the property to.
+ * @param   type The type of the property.
+ * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @ingroup Ecore_Config_Property_Group
  */
 int
 ecore_config_typed_set(const char *key, void *val, int type)
@@ -653,6 +663,12 @@ ecore_config_typed_set(const char *key, void *val, int type)
 
    return ret;
 }
+
+/**
+ * @defgroup Ecore_Config_Set_Group Ecore Config Setters
+ *
+ * Functions that set the value of a property.
+ */
 
 /**
  * Sets the indicated property to the value indicated by @a val.
@@ -845,6 +861,12 @@ ecore_config_typed_default(const char *key, void *val, int type)
      }
    return ret;
 }
+
+/**
+ * @defgroup Ecore_Config_Default_Group Ecore Config Defaults
+ *
+ * Functions that are used to set the default values of properties.
+ */
 
 /**
  * Sets the indicated property if it has not already been set or loaded.
@@ -1050,6 +1072,12 @@ ecore_config_theme_default(const char *key, char *val)
 {
    return ecore_config_typed_default(key, (void *)val, PT_THM);
 }
+
+/**
+ * @defgroup Ecore_Config_Listeners_Group Ecore Config Listeners
+ *
+ * Functions that set and unset property listener callbacks.
+ */
 
 /**
  * Adds a callback function to the list of functions called when a property
@@ -1340,18 +1368,24 @@ ecore_config_init_global(char *name)
 }
 
 /**
+ * @defgroup Ecore_Config_App_Lib_Group Ecore Config App Library Functions
+ *
+ * Functions that are used to start up and shutdown the Enlightened
+ * Property Library when used directly by an application.
+ */
+
+/**
  * Initializes the Enlightened Property Library.
  *
- * This function (or @ref ecore_config_system_init)
- * must be run before any other function in the
- * Enlightened Property Library, even if you have run @ref ecore_init .
- * The name given is used to determine the default configuration to
- * load.
+ * Either this function or @ref ecore_config_system_init must be run
+ * before any other function in the Enlightened Property Library, even
+ * if you have run @ref ecore_init .  The name given is used to
+ * determine the default configuration to load.
  *
  * @param  name Application name
  * @return @c ECORE_CONFIG_ERR_SUCC if the library is successfully set up.
  *         @c ECORE_CONFIG_ERR_FAIL otherwise.
- * @ingroup Ecore_Config_Lib_Group
+ * @ingroup Ecore_Config_App_Lib_Group
  */
 int
 ecore_config_init(char *name)
@@ -1381,9 +1415,9 @@ ecore_config_init(char *name)
 }
 
 /**
- * Frees memory and shuts down the library.
- * @return @c ECORE_CONFIG_ERR_IGNORED
- * @ingroup Ecore_Config_Lib_Group
+ * Frees memory and shuts down the library for an application.
+ * @return @c ECORE_CONFIG_ERR_IGNORED .
+ * @ingroup Ecore_Config_App_Lib_Group
  */
 int
 ecore_config_shutdown(void)
@@ -1392,18 +1426,25 @@ ecore_config_shutdown(void)
 }
 
 /**
- * Initializes the Enlightened Property Library (call from libraries i.e. ewl - NOT applications).
+ * @defgroup Ecore_Config_Lib_Lib_Group Ecore Config Library Functions
  *
- * This function (or ecore_config_init)
+ * Functions that are used to start up and shutdown the Enlightened
+ * Property Library when used directly by an application.
+ */
+
+/**
+ * Initializes the Enlightened Property Library.
+ *
+ * This function is meant to be run from other programming libraries.
+ * It should not be called from applications.
+ *
+ * This function (or @ref ecore_config_init )
  * must be run before any other function in the
  * Enlightened Property Library, even if you have run @ref ecore_init .
- * The name given is used to determine the default configuration to
- * load.
  *
- * @param  name Application name
  * @return @c ECORE_CONFIG_ERR_SUCC if the library is successfully set up.
  *         @c ECORE_CONFIG_ERR_FAIL otherwise.
- * @ingroup Ecore_Config_Lib_Group
+ * @ingroup Ecore_Config_Lib_Lib_Group
  */
 int
 ecore_config_system_init(void)
@@ -1477,9 +1518,9 @@ _ecore_config_system_load(void)
 
 
 /**
- * Frees memory and shuts down the library (call from libraries i.e. ewl - NOT applications).
+ * Frees memory and shuts down the library for other programming libraries.
  * @return @c ECORE_CONFIG_ERR_IGNORED
- * @ingroup Ecore_Config_Lib_Group
+ * @ingroup Ecore_Config_Lib_Lib_Group
  */
 int
 ecore_config_system_shutdown(void)

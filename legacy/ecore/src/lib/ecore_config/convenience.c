@@ -321,6 +321,11 @@ ecore_config_evas_font_path_apply(Evas * evas)
    return ECORE_CONFIG_ERR_SUCC;
 }
 
+/**
+ * Retrieves the default theme search path.
+ *
+ * @return The default theme search path.
+ */
 char               *
 ecore_config_theme_default_path_get(void)
 {
@@ -354,12 +359,15 @@ ecore_config_theme_default_path_get(void)
 }
 
 /**
- * Returns the search path used to find themes. This is specified by a user in the
- * property "/e/themes/search_path". If the property is not set the path defaults to
- * "/usr/local/share/<app_name>/themes/|~/.e/apps/<app_name>/themes".
- * Note: This should be called after ecore_config_load() to allow a users overriding
- * search path to be read.
- * @return The search path, or NULL if there is no memory left.
+ * Retrieves the search path used to find themes.
+ *
+ * The search path is stored in the property "/e/themes/search_path".  If
+ * the property has not been set, the default path used is
+ * "/usr/local/share/<app_name>/themes|~/.e/apps/<app_name>/themes".
+ * See @ref ecore_config_theme_default_path_get for more information about
+ * the default path.
+ *
+ * @return The search path.  @c NULL is returned if there is no memory left.
  */
 char               *
 ecore_config_theme_search_path_get(void)
@@ -381,16 +389,18 @@ ecore_config_theme_search_path_get(void)
 }
 
 /**
- * Adds to the search path used to find themes. The current path is found and
- * searches for occurrences of the appending item. If this item is not found it
- * is appended to the search path wich is then saved back into the property
- * "/e/themes/search_path".
- * Note: This should be called after ecore_config_load() to allow a users
- * overriding the default search path to be read.
- * @return On success ECORE_CONFIG_ERR_SUCC, on fail ECORE_CONFIG_ERR_FAIL
- * (appending item already in search path) or on NULL being passed in
- * ECORE_CONFIG_ERR_NODATA
-*/
+ * Adds the given path to the search path used to find themes.
+ *
+ * If the search path is successfully, the new search path will be saved
+ * into the property "/e/themes/search_path".  Therefore, this function
+ * should be called @b after @ref ecore_config_load to allow a user to
+ * override the default search path.
+ *
+ * @param  path The given 
+ * @return @c ECORE_CONFIG_ERR_SUCC on success.  @c ECORE_CONFIG_ERR_FAIL
+ *         will be returned if @p path already exists in the search path.
+ *         @c ECORE_CONFIG_ERR_FAIL is returned if @p path is @c NULL.
+ */
 int
 ecore_config_theme_search_path_append(char *path)
 {
@@ -422,12 +432,15 @@ ecore_config_theme_search_path_append(char *path)
 }
 
 /**
- * Get a theme files full path, as it is found according to the search path.
- * The theme searched for is @name (e.g. "winter").
- * The search path is defined by ecore_config_theme_search_path_get().
- * @param  name The theme name to search for.
- * @return A full path to the theme on sucess, or NULL on failure (no key specified or
- *         no theme matching that name could be found).
+ * Retrieve a theme file's full path.
+ *
+ * The search path for theme files is given by @ref
+ * ecore_config_theme_search_path_get .
+ *
+ * @param  name The name of the theme.
+ * @return A full path to the theme on success.  @c NULL will be returned
+ *         if @p name is @c NULL or no theme matching the given name could
+ *         be found.
  */
 char               *
 ecore_config_theme_with_path_from_name_get(char *name)
@@ -471,12 +484,16 @@ ecore_config_theme_with_path_from_name_get(char *name)
 }
 
 /**
- * Get a theme files full path, as it is found according to the search path.
- * The theme searched for is stored in the property @p key.
- * The search path is defined by ecore_config_theme_search_path_get().
- * @param  key The property containing the theme name to search for.
- * @return A full path to the theme on sucess, or NULL on failure (no key specified or
- *         no theme matching that name could be found).
+ * Retrieves the full path to the theme file of the theme stored in the
+ * given property.
+ *
+ * The search path for themes is given by @ref
+ * ecore_config_theme_search_path_get .
+ *
+ * @param  key The given property.
+ * @return A full path to the theme on success, or @c NULL on failure.
+ *         This function will fail if no key is specified or not theme
+ *         matching that given by the property @p key could be found.
  */
 char               *
 ecore_config_theme_with_path_get(const char *key)
@@ -543,9 +560,9 @@ ecore_config_parse_set(Ecore_Config_Prop * prop, char *arg, char *opt,
  * Parse the arguments set by @ref ecore_app_args_set and set properties
  * accordingly.
  *
- * @return ECORE_CONFIG_PARSE_CONTINUE if successful.
- *         ECORE_CONFIG_PARSE_EXIT is returned if an unrecognised option
- *         is found.  ECORE_CONFIG_PARSE_HELP is returned if help was
+ * @return @c ECORE_CONFIG_PARSE_CONTINUE if successful.
+ *         @c ECORE_CONFIG_PARSE_EXIT is returned if an unrecognised option
+ *         is found.  @c ECORE_CONFIG_PARSE_HELP is returned if help was
  *         displayed.
  */
 int

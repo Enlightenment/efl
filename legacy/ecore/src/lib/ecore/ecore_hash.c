@@ -29,12 +29,18 @@ static int _ecore_hash_node_init(Ecore_Hash_Node *node, void *key, void *value);
 static int _ecore_hash_node_destroy(Ecore_Hash_Node *node, Ecore_Free_Cb keyd,
 		Ecore_Free_Cb valued);
 
+/**
+ * @defgroup Ecore_Data_Hash_ADT_Creation_Group Hash Creation Functions
+ *
+ * Functions that create hash tables.
+ */
 
 /**
- * @brief Create and initialize a new hash
- * @param hash_func: the function for determining hash position
- * @param compare: the function for comparing node keys
- * @return Returns NULL on error, a new hash on success
+ * Creates and initializes a new hash
+ * @param hash_func The function for determining hash position.
+ * @param compare   The function for comparing node keys.
+ * @return @c NULL on error, a new hash on success.
+ * @ingroup Ecore_Data_Hash_ADT_Creation_Group
  */
 Ecore_Hash *ecore_hash_new(Ecore_Hash_Cb hash_func, Ecore_Compare_Cb compare)
 {
@@ -51,11 +57,12 @@ Ecore_Hash *ecore_hash_new(Ecore_Hash_Cb hash_func, Ecore_Compare_Cb compare)
 }
 
 /**
- * @brief Initialize a hash to some sane starting values
- * @param hash: the hash table to initialize
- * @param hash_func: the function for hashing node keys
- * @param compare: the function for comparing node keys
- * @return Returns TRUE on success, FALSE on an error.
+ * Initializes the given hash.
+ * @param   hash       The given hash.
+ * @param   hash_func  The function used for hashing node keys.
+ * @param   compare    The function used for comparing node keys.
+ * @return  @c TRUE on success, @c FALSE on an error.
+ * @ingroup Ecore_Data_Hash_ADT_Creation_Group
  */
 int ecore_hash_init(Ecore_Hash *hash, Ecore_Hash_Cb hash_func, Ecore_Compare_Cb compare)
 {
@@ -76,10 +83,17 @@ int ecore_hash_init(Ecore_Hash *hash, Ecore_Hash_Cb hash_func, Ecore_Compare_Cb 
 }
 
 /**
- * @brief Set the function to destroy the keys of entries
- * @param hash: the hash that this will affect
- * @param function: the function that will free the node keys
- * @return Returns TRUE on success, FALSE on error
+ * @defgroup Ecore_Data_Hash_ADT_Destruction_Group Hash Destruction Functions
+ *
+ * Functions that destroy hash tables and their contents.
+ */
+
+/**
+ * Sets the function to destroy the keys of the given hash.
+ * @param   hash     The given hash.
+ * @param   function The function used to free the node keys.
+ * @return  @c TRUE on success, @c FALSE on error.
+ * @ingroup Ecore_Data_Hash_ADT_Destruction_Group
  */
 int ecore_hash_set_free_key(Ecore_Hash *hash, Ecore_Free_Cb function)
 {
@@ -94,10 +108,11 @@ int ecore_hash_set_free_key(Ecore_Hash *hash, Ecore_Free_Cb function)
 }
 
 /**
- * @brief Set the function to destroy the value
- * @param hash: the hash that this will affect
- * @param function: the function that will free the node values
- * @return Returns TRUE on success, FALSE on error
+ * Sets the function to destroy the values in the given hash.
+ * @param   hash     The given hash.
+ * @param   function The function that will free the node values.
+ * @return  @c TRUE on success, @c FALSE on error
+ * @ingroup Ecore_Data_Hash_ADT_Destruction_Group
  */
 int ecore_hash_set_free_value(Ecore_Hash *hash, Ecore_Free_Cb function)
 {
@@ -112,11 +127,18 @@ int ecore_hash_set_free_value(Ecore_Hash *hash, Ecore_Free_Cb function)
 }
 
 /**
- * @brief Set the key/value pair in the hash table
- * @param hash: the hash table to set the the value in
- * @param key: the key for this value pair
- * @param value: the value corresponding with the key
- * @return Returns TRUE if successful, FALSE if not
+ * @defgroup Ecore_Data_Hash_ADT_Setting_Group Hash Setting Functions
+ *
+ * Functions that set values in hash tables.
+ */
+
+/**
+ * Sets a key-value pair in the given hash table.
+ * @param   hash    The given hash table.
+ * @param   key     The key.
+ * @param   value   The value.
+ * @return  @c TRUE if successful, @c FALSE if not.
+ * @ingroup Ecore_Data_Hash_ADT_Setting_Group
  */
 int ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
 {
@@ -140,9 +162,10 @@ int ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
 }
 
 /**
- * @brief Free the hash table and the data contained inside it
- * @param hash: the hash table to destroy
- * @return Returns TRUE on success, FALSE on error
+ * Free the hash table and the data contained inside it.
+ * @param   hash The hash table to destroy.
+ * @return  @c TRUE on success, @c FALSE on error.
+ * @ingroup Ecore_Data_Hash_ADT_Destruction_Group
  */
 void ecore_hash_destroy(Ecore_Hash *hash)
 {

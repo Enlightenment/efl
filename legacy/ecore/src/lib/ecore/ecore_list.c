@@ -202,6 +202,12 @@ _ecore_list_find(void *in_list, void *in_item)
 /* XXX: End deprecated code */
 
 /**
+@defgroup Ecore_Data_List_Creation_Group List Creation/Destruction Functions
+
+Functions that create, initialize and destroy Ecore_Lists.
+*/
+
+/**
  * Create and initialize a new list.
  * @return  A new initialized list on success, @c NULL on failure.
  * @ingroup Ecore_Data_List_Creation_Group
@@ -344,6 +350,12 @@ int ecore_list_nodes(Ecore_List * list)
 
 	return ret;
 }
+
+/**
+@defgroup Ecore_Data_List_Add_Item_Group List Item Adding Functions
+
+Functions that are used to add nodes to an Ecore_List.
+*/
 
 /**
  * Append data to the list.
@@ -498,6 +510,12 @@ static int _ecore_list_insert(Ecore_List * list, Ecore_List_Node *new_node)
 
 	return TRUE;
 }
+
+/**
+@defgroup Ecore_Data_List_Remove_Item_Group List Item Removing Functions
+
+Functions that remove nodes from an Ecore_List.
+*/
 
 /**
  * Remove the current item from the list.
@@ -707,6 +725,12 @@ static void *_ecore_list_remove_last(Ecore_List * list)
 
 	return ret;
 }
+
+/**
+@defgroup Ecore_Data_List_Traverse_Group List Traversal Functions
+
+Functions that can be used to traverse an Ecore_List.
+*/
 
 /**
  * Make the current item the item with the given index number.
@@ -1020,7 +1044,14 @@ int ecore_list_node_init(Ecore_List_Node * node)
 }
 
 /**
- * Allocate and initialize a new list node
+@defgroup Ecore_Data_List_Node_Group List Node Functions
+
+Functions that are used in the creation, maintenance and destruction of
+Ecore_List nodes.
+*/
+
+/**
+ * Allocates and initializes a new list node.
  * @return  A new Ecore_List_Node on success, @c NULL otherwise.
  * @ingroup Ecore_Data_List_Node_Group
  */
@@ -1039,7 +1070,7 @@ Ecore_List_Node *ecore_list_node_new()
 }
 
 /**
- * Here we actually call the function to free the data and free the node
+ * Calls the function to free the data and the node.
  * @param   node      Node to destroy.
  * @param   free_func Function to call if @p node points to data to free.
  * @return  @c TRUE.

@@ -238,7 +238,10 @@ To use the library, you:
 @li Load the configuration from a file.  You must set the default values
     first, so that the library knows the correct type of each argument.
 
-See @ref config_basic_example.c for an example.
+The following examples show how to use the Enlightened Property Library:
+@li @link config_basic_example.c config_basic_example.c @endlink
+@li @link config_listener_example.c config_listener_example.c @endlink
+
 */
 
 /**
@@ -253,15 +256,37 @@ include the @link Ecore_Data.h Ecore_Data.h @endlink to use them.
 A list is a simple data type where one each piece of data points to
 another piece of data.
 
-Associated modules include the following:
+Associated modules that describe the List ADT include:
+@li @ref Ecore_Data_List_Creation_Group
 @li @ref Ecore_Data_List_Add_Item_Group
+@li @ref Ecore_Data_List_Remove_Item_Group
+@li @ref Ecore_Data_List_Traverse_Group
+@li @ref Ecore_Data_List_Node_Group
+
+Examples involving lists include:
+@li @link list_example.c list_example.c @endlink
 
 @section Ecore_ADT_DList Doubly Linked List
 
 A doubly linked list is like a linked list, only each piece of data
-can also point to the piece before it.
+can also point to the piece before it.  In other words, you can traverse
+a doubly linked list in both directions.
+
+Associated modules that describe the DList ADT include:
+@li @ref Ecore_Data_DList_Creation_Group
+@li @ref Ecore_Data_DList_Add_Item_Group
+@li @ref Ecore_Data_DList_Remove_Item_Group
 
 @section Ecore_ADT_Hash Hash
+
+A hash is an abstract data type where one value is associated with another
+value.  Instead of each element of the group being accessible using a
+number, each element is accessed using another object.
+
+Associated modules that describe the Hash ADT include:
+@li @ref Ecore_Data_Hash_ADT_Creation_Group
+@li @ref Ecore_Data_Hash_ADT_Destruction_Group
+@li @ref Ecore_Data_Hash_ADT_Setting_Group
 
 @todo Finish this.
 */
@@ -325,78 +350,10 @@ state.
 */
 
 /**
-@defgroup Ecore_Data_List_Creation_Group List Creation/Destruction Functions
-
-Functions that create, initialize and destroy Ecore_Lists.
-*/
-
-/**
-@defgroup Ecore_Data_List_Add_Item_Group List Item Adding Functions
-
-Functions that are used to add nodes to an Ecore_List.
-*/
-
-/**
-@defgroup Ecore_Data_List_Remove_Item_Group List Item Removing Functions
-
-Functions that remove nodes from an Ecore_List.
-*/
-
-/**
-@defgroup Ecore_Data_List_Traverse_Group List Traversal Functions
-
-Functions that can be used to traverse an Ecore_List.
-*/
-
-/**
-@defgroup Ecore_Data_List_Node_Group List Node Functions
-
-Functions that are used in the creation, maintenance and destruction of
-Ecore_List nodes.
-*/
-
-/**
-@defgroup Ecore_Config_Lib_Group Ecore Config Library Functions
-
-Functions that are used to start up and shutdown the Ecore Configuration
-Library.
-*/
-
-/**
-@defgroup Ecore_Config_Property_Group Ecore Config Property Functions
-
-Functions that retrieve or set the attributes relating to a property.
-*/
-
-/**
-@defgroup Ecore_Config_Get_Group Ecore Config Retrievers
-
-Functions that return the value of a property, based on its key.
-*/
-
-/**
-@defgroup Ecore_Config_Default_Group Ecore Config Defaults
-
-Functions that are used to set the default values of properties.
-*/
-
-/**
 @defgroup Ecore_Config_Create_Group Ecore Config Create Functions
 
 Convenience functions that set default values, bounds, option values and
 descriptions in one call.
-*/
-
-/**
-@defgroup Ecore_Config_Set_Group Ecore Config Setters
-
-Functions that set the value of a property.
-*/
-
-/**
-@defgroup Ecore_Config_Listeners_Group Ecore Config Listeners
-
-Functions that set and unset property listener callbacks.
 */
 
 /**
