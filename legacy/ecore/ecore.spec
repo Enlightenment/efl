@@ -59,7 +59,6 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{prefix}/lib/libecore*.so.*
 %{prefix}/lib/libecore*.la
 %attr(755,root,root) %{prefix}/bin/ecore_*
-%attr(755,root,root) %{prefix}/bin/exsh
 %{prefix}/share/ecore
 
 %files devel
