@@ -124,6 +124,7 @@ quick "cheat sheet" on how to get started.
   ./autogen.sh
   ./configure \
   --enable-software-x11 \
+  --enable-gl-x11 \
   --enable-image-loader-png \
   --enable-image-loader-jpeg \
   --enable-image-loader-eet \
@@ -155,14 +156,15 @@ quick "cheat sheet" on how to get started.
   sudo make install
   cd
   
-3. You need Ecore from the SPLIT cvs branch
+3. You need Ecore from the HEAD cvs branch
 
-  cvs co -r SPLIT e17/libs/ecore
+  cvs co e17/libs/ecore
   cd e17/libs/ecore
   ./autogen.sh
   ./configure \
   --enable-ecore-x \
   --enable-ecore-evas \
+  --enable-ecore-evas-gl \
   --enable-ecore-job \
   --enable-ecore-con \
   --enable-ecore-ipc
@@ -199,7 +201,7 @@ data/ there are data sets for you to look at as examples. To try one out do:
    cd data
    ./e_logo.sh
    
-   edje ./e_logo.eet test   
+   edje ./e_logo.eet
 @endverbatim
 
 The edje test program/viewer is able to view multiple edje data sets. The
@@ -207,7 +209,7 @@ following will view 3 of them at once in the one window (which you can resize
 to give you more space to move and resize the edje data sets around):
 
 @verbatim
-  edje ./e_logo.eet test ./e_logo.eet test ./e_logo.eet test  
+  edje ./e_logo.eet ./e_logo.eet ./e_logo.eet
 @endverbatim
 
 

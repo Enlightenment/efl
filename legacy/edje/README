@@ -25,6 +25,7 @@ Quick start-up guide:
   ./autogen.sh
   ./configure \
   --enable-software-x11 \
+  --enable-gl-x11 \
   --enable-image-loader-png \
   --enable-image-loader-jpeg \
   --enable-image-loader-eet \
@@ -56,14 +57,15 @@ Quick start-up guide:
   sudo make install
   cd
   
-3. You need ecore from the SPLIT cvs branch
+3. You need ecore from the HEAD cvs branch
 
-  cvs co -r SPLIT e17/libs/ecore
+  cvs co e17/libs/ecore
   cd e17/libs/ecore
   ./autogen.sh
   ./configure \
   --enable-ecore-x \
   --enable-ecore-evas \
+  --enable-ecore-evas-gl \
   --enable-ecore-job \
   --enable-ecore-con \
   --enable-ecore-ipc
@@ -85,11 +87,11 @@ You now want to go test it out. first you'll need to make an edje .eet file.
    
 Now you can view the edje you just built:
    
-   edje ./e_logo.eet test
+   edje ./e_logo.eet
    
 You can view multilpe files at once with the edje test program:
    
-   edje ./e_logo.eet test ./e_logo.eet test ./e_logo.eet test
+   edje ./e_logo.eet ./e_logo.eet ./e_logo.eet
    
 to view the same one 3 times.
    
