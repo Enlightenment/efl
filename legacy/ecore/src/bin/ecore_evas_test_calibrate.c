@@ -149,7 +149,7 @@ calibrate_start(void)
    o = evas_object_text_add(evas);
    evas_object_layer_set(o, 1000002);
    evas_object_color_set(o, 0, 0, 0, 255);
-   evas_object_text_font_set(o, "helmet", 10);
+   evas_object_text_font_set(o, "Vera", 10);
    evas_object_pass_events_set(o, 1);
    evas_object_show(o);
    o_text = o;

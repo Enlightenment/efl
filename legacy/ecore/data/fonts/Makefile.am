@@ -1,6 +1,9 @@
-FONTS = helmet.ttf
+FILES = Vera.ttf VeraBI.ttf VeraBd.ttf VeraIt.ttf VeraMoBI.ttf \
+        VeraMoBd.ttf VeraMoIt.ttf VeraMono.ttf VeraSe.ttf VeraSeBd.ttf \
+        fonts.alias fonts.dir
 
-fontdir = $(pkgdatadir)/data/fonts
-font_DATA = $(FONTS)
+fontsdir = $(pkgdatadir)/data/test/fonts
+fonts_DATA = $(FILES)
 
-EXTRA_DIST = $(FONTS)
+EXTRA_DIST = $(FILES)
+
