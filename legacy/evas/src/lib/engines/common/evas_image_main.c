@@ -252,14 +252,14 @@ evas_common_image_store(RGBA_Image *im)
    if (im->info.key) l2 = strlen(im->info.key);
    snprintf(buf, sizeof(buf), "%llx", im->timestamp);
    l3 = strlen(buf);
-   key = malloc(l1 + 3 + l2 + 3 + l3 +1);
+   key = malloc(l1 + 5 + l2 + 5 + l3 +1);
    if (!key) return;
    key[0] = 0;
    if (im->info.real_file) strcpy(key, im->info.real_file);
    else if (im->info.file) strcpy(key, im->info.file);
-   strcat(key, "/:/");
+   strcat(key, "//://");
    if (im->info.key) strcat(key, im->info.key);
-   strcat(key, "/:/");
+   strcat(key, "//://");
    strcat(key, buf);
    images = evas_hash_add(images, key, im);
    free(key);
@@ -282,14 +282,14 @@ evas_common_image_unstore(RGBA_Image *im)
    if (im->info.key) l2 = strlen(im->info.key);
    snprintf(buf, sizeof(buf), "%llx", im->timestamp);
    l3 = strlen(buf);
-   key = malloc(l1 + 3 + l2 + 3 + l3 +1);
+   key = malloc(l1 + 5 + l2 + 5 + l3 +1);
    if (!key) return;
    key[0] = 0;
    if (im->info.real_file) strcpy(key, im->info.real_file);
    else if (im->info.file) strcpy(key, im->info.file);
-   strcat(key, "/:/");
+   strcat(key, "//://");
    if (im->info.key) strcat(key, im->info.key);
-   strcat(key, "/:/");
+   strcat(key, "//://");
    strcat(key, buf);
    images = evas_hash_del(images, key, im);
    free(key);
@@ -308,6 +308,7 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
    char buf[256];
    
    if ((!filename) && (!key)) return NULL;
+   if (!filename) return NULL;
    real_filename = evas_file_path_resolve((char *)filename);
    l1 = 0;
    if (real_filename) l1 = strlen(real_filename);
@@ -316,17 +317,18 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
    if (key) l2 = strlen(key);
    sprintf(buf, "%llx", timestamp);
    l3 = strlen(buf);
-   str = malloc(l1 + 3 + l2 + 3 + l3 +1);
+   str = malloc(l1 + 5 + l2 + 5 + l3 +1);
    if (!str)
      {
 	if (real_filename) free(real_filename);
 	return NULL;
      }
    str[0] = 0;
-   if (filename) strcpy(str, filename);
-   strcat(str, "/:/");
+   if (real_filename) strcpy(str, real_filename);
+   else if (filename) strcpy(str, filename);
+   strcat(str, "//://");
    if (key) strcat(str, key);
-   strcat(str, "/:/");
+   strcat(str, "//://");
    strcat(str, buf);   
    im = evas_hash_find(images, str);
    free(str);
@@ -345,12 +347,13 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
 	if (real_filename)
 	  {
              if ((im->info.real_file) &&
+		 (real_filename) &&
 		 (!strcmp(real_filename, im->info.real_file)))
 	       ok++;
 	  }
 	else
 	  {
-	     if ((filename) && (im->info.file) && 
+	     if ((filename) && (im->info.file) &&
 		 (!strcmp(filename, im->info.file)))
 	       ok++;
 	     if ((!filename) && (!im->info.file))
