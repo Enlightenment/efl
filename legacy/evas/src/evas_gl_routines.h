@@ -75,8 +75,10 @@ struct _evas_gl_context
       int active;
       int x, y, w, h;
    } clip;
+#ifdef HAVE_GL
    GLenum          read_buf;
    GLenum          write_buf;
+#endif
    Evas_GL_Texture *bound_texture;
    
    int             max_texture_depth;
@@ -91,7 +93,9 @@ struct _evas_gl_rect
 struct _evas_gl_texture
 {
    int w, h;
+#ifdef HAVE_GL
    GLuint texture;
+#endif
    int smooth;
 };
 
