@@ -1146,7 +1146,9 @@ EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_A
      ecore_x_window_save_set_del(Ecore_X_Window win);
    EAPI Ecore_X_Window *
      ecore_x_window_children_get(Ecore_X_Window win, int *num);
-   
+  
+   EAPI int
+     ecore_x_cursor_color_supported_get(void);
    EAPI Ecore_X_Cursor
      ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int hot_y);
    EAPI void

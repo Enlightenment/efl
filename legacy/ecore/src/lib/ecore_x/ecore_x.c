@@ -984,7 +984,11 @@ ecore_x_window_children_get(Ecore_X_Window win, int *num)
 
 
 
-
+int
+ecore_x_cursor_color_supported_get(void)
+{
+   return _ecore_x_xcursor;
+}
 
 Ecore_X_Cursor
 ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int hot_y)
