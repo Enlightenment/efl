@@ -465,7 +465,6 @@ int         tokeninfo(cell * val, char **str);
 int         needtoken(int token);
 void        stowlit(cell value);
 int         alphanum(char c);
-int         ishex(char c);
 void        delete_symbol(symbol * root, symbol * sym);
 void        delete_symbols(symbol * root, int level, int del_labels,
 				   int delete_functions);
