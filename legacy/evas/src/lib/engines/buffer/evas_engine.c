@@ -1062,6 +1062,7 @@ evas_engine_buffer_font_draw(void *data, void *context, void *surface, void *fon
 	if (dc)
 	  {
 	     RGBA_Image *im;
+	     int inset;
 	     
 	     if ((h * ow) < (w * oh))
 	       {
@@ -1079,7 +1080,7 @@ evas_engine_buffer_font_draw(void *data, void *context, void *surface, void *fon
 	     newfont = evas_common_font_load( ((RGBA_Font *)font)->src->name, (((RGBA_Font *)font)->size*mult)/divv);
 	     
 	     dc->col.col = dc_in->col.col;
-	     int inset = evas_common_font_query_inset( font, text);
+	     inset = evas_common_font_query_inset( font, text);
 	     im = evas_common_image_create(render_w+inset, render_h);
 	     if (im)
 	       {

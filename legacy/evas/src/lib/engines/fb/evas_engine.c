@@ -976,9 +976,10 @@ evas_engine_fb_font_draw(void *data, void *context, void *surface, void *font, i
 	if (dc)
 	  {
 	     RGBA_Image *im;
+	     int inset;
 	     
 	     dc->col.col = dc_in->col.col;
-	     int inset = evas_common_font_query_inset( font, text);
+	     inset = evas_common_font_query_inset( font, text);
 	     im = evas_common_image_create(ow+inset, oh);
 	     if (im)
 	       {
