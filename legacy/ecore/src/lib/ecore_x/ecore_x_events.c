@@ -1204,8 +1204,6 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
 	e->win = _xdnd->dest;
 	e->source = _xdnd->source;
-	e->time = CurrentTime;
-	_ecore_x_event_last_time = e->time;
 	ecore_event_add(ECORE_X_EVENT_XDND_ENTER, e, _ecore_x_event_free_xdnd_enter, NULL);
      }
 
@@ -1221,10 +1219,6 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	_xdnd->pos.x = xevent->xclient.data.l[2] >> 16;
 	_xdnd->pos.y = xevent->xclient.data.l[2] & 0xFFFFUL;
 	_xdnd->action = xevent->xclient.data.l[4]; /* Version 2 */
-	/* TODO: Resolve a suitable method for enumerating Xdnd actions */
-
-	/* Would it be feasible to handle the processing of this message
-	 * within ecore? I think not, but someone might have an idea here. */
 
 	_ecore_x_event_last_time = (_xdnd->version >= 1) ? 
 	   (Time)xevent->xclient.data.l[3] : CurrentTime;
@@ -1235,7 +1229,6 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	e->source = _xdnd->source;
 	e->position.x = _xdnd->pos.x;
 	e->position.y = _xdnd->pos.y;
-	e->time = xevent->xclient.data.l[3]; /* Version 1 */
 	e->action = _xdnd->action;
 	ecore_event_add(ECORE_X_EVENT_XDND_POSITION, e, NULL, NULL);
      }
@@ -1266,6 +1259,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	e->win = _xdnd->source;
 	e->target = _xdnd->dest;
 	e->will_accept = _xdnd->will_accept;
+	e->suppress = _xdnd->suppress;
 	e->rectangle.x = _xdnd->rectangle.x;
 	e->rectangle.y = _xdnd->rectangle.y;
 	e->rectangle.width = _xdnd->rectangle.width;
@@ -1300,7 +1294,6 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
      {
 	Ecore_X_Event_Xdnd_Drop *e;
 	Ecore_X_DND_Protocol *_xdnd;
-	Ecore_X_Time timestamp;
 
 	_xdnd = _ecore_x_dnd_protocol_get();
 	/* Match source/target */
@@ -1308,14 +1301,13 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	    || (_xdnd->dest != xevent->xclient.window))
 	  return;
 
-	timestamp = (_xdnd->version >= 1) ? 
+	_ecore_x_event_last_time = (_xdnd->version >= 1) ? 
 	   (Time)xevent->xclient.data.l[2] : _ecore_x_event_last_time;
 
 	e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Drop));
 	if (!e) return;
 	e->win = _xdnd->dest;
 	e->source = _xdnd->source;
-	e->time = timestamp;
 	e->action = _xdnd->action;
 	e->position.x = _xdnd->pos.x;
 	e->position.y = _xdnd->pos.y;
@@ -1338,6 +1330,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	if ((_xdnd->version >= 5) && (xevent->xclient.data.l[1] & 0x1UL))
 	  {
 	     /* Target successfully performed drop action */
+	     ecore_x_selection_xdnd_clear();
 	     _xdnd->state = ECORE_X_DND_IDLE;
 	  } else {
 	       completed = 0;

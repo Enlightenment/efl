@@ -455,7 +455,6 @@ struct _Ecore_X_Event_Selection_Notify
 struct _Ecore_X_Event_Xdnd_Enter
 {
    Ecore_X_Window       win, source;
-   Ecore_X_Time         time;
 
    char               **types;
    int                  num_types;
@@ -467,7 +466,6 @@ struct _Ecore_X_Event_Xdnd_Position
    struct {
       int x, y;
    } position;
-   Ecore_X_Time         time;
    Ecore_X_Atom         action;
 };
 
@@ -475,6 +473,7 @@ struct _Ecore_X_Event_Xdnd_Status
 {
    Ecore_X_Window       win, target;
    int                  will_accept;
+   int                  suppress;
    Ecore_X_Rectangle    rectangle;
    Ecore_X_Atom         action;
 };
@@ -487,7 +486,6 @@ struct _Ecore_X_Event_Xdnd_Leave
 struct _Ecore_X_Event_Xdnd_Drop
 {
    Ecore_X_Window       win, source;
-   Ecore_X_Time         time;
    Ecore_X_Atom         action;
    struct {
       int x, y;

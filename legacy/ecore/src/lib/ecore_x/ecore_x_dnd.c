@@ -239,9 +239,9 @@ ecore_x_dnd_send_finished(void)
 
    xev.xany.type = ClientMessage;
    xev.xany.display = _ecore_x_disp;
-   xev.xclient.window = _xdnd->source;
    xev.xclient.message_type = ECORE_X_ATOM_XDND_FINISHED;
    xev.xclient.format = 32;
+   xev.xclient.window = _xdnd->source;
 
    xev.xclient.data.l[0] = _xdnd->dest;
    memset(xev.xclient.data.l + 1, 0, sizeof(long) * 3);
