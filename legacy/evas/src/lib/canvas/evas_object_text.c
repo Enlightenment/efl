@@ -745,10 +745,9 @@ evas_object_text_font_get(Evas_Object *obj, char **font, Evas_Font_Size *size)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Sets the text to be displayed by the given evas text object.
+ * @param obj  Evas text object.
+ * @param text Text to display.
  */
 void
 evas_object_text_text_set(Evas_Object *obj, const char *text)
@@ -805,10 +804,9 @@ evas_object_text_text_set(Evas_Object *obj, const char *text)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Retrieves the text currently being displayed by the given evas text object.
+ * @param  obj The given evas text object.
+ * @return The text currently being displayed.  Do not free it.
  */
 const char *
 evas_object_text_text_get(Evas_Object *obj)
@@ -1096,13 +1094,16 @@ evas_object_text_char_coords_get(Evas_Object *obj, Evas_Coord x, Evas_Coord y, E
 }
 
 
-
+/**
+ * @defgroup Evas_Font_Path_Group Font Path Functions
+ *
+ * Functions that edit the paths being used to load fonts.
+ */
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Removes all font paths loaded into memory for the given evas.
+ * @param   e The given evas.
+ * @ingroup Evas_Font_Path_Group
  */
 void
 evas_font_path_clear(Evas *e)
@@ -1118,10 +1119,10 @@ evas_font_path_clear(Evas *e)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Appends a font path to the list of font paths used by the given evas.
+ * @param   e    The given evas.
+ * @param   path The new font path.
+ * @ingroup Evas_Font_Path_Group
  */
 void
 evas_font_path_append(Evas *e, const char *path)
@@ -1134,10 +1135,10 @@ evas_font_path_append(Evas *e, const char *path)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Prepends a font path to the list of font paths used by the given evas.
+ * @param   e The given evas.
+ * @param   path The new font path.
+ * @ingroup Evas_Font_Path_Group
  */
 void
 evas_font_path_prepend(Evas *e, const char *path)
@@ -1150,10 +1151,10 @@ evas_font_path_prepend(Evas *e, const char *path)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Retrieves the list of font paths used by the given evas.
+ * @param   e The given evas.
+ * @return  The list of font paths used.
+ * @ingroup Evas_Font_Path_Group
  */
 const Evas_List *
 evas_font_path_list(Evas *e)

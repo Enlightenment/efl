@@ -21,29 +21,12 @@ evas_hash_gen(const char *key)
 }
 
 /**
- * Add an entry to the hash table.
- * @param hash The hash table handle to hold the entry
- * @param key The key string for the entry
- * @param data The pointer to the data to be stored
- * @return The modified hash table handle
- * 
- * This function takes the data pointed to by @p data and inserts it into the
- * hash table @p hash, under the string key @p key. It will return a modified
- * hash table handle when done. An empty hash table starts as a NULL pointer.
- * 
- * It is expected that the @p key will be a unique string within the hash table
- * otherwise it is not deterministic as to which inserted data pointer will be
- * returned when evas_hash_find() is called, or which one wil be removed on
- * evas_hash_del() being called. A @p key of NULL is allowed, but will mean
- * unique lookups are impossible (unless the entry is the only one with a NULL
- * key in the hash table). Key strings are casesensitive.
- * 
- * If a memory allocation failure occurs, the old hash table pointer will be
- * returned, with the hash table contents unchanged, and the programmer should
- * use evas_hash_alloc_error() to determine if an allocation error occured and
- * recover from this situation.
- * 
- * Example:
+ * @defgroup Evas_Hash_Data Hash Data Functions
+ *
+ * Functions that add, access or remove data from hashes.
+ *
+ * The following example shows how to add and then access data in a
+ * hash table:
  * @code
  * Evas_Hash *hash = NULL;
  * extern void *my_data;
@@ -59,6 +42,45 @@ evas_hash_gen(const char *key)
  *     printf("My Data inserted and successfully found.\n");
  *   }
  * @endcode
+ *
+ * What follows is another example, showing how the @ref evas_hash_del
+ * function is used:
+ * @code
+ * extern Evas_Hash *hash;
+ * extern void *data;
+ * 
+ * printf("Insert some data...\n");
+ * hash = evas_hash_add(hash, "My Data", my_data);
+ * printf("Removing by key...\n");
+ * hash = evas_hash_del(hash, "My Data", NULL);
+ * printf("Insert some more data as a NULL key...\n");
+ * hash = evas_hash_add(hash, NULL, my_data);
+ * printf("Removing by data as a NULL key...\n");
+ * hash = evas_hash_del(hash, NULL, my_data);
+ * @endcode
+ */
+
+/**
+ * Adds an entry to the given hash table.
+ *
+ * @p key is expected to be a unique string within the hash table.
+ * Otherwise, you cannot be sure which inserted data pointer will be
+ * accessed with @ref evas_hash_find , and removed with
+ * @ref evas_hash_del .
+ *
+ * Key strings are case sensitive.
+ *
+ * @ref evas_hash_alloc_error should be used to determine if an
+ * allocation error occurred during this function.
+ *
+ * @param   hash The given hash table.  Can be @c NULL, in which case a
+ *               new hash table is allocated and returned.
+ * @param   key  A unique string.  Can be @c NULL.
+ * @param   data Data to associate with the string given by @p key.
+ * @return  Either the given hash table, or if the given value for @p
+ *          hash is @c NULL, then a new one.  @c NULL will be returned
+ *          if memory could not be allocated for a new table.
+ * @ingroup Evas_Hash_Data
  */
 Evas_Hash *
 evas_hash_add(Evas_Hash *hash, const char *key, const void *data)
@@ -116,35 +138,19 @@ evas_hash_add(Evas_Hash *hash, const char *key, const void *data)
 }
 
 /**
- * Remove an entry from the hash table
- * @param hash The hash table handle to remove the entry from
- * @param key The key string for the entry
- * @param data The pointer to the data to be removed
- * @return The modified hash table handle
- * 
- * This function removed an entry from the hash table pointed to by @p hash.
- * The key is identified by its string @p key. If the @p key is NULL, then the
- * data pointer @p data must be provided for a match to be possible so the
- * entry can be removed. As long as the @p key is not NULL, the @p data pointer
- * is not required and can be NULL. Remember than key strings are case
- * sensitive.
- * 
- * This function returns the modified hash table after removal.
- * 
- * Example:
- * @code
- * extern Evas_Hash *hash;
- * extern void *data;
- * 
- * printf("Insert some data...\n");
- * hash = evas_hash_add(hash, "My Data", my_data);
- * printf("Removing by key...\n");
- * hash = evas_hash_del(hash, "My Data", NULL);
- * printf("Insert some more data as a NULL key...\n");
- * hash = evas_hash_add(hash, NULL, my_data);
- * printf("Removing by data as a NULL key...\n");
- * hash = evas_hash_del(hash, NULL, my_data);
- * @endcode
+ * Removes the entry identified by @p key or @p data from the given
+ * hash table.
+ *
+ * If @p key is @c NULL, then @p data is used to find a match to
+ * remove.
+ *
+ * @param   hash The given hash table.
+ * @param   key  The key string.  Can be @c NULL.
+ * @param   data The data pointer to remove if @p key is @c NULL.
+ *               Otherwise, not required and can be @c NULL.
+ * @return  The modified hash table.  If there are no entries left, the
+ *          hash table will be freed and @c NULL will be returned.
+ * @ingroup Evas_Hash_Data
  */
 Evas_Hash *
 evas_hash_del(Evas_Hash *hash, const char *key, const void *data)
@@ -177,26 +183,12 @@ evas_hash_del(Evas_Hash *hash, const char *key, const void *data)
 }
 
 /**
- * Find a specified entry in a hash table
- * @param hash The hash table handle to find the entry in
- * @param key The key string for the entry
- * @return The data pointer for the stored entry, or NULL if not found.
- * 
- * This function finds an entry by its @p key, which is case sensitive. If the
- * entry in the hash table @p hash is found, the data pointer that was stored
- * under than entry is returned, otherwise NULL is returned.
- * 
- * Example:
- * @code
- * extern Evas_Hash *hash;
- * extern void *data;
- * 
- * hash = evas_hash_add(hash, "My Data", my_data);
- * if (evas_hash_find(hash, "My Data") == my_data)
- *   {
- *     printf("Found stored entry!\n");
- *   }
- * @endcode
+ * Retrieves a specific entry in the given hash table.
+ * @param   hash The given hash table.
+ * @param   key  The key string of the entry to find.
+ * @return  The data pointer for the stored entry, or @c NULL if not
+ *          found.
+ * @ingroup Evas_Hash_Data
  */
 void *
 evas_hash_find(Evas_Hash *hash, const char *key)
@@ -232,18 +224,9 @@ evas_hash_find(Evas_Hash *hash, const char *key)
 }
 
 /**
- * Return the number of buckets in the hash table
- * @param hash The hash table to return the bucket count of
- * @return The number of buckets in the hash table
- * 
- * This function returns the number of buckes in he hash table @p hash.
- * 
- * Example:
- * @code
- * extern Evas_Hash *hash;
- * 
- * printf("Hash bucket count: %i\n", evas_hash_size(hash));
- * @endcode
+ * Retrieves the number of buckets available in the given hash table.
+ * @param hash The given hash table.
+ * @return @c 256 if @p hash is not @c NULL.  @c 0 otherwise.
  */
 int
 evas_hash_size(Evas_Hash *hash)
@@ -251,6 +234,8 @@ evas_hash_size(Evas_Hash *hash)
    if (!hash) return 0;
    return 256;
 }
+
+/** @todo Complete documenting evas_hash.c */
 
 /**
  * Free an entire hash table

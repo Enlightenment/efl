@@ -56,10 +56,18 @@ static Evas_Object_Func object_func =
 /* it has no other api calls as all properties are standard */
 
 /**
- * To be documented.
+ * @defgroup Evas_Object_Gradient_Group Evas Gradient Object Functions
  *
- * FIXME: To be fixed.
- * 
+ * Functions that work on evas gradient objects.
+ *
+ * The following example shows how
+ */
+
+/**
+ * Adds a gradient object to the given evas.
+ * @param   e The given evas.
+ * @return  A new evas gradient object if successful.  Otherwise, @c NULL.
+ * @ingroup Evas_Object_Gradient_Group
  */
 Evas_Object *
 evas_object_gradient_add(Evas *e)
@@ -76,10 +84,23 @@ evas_object_gradient_add(Evas *e)
 }
 
 /**
- * To be documented.
+ * Adds a colour to the given evas gradient object.
  *
- * FIXME: To be fixed.
- * 
+ * The @p distance parameter determines the proportion of the gradient
+ * object that is to be set to this colour.  For instance, if red is
+ * added with @p distance set to 2, and green is added with @p
+ * distance set to 1, two-thirds will be red or reddish and one-third
+ * will be green or greenish.
+ *
+ * Colours are added from the top downwards.
+ *
+ * @param   obj      The given evas gradient object.
+ * @param   r        Red component of the given colour.
+ * @param   g        Green component of the given colour.
+ * @param   b        Blue component of the given colour.
+ * @param   a        Alpha component of the given colour.
+ * @param   distance Proportion of the gradient object that is this colour.
+ * @ingroup Evas_Object_Gradient_Group
  */
 void
 evas_object_gradient_color_add(Evas_Object *obj, int r, int g, int b, int a, int distance)
@@ -104,10 +125,8 @@ evas_object_gradient_color_add(Evas_Object *obj, int r, int g, int b, int a, int
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Deletes all colours set for the given evas gradient object.
+ * @param obj The given evas gradient object.
  */
 void
 evas_object_gradient_colors_clear(Evas_Object *obj)
@@ -130,10 +149,11 @@ evas_object_gradient_colors_clear(Evas_Object *obj)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Sets the angle at which the given evas gradient object sits clockwise
+ * from vertical.
+ * @param   obj   The given evas gradient object.
+ * @param   angle Angle in degrees.  Can be negative.
+ * @ingroup Evas_Object_Gradient
  */
 void
 evas_object_gradient_angle_set(Evas_Object *obj, Evas_Angle angle)
@@ -154,10 +174,11 @@ evas_object_gradient_angle_set(Evas_Object *obj, Evas_Angle angle)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Retrieves the angle at which the given evas gradient object sits
+ * clockwise from the vertical.
+ * @param   obj The given evas gradient object.
+ * @return  The current angle if successful. @c 0.0 otherwise.
+ * @ingroup Evas_Object_Gradient
  */
 Evas_Angle
 evas_object_gradient_angle_get(Evas_Object *obj)

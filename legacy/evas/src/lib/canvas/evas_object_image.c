@@ -106,11 +106,17 @@ evas_object_image_add(Evas *e)
 }
 
 /**
+ * @defgroup Evas_Object_Image_File_Group Image Object File Functions
+ *
+ * Functions that write to or retrieve images from files.
+ */
+
+/**
  * Sets the image displayed by the given image object.
  * @param   obj  The given image object.
  * @param   file Name of the file that the image exists in.
  * @param   key  Can be NULL.
- * @ingroup Evas_Object_Image
+ * @ingroup Evas_Object_Image_File_Group
  */
 void
 evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
@@ -176,7 +182,7 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
  *               name in.
  * @param   key  Pointer to a character pointer to store the pointer to the key
  *               string in.
- * @ingroup Evas_Object_Image
+ * @ingroup Evas_Object_Image_File_Group
  */
 void
 evas_object_image_file_get(Evas_Object *obj, char **file, char **key)
@@ -199,6 +205,12 @@ evas_object_image_file_get(Evas_Object *obj, char **file, char **key)
 }
 
 /**
+ * @defgroup Evas_Object_Image_Border_Group Image Object Border Functions
+ *
+ * Functions that adjust the unscaled image border of image objects.
+ */
+
+/**
  * Sets how much of each border of the given evas image object is not
  * to be scaled.
  *
@@ -215,7 +227,7 @@ evas_object_image_file_get(Evas_Object *obj, char **file, char **key)
  * @param   r   Distance of the right border that is not to be stretched.
  * @param   t   Distance of the top border that is not to be stretched.
  * @param   b   Distance of the bottom border that is not to be stretched.
- * @ingroup Evas_Object_Image
+ * @ingroup Evas_Object_Image_Border_Group
  */
 void
 evas_object_image_border_set(Evas_Object *obj, int l, int r, int t, int b)
@@ -259,7 +271,7 @@ evas_object_image_border_set(Evas_Object *obj, int l, int r, int t, int b)
  * @param   r   Pointer to an integer to store the right border width in.
  * @param   t   Pointer to an integer to store the top border width in.
  * @param   b   Pointer to an integer to store the bottom border width in.
- * @ingroup Evas_Object_Image
+ * @ingroup Evas_Object_Image_Border_Group
  */
 void
 evas_object_image_border_get(Evas_Object *obj, int *l, int *r, int *t, int *b)
@@ -288,6 +300,13 @@ evas_object_image_border_get(Evas_Object *obj, int *l, int *r, int *t, int *b)
 }
 
 /**
+ * @defgroup Evas_Object_Image_Fill_Group Image Object Fill Rectangle Functions
+ *
+ * Functions that deal with what areas of the image object are to be
+ * tiled with the given image.
+ */
+
+/**
  * Sets the rectangle on the image object that the image will be drawn
  * to.
  *
@@ -299,11 +318,12 @@ evas_object_image_border_get(Evas_Object *obj, int *l, int *r, int *t, int *b)
  * The default values for the fill parameters is @p x = 0, @p y = 0,
  * @p w = 32 and @p h = 32.
  *
- * @param obj The given evas image object.
- * @param x   The X coordinate for the top left corner of the image.
- * @param y   The Y coordinate for the top left corner of the image.
- * @param w   The width of the image.
- * @param h   The height of the image.
+ * @param   obj The given evas image object.
+ * @param   x   The X coordinate for the top left corner of the image.
+ * @param   y   The Y coordinate for the top left corner of the image.
+ * @param   w   The width of the image.
+ * @param   h   The height of the image.
+ * @ingroup Evas_Object_Image_Fill_Group
  */
 void
 evas_object_image_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
@@ -339,11 +359,12 @@ evas_object_image_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Co
  *
  * See @ref evas_object_image_fill_set for more details.
  * 
- * @param obj The given evas image object.
- * @param x   Pointer to an integer to store the X coordinate in.
- * @param y   Pointer to an integer to store the Y coordinate in.
- * @param w   Pointer to an integer to store the width in.
- * @param h   Pointer to an integer to store the height in.
+ * @param   obj The given evas image object.
+ * @param   x   Pointer to an integer to store the X coordinate in.
+ * @param   y   Pointer to an integer to store the Y coordinate in.
+ * @param   w   Pointer to an integer to store the width in.
+ * @param   h   Pointer to an integer to store the height in.
+ * @ingroup Evas_Object_Image_Fill_Group
  */
 void
 evas_object_image_fill_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
@@ -372,10 +393,24 @@ evas_object_image_fill_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_
 }
 
 /**
- * To be documented.
+ * @defgroup Evas_Object_Image_Size Image Object Image Size Functions
  *
- * FIXME: To be fixed.
- * 
+ * Functions that change the size of the image used by an image object.
+ */
+
+/**
+ * Sets the size of the image to be display by the given image object.
+ *
+ * This function will scale down or crop the image so that it is
+ * treated as if it were at the given size.  If the size given is
+ * smaller than the image, it will be cropped.  If the size given is
+ * larger, then the image will be treated as if it were in the upper
+ * left hand corner of a larger image that is otherwise transparent.
+ *
+ * @param   obj The given image object.
+ * @param   w   The new width.
+ * @param   h   The new height.
+ * @ingroup Evas_Object_Image_Size
  */
 void
 evas_object_image_size_set(Evas_Object *obj, int w, int h)
@@ -415,11 +450,12 @@ evas_object_image_size_set(Evas_Object *obj, int w, int h)
 
 /**
  * Retrieves the size of the image displayed by the given image object.
- * @param obj The given image object.
- * @param w   A pointer to an integer in which to store the width.  Can be
- *            @c NULL.
- * @param h   A pointer to an integer in which to store the height.  Can be
- *            @c NULL.
+ * @param   obj The given image object.
+ * @param   w   A pointer to an integer in which to store the width.  Can be
+ *              @c NULL.
+ * @param   h   A pointer to an integer in which to store the height.  Can be
+ *              @c NULL.
+ * @ingroup Evas_Object_Image_Size
  */
 void
 evas_object_image_size_get(Evas_Object *obj, int *w, int *h)
