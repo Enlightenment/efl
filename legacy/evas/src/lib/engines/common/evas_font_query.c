@@ -167,7 +167,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *text, int pos, int
 	chr_x = ((pen_x - kern) >> 8) + fg->glyph_out->left;
 	chr_y = (pen_y >> 8) + fg->glyph_out->top;
 	chr_w = fg->glyph_out->bitmap.width + (kern >> 8);
-	if (text[chr])
+/*	if (text[chr]) */
 	  {
 	     int advw;
 	     
@@ -241,7 +241,7 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y
 	chr_x = ((pen_x - kern) >> 8) + fg->glyph_out->left;
 	chr_y = (pen_y >> 8) + fg->glyph_out->top;
 	chr_w = fg->glyph_out->bitmap.width + (kern >> 8);
-	if (text[chr])
+/*	if (text[chr]) */
 	  {
 	     int advw;
 	     
