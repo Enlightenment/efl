@@ -2,6 +2,30 @@
 #include "evas_private.h"
 #include "Evas.h"
 
+/* FIXME:
+ * 
+ * things to add:
+ * 
+ * * font path support
+ * * font sources support
+ * * word wrap
+ * * underline support
+ * * double underline support
+ * * solid bg behind text
+ * * styles (outline, glow, etxra glow, shadow, soft shadow,
+ * * anchors (to query text extents)
+ * * inline objects (queryable)
+ * * tabs (indents)
+ * * left and right margins
+ * * api to query current extents as well as the native extents
+ * * overflow objects (overflow from this textblock can go into another)
+ * * obstacle objects to wrap around
+ * * on change figure out what node the change is in and figure out what line (nodes) it affects and only modify those nodes on that line or maybe others until changes dont happen further down
+ * * right to left text
+ * 
+ */
+
+/* save typing */
 #define ENFN obj->layer->evas->engine.func
 #define ENDT obj->layer->evas->engine.data.output
 
@@ -987,20 +1011,6 @@ evas_object_textblock_native_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coor
    if (w) *w = o->native.w;
    if (h) *h = o->native.h;
 }
-
-/* FIXME:
- * 
- * things to add:
- * 
- * overflow objects (overflow from this textblock can go into another)
- * obstacle objects to wrap around
- * on change figure out what node the change is in and figure out what line
- * (nodes) it affects and only modify those nodes on that line or maybe\
- * others until changes dont happen further down
- * 
- * lots more format handling (styles, right to left etc.)
- */
-
 
 /* all nice and private */
 static void
