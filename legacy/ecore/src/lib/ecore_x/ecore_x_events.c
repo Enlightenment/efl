@@ -503,15 +503,16 @@ _ecore_x_event_handle_motion_notify(XEvent *xevent)
 
    /* Xdnd handling */
    _xdnd = _ecore_x_dnd_protocol_get();
-   if (_xdnd->state == ECORE_X_DND_DRAGGING)
+   if (_xdnd->state != ECORE_X_DND_IDLE)
      {
 	/* Determine if we're still in the rectangle from the last status */
 	x1 = _xdnd->rectangle.x;
 	x2 = _xdnd->rectangle.x + _xdnd->rectangle.width;
 	y1 = _xdnd->rectangle.y;
 	y2 = _xdnd->rectangle.y + _xdnd->rectangle.height;
-	if ((e->win != _xdnd->dest) || (e->root.x < x1) || (e->root.x > x2)
-	    || (e->root.y < y1) || (e->root.y > y2))
+	if (!(_xdnd->suppress) || 
+	      ((e->root.x < x1) || (e->root.x > x2)
+	       || (e->root.y < y1) || (e->root.y > y2)))
 	  {
 	     _ecore_x_dnd_drag(e->root.x, e->root.y);
 	  }
@@ -995,12 +996,12 @@ _ecore_x_event_handle_selection_clear(XEvent *xevent)
    Atom sel;
 
    if (!(d = _ecore_x_selection_get(xevent->xselectionclear.selection)))
-      return;
+     return;
    if (xevent->xselectionclear.time > d->time)
-   {
-      _ecore_x_selection_set(None, NULL, 0, 
-            xevent->xselectionclear.selection);
-   }
+     {
+	_ecore_x_selection_set(None, NULL, 0, 
+			       xevent->xselectionclear.selection);
+     }
 
    /* Generate event for app cleanup */
    e = malloc(sizeof(Ecore_X_Event_Selection_Clear));
@@ -1008,13 +1009,13 @@ _ecore_x_event_handle_selection_clear(XEvent *xevent)
    e->time = xevent->xselectionclear.time;
    sel = xevent->xselectionclear.selection;
    if (sel == ECORE_X_ATOM_SELECTION_PRIMARY)
-      e->selection = ECORE_X_SELECTION_PRIMARY;
+     e->selection = ECORE_X_SELECTION_PRIMARY;
    else if (sel == ECORE_X_ATOM_SELECTION_SECONDARY)
-      e->selection = ECORE_X_SELECTION_SECONDARY;
+     e->selection = ECORE_X_SELECTION_SECONDARY;
    else
-      e->selection = ECORE_X_SELECTION_CLIPBOARD;
+     e->selection = ECORE_X_SELECTION_CLIPBOARD;
    ecore_event_add(ECORE_X_EVENT_SELECTION_CLEAR, e, NULL, NULL);
-   
+
 }
 
 void
@@ -1022,11 +1023,9 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
 {
    Ecore_X_Selection_Data           *sd;
    XSelectionEvent                  xnotify;
-   XEvent                           *xev;
+   XEvent                           xev;
    void                             *data;
 
-   xev = calloc(1, sizeof(XEvent));
-   
    xnotify.type = SelectionNotify;
    xnotify.display = xevent->xselectionrequest.display;
    xnotify.requestor = xevent->xselectionrequest.requestor;
@@ -1034,37 +1033,36 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
    xnotify.target = xevent->xselectionrequest.target;
    xnotify.time = CurrentTime;
 
-   if((sd = _ecore_x_selection_get(xnotify.selection)) 
-         && (sd->win == xevent->xselectionrequest.owner))
-   {
-      if (_ecore_x_selection_convert(xnotify.selection, xnotify.target,
-               &data) == -1)
-      {
-         /* Refuse selection, conversion to requested target failed */
-         xnotify.property = None;
-      }
-      else
-      {
-         /* FIXME: This does not properly handle large data transfers */
-         ecore_x_window_prop_property_set(xevent->xselectionrequest.requestor,
-               xevent->xselectionrequest.property,
-               xevent->xselectionrequest.target,
-               8, data, sd->length);
-         xnotify.property = xevent->xselectionrequest.property;
-         free(data);
-      }
-   }
+   if ((sd = _ecore_x_selection_get(xnotify.selection)) 
+       && (sd->win == xevent->xselectionrequest.owner))
+     {
+	if (!_ecore_x_selection_convert(xnotify.selection, xnotify.target,
+					&data) == -1)
+	  {
+	     /* Refuse selection, conversion to requested target failed */
+	     xnotify.property = None;
+	  }
+	else
+	  {
+	     /* FIXME: This does not properly handle large data transfers */
+	     ecore_x_window_prop_property_set(xevent->xselectionrequest.requestor,
+					      xevent->xselectionrequest.property,
+					      xevent->xselectionrequest.target,
+					      8, data, sd->length);
+	     xnotify.property = xevent->xselectionrequest.property;
+	     free(data);
+	  }
+     }
    else
-   {
-      xnotify.property = None;
-      return;
-   }
-   
-   xev->xselection = xnotify;
+     {
+	xnotify.property = None;
+	return;
+     }
+
+   xev.xselection = xnotify;
    XSendEvent(xevent->xselectionrequest.display, 
-              xevent->xselectionrequest.requestor, False, 0, xev);
-   XFree(xev);
-   
+	      xevent->xselectionrequest.requestor, False, 0, &xev);
+
 }
 
 void
@@ -1082,25 +1080,25 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
    e->target = _ecore_x_selection_target_get(xevent->xselection.target);
    selection = xevent->xselection.selection;
    if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
-      e->selection = ECORE_X_SELECTION_PRIMARY;
+     e->selection = ECORE_X_SELECTION_PRIMARY;
    else if (selection == ECORE_X_ATOM_SELECTION_SECONDARY)
-      e->selection = ECORE_X_SELECTION_SECONDARY;
+     e->selection = ECORE_X_SELECTION_SECONDARY;
    else if (selection == ECORE_X_ATOM_SELECTION_XDND)
-      e->selection = ECORE_X_SELECTION_XDND;
+     e->selection = ECORE_X_SELECTION_XDND;
    else if (selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
-      e->selection = ECORE_X_SELECTION_CLIPBOARD;
+     e->selection = ECORE_X_SELECTION_CLIPBOARD;
    else
-   {
-      free(e);
-      return;
-   }
+     {
+	free(e);
+	return;
+     }
 
    if (!ecore_x_window_prop_property_get(e->win, xevent->xselection.property,
-            AnyPropertyType, 8, &data, &num_ret))
-   {
-      free(e);
-      return;
-   }
+					 AnyPropertyType, 8, &data, &num_ret))
+     {
+	free(e);
+	return;
+     }
 
    sel_data.win = e->win;
    sel_data.selection = selection;
@@ -1108,7 +1106,6 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
    sel_data.length = num_ret;
    _ecore_x_selection_request_data_set(sel_data);
    ecore_event_add(ECORE_X_EVENT_SELECTION_NOTIFY, e, _ecore_x_event_free_selection_notify, NULL);
-
 }
 
 void
@@ -1259,7 +1256,6 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	e->win = _xdnd->source;
 	e->target = _xdnd->dest;
 	e->will_accept = _xdnd->will_accept;
-	e->suppress = _xdnd->suppress;
 	e->rectangle.x = _xdnd->rectangle.x;
 	e->rectangle.y = _xdnd->rectangle.y;
 	e->rectangle.width = _xdnd->rectangle.width;

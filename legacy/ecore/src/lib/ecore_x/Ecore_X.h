@@ -473,7 +473,6 @@ struct _Ecore_X_Event_Xdnd_Status
 {
    Ecore_X_Window       win, target;
    int                  will_accept;
-   int                  suppress;
    Ecore_X_Rectangle    rectangle;
    Ecore_X_Atom         action;
 };
@@ -826,6 +825,7 @@ EAPI int              ecore_x_dnd_version_get(Ecore_X_Window win);
 EAPI int              ecore_x_dnd_type_isset(Ecore_X_Window win, const char *type);
 EAPI void             ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, int on);
 EAPI int              ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size);
+EAPI void             ecore_x_dnd_drop(void);
 EAPI void             ecore_x_dnd_send_status(int will_accept, int suppress, Ecore_X_Rectangle rectangle, Ecore_X_Atom action);
 EAPI void             ecore_x_dnd_send_finished(void);
                  

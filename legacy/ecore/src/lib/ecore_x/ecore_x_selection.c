@@ -362,7 +362,7 @@ _ecore_x_selection_target_get(Atom target)
    else if (target == ECORE_X_ATOM_TEXT)
      return strdup(ECORE_X_SELECTION_TARGET_TEXT);
    else
-     return strdup(ECORE_X_SELECTION_TARGET_TEXT);
+     return NULL;
 }
 
 static void 
@@ -481,7 +481,7 @@ ecore_x_selection_converter_atom_del(Ecore_X_Atom target)
 	       }
 	     else
 	       {
-		  if(prev_cnv)
+		  if (prev_cnv)
 		    prev_cnv->next = cnv->next;
 		  else
 		    converters = NULL; /* This was the only converter */
@@ -521,25 +521,34 @@ _ecore_x_selection_convert(Atom selection, Atom target, void **data_ret)
    sel = _ecore_x_selection_get(selection);
    tgt_str = _ecore_x_selection_target_get(target);
 
-   for (cnv = converters; cnv; cnv = cnv->next)
+   if (tgt_str)
      {
-	if (cnv->target == target)
+	for (cnv = converters; cnv; cnv = cnv->next)
 	  {
-	     int r;
-	     r = cnv->convert(tgt_str, sel->data, sel->length, &data, &size);
-	     if (r)
+	     if (cnv->target == target)
 	       {
-		  *data_ret = data;
-		  return r;
+		  int r;
+		  r = cnv->convert(tgt_str, sel->data, sel->length, &data, &size);
+		  if (r)
+		    {
+		       *data_ret = data;
+		       return r;
+		    }
+		  else
+		    return 0;
 	       }
-	     else
-	       return -1;
 	  }
+
+	free(tgt_str);
+     }
+   else
+     {
+	*data_ret = malloc(sel->length);
+	memcpy(*data_ret, sel->data, sel->length);
+	return 1;
      }
 
-   free(tgt_str);
-
-   return -1;
+   return 0;
 }
 
 /* TODO: We need to work out a mechanism for automatic conversion to any requested
