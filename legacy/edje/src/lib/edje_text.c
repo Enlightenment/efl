@@ -223,7 +223,6 @@ _edje_text_part_on_add_clippers(Edje *ed, Edje_Real_Part *ep)
 		  evas_object_clip_set(o, ep->clip_to->object);
 	       }
 	  }
-	
      }
 }
 
@@ -543,6 +542,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
    ep->offset.x = ox + ((sw - tw) * params->text.align.x);
    ep->offset.y = oy + ((sh - th) * params->text.align.y);
+   
    evas_object_move(ep->object,
 		    ed->x + params->x + ep->offset.x,
 		    ed->y + params->y + ep->offset.y);

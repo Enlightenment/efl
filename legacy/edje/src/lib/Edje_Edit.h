@@ -392,9 +392,9 @@ struct _Edje
    char                 *part;
    
    int                   layer;
-   double                x, y, w, h;
+   Evas_Coord            x, y, w, h;
    struct {
-      double             w, h;
+      Evas_Coord         w, h;
    } min;
    unsigned short        dirty : 1;
    unsigned short        recalc : 1;

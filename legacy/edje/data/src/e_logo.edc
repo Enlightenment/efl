@@ -454,6 +454,8 @@ collections {
 //	    source:     "*";
 	    action:     STATE_SET "clicked" 0.0;
 	    transition: LINEAR 0.0;
+	    // NB: targets MUST come AFTER the action line so edje_cc knows
+	    // what to lookup
 	    target:     "logo";
 	 }
 	 program {

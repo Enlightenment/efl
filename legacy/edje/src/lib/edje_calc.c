@@ -314,7 +314,7 @@ _edje_part_recalc_single(Edje *ed,
      params->h = desc->rel2.offset_y +
      (desc->rel2.relative_y * ed->h) -
      params->y + 1;
-
+   
    /* aspect */
    if (params->h > 0)
      {
@@ -405,10 +405,10 @@ _edje_part_recalc_single(Edje *ed,
    /* if we have text that wants to make the min size the text size... */
    if ((chosen_desc) && (ep->part->type == EDJE_PART_TYPE_TEXT))
      {
-	char   *text;
-	char   *font;
-	int     size;
-	double  tw, th;
+	char      *text;
+	char      *font;
+	int        size;
+	Evas_Coord tw, th;
 	
 	text = chosen_desc->text.text;
 	font = chosen_desc->text.font;
@@ -708,9 +708,12 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
 
 	p3.text.align.x = (p1.text.align.x * (1.0 - pos)) + (p2.text.align.x * (pos));
 	p3.text.align.y = (p1.text.align.y * (1.0 - pos)) + (p2.text.align.y * (pos));
+	
      }
    else
-     p3 = p1;
+     {
+	p3 = p1;
+     }
 
    if ((chosen_desc->color_class) && (strlen(chosen_desc->color_class) > 0))
      {

@@ -254,17 +254,16 @@ _edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
 	Evas_Coord ox, oy;
 	
 	ep = l->data;
-	evas_object_geometry_get(ep->object, &ox, &oy, NULL, NULL);
 	evas_object_move(ep->object, ed->x + ep->x + ep->offset.x, ed->y + ep->y +ep->offset.y);
 	if (ep->swallowed_object)
 	  {
-	     evas_object_geometry_get(ep->swallowed_object, &ox, &oy, NULL, NULL);
 	     evas_object_move(ep->swallowed_object, ed->x + ep->x + ep->offset.x, ed->y + ep->y +ep->offset.y);
 	  }
 	if (ep->extra_objects)
 	  {
 	     Evas_List *el;
 	     
+	     evas_object_geometry_get(ep->object, &ox, &oy, NULL, NULL);
 	     for (el = ep->extra_objects; el; el = el->next)
 	       {
 		  Evas_Object *o;
