@@ -666,15 +666,9 @@ evas_list_count(Evas_List *list)
 void *
 evas_list_nth(Evas_List *list, int n)
 {
-   int i;
-   Evas_List *l;
-   
-   if (n < 0) return NULL;
-   for (i = 0, l = list; l; l = l->next, i++)
-     {
-	if (i == n) return l->data;
-     }
-   return NULL;
+   Evas_List *l = evas_list_nth_list(list, n);
+
+   return l ? l->data : NULL;
 }
 
 /**
