@@ -18,6 +18,8 @@
 
 typedef struct _Edje_File                            Edje_File;
 typedef struct _Edje_Data                            Edje_Data;
+typedef struct _Edje_Font_Directory                 Edje_Font_Directory;
+typedef struct _Edje_Font_Directory_Entry           Edje_Font_Directory_Entry;
 typedef struct _Edje_Image_Directory                 Edje_Image_Directory;
 typedef struct _Edje_Image_Directory_Entry           Edje_Image_Directory_Entry;
 typedef struct _Edje_Program                         Edje_Program;
@@ -144,6 +146,7 @@ struct _Edje_File
 {
    char                           *path;
    
+   Edje_Font_Directory            *font_dir;
    Edje_Image_Directory           *image_dir;
    Edje_Part_Collection_Directory *collection_dir;
    Evas_List                      *data;
@@ -160,6 +163,19 @@ struct _Edje_Data
    char *key;
    char *value;
 };
+
+/*----------*/
+
+struct _Edje_Font_Directory
+{
+   Evas_List *entries; /* a list of Edje_Font_Directory_Entry */
+};
+
+struct _Edje_Font_Directory_Entry
+{
+   char *entry; /* the name of the font */
+};
+
 
 /*----------*/
 

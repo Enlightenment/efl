@@ -508,6 +508,7 @@ _edje_part_recalc_single(Edje *ed,
 	int        size;
 	Evas_Coord tw, th;
 	char       buf[4096];
+        Evas_List *l;
 	
 	text = chosen_desc->text.text;
 	font = chosen_desc->text.font;
@@ -529,15 +530,24 @@ _edje_part_recalc_single(Edje *ed,
 	if (ep->text.text) text = ep->text.text;
 	if (ep->text.font) font = ep->text.font;
 	if (ep->text.size > 0) size = ep->text.size;
-	
-        strcpy(buf, "fonts/");
-	strcat(buf, font);
-	
-	evas_object_text_font_set(ep->object, buf, 10);
-	
-	if (evas_object_text_ascent_get(ep->object) > 0) font = buf;
-//	font = buf;
-	
+
+        /* check if the font is embedded in the .eet */
+        /* FIXME: we should cache this result */
+        if (ed->file->font_dir)
+	  {
+	     for (l = ed->file->font_dir->entries; l; l = l->next)
+	       {
+		  Edje_Font_Directory_Entry *fnt = l->data;
+
+		  if (!strcmp(fnt->entry, font))
+		    {
+		       strcpy(buf, "fonts/");
+		       strcat(buf, font);
+		       break;
+		    }
+	       }
+	  }
+
 	evas_object_text_font_set(ep->object, font, size);
 	if ((chosen_desc->text.min_x) || (chosen_desc->text.min_y))
 	  {

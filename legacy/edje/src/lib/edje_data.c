@@ -3,6 +3,8 @@
 
 Eet_Data_Descriptor *_edje_edd_edje_file = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_data = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_font_directory = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_font_directory_entry = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_image_directory = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_image_directory_entry = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_program = NULL;
@@ -37,6 +39,8 @@ _edje_edd_free(void)
 {
    FREED(_edje_edd_edje_file);
    FREED(_edje_edd_edje_data);
+   FREED(_edje_edd_edje_font_directory);
+   FREED(_edje_edd_edje_font_directory_entry);
    FREED(_edje_edd_edje_image_directory);
    FREED(_edje_edd_edje_image_directory_entry);
    FREED(_edje_edd_edje_program);
@@ -53,6 +57,17 @@ _edje_edd_free(void)
 void
 _edje_edd_setup(void)
 {
+   /* font directory */
+   _edje_edd_edje_font_directory_entry = 
+    NEWD("Edje_Font_Directory_Entry", 
+	 Edje_Font_Directory_Entry);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_font_directory_entry, Edje_Font_Directory_Entry, "entry", entry, EET_T_STRING);
+   
+   _edje_edd_edje_font_directory = 
+     NEWD("Edje_Font_Directory", 
+	  Edje_Font_Directory);
+   EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_font_directory, Edje_Font_Directory, "entries", entries, _edje_edd_edje_font_directory_entry);
+
    /* image directory */
    _edje_edd_edje_image_directory_entry = 
     NEWD("Edje_Image_Directory_Entry", 
@@ -91,6 +106,7 @@ _edje_edd_setup(void)
      NEWD("Edje_File", 
 	  Edje_File);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_file, Edje_File, "version", version, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "font_dir", font_dir, _edje_edd_edje_font_directory);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "image_dir", image_dir, _edje_edd_edje_image_directory);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "collection_dir", collection_dir, _edje_edd_edje_part_collection_directory);   
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "data", data, _edje_edd_edje_data);

@@ -66,6 +66,8 @@ struct _Edje_Message
 
 extern Eet_Data_Descriptor *_edje_edd_edje_file;
 extern Eet_Data_Descriptor *_edje_edd_edje_data;
+extern Eet_Data_Descriptor *_edje_edd_edje_font_directory;
+extern Eet_Data_Descriptor *_edje_edd_edje_font_directory_entry;
 extern Eet_Data_Descriptor *_edje_edd_edje_image_directory;
 extern Eet_Data_Descriptor *_edje_edd_edje_image_directory_entry;
 extern Eet_Data_Descriptor *_edje_edd_edje_program;
