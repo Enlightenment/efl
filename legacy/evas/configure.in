@@ -111,22 +111,13 @@ AC_ARG_WITH(qtdir,
   qt_dir="/opt/Qtopia";
 ])
 # check for freetype
-AC_ARG_WITH(freetype-config,
-[  --with-freetype-config=FREETYPE_CONFIG    use freetype-config specified ],
-[ 
-  FREETYPE_CONFIG=$withval;
-  echo "using "$FREETYPE_CONFIG" for freetype-config";
-],[
- PROG="freetype-config";
- AC_PATH_PROG(FREETYPE_CONFIG, $PROG, "", $PATH)
+AC_ARG_WITH(freetype-config, [  --with-freetype-config=FREETYPE_CONFIG    use freetype-config specified ],
+[ FREETYPE_CONFIG=$withval;
+  echo "using "$FREETYPE_CONFIG" for freetype-config"; ],
+[ if test -z "$FREETYPE_CONFIG"; then
+    AC_PATH_PROG(FREETYPE_CONFIG, "freetype-config", "", $PATH)
+  fi
 ])
-if [ test -z "$FREETYPE_CONFIG" ]; then
-  echo $PROG " is not in your \$PATH. Please ensure it is.";
-  echo "You may need to install the librarya and/or development packages";
-  echo "that contain this configure-script.";
-  echo "FATAL ERROR. ABORT.";
-  exit -1;
-fi
 freetype_cflags=`$FREETYPE_CONFIG --cflags`
 freetype_libs=`$FREETYPE_CONFIG --libs`
 

@@ -52,7 +52,8 @@ evas_gl_common_gradient_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL
 				     0, 0, 0, 0);
    if (!gr->tex)
      _evas_gl_common_gradient_texture_build(gc, gr);
-   evas_gl_common_context_texture_set(gc, gr->tex, 255, 3, 1);
+   evas_gl_common_context_texture_set(gc, gr->tex, 0, 255, 3);
+   
    evas_gl_common_context_read_buf_set(gc, GL_BACK);
    evas_gl_common_context_write_buf_set(gc, GL_BACK);
      {
@@ -88,6 +89,11 @@ evas_gl_common_gradient_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL
 	  {
 	     t[i] = (1.0 + ((((0.5) + (t[i] / 2.0)) * (256.0 - 2.0)))) / 256.0;
 	     t[i + 1] = (1.0 + ((((0.5) - (t[i + 1] / 2.0))) * 2.0)) / 4.0;
+	     if (gc->ext.nv_texture_rectangle)
+	       {
+		  t[i] *= 256.0;
+		  t[i + 1] *= 4.0;
+	       }
 	  }
 	glBegin(GL_QUADS);
 	glTexCoord2d(t[0],  t[1]); glVertex2i(x, y);
@@ -113,10 +119,10 @@ _evas_gl_common_gradient_texture_build(Evas_GL_Context *gc, Evas_GL_Gradient *gr
 	im = evas_common_image_create(256, 4);
 	if (im)
 	  {
-	     memcpy(im->image->data      , map, 256 * sizeof(DATA32));
-	     memcpy(im->image->data + 256, map, 256 * sizeof(DATA32));
-	     memcpy(im->image->data + 512, map, 256 * sizeof(DATA32));
-	     memcpy(im->image->data + 768, map, 256 * sizeof(DATA32));
+	     int i;
+	     
+	     for (i = 0; i < 4; i++)
+	       memcpy(im->image->data + (i * 256) , map, 256 * sizeof(DATA32));
 	     im->flags |= RGBA_IMAGE_HAS_ALPHA;
 	     gr->tex = evas_gl_common_texture_new(gc, im, 0);
 	     evas_common_image_free(im);
