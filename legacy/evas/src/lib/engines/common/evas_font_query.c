@@ -139,6 +139,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *text, int pos, int
 	RGBA_Font_Glyph *fg;
 	int chr_x, chr_y, chr_w;	
         int gl;
+	FT_Vector delta;
 	
 	pchr = chr;
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
@@ -146,8 +147,6 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *text, int pos, int
 	index = FT_Get_Char_Index(fn->ft.face, gl);
 	if ((use_kerning) && (prev_index) && (index))
 	  {
-	     FT_Vector delta;
-	     
 	     FT_Get_Kerning(fn->ft.face, prev_index, index,
 			    ft_kerning_default, &delta);
 	     pen_x += delta.x << 2;
@@ -158,7 +157,11 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *text, int pos, int
 	chr_x = (pen_x >> 8) + fg->glyph_out->left;
 	chr_y = (pen_y >> 8) + fg->glyph_out->top;
 	chr_w = fg->glyph_out->bitmap.width;
-	
+	if (text[chr])
+	  {
+	     if (chr_w < (fg->glyph->advance.x >> 16))
+	       chr_w = fg->glyph->advance.x >> 16;
+	  }
 	if (pchr == pos)
 	  {
 	     if (cx) *cx = chr_x;
@@ -193,6 +196,7 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y
 	RGBA_Font_Glyph *fg;
 	int chr_x, chr_y, chr_w;
         int gl;
+	FT_Vector delta;
 
 	pchr = chr;
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
@@ -200,8 +204,6 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y
 	index = FT_Get_Char_Index(fn->ft.face, gl);
 	if ((use_kerning) && (prev_index) && (index))
 	  {
-	     FT_Vector delta;
-	     
 	     FT_Get_Kerning(fn->ft.face, prev_index, index,
 			    ft_kerning_default, &delta);
 	     pen_x += delta.x << 6;
@@ -212,8 +214,14 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y
 	chr_x = (pen_x >> 8) + fg->glyph_out->left;
 	chr_y = (pen_y >> 8) + fg->glyph_out->top;
 	chr_w = fg->glyph_out->bitmap.width;
-	
-	if ((x >= chr_x) && (x < (chr_x + chr_w)) &&
+	if (text[chr])
+	  {
+	     if (chr_w < (((fg->glyph->advance.x + 0xffff) >> 16) + 
+			  (((pen_x & 0xff) + 0xff) >> 8) + 1))
+	       chr_w = ((fg->glyph->advance.x + 0xffff) >> 16) +
+		 (((pen_x & 0xff) + 0xff) >> 8) + 1;
+	  }
+	if ((x >= chr_x) && (x <= (chr_x + chr_w)) &&
 	    (y > - evas_common_font_max_ascent_get(fn)) &&
 	    (y < evas_common_font_max_descent_get(fn)))
 	  {

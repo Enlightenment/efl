@@ -678,7 +678,10 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 					      context,
 					      surface,
 					      o->engine_data,
-					      obj->cur.cache.geometry.x + x,
+					      obj->cur.cache.geometry.x + x -
+					      obj->layer->evas->engine.func->font_inset_get(obj->layer->evas->engine.data.output,
+											    o->engine_data,
+											    o->cur.text),
 					      obj->cur.cache.geometry.y + y + 
 					      (int)
 					      ((o->max_ascent * obj->cur.cache.geometry.h) / obj->cur.geometry.h),
