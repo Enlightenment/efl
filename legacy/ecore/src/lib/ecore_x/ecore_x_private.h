@@ -130,6 +130,12 @@ extern Atom     _ecore_x_atom_wm_command;
 extern Atom     _ecore_x_atom_wm_icon_name;
 extern Atom     _ecore_x_atom_wm_client_machine;
 extern Atom     _ecore_x_atom_wm_change_state;
+extern Atom     _ecore_x_atom_wm_colormap_windows;
+extern Atom     _ecore_x_atom_wm_window_role;
+extern Atom     _ecore_x_atom_wm_hints;
+extern Atom     _ecore_x_atom_wm_client_leader;
+extern Atom     _ecore_x_atom_wm_transient_for;
+extern Atom     _ecore_x_atom_wm_save_yourself;
 
 extern Atom     _ecore_x_atom_motif_wm_hints;
 

@@ -534,7 +534,15 @@ _ecore_evas_idle_enter(void *data)
 		    }
 	       }
 	     else
-	       evas_render(ee->evas);
+	       {
+		  Evas_List *updates;
+		  
+		  updates = evas_render_updates(ee->evas);
+		  if (updates)
+		    {
+		       evas_render_updates_free(updates);
+		    }
+	       }
 	  }
 	if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
      }

@@ -47,6 +47,8 @@ typedef struct _Ecore_X_Rectangle {
 
 #define ECORE_X_DND_VERSION 5
 
+#define ECORE_X_CURRENT_TIME 0
+   
 extern Ecore_X_Atom ECORE_X_DND_ACTION_COPY;
 extern Ecore_X_Atom ECORE_X_DND_ACTION_MOVE;
 extern Ecore_X_Atom ECORE_X_DND_ACTION_LINK;
@@ -870,22 +872,32 @@ int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom t
    void
      ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state);
    void
-     ecore_x_icccm_delete_window_send(Ecore_X_Window win);
+     ecore_x_icccm_delete_window_send(Ecore_X_Window win, Ecore_X_Time t);
    void
-     ecore_x_icccm_take_focus_send(Ecore_X_Window win);
+     ecore_x_icccm_take_focus_send(Ecore_X_Window win, Ecore_X_Time t);
    void
-     ecore_x_icccm_save_yourself_send(Ecore_X_Window win);
+     ecore_x_icccm_save_yourself_send(Ecore_X_Window win, Ecore_X_Time t);
    void
      ecore_x_icccm_move_resize_send(Ecore_X_Window win, 
 				    int x, int y, int w, int h);
+   void
+     ecore_x_icccm_hints_set(Ecore_X_Window win,
+			     int accepts_focus,
+			     Ecore_X_Window_State_Hint initial_state,
+			     Ecore_X_Pixmap icon_pixmap,
+			     Ecore_X_Pixmap icon_mask,
+			     Ecore_X_Window icon_window,
+			     Ecore_X_Window window_group,
+			     int is_urgent);
    int
-     ecore_x_icccm_basic_hints_get(Ecore_X_Window win,
-				   int *accepts_focus,
-				   Ecore_X_Window_State_Hint *initial_state,
-				   Ecore_X_Pixmap *icon_pixmap,
-				   Ecore_X_Pixmap *icon_mask,
-				   Ecore_X_Window *icon_window,
-				   Ecore_X_Window *window_group);
+     ecore_x_icccm_hints_get(Ecore_X_Window win,
+			     int *accepts_focus,
+			     Ecore_X_Window_State_Hint *initial_state,
+			     Ecore_X_Pixmap *icon_pixmap,
+			     Ecore_X_Pixmap *icon_mask,
+			     Ecore_X_Window *icon_window,
+			     Ecore_X_Window *window_group,
+			     int *is_urgent);
    
    
    /* FIXME: these funcs need categorising */

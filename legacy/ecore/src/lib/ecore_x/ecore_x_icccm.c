@@ -1,6 +1,8 @@
 /*
  * Various ICCCM related functions.
- * These are normally called only by window managers.
+ * 
+ * This is ALL the code involving anything ICCCM related. for both WM and
+ * client.
  */
 #include "Ecore.h"
 #include "ecore_x_private.h"
@@ -24,7 +26,7 @@ ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state)
 }
 
 void
-ecore_x_icccm_delete_window_send(Ecore_X_Window win)
+ecore_x_icccm_delete_window_send(Ecore_X_Window win, Ecore_X_Time t)
 {
    ecore_x_client_message32_send(win, _ecore_x_atom_wm_protocols,
 				 _ecore_x_atom_wm_delete_window,
@@ -32,22 +34,20 @@ ecore_x_icccm_delete_window_send(Ecore_X_Window win)
 }
 
 void
-ecore_x_icccm_take_focus_send(Ecore_X_Window win)
+ecore_x_icccm_take_focus_send(Ecore_X_Window win, Ecore_X_Time t)
 {
    ecore_x_client_message32_send(win, _ecore_x_atom_wm_protocols,
 				 _ecore_x_atom_wm_take_focus,
 				 CurrentTime, 0, 0, 0);
 }
 
-#if 0
 void
-ecore_x_icccm_save_yourself_send(Ecore_X_Window win)
+ecore_x_icccm_save_yourself_send(Ecore_X_Window win, Ecore_X_Time t)
 {
    ecore_x_client_message32_send(win, _ecore_x_atom_wm_protocols,
 				 _ecore_x_atom_wm_save_yourself,
 				 CurrentTime, 0, 0, 0);
 }
-#endif
 
 void
 ecore_x_icccm_move_resize_send(Ecore_X_Window win,
@@ -69,17 +69,74 @@ ecore_x_icccm_move_resize_send(Ecore_X_Window win,
    XSendEvent(_ecore_x_disp, win, False, StructureNotifyMask, &ev);
 }                 
 
+void
+ecore_x_icccm_hints_set(Ecore_X_Window win,
+			int accepts_focus,
+			Ecore_X_Window_State_Hint initial_state,
+			Ecore_X_Pixmap icon_pixmap,
+			Ecore_X_Pixmap icon_mask,
+			Ecore_X_Window icon_window,
+			Ecore_X_Window window_group,
+			int is_urgent)
+{
+   XWMHints *hints;
+   
+   hints = XAllocWMHints();
+   if (!hints) return;
+   
+   hints->flags = InputHint | StateHint;
+   hints->input = accepts_focus;
+   if (initial_state == ECORE_X_WINDOW_STATE_HINT_WITHDRAWN)
+     hints->initial_state = WithdrawnState;
+   else if (initial_state == ECORE_X_WINDOW_STATE_HINT_NORMAL)
+     hints->initial_state = NormalState;
+   else if (initial_state == ECORE_X_WINDOW_STATE_HINT_ICONIC)
+     hints->initial_state = IconicState;
+   if (icon_pixmap != 0)
+     {
+	hints->icon_pixmap = icon_pixmap;
+	hints->flags |= IconPixmapHint;
+     }
+   if (icon_mask != 0)
+     {
+	hints->icon_mask = icon_mask;
+	hints->flags |= IconMaskHint;
+     }
+   if (icon_window != 0)
+     {
+	hints->icon_window = icon_window;
+	hints->flags |= IconWindowHint;
+     }
+   if (window_group != 0)
+     {
+	hints->window_group = window_group;
+	hints->flags |= WindowGroupHint;
+     }
+   if (is_urgent)
+     hints->flags |= XUrgencyHint;
+   XSetWMHints(_ecore_x_disp, win, hints);
+   XFree(hints);
+}
+
 int
-ecore_x_icccm_basic_hints_get(Ecore_X_Window win,
-			      int *accepts_focus,
-			      Ecore_X_Window_State_Hint *initial_state,
-			      Ecore_X_Pixmap *icon_pixmap,
-			      Ecore_X_Pixmap *icon_mask,
-			      Ecore_X_Window *icon_window,
-			      Ecore_X_Window *window_group)
+ecore_x_icccm_hints_get(Ecore_X_Window win,
+			int *accepts_focus,
+			Ecore_X_Window_State_Hint *initial_state,
+			Ecore_X_Pixmap *icon_pixmap,
+			Ecore_X_Pixmap *icon_mask,
+			Ecore_X_Window *icon_window,
+			Ecore_X_Window *window_group,
+			int *is_urgent)
 {
    XWMHints           *hints;
-   
+
+   if (accepts_focus) *accepts_focus = 0;
+   if (initial_state) *initial_state = ECORE_X_WINDOW_STATE_HINT_NORMAL;
+   if (icon_pixmap) *icon_pixmap = 0;
+   if (icon_mask) *icon_mask = 0;
+   if (icon_window) *icon_window = 0;
+   if (window_group) *window_group = 0;
+   if (is_urgent) *is_urgent = 0;
    hints = XGetWMHints(_ecore_x_disp, win);
    if (hints)
      {
@@ -114,6 +171,10 @@ ecore_x_icccm_basic_hints_get(Ecore_X_Window win,
 	if ((hints->flags & WindowGroupHint) && (window_group))
 	  {
 	     *window_group = hints->window_group;
+	  }
+	if ((hints->flags & XUrgencyHint) && (is_urgent))
+	  {
+	     *is_urgent = 1;
 	  }
 	XFree(hints);
 	return 1;
@@ -198,11 +259,18 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win)
 }
 
 /* FIXME: move these things in here as they are icccm related */
+/* get/set min.max etc. size */
 /* get/set title */
 /* get/set name/class */
 /* get/set machine */
 /* get/set command */
 /* get/set icon name */
+/* get/set wm protocols */
+/* get/set colormap windows */
+/* get/set window role */
+/* get/set client leader */
+/* get/set transient for */
+/* send iconify request */
 
 /* FIXME: there are older E hints, gnome hitns and mwm hints and new netwm */
 /*        hints. each should go in their own file/section so we know which */

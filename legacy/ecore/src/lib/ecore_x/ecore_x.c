@@ -38,6 +38,12 @@ Atom     _ecore_x_atom_wm_command = 0;
 Atom     _ecore_x_atom_wm_icon_name = 0;
 Atom     _ecore_x_atom_wm_client_machine = 0;
 Atom     _ecore_x_atom_wm_change_state = 0;
+Atom     _ecore_x_atom_wm_colormap_windows = 0;
+Atom     _ecore_x_atom_wm_window_role = 0;
+Atom     _ecore_x_atom_wm_hints = 0;
+Atom     _ecore_x_atom_wm_client_leader = 0;
+Atom     _ecore_x_atom_wm_transient_for = 0;
+Atom     _ecore_x_atom_wm_save_yourself = 0;
 
 Atom     _ecore_x_atom_motif_wm_hints = 0;
 
@@ -376,6 +382,12 @@ ecore_x_init(const char *name)
    _ecore_x_atom_wm_icon_name             = XInternAtom(_ecore_x_disp, "WM_ICON_NAME", False);
    _ecore_x_atom_wm_client_machine        = XInternAtom(_ecore_x_disp, "WM_CLIENT_MACHINE", False);
    _ecore_x_atom_wm_change_state          = XInternAtom(_ecore_x_disp, "WM_CHANGE_STATE", False);
+   _ecore_x_atom_wm_colormap_windows      = XInternAtom(_ecore_x_disp, "WM_COLORMAP_WINDOWS", False);
+   _ecore_x_atom_wm_window_role           = XInternAtom(_ecore_x_disp, "WM_WINDOW_ROLE", False);
+   _ecore_x_atom_wm_hints                 = XInternAtom(_ecore_x_disp, "WM_HINTS", False);
+   _ecore_x_atom_wm_client_leader         = XInternAtom(_ecore_x_disp, "WM_CLIENT_LEADER", False);
+   _ecore_x_atom_wm_transient_for         = XInternAtom(_ecore_x_disp, "WM_TRANSIENT_FOR", False);
+   _ecore_x_atom_wm_save_yourself         = XInternAtom(_ecore_x_disp, "WM_SAVE_YOURSELF", False);
 
    _ecore_x_atom_motif_wm_hints           = XInternAtom(_ecore_x_disp, "_MOTIF_WM_HINTS", False);
 
