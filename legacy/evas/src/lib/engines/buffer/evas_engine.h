@@ -31,6 +31,10 @@ struct _Outbuf
       void * (*new_update_region) (int x, int y, int w, int h, int *row_bytes);
       void   (*free_update_region) (int x, int y, int w, int h, void *data);
    } func;
+
+   struct {
+      RGBA_Image  *back_buf;
+   } priv;
 };
 
 /****/

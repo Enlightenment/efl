@@ -10,6 +10,10 @@ evas_buffer_outbuf_buf_init(void)
 void
 evas_buffer_outbuf_buf_free(Outbuf *buf)
 {
+   if (buf->priv.back_buf)
+     {
+	evas_common_image_free(buf->priv.back_buf);
+     }
    free(buf);
 }
 
@@ -37,6 +41,19 @@ evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, in
 
    buf->func.new_update_region = new_update_region;
    buf->func.free_update_region = free_update_region;
+
+   if ((buf->depth == OUTBUF_DEPTH_RGB_32BPP_888_8888) &&
+       (buf->dest) && (buf->dest_row_bytes == (buf->w * sizeof(DATA32))))
+     {
+	buf->priv.back_buf = evas_common_image_new();
+	buf->priv.back_buf->image = evas_common_image_surface_new();
+	buf->priv.back_buf->image->w = w;
+	buf->priv.back_buf->image->h = h;
+	buf->priv.back_buf->image->data = buf->dest;
+	buf->priv.back_buf->image->no_free = 1;
+	buf->priv.back_buf->flags |= RGBA_IMAGE_HAS_ALPHA;
+     }
+   
    return buf;
 }
 
@@ -45,12 +62,34 @@ evas_buffer_outbuf_buf_new_region_for_update(Outbuf *buf, int x, int y, int w, i
 {
    RGBA_Image *im;
    
-   *cx = 0; *cy = 0; *cw = w; *ch = h;
-   im = evas_common_image_create(w, h);
-   if (im)
+   if (buf->priv.back_buf)
      {
-	im->flags |= RGBA_IMAGE_HAS_ALPHA;
-	memset(im->image->data, 0, w * h * sizeof(DATA32));
+	int xx, yy;
+	
+	*cx = x; *cy = y; *cw = w; *ch = h;
+	for (yy = 0; yy < h; yy++)
+	  {
+	     DATA32 *ptr;
+	     
+	     ptr = buf->priv.back_buf->image->data + 
+	       (y * buf->priv.back_buf->image->w) + x;
+	     for (xx = 0; xx < w; xx++)
+	       {
+		  A_VAL(ptr) = 0;
+		  ptr++;
+	       }
+	  }
+	return buf->priv.back_buf;
+     }
+   else
+     {
+	*cx = 0; *cy = 0; *cw = w; *ch = h;
+	im = evas_common_image_create(w, h);
+	if (im)
+	  {
+	     im->flags |= RGBA_IMAGE_HAS_ALPHA;
+	     memset(im->image->data, 0, w * h * sizeof(DATA32));
+	  }
      }
    return im;
 }
@@ -58,7 +97,7 @@ evas_buffer_outbuf_buf_new_region_for_update(Outbuf *buf, int x, int y, int w, i
 void
 evas_buffer_outbuf_buf_free_region_for_update(Outbuf *buf, RGBA_Image *update)
 {
-   evas_common_image_free(update);
+   if (update != buf->priv.back_buf) evas_common_image_free(update);
 }
 
 void
@@ -198,8 +237,14 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 	  }
 	break;
       case OUTBUF_DEPTH_RGB_32BPP_888_8888:
-	/* simple memcpy */
-	/* FIXME: write this */
+	if (!buf->priv.back_buf)
+	  {
+	     /* simple memcpy */
+	     /* FIXME: write this */
+	  }
+	else
+	  {
+	  }
 	break;
       case OUTBUF_DEPTH_BGR_32BPP_888_8888:
 	/* simple memcpy */
