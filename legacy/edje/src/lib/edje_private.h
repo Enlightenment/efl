@@ -730,6 +730,7 @@ extern Evas_List       *_edje_animators;
 extern Edje_Text_Style  _edje_text_styles[EDJE_TEXT_EFFECT_LAST];
 extern Evas_List       *_edje_edjes;
 
+extern char            *_edje_fontset_append;
 
 void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos);
 Edje_Part_Description *_edje_part_description_find(Edje *ed, Edje_Real_Part *rp, char *name, double val);

@@ -502,7 +502,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 			Edje_Part_Description *chosen_desc)
 {
    char   *text;
-   char   *font;
+   char   *font, *font2 = NULL;
    int     size;
    Evas_Coord  tw, th;
    Evas_Coord  ox, oy, sw, sh;
@@ -529,7 +529,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    if (ep->text.text) text = ep->text.text;
    if (ep->text.font) font = ep->text.font;
    if (ep->text.size > 0) size = ep->text.size;
-   
+
    /* check if the font is embedded in the .eet */
    /* FIXME: we should cache this result */
    if (ed->file->font_dir)
@@ -549,6 +549,20 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 		  inlined_font = 1;
 		  break;
 	       }
+	  }
+     }
+
+   if ((_edje_fontset_append) && (font))
+     {
+	char *font2;
+	
+	font2 = malloc(strlen(font) + 1 + strlen(_edje_fontset_append) + 1);
+	if (font2)
+	  {
+	     strcpy(font2, font);
+	     strcat(font2, ",");
+	     strcat(font2, _edje_fontset_append);
+	     font = font2;
 	  }
      }
    
@@ -726,4 +740,6 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 
    if (free_text)
      free(text);
+   if (font2)
+     free(font2);
 }

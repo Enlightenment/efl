@@ -535,7 +535,22 @@ _edje_part_recalc_single(Edje *ed,
 	if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
 	else evas_object_text_font_source_set(ep->object, NULL);
 	
-	evas_object_text_font_set(ep->object, font, size);
+	if ((_edje_fontset_append) && (font))
+	  {
+	     char *font2;
+	     
+	     font2 = malloc(strlen(font) + 1 + strlen(_edje_fontset_append) + 1);
+	     if (font2)
+	       {
+		  strcpy(font2, font);
+		  strcat(font2, ",");
+		  strcat(font2, _edje_fontset_append);
+		  evas_object_text_font_set(ep->object, font2, size);
+		  free(font2);
+	       }
+	  }
+	else
+	  evas_object_text_font_set(ep->object, font, size);
 	if ((chosen_desc->text.min_x) || (chosen_desc->text.min_y))
 	  {
 	     int mw, mh;

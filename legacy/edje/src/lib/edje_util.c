@@ -10,6 +10,7 @@ Evas_Hash *_edje_color_class_member_hash = NULL;
 Evas_Hash *_edje_text_class_hash = NULL;
 Evas_Hash *_edje_text_class_member_hash = NULL;
 
+char *_edje_fontset_append = NULL;
 
 /************************** API Routines **************************/
 
@@ -38,6 +39,23 @@ edje_thaw(void)
    for (l = _edje_edjes; l; l = l->next)
      edje_object_thaw((Evas_Object *)(l->data));
 }
+
+/* FIXDOC: Expand */
+void
+edje_fontset_append_set(char *fonts)
+{
+   if (_edje_fontset_append)
+     free(_edje_fontset_append);
+   _edje_fontset_append = strdup(fonts);
+}
+
+/* FIXDOC: Expand */
+const char *
+edje_fontset_append_get(void)
+{
+   return _edje_fontset_append;
+}
+
 
 /* FIXDOC: Verify/Expand */
 /** Get Edje object data
