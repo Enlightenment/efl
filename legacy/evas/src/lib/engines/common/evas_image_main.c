@@ -76,6 +76,100 @@ evas_common_image_shutdown(void)
 #endif
 }
 
+/* alpha tiles! - asctually span lists - need to do it as span lists */
+void
+evas_common_image_surface_alpha_tiles_calc(RGBA_Surface *is, int tsize)
+{
+   int x, y;
+   DATA32 *ptr;
+
+#if 1  
+   return;
+#endif   
+   /* hmm i only get about a 15% speedup on my "best cases". the complexity
+    * imho isn't worth the small gain, so i have disabled it here :( (this
+    * is best case scenario - average case will be much less gain)
+    * 
+    * thought for now the only case is 
+    */
+   if (is->spans) return;
+   if (!(is->im->flags & RGBA_IMAGE_HAS_ALPHA)) return;
+   /* FIXME: dont handle alpha only images yet */
+   if ((is->im->flags & RGBA_IMAGE_ALPHA_ONLY)) return;
+   if (tsize < 0) tsize = 0;
+   is->spans = calloc(1, sizeof(RGBA_Image_Span *) * is->h);
+   if (!is->spans) return;
+   ptr = is->data;
+   for (y = 0; y < is->h; y++)
+     {
+	RGBA_Image_Span *sp;
+	
+	sp = NULL;
+	for (x = 0; x < is->w; x++)
+	  {
+	     DATA8 a;
+	     
+	     a = A_VAL(ptr);
+	     if (sp)
+	       {
+		  if (a == 0)
+		    {
+		       is->spans[y] = evas_object_list_append(is->spans[y], sp);
+		       sp = NULL;
+		    }
+		  else
+		    {
+		       sp->w++;
+		       if ((sp->v == 2) && (a != 255)) sp->v = 1;
+		    }
+	       }
+	     else
+	       {
+		  if (a == 255)
+		    {
+		       sp = calloc(1, sizeof(RGBA_Image_Span));
+		       sp->x = x;
+		       sp->w = 1;
+		       sp->v = 2;
+		    }
+		  else if (a > 0)
+		    {
+		       sp = calloc(1, sizeof(RGBA_Image_Span));
+		       sp->x = x;
+		       sp->w = 1;
+		       sp->v = 1;
+		    }
+	       }
+	     ptr++;
+	  }
+	if (sp)
+	  {
+	     is->spans[y] = evas_object_list_append(is->spans[y], sp);
+	     sp = NULL;
+	  }
+     }
+}
+
+void
+evas_common_image_surface_alpha_tiles_free(RGBA_Surface *is)
+{
+   int i;
+   
+   if (!is->spans) return;
+   for (i = 0; i < is->h; i++)
+     {
+	while (is->spans[i])
+	  {
+	     RGBA_Image_Span *sp;
+	     
+	     sp = is->spans[i];
+	     is->spans[i] = evas_object_list_remove(sp, sp);
+	     free(sp);
+	  }
+     }
+   free(is->spans);
+}
+
 RGBA_Surface *
 evas_common_image_surface_new(RGBA_Image *im)
 {
@@ -125,6 +219,7 @@ evas_common_image_surface_dealloc(RGBA_Surface *is)
 	free(is->data);
 	is->data = NULL;
      }
+   evas_common_image_surface_alpha_tiles_free(is);
 }
 
 RGBA_Image *
@@ -429,6 +524,7 @@ evas_common_image_dirty(RGBA_Image *im)
 {
    int i;
    
+   if (im->image) evas_common_image_surface_alpha_tiles_free(im->image);
    evas_common_image_unstore(im);
    im->flags |= RGBA_IMAGE_IS_DIRTY;
 }

@@ -160,6 +160,7 @@ typedef char                          Evas_Bool;
 
 typedef struct _RGBA_Image            RGBA_Image;
 typedef struct _RGBA_Surface          RGBA_Surface;
+typedef struct _RGBA_Image_Span       RGBA_Image_Span;
 typedef struct _RGBA_Draw_Context     RGBA_Draw_Context;
 typedef struct _RGBA_Gradient         RGBA_Gradient;
 typedef struct _RGBA_Gradient_Color   RGBA_Gradient_Color;
@@ -188,12 +189,12 @@ typedef void (*Gfx_Func_Convert) (DATA32 *src, DATA8 *dst, int src_jump, int dst
 
 typedef enum _RGBA_Image_Flags
 {
-   RGBA_IMAGE_NOTHING    = (0),
-   RGBA_IMAGE_HAS_ALPHA  = (1 << 0),
-   RGBA_IMAGE_IS_DIRTY   = (1 << 1),
-   RGBA_IMAGE_INDEXED    = (1 << 2),
-   RGBA_IMAGE_ALPHA_ONLY = (1 << 3),
-   RGBA_IMAGE_HAVE_SPANS = (1 << 4)
+   RGBA_IMAGE_NOTHING     = (0),
+   RGBA_IMAGE_HAS_ALPHA   = (1 << 0),
+   RGBA_IMAGE_IS_DIRTY    = (1 << 1),
+   RGBA_IMAGE_INDEXED     = (1 << 2),
+   RGBA_IMAGE_ALPHA_ONLY  = (1 << 3),
+   RGBA_IMAGE_ALPHA_TILES = (1 << 4)
 } RGBA_Image_Flags;
 
 typedef enum _Convert_Pal_Mode
@@ -286,10 +287,18 @@ struct _RGBA_Draw_Context
 
 struct _RGBA_Surface
 {
-   int         w, h;
-   DATA32     *data;
-   char        no_free : 1;
-   RGBA_Image *im;
+   int                w, h;
+   DATA32            *data;
+   char               no_free : 1;
+   RGBA_Image        *im;
+   RGBA_Image_Span  **spans;
+};
+
+struct _RGBA_Image_Span
+{
+   Evas_Object_List     _list_data;
+   int                  x, w;
+   int                  v;
 };
 
 struct _RGBA_Image
@@ -761,6 +770,9 @@ void evas_common_scale_rgba_in_to_out_clip_sample      (RGBA_Image *src, RGBA_Im
 void          evas_common_image_init              (void);
 void          evas_common_image_shutdown          (void);
 
+void          evas_common_image_surface_alpha_tiles_calc(RGBA_Surface *is, int tsize);
+void          evas_common_image_surface_alpha_tiles_free(RGBA_Surface *is);
+   
 RGBA_Surface *evas_common_image_surface_new       (RGBA_Image *im);
 void          evas_common_image_surface_free      (RGBA_Surface *is);
 void          evas_common_image_surface_alloc     (RGBA_Surface *is);
