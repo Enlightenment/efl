@@ -6,8 +6,10 @@
 #include "Ecore_X.h"
 #include "Ecore_X_Atoms.h"
 
+#ifdef ECORE_XINERAMA
 static XineramaScreenInfo *_xin_info = NULL;
 static int _xin_scr_num = 0;
+#endif
 
 int
 ecore_x_xinerama_screen_count_get(void)
