@@ -18,7 +18,9 @@ static void _ecore_signal_callback_sighup(int sig, siginfo_t *si, void *foo);
 static void _ecore_signal_callback_sigquit(int sig, siginfo_t *si, void *foo);
 static void _ecore_signal_callback_sigint(int sig, siginfo_t *si, void *foo);
 static void _ecore_signal_callback_sigterm(int sig, siginfo_t *si, void *foo);
+#ifdef SIGPWR
 static void _ecore_signal_callback_sigpwr(int sig, siginfo_t *si, void *foo);
+#endif
 
 #ifdef SIGRTMIN
 static void _ecore_signal_callback_sigrt(int sig, siginfo_t *si, void *foo);
@@ -69,6 +71,7 @@ _ecore_signal_shutdown(void)
    _ecore_signal_callback_set(SIGTERM, (Signal_Handler) SIG_DFL);
 #ifdef SIGPWR
    _ecore_signal_callback_set(SIGPWR, (Signal_Handler) SIG_DFL);
+   sigpwr_count = 0;
 #endif
    sigchld_count = 0;
    sigusr1_count = 0;
@@ -77,7 +80,6 @@ _ecore_signal_shutdown(void)
    sigquit_count = 0;
    sigint_count = 0;
    sigterm_count = 0;
-   sigpwr_count = 0;
    sig_count = 0;
 
 #ifdef SIGRTMIN
