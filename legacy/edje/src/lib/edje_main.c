@@ -1,9 +1,14 @@
 #include "Edje.h"
 #include "edje_private.h"
 
+/* FIXME: clip_to needs to work */
 /* FIXME: free stuff - no more leaks */
 /* FIXME: dragables have to work */
 /* FIXME: drag start/top signals etc. */
+/* FIXME: drag needs to have signals with relative pos */
+/* FIXME: drag vals 0.0 -> 1.0. "rest" pos == 0.0 */
+/* FIXME: text parts need to work */
+/* FIXME: reduce linked list walking and list_nth calls */
 /* FIXME: named parts need to be able to be "replaced" with new evas objects */
 /* FIXME: need to be able to calculate min & max size of a whole edje */
 /* FIXME: on load don't segv on errors */
