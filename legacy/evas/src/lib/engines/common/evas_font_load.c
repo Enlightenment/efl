@@ -16,7 +16,7 @@ evas_common_font_source_memory_load(const char *name, const void *data, int data
    int error;
    RGBA_Font_Source *fs;
    
-   fs = malloc(sizeof(RGBA_Font_Source));
+   fs = calloc(1, sizeof(RGBA_Font_Source));
    if (!fs) return NULL;
    fs->name = strdup(name);
    fs->file = NULL;
@@ -51,7 +51,7 @@ evas_common_font_source_load(const char *name)
    int error;
    RGBA_Font_Source *fs;
    
-   fs = malloc(sizeof(RGBA_Font_Source));
+   fs = calloc(1, sizeof(RGBA_Font_Source));
    if (!fs) return NULL;
    fs->name = strdup(name);
    fs->file = strdup(name);
@@ -125,7 +125,7 @@ evas_common_font_memory_load(const char *name, int size, const void *data, int d
    fn = evas_common_font_find(name, size);
    if (fn) return fn;
    
-   fn = malloc(sizeof(RGBA_Font));   
+   fn = calloc(1, sizeof(RGBA_Font));   
    if (!fn) return NULL;
    
    fn->src = evas_common_font_source_find(name);
@@ -150,7 +150,7 @@ evas_common_font_load(const char *name, int size)
    fn = evas_common_font_find(name, size);
    if (fn) return fn;
    
-   fn = malloc(sizeof(RGBA_Font));   
+   fn = calloc(1, sizeof(RGBA_Font));   
    if (!fn) return NULL;
    
    fn->src = evas_common_font_source_find(name);
