@@ -56,6 +56,8 @@ edje_part_geometry_get(Evas_Object *o, char *part, int *x, int *y, int *w, int *
       if (y) *y = rp->y; 
       if (w) *w = rp->w; 
       if (h) *h = rp->h; 
+
+      return;
     }
   }
 }
