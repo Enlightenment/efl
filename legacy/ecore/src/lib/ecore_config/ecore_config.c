@@ -21,7 +21,7 @@ char                *__ecore_config_app_name = NULL;
 Ecore_Config_Server *_ecore_config_ipc_init(char *name);
 int _ecore_config_ipc_exit(void);
 
-static char *_ecore_config_type[]={ "undefined", "integer", "float", "string", "colour" };
+static char *_ecore_config_type[]={ "undefined", "integer", "float", "string", "colour", "theme" };
 
 Ecore_Config_Prop *ecore_config_dst(Ecore_Config_Prop *e) {
   Ecore_Config_Bundle        *t;
@@ -120,6 +120,12 @@ char *ecore_config_get_rgbstr(const char *key) {
   esprintf(&r,"#%06x",ecore_config_get_int(key));
   return r; }
 
+char *ecore_config_get_theme(const char *key) {
+  Ecore_Config_Prop *e;
+  e=ecore_config_get(__ecore_config_bundle_local,key);
+  return (e&&(e->type==PT_THM))?e->ptr:NULL; }
+      
+  
 char *ecore_config_get_as_string(const char *key) {
   Ecore_Config_Bundle *t;
   Ecore_Config_Prop   *e;
@@ -141,6 +147,8 @@ char *ecore_config_get_as_string(const char *key) {
         esprintf(&r,"%s:%s=\"%s\"",key,type,ecore_config_get_string(key)); break;
       case PT_RGB:
         esprintf(&r,"%s:%s=#%06x",key,type,ecore_config_get_int(key)); break;
+      case PT_THM:
+        esprintf(&r,"%s:%s=\"%s\"",key,type,ecore_config_get_theme(key)); break;
       default:
         esprintf(&r,"%s:unknown_type",key); break; }}
   return r; }
@@ -179,11 +187,15 @@ static int ecore_config_bound(Ecore_Config_Prop *e) {
 
   return ret; }
 
-int ecore_config_guess_type(char *val) {
+int ecore_config_guess_type(const char *key,char *val) {
+  Ecore_Config_Prop *p;
   char *l;
   long v;
   l=NULL;
 
+  if ((p=ecore_config_get(__ecore_config_bundle_local, key)) && p->type!=PT_NIL)
+    return p->type;
+  
   if(!val)
     return PT_NIL;
   if (val[0]=='#')
@@ -206,7 +218,6 @@ static int ecore_config_val_typed(Ecore_Config_Prop *e,void *val,int type) {
 
   l=NULL;
   v=0;
-  e->type=PT_NIL;
 
   if(!(val))
     e->ptr=NULL;
@@ -215,10 +226,11 @@ static int ecore_config_val_typed(Ecore_Config_Prop *e,void *val,int type) {
       i = (int *)val;
       e->val=(long)*i;
       e->type=PT_INT;
-    } else if (type==PT_STR) {
+    } else if (type==PT_STR || type==PT_THM) {
       if(!(e->ptr=strdup(val)))
         return ECORE_CONFIG_ERR_OOM;
-      e->type=PT_STR;
+      if (e->type==PT_NIL)
+        e->type=type;
     } else if (type==PT_RGB) {
       if (((char *)val)[0]=='#') {
         if((v=strtol(&((char *)val)[1],&l,16))<0) {
@@ -240,7 +252,8 @@ static int ecore_config_val_typed(Ecore_Config_Prop *e,void *val,int type) {
       f = (float *)val;
       e->val=(long)((*f)*ECORE_CONFIG_FLOAT_PRECISION);
       e->type=PT_FLT;
-    }
+    } else
+      e->type=PT_NIL;
 
     ecore_config_bound(e);
     e->flags|=PF_MODIFIED;
@@ -282,9 +295,16 @@ static int ecore_config_add_typed(Ecore_Config_Bundle *t, const char *key, void*
 
 static int ecore_config_add(Ecore_Config_Bundle *t,const char *key,char *val) {
   int type;
-  type=ecore_config_guess_type(val);
+  type=ecore_config_guess_type(key, val);
   return ecore_config_add_typed(t,key,val,type); }
-    
+
+void ecore_config_describe(const char *key, char *desc) {
+  Ecore_Config_Prop *e;
+  if ((e=ecore_config_get(__ecore_config_bundle_local, key)))
+    e->description = strdup(desc);
+}
+
+
 int ecore_config_set_typed(Ecore_Config_Bundle *t,const char *key,void *val,int type) {
   Ecore_Config_Prop *e;
   Ecore_Config_Listener_List *l;
@@ -318,7 +338,7 @@ int ecore_config_set(Ecore_Config_Bundle *t,const char *key,char *val) {
   int type;
   int tmpi;
   float tmpf;
-  type=ecore_config_guess_type(val);
+  type=ecore_config_guess_type(key, val);
   if (type == PT_INT) {
     tmpi = atoi(val);
     return ecore_config_set_typed(t,key,(void*) &tmpi,type);
@@ -343,6 +363,8 @@ int ecore_config_set_float(const char *key, float val) {
 int ecore_config_set_rgb(const char *key, char* val) {
   return ecore_config_set_typed(__ecore_config_bundle_local,key,(void *)val,PT_RGB); }
 
+int ecore_config_set_theme(const char *key, char* val) {
+  return ecore_config_set_typed(__ecore_config_bundle_local,key,(void *)val,PT_THM); }
 
 static int ecore_config_default_typed(Ecore_Config_Bundle *t,const char *key,void *val,int type) {
   int            ret;
@@ -364,7 +386,7 @@ int ecore_config_default(const char *key,char *val,float lo,float hi,float step)
   Ecore_Config_Prop *e;
   t = __ecore_config_bundle_local;
           
-  type=ecore_config_guess_type(val);
+  type=ecore_config_guess_type(key, val);
   ret=ecore_config_default_typed(t, key, val, type);
   e=ecore_config_get(t,key);
   if (e) {
@@ -437,6 +459,11 @@ int ecore_config_default_float_bound(const char *key,float val,float low,float h
 int ecore_config_default_rgb(const char *key,char *val) {
   return ecore_config_default_typed(__ecore_config_bundle_local, key, (void *) val, PT_RGB);
 }
+
+int ecore_config_default_theme(const char *key,char *val) {
+  return ecore_config_default_typed(__ecore_config_bundle_local, key, (void *) val, PT_THM);
+}
+
 
 int ecore_config_listen(const char *name,const char *key,
                         Ecore_Config_Listener listener,int tag,void *data) {

@@ -62,10 +62,17 @@ int ecore_config_load_file(char *file) {
     } else if (!strcmp(type, "str")) {
       data = e_db_str_get(db, keys[x]);
       if (data) {
-        if (ecore_config_guess_type(data)==PT_RGB)
-          ecore_config_set_rgb(keys[x],data);
-        else
-          ecore_config_set_string(keys[x],data);
+        itmp = ecore_config_guess_type(keys[x],data);
+        switch (itmp) {
+          case PT_RGB:
+            ecore_config_set_rgb(keys[x],data);
+            break;
+          case PT_THM:
+            ecore_config_set_theme(keys[x],data);
+            break;
+          default:
+            ecore_config_set_string(keys[x],data);
+        }
         free(data);
       } else {
         E(0, "Could not read key %s!\n", keys[x]);
@@ -134,6 +141,9 @@ int ecore_config_save_file(char *file) {
         break;
       case PT_STR:
         e_db_str_set(db, next->key, ecore_config_get_string(next->key));
+        break;
+      case PT_THM:
+        e_db_str_set(db, next->key, ecore_config_get_theme(next->key));
         break;
       case PT_NIL:
         /* currently we do nothing for undefined ojects */

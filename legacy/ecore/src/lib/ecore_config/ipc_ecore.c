@@ -81,7 +81,7 @@ char *_ecore_config_ipc_global_prop_list(Ecore_Config_Server *srv, const long se
     else if (!strcmp(type, "str")) {
       data = e_db_str_get(db, keys[x]);
       if (data) {
-        if (ecore_config_guess_type(data)==PT_RGB)
+        if (ecore_config_guess_type(keys[x], data)==PT_RGB)
           estring_appendf(s,"%s%s: colour",f?"\n":"",keys[x]);
         else
           estring_appendf(s,"%s%s: string",f?"\n":"",keys[x]);

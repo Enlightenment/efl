@@ -35,3 +35,23 @@ printf("appending font %s\n", font_path_tmp);
   return ECORE_CONFIG_ERR_SUCC;
 }
 
+static char *_ecore_config_short_types[]={ "nil", "int", "flt", "str", "rgb", "str"};
+
+void
+ecore_config_prop_list_describe(void)
+{
+  Ecore_Config_Prop    *props;
+
+  if (!__ecore_config_bundle_local) return;
+  props = __ecore_config_bundle_local->data;
+  while (props)
+    {
+      if (props->flags&PF_SYSTEM) {
+        props = props->next;
+        continue;
+      }
+      printf("  --%s\t [%s] %s\n", props->key, _ecore_config_short_types[props->type], props->description);
+      
+      props = props->next;
+    }
+}

@@ -55,7 +55,8 @@ typedef enum Ecore_Config_Type {
   PT_INT=1,
   PT_FLT=2,
   PT_STR=3,
-  PT_RGB=4
+  PT_RGB=4,
+  PT_THM=5
 } Ecore_Config_Type;
 
 
@@ -126,14 +127,17 @@ char          *ecore_config_get_string(const char *key);
 long           ecore_config_get_int(const char *key);
 int            ecore_config_get_rgb(const char *key,int *r, int *g, int *b);
 float          ecore_config_get_float(const char *key);
+char          *ecore_config_get_theme(const char *key);
 char          *ecore_config_get_as_string(const char *key);
 char          *ecore_config_canonize_key(char *,int modify);
+void           ecore_config_describe(const char *key, char *desc);
 int            ecore_config_set(Ecore_Config_Bundle *t,const char *key,char *val);
 int            ecore_config_set_string(const char *key,char *val);
 int            ecore_config_set_int(const char *key,int val);
 int            ecore_config_set_rgb(const char *key,char *val);
 char          *ecore_config_get_rgbstr(const char *key);
 int            ecore_config_set_float(const char *key,float val);
+int            ecore_config_set_theme(const char *key,char *val);
 int            ecore_config_set_as_string(const char *key,char *val);
 
 int            ecore_config_default(const char *key,char *val,float lo,float hi,float step);
@@ -143,11 +147,12 @@ int            ecore_config_default_string(const char *key,char *val);
 int            ecore_config_default_float(const char *key,float val);
 int            ecore_config_default_float_bound(const char *key,float val,float lo,float hi,float step);
 int            ecore_config_default_rgb(const char *key,char *val);
+int            ecore_config_default_theme(const char *key,char *val);
 
 int            ecore_config_listen(const char *name,const char *key,Ecore_Config_Listener listener,int tag,void *data);
 int            ecore_config_deaf(const char *name,const char *key,Ecore_Config_Listener listener);
 Ecore_Config_Prop   *ecore_config_dst(Ecore_Config_Prop *e);
-int ecore_config_guess_type(char *val);
+int ecore_config_guess_type(const char *key, char *val);
 
 Ecore_Config_Bundle *ecore_config_bundle_new(Ecore_Config_Server *srv, const char *id);
 Ecore_Config_Bundle *ecore_config_bundle_get_1st(Ecore_Config_Server *srv);
@@ -190,3 +195,4 @@ int            ecore_config_save_file(char *file);
 
 /* convenience mathods in convenience.c */
 int            ecore_config_evas_font_path_apply(Evas *evas);
+void           ecore_config_prop_list_describe(void);
