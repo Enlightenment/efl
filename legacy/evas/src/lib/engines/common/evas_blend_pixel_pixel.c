@@ -4,8 +4,6 @@
 #include "evas_mmx.h"
 #endif
 
-#define CONDITIONAL_BLEND 1
-
 extern DATA8        _evas_pow_lut[256][256];
 extern const DATA16 _evas_const_c1[4];
 
@@ -22,9 +20,11 @@ evas_common_blend_pixels_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int len)
    while (dst_ptr < dst_end_ptr)
      {
 	DATA32 tmp;
+	DATA8  a;
+	
+	a = A_VAL(src_ptr);
 
-#ifdef CONDITIONAL_BLEND
-	switch (A_VAL(src_ptr))
+	switch (a)
 	  {
 	   case 0:
 	     break;
@@ -32,31 +32,17 @@ evas_common_blend_pixels_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int len)
 	     *dst_ptr = *src_ptr;
 	     break;
 	   default:
-	     BLEND_COLOR(A_VAL(src_ptr), R_VAL(dst_ptr), 
+	     BLEND_COLOR(a, R_VAL(dst_ptr), 
 			 R_VAL(src_ptr), R_VAL(dst_ptr), 
 			 tmp);
-	     BLEND_COLOR(A_VAL(src_ptr), G_VAL(dst_ptr), 
+	     BLEND_COLOR(a, G_VAL(dst_ptr), 
 			 G_VAL(src_ptr), G_VAL(dst_ptr), 
 			 tmp);
-	     BLEND_COLOR(A_VAL(src_ptr), B_VAL(dst_ptr), 
+	     BLEND_COLOR(a, B_VAL(dst_ptr), 
 			 B_VAL(src_ptr), B_VAL(dst_ptr), 
 			 tmp);
 	     break;
 	  }
-#else
-	if (A_VAL(src_ptr))
-	  {
-	     BLEND_COLOR(A_VAL(src_ptr), R_VAL(dst_ptr), 
-			 R_VAL(src_ptr), R_VAL(dst_ptr), 
-			 tmp);
-	     BLEND_COLOR(A_VAL(src_ptr), G_VAL(dst_ptr), 
-			 G_VAL(src_ptr), G_VAL(dst_ptr), 
-			 tmp);
-	     BLEND_COLOR(A_VAL(src_ptr), B_VAL(dst_ptr), 
-			 B_VAL(src_ptr), B_VAL(dst_ptr), 
-			 tmp);
-	  }
-#endif	       
 	src_ptr++;
 	dst_ptr++;
      }
@@ -128,9 +114,10 @@ evas_common_blend_pixels_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len)
    while (dst_ptr < dst_end_ptr)
      {
 	DATA32 tmp;
-	DATA8  a;
+	DATA8  a, aa;
 	
-	switch (A_VAL(src_ptr))
+	aa = A_VAL(src_ptr);
+	switch (aa)
 	  {
 	   case 0:
 	     break;
@@ -138,8 +125,11 @@ evas_common_blend_pixels_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len)
 	     *dst_ptr = *src_ptr;
 	     break;
 	   default:
-	     a = _evas_pow_lut[A_VAL(src_ptr)][A_VAL(dst_ptr)];
+	     a = _evas_pow_lut[aa][A_VAL(dst_ptr)];
 	     
+	     BLEND_COLOR(aa, A_VAL(dst_ptr), 
+			 255, A_VAL(dst_ptr), 
+			 tmp);
 	     BLEND_COLOR(a, R_VAL(dst_ptr), 
 			 R_VAL(src_ptr), R_VAL(dst_ptr), 
 			 tmp);
@@ -149,7 +139,6 @@ evas_common_blend_pixels_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len)
 	     BLEND_COLOR(a, B_VAL(dst_ptr), 
 			 B_VAL(src_ptr), B_VAL(dst_ptr), 
 			 tmp);	
-	     A_VAL(dst_ptr) = A_VAL(dst_ptr) + ((A_VAL(src_ptr) * (255 - A_VAL(dst_ptr))) / 255);
 	  }
 	src_ptr++;
 	dst_ptr++;

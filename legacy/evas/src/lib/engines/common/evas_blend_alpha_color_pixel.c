@@ -147,12 +147,10 @@ evas_common_blend_alpha_color_rgba_to_rgba_c (DATA8 *src, DATA32 *dst, int len, 
    while (dst_ptr < dst_end_ptr)
      {
 	DATA32 tmp;
-	DATA8  a;
-	DATA8 aa;
+	DATA8  a, aa;
 	
 	aa = (((*src_ptr) + 1) * A_VAL(&col)) >> 8;
-	a = _evas_pow_lut[aa][A_VAL(dst_ptr)];
-        switch (a)
+        switch (aa)
 	  {
 	   case 0:
 	     break;
@@ -160,6 +158,10 @@ evas_common_blend_alpha_color_rgba_to_rgba_c (DATA8 *src, DATA32 *dst, int len, 
 	     *dst_ptr = col;
 	     break;
 	   default:
+	     a = _evas_pow_lut[aa][A_VAL(dst_ptr)];
+	     BLEND_COLOR(aa, A_VAL(dst_ptr), 
+		       255, A_VAL(dst_ptr), 
+		       tmp);
 	     BLEND_COLOR(a, R_VAL(dst_ptr), 
 			 R_VAL(&col), R_VAL(dst_ptr), 
 			 tmp);
@@ -169,7 +171,6 @@ evas_common_blend_alpha_color_rgba_to_rgba_c (DATA8 *src, DATA32 *dst, int len, 
 	     BLEND_COLOR(a, B_VAL(dst_ptr), 
 			 B_VAL(&col), B_VAL(dst_ptr), 
 			 tmp);
-	     A_VAL(dst_ptr) = A_VAL(dst_ptr) + ((aa * (255 - A_VAL(dst_ptr))) / 255);
 	     break;
 	  }
 	src_ptr++;

@@ -9,6 +9,9 @@
    if (A_VAL(src)) /* hmmm - do we need this? */ \
      { \
 	__a = _evas_pow_lut[A_VAL(src)][A_VAL(dst)]; \
+	BLEND_COLOR(A_VAL(src), A_VAL(dst), \
+		    255, A_VAL(dst), \
+		    __tmp); \
 	BLEND_COLOR(__a, R_VAL(dst), \
 		    R_VAL(src), R_VAL(dst), \
 		    __tmp); \
@@ -18,7 +21,6 @@
 	BLEND_COLOR(__a, B_VAL(dst), \
 		    B_VAL(src), B_VAL(dst), \
 		    __tmp); \
-	A_VAL(dst) = A_VAL(dst) + ((A_VAL(src) * (255 - A_VAL(dst))) / 255);\
      } \
 }
 

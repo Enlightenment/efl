@@ -202,6 +202,9 @@ evas_common_blend_pixels_mul_color_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int 
 		default:
 		  a = _evas_pow_lut[aa][A_VAL(dst_ptr)];
 		  
+		  BLEND_COLOR(aa, A_VAL(dst_ptr),
+				255, A_VAL(dst_ptr),
+				tmp);
 		  BLEND_COLOR(a, R_VAL(dst_ptr), 
 			      R_VAL(src_ptr), R_VAL(dst_ptr), 
 			      tmp);
@@ -211,7 +214,6 @@ evas_common_blend_pixels_mul_color_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int 
 		  BLEND_COLOR(a, B_VAL(dst_ptr), 
 			      B_VAL(src_ptr), B_VAL(dst_ptr), 
 			      tmp);
-		  A_VAL(dst_ptr) = A_VAL(dst_ptr) + ((aa * (255 - A_VAL(dst_ptr))) / 255);
 		  break;
 	       }
 	     src_ptr++;
@@ -231,14 +233,17 @@ evas_common_blend_pixels_mul_color_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int 
 		case 0:
 		  break;
 		case 255:
+		  A_VAL(dst_ptr) = 255;
 		  R_VAL(dst_ptr) = ((R_VAL(src_ptr) * (R_VAL(&mul_color) + 1)) >> 8);
 		  G_VAL(dst_ptr) = ((G_VAL(src_ptr) * (G_VAL(&mul_color) + 1)) >> 8);
 		  B_VAL(dst_ptr) = ((B_VAL(src_ptr) * (B_VAL(&mul_color) + 1)) >> 8);
-		  A_VAL(dst_ptr) = 255;
 		  break;
 		default:
 		  a = _evas_pow_lut[aa][A_VAL(dst_ptr)];
 		  
+		  BLEND_COLOR(aa, A_VAL(dst_ptr),
+				255, A_VAL(dst_ptr),
+				tmp);
 		  BLEND_COLOR(a, R_VAL(dst_ptr), 
 			      ((R_VAL(src_ptr) * (R_VAL(&mul_color) + 1)) >> 8), R_VAL(dst_ptr), 
 			      tmp);
@@ -248,7 +253,6 @@ evas_common_blend_pixels_mul_color_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int 
 		  BLEND_COLOR(a, B_VAL(dst_ptr), 
 			      ((B_VAL(src_ptr) * (B_VAL(&mul_color) + 1)) >> 8), B_VAL(dst_ptr), 
 			      tmp);
-		  A_VAL(dst_ptr) = A_VAL(dst_ptr) + ((aa * (255 - A_VAL(dst_ptr))) / 255);
 		  break;
 	       }
 	     src_ptr++;

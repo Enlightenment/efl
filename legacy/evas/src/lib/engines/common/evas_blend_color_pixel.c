@@ -96,6 +96,9 @@ evas_common_blend_color_rgba_to_rgba_c(DATA32 src, DATA32 *dst, int len)
 	
 	a = _evas_pow_lut[A_VAL(&src)][A_VAL(dst_ptr)];
 	
+	BLEND_COLOR(A_VAL(&src), A_VAL(dst_ptr), 
+		    255, A_VAL(dst_ptr), 
+		    tmp);
 	BLEND_COLOR(a, R_VAL(dst_ptr), 
 		    R_VAL(&src), R_VAL(dst_ptr), 
 		    tmp);
@@ -105,7 +108,6 @@ evas_common_blend_color_rgba_to_rgba_c(DATA32 src, DATA32 *dst, int len)
 	BLEND_COLOR(a, B_VAL(dst_ptr), 
 		    B_VAL(&src), B_VAL(dst_ptr), 
 		    tmp);	
-	A_VAL(dst_ptr) = A_VAL(dst_ptr) + ((A_VAL(&src) * (255 - A_VAL(dst_ptr))) / 255);
 	
 	dst_ptr++;
      }

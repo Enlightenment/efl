@@ -31,6 +31,8 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
    sx = SGN(dx);
    sy = SGN(dy);
    
+   col = dc->col.col;
+
    if ((dx == 0) && (dy == 0))
      {
 	if ((x1 < 0) ||
@@ -54,6 +56,9 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
 	     ptr = dst->image->data + (y1 * dst->image->w) + x1;
 	     __blend_a = _evas_pow_lut[A_VAL(&(col))][A_VAL(ptr)]; 
 	     
+	     BLEND_COLOR(A_VAL(&(col)), A_VAL(ptr), 
+			 255, A_VAL(ptr), 
+			 __blend_tmp);                 
 	     BLEND_COLOR(__blend_a, R_VAL(ptr), 
 			 R_VAL(&(col)), R_VAL(ptr), 
 			 __blend_tmp);                 
@@ -63,7 +68,6 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
 	     BLEND_COLOR(__blend_a, B_VAL(ptr), 
 			 B_VAL(&(col)), B_VAL(ptr), 
 			 __blend_tmp);                 
-	     A_VAL(ptr) = A_VAL(ptr) + ((A_VAL(&(col)) * (255 - A_VAL(ptr))) / 255);
 	  }
 	else
 	  {
@@ -86,8 +90,6 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
    im = dst->image->data;
    im_w = dst->image->w;
    im_h = dst->image->h;   
-   col = dc->col.col;
-   if (!A_VAL(&(col))) return;
 
    ext_x = 0; ext_y = 0; ext_w = im_w; ext_h = im_h;
    if (dc->clip.use)
@@ -146,6 +148,9 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
 			    
 			    __blend_a = _evas_pow_lut[A_VAL(&(col))][A_VAL(ptr)]; 
 			    
+			    BLEND_COLOR(A_VAL(&(col)), A_VAL(ptr), 
+					255, A_VAL(ptr), 
+					__blend_tmp);                 
 			    BLEND_COLOR(__blend_a, R_VAL(ptr), 
 					R_VAL(&(col)), R_VAL(ptr), 
 					__blend_tmp);                 
@@ -155,7 +160,6 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
 			    BLEND_COLOR(__blend_a, B_VAL(ptr), 
 					B_VAL(&(col)), B_VAL(ptr), 
 					__blend_tmp);                 
-			    A_VAL(ptr) = A_VAL(ptr) + ((A_VAL(&(col)) * (255 - A_VAL(ptr))) / 255);
 			 }
 		    }
 		  if (x == x2) return;
@@ -183,6 +187,9 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
 			    
 			    __blend_a = _evas_pow_lut[A_VAL(&(col))][A_VAL(ptr)]; 
 			    
+			    BLEND_COLOR(A_VAL(&(col)), A_VAL(ptr), 
+					255, A_VAL(ptr), 
+					__blend_tmp);                 
 			    BLEND_COLOR(__blend_a, R_VAL(ptr), 
 					R_VAL(&(col)), R_VAL(ptr), 
 					__blend_tmp);
@@ -192,7 +199,6 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
 			    BLEND_COLOR(__blend_a, B_VAL(ptr), 
 					B_VAL(&(col)), B_VAL(ptr), 
 					__blend_tmp);
-			    A_VAL(ptr) = A_VAL(ptr) + ((A_VAL(&(col)) * (255 - A_VAL(ptr))) / 255);
 			 }
 		    }
 		  if (y == y2) return;
