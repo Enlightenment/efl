@@ -6,6 +6,10 @@
 #include <string.h>
 #include <limits.h>
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 int ecore_config_load(void) {
   char file[PATH_MAX];
   snprintf(file, PATH_MAX, "%s/.e/apps/%s/config.db",getenv("HOME"),__ecore_config_app_name);
@@ -77,14 +81,36 @@ int ecore_config_load_file(char *file) {
   free(keys);
   return 0;
 }
+static void 
+_ecore_config_recurse_mkdir(char *file) {
+  char              *file_ptr;
+  char              *file_tmp;
+  struct stat        status;
+
+  file_tmp = strdup(file);
+  file_ptr = file_tmp + strlen(file_tmp);
+  while (*file_ptr != '/' && file_ptr > file_tmp)
+    file_ptr--;
+  *file_ptr = '\0';
+
+  if(stat(file_tmp, &status)) {
+    _ecore_config_recurse_mkdir(file_tmp);
+    mkdir(file_tmp, S_IRUSR | S_IWUSR | S_IXUSR);
+  }
+  free(file_tmp);
+}
 
 int ecore_config_save_file(char *file) {
   Ecore_Config_Prop *next;
   E_DB_File         *db;
+  struct stat        status;
   next=__ecore_config_bundle_local->data;
   db = NULL;
 
-  /* ### we may need to create a directory or two here! */
+  /* if file does not exist check to see if the dirs exist, creating if not */
+  if(stat(file, &status))
+    _ecore_config_recurse_mkdir(file);
+
   db = e_db_open(file);
   if (!db) {
     E(0, "Cannot open database from file %s!\n", file);
