@@ -160,7 +160,7 @@ eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num)
         new_cache = realloc(new_cache, new_cache_num * sizeof(Eet_File *));
 	if (!new_cache)
 	  {
-	     fprintf(stderr, "BAD ERROR! Eet realloc of cache list failed. abort\m");
+	     fprintf(stderr, "BAD ERROR! Eet realloc of cache list failed. Abort\n");
 	     abort();
 	  }
      }
