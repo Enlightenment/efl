@@ -383,7 +383,7 @@ _embryo_str_snprintf(Embryo_Program *ep, Embryo_Cell *params)
    s2[o] = 0;
    
    STRSET(ep, params[1], s2);
-   return strlen(s2);
+   return o;
 }
 
 static Embryo_Cell
