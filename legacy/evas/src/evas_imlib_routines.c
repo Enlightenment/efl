@@ -1,10 +1,5 @@
 #include "evas_imlib_routines.h"
 
-#define SPANS_COMMON(x1, w1, x2, w2) \
-(!((((x2) + (w2)) <= (x1)) || ((x2) >= ((x1) + (w1)))))
-#define RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh) \
-((SPANS_COMMON((x), (w), (xx), (ww))) && (SPANS_COMMON((y), (h), (yy), (hh))))
-
 static void __evas_imlib_image_cache_flush(Display *disp);
 static int  __evas_anti_alias = 1;
 static Evas_List drawable_list = NULL;

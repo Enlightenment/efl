@@ -10,9 +10,21 @@ main(int argc, char **argv)
    Colormap cmap;
    Window win;
    int win_w, win_h;
-   int i, a;
+   int i, a, w, h;
    Evas e;
-   Evas_Object o[32];
+   Evas_Object o[128];
+   int down;
+   char *imgs[8] =
+     {
+	"img/mush.png",
+	"img/book.png",
+	"img/bulb.png",
+	"img/term.png",
+	"img/calc.png",
+	"img/worlds.png",
+	"img/spider.png",
+	"img/mouse.png"	   
+     };
    
    win_w = 640; win_h = 480;
    if (argc == 4)
@@ -46,6 +58,8 @@ main(int argc, char **argv)
 			    vis,
 			    CWColormap | CWBorderPixel | CWEventMask,
 			    &att);
+	XSelectInput(d, win, ButtonPressMask | ButtonReleaseMask | 
+		     PointerMotionMask | ExposureMask);
 	XMapWindow(d, win);
 	XSync(d, False);
      }
@@ -55,20 +69,78 @@ main(int argc, char **argv)
    
    o[0] = evas_add_image_from_file(e, "img/sky001.png");
    evas_show(e, o[0]);
-   for (i = 1 ; i < 32; i++)
+   o[1] = evas_add_image_from_file(e, "img/logo001.png");
+   evas_get_image_size(e, o[1], &w, &h);
+   w /= 2;
+   h /= 2;
+   evas_show(e, o[1]);
+   for (i = 2 ; i < 128; i++)
      {
 	o[i] = evas_add_image_from_file(e, "img/mush.png");
 	evas_show(e, o[i]);
      }
-   
+   evas_raise(e, o[1]);
    evas_move(e, o[0], 0, 0);
    evas_resize(e, o[0], win_w, win_h);
    a = 0;
+   down = 0;
    for (;;)
      {
 	double x, y;
+	XEvent              ev;
+
+	while (XPending(d))
+/*	do*/
+	  {
+	     XNextEvent(d, &ev);
+	     switch(ev.type)
+	       {
+	       case ButtonPress:
+		    {
+		       int button, mouse_x, mouse_y;
+
+		       down = 1;
+		       button = ev.xbutton.button;
+		       mouse_x = ev.xbutton.x;
+		       mouse_y = ev.xbutton.y;
+		       evas_move(e, o[1], mouse_x - w, mouse_y - h);
+		    }
+		  break;
+	       case ButtonRelease:
+		    {
+		       int button, mouse_x, mouse_y;
+		       
+		       down = 0;
+		       button = ev.xbutton.button;
+		       mouse_x = ev.xbutton.x;
+		       mouse_y = ev.xbutton.y;
+		       evas_move(e, o[1], mouse_x - w, mouse_y - h);
+		    }
+		  break;
+	       case MotionNotify:
+		    {
+		       int mouse_x, mouse_y;
+		       
+		       mouse_x = ev.xmotion.x;
+		       mouse_y = ev.xmotion.y;
+		       if (down)
+			 {
+			    evas_move(e, o[1], mouse_x - w, mouse_y - h);
+			 }
+		    }
+		  break;
+	       case Expose:
+		    {
+		       evas_update_rect(e, ev.xexpose.x, ev.xexpose.y, ev.xexpose.width, ev.xexpose.height);
+		    }
+		  break;
+	       default:
+		  break;
+	       }
+	  }
+/*	while (XPending(d));*/
 	
-	for (i = 1; i < 32; i++)
+	for (i = 2; i < 128; i++)
 	  {
 	     int j, k;
 	     
@@ -76,12 +148,13 @@ main(int argc, char **argv)
 	     k = (i * -60) - (i * 2);
 	     x = (win_w + (cos((double)(a + j) * 2 * 3.141592654 / 1000) * (win_h - 100))) / 2;
 	     y = (win_h + (sin((double)(a + k) * 2 * 3.141592654 / 1000) * (win_h - 100))) / 2;
+	     evas_set_image_file(e, o[i], imgs[(i) & 0x7]);
 	     evas_move(e, o[i], x, y);
 	  }
 		
 	evas_render(e);
 	a++;
-	if (a > 1000) a = 0;
+	if (a >= 1000) a = 0;
      }
 }
 

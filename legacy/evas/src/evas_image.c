@@ -7,11 +7,30 @@
 static void
 _evas_free_image(Evas_Object o)
 {
+   Evas_Object_Image oo;
+   
+   oo = o;
+   if (o->callbacks) evas_list_free(o->callbacks);
+   if (oo->current.file) free(oo->current.file);
+   free(o);
 }
 
 static void
 _evas_free_image_renderer_data(Evas e, Evas_Object o)
 {
+   switch (e->current.render_method)
+     {
+     case RENDER_METHOD_ALPHA_SOFTWARE:
+	break;
+     case RENDER_METHOD_BASIC_HARDWARE:
+	break;
+     case RENDER_METHOD_3D_HARDWARE:
+	break;
+     case RENDER_METHOD_ALPHA_HARDWARE:
+	break;
+     default:
+	break;
+     }
 }
 
 /* adding objects */
@@ -68,22 +87,49 @@ evas_add_image_from_file(Evas e, char *file)
 Evas_Object
 evas_add_image_from_data(Evas e, void *data, Evas_Image_Format format, int w, int h)
 {
+   /* FIXME: not implimented */
+   return NULL;
 }
 
 /* set object settings */
 void
 evas_set_image_file(Evas e, Evas_Object o, char *file)
 {
+   Evas_Object_Image oo;
+   
+   oo = o;
+   if (oo->current.file)
+      free(oo->current.file);
+   oo->previous.file = NULL;
+   oo->current.file = strdup(file);
+     {
+	Imlib_Image im;
+	
+	im = imlib_load_image(file);
+	if (im)
+	  {
+	     imlib_context_set_image(im);
+	     oo->current.image.w = imlib_image_get_width();
+	     oo->current.image.h = imlib_image_get_height();
+	     o->current.w = (double)oo->current.image.w;
+	     o->current.h = (double)oo->current.image.h;
+	     imlib_free_image();
+	  }
+	else
+	  {
+	     oo->current.image.w = 0;
+	     oo->current.image.h = 0;
+	     o->current.w = (double)oo->current.image.w;
+	     o->current.h = (double)oo->current.image.h;
+	  }
+     }
+   o->changed = 1;
 }
 
 void
 evas_set_image_data(Evas e, Evas_Object o, void *data, Evas_Image_Format format, int w, int h)
 {
-}
-
-void
-evas_set_image_scale_smoothness(Evas e, Evas_Object o, int smooth)
-{
+   /* FIXME: not implimented */
 }
 
 void
@@ -95,4 +141,9 @@ evas_set_image_fill(Evas e, Evas_Object o, double x, double y, double w, double 
 void
 evas_get_image_size(Evas e, Evas_Object o, int *w, int *h)
 {
+   Evas_Object_Image oo;
+   
+   oo = o;
+   if (w) *w = oo->current.image.w;
+   if (h) *h = oo->current.image.h;
 }

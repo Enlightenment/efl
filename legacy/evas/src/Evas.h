@@ -131,6 +131,7 @@ struct _Evas_Object_Any
       int        zoomscale;
       int        layer;
       int        visible;
+      int        stacking;
    } current, previous;
 
    int changed;
@@ -228,6 +229,7 @@ void evas_set_output(Evas e, Display *disp, Drawable d, Visual *v, Colormap c);
 void evas_set_output_size(Evas e, int w, int h);
 void evas_set_output_viewport(Evas e, double x, double y, double w, double h);
 void evas_set_output_method(Evas e, Evas_Render_Method method);
+void evas_set_scale_smoothness(Evas e, int smooth);
 	 
 /* deleting objects */
 void evas_del_object(Evas e, Evas_Object o);
@@ -244,7 +246,6 @@ Evas_Object evas_add_bits(Evas e, char *file);
 /* set object settings */
 void evas_set_image_file(Evas e, Evas_Object o, char *file);
 void evas_set_image_data(Evas e, Evas_Object o, void *data, Evas_Image_Format format, int w, int h);
-void evas_set_image_scale_smoothness(Evas e, Evas_Object o, int smooth);
 void evas_set_image_fill(Evas e, Evas_Object o, double x, double y, double w, double h);
 void evas_set_bits_file(Evas e, Evas_Object o, char *file);
 void evas_set_color(Evas e, Evas_Object o, int r, int g, int b, int a);
@@ -265,8 +266,8 @@ void evas_gradient_add_color(Evas_Gradient grad, int r, int g, int b, int a, int
 /* stacking within a layer */
 void evas_raise(Evas e, Evas_Object o);
 void evas_lower(Evas e, Evas_Object o);
-void evas_stack_above(Evas e, Evas_Object o, int above);
-void evas_stack_below(Evas e, Evas_Object o, int above);
+void evas_stack_above(Evas e, Evas_Object o, Evas_Object above);
+void evas_stack_below(Evas e, Evas_Object o, Evas_Object above);
 
 /* object geoemtry */
 void evas_move(Evas e, Evas_Object o, double x, double y);

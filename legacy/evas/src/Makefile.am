@@ -8,7 +8,7 @@ MAINTAINERCLEANFILES = Makefile.in
 LIBS_X        = @x_ldflags@ @x_libs@
 LIBS_IMLIB2   = -lImlib2 -lttf -ldl -lm
 LIBS_DB       = -ledb
-LIBS_GL       = -lGL -lGLU
+LIBS_GL       = -lGLU -lGL 
 LIBS_EXTRA    = -L/usr/local/lib
 
 CFLAGS_X      = @x_cflags@

@@ -75,9 +75,47 @@ evas_render(Evas e)
 {
    Evas_List delete_objects;
    Evas_List l, ll;
+   void (*func_draw_add_rect) (Display *disp, Window win, int x, int y, int w, int h);
+   void * (*func_image_new_from_file) (Display *disp, char *file);   
+   void (*func_image_draw) (void *im, Display *disp, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h);   
+   void (*func_image_free) (void *im);   
+   void (*func_flush_draw) (Display *disp, Window w);
+   void (*func_init) (Display *disp, Window w);
+   int (*func_image_get_width) (void *im);
+   int (*func_image_get_height) (void *im);
    
    if ((!e->changed) || (!e->current.display) || (!e->current.drawable))
       return;
+   
+   switch (e->current.render_method)
+     {
+     case RENDER_METHOD_ALPHA_SOFTWARE:
+	func_draw_add_rect       = __evas_imlib_draw_add_rect;
+	func_image_new_from_file = __evas_imlib_image_new_from_file;
+	func_image_draw          = __evas_imlib_image_draw;
+	func_image_free          = __evas_imlib_image_free;
+	func_flush_draw          = __evas_imlib_flush_draw;
+	func_init                = __evas_imlib_init;
+	func_image_get_width     = __evas_imlib_image_get_width;
+	func_image_get_height    = __evas_imlib_image_get_height;
+	break;
+     case RENDER_METHOD_BASIC_HARDWARE:
+	break;
+     case RENDER_METHOD_3D_HARDWARE:
+	func_draw_add_rect       = __evas_gl_draw_add_rect;
+	func_image_new_from_file = __evas_gl_image_new_from_file;
+	func_image_draw          = __evas_gl_image_draw;
+	func_image_free          = __evas_gl_image_free;
+	func_flush_draw          = __evas_gl_flush_draw;
+	func_init                = __evas_gl_init;
+	func_image_get_width     = __evas_gl_image_get_width;
+	func_image_get_height    = __evas_gl_image_get_height;
+	break;
+     case RENDER_METHOD_ALPHA_HARDWARE:
+	break;
+     default:
+	break;
+     }
    e->changed = 0;
    if ((e->current.viewport.x != e->previous.viewport.x) || 
        (e->current.viewport.y != e->previous.viewport.y) || 
@@ -216,53 +254,55 @@ evas_render(Evas e)
 	evas_list_free(delete_objects);
      }
    
-   /* take all the update rects we've produced and render them */
-   switch (e->current.render_method)
      {
-     case RENDER_METHOD_ALPHA_SOFTWARE:
+	Imlib_Updates up;
+	
+	func_init(e->current.display, e->current.screen);
+	if (e->updates)
 	  {
-	     Imlib_Updates up;
-	     
-	     __evas_imlib_init(e->current.display, e->current.screen);
-	     if (e->updates)
+	     up = imlib_updates_merge_for_rendering(e->updates, 
+						    e->current.drawable_width,
+						    e->current.drawable_height);
+	     e->updates = NULL;
+	     if (up)
 	       {
-		  up = imlib_updates_merge_for_rendering(e->updates, 
-							  e->current.drawable_width,
-							  e->current.drawable_height);
-		  e->updates = NULL;
-		  if (up)
+		  Imlib_Updates u;
+		  
+		  u = up;
+		  while (u)
 		    {
-		       Imlib_Updates u;
+		       int x, y, w, h;
 		       
-		       u = up;
-		       while (u)
+		       imlib_updates_get_coordinates(u, &x, &y, &w, &h);
+		       func_draw_add_rect(e->current.display, 
+					  e->current.drawable,
+					  x, y, w, h);
+		       u = imlib_updates_get_next(u);
+		    }
+		  imlib_updates_free(up);
+		  /* draw all objects now */
+		  for (l = e->layers; l; l = l->next)
+		    {
+		       Evas_Layer layer;
+		       
+		       layer = l->data;
+		       for (ll = layer->objects; ll; ll = ll->next)
 			 {
-			    int x, y, w, h;
+			    Evas_Object_Any o;
 			    
-			    imlib_updates_get_coordinates(u, &x, &y, &w, &h);
-			    __evas_imlib_draw_add_rect(e->current.display, 
-						       e->current.drawable,
-						       x, y, w, h);
-			    u = imlib_updates_get_next(u);
-			 }
-		       imlib_updates_free(up);
-		       /* draw all objects now */
-		       for (l = e->layers; l; l = l->next)
-			 {
-			    Evas_Layer layer;
-			    
-			    layer = l->data;
-			    for (ll = layer->objects; ll; ll = ll->next)
+			    o = ll->data;
+			    if (o->current.visible)
 			      {
-				 Evas_Object_Any o;
+				 int x, y, w, h;
 				 
-				 o = ll->data;
-				 if (o->current.visible)
+				 _evas_object_get_current_translated_coords(e, o, 
+									    &x, &y, 
+									    &w, &h);
+				 if (RECTS_INTERSECT(0, 0, 
+						     e->current.drawable_width,
+						     e->current.drawable_height,
+						     x, y, w, h))
 				   {
-				      int x, y, w, h;
-				      _evas_object_get_current_translated_coords(e, o, 
-										 &x, &y, 
-										 &w, &h);
 				      switch (o->type)
 					{
 					case OBJECT_IMAGE:
@@ -271,21 +311,21 @@ evas_render(Evas e)
 						
 						oo = o;
 						  {
-						     Evas_Imlib_Image *im;
+						     void *im;
 						     
-						     im = __evas_imlib_image_new_from_file(e->current.display, oo->current.file);
+						     im = func_image_new_from_file(e->current.display, oo->current.file);
 						     if (im)
 						       {
-							  __evas_imlib_image_draw(im, 
-									       e->current.display,
-									       e->current.drawable,
-									       e->current.drawable_width,
-									       e->current.drawable_height,
-									       0, 0, 
-									       __evas_gl_image_get_width(im),
-									       __evas_gl_image_get_height(im),
-									       x, y, w, h);
-							  __evas_imlib_image_free(im);
+							  func_image_draw(im, 
+									  e->current.display,
+									  e->current.drawable,
+									  e->current.drawable_width,
+									  e->current.drawable_height,
+									  0, 0, 
+									  func_image_get_width(im),
+									  func_image_get_height(im),
+									  x, y, w, h);
+							  func_image_free(im);
 						       }
 						  }
 					     }
@@ -329,134 +369,10 @@ evas_render(Evas e)
 				   }
 			      }
 			 }
-		       __evas_imlib_flush_draw(e->current.display, 
-					       e->current.drawable);
 		    }
+		  func_flush_draw(e->current.display, e->current.drawable);
 	       }
 	  }
-	break;
-     case RENDER_METHOD_BASIC_HARDWARE:
-	break;
-     case RENDER_METHOD_3D_HARDWARE:
-	  {
-	     Imlib_Updates up;
-	     
-	     __evas_gl_init(e->current.display, e->current.screen);
-	     if (e->updates)
-	       {
-		  up = imlib_updates_merge_for_rendering(e->updates, 
-							 e->current.drawable_width,
-							 e->current.drawable_height);
-		  e->updates = NULL;
-		  if (up)
-		    {
-		       Imlib_Updates u;
-		       
-		       u = up;
-		       while (u)
-			 {
-			    int x, y, w, h;
-			    
-			    imlib_updates_get_coordinates(u, &x, &y, &w, &h);
-			    __evas_gl_draw_add_rect(e->current.display, 
-						    e->current.drawable,
-						    x, y, w, h);
-			    u = imlib_updates_get_next(u);
-			 }
-		       imlib_updates_free(up);
-		       /* draw all objects now */
-		       for (l = e->layers; l; l = l->next)
-			 {
-			    Evas_Layer layer;
-			    
-			    layer = l->data;
-			    for (ll = layer->objects; ll; ll = ll->next)
-			      {
-				 Evas_Object_Any o;
-				 
-				 o = ll->data;
-				 if (o->current.visible)
-				   {
-				      int x, y, w, h;
-				      _evas_object_get_current_translated_coords(e, o, 
-										 &x, &y, 
-										 &w, &h);
-				      switch (o->type)
-					{
-					case OBJECT_IMAGE:
-					     {
-						Evas_Object_Image oo;
-						
-						oo = o;
-						  {
-						     Evas_GL_Image *im;
-						     
-						     im = __evas_gl_image_new_from_file(e->current.display, oo->current.file);
-						     if (im)
-						       {
-							  __evas_gl_image_draw(im, 
-									       e->current.display,
-									       e->current.drawable,
-									       e->current.drawable_width,
-									       e->current.drawable_height,
-									       0, 0, 
-									       __evas_gl_image_get_width(im),
-									       __evas_gl_image_get_height(im),
-									       x, y, w, h);
-							  __evas_gl_image_free(im);
-						       }
-						  }
-					     }
-					   break;
-					case OBJECT_TEXT:
-					     {
-						Evas_Object_Text oo;
-						
-						oo = o;
-					     }
-					   break;
-					case OBJECT_RECTANGLE:
-					     {
-						Evas_Object_Rectangle oo;
-						
-						oo = o;
-					     }
-					   break;
-					case OBJECT_LINE:
-					     {
-						Evas_Object_Line oo;
-						
-						oo = o;
-					     }
-					   break;
-					case OBJECT_GRADIENT_BOX:
-					     {
-						Evas_Object_Gradient_Box oo;
-						
-						oo = o;
-					     }
-					   break;
-					case OBJECT_BITS:
-					     {
-						Evas_Object_Bits oo;
-						
-						oo = o;
-					     }
-					   break;
-					}
-				   }
-			      }
-			 }
-		       __evas_gl_flush_draw(e->current.display, 
-					    e->current.drawable);
-		    }
-	       }
-	  }
-	break;
-     case RENDER_METHOD_ALPHA_HARDWARE:
-	break;
-     default:
-	break;
      }
    e->previous = e->current;
 }
@@ -538,4 +454,25 @@ evas_set_output_method(Evas e, Evas_Render_Method method)
 {
    e->current.render_method = method;
    e->changed = 1;
+}
+
+void
+evas_set_scale_smoothness(Evas e, int smooth)
+{
+   switch (e->current.render_method)
+     {
+     case RENDER_METHOD_ALPHA_SOFTWARE:
+	__evas_imlib_image_set_smooth_scaling(smooth);
+	break;
+     case RENDER_METHOD_BASIC_HARDWARE:
+	break;
+     case RENDER_METHOD_3D_HARDWARE:
+	__evas_gl_image_set_smooth_scaling(smooth);
+	break;
+     case RENDER_METHOD_ALPHA_HARDWARE:
+	break;
+     default:
+	return 0;
+	break;
+     }
 }

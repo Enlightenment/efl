@@ -4,6 +4,21 @@
 #include <unistd.h>
 #include <string.h>
 
+Evas_Layer
+_evas_get_object_layer(Evas e, Evas_Object o)
+{
+   Evas_List l;
+   
+   for (l = e->layers; l; l = l->next)
+     {
+        Evas_Layer layer;
+	
+	layer = l->data;
+	if (layer->layer == o->current.layer) return layer;
+     }
+   return NULL;
+}
+
 void
 _evas_real_del_object(Evas e, Evas_Object o)
 {
@@ -49,25 +64,65 @@ evas_set_layer_store(Evas e, int l, int store)
 void
 evas_raise(Evas e, Evas_Object o)
 {
-   e->changed = 1;
+   Evas_Layer layer;
+   
+   layer = _evas_get_object_layer(e, o);
+   if (layer)
+     {
+	o->current.stacking = 1;
+	layer->objects = evas_list_remove(layer->objects, o);
+	layer->objects = evas_list_append(layer->objects, o);
+	o->changed = 1;
+	e->changed = 1;
+     }
 }
 
 void
 evas_lower(Evas e, Evas_Object o)
 {
-   e->changed = 1;
+   Evas_Layer layer;
+   
+   layer = _evas_get_object_layer(e, o);
+   if (layer)
+     {
+	o->current.stacking = 1;
+	layer->objects = evas_list_remove(layer->objects, o);
+	layer->objects = evas_list_prepend(layer->objects, o);
+	o->changed = 1;
+	e->changed = 1;
+     }
 }
 
 void
-evas_stack_above(Evas e, Evas_Object o, int above)
+evas_stack_above(Evas e, Evas_Object o, Evas_Object above)
 {
-   e->changed = 1;
+   Evas_Layer layer;
+   
+   layer = _evas_get_object_layer(e, o);
+   if (layer)
+     {
+	o->current.stacking = 1;
+	layer->objects = evas_list_remove(layer->objects, o);
+	layer->objects = evas_list_append_relative(layer->objects, o, above);
+	o->changed = 1;
+	e->changed = 1;
+     }
 }
 
 void
-evas_stack_below(Evas e, Evas_Object o, int above)
+evas_stack_below(Evas e, Evas_Object o, Evas_Object above)
 {
-   e->changed = 1;
+   Evas_Layer layer;
+   
+   layer = _evas_get_object_layer(e, o);
+   if (layer)
+     {
+	o->current.stacking = 1;
+	layer->objects = evas_list_remove(layer->objects, o);
+	layer->objects = evas_list_prepend_relative(layer->objects, o, above);
+	o->changed = 1;
+	e->changed = 1;
+     }
 }
 
 /* object geoemtry */
