@@ -152,7 +152,7 @@ exsh_LDFLAGS =
 exsh_CFLAGS = \
 $(CFLAGS) \
 $(INCLUDES) \
-$(top_builddir)/src/lib/ecore_config/ \
+-I$(top_builddir)/src/lib/ecore_config/ \
 @edb_cflags@
 
 exsh_DEPENDENCIES = \
