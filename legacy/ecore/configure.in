@@ -261,6 +261,8 @@ AC_SUBST(x_libs)
 Xcursor_libs=""
 Xcursor_cflags=""
 use_Xcursor="no"
+PCFLAGS=$CFLAGS
+CFLAGS=$x_cflags" "$x_includes
 AC_CHECK_HEADER(X11/Xcursor/Xcursor.h, [
     AC_CHECK_LIB(Xcursor, XcursorImageLoadCursor, [
         AC_DEFINE(ECORE_XCURSOR, 1, [Build support for Xcursor])
@@ -271,6 +273,8 @@ AC_CHECK_HEADER(X11/Xcursor/Xcursor.h, [
         Xcursor_cflags=""
         Xcursor_libs=""
         use_Xcursor="no"
+      ], [
+        $x_libs $x_ldflags -lXrender
       ]
     )
   ], [
@@ -281,6 +285,7 @@ AC_CHECK_HEADER(X11/Xcursor/Xcursor.h, [
     #include <X11/Xlib.h>
   ]
 )
+CFLAGS=$PCFLAGS
 
 AC_SUBST(Xcursor_cflags)
 AC_SUBST(Xcursor_libs)
