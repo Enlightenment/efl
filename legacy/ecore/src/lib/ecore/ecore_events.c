@@ -359,14 +359,6 @@ _ecore_event_del(Ecore_Event *event)
    return data;
 }
 
-static void
-_ecore_event_filter_del(Ecore_Event_Filter *ef)
-{
-   ECORE_MAGIC_SET(ef, ECORE_MAGIC_NONE);
-   event_filters = _ecore_list_remove(event_filters, ef);   
-   free(ef);
-}
-
 void
 _ecore_event_call(void)
 {
@@ -398,11 +390,12 @@ _ecore_event_call(void)
      }
    if (event_filters_delete_me)
      {
-	for (l = (Ecore_List *)event_filters; l; l = l->next)
+	for (l = (Ecore_List *)event_filters; l;)
 	  {
 	     Ecore_Event_Filter *ef;
 	
 	     ef = (Ecore_Event_Filter *)l;
+	     l = l->next;
 	     if (ef->delete_me)
 	       {
 		  event_filters = _ecore_list_remove(event_filters, ef);
