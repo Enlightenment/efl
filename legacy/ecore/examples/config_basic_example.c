@@ -18,11 +18,11 @@ char  *rgb_val;
 char  *thm_val;
 
 void set_defaults (void) {
-  ecore_config_default_int(INT_VAL_KEY, 0);
-  ecore_config_default_float(FLT_VAL_KEY, 0.0);
-  ecore_config_default_string(STR_VAL_KEY, "test1");
-  ecore_config_default_rgb(RGB_VAL_KEY, "#000000");
-  ecore_config_default_theme(THM_VAL_KEY, "default");
+  ecore_config_int_default(INT_VAL_KEY, 0);
+  ecore_config_float_default(FLT_VAL_KEY, 0.0);
+  ecore_config_string_default(STR_VAL_KEY, "test1");
+  ecore_config_rgb_default(RGB_VAL_KEY, "#000000");
+  ecore_config_theme_default(THM_VAL_KEY, "default");
 }
 
 void get_settings (void) {
@@ -31,11 +31,11 @@ void get_settings (void) {
    */
   set_defaults();
   ecore_config_load();
-  int_val = ecore_config_get_int(INT_VAL_KEY);
-  flt_val = ecore_config_get_float(FLT_VAL_KEY);
-  str_val = ecore_config_get_string(STR_VAL_KEY);
-  rgb_val = ecore_config_get_rgbstr(RGB_VAL_KEY);
-  thm_val = ecore_config_get_theme(THM_VAL_KEY);
+  int_val = ecore_config_int_get(INT_VAL_KEY);
+  flt_val = ecore_config_float_get(FLT_VAL_KEY);
+  str_val = ecore_config_string_get(STR_VAL_KEY);
+  rgb_val = ecore_config_rgbstr_get(RGB_VAL_KEY);
+  thm_val = ecore_config_theme_get(THM_VAL_KEY);
 }
 
 void change_settings(void) {
@@ -63,11 +63,11 @@ void change_settings(void) {
 }
 
 void save_settings (void) {
-  ecore_config_set_int(INT_VAL_KEY, int_val);
-  ecore_config_set_float(FLT_VAL_KEY, flt_val);
-  ecore_config_set_string(STR_VAL_KEY, str_val);
-  ecore_config_set_rgb(RGB_VAL_KEY, rgb_val);
-  ecore_config_set_theme(THM_VAL_KEY, thm_val);
+  ecore_config_int_set(INT_VAL_KEY, int_val);
+  ecore_config_float_set(FLT_VAL_KEY, flt_val);
+  ecore_config_string_set(STR_VAL_KEY, str_val);
+  ecore_config_rgb_set(RGB_VAL_KEY, rgb_val);
+  ecore_config_theme_set(THM_VAL_KEY, thm_val);
   ecore_config_save();
 }
 

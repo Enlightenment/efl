@@ -81,8 +81,8 @@ typedef struct Ecore_Config_Prop
 {
    char               *key;	///< Property key.
    char               *description;	///< Description set by ecore_config_descibe.
-   char                short_opt;
-   char               *long_opt;
+   char                short_opt;	///< short identifier on command line (-f)
+   char               *long_opt;	///< long identifier on command line (--foo)
    char               *ptr;	///< Used as the value when the property is a string or theme.
    Ecore_Config_Type   type;	///< Property type.
    long                val;	///< Used as the value when the property is an integer, float or colour.
@@ -130,47 +130,47 @@ extern              "C"
    extern char        *__ecore_config_app_name;
 
    Ecore_Config_Prop  *ecore_config_get(const char *key);
-   const char         *ecore_config_get_type(const Ecore_Config_Prop * e);
-   void               *ecore_config_get_data(const char *key);
-   char               *ecore_config_get_string(const char *key);
-   long                ecore_config_get_int(const char *key);
-   int                 ecore_config_get_rgb(const char *key, int *r, int *g,
+   const char         *ecore_config_type_get(const Ecore_Config_Prop * e);
+   void               *ecore_config_data_get(const char *key);
+   char               *ecore_config_string_get(const char *key);
+   long                ecore_config_int_get(const char *key);
+   int                 ecore_config_rgb_get(const char *key, int *r, int *g,
 					    int *b);
-   float               ecore_config_get_float(const char *key);
-   char               *ecore_config_get_theme(const char *key);
-   char               *ecore_config_get_as_string(const char *key);
+   char               *ecore_config_rgbstr_get(const char *key);
+   float               ecore_config_float_get(const char *key);
+   char               *ecore_config_theme_get(const char *key);
+   char               *ecore_config_as_string_get(const char *key);
    int                 ecore_config_describe(const char *key, char *desc);
-   int                 ecore_config_set_short_opt(const char *key,
+   int                 ecore_config_short_opt_set(const char *key,
 						  char short_opt);
-   int                 ecore_config_set_long_opt(const char *key,
+   int                 ecore_config_long_opt_set(const char *key,
 						 char *long_opt);
    int                 ecore_config_set(const char *key, char *val);
-   int                 ecore_config_set_typed(const char *key, void *val,
+   int                 ecore_config_typed_set(const char *key, void *val,
 					      int type);
-   int                 ecore_config_set_string(const char *key, char *val);
-   int                 ecore_config_set_int(const char *key, int val);
-   int                 ecore_config_set_rgb(const char *key, char *val);
-   char               *ecore_config_get_rgbstr(const char *key);
-   int                 ecore_config_set_float(const char *key, float val);
-   int                 ecore_config_set_theme(const char *key, char *val);
-   int                 ecore_config_set_theme_preview_group(const char *key,
+   int                 ecore_config_string_set(const char *key, char *val);
+   int                 ecore_config_int_set(const char *key, int val);
+   int                 ecore_config_rgb_set(const char *key, char *val);
+   int                 ecore_config_float_set(const char *key, float val);
+   int                 ecore_config_theme_set(const char *key, char *val);
+   int                 ecore_config_theme_preview_group_set(const char *key,
 							    char *group);
-   int                 ecore_config_set_as_string(const char *key, char *val);
+   int                 ecore_config_as_string_set(const char *key, char *val);
 
    int                 ecore_config_default(const char *key, char *val,
 					    float lo, float hi, float step);
-   int                 ecore_config_default_typed(const char *key, void *val,
+   int                 ecore_config_typed_default(const char *key, void *val,
 						  int type);
-   int                 ecore_config_default_int(const char *key, int val);
-   int                 ecore_config_default_int_bound(const char *key, int val,
+   int                 ecore_config_int_default(const char *key, int val);
+   int                 ecore_config_int_default_bound(const char *key, int val,
 						      int lo, int hi, int step);
-   int                 ecore_config_default_string(const char *key, char *val);
-   int                 ecore_config_default_float(const char *key, float val);
-   int                 ecore_config_default_float_bound(const char *key,
+   int                 ecore_config_string_default(const char *key, char *val);
+   int                 ecore_config_float_default(const char *key, float val);
+   int                 ecore_config_float_default_bound(const char *key,
 							float val, float lo,
 							float hi, float step);
-   int                 ecore_config_default_rgb(const char *key, char *val);
-   int                 ecore_config_default_theme(const char *key, char *val);
+   int                 ecore_config_rgb_default(const char *key, char *val);
+   int                 ecore_config_theme_default(const char *key, char *val);
 
    int                 ecore_config_listen(const char *name, const char *key,
 					   Ecore_Config_Listener listener,
@@ -178,27 +178,27 @@ extern              "C"
    int                 ecore_config_deaf(const char *name, const char *key,
 					 Ecore_Config_Listener listener);
    Ecore_Config_Prop  *ecore_config_dst(Ecore_Config_Prop * e);
-   int                 ecore_config_guess_type(const char *key, char *val);
+   int                 ecore_config_type_guess(const char *key, char *val);
 
    Ecore_Config_Bundle *ecore_config_bundle_new(Ecore_Config_Server * srv,
 						const char *id);
-   Ecore_Config_Bundle *ecore_config_bundle_get_1st(Ecore_Config_Server * srv);
-   Ecore_Config_Bundle *ecore_config_bundle_get_next(Ecore_Config_Bundle * ns);
-   Ecore_Config_Bundle *ecore_config_bundle_get_by_serial(Ecore_Config_Server *
+   Ecore_Config_Bundle *ecore_config_bundle_1st_get(Ecore_Config_Server * srv);
+   Ecore_Config_Bundle *ecore_config_bundle_next_get(Ecore_Config_Bundle * ns);
+   Ecore_Config_Bundle *ecore_config_bundle_by_serial_get(Ecore_Config_Server *
 							  srv, long serial);
-   Ecore_Config_Bundle *ecore_config_bundle_get_by_label(Ecore_Config_Server *
+   Ecore_Config_Bundle *ecore_config_bundle_by_label_get(Ecore_Config_Server *
 							 srv,
 							 const char *label);
-   long                ecore_config_bundle_get_serial(Ecore_Config_Bundle * ns);
-   char               *ecore_config_bundle_get_label(Ecore_Config_Bundle * ns);
+   long                ecore_config_bundle_serial_get(Ecore_Config_Bundle * ns);
+   char               *ecore_config_bundle_label_get(Ecore_Config_Bundle * ns);
 
    int                 ecore_config_init(char *name);
    int                 ecore_config_shutdown(void);
 
    int                 ecore_config_load(void);
-   int                 ecore_config_load_file(char *file);
+   int                 ecore_config_file_load(char *file);
    int                 ecore_config_save(void);
-   int                 ecore_config_save_file(char *file);
+   int                 ecore_config_file_save(char *file);
 
 /* error codes */
 # define ECORE_CONFIG_ERR_NOTSUPP     (-16)
@@ -219,9 +219,9 @@ extern              "C"
 # define ECORE_CONFIG_ERR_FAIL         (-1)	///< Failure result.
 # define ECORE_CONFIG_ERR_SUCC          (0)	///< Success result.
 
-# define ECORE_CONFIG_PARSE_HELP       (-2)
-# define ECORE_CONFIG_PARSE_EXIT       (-1)
-# define ECORE_CONFIG_PARSE_CONTINUE    (0)
+# define ECORE_CONFIG_PARSE_HELP       (-2)	///< Help was displayed
+# define ECORE_CONFIG_PARSE_EXIT       (-1)	///< An error occurred
+# define ECORE_CONFIG_PARSE_CONTINUE    (0)	///< Arguments parsed successfully
 
 /* convenience mathods in convenience.c */
    int                 ecore_config_evas_font_path_apply(Evas * evas);
@@ -232,33 +232,33 @@ extern              "C"
    int                 ecore_config_create(const char *key, void *val,
 					   char short_opt, char *long_opt,
 					   char *desc);
-   int                 ecore_config_create_typed(const char *key, void *val,
+   int                 ecore_config_typed_create(const char *key, void *val,
 						 int type, char short_opt,
 						 char *long_opt, char *desc);
-   int                 ecore_config_create_int(const char *key, int val,
+   int                 ecore_config_int_create(const char *key, int val,
 					       char short_opt, char *long_opt,
 					       char *desc);
-   int                 ecore_config_create_int_bound(const char *key, int val,
+   int                 ecore_config_int_create_bound(const char *key, int val,
 						     int low, int high,
 						     int step, char short_opt,
 						     char *long_opt,
 						     char *desc);
-   int                 ecore_config_create_string(const char *key, char *val,
+   int                 ecore_config_string_create(const char *key, char *val,
 						  char short_opt,
 						  char *long_opt, char *desc);
-   int                 ecore_config_create_float(const char *key, float val,
+   int                 ecore_config_float_create(const char *key, float val,
 						 char short_opt, char *long_opt,
 						 char *desc);
-   int                 ecore_config_create_float_bound(const char *key,
+   int                 ecore_config_float_create_bound(const char *key,
 						       float val, float low,
 						       float high, float step,
 						       char short_opt,
 						       char *long_opt,
 						       char *desc);
-   int                 ecore_config_create_rgb(const char *key, char *val,
+   int                 ecore_config_rgb_create(const char *key, char *val,
 					       char short_opt, char *long_opt,
 					       char *desc);
-   int                 ecore_config_create_theme(const char *key, char *val,
+   int                 ecore_config_theme_create(const char *key, char *val,
 						 char short_opt, char *long_opt,
 						 char *desc);
 

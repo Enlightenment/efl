@@ -24,7 +24,7 @@
 /*****************************************************************************/
 
 static int
-_ecore_config_ipc_ecore_get_string(char **m, char **r)
+_ecore_config_ipc_ecore_string_get(char **m, char **r)
 {
    char               *q;
    int                 l = 0;
@@ -88,7 +88,7 @@ _ecore_config_ipc_global_prop_list(Ecore_Config_Server * srv, const long serial)
 	     data = e_db_str_get(db, keys[x]);
 	     if (data)
 	       {
-		  if (ecore_config_guess_type(keys[x], data) == PT_RGB)
+		  if (ecore_config_type_guess(keys[x], data) == PT_RGB)
 		     estring_appendf(s, "%s%s: colour", f ? "\n" : "", keys[x]);
 		  else
 		     estring_appendf(s, "%s%s: string", f ? "\n" : "", keys[x]);
@@ -156,17 +156,17 @@ _ecore_config_ipc_ecore_handle_request(Ecore_Ipc_Server * server,
 	   r = _ecore_config_ipc_prop_list(srv, serial);
 	break;
      case IPC_PROP_DESC:
-	if (_ecore_config_ipc_ecore_get_string(&m, &k) == ECORE_CONFIG_ERR_SUCC)
+	if (_ecore_config_ipc_ecore_string_get(&m, &k) == ECORE_CONFIG_ERR_SUCC)
 	   r = _ecore_config_ipc_prop_desc(srv, serial, k);
 	break;
      case IPC_PROP_GET:
-	if (_ecore_config_ipc_ecore_get_string(&m, &k) == ECORE_CONFIG_ERR_SUCC)
+	if (_ecore_config_ipc_ecore_string_get(&m, &k) == ECORE_CONFIG_ERR_SUCC)
 	   r = _ecore_config_ipc_prop_get(srv, serial, k);
 	break;
      case IPC_PROP_SET:
-	if (_ecore_config_ipc_ecore_get_string(&m, &k) == ECORE_CONFIG_ERR_SUCC)
+	if (_ecore_config_ipc_ecore_string_get(&m, &k) == ECORE_CONFIG_ERR_SUCC)
 	  {
-	     if (_ecore_config_ipc_ecore_get_string(&m, &v) ==
+	     if (_ecore_config_ipc_ecore_string_get(&m, &v) ==
 		 ECORE_CONFIG_ERR_SUCC)
 		return _ecore_config_ipc_ecore_send(e,
 						    _ecore_config_ipc_prop_set
@@ -178,7 +178,7 @@ _ecore_config_ipc_ecore_handle_request(Ecore_Ipc_Server * server,
 	r = _ecore_config_ipc_bundle_list(srv);
 	break;
      case IPC_BUNDLE_NEW:
-	if (_ecore_config_ipc_ecore_get_string(&m, &k) == ECORE_CONFIG_ERR_SUCC)
+	if (_ecore_config_ipc_ecore_string_get(&m, &k) == ECORE_CONFIG_ERR_SUCC)
 	   return _ecore_config_ipc_ecore_send(e,
 					       k ?
 					       _ecore_config_ipc_bundle_new(srv,
@@ -186,7 +186,7 @@ _ecore_config_ipc_ecore_handle_request(Ecore_Ipc_Server * server,
 					       ECORE_CONFIG_ERR_FAIL, NULL);
 	break;
      case IPC_BUNDLE_LABEL_SET:
-	if (_ecore_config_ipc_ecore_get_string(&m, &k) == ECORE_CONFIG_ERR_SUCC)
+	if (_ecore_config_ipc_ecore_string_get(&m, &k) == ECORE_CONFIG_ERR_SUCC)
 	   return _ecore_config_ipc_ecore_send(e,
 					       k ?
 					       _ecore_config_ipc_bundle_label_set
@@ -195,7 +195,7 @@ _ecore_config_ipc_ecore_handle_request(Ecore_Ipc_Server * server,
 					       NULL);
 	break;
      case IPC_BUNDLE_LABEL_FIND:
-	if (_ecore_config_ipc_ecore_get_string(&m, &k) == ECORE_CONFIG_ERR_SUCC)
+	if (_ecore_config_ipc_ecore_string_get(&m, &k) == ECORE_CONFIG_ERR_SUCC)
 	   return _ecore_config_ipc_ecore_send(e,
 					       _ecore_config_ipc_bundle_label_find
 					       (srv, k), NULL);

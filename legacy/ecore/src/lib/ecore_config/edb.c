@@ -22,7 +22,7 @@ ecore_config_load(void)
 
    snprintf(file, PATH_MAX, "%s/.e/apps/%s/config.db", getenv("HOME"),
 	    __ecore_config_app_name);
-   return ecore_config_load_file(file);
+   return ecore_config_file_load(file);
 }
 
 /**
@@ -37,7 +37,7 @@ ecore_config_save(void)
 
    snprintf(file, PATH_MAX, "%s/.e/apps/%s/config.db", getenv("HOME"),
 	    __ecore_config_app_name);
-   return ecore_config_save_file(file);
+   return ecore_config_file_save(file);
 }
 
 /**
@@ -47,7 +47,7 @@ ecore_config_save(void)
  *         returned if the file cannot be loaded.
  */
 int
-ecore_config_load_file(char *file)
+ecore_config_file_load(char *file)
 {
    E_DB_File          *db;
    char              **keys;
@@ -81,7 +81,7 @@ ecore_config_load_file(char *file)
 	  {
 	     if (e_db_int_get(db, keys[x], &itmp))
 	       {
-		  ecore_config_set_int(keys[x], itmp);
+		  ecore_config_int_set(keys[x], itmp);
 	       }
 	     else
 	       {
@@ -92,7 +92,7 @@ ecore_config_load_file(char *file)
 	  {
 	     if (e_db_float_get(db, keys[x], &ftmp))
 	       {
-		  ecore_config_set_float(keys[x], ftmp);
+		  ecore_config_float_set(keys[x], ftmp);
 	       }
 	     else
 	       {
@@ -104,17 +104,17 @@ ecore_config_load_file(char *file)
 	     data = e_db_str_get(db, keys[x]);
 	     if (data)
 	       {
-		  itmp = ecore_config_guess_type(keys[x], data);
+		  itmp = ecore_config_type_guess(keys[x], data);
 		  switch (itmp)
 		    {
 		    case PT_RGB:
-		       ecore_config_set_rgb(keys[x], data);
+		       ecore_config_rgb_set(keys[x], data);
 		       break;
 		    case PT_THM:
-		       ecore_config_set_theme(keys[x], data);
+		       ecore_config_theme_set(keys[x], data);
 		       break;
 		    default:
-		       ecore_config_set_string(keys[x], data);
+		       ecore_config_string_set(keys[x], data);
 		    }
 		  free(data);
 	       }
@@ -165,7 +165,7 @@ _ecore_config_recurse_mkdir(char *file)
  *         ECORE_CONFIG_ERR_FAIL is returned if the data cannot be saved.
  */
 int
-ecore_config_save_file(char *file)
+ecore_config_file_save(char *file)
 {
    Ecore_Config_Prop  *next;
    E_DB_File          *db;
@@ -195,19 +195,19 @@ ecore_config_save_file(char *file)
 	switch (next->type)
 	  {
 	  case PT_INT:
-	     e_db_int_set(db, next->key, ecore_config_get_int(next->key));
+	     e_db_int_set(db, next->key, ecore_config_int_get(next->key));
 	     break;
 	  case PT_FLT:
-	     e_db_float_set(db, next->key, ecore_config_get_float(next->key));
+	     e_db_float_set(db, next->key, ecore_config_float_get(next->key));
 	     break;
 	  case PT_RGB:
-	     e_db_str_set(db, next->key, ecore_config_get_rgbstr(next->key));
+	     e_db_str_set(db, next->key, ecore_config_rgbstr_get(next->key));
 	     break;
 	  case PT_STR:
-	     e_db_str_set(db, next->key, ecore_config_get_string(next->key));
+	     e_db_str_set(db, next->key, ecore_config_string_get(next->key));
 	     break;
 	  case PT_THM:
-	     e_db_str_set(db, next->key, ecore_config_get_theme(next->key));
+	     e_db_str_set(db, next->key, ecore_config_theme_get(next->key));
 	     break;
 	  case PT_NIL:
 	     /* currently we do nothing for undefined ojects */
