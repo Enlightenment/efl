@@ -717,9 +717,15 @@ __evas_imlib_get_colormap(Display *disp, int screen)
 void
 __evas_imlib_init(Display *disp, int screen)
 {
-   imlib_set_font_cache_size(1024 * 1024);
-   imlib_set_cache_size(8 * 1024 * 1024);
-   imlib_set_color_usage(128);
+   static int initted = 0;
+   
+   if (!initted)
+     {
+	imlib_set_font_cache_size(1024 * 1024);
+	imlib_set_cache_size(8 * 1024 * 1024);
+	imlib_set_color_usage(128);
+	initted = 1;
+     }
 }
 
 void
