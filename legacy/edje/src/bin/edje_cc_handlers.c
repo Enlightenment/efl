@@ -1170,6 +1170,15 @@ st_collections_group_parts_part_description_image_normal(void)
 
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_IMAGE)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"image attributes in non-IMAGE part.\n",
+		progname, file_in, line);
+	exit(-1);
+     }
+
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
      {
@@ -1190,6 +1199,15 @@ st_collections_group_parts_part_description_image_tween(void)
 
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_IMAGE)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"image attributes in non-IMAGE part.\n",
+		progname, file_in, line);
+	exit(-1);
+     }
+
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
      {
@@ -1213,6 +1231,15 @@ st_collections_group_parts_part_description_image_border(void)
 
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_IMAGE)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"image attributes in non-IMAGE part.\n",
+		progname, file_in, line);
+	exit(-1);
+     }
+
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
    ed->border.l = parse_int_range(0, 0, 0x7fffffff);
@@ -1240,6 +1267,15 @@ st_collections_group_parts_part_description_fill_smooth(void)
 
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_IMAGE)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"fill attributes in non-IMAGE part.\n",
+		progname, file_in, line);
+	exit(-1);
+     }
+
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
    ed->fill.smooth = parse_bool(0);
@@ -1254,6 +1290,15 @@ st_collections_group_parts_part_description_fill_origin_relative(void)
 
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_IMAGE)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"fill attributes in non-IMAGE part.\n",
+		progname, file_in, line);
+	exit(-1);
+     }
+
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
    ed->fill.pos_rel_x = parse_float_range(0, 0.0, 999999999.0);   
@@ -1269,6 +1314,15 @@ st_collections_group_parts_part_description_fill_origin_offset(void)
 
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_IMAGE)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"fill attributes in non-IMAGE part.\n",
+		progname, file_in, line);
+	exit(-1);
+     }
+
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
    ed->fill.pos_abs_x = parse_int(0);
@@ -1286,6 +1340,15 @@ st_collections_group_parts_part_description_fill_size_relative(void)
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+
+   if (ep->type != EDJE_PART_TYPE_IMAGE)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"fill attributes in non-IMAGE part.\n",
+		progname, file_in, line);
+	exit(-1);
+     }
+
    ed->fill.rel_x = parse_float_range(0, 0.0, 999999999.0);   
    ed->fill.rel_y = parse_float_range(1, 0.0, 999999999.0);   
 }
@@ -1301,6 +1364,15 @@ st_collections_group_parts_part_description_fill_size_offset(void)
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+
+   if (ep->type != EDJE_PART_TYPE_IMAGE)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"fill attributes in non-IMAGE part.\n",
+		progname, file_in, line);
+	exit(-1);
+     }
+
    ed->fill.abs_x = parse_int(0);
    ed->fill.abs_y = parse_int(1);
 }
@@ -1379,6 +1451,15 @@ st_collections_group_parts_part_description_text_text(void)
 
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_TEXT)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"text attributes in non-TEXT part.\n",
+		progname, file_in, line);
+	exit(-1);
+     }
+
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
    ed->text.text = parse_str(0);
@@ -1393,6 +1474,15 @@ st_collections_group_parts_part_description_text_text_class(void)
    
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_TEXT)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"text attributes in non-TEXT part.\n",
+		progname, file_in, line);
+	exit(-1);
+     }
+
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
    ed->text.text_class = parse_str(0);
@@ -1407,6 +1497,15 @@ st_collections_group_parts_part_description_text_font(void)
 
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_TEXT)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"text attributes in non-TEXT part.\n",
+		progname, file_in, line);
+	exit(-1);
+     }
+
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
    ed->text.font = parse_str(0);
@@ -1421,6 +1520,15 @@ st_collections_group_parts_part_description_text_size(void)
 
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_TEXT)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"text attributes in non-TEXT part.\n",
+		progname, file_in, line);
+	exit(-1);
+     }
+
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
    ed->text.size = parse_int_range(0, 0, 255);
@@ -1455,6 +1563,15 @@ st_collections_group_parts_part_description_text_fit(void)
 
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_TEXT)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"text attributes in non-TEXT part.\n",
+		progname, file_in, line);
+	exit(-1);
+     }
+
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
    ed->text.fit_x = parse_bool(0);
@@ -1470,6 +1587,15 @@ st_collections_group_parts_part_description_text_min(void)
 
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_TEXT)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"text attributes in non-TEXT part.\n",
+		progname, file_in, line);
+	exit(-1);
+     }
+
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
    ed->text.min_x = parse_bool(0);
@@ -1485,6 +1611,15 @@ st_collections_group_parts_part_description_text_align(void)
 
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_TEXT)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"text attributes in non-TEXT part.\n",
+		progname, file_in, line);
+	exit(-1);
+     }
+
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
    ed->text.align.x = parse_float_range(0, 0.0, 1.0);
@@ -1500,6 +1635,15 @@ st_collections_group_parts_part_description_text_source(void)
 
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_TEXT)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"text attributes in non-TEXT part.\n",
+		progname, file_in, line);
+	exit(-1);
+     }
+
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
      {
@@ -1520,6 +1664,15 @@ st_collections_group_parts_part_description_text_text_source(void)
 
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_TEXT)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"text attributes in non-TEXT part.\n",
+		progname, file_in, line);
+	exit(-1);
+     }
+
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
      {
