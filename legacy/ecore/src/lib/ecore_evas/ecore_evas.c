@@ -15,7 +15,8 @@ static int _ecore_evas_init_count = 0;
 int
 ecore_evas_init(void)
 {
-   evas_init ();
+   if (_ecore_evas_init_count == 0)
+	evas_init ();
 
    return ++_ecore_evas_init_count;
 }
