@@ -3,6 +3,8 @@
 #include "ipc.h"
 #include "util.h"
 
+#include "ecore_config_private.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -56,6 +58,8 @@ _ecore_config_ipc_global_prop_list(Ecore_Config_Server * srv, const long serial)
    int                 f;
    char               *buf, *p, *type, *data;
 
+   db = NULL;
+   buf = NULL;
    s = estring_new(8192);
    f = 0;
    if ((p = getenv("HOME")))

@@ -1,5 +1,6 @@
 #include "Ecore_Config.h"
 #include "config.h"
+#include "ecore_config_private.h"
 
 #include <string.h>
 #include <ctype.h>
@@ -1255,6 +1256,12 @@ ecore_config_init(char *name)
 {
    char               *buf, *p, *path;
    Ecore_Config_Prop  *sys;
+
+   DEBUG = -1;
+   if ((p = getenv("ECORE_CONFIG_DEBUG")) && strlen(p) > 0)
+     {
+	DEBUG = atoi(p);
+     }
 
    __ecore_config_app_name = strdup(name);
    __ecore_config_server_local = ecore_config_init_local(name);

@@ -1,6 +1,8 @@
 #include <Edb.h>
 #include "Ecore_Config.h"
 
+#include "ecore_config_private.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

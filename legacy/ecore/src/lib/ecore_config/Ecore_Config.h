@@ -20,18 +20,6 @@
 /* FIXME: this should only be included if evas is present */
 # include <Evas.h>
 
-/* debug */
-# define DEBUG 1
-# undef ECORE_CONFIG_DEBUG
-
-# ifdef ECORE_CONFIG_DEBUG
-#  define D(fmt,args...) do { if(DEBUG>=0) fprintf(stderr,fmt,## args); } while(0);
-#  define E(lvl,args...) do { if(DEBUG>=(lvl)) fprintf(stderr,## args); } while(0)
-# else
-#  define D(msg,args...)
-#  define E(lvl,args...) do { } while(0)
-# endif
-
 # define ECORE_CONFIG_GLOBAL_ID "_system"
 
 /* structures */

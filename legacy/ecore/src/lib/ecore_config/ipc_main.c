@@ -6,6 +6,7 @@
 #include "ipc.h"
 
 #include "config.h"
+#include "ecore_config_private.h"
 
 #include <signal.h>
 #include <dlfcn.h>

@@ -19,6 +19,8 @@
 #include "Ecore_Config.h"
 #include "util.h"
 
+#include "ecore_config_private.h"
+
 #define CHUNKLEN 4096
 
 /*****************************************************************************/
