@@ -1,5 +1,5 @@
 #ifndef _ECORE_CONFIG_H
-#define _ECORE_CONFIG_H
+# define _ECORE_CONFIG_H
 
 /**
  * @file Ecore_Config.h
@@ -22,31 +22,31 @@
  */
 
 
-#define DIR_DELIMITER      '/'
-#define ECORE_CONFIG_FLOAT_PRECISION 1000
+# define DIR_DELIMITER      '/'
+# define ECORE_CONFIG_FLOAT_PRECISION 1000
 
-#ifndef TRUE
+# ifndef TRUE
 #  define FALSE (0)
 #  define TRUE  (!FALSE)
-#endif
+# endif
 
-#include <Ecore_Ipc.h>
+# include <Ecore_Ipc.h>
 /* this should only be included if evas is present */
-#include <Evas.h>
+# include <Evas.h>
 
 /* debug */
-#define DEBUG 1
-#undef ECORE_CONFIG_DEBUG
+# define DEBUG 1
+# undef ECORE_CONFIG_DEBUG
 
-#ifdef ECORE_CONFIG_DEBUG
+# ifdef ECORE_CONFIG_DEBUG
 #  define D(fmt,args...) do { if(DEBUG>=0) fprintf(stderr,fmt,## args); } while(0);
 #  define E(lvl,args...) do { if(DEBUG>=(lvl)) fprintf(stderr,## args); } while(0)
-#else
+# else
 #  define D(msg,args...)
 #  define E(lvl,args...) do { } while(0)
-#endif
+# endif
 
-#define ECORE_CONFIG_GLOBAL_ID "_system"
+# define ECORE_CONFIG_GLOBAL_ID "_system"
 
 /* structures */
 
@@ -114,6 +114,10 @@ typedef struct Ecore_Config_Server {
   Ecore_Config_Bundle        *bundles;          /* data anchor */
   struct Ecore_Config_Server *next; } Ecore_Config_Server;
 
+# ifdef __cplusplus
+extern "C" {
+# endif
+   
 /* global ptrs to save passing them through the API */
 extern Ecore_Config_Server *__ecore_config_server_global;
 extern Ecore_Config_Server *__ecore_config_server_local;
@@ -172,27 +176,29 @@ int            ecore_config_save(void);
 int            ecore_config_save_file(char *file);
 
 /* error codes */
-#  define ECORE_CONFIG_ERR_NOTSUPP     (-16)
-#  define ECORE_CONFIG_ERR_NOFILE      (-15)
-#  define ECORE_CONFIG_ERR_META_DLFAIL (-14)
-#  define ECORE_CONFIG_ERR_META_FILE   (-13)
-#  define ECORE_CONFIG_ERR_META_FORMAT (-12)
-#  define ECORE_CONFIG_ERR_MONMIS      (-11)
-#  define ECORE_CONFIG_ERR_NOEXEC      (-10)
-#  define ECORE_CONFIG_ERR_PARTIAL      (-9)
-#  define ECORE_CONFIG_ERR_PATHEX       (-8)
-#  define ECORE_CONFIG_ERR_TYPEMISMATCH (-7)
-#  define ECORE_CONFIG_ERR_MUTEX        (-6)
-#  define ECORE_CONFIG_ERR_NOTFOUND     (-5)
-#  define ECORE_CONFIG_ERR_OOM          (-4)
-#  define ECORE_CONFIG_ERR_IGNORED      (-3)
-#  define ECORE_CONFIG_ERR_NODATA       (-2)
-#  define ECORE_CONFIG_ERR_FAIL         (-1)
-#  define ECORE_CONFIG_ERR_SUCC          (0)
-
-#endif
-
+# define ECORE_CONFIG_ERR_NOTSUPP     (-16)
+# define ECORE_CONFIG_ERR_NOFILE      (-15)
+# define ECORE_CONFIG_ERR_META_DLFAIL (-14)
+# define ECORE_CONFIG_ERR_META_FILE   (-13)
+# define ECORE_CONFIG_ERR_META_FORMAT (-12)
+# define ECORE_CONFIG_ERR_MONMIS      (-11)
+# define ECORE_CONFIG_ERR_NOEXEC      (-10)
+# define ECORE_CONFIG_ERR_PARTIAL      (-9)
+# define ECORE_CONFIG_ERR_PATHEX       (-8)
+# define ECORE_CONFIG_ERR_TYPEMISMATCH (-7)
+# define ECORE_CONFIG_ERR_MUTEX        (-6)
+# define ECORE_CONFIG_ERR_NOTFOUND     (-5)
+# define ECORE_CONFIG_ERR_OOM          (-4)
+# define ECORE_CONFIG_ERR_IGNORED      (-3)
+# define ECORE_CONFIG_ERR_NODATA       (-2)
+# define ECORE_CONFIG_ERR_FAIL         (-1)
+# define ECORE_CONFIG_ERR_SUCC          (0)
 
 /* convenience mathods in convenience.c */
 int            ecore_config_evas_font_path_apply(Evas *evas);
 void           ecore_config_prop_list_describe(void);
+
+# ifdef __cplusplus
+}
+# endif
+#endif
