@@ -130,7 +130,8 @@ ecore_config_args_display(void)
       printf(" %c%c%c --%s\t <%s> %s\n", props->short_opt?'-':' ',
              props->short_opt?props->short_opt:' ', props->short_opt?',':' ',
              props->long_opt?props->long_opt:props->key,
-             _ecore_config_short_types[props->type], props->description);
+             _ecore_config_short_types[props->type],
+	     props->description?props->description:"(no description available)");
       
       props = props->next;
     }
