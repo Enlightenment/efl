@@ -11,3 +11,23 @@ image data for saving to eet files or sending across the network to
 other machines, or just writing to arbitary files on the system. All
 data is encoded in a platform independant way and can be written and
 read by any architecture.
+
+------------------------------------------------------------------------------
+BUILDING PACKAGES:
+
+RPM: To build rpm packages:
+  
+  sudo rpm -ta @PACKAGE@-@VERSION@.tar.gz
+
+You will find rpm packages in your system /usr/src/redhat/* dirs (note you may
+not need to use sudo or root if you have your own ~/.rpmrc. see rpm documents
+for more details)
+
+DEB: To build deb packages:
+
+  tar zvf @PACKAGE@-@VERSION@.tar.gz
+  cd @PACKAGE@-@VERSION@
+  dpkg-buildpackage -us -uc -rfakeroot
+
+You will find all the debin source, binary etc. packages put in the parent
+(..) directory.
