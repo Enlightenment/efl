@@ -1412,6 +1412,7 @@ evas.pc
 ],[
 chmod +x evas-config
 touch evas_docs.tar.gz
+touch src/bin/moc_evas_software_qtopia_main.cpp
 ])
 
 #####################################################################

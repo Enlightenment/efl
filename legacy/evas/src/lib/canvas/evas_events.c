@@ -53,10 +53,24 @@ evas_event_list_copy(Evas_List *list)
 /* public functions */
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Freeze alll event processing
+ * @param e The canvas to freeze event processing on
  * 
+ * This function will indicate to evas that the canvas @p e is to have all
+ * event processing frozen until a matching evas_event_thaw() function is
+ * called on the same canvas. Every freeze call must be matched by a thaw call
+ * in order to completely thaw out a canvas.
+ * 
+ * Example:
+ * @code
+ * extern Evas *evas;
+ * extern Evas_Object *object;
+ * 
+ * evas_event_freeze(evas);
+ * evas_object_move(object, 50, 100);
+ * evas_object_resize(object, 200, 200);
+ * evas_event_thaw(evas);
+ * @endcode
  */
 void
 evas_event_freeze(Evas *e)
@@ -68,9 +82,15 @@ evas_event_freeze(Evas *e)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Thaw a canvas out after freezing
+ * @param e The canvas to thaw out
+ * 
+ * This will thaw out a canvas after a matching evas_event_freeze() call. If
+ * this call completely thaws out a canvas, events will start being processed
+ * again after this call, but this call will not invole any "missed" events
+ * to be evaluated.
+ * 
+ * See evas_event_freeze() for an example.
  * 
  */
 void
@@ -85,10 +105,21 @@ evas_event_thaw(Evas *e)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Return the freeze count of a given canvas
+ * @param e The canvas to fetch the freeze count from
  * 
+ * This returns the number of times the canvas has been told to freeze events.
+ * It is possible to call evas_event_freeze() multiple times, and these must
+ * be matched by evas_event_thaw() calls. This call allows the program to
+ * discover just how many times things have been frozen in case it may want
+ * to break out of a deep freeze state where the count is high.
+ * 
+ * Example:
+ * @code
+ * extern Evas *evas;
+ * 
+ * while (evas_event_freeze_get(evas) > 0) evas_event_thaw(evas);
+ * @endcode
  */
 int
 evas_event_freeze_get(Evas *e)
@@ -144,6 +175,12 @@ evas_event_feed_mouse_down_data(Evas *e, int b, const void *data)
    if (copy) copy = evas_list_free(copy);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_event_feed_mouse_wheel_data(Evas *e, int direction, int z, const void *data)
 {
