@@ -115,7 +115,7 @@ main(int argc, char **argv)
 	     i++;
 	     if (!strcmp(argv[i], "x11"))
 		evas_set_output_method(e, RENDER_METHOD_BASIC_HARDWARE);
-	     else if (!strcmp(argv[i], "alpha"))
+	     else if (!strcmp(argv[i], "render"))
 		evas_set_output_method(e, RENDER_METHOD_ALPHA_HARDWARE);
 	     else if (!strcmp(argv[i], "soft"))
 		evas_set_output_method(e, RENDER_METHOD_ALPHA_SOFTWARE);

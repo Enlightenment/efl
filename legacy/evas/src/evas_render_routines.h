@@ -2,15 +2,19 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include <string.h>
 #include <math.h>
 #include <sys/time.h>
-#include <unistd.h>
+#include <sys/types.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 
 #include <X11/X.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
+#include <X11/extensions/XShm.h>
 
 #include "Evas_private.h"
 #include "Evas.h"
@@ -38,16 +42,22 @@ typedef void Evas_Render_Graident;
 struct _evas_render_image
 {
    char    *file;
+   Imlib_Image image;
    int      references;
    int      w, h;
    Display *disp;
+   struct {
+      int w, h;
+      struct 
+	{
+	   int l, r, t, b;
+	} border;
+      int smooth;
+      int pr, pg, pb, pa;
+   } current;
    Picture  pic;
    Pixmap   pmap;
    int      has_alpha;
-   struct 
-     {
-	int l, r, t, b;
-     }      border;
 };
 
 typedef struct _evas_render_drawable Evas_Render_Drawable;
@@ -62,6 +72,8 @@ struct _evas_render_drawable
 
 struct _evas_render_update
 {
+   Display *disp;
+   Drawable drawable;
    Picture pic;
    Pixmap pmap;
    int x, y, w, h;

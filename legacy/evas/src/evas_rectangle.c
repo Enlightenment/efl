@@ -63,6 +63,17 @@ evas_add_rectangle(Evas e)
 	     layer->objects = evas_list_append(layer->objects, o);
 	     return o;
 	  }
+	if (layer->layer > o->current.layer)
+	  {
+	     Evas_Layer        layer_new;
+	     
+	     layer_new = malloc(sizeof(struct _Evas_Layer));
+	     memset(layer_new, 0, sizeof(struct _Evas_Layer));
+	     e->layers = evas_list_prepend_relative(e->layers, layer_new, layer);
+	     layer_new->objects = evas_list_append(layer_new->objects, o);
+	     layer_new->layer = o->current.layer;
+	     return o;
+	  }
      }
    
    layer = malloc(sizeof(struct _Evas_Layer));

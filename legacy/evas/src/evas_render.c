@@ -389,6 +389,7 @@ evas_render_updates(Evas e)
 	Evas_Layer layer;
 	
 	layer = l->data;
+	printf("layer->layer %i\n", layer->layer);
 	for (ll = layer->objects; ll; ll = ll->next)
 	  {
 	     Evas_Object_Any o;
