@@ -6,9 +6,13 @@
 
 #include <setjmp.h>
 
+#ifndef WIN32
 static sigjmp_buf detect_buf;
+#endif
+
 static int cpu_feature_mask = 0;
 
+#ifndef WIN32
 static void evas_common_cpu_catch_ill(int sig);
 
 static void
@@ -16,6 +20,7 @@ evas_common_cpu_catch_ill(int sig)
 {
    siglongjmp(detect_buf, 1);
 }
+#endif
 
 #if ( \
 	 defined __i386__ || \
@@ -76,6 +81,7 @@ evas_common_cpu_vis_test(void)
 int
 evas_common_cpu_feature_test(void (*feature)(void))
 {
+#ifndef WIN32
    int enabled = 1;
    struct sigaction act, oact;
 
@@ -91,6 +97,9 @@ evas_common_cpu_feature_test(void (*feature)(void))
    feature();
    sigaction(SIGILL, &oact, NULL);
    return enabled;
+#else
+   return 0;
+#endif
 }
 
 void
