@@ -44,6 +44,7 @@ void   mouse_in      (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int 
 void   mouse_out     (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y);
 
 typedef struct _textblock TextBlock;
+typedef struct _imageblock ImageBlock;
 
 struct _textblock
 {
@@ -52,23 +53,42 @@ struct _textblock
    Evas_Object o_text, o_shadow;
 };
 
+struct _imageblock
+{
+   double time1, time2, time3, time4;
+   double x, y;
+   char *file;
+   Evas_Object o_image;
+};
+
+static double texts_loop = 75;
 static TextBlock texts[] =
 {
-     { 10.0, 12.0, 14.0, 16.0, "What are the 7 Wonders of the world?"},
-     { 14.0, 16.0, 18.0, 20.0, "The Temple of Artemis at Ephesus ..."},
-     { 18.0, 20.0, 22.0, 24.0, "The Colossus of Rhodes ..."},
-     { 22.0, 24.0, 26.0, 28.0, "The Hanging Gardens of Babylon ..."},
-     { 26.0, 28.0, 30.0, 32.0, "The Mausoleum at Halicarnassus ..."},
-     { 30.0, 32.0, 34.0, 36.0, "The Lighthouse at Alexandria ..."},
-     { 34.0, 36.0, 38.0, 40.0, "The Great Pyriamids at Giza ..."},
-     { 38.0, 40.0, 42.0, 44.0, "The Statue of Zeus at Olympia ..."},
+     { 10.0, 12.0, 14.0, 16.0, "What are the 7 Wonders of the world?", NULL, NULL},
+     { 14.0, 16.0, 18.0, 20.0, "The Temple of Artemis at Ephesus ...", NULL, NULL},
+     { 18.0, 20.0, 22.0, 24.0, "The Colossus of Rhodes ...", NULL, NULL},
+     { 22.0, 24.0, 26.0, 28.0, "The Hanging Gardens of Babylon ...", NULL, NULL},
+     { 26.0, 28.0, 30.0, 32.0, "The Mausoleum at Halicarnassus ...", NULL, NULL},
+     { 30.0, 32.0, 34.0, 36.0, "The Lighthouse at Alexandria ...", NULL, NULL},
+     { 34.0, 36.0, 38.0, 40.0, "The Great Pyriamids at Giza ...", NULL, NULL},
+     { 38.0, 40.0, 42.0, 44.0, "The Statue of Zeus at Olympia ...", NULL, NULL},
 
-     { 46.0, 48.0, 50.0, 52.0, "Is there an 8th wonder?"},
+     { 46.0, 48.0, 50.0, 52.0, "Is there an 8th wonder?", NULL, NULL},
    
-     { 52.0, 54.0, 58.0, 60.0, "Yes ..."},
-     { 60.0, 64.0, 70.0, 74.0, "EVAS"}
+     { 52.0, 54.0, 58.0, 60.0, "Yes ...", NULL, NULL},
+     { 60.0, 64.0, 70.0, 74.0, "EVAS", NULL, NULL}
 };
-static double texts_loop = 75;
+static double images_loop = 75;
+static ImageBlock images[] =
+{
+     { 14.0, 16.0, 18.0, 20.0, 300, 100, IMGDIR"evas_test_wonder_1.png", NULL},
+     { 18.0, 20.0, 22.0, 24.0, 100, 200, IMGDIR"evas_test_wonder_2.png", NULL},
+     { 22.0, 24.0, 26.0, 28.0, 500, 500, IMGDIR"evas_test_wonder_3.png", NULL},
+     { 26.0, 28.0, 30.0, 32.0, 200, 350, IMGDIR"evas_test_wonder_4.png", NULL},
+     { 30.0, 32.0, 34.0, 36.0, 400,   0, IMGDIR"evas_test_wonder_5.png", NULL},
+     { 34.0, 36.0, 38.0, 40.0, 150, 400, IMGDIR"evas_test_wonder_6.png", NULL},
+     { 38.0, 40.0, 42.0, 44.0, 600,  25, IMGDIR"evas_test_wonder_7.png", NULL}
+};
 
 /* functions */
 double
@@ -258,6 +278,7 @@ setup_view(Evas_Render_Method method)
    XMapWindow(display, win_view);
    
    for (i = 0; i < (sizeof(texts) / sizeof(TextBlock)); i++) texts[i].o_text = NULL;
+   for (i = 0; i < (sizeof(images) / sizeof(ImageBlock)); i++) images[i].o_image = NULL;
    if (evas_view) evas_free(evas_view);
    evas_view = e;
    
@@ -344,6 +365,50 @@ setup_view(Evas_Render_Method method)
    evas_set_pass_events(e, o, 1);
    evas_set_layer(e, o, 1000);
    evas_object_set_name(e, o, "pointer");
+}
+
+void
+image(double val)
+{
+   int i;
+
+   if (images_loop > 0)
+     {
+	while (val > texts_loop) val -= texts_loop;
+     }
+   for (i = 0; i < (sizeof(images) / sizeof(ImageBlock)); i++)
+     {
+	if (!images[i].o_image)
+	  {
+	     images[i].o_image = evas_add_image_from_file(evas_view, images[i].file);
+	     evas_set_layer(evas_view, images[i].o_image, 100);
+	  }
+	if ((val >= images[i].time1) && (val <= images[i].time4))
+	  {
+	     double tw, th, dx, dy, x, y;
+	     double alpha, a1;
+	     
+	     alpha = 255;
+	     if (val <= images[i].time2)
+		alpha = ((val - images[i].time1) / 
+			 (images[i].time2 - images[i].time1));
+	     else if (val <= images[i].time3)
+		alpha = 1;
+	     else
+		alpha = 1.0 - ((val - images[i].time3) / 
+			       (images[i].time4 - images[i].time3));
+	     a1 = 1 - alpha;
+	     dx = (a1 * a1 * a1 * a1) * 500 * sin(val * 2.3);
+	     dy = (a1 * a1 * a1 * a1) * 600 * cos(val * 3.7);
+	     evas_move(evas_view, images[i].o_image, images[i].x, images[i].y);
+	     evas_set_color(evas_view, images[i].o_image, 255, 255, 255, 255 * alpha);
+	     evas_show(evas_view, images[i].o_image);
+	  }
+	else
+	  {
+	     evas_hide(evas_view, images[i].o_image);
+	  }
+     }
 }
 
 void
@@ -607,6 +672,7 @@ animate(double val)
    evas_show(evas_view, o_shadow3);
    
    text(val);
+   image(val);
 }
 
 void
