@@ -67,8 +67,12 @@ if BUILD_ECORE_CONFIG
 bin_PROGRAMS = \
 ecore_test \
 exsh \
-examine \
 ecore_evas_test
+
+# You FOOOOOOOOLS! examine requires ewl. ewl requires ecore. see the circular
+# dependancy? NO NO NO!
+#examine \
+
 else
 bin_PROGRAMS = \
 ecore_test \
