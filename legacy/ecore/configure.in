@@ -288,6 +288,7 @@ ecore_evas_libs="";
 evas_cflags="";
 evas_libs="";
 
+
 AC_ARG_WITH(evas-config,
 [  --with-evas-config=EVAS_CONFIG    use evas-config specified ],
 [
@@ -488,17 +489,31 @@ if test "x$have_ecore_config" = "xyes"; then
   AM_CONDITIONAL(BUILD_ECORE_CONFIG, true)
   AC_DEFINE(BUILD_ECORE_CONFIG)
   ecore_config_libs="-lecore_config";
+  AC_ARG_WITH(edb-config,
+   [   --with-edb-config=EDB_CONFIG      use edb-config specified ],
+   [
+     PROG_CONFIG=$withval;
+     echo "using "$PROG_CONFIG" for edb-config";
+   ],[
+     PROG="edb-config";
+     AC_PATH_PROG(PROG_CONFIG, $PROG, "", $PATH)
+   ])
+   EDB_CONFIG=$PROG_CONFIG
+
+   AC_CHECK_LIB(edb, e_db_open,
+     [
+       edb_cflags=`edb-config --cflags`
+       edb_libs=`edb-config --libs`
+     ]
+   )
+   AC_SUBST(edb_libs)
+   AC_SUBST(edb_cflags)
 else
   AM_CONDITIONAL(BUILD_ECORE_CONFIG, false)
 fi
 
 AC_SUBST(ecore_config_cflags)
 AC_SUBST(ecore_config_libs)
-
-edb_libs=`edb-config --libs`
-edb_cflags=`edb-config --cflags`
-AC_SUBST(edb_libs)
-AC_SUBST(edb_cflags)
 
 AC_OUTPUT([
 Makefile
