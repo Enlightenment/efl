@@ -34,7 +34,8 @@
 #include <Ecore_Ipc.h>
 
 /* debug */
-#define DEBUG 999
+#define DEBUG 1
+#define ECORE_CONFIG_DEBUG
 
 #ifdef ECORE_CONFIG_DEBUG
 #  define D(fmt,args...) do { if(DEBUG>=0) fprintf(stderr,fmt,## args); } while(0);
@@ -71,7 +72,7 @@ typedef int (*Ecore_Config_Listener)(const char *key,const Ecore_Config_Type typ
 
 
 typedef struct Ecore_Config_Listener_List {
-  Ecore_Config_Listener              listener;
+  Ecore_Config_Listener        listener;
   const char                  *name;
   void                        *data;
   int                          tag;
@@ -84,9 +85,9 @@ typedef struct Ecore_Config_Prop {
   char                  *key;
   char                  *description;
   char                  *ptr;
-  Ecore_Config_Type            type;
+  Ecore_Config_Type      type;
   long                   val,lo,hi,step;
-  Ecore_Config_Flag            flags;
+  Ecore_Config_Flag      flags;
   Ecore_Config_Listener_List  *listeners;
   struct Ecore_Config_Prop    *next; /**< pointer to the next property in the list */
   } Ecore_Config_Prop;

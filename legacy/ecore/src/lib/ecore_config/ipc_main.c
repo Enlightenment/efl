@@ -120,8 +120,8 @@ int _ecore_config_ipc_prop_set(Ecore_Config_Server *srv, const long serial,const
 #ifdef HAVE_EVAS2
   int ret;
   Ecore_Config_Bundle *theme;
-  ret=ecore_config_set(theme,key,(char *)val);
   theme=ecore_config_bundle_get_by_serial(srv, serial);
+  ret=ecore_config_set(theme,key,(char *)val);
   E(1,"ipc.prop.set(%s->%s,\"%s\") => %d\n",theme->identifier,key,val,ret);
   return ret;
 #else

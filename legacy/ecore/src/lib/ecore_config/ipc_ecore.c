@@ -68,11 +68,13 @@ static int _ecore_config_ipc_ecore_send(Ecore_Ipc_Event_Client_Data *e,int code,
 static int _ecore_config_ipc_ecore_handle_request(Ecore_Ipc_Server *server,Ecore_Ipc_Event_Client_Data *e) {
   Ecore_Config_Server *srv;
   long  serial;
-  int   ret=ECORE_CONFIG_ERR_FAIL;
-  char *r=NULL,*k,*v,*m;
+  int   ret;
+  char *r,*k,*v,*m;
+  
   srv=_ecore_config_server_convert(server);
-
   serial=e->minor;
+  ret=ECORE_CONFIG_ERR_FAIL;
+  r=NULL;
   m=(char *)e->data;
   E(1,"IPC/eCore: client sent: [%d,%d] #%d (%d) @ %p\n",e->major,e->minor,e->ref,e->size,server);
 

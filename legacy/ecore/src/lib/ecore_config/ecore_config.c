@@ -529,7 +529,8 @@ char *ecore_config_bundle_get_label(Ecore_Config_Bundle *ns) {
 
 Ecore_Config_Bundle *ecore_config_bundle_new(Ecore_Config_Server *srv,const char *identifier) {
   Ecore_Config_Bundle *t;
-  static long  ss=0; /* bundle unique serial */
+  static long  ss;
+  ss=0; /* bundle unique serial */
 
   if((t=malloc(sizeof(Ecore_Config_Bundle)))) {
     memset(t,0,sizeof(Ecore_Config_Bundle));
