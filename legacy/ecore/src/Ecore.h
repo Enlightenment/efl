@@ -60,6 +60,7 @@ struct _e_xid
    int                 mapped;
    int                 mouse_in;
    int                 depth;
+   int                 gravity;
 };
 
 void                e_del_child(Window win, Window child);
@@ -218,6 +219,7 @@ void                e_dnd_set_mode_move(void);
 void                e_dnd_set_mode_ask(void);
 void                e_dnd_own_selection(Window win);
 void                e_dnd_send_drop(Window win, Window source_win);
+int                 e_window_get_gravity(Window win);
 void                e_window_gravity_reset(Window win);
 void                e_window_gravity_set(Window win, int gravity);
 void                e_pointer_warp_by(int dx, int dy);

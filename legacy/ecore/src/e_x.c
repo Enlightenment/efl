@@ -103,7 +103,9 @@ e_add_child(Window win, Window child)
    E_XID              *xid = NULL;
 
    if (XFindContext(disp, win, xid_context, (XPointer *) & xid) == XCNOENT)
-      return;
+     {
+	xid = e_validate_xid(win);
+     }
    if (xid)
      {
 	xid->children_num++;
@@ -113,6 +115,7 @@ e_add_child(Window win, Window child)
 	   REALLOC(xid->children, Window, xid->children_num);
 	xid->children[xid->children_num - 1] = child;
      }
+   xid = e_validate_xid(child);   
 }
 
 void
@@ -186,6 +189,7 @@ e_add_xid(Window win, int x, int y, int w, int h, int depth, Window parent)
    xid->root = e_window_get_root(parent);
    xid->children_num = 0;
    xid->children = NULL;
+   xid->gravity = e_window_get_gravity(win);
    XSaveContext(disp, xid->win, xid_context, (XPointer) xid);
    return xid;
 }
@@ -242,6 +246,7 @@ e_validate_xid(Window win)
 	   xid->mapped = 1;
 	xid->depth = att.depth;
 	xid->mouse_in = 0;
+	xid->gravity = att.win_gravity;
 	XSaveContext(disp, xid->win, xid_context, (XPointer) xid);
      }
    return xid;
@@ -300,6 +305,7 @@ e_window_new(Window parent, int x, int y, int w, int h)
 		       CWColormap | CWBackPixmap | CWBorderPixel |
 		       CWDontPropagate, &attr);
    e_add_xid(win, x, y, w, h, default_depth, parent);
+   e_add_child(parent, win);
    return win;
 }
 
@@ -325,6 +331,7 @@ e_window_override_new(Window parent, int x, int y, int w, int h)
 		       CWColormap | CWBackPixmap | CWBorderPixel |
 		       CWDontPropagate, &attr);
    e_add_xid(win, x, y, w, h, default_depth, parent);
+   e_add_child(parent, win);
    return win;
 }
 
@@ -343,6 +350,7 @@ e_window_input_new(Window parent, int x, int y, int w, int h)
 		       0, InputOnly, default_vis,
 		       CWOverrideRedirect | CWDontPropagate, &attr);
    e_add_xid(win, x, y, w, h, 0, parent);
+   e_add_child(parent, win);
    return win;
 }
 
@@ -501,6 +509,60 @@ e_window_move(Window win, int x, int y)
      }
 }
 
+#define REGRAVITATE \
+if (xid->children) \
+{ \
+   int                 j; \
+\
+   for (j = 0; j < xid->children_num; j++) \
+     { \
+	E_XID *xid2; \
+\
+	xid2 = e_validate_xid(xid->children[j]); printf("is %p\n", xid2);\
+	if (xid2) \
+	  { \
+	     switch (xid2->gravity) \
+	       { \
+		case ForgetGravity: /* dunno - check up */ \
+		  break; \
+		case NorthWestGravity: \
+		  break; \
+		case NorthGravity: /* not 100% sure */ \
+		  xid2->x += (w - xid->w) / 2; \
+		  break; \
+		case NorthEastGravity: \
+		  xid2->x += (w - xid->w); \
+		  break; \
+		case WestGravity: /* not 100% sure */ \
+		  xid2->h += (h - xid->h) / 2; \
+		  break; \
+		case CenterGravity: /* not 100% sure */ \
+		  xid2->x += (w - xid->w) / 2; \
+		  xid2->h += (h - xid->h) / 2; \
+		  break; \
+		case EastGravity: /* not 100% sure */ \
+		  xid2->x += (w - xid->w); \
+		  break; \
+		case SouthWestGravity: \
+		  xid2->y += (h - xid->h); \
+		  break; \
+		case SouthGravity: /* not 100% sure */ \
+		  xid2->x += (w - xid->w) / 2; \
+		  xid2->y += (h - xid->h); \
+		  break; \
+		case SouthEastGravity: \
+		  xid2->x += (w - xid->w); \
+		  xid2->y += (h - xid->h); \
+		  break; \
+		case StaticGravity: /* dunno - check up */ \
+		  break; \
+		default: \
+		  break; \
+	       } \
+	  } \
+     } \
+}
+
 void
 e_window_resize(Window win, int w, int h)
 {
@@ -511,6 +573,7 @@ e_window_resize(Window win, int w, int h)
      {
 	if ((xid->w == w) && (xid->h == h))
 	   return;
+	REGRAVITATE;
 	xid->w = w;
 	xid->h = h;
 	XResizeWindow(disp, win, w, h);
@@ -526,7 +589,8 @@ e_window_move_resize(Window win, int x, int y, int w, int h)
    if (xid)
      {
 	if ((xid->x == x) && (xid->y == y) && (xid->w == w) && (xid->h == h))
-	   return;
+	  return;
+	REGRAVITATE;
 	xid->x = x;
 	xid->y = y;
 	xid->w = w;
@@ -559,13 +623,13 @@ e_display_init(char *display)
 		   "Cannot connect to the display nominated by your DISPLAY variable:\n"
 		   "%s\n"
 		   "Try changing your DISPLAY variable like:\n"
-		   "DISPLAY=host:0 efm\n", d);
+		   "DISPLAY=host:0 application_name\n", d);
 	else
 	   fprintf(stderr,
 		   "Fatal Error:\n"
 		   "No DISPLAY variable set so cannot determine display to connect to.\n"
 		   "Try setting your DISPLAY variable like:\n"
-		   "DISPLAY=host:0 efm\n");
+		   "DISPLAY=host:0 appication_name\n");
 	exit(1);
      }
    XSetErrorHandler((XErrorHandler) e_handle_x_error);
@@ -2209,22 +2273,53 @@ e_grab_window_get(void)
    return grab_pointer_win;
 }
 
+int
+e_window_get_gravity(Window win)
+{
+   XWindowAttributes att;
+   
+   XGetWindowAttributes(disp, win, &att);
+   return att.win_gravity;
+}
+
 void
 e_window_gravity_reset(Window win)
 {
-   XSetWindowAttributes att;
+   E_XID              *xid = NULL;
 
-   att.win_gravity = NorthWestGravity;
-   XChangeWindowAttributes(disp, win, CWWinGravity, &att);
+   if (XFindContext(disp, win, xid_context, (XPointer *) & xid) == XCNOENT)
+      return;
+   if (xid)
+     {
+	XSetWindowAttributes att;
+	
+	if (xid->gravity != NorthWestGravity)
+	  {
+	     att.win_gravity = NorthWestGravity;
+	     XChangeWindowAttributes(disp, win, CWWinGravity, &att);
+	     xid->gravity = NorthWestGravity;
+	  }
+     }
 }
 
 void
 e_window_gravity_set(Window win, int gravity)
 {
-   XSetWindowAttributes att;
+   E_XID              *xid = NULL;
 
-   att.win_gravity = gravity;
-   XChangeWindowAttributes(disp, win, CWWinGravity, &att);
+   if (XFindContext(disp, win, xid_context, (XPointer *) & xid) == XCNOENT)
+      return;
+   if (xid)
+     {
+	if (xid->gravity != gravity)
+	  {
+	     XSetWindowAttributes att;
+	     
+	     att.win_gravity = gravity;
+	     XChangeWindowAttributes(disp, win, CWWinGravity, &att);
+	     xid->gravity = gravity;
+	  }
+     }
 }
 
 void
