@@ -9,6 +9,9 @@
 #include <unistd.h>
 #include <assert.h>
 
+/* make mono happy - this is evil though... */
+#undef SIGPWR
+
 typedef void (*Signal_Handler)(int sig, siginfo_t *si, void *foo);
 
 static void _ecore_signal_callback_set(int sig, Signal_Handler func); 
