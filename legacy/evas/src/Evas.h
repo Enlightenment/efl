@@ -183,6 +183,7 @@ void evas_show(Evas e, Evas_Object o);
 void evas_hide(Evas e, Evas_Object o);
 
 /* image query ops */
+int evas_get_image_alpha(Evas e, Evas_Object o);
 void evas_get_image_size(Evas e, Evas_Object o, int *w, int *h);
 void evas_get_image_border(Evas e, Evas_Object o, int *l, int *r, int *t, int *b);
 Imlib_Load_Error evas_get_image_load_error(Evas e, Evas_Object o);

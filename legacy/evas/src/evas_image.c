@@ -77,7 +77,12 @@ evas_add_image_from_file(Evas e, char *file)
 		  imlib_context_set_image(im);
 		  oo->current.image.w = imlib_image_get_width();
 		  oo->current.image.h = imlib_image_get_height();
+		  oo->current.alpha = imlib_image_has_alpha();
 		  imlib_free_image();
+	       }
+	     else
+	       {
+		  oo->current.alpha = 1;		  
 	       }
 	  }
      }
@@ -149,6 +154,7 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
 		  imlib_context_set_image(im);
 		  oo->current.image.w = imlib_image_get_width();
 		  oo->current.image.h = imlib_image_get_height();
+		  oo->current.alpha = imlib_image_has_alpha();
 		  imlib_free_image();
 		  evas_resize(e, o, 
 			      (double)oo->current.image.w,
@@ -169,6 +175,7 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
 		  oo->current.fill.y = 0;
 		  oo->current.fill.w = (double)oo->current.image.w;
 		  oo->current.fill.h = (double)oo->current.image.h;
+		  oo->current.alpha = 1;		  
 	       }
 	  }
 	o->changed = 1;
@@ -182,6 +189,7 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
 	oo->current.file = NULL;
 	oo->current.image.w = 0;
 	oo->current.image.h = 0;
+	oo->current.alpha = 1;
 	evas_resize(e, o, 
 		    (double)oo->current.image.w,
 		    (double)oo->current.image.h);
@@ -222,6 +230,18 @@ evas_set_image_fill(Evas e, Evas_Object o, double x, double y, double w, double 
 }
 
 /* image query ops */
+int
+evas_get_image_alpha(Evas e, Evas_Object o)
+{
+   Evas_Object_Image oo;
+   
+   if (!e) return;
+   if (!o) return;
+   IF_OBJ(o, OBJECT_IMAGE) return 0;
+   oo = o;
+   return oo->current.alpha;
+}
+
 void
 evas_get_image_size(Evas e, Evas_Object o, int *w, int *h)
 {

@@ -203,6 +203,7 @@ struct _Evas_Object_Image
       char *file;
       int   new_data;
       int   scale;
+      int   alpha;
       struct {
 	 int w, h;
       } image;
