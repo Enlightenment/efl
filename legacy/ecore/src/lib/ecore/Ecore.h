@@ -47,6 +47,9 @@ extern "C" {
 	pid_t      pid; /**< The process ID of the process that exited */
 	int        exit_code; /**< The exit code of the process */
 	Ecore_Exe *exe; /**< The handle to the exited process, or NULL if not found */
+	int        exit_signal; /** < The signal that caused the process to exit */
+	char       exited    : 1; /** < set to 1 if the process exited of its own accord */
+	char       signalled : 1; /** < set to 1 id the process exited due to uncaught signal */
 	void      *ext_data; /**< Extension data - not used */
      };
 

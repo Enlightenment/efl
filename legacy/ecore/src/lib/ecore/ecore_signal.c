@@ -87,19 +87,25 @@ _ecore_signal_call(void)
 	
 	while ((pid = waitpid(-1, &status, WNOHANG)) > 0)
 	  {
-	     if (WIFEXITED(status))
+	     Ecore_Event_Exe_Exit *e;
+	     
+	     e = _ecore_event_exe_exit_new();
+	     if (e)
 	       {
-		  Ecore_Event_Exe_Exit *e;
-		  
-		  e = _ecore_event_exe_exit_new();
-		  if (e)
+		  if (WIFEXITED(status))
 		    {
 		       e->exit_code = WEXITSTATUS(status);
-		       e->pid = pid;
-		       e->exe = _ecore_exe_find(pid);
-		       _ecore_event_add(ECORE_EVENT_EXE_EXIT, e, 
-					_ecore_event_exe_exit_free, NULL);
+		       e->exited = 1;
 		    }
+		  else if (WIFSIGNALED(status))
+		    {
+		       e->exit_signal = WTERMSIG(status);
+		       e->signalled = 1;
+		    }
+		  e->pid = pid;
+		  e->exe = _ecore_exe_find(pid);
+		  _ecore_event_add(ECORE_EVENT_EXE_EXIT, e, 
+				   _ecore_event_exe_exit_free, NULL);
 	       }
 	  }
 	sigchld_count--;
