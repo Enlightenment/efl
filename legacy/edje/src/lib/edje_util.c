@@ -967,10 +967,8 @@ edje_object_part_drag_value_set(Evas_Object *obj, const char *part, double dx, d
    if (rp->drag.down.count > 0) return;
    if (rp->part->dragable.confine_id != -1)
      {
-	if (dx < 0.0) dx = 0.0;
-	else if (dx > 1.0) dx = 1.0;
-	if (dy < 0.0) dy = 0.0;
-	else if (dy > 1.0) dy = 1.0;
+	dx = CLAMP(dx, 0.0, 1.0);
+	dy = CLAMP(dy, 0.0, 1.0);
      }
    if (rp->part->dragable.x < 0) dx = 1.0 - dx;
    if (rp->part->dragable.y < 0) dy = 1.0 - dy;
@@ -1245,10 +1243,8 @@ edje_object_part_drag_step(Evas_Object *obj, const char *part, double dx, double
    py = rp->drag.val.y;
    rp->drag.val.x += dx * rp->drag.step.x * rp->part->dragable.x;
    rp->drag.val.y += dy * rp->drag.step.y * rp->part->dragable.y;
-   if      (rp->drag.val.x < 0.0) rp->drag.val.x = 0.0;
-   else if (rp->drag.val.x > 1.0) rp->drag.val.x = 1.0;
-   if      (rp->drag.val.y < 0.0) rp->drag.val.y = 0.0;
-   else if (rp->drag.val.y > 1.0) rp->drag.val.y = 1.0;
+   rp->drag.val.x = CLAMP (rp->drag.val.x, 0.0, 1.0);
+   rp->drag.val.y = CLAMP (rp->drag.val.y, 0.0, 1.0);
    if ((px == rp->drag.val.x) && (py == rp->drag.val.y)) return;
    _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
    _edje_emit(ed, "drag,step", rp->part->name);   
@@ -1285,10 +1281,8 @@ edje_object_part_drag_page(Evas_Object *obj, const char *part, double dx, double
    py = rp->drag.val.y;
    rp->drag.val.x += dx * rp->drag.page.x * rp->part->dragable.x;
    rp->drag.val.y += dy * rp->drag.page.y * rp->part->dragable.y;
-   if      (rp->drag.val.x < 0.0) rp->drag.val.x = 0.0;
-   else if (rp->drag.val.x > 1.0) rp->drag.val.x = 1.0;
-   if      (rp->drag.val.y < 0.0) rp->drag.val.y = 0.0;
-   else if (rp->drag.val.y > 1.0) rp->drag.val.y = 1.0;
+   rp->drag.val.x = CLAMP (rp->drag.val.x, 0.0, 1.0);
+   rp->drag.val.y = CLAMP (rp->drag.val.y, 0.0, 1.0);
    if ((px == rp->drag.val.x) && (py == rp->drag.val.y)) return;
    _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
    _edje_emit(ed, "drag,page", rp->part->name);   
