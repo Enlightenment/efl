@@ -67,8 +67,12 @@ collections
 			 {
 			    relative, 0.0  0.0;
 			    offset,   0    0;
-// if not defined assumed to be -1 (relative to all)			    
+// if not defined assumed to be -1 (relative to all). to alone implies x & y
 //			    to,       "p2";
+// relative to thia named part only in X direction
+//			    to_x,       "p2";
+// and relative to this part only in the y direction
+//			    to_y,       "p2";
 			 }
 		       rel2
 			 {
