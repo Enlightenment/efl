@@ -242,7 +242,7 @@ AC_ARG_ENABLE(image-loader-eet,
       AC_MSG_RESULT(yes)
       AC_DEFINE(BUILD_LOADER_EET)
       eet_cflags=`eet-config --cflags`
-      eet_libs=`eet-config --libs`" -lz"
+      eet_libs=`eet-config --libs`
   ], AC_MSG_RESULT(no)
 )
 
@@ -254,17 +254,6 @@ AC_ARG_ENABLE(image-loader-edb,
       AC_DEFINE(BUILD_LOADER_EDB)
       edb_cflags=`edb-config --cflags`
       edb_libs=`edb-config --libs`" -lz"
-  ], AC_MSG_RESULT(no)
-)
-
-########### fmemopen support
-
-AC_MSG_CHECKING(whether to build memory fopen support)
-
-AC_ARG_ENABLE(fmemopen, 
-  [  --enable-fmemopen               enable C code], [
-      AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_FMEMOPEN)
   ], AC_MSG_RESULT(no)
 )
 

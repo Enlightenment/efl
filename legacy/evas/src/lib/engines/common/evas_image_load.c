@@ -553,115 +553,28 @@ load_image_file_data_jpeg(RGBA_Image *im, const char *file, const char *key)
 }
 #endif
 
-/* NB: look into:
- * fmemopen();
- * open_memstream();
- */
-
 #ifdef BUILD_LOADER_EET
 static int load_image_file_head_eet(RGBA_Image *im, const char *file, const char *key);
 static int
 load_image_file_head_eet(RGBA_Image *im, const char *file, const char *key)
 {
-   int                  w, h, alpha, compression, size;
+   int                  w, h, alpha, compression, size, quality, lossy;
    Eet_File            *ef;
-   DATA32              *ret;
    DATA32              *body;
-   DATA32               header[8];
    
    if ((!file) || (!key)) return -1;
    ef = eet_open((char *)file, EET_FILE_MODE_READ);
    if (!ef) return -1;
-   ret = eet_read(ef, (char *)key, &size);
-   if (!ret)
+   body = eet_data_image_read(ef, (char *)key, 
+			      &w, &h, &alpha, &compression, &quality, &lossy);
+   if (!body)
      {
 	eet_close(ef);
 	return -1;
      }
-   if (size < 32)
-     {
-	free(ret);
-	eet_close(ef);
-	return -1;
-     }
-   memcpy(header, ret, 32);
-#ifdef WORDS_BIGENDIAN
-     {
-	int i;
-	
-	for (i = 0; i < 8; i++) SWAP32(header[i]);
-     }
-#endif
-   if (header[0] != 0xac1dfeed)
-     {
-	int val = -1;
-	
-#ifdef BUILD_LOADER_JPEG
-#ifdef BUILD_FMEMOPEN
-	/* if we built the jpeg loader in.. try load an inlined jpeg */
-	if (header[0] == 0xbeeff00d)
-	  /* magic number for 2 jpegs. 1 color, 1 gray. gray is alpha */
-	  {
-	     FILE *f;
-	     int sz1, sz2;
-	     
-	     /* next int is byte size of first jpg */
-	     /* then next int is byte size of 2nd jpeg */
-	     /* all bytes after the first 12 are jpeg data */
-	     sz1 = header[1];
-	     sz2 = header[2];
-
-	     if ((sz1 <= 0) || (sz2 <= 0) ||
-		 ((sz1 + sz2 + 12) > size))
-	       {
-		  free(ret);
-		  eet_close(ef);
-		  return -1;
-	       }
-	     f = fmemopen(((DATA8 *)ret) + 12, (size_t)sz1, "r");
-	     if (!f)
-	       {
-		  free(ret);
-		  eet_close(ef);
-		  return -1;
-	       }
-	     val = load_image_file_head_jpeg_internal(im, f);
-	     fclose(f);
-	     im->flags |= RGBA_IMAGE_HAS_ALPHA;
-	  }
-	else
-	  {
-	     FILE *f;
-	     
-	     f = fmemopen(ret, (size_t)size, "r");
-	     if (!f)
-	       {
-		  free(ret);
-		  eet_close(ef);
-		  return -1;
-	       }
-	     val = load_image_file_head_jpeg_internal(im, f);
-	     fclose(f);
-	  }
-#endif
-#endif
-	free(ret);
-	eet_close(ef);
-	return val;
-     }
-   w = header[1];
-   h = header[2];
-   alpha = header[3];
-   compression = header[4];
    if ((w > 8192) || (h > 8192))
      {
-	free(ret);
-	eet_close(ef);
-	return -1;
-     }
-   if ((compression == 0) && (size < ((w * h * 4) + 32)))
-     {
-	free(ret);
+	free(body);
 	eet_close(ef);
 	return -1;
      }
@@ -670,13 +583,14 @@ load_image_file_head_eet(RGBA_Image *im, const char *file, const char *key)
      im->image = evas_common_image_surface_new();
    if (!im->image)
      {
-	free(ret);
+	free(body);
 	eet_close(ef);
 	return -1;
      }
    im->image->w = w;
    im->image->h = h;
-   free(ret);
+   im->image->data = body;
+   im->image->no_free = 0;
    eet_close(ef);
    return 1;
 }
@@ -685,166 +599,6 @@ static int load_image_file_data_eet(RGBA_Image *im, const char *file, const char
 static int
 load_image_file_data_eet(RGBA_Image *im, const char *file, const char *key)
 {
-   int                  w, h, alpha, compression, size;
-   Eet_File            *ef;
-   DATA32              *ret;
-   DATA32              *body;
-   DATA32               header[8];
-   
-   if ((!file) || (!key)) return -1;
-   ef = eet_open((char *)file, EET_FILE_MODE_READ);
-   if (!ef) return -1;
-   ret = eet_read(ef, (char *)key, &size);
-   if (!ret)
-     {
-	eet_close(ef);
-	return -1;
-     }
-   if (size < 32)
-     {
-	free(ret);
-	eet_close(ef);
-	return -1;
-     }
-   memcpy(header, ret, 32);
-#ifdef WORDS_BIGENDIAN
-     {
-	int i;
-	
-	for (i = 0; i < 8; i++) SWAP32(header[i]);
-     }
-#endif
-   if (header[0] != 0xac1dfeed)
-     {
-	int val = -1;
-	
-#ifdef BUILD_LOADER_JPEG
-#ifdef BUILD_FMEMOPEN	
-	/* if we built the jpeg loader in.. try load an inlined jpeg */
-	if (header[0] == 0xbeeff00d)
-	  /* magic number for 2 jpegs. 1 color, 1 gray. gray is alpha */
-	  {
-	     FILE *f;
-	     int sz1, sz2;
-	     
-	     /* next int is byte size of first jpg */
-	     /* then next int is byte size of 2nd jpeg */
-	     /* all bytes after the first 12 are jpeg data */
-	     sz1 = header[1];
-	     sz2 = header[2];
-
-	     if ((sz1 <= 0) || (sz2 <= 0) ||
-		 ((sz1 + sz2 + 12) > size))
-	       {
-		  free(ret);
-		  eet_close(ef);
-		  return -1;
-	       }
-	     f = fmemopen(((DATA8 *)ret) + 12, (size_t)sz1, "r");
-	     if (!f)
-	       {
-		  free(ret);
-		  eet_close(ef);
-		  return -1;
-	       }
-	     val = load_image_file_data_jpeg_internal(im, f);
-	     fclose(f);
-	     f = fmemopen(((DATA8 *)ret) + 12 + sz1, (size_t)sz2, "r");
-	     if (!f)
-	       {
-		  free(ret);
-		  eet_close(ef);
-		  return -1;
-	       }
-	     val = load_image_file_data_jpeg_alpha_internal(im, f);
-	     fclose(f);
-	     im->flags |= RGBA_IMAGE_HAS_ALPHA;	     
-	  }
-	else
-	  {
-	     FILE *f;
-	     
-	     f = fmemopen(ret, (size_t)size, "r");
-	     if (!f)
-	       {
-		  free(ret);
-		  eet_close(ef);
-		  return -1;
-	       }
-	     val = load_image_file_data_jpeg_internal(im, f);
-	     fclose(f);
-	  }
-#endif
-#endif
-	free(ret);
-	eet_close(ef);
-	return val;
-     }
-   w = header[1];
-   h = header[2];
-   alpha = header[3];
-   compression = header[4];
-   if ((w > 8192) || (h > 8192))
-     {
-	free(ret);
-	eet_close(ef);
-	return -1;
-     }
-   if ((compression == 0) && (size < ((w * h * 4) + 32)))
-     {
-	free(ret);
-	eet_close(ef);
-	return -1;
-     }
-   if (alpha) im->flags |= RGBA_IMAGE_HAS_ALPHA;
-   if (!im->image)
-     im->image = evas_common_image_surface_new();
-   if (!im->image)
-     {
-	free(ret);
-	eet_close(ef);
-	return -1;
-     }
-   im->image->w = w;
-   im->image->h = h;
-   body = &(ret[8]);
-   evas_common_image_surface_alloc(im->image);
-   if (!im->image->data)
-     {
-	free(ret);
-	eet_close(ef);
-	return -1;
-     }
-   if (!compression)
-     {
-#ifdef WORDS_BIGENDIAN
-	  {
-	     int x;
-	     
-	     memcpy(im->image->data, body, w * h * sizeof(DATA32));
-	     for (x = 0; x < (w * h); x++) SWAP32(im->image->data[x]);
-	  }
-#else
-	memcpy(im->image->data, body, w * h * sizeof(DATA32));
-#endif       
-     }
-   else
-     {
-	uLongf dlen;
-	
-	dlen = w * h * sizeof(DATA32);
-	uncompress((Bytef *)im->image->data, &dlen, (Bytef *)body, 
-		   (uLongf)(size - 32));
-#ifdef WORDS_BIGENDIAN
-	  {
-	     int x;
-	     
-	     for (x = 0; x < (w * h); x++) SWAP32(im->image->data[x]);
-	  }
-#endif
-     }   
-   free(ret);
-   eet_close(ef);
    return 1;
 }
 #endif

@@ -256,7 +256,6 @@ For those that want eet and edb image loading ability:
 --enable-image-loader-jpeg \
 --enable-image-loader-eet \
 --enable-image-loader-edb \
---enable-fmemopen \
 --enable-cpu-p2-only \
 --enable-cpu-mmx \
 --enable-cpu-sse \
