@@ -192,7 +192,10 @@ ecore_x_window_defaults_set(Ecore_X_Window win)
    /* ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_client_machine,
 				  (char *)buf); */
    if (XStringListToTextProperty(hostname, 1, &xprop))
-      XSetWMClientMachine(_ecore_x_disp, win, &xprop);
+     {
+	XSetWMClientMachine(_ecore_x_disp, win, &xprop);
+	XFree(xprop.value);
+     }
 
    /*
     * Set _NET_WM_PID

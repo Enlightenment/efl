@@ -5,6 +5,34 @@
 #include "Ecore_Evas.h"
 
 static int _ecore_evas_init_count = 0;
+static int _ecore_evas_fps_debug = 0;
+static double _ecore_evas_fps_min = 0;
+static double _ecore_evas_fps_avg_min = 0;
+static int _ecore_evas_fps_avg_count = 1;
+static Ecore_Timer *_ecore_evas_fps_timer = NULL;
+
+static int
+_ecore_evas_cb_fps_debug_timer(void *data)
+{
+   static int frame_count = 0;
+   static double fps_count = 0.0;
+   static double pt = 0.0;
+   double t, fps;
+   
+   t = ecore_time_get();
+   frame_count++;
+   if (pt == 0.0)
+     {
+	pt = t;
+	return 1;
+     }
+   if (t == pt) return 1;
+   fps = 1.0 / (t - pt);
+   if (fps > (2 * _ecore_evas_fps_avg_min)) return 1;
+   printf("ECORE_EVAS_FPS_DEBUG: FPS = %3.3f\n", fps);
+   pt = t;
+   return 1;
+}
 
 /**
  * Init the Evas system.
@@ -17,6 +45,23 @@ ecore_evas_init(void)
 {
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
+   if (getenv("ECORE_EVAS_FPS_DEBUG"))
+     {
+	if (getenv("ECORE_EVAS_FPS_MIN"))
+	  _ecore_evas_fps_min = atof(getenv("ECORE_EVAS_FPS_MIN"));
+	if (getenv("ECORE_EVAS_FPS_AVERAGE_MIN"))
+	  _ecore_evas_fps_avg_min = atof(getenv("ECORE_EVAS_FPS_AVERAGE_MIN"));
+	if (getenv("ECORE_EVAS_FPS_AVERAGE_COUNT"))
+	  _ecore_evas_fps_avg_count = atof(getenv("ECORE_EVAS_FPS_AVERAGE_COUNT"));
+	_ecore_evas_fps_debug = 1;
+	printf("%3.3f: %3.3f: %i\n",
+	       _ecore_evas_fps_min,
+	       _ecore_evas_fps_avg_min,
+	       _ecore_evas_fps_avg_count);
+	_ecore_evas_fps_timer = ecore_timer_add(1.0 / (_ecore_evas_fps_avg_min * 2),
+						_ecore_evas_cb_fps_debug_timer,
+						NULL);
+     }
    return _ecore_evas_init_count;
 }
 
@@ -54,7 +99,12 @@ ecore_evas_shutdown(void)
 void
 ecore_evas_free(Ecore_Evas *ee)
 {
-   if (!ee) return;
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+			 "ecore_evas_free");
+	return;
+     }
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_NONE);
    if (ee->driver) free(ee->driver);
    if (ee->name) free(ee->name);

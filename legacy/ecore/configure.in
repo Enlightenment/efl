@@ -134,6 +134,8 @@ if test "x$have_ecore_txt" = "xyes"; then
         iconv_libs="-liconv"
         ecore_txt_libs="-lecore_txt -liconv"
         have_ecore_txt="yes"
+      ], [
+        have_ecore_txt="no"
       ]
     )
   fi
@@ -145,6 +147,8 @@ if test "x$have_ecore_txt" = "xyes"; then
         AM_CONDITIONAL(BUILD_ECORE_TXT, true)
         ecore_txt_libs="-lecore_txt"
         have_ecore_txt="yes"
+       ], [
+        have_ecore_txt="no"
       ]
     )
   fi
