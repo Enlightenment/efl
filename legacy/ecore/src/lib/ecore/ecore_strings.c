@@ -35,7 +35,7 @@ char *ecore_string_instance(char *string)
 		str->string = strdup(string);
 		str->references = 0;
 
-		ecore_hash_set(ecore_strings, string, str);
+		ecore_hash_set(ecore_strings, str->string, str);
 	}
 
 	str->references++;
