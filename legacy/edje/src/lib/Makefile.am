@@ -38,6 +38,7 @@ edje_text.c \
 edje_util.c \
 edje_var.c \
 edje_container.c \
+edje_container.h \
 edje_message_queue.c \
 edje_private.h
 

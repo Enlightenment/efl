@@ -1,136 +1,26 @@
 #include "Edje.h"
 #include "edje_private.h"
-
-/* All items are virtual constructs that provide Evas_Objects at some point.
- * Edje may move, resize, show, hide, clip, unclip, raise, lower etc. this
- * item AFTER it calls the item's add() method and before it calls the del()
- * method. Edje may call add() and del() at any time as often items may not
- * be visible and so may not need to exist at all - they are merely information
- * used for layout, and nothing more. this helps save cpu and memory keeping
- * things responsive for BIG lists of items. you create an item from an item
- * class then ask that item to be appended/prepended etc. to the container.
- */
-typedef struct _Edje_Item Edje_Item;
-typedef struct _Edje_Item_Class Edje_Item_Class;
-
-struct _Edje_Item_Class
-{
-   Evas_Object *(*add)      (Edje_Item *ei);
-   void         (*del)      (Edje_Item *ei);
-   void         (*select)   (Edje_Item *ei);
-   void         (*deselect) (Edje_Item *ei);
-   void         (*focus)    (Edje_Item *ei);
-   void         (*unfocus)  (Edje_Item *ei);
-};
-
-/* private */
-struct _Edje_Item
-{
-   Edje_Item_Class *class;
-   void            *class_data;
-   
-   unsigned char    accessible : 1;
-   Evas_Object     *object;
-   Evas_Object     *underlay_object;
-};
-
-/* here is an item for a vertical list - with 1 or more columns. this has 3 */
-/* just rotate for a horizontal list */
-
-/*
- *             COL 0                 COL 1          COL 2
- * 
- * +-----------------------------+ +-------+ +----------------+
- * |          pad_top            | |       | |                |
- * | pad_left  OBJECT  pad_right | |  OBJ  | |     OBJECT     | ROW 0
- * |         pad_bottom          | |       | |                |
- * +-----------------------------+ +-------+ +----------------+
- *               /\              /|\
- *     space_row ||               +-- space_col
- *               \/
- * +-----------------------------+ +-------+ +----------------+
- * |                             | |       | |                |
- * |                             | |       | |                | ROW 1
- * |                             | |       | |                |
- * +-----------------------------+ +-------+ +----------------+
- * 
- * spacer object:
- * 1 edje object goes inbetween each row as a spacer object (opt)
- * 1 edje object goes inbetween each column as a spacer object (opt)
- * 
- * surround object:
- * 1 edje object goes around each item - item swallowed into "item" part (opt)
- *   if no "item" part then just underlay it
- *   on select send "select" "" signal
- *   on unselect send "unselect" "" signal
- *   on focus send "focus" "" signal
- *   on unfocus send "unfocus" signal
- * 
- *   if any list item/cell is an edje object emit this to them too.
- * 
- *   also call callbacks.
- *   if a surround object emits such a signal itself then call callbacks too
- * 
- * only 1 or 0 items can be focused
- * disabled items cannot be focused or selected/deselected
- * 
- * container accepts:
- * { theme sets these effectively }
- * set edje it is part of
- * set collection id for col spacer
- * set collection id for row spacer
- * set row space
- * set col space
- * set item padding
- * set collection id for surround object
- * 
- * { theme and app can both do this. theme has to do via embryo }
- * clear list
- * append item
- * prepend item
- * insert item before item
- * insert item after item
- * get item count
- * get first item
- * get last item
- * get item N
- * get item before item
- * get item after item
- * select item
- * unselect item
- * unselect all items
- * select all items
- * get selected item list
- * focus item
- * unfocus item
- * focus next item
- * focus prev item
- * get focused item
- * enable item
- * disable item
- * get item pos (along list) (0.0 - 1.0 1.0 = end of list)
- * get item span (0.0 - 1.0 1.0 == whole list height)
- * jump to pos
- * get list min width
- * get list min height
- * get view percentage
- * 
- * notes:
- * 
- * dnd of list items within lthe list and outside of it ???
- * 
- */
-
-/* create and destroy virtual items */
+#include "edje_container.h"
 
 Edje_Item *
 edje_item_add(Edje_Item_Class *cl, void *data)
 {
+   Edje_Item *ei;
+   
+   ei = calloc(sizeof(Edje_Item), 1);
+   
+   ei->class = cl;
+   ei->class_data = data;
+   
+   return ei;
 }
 
 void
 edje_item_del(Edje_Item *ei)
 {
+   if (ei->object) evas_object_del(ei->object);
+   if (ei->overlay_object) evas_object_del(ei->overlay_object);
+   free(ei);
 }
 
 /* an arbitary data pointer to use to track other data */
@@ -138,105 +28,188 @@ edje_item_del(Edje_Item *ei)
 void
 edje_item_data_set(Edje_Item *ei, void *data)
 {
+   ei->data = data;
 }
 
 void *
 edje_item_data_get(Edje_Item *ei)
 {
+   return ei->data;
 }
 
 /* this object covers the entire item */
 void
 edje_item_overlay_object_set(Edje_Item *ei, Evas_Object *obj)
 {
+   if (ei->overlay_object)
+     {
+	/* FIXME: if it changed - remove...*/
+     }
+   ei->overlay_object = obj;
+   if (ei->sd)
+     evas_object_smart_member_add(((Smart_Data *)(ei->sd))->smart_obj, obj);
 }
 
 Evas_Object *
 edje_item_overlay_object_get(Edje_Item *ei)
 {
+   return ei->overlay_object;
 }
 
 /* this object goes under entire item */
 void
 edje_item_object_set(Edje_Item *ei, Evas_Object *obj)
 {
+   if (ei->object)
+     {
+	/* FIXME: if it changed - remove...*/
+     }
+   ei->object = obj;
+   if (ei->sd)
+     evas_object_smart_member_add(((Smart_Data *)(ei->sd))->smart_obj, obj);
 }
 
 Evas_Object *
 edje_item_object_get(Edje_Item *ei)
 {
+   return ei->object;
 }
 
 /* optionally you can manage each column's object yourself OR let edje do it */
 void
 edje_item_object_column_set(Edje_Item *ei, int col, Evas_Object *obj)
 {
+   if (ei->cells_num <= (col + 1))
+     {
+	/* FIXME: unsafe realloc */
+	ei->cells = realloc(ei->cells, sizeof(Edje_Item_Cell) * col);
+	ei->cells_num = col + 1;
+     }
+   ei->cells[col].obj = obj;
 }
 
 Evas_Object *
 edje_item_object_column_get(Edje_Item *ei, int col)
 {
+   if (ei->cells_num <= (col + 1)) return NULL;
+   return ei->cells[col].obj;
 }
 
 /* query the item for the items preferred co-ords */
 void
-edje_tiem_geometry_get(Edje_Item *ei, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+edje_item_geometry_get(Edje_Item *ei, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
+   if (!ei->sd)
+     {
+	if (x) *x = 0;
+	if (y) *y = 0;
+	if (w) *w = 0;
+	if (h) *h = 0;
+	return;
+     }
+   if (x) *x = ((Smart_Data *)(ei->sd))->x;
+   if (y) *y = ((Smart_Data *)(ei->sd))->y + ei->y;
+   if (w) *w = ((Smart_Data *)(ei->sd))->w;
+   if (h) *h = ei->h;
 }
 
 /* freeze and thaw items if u are about to do a bunch of changes */
 int
 edje_item_freeze(Edje_Item *ei)
 {
+   ei->freeze++;
+   return ei->freeze;
 }
 
 int
 edje_item_thaw(Edje_Item *ei)
 {
+   ei->freeze--;
+   if (ei->freeze > 0) return ei->freeze;
+   if (!ei->sd) return ei->freeze;
+   if (ei->recalc)
+     {
+	/* FIXME: recalc item */
+     }
+   return ei->freeze;
 }
 
 /* column info */
 void
 edje_item_column_size_set(Edje_Item *ei, int col, Evas_Coord minw, Evas_Coord maxw, Evas_Coord minh, Evas_Coord maxh)
 {
+   if (ei->cells_num <= (col + 1))
+     {
+	/* FIXME: unsafe realloc */
+	ei->cells = realloc(ei->cells, sizeof(Edje_Item_Cell) * col);
+	ei->cells_num = col + 1;
+     }
+   if ((ei->cells[col].minw == minw) &&
+       (ei->cells[col].minh == minh) &&
+       (ei->cells[col].maxw == maxw) &&
+       (ei->cells[col].maxh == maxh)) return;
+   ei->cells[col].minw = minw;
+   ei->cells[col].minh = minh;
+   ei->cells[col].maxw = maxw;
+   ei->cells[col].maxh = maxh;
+   ei->recalc = 1;
+   if (ei->freeze > 0) return;
+   /* FIXME: recalc item */
 }
 
 void
 edje_item_column_size_get(Edje_Item *ei, int col, Evas_Coord *minw, Evas_Coord *maxw, Evas_Coord *minh, Evas_Coord *maxh)
 {
+   if (ei->cells_num <= (col + 1))
+     {
+	if (minw) *minw = 0;
+	if (minh) *minh = 0;
+	if (maxw) *maxw = -1;
+	if (maxh) *maxh = -1;
+     }
+   if (minw) *minw = ei->cells[col].minw;
+   if (minh) *minh = ei->cells[col].minh;
+   if (maxw) *maxw = ei->cells[col].maxw;
+   if (maxh) *maxh = ei->cells[col].maxh;
 }
 
 /* selection stuff */
 void
 edje_item_select(Edje_Item *ei)
 {
+   ei->selected = 1;
 }
 
 void
 edje_item_unselect(Edje_Item *ei)
 {
+   ei->selected = 0;
 }
 
 /* focus stuff - only 1 can be focuesd */
 void
 edje_item_focus(Edje_Item *ei)
 {
+   ei->focused = 1;
 }
 
 void
 edje_item_unfocus(Edje_Item *ei)
 {
+   ei->focused = 0;
 }
 
 /* disable/enable stuff - stops focus and selection working on these items */
 void
 edje_item_enable(Edje_Item *ei)
 {
+   ei->disabled = 0;
 }
 
 void
 edje_item_disable(Edje_Item *ei)
 {
+   ei->disabled = 1;
 }
 
 /* item utils */
@@ -265,11 +238,6 @@ edje_item_disabled_get(Edje_Item *ei)
 {
 }
 
-void
-edje_item_geometry_get(Edje_Item *ei, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
-{
-}
-
 double
 edje_item_position_get(Edje_Item *ei)
 {
@@ -283,164 +251,202 @@ edje_item_offset_set(Edje_Item *ei, Evas_Coord x, Evas_Coord y, Evas_Coord w, Ev
 /***** container calls *****/
 
 void
+edje_container_item_append(Evas_Object *obj, Edje_Item *ei)
+{
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+}
+
+void
+edje_container_item_prepend(Evas_Object *obj, Edje_Item *ei)
+{
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+}
+
+void
+edje_container_item_append_relative(Evas_Object *obj, Edje_Item *ei, Edje_Item *rel)
+{
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+}
+
+void
+edje_container_item_prepend_relative(Evas_Object *obj, Edje_Item *ei, Edje_Item *rel)
+{
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+}
+
+void
+edje_container_item_insert(Evas_Object *obj, Edje_Item *ei, int n)
+{
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+}
+
+void
+edje_container_item_remove(Evas_Object *obj, Edje_Item *ei)
+{
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+}
+
+void
 edje_container_columns_set(Evas_Object *obj, int cols)
 {
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
 }
 
 int
 edje_container_columns_get(Evas_Object *obj)
 {
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
 }
 
 void
 edje_container_min_size_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 {
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
 }
 
 void
 edje_container_max_size_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 {
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+}
+
+void
+edje_containter_align_set(Evas_Object *obj, double halign, double valign)
+{
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
+}
+
+void
+edje_container_align_get(Evas_Object *obj, double *halign, double *valign)
+{
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
 }
 
 int
 edje_container_count_get(Evas_Object *obj)
 {
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
 }
 
 Edje_Item *
 edje_container_item_first_get(Evas_Object *obj)
 {
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
 }
 
 Edje_Item *
 edje_container_item_last_get(Evas_Object *obj)
 {
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
 }
 
 Edje_Item *
-edje_container_item_n_get(Evas_Object *obj, int n)
+edje_container_item_nth_get(Evas_Object *obj, int n)
 {
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
 }
 
 void
 edje_container_homogenous_size_set(Evas_Object *obj, int homog)
 {
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
 }
 
 int
 edje_container_homogenous_size_get(Evas_Object *obj)
 {
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
 }
 
 void
 edje_container_orientation_set(Evas_Object *obj, int orient)
 {
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
 }
 
 int
 edje_container_orientation_get(Evas_Object *obj)
 {
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
 }
 
 void
 edje_container_scroll_set(Evas_Object *obj, double pos, double shift)
 {
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
 }
 
 void
 edje_container_scroll_get(Evas_Object *obj, double *pos, double *shift)
 {
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
 }
-
-#define E_SMART_OBJ_GET(smart, o, type) \
-     { \
-	char *_e_smart_str; \
-	\
-	if (!o) return; \
-	smart = evas_object_smart_data_get(o); \
-	if (!smart) return; \
-	_e_smart_str = (char *)evas_object_type_get(o); \
-	if (!_e_smart_str) return; \
-	if (strcmp(_e_smart_str, type)) return; \
-     }
-
-#define E_SMART_OBJ_GET_RETURN(smart, o, type, ret) \
-   { \
-      char *_e_smart_str; \
-      \
-      if (!o) return ret; \
-      smart = evas_object_smart_data_get(o); \
-      if (!smart) return ret; \
-      _e_smart_str = (char *)evas_object_type_get(o); \
-      if (!_e_smart_str) return ret; \
-      if (strcmp(_e_smart_str, type)) return ret; \
-   }
-
-#define E_OBJ_NAME "edje_container_object"
-
-typedef struct _Smart_Data   Smart_Data;
-typedef struct _Smart_Item   Smart_Item;
-typedef struct _Smart_Column Smart_Column;
-
-struct _Smart_Data
-{
-   int layout;
-   Evas_List *children;
-   struct {
-      int w, h;
-   } min, max;
-};
-
-struct _Smart_Item
-{
-   Evas_Object *container;
-   Evas_Object *obj;
-};
-
-struct _Smart_Column
-{
-   int min, max;
-};
-
-#define EDJE_LAYOUT_NONE  0
-
-/* the following are "linear" layout systems */
-
-/* H & V LIST pack all items at their minimum size - no expanding in the lists
- * direction (lets say height), BUT all items are expanded to fill the "width"
- * of the list. if an item is too small to fit the width, the list object will
- * call a "min_size_change" callback indicating to the parent/swallower that
- * the parent should revise its use/view of this object. this is intended for
- * large lists of items - like a list of files, or titles etc.  this allows
- * for each item to have multiple columns. each column may be any size, with
- * the minimu size being the sum of all minimum column widths. as more items
- * are added column widths may be adjusted and all items told of this
- * adjustment
- */
-#define EDJE_LAYOUT_VLIST 1
-#define EDJE_LAYOUT_HLIST 2
-/* H & V BOX pack items and may or may not expand an item in any direction and
- * may align an item smaller than its allocated space in a certain way. they
- * dont know about columns etc. like lists.
- */
-#define EDJE_LAYOUT_VBOX  3
-#define EDJE_LAYOUT_HBOX  4
-/* H & V flow are like "file manager" views you see in explorer etc. wehere
- * items "line wrap" as they go along horizontally (or vertizally) as needed
- */
-#define EDJE_LAYOUT_VFLOW 5
-#define EDJE_LAYOUT_HFLOW 6
-
-/* the following are "2 dimensional" layout systems */
-
-/* tables are full 2-dimensional layouts which dont really have append and
- * prepend semantics... this will need working on later for 2d layouts. dont
- * worry about these yet - but keep this as a marker for things to do later
- */
-#define EDJE_LAYOUT_TABLE 7
-/* count
- */
-#define EDJE_LAYOUT_COUNT 8
 
 static void _smart_init(void);
 static void _smart_add(Evas_Object * obj);
@@ -501,6 +507,7 @@ _smart_add(Evas_Object *obj)
    if (!sd) return;
 //   evas_object_smart_member_add(sd->obj, obj);
    evas_object_smart_data_set(obj, sd);
+   sd->smart_obj = obj;
 }
 
 static void
