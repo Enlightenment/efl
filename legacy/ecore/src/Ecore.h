@@ -776,7 +776,8 @@ extern              "C"
 					  int any_mod);
   void                ecore_keyboard_grab(Window win);
   void                ecore_keyboard_ungrab(void);
-
+  Window              ecore_keyboard_grab_window_get(void);
+       
 
   /* ----------------- GRAPHICS CONTEXT AND DRAWING CALLS */
 

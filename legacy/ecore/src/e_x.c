@@ -53,6 +53,8 @@ static Window_List *ignore_wins = NULL;
 
 static Window       grab_pointer_win = 0;
 
+static Window       keyboard_grab_win = 0;
+
 static int          dnd_copy = 0;
 static int          dnd_link = 0;
 static int          dnd_move = 1;
@@ -3354,8 +3356,6 @@ ecore_window_get_title(Window win)
   return NULL;
 }
 
-static Window       keyboard_grab_win = 0;
-
 void
 ecore_keyboard_grab(Window win)
 {
@@ -3382,6 +3382,13 @@ ecore_keyboard_ungrab(void)
     return;
   keyboard_grab_win = 0;
   XUngrabKeyboard(disp, CurrentTime);
+}
+
+Window
+ecore_keyboard_grab_window_get(void)
+{
+   if (!disp) return 0;
+   return keyboard_grab_win;
 }
 
 Window
