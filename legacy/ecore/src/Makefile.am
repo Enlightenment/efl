@@ -16,4 +16,4 @@ libecore_la_SOURCES = \
 	e_x.c
 
 libecore_la_LIBADD = @x_ldflags@ @x_libs@ -lm
-libecore_la_LDFLAGS = -version-info 0:1:0
+libecore_la_LDFLAGS = -version-info 0:2:0
