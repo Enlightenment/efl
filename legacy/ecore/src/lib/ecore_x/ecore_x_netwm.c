@@ -574,8 +574,11 @@ ecore_x_netwm_desktop_set(Ecore_X_Window win, unsigned int desk)
 int
 ecore_x_netwm_desktop_get(Ecore_X_Window win, unsigned int *desk)
 {
-   return ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_DESKTOP,
-					 desk, 1);
+   int ret;
+   ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_DESKTOP,
+					desk, 1);
+
+   return ret == 1 ? 1 : 0;
 }
 
 /*
@@ -612,8 +615,8 @@ ecore_x_netwm_strut_get(Ecore_X_Window win, int *left, int *right,
    ret = ecore_x_netwm_strut_partial_get(win, left, right, top, bottom,
 					 &left_start_y, &left_end_y, &right_start_y, &right_end_y,
 					 &top_start_x, &top_end_x, &bottom_start_x, &bottom_end_x);
-   if (ret)
-     return ret;
+   if (ret == 12)
+     return 1;
 
    ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_STRUT, strut, 4);
    if (ret != 4)
@@ -646,7 +649,7 @@ ecore_x_netwm_strut_partial_set(Ecore_X_Window win, int left, int right,
    strut[9] = top_end_x;
    strut[10] = bottom_start_x;
    strut[11] = bottom_end_x;
-   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_STRUT, strut, 12);
+   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_STRUT_PARTIAL, strut, 12);
 }
 
 int
@@ -716,8 +719,10 @@ ecore_x_netwm_pid_set(Ecore_X_Window win, int pid)
 int
 ecore_x_netwm_pid_get(Ecore_X_Window win, int *pid)
 {
-   return ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_PID,
-					 pid, 1);
+   int ret;
+   ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_PID,
+					pid, 1);
+   return ret == 1 ? 1 : 0;
 }
 
 void
@@ -746,8 +751,10 @@ ecore_x_netwm_user_time_set(Ecore_X_Window win, int time)
 int
 ecore_x_netwm_user_time_get(Ecore_X_Window win, int *time)
 {
-   return ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_USER_TIME,
-					 time, 1);
+   int ret;
+   ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_USER_TIME,
+					time, 1);
+   return ret == 1 ? 1 : 0;
 }
 
 static Ecore_X_Atom
@@ -793,7 +800,7 @@ ecore_x_netwm_window_state_isset(Ecore_X_Window win, Ecore_X_Window_State s)
    Ecore_X_Atom   *atoms, atom;
 
    if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_NET_WM_STATE,
-                                       XA_ATOM, 32, &data, &num))
+					 XA_ATOM, 32, &data, &num))
       return ret;
 
    atom = _ecore_x_netwm_state_atom_get(s);
@@ -1091,8 +1098,10 @@ ecore_x_netwm_opacity_set(Ecore_X_Window win, unsigned int opacity)
 int
 ecore_x_netwm_opacity_get(Ecore_X_Window win, unsigned int *opacity)
 {
-   return ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_WINDOW_OPACITY,
-					 opacity, 1);
+   int ret;
+   ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_WINDOW_OPACITY,
+					opacity, 1);
+   return ret == 1 ? 1 : 0;
 }
 
 void
