@@ -465,6 +465,7 @@ extern "C" {
    EAPI Evas_Format_Direction  evas_object_textblock_format_direction_get (Evas_Object *obj);
    EAPI void                   evas_object_textblock_format_size_get      (Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
    EAPI void                   evas_object_textblock_native_size_get      (Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
+   EAPI int                    evas_object_textblock_native_lines_get     (Evas_Object *obj);
        
    EAPI void              evas_object_del                   (Evas_Object *obj);
 
