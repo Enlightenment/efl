@@ -930,6 +930,7 @@ EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_A
    EAPI void            ecore_x_window_client_sniff(Ecore_X_Window win);
    EAPI Ecore_X_Atom    ecore_x_atom_get(const char *name);
 
+   EAPI void            ecore_x_icccm_init(void);
    EAPI void
      ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state);
    EAPI void
