@@ -1,7 +1,7 @@
 # Note that this is NOT a relocatable package
 %define ver      0.0.1
 %define rel      1
-%define prefix   /usr/local
+%define prefix   /usr
 
 Summary: eet
 Name: eet
@@ -59,8 +59,7 @@ fi
 ###########################################################################
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make prefix=$RPM_BUILD_ROOT%{prefix} install
+make DESTDIR=$RPM_BUILD_ROOT install
 
 %clean
 rm -rf $RPM_BUILD_ROOT
