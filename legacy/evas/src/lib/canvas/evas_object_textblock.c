@@ -27,9 +27,9 @@ struct _Layout
       unsigned char     r, g, b, a;
    } color, underline_color, outline_color, shadow_color;
    struct {
-      int               x, y, ascent, descent, mascent, mdescent;
+      int               inset, x, y, ascent, descent, mascent, mdescent;
    } line;
-   double               align;
+   double               align, valign;
 };
 
 /* a node of formatting data */
@@ -97,6 +97,7 @@ evas_object_textblock_layout_init(Layout *layout)
    layout->shadow_color.g = 255;
    layout->shadow_color.b = 255;
    layout->shadow_color.a = 255;
+   layout->line.inset = 0;
    layout->line.x = 0;
    layout->line.y = 0;
    layout->line.ascent = 0;
@@ -104,6 +105,7 @@ evas_object_textblock_layout_init(Layout *layout)
    layout->line.mascent = 0;
    layout->line.mdescent = 0;
    layout->align = 0.0;
+   layout->valign = -1.0;
 }
 
 static char *
@@ -137,6 +139,34 @@ evas_object_textblock_layout_format_apply(Layout *layout, char *key, char *data)
    else if (!strcmp(key, "size"))
      {
 	layout->font.size = atoi(data);
+     }
+   else if (!strcmp(key, "align"))
+     {
+	if (!strcmp(data, "left")) layout->align = 0.0;
+	else if (!strcmp(data, "middle")) layout->align = 0.5;
+	else if (!strcmp(data, "center")) layout->align = 0.5;
+	else if (!strcmp(data, "right")) layout->align = 1.0;
+	else
+	  {
+	     layout->align = atof(data);
+	     if (layout->align < 0.0) layout->align = 0.0;
+	     else if (layout->align > 1.0) layout->align = 1.0;
+	  }
+     }
+   else if (!strcmp(key, "valign"))
+     {
+	if (!strcmp(data, "top")) layout->valign = 0.0;
+	else if (!strcmp(data, "middle")) layout->valign = 0.5;
+	else if (!strcmp(data, "center")) layout->valign = 0.5;
+	else if (!strcmp(data, "bottom")) layout->valign = 1.0;
+	else if (!strcmp(data, "baseline")) layout->valign = -1.0;
+	else if (!strcmp(data, "base")) layout->valign = -1.0;
+	else
+	  {
+	     layout->valign = atof(data);
+	     if (layout->valign < 0.0) layout->valign = 0.0;
+	     else if (layout->valign > 1.0) layout->valign = 1.0;
+	  }
      }
    else if (!strcmp(key, "color"))
      {
@@ -347,12 +377,14 @@ evas_object_textblock_layout(Evas_Object *obj)
    Layout_Node *line_start = NULL;
 
    o = (Evas_Object_Textblock *)(obj->object_data);
-   /* FIXME: takes nodes and produce layotu nodes */
    evas_object_textblock_layout_init(&layout);
    w = obj->cur.geometry.w;
    h = obj->cur.geometry.h;
    o->last_w = w;
    o->last_h = h;
+   /* FIXME: this is a hack - seems the lowe level font stuff is off in its */
+   /* size estimates of a text line */
+//   w -= 2;
 //   printf("RE-LAYOUT %ix%i!\n", w, h);
    for (l = (Evas_Object_List *)o->nodes; l; l = l->next)
      {
@@ -383,6 +415,7 @@ evas_object_textblock_layout(Evas_Object *obj)
 	     int chrpos = -1, x, y, cx, cy, cw, ch;
 	     void *font = NULL;
 	     char *text;
+	     int adj, lastnode;
 
 	     text = strdup(node->text);
 	     new_node:
@@ -393,6 +426,8 @@ evas_object_textblock_layout(Evas_Object *obj)
 	     lnode->layout.font.font = font;
 	     if (font) ascent = ENFN->font_max_ascent_get(ENDT, font);
 	     if (font) descent = ENFN->font_max_descent_get(ENDT, font);
+	     lnode->layout.line.ascent = ascent;
+	     lnode->layout.line.descent = descent;
 	     layout.line.ascent = ascent;
 	     layout.line.descent = descent;
 	     if (layout.line.mascent < ascent) layout.line.mascent = ascent;
@@ -400,7 +435,8 @@ evas_object_textblock_layout(Evas_Object *obj)
 	     /* if this is at the start of the line... */
 	     if (layout.line.x == 0)
 	       {
-		  if (font) inset = ENFN->font_inset_get(ENDT, font, node->text);
+		  if (font) inset = ENFN->font_inset_get(ENDT, font, text);
+		  layout.line.inset = inset;
 		  layout.line.x = -inset;
 		  line_start = lnode;
 	       }
@@ -420,14 +456,37 @@ evas_object_textblock_layout(Evas_Object *obj)
 		  layout.line.x += hadvance;
 		  /* fix up max ascent/descent for the line */
 		  /* FIXME: fixup align */
-		  for (ll = (Evas_Object_List *)lnode; ll; ll = ll->prev)
+		  /*
+		  lastnode = 1;
+		  for (ll = l; ll; ll = ll->next)
 		    {
-		       Layout_Node *lnode2;
+		       Node *tnode;
 		       
-		       lnode2 = (Layout_Node *)ll;
-		       lnode2->layout.line.mascent = layout.line.mascent;
-		       lnode2->layout.line.mdescent = layout.line.mdescent;
-		       if (ll == (Evas_Object_List *)line_start) break;
+		       tnode = (Node *)ll;
+		       if ((tnode->format) &&
+			   (!strcmp(tnode->format, "\n")))
+			 break;
+		       if (tnode->text)
+			 {
+			    lastnode = 0;
+			    break;
+			 }
+		    }
+		  if (lastnode)
+		   */
+		    {
+		       adj = (double)(w - (lnode->layout.line.x + tw + layout.line.inset)) * layout.align;
+		       adj -= line_start->layout.line.x;
+		       for (ll = (Evas_Object_List *)lnode; ll; ll = ll->prev)
+			 {
+			    Layout_Node *lnode2;
+			    
+			    lnode2 = (Layout_Node *)ll;
+			    lnode2->layout.line.x += adj;
+			    lnode2->layout.line.mascent = layout.line.mascent;
+			    lnode2->layout.line.mdescent = layout.line.mdescent;
+			    if (ll == (Evas_Object_List *)line_start) break;
+			 }
 		    }
 	       }
 	     /* text doesnt fit */
@@ -461,15 +520,22 @@ evas_object_textblock_layout(Evas_Object *obj)
 		       o->layout_nodes = evas_object_list_append(o->layout_nodes, lnode);
 		       /* fix up max ascent/descent for the line */
 		       /* FIXME: fixup align */
+		       adj = (double)(w - (lnode->layout.line.x + tw + layout.line.inset)) * layout.align;
+		       adj -= line_start->layout.line.x;
+//		       printf("\"%s\" -> %i, %i %i ++ %i\n", 
+//			      lnode->text, layout.line.inset,
+//			      w, tw, adj);
 		       for (ll = (Evas_Object_List *)lnode; ll; ll = ll->prev)
 			 {
 			    Layout_Node *lnode2;
 			    
 			    lnode2 = (Layout_Node *)ll;
+			    lnode2->layout.line.x += adj;
 			    lnode2->layout.line.mascent = layout.line.mascent;
 			    lnode2->layout.line.mdescent = layout.line.mdescent;
 			    if (ll == (Evas_Object_List *)line_start) break;
 			 }
+		       layout.line.inset = 0;
 		       layout.line.x = 0;
 		       layout.line.y += lnode->layout.line.mascent + lnode->layout.line.mdescent;
 		       layout.line.mascent = 0;
@@ -1003,6 +1069,18 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 	evas_object_textblock_layout(obj);
 	o->changed = 0;
      }
+/*   
+    obj->layer->evas->engine.func->context_color_set(output,
+                                                     context,
+                                                     230, 160, 30, 100);
+    obj->layer->evas->engine.func->rectangle_draw(output,
+                                                  context,
+                                                  surface,
+                                                  obj->cur.cache.geometry.x + x,
+                                                  obj->cur.cache.geometry.y + y,
+                                                  obj->cur.cache.geometry.w,
+                                                  obj->cur.cache.geometry.h);
+ */
    for (l = (Evas_Object_List *)o->layout_nodes; l; l = l->next)
      {
 	Layout_Node *lnode;
@@ -1015,17 +1093,39 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 				(obj->cur.cache.clip.b * lnode->layout.color.b) / 255,
 				(obj->cur.cache.clip.a * lnode->layout.color.a) / 255);
 	if ((lnode->layout.font.font) && (lnode->text))
-	  ENFN->font_draw(output,
-			  context,
-			  surface,
-			  lnode->layout.font.font,
-			  obj->cur.cache.geometry.x + lnode->layout.line.x + x,
-			  obj->cur.cache.geometry.y + lnode->layout.line.y + y + lnode->layout.line.mascent,
-			  lnode->w,
-			  lnode->h,
-			  lnode->w,
-			  lnode->h,
-			  lnode->text);
+	  {
+	     if (lnode->layout.valign < 0.0)
+	       ENFN->font_draw(output,
+			       context,
+			       surface,
+			       lnode->layout.font.font,
+			       obj->cur.cache.geometry.x + 
+			       lnode->layout.line.x + x,
+			       obj->cur.cache.geometry.y + 
+			       lnode->layout.line.y + y + lnode->layout.line.mascent,
+			       lnode->w,
+			       lnode->h,
+			       lnode->w,
+			       lnode->h,
+			       lnode->text);
+	     else
+	       ENFN->font_draw(output,
+			       context,
+			       surface,
+			       lnode->layout.font.font,
+			       obj->cur.cache.geometry.x +
+			       lnode->layout.line.x + x,
+			       obj->cur.cache.geometry.y + 
+			       lnode->layout.line.y + y + 
+			       ((double)(((lnode->layout.line.mascent + lnode->layout.line.mdescent) -
+					 (lnode->layout.line.ascent + lnode->layout.line.descent)) * lnode->layout.valign)) +
+			       lnode->layout.line.ascent,
+			       lnode->w,
+			       lnode->h,
+			       lnode->w,
+			       lnode->h,
+			       lnode->text);
+	  }
      }
 /*   
    if (o->engine_data)
