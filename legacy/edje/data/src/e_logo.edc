@@ -219,8 +219,8 @@ collections {
 	       }
 	       image {
 		  normal: "bg.png";
-	       }
 	       border: 12 12 12 12;
+	       }
 	    }
 	 }
 	 part {
@@ -479,8 +479,8 @@ collections {
 	       }
 	       image {
 		  normal: "bg.png";
-	       }
 	       border: 12 12 12 12;
+	       }
 	    }
 	 }
       }
