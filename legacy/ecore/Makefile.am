@@ -19,4 +19,7 @@ dist-hook:
 
 bin_SCRIPTS = ecore-config
 
-EXTRA_DIST = README AUTHORS COPYING
+EXTRA_DIST = README AUTHORS COPYING ecore.m4
+
+m4datadir = $(datadir)/aclocal
+m4data_DATA = ecore.m4
