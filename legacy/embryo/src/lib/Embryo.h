@@ -49,9 +49,9 @@ extern "C" {
 #define EMBRYO_PROGRAM_FAIL  0
 
 /** Float to Embryo_Cell */
-#define EMBRYO_FLOAT_TO_CELL(f) (Embryo_Cell) f
+#define EMBRYO_FLOAT_TO_CELL(f) ( *((Embryo_Cell*)&f))
 /** Embryo_Cell to float */
-#define EMBRYO_CELL_TO_FLOAT(c) (float) c
+#define EMBRYO_CELL_TO_FLOAT(c) ( *((float*)&c))
 
    typedef unsigned int                Embryo_UCell;
    typedef int                         Embryo_Cell;
