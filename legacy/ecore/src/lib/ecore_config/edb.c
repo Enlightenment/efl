@@ -38,7 +38,7 @@ int ecore_config_load_file(char *file) {
   db = e_db_open_read(file);
   if (!db) {
     E(0, "Cannot open database from file %s!\n", file);
-    return 1;
+    return ECORE_CONFIG_ERR_NODATA;
   }
 
   keys = e_db_dump_key_list(file, &key_count);
@@ -86,7 +86,7 @@ int ecore_config_load_file(char *file) {
   }
   e_db_close(db);
   free(keys);
-  return 0;
+  return ECORE_CONFIG_ERR_SUCC;
 }
 static void 
 _ecore_config_recurse_mkdir(char *file) {
@@ -121,7 +121,7 @@ int ecore_config_save_file(char *file) {
   db = e_db_open(file);
   if (!db) {
     E(0, "Cannot open database from file %s!\n", file);
-    return 1;
+    return ECORE_CONFIG_ERR_FAIL;
   } 
   
   while (next) {
@@ -155,6 +155,6 @@ int ecore_config_save_file(char *file) {
   
   e_db_close(db);
   e_db_flush();
-  return 1;
+  return ECORE_CONFIG_ERR_SUCC;
 }
 

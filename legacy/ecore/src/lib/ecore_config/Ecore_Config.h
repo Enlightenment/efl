@@ -125,7 +125,6 @@ int            ecore_config_get_rgb(const char *key,int *r, int *g, int *b);
 float          ecore_config_get_float(const char *key);
 char          *ecore_config_get_theme(const char *key);
 char          *ecore_config_get_as_string(const char *key);
-char          *ecore_config_canonize_key(char *,int modify);
 void           ecore_config_describe(const char *key, char *desc);
 int            ecore_config_set(Ecore_Config_Bundle *t,const char *key,char *val);
 int            ecore_config_set_string(const char *key,char *val);
