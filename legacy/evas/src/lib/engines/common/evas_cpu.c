@@ -7,8 +7,10 @@
 static jmp_buf detect_buf;
 static int cpu_feature_mask = 0;
 
-void
-evas_common_cpu_catch_ill(void)
+static void evas_common_cpu_catch_ill(int sig);
+
+static void
+evas_common_cpu_catch_ill(int sig)
 {
    longjmp(detect_buf, 1);
 }
@@ -26,10 +28,9 @@ void
 evas_common_cpu_mmx2_test(void)
 {
 #ifdef BUILD_MMX
-   char data[128];
-   char data2[128];
-   
-   MOVE_16DWORDS_MMX2(data, data2);
+   char data[8];
+
+   mmx_r2m(movntq, mm0, data);
 #endif   
 }
 
@@ -50,7 +51,7 @@ void
 evas_common_cpu_altivec_test(void)
 {
    vector unsigned int zero;
-   illegal = 0;
+   
    zero = vec_splat_u32(0);
 }
 #endif /* __VEC__ */
@@ -69,13 +70,17 @@ evas_common_cpu_feature_test(void (*feature)(void))
    int enabled = 1;
    struct sigaction act, oact;
 
+   act.sa_handler = evas_common_cpu_catch_ill;
+   act.sa_flags = SA_RESTART;
+   sigemptyset(&act.sa_mask);
    sigaction(SIGILL, &act, &oact);
    if (setjmp(detect_buf))
-      enabled = 0;
-   else
-      feature();
+     {
+	sigaction(SIGILL, &oact, NULL);
+	return 0;
+     }
+   feature();
    sigaction(SIGILL, &oact, NULL);
-
    return enabled;
 }
 
@@ -90,11 +95,14 @@ evas_common_cpu_init(void)
 #ifdef BUILD_MMX
    cpu_feature_mask |= CPU_FEATURE_MMX * 
      evas_common_cpu_feature_test(evas_common_cpu_mmx_test);
+   evas_common_cpu_end_opt();
    cpu_feature_mask |= CPU_FEATURE_MMX2 * 
      evas_common_cpu_feature_test(evas_common_cpu_mmx2_test);
+   evas_common_cpu_end_opt();
 #ifdef BUILD_SSE
    cpu_feature_mask |= CPU_FEATURE_SSE * 
      evas_common_cpu_feature_test(evas_common_cpu_sse_test);
+   evas_common_cpu_end_opt();
 #endif /* BUILD_SSE */
 #endif /* BUILD_MMX */
 #endif /* __i386__ */
@@ -102,13 +110,14 @@ evas_common_cpu_init(void)
 #ifdef __VEC__
    cpu_feature_mask |= CPU_FEATURE_ALTIVEC *
      evas_common_cpu_feature_test(evas_common_cpu_altivec_test);
+   evas_common_cpu_end_opt();
 #endif /* __VEC__ */
 #endif /* __POWERPC__ */
 #ifdef __SPARC__
    cpu_feature_mask |= CPU_FEATURE_VIS *
      evas_common_cpu_feature_test(evas_common_cpu_vis_test);
-#endif /* __SPARC__ */
    evas_common_cpu_end_opt();
+#endif /* __SPARC__ */
 }
 
 inline int
