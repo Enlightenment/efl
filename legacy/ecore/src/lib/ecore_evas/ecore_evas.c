@@ -600,7 +600,7 @@ ecore_evas_shaped_get(Ecore_Evas *ee)
 			 "ecore_evas_shaped_get");
 	return 0;
      }
-   return ee->shaped;
+   return ee->shaped ? 1:0;
 }
 
 /**
@@ -660,7 +660,7 @@ ecore_evas_visibility_get(Ecore_Evas *ee)
 			 "ecore_evas_visibility_get");
 	return 0;
      }
-   return ee->visible;
+   return ee->visible ? 1:0;
 }
 
 /**
