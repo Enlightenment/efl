@@ -143,12 +143,12 @@ source_fetch_file(char *fil, char *filname)
 				 /* get the directory of the current file
 				  * if we haven't already done so
 				  */
-				 if (!dir && strrchr (filname, '/'))
+				 if (!dir && strrchr(fil, '/'))
 				   {
-				      dir = mem_strdup(filname);
-				      slash = strrchr (dir, '/');
+				      dir = mem_strdup(fil);
+				      slash = strrchr(dir, '/');
 				      *slash = '\0';
-				      dir_len = strlen (dir);
+				      dir_len = strlen(dir);
 				   }
 
 				 l = pp - p + dir_len + 1;
