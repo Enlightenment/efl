@@ -139,6 +139,7 @@ ecore_con_server_add(Ecore_Con_Type type,
 	     snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s|%i", name, port);
 	  }
 	pmode = umask(mask);
+	start:
 	svr->fd = socket(AF_UNIX, SOCK_STREAM, 0);
 	if (svr->fd < 0)
 	  {
@@ -166,8 +167,31 @@ ecore_con_server_add(Ecore_Con_Type type,
 	strncpy(socket_unix.sun_path, buf, sizeof(socket_unix.sun_path));
 	if (bind(svr->fd, (struct sockaddr *)&socket_unix, LENGTH_OF_SOCKADDR_UN(&socket_unix)) < 0)
 	  {
-	     umask(pmode);	     
-	     goto error;
+	     if (connect(svr->fd, (struct sockaddr *)&socket_unix, 
+			 LENGTH_OF_SOCKADDR_UN(&socket_unix)) < 0)
+	       {
+		  if ((type == ECORE_CON_LOCAL_USER) ||
+		      (type == ECORE_CON_LOCAL_SYSTEM))
+		    {
+		       if (unlink(buf) < 0)
+			 {
+			    umask(pmode);
+			    goto error;		       
+			 }
+		       else
+			 goto start;
+		    }
+		  else
+		    {
+		       umask(pmode);
+		       goto error;		       
+		    }
+	       }
+	     else
+	       {
+		  umask(pmode);	     
+		  goto error;
+	       }
 	  }
 	if (listen(svr->fd, 4096) < 0)
 	  {
