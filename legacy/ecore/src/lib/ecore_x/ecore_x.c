@@ -29,6 +29,7 @@ Atom     _ecore_x_atom_wm_take_focus = 0;
 Atom     _ecore_x_atom_wm_protocols = 0;
 Atom     _ecore_x_atom_wm_class = 0;
 Atom     _ecore_x_atom_wm_name = 0;
+Atom     _ecore_x_atom_wm_icon_name = 0;
 Atom     _ecore_x_atom_motif_wm_hints = 0;
 Atom     _ecore_x_atom_win_layer = 0;
 Atom     _ecore_x_atom_net_wm_desktop = 0;
@@ -92,6 +93,7 @@ int ECORE_X_EVENT_WINDOW_DELETE_REQUEST = 0;
 int ECORE_X_EVENT_WINDOW_PROP_TITLE_CHANGE = 0;
 int ECORE_X_EVENT_WINDOW_PROP_VISIBLE_TITLE_CHANGE = 0;
 int ECORE_X_EVENT_WINDOW_PROP_NAME_CLASS_CHANGE = 0;
+int ECORE_X_EVENT_WINDOW_PROP_ICON_NAME_CHANGE = 0;
 
 int ECORE_X_MODIFIER_SHIFT = 0;
 int ECORE_X_MODIFIER_CTRL = 0;
@@ -211,6 +213,7 @@ ecore_x_init(const char *name)
 	ECORE_X_EVENT_WINDOW_PROP_TITLE_CHANGE         = ecore_event_type_new();
 	ECORE_X_EVENT_WINDOW_PROP_VISIBLE_TITLE_CHANGE = ecore_event_type_new();
         ECORE_X_EVENT_WINDOW_PROP_NAME_CLASS_CHANGE    = ecore_event_type_new();
+	ECORE_X_EVENT_WINDOW_PROP_ICON_NAME_CHANGE     = ecore_event_type_new();
      }
    
    ECORE_X_MODIFIER_SHIFT = _ecore_x_key_mask_get(XK_Shift_L);
@@ -244,6 +247,7 @@ ecore_x_init(const char *name)
    _ecore_x_atom_wm_protocols            = XInternAtom(_ecore_x_disp, "WM_PROTOCOLS", False);
    _ecore_x_atom_wm_class                = XInternAtom(_ecore_x_disp, "WM_CLASS", False);
    _ecore_x_atom_wm_name                 = XInternAtom(_ecore_x_disp, "WM_NAME", False);
+   _ecore_x_atom_wm_icon_name            = XInternAtom(_ecore_x_disp, "WM_ICON_NAME", False);
    _ecore_x_atom_motif_wm_hints          = XInternAtom(_ecore_x_disp, "_MOTIF_WM_HINTS", False);
    _ecore_x_atom_win_layer               = XInternAtom(_ecore_x_disp, "_WIN_LAYER", False);
    _ecore_x_atom_net_current_desktop     = XInternAtom(_ecore_x_disp, "_NET_CURRENT_DESKTOP", False);

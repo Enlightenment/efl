@@ -417,6 +417,32 @@ handler_x_window_prop_title_change(void *data, int type, void *event)
 }
 
 int
+handler_x_window_prop_visible_title_change(void *data, int type, void *event)
+{
+   Ecore_X_Event_Window_Prop_Visible_Title_Change *e;
+   
+   e = event;
+   if (e->title)
+     printf("Visible title change to \"%s\"\n", e->title);
+   else
+     printf("Visible title deleted\n");
+   return 1;
+}
+
+int
+handler_x_window_prop_icon_name_change(void *data, int type, void *event)
+{
+   Ecore_X_Event_Window_Prop_Icon_Name_Change *e;
+   
+   e = event;
+   if (e->name)
+     printf("Icon name change to \"%s\"\n", e->name);
+   else
+     printf("Icon name deleted\n");
+   return 1;
+}
+
+int
 handler_x_window_prop_name_class_change(void *data, int type, void *event)
 {
    Ecore_X_Event_Window_Prop_Name_Class_Change *e;
@@ -432,8 +458,31 @@ handler_x_window_prop_name_class_change(void *data, int type, void *event)
 void
 setup_ecore_x_test(void)
 {
+   char *tmp;
+
    win = ecore_x_window_new(0, 0, 0, 120, 60);
    ecore_x_window_prop_title_set(win, "Ecore Test Program");
+   tmp = ecore_x_window_prop_title_get(win);
+   printf("Title currently: %s\n", tmp);
+   free(tmp);
+   tmp = ecore_x_window_prop_visible_title_get(win);
+   if (!tmp)
+     {
+        printf("No visible title, setting it to Ecore ... Program\n");
+	ecore_x_window_prop_visible_title_set(win, "Ecore ... Program");
+        tmp = ecore_x_window_prop_visible_title_get(win);
+     }
+   printf("Visible title: %s\n", tmp);
+   free(tmp);
+   tmp = ecore_x_window_prop_icon_name_get(win);
+   if (!tmp)
+     {
+        printf("No icon name, setting it to Ecore_Test\n");
+	ecore_x_window_prop_icon_name_set(win, "Ecore_Test");
+        tmp = ecore_x_window_prop_icon_name_get(win);
+     }
+   printf("Icon Name: %s\n", tmp);
+   free(tmp);
    ecore_x_window_prop_name_class_set(win, "ecore_test", "main");
    ecore_x_window_prop_protocol_set(win, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 1);
    ecore_x_window_show(win);
@@ -453,6 +502,8 @@ setup_ecore_x_test(void)
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_CONFIGURE, handler_x_window_configure, NULL);
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_DELETE_REQUEST, handler_x_window_delete_request, NULL);
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_TITLE_CHANGE, handler_x_window_prop_title_change, NULL);
+   ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_VISIBLE_TITLE_CHANGE, handler_x_window_prop_visible_title_change, NULL);
+   ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_ICON_NAME_CHANGE, handler_x_window_prop_icon_name_change, NULL);
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_NAME_CLASS_CHANGE, handler_x_window_prop_name_class_change, NULL);
 }
 #endif

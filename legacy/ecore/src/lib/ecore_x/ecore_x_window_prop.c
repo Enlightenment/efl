@@ -211,6 +211,40 @@ ecore_x_window_prop_visible_title_get(Ecore_X_Window win)
 }
 
 /**
+ * Set a window icon name.
+ * @param win The window
+ * @param t The icon name string
+ * 
+ * Set a window icon name
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_prop_icon_name_set(Ecore_X_Window win, const char *t)
+{
+   ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_icon_name, (char *)t);
+   ecore_x_window_prop_string_set(win, _ecore_x_atom_net_wm_icon_name,
+				  (char *)t);
+}
+
+/**
+ * Get a window icon name.
+ * @param win The window
+ * @return The windows icon name string
+ * 
+ * Return the icon name of a window. String must be free'd when done with.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+char *
+ecore_x_window_prop_icon_name_get(Ecore_X_Window win)
+{
+   char *name;
+
+   name = ecore_x_window_prop_string_get(win, _ecore_x_atom_net_wm_icon_name);
+   if (!name) name = ecore_x_window_prop_string_get(win, _ecore_x_atom_wm_icon_name);
+   return name;
+}
+
+/**
  * Set a window name & class.
  * @param win The window
  * @param n The name string
