@@ -106,7 +106,7 @@ typedef struct __s_symbol
    struct __s_symbol  *next;
    struct __s_symbol  *parent;	/* hierarchical types (multi-dimensional arrays) */
    char                name[sNAMEMAX + 1];
-   uint32_t            hash;	/* value derived from name, for quicker searching */
+   unsigned int        hash;	/* value derived from name, for quicker searching */
    cell                addr;	/* address or offset (or value for constant, index for native function) */
    char                vclass;	/* sLOCAL if "addr" refers to a local symbol */
    char                ident;	/* see below for possible values */
@@ -472,7 +472,7 @@ void        delete_symbols(symbol * root, int level, int del_labels,
 				   int delete_functions);
 int         refer_symbol(symbol * entry, symbol * bywhom);
 void        markusage(symbol * sym, int usage);
-uint32_t    namehash(char *name);
+unsigned int namehash(char *name);
 symbol     *findglb(char *name);
 symbol     *findloc(char *name);
 symbol     *findconst(char *name);

@@ -27,18 +27,7 @@
 #ifndef EMBRYO_CC_AMX_H
 #define EMBRYO_CC_AMX_H
 
-#if !defined __STDC_VERSION__ || __STDC_VERSION__ < 199901L
-  /* The ISO C99 defines the int16_t and int_32t types. If the compiler got
-   * here, these types are probably undefined.
-   */
-# ifdef HAVE_INTTYPES_H
-#include <inttypes.h>
-# else
-#  ifndef HAVE_STDINT_H
 #include <sys/types.h>
-#  endif
-# endif
-#endif
 
 /* calling convention for all interface functions and callback functions */
 
@@ -58,8 +47,8 @@
 
 #if !defined CELL_TYPE
 #define CELL_TYPE
-   typedef uint32_t    ucell;
-   typedef int32_t     cell;
+   typedef unsigned int    ucell;
+   typedef int     cell;
 #endif
 
    struct tagAMX;
@@ -81,7 +70,7 @@
 
    typedef struct tagAMX_FUNCSTUB
    {
-      uint32_t address   ;
+      unsigned int        address;
       char                name[sEXPMAX + 1];
    } AMX_FUNCSTUB __attribute__((packed));
 
@@ -127,23 +116,23 @@
  */
    typedef struct tagAMX_HEADER
    {
-      int32_t size       ;	/* size of the "file" */
-      uint16_t magic     ;	/* signature */
+      int size       ;	/* size of the "file" */
+      unsigned short magic     ;	/* signature */
       char file_version  ;	/* file format version */
       char amx_version   ;	/* required version of the AMX */
-      int16_t flags      ;
-      int16_t defsize    ;	/* size of a definition record */
-      int32_t cod        ;	/* initial value of COD - code block */
-      int32_t dat        ;	/* initial value of DAT - data block */
-      int32_t hea        ;	/* initial value of HEA - start of the heap */
-      int32_t stp        ;	/* initial value of STP - stack top */
-      int32_t cip        ;	/* initial value of CIP - the instruction pointer */
-      int32_t publics    ;	/* offset to the "public functions" table */
-      int32_t natives    ;	/* offset to the "native functions" table */
-      int32_t libraries  ;	/* offset to the table of libraries */
-      int32_t pubvars    ;	/* the "public variables" table */
-      int32_t tags       ;	/* the "public tagnames" table */
-      int32_t nametable  ;	/* name table, file version 7 only */
+      unsigned short flags      ;
+      unsigned short defsize    ;	/* size of a definition record */
+      int cod        ;	/* initial value of COD - code block */
+      int dat        ;	/* initial value of DAT - data block */
+      int hea        ;	/* initial value of HEA - start of the heap */
+      int stp        ;	/* initial value of STP - stack top */
+      int cip        ;	/* initial value of CIP - the instruction pointer */
+      int publics    ;	/* offset to the "public functions" table */
+      int natives    ;	/* offset to the "native functions" table */
+      int libraries  ;	/* offset to the table of libraries */
+      int pubvars    ;	/* the "public variables" table */
+      int tags       ;	/* the "public tagnames" table */
+      int nametable  ;	/* name table, file version 7 only */
    } AMX_HEADER       __attribute__((packed));
 #define AMX_MAGIC       0xf1e0
 
@@ -223,8 +212,8 @@
             else (result) = NULL;                                    \
 }
 
-   uint16_t           *amx_Align16(uint16_t * v);
-   uint32_t           *amx_Align32(uint32_t * v);
+   unsigned short           *amx_Align16(unsigned short * v);
+   unsigned int           *amx_Align32(unsigned int * v);
    int          amx_Allot(AMX * amx, int cells, cell * amx_addr,
 				 cell ** phys_addr);
    int          amx_Callback(AMX * amx, cell index, cell * result,
@@ -241,7 +230,7 @@
    int          amx_FindPubVar(AMX * amx, char *varname,
 				      cell * amx_addr);
    int          amx_FindTagId(AMX * amx, cell tag_id, char *tagname);
-   int          amx_Flags(AMX * amx, uint16_t * flags);
+   int          amx_Flags(AMX * amx, unsigned short * flags);
    int          amx_GetAddr(AMX * amx, cell amx_addr, cell ** phys_addr);
    int          amx_GetNative(AMX * amx, int index, char *funcname);
    int          amx_GetPublic(AMX * amx, int index, char *funcname);

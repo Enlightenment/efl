@@ -2467,7 +2467,7 @@ delete_symbols(symbol * root, int level, int delete_labels,
  * comparison (which is costly). There is little interest in avoiding
  * clusters in similar names, which is why this function is plain simple.
  */
-SC_FUNC uint32_t
+SC_FUNC unsigned int
 namehash(char *name)
 {
    unsigned char      *ptr = (unsigned char *)name;

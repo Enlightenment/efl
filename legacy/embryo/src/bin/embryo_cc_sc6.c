@@ -634,7 +634,7 @@ assemble(FILE * fout, FILE * fin)
 {
    typedef struct tagFUNCSTUB
    {
-      uint32_t            address, nameofs;
+      unsigned int            address, nameofs;
    } FUNCSTUB;
    AMX_HEADER          hdr;
    FUNCSTUB            func;
@@ -643,7 +643,7 @@ assemble(FILE * fout, FILE * fin)
    long                nametablesize, nameofs;
    char                line[256], *instr, *params;
    int                 i, pass;
-   int16_t             count;
+   short               count;
    symbol             *sym, **nativelist;
    constvalue         *constptr;
    cell                mainaddr;
@@ -663,7 +663,7 @@ assemble(FILE * fout, FILE * fin)
 #endif
 
    writeerror = FALSE;
-   nametablesize = sizeof(int16_t);
+   nametablesize = sizeof(short);
    numpublics = 0;
    numnatives = 0;
    numpubvars = 0;
@@ -798,7 +798,7 @@ assemble(FILE * fout, FILE * fin)
    /* dump zeros up to the rest of the header, so that we can easily "seek" */
    for (nameofs = sizeof hdr; nameofs < cod; nameofs++)
       putc(0, fout);
-   nameofs = nametable + sizeof(int16_t);
+   nameofs = nametable + sizeof(short);
 
    /* write the public functions table */
    count = 0;
