@@ -100,7 +100,69 @@ if test "x$GCC" = "xyes"; then
 fi
 changequote([,])dnl
 
-AC_MSG_CHECKING(whether ecore_x module is to be built)
+AC_MSG_CHECKING(whether ecore_txt module is to be built)
+
+# FIXME: detect if we need -liconv or not for iconv_libs
+iconv_cflags=""
+iconv_libs=""
+
+have_ecore_txt="";
+ecore_txt_cflags="";
+ecore_txt_libs="";
+
+AC_ARG_ENABLE(ecore-txt, 
+[  --enable-ecore-txt              enable the ecore_txt module], [
+  if [ test "$enableval" = "yes" ]; then  
+    AC_MSG_RESULT(yes)
+    have_ecore_txt="yes"
+  else
+    AC_MSG_RESULT(no)
+  fi
+], [
+  AC_MSG_RESULT(yes)
+  have_ecore_txt="yes"
+]
+)
+
+if test "x$have_ecore_txt" = "xyes"; then
+  AC_DEFINE(BUILD_ECORE_TXT)
+  AC_CHECK_LIB(c, iconv,
+    [
+      AM_CONDITIONAL(BUILD_ECORE_TXT, true)
+      ecore_txt_libs="-lecore_txt"
+    ], AC_CHECK_LIB(iconv, iconv,
+         [
+           AM_CONDITIONAL(BUILD_ECORE_TXT, true)
+           iconv_libs="-liconv"
+           ecore_txt_libs="-lecore_txt -liconv"
+         ], [
+	   AC_CHECK_LIB(c, libiconv,
+	     [
+	       AM_CONDITIONAL(BUILD_ECORE_TXT, true)
+	       ecore_txt_libs="-lecore_txt"
+             ], AC_CHECK_LIB(iconv, libiconv,
+                  [
+                    AM_CONDITIONAL(BUILD_ECORE_TXT, true)
+                    iconv_libs="-liconv"
+                    ecore_txt_libs="-lecore_txt -liconv"
+                  ], [
+                    AC_MSG_RESULT("no - disabling ecore_txt")
+                    AM_CONDITIONAL(BUILD_ECORE_TXT, false)
+                  ]
+                ),
+           )
+         ]
+       ),
+  )
+else
+  AM_CONDITIONAL(BUILD_ECORE_TXT, false)
+fi
+
+AC_SUBST(iconv_cflags)
+AC_SUBST(iconv_libs)
+
+AC_SUBST(ecore_txt_cflags)
+AC_SUBST(ecore_txt_libs)
 
 have_ecore_x="";
 ecore_x_cflags="";
@@ -112,19 +174,22 @@ x_cflags="";
 x_libs="";
 x_ldflags="";
 
-AC_ARG_ENABLE(ecore-x, 
-[  --enable-ecore-x                enable the ecore_x module], [
-  if [ test "$enableval" = "yes" ]; then  
+if test "x$have_ecore_txt" = "xyes"; then
+  AC_MSG_CHECKING(whether ecore_x module is to be built)
+  AC_ARG_ENABLE(ecore-x, 
+  [  --enable-ecore-x                enable the ecore_x module], [
+    if [ test "$enableval" = "yes" ]; then  
+      AC_MSG_RESULT(yes)
+      have_ecore_x="yes"
+    else
+      AC_MSG_RESULT(no)
+    fi
+  ], [
     AC_MSG_RESULT(yes)
     have_ecore_x="yes"
-  else
-    AC_MSG_RESULT(no)
-  fi
-], [
-  AC_MSG_RESULT(yes)
-  have_ecore_x="yes"
-]
-)
+  ]
+  )
+fi
 
 if test "x$have_ecore_x" = "xyes"; then
   AM_CONDITIONAL(BUILD_ECORE_X, test "$enableval" = "yes")
@@ -363,70 +428,6 @@ fi
 AC_SUBST(ecore_ipc_cflags)
 AC_SUBST(ecore_ipc_libs)
 
-
-AC_MSG_CHECKING(whether ecore_txt module is to be built)
-
-# FIXME: detect if we need -liconv or not for iconv_libs
-iconv_cflags=""
-iconv_libs=""
-
-have_ecore_txt="";
-ecore_txt_cflags="";
-ecore_txt_libs="";
-
-AC_ARG_ENABLE(ecore-txt, 
-[  --enable-ecore-txt              enable the ecore_txt module], [
-  if [ test "$enableval" = "yes" ]; then  
-    AC_MSG_RESULT(yes)
-    have_ecore_txt="yes"
-  else
-    AC_MSG_RESULT(no)
-  fi
-], [
-  AC_MSG_RESULT(yes)
-  have_ecore_txt="yes"
-]
-)
-
-if test "x$have_ecore_txt" = "xyes"; then
-  AC_DEFINE(BUILD_ECORE_TXT)
-  AC_CHECK_LIB(c, iconv,
-    [
-      AM_CONDITIONAL(BUILD_ECORE_TXT, true)
-      ecore_txt_libs="-lecore_txt"
-    ], AC_CHECK_LIB(iconv, iconv,
-         [
-           AM_CONDITIONAL(BUILD_ECORE_TXT, true)
-           iconv_libs="-liconv"
-           ecore_txt_libs="-lecore_txt -liconv"
-         ], [
-	   AC_CHECK_LIB(c, libiconv,
-	     [
-	       AM_CONDITIONAL(BUILD_ECORE_TXT, true)
-	       ecore_txt_libs="-lecore_txt"
-             ], AC_CHECK_LIB(iconv, libiconv,
-                  [
-                    AM_CONDITIONAL(BUILD_ECORE_TXT, true)
-                    iconv_libs="-liconv"
-                    ecore_txt_libs="-lecore_txt -liconv"
-                  ], [
-                    AC_MSG_RESULT("no - disabling ecore_txt")
-                    AM_CONDITIONAL(BUILD_ECORE_TXT, false)
-                  ]
-                ),
-           )
-         ]
-       ),
-  )
-else
-  AM_CONDITIONAL(BUILD_ECORE_TXT, false)
-fi
-
-AC_SUBST(iconv_cflags)
-AC_SUBST(iconv_libs)
-
-AC_SUBST(ecore_txt_cflags)
-AC_SUBST(ecore_txt_libs)
 
 AC_MSG_CHECKING(whether ecore_config module is to be built)
 
