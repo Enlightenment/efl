@@ -20,20 +20,21 @@
 typedef enum _Evas_Callback_Type
 {
    EVAS_CALLBACK_MOUSE_IN,
-     EVAS_CALLBACK_MOUSE_OUT,
-     EVAS_CALLBACK_MOUSE_DOWN,
-     EVAS_CALLBACK_MOUSE_UP,
-     EVAS_CALLBACK_MOUSE_MOVE,
-     EVAS_CALLBACK_FREE,
-     EVAS_CALLBACK_KEY_DOWN,
-     EVAS_CALLBACK_KEY_UP,
-     EVAS_CALLBACK_FOCUS_IN,
-     EVAS_CALLBACK_FOCUS_OUT,
-     EVAS_CALLBACK_SHOW,
-     EVAS_CALLBACK_HIDE,
-     EVAS_CALLBACK_MOVE,
-     EVAS_CALLBACK_RESIZE,
-     EVAS_CALLBACK_RESTACK
+   EVAS_CALLBACK_MOUSE_OUT,
+   EVAS_CALLBACK_MOUSE_DOWN,
+   EVAS_CALLBACK_MOUSE_UP,
+   EVAS_CALLBACK_MOUSE_MOVE,
+   EVAS_CALLBACK_MOUSE_WHEEL,	 
+   EVAS_CALLBACK_FREE,
+   EVAS_CALLBACK_KEY_DOWN,
+   EVAS_CALLBACK_KEY_UP,
+   EVAS_CALLBACK_FOCUS_IN,
+   EVAS_CALLBACK_FOCUS_OUT,
+   EVAS_CALLBACK_SHOW,
+   EVAS_CALLBACK_HIDE,
+   EVAS_CALLBACK_MOVE,
+   EVAS_CALLBACK_RESIZE,
+   EVAS_CALLBACK_RESTACK
 } Evas_Callback_Type;
 
 typedef struct _Evas_Rectangle      Evas_Rectangle;
@@ -227,6 +228,7 @@ struct _Evas_Callbacks
    Evas_Object_List *move;
    Evas_Object_List *in;
    Evas_Object_List *out;
+   Evas_Object_List *wheel;
    Evas_Object_List *key_down;
    Evas_Object_List *key_up;
    Evas_Object_List *free;

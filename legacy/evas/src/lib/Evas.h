@@ -11,6 +11,7 @@ enum _Evas_Callback_Type
    EVAS_CALLBACK_MOUSE_DOWN, /**< Mouse Button Down Event */
    EVAS_CALLBACK_MOUSE_UP, /**< Mouse Button Up Event */
    EVAS_CALLBACK_MOUSE_MOVE, /**< Mouse Move Event */
+   EVAS_CALLBACK_MOUSE_WHEEL, /**< Mouse Wheel Event */
    EVAS_CALLBACK_FREE, /**< Object Being Freed */
    EVAS_CALLBACK_KEY_DOWN, /**< Key Press Event */
    EVAS_CALLBACK_KEY_UP, /**< Key Release Event */
@@ -63,6 +64,7 @@ typedef struct _Evas_Event_Mouse_Up   Evas_Event_Mouse_Up; /**< Event structure 
 typedef struct _Evas_Event_Mouse_In   Evas_Event_Mouse_In; /**< Event structure for #EVAS_CALLBACK_MOUSE_IN event callbacks */
 typedef struct _Evas_Event_Mouse_Out  Evas_Event_Mouse_Out; /**< Event structure for #EVAS_CALLBACK_MOUSE_OUT event callbacks */
 typedef struct _Evas_Event_Mouse_Move Evas_Event_Mouse_Move; /**< Event structure for #EVAS_CALLBACK_MOUSE_MOVE event callbacks */
+typedef struct _Evas_Event_Mouse_Wheel Evas_Event_Mouse_Wheel; /**< Event structure for #EVAS_CALLBACK_MOUSE_WHEEL event callbacks */
 typedef struct _Evas_Event_Key_Down   Evas_Event_Key_Down; /**< Event structure for #EVAS_CALLBACK_KEY_DOWN event callbacks */
 typedef struct _Evas_Event_Key_Up     Evas_Event_Key_Up; /**< Event structure for #EVAS_CALLBACK_KEY_UP event callbacks */
 
@@ -153,6 +155,24 @@ struct _Evas_Event_Mouse_Move /** Mouse button down event */
    void          *data;
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
+};
+
+struct _Evas_Event_Mouse_Wheel /** Wheel event */
+{
+   int direction; /* 0 = default up/down wheel FIXME: more wheel types */
+   int z; /* ...,-2,-1 = down, 1,2,... = up */
+
+   struct {
+      int x, y;
+   } output;
+
+   struct {
+      double x, y;
+   } canvas;
+
+   void			 *data;
+   Evas_Modifier *modifiers;
+   Evas_Lock	 *locks;
 };
 
 struct _Evas_Event_Key_Down /** Key press event */
@@ -381,6 +401,7 @@ extern "C" {
    void              evas_event_feed_mouse_move_data   (Evas *e, int x, int y, const void *data);
    void              evas_event_feed_mouse_in_data     (Evas *e, const void *data);
    void              evas_event_feed_mouse_out_data    (Evas *e, const void *data);
+   void              evas_event_feed_mouse_wheel_data  (Evas *e, int direction, int z, const void *data);
    void              evas_event_feed_key_down_data     (Evas *e, const char *keyname, const void *data);
    void              evas_event_feed_key_up_data       (Evas *e, const char *keyname, const void *data);
    void              evas_event_feed_mouse_down        (Evas *e, int b);
@@ -388,6 +409,7 @@ extern "C" {
    void              evas_event_feed_mouse_move        (Evas *e, int x, int y);
    void              evas_event_feed_mouse_in          (Evas *e);
    void              evas_event_feed_mouse_out         (Evas *e);
+   void              evas_event_feed_mouse_wheel       (Evas *e, int direction, int z);
    void              evas_event_feed_key_down          (Evas *e, const char *keyname);
    void              evas_event_feed_key_up            (Evas *e, const char *keyname);
 

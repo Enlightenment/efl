@@ -132,6 +132,9 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
       case EVAS_CALLBACK_MOUSE_MOVE:
 	l_mod = &(obj->callbacks->move);
 	break;
+	  case EVAS_CALLBACK_MOUSE_WHEEL:
+	l_mod = &(obj->callbacks->wheel);
+	break;
       case EVAS_CALLBACK_FREE:
 	l_mod = &(obj->callbacks->free);
 	break;
@@ -212,11 +215,11 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
  * 
  * The event type @p type to trigger the function mys be one of 
  * EVAS_CALLBACK_MOUSE_IN, EVAS_CALLBACK_MOUSE_OUT, EVAS_CALLBACK_MOUSE_DOWN,
- * EVAS_CALLBACK_MOUSE_UP, EVAS_CALLBACK_MOUSE_MOVE, EVAS_CALLBACK_FREE, 
- * EVAS_CALLBACK_KEY_DOWN, EVAS_CALLBACK_KEY_UP, EVAS_CALLBACK_FOCUS_IN,
- * EVAS_CALLBACK_FOCUS_OUT, EVAS_CALLBACK_SHOW, EVAS_CALLBACK_HIDE, 
- * EVAS_CALLBACK_MOVE, EVAS_CALLBACK_RESIZE or EVAS_CALLBACK_RESTACK. This 
- * determines the kind of event that will trigger the callback to be called. 
+ * EVAS_CALLBACK_MOUSE_UP, EVAS_CALLBACK_MOUSE_MOVE, EVAS_CALLBACK_MOUSE_WHEEL,
+ * EVAS_CALLBACK_FREE, EVAS_CALLBACK_KEY_DOWN, EVAS_CALLBACK_KEY_UP, 
+ * EVAS_CALLBACK_FOCUS_IN, EVAS_CALLBACK_FOCUS_OUT, EVAS_CALLBACK_SHOW, 
+ * EVAS_CALLBACK_HIDE, EVAS_CALLBACK_MOVE, EVAS_CALLBACK_RESIZE or EVAS_CALLBACK_RESTACK.
+ * This determines the kind of event that will trigger the callback to be called.
  * The @p event_info pointer passed to the callback will be one of the 
  * following, depending on the event tiggering it:
  * 
@@ -261,7 +264,12 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
  * 
  * This event is triggered by the mouse pointer moving while over an object or
  * passively grabbed to an object.
- * 
+ *
+ * EVAS_CALLBACK_MOUSE_WHEEL: event_info = pointer to Evas_Event_Mouse_Wheel
+ *
+ * This event is triggered by the mouse wheel being rolled while over an object
+ * or passively grabbed to an object.
+ *
  * EVAS_CALLBACK_FREE: event_info = NULL
  * 
  * This event is triggered just before Evas is about to free all memory used
@@ -376,6 +384,9 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (
       case EVAS_CALLBACK_MOUSE_MOVE:
 	l_mod = &(obj->callbacks->move);
 	break;
+	  case EVAS_CALLBACK_MOUSE_WHEEL:
+	l_mod = &(obj->callbacks->wheel);
+	break;
       case EVAS_CALLBACK_FREE:
 	l_mod = &(obj->callbacks->free);
 	break;
@@ -467,6 +478,9 @@ evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (
 	break;
       case EVAS_CALLBACK_MOUSE_MOVE:
 	l_mod = &(obj->callbacks->move);
+	break;
+	  case EVAS_CALLBACK_MOUSE_WHEEL:
+	l_mod = &(obj->callbacks->wheel);
 	break;
       case EVAS_CALLBACK_FREE:
 	l_mod = &(obj->callbacks->free);
