@@ -848,21 +848,108 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
 void
 _ecore_x_event_handle_selection_clear(XEvent *xevent)
 {
-   /* FIXME: handle this event type */
-   /* This should wrap all the netwm property changes as well as ICCCM, */
-   /* the old gnomewm and kde hints, mwm hints and more */
+   Ecore_X_Selection_Data *d;
+
+   if(!(d = _ecore_x_selection_get(xevent->xselectionclear.selection)))
+      return;
+   if (xevent->xselectionclear.time > d->time)
+   {
+      _ecore_x_selection_set(None, NULL, 0, 
+            xevent->xselectionclear.selection);
+   }
 }
 
 void
 _ecore_x_event_handle_selection_request(XEvent *xevent)
 {
-   /* FIXME: handle this event type */
+   Ecore_X_Event_Selection_Request  *e;
+   Ecore_X_Selection_Data           *sd;
+   XSelectionEvent                  xnotify;
+   XEvent                           *xev;
+   char                             *data;
+
+   e = calloc(1, sizeof(Ecore_X_Event_Selection_Request));
+   e->win = xevent->xselectionrequest.requestor;
+   e->time = xevent->xselectionrequest.time;
+
+   xev = calloc(1, sizeof(XEvent));
+   
+   xnotify.requestor = xevent->xselectionrequest.requestor;
+   xnotify.selection = xevent->xselectionrequest.selection;
+   xnotify.target = xevent->xselectionrequest.target;
+   xnotify.time = CurrentTime;
+
+   if((sd = _ecore_x_selection_get(xnotify.selection)) 
+         && (sd->win == xevent->xselectionrequest.owner))
+   {
+      /* FIXME: Provide API for user-defined conversion functions */
+      if (xnotify.target == _ecore_x_atom_string)
+         data = ecore_x_selection_convert_to_string(sd->data);
+      else if (xnotify.target == _ecore_x_atom_utf8_string)
+         data = ecore_x_selection_convert_to_utf8_string(sd->data);
+      else
+         data = sd->data;
+      
+      /* FIXME: This does not properly handle large data transfers */
+      ecore_x_window_prop_property_set(e->win,
+            xevent->xselectionrequest.property,
+            xevent->xselectionrequest.target,
+            8, data, sd->length);
+      xnotify.property = xevent->xselectionrequest.property;
+   }
+   else
+   {
+      xnotify.property = None;
+      return;
+   }
+   
+   xev->xselection = xnotify;
+   XSendEvent(_ecore_x_disp, e->win, False, 0, xev);
+   /* FIXME: We alloc e but we never actually add it to the event
+    * queue -- should it be freed or is it still useful? */
+   
 }
 
 void
 _ecore_x_event_handle_selection_notify(XEvent *xevent)
 {
-   /* FIXME: handle this event type */
+   Ecore_X_Event_Selection_Notify   *e;
+   unsigned char                    *data = NULL;
+   Atom                             selection;
+   int                              num_ret;
+   Ecore_X_Selection_Data           sel_data;
+
+   e = calloc(1, sizeof(Ecore_X_Event_Selection_Notify));
+   e->win = xevent->xselection.requestor;
+   e->time = xevent->xselection.time;
+   e->target = ecore_x_selection_target_get(xevent->xselection.target);
+   selection = xevent->xselection.selection;
+   if (selection == _ecore_x_atom_selection_primary)
+      e->selection = ECORE_X_SELECTION_PRIMARY;
+   else if (selection == _ecore_x_atom_selection_secondary)
+      e->selection = ECORE_X_SELECTION_SECONDARY;
+   else if (selection == _ecore_x_atom_selection_clipboard)
+      e->selection = ECORE_X_SELECTION_CLIPBOARD;
+   else
+   {
+      free(e);
+      return;
+   }
+
+   if (!ecore_x_window_prop_property_get(e->win, xevent->xselection.property,
+            AnyPropertyType, 8, &data, &num_ret))
+   {
+      free(e);
+      return;
+   }
+
+   sel_data.win = e->win;
+   sel_data.selection = selection;
+   sel_data.data = data;
+   sel_data.length = num_ret;
+   _ecore_x_selection_request_data_set(sel_data);
+   ecore_event_add(ECORE_X_EVENT_SELECTION_NOTIFY, e, _ecore_x_event_free_generic, NULL);
+
 }
 
 void

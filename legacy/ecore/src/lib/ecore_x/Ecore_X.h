@@ -22,6 +22,19 @@ extern "C" {
 typedef void Ecore_X_Reply;   
 #endif
 
+typedef enum _Ecore_X_Selection_Target {
+   ECORE_X_SELECTION_TARGET_FILENAME,
+   ECORE_X_SELECTION_TARGET_STRING,
+   ECORE_X_SELECTION_TARGET_UTF8_STRING,
+   ECORE_X_SELECTION_TARGET_TEXT
+} Ecore_X_Selection_Target;
+
+typedef enum _Ecore_X_Selection {
+   ECORE_X_SELECTION_PRIMARY,
+   ECORE_X_SELECTION_SECONDARY,
+   ECORE_X_SELECTION_CLIPBOARD
+} Ecore_X_Selection;
+
 typedef enum _Ecore_X_Event_Mode
 {
    ECORE_X_EVENT_MODE_NORMAL,
@@ -358,8 +371,10 @@ struct _Ecore_X_Event_Selection_Request
 
 struct _Ecore_X_Event_Selection_Notify
 {
-   Ecore_X_Window  win;
-   Ecore_X_Window  time;
+   Ecore_X_Window             win;
+   Ecore_X_Time               time;
+   Ecore_X_Selection          selection;
+   Ecore_X_Selection_Target   target;
 };
 
 struct _Ecore_X_Event_Client_Message
@@ -553,13 +568,6 @@ typedef enum _Ecore_X_Window_State {
 
 } Ecore_X_Window_State;
 
-typedef enum _Ecore_X_Selection_Target {
-   ECORE_X_SELECTION_TARGET_FILENAME,
-   ECORE_X_SELECTION_TARGET_STRING,
-   ECORE_X_SELECTION_TARGET_UTF8_STRING,
-   ECORE_X_SELECTION_TARGET_TEXT
-} Ecore_X_Selection_Target;
-
 int              ecore_x_init(const char *name);
 int              ecore_x_shutdown(void);       
 Ecore_X_Display *ecore_x_display_get(void);
@@ -581,6 +589,16 @@ int              ecore_x_selection_secondary_set(Ecore_X_Window w, char *data, i
 int              ecore_x_selection_secondary_clear(void);
 int              ecore_x_selection_clipboard_set(Ecore_X_Window w, char *data, int len);
 int              ecore_x_selection_clipboard_clear(void);
+void             ecore_x_selection_primary_request(Ecore_X_Window w, Ecore_X_Selection_Target t);
+void             ecore_x_selection_secondary_request(Ecore_X_Window w, Ecore_X_Selection_Target t);
+void             ecore_x_selection_clipboard_request(Ecore_X_Window w, Ecore_X_Selection_Target t);
+void             ecore_x_selection_primary_request_data_get(void **buf, int *len);
+void             ecore_x_selection_secondary_request_data_get(void **buf, int *len);
+void             ecore_x_selection_clipboard_request_data_get(void **buf, int *len);
+Ecore_X_Selection_Target
+                 ecore_x_selection_target_get(Ecore_X_Atom target);
+char *           ecore_x_selection_convert_to_string(char *data);
+char *           ecore_x_selection_convert_to_utf8_string(char *data);
 
 Ecore_X_Window   ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h);
 Ecore_X_Window   ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h);

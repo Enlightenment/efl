@@ -42,6 +42,7 @@ struct _Ecore_X_Selection_Data
    Atom              selection;
    char              *data;
    int               length;
+   Time              time;
 };
 
 typedef enum _Ecore_X_WM_Protocol {
@@ -168,5 +169,9 @@ void _ecore_x_event_handle_colormap_notify(XEvent *xevent);
 void _ecore_x_event_handle_client_message(XEvent *xevent);
 void _ecore_x_event_handle_mapping_notify(XEvent *xevent);
 void _ecore_x_event_handle_shape_change(XEvent *xevent);
+
+void _ecore_x_selection_request_data_set(Ecore_X_Selection_Data data);
+Ecore_X_Selection_Data * _ecore_x_selection_get(Atom selection);
+int  _ecore_x_selection_set(Window w, char *data, int len, Atom selection);
 
 #endif
