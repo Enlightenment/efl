@@ -1,7 +1,7 @@
 ## Process this file with automake to produce Makefile.in
 
 INCLUDES = \
--I. -I$(top_srcdir)/src/lib -I$(includedir) -I$(top_srcdir) \
+-I. -I$(top_srcdir)/src/lib -I$(top_srcdir) \
 @DIRECTFB_CFLAGS@ @qt_cflags@ @gl_cflags@
 
 bin_PROGRAMS = \

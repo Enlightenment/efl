@@ -1,7 +1,23 @@
 #!/bin/sh
 
+PROJ="evas"
+
+SKIFF="/skiff/local"
+HOSTARCH="i686-pc-linux-gnu"
+TARGETCPU="arm"
+TARGETARCH=$TARGETCPU"-pc-linux-gnu"
+
+export EDB_CONFIG=$SKIFF"/"$TARGETCPU"-linux/bin/edb-config"
+export EET_CONFIG=$SKIFF"/"$TARGETCPU"-linux/bin/eet-config"
+export FREETYPE_CONFIG=$SKIFF"/"$TARGETCPU"-linux/bin/freetype-config"
+
 make clean distclean
+export CC=/skiff/local/bin/arm-linux-gcc
+export CFLAGS=-O9
 ./configure \
+--host=$HOSTARCH \
+--build=$TARGETARCH \
+--target=$TARGETARCH \
 --disable-software-x11 \
 --disable-directfb \
  --enable-fb \
@@ -45,97 +61,60 @@ make clean distclean
 --disable-convert-32-rgb-rot-270 \
 --disable-convert-32-rgb-rot-90
 
-CC="/skiff/local/bin/arm-linux-gcc"
-ST="/skiff/local/bin/arm-linux-strip"
-CFLAGS="-O9"
+INST="/tmp/"$PROJ"-instroot"
+sudo rm -rf $INST
 
-rm -rf "build"
-mkdir "build"
-DST=`pwd`"/build";
+make
 
-mkdir $DST"/lib";
-mkdir $DST"/bin";
-mkdir $DST"/include";
-mkdir $DST"/share";
-mkdir $DST"/share/evas";
+for I in  find . -name "*.la" -print; do
+  sed s:"/usr/local":$INST:g < $I > "/tmp/.sed.tmp"
+  sudo cp "/tmp/.sed.tmp" $I
+  rm -f "/tmp/.sed.tmp"
+done
 
-pushd src
+sudo \
+make \
+prefix=$INST \
+exec_prefix=$INST \
+bindir=$INST"/bin" \
+sbindir=$INST"/sbin" \
+sysconfdir=$INST"/etc" \
+datadir=$INST"/share" \
+includedir=$INST"/include" \
+libdir=$INST"/lib" \
+libexecdir=$INST"/libexec" \
+localstatedir=$INST"/var/run" \
+mandir=$INST"/share/man" \
+infodir=$INST"/share/info" \
+install
 
- pushd lib
-  LIB="evas"
-  $CC \
-  main.c canvas/*.c data/*.c engines/fb/*.c file/*.c \
-  engines/common/evas_blend_alpha_color_pixel.c \
-  engines/common/evas_blend_color_pixel.c \
-  engines/common/evas_blend_main.c \
-  engines/common/evas_blend_pixel_cmod_pixel.c \
-  engines/common/evas_blend_pixel_mul_pixel.c \
-  engines/common/evas_blend_pixel_pixel.c \
-  engines/common/evas_blit_main.c \
-  engines/common/evas_convert_color.c \
-  engines/common/evas_convert_gry_1.c \
-  engines/common/evas_convert_gry_4.c \
-  engines/common/evas_convert_gry_8.c \
-  engines/common/evas_convert_main.c \
-  engines/common/evas_convert_rgb_16.c \
-  engines/common/evas_convert_rgb_24.c \
-  engines/common/evas_convert_rgb_32.c \
-  engines/common/evas_convert_rgb_8.c \
-  engines/common/evas_cpu.c \
-  engines/common/evas_draw_main.c \
-  engines/common/evas_font_draw.c \
-  engines/common/evas_font_load.c \
-  engines/common/evas_font_main.c \
-  engines/common/evas_font_query.c \
-  engines/common/evas_gradient_main.c \
-  engines/common/evas_image_load.c \
-  engines/common/evas_image_main.c \
-  engines/common/evas_line_main.c \
-  engines/common/evas_polygon_main.c \
-  engines/common/evas_rectangle_main.c \
-  engines/common/evas_scale_main.c \
-  engines/common/evas_scale_sample.c \
-  engines/common/evas_scale_smooth.c \
-  engines/common/evas_tiler.c \
-  $CFLAGS \
-  -I. -Icanvas -Idata -Iengines/common -Iengines/fb -Ifile -Iinclude \
-  -I/skiff/local/include/freetype2 \
-  -I../.. \
-  -I/skiff/local/include \
-  -shared -fPIC -DPIC \
-  -Wl,-soname -Wl,"lib"$LIB".so.1" \
-  -o "lib"$LIB".so.1.0.0"
-  $ST -g "lib"$LIB".so.1.0.0"
-  rm -f "lib"$LIB".so"
-  ln -s "lib"$LIB".so.1.0.0" "lib"$LIB".so"
-  rm -f "lib"$LIB".so.1"
-  ln -s "lib"$LIB".so.1.0.0" "lib"$LIB".so.1"
-  rm -f "lib"$LIB".so.1.0"
-  ln -s "lib"$LIB".so.1.0.0" "lib"$LIB".so.1.0"
-  cp -a "lib"$LIB".so"* $DST"/lib";
-  cp -a Evas.h Evas_Engine_FB.h $DST"/include";
- popd
+## FIXUPS
+for I in $INST"/bin/"* $INST"/sbin/"* $INST"/libexec/"*; do
+  J=`echo $I | sed s:$TARGETARCH"-"::g`
+  sudo mv $I $J
+done
 
- pushd bin
-  BIN="evas_fb_test"
-   $CC evas_fb_main.c evas_test_main.c \
-   -I../.. -I../lib \
-   -I. \
-   -I/skiff/local/include \
-   -L. -L../lib \
-   -levas -leet -ljpeg -lpng -lfreetype -lm -lz \
-   -o $BIN
-   $ST $BIN
-   cp -a $BIN $DST"/bin";
- popd
-popd
+CF=$INST"/bin/"$PROJ"-config"
+sed s:"/usr/local":$SKIFF"/"$TARGETCPU"-linux":g < $CF > "/tmp/.sed.tmp"
+sudo cp "/tmp/.sed.tmp" $CF
+rm -f "/tmp/.sed.tmp"
 
-cp -ar data $DST"/share/evas"
+for I in  $INST"/lib/"*.la; do
+  sed s:"/usr/local":$SKIFF"/"$TARGETCPU"-linux":g < $I > "/tmp/.sed.tmp"
+  sudo cp "/tmp/.sed.tmp" $I
+  rm -f "/tmp/.sed.tmp"
+done
 
-PD=`pwd`
-pushd "build"
- tar zcvf $PD"/data.tar.gz" *
- pushd "/skiff/local"
-  sudo tar zxvf $PD"/data.tar.gz"
- popd
-popd
+## package it all up
+PACK=$PROJ"-"$TARGETCPU"-inst.tar.gz"
+
+DIR=$PWD
+cd $INST
+sudo tar zcvf $DIR"/"$PACK *
+sudo chown $USER $DIR"/"$PACK
+cd $DIR
+sudo rm -rf $INST
+
+## install it in our skiff tree
+cd $SKIFF"/"$TARGETCPU"-linux"
+sudo tar zxvf $DIR"/"$PACK

@@ -1,6 +1,3 @@
-#include "evas_common.h"
-#include "evas_private.h"
-
 /* os dependant file code. for unix-y like fs's only for now */
 /* if your os doesn't use unix-like fs starting with "/" for the root and */
 /* the file path separator isn't "/" then you may need to help out by */
@@ -18,6 +15,9 @@
 /* get the casefold feature! */
 #include <fnmatch.h>
 #include <dirent.h>
+
+#include "evas_common.h"
+#include "evas_private.h"
 
 int
 evas_file_path_is_full_path(char *path)

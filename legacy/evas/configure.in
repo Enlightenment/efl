@@ -116,10 +116,13 @@ AC_ARG_WITH(freetype-config,
   PROG_CONFIG=$withval;
   echo "using "$PROG_CONFIG" for freetype-config";
 ],[
-  PROG="freetype-config";
-  AC_PATH_PROG(PROG_CONFIG, $PROG, "", $PATH)
+ PROG="freetype-config";
+ AC_PATH_PROG(PROG_CONFIG, $PROG, "", $PATH)
 ])
-if [ test -z $PROG_CONFIG ]; then
+if [ test -n "$FREETYPE_CONFIG" ]; then
+  PROG_CONFIG=$FREETYPE_CONFIG;
+fi
+if [ test -z "$PROG_CONFIG" ]; then
   echo $PROG " is not in your \$PATH. Please ensure it is.";
   echo "You may need to install the librarya and/or development packages";
   echo "that contain this configure-script.";
@@ -128,7 +131,6 @@ if [ test -z $PROG_CONFIG ]; then
 fi
 freetype_cflags=`$PROG_CONFIG --cflags`
 freetype_libs=`$PROG_CONFIG --libs`
-
 
 #####################################################################
 ## Engines
@@ -498,8 +500,9 @@ if test "x$have_eet" = "xyes"; then
 fi
 if test "x$have_eet" = "xyes"; then
   AC_DEFINE(BUILD_LOADER_EET, 1, [EET Image Loader Support])
-  eet_cflags=`eet-config --cflags`
-  eet_libs=`eet-config --libs`
+  if [ test -z "$EET_CONFIG" ]; then EET_CONFIG="eet-config"; fi
+  eet_cflags=`$EET_CONFIG --cflags`
+  eet_libs=`$EET_CONFIG --libs`
 fi
 
 #######################################
@@ -531,8 +534,9 @@ if test "x$have_edb" = "xyes"; then
 fi
 if test "x$have_edb" = "xyes"; then
   AC_DEFINE(BUILD_LOADER_EDB, 1, [EDB Image Loader Support])
-  edb_cflags=`edb-config --cflags`
-  edb_libs=`edb-config --libs`
+  if [ test -z "$EDB_CONFIG" ]; then EDV_CONFIG="edb-config"; fi
+  edb_cflags=`$EDB_CONFIG --cflags`
+  edb_libs=`$EDB_CONFIG --libs`
 fi
 
 #######################################
@@ -564,8 +568,9 @@ if test "x$have_eet_fonts" = "xyes"; then
 fi
 if test "x$have_eet_fonts" = "xyes"; then
   AC_DEFINE(BUILD_FONT_LOADER_EET, 1, [EET Font Loader Support])
-  eet_cflags=`eet-config --cflags`
-  eet_libs=`eet-config --libs`
+  if [ test -z "$EET_CONFIG" ]; then EET_CONFIG="eet-config"; fi
+  eet_cflags=`$EET_CONFIG --cflags`
+  eet_libs=`$EET_CONFIG --libs`
 fi
 
 #####################################################################

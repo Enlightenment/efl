@@ -71,21 +71,36 @@ evas_common_font_source_load(const char *name)
 	return NULL;
      }
 #if 0 /* debugging to look at charmaps in a ttf */
-   printf("%i\n", fs->ft.face->num_charmaps);
+   printf("charmaps [%s]: %i\n", name, fs->ft.face->num_charmaps);
      {
 	int i;
 	
 	for (i = 0; i < fs->ft.face->num_charmaps; i++)
 	  {
-	     printf("%i: %x, %c\n", 
-		    i, fs->ft.face->charmaps[i]->encoding,
-		    fs->ft.face->charmaps[i]->encoding);
+	     printf("  %i: %x, ", 
+		    i, fs->ft.face->charmaps[i]->encoding);
+	     if      (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_NONE)           printf("none\n");
+	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_UNICODE)        printf("unicode\n");
+	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_MS_SYMBOL)      printf("ms_symbol\n");
+	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_SJIS)           printf("sjis\n");
+	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_GB2312)         printf("gb3212\n");
+	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_BIG5)           printf("big5\n");
+	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_WANSUNG)        printf("wansung\n");
+	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_JOHAB)          printf("johab\n");
+	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_ADOBE_LATIN_1)  printf("adobe_latin_1\n");
+	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_ADOBE_STANDARD) printf("adobe_standard\n");
+	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_ADOBE_EXPERT)   printf("adobe_expert\n");
+	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_ADOBE_CUSTOM)   printf("adobe_custom\n");
+	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_APPLE_ROMAN)    printf("apple_roman\n");
+	     else                                                                       printf("UNKNOWN");
+	     printf("\n");
 	  }
      }
 #endif   
    error = FT_Select_Charmap(fs->ft.face, ft_encoding_unicode);
    if (error)
      {
+	printf("cant select unicode!\n");
 /* disable this for now...
 	error = FT_Select_Charmap(fs->ft.face, ft_encoding_latin_2);
 	if (error)

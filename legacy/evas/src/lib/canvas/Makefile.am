@@ -5,13 +5,11 @@ AUTOMAKE_OPTIONS     = 1.4 foreign
 # A list of all the files in the current directory which can be regenerated
 MAINTAINERCLEANFILES = Makefile.in
 
-LDFLAGS		     = -L/usr/local/lib
+LDFLAGS		     = 
 INCLUDES	     = @freetype_cflags@ @x_cflags@ @DIRECTFB_CFLAGS@ \
                        -I. \
 		       -I$(top_srcdir)/src/lib \
-		       -I$(top_srcdir)/src/lib/include \
-		       -I$(includedir) \
-                       -I/usr/local/include
+		       -I$(top_srcdir)/src/lib/include
 
 noinst_LTLIBRARIES   = libevas_canvas.la
 libevas_canvas_la_SOURCES  = \

@@ -5,13 +5,11 @@ AUTOMAKE_OPTIONS     = 1.4 foreign
 # A list of all the files in the current directory which can be regenerated
 MAINTAINERCLEANFILES = Makefile.in
 
-LDFLAGS		     = -L/usr/local/lib
+LDFLAGS		     =
 INCLUDES	     = @freetype_cflags@ @qt_cflags@ \
                        -I. \
 		       -I$(top_srcdir)/src/lib \
-		       -I$(top_srcdir)/src/lib/include \
-		       -I$(includedir) \
-                       -I/usr/local/include
+		       -I$(top_srcdir)/src/lib/include
 
 CXXFLAGS             = $(CFLAGS) -DQT_QWS_EBX -DQT_QWS_CUSTOM -DQWS -DNO_DEBUG 
 

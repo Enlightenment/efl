@@ -5,14 +5,12 @@ AUTOMAKE_OPTIONS     = 1.4 foreign
 # A list of all the files in the current directory which can be regenerated
 MAINTAINERCLEANFILES = Makefile.in
 
-LDFLAGS		     = -L/usr/local/lib
+LDFLAGS		     =
 INCLUDES	     = @freetype_cflags@ @x_cflags@ \
                        -I. \
 		       -I$(top_srcdir)/src/lib \
-		       -I$(top_srcdir)/src/lib/include \
-		       -I$(includedir) \
-                       -I/usr/local/include
-
+		       -I$(top_srcdir)/src/lib/include
+		       
 if BUILD_ENGINE_SOFTWARE_X11
 
 noinst_LTLIBRARIES      = libevas_engine_software_x11.la
