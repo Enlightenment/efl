@@ -519,29 +519,76 @@ __evas_gl_texture_new(Evas_GL_Window *w, Imlib_Image im, int ix, int iy, int iw,
 	  }
      }
 #ifdef HAVE_GLU
-   if (imlib_image_has_alpha())
+   /* FIXME: GLU mipmap generation is BLOODY SLOW */
+   if (0) /* if libGLU is fucking slow piece of shit - do it ourselves */
      {
-        gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA8, tw, th, GL_RGBA,
-			  GL_UNSIGNED_BYTE, data);
-     }
-   else
-     {
-        gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB8, tw, th, GL_RGBA,
-			  GL_UNSIGNED_BYTE, data);
+	if (imlib_image_has_alpha())
+	  gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA8, tw, th, GL_RGBA,
+			    GL_UNSIGNED_BYTE, data);
+	else
+	  gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGB8, tw, th, GL_RGBA,
+			    GL_UNSIGNED_BYTE, data);
      }
 #else
-   if (imlib_image_has_alpha())
+   if (0)
      {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, tw, th, 0,
-		     GL_RGBA, GL_UNSIGNED_BYTE, data);
+	if (imlib_image_has_alpha())
+	  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, tw, th, 0,
+		       GL_RGBA, GL_UNSIGNED_BYTE, data);
+	else
+	  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, tw, th, 0,
+		       GL_RGBA, GL_UNSIGNED_BYTE, data);
      }
+#endif     
    else
      {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB8, tw, th, 0,
-		     GL_RGBA, GL_UNSIGNED_BYTE, data);
+	int mw, mh;
+	int level;
+	Imlib_Image im1 = NULL, im2 = NULL;
+	int alpha = 0;
+	
+	mw = tw;
+	mh = th;
+	level = 0;
+	alpha = imlib_image_has_alpha();
+	im1 = imlib_create_image_using_data(tw, th, data);
+	imlib_context_set_image(im1);
+	imlib_image_set_has_alpha(1);
+	
+	for (;;)
+	  {
+	     int pw, ph;
+	     DATA32 *idat;
+	     
+	     imlib_context_set_image(im1);
+	     idat = imlib_image_get_data_for_reading_only();	     
+	     if (alpha)
+	       glTexImage2D(GL_TEXTURE_2D, level, GL_RGBA8, mw, mh, 0,
+			    GL_RGBA, GL_UNSIGNED_BYTE, idat);
+	     else
+	       glTexImage2D(GL_TEXTURE_2D, level, GL_RGB8, mw, mh, 0,
+			    GL_RGBA, GL_UNSIGNED_BYTE, idat);
+	     imlib_image_put_back_data(idat);
+	     if ((mw == 1) && (mh == 1)) break;
+	     level++;
+	     pw = mw; ph = mh;
+	     mw >>= 1; if (mw < 1) mw = 1;
+	     mh >>= 1; if (mh < 1) mh = 1;
+	     im2 = imlib_create_cropped_scaled_image(0, 0, pw, ph, mw, mh);
+	     imlib_free_image();
+	     im1 = im2; im2 = NULL;
+	     imlib_context_set_image(im1);	     
+	     imlib_image_set_has_alpha(1);
+	  }
+	if (im1)
+	  {
+	     imlib_context_set_image(im1);
+	     imlib_free_image();
+	     im1 = NULL;
+	  }
      }
-#endif   
    free(data);
+   imlib_context_set_image(im);
    imlib_image_put_back_data(im_data);
    imlib_context_set_image(prev_im);
    return tex;
