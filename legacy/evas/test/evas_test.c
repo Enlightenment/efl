@@ -1,8 +1,20 @@
 #include <Evas.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/time.h>
 #include <unistd.h>
 #include <math.h>
+
+double get_time(void);
+
+double
+get_time(void)
+{
+   struct timeval      timev;
+   
+   gettimeofday(&timev, NULL);
+   return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
+}
 
 int
 main(int argc, char **argv)
@@ -14,8 +26,9 @@ main(int argc, char **argv)
    int win_w, win_h;
    int i, a, w, h;
    Evas e;
-   Evas_Object o[128];
+   Evas_Object o[128], o_rect;
    int down;
+   double t1, t2;
    char *imgs[8] =
      {
 	"img/mush.png",
@@ -91,6 +104,12 @@ main(int argc, char **argv)
 	evas_show(e, o[i]);
 	evas_set_layer(e, o[i], 100);
      }
+   o_rect = evas_add_rectangle(e);
+   evas_show(e, o_rect);
+   evas_move(e, o_rect, 100, 100);
+   evas_resize(e, o_rect, 200, 100);
+   evas_set_color(e, o_rect, rand()&0xff,  rand()&0xff,  rand()&0xff, 120);
+   evas_set_layer(e, o_rect, 150);
    
    evas_raise(e, o[1]);
    evas_move(e, o[0], 0, 0);
@@ -98,6 +117,7 @@ main(int argc, char **argv)
    evas_set_image_fill(e, o[0], 0, 0, win_w, win_h);
    a = 0;
    down = 0;
+   t1 = get_time();
    for (;;)
      {
 	double x, y;
@@ -167,7 +187,16 @@ main(int argc, char **argv)
 	  }
 	evas_render(e);
 	a++;
-	if (a >= 1000) a = 0;
+	if ((a % 25) == 0)
+	  {
+	      t2 = get_time() - t1;
+	      t1 = get_time();
+	      printf("%3.3f fps\n", 25 / t2);
+	  }
+	if (a >= 1000) 
+	   {
+	      a = 0;
+	   }
      }
 }
 
@@ -284,16 +313,6 @@ main(int argc, char **argv)
 #if 0
 #include "../src/evas_gl_routines.h"
 
-double get_time(void);
-
-double
-get_time(void)
-{
-   struct timeval      timev;
-   
-   gettimeofday(&timev, NULL);
-   return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
-}
 
 int
 main(int argc, char **argv)

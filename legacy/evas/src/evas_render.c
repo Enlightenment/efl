@@ -88,6 +88,8 @@ evas_render(Evas e)
    void * (*func_text_font_new) (Display *disp, char *font, int size);
    void (*func_text_font_free) (Evas_GL_Font *fn);
    void (*func_text_draw) (Evas_GL_Font *fn, Display *disp, Window win, int win_w, int win_h, int x, int y, char *text, int r, int g, int b, int a);
+   void (*func_rectangle_draw) (Display *disp, Window win, int win_w, int win_h, int x, int y, int w, int h, int r, int g, int b, int a);
+   void (*func_line_draw) (Display *disp, Window win, int win_w, int win_h, int x1, int y1, int x2, int y2, int r, int g, int b, int a);
    
    if ((!e->changed) || 
        (!e->current.display) || 
@@ -112,6 +114,8 @@ evas_render(Evas e)
 	func_text_font_new       = __evas_imlib_text_font_new;
 	func_text_font_free      = __evas_imlib_text_font_free;
 	func_text_draw           = __evas_imlib_text_draw;
+	func_rectangle_draw      = __evas_imlib_rectangle_draw;
+	func_line_draw           = __evas_imlib_line_draw;
 	break;
      case RENDER_METHOD_BASIC_HARDWARE:
 	break;
@@ -127,6 +131,8 @@ evas_render(Evas e)
 	func_text_font_new       = __evas_gl_text_font_new;
 	func_text_font_free      = __evas_gl_text_font_free;
 	func_text_draw           = __evas_gl_text_draw;
+	func_rectangle_draw      = __evas_gl_rectangle_draw;
+	func_line_draw           = __evas_gl_line_draw;
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
 	break;
@@ -216,7 +222,11 @@ evas_render(Evas e)
 				 Evas_Object_Rectangle oo;
 				 
 				 oo = o;
-				 if (1)
+				 if ((oo->current.r != oo->previous.r) ||
+				     (oo->current.g != oo->previous.g) ||
+				     (oo->current.b != oo->previous.b) ||
+				     (oo->current.a != oo->previous.a)
+				     )
 				    real_change = 1;
 				 oo->previous = oo->current;
 			      }
@@ -226,7 +236,15 @@ evas_render(Evas e)
 				 Evas_Object_Line oo;
 				 
 				 oo = o;
-				 if (1)
+				 if ((oo->current.x1 != oo->previous.x1) ||
+				     (oo->current.y1 != oo->previous.y1) ||
+				     (oo->current.x2 != oo->previous.x2) ||
+				     (oo->current.y2 != oo->previous.y2) ||
+				     (oo->current.r != oo->previous.r) ||
+				     (oo->current.g != oo->previous.g) ||
+				     (oo->current.b != oo->previous.b) ||
+				     (oo->current.a != oo->previous.a)
+				     )
 				    real_change = 1;
 				 oo->previous = oo->current;
 			      }
@@ -494,6 +512,19 @@ evas_render(Evas e)
 					   Evas_Object_Rectangle oo;
 					   
 					   oo = o;
+					   func_rectangle_draw(
+							       e->current.display,
+							       e->current.drawable,
+							       e->current.drawable_width,
+							       e->current.drawable_height,
+							       o->current.x,
+							       o->current.y,
+							       o->current.w,
+							       o->current.h,
+							       oo->current.r,
+							       oo->current.g,
+							       oo->current.b,
+							       oo->current.a);
 					}
 				      break;
 				   case OBJECT_LINE:
@@ -501,6 +532,19 @@ evas_render(Evas e)
 					   Evas_Object_Line oo;
 					   
 					   oo = o;
+					   func_line_draw(
+							  e->current.display,
+							  e->current.drawable,
+							  e->current.drawable_width,
+							  e->current.drawable_height,
+							  oo->current.x1,
+							  oo->current.y1,
+							  oo->current.x2,
+							  oo->current.y2,
+							  oo->current.r,
+							  oo->current.g,
+							  oo->current.b,
+							  oo->current.a);
 					}
 				      break;
 				   case OBJECT_GRADIENT_BOX:

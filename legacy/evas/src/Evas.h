@@ -215,8 +215,8 @@ void evas_update_rect(Evas e, int x, int y, int w, int h);
 void evas_render(Evas e);
 
 /* query for settings to use */
-Visual *evas_get_optimal_visual(Evas e, Display *disp);
-Colormap evas_get_optimal_colormap(Evas e, Display *disp);
+Visual   *evas_get_optimal_visual(Evas e, Display *disp);
+Colormap  evas_get_optimal_colormap(Evas e, Display *disp);
 
 /* the output settings */
 void evas_set_output(Evas e, Display *disp, Drawable d, Visual *v, Colormap c);
@@ -232,8 +232,8 @@ void evas_del_object(Evas e, Evas_Object o);
 Evas_Object evas_add_image_from_file(Evas e, char *file);
 Evas_Object evas_add_image_from_data(Evas e, void *data, Evas_Image_Format format, int w, int h);
 Evas_Object evas_add_text(Evas e, char *font, int size, char *text);
-Evas_Object evas_add_rectangle(Evas e, int r, int g, int b, int a);
-Evas_Object evas_add_line(Evas e, int r, int g, int b, int a);
+Evas_Object evas_add_rectangle(Evas e);
+Evas_Object evas_add_line(Evas e);
 Evas_Object evas_add_gradient_box(Evas e);
 
 /* set object settings */
@@ -251,7 +251,7 @@ void evas_set_font_cache(Evas e, int size);
 int  evas_get_font_cache(Evas e);
 void evas_flush_font_cache(Evas e);
 void evas_set_image_cache(Evas e, int size);
-int evas_get_image_cache(Evas e);
+int  evas_get_image_cache(Evas e);
 void evas_flush_image_cache(Evas e);
 void evas_font_add_path(Evas e, char *path);
 void evas_font_del_path(Evas e, char *path);
