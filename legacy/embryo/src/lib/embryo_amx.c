@@ -361,7 +361,10 @@ embryo_program_native_call_add(Embryo_Program *ep, char *name, Embryo_Cell (*fun
 	     if ((entry_name) && (!strcmp(entry_name, name)))
 	       {
 		  func_entry->address = ep->native_calls_size;
-		  return;
+		  /* FIXME: embryo_cc is putting in multiple native */
+		  /* function call entries - so we need to fill in all */
+		  /* of them!!! */
+		  /* return; */
 	       }
 	  }
 	func_entry = 
@@ -1530,6 +1533,25 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 		       ep->reset_hea = reset_hea;
 		       ep->run_count--;
 		       return EMBRYO_PROGRAM_SLEEP;
+		    }
+		    {
+		       Embryo_Header    *hdr;
+		       int i, num;
+		       Embryo_Func_Stub *func_entry;
+		       
+		       hdr = (Embryo_Header *)ep->code;
+		       num = NUMENTRIES(hdr, natives, libraries);
+		       func_entry = GETENTRY(hdr, natives, 0);
+		       for (i = 0; i < num; i++)
+			 {
+			    char *entry_name;
+			    
+			    entry_name = GETENTRYNAME(hdr, func_entry);
+			    if (i == offs)
+			      printf("EMBRYO: CALL [%i] %s() non-existant!\n", i, entry_name);
+			    func_entry =
+			      (Embryo_Func_Stub *)((unsigned char *)func_entry + hdr->defsize);
+			 }
 		    }
 		  ABORT(ep, num);
 	       }
