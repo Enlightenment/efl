@@ -2292,7 +2292,7 @@ int            __evas_gl_image_get_width(Evas_GL_Image *im){return 0;}
 int            __evas_gl_image_get_height(Evas_GL_Image *im){return 0;}
 void           __evas_gl_image_set_borders(Evas_GL_Image *im, int left, int right, int top, int bottom){}
 void           __evas_gl_image_set_smooth_scaling(int on){}
-void           __evas_gl_image_draw(Evas_GL_Image *im, Display *disp, Imlib_Image dstim, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h){}
+void           __evas_gl_image_draw(Evas_GL_Image *im, Display *disp, Imlib_Image dstim, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int cr, int cg, int cb, int ca){}
 
 /********/
 /* text */
@@ -2331,7 +2331,7 @@ void              __evas_gl_gradient_draw(Evas_GL_Graident *gr, Display *disp, I
 /***********/
 /* drawing */
 /***********/
-void         __evas_gl_init(Display *disp, int screen){}
+void         __evas_gl_init(Display *disp, int screen, int colors){}
 int          __evas_gl_capable(Display *disp){return 0;}
 void         __evas_gl_flush_draw(Display *disp, Imlib_Image dstim, Window win){}
 void         __evas_gl_sync(Display *disp){}
