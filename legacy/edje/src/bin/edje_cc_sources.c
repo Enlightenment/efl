@@ -75,9 +75,9 @@ source_fetch_file(char *fil, char *filname)
 	fseek(f, 0, SEEK_SET);
 	sf = mem_alloc(SZ(SrcFile));
 	sf->name = mem_strdup(filname);
-	sf->file = mem_alloc(sz);
+	sf->file = mem_alloc(sz + 1);
 	fread(sf->file, sz, 1, f);
-	sf->file[sz - 1] = '\0';
+	sf->file[sz] = '\0';
 	fseek(f, 0, SEEK_SET);
 	srcfiles.list = evas_list_append(srcfiles.list, sf);
     }
