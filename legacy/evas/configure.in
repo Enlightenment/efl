@@ -5,7 +5,7 @@ rm -f config.cache
 
 AC_INIT(configure.in)
 AC_ISC_POSIX
-AM_INIT_AUTOMAKE(evas, 1.0.0-pre5)
+AM_INIT_AUTOMAKE(evas, 1.0.0_pre5)
 AM_CONFIG_HEADER(config.h)
 
 AC_C_BIGENDIAN
@@ -94,7 +94,7 @@ gl_libs=""
 qt_dir=""
 qt_cflags=""
 qt_libs=""				 
-qt_moc=""
+qt_moc="moc"
 
 # blah-config style checks
 # qtdir setting

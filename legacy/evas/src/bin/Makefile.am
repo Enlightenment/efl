@@ -59,6 +59,7 @@ evas_fb_test_LDFLAGS = $(LDFLAGS)
 evas_fb_test_CFLAGS = $(CFLAGS)
 evas_fb_test_DEPENDENCIES = $(top_builddir)/src/lib/libevas.la
 
+if BUILD_ENGINE_SOFTWARE_QTOPIA
 moc_evas_software_qtopia_main.cpp: evas_software_qtopia_main.h
 	@qt_moc@ evas_software_qtopia_main.h -o moc_evas_software_qtopia_main.cpp
 
@@ -68,9 +69,12 @@ evas_software_qtopia_test_LDFLAGS = $(LDFLAGS)
 evas_software_qtopia_test_CFLAGS = $(CFLAGS) @qt_cflags@
 evas_software_qtopia_test_CXXFLAGS = $(CFLAGS) $(CXXFLAGS) @qt_cflags@
 evas_software_qtopia_test_DEPENDENCIES = $(top_builddir)/src/lib/libevas.la
+endif
 
 evas_gl_x11_test_SOURCES = evas_test_main.h evas_test_main.c evas_gl_x11_main.c
 evas_gl_x11_test_LDADD = $(top_builddir)/src/lib/libevas.la -lm @x_libs@ @gl_libs@
 evas_gl_x11_test_LDFLAGS = $(LDFLAGS)
 evas_gl_x11_test_CFLAGS = $(CFLAGS) @x_cflags@ @gl_cflags@
 evas_gl_x11_test_DEPENDENCIES = $(top_builddir)/src/lib/libevas.la
+
+EXTRA_DIST = evas_software_qtopia_main.h evas_software_qtopia_main.cpp

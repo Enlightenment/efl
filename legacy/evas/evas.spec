@@ -1,5 +1,5 @@
 # Note that this is NOT a relocatable package
-%define ver      1.0.0-pre5
+%define ver      1.0.0_pre5
 %define rel      1
 %define prefix   /usr
 
@@ -25,6 +25,7 @@ Requires: libpng >= 1.0.0
 Requires: libjpeg
 Requires: eet
 Requires: edb
+Provides: evas evas_software_x11 evas_loader_png evas_loader_jpeg evas_loader_eet evas_loader_edb
 
 Docdir: %{prefix}/doc
 
@@ -76,17 +77,16 @@ rm -rf $RPM_BUILD_ROOT
 --enable-convert-32-rgbx-8888 \
 --enable-convert-32-bgr-8888 \
 --enable-convert-32-bgrx-8888 \
---enable-convert-32-rgb-rot-0
+--enable-convert-32-rgb-rot-0 \
 --enable-convert-32-rgb-rot-90 \
---enable-convert-32-rgb-rot-270 \
+--enable-convert-32-rgb-rot-270
 
 make CFLAGS="-O2 -mpentiumpro -march=pentiumpro -mcpu=pentiumpro"
 
 ###########################################################################
 
 %install
-rm -rf $RPM_BUILD_ROOT
-make prefix=$RPM_BUILD_ROOT%{prefix} install
+make DESTDIR=$RPM_BUILD_ROOT install
 
 %clean
 rm -rf $RPM_BUILD_ROOT
