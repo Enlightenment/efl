@@ -1005,7 +1005,8 @@ ecore_evas_size_step_get(Ecore_Evas *ee, int *w, int *h)
 /**
  * Set the cursor of an Ecore_Evas
  * @param ee The Ecore_Evas
- * @param file The path to an image file for the cursor
+ * @param file  The path to an image file for the cursor
+ * @param layer
  * @param hot_x The x coordinate of the cursor's hot spot
  * @param hot_y The y coordinate of the cursor's hot spot
  * 

@@ -243,11 +243,11 @@ ecore_x_window_prop_title_get(Ecore_X_Window win)
 }
 
 /**
- * Set a window command.
- * @param win The window
- * @param t The command string
+ * Sets the WM_COMMAND property for @a win.
  * 
- * Set a window command
+ * @param win  The window.
+ * @param argc Number of arguments.
+ * @param argv Arguments.
  */
 void
 ecore_x_window_prop_command_set(Ecore_X_Window win, int argc, char **argv)
@@ -256,11 +256,13 @@ ecore_x_window_prop_command_set(Ecore_X_Window win, int argc, char **argv)
 }
 
 /**
- * Get a window command.
- * @param win The window
- * @return The windows command string
- * 
+ * Get the WM_COMMAND property for @a win.
+ *
  * Return the command of a window. String must be free'd when done with.
+ *
+ * @param win  The window.
+ * @param argc Number of arguments.
+ * @param argv Arguments.
  */
 void
 ecore_x_window_prop_command_get(Ecore_X_Window win, int *argc, char ***argv)
@@ -621,9 +623,9 @@ ecore_x_window_prop_xy_set(Ecore_X_Window win, int x, int y)
 }
 
 /**
- * Sets the sticky state for @win
+ * Sets the sticky state for @a win.
  * @param win The window
- * @param on Boolean representing the sticky state
+ * @param on  Boolean representing the sticky state
  */
 void
 ecore_x_window_prop_sticky_set(Ecore_X_Window win, int on)
@@ -651,10 +653,10 @@ ecore_x_window_prop_sticky_set(Ecore_X_Window win, int on)
 }
 
 /**
- * Sets the input mode for @win
+ * Sets the input mode for @a win
  * @param win The Window
  * @param mode The input mode. See the description of
- *             @Ecore_X_Window_Input_Mode for details
+ *             #_Ecore_X_Window_Input_Mode for details.
  * @return 1 if the input mode could be set, else 0
  */
 int
@@ -741,22 +743,22 @@ ecore_x_window_prop_borderless_set(Ecore_X_Window win, int borderless)
 }
 
 /**
- * Puts @win in the desired layer. This currently works with
+ * Puts @a win in the desired layer. This currently works with
  * windowmanagers that are Gnome-compliant or support NetWM.
- * 
- * @param win
- * @param layer If < 3, @win will be put below all other windows.
- *              If > 5, @win will be "always-on-top"
- *              If = 4, @win will be put in the default layer.
- *              Acceptable values range from 1 to 255 (0 reserved for
- *              desktop windows)
- * @return 1 if the state could be set else 0
  * 
  * Normally you will use this function with one of the predefined
  * layer constants:
  * ECORE_X_WINDOW_LAYER_BELOW  - for windows to be stacked below
  * ECORE_X_WINDOW_LAYER_ABOVE  - for windows to be stacked on top
  * ECORE_X_WINDOW_LAYER_NORMAL - for windows to be put in the default layer
+
+ * @param win
+ * @param layer If < 3, @a win will be put below all other windows.
+ *              If > 5, @a win will be "always-on-top"
+ *              If = 4, @a win will be put in the default layer.
+ *              Acceptable values range from 1 to 255 (0 reserved for
+ *              desktop windows)
+ * @return 1 if the state could be set else 0
  */
 int
 ecore_x_window_prop_layer_set(Ecore_X_Window win, int layer)
@@ -785,7 +787,6 @@ ecore_x_window_prop_layer_set(Ecore_X_Window win, int layer)
  * Set the withdrawn state of an Ecore_X_Window.
  * @param win The window whose withdrawn state is set.
  * @param withdrawn The window's new withdrawn state.
- *
  */
 void
 ecore_x_window_prop_withdrawn_set(Ecore_X_Window win, int withdrawn)
@@ -817,8 +818,6 @@ ecore_x_window_prop_withdrawn_set(Ecore_X_Window win, int withdrawn)
  * Request the window manager to change this windows desktop.
  * @param win The Window
  * @param desktop The desktop number.
- *
- * Request the window manager to change this windows desktop.
  */
 void
 ecore_x_window_prop_desktop_request(Ecore_X_Window win, long desktop)
@@ -840,12 +839,13 @@ ecore_x_window_prop_desktop_request(Ecore_X_Window win, long desktop)
 
 /**
  * Request the window manager to change this window's state.
- * @param win     The Window
- * @param state   The requested state
- * @param action  The action to perform: 0 - unset, 1 - set, 2 - toggle
  *
  * Use this function to request the window manager to change the
  * specified window's state after it has been displayed (mapped).
+ *
+ * @param win     The Window
+ * @param state   The requested state
+ * @param action  The action to perform: 0 - unset, 1 - set, 2 - toggle
  */
 void
 ecore_x_window_prop_state_request(Ecore_X_Window win, Ecore_X_Window_State state, int action)

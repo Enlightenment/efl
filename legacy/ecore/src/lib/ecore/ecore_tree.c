@@ -285,10 +285,11 @@ void *ecore_tree_get(Ecore_Tree * tree, void *key)
 }
 
 /**
- * @brief Find the closest value greater >= key
- * @param tree: the tree to search 
- * @param key: the key to search for in @tree
- * @return Returns NULL if no valid nodes, otherwise the node >= key
+ * @brief Find the closest value greater than or equal to the key.
+ * @param  tree The tree to search.
+ * @param  key  The key to search for in @a tree.
+ * @return NULL if no valid nodes, otherwise the node greater than or
+ *         equal to the key
  */
 void *ecore_tree_get_closest_larger(Ecore_Tree * tree, void *key)
 {
@@ -322,8 +323,8 @@ void *ecore_tree_get_closest_larger(Ecore_Tree * tree, void *key)
 
 /**
  * @brief Find the closest value <= key
- * @param tree: the tree to search
- * @param key: the key to search for in tree
+ * @param tree the tree to search
+ * @param key  the key to search for in tree
  * @return Returns NULL if no valid nodes, otherwise the node <= key
  */
 void *ecore_tree_get_closest_smaller(Ecore_Tree * tree, void *key)
@@ -350,11 +351,11 @@ void *ecore_tree_get_closest_smaller(Ecore_Tree * tree, void *key)
 }
 
 /**
- * @brief Set the value associated with key to @value
- * @param tree: the tree that contains the key/value pair
- * @param key: the key to identify which node to set a value
- * @param value: value to set the found node
- * @return Returns TRUE if successful, FALSE if not.
+ * Set the value associated with key to @a value.
+ * @param  tree  The tree that contains the key/value pair.
+ * @param  key   The key to identify which node to set a value.
+ * @param  value Value to set the found node.
+ * @return TRUE if successful, FALSE if not.
  */
 int ecore_tree_set(Ecore_Tree * tree, void *key, void *value)
 {
@@ -383,10 +384,10 @@ int ecore_tree_set(Ecore_Tree * tree, void *key, void *value)
 }
 
 /**
- * @brief Place a node in the tree
- * @param tree: the tree to add @node
- * @param node: the node to add to @tree
- * @brief Returns TRUE on a successful add, FALSE otherwise.
+ * Place a node in the tree.
+ * @param tree The tree to add @a node.
+ * @param node The node to add to @a tree.
+ * @return TRUE on a successful add, FALSE otherwise.
  */
 int ecore_tree_add_node(Ecore_Tree * tree, Ecore_Tree_Node * node)
 {
@@ -418,10 +419,10 @@ int ecore_tree_add_node(Ecore_Tree * tree, Ecore_Tree_Node * node)
 
 
 /**
- * @brief Remove the node from the tree
- * @param tree: the tree to remove @node
- * @param node: the node to remove from @tree
- * @return Returns TRUE on a successful remove, FALSE otherwise.
+ * Remove the node from the tree.
+ * @param  tree The tree to remove @a node from.
+ * @param  node The node to remove from @a tree.
+ * @return TRUE on a successful remove, FALSE otherwise.
  */
 int ecore_tree_remove_node(Ecore_Tree * tree, Ecore_Tree_Node * node)
 {
@@ -526,10 +527,10 @@ int ecore_tree_remove_node(Ecore_Tree * tree, Ecore_Tree_Node * node)
 }
 
 /**
- * @brief Remove the key from the tree
- * @param tree: the tree to remove @key
- * @param key: the key to remove from @tree
- * @return Returns TRUE on a successful remove, FALSE otherwise.
+ * Remove the key from the tree.
+ * @param  tree The tree to remove @a key.
+ * @param  key  The key to remove from @a tree.
+ * @return TRUE on a successful remove, FALSE otherwise.
  */
 int ecore_tree_remove(Ecore_Tree * tree, void *key)
 {

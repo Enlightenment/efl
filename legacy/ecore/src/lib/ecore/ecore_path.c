@@ -166,7 +166,7 @@ ecore_path_group_find(int group_id, char *name)
  * Get a list of all available files in the path
  * @param  group_id The identifier for the path to get all available files
  * @return A pointer to a newly allocated list of all files found in the paths
- *         identified by @group_id, NULL on failure.
+ *         identified by @a group_id, NULL on failure.
  */
 Ecore_List *
 ecore_path_group_available(int group_id)

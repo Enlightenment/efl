@@ -7,8 +7,10 @@ These routines are used for Ecore Library interaction
 /**
 
 @mainpage Ecore
+
 @image latex ecore_big.eps width=5cm
 @image html  ecore.png
+
 @version 1.0.0
 @author Carsten Haitzler <raster\@rasterman.com>
 @author Tom Gilbert <tom\@linuxbrit.co.uk>
@@ -17,16 +19,6 @@ These routines are used for Ecore Library interaction
 @author Term <term\@twistedpath.org>
 @author Tilman Sauerbeck <tilman\@code-monkey.de>
 @date 2000-2003
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -61,19 +53,6 @@ for reading or writing, allowing for streamlined, non-blocking IO.
 Here is an exmaple of a simple program and its basic event loop flow:
 
 @image html  prog_flow.png
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -141,15 +120,16 @@ int main(int argc, const char **argv)
 }
 @endcode
 
-In the previous example, we initialize our application and get the time at which
-our program has started so we can calculate an offset. We set up a timer to
-tick off in 0.5 seconds, and since it returns 1, will keep ticking off every
-0.5 seconds until it returns 0, or is deleted by hand. An event handler is set
-up to call a function - exit_func(), whenever an event of type 
-ECORE_EVENT_SIGNAL_EXIT is received (CTRL-C on the command line will cause
-such an event to happen). If this event occurs it tells you what kind of
-exit signal was received, and asks the main loop to quit when it is finished
-by calling ecore_main_loop_quit().
+In the previous example, we initialize our application and get the time at
+which our program has started so we can calculate an offset. We set
+up a timer to tick off in 0.5 seconds, and since it returns 1, will
+keep ticking off every 0.5 seconds until it returns 0, or is deleted
+by hand. An event handler is set up to call a function - exit_func(),
+whenever an event of type ECORE_EVENT_SIGNAL_EXIT is received (CTRL-C
+on the command line will cause such an event to happen). If this event
+occurs it tells you what kind of exit signal was received, and asks
+the main loop to quit when it is finished by calling
+ecore_main_loop_quit().
 
 The handles returned by ecore_timer_add() and ecore_event_handler_add() are 
 only stored here as an example. If you don't need to address the timer or 
@@ -160,11 +140,6 @@ This program looks slightly more complex than needed to do these simple
 things, but in principle, programs don't get any more complex. You add more
 event handlers, for more events, will have more timers and such, BUT it all
 follows the same principles as shown in this example.
-
-
-
-
-
 
 
 
@@ -180,17 +155,6 @@ gcc *.c \
 -lecore -lecore_evas -lecore_x -lecore_fb -lecore_job \
 `evas-config --cflags --libs`
 @endverbatim
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -213,15 +177,6 @@ make CFLAGS="-O9 -mpentiumpro -march=pentiumpro -mcpu=pentiumpro"
 
 
 
-
-
-
-
-
-
-
-
-
 @section tutorial Ecore Tutorial
 
 You will find a more comprehensive @ref tut here, going through many examples
@@ -240,3 +195,79 @@ with tips and hints as to how best do some things.
 Here is a tutotial for using Ecore...
 
 */
+
+/**
+@page The Enlightened Property Library
+
+The Enlightened Property Library (Ecore_Config) is an adbstraction
+from the complexities of writing your own configuration. It provides
+many features using the Enlightenment 17 development libraries.
+
+
+
+ */
+
+// GROUP DEFINITIONS
+
+/**
+ * @defgroup Ecore_Main_Loop_Group Main Loop Functions
+ *
+ * Functions used to control the main loop.
+ */
+
+/**
+ * @defgroup Ecore_Timer_Group Ecore Timer
+ *
+ * The timer allows callbacks to be called at specific intervals.
+ */
+
+/**
+ * @defgroup Idle_Group Idle Handlers
+ *
+ * Callbacks that are called when the program enters or exits an idle state.
+ *
+ * The ecore main loop enters an idle state when it is waiting for
+ * timers to time out, data to come in on a file descriptor or any
+ * other event to occur.  You can set callbacks to be called when the
+ * main loop enters an idle state, during an idle state or just after
+ * the program wakes up.
+ *
+ * Enterer callbacks are good for updating your program's state, if it
+ * has a state engine.  Once all of the enterer handlers are called,
+ * the program will enter a "sleeping" state.
+ *
+ * Idler callbacks are called when the main loop has called all
+ * enterer handlers.  They are useful for interfaces that require
+ * polling and timers would be too slow to use.
+ *
+ * If no idler callbacks are specified, then the process literally
+ * goes to sleep.  Otherwise, the idler callbacks are called
+ * continuously while the loop is "idle", using as much CPU as is
+ * available to the process.
+ *
+ * Exiter callbacks are called when the main loop wakes up from an idle
+ * state.
+ */
+
+// EXAMPLES
+
+/**
+ * @example args_example.c
+ * Shows how to set and retrieve the program arguments.
+ */
+
+/**
+ * @example event_handler_example.c
+ * Shows how to use event handlers.
+ */
+
+/**
+ * @example timer_example.c
+ * Demonstrates use of the ecore_timer.
+ */
+
+/**
+ * @example config_basic_example.c
+ * Provides an example of how to use the basic configuration functions.
+ * See the file Ecore_Config.h for the full list of available functions.
+ */

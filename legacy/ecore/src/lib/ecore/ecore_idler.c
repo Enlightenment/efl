@@ -6,19 +6,10 @@ static int          idlers_delete_me = 0;
 
 /**
  * Add an idler handler.
- * @param func The function to call when idling.
- * @param data The data to be passed to this @p func call
- * @return A idler handle
- * 
- * This function adds an idler handler and returns its handle on success, or
- * NULL on failure. Idlers will get called after idle enterer calls have all
- * been called and the program is in an idle state waiting on data or timers.
- * If no idler functions are set the process literally goes to sleep and uses
- * no CPU. If You have idler functions set they will be called continuously
- * during this "idle" time with your process consuming as much CPU as it can
- * get to do so. This is useful for when there are interfaces that require
- * polling and timers will mean too slow a response from the process if polling
- * is done by timers.
+ * @param  func The function to call when idling.
+ * @param  data The data to be passed to this @p func call.
+ * @return A idler handle if successfully added.  NULL otherwise.
+ * @ingroup Idle_Group
  */
 Ecore_Idler *
 ecore_idler_add(int (*func) (void *data), const void *data)
@@ -36,13 +27,11 @@ ecore_idler_add(int (*func) (void *data), const void *data)
 }
 
 /**
- * Delete an idler handler.
- * @param idler The idler to delete
- * 
- * Delete the specified @p idler from the set of idlers that are executed
- * during main loop execution. On success the data pointer set by
- * ecore_idler_add() and passed to the idler function is returned, or NULL
- * on failure.
+ * Delete an idler callback from the list to be executed.
+ * @param  idler The handle of the idler callback to delete
+ * @return The data pointer passed to the idler callback on success.  NULL
+ *         otherwise.
+ * @ingroup Idle_Group
  */
 void *
 ecore_idler_del(Ecore_Idler *idler)

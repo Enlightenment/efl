@@ -8,13 +8,8 @@ static int                 idle_exiters_delete_me = 0;
  * Add an idle exiter handler.
  * @param func The function to call when exiting an idle state.
  * @param data The data to be passed to the @p func call
- * @return A handle to the idle exiter callback
- * 
- * This function adds an idle exiter handler and returns its handle on success
- * or NULL on failure. Idle exiters are called just after he program wakes up
- * from an idle state where it is waiting on timers to time out, data to come
- * in on file descriptors, etc. When @p func is called, it will be passed
- * the pointer @p data.
+ * @return A handle to the idle exiter callback on success.  NULL otherwise.
+ * @ingroup Idle_Group
  */
 Ecore_Idle_Exiter *
 ecore_idle_exiter_add(int (*func) (void *data), const void *data)
@@ -32,13 +27,11 @@ ecore_idle_exiter_add(int (*func) (void *data), const void *data)
 }
 
 /**
- * Delete an idle exit handler.
+ * Delete an idle exiter handler from the list to be run on exiting idle state.
  * @param idle_exiter The idle exiter to delete
- * 
- * Delete the specified @p idle_exiter from the set of idle_exiters that are
- * executed during main loop execution. On success the data pointer that was
- * being passed to the idle handler function, set by ecore_idle_exiter_add()
- * will be returned.
+ * @return The data pointer that was being being passed to the handler if
+ *         successful.  NULL otherwise.
+ * @ingroup Idle_Group
  */
 void *
 ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter)

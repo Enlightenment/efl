@@ -6,18 +6,11 @@ static int                 idle_enterers_delete_me = 0;
 
 /**
  * Add an idle enterer handler.
- * @param func The function to call when entering an idle state.
- * @param data The data to be passed to the @p func call
- * @return A handle to the idle enterer callback
- * 
- * This function adds an idle enterer handler and returns its handle on success
- * or NULL on failure. Idle enterers are called just before he program goes
- * int an idle state where it is waiting on timers to time out, data to come
- * in on file descriptors, etc. The program will be in a "sleeping" state
- * after all the idle enterer callbacks are called. This is a good callback to
- * use to update your program's state if it has a state engine. Do all your
- * heavy processing here to update state (like drawing etc.). When @p func
- * is called, it will be passed the pointer @p data.
+ * @param   func The function to call when entering an idle state.
+ * @param   data The data to be passed to the @p func call
+ * @return  A handle to the idle enterer callback if successful.  Otherwise,
+ *          NULL is returned.
+ * @ingroup Idle_Group
  */
 Ecore_Idle_Enterer *
 ecore_idle_enterer_add(int (*func) (void *data), const void *data)
@@ -35,13 +28,11 @@ ecore_idle_enterer_add(int (*func) (void *data), const void *data)
 }
 
 /**
- * Delete an idle enter handler.
- * @param idle_enterer The idle enterer to delete
- * 
- * Delete the specified @p idle_enterer from the set of idle_enterers that are
- * executed during main loop execution. On success the data pointer that was
- * being passed to the idle handler function, set by ecore_idle_enterer_add()
- * will be returned.
+ * Delete an idle enterer callback.
+ * @param   idle_enterer The idle enterer to delete
+ * @return  The data pointer passed to the idler enterer callback on success.
+ *          NULL otherwise.
+ * @ingroup Idle_Group
  */
 void *
 ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer)

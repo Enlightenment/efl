@@ -344,9 +344,9 @@ int ecore_list_nodes(Ecore_List * list)
 
 /**
  * @brief Append data to the list.
- * @param list: the list to append @data
- * @param data: the data to append to @list.
- * @return Returns FALSE if an error occurs, TRUE if appended successfully
+ * @param  list The list to append @a data
+ * @param  data The data to append to @a list.
+ * @return FALSE if an error occurs, TRUE if appended successfully
  */
 inline int ecore_list_append(Ecore_List * list, void *data)
 {
@@ -389,10 +389,10 @@ static int _ecore_list_append_0(Ecore_List * list, Ecore_List_Node *end)
 }
 
 /**
- * @brief Prepend data to the beginning of the list
- * @param list: the list to prepend @data
- * @param data: the data to prepend to @list
- * @return Returns FALSE if an error occurs, TRUE if prepended successfully
+ * Prepend data to the beginning of the list.
+ * @param list The list to prepend @a data.
+ * @param data The data to prepend to @a list.
+ * @return FALSE if an error occurs, TRUE if prepended successfully
  */
 inline int ecore_list_prepend(Ecore_List * list, void *data)
 {
@@ -432,10 +432,10 @@ static int _ecore_list_prepend_0(Ecore_List * list, Ecore_List_Node *start)
 }
 
 /**
- * @brief Insert data at the current point in the list
- * @param list: the list to hold the inserted @data
- * @param data: the data to insert into @list
- * @return Returns FALSE on an error, TRUE on success
+ * Insert data at the current point in the list.
+ * @param  list The list to hold the inserted @a data.
+ * @param  data The data to insert into @a list.
+ * @return FALSE if there is an error, TRUE on success
  */
 inline int ecore_list_insert(Ecore_List * list, void *data)
 {
@@ -1138,11 +1138,10 @@ inline int ecore_dlist_index(Ecore_DList * list)
 }
 
 /**
- * @brief Append data to the list.
- * @param list: the list to append @data
- * @param data: the data to append to @list
- *
- * @return Returns FALSE if an error occurs, TRUE if appended successfully
+ * Append data to the list.
+ * @param list The list to append @a data
+ * @param data The data to append to @a list
+ * @return FALSE if an error occurs, TRUE if appended successfully
  */
 int ecore_dlist_append(Ecore_DList * list, void *data)
 {
@@ -1169,10 +1168,10 @@ int ecore_dlist_append(Ecore_DList * list, void *data)
 }
 
 /**
- * @brief Prepend data to the beginning of the list
- * @param list: the list to prepend @data
- * @param data: the data to prepend to @list
- * @return Returns FALSE if an error occurs, TRUE if prepended successfully
+ * Prepend data to the beginning of the list
+ * @param  list The list to prepend @a data
+ * @param  data The data to prepend to @a list
+ * @return FALSE if an error occurs, TRUE if prepended successfully
  */
 int ecore_dlist_prepend(Ecore_DList * list, void *data)
 {
@@ -1198,9 +1197,9 @@ int ecore_dlist_prepend(Ecore_DList * list, void *data)
 }
 
 /**
- * @brief Insert data at the current point in the list
- * @param list: the list to hold the inserted @data
- * @param data: the data to insert into @list
+ * Insert data at the current point in the list.
+ * @param  list The list to hold the inserted @a data.
+ * @param  data The data to insert into @a list.
  * @return Returns FALSE on an error, TRUE on success
  */
 int ecore_dlist_insert(Ecore_DList * list, void *data)

@@ -11,30 +11,6 @@ static char **app_argv = NULL;
  * 
  * A call to this function will store the programs command-line arguments
  * for later use by ecore_app_restart() or ecore_app_args_get().
- * 
- * @code
- * #include <Ecore.h>
- * 
- * int timer_once(void *data)
- * {
- *   int argc;
- *   char **argv;
- *   int i;
- * 
- *   ecore_app_args_get(&argc, &argv);
- *   for (i = 0; i < argc; i++) printf("ARG %i: %s\n", i, argv[i]);
- *   return 0;
- * }
- * 
- * int main(int argc, char **argv)
- * {
- *   ecore_init();
- *   ecore_app_args_set(argc, argv);
- *   ecore_timer_add(5.0, timer_once, NULL);
- *   ecore_main_loop_begin();
- *   ecore_shutdown();
- * }
- * @endcode
  */
 void
 ecore_app_args_set(int argc, const char **argv)

@@ -22,6 +22,7 @@ static double            t2 = 0.0;
 
 /**
  * Run 1 iteration of the main loop and process everything on the queue.
+ * @ingroup Ecore_Main_Loop_Group
  * 
  * This function Processes 1 iteration of the main loop, handling anything on
  * the queue. See ecore_main_loop_begin() for more information.
@@ -34,6 +35,7 @@ ecore_main_loop_iterate(void)
 
 /**
  * Run the application main loop.
+ * @ingroup Ecore_Main_Loop_Group
  * 
  * This function does not return until ecore_main_loop_quit() is called. It
  * will keep looping internally and call all callbacks set up to handle timers,
@@ -51,6 +53,7 @@ ecore_main_loop_begin(void)
 
 /**
  * Quit the main loop after it is done processing.
+ * @ingroup Ecore_Main_Loop_Group
  * 
  * This function will flag a quit of the main loop once the current loop has
  * finished processing all events. It will not quit instantly, so expect more

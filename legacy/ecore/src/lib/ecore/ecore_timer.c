@@ -15,6 +15,7 @@ static Ecore_Timer *timers = NULL;
  * @param func The function to call when it expires
  * @param data The data to pass to the function
  * @return A handle to the new timer
+ * @ingroup Ecore_Timer_Group
  * 
  * This function adds a timer and returns its handle on success and NULL on
  * failure. The function @p func will be called in @p in seconds from the
@@ -27,43 +28,8 @@ static Ecore_Timer *timers = NULL;
  * @p in value of 1.0 then the next timer will be triggered at the time this
  * timer was called plus 1.0).
  * 
- * @code
- * #include <Ecore.h>
- * 
- * Ecore_Timer *timer1 = NULL, *timer2 = NULL, *timer3 = NULL;
- *   
- * int timer_tick(void *data)
- * {
- *   printf("Tick timer %3.2f\n", ecore_time_get());
- *   return 1;
- * }
- * 
- * int timer_repeat(void *data)
- * {
- *   printf("Repeat timer called at %3.2f seconds, data %p\n",
- *          ecore_time_get(), data);
- *   return 1;
- * }
- * 
- * int timer_once(void *data)
- * {
- *   printf("Once only timer called at %3.2f seconds, data %p\n", 
- *          ecore_time_get(), data);
- *   ecore_timer_del(timer2);
- *   return 0;
- * }
- * 
- * int main(int argc, char **argv)
- * {
- *   ecore_init();
- *   ecore_app_args_set(argc, argv);
- *   timer1 = ecore_timer_add(5.0, timer_once, NULL);
- *   timer2 = ecore_timer_add(0.5, timer_repeat, NULL);
- *   timer3 = ecore_timer_add(1.0, timer_tick, NULL);
- *   ecore_main_loop_begin();
- *   ecore_shutdown();
- * }
- * @endcode
+ * For more information, see the @link timer_example.c ecore_timer @endlink
+ * example.
  */
 Ecore_Timer *
 ecore_timer_add(double in, int (*func) (void *data), const void *data)
@@ -85,6 +51,7 @@ ecore_timer_add(double in, int (*func) (void *data), const void *data)
  * Delete the specified timer from the timer list.
  * @param timer
  * @return The data pointer set for the timer
+ * @ingroup Ecore_Timer_Group
  * 
  * Delete the specified @p timer from the set of timers that are executed
  * during main loop execution. This function returns the data parameter that

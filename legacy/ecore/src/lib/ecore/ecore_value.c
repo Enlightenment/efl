@@ -55,7 +55,7 @@ unsigned int ecore_direct_hash(void *key)
 /**
  * Compute the hash value of a string
  * @param  key A pointer to the string to compute a hash value
- * @return A computed hash value for @key.
+ * @return A computed hash value for @a key.
  */
 unsigned int ecore_str_hash(void *key)
 {
