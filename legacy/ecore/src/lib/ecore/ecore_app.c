@@ -52,5 +52,13 @@ ecore_app_args_get(int *argc, char ***argv)
 void
 ecore_app_restart(void)
 {
-   /* FIXME: exec self using argv, argc etc. */
+   char **args;
+   int i;
+   
+   if ((app_argc < 1) || (!app_argv)) return;
+   args = malloc((app_argc + 1) * sizeof(char *));
+   if (!args) return;
+   for (i = 0; i < app_argc; i++) args[i] = app_argv[i];
+   args[i] = NULL;
+   execvp(app_argv[0], args);
 }
