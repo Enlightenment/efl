@@ -437,8 +437,8 @@ extern "C" {
    
    Evas_Modifier_Mask evas_key_modifier_mask_get       (Evas *e, char *keyname);
 
-   int               evas_object_key_grab              (Evas_Object *obj, char *keyname, Evas_Modifier_Mask modifiers, int exclusive);
-   void              evas_object_key_ungrab            (Evas_Object *obj, char *keyname, Evas_Modifier_Mask modifiers);
+   int               evas_object_key_grab              (Evas_Object *obj, char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, int exclusive);
+   void              evas_object_key_ungrab            (Evas_Object *obj, char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
    
    void              evas_object_pass_events_set       (Evas_Object *obj, int pass);
    int               evas_object_pass_events_get       (Evas_Object *obj);

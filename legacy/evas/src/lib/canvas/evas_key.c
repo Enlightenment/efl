@@ -233,13 +233,3 @@ evas_key_modifier_mask_get(Evas *e, char *keyname)
    if (num < 0) return 0;
    return 1 << num;
 }
-
-int
-evas_object_key_grab(Evas_Object *obj, char *keyname, Evas_Modifier_Mask modifiers, int exclusive)
-{
-}
-
-void
-evas_object_key_ungrab(Evas_Object *obj, char *keyname, Evas_Modifier_Mask modifiers)
-{
-}

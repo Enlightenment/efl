@@ -20,6 +20,7 @@ void
 evas_object_free(Evas_Object *obj, int clean_layer)
 {
    evas_object_event_callback_call(obj, EVAS_CALLBACK_FREE, NULL);
+   evas_object_grabs_cleanup(obj);
    evas_object_intercept_cleanup(obj);
    evas_object_smart_cleanup(obj);
    obj->func->free(obj);
@@ -414,6 +415,7 @@ evas_object_del(Evas_Object *obj)
 	obj->layer->evas->focused = NULL;
 	evas_object_event_callback_call(obj, EVAS_CALLBACK_FOCUS_OUT, NULL);
      }
+   evas_object_grabs_cleanup(obj);
    evas_object_hide(obj);   
    while (obj->clip.clipees) evas_object_clip_unset(obj->clip.clipees->data);
    if (obj->cur.clipper) evas_object_clip_unset(obj);

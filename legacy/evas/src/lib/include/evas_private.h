@@ -46,13 +46,14 @@ typedef struct _Evas_Modifier       Evas_Modifier;
 typedef struct _Evas_Lock           Evas_Lock;
 typedef unsigned long long          Evas_Modifier_Mask;
 typedef struct _Evas_Smart          Evas_Smart;
-typedef struct _Evas_Intercept_Func Evas_Intercept_Func;
+typedef void                        Evas_Performance;
+typedef struct _Evas_Intercept_Func         Evas_Intercept_Func;
 typedef struct _Evas_Intercept_Func_Basic   Evas_Intercept_Func_Basic;
 typedef struct _Evas_Intercept_Func_SizePos Evas_Intercept_Func_SizePos;
 typedef struct _Evas_Intercept_Func_Obj     Evas_Intercept_Func_Obj;
 typedef struct _Evas_Intercept_Func_Int     Evas_Intercept_Func_Int;
-typedef void                        Evas_Performance;
-
+typedef struct _Evas_Key_Grab               Evas_Key_Grab;
+  
 #define MAGIC_EVAS          0x70777770
 #define MAGIC_OBJ           0x71777770
 #define MAGIC_OBJ_RECTANGLE 0x71777771
@@ -92,8 +93,6 @@ if (_r) \
 #define MERR_FATAL() _evas_alloc_error = EVAS_ALLOC_ERROR_FATAL
 #define MERR_BAD() _evas_alloc_error = EVAS_ALLOC_ERROR_RECOVERED
 
-#define MEM_TRY_CALLOC(_ptr, _size)
-
 struct _Evas_Rectangle
 {
    int x, y, w, h;
@@ -121,6 +120,15 @@ struct _Evas_Intercept_Func_Int
 {
    void (*func) (void *data, Evas_Object *obj, int n);
    void *data;
+};
+
+struct _Evas_Key_Grab
+{
+   char               *keyname;
+   Evas_Modifier_Mask  modifiers;
+   Evas_Modifier_Mask  not_modifiers;
+   Evas_Object        *object;
+   int                 exclusive : 1;
 };
 
 struct _Evas_Intercept_Func
@@ -236,6 +244,8 @@ struct _Evas
       int   info_magic;
    } engine;
    
+   Evas_List     *grabs;
+   
    Evas_List     *font_path;
    
    Evas_Object   *focused;
@@ -314,6 +324,8 @@ struct _Evas_Object
    struct {
       Evas_List *elements;
    } data;
+   
+   Evas_List *grabs;
    
    struct {
       Evas_Object_List *in;
@@ -537,6 +549,7 @@ int evas_object_intercept_call_lower(Evas_Object *obj);
 int evas_object_intercept_call_stack_above(Evas_Object *obj, Evas_Object *above);
 int evas_object_intercept_call_stack_below(Evas_Object *obj, Evas_Object *below);
 int evas_object_intercept_call_layer_set(Evas_Object *obj, int l);
+void evas_object_grabs_cleanup(Evas_Object *obj);
        
 extern int _evas_alloc_error;
    

@@ -418,8 +418,6 @@ evas_event_feed_key_down_data(Evas *e, char *keyname, void *data)
    MAGIC_CHECK_END();
    if (!keyname) return;
    if (e->events_frozen > 0) return;
-   /* FIXME: handle grabs */
-   if (e->focused)
      {
 	Evas_Event_Key_Down ev;
 
@@ -427,8 +425,27 @@ evas_event_feed_key_down_data(Evas *e, char *keyname, void *data)
 	ev.data = data;
 	ev.modifiers = &(e->modifiers);
 	ev.locks = &(e->locks);
-	evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_DOWN, &ev);
-     }   
+	if (e->grabs)
+	  {
+	     Evas_List *l;
+	     
+	     for (l = e->grabs; l; l= l->next)
+	       {
+		  Evas_Key_Grab *g;
+		  
+		  g = l->data;
+		  if ((e->modifiers.mask & g->modifiers) &&
+		      (!(e->modifiers.mask & g->not_modifiers)) &&
+		      (!strcmp(keyname, g->keyname)))
+		    {
+		       evas_object_event_callback_call(g->object, EVAS_CALLBACK_KEY_DOWN, &ev);
+		       if (g->exclusive) return;
+		    }		      
+	       }
+	  }
+	if (e->focused)
+	  evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_DOWN, &ev);
+     }
 }
 
 void
@@ -439,9 +456,6 @@ evas_event_feed_key_up_data(Evas *e, char *keyname, void *data)
    MAGIC_CHECK_END();
    if (!keyname) return;
    if (e->events_frozen > 0) return;
-   if (!e->focused) return;   
-   /* FIXME: handle grabs */
-   if (e->focused)
      {
 	Evas_Event_Key_Up ev;
 
@@ -449,8 +463,27 @@ evas_event_feed_key_up_data(Evas *e, char *keyname, void *data)
 	ev.data = data;
 	ev.modifiers = &(e->modifiers);
 	ev.locks = &(e->locks);
-	evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_UP, &ev);
-     }   
+	if (e->grabs)
+	  {
+	     Evas_List *l;
+	     
+	     for (l = e->grabs; l; l= l->next)
+	       {
+		  Evas_Key_Grab *g;
+		  
+		  g = l->data;
+		  if ((e->modifiers.mask & g->modifiers) &&
+		      (!(e->modifiers.mask & g->not_modifiers)) &&
+		      (!strcmp(keyname, g->keyname)))
+		    {
+		       evas_object_event_callback_call(g->object, EVAS_CALLBACK_KEY_UP, &ev);
+		       if (g->exclusive) return;
+		    }		      
+	       }
+	  }
+	if (e->focused)
+	  evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_UP, &ev);
+     }
 }
 
 void
