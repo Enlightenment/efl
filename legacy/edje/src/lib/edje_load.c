@@ -589,26 +589,29 @@ _edje_file_del(Edje *ed)
 
 	     rp = ed->parts->data;
 	     ed->parts = evas_list_remove(ed->parts, rp);
-	     evas_object_event_callback_del(rp->object, 
-					    EVAS_CALLBACK_MOUSE_IN,
-					    _edje_mouse_in_cb);
-	     evas_object_event_callback_del(rp->object, 
-					    EVAS_CALLBACK_MOUSE_OUT,
-					    _edje_mouse_out_cb);
-	     evas_object_event_callback_del(rp->object, 
-					    EVAS_CALLBACK_MOUSE_DOWN,
+	     if (rp->object)
+	       {
+		  evas_object_event_callback_del(rp->object, 
+						 EVAS_CALLBACK_MOUSE_IN,
+						 _edje_mouse_in_cb);
+		  evas_object_event_callback_del(rp->object, 
+						 EVAS_CALLBACK_MOUSE_OUT,
+						 _edje_mouse_out_cb);
+		  evas_object_event_callback_del(rp->object, 
+						 EVAS_CALLBACK_MOUSE_DOWN,
 					    _edje_mouse_down_cb);
-	     evas_object_event_callback_del(rp->object, 
-					    EVAS_CALLBACK_MOUSE_UP,
-					    _edje_mouse_up_cb);
-	     evas_object_event_callback_del(rp->object, 
-					    EVAS_CALLBACK_MOUSE_MOVE,
-					    _edje_mouse_move_cb);
-	     evas_object_event_callback_del(rp->object, 
-					    EVAS_CALLBACK_MOUSE_WHEEL,
-					    _edje_mouse_wheel_cb);
-	     _edje_text_real_part_on_del(ed, rp);
-	     evas_object_del(rp->object);
+		  evas_object_event_callback_del(rp->object, 
+						 EVAS_CALLBACK_MOUSE_UP,
+						 _edje_mouse_up_cb);
+		  evas_object_event_callback_del(rp->object, 
+						 EVAS_CALLBACK_MOUSE_MOVE,
+						 _edje_mouse_move_cb);
+		  evas_object_event_callback_del(rp->object, 
+						 EVAS_CALLBACK_MOUSE_WHEEL,
+						 _edje_mouse_wheel_cb);
+		  _edje_text_real_part_on_del(ed, rp);
+		  evas_object_del(rp->object);
+	       }
 	     if (rp->swallowed_object)
 	       {
 		  evas_object_smart_member_del(rp->swallowed_object);

@@ -127,7 +127,6 @@ _edje_message_new(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id)
    em->type = type;
    em->id = id;
    em->edje->message.num++;
-   _edje_ref(em->edje);
    return em;
 }
 
@@ -243,7 +242,6 @@ _edje_message_free(Edje_Message *em)
 	  }
      }
    em->edje->message.num--;
-   _edje_unref(em->edje);
    free(em);
 }
 
