@@ -101,6 +101,12 @@ ecore_x_window_prop_property_del(Ecore_X_Window win, Ecore_X_Atom property)
    XDeleteProperty(_ecore_x_disp, win, property);
 }
 
+#if 0
+/*
+ * I see no purpose for a ecore_x_window_prop_property_notify().
+ * Commenting out for now, suggest to remove it entirely.
+ * /Kim
+ */
 /**
  * Send a property notify to a window.
  * @param win The window
@@ -132,6 +138,7 @@ ecore_x_window_prop_property_notify(Ecore_X_Window win, const char *type, long *
 	      (SubstructureNotifyMask | SubstructureRedirectMask),
 	      (XEvent *)&xev);
 }
+#endif
 
 /**
  * Set a window string property.
@@ -827,7 +834,8 @@ ecore_x_window_prop_desktop_request(Ecore_X_Window win, long desktop)
    xev.xclient.format = 32;
    xev.xclient.data.l[0] = desktop;
 
-   XSendEvent(_ecore_x_disp, DefaultRootWindow(_ecore_x_disp), False, 0, &xev);
+   XSendEvent(_ecore_x_disp, DefaultRootWindow(_ecore_x_disp), False,
+	      SubstructureNotifyMask | SubstructureRedirectMask, &xev);
 }
 
 /**
@@ -848,8 +856,11 @@ ecore_x_window_prop_state_request(Ecore_X_Window win, Ecore_X_Window_State state
       return;
 
    xev.xclient.type = ClientMessage;
+   xev.xclient.serial = 0;
+   xev.xclient.send_event = True;
    xev.xclient.display = _ecore_x_disp;
    xev.xclient.window = win;
+   xev.xclient.format = 32;
 
    switch (state) {
    case ECORE_X_WINDOW_STATE_ICONIFIED:
@@ -861,18 +872,17 @@ ecore_x_window_prop_state_request(Ecore_X_Window win, Ecore_X_Window_State state
       if (action != 1)
 	 return;
       xev.xclient.message_type = _ecore_x_atom_wm_change_state;
-      xev.xclient.format = 32;
       xev.xclient.data.l[0] = IconicState;
       break;
    default: /* The _NET_WM_STATE_... hints */
       xev.xclient.message_type = _ecore_x_atom_net_wm_state;
-      xev.xclient.format = 32;
       xev.xclient.data.l[0] = action;
       xev.xclient.data.l[1] = _ecore_x_window_prop_state_atom_get(state);
       break;
    }
 
-   XSendEvent(_ecore_x_disp, DefaultRootWindow(_ecore_x_disp), False, 0, &xev);
+   XSendEvent(_ecore_x_disp, DefaultRootWindow(_ecore_x_disp), False,
+              SubstructureNotifyMask | SubstructureRedirectMask, &xev);
 }
    
 

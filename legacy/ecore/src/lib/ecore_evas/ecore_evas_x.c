@@ -875,7 +875,7 @@ _ecore_evas_iconified_set(Ecore_Evas *ee, int on)
    if (((ee->prop.iconified) && (on)) ||
        ((!ee->prop.iconified) && (!on))) return;
    ee->prop.iconified = on;
-   ecore_x_window_prop_state_request(ee->engine.x.win,
+   ecore_x_window_prop_state_request(ee->engine.x.win_container,
 	   ECORE_X_WINDOW_STATE_ICONIFIED, on);
 }
 
