@@ -2175,33 +2175,41 @@ ecore_dnd_selection_get(Window win, Window req, Atom type, int *size)
 void
 ecore_dnd_set_data(Window win)
 {
-  static int          atom_xdndactioncopy = 0;
-  static int          atom_xdndactionmove = 0;
-  static int          atom_xdndactionlink = 0;
-  static int          atom_xdndactionask = 0;
-  static Atom         atom_xdndactionlist = 0;
-  static Atom         atom_xdndselection = 0;
-
+   static Atom         atom_xdndselection = 0;
+   
    if (!disp) return;
-  ECORE_ATOM(atom_xdndactioncopy, "XdndActionCopy");
-  ECORE_ATOM(atom_xdndactionmove, "XdndActionMove");
-  ECORE_ATOM(atom_xdndactionlink, "XdndActionLink");
-  ECORE_ATOM(atom_xdndactionask, "XdndActionAsk");
-  ECORE_ATOM(atom_xdndactionlist, "XdndActionList");
-  ECORE_ATOM(atom_xdndselection, "XdndSelection");
-  if (dnd_copy)
-    ecore_window_property_set(win, atom_xdndactionlist, XA_ATOM, 32,
-			      &atom_xdndactioncopy, 1);
-  else if (dnd_link)
-    ecore_window_property_set(win, atom_xdndactionlist, XA_ATOM, 32,
-			      &atom_xdndactionlink, 1);
-  else if (dnd_move)
-    ecore_window_property_set(win, atom_xdndactionlist, XA_ATOM, 32,
-			      &atom_xdndactionmove, 1);
-  else
-    ecore_window_property_set(win, atom_xdndactionlist, XA_ATOM, 32,
-			      &atom_xdndactionask, 1);
-  XSetSelectionOwner(disp, atom_xdndselection, win, CurrentTime);
+   ECORE_ATOM(atom_xdndselection, "XdndSelection");
+   ecore_dnd_set_action(win);
+   XSetSelectionOwner(disp, atom_xdndselection, win, CurrentTime);
+}
+
+void
+ecore_dnd_set_action(Window win)
+{
+   static int          atom_xdndactioncopy = 0;
+   static int          atom_xdndactionmove = 0;
+   static int          atom_xdndactionlink = 0;
+   static int          atom_xdndactionask = 0;
+   static Atom         atom_xdndactionlist = 0;
+   
+   if (!disp) return;
+   ECORE_ATOM(atom_xdndactioncopy, "XdndActionCopy");
+   ECORE_ATOM(atom_xdndactionmove, "XdndActionMove");
+   ECORE_ATOM(atom_xdndactionlink, "XdndActionLink");
+   ECORE_ATOM(atom_xdndactionask, "XdndActionAsk");
+   ECORE_ATOM(atom_xdndactionlist, "XdndActionList");
+   if (dnd_copy)
+     ecore_window_property_set(win, atom_xdndactionlist, XA_ATOM, 32,
+			       &atom_xdndactioncopy, 1);
+   else if (dnd_link)
+     ecore_window_property_set(win, atom_xdndactionlist, XA_ATOM, 32,
+			       &atom_xdndactionlink, 1);
+   else if (dnd_move)
+     ecore_window_property_set(win, atom_xdndactionlist, XA_ATOM, 32,
+			       &atom_xdndactionmove, 1);
+   else
+     ecore_window_property_set(win, atom_xdndactionlist, XA_ATOM, 32,
+			       &atom_xdndactionask, 1);
 }
 
 void

@@ -813,6 +813,8 @@ extern              "C"
   void               *ecore_dnd_selection_get(Window win, Window req, Atom type,
 					      int *size);
   void                ecore_dnd_set_data(Window win);
+  void                ecore_dnd_set_action(Window win);
+       
   void                ecore_dnd_send_data(Window win, Window source_win,
 					  void *data, int size, Atom dest_atom,
 					  int type);

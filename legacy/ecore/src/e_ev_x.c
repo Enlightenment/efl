@@ -903,12 +903,7 @@ ecore_event_x_handle_selection_notify(XEvent * xevent)
 		{
 		  buf[i] = 0;
 		  e->num_files++;
-		  if (e->files)
-		    {
-		      REALLOC_PTR(e->files, e->num_files);
-		    }
-		  else
-		    e->files = NEW_PTR(e->num_files);
+		  REALLOC_PTR(e->files, e->num_files);
 		  e->files[e->num_files - 1] = strdup(buf);
 		  buf[0] = 0;
 		  i = 0;
@@ -917,6 +912,13 @@ ecore_event_x_handle_selection_notify(XEvent * xevent)
 	      is++;
 	    }
 	}
+      if (i > 0)
+	 {
+	    buf[i] = 0;
+	    e->num_files++;
+	    REALLOC_PTR(e->files, e->num_files);
+	    e->files[e->num_files - 1] = strdup(buf);
+	 }
       FREE(buf);
       FREE(data);
     }
@@ -1056,7 +1058,8 @@ ecore_event_x_handle_client_message(XEvent * xevent)
   ECORE_ATOM(atom_xdndactionlink, "XdndActionLink");
   ECORE_ATOM(atom_xdndactionmove, "XdndActionMove");
   ECORE_ATOM(atom_text_uri_list, "text/uri-list");
-  /* forst type = delete event sent to client */
+   
+  /* first type = delete event sent to client */
   if ((xevent->xclient.message_type == atom_wm_protocols) &&
       (xevent->xclient.format == 32) &&
       (xevent->xclient.data.l[0] == (long)atom_wm_delete_window))
@@ -1072,9 +1075,9 @@ ecore_event_x_handle_client_message(XEvent * xevent)
 	   (xevent->xclient.format == 32))
     {
 /*      if ((xevent->xclient.data.l[2] == (long)atom_text_uri_list) ||
-	  (xevent->xclient.data.l[3] == (long)atom_text_uri_list) ||
-	  (xevent->xclient.data.l[4] == (long)atom_text_uri_list))
-*/	{
+ *	  (xevent->xclient.data.l[3] == (long)atom_text_uri_list) ||
+ *	  (xevent->xclient.data.l[4] == (long)atom_text_uri_list))
+ */	{
 	  Ecore_Event_Dnd_Drop_Request *e;
 
 	   
