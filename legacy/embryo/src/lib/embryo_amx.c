@@ -479,6 +479,20 @@ embryo_program_error_get(Embryo_Program *ep)
    return ep->error;
 }
 
+void
+embryo_program_data_set(Embryo_Program *ep, void *data)
+{
+   if (!ep) return;
+   ep->data = data;
+}
+
+void *
+embryo_program_data_get(Embryo_Program *ep)
+{
+   if (!ep) return NULL;
+   return ep->data;
+}
+
 const char *
 embryo_error_string_get(int error)
 {

@@ -244,6 +244,8 @@ struct _Embryo_Program
    int            params_alloc;
    
    int            run_count;
+   
+   void          *data;
 };
 
 struct _Embryo_Func_Stub

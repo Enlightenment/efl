@@ -73,6 +73,8 @@ extern "C" {
    Embryo_Cell      embryo_program_variable_find(Embryo_Program *ep, char *name);
    void             embryo_program_error_set(Embryo_Program *ep, int error);
    int              embryo_program_error_get(Embryo_Program *ep);
+   void             embryo_program_data_set(Embryo_Program *ep, void *data);
+   void            *embryo_program_data_get(Embryo_Program *ep);
    const char      *embryo_error_string_get(int error);
    int              embryo_data_string_length_get(Embryo_Program *ep, Embryo_Cell *str_cell);
    void             embryo_data_string_get(Embryo_Program *ep, Embryo_Cell *str_cell, char *dst);
