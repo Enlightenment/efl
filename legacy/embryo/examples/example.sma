@@ -1,13 +1,11 @@
 #include <float>
-#include "test.inc"
-
-/* This is ugly - please ignore this code! */
+#include "example.inc"
 
 /* To compile: 
- * embryo_cc ./test.sma -otest.amx
+ * embryo_cc ./example.sma -oexample.amx
  * 
  * To test run:
- * embryo ./test.amx
+ * embryo ./example.amx
  */
 
 public global1 = 99;
@@ -40,3 +38,4 @@ public testfn(arg1, str[], arg2)
    
    return 5;
 }
+

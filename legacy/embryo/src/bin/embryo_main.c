@@ -12,12 +12,14 @@
 #include <string.h>
 
 /* debugging native calls */
-static int dochar(Embryo_Program *ep, char ch, Embryo_Cell param);
-static int doesc(Embryo_Program *ep, char ch, Embryo_Cell param);
-static int printstring(Embryo_Program *ep, Embryo_Cell *cstr, Embryo_Cell *params, int num);
+static int process_format_char(Embryo_Program *ep, char ch, Embryo_Cell param);
+static int process_escape_char(Embryo_Program *ep, char ch);
+static int custom_printf(Embryo_Program *ep, Embryo_Cell *cstr, Embryo_Cell *params, int num);
+
+static Embryo_Cell exported_printf(Embryo_Program *ep, Embryo_Cell *params);
 
 static int
-dochar(Embryo_Program * ep, char ch, Embryo_Cell param)
+process_format_char(Embryo_Program * ep, char ch, Embryo_Cell param)
 {
    Embryo_Cell *cptr;
                                    
@@ -28,45 +30,37 @@ dochar(Embryo_Program * ep, char ch, Embryo_Cell param)
 	return 0;
       case 'c':
 	cptr = embryo_data_address_get(ep, param);
-	if (cptr)
-	  putchar((int) *cptr);
+	if (cptr) putchar((int) *cptr);
 	return 1;
       case 'i':
       case 'd':
 	cptr = embryo_data_address_get(ep, param);
-	if (cptr)
-	  printf("%i", (int) *cptr);
+	if (cptr) printf("%i", (int) *cptr);
 	return 1;
       case 'x':
 	cptr = embryo_data_address_get(ep, param);
-	if (cptr)
-	  printf("%x", (unsigned int) *cptr);
+	if (cptr) printf("%x", (unsigned int) *cptr);
 	return 1;
       case 'f':
 	cptr = embryo_data_address_get(ep, param);
-	if (cptr)
-	  printf("%f", (float)(*(float *)cptr));
+	if (cptr) printf("%f", (float)(*(float *)cptr));
 	return 1;
       case 'X':
 	cptr = embryo_data_address_get(ep, param);
-	if (cptr)
-	  printf("%08x", (unsigned int) *cptr);
+	if (cptr) printf("%08x", (unsigned int) *cptr);
 	return 1;
       case 's':
 	cptr = embryo_data_address_get(ep, param);
-	if (cptr)
-	  printstring(ep, cptr, NULL, 0);
+	if (cptr) custom_printf(ep, cptr, NULL, 0);
 	return 1;
-     }   
+     }
    putchar(ch);
    return 0;
 }
 
 static int
-doesc(Embryo_Program * ep, char ch, Embryo_Cell param)
+process_escape_char(Embryo_Program * ep, char ch)
 {
-   Embryo_Cell *cptr;
-                                   
    switch (ch)
      {
       case 'n':
@@ -81,37 +75,45 @@ doesc(Embryo_Program * ep, char ch, Embryo_Cell param)
 }
 
 static int
-printstring(Embryo_Program * ep, Embryo_Cell *cstr, Embryo_Cell *params, int num)
+custom_printf(Embryo_Program * ep, Embryo_Cell *cstr, Embryo_Cell *params, int num)
 {
    int i;
    int informat = 0, paramidx = 0, inesc = 0, len = 0;
-   int j = sizeof(Embryo_Cell) - sizeof(char);
    char c;
    char *str;
       
-   /* the string is packed */
    i = 0;
    len = embryo_data_string_length_get(ep, cstr);
    str = alloca(len + 1);
    embryo_data_string_get(ep, cstr, str);
-   for (i = 0;; i++) {
-      c = (char) (str[i]);
-      if (c == 0)
-	break;
-      if (informat) {
-	 paramidx += dochar(ep, c, params[paramidx]);
-	 informat = 0;
-      } else if (inesc) {
-	 doesc(ep, c, params[paramidx]);
-	 inesc = 0;
-      } else if (params != NULL && c == '%') {
-	 informat = 1;
-      } else if (params != NULL && c == '\\') {
-	 inesc = 1;
-      } else {
-	 putchar(c);
-      }                                       /* if */
-   }                                               /* for */
+   for (i = 0;; i++)
+     {
+	c = (char) (str[i]);
+	if (c == 0)
+	  break;
+	if (informat)
+	  {
+	     paramidx += process_format_char(ep, c, params[paramidx]);
+	     informat = 0;
+	  }
+	else if (inesc)
+	  {
+	     process_escape_char(ep, c);
+	     inesc = 0;
+	  }
+	else if ((params != NULL) && (c == '%'))
+	  {
+	     informat = 1;
+	  }
+	else if ((params != NULL) && (c == '\\'))
+	  {
+	     inesc = 1;
+	  }
+	else
+	  {
+	     putchar(c);
+	  }
+     }
    return EMBRYO_ERROR_NONE;
 }
 
@@ -120,13 +122,13 @@ exported_printf(Embryo_Program *ep, Embryo_Cell *params)
 {
    Embryo_Cell *cptr;
 
-   // params[0] = number of bytes params passed 
    cptr = embryo_data_address_get(ep, params[1]);
-   printstring(ep, cptr, params + 2, (int) (params[0] / sizeof(Embryo_Cell)) - 1);
-   fflush(stdout);
+   custom_printf(ep, cptr, params + 2, (int) (params[0] / sizeof(Embryo_Cell)) - 1);
    return EMBRYO_ERROR_NONE;
 }
 
+/* another example native call */
+/*
 static Embryo_Cell
 exported_call(Embryo_Program *ep, Embryo_Cell *params)
 {
@@ -161,78 +163,110 @@ exported_call(Embryo_Program *ep, Embryo_Cell *params)
    printf("\n");
    return 10;
 }
-
-void
-exit_error(Embryo_Program *ep, int errorcode)
-{
-  printf("Run time error %d: \"%s\"\n", 
-	 errorcode, 
-	 embryo_error_string_get(errorcode));
-  exit(-1);
-}
-
-void PrintUsage(char *program)
-{
-  printf("Usage: %s <filename>\n", program);
-  exit(1);
-}
+*/
 
 int
 main(int argc,char *argv[])
 {
    Embryo_Program *ep;
-   Embryo_Cell val;
    Embryo_Function fn;
-   int r;
+   int i;
+   int r = EMBRYO_PROGRAM_OK;
    int err;
+   int args = 0;
+   char *file = NULL;
+   char *func = NULL;
 
-   if (argc != 2)
+   for (i = 1; i < argc; i++)
      {
-	printf("Usage: %s <filename>\n", argv[0]);
+	if (argv[i][0] != '-')
+	  {
+	     file = argv[i];
+	     if (i < (argc - 1)) args = i + 1;
+	     break;
+	  }
+	else if (!strcmp(argv[i], "-func"))
+	  {
+	     if (i < (argc - 1))
+	       {
+		  i++;
+		  func = argv[i];
+	       }
+	  }
+     }
+   if ((argc < 2) || (!file))
+     {
+	printf("Usage: %s [options] <filename> [parameters]\n"
+	       "Where options can be any of:\n"
+	       "\t-func name         execute function \"name\" to start\n"
+	       , argv[0]);
 	exit(-1);
      }
-   ep = embryo_program_load(argv[1]);
+   ep = embryo_program_load(file);
    if (!ep)
      {
-	printf("Cannot load %s\n", argv[1]);
+	printf("Cannot load %s\n", file);
 	exit(-1);
      }
-   embryo_program_native_call_add(ep, "call", exported_call);
    embryo_program_native_call_add(ep, "printf", exported_printf);
-
    embryo_program_vm_push(ep);
-   val = embryo_program_variable_find(ep, "global1");
-   if (val != EMBRYO_CELL_NONE)
+
+   if (args > 0)
      {
-	Embryo_Cell *addr;
-	
-	addr = embryo_data_address_get(ep, val);
-	if (addr) printf("Global variable value = %i\n", (int)*addr);
+	for (i = args; i < argc; i++)
+	  {
+	     printf("%i\n", i);
+	     if (argv[i][0] == 's')
+		  embryo_parameter_string_push(ep, argv[i] + 1);
+	     else if (argv[i][0] == 'i')
+	       {
+		  Embryo_Cell n;
+		  
+		  n = atoi(argv[i] + 1);
+		  embryo_parameter_cell_push(ep, n);
+	       }
+	     else if (argv[i][0] == 'f')
+	       {
+		  float n;
+		  Embryo_Cell c;
+		  
+		  n = atof(argv[i] + 1);
+		  c = EMBRYO_FLOAT_TO_CELL(n);
+		  embryo_parameter_cell_push(ep, c);
+	       }
+	  }
+     }
+   r = EMBRYO_PROGRAM_OK;
+   if (func)
+     {
+	fn = embryo_program_function_find(ep, func);
+	if (fn != EMBRYO_FUNCTION_NONE)
+	  {
+	     while ((r = embryo_program_run(ep, fn)) == EMBRYO_PROGRAM_SLEEP);
+	  }
+	else
+	  {
+	     printf("Unable to find public function %s()\n"
+		    "Executing main() instead\n", func);
+	     while ((r = embryo_program_run(ep, EMBRYO_FUNCTION_MAIN)) == EMBRYO_PROGRAM_SLEEP);
+	  }
      }
    else
-     printf("Cannot find variable\n");
-	
-   fn = embryo_program_function_find(ep, "testfn");
-   if (fn != EMBRYO_FUNCTION_NONE)
      {
-	printf("Found testfn()\n");
-	embryo_parameter_cell_push(ep, 9876);
-	embryo_parameter_string_push(ep, "K is a dirty fish");
-	embryo_parameter_cell_push(ep, 127);
-	while ((r = embryo_program_run(ep, fn)) == EMBRYO_PROGRAM_SLEEP);
-	if (r == EMBRYO_PROGRAM_FAIL) printf("Run failed!\n");
-     }
-   else
-     {
-	printf("Runing main()\n");
 	while ((r = embryo_program_run(ep, EMBRYO_FUNCTION_MAIN)) == EMBRYO_PROGRAM_SLEEP);
-	if (r == EMBRYO_PROGRAM_FAIL) printf("Run failed!\n");
      }
    embryo_program_vm_pop(ep);
-   
-   err = embryo_program_error_get(ep);
-   if (err != EMBRYO_ERROR_NONE) exit_error(ep, err);
-   printf("Program %s returns %i\n", argv[1], embryo_program_return_value_get(ep));
+   if (r == EMBRYO_PROGRAM_FAIL)
+     {
+	printf("Run failed!\n");
+	err = embryo_program_error_get(ep);
+	if (err != EMBRYO_ERROR_NONE)
+	  {
+	     printf("Run time error %d: \"%s\"\n", err, embryo_error_string_get(err));
+	     exit(-1);
+	  }
+     }
+   printf("Program returned %i\n", (int)embryo_program_return_value_get(ep));
    embryo_program_free(ep);
    return 0;
 }
