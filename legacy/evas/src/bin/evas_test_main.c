@@ -255,7 +255,7 @@ loop(void)
    else if (t <= 36.0)
      {
 	double              tw, th;
-	static              did_fps = 0;
+	static int          did_fps = 0;
 	
 	if (!did_fps)
 	  {

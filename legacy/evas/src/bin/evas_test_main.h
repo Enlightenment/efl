@@ -37,6 +37,11 @@ double              get_time(void);
 void                loop(void);
 void                setup(void);
 
+void 		    setdown(void);
+void 		    scroll_setdown(void);
+void 		    scroll_setup(void);
+
+
 #ifdef __cplusplus
 }
 #endif
