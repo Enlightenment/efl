@@ -1,5 +1,5 @@
 # Note that this is NOT a relocatable package
-%define ver      1.0.0_pre8
+%define ver      1.0.0_pre10
 %define rel      1
 %define prefix   /usr
 
@@ -49,7 +49,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %build
 ./configure \
---prefix=%prefix \
+--prefix=%{prefix} \
 --enable-software-x11 \
 --enable-image-loader-png \
 --enable-image-loader-jpeg \
@@ -101,10 +101,12 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %attr(755,root,root) %{prefix}/lib/libevas.so*
 %attr(755,root,root) %{prefix}/lib/libevas.la
+%attr(755,root,root) %{prefix}/bin/evas_*
+%attr(755,root,root) %{prefix}/share/evas
 
 %files devel
 %attr(755,root,root) %{prefix}/lib/libevas.a
-%attr(755,root,root) %{prefix}/bin/evas*
+%attr(755,root,root) %{prefix}/bin/evas-config
 %{prefix}/include/Evas*
 %{prefix}/share/*
 %doc AUTHORS

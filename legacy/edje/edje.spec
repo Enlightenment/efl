@@ -64,10 +64,13 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %attr(755,root,root) %{prefix}/lib/libedje.so*
 %attr(755,root,root) %{prefix}/lib/libedje.la
+%attr(755,root,root) %{prefix}/bin/edje
+%attr(755,root,root) %{prefix}/bin/edje_cc
+%attr(755,root,root) %{prefix}/share/edje
 
 %files devel
 %attr(755,root,root) %{prefix}/lib/libedje.a
-%attr(755,root,root) %{prefix}/bin/edje*
+%attr(755,root,root) %{prefix}/bin/edje-config
 %{prefix}/include/Edje*
 %doc AUTHORS
 %doc COPYING
