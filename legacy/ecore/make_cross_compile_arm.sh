@@ -29,7 +29,8 @@ export CFLAGS=-O9
 --enable-ecore-ipc \
 --enable-ecore-txt \
 --disable-ecore-x \
---disable-ecore-config
+--enable-ecore-config \
+--disable-openssl
 
 INST="/tmp/"$PROJ"-instroot"
 sudo rm -rf $INST

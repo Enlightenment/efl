@@ -31,23 +31,27 @@ edb.c \
 convenience.c
 
 libecore_config_la_LIBADD = \
-$(top_builddir)/src/lib/ecore/libecore.la -ldl @evas_libs@
+$(top_builddir)/src/lib/ecore/libecore.la \
+-ldl \
+@edb_libs@ \
+@evas_libs@
 
 libecore_config_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la
 
-
-ecore_config_ipc_ecore_la_DEPENDENCIES     = \
+ecore_config_ipc_ecore_la_DEPENDENCIES = \
 $(top_builddir)/config.h \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
 libecore_config.la
+
 ecore_config_ipc_ecore_la_SOURCES          = ipc_ecore.c
 ecore_config_ipc_ecore_la_LIBADD           = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
 libecore_config.la \
-@edb_libs@
+@edb_libs@ \
+@evas_libs@
 
 $(DB):
 	sh $(top_srcdir)/src/lib/ecore_config/build_$(DB).sh
