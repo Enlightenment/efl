@@ -1,6 +1,6 @@
 #include "evas_common.h"
 
-extern DATA8        _evas_pow_lut[256][256];
+extern DATA8       *_evas_pow_lut;
 
 void
 evas_common_line_init(void)
@@ -54,7 +54,7 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
 	     DATA8  __blend_a;                                  
 	     
 	     ptr = dst->image->data + (y1 * dst->image->w) + x1;
-	     __blend_a = _evas_pow_lut[A_VAL(&(col))][A_VAL(ptr)]; 
+	     __blend_a = _evas_pow_lut[(A_VAL(&(col)) << 8) | A_VAL(ptr)]; 
 	     
 	     BLEND_COLOR(A_VAL(&(col)), A_VAL(ptr), 
 			 255, A_VAL(ptr), 
@@ -133,6 +133,7 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
    y = y1;
    if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
      {
+	if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
 	if (ax > ay)
 	  {
 	     d = ay - (ax >> 1);
@@ -146,7 +147,7 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
 			    DATA32 __blend_tmp;                       
 			    DATA8  __blend_a;                                  
 			    
-			    __blend_a = _evas_pow_lut[A_VAL(&(col))][A_VAL(ptr)]; 
+			    __blend_a = _evas_pow_lut[(A_VAL(&(col)) << 8) | A_VAL(ptr)]; 
 			    
 			    BLEND_COLOR(A_VAL(&(col)), A_VAL(ptr), 
 					255, A_VAL(ptr), 
@@ -185,7 +186,7 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
 			    DATA32 __blend_tmp;                       
 			    DATA8  __blend_a;                                  
 			    
-			    __blend_a = _evas_pow_lut[A_VAL(&(col))][A_VAL(ptr)]; 
+			    __blend_a = _evas_pow_lut[(A_VAL(&(col)) << 8) | A_VAL(ptr)]; 
 			    
 			    BLEND_COLOR(A_VAL(&(col)), A_VAL(ptr), 
 					255, A_VAL(ptr), 

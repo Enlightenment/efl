@@ -4,7 +4,7 @@
 #include "evas_mmx.h"
 #endif
 
-extern DATA8        _evas_pow_lut[256][256];
+extern DATA8        *_evas_pow_lut;
 extern const DATA16 _evas_const_c1[4];
 
 #ifdef BUILD_C
@@ -158,7 +158,7 @@ evas_common_blend_alpha_color_rgba_to_rgba_c (DATA8 *src, DATA32 *dst, int len, 
 	     *dst_ptr = col;
 	     break;
 	   default:
-	     a = _evas_pow_lut[aa][A_VAL(dst_ptr)];
+	     a = _evas_pow_lut[(aa << 8) | A_VAL(dst_ptr)];
 	     BLEND_COLOR(aa, A_VAL(dst_ptr), 
 		       255, A_VAL(dst_ptr), 
 		       tmp);

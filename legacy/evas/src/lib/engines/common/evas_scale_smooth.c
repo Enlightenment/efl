@@ -5,7 +5,6 @@
 
 #include "evas_blend_ops.h"
 
-extern DATA8        _evas_pow_lut[256][256];
 extern const DATA16 _evas_const_c1[4];
 
 static DATA32 **scale_calc_y_points(DATA32 *src, int sw, int sh, int dh);

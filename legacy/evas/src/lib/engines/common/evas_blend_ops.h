@@ -8,7 +8,7 @@
 \
    if (A_VAL(src)) /* hmmm - do we need this? */ \
      { \
-	__a = _evas_pow_lut[A_VAL(src)][A_VAL(dst)]; \
+	__a = _evas_pow_lut[(A_VAL(src) << 8) | A_VAL(dst)]; \
 	BLEND_COLOR(A_VAL(src), A_VAL(dst), \
 		    255, A_VAL(dst), \
 		    __tmp); \

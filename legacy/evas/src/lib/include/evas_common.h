@@ -627,7 +627,8 @@ void evas_common_cpu_end_opt                            (void);
     
 /****/
 void evas_common_blend_init                             (void);
-
+void evas_common_blend_init_evas_pow_lut                (void);
+   
 void evas_common_blend_pixels_rgba_to_rgb_c             (DATA32 *src, DATA32 *dst, int len);
 void evas_common_blend_pixels_rgba_to_rgb_mmx           (DATA32 *src, DATA32 *dst, int len);
 void evas_common_blend_pixels_rgba_to_rgba_c            (DATA32 *src, DATA32 *dst, int len);

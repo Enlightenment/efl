@@ -1,5 +1,7 @@
 #include "evas_common.h"
 
+extern DATA8        *_evas_pow_lut;
+
 void
 evas_common_draw_init(void)
 {
@@ -565,6 +567,7 @@ evas_common_draw_func_blend_color_get(DATA32 src, RGBA_Image *dst, int pixels)
      {
 	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
 	  {
+	     if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
 	     return evas_common_blend_color_rgba_to_rgba_c;
 	  }
 	else
@@ -585,6 +588,7 @@ evas_common_draw_func_blend_color_get(DATA32 src, RGBA_Image *dst, int pixels)
      {
 	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
 	  {
+	     if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
 	     return evas_common_copy_color_rgb_to_rgba_c;
 	  }
 	else
@@ -619,6 +623,7 @@ evas_common_draw_func_blend_cmod_get(RGBA_Image *src, RGBA_Image *dst, int pixel
      {
 	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
 	  {
+	     if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
 	     return evas_common_blend_pixels_cmod_rgba_to_rgba_c;
 	  }
 	else
@@ -630,6 +635,7 @@ evas_common_draw_func_blend_cmod_get(RGBA_Image *src, RGBA_Image *dst, int pixel
      {
 	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
 	  {
+	     if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
 	     return evas_common_copy_pixels_cmod_rgb_to_rgba_c;
 	  }
 	else
@@ -648,6 +654,7 @@ evas_common_draw_func_blend_mul_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst
      {
 	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
 	  {
+	     if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
 	     return evas_common_blend_pixels_mul_color_rgba_to_rgba_c;
 	  }
 	else
@@ -668,6 +675,7 @@ evas_common_draw_func_blend_mul_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst
      {
 	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
 	  {
+	     if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
 	     return evas_common_blend_pixels_mul_color_rgba_to_rgba_c;
 	  }
 	else
@@ -694,6 +702,7 @@ evas_common_draw_func_blend_alpha_get(RGBA_Image *dst)
 {
    if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
      {
+	if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
 	return evas_common_blend_alpha_color_rgba_to_rgba_c;
      }
    else
