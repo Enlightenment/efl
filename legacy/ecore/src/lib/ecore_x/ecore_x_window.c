@@ -524,6 +524,7 @@ ecore_x_window_border_width_get(Ecore_X_Window win)
 /**
  * Sets the width of the border of the given window.
  * @param   win The given window.
+ * @param   width The new border width.
  * @ingroup Ecore_X_Window_Geometry_Group
  */
 void
