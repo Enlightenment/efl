@@ -26,6 +26,7 @@ struct _Image_Lookup
 
 Edje_File *edje_file = NULL;
 Evas_List *edje_collections = NULL;
+Evas_List *fonts = NULL;
 
 static Eet_Data_Descriptor *edd_edje_file = NULL;
 static Eet_Data_Descriptor *edd_edje_image_directory = NULL;
@@ -69,6 +70,7 @@ data_write(void)
    int total_bytes;
    int input_raw_bytes;
    int image_num;
+   int font_num;
    int collection_num;
    
    bytes = 0;
@@ -76,6 +78,7 @@ data_write(void)
    total_bytes = 0;
    input_raw_bytes = 0;
    image_num = 0;
+   font_num = 0;
    collection_num = 0;
    ef = eet_open(file_out, EET_FILE_MODE_WRITE);
    if (!ef)
@@ -100,6 +103,103 @@ data_write(void)
      {
 	printf("%s: Wrote %9i bytes (%4iKb) for \"edje_file\" header\n",
 	       progname, bytes, (bytes + 512) / 1024);
+     }
+   for (l = fonts; l; l = l->next)
+     {
+	Font *fn;
+	void *fdata = NULL;
+	int fsize = 0;
+	Evas_List *ll;
+	FILE *f;
+	
+	fn = l->data;
+	f = fopen(fn->file, "rb");
+	if (f)
+	  {
+	     long pos;
+	     
+	     fseek(f, 0, SEEK_END);
+	     pos = ftell(f);
+	     rewind(f);
+	     fdata = malloc(pos);
+	     if (fdata)
+	       {
+		  if (fread(fdata, pos, 1, f) != 1)
+		    {
+		       fprintf(stderr, "%s: Error. unable to read all of font file \"%s\"\n",
+			       progname, fn->file);
+		       exit(-1);
+		    }
+		  fsize = pos;
+	       }
+	     fclose(f);
+	  }
+	else
+	  {
+	     for (ll = fnt_dirs; ll; ll = ll->next)
+	       {
+		  char buf[4096];
+		  
+		  snprintf(buf, sizeof(buf), "%s/%s", (char *)(ll->data), fn->file);
+		  f = fopen(buf, "rb");
+		  if (f)
+		    {
+		       long pos;
+		       
+		       fseek(f, 0, SEEK_END);
+		       pos = ftell(f);
+		       rewind(f);
+		       fdata = malloc(pos);
+		       printf("%i\n", (int)pos);
+		       if (fdata)
+			 {
+			    if (fread(fdata, pos, 1, f) != 1)
+			      {
+				 fprintf(stderr, "%s: Error. unable to read all of font file \"%s\"\n",
+					 progname, buf);
+				 exit(-1);
+			      }
+			    fsize = pos;
+			 }
+		       fclose(f);
+		       if (fdata) break;
+		    }
+	       }
+	  }
+	if (!fdata)
+	  {
+	     fprintf(stderr, "%s: Error. unable to write font part \"%s\" entry to %s \n",
+		     progname, fn->file, file_out);	
+	     exit(-1);
+	  }
+	else
+	  {
+	     char buf[4096];
+	     
+	     snprintf(buf, sizeof(buf), "fonts/%s", fn->name);
+	     bytes = eet_write(ef, buf, fdata, fsize, 1);
+	     if (bytes <= 0)
+	       {
+		  fprintf(stderr, "%s: Error. unable to write font part \"%s\" as \"%s\" part entry to %s \n",
+			  progname, fn->file, buf, file_out);	
+		  exit(-1);
+	       }
+	     else
+	       {
+		  font_num++;
+		  total_bytes += bytes;
+		  input_bytes += fsize;
+		  input_raw_bytes += fsize;
+	       }
+	     if (verbose)
+	       {
+		  printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" font entry \"%s\" compress: [real: %2.1f%%]\n",
+			 progname, bytes, (bytes + 512) / 1024, buf, fn->file,
+			 100 - (100 * (double)bytes) / ((double)(fsize))
+			 );
+	       }
+	     free(fdata);
+	  }
      }
    if ((edje_file) && (edje_file->image_dir))
      {
@@ -196,7 +296,69 @@ data_write(void)
    for (l = edje_collections; l; l = l->next)
      {
 	Edje_Part_Collection *pc;
-	char buf[456];
+	Evas_List *ll;
+	
+	pc = l->data;
+	for (ll = pc->parts; ll; ll = ll->next)
+	  {
+	     Edje_Part *ep;
+	     Evas_List *l3;
+	     Edje_Part_Description *epd;
+	     
+	     ep = ll->data;
+	     epd = ep->default_desc;
+	     if (epd->text.font)
+	       {
+		  Evas_List *lll;
+		  
+		  for (lll = fonts; lll; lll = lll->next)
+		    {
+		       Font *fn;
+		       
+		       fn = lll->data;
+		       if (!strcmp(fn->name, epd->text.font))
+			 {
+			    char *s;
+			    
+			    s = malloc(strlen(epd->text.font) + strlen("fonts/") + 1);
+			    strcpy(s, "fonts/");
+			    strcat(s, epd->text.font);
+			    free(epd->text.font);
+			    epd->text.font = s;
+			 }
+		    }
+	       }
+	     for (l3 = ep->other_desc; l3; l3 = l3->next)
+	       {
+		  epd = l3->data;
+		  if (epd->text.font)
+		    {
+		       Evas_List *lll;
+		       
+		       for (lll = fonts; lll; lll = lll->next)
+			 {
+			    Font *fn;
+			    
+			    fn = lll->data;
+			    if (!strcmp(fn->name, epd->text.font))
+			      {
+				 char *s;
+				 
+				 s = malloc(strlen(epd->text.font) + strlen("fonts/") + 1);
+				 strcpy(s, "fonts/");
+				 strcat(s, epd->text.font);
+				 free(epd->text.font);
+				 epd->text.font = s;
+			      }
+			 }
+		    }
+	       }
+	  }
+     }
+   for (l = edje_collections; l; l = l->next)
+     {
+	Edje_Part_Collection *pc;
+	char buf[4096];
 	
 	pc = l->data;
 	
@@ -231,6 +393,7 @@ data_write(void)
 	printf("Summary:\n"
 	       "  Wrote %i collections\n"
 	       "  Wrote %i images\n"
+	       "  Wrote %i fonts\n"
 	       "Conservative compression summary:\n"
 	       "  Wrote total %i bytes (%iKb) from %i (%iKb) input data\n"
 	       "  Output file is %3.1f%% the size of the input data\n"
@@ -242,6 +405,7 @@ data_write(void)
 	       ,
 	       collection_num,
 	       image_num,
+	       font_num,
 	       total_bytes, (total_bytes + 512) / 1024,
 	       input_bytes, (input_bytes + 512) / 1024,
 	       (100.0 * (double)total_bytes) / (double)input_bytes,

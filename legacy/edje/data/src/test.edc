@@ -1,3 +1,12 @@
+// Fonts to be inlined and used that a user might not have already installed
+fonts
+{
+   // The first argument is the file, just like images, the second is the
+   // font name this font is to be known as by edje text objects as the
+   // font name
+   font: "Vera.ttf" "Edje.Font.Name";
+}
+
 // Images in the image database for the output file
 images
 {

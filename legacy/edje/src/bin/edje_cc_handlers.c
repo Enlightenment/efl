@@ -5,6 +5,8 @@ static void ob_images(void);
 static void ob_images_image(void);
 static void st_images_image(void);
 
+static void st_fonts_font(void);
+
 static void st_data_item(void);
 
 static void ob_collections(void);
@@ -81,6 +83,7 @@ static void st_collections_group_programs_program_after(void);
 New_Statement_Handler statement_handlers[] =
 {
      {"images.image", st_images_image},
+     {"fonts.font", st_fonts_font},
      {"data.item", st_data_item},
      {"collections.group.name", st_collections_group_name},
      {"collections.group.min", st_collections_group_min},
@@ -145,6 +148,8 @@ New_Object_Handler object_handlers[] =
 {
      {"images", ob_images},
      {"images.image", ob_images_image},
+     {"fonts", NULL},
+     {"fonts.font", NULL},
      {"data", NULL},
      {"data.item", NULL},
      {"collections", ob_collections},
@@ -291,6 +296,17 @@ st_images_image(void)
      }
    if (img->source_type != EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY) return;
    img->source_param = parse_int_range(2, 0, 100);
+}
+
+static void
+st_fonts_font(void)
+{
+   Font *fn;
+   
+   fn = calloc(1, sizeof(Font));
+   fn->file = parse_str(0);
+   fn->name = parse_str(1);
+   fonts = evas_list_append(fonts, fn);
 }
 
 static void

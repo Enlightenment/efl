@@ -3,6 +3,7 @@
 static void main_help(void);
 
 Evas_List *img_dirs = NULL;
+Evas_List *fnt_dirs = NULL;
 char      *file_in = NULL;
 char      *file_out = NULL;
 char      *progname = NULL;
@@ -18,6 +19,7 @@ main_help(void)
       "Where OPTIONS is one or more of:\n"
       "\n"
       "-id image/directory      Add a directory to look in for relative path images\n"
+      "-fd font/directory       Add a directory to look in for relative path fonts\n"
       "-v                       Verbose output\n"
       ,progname);
 }
@@ -45,6 +47,11 @@ main(int argc, char **argv)
 	  {
 	     i++;	     
 	     img_dirs = evas_list_append(img_dirs, argv[i]);
+	  }
+	else if ((!strcmp(argv[i], "-fd")) && (i < (argc - 1)))
+	  {
+	     i++;	     
+	     fnt_dirs = evas_list_append(fnt_dirs, argv[i]);
 	  }
 	else if (!file_in)
 	  file_in = argv[i];

@@ -185,6 +185,7 @@ _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep)
 	Evas_Object *o;
 	
 	o = evas_object_text_add(ed->evas);
+	evas_object_text_font_source_set(o, ed->path);
 	evas_object_smart_member_add(o, ed->obj);
 	evas_object_pass_events_set(o, 1);
 	evas_object_clip_set(o, ed->clipper);

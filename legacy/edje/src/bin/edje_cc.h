@@ -22,6 +22,7 @@
 /* types */
 typedef struct _New_Object_Handler    New_Object_Handler;
 typedef struct _New_Statement_Handler New_Statement_Handler;
+typedef struct _Font                  Font;
 
 struct _New_Object_Handler
 {
@@ -33,6 +34,12 @@ struct _New_Statement_Handler
 {
    char *type;
    void (*func)(void);
+};
+
+struct _Font
+{
+   char *file;
+   char *name;
 };
 
 /* global fn calls */
@@ -63,6 +70,7 @@ char   *mem_strdup(const char *s);
 
 /* global vars */
 extern Evas_List             *img_dirs;
+extern Evas_List             *fnt_dirs;
 extern char                  *file_in;
 extern char                  *file_out;
 extern char                  *progname;
@@ -72,6 +80,7 @@ extern Evas_List             *stack;
 extern Evas_List             *params;
 extern Edje_File             *edje_file;
 extern Evas_List             *edje_collections;
+extern Evas_List             *fonts;
 extern New_Object_Handler     object_handlers[];
 extern New_Statement_Handler  statement_handlers[];
 

@@ -104,7 +104,10 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	     else if (ep->type == EDJE_PART_TYPE_IMAGE)
 	       rp->object = evas_object_image_add(ed->evas);
 	     else if (ep->type == EDJE_PART_TYPE_TEXT)
-	       rp->object = evas_object_text_add(ed->evas);
+	       {
+		  rp->object = evas_object_text_add(ed->evas);
+		  evas_object_text_font_source_set(rp->object, ed->path);
+	       }
 	     else
 	       {
 		  printf("EDJE ERROR: wrong part type %i!\n", ep->type);
