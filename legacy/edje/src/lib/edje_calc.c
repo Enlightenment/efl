@@ -397,27 +397,19 @@ _edje_part_recalc_single(Edje *ed,
 	  {
 	     /* adjust for max aspect (width / height) */
 	     if ((desc->aspect.max > 0.0) && (aspect > desc->aspect.max))
-	       {
-		  new_w = (params->h * desc->aspect.max);
-	       }
+	       new_w = (params->h * desc->aspect.max);
 	     /* adjust for min aspect (width / height) */
 	     if ((desc->aspect.min > 0.0) && (aspect < desc->aspect.min))
-	       {
-		  new_w = (params->h * desc->aspect.min);
-	       }
+	       new_w = (params->h * desc->aspect.min);
 	  } /* prefer horizontal size as determiner */
 	else if (desc->aspect.prefer == EDJE_ASPECT_PREFER_HORIZONTAL) /* keep both dimensions in check */
 	  {
 	     /* adjust for max aspect (width / height) */
 	     if ((desc->aspect.max > 0.0) && (aspect > desc->aspect.max))
-	       {
-		  new_h = (params->w / desc->aspect.max);
-	       }
+	       new_h = (params->w / desc->aspect.max);
 	     /* adjust for min aspect (width / height) */
 	     if ((desc->aspect.min > 0.0) && (aspect < desc->aspect.min))
-	       {
-		  new_h = (params->w / desc->aspect.min);
-	       }
+	       new_h = (params->w / desc->aspect.min);
 	  }
 	/* do real adjustment */
 	if ((params->h - new_h) > (params->w - new_w))
