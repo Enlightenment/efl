@@ -30,6 +30,7 @@ edje_data.c \
 edje_embryo.c \
 edje_load.c \
 edje_main.c \
+edje_misc.c \
 edje_program.c \
 edje_smart.c \
 edje_text.c \

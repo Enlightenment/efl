@@ -228,9 +228,12 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 	Edje_Program_Target *pt;
 	
 	pt = l->data;
-	rp = evas_list_nth(ed->parts, pt->id);
-	if (rp) _edje_part_pos_set(ed, rp, 
-				   runp->program->tween.mode, t);
+	if (pt->id >= 0)
+	  {
+	     rp = ed->table_parts[pt->id % ed->table_parts_size];
+	     if (rp) _edje_part_pos_set(ed, rp, 
+					runp->program->tween.mode, t);
+	  }
      }
    if (t >= 1.0)
      {
@@ -240,17 +243,20 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 	     Edje_Program_Target *pt;
 	     
 	     pt = l->data;
-	     rp = evas_list_nth(ed->parts, pt->id);
-	     if (rp)
+	     if (pt->id >= 0)
 	       {
-		  _edje_part_description_apply(ed, rp, 
-					       runp->program->state, 
-					       runp->program->value,
-					       NULL,
-					       0.0);
-		  _edje_part_pos_set(ed, rp, 
-				     runp->program->tween.mode, 0.0);
-		  rp->program = NULL;
+		  rp = ed->table_parts[pt->id % ed->table_parts_size];
+		  if (rp)
+		    {
+		       _edje_part_description_apply(ed, rp, 
+						    runp->program->state, 
+						    runp->program->value,
+						    NULL,
+						    0.0);
+		       _edje_part_pos_set(ed, rp, 
+					  runp->program->tween.mode, 0.0);
+		       rp->program = NULL;
+		    }
 	       }
 	  }
 	_edje_recalc(ed);
@@ -275,7 +281,7 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 	     
 	     if (pa->id >= 0)
 	       {
-		  pr = evas_list_nth(ed->collection->programs, pa->id);
+		  pr = ed->table_programs[pa->id % ed->table_programs_size];
 		  if (pr) _edje_program_run(ed, pr, 0, "", "");
 		  if (_edje_block_break(ed))
 		    {
@@ -313,17 +319,20 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
 	Edje_Program_Target *pt;
 	
 	pt = l->data;
-	rp = evas_list_nth(ed->parts, pt->id);
-	if (rp)
+	if (pt->id >= 0)
 	  {
-	     _edje_part_description_apply(ed, rp, 
-					  runp->program->state, 
-					  runp->program->value,
-					  NULL,
-					  0.0);
-	     _edje_part_pos_set(ed, rp, 
-				runp->program->tween.mode, 0.0);
-	     rp->program = NULL;
+	     rp = ed->table_parts[pt->id % ed->table_parts_size];
+	     if (rp)
+	       {
+		  _edje_part_description_apply(ed, rp, 
+					       runp->program->state, 
+					       runp->program->value,
+					       NULL,
+					       0.0);
+		  _edje_part_pos_set(ed, rp, 
+				     runp->program->tween.mode, 0.0);
+		  rp->program = NULL;
+	       }
 	  }
      }
    _edje_recalc(ed);
@@ -397,18 +406,21 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, char *ssig, char *ssrc)
 		  Edje_Program_Target *pt;
 		  
 		  pt = l->data;
-		  rp = evas_list_nth(ed->parts, pt->id);
-		  if (rp)
+		  if (pt->id >= 0)
 		    {
-		       if (rp->program)
-			 _edje_program_end(ed, rp->program);
-		       _edje_part_description_apply(ed, rp, 
-						    rp->param1.description->state.name,
-						    rp->param1.description->state.value, 
-						    pr->state, 
-						    pr->value);
-		       _edje_part_pos_set(ed, rp, pr->tween.mode, 0.0);
-		       rp->program = runp;
+		       rp = ed->table_parts[pt->id % ed->table_parts_size];
+		       if (rp)
+			 {
+			    if (rp->program)
+			      _edje_program_end(ed, rp->program);
+			    _edje_part_description_apply(ed, rp, 
+							 rp->param1.description->state.name,
+							 rp->param1.description->state.value, 
+							 pr->state, 
+							 pr->value);
+			    _edje_part_pos_set(ed, rp, pr->tween.mode, 0.0);
+			    rp->program = runp;
+			 }
 		    }
 	       }
 	     _edje_emit(ed, "program,start", pr->name);
@@ -435,17 +447,20 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, char *ssig, char *ssrc)
 		  Edje_Program_Target *pt;
 		  
 		  pt = l->data;
-		  rp = evas_list_nth(ed->parts, pt->id);
-		  if (rp)
+		  if (pt->id >= 0)
 		    {
-		       if (rp->program)
-			 _edje_program_end(ed, rp->program);
-		       _edje_part_description_apply(ed, rp, 
-						    pr->state, 
-						    pr->value,
-						    NULL,
-						    0.0);
-		       _edje_part_pos_set(ed, rp, pr->tween.mode, 0.0);
+		       rp = ed->table_parts[pt->id % ed->table_parts_size];
+		       if (rp)
+			 {
+			    if (rp->program)
+			      _edje_program_end(ed, rp->program);
+			    _edje_part_description_apply(ed, rp, 
+							 pr->state, 
+							 pr->value,
+							 NULL,
+							 0.0);
+			    _edje_part_pos_set(ed, rp, pr->tween.mode, 0.0);
+			 }
 		    }
 	       }
 	     _edje_emit(ed, "program,start", pr->name);
@@ -460,7 +475,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, char *ssig, char *ssrc)
 		 
 		  if (pa->id >= 0)
 		    {
-		       pr2 = evas_list_nth(ed->collection->programs, pa->id);
+		       pr2 = ed->table_programs[pa->id % ed->table_programs_size];
 		       if (pr2) _edje_program_run(ed, pr2, 0, "", "");
 		       if (_edje_block_break(ed)) goto break_prog;
 		    }
@@ -526,18 +541,21 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, char *ssig, char *ssrc)
 	     Edje_Program_Target *pt;
 	     
 	     pt = l->data;
-	     rp = evas_list_nth(ed->parts, pt->id);
-	     if ((rp) && (rp->drag.down.count == 0))
+	     if (pt->id >= 0)
 	       {
-		  rp->drag.val.x = pr->value;
-		  rp->drag.val.y = pr->value2;
-		  if      (rp->drag.val.x < 0.0) rp->drag.val.x = 0.0;
-		  else if (rp->drag.val.x > 1.0) rp->drag.val.x = 1.0;
-		  if      (rp->drag.val.y < 0.0) rp->drag.val.y = 0.0;
-		  else if (rp->drag.val.y > 1.0) rp->drag.val.y = 1.0;
-		  _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
-		  _edje_emit(ed, "drag,set", rp->part->name);
-		  if (_edje_block_break(ed)) goto break_prog;
+		  rp = ed->table_parts[pt->id % ed->table_parts_size];
+		  if ((rp) && (rp->drag.down.count == 0))
+		    {
+		       rp->drag.val.x = pr->value;
+		       rp->drag.val.y = pr->value2;
+		       if      (rp->drag.val.x < 0.0) rp->drag.val.x = 0.0;
+		       else if (rp->drag.val.x > 1.0) rp->drag.val.x = 1.0;
+		       if      (rp->drag.val.y < 0.0) rp->drag.val.y = 0.0;
+		       else if (rp->drag.val.y > 1.0) rp->drag.val.y = 1.0;
+		       _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
+		       _edje_emit(ed, "drag,set", rp->part->name);
+		       if (_edje_block_break(ed)) goto break_prog;
+		    }
 	       }
 	  }
 	_edje_emit(ed, "program,stop", pr->name);
@@ -553,18 +571,21 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, char *ssig, char *ssrc)
 	     Edje_Program_Target *pt;
 	     
 	     pt = l->data;
-	     rp = evas_list_nth(ed->parts, pt->id);
-	     if ((rp) && (rp->drag.down.count == 0))
+	     if (pt->id >= 0)
 	       {
-		  rp->drag.val.x += pr->value * rp->drag.step.x * rp->part->dragable.x;
-		  rp->drag.val.y += pr->value2 * rp->drag.step.y * rp->part->dragable.y;
-		  if      (rp->drag.val.x < 0.0) rp->drag.val.x = 0.0;
-		  else if (rp->drag.val.x > 1.0) rp->drag.val.x = 1.0;
-		  if      (rp->drag.val.y < 0.0) rp->drag.val.y = 0.0;
-		  else if (rp->drag.val.y > 1.0) rp->drag.val.y = 1.0;
-		  _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
-		  _edje_emit(ed, "drag,step", rp->part->name);
-		  if (_edje_block_break(ed)) goto break_prog;
+		  rp = ed->table_parts[pt->id % ed->table_parts_size];
+		  if ((rp) && (rp->drag.down.count == 0))
+		    {
+		       rp->drag.val.x += pr->value * rp->drag.step.x * rp->part->dragable.x;
+		       rp->drag.val.y += pr->value2 * rp->drag.step.y * rp->part->dragable.y;
+		       if      (rp->drag.val.x < 0.0) rp->drag.val.x = 0.0;
+		       else if (rp->drag.val.x > 1.0) rp->drag.val.x = 1.0;
+		       if      (rp->drag.val.y < 0.0) rp->drag.val.y = 0.0;
+		       else if (rp->drag.val.y > 1.0) rp->drag.val.y = 1.0;
+		       _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
+		       _edje_emit(ed, "drag,step", rp->part->name);
+		       if (_edje_block_break(ed)) goto break_prog;
+		    }
 	       }
 	  }
 	_edje_emit(ed, "program,stop", pr->name);
@@ -580,18 +601,21 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, char *ssig, char *ssrc)
 	     Edje_Program_Target *pt;
 	     
 	     pt = l->data;
-	     rp = evas_list_nth(ed->parts, pt->id);
-	     if ((rp) && (rp->drag.down.count == 0))
+	     if (pt->id >= 0)
 	       {
-		  rp->drag.val.x += pr->value * rp->drag.page.x * rp->part->dragable.x;
-		  rp->drag.val.y += pr->value2 * rp->drag.step.y * rp->part->dragable.y;
-		  if      (rp->drag.val.x < 0.0) rp->drag.val.x = 0.0;
-		  else if (rp->drag.val.x > 1.0) rp->drag.val.x = 1.0;
-		  if      (rp->drag.val.y < 0.0) rp->drag.val.y = 0.0;
-		  else if (rp->drag.val.y > 1.0) rp->drag.val.y = 1.0;
-		  _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
-		  _edje_emit(ed, "drag,page", rp->part->name);
-		  if (_edje_block_break(ed)) goto break_prog;
+		  rp = ed->table_parts[pt->id % ed->table_parts_size];
+		  if ((rp) && (rp->drag.down.count == 0))
+		    {
+		       rp->drag.val.x += pr->value * rp->drag.page.x * rp->part->dragable.x;
+		       rp->drag.val.y += pr->value2 * rp->drag.step.y * rp->part->dragable.y;
+		       if      (rp->drag.val.x < 0.0) rp->drag.val.x = 0.0;
+		       else if (rp->drag.val.x > 1.0) rp->drag.val.x = 1.0;
+		       if      (rp->drag.val.y < 0.0) rp->drag.val.y = 0.0;
+		       else if (rp->drag.val.y > 1.0) rp->drag.val.y = 1.0;
+		       _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
+		       _edje_emit(ed, "drag,page", rp->part->name);
+		       if (_edje_block_break(ed)) goto break_prog;
+		    }
 	       }
 	  }
 	_edje_emit(ed, "program,stop", pr->name);
@@ -620,9 +644,9 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, char *ssig, char *ssrc)
 	     
 	     if (pa->id >= 0)
 	       {
-	        pr2 = evas_list_nth(ed->collection->programs, pa->id);
-	        if (pr2) _edje_program_run(ed, pr2, 0, "", "");
-	        if (_edje_block_break(ed)) goto break_prog;
+		  pr2 = ed->table_programs[pa->id % ed->table_programs_size];
+		  if (pr2) _edje_program_run(ed, pr2, 0, "", "");
+		  if (_edje_block_break(ed)) goto break_prog;
 	       }
 	  }
      }

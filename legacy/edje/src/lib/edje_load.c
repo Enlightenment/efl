@@ -13,6 +13,7 @@ int
 edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 {
    Edje *ed;
+   int n;
    
    ed = _edje_fetch(obj);
    if (!ed) return 0;
@@ -85,7 +86,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	     hist = NULL;
 	  }
 	/* build real parts */
-	for (l = ed->collection->parts; l; l = l->next)
+	for (n = 0, l = ed->collection->parts; l; l = l->next, n++)
 	  {
 	     Edje_Part *ep;
 	     Edje_Real_Part *rp;
@@ -152,36 +153,61 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	     rp->drag.step.x = ep->dragable.step_x;
 	     rp->drag.step.y = ep->dragable.step_y;
 	  }
-	for (l = ed->parts; l; l = l->next)
+	if (n > 0)
 	  {
-	     Edje_Real_Part *rp;
-	     
-	     rp = l->data;
-	     if (rp->param1.description->rel1.id_x >= 0)
-	       rp->param1.rel1_to_x = evas_list_nth(ed->parts, rp->param1.description->rel1.id_x);
-	     if (rp->param1.description->rel1.id_y >= 0)
-	       rp->param1.rel1_to_y = evas_list_nth(ed->parts, rp->param1.description->rel1.id_y);
-	     if (rp->param1.description->rel2.id_x >= 0)
-	       rp->param1.rel2_to_x = evas_list_nth(ed->parts, rp->param1.description->rel2.id_x);
-	     if (rp->param1.description->rel2.id_y >= 0)
-	       rp->param1.rel2_to_y = evas_list_nth(ed->parts, rp->param1.description->rel2.id_y);
-	     _edje_text_part_on_add_clippers(ed, rp);
-	     if (rp->part->clip_to_id >= 0)
+	     ed->table_parts = malloc(sizeof(Edje_Real_Part *) * n);
+	     ed->table_parts_size = n;
+	     /* FIXME: check malloc return */
+	     n = 0;
+	     for (l = ed->parts; l; l = l->next)
 	       {
-		  rp->clip_to = evas_list_nth(ed->parts, rp->part->clip_to_id);
-		  if (rp->clip_to)
+		  Edje_Real_Part *rp;
+		  
+		  rp = l->data;
+		  ed->table_parts[n] = rp;
+		  n++;
+		  if (rp->param1.description->rel1.id_x >= 0)
+		    rp->param1.rel1_to_x = evas_list_nth(ed->parts, rp->param1.description->rel1.id_x);
+		  if (rp->param1.description->rel1.id_y >= 0)
+		    rp->param1.rel1_to_y = evas_list_nth(ed->parts, rp->param1.description->rel1.id_y);
+		  if (rp->param1.description->rel2.id_x >= 0)
+		    rp->param1.rel2_to_x = evas_list_nth(ed->parts, rp->param1.description->rel2.id_x);
+		  if (rp->param1.description->rel2.id_y >= 0)
+		    rp->param1.rel2_to_y = evas_list_nth(ed->parts, rp->param1.description->rel2.id_y);
+		  _edje_text_part_on_add_clippers(ed, rp);
+		  if (rp->part->clip_to_id >= 0)
 		    {
-		       evas_object_pass_events_set(rp->clip_to->object, 1);
-		       evas_object_clip_set(rp->object, rp->clip_to->object);
+		       rp->clip_to = evas_list_nth(ed->parts, rp->part->clip_to_id);
+		       if (rp->clip_to)
+			 {
+			    evas_object_pass_events_set(rp->clip_to->object, 1);
+			    evas_object_clip_set(rp->object, rp->clip_to->object);
+			 }
 		    }
+		  if (rp->part->dragable.confine_id >= 0)
+		    rp->confine_to = evas_list_nth(ed->parts, rp->part->dragable.confine_id);
+		  
+		  rp->swallow_params.min.w = 0;
+		  rp->swallow_params.min.w = 0;
+		  rp->swallow_params.max.w = -1;
+		  rp->swallow_params.max.h = -1;
 	       }
-	     if (rp->part->dragable.confine_id >= 0)
-	       rp->confine_to = evas_list_nth(ed->parts, rp->part->dragable.confine_id);
-	     
-	     rp->swallow_params.min.w = 0;
-	     rp->swallow_params.min.w = 0;
-	     rp->swallow_params.max.w = -1;
-	     rp->swallow_params.max.h = -1;
+	  }
+	n = evas_list_count(ed->collection->programs);
+	if (n > 0)
+	  {
+	     ed->table_programs = malloc(sizeof(Edje_Program *) * n);
+	     ed->table_programs_size = n;
+	     /* FIXME: check malloc return */
+	     n = 0;
+	     for (l = ed->collection->programs; l; l = l->next)
+	       {
+		  Edje_Program *pr;
+		  
+		  pr = l->data;
+		  ed->table_programs[n] = pr;
+		  n++;
+	       }
 	  }
 	_edje_ref(ed);
 	_edje_block(ed);
@@ -537,6 +563,12 @@ _edje_file_del(Edje *ed)
 	     free(pp);
 	  }
      }
+   if (ed->table_parts) free(ed->table_parts);
+   ed->table_parts = NULL;
+   ed->table_parts_size = 0;
+   if (ed->table_programs) free(ed->table_programs);
+   ed->table_programs = NULL;
+   ed->table_programs_size = 0;
 }
 
 void

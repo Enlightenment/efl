@@ -425,6 +425,11 @@ struct _Edje
    int                   load_error;
    int                   freeze;
    Edje_Var_Pool        *var_pool;
+   /* for faster lookups to avoid nth list walks */
+   int                   table_parts_size;
+   Edje_Real_Part      **table_parts;
+   int                   table_programs_size;
+   Edje_Program        **table_programs;
 };
 
 struct _Edje_Real_Part
