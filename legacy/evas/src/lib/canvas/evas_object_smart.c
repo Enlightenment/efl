@@ -14,7 +14,7 @@ struct _Evas_Object_Smart
 struct _Evas_Smart_Callback
 {
    char *event;
-   int   delete_me : 1;
+   char  delete_me : 1;
    void (*func) (void *data, Evas_Object *obj, void *event_info);
    void *func_data;
 };

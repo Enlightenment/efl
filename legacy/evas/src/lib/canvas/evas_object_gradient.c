@@ -15,9 +15,9 @@ struct _Evas_Object_Gradient
    struct {
       double         angle;
    } cur, prev;
-   int               changed : 1;
-   int               gradient_changed : 1;
-   int               gradient_opaque : 1;
+   char              changed : 1;
+   char              gradient_changed : 1;
+   char              gradient_opaque : 1;
    
    void             *engine_data;
 };

@@ -12,9 +12,9 @@ typedef struct _Evas_Polygon_Point       Evas_Polygon_Point;
 struct _Evas_Object_Polygon
 {
    DATA32            magic;
-   int               changed : 1;
-   Evas_List        *points;
-   
+   Evas_List        *points;   
+   char              changed : 1;
+
    void             *engine_data;
 };
 

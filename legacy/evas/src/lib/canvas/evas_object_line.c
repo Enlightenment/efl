@@ -20,7 +20,7 @@ struct _Evas_Object_Line
       } cache;
       double         x1, y1, x2, y2;
    } cur, prev;
-   int               changed : 1;
+   char              changed : 1;
    
    void             *engine_data;
 };

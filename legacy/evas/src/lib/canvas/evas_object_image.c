@@ -15,24 +15,22 @@ struct _Evas_Object_Image
    struct {
       struct {
 	 double      x, y, w, h;
-      } fill;
-      
+      } fill;      
       struct {
-	 int         w, h;
+	 short       w, h;
       } image;
-
       struct {
-	 int         l, r, t, b;
+	 short         l, r, t, b;
       } border;
 
       char          *file;
       char          *key;
       
-      int            smooth_scale : 1;
-      int            has_alpha :1;
+      char           smooth_scale : 1;
+      char           has_alpha :1;
    } cur, prev;
    
-   int               changed : 1;
+   char              changed : 1;
    
    int               load_error;
    Evas_List        *pixel_updates;

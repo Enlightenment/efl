@@ -53,6 +53,7 @@ typedef struct _Evas_Intercept_Func_SizePos Evas_Intercept_Func_SizePos;
 typedef struct _Evas_Intercept_Func_Obj     Evas_Intercept_Func_Obj;
 typedef struct _Evas_Intercept_Func_Int     Evas_Intercept_Func_Int;
 typedef struct _Evas_Key_Grab               Evas_Key_Grab;
+typedef struct _Evas_Callbacks      Evas_Callbacks;
   
 #define MAGIC_EVAS          0x70777770
 #define MAGIC_OBJ           0x71777770
@@ -128,7 +129,7 @@ struct _Evas_Key_Grab
    Evas_Modifier_Mask  modifiers;
    Evas_Modifier_Mask  not_modifiers;
    Evas_Object        *object;
-   int                 exclusive : 1;
+   char                exclusive : 1;
 };
 
 struct _Evas_Intercept_Func
@@ -152,7 +153,7 @@ struct _Evas_Smart
    int               usage;
    void             *data;
    
-   int               delete_me : 1;
+   char              delete_me : 1;
    
    void         (*func_add) (Evas_Object *o);
    void         (*func_del) (Evas_Object *o);
@@ -188,6 +189,27 @@ struct _Evas_Lock
    Evas_Modifier_Mask mask; /* we have a max of 64 locks */
 };
 
+struct _Evas_Callbacks
+{
+   char              deletions_waiting : 1;
+   int               walking_list;
+   Evas_Object_List *down;
+   Evas_Object_List *up;
+   Evas_Object_List *move;
+   Evas_Object_List *in;
+   Evas_Object_List *out;
+   Evas_Object_List *key_down;
+   Evas_Object_List *key_up;
+   Evas_Object_List *free;
+   Evas_Object_List *obj_focus_in;
+   Evas_Object_List *obj_focus_out;
+   Evas_Object_List *obj_show;
+   Evas_Object_List *obj_hide;
+   Evas_Object_List *obj_move;
+   Evas_Object_List *obj_resize;
+   Evas_Object_List *obj_restack;
+};
+
 struct _Evas
 {
    Evas_Object_List  _list_data;
@@ -195,8 +217,8 @@ struct _Evas
    DATA32            magic;
    
    struct {
-      int            inside : 1;
-      int            mouse_grabbed : 1;
+      char           inside : 1;
+      char           mouse_grabbed : 1;
       DATA32         button;
       int            x, y;
 
@@ -210,13 +232,13 @@ struct _Evas
    
    struct  {
       double         x, y, w, h;
-      int            changed : 1;
+      char           changed : 1;
    } viewport;
    
    struct {
       int            w, h;
       DATA32         render_method;
-      int            changed : 1;
+      char           changed : 1;
    } output;
    
    int               output_validity;
@@ -228,7 +250,7 @@ struct _Evas
    
    Evas_Hash        *name_hash;
    
-   int               changed : 1;
+   char              changed : 1;
    
    int               events_frozen;
    
@@ -260,8 +282,6 @@ struct _Evas_Layer
    int               layer;
    Evas_Object      *objects;
    
-   int               store : 1;
-
    Evas             *evas;
 
    void             *engine_data;
@@ -273,8 +293,7 @@ struct _Evas_Object
    
    DATA32            magic;
    
-   const char       *type;
-   
+   const char       *type;   
    Evas_Layer       *layer;   
    
    struct {
@@ -285,39 +304,22 @@ struct _Evas_Object
 	 } geometry;
 	 struct {
 	    int            x, y, w, h;
-	    int            r, g, b, a;
-	    int            visible;
+	    unsigned char  r, g, b, a;
+	    char           visible : 1;
 	 } clip;
       } cache;
       struct {
 	 double         x, y, w, h;
       } geometry;
       struct {
-	 int            r, g, b, a;
-      } color;
-      
-      int               visible : 1;
-      
-      int               layer;
-      
-      Evas_Object      *clipper;
-      
+	 unsigned char  r, g, b, a;
+      } color;      
+      char              visible : 1;      
+      int               layer;      
+      Evas_Object      *clipper;      
    } cur, prev;
    
-   char             *name;
-   
-   int               store : 1;
-   int               pass_events : 1;
-   int               repeat_events : 1;
-   int               restack : 1;
-   int               changed : 1;
-   int               mouse_in : 1;
-   int               mouse_grabbed : 1;
-   int               pre_render_done : 1;
-   int               intercepted : 1;
-   int               focused : 1;
-
-   int               delete_me;
+   char                       *name;
    
    Evas_Intercept_Func *interceptors;
    
@@ -326,26 +328,8 @@ struct _Evas_Object
    } data;
    
    Evas_List *grabs;
-   
-   struct {
-      int               deletions_waiting : 1;
-      int               walking_list;
-      Evas_Object_List *in;
-      Evas_Object_List *out;
-      Evas_Object_List *down;
-      Evas_Object_List *up;
-      Evas_Object_List *move;
-      Evas_Object_List *free;
-      Evas_Object_List *key_down;
-      Evas_Object_List *key_up;
-      Evas_Object_List *obj_focus_in;
-      Evas_Object_List *obj_focus_out;
-      Evas_Object_List *obj_show;
-      Evas_Object_List *obj_hide;
-      Evas_Object_List *obj_move;
-      Evas_Object_List *obj_resize;
-      Evas_Object_List *obj_restack;
-   } callbacks;
+
+   Evas_Callbacks *callbacks;
    
    struct {
       Evas_List   *clipees;
@@ -353,24 +337,37 @@ struct _Evas_Object
    } clip;
 
    Evas_Object_Func *func;
+
+   void             *object_data;
    
    struct {
       int            walking_list;
-      int            deletions_waiting : 1;
       Evas_Smart    *smart;
       void          *data;
       Evas_Object   *parent;
       Evas_List     *contained;
       Evas_List     *callbacks;
+      char           deletions_waiting : 1;
    } smart;
    
-   void             *object_data;
+   short                       store : 1;
+   short                       pass_events : 1;
+   short                       repeat_events : 1;
+   short                       restack : 1;
+   short                       changed : 1;
+   short                       mouse_in : 1;
+   short                       mouse_grabbed : 1;
+   short                       pre_render_done : 1;
+   short                       intercepted : 1;
+   short                       focused : 1;
+
+   unsigned char               delete_me;   
 };
 
 struct _Evas_Func_Node
 {
    Evas_Object_List  _list_data;   
-   int  delete_me : 1;
+   char delete_me : 1;
    void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info);
    void *data;
 };

@@ -44,45 +44,68 @@ static void
 evas_object_event_callback_clear(Evas_Object *obj)
 {
    Evas_Callback_Type t;
-   
-   if (!obj->callbacks.deletions_waiting) return;
-   obj->callbacks.deletions_waiting = 0;
-   evas_object_event_callback_list_post_free(&(obj->callbacks.in));
-   evas_object_event_callback_list_post_free(&(obj->callbacks.out));
-   evas_object_event_callback_list_post_free(&(obj->callbacks.down));
-   evas_object_event_callback_list_post_free(&(obj->callbacks.up));
-   evas_object_event_callback_list_post_free(&(obj->callbacks.move));
-   evas_object_event_callback_list_post_free(&(obj->callbacks.free));
-   evas_object_event_callback_list_post_free(&(obj->callbacks.key_down));
-   evas_object_event_callback_list_post_free(&(obj->callbacks.key_up));
-   evas_object_event_callback_list_post_free(&(obj->callbacks.obj_focus_in));
-   evas_object_event_callback_list_post_free(&(obj->callbacks.obj_focus_out));
-   evas_object_event_callback_list_post_free(&(obj->callbacks.obj_show));
-   evas_object_event_callback_list_post_free(&(obj->callbacks.obj_hide));
-   evas_object_event_callback_list_post_free(&(obj->callbacks.obj_move));
-   evas_object_event_callback_list_post_free(&(obj->callbacks.obj_resize));
-   evas_object_event_callback_list_post_free(&(obj->callbacks.obj_restack));
+
+   if (!obj->callbacks) return;
+   if (!obj->callbacks->deletions_waiting) return;
+   obj->callbacks->deletions_waiting = 0;
+   evas_object_event_callback_list_post_free(&(obj->callbacks->in));
+   evas_object_event_callback_list_post_free(&(obj->callbacks->out));
+   evas_object_event_callback_list_post_free(&(obj->callbacks->down));
+   evas_object_event_callback_list_post_free(&(obj->callbacks->up));
+   evas_object_event_callback_list_post_free(&(obj->callbacks->move));
+   evas_object_event_callback_list_post_free(&(obj->callbacks->free));
+   evas_object_event_callback_list_post_free(&(obj->callbacks->key_down));
+   evas_object_event_callback_list_post_free(&(obj->callbacks->key_up));
+   evas_object_event_callback_list_post_free(&(obj->callbacks->obj_focus_in));
+   evas_object_event_callback_list_post_free(&(obj->callbacks->obj_focus_out));
+   evas_object_event_callback_list_post_free(&(obj->callbacks->obj_show));
+   evas_object_event_callback_list_post_free(&(obj->callbacks->obj_hide));
+   evas_object_event_callback_list_post_free(&(obj->callbacks->obj_move));
+   evas_object_event_callback_list_post_free(&(obj->callbacks->obj_resize));
+   evas_object_event_callback_list_post_free(&(obj->callbacks->obj_restack));
+   if ((!obj->callbacks->in) &&
+       (!obj->callbacks->out) &&
+       (!obj->callbacks->down) &&
+       (!obj->callbacks->up) &&
+       (!obj->callbacks->move) &&
+       (!obj->callbacks->free) &&
+       (!obj->callbacks->key_down) &&
+       (!obj->callbacks->key_up) &&
+       (!obj->callbacks->obj_focus_in) &&
+       (!obj->callbacks->obj_focus_out) &&
+       (!obj->callbacks->obj_show) &&
+       (!obj->callbacks->obj_hide) &&
+       (!obj->callbacks->obj_move) &&
+       (!obj->callbacks->obj_resize) &&
+       (!obj->callbacks->obj_restack))
+     {
+	free(obj->callbacks);
+	obj->callbacks = NULL;	
+     }
 }
 
 void
 evas_object_event_callback_cleanup(Evas_Object *obj)
 {
    /* MEM OK */
-   evas_object_event_callback_list_free(&(obj->callbacks.in));
-   evas_object_event_callback_list_free(&(obj->callbacks.out));
-   evas_object_event_callback_list_free(&(obj->callbacks.down));
-   evas_object_event_callback_list_free(&(obj->callbacks.up));
-   evas_object_event_callback_list_free(&(obj->callbacks.move));
-   evas_object_event_callback_list_free(&(obj->callbacks.free));
-   evas_object_event_callback_list_free(&(obj->callbacks.key_down));
-   evas_object_event_callback_list_free(&(obj->callbacks.key_up));
-   evas_object_event_callback_list_free(&(obj->callbacks.obj_focus_in));
-   evas_object_event_callback_list_free(&(obj->callbacks.obj_focus_out));
-   evas_object_event_callback_list_free(&(obj->callbacks.obj_show));
-   evas_object_event_callback_list_free(&(obj->callbacks.obj_hide));
-   evas_object_event_callback_list_free(&(obj->callbacks.obj_move));
-   evas_object_event_callback_list_free(&(obj->callbacks.obj_resize));
-   evas_object_event_callback_list_free(&(obj->callbacks.obj_restack));
+   if (!obj->callbacks) return;
+   evas_object_event_callback_list_free(&(obj->callbacks->in));
+   evas_object_event_callback_list_free(&(obj->callbacks->out));
+   evas_object_event_callback_list_free(&(obj->callbacks->down));
+   evas_object_event_callback_list_free(&(obj->callbacks->up));
+   evas_object_event_callback_list_free(&(obj->callbacks->move));
+   evas_object_event_callback_list_free(&(obj->callbacks->free));
+   evas_object_event_callback_list_free(&(obj->callbacks->key_down));
+   evas_object_event_callback_list_free(&(obj->callbacks->key_up));
+   evas_object_event_callback_list_free(&(obj->callbacks->obj_focus_in));
+   evas_object_event_callback_list_free(&(obj->callbacks->obj_focus_out));
+   evas_object_event_callback_list_free(&(obj->callbacks->obj_show));
+   evas_object_event_callback_list_free(&(obj->callbacks->obj_hide));
+   evas_object_event_callback_list_free(&(obj->callbacks->obj_move));
+   evas_object_event_callback_list_free(&(obj->callbacks->obj_resize));
+   evas_object_event_callback_list_free(&(obj->callbacks->obj_restack));
+   free(obj->callbacks);
+   obj->callbacks = NULL;
 }
 
 void
@@ -91,58 +114,59 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
    /* MEM OK */
    Evas_Object_List **l_mod, *l;
    
+   if (!obj->callbacks) return;
    switch (type)
      {
       case EVAS_CALLBACK_MOUSE_IN:
-	l_mod = &(obj->callbacks.in);
+	l_mod = &(obj->callbacks->in);
 	break;
       case EVAS_CALLBACK_MOUSE_OUT:
-	l_mod = &(obj->callbacks.out);
+	l_mod = &(obj->callbacks->out);
 	break;
       case EVAS_CALLBACK_MOUSE_DOWN:
-	l_mod = &(obj->callbacks.down);
+	l_mod = &(obj->callbacks->down);
 	break;
       case EVAS_CALLBACK_MOUSE_UP:
-	l_mod = &(obj->callbacks.up);
+	l_mod = &(obj->callbacks->up);
 	break;
       case EVAS_CALLBACK_MOUSE_MOVE:
-	l_mod = &(obj->callbacks.move);
+	l_mod = &(obj->callbacks->move);
 	break;
       case EVAS_CALLBACK_FREE:
-	l_mod = &(obj->callbacks.free);
+	l_mod = &(obj->callbacks->free);
 	break;
       case EVAS_CALLBACK_KEY_DOWN:
-	l_mod = &(obj->callbacks.key_down);
+	l_mod = &(obj->callbacks->key_down);
 	break;
       case EVAS_CALLBACK_KEY_UP:
-	l_mod = &(obj->callbacks.key_up);
+	l_mod = &(obj->callbacks->key_up);
 	break;
       case EVAS_CALLBACK_FOCUS_IN:
-	l_mod = &(obj->callbacks.obj_focus_in);
+	l_mod = &(obj->callbacks->obj_focus_in);
 	break;
       case EVAS_CALLBACK_FOCUS_OUT:
-	l_mod = &(obj->callbacks.obj_focus_out);
+	l_mod = &(obj->callbacks->obj_focus_out);
 	break;
       case EVAS_CALLBACK_SHOW:
-	l_mod = &(obj->callbacks.obj_show);
+	l_mod = &(obj->callbacks->obj_show);
 	break;
       case EVAS_CALLBACK_HIDE:
-	l_mod = &(obj->callbacks.obj_hide);
+	l_mod = &(obj->callbacks->obj_hide);
 	break;
       case EVAS_CALLBACK_MOVE:
-	l_mod = &(obj->callbacks.obj_move);
+	l_mod = &(obj->callbacks->obj_move);
 	break;
       case EVAS_CALLBACK_RESIZE:
-	l_mod = &(obj->callbacks.obj_resize);
+	l_mod = &(obj->callbacks->obj_resize);
 	break;
       case EVAS_CALLBACK_RESTACK:
-	l_mod = &(obj->callbacks.obj_restack);
+	l_mod = &(obj->callbacks->obj_restack);
 	break;
       default:
 	return;
 	break;
      }
-   obj->callbacks.walking_list++;
+   obj->callbacks->walking_list++;
    for (l = *l_mod; l; l = l->next)
      {
 	Evas_Func_Node *fn;
@@ -152,8 +176,8 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
 	  fn->func(fn->data, obj->layer->evas, obj, event_info);
 	if (obj->delete_me) break;
      }
-   obj->callbacks.walking_list--;
-   if (!obj->callbacks.walking_list)
+   obj->callbacks->walking_list--;
+   if (!obj->callbacks->walking_list)
      evas_object_event_callback_clear(obj);
 }
 
@@ -328,52 +352,59 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (
    fn->func = func;
    fn->data = (void *)data;
 
+   if (!obj->callbacks)
+     obj->callbacks = evas_mem_calloc(sizeof(Evas_Callbacks));
+   if (!obj->callbacks)
+     {
+	free(fn);
+	return;
+     }
    switch (type)
      {
       case EVAS_CALLBACK_MOUSE_IN:
-	l_mod = &(obj->callbacks.in);
+	l_mod = &(obj->callbacks->in);
 	break;
       case EVAS_CALLBACK_MOUSE_OUT:
-	l_mod = &(obj->callbacks.out);
+	l_mod = &(obj->callbacks->out);
 	break;
       case EVAS_CALLBACK_MOUSE_DOWN:
-	l_mod = &(obj->callbacks.down);
+	l_mod = &(obj->callbacks->down);
 	break;
       case EVAS_CALLBACK_MOUSE_UP:
-	l_mod = &(obj->callbacks.up);
+	l_mod = &(obj->callbacks->up);
 	break;
       case EVAS_CALLBACK_MOUSE_MOVE:
-	l_mod = &(obj->callbacks.move);
+	l_mod = &(obj->callbacks->move);
 	break;
       case EVAS_CALLBACK_FREE:
-	l_mod = &(obj->callbacks.free);
+	l_mod = &(obj->callbacks->free);
 	break;
       case EVAS_CALLBACK_KEY_DOWN:
-	l_mod = &(obj->callbacks.key_down);
+	l_mod = &(obj->callbacks->key_down);
 	break;
       case EVAS_CALLBACK_KEY_UP:
-	l_mod = &(obj->callbacks.key_up);
+	l_mod = &(obj->callbacks->key_up);
 	break;
       case EVAS_CALLBACK_FOCUS_IN:
-	l_mod = &(obj->callbacks.obj_focus_in);
+	l_mod = &(obj->callbacks->obj_focus_in);
 	break;
       case EVAS_CALLBACK_FOCUS_OUT:
-	l_mod = &(obj->callbacks.obj_focus_out);
+	l_mod = &(obj->callbacks->obj_focus_out);
 	break;
       case EVAS_CALLBACK_SHOW:
-	l_mod = &(obj->callbacks.obj_show);
+	l_mod = &(obj->callbacks->obj_show);
 	break;
       case EVAS_CALLBACK_HIDE:
-	l_mod = &(obj->callbacks.obj_hide);
+	l_mod = &(obj->callbacks->obj_hide);
 	break;
       case EVAS_CALLBACK_MOVE:
-	l_mod = &(obj->callbacks.obj_move);
+	l_mod = &(obj->callbacks->obj_move);
 	break;
       case EVAS_CALLBACK_RESIZE:
-	l_mod = &(obj->callbacks.obj_resize);
+	l_mod = &(obj->callbacks->obj_resize);
 	break;
       case EVAS_CALLBACK_RESTACK:
-	l_mod = &(obj->callbacks.obj_restack);
+	l_mod = &(obj->callbacks->obj_restack);
 	break;
       default:
 	free(fn);
@@ -418,52 +449,54 @@ evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (
    
    if (!func) return NULL;
    
+   if (!obj->callbacks) return NULL;
+   
    switch (type)
      {
       case EVAS_CALLBACK_MOUSE_IN:
-	l_mod = &(obj->callbacks.in);
+	l_mod = &(obj->callbacks->in);
 	break;
       case EVAS_CALLBACK_MOUSE_OUT:
-	l_mod = &(obj->callbacks.out);
+	l_mod = &(obj->callbacks->out);
 	break;
       case EVAS_CALLBACK_MOUSE_DOWN:
-	l_mod = &(obj->callbacks.down);
+	l_mod = &(obj->callbacks->down);
 	break;
       case EVAS_CALLBACK_MOUSE_UP:
-	l_mod = &(obj->callbacks.up);
+	l_mod = &(obj->callbacks->up);
 	break;
       case EVAS_CALLBACK_MOUSE_MOVE:
-	l_mod = &(obj->callbacks.move);
+	l_mod = &(obj->callbacks->move);
 	break;
       case EVAS_CALLBACK_FREE:
-	l_mod = &(obj->callbacks.free);
+	l_mod = &(obj->callbacks->free);
 	break;
       case EVAS_CALLBACK_KEY_DOWN:
-	l_mod = &(obj->callbacks.key_down);
+	l_mod = &(obj->callbacks->key_down);
 	break;
       case EVAS_CALLBACK_KEY_UP:
-	l_mod = &(obj->callbacks.key_up);
+	l_mod = &(obj->callbacks->key_up);
 	break;
       case EVAS_CALLBACK_FOCUS_IN:
-	l_mod = &(obj->callbacks.obj_focus_in);
+	l_mod = &(obj->callbacks->obj_focus_in);
 	break;
       case EVAS_CALLBACK_FOCUS_OUT:
-	l_mod = &(obj->callbacks.obj_focus_out);
+	l_mod = &(obj->callbacks->obj_focus_out);
 	break;
       case EVAS_CALLBACK_SHOW:
-	l_mod = &(obj->callbacks.obj_show);
+	l_mod = &(obj->callbacks->obj_show);
 	break;
       case EVAS_CALLBACK_HIDE:
-	l_mod = &(obj->callbacks.obj_hide);
+	l_mod = &(obj->callbacks->obj_hide);
 	break;
       case EVAS_CALLBACK_MOVE:
-	l_mod = &(obj->callbacks.obj_move);
+	l_mod = &(obj->callbacks->obj_move);
 	break;
       case EVAS_CALLBACK_RESIZE:
-	l_mod = &(obj->callbacks.obj_resize);
+	l_mod = &(obj->callbacks->obj_resize);
 	break;
       case EVAS_CALLBACK_RESTACK:
-	l_mod = &(obj->callbacks.obj_restack);
+	l_mod = &(obj->callbacks->obj_restack);
 	break;
       default:
 	return NULL;
@@ -480,8 +513,8 @@ evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (
 	     
 	     data = fn->data;
 	     fn->delete_me = 1;
-	     obj->callbacks.deletions_waiting = 1;
-	     if (!obj->callbacks.walking_list)
+	     obj->callbacks->deletions_waiting = 1;
+	     if (!obj->callbacks->walking_list)
 	       evas_object_event_callback_clear(obj);
 	     return data;
 	  }

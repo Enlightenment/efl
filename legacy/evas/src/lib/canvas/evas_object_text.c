@@ -17,10 +17,10 @@ struct _Evas_Object_Text
       char          *font;
       double         size;
    } cur, prev;
-   int               changed : 1;
+   char              changed : 1;
    
-   double            ascent, descent;
-   double            max_ascent, max_descent;
+   float             ascent, descent;
+   float             max_ascent, max_descent;
    
    void             *engine_data;
 };
