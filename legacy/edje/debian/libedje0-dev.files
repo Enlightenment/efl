@@ -4,3 +4,4 @@ usr/lib/lib*.so
 usr/lib/*.la
 usr/share/aclocal/*
 usr/bin/*-config
+/usr/lib/pkgconfig/*

@@ -1,0 +1,3 @@
+usr/lib/lib*.so.*
+usr/lib/emotion/*.so
+usr/lib/xine/plugins/1.0.0/*.so
