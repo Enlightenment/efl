@@ -1,4 +1,4 @@
-#include <config.h>
+#include "config.h"
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -7,12 +7,20 @@
 #include <sys/time.h>
 #include <unistd.h>
 
+#ifdef HAVE_GL
 #include <GL/gl.h>
 #include <GL/glx.h>
+#ifdef HAVE_GLU
 #include <GL/glu.h>
+#endif
+#else
+typedef int GLXContext;
+typedef int GLuint;
+#endif
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#include <X11/Xutil.h>
 #include <X11/Xmu/StdCmap.h>
 
 #ifdef HAVE_FREETYPE_FREETYPE_H

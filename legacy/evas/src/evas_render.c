@@ -496,12 +496,22 @@ evas_get_optimal_visual(Evas e, Display *disp)
    switch (e->current.render_method)
      {
      case RENDER_METHOD_ALPHA_SOFTWARE:
-	return __evas_imlib_get_visual(disp, e->current.screen);
+	if (__evas_imlib_capable(disp))
+	   return __evas_imlib_get_visual(disp, e->current.screen);
+	else
+	  {
+	  }
 	break;
      case RENDER_METHOD_BASIC_HARDWARE:
 	break;
      case RENDER_METHOD_3D_HARDWARE:
-	return __evas_gl_get_visual(disp, e->current.screen);
+	if (__evas_gl_capable(disp))
+	   return __evas_gl_get_visual(disp, e->current.screen);
+	else
+	  {
+	     e->current.render_method = RENDER_METHOD_ALPHA_SOFTWARE;
+	     return evas_get_optimal_visual(e, disp);
+	  }
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
 	break;
@@ -509,6 +519,7 @@ evas_get_optimal_visual(Evas e, Display *disp)
 	return NULL;
 	break;
      }
+   return NULL;
 }
 
 Colormap
@@ -517,12 +528,22 @@ evas_get_optimal_colormap(Evas e, Display *disp)
    switch (e->current.render_method)
      {
      case RENDER_METHOD_ALPHA_SOFTWARE:
-	return __evas_imlib_get_colormap(disp, e->current.screen);
+	if (__evas_imlib_capable(disp))
+	   return __evas_imlib_get_colormap(disp, e->current.screen);
+	else
+	  {
+	  }
 	break;
      case RENDER_METHOD_BASIC_HARDWARE:
 	break;
      case RENDER_METHOD_3D_HARDWARE:
-	return __evas_gl_get_colormap(disp, e->current.screen);
+	if (__evas_gl_capable(disp))
+	   return __evas_gl_get_colormap(disp, e->current.screen);
+	else
+	  {
+	     e->current.render_method = RENDER_METHOD_ALPHA_SOFTWARE;
+	     return evas_get_optimal_colormap(e, disp);
+	  }
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
 	break;
@@ -530,6 +551,7 @@ evas_get_optimal_colormap(Evas e, Display *disp)
 	return 0;
 	break;
      }
+   return 0;
 }
 
 /* the output settings */
@@ -564,8 +586,11 @@ evas_set_output_viewport(Evas e, double x, double y, double w, double h)
 void
 evas_set_output_method(Evas e, Evas_Render_Method method)
 {
-   e->current.render_method = method;
-   e->changed = 1;
+   if (!e->current.display)
+     {
+	e->current.render_method = method;
+	e->changed = 1;
+     }
 }
 
 void

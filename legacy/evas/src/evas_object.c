@@ -39,6 +39,26 @@ _evas_real_del_object(Evas e, Evas_Object o)
      }
 }
 
+void
+_evas_layer_free(Evas e, Evas_Layer layer)
+{
+   if (layer->objects)
+     {
+	Evas_List         l;
+	
+	for (l = layer->objects; l; l = l->next)
+	  {
+	     Evas_Object o;
+	     
+	     o = l->data;
+	     o->object_renderer_data_free(e, o);
+	     o->object_free(o);	     
+	  }
+	evas_list_free(layer->objects);
+     }
+   free(layer);
+}
+
 /* deleting objects */
 void
 evas_del_object(Evas e, Evas_Object o)
@@ -49,15 +69,63 @@ evas_del_object(Evas e, Evas_Object o)
 
 /* layer stacking for object */
 void
-evas_set_layer(Evas e, Evas_Object o, int l)
+evas_set_layer(Evas e, Evas_Object o, int layer_num)
 {
+   Evas_Layer        layer;
+   Evas_List         l;
+
+   if (layer_num == o->current.layer) return;
+   
+   o->changed = 1;
    e->changed = 1;
+   for (l = e->layers; l; l = l->next)
+     {
+	layer = l->data;
+	if (layer->layer == o->current.layer)
+	  {
+	     layer->objects = evas_list_remove(layer->objects, o);
+	     if (!layer->objects)
+	       {
+		  e->layers = evas_list_remove(e->layers, layer);
+		  _evas_layer_free(e, layer);
+	       }
+	     break;
+	  }
+     }
+   o->current.layer = layer_num;
+   for (l = e->layers; l; l = l->next)
+     {
+	layer = l->data;
+	if (layer->layer == o->current.layer)
+	  {
+	     layer->objects = evas_list_append(layer->objects, o);
+	     break;
+	  }
+	if (layer->layer > o->current.layer)
+	  {
+	     Evas_Layer        layer_new;
+	     
+	     layer_new = malloc(sizeof(struct _Evas_Layer));
+	     memset(layer_new, 0, sizeof(struct _Evas_Layer));
+	     e->layers = evas_list_prepend_relative(e->layers, layer_new, layer);
+	     layer_new->objects = evas_list_append(layer_new->objects, o);
+	     layer_new->layer = o->current.layer;
+	     return;
+	  }
+     }
+
+   layer = malloc(sizeof(struct _Evas_Layer));
+   memset(layer, 0, sizeof(struct _Evas_Layer));
+   e->layers = evas_list_append(e->layers, layer);
+   layer->objects = evas_list_append(layer->objects, o);
+   layer->layer = o->current.layer;
 }
 
 void
 evas_set_layer_store(Evas e, int l, int store)
 {
-   e->changed = 1;
+/* FIXME: find layer and set store flag */
+/*   e->changed = 1; */
 }
 
 /* stacking within a layer */

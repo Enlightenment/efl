@@ -84,6 +84,7 @@ main(int argc, char **argv)
    evas_raise(e, o[1]);
    evas_move(e, o[0], 0, 0);
    evas_resize(e, o[0], win_w, win_h);
+   evas_set_image_fill(e, o[0], 0, 0, win_w, win_h);
    a = 0;
    down = 0;
    for (;;)

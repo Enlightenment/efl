@@ -26,9 +26,13 @@ evas_free(Evas e)
    
    for (l = e->layers; l; l = l->next)
      {
-	/* FIXME: free layer */
+	Evas_Layer layer;
+	
+	layer = l->data;
+	_evas_layer_free(layer);
      }
    if (e->layers) evas_list_free(e->layers);
+   if (e->updates) imlib_updates_free(e->updates);
    free(e);
 }
 

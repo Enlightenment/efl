@@ -3,6 +3,8 @@
 #include <unistd.h>
 #include <sys/types.h>
 
+#ifdef HAVE_GL
+
 static int __evas_gl_configuration[] = 
 {
    GLX_DOUBLEBUFFER, 
@@ -99,12 +101,21 @@ __evas_gl_image_copy_image_rect_to_texture(Evas_GL_Image *im, int x, int y,
    glBindTexture(GL_TEXTURE_2D, texture);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+#ifdef HAVE_GLU
    if (__evas_anti_alias)
      {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
      }
    else
+#else      
+   if (__evas_anti_alias)
+     {
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+     }
+   else
+#endif      
      {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -139,10 +150,12 @@ __evas_gl_image_copy_image_rect_to_texture(Evas_GL_Image *im, int x, int y,
 	if (tx < tw)
 	   *p2 = p2[-1];
      }
+#ifdef HAVE_GLU
    if (__evas_anti_alias)
       gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA8, tw, th, GL_RGBA, 
 			GL_UNSIGNED_BYTE, data);
    else
+#endif      
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, tw, th, 0,
 		   GL_RGBA, GL_UNSIGNED_BYTE, data);
    free(data);
@@ -2074,7 +2087,15 @@ int
 __evas_gl_capable(Display *disp)
 {
    int eb, evb;
-   return glXQueryExtension(disp, &eb, &evb);
+
+   if (__evas_gl_cx) return 1;
+   if (glXQueryExtension(disp, &eb, &evb))
+     {
+	__evas_gl_init(disp, 0);
+	if (__evas_gl_cx) return 1;
+	return 0;
+     }
+   return 0;
 }
 
 Visual *
@@ -2117,7 +2138,6 @@ __evas_gl_init(Display *disp, int screen)
 {
    if (__evas_gl_cx) return;
    
-   if (!__evas_gl_capable(disp)) return;
    __evas_gl_get_visual(disp, screen);
    /* direct rendering client */
    __evas_gl_cx = glXCreateContext(disp, __evas_vi, NULL, GL_TRUE);
@@ -2132,3 +2152,66 @@ __evas_gl_draw_add_rect(Display *disp, Window win,
    return;
 }
 
+#else
+
+/***************/
+/* image stuff */
+/***************/
+Evas_GL_Image *__evas_gl_image_new_from_file(Display *disp, char *file){return NULL;}
+void           __evas_gl_image_free(Evas_GL_Image *im){}
+void           __evas_gl_image_cache_empty(Display *disp){}
+void           __evas_gl_image_cache_set_size(Display *disp, int size){}
+int            __evas_gl_image_cache_get_size(Display *disp){return 0;}
+int            __evas_gl_image_get_width(Evas_GL_Image *im){return 0;}
+int            __evas_gl_image_get_height(Evas_GL_Image *im){return 0;}
+void           __evas_gl_image_set_borders(Evas_GL_Image *im, int left, int right, int top, int bottom){}
+void           __evas_gl_image_set_smooth_scaling(int on){}
+void           __evas_gl_image_draw(Evas_GL_Image *im, Display *disp, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h){}
+
+/********/
+/* text */
+/********/
+Evas_GL_Font  *__evas_gl_text_font_new(Display *disp, char *font, int size){return NULL;}
+void           __evas_gl_text_font_free(Evas_GL_Font *fn){}
+void           __evas_gl_text_font_add_path(char *path){}
+void           __evas_gl_text_font_del_path(char *path){}
+char         **__evas_gl_text_font_list_paths(int *count){return NULL;}
+void           __evas_gl_text_cache_empty(Display *disp){}
+void           __evas_gl_text_cache_set_size(Display *disp, int size){}
+int            __evas_gl_text_cache_get_size(Display *disp){return 0;}
+void           __evas_gl_text_get_size(Evas_GL_Font *fn, char *text, int *w, int *h){}
+int            __evas_gl_text_get_character_at_pos(Evas_GL_Font *fn, char *text, int x, int y, int *cx, int *cy, int *cw, int *ch){return 0;}
+void           __evas_gl_text_get_character_number(Evas_GL_Font *fn, char *text, int num, int *cx, int *cy, int *cw, int *ch){}
+void           __evas_gl_text_draw(Evas_GL_Font *fn, Display *disp, Window win, int win_w, int win_h, int x, int y, char *text, int r, int g, int b, int a){}
+
+/**************/
+/* rectangles */
+/**************/
+void           __evas_gl_rectangle_draw(Display *disp, Window win, int win_w, int win_h, int x, int y, int w, int h, int r, int g, int b, int a){}
+
+/*********/
+/* lines */
+/*********/
+void           __evas_gl_line_draw(Display *disp, Window win, int win_w, int win_h, int x1, int y1, int x2, int y2, int r, int g, int b, int a){}
+
+/*************/
+/* gradients */
+/*************/
+Evas_GL_Graident *__evas_gl_gradient_new(Display *disp){return NULL;}
+void              __evas_gl_gradient_free(Evas_GL_Graident *gr){}
+void              __evas_gl_gradient_color_add(Evas_GL_Graident *gr, int r, int g, int b, int a, int dist){}
+void              __evas_gl_gradient_draw(Evas_GL_Graident *gr, Display *disp, Window win, int win_w, int win_h, int x, int y, int w, int h, double angle){}
+
+/***********/
+/* drawing */
+/***********/
+void         __evas_gl_init(Display *disp, int screen){}
+int          __evas_gl_capable(Display *disp){return 0;}
+void         __evas_gl_flush_draw(Display *disp, Window win){}
+void         __evas_gl_sync(Display *disp){}
+Visual      *__evas_gl_get_visual(Display *disp, int screen){return NULL;}
+XVisualInfo *__evas_gl_get_visual_info(Display *disp, int screen){return NULL;}
+Colormap     __evas_gl_get_colormap(Display *disp, int screen){return 0;}
+void         __evas_gl_draw_add_rect(Display *disp, Window win, int x, int y, int w, int h){}
+
+#endif
