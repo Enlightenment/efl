@@ -88,7 +88,10 @@ static TextBlock texts[] =
    
      { 76.0, 78.0, 80.0, 82.0, "But for those who prefer to code ...", NULL, NULL},
      { 80.0, 82.0, 84.0, 86.0, "There is ...", NULL, NULL},
-     { 88.0, 90.0, 94.0, 98.0, "EVAS", NULL, NULL}
+     { 87.0, 89.0, 93.0, 96.0, "E      ", NULL, NULL},
+     { 87.5, 89.5, 93.5, 97.0, "  V    ", NULL, NULL},
+     { 88.0, 90.0, 94.0, 98.0, "    A  ", NULL, NULL},
+     { 88.5, 90.5, 94.5, 99.0, "      S", NULL, NULL}
 };
 static double images_loop = 75;
 static ImageBlock images[] =
