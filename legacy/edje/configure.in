@@ -80,15 +80,73 @@ dnl Set PACKAGE_SOURCE_DIR in config.h.
 packagesrcdir=`cd $srcdir && pwd`
 AC_DEFINE_UNQUOTED(PACKAGE_SOURCE_DIR, "${packagesrcdir}", [Source code directory])
 
-my_includes=`eet-config --cflags`" "`evas-config --cflags`" "`ecore-config --cflags`
-my_libs=`eet-config --libs`" "`evas-config --libs`" "`ecore-config --libs`
-AC_SUBST(my_includes)
-AC_SUBST(my_libs)
+AC_ARG_WITH(eet,
+        [  --with-eet=DIR          use eet in <DIR>],
+        [CFLAGS="$CFLAGS -I$withval/include"
+         LIBS="-L$withval/lib $LIBS"])
 
-imlib2_includes=`imlib2-config --cflags`
+AC_PATH_GENERIC(eet, , [
+    AC_SUBST(eet_libs)
+    AC_SUBST(eet_cflags)],
+    AC_MSG_ERROR(Cannot find eet: Is eet-config in path?))
+eet_libs=`eet-config --libs`
+eet_cflags=`eet-config --cflags`
+
+AC_SUBST(eet_cflags)
+AC_SUBST(eet_libs)
+
+AC_ARG_WITH(imlib2,
+        [  --with-imlib2=DIR          use imlib2 in <DIR>],
+        [CFLAGS="$CFLAGS -I$withval/include"
+         LIBS="-L$withval/lib $LIBS"])
+
+AC_PATH_GENERIC(imlib2, , [
+    AC_SUBST(imlib2_libs)
+    AC_SUBST(imlib2_cflags)],
+    AC_MSG_ERROR(Cannot find imlib2: Is imlib2-config in path?))
 imlib2_libs=`imlib2-config --libs`
-AC_SUBST(imlib2_includes)
+imlib2_cflags=`imlib2-config --cflags`
+
+AC_SUBST(imlib2_cflags)
 AC_SUBST(imlib2_libs)
+
+AC_ARG_WITH(evas,
+        [  --with-evas=DIR          use evas in <DIR>],
+        [CFLAGS="$CFLAGS -I$withval/include"
+         LIBS="-L$withval/lib $LIBS"])
+
+AC_PATH_GENERIC(evas, , [
+    AC_SUBST(evas_libs)
+    AC_SUBST(evas_cflags)],
+    AC_MSG_ERROR(Cannot find evas: Is evas-config in path?))
+evas_libs=`evas-config --libs`
+evas_cflags=`evas-config --cflags`
+
+AC_SUBST(evas_cflags)
+AC_SUBST(evas_libs)
+
+AC_CHECK_HEADERS(Evas_Engine_Software_X11.h, [], [], [
+   #include <Evas.h>
+   ])
+
+AC_CHECK_HEADERS(Evas_Engine_GL_X11.h, [], [], [
+   #include <Evas.h>
+   ])
+
+AC_ARG_WITH(ecore,
+        [  --with-ecore=DIR          use ecore in <DIR>],
+        [CFLAGS="$CFLAGS -I$withval/include"
+         LIBS="-L$withval/lib $LIBS"])
+
+AC_PATH_GENERIC(ecore, , [
+    AC_SUBST(ecore_libs)
+    AC_SUBST(ecore_cflags)],
+    AC_MSG_ERROR(Cannot find ecore: Is ecore-config in path?))
+ecore_libs=`ecore-config --libs`
+ecore_cflags=`ecore-config --cflags`
+
+AC_SUBST(ecore_cflags)
+AC_SUBST(ecore_libs)
 
 AC_OUTPUT([
 Makefile

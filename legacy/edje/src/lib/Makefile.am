@@ -11,7 +11,9 @@ INCLUDES	     = \
 -I$(top_srcdir) \
 -I$(top_builddir) \
 -I$(includedir) \
-@my_includes@
+@eet_cflags@ \
+@evas_cflags@ \
+@ecore_cflags@
 
 lib_LTLIBRARIES      = libedje.la
 include_HEADERS      = Edje.h
@@ -27,6 +29,6 @@ edje_text.c \
 edje_util.c \
 edje_private.h
 
-libedje_la_LIBADD       = $(LDFLAGS) -lm @my_libs@
+libedje_la_LIBADD       = $(LDFLAGS) -lm @evas_libs@ @ecore_libs@ @eet_libs@
 libedje_la_DEPENDENCIES = $(top_builddir)/config.h
 libedje_la_LDFLAGS      = -version-info 0:1:0

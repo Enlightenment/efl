@@ -9,8 +9,10 @@ INCLUDES = \
 -I$(top_srcdir)/lib \
 -I$(top_builddir)/lib \
 -I/usr/local/include \
-@my_includes@ \
-@imlib2_includes@
+@eet_cflags@ \
+@evas_cflags@ \
+@ecore_cflags@ \
+@imlib2_cflags@
 
 bin_PROGRAMS = edje edje_cc edje_ls
 
