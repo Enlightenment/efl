@@ -13,7 +13,7 @@ Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project 
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
 #BuildSuggests: xorg-x11-devel
 BuildRequires: libjpeg-devel XFree86-devel openssl-devel
-BuildRequires: evas-devel edb-devel eet-devel
+BuildRequires: evas-devel eet-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
@@ -27,7 +27,7 @@ Summary: Ecore headers and development libraries.
 Group: Development/Libraries
 Requires: %{name} = %{version}
 Requires: libjpeg-devel XFree86-devel openssl-devel
-Requires: evas-devel edb-devel eet-devel
+Requires: evas-devel eet-devel
 
 %description devel
 Ecore development files
