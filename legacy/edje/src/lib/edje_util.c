@@ -995,6 +995,10 @@ edje_object_part_drag_page(Evas_Object *obj, const char *part, double dx, double
    _edje_emit(ed, "drag,page", rp->part->name);   
 }
 
+
+
+
+
 Edje_Real_Part *
 _edje_real_part_get(Edje *ed, char *part)
 {

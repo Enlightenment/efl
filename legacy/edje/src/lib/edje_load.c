@@ -187,6 +187,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	_edje_block(ed);
 	_edje_freeze(ed);
 	if (ed->collection->script) _edje_embryo_script_init(ed);
+	_edje_var_init(ed);
 	_edje_emit(ed, "load", "");
 	for (l = ed->parts; l; l = l->next)
 	  {
@@ -451,6 +452,7 @@ _edje_file_del(Edje *ed)
    _edje_emit(ed, NULL, NULL); /* clear out signal emissions */
    ed->dont_clear_signals = 1;
    _edje_block_violate(ed);
+   _edje_var_shutdown(ed);
    if (ed->collection)
      {
 	ed->collection->references--;

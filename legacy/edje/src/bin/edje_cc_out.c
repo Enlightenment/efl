@@ -445,7 +445,15 @@ data_write(void)
 		       snprintf(buf, sizeof(buf), "embryo_cc -i%s -o%s %s", 
 				DAT"data/include", tmpo, tmpn);
 		       ret = system(buf);
-		       printf("ret = %i\n", ret);
+/*		       
+		       if (ret != 0)
+			 {
+			    printf("%i\n", ret);
+			    fprintf(stderr, "%s: Warning. Compiling script code not clean.\n",
+				    progname);	
+			    ABORT_WRITE(ef, file_out);
+			 }
+ */
 		       close(fd);
 		    }
 		  f = fopen(tmpo, "r");

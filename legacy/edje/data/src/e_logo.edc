@@ -143,6 +143,11 @@ collections {
 	 item: "My Data" "The string to attach to this data";
 	 item: "The Key" "String data attached to the key";
       }
+      script {
+	 public global_int;
+	 public global_float;
+	 public global_str;
+      }
       parts {
 	 part {
 	    name:          "background";
@@ -468,6 +473,25 @@ collections {
 //	    action:     SIGNAL_EMIT "do_it" "the_source";
 	    script {
 	       emit("PROGRAAAAAAAM", "TEEEEEEEEEEEEEST");
+	       set_int(global_int, 10);
+	       set_float(global_float, 10.0);
+	       set_str(global_str, "smelly fish");
+	       new buf[256];
+	       
+	       new i;
+	       i = get_int(global_int);
+	       snprintf(buf, 256, "1. i = %i :)", i);
+	       emit("DEBUG...", buf);
+	       
+	       new Float:f;
+	       f = get_float(global_float);
+	       snprintf(buf, 256, "2. f = %f :)", f);
+	       emit("DEBUG...", buf);
+	       
+	       new s[256];
+	       get_str(global_str, s, 256);
+	       snprintf(buf, 256, "3. s = %s :)", s);
+	       emit("DEBUG...", buf);
 	    }
 	 }
 	 program {

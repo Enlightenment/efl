@@ -34,6 +34,7 @@ edje_program.c \
 edje_smart.c \
 edje_text.c \
 edje_util.c \
+edje_var.c \
 edje_private.h
 
 libedje_la_LIBADD       = $(LDFLAGS) -lm @evas_libs@ @ecore_libs@ @eet_libs@ @embryo_libs@

@@ -123,6 +123,13 @@ Edje_Edit_Image *edje_edit_iamge_get_by_id(int id);
 #define EDJE_TWEEN_MODE_DECELERATE 4
 #define EDJE_TWEEN_MODE_LAST       5
 
+#define EDJE_VAR_NONE   0
+#define EDJE_VAR_INT    1
+#define EDJE_VAR_FLOAT  2
+#define EDJE_VAR_STRING 3
+
+#define EDJE_VAR_MAGIC_BASE 0x12fe84ba
+
 /*----------*/
 
 struct _Edje_File
@@ -371,6 +378,11 @@ typedef struct _Edje_Pending_Program Edje_Pending_Program;
 typedef struct _Edje_Text_Style Edje_Text_Style;
 typedef struct _Edje_Color_Class Edje_Color_Class;
 typedef struct _Edje_Text_Class Edje_Text_Class;
+typedef struct _Edje_Var Edje_Var;
+typedef struct _Edje_Var_Int Edje_Var_Int;
+typedef struct _Edje_Var_Float Edje_Var_Float;
+typedef struct _Edje_Var_String Edje_Var_String;
+typedef struct _Edje_Var_Pool Edje_Var_Pool;
 
 struct _Edje
 {
@@ -412,6 +424,7 @@ struct _Edje
    Evas_List            *emissions;
    int                   load_error;
    int                   freeze;
+   Edje_Var_Pool        *var_pool;
 };
 
 struct _Edje_Real_Part
@@ -565,6 +578,37 @@ struct _Edje_Text_Class
    char   *name;
    char   *font;
    double  size;
+};
+
+struct _Edje_Var_Int
+{
+   int      v;
+};
+
+struct _Edje_Var_Float
+{
+   double   v;
+};
+
+struct _Edje_Var_String
+{
+   char    *v;
+};
+
+struct _Edje_Var_Pool
+{
+   int       size;
+   Edje_Var *vars;
+};
+
+struct _Edje_Var
+{
+   unsigned char type;
+   union {
+      Edje_Var_Int    i;
+      Edje_Var_Float  f;
+      Edje_Var_String s;
+   } data;
 };
 
 void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos);

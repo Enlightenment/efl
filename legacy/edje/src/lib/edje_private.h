@@ -15,6 +15,7 @@
 
 #include <math.h>
 #include <fnmatch.h>
+#include <alloca.h>
 
 #include "Edje_Edit.h"
 
@@ -56,9 +57,18 @@ extern Evas_List       *_edje_animators;
 extern Edje_Text_Style  _edje_text_styles[EDJE_TEXT_EFFECT_LAST];
 extern Evas_List       *_edje_edjes;
 
-void _edje_embryo_script_init     (Edje *ed);
-void _edje_embryo_script_shutdown (Edje *ed);
-void _edje_embryo_script_reset    (Edje *ed);
-void _edje_embryo_test_run        (Edje *ed, char *fname, char *sig, char *src);
-    
+void          _edje_embryo_script_init     (Edje *ed);
+void          _edje_embryo_script_shutdown (Edje *ed);
+void          _edje_embryo_script_reset    (Edje *ed);
+void          _edje_embryo_test_run        (Edje *ed, char *fname, char *sig, char *src);
+void          _edje_var_init               (Edje *ed);
+void          _edje_var_shutdown           (Edje *ed);
+int           _edje_var_string_id_get      (Edje *ed, char *string);
+int           _edje_var_int_get            (Edje *ed, int id);
+void          _edje_var_int_set            (Edje *ed, int id, int v);
+double        _edje_var_float_get          (Edje *ed, int id);
+void          _edje_var_float_set          (Edje *ed, int id, double v);
+const char   *_edje_var_str_get            (Edje *ed, int id);
+void          _edje_var_str_set            (Edje *ed, int id, char *str);
+
 #endif
