@@ -1380,7 +1380,12 @@ ecore_x_events_allow_all(void)
    XAllowEvents(_ecore_x_disp, AsyncBoth, CurrentTime);
 }
 
-
+void
+ecore_x_pointer_last_xy_get(int *x, int *y)
+{
+   if (x) *x = _ecore_x_event_last_root_x;
+   if (y) *y = _ecore_x_event_last_root_y;
+}
 /*****************************************************************************/
 /*****************************************************************************/
 /*****************************************************************************/
