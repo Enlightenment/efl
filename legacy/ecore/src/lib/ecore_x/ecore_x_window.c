@@ -52,12 +52,12 @@ ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h)
                                 ColormapChangeMask;
    win = XCreateWindow(_ecore_x_disp, parent,
 		       x, y, w, h, 0,
-		       DefaultDepth(_ecore_x_disp, DefaultScreen(_ecore_x_disp)),
+		       0, /*DefaultDepth(_ecore_x_disp, DefaultScreen(_ecore_x_disp)),*/
 		       InputOutput, 
-		       DefaultVisual(_ecore_x_disp, DefaultScreen(_ecore_x_disp)),
+		       CopyFromParent, /*DefaultVisual(_ecore_x_disp, DefaultScreen(_ecore_x_disp)),*/
 		       CWBackingStore |
 		       CWOverrideRedirect | 
-		       CWColormap | 
+/*		       CWColormap | */
 		       CWBorderPixel |
 		       CWBackPixmap | 
 		       CWSaveUnder | 
@@ -109,12 +109,12 @@ ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h)
                                 ColormapChangeMask;
    win = XCreateWindow(_ecore_x_disp, parent,
 		       x, y, w, h, 0,
-		       DefaultDepth(_ecore_x_disp, DefaultScreen(_ecore_x_disp)),
+		       0, /*DefaultDepth(_ecore_x_disp, DefaultScreen(_ecore_x_disp)),*/
 		       InputOutput, 
-		       DefaultVisual(_ecore_x_disp, DefaultScreen(_ecore_x_disp)),
+		       CopyFromParent, /*DefaultVisual(_ecore_x_disp, DefaultScreen(_ecore_x_disp)),*/
 		       CWBackingStore |
 		       CWOverrideRedirect | 
-		       CWColormap | 
+/*		       CWColormap | */
 		       CWBorderPixel |
 		       CWBackPixmap | 
 		       CWSaveUnder | 
@@ -163,7 +163,7 @@ ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h)
 		       x, y, w, h, 0,
 		       0, 
 		       InputOnly,
-		       DefaultVisual(_ecore_x_disp, DefaultScreen(_ecore_x_disp)),
+		       CopyFromParent, /*DefaultVisual(_ecore_x_disp, DefaultScreen(_ecore_x_disp)),*/
 		       CWOverrideRedirect | 
 		       CWDontPropagate | 
 		       CWEventMask,

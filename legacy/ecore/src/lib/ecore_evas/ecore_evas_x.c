@@ -1179,11 +1179,42 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
    einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
    if (einfo)
      {
+	int screen;
+
+	/* FIXME: this is inefficient as its a round trip */
+	screen = DefaultScreen(ecore_x_display_get());
+	if (ScreenCount(ecore_x_display_get()) > 1)
+	  {
+	     Ecore_X_Window *roots;
+	     int num, i;
+	     
+	     num = 0;
+	     roots = ecore_x_window_root_list(&num);
+	     if (roots)
+	       {
+		  XWindowAttributes at;
+		  
+		  if (XGetWindowAttributes(ecore_x_display_get(),
+					   parent, &at))
+		    {
+		       for (i = 0; i < num; i++)
+			 {
+			    if (roots[i] == at.root == roots[i])
+			      {
+				 screen = i;
+				 break;
+			      }
+			 }
+		    }
+		  free(roots);
+	       }
+	  }
+	printf("EVAS ON SCREEN %i\n", screen);
 	einfo->info.display  = ecore_x_display_get();
-	einfo->info.visual   = DefaultVisual(ecore_x_display_get(), DefaultScreen(ecore_x_display_get()));
-	einfo->info.colormap = DefaultColormap(ecore_x_display_get(), DefaultScreen(ecore_x_display_get()));
+	einfo->info.visual   = DefaultVisual(ecore_x_display_get(), screen);
+	einfo->info.colormap = DefaultColormap(ecore_x_display_get(), screen);
 	einfo->info.drawable = ee->engine.x.win;
-	einfo->info.depth    = DefaultDepth(ecore_x_display_get(), DefaultScreen(ecore_x_display_get()));
+	einfo->info.depth    = DefaultDepth(ecore_x_display_get(), screen);
 	einfo->info.rotation = 0;
 	einfo->info.debug    = 0;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
@@ -1266,10 +1297,41 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
    if (einfo)
      {
 	XSetWindowAttributes attr;
+	int screen;
+
+	/* FIXME: this is inefficient as its a round trip */
+	screen = DefaultScreen(ecore_x_display_get());
+	if (ScreenCount(ecore_x_display_get()) > 1)
+	  {
+	     Ecore_X_Window *roots;
+	     int num, i;
+	     
+	     num = 0;
+	     roots = ecore_x_window_root_list(&num);
+	     if (roots)
+	       {
+		  XWindowAttributes at;
+		  
+		  if (XGetWindowAttributes(ecore_x_display_get(),
+					   parent, &at))
+		    {
+		       for (i = 0; i < num; i++)
+			 {
+			    if (roots[i] == at.root == roots[i])
+			      {
+				 screen = i;
+				 break;
+			      }
+			 }
+		    }
+		  free(roots);
+	       }
+	  }
+	printf("EVAS ON SCREEN %i\n", screen);
 	
 	attr.backing_store = NotUseful;
 	attr.override_redirect = True;
-	attr.colormap = einfo->func.best_colormap_get(ecore_x_display_get(), DefaultScreen(ecore_x_display_get()));
+	attr.colormap = einfo->func.best_colormap_get(ecore_x_display_get(), screen);
 	attr.border_pixel = 0;
 	attr.background_pixmap = None;
 	attr.event_mask =
@@ -1285,19 +1347,19 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 			ee->engine.x.win_container,
 			0, 0, 
 			w, h, 0,
-			einfo->func.best_depth_get(ecore_x_display_get(), DefaultScreen(ecore_x_display_get())),
+			einfo->func.best_depth_get(ecore_x_display_get(), screen),
 			InputOutput,
-			einfo->func.best_visual_get(ecore_x_display_get(), DefaultScreen(ecore_x_display_get())),
+			einfo->func.best_visual_get(ecore_x_display_get(), screen),
 			CWBackingStore | CWColormap |
 			CWBackPixmap | CWBorderPixel |
 			CWBitGravity | CWEventMask |
 			CWOverrideRedirect,
 			&attr);
 	einfo->info.display  = ecore_x_display_get();
-	einfo->info.visual   = einfo->func.best_visual_get(ecore_x_display_get(), DefaultScreen(ecore_x_display_get()));
-	einfo->info.colormap = einfo->func.best_colormap_get(ecore_x_display_get(), DefaultScreen(ecore_x_display_get()));
+	einfo->info.visual   = einfo->func.best_visual_get(ecore_x_display_get(), screen);
+	einfo->info.colormap = einfo->func.best_colormap_get(ecore_x_display_get(), screen);
 	einfo->info.drawable = ee->engine.x.win;
-	einfo->info.depth    = einfo->func.best_depth_get(ecore_x_display_get(), DefaultScreen(ecore_x_display_get()));
+	einfo->info.depth    = einfo->func.best_depth_get(ecore_x_display_get(), screen);
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
    evas_key_modifier_add(ee->evas, "Shift");
