@@ -65,6 +65,7 @@ struct _e_xid
    int                 depth;
    int                 gravity;
    int                 coords_invalid;
+   int                 bw;
 };
 
 void                e_del_child(Window win, Window child);
@@ -261,6 +262,7 @@ void                e_window_add_to_save_set(Window win);
 void                e_window_del_from_save_set(Window win);
 void                e_window_kill_client(Window win);
 void                e_window_set_border_width(Window win, int bw);
+int                 e_window_get_border_width(Window win);
 int                 e_window_get_wm_size_hints(Window win, XSizeHints *hints, int *mask);
 int                 e_window_is_visible(Window win);
 int                 e_window_is_normal(Window win);

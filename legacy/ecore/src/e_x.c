@@ -205,6 +205,7 @@ e_add_xid(Window win, int x, int y, int w, int h, int depth, Window parent)
    xid->children_num = 0;
    xid->children = NULL;
    xid->gravity = e_window_get_gravity(win);
+   xid->bw = 0;
    XSaveContext(disp, xid->win, xid_context, (XPointer) xid);
    return xid;
 }
@@ -262,6 +263,7 @@ e_validate_xid(Window win)
 	xid->depth = att.depth;
 	xid->mouse_in = 0;
 	xid->gravity = att.win_gravity;
+	xid->bw = att.border_width;
 	XSaveContext(disp, xid->win, xid_context, (XPointer) xid);
      }
    return xid;
@@ -2769,7 +2771,27 @@ e_window_kill_client(Window win)
 void
 e_window_set_border_width(Window win, int bw)
 {
+   E_XID              *xid = NULL;
+
+   xid = e_validate_xid(win);
+   if (xid)
+     {
+	xid->bw = bw;
+     }
    XSetWindowBorderWidth(disp, win, bw);
+}
+
+int
+e_window_get_border_width(Window win)
+{
+   E_XID              *xid = NULL;
+
+   xid = e_validate_xid(win);
+   if (xid)
+     {
+	return xid->bw;
+     }
+   return 0;
 }
 
 int

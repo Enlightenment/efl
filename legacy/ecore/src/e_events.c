@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 /* glocal (yes global/local) variabels for events */
 Ev_Fd_Handler      *fd_handlers = NULL;
