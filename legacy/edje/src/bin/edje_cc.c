@@ -18,6 +18,14 @@ int        line = 0;
 Evas_List *stack = NULL;
 Evas_List *params = NULL;
 
+Edje_File *edje_file = NULL;
+
+Eet_Data_Descriptor *edd_edje_file;
+Eet_Data_Descriptor *edd_edje_image_directory;
+Eet_Data_Descriptor *edd_edje_image_directory_entry;
+
+void  data_setup(void);
+void  data_write(void);
 void  new_object(void);
 void  new_statement(void);
 int   isdelim(char c);
@@ -46,19 +54,97 @@ struct _New_Statement_Handler
 void
 ob_images(void)
 {
-   printf("create images struct\n");
+   edje_file->image_dir = calloc(1, sizeof(Edje_Image_Directory));
+   if (!edje_file->image_dir)
+     {
+	fprintf(stderr, "%s: Error. memory allocation of %i bytes failed. %s\n",
+		progname, sizeof(Edje_Image_Directory), strerror(errno));
+	exit(-1);
+     }
 }
 
 void
 ob_images_image(void)
 {
-   printf("create new image\n");
+   Edje_Image_Directory_Entry *img;
+   
+   img = calloc(1, sizeof(Edje_Image_Directory_Entry));
+   edje_file->image_dir->entries = evas_list_append(edje_file->image_dir->entries, img);
+   img->id = evas_list_count(edje_file->image_dir->entries) - 1;
 }
 
 void
 st_images_image(void)
 {
-   printf("fill in new image using params\n");
+   Edje_Image_Directory_Entry *img;
+   char *str;
+   
+   img = evas_list_data(evas_list_last(edje_file->image_dir->entries));
+   str = evas_list_nth(params, 0);
+   if (str)
+     {
+	img->entry = strdup(str);
+	if (!str)
+	  {
+	     fprintf(stderr, "%s: Error. memory allocation of %i bytes failed. %s\n",
+		     progname, strlen(str) + 1, strerror(errno));
+	     exit(-1);
+	  }
+     }
+   else
+     {
+	fprintf(stderr, "%s: Error. %s:%i: no filename for image as arg 1\n",
+		progname, file_in, line);
+	exit(-1);
+     }
+   str = evas_list_nth(params, 1);
+   if (str)
+     {
+	if (!strcasecmp(str, "RAW"))
+	  {
+	     img->source_type = EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT;
+	     img->source_param = 0;
+	  }
+	else if (!strcasecmp(str, "COMP"))
+	  {
+	     img->source_type = EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT;
+	     img->source_param = 1;
+	  }
+	else if (!strcasecmp(str, "LOSSY"))
+	  {
+	     img->source_type = EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY;
+	     img->source_param = 0;
+	  }
+	else if (!strcasecmp(str, "USER"))
+	  {
+	     img->source_type = EDJE_IMAGE_SOURCE_TYPE_EXTERNAL;
+	     img->source_param = 0;
+	  }
+	else
+	  {
+	     fprintf(stderr, "%s: Error. %s:%i: invalid encoding \"%s\" for image as arg 2\n",
+		     progname, file_in, line, str);
+	     exit(-1);
+	  }
+     }
+   else
+     {
+	fprintf(stderr, "%s: Error. %s:%i: no encoding type for image as arg 2\n",
+		progname, file_in, line);
+	exit(-1);
+     }
+   if (img->source_type != EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY) return;
+   str = evas_list_nth(params, 2);
+   if (str)
+     {
+	img->source_param = atoi(str);
+     }
+   else
+     {
+	fprintf(stderr, "%s: Error. %s:%i: no encoding quality for lossy as arg 3\n",
+		progname, file_in, line);
+	exit(-1);
+     }
 }
 
 New_Object_Handler object_handlers[] =
@@ -71,6 +157,68 @@ New_Statement_Handler statement_handlers[] =
 {
      {"images.image", st_images_image}
 };
+
+void
+data_setup(void)
+{
+   edd_edje_image_directory_entry = eet_data_descriptor_new("Edje_Image_Directory_Entry",
+						      sizeof(Edje_Image_Directory_Entry),
+						      evas_list_next,
+						      evas_list_append,
+						      evas_list_data,
+						      evas_hash_foreach,
+						      evas_hash_add);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_edje_image_directory_entry, Edje_Image_Directory_Entry, "entry", entry, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_edje_image_directory_entry, Edje_Image_Directory_Entry, "source_type", source_type, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_edje_image_directory_entry, Edje_Image_Directory_Entry, "source_param", source_param, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(edd_edje_image_directory_entry, Edje_Image_Directory_Entry, "id", id, EET_T_INT);
+   edd_edje_image_directory = eet_data_descriptor_new("Edje_Image_Directory", 
+						      sizeof(Edje_Image_Directory),
+						      evas_list_next,
+						      evas_list_append,
+						      evas_list_data,
+						      evas_hash_foreach,
+						      evas_hash_add);
+   EET_DATA_DESCRIPTOR_ADD_LIST(edd_edje_image_directory, Edje_Image_Directory, "entries", entries, edd_edje_image_directory_entry);
+   edd_edje_file = eet_data_descriptor_new("Edje_File", 
+					   sizeof(Edje_File),
+					   evas_list_next,
+					   evas_list_append,
+					   evas_list_data,
+					   evas_hash_foreach,
+					   evas_hash_add);
+   EET_DATA_DESCRIPTOR_ADD_SUB(edd_edje_file, Edje_File, "image_dir", image_dir, edd_edje_image_directory);
+}
+
+void
+data_write(void)
+{
+   Eet_File *ef;
+   Evas_List *l;
+   
+   ef = eet_open(file_out, EET_FILE_MODE_WRITE);
+   if (!ef)
+     {
+	fprintf(stderr, "%s: Error. unable to open %s for writing output\n",
+		progname, file_out);
+	exit(-1);
+     }
+   eet_data_write(ef, edd_edje_file, "data", edje_file, 1);
+   for (l = edje_file->image_dir->entries; l; l = l->next)
+     {
+	Edje_Image_Directory_Entry *img;
+	
+	img = l->data;	
+	if (img->source_type != EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
+	  {
+	     if (img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT)
+	       printf("FIXME: should inline image %s lossless, compression: %i\n", img->entry, img->source_param);
+	     else
+	       printf("FIXME: should inline image %s lossy, quality: %i%%\n", img->entry, img->source_param);
+	  }
+     }
+   eet_close(ef);
+}
 
 void
 new_object(void)
@@ -429,6 +577,16 @@ main(int argc, char **argv)
 	exit(-1);
      }
    
+   edje_file = calloc(1, sizeof(Edje_File));
+   if (!edje_file)
+     {
+	fprintf(stderr, "%s: Error. memory allocation of %i bytes failed. %s\n",
+		progname, sizeof(Edje_File), strerror(errno));
+	exit(-1);
+     }
+   
+   data_setup();   
    compile();
+   data_write();
    return 0;
 }

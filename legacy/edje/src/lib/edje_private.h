@@ -68,11 +68,11 @@ typedef struct _Edje_Part_Description                Edje_Part_Description;
 #define EDJE_ACTION_TYPE_DRAG_SET    3
 #define EDJE_ACTION_TYPE_LAST        4
 
-#define EDJE_IMAGE_SOURCE_TYPE_NONE     0
-#define EDJE_IMAGE_SOURCE_TYPE_INLINE   1
-#define EDJE_IMAGE_SOURCE_TYPE_ABSOLUTE 2
-#define EDJE_IMAGE_SOURCE_TYPE_HOMEDIR  3
-#define EDJE_IMAGE_SOURCE_TYPE_LAST     4
+#define EDJE_IMAGE_SOURCE_TYPE_NONE           0
+#define EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT 1
+#define EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY   2
+#define EDJE_IMAGE_SOURCE_TYPE_EXTERNAL       3
+#define EDJE_IMAGE_SOURCE_TYPE_LAST           4
 
 #define EDJE_TEXT_EFFECT_NONE           0
 #define EDJE_TEXT_EFFECT_PLAIN          1
@@ -107,7 +107,6 @@ struct _Edje_File
 struct _Edje_Image_Directory
 {
    Evas_List *entries; /* a list of Edje_Image_Directory_Entry */
-
    int        references;
 };
 
@@ -115,6 +114,7 @@ struct _Edje_Image_Directory_Entry
 {
    char *entry; /* the nominal name of the image - if any */
    int   source_type; /* alternate source mode. 0 = none */
+   int   source_param; /* extar params on encoding */
    int   id; /* the id no. of the image */
 };
 
