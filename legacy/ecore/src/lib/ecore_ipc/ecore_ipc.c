@@ -746,23 +746,33 @@ _ecore_ipc_event_server_del(void *data, int ev_type, void *ev)
    md = ((head >> (4 * _n)) & 0xf); \
    if (md >= DLT_SET) \
      { \
-	dd[0] = *(cl->buf + offset + s + 0); \
-	dd[1] = *(cl->buf + offset + s + 1); \
-	dd[2] = *(cl->buf + offset + s + 2); \
-	dd[3] = *(cl->buf + offset + s + 3); \
-	d = ntohl(d); \
+	unsigned int v; \
+	unsigned char *dv; \
+	dv = (unsigned char *)&v; \
+	dv[0] = *(cl->buf + offset + s + 0); \
+	dv[1] = *(cl->buf + offset + s + 1); \
+	dv[2] = *(cl->buf + offset + s + 2); \
+	dv[3] = *(cl->buf + offset + s + 3); \
+	d = (int)ntohl(d); \
 	s += 4; \
      } \
    else if (md >= DLT_ADD16) \
      { \
-	dd[0] = *(cl->buf + offset + s + 0); \
-	dd[1] = *(cl->buf + offset + s + 1); \
-	d = ntohs(d); \
+	unsigned short v; \
+	unsigned char *dv; \
+	dv = (unsigned char *)&v; \
+	dv[0] = *(cl->buf + offset + s + 0); \
+	dv[1] = *(cl->buf + offset + s + 1); \
+	d = (int)ntohs(v); \
 	s += 2; \
      } \
    else if (md >= DLT_ADD8) \
      { \
-	d = *(cl->buf + offset + s + 0); \
+	unsigned char v; \
+	unsigned char *dv; \
+	dv = (unsigned char *)&v; \
+	dv[0] = *(cl->buf + offset + s + 0); \
+	d = (int)v; \
 	s += 1; \
      } \
    msg._member = _ecore_ipc_ddlt_int(d, cl->prev.i._member, md);
@@ -909,23 +919,33 @@ _ecore_ipc_event_client_data(void *data, int ev_type, void *ev)
    md = ((head >> (4 * _n)) & 0xf); \
    if (md >= DLT_SET) \
      { \
-	dd[0] = *(svr->buf + offset + s + 0); \
-	dd[1] = *(svr->buf + offset + s + 1); \
-	dd[2] = *(svr->buf + offset + s + 2); \
-	dd[3] = *(svr->buf + offset + s + 3); \
-	d = ntohl(d); \
+	unsigned int v; \
+	unsigned char *dv; \
+	dv = (unsigned char *)&v; \
+	dv[0] = *(svr->buf + offset + s + 0); \
+	dv[1] = *(svr->buf + offset + s + 1); \
+	dv[2] = *(svr->buf + offset + s + 2); \
+	dv[3] = *(svr->buf + offset + s + 3); \
+	d = (int)ntohl(d); \
 	s += 4; \
      } \
    else if (md >= DLT_ADD16) \
      { \
-	dd[0] = *(svr->buf + offset + s + 0); \
-	dd[1] = *(svr->buf + offset + s + 1); \
-	d = ntohs(d); \
+	unsigned short v; \
+	unsigned char *dv; \
+	dv = (unsigned char *)&v; \
+	dv[0] = *(svr->buf + offset + s + 0); \
+	dv[1] = *(svr->buf + offset + s + 1); \
+	d = (int)ntohs(v); \
 	s += 2; \
      } \
    else if (md >= DLT_ADD8) \
      { \
-	d = *(svr->buf + offset + s + 0); \
+	unsigned char v; \
+	unsigned char *dv; \
+	dv = (unsigned char *)&v; \
+	dv[0] = *(svr->buf + offset + s + 0); \
+	d = (int)v; \
 	s += 1; \
      } \
    msg._member = _ecore_ipc_ddlt_int(d, svr->prev.i._member, md);
