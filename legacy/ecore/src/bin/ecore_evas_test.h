@@ -9,9 +9,9 @@
 #include "Ecore_Evas.h"
 #include "Ecore_Fb.h"
 
-#define IM PACKAGE_DATA_DIR"/data/images/"
-#define PT PACKAGE_DATA_DIR"/data/pointers/"
-#define FN PACKAGE_DATA_DIR"/data/fonts/"
+#define IM PACKAGE_DATA_DIR"/images/"
+#define PT PACKAGE_DATA_DIR"/pointers/"
+#define FN PACKAGE_DATA_DIR"/fonts/"
 
 extern double       start_time;
 extern Ecore_Evas  *ee;
