@@ -553,6 +553,13 @@ typedef enum _Ecore_X_Window_State {
 
 } Ecore_X_Window_State;
 
+typedef enum _Ecore_X_Selection_Target {
+   ECORE_X_SELECTION_TARGET_FILENAME,
+   ECORE_X_SELECTION_TARGET_STRING,
+   ECORE_X_SELECTION_TARGET_UTF8_STRING,
+   ECORE_X_SELECTION_TARGET_TEXT
+} Ecore_X_Selection_Target;
+
 int              ecore_x_init(const char *name);
 int              ecore_x_shutdown(void);       
 Ecore_X_Display *ecore_x_display_get(void);
@@ -566,6 +573,13 @@ void             ecore_x_error_handler_set(void (*func) (void *data), const void
 void             ecore_x_io_error_handler_set(void (*func) (void *data), const void *data);
 int              ecore_x_error_request_get(void);
 int              ecore_x_error_code_get(void);
+
+int              ecore_x_selection_primary_set(Ecore_X_Window w, char *data, int len);
+int              ecore_x_selection_primary_clear(void);
+int              ecore_x_selection_secondary_set(Ecore_X_Window w, char *data, int len);
+int              ecore_x_selection_secondary_clear(void);
+int              ecore_x_selection_clipboard_set(Ecore_X_Window w, char *data, int len);
+int              ecore_x_selection_clipboard_clear(void);
 
 Ecore_X_Window   ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h);
 Ecore_X_Window   ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h);

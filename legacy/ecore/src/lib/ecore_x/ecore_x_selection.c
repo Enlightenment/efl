@@ -42,4 +42,50 @@ int ecore_x_selection_clipboard_clear(void)
    return _ecore_x_selection_set(None, NULL, 0, _ecore_x_atom_selection_clipboard);
 }
 
+static void _ecore_x_selection_request(Ecore_X_Window w, Ecore_X_Atom selection, Ecore_X_Selection_Target t) 
+{
+   Ecore_X_Atom target, prop;
+
+   switch (t) {
+      case ECORE_X_SELECTION_TARGET_FILENAME:
+         target = _ecore_x_atom_file_name;
+         break;
+      case ECORE_X_SELECTION_TARGET_STRING:
+         target = _ecore_x_atom_string;
+         break;
+      case ECORE_X_SELECTION_TARGET_UTF8_STRING:
+         target = _ecore_x_atom_utf8_string;
+         break;
+      case ECORE_X_SELECTION_TARGET_TEXT:
+         target = _ecore_x_atom_text;
+         break;
+      default:
+         target = _ecore_x_atom_text;
+   }
+   
+   if (selection == _ecore_x_atom_selection_primary)
+      prop = _ecore_x_atom_selection_prop_primary;
+   else if (selection == _ecore_x_atom_selection_secondary)
+      prop = _ecore_x_atom_selection_prop_secondary;
+   else
+      prop = _ecore_x_atom_selection_prop_clipboard;
+
+   XConvertSelection(_ecore_x_disp, selection, target, prop,
+                     w, _ecore_x_event_last_time);
+}
+
+void ecore_x_selection_primary_request(Ecore_X_Window w, Ecore_X_Selection_Target t)
+{
+   _ecore_x_selection_request(w, _ecore_x_atom_selection_primary, t);
+}
+
+void ecore_x_selection_secondary_request(Ecore_X_Window w, Ecore_X_Selection_Target t)
+{
+   _ecore_x_selection_request(w, _ecore_x_atom_selection_secondary, t);
+}
+
+void ecore_x_selection_clipboard_request(Ecore_X_Window w, Ecore_X_Selection_Target t)
+{
+   _ecore_x_selection_request(w, _ecore_x_atom_selection_clipboard, t);
+}
 

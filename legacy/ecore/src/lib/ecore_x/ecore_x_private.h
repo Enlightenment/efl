@@ -111,10 +111,16 @@ extern Atom     _ecore_x_atom_net_wm_state_below;
 extern Atom     _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
 
 extern Atom     _ecore_x_atom_utf8_string;
+extern Atom     _ecore_x_atom_file_name;
+extern Atom     _ecore_x_atom_string;
+extern Atom     _ecore_x_atom_text;
 
 extern Atom     _ecore_x_atom_selection_primary;
 extern Atom     _ecore_x_atom_selection_secondary;
 extern Atom     _ecore_x_atom_selection_clipboard;
+extern Atom     _ecore_x_atom_selection_prop_primary;
+extern Atom     _ecore_x_atom_selection_prop_secondary;
+extern Atom     _ecore_x_atom_selection_prop_clipboard;
 
 void _ecore_x_error_handler_init(void);
 void _ecore_x_event_handle_key_press(XEvent *xevent);

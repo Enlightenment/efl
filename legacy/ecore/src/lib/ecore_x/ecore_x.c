@@ -39,6 +39,9 @@ Atom     _ecore_x_atom_win_layer = 0;
 Atom     _ecore_x_atom_selection_primary = 0;
 Atom     _ecore_x_atom_selection_secondary = 0;
 Atom     _ecore_x_atom_selection_clipboard = 0;
+Atom     _ecore_x_atom_selection_prop_primary = 0;
+Atom     _ecore_x_atom_selection_prop_secondary = 0;
+Atom     _ecore_x_atom_selection_prop_clipboard = 0;
 
 /*
  * Root window NetWM hints.
@@ -97,6 +100,9 @@ Atom     _ecore_x_atom_net_wm_state_fullscreen = 0;
 Atom     _ecore_x_atom_net_wm_state_above = 0;
 Atom     _ecore_x_atom_net_wm_state_below = 0;
 
+Atom     _ecore_x_atom_file_name = 0;
+Atom     _ecore_x_atom_string = 0;
+Atom     _ecore_x_atom_text = 0;
 Atom     _ecore_x_atom_utf8_string = 0;
 
 Atom     _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM] = {0};
@@ -307,6 +313,10 @@ ecore_x_init(const char *name)
    _ecore_x_atom_selection_primary        = XA_PRIMARY;
    _ecore_x_atom_selection_secondary      = XA_SECONDARY;
    _ecore_x_atom_selection_clipboard      = XInternAtom(_ecore_x_disp, "CLIPBOARD", False);
+   _ecore_x_atom_selection_prop_primary   = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_PRIMARY", False);
+   _ecore_x_atom_selection_prop_secondary = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_SECONDARY", False);
+   _ecore_x_atom_selection_prop_clipboard = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_CLIPBOARD", False);
+   
    _ecore_x_atom_net_current_desktop      = XInternAtom(_ecore_x_disp, "_NET_CURRENT_DESKTOP", False);
    _ecore_x_atom_net_wm_name              = XInternAtom(_ecore_x_disp, "_NET_WM_NAME", False);
    _ecore_x_atom_net_wm_visible_name      = XInternAtom(_ecore_x_disp, "_NET_WM_VISIBLE_NAME", False);
@@ -345,6 +355,9 @@ ecore_x_init(const char *name)
    _ecore_x_atom_net_wm_state_below          = XInternAtom(_ecore_x_disp, "_NET_WM_STATE_BELOW", False);
 
    _ecore_x_atom_utf8_string = XInternAtom(_ecore_x_disp, "UTF8_STRING", False);
+   _ecore_x_atom_file_name          = XInternAtom(_ecore_x_disp, "FILE_NAME", False);
+   _ecore_x_atom_string             = XInternAtom(_ecore_x_disp, "STRING", False);
+   _ecore_x_atom_text               = XInternAtom(_ecore_x_disp, "TEXT", False);
 
    _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_DELETE_REQUEST] = _ecore_x_atom_wm_delete_window;
    _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_TAKE_FOCUS] = _ecore_x_atom_wm_take_focus;
