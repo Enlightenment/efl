@@ -565,7 +565,7 @@ void  _edje_edd_setup(void);
 void  _edje_file_add(Edje *ed);
 void  _edje_file_del(Edje *ed);
 void  _edje_file_free(Edje_File *edf);
-void  _edje_collection_free(Edje_Part_Collection *ec);
+void  _edje_collection_free(Edje *ed, Edje_Part_Collection *ec);
 
 Edje *_edje_add(Evas_Object *obj);
 void  _edje_del(Edje *ed);
@@ -581,14 +581,15 @@ void  _edje_emit(Edje *ed, char *sig, char *src);
 void  _edje_text_init(void);
 void  _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep);
 void  _edje_text_part_on_add_clippers(Edje *ed, Edje_Real_Part *ep);
-void  _edje_text_part_on_del(Edje *ed, Edje_Real_Part *ep);
+void  _edje_text_part_on_del(Edje *ed, Edje_Part *ep);
+void  _edje_text_real_part_on_del(Edje *ed, Edje_Real_Part *ep);
 void  _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *params, Edje_Part_Description *chosen_desc);
     
 Edje_Real_Part   *_edje_real_part_get(Edje *ed, char *part);
 Edje_Color_Class *_edje_color_class_find(Edje *ed, char *color_class);
 void              _edje_color_class_member_add(Edje *ed, char *color_class);
 void              _edje_color_class_member_del(Edje *ed, char *color_class);
-void              _edje_color_class_on_del(Edje *ed, Edje_Real_Part *rp);
+void              _edje_color_class_on_del(Edje *ed, Edje_Part *ep);
 Edje_Text_Class  *_edje_text_class_find(Edje *ed, char *text_class);
 void              _edje_text_class_member_add(Edje *ed, char *text_class);
 void              _edje_text_class_member_del(Edje *ed, char *text_class);

@@ -229,10 +229,33 @@ _edje_text_part_on_add_clippers(Edje *ed, Edje_Real_Part *ep)
 }
 
 void
-_edje_text_part_on_del(Edje *ed, Edje_Real_Part *ep)
+_edje_text_part_on_del(Edje *ed, Edje_Part *pt)
 {
    Evas_List *tmp;
-   Edje_Part *pt = ep->part;
+
+   if ((pt->default_desc) && (pt->default_desc->text.text_class))
+     {
+        _edje_text_class_member_del(ed, pt->default_desc->text.text_class);
+	pt->default_desc->text.text_class = NULL;
+     }
+   for (tmp = pt->other_desc; tmp; tmp = tmp->next)
+     {
+	 Edje_Part_Description *desc;
+
+	 desc = tmp->data;
+	 if (desc->text.text_class)
+	   {
+	      _edje_text_class_member_del(ed, desc->text.text_class);
+	      desc->text.text_class = NULL;
+	   }
+     }
+   return;
+}
+
+void
+_edje_text_real_part_on_del(Edje *ed, Edje_Real_Part *ep)
+{
+   Evas_List *tmp;
 
    while (ep->extra_objects)
      {
@@ -241,15 +264,6 @@ _edje_text_part_on_del(Edje *ed, Edje_Real_Part *ep)
 	o = ep->extra_objects->data;
 	ep->extra_objects = evas_list_remove(ep->extra_objects, o);
 	evas_object_del(o);
-     }
-
-   if ((pt->default_desc) && (pt->default_desc->text.text_class)) _edje_text_class_member_del(ed, pt->default_desc->text.text_class);
-   for (tmp = pt->other_desc; tmp; tmp = tmp->next)
-     {
-	 Edje_Part_Description *desc;
-
-	 desc = tmp->data;
-	 if (desc->text.text_class) _edje_text_class_member_del(ed, desc->text.text_class);
      }
    return;
 }

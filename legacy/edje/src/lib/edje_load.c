@@ -432,7 +432,7 @@ _edje_file_del(Edje *ed)
 	if (ed->collection->references <= 0)
 	  {
 	     ed->file->collection_hash = evas_hash_del(ed->file->collection_hash, ed->part, ed->collection);
-	     _edje_collection_free(ed->collection);
+	     _edje_collection_free(ed, ed->collection);
 	  }
 	ed->collection = NULL;
      }
@@ -446,7 +446,7 @@ _edje_file_del(Edje *ed)
 	while (ed->parts)
 	  {
 	     Edje_Real_Part *rp;
-	     
+
 	     rp = ed->parts->data;
 	     ed->parts = evas_list_remove(ed->parts, rp);
 	     evas_object_event_callback_del(rp->object, 
@@ -467,8 +467,7 @@ _edje_file_del(Edje *ed)
 	     evas_object_event_callback_del(rp->object, 
 					    EVAS_CALLBACK_MOUSE_WHEEL,
 					    _edje_mouse_wheel_cb);
-	     _edje_text_part_on_del(ed, rp);
-	     _edje_color_class_on_del(ed, rp);
+	     _edje_text_real_part_on_del(ed, rp);
 	     evas_object_del(rp->object);
 	     if (rp->swallowed_object)
 	       {
@@ -554,12 +553,12 @@ _edje_file_free(Edje_File *edf)
 }
 
 void
-_edje_collection_free(Edje_Part_Collection *ec)
+_edje_collection_free(Edje *ed, Edje_Part_Collection *ec)
 {
    while (ec->programs)
      {
 	Edje_Program *pr;
-	
+
 	pr = ec->programs->data;
 	ec->programs = evas_list_remove(ec->programs, pr);
 	if (pr->name) free(pr->name);
@@ -580,11 +579,17 @@ _edje_collection_free(Edje_Part_Collection *ec)
    while (ec->parts)
      {
 	Edje_Part *ep;
-	
+
 	ep = ec->parts->data;
 	ec->parts = evas_list_remove(ec->parts, ep);
+	_edje_text_part_on_del(ed, ep);
+	_edje_color_class_on_del(ed, ep);
 	if (ep->name) free(ep->name);
-	if (ep->default_desc) _edje_collection_free_part_description_free(ep->default_desc);
+	if (ep->default_desc)
+	  {
+	     _edje_collection_free_part_description_free(ep->default_desc);
+	     ep->default_desc = NULL;
+	  }
 	while (ep->other_desc)
 	  {
 	     Edje_Part_Description *desc;

@@ -1054,10 +1054,9 @@ _edje_color_class_member_del(Edje *ed, char *color_class)
 }
 
 void
-_edje_color_class_on_del(Edje *ed, Edje_Real_Part *rp)
+_edje_color_class_on_del(Edje *ed, Edje_Part *ep)
 {
    Evas_List *tmp;
-   Edje_Part *ep = rp->part;
 
    if ((ep->default_desc) && (ep->default_desc->color_class)) _edje_color_class_member_del(ed, ep->default_desc->color_class);
    for (tmp = ep->other_desc; tmp; tmp = tmp->next)
@@ -1065,7 +1064,11 @@ _edje_color_class_on_del(Edje *ed, Edje_Real_Part *rp)
         Edje_Part_Description *desc;
 
 	desc = tmp->data;
-	if (desc->color_class) _edje_color_class_member_del(ed, desc->color_class);
+	if (desc->color_class)
+	  {
+	     _edje_color_class_member_del(ed, desc->color_class);
+	     desc->color_class = NULL;
+	  }
      }
 }
 
