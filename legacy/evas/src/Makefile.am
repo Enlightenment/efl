@@ -7,18 +7,18 @@ MAINTAINERCLEANFILES = Makefile.in
 
 LIBS_X        = @x_ldflags@ @x_libs@
 LIBS_IMLIB2   = -lImlib2 -lttf -ldl -lm
-LIBS_DB       = -ledb
+#LIBS_DB       = -ledb
 LIBS_GL       = -lGLU -lGL 
 LIBS_EXTRA    = -L/usr/local/lib
 
 CFLAGS_X      = @x_cflags@
 CFLAGS_IMLIB2 = 
-CFLAGS_DB     = 
+#CFLAGS_DB     = 
 CFLAGS_GL     = @gl_includes@
 CFLAGS_EXTRA  = -I$(includedir) -I$(top_srcdir) -I/usr/local/include
 
-LIBS_ALL      = $(LIBS_X) $(LIBS_IMLIB2) $(LIBS_DB) $(LIBS_GL) $(LIBS_EXTRA)
-CFLGAS_ALL    = $(CFLAGS_X) $(CFLAGS_IMLIB2) $(CFLAGS_DB) $(CFLAGS_GL) $(CFLAGS_EXTRA)
+LIBS_ALL      = $(LIBS_X) $(LIBS_IMLIB2) $(LIBS_GL) $(LIBS_EXTRA)
+CFLGAS_ALL    = $(CFLAGS_X) $(CFLAGS_IMLIB2) $(CFLAGS_GL) $(CFLAGS_EXTRA)
 
 INCLUDES	     = $(CFLGAS_ALL) \
 		       -DLIBDIR=\"$(libdir)\" \

@@ -128,11 +128,19 @@ __evas_gl_image_copy_image_rect_to_texture(Evas_GL_Image *im, int x, int y,
 	p2 = data + (ty * tw);
 	for (tx = 0; tx < w; tx++)
 	  {
+#ifndef WORDS_BIGENDIAN
 	     *p2 =
 		((*p1 & 0xff000000)) |
 		((*p1 & 0x00ff0000) >> 16) |
 		((*p1 & 0x0000ff00)) |
 		((*p1 & 0x000000ff) << 16);
+#else
+	     *p2 =
+		((*p1 & 0xff000000) >> 24) |
+		((*p1 & 0x00ff0000) <<  8) |
+		((*p1 & 0x0000ff00) <<  8) |
+		((*p1 & 0x000000ff) <<  8);
+#endif	     
 	     p2++; p1++;
 	  }
 	if (tx < tw)

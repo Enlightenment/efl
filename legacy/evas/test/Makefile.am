@@ -1,7 +1,7 @@
 CFLAGS_X      = @x_cflags@
 CFLAGS_EXTRA  = -I$(includedir) -I$(top_srcdir) -I$(top_srcdir)/src -I/usr/local/include
 
-CFLGAS_ALL    = $(CFLAGS_X) $(CFLAGS_IMLIB2) $(CFLAGS_DB) $(CFLAGS_GL) $(CFLAGS_EXTRA)
+CFLGAS_ALL    = $(CFLAGS_X) $(CFLAGS_EXTRA)
 
 INCLUDES = $(CFLGAS_ALL)
 
