@@ -550,7 +550,7 @@ setup_ecore_x_test(void)
    ecore_x_window_prop_name_class_set(win, "ecore_test", "main");
    ecore_x_window_prop_desktop_set(win, 1);
    printf("Window on desktop %lu\n", ecore_x_window_prop_desktop_get(win));
-   ecore_x_window_prop_window_type_dialog_set(win);
+   ecore_x_window_prop_window_type_set(win, ECORE_X_WINDOW_TYPE_DIALOG);
    ecore_x_window_prop_protocol_set(win, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 1);
    ecore_x_window_show(win);
    ecore_x_flush();
