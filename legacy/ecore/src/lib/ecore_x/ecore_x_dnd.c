@@ -5,16 +5,22 @@
 
 static Ecore_X_Selection_Data _xdnd_selection;
 static Ecore_X_DND_Protocol *_xdnd = NULL;
+static int _ecore_x_dnd_init_count = 0;
 
 void
 _ecore_x_dnd_init (void)
 {
-   _xdnd = calloc(1, sizeof(Ecore_X_DND_Protocol));
+   if (!_ecore_x_dnd_init_count)
+   {
+      _xdnd = calloc(1, sizeof(Ecore_X_DND_Protocol));
    
-   _xdnd->version = ECORE_X_DND_VERSION;
-   _xdnd->source = None;
-   _xdnd->dest = None;
-   _xdnd->state = ECORE_X_DND_IDLE;
+      _xdnd->version = ECORE_X_DND_VERSION;
+      _xdnd->source = None;
+      _xdnd->dest = None;
+      _xdnd->state = ECORE_X_DND_IDLE;
+   }
+
+   _ecore_x_dnd_init_count++;
 
 }
 
@@ -24,6 +30,7 @@ _ecore_x_dnd_shutdown(void)
    if(_xdnd)
       free(_xdnd);
    _xdnd = NULL;
+   _ecore_x_dnd_init_count = 0;
 }
 
 void
