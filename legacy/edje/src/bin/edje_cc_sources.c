@@ -92,13 +92,12 @@ source_fetch(void)
 	notyet = 1;
 	forgetit = 0;
 	haveinclude = 0;
-	havefile = 0;
 	file = NULL;
 	while ((!forgetit) && (*p))
 	  {
 	     if (notyet)
 	       {
-		  if (!isblank(*p))
+		  if (!isspace(*p))
 		    {
 		       if (*p == '#')
 			 notyet = 0;
@@ -111,7 +110,7 @@ source_fetch(void)
 	       {
 		  if (!haveinclude)
 		    {
-		       if (!isblank(*p))
+		       if (!isspace(*p))
 			 {
 			    if (!strncmp(p, "include", 7))
 			      {
@@ -124,40 +123,39 @@ source_fetch(void)
 		    }
 		  else
 		    {
-		       if (!havefile)
+		       if (!isspace(*p))
 			 {
-			    if (!isblank(*p))
+			    if (*p == '"')
 			      {
-				 if (*p == '"')
-				   {
-				      pp = strchr(p + 1, '"');
-				      if (!pp)
-					forgetit = 1;
-				      else
-					{
-					   file = mem_alloc(pp - p);
-					   strncpy(file, p + 1, pp - p - 1);
-					   file[pp - p - 1] = 0;
-					   forgetit = 1;
-					}
-				   }
-				 else if (*p == '<')
-				   {
-				      pp = strchr(p + 1, '>');
-				      if (!pp)
-					forgetit = 1;
-				      else
-					{
-					   file = mem_alloc(pp - p);
-					   strncpy(file, p + 1, pp - p - 1);
-					   file[pp - p - 1] = 0;
-					   forgetit = 1;
-					}
-				   }
-				 else
+				 pp = strchr(p + 1, '"');
+				 if (!pp)
 				   forgetit = 1;
+				 else
+				   {
+				      file = mem_alloc(pp - p);
+				      strncpy(file, p + 1, pp - p - 1);
+				      file[pp - p - 1] = 0;
+				      forgetit = 1;
+				   }
 			      }
+			    else if (*p == '<')
+			      {
+				 pp = strchr(p + 1, '>');
+				 if (!pp)
+				   forgetit = 1;
+				 else
+				   {
+				      file = mem_alloc(pp - p);
+				      strncpy(file, p + 1, pp - p - 1);
+				      file[pp - p - 1] = 0;
+				      forgetit = 1;
+				   }
+			      }
+			    else
+			      forgetit = 1;
 			 }
+		       else
+			 p++;
 		    }
 	       }
 	  }
