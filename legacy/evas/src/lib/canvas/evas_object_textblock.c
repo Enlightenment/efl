@@ -766,6 +766,7 @@ evas_object_textblock_layout(Evas_Object *obj)
 			    if (ll == (Evas_Object_List *)line_start) break;
 			 }
 		       lnode->line_end = 1;
+		       fh = layout.line.y + layout.line.mascent + layout.line.mdescent;
 		    }
 	       }
 	     /* text doesnt fit */
@@ -1231,7 +1232,6 @@ evas_object_textblock_line_end_pos_get(Evas_Object *obj)
 	for (l = (Evas_Object_List *)lnode; l; l = l->next)
 	  {
 	     lnode = (Layout_Node *)l;
-	     printf("%s\n", lnode->text);
 	     if ((lnode->text) && (lnode->line_end))
 	       {
 		  int index;
