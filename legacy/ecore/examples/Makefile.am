@@ -25,7 +25,8 @@ INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_config \
 -I$(top_srcdir)/src/lib/ecore_x \
--I$(top_srcdir)/src/lib/ecore_con
+-I$(top_srcdir)/src/lib/ecore_con \
+@evas_cflags@
 
 LDADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
