@@ -926,6 +926,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 	if (last_mdescent < 1) fh += 1 - last_mdescent;
      }
    *format_h = fh;
+   return layout_nodes;
 }
 
 static void
