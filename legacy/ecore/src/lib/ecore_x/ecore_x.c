@@ -371,6 +371,41 @@ ecore_x_sync(void)
    XSync(_ecore_x_disp, False);
 }
 
+void
+ecore_x_killall(Ecore_X_Window root)
+{
+   int screens;
+   int i, j;
+   
+   XGrabServer(_ecore_x_disp);
+   screens = ScreenCount(_ecore_x_disp);
+
+   /* Tranverse window tree starting from root, and drag each
+    * before the firing squad */
+   for (i = 0; i < screens; ++i)
+   {
+      Window root_r;
+      Window parent_r;
+      Window *children_r = NULL;
+      int num_children = 0;
+      Window root = RootWindow(d->display, i);
+
+      while (XQueryTree(_ecore_x_disp, root, &root_r, &parent_r,
+               &children_r, &num_children) && num_children > 0)
+      {
+         for (j = 0; j < num_children; ++j)
+         {
+            XKillClient(_ecore_x_disp, children_r[j]);
+         }
+
+         XFree(children_r);
+      }
+   }
+
+   XUngrabServer(_ecore_x_disp);
+   XSync(_ecore_x_disp, False);
+}
+
 static int
 _ecore_x_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
 {

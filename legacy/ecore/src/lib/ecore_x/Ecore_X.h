@@ -492,6 +492,7 @@ void             ecore_x_double_click_time_set(double t);
 double           ecore_x_double_click_time_get(void);
 void             ecore_x_flush(void);
 void             ecore_x_sync(void);
+void             ecore_x_killall(Ecore_X_Window root);
        
 void             ecore_x_error_handler_set(void (*func) (void *data), const void *data);
 void             ecore_x_io_error_handler_set(void (*func) (void *data), const void *data);
