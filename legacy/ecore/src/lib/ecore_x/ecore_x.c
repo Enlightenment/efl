@@ -533,6 +533,19 @@ ecore_x_killall(Ecore_X_Window root)
    XSync(_ecore_x_disp, False);
 }
 
+/**
+ * Kill a specific client
+ *
+ * You can kill a specific client woning window @p win
+ *
+ * @param win Window of the client to be killed
+ */
+void
+ecore_x_kill(Ecore_X_Window win)
+{
+   XKillClient(_ecore_x_disp, win);
+}
+
 static int
 _ecore_x_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
 {

@@ -772,6 +772,7 @@ EAPI double           ecore_x_double_click_time_get(void);
 EAPI void             ecore_x_flush(void);
 EAPI void             ecore_x_sync(void);
 EAPI void             ecore_x_killall(Ecore_X_Window root);
+EAPI void             ecore_x_kill(Ecore_X_Window win);
        
 EAPI void             ecore_x_error_handler_set(void (*func) (void *data), const void *data);
 EAPI void             ecore_x_io_error_handler_set(void (*func) (void *data), const void *data);
