@@ -21,7 +21,6 @@
 #  define TRUE (!FALSE)
 #endif
 
-
 typedef struct _ipc {
   void *lib;
   void *data;
@@ -40,7 +39,7 @@ static unsigned long  ipc_timer=0L;
 Ecore_Config_Server *srv2ecore_config_srv(void *srv) {
   ipc *ipc_tmp;
   Ecore_Config_Server *srv_tmp;
- 
+/*
   ipc_tmp = ipc_modules;
   while (ipc_tmp) {
     srv_tmp = ipc_tmp->data;
@@ -51,8 +50,8 @@ Ecore_Config_Server *srv2ecore_config_srv(void *srv) {
     }
     ipc_tmp = ipc_tmp->next;
   }
-
-  return NULL;
+*/
+  return config_system;
 }
 
 /*****************************************************************************/

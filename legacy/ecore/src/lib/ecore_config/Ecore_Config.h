@@ -44,6 +44,7 @@
 #  define E(lvl,args...) do { } while(0)
 #endif
 
+#define ECORE_CONFIG_GLOBAL_ID "_system"
 
 /* structures */
 
@@ -109,6 +110,8 @@ typedef struct Ecore_Config_Server {
   Ecore_Config_Bundle        *bundles;          /* data anchor */
   struct Ecore_Config_Server *next; } Ecore_Config_Server;
 
+Ecore_Config_Server *config_system;
+
 
 Ecore_Config_Prop   *ecore_config_get(const Ecore_Config_Bundle *t,const char *key);
 const char    *ecore_config_get_type(const Ecore_Config_Prop *e);
@@ -149,8 +152,7 @@ long           ecore_config_bundle_get_serial(Ecore_Config_Bundle *ns);
 char          *ecore_config_bundle_get_label(Ecore_Config_Bundle *ns);
                       
 
-Ecore_Config_Server *ecore_config_init(char *name);
-Ecore_Config_Server *ecore_config_init_global(char *name);
+Ecore_Config_Bundle *ecore_config_init(char *name);
 int            ecore_config_exit(void);
 
 int            ecore_config_load(Ecore_Config_Bundle *b);

@@ -551,7 +551,7 @@ Ecore_Config_Server *do_init(char *name) {
   return ipc_init(name);
 }
 
-Ecore_Config_Server *ecore_config_init(char *name) {
+Ecore_Config_Server *ecore_config_init_local(char *name) {
   char *p;
   char *buf;
 
@@ -583,6 +583,28 @@ Ecore_Config_Server *ecore_config_init_global(char *name) {
   }
   
   return do_init(name);
+}
+
+Ecore_Config_Bundle *ecore_config_init(char *name) {
+  Ecore_Config_Server *srv;
+  Ecore_Config_Bundle *bdl;
+  char                *buf, *p;
+  
+  srv = ecore_config_init_local(name);
+  ecore_config_init_global(ECORE_CONFIG_GLOBAL_ID);
+  
+  bdl = ecore_config_bundle_new(srv, "config");
+
+  if((p=getenv("HOME"))) {  /* debug-only ### FIXME */
+    if ((buf=malloc(PATH_MAX*sizeof(char)))) {
+      snprintf(buf,PATH_MAX,"%s/.e/config.db",p);
+      ecore_config_load_file(bdl, buf);
+    }
+    free(buf);
+  }
+
+  config_system=srv; 
+  return bdl;
 }
 
 int ecore_config_exit(void) {
