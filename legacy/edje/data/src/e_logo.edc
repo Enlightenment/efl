@@ -1,5 +1,6 @@
 fonts {
-   font: "Vera.ttf" "Edje.Vera";
+   font: "Vera.ttf" "Vera";
+   font: "VeraBd.ttf" "Vera Bold";
 }
 images {
    image: "bg.png" LOSSY 95;
@@ -136,7 +137,7 @@ data
 collections {
    group {
       name: "test";
-      min: 32 32;
+      min: 128 128;
       max: 1024 768;
       data {
 	 item: "My Data" "The string to attach to this data";
@@ -245,7 +246,7 @@ collections {
 	       text {
 		  text:     "This is a longer test string";
 		  text_class: "plainjane";
-		  font:     "Edje.Vera";
+		  font:     "Vera";
 		  size:     6;
 //		  fit:    0 1;
 //		  min:    1 1;
@@ -582,7 +583,7 @@ collections {
 	       get_text_class("plainjane", font, size);
 	       snprintf(buf, 256, "%s SIZE: %f", font, size);
 	       emit("DEBUG...", buf); 
-	       set_text_class("plainjane", "-Bitstream-Bitstream Vera Sans-bold-i-normal--0-0-0-0-p-0-ascii-0", 8.0);
+	       set_text_class("plainjane", "Vera Bold", 8.0);
             }
         }   
 	program {
@@ -604,7 +605,7 @@ collections {
 	       snprintf(buf, 256, "**Mouse at** x: %i y: %i\n", w, h);
 	       emit("DEBUG...", buf);
 	       set_color_class("bg", 255, 255, 255, 255);
-	       set_text_class("plainjane", "-Bitstream-Bitstream Vera Sans-medium-r-normal--0-0-0-0-p-0-ascii-0", 6.0); 
+	       set_text_class("plainjane", "Vera", 6.0); 
             }
          }
 	 program {
@@ -651,6 +652,7 @@ collections {
 	       anim(1.5, "anim_cb", 7777);
 	    }
 	 }
+#if 0	 
 	 program {
 	    name:       "random_signal";
 	    signal:     "show";
@@ -665,6 +667,7 @@ collections {
 	    in:         1.0 5.0;
 	    action:     SIGNAL_EMIT "do_random" "the_source";
 	 }
+#endif	 
 	 program {
 	    name:       "logo_click_d1";
 	    signal:     "mouse,down,1";

@@ -162,13 +162,13 @@ main_delete_request(Ecore_Evas *ee)
 static void
 main_pre_rend(Ecore_Evas *ee)
 {
-   edje_thaw();
+//   edje_thaw();
 }
 
 static void
 main_post_rend(Ecore_Evas *ee)
 {
-   edje_freeze();   
+//   edje_freeze();   
 }
 
 void
@@ -685,6 +685,8 @@ test_setup(char *file, char *name)
 	hh = starth;
      }
    
+   printf("%i %i, %i %i\n", (int)startw, (int)starth, (int)ww, (int)hh);
+   
    de = calloc(1, sizeof(Demo_Edje));
    edjes = evas_list_append(edjes, de);
 
@@ -777,7 +779,7 @@ test_setup(char *file, char *name)
    edje_object_size_min_get(o, &(de->minw), &(de->minh));
    if (ww < de->minw) w = de->minw;
    if (hh < de->minh) h = de->minh;
-   edje_object_size_min_get(o, &(de->maxw), &(de->maxh));
+   edje_object_size_max_get(o, &(de->maxw), &(de->maxh));
    if (de->maxw > 0)
      {
 	if (ww > de->maxw) w = de->maxw;

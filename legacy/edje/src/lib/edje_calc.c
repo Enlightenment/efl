@@ -182,12 +182,15 @@ _edje_recalc(Edje *ed)
 {
    Evas_List *l;
    
+//   printf("ed->freeze = %i\n", ed->freeze);
+//   printf("ed->calc_only = %i\n", ed->calc_only);
    if (!ed->dirty) return;
    if (ed->freeze)
      {
 	ed->recalc = 1;
 	if (!ed->calc_only) return;
      }
+//   printf("recalcies\n");
    for (l = ed->parts; l; l = l->next)
      {
 	Edje_Real_Part *ep;
@@ -504,12 +507,14 @@ _edje_part_recalc_single(Edje *ed,
 	char      *font;
 	int        size;
 	Evas_Coord tw, th;
+	char       buf[4096];
 	
 	text = chosen_desc->text.text;
 	font = chosen_desc->text.font;
 	size = chosen_desc->text.size;
 	
-	if ((chosen_desc->text.text_class) && (strlen(chosen_desc->text.text_class) > 0))
+	if ((chosen_desc->text.text_class) && 
+	    (strlen(chosen_desc->text.text_class) > 0))
 	  {
 	     Edje_Text_Class *tc;
 	     
@@ -524,6 +529,15 @@ _edje_part_recalc_single(Edje *ed,
 	if (ep->text.text) text = ep->text.text;
 	if (ep->text.font) font = ep->text.font;
 	if (ep->text.size > 0) size = ep->text.size;
+	
+        strcpy(buf, "fonts/");
+	strcat(buf, font);
+	
+	evas_object_text_font_set(ep->object, buf, 10);
+	
+	if (evas_object_text_ascent_get(ep->object) > 0) font = buf;
+//	font = buf;
+	
 	evas_object_text_font_set(ep->object, font, size);
 	if ((chosen_desc->text.min_x) || (chosen_desc->text.min_y))
 	  {
@@ -698,6 +712,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
    Edje_Part_Description *chosen_desc;
    double pos = 0.0;
 
+//   printf("^^^^calc: %s\n", ep->part->name);
    if (ep->calculated) return;
    if (ep->calculating)
      {
@@ -716,6 +731,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
    if (ep->param2.rel2_to_x)  _edje_part_recalc(ed, ep->param2.rel2_to_x);
    if (ep->param2.rel2_to_y)  _edje_part_recalc(ed, ep->param2.rel2_to_y);
    
+//   printf("CALC\n");
+   
    /* actually calculate now */
    if (ep->description_pos == 0.0)
      chosen_desc = ep->param1.description;
@@ -728,6 +745,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
 	ep->calculated = 1;
 	return;
      }
+//   printf("CALC2\n");
    
    ep->chosen_description = chosen_desc;
    if (ep->param1.description)
@@ -852,6 +870,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
      }
    if (!ed->calc_only)
      {
+//	printf("APPL\n");
 	if (ep->part->type == EDJE_PART_TYPE_RECTANGLE)
 	  {
 	     evas_object_move(ep->object, ed->x + p3.x, ed->y + p3.y);

@@ -351,6 +351,7 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
    Evas_List *l;
    Edje_Text_Class *tc;
 
+//   printf("------------ edje_object_text_class_set\n");
    ed = _edje_fetch(obj);
    if ((!ed) || (!text_class)) return;
    if (size < 0.0) size = 0.0;
@@ -1455,15 +1456,25 @@ int
 _edje_freeze(Edje *ed)
 {
    ed->freeze++;
+//   printf("FREEZE %i\n", ed->freeze);
    return ed->freeze;
 }
 
 int
 _edje_thaw(Edje *ed)
 {
+//   printf("THAW %i\n", ed->freeze);
    ed->freeze--;
-   if (ed->freeze < 0) ed->freeze = 0;
-   if ((ed->freeze == 0) && (ed->recalc)) _edje_recalc(ed);
+   if (ed->freeze < 0)
+     {
+//	printf("-------------########### OVER THAW\n");
+	ed->freeze = 0;
+     }
+   if ((ed->freeze == 0) && (ed->recalc)) 
+     {
+//	printf("thaw recalc\n");
+	_edje_recalc(ed);
+     }
    return ed->freeze;
 }
 

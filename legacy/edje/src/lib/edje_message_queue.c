@@ -1,5 +1,8 @@
 #include "Edje.h"
+#include <Ecore_Job.h>
 #include "edje_private.h"
+
+Ecore_Job *job = NULL;
 
 void
 edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void *msg)
@@ -23,7 +26,6 @@ edje_object_message_handler_set(Evas_Object *obj, void (*func) (void *data, Evas
 
 static Evas_List *msgq = NULL;
 static Evas_List *tmp_msgq = NULL;
-static Ecore_Idle_Enterer *idler = NULL;
 
 static int
 _edje_dummy_timer(void *data)
@@ -31,25 +33,27 @@ _edje_dummy_timer(void *data)
    return 0;
 }
 
-static int
-_edje_idler(void *data)
+static void
+_edje_job(void *data)
 {
    _edje_message_queue_process();
-   return 1;
+   job = NULL;
 }
 
 void
 _edje_message_init(void)
 {
-   idler = ecore_idle_enterer_add(_edje_idler, NULL);
 }
 
 void
 _edje_message_shutdown(void)
 {
    _edje_message_queue_clear();
-   ecore_idle_enterer_del(idler);
-   idler = NULL;
+   if (job)
+     {
+	ecore_job_del(job);
+	job = NULL;
+     }
 }
 
 void
@@ -197,7 +201,8 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
    Edje_Message *em;
    int i;
    unsigned char *msg = NULL;
-   
+
+   if (!job) job = ecore_job_add(_edje_job, NULL);
    em = _edje_message_new(ed, queue, type, id);
    if (!em) return;
    switch (em->type)

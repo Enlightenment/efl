@@ -292,6 +292,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    Evas_Coord  tw, th;
    Evas_Coord  ox, oy, sw, sh;
    char    *buf = NULL;
+   char     buf2[4096];
 
    text = chosen_desc->text.text;
    font = chosen_desc->text.font;
@@ -312,6 +313,15 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    if (ep->text.text) text = ep->text.text;
    if (ep->text.font) font = ep->text.font;
    if (ep->text.size > 0) size = ep->text.size;
+   
+   strcpy(buf2, "fonts/");
+   strcat(buf2, font);
+   
+   evas_object_text_font_set(ep->object, buf2, 10);
+   
+   if (evas_object_text_ascent_get(ep->object) > 0) font = buf2;
+//   font = buf2;
+   
    ox = _edje_text_styles[ep->part->effect].offset.x;
    oy = _edje_text_styles[ep->part->effect].offset.y;
    sw = params->w - (_edje_text_styles[ep->part->effect].pad.l + _edje_text_styles[ep->part->effect].pad.r);

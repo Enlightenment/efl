@@ -332,7 +332,7 @@ data_write(void)
 		     progname, ep->name);
 	     ABORT_WRITE(ef, file_out);
 	       }
-
+/*
 	     if (epd->text.font)
 	       {
 		  Evas_List *lll;
@@ -354,6 +354,7 @@ data_write(void)
 			 }
 		    }
 	       }
+ */
 	     for (l3 = ep->other_desc; l3; l3 = l3->next)
 	       {
 		  epd = l3->data;
