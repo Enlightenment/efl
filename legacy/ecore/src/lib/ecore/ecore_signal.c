@@ -17,16 +17,16 @@ static void _ecore_signal_callback_sigint(int sig);
 static void _ecore_signal_callback_sigterm(int sig);
 static void _ecore_signal_callback_sigpwr(int sig);
 
-static volatile int sigchld_count = 0;
-static volatile int sigusr1_count = 0;
-static volatile int sigusr2_count = 0;
-static volatile int sighup_count = 0;
-static volatile int sigquit_count = 0;
-static volatile int sigint_count = 0;
-static volatile int sigterm_count = 0;
-static volatile int sigpwr_count = 0;
+static volatile sig_atomic_t sigchld_count = 0;
+static volatile sig_atomic_t sigusr1_count = 0;
+static volatile sig_atomic_t sigusr2_count = 0;
+static volatile sig_atomic_t sighup_count = 0;
+static volatile sig_atomic_t sigquit_count = 0;
+static volatile sig_atomic_t sigint_count = 0;
+static volatile sig_atomic_t sigterm_count = 0;
+static volatile sig_atomic_t sigpwr_count = 0;
 
-static volatile int sig_count = 0;
+static volatile sig_atomic_t sig_count = 0;
 
 void
 _ecore_signal_shutdown(void)
