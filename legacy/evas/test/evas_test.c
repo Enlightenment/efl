@@ -1,5 +1,5 @@
 #include <Evas.h>
-#include "../src/evas_gl_routines.h"
+#include "../src/evas_imlib_routines.h"
 #include <math.h>
 
 double get_time(void);
@@ -23,9 +23,9 @@ main(int argc, char **argv)
    int win_w, win_h;
    
    d = XOpenDisplay(NULL);
-   __evas_gl_init(d);
-   vis = __evas_gl_get_visual(d, DefaultScreen(d));
-   cmap = __evas_gl_get_colormap(d, DefaultScreen(d));
+   __evas_imlib_init(d);
+   vis = __evas_imlib_get_visual(d, DefaultScreen(d));
+   cmap = __evas_imlib_get_colormap(d, DefaultScreen(d));
    
    win_w = 640; win_h = 480;
      {
@@ -38,25 +38,25 @@ main(int argc, char **argv)
 	win = XCreateWindow(d,
 			    RootWindow(d, DefaultScreen(d)),
 			    0, 0, win_w, win_h, 0,
-			    (__evas_gl_get_visual_info(d, DefaultScreen(d)))->depth,
+			    (__evas_imlib_get_visual_info(d, DefaultScreen(d)))->depth,
 			    InputOutput,
 			    vis,
 			    CWColormap | CWBorderPixel | CWEventMask,
 			    &att);
 	XMapWindow(d, win);
      }
-   if (__evas_gl_capable(d))
+   if (__evas_imlib_capable(d))
      {
 	int a = 0;
 	double t1, t2;
-	Evas_GL_Image *i[4], *bg, *l;
+	Evas_Imlib_Image *i[4], *bg, *l;
 	
-	bg = __evas_gl_image_new_from_file(d, "img/sky001.png");
-	i[0] = __evas_gl_image_new_from_file(d, "img/fog1001.png");
-	i[1] = __evas_gl_image_new_from_file(d, "img/fog2001.png");
-	i[2] = __evas_gl_image_new_from_file(d, "img/fog3001.png");
-	i[3] = __evas_gl_image_new_from_file(d, "img/fog4001.png");
-	l = __evas_gl_image_new_from_file(d, "img/logo001.png");
+	bg = __evas_imlib_image_new_from_file(d, "img/sky001.png");
+	i[0] = __evas_imlib_image_new_from_file(d, "img/fog1001.png");
+	i[1] = __evas_imlib_image_new_from_file(d, "img/fog2001.png");
+	i[2] = __evas_imlib_image_new_from_file(d, "img/fog3001.png");
+	i[3] = __evas_imlib_image_new_from_file(d, "img/fog4001.png");
+	l = __evas_imlib_image_new_from_file(d, "img/logo001.png");
 	if (!bg)
 	  {
 	     printf("cannot find images!\n");
@@ -69,8 +69,9 @@ main(int argc, char **argv)
 	     
 	     if (a == 0)
 		t1 = get_time();
-	     __evas_gl_image_draw(bg, d, win, win_w, win_h,
-					0, 0, bg->w, bg->h,
+	     __evas_imlib_draw_add_rect(d, win, 0, 0, win_w, win_h);
+	     __evas_imlib_image_draw(bg, d, win, win_w, win_h,
+					0, 0, __evas_imlib_image_get_width(bg), __evas_imlib_image_get_height(bg),
 					0, 0, win_w, win_h);
 	     for (k = 0; k < 4; k++)
 	       {
@@ -80,17 +81,17 @@ main(int argc, char **argv)
 		  xx = (((k + 1) * a) / 2) % win_w;
 		  yy = 0;
 		  if (k == 2)
-		     __evas_gl_image_draw(l, d, win, win_w, win_h,
-						0, 0, l->w, l->h,
-						(win_w - l->w) / 2, (win_h - l->h) /2, l->w, l->h);
-		  __evas_gl_image_draw(i[j], d, win, win_w, win_h,
-					     0, 0, i[j]->w, i[j]->h,
+		     __evas_imlib_image_draw(l, d, win, win_w, win_h,
+						0, 0, __evas_imlib_image_get_width(l), __evas_imlib_image_get_height(l),
+						(win_w - __evas_imlib_image_get_width(l)) / 2, (win_h - __evas_imlib_image_get_height(l)) /2, __evas_imlib_image_get_width(l), __evas_imlib_image_get_height(l));
+		  __evas_imlib_image_draw(i[j], d, win, win_w, win_h,
+					     0, 0, __evas_imlib_image_get_width(i[j]), __evas_imlib_image_get_height(i[j]),
 					     xx, yy, win_w, win_h);
-		  __evas_gl_image_draw(i[j], d, win, win_w, win_h,
-					     0, 0, i[j]->w, i[j]->h,
+		  __evas_imlib_image_draw(i[j], d, win, win_w, win_h,
+					     0, 0, __evas_imlib_image_get_width(i[j]), __evas_imlib_image_get_height(i[j]),
 					     xx - win_w, yy, win_w, win_h);
 	       }
-	     __evas_gl_flush_draw(d, win);
+	     __evas_imlib_flush_draw(d, win);
 	     a++;
 	     if (a == (win_w * 4)) 
 		{
@@ -99,7 +100,7 @@ main(int argc, char **argv)
 		   
 		   t2 = get_time();
 		   tim = t2 - t1;
-		   pixels = (((((double)k + 1) * (double)win_w * (double)win_h) + ((double)l->w * (double)l->h)) * (double)a);
+		   pixels = (((((double)k + 1) * (double)win_w * (double)win_h) + ((double)__evas_imlib_image_get_width(l) * (double)__evas_imlib_image_get_height(l))) * (double)a);
 		   printf("%3.0f pixels in %3.3f seconds\n", pixels, tim);
 		   printf("..... %4.1f Mpixels/second\n", pixels / (tim * 1000000));
 		   a = 0;

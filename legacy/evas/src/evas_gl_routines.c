@@ -519,7 +519,17 @@ __evas_gl_image_cache_get_size(Display *disp)
    disp = NULL;
 }
 
+int
+__evas_gl_image_get_width(Evas_GL_Image *im)
+{
+   return im->w;
+}
 
+int
+__evas_gl_image_get_height(Evas_GL_Image *im)
+{
+   return im->h;
+}
 
 
 
@@ -710,5 +720,11 @@ __evas_gl_init(Display *disp)
    __evas_gl_cx = glXCreateContext(disp, __evas_vi, NULL, GL_TRUE);
    /* GLX indirect */
 /*   __evas_gl_cx = glXCreateContext(disp, __evas_vi, NULL, GL_FALSE);*/
+}
+
+void
+__evas_gl_draw_add_rect(Display *disp, Window win,
+			int x, int y, int w, int h)
+{
 }
 
