@@ -1160,19 +1160,14 @@ e_key_grab(char *key, Ev_Key_Modifiers mods, int anymod, int sync)
       mode = GrabModeSync;
    if (!grabkey_win)
      grabkey_win = default_root;
-   if (!grabkey_win)
-     {
-	grabkey_win = e_window_override_new(0, -1, -1, 1, 1);
-	e_window_show(grabkey_win);
-     }
    if (mods & EV_KEY_MODIFIER_SHIFT)
-      mod |= mod_shift;
+      mod |= e_mod_mask_shift_get();
    if (mods & EV_KEY_MODIFIER_CTRL)
-      mod |= mod_ctrl;
+      mod |= e_mod_mask_ctrl_get();
    if (mods & EV_KEY_MODIFIER_ALT)
-      mod |= mod_alt;
+      mod |= e_mod_mask_alt_get();
    if (mods & EV_KEY_MODIFIER_WIN)
-      mod |= mod_win;
+      mod |= e_mod_mask_win_get();
    mask_scroll = e_lock_mask_scroll_get();
    mask_num = e_lock_mask_num_get();
    mask_caps = e_lock_mask_caps_get();
@@ -1185,12 +1180,12 @@ e_key_grab(char *key, Ev_Key_Modifiers mods, int anymod, int sync)
    masks[6] = mask_num | mask_caps;
    masks[7] = mask_scroll | mask_num | mask_caps;
    if (anymod)
-      XGrabKey(disp, keycode, AnyModifier, grabkey_win, False, mode, mode);
+     XGrabKey(disp, keycode, AnyModifier, grabkey_win, False, mode, mode);
    else
      {
 	for (i = 0; i < 8; i++)
-	   XGrabKey(disp, keycode, masks[i] | mod, grabkey_win, False,
-		    mode, mode);
+	  XGrabKey(disp, keycode, masks[i] | mod, grabkey_win, False,
+		   mode, mode);
      }
 }
 
@@ -1208,13 +1203,13 @@ e_key_ungrab(char *key, Ev_Key_Modifiers mods, int anymod)
 
 	mod = 0;
 	if (mods & EV_KEY_MODIFIER_SHIFT)
-	   mod |= mod_shift;
+	  mod |= e_mod_mask_shift_get();
 	if (mods & EV_KEY_MODIFIER_CTRL)
-	   mod |= mod_ctrl;
+	  mod |= e_mod_mask_ctrl_get();
 	if (mods & EV_KEY_MODIFIER_ALT)
-	   mod |= mod_alt;
+	  mod |= e_mod_mask_alt_get();
 	if (mods & EV_KEY_MODIFIER_WIN)
-	   mod |= mod_win;
+	  mod |= e_mod_mask_win_get();
 	mask_scroll = e_lock_mask_scroll_get();
 	mask_num = e_lock_mask_num_get();
 	mask_caps = e_lock_mask_caps_get();

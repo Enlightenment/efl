@@ -115,6 +115,7 @@ e_ev_x_init(void)
    e_key_grab("Num_Lock", EV_KEY_MODIFIER_NONE, 1, 1);
    e_key_grab("Scroll_Lock", EV_KEY_MODIFIER_NONE, 1, 1);
    e_key_grab("Caps_Lock", EV_KEY_MODIFIER_NONE, 1, 1);
+ */
    current_lock = e_modifier_mask_get();
    if (current_lock & lock_mask_scroll)
       e_lock_scroll_set(1);
@@ -130,7 +131,6 @@ e_ev_x_init(void)
       e_mod_alt_set(1);
    if (current_lock & mod_mask_win)
       e_mod_win_set(1);
- */
    e_add_event_fd(e_x_get_fd(), e_ev_x_handle_events);
 }
 
