@@ -421,6 +421,23 @@ ecore_x_window_focus_at_time(Ecore_X_Window win, Ecore_X_Time t)
 }
 
 /**
+ * gets the focus to the window @p win.
+ * @return  The window that has focus.
+ * @ingroup Ecore_X_Window_Focus_Functions
+ */
+Ecore_X_Window
+ecore_x_window_focus_get(void)
+{
+   Window win;
+   int revert_mode;
+   
+   win = 0;
+   
+   XGetInputFocus(_ecore_x_disp, &win, &revert_mode);
+   return win;
+}
+
+/**
  * @defgroup Ecore_X_Window_Z_Order_Group X Window Z Order Functions
  *
  * Functions that change the Z order of X windows.

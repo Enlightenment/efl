@@ -820,6 +820,9 @@ _ecore_x_event_handle_circulate_request(XEvent *xevent)
 void
 _ecore_x_event_handle_property_notify(XEvent *xevent)
 {
+#if 0 /* for now i disabled this. nice idea though this is - it leaves a lot
+       * to be desired for efficiency that is better left to the app layer
+       */
    if (xevent->xproperty.atom == _ecore_x_atom_wm_class)
      {
 	Ecore_X_Event_Window_Prop_Name_Class_Change *e;
@@ -908,6 +911,7 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
 	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE, e, NULL, NULL);
      }
    else 
+#endif     
    {
       Ecore_X_Event_Window_Property *e;
 

@@ -789,6 +789,7 @@ void             ecore_x_window_resize(Ecore_X_Window win, int w, int h);
 void             ecore_x_window_move_resize(Ecore_X_Window win, int x, int y, int w, int h);
 void             ecore_x_window_focus(Ecore_X_Window win);
 void             ecore_x_window_focus_at_time(Ecore_X_Window win, Ecore_X_Time t);
+Ecore_X_Window   ecore_x_window_focus_get(void);
 void             ecore_x_window_raise(Ecore_X_Window win);
 void             ecore_x_window_lower(Ecore_X_Window win);
 void             ecore_x_window_reparent(Ecore_X_Window win, Ecore_X_Window new_parent, int x, int y);

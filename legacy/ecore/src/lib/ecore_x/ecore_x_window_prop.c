@@ -249,8 +249,8 @@ ecore_x_window_prop_title_get(Ecore_X_Window win)
 {
    char *title;
 
-   title = ecore_x_window_prop_string_get(win, _ecore_x_atom_net_wm_name);
-   if (!title) title = ecore_x_window_prop_string_get(win, _ecore_x_atom_wm_name);
+/*   title = ecore_x_window_prop_string_get(win, _ecore_x_atom_net_wm_name);*/
+   title = ecore_x_window_prop_string_get(win, _ecore_x_atom_wm_name);
    return title;
 }
 
