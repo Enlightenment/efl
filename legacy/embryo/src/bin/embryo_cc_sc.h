@@ -630,7 +630,6 @@ extern constvalue *curlibrary;	/* current library */
 extern symbol    *curfunc;	/* pointer to current function */
 extern char      *inpfname;	/* name of the file currently read from */
 extern char       outfname[];	/* output file name */
-extern char       errfname[];	/* error file name */
 extern char       sc_ctrlchar;	/* the control character (or escape character) */
 extern int        litidx;	/* index to literal table */
 extern int        litmax;	/* current size of the literal table */

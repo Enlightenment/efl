@@ -42,7 +42,6 @@ constvalue *curlibrary = NULL;	/* current library */
 symbol  *curfunc;	/* pointer to current function */
 char    *inpfname;	/* pointer to name of the file currently read from */
 char     outfname[_MAX_PATH];	/* output file name */
-char     errfname[_MAX_PATH];	/* error file name */
 char     sc_ctrlchar = CTRL_CHAR;	/* the control character (or escape character) */
 int      litidx = 0;	/* index to literal table */
 int      litmax = sDEF_LITMAX;	/* current size of the literal table */

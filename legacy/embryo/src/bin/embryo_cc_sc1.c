@@ -1,5 +1,7 @@
-/*  Small compiler
+/*
+ *  vim:ts=8:sw=3:sts=3:noexpandtab
  *
+ *  Small compiler
  *  Function and variable definition and declaration, statement parser.
  *
  *  Copyright (c) ITB CompuPhase, 1997-2003
@@ -38,8 +40,8 @@
 static void         resetglobals(void);
 static void         initglobals(void);
 static void         setopt(int argc, char **argv,
-			   char *iname, char *oname,
-			   char *ename, char *pname, char *rname);
+                           char *iname, char *oname,
+                           char *pname, char *rname);
 static void         setconfig(char *root);
 static void         setcaption(void);
 static void         about(void);
@@ -312,7 +314,7 @@ sc_compile(int argc, char *argv[])
    if (!phopt_init())
       error(103);		/* insufficient memory */
 
-   setopt(argc, argv, inpfname, outfname, errfname, incfname, reportname);
+   setopt(argc, argv, inpfname, outfname, incfname, reportname);
    /* set output names that depend on the input name */
    if (sc_listing)
       set_extension(outfname, ".lst", TRUE);
@@ -320,10 +322,6 @@ sc_compile(int argc, char *argv[])
       set_extension(outfname, ".asm", TRUE);
    strcpy(binfname, outfname);
    set_extension(binfname, ".amx", TRUE);
-   if (strlen(errfname) != 0)
-      unlink(errfname);		/* delete file on startup */
-   else
-      setcaption();
    setconfig(argv[0]);		/* the path to the include files */
    lcl_ctrlchar = sc_ctrlchar;
    lcl_packstr = sc_packstr;
@@ -473,14 +471,12 @@ sc_compile(int argc, char *argv[])
 #endif
    if (errnum != 0)
      {
-	if (strlen(errfname) == 0)
-	   sc_printf("\n%d Error%s.\n", errnum, (errnum > 1) ? "s" : "");
+	sc_printf("\n%d Error%s.\n", errnum, (errnum > 1) ? "s" : "");
 	retcode = 2;
      }
    else if (warnnum != 0)
      {
-	if (strlen(errfname) == 0)
-	   sc_printf("\n%d Warning%s.\n", warnnum, (warnnum > 1) ? "s" : "");
+	sc_printf("\n%d Warning%s.\n", warnnum, (warnnum > 1) ? "s" : "");
 	retcode = 1;
      }
    else
@@ -595,7 +591,6 @@ initglobals(void)
    rational_digits = 0;		/* number of fractional digits */
 
    outfname[0] = '\0';		/* output file name */
-   errfname[0] = '\0';		/* error file name */
    inpf = NULL;			/* file read from */
    inpfname = NULL;		/* pointer to name of the file currently
 				 * read from */
@@ -652,193 +647,78 @@ set_extension(char *filename, char *extension, int force)
 
 static void
 parseoptions(int argc, char **argv, char *iname, char *oname,
-	     char *ename, char *pname, char *rname)
+             char *pname, char *rname)
 {
-   char                str[_MAX_PATH], *ptr;
-   int                 arg, i, isoption;
+   char str[PATH_MAX];
+   int i, stack_size;
+   size_t len;
 
-    /**/
-      /* use embryo include dir always */
-      insert_path(PACKAGE_DATA_DIR "/include/");
+   /* use embryo include dir always */
+   insert_path(PACKAGE_DATA_DIR "/include/");
    insert_path(PACKAGE_DATA_DIR "./");
 
-    /**/ for (arg = 1; arg < argc; arg++)
-     {
-	isoption = argv[arg][0] == '-';
-	if (isoption)
-	  {
-	     ptr = &argv[arg][1];
-	     switch (*ptr)
-	       {
-#if 0
-	       case 'A':
-		  i = atoi(ptr + 1);
-		  if ((i % sizeof(cell)) == 0)
-		     sc_dataalign = i;
-		  else
-		     about();
-		  break;
-	       case 'a':
-		  if (*(ptr + 1) != '\0')
-		     about();
-		  sc_asmfile = TRUE;	/* skip last pass of making binary file */
-		  break;
-	       case 'C':
-		  sc_compress = toggle_option(ptr, sc_compress);
-		  break;
-	       case 'c':
-		  i = atoi(ptr + 1);
-		  if (i == 8 || i == 16)
-		     charbits = i;	/* character size is 8 or 16 bits */
-		  else
-		     about();
-		  break;
-#if defined dos_setdrive
-	       case 'D':	/* set active directory */
-		  ptr++;
-		  if (ptr[1] == ':')
-		     dos_setdrive(toupper(*ptr) - 'A' + 1);	/* set active drive */
-		  chdir(ptr);
-		  break;
-#endif
-	       case 'd':
-		  switch (ptr[1])
-		    {
-		    case '0':
-		       sc_debug = 0;
-		       break;
-		    case '1':
-		       sc_debug = sCHKBOUNDS;	/* assertions and bounds checking */
-		       break;
-		    case '2':
-		       sc_debug = sCHKBOUNDS | sSYMBOLIC;	/* also symbolic info */
-		       break;
-		    case '3':
-		       sc_debug = sCHKBOUNDS | sSYMBOLIC | sNOOPTIMIZE;
-		       /* also avoid peephole optimization */
-		       break;
-		    default:
-		       about();
-		    }		/* switch */
-		  break;
-#endif
-	       case 'e':
-		  strcpy(ename, ptr + 1);	/* set name of error file */
-		  break;
-	       case 'i':
-		  strcpy(str, ptr + 1);	/*set name of include directory */
-		  i = strlen(str);
-		  if (i > 0)
-		    {
-		       if (str[i - 1] != DIRSEP_CHAR)
-			 {
-			    str[i] = DIRSEP_CHAR;
-			    str[i + 1] = '\0';
-			 }	/* if */
-		       insert_path(str);
-		    }		/* if */
-		  break;
-#if 0
-	       case 'l':
-		  if (*(ptr + 1) != '\0')
-		     about();
-		  sc_listing = TRUE;	/* skip second pass & code generation */
-		  break;
-#endif
-	       case 'o':
-		  strcpy(oname, ptr + 1);	/* set name of (binary) output file */
-		  break;
-#if 0
-	       case 'P':
-		  sc_packstr = toggle_option(ptr, sc_packstr);
-		  break;
-	       case 'p':
-		  strcpy(pname, ptr + 1);	/* set name of implicit include file */
-		  break;
-#endif
-	       case 'S':
-		  i = atoi(ptr + 1);
-		  if (i > 64)
-		     sc_stksize = (cell) i;	/* stack size has minimum size */
-		  else
-		     about();
-		  break;
-#if 0
-	       case 's':
-		  skipinput = atoi(ptr + 1);
-		  break;
-	       case 't':
-		  sc_tabsize = atoi(ptr + 1);
-		  break;
-	       case '\\':	/* use \ instead for escape characters */
-		  sc_ctrlchar = '\\';
-		  break;
-	       case '^':	/* use ^ instead for escape characters */
-		  sc_ctrlchar = '^';
-		  break;
-	       case ';':
-		  sc_needsemicolon = toggle_option(ptr, sc_needsemicolon);
-		  break;
-#endif
-	       default:	/* wrong option */
-		  about();
-	       }		/* switch */
-	  }
-	else if (argv[arg][0] == '@')
-	  {
-	  }
-	else if ((ptr = strchr(argv[arg], '=')) != NULL)
-	  {
-	     i = (int)(ptr - argv[arg]);
-	     if (i > sNAMEMAX)
-	       {
-		  i = sNAMEMAX;
-		  error(200, argv[arg], sNAMEMAX);	/* symbol too long,
-							 *truncated to sNAMEMAX chars*/
-	       }		/* if */
-	     strncpy(str, argv[arg], i);
-	     str[i] = '\0';	/* str holds symbol name */
-	     i = atoi(ptr + 1);
-	     add_constant(str, i, sGLOBAL, 0);
-	  }
-	else if (strlen(iname) > 0)
-	  {
-	     about();
-	  }
-	else
-	  {
-	     strcpy(iname, argv[arg]);
-	     set_extension(iname, ".sma", FALSE);
-	     /* The output name is the input name with a different extension,
-	      * but it is stored in a different directory
-	      */
-#if 0
-	     if (strlen(oname) == 0)
-	       {
-		  if ((ptr = strrchr(iname, DIRSEP_CHAR)) != NULL)
-		     ptr++;	/* strip path */
-		  else
-		     ptr = iname;
-		  strcpy(oname, ptr);
-	       }		/* if */
-	     set_extension(oname, ".asm", TRUE);
-#endif
-	  }			/* if */
-     }				/* for */
+   for (i = 1; i < argc; i++)
+   {
+      if (!strcmp (argv[i], "-i") && *argv[i + 1])
+      {
+	 /* include directory */
+	 i++;
+	 snprintf(str, sizeof(str), "%s", argv[i]);
+
+	 len = strlen(str);
+	 if (len > 0)
+	 {
+	    if (str[len - 1] != DIRSEP_CHAR)
+	    {
+	       str[len] = DIRSEP_CHAR;
+	       str[len + 1] = '\0';
+	    }
+
+	    insert_path(str);
+	 }
+      }
+      else if (!strcmp (argv[i], "-o") && *argv[i + 1])
+      {
+	 /* output file */
+	 i++;
+	 strcpy(oname, argv[i]); /* FIXME */
+      }
+      else if (!strcmp (argv[i], "-S") && *argv[i + 1])
+      {
+	 /* stack size */
+	 i++;
+	 stack_size = atoi(argv[i]);
+
+	 if (stack_size > 64)
+	    sc_stksize = (cell) stack_size;
+	 else
+	    about();
+      }
+      else if (!*iname)
+      {
+	 /* input file */
+	 strcpy(iname, argv[i]); /* FIXME */
+	 set_extension(iname, ".sma", FALSE);
+      }
+      else
+      {
+	 /* only allow one input filename */
+	 about ();
+      }
+   }
 }
 
 static void
 setopt(int argc, char **argv, char *iname, char *oname,
-       char *ename, char *pname, char *rname)
+       char *pname, char *rname)
 {
    *iname = '\0';
    *oname = '\0';
-   *ename = '\0';
    *pname = '\0';
    *rname = '\0';
    strcpy(pname, sDEF_PREFIX);
 
-   parseoptions(argc, argv, iname, oname, ename, pname, rname);
+   parseoptions(argc, argv, iname, oname, pname, rname);
    if (strlen(iname) == 0)
       about();
 }
@@ -884,11 +764,9 @@ setcaption(void)
 static void
 about(void)
 {
-   if (strlen(errfname) == 0)
-     {
-	setcaption();
-	sc_printf("Usage:   embryo_cc <filename> [options]\n\n");
-	sc_printf("Options:\n");
+   setcaption();
+   sc_printf("Usage:   embryo_cc <filename> [options]\n\n");
+   sc_printf("Options:\n");
 #if 0
 	sc_printf
 	   ("         -A<num>  alignment in bytes of the data segment and the\
@@ -916,13 +794,12 @@ about(void)
 	   ("         -d2      full debug information and dynamic checking\n");
 	sc_printf("         -d3      full debug information, dynamic checking,\
      no optimization\n");
-	sc_printf("         -e<name> set name of error file (quiet compile)\n");
 #endif
-	sc_printf("         -i<name> path for include files\n");
+	sc_printf("         -i <name> path for include files\n");
 #if 0
 	sc_printf("         -l       create list file (preprocess only)\n");
 #endif
-	sc_printf("         -o<name> set base name of output file\n");
+	sc_printf("         -o <name> set base name of output file\n");
 #if 0
 	sc_printf
 	   ("         -P[+/-]  strings are \"packed\" by default (default=%c)\n",
@@ -932,7 +809,7 @@ about(void)
 	   longjmp(errbuf, 3);
 #endif
 	sc_printf
-	   ("         -S<num>  stack/heap size in cells (default=%d)\n",
+	   ("         -S <num>  stack/heap size in cells (default=%d, min=65)\n",
 	    (int)sc_stksize);
 #if 0
 	sc_printf("         -s<num>  skip lines from the input file\n");
@@ -947,8 +824,7 @@ about(void)
 	   ("         sym=val  define constant \"sym\" with value \"val\"\n");
 	sc_printf("         sym=     define constant \"sym\" with value 0\n");
 #endif
-     }				/* if */
-   longjmp(errbuf, 3);		/* user abort */
+	longjmp(errbuf, 3);		/* user abort */
 }
 
 static void
