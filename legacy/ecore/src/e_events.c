@@ -243,7 +243,7 @@ e_event_loop(void)
         /* see if we have any new ipc connections */
         tval.tv_sec = 0;
         tval.tv_usec = 0;
-        ipccount =+ select(ipcsize + 1, &ipcset, NULL, NULL, &tval);
+        ipccount += select(ipcsize + 1, &ipcset, NULL, NULL, &tval);
 
 	/* return < 0 - error or signal interrupt */
 	if (fdcount < 0)
