@@ -83,7 +83,6 @@ static int _ecore_fb_kbd_fd_handler(Ecore_Fd_Handler *fd_handler, void *data);
 static int _ecore_fb_ps2_fd_handler(Ecore_Fd_Handler *fd_handler, void *data);
 static void _ecore_fb_event_free_key_down(void *data, void *ev);
 static void _ecore_fb_event_free_key_up(void *data, void *ev);
-static void _ecore_fb_event_free_generic(void *data, void *ev);
 static int _ecore_fb_signal_usr_handler(void *data, int type, void *ev);
 static void _ecore_fb_vt_switch(int vt);
     
@@ -447,8 +446,7 @@ ecore_fb_init(const char *name)
 		  if (e)
 		    {
 		       e->number = 2;
-		       _ecore_event_add(ECORE_EVENT_SIGNAL_USER, e,
-					_ecore_event_signal_user_free, NULL);
+		       ecore_event_add(ECORE_EVENT_SIGNAL_USER, e, NULL, NULL);
 		    }
 	       }
 	  }
@@ -890,7 +888,7 @@ _ecore_fb_ts_fd_handler(Ecore_Fd_Handler *fd_handler, void *data)
 	     if (!e) goto retry;
 	     e->x = x;
 	     e->y = y;
-	     ecore_event_add(ECORE_FB_EVENT_MOUSE_MOVE, e, _ecore_fb_event_free_generic, NULL);
+	     ecore_event_add(ECORE_FB_EVENT_MOUSE_MOVE, e, NULL, NULL);
 	  }
 	if ((pressure) && (!prev_pressure))
 	  {
@@ -909,7 +907,7 @@ _ecore_fb_ts_fd_handler(Ecore_Fd_Handler *fd_handler, void *data)
 		  did_triple = 1;
 		  e->triple_click = 1;
 	       }
-	     ecore_event_add(ECORE_FB_EVENT_MOUSE_BUTTON_DOWN, e, _ecore_fb_event_free_generic, NULL);
+	     ecore_event_add(ECORE_FB_EVENT_MOUSE_BUTTON_DOWN, e, NULL, NULL);
 	  }
 	else if ((!pressure) && (prev_pressure))
 	  {
@@ -921,7 +919,7 @@ _ecore_fb_ts_fd_handler(Ecore_Fd_Handler *fd_handler, void *data)
 	     e->x = prev_x;
 	     e->y = prev_y;
 	     e->button = 1;
-	     ecore_event_add(ECORE_FB_EVENT_MOUSE_BUTTON_UP, e, _ecore_fb_event_free_generic, NULL);
+	     ecore_event_add(ECORE_FB_EVENT_MOUSE_BUTTON_UP, e, NULL, NULL);
 	  }
         if (did_triple)
 	  {
@@ -1083,7 +1081,7 @@ _ecore_fb_ps2_fd_handler(Ecore_Fd_Handler *fd_handler, void *data)
 	     if (!e) goto retry;
 	     e->x = x;
 	     e->y = y;
-	     ecore_event_add(ECORE_FB_EVENT_MOUSE_MOVE, e, _ecore_fb_event_free_generic, NULL);
+	     ecore_event_add(ECORE_FB_EVENT_MOUSE_MOVE, e, NULL, NULL);
 	  }
 	for (i = 1; i <= 3; i++)
 	  {
@@ -1107,7 +1105,7 @@ _ecore_fb_ps2_fd_handler(Ecore_Fd_Handler *fd_handler, void *data)
 		       did_triple = 1;
 		       e->triple_click = 1;
 		    }
-		  ecore_event_add(ECORE_FB_EVENT_MOUSE_BUTTON_DOWN, e, _ecore_fb_event_free_generic, NULL);
+		  ecore_event_add(ECORE_FB_EVENT_MOUSE_BUTTON_DOWN, e, NULL, NULL);
 	       }
 	     else if ((!(button & mask)) && ((prev_button & mask)))
 	       {
@@ -1119,7 +1117,7 @@ _ecore_fb_ps2_fd_handler(Ecore_Fd_Handler *fd_handler, void *data)
 		  e->x = x;
 		  e->y = y;
 		  e->button = 1;
-		  ecore_event_add(ECORE_FB_EVENT_MOUSE_BUTTON_UP, e, _ecore_fb_event_free_generic, NULL);
+		  ecore_event_add(ECORE_FB_EVENT_MOUSE_BUTTON_UP, e, NULL, NULL);
 	       }
 	  }
 	if (did_triple)
@@ -1159,12 +1157,6 @@ _ecore_fb_event_free_key_up(void *data, void *ev)
    e = ev;
    free(e->keyname);
    free(e);
-}
-
-static void
-_ecore_fb_event_free_generic(void *data, void *ev)
-{
-   free(ev);
 }
 
 static int

@@ -185,15 +185,10 @@ void          _ecore_event_call(void);
 void         *_ecore_event_exe_exit_new(void);
 void          _ecore_event_exe_exit_free(void *data, void *ev);
 void         *_ecore_event_signal_user_new(void);
-void          _ecore_event_signal_user_free(void *data, void *ev);
 void         *_ecore_event_signal_hup_new(void);
-void          _ecore_event_signal_hup_free(void *data, void *ev);
 void         *_ecore_event_signal_exit_new(void);
-void          _ecore_event_signal_exit_free(void *data, void *ev);
 void         *_ecore_event_signal_power_new(void);
-void          _ecore_event_signal_power_free(void *data, void *ev);
 void         * _ecore_event_signal_realtime_new(void);
-void          _ecore_event_signal_realtime_free(void *data, void *ev);
 
 void          _ecore_main_shutdown(void);
     

@@ -445,15 +445,6 @@ _ecore_event_signal_user_new(void)
    return e;
 }
 
-void
-_ecore_event_signal_user_free(void *data, void *ev)
-{
-   Ecore_Event_Signal_User *e;
-   
-   e = ev;
-   free(e);
-}
-
 void *
 _ecore_event_signal_hup_new(void)
 {
@@ -461,15 +452,6 @@ _ecore_event_signal_hup_new(void)
    
    e = calloc(1, sizeof(Ecore_Event_Signal_Hup));
    return e;
-}
-
-void
-_ecore_event_signal_hup_free(void *data, void *ev)
-{
-   Ecore_Event_Signal_Hup *e;
-   
-   e = ev;
-   free(e);
 }
 
 void *
@@ -481,15 +463,6 @@ _ecore_event_signal_exit_new(void)
    return e;
 }
 
-void
-_ecore_event_signal_exit_free(void *data, void *ev)
-{
-   Ecore_Event_Signal_Exit *e;
-   
-   e = ev;
-   free(e);
-}
-
 void *
 _ecore_event_signal_power_new(void)
 {
@@ -499,23 +472,8 @@ _ecore_event_signal_power_new(void)
    return e;
 }
 
-void
-_ecore_event_signal_power_free(void *data, void *ev)
-{
-   Ecore_Event_Signal_Power *e;
-   
-   e = ev;
-   free(e);
-}
-
 void *
 _ecore_event_signal_realtime_new(void)
 {
    return calloc(1, sizeof(Ecore_Event_Signal_Realtime));
-}
-
-void
-_ecore_event_signal_realtime_free(void *data, void *ev)
-{
-   free(ev);
 }

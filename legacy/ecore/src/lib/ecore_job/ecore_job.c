@@ -3,7 +3,6 @@
 #include "ecore_job_private.h"
 #include "Ecore_Job.h"
 
-static void _ecore_job_free(void *data, void *ev);
 static int _ecore_job_event_handler(void *data, int type, void *ev);
     
 static int ecore_event_job_type = 0;
@@ -33,7 +32,7 @@ ecore_job_add(void (*func) (void *data), const void *data)
    job = calloc(1, sizeof(Ecore_Job));
    if (!job) return NULL;
    ECORE_MAGIC_SET(job, ECORE_MAGIC_JOB);
-   job->event = ecore_event_add(ecore_event_job_type, job, _ecore_job_free, NULL);
+   job->event = ecore_event_add(ecore_event_job_type, job, NULL, NULL);
    if (!job->event)
      {
 	free(job);
@@ -67,15 +66,6 @@ ecore_job_del(Ecore_Job *job)
    ECORE_MAGIC_SET(job, ECORE_MAGIC_NONE);
    ecore_event_del(job->event);
    return data;
-}
-
-static void
-_ecore_job_free(void *data, void *ev)
-{
-   Ecore_Job *job;
-   
-   job = ev;
-   free(job);
 }
 
 static int

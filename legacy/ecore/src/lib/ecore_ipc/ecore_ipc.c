@@ -178,10 +178,6 @@ static int _ecore_ipc_event_server_add(void *data, int ev_type, void *ev);
 static int _ecore_ipc_event_server_del(void *data, int ev_type, void *ev);
 static int _ecore_ipc_event_client_data(void *data, int ev_type, void *ev);
 static int _ecore_ipc_event_server_data(void *data, int ev_type, void *ev);
-static void _ecore_ipc_event_client_add_free(void *data, void *ev);
-static void _ecore_ipc_event_client_del_free(void *data, void *ev);
-static void _ecore_ipc_event_server_add_free(void *data, void *ev);
-static void _ecore_ipc_event_server_del_free(void *data, void *ev);
 static void _ecore_ipc_event_client_data_free(void *data, void *ev);
 static void _ecore_ipc_event_server_data_free(void *data, void *ev);
     
@@ -655,8 +651,7 @@ _ecore_ipc_event_client_add(void *data, int ev_type, void *ev)
 	     if (e2)
 	       {
 		  e2->client = cl;
-		  ecore_event_add(ECORE_IPC_EVENT_CLIENT_ADD, e2,
-				  _ecore_ipc_event_client_add_free, NULL);
+		  ecore_event_add(ECORE_IPC_EVENT_CLIENT_ADD, e2, NULL, NULL);
 	       }
 	  }
      }
@@ -682,8 +677,7 @@ _ecore_ipc_event_client_del(void *data, int ev_type, void *ev)
 	     if (e2)
 	       {
 		  e2->client = cl;
-		  ecore_event_add(ECORE_IPC_EVENT_CLIENT_DEL, e2,
-				  _ecore_ipc_event_client_del_free, NULL);
+		  ecore_event_add(ECORE_IPC_EVENT_CLIENT_DEL, e2, NULL, NULL);
 	       }
 	  }
      }
@@ -709,8 +703,7 @@ _ecore_ipc_event_server_add(void *data, int ev_type, void *ev)
 	     if (e2)
 	       {
 		  e2->server = svr;
-		  ecore_event_add(ECORE_IPC_EVENT_SERVER_ADD, e2,
-				  _ecore_ipc_event_server_add_free, NULL);
+		  ecore_event_add(ECORE_IPC_EVENT_SERVER_ADD, e2, NULL, NULL);
 	       }
 	  }
      }
@@ -736,8 +729,7 @@ _ecore_ipc_event_server_del(void *data, int ev_type, void *ev)
 	     if (e2)
 	       {
 		  e2->server = svr;
-		  ecore_event_add(ECORE_IPC_EVENT_SERVER_DEL, e2,
-				  _ecore_ipc_event_server_del_free, NULL);
+		  ecore_event_add(ECORE_IPC_EVENT_SERVER_DEL, e2, NULL, NULL);
 	       }
 	  }
      }
@@ -1068,42 +1060,6 @@ _ecore_ipc_event_server_data(void *data, int ev_type, void *ev)
 	  }
      }
    return 0;
-}
-
-static void
-_ecore_ipc_event_client_add_free(void *data, void *ev)
-{
-   Ecore_Ipc_Event_Client_Add *e;
-   
-   e = ev;
-   free(e);
-}
-
-static void
-_ecore_ipc_event_client_del_free(void *data, void *ev)
-{
-   Ecore_Ipc_Event_Client_Del *e;
-   
-   e = ev;
-   free(e);
-}
-
-static void
-_ecore_ipc_event_server_add_free(void *data, void *ev)
-{
-   Ecore_Ipc_Event_Server_Add *e;
-   
-   e = ev;
-   free(e);
-}
-
-static void
-_ecore_ipc_event_server_del_free(void *data, void *ev)
-{
-   Ecore_Ipc_Event_Server_Del *e;
-   
-   e = ev;
-   free(e);
 }
 
 static void

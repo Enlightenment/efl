@@ -9,11 +9,8 @@ static void _ecore_x_event_free_window_prop_visible_title_change(void *data, voi
 static void _ecore_x_event_free_window_prop_icon_name_change(void *data, void *ev);
 static void _ecore_x_event_free_window_prop_visible_icon_name_change(void *data, void *ev);
 static void _ecore_x_event_free_window_prop_client_machine_change(void *data, void *ev);
-static void _ecore_x_event_free_window_prop_pid_change(void *data, void *ev);
-static void _ecore_x_event_free_window_prop_desktop_change(void *data, void *ev);
 static void _ecore_x_event_free_key_down(void *data, void *ev);
 static void _ecore_x_event_free_key_up(void *data, void *ev);
-static void _ecore_x_event_free_generic(void *data, void *ev);
 
 void
 ecore_x_event_mask_set(Ecore_X_Window w, Ecore_X_Event_Mask mask)
@@ -101,24 +98,6 @@ _ecore_x_event_free_window_prop_client_machine_change(void *data, void *ev)
 }
 
 static void
-_ecore_x_event_free_window_prop_pid_change(void *data, void *ev)
-{
-   Ecore_X_Event_Window_Prop_Pid_Change *e;
-   
-   e = ev;
-   free(e);
-}
-
-static void
-_ecore_x_event_free_window_prop_desktop_change(void *data, void *ev)
-{
-   Ecore_X_Event_Window_Prop_Desktop_Change *e;
-   
-   e = ev;
-   free(e);
-}
-
-static void
 _ecore_x_event_free_key_down(void *data, void *ev)
 {
    Ecore_X_Event_Key_Down *e;
@@ -151,21 +130,6 @@ _ecore_x_event_free_selection_notify(void *data, void *ev)
    if (e->target) free(e->target);
    free(e);
 }
-
-static void
-_ecore_x_event_free_client_message(void *data, void *ev)
-{
-   Ecore_X_Event_Client_Message *e;
-   e = ev;
-   free(e);
-}
-
-static void
-_ecore_x_event_free_generic(void *data, void *ev)
-{
-   free(ev);
-}
-
 
 void
 _ecore_x_event_handle_key_press(XEvent *xevent)
@@ -310,7 +274,7 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
          _ecore_x_event_last_win = e->win;
          _ecore_x_event_last_root_x = e->root.x;
          _ecore_x_event_last_root_y = e->root.y;
-         ecore_event_add(ECORE_X_EVENT_MOUSE_WHEEL, e, _ecore_x_event_free_generic, NULL);
+         ecore_event_add(ECORE_X_EVENT_MOUSE_WHEEL, e, NULL, NULL);
      }
    else
      {
@@ -332,7 +296,7 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 	     _ecore_x_event_last_win = e->win;
 	     _ecore_x_event_last_root_x = e->root.x;
 	     _ecore_x_event_last_root_y = e->root.y;
-	     ecore_event_add(ECORE_X_EVENT_MOUSE_MOVE, e, _ecore_x_event_free_generic, NULL);
+	     ecore_event_add(ECORE_X_EVENT_MOUSE_MOVE, e, NULL, NULL);
 	  }
 	  {
 	     Ecore_X_Event_Mouse_Button_Down *e;
@@ -366,7 +330,7 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 	     _ecore_x_event_last_win = e->win;
 	     _ecore_x_event_last_root_x = e->root.x;
 	     _ecore_x_event_last_root_y = e->root.y;
-	     ecore_event_add(ECORE_X_EVENT_MOUSE_BUTTON_DOWN, e, _ecore_x_event_free_generic, NULL);
+	     ecore_event_add(ECORE_X_EVENT_MOUSE_BUTTON_DOWN, e, NULL, NULL);
 	  }
 	if (did_triple)
 	  {
@@ -416,7 +380,7 @@ _ecore_x_event_handle_button_release(XEvent *xevent)
 	     _ecore_x_event_last_win = e->win;
 	     _ecore_x_event_last_root_x = e->root.x;
 	     _ecore_x_event_last_root_y = e->root.y;
-	     ecore_event_add(ECORE_X_EVENT_MOUSE_MOVE, e, _ecore_x_event_free_generic, NULL);
+	     ecore_event_add(ECORE_X_EVENT_MOUSE_MOVE, e, NULL, NULL);
 	  }
 	  {
 	     Ecore_X_Event_Mouse_Button_Up *e;
@@ -437,7 +401,7 @@ _ecore_x_event_handle_button_release(XEvent *xevent)
 	     _ecore_x_event_last_win = e->win;
 	     _ecore_x_event_last_root_x = e->root.x;
 	     _ecore_x_event_last_root_y = e->root.y;
-	     ecore_event_add(ECORE_X_EVENT_MOUSE_BUTTON_UP, e, _ecore_x_event_free_generic, NULL);
+	     ecore_event_add(ECORE_X_EVENT_MOUSE_BUTTON_UP, e, NULL, NULL);
 	  }
      }
 }
@@ -462,7 +426,7 @@ _ecore_x_event_handle_motion_notify(XEvent *xevent)
    _ecore_x_event_last_win = e->win;
    _ecore_x_event_last_root_x = e->root.x;
    _ecore_x_event_last_root_y = e->root.y;
-   ecore_event_add(ECORE_X_EVENT_MOUSE_MOVE, e, _ecore_x_event_free_generic, NULL);
+   ecore_event_add(ECORE_X_EVENT_MOUSE_MOVE, e, NULL, NULL);
 }
 
 void
@@ -486,7 +450,7 @@ _ecore_x_event_handle_enter_notify(XEvent *xevent)
 	_ecore_x_event_last_win = e->win;
 	_ecore_x_event_last_root_x = e->root.x;
 	_ecore_x_event_last_root_y = e->root.y;
-	ecore_event_add(ECORE_X_EVENT_MOUSE_MOVE, e, _ecore_x_event_free_generic, NULL);
+	ecore_event_add(ECORE_X_EVENT_MOUSE_MOVE, e, NULL, NULL);
      }
      {
 	Ecore_X_Event_Mouse_In *e;
@@ -511,7 +475,7 @@ _ecore_x_event_handle_enter_notify(XEvent *xevent)
 	else if (xevent->xcrossing.detail == NotifyNonlinearVirtual) e->detail = ECORE_X_EVENT_DETAIL_NON_LINEAR_VIRTUAL;
 	e->time = xevent->xcrossing.time;
 	_ecore_x_event_last_time = e->time;
-	ecore_event_add(ECORE_X_EVENT_MOUSE_IN, e, _ecore_x_event_free_generic, NULL);
+	ecore_event_add(ECORE_X_EVENT_MOUSE_IN, e, NULL, NULL);
      }
 }
 
@@ -536,7 +500,7 @@ _ecore_x_event_handle_leave_notify(XEvent *xevent)
 	_ecore_x_event_last_win = e->win;
 	_ecore_x_event_last_root_x = e->root.x;
 	_ecore_x_event_last_root_y = e->root.y;
-	ecore_event_add(ECORE_X_EVENT_MOUSE_MOVE, e, _ecore_x_event_free_generic, NULL);
+	ecore_event_add(ECORE_X_EVENT_MOUSE_MOVE, e, NULL, NULL);
      }
      {
 	Ecore_X_Event_Mouse_Out *e;
@@ -564,7 +528,7 @@ _ecore_x_event_handle_leave_notify(XEvent *xevent)
 	_ecore_x_event_last_win = e->win;
 	_ecore_x_event_last_root_x = e->root.x;
 	_ecore_x_event_last_root_y = e->root.y;
-	ecore_event_add(ECORE_X_EVENT_MOUSE_OUT, e, _ecore_x_event_free_generic, NULL);
+	ecore_event_add(ECORE_X_EVENT_MOUSE_OUT, e, NULL, NULL);
      }
 }
 
@@ -590,7 +554,7 @@ _ecore_x_event_handle_focus_in(XEvent *xevent)
    else if (xevent->xfocus.detail == NotifyDetailNone)       e->detail = ECORE_X_EVENT_DETAIL_DETAIL_NONE;
    e->time = _ecore_x_event_last_time;
    _ecore_x_event_last_time = e->time;
-   ecore_event_add(ECORE_X_EVENT_WINDOW_FOCUS_IN, e, _ecore_x_event_free_generic, NULL);
+   ecore_event_add(ECORE_X_EVENT_WINDOW_FOCUS_IN, e, NULL, NULL);
 }
 
 void
@@ -615,7 +579,7 @@ _ecore_x_event_handle_focus_out(XEvent *xevent)
    else if (xevent->xfocus.detail == NotifyDetailNone)       e->detail = ECORE_X_EVENT_DETAIL_DETAIL_NONE;
    e->time = _ecore_x_event_last_time;
    _ecore_x_event_last_time = e->time;
-   ecore_event_add(ECORE_X_EVENT_WINDOW_FOCUS_OUT, e, _ecore_x_event_free_generic, NULL);
+   ecore_event_add(ECORE_X_EVENT_WINDOW_FOCUS_OUT, e, NULL, NULL);
 }
 
 void
@@ -637,7 +601,7 @@ _ecore_x_event_handle_expose(XEvent *xevent)
    e->y = xevent->xexpose.y;
    e->w = xevent->xexpose.width;
    e->h = xevent->xexpose.height;
-   ecore_event_add(ECORE_X_EVENT_WINDOW_DAMAGE, e, _ecore_x_event_free_generic, NULL);   
+   ecore_event_add(ECORE_X_EVENT_WINDOW_DAMAGE, e, NULL, NULL);   
 }
 
 void
@@ -653,7 +617,7 @@ _ecore_x_event_handle_graphics_expose(XEvent *xevent)
    e->y = xevent->xgraphicsexpose.y;
    e->w = xevent->xgraphicsexpose.width;
    e->h = xevent->xgraphicsexpose.height;
-   ecore_event_add(ECORE_X_EVENT_WINDOW_DAMAGE, e, _ecore_x_event_free_generic, NULL);   
+   ecore_event_add(ECORE_X_EVENT_WINDOW_DAMAGE, e, NULL, NULL);   
 }
 
 void
@@ -671,7 +635,7 @@ _ecore_x_event_handle_visibility_notify(XEvent *xevent)
 	 e->fully_obscured = 1;
       else
 	 e->fully_obscured = 0;	    
-      ecore_event_add(ECORE_X_EVENT_WINDOW_VISIBILITY_CHANGE, e, _ecore_x_event_free_generic, NULL);
+      ecore_event_add(ECORE_X_EVENT_WINDOW_VISIBILITY_CHANGE, e, NULL, NULL);
    }
 }
 
@@ -687,7 +651,7 @@ _ecore_x_event_handle_create_notify(XEvent *xevent)
    else
       e->override = 0;
    e->time = _ecore_x_event_last_time;
-   ecore_event_add(ECORE_X_EVENT_WINDOW_CREATE, e, _ecore_x_event_free_generic, NULL);
+   ecore_event_add(ECORE_X_EVENT_WINDOW_CREATE, e, NULL, NULL);
 }
 
 void
@@ -700,7 +664,7 @@ _ecore_x_event_handle_destroy_notify(XEvent *xevent)
    e->win =  xevent->xdestroywindow.window;
    e->time = _ecore_x_event_last_time;
    if (e->win == _ecore_x_event_last_win) _ecore_x_event_last_win = 0;
-   ecore_event_add(ECORE_X_EVENT_WINDOW_DESTROY, e, _ecore_x_event_free_generic, NULL);   
+   ecore_event_add(ECORE_X_EVENT_WINDOW_DESTROY, e, NULL, NULL);   
 }
 
 void
@@ -712,7 +676,7 @@ _ecore_x_event_handle_unmap_notify(XEvent *xevent)
    if (!e) return;
    e->win = xevent->xunmap.window;
    e->time = _ecore_x_event_last_time;
-   ecore_event_add(ECORE_X_EVENT_WINDOW_HIDE, e, _ecore_x_event_free_generic, NULL);
+   ecore_event_add(ECORE_X_EVENT_WINDOW_HIDE, e, NULL, NULL);
 }
 
 void
@@ -724,7 +688,7 @@ _ecore_x_event_handle_map_notify(XEvent *xevent)
    if (!e) return;
    e->win = xevent->xmap.window;
    e->time = _ecore_x_event_last_time;
-   ecore_event_add(ECORE_X_EVENT_WINDOW_SHOW, e, _ecore_x_event_free_generic, NULL);
+   ecore_event_add(ECORE_X_EVENT_WINDOW_SHOW, e, NULL, NULL);
 }
 
 void
@@ -737,7 +701,7 @@ _ecore_x_event_handle_map_request(XEvent *xevent)
    e->win = xevent->xmaprequest.window;
    e->time = _ecore_x_event_last_time;
    e->parent = xevent->xmaprequest.parent;
-   ecore_event_add(ECORE_X_EVENT_WINDOW_SHOW_REQUEST, e, _ecore_x_event_free_generic, NULL);
+   ecore_event_add(ECORE_X_EVENT_WINDOW_SHOW_REQUEST, e, NULL, NULL);
 }
 
 void
@@ -750,7 +714,7 @@ _ecore_x_event_handle_reparent_notify(XEvent *xevent)
    e->win = xevent->xreparent.window;
    e->parent = xevent->xreparent.parent;
    e->time = _ecore_x_event_last_time;
-   ecore_event_add(ECORE_X_EVENT_WINDOW_REPARENT, e, _ecore_x_event_free_generic, NULL);
+   ecore_event_add(ECORE_X_EVENT_WINDOW_REPARENT, e, NULL, NULL);
 }
 
 void
@@ -770,7 +734,7 @@ _ecore_x_event_handle_configure_notify(XEvent *xevent)
    e->override = xevent->xconfigure.override_redirect;
    e->from_wm = xevent->xconfigure.send_event;
    e->time = _ecore_x_event_last_time;
-   ecore_event_add(ECORE_X_EVENT_WINDOW_CONFIGURE, e, _ecore_x_event_free_generic, NULL);      
+   ecore_event_add(ECORE_X_EVENT_WINDOW_CONFIGURE, e, NULL, NULL);      
 }
 
 void
@@ -882,7 +846,7 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
 	e->pid = ecore_x_window_prop_pid_get(xevent->xproperty.window);
    e->time = xevent->xproperty.time;
    _ecore_x_event_last_time = e->time;
-	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE, e, _ecore_x_event_free_window_prop_pid_change, NULL);
+	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE, e, NULL, NULL);
      }
    else if (xevent->xproperty.atom == _ecore_x_atom_net_wm_desktop)
      {
@@ -891,7 +855,7 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
 	e = calloc(1, sizeof(Ecore_X_Event_Window_Prop_Desktop_Change));
 	if (!e) return;
 	e->desktop = ecore_x_window_prop_desktop_get(xevent->xproperty.window);
-	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE, e, _ecore_x_event_free_window_prop_desktop_change, NULL);
+	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE, e, NULL, NULL);
      }
    else 
    {
@@ -903,7 +867,7 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
       e->atom = xevent->xproperty.atom;
       e->time = xevent->xproperty.time;
       _ecore_x_event_last_time = e->time;
-      ecore_event_add(ECORE_X_EVENT_WINDOW_PROPERTY, e, _ecore_x_event_free_generic, NULL);
+      ecore_event_add(ECORE_X_EVENT_WINDOW_PROPERTY, e, NULL, NULL);
    }
 }
 
@@ -933,7 +897,7 @@ _ecore_x_event_handle_selection_clear(XEvent *xevent)
       e->selection = ECORE_X_SELECTION_SECONDARY;
    else
       e->selection = ECORE_X_SELECTION_CLIPBOARD;
-   ecore_event_add(ECORE_X_EVENT_SELECTION_CLEAR, e, _ecore_x_event_free_generic, NULL);
+   ecore_event_add(ECORE_X_EVENT_SELECTION_CLEAR, e, NULL, NULL);
    
 }
 
@@ -1042,7 +1006,7 @@ _ecore_x_event_handle_colormap_notify(XEvent *xevent)
       e->installed = 1;
    else
       e->installed = 0;
-   ecore_event_add(ECORE_X_EVENT_WINDOW_COLORMAP, e, _ecore_x_event_free_generic, NULL);
+   ecore_event_add(ECORE_X_EVENT_WINDOW_COLORMAP, e, NULL, NULL);
 }
 
 void
@@ -1062,7 +1026,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	   if (!e) return;
    	e->win = xevent->xclient.window;
 	   e->time = _ecore_x_event_last_time;
-   	ecore_event_add(ECORE_X_EVENT_WINDOW_DELETE_REQUEST, e, _ecore_x_event_free_generic, NULL);
+   	ecore_event_add(ECORE_X_EVENT_WINDOW_DELETE_REQUEST, e, NULL, NULL);
    }
    
    /* Xdnd Client Message Handling Begin */
@@ -1124,7 +1088,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
       e->source = _xdnd->source;
       e->time = CurrentTime;
       _ecore_x_event_last_time = e->time;
-      ecore_event_add(ECORE_X_EVENT_XDND_ENTER, e, _ecore_x_event_free_generic, NULL);
+      ecore_event_add(ECORE_X_EVENT_XDND_ENTER, e, NULL, NULL);
    }
    
    /* Message Type: XdndPosition */
@@ -1152,7 +1116,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
       e->position.y = _xdnd->pos.y;
       e->time = xevent->xclient.data.l[3]; /* Version 1 */
       e->action = _xdnd->action;
-      ecore_event_add(ECORE_X_EVENT_XDND_POSITION, e, _ecore_x_event_free_generic, NULL);
+      ecore_event_add(ECORE_X_EVENT_XDND_POSITION, e, NULL, NULL);
    }
    
    /* Message Type: XdndStatus */
@@ -1187,7 +1151,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
       e->rectangle.height = _xdnd->rectangle.height;
       e->action = _xdnd->accepted_action;
 
-      ecore_event_add(ECORE_X_EVENT_XDND_STATUS, e, _ecore_x_event_free_generic, NULL);
+      ecore_event_add(ECORE_X_EVENT_XDND_STATUS, e, NULL, NULL);
    }
 
    /* Message Type: XdndLeave */
@@ -1212,7 +1176,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
       if (!e) return;
       e->win = _xdnd->dest;
       e->source = _xdnd->source;
-      ecore_event_add(ECORE_X_EVENT_XDND_ENTER, e, _ecore_x_event_free_generic, NULL);
+      ecore_event_add(ECORE_X_EVENT_XDND_ENTER, e, NULL, NULL);
    }
    else if (xevent->xclient.message_type == _ecore_x_atom_xdnd_drop)
    {
@@ -1244,7 +1208,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
       e->action = _xdnd->action;
       e->position.x = _xdnd->pos.x;
       e->position.y = _xdnd->pos.y;
-      ecore_event_add(ECORE_X_EVENT_XDND_DROP, e, _ecore_x_event_free_generic, NULL);
+      ecore_event_add(ECORE_X_EVENT_XDND_DROP, e, NULL, NULL);
    }
 
    /* Message Type: XdndFinished */
@@ -1288,7 +1252,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
          e->action = _xdnd->action;
       }
 
-      ecore_event_add(ECORE_X_EVENT_XDND_FINISHED, e, _ecore_x_event_free_generic, NULL);
+      ecore_event_add(ECORE_X_EVENT_XDND_FINISHED, e, NULL, NULL);
 
    }
    else
@@ -1303,8 +1267,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
    	for(i = 0; i < 5; i++) 
          e->data.l[i] = xevent->xclient.data.l[i];
       
-   	ecore_event_add(ECORE_X_EVENT_CLIENT_MESSAGE, e, 
-                      _ecore_x_event_free_client_message, NULL);
+   	ecore_event_add(ECORE_X_EVENT_CLIENT_MESSAGE, e, NULL, NULL);
    }
 }
 
