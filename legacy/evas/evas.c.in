@@ -12,7 +12,7 @@ These routines are used for Evas Library interaction
 @image html  evas.png
 @version 1.0.0
 @author Carsten Haitzler <raster@rasterman.com>
-@author Adam Till <till@adam-lilienthal.de>
+@author Till Adam <till@adam-lilienthal.de>
 @author Steve Ireland <sireland@pobox.com>
 @date 2001-2002
 

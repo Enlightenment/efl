@@ -244,6 +244,11 @@ extern "C" {
    int               evas_coord_world_x_to_screen      (Evas *e, double x);
    int               evas_coord_world_y_to_screen      (Evas *e, double y);
        
+   void              evas_pointer_output_xy_get        (Evas *e, int *x, int *y);
+   void              evas_pointer_canvas_xy_get        (Evas *e, double *x, double *y);
+   int               evas_pointer_button_down_mask_get (Evas *e);
+   int               evas_pointer_inside_get           (Evas *e);
+/* DOC UP TO HERE */
    void              evas_damage_rectangle_add         (Evas *e, int x, int y, int w, int h);
    void              evas_obscured_rectangle_add       (Evas *e, int x, int y, int w, int h);
    void              evas_obscured_clear               (Evas *e);
@@ -390,11 +395,6 @@ extern "C" {
    void              evas_object_smart_callback_add    (Evas_Object *obj, char *event, void (*func) (void *data, Evas_Object *obj, void *event_info), void *data);
    void             *evas_object_smart_callback_del    (Evas_Object *obj, char *event, void (*func) (void *data, Evas_Object *obj, void *event_info));
    void              evas_object_smart_callback_call   (Evas_Object *obj, char *event, void *event_info);
-       
-   void              evas_pointer_output_xy_get        (Evas *e, int *x, int *y);
-   void              evas_pointer_canvas_xy_get        (Evas *e, double *x, double *y);
-   int               evas_pointer_button_down_mask_get (Evas *e);
-   int               evas_pointer_inside_get           (Evas *e);
    
    void              evas_event_freeze                 (Evas *e);
    void              evas_event_thaw                   (Evas *e);
