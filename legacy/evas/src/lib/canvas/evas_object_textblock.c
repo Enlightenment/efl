@@ -10,7 +10,7 @@
  * 
  * things to add:
  * 
- * * tabs (indents)
+ * * jump/align to spot (N spaces, N pixels, N% (set or adjust by +/-))
  * * left and right margins
  * * anchors (for inline objects other than text - images etc.) - variable size ones too
  * * if a word (or char) doesnt fit at all do something sensible
@@ -120,6 +120,7 @@ struct _Layout_Node
    int           line;
    unsigned char line_start : 1;
    unsigned char line_end : 1;
+   unsigned char spacer : 1;
 };
 
 struct _Evas_Object_Textblock
@@ -775,10 +776,13 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 	     /* first handle newline, tab etc. etc */
 	     if (node->format[0] == '\n')
 	       {
+		  newline:
+		  if (layout_nodes)
+		    lnode = (Layout_Node *)((Evas_Object_List *)layout_nodes)->last;
 		  if (lnode)
 		    lnode->line_end = 1;
 		  layout.line.x = pad_l;
-		  if ((layout.line.y + layout.line.mascent + layout.line.mdescent) > h)
+		  if ((layout.line.y + layout.line.mascent + layout.line.mdescent) > hh)
 		    {
 		       /* FIXME: this node would overflow to the next textblock */
 		    }
@@ -789,6 +793,50 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		  fh = layout.line.y;
 		  last_mdescent = 3;
 		  line_start = NULL;
+	       }
+	     else if (node->format[0] == '\t')
+	       {
+		  int hadvance = 0, ascent = 0, descent = 0, inset = 0;
+		  void *font;
+		  
+		  lnode = calloc(1, sizeof(Layout_Node));
+		  lnode->source_node = node;
+		  lnode->line = line;
+		  lnode->text_pos = text_pos;	
+		  last_line = line;
+		  evas_object_textblock_layout_copy(&layout, &(lnode->layout));
+		  if (lnode->layout.font.name)
+		    font = evas_font_load(obj->layer->evas, lnode->layout.font.name, lnode->layout.font.source, lnode->layout.font.size);
+		  /* if this is at the start of the line... */
+		  if ((layout.line.x == pad_l) || (!line_start))
+		    {
+		       if (font) inset = ENFN->font_inset_get(ENDT, font, "        ");
+		       layout.line.inset = inset;
+		       layout.line.x = pad_l - inset + (layout.line.x - pad_l);
+		       layout.line.mascent = 0;
+		       layout.line.mdescent = 0;
+		       line_start = lnode;
+		       lnode->line_start = 1;
+		    }
+		  lnode->layout.font.font = font;
+		  if (font) ascent = ENFN->font_max_ascent_get(ENDT, font);
+		  if (font) descent = ENFN->font_max_descent_get(ENDT, font);
+		  if (font) hadvance = ENFN->font_h_advance_get(ENDT, font, "        ");
+		  lnode->layout.line.ascent = ascent;
+		  lnode->layout.line.descent = descent;
+		  layout.line.ascent = ascent;
+		  layout.line.descent = descent;
+		  if (layout.line.mascent < ascent) layout.line.mascent = ascent;
+		  if (layout.line.mdescent < descent) layout.line.mdescent = descent;
+		  lnode->w = hadvance;
+		  lnode->h = ascent + descent;
+		  lnode->spacer = 1;
+		  layout_nodes = evas_object_list_append(layout_nodes, lnode);
+		  if ((layout.line.x + hadvance) > fw)
+		    fw = layout.line.x + hadvance;
+		  layout.line.x += hadvance;
+		  lnode->layout.line.advance = hadvance;
+		  if (layout.line.x >= ww) goto newline;
 	       }
 	     else
 	       {
@@ -827,11 +875,11 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 	     if (lnode->layout.font.name)
 	       font = evas_font_load(obj->layer->evas, lnode->layout.font.name, lnode->layout.font.source, lnode->layout.font.size);
 	     /* if this is at the start of the line... */
-	     if (layout.line.x == pad_l)
+	     if ((layout.line.x == pad_l) || (!line_start))
 	       {
 		  if (font) inset = ENFN->font_inset_get(ENDT, font, text);
 		  layout.line.inset = inset;
-		  layout.line.x = pad_l - inset;
+		  layout.line.x = pad_l - inset + (layout.line.x - pad_l);
 		  layout.line.mascent = 0;
 		  layout.line.mdescent = 0;
 		  line_start = lnode;
@@ -869,8 +917,8 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		  layout_nodes = evas_object_list_append(layout_nodes, lnode);
 		  /* and advance */
 		  /* fix up max ascent/descent for the line */
-		  adj = (double)(w - (lnode->layout.line.x -pad_l + tw + layout.line.inset)) * layout.align;
-		  adj -= line_start->layout.line.x;
+		  adj = (double)(ww - (lnode->layout.line.x - pad_l + tw + layout.line.inset)) * layout.align;
+//		  adj -= line_start->layout.line.x;
 		  if ((layout.line.x + hadvance) > fw)
 		    fw = layout.line.x + hadvance;
 		  layout.line.x += hadvance;
@@ -982,7 +1030,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 			 lnode = (Layout_Node *)((Evas_Object_List *)layout_nodes)->last;
 		       if (lnode)
 			 {
-			    adj = (double)(w - (layout.line.x - pad_l + tw + layout.line.inset)) * layout.align;
+			    adj = (double)(ww - (layout.line.x - pad_l + tw + layout.line.inset)) * layout.align;
 			    adj -= line_start->layout.line.x;
 			    for (ll = (Evas_Object_List *)lnode; ll; ll = ll->prev)
 			      {
@@ -1033,7 +1081,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		       lnode->layout.line.advance = hadvance;
 		       layout_nodes = evas_object_list_append(layout_nodes, lnode);
 		       adj = (double)(ww - (lnode->layout.line.x - pad_l + tw + layout.line.inset)) * layout.align;
-		       adj -= line_start->layout.line.x;
+//		       adj -= line_start->layout.line.x;
 		       for (ll = (Evas_Object_List *)lnode; ll; ll = ll->prev)
 			 {
 			    Layout_Node *lnode2;
@@ -1469,11 +1517,11 @@ evas_object_textblock_line_start_pos_get(Evas_Object *obj)
    int ps;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return -1;
+   return EVAS_TEXT_INVALID;
    MAGIC_CHECK_END();
    o = (Evas_Object_Textblock *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
-   return -1;
+   return EVAS_TEXT_INVALID;
    MAGIC_CHECK_END();
    if (o->format.dirty)
      evas_object_textblock_format_calc(obj);
@@ -1489,7 +1537,7 @@ evas_object_textblock_line_start_pos_get(Evas_Object *obj)
 	       return lnode->text_pos;
 	  }
      }
-   return -1;
+   return EVAS_TEXT_INVALID;
 }
 
 int
@@ -1500,11 +1548,11 @@ evas_object_textblock_line_end_pos_get(Evas_Object *obj)
    int ps;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return 1;
+   return EVAS_TEXT_INVALID;
    MAGIC_CHECK_END();
    o = (Evas_Object_Textblock *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
-   return -1;
+   return EVAS_TEXT_INVALID;
    MAGIC_CHECK_END();
    if (o->format.dirty)
      evas_object_textblock_format_calc(obj);
@@ -1525,7 +1573,7 @@ evas_object_textblock_line_end_pos_get(Evas_Object *obj)
 	       }
 	  }
      }
-   return -1;
+   return EVAS_TEXT_INVALID;
 }
 
 Evas_Bool
@@ -1623,11 +1671,11 @@ evas_object_textblock_char_coords_get(Evas_Object *obj, Evas_Coord x, Evas_Coord
    Evas_Object_List *l;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return -1;
+   return EVAS_TEXT_INVALID;
    MAGIC_CHECK_END();
    o = (Evas_Object_Textblock *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
-   return -1;
+   return EVAS_TEXT_INVALID;
    MAGIC_CHECK_END();
    if (o->format.dirty)
      evas_object_textblock_format_calc(obj);
@@ -1635,15 +1683,26 @@ evas_object_textblock_char_coords_get(Evas_Object *obj, Evas_Coord x, Evas_Coord
      {
 	lnode = (Layout_Node *)l;
 	
-	if ((lnode->text) &&
-	    (x >= lnode->layout.line.x) && 
+	if ((x >= lnode->layout.line.x) && 
 	    (x < (lnode->layout.line.x + lnode->layout.line.advance)) &&
 	    (y >= lnode->layout.line.y) && 
 	    (y < (lnode->layout.line.y + lnode->layout.line.mascent + lnode->layout.line.mdescent)))
 	  {
 	     int ret, rx = 0, ry = 0, rw = 0, rh = 0;
 	     
-	     if (lnode->layout.font.font)
+	     if (lnode->spacer)
+	       {
+		  ry = lnode->layout.line.y;
+		  rx += lnode->layout.line.x;
+		  rh = lnode->layout.line.mascent + lnode->layout.line.mdescent;
+		  rw = lnode->w;
+		  if (cx) *cx = rx;
+		  if (cy) *cy = ry;
+		  if (cw) *cw = rw;
+		  if (ch) *ch = rh;
+		  return EVAS_TEXT_SPECIAL;
+	       }
+	     else if ((lnode->layout.font.font) && (lnode->text))
 	       {
 		  ret = ENFN->font_char_at_coords_get(ENDT, lnode->layout.font.font,
 						      lnode->text,
@@ -1682,10 +1741,10 @@ evas_object_textblock_char_coords_get(Evas_Object *obj, Evas_Coord x, Evas_Coord
 		  if (ch) *ch = rh;
 		  return ret + lnode->text_pos;
 	       }
-	     return -1;
+	     return EVAS_TEXT_INVALID;
 	  }
      }
-   return -1;
+   return EVAS_TEXT_INVALID;
 }
 
 void
@@ -2095,11 +2154,11 @@ evas_object_textblock_format_next_pos_get(Evas_Object *obj)
    int ps, pos;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return -1;
+   return EVAS_TEXT_INVALID;
    MAGIC_CHECK_END();
    o = (Evas_Object_Textblock *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
-   return -1;
+   return EVAS_TEXT_INVALID;
    MAGIC_CHECK_END();
    node = evas_object_textblock_node_pos_get(obj, o->pos, &ps);
    pos = ps;
@@ -2114,7 +2173,7 @@ evas_object_textblock_format_next_pos_get(Evas_Object *obj)
 	  }
 	return pos;
      }
-   return -1;
+   return EVAS_TEXT_INVALID;
 }
 
 int
@@ -2219,19 +2278,6 @@ evas_object_textblock_format_next_del(Evas_Object *obj, int n)
      }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
 int
 evas_object_textblock_format_prev_pos_get(Evas_Object *obj)
 {
@@ -2240,11 +2286,11 @@ evas_object_textblock_format_prev_pos_get(Evas_Object *obj)
    int ps, pos;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return -1;
+   return EVAS_TEXT_INVALID;
    MAGIC_CHECK_END();
    o = (Evas_Object_Textblock *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
-   return -1;
+   return EVAS_TEXT_INVALID;
    MAGIC_CHECK_END();
    node = evas_object_textblock_node_pos_get(obj, o->pos, &ps);
    pos = ps;
@@ -2258,7 +2304,7 @@ evas_object_textblock_format_prev_pos_get(Evas_Object *obj)
 	  }
 	return pos;
      }
-   return -1;
+   return EVAS_TEXT_INVALID;
 }
 
 int
@@ -2362,14 +2408,6 @@ evas_object_textblock_format_prev_del(Evas_Object *obj, int n)
 	  }
      }
 }
-
-
-
-
-
-
-
-
 
 char *
 evas_object_textblock_current_format_get(Evas_Object *obj)

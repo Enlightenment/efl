@@ -143,6 +143,9 @@ typedef struct _Evas_Event_Key_Up     Evas_Event_Key_Up; /**< Event structure fo
 #define EVAS_ALLOC_ERROR_FATAL                     1 /**< Allocation failed despite attempts to free up memory */
 #define EVAS_ALLOC_ERROR_RECOVERED                 2 /**< Allocation succeeded, but extra memory had to be found by freeing up speculative resources */
 
+#define EVAS_TEXT_INVALID -1
+#define EVAS_TEXT_SPECIAL -2
+
 struct _Evas_Pixel_Import_Source
 {
    int format; /**< pixel format type ie ARGB32, YUV420P_601 etc. */
