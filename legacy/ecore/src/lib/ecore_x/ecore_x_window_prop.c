@@ -799,3 +799,137 @@ ecore_x_window_prop_desktop_get(Ecore_X_Window win)
 
    return desktop;
 }
+
+/**
+ * Change a windows type.
+ * @param win The Window
+ * @param type The Type
+ *
+ * Change a windows type.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_prop_window_type_set(Ecore_X_Window win, Ecore_X_Atom type)
+{
+	int            num;
+	unsigned char *data = NULL;
+
+	if (ecore_x_window_prop_property_get(win,
+					     _ecore_x_atom_net_wm_window_type,
+					     XA_ATOM, 32, &data, &num))
+	   XFree(data);
+
+	data = malloc(sizeof(Ecore_X_Atom));
+	if (data)
+	  {
+	     ((Atom *)data)[0] = type;
+	     ecore_x_window_prop_property_set(win,
+					      _ecore_x_atom_net_wm_window_type,
+					      XA_ATOM, 32, data, 1);
+	  }
+	free(data);
+}
+
+/**
+ * Set a window as a desktop type.
+ * @param win The Window
+ *
+ * Set a window as a desktop type.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_prop_window_type_desktop_set(Ecore_X_Window win)
+{
+   ecore_x_window_prop_window_type_set(win, _ecore_x_atom_net_wm_window_type_desktop);
+}
+
+/**
+ * Set a window as a desktop type.
+ * @param win The Window
+ *
+ * Set a window as a desktop type.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_prop_window_type_dock_set(Ecore_X_Window win)
+{
+   ecore_x_window_prop_window_type_set(win, _ecore_x_atom_net_wm_window_type_dock);
+}
+
+/**
+ * Set a window as a toolbar type.
+ * @param win The Window
+ *
+ * Set a window as a toolbar type.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_prop_window_type_toolbar_set(Ecore_X_Window win)
+{
+   ecore_x_window_prop_window_type_set(win, _ecore_x_atom_net_wm_window_type_toolbar);
+}
+
+/**
+ * Set a window as a menu type.
+ * @param win The Window
+ *
+ * Set a window as a menu type.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_prop_window_type_menu_set(Ecore_X_Window win)
+{
+   ecore_x_window_prop_window_type_set(win, _ecore_x_atom_net_wm_window_type_menu);
+}
+
+/**
+ * Set a window as a utility type.
+ * @param win The Window
+ *
+ * Set a window as a utility type.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_prop_window_type_utility_set(Ecore_X_Window win)
+{
+   ecore_x_window_prop_window_type_set(win, _ecore_x_atom_net_wm_window_type_utility);
+}
+
+/**
+ * Set a window as a splash type.
+ * @param win The Window
+ *
+ * Set a window as a splash type.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_prop_window_type_splash_set(Ecore_X_Window win)
+{
+   ecore_x_window_prop_window_type_set(win, _ecore_x_atom_net_wm_window_type_splash);
+}
+
+/**
+ * Set a window as a dialog type.
+ * @param win The Window
+ *
+ * Set a window as a dialog type.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_prop_window_type_dialog_set(Ecore_X_Window win)
+{
+   ecore_x_window_prop_window_type_set(win, _ecore_x_atom_net_wm_window_type_dialog);
+}
+
+/**
+ * Set a window as a normal type.
+ * @param win The Window
+ *
+ * Set a window as a normal type.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_prop_window_type_normal_set(Ecore_X_Window win)
+{
+   ecore_x_window_prop_window_type_set(win, _ecore_x_atom_net_wm_window_type_normal);
+}

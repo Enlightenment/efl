@@ -551,6 +551,7 @@ setup_ecore_x_test(void)
    ecore_x_window_prop_name_class_set(win, "ecore_test", "main");
    ecore_x_window_prop_desktop_set(win, 1);
    printf("Window on desktop %u\n", ecore_x_window_prop_desktop_get(win));
+   ecore_x_window_prop_window_type_dialog_set(win);
    ecore_x_window_prop_protocol_set(win, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 1);
    ecore_x_window_show(win);
    ecore_x_flush();
@@ -855,8 +856,8 @@ main(int argc, const char **argv)
    
 #ifdef BUILD_ECORE_X
    /* setup to test ecore_x module things */
-/*   if (!ecore_x_init(NULL)) return -1; */
-/*   setup_ecore_x_test(); */
+   if (!ecore_x_init(NULL)) return -1;
+   setup_ecore_x_test();
 #endif
 
 #ifdef BUILD_ECORE_EVAS

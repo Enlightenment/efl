@@ -195,6 +195,8 @@ ecore_x_window_defaults_set(Ecore_X_Window win)
    pid = getpid();
    ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_pid, XA_CARDINAL,
 		                    32, &pid, 1);
+
+   ecore_x_window_prop_window_type_normal_set(win);
 }
 
 /**
