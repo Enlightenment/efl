@@ -124,6 +124,7 @@ EDJE_CC_PRG=""
 EDJE_DECC_PRG=""
 if test "x$have_edje_cc" = "xyes"; then
   AM_CONDITIONAL(BUILD_EDJE_CC, true)
+  AM_CONDITIONAL(BUILD_EDJE_DECC, true)
   EDJE_CC_PRG="edje_cc"
   EDJE_DECC_PRG="edje_decc"
 else
