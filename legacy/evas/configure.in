@@ -96,7 +96,7 @@ AC_MSG_ERROR([Fatal Error: no Imlib2 detected.]); exit],
 `$IMLIB2_CONFIG --libs` `$IMLIB2_CONFIG --cflags`)
 )
 
-AC_CHECK_LIB(ttf, TT_Init_FreeType, TTF_LIBS=-lttf $LIBS_TTF, [
+AC_CHECK_LIB(ttf, TT_Init_FreeType, TTF_LIBS="-lttf "$LIBS_TTF, [
 echo ""
 echo "ERROR: Evas needs a system with libttf.so (TrueType Font Library)"
 echo "You can obtain it from:"
@@ -142,21 +142,21 @@ gl_includes=""
 #### Find out about OpenGL
 PREV_CPPFLAGS=$CPPFLAGS
 CPPFLAGS=$CPPFLAGS" -I/usr/include -I/usr/local/include "$x_cflags
-AC_TRY_CPP(GL/gl.h,
+AC_TRY_CPP([#include <GL/gl.h>],
 echo "checking for GL/gl.h... yes"
 gl_includes=$CPPFLAGS" -I/usr/include -I/usr/local/include "$x_cflags
 AC_CHECK_LIB(GL, glBindTexture, have_gl=yes,[
-], -L/usr/local/lib -lGL $X_LDFLAGS $X_EXTRA_LIBS $X_LIBS $LIBS_GL)
+], -L/usr/local/lib -lGL $X_LDFLAGS $X_EXTRA_LIBS $X_LIBS $LIBS_GL -lm)
 )
 if test "x$have_gl" = "xyes"; then
   gl_includes=$gl_includes
   gl_ldflags=$gl_ldflags" -L/usr/local/lib "$X_LDFLAGS" "$X_EXTRA_LIBS" "$X_LIBS" "$LIBS_GL
   gl_libs=$gl_libs" -lGL"
   AC_DEFINE(HAVE_GL)
-  AC_TRY_CPP(GL/glu.h,
+  AC_TRY_CPP([#include <GL/glu.h>],
   echo "checking for GL/glu.h... yes"
   AC_CHECK_LIB(GLU, gluBuild2DMipmaps, have_glu=yes,[
-  ], $gl_ldflags -lGL -lGLU)
+  ], $gl_ldflags -lGL -lGLU -lm)
   )
   AC_CHECK_LIB(GLU, gluTessBeginPolygon, ,[
    echo ""

@@ -830,6 +830,8 @@ evas_set_text(Evas e, Evas_Object o, char *text)
 	     oo->current.text = NULL;
 	     if (text)
 		oo->current.text = strdup(text);
+	     else
+	       oo->current.text = strdup("");	     
 	     oo->previous.text = NULL;
 	       {	     
 		  switch (e->current.render_method)
@@ -935,9 +937,9 @@ evas_set_text(Evas e, Evas_Object o, char *text)
 	       }
 	     o->current.w = (double)oo->current.string.w;
 	     o->current.h = (double)oo->current.string.h;
+	     o->changed = 1;
+	     e->changed = 1;
 	  }
-	o->changed = 1;
-	e->changed = 1;
 	break;
      default:
 	break;
@@ -1070,9 +1072,9 @@ evas_set_font(Evas e, Evas_Object o, char *font, int size)
 	       }
 	     o->current.w = (double)oo->current.string.w;
 	     o->current.h = (double)oo->current.string.h;
+	     o->changed = 1;
+	     e->changed = 1;
 	  }
-	o->changed = 1;
-	e->changed = 1;
 	break;
      default:
 	break;
