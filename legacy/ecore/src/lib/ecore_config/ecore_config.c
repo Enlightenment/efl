@@ -626,6 +626,12 @@ int ecore_config_init(char *name) {
 }
 
 int ecore_config_exit(void) {
-  return ipc_exit();
+  int ret;
+  ret = ipc_exit();
+  free(__app_name);
+  free(__bundle_local);
+  free(__server_local);
+  free(__server_global);
+  return ret;
 }
 

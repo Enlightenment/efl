@@ -10,13 +10,13 @@ int ecore_config_load(void) {
   char file[PATH_MAX];
   snprintf(file, PATH_MAX, "%s/.e/apps/%s/config.db",getenv("HOME"),__app_name);
   return ecore_config_load_file(file);
-  }
+}
 
 int ecore_config_save(void) {
   char file[PATH_MAX];
   snprintf(file, PATH_MAX, "%s/.e/apps/%s/config.db",getenv("HOME"),__app_name);
   return ecore_config_save_file(file);
-  }
+}
 
 int ecore_config_load_file(char *file) {
   E_DB_File *db = NULL;
@@ -61,6 +61,7 @@ int ecore_config_load_file(char *file) {
           ecore_config_set_rgb(keys[x],data);
         else
           ecore_config_set_string(keys[x],data);
+        free(data);
       } else {
         E(0, "Could not read key %s!\n", keys[x]);
       }
@@ -72,6 +73,7 @@ int ecore_config_load_file(char *file) {
     if (type) free(type);
   }
   e_db_close(db);
+  free(keys);
   return 0;
 }
 
