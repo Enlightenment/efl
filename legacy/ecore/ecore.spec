@@ -15,8 +15,6 @@ Packager: The Rasterman <raster@rasterman.com> Term <term@kempler.net>
 Vendor: The Enlightenment Development Team <e-develop@enlightenment.org>
 Source: ftp://ftp.enlightenment.org/enlightenment/%{name}-%{ver}.tar.gz
 BuildRoot: /var/tmp/%{name}-root
-#Requires: evas >= 0.0.1
-#Requires: edb >= 1.0.2
 
 %description
 Ecore is brub.
@@ -62,3 +60,4 @@ rm -rf $RPM_BUILD_ROOT
 %{prefix}/lib/libecore.so
 %{prefix}/lib/libecore.*a
 %{prefix}/include/Ecore.h
+%{prefix}/bin/ecore-config

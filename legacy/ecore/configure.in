@@ -80,8 +80,9 @@ AC_SUBST(x_libs)
 
 AC_OUTPUT([
 Makefile
+ecore-config
 src/Makefile
 ], [
+chmod +x ecore-config
 ]
 )
-

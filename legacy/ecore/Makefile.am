@@ -17,4 +17,6 @@ dist-hook:
 	  done \
 	fi
 
+bin_SCRIPTS = ecore-config
+
 EXTRA_DIST = README AUTHORS COPYING
