@@ -1,23 +1,4 @@
-/* C library header files. */
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <sys/time.h>
-#include <unistd.h>
-
-#include <GL/gl.h>
-#include <GL/glx.h>
-
-#include <X11/Xlib.h>
-#include <X11/Xatom.h>
-#include <X11/Xmu/StdCmap.h>
-#include <X11/keysym.h>
-
-#include "Evas.h"
-
-Display *disp;
+#include "evas_gl_routines.h"
 
 static int __evas_gl_configuration[] = 
 {
@@ -27,47 +8,6 @@ static int __evas_gl_configuration[] =
    GLX_GREEN_SIZE, 1,
    GLX_BLUE_SIZE,  1, 
    None
-};
-
-/* imlib 2 opengl backend work - transfer imlib image between states */
-/* of being client-side data, a texture set (an WxH array of textutes */
-/* tiled - to work around maximum texture size limitation of opengl) and */
-/* a buffer (using a pixmap as a destination drawable so we can render */
-/* ofscreen) */
-
-typedef struct _evas_gl_image     Evas_GL_Image;
-typedef enum _evas_gl_image_state Evas_GL_Image_State;
-
-enum _evas_gl_image_state
-{
-   EVAS_STATE_DATA,
-   EVAS_STATE_TEXTURE
-};
-
-struct _evas_gl_image
-{
-   Evas_GL_Image_State state;
-   int w, h;
-/* data specific params */
-   DATA32 *data;
-/* common GL params */
-   GLXContext context;
-/* texture state specific params */
-   struct _tex
-     {
-	int max_size;
-	int w, h;
-	int edge_w, edge_h;
-	GLuint *textures;
-     } texture;
-/* buffer specific params */
-   struct _buf
-     {
-	Display *display;
-	XVisualInfo *visual_info;
-	Colormap colormap;
-	Window window;
-     } buffer;
 };
 
 void
@@ -142,7 +82,7 @@ __evas_gl_move_state_data_to_texture(Evas_GL_Image *im)
    att.border_pixel = 0;
    att.event_mask = 0;
    im->buffer.window = XCreateWindow(im->buffer.display,
-				     RootWindow(disp, DefaultScreen(disp)),
+				     RootWindow(im->buffer.display, DefaultScreen(im->buffer.display)),
 				     0, 0, 32, 32, 0, 
 				     im->buffer.visual_info->depth,
 				     InputOutput, 

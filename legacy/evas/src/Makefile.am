@@ -31,6 +31,7 @@ evas_object.c \
 evas_rectangle.c \
 evas_render.c \
 evas_text.c \
+evas_gl_routines.h \
 Evas.h
 
 libevas_la_LIBADD       = -lX11 -lXext -lttf -ldl -lm -lImlib2 -ldb -lGL $(LDFLAGS)
