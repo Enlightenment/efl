@@ -1,4 +1,4 @@
-Source: libevas0
+Source: evas
 Section: libs
 Priority: optional
 Maintainer: Horms <horms@vergenet.net>
