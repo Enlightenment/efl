@@ -1,1 +1,21 @@
 Embryo 0.0.1
+
+OK a lot of peolpe ask this. What is Embryo?
+
+It is a cleanup/imlementation of the SMALL programming/scripting language.
+You can find documentation on the language, syntax and the original code here:
+
+  http://www.compuphase.com/small.htm
+  
+There are PDF's on the language syntax which are 100% relevant for Embryo.
+
+Embryo is based on the 2.5.0 codebase but has some MAJOR changes. I will list
+these later.
+
+Embryo is basically a compler/virtual machine combination. The compiler takes
+Small language scripts and compiles them into bytecode. This bytecode is
+interpreted by the Small Virtual Machine (Abstract Machine - or AMX). The
+Embryo AMX is a stripped down and cleaned up version of the Small original -
+with windows specific support removed and the coding style mostly changed to
+fit enlightenment coding style. The compiler is still almost verbatim. It
+works on x86 and PPC now. It needs work.
