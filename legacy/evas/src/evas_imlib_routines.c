@@ -439,7 +439,7 @@ void              __evas_imlib_line_draw(Display *disp, Window win,
 		       if (!up->image)
 			  up->image = imlib_create_image(up->w, up->h);
 		       imlib_context_set_image(up->image);
-		       imlib_image_draw_line(x1 - up->x, y1 - up->x, x2 - up->x, y2 - up->y, 0);
+		       imlib_image_draw_line(x1 - up->x, y1 - up->y, x2 - up->x, y2 - up->y, 0);
 		    }
 	       }
 	  }
