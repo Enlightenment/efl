@@ -403,7 +403,6 @@ _ecore_event_call(void)
 	     Ecore_Event_Filter *ef;
 	
 	     ef = (Ecore_Event_Filter *)l;
-	     l = l->next;
 	     if (ef->delete_me)
 	       {
 		  event_filters = _ecore_list_remove(event_filters, ef);
