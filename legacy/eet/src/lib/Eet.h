@@ -135,10 +135,10 @@ extern "C" {
    EAPI Eet_File *eet_open  (const char *file, Eet_File_Mode mode);
 
    /**
-	* Get the mode an Eet_File was opened with.
-	* @param ef A valid eet file handle.
-	* @return The mode ef was opened with.
-	*/
+    * Get the mode an Eet_File was opened with.
+    * @param ef A valid eet file handle.
+    * @return The mode ef was opened with.
+    */
    EAPI Eet_File_Mode eet_mode_get (Eet_File *ef);
    
    /**
