@@ -4,6 +4,7 @@ make clean distclean
 rm config.cache
 ./configure \
 --enable-software-x11 \
+--enable-gl-x11 \
 --enable-image-loader-png \
 --enable-image-loader-jpeg \
 --enable-image-loader-eet \

@@ -166,6 +166,13 @@ make CFLAGS="-O9 -mpentiumpro -march=pentiumpro -mcpu=pentiumpro"
 
 ###### OpenGL (being worked on. does nothing much at the moment) #######
 
+This requires OpengGL 1.2 or above. it needs libGL and libGLU. Speedup
+benefit may vary depending on graphcis card. Many GL implimentations have
+many bugs that have been triggered during development. There are workarounds
+for known bugs. You may encounter more. At this stage please help out if you
+know OpenGL well. NB: you MUST enable the smooth scaler to use the gl engine
+- currently it isn't properly forced to be enabled for you.
+
 ./configure \
 --enable-gl-x11 \
 --enable-image-loader-png \

@@ -480,7 +480,7 @@ loop(void)
 	   double              x, y;
 
 	   evas_object_image_size_get(test_pattern, &iw, &ih);
-	   v = 2.0 - ((t - 96.0) / 10.0);
+	   v = 2.0 - ((t - 76.0) / 10.0);
 	   if ((v >= 0.4) && (v <= 1.4))
 	     {
 		evas_object_text_text_set(comment,
@@ -889,12 +889,12 @@ loop(void)
 					    "Destroy gradient blue, create red");
 		  ob = evas_object_gradient_add(evas);
 		  evas_object_gradient_color_add(ob, 255, 0, 0, 0, 1);
-		  evas_object_gradient_color_add(ob, 255, 0, 0, 255, 1);
+		  evas_object_gradient_color_add(ob, 255, 255, 0, 255, 1);
 		  evas_object_gradient_color_add(ob, 255, 255, 255, 255, 1);
 		  evas_object_gradient_angle_set(ob, 45.0);
-		  evas_object_move(ob, (win_w - 48) / 2,
-				   (win_h - 240) + ((240 - 48) / 2));
-		  evas_object_resize(ob, 48, 48);
+		  evas_object_move(ob, (win_w - 128) / 2,
+				   (win_h - 240) + ((240 - 128) / 2));
+		  evas_object_resize(ob, 128, 128);
 		  evas_object_layer_set(ob, 5);
 		  evas_object_clip_set(ob, panel_clip);
 		  evas_object_show(ob);
@@ -914,12 +914,12 @@ loop(void)
 					    "Destroy gradient red, create blue");
 		  ob = evas_object_gradient_add(evas);
 		  evas_object_gradient_color_add(ob, 0, 0, 255, 0, 1);
-		  evas_object_gradient_color_add(ob, 0, 0, 255, 255, 1);
+		  evas_object_gradient_color_add(ob, 0, 255, 255, 255, 1);
 		  evas_object_gradient_color_add(ob, 255, 255, 255, 255, 1);
 		  evas_object_gradient_angle_set(ob, 45.0);
-		  evas_object_move(ob, (win_w - 48) / 2,
-				   (win_h - 240) + ((240 - 48) / 2));
-		  evas_object_resize(ob, 48, 48);
+		  evas_object_move(ob, (win_w - 128) / 2,
+				   (win_h - 240) + ((240 - 128) / 2));
+		  evas_object_resize(ob, 128, 128);
 		  evas_object_layer_set(ob, 5);
 		  evas_object_clip_set(ob, panel_clip);
 		  evas_object_show(ob);

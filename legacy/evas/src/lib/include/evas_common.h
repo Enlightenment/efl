@@ -128,7 +128,7 @@
 #ifndef _WIN32_WCE
 typedef unsigned long long            DATA64;
 #else
-typedef unsigned __int64			  DATA64;
+typedef unsigned __int64	      DATA64;
 #define strdup _strdup
 #define snprintf _snprintf
 #define rewind(f) fseek(f,0,SEEK_SET)

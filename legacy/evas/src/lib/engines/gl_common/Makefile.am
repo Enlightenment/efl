@@ -17,6 +17,8 @@ if BUILD_ENGINE_GL_COMMON
 
 noinst_LTLIBRARIES      = libevas_engine_gl_common.la
 libevas_engine_gl_common_la_SOURCES  = \
+evas_gl_routines.c \
+evas_gl_routines.h \
 evas_gl_image.c
 
 libevas_engine_gl_common_la_LIBADD       = \

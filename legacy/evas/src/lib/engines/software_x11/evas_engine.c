@@ -780,7 +780,8 @@ evas_engine_software_x11_image_data_put(void *data, void *image, DATA32 *image_d
 	evas_common_image_unref(im);
 	return evas_engine_software_x11_image_new_from_data(data, w, h, image_data);
      }
-   evas_common_image_dirty(im);
+   /* hmmm - but if we wrote... why bother? */
+/*   evas_common_image_dirty(im); */
    return im;
 }
 
