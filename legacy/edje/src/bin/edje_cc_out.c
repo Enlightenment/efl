@@ -91,6 +91,76 @@ data_setup(void)
    edd_edje_part_image_id = _edje_edd_edje_part_image_id;
 }
 
+static void
+check_image_part_desc (Edje_Part *ep, Edje_Part_Description *epd, Eet_File *ef)
+{
+   Evas_List *l;
+
+   if (epd->image.id == -1)
+     {
+	fprintf(stderr, "%s: Error. image attributes missing "
+	      "for part \"%s\", description \"%s\" %f\n",
+	      progname, ep->name, epd->state.name, epd->state.value);
+	ABORT_WRITE(ef, file_out);
+     }
+
+   for (l = epd->image.tween_list; l; l = l->next)
+     {
+	Edje_Part_Image_Id *iid = l->data;
+
+	if (iid->id == -1)
+	  {
+	     fprintf(stderr, "%s: Error. tween image id missing "
+		   "for part \"%s\", description \"%s\" %f\n",
+		   progname, ep->name, epd->state.name,
+		   epd->state.value);
+	     ABORT_WRITE(ef, file_out);
+	  }
+     }
+}
+
+static void
+check_part (Edje_Part *ep, Eet_File *ef)
+{
+   Edje_Part_Description *epd = ep->default_desc;
+   Evas_List *l;
+
+   if (!epd)
+     {
+	fprintf(stderr, "%s: Error. default description missing "
+	      "for part \"%s\"\n", progname, ep->name);
+	ABORT_WRITE(ef, file_out);
+     }
+
+   if (ep->type == EDJE_PART_TYPE_IMAGE)
+     {
+	check_image_part_desc (ep, epd, ef);
+
+	for (l = ep->other_desc; l; l = l->next)
+	  check_image_part_desc (ep, l->data, ef);
+     }
+}
+
+static void
+check_program (Edje_Program *ep, Eet_File *ef)
+{
+   switch (ep->action) {
+      case EDJE_ACTION_TYPE_STATE_SET:
+      case EDJE_ACTION_TYPE_ACTION_STOP:
+      case EDJE_ACTION_TYPE_DRAG_VAL_SET:
+      case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
+      case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
+	 if (!ep->targets) {
+	      fprintf(stderr, "%s: Error. Target missing in program %s\n",
+		    progname, ep->name);
+	      ABORT_WRITE(ef, file_out);
+	 }
+	 break;
+      default:
+	 break;
+   }
+}
+
 void
 data_write(void)
 {
@@ -406,6 +476,8 @@ data_write(void)
 	  }
      }
 #endif
+
+   /* sanity checks for parts and programs */
    for (l = edje_collections; l; l = l->next)
      {
 	Edje_Part_Collection *pc;
@@ -414,19 +486,12 @@ data_write(void)
 	pc = l->data;
 	for (ll = pc->parts; ll; ll = ll->next)
 	  {
-	     Edje_Part *ep;
-	     Edje_Part_Description *epd;
-	     
-	     ep = ll->data;
-	     epd = ep->default_desc;
+	     check_part (ll->data, ef);
 
-	     if (!epd)
-	       {
-		  fprintf(stderr, "%s: Error. description missing for part \"%s\"\n",
-			  progname, ep->name);
-		  ABORT_WRITE(ef, file_out);
-	       }
 /*
+	     Edje_Part *ep = ll->data;
+	     Edje_Part_Description *epd = ep->default_desc;
+
 	     if (epd->text.font)
 	       {
 		  Evas_List *lll;
@@ -477,25 +542,7 @@ data_write(void)
 	  }
 
 	for (ll = pc->programs; ll; ll = ll->next)
-	  {
-	     Edje_Program *ep = ll->data;
-
-	     switch (ep->action) {
-		  case EDJE_ACTION_TYPE_STATE_SET:
-		  case EDJE_ACTION_TYPE_ACTION_STOP:
-		  case EDJE_ACTION_TYPE_DRAG_VAL_SET:
-		  case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
-		  case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
-		     if (!ep->targets) {
-		       fprintf(stderr, "%s: Error. Target missing in program %s\n",
-			     progname, ep->name);
-		       ABORT_WRITE(ef, file_out);
-		     }
-		     break;
-		  default:
-		     break;
-	     }
-	  }
+	     check_program (ll->data, ef);
      }
    for (l = edje_collections; l; l = l->next)
      {
