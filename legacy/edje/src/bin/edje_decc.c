@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 /* ugly ugly. avert your eyes. */
 #include "edje_decc.h"
 #include <sys/types.h>
@@ -109,6 +113,8 @@ output(void)
    e_file_mkpath(outdir);
    
    ef = eet_open(file_in, EET_FILE_MODE_READ);
+
+#ifdef HAVE_IMLIB
    if (edje_file->image_dir)
      {
 	for (l = edje_file->image_dir->entries; l; l = l->next)
@@ -167,6 +173,8 @@ output(void)
 	       }
 	  }
      }
+#endif
+
    for (l = srcfiles->list; l; l = l->next)
      {
 	SrcFile *sf;
@@ -252,7 +260,10 @@ output(void)
 	fprintf(f, "#!/bin/sh\n");
 	fprintf(f, "edje_cc $@ -id . -fd . main_edje_source.edc %s.eet\n", outdir);
 	fclose(f);
+
+#ifndef WIN32
 	chmod(out, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP);
+#endif
      }
    eet_close(ef);
 }
@@ -267,12 +278,16 @@ e_file_is_dir(char *file)
    return 0;
 }
 
-static mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
-
 int
 e_file_mkdir(char *dir)
 {
+#ifndef WIN32
+   static mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
+
    if (mkdir(dir, default_mode) < 0) return 0;
+#else
+   if (mkdir(dir) < 0) return 0;
+#endif
    return 1;
 }
 
