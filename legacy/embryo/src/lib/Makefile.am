@@ -26,4 +26,4 @@ embryo_private.h
 
 libembryo_la_LIBADD       = -lm @fnmatch_libs@
 libembryo_la_DEPENDENCIES = $(top_builddir)/config.h
-libembryo_la_LDFLAGS      = $(LDFLAGS) -version-info 9:1:9
+libembryo_la_LDFLAGS      = -version-info 9:1:9
