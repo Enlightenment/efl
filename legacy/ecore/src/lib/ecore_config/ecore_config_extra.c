@@ -499,10 +499,10 @@ ecore_config_theme_with_path_from_name_get(char *name)
            *ptr = '\0';
 
         file = malloc(strlen(search_path_tmp) + strlen(name) + 6);
-           /* 6 = / + .eet + \0 */
+           /* 6 = / + .edj + \0 */
 
         snprintf(file, strlen(search_path_tmp) + strlen(name) + 6, 
-                      "%s/%s.eet", search_path_tmp, name);
+                      "%s/%s.edj", search_path_tmp, name);
 	
         if (stat(file, &st) == 0)
           {
