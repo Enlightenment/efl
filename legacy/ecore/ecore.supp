@@ -9,3 +9,38 @@
    fun:_XmbTextPropertyToTextList
    fun:XmbTextPropertyToTextList
 }
+{
+   bogus2
+   Memcheck:Param
+   write(buf)
+   obj:/lib/ld-2.3.3.so
+   fun:_X11TransWrite
+   obj:/usr/X11R6/lib/libX11.so.6.2
+   fun:_XReply
+}
+{
+   bogus3
+   Memcheck:Cond
+   obj:/usr/X11R6/lib/libX11.so.6.2
+   obj:/usr/X11R6/lib/libX11.so.6.2
+   obj:/usr/X11R6/lib/libX11.so.6.2
+   fun:_XlcCreateLocaleDataBase
+}
+{
+   bogus4
+   Memcheck:Param
+   write(buf)
+   obj:/lib/ld-2.3.3.so
+   fun:_X11TransWrite
+   obj:/usr/X11R6/lib/libX11.so.6.2
+   fun:_XFlush
+}
+{
+   blah, blah, xlib sucks
+   Memcheck:Param
+   writev(vector[...])
+   obj:/lib/ld-2.3.3.so
+   obj:/usr/X11R6/lib/libX11.so.6.2
+   fun:_X11TransWritev
+   fun:_XSend
+}
