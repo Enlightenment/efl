@@ -428,9 +428,7 @@ evas_event_feed_key_down_data(Evas *e, const char *keyname, const void *data)
    if (e->events_frozen > 0) return;
      {
 	Evas_Event_Key_Down ev;
-	Evas_Object *focused_obj;
-
-	focused_obj = e->focused;
+	
 	ev.keyname = (char *)keyname;
 	ev.data = (void *)data;
 	ev.modifiers = &(e->modifiers);
@@ -456,10 +454,10 @@ evas_event_feed_key_down_data(Evas *e, const char *keyname, const void *data)
 		    }		      
 	       }
 	  }
-	if (focused_obj)
+	if (e->focused)
 	  {
 	     if (!e->events_frozen)
-	       evas_object_event_callback_call(focused_obj, EVAS_CALLBACK_KEY_DOWN, &ev);
+	       evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_DOWN, &ev);
 	  }
      }
 }
@@ -474,9 +472,7 @@ evas_event_feed_key_up_data(Evas *e, const char *keyname, const void *data)
    if (e->events_frozen > 0) return;
      {
 	Evas_Event_Key_Up ev;
-	Evas_Object *focused_obj;
-
-	focused_obj = e->focused;
+	
 	ev.keyname = (char *)keyname;
 	ev.data = (void *)data;
 	ev.modifiers = &(e->modifiers);
@@ -502,10 +498,10 @@ evas_event_feed_key_up_data(Evas *e, const char *keyname, const void *data)
 		    }		      
 	       }
 	  }
-	if (focused_obj)
+	if (e->focused)
 	  {
 	     if (!e->events_frozen)
-	       evas_object_event_callback_call(focused_obj, EVAS_CALLBACK_KEY_UP, &ev);
+	       evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_UP, &ev);
 	  }
      }
 }
