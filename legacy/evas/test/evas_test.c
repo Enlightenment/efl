@@ -26,8 +26,13 @@ main(int argc, char **argv)
    __evas_gl_init(d, DefaultScreen(d));
    vis = __evas_gl_get_visual(d, DefaultScreen(d));
    cmap = __evas_gl_get_colormap(d, DefaultScreen(d));
-   
-   win_w = 1280; win_h = 1024;
+
+   win_w = 640; win_h = 480;
+   if (argc == 3)
+     {
+	win_w = atoi(argv[1]);
+	win_h = atoi(argv[2]);
+     }
      {
 	XSetWindowAttributes att;
 	
