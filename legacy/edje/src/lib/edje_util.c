@@ -1,6 +1,24 @@
 #include "Edje.h"
 #include "edje_private.h"
 
+void
+edje_freeze(void)
+{
+   Evas_List *l;
+   
+   for (l = _edje_edjes; l; l = l->next)
+     edje_object_freeze((Evas_Object *)(l->data));
+}
+
+void
+edje_thaw(void)
+{
+   Evas_List *l;
+   
+   for (l = _edje_edjes; l; l = l->next)
+     edje_object_thaw((Evas_Object *)(l->data));
+}
+
 int
 edje_object_freeze(Evas_Object *obj)
 {
@@ -424,7 +442,8 @@ int
 _edje_thaw(Edje *ed)
 {
    ed->freeze--;
-   if ((ed->freeze <= 0) && (ed->recalc))
+   if (ed->freeze < 0) ed->freeze = 0;
+   if ((ed->freeze == 0) && (ed->recalc))
      _edje_recalc(ed);
    return ed->freeze;
 }

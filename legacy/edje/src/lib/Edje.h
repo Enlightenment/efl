@@ -10,6 +10,8 @@ extern "C" {
    void         edje_init                       (void);
    void         edje_frametime_set              (double t);
    double       edje_frametime_get              (void);
+   void         edje_freeze                     (void);
+   void         edje_thaw                       (void);
    
    Evas_Object *edje_object_add                 (Evas *evas);
    void         edje_object_file_set            (Evas_Object *o, const char *file, const char *part);

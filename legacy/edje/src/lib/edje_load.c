@@ -32,7 +32,6 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	     Edje_Real_Part *rp;
 	     char buf[256];
 	     
-	     printf("PART!\n");
 	     ep = l->data;
 	     rp = calloc(1, sizeof(Edje_Real_Part));
 	     if (!rp) return;

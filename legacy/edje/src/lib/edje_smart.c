@@ -18,6 +18,8 @@ static void _edje_smart_clip_unset(Evas_Object * obj);
 
 static Evas_Smart *_edje_smart = NULL;
 
+Evas_List *_edje_edjes = NULL;
+
 /* API Routines */
 Evas_Object *
 edje_object_add(Evas *evas)
@@ -56,6 +58,7 @@ _edje_smart_add(Evas_Object * obj)
    evas_object_smart_data_set(obj, ed);
    ed->obj = obj;
    evas_object_smart_member_add(ed->clipper, ed->obj);
+   _edje_edjes = evas_list_append(_edje_edjes, obj);
 }
 
 static void
@@ -67,6 +70,7 @@ _edje_smart_del(Evas_Object * obj)
    if (!ed) return;
    _edje_clean_objects(ed);
    _edje_unref(ed);
+   _edje_edjes = evas_list_remove(_edje_edjes, obj);
 }
 
 static void

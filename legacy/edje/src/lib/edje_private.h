@@ -533,5 +533,6 @@ extern int              _edje_anim_count;
 extern Ecore_Timer     *_edje_timer;
 extern Evas_List       *_edje_animators;
 extern Ejde_Text_Style  _edje_text_styles[EDJE_TEXT_EFFECT_LAST];
+extern Evas_List       *_edje_edjes;
 
 #endif

@@ -339,7 +339,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	     
 	     dif = (th - sh) / 4;
 	     if (dif < 1) dif = 1;
-	     while ((th < sh) && (sw >= 0.0))
+	     while ((th > sh) && (sw >= 0.0))
 	       {
 		  size -= dif;
 		  evas_object_text_font_set(ep->object, font, size);

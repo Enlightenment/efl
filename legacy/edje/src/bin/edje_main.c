@@ -5,6 +5,8 @@ static void main_stop(void);
 static void main_resize(Ecore_Evas *ee);
 static int  main_signal_exit(void *data, int ev_type, void *ev);
 static void main_delete_request(Ecore_Evas *ee);
+static void main_pre_rend(Ecore_Evas *ee);
+static void main_post_rend(Ecore_Evas *ee);
 
 void        bg_setup(void);
 void        bg_resize(double w, double h);
@@ -55,6 +57,8 @@ main_start(int argc, char **argv)
    if (!ecore_evas) return -1;
    ecore_evas_callback_delete_request_set(ecore_evas, main_delete_request);
    ecore_evas_callback_resize_set(ecore_evas, main_resize);
+   ecore_evas_callback_pre_render_set(ecore_evas, main_pre_rend);
+   ecore_evas_callback_post_render_set(ecore_evas, main_post_rend);
    ecore_evas_title_set(ecore_evas, "Edje Test Program");
    ecore_evas_name_class_set(ecore_evas, "edje", "main");
    ecore_evas_show(ecore_evas);
@@ -93,6 +97,18 @@ static void
 main_delete_request(Ecore_Evas *ee)
 {
    ecore_main_loop_quit();
+}
+
+static void
+main_pre_rend(Ecore_Evas *ee)
+{
+   edje_thaw();
+}
+
+static void
+main_post_rend(Ecore_Evas *ee)
+{
+   edje_freeze();   
 }
 
 void
