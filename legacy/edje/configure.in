@@ -151,80 +151,41 @@ AC_SUBST(EDJE_CC_PRG)
 AC_SUBST(EDJE_DECC_PRG)
 
 AC_ARG_WITH(eet,
-        [  --with-eet=DIR          use eet in <DIR>],
+        [  --with-eet=DIR               use eet in <DIR>],
         [CFLAGS="$CFLAGS -I$withval/include"
-        LIBS="-L$withval/lib $LIBS"])
-			 
-have_eet="no";
-AC_CHECK_HEADER(Eet.h,
-  [ have_eet="yes" ],
-  [ have_eet="no" ]
-)
+         LIBS="-L$withval/lib $LIBS"])
 
-if test "x$have_eet" = "xyes"; then
-  if [ test -z "$EET_CONFIG" ]; then EET_CONFIG="eet-config"; fi
-  eet_cflags=`$EET_CONFIG --cflags`
-  eet_libs=`$EET_CONFIG --libs`
-else
-  AC_MSG_ERROR(Cannot find Eet.h)
-  exit -1
-fi
+AC_PATH_GENERIC(eet, , ,
+    AC_MSG_ERROR(Cannot find eet: Is eet-config in path?))
 
-AC_SUBST(eet_cflags)
-AC_SUBST(eet_libs)
+AC_ARG_WITH(embryo,
+        [  --with-embryo=DIR            use embryo in <DIR>],
+        [CFLAGS="$CFLAGS -I$withval/include"
+         LIBS="-L$withval/lib $LIBS"])
 
-have_embryo="no";
-AC_CHECK_HEADER(Embryo.h,
-  [ have_embryo="yes" ],
-  [ have_embryo="no" ]
-)
+AC_PATH_GENERIC(embryo, 0.9.1, ,
+    AC_MSG_ERROR(Cannot find embryo: Is embryo-config in path?))
 
-if test "x$have_embryo" = "xyes"; then
-  if [ test -z "$EMBRYO_CONFIG" ]; then EMBRYO_CONFIG="embryo-config"; fi
-  embryo_cflags=`$EMBRYO_CONFIG --cflags`
-  embryo_libs=`$EMBRYO_CONFIG --libs`
-else
-  AC_MSG_ERROR(Cannot find Embryo.h)
-  exit -1
-fi
-
-AC_SUBST(embryo_cflags)
-AC_SUBST(embryo_libs)
-
-imlib2_cflags=""
-imlib2_libs=""
 if test "x$have_edje_cc" = "xyes"; then
   AC_ARG_WITH(imlib2,
           [  --with-imlib2=DIR          use imlib2 in <DIR>],
           [CFLAGS="$CFLAGS -I$withval/include"
            LIBS="-L$withval/lib $LIBS"])
 
-  AC_PATH_GENERIC(imlib2, , [
-      AC_SUBST(imlib2_libs)
-      AC_SUBST(imlib2_cflags)],
-      AC_MSG_ERROR(Cannot find imlib2: Is imlib2-config in path?))
-  imlib2_libs=`imlib2-config --libs`
-  imlib2_cflags=`imlib2-config --cflags`
+  AC_PATH_GENERIC(imlib2, ,
+      AC_DEFINE(HAVE_IMLIB, 1, [Define to 1 if you have Imlib2]), [
+      have_imlib2="no"
+      AC_MSG_WARN(Cannot find imlib2: Is imlib2-config in path?)
+      ])
 fi
-AC_SUBST(imlib2_cflags)
-AC_SUBST(imlib2_libs)
 
 AC_ARG_WITH(evas,
         [  --with-evas=DIR          use evas in <DIR>],
         [CFLAGS="$CFLAGS -I$withval/include"
          LIBS="-L$withval/lib $LIBS"])
 
-AC_PATH_GENERIC(evas, , [
-    AC_SUBST(evas_libs)
-    AC_SUBST(evas_cflags)],
+AC_PATH_GENERIC(evas, , ,
     AC_MSG_ERROR(Cannot find evas: Is evas-config in path?))
-
-if [ test -z "$EVAS_CONFIG" ]; then EVAS_CONFIG="evas-config"; fi
-evas_cflags=`$EVAS_CONFIG --cflags`
-evas_libs=`$EVAS_CONFIG --libs`
-
-AC_SUBST(evas_cflags)
-AC_SUBST(evas_libs)
 
 AC_CHECK_HEADERS(Evas_Engine_Software_X11.h, [], [], [
    #include <Evas.h>
@@ -243,17 +204,8 @@ AC_ARG_WITH(ecore,
         [CFLAGS="$CFLAGS -I$withval/include"
          LIBS="-L$withval/lib $LIBS"])
 
-AC_PATH_GENERIC(ecore, , [
-    AC_SUBST(ecore_libs)
-    AC_SUBST(ecore_cflags)],
+AC_PATH_GENERIC(ecore, , ,
     AC_MSG_ERROR(Cannot find ecore: Is ecore-config in path?))
-
-if [ test -z "$ECORE_CONFIG" ]; then ECORE_CONFIG="ecore-config"; fi
-ecore_cflags=`$ECORE_CONFIG --cflags`
-ecore_libs=`$ECORE_CONFIG --libs`
-
-AC_SUBST(ecore_cflags)
-AC_SUBST(ecore_libs)
 
 AC_MSG_CHECKING([for location of Vim data files])
 install_vim="yes";
@@ -311,3 +263,11 @@ edje-config
 chmod +x edje-config
 touch edje_docs.tar.gz
 ])
+
+if test "x$have_edje_cc" = "xyes"; then
+	if test "x$have_imlib2" = "xno"; then
+		echo
+		echo "WARNING: Building edje_cc without Imlib2 support!"
+		echo
+	fi
+fi

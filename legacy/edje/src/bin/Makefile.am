@@ -4,10 +4,10 @@ INCLUDES = \
 -I$(top_srcdir) \
 -I$(top_srcdir)/bin \
 -I$(top_srcdir)/src/lib \
-@eet_cflags@ \
-@evas_cflags@ \
-@ecore_cflags@ \
-@imlib2_cflags@
+@EET_CFLAGS@ \
+@EVAS_CFLAGS@ \
+@ECORE_CFLAGS@ \
+@IMLIB2_CFLAGS@
 
 bin_SCRIPTS = \
 edje_recc
@@ -48,7 +48,7 @@ edje_cc_sources.c
 
 edje_cc_LDADD = \
 $(top_builddir)/src/lib/libedje.la \
-@imlib2_libs@
+@IMLIB2_LIBS@
 
 edje_cc_CPPFLAGS = @edje_def@
 
@@ -65,7 +65,7 @@ edje_cc_sources.c
 
 edje_decc_LDADD = \
 $(top_builddir)/src/lib/libedje.la \
-@imlib2_libs@
+@IMLIB2_LIBS@
 
 edje_decc_CPPFLAGS = @edje_def@
 

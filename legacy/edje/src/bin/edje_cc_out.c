@@ -236,6 +236,7 @@ data_write(void)
 	     free(fdata);
 	  }
      }
+#ifdef HAVE_IMLIB
    if ((edje_file) && (edje_file->image_dir))
      {
 	for (l = edje_file->image_dir->entries; l; l = l->next)
@@ -404,6 +405,7 @@ data_write(void)
 	       }
 	  }
      }
+#endif
    for (l = edje_collections; l; l = l->next)
      {
 	Edje_Part_Collection *pc;
