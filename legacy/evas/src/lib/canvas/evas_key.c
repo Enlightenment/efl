@@ -56,11 +56,11 @@ evas_key_lock_get(Evas *e)
 int
 evas_key_modifier_is_set_get(Evas_Modifier *m, char *keyname)
 {
-   unsigned long long num;
+   Evas_Modifier_Mask num;
    
    if (!m) return 0;
    if (!keyname) return 0;
-   num = (unsigned long long)evas_key_modifier_number(m, keyname);
+   num = (Evas_Modifier_Mask)evas_key_modifier_number(m, keyname);
    if (num < 0) return 0;
    num = 1 << num;
    if (m->mask & num) return 1;
@@ -70,11 +70,11 @@ evas_key_modifier_is_set_get(Evas_Modifier *m, char *keyname)
 int
 evas_key_lock_is_set_get(Evas_Lock *l, char *keyname)
 {
-   unsigned long long num;
+   Evas_Modifier_Mask num;
    
    if (!l) return 0;
    if (!keyname) return 0;
-   num = (unsigned long long)evas_key_lock_number(l, keyname);
+   num = (Evas_Modifier_Mask)evas_key_lock_number(l, keyname);
    if (num < 0) return 0;
    num = 1 << num;
    if (l->mask & num) return 1;
@@ -165,12 +165,12 @@ evas_key_lock_del(Evas *e, char *keyname)
 void
 evas_key_modifier_on(Evas *e, char *keyname)
 {
-   unsigned long long num;
+   Evas_Modifier_Mask num;
    
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   num = (unsigned long long)evas_key_modifier_number(&(e->modifiers), keyname);
+   num = (Evas_Modifier_Mask)evas_key_modifier_number(&(e->modifiers), keyname);
    if (num < 0) return;
    num = 1 << num;
    e->modifiers.mask |= num;
@@ -179,12 +179,12 @@ evas_key_modifier_on(Evas *e, char *keyname)
 void
 evas_key_modifier_off(Evas *e, char *keyname)
 {
-   unsigned long long num;
+   Evas_Modifier_Mask num;
    
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();   
-   num = (unsigned long long)evas_key_modifier_number(&(e->modifiers), keyname);
+   num = (Evas_Modifier_Mask)evas_key_modifier_number(&(e->modifiers), keyname);
    if (num < 0) return;
    num = 1 << num;
    e->modifiers.mask &= ~num;
@@ -193,12 +193,12 @@ evas_key_modifier_off(Evas *e, char *keyname)
 void
 evas_key_lock_on(Evas *e, char *keyname)
 {
-   unsigned long long num;
+   Evas_Modifier_Mask num;
    
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();   
-   num = (unsigned long long)evas_key_lock_number(&(e->locks), keyname);
+   num = (Evas_Modifier_Mask)evas_key_lock_number(&(e->locks), keyname);
    if (num < 0) return;
    num = 1 << num;
    e->locks.mask |= num;
@@ -207,24 +207,39 @@ evas_key_lock_on(Evas *e, char *keyname)
 void
 evas_key_lock_off(Evas *e, char *keyname)
 {
-   unsigned long long num;
+   Evas_Modifier_Mask num;
    
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();   
-   num = (unsigned long long)evas_key_lock_number(&(e->locks), keyname);
+   num = (Evas_Modifier_Mask)evas_key_lock_number(&(e->locks), keyname);
    if (num < 0) return;
    num = 1 << num;
    e->locks.mask &= ~num;
 }
 
 /* errr need to add key grabbing/ungrabbing calls - missing modifier stuff. */
+
+Evas_Modifier_Mask
+evas_key_modifier_mask_get(Evas *e, char *keyname)
+{
+   Evas_Modifier_Mask num;
+   
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return 0;
+   MAGIC_CHECK_END();
+   if (!keyname) return 0;
+   num = evas_key_modifier_number(&(e->modifiers), keyname);
+   if (num < 0) return 0;
+   return 1 << num;
+}
+
 int
-evas_object_key_grab(Evas_Object *obj, char *keyname, int exclusive)
+evas_object_key_grab(Evas_Object *obj, char *keyname, Evas_Modifier_Mask modifiers, int exclusive)
 {
 }
 
 void
-evas_object_key_ungrab(Evas_Object *obj, char *keyname)
+evas_object_key_ungrab(Evas_Object *obj, char *keyname, Evas_Modifier_Mask modifiers)
 {
 }

@@ -44,6 +44,7 @@ typedef struct _Evas_Func           Evas_Func;
 typedef struct _Evas_Object_Func    Evas_Object_Func;
 typedef struct _Evas_Modifier       Evas_Modifier;
 typedef struct _Evas_Lock           Evas_Lock;
+typedef unsigned long long          Evas_Modifier_Mask;
 typedef struct _Evas_Smart          Evas_Smart;
 typedef struct _Evas_Intercept_Func Evas_Intercept_Func;
 typedef struct _Evas_Intercept_Func_Basic   Evas_Intercept_Func_Basic;
@@ -167,7 +168,7 @@ struct _Evas_Modifier
       int       count;
       char    **list;
    } mod;
-   unsigned long long mask; /* ok we have a max of 64 modifiers */
+   Evas_Modifier_Mask mask; /* ok we have a max of 64 modifiers */
 };
 
 struct _Evas_Lock
@@ -176,7 +177,7 @@ struct _Evas_Lock
       int       count;
       char    **list;
    } lock;
-   unsigned long long mask; /* we have a max of 64 locks */
+   Evas_Modifier_Mask mask; /* we have a max of 64 locks */
 };
 
 struct _Evas

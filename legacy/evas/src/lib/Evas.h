@@ -66,6 +66,8 @@ typedef void Evas_Modifier;
 typedef void Evas_Lock;
 /** An Evas Smart Object handle */
 typedef void Evas_Smart;
+/** An Evas modifier mask type */
+typedef unsigned long long Evas_Modifier_Mask;
 #endif
 #endif
 
@@ -434,9 +436,11 @@ extern "C" {
    void              evas_key_modifier_off             (Evas *e, char *keyname);
    void              evas_key_lock_on                  (Evas *e, char *keyname);
    void              evas_key_lock_off                 (Evas *e, char *keyname);
+   
+   Evas_Modifier_Mask evas_key_modifier_mask_get       (Evas *e, char *keyname);
 
-   int               evas_object_key_grab              (Evas_Object *obj, char *keyname, int exclusive);
-   void              evas_object_key_ungrab            (Evas_Object *obj, char *keyname);
+   int               evas_object_key_grab              (Evas_Object *obj, char *keyname, Evas_Modifier_Mask modifiers, int exclusive);
+   void              evas_object_key_ungrab            (Evas_Object *obj, char *keyname, Evas_Modifier_Mask modifiers);
    
    void              evas_object_pass_events_set       (Evas_Object *obj, int pass);
    int               evas_object_pass_events_get       (Evas_Object *obj);
