@@ -22,7 +22,8 @@ export CFLAGS=-O9
 --enable-ecore-fb \
 --enable-ecore-evas \
 --enable-ecore-job \
---disable-ecore-evas-fb \
+--enable-ecore-evas-fb \
+--disable-ecore-evas-x \
 --disable-ecore-evas-gl \
 --enable-ecore-con \
 --enable-ecore-ipc \
