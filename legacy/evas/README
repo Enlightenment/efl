@@ -1,11 +1,23 @@
 -------------------------------------------------------------------------------
-                                E V A S - 0.0.5
+                                E V A S - 0.5.0
 -------------------------------------------------------------------------------
 
 This is the ``E Canvas'' - a rip off of some of the other canvas's floating
 about - Tk and gnome too. it's at the Xlib level. it's intended to be
 accelerated by hardware or highly optimised software where possible. It is
 intended to be simple and allow for the building of interfaces ontop of it.
+
+What you NEED:
+* Imlib2 1.0.3 or higher (and development headers)
+* Freetype 1.1, 1.2 or 1.3 - NOT 2.0 and development headers
+* X11R6 and development headersand libraries
+
+If you want hardware acceleration to be available:
+* OpenGL 1.0 and headers, with hardware accel support and an Xserver with 
+that too - your milage will vary (Xfree86 4.0 with DRI or Nvidia drivers for
+example). make sure you dont have mutliepl libGL's and multiple GL headers
+on your system. Rememebr most GL drivers are buggy and you will experience
+problems. See your driver maintainers for these :)
 
 if you got this from cvs do:
 ./autogen.sh
