@@ -823,11 +823,12 @@ main(int argc, char **argv)
    if (argc < 2)
      {
 	printf("Usage:\n");
-	printf("  %s [-gl] [-g WxH] [-fill] [edje_file1] [edje_file2] ...\n", argv[0]);
+	printf("  %s [-gl] [-fb] [-g WxH] [-fill] [edje_file1] [edje_file2] ...\n", argv[0]);
 	printf("\n");
 	printf("Example:\n");
 	printf("  %s data/e_logo.eet\n", argv[0]);
 	printf("  %s -fill -g 800x600 data/e_logo.eet\n", argv[0]);
+	printf("  %s -gl -fill -g 800x600 data/e_logo.eet\n", argv[0]);
 	exit(-1);
      }
    for (i = 1; i < argc; i++)
