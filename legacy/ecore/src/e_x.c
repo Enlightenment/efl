@@ -216,7 +216,7 @@ ecore_add_xid(Window win, int x, int y, int w, int h, int depth, Window parent)
   xid->children = NULL;
   xid->gravity = ecore_window_get_gravity(win);
   xid->bw = 0;
-  xid->grab_button_auto_replay = 0;
+  xid->grab_button_auto_replay = NULL;
   XSaveContext(disp, xid->win, xid_context, (XPointer) xid);
   ecore_add_child(parent, win);
   return xid;
@@ -277,7 +277,7 @@ ecore_validate_xid(Window win)
       xid->mouse_in = 0;
       xid->gravity = att.win_gravity;
       xid->bw = att.border_width;
-      xid->grab_button_auto_replay = 0;
+      xid->grab_button_auto_replay = NULL;
       XSaveContext(disp, xid->win, xid_context, (XPointer) xid);
       ecore_add_child(xid->parent, win);
     }
@@ -916,7 +916,7 @@ void
 ecore_event_allow(int mode, Time t)
 {
    if (!disp) return;
-  XAllowEvents(disp, mode, t);
+   XAllowEvents(disp, mode, t);
 }
 
 int
@@ -2933,24 +2933,24 @@ ecore_window_get_root_relative_location(Window win, int *x, int *y)
 }
 
 void
-ecore_window_button_grab_auto_replay_set(Window win, int on)
+ecore_window_button_grab_auto_replay_set(Window win, int (*func) (Ecore_Event_Mouse_Down *ev))
 {
   Ecore_XID *xid = NULL;
 
    if (!disp) return;
   xid = ecore_validate_xid(win);
   if (!xid) return;
-  xid->grab_button_auto_replay = on;
+  xid->grab_button_auto_replay = func;
 }
 
-int
+void *
 ecore_window_button_grab_auto_replay_get(Window win)
 {
   Ecore_XID *xid = NULL;
 
-   if (!disp) return 0;
+   if (!disp) return NULL;
   xid = ecore_validate_xid(win);
-  if (!xid) return 0;
+  if (!xid) return NULL;
   return xid->grab_button_auto_replay;
 }
 
@@ -3041,9 +3041,9 @@ void
 ecore_pointer_replay(Time t)
 {
    if (!disp) return;
-  XSync(disp, False);
-  XAllowEvents(disp, ReplayPointer, t);
-  XSync(disp, False);
+   XSync(disp, False);
+   XAllowEvents(disp, ReplayPointer, t);
+   XSync(disp, False);
 }
 
 void

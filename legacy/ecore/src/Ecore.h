@@ -56,23 +56,6 @@ enum _ecore_ev_modifiers
 
 typedef enum _ecore_ev_modifiers Ecore_Event_Key_Modifiers;
 
-struct _ecore_xid
-{
-  Window              win;
-  Window              parent;
-  Window              root;
-  int                 children_num;
-  Window             *children;
-  int                 x, y, w, h;
-  int                 mapped;
-  int                 mouse_in;
-  int                 depth;
-  int                 gravity;
-  int                 coords_invalid;
-  int                 bw;
-  int                 grab_button_auto_replay;
-};
-
 #ifdef __cplusplus
 extern              "C"
 {
@@ -332,9 +315,6 @@ extern              "C"
 				       int bb);
   void                ecore_cursor_free(Cursor c);
   void                ecore_cursor_set(Window win, Cursor c);
-  void                ecore_window_button_grab_auto_replay_set(Window win,
-							       int on);
-  int                 ecore_window_button_grab_auto_replay_get(Window win);
 
   typedef struct _ecore_event Ecore_Event;
   typedef struct _ecore_event_fd_handler Ecore_Event_Fd_Handler;
@@ -765,6 +745,24 @@ extern              "C"
     Ecore_Event_Ipc_Service *next;
   };
 
+
+struct _ecore_xid
+{
+  Window              win;
+  Window              parent;
+  Window              root;
+  int                 children_num;
+  Window             *children;
+  int                 x, y, w, h;
+  int                 mapped;
+  int                 mouse_in;
+  int                 depth;
+  int                 gravity;
+  int                 coords_invalid;
+  int                 bw;
+  int                 (*grab_button_auto_replay) (Ecore_Event_Mouse_Down *ev);
+};
+   
   void                ecore_add_event(Ecore_Event_Type type, void *event,
 				      void (*ev_free) (void *event));
   void                ecore_del_event(void *event);
@@ -801,6 +799,10 @@ extern              "C"
   void                ecore_event_x_init(void);
   char               *ecore_keypress_translate_into_typeable(Ecore_Event_Key_Down * e);
 
+  void                ecore_window_button_grab_auto_replay_set(Window win, 
+							       int (*func) (Ecore_Event_Mouse_Down *ev));
+  void               *ecore_window_button_grab_auto_replay_get(Window win);
+   
 #define ECORE_ATOM(atom, name) \
         if (!atom) (atom) = ecore_atom_get(name);
 #define MEMCPY(src, dst, type, num) \

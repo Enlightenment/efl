@@ -413,7 +413,8 @@ ecore_event_x_handle_button_press(XEvent * xevent)
           if (XFindContext(xevent->xbutton.display, e->win,
                            xid_context, (XPointer *) & xid) != XCNOENT)
             {
-              if (xid->grab_button_auto_replay)
+              if ((xid->grab_button_auto_replay) &&
+		  (xid->grab_button_auto_replay(e)))
                 {
                    ecore_pointer_replay(e->time);
                 }
