@@ -7,18 +7,25 @@
 #include <setjmp.h>
 
 #ifndef WIN32
-static sigjmp_buf detect_buf;
+static sigjmp_buf detect_buf, detect_buf2;
 #endif
 
 static int cpu_feature_mask = 0;
 
 #ifndef WIN32
 static void evas_common_cpu_catch_ill(int sig);
+static void evas_common_cpu_catch_segv(int sig);
 
 static void
 evas_common_cpu_catch_ill(int sig)
 {
    siglongjmp(detect_buf, 1);
+}
+
+static void
+evas_common_cpu_catch_segv(int sig)
+{
+   siglongjmp(detect_buf2, 1);
 }
 #endif
 
@@ -76,7 +83,7 @@ evas_common_cpu_feature_test(void (*feature)(void))
 {
 #ifndef WIN32
    int enabled = 1;
-   struct sigaction act, oact;
+   struct sigaction act, oact, oact2;
 
    act.sa_handler = evas_common_cpu_catch_ill;
    act.sa_flags = SA_RESTART;
@@ -87,8 +94,21 @@ evas_common_cpu_feature_test(void (*feature)(void))
 	sigaction(SIGILL, &oact, NULL);
 	return 0;
      }
+   act.sa_handler = evas_common_cpu_catch_segv;
+   act.sa_flags = SA_RESTART;
+   sigemptyset(&act.sa_mask);
+   sigaction(SIGSEGV, &act, &oact2);
+   if (sigsetjmp(detect_buf2, 1))
+     {
+	sigaction(SIGILL, &oact, NULL);
+	sigaction(SIGSEGV, &oact2, NULL);
+	return 0;
+     }
+   
    feature();
+   
    sigaction(SIGILL, &oact, NULL);
+   sigaction(SIGSEGV, &oact2, NULL);
    return enabled;
 #else
    return 0;
