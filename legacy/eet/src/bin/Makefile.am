@@ -1,4 +1,4 @@
-## Process this file with automake to produce Makefile.in
+MAINTAINERCLEANFILES = Makefile.in
 
 INCLUDES = -I$(top_srcdir)/src/lib
 
