@@ -1,6 +1,6 @@
 #include "evas_x11_routines.h"
 
-static void __evas_imlib_image_cache_flush(Display *disp);
+static void __evas_x11_image_cache_flush(Display *disp);
 static int  __evas_anti_alias = 1;
 static Evas_List drawable_list = NULL;
 
@@ -69,9 +69,10 @@ __evas_x11_image_draw(Evas_X11_Image *im,
 {
    Evas_List l;
    Imlib_Color_Modifier cm = NULL;
+   Pixmap pmap = 0, mask = 0;
 
    if (ca == 0) return;
-/*   
+
    if ((cr != 255) || (cg != 255) || (cb != 255) || (ca != 255))
      {
 	DATA8 r[256], g[256], b[256], a[256];
@@ -90,23 +91,26 @@ __evas_x11_image_draw(Evas_X11_Image *im,
      }
    else
       imlib_context_set_color_modifier(NULL);
-*/   
+
    imlib_context_set_display(disp);
    imlib_context_set_visual(__evas_visual);
    imlib_context_set_colormap(__evas_cmap);
    imlib_context_set_drawable(w);
-   imlib_context_set_dither(1);
+   imlib_context_set_dither_mask(__evas_anti_alias);
+   imlib_context_set_anti_alias(__evas_anti_alias);
    imlib_context_set_blend(0);
    imlib_context_set_angle(0.0);
    imlib_context_set_operation(IMLIB_OP_COPY);
    imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
-   imlib_context_set_anti_alias(__evas_anti_alias);
    for(l = drawable_list; l; l = l->next)
      {
 	Evas_X11_Drawable *dr;
 	
 	dr = l->data;
-	
+	if (dr->depth <= 8)
+	   imlib_context_set_dither(1);
+	else
+	   imlib_context_set_dither(0);	
 	if ((dr->win == w) && (dr->disp == disp))
 	  {
 	     Evas_List ll;
@@ -121,48 +125,44 @@ __evas_x11_image_draw(Evas_X11_Image *im,
 		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
 				      dst_x, dst_y, dst_w, dst_h))
 		    {
-		       Pixmap pmap = 0, mask = 0, s_pmap = 0, s_mask = 0;
+		       Imlib_Border bd;
+		       int xx, yy, ww, hh, iw, ih;
+		       
 
 		       if (!up->p)
 			  up->p = XCreatePixmap(disp, w, up->w, up->h, dr->depth);
 		       imlib_context_set_image(im);
-		       imlib_render_pixmaps_for_whole_image(&pmap, &mask);
-		       /* if we need to scale...... */
-/*		       
-		       if ((src_w != dst_w) || (src_h) != (dst_h))
+		       imlib_image_get_border(&bd);
+		       /* if we haven't created a pixmap for thew image yet this */
+		       /* round of updates */
+
+		       iw = imlib_image_get_width();
+		       ih = imlib_image_get_height();
+		       ww = (iw * dst_w) / src_w;
+		       hh = (ih * dst_h) / src_h;
+		       xx = (src_x * src_w) / dst_w;
+		       yy = (src_y * src_h) / dst_h;
+		       imlib_render_pixmaps_for_whole_image_at_size(&pmap, &mask,
+								    ww, hh);
+		       if (mask)
 			 {
-			    if (mask)
-			      {
-			      }
-			    
-			    if (s_pmap) XFreePixmap(disp, s_pmap);
-			    if (s_mask) XFreePixmap(disp, s_mask);
+			    XSetClipMask(disp, dr->gc, mask);
+			    XSetClipOrigin(disp, dr->gc, dst_x - up->x - src_x, dst_y - up->y - src_y);
 			 }
 		       else
-*/
 			 {
-			    if (mask)
-			      {
-/*				 
-				 XSetStipple(disp, dr->gc, mask);
-				 XSetTSOrigin(disp, dr->gc, dst_x - up->x, dst_y - up->y);
-*/
-				 XSetClipMask(disp, dr->gc, mask);
-				 XSetClipOrigin(disp, dr->gc, dst_x - up->x, dst_y - up->y);
-			      }
-			    else
-			      {
-				 XSetClipMask(disp, dr->gc, None);
-			      }
-                            if (pmap)
-			       XCopyArea(disp, pmap, up->p, dr->gc, 
-					 src_x, src_y, src_w, src_h, dst_x - up->x, dst_y - up->y);
+			    XSetClipMask(disp, dr->gc, None);
 			 }
-		       if (pmap) imlib_free_pixmap_and_mask(pmap);
+		       if (pmap)
+			  XCopyArea(disp, pmap, up->p, dr->gc, 
+				    xx, yy, 
+				    dst_w, dst_h, 
+				    dst_x - up->x, dst_y - up->y);
 		    }
 	       }
 	  }
      }
+   if (pmap) imlib_free_pixmap_and_mask(pmap);
    if (cm)
      {
 	imlib_free_color_modifier();
@@ -620,6 +620,7 @@ __evas_x11_flush_draw(Display *disp, Imlib_Image dstim, Window win)
 	
 	dr = l->data;
 	
+	XSetClipMask(disp, dr->gc, None);
 	if ((dr->win == win) && (dr->disp == disp))
 	  {
 	     Evas_List ll;
