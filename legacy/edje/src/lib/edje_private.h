@@ -15,7 +15,6 @@
 
 #include <math.h>
 #include <fnmatch.h>
-#include <stdarg.h>
 
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
@@ -131,7 +130,7 @@ void _edje_message_init(void);
 void _edje_message_shutdown(void);
 Edje_Message *_edje_message_new(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id);
 void _edje_message_free(Edje_Message *em);
-void _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, ...);
+void _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, void *emsg);
 void _edje_message_process(Edje_Message *em);
 void _edje_message_queue_process(void);
 void _edje_message_queue_clear(void);

@@ -21,6 +21,7 @@ static Ecore_Idle_Enterer *idler = NULL;
 static int
 _edje_dummy_timer(void *data)
 {
+   printf("DUMMY\n");
    return 0;
 }
 
@@ -71,35 +72,94 @@ _edje_message_free(Edje_Message *em)
 	switch (em->type)
 	  {
 	   case EDJE_MESSAGE_STRING:
+	       {
+		  Edje_Message_String *emsg;
+		  
+		  emsg = (Edje_Message_String *)em->msg;
+		  free(emsg->str);
+		  free(emsg);
+	       }
 	   case EDJE_MESSAGE_INT:
+	       {
+		  Edje_Message_Int *emsg;
+		  
+		  emsg = (Edje_Message_Int *)em->msg;
+		  free(emsg);
+	       }
 	   case EDJE_MESSAGE_FLOAT:
+	       {
+		  Edje_Message_Float *emsg;
+		  
+		  emsg = (Edje_Message_Float *)em->msg;
+		  free(emsg);
+	       }
 	   case EDJE_MESSAGE_INT_SET:
+	       {
+		  Edje_Message_Int_Set *emsg;
+		  
+		  emsg = (Edje_Message_Int_Set *)em->msg;
+		  free(emsg);
+	       }
+	     break;
 	   case EDJE_MESSAGE_FLOAT_SET:
-	     free(em->msg);
+	       {
+		  Edje_Message_Float_Set *emsg;
+		  
+		  emsg = (Edje_Message_Float_Set *)em->msg;
+		  free(emsg);
+	       }
 	     break;
 	   case EDJE_MESSAGE_STRING_FLOAT:
+	       {
+		  Edje_Message_String_Float *emsg;
+		  
+		  emsg = (Edje_Message_String_Float *)em->msg;
+		  free(emsg->str);
+		  free(emsg);
+	       }
 	   case EDJE_MESSAGE_STRING_INT:
+	       {
+		  Edje_Message_String_Int *emsg;
+		  
+		  emsg = (Edje_Message_String_Int *)em->msg;
+		  free(emsg->str);
+		  free(emsg);
+	       }
 	   case EDJE_MESSAGE_STRING_FLOAT_SET:
+	       {
+		  Edje_Message_String_Float_Set *emsg;
+		  
+		  emsg = (Edje_Message_String_Float_Set *)em->msg;
+		  free(emsg->str);
+		  free(emsg);
+	       }
 	   case EDJE_MESSAGE_STRING_INT_SET:
-	     memcpy(&ptr, em->msg, sizeof(char *));
-	     free(ptr);
-	     free(em->msg);
-	     break;
+	       {
+		  Edje_Message_String_Int_Set *emsg;
+		  
+		  emsg = (Edje_Message_String_Int_Set *)em->msg;
+		  free(emsg->str);
+		  free(emsg);
+	       }
 	   case EDJE_MESSAGE_SIGNAL:
-	     memcpy(&ptr, em->msg, sizeof(char *));
-	     free(ptr);
-	     memcpy(&ptr, em->msg + sizeof(char *), sizeof(char *));
-	     free(ptr);
-	     free(em->msg);
+	       {
+		  Edje_Message_Signal *emsg;
+		  
+		  emsg = (Edje_Message_Signal *)em->msg;
+		  free(emsg->sig);
+		  free(emsg->src);
+		  free(emsg);
+	       }
 	     break;
 	   case EDJE_MESSAGE_STRING_SET:
-	     memcpy(&count, em->msg, sizeof(int));
-	     for (i = 0; i < count; i++)
 	       {
-		  memcpy(&ptr, em->msg + sizeof(int) + (i * sizeof(char *)), sizeof(char *));
-		  free(ptr);
+		  Edje_Message_String_Set *emsg;
+		  
+		  emsg = (Edje_Message_String_Set *)em->msg;
+		  for (i = 0; i < emsg->count; i++)
+		    free(emsg->str[i]);
+		  free(emsg);
 	       }
-	     free(em->msg);
 	     break;
 	   case EDJE_MESSAGE_NONE:
 	   default:
@@ -111,121 +171,142 @@ _edje_message_free(Edje_Message *em)
 }
 
 void
-_edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, ...)
+_edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, void *emsg)
 {
-   /* FIXME: check all malloc fails and gracefully unroll and exit */
+   /* FIXME: check all malloc & strdup fails and gracefully unroll and exit */
    Edje_Message *em;
-   va_list args;
-   int count = 0, i;
-   char *str = NULL, *str2 = NULL, *s;
-   int num = 0;
-   double flt = 0.0;
+   int i;
    unsigned char *msg = NULL;
    
    em = _edje_message_new(ed, queue, type, id);
    if (!em) return;
-   va_start(args, id);
-
-   /* this is evil code - but all we do is pack pointers, ints and doubles */
-   /* into the msg generic pointer one after the other */
    switch (em->type)
      {
       case EDJE_MESSAGE_NONE:
 	break;
       case EDJE_MESSAGE_SIGNAL:
-	str = va_arg(args, char *);
-	str2 = va_arg(args, char *);
-	msg = malloc(sizeof(char *) * 2);
-	s = strdup(str);
-	memcpy(msg + (0 * sizeof(char *)), &s, sizeof(char *));
-	s = strdup(str2);
-	memcpy(msg + (1 * sizeof(char *)), &s, sizeof(char *));
+	  {
+	     Edje_Message_Signal *emsg2, *emsg3;
+	     
+	     emsg2 = (Edje_Message_Signal *)emsg;
+	     emsg3 = malloc(sizeof(Edje_Message_Signal));
+	     emsg3->sig = strdup(emsg2->sig);
+	     emsg3->src = strdup(emsg2->src);
+	     msg = (unsigned char *)emsg3;
+	  }
 	break;
       case EDJE_MESSAGE_STRING:
-	str = va_arg(args, char *);
-	msg = strdup(str);
+	  {
+	     Edje_Message_String *emsg2, *emsg3;
+	     
+	     emsg2 = (Edje_Message_String *)emsg;
+	     emsg3 = malloc(sizeof(Edje_Message_String));
+	     emsg3->str = strdup(emsg2->str);
+	     msg = (unsigned char *)emsg3;
+	  }
 	break;
       case EDJE_MESSAGE_INT:
-	num = va_arg(args, int);
-	msg = malloc(sizeof(int));
-	memcpy(msg, &num, sizeof(int));
+	  {
+	     Edje_Message_Int *emsg2, *emsg3;
+	     
+	     emsg2 = (Edje_Message_Int *)emsg;
+	     emsg3 = malloc(sizeof(Edje_Message_Int));
+	     emsg3->val = emsg2->val;
+	     msg = (unsigned char *)emsg3;
+	  }
 	break;
       case EDJE_MESSAGE_FLOAT:
-	flt = va_arg(args, double);
-	msg = malloc(sizeof(double));
-	memcpy(msg, &flt, sizeof(double));
+	  {
+	     Edje_Message_Float *emsg2, *emsg3;
+	     
+	     emsg2 = (Edje_Message_Float *)emsg;
+	     emsg3 = malloc(sizeof(Edje_Message_Float));
+	     emsg3->val = emsg2->val;
+	     msg = (unsigned char *)emsg3;
+	  }
 	break;
       case EDJE_MESSAGE_STRING_SET:
-	count = va_arg(args, int);
-	msg = malloc(sizeof(int) + (count * sizeof(char *)));
-	memcpy(msg, &count, sizeof(int));
-	for (i = 0; i < count; i++)
 	  {
-	     str = va_arg(args, char *);
-	     s = strdup(str);
-	     memcpy(msg + sizeof(int) + (i * sizeof(char *)), &s, sizeof(char *));
+	     Edje_Message_String_Set *emsg2, *emsg3;
+	     
+	     emsg2 = (Edje_Message_String_Set *)emsg;
+	     emsg3 = malloc(sizeof(Edje_Message_String_Set) + ((emsg2->count - 1) * sizeof(char *)));
+	     emsg3->count = emsg2->count;
+	     for (i = 0; i < emsg3->count; i++)
+	       emsg3->str[i] = strdup(emsg2->str[i]);
+	     msg = (unsigned char *)emsg3;
 	  }
 	break;
       case EDJE_MESSAGE_INT_SET:
-	count = va_arg(args, int);
-	msg = malloc(sizeof(int) + (count * sizeof(int)));
-	memcpy(msg, &count, sizeof(int));
-	for (i = 0; i < count; i++)
 	  {
-	     num = va_arg(args, int);
-	     memcpy(msg + sizeof(int) + (i * sizeof(int)), &num, sizeof(int));
+	     Edje_Message_Int_Set *emsg2, *emsg3;
+	     
+	     emsg2 = (Edje_Message_Int_Set *)emsg;
+	     emsg3 = malloc(sizeof(Edje_Message_Int_Set) + ((emsg2->count - 1) * sizeof(int)));
+	     emsg3->count = emsg2->count;
+	     for (i = 0; i < emsg3->count; i++)
+	       emsg3->val[i] = emsg2->val[i];
+	     msg = (unsigned char *)emsg3;
 	  }
 	break;
       case EDJE_MESSAGE_FLOAT_SET:
-	count = va_arg(args, int);
-	msg = malloc(sizeof(int) + (count * sizeof(double)));
-	memcpy(msg, &count, sizeof(int));
-	for (i = 0; i < count; i++)
 	  {
-	     flt = va_arg(args, double);
-	     memcpy(msg + sizeof(int) + (i * sizeof(double)), &flt, sizeof(double));
+	     Edje_Message_Float_Set *emsg2, *emsg3;
+	     
+	     emsg2 = (Edje_Message_Float_Set *)emsg;
+	     emsg3 = malloc(sizeof(Edje_Message_Float_Set) + ((emsg2->count - 1) * sizeof(double)));
+	     emsg3->count = emsg2->count;
+	     for (i = 0; i < emsg3->count; i++)
+	       emsg3->val[i] = emsg2->val[i];
+	     msg = (unsigned char *)emsg3;
 	  }
 	break;
       case EDJE_MESSAGE_STRING_INT:
-	str = va_arg(args, char *);
-	num = va_arg(args, int);
-	msg = malloc(sizeof(char *) + sizeof(int));
-	s = strdup(str);
-	memcpy(msg, &s, sizeof(char *));
-	memcpy(msg + sizeof(char *), &num, sizeof(int));
+	  {
+	     Edje_Message_String_Int *emsg2, *emsg3;
+	     
+	     emsg2 = (Edje_Message_String_Int *)emsg;
+	     emsg3 = malloc(sizeof(Edje_Message_String_Int));
+	     emsg3->str = strdup(emsg2->str);
+	     emsg3->val = emsg2->val;
+	     msg = (unsigned char *)emsg3;
+	  }
 	break;
       case EDJE_MESSAGE_STRING_FLOAT:
-	str = va_arg(args, char *);
-	flt = va_arg(args, double);
-	msg = malloc(sizeof(char *) + sizeof(double));
-	s = strdup(str);
-	memcpy(msg, &s, sizeof(char *));
-	memcpy(msg + sizeof(char *), &flt, sizeof(double));
+	  {
+	     Edje_Message_String_Float *emsg2, *emsg3;
+	     
+	     emsg2 = (Edje_Message_String_Float *)emsg;
+	     emsg3 = malloc(sizeof(Edje_Message_String_Float));
+	     emsg3->str = strdup(emsg2->str);
+	     emsg3->val = emsg2->val;
+	     msg = (unsigned char *)emsg3;
+	  }
 	break;
       case EDJE_MESSAGE_STRING_INT_SET:
-	str = va_arg(args, char *);
-	count = va_arg(args, int);
-	msg = malloc(sizeof (char *) + sizeof(int) + (count * sizeof(int)));
-	s = strdup(str);
-	memcpy(msg, &s, sizeof(char *));
-	memcpy(msg + sizeof(char *), &count, sizeof(int));
-	for (i = 0; i < count; i++)
 	  {
-	     num = va_arg(args, int);
-	     memcpy(msg + sizeof(char *) + sizeof(int) + (i * sizeof(int)), &num, sizeof(int));
+	     Edje_Message_String_Int_Set *emsg2, *emsg3;
+	     
+	     emsg2 = (Edje_Message_String_Int_Set *)emsg;
+	     emsg3 = malloc(sizeof(Edje_Message_String_Int_Set) + ((emsg2->count - 1) * sizeof(int)));
+	     emsg3->str = strdup(emsg2->str);
+	     emsg3->count = emsg2->count;
+	     for (i = 0; i < emsg3->count; i++)
+	       emsg3->val[i] = emsg2->val[i];
+	     msg = (unsigned char *)emsg3;
 	  }
 	break;
       case EDJE_MESSAGE_STRING_FLOAT_SET:
-	str = va_arg(args, char *);
-	count = va_arg(args, int);
-	msg = malloc(sizeof (char *) + sizeof(int) + (count * sizeof(double)));
-	s = strdup(str);
-	memcpy(msg, &s, sizeof(char *));
-	memcpy(msg + sizeof(char *), &count, sizeof(int));
-	for (i = 0; i < count; i++)
 	  {
-	     flt = va_arg(args, double);
-	     memcpy(msg + sizeof(char *) + sizeof(int) + (i * sizeof(double)), &flt, sizeof(double));
+	     Edje_Message_String_Float_Set *emsg2, *emsg3;
+	     
+	     emsg2 = (Edje_Message_String_Float_Set *)emsg;
+	     emsg3 = malloc(sizeof(Edje_Message_String_Float_Set) + ((emsg2->count - 1) * sizeof(double)));
+	     emsg3->str = strdup(emsg2->str);
+	     emsg3->count = emsg2->count;
+	     for (i = 0; i < emsg3->count; i++)
+	       emsg3->val[i] = emsg2->val[i];
+	     msg = (unsigned char *)emsg3;
 	  }
 	break;
       default:
@@ -234,8 +315,6 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, .
    
    em->msg = msg;
    msgq = evas_list_append(msgq, em);
-   
-   va_end(args);
 }
 
 void
@@ -261,11 +340,10 @@ _edje_message_process(Edje_Message *em)
 		       void *pdata;
 		       Embryo_Cell cell;
 		       
-//		       embryo_parameter_string_push(em->edje->collection->script, sig);
 		       /* first param is the message type - always */
 		       cell = em->type;
 		       embryo_parameter_cell_push(em->edje->collection->script, cell);
-		       /* first param is the integer of the event id - always there */
+		       /* 2nd param is the integer of the event id - always there */
 		       cell = em->id;
 		       embryo_parameter_cell_push(em->edje->collection->script, cell);
 		       pdata = embryo_program_data_get(em->edje->collection->script);
@@ -274,7 +352,6 @@ _edje_message_process(Edje_Message *em)
 		       embryo_program_data_set(em->edje->collection->script, pdata);
 		    }
 	       }
-	     /* call script fn */
 	     break;
 	   default:
 	     break;
@@ -287,11 +364,45 @@ _edje_message_process(Edje_Message *em)
 	     
 	     memcpy(&str1, em->msg, sizeof(char *));
 	     memcpy(&str2, em->msg + sizeof(char *), sizeof(char *));
-//	     printf("HANDLE SIG!\n");
 	     _edje_emit_handle(em->edje, str1, str2);
 	  }
 	break;
       case EDJE_MESSAGE_STRING:
+	switch (em->queue)
+	  {
+	   case EDJE_QUEUE_APP:
+	     /* simply call app callback */
+	     break;
+	   case EDJE_QUEUE_SCRIPT:
+	     if ((em->edje->collection) && (em->edje->collection->script))
+	       {
+		  Embryo_Function fn;
+		  
+		  _edje_embryo_script_reset(em->edje);
+		  fn = embryo_program_function_find(em->edje->collection->script, "message");
+		  if (fn != EMBRYO_FUNCTION_NONE)
+		    {
+		       void *pdata;
+		       Embryo_Cell cell;
+		       
+		       /* first param is the message type - always */
+		       cell = em->type;
+		       embryo_parameter_cell_push(em->edje->collection->script, cell);
+		       /* 2nd param is the integer of the event id - always there */
+		       cell = em->id;
+		       embryo_parameter_cell_push(em->edje->collection->script, cell);
+		       /* 3rd param is the string */
+		       embryo_parameter_string_push(em->edje->collection->script, em->msg);
+		       pdata = embryo_program_data_get(em->edje->collection->script);
+		       embryo_program_data_set(em->edje->collection->script, em->edje);
+		       embryo_program_run(em->edje->collection->script, fn);
+		       embryo_program_data_set(em->edje->collection->script, pdata);
+		    }
+	       }
+	     break;
+	   default:
+	     break;
+	  }
 	break;
       case EDJE_MESSAGE_INT:
 	break;
@@ -319,23 +430,29 @@ _edje_message_process(Edje_Message *em)
 void
 _edje_message_queue_process(void)
 {
+   int i;
+   
    if (msgq == NULL) return;
 
-//   printf("PROCESS\n");
-   /* a temporary message queue */
-   tmp_msgq = msgq;
-   msgq = NULL;
-   
-   while (tmp_msgq)
+   /* allow the message queue to feed itself up to 8 times before forcing */
+   /* us to go back to normal processing and let a 0 timeout deal with it */
+   for (i = 0; (i < 8) && (msgq); i++)
      {
-	Edje_Message *em;
+	/* a temporary message queue */
+	tmp_msgq = msgq;
+	msgq = NULL;
 	
-	em = tmp_msgq->data;
-	tmp_msgq = evas_list_remove_list(tmp_msgq, tmp_msgq);
-	_edje_message_process(em);
-	_edje_message_free(em);
+	while (tmp_msgq)
+	  {
+	     Edje_Message *em;
+	     
+	     em = tmp_msgq->data;
+	     tmp_msgq = evas_list_remove_list(tmp_msgq, tmp_msgq);
+	     _edje_message_process(em);
+	     _edje_message_free(em);
+	  }
      }
-
+   
    /* if the message queue filled again set a timer to expire in 0.0 sec */
    /* to get the dle enterer to be run again */
    if (msgq)

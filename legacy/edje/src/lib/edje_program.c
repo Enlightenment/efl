@@ -727,8 +727,12 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, char *ssig, char *ssrc)
 void
 _edje_emit(Edje *ed, char *sig, char *src)
 {
+   Edje_Message_Signal emsg;
+   
    if (ed->delete_me) return;
-   _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_SIGNAL, 0, sig, src);
+   emsg.sig = sig;
+   emsg.src = src;
+   _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_SIGNAL, 0, &emsg);
 }
 
 /* FIXME: what if we delete the evas object??? */

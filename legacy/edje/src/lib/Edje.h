@@ -32,19 +32,102 @@ typedef enum _Edje_Message_Type
      EDJE_MESSAGE_STRING_FLOAT_SET = 11
 } Edje_Message_Type;
 
-#define EDJE_DRAG_DIR_NONE 0
-#define EDJE_DRAG_DIR_X    1
-#define EDJE_DRAG_DIR_Y    2
-#define EDJE_DRAG_DIR_XY   3
+typedef struct _Edje_Message_Signal           Edje_Message_Signal;
+typedef struct _Edje_Message_String           Edje_Message_String;
+typedef struct _Edje_Message_Int              Edje_Message_Int;
+typedef struct _Edje_Message_Float            Edje_Message_Float;
+typedef struct _Edje_Message_String_Set       Edje_Message_String_Set;
+typedef struct _Edje_Message_Int_Set          Edje_Message_Int_Set;
+typedef struct _Edje_Message_Float_Set        Edje_Message_Float_Set;
+typedef struct _Edje_Message_String_Int       Edje_Message_String_Int;
+typedef struct _Edje_Message_String_Float     Edje_Message_String_Float;
+typedef struct _Edje_Message_String_Int_Set   Edje_Message_String_Int_Set;
+typedef struct _Edje_Message_String_Float_Set Edje_Message_String_Float_Set;
 
-#define EDJE_LOAD_ERROR_NONE                       0
-#define EDJE_LOAD_ERROR_GENERIC                    1
-#define EDJE_LOAD_ERROR_DOES_NOT_EXIST             2
-#define EDJE_LOAD_ERROR_PERMISSION_DENIED          3
-#define EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED 4
-#define EDJE_LOAD_ERROR_CORRUPT_FILE               5
-#define EDJE_LOAD_ERROR_UNKNOWN_FORMAT             6
-#define EDJE_LOAD_ERROR_INCOMPATIBLE_FILE          7
+struct _Edje_Message_Signal
+{
+   char *sig;
+   char *src;
+};
+
+struct _Edje_Message_String
+{
+   char *str;
+};
+
+struct _Edje_Message_Int
+{
+   int val;
+};
+
+struct _Edje_Message_Float
+{
+   double val;
+};
+
+struct _Edje_Message_String_Set
+{
+   int count;
+   char *str[1];
+};
+
+struct _Edje_Message_Int_Set
+{
+   int count;
+   int val[1];
+};
+
+struct _Edje_Message_Float_Set
+{
+   int count;
+   double val[1];
+};
+
+struct _Edje_Message_String_Int
+{
+   char *str;
+   int val;
+};
+
+struct _Edje_Message_String_Float
+{
+   char *str;
+   double val;
+};
+
+struct _Edje_Message_String_Int_Set
+{
+   char *str;
+   int count;
+   int val[1];
+};
+
+struct _Edje_Message_String_Float_Set
+{
+   char *str;
+   int count;
+   double val[1];
+};
+
+enum
+{
+   EDJE_DRAG_DIR_NONE = 0,
+     EDJE_DRAG_DIR_X = 1,
+     EDJE_DRAG_DIR_Y = 2,
+     EDJE_DRAG_DIR_XY = 3
+};
+
+enum
+{
+   EDJE_LOAD_ERROR_NONE = 0,
+     EDJE_LOAD_ERROR_GENERIC = 1,
+     EDJE_LOAD_ERROR_DOES_NOT_EXIST = 2,
+     EDJE_LOAD_ERROR_PERMISSION_DENIED = 3,
+     EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED = 4,
+     EDJE_LOAD_ERROR_CORRUPT_FILE = 5,
+     EDJE_LOAD_ERROR_UNKNOWN_FORMAT = 6,
+     EDJE_LOAD_ERROR_INCOMPATIBLE_FILE = 7
+};
 
 #ifdef __cplusplus
 extern "C" {
