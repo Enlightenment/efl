@@ -34,11 +34,14 @@ $(top_builddir)/src/lib/ecore/libecore.la
 ecore_config_ipc_ecore_la_DEPENDENCIES     = \
 $(top_builddir)/config.h \
 $(top_builddir)/src/lib/ecore/libecore.la \
-$(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la
+$(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
+$(top_builddir)/src/lib/ecore_config/libecore_config.la
 ecore_config_ipc_ecore_la_SOURCES          = ipc_ecore.c
 ecore_config_ipc_ecore_la_LIBADD           = \
 $(top_builddir)/src/lib/ecore/libecore.la \
-$(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la
+$(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
+$(top_builddir)/src/lib/ecore_config/libecore_config.la \
+-ledb
 
 
 endif
