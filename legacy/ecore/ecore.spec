@@ -11,7 +11,7 @@ Release: %{rel}
 Copyright: BSD
 Group: User Interface/X
 URL: http://www.enlightenment.org/efm.html
-Packager: The Rasterman <raster@rasterman.com> Term <term@kempler.net>
+Packager: The Rasterman <raster@rasterman.com> Term <term@twistedpath.org>
 Vendor: The Enlightenment Development Team <e-develop@enlightenment.org>
 Source: ftp://ftp.enlightenment.org/enlightenment/%{name}-%{ver}.tar.gz
 BuildRoot: /var/tmp/%{name}-root
