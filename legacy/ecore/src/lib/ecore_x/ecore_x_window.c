@@ -688,3 +688,16 @@ ecore_x_window_parent_get(Ecore_X_Window win)
    return parent;
 }
 
+/**
+ * Sets the background color of the given window.
+ * @param win   The given window
+ * @param color The color to set to (i.e. 0xff0000)
+ */
+void
+ecore_x_window_background_color_set(Ecore_X_Window win, unsigned long color)
+{
+   XSetWindowAttributes attr;
+
+   attr.background_pixel      = color;
+   XChangeWindowAttributes(_ecore_x_disp, win, CWBackPixel, &attr);
+}
