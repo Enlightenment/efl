@@ -38,6 +38,9 @@
 #if defined LINUX
   #include <unistd.h>
   #include <embryo_cc_sclinux.h>
+//
+  #include "config.h"
+//
 #endif
 
 #if defined FORTIFY
@@ -588,12 +591,14 @@ static void initglobals(void)
   litmax=sDEF_LITMAX;   /* current size of the literal table */
   errnum=0;             /* number of errors */
   warnnum=0;            /* number of warnings */
-  sc_debug=sCHKBOUNDS;  /* by default: bounds checking+assertions */
+//  sc_debug=sCHKBOUNDS;  /* by default: bounds checking+assertions */
+  sc_debug=0;           /* by default: no debug */
   charbits=8;           /* a "char" is 8 bits */
   sc_packstr=FALSE;     /* strings are unpacked by default */
-  sc_compress=TRUE;     /* compress output bytecodes */
+//  sc_compress=TRUE;     /* compress output bytecodes */
+  sc_compress=FALSE;     /* compress output bytecodes */
   sc_needsemicolon=FALSE;/* semicolon required to terminate expressions? */
-  sc_dataalign=sizeof(cell);
+  sc_dataalign=4;
   sc_stksize=sDEF_AMXSTACK;/* default stack size */
   sc_tabsize=8;         /* assume a TAB is 8 spaces */
   sc_rationaltag=0;     /* assume no support for rational numbers */
@@ -676,6 +681,11 @@ static void parseoptions(int argc,char **argv,char *iname,char *oname,
   char str[_MAX_PATH],*ptr;
   int arg,i,isoption;
 
+//   
+   /* use embryo include dir always */
+   insert_path(PACKAGE_DATA_DIR"/include/");
+   insert_path(PACKAGE_DATA_DIR"./");
+//	       
   for (arg=1; arg<argc; arg++) {
     #if DIRSEP_CHAR=='/'
       isoption= argv[arg][0]=='-';
@@ -685,6 +695,7 @@ static void parseoptions(int argc,char **argv,char *iname,char *oname,
     if (isoption) {
       ptr=&argv[arg][1];
       switch (*ptr) {
+#if 0	 
       case 'A':
         i=atoi(ptr+1);
         if ((i % sizeof(cell))==0)
@@ -734,6 +745,7 @@ static void parseoptions(int argc,char **argv,char *iname,char *oname,
           about();
         } /* switch */
         break;
+#endif	 
       case 'e':
         strcpy(ename,ptr+1);    /* set name of error file */
         break;
@@ -755,14 +767,17 @@ static void parseoptions(int argc,char **argv,char *iname,char *oname,
           insert_path(str);
         } /* if */
         break;
+#if 0	 
       case 'l':
         if (*(ptr+1)!='\0')
           about();
         sc_listing=TRUE;        /* skip second pass & code generation */
         break;
+#endif	 
       case 'o':
         strcpy(oname,ptr+1);    /* set name of (binary) output file */
         break;
+#if 0	 
       case 'P':
         sc_packstr=toggle_option(ptr,sc_packstr);
         break;
@@ -786,6 +801,7 @@ static void parseoptions(int argc,char **argv,char *iname,char *oname,
         } /* if */
         break;
 #endif
+#endif	 
       case 'S':
         i=atoi(ptr+1);
         if (i>64)
@@ -793,6 +809,7 @@ static void parseoptions(int argc,char **argv,char *iname,char *oname,
         else
           about();
         break;
+#if 0	 
       case 's':
         skipinput=atoi(ptr+1);
         break;
@@ -808,6 +825,7 @@ static void parseoptions(int argc,char **argv,char *iname,char *oname,
       case ';':
         sc_needsemicolon=toggle_option(ptr,sc_needsemicolon);
         break;
+#endif	 
       default:                  /* wrong option */
         about();
       } /* switch */
@@ -996,15 +1014,19 @@ static int waitkey(void)
 
 static void setcaption(void)
 {
+// shh be quiet!   
+#if 0   
   sc_printf("Small compiler " VERSION_STR "\t\tCopyright (c) 1997-2003, ITB CompuPhase\n\n");
+#endif   
 }
 
 static void about(void)
 {
   if (strlen(errfname)==0) {
     setcaption();
-    sc_printf("Usage:   sc <filename> [options]\n\n");
+    sc_printf("Usage:   embryo_cc <filename> [options]\n\n");
     sc_printf("Options:\n");
+#if 0     
     sc_printf("         -A<num>  alignment in bytes of the data segment and the stack\n");
     sc_printf("         -a       output assembler code (skip code generation pass)\n");
     sc_printf("         -C[+/-]  compact encoding for output file (default=%c)\n", sc_compress ? '+' : '-');
@@ -1021,9 +1043,13 @@ static void about(void)
 #if defined	__WIN32__ || defined _WIN32 || defined _Windows
     sc_printf("         -H<hwnd> window handle to send a notification message on finish\n");
 #endif
+#endif     
     sc_printf("         -i<name> path for include files\n");
+#if 0     
     sc_printf("         -l       create list file (preprocess only)\n");
+#endif     
     sc_printf("         -o<name> set base name of output file\n");
+#if 0     
     sc_printf("         -P[+/-]  strings are \"packed\" by default (default=%c)\n", sc_packstr ? '+' : '-');
     sc_printf("         -p<name> set name of \"prefix\" file\n");
     if (!waitkey())
@@ -1031,7 +1057,9 @@ static void about(void)
 #if !defined SC_LIGHT
     sc_printf("         -r[name] write cross reference report to console or to specified file\n");
 #endif
+#endif     
     sc_printf("         -S<num>  stack/heap size in cells (default=%d)\n",(int)sc_stksize);
+#if 0     
     sc_printf("         -s<num>  skip lines from the input file\n");
     sc_printf("         -t<num>  TAB indent size (in character positions)\n");
     sc_printf("         -\\       use '\\' for escape characters\n");
@@ -1039,6 +1067,7 @@ static void about(void)
     sc_printf("         -;[+/-]  require a semicolon to end each statement (default=%c)\n", sc_needsemicolon ? '+' : '-');
     sc_printf("         sym=val  define constant \"sym\" with value \"val\"\n");
     sc_printf("         sym=     define constant \"sym\" with value 0\n");
+#endif     
   } /* if */
   longjmp(errbuf,3);        /* user abort */
 }

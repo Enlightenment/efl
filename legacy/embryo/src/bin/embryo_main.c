@@ -1,5 +1,8 @@
 #include "Embryo.h"
 
+/* This is ugly code! don't look at it please! i am embarrassed! i need to */
+/* cleanit up! */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
