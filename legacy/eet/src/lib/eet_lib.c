@@ -247,8 +247,11 @@ eet_flush(Eet_File *ef)
      {
 	for (j = 0; j < ef->header->directory->hash[i].size; j++)
 	  {
-	     size += 20 + strlen(ef->header->directory->hash[i].node[j].name);
-	     count++;
+	     if (ef->header->directory->hash[i].node[j].compression >= 0)
+	       {  
+		  size += 20 + strlen(ef->header->directory->hash[i].node[j].name);
+		  count++;
+	       }
 	  }
      }
    /* caluclate offsets per entry */
@@ -257,8 +260,11 @@ eet_flush(Eet_File *ef)
      {
 	for (j = 0; j < ef->header->directory->hash[i].size; j++)
 	  {
-	     ef->header->directory->hash[i].node[j].offset = 12 + size + offset;
-	     offset += ef->header->directory->hash[i].node[j].size;
+             if (ef->header->directory->hash[i].node[j].compression >= 0)
+	       {
+		  ef->header->directory->hash[i].node[j].offset = 12 + size + offset;
+		  offset += ef->header->directory->hash[i].node[j].size;
+	       }
 	  }
      }
    /* go thru and write the header */
@@ -319,10 +325,13 @@ eet_flush(Eet_File *ef)
      {
 	for (j = 0; j < ef->header->directory->hash[i].size; j++)
 	  {
-	     if (fwrite(ef->header->directory->hash[i].node[j].data, 
-		       ef->header->directory->hash[i].node[j].size,
-		       1, ef->fp) != 1)
-	       return;
+	     if (ef->header->directory->hash[i].node[j].compression >= 0)
+	       {
+		  if (fwrite(ef->header->directory->hash[i].node[j].data, 
+			     ef->header->directory->hash[i].node[j].size,
+			     1, ef->fp) != 1)
+		    return;
+	       }
 	  }
      }
    /* no more writes pending */
