@@ -1491,7 +1491,7 @@ int
 _edje_unblock(Edje *ed)
 {
    int ret = 0;
-   if (!ed) return;
+   if (!ed) return ret;
 
    ed->block--;
    if (ed->block == 0)
