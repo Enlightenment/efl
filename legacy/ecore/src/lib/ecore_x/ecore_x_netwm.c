@@ -73,27 +73,28 @@ ecore_x_window_prop_card32_get(Ecore_X_Window win, Ecore_X_Atom atom,
    unsigned long       bytes_after, num_ret;
    int                 format_ret;
    unsigned int        i;
+   int                 num;
 
    prop_ret = NULL;
    XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
-		      ECORE_X_ATOM_UTF8_STRING, &type_ret,
-		      &format_ret, &num_ret, &bytes_after, &prop_ret);
-   if (prop_ret && num_ret > 0 && format_ret == 32)
+		      XA_CARDINAL, &type_ret, &format_ret, &num_ret,
+		      &bytes_after, &prop_ret);
+   if (prop_ret && type_ret == XA_CARDINAL && format_ret == 32)
      {
 	if (num_ret < len)
 	   len = num_ret;
 	for (i = 0; i < len; i++)
-	   val[i] = prop_ret[i];
+	   val[i] = ((unsigned long *)prop_ret)[i];
+	num = len;
      }
    else
      {
-	if (!prop_ret || format_ret != 32)
-	   len = -1;
+	num = -1;
      }
    if (prop_ret)
       XFree(prop_ret);
 
-   return len;
+   return num;
 }
 
 /*
