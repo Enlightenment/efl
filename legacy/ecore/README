@@ -47,3 +47,9 @@ export CFLAGS="-O9"
 --with-evas-config=/skiff/local/arm-linux/bin/evas-config
 make CFLAGS="-O9 -I/skiff/local/include -I/skiff/local/arm-linux/include"
 
+FOR OTHER DEVELOPERS:
+
+If you want to help with E... here's some ideas for ecore:
+
+* All of NETWM supported in ecore_x
+* Support DBUS ontop of ecore_con (and modify to allow explicit paths)

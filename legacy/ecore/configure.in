@@ -102,15 +102,20 @@ x_ldflags="";
 
 AC_ARG_ENABLE(ecore-x, 
 [  --enable-ecore-x                enable the ecore_x module], [
-  AC_MSG_RESULT(yes)
-  AM_CONDITIONAL(BUILD_ECORE_X, test "$enableval" = "yes")
-  AC_DEFINE(BUILD_ECORE_X)
-  x_dir="/usr/X11R6";
-  x_includes="";
-  x_cflags="-I"$x_dir"/include"
-  x_libs="-L"$x_dir"/lib -lX11 -lXext"
-  x_ldflags="";
-  ecore_x_libs="-lecore_x";
+  if [ test "$enableval" = "yes" ]; then  
+    AC_MSG_RESULT(yes)
+    AM_CONDITIONAL(BUILD_ECORE_X, test "$enableval" = "yes")
+    AC_DEFINE(BUILD_ECORE_X)
+    x_dir="/usr/X11R6";
+    x_includes="";
+    x_cflags="-I"$x_dir"/include"
+    x_libs="-L"$x_dir"/lib -lX11 -lXext"
+    x_ldflags="";
+    ecore_x_libs="-lecore_x";
+  else
+    AC_MSG_RESULT(no)
+    AM_CONDITIONAL(BUILD_ECORE_X, false)
+  fi
 ], [
   AC_MSG_RESULT(no)
   AM_CONDITIONAL(BUILD_ECORE_X, false)
@@ -132,10 +137,15 @@ ecore_job_libs="";
 
 AC_ARG_ENABLE(ecore-job, 
 [  --enable-ecore-job              enable the ecore_job module], [
-  AC_MSG_RESULT(yes)
-  AM_CONDITIONAL(BUILD_ECORE_JOB, test "$enableval" = "yes")
-  AC_DEFINE(BUILD_ECORE_JOB)
-  ecore_job_libs="-lecore_job";
+  if [ test "$enableval" = "yes" ]; then  
+    AC_MSG_RESULT(yes)
+    AM_CONDITIONAL(BUILD_ECORE_JOB, test "$enableval" = "yes")
+    AC_DEFINE(BUILD_ECORE_JOB)
+    ecore_job_libs="-lecore_job";
+  else
+    AC_MSG_RESULT(no)
+    AM_CONDITIONAL(BUILD_ECORE_JOB, false)
+  fi
 ], [
   AC_MSG_RESULT(no)
   AM_CONDITIONAL(BUILD_ECORE_JOB, false)
@@ -152,10 +162,15 @@ AC_MSG_CHECKING(whether ecore_fb module is to be built)
 
 AC_ARG_ENABLE(ecore-fb, 
 [  --enable-ecore-fb               enable the ecore_fb module], [
-  AC_MSG_RESULT(yes)
-  AM_CONDITIONAL(BUILD_ECORE_FB, test "$enableval" = "yes")
-  AC_DEFINE(BUILD_ECORE_FB)
-  ecore_fb_libs="-lecore_fb";
+  if [ test "$enableval" = "yes" ]; then  
+    AC_MSG_RESULT(yes)
+    AM_CONDITIONAL(BUILD_ECORE_FB, test "$enableval" = "yes")
+    AC_DEFINE(BUILD_ECORE_FB)
+    ecore_fb_libs="-lecore_fb";
+  else
+    AC_MSG_RESULT(no)
+    AM_CONDITIONAL(BUILD_ECORE_FB, false)
+  fi
 ], [
   AC_MSG_RESULT(no)
   AM_CONDITIONAL(BUILD_ECORE_FB, false)
@@ -186,18 +201,23 @@ AC_MSG_CHECKING(whether ecore_evas module is to be built)
 
 AC_ARG_ENABLE(ecore-evas, 
 [  --enable-ecore-evas             enable the ecore_evas module], [
-  AC_MSG_RESULT(yes)
-  AM_CONDITIONAL(BUILD_ECORE_EVAS, test "$enableval" = "yes")
-  AC_DEFINE(BUILD_ECORE_EVAS)
-  if [ test -z $EVAS_CONFIG ]; then
-    echo $PROG " is not in your \$PATH. Please ensure it is.";
-    echo "Read the manual page for you shell as to how to extend your path.";
-    echo "FATAL ERROR. ABORT.";
-    exit -1;
+  if [ test "$enableval" = "yes" ]; then  
+    AC_MSG_RESULT(yes)
+    AM_CONDITIONAL(BUILD_ECORE_EVAS, test "$enableval" = "yes")
+    AC_DEFINE(BUILD_ECORE_EVAS)
+    if [ test -z $EVAS_CONFIG ]; then
+       echo $PROG " is not in your \$PATH. Please ensure it is.";
+       echo "Read the manual page for you shell as to how to extend your path.";
+       echo "FATAL ERROR. ABORT.";
+       exit -1;
+    fi
+    evas_cflags=`$EVAS_CONFIG --cflags`
+    evas_libs=`$EVAS_CONFIG --libs`
+    ecore_evas_libs="-lecore_evas";
+  else
+    AC_MSG_RESULT(no)
+    AM_CONDITIONAL(BUILD_ECORE_EVAS, false)
   fi
-  evas_cflags=`$EVAS_CONFIG --cflags`
-  evas_libs=`$EVAS_CONFIG --libs`
-  ecore_evas_libs="-lecore_evas";
 ], [
   AC_MSG_RESULT(no)
   AM_CONDITIONAL(BUILD_ECORE_EVAS, false)
@@ -214,9 +234,14 @@ AC_MSG_CHECKING(whether ecore_evas gl support is to be built)
 
 AC_ARG_ENABLE(ecore-evas-gl, 
 [  --enable-ecore-evas-gl          enable gl in the ecore_evas module], [
-  AC_MSG_RESULT(yes)
-  AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, test "$enableval" = "yes")
-  AC_DEFINE(BUILD_ECORE_EVAS_GL)
+  if [ test "$enableval" = "yes" ]; then  
+    AC_MSG_RESULT(yes)
+    AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, test "$enableval" = "yes")
+    AC_DEFINE(BUILD_ECORE_EVAS_GL)
+  else
+    AC_MSG_RESULT(no)
+    AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, false)
+  fi
 ], [
   AC_MSG_RESULT(no)
   AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, false)
@@ -230,10 +255,15 @@ ecore_con_libs="";
 
 AC_ARG_ENABLE(ecore-con, 
 [  --enable-ecore-con              enable the ecore_con module], [
-  AC_MSG_RESULT(yes)
-  AM_CONDITIONAL(BUILD_ECORE_CON, test "$enableval" = "yes")
-  AC_DEFINE(BUILD_ECORE_CON)
-  ecore_con_libs="-lecore_con"
+  if [ test "$enableval" = "yes" ]; then  
+    AC_MSG_RESULT(yes)
+    AM_CONDITIONAL(BUILD_ECORE_CON, test "$enableval" = "yes")
+    AC_DEFINE(BUILD_ECORE_CON)
+    ecore_con_libs="-lecore_con"
+  else
+    AC_MSG_RESULT(no)
+    AM_CONDITIONAL(BUILD_ECORE_CON, false)
+  fi
 ], [
   AC_MSG_RESULT(no)
   AM_CONDITIONAL(BUILD_ECORE_CON, false)
@@ -250,10 +280,15 @@ ecore_ipc_libs="";
 
 AC_ARG_ENABLE(ecore-ipc, 
 [  --enable-ecore-ipc              enable the ecore_ipc module], [
-  AC_MSG_RESULT(yes)
-  AM_CONDITIONAL(BUILD_ECORE_IPC, test "$enableval" = "yes")
-  AC_DEFINE(BUILD_ECORE_IPC)
-  ecore_ipc_libs="-lecore_ipc"
+  if [ test "$enableval" = "yes" ]; then  
+    AC_MSG_RESULT(yes)
+    AM_CONDITIONAL(BUILD_ECORE_IPC, test "$enableval" = "yes")
+    AC_DEFINE(BUILD_ECORE_IPC)
+    ecore_ipc_libs="-lecore_ipc"
+  else
+    AC_MSG_RESULT(no)
+    AM_CONDITIONAL(BUILD_ECORE_IPC, false)
+  fi
 ], [
   AC_MSG_RESULT(no)
   AM_CONDITIONAL(BUILD_ECORE_IPC, false)
@@ -275,10 +310,15 @@ ecore_txt_libs="";
 
 AC_ARG_ENABLE(ecore-txt, 
 [  --enable-ecore-txt              enable the ecore_txt module], [
-  AC_MSG_RESULT(yes)
-  AM_CONDITIONAL(BUILD_ECORE_TXT, test "$enableval" = "yes")
-  AC_DEFINE(BUILD_ECORE_TXT)
-  ecore_txt_libs="-lecore_txt"  
+  if [ test "$enableval" = "yes" ]; then  
+    AC_MSG_RESULT(yes)
+    AM_CONDITIONAL(BUILD_ECORE_TXT, test "$enableval" = "yes")
+    AC_DEFINE(BUILD_ECORE_TXT)
+    ecore_txt_libs="-lecore_txt"  
+  else
+    AC_MSG_RESULT(no)
+    AM_CONDITIONAL(BUILD_ECORE_TXT, false)
+  fi
 ], [
   AC_MSG_RESULT(no)
   AM_CONDITIONAL(BUILD_ECORE_TXT, false)
