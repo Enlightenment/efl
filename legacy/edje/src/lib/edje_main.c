@@ -11,6 +11,7 @@ edje_init(void)
      {
 	_edje_edd_setup();
 	_edje_text_init();
+	embryo_init();
      }
    return initted;
 }
@@ -24,7 +25,8 @@ edje_shutdown(void)
    _edje_edd_free();
    _edje_color_class_members_free();
    _edje_text_class_members_free();
-
+   embryo_shutdown();
+   
    return 0;
 }
 

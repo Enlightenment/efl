@@ -43,15 +43,134 @@ _edje_embryo_fn_emit(Embryo_Program *ep, Embryo_Cell *params)
    return 0;
 }
 
-/* routines to export:
+/* 
+ * ALREADY EXPORTEd By EMBRYO:
  * 
- * glob_match()
- * strcmp()
- * strcpy()
- * strlen()
- * rand()
- * time()
- * ... more to come
+ * Float:atof(string[]);
+ * Float:fract(Float:value);
+ *       round(Float:value, Float_Round_Method:method=ROUND);
+ * Float:sqrt(Float:value);
+ * Float:pow(Float:value, Float:exponent);
+ * Float:log(Float:value, Float:base=10.0);
+ * Float:sin(Float:value, Float_Angle_Mode:mode=RADIAN);
+ * Float:cos(Float:value, Float_Angle_Mode:mode=RADIAN);
+ * Float:tan(Float:value, Float_Angle_Mode:mode=RADIAN);
+ * Float:abs(Float:value);
+ *       atoi(str[]);
+ *       fnmatch(glob[], str[]);
+ *       strcmp(str1[], str2[]);
+ *       strncmp(str1[], str2[]);
+ *       strcpy(dst[], src[]);
+ *       strncpy(dst[], src[], n);
+ *       strlen(str[]);
+ *       strcat(dst[], src[]);
+ *       strncat(dst[], src[], n);
+ *       strprep(dst[], src[]);
+ *       strnprep(dst[], src[], n);
+ *       strcut(dst[], str[], n, n2);
+ *       snprintf(dst[], dstn, fmt[], ...);
+ *       strstr(str[], ndl[]);
+ *       strchr(str[], ch[]);
+ *       strrchr(str[], ch[]);
+ *       rand();
+ * 
+ * ROUTINES TO EXPORT:
+ * 
+ * BASIC NUTS & BOLTS
+ * 
+ * get_int(key[])
+ * set_int(key[], val)
+ * get_float(key[])
+ * set_float(key[], Float:val)
+ * get_str(key[], dst[], maxlen)
+ * set_str(key[], str[])
+ * 
+ * TIMERS... (tick off in N seconds from now)
+ *
+ * timer(Float:in, fname[], val)
+ * cancel_timer(id)
+ * 
+ * ANIMATORS... (run for N seconds, passing in position)
+ * 
+ * anim(Float:length, fname[], ...) (varargs = series of int's - no strings))
+ * candel_anim(id);
+ * 
+ * EDJE...
+ * 
+ * set_state(part[], state[], Float:state_val)
+ * set_tween_state(part[], state1[], Float:state1_val, state2[], Float:state2_val)
+ * emit(sig[], src[])
+ * run_program(name[])
+ * stop_program(name[])
+ * stop_programs_on(name[])
+ * Direction:get_drag_dir(name[])
+ * get_drag(name[], &Float:dx, &Float:&dy)
+ * set_drag(name[], Float:dx, Float:dy)
+ * get_drag_step(name[], &Float:dx, &Float:&dy)
+ * set_drag_step(name[], Float:dx, Float:dy)
+ * get_drag_page(name[], &Float:dx, &Float:&dy)
+ * set_drag_page(name[], Float:dx, Float:dy)
+ * get_drag_count(name[], &Float:dx, &Float:&dy)
+ * set_drag_count(name[], Float:dx, Float:dy)
+ * set_drag_confine(name[], confine_name[])
+ * text_set(name[], str[])
+ * text_get(name[], dst[], maxlen)
+ * get_min_size(w, h)
+ * set_min_size(&w, &h)
+ * get_max_size(w, h)
+ * set_max_size(&w, &h)
+ * get_size(&w, &h)
+ * resize_request(w, h)
+ * get_mouse(&x, &y)
+ * set_color_class(class[], r, g, b, a)
+ * get_color_class(class[], &r, &g, &b, &a)
+ * set_text_class(class[], font[], Float:size)
+ * get_text_class(class[], font[], &Float:size)
+ * //set_type(name[], Type:type)
+ * //set_effect(name[], Effect:fx)
+ * set_mouse_events(name[], ev)
+ * get_mouse_events(name[])
+ * set_repeat_events(name[], rep)
+ * get_repeat_events(name[])
+ * set_clip(name[], clip_name[])
+ * get_clip(name[], clip_name_dst[], clip_name_dst_max)
+ * 
+ * MODIFY STATE VALUES
+ * 
+ * set_state_val(name[], state[], Float:state_val, Param:param, ...)
+ * get_state_val(name[], state[], Float:state_val, Param:param, ...)
+ * 
+ * for these:
+ * 
+ * visible
+ * align[x,y]
+ * min[w,h]
+ * max[w,h]
+ * step[x,y]
+ * aspect[min,max]
+ * rel1[rx,ry,namex[],namey[]]
+ * rel1[x,y]
+ * rel2[rx,ry,namex[],namey[]]
+ * rel2[x,y]
+ * image[id]
+ * image[tween_list...] (get???)
+ * border[l,r,t,b]
+ * fill[smooth]
+ * fill[pos_rx,pos_ry,pos_x,pos_y]
+ * fill[sz_rx,sz_ry,sz_x,sz_y]
+ * color_class
+ * color[r,g,b,a]
+ * color2[r,g,b,a]
+ * color3[r,g,b,a]
+ * text[text_class]
+ * text[font]
+ * text[size]
+ * text[fit_x,fit_y]
+ * text[min_x,min_y]
+ * text[align_x,align_y]
+ * 
+ * FUTURE: KEYS
+ * 
  */
 
 void
