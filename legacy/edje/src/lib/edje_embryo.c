@@ -43,6 +43,17 @@ _edje_embryo_fn_emit(Embryo_Program *ep, Embryo_Cell *params)
    return 0;
 }
 
+/* routines to export:
+ * 
+ * glob_match()
+ * strcmp()
+ * strcpy()
+ * strlen()
+ * rand()
+ * time()
+ * ... more to come
+ */
+
 void
 _edje_embryo_script_init(Edje *ed)
 {
@@ -58,18 +69,6 @@ _edje_embryo_script_init(Edje *ed)
    embryo_program_native_call_add(ep, "emit", _edje_embryo_fn_emit);
    
    embryo_program_vm_push(ep); /* neew a new vm to run in */
-   /* by default always call main() to init stuff */
-   if (embryo_program_run(ep, EMBRYO_FUNCTION_MAIN) != EMBRYO_PROGRAM_OK)
-     /* FIXME: debugging hack!!!! */
-     {
-	printf("EDJE DEBUG: Run of main() failed. Reason:\n");
-	printf("%s\n", embryo_error_string_get(embryo_program_error_get(ep)));
-     }
-   else
-     {
-	printf("EDJE DEBUG: main() returned %i\n",
-	       embryo_program_return_value_get(ep));
-     }
 }
 
 void

@@ -143,16 +143,6 @@ collections {
 	 item: "My Data" "The string to attach to this data";
 	 item: "The Key" "String data attached to the key";
       }
-      script {
-	 
-	 main()
-	   {
-	      tst();
-	      emit("Flabby", "Pants");
-	      return 7;
-	   }
-	 
-      }
       parts {
 	 part {
 	    name:          "background";

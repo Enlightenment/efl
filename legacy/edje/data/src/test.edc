@@ -40,6 +40,23 @@ collections
 	     item: "My Data" "The string to attach to this data";
 	     item: "The Key" "String data attached to the key";
 	  }
+// this section is optional. it contains all "shared" subroutines for this
+// group. so if any program scripts call functions that are not edje
+// exported calls, then this is where you put your own subroutines.
+	script
+	  {
+	     my_routine(var)
+	       {
+		  new i;
+		  
+		  if (var > 10) tst();
+		  if (var > 20)
+		    {
+		       for (i = 20; i < var; i++)
+			 emit("SMELLY", "Fish");
+		    }
+	       }
+	  }
 	parts
 	  {
 	     part
@@ -195,6 +212,24 @@ collections
 		  source:     "logo";
 		  action:     STATE_SET "default" 0.0;
 		  target:     "logo";
+	       }
+	     program
+	       {
+		  name:       "logo_unclick_script";
+		  signal:     "mouse,up,1";
+		  source:     "logo";
+// code to execute if this program matches. it can use subroutines declared
+// for this group or functions exported
+		  script
+		    {
+		       var i = 5;
+		       
+		       while (i > 0)
+			 {
+			    my_routine(10 + (i * 5));
+			    i--;
+			 }
+		    }
 	       }
 /*	     
 	     program
