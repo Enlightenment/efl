@@ -312,6 +312,7 @@ ecore_event_loop(void)
       time2 = time1 - prev_time;
       prev_time = time1;
     }
+   __quit_ev_loop = 0;
 }
 
 /* set a flag to 0 so that we can quit the event loop and shutdown 
