@@ -2232,6 +2232,117 @@ e_window_set_name_class(Window win, char *name, char *class)
 }
 
 void
+e_window_get_name_class(Window win, char **name, char **class)
+{
+   XClassHint xch;
+   
+   if (name) *name = NULL;
+   if (class) *class = NULL;
+   if (XGetClassHint(disp, win, &xch))
+     {
+	if (name)
+	  {
+	     if (xch.res_name) *name = strdup(xch.res_name);
+	  }
+	if (class)
+	  {
+	     if (xch.res_class) *class = strdup(xch.res_class);
+	  }
+	XFree(xch.res_name);
+	XFree(xch.res_class);
+     }
+}
+
+void
+e_window_get_hints(Window win, int *accepts_focus, int *initial_state,
+		   Pixmap *icon_pixmap, Pixmap *icon_mask,
+		   Window *icon_window, Window *window_group)
+{
+   XWMHints *hints;
+   
+   hints = XGetWMHints(disp, win);
+   if (hints)
+     {
+	if ((hints->flags & InputHint) && (accepts_focus))
+	  {
+	     if (hints->input) *accepts_focus = 1;
+	     else *accepts_focus = 0;
+	  }
+	if ((hints->flags & StateHint) && (initial_state))
+	  {
+	     *initial_state = hints->initial_state;
+	  }
+	if ((hints->flags & IconPixmapHint) && (icon_pixmap))
+	  {
+	     *icon_pixmap = hints->icon_pixmap;
+	  }
+	if ((hints->flags & IconMaskHint) && (icon_mask))
+	  {
+	     *icon_mask = hints->icon_pixmap;
+	  }
+	if ((hints->flags & IconWindowHint) && (icon_window))
+	  {
+	     *icon_window = hints->icon_window;
+	  }
+	if ((hints->flags & WindowGroupHint) && (window_group))
+	  {
+	     *window_group = hints->window_group;
+	  }
+	XFree(hints);
+     }
+}
+
+char *
+e_window_get_machine(Window win)
+{
+   XTextProperty       xtp;
+   
+   if (XGetWMClientMachine(disp, win, &xtp))
+     {
+	char *s;
+	
+	if (!xtp.value) return NULL;	
+	s = strdup(xtp.value);
+	XFree(xtp.value);
+	return s;
+     }
+   return NULL;
+}
+
+char *
+e_window_get_command(Window win)
+{
+   int                 cargc;
+   char              **cargv;
+   
+   if (XGetCommand(disp, win, &cargv, &cargc))
+     {
+	if (cargc > 0)
+	  {
+	     char *s;
+	     int size, i;
+	     
+	     s = NULL;
+	     size = strlen(cargv[0]);
+	     REALLOC(s, char, size + 1);
+	     strcpy(s, cargv[0]);
+	     for (i = 1; i < cargc; i++)
+	       {
+		  size += strlen(cargv[i]);
+		  REALLOC(s, char, size + 2);
+		  strcat(s, " ");
+		  strcat(s, cargv[i]);
+	       }
+	     XFreeStringList(cargv);
+	     return s;
+	  }
+	else
+	  return NULL;
+     }
+   return NULL;
+}
+
+void
 e_window_set_min_size(Window win, int w, int h)
 {
    XSizeHints          hints;

@@ -209,6 +209,13 @@ void                e_window_set_title(Window win, char *title);
 void                e_window_set_name_class(Window win, char *name,
 
 					    char *);
+void                e_window_get_name_class(Window win, char **name, char **class);       
+char               *e_window_get_machine(Window win);
+char               *e_window_get_command(Window win);
+char               *e_window_get_icon_name(Window win);       
+void                e_window_get_hints(Window win, int *accepts_focus, int *initial_state,
+				       Pixmap *icon_pixmap, Pixmap *icon_mask,
+				       Window *icon_window, Window *window_group);
 void                e_window_set_min_size(Window win, int w, int h);
 void                e_window_set_max_size(Window win, int w, int h);
 void                e_window_set_xy_hints(Window win, int x, int y);
