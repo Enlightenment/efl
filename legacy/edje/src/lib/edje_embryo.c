@@ -78,9 +78,29 @@ static void _edje_embryo_globals_init(Edje *ed);
  * get_strlen(id)
  * get_str(id, dst[], maxlen)
  * set_str(id, str[])
- * ** lists/arrays for stored variables
- * ** dynamic allocation (just use cell as index to dynamic block)
- * timer(Float:in, fname[], val);
+ * ######## lists/arrays for stored variables (to be implemented)
+ * # count(id)
+ * # remove(id, n)
+ * #
+ * # append_int(id, v)
+ * # prepend_int(id, v)
+ * # insert_int(id, v, n)
+ * # replace_int(id, v, n)
+ * # fetch_int(id, n)
+ * #
+ * # append_float(id, Float:v)
+ * # prepend_float(id, Float:v)
+ * # insert_float(id, Float:v, n)
+ * # replace_float(id, Float:v, n)
+ * # Float:fetch_float(id, n)
+ * #
+ * # append_str(id, str[])
+ * # prepend_str(id, str[])
+ * # insert_str(id, str[], n)
+ * # replace_str(id, str[], n)
+ * # fetch_str(id, n, dst[], maxlen)
+ * #
+ * timer(Float:in, fname[], val)
  * cancel_timer(id)
  * anim(Float:len, fname[], val)
  * cancel_anim(id)
@@ -111,6 +131,12 @@ static void _edje_embryo_globals_init(Edje *ed);
  *
  * still need to implement this:
  *
+ * ##### post messages to the app via _edje_message_send();
+ * # message(id, type, ...);
+ * #
+ * ##### what about posting messages to OTHER edje objects (swallowed?)
+ * # ????
+ * 
  * ** part_id and program_id need to be able to be "found" from strings
  * 
  * get_drag_count(part_id, &Float:dx, &Float:&dy)
@@ -964,17 +990,15 @@ _edje_embryo_test_run(Edje *ed, char *fname, char *sig, char *src)
    fn = embryo_program_function_find(ed->collection->script, fname);
    if (fn != EMBRYO_FUNCTION_NONE)
      {
+	void *pdata;
+	
 	printf("EDJE DEBUG: About to run script from program.\n");
 	embryo_parameter_string_push(ed->collection->script, sig);
 	embryo_parameter_string_push(ed->collection->script, src);
-	  {
-	     void *pdata;
-	     
-	     pdata = embryo_program_data_get(ed->collection->script);
-	     embryo_program_data_set(ed->collection->script, ed);
-	     embryo_program_run(ed->collection->script, fn);
-	     embryo_program_data_set(ed->collection->script, pdata);
-	  }
+	pdata = embryo_program_data_get(ed->collection->script);
+	embryo_program_data_set(ed->collection->script, ed);
+	embryo_program_run(ed->collection->script, fn);
+	embryo_program_data_set(ed->collection->script, pdata);
 	printf("EDJE DEBUG: Done.\n");
      }
 }

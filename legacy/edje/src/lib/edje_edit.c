@@ -1,3 +1,4 @@
+#include "Edje.h"
 #include "edje_private.h"
 
 int edje_edit_init()

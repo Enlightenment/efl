@@ -526,8 +526,7 @@ _edje_file_add(Edje *ed)
 void
 _edje_file_del(Edje *ed)
 {
-   _edje_emit(ed, NULL, NULL); /* clear out signal emissions */
-   ed->dont_clear_signals = 1;
+   _edje_message_del(ed);
    _edje_block_violate(ed);
    _edje_var_shutdown(ed);
    if (ed->collection)
@@ -663,6 +662,19 @@ _edje_file_free(Edje_File *edf)
 	  }
 	free(edf->collection_dir);
      }
+   if (edf->data)
+     {
+	while (edf->data)
+	  {
+	     Edje_Data *edt;
+	     
+	     edt = edf->data->data;
+	     edf->data = evas_list_remove(edf->data, edt);
+	     if (edt->key) free(edt->key);
+	     if (edt->value) free(edt->value);
+	     free(edt);
+	  }
+     }
    if (edf->collection_hash) evas_hash_free(edf->collection_hash);
    free(edf);
 }
@@ -722,6 +734,19 @@ _edje_collection_free(Edje *ed, Edje_Part_Collection *ec)
 	     _edje_collection_free_part_description_free(desc);
 	  }
 	free(ep);
+     }
+   if (ec->data)
+     {
+	while (ec->data)
+	  {
+	     Edje_Data *edt;
+	     
+	     edt = ec->data->data;
+	     ec->data = evas_list_remove(ec->data, edt);
+	     if (edt->key) free(edt->key);
+	     if (edt->value) free(edt->value);
+	     free(edt);
+	  }
      }
 #ifdef EDJE_PROGRAM_CACHE
    if (ec->prog_cache.no_matches) evas_hash_free(ec->prog_cache.no_matches);

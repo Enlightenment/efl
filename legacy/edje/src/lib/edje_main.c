@@ -19,6 +19,7 @@ edje_init(void)
 	_edje_text_init();
 	embryo_init();
      }
+   _edje_message_init();
    return initted;
 }
 
@@ -32,6 +33,7 @@ edje_shutdown(void)
    initted--;
    if (initted > 0) return initted;
 
+   _edje_message_shutdown();
    _edje_edd_free();
    _edje_color_class_members_free();
    _edje_text_class_members_free();
@@ -140,6 +142,5 @@ void
 _edje_unref(Edje *ed)
 {
    ed->references--;
-   if (ed->references <= 0)
-     _edje_del(ed);
+   if (ed->references <= 0) _edje_del(ed);
 }

@@ -5,6 +5,33 @@
 
 /* FIXDOC: Define these? */
 
+typedef enum _Edje_Queue
+{
+   EDJE_QUEUE_APP,
+     EDJE_QUEUE_SCRIPT
+} Edje_Queue;
+
+typedef enum _Edje_Message_Type
+{
+   EDJE_MESSAGE_NONE,
+     
+     EDJE_MESSAGE_SIGNAL,
+     
+     EDJE_MESSAGE_STRING,
+     EDJE_MESSAGE_INT,
+     EDJE_MESSAGE_FLOAT,
+     
+     EDJE_MESSAGE_STRING_SET,
+     EDJE_MESSAGE_INT_SET,
+     EDJE_MESSAGE_FLOAT_SET,
+     
+     EDJE_MESSAGE_STRING_INT,
+     EDJE_MESSAGE_STRING_FLOAT,
+     
+     EDJE_MESSAGE_STRING_INT_SET,
+     EDJE_MESSAGE_STRING_FLOAT_SET
+} Edje_Message_Type;
+
 #define EDJE_DRAG_DIR_NONE 0
 #define EDJE_DRAG_DIR_X    1
 #define EDJE_DRAG_DIR_Y    2

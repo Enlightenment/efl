@@ -724,209 +724,141 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, char *ssig, char *ssrc)
    _edje_unblock(ed);
 }
 
-static void _edje_emission_free(Edje_Emission *ee)
-{
-   if (!ee)
-      return;
-
-   if (ee->signal)
-	   free(ee->signal);
-
-   if (ee->source)
-	   free(ee->source);
-
-   free(ee);
-}
-
 void
 _edje_emit(Edje *ed, char *sig, char *src)
 {
-   Evas_List *l;
-   Edje_Emission *ee = NULL;
-   /* limit self-feeding loops in callbacks to 64 levels */
-   static int recursions = 0;
-   static int recursion_limit = 0;
-
-   if ((!sig) && (!src))
-     {
-	while (ed->emissions)
-	  {
-	     ee = ed->emissions->data;
-	     ed->emissions = evas_list_remove(ed->emissions, ee);
-
-	     _edje_emission_free(ee);
-	  }
-	return;
-     }
    if (ed->delete_me) return;
-   if ((recursions >= 64) || (recursion_limit))
-     {
-	recursion_limit = 1;
-	return;
-     }
-   recursions++;
+   _edje_message_send(ed, EDJE_QUEUE_APP, EDJE_MESSAGE_SIGNAL, 0, sig, src);
+}
+
+/* FIXME: what if we delete the evas object??? */
+void
+_edje_emit_handle(Edje *ed, char *sig, char *src)
+{
+   Evas_List *l;
+
+   if (ed->delete_me) return;
 //   printf("EDJE EMIT: signal: \"%s\" source: \"%s\"\n", sig, src);
-   if ((sig) && (src))
-     {
-	ee = calloc(1, sizeof(Edje_Emission));
-	if (!ee)
-	  {
-	     recursions--;
-	     if (recursions == 0) recursion_limit = 0;
-	     return;
-	  }
-	ee->signal = strdup(sig);
-	ee->source = strdup(src);
-	if ((ed->emissions) || (_edje_block_break(ed)))
-	  {
-	     ed->emissions = evas_list_append(ed->emissions, ee);
-	     recursions--;
-	     if (recursions == 0) recursion_limit = 0;
-	     return;
-	  }
-	else
-	  ed->emissions = evas_list_append(ed->emissions, ee);
-     }
-   if (!ed->emissions) return;
    _edje_block(ed);
    _edje_ref(ed);
    _edje_freeze(ed);
-   while (ed->emissions)
+   if (ed->collection)
      {
-	ee = ed->emissions->data;
-	ed->emissions = evas_list_remove(ed->emissions, ee);
-	if (ed->collection)
+	Edje_Part_Collection *ec;
+#ifdef EDJE_PROGRAM_CACHE
+	char *tmps;
+	int l1, l2;
+#endif	     
+	int done;
+	
+	ec = ed->collection;
+#ifdef EDJE_PROGRAM_CACHE
+	l1 = strlen(sig);
+	l2 = strlen(src);
+	tmps = malloc(l1 + l2 + 2);
+	
+	if (tmps)
 	  {
-	     Edje_Part_Collection *ec;
-#ifdef EDJE_PROGRAM_CACHE
-	     char *tmps;
+	     strcpy(tmps, sig);
+	     tmps[l1] = '\377';
+	     strcpy(&(tmps[l1 + 1]), src);
+	  }
 #endif	     
-	     int l1, l2;
-	     int done;
-	     
-	     ec = ed->collection;
+	done = 0;
+	
 #ifdef EDJE_PROGRAM_CACHE
-	     l1 = strlen(ee->signal);
-	     l2 = strlen(ee->source);
-	     tmps = malloc(l1 + l2 + 2);
+	if (tmps)
+	  {
+	     Evas_List *matches;
 	     
-	     if (tmps)
+	     if (evas_hash_find(ec->prog_cache.no_matches, tmps))
 	       {
-		  strcpy(tmps, ee->signal);
-		  tmps[l1] = '\377';
-		  strcpy(&(tmps[l1 + 1]), ee->source);
+		  done = 1;
 	       }
-#endif	     
-	     done = 0;
-	     
-#ifdef EDJE_PROGRAM_CACHE
-	     if (tmps)
+	     else if ((matches = evas_hash_find(ec->prog_cache.matches, tmps)))
 	       {
-		  Evas_List *matches;
-		  
-		  if (evas_hash_find(ec->prog_cache.no_matches, tmps))
-		    {
-		       done = 1;
-		    }
-		  else if ((matches = evas_hash_find(ec->prog_cache.matches, tmps)))
-		    {
-		       for (l = matches; l; l = l->next)
-			 {
-			    Edje_Program *pr;
-			    
-			    pr = l->data;
-			    _edje_program_run(ed, pr, 0, sig, src);
-			    if (_edje_block_break(ed))
-			      {
-				 if (tmps) free(tmps);
-				 if (!ed->dont_clear_signals)
-				   _edje_emit(ed, NULL, NULL);
-				 goto break_prog;
-			      }
-			 }
-		       done = 1;
-		    }
-	       }
-#endif
-	     if (!done)
-	       {
-#ifdef EDJE_PROGRAM_CACHE
-		  int matched = 0;
-		  Evas_List *matches = NULL;
-#endif
-		  
-		  for (l = ed->collection->programs; l; l = l->next)
+		  for (l = matches; l; l = l->next)
 		    {
 		       Edje_Program *pr;
 		       
 		       pr = l->data;
-		       if ((pr->signal) &&
-			   (pr->source) &&
-			   (_edje_glob_match(ee->signal, pr->signal)) &&
-			   (_edje_glob_match(ee->source, pr->source)))
+		       _edje_program_run(ed, pr, 0, sig, src);
+		       if (_edje_block_break(ed))
 			 {
-#ifdef EDJE_PROGRAM_CACHE
-			    matched++;
-#endif			    
-			    _edje_program_run(ed, pr, 0, ee->signal, ee->source);
-			    if (_edje_block_break(ed))
-			      {
-#ifdef EDJE_PROGRAM_CACHE
-				 if (tmps) free(tmps);
-				 evas_list_free(matches);
-#endif				 
-				 if (!ed->dont_clear_signals)
-				   _edje_emit(ed, NULL, NULL);
-				 goto break_prog;
-			      }
-#ifdef EDJE_PROGRAM_CACHE
-			    matches = evas_list_append(matches, pr);
-#endif			    
+			    if (tmps) free(tmps);
+			    goto break_prog;
 			 }
 		    }
-#ifdef EDJE_PROGRAM_CACHE
-		  if (tmps)
-		    {
-		       if (matched == 0)
-			 ec->prog_cache.no_matches = 
-			 evas_hash_add(ec->prog_cache.no_matches, tmps, ed);
-		       else
-			 ec->prog_cache.matches =
-			 evas_hash_add(ec->prog_cache.matches, tmps, matches);
-		    }
-#endif		    
+		  done = 1;
 	       }
-	     _edje_emit_cb(ed, ee->signal, ee->source);
-	     if (_edje_block_break(ed))
+	  }
+#endif
+	if (!done)
+	  {
+#ifdef EDJE_PROGRAM_CACHE
+	     int matched = 0;
+	     Evas_List *matches = NULL;
+#endif
+	     
+	     for (l = ed->collection->programs; l; l = l->next)
 	       {
+		  Edje_Program *pr;
+		  
+		  pr = l->data;
+		  if ((pr->signal) &&
+		      (pr->source) &&
+		      (_edje_glob_match(sig, pr->signal)) &&
+		      (_edje_glob_match(src, pr->source)))
+		    {
 #ifdef EDJE_PROGRAM_CACHE
-		  if (tmps) free(tmps);
-#endif		  
-		  if (!ed->dont_clear_signals)		    
-		    _edje_emit(ed, NULL, NULL);
-		  goto break_prog;
+		       matched++;
+#endif			    
+		       _edje_program_run(ed, pr, 0, sig, src);
+		       if (_edje_block_break(ed))
+			 {
+#ifdef EDJE_PROGRAM_CACHE
+			    if (tmps) free(tmps);
+			    evas_list_free(matches);
+#endif				 
+			    goto break_prog;
+			 }
+#ifdef EDJE_PROGRAM_CACHE
+		       matches = evas_list_append(matches, pr);
+#endif			    
+		    }
 	       }
+#ifdef EDJE_PROGRAM_CACHE
+	     if (tmps)
+	       {
+		  if (matched == 0)
+		    ec->prog_cache.no_matches = 
+		    evas_hash_add(ec->prog_cache.no_matches, tmps, ed);
+		  else
+		    ec->prog_cache.matches =
+		    evas_hash_add(ec->prog_cache.matches, tmps, matches);
+	       }
+#endif		    
+	  }
+	_edje_emit_cb(ed, sig, src);
+	if (_edje_block_break(ed))
+	  {
 #ifdef EDJE_PROGRAM_CACHE
 	     if (tmps) free(tmps);
-	     tmps = NULL;
-#endif	     
+#endif		  
+	     goto break_prog;
 	  }
-
-	_edje_emission_free(ee);
-	ee = NULL;
+#ifdef EDJE_PROGRAM_CACHE
+	if (tmps) free(tmps);
+	tmps = NULL;
+#endif	     
      }
    break_prog:
-
-   if (ee)
-      _edje_emission_free(ee);
-
-   recursions--;
-   if (recursions == 0) recursion_limit = 0;
    _edje_thaw(ed);
    _edje_unref(ed);
    _edje_unblock(ed);
 }
 
+/* FIXME: what if we delete the evas object??? */
 static void
 _edje_emit_cb(Edje *ed, char *sig, char *src)
 {

@@ -380,7 +380,6 @@ typedef struct _Edje_Real_Part Edje_Real_Part;
 typedef struct _Edje_Running_Program Edje_Running_Program;
 typedef struct _Edje_Signal_Callback Edje_Signal_Callback;
 typedef struct _Edje_Calc_Params Edje_Calc_Params;
-typedef struct _Edje_Emission Edje_Emission;
 typedef struct _Edje_Pending_Program Edje_Pending_Program;
 typedef struct _Edje_Text_Style Edje_Text_Style;
 typedef struct _Edje_Color_Class Edje_Color_Class;
@@ -417,7 +416,6 @@ struct _Edje
    unsigned short        walking_actions : 1;
    unsigned short        block_break : 1;
    unsigned short        delete_me : 1;
-   unsigned short        dont_clear_signals : 1;
    double                paused_at;
    Evas                 *evas; /* the evas this edje belongs to */
    Evas_Object          *obj; /* the smart object */
@@ -432,7 +430,6 @@ struct _Edje
    Evas_List            *text_classes;
    int                   references;
    int                   block;
-   Evas_List            *emissions;
    int                   load_error;
    int                   freeze;
    /* variable pool for edje embryo scripts */
@@ -447,6 +444,8 @@ struct _Edje
       void (*func) (void *data, Evas_Object *obj, const char *part);
       void *data;
    } text_change;
+   
+   int                   message_num;
 };
 
 struct _Edje_Real_Part
@@ -556,12 +555,6 @@ struct _Edje_Calc_Params
          double      x, y; /* text alignment within bounds */
       } align;
    } text;
-};
-
-struct _Edje_Emission
-{
-   char *signal;
-   char *source;
 };
 
 struct _Edje_Pending_Program
@@ -693,6 +686,8 @@ void  _edje_collection_free(Edje *ed, Edje_Part_Collection *ec);
 
 Edje *_edje_add(Evas_Object *obj);
 void  _edje_del(Edje *ed);
+void  _edje_ref(Edje *ed);
+void  _edje_unref(Edje *ed);
 void  _edje_clean_objects(Edje *ed);
 void  _edje_ref(Edje *ed);
 void  _edje_unref(Edje *ed);
@@ -701,6 +696,7 @@ int   _edje_program_run_iterate(Edje_Running_Program *runp, double tim);
 void  _edje_program_end(Edje *ed, Edje_Running_Program *runp);
 void  _edje_program_run(Edje *ed, Edje_Program *pr, int force, char *ssig, char *ssrc);
 void  _edje_emit(Edje *ed, char *sig, char *src);
+void  _edje_emit_handle(Edje *ed, char *sig, char *src);
 
 void  _edje_text_init(void);
 void  _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep);

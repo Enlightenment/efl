@@ -15,6 +15,7 @@
 
 #include <math.h>
 #include <fnmatch.h>
+#include <stdarg.h>
 
 #ifdef HAVE_ALLOCA_H
 #include <alloca.h>
@@ -40,6 +41,16 @@
  * ? all unsafe calls that may result in callbacks must be marked and dealt with
  */
 
+typedef struct _Edje_Message Edje_Message;
+
+struct _Edje_Message
+{
+   Edje              *edje;
+   Edje_Queue         queue;
+   Edje_Message_Type  type;
+   int                id;
+   unsigned char     *msg;
+};
 
 extern Eet_Data_Descriptor *_edje_edd_edje_file;
 extern Eet_Data_Descriptor *_edje_edd_edje_data;
@@ -116,5 +127,14 @@ int           _edje_var_anim_add            (Edje *ed, double len, char *fname, 
 void          _edje_var_anim_del            (Edje *ed, int id);
 void          _edje_var_anim_frametime_reset(void);
     
-
+void _edje_message_init(void);
+void _edje_message_shutdown(void);
+Edje_Message *_edje_message_new(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id);
+void _edje_message_free(Edje_Message *em);
+void _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, ...);
+void _edje_message_process(Edje_Message *em);
+void _edje_message_queue_process(void);
+void _edje_message_queue_clear(void);
+void _edje_message_del(Edje *ed);
+    
 #endif
