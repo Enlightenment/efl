@@ -416,6 +416,7 @@ void              __evas_imlib_line_draw(Display *disp, Window win,
    else x = x2;
    if (y1 < y2) y = y1;
    else y = y2;
+   w++; h++;
    for(l = drawable_list; l; l = l->next)
      {
 	Evas_Imlib_Drawable *dr;

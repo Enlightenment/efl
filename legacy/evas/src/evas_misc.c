@@ -139,6 +139,12 @@ evas_set_zoom_scale(Evas e, Evas_Object o, int scale)
 }
 
 void
+evas_set_pass_events(Evas e, Evas_Object o, int pass_events)
+{
+   o->pass_events = 1;
+}
+
+void
 evas_set_font_cache(Evas e, int size)
 {
    switch (e->current.render_method)

@@ -152,6 +152,8 @@ struct _Evas_Object_Any
    
    int delete_me;
    
+   int pass_events;
+   
    void (*object_free) (Evas_Object _o);
    void (*object_renderer_data_free) (Evas _e, Evas_Object _o);
    
@@ -270,6 +272,7 @@ void evas_set_gradient(Evas e, Evas_Object o, Evas_Gradient grad);
 void evas_set_angle(Evas e, Evas_Object o, double angle);
 void evas_set_zoom_scale(Evas e, Evas_Object o, int scale);
 void evas_set_line_xy(Evas e, Evas_Object o, double x1, double y1, double x2, double y2);
+void evas_set_pass_events(Evas e, Evas_Object o, int pass_events);
 
 /* cache settings for performance */
 void evas_set_font_cache(Evas e, int size);

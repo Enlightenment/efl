@@ -32,7 +32,7 @@ _evas_highest_object_at_point(Evas e, int x, int y)
 	     Evas_Object ob;
 	     
 	     ob = ll->data;
-	     if (ob->current.visible)
+	     if ((ob->current.visible) && (!ob->pass_events))
 	       {
 		  if (_evas_point_in_object(e, ob, x, y)) 
 		     o = ob;
@@ -58,7 +58,7 @@ _evas_objects_at_point(Evas e, int x, int y)
 	     Evas_Object ob;
 	     
 	     ob = ll->data;
-	     if (ob->current.visible)
+	     if ((ob->current.visible) && (!ob->pass_events))
 	       {
 		  if (_evas_point_in_object(e, ll->data, x, y))
 		     objs = evas_list_prepend(objs, ll->data);
