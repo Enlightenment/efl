@@ -368,6 +368,8 @@ ecore_x_init(const char *name)
 
    _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_DELETE_REQUEST] = _ecore_x_atom_wm_delete_window;
    _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_TAKE_FOCUS] = _ecore_x_atom_wm_take_focus;
+
+   _ecore_x_selection_data_initialize();
    
    _ecore_x_init_count++;
    return _ecore_x_init_count;

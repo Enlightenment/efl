@@ -45,6 +45,16 @@ struct _Ecore_X_Selection_Data
    Time              time;
 };
 
+typedef struct _Ecore_X_Selection_Converter Ecore_X_Selection_Converter;
+
+struct _Ecore_X_Selection_Converter
+{
+   Atom     target;
+   int      (*convert)(char *target, void *data, int size, 
+                    void **data_ret, int *size_ret);
+   struct _Ecore_X_Selection_Converter *next;
+};
+
 typedef enum _Ecore_X_WM_Protocol {
 	/**
 	 * If enabled the window manager will be asked to send a
@@ -171,6 +181,7 @@ void _ecore_x_event_handle_client_message(XEvent *xevent);
 void _ecore_x_event_handle_mapping_notify(XEvent *xevent);
 void _ecore_x_event_handle_shape_change(XEvent *xevent);
 
+void _ecore_x_selection_data_initialize(void);
 void _ecore_x_selection_request_data_set(Ecore_X_Selection_Data data);
 Ecore_X_Selection_Data * _ecore_x_selection_get(Atom selection);
 int  _ecore_x_selection_set(Window w, char *data, int len, Atom selection);

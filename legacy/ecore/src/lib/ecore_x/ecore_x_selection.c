@@ -6,6 +6,16 @@
 /* FIXME: Initialize! */
 static Ecore_X_Selection_Data selections[3];
 static Ecore_X_Selection_Data request_data[3];
+static Ecore_X_Selection_Converter *converters;
+
+void
+_ecore_x_selection_data_initialize(void)
+{
+   memset(selections, 0, sizeof(selections));
+   memset(request_data, 0, sizeof(request_data));
+   converters = calloc(1, sizeof(Ecore_X_Selection_Converter));
+   /* TODO: Write predefined converters */
+}
 
 static void
 _ecore_x_selection_request_data_get(Ecore_X_Atom selection, void **buf, int *len)
@@ -241,5 +251,136 @@ ecore_x_selection_target_get(Ecore_X_Atom target)
       return ECORE_X_SELECTION_TARGET_TEXT;
    else
       return ECORE_X_SELECTION_TARGET_TEXT;
+}
+
+void
+ecore_x_selection_converter_atom_add(Ecore_X_Atom atom,
+      int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret))
+{
+   Ecore_X_Selection_Converter *cnv;
+
+   cnv = converters;
+   if (converters) 
+   {
+      while (1)
+      {
+         if (cnv->target == atom)
+         {
+            cnv->convert = func;
+            return;
+         }
+         if (cnv->next)
+            cnv = cnv->next;
+         else
+            break;
+      }
+   
+      cnv->next = calloc(1, sizeof(Ecore_X_Selection_Converter));
+      cnv = cnv->next;
+   } else {
+      converters = calloc(1, sizeof(Ecore_X_Selection_Converter));
+      cnv = converters;
+   }
+   cnv->target = atom;
+   cnv->convert = func;
+}
+
+
+void
+ecore_x_selection_converter_add(char *target, 
+      int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret))
+{
+   Ecore_X_Atom x_target;
+   char *atom_name;
+   
+   if (!func)
+      return;
+
+   /* FIXME: Some of these are just made up because I can't find
+    * standard "mime type" strings for them at the moment" */
+   if (!target || !strcmp(target, "TEXT"))
+      x_target = _ecore_x_atom_text;
+   if (!strcmp(target, "STRING"))
+      x_target = _ecore_x_atom_string;
+   else if (!strcmp(target, "UTF8_STRING"))
+      x_target = _ecore_x_atom_utf8_string;
+   else if (!strcmp(target, "FILENAME"))
+      x_target = _ecore_x_atom_file_name;
+   else
+   {
+      atom_name = malloc(strlen(target) + 4);
+      sprintf(atom_name, "_E_%s", target);
+      x_target = XInternAtom(_ecore_x_disp, atom_name, False);
+   }
+
+   ecore_x_selection_converter_atom_add(x_target, func);
+}
+
+void
+ecore_x_selection_converter_atom_del(Ecore_X_Atom atom)
+{
+   Ecore_X_Selection_Converter *cnv, *prev_cnv;
+   
+   prev_cnv = NULL;
+   cnv = converters;
+   
+   while (cnv)
+   {
+      if (cnv->target == atom)
+      {
+         if(prev_cnv)
+            prev_cnv->next = cnv->next;
+         else
+            converters = NULL; /* This was the only converter */
+         free(cnv);
+         return;
+      }
+      prev_cnv = cnv;
+      cnv = cnv->next;
+   }
+}
+
+int
+_ecore_x_selection_convert(Ecore_X_Atom selection, Ecore_X_Atom target, void **data_ret)
+{
+   Ecore_X_Selection_Data *sel;
+   Ecore_X_Selection_Converter *cnv;
+   void *data;
+   int size;
+   char *tgt_str;
+   
+   sel = _ecore_x_selection_get(selection);
+   if (target == _ecore_x_atom_text)
+      tgt_str = strdup("TEXT");
+   else if (target == _ecore_x_atom_string)
+      tgt_str = strdup("STRING");
+   else if (target == _ecore_x_atom_utf8_string)
+      tgt_str = strdup("UTF8_STRING");
+   else if (target == _ecore_x_atom_file_name)
+      tgt_str = strdup("FILENAME");
+   else
+   {
+      char *atom_name = XGetAtomName(_ecore_x_disp, target);
+      tgt_str = strdup(atom_name);
+      XFree(atom_name);
+   }
+   
+   for (cnv = converters; cnv; cnv = cnv->next)
+   {
+      if (cnv->target == target)
+      {
+         int r;
+         r = cnv->convert(tgt_str, sel->data, sel->length, &data, &size);
+         if (r)
+         {
+            *data_ret = data;
+            return r;
+         }
+         else
+            return -1;
+      }
+   }
+
+   return -1;
 }
 
