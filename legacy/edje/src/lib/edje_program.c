@@ -155,7 +155,7 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 	     
 	     pr = evas_list_nth(runp->edje->collection->programs, 
 				runp->program->after);
-	     if (pr) _edje_program_run(runp->edje, pr);
+	     if (pr) _edje_program_run(runp->edje, pr, 0);
 	  }
 	_edje_thaw(runp->edje);
 	_edje_unref(runp->edje);
@@ -206,13 +206,33 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
 }
    
 void
-_edje_program_run(Edje *ed, Edje_Program *pr)
+_edje_program_run(Edje *ed, Edje_Program *pr, int force)
 {
    Evas_List *l;
    /* limit self-feeding loops in programs to 64 levels */
    static int recursions = 0;
    static int recursion_limit = 0;
 
+   if ((pr->in.from != 0.0) && (pr->in.range != 0.0) && (!force))
+     {
+	Edje_Pending_Program *pp;
+	double r;
+	
+	pp = calloc(1, sizeof(Edje_Pending_Program));
+	if (!pp) return;
+	if (pr->in.range > 0.0) r = ((double)rand() / RAND_MAX);
+	pp->timer = ecore_timer_add(pr->in.from + (pr->in.range * r), 
+				    _edje_pending_timer_cb, pp);
+	if (!pp->timer)
+	  {
+	     free(pp);
+	     return;
+	  }
+	pp->edje = ed;
+	pp->program = pr;
+	ed->pending_actions = evas_list_append(ed->pending_actions, pp);
+	return;
+     }
    if ((recursions >= 64) || (recursion_limit))
      {
 	recursion_limit = 1;
@@ -365,9 +385,11 @@ _edje_emit(Edje *ed, char *sig, char *src)
 		  Edje_Program *pr;
 		  
 		  pr = l->data;
-		  if ((_edje_glob_match(ee->signal, pr->signal)) &&
+		  if ((pr->signal) &&
+		      (pr->source) &&
+		      (_edje_glob_match(ee->signal, pr->signal)) &&
 		      (_edje_glob_match(ee->source, pr->source)))
-		    _edje_program_run(ed, pr);
+		    _edje_program_run(ed, pr, 0);
 	       }
 	     ed->walking_callbacks = 1;
 	     for (l = ed->callbacks; l; l = l->next)

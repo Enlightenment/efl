@@ -62,6 +62,7 @@ static void ob_collections_group_programs_program(void);
 static void st_collections_group_programs_program_name(void);
 static void st_collections_group_programs_program_signal(void);
 static void st_collections_group_programs_program_source(void);
+static void st_collections_group_programs_program_in(void);
 static void st_collections_group_programs_program_action(void);
 static void st_collections_group_programs_program_transition(void);
 static void st_collections_group_programs_program_target(void);
@@ -116,6 +117,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.programs.program.name", st_collections_group_programs_program_name},
      {"collections.group.programs.program.signal", st_collections_group_programs_program_signal},
      {"collections.group.programs.program.source", st_collections_group_programs_program_source},
+     {"collections.group.programs.program.in", st_collections_group_programs_program_in},
      {"collections.group.programs.program.action", st_collections_group_programs_program_action},
      {"collections.group.programs.program.transition", st_collections_group_programs_program_transition},
      {"collections.group.programs.program.target", st_collections_group_programs_program_target},
@@ -185,6 +187,7 @@ New_Object_Handler object_handlers[] =
      {"collections.group.programs.program.name", NULL},
      {"collections.group.programs.program.signal", NULL},
      {"collections.group.programs.program.source", NULL},
+     {"collections.group.programs.program.in", NULL},
      {"collections.group.programs.program.action", NULL},
      {"collections.group.programs.program.transition", NULL},
      {"collections.group.programs.program.target", NULL},
@@ -1043,6 +1046,18 @@ st_collections_group_programs_program_source(void)
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->programs));
    ep->source = parse_str(0);
+}
+
+static void
+st_collections_group_programs_program_in(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Program *ep;
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->programs));
+   ep->in.from = parse_float_range(0, 0.0, 999999999.0);
+   ep->in.range = parse_float_range(1, 0.0, 999999999.0);
 }
 
 static void

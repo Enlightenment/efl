@@ -390,6 +390,20 @@ collections {
 	    source,     "logo_anim";
 	    action,     SIGNAL_EMIT "do_it" "the_source";
 	 }
+	 program {
+	    name,       "random_signal";
+	    signal,     "show";
+	    source,     "";
+	    in,         1.0 5.0;
+	    action,     SIGNAL_EMIT "do_random" "the_source";
+	 }
+	 program {
+	    name,       "random_signal";
+	    signal,     "do_random";
+	    source,     "the_source";
+	    in,         1.0 5.0;
+	    action,     SIGNAL_EMIT "do_random" "the_source";
+	 }
       }
    }
 }

@@ -11,7 +11,6 @@
 #include <fnmatch.h>
 
 /* FIXME:
- * need "random" signals and events for hooking to, and "random" durations
  * free stuff - no more leaks
  * dragables have to work
  * drag start/top signals etc.
@@ -161,6 +160,11 @@ struct _Edje_Program /* a conditional program to be run */
    
    char      *signal; /* if signal emission name matches the glob here... */
    char      *source; /* if part that emitted this (name) matches this glob */
+   
+   struct {
+      double  from;
+      double  range;
+   } in;
    
    int        action; /* type - set state, stop action, set drag pos etc. */
    char      *state; /* what state of alternates to apply, NULL = default */
@@ -329,6 +333,7 @@ typedef struct _Edje_Running_Program Edje_Running_Program;
 typedef struct _Edje_Signal_Callback Edje_Signal_Callback;
 typedef struct _Edje_Calc_Params Edje_Calc_Params;
 typedef struct _Edje_Emission Edje_Emission;
+typedef struct _Edje_Pending_Program Edje_Pending_Program;
 
 struct _Edje
 {
@@ -351,6 +356,7 @@ struct _Edje
    Evas_List            *parts; /* private list of parts */
    Evas_List            *actions; /* currently running actions */   
    Evas_List            *callbacks;
+   Evas_List            *pending_actions;
    int                   freeze;
    int                   references;
 };
@@ -424,6 +430,13 @@ struct _Edje_Emission
    char *source;
 };
 
+struct _Edje_Pending_Program
+{
+   Edje         *edje;
+   Edje_Program *program;
+   Ecore_Timer  *timer;
+};
+
 void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos);
 void  _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1, char *d2, double v2);
 void  _edje_recalc(Edje *ed);
@@ -435,6 +448,7 @@ void  _edje_mouse_up_cb(void *data, Evas * e, Evas_Object * obj, void *event_inf
 void  _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
 void  _edje_mouse_wheel_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
 int   _edje_timer_cb(void *data);
+int   _edje_pending_timer_cb(void *data);
 
 void  _edje_edd_setup(void);
 
@@ -452,7 +466,7 @@ void  _edje_unref(Edje *ed);
     
 int   _edje_program_run_iterate(Edje_Running_Program *runp, double tim);
 void  _edje_program_end(Edje *ed, Edje_Running_Program *runp);
-void  _edje_program_run(Edje *ed, Edje_Program *pr);
+void  _edje_program_run(Edje *ed, Edje_Program *pr, int force);
 void  _edje_emit(Edje *ed, char *sig, char *src);
 
 Edje *_edje_fetch(Evas_Object *obj);

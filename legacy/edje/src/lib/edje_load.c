@@ -228,16 +228,28 @@ _edje_file_del(Edje *ed)
 	  }
 	_edje_animators = evas_list_remove(_edje_animators, ed);
      }
+   if (ed->pending_actions)
+     {
+	while (ed->pending_actions)
+	  {
+	     Edje_Pending_Program *pp;
+	     
+	     pp = ed->pending_actions->data;
+	     ed->pending_actions = evas_list_remove(ed->pending_actions, pp);
+	     ecore_timer_del(pp->timer);
+	     free(pp);
+	  }
+     }
 }
 
 void
 _edje_file_free(Edje_File *edf)
 {
-   printf("FIXME: leak!\n");
+   printf("FIXME: leak Edje_File!\n");
 }
 
 void
 _edje_collection_free(Edje_Part_Collection *ec)
 {
-   printf("FIXME: leak!\n");
+   printf("FIXME: leak Edje_Part_Collection!\n");
 }
