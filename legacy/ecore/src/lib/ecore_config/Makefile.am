@@ -34,7 +34,8 @@ ecore_config.c \
 ipc_main.c \
 util.c \
 edb.c \
-convenience.c
+convenience.c \
+ecore_config_private.h
 
 libecore_config_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
