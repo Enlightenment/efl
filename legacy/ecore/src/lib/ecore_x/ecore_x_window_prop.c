@@ -1079,6 +1079,7 @@ ecore_x_window_prop_state_unset(Ecore_X_Window win, Ecore_X_Window_State s)
    free(newset);
 }
 
+#if 0
 void
 ecore_x_window_prop_window_type_utility_set(Ecore_X_Window win)
 {
@@ -1123,6 +1124,8 @@ ecore_x_window_prop_window_type_normal_set(Ecore_X_Window win)
 {
    ecore_x_window_prop_window_type_set(win, _ecore_x_atom_net_wm_window_type_normal);
 }
+
+#endif
 
 /**
  * Set the requested opacity of the window

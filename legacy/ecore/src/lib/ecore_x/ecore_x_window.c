@@ -198,7 +198,7 @@ ecore_x_window_defaults_set(Ecore_X_Window win)
    ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_pid, XA_CARDINAL,
 		                    32, &pid, 1);
 
-   ecore_x_window_prop_window_type_normal_set(win);
+   ecore_x_window_prop_window_type_set(win, ECORE_X_WINDOW_TYPE_NORMAL);
 
    ecore_app_args_get(&argc, &argv);
    ecore_x_window_prop_command_set(win, argc, argv);
