@@ -717,11 +717,11 @@ static int svr_try_connect_ssl(Ecore_Con_Server *svr)
    assert(svr->connecting);
    assert(svr->ssl);
 
-   res = SSL_connect(svr->ssl);
-   ssl_err = SSL_get_error(svr->ssl, res);
-
-   if (ssl_err == SSL_ERROR_NONE)
+   if ((res = SSL_connect(svr->ssl)) == 1)
       return 1;
+
+   ssl_err = SSL_get_error(svr->ssl, res);
+   assert (ssl_err != SSL_ERROR_NONE);
 
    if (ssl_err == SSL_ERROR_WANT_READ)
       flag = ECORE_FD_READ;
@@ -782,7 +782,7 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 {
    Ecore_Con_Server   *svr;
 #if USE_OPENSSL
-	int ssl_err = 0;
+	int ssl_err = SSL_ERROR_NONE;
 #endif
    
    svr = data;
@@ -812,8 +812,12 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 #if USE_OPENSSL
 		 } else {
             num = SSL_read(svr->ssl, svr->read_buf, READBUFSIZ);
-            ssl_err = SSL_get_error(svr->ssl, num);
-            lost_server = (ssl_err == SSL_ERROR_ZERO_RETURN);
+
+            if (num < 1) {
+               ssl_err = SSL_get_error(svr->ssl, num);
+               lost_server = (ssl_err == SSL_ERROR_ZERO_RETURN);
+            } else
+               ssl_err = SSL_ERROR_NONE;
          }
 #endif
 	     if (num < 1)
@@ -958,7 +962,7 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
 {
    int count, num, lost_server = 0;
 #if USE_OPENSSL
-   int ssl_err;
+   int ssl_err = SSL_ERROR_NONE;
 #endif
 
    if (!svr->write_buf) return;
@@ -984,8 +988,11 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
 #if USE_OPENSSL
    } else {
       count = SSL_write(svr->ssl, svr->write_buf + svr->write_buf_offset, num);
-      ssl_err = SSL_get_error(svr->ssl, count);
-      lost_server = (ssl_err == SSL_ERROR_ZERO_RETURN);
+
+      if (count < 1) {
+         ssl_err = SSL_get_error(svr->ssl, count);
+         lost_server = (ssl_err == SSL_ERROR_ZERO_RETURN);
+      }
    }
 #endif
 
