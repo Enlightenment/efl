@@ -212,6 +212,8 @@ eet_flush(Eet_File *ef)
    /* check to see its' an eet file pointer */   
    if ((!ef) || (ef->magic != EET_MAGIC_FILE))
      return;
+   if (!ef->header) return;
+   if (!ef->header->directory) return;
    if (ef->mode != EET_FILE_MODE_WRITE) return;
    if (!ef->writes_pending) return;
 
@@ -637,6 +639,10 @@ eet_read(Eet_File *ef, char *name, int *size_ret)
      }
    /* get hash bucket this should be in */
    hash = eet_hash_gen(name, ef->header->directory->size);
+   /* no header, return NULL */
+   if (!ef->header) return NULL;
+   /* no directory, return NULL */
+   if (!ef->header->directory) return NULL;
    /* hunt hash bucket */
    num = ef->header->directory->hash[hash].size;
    for (i = 0; i < num; i++)
@@ -857,7 +863,8 @@ eet_list(Eet_File *ef, char *glob, int *count_ret)
    int i, j, num;
 
    /* check to see its' an eet file pointer */   
-   if ((!ef) || (ef->magic != EET_MAGIC_FILE) || (!glob))
+   if ((!ef) || (ef->magic != EET_MAGIC_FILE) || (!glob) ||
+       (!ef->header) || (!ef->header->directory))
      {
 	if (count_ret) *count_ret = 0;
 	return NULL;
