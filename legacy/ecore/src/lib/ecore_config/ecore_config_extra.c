@@ -574,7 +574,10 @@ ecore_config_parse_set(Ecore_Config_Prop * prop, char *arg, char *opt,
 	return ECORE_CONFIG_PARSE_EXIT;
      }
    else
-      ecore_config_set(prop->key, arg);
+     {
+	ecore_config_set(prop->key, arg);
+	prop->flags |= PF_CMDLN;
+     }   
    return ECORE_CONFIG_PARSE_CONTINUE;
 }
 

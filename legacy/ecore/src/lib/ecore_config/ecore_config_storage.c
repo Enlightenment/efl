@@ -213,12 +213,15 @@ ecore_config_file_save(char *file)
    while (next)
      {
 	/* let the config_db deal with this
-	if (!(next->flags & PF_MODIFIED))
+	 * handyande: hmm, not sure that it ever does - reinstating until
+	 * further discussions satisfy me!
+	 */
+	if (!(next->flags & PF_MODIFIED) || next->flags & PF_CMDLN)
 	  {
 	     next = next->next;
 	     continue;
 	  }
-	 */
+
 	tmp = NULL;
 
 	switch (next->type)

@@ -541,6 +541,7 @@ ecore_config_typed_val(Ecore_Config_Prop * e, void *val, int type)
 
 	ecore_config_bound(e);
 	e->flags |= PF_MODIFIED;
+  e->flags = e->flags & ~PF_CMDLN;
 	return ECORE_CONFIG_ERR_SUCC;
      }
    return ECORE_CONFIG_ERR_IGNORED;
