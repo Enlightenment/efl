@@ -764,9 +764,42 @@ _edje_thaw(Edje *ed)
 {
    ed->freeze--;
    if (ed->freeze < 0) ed->freeze = 0;
-   if ((ed->freeze == 0) && (ed->recalc))
-     _edje_recalc(ed);
+   if ((ed->freeze == 0) && (ed->recalc)) _edje_recalc(ed);
    return ed->freeze;
+}
+
+int
+_edje_block(Edje *ed)
+{
+   ed->block++;
+   return ed->block;
+}
+
+int
+_edje_unblock(Edje *ed)
+{
+   ed->block--;
+   if (ed->block == 0)
+     {
+	ed->block_break = 0;
+	printf("unblock!!! ed->emissions = %p\n", ed->emissions);
+	ed->dont_clear_signals = 0;
+	if (ed->emissions) _edje_emit(ed, "", NULL);
+     }
+   return ed->block;
+}
+
+int
+_edje_block_break(Edje *ed)
+{
+   if (ed->block_break) return 1;
+   return 0;
+}
+
+void
+_edje_block_violate(Edje *ed)
+{
+   if (ed->block > 0) ed->block_break = 1;
 }
 
 void

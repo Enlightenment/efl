@@ -62,6 +62,7 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    else
 #endif     
      snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
+   _edje_ref(ed);
    if ((rp->part->dragable.x) || (rp->part->dragable.y))
      {
 	if (rp->drag.down.count == 0)
@@ -83,6 +84,7 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    _edje_emit(ed, buf, rp->part->name);
    _edje_recalc(ed);
    _edje_thaw(ed);   
+   _edje_unref(ed);
 }
 
 void
@@ -98,6 +100,7 @@ _edje_mouse_up_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    rp = evas_object_data_get(obj, "real_part");
    if (!rp) return;
    snprintf(buf, sizeof(buf), "mouse,up,%i", ev->button);
+   _edje_ref(ed);
    _edje_emit(ed, buf, rp->part->name);
    if ((rp->part->dragable.x) || (rp->part->dragable.y))
      {
@@ -122,6 +125,7 @@ _edje_mouse_up_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
      }
    _edje_recalc(ed);
    _edje_thaw(ed);
+   _edje_unref(ed);
 }
 
 void
@@ -165,11 +169,11 @@ _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	     ed->dirty = 1;
 	  }
      }
+   _edje_ref(ed);
    _edje_emit(ed, "mouse,move", rp->part->name);
    ed->calc_only = 1;
    _edje_recalc(ed);
    ed->calc_only = 0;
-   _edje_thaw(ed); 
    if ((rp->part->dragable.x) || (rp->part->dragable.y))
      {
 	if (rp->drag.down.count > 0)
@@ -187,6 +191,8 @@ _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	       }
 	  }
      }
+   _edje_unref(ed);
+   _edje_thaw(ed); 
 }
 
 void
@@ -225,9 +231,10 @@ _edje_timer_cb(void *data)
 	Evas_List *newl = NULL;
 	
 	ed = animl->data;
+	_edje_block(ed);
 	_edje_freeze(ed);
 	animl = evas_list_remove(animl, animl->data);
-	if (!ed->paused)
+	if ((!ed->paused) && (!ed->delete_me))
 	  {
 	     ed->walking_actions = 1;
 	     for (l = ed->actions; l; l = l->next)
@@ -240,6 +247,12 @@ _edje_timer_cb(void *data)
 		  newl = evas_list_remove(newl, newl->data);
 		  if (!runp->delete_me)
 		    _edje_program_run_iterate(runp, t);
+		  if (_edje_block_break(ed))
+		    {
+		       evas_list_free(newl);
+		       newl = NULL;
+		       goto break_prog;
+		    }
 	       }
 	     for (l = ed->actions; l; l = l->next)
 	       newl = evas_list_append(newl, l->data);
@@ -262,6 +275,8 @@ _edje_timer_cb(void *data)
 	       }
 	     ed->walking_actions = 0;
 	  }
+	break_prog:
+	_edje_unblock(ed);
 	_edje_thaw(ed);
 	_edje_unref(ed);
      }

@@ -17,9 +17,13 @@
 
 /* FIXME:
  * 
+ * recursions, unsafe callbacks outside edje etc. with freeze, ref/unref and blobk/unblock and break_programs needs to be redesigned & fixed
+ * all unsafe calls that may result in callbacks must be marked and dealt with
+ * 
+ * dragable needs to be able to reverse value affect for "other direction" drag
+ * dragable relative value needs to be able to be set or ++/-- by actions
  * dragable needs to be able to affect rel/abs values of other parts
  * dragable relative value needs to be able to be applied to other part vals.
- * dragable relative value needs to be able to be set or ++/-- by actions
  * 
  * more example edje files
  * 
@@ -370,6 +374,9 @@ struct _Edje
    unsigned short        no_anim : 1;
    unsigned short        calc_only : 1;
    unsigned short        walking_actions : 1;
+   unsigned short        block_break : 1;
+   unsigned short        delete_me : 1;
+   unsigned short        dont_clear_signals : 1;
    double                paused_at;
    Evas                 *evas; /* the evas this edje belongs to */
    Evas_Object          *obj; /* the smart object */
@@ -384,7 +391,8 @@ struct _Edje
    Evas_List            *text_classes;
    int                   freeze;
    int                   references;
-   
+   int                   block;
+   Evas_List            *emissions;
 };
 
 struct _Edje_Real_Part
@@ -581,6 +589,10 @@ Edje             *_edje_fetch(Evas_Object *obj);
 int               _edje_glob_match(char *str, char *glob);
 int               _edje_freeze(Edje *ed);
 int               _edje_thaw(Edje *ed);
+int               _edje_block(Edje *ed);
+int               _edje_unblock(Edje *ed);
+int               _edje_block_break(Edje *ed);
+void              _edje_block_violate(Edje *ed);    
 void              _edje_object_part_swallow_free_cb(void *data, Evas *e, Evas_Object *obj, void *event_info);
 
 

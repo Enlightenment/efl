@@ -85,6 +85,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	     rp->part = ep;
 	     ed->parts = evas_list_append(ed->parts, rp);
 	     rp->param1.description =  ep->default_desc;
+	     printf("MEH %s\n", rp->part->name);
 	     if (!rp->param1.description)
 	       {
 		  printf("EDJE ERROR: no default part description!\n");
@@ -133,8 +134,8 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	       }
 	     else
 	       evas_object_pass_events_set(rp->object, 1);
-	     evas_object_clip_set(rp->object, ed->clipper);
-	     evas_object_show(rp->object);
+	     if (rp->part->clip_to_id < 0)
+	       evas_object_clip_set(rp->object, ed->clipper);
 	  }
 	for (l = ed->parts; l; l = l->next)
 	  {
@@ -162,13 +163,25 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	     if (rp->part->dragable.confine_id >= 0)
 	       rp->confine_to = evas_list_nth(ed->parts, rp->part->dragable.confine_id);
 	  }
-	ed->dirty = 1;
+	_edje_ref(ed);
+	_edje_block(ed);
 	_edje_freeze(ed);
-	_edje_recalc(ed);
 	_edje_emit(ed, "load", "");
-	_edje_thaw(ed);
+	for (l = ed->parts; l; l = l->next)
+	  {
+	     Edje_Real_Part *rp;
+	     
+	     rp = l->data;
+	     evas_object_show(rp->object);
+	     if (_edje_block_break(ed)) break;
+	  }
+	ed->dirty = 1;
 	if ((ed->parts) && (evas_object_visible_get(obj)))
 	  evas_object_show(ed->clipper);
+	_edje_recalc(ed);
+	_edje_thaw(ed);
+	_edje_unblock(ed);
+	_edje_unref(ed);
      }
 }
 
@@ -359,9 +372,9 @@ _edje_file_add(Edje *ed)
 void
 _edje_file_del(Edje *ed)
 {
-   /* segv's sometimes happen after here... */
-   /* avoid segv's... but LEAK */
-   /* return; */
+   _edje_emit(ed, NULL, NULL); /* clear out signal emissions */
+   ed->dont_clear_signals = 1;
+   _edje_block_violate(ed);
    if (ed->collection)
      {
 	ed->collection->references--;
@@ -385,7 +398,6 @@ _edje_file_del(Edje *ed)
 	     
 	     rp = ed->parts->data;
 	     ed->parts = evas_list_remove(ed->parts, rp);
-	     _edje_text_part_on_del(ed, rp);
 	     evas_object_event_callback_del(rp->object, 
 					    EVAS_CALLBACK_MOUSE_IN,
 					    _edje_mouse_in_cb);
@@ -404,6 +416,7 @@ _edje_file_del(Edje *ed)
 	     evas_object_event_callback_del(rp->object, 
 					    EVAS_CALLBACK_MOUSE_WHEEL,
 					    _edje_mouse_wheel_cb);
+	     _edje_text_part_on_del(ed, rp);
 	     evas_object_del(rp->object);
 	     if (rp->swallowed_object)
 	       {
@@ -431,8 +444,8 @@ _edje_file_del(Edje *ed)
 	     ed->actions = evas_list_remove(ed->actions, runp);
 	     free(runp);
 	  }
-	_edje_animators = evas_list_remove(_edje_animators, ed);
      }
+   _edje_animators = evas_list_remove(_edje_animators, ed);
    if (ed->pending_actions)
      {
 	while (ed->pending_actions)

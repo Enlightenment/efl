@@ -37,6 +37,7 @@ edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const ch
    if ((!emission) || (!source) || (!func)) return;
    ed = _edje_fetch(obj);
    if (!ed) return;
+   if (ed->delete_me) return;
    escb = calloc(1, sizeof(Edje_Signal_Callback));
    escb->signal = strdup(emission);
    escb->source = strdup(source);
@@ -59,6 +60,7 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
    if ((!emission) || (!source) || (!func)) return NULL;
    ed = _edje_fetch(obj);
    if (!ed) return;
+   if (ed->delete_me) return NULL;
    for (l = ed->callbacks; l; l = l->next)
      {
 	Edje_Signal_Callback *escb;
@@ -97,6 +99,7 @@ edje_object_signal_emit(Evas_Object *obj, const char *emission, const char *sour
    if ((!emission) || (!source)) return;
    ed = _edje_fetch(obj);
    if (!ed) return;
+   if (ed->delete_me) return;
    _edje_emit(ed, (char *)emission, (char *)source);
 }
 
@@ -109,6 +112,7 @@ edje_object_play_set(Evas_Object *obj, int play)
    
    ed = _edje_fetch(obj);
    if (!ed) return;
+   if (ed->delete_me) return;
    if (play)
      {
 	if (!ed->paused) return;
@@ -137,6 +141,7 @@ edje_object_play_get(Evas_Object *obj)
 
    ed = _edje_fetch(obj);
    if (!ed) return 0;
+   if (ed->delete_me) return 0;
    if (ed->paused) return 0;
    return 1;
 }
@@ -149,6 +154,8 @@ edje_object_animation_set(Evas_Object *obj, int on)
    
    ed = _edje_fetch(obj);
    if (!ed) return;   
+   if (ed->delete_me) return;
+   _edje_block(ed);
    ed->no_anim = !on;
    _edje_freeze(ed);
    if (!on)
@@ -164,6 +171,11 @@ edje_object_animation_set(Evas_Object *obj, int on)
 	     runp = newl->data;
 	     newl = evas_list_remove(newl, newl->data);
 	     _edje_program_run_iterate(runp, runp->start_time + runp->program->tween.time);
+	     if (_edje_block_break(ed))
+	       {
+		  evas_list_free(newl);
+		  goto break_prog;
+	       }
 	  }
      }
    else
@@ -175,7 +187,9 @@ edje_object_animation_set(Evas_Object *obj, int on)
 	     evas_object_show(obj);
 	  }
      }
+   break_prog:
    _edje_thaw(ed);
+   _edje_unblock(ed);
 }
 
 int
@@ -185,6 +199,7 @@ edje_object_animation_get(Evas_Object *obj)
    
    ed = _edje_fetch(obj);
    if (!ed) return 0;
+   if (ed->delete_me) return 0;
    if (ed->no_anim) return 0;
    return 1;
 }
@@ -196,9 +211,13 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 {
    double t, total;
    Evas_List *l;
+   Edje *ed;
 
-   _edje_ref(runp->edje);
-   _edje_freeze(runp->edje);
+   ed = runp->edje;
+   if (ed->delete_me) return 0;
+   _edje_block(ed);
+   _edje_ref(ed);
+   _edje_freeze(ed);
    t = tim - runp->start_time;
    total = runp->program->tween.time;
    t /= total;
@@ -209,8 +228,8 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 	Edje_Program_Target *pt;
 	
 	pt = l->data;
-	rp = evas_list_nth(runp->edje->parts, pt->id);
-	if (rp) _edje_part_pos_set(runp->edje, rp, 
+	rp = evas_list_nth(ed->parts, pt->id);
+	if (rp) _edje_part_pos_set(ed, rp, 
 				   runp->program->tween.mode, t);
      }
    if (t >= 1.0)
@@ -221,45 +240,50 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 	     Edje_Program_Target *pt;
 	     
 	     pt = l->data;
-	     rp = evas_list_nth(runp->edje->parts, pt->id);
+	     rp = evas_list_nth(ed->parts, pt->id);
 	     if (rp)
 	       {
-		  _edje_part_description_apply(runp->edje, rp, 
+		  _edje_part_description_apply(ed, rp, 
 					       runp->program->state, 
 					       runp->program->value,
 					       NULL,
 					       0.0);
-		  _edje_part_pos_set(runp->edje, rp, 
+		  _edje_part_pos_set(ed, rp, 
 				     runp->program->tween.mode, 0.0);
 		  rp->program = NULL;
 	       }
 	  }
-	_edje_recalc(runp->edje);
+	_edje_recalc(ed);
 	runp->delete_me = 1;
-	if (!runp->edje->walking_actions)
+	if (!ed->walking_actions)
 	  {
 	     _edje_anim_count--;
-	     runp->edje->actions = evas_list_remove(runp->edje->actions, runp);
-	     if (!runp->edje->actions)
-	       _edje_animators = evas_list_remove(_edje_animators, runp->edje);
+	     ed->actions = evas_list_remove(ed->actions, runp);
+	     if (!ed->actions)
+	       _edje_animators = evas_list_remove(_edje_animators, ed);
 	  }
-	_edje_emit(runp->edje, "program,stop", runp->program->name);
+	_edje_emit(ed, "program,stop", runp->program->name);
+	if (_edje_block_break(ed)) goto break_prog;
 	if (runp->program->after >= 0)
 	  {
 	     Edje_Program *pr;
 	     
-	     pr = evas_list_nth(runp->edje->collection->programs, 
+	     pr = evas_list_nth(ed->collection->programs, 
 				runp->program->after);
-	     if (pr) _edje_program_run(runp->edje, pr, 0);
+	     if (pr) _edje_program_run(ed, pr, 0);
+	     if (_edje_block_break(ed)) goto break_prog;
 	  }
-	_edje_thaw(runp->edje);
-	_edje_unref(runp->edje);
-	if (!runp->edje->walking_actions) free(runp);
+	_edje_thaw(ed);
+	_edje_unref(ed);
+	if (!ed->walking_actions) free(runp);
+	_edje_unblock(ed);
 	return  0;
      }
-   _edje_recalc(runp->edje);
-   _edje_thaw(runp->edje);
-   _edje_unref(runp->edje);
+   break_prog:
+   _edje_recalc(ed);
+   _edje_thaw(ed);
+   _edje_unref(ed);
+   _edje_unblock(ed);
    return 1;
 }
 
@@ -267,41 +291,46 @@ void
 _edje_program_end(Edje *ed, Edje_Running_Program *runp)
 {
    Evas_List *l;
+   char *pname = NULL;
 
-   _edje_ref(runp->edje);
-   _edje_freeze(runp->edje);
+   if (ed->delete_me) return;
+   _edje_ref(ed);
+   _edje_freeze(ed);
    for (l = runp->program->targets; l; l = l->next)
      {
 	Edje_Real_Part *rp;
 	Edje_Program_Target *pt;
 	
 	pt = l->data;
-	rp = evas_list_nth(runp->edje->parts, pt->id);
+	rp = evas_list_nth(ed->parts, pt->id);
 	if (rp)
 	  {
-	     _edje_part_description_apply(runp->edje, rp, 
+	     _edje_part_description_apply(ed, rp, 
 					  runp->program->state, 
 					  runp->program->value,
 					  NULL,
 					  0.0);
-	     _edje_part_pos_set(runp->edje, rp, 
+	     _edje_part_pos_set(ed, rp, 
 				runp->program->tween.mode, 0.0);
 	     rp->program = NULL;
 	  }
      }
-   _edje_recalc(runp->edje);
+   _edje_recalc(ed);
    runp->delete_me = 1;
-   if (!runp->edje->walking_actions)
+   pname = runp->program->name;
+   if (!ed->walking_actions)
      {
 	_edje_anim_count--;
-	runp->edje->actions = evas_list_remove(runp->edje->actions, runp);
-	if (!runp->edje->actions)
-	  _edje_animators = evas_list_remove(_edje_animators, runp->edje);
+	ed->actions = evas_list_remove(ed->actions, runp);
+	if (!ed->actions)
+	  {
+	     _edje_animators = evas_list_remove(_edje_animators, ed);
+	     free(runp);
+	  }
      }
-   _edje_emit(runp->edje, "program,stop", runp->program->name);
-   _edje_thaw(runp->edje);
-   _edje_unref(runp->edje);   
-   if (!runp->edje->walking_actions) free(runp);
+   _edje_emit(ed, "program,stop", pname);
+   _edje_thaw(ed);
+   _edje_unref(ed);   
 }
    
 void
@@ -312,6 +341,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
    static int recursions = 0;
    static int recursion_limit = 0;
 
+   if (ed->delete_me) return;
    if ((pr->in.from > 0.0) && (pr->in.range >= 0.0) && (!force))
      {
 	Edje_Pending_Program *pp;
@@ -340,8 +370,10 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
 	return;
      }
    recursions++;
-   _edje_freeze(ed);
+   _edje_block(ed);
    _edje_ref(ed);
+   _edje_freeze(ed);
+   printf("run program %s\n", pr->name);
    if (pr->action == EDJE_ACTION_TYPE_STATE_SET)
      {
 	if ((pr->tween.time > 0.0) && (!ed->no_anim))
@@ -370,7 +402,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
 		    }
 	       }
 	     _edje_emit(ed, "program,start", pr->name);
-	     
+	     if (_edje_block_break(ed)) goto break_prog;
 	     if (!ed->actions)
 	       _edje_animators = evas_list_append(_edje_animators, ed);
 	     ed->actions = evas_list_append(ed->actions, runp);
@@ -403,7 +435,9 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
 		    }
 	       }
 	     _edje_emit(ed, "program,start", pr->name);
+	     if (_edje_block_break(ed)) goto break_prog;
 	     _edje_emit(ed, "program,stop", pr->name);
+	     if (_edje_block_break(ed)) goto break_prog;
 	     if (pr->after >= 0)
 	       {
 		  Edje_Program *pr2;
@@ -411,6 +445,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
 		  pr2 = evas_list_nth(ed->collection->programs, 
 				     pr->after);
 		  if (pr2) _edje_program_run(ed, pr2, 0);
+		  if (_edje_block_break(ed)) goto break_prog;
 	       }
 	     _edje_recalc(ed);
 	  }
@@ -451,12 +486,16 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
 	     done:
 	  }
 	_edje_emit(ed, "program,stop", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
      }
    else if (pr->action == EDJE_ACTION_TYPE_SIGNAL_EMIT)
      {
 	_edje_emit(ed, "program,start", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
 	_edje_emit(ed, pr->state, pr->state2);
+	if (_edje_block_break(ed)) goto break_prog;
 	_edje_emit(ed, "program,stop", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
      }
    if (pr->action != EDJE_ACTION_TYPE_STATE_SET)
      {
@@ -466,57 +505,79 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
 	     
 	     pr2 = evas_list_nth(ed->collection->programs, pr->after);
 	     if (pr2) _edje_program_run(ed, pr2, 0);
+	     if (_edje_block_break(ed)) goto break_prog;
 	  }
      }
-   _edje_unref(ed);
+   break_prog:
    _edje_thaw(ed);
+   _edje_unref(ed);
    recursions--;
    if (recursions == 0) recursion_limit = 0;
+   _edje_unblock(ed);
 }
 
 void
 _edje_emit(Edje *ed, char *sig, char *src)
 {
    Evas_List *l;
-   static Evas_List *emissions = NULL;
    Edje_Emission *ee;
    /* limit self-feeding loops in callbacks to 64 levels */
    static int recursions = 0;
    static int recursion_limit = 0;
 
+   if ((!sig) && (!src))
+     {
+	printf("clear signals! %p\n", ed->emissions);
+	while (ed->emissions)
+	  {
+	     ee = ed->emissions->data;
+	     free(ee->signal);
+	     free(ee->source);
+	     free(ee);
+	     ed->emissions = evas_list_remove(ed->emissions, ee);
+	  }
+	return;
+     }
+   if (ed->delete_me) return;
    if ((recursions >= 64) || (recursion_limit))
      {
 	recursion_limit = 1;
 	return;
      }
    recursions++;
+   printf("EDJE EMIT: signal: \"%s\" source: \"%s\"\n", sig, src);
+   if ((sig) && (src))
+     {
+	printf("queue emission\n");
+	ee = calloc(1, sizeof(Edje_Emission));
+	if (!ee)
+	  {
+	     recursions--;
+	     if (recursions == 0) recursion_limit = 0;
+	     return;
+	  }
+	ee->signal = strdup(sig);
+	ee->source = strdup(src);
+	if ((ed->emissions) || (_edje_block_break(ed)))
+	  {
+	     printf("append signal & leave\n");
+	     ed->emissions = evas_list_append(ed->emissions, ee);
+	     recursions--;
+	     if (recursions == 0) recursion_limit = 0;
+	     return;
+	  }
+	else
+	  ed->emissions = evas_list_append(ed->emissions, ee);
+     }
+   if (!ed->emissions) return;
+   _edje_block(ed);
    _edje_ref(ed);
    _edje_freeze(ed);
-   printf("EDJE EMIT: signal: \"%s\" source: \"%s\"\n", sig, src);
-   ee = calloc(1, sizeof(Edje_Emission));
-   if (!ee)
+   while (ed->emissions)
      {
-	recursions--;
-	if (recursions == 0) recursion_limit = 0;
-	return;
-     }
-   ee->signal = strdup(sig);
-   ee->source = strdup(src);
-   if (emissions)
-     {
-	emissions = evas_list_append(emissions, ee);
-	_edje_thaw(ed);
-	_edje_unref(ed);
-	recursions--;
-	if (recursions == 0) recursion_limit = 0;
-	return;
-     }
-   else
-     emissions = evas_list_append(emissions, ee);
-   while (emissions)
-     {
-	ee = emissions->data;
-	emissions = evas_list_remove(emissions, ee);
+	ee = ed->emissions->data;
+	ed->emissions = evas_list_remove(ed->emissions, ee);
+	printf("EDJE: handle emission \"%s\" \"%s\"\n", ee->signal, ee->source);
 	if (ed->collection)
 	  {
 	     Edje_Part_Collection *ec;
@@ -542,7 +603,9 @@ _edje_emit(Edje *ed, char *sig, char *src)
 		  Evas_List *matches;
 		  
 		  if (evas_hash_find(ec->prog_cache.no_matches, tmps))
-		    done = 1;
+		    {
+		       done = 1;
+		    }
 		  else if ((matches = evas_hash_find(ec->prog_cache.matches, tmps)))
 		    {
 		       for (l = matches; l; l = l->next)
@@ -551,6 +614,13 @@ _edje_emit(Edje *ed, char *sig, char *src)
 			    
 			    pr = l->data;
 			    _edje_program_run(ed, pr, 0);
+			    if (_edje_block_break(ed))
+			      {
+				 if (tmps) free(tmps);
+				 if (!ed->dont_clear_signals)
+				   _edje_emit(ed, NULL, NULL);
+				 goto break_prog;
+			      }
 			 }
 		       done = 1;
 		    }
@@ -572,6 +642,14 @@ _edje_emit(Edje *ed, char *sig, char *src)
 			 {
 			    matched++;
 			    _edje_program_run(ed, pr, 0);
+			    if (_edje_block_break(ed))
+			      {
+				 if (tmps) free(tmps);
+				 evas_list_free(matches);
+				 if (!ed->dont_clear_signals)
+				   _edje_emit(ed, NULL, NULL);
+				 goto break_prog;
+			      }
 			    matches = evas_list_append(matches, pr);
 			 }
 		    }
@@ -586,16 +664,26 @@ _edje_emit(Edje *ed, char *sig, char *src)
 		    }
 	       }
 	     _edje_emit_cb(ed, ee->signal, ee->source);
+	     if (_edje_block_break(ed))
+	       {
+		  if (tmps) free(tmps);
+		  if (!ed->dont_clear_signals)		    
+		    _edje_emit(ed, NULL, NULL);
+		  goto break_prog;
+	       }
 	     if (tmps) free(tmps);
+	     tmps = NULL;
 	  }
 	free(ee->signal);
 	free(ee->source);
 	free(ee);
      }
-   _edje_thaw(ed);
-   _edje_unref(ed);
+   break_prog:
    recursions--;
    if (recursions == 0) recursion_limit = 0;
+   _edje_thaw(ed);
+   _edje_unref(ed);
+   _edje_unblock(ed);
 }
 
 static void
@@ -603,6 +691,10 @@ _edje_emit_cb(Edje *ed, char *sig, char *src)
 {
    Evas_List *l;
    
+   if (ed->delete_me) return;
+   _edje_ref(ed);
+   _edje_freeze(ed);   
+   _edje_block(ed);
    ed->walking_callbacks = 1;
    for (l = ed->callbacks; l; l = l->next)
      {
@@ -614,6 +706,7 @@ _edje_emit_cb(Edje *ed, char *sig, char *src)
 	    (_edje_glob_match(sig, escb->signal)) &&
 	    (_edje_glob_match(src, escb->source)))
 	  escb->func(escb->data, ed->obj, sig, src);
+	if (_edje_block_break(ed)) goto break_prog;
      }
    ed->walking_callbacks = 0;
    if ((ed->delete_callbacks) || (ed->just_added_callbacks))
@@ -639,4 +732,8 @@ _edje_emit_cb(Edje *ed, char *sig, char *src)
 	     l = next_l;
 	  }
      }
+   break_prog:
+   _edje_unblock(ed);
+   _edje_thaw(ed);
+   _edje_unref(ed);
 }
