@@ -97,10 +97,10 @@ evas_get_color(Evas e, Evas_Object o, int *r, int *g, int *b, int *a)
 	     Evas_Object_Text oo;
 	     
 	     oo = (Evas_Object_Text)o;
-	     *r = oo->current.r;
-	     *g = oo->current.g;
-	     *b = oo->current.b;
-	     *a = oo->current.a;
+	     if (r) *r = oo->current.r;
+	     if (g) *g = oo->current.g;
+	     if (b) *b = oo->current.b;
+	     if (a) *a = oo->current.a;
 	  }
 	break;
      case OBJECT_RECTANGLE:
@@ -108,10 +108,10 @@ evas_get_color(Evas e, Evas_Object o, int *r, int *g, int *b, int *a)
 	     Evas_Object_Rectangle oo;
 	     
 	     oo = (Evas_Object_Rectangle)o;
-	     *r = oo->current.r;
-	     *g = oo->current.g;
-	     *b = oo->current.b;
-	     *a = oo->current.a;
+	     if (r) *r = oo->current.r;
+	     if (g) *g = oo->current.g;
+	     if (b) *b = oo->current.b;
+	     if (a) *a = oo->current.a;
 	  }
 	break;
      case OBJECT_LINE:
@@ -119,10 +119,10 @@ evas_get_color(Evas e, Evas_Object o, int *r, int *g, int *b, int *a)
 	     Evas_Object_Line oo;
 	     
 	     oo = (Evas_Object_Line)o;
-	     *r = oo->current.r;
-	     *g = oo->current.g;
-	     *b = oo->current.b;
-	     *a = oo->current.a;
+	     if (r) *r = oo->current.r;
+	     if (g) *g = oo->current.g;
+	     if (b) *b = oo->current.b;
+	     if (a) *a = oo->current.a;
 	  }
 	break;
      default:
