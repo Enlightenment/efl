@@ -80,8 +80,8 @@ native       get_geometry     (part_id, &x, &y, &w, &h);
 native       get_mouse        (&x, &y);
 native       stop_program     (program_id);
 native       stop_programs_on (part_id);
-native       set_min_size     (part_id, Float:w, Float:h);
-native       set_max_size     (part_id, Float:w, Float:h);
+native       set_min_size     (Float:w, Float:h);
+native       set_max_size     (Float:w, Float:h);
 
 enum Msg_Type
 {

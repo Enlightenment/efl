@@ -88,8 +88,8 @@
  * get_mouse(&x, &y)
  * stop_program(program_id)
  * stop_programs_on(part_id)
- * set_min_size(&w, &h)
- * set_max_size(&w, &h)
+ * set_min_size(w, h)
+ * set_max_size(w, h)
  * send_message(Msg_Type:type, id, ...)
  * 
  * still need to implement this:
