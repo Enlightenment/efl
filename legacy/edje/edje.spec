@@ -74,6 +74,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libedje.la
 %{_libdir}/libedje_edit.a
 %{_libdir}/libedje_edit.la
+%{_libdir}/pkgconfig/edje.pc
 %{_bindir}/edje-config
 %{_includedir}/Edje*
 

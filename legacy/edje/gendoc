@@ -5,6 +5,7 @@ for I in `find ./src/lib -name "*.c" -print`; do
   cat $I >> ./edje.c
 done
 rm -rf ./doc/html ./doc/latex ./doc/man
+mkdir -p ./doc/html ./doc/latex ./doc/man
 doxygen
 cp doc/img/*.png doc/html/
 rm -f edje_docs.tar edje_docs.tar.gz

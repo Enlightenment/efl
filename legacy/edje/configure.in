@@ -265,6 +265,7 @@ fi
 AC_SUBST(vimdir)
 
 AC_OUTPUT([
+edje.pc
 Makefile
 data/Makefile
 data/images/Makefile
