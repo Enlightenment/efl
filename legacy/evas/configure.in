@@ -214,7 +214,7 @@ AC_ARG_ENABLE(gl-x11, [  --enable-gl-x11              enable the OpenGL X11 disp
            x_cflags="-I"$x_dir"/include"
            x_libs="-L"$x_dir"/lib -lX11 -lXext"
            gl_cflags="-I/usr/include"
-           gl_libs="-L/usr/lib -lGL -lGLU"
+           gl_libs="-L/usr/lib -lGL -lGLU -lpthread"
 	   gl_dir=""
 	   ENGINE_GL_X11_PRG="evas_gl_x11_test"
         ], [
