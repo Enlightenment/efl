@@ -57,9 +57,12 @@ ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h)
 		       CWEventMask,
 		       &attr);
 
-   gethostname(buf, MAXHOSTNAMELEN);
-   buf[MAXHOSTNAMELEN - 1] = '\0';
-   ecore_x_window_prop_client_machine_set(win, buf);
+   if (parent == DefaultRootWindow(_ecore_x_disp))
+     {
+	gethostname(buf, MAXHOSTNAMELEN);
+	buf[MAXHOSTNAMELEN - 1] = '\0';
+	ecore_x_window_prop_client_machine_set(win, buf);
+     }
    return win;
 }
 
@@ -118,9 +121,12 @@ ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h)
 		       CWEventMask,
 		       &attr);
 
-   gethostname(buf, MAXHOSTNAMELEN);
-   buf[MAXHOSTNAMELEN - 1] = '\0';
-   ecore_x_window_prop_client_machine_set(win, buf);
+   if (parent == DefaultRootWindow(_ecore_x_disp))
+     {
+	gethostname(buf, MAXHOSTNAMELEN);
+	buf[MAXHOSTNAMELEN - 1] = '\0';
+	ecore_x_window_prop_client_machine_set(win, buf);
+     }
    return win;
 }
 
@@ -169,9 +175,12 @@ ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h)
 		       CWEventMask,
 		       &attr);
 
-   gethostname(buf, MAXHOSTNAMELEN);
-   buf[MAXHOSTNAMELEN - 1] = '\0';
-   ecore_x_window_prop_client_machine_set(win, buf);
+   if (parent == DefaultRootWindow(_ecore_x_disp))
+     {
+	gethostname(buf, MAXHOSTNAMELEN);
+	buf[MAXHOSTNAMELEN - 1] = '\0';
+	ecore_x_window_prop_client_machine_set(win, buf);
+     }
    return win;
 }
 
