@@ -141,6 +141,7 @@ void evas_font_del_path(Evas e, char *path);
    
 /* layer stacking for object */
 void evas_set_layer(Evas e, Evas_Object o, int l);
+int evas_get_layer(Evas e, Evas_Object o);
 /* ** ** not implimented yet ** ** */void evas_set_layer_store(Evas e, int l, int store);
 
 /* gradient creating / deletion / modification */

@@ -189,6 +189,18 @@ evas_set_layer(Evas e, Evas_Object o, int layer_num)
       evas_event_move(e, e->mouse.x, e->mouse.y);
 }
 
+int
+evas_get_layer(Evas e, Evas_Object o)
+{
+   Evas_Layer        layer;
+   Evas_List         l;
+   int removed;
+
+   if (!e) return 0;
+   if (!o) return 0;
+   return o->current.layer;
+}
+
 void
 evas_set_layer_store(Evas e, int l, int store)
 {
