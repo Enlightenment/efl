@@ -1,4 +1,5 @@
 #include "Ecore.h"
+#include "config.h"
 #include "Ecore_Con.h"
 #include "ecore_private.h"
 #include "ecore_ipc_private.h"
@@ -93,12 +94,19 @@ ecore_ipc_shutdown(void)
  * FIXME: To be fixed.
  */
 Ecore_Ipc_Server *
-ecore_ipc_server_add(Ecore_Ipc_Type type, char *name, int port, const void *data)
+ecore_ipc_server_add(Ecore_Ipc_Type compl_type, char *name, int port, const void *data)
 {
    Ecore_Ipc_Server *svr;
+   Ecore_Ipc_Type type;
+   Ecore_Con_Type extra = 0;
    
    svr = calloc(1, sizeof(Ecore_Ipc_Server));
    if (!svr) return NULL;
+   type = compl_type;
+#if USE_OPENSSL
+   type &= ~ECORE_IPC_USE_SSL;
+   if (compl_type & ECORE_IPC_USE_SSL) extra = ECORE_CON_USE_SSL;
+#endif   
    switch (type)
      {
       case ECORE_IPC_LOCAL_USER:
@@ -108,7 +116,7 @@ ecore_ipc_server_add(Ecore_Ipc_Type type, char *name, int port, const void *data
 	svr->server = ecore_con_server_add(ECORE_CON_LOCAL_SYSTEM, name, port, svr);
 	break;
       case ECORE_IPC_REMOTE_SYSTEM:
-	svr->server = ecore_con_server_add(ECORE_CON_REMOTE_SYSTEM, name, port, svr);
+	svr->server = ecore_con_server_add(ECORE_CON_REMOTE_SYSTEM | extra, name, port, svr);
 	break;
       default:
 	free(svr);
@@ -131,12 +139,19 @@ ecore_ipc_server_add(Ecore_Ipc_Type type, char *name, int port, const void *data
  * FIXME: To be fixed.
  */
 Ecore_Ipc_Server *
-ecore_ipc_server_connect(Ecore_Ipc_Type type, char *name, int port, const void *data)
+ecore_ipc_server_connect(Ecore_Ipc_Type compl_type, char *name, int port, const void *data)
 {
    Ecore_Ipc_Server *svr;
+   Ecore_Ipc_Type type;
+   Ecore_Con_Type extra = 0;
    
    svr = calloc(1, sizeof(Ecore_Ipc_Server));
    if (!svr) return NULL;
+   type = compl_type;
+#if USE_OPENSSL
+   type &= ~ECORE_IPC_USE_SSL;
+   if (compl_type & ECORE_IPC_USE_SSL) extra = ECORE_CON_USE_SSL;
+#endif   
    switch (type)
      {
       case ECORE_IPC_LOCAL_USER:
@@ -146,7 +161,7 @@ ecore_ipc_server_connect(Ecore_Ipc_Type type, char *name, int port, const void *
 	svr->server = ecore_con_server_connect(ECORE_CON_LOCAL_SYSTEM, name, port, svr);
 	break;
       case ECORE_IPC_REMOTE_SYSTEM:
-	svr->server = ecore_con_server_connect(ECORE_CON_REMOTE_SYSTEM, name, port, svr);
+	svr->server = ecore_con_server_connect(ECORE_CON_REMOTE_SYSTEM | extra, name, port, svr);
 	break;
       default:
 	free(svr);

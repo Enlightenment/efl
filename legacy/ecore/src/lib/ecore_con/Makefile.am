@@ -1,7 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
 INCLUDES = \
--I$(top_srcdir)/src/lib/ecore @SSL_CFLAGS@
+-I$(top_srcdir)/src/lib/ecore \
+@SSL_CFLAGS@
 
 libecore_con_la_LDFLAGS = -version-info 1:0:0 \
 -L$(top_builddir)/src/lib/ecore/.libs
@@ -17,7 +18,8 @@ ecore_con.c \
 ecore_con_private.h
 
 libecore_con_la_LIBADD = \
-$(top_builddir)/src/lib/ecore/libecore.la @SSL_LIBS@
+$(top_builddir)/src/lib/ecore/libecore.la \
+@SSL_LIBS@
 
 libecore_con_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la

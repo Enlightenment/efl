@@ -622,6 +622,8 @@ AC_SUBST(PERL)
 AC_SUBST(ecore_config_cflags)
 AC_SUBST(ecore_config_libs)
 
+AC_SUBST(USE_OPENSSL)
+
 AC_OUTPUT([
 Makefile
 ecore-config
@@ -636,6 +638,7 @@ src/lib/ecore_evas/Ecore_Evas.h
 src/lib/ecore_evas/Makefile
 src/lib/ecore_con/Ecore_Con.h
 src/lib/ecore_con/Makefile
+src/lib/ecore_ipc/Ecore_Ipc.h
 src/lib/ecore_ipc/Makefile
 src/lib/ecore_txt/Makefile
 src/lib/ecore_config/Makefile
@@ -658,7 +661,7 @@ echo "  Ecore_FB................: $have_ecore_fb"
 echo "  Ecore_Evas..............: $have_ecore_evas"
 echo "  Ecore_Evas GL Support...: $have_ecore_evas_gl"
 echo "  Ecore_Evas FB Support...: $have_ecore_evas_fb"
-echo "  Ecore_Ipc...............: $have_ecore_ipc"
+echo "  Ecore_Ipc...............: $have_ecore_ipc (OpenSSL: $use_openssl)"
 echo "  Ecore_Config............: $have_ecore_config"
 echo
 echo "Now type 'make' ('gmake' on some systems) to compile $PACKAGE."
