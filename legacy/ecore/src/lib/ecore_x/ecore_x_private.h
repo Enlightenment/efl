@@ -63,6 +63,7 @@ typedef struct _Ecore_X_DND_Protocol
    enum {
       ECORE_X_DND_IDLE,
       ECORE_X_DND_DRAGGING,
+      ECORE_X_DND_DROPPED,
       ECORE_X_DND_ENTERED,
       ECORE_X_DND_TARGET_ENTERED,
       ECORE_X_DND_TARGET_CONVERTING,
@@ -86,6 +87,8 @@ typedef struct _Ecore_X_DND_Protocol
    
    int will_accept;
    int suppress;
+
+   int await_status;
    
    struct {
       Ecore_Event_Handler *mouse_move;

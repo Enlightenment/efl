@@ -498,6 +498,11 @@ _ecore_x_window_at_xy_get(Window base, int bx, int by, int x, int y)
    return base;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
 Ecore_X_Window
 ecore_x_window_at_xy_get(int x, int y)
 {
@@ -514,6 +519,11 @@ ecore_x_window_at_xy_get(int x, int y)
    return win ? win : root;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
 Ecore_X_Window
 ecore_x_window_parent_get(Ecore_X_Window win)
 {
