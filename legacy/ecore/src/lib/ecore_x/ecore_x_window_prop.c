@@ -277,6 +277,37 @@ ecore_x_window_prop_visible_icon_name_get(Ecore_X_Window win)
 }
 
 /**
+ * Set a window client machine.
+ * @param win The window
+ * @param t The client machine string
+ * 
+ * Set a window client machine string
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_prop_client_machine_set(Ecore_X_Window win, const char *t)
+{
+   ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_client_machine, (char *)t);
+}
+
+/**
+ * Get a window client machine string.
+ * @param win The window
+ * @return The windows client machine string
+ * 
+ * Return the client machine of a window. String must be free'd when done with.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+char *
+ecore_x_window_prop_client_machine_get(Ecore_X_Window win)
+{
+   char *name;
+
+   name = ecore_x_window_prop_string_get(win, _ecore_x_atom_wm_client_machine);
+   return name;
+}
+
+/**
  * Set a window name & class.
  * @param win The window
  * @param n The name string

@@ -456,6 +456,19 @@ handler_x_window_prop_visible_icon_name_change(void *data, int type, void *event
 }
 
 int
+handler_x_window_prop_client_machine_change(void *data, int type, void *event)
+{
+   Ecore_X_Event_Window_Prop_Client_Machine_Change *e;
+   
+   e = event;
+   if (e->name)
+     printf("Client machine change to \"%s\"\n", e->name);
+   else
+     printf("Client machine deleted\n");
+   return 1;
+}
+
+int
 handler_x_window_prop_name_class_change(void *data, int type, void *event)
 {
    Ecore_X_Event_Window_Prop_Name_Class_Change *e;
@@ -504,6 +517,15 @@ setup_ecore_x_test(void)
         tmp = ecore_x_window_prop_visible_icon_name_get(win);
      }
    printf("Visible icon Name: %s\n", tmp);
+   free(tmp);
+   tmp = ecore_x_window_prop_client_machine_get(win);
+   if (!tmp)
+     {
+        printf("No client machine, setting it to host.test.com\n");
+	ecore_x_window_prop_client_machine_set(win, "host.test.com");
+        tmp = ecore_x_window_prop_client_machine_get(win);
+     }
+   printf("Client machine: %s\n", tmp);
    free(tmp);
    ecore_x_window_prop_name_class_set(win, "ecore_test", "main");
    ecore_x_window_prop_protocol_set(win, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 1);

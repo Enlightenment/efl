@@ -57,6 +57,7 @@ extern Atom     _ecore_x_atom_wm_protocols;
 extern Atom     _ecore_x_atom_wm_class;
 extern Atom     _ecore_x_atom_wm_name;
 extern Atom     _ecore_x_atom_wm_icon_name;
+extern Atom     _ecore_x_atom_wm_client_machine;
 extern Atom     _ecore_x_atom_motif_wm_hints;
 extern Atom     _ecore_x_atom_win_layer;
 extern Atom     _ecore_x_atom_net_wm_desktop;
