@@ -1,0 +1,216 @@
+#include "evas_common.h"
+#include "evas_private.h"
+#include "Evas.h"
+
+static Evas_Object *evas_object_above_get_internal(Evas_Object *obj);
+static Evas_Object *evas_object_below_get_internal(Evas_Object *obj);
+
+static Evas_Object *
+evas_object_above_get_internal(Evas_Object *obj)
+{
+   if (((Evas_Object_List *)obj)->next)
+     return (Evas_Object *)(((Evas_Object_List *)obj)->next);
+   else
+     {
+	if (((Evas_Object_List *)(((Evas_Object *)obj)->layer))->next)
+	  {
+	     Evas_Layer *l;
+	     
+	     l = (Evas_Layer *)(((Evas_Object_List *)(((Evas_Object *)obj)->layer))->next);
+	     return l->objects;
+	  }
+     }
+   return NULL;
+}
+
+static Evas_Object *
+evas_object_below_get_internal(Evas_Object *obj)
+{
+   if (((Evas_Object_List *)obj)->prev)
+     return (Evas_Object *)(((Evas_Object_List *)obj)->prev);
+   else
+     {
+        if (((Evas_Object_List *)(((Evas_Object *)obj)->layer))->prev)
+	  {
+	     Evas_Layer *l;
+	     
+	     l = (Evas_Layer *)(((Evas_Object_List *)(((Evas_Object *)obj)->layer))->prev);
+	     return (Evas_Object *)(((Evas_Object_List *)(l->objects))->last);
+	  }
+     }
+   return NULL;
+}
+
+void
+evas_object_raise(Evas_Object *obj)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (obj->smart.smart)
+     {
+       if (obj->smart.smart->func_raise)
+	  obj->smart.smart->func_raise(obj);
+     }
+   if (!(((Evas_Object_List *)obj)->next)) return;
+   obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
+   obj->layer->objects = evas_object_list_append(obj->layer->objects, obj);
+   if (obj->clip.clipees) return;
+   obj->restack = 1;
+   evas_object_change(obj);
+   if (!obj->smart.smart)
+     {
+	if (evas_object_is_in_output_rect(obj, 
+					  obj->layer->evas->pointer.x, 
+					  obj->layer->evas->pointer.y, 1, 1) &&
+	    obj->cur.visible)
+	  evas_event_feed_mouse_move(obj->layer->evas, obj->layer->evas->pointer.x, obj->layer->evas->pointer.y);   
+     }
+}
+
+void
+evas_object_lower(Evas_Object *obj)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (obj->smart.smart)
+     {
+       if (obj->smart.smart->func_lower)
+	  obj->smart.smart->func_lower(obj);
+     }
+   if (!(((Evas_Object_List *)obj)->prev)) return;
+   obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
+   obj->layer->objects = evas_object_list_prepend(obj->layer->objects, obj);
+   if (obj->clip.clipees) return;
+   obj->restack = 1;
+   evas_object_change(obj);
+   if (!obj->smart.smart)
+     {
+	if (evas_object_is_in_output_rect(obj, 
+					  obj->layer->evas->pointer.x, 
+					  obj->layer->evas->pointer.y, 1, 1) &&
+	    obj->cur.visible)
+	  evas_event_feed_mouse_move(obj->layer->evas, obj->layer->evas->pointer.x, obj->layer->evas->pointer.y);   
+     }
+}
+
+void
+evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   MAGIC_CHECK(above, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (obj->smart.smart)
+     {
+       if (obj->smart.smart->func_stack_above)
+	  obj->smart.smart->func_stack_above(obj, above);
+     }
+   if (above->layer != obj->layer) return;
+   if (((Evas_Object_List *)obj)->prev == (Evas_Object_List *)above) return;
+   obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
+   obj->layer->objects = evas_object_list_append_relative(obj->layer->objects, obj, above);
+   if (obj->clip.clipees) return;
+   obj->restack = 1;
+   evas_object_change(obj);
+   if (!obj->smart.smart)
+     {
+	if (evas_object_is_in_output_rect(obj, 
+					  obj->layer->evas->pointer.x, 
+					  obj->layer->evas->pointer.y, 1, 1) &&
+	    obj->cur.visible)
+	  evas_event_feed_mouse_move(obj->layer->evas, obj->layer->evas->pointer.x, obj->layer->evas->pointer.y);   
+     }
+}
+
+void
+evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   MAGIC_CHECK(below, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (obj->smart.smart)
+     {
+       if (obj->smart.smart->func_stack_below)
+	  obj->smart.smart->func_stack_below(obj, below);
+     }
+   if (below->layer != obj->layer) return;
+   if (((Evas_Object_List *)obj)->next == (Evas_Object_List *)below) return;
+   obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
+   obj->layer->objects = evas_object_list_prepend_relative(obj->layer->objects, obj, below);
+   if (obj->clip.clipees) return;
+   obj->restack = 1;
+   evas_object_change(obj);
+   if (!obj->smart.smart)
+     {
+	if (evas_object_is_in_output_rect(obj, 
+					  obj->layer->evas->pointer.x, 
+					  obj->layer->evas->pointer.y, 1, 1) &&
+	    obj->cur.visible)
+	  evas_event_feed_mouse_move(obj->layer->evas, obj->layer->evas->pointer.x, obj->layer->evas->pointer.y);   
+     }
+}
+
+Evas_Object *
+evas_object_above_get(Evas_Object *obj)
+{
+   Evas_Object *obj2;
+   
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return NULL;
+   MAGIC_CHECK_END();
+   obj2 = evas_object_above_get_internal(obj);
+   while ((obj2) && (obj2->smart.parent))
+     obj2 = evas_object_above_get_internal(obj2);   
+   return obj2;
+}
+
+Evas_Object *
+evas_object_below_get(Evas_Object *obj)
+{
+   Evas_Object *obj2;
+   
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return NULL;
+   MAGIC_CHECK_END();
+   obj2 = evas_object_below_get_internal(obj);
+   while ((obj2) && (obj2->smart.parent))
+     obj2 = evas_object_below_get_internal(obj2);   
+   return obj2;
+}
+
+Evas_Object *
+evas_object_bottom_get(Evas *e)
+{
+   Evas_Object *obj2;
+   
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return NULL;
+   MAGIC_CHECK_END();
+   if (e->layers)
+     obj2 = e->layers->objects;
+   while ((obj2) && (obj2->smart.parent))
+     obj2 = evas_object_above_get_internal(obj2);
+   return obj2;
+}
+
+Evas_Object *
+evas_object_top_get(Evas *e)
+{
+   Evas_Object *obj2;
+   
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return NULL;
+   MAGIC_CHECK_END();
+   if (e->layers)
+     obj2 = (Evas_Object *)(((Evas_List *)(((Evas_Layer *)(((Evas_Object_List *)(e->layers))->last))->objects))->last);
+   while ((obj2) && (obj2->smart.parent))
+     obj2 = evas_object_below_get_internal(obj2);
+   return obj2;
+}

@@ -1,0 +1,6 @@
+#ifndef EVAS_ENGINE_SOFTWARE_WIN32_GDI_H
+#define EVAS_ENGINE_SOFTWARE_WIN32_GDI_H
+
+extern Evas_Func evas_engine_software_win32_gdi_func;
+
+#endif
