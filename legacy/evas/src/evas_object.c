@@ -284,14 +284,12 @@ evas_set_layer(Evas e, Evas_Object o, int layer_num)
    o->changed = 1;
    e->changed = 1;
    o->current.layer = layer_num;
-   printf("object at layer %i\n", layer_num);
+   
    for (l = e->layers; l; l = l->next)
      {
 	layer = l->data;
-	printf("have a layer %i\n", layer->layer);
 	if (layer->layer == o->current.layer)
 	  {
-	     printf("same layer..\n");
 	     layer->objects = evas_list_append(layer->objects, o);
 	     if ((o->current.visible) && 
 		 (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)))
@@ -302,7 +300,6 @@ evas_set_layer(Evas e, Evas_Object o, int layer_num)
 	  {
 	     Evas_Layer        layer_new;
 	     
-	     printf("insert before this layer\n");
 	     layer_new = malloc(sizeof(struct _Evas_Layer));
 	     memset(layer_new, 0, sizeof(struct _Evas_Layer));
 	     e->layers = evas_list_prepend_relative(e->layers, layer_new, layer);
@@ -314,7 +311,6 @@ evas_set_layer(Evas e, Evas_Object o, int layer_num)
 	     return;
 	  }
      }
-   printf("put at end of layers\n");
    layer = malloc(sizeof(struct _Evas_Layer));
    memset(layer, 0, sizeof(struct _Evas_Layer));
    e->layers = evas_list_append(e->layers, layer);
