@@ -1,6 +1,145 @@
 #include "Edje.h"
 #include "edje_private.h"
 
+/* All items are virtual constructs that provide Evas_Objects at some point.
+ * Edje may move, resize, show, hide, clip, unclip, raise, lower etc. this
+ * item AFTER it calls the item's add() method and before it calls the del()
+ * method. Edje may call add() and del() at any time as often items may not
+ * be visible and so may not need to exist at all - they are merely information
+ * used for layout, and nothing more. this helps save cpu and memory keeping
+ * things responsive for BIG lists of items. you create an item from an item
+ * class then ask that item to be appended/prepended etc. to the container.
+ */
+typedef struct _Edje_Item Edje_Item;
+typedef struct _Edje_Item_Class Edje_Item_Class;
+
+struct _Edje_Item_Class
+{
+   Evas_Object *(*add)      (Edje_Item *ei);
+   void         (*del)      (Edje_Item *ei);
+   void         (*select)   (Edje_Item *ei);
+   void         (*deselect) (Edje_Item *ei);
+   void         (*focus)    (Edje_Item *ei);
+   void         (*unfocus)  (Edje_Item *ei);
+};
+
+/* private */
+struct _Edje_Item
+{
+   Edje_Item_Class *class;
+   void            *class_data;
+   
+   unsigned char accessible : 1;
+};
+
+/* create and destroy virtual items */
+
+Edje_Item *
+edje_item_add(Edje_Item_Class *cl, void *data)
+{
+}
+
+void
+edje_item_del(Edje_Item *ei)
+{
+}
+
+/* an arbitary data pointer to use to track other data */
+
+void
+edje_item_data_wet(Edje_Item *ei, void *data)
+{
+}
+
+void *
+edje_item_data_get(Edje_Item *ei)
+{
+}
+
+/* this object covers the entire item */
+void
+edje_item_object_set(Edje_Item *ei, Evas_Object *obj)
+{
+}
+
+Evas_Object *
+edje_item_object_get(Edje_Item *ei)
+{
+}
+
+/* optionally you can manage each column's object yourself OR let edje do it */
+void
+edje_item_object_column_set(Edje_Item *ei, int col, Evas_Object *obj)
+{
+}
+
+Evas_Object *
+edje_item_object_column_get(Edje_Item *ei, int col)
+{
+}
+
+/* query the item for the items preferred co-ords */
+void
+edje_tiem_geometry_get(Edje_Item *ei, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
+{
+}
+
+/* freeze and thaw items if u are about to do a bunch of changes */
+int
+edje_item_freeze(Edje_Item *ei)
+{
+}
+
+int
+edje_item_thaw(Edje_Item *ei)
+{
+}
+
+/* column info */
+void
+edje_item_columns_set(Edje_Item *ei, int cols)
+{
+}
+
+void
+edje_item_column_size_set(Edje_Item *ei, int col, Evas_Coord minw, Evas_Coord maxw, Evas_Coord minh, Evas_Coord maxh)
+{
+}
+
+/* selection stuff */
+void
+edje_item_select(Edje_Item *ei)
+{
+}
+
+void
+edje_item_unselect(Edje_Item *ei)
+{
+}
+
+/* focus stuff - only 1 can be focuesd */
+void
+edje_item_focus(Edje_Item *ei)
+{
+}
+
+void
+edje_item_unfocus(Edje_Item *ei)
+{
+}
+
+/* disable/enable stuff - stops focus and selection working on these items */
+void
+edje_item_enable(Edje_Item *ei)
+{
+}
+
+void
+edje_item_disable(Edje_Item *ei)
+{
+}
+
+
 #define E_SMART_OBJ_GET(smart, o, type) \
      { \
 	char *_e_smart_str; \
@@ -66,26 +205,29 @@ struct _Smart_Column
  * are added column widths may be adjusted and all items told of this
  * adjustment
  */
-#define EDJE_LAYOUT_VLIST 2
-#define EDJE_LAYOUT_HLIST 1
+#define EDJE_LAYOUT_VLIST 1
+#define EDJE_LAYOUT_HLIST 2
 /* H & V BOX pack items and may or may not expand an item in any direction and
  * may align an item smaller than its allocated space in a certain way. they
  * dont know about columns etc. like lists.
  */
-#define EDJE_LAYOUT_VBOX  4
-#define EDJE_LAYOUT_HBOX  3
+#define EDJE_LAYOUT_VBOX  3
+#define EDJE_LAYOUT_HBOX  4
 /* H & V flow are like "file manager" views you see in explorer etc. wehere
  * items "line wrap" as they go along horizontally (or vertizally) as needed
  */
-#define EDJE_LAYOUT_VFLOW 6
-#define EDJE_LAYOUT_HFLOW 5
+#define EDJE_LAYOUT_VFLOW 5
+#define EDJE_LAYOUT_HFLOW 6
 
 /* the following are "2 dimensional" layout systems */
 
 /* tables are full 2-dimensional layouts which dont really have append and
- * prepend semantics... this will need working on later for 2d layouts
+ * prepend semantics... this will need working on later for 2d layouts. dont
+ * worry about these yet - but keep this as a marker for things to do later
  */
 #define EDJE_LAYOUT_TABLE 7
+/* count
+ */
 #define EDJE_LAYOUT_COUNT 8
 
 static void _smart_init(void);

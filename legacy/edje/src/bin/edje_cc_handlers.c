@@ -733,6 +733,7 @@ st_collections_group_parts_part_description_aspect_preference(void)
 				   "NONE", EDJE_ASPECT_PREFER_NONE,
 				   "VERTICAL", EDJE_ASPECT_PREFER_VERTICAL,
 				   "HORIZONTAL", EDJE_ASPECT_PREFER_HORIZONTAL,
+				   "BOTH", EDJE_ASPECT_PREFER_BOTH,
 				   NULL);
 }
 

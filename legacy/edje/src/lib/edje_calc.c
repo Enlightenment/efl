@@ -413,24 +413,51 @@ _edje_part_recalc_single(Edje *ed,
 	     if ((desc->aspect.min > 0.0) && (aspect < desc->aspect.min))
 	       new_h = (params->w / desc->aspect.min);
 	  }
-	/* do real adjustment */
-	if ((params->h - new_h) > (params->w - new_w))
+	else if (desc->aspect.prefer == EDJE_ASPECT_PREFER_BOTH) /* keep both dimensions in check */
 	  {
-	     if (params->h < new_h)
-	       params->h = new_h;
-	     else if (params->h > new_h)
-	       params->h = new_h;
-	     if (desc->aspect.prefer == EDJE_ASPECT_PREFER_VERTICAL)
+	     /* adjust for max aspect (width / height) */
+	     if ((desc->aspect.max > 0.0) && (aspect > desc->aspect.max))
+	       {
+		  new_w = (params->h * desc->aspect.max);
+		  new_h = (params->w / desc->aspect.max);
+	       }
+	     /* adjust for min aspect (width / height) */
+	     if ((desc->aspect.min > 0.0) && (aspect < desc->aspect.min))
+	       {
+		  new_w = (params->h * desc->aspect.min);
+		  new_h = (params->w / desc->aspect.min);
+	       }
+	  }
+	/* do real adjustment */
+	if (desc->aspect.prefer == EDJE_ASPECT_PREFER_BOTH)
+	  {
+	     /* fix h and vary w */
+	     if (new_w > params->w)
 	       params->w = new_w;
+	     /* fix w and vary h */
+	     else
+	       params->h = new_h;
 	  }
 	else
 	  {
-	     if (params->w < new_w)
-	       params->w = new_w;
-	     else if (params->w > new_w)
-	       params->w = new_w;
-	     if (desc->aspect.prefer == EDJE_ASPECT_PREFER_HORIZONTAL)
-	       params->h = new_h;
+	     if ((params->h - new_h) > (params->w - new_w))
+	       {
+		  if (params->h < new_h)
+		    params->h = new_h;
+		  else if (params->h > new_h)
+		    params->h = new_h;
+		  if (desc->aspect.prefer == EDJE_ASPECT_PREFER_VERTICAL)
+		    params->w = new_w;
+	       }
+	     else
+	       {
+		  if (params->w < new_w)
+		    params->w = new_w;
+		  else if (params->w > new_w)
+		    params->w = new_w;
+		  if (desc->aspect.prefer == EDJE_ASPECT_PREFER_HORIZONTAL)
+		    params->h = new_h;
+	       }
 	  }
 	params->x = want_x + ((want_w - params->w) * desc->align.x);
 	params->y = want_y + ((want_h - params->h) * desc->align.y);

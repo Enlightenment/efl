@@ -133,6 +133,7 @@ Edje_Edit_Image *edje_edit_iamge_get_by_id(int id);
 #define EDJE_ASPECT_PREFER_NONE       0
 #define EDJE_ASPECT_PREFER_VERTICAL   1
 #define EDJE_ASPECT_PREFER_HORIZONTAL 2
+#define EDJE_ASPECT_PREFER_BOTH       3
 
 #define EDJE_VAR_MAGIC_BASE 0x12fe84ba
 
