@@ -488,13 +488,15 @@ static Embryo_Cell
 _edje_embryo_fn_get_mouse(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed;
-   int x=0, y=0;
+   Evas_Coord x = 0, y = 0;
 
    CHKPARAM(2);
    ed = embryo_program_data_get(ep);
-   evas_pointer_output_xy_get(ed->evas, &x, &y);
-   SETINT(x, params[1]);
-   SETINT(y, params[2]);
+   evas_pointer_canvas_xy_get(ed->evas, &x, &y);
+   x -= ed->x;
+   y -= ed->y;
+   SETINT((int)x, params[1]);
+   SETINT((int)y, params[2]);
    return 0;
 }
 

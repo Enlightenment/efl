@@ -13,6 +13,7 @@ struct _Demo_Edje
    Evas_Object *title_clip;
    Evas_Object *image;
    Evas_Coord       minw, minh;
+   Evas_Coord       maxw, maxh;
    int          hdir;
    int          vdir;
    char         down_top : 1;
@@ -60,6 +61,7 @@ Ecore_Evas  *ecore_evas = NULL;
 Evas        *evas       = NULL;
 int          startw     = 240;
 int          starth     = 320;
+int          mdfill     = 0;
 
 static int
 main_start(int argc, char **argv)
@@ -97,6 +99,10 @@ main_start(int argc, char **argv)
              else if (!strcmp(argv[i], "-gl"))
                {
 		  mode = 1;
+               }
+             else if (!strcmp(argv[i], "-fill"))
+               {
+		  mdfill = 1;
                }
           }
      }
@@ -666,11 +672,18 @@ test_setup(char *file, char *name)
    char buf[1024];
    Evas_Coord tw, th, w, h;
    Evas_Coord xx, yy, ww, hh;
-   
+
    xx = 10;
    yy = 10;
    ww = startw - 40;
    hh = starth - 50;
+   if (mdfill)
+     {
+	xx = -10;
+	yy = -20;
+	ww = startw;
+	hh = starth;
+     }
    
    de = calloc(1, sizeof(Demo_Edje));
    edjes = evas_list_append(edjes, de);
@@ -759,11 +772,20 @@ test_setup(char *file, char *name)
    edje_object_part_drag_page_set(o, "dragable", 0.2, 0.2);
    evas_object_move(o, xx + 10, yy + 20);
    evas_object_show(o);
-   edje_object_size_min_get(o, &(de->minw), &(de->minh));
    w = ww;
    h = hh;
+   edje_object_size_min_get(o, &(de->minw), &(de->minh));
    if (ww < de->minw) w = de->minw;
    if (hh < de->minh) h = de->minh;
+   edje_object_size_min_get(o, &(de->maxw), &(de->maxh));
+   if (de->maxw > 0)
+     {
+	if (ww > de->maxw) w = de->maxw;
+     }
+   if (de->maxh > 0)
+     {
+	if (hh > de->maxh) h = de->maxh;
+     }
    evas_object_resize(o, w, h);
    de->edje = o;
 
@@ -795,7 +817,7 @@ main(int argc, char **argv)
    if (argc < 2)
      {
 	printf("Usage:\n");
-	printf("  %s file_to_show.eet [-gl] [-g WxH] [collection_to_show] ...\n", argv[0]);
+	printf("  %s file_to_show.eet [-gl] [-g WxH] [-fill] [collection_to_show] ...\n", argv[0]);
 	printf("\n");
 	printf("Example:\n");
 	printf("  %s data/e_logo.eet\n", argv[0]);
