@@ -47,7 +47,7 @@ endif
 
 EXTRA_DIST = \
 Ecore_X.h \
-Ecore_X_Cusor.h \
+Ecore_X_Cursor.h \
 ecore_x.c \
 ecore_x_dnd.c \
 ecore_x_error.c \
