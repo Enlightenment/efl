@@ -12,7 +12,6 @@ _evas_free_gradient_box(Evas_Object o)
    Evas_Object_Gradient_Box oo;
    
    oo = o;
-   if (o->callbacks) evas_list_free(o->callbacks);
    if (oo->current.gradient) evas_gradient_free(oo->current.gradient);
    free(o);
 }

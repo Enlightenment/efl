@@ -10,7 +10,6 @@ _evas_free_rectangle(Evas_Object o)
    Evas_Object_Rectangle oo;
    
    oo = o;
-   if (o->callbacks) evas_list_free(o->callbacks);
    free(o);
 }
 

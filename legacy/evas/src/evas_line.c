@@ -10,7 +10,6 @@ _evas_free_line(Evas_Object o)
    Evas_Object_Line oo;
    
    oo = o;
-   if (o->callbacks) evas_list_free(o->callbacks);
    free(o);
 }
 

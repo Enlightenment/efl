@@ -12,7 +12,6 @@ _evas_free_text(Evas_Object o)
    Evas_Object_Text oo;
    
    oo = o;
-   if (o->callbacks) evas_list_free(o->callbacks);
    if (oo->current.text) free(oo->current.text);
    free(o);
 }

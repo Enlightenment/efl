@@ -10,7 +10,6 @@ _evas_free_image(Evas_Object o)
    Evas_Object_Image oo;
    
    oo = o;
-   if (o->callbacks) evas_list_free(o->callbacks);
    if (oo->current.file) free(oo->current.file);
    free(o);
 }
