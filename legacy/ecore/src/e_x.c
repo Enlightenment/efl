@@ -64,12 +64,14 @@ static Window       e_window_at_xy_0(Window base, int bx, int by, int x, int y);
 static void
 e_handle_x_error(Display * d, XErrorEvent * ev)
 {
+/*   
    char err[16384];
    
-   XGetErrorText(d, ev->error_code, err, 16000);
+   XGetErrorText(d, ev->error_code, err, 16000);   
     printf("X Error:\n"
 	  "Error: %s\nrequest: %i\nminor: %i\n", err, ev->request_code, ev->minor_code);
-   /* ignroe all X errors */
+ */
+   /* ignore all X errors */
    return;
    d = NULL;
    ev = NULL;
