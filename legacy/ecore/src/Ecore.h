@@ -635,7 +635,6 @@ struct _ev_paste_request
    char               *string;
 };
 
-
 struct _ev_dnd_drop_request
 {
    Window              win, root, source_win;
