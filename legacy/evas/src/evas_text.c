@@ -208,6 +208,32 @@ evas_get_text_size(Evas e, Evas_Object o)
 }
 
 int
+evas_get_text_height(Evas e, Evas_Object o)
+{
+   Evas_Object_Text oo;
+
+   if (!e) return 0;
+   if (!o) return 0;
+   IF_OBJ(o, OBJECT_TEXT) return 0;
+   oo = o;
+
+   return oo->current.string.h;
+}
+
+int
+evas_get_text_width(Evas e, Evas_Object o)
+{
+   Evas_Object_Text oo;
+
+   if (!e) return 0;
+   if (!o) return 0;
+   IF_OBJ(o, OBJECT_TEXT) return 0;
+   oo = o;
+
+   return oo->current.string.w;
+}
+
+int
 evas_text_at_position(Evas e, Evas_Object o, double x, double y, 
 		      int *char_x, int *char_y, int *char_w, int *char_h)
 {
