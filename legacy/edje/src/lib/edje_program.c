@@ -698,6 +698,11 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, char *ssig, char *ssrc)
 	if (_edje_block_break(ed)) goto break_prog;
 	_edje_recalc(ed);
      }
+   else
+     {
+	_edje_emit(ed, "program,start", pr->name);
+	_edje_emit(ed, "program,stop", pr->name);
+     }
    if (!((pr->action == EDJE_ACTION_TYPE_STATE_SET) 
 	 /* hmm this fucks somethgin up. must look into it later */
 	 /* && (pr->tween.time > 0.0) && (!ed->no_anim))) */
