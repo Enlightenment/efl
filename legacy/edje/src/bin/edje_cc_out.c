@@ -351,8 +351,8 @@ data_write(void)
 		    }
 		  else
 		    {
-		       fprintf(stderr, "%s: Error. unable to load image for image part \"%s\" as \"%s\" part entry to %s \n",
-			       progname, img->entry, buf, file_out);	
+		       fprintf(stderr, "%s: Error. unable to load image for image \"%s\" part entry to %s \n",
+			       progname, img->entry, file_out);	
 		       ABORT_WRITE(ef, file_out);
 		    }
 	       }
