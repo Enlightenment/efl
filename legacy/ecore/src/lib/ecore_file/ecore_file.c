@@ -2,7 +2,6 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 #include "ecore_file_private.h"
-#include "Ecore_File.h"
 
 /* externally accessible functions */
 int
@@ -116,7 +115,7 @@ ecore_file_realpath(const char *file)
 }
 
 char *
-ecore_file_get_file(const char *path)
+ecore_file_get_file(char *path)
 {
    char *result = NULL;
 
@@ -127,7 +126,7 @@ ecore_file_get_file(const char *path)
 }
 
 char *
-ecore_file_get_dir(const char *file)
+ecore_file_get_dir(char *file)
 {
    char               *p;
    char                buf[PATH_MAX];

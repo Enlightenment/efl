@@ -38,8 +38,8 @@ EAPI int        ecore_file_mkdir    (const char *dir);
 EAPI int        ecore_file_mkpath   (const char *path);
 EAPI int        ecore_file_cp       (const char *src, const char *dst);
 EAPI char      *ecore_file_realpath (const char *file);
-EAPI char      *ecore_file_get_file (const char *path);
-EAPI char      *ecore_file_get_dir  (const char *path);
+EAPI char      *ecore_file_get_file (char *path);
+EAPI char      *ecore_file_get_dir  (char *path);
 
 EAPI int        ecore_file_can_exec (const char *file);
 EAPI char      *ecore_file_readlink (const char *link);
@@ -62,6 +62,7 @@ typedef enum {
      ECORE_FILE_EVENT_CHANGED
 } Ecore_File_Event;
 
+#if 0
 struct _Ecore_File_Monitor {
      void (*func) (void *data,
 		   Ecore_File_Monitor *ecore_file_monitor,
@@ -73,6 +74,7 @@ struct _Ecore_File_Monitor {
      Ecore_File_Type  type;
      void            *data;
 };
+#endif
 
 #if 0
 struct _Ecore_File_Monitor_Event {
@@ -94,5 +96,6 @@ EAPI Ecore_File_Monitor *ecore_file_monitor_add(const char *path,
 							      const char *path),
 					       	void *data);
 EAPI void                ecore_file_monitor_del(Ecore_File_Monitor *ecore_file_monitor);
+EAPI Ecore_File_Type     ecore_file_monitor_type_get(Ecore_File_Monitor *ecore_file_monitor);
 
 #endif

@@ -16,6 +16,7 @@ include_HEADERS = Ecore_File.h
 libecore_file_la_SOURCES = \
 ecore_file.c \
 ecore_file_private.h \
+ecore_file_monitor.c \
 ecore_file_monitor_fam.c \
 ecore_file_monitor_inotify.c \
 ecore_file_monitor_dnotify.c \
@@ -31,6 +32,7 @@ endif
 EXTRA_DIST = \
 ecore_file.c \
 ecore_file_private.h \
+ecore_file_monitor.c \
 ecore_file_monitor_fam.c \
 ecore_file_monitor_inotify.c \
 ecore_file_monitor_dnotify.c \
