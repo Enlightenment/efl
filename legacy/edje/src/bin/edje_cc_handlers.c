@@ -906,6 +906,7 @@ st_collections_group_parts_part_description_state(void)
    Edje_Part_Collection *pc;
    Edje_Part *ep;
    Edje_Part_Description *ed;
+   char *s;
 
    check_arg_count(2);
    
@@ -913,7 +914,17 @@ st_collections_group_parts_part_description_state(void)
    ep = evas_list_data(evas_list_last(pc->parts));   
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-   ed->state.name = parse_str(0);
+
+   s = parse_str(0);
+   if (!strcmp (s, "custom"))
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"invalid state name: '%s'.\n",
+		progname, file_in, line - 1, s);
+	exit(-1);
+     }
+
+   ed->state.name = s;
    ed->state.value = parse_float_range(1, 0.0, 1.0);
 }
 
