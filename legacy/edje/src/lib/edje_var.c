@@ -979,7 +979,7 @@ _edje_var_anim_add(Edje *ed, double len, char *fname, int val)
      _edje_anim_list = evas_list_append(_edje_anim_list, ed);
    ed->var_pool->animators = evas_list_prepend(ed->var_pool->animators, ea);
    if (!_edje_anim_timer)
-     _edje_anim_timer = ecore_timer_add(edje_frametime_get(), _edje_var_anim_cb, NULL);
+     _edje_anim_timer = ecore_animator_add(_edje_var_anim_cb, NULL);
    return ea->id;
 }
 
@@ -1017,18 +1017,5 @@ _edje_var_anim_del(Edje *ed, int id)
 	       ea->delete_me = 1;
 	     return;
 	  }
-     }
-}
-
-void
-_edje_var_anim_frametime_reset(void)
-{
-   double ft;
-   
-   if (_edje_anim_timer)
-     {
-	ft = edje_frametime_get();
-	ecore_timer_del(_edje_anim_timer);
-	_edje_anim_timer = ecore_timer_add(ft, _edje_var_anim_cb, NULL);
      }
 }

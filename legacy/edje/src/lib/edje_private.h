@@ -80,7 +80,7 @@ extern Eet_Data_Descriptor *_edje_edd_edje_part_description;
 extern Eet_Data_Descriptor *_edje_edd_edje_part_image_id;
 
 extern int              _edje_anim_count;
-extern Ecore_Timer     *_edje_timer;
+extern Ecore_Animator  *_edje_timer;
 extern Evas_List       *_edje_animators;
 extern Edje_Text_Style  _edje_text_styles[EDJE_TEXT_EFFECT_LAST];
 extern Evas_List       *_edje_edjes;
@@ -139,7 +139,6 @@ void          _edje_var_timer_del           (Edje *ed, int id);
 
 int           _edje_var_anim_add            (Edje *ed, double len, char *fname, int val);
 void          _edje_var_anim_del            (Edje *ed, int id);
-void          _edje_var_anim_frametime_reset(void);
     
 void          _edje_message_init            (void);
 void          _edje_message_shutdown        (void);

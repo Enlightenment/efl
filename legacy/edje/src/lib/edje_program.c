@@ -3,11 +3,9 @@
 
 static void _edje_emit_cb(Edje *ed, char *sig, char *src);
 
-static double       _edje_frametime = 1.0 / 60.0;
-
-int          _edje_anim_count = 0;
-Ecore_Timer *_edje_timer = NULL;
-Evas_List   *_edje_animators = NULL;
+int             _edje_anim_count = 0;
+Ecore_Animator *_edje_timer = NULL;
+Evas_List      *_edje_animators = NULL;
 
 /************************** API Routines **************************/
 
@@ -15,31 +13,24 @@ Evas_List   *_edje_animators = NULL;
 /** Set the frametime
  * @param t The frametime
  *
- * Sets the frametime in seconds, by default this is 1/60.
+ * Sets the frametime in seconds, by default this is 1/30.
  */
 void
 edje_frametime_set(double t)
 {
-   if (t == _edje_frametime) return;
-   _edje_frametime = t;
-   if (_edje_timer)
-     {
-	ecore_timer_del(_edje_timer);
-	_edje_timer = ecore_timer_add(_edje_frametime, _edje_timer_cb, NULL);
-     }
-   _edje_var_anim_frametime_reset();
+   ecore_animator_frametime_set(t);
 }
 
 /* FIXDOC: Expand */
 /** Get the frametime
  * @return The frametime
  *
- * Returns the frametime in seconds, by default this is 1/60.
+ * Returns the frametime in seconds, by default this is 1/30.
  */
 double
 edje_frametime_get(void)
 {
-   return _edje_frametime;
+   return ecore_animator_frametime_get();
 }
 
 /* FIXDOC: Expand */
@@ -501,7 +492,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, char *ssig, char *ssrc)
 	     runp->edje = ed;
 	     runp->program = pr;
 	     if (!_edje_timer)
-	       _edje_timer = ecore_timer_add(_edje_frametime, _edje_timer_cb, NULL);
+	       _edje_timer = ecore_animator_add(_edje_timer_cb, NULL);
 	     _edje_anim_count++;
 	  }
 	else
