@@ -114,12 +114,139 @@ _evas_layer_free(Evas e, Evas_Layer layer)
    free(layer);
 }
 
+void
+_evas_cleanup_clip(Evas e, Evas_Object o)
+{
+   if (o->clip.list)
+     {
+	Evas_List l;
+	
+	for (l = o->clip.list; l; l = l->next)
+	  {
+	     Evas_Object o2;
+	     
+	     o2 = l->data;
+	     o2->clip.object = NULL;
+	     o2->clip.changed = 1;
+	     o2->changed = 1;
+	     e->changed = 1;
+	  }
+	evas_list_free(o->clip.list);
+     }
+   if (o->clip.object)
+     o->clip.object->clip.list = evas_list_remove(o->clip.object->clip.list, o);
+}
+
+void
+_evas_get_current_clipped_geometry(Evas e, Evas_Object o, double *x, double *y, double *w, double *h)
+{
+   if (!o->current.visible)
+     {
+	*x = 0.0;
+	*y = 0.0;
+	*w = 0.0;
+	*h = 0.0;
+	return;
+     }
+   if (o->clip.object)
+     _evas_get_current_clipped_geometry(e, o->clip.object, x, y, w, h);
+   CLIP_TO(*x, *y, *w, *h, 
+	   o->current.x, o->current.y, o->current.w, o->current.h);
+}
+
+void
+_evas_get_previous_clipped_geometry(Evas e, Evas_Object o, double *x, double *y, double *w, double *h)
+{
+   if (!o->previous.visible)
+     {
+	*x = 0.0;
+	*y = 0.0;
+	*w = 0.0;
+	*h = 0.0;
+	return;
+     }
+   if (o->clip.object)
+     _evas_get_current_clipped_geometry(e, o->clip.object, x, y, w, h);
+   CLIP_TO(*x, *y, *w, *h, 
+	   o->previous.x, o->previous.y, o->previous.w, o->previous.h);
+}
+
+int
+_evas_point_in_object(Evas e, Evas_Object o, int x, int y)
+{
+   double cx, cy;
+   double ox, oy, ow, oh;
+   
+   if (o->delete_me) return 0;
+   cx = evas_screen_x_to_world(e, x);
+   cy = evas_screen_x_to_world(e, y);
+   ox = o->current.x; oy = o->current.y;
+   ow = o->current.w; oh = o->current.h;
+   _evas_get_current_clipped_geometry(e, o, &ox, &oy, &ow, &oh);
+   if ((cx >= ox) && (cx < (ox + ow)) && (cy >= oy) && (cy < (oy + oh)))
+     return 1;
+   return 0;
+}
+
+void
+evas_set_clip(Evas e, Evas_Object o, Evas_Object clip)
+{
+   if (!e) return;
+   if (!o) return;
+   if (!clip) return;
+
+   if (o->clip.object == clip) return;
+   e->changed = 1;
+   o->changed = 1;
+   o->clip.changed = 1;
+   if (o->clip.object)
+     o->clip.object->clip.list = evas_list_remove(o->clip.object->clip.list, o);
+   o->clip.object = clip;
+   clip->clip.list = evas_list_prepend(clip->clip.list, o);
+}
+
+void
+evas_unset_clip(Evas e, Evas_Object o)
+{
+   if (!e) return;
+   if (!o) return;
+   
+   if (o->clip.object)
+     {
+	e->changed = 1;
+	o->changed = 1;
+	o->clip.changed = 1;
+	o->clip.object->clip.list = evas_list_remove(o->clip.object->clip.list, o);
+	o->clip.object = NULL;
+     }
+}
+
+Evas_Object
+evas_get_clip_object(Evas e, Evas_Object o)
+{
+   if (!e) return NULL;
+   if (!o) return NULL;
+   
+   return o->clip.object;
+}
+
+Evas_List
+evas_get_clip_list(Evas e, Evas_Object o)
+{
+   if (!e) return NULL;
+   if (!o) return NULL;
+
+   return o->clip.list;
+}
+
 /* deleting objects */
 void
 evas_del_object(Evas e, Evas_Object o)
 {
    if (!e) return;
    if (!o) return;
+   _evas_cleanup_clip(e, o);
+   e->changed = 1;
    evas_hide(e, o);
    o->delete_me = 1;
 }
@@ -228,11 +355,14 @@ evas_objects_in_rect(Evas e, double x, double y, double w, double h)
 	     Evas_Object ob;
 	     
 	     ob = ll->data;
-	     if ((ob->current.visible) && (!ob->pass_events) && (!ob->delete_me))
+	     if ((ob->current.visible) && (!ob->pass_events) && (!ob->delete_me) && (!ob->clip.list))
 	       {
-		  if (RECTS_INTERSECT(x, y, w, h, 
-				     ob->current.x, ob->current.y, 
-				     ob->current.w, ob->current.h))
+		  double ox, oy, ow, oh;
+		  
+		  ox = ob->current.x; oy = ob->current.y; 
+		  ow = ob->current.w; oh = ob->current.h;
+		  _evas_get_current_clipped_geometry(e, ob, &ox, &oy, &ow, &oh);
+		  if (RECTS_INTERSECT(x, y, w, h, ox, oy, ow, oh))
 		     objs = evas_list_prepend(objs, ll->data);
 	       }
 	  }
@@ -257,11 +387,14 @@ evas_objects_at_position(Evas e, double x, double y)
 	     Evas_Object ob;
 	     
 	     ob = ll->data;
-	     if ((ob->current.visible) && (!ob->pass_events) && (!ob->delete_me))
+	     if ((ob->current.visible) && (!ob->pass_events) && (!ob->delete_me) && (!ob->clip.list))
 	       {
-		  if (RECTS_INTERSECT(x, y, 1, 1, 
-				     ob->current.x, ob->current.y, 
-				     ob->current.w, ob->current.h))
+		  double ox, oy, ow, oh;
+		  
+		  ox = ob->current.x; oy = ob->current.y; 
+		  ow = ob->current.w; oh = ob->current.h;
+		  _evas_get_current_clipped_geometry(e, ob, &ox, &oy, &ow, &oh);
+		  if (RECTS_INTERSECT(x, y, 1, 1, ox, oy, ow, oh))
 		     objs = evas_list_prepend(objs, ll->data);
 	       }
 	  }
@@ -287,11 +420,14 @@ evas_object_in_rect(Evas e, double x, double y, double w, double h)
 	     Evas_Object ob;
 	     
 	     ob = ll->data;
-	     if ((ob->current.visible) && (!ob->pass_events) && (!ob->delete_me))
+	     if ((ob->current.visible) && (!ob->pass_events) && (!ob->delete_me) && (!ob->clip.list))
 	       {
-		  if (RECTS_INTERSECT(x, y, w, h, 
-				      ob->current.x, ob->current.y, 
-				      ob->current.w, ob->current.h))
+		  double ox, oy, ow, oh;
+		  
+		  ox = ob->current.x; oy = ob->current.y; 
+		  ow = ob->current.w; oh = ob->current.h;
+		  _evas_get_current_clipped_geometry(e, ob, &ox, &oy, &ow, &oh);
+		  if (RECTS_INTERSECT(x, y, w, h, ox, oy, ow, oh))
 		     o = ob;
 	       }
 	  }
@@ -317,11 +453,14 @@ evas_object_at_position(Evas e, double x, double y)
 	     Evas_Object ob;
 	     
 	     ob = ll->data;
-	     if ((ob->current.visible) && (!ob->pass_events) && (!ob->delete_me))
+	     if ((ob->current.visible) && (!ob->pass_events) && (!ob->delete_me) && (!ob->clip.list))
 	       {
-		  if (RECTS_INTERSECT(x, y, 1, 1, 
-				     ob->current.x, ob->current.y, 
-				     ob->current.w, ob->current.h))
+		  double ox, oy, ow, oh;
+		  
+		  ox = ob->current.x; oy = ob->current.y; 
+		  ow = ob->current.w; oh = ob->current.h;
+		  _evas_get_current_clipped_geometry(e, ob, &ox, &oy, &ow, &oh);
+		  if (RECTS_INTERSECT(x, y, 1.0, 1.0, ox, oy, ow, oh))
 		      o = ob;
 	       }
 	  }

@@ -1,10 +1,48 @@
 #include "evas_x11_routines.h"
+#include <sys/stat.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <assert.h>
 
 #define CLIP(x, y, w, h, xx, yy, ww, hh) \
 if (x < (xx)) {w += (x - (xx)); x = (xx);} \
 if (y < (yy)) {h += (y - (yy)); y = (yy);} \
 if ((x + w) > ((xx) + (ww))) {w = (ww) - (x - xx);} \
 if ((y + h) > ((yy) + (hh))) {h = (hh) - (y - yy);}
+
+#define INTERSECTS(x, y, w, h, xx, yy, ww, hh) \
+        ((x < (xx + ww)) && \
+	             (y < (yy + hh)) && \
+	             ((x + w) > xx) && \
+	             ((y + h) > yy))
+
+#define CLIP_TO(_x, _y, _w, _h, _cx, _cy, _cw, _ch) \
+     { \
+	          if (INTERSECTS(_x, _y, _w, _h, _cx, _cy, _cw, _ch)) \
+	  { \
+	                         if (_x < _cx) \
+	       { \
+		                           _w += _x - _cx; \
+		                           _x = _cx; \
+		                           if (_w < 0) _w = 0; \
+	       } \
+	                         if ((_x + _w) > (_cx + _cw)) \
+	                             _w = _cx + _cw - _x; \
+	                         if (_y < _cy) \
+	       { \
+		                           _h += _y - _cy; \
+		                           _y = _cy; \
+		                           if (_h < 0) _h = 0; \
+	       } \
+	                         if ((_y + _h) > (_cy + _ch)) \
+	                             _h = _cy + _ch - _y; \
+	  } \
+	                 else \
+	  { \
+	                         _w = 0; _h = 0; \
+	  } \
+     }
+
 
 static void __evas_x11_image_cache_flush(Display *disp);
 static int  __evas_anti_alias = 1;
@@ -13,6 +51,22 @@ static Evas_List drawable_list = NULL;
 static Visual *__evas_visual = NULL;
 static Colormap __evas_cmap = 0;
 
+static Evas_List __evas_images          = NULL;
+static int       __evas_image_cache     = 0;
+static int       __evas_image_cache_max = 512 * 1024;
+
+/* the current clip region and color */
+static int       __evas_clip            = 0;
+static int       __evas_clip_x          = 0;
+static int       __evas_clip_y          = 0;
+static int       __evas_clip_w          = 0;
+static int       __evas_clip_h          = 0;
+static int       __evas_clip_r          = 0;
+static int       __evas_clip_g          = 0;
+static int       __evas_clip_b          = 0;
+static int       __evas_clip_a          = 0;
+
+
 /*****************************************************************************/
 /* image internals ***********************************************************/
 /*****************************************************************************/
@@ -20,11 +74,34 @@ static Colormap __evas_cmap = 0;
 static void
 __evas_x11_image_cache_flush(Display *disp)
 {
-   int size;
+   Evas_X11_Image *im, *im_last;
+   Evas_List l;
    
-   size = imlib_get_cache_size();
-   imlib_set_cache_size(0);
-   imlib_set_cache_size(size);
+   while (__evas_image_cache > __evas_image_cache_max)
+     {
+	for (l = __evas_images; l; l = l->next)
+	  {
+	     im = l->data;
+	     
+	     if (im->references == 0) im_last = im;
+	  }
+	if (im_last)
+	  {
+	     im = im_last;
+	     
+	     __evas_images = evas_list_remove(__evas_images, im);
+	     if (im->pmap) imlib_free_pixmap_and_mask(im->pmap);
+	     if (im->gc) XFreeGC(im->disp, im->gc);
+	     if (im->file) free(im->file);
+	     if (im->image) 
+	       {
+		  imlib_context_set_image(im->image);		  
+		  imlib_free_image_and_decache();
+	       }
+	     __evas_image_cache -= im->pw * im->ph * 4;
+	     free(im);
+	  }
+     }
 }
 
 /*****************************************************************************/
@@ -33,15 +110,57 @@ __evas_x11_image_cache_flush(Display *disp)
 
 Evas_X11_Image *
 __evas_x11_image_new_from_file(Display *disp, char *file)
-{	
-   return (Evas_X11_Image *)imlib_load_image(file);
+{
+   Evas_X11_Image *im;
+   Evas_List l;
+   
+   for (l = __evas_images; l; l = l->next)
+     {
+	im = l->data;
+	if ((!strcmp(im->file, file)) && (im->disp == disp))
+	  {
+	     if (l != __evas_images)
+	       {
+		  __evas_images = evas_list_remove(__evas_images, im);
+		  __evas_images = evas_list_prepend(__evas_images, im);
+	       }
+	     if (im->references == 0)
+	       {
+		  __evas_image_cache -= im->pw * im->ph * 4;		  
+	       }
+	     im->references++;
+	     return im;
+	  }
+     }
+   im = malloc(sizeof(Evas_X11_Image));
+   memset(im, 0, sizeof(Evas_X11_Image));
+   im->image = imlib_load_image(file);
+   if (!im->image) 
+     {
+	free(im);
+	return NULL;
+     }
+   im->disp = disp;
+   im->file = strdup(file);
+   im->references = 1;
+   imlib_context_set_image(im->image);
+   im->w = imlib_image_get_width();
+   im->h = imlib_image_get_height();
+   im->has_alpha =  imlib_image_has_alpha();
+   __evas_images = evas_list_prepend(__evas_images, im);
+   return im;
 }
 
 void
 __evas_x11_image_free(Evas_X11_Image *im)
 {
-   imlib_context_set_image((Imlib_Image)im);
-   imlib_free_image();
+   im->references--;
+   if (im->references == 0)
+     {
+	/* flush */
+	__evas_image_cache += im->pw * im->ph * 4;
+	__evas_x11_image_cache_flush(im->disp);
+     }
 }
 
 void
@@ -52,18 +171,24 @@ __evas_x11_image_cache_empty(Display *disp)
    size = imlib_get_cache_size();
    imlib_set_cache_size(0);
    imlib_set_cache_size(size);
+   size = __evas_image_cache_max;
+   __evas_image_cache_max = 0;
+   __evas_x11_image_cache_flush(disp);
+   __evas_image_cache_max = size;
 }
 
 void
 __evas_x11_image_cache_set_size(Display *disp, int size)
 {
-   imlib_set_cache_size(size);
+   __evas_image_cache_max = size;
+   imlib_set_cache_size(size * 2);
+   __evas_x11_image_cache_flush(disp);
 }
 
 int
 __evas_x11_image_cache_get_size(Display *disp)
 {
-   return imlib_get_cache_size();
+   return __evas_image_cache_max;
 }
 
 void
@@ -75,11 +200,18 @@ __evas_x11_image_draw(Evas_X11_Image *im,
 {
    Evas_List l;
    Imlib_Color_Modifier cm = NULL;
-   Pixmap pmap = 0, mask = 0;
 
    if (ca == 0) return;
    if ((src_w == 0) || (src_h == 0) || (dst_w == 0) || (dst_w == 0)) return;
 
+   if (__evas_clip)
+     {
+	cr = (cr * __evas_clip_r) / 255;
+	cg = (cg * __evas_clip_g) / 255;
+	cb = (cb * __evas_clip_b) / 255;                               
+	ca = (ca * __evas_clip_a) / 255;
+     }                      
+   if (ca < 128) return;
    if ((cr != 255) || (cg != 255) || (cb != 255) || (ca != 255))
      {
 	DATA8 r[256], g[256], b[256], a[256];
@@ -103,9 +235,9 @@ __evas_x11_image_draw(Evas_X11_Image *im,
    imlib_context_set_visual(__evas_visual);
    imlib_context_set_colormap(__evas_cmap);
    imlib_context_set_drawable(w);
-   imlib_context_set_dither_mask(__evas_anti_alias);
-   imlib_context_set_anti_alias(__evas_anti_alias);
-   imlib_context_set_dither(1);
+   imlib_context_set_dither_mask(0);
+   imlib_context_set_anti_alias(0);
+   imlib_context_set_dither(__evas_anti_alias);
    imlib_context_set_blend(0);
    imlib_context_set_angle(0.0);
    imlib_context_set_operation(IMLIB_OP_COPY);
@@ -129,45 +261,84 @@ __evas_x11_image_draw(Evas_X11_Image *im,
 		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
 				      dst_x, dst_y, dst_w, dst_h))
 		    {
-		       Imlib_Border bd;
-		       int xx, yy, ww, hh, iw, ih;
+		       int xx, yy, ww, hh, iw, ih, dx, dy, dw, dh;
 		       
 
 		       if (!up->p)
 			  up->p = XCreatePixmap(disp, w, up->w, up->h, dr->depth);
-		       imlib_context_set_image(im);
-		       imlib_image_get_border(&bd);
-		       /* if we haven't created a pixmap for thew image yet this */
-		       /* round of updates */
 
-		       iw = imlib_image_get_width();
-		       ih = imlib_image_get_height();
-		       ww = (iw * dst_w) / src_w;
-		       hh = (ih * dst_h) / src_h;
-		       xx = (src_x * src_w) / dst_w;
-		       yy = (src_y * src_h) / dst_h;
-		       if (!pmap)
-			  imlib_render_pixmaps_for_whole_image_at_size(&pmap, &mask,
-								       ww, hh);
-		       if (mask)
+		       dx = dst_x;
+		       dy = dst_y;
+		       dw = dst_w;
+		       dh = dst_h;
+		       iw = im->w;
+		       ih = im->h;
+		       ww = (iw * dw) / src_w;
+		       hh = (ih * dh) / src_h;
+		       xx = (src_x * src_w) / dw;
+		       yy = (src_y * src_h) / dh;
+		       if (__evas_clip)
 			 {
-			    XSetClipMask(disp, dr->gc, mask);
-			    XSetClipOrigin(disp, dr->gc, dst_x - up->x - src_x, dst_y - up->y - src_y);
+			    int px, py;
+			    
+			    px = dx;
+			    py = dy;
+			    CLIP_TO(dx, dy, dw, dh, 
+				    __evas_clip_x, __evas_clip_y, 
+				    __evas_clip_w, __evas_clip_h);
+			    xx += dx - px;
+			    yy += dy - py;
 			 }
-		       else
+		       if ((dw > 1) && (dh > 1))
 			 {
-			    XSetClipMask(disp, dr->gc, None);
+			    if ((ww != im->pw) || (hh != im->ph) ||
+				(cr != im->pr) || (cg != im->pg) || 
+				(cb != im->pb) || (ca != im->pa))
+			      {
+				 if (im->pmap) imlib_free_pixmap_and_mask(im->pmap);
+				 if (im->gc) XFreeGC(im->disp, im->gc);
+				 im->pmap = 0;
+				 im->mask = 0;
+				 im->gc = 0;
+				 im->pw = 0;
+				 im->ph = 0;
+			      }
+			    if (!im->pmap)
+			      {
+				 XGCValues gcv;
+				 
+				 imlib_context_set_image(im->image);
+				 im->pw = ww;
+				 im->ph = hh;
+				 im->pr = cr;
+				 im->pg = cg;
+				 im->pb = cb;
+				 im->pa = ca;
+				 imlib_render_pixmaps_for_whole_image_at_size(&im->pmap, &im->mask,
+									      ww, hh);
+				 gcv.graphics_exposures = False;
+				 im->gc = XCreateGC(disp, w, 
+						    GCGraphicsExposures, &gcv);
+				 im->win = w;
+				 if (im->mask) 
+				   XSetClipMask(disp, im->gc, im->mask);
+			      }
+			    if (im->mask)
+			      XSetClipOrigin(disp, im->gc, 
+					     dst_x - up->x - src_x, 
+					     dst_y - up->y - src_y);
+			    if (im->pmap)
+			      XCopyArea(disp, 
+					im->pmap, up->p, 
+					im->gc, 
+					xx, yy, 
+					dw, dh, 
+					dx - up->x, dy - up->y);
 			 }
-		       if (pmap)
-			  XCopyArea(disp, pmap, up->p, dr->gc, 
-				    xx, yy, 
-				    dst_w, dst_h, 
-				    dst_x - up->x, dst_y - up->y);
 		    }
 	       }
 	  }
      }
-   if (pmap) imlib_free_pixmap_and_mask(pmap);
    if (cm)
      {
 	imlib_free_color_modifier();
@@ -178,15 +349,13 @@ __evas_x11_image_draw(Evas_X11_Image *im,
 int
 __evas_x11_image_get_width(Evas_X11_Image *im)
 {
-   imlib_context_set_image((Imlib_Image)im);
-   return imlib_image_get_width();
+   return im->w;
 }
 
 int
 __evas_x11_image_get_height(Evas_X11_Image *im)
 {
-   imlib_context_set_image((Imlib_Image)im);
-   return imlib_image_get_height();
+   return im->h;
 }
 
 void
@@ -195,12 +364,24 @@ __evas_x11_image_set_borders(Evas_X11_Image *im, int left, int right,
 {
    Imlib_Border bd;
    
-   imlib_context_set_image((Imlib_Image)im);
-   bd.left = left;
-   bd.right = right;
-   bd.top = top;
-   bd.bottom = bottom;
-   imlib_image_set_border(&bd);
+   imlib_context_set_image(im->image);
+   imlib_image_get_border(&bd);
+   if ((bd.left != left) || (bd.right != right) || 
+       (bd.top != top) || (bd.bottom != bottom))
+     {
+	if (im->pmap) imlib_free_pixmap_and_mask(im->pmap);
+	if (im->gc) XFreeGC(im->disp, im->gc);
+	im->pmap = 0;
+	im->mask = 0;
+	im->gc = 0;
+	im->pw = 0;
+	im->ph = 0;
+	bd.left = left;
+	bd.right = right;
+	bd.top = top;
+	bd.bottom = bottom;
+	imlib_image_set_border(&bd);
+     }
 }
 
 void
@@ -239,6 +420,275 @@ __evas_x11_image_set_smooth_scaling(int on)
 /* font internals ************************************************************/
 /*****************************************************************************/
 
+#define TT_VALID( handle )  ( ( handle ).z != NULL )
+
+static Evas_List        __evas_fonts           = NULL;
+
+static char    **__evas_fpath           = NULL;
+static int       __evas_fpath_num       = 0;
+static int       __evas_font_cache      = 0;
+static int       __evas_font_cache_max  = 512 * 1024;
+
+static int       __evas_rend_lut[9]   = { 0, 64, 128, 192, 255, 255, 255, 255, 255 };
+
+static int       __evas_have_tt_engine  = 0;
+static TT_Engine __evas_tt_engine;
+
+static Evas_X11_Glyph *
+__evas_x11_text_font_get_glyph(Evas_X11_Font *fn, int glyph)
+{
+   Evas_X11_Glyph *g;
+   Evas_List l;
+   int hash;
+   int code;
+   
+   hash = glyph & 0xff;
+   for (l = fn->glyphs[hash]; l; l = l->next)
+     {
+	g = l->data;
+	if (g->glyph_id == glyph)
+	  {
+	     if (l != fn->glyphs[hash])
+	       {
+		  fn->glyphs[hash] = evas_list_remove(fn->glyphs[hash], g);
+		  fn->glyphs[hash] = evas_list_prepend(fn->glyphs[hash], g);
+	       }
+	     return g;
+	  }
+     }
+   g = malloc(sizeof(Evas_X11_Glyph));
+   g->glyph_id = glyph;
+   TT_New_Glyph(fn->face, &(g->glyph));
+   code = TT_Char_Index(fn->char_map, glyph);
+   TT_Load_Glyph(fn->instance, g->glyph, code, TTLOAD_SCALE_GLYPH | TTLOAD_HINT_GLYPH);
+   TT_Get_Glyph_Metrics(g->glyph, &(g->metrics));
+   g->pw = 0;
+   g->ph = 0;
+   g->pmap = 0;
+   fn->glyphs[hash] = evas_list_prepend(fn->glyphs[hash], g);
+   return g;
+}
+
+static TT_Raster_Map *
+__evas_x11_text_font_raster_new(int width, int height)
+{
+   TT_Raster_Map      *rmap;
+   
+   rmap = malloc(sizeof(TT_Raster_Map));
+   if (!rmap) return NULL;
+   rmap->width = (width + 3) & -4;
+   rmap->rows = height;
+   rmap->flow = TT_Flow_Up;
+   rmap->cols = rmap->width;
+   rmap->size = rmap->rows * rmap->width;
+   if (rmap->size <= 0)
+     {
+	free(rmap);
+	return NULL;
+     }
+   rmap->bitmap = malloc(rmap->size);
+   if (!rmap->bitmap)
+     {
+	free(rmap);
+	return NULL;
+     }
+   memset(rmap->bitmap, 0, rmap->size);
+   return rmap;
+}
+
+static void
+__evas_x11_text_font_raster_free(TT_Raster_Map * rmap)
+{
+   if (rmap->bitmap) free(rmap->bitmap);
+   free(rmap);
+}
+
+__evas_x11_is_file(char *file)
+{
+   struct stat         st;
+   
+   if (stat(file, &st) < 0)
+     return 0;
+   return 1;
+}
+
+static char *
+__evas_x11_font_find(char *font)
+{
+   char buf[4096];
+   char *ext[] = {".ttf", ".TTF", ""
+   };
+   int i, j;
+   
+   for (i = 0; i < 3; i++)
+     {
+	sprintf(buf, "%s%s", font, ext[i]);
+	if (__evas_x11_is_file(buf)) return strdup(buf);
+     }
+   for (j = 0; j < __evas_fpath_num; j++)
+     {
+	for (i = 0; i < 3; i++)
+	  {
+	     sprintf(buf, "%s/%s%s", __evas_fpath[j], font, ext[i]);
+	     if (__evas_x11_is_file(buf)) return strdup(buf);
+	  }
+     }
+   return NULL;
+}
+
+static Evas_X11_Font *
+__evas_x11_font_load(char *font, int size)
+{
+   Evas_X11_Font *fn;
+   char *file;
+   TT_Error error;
+   int i, num_cmap, upm;
+   const int dpi = 96;
+   
+   file = __evas_x11_font_find(font);
+   if (!file) return;
+   if (!__evas_have_tt_engine)
+     {
+	error = TT_Init_FreeType(&__evas_tt_engine);
+	if (error) return NULL;
+	__evas_have_tt_engine = 1;
+     }
+   fn = malloc(sizeof(Evas_X11_Font));
+   fn->font = strdup(font);
+   fn->size = size;
+   fn->engine = __evas_tt_engine;
+   error = TT_Open_Face(fn->engine, file, &fn->face);
+   if (error)
+     {
+	free(fn->font);
+	free(fn);
+	free(file);
+	return NULL;
+     }
+   free(file);
+   error = TT_Get_Face_Properties(fn->face, &fn->properties);
+   if (error)
+     {
+	TT_Close_Face(fn->face);
+	free(fn->font);
+	free(fn);
+	return NULL;
+     }
+   error = TT_New_Instance(fn->face, &fn->instance);
+   if (error)
+     {
+	TT_Close_Face(fn->face);
+	free(fn->font);
+	free(fn);
+	return NULL;
+     }
+   TT_Set_Instance_Resolutions(fn->instance, dpi, dpi);
+   TT_Set_Instance_CharSize(fn->instance, size * 64);
+   TT_Get_Instance_Metrics(fn->instance, &fn->metrics);
+   upm = fn->properties.header->Units_Per_EM;
+   fn->ascent = (fn->properties.horizontal->Ascender * fn->metrics.y_ppem) / upm;
+   fn->descent = (fn->properties.horizontal->Descender * fn->metrics.y_ppem) / upm;
+   if (fn->descent < 0) fn->descent = -fn->descent;
+   num_cmap = fn->properties.num_CharMaps;
+   for (i = 0; i < num_cmap; i++)
+     {
+	unsigned short      platform, encoding;
+	
+	TT_Get_CharMap_ID(fn->face, i, &platform, &encoding);
+	if ((platform == 3 && encoding == 1) ||
+	    (platform == 0 && encoding == 0))
+	  {
+	     TT_Get_CharMap(fn->face, i, &fn->char_map);
+	     break;
+	  }
+     }
+   if (i == num_cmap)
+     TT_Get_CharMap(fn->face, 0, &fn->char_map);
+   fn->max_descent = 0;
+   fn->max_ascent = 0;
+   memset(fn->glyphs, 0, sizeof(Evas_List) * 256);
+   fn->references = 1;
+   
+   /* go thru the first 256 glyps to calculate max ascent/descent */
+     {
+	Evas_X11_Glyph *g;
+	
+	for (i = 0; i < 256; i++)
+	  {
+	     g = __evas_x11_text_font_get_glyph(fn, i);
+	     if (!g) continue;
+	     if (!TT_VALID(g->glyph)) continue;
+	     if ((g->metrics.bbox.yMin & -64) < fn->max_descent)
+	       fn->max_descent = (g->metrics.bbox.yMin & -64);
+	     if (((g->metrics.bbox.yMax + 63) & -64) > fn->max_ascent)
+	       fn->max_ascent = ((g->metrics.bbox.yMax + 63) & -64);
+	  }
+     }
+   
+   if (((fn->ascent == 0) && (fn->descent == 0)) || (fn->ascent == 0))
+     {
+	fn->ascent = fn->max_ascent / 64;
+	fn->descent = -fn->max_descent / 64;
+     }
+   TT_Flush_Face(fn->face);
+   return fn;
+}
+
+static void
+__evas_x11_text_font_cache_flush(void)
+{
+   Evas_List l;
+   Evas_X11_Font *fn_last;
+   Evas_X11_Font *fn;
+   
+   while (__evas_font_cache > __evas_font_cache_max)
+     {
+	fn_last = NULL;
+	for (l = __evas_fonts; l; l = l->next)
+	  {
+	     fn = l->data;
+	     if (fn->references == 0) fn_last = fn;
+	  }
+	if (fn_last)
+	  {
+	     int i;
+	     Evas_List l;
+	     
+	     for (i = 0; i < 256; i++)
+	       {
+		  for (l = fn->glyphs[i]; l; l = l->next)
+		    {
+		       Evas_X11_Glyph *g;
+		  
+		       g = l->data;
+		       __evas_font_cache -= (((g->pw -1) | 0x7) + 1) * g->ph / 8;
+		    }
+	       }
+	     TT_Done_Instance(fn_last->instance);
+	     TT_Close_Face(fn_last->face);
+	     if (fn_last->font) free(fn_last->font);
+	     for (i = 0; i < 256; i++)
+	       {
+		  if (fn_last->glyphs[i])
+		    {
+		       for (l = fn_last->glyphs[i]; l; l = l->next)
+			 {
+			    Evas_X11_Glyph *g;
+			    Evas_List ll;
+			    
+			    g = l->data;
+			    if (g->pmap)
+			      XFreePixmap(fn->disp, g->pmap);
+			    free(g);
+			 }
+		       evas_list_free(fn_last->glyphs[i]);
+		    }
+	       }
+	     __evas_fonts = evas_list_remove(__evas_fonts, fn_last);
+	     free(fn_last);
+	  }
+     }
+}
 /*****************************************************************************/
 /* font externals ************************************************************/
 /*****************************************************************************/
@@ -246,36 +696,101 @@ __evas_x11_image_set_smooth_scaling(int on)
 Evas_X11_Font *
 __evas_x11_text_font_new(Display *disp, char *font, int size)
 {
-   return NULL;
+   Evas_List l;
+   Evas_X11_Font *fn;
+   
+   if (!font) return NULL;
+   for (l = __evas_fonts; l; l = l->next)
+     {
+	Evas_X11_Font *fn;
+	
+	fn = l->data;
+	if (!strcmp(fn->font, font) && (size == fn->size))
+	  {
+	     if (l != __evas_fonts)
+	       {
+		  __evas_fonts = evas_list_remove(__evas_fonts, fn);
+		  __evas_fonts = evas_list_prepend(__evas_fonts, fn);
+	       }
+	     if (fn->references == 0)
+	       {
+		  int i;
+		  Evas_List l;
+		  
+		  for (i = 0; i < 256; i++)
+		    {
+		       for (l = fn->glyphs[i]; l; l = l->next)
+			 {
+			    Evas_X11_Glyph *g;
+			    
+			    g = l->data;
+			    __evas_font_cache -= (((g->pw -1) | 0x7) + 1) * g->ph / 8;
+			 }
+		    }
+	       }
+	     fn->references++;
+	     return fn;
+	  }
+     }
+   fn = __evas_x11_font_load(font, size);
+   if (!fn) return NULL;
+   __evas_fonts = evas_list_prepend(__evas_fonts, fn);
+   return fn;
 }
 
 void
 __evas_x11_text_font_free(Evas_X11_Font *fn)
 {
+   if (!fn) return;
+   if (fn->references >= 0)
+     {
+	fn->references--;
+	if (fn->references == 0)
+	  {
+	     int i;
+	     Evas_List l;
+	     
+	     for (i = 0; i < 256; i++)
+	       {
+		  for (l = fn->glyphs[i]; l; l = l->next)
+		    {
+		       Evas_X11_Glyph *g;
+		  
+		       g = l->data;
+		       __evas_font_cache += (((g->pw -1) | 0x7) + 1) * g->ph / 8;
+		    }
+	       }
+	  }
+     }
+   __evas_x11_text_font_cache_flush();
 }
 
 int
 __evas_x11_text_font_get_ascent(Evas_X11_Font *fn)
 {
-   return 1;
+   if (!fn) return 0;
+   return fn->ascent;
 }
 
 int
 __evas_x11_text_font_get_descent(Evas_X11_Font *fn)
 {
-   return 1;
+   if (!fn) return 0;
+   return fn->descent;
 }
 
 int
 __evas_x11_text_font_get_max_ascent(Evas_X11_Font *fn)
 {
-   return 1;
+   if (!fn) return 0;
+   return fn->max_ascent;
 }
 
 int
 __evas_x11_text_font_get_max_descent(Evas_X11_Font *fn)
 {
-   return 1;
+   if (!fn) return 0;
+   return fn->max_descent;
 }
 
 void
@@ -283,44 +798,92 @@ __evas_x11_text_font_get_advances(Evas_X11_Font *fn, char *text,
 				    int *advance_horiz,
 				    int *advance_vert)
 {
+   if (advance_horiz) *advance_horiz = 0;
+   if (advance_horiz) *advance_vert = 0;
+   if (!fn) return;
+   if (!text) return;
+   if (text[0] == 0) return;
+   /* FIXME */
 }
 
 int
 __evas_x11_text_font_get_first_inset(Evas_X11_Font *fn, char *text)
 {
-   return 1;
+   if (!fn) return 0;
+   if (!text) return 0;
+   if (text[0] == 0) return 0;
+   /* FIXME */
 }
 
 void
 __evas_x11_text_font_add_path(char *path)
 {
+   int i;
+   
+   for (i = 0; i < __evas_fpath_num; i++)
+     {
+	if (!strcmp(path, __evas_fpath[i])) return;
+     }
+   __evas_fpath_num++;
+   if (!__evas_fpath) __evas_fpath = malloc(sizeof(char *));
+   else __evas_fpath = realloc(__evas_fpath,
+			       (__evas_fpath_num * sizeof(char *)));
+   __evas_fpath[__evas_fpath_num - 1] = strdup(path);
 }
 
 void
 __evas_x11_text_font_del_path(char *path)
 {
+   int i, j;
+   
+   for (i = 0; i < __evas_fpath_num; i++)
+     {
+	if (!strcmp(path, __evas_fpath[i]))
+	  {
+	     __evas_fpath_num--;
+	     for (j = i; j < __evas_fpath_num; j++)
+	       __evas_fpath[j] = __evas_fpath[j + 1];
+	     if (__evas_fpath_num > 0)
+	       __evas_fpath = realloc(__evas_fpath,
+				      __evas_fpath_num * sizeof(char *));
+	     else
+	       {
+		  free(__evas_fpath);
+		  __evas_fpath = NULL;
+	       }
+	  }
+     }
 }
 
 char **
 __evas_x11_text_font_list_paths(int *count)
 {
-   return NULL;
+   *count = __evas_fpath_num;
+   return __evas_fpath;
 }
 
 void
 __evas_x11_text_cache_empty(Display *disp)
 {
+   int prev_cache;
+
+   prev_cache = __evas_font_cache_max;
+   __evas_font_cache_max = 0;
+   __evas_x11_text_font_cache_flush();
+   __evas_font_cache_max = prev_cache;
 }
 
 void
 __evas_x11_text_cache_set_size(Display *disp, int size)
 {
+   __evas_font_cache_max = size;
+   __evas_x11_text_font_cache_flush();
 }
 
 int
 __evas_x11_text_cache_get_size(Display *disp)
 {
-   return 0;
+   return __evas_font_cache_max;
 }
 
 void
@@ -328,11 +891,40 @@ __evas_x11_text_draw(Evas_X11_Font *fn, Display *disp, Imlib_Image dstim, Window
 		       int win_w, int win_h, int x, int y, char *text, 
 		       int r, int g, int b, int a)
 {
+   /* FIXME */
 }
 
 void
 __evas_x11_text_get_size(Evas_X11_Font *fn, char *text, int *w, int *h)
 {
+   int i, pw, ph;
+   Evas_X11_Glyph *g;
+   int glyph;
+
+   if (!fn) return;
+   if (!text) return;
+   if (text[0] == 0) return;
+   pw = 0;
+   ph = (fn->max_ascent - fn->max_descent) / 64;
+   for (i = 0; text[i]; i++)
+     {
+	/* for internationalization this here wouldnt just use */
+	/* the char value of the text[i] but translate form utf-8 */
+	/* or whetever and incriment i appropriately and set g to */
+	/* the glyph index */
+	glyph = ((unsigned char *)text)[i];
+	g = __evas_x11_text_font_get_glyph(fn, glyph);
+	if (!g) continue;
+	if (!TT_VALID(g->glyph)) continue;
+	if (i == 0)
+	  pw += ((-g->metrics.bearingX) / 64);
+	if (text[i + 1] == 0) /* last char - ineternationalization issue */
+	  pw += (g->metrics.bbox.xMax / 64);
+	else
+	  pw += g->metrics.advance / 64;
+     }
+   if (w) *w = pw + 1;
+   if (h) *h = ph + 1;
 }
 
 int
@@ -340,6 +932,45 @@ __evas_x11_text_get_character_at_pos(Evas_X11_Font *fn, char *text,
 				       int x, int y, 
 				       int *cx, int *cy, int *cw, int *ch)
 {
+   int                 i, px, ppx;
+   
+   if (cx) *cx = 0;
+   if (cy) *cy = 0;
+   if (cw) *cw = 0;
+   if (ch) *ch = 0;
+   if (!fn) return -1;
+   if (!text) return -1;
+   if (text[0] == 0) return -1;
+   
+   if ((y < 0) || (y > (fn->ascent + fn->descent))) return -1;
+   if (cy) *cy = 0;
+   if (ch) *ch = fn->ascent + fn->descent;
+   ppx = 0;
+   px = 0;
+   for (i = 0; text[i]; i++)
+     {
+	Evas_X11_Glyph *g;
+	int glyph;
+	
+	glyph = ((unsigned char *)text)[i];
+	g = __evas_x11_text_font_get_glyph(fn, glyph);
+	if (!g) continue;
+	if (!TT_VALID(g->glyph)) continue;
+	if (i == 0)
+	  px += ((-g->metrics.bearingX) / 64);
+	if (text[i + 1] == 0)
+	  px += (g->metrics.bbox.xMax / 64);
+	else
+	  px += g->metrics.advance / 64;
+	if ((x >= ppx) && (x < px))
+	  {
+	     if (cx)
+	       *cx = ppx;
+	     if (cw)
+	       *cw = px - ppx;
+	     return i;
+	  }
+     }
    return -1;
 }
 
@@ -348,6 +979,43 @@ __evas_x11_text_get_character_number(Evas_X11_Font *fn, char *text,
 				       int num, 
 				       int *cx, int *cy, int *cw, int *ch)
 {
+   int                 i, px, ppx;
+
+   if (cx) *cx = 0;
+   if (cy) *cy = 0;
+   if (cw) *cw = 0;
+   if (ch) *ch = 0;
+   if (!fn) return;
+   if (!text) return;
+   if (text[0] == 0) return;
+
+   if (cy) *cy = 0;
+   if (ch) *ch = fn->ascent + fn->descent;
+   ppx = 0;
+   px = 0;
+   for (i = 0; text[i]; i++)
+     {
+	Evas_X11_Glyph *g;
+	int glyph;
+	
+	glyph = ((unsigned char *)text)[i];
+	g = __evas_x11_text_font_get_glyph(fn, glyph);
+	if (!g) continue;
+	if (!TT_VALID(g->glyph)) continue;
+	ppx = px;
+	if (i == 0)
+	  px += ((-g->metrics.bearingX) / 64);
+	if (text[i + 1] == 0)
+	  px += (g->metrics.bbox.xMax / 64);
+	else
+	  px += g->metrics.advance / 64;
+	if (i == num)
+	  {
+	     if (cx) *cx = ppx;
+	     if (cw) *cw = px - ppx;
+	     return;
+	  }
+     }
 }
 
 
@@ -381,21 +1049,28 @@ __evas_x11_text_get_character_number(Evas_X11_Font *fn, char *text,
 void              __evas_x11_rectangle_draw(Display *disp, Imlib_Image dstim, Window win,
 					      int win_w, int win_h,
 					      int x, int y, int w, int h,
-					      int r, int g, int b, int a)
+					      int cr, int cg, int cb, int ca)
 {
    Evas_List l;
    DATA32 pixel;
-   Imlib_Image im = NULL;
-   Pixmap pmap = 0, mask = 0, s_mask = 0;
 
-   imlib_context_set_color(r, g, b, a);
+   if (__evas_clip)
+     {
+	cr = (cr * __evas_clip_r) / 255;
+	cg = (cg * __evas_clip_g) / 255;
+	cb = (cb * __evas_clip_b) / 255;                               
+	ca = (ca * __evas_clip_a) / 255;
+     }
+   if (ca < 128) return;
    imlib_context_set_display(disp);
    imlib_context_set_visual(__evas_visual);
    imlib_context_set_colormap(__evas_cmap);
    imlib_context_set_drawable(win);
-   imlib_context_set_dither_mask(1);
+   imlib_context_set_color(cr, cg, cb, ca);
+   pixel = imlib_render_get_pixel_color();
+   imlib_context_set_dither_mask(0);
    imlib_context_set_anti_alias(0);
-   imlib_context_set_dither(1);
+   imlib_context_set_dither(0);
    imlib_context_set_blend(0);
    imlib_context_set_angle(0.0);
    imlib_context_set_operation(IMLIB_OP_COPY);
@@ -423,84 +1098,32 @@ void              __evas_x11_rectangle_draw(Display *disp, Imlib_Image dstim, Wi
 		    {
 		       if (!up->p)
 			  up->p = XCreatePixmap(disp, win, up->w, up->h, dr->depth);
-		       if (!im)
+		       XSetForeground(disp, dr->gc, pixel);
+		       XSetClipMask(disp, dr->gc, None);
+		       XSetClipOrigin(disp, dr->gc, 0, 0);
+		       XSetFillStyle(disp, dr->gc, FillSolid);
 			 {
-			    pixel = (a << 24) | (r << 16) | (g << 8) | b;
-			    im = imlib_create_image_using_data(1, 1, &pixel);
-			    imlib_context_set_image(im);
-			    if (a < 255) imlib_image_set_has_alpha(1);
-			    if (!pmap)
-			       imlib_render_pixmaps_for_whole_image_at_size(&pmap, &mask,
-									    32, 32);
-			 }
-		       if (a < 255)
-			 {
-			    if (mask)
+			    int xx, yy, ww, hh;
+			    
+			    xx = x;
+			    yy = y;
+			    ww = w;
+			    hh = h;
+			    
+			    CLIP_TO(xx, yy, ww, hh, up->x, up->y, up->w, up->h);
+			    if (__evas_clip)
 			      {
-				 int xx, yy, ww, hh, x1, y1, xs, ys;
-				 GC gc;
-				 XGCValues gcv;
-				 
-				 xx = x - up->x;
-				 yy = y - up->y;
-				 ww = w;
-				 hh = h;
-				 CLIP(xx, yy, ww, hh, 0, 0, up->w, up->h);
-				 s_mask = XCreatePixmap(disp, win, ww, hh, 1);
-				 gc = XCreateGC(disp, s_mask, 0, &gcv);
-				 xs = (x - up->x) % 32;
-				 if (xs > 0) xs = 0;
-				 else
-				   {
-				      while (xs < 0) xs += 32;
-				      xs -= 32;
-				   }
-				 ys = (y - up->y) % 32;
-				 if (ys > 0) ys = 0;
-				 else
-				   {
-				      while (ys < 0) ys += 32;
-				      ys -= 32;
-				   }
-				 for (y1 = ys; y1 < hh; y1 += 32)
-				   {
-				      for (x1 = xs; x1 < ww; x1 += 32)
-					 XCopyArea(disp, mask, s_mask, gc,
-						   0, 0, 32, 32,
-						   x1, y1);
-				   }
-				 XSetClipMask(disp, dr->gc, s_mask);
-				 XSetClipOrigin(disp, dr->gc, xx, yy);
-				 XFreeGC(disp, gc);
+				 CLIP_TO(xx, yy, ww, hh, 
+					 __evas_clip_x, __evas_clip_y, 
+					 __evas_clip_w, __evas_clip_h);
 			      }
-			    else
-			      {
-				 XSetClipMask(disp, dr->gc, None);
-			      }
+			    if ((w > 1) && (h > 1))
+			      XFillRectangle(disp, up->p, dr->gc, 
+					     xx - up->x, yy - up->y, ww, hh);
 			 }
-		       if (pmap)
-			 {
-			    XSetFillStyle(disp, dr->gc, FillTiled);
-			    XSetTile(disp, dr->gc, pmap);
-			    XSetTSOrigin(disp, dr->gc, x - up->x, y - up->y);
-			 }
-		       else
-			 {
-			    XSetFillStyle(disp, dr->gc, FillSolid);
-			    XSetTile(disp, dr->gc, None);
-			 }
-		       XFillRectangle(disp, up->p, dr->gc, x - up->x, y - up->y, w, h);
-		       if (s_mask) XFreePixmap(disp, s_mask);
-		       s_mask = 0;
 		    }
 	       }
 	  }
-     }
-   if (pmap) imlib_free_pixmap_and_mask(pmap);	
-   if (im) 
-     {
-	imlib_context_set_image(im);
-	imlib_free_image();
      }
 }
 
@@ -527,22 +1150,29 @@ void              __evas_x11_rectangle_draw(Display *disp, Imlib_Image dstim, Wi
 void              __evas_x11_line_draw(Display *disp, Imlib_Image dstim, Window win,
 					 int win_w, int win_h,
 					 int x1, int y1, int x2, int y2,
-					 int r, int g, int b, int a)
+					 int cr, int cg, int cb, int ca)
 {
    Evas_List l;
    int x, y, w, h;
    DATA32 pixel;
-   Imlib_Image im = NULL;
-   Pixmap pmap = 0, mask = 0, s_mask = 0;
 
-   imlib_context_set_color(r, g, b, a);
+   if (__evas_clip)
+     {
+	cr = (cr * __evas_clip_r) / 255;
+	cg = (cg * __evas_clip_g) / 255;
+	cb = (cb * __evas_clip_b) / 255;                               
+	ca = (ca * __evas_clip_a) / 255;
+     }
+   if (ca < 128) return;
    imlib_context_set_display(disp);
    imlib_context_set_visual(__evas_visual);
    imlib_context_set_colormap(__evas_cmap);
    imlib_context_set_drawable(win);
-   imlib_context_set_dither_mask(1);
+   imlib_context_set_color(cr, cg, cb, ca);
+   pixel = imlib_render_get_pixel_color();
+   imlib_context_set_dither_mask(0);
    imlib_context_set_anti_alias(0);
-   imlib_context_set_dither(1);
+   imlib_context_set_dither(0);
    imlib_context_set_blend(0);
    imlib_context_set_angle(0.0);
    imlib_context_set_operation(IMLIB_OP_COPY);
@@ -578,86 +1208,39 @@ void              __evas_x11_line_draw(Display *disp, Imlib_Image dstim, Window 
 				      x, y, w, h))
 		    {
 		       if (!up->p)
-			  up->p = XCreatePixmap(disp, win, up->w, up->h, dr->depth);
-		       if (!im)
+			 up->p = XCreatePixmap(disp, win, up->w, up->h, dr->depth);
+		       XSetForeground(disp, dr->gc, pixel);
+		       XSetClipMask(disp, dr->gc, None);
+		       XSetClipOrigin(disp, dr->gc, 0, 0);
+		       XSetFillStyle(disp, dr->gc, FillSolid);
 			 {
-			    pixel = (a << 24) | (r << 16) | (g << 8) | b;
-			    im = imlib_create_image_using_data(1, 1, &pixel);
-			    imlib_context_set_image(im);
-			    if (a < 255)
-			       imlib_image_set_has_alpha(1);
-			    if (!pmap)
-			       imlib_render_pixmaps_for_whole_image_at_size(&pmap, &mask,
-									    32, 32);
-			 }
-		       if (a < 255)
-			 {
-			    if (mask)
+			    int xx, yy, ww, hh;
+			    XRectangle rect;
+			    
+			    xx = up->x;
+			    yy = up->y;
+			    ww = up->w;
+			    hh = up->h;
+			    
+			    if (__evas_clip)
 			      {
-				 int xx, yy, ww, hh, x1, y1, xs, ys;
-				 GC gc;
-				 XGCValues gcv;
-				 
-				 xx = x - up->x;
-				 yy = y - up->y;
-				 ww = w;
-				 hh = h;
-				 CLIP(xx, yy, ww, hh, 0, 0, up->w, up->h);
-				 s_mask = XCreatePixmap(disp, win, ww, hh, 1);
-				 gc = XCreateGC(disp, s_mask, 0, &gcv);
-				 xs = (x - up->x) % 32;
-				 if (xs > 0) xs = 0;
-				 else
-				   {
-				      while (xs < 0) xs += 32;
-				      xs -= 32;
-				   }
-				 ys = (y - up->y) % 32;
-				 if (ys > 0) ys = 0;
-				 else
-				   {
-				      while (ys < 0) ys += 32;
-				      ys -= 32;
-				   }
-				 for (y1 = ys; y1 < hh; y1 += 32)
-				   {
-				      for (x1 = xs; x1 < ww; x1 += 32)
-					 XCopyArea(disp, mask, s_mask, gc,
-						   0, 0, 32, 32,
-						   x1, y1);
-				   }
-				 XSetClipMask(disp, dr->gc, s_mask);
-				 XSetClipOrigin(disp, dr->gc, xx, yy);
-				 XFreeGC(disp, gc);
+				 CLIP_TO(xx, yy, ww, hh,
+					 __evas_clip_x, __evas_clip_y,
+					 __evas_clip_w, __evas_clip_h);
 			      }
-			    else
-			      {
-				 XSetClipMask(disp, dr->gc, None);
-			      }
+			    rect.x = xx - up->x;
+			    rect.y = yy - up->y;
+			    rect.width = ww;
+			    rect.height = hh;
+			    XSetClipRectangles(disp, dr->gc, 0, 0, 
+					       &rect, 1, Unsorted);
+			    XDrawLine(disp, up->p, dr->gc, 
+				      x1 - up->x, y1 - up->y, 
+				      x2 - up->x, y2 - up->y);
 			 }
-		       if (pmap)
-			 {
-			    XSetFillStyle(disp, dr->gc, FillTiled);
-			    XSetTile(disp, dr->gc, pmap);
-			    XSetTSOrigin(disp, dr->gc, x - up->x, y - up->y);
-			 }
-		       else
-			 {
-			    XSetFillStyle(disp, dr->gc, FillSolid);
-			    XSetTile(disp, dr->gc, None);
-			 }
-		       XDrawLine(disp, up->p, dr->gc, x1 - up->x, y1 - up->y, x2 - up->x, y2 - up->y);
-		       if (s_mask) XFreePixmap(disp, s_mask);
-		       s_mask = 0;
 		    }
 	       }
 	  }
-     }
-   if (pmap) imlib_free_pixmap_and_mask(pmap);	
-   if (im) 
-     {
-	imlib_context_set_image(im);
-	imlib_free_image();
      }
 }
 
@@ -685,22 +1268,40 @@ void              __evas_x11_line_draw(Display *disp, Imlib_Image dstim, Window 
 Evas_X11_Graident *
 __evas_x11_gradient_new(Display *disp)
 {
-   return (Evas_X11_Graident *)imlib_create_color_range();
+   Evas_X11_Graident *gr;
+
+   gr = malloc(sizeof(Evas_X11_Graident));
+   gr->colors = NULL;
 }
 
 void
 __evas_x11_gradient_free(Evas_X11_Graident *gr)
 {
-   imlib_context_set_color_range((Imlib_Color_Range)gr);
-   imlib_free_color_range();
+   Evas_List l;
+
+   if (gr->colors)
+     {
+	for (l = gr->colors; l; l = l->next)
+	  {  
+	     free(l->data);
+	  }
+	evas_list_free(gr->colors);
+     }
+   free(gr);
 }
 
 void
 __evas_x11_gradient_color_add(Evas_X11_Graident *gr, int r, int g, int b, int a, int dist)
 {
-   imlib_context_set_color_range((Imlib_Color_Range)gr);
-   imlib_context_set_color(r, g, b, a);
-   imlib_add_color_to_color_range(dist);
+   Evas_X11_Color *cl;
+                        
+   cl = malloc(sizeof(Evas_X11_Color));
+   cl->r = r;
+   cl->g = g;
+   cl->b = b;
+   cl->a = a;
+   cl->dist = dist;
+   gr->colors = evas_list_append(gr->colors, cl);
 }
 
 void
@@ -712,21 +1313,23 @@ __evas_x11_gradient_draw(Evas_X11_Graident *gr, Display *disp, Imlib_Image dstim
    imlib_context_set_visual(__evas_visual);
    imlib_context_set_colormap(__evas_cmap);
    imlib_context_set_drawable(win);
-   imlib_context_set_dither_mask(1);
+   imlib_context_set_dither_mask(0);
    imlib_context_set_anti_alias(0);
-   imlib_context_set_dither(1);
+   imlib_context_set_dither(0);
    imlib_context_set_blend(0);
    imlib_context_set_angle(0.0);
    imlib_context_set_operation(IMLIB_OP_COPY);
    imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
    imlib_context_set_color_modifier(NULL);
-   imlib_context_set_color_range((Imlib_Color_Range)gr);
-   for(l = drawable_list; l; l = l->next)
+
+   while (angle < 0.0) angle += 360.0;
+   while (angle > 360.0) angle -= 360.0;
+   
+   for (l = drawable_list; l; l = l->next)
      {
 	Evas_X11_Drawable *dr;
 	
 	dr = l->data;
-	
 	if ((dr->win == win) && (dr->disp == disp))
 	  {
 	     Evas_List ll;
@@ -736,60 +1339,140 @@ __evas_x11_gradient_draw(Evas_X11_Graident *gr, Display *disp, Imlib_Image dstim
 		  Evas_X11_Update *up;
 
 		  up = ll->data;
-		  
-		  /* if image intersects image update - render */
 		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
 				      x, y, w, h))
 		    {
+		       int i, p, tot;
 		       int xx, yy, ww, hh;
-		       Imlib_Image im = NULL;
-		       Pixmap pmap = 0, mask = 0;
+		       XRectangle rect;
+		       Evas_List l2;
 		       
-		       xx = x - up->x;
-		       yy = y - up->y;
-		       ww = w;
-		       hh = h;
-		       CLIP(xx, yy, ww, hh, 0, 0, up->w, up->h);
 		       if (!up->p)
 			  up->p = XCreatePixmap(disp, win, up->w, up->h, dr->depth);
-		       im = imlib_create_image(ww, hh);
-		       if (im)
+		       
+		       XSetClipMask(disp, dr->gc, None);
+		       XSetClipOrigin(disp, dr->gc, 0, 0);
+		       XSetFillStyle(disp, dr->gc, FillSolid);
+		       		       
+		       xx = x;
+		       yy = y;
+		       ww = w;
+		       hh = h;		       
+		       if (__evas_clip)
 			 {
-			    DATA32 *data;
+			    CLIP_TO(xx, yy, ww, hh,
+				    __evas_clip_x, __evas_clip_y,
+				    __evas_clip_w, __evas_clip_h);
+			 }
+		       tot = 0;
+		       for (l2 = gr->colors; l2; l2 = l2->next)
+			 {
+			    Evas_X11_Color *c1;
 			    
-			    imlib_context_set_image(im);
-			    data = imlib_image_get_data();
-			    memset(data, 0, ww * hh * sizeof(DATA32));
-			    imlib_image_put_back_data(data);
-			    imlib_image_set_has_alpha(1);
-			    imlib_image_fill_color_range_rectangle(x - xx - up->x, y - yy - up->y, w, h, angle);
-			    pmap = XCreatePixmap(disp, win, ww, hh, dr->depth);
-			    mask = XCreatePixmap(disp, win, ww, hh, 1);
-			    imlib_context_set_drawable(pmap);
-			    imlib_context_set_mask(mask);
-			    imlib_render_image_on_drawable(0, 0);
-			    imlib_context_set_mask(0);
+			    c1 = l2->data;
+			    if (l2 != gr->colors) tot += c1->dist;
 			 }
-		       if (mask)
+		       tot <<= 2;
+		       if ((ww > 1) && (hh > 1))
 			 {
-			    XSetClipMask(disp, dr->gc, mask);
-			    XSetClipOrigin(disp, dr->gc, xx, yy);
-			 }
-		       else
-			 {
-			    XSetClipMask(disp, dr->gc, None);
-			 }
-		       if (pmap)
-			  XCopyArea(disp, pmap, up->p, dr->gc, 
-				    0, 0, 
-				    ww, hh, 
-				    xx, yy);
-		       if (pmap) XFreePixmap(disp, pmap);
-		       if (mask) XFreePixmap(disp, mask);
-		       if (im) 
-			 {
-			    imlib_context_set_image(im);
-			    imlib_free_image();
+			    rect.x = xx - up->x;
+			    rect.y = yy - up->y;
+			    rect.width = ww;
+			    rect.height = hh;
+			    XSetClipRectangles(disp, dr->gc, 0, 0,
+					       &rect, 1, Unsorted);
+			    p = 0;
+			    for (l2 = gr->colors; l2; l2 = l2->next)
+			      {
+				 int r, g, b, a;
+				 int dist;
+				 Evas_X11_Color *c1, *c2;
+				 XPoint xpoints[4];
+				 DATA32 pixel;
+				 double x1, y1, x2, y2, x3, y3, per1, per2;
+				 
+				 c1 = l2->data;
+				 if (!l2->next) break;;
+				 c2 = l2->next->data;
+				 dist = c2->dist;
+				 
+				 for (i = 0; i < (dist << 2); i++)
+				   {
+				      r = ((c1->r * ((dist << 2) - i)) + (c2->r * i)) / (dist << 2);
+				      g = ((c1->g * ((dist << 2) - i)) + (c2->g * i)) / (dist << 2);
+				      b = ((c1->b * ((dist << 2) - i)) + (c2->b * i)) / (dist << 2);
+				      a = ((c1->a * ((dist << 2) - i)) + (c2->a * i)) / (dist << 2);
+				      if (__evas_clip)
+					{
+					   r = (r * __evas_clip_r) / 255;
+					   g = (g * __evas_clip_g) / 255;
+					   b = (b * __evas_clip_b) / 255;
+					   a = (a * __evas_clip_a) / 255;
+					}
+				      if (a >= 128)
+					{
+					   /*      |  0/x2 */
+					   /*      |_ /    */
+					   /*      |a/     */
+					   /*    -_|/      */
+					   /*      |-_     */
+					   /* x3 1/|  x1   */
+					   
+					   x1 = cos((angle * 2.0 * 3.141592654) / 360.0);
+					   y1 = sin((angle * 2.0 * 3.141592654) / 360.0);
+					   x2 = cos(((angle - 90) * 2.0 * 3.141592654) / 360.0);
+					   y2 = sin(((angle - 90) * 2.0 * 3.141592654) / 360.0);
+					   
+					   if ((angle > 0.0) && (angle <= 90.0))         {x3 = -1.0; y3 =  1.0;}
+					   else if ((angle > 90.0) && (angle <= 180.0))  {x3 = -1.0; y3 = -1.0;}
+					   else if ((angle > 180.0) && (angle <= 270.0)) {x3 =  1.0; y3 = -1.0;}
+					   else                                          {x3 =  1.0; y3 =  1.0;}
+					   
+					   if ((angle > 315.0) || (angle <= 45.0))       {x2 *= -1.0 / y2; y2 = -1.0;}
+					   else if ((angle > 45.0) && (angle <= 135.0))  {y2 *=  1.0 / x2; x2 =  1.0;}
+					   else if ((angle > 135.0) && (angle <= 225.0)) {x2 *=  1.0 / y2; y2 =  1.0;}
+					   else                                          {y2 *= -1.0 / x2; x2 = -1.0;}
+					   
+					   x3 = (x3 + 1.0) / 2.0;
+					   y3 = (y3 + 1.0) / 2.0;
+					   
+					   x2 *= 0.5;
+					   y2 *= 0.5;
+					   
+					   per1 = (-1.0 + ((((double)(tot - p - 1) / (double)tot) - 0.5) * 2.0));
+					   per2 = (-1.0 + ((((double)(tot - p) / (double)tot) - 0.5) * 2.0));
+					   
+					   xpoints[0].x = x - up->x + (int)
+					     ((x3 + (2.0 * x1) + (-x2 * per2)) * (double)w);
+					   xpoints[0].y = y - up->y + (int)
+					     ((y3 + (2.0 * y1) + (-y2 * per2)) * (double)h);
+					   
+					   xpoints[1].x = x - up->x + (int)
+					     ((x3 + (2.0 * x1) + (-x2 * per1)) * (double)w);
+					   xpoints[1].y = y - up->y + (int)
+					     ((y3 + (2.0 * y1) + (-y2 * per1)) * (double)h);
+					   
+					   xpoints[2].x = x - up->x + (int)
+					     ((x3 - (2.0 * x1) + (-x2 * per1)) * (double)w);
+					   xpoints[2].y = y - up->y + (int)
+					     ((y3 - (2.0 * y1) + (-y2 * per1)) * (double)h);
+					   
+					   xpoints[3].x = x - up->x + (int)
+					     ((x3 - (2.0 * x1) + (-x2 * per2)) * (double)w);
+					   xpoints[3].y = y - up->y + (int)
+					     ((y3 - (2.0 * y1) + (-y2 * per2)) * (double)h);
+					   
+					   imlib_context_set_color(r, g, b, a);
+					   pixel = 0;
+					   pixel = imlib_render_get_pixel_color();
+					   XSetForeground(disp, dr->gc, pixel);
+					   XFillPolygon(disp, up->p, dr->gc, 
+							xpoints, 4, 
+							Convex, CoordModeOrigin);
+					}
+				      p++;
+				   }
+			      }
 			 }
 		    }
 	       }
@@ -814,22 +1497,29 @@ void
 __evas_x11_poly_draw (Display *disp, Imlib_Image dstim, Window win, 
 		      int win_w, int win_h, 
 		      Evas_List points, 
-		      int r, int g, int b, int a)
+		      int cr, int cg, int cb, int ca)
 {
    Evas_List l, l2;
    DATA32 pixel;
-   Imlib_Image im = NULL;
-   Pixmap pmap = 0, mask = 0, s_mask = 0;
    int x, y, w, h;
-   
-   imlib_context_set_color(r, g, b, a);
+
+   if (__evas_clip)
+     {
+	cr = (cr * __evas_clip_r) / 255;
+	cg = (cg * __evas_clip_g) / 255;
+	cb = (cb * __evas_clip_b) / 255;                               
+	ca = (ca * __evas_clip_a) / 255;
+     }
+   if (ca < 128) return;
    imlib_context_set_display(disp);
    imlib_context_set_visual(__evas_visual);
    imlib_context_set_colormap(__evas_cmap);
    imlib_context_set_drawable(win);
-   imlib_context_set_dither_mask(1);
+   imlib_context_set_color(cr, cg, cb, ca);
+   pixel = imlib_render_get_pixel_color();
+   imlib_context_set_dither_mask(0);
    imlib_context_set_anti_alias(0);
-   imlib_context_set_dither(1);
+   imlib_context_set_dither(0);
    imlib_context_set_blend(0);
    imlib_context_set_angle(0.0);
    imlib_context_set_operation(IMLIB_OP_COPY);
@@ -882,82 +1572,38 @@ __evas_x11_poly_draw (Display *disp, Imlib_Image dstim, Window win,
 		  
 		  up = ll->data;
 		  
-		  /* if image intersects image update - render */
 		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
 				      x, y, w, h))
 		    {
 		       if (!up->p)
 			  up->p = XCreatePixmap(disp, win, up->w, up->h, dr->depth);
-		       if (!im)
-			 {
-			    pixel = (a << 24) | (r << 16) | (g << 8) | b;
-			    im = imlib_create_image_using_data(1, 1, &pixel);
-			    imlib_context_set_image(im);
-			    if (a < 255) imlib_image_set_has_alpha(1);
-			    if (!pmap)
-			       imlib_render_pixmaps_for_whole_image_at_size(&pmap, &mask,
-									    32, 32);
-			 }
-		       if (a < 255)
-			 {
-			    if (mask)
-			      {
-				 int xx, yy, ww, hh, x1, y1, xs, ys;
-				 GC gc;
-				 XGCValues gcv;
-				 
-				 xx = x - up->x;
-				 yy = y - up->y;
-				 ww = w;
-				 hh = h;
-				 CLIP(xx, yy, ww, hh, 0, 0, up->w, up->h);
-				 s_mask = XCreatePixmap(disp, win, ww, hh, 1);
-				 gc = XCreateGC(disp, s_mask, 0, &gcv);
-				 xs = (x - up->x) % 32;
-				 if (xs > 0) xs = 0;
-				 else
-				   {
-				      while (xs < 0) xs += 32;
-				      xs -= 32;
-				   }
-				 ys = (y - up->y) % 32;
-				 if (ys > 0) ys = 0;
-				 else
-				   {
-				      while (ys < 0) ys += 32;
-				      ys -= 32;
-				   }
-				 for (y1 = ys; y1 < hh; y1 += 32)
-				   {
-				      for (x1 = xs; x1 < ww; x1 += 32)
-					 XCopyArea(disp, mask, s_mask, gc,
-						   0, 0, 32, 32,
-						   x1, y1);
-				   }
-				 XSetClipMask(disp, dr->gc, s_mask);
-				 XSetClipOrigin(disp, dr->gc, xx, yy);
-				 XFreeGC(disp, gc);
-			      }
-			    else
-			      {
-				 XSetClipMask(disp, dr->gc, None);
-			      }
-			 }
-		       if (pmap)
-			 {
-			    XSetFillStyle(disp, dr->gc, FillTiled);
-			    XSetTile(disp, dr->gc, pmap);
-			    XSetTSOrigin(disp, dr->gc, x - up->x, y - up->y);
-			 }
-		       else
-			 {
-			    XSetFillStyle(disp, dr->gc, FillSolid);
-			    XSetTile(disp, dr->gc, None);
-			 }
+		       XSetForeground(disp, dr->gc, pixel);
+		       XSetClipMask(disp, dr->gc, None);
+		       XSetClipOrigin(disp, dr->gc, 0, 0);
+		       XSetFillStyle(disp, dr->gc, FillSolid);
 			 {
 			    XPoint *xpoints;
 			    int point_count, i;
+			    int xx, yy, ww, hh;
+			    XRectangle rect;
 			    
+			    xx = up->x;
+			    yy = up->y;
+			    ww = up->w;
+			    hh = up->h;
+			    
+			    if (__evas_clip)
+			      {
+				 CLIP_TO(xx, yy, ww, hh,
+					 __evas_clip_x, __evas_clip_y,
+					 __evas_clip_w, __evas_clip_h);
+			      }
+			    rect.x = xx - up->x;
+			    rect.y = yy - up->y;
+			    rect.width = ww;
+			    rect.height = hh;
+			    XSetClipRectangles(disp, dr->gc, 0, 0, 
+					       &rect, 1, Unsorted);
 			    point_count = 0;
 			    for (l2 = points; l2; l2 = l2->next) point_count++;
 			    xpoints = malloc(point_count * sizeof(XPoint));
@@ -970,20 +1616,13 @@ __evas_x11_poly_draw (Display *disp, Imlib_Image dstim, Window win,
 				 xpoints[i].y = p->y - up->y;
 			      }
 			    XFillPolygon(disp, up->p, dr->gc, xpoints, 
-					 point_count, Complex, CoordModeOrigin);
+					 point_count, Complex, 
+					 CoordModeOrigin);
 			    free(xpoints);
 			 }
-		       if (s_mask) XFreePixmap(disp, s_mask);
-		       s_mask = 0;
 		    }
 	       }
 	  }
-     }
-   if (pmap) imlib_free_pixmap_and_mask(pmap);	
-   if (im) 
-     {
-	imlib_context_set_image(im);
-	imlib_free_image();
      }
 }
 
@@ -1001,6 +1640,20 @@ __evas_x11_poly_draw (Display *disp, Imlib_Image dstim, Window win,
 /*****************************************************************************/
 
 void
+__evas_x11_set_clip_rect(int on, int x, int y, int w, int h, int r, int g, int b, int a)
+{    
+   __evas_clip = on;
+   __evas_clip_x = x;
+   __evas_clip_y = y;
+   __evas_clip_w = w;
+   __evas_clip_h = h;
+   __evas_clip_r = r;
+   __evas_clip_g = g;
+   __evas_clip_b = b;
+   __evas_clip_a = a;
+}
+
+void
 __evas_x11_sync(Display *disp)
 {
    XSync(disp, False);
@@ -1011,8 +1664,6 @@ __evas_x11_flush_draw(Display *disp, Imlib_Image dstim, Window win)
 {
    Evas_List l;
    
-/*   
-*/
    for(l = drawable_list; l; l = l->next)
      {
 	Evas_X11_Drawable *dr;
@@ -1020,6 +1671,8 @@ __evas_x11_flush_draw(Display *disp, Imlib_Image dstim, Window win)
 	dr = l->data;
 	
 	XSetClipMask(disp, dr->gc, None);
+	XSetClipOrigin(disp, dr->gc, 0, 0);
+	XSetFillStyle(disp, dr->gc, FillSolid);
 	if ((dr->win == win) && (dr->disp == disp))
 	  {
 	     Evas_List ll;
@@ -1036,7 +1689,6 @@ __evas_x11_flush_draw(Display *disp, Imlib_Image dstim, Window win)
 				 0, 0, up->w, up->h, up->x, up->y);
 		       XFreePixmap(disp, up->p);
 		    }
-
 		  free(up);
 	       }
 	     if (dr->tmp_images)

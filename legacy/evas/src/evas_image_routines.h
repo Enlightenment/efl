@@ -108,6 +108,7 @@ void                 __evas_image_poly_draw (Display *disp, Imlib_Image dstim, W
 /***********/
 /* drawing */
 /***********/
+void         __evas_image_set_clip_rect(int on, int x, int y, int w, int h, int r, int g, int b, int a);
 void         __evas_image_init(Display *disp, int screen, int colors);
 int          __evas_image_capable(Display *disp);
 void         __evas_image_flush_draw(Display *disp, Imlib_Image dstim, Window win);

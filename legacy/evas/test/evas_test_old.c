@@ -212,6 +212,25 @@ main(int argc, char **argv)
    h /= 2;
    evas_show(e, o[1]);
    
+   o_rect = evas_add_rectangle(e);
+   evas_show(e, o_rect);
+   evas_move(e, o_rect, 100, 80);
+   evas_resize(e, o_rect, 120, 120);
+   evas_set_color(e, o_rect, rand()&0xff,  rand()&0xff,  rand()&0xff, 200);
+   evas_set_layer(e, o_rect, 180);
+   evas_callback_add(e, o_rect, CALLBACK_MOUSE_DOWN, mouse_down, NULL);
+   evas_callback_add(e, o_rect, CALLBACK_MOUSE_UP, mouse_up, NULL);
+   evas_callback_add(e, o_rect, CALLBACK_MOUSE_MOVE, mouse_move, NULL);
+   evas_callback_add(e, o_rect, CALLBACK_MOUSE_IN, mouse_in, NULL);
+   evas_callback_add(e, o_rect, CALLBACK_MOUSE_OUT, mouse_out, NULL);
+
+   o_rect = evas_add_rectangle(e);
+   evas_show(e, o_rect);
+   evas_move(e, o_rect, 200, 100);
+   evas_resize(e, o_rect, 300, 200);
+   evas_set_color(e, o_rect, rand()&0xff,  rand()&0xff,  rand()&0xff, 200);
+   evas_set_layer(e, o_rect, 150);
+   
    for (i = 2 ; i < 120; i++)
      {
 	o[i] = evas_add_image_from_file(e, IMGDIR"mush.png");
@@ -222,6 +241,7 @@ main(int argc, char **argv)
 	evas_callback_add(e, o[i], CALLBACK_MOUSE_MOVE, mouse_move, NULL);
 	evas_callback_add(e, o[i], CALLBACK_MOUSE_IN, mouse_in, NULL);
 	evas_callback_add(e, o[i], CALLBACK_MOUSE_OUT, mouse_out, NULL);
+	evas_set_clip(e, o[i], o_rect);	
      }
    for (i = 120; i < 128; i++)
      {
@@ -235,17 +255,6 @@ main(int argc, char **argv)
 	evas_callback_add(e, o[i], CALLBACK_MOUSE_IN, mouse_in, NULL);
 	evas_callback_add(e, o[i], CALLBACK_MOUSE_OUT, mouse_out, NULL);
      }
-   o_rect = evas_add_rectangle(e);
-   evas_show(e, o_rect);
-   evas_move(e, o_rect, 100, 100);
-   evas_resize(e, o_rect, 200, 100);
-   evas_set_color(e, o_rect, rand()&0xff,  rand()&0xff,  rand()&0xff, 120);
-   evas_set_layer(e, o_rect, 150);
-   evas_callback_add(e, o_rect, CALLBACK_MOUSE_DOWN, mouse_down, NULL);
-   evas_callback_add(e, o_rect, CALLBACK_MOUSE_UP, mouse_up, NULL);
-   evas_callback_add(e, o_rect, CALLBACK_MOUSE_MOVE, mouse_move, NULL);
-   evas_callback_add(e, o_rect, CALLBACK_MOUSE_IN, mouse_in, NULL);
-   evas_callback_add(e, o_rect, CALLBACK_MOUSE_OUT, mouse_out, NULL);
 
    o_poly = evas_add_poly(e);
    evas_show(e, o_poly);
@@ -267,7 +276,7 @@ main(int argc, char **argv)
    o_line = evas_add_line(e);
    evas_show(e, o_line);
    evas_set_line_xy(e, o_line, 10, 20, 100, 50);
-   evas_set_color(e, o_line, rand()&0xff,  rand()&0xff,  rand()&0xff, 120);
+   evas_set_color(e, o_line, rand()&0xff,  rand()&0xff,  rand()&0xff, 140);
    evas_set_layer(e, o_rect, 150);
    evas_callback_add(e, o_line, CALLBACK_MOUSE_DOWN, mouse_down, NULL);
    evas_callback_add(e, o_line, CALLBACK_MOUSE_UP, mouse_up, NULL);
@@ -278,7 +287,7 @@ main(int argc, char **argv)
    o_grad = evas_add_gradient_box(e);
    evas_show(e, o_grad);
    evas_move(e, o_grad, 300, 50);
-   evas_resize(e, o_grad, 200, 200);
+   evas_resize(e, o_grad, 300, 300);
    evas_set_layer(e, o_grad, 150);
    grad = evas_gradient_new();
    evas_gradient_add_color(grad, 255, 255, 255, 255, 8);
@@ -291,6 +300,7 @@ main(int argc, char **argv)
    evas_callback_add(e, o_grad, CALLBACK_MOUSE_MOVE, mouse_move, NULL);
    evas_callback_add(e, o_grad, CALLBACK_MOUSE_IN, mouse_in, NULL);
    evas_callback_add(e, o_grad, CALLBACK_MOUSE_OUT, mouse_out, NULL);
+/*   evas_set_clip(e, o_grad, o_rect);*/
 
    o_text = evas_add_text(e, "grunge", 14, "Click and Drag Objects...");
    evas_set_color(e, o_text, 0, 0, 0, 160);
@@ -304,7 +314,7 @@ main(int argc, char **argv)
    evas_callback_add(e, o_text, CALLBACK_MOUSE_OUT, mouse_out, NULL);
 
    o_fps = evas_add_text(e, "morpheus", 16, "FPS...");
-   evas_set_color(e, o_fps, 255, 255, 255, 120);
+   evas_set_color(e, o_fps, 255, 255, 255, 140);
    evas_move(e, o_fps, win_w, win_h); 
    evas_show(e, o_fps);
    evas_set_layer(e, o_fps, 500);
@@ -388,9 +398,9 @@ main(int argc, char **argv)
 		  if (i < 100)
 		     evas_set_image_file(e, o[i], imgs[(i) & 0x7]);
 		  evas_move(e, o[i], x, y);
-		  ww =  ((1.2 + cos((double)(a + j + m) * 2 * 3.141592654 / 1000)) * 48);
-		  hh = ww;
 /*		  
+		  ww =  ((1.2 + cos((double)(a + j + m) * 2 * 3.141592654 / 1000)) * 24);
+		  hh = ww;
 		  evas_resize(e, o[i], ww, hh);
 		  evas_set_image_fill(e, o[i], 0, 0, ww, hh);
 		  evas_set_color(e, o[i], 255, 255, 255, 

@@ -32,112 +32,166 @@ typedef int GLuint;
 #include "Evas_private.h"
 #include "Evas.h"
 
-typedef struct _evas_gl_image          Evas_GL_Image;
-typedef struct _evas_gl_font           Evas_GL_Font;
-typedef struct _evas_gl_glyph_info     Evas_GL_Glyph_Info;
-typedef struct _evas_gl_gradient       Evas_GL_Graident;
-typedef struct _evas_gl_gradient_color Evas_GL_Graident_Color;
-typedef enum   _evas_gl_image_state    Evas_GL_Image_State;
+typedef struct _evas_gl_image            Evas_GL_Image;
+typedef struct _evas_gl_font             Evas_GL_Font;
+typedef struct _evas_gl_gradient         Evas_GL_Graident;
 
-enum _evas_gl_image_state
+typedef struct _evas_gl_font_texture     Evas_GL_Font_Texture;
+typedef struct _evas_gl_glpyh_texture    Evas_GL_Glyph_Texture;
+typedef struct _evas_gl_glyph            Evas_GL_Glyph;
+typedef struct _evas_gl_gradient_texture Evas_GL_Graident_Texture;
+typedef struct _evas_gl_window           Evas_GL_Window;
+typedef struct _evas_gl_context          Evas_GL_Context;
+typedef struct _evas_gl_rect             Evas_GL_Rect;
+typedef struct _evas_gl_texture          Evas_GL_Texture;
+typedef struct _evas_gl_texmesh          Evas_GL_Texmesh;
+
+struct _evas_gl_window
 {
-   EVAS_STATE_DATA,
-   EVAS_STATE_TEXTURE
+   Display         *disp;
+   Window           win;
+   Window           root;
+   int              screen;
+   Evas_GL_Context *context;
+   Evas_List        updates;
+   int              w, h;
+};
+
+struct _evas_gl_context
+{
+   Display        *disp;
+   int             screen;
+   GLXContext      context;
+   Window          win;
+   Window          root;
+   XVisualInfo    *visualinfo;
+   Visual         *visual;
+   Colormap        colormap;
+   int             dither;
+   int             blend;
+   int             texture;
+   DATA32          color;
+   struct {
+      int active;
+      int x, y, w, h;
+   } clip;
+   GLenum          read_buf;
+   GLenum          write_buf;
+   Evas_GL_Texture *bound_texture;
+   
+   int             max_texture_depth;
+   int             max_texture_size;
+};
+
+struct _evas_gl_rect
+{
+   int x, y, w, h;
+};
+
+struct _evas_gl_texture
+{
+   int w, h;
+   GLuint texture;
+   int smooth;
+};
+
+struct _evas_gl_texmesh
+{
+   struct {
+      int x, y;
+      int x_edge, y_edge;
+      int x_left, y_left;
+   } tiles;
+   Evas_GL_Texture **textures;
+   Evas_GL_Window  *window;
+   Evas_GL_Context *context;
 };
 
 struct _evas_gl_image
 {
-   Evas_GL_Image_State state;
-   int w, h;
-   int direct;
-   int bl, br, bt, bb;
-   int alpha;
    char *file;
-   /* data specific params */
-   DATA32 *data;
-   /* common GL params */
-   GLXContext context;
-   /* texture state specific params */
-   struct
-     {
-	int max_size;
-	int w, h;
-	int edge_w, edge_h;
-	GLuint *textures;
-     } texture;
-   /* buffer specific params */
-   struct
-     {
-	Display *display;
-	XVisualInfo *visual_info;
-	Colormap colormap;
-	Window window, dest;
-	int dest_w, dest_h;
-     } buffer;
+   Imlib_Image im;
+   int w, h;
+   struct {
+      int l, r, t, b;
+   } border;
+   int has_alpha;
+   Evas_List textures;
    int references;
 };
 
-struct _evas_gl_font
+struct _evas_gl_gradient_texture
 {
-   char *file;
-   int   size;
-
-   TT_Engine           engine;
-   TT_Face             face;
-   TT_Instance         instance;
-   TT_Face_Properties  properties;
-   int                 num_glyph;
-   TT_Glyph           *glyphs;
-   Evas_GL_Glyph_Info *glyphinfo;
-   int                 max_descent;
-   int                 max_ascent;
-   int                 descent;
-   int                 ascent;
-   int                 mem_use;
-   
-   GLXContext  context;
-   int         max_texture_size;
-   int         num_textures;
-   GLuint     *textures;
-   struct
-     {
-	Display *display;
-	XVisualInfo *visual_info;
-	Colormap colormap;
-	Window window, dest;
-	int dest_w, dest_h;
-     } buffer;
-   int   references;
-};
-
-struct _evas_gl_glyph_info
-{
-   GLuint texture;
-   int    px, py, pw, ph;
-   double x1, y1, x2, y2;
-};
-
-struct _evas_gl_gradient_color
-{
-   int r, g, b, a;
-   int dist;
+   Evas_GL_Window  *window;
+   Evas_GL_Context *context;   
+   Evas_GL_Texture *texture;
 };
 
 struct _evas_gl_gradient
 {
-   Evas_List   colors;
-   GLXContext  context;
-   int         max_texture_size;
-   int         texture_w, texture_h;
-   GLuint      texture;
-   struct
-     {
-	Display *display;
-	XVisualInfo *visual_info;
-	Colormap colormap;
-	Window window, dest;
-	int dest_w, dest_h;
-     } buffer;
+   Imlib_Color_Range col_range;
+   Evas_List textures;
+};
+
+struct _evas_gl_glpyh_texture
+{
+   struct {
+      double        x1, x2, y1, y2;
+   } tex;
+   Evas_GL_Window  *window;
+   Evas_GL_Context *context;   
+   Evas_GL_Texture *texture;
+};
+
+struct _evas_gl_glyph
+{
+   int              glyph_id;
+   TT_Glyph         glyph;
+   
+   TT_Glyph_Metrics metrics;
+   
+   Evas_GL_Glyph_Texture *texture;
+   
+   struct {
+      double        x1, x2, y1, y2;
+   } tex;
+   
+   Evas_List textures;
+};
+
+struct _evas_gl_font_texture
+{
+   struct {
+      int x, y;
+      int row_h;
+   } cursor;
+   Evas_GL_Window  *window;
+   Evas_GL_Context *context;
+   Evas_GL_Texture *texture;
+};
+
+struct _evas_gl_font
+{
+   char *font;
+   int   size;
+   
+   TT_Engine           engine;
+   TT_Face             face;
+   TT_Instance         instance;
+   TT_Face_Properties  properties;   
+   TT_CharMap          char_map;
+   TT_Instance_Metrics metrics;
+   
+   Evas_List glyphs[256];
+   
+   Evas_List textures;
+   
+   int ascent;
+   int descent;
+   int max_descent;
+   int max_ascent;
+   
+   int references;
 };
 
 /***************/
@@ -202,6 +256,7 @@ void              __evas_gl_poly_draw (Display *disp, Imlib_Image dstim, Window 
 /***********/
 /* drawing */
 /***********/
+void         __evas_gl_set_clip_rect(int on, int x, int y, int w, int h, int r, int g, int b, int a);
 void         __evas_gl_init(Display *disp, int screen, int colors);
 int          __evas_gl_capable(Display *disp);
 void         __evas_gl_flush_draw(Display *disp, Imlib_Image dstim, Window win);

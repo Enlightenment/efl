@@ -17,43 +17,58 @@
 ((SPANS_COMMON((x), (w), (xx), (ww))) && (SPANS_COMMON((y), (h), (yy), (hh))))
 #endif
 
+void _evas_get_current_clipped_geometry(Evas e, Evas_Object o, double *x, double *y, double *w, double *h);
+void _evas_get_previous_clipped_geometry(Evas e, Evas_Object o, double *x, double *y, double *w, double *h);
+
 void
 _evas_object_get_current_translated_coords(Evas e, Evas_Object o, 
-					   int *x, int *y, int *w, int *h)
+					   int *x, int *y, int *w, int *h, int clip)
 {
+   double ox, oy, ow, oh;
+   
+   ox = o->current.x; oy = o->current.y;
+   ow = o->current.w; oh = o->current.h;
+   if (clip)
+     _evas_get_current_clipped_geometry(e, o, &ox, &oy, &ow, &oh);
    *x = (int)
-      (((o->current.x - e->current.viewport.x) * 
+      (((ox - e->current.viewport.x) * 
 	(double)e->current.drawable_width) / 
        e->current.viewport.w);
    *y = (int)
-      (((o->current.y - e->current.viewport.y) * 
+      (((oy - e->current.viewport.y) * 
 	(double)e->current.drawable_height) / 
        e->current.viewport.h);
    *w = (int)
-      ((o->current.w * (double)e->current.drawable_width) /
+      ((ow * (double)e->current.drawable_width) /
        e->current.viewport.w);
    *h = (int)
-      ((o->current.h * (double)e->current.drawable_height) /
+      ((oh * (double)e->current.drawable_height) /
        e->current.viewport.h);
 }
 
 void
 _evas_object_get_previous_translated_coords(Evas e, Evas_Object o, 
-					   int *x, int *y, int *w, int *h)
+					   int *x, int *y, int *w, int *h, int clip)
 {
+   double ox, oy, ow, oh;
+   
+   ox = o->previous.x; oy = o->previous.y;
+   ow = o->previous.w; oh = o->previous.h;
+   if (clip)
+     _evas_get_previous_clipped_geometry(e, o, &ox, &oy, &ow, &oh);
    *x = (int)
-      (((o->previous.x - e->previous.viewport.x) * 
+      (((ox - e->previous.viewport.x) * 
 	(double)e->previous.drawable_width) / 
        e->previous.viewport.w);
    *y = (int)
-      (((o->previous.y - e->previous.viewport.y) * 
+      (((oy - e->previous.viewport.y) * 
 	(double)e->previous.drawable_height) / 
        e->previous.viewport.h);
    *w = (int)
-      ((o->previous.w * (double)e->previous.drawable_width) /
+      ((ow * (double)e->previous.drawable_width) /
        e->previous.viewport.w);
    *h = (int)
-      ((o->previous.h * (double)e->previous.drawable_height) /
+      ((oh * (double)e->previous.drawable_height) /
        e->previous.viewport.h);
 }
 
@@ -178,6 +193,7 @@ evas_render_updates(Evas e)
    void (*func_line_draw) (Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x1, int y1, int x2, int y2, int r, int g, int b, int a);
    void (*func_gradient_draw) (void *gr, Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x, int y, int w, int h, double angle);
    void (*func_poly_draw) (Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, Evas_List points, int r, int g, int b, int a);
+   void (*func_set_clip_rect) (int on, int x, int y, int w, int h, int r, int g, int b, int a);
    
    if (!e) return NULL;
    if ((e->current.render_method == RENDER_METHOD_IMAGE) &&
@@ -215,6 +231,7 @@ evas_render_updates(Evas e)
 	func_line_draw           = __evas_imlib_line_draw;
 	func_gradient_draw       = __evas_imlib_gradient_draw;
 	func_poly_draw           = __evas_imlib_poly_draw;
+	func_set_clip_rect       = __evas_imlib_set_clip_rect;
 	break;
      case RENDER_METHOD_BASIC_HARDWARE:
 	func_draw_add_rect       = __evas_x11_draw_add_rect;
@@ -233,6 +250,7 @@ evas_render_updates(Evas e)
 	func_line_draw           = __evas_x11_line_draw;
 	func_gradient_draw       = __evas_x11_gradient_draw;
 	func_poly_draw           = __evas_x11_poly_draw;
+	func_set_clip_rect       = __evas_x11_set_clip_rect;
 	break;
      case RENDER_METHOD_3D_HARDWARE:
 	func_draw_add_rect       = __evas_gl_draw_add_rect;
@@ -251,6 +269,7 @@ evas_render_updates(Evas e)
 	func_line_draw           = __evas_gl_line_draw;
 	func_gradient_draw       = __evas_gl_gradient_draw;
 	func_poly_draw           = __evas_gl_poly_draw;
+	func_set_clip_rect       = __evas_gl_set_clip_rect;
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
 	func_draw_add_rect       = __evas_render_draw_add_rect;
@@ -269,6 +288,7 @@ evas_render_updates(Evas e)
 	func_line_draw           = __evas_render_line_draw;
 	func_gradient_draw       = __evas_render_gradient_draw;
 	func_poly_draw           = __evas_render_poly_draw;
+	func_set_clip_rect       = __evas_render_set_clip_rect;
 	break;
      case RENDER_METHOD_IMAGE:
 	func_draw_add_rect       = __evas_image_draw_add_rect;
@@ -287,6 +307,7 @@ evas_render_updates(Evas e)
 	func_line_draw           = __evas_image_line_draw;
 	func_gradient_draw       = __evas_image_gradient_draw;
 	func_poly_draw           = __evas_image_poly_draw;
+	func_set_clip_rect       = __evas_image_set_clip_rect;
 	break;
      default:
 	break;
@@ -311,10 +332,11 @@ evas_render_updates(Evas e)
 	for (ll = layer->objects; ll; ll = ll->next)
 	  {
 	     Evas_Object_Any o;
-	     int real_change, prop_change;
+	     int real_change, prop_change, clip_change;
 
 	     real_change = 0;
 	     prop_change = 0;
+	     clip_change = 0;
 	     o = ll->data;
 	     
 	     if (o->delete_me) 
@@ -330,7 +352,8 @@ evas_render_updates(Evas e)
 			(o->current.h != o->previous.h) ||
 			(o->current.zoomscale != o->previous.zoomscale) ||
 			(o->current.layer != o->previous.layer) ||
-			(o->current.stacking)))
+			(o->current.stacking) ||
+			(o->clip.changed)))
 		      )
 		    {
 		       if (((o->current.visible != o->previous.visible) ||
@@ -353,8 +376,8 @@ evas_render_updates(Evas e)
 			       prop_change = 1;
 			 }
 		       real_change = 1;
-		    }
-		  
+		       clip_change = o->clip.changed;
+		    }		  
 		  
 		  o->current.stacking = 0;
 		  if ((!real_change) && (o->current.visible))
@@ -490,10 +513,12 @@ evas_render_updates(Evas e)
 		       
 		       _evas_object_get_previous_translated_coords(e, o, 
 								   &x, &y, 
-								   &w, &h);
+								   &w, &h, 
+								   1 - clip_change);
 		       _evas_object_get_current_translated_coords(e, o, 
 								  &xx, &yy, 
-								  &ww, &hh);
+								  &ww, &hh, 
+								  1 - clip_change);
 		       rl = NULL;
 		       if (x < xx)
 			 {
@@ -576,11 +601,13 @@ evas_render_updates(Evas e)
 		    {
 		       _evas_object_get_previous_translated_coords(e, o, 
 								   &x, &y, 
-								   &w, &h);
+								   &w, &h, 
+								   1 - clip_change);
 		       evas_update_rect(e, x, y, w, h);
 		       _evas_object_get_current_translated_coords(e, o, 
 								  &x, &y, 
-								  &w, &h);
+								  &w, &h, 
+								  1 - clip_change);
 		       evas_update_rect(e, x, y, w, h);
 		    }
 	       }
@@ -637,12 +664,50 @@ evas_render_updates(Evas e)
 			    
 			    _evas_object_get_current_translated_coords(e, o, 
 								       &x, &y, 
-								       &w, &h);
+								       &w, &h, 
+								       1 - o->clip.changed);
+			    o->clip.changed = 0;
 			    if (RECTS_INTERSECT(0, 0, 
 						e->current.drawable_width,
 						e->current.drawable_height,
-						x, y, w, h))
+						x, y, w, h) &&
+				(!o->clip.list))
 			      {
+				 if (!o->clip.changed)
+				   _evas_object_get_current_translated_coords(e, o, 
+									      &x, &y, 
+									      &w, &h, 
+									      0);
+				 if (o->clip.object)
+				   {
+				      Evas_Object_Rectangle oo;
+				      int clr, clg, clb, cla;
+				      int clx, cly, clw, clh;
+				      
+				      clr = 255;
+				      clg = 255;
+				      clb = 255;
+				      cla = 255;
+				      if (o->clip.object->type == OBJECT_RECTANGLE)
+					{
+					   oo = o->clip.object;
+					   
+					   clr = oo->current.r;
+					   clg = oo->current.g;
+					   clb = oo->current.b;
+					   cla = oo->current.a;
+					}
+				      _evas_object_get_current_translated_coords(e, o, 
+										 &clx, &cly, 
+										 &clw, &clh, 
+										 1);
+				      if ((clw > 1) && (clh > 1))
+					func_set_clip_rect(1, clx, cly, clw, clh, clr, clg, clb, cla);
+				      else
+					func_set_clip_rect(1, e->current.drawable_width + 1, e->current.drawable_height + 1, 1, 1, 255, 255, 255, 255);
+				   }
+				 else
+				   func_set_clip_rect(0, 0, 0, 0, 0, 255, 255, 255, 255);
 				 switch (o->type)
 				   {
 				   case OBJECT_IMAGE:

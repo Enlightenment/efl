@@ -12,6 +12,12 @@
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
 
+#ifdef HAVE_FREETYPE_FREETYPE_H
+#include <freetype/freetype.h>
+#else
+#include <freetype.h>
+#endif
+
 #include "Evas_private.h"
 #include "Evas.h"
 
@@ -24,12 +30,14 @@
 ((SPANS_COMMON((x), (w), (xx), (ww))) && (SPANS_COMMON((y), (h), (yy), (hh))))
 #endif
 
-typedef void Evas_X11_Image;
-typedef void Evas_X11_Font;
-typedef void Evas_X11_Graident;
+typedef struct _evas_x11_image    Evas_X11_Image;
+typedef struct _evas_x11_font     Evas_X11_Font;
+typedef struct _evas_x11_gradient Evas_X11_Graident;
+typedef struct _evas_x11_color    Evas_X11_Color;
+typedef struct _evas_x11_glyph    Evas_X11_Glyph;
 
 typedef struct _evas_x11_drawable Evas_X11_Drawable;
-typedef struct _evas_x11_update Evas_X11_Update;
+typedef struct _evas_x11_update   Evas_X11_Update;
 
 struct _evas_x11_drawable
 {
@@ -44,6 +52,67 @@ struct _evas_x11_update
 {
    Pixmap p;
    int x, y, w, h;
+};
+
+struct _evas_x11_image
+{
+   GC gc;
+   Display *disp;
+   Window win;
+   int pw, ph, pr, pg, pb, pa;
+   Pixmap pmap;
+   Pixmap mask;
+   int w, h;
+   int has_alpha;
+   char *file;
+   Imlib_Image image;
+   int references;
+};
+
+struct _evas_x11_glyph
+{
+   int              glyph_id;
+   TT_Glyph         glyph;
+   
+   TT_Glyph_Metrics metrics;
+   
+   int              pw, ph;
+   Pixmap           pmap;
+};
+
+struct _evas_x11_font
+{
+   char *font;
+   int   size;
+   
+   Display            *disp;
+
+   TT_Engine           engine;
+   TT_Face             face;
+   TT_Instance         instance;
+   TT_Face_Properties  properties;
+   TT_CharMap          char_map;
+   TT_Instance_Metrics metrics;
+
+   Evas_List glyphs[256];
+   
+   int ascent;
+   int descent;
+   int max_descent;
+   int max_ascent;
+
+   int references;
+};
+
+struct _evas_x11_gradient
+{
+   Evas_List colors;
+};
+
+struct _evas_x11_color
+{
+   int r, g, b, a;
+   int dist;
 };
 
 /***************/
@@ -110,6 +179,7 @@ void                  __evas_x11_poly_draw (Display *disp, Imlib_Image dstim, Wi
 /***********/
 /* drawing */
 /***********/
+void         __evas_x11_set_clip_rect(int on, int x, int y, int w, int h, int r, int g, int b, int a);
 void         __evas_x11_init(Display *disp, int screen, int colors);
 int          __evas_x11_capable(Display *disp);
 void         __evas_x11_flush_draw(Display *disp, Imlib_Image dstim, Window win);

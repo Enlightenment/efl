@@ -5,71 +5,24 @@
 #include <unistd.h>
 #include <string.h>
 
-int
-_evas_point_in_object(Evas e, Evas_Object o, int x, int y)
-{
-   int ox, oy, ow, oh;
-
-   if (o->delete_me) return 0;
-   _evas_object_get_current_translated_coords(e, o, &ox, &oy, &ow, &oh);
-   if ((x >= ox) && (x < (ox + ow)) && (y >= oy) && (y < (oy + oh)))
-      return 1;
-   return 0;
-}
-
 Evas_Object
 _evas_highest_object_at_point(Evas e, int x, int y)
 {
-   Evas_List l, ll;
-   Evas_Layer layer;
-   Evas_Object o;
+   double cx, cy;
    
-   o = NULL;
-   for (l = e->layers; l ; l = l->next)
-     {
-	layer = l->data;
-	
-	for (ll = layer->objects; ll; ll = ll->next)
-	  {
-	     Evas_Object ob;
-	     
-	     ob = ll->data;
-	     if ((ob->current.visible) && (!ob->pass_events) && (!ob->delete_me))
-	       {
-		  if (_evas_point_in_object(e, ob, x, y)) 
-		    {
-		       o = ob;
-		    }
-	       }
-	  }
-     }
-   return o;
+   cx = evas_screen_x_to_world(e, x);
+   cy = evas_screen_x_to_world(e, y);
+   return evas_object_at_position(e, cx, cy);
 }
 
 Evas_List
 _evas_objects_at_point(Evas e, int x, int y)
 {
-   Evas_List l, ll, objs;
-   Evas_Layer layer;
+   double cx, cy;
    
-   objs = NULL;
-   for (l = e->layers; l ; l = l->next)
-     {
-	layer = l->data;
-	
-	for (ll = layer->objects; ll; ll = ll->next)
-	  {
-	     Evas_Object ob;
-	     
-	     ob = ll->data;
-	     if ((ob->current.visible) && (!ob->pass_events) && (!ob->delete_me))
-	       {
-		  if (_evas_point_in_object(e, ll->data, x, y))
-		     objs = evas_list_prepend(objs, ll->data);
-	       }
-	  }
-     }
-   return objs;
+   cx = evas_screen_x_to_world(e, x);
+   cy = evas_screen_x_to_world(e, y);
+   return evas_objects_at_position(e, cx, cy);
 }	 
 
 void

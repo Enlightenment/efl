@@ -99,7 +99,13 @@ void evas_set_output_size(Evas e, int w, int h);
 void evas_set_output_viewport(Evas e, double x, double y, double w, double h);
 void evas_set_output_method(Evas e, Evas_Render_Method method);
 void evas_set_scale_smoothness(Evas e, int smooth);
-	 
+
+/* clipping - for now you can only use rectangles as clip objects */
+void        evas_set_clip(Evas e, Evas_Object o, Evas_Object clip);
+void        evas_unset_clip(Evas e, Evas_Object o);
+Evas_Object evas_get_clip_object(Evas e, Evas_Object o);
+Evas_List   evas_get_clip_list(Evas e, Evas_Object o);
+       
 /* deleting objects */
 void evas_del_object(Evas e, Evas_Object o);
 

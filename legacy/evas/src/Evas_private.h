@@ -34,6 +34,40 @@ typedef struct _Evas_Object_Poly *         Evas_Object_Poly;
 
 #define IF_OBJ(_o, _t) if (((Evas_Object)_o)->type != _t)
 
+#define INTERSECTS(x, y, w, h, xx, yy, ww, hh) \
+((x < (xx + ww)) && \
+(y < (yy + hh)) && \
+((x + w) > xx) && \
+((y + h) > yy))
+
+#define CLIP_TO(_x, _y, _w, _h, _cx, _cy, _cw, _ch) \
+{ \
+  if (INTERSECTS(_x, _y, _w, _h, _cx, _cy, _cw, _ch)) \
+    { \
+      if (_x < _cx) \
+	{ \
+	  _w += _x - _cx; \
+	  _x = _cx; \
+	  if (_w < 0) _w = 0; \
+	} \
+      if ((_x + _w) > (_cx + _cw)) \
+	_w = _cx + _cw - _x; \
+      if (_y < _cy) \
+	{ \
+	  _h += _y - _cy; \
+	  _y = _cy; \
+	  if (_h < 0) _h = 0; \
+	} \
+      if ((_y + _h) > (_cy + _ch)) \
+	_h = _cy + _ch - _y; \
+    } \
+  else \
+    { \
+      _w = 0; _h = 0; \
+    } \
+  }
+
+
 #include "Evas.h"
 struct _Evas_Render_Data
 {
@@ -150,6 +184,12 @@ struct _Evas_Object_Any
    
    Evas_List  callbacks;
    Evas_List  data;
+   
+   struct {
+      Evas_List   list;
+      Evas_Object object;
+      int         changed;
+   } clip;
    
    Evas_Render_Data renderer_data;
    

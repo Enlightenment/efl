@@ -5,6 +5,17 @@ static void __evas_imlib_image_cache_flush(Display *disp);
 static int  __evas_anti_alias = 1;
 static Evas_List drawable_list = NULL;
 
+/* the current clip region and color */
+static int       __evas_clip            = 0;
+static int       __evas_clip_x          = 0;
+static int       __evas_clip_y          = 0;
+static int       __evas_clip_w          = 0;
+static int       __evas_clip_h          = 0;
+static int       __evas_clip_r          = 0;
+static int       __evas_clip_g          = 0;
+static int       __evas_clip_b          = 0;
+static int       __evas_clip_a          = 0;
+
 /*****************************************************************************/
 /* image internals ***********************************************************/
 /*****************************************************************************/
@@ -68,7 +79,14 @@ __evas_imlib_image_draw(Evas_Imlib_Image *im,
    Evas_List l;
    Imlib_Color_Modifier cm = NULL;
 
-   if (ca == 0) return;
+   if (__evas_clip)
+     {
+	cr = (cr * __evas_clip_r) / 255;
+	cg = (cg * __evas_clip_g) / 255;
+	cb = (cb * __evas_clip_b) / 255;
+	ca = (ca * __evas_clip_a) / 255;
+     }   
+   if (ca == 0) return;   
    if ((cr != 255) || (cg != 255) || (cb != 255) || (ca != 255))
      {
 	DATA8 r[256], g[256], b[256], a[256];
@@ -113,6 +131,13 @@ __evas_imlib_image_draw(Evas_Imlib_Image *im,
 		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
 				      dst_x, dst_y, dst_w, dst_h))
 		    {
+		       if (__evas_clip) 
+			 imlib_context_set_cliprect(__evas_clip_x - up->x, 
+						    __evas_clip_y - up->y, 
+						    __evas_clip_w, 
+						    __evas_clip_h);
+		       else imlib_context_set_cliprect(0, 0, 0, 0);
+		       
 		       if (!up->image)
 			  up->image = imlib_create_image(up->w, up->h);
 		       imlib_context_set_image(up->image);
@@ -301,13 +326,21 @@ __evas_imlib_text_cache_get_size(Display *disp)
 void
 __evas_imlib_text_draw(Evas_Imlib_Font *fn, Display *disp, Imlib_Image dstim, Window win, 
 		       int win_w, int win_h, int x, int y, char *text, 
-		       int r, int g, int b, int a)
+		       int cr, int cg, int cb, int ca)
 {
    Evas_List l;
    int w, h;
    
+   if (__evas_clip)
+     {
+	cr = (cr * __evas_clip_r) / 255;
+	cg = (cg * __evas_clip_g) / 255;
+	cb = (cb * __evas_clip_b) / 255;
+	ca = (ca * __evas_clip_a) / 255;
+     }   
    if ((!fn) || (!text)) return;
-   imlib_context_set_color(r, g, b, a);
+   if (ca == 0) return;
+   imlib_context_set_color(cr, cg, cb, ca);
    imlib_context_set_font((Imlib_Font)fn);
    imlib_context_set_angle(0.0);
    imlib_context_set_operation(IMLIB_OP_COPY);
@@ -336,6 +369,12 @@ __evas_imlib_text_draw(Evas_Imlib_Font *fn, Display *disp, Imlib_Image dstim, Wi
 		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
 				      x, y, w, h))
 		    {
+		       if (__evas_clip) 
+			 imlib_context_set_cliprect(__evas_clip_x - up->x, 
+						    __evas_clip_y - up->y, 
+						    __evas_clip_w, 
+						    __evas_clip_h);
+		       else imlib_context_set_cliprect(0, 0, 0, 0);
 		       if (!up->image)
 			  up->image = imlib_create_image(up->w, up->h);
 		       imlib_context_set_image(up->image);
@@ -407,11 +446,19 @@ __evas_imlib_text_get_character_number(Evas_Imlib_Font *fn, char *text,
 void              __evas_imlib_rectangle_draw(Display *disp, Imlib_Image dstim, Window win,
 					      int win_w, int win_h,
 					      int x, int y, int w, int h,
-					      int r, int g, int b, int a)
+					      int cr, int cg, int cb, int ca)
 {
    Evas_List l;
    
-   imlib_context_set_color(r, g, b, a);
+   if (__evas_clip)
+     {
+	cr = (cr * __evas_clip_r) / 255;
+	cg = (cg * __evas_clip_g) / 255;
+	cb = (cb * __evas_clip_b) / 255;
+	ca = (ca * __evas_clip_a) / 255;
+     }
+   if (ca == 0) return;
+   imlib_context_set_color(cr, cg, cb, ca);
    imlib_context_set_angle(0.0);
    imlib_context_set_operation(IMLIB_OP_COPY);
    imlib_context_set_color_modifier(NULL);
@@ -438,6 +485,8 @@ void              __evas_imlib_rectangle_draw(Display *disp, Imlib_Image dstim, 
 		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
 				      x, y, w, h))
 		    {
+		       if (__evas_clip) imlib_context_set_cliprect(__evas_clip_x - up->x, __evas_clip_y - up->y, __evas_clip_w, __evas_clip_h);
+		       else imlib_context_set_cliprect(0, 0, 0, 0);
 		       if (!up->image)
 			  up->image = imlib_create_image(up->w, up->h);
 		       imlib_context_set_image(up->image);
@@ -471,12 +520,20 @@ void              __evas_imlib_rectangle_draw(Display *disp, Imlib_Image dstim, 
 void              __evas_imlib_line_draw(Display *disp, Imlib_Image dstim, Window win,
 					 int win_w, int win_h,
 					 int x1, int y1, int x2, int y2,
-					 int r, int g, int b, int a)
+					 int cr, int cg, int cb, int ca)
 {
    Evas_List l;
    int x, y, w, h;
    
-   imlib_context_set_color(r, g, b, a);
+   if (__evas_clip)
+     {
+	cr = (cr * __evas_clip_r) / 255;
+	cg = (cg * __evas_clip_g) / 255;
+	cb = (cb * __evas_clip_b) / 255;
+	ca = (ca * __evas_clip_a) / 255;
+     }
+   if (ca == 0) return;
+   imlib_context_set_color(cr, cg, cb, ca);
    imlib_context_set_angle(0.0);
    imlib_context_set_operation(IMLIB_OP_COPY);
    imlib_context_set_color_modifier(NULL);
@@ -512,6 +569,8 @@ void              __evas_imlib_line_draw(Display *disp, Imlib_Image dstim, Windo
 		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
 				      x, y, w, h))
 		    {
+		       if (__evas_clip) imlib_context_set_cliprect(__evas_clip_x - up->x, __evas_clip_y - up->y, __evas_clip_w, __evas_clip_h);
+		       else imlib_context_set_cliprect(0, 0, 0, 0);
 		       if (!up->image)
 			  up->image = imlib_create_image(up->w, up->h);
 		       imlib_context_set_image(up->image);
@@ -546,36 +605,75 @@ void              __evas_imlib_line_draw(Display *disp, Imlib_Image dstim, Windo
 Evas_Imlib_Graident *
 __evas_imlib_gradient_new(Display *disp)
 {
-   return (Evas_Imlib_Graident *)imlib_create_color_range();
+   Evas_Imlib_Graident *gr;
+   
+   gr = malloc(sizeof(Evas_Imlib_Graident));
+   gr->colors = NULL;
 }
 
 void
 __evas_imlib_gradient_free(Evas_Imlib_Graident *gr)
 {
-   imlib_context_set_color_range((Imlib_Color_Range)gr);
-   imlib_free_color_range();
+   Evas_List l;
+   
+   if (gr->colors)
+     {
+	for (l = gr->colors; l; l = l->next)
+	  {
+	     free(l->data);
+	  }
+	evas_list_free(gr->colors);
+     }
+   free(gr);
 }
 
 void
 __evas_imlib_gradient_color_add(Evas_Imlib_Graident *gr, int r, int g, int b, int a, int dist)
 {
-   imlib_context_set_color_range((Imlib_Color_Range)gr);
-   imlib_context_set_color(r, g, b, a);
-   imlib_add_color_to_color_range(dist);
+   Evas_Imlib_Color *cl;
+   
+   cl = malloc(sizeof(Evas_Imlib_Color));
+   cl->r = r;
+   cl->g = g;
+   cl->b = b;
+   cl->a = a;
+   cl->dist = dist;
+   gr->colors = evas_list_append(gr->colors, cl);
 }
 
 void
 __evas_imlib_gradient_draw(Evas_Imlib_Graident *gr, Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x, int y, int w, int h, double angle)
 {
    Evas_List l;
-   
+   Imlib_Color_Range cr;
+
+   if ((__evas_clip) && (__evas_clip_a == 0)) return;
    imlib_context_set_angle(angle);
    imlib_context_set_operation(IMLIB_OP_COPY);
    imlib_context_set_color_modifier(NULL);
    imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
-   imlib_context_set_color_range((Imlib_Color_Range)gr);
    imlib_context_set_anti_alias(1);
    imlib_context_set_blend(1);
+   cr = imlib_create_color_range();
+   imlib_context_set_color_range(cr);
+     {
+	Evas_List l;
+	
+	for (l = gr->colors; l; l = l->next)
+	  {
+	     Evas_Imlib_Color *cl;
+	     
+	     cl = l->data;
+	     if (__evas_clip)
+	       imlib_context_set_color((cl->r * __evas_clip_r) / 255, 
+				       (cl->g * __evas_clip_g) / 255, 
+				       (cl->b * __evas_clip_b) / 255, 
+				       (cl->a * __evas_clip_a) / 255);
+	     else
+	       imlib_context_set_color(cl->r, cl->g, cl->b, cl->a);	       
+	     imlib_add_color_to_color_range(cl->dist);
+	  }
+     }
    for(l = drawable_list; l; l = l->next)
      {
 	Evas_Imlib_Drawable *dr;
@@ -596,6 +694,8 @@ __evas_imlib_gradient_draw(Evas_Imlib_Graident *gr, Display *disp, Imlib_Image d
 		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
 				      x, y, w, h))
 		    {
+		       if (__evas_clip) imlib_context_set_cliprect(__evas_clip_x - up->x, __evas_clip_y - up->y, __evas_clip_w, __evas_clip_h);
+		       else imlib_context_set_cliprect(0, 0, 0, 0);
 		       if (!up->image)
 			  up->image = imlib_create_image(up->w, up->h);
 		       imlib_context_set_image(up->image);
@@ -604,6 +704,7 @@ __evas_imlib_gradient_draw(Evas_Imlib_Graident *gr, Display *disp, Imlib_Image d
 	       }
 	  }
      }
+   imlib_free_color_range();
 }
 
 
@@ -616,12 +717,20 @@ void
 __evas_imlib_poly_draw (Display *disp, Imlib_Image dstim, Window win, 
 			int win_w, int win_h, 
 			Evas_List points, 
-			int r, int g, int b, int a)
+			int cr, int cg, int cb, int ca)
 {
    Evas_List l, l2;
    int x, y, w, h;
 
-   imlib_context_set_color(r, g, b, a);
+   if (__evas_clip)
+     {
+	cr = (cr * __evas_clip_r) / 255;
+	cg = (cg * __evas_clip_g) / 255;
+	cb = (cb * __evas_clip_b) / 255;
+	ca = (ca * __evas_clip_a) / 255;
+     }
+   if (ca == 0) return;
+   imlib_context_set_color(cr, cg, cb, ca);
    imlib_context_set_angle(0.0);
    imlib_context_set_operation(IMLIB_OP_COPY);
    imlib_context_set_color_modifier(NULL);
@@ -682,6 +791,9 @@ __evas_imlib_poly_draw (Display *disp, Imlib_Image dstim, Window win,
 		    {
 		       ImlibPolygon pol;
 		       
+		       if (__evas_clip) imlib_context_set_cliprect(__evas_clip_x - up->x, __evas_clip_y - up->y, __evas_clip_w, __evas_clip_h);
+		       else imlib_context_set_cliprect(0, 0, 0, 0);
+		       
 		       if (!up->image)
 			  up->image = imlib_create_image(up->w, up->h);
 		       imlib_context_set_image(up->image);
@@ -719,6 +831,20 @@ __evas_imlib_poly_draw (Display *disp, Imlib_Image dstim, Window win,
 
 static Visual *__evas_visual = NULL;
 static Colormap __evas_cmap = 0;
+
+void
+__evas_imlib_set_clip_rect(int on, int x, int y, int w, int h, int r, int g, int b, int a)
+{    
+   __evas_clip = on;
+   __evas_clip_x = x;
+   __evas_clip_y = y;
+   __evas_clip_w = w;
+   __evas_clip_h = h;
+   __evas_clip_r = r;
+   __evas_clip_g = g;
+   __evas_clip_b = b;
+   __evas_clip_a = a;
+}
 
 void
 __evas_imlib_sync(Display *disp)

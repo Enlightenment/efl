@@ -26,10 +26,11 @@
 
 typedef void Evas_Imlib_Image;
 typedef void Evas_Imlib_Font;
-typedef void Evas_Imlib_Graident;
 
 typedef struct _evas_imlib_drawable Evas_Imlib_Drawable;
 typedef struct _evas_imlib_update Evas_Imlib_Update;
+typedef struct _evas_imlib_color Evas_Imlib_Color;
+typedef struct _evas_imlib_gradient Evas_Imlib_Graident;
 
 struct _evas_imlib_drawable
 {
@@ -42,6 +43,17 @@ struct _evas_imlib_update
 {
    Imlib_Image image;
    int x, y, w, h;
+};
+
+struct _evas_imlib_color
+{
+   int r, g, b, a;
+   int dist;
+};
+
+struct _evas_imlib_gradient
+{
+   Evas_List colors;
 };
 
 /***************/
@@ -108,6 +120,7 @@ void                 __evas_imlib_poly_draw (Display *disp, Imlib_Image dstim, W
 /***********/
 /* drawing */
 /***********/
+void         __evas_imlib_set_clip_rect(int on, int x, int y, int w, int h, int r, int g, int b, int a);
 void         __evas_imlib_init(Display *disp, int screen, int colors);
 int          __evas_imlib_capable(Display *disp);
 void         __evas_imlib_flush_draw(Display *disp, Imlib_Image dstim, Window win);

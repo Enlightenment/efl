@@ -1147,6 +1147,7 @@ animate(double val)
 	
 	fps = (double)framecount / (val - last_time);
 	sprintf(buf, "FPS: %3.2f", fps);
+	printf("%s\n", buf);
 	evas_set_text(evas_view, o_fps, buf);
 	framecount = -1;
 	last_time = val;

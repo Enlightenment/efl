@@ -4,6 +4,17 @@ static void __evas_image_image_cache_flush(Display *disp);
 static int  __evas_anti_alias = 1;
 static Evas_List drawable_list = NULL;
 
+/* the current clip region and color */
+static int       __evas_clip            = 0;
+static int       __evas_clip_x          = 0;
+static int       __evas_clip_y          = 0;
+static int       __evas_clip_w          = 0;
+static int       __evas_clip_h          = 0;
+static int       __evas_clip_r          = 0;
+static int       __evas_clip_g          = 0;
+static int       __evas_clip_b          = 0;
+static int       __evas_clip_a          = 0;
+
 /*****************************************************************************/
 /* image internals ***********************************************************/
 /*****************************************************************************/
@@ -805,6 +816,20 @@ __evas_image_poly_draw (Display *disp, Imlib_Image dstim, Window win,
 
 static Visual *__evas_visual = NULL;
 static Colormap __evas_cmap = 0;
+
+void
+__evas_image_set_clip_rect(int on, int x, int y, int w, int h, int r, int g, int b, int a)
+{    
+   __evas_clip = on;
+   __evas_clip_x = x;
+   __evas_clip_y = y;
+   __evas_clip_w = w;
+   __evas_clip_h = h;
+   __evas_clip_r = r;
+   __evas_clip_g = g;
+   __evas_clip_b = b;
+   __evas_clip_a = a;
+}
 
 void
 __evas_image_sync(Display *disp)
