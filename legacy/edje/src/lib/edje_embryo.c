@@ -186,6 +186,7 @@
 #define GETSTR(str, par) { \
    Embryo_Cell *___cptr; \
    int ___l; \
+   str = NULL; \
    if ((___cptr = embryo_data_address_get(ep, (par)))) { \
    ___l = embryo_data_string_length_get(ep, ___cptr); \
    if (((str) = alloca(___l + 1))) \
