@@ -1,6 +1,6 @@
 # this is NOT relocatable, unless you alter the patch!
 %define	name	evas
-%define	ver	0.0.1
+%define	ver	0.0.2
 %define	rel	1
 %define prefix  /usr
 
@@ -14,7 +14,7 @@ Version: %{ver}
 Release: %{rel}
 Copyright: BSD
 Group: User Interface/X
-URL: http://www.enlightenment.org/efm.html
+URL: http://www.enlightenment.org/
 Packager: Term <kempler@utdallas.edu>
 Vendor: The Enlightenment Development Team <e-develop@enlightenment.org>
 Source: ftp://ftp.enlightenment.org/enlightenment/%{name}-%{ver}.tar.gz

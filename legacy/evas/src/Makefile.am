@@ -59,4 +59,4 @@ Evas_private.h
 
 libevas_la_LIBADD       = $(LIBS_ALL)
 libevas_la_DEPENDENCIES = $(top_builddir)/config.h
-libevas_la_LDFLAGS      = -version-info 0:1:0
+libevas_la_LDFLAGS      = -version-info 0:2:0
