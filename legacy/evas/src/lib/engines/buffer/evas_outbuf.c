@@ -78,7 +78,7 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 	       {
 		  for (yy = 0; yy < h; yy++)
 		    {
-		       dst = buf->dest + ((y + yy) * buf->dest_row_bytes);
+		       dst = (DATA8 *)(buf->dest) + ((y + yy) * buf->dest_row_bytes) + (x * 3);
 		       src = update->image->data + (yy * update->image->w);
 		       for (xx = 0; xx < w; xx++)
 			 {
@@ -102,7 +102,7 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 	       {
 		  for (yy = 0; yy < h; yy++)
 		    {
-		       dst = buf->dest + ((y + yy) * buf->dest_row_bytes);
+		       dst = (DATA8 *)(buf->dest) + ((y + yy) * buf->dest_row_bytes) + (x * 3);
 		       src = update->image->data + (yy * update->image->w);
 		       for (xx = 0; xx < w; xx++)
 			 {
@@ -130,7 +130,7 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 	       {
 		  for (yy = 0; yy < h; yy++)
 		    {
-		       dst = buf->dest + ((y + yy) * buf->dest_row_bytes);
+		       dst = (DATA8 *)(buf->dest) + ((y + yy) * buf->dest_row_bytes) + (x * 3);
 		       src = update->image->data + (yy * update->image->w);
 		       for (xx = 0; xx < w; xx++)
 			 {
@@ -154,7 +154,7 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 	       {
 		  for (yy = 0; yy < h; yy++)
 		    {
-		       dst = buf->dest + ((y + yy) * buf->dest_row_bytes);
+		       dst = (DATA8 *)(buf->dest) + ((y + yy) * buf->dest_row_bytes) + (x * 3);
 		       src = update->image->data + (yy * update->image->w);
 		       for (xx = 0; xx < w; xx++)
 			 {
