@@ -58,12 +58,14 @@
         {if (dat) FREE(dat);}
 #define REALLOC(dat, type, num) \
         { \
-                if (dat) dat = realloc((dat), sizeof(type) * (num)); \
+	        if ((dat) && (num == 0)) {free(dat); dat = NULL;} \
+                else if (dat) dat = realloc((dat), sizeof(type) * (num)); \
                 else dat = malloc(sizeof(type) * (num)); \
         }
 #define REALLOC_PTR(dat, num) \
         { \
-                if (dat) dat = realloc(dat, sizeof(void *) * (num)); \
+	        if ((dat) && (num == 0)) {free(dat); dat = NULL;} \
+                else if (dat) dat = realloc(dat, sizeof(void *) * (num)); \
                 else dat = malloc(sizeof(void *) * (num)); \
         }
 
