@@ -495,17 +495,29 @@ fn_grad(double v, double val, int no)
 static void
 fn_image(double v, double val, int no)
 {
-   static Evas_Object o_fn_images[8] = 
-     {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+   static Evas_Object o_fn_images[16];
    static double last_val = 0;
    static int init = 0;
+   static double coords[16 * 2];
+      
    int i;
    
+   if (!init)
+     {
+	init = 1;
+	
+	for (i = 0; i < 16; i++) 
+	   {
+	      o_fn_images[i] = NULL;
+	      coords[(i * 2) + 0] = ((1024 - 128) / 2) + ((rand() % 500) - 250);
+	      coords[(i * 2) + 1] = ((768) / 2) + ((rand() % 200) - 0);
+	   }
+     }
    if (no)
      {
 	if (last_val != val)
 	  {
-	     for (i = 0; i < 8; i++)
+	     for (i = 0; i < 16; i++)
 	       {
 		  if (o_fn_images[i])
 		     evas_del_object(evas_view, o_fn_images[i]);
@@ -514,6 +526,30 @@ fn_image(double v, double val, int no)
 	  }
 	return;
      }
+   for (i = 0; i < 16; i++)
+     {
+	double alpha;
+	
+	if (v < 1)
+	   alpha = v;
+	else if (v < 2)
+	   alpha = 1;
+	else alpha = (3 - v);
+	if (!o_fn_images[i]) 
+	   {
+	      char buf[4096];
+	      
+	      sprintf(buf, IMGDIR"evas_test_image_%i.png", i);
+	      o_fn_images[i] = evas_add_image_from_file(evas_view, buf);
+	      evas_set_layer(evas_view, o_fn_images[i], 99);
+	   }
+	evas_set_color(evas_view, o_fn_images[i], 255, 255, 255, 255.0 * alpha);
+	evas_move(evas_view, o_fn_images[i], 
+		  coords[(i * 2) + 0] + (50 * cos((val * 2.7) + 3.4 + i)), 
+		  coords[(i * 2) + 1] + (20 * sin((val * 3.6) + 1.2 + i))); 
+	evas_show(evas_view, o_fn_images[i]);
+     }
+   
    last_val = val;
 }
 
