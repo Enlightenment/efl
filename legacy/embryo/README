@@ -1,5 +1,14 @@
 Embryo 0.0.1
 
+WARNING: gcc compatibility!!!
+There seems to be some bug (or disagreement) between embryo and gcc 3.2.x
+where ieee floating point format encoding does not "agree" with embryo's own
+hand-made tests. embryo_cc may not work if you compile using gcc 3.2.x. gcc
+3.3.x is known to work fine. we are not 100% sure whose fault this is yet, so
+we won't be jumping up and down, but be warned - gcc 3.2.x does not agree
+with embryo.
+
+
 OK a lot of peolpe ask this. What is Embryo?
 
 Embryo is primarily a shared library that gives you an API to load and control
