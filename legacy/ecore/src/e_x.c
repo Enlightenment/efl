@@ -316,6 +316,7 @@ ecore_sync(void)
 {
   if (!disp)
     return;
+
   XSync(disp, False);
 }
 
@@ -1796,8 +1797,11 @@ ecore_window_dnd_advertise(Window win)
 void
 ecore_grab(void)
 {
-   if (!disp) return;
+  if (!disp)
+    return;
+
   x_grabs++;
+
   if (x_grabs == 1)
     XGrabServer(disp);
 }
@@ -1805,8 +1809,11 @@ ecore_grab(void)
 void
 ecore_ungrab(void)
 {
-   if (!disp) return;
+  if (!disp)
+    return;
+
   x_grabs--;
+
   if (x_grabs == 0)
     {
       XUngrabServer(disp);
