@@ -257,10 +257,6 @@ syn match	cUserCont	display ";\s*\I\i*\s*:[^:]"me=e-1 contains=@cLabelGroup
 
 syn match	cUserLabel	display "\I\i*" contained
 
-" Avoid recognizing most bitfields as labels
-syn match	cBitField	display "^\s*\I\i*\s*:\s*[1-9]"me=e-1
-syn match	cBitField	display ";\s*\I\i*\s*:\s*[1-9]"me=e-1
-
 if exists("c_minlines")
   let b:c_minlines = c_minlines
 else
