@@ -9,4 +9,4 @@ evas_test_SOURCES = evas_test.c
 
 evas_test_LDFLAGS = -static 
 
-evas_test_LDADD = $(top_builddir)/src/libevas.la -lImlib2 -lttf -lX11 -lXext -ldl
+evas_test_LDADD = $(top_builddir)/src/libevas.la -lImlib2 -lttf -lX11 -lXext -ldl -ldb -lGL -lm

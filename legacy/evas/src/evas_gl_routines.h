@@ -64,6 +64,7 @@ void __evas_gl_render_to_window(Evas_GL_Image *im,
 Evas_GL_Image * __evas_gl_create_image(void);
 int __evas_gl_capable(Display *disp);
 Visual * __evas_gl_get_visual(Display *disp);
+XVisualInfo *__evas_gl_get_visual_info(Display *disp);
 Colormap __evas_gl_get_colormap(Display *disp);
 void __evas_gl_init(Display *disp);
 Evas_GL_Image * __evas_gl_image_new_from_file(Display *disp, char *file);

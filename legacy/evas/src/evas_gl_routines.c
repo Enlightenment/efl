@@ -244,8 +244,7 @@ void __evas_gl_render_to_window(Evas_GL_Image *im,
 	     glEnd();
 	  }
      }
-   glXSwapBuffers(im->buffer.display, w);
-   glDisable(GL_SCISSOR_TEST);
+/*   glDisable(GL_SCISSOR_TEST);*/
 }
 
 Evas_GL_Image *
@@ -279,6 +278,13 @@ __evas_gl_get_visual(Display *disp)
 	__evas_vi = glXChooseVisual(disp, DefaultScreen(disp), __evas_gl_configuration);
      }
    return __evas_vi->visual;
+}
+
+XVisualInfo *
+__evas_gl_get_visual_info(Display *disp)
+{
+   __evas_gl_get_visual(disp);
+   return __evas_vi;
 }
 
 Colormap
