@@ -37,28 +37,30 @@ evas_smart_new(const char *name,
 
    s->magic = MAGIC_SMART;
    
-   s->name = strdup(name);
-   if (!s->name)
+   s->class_allocated = 1;
+
+   s->smart_class = evas_mem_calloc(sizeof(Evas_Smart_Class));
+   if (!s->smart_class)
      {
 	free(s);
 	return NULL;
      }
-     
-   s->func_add = func_add;
-   s->func_del = func_del;
-   s->func_layer_set = func_layer_set;
-   s->func_raise = func_raise;
-   s->func_lower = func_lower;
-   s->func_stack_above = func_stack_above;
-   s->func_stack_below = func_stack_below;
-   s->func_move = func_move;
-   s->func_resize = func_resize;
-   s->func_show = func_show;
-   s->func_hide = func_hide;
-   s->func_color_set = func_color_set;
-   s->func_clip_set = func_clip_set;
-   s->func_clip_unset = func_clip_unset;
-   s->data = (void *)data;
+   s->smart_class->name = name;
+   s->smart_class->add = func_add;
+   s->smart_class->del = func_del;
+   s->smart_class->layer_set = func_layer_set;
+   s->smart_class->raise = func_raise;
+   s->smart_class->lower = func_lower;
+   s->smart_class->stack_above = func_stack_above;
+   s->smart_class->stack_below = func_stack_below;
+   s->smart_class->move = func_move;
+   s->smart_class->resize = func_resize;
+   s->smart_class->show = func_show;
+   s->smart_class->hide = func_hide;
+   s->smart_class->color_set = func_color_set;
+   s->smart_class->clip_set = func_clip_set;
+   s->smart_class->clip_unset = func_clip_unset;
+   s->smart_class->data = (void *)data;
    
    return s;
 }
@@ -77,8 +79,46 @@ evas_smart_free(Evas_Smart *s)
    MAGIC_CHECK_END();
    s->delete_me = 1;
    if (s->usage > 0) return;
-   if (s->name) free(s->name);
+   if (s->class_allocated) free(s->smart_class);
    free(s);
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
+Evas_Smart *
+evas_smart_class_new(Evas_Smart_Class *sc)
+{
+   Evas_Smart *s;
+   
+   if (!sc) return NULL;
+   
+   s = evas_mem_calloc(sizeof(Evas_Smart));
+   if (!s) return NULL;
+
+   s->magic = MAGIC_SMART;
+   
+   s->smart_class = sc;
+   
+   return s;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
+Evas_Smart_Class *
+evas_smart_class_get(Evas_Smart *s)
+{
+   MAGIC_CHECK(s, Evas_Smart, MAGIC_SMART);
+   return NULL;
+   MAGIC_CHECK_END();
+   return s->smart_class;
 }
 
 /**
@@ -93,7 +133,7 @@ evas_smart_data_get(Evas_Smart *s)
    MAGIC_CHECK(s, Evas_Smart, MAGIC_SMART);
    return NULL;
    MAGIC_CHECK_END();
-   return s->data;
+   return s->smart_class->data;
 }
 
 /* internal funcs */

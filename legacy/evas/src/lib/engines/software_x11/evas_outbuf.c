@@ -218,7 +218,6 @@ evas_software_x11_outbuf_software_x11_setup_x(int w, int h, int rot, Outbuf_Dept
 		       buf->priv.mask.b, buf->priv.pal->colors);
 	     }
 	}
-      buf->priv.x.shm = evas_software_x11_x_software_x11_can_do_shm(buf->priv.x.disp);
       evas_software_x11_outbuf_software_x11_drawable_set(buf, draw);
       evas_software_x11_outbuf_software_x11_mask_set(buf, mask);
    }

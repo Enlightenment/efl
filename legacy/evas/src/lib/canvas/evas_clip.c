@@ -123,8 +123,8 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
    if (obj->cur.clipper == clip) return;
    if (obj->smart.smart)
      {
-       if (obj->smart.smart->func_clip_set)
-	  obj->smart.smart->func_clip_set(obj, clip);
+       if (obj->smart.smart->smart_class->clip_set)
+	  obj->smart.smart->smart_class->clip_set(obj, clip);
      }
    if (obj->cur.clipper)
      {
@@ -180,8 +180,8 @@ evas_object_clip_unset(Evas_Object *obj)
    /* unclip */
    if (obj->smart.smart)
      {
-       if (obj->smart.smart->func_clip_unset)
-	  obj->smart.smart->func_clip_unset(obj);
+       if (obj->smart.smart->smart_class->clip_unset)
+	  obj->smart.smart->smart_class->clip_unset(obj);
      }
    obj->cur.clipper->clip.clipees = evas_list_remove(obj->cur.clipper->clip.clipees, obj);
    obj->cur.clipper = NULL;

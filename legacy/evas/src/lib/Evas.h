@@ -27,6 +27,16 @@ typedef enum _Evas_Callback_Type Evas_Callback_Type; /**< The type of event to t
 
 typedef struct _Evas_List             Evas_List; /**< A generic linked list node handle */
 typedef struct _Evas_Rectangle        Evas_Rectangle; /**< A generic rectangle handle */
+typedef struct _Evas_Smart_Class      Evas_Smart_Class; /**< A smart object base class */
+
+typedef struct _Evas_Hash Evas_Hash; /**< A Hash table handle */
+typedef struct _Evas Evas; /**< An Evas canvas handle */
+typedef struct _Evas_Object Evas_Object; /**< An Evas Object handle */
+typedef void Evas_Performance; /**< An Evas Performance handle */
+typedef struct _Evas_Modifier Evas_Modifier; /**< An Evas Modifier */
+typedef struct _Evas_Lock Evas_Lock; /**< An Evas Lock */
+typedef struct _Evas_Smart Evas_Smart; /**< An Evas Smart Object handle */
+typedef unsigned long long Evas_Modifier_Mask; /**< An Evas modifier mask type */
 
 struct _Evas_List /** A linked list node */
 {
@@ -46,14 +56,27 @@ struct _Evas_Rectangle /** A rectangle */
    int h; /**< height of rectangle */
 };
 
-typedef struct _Evas_Hash Evas_Hash; /**< A Hash table handle */
-typedef struct _Evas Evas; /**< An Evas canvas handle */
-typedef struct _Evas_Object Evas_Object; /**< An Evas Object handle */
-typedef void Evas_Performance; /**< An Evas Performance handle */
-typedef struct _Evas_Modifier Evas_Modifier; /**< An Evas Modifier */
-typedef struct _Evas_Lock Evas_Lock; /**< An Evas Lock */
-typedef struct _Evas_Smart Evas_Smart; /**< An Evas Smart Object handle */
-typedef unsigned long long Evas_Modifier_Mask; /**< An Evas modifier mask type */
+struct _Evas_Smart_Class /** a smart object class */
+{
+   const char *name; /** the string name of the class */
+     
+   void  (*add)         (Evas_Object *o);
+   void  (*del)         (Evas_Object *o);
+   void  (*layer_set)   (Evas_Object *o, int l);
+   void  (*raise)       (Evas_Object *o);
+   void  (*lower)       (Evas_Object *o);
+   void  (*stack_above) (Evas_Object *o, Evas_Object *above);
+   void  (*stack_below) (Evas_Object *o, Evas_Object *below);
+   void  (*move)        (Evas_Object *o, double x, double y);
+   void  (*resize)      (Evas_Object *o, double w, double h);
+   void  (*show)        (Evas_Object *o);
+   void  (*hide)        (Evas_Object *o);
+   void  (*color_set)   (Evas_Object *o, int r, int g, int b, int a);
+   void  (*clip_set)    (Evas_Object *o, Evas_Object *clip);
+   void  (*clip_unset)  (Evas_Object *o);
+   
+   const void *data;
+};
 #endif
 #endif
 
@@ -384,6 +407,9 @@ extern "C" {
 
    Evas_Smart       *evas_smart_new                    (const char *name, void (*func_add) (Evas_Object *obj), void (*func_del) (Evas_Object *obj), void (*func_layer_set) (Evas_Object *obj, int l), void (*func_raise) (Evas_Object *obj), void (*func_lower) (Evas_Object *obj), void (*func_stack_above) (Evas_Object *obj, Evas_Object *above), void (*func_stack_below) (Evas_Object *obj, Evas_Object *below), void (*func_move) (Evas_Object *obj, double x, double y), void (*func_resize) (Evas_Object *obj, double w, double h), void (*func_show) (Evas_Object *obj), void (*func_hide) (Evas_Object *obj), void (*func_color_set) (Evas_Object *obj, int r, int g, int b, int a), void (*func_clip_set) (Evas_Object *obj, Evas_Object *clip), void (*func_clip_unset) (Evas_Object *obj), const void *data);
    void              evas_smart_free                   (Evas_Smart *s);
+   Evas_Smart       *evas_smart_class_new              (Evas_Smart_Class *sc);
+   Evas_Smart_Class *evas_smart_class_get              (Evas_Smart *s);
+       
    void             *evas_smart_data_get               (Evas_Smart *s);
        
    Evas_Object      *evas_object_smart_add             (Evas *e, Evas_Smart *s);

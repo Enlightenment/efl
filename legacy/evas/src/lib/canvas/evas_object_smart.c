@@ -179,13 +179,13 @@ evas_object_smart_add(Evas *e, Evas_Smart *s)
    obj = evas_object_new();
    if (!obj) return NULL;
    obj->smart.smart = s;
-   obj->type = s->name;
+   obj->type = s->smart_class->name;
    evas_object_smart_init(obj);
    evas_object_inject(obj, e);
    
    evas_object_smart_use(s);
    
-   if (s->func_add) s->func_add(obj);
+   if (s->smart_class->add) s->smart_class->add(obj);
    
    return obj;   
 }
@@ -325,7 +325,7 @@ evas_object_smart_del(Evas_Object *obj)
    Evas_Smart *s;
    
    s = obj->smart.smart;
-   if ((s) && (s->func_del)) s->func_del(obj);
+   if ((s) && (s->smart_class->del)) s->smart_class->del(obj);
    if (obj->smart.parent) evas_object_smart_member_del(obj);
    if (s) evas_object_smart_unuse(s);
 }

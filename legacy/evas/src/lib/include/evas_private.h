@@ -58,6 +58,7 @@ typedef struct _Evas_Intercept_Func_Obj     Evas_Intercept_Func_Obj;
 typedef struct _Evas_Intercept_Func_Int     Evas_Intercept_Func_Int;
 typedef struct _Evas_Key_Grab               Evas_Key_Grab;
 typedef struct _Evas_Callbacks      Evas_Callbacks;
+typedef struct _Evas_Smart_Class      Evas_Smart_Class;
   
 #define MAGIC_EVAS          0x70777770
 #define MAGIC_OBJ           0x71777770
@@ -181,26 +182,34 @@ struct _Evas_Smart
 {
    DATA32            magic;
 
-   char             *name;
    int               usage;
-   void             *data;
    
    char              delete_me : 1;
+   char              class_allocated : 1;
    
-   void         (*func_add) (Evas_Object *o);
-   void         (*func_del) (Evas_Object *o);
-   void         (*func_layer_set) (Evas_Object *o, int l);
-   void         (*func_raise) (Evas_Object *o);
-   void         (*func_lower) (Evas_Object *o);
-   void         (*func_stack_above) (Evas_Object *o, Evas_Object *above);
-   void         (*func_stack_below) (Evas_Object *o, Evas_Object *below);
-   void         (*func_move) (Evas_Object *o, double x, double y);
-   void         (*func_resize) (Evas_Object *o, double w, double h);
-   void         (*func_show) (Evas_Object *o);
-   void         (*func_hide) (Evas_Object *o);
-   void         (*func_color_set) (Evas_Object *o, int r, int g, int b, int a);
-   void         (*func_clip_set) (Evas_Object *o, Evas_Object *clip);
-   void         (*func_clip_unset) (Evas_Object *o);   
+   Evas_Smart_Class *smart_class;
+};
+
+struct _Evas_Smart_Class /** a smart object class */
+{
+   const char *name; /** the string name of the class */
+   
+   void  (*add)         (Evas_Object *o);
+   void  (*del)         (Evas_Object *o);
+   void  (*layer_set)   (Evas_Object *o, int l);
+   void  (*raise)       (Evas_Object *o);
+   void  (*lower)       (Evas_Object *o);
+   void  (*stack_above) (Evas_Object *o, Evas_Object *above);
+   void  (*stack_below) (Evas_Object *o, Evas_Object *below);
+   void  (*move)        (Evas_Object *o, double x, double y);
+   void  (*resize)      (Evas_Object *o, double w, double h);
+   void  (*show)        (Evas_Object *o);
+   void  (*hide)        (Evas_Object *o);
+   void  (*color_set)   (Evas_Object *o, int r, int g, int b, int a);
+   void  (*clip_set)    (Evas_Object *o, Evas_Object *clip);
+   void  (*clip_unset)  (Evas_Object *o);
+   
+   const void *data;
 };
 
 struct _Evas_Modifier

@@ -446,8 +446,8 @@ evas_object_move(Evas_Object *obj, double x, double y)
    if (evas_object_intercept_call_move(obj, x, y)) return;
    if (obj->smart.smart)
      {
-       if (obj->smart.smart->func_move)
-	  obj->smart.smart->func_move(obj, x, y);
+       if (obj->smart.smart->smart_class->move)
+	  obj->smart.smart->smart_class->move(obj, x, y);
      }
    if ((obj->cur.geometry.x == x) &&
        (obj->cur.geometry.y == y)) 
@@ -498,8 +498,8 @@ evas_object_resize(Evas_Object *obj, double w, double h)
    if (evas_object_intercept_call_resize(obj, w, h)) return;
    if (obj->smart.smart)
      {
-       if (obj->smart.smart->func_resize)
-	  obj->smart.smart->func_resize(obj, w, h);
+       if (obj->smart.smart->smart_class->resize)
+	  obj->smart.smart->smart_class->resize(obj, w, h);
      }
    if ((obj->cur.geometry.w == w) &&
        (obj->cur.geometry.h == h))
@@ -565,8 +565,8 @@ evas_object_show(Evas_Object *obj)
    if (evas_object_intercept_call_show(obj)) return;
    if (obj->smart.smart)
      {
-       if (obj->smart.smart->func_show)
-	  obj->smart.smart->func_show(obj);
+       if (obj->smart.smart->smart_class->show)
+	  obj->smart.smart->smart_class->show(obj);
      }
    if (obj->cur.visible)
      {
@@ -606,8 +606,8 @@ evas_object_hide(Evas_Object *obj)
    if (evas_object_intercept_call_hide(obj)) return;
    if (obj->smart.smart)
      {
-       if (obj->smart.smart->func_hide)
-	  obj->smart.smart->func_hide(obj);
+       if (obj->smart.smart->smart_class->hide)
+	  obj->smart.smart->smart_class->hide(obj);
      }
    if (!obj->cur.visible)
      {
@@ -686,8 +686,8 @@ evas_object_color_set(Evas_Object *obj, int r, int g, int b, int a)
    if (a > 255) a = 255; if (a < 0) a = 0;
    if (obj->smart.smart)
      {
-       if (obj->smart.smart->func_color_set)
-	  obj->smart.smart->func_color_set(obj, r, g, b, a);
+       if (obj->smart.smart->smart_class->color_set)
+	  obj->smart.smart->smart_class->color_set(obj, r, g, b, a);
      }
    if ((obj->cur.color.r == r) &&
        (obj->cur.color.g == g) &&

@@ -140,8 +140,8 @@ evas_object_layer_set(Evas_Object *obj, int l)
      }
    if (obj->smart.smart)
      {
-       if (obj->smart.smart->func_layer_set)
-	  obj->smart.smart->func_layer_set(obj, l);
+       if (obj->smart.smart->smart_class->layer_set)
+	  obj->smart.smart->smart_class->layer_set(obj, l);
      }
    e = obj->layer->evas;
    evas_object_release(obj, 1);
