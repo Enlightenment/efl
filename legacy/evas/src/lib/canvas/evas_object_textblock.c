@@ -10,23 +10,20 @@
  * 
  * things to add:
  * 
- * * underline support
- * * double underline support
- * * strikethrough support
- * * solid bg behind text
+ * * get pos given object-relative co-ords
+ * * get line geometry at any char pos
+ * * get next line char pos
+ * * get start of line char pos
+ * * get formatted extents
+ * * get native extents
+ * * finish off current api where it is unfinished
  * * if a word (or char) doesnt fit at all do something sensible
  * * styles (outline, glow, etxra glow, shadow, soft shadow, etc.)
  * * anchors (to query text extents)
- * * query text pos given object-relative co-ords
- * * inline objects (queryable)
  * * tabs (indents)
- * * finish off current api thats unfinished
  * * left and right margins
- * * freeze thaw api
  * * get all the current format params at any point
- * * get line geometry at any char pos
- * * get next line char pos
- * * api to query formatted extents as well as the native extents
+ * * freeze thaw api
  * 
  * tough ones:
  * * overflow objects (overflow from this textblock can go into another)
@@ -38,6 +35,7 @@
  * really tough ones:
  * * fix core text code to properly handle unicode codeponts - handle ALL unicode domains properly.
  * * right to left text
+ * * top down (japanese/chinese) text layout
  * 
  * insanely tough ones:
  * * for ultra-huge documents determine paging sections of the text in/out and being able to provide callbacks form the user api that can provide the text
@@ -81,10 +79,15 @@ struct _Layout
    struct {
       int               inset, x, y, 
 	                ascent, descent, 
-	                mascent, mdescent;
+	                mascent, mdescent,
+	                advance;
    } line;
    double               align, valign;
    unsigned char        word_wrap : 1;
+   unsigned char        underline : 1;
+   unsigned char        second_underline : 1;
+   unsigned char        strikethrough : 1;
+   unsigned char        backing : 1;
 };
 
 /* a node of formatting data */
@@ -150,6 +153,7 @@ evas_object_textblock_layout_init(Layout *layout)
    layout->shadow_color = layout->color;
    layout->glow_color = layout->color;
    layout->outer_glow_color = layout->color;
+   layout->backing_color = layout->color;
    layout->strikethrough_color = layout->color;
    layout->line.inset = 0;
    layout->line.x = 0;
@@ -158,8 +162,14 @@ evas_object_textblock_layout_init(Layout *layout)
    layout->line.descent = 0;
    layout->line.mascent = 0;
    layout->line.mdescent = 0;
+   layout->line.advance = 0;
    layout->align = 0.0;
    layout->valign = -1.0;
+   layout->word_wrap = 0;
+   layout->underline = 0;
+   layout->second_underline = 0;
+   layout->strikethrough = 0;
+   layout->backing = 0;
 }
 
 static char *
@@ -231,7 +241,15 @@ evas_object_textblock_layout_format_apply(Layout *layout, char *key, char *data)
 	     else if (layout->valign > 1.0) layout->valign = 1.0;
 	  }
      }
-   else if (!strcmp(key, "color"))
+   else if ((!strcmp(key, "color")) ||
+	    (!strcmp(key, "underline_color")) ||
+	    (!strcmp(key, "double_underline_color")) ||
+	    (!strcmp(key, "outline_color")) ||
+	    (!strcmp(key, "shadow_color")) ||
+	    (!strcmp(key, "glow_color")) ||
+	    (!strcmp(key, "outer_glow_color")) ||
+	    (!strcmp(key, "backing_color")) ||
+	    (!strcmp(key, "strikethrough_color")))
      {
 	/* #RRGGBB[AA] or #RGB[A] */
 	if (data[0] == '#')
@@ -280,16 +298,108 @@ evas_object_textblock_layout_format_apply(Layout *layout, char *key, char *data)
 		  a = evas_object_textblock_hex_string_get(data[4]);
 		  a = (a << 4) | a;
 	       }
-	     layout->color.r = r;
-	     layout->color.g = g;
-	     layout->color.b = b;
-	     layout->color.a = a;
+	     if (!strcmp(key, "color"))
+	       {
+		  layout->color.r = r;
+		  layout->color.g = g;
+		  layout->color.b = b;
+		  layout->color.a = a;
+	       }
+	     else if (!strcmp(key, "underline_color"))
+	       {
+		  layout->underline_color.r = r;
+		  layout->underline_color.g = g;
+		  layout->underline_color.b = b;
+		  layout->underline_color.a = a;
+	       }
+	     else if (!strcmp(key, "double_underline_color"))
+	       {
+		  layout->double_underline_color.r = r;
+		  layout->double_underline_color.g = g;
+		  layout->double_underline_color.b = b;
+		  layout->double_underline_color.a = a;
+	       }
+	     else if (!strcmp(key, "outline_color"))
+	       {
+		  layout->outline_color.r = r;
+		  layout->outline_color.g = g;
+		  layout->outline_color.b = b;
+		  layout->outline_color.a = a;
+	       }
+	     else if (!strcmp(key, "shadow_color"))
+	       {
+		  layout->shadow_color.r = r;
+		  layout->shadow_color.g = g;
+		  layout->shadow_color.b = b;
+		  layout->shadow_color.a = a;
+	       }
+	     else if (!strcmp(key, "glow_color"))
+	       {
+		  layout->glow_color.r = r;
+		  layout->glow_color.g = g;
+		  layout->glow_color.b = b;
+		  layout->glow_color.a = a;
+	       }
+	     else if (!strcmp(key, "outer_glow_color"))
+	       {
+		  layout->outer_glow_color.r = r;
+		  layout->outer_glow_color.g = g;
+		  layout->outer_glow_color.b = b;
+		  layout->outer_glow_color.a = a;
+	       }
+	     else if (!strcmp(key, "backing_color"))
+	       {
+		  layout->backing_color.r = r;
+		  layout->backing_color.g = g;
+		  layout->backing_color.b = b;
+		  layout->backing_color.a = a;
+	       }
+	     else if (!strcmp(key, "strikethrough_color"))
+	       {
+		  layout->strikethrough_color.r = r;
+		  layout->strikethrough_color.g = g;
+		  layout->strikethrough_color.b = b;
+		  layout->strikethrough_color.a = a;
+	       }
 	  }
      }
    else if (!strcmp(key, "wrap"))
      {
 	if (!strcmp(data, "word")) layout->word_wrap = 1;
 	else layout->word_wrap = 0;
+     }
+   else if (!strcmp(key, "underline"))
+     {
+	if (!strcmp(data, "off"))
+	  {
+	     layout->underline = 0;
+	     layout->second_underline = 0;
+	  }
+	else if ((!strcmp(data, "on")) ||
+		 (!strcmp(data, "single")))
+	  {
+	     layout->underline = 1;
+	     layout->second_underline = 0;
+	  }
+	else if (!strcmp(data, "double"))
+	  {
+	     layout->underline = 1;
+	     layout->second_underline = 1;
+	  }
+     }
+   else if (!strcmp(key, "strikethrough"))
+     {
+	if (!strcmp(data, "off"))
+	  layout->strikethrough = 0;
+	else if (!strcmp(data, "on"))
+	  layout->strikethrough = 1;
+     }
+   else if (!strcmp(key, "backing"))
+     {
+	if (!strcmp(data, "off"))
+	  layout->backing = 0;
+	else if (!strcmp(data, "on"))
+	  layout->backing = 1;
      }
 }
 
@@ -539,7 +649,7 @@ evas_object_textblock_layout(Evas_Object *obj)
 	if (node->format)
 	  {
 	     /* first handle newline, tab etc. etc */
-	     if (!strcmp(node->format, "\n"))
+	     if (node->format[0] == '\n')
 	       {
 		  if (lnode)
 		    lnode->line_end = 1;
@@ -549,6 +659,7 @@ evas_object_textblock_layout(Evas_Object *obj)
 		       /* FIXME: this node would overflow to the next textblock */
 		    }
 		  layout.line.y += layout.line.mascent + layout.line.mdescent;
+		  line_start = NULL;
 	       }
 	     else
 	       evas_object_textblock_layout_format_modify(&layout, node->format);
@@ -606,6 +717,7 @@ evas_object_textblock_layout(Evas_Object *obj)
 	     /* if the text fits... just add */
 	     if (chrpos < 0)
 	       {
+		  int more_text_on_line = 0;
 		  if (font) ENFN->font_string_size_get(ENDT, font, text, &tw, &th);
 		  lnode->w = tw;
 		  lnode->h = th;
@@ -613,19 +725,39 @@ evas_object_textblock_layout(Evas_Object *obj)
 		  if (font) hadvance = ENFN->font_h_advance_get(ENDT, font, text);
 		  o->layout_nodes = evas_object_list_append(o->layout_nodes, lnode);
 		  /* and advance */
-		  layout.line.x += hadvance;
 		  /* fix up max ascent/descent for the line */
 		  adj = (double)(w - (lnode->layout.line.x + tw + layout.line.inset)) * layout.align;
 		  adj -= line_start->layout.line.x;
-		  for (ll = (Evas_Object_List *)lnode; ll; ll = ll->prev)
+		  layout.line.x += hadvance;
+		  lnode->layout.line.advance = hadvance;
+		  for (ll = l; ll; ll = ll->next)
 		    {
-		       Layout_Node *lnode2;
+		       Node *node2;
 		       
-		       lnode2 = (Layout_Node *)ll;
-		       lnode2->layout.line.x += adj;
-		       lnode2->layout.line.mascent = layout.line.mascent;
-		       lnode2->layout.line.mdescent = layout.line.mdescent;
-		       if (ll == (Evas_Object_List *)line_start) break;
+		       node2 = (Node *)ll;
+		       if (node->text)
+			 {
+			    more_text_on_line = 1;
+			    break;
+			 }
+		       else if ((node->format) && (node->format[0] == '\n'))
+			 {
+			    more_text_on_line = 0;
+			    break;
+			 }
+		    }
+		  if (!more_text_on_line)
+		    {
+		       for (ll = (Evas_Object_List *)lnode; ll; ll = ll->prev)
+			 {
+			    Layout_Node *lnode2;
+			    
+			    lnode2 = (Layout_Node *)ll;
+			    lnode2->layout.line.x += adj;
+			    lnode2->layout.line.mascent = layout.line.mascent;
+			    lnode2->layout.line.mdescent = layout.line.mdescent;
+			    if (ll == (Evas_Object_List *)line_start) break;
+			 }
 		    }
 	       }
 	     /* text doesnt fit */
@@ -710,6 +842,7 @@ evas_object_textblock_layout(Evas_Object *obj)
 			    /* FIXME: this node would overflow to the next textblock */
 			 }
 		       layout.line.y += layout.line.mascent + layout.line.mdescent;
+		       line_start = NULL;
 		       text = text2;
 		       /* still more text to go */
 		       if ((layout.line.mascent + layout.line.mdescent) > 0)
@@ -1374,6 +1507,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 {
    Evas_Object_Textblock *o;
    Evas_Object_List *l;
+   int pbackx;
    
    /* render object to surface with context, and offxet by x,y */
    o = (Evas_Object_Textblock *)(obj->object_data);
@@ -1399,54 +1533,176 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
                                                   obj->cur.cache.geometry.w,
                                                   obj->cur.cache.geometry.h);
  */
-#if 1
    for (l = (Evas_Object_List *)o->layout_nodes; l; l = l->next)
      {
-	Layout_Node *lnode;
+	Layout_Node *lnode, *nlnode;
 	
 	lnode = (Layout_Node *)l;
-	ENFN->context_color_set(output,
-				context,
-				(obj->cur.cache.clip.r * lnode->layout.color.r) / 255,
-				(obj->cur.cache.clip.g * lnode->layout.color.g) / 255,
-				(obj->cur.cache.clip.b * lnode->layout.color.b) / 255,
-				(obj->cur.cache.clip.a * lnode->layout.color.a) / 255);
+	nlnode = (Layout_Node *)(l->next);
+	if (lnode->line_start) pbackx = 0;
 	if ((lnode->layout.font.font) && (lnode->text))
 	  {
 	     if (lnode->layout.valign < 0.0)
-	       ENFN->font_draw(output,
-			       context,
-			       surface,
-			       lnode->layout.font.font,
-			       obj->cur.cache.geometry.x + 
-			       lnode->layout.line.x + x,
-			       obj->cur.cache.geometry.y + 
-			       lnode->layout.line.y + y + lnode->layout.line.mascent,
-			       lnode->w,
-			       lnode->h,
-			       lnode->w,
-			       lnode->h,
-			       lnode->text);
+	       {
+		  int lin;
+		  int inset = 0;
+		  		  
+		  lin = 0;
+		  if (lnode->layout.underline) lin++;
+		  if (lnode->layout.second_underline) lin++;
+		  if (lnode->layout.strikethrough) lin++;
+		  if (lnode->layout.backing) lin++;
+		  if (lin > 0)
+		    inset = ENFN->font_inset_get(ENDT, 
+						 lnode->layout.font.font,
+						 lnode->text);
+		  if (lnode->layout.backing)
+		    {
+		       int bx;
+		       
+		       ENFN->context_color_set(output,
+					       context,
+					       (obj->cur.cache.clip.r * lnode->layout.backing_color.r) / 255,
+					       (obj->cur.cache.clip.g * lnode->layout.backing_color.g) / 255,
+					       (obj->cur.cache.clip.b * lnode->layout.backing_color.b) / 255,
+					       (obj->cur.cache.clip.a * lnode->layout.backing_color.a) / 255);
+		       bx = lnode->layout.line.x + inset;
+		       if (pbackx > 0) bx = pbackx;
+		       pbackx = bx + lnode->layout.line.advance;
+		       if (((nlnode) && ((nlnode->line_start) ||
+					 (!nlnode->layout.backing))) ||
+			   (!nlnode))
+			 ENFN->rectangle_draw(output,
+					      context,
+					      surface,
+					      obj->cur.cache.geometry.x + 
+					      bx + x,
+					      obj->cur.cache.geometry.y +
+					      lnode->layout.line.y + y,
+					      lnode->w,
+					      lnode->layout.line.mascent + lnode->layout.line.mdescent);
+		       else
+			 ENFN->rectangle_draw(output,
+					      context,
+					      surface,
+					      obj->cur.cache.geometry.x + 
+					      bx + x,
+					      obj->cur.cache.geometry.y +
+					      lnode->layout.line.y + y,
+					      lnode->layout.line.advance,
+					      lnode->layout.line.mascent + lnode->layout.line.mdescent);
+		    }
+		  else
+		    pbackx = 0;
+		  ENFN->context_color_set(output,
+					  context,
+					  (obj->cur.cache.clip.r * lnode->layout.color.r) / 255,
+					  (obj->cur.cache.clip.g * lnode->layout.color.g) / 255,
+					  (obj->cur.cache.clip.b * lnode->layout.color.b) / 255,
+					  (obj->cur.cache.clip.a * lnode->layout.color.a) / 255);
+		  ENFN->font_draw(output,
+				  context,
+				  surface,
+				  lnode->layout.font.font,
+				  obj->cur.cache.geometry.x + 
+				  lnode->layout.line.x + x,
+				  obj->cur.cache.geometry.y + 
+				  lnode->layout.line.y + y + 
+				  lnode->layout.line.mascent,
+				  lnode->w,
+				  lnode->h,
+				  lnode->w,
+				  lnode->h,
+				  lnode->text);
+		  if (lnode->layout.underline)
+		    {
+		       ENFN->context_color_set(output,
+					       context,
+					       (obj->cur.cache.clip.r * lnode->layout.underline_color.r) / 255,
+					       (obj->cur.cache.clip.g * lnode->layout.underline_color.g) / 255,
+					       (obj->cur.cache.clip.b * lnode->layout.underline_color.b) / 255,
+					       (obj->cur.cache.clip.a * lnode->layout.underline_color.a) / 255);
+		       ENFN->rectangle_draw(output,
+					    context,
+					    surface,
+					    obj->cur.cache.geometry.x + 
+					    lnode->layout.line.x + x + inset,
+					    obj->cur.cache.geometry.y +
+					    lnode->layout.line.y + y + 
+					    lnode->layout.line.mascent + 1,
+					    lnode->w,
+					    1);
+		    }
+		  if (lnode->layout.second_underline)
+		    {
+		       ENFN->context_color_set(output,
+					       context,
+					       (obj->cur.cache.clip.r * lnode->layout.double_underline_color.r) / 255,
+					       (obj->cur.cache.clip.g * lnode->layout.double_underline_color.g) / 255,
+					       (obj->cur.cache.clip.b * lnode->layout.double_underline_color.b) / 255,
+					       (obj->cur.cache.clip.a * lnode->layout.double_underline_color.a) / 255);
+		       ENFN->rectangle_draw(output,
+					    context,
+					    surface,
+					    obj->cur.cache.geometry.x + 
+					    lnode->layout.line.x + x + inset,
+					    obj->cur.cache.geometry.y +
+					    lnode->layout.line.y + y + 
+					    lnode->layout.line.mascent + 3,
+					    lnode->w,
+					    1);
+		    }
+		  if (lnode->layout.strikethrough)
+		    {
+		       ENFN->context_color_set(output,
+					       context,
+					       (obj->cur.cache.clip.r * lnode->layout.strikethrough_color.r) / 255,
+					       (obj->cur.cache.clip.g * lnode->layout.strikethrough_color.g) / 255,
+					       (obj->cur.cache.clip.b * lnode->layout.strikethrough_color.b) / 255,
+					       (obj->cur.cache.clip.a * lnode->layout.strikethrough_color.a) / 255);
+		       ENFN->rectangle_draw(output,
+					    context,
+					    surface,
+					    obj->cur.cache.geometry.x + 
+					    lnode->layout.line.x + x + inset,
+					    obj->cur.cache.geometry.y +
+					    lnode->layout.line.y + y + 
+					    lnode->layout.line.mascent - ((lnode->layout.line.ascent - lnode->layout.line.descent) / 2),
+					    lnode->w,
+					    1);
+		    }
+	       }
 	     else
-	       ENFN->font_draw(output,
-			       context,
-			       surface,
-			       lnode->layout.font.font,
-			       obj->cur.cache.geometry.x +
-			       lnode->layout.line.x + x,
-			       obj->cur.cache.geometry.y + 
-			       lnode->layout.line.y + y + 
-			       ((double)(((lnode->layout.line.mascent + lnode->layout.line.mdescent) -
-					 (lnode->layout.line.ascent + lnode->layout.line.descent)) * lnode->layout.valign)) +
-			       lnode->layout.line.ascent,
-			       lnode->w,
-			       lnode->h,
-			       lnode->w,
-			       lnode->h,
-			       lnode->text);
+	       {
+		  
+		  ENFN->context_color_set(output,
+					  context,
+					  (obj->cur.cache.clip.r * lnode->layout.color.r) / 255,
+					  (obj->cur.cache.clip.g * lnode->layout.color.g) / 255,
+					  (obj->cur.cache.clip.b * lnode->layout.color.b) / 255,
+					  (obj->cur.cache.clip.a * lnode->layout.color.a) / 255);
+		  ENFN->font_draw(output,
+				  context,
+				  surface,
+				  lnode->layout.font.font,
+				  obj->cur.cache.geometry.x +
+				  lnode->layout.line.x + x,
+				  obj->cur.cache.geometry.y + 
+				  lnode->layout.line.y + y + 
+				  ((double)(((lnode->layout.line.mascent + 
+					      lnode->layout.line.mdescent) -
+					     (lnode->layout.line.ascent + 
+					      lnode->layout.line.descent)) * 
+					    lnode->layout.valign)) +
+				  lnode->layout.line.ascent,
+				  lnode->w,
+				  lnode->h,
+				  lnode->w,
+				  lnode->h,
+				  lnode->text);
+	       }
 	  }
      }
-#endif   
 /*   
    if (o->engine_data)
      {
