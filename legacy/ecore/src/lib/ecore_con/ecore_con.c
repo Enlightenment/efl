@@ -851,14 +851,14 @@ static void
 kill_server(Ecore_Con_Server *svr)
 {
    Ecore_Con_Event_Server_Del *e;
-
+   
    e = calloc(1, sizeof(Ecore_Con_Event_Server_Del));
    if (e)
-   {
-      e->server = svr;
-      ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e, NULL, NULL);
-   }
-
+     {
+	e->server = svr;
+	ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e, NULL, NULL);
+     }
+   
    svr->dead = 1;
    ecore_main_fd_handler_del(svr->fd_handler);
    svr->fd_handler = NULL;
