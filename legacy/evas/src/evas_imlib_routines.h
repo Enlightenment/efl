@@ -74,7 +74,7 @@ void              __evas_imlib_text_draw(Evas_Imlib_Font *fn, Display *disp, Win
 /***********/
 /* drawing */
 /***********/
-void         __evas_imlib_init(Display *disp);
+void         __evas_imlib_init(Display *disp, int screen);
 int          __evas_imlib_capable(Display *disp);
 void         __evas_imlib_flush_draw(Display *disp, Window win);
 void         __evas_imlib_sync(Display *disp);

@@ -334,7 +334,6 @@ __evas_gl_image_create_from_file(Display *disp, char *file)
    im->texture.edge_h = 0;
    im->texture.textures = NULL;
 
-   __evas_gl_init(disp);   
    im->context = __evas_gl_cx;
    im->buffer.display = disp;
    im->buffer.colormap = __evas_gl_get_colormap(disp, 0);
@@ -710,12 +709,12 @@ __evas_gl_get_colormap(Display *disp, int screen)
 }
 
 void
-__evas_gl_init(Display *disp)
+__evas_gl_init(Display *disp, int screen)
 {
    if (__evas_gl_cx) return;
    
    if (!__evas_gl_capable(disp)) return;
-   __evas_gl_get_visual(disp, 0);
+   __evas_gl_get_visual(disp, screen);
    /* direct rendering client */
    __evas_gl_cx = glXCreateContext(disp, __evas_vi, NULL, GL_TRUE);
    /* GLX indirect */

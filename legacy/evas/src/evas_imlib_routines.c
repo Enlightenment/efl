@@ -343,12 +343,11 @@ __evas_imlib_get_colormap(Display *disp, int screen)
 }
 
 void
-__evas_imlib_init(Display *disp)
+__evas_imlib_init(Display *disp, int screen)
 {
-   __evas_imlib_get_visual(disp, 0);
-   __evas_imlib_get_visual(disp, 0);
-   __evas_imlib_get_colormap(disp, 0);
-   imlib_context_set_display(disp);
+   __evas_imlib_get_visual(disp, screen);
+   __evas_imlib_get_visual(disp, screen);
+   __evas_imlib_get_colormap(disp, screen);
 }
 
 void

@@ -23,7 +23,7 @@ main(int argc, char **argv)
    int win_w, win_h;
    
    d = XOpenDisplay(NULL);
-   __evas_gl_init(d);
+   __evas_gl_init(d, DefaultScreen(d));
    vis = __evas_gl_get_visual(d, DefaultScreen(d));
    cmap = __evas_gl_get_colormap(d, DefaultScreen(d));
    

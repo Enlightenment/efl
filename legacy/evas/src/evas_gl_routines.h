@@ -112,7 +112,7 @@ void           __evas_gl_text_draw(Evas_GL_Font *fn, Display *disp, Window win, 
 /***********/
 /* drawing */
 /***********/
-void         __evas_gl_init(Display *disp);
+void         __evas_gl_init(Display *disp, int screen);
 int          __evas_gl_capable(Display *disp);
 void         __evas_gl_flush_draw(Display *disp, Window win);
 void         __evas_gl_sync(Display *disp);
