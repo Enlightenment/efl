@@ -348,8 +348,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
        (ep->text.cache.in_str) &&
        (text) &&
        (!strcmp(ep->text.cache.in_str, text)) &&
-       (chosen_desc->text.align.x == params->text.align.x) &&
-       (chosen_desc->text.align.y == params->text.align.y))
+       (ep->text.cache.align_x == params->text.align.x) &&
+       (ep->text.cache.align_y == params->text.align.y))
      {
 	text = ep->text.cache.out_str;
 	size = ep->text.cache.out_size;
@@ -583,7 +583,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    ep->text.cache.in_w = sw;
    ep->text.cache.in_h = sh;
    ep->text.cache.out_size = size;
-   
+   ep->text.cache.align_x = params->text.align.x;
+   ep->text.cache.align_y = params->text.align.y;
    arrange_text:
    
    if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);

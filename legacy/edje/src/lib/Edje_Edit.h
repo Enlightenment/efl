@@ -520,6 +520,7 @@ struct _Edje_Real_Part
 	 char               *in_str;
 	 char               *out_str;
 	 int                 out_size;
+	 double              align_x, align_y;
       } cache;
       Edje_Real_Part        *source;
       Edje_Real_Part        *text_source;
