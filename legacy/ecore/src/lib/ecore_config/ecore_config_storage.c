@@ -81,7 +81,7 @@ ecore_config_file_load(char *file)
 	for (x = 0; x < key_count; x++)
 	  {
 	     type = _ecore_config_db_key_type_get(db, keys[x]);
-	     printf("%s == %s\n", keys[x], type);
+	     printf("\"%s\" == \"%s\"\n", keys[x], type);
 	     if (!type) type = "?";
 	     if (!strcmp(type, "int"))
 	       {

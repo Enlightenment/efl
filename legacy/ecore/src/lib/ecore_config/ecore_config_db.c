@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <locale.h>
 
 struct _Ecore_Config_DB_File
 {
@@ -116,6 +117,7 @@ _ecore_config_db_key_int_get(Ecore_Config_DB_File *db, char *key, int *dest)
    if (data)
      {
 	int l;
+	char *prev_locale;
 
 	if (size <= 2)
 	  {
@@ -134,7 +136,10 @@ _ecore_config_db_key_int_get(Ecore_Config_DB_File *db, char *key, int *dest)
 	     free(data);
 	     return 0;
 	  }
+   
+	prev_locale = setlocale(LC_NUMERIC, "C");
 	*dest = atoi(data + l + 1);
+	if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
 	free(data);
      }
    return 0;
@@ -150,6 +155,7 @@ _ecore_config_db_key_float_get(Ecore_Config_DB_File *db, char *key, double *dest
    if (data)
      {
 	int l;
+	char *prev_locale;
 	
 	if (size <= 2)
 	  {
@@ -168,7 +174,10 @@ _ecore_config_db_key_float_get(Ecore_Config_DB_File *db, char *key, double *dest
 	     free(data);
 	     return 0;
 	  }
+	
+	prev_locale = setlocale(LC_NUMERIC, "C");
 	*dest = atof(data + l + 1);
+	if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
 	free(data);
      }
    return 0;
@@ -253,8 +262,11 @@ _ecore_config_db_key_int_set(Ecore_Config_DB_File *db, char *key, int val)
 {
    char buf[256];
    int num;
+   char *prev_locale;
    
+   prev_locale = setlocale(LC_NUMERIC, "C");
    num = snprintf(buf, sizeof(buf), "%s %i ", "int", val);
+   if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
    buf[3] = 0;
    buf[num - 1] = 0;
    eet_write(db->ef, key, buf, num, 1);
@@ -265,10 +277,15 @@ _ecore_config_db_key_float_set(Ecore_Config_DB_File *db, char *key, double val)
 {
    char buf[256];
    int num;
+   char *prev_locale;
    
-   num = snprintf(buf, sizeof(buf), "%s %f ", "float", val);
+   prev_locale = setlocale(LC_NUMERIC, "C");
+   num = snprintf(buf, sizeof(buf), "%s %16.16f ", "float", val);
+   if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
+   printf("WRITE \"%s\"\n", buf);
    buf[5] = 0;
    buf[num - 1] = 0;
+   printf("--P2 \"%s\"\n", buf + 6);
    eet_write(db->ef, key, buf, num, 1);
 }
 
