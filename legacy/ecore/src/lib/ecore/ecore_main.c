@@ -175,7 +175,7 @@ ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler, void (*
 	return;
      }
    fd_handler->prep_func = func;
-   fd_handler->prep_data = data;
+   fd_handler->prep_data = (void *) data;
 }
 
 /**
