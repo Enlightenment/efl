@@ -450,8 +450,14 @@ fb_init(int vt, int device)
 #if 0   
    if (vt != 0) fb_setvt(vt);
 #endif
-   sprintf(dev, "/dev/fb%i", device);
-   if ((fb = open(dev, O_RDWR)) == -1) 
+   sprintf(dev, "/dev/fb/%i", device);
+   fb = open(dev, O_RDWR);
+   if ( fb == -1 )
+     {
+       sprintf(dev, "/dev/fb%i", device);
+       fb = open(dev, O_RDWR);
+     }
+   if (fb == -1)
      {  
 	fprintf(stderr,"open %s: %s\n", dev, strerror(errno));
 	fb_cleanup();
