@@ -312,12 +312,24 @@ void
 evas_put_data(Evas e, Evas_Object o, char *key, void *data)
 {
    Evas_Data d;
+   Evas_List l;
    
    if (!key) return;
+   for (l = o->data; l; l = l->next)
+     {
+	Evas_Data d;
+	
+	d = l->data;
+	if (!strcmp(d->key, key)) 
+	   {
+	      d->data = data;
+	      return;
+	   }
+     }
    d = malloc(sizeof(struct _Evas_Data));
    d->key = strdup(key);
    d->data = data;
-   o->data = evas_list_append(o->data, d);
+   o->data = evas_list_prepend(o->data, d);
 }
 
 void *
@@ -325,12 +337,38 @@ evas_get_data(Evas e, Evas_Object o, char *key)
 {
    Evas_List l;
    
+   if (!key) return NULL;
    for (l = o->data; l; l = l->next)
      {
 	Evas_Data d;
 	
 	d = l->data;
 	if (!strcmp(d->key, key)) return d->data;
+     }
+   return NULL;
+}
+
+void *
+evas_remove_data(Evas e, Evas_Object o, char *key)
+{
+   Evas_List l;
+   
+   if (!key) return NULL;
+   for (l = o->data; l; l = l->next)
+     {
+	Evas_Data d;
+	
+	d = l->data;
+	if (!strcmp(d->key, key))
+	  {
+	     void *data;
+	     
+	     o->data = evas_list_remove(o->data, l->data);
+	     data = d->data;
+	     free(d->key);
+	     free(d);
+	     return data;
+	  }
      }
    return NULL;
 }

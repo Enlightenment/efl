@@ -9,7 +9,10 @@ _evas_callback_call(Evas e, Evas_Object o, Evas_Callback_Type callback,
 		    int b, int x, int y)
 {
    Evas_List l;
+   static in_cb = 0;
    
+   if (in_cb) return;
+   in_cb = 1;
    if (o->callbacks)
      {
 	for (l = o->callbacks; l; l = l->next)
@@ -20,8 +23,8 @@ _evas_callback_call(Evas e, Evas_Object o, Evas_Callback_Type callback,
 	     if (cb->type == callback)
 		cb->callback(cb->data, e, o, b, x, y);
 	  }
-	evas_list_free(o->callbacks);
      }   
+   in_cb = 0;
 }
 
 /* callbacks */

@@ -6,7 +6,7 @@
 #include <unistd.h>
 #include <string.h>
 
-static void
+void
 _evas_object_get_current_translated_coords(Evas e, Evas_Object o, 
 					   int *x, int *y, int *w, int *h)
 {
@@ -26,7 +26,7 @@ _evas_object_get_current_translated_coords(Evas e, Evas_Object o,
        e->current.viewport.h);
 }
 
-static void
+void
 _evas_object_get_previous_translated_coords(Evas e, Evas_Object o, 
 					   int *x, int *y, int *w, int *h)
 {
@@ -522,18 +522,19 @@ evas_render(Evas e)
 					   Evas_Object_Rectangle oo;
 					   
 					   oo = o;
-					   func_rectangle_draw(e->current.display,
-							       e->current.drawable,
-							       e->current.drawable_width,
-							       e->current.drawable_height,
-							       o->current.x,
-							       o->current.y,
-							       o->current.w,
-							       o->current.h,
-							       oo->current.r,
-							       oo->current.g,
-							       oo->current.b,
-							       oo->current.a);
+					   if (oo->current.a != 0)
+					      func_rectangle_draw(e->current.display,
+								  e->current.drawable,
+								  e->current.drawable_width,
+								  e->current.drawable_height,
+								  o->current.x,
+								  o->current.y,
+								  o->current.w,
+								  o->current.h,
+								  oo->current.r,
+								  oo->current.g,
+								  oo->current.b,
+								  oo->current.a);
 					}
 				      break;
 				   case OBJECT_LINE:

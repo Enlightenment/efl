@@ -16,6 +16,55 @@ get_time(void)
    return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
 }
 
+
+/* callbacks for logo object */
+
+void
+mouse_down (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y)
+{
+   evas_put_data(_e, _o, "clicked", (void *)1);
+   evas_put_data(_e, _o, "x", (void *)_x);
+   evas_put_data(_e, _o, "y", (void *)_y);
+   evas_set_layer(_e, _o, 200);
+}
+
+void
+mouse_up (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y)
+{
+   evas_remove_data(_e, _o, "clicked");
+   evas_set_layer(_e, _o, 50);
+}
+
+void
+mouse_move (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y)
+{
+   if (evas_get_data(_e, _o, "clicked"))
+     {
+	double ox, oy;
+	int x, y;
+	
+	evas_get_geometry(_e, _o, &ox, &oy, NULL, NULL);
+	x = evas_get_data(_e, _o, "x");
+	y = evas_get_data(_e, _o, "y");
+	evas_put_data(_e, _o, "x", (void *)_x);
+	evas_put_data(_e, _o, "y", (void *)_y);
+	evas_move(_e, _o, ox + _x - x, oy + _y - y);
+     }
+}
+
+void
+mouse_in (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y)
+{
+}
+
+void
+mouse_out (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y)
+{
+}
+
+/* done with callbacks */
+
+
 int
 main(int argc, char **argv)
 {
@@ -88,6 +137,11 @@ main(int argc, char **argv)
    evas_show(e, o[0]);
    o[1] = evas_add_image_from_file(e, "img/logo001.png");
    evas_get_image_size(e, o[1], &w, &h);
+   evas_callback_add(e, o[1], CALLBACK_MOUSE_DOWN, mouse_down, NULL);
+   evas_callback_add(e, o[1], CALLBACK_MOUSE_UP, mouse_up, NULL);
+   evas_callback_add(e, o[1], CALLBACK_MOUSE_MOVE, mouse_move, NULL);
+   evas_callback_add(e, o[1], CALLBACK_MOUSE_IN, mouse_in, NULL);
+   evas_callback_add(e, o[1], CALLBACK_MOUSE_OUT, mouse_out, NULL);
    w /= 2;
    h /= 2;
    evas_show(e, o[1]);
@@ -111,12 +165,22 @@ main(int argc, char **argv)
    evas_resize(e, o_rect, 200, 100);
    evas_set_color(e, o_rect, rand()&0xff,  rand()&0xff,  rand()&0xff, 120);
    evas_set_layer(e, o_rect, 150);
+   evas_callback_add(e, o_rect, CALLBACK_MOUSE_DOWN, mouse_down, NULL);
+   evas_callback_add(e, o_rect, CALLBACK_MOUSE_UP, mouse_up, NULL);
+   evas_callback_add(e, o_rect, CALLBACK_MOUSE_MOVE, mouse_move, NULL);
+   evas_callback_add(e, o_rect, CALLBACK_MOUSE_IN, mouse_in, NULL);
+   evas_callback_add(e, o_rect, CALLBACK_MOUSE_OUT, mouse_out, NULL);
    
    o_line = evas_add_line(e);
    evas_show(e, o_line);
    evas_set_line_xy(e, o_line, 10, 20, 100, 50);
    evas_set_color(e, o_line, rand()&0xff,  rand()&0xff,  rand()&0xff, 120);
    evas_set_layer(e, o_rect, 150);
+   evas_callback_add(e, o_line, CALLBACK_MOUSE_DOWN, mouse_down, NULL);
+   evas_callback_add(e, o_line, CALLBACK_MOUSE_UP, mouse_up, NULL);
+   evas_callback_add(e, o_line, CALLBACK_MOUSE_MOVE, mouse_move, NULL);
+   evas_callback_add(e, o_line, CALLBACK_MOUSE_IN, mouse_in, NULL);
+   evas_callback_add(e, o_line, CALLBACK_MOUSE_OUT, mouse_out, NULL);
    
    o_grad = evas_add_gradient_box(e);
    evas_show(e, o_grad);
@@ -129,6 +193,11 @@ main(int argc, char **argv)
    evas_gradient_add_color(grad, 255, 0  , 0,   150, 8);
    evas_gradient_add_color(grad, 0  , 0  , 0,   0,   8);
    evas_set_gradient(e, o_grad, grad);
+   evas_callback_add(e, o_grad, CALLBACK_MOUSE_DOWN, mouse_down, NULL);
+   evas_callback_add(e, o_grad, CALLBACK_MOUSE_UP, mouse_up, NULL);
+   evas_callback_add(e, o_grad, CALLBACK_MOUSE_MOVE, mouse_move, NULL);
+   evas_callback_add(e, o_grad, CALLBACK_MOUSE_IN, mouse_in, NULL);
+   evas_callback_add(e, o_grad, CALLBACK_MOUSE_OUT, mouse_out, NULL);
 
    o_fps = evas_add_text(e, "morpheus", 16, "FPS...");
    evas_set_color(e, o_fps, 255, 255, 255, 120);
@@ -162,8 +231,7 @@ main(int argc, char **argv)
 		       button = ev.xbutton.button;
 		       mouse_x = ev.xbutton.x;
 		       mouse_y = ev.xbutton.y;
-		       evas_move(e, o[1], mouse_x - w, mouse_y - h);
-		       evas_set_layer(e, o[1], 200);
+		       evas_event_button_down(e, mouse_x, mouse_y, button);
 		    }
 		  break;
 	       case ButtonRelease:
@@ -174,8 +242,7 @@ main(int argc, char **argv)
 		       button = ev.xbutton.button;
 		       mouse_x = ev.xbutton.x;
 		       mouse_y = ev.xbutton.y;
-		       evas_move(e, o[1], mouse_x - w, mouse_y - h);
-		       evas_set_layer(e, o[1], 1);
+		       evas_event_button_up(e, mouse_x, mouse_y, button);
 		    }
 		  break;
 	       case MotionNotify:
@@ -184,8 +251,7 @@ main(int argc, char **argv)
 		       
 		       mouse_x = ev.xmotion.x;
 		       mouse_y = ev.xmotion.y;
-		       if (down)
-			  evas_move(e, o[1], mouse_x - w, mouse_y - h);
+		       evas_event_move(e, mouse_x, mouse_y);
 		    }
 		  break;
 	       case Expose:

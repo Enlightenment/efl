@@ -34,7 +34,8 @@ typedef struct _Evas_Object_Gradient_Box * Evas_Object_Gradient_Box;
 #define CALLBACK_MOUSE_OUT  1
 #define CALLBACK_MOUSE_DOWN 2
 #define CALLBACK_MOUSE_UP   3
-#define CALLBACK_FREE       4
+#define CALLBACK_MOUSE_MOVE 4
+#define CALLBACK_FREE       5
 
 #define IMAGE_FORMAT_BGRA   0
 #define IMAGE_FORMAT_ARGB   1
@@ -331,7 +332,8 @@ Evas_Object evas_get_object_at_pos(Evas e, double x, double y);
 /* data attachment ops */
 void evas_put_data(Evas e, Evas_Object o, char *key, void *data);
 void *evas_get_data(Evas e, Evas_Object o, char *key);  
-   
+void *evas_remove_data(Evas e, Evas_Object o, char *key);
+	 
 /* events */
 void evas_event_button_down(Evas e, int x, int y, int b);
 void evas_event_button_up(Evas e, int x, int y, int b);

@@ -34,7 +34,8 @@ _evas_highest_object_at_point(Evas e, int x, int y)
 	     ob = ll->data;
 	     if (ob->current.visible)
 	       {
-		  if (_evas_point_in_object(e, ll->data, x, y)) o = ll->data;
+		  if (_evas_point_in_object(e, ob, x, y)) 
+		     o = ob;
 	       }
 	  }
      }
@@ -73,12 +74,18 @@ evas_event_button_down(Evas e, int x, int y, int b)
 {
    Evas_Object o;
    
-   if ((b > 1)  || (b < 32)) return;
-   if (!e->mouse.buttons) e->mouse.button_object = o;
+   if ((b < 1) || (b > 32)) return;
+   if (!e->mouse.buttons) 
+      {
+	 o = _evas_highest_object_at_point(e, e->mouse.x, e->mouse.y);
+	 e->mouse.button_object = o;
+      }
    e->mouse.buttons |= (1 << (b - 1));
    e->mouse.x = x;
    e->mouse.y = y;
-   _evas_callback_call(e, e->mouse.object, CALLBACK_MOUSE_DOWN, b, x, y);
+   if (e->mouse.button_object)
+      _evas_callback_call(e, e->mouse.button_object, CALLBACK_MOUSE_DOWN, 
+			  b, x, y);
 }
 
 void
@@ -86,28 +93,57 @@ evas_event_button_up(Evas e, int x, int y, int b)
 {
    Evas_Object o;
    
-   if ((b > 1)  || (b < 32)) return;
+   if ((b < 1) || (b > 32)) return;
    e->mouse.buttons &= ~(1 << (b - 1));
-   if (!e->mouse.buttons) e->mouse.button_object = NULL;
    e->mouse.x = x;
    e->mouse.y = y;
-   _evas_callback_call(e, e->mouse.object, CALLBACK_MOUSE_UP, b, x, y);
+   if (e->mouse.button_object)
+      _evas_callback_call(e, e->mouse.button_object, CALLBACK_MOUSE_UP, 
+			  b, x, y);
+   if (!e->mouse.buttons) e->mouse.button_object = NULL;
 }
 
 void
 evas_event_move(Evas e, int x, int y)
 {
    Evas_Object o;
-   
+
+   if (!e->mouse.button_object)
+     {
+	o = _evas_highest_object_at_point(e, e->mouse.x, e->mouse.y);
+	if (o != e->mouse.object)
+	  {
+	     if (e->mouse.object)
+	       {
+		  _evas_callback_call(e, e->mouse.object, CALLBACK_MOUSE_MOVE, 
+				      e->mouse.buttons, e->mouse.x, e->mouse.y);
+		  _evas_callback_call(e, e->mouse.object, CALLBACK_MOUSE_OUT, 
+				      e->mouse.buttons, e->mouse.x, e->mouse.y);
+	       }
+	     e->mouse.x = x;
+	     e->mouse.y = y;
+	     e->mouse.object = o;
+	     if (e->mouse.object)
+	       {
+		  _evas_callback_call(e, e->mouse.object, CALLBACK_MOUSE_IN, 
+				      e->mouse.buttons, e->mouse.x, e->mouse.y);
+		  _evas_callback_call(e, e->mouse.object, CALLBACK_MOUSE_MOVE, 
+				      e->mouse.buttons, e->mouse.x, e->mouse.y);
+	       }
+	     return;
+	  }   
+	e->mouse.x = x;
+	e->mouse.y = y;
+	if (e->mouse.object)
+	   _evas_callback_call(e, e->mouse.object, CALLBACK_MOUSE_MOVE, 
+			       e->mouse.buttons, e->mouse.x, e->mouse.y);
+	return;
+     }
    e->mouse.x = x;
    e->mouse.y = y;
-   o = _evas_highest_object_at_point(e, e->mouse.x, e->mouse.y);
-   if (o != e->mouse.object)
-     {
-	_evas_callback_call(e, e->mouse.object, CALLBACK_MOUSE_OUT, e->mouse.buttons, x, y);
-	e->mouse.object = o;
-	_evas_callback_call(e, e->mouse.object, CALLBACK_MOUSE_IN, e->mouse.buttons, x, y);
-     }   
+   if (e->mouse.button_object)
+      _evas_callback_call(e, e->mouse.button_object, CALLBACK_MOUSE_MOVE, 
+			  e->mouse.buttons, e->mouse.x, e->mouse.y);
 }
 
 void

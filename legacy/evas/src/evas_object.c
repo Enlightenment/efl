@@ -113,17 +113,17 @@ evas_set_layer(Evas e, Evas_Object o, int layer_num)
 {
    Evas_Layer        layer;
    Evas_List         l;
+   int removed;
 
    if (layer_num == o->current.layer) return;
-   
-   o->changed = 1;
-   e->changed = 1;
+   removed = 0;
    for (l = e->layers; l; l = l->next)
      {
 	layer = l->data;
 	if (layer->layer == o->current.layer)
 	  {
 	     layer->objects = evas_list_remove(layer->objects, o);
+	     removed = 1;
 	     if (!layer->objects)
 	       {
 		  e->layers = evas_list_remove(e->layers, layer);
@@ -132,6 +132,9 @@ evas_set_layer(Evas e, Evas_Object o, int layer_num)
 	     break;
 	  }
      }
+   if (!removed) return;
+   o->changed = 1;
+   e->changed = 1;
    o->current.layer = layer_num;
    for (l = e->layers; l; l = l->next)
      {
@@ -139,7 +142,7 @@ evas_set_layer(Evas e, Evas_Object o, int layer_num)
 	if (layer->layer == o->current.layer)
 	  {
 	     layer->objects = evas_list_append(layer->objects, o);
-	     break;
+	     return;
 	  }
 	if (layer->layer > o->current.layer)
 	  {
@@ -150,6 +153,9 @@ evas_set_layer(Evas e, Evas_Object o, int layer_num)
 	     e->layers = evas_list_prepend_relative(e->layers, layer_new, layer);
 	     layer_new->objects = evas_list_append(layer_new->objects, o);
 	     layer_new->layer = o->current.layer;
+	     if ((o->current.visible) && 
+		 (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)))
+		evas_event_move(e, e->mouse.x, e->mouse.y);
 	     return;
 	  }
      }
@@ -159,6 +165,9 @@ evas_set_layer(Evas e, Evas_Object o, int layer_num)
    e->layers = evas_list_append(e->layers, layer);
    layer->objects = evas_list_append(layer->objects, o);
    layer->layer = o->current.layer;
+   if ((o->current.visible) && 
+       (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)))
+      evas_event_move(e, e->mouse.x, e->mouse.y);
 }
 
 void
@@ -182,6 +191,9 @@ evas_raise(Evas e, Evas_Object o)
 	layer->objects = evas_list_append(layer->objects, o);
 	o->changed = 1;
 	e->changed = 1;
+	if ((o->current.visible) && 
+	    (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)))
+	   evas_event_move(e, e->mouse.x, e->mouse.y);
      }
 }
 
@@ -198,6 +210,9 @@ evas_lower(Evas e, Evas_Object o)
 	layer->objects = evas_list_prepend(layer->objects, o);
 	o->changed = 1;
 	e->changed = 1;
+	if ((o->current.visible) && 
+	    (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)))
+	   evas_event_move(e, e->mouse.x, e->mouse.y);
      }
 }
 
@@ -214,6 +229,9 @@ evas_stack_above(Evas e, Evas_Object o, Evas_Object above)
 	layer->objects = evas_list_append_relative(layer->objects, o, above);
 	o->changed = 1;
 	e->changed = 1;
+	if ((o->current.visible) && 
+	    (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)))
+	   evas_event_move(e, e->mouse.x, e->mouse.y);
      }
 }
 
@@ -230,6 +248,9 @@ evas_stack_below(Evas e, Evas_Object o, Evas_Object above)
 	layer->objects = evas_list_prepend_relative(layer->objects, o, above);
 	o->changed = 1;
 	e->changed = 1;
+	if ((o->current.visible) && 
+	    (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)))
+	   evas_event_move(e, e->mouse.x, e->mouse.y);
      }
 }
 
@@ -237,21 +258,33 @@ evas_stack_below(Evas e, Evas_Object o, Evas_Object above)
 void
 evas_move(Evas e, Evas_Object o, double x, double y)
 {
+   int event_update = 0;
+   
    if ((o->type == OBJECT_LINE)) return;
+   if (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y))
+      event_update = 1;
    o->current.x = x;
    o->current.y = y;
    o->changed = 1;
    e->changed = 1;
+   if ((_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)) || event_update)
+      evas_event_move(e, e->mouse.x, e->mouse.y);
 }
 
 void
 evas_resize(Evas e, Evas_Object o, double w, double h)
 {
+   int event_update = 0;
+   
    if ((o->type == OBJECT_TEXT) || (o->type == OBJECT_LINE)) return;
+   if (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y))
+      event_update = 1;
    o->current.w = w;
    o->current.h = h;
    o->changed = 1;
    e->changed = 1;
+   if ((_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)) || event_update)
+      evas_event_move(e, e->mouse.x, e->mouse.y);
 }
 
 void
@@ -271,6 +304,8 @@ evas_show(Evas e, Evas_Object o)
    o->current.visible = 1;
    o->changed = 1;
    e->changed = 1;
+   if (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y))
+      evas_event_move(e, e->mouse.x, e->mouse.y);
 }
 
 void
@@ -279,4 +314,6 @@ evas_hide(Evas e, Evas_Object o)
    o->current.visible = 0;
    o->changed = 1;
    e->changed = 1;
+   if (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y))
+      evas_event_move(e, e->mouse.x, e->mouse.y);
 }
