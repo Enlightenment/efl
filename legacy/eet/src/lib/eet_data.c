@@ -170,14 +170,14 @@ static int words_bigendian = -1;
 /*---*/
 
 #define SWAP64(x) (x) = \
-   ((((unsigned long long)(x) & 0x00000000000000ff ) << 56) |\
-       (((unsigned long long)(x) & 0x000000000000ff00 ) << 40) |\
-       (((unsigned long long)(x) & 0x0000000000ff0000 ) << 24) |\
-       (((unsigned long long)(x) & 0x00000000ff000000 ) << 8) |\
-       (((unsigned long long)(x) & 0x000000ff00000000 ) >> 8) |\
-       (((unsigned long long)(x) & 0x0000ff0000000000 ) >> 24) |\
-       (((unsigned long long)(x) & 0x00ff000000000000 ) >> 40) |\
-       (((unsigned long long)(x) & 0xff00000000000000 ) >> 56))
+   ((((unsigned long long)(x) & 0x00000000000000ffULL ) << 56) |\
+       (((unsigned long long)(x) & 0x000000000000ff00ULL ) << 40) |\
+       (((unsigned long long)(x) & 0x0000000000ff0000ULL ) << 24) |\
+       (((unsigned long long)(x) & 0x00000000ff000000ULL ) << 8) |\
+       (((unsigned long long)(x) & 0x000000ff00000000ULL ) >> 8) |\
+       (((unsigned long long)(x) & 0x0000ff0000000000ULL ) >> 24) |\
+       (((unsigned long long)(x) & 0x00ff000000000000ULL ) >> 40) |\
+       (((unsigned long long)(x) & 0xff00000000000000ULL ) >> 56))
 #define SWAP32(x) (x) = \
    ((((int)(x) & 0x000000ff ) << 24) |\
        (((int)(x) & 0x0000ff00 ) << 8) |\
@@ -1368,7 +1368,6 @@ eet_data_image_header_decode(void *data, int size, int *w, int *h, int *alpha, i
    if (header[0] == 0xac1dfeed)
      {
 	int iw, ih, al, cp;
-	unsigned int *body;
 	
 	iw = header[1];
 	ih = header[2];
