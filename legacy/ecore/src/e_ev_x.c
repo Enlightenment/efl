@@ -442,6 +442,7 @@ e_ev_x_handle_enter_notify(XEvent * xevent)
 {
    Ev_Window_Enter    *e;
    
+   if ((xevent->xcrossing.mode == NotifyGrab) || (xevent->xcrossing.mode == NotifyUngrab)) return;
    e_pointer_xy_set(xevent->xcrossing.x_root, xevent->xcrossing.y_root);
    e = NEW(Ev_Window_Enter, 1);
    e->win = xevent->xcrossing.window;
@@ -475,6 +476,7 @@ e_ev_x_handle_leave_notify(XEvent * xevent)
 {
    Ev_Window_Leave    *e;
 
+   if ((xevent->xcrossing.mode == NotifyGrab) || (xevent->xcrossing.mode == NotifyUngrab)) return;
    e_pointer_xy_set(xevent->xcrossing.x_root, xevent->xcrossing.y_root);
      {
 	Ev_Mouse_Move      *e;

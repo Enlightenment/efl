@@ -2473,3 +2473,88 @@ e_window_get_root_relative_location(Window win, int *x, int *y)
    if (x) *x = dx;
    if (y) *y = dy;
 }
+
+void
+e_button_grab(Window win, int button, int events, Ev_Key_Modifiers mod, int any_mod)
+{
+   unsigned int b;
+   unsigned int m;
+   unsigned int locks[8];
+   int i;
+   
+   b = button;
+   if (b == 0) b = AnyButton;
+   m = 0;
+   if (any_mod) m = AnyModifier;
+   else
+     {
+	if (mod & EV_KEY_MODIFIER_SHIFT) m |= e_mod_mask_shift_get();
+	if (mod & EV_KEY_MODIFIER_CTRL) m |= e_mod_mask_ctrl_get();
+	if (mod & EV_KEY_MODIFIER_ALT) m |= e_mod_mask_alt_get();
+	if (mod & EV_KEY_MODIFIER_WIN) m |= e_mod_mask_win_get();
+     }
+   locks[0] = 0;
+   locks[1] = e_lock_mask_caps_get();
+   locks[2] =                          e_lock_mask_num_get();
+   locks[3] =                                                  e_lock_mask_scroll_get();
+   locks[4] = e_lock_mask_caps_get() | e_lock_mask_num_get();
+   locks[5] = e_lock_mask_caps_get() |                         e_lock_mask_scroll_get();
+   locks[6] =                          e_lock_mask_num_get() | e_lock_mask_scroll_get();
+   locks[7] = e_lock_mask_caps_get() | e_lock_mask_num_get() | e_lock_mask_scroll_get();
+   for (i = 0; i < 8; i++)
+      XGrabButton(disp, b, m | locks[i], 
+		  win, False, events, 
+		  GrabModeSync, GrabModeAsync, None, None);
+}
+
+void
+e_button_ungrab(Window win, int button, Ev_Key_Modifiers mod, int any_mod)
+{
+   unsigned int b;
+   unsigned int m;
+   unsigned int locks[8];
+   int i;
+   
+   b = button;
+   if (b == 0) b = AnyButton;
+   m = 0;
+   if (any_mod) m = AnyModifier;
+   else
+     {
+	if (mod & EV_KEY_MODIFIER_SHIFT) m |= e_mod_mask_shift_get();
+	if (mod & EV_KEY_MODIFIER_CTRL) m |= e_mod_mask_ctrl_get();
+	if (mod & EV_KEY_MODIFIER_ALT) m |= e_mod_mask_alt_get();
+	if (mod & EV_KEY_MODIFIER_WIN) m |= e_mod_mask_win_get();
+     }
+   locks[0] = 0;
+   locks[1] = e_lock_mask_caps_get();
+   locks[2] =                          e_lock_mask_num_get();
+   locks[3] =                                                  e_lock_mask_scroll_get();
+   locks[4] = e_lock_mask_caps_get() | e_lock_mask_num_get();
+   locks[5] = e_lock_mask_caps_get() |                         e_lock_mask_scroll_get();
+   locks[6] =                          e_lock_mask_num_get() | e_lock_mask_scroll_get();
+   locks[7] = e_lock_mask_caps_get() | e_lock_mask_num_get() | e_lock_mask_scroll_get();
+   for (i = 0; i < 8; i++)
+      XUngrabButton(disp, b, m | locks[i], win);
+}
+
+void
+e_pointer_replay(Time t)
+{
+   XSync(disp, False);
+   XAllowEvents(disp, ReplayPointer, t);
+   XSync(disp, False);   
+}
+
+void
+e_pointer_grab(Window win, Time t)
+{
+   XGrabPointer(disp, win, False, XEV_BUTTON | XEV_MOUSE_MOVE |  XEV_IN_OUT,
+		GrabModeAsync, GrabModeAsync, None, None, t);
+}
+
+void
+e_pointer_ungrab(Time t)
+{
+   XUngrabPointer(disp, t);
+}

@@ -235,6 +235,12 @@ void                e_window_get_virtual_area(Window win, int *area_x,
 void                e_get_virtual_area(int *area_x, int *area_y);
 void                e_window_get_root_relative_location(Window win, int *x, int *y);
 
+void                e_button_grab(Window win, int button, int events, Ev_Key_Modifiers mod, int any_mod);
+void                e_button_ungrab(Window win, int button, Ev_Key_Modifiers mod, int any_mod);
+void                e_pointer_replay(Time t);
+void                e_pointer_grab(Window win, Time t);
+void                e_pointer_ungrab(Time t);
+
 typedef struct _eev Eevent;
 typedef struct _ev_fd_handler Ev_Fd_Handler;
 typedef struct _ev_pid_handler Ev_Pid_Handler;
