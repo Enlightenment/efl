@@ -783,7 +783,8 @@ main(int argc, const char **argv)
      {
 	Ecore_Con_Server *server;
 	
-	server = ecore_con_server_add(ECORE_CON_LOCAL_USER, "ecore_test", 0, NULL);
+/*	server = ecore_con_server_add(ECORE_CON_LOCAL_USER, "ecore_test", 0, NULL);*/
+	server = ecore_con_server_add(ECORE_CON_LOCAL_SYSTEM, "ecore_test", 0, NULL);
 /*	server = ecore_con_server_add(ECORE_CON_REMOTE_SYSTEM, "localhost", 7654, NULL); */
 	ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_ADD, handler_client_add, NULL);
 	ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DEL, handler_client_del, NULL);
@@ -793,7 +794,8 @@ main(int argc, const char **argv)
      {
 	Ecore_Con_Server *server;
 	
-	server = ecore_con_server_connect(ECORE_CON_LOCAL_USER, "ecore_test", 0, NULL);
+/*	server = ecore_con_server_connect(ECORE_CON_LOCAL_USER, "ecore_test", 0, NULL);*/
+	server = ecore_con_server_connect(ECORE_CON_LOCAL_SYSTEM, "ecore_test", 0, NULL);
 /*	server = ecore_con_server_connect(ECORE_CON_REMOTE_SYSTEM, "localhost", 7654, NULL); */
 /*	server = ecore_con_server_connect(ECORE_CON_REMOTE_SYSTEM, "www.rasterman.com", 80, NULL); */
 	ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ADD, handler_server_add, NULL);

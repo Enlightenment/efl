@@ -50,7 +50,7 @@ libecore_config.la \
 @edb_libs@
 
 $(DB):
-	sh build_$(DB).sh
+	sh $(top_srcdir)/src/lib/ecore_config/build_$(DB).sh
 
 endif
 
@@ -62,5 +62,6 @@ ipc_ecore.c \
 ipc.h \
 util.c \
 util.h \
-edb.c
+edb.c \
+build_system.db.sh
 
