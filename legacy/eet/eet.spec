@@ -13,6 +13,8 @@ Source: ftp://ftp.enlightenment.org/pub/eet/eet-%{ver}.tar.gz
 BuildRoot: /var/tmp/eet-root
 Packager: The Rasterman <raster@rasterman.com>
 URL: http://www.enlightenment.org/
+BuildRequires: libjpeg-devel
+BuildRequires: zlib-devel
 Requires: libjpeg
 Requires: zlib
 
@@ -32,8 +34,18 @@ machines, or just writing to arbitary files on the system. All data is
 encoded ina platform independant way and can be written and read by any
 architecture.
 
+%package devel
+Summary: Eet headers, static libraries, documentation and test programs
+Group: System Environment/Libraries
+Requires: %{name} = %{version}
+
+%description devel
+Headers, static libraries, test programs and documentation for Eet
+
 %prep
-%setup
+rm -rf $RPM_BUILD_ROOT
+
+%setup -q
 
 %build
 ./configure --prefix=%prefix
@@ -54,16 +66,20 @@ make prefix=$RPM_BUILD_ROOT%{prefix} install
 rm -rf $RPM_BUILD_ROOT
 
 %post
+/sbin/ldconfig
 
 %postun
+/sbin/ldconfig
 
 %files
 %defattr(-,root,root)
-%doc README COPYING ChangeLog eet_docs.tar.gz
-%attr(755,root,root) %{prefix}/bin/*
-%attr(755,root,root) %{prefix}/lib/*
-%{prefix}/share/*
+%attr(755,root,root) %{prefix}/lib/libeet.so*
+%attr(755,root,root) %{prefix}/lib/libeet.la
 
+%files devel
+%attr(755,root,root) %{prefix}/lib/libeet.a
+%attr(755,root,root) %{prefix}/bin/eet*
+%{prefix}/include/Eet*
 %doc AUTHORS
 %doc COPYING
 %doc README
@@ -72,4 +88,3 @@ rm -rf $RPM_BUILD_ROOT
 %changelog
 * Sat Jun 23 2001 The Rasterman <raster@rasterman.com>
 - Created spec file
-
