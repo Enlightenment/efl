@@ -878,18 +878,15 @@ _ecore_x_event_handle_selection_clear(XEvent *xevent)
 void
 _ecore_x_event_handle_selection_request(XEvent *xevent)
 {
-   Ecore_X_Event_Selection_Request  *e;
    Ecore_X_Selection_Data           *sd;
    XSelectionEvent                  xnotify;
    XEvent                           *xev;
    char                             *data;
 
-   e = calloc(1, sizeof(Ecore_X_Event_Selection_Request));
-   e->win = xevent->xselectionrequest.requestor;
-   e->time = xevent->xselectionrequest.time;
-
    xev = calloc(1, sizeof(XEvent));
    
+   xnotify.type = SelectionNotify;
+   xnotify.display = xevent->xselectionrequest.display;
    xnotify.requestor = xevent->xselectionrequest.requestor;
    xnotify.selection = xevent->xselectionrequest.selection;
    xnotify.target = xevent->xselectionrequest.target;
@@ -898,7 +895,8 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
    if((sd = _ecore_x_selection_get(xnotify.selection)) 
          && (sd->win == xevent->xselectionrequest.owner))
    {
-      /* FIXME: Provide API for user-defined conversion functions */
+      /* TODO: Use predefined/user-definable callback functions
+       * to convert selections */
       if (xnotify.target == _ecore_x_atom_string)
          data = ecore_x_selection_convert_to_string(sd->data);
       else if (xnotify.target == _ecore_x_atom_utf8_string)
@@ -907,7 +905,7 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
          data = sd->data;
       
       /* FIXME: This does not properly handle large data transfers */
-      ecore_x_window_prop_property_set(e->win,
+      ecore_x_window_prop_property_set(xevent->xselectionrequest.requestor,
             xevent->xselectionrequest.property,
             xevent->xselectionrequest.target,
             8, data, sd->length);
@@ -920,9 +918,9 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
    }
    
    xev->xselection = xnotify;
-   XSendEvent(_ecore_x_disp, e->win, False, 0, xev);
-   /* FIXME: We alloc e but we never actually add it to the event
-    * queue -- should it be freed or is it still useful? */
+   XSendEvent(xevent->xselectionrequest.display, 
+              xevent->xselectionrequest.requestor, False, 0, xev);
+   XFree(xev);
    
 }
 
