@@ -1,0 +1,7 @@
+.deps
+.libs
+Makefile
+Makefile.in
+edje
+edje_ls
+edje_cc
