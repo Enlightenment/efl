@@ -77,8 +77,8 @@ int is_dir(const char *dir) {
 int ex_ipc_init(ex_ipc_server_list **srv_list,char *pipe_name,connstate *cs) {
   int global, port, connected;
   struct stat st;
-  char *p, *str;
-  char buf[PATH_MAX];
+  char *p;
+  char str[PATH_MAX], buf[PATH_MAX];
   DIR *dir;
   struct dirent *socket;
   Ecore_Ipc_Server *tmp_sock;
@@ -95,7 +95,6 @@ int ex_ipc_init(ex_ipc_server_list **srv_list,char *pipe_name,connstate *cs) {
     return ECORE_CONFIG_ERR_IGNORED;
 
   if((p=getenv("HOME"))) {  /* debug-only ### FIXME */
-    str=malloc(1000*sizeof(char));
     sprintf(str,"%s/.ecore/%s/.global",p,pipe_name);
     if (stat(str, &st))
       global=FALSE;
