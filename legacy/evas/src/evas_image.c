@@ -65,7 +65,9 @@ evas_add_image_from_file(Evas e, char *file)
 		  oo->current.image.w = imlib_image_get_width();
 		  oo->current.image.h = imlib_image_get_height();
 		  imlib_free_image();
-	       }
+	       } else if(!im){
+					 return NULL;
+				 }
 	  }
      }
    oo->current.fill.x = 0;
