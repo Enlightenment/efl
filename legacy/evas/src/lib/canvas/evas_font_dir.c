@@ -30,7 +30,7 @@ evas_font_dir_cache_free(void)
 }
 
 char *
-object_text_font_cache_find(char *dir, char *font)
+evas_font_dir_cache_find(char *dir, char *font)
 {
    Evas_Font_Dir *fd;
    

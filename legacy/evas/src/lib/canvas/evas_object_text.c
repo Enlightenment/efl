@@ -218,7 +218,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
 	       {
 		  char *f_file;
 		  
-		  f_file = object_text_font_cache_find(l->data, (char *)font);
+		  f_file = evas_font_dir_cache_find(l->data, (char *)font);
 		  if (f_file)
 		    {
 		       o->engine_data = obj->layer->evas->engine.func->font_load(obj->layer->evas->engine.data.output,

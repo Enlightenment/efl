@@ -661,7 +661,7 @@ int evas_object_intercept_call_layer_set(Evas_Object *obj, int l);
 void evas_object_grabs_cleanup(Evas_Object *obj);
 void evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
 void evas_font_dir_cache_free(void);
-char *object_text_font_cache_find(char *dir, char *font);
+char *evas_font_dir_cache_find(char *dir, char *font);
 
 extern int _evas_alloc_error;
 
