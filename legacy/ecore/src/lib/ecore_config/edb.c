@@ -88,22 +88,19 @@ ecore_config_file_load(char *file)
 	  {
 	     if (e_db_int_get(db, keys[x], &itmp))
 	       {
-		  /* eh? how can this GUESS a boolean or not from an int? how? */
-		  /* this only works possibly if its a string!!! */
-		  /* disable booleans stuff ..*/
-/*		  
-		  pt = ecore_config_type_guess(keys[x], &itmp);
+		  Ecore_Config_Prop  *p;
+		  
+		  pt = PT_INT;
+		  if ((p = ecore_config_get(keys[x]))) pt = p->type;
 		  switch (pt)
 		    {
-			case PT_BLN:
-			  ecore_config_boolean_set(keys[x], itmp);
-			  break;
-			default:
- */
-			  ecore_config_int_set(keys[x], itmp);
-/*			  break;
+		     case PT_BLN:
+		       ecore_config_boolean_set(keys[x], itmp);
+		       break;
+		     default:
+		       ecore_config_int_set(keys[x], itmp);
+		       break;
 		    }
- */
 	       }
 	     else
 	       {
