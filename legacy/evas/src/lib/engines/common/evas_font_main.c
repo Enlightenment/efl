@@ -8,10 +8,14 @@ evas_common_font_init(void)
 {
    int error;
 
-   if (initialised) return;
+   initialised++;
+   if (initialised != 1) return;
    error = FT_Init_FreeType(&ft_lib);
-   if (error) return;
-   initialised = 1;
+   if (error)
+     {
+	initialised--;
+	return;
+     }
 }
 
 void
@@ -19,11 +23,9 @@ evas_common_font_shutdown(void)
 {
    int error;
 
-   if (!initialised) return;
-
+   initialised--;
+   if (initialised != 0) return;
    error = FT_Done_FreeType(ft_lib);
-   if (error) return;
-   initialised = 0;
 }
 
 int
