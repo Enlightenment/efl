@@ -18,7 +18,7 @@ int main(int argc, char **argv)
 {
   ecore_init();
   ecore_app_args_set(argc, argv);
-  ecore_timer_add(2.0, timer_once, NULL);
+  ecore_timer_add(0.1, timer_once, NULL);
   ecore_main_loop_begin();
   ecore_shutdown();
   return 0;
