@@ -745,6 +745,19 @@ e_x_get_fd(void)
 }
 
 void
+e_set_error_handler(void (*func) (Display * d, XErrorEvent * ev))
+		    
+{
+   XSetErrorHandler((XErrorHandler)func);
+}
+
+void
+e_reset_error_handler(void)
+{
+   XSetErrorHandler((XErrorHandler) e_handle_x_error);   
+}
+
+int
 e_display_init(char *display)
 {
    int                 revert;
@@ -756,6 +769,7 @@ e_display_init(char *display)
 	char               *d;
 
 	d = getenv("DISPLAY");
+/* no need for this anymore	
 	if (d)
 	   fprintf(stderr,
 		   "Fatal Error:\n"
@@ -769,7 +783,8 @@ e_display_init(char *display)
 		   "No DISPLAY variable set so cannot determine display to connect to.\n"
 		   "Try setting your DISPLAY variable like:\n"
 		   "DISPLAY=host:0 appication_name\n");
-	exit(1);
+*/
+	return 0;
      }
    XSetErrorHandler((XErrorHandler) e_handle_x_error);
    XSetIOErrorHandler((XIOErrorHandler) e_handle_x_io_error);
@@ -787,6 +802,7 @@ e_display_init(char *display)
 		       XEV_CONFIGURE | XEV_CHILD_CHANGE | XEV_PROPERTY |
 		       XEV_COLORMAP | XEV_VISIBILITY);
    e_pointer_xy(0, NULL, NULL);
+   return 1;
 }
 
 int

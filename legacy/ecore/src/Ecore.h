@@ -112,10 +112,11 @@ void                e_window_add_events(Window win, long mask);
 void                e_window_move(Window win, int x, int y);
 void                e_window_resize(Window win, int w, int h);
 void                e_window_move_resize(Window win, int x, int y, int w,
-
 					 int h);
 int                 e_x_get_fd(void);
-void                e_display_init(char *display);
+void                e_set_error_handler(void (*func) (Display * d, XErrorEvent * ev));
+void                e_reset_error_handler(void);
+int                 e_display_init(char *display);
 int                 e_events_pending(void);
 void                e_get_next_event(XEvent * event);
 int                 e_event_shape_get_id(void);
