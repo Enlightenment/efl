@@ -899,9 +899,8 @@ int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom t
 			     Ecore_X_Window *window_group,
 			     int *is_urgent);
 
-#if 0 /* ??? */
    void                ecore_x_netwm_init(void);
-#endif
+   void                ecore_x_netwm_wm_identify(Ecore_X_Window root, Ecore_X_Window check, const char *wm_name);
    void                ecore_x_netwm_desk_count_set(Ecore_X_Window root, int n_desks);
    void                ecore_x_netwm_desk_roots_set(Ecore_X_Window root, int n_desks, Ecore_X_Window * vroots);
    void                ecore_x_netwm_desk_names_set(Ecore_X_Window root, int n_desks, const char **names);

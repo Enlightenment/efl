@@ -8,6 +8,9 @@
 /*
  * Convenience macros
  */
+#define _ATOM_GET(name) \
+   XInternAtom(_ecore_x_disp, name, False)
+
 #define _ATOM_SET_UTF8_STRING(atom, win, string) \
    XChangeProperty(_ecore_x_disp, win, atom, _ecore_x_atom_utf8_string, 8, PropModeReplace, \
                    (unsigned char *)string, strlen(string))
@@ -24,51 +27,150 @@
    XChangeProperty(_ecore_x_disp, win, atom, XA_CARDINAL, 32, PropModeReplace, \
                    (unsigned char *)p_val, cnt)
 
-#if 0
-/*
- * All netwm atoms could be moved to here. Otherwise remove this.
- */
-Atom                _ecore_x_atom_net_number_of_desktops;
-Atom                _ecore_x_atom_net_virtual_roots;
-Atom                _ecore_x_atom_net_desktop_names;
-Atom                _ecore_x_atom_net_desktop_geometry;
-Atom                _ecore_x_atom_net_workarea;
-Atom                _ecore_x_atom_net_current_desktop;
-Atom                _ecore_x_atom_net_desktop_viewport;
-Atom                _ecore_x_atom_net_showing_desktop;
 
-Atom                _ecore_x_atom_net_client_list;
-Atom                _ecore_x_atom_net_client_list_stacking;
-Atom                _ecore_x_atom_net_active_window;
+/*
+ * Root window NetWM hints.
+ */
+Atom     _ecore_x_atom_net_supported = 0;
+Atom     _ecore_x_atom_net_supporting_wm_check = 0;
+
+Atom     _ecore_x_atom_net_number_of_desktops = 0;
+Atom     _ecore_x_atom_net_virtual_roots = 0;
+Atom     _ecore_x_atom_net_desktop_names = 0;
+Atom     _ecore_x_atom_net_desktop_geometry = 0;
+Atom     _ecore_x_atom_net_desktop_viewport = 0;
+Atom     _ecore_x_atom_net_workarea = 0;
+Atom     _ecore_x_atom_net_desktop_layout = 0;
+
+Atom     _ecore_x_atom_net_current_desktop = 0;
+Atom     _ecore_x_atom_net_showing_desktop = 0;
+
+Atom     _ecore_x_atom_net_client_list = 0;
+Atom     _ecore_x_atom_net_client_list_stacking = 0;
+Atom     _ecore_x_atom_net_active_window = 0;
+
+/*
+ * Client message types.
+ */
+Atom     _ecore_x_atom_net_close_window = 0;
+Atom     _ecore_x_atom_net_wm_moveresize = 0;
+
+/*
+ * Application window specific NetWM hints.
+ */
+Atom     _ecore_x_atom_net_wm_desktop = 0;
+Atom     _ecore_x_atom_net_wm_name = 0;
+Atom     _ecore_x_atom_net_wm_visible_name = 0;
+Atom     _ecore_x_atom_net_wm_icon_name = 0;
+Atom     _ecore_x_atom_net_wm_visible_icon_name = 0;
+Atom     _ecore_x_atom_net_wm_window_type = 0;
+Atom     _ecore_x_atom_net_wm_state = 0;
+Atom     _ecore_x_atom_net_wm_allowed_actions = 0;
+Atom     _ecore_x_atom_net_wm_strut = 0;
+Atom     _ecore_x_atom_net_wm_strut_partial = 0;
+Atom     _ecore_x_atom_net_wm_icon_geometry = 0;
+Atom     _ecore_x_atom_net_wm_icon = 0;
+Atom     _ecore_x_atom_net_wm_pid = 0;
+Atom     _ecore_x_atom_net_wm_handle_icons = 0;
+Atom     _ecore_x_atom_net_wm_user_time = 0;
+
+Atom     _ecore_x_atom_net_wm_window_type_desktop = 0;
+Atom     _ecore_x_atom_net_wm_window_type_dock = 0;
+Atom     _ecore_x_atom_net_wm_window_type_toolbar = 0;
+Atom     _ecore_x_atom_net_wm_window_type_menu = 0;
+Atom     _ecore_x_atom_net_wm_window_type_utility = 0;
+Atom     _ecore_x_atom_net_wm_window_type_splash = 0;
+Atom     _ecore_x_atom_net_wm_window_type_dialog = 0;
+Atom     _ecore_x_atom_net_wm_window_type_normal = 0;
+
+Atom     _ecore_x_atom_net_wm_state_modal = 0;
+Atom     _ecore_x_atom_net_wm_state_sticky = 0;
+Atom     _ecore_x_atom_net_wm_state_maximized_vert = 0;
+Atom     _ecore_x_atom_net_wm_state_maximized_horz = 0;
+Atom     _ecore_x_atom_net_wm_state_shaded = 0;
+Atom     _ecore_x_atom_net_wm_state_skip_taskbar = 0;
+Atom     _ecore_x_atom_net_wm_state_skip_pager = 0;
+Atom     _ecore_x_atom_net_wm_state_hidden = 0;
+Atom     _ecore_x_atom_net_wm_state_fullscreen = 0;
+Atom     _ecore_x_atom_net_wm_state_above = 0;
+Atom     _ecore_x_atom_net_wm_state_below = 0;
+
+Atom     _ecore_x_atom_net_wm_window_opacity = 0;
 
 void
 ecore_x_netwm_init(void)
 {
-   _ecore_x_atom_net_number_of_desktops =
-      XInternAtom(_ecore_x_disp, "_NET_NUMBER_OF_DESKTOPS", False);
-   _ecore_x_atom_net_virtual_roots =
-      XInternAtom(_ecore_x_disp, "_NET_VIRTUAL_ROOTS", False);
-   _ecore_x_atom_net_desktop_names =
-      XInternAtom(_ecore_x_disp, "_NET_DESKTOP_NAMES", False);
-   _ecore_x_atom_net_desktop_geometry =
-      XInternAtom(_ecore_x_disp, "_NET_DESKTOP_GEOMETRY", False);
-   _ecore_x_atom_net_workarea =
-      XInternAtom(_ecore_x_disp, "_NET_WORKAREA", False);
-   _ecore_x_atom_net_current_desktop =
-      XInternAtom(_ecore_x_disp, "_NET_CURRENT_DESKTOP", False);
-   _ecore_x_atom_net_desktop_viewport =
-      XInternAtom(_ecore_x_disp, "_NET_DESKTOP_VIEWPORT", False);
-   _ecore_x_atom_net_showing_desktop =
-      XInternAtom(_ecore_x_disp, "_NET_SHOWING_DESKTOP", False);
+   _ecore_x_atom_net_supported            = _ATOM_GET("_NET_SUPPORTED");
+   _ecore_x_atom_net_supporting_wm_check  = _ATOM_GET("_NET_SUPPORTING_WM_CHECK");
 
-   _ecore_x_atom_net_client_list =
-      XInternAtom(_ecore_x_disp, "_NET_CLIENT_LIST", False);
-   _ecore_x_atom_net_client_list_stacking =
-      XInternAtom(_ecore_x_disp, "_NET_CLIENT_LIST_STACKING", False);
-   _ecore_x_atom_net_active_window =
-      XInternAtom(_ecore_x_disp, "_NET_ACTIVE_WINDOW", False);
+   _ecore_x_atom_net_number_of_desktops   = _ATOM_GET("_NET_NUMBER_OF_DESKTOPS");
+   _ecore_x_atom_net_virtual_roots        = _ATOM_GET("_NET_VIRTUAL_ROOTS");
+   _ecore_x_atom_net_desktop_geometry     = _ATOM_GET("_NET_DESKTOP_GEOMETRY");
+   _ecore_x_atom_net_desktop_names        = _ATOM_GET("_NET_DESKTOP_NAMES");
+   _ecore_x_atom_net_current_desktop      = _ATOM_GET("_NET_CURRENT_DESKTOP");
+   _ecore_x_atom_net_desktop_viewport     = _ATOM_GET("_NET_DESKTOP_VIEWPORT");
+   _ecore_x_atom_net_workarea             = _ATOM_GET("_NET_WORKAREA");
+
+   _ecore_x_atom_net_client_list          = _ATOM_GET("_NET_CLIENT_LIST");
+   _ecore_x_atom_net_client_list_stacking = _ATOM_GET("_NET_CLIENT_LIST_STACKING");
+   _ecore_x_atom_net_active_window        = _ATOM_GET("_NET_ACTIVE_WINDOW");
+
+   _ecore_x_atom_net_close_window         = _ATOM_GET("_NET_CLOSE_WINDOW");
+   _ecore_x_atom_net_wm_moveresize        = _ATOM_GET("_NET_WM_MOVERESIZE");
+
+   _ecore_x_atom_net_wm_name              = _ATOM_GET("_NET_WM_NAME");
+   _ecore_x_atom_net_wm_visible_name      = _ATOM_GET("_NET_WM_VISIBLE_NAME");
+   _ecore_x_atom_net_wm_icon_name         = _ATOM_GET("_NET_WM_ICON_NAME");
+   _ecore_x_atom_net_wm_visible_icon_name = _ATOM_GET("_NET_WM_VISIBLE_ICON_NAME");
+   _ecore_x_atom_net_wm_desktop           = _ATOM_GET("_NET_WM_DESKTOP");
+   _ecore_x_atom_net_wm_window_type       = _ATOM_GET("_NET_WM_WINDOW_TYPE");
+   _ecore_x_atom_net_wm_state             = _ATOM_GET("_NET_WM_STATE");
+   _ecore_x_atom_net_wm_allowed_actions   = _ATOM_GET("_NET_WM_ALLOWED_ACTIONS");
+   _ecore_x_atom_net_wm_strut             = _ATOM_GET("_NET_WM_STRUT");
+   _ecore_x_atom_net_wm_strut_partial     = _ATOM_GET("_NET_WM_STRUT_PARTIAL");
+   _ecore_x_atom_net_wm_icon_geometry     = _ATOM_GET("_NET_WM_ICON_GEOMETRY");
+   _ecore_x_atom_net_wm_icon              = _ATOM_GET("_NET_WM_ICON");
+   _ecore_x_atom_net_wm_pid               = _ATOM_GET("_NET_WM_PID");
+   _ecore_x_atom_net_wm_user_time         = _ATOM_GET("_NET_WM_USER_TIME");
+
+   _ecore_x_atom_net_wm_window_type_desktop = _ATOM_GET("_NET_WM_WINDOW_TYPE_DESKTOP");
+   _ecore_x_atom_net_wm_window_type_dock    = _ATOM_GET("_NET_WM_WINDOW_TYPE_DOCK");
+   _ecore_x_atom_net_wm_window_type_toolbar = _ATOM_GET("_NET_WM_WINDOW_TYPE_TOOLBAR");
+   _ecore_x_atom_net_wm_window_type_menu    = _ATOM_GET("_NET_WM_WINDOW_TYPE_MENU");
+   _ecore_x_atom_net_wm_window_type_utility = _ATOM_GET("_NET_WM_WINDOW_TYPE_UTILITY");
+   _ecore_x_atom_net_wm_window_type_splash  = _ATOM_GET("_NET_WM_WINDOW_TYPE_SPLASH");
+   _ecore_x_atom_net_wm_window_type_dialog  = _ATOM_GET("_NET_WM_WINDOW_TYPE_DIALOG");
+   _ecore_x_atom_net_wm_window_type_normal  = _ATOM_GET("_NET_WM_WINDOW_TYPE_NORMAL");
+
+   _ecore_x_atom_net_wm_state_modal          = _ATOM_GET("_NET_WM_STATE_MODAL");
+   _ecore_x_atom_net_wm_state_sticky         = _ATOM_GET("_NET_WM_STATE_STICKY");
+   _ecore_x_atom_net_wm_state_maximized_vert = _ATOM_GET("_NET_WM_STATE_MAXIMIZED_VERT");
+   _ecore_x_atom_net_wm_state_maximized_horz = _ATOM_GET("_NET_WM_STATE_MAXIMIZED_HORZ");
+   _ecore_x_atom_net_wm_state_shaded         = _ATOM_GET("_NET_WM_STATE_SHADED");
+   _ecore_x_atom_net_wm_state_skip_taskbar   = _ATOM_GET("_NET_WM_STATE_SKIP_TASKBAR");
+   _ecore_x_atom_net_wm_state_skip_pager     = _ATOM_GET("_NET_WM_STATE_SKIP_PAGER");
+   _ecore_x_atom_net_wm_state_hidden         = _ATOM_GET("_NET_WM_STATE_HIDDEN");
+   _ecore_x_atom_net_wm_state_fullscreen     = _ATOM_GET("_NET_WM_STATE_FULLSCREEN");
+   _ecore_x_atom_net_wm_state_above          = _ATOM_GET("_NET_WM_STATE_ABOVE");
+   _ecore_x_atom_net_wm_state_below          = _ATOM_GET("_NET_WM_STATE_BELOW");
+
+   _ecore_x_atom_net_wm_window_opacity       = _ATOM_GET("_NET_WM_WINDOW_OPACITY");
 }
-#endif
+
+/*
+ * WM identification
+ */
+void
+ecore_x_netwm_wm_identify(Ecore_X_Window root, Ecore_X_Window check,
+                          const char *wm_name)
+{
+   _ATOM_SET_WINDOW(_ecore_x_atom_net_supporting_wm_check, root, &check, 1);
+   _ATOM_SET_WINDOW(_ecore_x_atom_net_supporting_wm_check, check, &check, 1);
+   _ATOM_SET_UTF8_STRING(_ecore_x_atom_net_wm_name, check, wm_name);
+   /* This one isn't mandatory */
+   _ATOM_SET_UTF8_STRING(_ecore_x_atom_net_wm_name, root, wm_name);
+}  
+
 
 /*
  * Desktop configuration and status
