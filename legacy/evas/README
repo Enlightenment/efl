@@ -21,20 +21,26 @@ make install
 
 in the test directory you will find a test program:
 cd test
-./evas_test
+./evas_test_old
 
-this will by default try the GL engine - if you don't have hardware
-accelerated OpenGL it will be SLOOOOOOOOOOOW. Also Mesa 3.2 and below have
-known bugs that cause a segv. it's been fixed in 3.3.
+this will by default try the software engine - if you don't have a fast cpu
+it will be slow. You can try the other engines:
+./evas_test_old -m x11
+./evas_test_old -m x11 -s 0
+./evas_test_old -m hard
 
-If evas didnt find OpenGL it will have built a software only engine so you
-don't need to do anything. You can force software rendering with:
-./evas_test 640 480 software
+x11 is the X11 pixmap engine. -s 0 turns off ``dithering'' and smooth shading
+for image objects hre for better speed. hard is the opengl hardware 3D
+engine. Note that if you do NOT have real hardware accelerated GL it will be
+SLOOOOOOOOOOOOOW - VERY slow. Much slower than software. Also Mesa 3.2 and 
+below has known bugs that cause a segv. It's been fixed in Mesa 3.3.
 
-you can change the window size by changing the 2 numbers (they are width and
-height). if you dont append ``software'' as a parameter it will fall back to
-GL rendering.
+If evas didn't find OpenGL it will have built a software only engine so you
+don't need to try hardware since this will fall back to sfotware mode
+automatically.
 
+There is a new evas_test program being written too - it's in progress, so
+wait for it to be complete.
 
 -------------------------------------------------------------------------------
 MORE DETAILED DESCRIPTION:
@@ -54,13 +60,14 @@ The result is an application creates an Evas & attaches that evas to a window.
 Now it just creates objects - create an image object, a text object, a line
 object, a rectangle object etc. It just moves and resizes these objects around
 by calling routines in Evas - Evas handles redrawing, scaling, ordering the
-draws to acount for layers , clipping objects out that don't exist in the
-visible Evas area etc.
+draws to acount for layers, clipping objects out that don't exist in the
+visible Evas area etc. All the application need do is call evas_redraw when
+it becomes idle to have the evas redraw what has changed.
 
 This means less headache for tha application programmer. Now why do this as
 a whole new library? Well - because the library can render the Evas as fast
 as possible. It uses Imlib2 to do the grunt work of loading images - and
-beyond that it can currently use either imlib2 or OpenGL to render to the
+beyond that it can currently use either imlib2, OpenGL or X11 to render to the
 Evas - if you have decent hardware that's supported by OpenGL you will see
 in the area of 10-50 times (in future even higher) speedups in rendering
 using the GL backend instead of the Imlib2 one (even though Imlib2 is a
@@ -72,4 +79,6 @@ actually alpha blend, but X11 keeping the rendering server-side with pixmaps
 and clip masks) so this means a highly optimized rendering subsystem to build
 more complex things ontop of.
 
-
+As it stands right now the API is still under construction - don't bank on it
+remaining 100% stable. The backend of evas currently seems to have no bugs or
+leaks that I know of, so feel free to punish it.
