@@ -1,11 +1,8 @@
-## Process this file with automake to produce Makefile.in
+MAINTAINERCLEANFILES = Makefile.in
 
 SUBDIRS = canvas data file engines imaging include
 
 AUTOMAKE_OPTIONS     = 1.4 foreign
-
-# A list of all the files in the current directory which can be regenerated
-MAINTAINERCLEANFILES = Makefile.in
 
 INCLUDES	     = @freetype_cflags@ @x_cflags@ @qt_cflags@ @DIRECTFB_CFLAGS@ @gl_cflags@ \
                        -I. \

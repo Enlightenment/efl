@@ -1,8 +1,6 @@
 # get rid of that stupid cache mechanism
 rm -f config.cache
 
-  
-
 AC_INIT(configure.in)
 AC_CANONICAL_BUILD
 AC_CANONICAL_HOST
@@ -1459,6 +1457,7 @@ AC_SUBST(altivec_cflags)
 
 AC_OUTPUT([
 Makefile
+evas.pc
 data/Makefile
 src/Makefile
 src/bin/Makefile
@@ -1484,10 +1483,15 @@ src/lib/include/Makefile
 proj/Makefile
 proj/win32_gdi/Makefile
 evas-config
-evas.pc
+README
+evas.spec
+evas.oe
+evas-native.oe
+evas.bb
+evasXnative.bb
+debian/changelog
 ],[
 chmod +x evas-config
-touch evas_docs.tar.gz
 touch src/bin/moc_evas_software_qtopia_main.cpp
 ])
 

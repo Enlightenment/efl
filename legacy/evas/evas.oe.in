@@ -6,8 +6,8 @@ MAINTAINER = "Carsten Haitzler (Rasterman) <raster@rasterman.com>"
 SECTION = "e/libs"
 PRIORITY = "optional"
 DEPENDS = "libpng jpeg eet freetype"
-PV = "evas-1.0.0_pre13"
-PR = "2"
+PV = "@VERSION@"
+PR = "1"
 
 do_prepsources () {
   make clean distclean || true

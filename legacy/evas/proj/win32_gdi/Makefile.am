@@ -1,3 +1,5 @@
+MAINTAINERCLEANFILES = Makefile.in
+
 EXTRA_DIST = \
 evaslib.vcb \
 evaslib.vcl \

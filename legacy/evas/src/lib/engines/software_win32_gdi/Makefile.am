@@ -1,3 +1,5 @@
+MAINTAINERCLEANFILES = Makefile.in
+
 EXTRA_DIST = \
 evas_engine.h \
 evas_engine.c \
