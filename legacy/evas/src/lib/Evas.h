@@ -413,7 +413,13 @@ extern "C" {
    void              evas_event_feed_key_down          (Evas *e, char *keyname);
    void              evas_event_feed_key_up            (Evas *e, char *keyname);
 
-   void              evas_object_focus                 (Evas_Object *o);
+   void              evas_object_focus_set             (Evas_Object *o, int focus);
+   int               evas_object_focus_get             (Evas_Object *o);
+
+   Evas_Object      *evas_focus_get                    (Evas *e);
+
+   Evas_Modifier    *evas_key_modifier_get             (Evas *e);
+   Evas_Lock        *evas_key_lock_get                 (Evas *e);
 
    char             *evas_key_name_get                 (Evas_Key *k);
    
