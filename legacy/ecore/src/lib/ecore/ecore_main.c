@@ -1,10 +1,20 @@
 #include "ecore_private.h"
 #include "Ecore.h"
 
+#define FIX_HZ 1   
+
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <errno.h>
+
+#ifdef FIX_HZ
+#include <sys/param.h>
+#ifndef HZ
+#define HZ 100
+#endif
+#endif
+
 
 static int  _ecore_main_select(double timeout);
 static void _ecore_main_fd_handlers_cleanup(void);
@@ -243,14 +253,20 @@ _ecore_main_select(double timeout)
    int            max_fd;
    int            ret;
    Ecore_Oldlist    *l;
-   
+
    t = NULL;
    if (timeout > 0.0)
      {
 	int sec, usec;
-	
+
+#ifdef FIX_HZ
+	timeout += (0.5 / HZ);
 	sec = (int)timeout;
 	usec = (int)((timeout - (double)sec) * 1000000);
+#else	
+	sec = (int)timeout;
+	usec = (int)((timeout - (double)sec) * 1000000);
+#endif	
 	tv.tv_sec = sec;
 	tv.tv_usec = usec;
 	t = &tv;
@@ -415,8 +431,11 @@ _ecore_main_loop_iterate_internal(int once_only)
    while (_ecore_signal_count_get()) _ecore_signal_call();
    if (_ecore_event_exist())
      {
+	int ret;
+	
 	have_event = 1;
 	have_signal = 1;
+	ret = _ecore_main_select(0);
 	goto process_events;
      }
    /* call idle enterers ... */
@@ -441,8 +460,11 @@ _ecore_main_loop_iterate_internal(int once_only)
    /* if ther are any - jump to processing them */
    if (_ecore_event_exist())
      {
+	int ret;
+	
 	have_event = 1;
 	have_signal = 1;
+	ret = _ecore_main_select(0);
 	goto process_events;
      }
    if (once_only)
