@@ -77,7 +77,7 @@ ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state)
       c[0] = NormalState;
    else if (state == ECORE_X_WINDOW_STATE_HINT_ICONIC)
       c[0] = IconicState;
-   c[1] = 0;
+   c[1] = None;
    XChangeProperty(_ecore_x_disp, win, ECORE_X_ATOM_WM_STATE,
 		   ECORE_X_ATOM_WM_STATE, 32, PropModeReplace,
 		   (unsigned char *)c, 2);
