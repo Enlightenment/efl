@@ -918,7 +918,7 @@ EAPI int              ecore_x_pixmap_depth_get(Ecore_X_Pixmap pmap);
 EAPI Ecore_X_GC       ecore_x_gc_new(Ecore_X_Drawable draw);
 EAPI void             ecore_x_gc_del(Ecore_X_GC gc);
 
-EAPI int              ecore_x_client_message32_send(Ecore_X_Window win, Ecore_X_Atom type, long d0, long d1, long d2, long d3, long d4);
+EAPI int              ecore_x_client_message32_send(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Event_Mask mask, long d0, long d1, long d2, long d3, long d4);
 EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom type, const void *data, int len);
 
    

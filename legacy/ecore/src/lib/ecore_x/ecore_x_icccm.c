@@ -84,6 +84,7 @@ void
 ecore_x_icccm_delete_window_send(Ecore_X_Window win, Ecore_X_Time t)
 {
    ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS,
+				 ECORE_X_EVENT_MASK_NONE,
 				 ECORE_X_ATOM_WM_DELETE_WINDOW,
 				 t, 0, 0, 0);
 }
@@ -92,6 +93,7 @@ void
 ecore_x_icccm_take_focus_send(Ecore_X_Window win, Ecore_X_Time t)
 {
    ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS,
+				 ECORE_X_EVENT_MASK_NONE,
 				 ECORE_X_ATOM_WM_TAKE_FOCUS,
 				 t, 0, 0, 0);
 }
@@ -100,6 +102,7 @@ void
 ecore_x_icccm_save_yourself_send(Ecore_X_Window win, Ecore_X_Time t)
 {
    ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS,
+				 ECORE_X_EVENT_MASK_NONE,
 				 ECORE_X_ATOM_WM_SAVE_YOURSELF,
 				 t, 0, 0, 0);
 }

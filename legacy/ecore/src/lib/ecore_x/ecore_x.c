@@ -1261,6 +1261,7 @@ ecore_x_window_button_ungrab(Ecore_X_Window win, int button,
  */
 int
 ecore_x_client_message32_send(Ecore_X_Window win, Ecore_X_Atom type,
+			      Ecore_X_Event_Mask mask,
 			      long d0, long d1, long d2, long d3, long d4)
 {
     XEvent xev;
@@ -1275,7 +1276,7 @@ ecore_x_client_message32_send(Ecore_X_Window win, Ecore_X_Atom type,
     xev.xclient.data.l[3] = d3;
     xev.xclient.data.l[4] = d4;
 
-    return XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
+    return XSendEvent(_ecore_x_disp, win, False, mask, &xev);
 }
 
 /**
