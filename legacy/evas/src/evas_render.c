@@ -177,6 +177,7 @@ evas_render_updates(Evas e)
    Imlib_Updates up = NULL;
    Evas_List delete_objects;
    Evas_List l, ll;
+   int output_size_change = 0;
    void (*func_draw_add_rect) (Display *disp, Imlib_Image dstim, Window win, int x, int y, int w, int h);
    void * (*func_image_new_from_file) (Display *disp, char *file);   
    void (*func_image_set_borders) (void *im, int left, int right, int top, int bottom);
@@ -211,7 +212,7 @@ evas_render_updates(Evas e)
        (e->current.viewport.w <= 0) || 
        (e->current.viewport.h <= 0))
       return NULL;
-   
+
    switch (e->current.render_method)
      {
      case RENDER_METHOD_ALPHA_SOFTWARE:
@@ -354,6 +355,21 @@ evas_render_updates(Evas e)
 			   e->current.drawable_width, 
 			   e->current.drawable_height);
      }
+   else if ((e->current.drawable_width != e->previous.drawable_width) ||
+	    (e->current.drawable_height != e->previous.drawable_height))
+     {
+	evas_update_rect(e,
+			 0, 0,
+			 e->current.drawable_width,
+			 e->current.drawable_height);
+	if (!(((((double)e->current.drawable_width / (double)e->current.viewport.w)
+		== 
+		((double)e->previous.drawable_width / (double)e->previous.viewport.w)) &&
+	       (((double)e->current.drawable_height / (double)e->current.viewport.h)
+		== 
+		((double)e->previous.drawable_height / (double)e->previous.viewport.h)))))
+	  output_size_change = 1;
+     }
    
    e->changed = 0;
    delete_objects = 0;
@@ -401,6 +417,14 @@ evas_render_updates(Evas e)
 				 o->renderer_data.method[e->current.render_method] = NULL;
 			      }
 			 }
+		    }
+		  if ((o->type == OBJECT_TEXT) && (output_size_change))
+		    {
+		       if (o->renderer_data.method[e->current.render_method])
+			 {
+			    func_text_font_free((void *)o->renderer_data.method[e->current.render_method]);
+			    o->renderer_data.method[e->current.render_method] = NULL;
+			 }		       
 		    }
 	       }
 	     if (o->changed)
