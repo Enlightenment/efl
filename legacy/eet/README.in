@@ -28,6 +28,8 @@ DEB: To build deb packages:
   tar zvf @PACKAGE@-@VERSION@.tar.gz
   cd @PACKAGE@-@VERSION@
   dpkg-buildpackage -us -uc -rfakeroot
+  cd ..
+  rm -rf @PACKAGE@-@VERSION@
 
-You will find all the debin source, binary etc. packages put in the parent
-(..) directory.
+You will find all the debian source, binary etc. packages put in the directory
+where you first untarred the source tarball.
