@@ -756,14 +756,14 @@ evas_render_method_list(void)
 #ifdef BUILD_ENGINE_BUFFER
    methods = evas_list_append(methods, strdup("buffer"));
 #endif
-#ifdef BBUILD_ENGINE_SOFTWARE_WIN32_GDI
+#ifdef BUILD_ENGINE_SOFTWARE_WIN32_GDI
    methods = evas_list_append(methods, strdup("software_win32_gdi"));
 #endif   
-#ifdef BBUILD_ENGINE_SOFTWARE_QTOPIA
+#ifdef BUILD_ENGINE_SOFTWARE_QTOPIA
    methods = evas_list_append(methods, strdup("software_qtopia"));
 #endif   
 
-   return NULL;
+   return methods;
 }
 
 /**
