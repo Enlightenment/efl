@@ -44,6 +44,8 @@ edje_thaw(void)
 void
 edje_fontset_append_set(char *fonts)
 {
+   if (!fonts) return;
+
    if (_edje_fontset_append)
      free(_edje_fontset_append);
    _edje_fontset_append = strdup(fonts);
