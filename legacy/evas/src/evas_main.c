@@ -2,16 +2,39 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 
 /* create and destroy */
 Evas
 evas_new(void)
 {
+   Evas e;
+   
+   e = malloc(sizeof(struct _Evas));
+   memset(e, 0, sizeof(struct _Evas));
+   e->current.viewport.x = 0.0;
+   e->current.viewport.y = 0.0;
+   e->current.viewport.w = 0.0;
+   e->current.viewport.h = 0.0;
+   e->current.output.x = 0;
+   e->current.output.y = 0;
+   e->current.output.w = 0;
+   e->current.output.h = 0;   
+   e->current.render_method = RENDER_METHOD_BASIC_HARDWARE;
+   return e;
 }
 
 void
 evas_free(Evas e)
 {
+   Evas_List l;
+   
+   for (l = e->layers; l; l = l->next)
+     {
+	/* free layer */
+     }
+   if (e->layers) evas_list_free(e->layers);
+   free(e);
 }
 
 /* for exposes or forced redraws (relative to output drawable) */

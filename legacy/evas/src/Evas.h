@@ -38,6 +38,14 @@ typedef struct _Evas_Object_Evas *         Evas_Object_Evas;
 #define IMAGE_FORMAT_RGB    2
 #define IMAGE_FORMAT_GRAY   3
 
+#define OBJECT_IMAGE        0
+#define OBJECT_TEXT         1
+#define OBJECT_RECTANGLE    2
+#define OBJECT_LINE         3
+#define OBJECT_GRADIENT_BOX 4
+#define OBJECT_BITS         5
+#define OBJECT_EVAS         6
+
 struct _Evas
 {
    struct  {
@@ -54,15 +62,13 @@ struct _Evas
 	 double     x, y, w, h;
       } viewport;
       
-      Evas_List     layers;
-      
       int           render_method;
       
       void      *renderer_data;
       
    } current, previous;
    
-   /* externally provided updates for drawable relative rects */
+   Evas_List     layers;
    Evas_List     updates;
 };
 
