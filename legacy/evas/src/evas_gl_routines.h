@@ -29,6 +29,7 @@ typedef int GLuint;
 #include <freetype.h>
 #endif
 
+#include "Evas_private.h"
 #include "Evas.h"
 
 typedef struct _evas_gl_image          Evas_GL_Image;

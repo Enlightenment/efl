@@ -12,6 +12,7 @@
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
 
+#include "Evas_private.h"
 #include "Evas.h"
 
 #include <Imlib2.h>

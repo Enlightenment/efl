@@ -12,10 +12,24 @@ if test X"$enable_shared" = Xyes; then
   DLLDFLAGS=-export-dynamic
   AC_SUBST(DLLDFLAGS)
 fi
-AM_WITH_DMALLOC
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 
+IMLIB2_CONFIG="imlib2-config"
+
+AC_ARG_WITH(imlib2,
+        [  --with-imlib2=DIR       use DIR where imlib2 was installed (eg /usr/local)],
+	[CPPFLAGS="$CPPFLAGS -I$withval/include"	
+	 IMLIB2_CONFIG=$withval"/bin/imlib2-config"])			
+AC_ARG_WITH(ttf,
+        [  --with-ttf=DIR          use DIR where freetype was installed (eg /opt/freetype)],
+	[CPPFLAGS="$CPPFLAGS -I$withval/include"
+	 LIBS_TTF="-L"$withval"/lib"])
+AC_ARG_WITH(gl,
+        [  --with-gl=DIR           use DIR where opengl was installed (eg /usr/X11R6)],
+	[CPPFLAGS="$CPPFLAGS -I$withval/include"
+	 LIBS_GL="-L"$withval"/lib"])
+			
 #### Find out about X
 AC_PATH_X
 AC_PATH_XTRA
@@ -56,10 +70,11 @@ AC_CHECK_LIB(Imlib2, imlib_context_set_image, ,[
 echo ""
 echo "ERROR: Imlib 2 needed"
 echo ""
-AC_MSG_ERROR([Fatal Error: no Imlib2 detected.]); exit], -L/usr/X11R6/lib -L/usr/local/lib -lm -ldl -lttf -lX11 -lXext)
+AC_MSG_ERROR([Fatal Error: no Imlib2 detected.]); exit], 
+`$IMLIB2_CONFIG --libs` `$IMLIB2_CONFIG --cflags`)
 )
 
-AC_CHECK_LIB(ttf, TT_Init_FreeType, TTF_LIBS=-lttf, [
+AC_CHECK_LIB(ttf, TT_Init_FreeType, TTF_LIBS=-lttf $LIBS_TTF, [
 echo ""
 echo "ERROR: Evas needs a system with libttf.so (TrueType Font Library)"
 echo "You can obtain it from:"
@@ -69,7 +84,7 @@ echo "http://www.freetype.org/"
 echo "You can obtain some truetype fonts from:"
 echo "http://voyager.cns.ohiou.edu/~sadkins/web_library/fonts/font_archive/"
 echo ""
-AC_MSG_ERROR([Fatal Error: no FreeType detected.])], -lm)
+AC_MSG_ERROR([Fatal Error: no FreeType detected.])], $LIBS_TTF -lm)
 
 AC_CHECK_HEADERS(freetype.h freetype/freetype.h,[ break] , )
 
@@ -97,6 +112,8 @@ AC_MSG_ERROR([Fatal Error: no FreeType header files detected.])
 fi
 fi
 
+ttf_includes="$CPPFLAGS"
+ttf_libs="$LIBS_TTF -lm -lttf"
 
 gl_includes=""
 #### Find out about OpenGL
@@ -104,24 +121,22 @@ PREV_CPPFLAGS=$CPPFLAGS
 CPPFLAGS=$CPPFLAGS" -I/usr/include -I/usr/local/include "$x_cflags
 AC_TRY_CPP(GL/gl.h,
 echo "checking for GL/gl.h... yes"
-gl_includes="-I/usr/include -I/usr/local/include "$x_cflags
+gl_includes=$CPPFLAGS" -I/usr/include -I/usr/local/include "$x_cflags
 AC_CHECK_LIB(GL, glBindTexture, have_gl=yes,[
-], -L/usr/local/lib -lGL $X_LDFLAGS $X_EXTRA_LIBS $X_LIBS)
+], -L/usr/local/lib -lGL $X_LDFLAGS $X_EXTRA_LIBS $X_LIBS $LIBS_GL)
 )
 if test "x$have_gl" = "xyes"; then
-  gl_includes=$gl_includes" -I/usr/include -I/usr/local/include"
-  gl_ldflags=$gl_ldflags" -L/usr/local/lib"
+  gl_includes=$gl_includes
+  gl_ldflags=$gl_ldflags" -L/usr/local/lib "$X_LDFLAGS" "$X_EXTRA_LIBS" "$X_LIBS" "$LIBS_GL
   gl_libs=$gl_libs" -lGL"
   AC_DEFINE(HAVE_GL)
   AC_TRY_CPP(GL/glu.h,
   echo "checking for GL/glu.h... yes"
-  gl_includes="-I/usr/include -I/usr/local/include "$x_cflags
   AC_CHECK_LIB(GLU, gluBuild2DMipmaps, have_glu=yes,[
-  ], -L/usr/local/lib -lGL -lGLU $X_LDFLAGS $X_EXTRA_LIBS $X_LIBS)
+  ], $gl_ldflags -lGL -lGLU)
   )
   if test "x$have_glu" = "xyes"; then
     gl_includes=$gl_includes" -I/usr/include -I/usr/local/include"
-    gl_ldflags=$gl_ldflags" -L/usr/local/lib"
     gl_libs=$gl_libs" -lGLU"
     AC_DEFINE(HAVE_GLU)
   else
@@ -140,8 +155,8 @@ else
 fi
 CPPFLAGS=$PREV_CPPFLAGS
 
-imlib2_inlcudes=`imlib2-config --cflags`
-imlib2_libs=`imlib2-config --libs`
+imlib2_inlcudes=`$IMLIB2_CONFIG --cflags`
+imlib2_libs=`$IMLIB2_CONFIG --libs`
 
 AC_SUBST(x_cflags)
 AC_SUBST(x_includes)
@@ -152,6 +167,8 @@ AC_SUBST(gl_ldflags)
 AC_SUBST(gl_libs)
 AC_SUBST(imlib2_includes)
 AC_SUBST(imlib2_libs)
+AC_SUBST(ttf_includes)
+AC_SUBST(ttf_libs)
 
 AC_OUTPUT([
 Makefile src/Makefile test/Makefile evas-config

@@ -1,3 +1,4 @@
+#include "Evas_private.h"
 #include "Evas.h"
 #include <stdio.h>
 #include <stdlib.h>

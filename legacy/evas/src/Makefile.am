@@ -9,16 +9,18 @@ LIBS_X        = @x_ldflags@ @x_libs@
 LIBS_IMLIB2   = @imlib2_libs@
 #LIBS_DB       = -ledb
 LIBS_GL       = @gl_ldflags@ @gl_libs@
+LIBS_TTF      = @ttf_libs@
 LIBS_EXTRA    = -L/usr/local/lib
 
 CFLAGS_X      = @x_cflags@
 CFLAGS_IMLIB2 = @imlib2_includes@
 #CFLAGS_DB     = 
 CFLAGS_GL     = @gl_includes@
+CFLAGS_TTF    = @ttf_includes@
 CFLAGS_EXTRA  = -I$(includedir) -I$(top_srcdir) -I/usr/local/include
 
-LIBS_ALL      = $(LIBS_X) $(LIBS_IMLIB2) $(LIBS_GL) $(LIBS_EXTRA)
-CFLGAS_ALL    = $(CFLAGS_X) $(CFLAGS_IMLIB2) $(CFLAGS_GL) $(CFLAGS_EXTRA)
+LIBS_ALL      = $(LIBS_X) $(LIBS_IMLIB2) $(LIBS_GL) $(LIBS_TTF) $(LIBS_EXTRA)
+CFLGAS_ALL    = $(CFLAGS_X) $(CFLAGS_IMLIB2) $(CFLAGS_GL) $(CFLAGS_TTF) $(CFLAGS_EXTRA)
 
 INCLUDES	     = $(CFLGAS_ALL) \
 		       -DLIBDIR=\"$(libdir)\" \
@@ -49,7 +51,8 @@ evas_x11_routines.c \
 evas_image_routines.h \
 evas_imlib_routines.h \
 evas_x11_routines.h \
-Evas.h
+Evas.h \
+Evas_private.h
 
 libevas_la_LIBADD       = $(LIBS_ALL)
 libevas_la_DEPENDENCIES = $(top_builddir)/config.h

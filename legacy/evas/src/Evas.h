@@ -4,236 +4,55 @@
 #include <X11/Xlib.h>
 #include <Imlib2.h>
 
-typedef struct _Evas *                     Evas;
-typedef struct _Evas_Gradient *            Evas_Gradient;
-typedef struct _Evas_Object_Any *          Evas_Object;
-typedef struct _Evas_Object_Any *          Evas_Object_Any;
-typedef int                                Evas_Callback_Type;
-typedef int                                Evas_Image_Format;
-typedef int                                Evas_Render_Method;
-typedef struct _Evas_Render_Data           Evas_Render_Data;
+/* types */
+#ifndef _EVAS_PRIVATE_H
+typedef void *                             Evas;
+typedef void *                             Evas_Gradient;
+typedef void *                             Evas_Object;
+#endif
 typedef struct _Evas_List *                Evas_List;
-typedef struct _Evas_Data *                Evas_Data;
-typedef struct _Evas_Layer *               Evas_Layer;
-typedef struct _Evas_Color_Point *         Evas_Color_Point;
-typedef struct _Evas_Callback *            Evas_Callback;
-typedef struct _Evas_Rectangle *           Evas_Rectangle;
-typedef struct _Evas_Object_Image *        Evas_Object_Image;
-typedef struct _Evas_Object_Text *         Evas_Object_Text;
-typedef struct _Evas_Object_Rectangle *    Evas_Object_Rectangle;
-typedef struct _Evas_Object_Line *         Evas_Object_Line;
-typedef struct _Evas_Object_Gradient_Box * Evas_Object_Gradient_Box;
 
-#define RENDER_METHOD_ALPHA_SOFTWARE    0
-#define RENDER_METHOD_BASIC_HARDWARE    1
-#define RENDER_METHOD_3D_HARDWARE       2
-#define RENDER_METHOD_ALPHA_HARDWARE    3
-#define RENDER_METHOD_IMAGE             4
-#define RENDER_METHOD_COUNT             5
+typedef enum _Evas_Callback_Type           Evas_Callback_Type;
+typedef enum _Evas_Image_Format            Evas_Image_Format;
+typedef enum _Evas_Render_Method           Evas_Render_Method;
 
-#define CALLBACK_MOUSE_IN   0
-#define CALLBACK_MOUSE_OUT  1
-#define CALLBACK_MOUSE_DOWN 2
-#define CALLBACK_MOUSE_UP   3
-#define CALLBACK_MOUSE_MOVE 4
-#define CALLBACK_FREE       5
-
-#define IMAGE_FORMAT_BGRA   0
-#define IMAGE_FORMAT_ARGB   1
-#define IMAGE_FORMAT_RGB    2
-#define IMAGE_FORMAT_GRAY   3
-
-#define OBJECT_IMAGE        1230
-#define OBJECT_TEXT         1231
-#define OBJECT_RECTANGLE    1232
-#define OBJECT_LINE         1233
-#define OBJECT_GRADIENT_BOX 1234
-
-#define IF_OBJ(_o, _t) if (((Evas_Object)_o)->type != _t)
-
-struct _Evas_Render_Data
-{
-   int *method[RENDER_METHOD_COUNT];
-};
-
-struct _Evas
-{
-   struct  {
-      Display      *display;
-      Drawable      drawable;
-      Visual       *visual;
-      Colormap      colormap;
-      int           created_window;
-      int           screen;
-      int           colors;
-      Imlib_Image   image;
-      
-      int           drawable_width, drawable_height;
-      
-      struct  {
-	 double     x, y, w, h;
-      } viewport;
-      
-      Evas_Render_Method render_method;
-      
-      Evas_Render_Data renderer_data;
-      
-   } current, previous;
-   
-   struct {
-      int in;
-      int x, y;
-      int buttons;
-      Evas_Object object, button_object;
-   } mouse;
-   
-   
-   void (*evas_renderer_data_free) (Evas _e);
-   
-   int changed;
-   
-   Evas_List     layers;
-   Imlib_Updates updates;
-};
-
-struct _Evas_Color_Point
-{
-   int r, g, b, a;
-   int distance;
-};
-
-struct _Evas_Gradient
-{
-   Evas_List  color_points;
-};
-
-struct _Evas_List
+/* public structs */
+struct _Evas_List 
 {
    Evas_List  prev, next;
    void      *data;
 };
 
-struct _Evas_Rectangle
+/* enums */
+#define RENDER_METHOD_COUNT 5
+enum _Evas_Render_Method
 {
-   int x, y, w, h;
+   RENDER_METHOD_ALPHA_SOFTWARE,
+   RENDER_METHOD_BASIC_HARDWARE,
+   RENDER_METHOD_3D_HARDWARE,
+   RENDER_METHOD_ALPHA_HARDWARE,
+   RENDER_METHOD_IMAGE
 };
 
-struct _Evas_Data
+enum _Evas_Callback_Type
 {
-   char *key;
-   void *data;
+   CALLBACK_MOUSE_IN,
+   CALLBACK_MOUSE_OUT,
+   CALLBACK_MOUSE_DOWN,
+   CALLBACK_MOUSE_UP,
+   CALLBACK_MOUSE_MOVE,
+   CALLBACK_FREE
 };
 
-struct _Evas_Layer
+enum _Evas_Image_Format
 {
-   int        layer;
-   Evas_List  objects;
-   
-   struct  {
-      int        store;
-   } current, previous;
-   
-   Evas_Render_Data renderer_data;
+   IMAGE_FORMAT_BGRA,
+   IMAGE_FORMAT_ARGB,
+   IMAGE_FORMAT_RGB,
+   IMAGE_FORMAT_GRAY
 };
 
-struct _Evas_Callback
-{
-   Evas_Callback_Type type;
-   void *data;
-   void (*callback) (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y);
-};
-
-struct _Evas_Object_Any
-{
-   int        type;
-   struct  {
-      double     x, y, w, h;
-      int        zoomscale;
-      int        layer;
-      int        visible;
-      int        stacking;
-   } current, previous;
-
-   int changed;
-   
-   int delete_me;
-   
-   int pass_events;
-   
-   void (*object_free) (Evas_Object _o);
-   void (*object_renderer_data_free) (Evas _e, Evas_Object _o);
-   
-   Evas_List  callbacks;
-   Evas_List  data;
-   
-   Evas_Render_Data renderer_data;
-   
-   char *name;
-};
-
-struct _Evas_Object_Image
-{
-   struct _Evas_Object_Any object;
-   struct  {
-      char *file;
-      int   new_data;
-      int   scale;
-      struct {
-	 int w, h;
-      } image;
-      struct {
-	 double x, y, w, h;
-      } fill;
-      struct {
-	 int l, r, t, b;
-      } border;
-      struct {
-	 int r, g, b, a;
-      } color;
-   } current, previous;
-};
-
-struct _Evas_Object_Text
-{
-   struct _Evas_Object_Any object;
-   struct  {
-      char *text;
-      char *font;
-      int   size;
-      struct {
-	 int w, h;
-      } string;
-      int r, g, b, a;
-   } current, previous;
-};
-
-struct _Evas_Object_Rectangle
-{
-   struct _Evas_Object_Any object;
-   struct  {
-      int r, g, b, a;
-   } current, previous;
-};
-
-struct _Evas_Object_Line
-{
-   struct _Evas_Object_Any object;
-   struct  {
-      double x1, y1, x2, y2;
-      int r, g, b, a;
-   } current, previous;
-};
-
-struct _Evas_Object_Gradient_Box
-{
-   struct _Evas_Object_Any object;
-   struct  {
-      Evas_Gradient gradient;
-      int    new_gradient;
-      double angle;
-   } current, previous;
-};
-
+/* functions */
 #ifdef __cplusplus
 extern "C" {
 #endif
