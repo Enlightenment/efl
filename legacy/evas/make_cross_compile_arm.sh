@@ -24,6 +24,7 @@ export CFLAGS=-O9
 --disable-buffer \
 --disable-software-qtopia \
 --disable-gl-x11 \
+--disable-cairo-x11 \
  --enable-image-loader-png \
  --enable-image-loader-jpeg \
  --enable-image-loader-eet \
