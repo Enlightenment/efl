@@ -37,29 +37,44 @@ typedef enum _Evas_Callback_Type
    EVAS_CALLBACK_RESTACK
 } Evas_Callback_Type;
 
-typedef struct _Evas_Rectangle      Evas_Rectangle;
+typedef struct _Evas_Rectangle              Evas_Rectangle;
 
-typedef struct _Evas                Evas;
-typedef struct _Evas_Layer          Evas_Layer;
-typedef struct _Evas_Object         Evas_Object;
-typedef struct _Evas_Data_Node      Evas_Data_Node;
-typedef struct _Evas_Func_Node      Evas_Func_Node;
-typedef struct _Evas_Func           Evas_Func;
-typedef struct _Evas_Object_Func    Evas_Object_Func;
-typedef struct _Evas_Modifier       Evas_Modifier;
-typedef struct _Evas_Lock           Evas_Lock;
-typedef unsigned long long          Evas_Modifier_Mask;
-typedef struct _Evas_Smart          Evas_Smart;
-typedef void                        Evas_Performance;
+typedef struct _Evas                        Evas;
+typedef struct _Evas_Layer                  Evas_Layer;
+typedef struct _Evas_Object                 Evas_Object;
+typedef struct _Evas_Data_Node              Evas_Data_Node;
+typedef struct _Evas_Func_Node              Evas_Func_Node;
+typedef struct _Evas_Func                   Evas_Func;
+typedef struct _Evas_Object_Func            Evas_Object_Func;
+typedef struct _Evas_Modifier               Evas_Modifier;
+typedef struct _Evas_Lock                   Evas_Lock;
+typedef unsigned long long                  Evas_Modifier_Mask;
+typedef struct _Evas_Smart                  Evas_Smart;
+typedef void                                Evas_Performance;
 typedef struct _Evas_Intercept_Func         Evas_Intercept_Func;
 typedef struct _Evas_Intercept_Func_Basic   Evas_Intercept_Func_Basic;
 typedef struct _Evas_Intercept_Func_SizePos Evas_Intercept_Func_SizePos;
 typedef struct _Evas_Intercept_Func_Obj     Evas_Intercept_Func_Obj;
 typedef struct _Evas_Intercept_Func_Int     Evas_Intercept_Func_Int;
 typedef struct _Evas_Key_Grab               Evas_Key_Grab;
-typedef struct _Evas_Callbacks      Evas_Callbacks;
-typedef struct _Evas_Smart_Class      Evas_Smart_Class;
-  
+typedef struct _Evas_Callbacks              Evas_Callbacks;
+typedef struct _Evas_Smart_Class            Evas_Smart_Class;
+#if 1 /* able to change co-ordinate systems to remove all fp ops */
+typedef double                              Evas_Coord;
+typedef double                              Evas_Font_Size;
+typedef double                              Evas_Angle;
+#ifndef EVAS_COMMON_H
+typedef int                                 Evas_Bool;
+#endif
+#else
+typedef int                                 Evas_Coord;
+typedef int                                 Evas_Font_Size;
+typedef int                                 Evas_Angle;
+#ifndef EVAS_COMMON_H
+typedef char                                Evas_Bool;
+#endif
+#endif
+
 #define MAGIC_EVAS          0x70777770
 #define MAGIC_OBJ           0x71777770
 #define MAGIC_OBJ_RECTANGLE 0x71777771
@@ -138,7 +153,7 @@ struct _Evas_Intercept_Func_Basic
 
 struct _Evas_Intercept_Func_SizePos
 {
-   void (*func) (void *data, Evas_Object *obj, double x, double y);
+   void (*func) (void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y);
    void *data;
 };
 
@@ -201,8 +216,8 @@ struct _Evas_Smart_Class /** a smart object class */
    void  (*lower)       (Evas_Object *o);
    void  (*stack_above) (Evas_Object *o, Evas_Object *above);
    void  (*stack_below) (Evas_Object *o, Evas_Object *below);
-   void  (*move)        (Evas_Object *o, double x, double y);
-   void  (*resize)      (Evas_Object *o, double w, double h);
+   void  (*move)        (Evas_Object *o, Evas_Coord x, Evas_Coord y);
+   void  (*resize)      (Evas_Object *o, Evas_Coord w, Evas_Coord h);
    void  (*show)        (Evas_Object *o);
    void  (*hide)        (Evas_Object *o);
    void  (*color_set)   (Evas_Object *o, int r, int g, int b, int a);
@@ -264,7 +279,7 @@ struct _Evas
       DATA32         button;
       int            x, y;
 
-      double         canvas_x, canvas_y;
+      Evas_Coord         canvas_x, canvas_y;
       
       struct {
 	 Evas_List *in;
@@ -273,7 +288,7 @@ struct _Evas
    } pointer;
    
    struct  {
-      double         x, y, w, h;
+      Evas_Coord         x, y, w, h;
       char           changed : 1;
    } viewport;
    
@@ -355,7 +370,7 @@ struct _Evas_Object
 	 } clip;
       } cache;
       struct {
-	 double         x, y, w, h;
+	 Evas_Coord         x, y, w, h;
       } geometry;
       struct {
 	 unsigned char  r, g, b, a;
@@ -440,8 +455,8 @@ struct _Evas_Object_Func
    int  (*is_opaque) (Evas_Object *obj);
    int  (*was_opaque) (Evas_Object *obj);
    
-   int  (*is_inside) (Evas_Object *obj, double x, double y);
-   int  (*was_inside) (Evas_Object *obj, double x, double y);
+   int  (*is_inside) (Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+   int  (*was_inside) (Evas_Object *obj, Evas_Coord x, Evas_Coord y);
    
    void (*coords_recalc) (Evas_Object *obj);
 };
@@ -486,6 +501,7 @@ struct _Evas_Func
    
    void *(*gradient_color_add)             (void *data, void *context, void *gradient, int r, int g, int b, int a, int distance);
    void *(*gradient_colors_clear)          (void *data, void *context, void *gradient);
+
    void (*gradient_draw)                   (void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle);
    
    void *(*image_load)                     (void *data, char *file, char *key, int *error);
@@ -591,8 +607,8 @@ void evas_object_inform_call_restack(Evas_Object *obj);
 void evas_object_intercept_cleanup(Evas_Object *obj);
 int evas_object_intercept_call_show(Evas_Object *obj);
 int evas_object_intercept_call_hide(Evas_Object *obj);
-int evas_object_intercept_call_move(Evas_Object *obj, double x, double y);
-int evas_object_intercept_call_resize(Evas_Object *obj, double w, double h);
+int evas_object_intercept_call_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+int evas_object_intercept_call_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h);
 int evas_object_intercept_call_raise(Evas_Object *obj);
 int evas_object_intercept_call_lower(Evas_Object *obj);
 int evas_object_intercept_call_stack_above(Evas_Object *obj, Evas_Object *above);

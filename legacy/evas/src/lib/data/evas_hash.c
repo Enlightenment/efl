@@ -308,7 +308,7 @@ evas_hash_free(Evas_Hash *hash)
  * @code
  * extern Evas_Hash *hash;
  * 
- * int hash_fn(Evas_Hash *hash, const char *key, void *data, void *fdata)
+ * Evas_Bool hash_fn(Evas_Hash *hash, const char *key, void *data, void *fdata)
  * {
  *   printf("Func data: %s, Hash entry: %s / %p\n", fdata, key, data);
  *   return 1;
@@ -325,7 +325,7 @@ evas_hash_free(Evas_Hash *hash)
  * @endcode
  */
 void
-evas_hash_foreach(Evas_Hash *hash, int (*func) (Evas_Hash *hash, const char *key, void *data, void *fdata), const void *fdata)
+evas_hash_foreach(Evas_Hash *hash, Evas_Bool (*func) (Evas_Hash *hash, const char *key, void *data, void *fdata), const void *fdata)
 {
    int i, size;
 

@@ -40,7 +40,7 @@
 #define POLY_EDGE_ADD(_i, _y)                                           \
 {                                                                       \
    int _j;                                                              \
-   double _dx;                                                          \
+   float _dx;                                                           \
    RGBA_Vertex *_p, *_q;                                                \
    if (_i < (n - 1)) _j = _i + 1;                                       \
    else _j = 0;                                                         \
@@ -55,7 +55,7 @@
 	_q = &(point[_i]);                                              \
      }                                                                  \
    edges[num_active_edges].dx = _dx = (_q->x - _p->x) / (_q->y - _p->y); \
-   edges[num_active_edges].x = (_dx * ((double)_y + 0.5 - _p->y)) + _p->x; \
+   edges[num_active_edges].x = (_dx * ((float)_y + 0.5 - _p->y)) + _p->x; \
    edges[num_active_edges].i = _i;                                      \
    num_active_edges++;                                                  \
 }
@@ -143,6 +143,13 @@ typedef struct _Evas_Object_List      Evas_Object_List;
 typedef struct _Evas_List             Evas_List;
 typedef struct _Evas_Hash             Evas_Hash;
 typedef struct _Evas_Hash_El          Evas_Hash_El;
+#ifndef EVAS_PRIVATE_H
+#if 1 /* able to change co-ordinate systems to remove all fp ops */
+typedef int                           Evas_Bool;
+#else
+typedef char                          Evas_Bool;
+#endif
+#endif
 
 typedef struct _RGBA_Image            RGBA_Image;
 typedef struct _RGBA_Surface          RGBA_Surface;
@@ -575,7 +582,7 @@ Evas_Hash *evas_hash_del                (Evas_Hash *hash, const char *key, const
 void      *evas_hash_find               (Evas_Hash *hash, const char *key);
 int        evas_hash_size               (Evas_Hash *hash);
 void       evas_hash_free               (Evas_Hash *hash);
-void       evas_hash_foreach            (Evas_Hash *hash, int (*func) (Evas_Hash *hash, const char *key, void *data, void *fdata), const void *fdata);
+void       evas_hash_foreach            (Evas_Hash *hash, Evas_Bool (*func) (Evas_Hash *hash, const char *key, void *data, void *fdata), const void *fdata);
 int        evas_hash_alloc_error        (void);
    
 void *evas_object_list_append           (void *in_list, void *in_item);

@@ -15,7 +15,7 @@
  * 
  */
 void
-evas_object_focus_set(Evas_Object *obj, int focus)
+evas_object_focus_set(Evas_Object *obj, Evas_Bool focus)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -45,7 +45,7 @@ evas_object_focus_set(Evas_Object *obj, int focus)
  * FIXME: To be fixed.
  * 
  */
-int
+Evas_Bool
 evas_object_focus_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);

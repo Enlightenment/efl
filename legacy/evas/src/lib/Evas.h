@@ -38,6 +38,18 @@ typedef struct _Evas_Lock Evas_Lock; /**< An Evas Lock */
 typedef struct _Evas_Smart Evas_Smart; /**< An Evas Smart Object handle */
 typedef unsigned long long Evas_Modifier_Mask; /**< An Evas modifier mask type */
 
+#if 1 /* able to change co-ordinate systems to remove all fp ops */
+typedef double Evas_Coord; /**< A unit in canvas space. Normally a double, but may vary on platforms */
+typedef double Evas_Font_Size; /**< Units to descript font sizes. Normally a double, but may vary on platforms */
+typedef double Evas_Angle; /**< A unit to measure angles (in degrees). Normally a double, but may vary on platforms */
+typedef int    Evas_Bool; /**< A boolean. 1 = on/true/yes, 0 = off/false/no */
+#else
+typedef int    Evas_Coord;
+typedef int    Evas_Font_Size;
+typedef int    Evas_Angle;
+typedef char   Evas_Bool;
+#endif
+
 struct _Evas_List /** A linked list node */
 {
    void      *data; /**< Pointer to list element payload */
@@ -67,8 +79,8 @@ struct _Evas_Smart_Class /** a smart object class */
    void  (*lower)       (Evas_Object *o);
    void  (*stack_above) (Evas_Object *o, Evas_Object *above);
    void  (*stack_below) (Evas_Object *o, Evas_Object *below);
-   void  (*move)        (Evas_Object *o, double x, double y);
-   void  (*resize)      (Evas_Object *o, double w, double h);
+   void  (*move)        (Evas_Object *o, Evas_Coord x, Evas_Coord y);
+   void  (*resize)      (Evas_Object *o, Evas_Coord w, Evas_Coord h);
    void  (*show)        (Evas_Object *o);
    void  (*hide)        (Evas_Object *o);
    void  (*color_set)   (Evas_Object *o, int r, int g, int b, int a);
@@ -79,7 +91,6 @@ struct _Evas_Smart_Class /** a smart object class */
 };
 #endif
 #endif
-
 
 typedef struct _Evas_Engine_Info      Evas_Engine_Info; /**< A generic Evas Engine information structure */
 typedef struct _Evas_Event_Mouse_Down Evas_Event_Mouse_Down; /**< Event structure for #EVAS_CALLBACK_MOUSE_DOWN event callbacks */
@@ -115,7 +126,7 @@ struct _Evas_Event_Mouse_Down /** Mouse button press event */
       int x, y;
    } output;
    struct {
-      double x, y;
+      Evas_Coord x, y;
    } canvas;
    void          *data;
    Evas_Modifier *modifiers;
@@ -129,7 +140,7 @@ struct _Evas_Event_Mouse_Up /** Mouse butotn relase event */
       int x, y;
    } output;
    struct {
-      double x, y;
+      Evas_Coord x, y;
    } canvas;
    void          *data;
    Evas_Modifier *modifiers;
@@ -143,7 +154,7 @@ struct _Evas_Event_Mouse_In /** Mouse enter event */
       int x, y;
    } output;
    struct {
-      double x, y;
+      Evas_Coord x, y;
    } canvas;
    void          *data;
    Evas_Modifier *modifiers;
@@ -157,7 +168,7 @@ struct _Evas_Event_Mouse_Out /** Mouse leave event */
       int x, y;
    } output;
    struct {
-      double x, y;
+      Evas_Coord x, y;
    } canvas;
    void          *data;
    Evas_Modifier *modifiers;
@@ -172,7 +183,7 @@ struct _Evas_Event_Mouse_Move /** Mouse button down event */
 	 int x, y;
       } output;
       struct {
-	 double x, y;
+	 Evas_Coord x, y;
       } canvas;
    } cur, prev;
    void          *data;
@@ -190,7 +201,7 @@ struct _Evas_Event_Mouse_Wheel /** Wheel event */
    } output;
 
    struct {
-      double x, y;
+      Evas_Coord x, y;
    } canvas;
 
    void			 *data;
@@ -248,7 +259,7 @@ extern "C" {
    void             *evas_hash_find                    (Evas_Hash *hash, const char *key);
    int               evas_hash_size                    (Evas_Hash *hash);
    void              evas_hash_free                    (Evas_Hash *hash);
-   void              evas_hash_foreach                 (Evas_Hash *hash, int (*func) (Evas_Hash *hash, const char *key, void *data, void *fdata), const void *fdata);
+   void              evas_hash_foreach                 (Evas_Hash *hash, Evas_Bool (*func) (Evas_Hash *hash, const char *key, void *data, void *fdata), const void *fdata);
    int               evas_hash_alloc_error             (void);
    
    int               evas_alloc_error                  (void);
@@ -268,18 +279,18 @@ extern "C" {
    
    void              evas_output_size_set              (Evas *e, int w, int h);
    void              evas_output_size_get              (Evas *e, int *w, int *h);
-   void              evas_output_viewport_set          (Evas *e, double x, double y, double w, double h);
-   void              evas_output_viewport_get          (Evas *e, double *x, double *y, double *w, double *h);
+   void              evas_output_viewport_set          (Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+   void              evas_output_viewport_get          (Evas *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
    
-   double            evas_coord_screen_x_to_world      (Evas *e, int x);
-   double            evas_coord_screen_y_to_world      (Evas *e, int y);   
-   int               evas_coord_world_x_to_screen      (Evas *e, double x);
-   int               evas_coord_world_y_to_screen      (Evas *e, double y);
+   Evas_Coord        evas_coord_screen_x_to_world      (Evas *e, int x);
+   Evas_Coord        evas_coord_screen_y_to_world      (Evas *e, int y);   
+   int               evas_coord_world_x_to_screen      (Evas *e, Evas_Coord x);
+   int               evas_coord_world_y_to_screen      (Evas *e, Evas_Coord y);
        
    void              evas_pointer_output_xy_get        (Evas *e, int *x, int *y);
-   void              evas_pointer_canvas_xy_get        (Evas *e, double *x, double *y);
+   void              evas_pointer_canvas_xy_get        (Evas *e, Evas_Coord *x, Evas_Coord *y);
    int               evas_pointer_button_down_mask_get (Evas *e);
-   int               evas_pointer_inside_get           (Evas *e);
+   Evas_Bool         evas_pointer_inside_get           (Evas *e);
 /* DOC UP TO HERE */
    void              evas_damage_rectangle_add         (Evas *e, int x, int y, int w, int h);
    void              evas_obscured_rectangle_add       (Evas *e, int x, int y, int w, int h);
@@ -291,17 +302,17 @@ extern "C" {
    Evas_Object      *evas_object_rectangle_add         (Evas *e);
    
    Evas_Object      *evas_object_line_add              (Evas *e);
-   void              evas_object_line_xy_set           (Evas_Object *obj, double x1, double y1, double x2, double y2);
-   void              evas_object_line_xy_get           (Evas_Object *obj, double *x1, double *y1, double *x2, double *y2);
+   void              evas_object_line_xy_set           (Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coord x2, Evas_Coord y2);
+   void              evas_object_line_xy_get           (Evas_Object *obj, Evas_Coord *x1, Evas_Coord *y1, Evas_Coord *x2, Evas_Coord *y2);
    
    Evas_Object      *evas_object_gradient_add          (Evas *e);
    void              evas_object_gradient_color_add    (Evas_Object *obj, int r, int g, int b, int a, int distance);
    void              evas_object_gradient_colors_clear (Evas_Object *obj);
-   void              evas_object_gradient_angle_set    (Evas_Object *obj, double angle);
-   double            evas_object_gradient_angle_get    (Evas_Object *obj);
+   void              evas_object_gradient_angle_set    (Evas_Object *obj, Evas_Angle angle);
+   Evas_Angle        evas_object_gradient_angle_get    (Evas_Object *obj);
    
    Evas_Object      *evas_object_polygon_add           (Evas *e);
-   void              evas_object_polygon_point_add     (Evas_Object *obj, double x, double y);
+   void              evas_object_polygon_point_add     (Evas_Object *obj, Evas_Coord x, Evas_Coord y);
    void              evas_object_polygon_points_clear  (Evas_Object *obj);
    
    Evas_Object      *evas_object_image_add             (Evas *e);       
@@ -309,19 +320,19 @@ extern "C" {
    void              evas_object_image_file_get        (Evas_Object *obj, char **file, char **key);
    void              evas_object_image_border_set      (Evas_Object *obj, int l, int r, int t, int b);
    void              evas_object_image_border_get      (Evas_Object *obj, int *l, int *r, int *t, int *b);
-   void              evas_object_image_fill_set        (Evas_Object *obj, double x, double y, double w, double h);
-   void              evas_object_image_fill_get        (Evas_Object *obj, double *x, double *y, double *w, double *h);
+   void              evas_object_image_fill_set        (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+   void              evas_object_image_fill_get        (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
    void              evas_object_image_size_set        (Evas_Object *obj, int w, int h);
    void              evas_object_image_size_get        (Evas_Object *obj, int *w, int *h);
    int               evas_object_image_load_error_get  (Evas_Object *obj);
-   void              evas_object_image_data_set        (Evas_Object *obj, int *data);
-   int              *evas_object_image_data_get        (Evas_Object *obj, int for_writing);
-   void              evas_object_image_data_copy_set   (Evas_Object *obj, int *data);
+   void              evas_object_image_data_set        (Evas_Object *obj, void *data);
+   void             *evas_object_image_data_get        (Evas_Object *obj, Evas_Bool for_writing);
+   void              evas_object_image_data_copy_set   (Evas_Object *obj, void *data);
    void              evas_object_image_data_update_add (Evas_Object *obj, int x, int y, int w, int h);
-   void              evas_object_image_alpha_set       (Evas_Object *obj, int has_alpha);
-   int               evas_object_image_alpha_get       (Evas_Object *obj);
-   void              evas_object_image_smooth_scale_set(Evas_Object *obj, int smooth_scale);
-   int               evas_object_image_smooth_scale_get(Evas_Object *obj);
+   void              evas_object_image_alpha_set       (Evas_Object *obj, Evas_Bool has_alpha);
+   Evas_Bool         evas_object_image_alpha_get       (Evas_Object *obj);
+   void              evas_object_image_smooth_scale_set(Evas_Object *obj, Evas_Bool smooth_scale);
+   Evas_Bool         evas_object_image_smooth_scale_get(Evas_Object *obj);
    void              evas_object_image_reload          (Evas_Object *obj);
        
    void              evas_image_cache_flush            (Evas *e);
@@ -330,19 +341,19 @@ extern "C" {
    int               evas_image_cache_get              (Evas *e);
    
    Evas_Object      *evas_object_text_add              (Evas *e);
-   void              evas_object_text_font_set         (Evas_Object *obj, const char *font, double size);
-   void              evas_object_text_font_get         (Evas_Object *obj, char **font, double *size);
+   void              evas_object_text_font_set         (Evas_Object *obj, const char *font, Evas_Font_Size size);
+   void              evas_object_text_font_get         (Evas_Object *obj, char **font, Evas_Font_Size *size);
    void              evas_object_text_text_set         (Evas_Object *obj, const char *text);
    const char       *evas_object_text_text_get         (Evas_Object *obj);
-   double            evas_object_text_ascent_get       (Evas_Object *obj);
-   double            evas_object_text_descent_get      (Evas_Object *obj);
-   double            evas_object_text_max_ascent_get   (Evas_Object *obj);
-   double            evas_object_text_max_descent_get  (Evas_Object *obj);
-   double            evas_object_text_horiz_advance_get(Evas_Object *obj);
-   double            evas_object_text_vert_advance_get (Evas_Object *obj);
-   double            evas_object_text_inset_get        (Evas_Object *obj);
-   int               evas_object_text_char_pos_get     (Evas_Object *obj, int pos, double *cx, double *cy, double *cw, double *ch);
-   int               evas_object_text_char_coords_get  (Evas_Object *obj, double x, double y, double *cx, double *cy, double *cw, double *ch);
+   Evas_Coord        evas_object_text_ascent_get       (Evas_Object *obj);
+   Evas_Coord        evas_object_text_descent_get      (Evas_Object *obj);
+   Evas_Coord        evas_object_text_max_ascent_get   (Evas_Object *obj);
+   Evas_Coord        evas_object_text_max_descent_get  (Evas_Object *obj);
+   Evas_Coord        evas_object_text_horiz_advance_get(Evas_Object *obj);
+   Evas_Coord        evas_object_text_vert_advance_get (Evas_Object *obj);
+   Evas_Coord        evas_object_text_inset_get        (Evas_Object *obj);
+   int               evas_object_text_char_pos_get     (Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
+   int               evas_object_text_char_coords_get  (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
    
    int               evas_string_char_next_get         (const char *str, int pos, int *decoded);
    int               evas_string_char_prev_get         (const char *str, int pos, int *decoded);
@@ -372,13 +383,13 @@ extern "C" {
    Evas_Object      *evas_object_bottom_get            (Evas *e);
    Evas_Object      *evas_object_top_get               (Evas *e);
        
-   void              evas_object_move                  (Evas_Object *obj, double x, double y);
-   void              evas_object_resize                (Evas_Object *obj, double w, double h);
-   void              evas_object_geometry_get          (Evas_Object *obj, double *x, double *y, double *w, double *h);   
+   void              evas_object_move                  (Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+   void              evas_object_resize                (Evas_Object *obj, Evas_Coord w, Evas_Coord h);
+   void              evas_object_geometry_get          (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);   
 
    void              evas_object_show                  (Evas_Object *obj);
    void              evas_object_hide                  (Evas_Object *obj);
-   int               evas_object_visible_get           (Evas_Object *obj);
+   Evas_Bool         evas_object_visible_get           (Evas_Object *obj);
    
    void              evas_object_color_set             (Evas_Object *obj, int r, int g, int b, int a);
    void              evas_object_color_get             (Evas_Object *obj, int *r, int *g, int *b, int *a);
@@ -398,14 +409,14 @@ extern "C" {
    
    Evas             *evas_object_evas_get              (Evas_Object *obj);
    
-   Evas_Object      *evas_object_top_at_xy_get         (Evas *e, double x, double y, int include_pass_events_objects, int include_hidden_objects);
+   Evas_Object      *evas_object_top_at_xy_get         (Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects);
    Evas_Object      *evas_object_top_at_pointer_get    (Evas *e);
-   Evas_Object      *evas_object_top_in_rectangle_get  (Evas *e, double x, double y, double w, double h, int include_pass_events_objects, int include_hidden_objects);
+   Evas_Object      *evas_object_top_in_rectangle_get  (Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects);
    
-   Evas_List        *evas_objects_at_xy_get            (Evas *e, double x, double y, int include_pass_events_objects, int include_hidden_objects);
-   Evas_List        *evas_objects_in_rectangle_get     (Evas *e, double x, double y, double w, double h, int include_pass_events_objects, int include_hidden_objects);
+   Evas_List        *evas_objects_at_xy_get            (Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects);
+   Evas_List        *evas_objects_in_rectangle_get     (Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects);
 
-   Evas_Smart       *evas_smart_new                    (const char *name, void (*func_add) (Evas_Object *obj), void (*func_del) (Evas_Object *obj), void (*func_layer_set) (Evas_Object *obj, int l), void (*func_raise) (Evas_Object *obj), void (*func_lower) (Evas_Object *obj), void (*func_stack_above) (Evas_Object *obj, Evas_Object *above), void (*func_stack_below) (Evas_Object *obj, Evas_Object *below), void (*func_move) (Evas_Object *obj, double x, double y), void (*func_resize) (Evas_Object *obj, double w, double h), void (*func_show) (Evas_Object *obj), void (*func_hide) (Evas_Object *obj), void (*func_color_set) (Evas_Object *obj, int r, int g, int b, int a), void (*func_clip_set) (Evas_Object *obj, Evas_Object *clip), void (*func_clip_unset) (Evas_Object *obj), const void *data);
+   Evas_Smart       *evas_smart_new                    (const char *name, void (*func_add) (Evas_Object *obj), void (*func_del) (Evas_Object *obj), void (*func_layer_set) (Evas_Object *obj, int l), void (*func_raise) (Evas_Object *obj), void (*func_lower) (Evas_Object *obj), void (*func_stack_above) (Evas_Object *obj, Evas_Object *above), void (*func_stack_below) (Evas_Object *obj, Evas_Object *below), void (*func_move) (Evas_Object *obj, Evas_Coord x, Evas_Coord y), void (*func_resize) (Evas_Object *obj, Evas_Coord w, Evas_Coord h), void (*func_show) (Evas_Object *obj), void (*func_hide) (Evas_Object *obj), void (*func_color_set) (Evas_Object *obj, int r, int g, int b, int a), void (*func_clip_set) (Evas_Object *obj, Evas_Object *clip), void (*func_clip_unset) (Evas_Object *obj), const void *data);
    void              evas_smart_free                   (Evas_Smart *s);
    Evas_Smart       *evas_smart_class_new              (Evas_Smart_Class *sc);
    Evas_Smart_Class *evas_smart_class_get              (Evas_Smart *s);
@@ -442,17 +453,17 @@ extern "C" {
    void              evas_event_feed_key_down          (Evas *e, const char *keyname);
    void              evas_event_feed_key_up            (Evas *e, const char *keyname);
 
-   void              evas_object_focus_set             (Evas_Object *obj, int focus);
-   int               evas_object_focus_get             (Evas_Object *obj);
+   void              evas_object_focus_set             (Evas_Object *obj, Evas_Bool focus);
+   Evas_Bool         evas_object_focus_get             (Evas_Object *obj);
 
    Evas_Object      *evas_focus_get                    (Evas *e);
 
    Evas_Modifier    *evas_key_modifier_get             (Evas *e);
    Evas_Lock        *evas_key_lock_get                 (Evas *e);
 
-   int               evas_key_modifier_is_set_get      (Evas_Modifier *m, const char *keyname);
+   Evas_Bool         evas_key_modifier_is_set_get      (Evas_Modifier *m, const char *keyname);
 
-   int               evas_key_lock_is_set_get          (Evas_Lock *l, const char *keyname);
+   Evas_Bool         evas_key_lock_is_set_get          (Evas_Lock *l, const char *keyname);
    
    void              evas_key_modifier_add             (Evas *e, const char *keyname);
    void              evas_key_modifier_del             (Evas *e, const char *keyname);
@@ -466,13 +477,13 @@ extern "C" {
    
    Evas_Modifier_Mask evas_key_modifier_mask_get       (Evas *e, const char *keyname);
 
-   int               evas_object_key_grab              (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, int exclusive);
+   Evas_Bool         evas_object_key_grab        (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Evas_Bool exclusive);
    void              evas_object_key_ungrab            (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
    
-   void              evas_object_pass_events_set       (Evas_Object *obj, int pass);
-   int               evas_object_pass_events_get       (Evas_Object *obj);
-   void              evas_object_repeat_events_set     (Evas_Object *obj, int repeat);
-   int               evas_object_repeat_events_get     (Evas_Object *obj);
+   void              evas_object_pass_events_set       (Evas_Object *obj, Evas_Bool pass);
+   Evas_Bool         evas_object_pass_events_get       (Evas_Object *obj);
+   void              evas_object_repeat_events_set     (Evas_Object *obj, Evas_Bool repeat);
+   Evas_Bool         evas_object_repeat_events_get     (Evas_Object *obj);
 
    void              evas_object_event_callback_add    (Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), const void *data);
    void             *evas_object_event_callback_del    (Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info));
@@ -481,10 +492,10 @@ extern "C" {
    void             *evas_object_intercept_show_callback_del        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj));
    void              evas_object_intercept_hide_callback_add        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), const void *data);
    void             *evas_object_intercept_hide_callback_del        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj));
-   void              evas_object_intercept_move_callback_add        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, double x, double y), const void *data);
-   void             *evas_object_intercept_move_callback_del        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, double x, double y));
-   void              evas_object_intercept_resize_callback_add      (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, double w, double h), const void *data);
-   void             *evas_object_intercept_resize_callback_del      (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, double w, double h));
+   void              evas_object_intercept_move_callback_add        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y), const void *data);
+   void             *evas_object_intercept_move_callback_del        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y));
+   void              evas_object_intercept_resize_callback_add      (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Coord w, Evas_Coord h), const void *data);
+   void             *evas_object_intercept_resize_callback_del      (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Coord w, Evas_Coord h));
    void              evas_object_intercept_raise_callback_add       (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), const void *data);
    void             *evas_object_intercept_raise_callback_del       (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj));
    void              evas_object_intercept_lower_callback_add       (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), const void *data);

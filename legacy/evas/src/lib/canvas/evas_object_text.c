@@ -15,7 +15,7 @@ struct _Evas_Object_Text
    struct {
       char          *text;
       char          *font;
-      double         size;
+      Evas_Font_Size size;
    } cur, prev;
    char              changed : 1;
    
@@ -245,7 +245,6 @@ object_text_font_cache_dir_add(char *dir)
 	       {
 		  char font_prop[14][256];
 		  int i;
-		  int match;
 		  
 		  /* skip comments */
 		  if ((fdef[0] == '!') || (fdef[0] == '#')) continue;
@@ -482,10 +481,10 @@ evas_object_text_add(Evas *e)
  * 
  */
 void
-evas_object_text_font_set(Evas_Object *obj, const char *font, double size)
+evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size size)
 {
    Evas_Object_Text *o;
-   int is, was;
+   int is, was = 0;
    int same_font = 0;
       
    if (!font) return;
@@ -521,7 +520,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, double size)
 	  {
 	     char *f_file;
 
-	     f_file = object_text_font_cache_find(l->data, font);
+	     f_file = object_text_font_cache_find(l->data, (char *)font);
 	     if (f_file)
 	       {
 		  o->engine_data = obj->layer->evas->engine.func->font_load(obj->layer->evas->engine.data.output,
@@ -604,7 +603,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, double size)
  * 
  */
 void
-evas_object_text_font_get(Evas_Object *obj, char **font, double *size)
+evas_object_text_font_get(Evas_Object *obj, char **font, Evas_Font_Size *size)
 {
    Evas_Object_Text *o;
       
@@ -710,7 +709,7 @@ evas_object_text_text_get(Evas_Object *obj)
  * FIXME: To be fixed.
  * 
  */
-double
+Evas_Coord
 evas_object_text_ascent_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
@@ -731,7 +730,7 @@ evas_object_text_ascent_get(Evas_Object *obj)
  * FIXME: To be fixed.
  * 
  */
-double
+Evas_Coord
 evas_object_text_descent_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
@@ -752,7 +751,7 @@ evas_object_text_descent_get(Evas_Object *obj)
  * FIXME: To be fixed.
  * 
  */
-double
+Evas_Coord
 evas_object_text_max_ascent_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
@@ -773,7 +772,7 @@ evas_object_text_max_ascent_get(Evas_Object *obj)
  * FIXME: To be fixed.
  * 
  */
-double
+Evas_Coord
 evas_object_text_max_descent_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
@@ -794,7 +793,7 @@ evas_object_text_max_descent_get(Evas_Object *obj)
  * FIXME: To be fixed.
  * 
  */
-double
+Evas_Coord
 evas_object_text_inset_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
@@ -817,7 +816,7 @@ evas_object_text_inset_get(Evas_Object *obj)
  * FIXME: To be fixed.
  * 
  */
-double
+Evas_Coord
 evas_object_text_horiz_advance_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
@@ -840,7 +839,7 @@ evas_object_text_horiz_advance_get(Evas_Object *obj)
  * FIXME: To be fixed.
  * 
  */
-double
+Evas_Coord
 evas_object_text_vert_advance_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
@@ -864,7 +863,7 @@ evas_object_text_vert_advance_get(Evas_Object *obj)
  * 
  */
 int
-evas_object_text_char_pos_get(Evas_Object *obj, int pos, double *cx, double *cy, double *cw, double *ch)
+evas_object_text_char_pos_get(Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Evas_Object_Text *o;
    int ret, x = 0, y = 0, w = 0, h = 0;
@@ -917,7 +916,7 @@ evas_object_text_char_pos_get(Evas_Object *obj, int pos, double *cx, double *cy,
  * 
  */
 int
-evas_object_text_char_coords_get(Evas_Object *obj, double x, double y, double *cx, double *cy, double *cw, double *ch)
+evas_object_text_char_coords_get(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Evas_Object_Text *o;
    int ret, rx = 0, ry = 0, rw = 0, rh = 0;
@@ -1101,7 +1100,7 @@ evas_string_char_next_get(const char *str, int pos, int *decoded)
    if (!str) return 0;
    if (pos < 0) return 0;
    p = pos;
-   d = evas_common_font_utf8_get_next(str, &p);
+   d = evas_common_font_utf8_get_next((char *)str, &p);
    if (decoded) *decoded = d;
    return p;
 }
@@ -1121,7 +1120,7 @@ evas_string_char_prev_get(const char *str, int pos, int *decoded)
    if (!str) return 0;
    if (pos < 0) return 0;
    p = pos;
-   d = evas_common_font_utf8_get_prev(str, &p);
+   d = evas_common_font_utf8_get_prev((char *)str, &p);
    if (decoded) *decoded = d;
    return p;
 }

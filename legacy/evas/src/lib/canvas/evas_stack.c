@@ -290,7 +290,7 @@ evas_object_below_get(Evas_Object *obj)
 Evas_Object *
 evas_object_bottom_get(Evas *e)
 {
-   Evas_Object *obj2;
+   Evas_Object *obj2 = NULL;
    
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
@@ -311,7 +311,7 @@ evas_object_bottom_get(Evas *e)
 Evas_Object *
 evas_object_top_get(Evas *e)
 {
-   Evas_Object *obj2;
+   Evas_Object *obj2 = NULL;
    
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;

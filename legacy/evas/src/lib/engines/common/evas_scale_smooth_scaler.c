@@ -6,7 +6,6 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
 	   int dst_region_x, int dst_region_y, 
 	   int dst_region_w, int dst_region_h)
 {
-   int      divx, divy;
    int      x, y;
    int     *lin_ptr, *lin2_ptr;
    int     *interp_x, *interp_y;
@@ -291,11 +290,35 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
 		    {
 		       lin_ptr[x] = (((x + dst_clip_x - dst_region_x) * 
 				      (src_region_w)) / dst_region_w);
-		       if (src_region_w > 4096)
+		       if (dst_region_w > 262144)
+			 interp_x[x] = (((((x + dst_clip_x - dst_region_x) * 
+					   (src_region_w))) / dst_region_w) -
+					(lin_ptr[x])) << 8;
+		       else if (dst_region_w > 131072)
+			 interp_x[x] = (((((x + dst_clip_x - dst_region_x) * 
+					   (src_region_w)) << 1) / dst_region_w) -
+					(lin_ptr[x] << 1)) << 7;
+		       else if (dst_region_w > 65536)
+			 interp_x[x] = (((((x + dst_clip_x - dst_region_x) * 
+					   (src_region_w)) << 2) / dst_region_w) -
+					(lin_ptr[x] << 2)) << 6;
+		       else if (dst_region_w > 37268)
+			 interp_x[x] = (((((x + dst_clip_x - dst_region_x) * 
+					   (src_region_w)) << 3) / dst_region_w) -
+					(lin_ptr[x] << 3)) << 5;
+		       else if (dst_region_w > 16384)
+			 interp_x[x] = (((((x + dst_clip_x - dst_region_x) * 
+					   (src_region_w)) << 4) / dst_region_w) -
+					(lin_ptr[x] << 4)) << 4;
+		       else if (dst_region_w > 8192)
+			 interp_x[x] = (((((x + dst_clip_x - dst_region_x) * 
+					   (src_region_w)) << 5) / dst_region_w) -
+					(lin_ptr[x] << 5)) << 3;
+		       else if (dst_region_w > 4096)
 			 interp_x[x] = (((((x + dst_clip_x - dst_region_x) * 
 					   (src_region_w)) << 6) / dst_region_w) -
 					(lin_ptr[x] << 6)) << 2;
-		       else if (src_region_w > 2048)
+		       else if (dst_region_w > 2048)
 			 interp_x[x] = (((((x + dst_clip_x - dst_region_x) * 
 					   (src_region_w)) << 7) / dst_region_w) -
 					(lin_ptr[x] << 7)) << 1;
@@ -322,11 +345,35 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
 		       pos = (((y + dst_clip_y - dst_region_y) * 
 			       (src_region_h)) / dst_region_h);
 		       row_ptr[y] = src_data + ((pos + src_region_y) * src_w);
-		       if (src_region_h > 4096)
+		       if (dst_region_h > 262144)
+			 interp_y[y] = (((((y + dst_clip_y - dst_region_y) * 
+					   (src_region_h))) / dst_region_h) -
+					(pos)) << 8;
+		       else if (dst_region_h > 131072)
+			 interp_y[y] = (((((y + dst_clip_y - dst_region_y) * 
+					   (src_region_h)) << 1) / dst_region_h) -
+					(pos << 1)) << 7;
+		       else if (dst_region_h > 65536)
+			 interp_y[y] = (((((y + dst_clip_y - dst_region_y) * 
+					   (src_region_h)) << 2) / dst_region_h) -
+					(pos << 2)) << 6;
+		       else if (dst_region_h > 32768)
+			 interp_y[y] = (((((y + dst_clip_y - dst_region_y) * 
+					   (src_region_h)) << 3) / dst_region_h) -
+					(pos << 3)) << 5;
+		       else if (dst_region_h > 16384)
+			 interp_y[y] = (((((y + dst_clip_y - dst_region_y) * 
+					   (src_region_h)) << 4) / dst_region_h) -
+					(pos << 4)) << 4;
+		       else if (dst_region_h > 8192)
+			 interp_y[y] = (((((y + dst_clip_y - dst_region_y) * 
+					   (src_region_h)) << 5) / dst_region_h) -
+					(pos << 5)) << 3;
+		       else if (dst_region_h > 4096)
 			 interp_y[y] = (((((y + dst_clip_y - dst_region_y) * 
 					   (src_region_h)) << 6) / dst_region_h) -
 					(pos << 6)) << 2;
-		       else if (src_region_h > 2048)
+		       else if (dst_region_h > 2048)
 			 interp_y[y] = (((((y + dst_clip_y - dst_region_y) * 
 					   (src_region_h)) << 7) / dst_region_h) -
 					(pos << 7)) << 1;
@@ -630,6 +677,7 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
 	     DATA32       *src_data, *src2_data;	
 	     RGBA_Surface *srf1, *srf2;
 	     int           mix;
+	     int           divx, divy;
 	     
 	     /* no mipmaps at all- need to populate mipmap table */
 	     if (src->mipmaps.num == 0)
@@ -847,7 +895,7 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
 #define YAP                       (yapoints[dyy + y])
 	     /* NEW scaling code... */
 	     DATA32 *sptr;
-	     int x, y, dyy;
+	     int x, y;
 	     DATA32 **ypoints;
 	     int *xpoints;
 	     int *xapoints;

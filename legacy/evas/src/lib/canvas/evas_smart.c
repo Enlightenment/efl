@@ -19,8 +19,8 @@ evas_smart_new(const char *name,
 	       void      (*func_lower) (Evas_Object *o),
 	       void      (*func_stack_above) (Evas_Object *o, Evas_Object *above),
 	       void      (*func_stack_below) (Evas_Object *o, Evas_Object *below),
-	       void      (*func_move) (Evas_Object *o, double x, double y),
-	       void      (*func_resize) (Evas_Object *o, double w, double h),
+	       void      (*func_move) (Evas_Object *o, Evas_Coord x, Evas_Coord y),
+	       void      (*func_resize) (Evas_Object *o, Evas_Coord w, Evas_Coord h),
 	       void      (*func_show) (Evas_Object *o),
 	       void      (*func_hide) (Evas_Object *o),
 	       void      (*func_color_set) (Evas_Object *o, int r, int g, int b, int a),
@@ -133,7 +133,7 @@ evas_smart_data_get(Evas_Smart *s)
    MAGIC_CHECK(s, Evas_Smart, MAGIC_SMART);
    return NULL;
    MAGIC_CHECK_END();
-   return s->smart_class->data;
+   return (void *)s->smart_class->data;
 }
 
 /* internal funcs */

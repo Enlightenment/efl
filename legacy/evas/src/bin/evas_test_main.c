@@ -171,7 +171,7 @@ loop(void)
 #endif     
    if (t <= 2.0)
      {
-	double              y;
+	Evas_Coord              y;
 
 	y = sin((t / 2) * (EVAS_PI / 2)) * 240;
 	evas_object_move(panel, 0, win_h - y);
@@ -260,7 +260,7 @@ loop(void)
 	  }
 	for (i = 0; i < 16; i++)
 	  {
-	     double              x, y;
+	     Evas_Coord              x, y;
 	     double              v;
 	     
 	     v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
@@ -279,7 +279,7 @@ loop(void)
 	for (i = 0; i < 2; i++)
 	  {
 	     int iw, ih;
-	     double              x, y;
+	     Evas_Coord              x, y;
 	     double              v;
 	     
 	     evas_object_image_size_get(p_i[i], &iw, &ih);
@@ -295,7 +295,7 @@ loop(void)
 	  }
 	for (i = 0; i < 16; i++)
 	  {
-	     double              x, y;
+	     Evas_Coord              x, y;
 	     double              v;
 	     
 	     v = (((t - 6.0) / 24.0) * EVAS_PI * 2) * 2;
@@ -305,7 +305,7 @@ loop(void)
 	  }
 	for (i = 0; i < 8; i++)
 	  {
-	     double              x, y;
+	     Evas_Coord              x, y;
 	     double              v;
 	     
 	     v = (((t - 6.0) / 29.0) * EVAS_PI * 2) * 2;
@@ -324,7 +324,7 @@ loop(void)
      }
    else if (t <= 36.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 	static int          did_fps = 0;
 	
 	if (!did_fps)
@@ -407,7 +407,7 @@ loop(void)
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
 	{
-	   double              x, y;
+	   Evas_Coord              x, y;
 	   double              v;
 
 	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
@@ -421,14 +421,14 @@ loop(void)
      }
    else if (t <= 46.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment, "Image objects can be resized");
 	evas_object_text_text_set(title, "Test 2: Resize 2 Images");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
 	{
-	   double              x, y;
+	   Evas_Coord              x, y;
 	   double              v;
 
 	   v = (((t - 16.0) / 10.0) * EVAS_PI * 2) * 2;
@@ -443,7 +443,7 @@ loop(void)
 
    else if (t <= 56.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment,
 				  "Image objects are filled and scaled differently");
@@ -451,7 +451,7 @@ loop(void)
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
 	{
-	   double              x, y;
+	   Evas_Coord              x, y;
 	   double              v;
 
 	   v = (((t - 26.0) / 10.0) * EVAS_PI * 2) * 2;
@@ -467,7 +467,7 @@ loop(void)
      }
    else if (t <= 66.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment, "Image objects are offset filled");
 	evas_object_text_text_set(title, "Test 4: Fill Offset 2 Images");
@@ -477,7 +477,7 @@ loop(void)
 	evas_object_resize(t1, 100, 100);
 	evas_object_image_fill_set(t1, -25, -25, 100, 100);
 	{
-	   double              x, y;
+	   Evas_Coord              x, y;
 	   double              v;
 
 	   v = (((t - 36.0) / 10.0) * EVAS_PI * 2) * 2;
@@ -494,7 +494,7 @@ loop(void)
 
    else if (t <= 76.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment,
 				  "Edges of images can be scaled differently");
@@ -504,7 +504,7 @@ loop(void)
 	evas_object_image_border_set(t1, 8, 8, 8, 8);
 	evas_object_image_border_set(t2, 8, 8, 8, 8);
 	{
-	   double              x, y;
+	   Evas_Coord              x, y;
 	   double              v;
 
 	   v = (((t - 46.0) / 10.0) * EVAS_PI * 2) * 2;
@@ -520,7 +520,7 @@ loop(void)
      }
    else if (t <= 96.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 	int                 iw, ih;
 
 	evas_object_text_text_set(title, "Test 7: Image Quality");
@@ -546,7 +546,7 @@ loop(void)
 	  }
 	{
 	   double              v;
-	   double              x, y;
+	   Evas_Coord              x, y;
 
 	   evas_object_image_size_get(test_pattern, &iw, &ih);
 	   v = 2.0 - ((t - 76.0) / 10.0);
@@ -576,7 +576,7 @@ loop(void)
      }
    else if (t <= 106.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 	int                 iw, ih;
 
 	evas_object_text_text_set(title, "Test 8: Raise & Lower");
@@ -610,7 +610,7 @@ loop(void)
      }
    else if (t <= 116.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 	int                 iw, ih;
 
 	evas_object_text_text_set(title, "Test 9: Layer Setting");
@@ -646,7 +646,7 @@ loop(void)
      }
    else if (t <= 126.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 	int                 iw, ih;
 
 	evas_object_text_text_set(title, "Test 10: Show & Hide");
@@ -680,7 +680,7 @@ loop(void)
      }
    else if (t <= 156.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 	int                 iw, ih;
 
 	evas_object_text_text_set(title, "Test 11: Image Data Access");
@@ -770,7 +770,7 @@ loop(void)
      }
    else if (t <= 166.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(title, "Test 12: Image Destroy & Create");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
@@ -838,7 +838,7 @@ loop(void)
      }
    else if (t <= 176.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(title, "Test 13: Line Destroy & Create");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
@@ -888,7 +888,7 @@ loop(void)
      }
    else if (t <= 186.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(title, "Test 14: Rectangle Destroy & Create");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
@@ -940,7 +940,7 @@ loop(void)
      }
    else if (t <= 196.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(title, "Test 15: Gradient Destroy & Create");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
@@ -998,7 +998,7 @@ loop(void)
      }
    else if (t <= 206.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(title, "Test 16: Polygon Destroy & Create");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
@@ -1052,7 +1052,7 @@ loop(void)
      }
    else if (t <= 216.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(title, "Test 17: Text Destroy & Create");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
@@ -1113,7 +1113,7 @@ loop(void)
      }
    else if (t <= 227.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment,
 				  "Image objects can be clipped by rectangles");
@@ -1178,7 +1178,7 @@ loop(void)
 	     evas_object_clip_set(t2, c2);
 	  }
 	{
-	   double              x, y;
+	   Evas_Coord              x, y;
 	   double              v;
 
 	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
@@ -1192,7 +1192,7 @@ loop(void)
      }
    else if (t <= 237.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment,
 				  "Image objects can be clipped by recursively");
@@ -1201,7 +1201,7 @@ loop(void)
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
 	evas_object_clip_set(c2, c1);
 	{
-	   double              x, y;
+	   Evas_Coord              x, y;
 	   double              v;
 
 	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
@@ -1215,7 +1215,7 @@ loop(void)
      }
    else if (t <= 247.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment,
 				  "Clip objects can move around too...");
@@ -1223,7 +1223,7 @@ loop(void)
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
 	{
-	   double              x, y;
+	   Evas_Coord              x, y;
 	   double              v;
 
 	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
@@ -1239,7 +1239,7 @@ loop(void)
      }
    else if (t <= 257.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment,
 				  "Clip objects can resize around too...");
@@ -1247,7 +1247,7 @@ loop(void)
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
 	{
-	   double              x, y;
+	   Evas_Coord              x, y;
 	   double              v;
 
 	   evas_object_move(t1, 40, win_h - 240 + 60);
@@ -1265,7 +1265,7 @@ loop(void)
      }
    else if (t <= 267.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment, "Clip objects can hide and show...");
 	evas_object_text_text_set(title, "Test 21: Show and Hide Clip Objects");
@@ -1314,7 +1314,7 @@ loop(void)
      }
    else if (t <= 277.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment,
 				  "Clip objects can clip and unclip...");
@@ -1344,7 +1344,7 @@ loop(void)
      }
    else if (t <= 287.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment, "Clip objects can be destroyed...");
 	evas_object_text_text_set(title, "Test 23: Destroy Clip Objects");
@@ -1408,7 +1408,7 @@ loop(void)
      }
    else if (t <= 298.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment,
 				  "We can change the text of a text object");
@@ -1450,7 +1450,7 @@ loop(void)
      }
    else if (t <= 308.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment, "We can change the font size");
 	evas_object_text_text_set(title, "Test 25: Set Text Object Size");
@@ -1460,7 +1460,7 @@ loop(void)
      }
    else if (t <= 318.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment, "We can move text");
 	evas_object_text_text_set(title, "Test 26: Move Text Object");
@@ -1469,7 +1469,7 @@ loop(void)
 	evas_object_text_font_set(t1, "arial", 24);
 	evas_object_text_text_set(t1, "Evas");
 	{
-	   double              x, y;
+	   Evas_Coord              x, y;
 	   double              v;
 
 	   evas_object_geometry_get(t1, NULL, NULL, &tw, &th);
@@ -1481,7 +1481,7 @@ loop(void)
      }
    else if (t <= 328.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment, "We can change the font");
 	evas_object_text_text_set(title, "Test 27: Set Text Object Font");
@@ -1509,7 +1509,7 @@ loop(void)
      }
    else if (t <= 338.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment, "We can change the color");
 	evas_object_text_text_set(title, "Test 28: Set Text Object Color");
@@ -1535,7 +1535,7 @@ loop(void)
      }
    else if (t <= 349.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment, "We can move gradients around");
 	evas_object_text_text_set(title, "Test 29: Move Gradients");
@@ -1560,7 +1560,7 @@ loop(void)
 	     t1 = ob;
 	  }
 	{
-	   double              x, y;
+	   Evas_Coord              x, y;
 	   double              v;
 
 	   evas_object_geometry_get(t1, NULL, NULL, &tw, &th);
@@ -1572,14 +1572,14 @@ loop(void)
      }
    else if (t <= 359.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment, "We can resize gradients");
 	evas_object_text_text_set(title, "Test 30: Resize Gradients");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
 	{
-	   double              x, y;
+	   Evas_Coord              x, y;
 	   double              v;
 
 	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
@@ -1591,7 +1591,7 @@ loop(void)
      }
    else if (t <= 369.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment,
 				  "We can change gradient angle fills & resize");
@@ -1599,7 +1599,7 @@ loop(void)
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
 	{
-	   double              x, y;
+	   Evas_Coord              x, y;
 	   double              v;
 
 	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
@@ -1611,7 +1611,7 @@ loop(void)
      }
    else if (t <= 379.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment,
 				  "We can change color gradient, angle fill & resize");
@@ -1619,7 +1619,7 @@ loop(void)
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
 	{
-	   double              x, y;
+	   Evas_Coord              x, y;
 	   double              v;
 
 	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
@@ -1649,7 +1649,7 @@ loop(void)
      }
    else if (t <= 369.0)		/* FAIL! software_x11, fb */
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment,
 				  "We can change color of a gradient object");
@@ -1657,7 +1657,7 @@ loop(void)
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
 	{
-	   double              x, y;
+	   Evas_Coord              x, y;
 	   double              v;
 
 	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
@@ -1686,7 +1686,7 @@ loop(void)
      }
    else if (t <= 400.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment,
 				  "We can move, resize and recolor rectangles");
@@ -1706,7 +1706,7 @@ loop(void)
 	     t1 = ob;
 	  }
 	{
-	   double              x, y;
+	   Evas_Coord              x, y;
 	   double              v;
 
 	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
@@ -1736,7 +1736,7 @@ loop(void)
      }
    else if (t <= 411.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment,
 				  "We can modify line begin & end coords");
@@ -1758,7 +1758,7 @@ loop(void)
 	     t1 = ob;
 	  }
 	{
-	   double              x, y, xx, yy;
+	   Evas_Coord              x, y, xx, yy;
 	   double              v;
 
 	   v = (((t - 2.0) / 12.0) * EVAS_PI * 2) * 2;
@@ -1779,7 +1779,7 @@ loop(void)
      }
    else if (t <= 421.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment,
 				  "We can move, resize and recolor lines");
@@ -1787,7 +1787,7 @@ loop(void)
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
 	{
-	   double              x, y;
+	   Evas_Coord              x, y;
 	   double              v;
 
 	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
@@ -1817,7 +1817,7 @@ loop(void)
      }
    else if (t <= 432.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment, "We can modify polygon points");
 	evas_object_text_text_set(title, "Test 36: Polygons");
@@ -1838,7 +1838,7 @@ loop(void)
 	     t1 = ob;
 	  }
 	{
-	   double              x, y;
+	   Evas_Coord              x, y;
 	   double              v;
 
 	   evas_object_polygon_points_clear(t1);
@@ -1870,7 +1870,7 @@ loop(void)
      }
    else if (t <= 442.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment,
 				  "We can move, resize and recolor polygons");
@@ -1878,7 +1878,7 @@ loop(void)
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
 	{
-	   double              x, y;
+	   Evas_Coord              x, y;
 	   double              v;
 
 	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
@@ -1908,7 +1908,7 @@ loop(void)
      }
    else if (t <= 453.0)
      {
-	double              tw, th;
+	Evas_Coord              tw, th;
 
 	evas_object_text_text_set(comment,
 				  "We are now done with testing. Goodbye!");

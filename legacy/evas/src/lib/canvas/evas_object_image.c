@@ -14,7 +14,7 @@ struct _Evas_Object_Image
    
    struct {
       struct {
-	 double      x, y, w, h;
+	 Evas_Coord  x, y, w, h;
       } fill;      
       struct {
 	 short       w, h;
@@ -41,8 +41,8 @@ struct _Evas_Object_Image
 /* private methods for image objects */
 static void evas_object_image_unload(Evas_Object *obj);
 static void evas_object_image_load(Evas_Object *obj);
-static double evas_object_image_figure_x_fill(Evas_Object *obj, double start, double size, double *size_ret);
-static double evas_object_image_figure_y_fill(Evas_Object *obj, double start, double size, double *size_ret);
+static Evas_Coord evas_object_image_figure_x_fill(Evas_Object *obj, Evas_Coord start, Evas_Coord size, Evas_Coord *size_ret);
+static Evas_Coord evas_object_image_figure_y_fill(Evas_Object *obj, Evas_Coord start, Evas_Coord size, Evas_Coord *size_ret);
 
 static void evas_object_image_init(Evas_Object *obj);
 static void *evas_object_image_new(void);
@@ -256,7 +256,7 @@ evas_object_image_border_get(Evas_Object *obj, int *l, int *r, int *t, int *b)
  * 
  */
 void
-evas_object_image_fill_set(Evas_Object *obj, double x, double y, double w, double h)
+evas_object_image_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    Evas_Object_Image *o;
    
@@ -290,7 +290,7 @@ evas_object_image_fill_set(Evas_Object *obj, double x, double y, double w, doubl
  * 
  */
 void
-evas_object_image_fill_get(Evas_Object *obj, double *x, double *y, double *w, double *h)
+evas_object_image_fill_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    Evas_Object_Image *o;
    
@@ -411,7 +411,7 @@ evas_object_image_load_error_get(Evas_Object *obj)
  * 
  */
 void
-evas_object_image_data_set(Evas_Object *obj, int *data)
+evas_object_image_data_set(Evas_Object *obj, void *data)
 {
    Evas_Object_Image *o;
    void *p_data;
@@ -447,8 +447,8 @@ evas_object_image_data_set(Evas_Object *obj, int *data)
  * FIXME: To be fixed.
  * 
  */
-int *
-evas_object_image_data_get(Evas_Object *obj, int for_writing)
+void *
+evas_object_image_data_get(Evas_Object *obj, Evas_Bool for_writing)
 {
    Evas_Object_Image *o;
    DATA32 *data;
@@ -478,7 +478,7 @@ evas_object_image_data_get(Evas_Object *obj, int for_writing)
  * 
  */
 void
-evas_object_image_data_copy_set(Evas_Object *obj, int *data)
+evas_object_image_data_copy_set(Evas_Object *obj, void *data)
 {
    Evas_Object_Image *o;
    
@@ -540,7 +540,7 @@ evas_object_image_data_update_add(Evas_Object *obj, int x, int y, int w, int h)
  * 
  */
 void
-evas_object_image_alpha_set(Evas_Object *obj, int has_alpha)
+evas_object_image_alpha_set(Evas_Object *obj, Evas_Bool has_alpha)
 {
    Evas_Object_Image *o;
    
@@ -569,7 +569,7 @@ evas_object_image_alpha_set(Evas_Object *obj, int has_alpha)
  * FIXME: To be fixed.
  * 
  */
-int
+Evas_Bool
 evas_object_image_alpha_get(Evas_Object *obj)
 {
    Evas_Object_Image *o;
@@ -591,7 +591,7 @@ evas_object_image_alpha_get(Evas_Object *obj)
  * 
  */
 void
-evas_object_image_smooth_scale_set(Evas_Object *obj, int smooth_scale)
+evas_object_image_smooth_scale_set(Evas_Object *obj, Evas_Bool smooth_scale)
 {
    Evas_Object_Image *o;
    
@@ -615,7 +615,7 @@ evas_object_image_smooth_scale_set(Evas_Object *obj, int smooth_scale)
  * FIXME: To be fixed.
  * 
  */
-int
+Evas_Bool
 evas_object_image_smooth_scale_get(Evas_Object *obj)
 {
    Evas_Object_Image *o;
@@ -827,13 +827,13 @@ evas_object_image_load(Evas_Object *obj)
      }
 }
 
-static double
-evas_object_image_figure_x_fill(Evas_Object *obj, double start, double size, double *size_ret)
+static Evas_Coord
+evas_object_image_figure_x_fill(Evas_Object *obj, Evas_Coord start, Evas_Coord size, Evas_Coord *size_ret)
 {
-   double w;
+   Evas_Coord w;
 
    w = ((size * obj->layer->evas->output.w) / 
-	(double)obj->layer->evas->viewport.w);
+	(Evas_Coord)obj->layer->evas->viewport.w);
    if (start > 0)
      {
 	while (start - size > 0) start -= size;
@@ -843,18 +843,18 @@ evas_object_image_figure_x_fill(Evas_Object *obj, double start, double size, dou
 	while (start < 0) start += size;
      }
    start = ((start * obj->layer->evas->output.w) /
-	    (double)obj->layer->evas->viewport.w);	    
+	    (Evas_Coord)obj->layer->evas->viewport.w);	    
    *size_ret = w;
    return start;
 }
 
-static double
-evas_object_image_figure_y_fill(Evas_Object *obj, double start, double size, double *size_ret)
+static Evas_Coord
+evas_object_image_figure_y_fill(Evas_Object *obj, Evas_Coord start, Evas_Coord size, Evas_Coord *size_ret)
 {
-   double h;
+   Evas_Coord h;
 
    h = ((size * obj->layer->evas->output.h) / 
-	(double)obj->layer->evas->viewport.h);
+	(Evas_Coord)obj->layer->evas->viewport.h);
    if (start > 0)
      {
 	while (start - size > 0) start -= size;
@@ -864,7 +864,7 @@ evas_object_image_figure_y_fill(Evas_Object *obj, double start, double size, dou
 	while (start < 0) start += size;
      }
    start = ((start * obj->layer->evas->output.h) /
-	    (double)obj->layer->evas->viewport.h);
+	    (Evas_Coord)obj->layer->evas->viewport.h);
    *size_ret = h;
    return start;
 }
@@ -962,7 +962,7 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 							   obj->cur.cache.clip.a);
    if (o->engine_data)
      {
-	double idw, idh, idx, idy;
+	Evas_Coord idw, idh, idx, idy;
 	int ix, iy, iw, ih;
 		  
 	idx = evas_object_image_figure_x_fill(obj, o->cur.fill.x, o->cur.fill.w, &idw);
@@ -973,7 +973,7 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 	if (idy > 0.0) idy -= idh;
 	while ((int)idx < obj->cur.cache.geometry.w)
 	  {
-	     double ydy;
+	     Evas_Coord ydy;
 	     int dobreak_w = 0;
 	     
 	     ydy = idy;
@@ -1247,7 +1247,7 @@ evas_object_image_render_pre(Evas_Object *obj)
 	     while (o->pixel_updates)
 	       {
 		  Evas_Rectangle *r, *rr;
-		  double idw, idh, idx, idy;
+		  Evas_Coord idw, idh, idx, idy;
 		  int x, y, w, h;
 		  
 		  rr = o->pixel_updates->data;
@@ -1255,13 +1255,13 @@ evas_object_image_render_pre(Evas_Object *obj)
 		  idx = evas_object_image_figure_x_fill(obj, o->cur.fill.x, o->cur.fill.w, &idw);
 		  idy = evas_object_image_figure_y_fill(obj, o->cur.fill.y, o->cur.fill.h, &idh);
 		  
-		  if (idw < 1.0) idw = 1.0;
-		  if (idh < 1.0) idh = 1.0;
+		  if (idw < 1) idw = 1;
+		  if (idh < 1) idh = 1;
 		  if (idx > 0) idx -= idw;
 		  if (idy > 0) idy -= idh;
 		  while (idx < obj->cur.cache.geometry.w)
 		    {
-		       double ydy;
+		       Evas_Coord ydy;
 		       
 		       ydy = idy;
 		       x = idx;

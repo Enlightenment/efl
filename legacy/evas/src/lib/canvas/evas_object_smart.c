@@ -231,13 +231,13 @@ evas_object_smart_callback_del(Evas_Object *obj, const char *event, void (*func)
    Evas_List *l;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return;
+   return NULL;
    MAGIC_CHECK_END();
    o = (Evas_Object_Smart *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
-   return;
+   return NULL;
    MAGIC_CHECK_END();
-   if (!event) return;
+   if (!event) return NULL;
    for (l = obj->smart.callbacks; l; l = l->next)
      {
 	Evas_Smart_Callback *cb;
@@ -347,7 +347,7 @@ evas_object_smart_cleanup(Evas_Object *obj)
 	if (cb->event) free(cb->event);
 	free(cb);
      }
-   obj->smart.parent;
+   obj->smart.parent = NULL;
    obj->smart.data = NULL;
    obj->smart.smart = NULL;
    if (s) evas_object_smart_unuse(s);
@@ -404,6 +404,9 @@ evas_object_smart_free(Evas_Object *obj)
 static void 
 evas_object_smart_render(Evas_Object *obj, void *output, void *context, void *surface, int x, int y)
 {
+   return;
+   obj = output = context = surface = NULL;
+   x = y = 0;
 }
 
 static void

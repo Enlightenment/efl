@@ -7,6 +7,7 @@
 /* adding in a new set of functions here */
 
 #ifndef _WIN32_WCE
+/* UNIX compatability functions */
 
 #include <limits.h>
 #include <unistd.h>
@@ -133,6 +134,7 @@ evas_file_path_resolve(const char *file)
 }
 
 #else
+/* WIN32 WINCE compatability functions */
 
 /* Forward declarations */
 

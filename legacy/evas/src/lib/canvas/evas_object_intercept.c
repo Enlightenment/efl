@@ -76,7 +76,7 @@ evas_object_intercept_call_hide(Evas_Object *obj)
 }
 
 int
-evas_object_intercept_call_move(Evas_Object *obj, double x, double y)
+evas_object_intercept_call_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    /* MEM OK */
    int ret;
@@ -92,7 +92,7 @@ evas_object_intercept_call_move(Evas_Object *obj, double x, double y)
 }
 
 int
-evas_object_intercept_call_resize(Evas_Object *obj, double w, double h)
+evas_object_intercept_call_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
    /* MEM OK */
    int ret;
@@ -285,7 +285,7 @@ evas_object_intercept_hide_callback_del(Evas_Object *obj, void (*func) (void *da
  * 
  */
 void
-evas_object_intercept_move_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, double x, double y), const void *data)
+evas_object_intercept_move_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y), const void *data)
 {
    /* MEM OK */
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -305,7 +305,7 @@ evas_object_intercept_move_callback_add(Evas_Object *obj, void (*func) (void *da
  * 
  */
 void *
-evas_object_intercept_move_callback_del(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, double x, double y))
+evas_object_intercept_move_callback_del(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y))
 {
    /* MEM OK */
    void *data;
@@ -313,6 +313,7 @@ evas_object_intercept_move_callback_del(Evas_Object *obj, void (*func) (void *da
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
+   if (!func) return NULL;
    if (!obj->interceptors) return NULL;
    obj->interceptors->move.func = NULL;
    data = obj->interceptors->move.data;
@@ -328,7 +329,7 @@ evas_object_intercept_move_callback_del(Evas_Object *obj, void (*func) (void *da
  * 
  */
 void
-evas_object_intercept_resize_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, double w, double h), const void *data)
+evas_object_intercept_resize_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Coord w, Evas_Coord h), const void *data)
 {
    /* MEM OK */
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -348,7 +349,7 @@ evas_object_intercept_resize_callback_add(Evas_Object *obj, void (*func) (void *
  * 
  */
 void *
-evas_object_intercept_resize_callback_del(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, double w, double h))
+evas_object_intercept_resize_callback_del(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Coord w, Evas_Coord h))
 {
    /* MEM OK */
    void *data;
@@ -356,6 +357,7 @@ evas_object_intercept_resize_callback_del(Evas_Object *obj, void (*func) (void *
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
+   if (!func) return NULL;
    if (!obj->interceptors) return NULL;
    obj->interceptors->resize.func = NULL;
    data = obj->interceptors->resize.data;
@@ -399,6 +401,7 @@ evas_object_intercept_raise_callback_del(Evas_Object *obj, void (*func) (void *d
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
+   if (!func) return NULL;
    if (!obj->interceptors) return NULL;
    obj->interceptors->raise.func = NULL;
    data = obj->interceptors->raise.data;
@@ -442,6 +445,7 @@ evas_object_intercept_lower_callback_del(Evas_Object *obj, void (*func) (void *d
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
+   if (!func) return NULL;
    if (!obj->interceptors) return NULL;
    obj->interceptors->lower.func = NULL;
    data = obj->interceptors->lower.data;
@@ -485,6 +489,7 @@ evas_object_intercept_stack_above_callback_del(Evas_Object *obj, void (*func) (v
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
+   if (!func) return NULL;
    if (!obj->interceptors) return NULL;
    obj->interceptors->stack_above.func = NULL;
    data = obj->interceptors->stack_above.data;
@@ -528,6 +533,7 @@ evas_object_intercept_stack_below_callback_del(Evas_Object *obj, void (*func) (v
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
+   if (!func) return NULL;
    if (!obj->interceptors) return NULL;
    obj->interceptors->stack_below.func = NULL;
    data = obj->interceptors->stack_below.data;
@@ -571,6 +577,7 @@ evas_object_intercept_layer_set_callback_del(Evas_Object *obj, void (*func) (voi
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
+   if (!func) return NULL;
    if (!obj->interceptors) return NULL;
    obj->interceptors->layer_set.func = NULL;
    data = obj->interceptors->layer_set.data;

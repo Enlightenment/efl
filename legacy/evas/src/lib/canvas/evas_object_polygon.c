@@ -20,7 +20,7 @@ struct _Evas_Object_Polygon
 
 struct _Evas_Polygon_Point
 {
-   double x, y;
+   Evas_Coord x, y;
 };
 
 /* private methods for polygon objects */
@@ -33,8 +33,8 @@ static void evas_object_polygon_render_post(Evas_Object *obj);
 
 static int evas_object_polygon_is_opaque(Evas_Object *obj);
 static int evas_object_polygon_was_opaque(Evas_Object *obj);
-static int evas_object_polygon_is_inside(Evas_Object *obj, double x, double y);
-static int evas_object_polygon_was_inside(Evas_Object *obj, double x, double y);
+static int evas_object_polygon_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+static int evas_object_polygon_was_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 
 static Evas_Object_Func object_func =
 {
@@ -85,12 +85,12 @@ evas_object_polygon_add(Evas *e)
  * 
  */
 void
-evas_object_polygon_point_add(Evas_Object *obj, double x, double y)
+evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    Evas_Object_Polygon *o;
    Evas_Polygon_Point *p;
-   double min_x, max_x, min_y, max_y;
-   int is, was;
+   Evas_Coord min_x, max_x, min_y, max_y;
+   int is, was = 0;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -406,7 +406,7 @@ evas_object_polygon_was_opaque(Evas_Object *obj)
 }
 
 static int
-evas_object_polygon_is_inside(Evas_Object *obj, double x, double y)
+evas_object_polygon_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    Evas_Object_Polygon *o;
    
@@ -420,7 +420,7 @@ evas_object_polygon_is_inside(Evas_Object *obj, double x, double y)
 }
 
 static int
-evas_object_polygon_was_inside(Evas_Object *obj, double x, double y)
+evas_object_polygon_was_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    Evas_Object_Polygon *o;
    

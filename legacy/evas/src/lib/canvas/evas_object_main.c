@@ -436,9 +436,9 @@ evas_object_del(Evas_Object *obj)
  * 
  */
 void
-evas_object_move(Evas_Object *obj, double x, double y)
+evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
-   int is, was;
+   int is, was = 0;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -487,9 +487,9 @@ evas_object_move(Evas_Object *obj, double x, double y)
  * 
  */
 void
-evas_object_resize(Evas_Object *obj, double w, double h)
+evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
-   int is, was;
+   int is, was = 0;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -538,7 +538,7 @@ evas_object_resize(Evas_Object *obj, double w, double h)
  * 
  */
 void
-evas_object_geometry_get(Evas_Object *obj, double *x, double *y, double *w, double *h)
+evas_object_geometry_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    if (x) *x = 0; if (y) *y = 0; if (w) *w = 0; if (h) *h = 0;
@@ -659,7 +659,7 @@ evas_object_hide(Evas_Object *obj)
  * FIXME: To be fixed.
  * 
  */
-int
+Evas_Bool
 evas_object_visible_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -742,7 +742,7 @@ evas_object_evas_get(Evas_Object *obj)
  * 
  */
 Evas_Object *
-evas_object_top_at_xy_get(Evas *e, double x, double y, int include_pass_events_objects, int include_hidden_objects)
+evas_object_top_at_xy_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
 {
    Evas_Object_List *l;
    int xx, yy;
@@ -793,7 +793,7 @@ evas_object_top_at_pointer_get(Evas *e)
  * 
  */
 Evas_Object *
-evas_object_top_in_rectangle_get(Evas *e, double x, double y, double w, double h, int include_pass_events_objects, int include_hidden_objects)
+evas_object_top_in_rectangle_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
 {
    Evas_Object_List *l;
    int xx, yy, ww, hh;
@@ -836,7 +836,7 @@ evas_object_top_in_rectangle_get(Evas *e, double x, double y, double w, double h
  * 
  */
 Evas_List *
-evas_objects_at_xy_get(Evas *e, double x, double y, int include_pass_events_objects, int include_hidden_objects)
+evas_objects_at_xy_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
 {
    Evas_List *in = NULL;
    Evas_Object_List *l;
@@ -876,7 +876,7 @@ evas_objects_at_xy_get(Evas *e, double x, double y, int include_pass_events_obje
  * 
  */
 Evas_List *
-evas_objects_in_rectangle_get(Evas *e, double x, double y, double w, double h, int include_pass_events_objects, int include_hidden_objects)
+evas_objects_in_rectangle_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
 {
    Evas_List *in = NULL;
    Evas_Object_List *l;

@@ -18,7 +18,7 @@ evas_key_grab_new(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modi
    Evas_Key_Grab *g;
    
    g = evas_mem_calloc(sizeof(Evas_Key_Grab));
-   if (!g) return;
+   if (!g) return NULL;
    g->object = obj;
    g->modifiers = modifiers;
    g->not_modifiers = not_modifiers;
@@ -147,8 +147,8 @@ evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask mod
  * FIXME: To be fixed.
  * 
  */
-int
-evas_object_key_grab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, int exclusive)
+Evas_Bool
+evas_object_key_grab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Evas_Bool exclusive)
 {
    /* MEM OK */
    Evas_Key_Grab *g;

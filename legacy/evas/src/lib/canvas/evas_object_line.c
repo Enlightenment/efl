@@ -15,10 +15,10 @@ struct _Evas_Object_Line
       struct {
 	 int         x1, y1, x2, y2;
 	 struct {
-	    double   w, h;
+	    Evas_Coord w, h;
 	 } object;
       } cache;
-      double         x1, y1, x2, y2;
+      Evas_Coord         x1, y1, x2, y2;
    } cur, prev;
    char              changed : 1;
    
@@ -35,8 +35,8 @@ static void evas_object_line_render_post(Evas_Object *obj);
 
 static int evas_object_line_is_opaque(Evas_Object *obj);
 static int evas_object_line_was_opaque(Evas_Object *obj);
-static int evas_object_line_is_inside(Evas_Object *obj, double x, double y);
-static int evas_object_line_was_inside(Evas_Object *obj, double x, double y);
+static int evas_object_line_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
+static int evas_object_line_was_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y);
 static void evas_object_line_coords_recalc(Evas_Object *obj);
 
 static Evas_Object_Func object_func =
@@ -88,11 +88,12 @@ evas_object_line_add(Evas *e)
  * 
  */
 void
-evas_object_line_xy_set(Evas_Object *obj, double x1, double y1, double x2, double y2)
+evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coord x2, Evas_Coord y2)
 {
    Evas_Object_Line *o;
-   double min_x, max_x, min_y, max_y;
-   int is, was;
+   Evas_Coord min_x, max_x, min_y, max_y;
+   int is, was = 0;
+   
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -159,7 +160,7 @@ evas_object_line_xy_set(Evas_Object *obj, double x1, double y1, double x2, doubl
  * 
  */
 void
-evas_object_line_xy_get(Evas_Object *obj, double *x1, double *y1, double *x2, double *y2)
+evas_object_line_xy_get(Evas_Object *obj, Evas_Coord *x1, Evas_Coord *y1, Evas_Coord *x2, Evas_Coord *y2)
 {
    Evas_Object_Line *o;
 
@@ -382,7 +383,7 @@ evas_object_line_was_opaque(Evas_Object *obj)
 }
 
 static int
-evas_object_line_is_inside(Evas_Object *obj, double x, double y)
+evas_object_line_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    Evas_Object_Line *o;
    
@@ -396,7 +397,7 @@ evas_object_line_is_inside(Evas_Object *obj, double x, double y)
 }
 
 static int
-evas_object_line_was_inside(Evas_Object *obj, double x, double y)
+evas_object_line_was_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    Evas_Object_Line *o;
    

@@ -452,7 +452,7 @@ evas_output_size_get(Evas *e, int *w, int *h)
  * @endcode
  */
 void
-evas_output_viewport_set(Evas *e, double x, double y, double w, double h)
+evas_output_viewport_set(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);   
    return;
@@ -489,13 +489,13 @@ evas_output_viewport_set(Evas *e, double x, double y, double w, double h)
  * Example:
  * @code
  * extern Evas *evas;
- * double x, y, width, height;
+ * Evas_Coord x, y, width, height;
  * 
  * evas_output_viewport_get(evas, &x, &y, &w, &h);
  * @endcode
  */
 void
-evas_output_viewport_get(Evas *e, double *x, double *y, double *w, double *h)
+evas_output_viewport_get(Evas *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);   
    if (x) *x = 0; 
@@ -527,18 +527,18 @@ evas_output_viewport_get(Evas *e, double *x, double *y, double *w, double *h)
  * @code
  * extern Evas *evas;
  * extern int screen_x;
- * double canvas_x;
+ * Evas_Coord canvas_x;
  * 
  * canvas_x = evas_coord_screen_x_to_world(evas, screen_x);
  * @endcode
  */
-double
+Evas_Coord
 evas_coord_screen_x_to_world(Evas *e, int x)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);   
    return 0;
    MAGIC_CHECK_END();
-   return e->viewport.x + (((double)x * e->viewport.w) / (double)e->output.w);
+   return e->viewport.x + (((Evas_Coord)x * e->viewport.w) / (Evas_Coord)e->output.w);
 }
 
 /**
@@ -557,18 +557,18 @@ evas_coord_screen_x_to_world(Evas *e, int x)
  * @code
  * extern Evas *evas;
  * extern int screen_y;
- * double canvas_y;
+ * Evas_Coord canvas_y;
  * 
  * canvas_y = evas_coord_screen_y_to_world(evas, screen_y);
  * @endcode
  */
-double
+Evas_Coord
 evas_coord_screen_y_to_world(Evas *e, int y)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);   
    return 0;
    MAGIC_CHECK_END();
-   return e->viewport.y + (((double)y * e->viewport.h) / (double)e->output.h);
+   return e->viewport.y + (((Evas_Coord)y * e->viewport.h) / (Evas_Coord)e->output.h);
 }
 
 /**
@@ -587,18 +587,18 @@ evas_coord_screen_y_to_world(Evas *e, int y)
  * @code
  * extern Evas *evas;
  * int screen_x;
- * extern double canvas_x;
+ * extern Evas_Coord canvas_x;
  * 
  * screen_x = evas_coord_world_x_to_screen(evas, canvas_x);
  * @endcode
  */
 int
-evas_coord_world_x_to_screen(Evas *e, double x)
+evas_coord_world_x_to_screen(Evas *e, Evas_Coord x)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);   
    return 0;
    MAGIC_CHECK_END();
-   return (int)(((x - e->viewport.x) * (double)e->output.w) /  e->viewport.w);
+   return (int)(((x - e->viewport.x) * (Evas_Coord)e->output.w) /  e->viewport.w);
 }
 
 /**
@@ -617,18 +617,18 @@ evas_coord_world_x_to_screen(Evas *e, double x)
  * @code
  * extern Evas *evas;
  * int screen_y;
- * extern double canvas_y;
+ * extern Evas_Coord canvas_y;
  * 
  * screen_y = evas_coord_world_y_to_screen(evas, canvas_y);
  * @endcode
  */
 int
-evas_coord_world_y_to_screen(Evas *e, double y)
+evas_coord_world_y_to_screen(Evas *e, Evas_Coord y)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);   
    return 0;
    MAGIC_CHECK_END();
-   return (int)(((y - e->viewport.y) * (double)e->output.h) /  e->viewport.h);
+   return (int)(((y - e->viewport.y) * (Evas_Coord)e->output.h) /  e->viewport.h);
 }
 
 /**
@@ -837,25 +837,25 @@ evas_pointer_output_xy_get(Evas *e, int *x, int *y)
  * This function returns the current known pointer co-ordinates
  * 
  * @param e The pointer to the Evas Canvas
- * @param x The pointer to a double to be filled in
- * @param y The pointer to a double to be filled in
+ * @param x The pointer to a Evas_Coord to be filled in
+ * @param y The pointer to a Evas_Coord to be filled in
  * 
  * This function returns the current known canvas unit co-ordinates of the
- * mouse pointer and sets the contents of the doubles pointed to by @p x
+ * mouse pointer and sets the contents of the Evas_Coords pointed to by @p x
  * and @p y to contain these co-ordinates. If @p e is not a valid canvas the
  * results of this function are undefined.
  * 
  * Example:
  * @code
  * extern Evas *evas;
- * double mouse_x, mouse_y;
+ * Evas_Coord mouse_x, mouse_y;
  * 
  * evas_pointer_output_xy_get(evas, &mouse_x, &mouse_y);
  * printf("Mouse is at canvas position %f, %f\n", mouse_x, mouse_y);
  * @endcode
  */
 void
-evas_pointer_canvas_xy_get(Evas *e, double *x, double *y)
+evas_pointer_canvas_xy_get(Evas *e, Evas_Coord *x, Evas_Coord *y)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    if (x) *x = 0;
@@ -936,7 +936,7 @@ evas_pointer_button_down_mask_get(Evas *e)
  * else printf("Mouse is out\n");
  * @endcode
  */
-int 
+Evas_Bool
 evas_pointer_inside_get(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);

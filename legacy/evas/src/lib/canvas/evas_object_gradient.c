@@ -13,7 +13,7 @@ struct _Evas_Object_Gradient
    DATA32            magic;
    
    struct {
-      double         angle;
+      Evas_Angle     angle;
    } cur, prev;
    char              changed : 1;
    char              gradient_changed : 1;
@@ -136,7 +136,7 @@ evas_object_gradient_colors_clear(Evas_Object *obj)
  * 
  */
 void
-evas_object_gradient_angle_set(Evas_Object *obj, double angle)
+evas_object_gradient_angle_set(Evas_Object *obj, Evas_Angle angle)
 {
    Evas_Object_Gradient *o;
 
@@ -159,7 +159,7 @@ evas_object_gradient_angle_set(Evas_Object *obj, double angle)
  * FIXME: To be fixed.
  * 
  */
-double
+Evas_Angle
 evas_object_gradient_angle_get(Evas_Object *obj)
 {
    Evas_Object_Gradient *o;

@@ -43,8 +43,6 @@ evas_object_event_callback_list_post_free(Evas_Object_List **list)
 static void
 evas_object_event_callback_clear(Evas_Object *obj)
 {
-   Evas_Callback_Type t;
-
    if (!obj->callbacks) return;
    if (!obj->callbacks->deletions_waiting) return;
    obj->callbacks->deletions_waiting = 0;

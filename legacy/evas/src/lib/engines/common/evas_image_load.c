@@ -414,6 +414,7 @@ load_image_file_data_jpeg_internal(RGBA_Image *im, FILE *f)
    return 1;
 }
 
+#if 0 /* not used at the moment */
 static int load_image_file_data_jpeg_alpha_internal(RGBA_Image *im, FILE *f);
 static int
 load_image_file_data_jpeg_alpha_internal(RGBA_Image *im, FILE *f)
@@ -519,6 +520,7 @@ load_image_file_data_jpeg_alpha_internal(RGBA_Image *im, FILE *f)
    jpeg_destroy_decompress(&cinfo);
    return 1;
 }
+#endif 
 
 static int load_image_file_head_jpeg(RGBA_Image *im, const char *file, const char *key);
 static int
@@ -558,7 +560,7 @@ static int load_image_file_head_eet(RGBA_Image *im, const char *file, const char
 static int
 load_image_file_head_eet(RGBA_Image *im, const char *file, const char *key)
 {
-   int                  w, h, alpha, compression, size, quality, lossy;
+   int                  w, h, alpha, compression, quality, lossy;
    Eet_File            *ef;
    DATA32              *body;
    
@@ -611,7 +613,6 @@ load_image_file_head_edb(RGBA_Image *im, const char *file, const char *key)
    int                  w, h, alpha, compression, size;
    E_DB_File           *db;
    DATA32              *ret;
-   DATA32              *body;
    DATA32               header[8];
    
    if ((!file) || (!key)) return -1;

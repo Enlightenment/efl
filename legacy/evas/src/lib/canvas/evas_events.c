@@ -145,7 +145,6 @@ void
 evas_event_feed_mouse_wheel_data(Evas *e, int direction, int z, const void *data)
 {
    Evas_List *l, *copy;
-   Evas_Object *obj;
    
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -290,7 +289,7 @@ void
 evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
 {
    int px, py;
-   double pcx, pcy;
+   Evas_Coord pcx, pcy;
    
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -482,6 +481,8 @@ evas_event_feed_mouse_in_data(Evas *e, const void *data)
    return;
    MAGIC_CHECK_END();
    e->pointer.inside = 1;
+   return;
+   data = NULL;
 }
 
 /**
@@ -497,6 +498,8 @@ evas_event_feed_mouse_out_data(Evas *e, const void *data)
    return;
    MAGIC_CHECK_END();
    e->pointer.inside = 0;
+   return;
+   data = NULL;
 }
 
 /**
@@ -758,7 +761,7 @@ evas_event_feed_key_up(Evas *e, const char *keyname)
  * 
  */
 void
-evas_object_pass_events_set(Evas_Object *obj, int pass)
+evas_object_pass_events_set(Evas_Object *obj, Evas_Bool pass)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -778,7 +781,7 @@ evas_object_pass_events_set(Evas_Object *obj, int pass)
  * FIXME: To be fixed.
  * 
  */
-int
+Evas_Bool
 evas_object_pass_events_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -794,7 +797,7 @@ evas_object_pass_events_get(Evas_Object *obj)
  * 
  */
 void
-evas_object_repeat_events_set(Evas_Object *obj, int repeat)
+evas_object_repeat_events_set(Evas_Object *obj, Evas_Bool repeat)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -814,7 +817,7 @@ evas_object_repeat_events_set(Evas_Object *obj, int repeat)
  * FIXME: To be fixed.
  * 
  */
-int
+Evas_Bool
 evas_object_repeat_events_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
