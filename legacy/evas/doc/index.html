@@ -101,11 +101,82 @@ Assembly optimizations for the core routines.
 <p>
 </blockquote>
 <p>
-<b>Canvas Principles in Detail</b>
+<b>Evas Principles</b>
 <p>
 <blockquote>
 <p>
- 
+Let's demonstratehow Evas optmizes updates when you manipulate objects.
+Let's take an example Evas for deomnstration purposes that has several
+objects in it.
+<p>
+<img src=eg1.gif width=512 height=384>
+<p>
+This simple Evas has 4 image objects. All objects occupy a rectangular area
+in the Evas. This is the region events for the object are accepted, and is
+also the region that gets updated when that object changes. The occupied
+areas of the objects would look something as follows.
+<p>
+<img src=eg2.gif width=512 height=384>
+<p>
+Notice that all the occupation rectangles are bounding the objects
+themselves - even if those objects contain blank, unused space.
+<p>
+<img src=eg3.gif width=512 height=384>
+<p>
+Now let's say we want to move the arrow object a bit down and to the right
+as shown here. We would simply call the <b>evas_move()</b> function call with 
+the new co-ordinates of the top-left origin of the object. Evas will simply
+record the new co-ordinates and mark the object as having a possible update.
+As long as you are busy modifying the Evas, no rendering is actually done -
+moving and resizing objects etc. is almost for free. Rendering only occurs
+when you call <b>evas_render()</b>. Let us say for this example that we make
+no further changes to the evas and now our program hits an idle state. We
+now need to render
+<p>
+<img src=eg4.gif width=512 height=384>
+<p>
+When we call <b>evas_render()</b> Evas goes through the object list looking
+at objects marked with possible updates. If they do it inspects their state
+the last time it rendered them and now - if the states do not match, Evas adds
+a rectangle to it's list of rectangles in the Evas to be updated. Inthe case
+of a move or resize, a rectangle for the previous and current locations for
+that object are added as above.
+<p>
+<img src=eg8.gif width=512 height=384>
+<p>
+Now our 2 rectangles have been inserted Evas will want to keep updates
+within a tile'd grid of 32x32 pixel blocks. The 32x32 mesh is shown above.
+Notice the update rectangles do not align perfectly with the grid.
+<p>
+<img src=eg9.gif width=512 height=384>
+<p>
+Now evas will figure out a minimum number of rectangles that would align to
+this tile grid and cover the area the update rectangles cover, as shown
+above. The Green, Yellow and Red Rectangles cover the update regions and
+align to the grid.
+<p>
+<img src=eg5.gif width=512 height=384>
+<p>
+Above you can see how the updatr rectangles do not overlap eachother but are
+a superset of the update regions. Evas has alreayd now optmized drawing to
+only re-render these rectangles.
+<p>
+<img src=eg6.gif width=512 height=384>
+<p>
+Evas will now go and re-render the contents of each of these rectangles one
+at a time in the render function (unless the back-end renderer does not
+support this as is the case with the Hardware 3D accelerated driver since
+OpenGL does not support partial buffer swaps).
+<p>
+<img src=eg7.gif width=512 height=384>
+<p>
+And now we have the result. A newly rendered Evas that only rendered what
+changed and shows the state of the Evas as it currently stands. As you can
+imagine if lots of objects overlap, small and large, and are changing every
+now and again, Evas can do a pretty good job of keeping re-draws down to a
+minimum sane number. Rendering shoudl only be called once you have made your
+changes and want to see them appear in the Evas. This will ensure you do not
+render more often than you need to.
 <p>
 </blockquote>
 <p>
