@@ -1623,27 +1623,24 @@ evas_object_textblock_node_pos_get(Evas_Object *obj, int pos, int *pstart)
 {
    Evas_Object_Textblock *o;
    Evas_Object_List *l;
-   int p, ps;
+   int p, ps = 0;
+   Node *node = NULL;
    
    o = (Evas_Object_Textblock *)(obj->object_data);
    ps = p = 0;
    for (l = (Evas_Object_List *)o->nodes; l; l = l->next)
      {
-	Node *node;
-	
 	node = (Node *)l;
 	if (node->text)
 	  {
 	     ps = p;
 	     p += node->text_len;
-	     if (p > pos)
-	       {
-		  *pstart = ps;
-		  return node;
-	       }
+	     if (p > pos) break;
 	  }
      }
-   return NULL;
+   *pstart = ps;
+   if (node && !node->text) node = NULL;
+   return node;
 }
 
 static Layout_Node *
@@ -1651,26 +1648,27 @@ evas_object_textblock_layout_node_pos_get(Evas_Object *obj, int pos, int *pstart
 {
    Evas_Object_Textblock *o;
    Evas_Object_List *l;
-   int p;
+   int p = 0;
+   Layout_Node *lnode = NULL;
    
    o = (Evas_Object_Textblock *)(obj->object_data);
    p = 0;
    for (l = (Evas_Object_List *)o->layout_nodes; l; l = l->next)
      {
-	Layout_Node *lnode;
-	
 	lnode = (Layout_Node *)l;
 	if (lnode->text)
 	  {
 	     p = lnode->text_pos + lnode->text_len;
 	     if (p > pos)
 	       {
-		  *pstart = lnode->text_pos;
-		  return lnode;
+		  p = lnode->text_pos;
+		  break;
 	       }
 	  }
      }
-   return NULL;
+   *pstart = p;
+   if (lnode && !lnode->text) lnode = NULL;
+   return lnode;
 }
 
 /* unused */
