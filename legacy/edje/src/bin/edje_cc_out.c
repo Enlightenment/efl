@@ -137,8 +137,15 @@ data_write(void)
 		    }
 		  if (verbose)
 		    {
-		       printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" image entry \"%s\"\n",
-			      progname, bytes, (bytes + 512) / 1024, buf, img->entry);
+		       struct stat st;
+		       
+		       if (stat(imlib_image_get_filename(), &st) != 0)
+			 st.st_size = 0;
+		       printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" image entry \"%s\" compress: [raw: %2.1f%%] [real: %2.1f%%]\n",
+			      progname, bytes, (bytes + 512) / 1024, buf, img->entry,
+			      100 - (100 * (double)bytes) / ((double)(im_w * im_h * 4)),
+			      100 - (100 * (double)bytes) / ((double)(st.st_size))
+			      );
 		    }
 		  imlib_image_put_back_data(im_data);
 		  imlib_free_image();

@@ -23,6 +23,7 @@ edje_load.c \
 edje_main.c \
 edje_program.c \
 edje_smart.c \
+edje_text.c \
 edje_util.c \
 edje_private.h
 

@@ -13,86 +13,61 @@ Eet_Data_Descriptor *_edje_edd_edje_part = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_description = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_image_id = NULL;
 
+#define NEWD(str, typ) \
+   eet_data_descriptor_new(str, sizeof(typ), \
+			      (void *(*) (void *))evas_list_next, \
+			      (void *(*) (void *, void *))evas_list_append, \
+			      (void *(*) (void *))evas_list_data, \
+			      (void *(*) (void *))evas_list_free, \
+			      (void  (*) (void *, int (*) (void *, const char *, void *, void *), void *))evas_hash_foreach, \
+			      (void *(*) (void *, const char *, void *))evas_hash_add, \
+			      (void  (*) (void *))evas_hash_free)
+
 void
 _edje_edd_setup(void)
 {
    /* image directory */
    _edje_edd_edje_image_directory_entry = 
-     eet_data_descriptor_new("Edje_Image_Directory_Entry",
-			     sizeof(Edje_Image_Directory_Entry),
-			     evas_list_next,
-			     evas_list_append,
-			     evas_list_data,
-			     evas_hash_foreach,
-			     evas_hash_add);
+    NEWD("Edje_Image_Directory_Entry", 
+	 Edje_Image_Directory_Entry);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_image_directory_entry, Edje_Image_Directory_Entry, "entry", entry, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_image_directory_entry, Edje_Image_Directory_Entry, "source_type", source_type, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_image_directory_entry, Edje_Image_Directory_Entry, "source_param", source_param, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_image_directory_entry, Edje_Image_Directory_Entry, "id", id, EET_T_INT);
    
    _edje_edd_edje_image_directory = 
-     eet_data_descriptor_new("Edje_Image_Directory", 
-			     sizeof(Edje_Image_Directory),
-			     evas_list_next,
-			     evas_list_append,
-			     evas_list_data,
-			     evas_hash_foreach,
-			     evas_hash_add);
+     NEWD("Edje_Image_Directory", 
+	  Edje_Image_Directory);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_image_directory, Edje_Image_Directory, "entries", entries, _edje_edd_edje_image_directory_entry);
 
    /* collection directory */
    _edje_edd_edje_part_collection_directory_entry = 
-     eet_data_descriptor_new("Edje_Part_Collection_Directory_Entry",
-			     sizeof(Edje_Part_Collection_Directory_Entry),
-			     evas_list_next,
-			     evas_list_append,
-			     evas_list_data,
-			     evas_hash_foreach,
-			     evas_hash_add);
+     NEWD("Edje_Part_Collection_Directory_Entry",
+	  Edje_Part_Collection_Directory_Entry);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "entry", entry, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection_directory_entry, Edje_Part_Collection_Directory_Entry, "id", id, EET_T_INT);
    
    _edje_edd_edje_part_collection_directory = 
-     eet_data_descriptor_new("Edje_Part_Collection_Directory",
-			     sizeof(Edje_Part_Collection_Directory),
-			     evas_list_next,
-			     evas_list_append,
-			     evas_list_data,
-			     evas_hash_foreach,
-			     evas_hash_add);
+     NEWD("Edje_Part_Collection_Directory",
+	  Edje_Part_Collection_Directory);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_part_collection_directory, Edje_Part_Collection_Directory, "entries", entries, _edje_edd_edje_part_collection_directory_entry);
    
    /* the main file directory */
    _edje_edd_edje_file = 
-     eet_data_descriptor_new("Edje_File", 
-			     sizeof(Edje_File),
-			     evas_list_next,
-			     evas_list_append,
-			     evas_list_data,
-			     evas_hash_foreach,
-			     evas_hash_add);
+     NEWD("Edje_File", 
+	  Edje_File);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "image_dir", image_dir, _edje_edd_edje_image_directory);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "collection_dir", collection_dir, _edje_edd_edje_part_collection_directory);   
 
    /* parts & programs - loaded induvidually */
    _edje_edd_edje_program_target = 
-     eet_data_descriptor_new("Edje_Program_Target",
-			     sizeof(Edje_Program_Target),
-			     evas_list_next,
-			     evas_list_append,
-			     evas_list_data,
-			     evas_hash_foreach,
-			     evas_hash_add);
+     NEWD("Edje_Program_Target",
+	  Edje_Program_Target);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program_target, Edje_Program_Target, "id", id, EET_T_INT);
    
    _edje_edd_edje_program = 
-     eet_data_descriptor_new("Edje_Program",
-			     sizeof(Edje_Program),
-			     evas_list_next,
-			     evas_list_append,
-			     evas_list_data,
-			     evas_hash_foreach,
-			     evas_hash_add);
+     NEWD("Edje_Program",
+	  Edje_Program);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "id", id, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "name", name, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "signal", signal, EET_T_STRING);
@@ -109,23 +84,13 @@ _edje_edd_setup(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "after", after, EET_T_INT);
    
    _edje_edd_edje_part_image_id = 
-     eet_data_descriptor_new("Edje_Part_Image_Id",
-			     sizeof(Edje_Part_Image_Id),
-			     evas_list_next,
-			     evas_list_append,
-			     evas_list_data,
-			     evas_hash_foreach,
-			     evas_hash_add);
+     NEWD("Edje_Part_Image_Id",
+	  Edje_Part_Image_Id);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_image_id, Edje_Part_Image_Id, "id", id, EET_T_INT);
    
    _edje_edd_edje_part_description = 
-     eet_data_descriptor_new("Edje_Part_Description",
-			     sizeof(Edje_Part_Description),
-			     evas_list_next,
-			     evas_list_append,
-			     evas_list_data,
-			     evas_hash_foreach,
-			     evas_hash_add);
+     NEWD("Edje_Part_Description",
+	  Edje_Part_Description);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description, Edje_Part_Description, "state.name", state.name, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description, Edje_Part_Description, "state.value", state.value, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description, Edje_Part_Description, "visible", visible, EET_T_CHAR);
@@ -186,7 +151,6 @@ _edje_edd_setup(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description, Edje_Part_Description, "text.text", text.text, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description, Edje_Part_Description, "text.font", text.font, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description, Edje_Part_Description, "text.size", text.size, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description, Edje_Part_Description, "text.effect", text.effect, EET_T_CHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description, Edje_Part_Description, "text.fit_x", text.fit_x, EET_T_CHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description, Edje_Part_Description, "text.fit_y", text.fit_y, EET_T_CHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description, Edje_Part_Description, "text.min_x", text.min_x, EET_T_CHAR);
@@ -195,16 +159,12 @@ _edje_edd_setup(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description, Edje_Part_Description, "text.align.y", text.align.y, EET_T_DOUBLE);
    
    _edje_edd_edje_part = 
-     eet_data_descriptor_new("Edje_Part",
-			     sizeof(Edje_Part),
-			     evas_list_next,
-			     evas_list_append,
-			     evas_list_data,
-			     evas_hash_foreach,
-			     evas_hash_add);
+     NEWD("Edje_Part",
+	  Edje_Part);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "name", name, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "id", id, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "type", type, EET_T_CHAR);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "effect", effect, EET_T_CHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "mouse_events", mouse_events, EET_T_CHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "clip_to_id", clip_to_id, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part, Edje_Part, "color_class", color_class, EET_T_STRING);
@@ -213,13 +173,8 @@ _edje_edd_setup(void)
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_part, Edje_Part, "other_desc", other_desc, _edje_edd_edje_part_description);
    
    _edje_edd_edje_part_collection  = 
-     eet_data_descriptor_new("Edje_Part_Collection", 
-			     sizeof(Edje_Part_Collection),
-			     evas_list_next,
-			     evas_list_append,
-			     evas_list_data,
-			     evas_hash_foreach,
-			     evas_hash_add);
+     NEWD("Edje_Part_Collection", 
+	  Edje_Part_Collection);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_part_collection, Edje_Part_Collection, "programs", programs, _edje_edd_edje_program);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_part_collection, Edje_Part_Collection, "parts", parts, _edje_edd_edje_part);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection, Edje_Part_Collection, "id", id, EET_T_INT);

@@ -98,6 +98,95 @@ edje_signal_emit(Evas_Object *obj, const char *emission, const char *source)
    _edje_emit(ed, (char *)emission, (char *)source);
 }
 
+void
+edje_play_set(Evas_Object *obj, int play)
+{
+   Edje *ed;
+   double t;
+   Evas_List *l;
+   
+   ed = _edje_fetch(obj);
+   if (!ed) return;
+   if (play)
+     {
+	if (!ed->paused) return;
+	ed->paused = 0;
+	t = ecore_time_get() - ed->paused_at;
+	for (l = ed->actions; l; l = l->next)
+	  {
+	     Edje_Running_Program *runp;
+	     
+	     runp = l->data;
+	     runp->start_time += t;
+	  }
+     }
+   else
+     {
+	if (ed->paused) return;
+	ed->paused = 1;
+	ed->paused_at = ecore_time_get();
+     }
+}
+
+int 
+edje_play_get(Evas_Object *obj)
+{
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
+   if (!ed) return 0;
+   if (ed->paused) return 0;
+   return 1;
+}
+
+void
+edje_animation_set(Evas_Object *obj, int on)
+{
+   Edje *ed;
+   Evas_List *l;
+   
+   ed = _edje_fetch(obj);
+   if (!ed) return;   
+   ed->no_anim = !on;
+   _edje_freeze(ed);
+   if (!on)
+     {
+	Evas_List *newl = NULL;
+	
+	for (l = ed->actions; l; l = l->next)
+	  newl = evas_list_append(newl, l->data);
+	while (newl)
+	  {
+	     Edje_Running_Program *runp;
+	     
+	     runp = newl->data;
+	     newl = evas_list_remove(newl, newl->data);
+	     _edje_program_run_iterate(runp, runp->start_time + runp->program->tween.time);
+	  }
+     }
+   else
+     {
+	_edje_emit(ed, "load", "");	
+	if (evas_object_visible_get(obj))
+	  {
+	     evas_object_hide(obj);
+	     evas_object_show(obj);
+	  }
+     }
+   _edje_thaw(ed);
+}
+
+int
+edje_animation_get(Evas_Object *obj)
+{
+   Edje *ed;
+   
+   ed = _edje_fetch(obj);
+   if (!ed) return 0;
+   if (ed->no_anim) return 0;
+   return 1;
+}
+
 /* Private Routines */
 
 int
@@ -244,7 +333,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
    _edje_emit(ed, "program,start", pr->name);
    if (pr->action == EDJE_ACTION_TYPE_STATE_SET)
      {
-	if (pr->tween.time > 0.0)
+	if ((pr->tween.time > 0.0) && (!ed->no_anim))
 	  {
 	     Edje_Running_Program *runp;
 	     

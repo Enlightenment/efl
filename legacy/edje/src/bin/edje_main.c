@@ -6,11 +6,33 @@ static void main_resize(Ecore_Evas *ee);
 static int  main_signal_exit(void *data, int ev_type, void *ev);
 static void main_delete_request(Ecore_Evas *ee);
 
-void bg_setup(void);
-void bg_resize(double w, double h);
+void        bg_setup(void);
+void        bg_resize(double w, double h);
+static void bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_info);
 
-void test_setup(char *file, char *name);
-void test_reize(double w, double h);
+void        test_setup(char *file, char *name);
+void        test_reize(double w, double h);
+typedef struct _Demo_Edje Demo_Edje;
+
+struct _Demo_Edje
+{
+   Evas_Object *edje;
+   Evas_Object *left;
+   Evas_Object *right;
+   Evas_Object *top;
+   Evas_Object *bottom;
+   Evas_Object *title;
+   Evas_Object *title_clip;
+   Evas_Object *image;
+   int          down_top : 1;
+   int          down_bottom : 1;
+   int          hdir;
+   int          vdir;
+};
+
+static Evas_List   *edjes = NULL;
+static Evas_Object *o_bg = NULL;
+static Evas_Object *o_shadow = NULL;
     
 double       start_time = 0.0;
 Ecore_Evas  *ecore_evas = NULL;
@@ -49,10 +71,8 @@ main_start(int argc, char **argv)
    ecore_evas_name_class_set(ecore_evas, "edje", "main");
    ecore_evas_show(ecore_evas);
    evas = ecore_evas_get(ecore_evas);
-//   evas_image_cache_set(evas, 1024 * 1024);
-//   evas_font_cache_set(evas, 256 * 1024);
-   evas_image_cache_set(evas, 0);
-   evas_font_cache_set(evas, 0);
+   evas_image_cache_set(evas, 8 * 1024 * 1024);
+   evas_font_cache_set(evas, 1 * 1024 * 1024);
    evas_font_path_append(evas, DAT"data/test/fonts");
    return 1;
 }
@@ -87,9 +107,6 @@ main_delete_request(Ecore_Evas *ee)
    ecore_main_loop_quit();
 }
 
-static Evas_Object *o_bg = NULL;
-static Evas_Object *o_shadow = NULL;
-
 void
 bg_setup(void)
 {
@@ -104,6 +121,8 @@ bg_setup(void)
    evas_object_image_fill_set(o, 0, 0, 128, 128);
    evas_object_pass_events_set(o, 1);
    evas_object_show(o);   
+   evas_object_focus_set(o, 1);
+   evas_object_event_callback_add(o, EVAS_CALLBACK_KEY_DOWN, bg_key_down, NULL);
    o_bg = o;
 
    o = evas_object_image_add(evas);
@@ -126,25 +145,27 @@ bg_resize(double w, double h)
    evas_object_image_fill_set(o_shadow, 0, 0, w, h);
 }
 
-typedef struct _Demo_Edje Demo_Edje;
-
-struct _Demo_Edje
+static void
+bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_info)
 {
-   Evas_Object *edje;
-   Evas_Object *left;
-   Evas_Object *right;
-   Evas_Object *top;
-   Evas_Object *bottom;
-   Evas_Object *title;
-   Evas_Object *title_clip;
-   Evas_Object *image;
-   int          down_top : 1;
-   int          down_bottom : 1;
-   int          hdir;
-   int          vdir;
-};
-
-static Evas_List *edjes = NULL;
+   Evas_Event_Key_Down *ev;
+   
+   ev = (Evas_Event_Key_Down *)event_info;
+     {
+	Evas_List *l;
+	
+	for (l = edjes; l; l = l->next)
+	  {
+	     Demo_Edje *de;
+	     
+	     de = l->data;
+	     if (!strcmp(ev->keyname, "p"))      edje_play_set(de->edje, 1);
+	     else if (!strcmp(ev->keyname, "o")) edje_play_set(de->edje, 0);
+	     else if (!strcmp(ev->keyname, "a")) edje_animation_set(de->edje, 1);
+	     else if (!strcmp(ev->keyname, "s")) edje_animation_set(de->edje, 0);
+	  }
+     }
+}
 
 static void cb (void *data, Evas_Object *o, const char *sig, const char *src);
 

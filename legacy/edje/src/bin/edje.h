@@ -3,6 +3,7 @@
 
 #include <Evas.h>
 #include <Ecore.h>
+#include <Ecore_X.h>
 #include <Ecore_Evas.h>
 /* ... only for testing */
 #include <Eet.h>

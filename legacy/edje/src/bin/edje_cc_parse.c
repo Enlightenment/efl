@@ -476,7 +476,7 @@ parse_float(int n)
 }
 
 double
-parse_float_range(int n, int f, int t)
+parse_float_range(int n, double f, double t)
 {
    char *str;
    double i;
@@ -491,7 +491,7 @@ parse_float_range(int n, int f, int t)
    i = atof(str);
    if ((i < f) || (i > t))
      {
-	fprintf(stderr, "%s: Error. %s:%i integer %i out of range of %3.3f to %3.3f inclusive\n",
+	fprintf(stderr, "%s: Error. %s:%i float %3.3f out of range of %3.3f to %3.3f inclusive\n",
 		progname, file_in, line, i, f, t);
 	exit(-1);
      }

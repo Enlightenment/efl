@@ -337,26 +337,20 @@ _edje_part_recalc_single(Edje *ed,
 	size = chosen_desc->text.size;
 	if (ep->text.text) text = ep->text.text;
 	if (ep->text.font) font = ep->text.font;
-	if (ep->text.size) size = ep->text.size;
+	if (ep->text.size > 0) size = ep->text.size;
 	evas_object_text_font_set(ep->object, font, size);
 	if ((chosen_desc->text.min_x) || (chosen_desc->text.min_y))
 	  {
 	     evas_object_text_text_set(ep->object, text);
 	     evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
 	     if (chosen_desc->text.min_x)
-	       {
-		  minw = tw;
-		  /* FIXME: account for effect */
-		  /* for now just add 2 */
-		  minw += 2;
-	       }
+	       minw = tw +
+	       _edje_text_styles[ep->part->effect].pad.l +
+	       _edje_text_styles[ep->part->effect].pad.r;
 	     if (chosen_desc->text.min_y)
-	       {
-		  minh = th;
-		  /* FIXME: account for effect */
-		  /* for now just add 2 */
-		  minw += 2;
-	       }
+	       minw = th + 
+	       _edje_text_styles[ep->part->effect].pad.t +
+	       _edje_text_styles[ep->part->effect].pad.b;
 	  }
      }
    /* adjust for min size */
@@ -507,7 +501,6 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
      {
 	_edje_part_recalc_single(ed, ep, ep->param2.description, chosen_desc, ep->param2.rel1_to, ep->param2.rel2_to, ep->param2.confine_to, &p2);
 
-	/* FIXME: pos isnt just linear - depends on tween method */
 	pos = ep->description_pos;
 	
 	/* visible is special */
@@ -569,11 +562,13 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
      {
 	evas_object_move(ep->object, ed->x + p3.x, ed->y + p3.y);
 	evas_object_resize(ep->object, p3.w, p3.h);
+	evas_object_color_set(ep->object, p3.color.r, p3.color.g, p3.color.b, p3.color.a);
+	if (p3.visible) evas_object_show(ep->object);
+	else evas_object_hide(ep->object);
      }
    else if (ep->part->type == EDJE_PART_TYPE_TEXT)
      {
-	/* FIXME: if text object calculate text now */
-	/* FIXME: set other colors */
+	_edje_text_recalc_apply(ed, ep, &p3, chosen_desc);
      }
    else if (ep->part->type == EDJE_PART_TYPE_IMAGE)
      {
@@ -610,10 +605,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
 
 	snprintf(buf, sizeof(buf), "images/%i", image_id);
 	evas_object_image_file_set(ep->object, ed->file->path, buf);
+	evas_object_color_set(ep->object, p3.color.r, p3.color.g, p3.color.b, p3.color.a);
+	if (p3.visible) evas_object_show(ep->object);
+	else evas_object_hide(ep->object);
      }
-   if (p3.visible) evas_object_show(ep->object);
-   else evas_object_hide(ep->object);
-   evas_object_color_set(ep->object, p3.color.r, p3.color.g, p3.color.b, p3.color.a);
    
    ep->x = p3.x;
    ep->y = p3.y;

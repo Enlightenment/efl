@@ -9,6 +9,7 @@ edje_init(void)
    if (initted) return;
    initted = 1;
    _edje_edd_setup();
+   _edje_text_init();
 }
 
 Edje *

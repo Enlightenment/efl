@@ -35,8 +35,10 @@ edje_file_set(Evas_Object *obj, const char *file, const char *part)
 	     ep = l->data;
 	     rp = calloc(1, sizeof(Edje_Real_Part));
 	     if (!rp) return;
+	     rp->part = ep;
 	     ed->parts = evas_list_append(ed->parts, rp);
 	     rp->param1.description =  ep->default_desc;
+	     _edje_text_part_on_add(ed, rp);
 	     if (ep->type == EDJE_PART_TYPE_RECTANGLE)
 	       rp->object = evas_object_rectangle_add(ed->evas);
 	     else if (ep->type == EDJE_PART_TYPE_IMAGE)
@@ -76,7 +78,6 @@ edje_file_set(Evas_Object *obj, const char *file, const char *part)
 	       evas_object_pass_events_set(rp->object, 1);
 	     evas_object_clip_set(rp->object, ed->clipper);
 	     evas_object_show(rp->object);
-	     rp->part = ep;
 	  }
 	for (l = ed->parts; l; l = l->next)
 	  {
@@ -87,6 +88,7 @@ edje_file_set(Evas_Object *obj, const char *file, const char *part)
 	       rp->param1.rel1_to = evas_list_nth(ed->parts, rp->param1.description->rel1.id);
 	     if (rp->param1.description->rel2.id >= 0)
 	       rp->param1.rel2_to = evas_list_nth(ed->parts, rp->param1.description->rel2.id);
+	     _edje_text_part_on_add_clippers(ed, rp);
 	     if (rp->part->clip_to_id >= 0)
 	       {
 		  rp->clip_to = evas_list_nth(ed->parts, rp->part->clip_to_id);
@@ -207,9 +209,12 @@ _edje_file_del(Edje *ed)
 	     Edje_Real_Part *rp;
 	     
 	     rp = ed->parts->data;
+	     _edje_text_part_on_del(ed, rp);
 	     evas_object_del(rp->object);
 	     if (rp->text.text) free(rp->text.text);
 	     if (rp->text.font) free(rp->text.font);
+	     if (rp->text.cache.in_str) free(rp->text.cache.in_str);
+	     if (rp->text.cache.out_str) free(rp->text.cache.out_str);	     
 	     free(rp);
 	     ed->parts = evas_list_remove(ed->parts, ed->parts->data);
 	  }
@@ -245,7 +250,35 @@ _edje_file_del(Edje *ed)
 void
 _edje_file_free(Edje_File *edf)
 {
-   printf("FIXME: leak Edje_File!\n");
+   if (edf->path) free(edf->path);
+   if (edf->image_dir)
+     {
+	while (edf->image_dir->entries)
+	  {
+	     Edje_Image_Directory_Entry *ie;
+	     
+	     ie = edf->image_dir->entries->data;
+	     edf->image_dir->entries = evas_list_remove(edf->image_dir->entries, ie);
+	     if (ie->entry) free(ie->entry);
+	     free(ie);
+	  }
+	free(edf->image_dir);
+     }
+   if (edf->collection_dir)
+     {
+	while (edf->collection_dir->entries)
+	  {
+	     Edje_Part_Collection_Directory_Entry *ce;
+	     
+	     ce = edf->collection_dir->entries->data;
+	     edf->collection_dir->entries = evas_list_remove(edf->collection_dir->entries, ce);
+	     if (ce->entry) free(ce->entry);
+	     free(ce);
+	  }
+	free(edf->collection_dir);
+     }
+   if (edf->collection_hash) evas_hash_free(edf->collection_hash);
+   free(edf);
 }
 
 void

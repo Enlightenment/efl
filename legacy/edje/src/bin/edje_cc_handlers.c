@@ -15,6 +15,7 @@ static void ob_collections_group_parts(void);
 static void ob_collections_group_parts_part(void);
 static void st_collections_group_parts_part_name(void);
 static void st_collections_group_parts_part_type(void);
+static void st_collections_group_parts_part_effect(void);
 static void st_collections_group_parts_part_mouse_events(void);
 static void st_collections_group_parts_part_clip_to_id(void);
 static void st_collections_group_parts_part_color_class(void);
@@ -51,7 +52,6 @@ static void st_collections_group_parts_part_description_color3(void);
 static void st_collections_group_parts_part_description_text_text(void);
 static void st_collections_group_parts_part_description_text_font(void);
 static void st_collections_group_parts_part_description_text_size(void);
-static void st_collections_group_parts_part_description_text_effect(void);
 static void st_collections_group_parts_part_description_text_fit(void);
 static void st_collections_group_parts_part_description_text_min(void);
 static void st_collections_group_parts_part_description_text_align(void);
@@ -76,6 +76,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.name", st_collections_group_name},
      {"collections.group.parts.part.name", st_collections_group_parts_part_name},
      {"collections.group.parts.part.type", st_collections_group_parts_part_type},
+     {"collections.group.parts.part.effect", st_collections_group_parts_part_effect},
      {"collections.group.parts.part.mouse_events", st_collections_group_parts_part_mouse_events},
      {"collections.group.parts.part.clip_to", st_collections_group_parts_part_clip_to_id},
      {"collections.group.parts.part.color_class", st_collections_group_parts_part_color_class},
@@ -110,7 +111,6 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.text.text", st_collections_group_parts_part_description_text_text},
      {"collections.group.parts.part.description.text.font", st_collections_group_parts_part_description_text_font},
      {"collections.group.parts.part.description.text.size", st_collections_group_parts_part_description_text_size},
-     {"collections.group.parts.part.description.text.effect", st_collections_group_parts_part_description_text_effect},
      {"collections.group.parts.part.description.text.fit", st_collections_group_parts_part_description_text_fit},
      {"collections.group.parts.part.description.text.min", st_collections_group_parts_part_description_text_min},
      {"collections.group.parts.part.description.text.align", st_collections_group_parts_part_description_text_align},
@@ -135,6 +135,7 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part", ob_collections_group_parts_part},
      {"collections.group.parts.part.name", NULL},
      {"collections.group.parts.part.type", NULL},
+     {"collections.group.parts.part.effect", NULL},
      {"collections.group.parts.part.mouse_events", NULL},
      {"collections.group.parts.part.clip_to", NULL},
      {"collections.group.parts.part.color_class", NULL},
@@ -178,7 +179,6 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.text.text", NULL},
      {"collections.group.parts.part.description.text.font", NULL},
      {"collections.group.parts.part.description.text.size", NULL},
-     {"collections.group.parts.part.description.text.effect", NULL},
      {"collections.group.parts.part.description.text.fit", NULL},
      {"collections.group.parts.part.description.text.min", NULL},
      {"collections.group.parts.part.description.text.align", NULL},
@@ -445,6 +445,8 @@ ob_collections_group_parts_part_description(void)
    ed->color3.g = 0;
    ed->color3.b = 0;
    ed->color3.a = 128;
+   ed->text.align.x = 0.5;
+   ed->text.align.y = 0.5;
 }
 
 static void
@@ -614,8 +616,8 @@ st_collections_group_parts_part_description_rel1_relative(void)
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-   ed->rel1.relative_x = parse_float_range(0, 0.0, 1.0);
-   ed->rel1.relative_y = parse_float_range(1, 0.0, 1.0);
+   ed->rel1.relative_x = parse_float(0);
+   ed->rel1.relative_y = parse_float(1);
 }
 
 static void
@@ -664,8 +666,8 @@ st_collections_group_parts_part_description_rel2_relative(void)
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-   ed->rel2.relative_x = parse_float_range(0, 0.0, 1.0);
-   ed->rel2.relative_y = parse_float_range(1, 0.0, 1.0);
+   ed->rel2.relative_x = parse_float(0);
+   ed->rel2.relative_y = parse_float(1);
 }
 
 static void
@@ -931,7 +933,7 @@ st_collections_group_parts_part_description_text_size(void)
 }
 
 static void
-st_collections_group_parts_part_description_text_effect(void)
+st_collections_group_parts_part_effect(void)
 {
    Edje_Part_Collection *pc;
    Edje_Part *ep;
@@ -939,15 +941,16 @@ st_collections_group_parts_part_description_text_effect(void)
 
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-   ed->text.effect = parse_enum(0, 
-				"NONE", EDJE_TEXT_EFFECT_NONE,
-				"PLAIN", EDJE_TEXT_EFFECT_PLAIN,
-				"OUTLINE", EDJE_TEXT_EFFECT_OUTLINE,
-				"SHADOW", EDJE_TEXT_EFFECT_SHADOW,
-				"SHADOW_OUTLINE", EDJE_TEXT_EFFECT_OUTLINE_SHADOW,
-				NULL);
+   ep->effect = parse_enum(0, 
+			   "NONE", EDJE_TEXT_EFFECT_NONE,
+			   "PLAIN", EDJE_TEXT_EFFECT_PLAIN,
+			   "OUTLINE", EDJE_TEXT_EFFECT_OUTLINE,
+			   "SOFT_OUTLINE", EDJE_TEXT_EFFECT_SOFT_OUTLINE,
+			   "SHADOW", EDJE_TEXT_EFFECT_SHADOW,
+			   "SOFT_SHADOW", EDJE_TEXT_EFFECT_SOFT_SHADOW,
+			   "OUTLINE_SHADOW", EDJE_TEXT_EFFECT_OUTLINE_SHADOW,
+			   "OUTLINE_SOFT_SHADOW", EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW,
+			   NULL);
 }
 
 static void

@@ -85,6 +85,18 @@ _edje_smart_layer_set(Evas_Object * obj, int layer)
 	Edje_Real_Part *ep;
 	
 	ep = l->data;
+	if (ep->extra_objects)
+	  {
+	     Evas_List *el;
+	     
+	     for (el = ep->extra_objects; el; el = el->next)
+	       {
+		  Evas_Object *o;
+		  
+		  o = el->data;
+		  evas_object_layer_set(o, ed->layer);
+	       }
+	  }
 	evas_object_layer_set(ep->object, ed->layer);
      }
    snprintf(buf, sizeof(buf), "layer,set,%i", layer);
@@ -104,6 +116,18 @@ _edje_smart_raise(Evas_Object * obj)
 	Edje_Real_Part *ep;
 	
 	ep = l->data;
+	if (ep->extra_objects)
+	  {
+	     Evas_List *el;
+	     
+	     for (el = ep->extra_objects; el; el = el->next)
+	       {
+		  Evas_Object *o;
+		  
+		  o = el->data;
+		  evas_object_raise(o);
+	       }
+	  }
 	evas_object_raise(ep->object);
      }
    _edje_emit(ed, "raise", "");
@@ -123,6 +147,18 @@ _edje_smart_lower(Evas_Object * obj)
 	
 	ep = l->data;
 	evas_object_lower(ep->object);
+	if (ep->extra_objects)
+	  {
+	     Evas_List *el;
+	     
+	     for (el = ep->extra_objects; el; el = el->next)
+	       {
+		  Evas_Object *o;
+		  
+		  o = el->data;
+		  evas_object_lower(o);
+	       }
+	  }
      }
    _edje_emit(ed, "lower", "");
 }
@@ -141,6 +177,18 @@ _edje_smart_stack_above(Evas_Object * obj, Evas_Object * above)
 	
 	ep = l->data;
 	evas_object_stack_above(ep->object, above);
+	if (ep->extra_objects)
+	  {
+	     Evas_List *el;
+	     
+	     for (el = evas_list_last(ep->extra_objects); el; el = el->prev)
+	       {
+		  Evas_Object *o;
+		  
+		  o = el->data;
+		  evas_object_stack_above(o, above);
+	       }
+	  }
      }
    _edje_emit(ed, "stack_above", "");
 }
@@ -158,6 +206,18 @@ _edje_smart_stack_below(Evas_Object * obj, Evas_Object * below)
 	Edje_Real_Part *ep;
 	
 	ep = l->data;
+	if (ep->extra_objects)
+	  {
+	     Evas_List *el;
+	     
+	     for (el = ep->extra_objects; el; el = el->next)
+	       {
+		  Evas_Object *o;
+		  
+		  o = el->data;
+		  evas_object_stack_below(o, below);
+	       }
+	  }
 	evas_object_stack_below(ep->object, below);
      }
    _edje_emit(ed, "stack_below", "");
@@ -180,9 +240,25 @@ _edje_smart_move(Evas_Object * obj, double x, double y)
    for (l = ed->parts; l; l = l->next)
      {
 	Edje_Real_Part *ep;
+	double ox, oy;
 	
 	ep = l->data;
-	evas_object_move(ep->object, ed->x + ep->x, ed->y + ep->y);
+	evas_object_geometry_get(ep->object, &ox, &oy, NULL, NULL);
+	evas_object_move(ep->object, ed->x + ep->x + ep->offset.x, ed->y + ep->y +ep->offset.y);
+	if (ep->extra_objects)
+	  {
+	     Evas_List *el;
+	     
+	     for (el = ep->extra_objects; el; el = el->next)
+	       {
+		  Evas_Object *o;
+		  double oox, ooy;
+		  
+		  o = el->data;
+		  evas_object_geometry_get(o, &oox, &ooy, NULL, NULL);
+		  evas_object_move(o, ed->x + ep->x + ep->offset.x + (oox - ox), ed->y + ep->y + ep->offset.y + (ooy - oy));
+	       }
+	  }
      }
    _edje_emit(ed, "move", "");
 }

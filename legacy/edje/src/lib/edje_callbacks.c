@@ -41,7 +41,25 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    ed = data;
    rp = evas_object_data_get(obj, "real_part");
    if (!rp) return;
-   snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
+   if (ecore_event_current_type_get() == ECORE_X_EVENT_MOUSE_BUTTON_DOWN)
+     {
+	Ecore_X_Event_Mouse_Button_Down *evx;
+	
+	evx = ecore_event_current_event_get();
+	if (evx)
+	  {
+	     if (evx->triple_click)
+	       snprintf(buf, sizeof(buf), "mouse,down,%i,triple", ev->button);
+	     else if (evx->double_click)
+	       snprintf(buf, sizeof(buf), "mouse,down,%i,double", ev->button);
+	     else
+	       snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
+	  }
+	else
+	  snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
+     }
+   else
+     snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
    if (rp->clicked_button == 0)
      {
 	rp->clicked_button = ev->button;
@@ -144,15 +162,18 @@ _edje_timer_cb(void *data)
 	ed = animl->data;
 	_edje_freeze(ed);
 	animl = evas_list_remove(animl, animl->data);
-	for (l = ed->actions; l; l = l->next)
-	  newl = evas_list_append(newl, l->data);
-	while (newl)
+	if (!ed->paused)
 	  {
-	     Edje_Running_Program *runp;
-	     
-	     runp = newl->data;
-	     newl = evas_list_remove(newl, newl->data);
-	     _edje_program_run_iterate(runp, t);
+	     for (l = ed->actions; l; l = l->next)
+	       newl = evas_list_append(newl, l->data);
+	     while (newl)
+	       {
+		  Edje_Running_Program *runp;
+		  
+		  runp = newl->data;
+		  newl = evas_list_remove(newl, newl->data);
+		  _edje_program_run_iterate(runp, t);
+	       }
 	  }
 	_edje_thaw(ed);
 	_edje_unref(ed);

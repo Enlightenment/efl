@@ -5,41 +5,47 @@
 
 #include <Evas.h>
 #include <Ecore.h>
+#include <Ecore_X.h>
 #include <Eet.h>
 
 #include <math.h>
 #include <fnmatch.h>
 
 /* FIXME:
+ * 
  * free stuff - no more leaks
+ * 
  * dragables have to work
  * drag start/top signals etc.
  * drag needs to have signals with relative pos as arg.
  * drag vals should be 0.0 -> 1.0 if drag is confined. "rest" pos = 0.0.
  * query dragable for its relative pos value
- * text parts need to work
+ * 
  * text and color classes need to work
- * reduce linked list walking and list_nth calls
+ * 
  * named parts need to be able to be "replaced" with new evas objects
  * part replacement with object callbacks should be possible
+ * 
  * real part size and "before min/max limit" sizes need to be stored per part
  * need to be able to calculate min & max size of a whole edje
+ * 
  * need to be able to list collections in an eet file
+ * 
  * externally sourced images need to be supported in edje_cc and edje
- * part queries for geometry etc.
- * need to be able to "pause" edjes from API
- * need to be able to force anim times to 0.0 from API to turn off animation
+ * 
  * need to detect relative part loops
  * need to detect clip_to part loops
+ * 
  * edje_cc should be able to force lossy, lossless, min and max quality and compression of encoded images
  * edje_cc needs to prune out unused images
  * edje_cc might need an option for limiting number of tween images
+ * 
  * audit edje for corrupt/bad input files
+ * 
+ * ? reduce linked list walking and list_nth calls
  * ? add containering (hbox, vbox, table, wrapping multi-line hbox & vbox)
- * ? somehow handle double click?
  * ? add numeric params to conditions for progs (ranges etc.)
- * ? containering for multiple children? (hbox, vbox, table, wrapping list)
-*/
+ */
 
   
 /* HOW THIS ALL WORKS:
@@ -103,12 +109,15 @@ typedef struct _Edje_Part_Description                Edje_Part_Description;
 #define EDJE_PART_TYPE_IMAGE     3
 #define EDJE_PART_TYPE_LAST      4
 
-#define EDJE_TEXT_EFFECT_NONE           0
-#define EDJE_TEXT_EFFECT_PLAIN          1
-#define EDJE_TEXT_EFFECT_OUTLINE        2
-#define EDJE_TEXT_EFFECT_SHADOW         3
-#define EDJE_TEXT_EFFECT_OUTLINE_SHADOW 4
-#define EDJE_TEXT_EFFECT_LAST           5
+#define EDJE_TEXT_EFFECT_NONE                0
+#define EDJE_TEXT_EFFECT_PLAIN               1
+#define EDJE_TEXT_EFFECT_OUTLINE             2
+#define EDJE_TEXT_EFFECT_SOFT_OUTLINE        3
+#define EDJE_TEXT_EFFECT_SHADOW              4
+#define EDJE_TEXT_EFFECT_SOFT_SHADOW         5
+#define EDJE_TEXT_EFFECT_OUTLINE_SHADOW      6
+#define EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW 7
+#define EDJE_TEXT_EFFECT_LAST                8
 
 #define EDJE_ACTION_TYPE_NONE        0
 #define EDJE_ACTION_TYPE_STATE_SET   1
@@ -218,6 +227,7 @@ struct _Edje_Part
    char                  *name; /* the name if any of the part */
    int                    id; /* its id number */
    unsigned char          type; /* what type (image, rect, text) */
+   unsigned char          effect; /* 0 = plain... */
    unsigned char          mouse_events; /* it will affect/respond to mouse events */
    int                    clip_to_id; /* the part id to clip this one to */   
    char                  *color_class; /* how to modify the color */
@@ -307,7 +317,6 @@ struct _Edje_Part_Description
       
       int            size; /* 0 = use user set size */
       
-      unsigned char  effect; /* 0 = plain... */
       unsigned char  fit_x; /* resize font size down to fit in x dir */
       unsigned char  fit_y; /* resize font size down to fit in y dir */
       unsigned char  min_x; /* if text size should be part min size */
@@ -334,6 +343,7 @@ typedef struct _Edje_Signal_Callback Edje_Signal_Callback;
 typedef struct _Edje_Calc_Params Edje_Calc_Params;
 typedef struct _Edje_Emission Edje_Emission;
 typedef struct _Edje_Pending_Program Edje_Pending_Program;
+typedef struct _Ejde_Text_Style Ejde_Text_Style;
 
 struct _Edje
 {
@@ -342,12 +352,15 @@ struct _Edje
    
    int                   layer;
    double                x, y, w, h;
-   unsigned char         dirty : 1;
-   unsigned char         recalc : 1;
-   unsigned char         walking_callbacks : 1;
-   unsigned char         delete_callbacks : 1;
-   unsigned char         just_added_callbacks : 1;
-   unsigned char         have_objects : 1;
+   unsigned short        dirty : 1;
+   unsigned short        recalc : 1;
+   unsigned short        walking_callbacks : 1;
+   unsigned short        delete_callbacks : 1;
+   unsigned short        just_added_callbacks : 1;
+   unsigned short        have_objects : 1;
+   unsigned short        paused : 1;
+   unsigned short        no_anim : 1;
+   double                paused_at;
    Evas                 *evas; /* the evas this edje belongs to */
    Evas_Object          *obj; /* the smart object */
    Evas_Object          *clipper; /* a big rect to clip this edje to */
@@ -364,7 +377,11 @@ struct _Edje
 struct _Edje_Real_Part
 {
    int                       x, y, w, h;
+   struct {
+      int                    x, y;
+   } offset;
    Evas_Object              *object;
+   Evas_List                *extra_objects;
    unsigned char             calculated : 1;
    unsigned char             dirty      : 1;
    unsigned char             still_in   : 1;
@@ -377,6 +394,13 @@ struct _Edje_Real_Part
       char                  *text;
       char                  *font;
       int                    size;
+      struct {
+	 double              in_w, in_h;
+	 int                 in_size;
+	 char               *in_str;
+	 char               *out_str;
+	 int                 out_size;
+      } cache;
    } text;
    double                    description_pos;
    struct {
@@ -437,6 +461,22 @@ struct _Edje_Pending_Program
    Ecore_Timer  *timer;
 };
 
+struct _Ejde_Text_Style
+{
+   struct {
+      unsigned char x, y;
+   } offset;
+   struct {
+      unsigned char l, r, t, b;
+   } pad;
+   int num;
+   struct {
+      unsigned char color; /* 0 = color, 1, 2 = color2, color3 */
+      char          x, y; /* offset */
+      unsigned char alpha;
+   } members[32];
+};
+
 void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos);
 void  _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1, char *d2, double v2);
 void  _edje_recalc(Edje *ed);
@@ -469,6 +509,12 @@ void  _edje_program_end(Edje *ed, Edje_Running_Program *runp);
 void  _edje_program_run(Edje *ed, Edje_Program *pr, int force);
 void  _edje_emit(Edje *ed, char *sig, char *src);
 
+void  _edje_text_init(void);
+void  _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep);
+void  _edje_text_part_on_add_clippers(Edje *ed, Edje_Real_Part *ep);
+void  _edje_text_part_on_del(Edje *ed, Edje_Real_Part *ep);
+void  _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *params, Edje_Part_Description *chosen_desc);
+    
 Edje *_edje_fetch(Evas_Object *obj);
 int   _edje_glob_match(char *str, char *glob);
 int   _edje_freeze(Edje *ed);
@@ -487,8 +533,9 @@ extern Eet_Data_Descriptor *_edje_edd_edje_part;
 extern Eet_Data_Descriptor *_edje_edd_edje_part_description;
 extern Eet_Data_Descriptor *_edje_edd_edje_part_image_id;
 
-extern int          _edje_anim_count;
-extern Ecore_Timer *_edje_timer;
-extern Evas_List   *_edje_animators;
+extern int              _edje_anim_count;
+extern Ecore_Timer     *_edje_timer;
+extern Evas_List       *_edje_animators;
+extern Ejde_Text_Style  _edje_text_styles[EDJE_TEXT_EFFECT_LAST];
 
 #endif
