@@ -183,6 +183,7 @@ void                  __evas_x11_poly_draw (Display *disp, Imlib_Image dstim, Wi
 /***********/
 void         __evas_x11_set_clip_rect(int on, int x, int y, int w, int h, int r, int g, int b, int a);
 void         __evas_x11_init(Display *disp, int screen, int colors);
+void         __evas_x11_set_vis_cmap(Visual *vis, Colormap cmap);
 int          __evas_x11_capable(Display *disp);
 void         __evas_x11_flush_draw(Display *disp, Imlib_Image dstim, Window win);
 void         __evas_x11_sync(Display *disp);

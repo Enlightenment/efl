@@ -2856,6 +2856,11 @@ __evas_gl_flush_draw(Display *disp, Imlib_Image dstim, Window win)
 #endif   
 }
 
+void
+__evas_gl_set_vis_cmap(Visual *vis, Colormap cmap)
+{
+}
+
 int
 __evas_gl_capable(Display *disp)
 {

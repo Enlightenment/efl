@@ -196,6 +196,7 @@ evas_render_updates(Evas e)
    void (*func_gradient_draw) (void *gr, Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x, int y, int w, int h, double angle);
    void (*func_poly_draw) (Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, Evas_List points, int r, int g, int b, int a);
    void (*func_set_clip_rect) (int on, int x, int y, int w, int h, int r, int g, int b, int a);
+   void (*func_set_vis_cmap) (Visual *vis, Colormap cmap);
    
    if (!e) return NULL;
    if ((e->current.render_method == RENDER_METHOD_IMAGE) &&
@@ -234,6 +235,7 @@ evas_render_updates(Evas e)
 	func_gradient_draw       = __evas_imlib_gradient_draw;
 	func_poly_draw           = __evas_imlib_poly_draw;
 	func_set_clip_rect       = __evas_imlib_set_clip_rect;
+	func_set_vis_cmap        = __evas_imlib_set_vis_cmap;
 	break;
      case RENDER_METHOD_BASIC_HARDWARE:
 	func_draw_add_rect       = __evas_x11_draw_add_rect;
@@ -253,6 +255,7 @@ evas_render_updates(Evas e)
 	func_gradient_draw       = __evas_x11_gradient_draw;
 	func_poly_draw           = __evas_x11_poly_draw;
 	func_set_clip_rect       = __evas_x11_set_clip_rect;
+	func_set_vis_cmap        = __evas_x11_set_vis_cmap;
 	break;
 #ifdef HAVE_GL
      case RENDER_METHOD_3D_HARDWARE:
@@ -273,8 +276,10 @@ evas_render_updates(Evas e)
 	func_gradient_draw       = __evas_gl_gradient_draw;
 	func_poly_draw           = __evas_gl_poly_draw;
 	func_set_clip_rect       = __evas_gl_set_clip_rect;
+	func_set_vis_cmap        = __evas_gl_set_vis_cmap;
 	break;
 #endif
+#ifdef HAVE_RENDER	
      case RENDER_METHOD_ALPHA_HARDWARE:
 	func_draw_add_rect       = __evas_render_draw_add_rect;
 	func_image_new_from_file = __evas_render_image_new_from_file;
@@ -293,7 +298,9 @@ evas_render_updates(Evas e)
 	func_gradient_draw       = __evas_render_gradient_draw;
 	func_poly_draw           = __evas_render_poly_draw;
 	func_set_clip_rect       = __evas_render_set_clip_rect;
+	func_set_vis_cmap        = __evas_render_set_vis_cmap;
 	break;
+#endif	
      case RENDER_METHOD_IMAGE:
 	func_draw_add_rect       = __evas_image_draw_add_rect;
 	func_image_new_from_file = __evas_image_image_new_from_file;
@@ -312,8 +319,10 @@ evas_render_updates(Evas e)
 	func_gradient_draw       = __evas_image_gradient_draw;
 	func_poly_draw           = __evas_image_poly_draw;
 	func_set_clip_rect       = __evas_image_set_clip_rect;
+	func_set_vis_cmap        = __evas_image_set_vis_cmap;
 	break;
      default:
+	return;
 	break;
      }
    if ((e->current.viewport.x != e->previous.viewport.x) || 
@@ -832,6 +841,7 @@ evas_render_updates(Evas e)
 		  u = imlib_updates_get_next(u);
 	       }
 	     /* draw all objects now */
+	     func_set_vis_cmap(e->current.visual, e->current.colormap);
 	     for (l = e->layers; l; l = l->next)
 	       {
 		  Evas_Layer layer;

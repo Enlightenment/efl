@@ -133,6 +133,7 @@ void                 __evas_render_poly_draw (Display *disp, Imlib_Image dstim, 
 /***********/
 void         __evas_render_set_clip_rect(int on, int x, int y, int w, int h, int r, int g, int b, int a);
 void         __evas_render_init(Display *disp, int screen, int colors);
+void         __evas_render_set_vis_cmap(Visual *vis, Colormap cmap);
 int          __evas_render_capable(Display *disp);
 void         __evas_render_flush_draw(Display *disp, Imlib_Image dstim, Window win);
 void         __evas_render_sync(Display *disp);

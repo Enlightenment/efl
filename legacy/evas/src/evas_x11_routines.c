@@ -1896,6 +1896,12 @@ __evas_x11_flush_draw(Display *disp, Imlib_Image dstim, Window win)
    drawable_list = NULL;
 }
 
+void
+__evas_x11_set_vis_cmap(Visual *vis, Colormap cmap)
+{
+   __evas_visual = vis;
+   __evas_cmap = cmap;
+}
    
 int
 __evas_x11_capable(Display *disp)

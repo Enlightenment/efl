@@ -969,6 +969,10 @@ __evas_image_flush_draw(Display *disp, Imlib_Image dstim, Window win)
    drawable_list = NULL;
 }
 
+void
+__evas_image_set_vis_cmap(Visual *vis, Colormap cmap)
+{
+}
    
 int
 __evas_image_capable(Display *disp)

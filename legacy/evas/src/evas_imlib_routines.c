@@ -1133,8 +1133,14 @@ __evas_imlib_flush_draw(Display *disp, Imlib_Image dstim, Window win)
    drawable_list = NULL;
 }
 
-   
-   int
+void
+__evas_imlib_set_vis_cmap(Visual *vis, Colormap cmap)
+{
+   __evas_visual = vis;
+   __evas_cmap = cmap;
+}
+
+int
 __evas_imlib_capable(Display *disp)
 {
    return 1;
