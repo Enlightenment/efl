@@ -12,6 +12,8 @@ INCLUDES = \
 bin_SCRIPTS = \
 @EDJE_RECC_PRG@
 
+EXTRA_DIST = @EDJE_RECC_PRG@
+
 bin_PROGRAMS = \
 edje \
 edje_ls \

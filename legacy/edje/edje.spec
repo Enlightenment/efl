@@ -13,8 +13,8 @@ Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project 
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
 #BuildSuggests: xorg-x11-devel vim-enhanced
 BuildRequires: libjpeg-devel zlib-devel eet-devel XFree86-devel
-BuildRequires: edb-devel embryo-devel imlib2-devel evas-devel ecore-devel
-Requires: ecore evas eet imlib2 edb embryo
+BuildRequires: embryo-devel imlib2-devel evas-devel ecore-devel
+Requires: ecore evas eet imlib2 embryo
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
@@ -38,7 +38,7 @@ Summary: Edje headers, static libraries, documentation and test programs
 Group: System Environment/Libraries
 Requires: %{name} = %{version}
 Requires: libjpeg-devel zlib-devel eet-devel XFree86-devel
-Requires: edb-devel embryo-devel imlib2-devel evas-devel ecore-devel
+Requires: embryo-devel imlib2-devel evas-devel ecore-devel
 
 %description devel
 Headers, static libraries, test programs and documentation for Edje
