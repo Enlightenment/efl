@@ -25,7 +25,7 @@ Group: Development/Libraries
 Requires: %{name} = %{ver}
 
 %description devel
-Ecore development stuff
+Ecore development files
 
 %prep
 %setup -q
