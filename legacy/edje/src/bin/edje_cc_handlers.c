@@ -53,6 +53,7 @@ static void st_collections_group_parts_part_description_rel2_to_x(void);
 static void st_collections_group_parts_part_description_rel2_to_y(void);
 static void st_collections_group_parts_part_description_image_normal(void);
 static void st_collections_group_parts_part_description_image_tween(void);
+static void st_collections_group_parts_part_description_image_border(void);
 static void st_collections_group_parts_part_description_border(void);
 static void st_collections_group_parts_part_description_fill_smooth(void);
 static void st_collections_group_parts_part_description_fill_origin_relative(void);
@@ -144,6 +145,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.image.tween", st_collections_group_parts_part_description_image_tween},
      {"collections.group.parts.part.description.image.image", st_images_image}, /* dup */
      {"collections.group.parts.part.description.image.images.image", st_images_image}, /* dup */
+     {"collections.group.parts.part.description.image.border", st_collections_group_parts_part_description_image_border},
      {"collections.group.parts.part.description.border", st_collections_group_parts_part_description_border},
      {"collections.group.parts.part.description.fill.smooth", st_collections_group_parts_part_description_fill_smooth},
      {"collections.group.parts.part.description.fill.origin.relative", st_collections_group_parts_part_description_fill_origin_relative},
@@ -1203,7 +1205,7 @@ st_collections_group_parts_part_description_image_tween(void)
 }
 
 static void
-st_collections_group_parts_part_description_border(void)
+st_collections_group_parts_part_description_image_border(void)
 {
    Edje_Part_Collection *pc;
    Edje_Part *ep;
@@ -1217,6 +1219,16 @@ st_collections_group_parts_part_description_border(void)
    ed->border.r = parse_int_range(1, 0, 0x7fffffff);
    ed->border.t = parse_int_range(2, 0, 0x7fffffff);
    ed->border.b = parse_int_range(3, 0, 0x7fffffff);   
+}
+
+static void
+st_collections_group_parts_part_description_border(void)
+{
+   fprintf(stderr, "%s: Warning. %s:%i: description.border is deprecated, "
+	   "use description.image.border instead.\n",
+	   progname, file_in, line);
+
+   st_collections_group_parts_part_description_image_border ();
 }
 
 static void
