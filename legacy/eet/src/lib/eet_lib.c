@@ -781,7 +781,8 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
    if (!name2) return 0;
    /* dup data */
    data_size = size;
-   if (compress == 1)     
+   /* have bigger buffer for compress */
+   if (compress == 1)
      data_size = 12 + ((size * 101) / 100);
    data2 = malloc(data_size);
    if (!data2)
@@ -793,10 +794,12 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
    if (compress == 1)
      {
 	uLongf buflen;
-	
+	int ok;
+	  
 	/* compress the data with max compression */
-	if (compress2((Bytef *)data2, &buflen, (Bytef *)data, 
-		      (uLong)size, 9) != Z_OK)
+	buflen = (uLongf)data_size;
+	if ((ok = compress2((Bytef *)data2, &buflen, (Bytef *)data, 
+			   (uLong)size, 9)) != Z_OK)
 	  {
 	     free(name2);
 	     free(data2);
@@ -808,6 +811,13 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
 	  {
 	     compress = 0;
 	     data_size = size;
+	  }
+	else
+	  {
+	     void *data3;
+	     
+	     data3 = realloc(data2, data_size);
+	     if (data3) data2 = data3;
 	  }
      }
    if (!compress)
