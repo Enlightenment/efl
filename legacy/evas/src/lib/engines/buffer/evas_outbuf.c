@@ -1,7 +1,6 @@
 #include "evas_common.h"
 #include "evas_engine.h"
 #include <sys/time.h>
-#include <sys/utsname.h>
 
 void
 evas_buffer_outbuf_buf_init(void)
