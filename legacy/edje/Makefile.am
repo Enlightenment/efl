@@ -1,0 +1,18 @@
+## Process this file with automake to produce Makefile.in
+
+SUBDIRS = src
+
+MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
+                       config.h.in config.sub configure install-sh \
+		       ltconfig ltmain.sh missing mkinstalldirs \
+		       stamp-h.in edje_docs.tar edje_docs.tar.gz edje.c
+
+dist-hook:
+	./gendoc; \
+	tar cvf edje_docs.tar doc; \
+	rm -f edje_docs.tar.gz; \
+	gzip -9 edje_docs.tar;
+
+bin_SCRIPTS = edje-config
+
+EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN edje.spec edje.c.in gendoc Doxyfile edje_docs.tar.gz

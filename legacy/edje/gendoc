@@ -1,0 +1,12 @@
+#!/bin/sh
+cp ./edje.c.in ./edje.c
+for I in `find ./src/lib -name "edje.h" -print`; do
+  cat $I >> ./edje.c
+done
+#for I in `find ./src/lib -name "*.c" -print`; do
+#  cat $I >> ./edje.c
+#done
+rm -rf ./doc/html ./doc/latex ./doc/man
+doxygen
+cp doc/img/*.png doc/html/
+exit 0
