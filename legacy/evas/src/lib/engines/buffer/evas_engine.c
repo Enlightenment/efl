@@ -1046,13 +1046,15 @@ static void
 evas_engine_buffer_font_draw(void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, char *text)
 {
    Render_Engine *re;
+   RGBA_Font* newfont;
+   int render_w, render_h, mult, divv;
 
    re = (Render_Engine *)data;
    if ((w == ow) && (h == oh))
      evas_common_font_draw(surface, context, font, x, y, text);
    else
      {
-	/* create output surface size ow x oh and scale to w x h */
+	/* create output surface size render_w x render_h, draw text in adapted size, and scale to w x h */
 	RGBA_Draw_Context *dc, *dc_in;
 
 	dc_in = context;
@@ -1061,25 +1063,43 @@ evas_engine_buffer_font_draw(void *data, void *context, void *surface, void *fon
 	  {
 	     RGBA_Image *im;
 	     
+	     if ((h * ow) < (w * oh))
+	       {
+		  mult = w;
+		  divv = ow;
+	       }
+	     else
+	       {
+		  mult = h;
+		  divv = oh;
+	       }
+	     render_w = (ow * mult) / divv;
+	     render_h = (oh * mult) / divv;
+	     
 	     dc->col.col = dc_in->col.col;
-	     im = evas_common_image_create(ow, oh);
+	     im = evas_common_image_create(render_w, render_h);
 	     if (im)
 	       {
 		  int max_ascent;
 		  int i, j;
 		  
 		  im->flags |= RGBA_IMAGE_HAS_ALPHA;
-		  j = ow * oh;
+		  j = render_w * render_h;
 		  for (i = 0; i < j; i++) im->image->data[i] = (dc->col.col & 0xffffff);
 		  
-		  max_ascent = evas_common_font_max_ascent_get(font);
-		  
-		  evas_common_font_draw(im, dc, font, 0, max_ascent, text);
-		  evas_common_cpu_end_opt();
-		  evas_common_scale_rgba_in_to_out_clip_smooth(im, surface, context, 
-						   0, 0, ow, oh, 
-						   x, y - ((max_ascent * h) / oh), 
-						   w, h);
+		  newfont = evas_common_font_load( ((RGBA_Font *)font)->src->name, (((RGBA_Font *)font)->size*mult)/divv);
+		  if (newfont)
+		    {
+		       max_ascent = evas_common_font_max_ascent_get(newfont);
+		       
+		       evas_common_font_draw(im, dc, newfont, 0, max_ascent, text);
+		       evas_common_cpu_end_opt();
+		       evas_common_scale_rgba_in_to_out_clip_smooth(im, surface, context, 
+								    0, 0, render_w, render_h,
+								    x, y - ((max_ascent * h) / render_h),
+								    w, h);
+		       evas_common_font_free(newfont);
+		    }
 		  evas_common_image_free(im);
 	       }
 	     evas_common_draw_context_free(dc);
