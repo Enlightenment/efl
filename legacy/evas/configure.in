@@ -395,6 +395,48 @@ AC_ARG_ENABLE(cpu-sse,
   ], AC_MSG_RESULT(no)
 )
 
+altivec_cflags=""
+altivec_libs=""
+
+AC_MSG_CHECKING(whether to build altivec code)
+
+AC_ARG_ENABLE(cpu-altivec, 
+  [  --enable-cpu-altivec                enable altivec code], [
+     if [ test "$enableval" = "yes" ]; then
+        have_altivec="yes"
+        AC_MSG_RESULT(yes)
+     else
+        AC_MSG_RESULT(no)
+     fi
+  ], AC_MSG_RESULT(no)
+)
+
+if test "x$have_altivec" = "xyes"; then
+   AC_CHECK_HEADER(altivec.h,
+     [
+        altivec_libs="-laltivec"
+        AC_DEFINE(BUILD_ALTIVEC)
+     ],
+     [
+        have_altivec=""
+     ])
+fi
+
+if test "x$have_altivec" = "x"; then
+   AC_MSG_CHECKING(whether to use altivec compiler flag)
+   if test $GCC = yes; then
+      if echo "int main(){ return 0;}" | gcc -faltivec -E - > /dev/null 2>&1; then
+         AC_MSG_RESULT(yes)
+         altivec_cflags="-faltivec"
+         AC_DEFINE(BUILD_ALTIVEC)
+      else
+         AC_MSG_RESULT(no)
+      fi
+   else
+      AC_MSG_RESULT(no)
+   fi
+fi
+
 AC_MSG_CHECKING(whether to build c code)
 
 AC_ARG_ENABLE(cpu-c, 
@@ -793,6 +835,8 @@ AC_SUBST(ENGINE_FB_PRG)
 AC_SUBST(ENGINE_BUFFER_PRG)
 AC_SUBST(ENGINE_SOFTWARE_QTOPIA_PRG)
 AC_SUBST(ENGINE_GL_X11_PRG)
+
+AC_SUBST(altivec_cflags)
 
 AC_OUTPUT([
 Makefile
