@@ -21,14 +21,14 @@ DST=`pwd`"/build""/usr/local";
 
 mkdir $DST"/lib";
 mkdir $DST"/bin";
-mkdir $DST"/share";
-mkdir $DST"/share/eet";
+mkdir $DST"/include";
+#mkdir $DST"/share";
+#mkdir $DST"/share/eet";
 
 pushd src
 
  pushd lib
   LIB="eet"
-  VER="0.0.1"
   $CC \
   *.c \
   $CFLAGS \
@@ -46,6 +46,7 @@ pushd src
   rm -f "lib"$LIB".so.0.0"
   ln -s "lib"$LIB".so.0.0.1" "lib"$LIB".so.0.0"
   cp -a "lib"$LIB".so"* $DST"/lib";
+  cp -a "Eet.h" $DST"/include";
  popd
 
  pushd bin
