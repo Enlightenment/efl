@@ -4,6 +4,7 @@
 #include "Ecore_Job.h"
 
 static int _ecore_job_event_handler(void *data, int type, void *ev);
+static void _ecore_job_event_free(void *data, void *ev);
     
 static int ecore_event_job_type = 0;
 
@@ -31,7 +32,7 @@ ecore_job_add(void (*func) (void *data), const void *data)
    job = calloc(1, sizeof(Ecore_Job));
    if (!job) return NULL;
    ECORE_MAGIC_SET(job, ECORE_MAGIC_JOB);
-   job->event = ecore_event_add(ecore_event_job_type, job, NULL, NULL);
+   job->event = ecore_event_add(ecore_event_job_type, job, _ecore_job_event_free, NULL);
    if (!job->event)
      {
 	free(job);
@@ -73,4 +74,13 @@ _ecore_job_event_handler(void *data, int type, void *ev)
    job = ev;
    job->func(job->data);
    return 0;
+}
+
+static void
+_ecore_job_event_free(void *data, void *ev)
+{
+   Ecore_Job *job;
+   
+   job = ev;
+   free(ev);
 }

@@ -340,7 +340,10 @@ _ecore_event_call(void)
 		  e = (Ecore_Event *)ll;
 		  if (!ef->func_filter(ef->loop_data, ef->data,
 				       e->type, e->event))
-		    ecore_event_del(e);
+		    {
+//		       printf("FILTER SAID TO DEL ev %p\n", e->event);
+		       ecore_event_del(e);
+		    }
 	       }
 	     if (ef->func_end)
 	       ef->func_end(ef->data, ef->loop_data);
@@ -363,6 +366,7 @@ _ecore_event_call(void)
 	  }
 	event_filters_delete_me = 0;
      }
+//   printf("EVENT BATCH...\n");
    for (l = (Ecore_Oldlist *)events; l; l = l->next)
      {
 	Ecore_Oldlist *ll;	
@@ -376,6 +380,7 @@ _ecore_event_call(void)
 	     handle_count = 0;
 	     ecore_raw_event_type = e->type;
 	     ecore_raw_event_event = e->event;
+//	     printf("HANDLE ev type %i, %p\n", e->type, e->event);
 	     for (ll = (Ecore_Oldlist *)event_handlers; ll; ll = ll->next)
 	       {
 		  Ecore_Event_Handler *eh;
