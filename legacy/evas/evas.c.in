@@ -11,15 +11,15 @@ These routines are used for Evas Library interaction
 @image latex evas_big.eps width=5cm
 @image html  evas.png
 @version 1.0.0
-@author Carsten Haitzler <raster@rasterman.com>
-@author Till Adam <till@adam-lilienthal.de>
-@author Steve Ireland <sireland@pobox.com>
-@author Brett Nash <nash@nash.id.au>
-@author Tilman Sauerbeck <tilman@code-monkey.de>
-@author Corey Donohoe <atmos@atmos.org>
-@author Yuri Hudobin <glassy_ape@users.sourceforge.net>
-@author Nathan Ingersoll <ningerso@d.umn.edu>
-@author Willem Monsuwe <willem@stack.nl>
+@author Carsten Haitzler <raster\@rasterman.com>
+@author Till Adam <till\@adam-lilienthal.de>
+@author Steve Ireland <sireland\@pobox.com>
+@author Brett Nash <nash\@nash.id.au>
+@author Tilman Sauerbeck <tilman\@code-monkey.de>
+@author Corey Donohoe <atmos\@atmos.org>
+@author Yuri Hudobin <glassy_ape\@users.sourceforge.net>
+@author Nathan Ingersoll <ningerso\@d.umn.edu>
+@author Willem Monsuwe <willem\@stack.nl>
 @date 2000-2003
 
 
