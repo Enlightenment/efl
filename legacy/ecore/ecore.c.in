@@ -150,7 +150,7 @@ int timer_func(void *data)
   return 1;
 }
 
-int exit_func(int ev_type, void *ev, void *data)
+int exit_func(void *data, int ev_type, void *ev)
 {
   Ecore_Event_Signal_Exit *e;
 
