@@ -694,6 +694,43 @@ emotion_object_spu_button_get(Evas_Object *obj)
    return sd->spu.button;
 }
 
+const char *
+emotion_object_meta_info_get(Evas_Object *obj, Emotion_Meta_Info meta)
+{
+   Smart_Data *sd;
+   
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
+   if (!sd->module) return NULL;
+   if (!sd->video) return NULL;
+   switch (meta)
+     {
+      case EMOTION_META_INFO_TRACK_TITLE:
+	return sd->module->meta_get(sd->video, META_TRACK_TITLE);
+	break;
+      case EMOTION_META_INFO_TRACK_ARTIST:
+	return sd->module->meta_get(sd->video, META_TRACK_ARTIST);
+	break;
+      case EMOTION_META_INFO_TRACK_ALBUM:
+	return sd->module->meta_get(sd->video, META_TRACK_ALBUM);
+	break;
+      case EMOTION_META_INFO_TRACK_YEAR:
+	return sd->module->meta_get(sd->video, META_TRACK_YEAR);
+	break;
+      case EMOTION_META_INFO_TRACK_GENRE:
+	return sd->module->meta_get(sd->video, META_TRACK_GENRE);
+	break;
+      case EMOTION_META_INFO_TRACK_COMMENT:
+	return sd->module->meta_get(sd->video, META_TRACK_COMMENT);
+	break;
+      case EMOTION_META_INFO_TRACK_DISC_ID:
+	return sd->module->meta_get(sd->video, META_TRACK_DISCID);
+	break;
+      default:
+	break;
+     }
+   return NULL;
+}
+
 
 
 

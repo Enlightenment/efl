@@ -50,7 +50,7 @@ static const char *em_chapter_name_get(void *ef, int chapter);
 static void em_speed_set(void *ef, double speed);
 static double em_speed_get(void *ef);
 static int em_eject(void *ef);
-
+static const char *em_meta_get(Emotion_Xine_Video *ev, int meta);
 
 static void *_em_seek        (void *par);
 static int   _em_fd_active   (void *data, Ecore_Fd_Handler *fdh);
@@ -321,6 +321,7 @@ em_file_open(const char *file, Evas_Object *obj)
 	pthread_create(&ev->get_pos_len_th, NULL, _em_get_pos_len_th, ev);
 	pthread_attr_destroy(&thattr);
      }
+//   em_debug(ev);
    return ev;
 }
 
@@ -969,6 +970,38 @@ em_eject(void *ef)
    xine_eject(ev->stream);
 }
 
+static const char *
+em_meta_get(Emotion_Xine_Video *ev, int meta)
+{
+   switch (meta)
+     {
+      case META_TRACK_TITLE:
+	return xine_get_meta_info(ev->stream, XINE_META_INFO_TITLE);
+	break;
+      case META_TRACK_ARTIST:
+	return xine_get_meta_info(ev->stream, XINE_META_INFO_ARTIST);
+	break;
+      case META_TRACK_GENRE:
+	return xine_get_meta_info(ev->stream, XINE_META_INFO_GENRE);
+	break;
+      case META_TRACK_COMMENT:
+	return xine_get_meta_info(ev->stream, XINE_META_INFO_COMMENT);
+	break;
+      case META_TRACK_ALBUM:
+	return xine_get_meta_info(ev->stream, XINE_META_INFO_ALBUM);
+	break;
+      case META_TRACK_YEAR:
+	return xine_get_meta_info(ev->stream, XINE_META_INFO_YEAR);
+	break;
+      case META_TRACK_DISCID:
+	return xine_get_meta_info(ev->stream, XINE_META_INFO_CDINDEX_DISCID);
+	break;
+      default:
+	break;
+     }
+   return NULL;
+}
+
 
 
 
@@ -1301,7 +1334,6 @@ _em_get_pos_len(Emotion_Xine_Video *ev)
 
 
 
-
 static Emotion_Video_Module em_module =
 {
    em_init, /* init */
@@ -1349,7 +1381,8 @@ static Emotion_Video_Module em_module =
      em_chapter_name_get, /* chapter_name_get */
      em_speed_set, /* speed_set */
      em_speed_get, /* speed_get */
-     em_eject /* eject */
+     em_eject, /* eject */
+     em_meta_get /* meta_get */
 };
 
 Emotion_Video_Module *
@@ -1429,13 +1462,13 @@ em_debug(Emotion_Xine_Video *ev)
    printf("video_channels = %i\n", video_channels);
    printf("video_streams = %i\n", video_streams);
    printf("video_seekable = %i\n", video_seekable);
-//   printf("title = %s\n", title);
-//   printf("comment = %s\n", comment);
-//   printf("artist = %s\n", artist);
-//   printf("genre = %s\n", genre);
-//   printf("album = %s\n", album);
-//   printf("year = %s\n", year);
-//   printf("cdindex_discid = %s\n", cdindex_discid);
+   printf("title = %s\n", title);
+   printf("comment = %s\n", comment);
+   printf("artist = %s\n", artist);
+   printf("genre = %s\n", genre);
+   printf("album = %s\n", album);
+   printf("year = %s\n", year);
+   printf("cdindex_discid = %s\n", cdindex_discid);
    printf("video_channel = %i\n", video_channel);
    printf("audio_channel = %i\n", audio_channel);
    printf("spu_channels = %i\n", spu_channel);

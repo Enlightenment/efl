@@ -7,6 +7,14 @@
 
 #include "config.h"
 
+#define META_TRACK_TITLE 1
+#define META_TRACK_ARTIST 2
+#define META_TRACK_GENRE 3
+#define META_TRACK_COMMENT 4
+#define META_TRACK_ALBUM 5
+#define META_TRACK_YEAR 6
+#define META_TRACK_DISCID 7
+
 typedef struct _Emotion_Video_Module Emotion_Video_Module;
 
 struct _Emotion_Video_Module
@@ -57,6 +65,7 @@ struct _Emotion_Video_Module
    void         (*speed_set) (void *ef, double speed);
    double       (*speed_get) (void *ef);
    int          (*eject) (void *ef);
+   const char * (*meta_get) (void *ef, int meta);
    
    void          *handle;
 };

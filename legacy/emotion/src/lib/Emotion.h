@@ -36,7 +36,19 @@ enum _Emotion_Event
    EMOTION_EVENT_10
 };
 
-typedef enum _Emotion_Event Emotion_Event;
+enum _Emotion_Meta_Info
+{
+   EMOTION_META_INFO_TRACK_TITLE,
+   EMOTION_META_INFO_TRACK_ARTIST,
+   EMOTION_META_INFO_TRACK_ALBUM,
+   EMOTION_META_INFO_TRACK_YEAR,
+   EMOTION_META_INFO_TRACK_GENRE,
+   EMOTION_META_INFO_TRACK_COMMENT,
+   EMOTION_META_INFO_TRACK_DISC_ID
+};
+
+typedef enum _Emotion_Event     Emotion_Event;
+typedef enum _Emotion_Meta_Info Emotion_Meta_Info;
 
 #define EMOTION_CHANNEL_AUTO -1
 #define EMOTION_CHANNEL_DEFAULT 0
@@ -90,5 +102,6 @@ const char  *emotion_object_ref_file_get          (Evas_Object *obj);
 int          emotion_object_ref_num_get           (Evas_Object *obj);
 int          emotion_object_spu_button_count_get  (Evas_Object *obj);
 int          emotion_object_spu_button_get        (Evas_Object *obj);
-    
+const char  *emotion_object_meta_info_get         (Evas_Object *obj, Emotion_Meta_Info meta);
+
 #endif
