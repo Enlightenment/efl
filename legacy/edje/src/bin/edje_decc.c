@@ -201,6 +201,11 @@ output(void)
 	     exit (-1);
 	  }
 	f = fopen(out, "w");
+	if (!f) 
+	  {
+	     printf("ERROR: unable to write file (%s).\n", out);
+	     exit (-1);
+	  }
 	fputs(sf->file, f);
 	fclose(f);
      }
