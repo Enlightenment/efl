@@ -967,9 +967,7 @@ eet_delete(Eet_File *ef, char *name)
    int exists_already = 0;
    
    /* check to see its' an eet file pointer */   
-   if ((!ef) || (ef->magic != EET_MAGIC_FILE)
-       || (!name) ||
-       (ef->mode != EET_FILE_MODE_RW))
+   if ((!ef) || (ef->magic != EET_MAGIC_FILE) || (!name))
      return 0;
 
    if (!ef->header) return 0;
