@@ -263,7 +263,7 @@ output(void)
 	  }
 	f = fopen(out, "w");
 	fprintf(f, "#!/bin/sh\n");
-	fprintf(f, "edje_cc $@ -id . -fd . main_edje_source.edc %s.eet\n", outdir);
+	fprintf(f, "edje_cc $@ -id . -fd . main_edje_source.edc -o %s.eet\n", outdir);
 	fclose(f);
 
 #ifndef WIN32

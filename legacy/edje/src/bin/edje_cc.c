@@ -129,6 +129,11 @@ main(int argc, char **argv)
 	  {
 	     defines = evas_list_append(defines, mem_strdup(argv[i]));
 	  }
+	else if ((!strcmp(argv[i], "-o")) && (i < (argc - 1)))
+	  {
+	     i++;
+	     file_out = argv[i];
+	  }
 	else if (!file_in)
 	  file_in = argv[i];
 	else if (!file_out)
