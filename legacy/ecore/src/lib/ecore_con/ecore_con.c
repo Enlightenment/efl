@@ -267,7 +267,7 @@ ecore_con_server_connect(Ecore_Con_Type type,
    Ecore_Con_Server   *svr;
    struct sockaddr_un  socket_unix;
    struct sockaddr_in  socket_addr;
-   int                 curstate;
+   int                 curstate = 0;
    char                buf[4096];
 
    if (!name) return NULL;
