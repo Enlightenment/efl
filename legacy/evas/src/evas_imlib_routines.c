@@ -5,11 +5,22 @@
 #define RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh) \
 ((SPANS_COMMON((x), (w), (xx), (ww))) && (SPANS_COMMON((y), (h), (yy), (hh))))
 
+static void __evas_imlib_image_cache_flush(Display *disp);
 static Evas_List drawable_list = NULL;
 
 /*****************************************************************************/
 /* image internals ***********************************************************/
 /*****************************************************************************/
+
+static void
+__evas_imlib_image_cache_flush(Display *disp)
+{
+   int size;
+   
+   size = imlib_get_cache_size();
+   imlib_set_cache_size(0);
+   imlib_set_cache_size(size);
+}
 
 /*****************************************************************************/
 /* image externals ***********************************************************/
@@ -26,16 +37,6 @@ __evas_imlib_image_free(Evas_Imlib_Image *im)
 {
    imlib_context_set_image((Imlib_Image)im);
    imlib_free_image();
-}
-
-void
-__evas_imlib_image_cache_flush(Display *disp)
-{
-   int size;
-   
-   size = imlib_get_cache_size();
-   imlib_set_cache_size(0);
-   imlib_set_cache_size(size);
 }
 
 void
@@ -252,7 +253,7 @@ __evas_imlib_text_draw(Evas_Imlib_Font *fn, Display *disp, Window win,
 		       if (!up->image)
 			  up->image = imlib_create_image(up->w, up->h);
 		       imlib_context_set_image(up->image);
-		       imlib_text_draw(x, y, text);
+		       imlib_text_draw(x - up->x, y - up->y, text);
 		    }
 	       }
 	  }
@@ -280,6 +281,140 @@ __evas_imlib_text_get_size(Evas_Imlib_Font *fn, char *text, int *w, int *h)
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*****************************************************************************/
+/* rectangle externals *******************************************************/
+/*****************************************************************************/
+
+void              __evas_imlib_rectangle_draw(Display *disp, Window win,
+					      int win_w, int win_h,
+					      int x, int y, int w, int h,
+					      int r, int g, int b, int a)
+{
+   Evas_List l;
+   
+   imlib_context_set_color(r, g, b, a);
+   imlib_context_set_angle(0.0);
+   imlib_context_set_operation(IMLIB_OP_COPY);
+   imlib_context_set_color_modifier(NULL);
+   imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
+   imlib_context_set_anti_alias(1);
+   for(l = drawable_list; l; l = l->next)
+     {
+	Evas_Imlib_Drawable *dr;
+	
+	dr = l->data;
+	
+	if ((dr->win == win) && (dr->disp == disp))
+	  {
+	     Evas_List ll;
+	     
+	     for (ll = dr->tmp_images; ll; ll = ll->next)
+	       {
+		  Evas_Imlib_Update *up;
+
+		  up = ll->data;
+		  
+		  /* if image intersects image update - render */
+		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
+				      x, y, w, h))
+		    {
+		       if (!up->image)
+			  up->image = imlib_create_image(up->w, up->h);
+		       imlib_context_set_image(up->image);
+		       imlib_image_draw_rectangle(x - up->x, y - up->y, w, h);
+		    }
+	       }
+	  }
+     }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*****************************************************************************/
+/* rectangle externals *******************************************************/
+/*****************************************************************************/
+
+void              __evas_imlib_line_draw(Display *disp, Window win,
+					 int win_w, int win_h,
+					 int x1, int y1, int x2, int y2,
+					 int r, int g, int b, int a)
+{
+   Evas_List l;
+   int x, y, w, h;
+   
+   imlib_context_set_color(r, g, b, a);
+   imlib_context_set_angle(0.0);
+   imlib_context_set_operation(IMLIB_OP_COPY);
+   imlib_context_set_color_modifier(NULL);
+   imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
+   imlib_context_set_anti_alias(1);
+   w = x2 - x1;
+   if (w < 0) w = -w;
+   h = y2 - y1;
+   if (h < 0) h = -h;
+   if (x1 < x2) x = x1;
+   else x = x2;
+   if (y1 < y2) y = y1;
+   else y = y2;
+   for(l = drawable_list; l; l = l->next)
+     {
+	Evas_Imlib_Drawable *dr;
+	
+	dr = l->data;
+	
+	if ((dr->win == win) && (dr->disp == disp))
+	  {
+	     Evas_List ll;
+	     
+	     for (ll = dr->tmp_images; ll; ll = ll->next)
+	       {
+		  Evas_Imlib_Update *up;
+
+		  up = ll->data;
+		  
+		  /* if image intersects image update - render */
+		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
+				      x, y, w, h))
+		    {
+		       if (!up->image)
+			  up->image = imlib_create_image(up->w, up->h);
+		       imlib_context_set_image(up->image);
+		       imlib_image_draw_line(x1 - up->x, y - up->x, x2 - up->x, y2 - up->y, 0);
+		    }
+	       }
+	  }
+     }
+}
 
 
 

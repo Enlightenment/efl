@@ -127,14 +127,17 @@ void           __evas_gl_text_cache_empty(Display *disp);
 void           __evas_gl_text_cache_set_size(Display *disp, int size);
 int            __evas_gl_text_cache_get_size(Display *disp);
 void           __evas_gl_text_draw(Evas_GL_Font *fn, Display *disp, Window win, int win_w, int win_h, int x, int y, char *text, int r, int g, int b, int a);
+void           __evas_gl_text_get_size(Evas_GL_Font *fn, char *text, int *w, int *h);
 
 /**************/
 /* rectangles */
 /**************/
+void           __evas_gl_rectangle_draw(Display *disp, Window win, int win_w, int win_h, int x, int y, int w, int h, int r, int g, int b, int a);
 
 /*********/
 /* lines */
 /*********/
+void           __evas_gl_line_draw(Display *disp, Window win, int win_w, int win_h, int x1, int y1, int x2, int y2, int r, int g, int b, int a);
 
 /*************/
 /* gradients */

@@ -65,9 +65,13 @@ void              __evas_imlib_text_get_size(Evas_Imlib_Font *fn, char *text, in
 /* rectangles */
 /**************/
 
+void              __evas_imlib_rectangle_draw(Display *disp, Window win, int win_w, int win_h, int x, int y, int w, int h, int r, int g, int b, int a);
+
 /*********/
 /* lines */
 /*********/
+
+void              __evas_imlib_line_draw(Display *disp, Window win, int win_w, int win_h, int x1, int y1, int x2, int y2, int r, int g, int b, int a);
 
 /*************/
 /* gradients */

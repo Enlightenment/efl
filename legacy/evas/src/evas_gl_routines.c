@@ -308,6 +308,7 @@ __evas_gl_image_set_context_for_dest(Evas_GL_Image *im, Display *disp, Window w,
 	glDisable(GL_BLEND);
      }
    glEnable(GL_DITHER);
+   glEnable(GL_TEXTURE_2D);
    glShadeModel(GL_FLAT);
    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
@@ -1365,6 +1366,157 @@ __evas_gl_text_get_size(Evas_GL_Font *fn, char *text, int *w, int *h)
 
 
 
+/*****************************************************************************/
+/* rectangle externals *******************************************************/
+/*****************************************************************************/
+
+void           __evas_gl_rectangle_draw(Display *disp, Window win,
+					int win_w, int win_h,
+					int x, int y, int w, int h,
+					int r, int g, int b, int a)
+{
+   float rr, gg, bb, aa;
+   static int dest_w = 0, dest_h = 0;
+   
+   if ((__evas_current_win != win) || (__evas_current_disp != disp))
+     {
+	glXMakeCurrent(disp, win, __evas_gl_cx);
+	__evas_current_disp = disp;
+	__evas_current_win = win;
+     }
+   rr = (float)r / 255;
+   gg = (float)g / 255;
+   bb = (float)b / 255;
+   aa = (float)a / 255;
+   glColor4f(rr, gg, bb, aa);
+   if ((win_w != dest_w) || (win_h != dest_h))
+     {
+	glViewport(0, 0, win_w, win_h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, win_w, 0, win_h, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glScalef(1, -1, 1);
+	glTranslatef(0, -win_h, 0);
+	dest_w = win_w;
+	dest_h = win_h;
+     }
+   if (a < 255)
+     {
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+     }
+   else
+      glDisable(GL_BLEND);
+   glEnable(GL_DITHER);
+   glDisable(GL_TEXTURE_2D);
+   glShadeModel(GL_FLAT);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+   glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+   
+   glBegin(GL_QUADS);
+   glVertex2i(x, y);
+   glVertex2i(x + w, y);
+   glVertex2i(x + w, y + h);
+   glVertex2i(x, y + h);
+   glEnd();
+   
+   glEnable(GL_TEXTURE_2D);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*****************************************************************************/
+/* line externals ************************************************************/
+/*****************************************************************************/
+
+void              __evas_gl_line_draw(Display *disp, Window win,
+				      int win_w, int win_h,
+				      int x1, int y1, int x2, int y2,
+				      int r, int g, int b, int a)
+{
+   float rr, gg, bb, aa;
+   static int dest_w = 0, dest_h = 0;
+   
+   if ((__evas_current_win != win) || (__evas_current_disp != disp))
+     {
+	glXMakeCurrent(disp, win, __evas_gl_cx);
+	__evas_current_disp = disp;
+	__evas_current_win = win;
+     }
+   rr = (float)r / 255;
+   gg = (float)g / 255;
+   bb = (float)b / 255;
+   aa = (float)a / 255;
+   glColor4f(rr, gg, bb, aa);
+   if ((win_w != dest_w) || (win_h != dest_h))
+     {
+	glViewport(0, 0, win_w, win_h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, win_w, 0, win_h, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glScalef(1, -1, 1);
+	glTranslatef(0, -win_h, 0);
+	dest_w = win_w;
+	dest_h = win_h;
+     }
+   if (a < 255)
+     {
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+     }
+   else
+      glDisable(GL_BLEND);
+   glEnable(GL_DITHER);
+   glDisable(GL_TEXTURE_2D);
+   glShadeModel(GL_FLAT);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+   glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+/*   glEnable(GL_LINE_SMOOTH);*/
+   
+   glBegin(GL_LINES);
+   glVertex2i(x1, y1);
+   glVertex2i(x2, y2);
+   glEnd();
+   
+   glEnable(GL_TEXTURE_2D);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1451,11 +1603,5 @@ __evas_gl_draw_add_rect(Display *disp, Window win,
 			int x, int y, int w, int h)
 {
    return;
-   disp = NULL;
-   win = 0;
-   x = 0;
-   y = 0;
-   w = 0;
-   h = 0;
 }
 

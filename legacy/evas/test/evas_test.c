@@ -114,6 +114,24 @@ main(int argc, char **argv)
 	     __evas_gl_text_draw(fn[3], d, win, win_w, win_h, 30, 200, 
 				 "With Lots of colors & transparency too!", 
 				 50, 200, 100, 100);
+	     __evas_gl_rectangle_draw(d, win, win_w, win_h,
+				      80, 100, 100, 30,
+				      200, 40, 100, 100);
+	     __evas_gl_rectangle_draw(d, win, win_w, win_h,
+				      150, 110, 25, 25,
+				      200, 40, 100, 255);
+	     __evas_gl_rectangle_draw(d, win, win_w, win_h,
+				      170, 160, 200, 180,
+				      30, 40, 200, 160);
+	     __evas_gl_line_draw(d, win, win_w, win_h,
+				 10, 20, 100, 160,
+				 255, 255, 255, 255);
+	     __evas_gl_line_draw(d, win, win_w, win_h,
+				 10, 20, 100, 20,
+				 0, 0, 0, 255);
+	     __evas_gl_line_draw(d, win, win_w, win_h,
+				 10, 20, 10, 200,
+				 255, 255, 0, 100);
 	     __evas_gl_flush_draw(d, win);
 	     a++;
 	     if (a == (win_w * 4)) 
