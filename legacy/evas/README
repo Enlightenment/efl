@@ -34,7 +34,7 @@ There is also
 this will by default try the software engine - if you don't have a fast cpu
 it will be slow. You can try the other engines:
 ./evas_test_old -m x11
-./evas_test_old -m x11 -s 0
+./evas_test_old -m soft -s 0
 ./evas_test_old -m hard
 
 x11 is the X11 pixmap engine. -s 0 turns off ``dithering'' and smooth shading
