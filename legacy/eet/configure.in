@@ -4,7 +4,7 @@ dnl Process this file with autoconf to produce a configure script.
 rm -f config.cache
 
 AC_INIT(configure.in)
-AM_INIT_AUTOMAKE(eet, 0.0.1)
+AM_INIT_AUTOMAKE(eet, 0.9.0)
 AM_CONFIG_HEADER(config.h)
 
 AC_ISC_POSIX

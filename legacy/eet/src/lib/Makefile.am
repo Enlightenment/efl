@@ -19,4 +19,4 @@ Eet_private.h
 
 libeet_la_LIBADD       = $(LDFLAGS) -lz -ljpeg
 libeet_la_DEPENDENCIES = $(top_builddir)/config.h
-libeet_la_LDFLAGS      = -version-info 0:1:0
+libeet_la_LDFLAGS      = -version-info 9:0:9
