@@ -350,7 +350,6 @@ evas_object_smart_cleanup(Evas_Object *obj)
    obj->smart.parent = NULL;
    obj->smart.data = NULL;
    obj->smart.smart = NULL;
-   if (s) evas_object_smart_unuse(s);
 }
 
 /* all nice and private */

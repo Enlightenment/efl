@@ -147,5 +147,5 @@ void
 evas_object_smart_unuse(Evas_Smart *s)
 {
    s->usage--;
-   if (s->delete_me) evas_smart_free(s);
+   if (!s->usage) evas_smart_free(s);
 }
