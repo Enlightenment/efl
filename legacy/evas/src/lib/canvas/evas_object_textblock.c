@@ -1635,6 +1635,8 @@ evas_object_textblock_text_del(Evas_Object *obj, int len)
    if (len <= 0) return;
    if (o->pos >= o->len) return;
 
+   /* FIXME: need to delete formatting info too */
+   
    /* deleting everything */
    if ((o->pos == 0) && (len >= o->len))
      {
@@ -1768,11 +1770,9 @@ evas_object_textblock_format_insert(Evas_Object *obj, const char *format)
    /* at the end - just append */
    if (!node)
      {
-	printf("FORMAT INSERT: no node to insert at\n");
 	nformat = evas_object_textblock_format_merge(NULL, (char *)format);
 	if (nformat)
 	  {
-	     printf("end..\n");
 	     node = calloc(1, sizeof(Node));
 	     node->format = nformat;
 	     o->nodes = evas_object_list_append(o->nodes, node);
@@ -1780,7 +1780,6 @@ evas_object_textblock_format_insert(Evas_Object *obj, const char *format)
      }
    else
      {
-	printf("FORMAT INSERT: \"%s\"\n", node->text);
 	nformat = evas_object_textblock_format_merge(NULL, (char *)format);
 	if (nformat)
 	  {
