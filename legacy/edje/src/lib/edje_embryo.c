@@ -1645,7 +1645,7 @@ _edje_embryo_script_init(Edje *ed)
    embryo_program_native_call_add(ep, "set_state_val", _edje_embryo_fn_set_state_val);
    embryo_program_native_call_add(ep, "get_state_val", _edje_embryo_fn_get_state_val);
    
-   embryo_program_vm_push(ep); /* neew a new vm to run in */
+   embryo_program_vm_push(ep); /* need a new vm to run in */
    _edje_embryo_globals_init(ed);
 }
 
