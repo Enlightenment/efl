@@ -280,6 +280,10 @@ output(void)
 #ifndef WIN32
 	chmod(out, S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IWGRP | S_IXGRP);
 #endif
+
+	printf("\n*** CAUTION ***\n"
+	      "Please check the build script for anythin malicious "
+	      "before running it!\n\n");
      }
    eet_close(ef);
 }
