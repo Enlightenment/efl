@@ -11,8 +11,9 @@ Source: ftp://ftp.enlightenment.org/pub/emotion/%{name}-%{version}.tar.gz
 Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
-#BuildSuggests: xorg-x11-devel
-BuildRequires: XFree86-devel xine-lib-devel
+#BuildSuggests: xorg-x11-devel libxine1-devel xine-lib-devel
+BuildRequires: XFree86-devel
+BuildRequires: /usr/bin/xine-config
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
@@ -22,7 +23,7 @@ Emotion is a Media Library
 Summary: Emotion headers, static libraries, documentation and test programs
 Group: System Environment/Libraries
 Requires: %{name} = %{version}
-Requires: XFree86-devel xine-lib-devel
+Requires: XFree86-devel
 
 %description devel
 Headers, static libraries, test programs and documentation for Emotion
