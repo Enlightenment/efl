@@ -283,9 +283,18 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
 		    {
 		       lin_ptr[x] = (((x + dst_clip_x - dst_region_x) * 
 				      (src_region_w)) / dst_region_w);
-		       interp_x[x] = ((((x + dst_clip_x - dst_region_x) * 
-					(src_region_w)) << 8) / dst_region_w) -
-			 (lin_ptr[x] << 8);
+		       if (src_region_w > 4096)
+			 interp_x[x] = (((((x + dst_clip_x - dst_region_x) * 
+					   (src_region_w)) << 6) / dst_region_w) -
+					(lin_ptr[x] << 6)) << 2;
+		       else if (src_region_w > 2048)
+			 interp_x[x] = (((((x + dst_clip_x - dst_region_x) * 
+					   (src_region_w)) << 7) / dst_region_w) -
+					(lin_ptr[x] << 7)) << 1;
+		       else
+			 interp_x[x] = (((((x + dst_clip_x - dst_region_x) * 
+					   (src_region_w)) << 8) / dst_region_w) -
+					(lin_ptr[x] << 8));
 		       lin_ptr[x] += src_region_x;
 		    }
 		  else
@@ -305,9 +314,18 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
 		       pos = (((y + dst_clip_y - dst_region_y) * 
 			       (src_region_h)) / dst_region_h);
 		       row_ptr[y] = src_data + ((pos + src_region_y) * src_w);
-		       interp_y[y] = ((((y + dst_clip_y - dst_region_y) * 
-					(src_region_h)) << 8) / dst_region_h) -
-			 (pos << 8);
+		       if (src_region_h > 4096)
+			 interp_y[y] = (((((y + dst_clip_y - dst_region_y) * 
+					   (src_region_h)) << 6) / dst_region_h) -
+					(pos << 6)) << 2;
+		       else if (src_region_h > 2048)
+			 interp_y[y] = (((((y + dst_clip_y - dst_region_y) * 
+					   (src_region_h)) << 7) / dst_region_h) -
+					(pos << 7)) << 1;
+		       else
+			 interp_y[y] = (((((y + dst_clip_y - dst_region_y) * 
+					   (src_region_h)) << 8) / dst_region_h) -
+					(pos << 8));
 		    }
 		  else
 		    {
