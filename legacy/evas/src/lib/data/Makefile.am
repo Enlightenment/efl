@@ -6,13 +6,12 @@ AUTOMAKE_OPTIONS     = 1.4 foreign
 MAINTAINERCLEANFILES = Makefile.in
 
 LDFLAGS		     = -L/usr/local/lib
-INCLUDES	     = \
+INCLUDES	     = @freetype_cflags@ \
                        -I. \
 		       -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include \
 		       -I$(includedir) \
-                       -I/usr/local/include \
-		       @freetype_cflags@
+                       -I/usr/local/include
 
 noinst_LTLIBRARIES      = libevas_data.la
 libevas_data_la_SOURCES  = \

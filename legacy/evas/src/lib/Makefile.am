@@ -8,11 +8,11 @@ AUTOMAKE_OPTIONS     = 1.4 foreign
 MAINTAINERCLEANFILES = Makefile.in
 
 LDFLAGS		     = -L/usr/local/lib
-INCLUDES	     = -I/usr/local/include \
+INCLUDES	     = @freetype_cflags@ @x_cflags@ @qt_cflags@ @DIRECTFB_CFLAGS@ @gl_cflags@ \
+                       -I/usr/local/include \
 		       -I$(top_srcdir)/src/lib/include \
 		       -I$(includedir) \
-		       -I/usr/local/include \
-		       @freetype_cflags@ @x_cflags@ @qt_cflags@ @DIRECTFB_CFLAGS@ @gl_cflags@
+		       -I/usr/local/include		       
 
 lib_LTLIBRARIES      = libevas.la
 
