@@ -83,49 +83,49 @@ extern              "C"
   void                ecore_raise_child(Window win, Window child);
   void                ecore_lower_child(Window win, Window child);
   Ecore_XID          *ecore_add_xid(Window win, int x, int y, int w, int h,
-				    int depth, Window parent);
+            int depth, Window parent);
   Ecore_XID          *ecore_validate_xid(Window win);
   void                ecore_unvalidate_xid(Window win);
   void                ecore_sync(void);
   void                ecore_flush(void);
   Window              ecore_window_new(Window parent, int x, int y, int w,
-				       int h);
+               int h);
   Window              ecore_window_override_new(Window parent, int x, int y,
-						int w, int h);
+            int w, int h);
   Window              ecore_window_input_new(Window parent, int x, int y, int w,
-					     int h);
+               int h);
   void                ecore_window_set_events_propagate(Window win,
-							int propagate);
+              int propagate);
   void                ecore_window_show(Window win);
   void                ecore_window_hide(Window win);
   Pixmap              ecore_pixmap_new(Window win, int w, int h, int dep);
   void                ecore_pixmap_free(Pixmap pmap);
   void                ecore_window_set_background_pixmap(Window win,
-							 Pixmap pmap);
+               Pixmap pmap);
   void                ecore_window_set_shape_mask(Window win, Pixmap mask);
   void                ecore_window_add_shape_mask(Window win, Pixmap mask);
   void                ecore_window_set_shape_window(Window win, Window src,
-						    int x, int y);
+                int x, int y);
   void                ecore_window_add_shape_window(Window win, Window src,
-						    int x, int y);
+                int x, int y);
   void                ecore_window_set_shape_rectangle(Window win, int x, int y,
-						       int w, int h);
+                   int w, int h);
   void                ecore_window_add_shape_rectangle(Window win, int x, int y,
-						       int w, int h);
+                   int w, int h);
   void                ecore_window_set_shape_rectangles(Window win,
-							XRectangle * rect,
-							int num);
+              XRectangle * rect,
+              int num);
   void                ecore_window_add_shape_rectangles(Window win,
-							XRectangle * rect,
-							int num);
+              XRectangle * rect,
+              int num);
   void                ecore_window_clip_shape_by_rectangle(Window win, int x,
-							   int y, int w, int h);
+                 int y, int w, int h);
   XRectangle         *ecore_window_get_shape_rectangles(Window win, int *num);
   void                ecore_window_select_shape_events(Window win);
   void                ecore_window_unselect_shape_events(Window win);
   void                ecore_window_clear(Window win);
   void                ecore_window_clear_area(Window win, int x, int y, int w,
-					      int h);
+                int h);
   void                ecore_pointer_xy(Window win, int *x, int *y);
   void                ecore_pointer_xy_set(int x, int y);
   void                ecore_pointer_xy_get(int *x, int *y);
@@ -135,7 +135,7 @@ extern              "C"
   void                ecore_window_move(Window win, int x, int y);
   void                ecore_window_resize(Window win, int w, int h);
   void                ecore_window_move_resize(Window win, int x, int y, int w,
-					       int h);
+                 int h);
   int                 ecore_x_get_fd(void);
   void                ecore_set_error_handler(Ecore_Error_Function * func);
   void                ecore_reset_error_handler(void);
@@ -157,18 +157,18 @@ extern              "C"
   int                 ecore_modifier_mask_get(void);
   Window              ecore_get_key_grab_win(void);
   void                ecore_key_grab(char *key, Ecore_Event_Key_Modifiers mods,
-				     int anymod, int sync);
+             int anymod, int sync);
   void                ecore_key_ungrab(char *key,
-				       Ecore_Event_Key_Modifiers mods,
-				       int anymod);
+               Ecore_Event_Key_Modifiers mods,
+               int anymod);
   KeyCode             ecore_key_get_keycode(char *key);
   void                ecore_window_destroy(Window win);
   void                ecore_window_reparent(Window win, Window parent, int x,
-					    int y);
+              int y);
   void                ecore_window_raise(Window win);
   void                ecore_window_lower(Window win);
   void                ecore_window_get_geometry(Window win, int *x, int *y,
-						int *w, int *h);
+            int *w, int *h);
   int                 ecore_window_get_depth(Window win);
   int                 ecore_window_exists(Window win);
   Window              ecore_window_get_parent(Window win);
@@ -197,10 +197,10 @@ extern              "C"
   Atom                ecore_atom_get(char *name);
   void                ecore_window_set_delete_inform(Window win);
   void                ecore_window_property_set(Window win, Atom type,
-						Atom format, int size,
-						void *data, int number);
+            Atom format, int size,
+            void *data, int number);
   void               *ecore_window_property_get(Window win, Atom type,
-						Atom format, int *size);
+            Atom format, int *size);
   void                ecore_window_dnd_advertise(Window win);
   void                ecore_grab(void);
   void                ecore_ungrab(void);
@@ -211,51 +211,51 @@ extern              "C"
 
   int                 ecore_window_dnd_capable(Window win);
   void                ecore_window_dnd_handle_motion(Window source_win, int x,
-						     int y, int dragging);
+                 int y, int dragging);
   int                 ecore_dnd_selection_convert(Window win, Window req,
-						  Atom type);
+              Atom type);
   void               *ecore_dnd_selection_get(Window win, Window req, Atom type,
-					      int *size);
+                int *size);
   void                ecore_window_dnd_ok(int ok);
   void                ecore_window_dnd_finished(void);
   void                ecore_window_dnd_send_status_ok(Window source_win,
-						      Window win, int x, int y,
-						      int w, int h);
+                  Window win, int x, int y,
+                  int w, int h);
   void                ecore_window_dnd_send_finished(Window source_win,
-						     Window win);
+                 Window win);
   void                ecore_dnd_set_data(Window win);
   void                ecore_dnd_send_data(Window win, Window source_win,
-					  void *data, int size, Atom dest_atom,
-					  int plain_text);
+            void *data, int size, Atom dest_atom,
+            int plain_text);
   void                ecore_window_set_title(Window win, char *title);
   void                ecore_window_set_name_class(Window win, char *name,
-						  char *);
+              char *);
   void                ecore_window_get_name_class(Window win, char **name,
-						  char **class);
+              char **class);
   char               *ecore_window_get_machine(Window win);
   char               *ecore_window_get_command(Window win);
   char               *ecore_window_get_icon_name(Window win);
   void                ecore_window_get_hints(Window win, int *accepts_focus,
-					     int *initial_state,
-					     Pixmap * icon_pixmap,
-					     Pixmap * icon_mask,
-					     Window * icon_window,
-					     Window * window_group);
+               int *initial_state,
+               Pixmap * icon_pixmap,
+               Pixmap * icon_mask,
+               Window * icon_window,
+               Window * window_group);
   void                ecore_window_set_min_size(Window win, int w, int h);
   void                ecore_window_set_max_size(Window win, int w, int h);
   void                ecore_window_set_xy_hints(Window win, int x, int y);
   void                ecore_window_get_frame_size(Window win, int *l, int *r,
-						  int *t, int *b);
+              int *t, int *b);
   int                 ecore_window_save_under(Window win);
   GC                  ecore_gc_new(Drawable d);
   void                ecore_gc_free(GC gc);
   void                ecore_gc_set_fg(GC gc, int val);
   void                ecore_fill_rectangle(Drawable d, GC gc, int x, int y,
-					   int w, int h);
+             int w, int h);
   void                ecore_draw_rectangle(Drawable d, GC gc, int x, int y,
-					   int w, int h);
+             int w, int h);
   void                ecore_draw_line(Drawable d, GC gc, int x1, int y1, int x2,
-				      int y2);
+              int y2);
   void                ecore_draw_point(Drawable d, GC gc, int x, int y);
   void                ecore_window_hint_set_layer(Window win, int layer);
   void                ecore_window_hint_set_sticky(Window win, int sticky);
@@ -277,36 +277,36 @@ extern              "C"
   void                ecore_pointer_warp_to(int x, int y);
   void                ecore_gc_set_include_inferiors(GC gc);
   void                ecore_area_copy(Drawable src, Drawable dest, GC gc,
-				      int sx, int sy, int sw, int sh, int dx,
-				      int dy);
+              int sx, int sy, int sw, int sh, int dx,
+              int dy);
   Window              ecore_window_root(void);
   void                ecore_window_get_virtual_area(Window win, int *area_x,
-						    int *area_y);
+                int *area_y);
   void                ecore_get_virtual_area(int *area_x, int *area_y);
   void                ecore_window_get_root_relative_location(Window win,
-							      int *x, int *y);
+                    int *x, int *y);
 
   void                ecore_button_grab(Window win, int button, int events,
-					Ecore_Event_Key_Modifiers mod,
-					int any_mod);
+          Ecore_Event_Key_Modifiers mod,
+          int any_mod);
   void                ecore_button_ungrab(Window win, int button,
-					  Ecore_Event_Key_Modifiers mod,
-					  int any_mod);
+            Ecore_Event_Key_Modifiers mod,
+            int any_mod);
   void                ecore_pointer_replay(Time t);
   void                ecore_pointer_grab(Window win, Time t);
   void                ecore_pointer_ungrab(Time t);
   void                ecore_window_send_event_move_resize(Window win, int x,
-							  int y, int w, int h);
+                int y, int w, int h);
   void                ecore_window_send_client_message(Window win, Atom type,
-						       int format, void *data);
+                   int format, void *data);
   void                ecore_window_add_to_save_set(Window win);
   void                ecore_window_del_from_save_set(Window win);
   void                ecore_window_kill_client(Window win);
   void                ecore_window_set_border_width(Window win, int bw);
   int                 ecore_window_get_border_width(Window win);
   int                 ecore_window_get_wm_size_hints(Window win,
-						     XSizeHints * hints,
-						     int *mask);
+                 XSizeHints * hints,
+                 int *mask);
   int                 ecore_window_is_visible(Window win);
   int                 ecore_window_is_normal(Window win);
   int                 ecore_window_is_manageable(Window win);
@@ -328,8 +328,8 @@ extern              "C"
 
   void                ecore_set_blank_pointer(Window w);
   Cursor              ecore_cursor_new(Pixmap pmap, Pixmap mask, int x, int y,
-				       int fr, int fg, int fb, int br, int bg,
-				       int bb);
+               int fr, int fg, int fb, int br, int bg,
+               int bb);
   void                ecore_cursor_free(Cursor c);
   void                ecore_cursor_set(Window win, Cursor c);
   void                ecore_window_button_grab_auto_replay_set(Window win,
@@ -766,7 +766,7 @@ extern              "C"
   };
 
   void                ecore_add_event(Ecore_Event_Type type, void *event,
-				      void (*ev_free) (void *event));
+              void (*ev_free) (void *event));
   void                ecore_del_event(void *event);
   void                ecore_del_all_events(void);
   Ecore_Event        *ecore_get_last_event(void);
@@ -782,8 +782,8 @@ extern              "C"
   void                ecore_event_loop_quit(void);
 
   void                ecore_add_event_timer(char *name, double in,
-					    void (*func) (int val, void *data),
-					    int val, void *data);
+              void (*func) (int val, void *data),
+              int val, void *data);
   void               *ecore_del_event_timer(char *name);
 
   void                ecore_event_filter(Ecore_Event * ev);
@@ -791,27 +791,18 @@ extern              "C"
   void                ecore_event_filter_idle_handle(void);
   void                ecore_event_filter_init(void);
   void                ecore_event_filter_handler_add(Ecore_Event_Type type,
-						     void (*func) (Ecore_Event *
-								   ev));
-  void
-     
-     
-     
-     
-     
-     
-     
-     ecore_event_filter_idle_handler_add(void (*func) (void *data), void *data);
+                 void (*func) (Ecore_Event *
+                   ev));
+  void                ecore_event_filter_idle_handler_add(
+                                                     void (*func) (void *data),
+                                                     void *data);
 
   void                ecore_ev_signal_init(void);
   int                 ecore_ev_signal_events_pending(void);
 
   void                ecore_ev_x_init(void);
-  char
-     
-     
-     
-            *ecore_key_press_translate_into_typeable(Ecore_Event_Key_Down * e);
+  char               *ecore_key_press_translate_into_typeable(
+                                                     Ecore_Event_Key_Down * e);
 
 #define ECORE_ATOM(atom, name) \
         if (!atom) (atom) = ecore_atom_get(name);
