@@ -69,7 +69,7 @@ typedef struct _call {
   para         signature;
   const char  *help; } call;
 
-
+void print_usage(void);
 
 static call calls[]={
   { IPC_NONE,         "bundle",           P_HELPONLY, "List of propertyset-related commands" },
@@ -471,11 +471,23 @@ static int parse_line(ex_ipc_server_list **server_list,char *line) {
 
 
 int main(int argc,char **argv) {
-  ex_ipc_server_list *server=NULL;
-  int                 ret=ECORE_CONFIG_ERR_SUCC,cc=0;
-  connstate           cs=OFFLINE;
-  char               *p,*f=NULL;
-  char               *pipe_name=NULL;
+  ex_ipc_server_list *server;
+  int                 ret,cc;
+  connstate           cs;
+  char               *p,*f,*q;
+  char               *pipe_name;
+  #ifndef HAVE_LIBREADLINE
+    char              buf[MI];
+  #elif defined(HAVE_READLINE_HISTORY)
+    char             *history;
+  #endif
+
+  f=NULL;
+  server=NULL;
+  pipe_name=NULL;
+  ret=ECORE_CONFIG_ERR_SUCC;
+  cc=0;
+  cs=OFFLINE;
 
   if (argc <= 1  || (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0))  {
     print_usage();
@@ -485,10 +497,8 @@ int main(int argc,char **argv) {
   pipe_name=argv[1];
   printf("exsh: connecting to %s.\n", pipe_name);
   
-#ifndef HAVE_LIBREADLINE
-  char              buf[MI];
-#elif defined(HAVE_READLINE_HISTORY)
-  char             *history=NULL;
+#if defined(HAVE_READLINE_HISTORY)
+  *history=NULL;
 
   using_history();
   stifle_history(96);
@@ -521,7 +531,7 @@ reconnect:
       printf(IN);
       if((f=p=fgets(buf,MI,stdin))) {
 #endif
-        char *q=strchr(p,'\n');
+        *q=strchr(p,'\n');
         if(q)
           *q='\0';
         if(!strcasecmp(p,"exit")||!strcasecmp(p,"quit")) {
