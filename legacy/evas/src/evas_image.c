@@ -44,6 +44,7 @@ _evas_free_image_renderer_data(Evas e, Evas_Object o)
      default:
 	break;
      }
+   o->renderer_data.method[e->current.render_method] = NULL;
 }
 
 /* adding objects */
