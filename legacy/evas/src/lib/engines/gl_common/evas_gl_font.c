@@ -275,8 +275,10 @@ _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
    fp->allocations = evas_list_prepend(fp->allocations, fa);
    if (evas_list_alloc_error())
      {
+	printf("alloc prob\n");
 	gc->tex_pool = evas_list_remove(gc->tex_pool, fp);
 	glDeleteTextures(1, &(fp->texture));
+	free(fa);
 	free(fp);
 	return NULL;
      }
@@ -384,6 +386,10 @@ _evas_gl_font_texture_pool_rect_find(Evas_GL_Font_Texture_Pool *fp,
 		  
 		  /* dont do the rect we are just using as our offset */
 		  if (l2 == l) continue;
+		  /* hmmm crash here on mga... l2->data seems broken */
+		  /* so far it looks like memory corruption, but i can't */
+		  /* use valgrind to inspect any further due to the dri */
+		  /* hardware stuff :( */
 		  fa2 = l2->data;
 		  
 		  rx = fa2->x;
