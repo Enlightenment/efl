@@ -14,5 +14,5 @@ noinst_LTLIBRARIES      = libevas_file.la
 libevas_file_la_SOURCES  = \
 evas_path.c
 
-libevas_file_la_LIBADD       = $(LDFLAGS)
+libevas_file_la_LIBADD       = $LDFLAGS
 libevas_file_la_DEPENDENCIES = $(top_builddir)/config.h

@@ -57,8 +57,7 @@ evas_scale_smooth_scaler_downy.c \
 evas_scale_smooth_scaler_noscale.c \
 evas_scale_smooth_scaler_up.c
 
-libevas_engine_common_la_LIBADD       = \
-$(LDFLAGS)
+libevas_engine_common_la_LIBADD       = $LDFLAGS
 
 libevas_engine_common_la_DEPENDENCIES = \
 $(top_builddir)/config.h

@@ -14,5 +14,5 @@ noinst_LTLIBRARIES      = libevas_imaging.la
 libevas_imaging_la_SOURCES  = \
 evas_imaging.c
 
-libevas_imaging_la_LIBADD       = $(LDFLAGS)
+libevas_imaging_la_LIBADD       = $LDFLAGS
 libevas_imaging_la_DEPENDENCIES = $(top_builddir)/config.h

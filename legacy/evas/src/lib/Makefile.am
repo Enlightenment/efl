@@ -111,7 +111,7 @@ $(ENGINE_CAIRO_X11_INC)
 libevas_la_SOURCES  = \
 main.c
 
-libevas_la_LIBADD       = $(LDFLAGS) \
+libevas_la_LIBADD       = $LDFLAGS \
                           canvas/libevas_canvas.la \
 			  data/libevas_data.la \
 			  file/libevas_file.la \

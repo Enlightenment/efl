@@ -17,8 +17,7 @@ libevas_engine_cairo_common_la_SOURCES  = \
 evas_cairo_private.h \
 evas_cairo_main.c
 
-libevas_engine_cairo_common_la_LIBADD       = \
-@CAIRO_LIBS@ $(LDFLAGS)
+libevas_engine_cairo_common_la_LIBADD       = @CAIRO_LIBS@ $LDFLAGS
 
 libevas_engine_cairo_common_la_DEPENDENCIES = \
 $(top_builddir)/config.h

@@ -21,8 +21,7 @@ evas_engine.c \
 evas_outbuf.c \
 evas_qt_main.cpp
 
-libevas_engine_software_qtopia_la_LIBADD       = \
-@qt_libs@ $(LDFLAGS)
+libevas_engine_software_qtopia_la_LIBADD       = @qt_libs@ $LDFLAGS
 
 libevas_engine_software_qtopia_la_DEPENDENCIES = \
 $(top_builddir)/config.h

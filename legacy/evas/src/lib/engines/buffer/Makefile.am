@@ -18,8 +18,7 @@ evas_engine.h \
 evas_engine.c \
 evas_outbuf.c
 
-libevas_engine_buffer_la_LIBADD       = \
-$(LDFLAGS)
+libevas_engine_buffer_la_LIBADD       = $LDFLAGS
 
 libevas_engine_buffer_la_DEPENDENCIES = \
 $(top_builddir)/config.h
