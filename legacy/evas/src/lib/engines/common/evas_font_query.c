@@ -1,6 +1,6 @@
 #include "evas_common.h"
 
-extern FT_Library ft_lib;
+extern FT_Library evas_ft_lib;
 
 /* string extents */
 void

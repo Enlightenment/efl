@@ -1,6 +1,6 @@
 #include "evas_common.h"
 
-extern FT_Library ft_lib;
+extern FT_Library evas_ft_lib;
 
 RGBA_Font_Glyph *
 evas_common_font_cache_glyph_get(RGBA_Font *fn, FT_UInt index)

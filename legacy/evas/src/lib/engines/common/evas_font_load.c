@@ -1,6 +1,6 @@
 #include "evas_common.h"
 
-extern FT_Library ft_lib;
+FT_Library                evas_ft_lib = 0;
 
 static int                font_cache_usage = 0;
 static int                font_cache = 0;
@@ -26,7 +26,7 @@ evas_common_font_load(const char *name, int size)
    fn = malloc(sizeof(RGBA_Font));   
    file = (char *)name;
    
-   error = FT_New_Face(ft_lib, file, 0, &(fn->ft.face));
+   error = FT_New_Face(evas_ft_lib, file, 0, &(fn->ft.face));
    if (error)
      {
 	free(fn);
