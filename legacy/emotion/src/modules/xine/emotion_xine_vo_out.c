@@ -522,6 +522,8 @@ static void _emotion_overlay_blend_yuv(uint8_t *dst_base[3], vo_overlay_t * img_
    int clip_right;
    uint8_t clr=0;
    
+   if (!rle) return;
+   
    uint8_t *dst_y = dst_base[0] + dst_pitches[0] * y_off + x_off;
    uint8_t *dst_cr = dst_base[2] + (y_off / 2) * dst_pitches[1] + (x_off / 2) + 1;
    uint8_t *dst_cb = dst_base[1] + (y_off / 2) * dst_pitches[2] + (x_off / 2) + 1;
