@@ -120,6 +120,7 @@
 #include <string.h>
 #include <signal.h>
 #include <setjmp.h>
+#include <sys/types.h>
 
 #ifdef _WIN32_WCE
 #include <windows.h>
