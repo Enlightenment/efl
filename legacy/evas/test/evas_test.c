@@ -61,7 +61,7 @@ struct _imageblock
    Evas_Object o_image;
 };
 
-static double texts_loop = 75;
+static double texts_loop = 100;
 static TextBlock texts[] =
 {
      { 10.0, 12.0, 14.0, 16.0, "What are the 7 Wonders of the world?", NULL, NULL},
@@ -76,7 +76,11 @@ static TextBlock texts[] =
      { 46.0, 48.0, 50.0, 52.0, "Is there an 8th wonder?", NULL, NULL},
    
      { 52.0, 54.0, 58.0, 60.0, "Yes ...", NULL, NULL},
-     { 60.0, 64.0, 70.0, 74.0, "EVAS", NULL, NULL}
+     { 60.0, 64.0, 70.0, 74.0, "Mouldy Cheese", NULL, NULL},
+
+     { 76.0, 78.0, 80.0, 82.0, "But for those of you who ant to code ...", NULL, NULL},
+     { 80.0, 82.0, 84.0, 86.0, "There is ...", NULL, NULL},
+     { 88.0, 90.0, 94.0, 98.0, "EVAS", NULL, NULL}
 };
 static double images_loop = 75;
 static ImageBlock images[] =
@@ -87,7 +91,8 @@ static ImageBlock images[] =
      { 26.0, 28.0, 30.0, 32.0, 200, 350, IMGDIR"evas_test_wonder_4.png", NULL},
      { 30.0, 32.0, 34.0, 36.0, 400,   0, IMGDIR"evas_test_wonder_5.png", NULL},
      { 34.0, 36.0, 38.0, 40.0, 150, 400, IMGDIR"evas_test_wonder_6.png", NULL},
-     { 38.0, 40.0, 42.0, 44.0, 600,  25, IMGDIR"evas_test_wonder_7.png", NULL}
+     { 38.0, 40.0, 42.0, 44.0, 600,  25, IMGDIR"evas_test_wonder_7.png", NULL},
+     { 60.0, 64.0, 70.0, 74.0, 400, 100, IMGDIR"evas_test_cheese.png", NULL}
 };
 
 /* functions */
