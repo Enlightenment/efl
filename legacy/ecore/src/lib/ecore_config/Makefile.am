@@ -3,7 +3,8 @@
 SUBDIRS  = ipc
 
 INCLUDES = \
--I$(top_srcdir)/src/lib/ecore
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_ipc
 
 libecore_config_la_LDFLAGS = -version-info 1:0:0 \
 -L$(top_builddir)/src/lib/ecore/.libs

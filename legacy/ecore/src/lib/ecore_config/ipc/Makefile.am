@@ -7,6 +7,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 LDFLAGS              = -module -avoid-version -rdynamic -shared
 INCLUDES             = -I$(top_srcdir)/src\
+		       -I$(top_srcdir)/src/lib/ecore_ipc \
 		       -I../../ -I../ -I.
 
 IPC_ECORE_L = ipc_ecore.la
