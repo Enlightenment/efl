@@ -15,9 +15,7 @@ CFLAGS="-O2"
 
 rm -rf "build"
 mkdir "build"
-mkdir "build""/usr"
-mkdir "build""/usr/local"
-DST=`pwd`"/build""/usr/local";
+DST=`pwd`"/build";
 
 mkdir $DST"/lib";
 mkdir $DST"/bin";
@@ -69,7 +67,7 @@ popd
 PD=`pwd`
 pushd "build"
  tar zcvf $PD"/data.tar.gz" *
- pushd /skiff
+ pushd /skiff/local
   sudo tar zxvf $PD"/data.tar.gz"
  popd
 popd
