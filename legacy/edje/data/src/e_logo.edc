@@ -431,7 +431,7 @@ collections {
 //	    signal,     "*";
 //	    source,     "*";
 	    action,     STATE_SET "clicked" 0.0;
-	    transition, LINEAR, 0.0;
+	    transition, LINEAR 0.0;
 	    target,     "logo";
 	 }
 	 program {
@@ -439,7 +439,7 @@ collections {
 	    signal,     "mouse,up,1";
 	    source,     "logo";
 	    action,     STATE_SET "default" 0.0;
-	    transition, DECELERATE, 0.25;
+	    transition, DECELERATE 0.25;
 	    target,     "logo";
 	 }
 	 program {
@@ -447,7 +447,7 @@ collections {
 	    signal,     "show";
 	    source,     "";
 	    action,     STATE_SET "default" 0.0;
-	    transition, LINEAR, 4.0;
+	    transition, LINEAR 4.0;
 	    target,     "logo_anim";
 	    after,      "logo_animate"; // at end... loop
 	 }
