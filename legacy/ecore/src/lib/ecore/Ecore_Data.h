@@ -31,54 +31,56 @@ unsigned int ecore_str_hash(void *key);
 #include <pthread.h>
 
 #define ECORE_DECLARE_LOCKS \
-int readers; \
-pthread_mutex_t readers_mutex; \
-pthread_mutex_t writers_mutex; \
-pthread_cond_t readers_cond;
+struct { \
+	int readers; \
+	pthread_mutex_t readers_mutex; \
+	pthread_mutex_t writers_mutex; \
+	pthread_cond_t readers_cond; \
+} locks
 
 #define ECORE_INIT_LOCKS(structure) \
 if (structure) { \
 	structure->readers = 0; \
-	pthread_mutex_init(&structure->readers_mutex, NULL); \
-	pthread_mutex_init(&structure->writers_mutex, NULL); \
-	pthread_cond_init(&structure->readers_cond, NULL); \
+	pthread_mutex_init(&structure->locks.readers_mutex, NULL); \
+	pthread_mutex_init(&structure->locks.writers_mutex, NULL); \
+	pthread_cond_init(&structure->locks.readers_cond, NULL); \
 }
 
 #define ECORE_DESTROY_LOCKS(structure) \
 if (structure) { \
-	pthread_mutex_destroy(&structure->readers_mutex); \
-	pthread_mutex_destroy(&structure->writers_mutex); \
+	pthread_mutex_destroy(&structure->locks.readers_mutex); \
+	pthread_mutex_destroy(&structure->locks.writers_mutex); \
 	pthread_cond_destroy(&structure->readers_cond); \
 }
 
 #define ECORE_READ_LOCK(structure) \
 if (structure) { \
-	pthread_mutex_lock(&structure->readers_mutex); \
-	structure->readers++; \
-	pthread_mutex_unlock(&structure->readers_mutex); \
+	pthread_mutex_lock(&structure->locks.readers_mutex); \
+	structure->locks.readers++; \
+	pthread_mutex_unlock(&structure->locks.readers_mutex); \
 }
 
 #define ECORE_READ_UNLOCK(structure) \
 if (structure) { \
-	pthread_mutex_lock(&structure->readers_mutex); \
-	if (--structure->readers == 0) \
-		pthread_cond_broadcast(&structure->readers_cond); \
-	pthread_mutex_unlock(&structure->readers_mutex); \
+	pthread_mutex_lock(&structure->locks.readers_mutex); \
+	if (--structure->locks.readers == 0) \
+		pthread_cond_broadcast(&structure->locks.readers_cond); \
+	pthread_mutex_unlock(&structure->locks.readers_mutex); \
 }
 
 #define ECORE_WRITE_LOCK(structure) \
 if (structure) { \
-	pthread_mutex_lock(&structure->readers_mutex); \
-	pthread_mutex_lock(&structure->writers_mutex); \
-	while (structure->readers > 0) \
-		pthread_cond_wait(&structure->readers_cond, \
-				&structure->readers_mutex); \
-	pthread_mutex_unlock(&structure->readers_mutex); \
+	pthread_mutex_lock(&structure->locks.readers_mutex); \
+	pthread_mutex_lock(&structure->locks.writers_mutex); \
+	while (structure->locks.readers > 0) \
+		pthread_cond_wait(&structure->locks.readers_cond, \
+				&structure->locks.readers_mutex); \
+	pthread_mutex_unlock(&structure->locks.readers_mutex); \
 }
 
 #define ECORE_WRITE_UNLOCK(structure) \
 if (structure) \
-	pthread_mutex_unlock(&structure->writers_mutex); \
+	pthread_mutex_unlock(&structure->locks.writers_mutex); \
 
 #define ECORE_THREAD_CREATE(function, arg) \
 if (function) { \
@@ -91,7 +93,7 @@ if (function) { \
 
 #else /* No pthreads available */
 
-#define ECORE_DECLARE_LOCKS
+#define ECORE_DECLARE_LOCKS struct { } locks
 #define ECORE_INIT_LOCKS(structure)
 #define ECORE_READ_LOCK(structure)
 #define ECORE_READ_UNLOCK(structure)
@@ -114,7 +116,7 @@ struct _ecore_list_node {
 	void *data;
 	struct _ecore_list_node *next;
 
-	ECORE_DECLARE_LOCKS
+	ECORE_DECLARE_LOCKS;
 };
 
 struct _ecore_list {
@@ -127,7 +129,7 @@ struct _ecore_list {
 	int nodes;		/* The number of nodes in the list */
 	int index;		/* The position from the front of the
 				   list of current node */
-	ECORE_DECLARE_LOCKS
+	ECORE_DECLARE_LOCKS;
 };
 
 
@@ -252,7 +254,7 @@ struct _ecore_hash_node {
 	void *key;	/* The key for the data node */
 	void *value;	/* The value associated with this node */
 
-	ECORE_DECLARE_LOCKS
+	ECORE_DECLARE_LOCKS;
 };
 
 typedef struct _ecore_hash Ecore_Hash;
@@ -270,7 +272,7 @@ struct _ecore_hash {
 	Ecore_Free_Cb free_key;	/* The callback function to free key */
 	Ecore_Free_Cb free_value;	/* The callback function to determine hash */
 
-	ECORE_DECLARE_LOCKS
+	ECORE_DECLARE_LOCKS;
 };
 
 /* Create and initialize a hash */
@@ -468,7 +470,7 @@ struct _Ecore_Tree_Node {
 	int max_right;
 	int max_left;
 
-	ECORE_DECLARE_LOCKS
+	ECORE_DECLARE_LOCKS;
 };
 
 typedef struct _Ecore_Tree Ecore_Tree;
@@ -483,7 +485,7 @@ struct _Ecore_Tree {
 	/* Callback for freeing node data, default is NULL */
 	Ecore_Free_Cb free_func;
 
-	ECORE_DECLARE_LOCKS
+	ECORE_DECLARE_LOCKS;
 };
 
 /* Some basic tree functions */
