@@ -8,8 +8,8 @@ MAINTAINERCLEANFILES = Makefile.in
 INCLUDES	     = @freetype_cflags@ @VALGRIND_CFLAGS@ \
                        -I. \
 		       -I$(top_srcdir)/src/lib \
-		       -I$(top_srcdir)/src/lib/include
-                       
+		       -I$(top_srcdir)/src/lib/include \
+		       @eet_cflags@ @edb_cflags@
 
 noinst_LTLIBRARIES      = libevas_engine_common.la
 libevas_engine_common_la_SOURCES  = \
