@@ -37,7 +37,9 @@ _evas_highest_object_at_point(Evas e, int x, int y)
 	     if ((ob->current.visible) && (!ob->pass_events) && (!ob->delete_me))
 	       {
 		  if (_evas_point_in_object(e, ob, x, y)) 
-		     o = ob;
+		    {
+		       o = ob;
+		    }
 	       }
 	  }
      }
@@ -80,7 +82,7 @@ evas_event_button_down(Evas e, int x, int y, int b)
    if ((b < 1) || (b > 32)) return;
    if (!e->mouse.buttons) 
       {
-	 o = _evas_highest_object_at_point(e, e->mouse.x, e->mouse.y);
+	 o = _evas_highest_object_at_point(e, x, y);
 	 e->mouse.button_object = o;
       }
    e->mouse.buttons |= (1 << (b - 1));
@@ -109,7 +111,7 @@ evas_event_button_up(Evas e, int x, int y, int b)
 	 if ((e->mouse.button_object) &&
 	     (e->mouse.object != e->mouse.button_object))
 	    _evas_callback_call(e, e->mouse.button_object, CALLBACK_MOUSE_OUT, 
-				e->mouse.buttons, e->mouse.x, e->mouse.y);
+				e->mouse.buttons, x, y);
 	 e->mouse.button_object = NULL;
       }
 }
