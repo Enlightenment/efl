@@ -93,7 +93,7 @@ evas_file_path_list(char *path, char *match, int match_case)
 	if (!match_case)
 	  flags |= FNM_CASEFOLD;
 #else
-#warning "Your libc does not provide case-insensitive matching!"
+/*#warning "Your libc does not provide case-insensitive matching!"*/
 #endif	
 	while ((dp = readdir(dir)))
 	  {

@@ -157,13 +157,13 @@ evas_imaging_font_line_advance_get(Evas_Imaging_Font *fn)
 void
 evas_imaging_font_string_advance_get(Evas_Imaging_Font *fn, char *str, int *x, int *y)
 {
-   return evas_common_font_query_advance(fn->font, str, x, y);
+   evas_common_font_query_advance(fn->font, str, x, y);
 }
 
 void
 evas_imaging_font_string_size_query(Evas_Imaging_Font *fn, char *str, int *w, int *h)
 {
-   return evas_common_font_query_size(fn->font, str, w, h);
+   evas_common_font_query_size(fn->font, str, w, h);
 }
 
 int
