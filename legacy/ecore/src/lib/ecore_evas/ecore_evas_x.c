@@ -870,6 +870,16 @@ _ecore_evas_focus_set(Ecore_Evas *ee, int on)
 }
 
 static void
+_ecore_evas_iconified_set(Ecore_Evas *ee, int on)
+{
+   if (((ee->prop.iconified) && (on)) ||
+       ((!ee->prop.iconified) && (!on))) return;
+   ee->prop.iconified = on;
+   ecore_x_window_prop_state_request(ee->engine.x.win,
+	   ECORE_X_WINDOW_STATE_ICONIFIED, on);
+}
+
+static void
 _ecore_evas_borderless_set(Ecore_Evas *ee, int on)
 {
    if (((ee->prop.borderless) && (on)) ||
@@ -1094,7 +1104,7 @@ static const Ecore_Evas_Engine_Func _ecore_x_engine_func =
      _ecore_evas_cursor_set,
      _ecore_evas_layer_set,
      _ecore_evas_focus_set,
-     NULL,
+     _ecore_evas_iconified_set,
      _ecore_evas_borderless_set,
      _ecore_evas_override_set,
      NULL,
