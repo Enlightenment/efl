@@ -412,9 +412,23 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
 		  if (pt->id == runp->program->id)
 		    {
 		       _edje_program_end(ed, runp);
-		       break;
+		       goto done;
 		    }
 	       }
+	     for (ll = ed->pending_actions; ll; ll = ll->next)
+	       {
+		  Edje_Pending_Program *pp;
+		  
+		  pp = ll->data;
+		  if (pt->id == pp->program->id)
+		    {
+		       ed->pending_actions = evas_list_remove(ed->pending_actions, pp);
+		       ecore_timer_del(pp->timer);
+		       free(pp);
+		       goto done;
+		    }
+	       }
+	     done:
 	  }
 	_edje_emit(ed, "program,stop", pr->name);
      }
