@@ -578,6 +578,7 @@ void evas_object_recalc_clippees(Evas_Object *obj);
 int evas_object_clippers_is_visible(Evas_Object *obj);
 int evas_object_clippers_was_visible(Evas_Object *obj);
 void evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void *event_info);
+int evas_event_passes_through(Evas_Object *obj);
 Evas_List *evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y);
 int evas_file_path_is_full_path(char *path);
 char *evas_file_path_join(char *path, char *end);

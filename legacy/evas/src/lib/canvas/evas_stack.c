@@ -73,7 +73,7 @@ evas_object_raise(Evas_Object *obj)
      }
    obj->restack = 1;
    evas_object_change(obj);
-   if (!obj->pass_events)
+   if (!evas_event_passes_through(obj))
      {
 	if (!obj->smart.smart)
 	  {
@@ -119,7 +119,7 @@ evas_object_lower(Evas_Object *obj)
      }
    obj->restack = 1;
    evas_object_change(obj);
-   if (!obj->pass_events)
+   if (!evas_event_passes_through(obj))
      {
 	if (!obj->smart.smart)
 	  {
@@ -173,7 +173,7 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
      }
    obj->restack = 1;
    evas_object_change(obj);
-   if (!obj->pass_events)
+   if (!evas_event_passes_through(obj))
      {
 	if (!obj->smart.smart)
 	  {
@@ -227,7 +227,7 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
      }
    obj->restack = 1;
    evas_object_change(obj);
-   if (!obj->pass_events)
+   if (!evas_event_passes_through(obj))
      {
 	if (!obj->smart.smart)
 	  {

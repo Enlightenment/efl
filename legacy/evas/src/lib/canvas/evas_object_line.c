@@ -103,7 +103,7 @@ evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coo
    MAGIC_CHECK_END();
    if ((x1 == o->cur.x1) && (y1 == o->cur.y1) &&
        (x2 == o->cur.x2) && (y2 == o->cur.y2)) return;
-   if (!obj->pass_events)
+   if (!evas_event_passes_through(obj))
      was = evas_object_is_in_output_rect(obj,
 					 obj->layer->evas->pointer.x,
 					 obj->layer->evas->pointer.y, 1, 1);
@@ -142,7 +142,7 @@ evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coo
    is = evas_object_is_in_output_rect(obj,
 				      obj->layer->evas->pointer.x,
 				      obj->layer->evas->pointer.y, 1, 1);
-   if (!obj->pass_events)
+   if (!evas_event_passes_through(obj))
      {  
 	if ((is ^ was) && obj->cur.visible)
 	  evas_event_feed_mouse_move(obj->layer->evas,

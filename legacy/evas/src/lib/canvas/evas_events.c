@@ -2,6 +2,14 @@
 #include "evas_private.h"
 #include "Evas.h"
 
+int
+evas_event_passes_through(Evas_Object *obj)
+{
+   if (obj->pass_events) return 1;
+   if (obj->smart.parent) return evas_event_passes_through(obj->smart.parent);
+   return 0;
+}
+
 Evas_List *
 evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y)
 {
@@ -21,7 +29,7 @@ evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y)
 	     
 	     obj = (Evas_Object *)l2;
 	     if (obj == stop) goto done;
-	     if ((!obj->pass_events) && (!obj->smart.smart))
+	     if ((!evas_event_passes_through(obj)) && (!obj->smart.smart))
 	       {
 		  evas_object_clip_recalc(obj);
 		  if ((evas_object_is_in_output_rect(obj, x, y, 1, 1)) &&
@@ -363,7 +371,7 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
 	     obj = l->data;
 	     if ((obj->cur.visible) &&
 		 (evas_object_clippers_is_visible(obj)) &&
-		 (!obj->pass_events) &&
+		 (!evas_event_passes_through(obj)) &&
 		 (!obj->smart.smart) &&
 		 (!obj->clip.clipees))
 	       {
@@ -436,7 +444,7 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
 		 (obj->cur.visible) &&
 		 (evas_object_clippers_is_visible(obj)) &&
 		 (evas_list_find(ins, obj)) &&
-		 (!obj->pass_events) &&
+		 (!evas_event_passes_through(obj)) &&
 		 (!obj->smart.smart) &&
 		 (!obj->clip.clipees))
 	       {

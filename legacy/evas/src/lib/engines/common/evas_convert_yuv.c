@@ -127,8 +127,10 @@ evas_common_convert_yuv_420p_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
 #ifndef BUILD_MMX
    mmx = 0;
 #endif
-   if (sse) _evas_yv12torgb_sse(src, dst, w, h);
-   else if (mmx) _evas_yv12torgb_mmx(src, dst, w, h);
+   if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
+     _evas_yv12torgb_sse(src, dst, w, h);
+   else if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+     _evas_yv12torgb_mmx(src, dst, w, h);
 #ifdef BUILD_ALTIVEC
    if (evas_common_cpu_has_feature(CPU_FEATURE_ALTIVEC))
      _evas_yv12torgb_altivec(src, dst, w, h);
