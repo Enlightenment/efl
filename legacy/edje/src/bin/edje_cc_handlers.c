@@ -17,6 +17,8 @@ static void st_collections_group_min(void);
 static void st_collections_group_max(void);
 static void st_collections_group_data_item(void);
 
+static void ob_collections_group_script(void);
+
 static void ob_collections_group_parts_part(void);
 static void st_collections_group_parts_part_name(void);
 static void st_collections_group_parts_part_type(void);
@@ -77,6 +79,8 @@ static void st_collections_group_programs_program_action(void);
 static void st_collections_group_programs_program_transition(void);
 static void st_collections_group_programs_program_target(void);
 static void st_collections_group_programs_program_after(void);
+
+static void ob_collections_group_programs_program_script(void);
 
 /*****/
 
@@ -159,6 +163,7 @@ New_Object_Handler object_handlers[] =
      {"collections.group.max", NULL},
      {"collections.group.data", NULL},
      {"collections.group.data.item", NULL},
+     {"collections.group.script", ob_collections_group_script},
      {"collections.group.parts", NULL},
      {"collections.group.parts.part", ob_collections_group_parts_part},
      {"collections.group.parts.part.name", NULL},
@@ -224,7 +229,8 @@ New_Object_Handler object_handlers[] =
      {"collections.group.programs.program.action", NULL},
      {"collections.group.programs.program.transition", NULL},
      {"collections.group.programs.program.target", NULL},
-     {"collections.group.programs.program.after", NULL}
+     {"collections.group.programs.program.after", NULL},
+     {"collections.group.programs.program.script", ob_collections_group_programs_program_script}
 };
 
 /*****/
@@ -332,6 +338,7 @@ ob_collections_group(void)
 {
    Edje_Part_Collection_Directory_Entry *de;
    Edje_Part_Collection *pc;
+   Code *cd;
    
    de = mem_alloc(SZ(Edje_Part_Collection_Directory_Entry));
    edje_file->collection_dir->entries = evas_list_append(edje_file->collection_dir->entries, de);
@@ -340,6 +347,9 @@ ob_collections_group(void)
    pc = mem_alloc(SZ(Edje_Part_Collection));
    edje_collections = evas_list_append(edje_collections, pc);
    pc->id = evas_list_count(edje_collections) - 1;
+   
+   cd = mem_alloc(SZ(Code));
+   codes = evas_list_append(codes, cd);
 }
 
 static void
@@ -369,6 +379,35 @@ st_collections_group_max(void)
    pc = evas_list_data(evas_list_last(edje_collections));
    pc->prop.max.w = parse_int_range(0, 0, 0x7fffffff);
    pc->prop.max.h = parse_int_range(1, 0, 0x7fffffff);
+}
+
+static void
+ob_collections_group_script(void)
+{
+   Edje_Part_Collection *pc;
+   Code *cd;
+   
+   pc = evas_list_data(evas_list_last(edje_collections));
+   cd = evas_list_data(evas_list_last(codes));
+   
+   if (!is_verbatim()) track_verbatim(1);
+   else
+     {
+	char *s;
+	
+	s = get_verbatim();
+	if (s)
+	  {
+	     if (cd->shared)
+	       {
+		  fprintf(stderr, "%s: Error. parse error %s:%i. There is already an existing script section for the group\n",
+			  progname, file_in, line);
+		  exit(-1);
+	       }
+	     cd->shared = s;
+	     set_verbatim(NULL);
+	  }
+     }
 }
 
 static void
@@ -1256,6 +1295,7 @@ st_collections_group_programs_program_action(void)
 			   "DRAG_VAL_SET", EDJE_ACTION_TYPE_DRAG_VAL_SET,
 			   "DRAG_VAL_STEP", EDJE_ACTION_TYPE_DRAG_VAL_STEP,
 			   "DRAG_VAL_PAGE", EDJE_ACTION_TYPE_DRAG_VAL_PAGE,
+			   "SCRIPT", EDJE_ACTION_TYPE_SCRIPT,
 			   NULL);
    if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
      {
@@ -1348,14 +1388,45 @@ st_collections_group_programs_program_after(void)
      {
 	Edje_Program_After *pa;
 	char *name;
-
+	
 	name = parse_str(0);
-
+	
 	pa = mem_alloc(SZ(Edje_Program_After));
 	pa->id = -1;
 	ep->after = evas_list_append(ep->after, pa);
-
+	
 	data_queue_program_lookup(pc, name, &(pa->id));
 	free(name);
+     }
+}
+
+static void
+ob_collections_group_programs_program_script(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Program *ep;
+   Code *cd;
+   
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->programs));
+   cd = evas_list_data(evas_list_last(codes));
+   
+   if (!is_verbatim()) track_verbatim(1);
+   else
+     {
+	char *s;
+	
+	s = get_verbatim();
+	if (s)
+	  {
+	     Code_Program *cp;
+	     
+	     cp = mem_alloc(SZ(Code_Program));
+	     cp->id = ep->id;
+	     cp->script = s;
+	     cd->programs = evas_list_append(cd->programs, cp);
+	     set_verbatim(NULL);
+	     ep->action = EDJE_ACTION_TYPE_SCRIPT;
+	  }
      }
 }

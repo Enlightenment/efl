@@ -23,6 +23,8 @@
 typedef struct _New_Object_Handler    New_Object_Handler;
 typedef struct _New_Statement_Handler New_Statement_Handler;
 typedef struct _Font                  Font;
+typedef struct _Code                  Code;
+typedef struct _Code_Program          Code_Program;
 
 struct _New_Object_Handler
 {
@@ -42,6 +44,18 @@ struct _Font
    char *name;
 };
 
+struct _Code
+{
+   char      *shared;
+   Evas_List *programs; 
+};
+
+struct _Code_Program
+{
+   int        id;
+   char      *script;
+};
+
 /* global fn calls */
 void    data_setup(void);
 void    data_write(void);
@@ -50,7 +64,11 @@ void    data_queue_program_lookup(Edje_Part_Collection *pc, char *name, int *des
 void    data_queue_image_lookup(char *name, int *dest);
 void    data_process_lookups(void);
     
-    
+
+int     is_verbatim(void);
+void    track_verbatim(int on);
+void    set_verbatim(char *s);
+char   *get_verbatim(void);
 void    compile(void);
 int     is_param(int n);
 int     is_num(int n);    
@@ -81,6 +99,7 @@ extern Evas_List             *params;
 extern Edje_File             *edje_file;
 extern Evas_List             *edje_collections;
 extern Evas_List             *fonts;
+extern Evas_List             *codes;
 extern New_Object_Handler     object_handlers[];
 extern New_Statement_Handler  statement_handlers[];
 

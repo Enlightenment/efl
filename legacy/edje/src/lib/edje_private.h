@@ -59,5 +59,6 @@ extern Evas_List       *_edje_edjes;
 void _edje_embryo_script_init     (Edje *ed);
 void _edje_embryo_script_shutdown (Edje *ed);
 void _edje_embryo_script_reset    (Edje *ed);
+void _edje_embryo_test_run        (Edje *ed, char *fname, char *sig, char *src);
     
 #endif

@@ -93,3 +93,23 @@ _edje_embryo_script_reset(Edje *ed)
    if (embryo_program_recursion_get(ed->collection->script) > 0) return;
    embryo_program_vm_reset(ed->collection->script);
 }
+
+void
+_edje_embryo_test_run(Edje *ed, char *fname, char *sig, char *src)
+{
+   Embryo_Function fn;
+   
+   if (!ed) return;
+   if (!ed->collection) return;
+   if (!ed->collection->script) return;
+   _edje_embryo_script_reset(ed);
+   fn = embryo_program_function_find(ed->collection->script, fname);
+   if (fn != EMBRYO_FUNCTION_NONE)
+     {
+	printf("EDJE DEBUG: About to run script from progrqm.\n");
+	embryo_parameter_string_push(ed->collection->script, sig);
+	embryo_parameter_string_push(ed->collection->script, src);
+	embryo_program_run(ed->collection->script, fn);
+	printf("EDJE DEBUG: Done.\n");
+     }
+}

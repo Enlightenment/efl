@@ -139,11 +139,20 @@ collections {
       name: "test";
       min: 32 32;
       max: 1024 768;
-      data
-	{
-	   item: "My Data" "The string to attach to this data";
-	   item: "The Key" "String data attached to the key";
-	}
+      data {
+	 item: "My Data" "The string to attach to this data";
+	 item: "The Key" "String data attached to the key";
+      }
+      script {
+	 
+	 main()
+	   {
+	      tst();
+	      emit("Flabby", "Pants");
+	      return 7;
+	   }
+	 
+      }
       parts {
 	 part {
 	    name:          "background";
@@ -466,7 +475,10 @@ collections {
 	    name:       "logo_animate_signal";
 	    signal:     "mouse,up,1";
 	    source:     "logo_anim";
-	    action:     SIGNAL_EMIT "do_it" "the_source";
+//	    action:     SIGNAL_EMIT "do_it" "the_source";
+	    script {
+	       emit("PROGRAAAAAAAM", "TEEEEEEEEEEEEEST");
+	    }
 	 }
 	 program {
 	    name:       "random_signal";

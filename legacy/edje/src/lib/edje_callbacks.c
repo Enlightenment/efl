@@ -307,7 +307,7 @@ _edje_pending_timer_cb(void *data)
    
    pp = data;
    pp->edje->pending_actions = evas_list_remove(pp->edje->pending_actions, pp);
-   _edje_program_run(pp->edje, pp->program, 1);
+   _edje_program_run(pp->edje, pp->program, 1, "", "");
    free(pp);
    return 0;
 }

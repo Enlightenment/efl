@@ -27,6 +27,7 @@ struct _Image_Lookup
 Edje_File *edje_file = NULL;
 Evas_List *edje_collections = NULL;
 Evas_List *fonts = NULL;
+Evas_List *codes = NULL;
 
 static Eet_Data_Descriptor *edd_edje_file = NULL;
 static Eet_Data_Descriptor *edd_edje_image_directory = NULL;
@@ -77,6 +78,7 @@ data_write(void)
    int image_num;
    int font_num;
    int collection_num;
+   int i;
    
    bytes = 0;
    input_bytes = 0;
@@ -374,37 +376,6 @@ data_write(void)
 	char buf[4096];
 	
 	pc = l->data;
-
-	/* FIXME: hack!!!! */
-	  {
-	     FILE *f;
-	     
-	     f = fopen("test.amx", "r");
-	     if (f)
-	       {
-		  int size;
-		  void *data;
-		  
-		  fseek(f, 0, SEEK_END);
-		  size = ftell(f);
-		  rewind(f);
-		  if (size > 0)
-		    {
-		       int bt;
-		       
-		       data = malloc(size);
-		       if (data)
-			 {
-			    fread(data, size, 1, f);
-			    snprintf(buf, sizeof(buf), "scripts/%i", pc->id);
-			    bt = eet_write(ef, buf, data, size, 1);
-			    free(data);
-			    printf("WROTE %i bytes of AMX!\n", bt);
-			 }
-		    }
-		  fclose(f);
-	       }
-	  }
 	snprintf(buf, sizeof(buf), "collections/%i", pc->id);
 	bytes = eet_data_write(ef, edd_edje_part_collection, buf, pc, 1);
 	if (bytes <= 0)
@@ -422,6 +393,88 @@ data_write(void)
 	  {
 	     printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" collection entry\n",
 		    progname, bytes, (bytes + 512) / 1024, buf);
+	  }
+     }
+   for (i = 0, l = codes; l; l = l->next, i++)
+     {
+	Code *cd;
+	
+	cd = l->data;
+	if ((cd->shared) || (cd->programs))
+	  {
+	     int fd;
+	     char tmpn[4096];
+	     
+	     strcpy(tmpn, "/tmp/edje_cc.sma-tmp-XXXXXX");
+	     fd = mkstemp(tmpn);
+	     if (fd >= 0)
+	       {
+		  FILE *f;
+		  char buf[4096];
+		  char tmpo[4096];
+		  int ret;
+		  
+		  f = fopen(tmpn, "w");
+		  if (f)
+		    {
+		       Evas_List *ll;
+		       
+		       fprintf(f, "#include <edje>\n\n");
+		       if (cd->shared) fprintf(f, "%s\n", cd->shared);
+		       for (ll = cd->programs; ll; ll = ll->next)
+			 {
+			    Code_Program *cp;
+			    
+			    cp = ll->data;
+			    if (cp->script)
+			      {
+				 /* FIXME: this prototype needs to be */
+				 /* formalised and set in stone */
+				 fprintf(f, "public _p%i(sig[], src[]) {\n", cp->id);
+				 fprintf(f, "%s\n", cp->script);
+				 fprintf(f, "}\n");
+			      }
+			 }
+		       fclose(f);
+		    }
+		  close(fd);
+		  strcpy(tmpo, "/tmp/edje_cc.amx-tmp-XXXXXX");
+		  fd = mkstemp(tmpo);
+		  if (fd >= 0)
+		    {
+		       snprintf(buf, sizeof(buf), "embryo_cc -i%s -o%s %s", 
+				DAT"data/include", tmpo, tmpn);
+		       ret = system(buf);
+		       printf("ret = %i\n", ret);
+		       close(fd);
+		    }
+		  f = fopen(tmpo, "r");
+		  if (f)
+		    {
+		       int size;
+		       void *data;
+		       
+		       fseek(f, 0, SEEK_END);
+		       size = ftell(f);
+		       rewind(f);
+		       if (size > 0)
+			 {
+			    int bt;
+			    
+			    data = malloc(size);
+			    if (data)
+			      {
+				 fread(data, size, 1, f);
+				 snprintf(buf, sizeof(buf), "scripts/%i", i);
+				 bt = eet_write(ef, buf, data, size, 1);
+				 free(data);
+			      }
+			 }
+		       fclose(f);
+		    }
+		  unlink(tmpn);
+		  unlink(tmpo);
+	       }
 	  }
      }
    eet_close(ef);

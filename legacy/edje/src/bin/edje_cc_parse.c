@@ -36,7 +36,9 @@ int        line = 0;
 Evas_List *stack = NULL;
 Evas_List *params = NULL;
 
-static char file_buf[4096];
+static char  file_buf[4096];
+static int   verbatim = 0;
+static char *verbatim_str = NULL;
 
 static void
 new_object(void)
@@ -379,6 +381,73 @@ parse(char *data, off_t size)
 	       {
 		  stack = evas_list_append(stack, token);
 		  new_object();
+		  if ((verbatim == 1) && (p < (end - 2)))
+		    {
+		       int escaped = 0;
+		       int inquotes = 0;
+		       int insquotes = 0;
+		       int squigglie = 1;
+		       char *verbatim_1;
+		       char *verbatim_2;
+		       
+		       while ((p[0] != '{') && (p < end)) p++;
+		       p++;
+		       verbatim_1 = p;
+		       verbatim_2 = NULL;
+		       for (; p < end; p++)
+			 {
+			    if (escaped) escaped = 0;
+			    if (!escaped)
+			      {
+				 if (p[0] == '\\') escaped = 1;
+				 else if (p[0] == '\"')
+				   {
+				      if (!insquotes)
+					{
+					   if (inquotes) inquotes = 0;
+					   else inquotes = 1;
+					}
+				   }
+				 else if (p[0] == '\'')
+				   {
+				      if (!inquotes)
+					{
+					   if (insquotes) insquotes = 0;
+					   else insquotes = 1;
+					}
+				   }
+				 else if ((!inquotes) && (!insquotes))
+				   {
+				      if      (p[0] == '{') squigglie++;
+				      else if (p[0] == '}') squigglie--;
+				      if (squigglie == 0)
+					{
+					   verbatim_2 = p - 1;
+					   break;
+					}
+				   }
+			      }
+			 }
+		       if (verbatim_2 > verbatim_1)
+			 {
+			    int l;
+			    char *v;
+			    
+			    l = verbatim_2 - verbatim_1 + 1;
+			    v = malloc(l + 1);
+			    strncpy(v, verbatim_1, l);
+			    v[l] = 0;
+			    set_verbatim(v);
+			 }
+		       else
+			 {
+			    fprintf(stderr, "%s: Error. parse error %s:%i. { marker does not have matching } marker\n",
+				    progname, file_in, line);
+			    exit(-1);
+			 }
+		       new_object();
+		       verbatim = 0;
+		    }
 	       }
 	  }
      }
@@ -394,6 +463,30 @@ static void
 clean_tmp_file(void)
 {
    if (clean_file) unlink(clean_file);
+}
+
+int
+is_verbatim(void)
+{
+   return verbatim;
+}
+
+void
+track_verbatim(int on)
+{
+   verbatim = on;
+}
+
+void
+set_verbatim(char *s)
+{
+   verbatim_str = s;
+}
+
+char *
+get_verbatim(void)
+{
+   return verbatim_str;
 }
 
 void

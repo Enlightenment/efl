@@ -276,7 +276,7 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 	     if (pa->id >= 0)
 	       {
 		  pr = evas_list_nth(ed->collection->programs, pa->id);
-		  if (pr) _edje_program_run(ed, pr, 0);
+		  if (pr) _edje_program_run(ed, pr, 0, "", "");
 		  if (_edje_block_break(ed))
 		    {
 		       if (!ed->walking_actions) free(runp);
@@ -345,7 +345,7 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
 }
    
 void
-_edje_program_run(Edje *ed, Edje_Program *pr, int force)
+_edje_program_run(Edje *ed, Edje_Program *pr, int force, char *ssig, char *ssrc)
 {
    Evas_List *l;
    /* limit self-feeding loops in programs to 64 levels */
@@ -461,7 +461,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
 		  if (pa->id >= 0)
 		    {
 		       pr2 = evas_list_nth(ed->collection->programs, pa->id);
-		       if (pr2) _edje_program_run(ed, pr2, 0);
+		       if (pr2) _edje_program_run(ed, pr2, 0, "", "");
 		       if (_edje_block_break(ed)) goto break_prog;
 		    }
 	       }
@@ -597,6 +597,17 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
 	_edje_emit(ed, "program,stop", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
      }
+   else if (pr->action == EDJE_ACTION_TYPE_SCRIPT)
+     {
+	char fname[128];
+	
+	_edje_emit(ed, "program,start", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+	snprintf(fname, sizeof(fname), "_p%i", pr->id);
+	_edje_embryo_test_run(ed, fname, ssig, ssrc);
+	_edje_emit(ed, "program,stop", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+     }
    if (!((pr->action == EDJE_ACTION_TYPE_STATE_SET) 
 	 /* hmm this fucks somethgin up. must look into it later */
 	 /* && (pr->tween.time > 0.0) && (!ed->no_anim))) */
@@ -610,7 +621,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
 	     if (pa->id >= 0)
 	       {
 	        pr2 = evas_list_nth(ed->collection->programs, pa->id);
-	        if (pr2) _edje_program_run(ed, pr2, 0);
+	        if (pr2) _edje_program_run(ed, pr2, 0, "", "");
 	        if (_edje_block_break(ed)) goto break_prog;
 	       }
 	  }
@@ -734,7 +745,7 @@ _edje_emit(Edje *ed, char *sig, char *src)
 			    Edje_Program *pr;
 			    
 			    pr = l->data;
-			    _edje_program_run(ed, pr, 0);
+			    _edje_program_run(ed, pr, 0, sig, src);
 			    if (_edje_block_break(ed))
 			      {
 				 if (tmps) free(tmps);
@@ -767,7 +778,7 @@ _edje_emit(Edje *ed, char *sig, char *src)
 #ifdef EDJE_PROGRAM_CACHE
 			    matched++;
 #endif			    
-			    _edje_program_run(ed, pr, 0);
+			    _edje_program_run(ed, pr, 0, ee->signal, ee->source);
 			    if (_edje_block_break(ed))
 			      {
 #ifdef EDJE_PROGRAM_CACHE

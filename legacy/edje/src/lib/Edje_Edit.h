@@ -113,7 +113,8 @@ Edje_Edit_Image *edje_edit_iamge_get_by_id(int id);
 #define EDJE_ACTION_TYPE_DRAG_VAL_SET  4
 #define EDJE_ACTION_TYPE_DRAG_VAL_STEP 5
 #define EDJE_ACTION_TYPE_DRAG_VAL_PAGE 6
-#define EDJE_ACTION_TYPE_LAST          7
+#define EDJE_ACTION_TYPE_SCRIPT        7
+#define EDJE_ACTION_TYPE_LAST          8
 
 #define EDJE_TWEEN_MODE_NONE       0
 #define EDJE_TWEEN_MODE_LINEAR     1
@@ -597,7 +598,7 @@ void  _edje_unref(Edje *ed);
     
 int   _edje_program_run_iterate(Edje_Running_Program *runp, double tim);
 void  _edje_program_end(Edje *ed, Edje_Running_Program *runp);
-void  _edje_program_run(Edje *ed, Edje_Program *pr, int force);
+void  _edje_program_run(Edje *ed, Edje_Program *pr, int force, char *ssig, char *ssrc);
 void  _edje_emit(Edje *ed, char *sig, char *src);
 
 void  _edje_text_init(void);
