@@ -524,7 +524,7 @@ ecore_config_theme_with_path_get(const char *key)
 }
 
 static char        *_ecore_config_short_types[] =
-   { "nil", "int", "flt", "str", "rgb", "str" };
+   { "<nil> ", "<int> ", "<flt> ", "<str> ", "<rgb> ", "<str> ", "<bool>" };
 
 /**
  * Prints the property list of the local configuration bundle to output.
@@ -537,7 +537,7 @@ ecore_config_args_display(void)
    if (__ecore_config_app_description)
       printf("%s\n\n", __ecore_config_app_description);
    printf("Supported Options:\n");
-   printf(" -h, --help\t      Print this text\n");
+   printf(" -h, --help\t       Print this text\n");
    if (!__ecore_config_bundle_local)
       return;
    props = __ecore_config_bundle_local->data;
@@ -548,7 +548,7 @@ ecore_config_args_display(void)
 	     props = props->next;
 	     continue;
 	  }
-	printf(" %c%c%c --%s\t<%s> %s\n", props->short_opt ? '-' : ' ',
+	printf(" %c%c%c --%s\t%s %s\n", props->short_opt ? '-' : ' ',
 	       props->short_opt ? props->short_opt : ' ',
 	       props->short_opt ? ',' : ' ',
 	       props->long_opt ? props->long_opt : props->key,
