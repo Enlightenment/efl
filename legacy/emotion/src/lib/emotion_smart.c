@@ -163,12 +163,16 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
    sd->pos = 0;
    sd->seek_pos = 0;
    sd->len = 0;
-   if (file)
+   if ((file) && (strlen(file) > 0))
      {
 	int w, h;
 	
 	sd->file = strdup(file);
-	if (sd->video) sd->module->file_close(sd->video);
+	if (sd->video)
+	  {
+	     sd->module->file_close(sd->video);
+	     evas_object_image_size_set(sd->obj, 0, 0);
+	  }
 	if (sd->module) _emotion_module_close(sd->module);
 	sd->module = _emotion_module_open("emotion_decoder_xine.so");
 	if (!sd->module) return;

@@ -2,10 +2,6 @@
 #include "emotion_private.h"
 #include "emotion_xine.h"
 
-#include <unistd.h>
-#include <fcntl.h>
-#include <pthread.h>
-
 static int        init_count = 0;
 static xine_t    *decoder = NULL;
 
@@ -56,11 +52,14 @@ static void em_speed_set(void *ef, double speed);
 static double em_speed_get(void *ef);
 static int em_eject(void *ef);
 
+
 static void *_em_seek        (void *par);
 static int   _em_fd_active   (void *data, Ecore_Fd_Handler *fdh);
 static void  _em_event       (void *data, const xine_event_t *event);
 static int   _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh);
 static int   _em_timer       (void *data);
+static void *_em_get_pos_len_th(void *par);
+static void  _em_get_pos_len (Emotion_Xine_Video *ev);
 
 static int
 em_init(void)
@@ -112,6 +111,15 @@ em_file_open(const char *file, Evas_Object *obj)
    if (!ev) return NULL;
    ev->obj = obj;
 
+   if (1)
+     {
+	xine_cfg_entry_t cf;
+	if (xine_config_lookup_entry(decoder, "input.dvd_use_readahead", &cf))
+	  {
+	     cf.num_value = 1; // 0 or 1
+	     xine_config_update_entry(decoder, &cf);
+	  }
+     }
    /* some notes on parameters we could swizzle for certain inputs */
    if (0)
      {
@@ -134,7 +142,7 @@ em_file_open(const char *file, Evas_Object *obj)
 	  }
 	if (xine_config_lookup_entry(decoder, "input.dvd_use_readahead", &cf))
 	  {
-	     cf.num_value = 0; // 0 or 1
+	     cf.num_value = 1; // 0 or 1
 	     xine_config_update_entry(decoder, &cf);
 	  }
 	// these are used any time in runtime - so changing affects all dvd's
@@ -297,6 +305,23 @@ em_file_open(const char *file, Evas_Object *obj)
    v = xine_get_stream_info(ev->stream, XINE_STREAM_INFO_VIDEO_RATIO);
    ev->ratio = (double)v / 10000.0;
    ev->just_loaded = 1;
+   
+     {
+	pthread_attr_t thattr;
+	
+	pthread_cond_init(&(ev->seek_cond), NULL);
+	pthread_cond_init(&(ev->get_pos_len_cond), NULL);
+	pthread_mutex_init(&(ev->seek_mutex), NULL);
+	pthread_mutex_init(&(ev->get_pos_len_mutex), NULL);
+
+	pthread_attr_init(&thattr);
+	pthread_create(&ev->seek_th, NULL, _em_seek, ev);
+	pthread_attr_destroy(&thattr);
+
+	pthread_attr_init(&thattr);
+	pthread_create(&ev->get_pos_len_th, NULL, _em_get_pos_len_th, ev);
+	pthread_attr_destroy(&thattr);
+     }
    return ev;
 }
 
@@ -306,16 +331,26 @@ em_file_close(void *ef)
    Emotion_Xine_Video *ev;
    
    ev = (Emotion_Xine_Video *)ef;
+   printf("xn stop\n");
+   xine_stop(ev->stream);
+   ev->delete_me = 1;
+//   pthread_mutex_lock(&(ev->seek_mutex));
+   pthread_cond_broadcast(&(ev->seek_cond));
+//   pthread_mutex_lock(&(ev->get_pos_len_mutex));
+   pthread_cond_broadcast(&(ev->get_pos_len_cond));
    while (ev->seek_to);
+   while (ev->get_poslen);
    ecore_main_fd_handler_del(ev->fd_handler);
    close(ev->fd_write);
    close(ev->fd_read);
    ecore_main_fd_handler_del(ev->fd_ev_handler);
    close(ev->fd_ev_write);
    close(ev->fd_ev_read);
-   xine_stop(ev->stream);
+   printf("xn close\n");
    xine_close(ev->stream);
+   printf("xn dispose\n");
    xine_dispose(ev->stream);
+   printf("xn dispose evq\n");
    xine_event_dispose_queue(ev->queue);
    if (ev->video) xine_close_video_driver(decoder, ev->video);
    if (ev->audio) xine_close_audio_driver(decoder, ev->audio);
@@ -401,14 +436,7 @@ em_pos_set(void *ef, double pos)
    if (ev->seek_to_pos == pos) return;
    ev->seek_to_pos = pos;
    ev->seek_to++;
-   if (ev->seek_to == 1)
-     {
-	pthread_t th;
-	pthread_attr_t thattr;
-	
-	if (pthread_create(&th, NULL, _em_seek, ev) != 0)
-	  ev->seek_to--;
-     }
+   pthread_cond_broadcast(&(ev->seek_cond));
 }
 
 static double
@@ -922,21 +950,28 @@ static void *
 _em_seek(void *par)
 {
    Emotion_Xine_Video *ev;
-   double ppos = -1.0;
    
    ev = (Emotion_Xine_Video *)par;
-   while (ev->seek_to > 0)
+   pthread_mutex_lock(&(ev->seek_mutex));
+   for (;;)
      {
-	if (ppos != ev->seek_to_pos)
+	double ppos = -1.0;
+	
+	pthread_cond_wait(&(ev->seek_cond), &(ev->seek_mutex));
+	while (ev->seek_to > 0)
 	  {
-	     ppos = ev->seek_to_pos;
-	     xine_play(ev->stream, 0, ev->seek_to_pos * 1000);
+	     if (ppos != ev->seek_to_pos)
+	       {
+		  ppos = ev->seek_to_pos;
+		  xine_play(ev->stream, 0, ev->seek_to_pos * 1000);
+	       }
+	     ev->seek_to = 0;
+	     if (ev->delete_me) return NULL;
 	  }
-	ev->seek_to--;
-     }
-   if (!ev->play)
-     {
-	xine_set_param(ev->stream, XINE_PARAM_SPEED, XINE_SPEED_PAUSE);
+	if (!ev->play)
+	  xine_set_param(ev->stream, XINE_PARAM_SPEED, XINE_SPEED_PAUSE);
+	if (ev->delete_me) return NULL;
+	usleep(1000000 / 10);
      }
    return NULL;
 }
@@ -948,9 +983,6 @@ _em_fd_active(void *data, Ecore_Fd_Handler *fdh)
    int fd, len;
    Emotion_Xine_Video_Frame *fr;
    Emotion_Xine_Video *ev;
-   int pos_stream = 0;
-   int pos_time = 0;
-   int length_time = 0;
    
    ev = data;
    fd = ecore_main_fd_handler_fd_get(fdh);
@@ -968,18 +1000,11 @@ _em_fd_active(void *data, Ecore_Fd_Handler *fdh)
 			 ev->cur_frame->done_func(ev->cur_frame->done_data);
 		    }
 		  ev->cur_frame = fr;
-		  if (xine_get_pos_length(ev->stream,
-					  &pos_stream,
-					  &pos_time,
-					  &length_time))
-		    {
-		       
-		       ev->pos = (double)pos_time / 1000.0;
-		       ev->len = (double)length_time / 1000.0;
-		    }
+		  _em_get_pos_len(ev);
 		  if ((xine_get_stream_info(ev->stream, XINE_STREAM_INFO_HAS_VIDEO)) &&
 		      (xine_get_stream_info(ev->stream, XINE_STREAM_INFO_VIDEO_HANDLED)))
 		    {
+ 
 		       if (ev->video_mute)
 			 {
 			    if (ev->cur_frame->done_func)
@@ -1065,6 +1090,13 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 		       _emotion_title_set(ev->obj, e->str);
 		    }
 		  break;
+		case XINE_EVENT_FRAME_FORMAT_CHANGE:
+		    {
+		       xine_format_change_data_t *e;
+		       
+		       e = eev->xine_event;
+		    }
+		  break;
 		case XINE_EVENT_UI_MESSAGE:
 		    {
 		       xine_ui_message_data_t *e;
@@ -1145,20 +1177,9 @@ static int
 _em_timer(void *data)
 {
    Emotion_Xine_Video *ev;
-   int pos_stream = 0;
-   int pos_time = 0;
-   int length_time = 0;
    
    ev = data;
-   if (xine_get_pos_length(ev->stream,
-			   &pos_stream,
-			   &pos_time,
-			   &length_time))
-     {
-	
-	ev->pos = (double)pos_time / 1000.0;
-	ev->len = (double)length_time / 1000.0;
-     }
+   _em_get_pos_len(ev);
    if ((xine_get_stream_info(ev->stream, XINE_STREAM_INFO_HAS_VIDEO)) &&
        (xine_get_stream_info(ev->stream, XINE_STREAM_INFO_VIDEO_HANDLED)))
      _emotion_frame_new(ev->obj);
@@ -1166,6 +1187,52 @@ _em_timer(void *data)
    return 1;
 }
 
+static void *
+_em_get_pos_len_th(void *par)
+{
+   Emotion_Xine_Video *ev;
+   
+   ev = (Emotion_Xine_Video *)par;
+   
+   pthread_mutex_lock(&(ev->get_pos_len_mutex));
+   for (;;)
+     {
+	pthread_cond_wait(&(ev->get_pos_len_cond), &(ev->get_pos_len_mutex));
+	while (ev->get_poslen > 0)
+	  {
+	     int pos_stream = 0;
+	     int pos_time = 0;
+	     int length_time = 0;
+	     
+	     if (xine_get_pos_length(ev->stream,
+				     &pos_stream,
+				     &pos_time,
+				     &length_time))
+	       {
+		  
+		  ev->pos = (double)pos_time / 1000.0;
+		  ev->len = (double)length_time / 1000.0;
+	       }
+	     if (ev->delete_me)
+	       {
+		  ev->get_poslen = 0;
+		  return NULL;
+	       }
+	     ev->get_poslen = 0;
+//	     printf("get pos %3.3f\n", ev->pos);
+	     usleep(1000000 / 10);
+	  }
+     }
+   return NULL;
+}
+
+static void
+_em_get_pos_len(Emotion_Xine_Video *ev)
+{
+   if (ev->get_poslen) return;
+   ev->get_poslen++;
+   pthread_cond_broadcast(&(ev->get_pos_len_cond));
+}
 
 
 

@@ -2,6 +2,9 @@
 #define EMOTION_XINE_H
 
 #include <xine.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <pthread.h>
 
 typedef struct _Emotion_Xine_Video       Emotion_Xine_Video;
 typedef struct _Emotion_Xine_Video_Frame Emotion_Xine_Video_Frame;
@@ -21,8 +24,9 @@ struct _Emotion_Xine_Video
    int                       w, h;
    Evas_Object              *obj;
    Emotion_Xine_Video_Frame *cur_frame;
-   int                       seek_to;
-   double                    seek_to_pos;
+   volatile int              seek_to;
+   volatile int              get_poslen;
+   volatile double           seek_to_pos;
    Ecore_Timer              *timer;
    int                       fd_read;
    int                       fd_write;
@@ -35,6 +39,14 @@ struct _Emotion_Xine_Video
    unsigned char             video_mute : 1;
    unsigned char             audio_mute : 1;
    unsigned char             spu_mute : 1;
+   volatile unsigned char    delete_me : 1;
+   
+   pthread_t                 seek_th;
+   pthread_t                 get_pos_len_th;
+   pthread_cond_t            seek_cond;
+   pthread_cond_t            get_pos_len_cond;
+   pthread_mutex_t           seek_mutex;
+   pthread_mutex_t           get_pos_len_mutex;
 };
 
 struct _Emotion_Xine_Video_Frame
