@@ -61,6 +61,26 @@ ecore_timer_del(Ecore_Timer *timer)
    return timer->data;
 }
 
+/**
+ * Change the interval the timer ticks of. If set during
+ * a timer call, this will affect the next interval.
+ *
+ * @param   timer The timer to change.
+ * @param   in    The interval in seconds.
+ * @ingroup Ecore_Time_Group
+ */
+void
+ecore_timer_interval_set(Ecore_Timer *timer, double in)
+{
+   if (!ECORE_MAGIC_CHECK(timer, ECORE_MAGIC_TIMER))
+     {
+	ECORE_MAGIC_FAIL(timer, ECORE_MAGIC_TIMER,
+			 "ecore_timer_interval_set");
+	return;
+     }
+   timer->in = in;
+}
+
 void
 _ecore_timer_shutdown(void)
 {

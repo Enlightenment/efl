@@ -240,6 +240,7 @@ extern "C" {
        
    EAPI Ecore_Timer *ecore_timer_add(double in, int (*func) (void *data), const void *data);
    EAPI void        *ecore_timer_del(Ecore_Timer *timer);
+   EAPI void         ecore_timer_interval_set(Ecore_Timer *timer, double in);
    
    EAPI Ecore_Animator *ecore_animator_add(int (*func) (void *data), const void *data);
    EAPI void           *ecore_animator_del(Ecore_Animator *animator);
