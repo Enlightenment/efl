@@ -406,6 +406,26 @@ e_ev_x_handle_button_press(XEvent * xevent)
 		e->double_click = 1;
 	  }
 	e_add_event(EV_MOUSE_DOWN, e, e_ev_generic_free);
+	  {
+	     E_XID              *xid = NULL;
+	     
+	     if (XFindContext(xevent->xbutton.display, e->win, 
+			      xid_context, (XPointer *) & xid) != XCNOENT)
+	       {
+		  if (xid->grab_button_auto_replay)
+		    {
+		       if ((xid->grab_button_button == 0) ||
+			   (xid->grab_button_button == e->button))
+			 {
+			    if ((xid->grab_button_any_mod) ||
+				(xid->grab_button_mods == e->mods))
+			      {
+				 e_pointer_replay(e->time);
+			      }
+			 }
+		    }
+	       }
+	  }
      }
    last_last_window = last_window;
    last_window = xevent->xbutton.window;

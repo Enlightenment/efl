@@ -38,6 +38,8 @@
 #define XEV_PROPERTY          PropertyChangeMask
 #define XEV_COLORMAP          ColormapChangeMask
 
+extern XContext            xid_context;
+
 typedef struct _e_xid E_XID;
 typedef struct _e_keygrab E_KeyGrab;
 
@@ -66,6 +68,10 @@ struct _e_xid
    int                 gravity;
    int                 coords_invalid;
    int                 bw;
+   int                 grab_button_auto_replay;
+   int                 grab_button_button;
+   Ev_Key_Modifiers    grab_button_mods;
+   int                 grab_button_any_mod;
 };
 
 #ifdef __cplusplus
@@ -301,6 +307,9 @@ void                e_set_blank_pointer(Window w);
 Cursor              e_cursor_new(Pixmap pmap, Pixmap mask, int x, int y, int fr, int fg, int fb, int br, int bg, int bb);
 void                e_cursor_free(Cursor c);
 void                e_cursor_set(Window win, Cursor c);
+
+void                e_window_button_grab_auto_replay_set(Window win, int on);
+int                 e_window_button_grab_auto_replay_get(Window win);
    
 typedef struct _eev Eevent;
 typedef struct _ev_fd_handler Ev_Fd_Handler;
