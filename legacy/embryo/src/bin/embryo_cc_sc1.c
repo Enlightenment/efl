@@ -672,7 +672,6 @@ parseoptions(int argc, char **argv, char *iname, char *oname,
       {
 	 /* input file */
 	 strcpy(iname, argv[i]); /* FIXME */
-	 set_extension(iname, ".sma", FALSE);
       }
       else
       {
