@@ -2,7 +2,7 @@
 #include "edje_private.h"
 
 int
-edje_part_exists(Evas_Object *obj, const char *part)
+edje_object_part_exists(Evas_Object *obj, const char *part)
 {
    Evas_List *l;
    Edje *ed;
@@ -20,7 +20,7 @@ edje_part_exists(Evas_Object *obj, const char *part)
 }
 
 void
-edje_part_geometry_get(Evas_Object *obj, const char *part, double *x, double *y, double *w, double *h )
+edje_object_part_geometry_get(Evas_Object *obj, const char *part, double *x, double *y, double *w, double *h )
 {
    Evas_List *l;
    Edje *ed;
@@ -55,7 +55,7 @@ edje_part_geometry_get(Evas_Object *obj, const char *part, double *x, double *y,
 }
 
 void
-edje_part_text_set(Evas_Object *obj, const char *part, const char *text)
+edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
 {
    Evas_List *l;
    Edje *ed;
@@ -89,7 +89,7 @@ edje_part_text_set(Evas_Object *obj, const char *part, const char *text)
 }
 
 const char *
-edje_part_text_get(Evas_Object *obj, const char *part)
+edje_object_part_text_get(Evas_Object *obj, const char *part)
 {
    Evas_List *l;
    Edje *ed;

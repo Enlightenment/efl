@@ -5,7 +5,7 @@ static Evas_Hash   *_edje_file_hash = NULL;
 
 /* API Routines */
 void
-edje_file_set(Evas_Object *obj, const char *file, const char *part)
+edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 {
    Edje *ed;
    
@@ -107,6 +107,22 @@ edje_file_set(Evas_Object *obj, const char *file, const char *part)
 	if ((ed->parts) && (evas_object_visible_get(obj)))
 	  evas_object_show(ed->clipper);
      }
+}
+
+void
+edje_object_file_get(Evas_Object *obj, const char **file, const char **part)
+{
+   Edje *ed;
+   
+   ed = _edje_fetch(obj);
+   if (!ed)
+     {
+	if (file) *file = NULL;
+	if (part) *part = NULL;
+	return;
+     }
+   if (file) *file = ed->path;
+   if (part) *part = ed->part;
 }
 
 void

@@ -20,7 +20,7 @@ static Evas_Smart *_edje_smart = NULL;
 
 /* API Routines */
 Evas_Object *
-edje_add(Evas *evas)
+edje_object_add(Evas *evas)
 {
    if (!_edje_smart)
      {

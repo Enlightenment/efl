@@ -45,6 +45,7 @@
  * ? reduce linked list walking and list_nth calls
  * ? add containering (hbox, vbox, table, wrapping multi-line hbox & vbox)
  * ? add numeric params to conditions for progs (ranges etc.)
+ * ? key/value pair config values per colelction and per edje file
  */
 
   

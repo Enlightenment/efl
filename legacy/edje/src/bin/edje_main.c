@@ -159,10 +159,10 @@ bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	     Demo_Edje *de;
 	     
 	     de = l->data;
-	     if (!strcmp(ev->keyname, "p"))      edje_play_set(de->edje, 1);
-	     else if (!strcmp(ev->keyname, "o")) edje_play_set(de->edje, 0);
-	     else if (!strcmp(ev->keyname, "a")) edje_animation_set(de->edje, 1);
-	     else if (!strcmp(ev->keyname, "s")) edje_animation_set(de->edje, 0);
+	     if (!strcmp(ev->keyname, "p"))      edje_object_play_set(de->edje, 1);
+	     else if (!strcmp(ev->keyname, "o")) edje_object_play_set(de->edje, 0);
+	     else if (!strcmp(ev->keyname, "a")) edje_object_animation_set(de->edje, 1);
+	     else if (!strcmp(ev->keyname, "s")) edje_object_animation_set(de->edje, 0);
 	  }
      }
 }
@@ -433,10 +433,10 @@ test_setup(char *file, char *name)
    evas_object_show(o);
    de->title = o;
    
-   o = edje_add(evas);
-   edje_file_set(o, file, name);
-   edje_signal_callback_add(o, "do_it", "the_source", cb, NULL);
-   edje_signal_callback_add(o, "mouse,*", "logo", cb, NULL);
+   o = edje_object_add(evas);
+   edje_object_file_set(o, file, name);
+   edje_object_signal_callback_add(o, "do_it", "the_source", cb, NULL);
+   edje_object_signal_callback_add(o, "mouse,*", "logo", cb, NULL);
    evas_object_move(o, 10 + 10, 10 + 20);
    evas_object_resize(o, 200, 240);
    evas_object_show(o);
