@@ -541,16 +541,24 @@ _edje_part_recalc_single(Edje *ed,
 	evas_object_text_font_set(ep->object, font, size);
 	if ((chosen_desc->text.min_x) || (chosen_desc->text.min_y))
 	  {
+	     int mw, mh;
+	     
 	     evas_object_text_text_set(ep->object, text);
 	     evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
 	     if (chosen_desc->text.min_x)
-	       minw = tw +
-	       _edje_text_styles[ep->part->effect].pad.l +
-	       _edje_text_styles[ep->part->effect].pad.r;
+	       {
+		  mw = tw +
+		    _edje_text_styles[ep->part->effect].pad.l +
+		    _edje_text_styles[ep->part->effect].pad.r;
+		  if (mw > minw) minw = mw;
+	       }
 	     if (chosen_desc->text.min_y)
-	       minh = th + 
-	       _edje_text_styles[ep->part->effect].pad.t +
-	       _edje_text_styles[ep->part->effect].pad.b;
+	       {
+		  mh = th + 
+		    _edje_text_styles[ep->part->effect].pad.t +
+		    _edje_text_styles[ep->part->effect].pad.b;
+		  if (mh > minh) minh = mh;
+	       }
 	  }
      }
    /* rememebr what our size is BEFORE we go limit it */
