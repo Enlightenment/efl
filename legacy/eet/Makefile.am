@@ -11,7 +11,7 @@ dist-hook:
 	./gendoc; \
 	tar cvf eet_docs.tar doc; \
 	rm -f eet_docs.tar.gz; \
-	gzip -9 eet_docs.tar; \
+	gzip -9 eet_docs.tar;
 
 bin_SCRIPTS = eet-config
 
