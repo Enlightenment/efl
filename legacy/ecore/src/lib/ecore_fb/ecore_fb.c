@@ -375,9 +375,17 @@ static char *_ecore_fb_btn_syms[128] =
 };
 
 /**
+ * @defgroup Ecore_FB_Library_Group Framebuffer Library Functions
+ *
+ * Functions used to set up and shut down the Ecore_Framebuffer functions.
+ */
+
+/**
  * Sets up the Ecore_Fb library.
- * @param  name device target name
- * @return @c 0 on failure, greater than @c 0 on success.
+ * @param   name device target name
+ * @return  @c 0 on failure.  Otherwise, the number of times the library has
+ *          been initialised without being shut down.
+ * @ingroup Ecore_FB_Library_Group
  */
 int
 ecore_fb_init(const char *name)
@@ -509,8 +517,9 @@ ecore_fb_init(const char *name)
 
 /**
  * Shuts down the Ecore_Fb library. 
- * @return @c 0 if the system was shut * down, or 1 if it still needs to
- * be shut down
+ * @return  @c The number of times the system has been initialised without
+ *             being shut down.
+ * @ingroup Ecore_FB_Library_Group
  */
 int
 ecore_fb_shutdown(void)
@@ -555,13 +564,20 @@ ecore_fb_shutdown(void)
 }
 
 /**
+ * @defgroup Ecore_FB_Click_Group Framebuffer Double Click Functions
+ *
+ * Functions that deal with the double click time of the framebuffer.
+ */
+
+/**
  * Sets the timeout for a double and triple clicks to be flagged.
  * 
  * This sets the time between clicks before the double_click flag is
  * set in a button down event. If 3 clicks occur within double this
  * time, the triple_click flag is also set.
  *
- * @param t The time in seconds
+ * @param   t The time in seconds
+ * @ingroup Ecore_FB_Click_Group
  */
 void
 ecore_fb_double_click_time_set(double t)
@@ -576,6 +592,7 @@ ecore_fb_double_click_time_set(double t)
  * See @ref ecore_x_double_click_time_set for more information.
  *
  * @return  The timeout for double clicks in seconds.
+ * @ingroup Ecore_FB_Click_Group
  */
 double
 ecore_fb_double_click_time_get(void)
@@ -596,12 +613,19 @@ ecore_fb_size_get(int *w, int *h)
 }
 
 /**
+ * @defgroup Ecore_FB_Calibrate_Group Framebuffer Calibration Functions
+ *
+ * Functions that calibrate the screen.
+ */
+
+/**
  * Calibrates the touschreen using the given parameters.
- * @param xscale X scaling, where 256 = 1.0
- * @param xtrans X translation.
- * @param yscale Y scaling.
- * @param ytrans Y translation.
- * @param xyswap Swap X & Y flag.
+ * @param   xscale X scaling, where 256 = 1.0
+ * @param   xtrans X translation.
+ * @param   yscale Y scaling.
+ * @param   ytrans Y translation.
+ * @param   xyswap Swap X & Y flag.
+ * @ingroup Ecore_FB_Calibrate_Group
  */
 void
 ecore_fb_touch_screen_calibrate_set(int xscale, int xtrans, int yscale, int ytrans, int xyswap)
@@ -619,12 +643,13 @@ ecore_fb_touch_screen_calibrate_set(int xscale, int xtrans, int yscale, int ytra
 
 /**
  * Retrieves the calibration parameters of the touchscreen.
- * @param xscale Pointer to an integer in which to store the X scaling.
- *               Note that 256 = 1.0.
- * @param xtrans Pointer to an integer in which to store the X translation.
- * @param yscale Pointer to an integer in which to store the Y scaling.
- * @param ytrans Pointer to an integer in which to store the Y translation.
- * @param xyswap Pointer to an integer in which to store the Swap X & Y flag.
+ * @param   xscale Pointer to an integer in which to store the X scaling.
+ *                 Note that 256 = 1.0.
+ * @param   xtrans Pointer to an integer in which to store the X translation.
+ * @param   yscale Pointer to an integer in which to store the Y scaling.
+ * @param   ytrans Pointer to an integer in which to store the Y translation.
+ * @param   xyswap Pointer to an integer in which to store the Swap X & Y flag.
+ * @ingroup Ecore_FB_Calibrate_Group
  */
 void
 ecore_fb_touch_screen_calibrate_get(int *xscale, int *xtrans, int *yscale, int *ytrans, int *xyswap)
@@ -641,8 +666,15 @@ ecore_fb_touch_screen_calibrate_get(int *xscale, int *xtrans, int *yscale, int *
 }
 
 /**
+ * @defgroup Ecore_FB_Backlight_Group Framebuffer Backlight Functions
+ *
+ * Functions that deal with the backlight of a framebuffer's screen.
+ */
+
+/**
  * Turns on or off the backlight.
- * @param on @c 1 to turn the backlight on.  @c 0 to turn it off.
+ * @param   on @c 1 to turn the backlight on.  @c 0 to turn it off.
+ * @ingroup Ecore_FB_Backlight_Group
  */
 void
 ecore_fb_backlight_set(int on)
@@ -657,7 +689,8 @@ ecore_fb_backlight_set(int on)
 
 /**
  * Retrieves the backlight state.
- * @return Whether the backlight is on.
+ * @return  Whether the backlight is on.
+ * @ingroup Ecore_FB_Backlight_Group
  */
 int
 ecore_fb_backlight_get(void)
@@ -671,8 +704,9 @@ ecore_fb_backlight_get(void)
 
 /**
  * Sets the backlight brightness.
- * @param br Brightness between 0.0 to 1.0, where 0.0 is darkest and 1.0
- *           is brightest.
+ * @param   br Brightness between 0.0 to 1.0, where 0.0 is darkest and 1.0
+ *             is brightest.
+ * @ingroup Ecore_FB_Backlight_Group
  */
 void 
 ecore_fb_backlight_brightness_set(double br)
@@ -690,8 +724,9 @@ ecore_fb_backlight_brightness_set(double br)
 
 /**
  * Retrieves the backlight brightness.
- * @return The current backlight brigntess, where 0.0 is the darkest and
- *         1.0 is the brightest.
+ * @return  The current backlight brigntess, where 0.0 is the darkest and
+ *          1.0 is the brightest.
+ * @ingroup Ecore_FB_Backlight_Group
  */
 double
 ecore_fb_backlight_brightness_get(void)
@@ -704,9 +739,16 @@ ecore_fb_backlight_brightness_get(void)
 }
 
 /**
- * To be documented.
+ * @defgroup Ecore_FB_LED_Group Framebuffer LED Functions
  *
- * FIXME: To be fixed.
+ * Functions that deal with the light emitting diode connected to the
+ * current framebuffer.
+ */
+
+/**
+ * Sets whether the current framebuffer's LED to the given state.
+ * @param   on @c 1 to indicate the LED should be on, @c 0 if it should be off.
+ * @ingroup Ecore_FB_LED_Group
  */
 void
 ecore_fb_led_set(int on)
@@ -720,9 +762,10 @@ ecore_fb_led_set(int on)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Makes the LED of the current framebuffer blink.
+ * @param   speed Number to give the speed on the blink.
+ * @ingroup Ecore_FB_LED_Group
+ * @todo    Documentation: Work out what speed the units are in.
  */
 void
 ecore_fb_led_blink_set(double speed)
@@ -738,9 +781,15 @@ ecore_fb_led_blink_set(double speed)
 }
 
 /**
- * To be documented.
+ * @defgroup Ecore_FB_Contrast_Group Framebuffer Contrast Functions
  *
- * FIXME: To be fixed.
+ * Values that set and retrieve the contrast of a framebuffer screen.
+ */
+
+/**
+ * Sets the contrast used by the framebuffer screen.
+ * @param   cr Value between 0 and 1 that gives the new contrast of the screen.
+ * @ingroup Ecore_FB_Contrast_Group
  */
 void 
 ecore_fb_contrast_set(double cr)
@@ -756,9 +805,10 @@ ecore_fb_contrast_set(double cr)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Retrieves the contrast currently being used by the framebuffer screen.
+ * @return  A value between 0 and 1 that represents the current contrast of the
+ *          screen.
+ * @ingroup Ecore_FB_Contrast_Group
  */
 double
 ecore_fb_contrast_get(void)
@@ -791,6 +841,7 @@ ecore_fb_light_sensor_get(void)
  * To be documented.
  *
  * FIXME: To be fixed.
+ * @todo Documentation: Find out what this does.
  */
 void
 ecore_fb_callback_gain_set(void (*func) (void *data), void *data)
@@ -803,6 +854,7 @@ ecore_fb_callback_gain_set(void (*func) (void *data), void *data)
  * To be documented.
  *
  * FIXME: To be fixed.
+ * @todo Documentation: Find out what this does.
  */
 void
 ecore_fb_callback_lose_set(void (*func) (void *data), void *data)
