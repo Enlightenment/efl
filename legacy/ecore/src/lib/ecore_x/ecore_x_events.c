@@ -18,6 +18,9 @@ ecore_x_event_mask_set(Ecore_X_Window w, Ecore_X_Event_Mask mask)
    XWindowAttributes attr;
    XSetWindowAttributes s_attr;
 
+   if (!w)
+      w = DefaultRootWindow(_ecore_x_disp);
+
    memset(&attr, 0, sizeof(XWindowAttributes));
    XGetWindowAttributes(_ecore_x_disp, w, &attr);
    s_attr.event_mask = mask | attr.your_event_mask;
@@ -29,6 +32,9 @@ ecore_x_event_mask_unset(Ecore_X_Window w, Ecore_X_Event_Mask mask)
 {
    XWindowAttributes attr;
    XSetWindowAttributes s_attr;
+
+   if (!w)
+      w = DefaultRootWindow(_ecore_x_disp);
 
    memset(&attr, 0, sizeof(XWindowAttributes));
    XGetWindowAttributes(_ecore_x_disp, w, &attr);
