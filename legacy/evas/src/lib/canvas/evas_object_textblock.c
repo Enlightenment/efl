@@ -13,6 +13,7 @@
  * * word wrap
  * * underline support
  * * double underline support
+ * * strikethrough support
  * * solid bg behind text
  * * if a word (or char) doesnt fit at all do something sensible
  * * styles (outline, glow, etxra glow, shadow, soft shadow, etc.)
@@ -29,6 +30,8 @@
  * * api to query formatted extents as well as the native extents
  * 
  * tough ones:
+ * * kerning control
+ * * fully justified text (space chars evenly to fit the line)
  * * overflow objects (overflow from this textblock can go into another)
  * * obstacle objects to wrap around
  * * on change figure out what node the change is in and figure out what line (nodes) it affects and only modify those nodes on that line or maybe others until changes dont happen further down
