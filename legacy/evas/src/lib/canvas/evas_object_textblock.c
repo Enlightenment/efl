@@ -84,8 +84,8 @@ evas_object_textblock_text_set(Evas_Object *obj, char *text)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   o = (Evas_Object_Text *)(obj->object_data);
-   MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXT);
    return;
    MAGIC_CHECK_END();
 }
@@ -98,8 +98,8 @@ evas_object_textblock_text_get(Evas_Object *obj)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
-   o = (Evas_Object_Text *)(obj->object_data);
-   MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXT);
    return NULL;
    MAGIC_CHECK_END();
    return NULL;
@@ -113,8 +113,8 @@ evas_object_textblock_cursor_pos_set(Evas_Object *obj, int pos)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   o = (Evas_Object_Text *)(obj->object_data);
-   MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXT);
    return;
    MAGIC_CHECK_END();
 }
@@ -127,8 +127,8 @@ evas_object_textblock_cursor_pos_get(Evas_Object *obj)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
-   o = (Evas_Object_Text *)(obj->object_data);
-   MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXT);
    return 0;
    MAGIC_CHECK_END();
    return 0;
@@ -142,8 +142,8 @@ evas_object_textblock_text_insert(Evas_Object *obj, char *text)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   o = (Evas_Object_Text *)(obj->object_data);
-   MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXT);
    return;
    MAGIC_CHECK_END();
 }
@@ -156,8 +156,8 @@ evas_object_textblock_newline_use_set(Evas_Object *obj, Evas_Bool use)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   o = (Evas_Object_Text *)(obj->object_data);
-   MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXT);
    return;
    MAGIC_CHECK_END();
 }
@@ -170,8 +170,8 @@ evas_object_textblock_newline_use_get(Evas_Object *obj)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
-   o = (Evas_Object_Text *)(obj->object_data);
-   MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXT);
    return 0;
    MAGIC_CHECK_END();
    return 0;
