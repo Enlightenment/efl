@@ -24,6 +24,7 @@
 extern "C" {
 #endif
 
+#define HAVE_ECORE_EVAS_X @BUILD_ECORE_X@
 #define HAVE_ECORE_EVAS_FB @BUILD_ECORE_EVAS_FB@
 #define HAVE_ECORE_EVAS_GL @BUILD_ECORE_EVAS_GL@
 
@@ -42,12 +43,14 @@ int         ecore_evas_init(void);
 int         ecore_evas_shutdown(void);
 
 /* engine/target specific init calls */
+#if HAVE_ECORE_EVAS_X
 Ecore_Evas     *ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
 Ecore_X_Window  ecore_evas_software_x11_window_get(Ecore_Evas *ee);
 
 #if HAVE_ECORE_EVAS_GL
 Ecore_Evas     *ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
 Ecore_X_Window  ecore_evas_gl_x11_window_get(Ecore_Evas *ee);
+#endif
 #endif
 
 #if HAVE_ECORE_EVAS_FB
