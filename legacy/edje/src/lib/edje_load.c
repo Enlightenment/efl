@@ -28,7 +28,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
    ed->part = strdup(part);
    
    _edje_file_add(ed);
-   
+
    if (ed->collection)
      {
 	Evas_List *l;
@@ -331,7 +331,7 @@ _edje_file_add(Edje *ed)
 	     char buf[256];
 	     
 	     snprintf(buf, sizeof(buf), "collections/%i", id);
-	     if (!ef) eet_open(ed->path, EET_FILE_MODE_READ);
+	     if (!ef) ef = eet_open(ed->path, EET_FILE_MODE_READ);
 	     if (!ef) goto out;
 	     ed->collection = eet_data_read(ef, 
 					    _edje_edd_edje_part_collection, 
