@@ -70,7 +70,10 @@ char *ipc_prop_list(Ecore_Config_Server *srv, const long serial) {
   while(e) {
     estring_appendf(s,"%s%s: %s",f?"\n":"",e->key,ecore_config_get_type(e));
     if(e->flags&PF_BOUNDS)
-      estring_appendf(s,", range %d..%d",e->lo,e->hi);
+      if (e->type==PT_FLT)
+        estring_appendf(s,", range %le..%le",(float)e->lo/ECORE_CONFIG_FLOAT_PRECISION,(float)e->hi/ECORE_CONFIG_FLOAT_PRECISION);
+      else
+        estring_appendf(s,", range %d..%d",e->lo,e->hi);
     f=1;
     e=e->next; }
 

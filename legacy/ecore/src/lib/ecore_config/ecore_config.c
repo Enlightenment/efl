@@ -110,7 +110,7 @@ long ecore_config_get_int(const Ecore_Config_Bundle *t,const char *key) {
 
 float ecore_config_get_float(const Ecore_Config_Bundle *t,const char *key) {
   Ecore_Config_Prop *e=ecore_config_get(t,key);
-  return (e&&(e->type==PT_FLT))?(e->val/ECORE_CONFIG_FLOAT_PRECISION):0.0; }
+  return (e&&(e->type==PT_FLT))?((float)e->val/ECORE_CONFIG_FLOAT_PRECISION):0.0; }
 
 
 int ecore_config_get_rgb(const Ecore_Config_Bundle *t,const char *key,int *r, int *g, int *b) {
@@ -204,6 +204,7 @@ int ecore_config_guess_type(char *val) {
 static int ecore_config_val_typed(Ecore_Config_Prop *e,void *val,int type) {
   char          *l=NULL;
   long           v=0;
+  float         *f;
 
   e->type=PT_NIL;
 
@@ -235,17 +236,9 @@ static int ecore_config_val_typed(Ecore_Config_Prop *e,void *val,int type) {
         e->type=PT_RGB;
       }
     } else if (type==PT_FLT) {
-      v=strtol(val,&l,10);
-      if(*l) {
-        float  f;
-        if(sscanf(val,"%f%*s",&f)!=1) {
-          if(!(e->ptr=strdup(val)))
-            return ECORE_CONFIG_ERR_OOM;
-          e->type=PT_STR; }
-        else {
-          e->val=(long)(f*ECORE_CONFIG_FLOAT_PRECISION);
-          e->type=PT_FLT; }
-      }
+      f = (float *)val;
+      e->val=(long)((*f)*ECORE_CONFIG_FLOAT_PRECISION);
+      e->type=PT_FLT;
     }
 
     ecore_config_bound(e);
@@ -339,7 +332,7 @@ int ecore_config_set_rgb(Ecore_Config_Bundle *t,const char *key, char* val) {
   return ecore_config_set_typed(t,key,(void *)val,PT_RGB); }
 
 
-static int ecore_config_default_typed(Ecore_Config_Bundle *t,const char *key,void *val,float lo,float hi,float step, int type) {
+static int ecore_config_default_typed(Ecore_Config_Bundle *t,const char *key,void *val,int type) {
   int            ret=ECORE_CONFIG_ERR_SUCC;
   Ecore_Config_Prop *e;
 
@@ -350,40 +343,77 @@ static int ecore_config_default_typed(Ecore_Config_Bundle *t,const char *key,voi
       return ECORE_CONFIG_ERR_FAIL;
     e->flags=e->flags&~PF_MODIFIED; }
 
-  if(e->type==PT_INT) {
-    e->step=(int)step;
-    e->flags|=PF_BOUNDS;
-    e->lo=(int)lo;
-    e->hi=(int)hi; }
-  else if(e->type==PT_FLT) {
-    e->step=(int)(step*ECORE_CONFIG_FLOAT_PRECISION);
-    e->flags|=PF_BOUNDS;
-    e->lo=(int)(lo*ECORE_CONFIG_FLOAT_PRECISION);
-    e->hi=(int)(hi*ECORE_CONFIG_FLOAT_PRECISION); }
-
-  ecore_config_bound(e);
-
   return ret; }
 
 int ecore_config_default(Ecore_Config_Bundle *t,const char *key,char *val,float lo,float hi,float step) {
-  int type=ecore_config_guess_type(val);
-  return ecore_config_default_typed(t, key, val, lo, hi, step, type);
+  int ret, type;
+  Ecore_Config_Prop *e;
+          
+  type=ecore_config_guess_type(val);
+  ret=ecore_config_default_typed(t, key, val, type);
+  if (e=ecore_config_get(t,key)) {
+    if (type==PT_INT) {
+      e->step=step;
+      e->flags|=PF_BOUNDS;
+      e->lo=lo;
+      e->hi=hi;
+      ecore_config_bound(e);
+    } else if (type==PT_FLT) {
+      e->step=(int)(step*ECORE_CONFIG_FLOAT_PRECISION);
+      e->flags|=PF_BOUNDS;
+      e->lo=(int)(lo*ECORE_CONFIG_FLOAT_PRECISION);
+      e->hi=(int)(hi*ECORE_CONFIG_FLOAT_PRECISION);
+      ecore_config_bound(e);
+    }
+  }
 }
     
-int ecore_config_default_int(Ecore_Config_Bundle *t,const char *key,int val,int low,int high,int step) {
-  return ecore_config_default_typed(t, key, (void *) &val, (float) low, (float) high, (float) step, PT_INT);
+int ecore_config_default_int(Ecore_Config_Bundle *t,const char *key,int val) {
+  return  ecore_config_default_typed(t, key, (void *) val, PT_INT);
+}
+
+int ecore_config_default_int_bound(Ecore_Config_Bundle *t,const char *key,int val,int low,int high,int step) {
+  Ecore_Config_Prop *e;
+  int                ret;
+  
+  ret=ecore_config_default_typed(t, key, (void *) val, PT_INT);
+  if (e=ecore_config_get(t,key)) {
+    e->step=step;
+    e->flags|=PF_BOUNDS;
+    e->lo=low;
+    e->hi=high; 
+    ecore_config_bound(e);
+  }
+  
+  return ret;
 }
 
 int ecore_config_default_string(Ecore_Config_Bundle *t,const char *key,char *val) {
-  return ecore_config_default_typed(t, key, (void *) val, (float) 0, (float) 0, (float) 0, PT_STR);
+  return ecore_config_default_typed(t, key, (void *) val, PT_STR);
 }
 
-int ecore_config_default_float(Ecore_Config_Bundle *t,const char *key,float val,float low,float high,float step) {
-  return ecore_config_default_typed(t, key, (void *) &val, low, high, step, PT_FLT);
+int ecore_config_default_float(Ecore_Config_Bundle *t,const char *key,float val){
+  return ecore_config_default_typed(t, key, (void *) &val, PT_FLT);
+}
+   
+int ecore_config_default_float_bound(Ecore_Config_Bundle *t,const char *key,float val,float low,float high,float step) {
+  Ecore_Config_Prop *e;
+  int                ret;
+      
+  ret=ecore_config_default_typed(t, key, (void *) &val, PT_FLT);
+  if (e=ecore_config_get(t,key)) {                  
+    e->step=(int)(step*ECORE_CONFIG_FLOAT_PRECISION);
+    e->flags|=PF_BOUNDS;
+    e->lo=(int)(low*ECORE_CONFIG_FLOAT_PRECISION);
+    e->hi=(int)(high*ECORE_CONFIG_FLOAT_PRECISION);
+    ecore_config_bound(e);
+  }
+                            
+  return ret;
 }
 
 int ecore_config_default_rgb(Ecore_Config_Bundle *t,const char *key,char *val) {
-  return ecore_config_default_typed(t, key, (void *) val, (float) 0, (float) 0, (float) 0, PT_RGB);
+  return ecore_config_default_typed(t, key, (void *) val, PT_RGB);
 }
 
 int ecore_config_listen(Ecore_Config_Bundle *t,const char *name,const char *key,
