@@ -3,8 +3,8 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: evas
-Description: Evas canvas display library
+Name: ecore
+Description: Ecore event abstraction library (FIXME)
 Requires: @requirements@
 Version: @VERSION@
 Libs: -L${libdir} -lecore @ecore_txt_libs@ @ecore_x_libs@ @ecore_job_libs@ @ecore_fb_libs@ @ecore_evas_libs@ @ecore_con_libs@ @ecore_ipc_libs@ @ecore_config_libs@
