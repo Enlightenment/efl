@@ -20,6 +20,10 @@ evas_key_grab_new(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modi
    
    g = evas_mem_calloc(sizeof(Evas_Key_Grab));
    if (!g) return;
+   g->object = obj;
+   g->modifiers = modifiers;
+   g->not_modifiers = not_modifiers;
+   g->exclusive = exclusive;
    g->keyname = strdup(keyname);
    if (!g->keyname)
      {
@@ -64,10 +68,6 @@ evas_key_grab_new(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modi
 	     return NULL;
 	  }
      }
-   g->object = obj;
-   g->modifiers = modifiers;
-   g->not_modifiers = not_modifiers;
-   g->exclusive = exclusive;
    return g;
 }
 
