@@ -458,8 +458,7 @@ cleanup:
     assemble(binf,outf);        /* assembler file is now input */
   } /* if */
   if (outf!=NULL)
-//    sc_closeasm(outf,!(sc_asmfile || sc_listing));
-    sc_closeasm(outf, 0);
+    sc_closeasm(outf,!(sc_asmfile || sc_listing));
   if (binf!=NULL)
     sc_closebin(binf,errnum!=0);
 

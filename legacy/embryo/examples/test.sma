@@ -1,4 +1,3 @@
-#include <float>
 #include "test.inc"
 
 /* This is ugly - please ignore this code! */

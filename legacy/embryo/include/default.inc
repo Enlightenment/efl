@@ -6,13 +6,14 @@
  * operators for the floating point functions.
  * Modified March 2004 by Carsten Haitzler <raster@rasterman.com> to conform
  * to E coding style
+ * Became default include for embryo...
  *
  * This file is provided as is (no warranties).
  */
-#if defined FLOAT_INC
+#if defined DEFAULT_INC
 #endinput
 #endif
-#define FLOAT_INC
+#define DEFAULT_INC
 
 #pragma rational Float
 

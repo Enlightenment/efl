@@ -1,4 +1,3 @@
-#include <float>
 #include "example.inc"
 
 /* To compile: 
