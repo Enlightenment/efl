@@ -761,7 +761,7 @@ data_process_string(Edje_Part_Collection *pc, char *prefix, char *s, void (*func
 	       {
 		  Code_Lookup *cl;
 		  
-		  cl = calloc(1, sizeof(Code_Lookup));
+		  cl = mem_alloc(SZ(Code_Lookup));
 		  if (cl)
 		    {
 		       int inesc = 0;

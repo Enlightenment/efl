@@ -5,6 +5,9 @@ static void ob_images(void);
 static void ob_images_image(void);
 static void st_images_image(void);
 
+static void ob_fonts(void);
+
+static void ob_fonts_font(void);
 static void st_fonts_font(void);
 
 static void st_data_item(void);
@@ -154,8 +157,8 @@ New_Object_Handler object_handlers[] =
 {
      {"images", ob_images},
      {"images.image", ob_images_image},
-     {"fonts", NULL},
-     {"fonts.font", NULL},
+     {"fonts", ob_fonts},
+     {"fonts.font", ob_fonts_font},
      {"data", NULL},
      {"data.item", NULL},
      {"collections", ob_collections},
@@ -264,7 +267,7 @@ ob_images_image(void)
 {
    Edje_Image_Directory_Entry *img;
    
-   img = calloc(1, sizeof(Edje_Image_Directory_Entry));
+   img = mem_alloc(SZ(Edje_Image_Directory_Entry));
    edje_file->image_dir->entries = evas_list_append(edje_file->image_dir->entries, img);
    img->id = evas_list_count(edje_file->image_dir->entries) - 1;
 }
@@ -308,24 +311,42 @@ st_images_image(void)
 }
 
 static void
+ob_fonts(void)
+{
+   if (!edje_file->font_dir)
+     edje_file->font_dir = mem_alloc(SZ(Edje_Font_Directory));
+}
+
+static void
+ob_fonts_font(void)
+{
+   Edje_Font_Directory_Entry *fnt;
+   
+   fnt = mem_alloc(SZ(Edje_Font_Directory_Entry));
+   if (edje_file->font_dir)
+     edje_file->font_dir->entries = evas_list_append(edje_file->font_dir->entries, fnt);
+   else
+     printf("hmm, no font dir?\n");
+}
+
+static void
 st_fonts_font(void)
 {
    Font *fn;
    Edje_Font_Directory_Entry *fnt;
    
-   fn = calloc(1, sizeof(Font));
+   fn = mem_alloc(SZ(Font));
    fn->file = parse_str(0);
    fn->name = parse_str(1);
    fonts = evas_list_append(fonts, fn);
-   
-   if (!edje_file->font_dir)
-     edje_file->font_dir = calloc(1, sizeof(Edje_Font_Directory));
-   
-   fnt = calloc(1, sizeof(Edje_Font_Directory_Entry));
-   fnt->entry = strdup(fn->name);
-   
-   edje_file->font_dir->entries = 
-     evas_list_append(edje_file->font_dir->entries, fnt);
+  
+   if (edje_file->font_dir)
+   {
+     fnt = evas_list_data(evas_list_last(edje_file->font_dir->entries));
+     if(fnt) fnt->entry = mem_strdup(fn->name);
+   }
+   else
+     fprintf(stderr, "%s: Error. parse error %s:%i. Trying to a font outside of a fonts block?\n", progname, file_in, line);
 }
 
 static void
@@ -333,7 +354,7 @@ st_data_item(void)
 {
    Edje_Data *di;
    
-   di = calloc(1, sizeof(Edje_Data));
+   di = mem_alloc(SZ(Edje_Data));
    di->key = parse_str(0);
    di->value = parse_str(1);
    edje_file->data = evas_list_append(edje_file->data, di);
@@ -432,7 +453,7 @@ st_collections_group_data_item(void)
    Edje_Data *di;
    
    pc = evas_list_data(evas_list_last(edje_collections));
-   di = calloc(1, sizeof(Edje_Data));
+   di = mem_alloc(SZ(Edje_Data));
    di->key = parse_str(0);
    di->value = parse_str(1);
    pc->data = evas_list_append(pc->data, di);

@@ -70,7 +70,7 @@ source_fetch_file(char *fil, char *filname)
 	sz = ftell(f);
 	fseek(f, 0, SEEK_SET);
 	sf = mem_alloc(SZ(SrcFile));
-	sf->name = strdup(filname);
+	sf->name = mem_strdup(filname);
 	sf->file = mem_alloc(sz);
 	fread(sf->file, sz, 1, f);
 	fseek(f, 0, SEEK_SET);
