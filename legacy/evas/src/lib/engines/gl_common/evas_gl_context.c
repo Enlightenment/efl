@@ -365,6 +365,7 @@ static void
 _evas_gl_common_clip_set(Evas_GL_Context *gc)
 {
    if (!gc->change.clip) return;
+   /* might be faster using clip planes ??? glClipPlane() */
    if (gc->clip.active)
      {
 	glEnable(GL_SCISSOR_TEST);
