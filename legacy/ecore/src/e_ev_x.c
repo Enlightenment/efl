@@ -964,13 +964,6 @@ e_ev_x_handle_selection_request(XEvent * xevent)
 	  }
 	XSendEvent(xevent->xselectionrequest.display, 
 		   xevent->xselectionrequest.requestor, False, 0, &ev);
-	printf("%i %i %i : %i, %i (%x %x %x)\n", 
-	       xevent->xselectionrequest.selection, /* XA_PRIMARY */
-	       xevent->xselectionrequest.target, /* XA_STRING */
-	       xevent->xselectionrequest.property, /* the destination atiom */
-	       atom_text_selection, XA_STRING, 
-	       xevent->xselectionrequest.owner, /* the window we put it on */
-	       xevent->xselectionrequest.requestor /* where to put the prop */);
      }
 }
 
