@@ -18,7 +18,9 @@
 #include <stdarg.h>
 #include <locale.h>
 #include <ctype.h>
+#ifdef HAVE_ALLOCA_H
 #include <alloca.h>
+#endif
 
 /* types */
 typedef struct _New_Object_Handler    New_Object_Handler;
