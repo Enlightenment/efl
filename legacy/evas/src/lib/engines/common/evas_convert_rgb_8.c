@@ -20,14 +20,20 @@ void evas_common_convert_rgba_to_8bpp_rgb_332_dith     (DATA32 *src, DATA8 *dst,
    
    CONVERT_LOOP_START_ROT_0();
    
-   r = (R_VAL(src_ptr)) >> (8 - 3);
-   g = (G_VAL(src_ptr)) >> (8 - 3);
-   b = (B_VAL(src_ptr)) >> (8 - 2);
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(3);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(2);
-   if (((R_VAL(src_ptr) - (r << (8 - 3))) >= dith ) && (r < 0x07)) r++;
-   if (((G_VAL(src_ptr) - (g << (8 - 3))) >= dith ) && (g < 0x07)) g++;
-   if (((B_VAL(src_ptr) - (b << (8 - 2))) >= dith2) && (b < 0x03)) b++;
+/*   r = (R_VAL(src_ptr)) >> (8 - 3);*/
+/*   g = (G_VAL(src_ptr)) >> (8 - 3);*/
+/*   b = (B_VAL(src_ptr)) >> (8 - 2);*/
+/*   if (((R_VAL(src_ptr) - (r << (8 - 3))) >= dith ) && (r < 0x07)) r++;*/
+/*   if (((G_VAL(src_ptr) - (g << (8 - 3))) >= dith ) && (g < 0x07)) g++;*/
+/*   if (((B_VAL(src_ptr) - (b << (8 - 2))) >= dith2) && (b < 0x03)) b++;*/
+   r = (R_VAL(src_ptr)) * 7 / 255;
+   if (((R_VAL(src_ptr) - (r * 255 / 7)) >= dith ) && (r < 0x07)) r++;
+   g = (G_VAL(src_ptr)) * 7 / 255;
+   if (((G_VAL(src_ptr) - (g * 255 / 7)) >= dith ) && (g < 0x07)) g++;
+   b = (B_VAL(src_ptr)) * 3 / 255;
+   if (((B_VAL(src_ptr) - (b * 255 / 3)) >= dith2) && (b < 0x03)) b++;
    
    *dst_ptr = pal[(r << 5) | (g << 2) | (b)];
    
@@ -87,14 +93,20 @@ void evas_common_convert_rgba_to_8bpp_rgb_232_dith     (DATA32 *src, DATA8 *dst,
    
    CONVERT_LOOP_START_ROT_0();
    
-   r = (R_VAL(src_ptr)) >> (8 - 2);
-   g = (G_VAL(src_ptr)) >> (8 - 3);
-   b = (B_VAL(src_ptr)) >> (8 - 2);
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(3);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(2);
-   if (((R_VAL(src_ptr) - (r << (8 - 2))) >= dith2) && (r < 0x03)) r++;
-   if (((G_VAL(src_ptr) - (g << (8 - 3))) >= dith ) && (g < 0x07)) g++;
-   if (((B_VAL(src_ptr) - (b << (8 - 2))) >= dith2) && (b < 0x03)) b++;
+/*   r = (R_VAL(src_ptr)) >> (8 - 2);*/
+/*   g = (G_VAL(src_ptr)) >> (8 - 3);*/
+/*   b = (B_VAL(src_ptr)) >> (8 - 2);*/
+/*   if (((R_VAL(src_ptr) - (r << (8 - 2))) >= dith2) && (r < 0x03)) r++;*/
+/*   if (((G_VAL(src_ptr) - (g << (8 - 3))) >= dith ) && (g < 0x07)) g++;*/
+/*   if (((B_VAL(src_ptr) - (b << (8 - 2))) >= dith2) && (b < 0x03)) b++;*/
+   r = (R_VAL(src_ptr)) * 3 / 255;
+   if (((R_VAL(src_ptr) - (r * 255 / 3)) >= dith2) && (r < 0x03)) r++;
+   g = (G_VAL(src_ptr)) * 7 / 255;
+   if (((G_VAL(src_ptr) - (g * 255 / 7)) >= dith ) && (g < 0x07)) g++;
+   b = (B_VAL(src_ptr)) * 3 / 255;
+   if (((B_VAL(src_ptr) - (b * 255 / 3)) >= dith2) && (b < 0x03)) b++;
    
    *dst_ptr = pal[(r << 5) | (g << 2) | (b)];
    
@@ -114,13 +126,19 @@ void evas_common_convert_rgba_to_8bpp_rgb_222_dith     (DATA32 *src, DATA8 *dst,
    
    CONVERT_LOOP_START_ROT_0();
    
-   r = (R_VAL(src_ptr)) >> (8 - 2);
-   g = (G_VAL(src_ptr)) >> (8 - 2);
-   b = (B_VAL(src_ptr)) >> (8 - 2);
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(2);
-   if (((R_VAL(src_ptr) - (r << (8 - 2))) >= dith ) && (r < 0x03)) r++;
-   if (((G_VAL(src_ptr) - (g << (8 - 2))) >= dith ) && (g < 0x03)) g++;
-   if (((B_VAL(src_ptr) - (b << (8 - 2))) >= dith ) && (b < 0x03)) b++;
+/*   r = (R_VAL(src_ptr)) >> (8 - 2);*/
+/*   g = (G_VAL(src_ptr)) >> (8 - 2);*/
+/*   b = (B_VAL(src_ptr)) >> (8 - 2);*/
+/*   if (((R_VAL(src_ptr) - (r << (8 - 2))) >= dith ) && (r < 0x03)) r++;*/
+/*   if (((G_VAL(src_ptr) - (g << (8 - 2))) >= dith ) && (g < 0x03)) g++;*/
+/*   if (((B_VAL(src_ptr) - (b << (8 - 2))) >= dith ) && (b < 0x03)) b++;*/
+   r = (R_VAL(src_ptr)) * 3 / 255;
+   if (((R_VAL(src_ptr) - (r * 255 / 3)) >= dith ) && (r < 0x03)) r++;
+   g = (G_VAL(src_ptr)) * 3 / 255;
+   if (((G_VAL(src_ptr) - (g * 255 / 3)) >= dith ) && (g < 0x03)) g++;
+   b = (B_VAL(src_ptr)) * 3 / 255;
+   if (((B_VAL(src_ptr) - (b * 255 / 3)) >= dith ) && (b < 0x03)) b++;
    
    *dst_ptr = pal[(r << 4) | (g << 2) | (b)];
    
@@ -140,14 +158,20 @@ void evas_common_convert_rgba_to_8bpp_rgb_221_dith     (DATA32 *src, DATA8 *dst,
    
    CONVERT_LOOP_START_ROT_0();
    
-   r = (R_VAL(src_ptr)) >> (8 - 2);
-   g = (G_VAL(src_ptr)) >> (8 - 2);
-   b = (B_VAL(src_ptr)) >> (8 - 1);
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(2);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(1);
-   if (((R_VAL(src_ptr) - (r << (8 - 2))) >= dith ) && (r < 0x03)) r++;
-   if (((G_VAL(src_ptr) - (g << (8 - 2))) >= dith ) && (g < 0x03)) g++;
-   if (((B_VAL(src_ptr) - (b << (8 - 1))) >= dith2) && (b < 0x01)) b++;
+/*   r = (R_VAL(src_ptr)) >> (8 - 2);*/
+/*   g = (G_VAL(src_ptr)) >> (8 - 2);*/
+/*   b = (B_VAL(src_ptr)) >> (8 - 1);*/
+/*   if (((R_VAL(src_ptr) - (r << (8 - 2))) >= dith ) && (r < 0x03)) r++;*/
+/*   if (((G_VAL(src_ptr) - (g << (8 - 2))) >= dith ) && (g < 0x03)) g++;*/
+/*   if (((B_VAL(src_ptr) - (b << (8 - 1))) >= dith2) && (b < 0x01)) b++;*/
+   r = (R_VAL(src_ptr)) * 3 / 255;
+   if (((R_VAL(src_ptr) - (r * 255 / 3)) >= dith ) && (r < 0x03)) r++;
+   g = (G_VAL(src_ptr)) * 3 / 255;
+   if (((G_VAL(src_ptr) - (g * 255 / 3)) >= dith ) && (g < 0x03)) g++;
+   b = (B_VAL(src_ptr)) * 1 / 255;
+   if (((B_VAL(src_ptr) - (b * 255 / 1)) >= dith2) && (b < 0x01)) b++;
    
    *dst_ptr = pal[(r << 3) | (g << 1) | (b)];
    
@@ -167,14 +191,21 @@ void evas_common_convert_rgba_to_8bpp_rgb_121_dith     (DATA32 *src, DATA8 *dst,
    
    CONVERT_LOOP_START_ROT_0();
    
-   r = (R_VAL(src_ptr)) >> (8 - 1);
-   g = (G_VAL(src_ptr)) >> (8 - 2);
-   b = (B_VAL(src_ptr)) >> (8 - 1);
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(2);
    dith2 = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(1);
-   if (((R_VAL(src_ptr) - (r << (8 - 1))) >= dith2) && (r < 0x01)) r++;
-   if (((G_VAL(src_ptr) - (g << (8 - 2))) >= dith ) && (g < 0x03)) g++;
-   if (((B_VAL(src_ptr) - (b << (8 - 1))) >= dith2) && (b < 0x01)) b++;
+/*   r = (R_VAL(src_ptr)) >> (8 - 1);*/
+/*   g = (G_VAL(src_ptr)) >> (8 - 2);*/
+/*   b = (B_VAL(src_ptr)) >> (8 - 1);*/
+/*   if (((R_VAL(src_ptr) - (r << (8 - 1))) >= dith2) && (r < 0x01)) r++;*/
+/*   if (((G_VAL(src_ptr) - (g << (8 - 2))) >= dith ) && (g < 0x03)) g++;*/
+/*   if (((B_VAL(src_ptr) - (b << (8 - 1))) >= dith2) && (b < 0x01)) b++;*/
+   
+   r = (R_VAL(src_ptr)) * 1 / 255;
+   if (((R_VAL(src_ptr) - (r * 255 / 1)) >= dith2) && (r < 0x01)) r++;
+   g = (G_VAL(src_ptr)) * 3 / 255;
+   if (((G_VAL(src_ptr) - (g * 255 / 3)) >= dith ) && (g < 0x03)) g++;
+   b = (B_VAL(src_ptr)) * 1 / 255;
+   if (((B_VAL(src_ptr) - (b * 255 / 1)) >= dith2) && (b < 0x01)) b++;
    
    *dst_ptr = pal[(r << 3) | (g << 1) | (b)];
    
@@ -194,13 +225,20 @@ void evas_common_convert_rgba_to_8bpp_rgb_111_dith     (DATA32 *src, DATA8 *dst,
    
    CONVERT_LOOP_START_ROT_0();
    
-   r = (R_VAL(src_ptr)) >> (8 - 1);
-   g = (G_VAL(src_ptr)) >> (8 - 1);
-   b = (B_VAL(src_ptr)) >> (8 - 1);
    dith = DM_TABLE[(x + dith_x) & DM_MSK][(y + dith_y) & DM_MSK] >> DM_SHF(1);
-   if (((R_VAL(src_ptr) - (r << (8 - 1))) >= dith ) && (r < 0x01)) r++;
-   if (((G_VAL(src_ptr) - (g << (8 - 1))) >= dith ) && (g < 0x01)) g++;
-   if (((B_VAL(src_ptr) - (b << (8 - 1))) >= dith ) && (b < 0x01)) b++;
+/*   r = (R_VAL(src_ptr)) >> (8 - 1);*/
+/*   g = (G_VAL(src_ptr)) >> (8 - 1);*/
+/*   b = (B_VAL(src_ptr)) >> (8 - 1);*/
+/*   if (((R_VAL(src_ptr) - (r << (8 - 1))) >= dith ) && (r < 0x01)) r++;*/
+/*   if (((G_VAL(src_ptr) - (g << (8 - 1))) >= dith ) && (g < 0x01)) g++;*/
+/*   if (((B_VAL(src_ptr) - (b << (8 - 1))) >= dith ) && (b < 0x01)) b++;*/
+   
+   r = (R_VAL(src_ptr)) * 1 / 255;
+   if (((R_VAL(src_ptr) - (r * 255 / 1)) >= dith ) && (r < 0x01)) r++;
+   g = (G_VAL(src_ptr)) * 1 / 255;
+   if (((G_VAL(src_ptr) - (g * 255 / 1)) >= dith ) && (g < 0x01)) g++;
+   b = (B_VAL(src_ptr)) * 1 / 255;
+   if (((B_VAL(src_ptr) - (b * 255 / 1)) >= dith ) && (b < 0x01)) b++;
    
    *dst_ptr = pal[(r << 2) | (g << 1) | (b)];
    
