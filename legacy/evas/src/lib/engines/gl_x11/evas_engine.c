@@ -649,6 +649,8 @@ evas_engine_gl_x11_image_size_set(void *data, void *image, int w, int h)
    evas_engine_gl_x11_window_use(re->win);
    if (!image) return NULL;
    im_old = image;
+   if ((im_old) && (im_old->im->image->w == w) && (im_old->im->image->h == h))
+     return image;
    im = evas_gl_common_image_new(re->win->gl_context, w, h);
    if (im_old)
      {
@@ -691,7 +693,11 @@ evas_engine_gl_x11_image_data_get(void *data, void *image, int to_write, DATA32 
 	     Evas_GL_Image *im_new;
 	     
 	     im_new = evas_gl_common_image_new_from_copied_data(im->gc, im->im->image->w, im->im->image->h, im->im->image->data);
-	     if (!im_new) return im;
+	     if (!im_new)
+	       {
+		  return im;
+		  *image_data = NULL;
+	       }
 	     im = im_new;
 	  }
 	else
@@ -720,7 +726,7 @@ evas_engine_gl_x11_image_data_put(void *data, void *image, DATA32 *image_data)
 	return evas_engine_gl_x11_image_new_from_data(data, w, h, image_data);
      }
    /* hmmm - but if we wrote... why bother? */
-/*   evas_gl_common_image_dirty(im); */
+   evas_gl_common_image_dirty(im);
    return im;
 }
 
@@ -733,6 +739,8 @@ evas_engine_gl_x11_image_alpha_set(void *data, void *image, int has_alpha)
    re = (Render_Engine *)data;
    evas_engine_gl_x11_window_use(re->win);
    im = image;
+   if ((has_alpha) && (im->im->flags & RGBA_IMAGE_HAS_ALPHA)) return image;
+   else if ((!has_alpha) && (!(im->im->flags & RGBA_IMAGE_HAS_ALPHA))) return image;
    if (im->references > 1)
      {
 	Evas_GL_Image *im_new;
@@ -949,7 +957,7 @@ evas_engine_gl_x11_font_draw(void *data, void *context, void *surface, void *fon
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-#define GL_TXT 1
+//#define GL_TXT 1
 
 #ifdef GL_TXT   
      {

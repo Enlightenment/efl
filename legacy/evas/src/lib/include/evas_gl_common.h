@@ -77,6 +77,8 @@ struct _Evas_GL_Texture
    char             smooth : 1;
    char             changed : 1;
    char             have_mipmaps : 1;
+   char             opt : 1;
+   char             not_power_of_two : 1; 
    int              references;
 };
 
@@ -118,6 +120,7 @@ void              evas_gl_common_context_clip_set(Evas_GL_Context *gc, int on, i
 void              evas_gl_common_context_read_buf_set(Evas_GL_Context *gc, GLenum buf);
 void              evas_gl_common_context_write_buf_set(Evas_GL_Context *gc, GLenum buf);
 Evas_GL_Texture  *evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth);
+void              evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth);
 void              evas_gl_common_texture_free(Evas_GL_Texture *tex);
 Evas_GL_Image    *evas_gl_common_image_load(Evas_GL_Context *gc, char *file, char *key);
 Evas_GL_Image    *evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, int *data);

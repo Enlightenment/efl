@@ -1,5 +1,12 @@
 #include "evas_gl_common.h"
 
+/* nvidia extensions */
+extern void PixelDataRangeNV(int target, int length, void *pointer);
+#define GL_WRITE_PIXEL_DATA_RANGE_NV 0x8878
+#define GL_READ_PIXEL_DATA_RANGE_NV 0x8879
+#define GL_TEXTURE_RECTANGLE_NV 0x84f5
+
+
 static void _evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int smooth);
 static void _evas_gl_common_gradient_texture_build(Evas_GL_Context *gc, Evas_GL_Gradient *gr);
 static void _evas_gl_common_viewport_set(Evas_GL_Context *gc);
@@ -191,11 +198,48 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
    tex = calloc(1, sizeof(Evas_GL_Texture));
    if (!tex) return NULL;
 
+//#define NV_RECT_EXT 
+   
+#ifdef NV_RECT_EXT
+     {
+	printf("new rect tex %ix%i\n", im->image->w, im->image->h);
+	
+	tex->gc = gc;
+	tex->w = im->image->w;
+	tex->h = im->image->h;
+	tex->not_power_of_two = 1;
+	tex->tw = im->image->w;
+	tex->th = im->image->h;
+	tex->references = 0;
+	tex->smooth = 0;
+	tex->changed = 1;
+	
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_RECTANGLE_NV);
+	glGenTextures(1, &(tex->texture));
+	glBindTexture(GL_TEXTURE_RECTANGLE_NV, tex->texture);
+	
+	if (gc->texture) gc->texture->references--;
+	gc->texture = tex;
+	gc->change.texture = 1;
+	tex->references++;
+
+	if (im->flags & RGBA_IMAGE_HAS_ALPHA) texfmt = GL_RGBA8;
+	else texfmt = GL_RGB8;
+	pixfmt = GL_BGRA;
+
+	glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, 
+		     texfmt, tex->w, tex->h, 0,
+		     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV, im->image->data);
+	return tex;
+     }
+#endif   
    shift = 1; while (im->image->w > shift) shift = shift << 1; tw = shift;
    shift = 1; while (im->image->h > shift) shift = shift << 1; th = shift;
    tex->gc = gc;
    tex->w = tw;
    tex->h = th;
+   printf("new tex %ix%i\n", tw, th);
    tex->tw = im->image->w;
    tex->th = im->image->h;
    tex->references = 0;
@@ -210,8 +254,8 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
    gc->change.texture = 1;
    tex->references++;
 
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
    
@@ -223,11 +267,9 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
    else texfmt = GL_RGB8;
    pixfmt = GL_BGRA;
    
-   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-   glPixelStorei(GL_PACK_ALIGNMENT, 1);
    glTexImage2D(GL_TEXTURE_2D, 0, 
 		texfmt, tw, th, 0,
-		pixfmt, GL_UNSIGNED_BYTE, NULL);
+		pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
 #ifdef NVIDIA_HACK
 /* NVIDIA HACK 1,part-1 */   
    /* Nvidia's 4496 drivers and below have a bug. unless i "allocate" the
@@ -258,29 +300,29 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
 	     if (tth < 1) tth = 1;
 	     glTexImage2D(GL_TEXTURE_2D, l,
 			  texfmt, ttw, tth, 0,
-			  pixfmt, GL_UNSIGNED_BYTE, NULL);
+			  pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
 	  }
      }
 /* END ENVIDIA HACK */
 #endif   
    glTexSubImage2D(GL_TEXTURE_2D, 0, 
 		   0, 0, im_w, im_h,
-		   pixfmt, GL_UNSIGNED_BYTE,
+		   pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
 		   im_data);
    if (im_w < tw)
      glTexSubImage2D(GL_TEXTURE_2D, 0, 
 		     im_w, 0, 1, im_h,
-		     pixfmt, GL_UNSIGNED_BYTE,
+		     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
 		     im_data + im_w - 1);
    if (im_h < th)
      glTexSubImage2D(GL_TEXTURE_2D, 0, 
 		     0, im_h, im_w, 1,
-		     pixfmt, GL_UNSIGNED_BYTE,
+		     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
 		     im_data + (im_w * (im_h - 1)));
    if ((im_w < tw) && (im_h < th))
      glTexSubImage2D(GL_TEXTURE_2D, 0, 
 		     im_w, im_h, 1, 1,
-		     pixfmt, GL_UNSIGNED_BYTE,
+		     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
 		     im_data + (im_w * (im_h - 1)) + im_w - 1);
 #ifdef RADEON_HACK   
 /* RADEON HACK 1 */
@@ -360,25 +402,25 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
 	     im_h = h;
 	     glTexImage2D(GL_TEXTURE_2D, l,
 			  texfmt, ttw, tth, 0,
-			  pixfmt, GL_UNSIGNED_BYTE, NULL);
+			  pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
 	     glTexSubImage2D(GL_TEXTURE_2D, l,
 			     0, 0, im_w, im_h,
-			     pixfmt, GL_UNSIGNED_BYTE,
+			     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
 			     im_data);
 	     if (im_w < ttw)
 	       glTexSubImage2D(GL_TEXTURE_2D, l,
 			       im_w, 0, 1, im_h,
-			       pixfmt, GL_UNSIGNED_BYTE,
+			       pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
 			       im_data + im_w - 1);
 	     if (im_h < tth)
 	       glTexSubImage2D(GL_TEXTURE_2D, l,
 			       0, im_h, im_w, 1,
-			       pixfmt, GL_UNSIGNED_BYTE,
+			       pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
 			       im_data + (im_w * (im_h - 1)));
 	     if ((im_w < ttw) && (im_h < tth))
 	       glTexSubImage2D(GL_TEXTURE_2D, l, 
 			       im_w, im_h, 1, 1,
-			       pixfmt, GL_UNSIGNED_BYTE,
+			       pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
 			       im_data + (im_w * (im_h - 1)) + im_w - 1);
 	     im1 = im2;
 	     im2 = NULL;
@@ -390,6 +432,217 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
 /* END RADEON HACK */
 #endif   
    return tex;
+}
+
+void
+evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
+{
+   int *im_data;
+   int im_w, im_h;
+   int tw, th;
+   int shift;
+   GLenum pixfmt, texfmt, target;
+
+   if (tex->not_power_of_two)
+     {
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_TEXTURE_RECTANGLE_NV);
+	glBindTexture(GL_TEXTURE_RECTANGLE_NV, tex->texture);
+
+	if (!tex->opt)
+	  {
+	     glPixelDataRangeNV(GL_WRITE_PIXEL_DATA_RANGE_NV, 
+				im->image->w * im->image->h * 4, 
+			 im->image->data);
+	     tex->opt = 1;
+	  }
+	
+	if (tex->gc->texture) tex->gc->texture->references--;
+	tex->gc->texture = tex;
+	tex->gc->change.texture = 1;
+	tex->references++;
+
+	if (im->flags & RGBA_IMAGE_HAS_ALPHA) texfmt = GL_RGBA8;
+	else texfmt = GL_RGB8;
+	pixfmt = GL_BGRA;
+	
+	glTexSubImage2D(GL_TEXTURE_RECTANGLE_NV, 0, 
+			0, 0, tex->w, tex->h,
+			pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+			im->image->data);
+	return;
+     }
+   tw = tex->w;
+   th = tex->h;
+   tex->changed = 1;
+   glEnable(GL_TEXTURE_2D);
+   if (tex->not_power_of_two)
+     {
+	glEnable(GL_TEXTURE_RECTANGLE_NV);
+	target = GL_TEXTURE_RECTANGLE_NV;
+     }
+   else
+     {
+	glDisable(GL_TEXTURE_RECTANGLE_NV);
+	target = GL_TEXTURE_2D;
+     }
+     
+   glBindTexture(GL_TEXTURE_2D, tex->texture);
+
+   if (tex->gc->texture) tex->gc->texture->references--;
+   tex->gc->texture = tex;
+   tex->gc->change.texture = 1;
+   tex->references++;
+
+   if (!tex->opt)
+     {
+	glPixelDataRangeNV(GL_WRITE_PIXEL_DATA_RANGE_NV, 
+			 im->image->w * im->image->h * 4, 
+			 im->image->data);
+	tex->opt = 1;
+     }
+   
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   
+   im_data = im->image->data;
+   im_w = im->image->w;
+   im_h = im->image->h;
+
+   if (im->flags & RGBA_IMAGE_HAS_ALPHA) texfmt = GL_RGBA8;
+   else texfmt = GL_RGB8;
+   pixfmt = GL_BGRA;
+   
+   glTexSubImage2D(GL_TEXTURE_2D, 0, 
+		   0, 0, im_w, im_h,
+		   pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+		   im_data);
+#if 1 // this is sloooow... well slower than just the above...
+   if (im_w < tw)
+     glTexSubImage2D(GL_TEXTURE_2D, 0, 
+		     im_w, 0, 1, im_h,
+		     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+		     im_data + im_w - 1);
+   if (im_h < th)
+     glTexSubImage2D(GL_TEXTURE_2D, 0, 
+		     0, im_h, im_w, 1,
+		     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+		     im_data + (im_w * (im_h - 1)));
+   if ((im_w < tw) && (im_h < th))
+     glTexSubImage2D(GL_TEXTURE_2D, 0, 
+		     im_w, im_h, 1, 1,
+		     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+		     im_data + (im_w * (im_h - 1)) + im_w - 1);
+#endif   
+#ifdef RADEON_HACK   
+/* RADEON HACK 1 */
+   /* similar to nvidia's bug (fixed in hack 1) ati's drivers SEGV if i try
+    * and upload textures later on than now, not even alloocating them first
+    * like nvidias hack does helps this, so if i EVER need mipmaps, it's now or
+    * never, and that just SUCKS. i'm forever generating mipmaps for textures
+    * where i might never need them. this is just silly! must report this to
+    * ati
+    */
+     {
+	int ttw, tth;
+	int w, h;
+	int l;
+	RGBA_Image *im1 = NULL, *im2 = NULL;
+#ifdef BUILD_MMX
+	int mmx, sse, sse2;
+#endif
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+#ifdef BUILD_MMX
+	evas_common_cpu_can_do(&mmx, &sse, &sse2);
+#endif
+	w = im->image->w;
+	h = im->image->h;
+	im1 = im;
+   
+	ttw = tw;
+	tth = th;
+	l = 0;
+	
+	while ((ttw > 1) || (tth > 1))
+	  {
+	     int pw, ph;
+	     
+	     l++;
+	     
+	     pw = w;
+	     ph = h;
+	     
+	     w /= 2;
+	     h /= 2;
+	     if (w < 1) w = 1;
+	     if (h < 1) h = 1;
+	     
+	     ttw /= 2;
+	     tth /= 2;
+	     if (ttw < 1) ttw = 1;
+	     if (tth < 1) tth = 1;
+
+	     im2 = evas_common_image_create(w, h);
+#ifdef BUILD_MMX
+	     if (mmx)
+	       {  
+		  evas_common_scale_rgba_mipmap_down_2x2_mmx(im1->image->data,
+							     im2->image->data, 
+							     pw, ph);
+	       }
+	     else
+#endif	  
+	       {
+		  if (im->flags & RGBA_IMAGE_HAS_ALPHA)
+		    evas_common_scale_rgba_mipmap_down_2x2_c(im1->image->data,
+							     im2->image->data, 
+							     pw, ph);
+		  else
+		    evas_common_scale_rgb_mipmap_down_2x2_c(im1->image->data,
+							    im2->image->data, 
+							    pw, ph);
+	       }
+	     if (im1 != im) evas_common_image_free(im1);
+	     im1 = NULL;
+	     
+	     im_data = im2->image->data;
+	     im_w = w;
+	     im_h = h;
+//	     glTexImage2D(GL_TEXTURE_2D, l,
+//			  texfmt, ttw, tth, 0,
+//			  pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
+	     glTexSubImage2D(GL_TEXTURE_2D, l,
+			     0, 0, im_w, im_h,
+			     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+			     im_data);
+	     if (im_w < ttw)
+	       glTexSubImage2D(GL_TEXTURE_2D, l,
+			       im_w, 0, 1, im_h,
+			       pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+			       im_data + im_w - 1);
+	     if (im_h < tth)
+	       glTexSubImage2D(GL_TEXTURE_2D, l,
+			       0, im_h, im_w, 1,
+			       pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+			       im_data + (im_w * (im_h - 1)));
+	     if ((im_w < ttw) && (im_h < tth))
+	       glTexSubImage2D(GL_TEXTURE_2D, l, 
+			       im_w, im_h, 1, 1,
+			       pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+			       im_data + (im_w * (im_h - 1)) + im_w - 1);
+	     im1 = im2;
+	     im2 = NULL;
+	  }
+	if ((im1 != im) && (im1)) evas_common_image_free(im1);
+	tex->have_mipmaps = 1;
+	tex->smooth = 1;
+     }
+/* END RADEON HACK */
+#endif   
 }
 
 void
@@ -542,11 +795,6 @@ evas_gl_common_image_dirty(Evas_GL_Image *im)
 {
    evas_common_image_dirty(im->im);
    im->dirty = 1;
-   if (im->tex)
-     {
-	evas_gl_common_texture_free(im->tex);
-	im->tex = NULL;
-     }
 }
 
 Evas_GL_Polygon *
@@ -670,6 +918,11 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Im
 	r = g = b = a = 255;
      }
    evas_common_load_image_data_from_file(im->im);
+   if ((im->tex) && (im->dirty))
+     {
+	evas_gl_common_texture_update(im->tex, im->im, im->tex->smooth);
+	im->dirty = 0;
+     }
    if (!im->tex)
      im->tex = evas_gl_common_texture_new(gc, im->im, smooth);
    ow = (dw * im->tex->tw) / sw;
@@ -678,12 +931,21 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Im
    if ((!im->tex->have_mipmaps) && (smooth) &&
        ((im->tex->uw < im->tex->tw) || (im->tex->uh < im->tex->th)))
      _evas_gl_common_texture_mipmaps_build(im->tex, im->im, smooth);
-   
-   tx1 = (double)(sx     ) / (double)(im->tex->w);
-   ty1 = (double)(sy     ) / (double)(im->tex->h);
-   tx2 = (double)(sx + sw) / (double)(im->tex->w);
-   ty2 = (double)(sy + sh) / (double)(im->tex->h);
-   
+
+   if (im->tex->not_power_of_two)
+     {
+	tx1 = sx;
+	ty1 = sy;
+	tx2 = sx + sw;
+	ty2 = sy + sh;
+     }
+   else
+     {
+	tx1 = (double)(sx     ) / (double)(im->tex->w);
+	ty1 = (double)(sy     ) / (double)(im->tex->h);
+	tx2 = (double)(sx + sw) / (double)(im->tex->w);
+	ty2 = (double)(sy + sh) / (double)(im->tex->h);
+     }
    evas_gl_common_context_color_set(gc, r, g, b, a);
    if ((a < 255) || (im->im->flags & RGBA_IMAGE_HAS_ALPHA))
      evas_gl_common_context_blend_set(gc, 1);
@@ -946,6 +1208,7 @@ _evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int 
 #endif
 
    if (!smooth) return;
+   if (tex->not_power_of_two) return;
 #ifdef BUILD_MMX
    evas_common_cpu_can_do(&mmx, &sse, &sse2);
 #endif
@@ -968,10 +1231,9 @@ _evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int 
    else texfmt = GL_RGB8;
    pixfmt = GL_BGRA;
    
+   printf("building mipmaps... [%i x %i]\n", tw, th);
    glEnable(GL_TEXTURE_2D);
    glBindTexture(GL_TEXTURE_2D, tex->texture);
-   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-   glPixelStorei(GL_PACK_ALIGNMENT, 1);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
    while ((w > 1) || (h > 1))
@@ -1031,32 +1293,32 @@ _evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int 
 /* disable this as the mipmap was already allocated earlier on
 	glTexImage2D(GL_TEXTURE_2D, level,
 		     texfmt, tw, th, 0,
-		     pixfmt, GL_UNSIGNED_BYTE, NULL);
+		     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
  */
 #else
 	glTexImage2D(GL_TEXTURE_2D, level,
 		     texfmt, tw, th, 0,
-		     pixfmt, GL_UNSIGNED_BYTE, NULL);
+		     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
 #endif	
 /* END NVIDIA HACK */	
 	glTexSubImage2D(GL_TEXTURE_2D, level, 
 			0, 0, im_w, im_h,
-			pixfmt, GL_UNSIGNED_BYTE,
+			pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
 			im_data);
 	if (im_w < tw)
 	  glTexSubImage2D(GL_TEXTURE_2D, level, 
 			  im_w, 0, 1, im_h,
-			  pixfmt, GL_UNSIGNED_BYTE,
+			  pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
 			  im_data + im_w - 1);
 	if (im_h < th)
 	  glTexSubImage2D(GL_TEXTURE_2D, level,
 			  0, im_h, im_w, 1,
-			  pixfmt, GL_UNSIGNED_BYTE,
+			  pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
 			  im_data + (im_w * (im_h - 1)));
 	if ((im_w < tw) && (im_h < th))
 	  glTexSubImage2D(GL_TEXTURE_2D, level, 
 			  im_w, im_h, 1, 1,
-			  pixfmt, GL_UNSIGNED_BYTE,
+			  pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
 			  im_data + (im_w * (im_h - 1)) + im_w - 1);
 	im1 = im2;
 	im2 = NULL;
@@ -1160,24 +1422,44 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
    if (!gc->change.texture) return;
    if (gc->texture)
      {
-	glEnable(GL_TEXTURE_2D);
-	glBindTexture(GL_TEXTURE_2D, gc->texture->texture);
-	if (gc->texture->changed)
+	if (gc->texture->not_power_of_two)
 	  {
-	     if (gc->texture->smooth)
+	     glEnable(GL_TEXTURE_2D);
+	     glEnable(GL_TEXTURE_RECTANGLE_NV);
+	     glBindTexture(GL_TEXTURE_RECTANGLE_NV, gc->texture->texture);
+	  }
+	else
+	  {
+	     glDisable(GL_TEXTURE_RECTANGLE_NV);
+	     glEnable(GL_TEXTURE_2D);
+	     glBindTexture(GL_TEXTURE_2D, gc->texture->texture);
+	  }
+	if (gc->texture->not_power_of_two)
+	  {
+	     if (gc->texture->changed)
 	       {
-		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		  if (gc->texture->have_mipmaps)
-		    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		  gc->texture->changed = 0;
+	       }
+	  }
+	else
+	  {
+	     if (gc->texture->changed)
+	       {
+		  if (gc->texture->smooth)
+		    {
+		       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		       if (gc->texture->have_mipmaps)
+			 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		       else
+			 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		    }
 		  else
-		    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		    {
+		       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		    }
+		  gc->texture->changed = 0;
 	       }
-	     else
-	       {
-		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	       }
-	     gc->texture->changed = 0;
 	  }
      }
    else
@@ -1219,7 +1501,8 @@ _evas_gl_common_other_set(Evas_GL_Context *gc)
    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
 //   glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
    glDisable(GL_LINE_SMOOTH);
-   glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+   glDisable(GL_CULL_FACE);
+   glDepthMask(GL_FALSE);
    glPixelStorei(GL_PACK_ALIGNMENT, 1);
    gc->change.other = 0;
 }
