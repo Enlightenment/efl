@@ -115,7 +115,7 @@ AC_ARG_WITH(evas-config, [  --with-evas-config=EVAS_CONFIG    use evas-config sp
 [ EVAS_CONFIG=$withval;
   echo "using "$EVAS_CONFIG" for evas-config"; ],
 [ if test -z "$EVAS_CONFIG"; then
-  AC_PATH_PROG(EVAS_CONFIG, "evas-config", "", $PATH)
+    AC_PATH_PROG(EVAS_CONFIG, "evas-config", "", $PATH)
   fi
 ])
 evas_cflags=`$EVAS_CONFIG --cflags`
@@ -125,7 +125,7 @@ AC_ARG_WITH(ecore-config, [  --with-ecore-config=ECORE_CONFIG  use ecore-config 
 [ ECORE_CONFIG=$withval;
   echo "using "$ECORE_CONFIG" for ecore-config"; ],
 [ if test -z "$ECORE_CONFIG"; then
-  AC_PATH_PROG(ECORE_CONFIG, "ecore-config", "", $PATH)
+    AC_PATH_PROG(ECORE_CONFIG, "ecore-config", "", $PATH)
   fi
 ])
 ecore_cflags=`$ECORE_CONFIG --cflags`
@@ -135,7 +135,7 @@ AC_ARG_WITH(eet-config, [  --with-eet-config=EET_CONFIG      use eet-config spec
 [ EET_CONFIG=$withval;
   echo "using "$EET_CONFIG" for eet-config"; ],
 [ if test -z "$EET_CONFIG"; then
-  AC_PATH_PROG(EET_CONFIG, "eet-config", "", $PATH)
+    AC_PATH_PROG(EET_CONFIG, "eet-config", "", $PATH)
   fi
 ])
 eet_cflags=`$EET_CONFIG --cflags`
@@ -145,7 +145,7 @@ AC_ARG_WITH(embryo-config, [  --with-embryo-config=EMBRYO_CONFIG use embryo-conf
 [ EMBRYO_CONFIG=$withval;
   echo "using "$EMBRYO_CONFIG" for embryo-config"; ],
 [ if test -z "$EMBRYO_CONFIG"; then
-  AC_PATH_PROG(EMBRYO_CONFIG, "embryo-config", "", $PATH)
+    AC_PATH_PROG(EMBRYO_CONFIG, "embryo-config", "", $PATH)
   fi
 ])
 embryo_cflags=`$EMBRYO_CONFIG --cflags`
