@@ -1,6 +1,12 @@
 #ifndef _ECORE_CON_H
 #define _ECORE_CON_H
 
+#define HAVE_ECORE_CON_OPENSSL @USE_OPENSSL@
+
+#if HAVE_ECORE_CON_OPENSSL
+#include <openssl/ssl.h>
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -11,9 +17,12 @@ extern "C" {
    
    typedef enum _Ecore_Con_Type
      {
-	ECORE_CON_LOCAL_USER,
+	  ECORE_CON_LOCAL_USER,
 	  ECORE_CON_LOCAL_SYSTEM,
-	  ECORE_CON_REMOTE_SYSTEM,
+	  ECORE_CON_REMOTE_SYSTEM
+#if HAVE_ECORE_CON_OPENSSL 
+	  ,ECORE_CON_USE_SSL = 16
+#endif
      } Ecore_Con_Type;
    
 #endif

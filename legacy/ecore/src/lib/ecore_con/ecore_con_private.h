@@ -4,14 +4,21 @@
 #define ECORE_MAGIC_CON_SERVER             0x77665544
 #define ECORE_MAGIC_CON_CLIENT             0x77556677
 
+#if USE_OPENSSL
+#include <openssl/ssl.h>
+#endif
+
 typedef struct _Ecore_Con_Client Ecore_Con_Client;
 typedef struct _Ecore_Con_Server Ecore_Con_Server;
 
 typedef enum _Ecore_Con_Type
 {
    ECORE_CON_LOCAL_USER,
-     ECORE_CON_LOCAL_SYSTEM,
-     ECORE_CON_REMOTE_SYSTEM,
+   ECORE_CON_LOCAL_SYSTEM,
+   ECORE_CON_REMOTE_SYSTEM
+#if USE_OPENSSL
+  ,ECORE_CON_USE_SSL = 16
+#endif
 } Ecore_Con_Type;
 
 struct _Ecore_Con_Client
@@ -46,6 +53,10 @@ struct _Ecore_Con_Server
    char              dead : 1;
    char              created : 1;
    char              connecting : 1;
+#if USE_OPENSSL
+   SSL_CTX          *ssl_ctx;
+   SSL              *ssl;
+#endif
 };
 
 #endif
