@@ -27,6 +27,7 @@ extern "C" {
    int          edje_object_thaw                (Evas_Object *o);
    void         edje_object_color_class_set     (Evas_Object *o, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
    void         edje_object_text_class_set      (Evas_Object *o, const char *text_class, const char *font, double size);
+   void         edje_object_size_min_get        (Evas_Object *o, double *minw, double *minh);
    int          edje_object_part_exists         (Evas_Object *o, const char *part);
    void         edje_object_part_geometry_get   (Evas_Object *o, const char *part, double *x, double *y, double *w, double *h);
    void         edje_object_part_text_set       (Evas_Object *o, const char *part, const char *text);
@@ -34,7 +35,7 @@ extern "C" {
    void         edje_object_part_swallow        (Evas_Object *o, const char *part, Evas_Object *o_swallow);
    void         edje_object_part_unswallow      (Evas_Object *o, Evas_Object *o_swallow);
    Evas_Object *edje_object_part_swallow_get    (Evas_Object *o, const char *part);
-   void         edje_object_size_min_get        (Evas_Object *o, double *minw, double *minh);
+   const char  *edje_object_part_state_get      (Evas_Object *o, const char *part, double *val_ret);
        
 #ifdef __cplusplus
 }

@@ -360,6 +360,44 @@ edje_object_size_min_get(Evas_Object *obj, double *minw, double *minh)
    ed->calc_only = 0;
 }
 
+const char *
+edje_object_part_state_get(Evas_Object *obj, const char *part, double *val_ret)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);   
+   if ((!ed) || (!part))
+     {
+	if (val_ret) *val_ret = 0;
+	return "";
+     }
+   rp = _edje_real_part_get(ed, (char *)part);
+   if (!rp)
+     {
+	if (val_ret) *val_ret = 0;
+	return "";
+     }
+   if (!rp->chosen_description)
+     {
+	if (val_ret) *val_ret = rp->chosen_description->state.value;
+	if (rp->chosen_description->state.name)
+	  return rp->chosen_description->state.name;
+	return "default";
+     }
+   else
+     {
+	if (rp->param1.description)
+	  {
+	     if (val_ret) *val_ret = rp->param1.description->state.value;
+	     if (rp->param1.description->state.name)
+	       return rp->param1.description->state.name;
+	     return "default";
+	  }
+     }
+   if (val_ret) *val_ret = 0;
+   return "";
+}
 
 
 

@@ -24,9 +24,7 @@
  * drag needs to have signals with relative pos as arg.
  * drag vals should be 0.0 -> 1.0 if drag is confined. "rest" pos = 0.0.
  * query dragable for its relative pos value
- * 
- * need to be able to query "state" of an edje part
- * need to be able to set callback on part state change
+ * dragable needs to be able to affext rel/abs values of other parts
  * 
  * swallowed objects need to be able to advertise min/max size
  * 
@@ -379,6 +377,7 @@ struct _Edje_Real_Part
       } cache;
    } text;
    double                    description_pos;
+   Edje_Part_Description    *chosen_description;
    struct {
       Edje_Part_Description *description;
       Edje_Real_Part        *rel1_to;
