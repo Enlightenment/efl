@@ -512,7 +512,7 @@ _edje_message_del(Edje *ed)
 
    if (ed->message.num <= 0) return;
    /* delete any messages on the main queue for this edje object */
-   for (l = msgq; ; )
+   for (l = msgq; l; )
      {
 	Edje_Message *em;
 	Evas_List *lp;
@@ -528,7 +528,7 @@ _edje_message_del(Edje *ed)
 	if (ed->message.num <= 0) return;
      }
    /* delete any on the processing queue */
-   for (l = tmp_msgq; ; )
+   for (l = tmp_msgq; l; )
      {
 	Edje_Message *em;
 	Evas_List *lp;
@@ -538,7 +538,7 @@ _edje_message_del(Edje *ed)
 	l = l->next;
 	if (em->edje == ed)
 	  {
-	     msgq = evas_list_remove_list(msgq, lp);
+	     tmp_msgq = evas_list_remove_list(tmp_msgq, lp);
 	     _edje_message_free(em);
 	  }
 	if (ed->message.num <= 0) return;
