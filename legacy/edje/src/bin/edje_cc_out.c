@@ -65,7 +65,17 @@ data_write(void)
    Eet_File *ef;
    Evas_List *l;
    int bytes;
+   int input_bytes;
+   int total_bytes;
+   int input_raw_bytes;
+   int image_num;
+   int collection_num;
    
+   input_bytes = 0;
+   total_bytes = 0;
+   input_raw_bytes = 0;
+   image_num = 0;
+   collection_num = 0;
    ef = eet_open(file_out, EET_FILE_MODE_WRITE);
    if (!ef)
      {
@@ -80,6 +90,8 @@ data_write(void)
 		progname, file_out);	
 	exit(-1);	
      }
+   else
+     total_bytes += bytes;
    if (verbose)
      {
 	printf("%s: Wrote %9i bytes (%4iKb) for \"edje_file\" header\n",
@@ -135,12 +147,19 @@ data_write(void)
 			       progname, img->entry, buf, file_out);	
 		       exit(-1);
 		    }
+		  else
+		    {
+		       image_num++;
+		       total_bytes += bytes;
+		    }
 		  if (verbose)
 		    {
 		       struct stat st;
 		       
 		       if (stat(imlib_image_get_filename(), &st) != 0)
 			 st.st_size = 0;
+		       input_bytes += st.st_size;
+		       input_raw_bytes += im_w * im_h * 4;
 		       printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" image entry \"%s\" compress: [raw: %2.1f%%] [real: %2.1f%%]\n",
 			      progname, bytes, (bytes + 512) / 1024, buf, img->entry,
 			      100 - (100 * (double)bytes) / ((double)(im_w * im_h * 4)),
@@ -172,6 +191,11 @@ data_write(void)
 		     progname, buf, file_out);	
 	     exit(-1);
 	  }
+	else
+	  {
+	     collection_num++;
+	     total_bytes += bytes;
+	  }
 	if (verbose)
 	  {
 	     printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" collection entry\n",
@@ -179,6 +203,39 @@ data_write(void)
 	  }
      }
    eet_close(ef);
+   if (verbose)
+     {
+	struct stat st;
+	
+	if (stat(file_in, &st) != 0)
+	  st.st_size = 0;
+	input_bytes += st.st_size;
+	input_raw_bytes += st.st_size;
+	printf("Summary:\n"
+	       "  Wrote %i collections\n"
+	       "  Wrote %i images\n"
+	       "Conservative compression summary:\n"
+	       "  Wrote total %i bytes (%iKb) from %i (%iKb) input data\n"
+	       "  Output file is %3.1f%% the size of the input data\n"
+	       "  Saved %i bytes (%iKb)\n"
+	       "Raw compression summary:\n"
+	       "  Wrote total %i bytes (%iKb) from %i (%iKb) raw input data\n"
+	       "  Output file is %3.1f%% the size of the raw input data\n"
+	       "  Saved %i bytes (%iKb)\n"
+	       ,
+	       collection_num,
+	       image_num,
+	       total_bytes, (total_bytes + 512) / 1024,
+	       input_bytes, (input_bytes + 512) / 1024,
+	       (100.0 * (double)total_bytes) / (double)input_bytes,
+	       input_bytes - total_bytes,
+	       (input_bytes - total_bytes + 512) / 1024,
+	       total_bytes, (total_bytes + 512) / 1024,
+	       input_raw_bytes, (input_raw_bytes + 512) / 1024,
+	       (100.0 * (double)total_bytes) / (double)input_raw_bytes,
+	       input_raw_bytes - total_bytes,
+	       (input_raw_bytes - total_bytes + 512) / 1024);
+     }
 }
 
 void
