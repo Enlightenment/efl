@@ -532,6 +532,7 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    obj->cur.cache.geometry.validity = 0;
    evas_object_change(obj);
    evas_object_recalc_clippees(obj);
+//   if (obj->func->coords_recalc) obj->func->coords_recalc(obj);
    if (!evas_event_passes_through(obj))
      {
 	if (!obj->smart.smart)

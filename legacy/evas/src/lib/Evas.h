@@ -436,7 +436,7 @@ extern "C" {
    EAPI void              evas_font_cache_set               (Evas *e, int size);
    EAPI int               evas_font_cache_get               (Evas *e);
    
-   EAPI Evas_Object            *evas_object_textblock_add                 (Evas *e);
+   EAPI Evas_Object           *evas_object_textblock_add                  (Evas *e);
    EAPI void                   evas_object_textblock_clear                (Evas_Object *obj);
    EAPI void                   evas_object_textblock_cursor_pos_set       (Evas_Object *obj, int pos);
    EAPI int                    evas_object_textblock_cursor_pos_get       (Evas_Object *obj);
