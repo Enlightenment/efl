@@ -1053,11 +1053,25 @@ _edje_color_class_member_del(Edje *ed, char *color_class)
    if (members) _edje_color_class_member_hash = evas_hash_add(_edje_color_class_member_hash, color_class, members);
 }
 
+/**
+ * Used to free the member lists that are stored in the text_class
+ * and color_class hashtables.
+ */
+static Evas_Bool member_list_free(Evas_Hash *hash, const char *key,
+                                  void *data, void *fdata)
+{
+	evas_list_free(data);
+
+	return 1;
+}
+
 void
 _edje_color_class_members_free(void)
 {
    if (!_edje_color_class_member_hash) return;
 
+   evas_hash_foreach(_edje_color_class_member_hash, member_list_free,
+                     NULL);
    evas_hash_free(_edje_color_class_member_hash);
    _edje_color_class_member_hash = NULL;
 }
@@ -1129,6 +1143,8 @@ _edje_text_class_members_free(void)
 {
    if (!_edje_text_class_member_hash) return;
 
+   evas_hash_foreach(_edje_text_class_member_hash, member_list_free,
+                     NULL);
    evas_hash_free(_edje_text_class_member_hash);
    _edje_text_class_member_hash = NULL;
 }
