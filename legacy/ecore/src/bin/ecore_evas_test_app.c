@@ -25,8 +25,10 @@ app_start(int argc, const char **argv)
      ee = ecore_evas_fb_new(NULL, 0,  240, 320);
    else if ((argc > 1) && (!strcmp(argv[1], "-x")))
      ee = ecore_evas_software_x11_new(NULL, 0,  0, 0, 240, 320);
+#if HAVE_ECORE_EVAS_GL
    else if ((argc > 1) && (!strcmp(argv[1], "-gl")))
      ee = ecore_evas_gl_x11_new(NULL, 0,  0, 0, 240, 320);
+#endif
    else if ((argc > 1) && (!strcmp(argv[1], "-h")))
      {
 	printf("%s -x         Test ecore_evas in X (default)\n"
