@@ -12,7 +12,7 @@ Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.or
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
 #BuildSuggests: xorg-x11-devel freetype2-devel
-BuildRequires: libpng-devel eet-devel edb-devel XFree86-devel freetype-devel libjpeg-devel
+BuildRequires: libpng-devel eet-devel edb-devel XFree86-devel freetype2-devel libjpeg-devel
 Provides: evas evas_software_x11 evas_loader_png evas_loader_jpeg evas_loader_eet evas_loader_edb
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
@@ -25,7 +25,7 @@ images, alpha-blend objects much and more.
 Summary: Evas headers, static libraries, documentation and test programs
 Group: System Environment/Libraries
 Requires: %{name} = %{version}
-Requires: libpng-devel eet-devel edb-devel XFree86-devel freetype-devel libjpeg-devel
+Requires: libpng-devel eet-devel edb-devel XFree86-devel freetype2-devel libjpeg-devel
 
 %description devel
 Headers, static libraries, test programs and documentation for Evas.
