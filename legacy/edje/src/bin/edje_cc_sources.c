@@ -61,27 +61,28 @@ source_fetch_file(char *fil, char *filname)
 {
    FILE *f;
    char buf[256 * 1024];
+   long sz;
+   SrcFile *sf;
    
    f = fopen(fil, "rb");
    if (!f)
-     return;
-   else
      {
-	long sz;
-	SrcFile *sf;
-	
-	fseek(f, 0, SEEK_END);
-	sz = ftell(f);
-	fseek(f, 0, SEEK_SET);
-	sf = mem_alloc(SZ(SrcFile));
-	sf->name = mem_strdup(filname);
-	sf->file = mem_alloc(sz + 1);
-	fread(sf->file, sz, 1, f);
-	sf->file[sz] = '\0';
-	fseek(f, 0, SEEK_SET);
-	srcfiles.list = evas_list_append(srcfiles.list, sf);
-    }
-   
+	fprintf(stderr, "%s: Warning. Cannot open file '%s'\n",
+	      progname, fil);
+	exit(-1);
+     }
+
+   fseek(f, 0, SEEK_END);
+   sz = ftell(f);
+   fseek(f, 0, SEEK_SET);
+   sf = mem_alloc(SZ(SrcFile));
+   sf->name = mem_strdup(filname);
+   sf->file = mem_alloc(sz + 1);
+   fread(sf->file, sz, 1, f);
+   sf->file[sz] = '\0';
+   fseek(f, 0, SEEK_SET);
+   srcfiles.list = evas_list_append(srcfiles.list, sf);
+
    while (fgets(buf, sizeof(buf), f))
      {
 	char *p = buf, *pp;
@@ -103,60 +104,71 @@ source_fetch_file(char *fil, char *filname)
 		    }
 		  p++;
 	       }
-	     else
+
+	     if (!haveinclude)
 	       {
-		  if (!haveinclude)
+		  if (!isspace(*p))
 		    {
-		       if (!isspace(*p))
+		       if (!strncmp(p, "include", 7))
 			 {
-			    if (!strncmp(p, "include", 7))
-			      {
-				 haveinclude = 1;
-				 p += 7;
-			      }
-			    else
-			      forgetit = 1;
-			 }
-		    }
-		  else
-		    {
-		       if (!isspace(*p))
-			 {
-			    if (*p == '"')
-			      {
-				 pp = strchr(p + 1, '"');
-				 if (!pp)
-				   forgetit = 1;
-				 else
-				   {
-				      file = mem_alloc(pp - p);
-				      strncpy(file, p + 1, pp - p - 1);
-				      file[pp - p - 1] = 0;
-				      forgetit = 1;
-				   }
-			      }
-			    else if (*p == '<')
-			      {
-				 pp = strchr(p + 1, '>');
-				 if (!pp)
-				   forgetit = 1;
-				 else
-				   {
-				      file = mem_alloc(pp - p);
-				      strncpy(file, p + 1, pp - p - 1);
-				      file[pp - p - 1] = 0;
-				      forgetit = 1;
-				   }
-			      }
-			    else
-			      forgetit = 1;
+			    haveinclude = 1;
+			    p += 7;
 			 }
 		       else
-			 p++;
+			 forgetit = 1;
 		    }
-
-		  got_hash = 0;
 	       }
+	     else
+	       {
+		  if (!isspace(*p))
+		    {
+		       char end = '\0';
+
+		       if (*p == '"')
+			    end = '"';
+		       else if (*p == '<')
+			    end = '>';
+
+		       if (end)
+			 {
+			    pp = strchr(p + 1, end);
+			    if (!pp)
+			      forgetit = 1;
+			    else
+			      {
+				 char *slash, *dir = NULL;
+				 ssize_t dir_len = 0, l = 0;
+
+				 /* get the directory of the current file */
+				 if (strrchr (filname, '/'))
+				   {
+				      dir = mem_strdup(filname);
+				      slash = strrchr (dir, '/');
+				      *slash = '\0';
+				      dir_len = strlen (dir);
+				      l++; /* one extra char for the delimiter */
+				   }
+
+				 l += pp - p + dir_len;
+				 file = mem_alloc(l);
+
+				 if (!dir_len)
+				   snprintf(file, l, "%s", p + 1);
+				 else
+				   snprintf(file, l, "%s/%s", dir, p + 1);
+
+				 free (dir);
+				 forgetit = 1;
+			      }
+			 }
+		       else
+			 forgetit = 1;
+		    }
+		  else
+		    p++;
+	       }
+
+	     got_hash = 0;
 	  }
 	if (file)
 	  {
