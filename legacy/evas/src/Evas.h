@@ -196,6 +196,7 @@ struct _Evas_Object_Gradient_Box
    struct _Evas_Object_Any object;
    struct  {
       Evas_Gradient gradient;
+      int    new_gradient;
       double angle;
    } current, previous;
 };
@@ -247,12 +248,16 @@ void evas_set_gradient(Evas e, Evas_Object o, Evas_Gradient grad);
 void evas_set_angle(Evas e, Evas_Object o, double angle);
 void evas_set_zoom_scale(Evas e, Evas_Object o, int scale);
 void evas_set_line_xy(Evas e, Evas_Object o, double x1, double y1, double x2, double y2);
+
+/* cache settings for performance */
 void evas_set_font_cache(Evas e, int size);
 int  evas_get_font_cache(Evas e);
 void evas_flush_font_cache(Evas e);
 void evas_set_image_cache(Evas e, int size);
 int  evas_get_image_cache(Evas e);
 void evas_flush_image_cache(Evas e);
+
+/* font path */
 void evas_font_add_path(Evas e, char *path);
 void evas_font_del_path(Evas e, char *path);
    

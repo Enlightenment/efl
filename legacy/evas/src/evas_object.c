@@ -197,6 +197,7 @@ evas_stack_below(Evas e, Evas_Object o, Evas_Object above)
 void
 evas_move(Evas e, Evas_Object o, double x, double y)
 {
+   if ((o->type == OBJECT_LINE)) return;
    o->current.x = x;
    o->current.y = y;
    o->changed = 1;
@@ -206,13 +207,11 @@ evas_move(Evas e, Evas_Object o, double x, double y)
 void
 evas_resize(Evas e, Evas_Object o, double w, double h)
 {
-   if (o->type != OBJECT_TEXT)
-     {
-	o->current.w = w;
-	o->current.h = h;
-	o->changed = 1;
-	e->changed = 1;
-     }
+   if ((o->type == OBJECT_TEXT) || (o->type == OBJECT_LINE)) return;
+   o->current.w = w;
+   o->current.h = h;
+   o->changed = 1;
+   e->changed = 1;
 }
 
 void

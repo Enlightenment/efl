@@ -86,10 +86,11 @@ evas_render(Evas e)
    int (*func_image_get_width) (void *im);
    int (*func_image_get_height) (void *im);
    void * (*func_text_font_new) (Display *disp, char *font, int size);
-   void (*func_text_font_free) (Evas_GL_Font *fn);
-   void (*func_text_draw) (Evas_GL_Font *fn, Display *disp, Window win, int win_w, int win_h, int x, int y, char *text, int r, int g, int b, int a);
+   void (*func_text_font_free) (void *fn);
+   void (*func_text_draw) (void *fn, Display *disp, Window win, int win_w, int win_h, int x, int y, char *text, int r, int g, int b, int a);
    void (*func_rectangle_draw) (Display *disp, Window win, int win_w, int win_h, int x, int y, int w, int h, int r, int g, int b, int a);
    void (*func_line_draw) (Display *disp, Window win, int win_w, int win_h, int x1, int y1, int x2, int y2, int r, int g, int b, int a);
+   void (*func_gradient_draw) (void *gr, Display *disp, Window win, int win_w, int win_h, int x, int y, int w, int h, double angle);
    
    if ((!e->changed) || 
        (!e->current.display) || 
@@ -116,6 +117,7 @@ evas_render(Evas e)
 	func_text_draw           = __evas_imlib_text_draw;
 	func_rectangle_draw      = __evas_imlib_rectangle_draw;
 	func_line_draw           = __evas_imlib_line_draw;
+	func_gradient_draw       = __evas_imlib_gradient_draw;
 	break;
      case RENDER_METHOD_BASIC_HARDWARE:
 	break;
@@ -133,6 +135,7 @@ evas_render(Evas e)
 	func_text_draw           = __evas_gl_text_draw;
 	func_rectangle_draw      = __evas_gl_rectangle_draw;
 	func_line_draw           = __evas_gl_line_draw;
+	func_gradient_draw       = __evas_gl_gradient_draw;
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
 	break;
@@ -197,6 +200,7 @@ evas_render(Evas e)
 				     (oo->current.fill.h != oo->previous.fill.h)
 				     )
 				    real_change = 1;
+				 oo->current.new_data = 0;
 				 oo->previous = oo->current;
 			      }
 			    break;
@@ -254,8 +258,10 @@ evas_render(Evas e)
 				 Evas_Object_Gradient_Box oo;
 				 
 				 oo = o;
-				 if (1)
+				 if ((oo->current.new_gradient) ||
+				     (oo->current.angle != oo->previous.angle))
 				    real_change = 1;
+				 oo->current.new_gradient = 0;
 				 oo->previous = oo->current;
 			      }
 			    break;
@@ -512,8 +518,7 @@ evas_render(Evas e)
 					   Evas_Object_Rectangle oo;
 					   
 					   oo = o;
-					   func_rectangle_draw(
-							       e->current.display,
+					   func_rectangle_draw(e->current.display,
 							       e->current.drawable,
 							       e->current.drawable_width,
 							       e->current.drawable_height,
@@ -532,8 +537,7 @@ evas_render(Evas e)
 					   Evas_Object_Line oo;
 					   
 					   oo = o;
-					   func_line_draw(
-							  e->current.display,
+					   func_line_draw(e->current.display,
 							  e->current.drawable,
 							  e->current.drawable_width,
 							  e->current.drawable_height,
@@ -552,6 +556,17 @@ evas_render(Evas e)
 					   Evas_Object_Gradient_Box oo;
 					   
 					   oo = o;
+					   if (o->renderer_data.method[e->current.render_method])
+					      func_gradient_draw(o->renderer_data.method[e->current.render_method],
+								 e->current.display,
+								 e->current.drawable,
+								 e->current.drawable_width,
+								 e->current.drawable_height,
+								 o->current.x,
+								 o->current.y,
+								 o->current.w,
+								 o->current.h,
+								 oo->current.angle);
 					}
 				      break;
 				   default:

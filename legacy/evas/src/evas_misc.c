@@ -290,6 +290,7 @@ evas_get_font_cache(Evas e)
 	return;
 	break;
      }
+   return 0;
 }
 
 void
@@ -353,6 +354,7 @@ evas_get_image_cache(Evas e)
 	return;
 	break;
      }
+   return 0;
 }
 
 void

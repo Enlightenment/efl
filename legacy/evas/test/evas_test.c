@@ -26,7 +26,8 @@ main(int argc, char **argv)
    int win_w, win_h;
    int i, a, w, h;
    Evas e;
-   Evas_Object o[128], o_rect;
+   Evas_Object o[128], o_rect, o_line, o_grad;
+   Evas_Gradient grad;
    int down;
    double t1, t2;
    char *imgs[8] =
@@ -42,14 +43,14 @@ main(int argc, char **argv)
      };
    
    win_w = 640; win_h = 480;
-   if (argc == 4)
+   if (argc >= 3)
      {
 	win_w = atoi(argv[1]);
 	win_h = atoi(argv[2]);
      }
    
    e = evas_new();
-   if (!strcmp(argv[3], "software"))
+   if ((argc == 4) && (!strcmp(argv[3], "software")))
       evas_set_output_method(e, RENDER_METHOD_ALPHA_SOFTWARE);
    else
       evas_set_output_method(e, RENDER_METHOD_3D_HARDWARE);
@@ -99,7 +100,7 @@ main(int argc, char **argv)
      }
    for (i = 100; i < 128; i++)
      {
-	o[i] = evas_add_text(e, "notepad", 20, imgs[i & 0x7]);
+	o[i] = evas_add_text(e, "notepad", 16, imgs[i & 0x7]);
 	evas_set_color(e, o[i], rand()&0xff,  rand()&0xff,  rand()&0xff, 255);
 	evas_show(e, o[i]);
 	evas_set_layer(e, o[i], 100);
@@ -110,6 +111,24 @@ main(int argc, char **argv)
    evas_resize(e, o_rect, 200, 100);
    evas_set_color(e, o_rect, rand()&0xff,  rand()&0xff,  rand()&0xff, 120);
    evas_set_layer(e, o_rect, 150);
+   
+   o_line = evas_add_line(e);
+   evas_show(e, o_line);
+   evas_set_line_xy(e, o_line, 10, 20, 100, 50);
+   evas_set_color(e, o_line, rand()&0xff,  rand()&0xff,  rand()&0xff, 120);
+   evas_set_layer(e, o_rect, 150);
+   
+   o_grad = evas_add_gradient_box(e);
+   evas_show(e, o_grad);
+   evas_move(e, o_grad, 300, 50);
+   evas_resize(e, o_grad, 300, 400);
+   evas_set_layer(e, o_grad, 150);
+   grad = evas_gradient_new();
+   evas_gradient_add_color(grad, 255, 255, 255, 255, 8);
+   evas_gradient_add_color(grad, 255, 255, 0,   200, 8);
+   evas_gradient_add_color(grad, 255, 0  , 0,   150, 8);
+   evas_gradient_add_color(grad, 0  , 0  , 0,   0,   8);
+   evas_set_gradient(e, o_grad, grad);
    
    evas_raise(e, o[1]);
    evas_move(e, o[0], 0, 0);
@@ -185,13 +204,14 @@ main(int argc, char **argv)
 		evas_set_image_file(e, o[i], imgs[(i) & 0x7]);
 	     evas_move(e, o[i], x, y);
 	  }
+	evas_set_angle(e, o_grad, (double)a * 360 / 1000);
 	evas_render(e);
 	a++;
 	if ((a % 25) == 0)
 	  {
 	      t2 = get_time() - t1;
 	      t1 = get_time();
-	      printf("%3.3f fps\n", 25 / t2);
+	      printf("%3.1f fps\n", 25 / t2);
 	  }
 	if (a >= 1000) 
 	   {

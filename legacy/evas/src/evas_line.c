@@ -7,7 +7,7 @@
 static void
 _evas_free_line(Evas_Object o)
 {
-   Evas_Object_Rectangle oo;
+   Evas_Object_Line oo;
    
    oo = o;
    if (o->callbacks) evas_list_free(o->callbacks);
