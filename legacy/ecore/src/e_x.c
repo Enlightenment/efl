@@ -1,8 +1,9 @@
 #include "e_x.h"
 #include "e_mem.h"
-#include "e_str.h"
 #include <Imlib2.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
 typedef struct _window_list Window_List;

@@ -1,5 +1,4 @@
 #include "e_ev_filter.h"
-#include "e_str.h"
 #include "e_mem.h"
 #include "e_util.h"
 

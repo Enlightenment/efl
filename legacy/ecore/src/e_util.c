@@ -1,6 +1,5 @@
 #include "e_util.h"
 #include "e_mem.h"
-#include "e_str.h"
 
 double
 e_get_time(void)

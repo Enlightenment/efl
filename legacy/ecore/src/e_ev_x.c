@@ -1,6 +1,5 @@
 #include "e_events.h"
 #include "e_ev_x.h"
-#include "e_str.h"
 #include "e_mem.h"
 #include "e_util.h"
 
