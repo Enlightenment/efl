@@ -1,3 +1,6 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
@@ -14,33 +17,33 @@ _ecore_x_selection_data_init(void)
 {
    /* Initialize converters */
    ecore_x_selection_converter_atom_add(ECORE_X_ATOM_TEXT, 
-         _ecore_x_selection_converter_text);
+					_ecore_x_selection_converter_text);
 #ifdef X_HAVE_UTF8_STRING
    ecore_x_selection_converter_atom_add(ECORE_X_ATOM_UTF8_STRING, 
-         _ecore_x_selection_converter_text);
+					_ecore_x_selection_converter_text);
 #endif
    ecore_x_selection_converter_atom_add(ECORE_X_ATOM_COMPOUND_TEXT,
-         _ecore_x_selection_converter_text);
+					_ecore_x_selection_converter_text);
    ecore_x_selection_converter_atom_add(ECORE_X_ATOM_STRING,
-         _ecore_x_selection_converter_text);
+					_ecore_x_selection_converter_text);
 }
 
 void
 _ecore_x_selection_shutdown(void)
 {
-	Ecore_X_Selection_Converter *cnv = converters, *tmp;
+   Ecore_X_Selection_Converter *cnv = converters, *tmp;
 
-	if (!converters)
-		return;
+   if (!converters)
+     return;
 
-	/* free the selection converters */
-	while (cnv) {	
-		tmp = cnv->next;
-		free(cnv);
-		cnv = tmp;
-	}
+   /* free the selection converters */
+   while (cnv) {	
+	tmp = cnv->next;
+	free(cnv);
+	cnv = tmp;
+   }
 
-	converters = NULL;
+   converters = NULL;
 }
 
 static void
@@ -360,26 +363,26 @@ ecore_x_selection_converter_atom_add(Ecore_X_Atom target,
 
    cnv = converters;
    if (converters) 
-   {
-      while (1)
-      {
-         if (cnv->target == target)
-         {
-            cnv->convert = func;
-            return;
-         }
-         if (cnv->next)
-            cnv = cnv->next;
-         else
-            break;
-      }
-   
-      cnv->next = calloc(1, sizeof(Ecore_X_Selection_Converter));
-      cnv = cnv->next;
-   } else {
-      converters = calloc(1, sizeof(Ecore_X_Selection_Converter));
-      cnv = converters;
-   }
+     {
+	while (1)
+	  {
+	     if (cnv->target == target)
+	       {
+		  cnv->convert = func;
+		  return;
+	       }
+	     if (cnv->next)
+	       cnv = cnv->next;
+	     else
+	       break;
+	  }
+
+	cnv->next = calloc(1, sizeof(Ecore_X_Selection_Converter));
+	cnv = cnv->next;
+     } else {
+	  converters = calloc(1, sizeof(Ecore_X_Selection_Converter));
+	  cnv = converters;
+     }
    cnv->target = target;
    cnv->convert = func;
 }
@@ -408,29 +411,29 @@ ecore_x_selection_converter_atom_del(Ecore_X_Atom target)
    cnv = converters;
    
    while (cnv)
-   {
-      if (cnv->target == target)
-      {
-         if (target == ECORE_X_ATOM_TEXT ||
-             target == ECORE_X_ATOM_COMPOUND_TEXT ||
-             target == ECORE_X_ATOM_STRING)
-         {
-            cnv->convert = _ecore_x_selection_converter_text;
-         }
-         else
-         {
-            if(prev_cnv)
-               prev_cnv->next = cnv->next;
-            else
-               converters = NULL; /* This was the only converter */
-            free(cnv);
-         }
-         
-         return;
-      }
-      prev_cnv = cnv;
-      cnv = cnv->next;
-   }
+     {
+	if (cnv->target == target)
+	  {
+	     if (target == ECORE_X_ATOM_TEXT ||
+		   target == ECORE_X_ATOM_COMPOUND_TEXT ||
+		   target == ECORE_X_ATOM_STRING)
+	       {
+		  cnv->convert = _ecore_x_selection_converter_text;
+	       }
+	     else
+	       {
+		  if(prev_cnv)
+		    prev_cnv->next = cnv->next;
+		  else
+		    converters = NULL; /* This was the only converter */
+		  free(cnv);
+	       }
+
+	     return;
+	  }
+	prev_cnv = cnv;
+	cnv = cnv->next;
+     }
 }
 
 void
@@ -460,20 +463,20 @@ _ecore_x_selection_convert(Atom selection, Atom target, void **data_ret)
    tgt_str = _ecore_x_selection_target_get(target);
    
    for (cnv = converters; cnv; cnv = cnv->next)
-   {
-      if (cnv->target == target)
-      {
-         int r;
-         r = cnv->convert(tgt_str, sel->data, sel->length, &data, &size);
-         if (r)
-         {
-            *data_ret = data;
-            return r;
-         }
-         else
-            return -1;
-      }
-   }
+     {
+	if (cnv->target == target)
+	  {
+	     int r;
+	     r = cnv->convert(tgt_str, sel->data, sel->length, &data, &size);
+	     if (r)
+	       {
+		  *data_ret = data;
+		  return r;
+	       }
+	     else
+	       return -1;
+	  }
+     }
 
    free(tgt_str);
 
@@ -505,24 +508,24 @@ static int _ecore_x_selection_converter_text(char *target, void *data, int size,
    else
       return 0;
    
-   if(!(mystr = strdup(data)))
+   if (!(mystr = strdup(data)))
       return 0;
    
    if (XmbTextListToTextProperty(_ecore_x_disp, &mystr, 1, style, &text_prop) == Success)
-   {
-      int bufsize = strlen(text_prop.value) + 1;
-      *data_ret = malloc(bufsize);
-      memcpy(*data_ret, text_prop.value, bufsize);
-      *size_ret = bufsize;
-      XFree(text_prop.value);
-      free(mystr);
-      return 1;
-   }
+     {
+	int bufsize = strlen(text_prop.value) + 1;
+	*data_ret = malloc(bufsize);
+	memcpy(*data_ret, text_prop.value, bufsize);
+	*size_ret = bufsize;
+	XFree(text_prop.value);
+	free(mystr);
+	return 1;
+     }
    else
-   {
-      free(mystr);
-      return 0;
-   }
+     {
+	free(mystr);
+	return 0;
+     }
 }
 
 
