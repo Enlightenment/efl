@@ -2,7 +2,7 @@
 
 Summary: embryo
 Name: embryo
-Version: 0.9.0
+Version: 0.9.1
 Release: 1.%(date '+%Y%m%d')
 Copyright: BSD
 Group: System Environment/Libraries
