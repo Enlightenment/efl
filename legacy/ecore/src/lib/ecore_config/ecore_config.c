@@ -207,7 +207,7 @@ static int ecore_config_val_typed(Ecore_Config_Prop *e,void *val,int type) {
   v=0;
   e->type=PT_NIL;
 
-  if(!val)
+  if(!(val || type==PT_INT))
     e->ptr=NULL;
   else {
     if (type==PT_INT) {
@@ -314,10 +314,14 @@ int ecore_config_set_typed(Ecore_Config_Bundle *t,const char *key,void *val,int 
 
 int ecore_config_set(Ecore_Config_Bundle *t,const char *key,char *val) {
   int type;
+  float tmpf;
   type=ecore_config_guess_type(val);
   if (type == PT_INT)
     return ecore_config_set_typed(t,key,(void*) atoi(val),type);
-  else
+  else if  (type == PT_FLT) {
+    tmpf = atof(val);
+    return ecore_config_set_typed(t,key,(void*) &tmpf,type);
+  } else
     return ecore_config_set_typed(t,key,(void*) val,type); }
 
 int ecore_config_set_as_string(const char *key,char *val) {
