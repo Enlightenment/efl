@@ -629,7 +629,6 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 		  evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
 		  if ((size > 0) && (tw == 0)) break;
 	       }
-	     size = psize;
 	  }
      }
    if (chosen_desc->text.fit_y)
