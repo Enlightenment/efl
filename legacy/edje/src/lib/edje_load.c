@@ -147,6 +147,8 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	       evas_object_pass_events_set(rp->object, 1);
 	     if (rp->part->clip_to_id < 0)
 	       evas_object_clip_set(rp->object, ed->clipper);
+	     rp->drag.step.x = ep->dragable.step_x;
+	     rp->drag.step.y = ep->dragable.step_y;
 	  }
 	for (l = ed->parts; l; l = l->next)
 	  {

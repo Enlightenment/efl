@@ -179,9 +179,10 @@ _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
      }
    _edje_ref(ed);
    _edje_emit(ed, "mouse,move", rp->part->name);
-   ed->calc_only = 1;
+/* FIXME: this FUCKS up badly!!!! */   
+/*   ed->calc_only = 1; */
    _edje_recalc(ed);
-   ed->calc_only = 0;
+/*   ed->calc_only = 0; */
    if ((rp->part->dragable.x) || (rp->part->dragable.y))
      {
 	if (rp->drag.down.count > 0)

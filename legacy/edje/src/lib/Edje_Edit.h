@@ -397,11 +397,11 @@ struct _Edje
    Evas_List            *pending_actions;
    Evas_List            *color_classes;
    Evas_List            *text_classes;
-   int                   freeze;
    int                   references;
    int                   block;
    Evas_List            *emissions;
    int                   load_error;
+   int                   freeze;
 };
 
 struct _Edje_Real_Part

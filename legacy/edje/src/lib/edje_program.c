@@ -275,13 +275,13 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 	     
 	     if (pa->id >= 0)
 	       {
-	        pr = evas_list_nth(ed->collection->programs, pa->id);
-	        if (pr) _edje_program_run(ed, pr, 0);
-	        if (_edje_block_break(ed))
-	          {
-		     if (!ed->walking_actions) free(runp);
-		     goto break_prog;
-	          }
+		  pr = evas_list_nth(ed->collection->programs, pa->id);
+		  if (pr) _edje_program_run(ed, pr, 0);
+		  if (_edje_block_break(ed))
+		    {
+		       if (!ed->walking_actions) free(runp);
+		       goto break_prog;
+		    }
 	       }
 	  }
 	_edje_thaw(ed);
