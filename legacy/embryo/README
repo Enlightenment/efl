@@ -2,20 +2,58 @@ Embryo 0.0.1
 
 OK a lot of peolpe ask this. What is Embryo?
 
-It is a cleanup/imlementation of the SMALL programming/scripting language.
-You can find documentation on the language, syntax and the original code here:
+Embryo is primarily a shared library that gives you an API to load and control
+interpredted programs compiled into the abstract machine bytecode that it
+understands. This abstrac (or virtual) machine is imilar to a real machine
+with a CPU, but it is emulated in software. The architecture is simple and is
+the same as the abstract machine (AMX) in the
+<a href=http://www.compuphase.com/small.htm>SMALL</a> language as it is based
+on exactly the same code. Embryo has modified the code for the AMX extensively
+and has made it smaller and more portable. It is VERY small. The total size
+of the virtual machine code AND header files is less than 2500 lines of code.
+It includes the floating point library support by default as well. This makes
+it one of the smallest interpreting engines around, and thus makes is very
+efficient to use in code.
 
-  http://www.compuphase.com/small.htm
+Embryo also uses the SMALL compiler from the same codebase. This code has
+barely been touched and so sufferes from lots of portability issues. It has
+been partially fixed and now works on both big and little endian but the code
+still need to be gone over and really cleaned up. It does work, but it's only
+just working. It has been called embryo_cc and compiled a subset of SMALL
+binary outputs. it does not support packed strings, variable alignment, or
+debugging output. it does not support many features of the full SMALL
+compiler because the Embryo AMX does not support these either. You will find
+the Embryo codebase to work muich better on Linux (and BSD and MacOS X) and
+other UNIX operating systems as it has been developed and tested on them. IT
+is known to work on:
+  gcc Linux   (x86-32)
+  gcc Linux   (PPC)
+  gcc MacOS X (PPC)
+
+And will likely work on more combinations. IT currently has problems on 64bit
+SPARC cpu's. Other 64bit systems are untested. It is the aim to fix the code
+so it works on all commonly used architectures (32, 64bit, big and little
+endian, alignment forgiving/unforgiving). ASo far 64bit support is the major
+issue.
+
+For more documentation please see the Language guide here:
+
+<a href=http://www.compuphase.com/smalldoc.pdf>Small Language Booklet</a>
   
-There are PDF's on the language syntax which are 100% relevant for Embryo.
+This documents the SMALL language and is 100% relevant for Embryo and the
+syntax of files it can compile (.sma files).
 
-Embryo is based on the 2.5.0 codebase but has some MAJOR changes. I will list
-these later.
+Any help is appreciated in helping clean and port this code, so feel free to
+send patches to the Enlightenment development lists.
 
-Embryo is basically a compler/virtual machine combination. The compiler takes
-Small language scripts and compiles them into bytecode. This bytecode is
-interpreted by the Small Virtual Machine (Abstract Machine - or AMX). The
-Embryo AMX is a stripped down and cleaned up version of the Small original -
-with windows specific support removed and the coding style mostly changed to
-fit enlightenment coding style. The compiler is still almost verbatim. It
-works on x86 and PPC now. It needs work.
+The main aim of Embryo is to provide an easy to usse library for running
+compiled SMALL programs and giving them access to the calling program and
+any API it exports to the SMALL script. SMALL programs/scripts are completely
+sandboxed. They cannot access any system or function calls other than the
+ones provided by the calling appllication to the Embryo API. This mjeans a
+SMALL script cannot open or write to, delete or load files. It is fairly
+harmless and this also keeps Embryo small.
+
+This is a work in progress, so please be patient if things don't work for you
+- and patches and help in fixing it is very much appreciated.
+
