@@ -128,9 +128,12 @@ evas_file_path_resolve(const char *file)
 {
    char buf[PATH_MAX], *buf2;
    
+   return strdup(file);
+#if 0   
    if (!realpath(file, buf)) return NULL;
    buf2 = strdup(buf);
    return buf2;
+#endif   
 }
 
 #else

@@ -833,29 +833,82 @@ load_image_file_data_template(RGBA_Image *im, const char *file, const char *key)
 RGBA_Image *
 evas_common_load_image_from_file(const char *file, const char *key)
 {
-   char *real_file;
+//   char *real_file;
    RGBA_Image *im;
    int ok;
-   DATA64 mod_time;
+   char *p;
+//   DATA64 mod_time;
 
-   real_file = evas_file_path_resolve(file);
-   mod_time = 0;
-   if (real_file) mod_time = evas_file_modified_time(real_file);
-   else if (file) mod_time = evas_file_modified_time(file);
-   im = evas_common_image_find(file, key, mod_time);
+//   real_file = evas_file_path_resolve(file);
+//   mod_time = 0;
+//   if (real_file) mod_time = evas_file_modified_time(real_file);
+//   else if (file) mod_time = evas_file_modified_time(file);
+   im = evas_common_image_find(file, key, 0);
    if (im)
      {
 	evas_common_image_ref(im);
-	if (real_file) free(real_file);
+//	if (real_file) free(real_file);
 	return im;
      }
+   printf("@@@@@@@@@ IMAGE LOAD\n");
    im = evas_common_image_new();
    if (!im)
      {
-	if (real_file) free(real_file);
+//	if (real_file) free(real_file);
 	return NULL;
      }
    ok = -1;
+     {
+	p = strrchr(file, '.');
+	if (p)
+	  {
+	     p++;
+	     
+#ifdef BUILD_LOADER_PNG
+	     if (ok == -1)
+	       {
+		  if (!strcasecmp(p, "png"))
+		    {
+		       ok = load_image_file_head_png(im, file, key);
+		       if (ok != -1) im->info.format = 1;
+		    }
+	       }
+#endif
+#ifdef BUILD_LOADER_JPEG
+	     if (ok == -1)
+	       {
+		  if ((!strcasecmp(p, "jpg")) ||
+		      (!strcasecmp(p, "jpeg")) ||
+		      (!strcasecmp(p, "jfif")))
+		    {
+		       ok = load_image_file_head_jpeg(im, file, key);
+		       if (ok != -1) im->info.format = 2;
+		    }
+	       }
+#endif
+#ifdef BUILD_LOADER_EET
+	     if (ok == -1)
+	       {
+		  if (!strcasecmp(p, "eet"))
+		    {
+		       ok = load_image_file_head_eet(im, file, key);
+		       if (ok != -1) im->info.format = 3;
+		    }
+	       }
+#endif
+#ifdef BUILD_LOADER_EDB
+	     if (ok == -1)
+	       {
+		  if (!strcasecmp(p, "edb"))
+		    {
+		       ok = load_image_file_head_edb(im, file, key);
+		       if (ok != -1) im->info.format = 4;
+		    }
+	       }
+#endif
+	  }
+     }
+   
 #ifdef BUILD_LOADER_PNG
    if (ok == -1)
      {
@@ -887,18 +940,18 @@ evas_common_load_image_from_file(const char *file, const char *key)
    if (ok == -1)
      {
 	evas_common_image_free(im);
-	if (real_file) free(real_file);
+//	if (real_file) free(real_file);
 	return NULL;
      }
-   im->timestamp = mod_time;
+//   im->timestamp = mod_time;
    if (file)
      {
 	im->info.file = strdup(file);
-	im->info.real_file = real_file;
+//	im->info.real_file = real_file;
      }
    else
      {
-	if (real_file) free(real_file);	
+//	if (real_file) free(real_file);	
      }
    if (key)
      im->info.key = strdup(key);
