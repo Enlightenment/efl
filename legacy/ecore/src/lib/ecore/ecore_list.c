@@ -240,8 +240,6 @@ int ecore_list_init(Ecore_List *list)
 
 	memset(list, 0, sizeof(Ecore_List));
 
-	ECORE_INIT_LOCKS(list);
-
 	return TRUE;
 }
 
@@ -256,16 +254,11 @@ void ecore_list_destroy(Ecore_List * list)
 
 	CHECK_PARAM_POINTER("list", list);
 
-	ECORE_WRITE_LOCK(list);
-
 	while (list->first) {
 		data = _ecore_list_remove_first(list);
 		if (list->free_func)
 			list->free_func(data);
 	}
-
-	ECORE_WRITE_UNLOCK(list);
-	ECORE_DESTROY_LOCKS(list);
 
 	FREE(list);
 }
@@ -281,11 +274,7 @@ int ecore_list_set_free_cb(Ecore_List * list, Ecore_Free_Cb free_func)
 {
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_WRITE_LOCK(list);
-
 	list->free_func = free_func;
-
-	ECORE_WRITE_UNLOCK(list);
 
 	return TRUE;
 }
@@ -301,12 +290,8 @@ int ecore_list_is_empty(Ecore_List * list)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_READ_LOCK(list);
-
 	if (list->nodes)
 		ret = FALSE;
-
-	ECORE_READ_UNLOCK(list);
 
 	return ret;
 }
@@ -322,11 +307,7 @@ int ecore_list_index(Ecore_List * list)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_READ_LOCK(list);
-
 	ret = list->index;
-
-	ECORE_READ_UNLOCK(list);
 
 	return ret;
 }
@@ -342,11 +323,7 @@ int ecore_list_nodes(Ecore_List * list)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_READ_LOCK(list);
-
 	ret = list->nodes;
-
-	ECORE_READ_UNLOCK(list);
 
 	return ret;
 }
@@ -374,11 +351,7 @@ inline int ecore_list_append(Ecore_List * list, void *data)
 	node = ecore_list_node_new();
 	node->data = data;
 
-	ECORE_WRITE_LOCK(list);
-
 	ret = _ecore_list_append_0(list, node);
-
-	ECORE_WRITE_UNLOCK(list);
 
 	return ret;
 }
@@ -387,9 +360,7 @@ inline int ecore_list_append(Ecore_List * list, void *data)
 static int _ecore_list_append_0(Ecore_List * list, Ecore_List_Node *end)
 {
 	if (list->last) {
-		ECORE_WRITE_LOCK(list->last);
 		list->last->next = end;
-		ECORE_WRITE_UNLOCK(list->last);
 	}
 
 	list->last = end;
@@ -421,9 +392,7 @@ inline int ecore_list_prepend(Ecore_List * list, void *data)
 	node = ecore_list_node_new();
 	node->data = data;
 
-	ECORE_WRITE_LOCK(list);
 	ret = _ecore_list_prepend_0(list, node);
-	ECORE_WRITE_UNLOCK(list);
 
 	return ret;
 }
@@ -432,9 +401,7 @@ inline int ecore_list_prepend(Ecore_List * list, void *data)
 static int _ecore_list_prepend_0(Ecore_List * list, Ecore_List_Node *start)
 {
 	/* Put it at the beginning of the list */
-	ECORE_WRITE_LOCK(start);
 	start->next = list->first;
-	ECORE_WRITE_UNLOCK(start);
 
 	list->first = start;
 
@@ -465,9 +432,7 @@ inline int ecore_list_insert(Ecore_List * list, void *data)
 	node = ecore_list_node_new();
 	node->data = data;
 
-	ECORE_WRITE_LOCK(list);
 	ret = _ecore_list_insert(list, node);
-	ECORE_WRITE_UNLOCK(list);
 
 	return ret;
 }
@@ -492,16 +457,12 @@ static int _ecore_list_insert(Ecore_List * list, Ecore_List_Node *new_node)
 	}
 
 	/* Setup the fields of the new node */
-	ECORE_WRITE_LOCK(new_node);
 	new_node->next = list->current;
-	ECORE_WRITE_UNLOCK(new_node);
 
 	/* And hook the node into the list */
 	_ecore_list_goto_index(list, ecore_list_index(list) - 1);
 
-	ECORE_WRITE_LOCK(list->current);
 	list->current->next = new_node;
-	ECORE_WRITE_UNLOCK(list->current);
 
 	/* Now move the current item to the inserted item */
 	list->current = new_node;
@@ -529,9 +490,7 @@ inline void *ecore_list_remove(Ecore_List * list)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_WRITE_LOCK(list);
 	ret = _ecore_list_remove_0(list);
-	ECORE_WRITE_UNLOCK(list);
 
 	return ret;
 }
@@ -561,18 +520,12 @@ static void *_ecore_list_remove_0(Ecore_List * list)
 
 	_ecore_list_goto_index(list, list->index - 1);
 
-	ECORE_WRITE_LOCK(list->current);
-	ECORE_WRITE_LOCK(old);
-
 	list->current->next = old->next;
 	old->next = NULL;
 	ret = old->data;
 	old->data = NULL;
 
 	_ecore_list_next(list);
-
-	ECORE_WRITE_UNLOCK(old);
-	ECORE_WRITE_UNLOCK(list->current);
 
 	ecore_list_node_destroy(old, NULL);
 	list->nodes--;
@@ -592,12 +545,9 @@ int ecore_list_remove_destroy(Ecore_List *list)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_WRITE_LOCK(list);
 	data = _ecore_list_remove_0(list);
 	if (list->free_func)
 		list->free_func(data);
-
-	ECORE_WRITE_UNLOCK(list);
 
 	return TRUE;
 }
@@ -615,9 +565,7 @@ inline void *ecore_list_remove_first(Ecore_List * list)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_WRITE_LOCK(list);
 	ret = _ecore_list_remove_first(list);
-	ECORE_WRITE_UNLOCK(list);
 
 	return ret;
 }
@@ -631,10 +579,8 @@ static void *_ecore_list_remove_first(Ecore_List * list)
 	if (!list)
 		return FALSE;
 
-	ECORE_WRITE_UNLOCK(list);
 	if (ecore_list_is_empty(list))
 		return FALSE;
-	ECORE_WRITE_LOCK(list);
 
 	if (!list->first)
 		return FALSE;
@@ -651,10 +597,8 @@ static void *_ecore_list_remove_first(Ecore_List * list)
 	if (list->last == old)
 		list->last = list->first;
 
-	ECORE_WRITE_LOCK(old);
 	ret = old->data;
 	old->data = NULL;
-	ECORE_WRITE_UNLOCK(old);
 
 	ecore_list_node_destroy(old, NULL);
 	list->nodes--;
@@ -674,9 +618,7 @@ inline void *ecore_list_remove_last(Ecore_List * list)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_WRITE_LOCK(list);
 	ret = _ecore_list_remove_last(list);
-	ECORE_WRITE_UNLOCK(list);
 
 	return ret;
 }
@@ -703,22 +645,20 @@ static void *_ecore_list_remove_last(Ecore_List * list)
 	if (list->first == old)
 		list->first = NULL;
 	for (prev = list->first; prev && prev->next != old; prev = prev->next);
+	list->last = prev;
 	if (prev) {
 		prev->next = NULL;
-		list->last = prev;
 		if (list->current == old) {
 			list->current = NULL;
 		}
 	}
 
 
-	ECORE_WRITE_LOCK(old);
 	if (old) {
 		old->next = NULL;
 		ret = old->data;
 		old->data = NULL;
 	}
-	ECORE_WRITE_UNLOCK(old);
 
 	ecore_list_node_destroy(old, NULL);
 	list->nodes--;
@@ -745,9 +685,7 @@ inline void *ecore_list_goto_index(Ecore_List * list, int index)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_WRITE_LOCK(list);
 	ret = _ecore_list_goto_index(list, index);
-	ECORE_WRITE_UNLOCK(list);
 
 	return ret;
 }
@@ -789,9 +727,7 @@ inline void *ecore_list_goto(Ecore_List * list, void *data)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_WRITE_LOCK(list);
 	ret = _ecore_list_goto(list, data);
-	ECORE_WRITE_UNLOCK(list);
 
 	return ret;
 }
@@ -808,7 +744,6 @@ static void *_ecore_list_goto(Ecore_List * list, void *data)
 	index = 1;
 
 	node = list->first;
-	ECORE_READ_LOCK(node);
 	while (node && node->data) {
 		Ecore_List_Node *next;
 
@@ -816,15 +751,12 @@ static void *_ecore_list_goto(Ecore_List * list, void *data)
 			break;
 
 		next = node->next;
-		ECORE_READ_UNLOCK(node);
 
 		node = next;
 
-		ECORE_READ_LOCK(node);
 		index++;
 	}
 
-	ECORE_READ_UNLOCK(node);
 	if (!node)
 		return NULL;
 
@@ -846,11 +778,7 @@ inline void *ecore_list_goto_first(Ecore_List *list)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_WRITE_LOCK(list);
-
 	ret = _ecore_list_goto_first(list);
-
-	ECORE_WRITE_UNLOCK(list);
 
 	return ret;
 }
@@ -879,9 +807,7 @@ inline void *ecore_list_goto_last(Ecore_List * list)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_WRITE_LOCK(list);
 	ret = _ecore_list_goto_last(list);
-	ECORE_WRITE_UNLOCK(list);
 
 	return ret;
 }
@@ -907,9 +833,7 @@ inline void *ecore_list_current(Ecore_List * list)
 {
 	void *ret;
 
-	ECORE_READ_LOCK(list);
 	ret = _ecore_list_current(list);
-	ECORE_READ_UNLOCK(list);
 
 	return ret;
 }
@@ -922,9 +846,7 @@ static void *_ecore_list_current(Ecore_List * list)
 	if (!list->current)
 		return NULL;
 
-	ECORE_READ_LOCK(list->current);
 	ret = list->current->data;
-	ECORE_READ_UNLOCK(list->current);
 
 	return ret;
 }
@@ -941,9 +863,7 @@ inline void *ecore_list_next(Ecore_List * list)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_WRITE_LOCK(list);
 	data = _ecore_list_next(list);
-	ECORE_WRITE_UNLOCK(list);
 
 	return data;
 }
@@ -958,17 +878,13 @@ static void *_ecore_list_next(Ecore_List * list)
 	if (!list->current)
 		return NULL;
 
-	ECORE_READ_LOCK(list->current);
 	ret = list->current;
 	next = list->current->next;
-	ECORE_READ_UNLOCK(list->current);
 
 	list->current = next;
 	list->index++;
 
-	ECORE_READ_LOCK(ret);
 	data = ret->data;
-	ECORE_READ_UNLOCK(ret);
 
 	return data;
 }
@@ -984,12 +900,8 @@ int ecore_list_clear(Ecore_List * list)
 {
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_WRITE_LOCK(list);
-
 	while (!ecore_list_is_empty(list))
 		_ecore_list_remove_first(list);
-
-	ECORE_WRITE_UNLOCK(list);
 
 	return TRUE;
 }
@@ -1007,9 +919,7 @@ int ecore_list_for_each(Ecore_List *list, Ecore_For_Each function)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_READ_LOCK(list);
 	ret = _ecore_list_for_each(list, function);
-	ECORE_READ_UNLOCK(list);
 
 	return ret;
 }
@@ -1037,8 +947,6 @@ int ecore_list_node_init(Ecore_List_Node * node)
 
 	node->next = NULL;
 	node->data = NULL;
-
-	ECORE_INIT_LOCKS(node);
 
 	return TRUE;
 }
@@ -1080,13 +988,8 @@ int ecore_list_node_destroy(Ecore_List_Node * node, Ecore_Free_Cb free_func)
 {
 	CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
 
-	ECORE_WRITE_LOCK(node);
-
 	if (free_func && node->data)
 		free_func(node->data);
-
-	ECORE_WRITE_UNLOCK(node);
-	ECORE_DESTROY_LOCKS(node);
 
 	FREE(node);
 
@@ -1133,8 +1036,6 @@ int ecore_dlist_init(Ecore_DList *list)
 
 	memset(list, 0, sizeof(Ecore_DList));
 
-	ECORE_INIT_LOCKS(list);
-
 	return TRUE;
 }
 
@@ -1148,16 +1049,11 @@ void ecore_dlist_destroy(Ecore_DList * list)
 	void *data;
 	CHECK_PARAM_POINTER("list", list);
 
-	ECORE_WRITE_LOCK(list);
-
 	while (list->first) {
 		data = _ecore_dlist_remove_first(list);
 		if (list->free_func)
 			list->free_func(data);
 	}
-
-	ECORE_WRITE_UNLOCK(list);
-	ECORE_DESTROY_LOCKS(list);
 
 	FREE(list);
 }
@@ -1222,8 +1118,6 @@ int ecore_dlist_append(Ecore_DList * list, void *data)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_WRITE_LOCK(list);
-
 	node = ecore_dlist_node_new();
 	ECORE_LIST_NODE(node)->data = data;
 
@@ -1232,8 +1126,6 @@ int ecore_dlist_append(Ecore_DList * list, void *data)
 	if (ret) {
 		node->previous = prev;
 	}
-
-	ECORE_WRITE_UNLOCK(list);
 
 	return ret;
 }
@@ -1253,8 +1145,6 @@ int ecore_dlist_prepend(Ecore_DList * list, void *data)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_WRITE_LOCK(list);
-
 	node = ecore_dlist_node_new();
 	ECORE_LIST_NODE(node)->data = data;
 
@@ -1262,8 +1152,6 @@ int ecore_dlist_prepend(Ecore_DList * list, void *data)
 	ret = _ecore_list_prepend_0(ECORE_LIST(list), ECORE_LIST_NODE(node));
 	if (ret && prev)
 		prev->previous = node;
-
-	ECORE_WRITE_UNLOCK(list);
 
 	return ret;
 }
@@ -1283,8 +1171,6 @@ int ecore_dlist_insert(Ecore_DList * list, void *data)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_WRITE_LOCK(list);
-
 	prev = ECORE_DLIST_NODE(ECORE_LIST(list)->current);
 	if (!prev)
 		prev = ECORE_DLIST_NODE(ECORE_LIST(list)->last);
@@ -1297,7 +1183,6 @@ int ecore_dlist_insert(Ecore_DList * list, void *data)
 
 	ret = _ecore_list_insert(list, ECORE_LIST_NODE(node));
 	if (!ret) {
-		ECORE_WRITE_UNLOCK(list);
 		return ret;
 	}
 
@@ -1306,8 +1191,6 @@ int ecore_dlist_insert(Ecore_DList * list, void *data)
 
 	if (prev)
 		node->previous = prev;
-
-	ECORE_WRITE_UNLOCK(list);
 
 	return ret;
 }
@@ -1332,16 +1215,12 @@ void *ecore_dlist_remove(Ecore_DList * list)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_WRITE_LOCK(list);
-
 	if (l2->current) {
 		node = ECORE_DLIST_NODE(list->current->next);
 		if (node)
 			node->previous = ECORE_DLIST_NODE(l2->current)->previous;
 	}
 	ret = _ecore_list_remove_0(list);
-
-	ECORE_WRITE_UNLOCK(list);
 
 	return ret;
 }
@@ -1358,9 +1237,7 @@ void *ecore_dlist_remove_first(Ecore_DList * list)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_WRITE_LOCK(list);
 	ret = _ecore_dlist_remove_first(list);
-	ECORE_WRITE_UNLOCK(list);
 
 	return ret;
 }
@@ -1405,9 +1282,7 @@ void *ecore_dlist_remove_last(Ecore_DList * list)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_WRITE_LOCK(list);
 	ret = _ecore_list_remove_last(list);
-	ECORE_WRITE_UNLOCK(list);
 
 	return ret;
 }
@@ -1424,9 +1299,7 @@ void *ecore_dlist_goto_index(Ecore_DList * list, int index)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_WRITE_LOCK(list);
 	ret = _ecore_dlist_goto_index(list, index);
-	ECORE_WRITE_UNLOCK(list);
 
 	return ret;
 }
@@ -1477,9 +1350,7 @@ void *ecore_dlist_goto(Ecore_DList * list, void *data)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_WRITE_LOCK(list);
 	ret = _ecore_list_goto(ECORE_LIST(list), data);
-	ECORE_WRITE_UNLOCK(list);
 
 	return ret;
 }
@@ -1496,9 +1367,7 @@ void *ecore_dlist_goto_first(Ecore_DList *list)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_WRITE_LOCK(list);
 	ret = _ecore_list_goto_first(list);
-	ECORE_WRITE_UNLOCK(list);
 
 	return ret;
 }
@@ -1514,9 +1383,7 @@ void *ecore_dlist_goto_last(Ecore_DList * list)
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ECORE_WRITE_LOCK(list);
 	ret = _ecore_list_goto_last(ECORE_LIST(list));
-	ECORE_WRITE_UNLOCK(list);
 
 	return ret;
 }
@@ -1530,9 +1397,7 @@ void *ecore_dlist_current(Ecore_DList * list)
 {
 	void *ret;
 
-	ECORE_READ_LOCK(list);
 	ret = _ecore_list_current(ECORE_LIST(list));
-	ECORE_READ_UNLOCK(list);
 
 	return ret;
 }
@@ -1546,9 +1411,7 @@ void *ecore_dlist_next(Ecore_DList * list)
 {
 	void *data;
 
-	ECORE_WRITE_LOCK(list);
 	data = _ecore_list_next(list);
-	ECORE_WRITE_UNLOCK(list);
 
 	return data;
 }
@@ -1562,9 +1425,7 @@ void *ecore_dlist_previous(Ecore_DList * list)
 {
 	void *data;
 
-	ECORE_WRITE_LOCK(list);
 	data = _ecore_dlist_previous(list);
-	ECORE_WRITE_UNLOCK(list);
 
 	return data;
 }
