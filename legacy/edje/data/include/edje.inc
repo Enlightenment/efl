@@ -61,19 +61,25 @@ native       cancel_anim(id);
  * 
  * run_program(PROGRAM:"program_name");
  */
-native       emit           (sig[], src[]);
-native       set_state      (part_id, state[], Float:state_val);
-native       set_tween_state(part_id, Float:tween, state1[], Float:state1_val, state2[], Float:state2_val);
-native       run_program    (program_id);
+native       emit             (sig[], src[]);
+native       set_state        (part_id, state[], Float:state_val);
+native       set_tween_state  (part_id, Float:tween, state1[], Float:state1_val, state2[], Float:state2_val);
+native       run_program      (program_id);
+native       get_drag_dir     (part_id);
+native	     get_drag	      (part_id, &Float:dx, &Float:dy);
+native       set_drag         (part_id, Float:dx, Float:dy);
+native       set_text         (part_id, str[]);
+native       get_text         (part_id, dst[], maxlen);
+native       get_min_size     (&w, &h);
+native       get_max_size     (&w, &h);
+native       get_color_class  (class[], &r, &g, &b, &a);
+native       set_color_class  (class[], r, g, b, a);
+native       set_text_class   (class[], font[], Float:size);
+native       get_text_class   (class[], font[], &Float:size);
+native       get_mouse        (&x, &y);
+native       stop_program     (program_id);
+native       stop_programs_on (part_id);
+native       set_min_size     (part_id, Float:w, Float:h);
+native       set_max_size     (part_id, Float:w, Float:h);
 
-native       stop_program   (program_id);
-native       stop_programs_on(part_id);
 
-native       set_drag(part_id, Float:dx, Float:dy);
-native       set_drag_step(part_id, Float:dx, Float:dy);
-native       set_drag_page(part_id, Float:dx, Float:dy);
-
-native       text_set(part_id, text[]);
-
-native       set_min_size(part_id, Float:w, Float:h);
-native       set_max_size(part_id, Float:w, Float:h);

@@ -1,7 +1,6 @@
 fonts {
    font: "Vera.ttf" "Edje.Vera";
 }
-
 images {
    image: "bg.png" LOSSY 95;
    image: "e.png"  LOSSY 95;
@@ -155,8 +154,6 @@ collections {
          public anim_cb(val, Float: pos)
 	   {
 	      new buf[100];
-	      
-              set_drag(PART:"dragable", sin(3.14*pos), cos(1.57*pos));
 	      
 	      snprintf(buf, 100, "val = %i, pos = %f", val, pos);
 	      emit("PR AAAAAAAAANIM", buf);
@@ -454,8 +451,6 @@ collections {
 //	    source:     "*";
 	    action:     STATE_SET "clicked" 0.0;
 	    transition: LINEAR 0.0;
-	    // NB: targets MUST come AFTER the action line so edje_cc knows
-	    // what to lookup
 	    target:     "logo";
 	 }
 	 program {
@@ -482,6 +477,94 @@ collections {
 	    action:     ACTION_STOP;
 	    target:     "logo_animate";
 	 }
+	 // Test get_drag_dir function. Clicking with mouse button
+	 // 1 on that long rectangle causes a print-out of its
+	 // dragability directions.
+	 program {
+            name:       "test_drag_dir";
+            signal:     "mouse,down,1";
+            source:     "dragable";
+            script {
+	       new j;
+	       new buff[256];
+	       j = get_drag_dir(PART:"dragable");	
+	       snprintf(buff, 256, "**Drag Direction** %i", j);
+	       emit("DEBUG...", buff);
+	    }
+	 }
+	 // Test the get_drag function. Dragging the long rectangle
+	 // causes print-out of dragging coordinates.
+	 program {   
+            name:       "test_get_drag";
+            signal:     "drag";
+            source:     "dragable";
+            script {  
+               new Float:dx;
+	       new Float:dy; 
+               new buff[256];
+               get_drag(PART:"dragable", dx, dy);
+               snprintf(buff, 256, "**Drag** x: %f y: %f", dx, dy);
+               emit("DEBUG...", buff);
+            }
+        }
+	// Test the set_drag function. Clicking with mouse button
+	// 3 on the text object causes the long rectangle to be
+	// translated to the coordinates (0.1, 0.5)
+	program {
+            name:       "test_set_drag";
+            signal:     "mouse,down,3";
+            source:     "text";
+            script {
+               set_drag(PART:"dragable", 0.1, 0.5);
+               emit("DEBUG...", "SET_DRAG");
+            }
+        }
+	// Test the set_text and get_text functions. Clicking down on 
+	// the text with button 1 changes the text, releasing reverts.
+	program {
+            name:       "test_set_and_get_text1";
+            signal:     "mouse,down,1";
+            source:     "text";
+            script {
+	       new buf[256]; 
+	       get_text(PART:"text", buf, 256);
+	       emit("DEBUG...", buf);
+	       set_text(PART:"text", "Text has changed");	
+	       new r,g,b,a;
+               set_color_class("bg", 255, 0, 0, 127);
+               get_color_class("bg", r, g, b, a);
+               snprintf(buf, 256, "r: %i g: %i b: %i a: %i", r, g, b, a);
+               emit("DEBUG...", buf);
+	       new font[100];
+	       new Float:size;
+	       get_text_class("plainjane", font, size);
+	       snprintf(buf, 256, "%s SIZE: %f", font, size);
+	       emit("DEBUG...", buf); 
+	       set_text_class("plainjane", "-Bitstream-Bitstream Vera Sans-bold-i-normal--0-0-0-0-p-0-ascii-0", 8.0);
+            }
+        }   
+	program {
+            name:       "test_set_and_get_text2";
+            signal:     "mouse,up,1";
+            source:     "text";
+            script {
+               set_text(PART:"text", "This is a longer test string");
+	       new w;
+	       new h;
+	       new w2;
+	       new h2;
+	       get_min_size(w, h);
+	       get_max_size(w2, h2);
+	       new buf[256];
+	       snprintf(buf, 256, "**Min Size** w: %i h: %i\n**Max Size** w: %i h: %i", w, h, w2, h2);
+               emit("DEBUG...", buf);
+	       get_mouse(w,h);
+	       snprintf(buf, 256, "**Mouse at** x: %i y: %i\n", w, h);
+	       emit("DEBUG...", buf);
+	       set_color_class("bg", 255, 255, 255, 255);
+	       set_text_class("plainjane", "-Bitstream-Bitstream Vera Sans-medium-r-normal--0-0-0-0-p-0-ascii-0", 6.0); 
+            }
+         }
 	 program {
 	    name:       "logo_animate_signal";
 	    signal:     "mouse,up,1";
@@ -542,14 +625,14 @@ collections {
 	 }
 	 program {
 	    name:       "logo_click_d1";
-	    signal:     "mouse,down,1*";
+	    signal:     "mouse,down,1";
 	    source:     "logo";
 	    action:     DRAG_VAL_STEP 1.0 1.0;
 	    target:     "dragable";
 	 }
 	 program {
 	    name:       "logo_click_d2";
-	    signal:     "mouse,down,3*";
+	    signal:     "mouse,down,3";
 	    source:     "logo";
 	    action:     DRAG_VAL_STEP -1.0 -1.0;
 	    target:     "dragable";

@@ -45,8 +45,102 @@
    Embryo_Cell *___cptr; \
    if ((___cptr = embryo_data_address_get(ep, (par)))) { \
    embryo_data_string_set(ep, str, ___cptr);}}
+#define SETFLOAT(val, par) { \
+   float *___cptr; \
+   if ((___cptr = (float *)embryo_data_address_get(ep, (par)))) { \
+   *___cptr = (float)val;}}
+#define SETINT(val, par) { \
+   int *___cptr; \
+   if ((___cptr = (int *)embryo_data_address_get(ep, (par)))) { \
+   *___cptr = (int)val;}}
 
 static void _edje_embryo_globals_init(Edje *ed);
+
+/* EDJE...
+ * 
+ * implemented so far as examples:
+ * 
+ * emit(sig[], src[])
+ * set_state(part_id, state[], Float:state_val)
+ * set_tween_state(part_id, Float:tween, state1[], Float:state1_val, state2[], Float:state2_val)
+ * run_program(program_id)
+ * Direction:get_drag_dir(part_id)
+ * get_drag(part_id, &Float:dx, &Float:&dy)
+ * set_drag(part_id, Float:dx, Float:dy)
+ * text_set(part_id, str[])
+ * text_get(part_id, dst[], maxlen)
+ * get_min_size(w, h)
+ * get_max_size(w, h)
+ * set_color_class(class[], r, g, b, a)
+ * get_color_class(class[], &r, &g, &b, &a)
+ * set_text_class(class[], font[], Float:size)
+ * get_text_class(class[], font[], &Float:size)
+ * get_drag_step(part_id, &Float:dx, &Float:&dy)
+ * set_drag_step(part_id, Float:dx, Float:dy)
+ * get_drag_page(part_id, &Float:dx, &Float:&dy)
+ * set_drag_page(part_id, Float:dx, Float:dy)
+ * get_mouse(&x, &y)
+ * stop_program(program_id)
+ * stop_programs_on(part_id)
+ * set_min_size(&w, &h)
+ * set_max_size(&w, &h)
+ *
+ * still need to implement this:
+ *
+ * get_drag_count(part_id, &Float:dx, &Float:&dy)
+ * set_drag_count(part_id, Float:dx, Float:dy)
+ * set_drag_confine(part_id, confine_part_id)
+ * get_size(&w, &h)
+ * resize_request(w, h)
+ * get_mouse_buttons()
+ * //set_type(part_id, Type:type)
+ * //set_effect(part_id, Effect:fx)
+ * set_mouse_events(part_id, ev)
+ * get_mouse_events(part_id)
+ * set_repeat_events(part_id, rep)
+ * get_repeat_events(part_id)
+ * set_clip(part_id, clip_part_id)
+ * get_clip(part_id)
+ */
+
+/* MODIFY STATE VALUES
+ * 
+ * set_state_val(part_id, state[], Float:state_val, Param:param, ...)
+ * get_state_val(part_id, state[], Float:state_val, Param:param, ...)
+ * 
+ * FOR THESE PROPERTIES:
+ * 
+ * visible
+ * align[x,y]
+ * min[w,h]
+ * max[w,h]
+ * step[x,y]
+ * aspect[min,max]
+ * rel1[rx,ry,part_id,part_id]
+ * rel1[x,y]
+ * rel2[rx,ry,part_id,part_id]
+ * rel2[x,y]
+ * image[id]
+ * image[tween_list...] (get???)
+ * border[l,r,t,b]
+ * fill[smooth]
+ * fill[pos_rx,pos_ry,pos_x,pos_y]
+ * fill[sz_rx,sz_ry,sz_x,sz_y]
+ * color_class
+ * color[r,g,b,a]
+ * color2[r,g,b,a]
+ * color3[r,g,b,a]
+ * text[text_class]
+ * text[font]
+ * text[size]
+ * text[fit_x,fit_y]
+ * text[min_x,min_y]
+ * text[align_x,align_y]
+ */
+
+/* FUTURE: KEYS???
+ * 
+ */
 
 /* get_int(id) */
 static Embryo_Cell
@@ -239,53 +333,117 @@ _edje_embryo_fn_cancel_anim(Embryo_Program *ep, Embryo_Cell *params)
    return 0;
 }
 
+/* set_min_size(Float:w, Float:h) */
+static Embryo_Cell
+_edje_embryo_fn_set_min_size(Embryo_Program *ep, Embryo_Cell *params)
+{
+    Edje *ed;
+   int part_id = 0;
+   float f = 0.0;
+   double w = 0.0, h = 0.0;
+   
+   CHKPARAM(2);
+   ed = embryo_program_data_get(ep);
+   f = EMBRYO_CELL_TO_FLOAT(params[1]);
+   w = (double)f;
+   f = EMBRYO_CELL_TO_FLOAT(params[2]);
+   h = (double)f;
+   
+   if (w < 0.0) w = 0.0;
+   if (h < 0.0) h = 0.0;
+   ed->collection->prop.min.w = w;
+   ed->collection->prop.min.h = h;
+   ed->dirty = 1;
+   _edje_recalc(ed);
+   return 0;
+}
 
-/* EDJE...
- * 
- * implemented so far as examples:
- * 
- * emit(sig[], src[])
- * set_state(part_id, state[], Float:state_val)
- * set_tween_state(part_id, Float:tween, state1[], Float:state1_val, state2[], Float:state2_val)
- * run_program(program_id)
- * stop_program(program_id)
- * stop_programs_on(part_id)
- * set_drag(part_id, Float:dx, Float:dy)
- * set_drag_step(part_id, Float:dx, Float:dy)
- * set_drag_page(part_id, Float:dx, Float:dy)
- * text_set(part_id, str[])
- * set_min_size(Float:w, Float:h)
- * set_max_size(Float:w, Float:h)
- *
- * still need to implement this:
- * 
- * Direction:get_drag_dir(part_id)
- * get_drag_count(part_id, &Float:dx, &Float:&dy)
- * set_drag_count(part_id, Float:dx, Float:dy)
- * set_drag_confine(part_id, confine_part_id)
- * text_get(part_id, dst[], maxlen)
- * get_drag(part_id, &Float:dx, &Float:&dy)
- * get_drag_step(part_id, &Float:dx, &Float:&dy)
- * get_drag_page(part_id, &Float:dx, &Float:&dy)
- * get_min_size(&Float:w, &Float:h)
- * get_max_size(&Float:w, &Float:h)
- * get_size(&Float:w, &Float:h)
- * resize_request(w, h)
- * get_mouse(&x, &y)
- * get_mouse_buttons()
- * set_color_class(class[], r, g, b, a)
- * get_color_class(class[], &r, &g, &b, &a)
- * set_text_class(class[], font[], Float:size)
- * get_text_class(class[], font[], &Float:size)
- * //set_type(part_id, Type:type)
- * //set_effect(part_id, Effect:fx)
- * set_mouse_events(part_id, ev)
- * get_mouse_events(part_id)
- * set_repeat_events(part_id, rep)
- * get_repeat_events(part_id)
- * set_clip(part_id, clip_part_id)
- * get_clip(part_id)
- */
+/* set_max_size(Float:w, Float:h) */
+static Embryo_Cell
+_edje_embryo_fn_set_max_size(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   int part_id = 0;
+   float f = 0.0;
+   double w = 0.0, h = 0.0;
+   
+   CHKPARAM(2);
+   ed = embryo_program_data_get(ep);
+   f = EMBRYO_CELL_TO_FLOAT(params[1]);
+   w = (double)f;
+   f = EMBRYO_CELL_TO_FLOAT(params[2]);
+   h = (double)f;
+   
+   if (w < 0.0) w = 0.0;
+   if (h < 0.0) h = 0.0;
+   ed->collection->prop.max.w = w;
+   ed->collection->prop.max.h = h;
+   ed->dirty = 1;
+   _edje_recalc(ed);
+   
+   return 0;
+}
+
+/* stop_program(program_id) */
+static Embryo_Cell
+_edje_embryo_fn_stop_program(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   char *state1 = NULL, *state2 = NULL;
+   int program_id = 0;
+   Edje_Running_Program *runp;
+   Evas_List *l;
+   
+   CHKPARAM(1);
+   ed = embryo_program_data_get(ep);
+   program_id = params[1];
+   if (program_id < 0) return 0;
+   for (l = ed->actions; l; l = l->next)
+     {
+	runp = l->data;
+	if (program_id == runp->program->id)
+	  _edje_program_end(ed, runp);
+     }
+   return 0;
+}
+
+/* stop_programs_on(part_id) */
+static Embryo_Cell
+_edje_embryo_fn_stop_programs_on(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   
+   char *state1 = NULL, *state2 = NULL;
+   int part_id = 0;
+   Edje_Real_Part *rp;
+   
+   CHKPARAM(1);
+   ed = embryo_program_data_get(ep);
+   part_id = params[1];
+   if (part_id < 0) return 0;
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   if (rp)
+     {
+	/* there is only ever 1 program acting on a part at any time */
+	if (rp->program) _edje_program_end(ed, rp->program);
+     }
+   return 0;
+}
+
+/* get_mouse(&x, &y) */
+static Embryo_Cell
+_edje_embryo_fn_get_mouse(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   int x=0, y=0;
+
+   CHKPARAM(2);
+   ed = embryo_program_data_get(ep);
+   evas_pointer_output_xy_get(ed->evas, &x, &y);
+   SETINT(x, params[1]);
+   SETINT(y, params[2]);
+   return 0;
+}
 
 /* emit(sig[], src[]) */
 static Embryo_Cell
@@ -387,50 +545,40 @@ _edje_embryo_fn_run_program(Embryo_Program *ep, Embryo_Cell *params)
    return 0;
 }
 
-/* stop_program(program_id) */
+/* get_drag_dir(part_id) */
 static Embryo_Cell
-_edje_embryo_fn_stop_program(Embryo_Program *ep, Embryo_Cell *params)
+_edje_embryo_fn_get_drag_dir(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed;
-   char *state1 = NULL, *state2 = NULL;
-   int program_id = 0;
-   Edje_Running_Program *runp;
-   Evas_List *l;
-   
-   CHKPARAM(1);
-   ed = embryo_program_data_get(ep);
-   program_id = params[1];
-   if (program_id < 0) return 0;
-
-   for (l = ed->actions; l; l = l->next)
-   {
-     runp = l->data;
-     if (program_id == runp->program->id)
-       _edje_program_end(ed, runp);
-   }
-   return 0;
-}
-
-/* stop_programs_on(part_id) */
-static Embryo_Cell
-_edje_embryo_fn_stop_programs_on(Embryo_Program *ep, Embryo_Cell *params)
-{
-   Edje *ed;
-   char *state1 = NULL, *state2 = NULL;
    int part_id = 0;
    Edje_Real_Part *rp;
-   
+
    CHKPARAM(1);
    ed = embryo_program_data_get(ep);
    part_id = params[1];
    if (part_id < 0) return 0;
-
    rp = ed->table_parts[part_id % ed->table_parts_size];
-   if (rp)
-     {
-        /* FIXME: are there more than one to stop? (rephorm) */
-	if (rp->program) _edje_program_end(ed, rp->program);
-     }
+   return edje_object_part_drag_dir_get(ed->obj, rp->part->name);
+}
+
+/* get_drag(part_id, &Float:dx, &Float:dy) */
+static Embryo_Cell
+_edje_embryo_fn_get_drag(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   int part_id = 0;
+   Edje_Real_Part *rp;
+   double dx = 0.0, dy = 0.0;
+
+   CHKPARAM(3);
+   ed = embryo_program_data_get(ep);
+   part_id = params[1];
+   if (part_id < 0) return 0;
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   edje_object_part_drag_value_get(ed->obj, rp->part->name, &dx, &dy);
+   SETFLOAT(dx, params[2]);
+   SETFLOAT(dy, params[3]);
+
    return 0;
 }
 
@@ -440,37 +588,205 @@ _edje_embryo_fn_set_drag(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed;
    int part_id = 0;
-   float f = 0.0;
-   double dx = 0.0, dy = 0.0;
    Edje_Real_Part *rp;
-   
+
    CHKPARAM(3);
    ed = embryo_program_data_get(ep);
    part_id = params[1];
    if (part_id < 0) return 0;
-   f = EMBRYO_CELL_TO_FLOAT(params[2]);
-   dx = (double)f;
-   f = EMBRYO_CELL_TO_FLOAT(params[3]);
-   dy = (double)f;
    rp = ed->table_parts[part_id % ed->table_parts_size];
-   if (rp)
+   edje_object_part_drag_value_set(ed->obj, rp->part->name, 
+				   (double)EMBRYO_CELL_TO_FLOAT(params[2]), 
+				   (double)EMBRYO_CELL_TO_FLOAT(params[3]));
+   return(0);
+}
+
+/* text_set(part_id, str[]) */
+static Embryo_Cell
+_edje_embryo_fn_text_set(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   int part_id = 0;
+   Edje_Real_Part *rp;
+   char *s;
+
+   CHKPARAM(2);
+   ed = embryo_program_data_get(ep);
+   part_id = params[1];
+   if (part_id < 0) return 0;
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   GETSTR(s, params[2]);
+   if (s){
+     edje_object_part_text_set(ed->obj, rp->part->name, s);
+   }
+   return(0);
+}
+
+/* text_get(part_id, dst[], maxlen) */
+static Embryo_Cell
+_edje_embryo_fn_text_get(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   int part_id = 0;
+   Edje_Real_Part *rp;
+   char *s;
+
+   CHKPARAM(3);
+   ed = embryo_program_data_get(ep);
+   part_id = params[1];
+   if (part_id < 0) return 0;
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   s = edje_object_part_text_get(ed->obj, rp->part->name);
+   if (s)
      {
-       if (rp->drag.down.count > 0) return;
-       if(rp->part->dragable.confine_id != -1)
-       {
-        if (dx < 0.0) dx = 0.0;
-        else if (dx > 1.0) dx = 1.0;
-        if (dy < 0.0) dy = 0.0;
-        else if (dy > 1.0) dy = 1.0;
-       }
-       if (rp->part->dragable.x < 0) dx = 1.0 - dx;
-       if (rp->part->dragable.y < 0) dy = 1.0 - dy;
-       if ((rp->drag.val.x == dx) && (rp->drag.val.y == dy)) return;
-       rp->drag.val.x = dx;
-       rp->drag.val.y = dy;
-       _edje_dragable_pos_set(ed, rp, dx, dy);
-       _edje_emit(ed, "drag,set", rp->part->name); 
+	if (strlen(s) < params[3])
+	  {
+	     SETSTR(s, params[2]);
+	  }
+	else
+	  {
+	     char *ss;
+	     
+	     ss = strdup(s);
+	     if (ss)
+	       {
+		  ss[params[3] - 1] = 0;
+		  SETSTR(ss, params[2]);
+		  free(ss);
+	       }
+	  }
      }
+   else
+     {
+	SETSTR("", params[2]);
+     }
+   return 0;
+}
+
+/* get_min_size(&w, &h) */
+static Embryo_Cell
+_edje_embryo_fn_get_min_size(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   Evas_Coord w = 0, h = 0;
+
+   CHKPARAM(2);
+   ed = embryo_program_data_get(ep);
+   edje_object_size_min_get(ed->obj, &w, &h);
+   SETINT(w, params[1]);
+   SETINT(h, params[2]);
+   return 0;
+}
+
+/* get_max_size(&w, &h) */
+static Embryo_Cell
+_edje_embryo_fn_get_max_size(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   Evas_Coord w = 0, h = 0;
+
+   CHKPARAM(2);
+   ed = embryo_program_data_get(ep);
+   edje_object_size_max_get(ed->obj, &w, &h);
+   SETINT(w, params[1]);
+   SETINT(h, params[2]);
+   return 0;
+
+}
+
+/* get_color_class(class[], &r, &g, &b, &a) */
+static Embryo_Cell
+_edje_embryo_fn_get_color_class(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   Edje_Color_Class *c_class;
+   char *class;
+
+   CHKPARAM(5);
+   ed = embryo_program_data_get(ep);
+   GETSTR(class, params[1]);
+   if (!class) return 0;
+   c_class = _edje_color_class_find(ed, class);
+   if (c_class == NULL) return 0;
+   SETINT(c_class->r, params[2]);
+   SETINT(c_class->g, params[3]);
+   SETINT(c_class->b, params[4]);
+   SETINT(c_class->a, params[5]);
+   return 0;
+}
+
+/* set_color_class(class[], r, g, b, a) */
+static Embryo_Cell
+_edje_embryo_fn_set_color_class(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   char *class;
+
+   CHKPARAM(5);
+   ed = embryo_program_data_get(ep);
+   GETSTR(class, params[1]);
+   if (!class) return 0;
+   edje_object_color_class_set(ed->obj, class, params[2], params[3], params[4], params[5],  
+			       params[2], params[3], params[4], params[5], 
+			       params[2], params[3], params[4], params[5]);
+   return 0;
+}
+
+/* set_text_class(class[], font[], Float:size) */
+static Embryo_Cell
+_edje_embryo_fn_set_text_class(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   char *class, *font;
+   Evas_Font_Size fsize;
+
+   CHKPARAM(3);
+   ed = embryo_program_data_get(ep);
+   GETSTR(class, params[1]);
+   GETSTR(font, params[2]);
+   if( !class || !font ) return 0;
+   fsize = (Evas_Font_Size)EMBRYO_CELL_TO_FLOAT(params[3]);
+   edje_object_text_class_set(ed->obj, class, font, fsize);
+   return 0;
+}
+
+/* get_text_class(class[], font[], &Float:size) */
+static Embryo_Cell
+_edje_embryo_fn_get_text_class(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   char *class;
+   Edje_Text_Class *t_class;
+
+   CHKPARAM(3);
+   ed = embryo_program_data_get(ep);
+   GETSTR(class, params[1]);
+   if (!class) return 0;
+   t_class = _edje_text_class_find(ed, class);
+   if (t_class == NULL) return 0;
+   SETSTR(t_class->font, params[2]);
+   SETFLOAT(t_class->size, params[3]);
+   return 0;
+}
+
+/* get_drag_step(part_id, &Float:dx, &Float:&dy) */
+static Embryo_Cell
+_edje_embryo_fn_get_drag_step(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   int part_id = 0;
+   Edje_Real_Part *rp;
+   double dx = 0.0, dy = 0.0;
+
+   CHKPARAM(3);
+   ed = embryo_program_data_get(ep);
+   part_id = params[1];
+   if (part_id < 0) return 0;
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   edje_object_part_drag_step_get(ed->obj, rp->part->name, &dx, &dy);
+   SETFLOAT(dx, params[2]);
+   SETFLOAT(dy, params[3]);
+
    return 0;
 }
 
@@ -480,30 +796,37 @@ _edje_embryo_fn_set_drag_step(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed;
    int part_id = 0;
-   float f = 0.0;
-   double dx = 0.0, dy = 0.0;
    Edje_Real_Part *rp;
-   
+
    CHKPARAM(3);
    ed = embryo_program_data_get(ep);
    part_id = params[1];
    if (part_id < 0) return 0;
-   f = EMBRYO_CELL_TO_FLOAT(params[2]);
-   dx = (double)f;
-   f = EMBRYO_CELL_TO_FLOAT(params[3]);
-   dy = (double)f;
    rp = ed->table_parts[part_id % ed->table_parts_size];
-   if (rp)
-     {
-       if (rp->drag.down.count > 0) return;
-       if (dx < 0.0) dx = 0.0;
-       else if (dx > 1.0) dx = 1.0;
-       if (dy < 0.0) dy = 0.0;
-       else if (dy > 1.0) dy = 1.0;
+   edje_object_part_drag_step_set(ed->obj, rp->part->name, 
+				  (double)EMBRYO_CELL_TO_FLOAT(params[2]), 
+				  (double)EMBRYO_CELL_TO_FLOAT(params[3]));
+   return(0);
+}
 
-       rp->drag.step.x = dx;
-       rp->drag.step.y = dy;
-     }
+/* get_drag_page(part_id, &Float:dx, &Float:&dy) */
+static Embryo_Cell
+_edje_embryo_fn_get_drag_page(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   int part_id = 0;
+   Edje_Real_Part *rp;
+   double dx = 0.0, dy = 0.0;
+
+   CHKPARAM(3);
+   ed = embryo_program_data_get(ep);
+   part_id = params[1];
+   if (part_id < 0) return 0;
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   edje_object_part_drag_page_get(ed->obj, rp->part->name, &dx, &dy);
+   SETFLOAT(dx, params[2]);
+   SETFLOAT(dy, params[3]);
+
    return 0;
 }
 
@@ -513,155 +836,18 @@ _edje_embryo_fn_set_drag_page(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed;
    int part_id = 0;
-   float f = 0.0;
-   double dx = 0.0, dy = 0.0;
    Edje_Real_Part *rp;
-   
+
    CHKPARAM(3);
    ed = embryo_program_data_get(ep);
    part_id = params[1];
    if (part_id < 0) return 0;
-   f = EMBRYO_CELL_TO_FLOAT(params[2]);
-   dx = (double)f;
-   f = EMBRYO_CELL_TO_FLOAT(params[3]);
-   dy = (double)f;
    rp = ed->table_parts[part_id % ed->table_parts_size];
-   if (rp)
-     {
-       if (rp->drag.down.count > 0) return;
-       if(rp->part->dragable.confine_id != -1)
-       if (dx < 0.0) dx = 0.0;
-       else if (dx > 1.0) dx = 1.0;
-       if (dy < 0.0) dy = 0.0;
-       else if (dy > 1.0) dy = 1.0;
-       rp->drag.page.x = dx;
-       rp->drag.page.y = dy;
-     }
-   return 0;
+   edje_object_part_drag_page_set(ed->obj, rp->part->name, 
+				  (double)EMBRYO_CELL_TO_FLOAT(params[2]), 
+				  (double)EMBRYO_CELL_TO_FLOAT(params[3]));
+   return(0);
 }
-
-/* text_set(part_id, str[]) */
-static Embryo_Cell
-_edje_embryo_fn_text_set(Embryo_Program *ep, Embryo_Cell *params)
-{
-   Edje *ed;
-   int part_id = 0;
-   char *text = NULL;
-   Edje_Real_Part *rp;
-   
-   CHKPARAM(2);
-   ed = embryo_program_data_get(ep);
-   part_id = params[1];
-   if (part_id < 0) return 0;
-   GETSTR(text, params[2]);
-
-   rp = ed->table_parts[part_id % ed->table_parts_size];
-   if (rp)
-     {
-       if (rp->part->type != EDJE_PART_TYPE_TEXT) return;
-       if ((!rp->text.text) && (!text))
-         return;
-       if ((rp->text.text) && (text) &&
-           (!strcmp(rp->text.text, text)))
-         return;
-       if (rp->text.text) free(rp->text.text);
-       rp->text.text = strdup(text);
-       ed->dirty = 1;
-       _edje_recalc(ed);
-     }
-   return 0;
-}
-
-/* set_min_size(Float:w, Float:h) */
-static Embryo_Cell
-_edje_embryo_fn_set_min_size(Embryo_Program *ep, Embryo_Cell *params)
-{
-   Edje *ed;
-   int part_id = 0;
-   float f = 0.0;
-   double w = 0.0, h = 0.0;
-   
-   CHKPARAM(2);
-   ed = embryo_program_data_get(ep);
-   f = EMBRYO_CELL_TO_FLOAT(params[1]);
-   w = (double)f;
-   f = EMBRYO_CELL_TO_FLOAT(params[2]);
-   h = (double)f;
-   
-   if (w < 0.0) w = 0.0;
-   if (h < 0.0) h = 0.0;
-   ed->collection->prop.min.w = w;
-   ed->collection->prop.min.h = h;
-   ed->dirty = 1;
-   _edje_recalc(ed);
-
-   return 0;
-}
-
-/* set_max_size(Float:w, Float:h) */
-static Embryo_Cell
-_edje_embryo_fn_set_max_size(Embryo_Program *ep, Embryo_Cell *params)
-{
-   Edje *ed;
-   int part_id = 0;
-   float f = 0.0;
-   double w = 0.0, h = 0.0;
-   
-   CHKPARAM(2);
-   ed = embryo_program_data_get(ep);
-   f = EMBRYO_CELL_TO_FLOAT(params[1]);
-   w = (double)f;
-   f = EMBRYO_CELL_TO_FLOAT(params[2]);
-   h = (double)f;
-   
-   if (w < 0.0) w = 0.0;
-   if (h < 0.0) h = 0.0;
-   ed->collection->prop.max.w = w;
-   ed->collection->prop.max.h = h;
-   ed->dirty = 1;
-   _edje_recalc(ed);
-
-   return 0;
-}
-
-/* MODIFY STATE VALUES
- * 
- * set_state_val(part_id, state[], Float:state_val, Param:param, ...)
- * get_state_val(part_id, state[], Float:state_val, Param:param, ...)
- * 
- * FOR THESE PROPERTIES:
- * 
- * visible
- * align[x,y]
- * min[w,h]
- * max[w,h]
- * step[x,y]
- * aspect[min,max]
- * rel1[rx,ry,part_id,part_id]
- * rel1[x,y]
- * rel2[rx,ry,part_id,part_id]
- * rel2[x,y]
- * image[id]
- * image[tween_list...] (get???)
- * border[l,r,t,b]
- * fill[smooth]
- * fill[pos_rx,pos_ry,pos_x,pos_y]
- * fill[sz_rx,sz_ry,sz_x,sz_y]
- * color_class
- * color[r,g,b,a]
- * color2[r,g,b,a]
- * color3[r,g,b,a]
- * text[text_class]
- * text[font]
- * text[size]
- * text[fit_x,fit_y]
- * text[min_x,min_y]
- * text[align_x,align_y]
- */
-
-/* FUTURE: KEYS???
- * 
- */
 
 void
 _edje_embryo_script_init(Edje *ed)
@@ -692,16 +878,28 @@ _edje_embryo_script_init(Edje *ed)
    embryo_program_native_call_add(ep, "set_state", _edje_embryo_fn_set_state);
    embryo_program_native_call_add(ep, "set_tween_state", _edje_embryo_fn_set_tween_state);
    embryo_program_native_call_add(ep, "run_program", _edje_embryo_fn_run_program);
+   embryo_program_native_call_add(ep, "get_drag_dir", _edje_embryo_fn_get_drag_dir);
+   embryo_program_native_call_add(ep, "get_drag", _edje_embryo_fn_get_drag);
+   embryo_program_native_call_add(ep, "set_drag", _edje_embryo_fn_set_drag);
+   embryo_program_native_call_add(ep, "set_text", _edje_embryo_fn_text_set);
+   embryo_program_native_call_add(ep, "get_text", _edje_embryo_fn_text_get);
+   embryo_program_native_call_add(ep, "get_min_size", _edje_embryo_fn_get_min_size);
+   embryo_program_native_call_add(ep, "get_max_size", _edje_embryo_fn_get_max_size);
+   embryo_program_native_call_add(ep, "get_color_class", _edje_embryo_fn_get_color_class);
+   embryo_program_native_call_add(ep, "set_color_class", _edje_embryo_fn_set_color_class);
+   embryo_program_native_call_add(ep, "set_text_class", _edje_embryo_fn_set_text_class);
+   embryo_program_native_call_add(ep, "get_text_class", _edje_embryo_fn_get_text_class);
+   embryo_program_native_call_add(ep, "get_drag_step", _edje_embryo_fn_get_drag_step);
+   embryo_program_native_call_add(ep, "set_drag_step", _edje_embryo_fn_set_drag_step);
+   embryo_program_native_call_add(ep, "get_drag_page", _edje_embryo_fn_get_drag_page);
+   embryo_program_native_call_add(ep, "set_drag_page", _edje_embryo_fn_set_drag_page);
+   embryo_program_native_call_add(ep, "get_mouse", _edje_embryo_fn_get_mouse);
    embryo_program_native_call_add(ep, "stop_program", _edje_embryo_fn_stop_program);
    embryo_program_native_call_add(ep, "stop_programs_on", _edje_embryo_fn_stop_programs_on);
-   embryo_program_native_call_add(ep, "set_drag", _edje_embryo_fn_set_drag);
-   embryo_program_native_call_add(ep, "set_drag_step", _edje_embryo_fn_set_drag_step);
-   embryo_program_native_call_add(ep, "set_drag_page", _edje_embryo_fn_set_drag_page);
-   embryo_program_native_call_add(ep, "text_set", _edje_embryo_fn_text_set);
    embryo_program_native_call_add(ep, "set_min_size", _edje_embryo_fn_set_min_size);
    embryo_program_native_call_add(ep, "set_max_size", _edje_embryo_fn_set_max_size);
    
-   embryo_program_vm_push(ep); /* need a new vm to run in */
+   embryo_program_vm_push(ep); /* neew a new vm to run in */
    _edje_embryo_globals_init(ed);
 }
 
@@ -752,6 +950,7 @@ _edje_embryo_test_run(Edje *ed, char *fname, char *sig, char *src)
 	     embryo_program_run(ed->collection->script, fn);
 	     embryo_program_data_set(ed->collection->script, pdata);
 	  }
+	embryo_program_run(ed->collection->script, fn);
 	printf("EDJE DEBUG: Done.\n");
      }
 }
