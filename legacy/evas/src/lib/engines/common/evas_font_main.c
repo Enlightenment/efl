@@ -117,7 +117,7 @@ evas_common_font_utf8_get_next(unsigned char *buf, int *iindex)
 	r <<= 6;
 	r |= (d3 & 0x3f);
      }
-   else 
+   else
      { 
 	/* 4 byte */
 	d2 = buf[index++];
@@ -133,15 +133,88 @@ evas_common_font_utf8_get_next(unsigned char *buf, int *iindex)
 	r <<= 6;
 	r |= (d3 & 0x3f);
 	r <<= 6;
-	r |= (d4 & 0x3f);
-	
-     }
-   if (r < 0xdfff && d > 0xd800) 
-     {
-	/* ill-formed says Table 3.1B in the */
-	/* Unicode 3.2 std */
-	return 0;      
+	r |= (d4 & 0x3f);	
      }
    *iindex = index;
+   return r;
+}
+
+int
+evas_common_font_utf8_get_prev(unsigned char *buf, int *iindex)
+{
+   /* Reads UTF8 bytes from @buf, starting at *@index and returns
+    * the code point of the previous valid code point. @index is
+    * updated ready for the next call.
+    * 
+    * Returns 0 to indicate an error (e.g. invalid UTF8)
+    */   
+   int index = *iindex, r, istart = *iindex;
+   unsigned char d = buf[index++], d2, d3, d4;
+   
+   if (!d)
+     return 0;
+   if (d < 0x80) 
+     {
+	r = d;
+     }
+   else if ((d & 0xe0) == 0xc0) 
+     { 
+	/* 2 byte */
+	d2 = buf[index++];
+	if ((d2 & 0xc0) != 0x80)
+	  return 0;
+	r = d & 0x1f; /* copy lower 5 */
+	r <<= 6;
+	r |= (d2 & 0x3f); /* copy lower 6 */
+     }
+   else if ((d & 0xf0) == 0xe0) 
+     { 
+	/* 3 byte */
+	d2 = buf[index++];
+	d3 = buf[index++];
+	if ((d2 & 0xc0) != 0x80 ||
+	    (d3 & 0xc0) != 0x80)
+	  return 0;
+	r = d & 0x0f; /* copy lower 4 */
+	r <<= 6;
+	r |= (d2 & 0x3f);
+	r <<= 6;
+	r |= (d3 & 0x3f);
+     }
+   else
+     { 
+	/* 4 byte */
+	d2 = buf[index++];
+	d3 = buf[index++];
+	d4 = buf[index++];
+	if ((d2 & 0xc0) != 0x80 ||
+	    (d3 & 0xc0) != 0x80 ||
+	    (d4 & 0xc0) != 0x80)
+	  return 0;
+	r = d & 0x0f; /* copy lower 4 */
+	r <<= 6;
+	r |= (d2 & 0x3f);
+	r <<= 6;
+	r |= (d3 & 0x3f);
+	r <<= 6;
+	r |= (d4 & 0x3f);	
+     }
+   index = istart - 1;
+   d = buf[index];
+   if (!(d & 0x80))
+     *iindex = index;
+   else
+     {
+	while (index > 0)
+	  {
+	     index--;
+	     d = buf[index];
+	     if ((d & 0xc0) != 0x80)
+	       {
+		  *iindex = index;
+		  return r;
+	       }
+	  }
+     }
    return r;
 }

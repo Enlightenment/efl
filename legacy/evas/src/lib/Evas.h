@@ -320,6 +320,9 @@ extern "C" {
    double            evas_object_text_inset_get        (Evas_Object *obj);
    int               evas_object_text_char_pos_get     (Evas_Object *obj, int pos, double *cx, double *cy, double *cw, double *ch);
    int               evas_object_text_char_coords_get  (Evas_Object *obj, double x, double y, double *cx, double *cy, double *cw, double *ch);
+   
+   int               evas_string_char_next_get         (const char *str, int pos, int *decoded);
+   int               evas_string_char_prev_get         (const char *str, int pos, int *decoded);
 
    void              evas_font_path_clear              (Evas *e);
    void              evas_font_path_append             (Evas *e, const char *path);

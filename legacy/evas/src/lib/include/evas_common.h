@@ -794,7 +794,8 @@ void             evas_common_font_query_advance     (RGBA_Font *fn, const char *
 int              evas_common_font_query_char_coords (RGBA_Font *fn, const char *text, int pos, int *cx, int *cy, int *cw, int *ch);
 int              evas_common_font_query_text_at_pos (RGBA_Font *fn, const char *text, int x, int y, int *cx, int *cy, int *cw, int *ch);
 int              evas_common_font_utf8_get_next     (unsigned char *buf, int *iindex);
-    
+int              evas_common_font_utf8_get_prev     (unsigned char *buf, int *iindex);
+       
 /****/
 void         evas_common_tilebuf_init               (void);
 

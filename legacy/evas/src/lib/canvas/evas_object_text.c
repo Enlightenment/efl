@@ -848,6 +848,46 @@ evas_font_cache_get(Evas *e)
    return e->engine.func->font_cache_get(e->engine.data.output);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
+int
+evas_string_char_next_get(const char *str, int pos, int *decoded)
+{
+   int p, d;
+   
+   if (decoded) *decoded = 0;
+   if (!str) return 0;
+   if (pos < 0) return 0;
+   p = pos;
+   d = evas_common_font_utf8_get_next(str, &p);
+   if (decoded) *decoded = d;
+   return p;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
+int
+evas_string_char_prev_get(const char *str, int pos, int *decoded)
+{
+   int p, d;
+   
+   if (decoded) *decoded = 0;
+   if (!str) return 0;
+   if (pos < 0) return 0;
+   p = pos;
+   d = evas_common_font_utf8_get_prev(str, &p);
+   if (decoded) *decoded = d;
+   return p;
+}
+
 
 
 /* all nice and private */
