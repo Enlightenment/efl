@@ -12,13 +12,12 @@
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <X11/Xmu/StdCmap.h>
-#include <X11/keysym.h>
 
 #include "Evas.h"
 
-typedef struct _evas_gl_image     Evas_GL_Image;
-typedef struct _evas_gl_font      Evas_GL_Font;
-typedef enum _evas_gl_image_state Evas_GL_Image_State;
+typedef struct _evas_gl_image       Evas_GL_Image;
+typedef struct _evas_gl_font        Evas_GL_Font;
+typedef enum   _evas_gl_image_state Evas_GL_Image_State;
 
 enum _evas_gl_image_state
 {
@@ -78,7 +77,6 @@ struct _evas_gl_font
 /***************/
 Evas_GL_Image *__evas_gl_image_new_from_file(Display *disp, char *file);
 void           __evas_gl_image_free(Evas_GL_Image *im);
-void           __evas_gl_image_cache_flush(Display *disp);
 void           __evas_gl_image_cache_empty(Display *disp);
 void           __evas_gl_image_cache_set_size(Display *disp, int size);
 int            __evas_gl_image_cache_get_size(Display *disp);
@@ -87,11 +85,14 @@ void           __evas_gl_image_draw(Evas_GL_Image *im, Display *disp, Window w, 
 /********/
 /* text */
 /********/
-Evas_GL_Font  *__evas_gl_text_font_load(Display *disp, char *font, int size);
+Evas_GL_Font  *__evas_gl_text_font_new(Display *disp, char *font, int size);
 void           __evas_gl_text_font_free(Evas_GL_Font *fn);
 void           __evas_gl_text_font_add_path(char *path);
 void           __evas_gl_text_font_del_path(char *path);
 char         **__evas_gl_text_font_list_paths(int *count);
+void           __evas_gl_text_cache_empty(Display *disp);
+void           __evas_gl_text_cache_set_size(Display *disp, int size);
+int            __evas_gl_text_cache_get_size(Display *disp);
 void           __evas_gl_text_draw(Evas_GL_Font *fn, Display *disp, Window win, int x, int y, char *text, int r, int g, int b, int a);
 
 /**************/
@@ -113,7 +114,7 @@ void         __evas_gl_init(Display *disp);
 int          __evas_gl_capable(Display *disp);
 void         __evas_gl_flush_draw(Display *disp, Window win);
 void         __evas_gl_sync(Display *disp);
-Visual      *__evas_gl_get_visual(Display *disp);
-XVisualInfo *__evas_gl_get_visual_info(Display *disp);
-Colormap     __evas_gl_get_colormap(Display *disp);
+Visual      *__evas_gl_get_visual(Display *disp, int screen);
+XVisualInfo *__evas_gl_get_visual_info(Display *disp, int screen);
+Colormap     __evas_gl_get_colormap(Display *disp, int screen);
 

@@ -24,8 +24,8 @@ main(int argc, char **argv)
    
    d = XOpenDisplay(NULL);
    __evas_gl_init(d);
-   vis = __evas_gl_get_visual(d);
-   cmap = __evas_gl_get_colormap(d);
+   vis = __evas_gl_get_visual(d, DefaultScreen(d));
+   cmap = __evas_gl_get_colormap(d, DefaultScreen(d));
    
    win_w = 640; win_h = 480;
      {
@@ -38,7 +38,7 @@ main(int argc, char **argv)
 	win = XCreateWindow(d,
 			    RootWindow(d, DefaultScreen(d)),
 			    0, 0, win_w, win_h, 0,
-			    (__evas_gl_get_visual_info(d))->depth,
+			    (__evas_gl_get_visual_info(d, DefaultScreen(d)))->depth,
 			    InputOutput,
 			    vis,
 			    CWColormap | CWBorderPixel | CWEventMask,

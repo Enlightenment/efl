@@ -17,6 +17,7 @@ static void           __evas_gl_image_set_context_for_dest(Evas_GL_Image *im, Di
 static Evas_GL_Image *__evas_gl_create_image(void);
 static Evas_GL_Image *__evas_gl_image_create_from_file(Display *disp, char *file);
 static void           __evas_gl_image_destroy(Evas_GL_Image *im);
+static void           __evas_gl_image_cache_flush(Display *disp);
 
 static XVisualInfo *__evas_vi               = NULL;
 static GLXContext   __evas_gl_cx            = 0;
@@ -336,7 +337,7 @@ __evas_gl_image_create_from_file(Display *disp, char *file)
    __evas_gl_init(disp);   
    im->context = __evas_gl_cx;
    im->buffer.display = disp;
-   im->buffer.colormap = __evas_gl_get_colormap(disp);
+   im->buffer.colormap = __evas_gl_get_colormap(disp, 0);
    im->buffer.visual_info = __evas_vi;
    im->buffer.window = 0;
    im->buffer.dest = 0;
@@ -359,6 +360,31 @@ __evas_gl_image_destroy(Evas_GL_Image *im)
 	free(im->texture.textures);
      }
    free(im);
+}
+
+static void
+__evas_gl_image_cache_flush(Display *disp)
+{
+   while (__evas_image_cache_used > __evas_image_cache_max)
+     {
+	Evas_GL_Image *im = NULL, *im_last;
+        Evas_List l;
+	
+	im_last = NULL;
+        for (l = __evas_images; l; l = l->next)
+          {
+	     im = l->data;
+	     
+	     if (im->references <= 0)
+		im_last = im;
+	  }
+	if (im_last)
+	  {
+	     __evas_images = evas_list_remove(__evas_images, im_last);
+	     __evas_gl_image_destroy(im_last);
+	  }
+     }
+   disp = NULL;
 }
 
 /*****************************************************************************/
@@ -454,31 +480,6 @@ __evas_gl_image_free(Evas_GL_Image *im)
 }
 
 void
-__evas_gl_image_cache_flush(Display *disp)
-{
-   while (__evas_image_cache_used > __evas_image_cache_max)
-     {
-	Evas_GL_Image *im = NULL, *im_last;
-        Evas_List l;
-	
-	im_last = NULL;
-        for (l = __evas_images; l; l = l->next)
-          {
-	     im = l->data;
-	     
-	     if (im->references <= 0)
-		im_last = im;
-	  }
-	if (im_last)
-	  {
-	     __evas_images = evas_list_remove(__evas_images, im_last);
-	     __evas_gl_image_destroy(im_last);
-	  }
-     }
-   disp = NULL;
-}
-
-void
 __evas_gl_image_cache_empty(Display *disp)
 {
    Evas_GL_Image *im = NULL, *im_last;
@@ -559,7 +560,7 @@ __evas_gl_image_cache_get_size(Display *disp)
 /*****************************************************************************/
 
 Evas_GL_Font *
-__evas_gl_text_font_load(Display *disp, char *font, int size)
+__evas_gl_text_font_new(Display *disp, char *font, int size)
 {
 }
 
@@ -580,6 +581,21 @@ __evas_gl_text_font_del_path(char *path)
 
 char **
 __evas_gl_text_font_list_paths(int *count)
+{
+}
+
+void
+__evas_gl_text_cache_empty(Display *disp)
+{
+}
+
+void
+__evas_gl_text_cache_set_size(Display *disp, int size)
+{
+}
+
+int
+__evas_gl_text_cache_get_size(Display *disp)
 {
 }
 
@@ -649,36 +665,36 @@ __evas_gl_capable(Display *disp)
 }
 
 Visual *
-__evas_gl_get_visual(Display *disp)
+__evas_gl_get_visual(Display *disp, int screen)
 {
    static Display *d = NULL;
 
    if (d != disp)
      {
 	d = disp;
-	__evas_vi = glXChooseVisual(disp, DefaultScreen(disp), __evas_gl_configuration);
+	__evas_vi = glXChooseVisual(disp, screen, __evas_gl_configuration);
      }
    return __evas_vi->visual;
 }
 
 XVisualInfo *
-__evas_gl_get_visual_info(Display *disp)
+__evas_gl_get_visual_info(Display *disp, int screen)
 {
-   __evas_gl_get_visual(disp);
+   __evas_gl_get_visual(disp, screen);
    return __evas_vi;
 }
 
 Colormap
-__evas_gl_get_colormap(Display *disp)
+__evas_gl_get_colormap(Display *disp, int screen)
 {
    static Display *d = NULL;
    static Colormap cmap = 0;
 
-   if (!__evas_vi) __evas_gl_get_visual(disp);
+   if (!__evas_vi) __evas_gl_get_visual(disp, screen);
    if (d != disp)
      {
 	d = disp;
-	cmap = XCreateColormap(disp, RootWindow(disp, DefaultScreen(disp)), __evas_vi->visual, 0);
+	cmap = XCreateColormap(disp, RootWindow(disp, screen), __evas_vi->visual, 0);
      }
    return cmap;
 }
@@ -689,7 +705,7 @@ __evas_gl_init(Display *disp)
    if (__evas_gl_cx) return;
    
    if (!__evas_gl_capable(disp)) return;
-   __evas_gl_get_visual(disp);
+   __evas_gl_get_visual(disp, 0);
    /* direct rendering client */
    __evas_gl_cx = glXCreateContext(disp, __evas_vi, NULL, GL_TRUE);
    /* GLX indirect */
