@@ -1287,6 +1287,8 @@ void
 evas_set_output_viewport(Evas e, double x, double y, double w, double h)
 {
    if (!e) return;
+   if (w < 1) w = 1;
+   if (h < 1) h = 1;
    e->current.viewport.x = x;
    e->current.viewport.y = y;
    e->current.viewport.w = w;

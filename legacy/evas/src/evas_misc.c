@@ -111,8 +111,10 @@ evas_new(void)
    memset(e, 0, sizeof(struct _Evas));
    e->current.viewport.x = 0.0;
    e->current.viewport.y = 0.0;
-   e->current.viewport.w = 0.0;
-   e->current.viewport.h = 0.0;
+   e->current.viewport.w = 1.0;
+   e->current.viewport.h = 1.0;
+   e->current.drawable_width = 1;
+   e->current.drawable_height = 1;
    e->current.render_method = RENDER_METHOD_ALPHA_SOFTWARE;
    e->current.colors = 216;
    return e;
