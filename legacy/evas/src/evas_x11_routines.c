@@ -1104,7 +1104,12 @@ __evas_x11_text_get_size(Evas_X11_Font *fn, char *text, int *w, int *h)
 	if (i == 0)
 	  pw += ((-g->metrics.bearingX) / 64);
 	if (text[i + 1] == 0) /* last char - ineternationalization issue */
-	  pw += (g->metrics.bbox.xMax / 64);
+	  {
+	     if ((g->metrics.bbox.xMax / 64) == 0)
+	       pw += (g->metrics.advance / 64);
+	     else
+	       pw += (g->metrics.bbox.xMax / 64);
+	  }
 	else
 	  pw += g->metrics.advance / 64;
      }
