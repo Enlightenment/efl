@@ -600,6 +600,7 @@ void             ecore_x_window_cursor_show(Ecore_X_Window win, int show);
 void             ecore_x_window_defaults_set(Ecore_X_Window win);
    
 void             ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Atom format, int size, void *data, int number);
+int              ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecore_X_Atom type, int size, unsigned char **data, int *num);
 void             ecore_x_window_prop_property_notify(Ecore_X_Window win, const char *type, long *data);
 void             ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom type, char *str);
 char            *ecore_x_window_prop_string_get(Ecore_X_Window win, Ecore_X_Atom type);
