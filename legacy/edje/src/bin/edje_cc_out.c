@@ -194,8 +194,9 @@ data_write(void)
 	  }
 	if (!fdata)
 	  {
-	     fprintf(stderr, "%s: Warning. unable to open font \"%s\" for inclusion in output\n",
-		     progname, fn->file);
+	     fprintf(stderr, "%s: Error. unable to load font part \"%s\" entry to %s \n",
+		     progname, fn->file, file_out);
+	     ABORT_WRITE(ef, file_out);
 	  }
 	else
 	  {
@@ -350,8 +351,9 @@ data_write(void)
 		    }
 		  else
 		    {
-		       fprintf(stderr, "%s: Warning. unable to open image \"%s\" for inclusion in output\n",
-			       progname, img->entry);			  
+		       fprintf(stderr, "%s: Error. unable to load image for image part \"%s\" as \"%s\" part entry to %s \n",
+			       progname, img->entry, buf, file_out);	
+		       ABORT_WRITE(ef, file_out);
 		    }
 	       }
 	  }
@@ -372,9 +374,9 @@ data_write(void)
 
 	     if (!epd)
 	       {
-	     fprintf(stderr, "%s: Error. description missing for part \"%s\"\n",
-		     progname, ep->name);
-	     ABORT_WRITE(ef, file_out);
+		  fprintf(stderr, "%s: Error. description missing for part \"%s\"\n",
+			  progname, ep->name);
+		  ABORT_WRITE(ef, file_out);
 	       }
 /*
 	     if (epd->text.font)
@@ -553,7 +555,6 @@ data_write(void)
 		       ret = system(buf);
 		       if (ret != 0)
 			 {
-			    printf("%i\n", ret);
 			    fprintf(stderr, "%s: Warning. Compiling script code not clean.\n",
 				    progname);	
 			    ABORT_WRITE(ef, file_out);
