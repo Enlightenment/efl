@@ -177,6 +177,7 @@ evas_object_textblock_layout_init(Layout *layout)
    layout->line.advance = 0;
    layout->align = 0.0;
    layout->valign = -1.0;
+   layout->style = STYLE_PLAIN;
    layout->word_wrap = 0;
    layout->underline = 0;
    layout->second_underline = 0;
@@ -836,7 +837,10 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		    fw = layout.line.x + hadvance;
 		  layout.line.x += hadvance;
 		  lnode->layout.line.advance = hadvance;
-		  if (layout.line.x >= ww) goto newline;
+		  if (w > 0)
+		    {
+		       if (layout.line.x >= ww) goto newline;
+		    }
 	       }
 	     else
 	       {
@@ -1178,6 +1182,7 @@ evas_object_textblock_native_calc(Evas_Object *obj)
    o->native.w = fw;
    o->native.h = fh;
    o->native.lines = lines;
+   o->native.dirty = 0;
 }
 
 static Node *
