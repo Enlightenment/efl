@@ -1,20 +1,11 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = src
+SUBDIRS = data src
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
                        config.h.in config.sub configure install-sh \
 		       ltconfig ltmain.sh missing mkinstalldirs \
 		       stamp-h.in edje_docs.tar edje_docs.tar.gz edje.c
-
-install-data-local:
-	@$(NORMAL_INSTALL)
-	if test -d $(srcdir)/data; then \
-	 $(mkinstalldirs) $(DESTDIR)$(pkgdatadir)/data; \
-	  for d in $(srcdir)/data/*; do \
-	      cp -pR $$d $(DESTDIR)$(pkgdatadir)/data; \
-	  done \
-	fi
 
 ### this is all fine and great - ut edje should not be going and installing
 ### data in another software's data dir - it's just wrong. not to mention this
@@ -28,13 +19,7 @@ dist-hook:
 	./gendoc; \
 	tar cvf edje_docs.tar doc/html doc/latex doc/man; \
 	rm -f edje_docs.tar.gz; \
-	gzip -9 edje_docs.tar; \
-	if test -d data; then \
-	  mkdir $(distdir)/data; \
-	  for file in data/*; do \
-	    cp -pR $$file $(distdir)/data; \
-	  done \
-	fi
+	gzip -9 edje_docs.tar;
 
 bin_SCRIPTS = edje-config
 

@@ -266,6 +266,21 @@ AC_SUBST(vimdir)
 
 AC_OUTPUT([
 Makefile
+data/Makefile
+data/images/Makefile
+data/include/Makefile
+data/src/Makefile
+data/template/Makefile
+data/template/embryo/Makefile
+data/template/fonts/Makefile
+data/template/hashes/Makefile
+data/template/images/Makefile
+data/template/macros/Makefile
+data/template/parts/Makefile
+data/template/programs/Makefile
+data/test/Makefile
+data/test/fonts/Makefile
+data/test/images/Makefile
 src/Makefile
 src/lib/Makefile
 src/bin/Makefile
