@@ -110,37 +110,40 @@ typedef struct Ecore_Config_Server {
   Ecore_Config_Bundle        *bundles;          /* data anchor */
   struct Ecore_Config_Server *next; } Ecore_Config_Server;
 
-Ecore_Config_Server *config_system;
+/* global ptrs to save passing them through the API */
+Ecore_Config_Server *__server_global;
+Ecore_Config_Server *__server_local;
+Ecore_Config_Bundle *__bundle_local;
+char                *__app_name;
 
-
-Ecore_Config_Prop   *ecore_config_get(const Ecore_Config_Bundle *t,const char *key);
+Ecore_Config_Prop   *ecore_config_get(Ecore_Config_Bundle *t,const char *key);
 const char    *ecore_config_get_type(const Ecore_Config_Prop *e);
-void          *ecore_config_get_data(const Ecore_Config_Bundle *t,const char *key);
-char          *ecore_config_get_string(const Ecore_Config_Bundle *t,const char *key);
-long           ecore_config_get_int(const Ecore_Config_Bundle *t,const char *key);
-int            ecore_config_get_rgb(const Ecore_Config_Bundle *t,const char *key,int *r, int *g, int *b);
-float          ecore_config_get_float(const Ecore_Config_Bundle *t,const char *key);
-char          *ecore_config_get_as_string(const Ecore_Config_Bundle *t,const char *key);
+void          *ecore_config_get_data(const char *key);
+char          *ecore_config_get_string(const char *key);
+long           ecore_config_get_int(const char *key);
+int            ecore_config_get_rgb(const char *key,int *r, int *g, int *b);
+float          ecore_config_get_float(const char *key);
+char          *ecore_config_get_as_string(const char *key);
 char          *ecore_config_canonize_key(char *,int modify);
 int            ecore_config_set(Ecore_Config_Bundle *t,const char *key,char *val);
-int            ecore_config_set_string(Ecore_Config_Bundle *t,const char *key,char *val);
-int            ecore_config_set_int(Ecore_Config_Bundle *t,const char *key,int val);
-int            ecore_config_set_rgb(Ecore_Config_Bundle *t,const char *key,char *val);
-char          *ecore_config_get_rgbstr(const Ecore_Config_Bundle *t,const char *key);
-int            ecore_config_set_float(Ecore_Config_Bundle *t,const char *key,float val);
-int            ecore_config_set_as_string(Ecore_Config_Bundle *t,const char *key,char *val);
+int            ecore_config_set_string(const char *key,char *val);
+int            ecore_config_set_int(const char *key,int val);
+int            ecore_config_set_rgb(const char *key,char *val);
+char          *ecore_config_get_rgbstr(const char *key);
+int            ecore_config_set_float(const char *key,float val);
+int            ecore_config_set_as_string(const char *key,char *val);
 
-int            ecore_config_default(Ecore_Config_Bundle *t,const char *key,char *val,float lo,float hi,float step);
-int            ecore_config_default_int(Ecore_Config_Bundle *t,const char *key,int val);
-int            ecore_config_default_int_bound(Ecore_Config_Bundle *t,const char *key,int val,int lo,int hi,int step);
-int            ecore_config_default_string(Ecore_Config_Bundle *t,const char *key,char *val);
-int            ecore_config_default_float(Ecore_Config_Bundle *t,const char *key,float val);
-int            ecore_config_default_float_bound(Ecore_Config_Bundle *t,const char *key,float val,float lo,float hi,float step);
-int            ecore_config_default_rgb(Ecore_Config_Bundle *t,const char *key,char *val);
+int            ecore_config_default(const char *key,char *val,float lo,float hi,float step);
+int            ecore_config_default_int(const char *key,int val);
+int            ecore_config_default_int_bound(const char *key,int val,int lo,int hi,int step);
+int            ecore_config_default_string(const char *key,char *val);
+int            ecore_config_default_float(const char *key,float val);
+int            ecore_config_default_float_bound(const char *key,float val,float lo,float hi,float step);
+int            ecore_config_default_rgb(const char *key,char *val);
 
-int            ecore_config_listen(Ecore_Config_Bundle *t,const char *name,const char *key,Ecore_Config_Listener listener,int tag,void *data);
-int            ecore_config_deaf(Ecore_Config_Bundle *t,const char *name,const char *key,Ecore_Config_Listener listener);
-Ecore_Config_Prop   *ecore_config_dst(Ecore_Config_Bundle *t,Ecore_Config_Prop *e);
+int            ecore_config_listen(const char *name,const char *key,Ecore_Config_Listener listener,int tag,void *data);
+int            ecore_config_deaf(const char *name,const char *key,Ecore_Config_Listener listener);
+Ecore_Config_Prop   *ecore_config_dst(Ecore_Config_Prop *e);
 int ecore_config_guess_type(char *val);
 
 Ecore_Config_Bundle *ecore_config_bundle_new(Ecore_Config_Server *srv, const char *id);
@@ -152,13 +155,13 @@ long           ecore_config_bundle_get_serial(Ecore_Config_Bundle *ns);
 char          *ecore_config_bundle_get_label(Ecore_Config_Bundle *ns);
                       
 
-Ecore_Config_Bundle *ecore_config_init(char *name);
+int            ecore_config_init(char *name);
 int            ecore_config_exit(void);
 
-int            ecore_config_load(Ecore_Config_Bundle *b);
-int            ecore_config_load_file(Ecore_Config_Bundle *b, char *file);
-int            ecore_config_save(Ecore_Config_Bundle *b);
-int            ecore_config_save_file(Ecore_Config_Bundle *b, char *file);
+int            ecore_config_load(void);
+int            ecore_config_load_file(char *file);
+int            ecore_config_save(void);
+int            ecore_config_save_file(char *file);
 
 /* error codes */
 #  define ECORE_CONFIG_ERR_NOTSUPP     (-16)

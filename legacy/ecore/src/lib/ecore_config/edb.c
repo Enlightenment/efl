@@ -5,21 +5,21 @@
 #include <stdio.h>
 #include <string.h>
 
-int ecore_config_load(Ecore_Config_Bundle *b) {
+int ecore_config_load(void) {
   char* file = malloc(1024); /* ### fixme */
-  sprintf(file,"%s/.e/apps/%s/config.db",getenv("HOME"),b->owner);
-  return ecore_config_load_file(b,file);
+  sprintf(file,"%s/.e/apps/%s/config.db",getenv("HOME"),__app_name);
+  return ecore_config_load_file(file);
   free(file);
   }
 
-int ecore_config_save(Ecore_Config_Bundle *b) {
+int ecore_config_save(void) {
   char* file = malloc(1024); /* ### fixme */
-  sprintf(file,"%s/.e/apps/%s/config.db",getenv("HOME"),b->owner);
-  return ecore_config_save_file(b,file);
+  sprintf(file,"%s/.e/apps/%s/config.db",getenv("HOME"),__app_name);
+  return ecore_config_save_file(file);
   free(file);
   }
 
-int ecore_config_load_file(Ecore_Config_Bundle *b, char *file) {
+int ecore_config_load_file(char *file) {
   E_DB_File *db = NULL;
   char **keys;
   int key_count;
@@ -45,13 +45,13 @@ int ecore_config_load_file(Ecore_Config_Bundle *b, char *file) {
 
     if (!strcmp(type, "int")) {
       if (e_db_int_get(db, keys[x], &itmp)) {
-        ecore_config_set_int(b, keys[x], itmp);
+        ecore_config_set_int(keys[x], itmp);
       } else {
         E(0, "Could not read key %s!\n", keys[x]);
       }
     } else if (!strcmp(type, "float")) {
       if (e_db_float_get(db, keys[x], &ftmp)) {
-        ecore_config_set_float(b, keys[x], ftmp);
+        ecore_config_set_float(keys[x], ftmp);
       } else {
         E(0, "Could not read key %s!\n", keys[x]);
       }
@@ -59,9 +59,9 @@ int ecore_config_load_file(Ecore_Config_Bundle *b, char *file) {
       data = e_db_str_get(db, keys[x]);
       if (data) {
         if (ecore_config_guess_type(data)==PT_RGB)
-          ecore_config_set_rgb(b,keys[x],data);
+          ecore_config_set_rgb(keys[x],data);
         else
-          ecore_config_set_string(b,keys[x],data);
+          ecore_config_set_string(keys[x],data);
       } else {
         E(0, "Could not read key %s!\n", keys[x]);
       }
@@ -76,8 +76,8 @@ int ecore_config_load_file(Ecore_Config_Bundle *b, char *file) {
   return 0;
 }
 
-int ecore_config_save_file(Ecore_Config_Bundle *b, char *file) {
-  Ecore_Config_Prop *next=b->data;
+int ecore_config_save_file(char *file) {
+  Ecore_Config_Prop *next=__bundle_local->data;
   E_DB_File   *db = NULL;
 
   /* ### we may need to create a directory or two here! */
@@ -94,16 +94,16 @@ int ecore_config_save_file(Ecore_Config_Bundle *b, char *file) {
     }
     switch (next->type) {
       case PT_INT:
-        e_db_int_set(db, next->key, ecore_config_get_int(b, next->key));
+        e_db_int_set(db, next->key, ecore_config_get_int(next->key));
         break;
       case PT_FLT:
-        e_db_float_set(db, next->key, ecore_config_get_float(b, next->key));
+        e_db_float_set(db, next->key, ecore_config_get_float(next->key));
         break;
       case PT_RGB:
-        e_db_str_set(db, next->key, ecore_config_get_rgbstr(b, next->key));
+        e_db_str_set(db, next->key, ecore_config_get_rgbstr(next->key));
         break;
       case PT_STR:
-        e_db_str_set(db, next->key, ecore_config_get_string(b, next->key));
+        e_db_str_set(db, next->key, ecore_config_get_string(next->key));
         break;
       case PT_NIL:
         /* currently we do nothing for undefined ojects */

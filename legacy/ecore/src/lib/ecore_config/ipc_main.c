@@ -39,7 +39,7 @@ static unsigned long  ipc_timer=0L;
 Ecore_Config_Server *srv2ecore_config_srv(void *srv) {
   ipc *ipc_tmp;
   Ecore_Config_Server *srv_tmp;
-/*
+
   ipc_tmp = ipc_modules;
   while (ipc_tmp) {
     srv_tmp = ipc_tmp->data;
@@ -50,8 +50,8 @@ Ecore_Config_Server *srv2ecore_config_srv(void *srv) {
     }
     ipc_tmp = ipc_tmp->next;
   }
-*/
-  return config_system;
+
+  return __server_global;
 }
 
 /*****************************************************************************/
@@ -101,7 +101,7 @@ char *ipc_prop_get(Ecore_Config_Server *srv, const long serial,const char *key) 
 #ifdef HAVE_EVAS2
   char          *ret=NULL;
   Ecore_Config_Bundle *theme=ecore_config_bundle_get_by_serial(srv, serial);
-  if((ret=ecore_config_get_as_string(theme,key)))
+  if((ret=ecore_config_get_as_string(/*theme,*/key)))
     return ret;
 #endif
   return strdup("<undefined>"); }
@@ -243,7 +243,7 @@ Ecore_Config_Server *ipc_init(char *pipe_name) {
       list->next=nm->data;
         
       nm->data=list;
-      if (ret_srv) ret_srv=list;
+      if (!ret_srv) ret_srv=list;
       nm = nm->next;
     }
   
