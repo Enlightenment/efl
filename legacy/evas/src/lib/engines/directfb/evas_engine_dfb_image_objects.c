@@ -53,6 +53,7 @@ evas_engine_directfb_image_load(void *data, char *file, char *key, int *error)
 
    /* Image is not in cache or not already used -> create it */
    re->dfb->CreateImageProvider(re->dfb, file, &provider);
+   if (!provider) return NULL;
    provider->GetSurfaceDescription(provider, &dsc);
    provider->GetImageDescription(provider, &img_desc);
 
@@ -60,6 +61,11 @@ evas_engine_directfb_image_load(void *data, char *file, char *key, int *error)
    dsc.pixelformat = DSPF_ARGB;
 
    re->dfb->CreateSurface(re->dfb, &dsc, &image);
+   if (!image)
+     {
+	provider->Release(provider);
+	return NULL;
+     }
    provider->RenderTo(provider, image, NULL);
    provider->Release(provider);
 
@@ -67,6 +73,7 @@ evas_engine_directfb_image_load(void *data, char *file, char *key, int *error)
    im->image = evas_common_image_surface_new();
    if (!im->image)
      {
+	image->Release(image);
 	_dfb_image_free(im);
 	return NULL;
      }
