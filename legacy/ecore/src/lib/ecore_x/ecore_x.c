@@ -1183,7 +1183,11 @@ ecore_x_ungrab(void)
  *
  * @param win     The window the message is sent to.
  * @param type    The client message type.
- * @param d0...d4 The client message data items.
+ * @param d0      The client message data item 1
+ * @param d1      The client message data item 2
+ * @param d2      The client message data item 3
+ * @param d3      The client message data item 4
+ * @param d4      The client message data item 5
  *
  * @return !0 on success.
  */
