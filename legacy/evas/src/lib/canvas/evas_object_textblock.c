@@ -12,7 +12,8 @@
  * * underline support
  * * double underline support
  * * solid bg behind text
- * * styles (outline, glow, etxra glow, shadow, soft shadow,
+ * * if a word (or char) doesnt fit at all do something sensible
+ * * styles (outline, glow, etxra glow, shadow, soft shadow, etc.)
  * * anchors (to query text extents)
  * * inline objects (queryable)
  * * tabs (indents)
