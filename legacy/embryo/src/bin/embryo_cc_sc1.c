@@ -1000,8 +1000,8 @@ setconstants(void)
    add_constant("false", 0, sGLOBAL, 1);
    add_constant("EOS", 0, sGLOBAL, 0);	/* End Of String, or '\0' */
    add_constant("cellbits", 32, sGLOBAL, 0);
-   add_constant("cellmax", LONG_MAX, sGLOBAL, 0);
-   add_constant("cellmin", LONG_MIN, sGLOBAL, 0);
+   add_constant("cellmax", INT_MAX, sGLOBAL, 0);
+   add_constant("cellmin", INT_MIN, sGLOBAL, 0);
    add_constant("charbits", charbits, sGLOBAL, 0);
    add_constant("charmin", 0, sGLOBAL, 0);
    add_constant("charmax", (charbits == 16) ? 0xffff : 0xff, sGLOBAL, 0);
@@ -3651,6 +3651,7 @@ test(int label, int parens, int invert)
 #endif
      }				/* if */
 
+   /* FIXME: 64bit unsafe! putting an int on a stack of void *'s */
    pushstk((stkitem) intest);
    intest = 1;
    if (parens)

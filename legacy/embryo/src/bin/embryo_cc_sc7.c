@@ -555,7 +555,10 @@ replacesequence(char *pattern, char symbols[_maxoptvars][_aliasmax + 1],
 
    /* allocate a buffer to replace the sequence in */
    if ((buffer = malloc(*repl_length)) == NULL)
-      return (char *)error(103);
+     {
+	error(103);
+	return NULL;
+     }
 
    /* replace the pattern into this temporary buffer */
    lptr = buffer;

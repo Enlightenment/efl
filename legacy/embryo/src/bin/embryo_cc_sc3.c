@@ -1691,7 +1691,9 @@ primary(value * lval)
 
    if (matchtoken('('))
      {				/* sub-expression - (expression,...) */
+	/* FIXME: 64bit unsafe */
 	pushstk((stkitem) intest);
+	/* FIXME: 64bit unsafe */
 	pushstk((stkitem) sc_allowtags);
 
 	intest = 0;		/* no longer in "test" expression */
