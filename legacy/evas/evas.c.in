@@ -357,7 +357,7 @@ Suggested configure options for an ipaq 38xx:
 --enable-cpu-c \
 --enable-scale-smooth \
 --enable-scale-sample \
---enable-convert-16-rgb-ipq \
+--enable-convert-16-rgb-565 \
 --enable-convert-16-rgb-rot-90
 
 make CFLAGS="-O9"

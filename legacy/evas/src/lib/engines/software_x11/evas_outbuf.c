@@ -35,6 +35,12 @@ evas_software_x11_outbuf_software_x11_free(Outbuf * buf)
    free(buf);
 }
 
+void
+evas_software_x11_outbuf_software_x11_rotation_set(Outbuf *buf, int rot)
+{
+   buf->rot = rot;
+}
+
 Outbuf             *
 evas_software_x11_outbuf_software_x11_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 			    Display * disp, Drawable draw, Visual * vis,

@@ -239,6 +239,7 @@ evas_engine_software_x11_setup(Evas *e, void *in)
    re = e->engine.data.output;
    evas_software_x11_outbuf_software_x11_drawable_set(re->ob, info->info.drawable);
    evas_software_x11_outbuf_software_x11_mask_set(re->ob, info->info.mask);
+   evas_software_x11_outbuf_software_x11_rotation_set(re->ob, info->info.rotation);
 }
 
 static void *

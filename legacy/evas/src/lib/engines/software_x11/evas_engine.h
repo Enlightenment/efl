@@ -103,7 +103,7 @@ void         evas_software_x11_outbuf_software_x11_init                   (void)
 void         evas_software_x11_outbuf_software_x11_free                   (Outbuf *buf);
 
 Outbuf      *evas_software_x11_outbuf_software_x11_setup_x                (int w, int h, int rot, Outbuf_Depth depth, Display *disp, Drawable draw, Visual *vis, Colormap cmap, int x_depth, Outbuf_Perf *perf, int grayscale, int max_colors, Pixmap mask, int shape_dither);
-
+    
 char        *evas_software_x11_outbuf_software_x11_perf_serialize_x       (Outbuf_Perf *perf);
 void         evas_software_x11_outbuf_software_x11_perf_deserialize_x     (Outbuf_Perf *perf, const char *data);
 Outbuf_Perf *evas_software_x11_outbuf_software_x11_perf_new_x             (Display *disp, Window draw, Visual *vis, Colormap cmap,  int x_depth);
@@ -127,6 +127,7 @@ int          evas_software_x11_outbuf_software_x11_get_have_backbuf       (Outbu
 void         evas_software_x11_outbuf_software_x11_set_have_backbuf       (Outbuf *buf, int have_backbuf);
 void         evas_software_x11_outbuf_software_x11_drawable_set           (Outbuf *buf, Drawable draw);
 void         evas_software_x11_outbuf_software_x11_mask_set               (Outbuf *buf, Pixmap mask);
+void         evas_software_x11_outbuf_software_x11_rotation_set           (Outbuf *buf, int rot);
     
 void         evas_software_x11_outbuf_software_x11_debug_set              (Outbuf *buf, int debug);
 void         evas_software_x11_outbuf_software_x11_debug_show             (Outbuf *buf, Drawable draw, int x, int y, int w, int h);
