@@ -383,10 +383,9 @@ ecore_config_theme_with_path_from_name_get(char *name)
 
         file = malloc(strlen(search_path_tmp) + strlen(name) + 6);
            /* 6 = / + .eet + \0 */
-        strcpy(file, search_path_tmp);
-        strcat(file, "/");
-        strcat(file, name);
-        strcat(file, ".eet");
+        snprintf(file, strlen(search_path_tmp) + strlen(name) + 6, 
+			"%s/%s.eet", search_path_tmp, name);
+	
         if (stat(file, &st) == 0)
           {
               free(search_path);
