@@ -329,7 +329,20 @@ evas_render(Evas e)
 			     (o->current.zoomscale != o->previous.zoomscale) ||
 			     (o->current.layer != o->previous.layer) ||
 			     (o->current.stacking))))
-			  prop_change = 1;			   
+			  prop_change = 1;
+		       if ((!prop_change) &&
+			   (o->type == OBJECT_RECTANGLE))
+			 {
+			    Evas_Object_Rectangle oo;
+			    
+			    oo = o;
+			    if ((oo->current.r != oo->previous.r) ||
+				(oo->current.g != oo->previous.g) ||
+				(oo->current.b != oo->previous.b) ||
+				(oo->current.a != oo->previous.a)
+				)
+			       prop_change = 1;
+			 }
 		       real_change = 1;
 		    }
 		  
