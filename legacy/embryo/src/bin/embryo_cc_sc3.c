@@ -1724,8 +1724,13 @@ static void callfunction(symbol *sym)
           /* otherwise, the address is already in PRI */
           if (lval.sym!=NULL)
             markusage(lval.sym,uWRITTEN);
+/*
+ * Dont need this warning - its varargs. there is no way of knowing the
+ * required tag/type...
+ * 
           if (!checktag(arg[argidx].tags,arg[argidx].numtags,lval.tag))
             error(213);
+ */
           break;
         case iVARIABLE:
           if (lval.ident==iLABEL || lval.ident==iFUNCTN || lval.ident==iREFFUNC
