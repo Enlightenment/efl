@@ -2451,6 +2451,12 @@ void           __evas_gl_image_draw(Evas_GL_Image *im, Display *disp, Imlib_Imag
 Evas_GL_Font  *__evas_gl_text_font_new(Display *disp, char *font, int size){return NULL;}
 void           __evas_gl_text_font_free(Evas_GL_Font *fn){}
 void           __evas_gl_text_font_add_path(char *path){}
+int            __evas_gl_text_font_get_ascent(Evas_GL_Font *fn){return 0;}
+int            __evas_gl_text_font_get_descent(Evas_GL_Font *fn){return 0;}
+int            __evas_gl_text_font_get_max_ascent(Evas_GL_Font *fn){return 0;}
+int            __evas_gl_text_font_get_max_descent(Evas_GL_Font *fn){return 0;}
+void           __evas_gl_text_font_get_advances(Evas_GL_Font *fn, char *text, int *advance_horiz, int *advance_vert){}
+int            __evas_gl_text_font_get_first_inset(Evas_GL_Font *fn, char *text){return 0;}
 void           __evas_gl_text_font_del_path(char *path){}
 char         **__evas_gl_text_font_list_paths(int *count){return NULL;}
 void           __evas_gl_text_cache_empty(Display *disp){}
