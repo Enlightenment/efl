@@ -195,25 +195,27 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y
 	FT_UInt index;
 	RGBA_Font_Glyph *fg;
 	int chr_x, chr_y, chr_w;
-        int gl;
+        int gl, kern;
 	FT_Vector delta;
 
 	pchr = chr;
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (gl == 0) break;
 	index = FT_Get_Char_Index(fn->ft.face, gl);
+	kern = 0;
 	if ((use_kerning) && (prev_index) && (index))
 	  {
 	     FT_Get_Kerning(fn->ft.face, prev_index, index,
 			    ft_kerning_default, &delta);
-	     pen_x += delta.x << 6;
+	     kern = delta.x << 6;
+	     pen_x += kern;
 	  }
 	fg = evas_common_font_cache_glyph_get(fn, index);
 	if (!fg) continue;
 	
-	chr_x = (pen_x >> 8) + fg->glyph_out->left;
+	chr_x = ((pen_x - kern) >> 8) + fg->glyph_out->left;
 	chr_y = (pen_y >> 8) + fg->glyph_out->top;
-	chr_w = fg->glyph_out->bitmap.width;
+	chr_w = fg->glyph_out->bitmap.width + (kern >> 8);
 	if (text[chr])
 	  {
 	     if (chr_w < (((fg->glyph->advance.x + 0xffff) >> 16) + 
