@@ -858,7 +858,7 @@ ecore_config_typed_default(const char *key, void *val, int type)
 	   return ECORE_CONFIG_ERR_FAIL;
 	e->flags = e->flags & ~PF_MODIFIED;
      }
-   else if (!(e->flags & PF_MODIFIED))
+   else if (!(e->flags & PF_MODIFIED) && !(e->flags & PF_SYSTEM))
      {
 	ecore_config_typed_set(key, val, type);
 	if (!(e = ecore_config_get(key)))       /* get handle */
