@@ -207,7 +207,7 @@ int ecore_config_mod_init(char *pipe_name, void **data) {
   ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_DEL, ipc_client_del, server);
   ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_DATA,ipc_client_sent,server);
 
-  if(socket) {
+  if(server) {
     E(1,"IPC/eCore: Server is listening on %s.\n", pipe_name);
   }
 
