@@ -548,7 +548,7 @@ ecore_con_client_del(Ecore_Con_Client *cl)
      }   
    data = cl->data;
    _ecore_con_client_free(cl);
-   return cl->data;
+   return data;
 }
 
 /**
