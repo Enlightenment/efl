@@ -532,7 +532,6 @@ ecore_con_server_send(Ecore_Con_Server *svr, void *data, int size)
 	svr->write_buf_size = size;
 	memcpy(svr->write_buf, data, size);
      }
-   _ecore_con_server_flush(svr);
    return size;
 }
   
@@ -571,7 +570,6 @@ ecore_con_client_send(Ecore_Con_Client *cl, void *data, int size)
 	cl->buf_size = size;
 	memcpy(cl->buf, data, size);
      }
-   _ecore_con_client_flush(cl);
    return size;
 }
   
