@@ -210,8 +210,7 @@ evas_event_feed_mouse_up_data(Evas *e, int b, const void *data)
 	ev.data = (void *)data;
 	ev.modifiers = &(e->modifiers);
 	ev.locks = &(e->locks);	
-	if (!e->events_frozen)
-	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_UP, &ev);
+	evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_UP, &ev);
      }
    if (copy) copy = evas_list_free(copy);
    if (!e->pointer.button) 
@@ -243,8 +242,7 @@ evas_event_feed_mouse_up_data(Evas *e, int b, const void *data)
 		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);		  
-		  if (!e->events_frozen)
-		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
+		  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }
 	  }
 	if (copy) copy = evas_list_free(copy);
@@ -267,8 +265,7 @@ evas_event_feed_mouse_up_data(Evas *e, int b, const void *data)
 		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);
-		  if (!e->events_frozen)
-		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_IN, &ev);
+		  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_IN, &ev);
 	       }
 	  }
 	/* free our old list of ins */
@@ -341,8 +338,7 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
 		       ev.data = (void *)data;
 		       ev.modifiers = &(e->modifiers);
 		       ev.locks = &(e->locks);		       
-		       if (!e->events_frozen)
-			 evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_MOVE, &ev);
+		       evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_MOVE, &ev);
 		    }
 	       }
 	     else
@@ -368,8 +364,7 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
 		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);
-		  if (!e->events_frozen)
-		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
+		  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }	     
 	  }
      }
@@ -414,8 +409,7 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
 		       ev.data = (void *)data;
 		       ev.modifiers = &(e->modifiers);
 		       ev.locks = &(e->locks);		       
-		       if (!e->events_frozen)
-			 evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_MOVE, &ev);
+		       evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_MOVE, &ev);
 		    }
 	       }
 	     /* otherwise it has left the object */
@@ -432,8 +426,7 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
 		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);		  
-		  if (!e->events_frozen)
-		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
+		  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }
 	  }
 	if (copy) copy = evas_list_free(copy);
@@ -457,8 +450,7 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
 		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);		  
-		  if (!e->events_frozen)
-		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_IN, &ev);
+		  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_IN, &ev);
 	       }
 	  }
 	/* free our old list of ins */
@@ -547,8 +539,7 @@ evas_event_feed_key_down_data(Evas *e, const char *keyname, const void *data)
 			 (g->not_modifiers == ~e->modifiers.mask))) &&
 		      (!strcmp(keyname, g->keyname)))
 		    {
-		       if (!e->events_frozen)
-			 evas_object_event_callback_call(g->object, EVAS_CALLBACK_KEY_DOWN, &ev);
+		       evas_object_event_callback_call(g->object, EVAS_CALLBACK_KEY_DOWN, &ev);
 		       if (g->exclusive) exclusive = 1;
 		    }
 	       }
@@ -574,8 +565,7 @@ evas_event_feed_key_down_data(Evas *e, const char *keyname, const void *data)
 	  }
 	if ((e->focused) && (!exclusive))
 	  {
-	     if (!e->events_frozen)
-	       evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_DOWN, &ev);
+	     evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_DOWN, &ev);
 	  }
      }
 }
@@ -625,8 +615,7 @@ evas_event_feed_key_up_data(Evas *e, const char *keyname, const void *data)
 			 (g->not_modifiers == ~e->modifiers.mask))) &&
 		      (!strcmp(keyname, g->keyname)))
 		    {
-		       if (!e->events_frozen)
-			 evas_object_event_callback_call(g->object, EVAS_CALLBACK_KEY_UP, &ev);
+		       evas_object_event_callback_call(g->object, EVAS_CALLBACK_KEY_UP, &ev);
 		       if (g->exclusive) exclusive = 1;
 		    }		      
 	       }
@@ -652,8 +641,7 @@ evas_event_feed_key_up_data(Evas *e, const char *keyname, const void *data)
 	  }
 	if ((e->focused) && (!exclusive))
 	  {
-	     if (!e->events_frozen)
-	       evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_UP, &ev);
+	     evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_UP, &ev);
 	  }
      }
 }
