@@ -716,7 +716,7 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	     if (!svr->ssl)
 #endif
 	        num = read(svr->fd, buf, 65536);
-#ifdef USE_OPENSSL
+#if USE_OPENSSL
 		 else
 	        num = SSL_read(svr->ssl, buf, 65536);
 #endif
