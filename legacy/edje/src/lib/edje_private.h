@@ -301,7 +301,7 @@ struct _Edje
    char                 *part;
    
    int                   layer;
-   int                   x, y, w, h;
+   double                x, y, w, h;
    unsigned char         dirty : 1;
    Evas                 *evas; /* the evas this edje belongs to */
    Evas_Object          *clipper; /* a big rect to clip this edje to */
