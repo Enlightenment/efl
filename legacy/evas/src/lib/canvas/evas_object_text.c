@@ -1,9 +1,6 @@
 #include "evas_common.h"
 #include "evas_private.h"
 #include "Evas.h"
-#ifdef BUILD_FONT_LOADER_EET
-#include <Eet.h>
-#endif
 
 /* private magic number for text objects */
 static const char o_type[] = "text";
@@ -67,7 +64,7 @@ static Evas_Object_Func object_func =
  *
  * FIXME: To be fixed.
  * 
-evas_font_load.c */
+ */
 Evas_Object *
 evas_object_text_add(Evas *e)
 {
@@ -167,69 +164,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
 						 o->engine_data);
 	o->engine_data = NULL;
      }
-#ifdef BUILD_FONT_LOADER_EET
-   if (o->cur.source)
-     {
-	Eet_File *ef;
-	char *fake_name;
-	
-	fake_name = evas_file_path_join(o->cur.source, font);
-	if (fake_name)
-	  {
-	     o->engine_data = 
-	       obj->layer->evas->engine.func->font_load
-	       (obj->layer->evas->engine.data.output, fake_name, 
-		size);
-	     if (!o->engine_data)
-	       {
-		  /* read original!!! */
-		  ef = eet_open(o->cur.source, EET_FILE_MODE_READ);
-		  if (ef)
-		    {
-		       void *fdata;
-		       int fsize = 0;
-		       
-		       fdata = eet_read(ef, font, &fsize);
-		       if ((fdata) && (fsize > 0))
-			 {
-			    o->engine_data = 
-			      obj->layer->evas->engine.func->font_memory_load
-			      (obj->layer->evas->engine.data.output,
-			       fake_name, size, fdata, fsize);
-			    free(fdata);
-			 }
-		       eet_close(ef);
-		    }
-	       }
-	     free(fake_name);
-	  }
-     }
-   if (!o->engine_data)
-     {
-#endif
-	if (evas_file_path_is_full_path((char *)font))
-	  o->engine_data = obj->layer->evas->engine.func->font_load(obj->layer->evas->engine.data.output,
-								    (char *)font, size);
-	else
-	  {
-	     Evas_List *l;
-	     
-	     for (l = obj->layer->evas->font_path; l; l = l->next)
-	       {
-		  char *f_file;
-		  
-		  f_file = evas_font_dir_cache_find(l->data, (char *)font);
-		  if (f_file)
-		    {
-		       o->engine_data = obj->layer->evas->engine.func->font_load(obj->layer->evas->engine.data.output,
-										 f_file, size);
-		       if (o->engine_data) break;
-		    }
-	       }
-#ifdef BUILD_FONT_LOADER_EET
-	  }
-#endif
-     } 
+   o->engine_data = evas_font_load(obj->layer->evas, font, o->cur.source, size);
    if (!same_font) 
      {
 	if (o->cur.font) free(o->cur.font);

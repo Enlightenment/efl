@@ -10,8 +10,6 @@
  * 
  * things to add:
  * 
- * * font path support
- * * font sources support
  * * word wrap
  * * underline support
  * * double underline support
@@ -162,8 +160,17 @@ evas_object_textblock_layout_format_apply(Layout *layout, char *key, char *data)
      }
    else if (!strcmp(key, "font_source"))
      {
-	if (layout->font.source) free(layout->font.source);
-	layout->font.source = strdup(data);
+	if (layout->font.source)
+	  {
+	     free(layout->font.source);
+	     layout->font.source = NULL;
+	  }
+	if (!((data[0] == 0) ||
+	      (!strcmp(data, "0")) ||
+	      (!strcmp(data, "NULL")) ||
+	      (!strcmp(data, "null")) ||
+	      (!strcmp(data, "(null)"))))
+	  layout->font.source = strdup(data);
      }
    else if (!strcmp(key, "size"))
      {
@@ -487,7 +494,7 @@ evas_object_textblock_layout(Evas_Object *obj)
 	     lnode = calloc(1, sizeof(Layout_Node));
 	     evas_object_textblock_layout_copy(&layout, &(lnode->layout));
 	     if (lnode->layout.font.name)
-	       font = ENFN->font_load(ENDT, lnode->layout.font.name, lnode->layout.font.size);
+	       font = evas_font_load(obj->layer->evas, lnode->layout.font.name, lnode->layout.font.source, lnode->layout.font.size);
 	     lnode->layout.font.font = font;
 	     if (font) ascent = ENFN->font_max_ascent_get(ENDT, font);
 	     if (font) descent = ENFN->font_max_descent_get(ENDT, font);

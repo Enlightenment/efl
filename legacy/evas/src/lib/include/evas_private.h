@@ -687,7 +687,8 @@ void evas_object_grabs_cleanup(Evas_Object *obj);
 void evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
 void evas_font_dir_cache_free(void);
 char *evas_font_dir_cache_find(char *dir, char *font);
-
+void *evas_font_load(Evas *evas, char *name, char *source, int size);
+       
 extern int _evas_alloc_error;
 
 typedef struct _Evas_Imaging_Image Evas_Imaging_Image;
