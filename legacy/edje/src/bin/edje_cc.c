@@ -13,7 +13,7 @@ main_help(void)
 {
    printf
      ("Usage:\n"
-      "\t%s [OPTIONS] input_file.edc output_file.eet\n"
+      "\t%s [OPTIONS] input_file.edc [output_file.eet]\n"
       "\n"
       "Where OPTIONS is one or more of:\n"
       "\n"
@@ -57,6 +57,20 @@ main(int argc, char **argv)
 	main_help();
 	exit(-1);
      }
+   if (!file_out)
+      {
+         char *suffix;
+      
+         if ((suffix = strstr(file_in,".edc")) && (suffix[4] == 0))
+            {
+               file_out = strdup(file_in);
+               if (file_out)
+                  {
+                     suffix = strstr(file_out,".edc");
+                     strcpy(suffix,".eet");
+                  }
+            }
+      }
    if (!file_out)
      {
 	fprintf(stderr, "%s: Error: no output file specified.\n", progname);
