@@ -513,11 +513,26 @@ fi
 
 #######################################
 ## EET
+AC_ARG_WITH(eet-config, [   --with-eet-config=EET_CONFIG      use eet-config specified ],
+[ EET_CONFIG=$withval;
+  echo "using "$EET_CONFIG" for eet-config"; ],
+[ if test -z "$EET_CONFIG"; then
+    AC_PATH_PROG(EET_CONFIG, "eet-config", "", $PATH)
+  fi
+])
+if [ test -z "$EET_CONFIG" ]; then EET_CONFIG="eet-config"; fi
+eet_cflags=`$EET_CONFIG --cflags`
+eet_libs=`$EET_CONFIG --libs`
+eet_version=`$EET_CONFIG --version`
+
 have_eet="no";
-AC_CHECK_HEADER(Eet.h,
-  [ have_eet="yes" ],
-  [ have_eet="no" ]
-)
+have_eet_fonts="no";
+if [ test -n "$eet_version" ]; then
+  eet_ok="yes";
+  have_eet="yes";
+  have_eet_fonts="yes";
+fi
+
 AC_MSG_CHECKING(whether to enable eet image loader)
 AC_ARG_ENABLE(image-loader-eet, 
   [  --enable-image-loader-eet       enable EET image loader], [
@@ -531,89 +546,6 @@ AC_ARG_ENABLE(image-loader-eet,
   ], [
       AC_MSG_RESULT($have_eet)
   ]
-)
-if test "x$have_eet" = "xyes"; then
-  AC_CHECK_HEADER(Eet.h,
-    [ have_eet="yes" ],
-    [ have_eet="no" ]
-  )
-fi
-
-function vser
-{
-  v=$1
-  VSTART=`echo $v | awk -F_ '{printf("%s", $1);}'`
-  V1=`echo $VSTART | awk -F\. '{printf("%s", $1);}'`
-  V2=`echo $VSTART | awk -F\. '{printf("%s", $2);}'`
-  V3=`echo $VSTART | awk -F\. '{printf("%s", $3);}'`
-  V4="0"
-  VEND=`echo $v | awk -F_ '{printf("%s", $2);}'`
-  if test -n "$VEND"; then
-    V4=`echo $VEND | sed s/pre//`
-  fi
-  V3=$(( $V3 * 100  ));
-  V2=$(( $V2 * 10000  ));
-  V1=$(( $V1 * 1000000  ));
-  V=$(( $V4 + $V3 + $V2 + $V1 ));
-  echo $V
-}
-
-if test "x$have_eet" = "xyes"; then
-  if [ test -z "$EET_CONFIG" ]; then EET_CONFIG="eet-config"; fi
-  V=`$EET_CONFIG --version`
-  VV=`vser $V`
-  VM="0.9.9"
-  VVM=`vser $VM`
-  if test $VV -lt $VVM; then
-    echo "Error. Eet is not at least "$VM". It is "$V". Disabling EET"
-    have_eet="no"
-  else
-    AC_DEFINE(BUILD_LOADER_EET, 1, [EET Image Loader Support])
-    eet_cflags=`$EET_CONFIG --cflags`
-    eet_libs=`$EET_CONFIG --libs`
-  fi
-fi
-
-#######################################
-## EDB
-have_edb="no";
-AC_CHECK_HEADER(Edb.h,
-  [ have_edb="yes" ],
-  [ have_edb="no" ]
-)
-AC_MSG_CHECKING(whether to enable edb image loader)
-AC_ARG_ENABLE(image-loader-edb, 
-  [  --enable-image-loader-edb       enable EDB image loader], [
-      if [ test "$enableval" = "yes" ]; then
-        AC_MSG_RESULT(yes)
-	have_edb="yes"
-      else
-        AC_MSG_RESULT(no)
-	have_edb="no"
-      fi
-  ], [
-      AC_MSG_RESULT($have_edb)
-  ]
-)
-if test "x$have_edb" = "xyes"; then
-  AC_CHECK_HEADER(Edb.h,
-    [ have_edb="yes" ],
-    [ have_edb="no" ]
-  )
-fi
-if test "x$have_edb" = "xyes"; then
-  AC_DEFINE(BUILD_LOADER_EDB, 1, [EDB Image Loader Support])
-  if [ test -z "$EDB_CONFIG" ]; then EDB_CONFIG="edb-config"; fi
-  edb_cflags=`$EDB_CONFIG --cflags`
-  edb_libs=`$EDB_CONFIG --libs`
-fi
-
-#######################################
-## EET
-have_eet_fonts="no";
-AC_CHECK_HEADER(Eet.h,
-  [ have_eet_fonts="yes" ],
-  [ have_eet_fonts="no" ]
 )
 AC_MSG_CHECKING(whether to enable eet font loader)
 AC_ARG_ENABLE(font-loader-eet, 
@@ -629,26 +561,63 @@ AC_ARG_ENABLE(font-loader-eet,
       AC_MSG_RESULT($have_eet_fonts)
   ]
 )
-if test "x$have_eet_fonts" = "xyes"; then
-  AC_CHECK_HEADER(Eet.h,
-    [ have_eet_fonts="yes" ],
-    [ have_eet_fonts="no" ]
-  )
-fi
-if test "x$have_eet_fonts" = "xyes"; then
-  if [ test -z "$EET_CONFIG" ]; then EET_CONFIG="eet-config"; fi
-  V=`$EET_CONFIG --version`
-  VV=`vser $V`
-  VM="0.9.9"
-  VVM=`vser $VM`
-  if test $VV -lt $VVM; then
-    echo "Error. Eet is not at least "$VM". It is "$V". Disabling EET"
-    have_eet="no"
-  else
-    AC_DEFINE(BUILD_FONT_LOADER_EET, 1, [EET Font Loader Support])
-    eet_cflags=`$EET_CONFIG --cflags`
-    eet_libs=`$EET_CONFIG --libs`
+
+AC_MSG_CHECKING(whether to enable eet support)
+if test "x$eet_ok" = "xyes"; then
+  AC_MSG_RESULT(yes)
+  if test "x$have_eet" = "xyes"; then
+    AC_DEFINE(BUILD_LOADER_EET, 1, [EET Image Loader Support])
   fi
+  if test "x$have_eet_fonts" = "xyes"; then
+    AC_DEFINE(BUILD_FONT_LOADER_EET, 1, [EET Font Loader Support])
+  fi
+else
+  AC_MSG_RESULT(no)
+fi
+
+#######################################
+## EDB
+AC_ARG_WITH(edb-config, [   --with-edb-config=EDB_CONFIG      use edb-config specified ],
+[ EDB_CONFIG=$withval;
+  echo "using "$EDB_CONFIG" for edb-config"; ],
+[ if test -z "$EDB_CONFIG"; then
+    AC_PATH_PROG(EDB_CONFIG, "edb-config", "", $PATH)
+  fi
+])
+if [ test -z "$EDB_CONFIG" ]; then EDB_CONFIG="edb-config"; fi
+edb_cflags=`$EDB_CONFIG --cflags`
+edb_libs=`$EDB_CONFIG --libs`
+edb_version=`$EDB_CONFIG --version`
+
+have_edb="no";
+if [ test -n "$edb_version" ]; then
+  edb_ok="yes";
+  have_edb="yes";
+fi
+
+AC_MSG_CHECKING(whether to enable edb image loader)
+AC_ARG_ENABLE(image-loader-edb, 
+  [  --enable-image-loader-edb       enable EDB image loader], [
+      if [ test "$enableval" = "yes" ]; then
+        AC_MSG_RESULT(yes)
+	have_edb="yes"
+      else
+        AC_MSG_RESULT(no)
+	have_edb="no"
+      fi
+  ], [
+      AC_MSG_RESULT($have_edb)
+  ]
+)
+
+AC_MSG_CHECKING(whether to enable edb support)
+if test "x$edb_ok" = "xyes"; then
+  AC_MSG_RESULT(yes)
+  if test "x$have_edb" = "xyes"; then
+    AC_DEFINE(BUILD_LOADER_EDB, 1, [EDB Image Loader Support])
+  fi
+else
+  AC_MSG_RESULT(no)
 fi
 
 #####################################################################
