@@ -261,13 +261,16 @@ evas_move(Evas e, Evas_Object o, double x, double y)
    int event_update = 0;
    
    if ((o->type == OBJECT_LINE)) return;
-   if (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y))
+   if ((o->current.visible) && 
+       (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)))
       event_update = 1;
    o->current.x = x;
    o->current.y = y;
    o->changed = 1;
    e->changed = 1;
-   if ((_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)) || event_update)
+   if ((o->current.visible) &&
+       ((_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)) || 
+	(event_update)))
       evas_event_move(e, e->mouse.x, e->mouse.y);
 }
 
@@ -276,14 +279,16 @@ evas_resize(Evas e, Evas_Object o, double w, double h)
 {
    int event_update = 0;
    
-   if ((o->type == OBJECT_TEXT) || (o->type == OBJECT_LINE)) return;
-   if (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y))
+   if ((o->current.visible) && 
+       (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)))
       event_update = 1;
    o->current.w = w;
    o->current.h = h;
    o->changed = 1;
    e->changed = 1;
-   if ((_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)) || event_update)
+   if ((o->current.visible) &&
+       ((_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)) || 
+	(event_update)))
       evas_event_move(e, e->mouse.x, e->mouse.y);
 }
 

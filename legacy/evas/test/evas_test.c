@@ -132,6 +132,9 @@ main(int argc, char **argv)
    evas_set_output(e, d, win, vis, cmap);
    evas_set_output_size(e, win_w, win_h);
    evas_set_output_viewport(e, 0, 0, win_w, win_h);
+
+   evas_set_font_cache(e, 1 * 1024 * 1024);
+   evas_set_image_cache(e, 8 * 1024 * 1024);   
    
    o[0] = evas_add_image_from_file(e, "img/sky001.png");
    evas_show(e, o[0]);
@@ -151,6 +154,11 @@ main(int argc, char **argv)
 	o[i] = evas_add_image_from_file(e, "img/mush.png");
 	evas_show(e, o[i]);
 	evas_set_layer(e, o[i], 100);
+	evas_callback_add(e, o[i], CALLBACK_MOUSE_DOWN, mouse_down, NULL);
+	evas_callback_add(e, o[i], CALLBACK_MOUSE_UP, mouse_up, NULL);
+	evas_callback_add(e, o[i], CALLBACK_MOUSE_MOVE, mouse_move, NULL);
+	evas_callback_add(e, o[i], CALLBACK_MOUSE_IN, mouse_in, NULL);
+	evas_callback_add(e, o[i], CALLBACK_MOUSE_OUT, mouse_out, NULL);
      }
    for (i = 120; i < 128; i++)
      {
@@ -158,6 +166,11 @@ main(int argc, char **argv)
 	evas_set_color(e, o[i], rand()&0xff,  rand()&0xff,  rand()&0xff, 255);
 	evas_show(e, o[i]);
 	evas_set_layer(e, o[i], 100);
+	evas_callback_add(e, o[i], CALLBACK_MOUSE_DOWN, mouse_down, NULL);
+	evas_callback_add(e, o[i], CALLBACK_MOUSE_UP, mouse_up, NULL);
+	evas_callback_add(e, o[i], CALLBACK_MOUSE_MOVE, mouse_move, NULL);
+	evas_callback_add(e, o[i], CALLBACK_MOUSE_IN, mouse_in, NULL);
+	evas_callback_add(e, o[i], CALLBACK_MOUSE_OUT, mouse_out, NULL);
      }
    o_rect = evas_add_rectangle(e);
    evas_show(e, o_rect);
@@ -199,7 +212,7 @@ main(int argc, char **argv)
    evas_callback_add(e, o_grad, CALLBACK_MOUSE_IN, mouse_in, NULL);
    evas_callback_add(e, o_grad, CALLBACK_MOUSE_OUT, mouse_out, NULL);
 
-   o_text = evas_add_text(e, "grunge", 24, "Click and Drag Objects...");
+   o_text = evas_add_text(e, "grunge", 14, "Click and Drag Objects...");
    evas_set_color(e, o_text, 0, 0, 0, 160);
    evas_move(e, o_text, 30, 60); 
    evas_show(e, o_text);
@@ -279,13 +292,16 @@ main(int argc, char **argv)
 	  {
 	     int j, k;
 	     
-	     j = (i * 50) + i;
-	     k = (i * -60) - (i * 2);
-	     x = (win_w + (cos((double)(a + j) * 2 * 3.141592654 / 1000) * (win_h - 100))) / 2;
-	     y = (win_h + (sin((double)(a + k) * 2 * 3.141592654 / 1000) * (win_h - 100))) / 2;
-	     if (i < 100)
-		evas_set_image_file(e, o[i], imgs[(i) & 0x7]);
-	     evas_move(e, o[i], x, y);
+	     if (!evas_get_data(e, o[i], "clicked"))
+	       {
+		  j = (i * 50) + i;
+		  k = (i * -60) - (i * 2);
+		  x = (win_w + (cos((double)(a + j) * 2 * 3.141592654 / 1000) * (win_h - 100))) / 2;
+		  y = (win_h + (sin((double)(a + k) * 2 * 3.141592654 / 1000) * (win_h - 100))) / 2;
+		  if (i < 100)
+		     evas_set_image_file(e, o[i], imgs[(i) & 0x7]);
+		  evas_move(e, o[i], x, y);
+	       }
 	  }
 	evas_set_angle(e, o_grad, (double)a * 360 / 1000);
 	evas_render(e);

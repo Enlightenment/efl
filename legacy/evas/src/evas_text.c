@@ -279,8 +279,9 @@ evas_set_text(Evas e, Evas_Object o, char *text)
 				 __evas_imlib_text_get_size(fn, oo->current.text,
 							    &oo->current.string.w,
 							    &oo->current.string.h);
-				 o->current.w = (double)oo->current.string.w;
-				 o->current.h = (double)oo->current.string.h;
+				 evas_resize(e, o, 
+					     (double)oo->current.string.w,
+					     (double)oo->current.string.h);
 				 __evas_imlib_text_font_free(fn);
 			      }
 			 }
@@ -299,8 +300,9 @@ evas_set_text(Evas e, Evas_Object o, char *text)
 				 __evas_gl_text_get_size(fn, oo->current.text,
 							 &oo->current.string.w,
 							 &oo->current.string.h);
-				 o->current.w = (double)oo->current.string.w;
-				 o->current.h = (double)oo->current.string.h;
+				 evas_resize(e, o, 
+					     (double)oo->current.string.w,
+					     (double)oo->current.string.h);
 				 __evas_gl_text_font_free(fn);
 			      }
 			 }
@@ -351,8 +353,9 @@ evas_set_font(Evas e, Evas_Object o, char *font, int size)
 				 __evas_imlib_text_get_size(fn, oo->current.text,
 							    &oo->current.string.w,
 							    &oo->current.string.h);
-				 o->current.w = (double)oo->current.string.w;
-				 o->current.h = (double)oo->current.string.h;
+				 evas_resize(e, o, 
+					     (double)oo->current.string.w,
+					     (double)oo->current.string.h);
 				 __evas_imlib_text_font_free(fn);
 			      }
 			 }
@@ -371,8 +374,9 @@ evas_set_font(Evas e, Evas_Object o, char *font, int size)
 				 __evas_gl_text_get_size(fn, oo->current.text,
 							 &oo->current.string.w,
 							 &oo->current.string.h);
-				 o->current.w = (double)oo->current.string.w;
-				 o->current.h = (double)oo->current.string.h;
+				 evas_resize(e, o, 
+					     (double)oo->current.string.w,
+					     (double)oo->current.string.h);
 				 __evas_gl_text_font_free(fn);
 			      }
 			 }

@@ -78,8 +78,12 @@ void
 evas_set_line_xy(Evas e, Evas_Object o, double x1, double y1, double x2, double y2)
 {
    Evas_Object_Line oo;
+   int event_update = 0;
    
    oo = (Evas_Object_Line)o;
+   if ((o->current.visible) &&
+       (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)))
+      event_update = 1;
    oo->current.x1 = x1;
    oo->current.y1 = y1;
    oo->current.x2 = x2;
@@ -104,6 +108,10 @@ evas_set_line_xy(Evas e, Evas_Object o, double x1, double y1, double x2, double 
 	o->current.y = y2;
 	o->current.h = (y1 - y2) + 1;
      }
+   if ((o->current.visible) &&
+       ((_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)) ||
+	(event_update)))
+      evas_event_move(e, e->mouse.x, e->mouse.y);
    o->changed = 1;
    e->changed = 1;
 }

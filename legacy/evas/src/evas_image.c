@@ -115,8 +115,9 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
 	     imlib_context_set_image(im);
 	     oo->current.image.w = imlib_image_get_width();
 	     oo->current.image.h = imlib_image_get_height();
-	     o->current.w = (double)oo->current.image.w;
-	     o->current.h = (double)oo->current.image.h;
+	     evas_resize(e, o, 
+			 (double)oo->current.image.w,
+			 (double)oo->current.image.h);
 	     oo->current.fill.x = 0;
 	     oo->current.fill.y = 0;
 	     oo->current.fill.w = (double)oo->current.image.w;
@@ -127,8 +128,9 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
 	  {
 	     oo->current.image.w = 0;
 	     oo->current.image.h = 0;
-	     o->current.w = (double)oo->current.image.w;
-	     o->current.h = (double)oo->current.image.h;
+	     evas_resize(e, o, 
+			 (double)oo->current.image.w,
+			 (double)oo->current.image.h);
 	     oo->current.fill.x = 0;
 	     oo->current.fill.y = 0;
 	     oo->current.fill.w = (double)oo->current.image.w;
