@@ -1196,7 +1196,7 @@ command(void)
 			extern char        *sc_tokens[];	/* forward declaration */
 
 			if (tok < 256)
-			   snprintf(s2, sizeof(s2)-1, "%c", (char)tok);
+			   snprintf(s2, sizeof(s2), "%c", (char)tok);
 			else
 			   strcpy(s2, sc_tokens[tok - tFIRST]);
 			error(1, sc_tokens[tSYMBOL - tFIRST], s2);
@@ -2139,13 +2139,13 @@ needtoken(int token)
 	/* token already pushed back */
 	assert(_pushed);
 	if (token < 256)
-	   snprintf(s1, sizeof(s1)-1, "%c", (char)token);	/* single character token */
+	   snprintf(s1, sizeof(s1), "%c", (char)token);	/* single character token */
 	else
 	   strcpy(s1, sc_tokens[token - tFIRST]);	/* multi-character symbol */
 	if (!freading)
 	   strcpy(s2, "-end of file-");
 	else if (_lextok < 256)
-	   snprintf(s2, sizeof(s1)-1, "%c", (char)_lextok);
+	   snprintf(s2, sizeof(s1), "%c", (char)_lextok);
 	else
 	   strcpy(s2, sc_tokens[_lextok - tFIRST]);
 	error(1, s1, s2);	/* expected ..., but found ... */

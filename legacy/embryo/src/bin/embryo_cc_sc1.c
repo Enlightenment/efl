@@ -2151,7 +2151,7 @@ tag2str(char *dest, int tag)
 {
    tag &= TAGMASK;
    assert(tag >= 0);
-   snprintf(dest, sizeof(dest)-1, "0%x", tag);
+   snprintf(dest, sizeof(dest), "0%x", tag);
    return isdigit(dest[1]) ? &dest[1] : dest;
 }
 
@@ -2165,12 +2165,12 @@ operator_symname(char *symname, char *opername, int tag1, int tag2,
    assert(numtags >= 1 && numtags <= 2);
    opertok = (opername[1] == '\0') ? opername[0] : 0;
    if (opertok == '=')
-      snprintf(symname, sizeof(symname)-1, "%s%s%s", tag2str(tagstr1, resulttag), opername,
+      snprintf(symname, sizeof(symname), "%s%s%s", tag2str(tagstr1, resulttag), opername,
 	      tag2str(tagstr2, tag1));
    else if (numtags == 1 || opertok == '~')
-      snprintf(symname, sizeof(symname)-1, "%s%s", opername, tag2str(tagstr1, tag1));
+      snprintf(symname, sizeof(symname), "%s%s", opername, tag2str(tagstr1, tag1));
    else
-      snprintf(symname, sizeof(symname)-1, "%s%s%s", tag2str(tagstr1, tag1), opername,
+      snprintf(symname, sizeof(symname), "%s%s%s", tag2str(tagstr1, tag1), opername,
 	      tag2str(tagstr2, tag2));
    return symname;
 }
@@ -2226,7 +2226,7 @@ funcdisplayname(char *dest, char *funcname)
    assert(tagsym[1] != NULL);
    if (unary)
      {
-	snprintf(dest, sizeof(dest)-1, "operator%s(%s:)", opname, tagsym[1]->name);
+	snprintf(dest, sizeof(dest), "operator%s(%s:)", opname, tagsym[1]->name);
      }
    else
      {
@@ -2234,10 +2234,10 @@ funcdisplayname(char *dest, char *funcname)
 	/* special case: the assignment operator has the return value
 	 * as the 2nd tag */
 	if (opname[0] == '=' && opname[1] == '\0')
-	   snprintf(dest, sizeof(dest)-1, "%s:operator%s(%s:)", tagsym[0]->name,
+	   snprintf(dest, sizeof(dest), "%s:operator%s(%s:)", tagsym[0]->name,
            opname, tagsym[1]->name);
 	else
-	   snprintf(dest, sizeof(dest)-1, "operator%s(%s:,%s:)", opname,
+	   snprintf(dest, sizeof(dest), "operator%s(%s:,%s:)", opname,
            tagsym[0]->name, tagsym[1]->name);
      }				/* if */
    return dest;
