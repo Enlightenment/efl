@@ -1,0 +1,3 @@
+script {
+	public mouse_state;
+}

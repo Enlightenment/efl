@@ -1,0 +1,29 @@
+#define GENERIC_ICON_MAPPING(title, iconfile) \
+  group { name, title; min, 32 32; max, 256 256; \
+      parts { \
+	  part { \
+	  name, "image"; type, IMAGE; mouse_events, 1; repeat_events, 1; \
+	  description { state, "default" 0.0; align, 0.5 0.5; \
+	  min, 32 32; max, 256 256; color, 255 255 255 255; \
+	  rel1 { relative, 0.0 0.0; offset, 0 0; } \
+	  rel2 { relative, 1.0 1.0; offset, 0 0; } \
+	  image { normal, iconfile; } } \
+	  description { state, "clicked" 0.0; align, 0.5 0.5; \
+	  min, 32 32; max, 256 256; color, 255 255 255 160; \
+	  rel1 { relative, 0.0 0.0; offset, 0 0; } \
+	  rel2 { relative, 1.0 1.0; offset, 0 0; } \
+	  image { normal, iconfile; } } } } \
+      programs { \
+	  program { \
+	    name, title"mouse_down"; signal, "mouse,down,*"; \
+	    source, "image"; action, STATE_SET "clicked" 0.0; \
+	    transition, ACCELERATE 0.2; target, "image"; in, 0.15 0.0; } \
+	  program { \
+	    name, title"mouse_down_kill"; signal, "mouse,up,*"; \
+	    source, "image"; action, ACTION_STOP; \
+	    target, title"mouse_down"; } \
+	  program { \
+	    name, title"mouse_up"; signal, "mouse,up,*"; \
+	    source, "image"; action, STATE_SET "default" 0.0; \
+	    transition, ACCELERATE 0.2; target, "image"; } } \
+}

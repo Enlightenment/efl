@@ -1,0 +1,36 @@
+	program {
+	    name, "edje_loaded";
+	    signal, "load";
+	    source, "";
+	    script {
+		set_int(mouse_state, 0);
+		emit("initializing your edjes", "");
+	    }
+	}
+	program {
+	    name, "background_icon_mouse_down_embryo_reset";
+	    signal, "mouse,down,*";
+	    source, "background";
+	    script {
+		set_int(mouse_state, 0);
+	    }
+	}
+	program {
+	    name, "background_icon_mouse_down_ignore_clicks";
+	    signal, "mouse,down,1";
+	    source, "background";
+	    script {
+		set_int(mouse_state, 1);
+	    }
+	    in, 0.25 0.0;
+	}
+	program {
+	    name, "background_icon_mouse_clicked";
+	    signal, "mouse,clicked,1";
+	    source, "background";
+	    script {
+		if(get_int(mouse_state) == 0) {
+		    emit("background,clicked", "");
+		}
+	    }
+	}
