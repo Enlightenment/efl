@@ -184,6 +184,7 @@ struct _Edje_Part
 {
    char                  *name; /* the name if any of the part */
    unsigned char          type; /* what type (image, rect, text) */
+   unsigned char          mouse_events; /* it will affect/respond to mouse events */
    int                    id; /* its id number */
    char                  *color_class; /* how to modify the color */
    char                  *text_class; /* how to apply/modify the font */
@@ -269,12 +270,19 @@ struct _Edje_Part_Description
 
    struct {
       char          *text; /* if "" or NULL, then leave text unchanged */
+      char          *font; /* if a specific font is asked for */
       
       int            size; /* 0 = use user set size */
       
       unsigned char  effect; /* 0 = plain... */
       unsigned char  fit_x; /* resize font size down to fit in x dir */
       unsigned char  fit_y; /* resize font size down to fit in y dir */
+      unsigned char  min_x; /* if text size should be part min size */
+      unsigned char  min_y; /* if text size should be part min size */
+      
+      struct {
+	 double      x, y; /* text alignment within bounds */
+      } align;
    } text;
 };
 
@@ -291,6 +299,7 @@ typedef struct _Edje_Real_Part Edje_Real_Part;
 
 struct _Edje
 {
+   char                 *part;
    int                   layer;
    int                   x, y, w, h;
    unsigned char         dirty : 1;
@@ -304,15 +313,20 @@ struct _Edje
 
 struct _Edje_Real_Part
 {
-   int                    x, y, w, h;
-   Evas_Object           *object;
-   unsigned char          calculated : 1;
-   unsigned char          dirty : 1;
-   Edje_Part             *part;
+   int                       x, y, w, h;
+   Evas_Object              *object;
+   unsigned char             calculated : 1;
+   unsigned char             dirty      : 1;
+   Edje_Part                *part;
    struct {
       int x, y;
    } drag;
-   double                 description_pos;
+   struct {
+      char                  *text;
+      char                  *font;
+      int                    size;
+   } text;
+   double                    description_pos;
    struct {
       Edje_Part_Description *description;
       Edje_Real_Part        *rel1_to;
@@ -325,19 +339,17 @@ typedef struct _Edje_Calc_Params Edje_Calc_Params;
 
 struct _Edje_Calc_Params
 {
-   double x, y, w, h;
- 
+   double           x, y, w, h;
+   char             visible : 1; 
    struct {
-      double x, y, w, h;
+      double        x, y, w, h;
    } fill;
    struct {
       unsigned char r, g, b, a;
    } color, color2, color3;
    struct {   
-      int l, r, t, b;
+      int           l, r, t, b;
    } border;
-   
-   char visible : 1;
 };
 
 #endif

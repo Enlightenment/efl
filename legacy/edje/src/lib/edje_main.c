@@ -82,11 +82,14 @@ static void
 _edje_part_recalc_single(Edje *ed,
 			 Edje_Real_Part *ep, 
 			 Edje_Part_Description *desc, 
+			 Edje_Part_Description *chosen_desc,
 			 Edje_Real_Part *rel1_to, 
 			 Edje_Real_Part *rel2_to, 
 			 Edje_Real_Part *confine_to,
 			 Edje_Calc_Params *params)
 {
+   int minw, minh;
+   
    /* relative coords of top left & bottom right */
    if (rel1_to)
      {
@@ -181,6 +184,62 @@ _edje_part_recalc_single(Edje *ed,
 	     params->h = new_h;
 	  }	
      }
+   minw = desc->min.w;
+   minh = desc->min.h;
+   /* if we have text that wants to make the min size the text size... */
+   if ((chosen_desc) && (ep->part->type == EDJE_PART_TYPE_TEXT))
+     {
+	char   *text;
+	char   *font;
+	int     size;
+	double  tw, th;
+	
+	text = chosen_desc->text.text;
+	font = chosen_desc->text.font;
+	size = chosen_desc->text.size;
+	if (ep->text.text) text = ep->text.text;
+	if (ep->text.font) font = ep->text.font;
+	if (ep->text.size) size = ep->text.size;
+	evas_object_text_font_set(ep->object, font, size);
+	if ((chosen_desc->text.min_x) || (chosen_desc->text.min_y))
+	  {
+	     evas_object_text_text_set(ep->object, text);
+	     evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
+	     if (chosen_desc->text.min_x)
+	       {
+		  minw = tw;
+		  /* FIXME: account for effect */
+		  /* for now just add 2 */
+		  minw += 2;
+	       }
+	     if (chosen_desc->text.min_y)
+	       {
+		  minh = th;
+		  /* FIXME: account for effect */
+		  /* for now just add 2 */
+		  minw += 2;
+	       }
+	  }
+     }
+   /* adjust for min size */
+   if (minw >= 0)
+     {
+	if (params->w < minw)
+	  {
+	     params->x = params->x + 
+	       ((params->w - minw) * (1.0 - desc->align.x));
+	     params->w = minw;
+	  }
+     }
+   if (minh >= 0)
+     {
+	if (params->h < minh)
+	  {
+	     params->y = params->y + 
+	       ((params->h - minh) * (1.0 - desc->align.y));
+	     params->h = minh;
+	  }
+     }
    /* adjust for max size */
    if (desc->max.w >= 0)
      {
@@ -198,25 +257,6 @@ _edje_part_recalc_single(Edje *ed,
 	     params->y = params->y + 
 	       ((params->h - desc->max.h) * desc->align.y);
 	     params->h = desc->max.h;
-	  }
-     }
-   /* adjust for min size */
-   if (desc->min.w >= 0)
-     {
-	if (params->w < desc->min.w)
-	  {
-	     params->x = params->x + 
-	       ((params->w - desc->min.w) * (1.0 - desc->align.x));
-	     params->w = desc->min.w;
-	  }
-     }
-   if (desc->min.h >= 0)
-     {
-	if (params->h < desc->min.h)
-	  {
-	     params->y = params->y + 
-	       ((params->h - desc->min.h) * (1.0 - desc->align.y));
-	     params->h = desc->min.h;
 	  }
      }
    /* confine */
@@ -299,14 +339,14 @@ _edje_part_recalc_single(Edje *ed,
    params->border.r = desc->border.r;
    params->border.t = desc->border.t;
    params->border.b = desc->border.b;
-   /* text */
-   /* FIXME: do */   
 }
 
 static void
 _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
 {
-   Edje_Calc_Params p1, p2;
+   Edje_Calc_Params p1, p2, p3;
+   Edje_Part_Description *chosen_desc;
+   double pos;
    
    if (ep->calculated) return;
    if (ep->param1.rel1_to)    _edje_part_recalc(ed, ep->param1.rel1_to);
@@ -317,11 +357,115 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
    if (ep->param2.confine_to) _edje_part_recalc(ed, ep->param2.confine_to);
    
    /* actually calculate now */
-   if (ep->param1.description)
-     _edje_part_recalc_single(ed, ep, ep->param1.description, ep->param1.rel1_to, ep->param1.rel2_to, ep->param1.confine_to, &p1);
-   if (ep->param2.description)
-     _edje_part_recalc_single(ed, ep, ep->param1.description, ep->param2.rel1_to, ep->param2.rel2_to, ep->param2.confine_to, &p2);
+   if (ep->description_pos == 0.0)
+     chosen_desc = ep->param1.description;
+   else
+     chosen_desc = ep->param2.description;
    
+   if (ep->param1.description)
+     _edje_part_recalc_single(ed, ep, ep->param1.description, chosen_desc, ep->param1.rel1_to, ep->param1.rel2_to, ep->param1.confine_to, &p1);
+   if (ep->param2.description)
+     {
+	_edje_part_recalc_single(ed, ep, ep->param2.description, chosen_desc, ep->param2.rel1_to, ep->param2.rel2_to, ep->param2.confine_to, &p2);
+
+	/* FIXME: pos isnt just linear - depends on tween method */
+	pos = ep->description_pos;
+	
+	/* visible is special */
+	if ((p1.visible) && (!p2.visible))
+	  {
+	     if (pos == 1.0)
+	       p3.visible = 0;
+	     else
+	       p3.visible = 1;
+	  }
+	else if ((!p1.visible) && (p2.visible))
+	  {
+	     if (pos == 0.0)
+	       p3.visible = 0;
+	     else
+	       p3.visible = 1;
+	  }
+	else
+	  p3.visible = p1.visible;
+	
+	p3.x = (p1.x * (1.0 - pos)) + (p2.x * (pos));
+	p3.y = (p1.y * (1.0 - pos)) + (p2.y * (pos));
+	p3.w = (p1.w * (1.0 - pos)) + (p2.w * (pos));
+	p3.h = (p1.h * (1.0 - pos)) + (p2.h * (pos));
+	
+	p3.fill.x = (p1.fill.x * (1.0 - pos)) + (p2.fill.x * (pos));
+	p3.fill.y = (p1.fill.y * (1.0 - pos)) + (p2.fill.y * (pos));
+	p3.fill.w = (p1.fill.w * (1.0 - pos)) + (p2.fill.w * (pos));
+	p3.fill.h = (p1.fill.h * (1.0 - pos)) + (p2.fill.h * (pos));
+	
+	p3.color.r = (p1.color.r * (1.0 - pos)) + (p2.color.r * (pos));
+	p3.color.g = (p1.color.g * (1.0 - pos)) + (p2.color.g * (pos));
+	p3.color.b = (p1.color.b * (1.0 - pos)) + (p2.color.b * (pos));
+	p3.color.a = (p1.color.a * (1.0 - pos)) + (p2.color.a * (pos));
+	
+	p3.color2.r = (p1.color2.r * (1.0 - pos)) + (p2.color2.r * (pos));
+	p3.color2.g = (p1.color2.g * (1.0 - pos)) + (p2.color2.g * (pos));
+	p3.color2.b = (p1.color2.b * (1.0 - pos)) + (p2.color2.b * (pos));
+	p3.color2.a = (p1.color2.a * (1.0 - pos)) + (p2.color2.a * (pos));
+	
+	p3.color3.r = (p1.color3.r * (1.0 - pos)) + (p2.color3.r * (pos));
+	p3.color3.g = (p1.color3.g * (1.0 - pos)) + (p2.color3.g * (pos));
+	p3.color3.b = (p1.color3.b * (1.0 - pos)) + (p2.color3.b * (pos));
+	p3.color3.a = (p1.color3.a * (1.0 - pos)) + (p2.color3.a * (pos));
+	
+	p3.border.l = (p1.border.l * (1.0 - pos)) + (p2.border.l * (pos));
+	p3.border.r = (p1.border.r * (1.0 - pos)) + (p2.border.r * (pos));
+	p3.border.t = (p1.border.t * (1.0 - pos)) + (p2.border.t * (pos));
+	p3.border.b = (p1.border.b * (1.0 - pos)) + (p2.border.b * (pos));
+     }
+   else
+     p3 = p1;
+   if (ep->part->type == EDJE_PART_TYPE_RECTANGLE)
+     {
+	evas_object_move(ep->object, ed->x + p3.x, ed->y + p3.y);
+	evas_object_resize(ep->object, p3.w, p3.h);
+     }
+   else if (ep->part->type == EDJE_PART_TYPE_TEXT)
+     {
+	/* FIXME: if text object calculate text now */
+	/* FIXME: set other colors */
+     }
+   else if (ep->part->type == EDJE_PART_TYPE_IMAGE)
+     {
+	char buf[4096];
+	int image_id;
+	int image_count, image_num;
+	
+	evas_object_move(ep->object, ed->x + p3.x, ed->y + p3.y);
+	evas_object_resize(ep->object, p3.w, p3.h);
+	evas_object_image_fill_set(ep->object, p3.fill.x, p3.fill.y, p3.fill.w, p3.fill.h);
+	evas_object_image_border_set(ep->object, p3.border.l, p3.border.r, p3.border.t, p3.border.b);
+	image_id = ep->param1.description->image.id;
+	image_count = 2;
+	if (ep->param2.description)
+	  image_count += evas_list_count(ep->param2.description->image.tween_list);
+	image_num = (pos * ((double)image_count - 0.5));
+	if (image_num > (image_count - 1))
+	  image_num = image_count - 1;
+	if (image_num == 0)
+	  image_id = ep->param1.description->image.id;
+	else if (image_num == (image_count - 1))
+	  image_id = ep->param2.description->image.id;
+	else
+	  {
+	     Edje_Part_Image_Id *imid;
+	     
+	     imid = evas_list_nth(ep->param2.description->image.tween_list, image_num - 1);
+	     if (imid) image_id = imid->image_id;
+	  }
+	
+	snprintf(buf, sizeof(buf), "/images/%i", image_id);
+	evas_object_image_file_set(ep->object, ed->file->path, buf);
+     }
+   if (p3.visible) evas_object_show(ep->object);
+   else evas_object_hide(ep->object);
+   evas_object_color_set(ep->object, p3.color.r, p3.color.g, p3.color.b, p3.color.a);
    ep->calculated = 1;
    ep->dirty = 0;
 }
@@ -363,6 +507,24 @@ _edje_fetch(Evas_Object *obj)
    ed = evas_object_smart_data_get(obj);
    return ed;
 }
+
+/*
+Edje_File *
+_edje_add(Evas (evas)
+{
+   Edje *ed;
+     
+   ed = calloc(1, sizeof(Edje));
+   ed->evas = evas;
+   return ed;
+}
+
+void
+_edje_free(Edje *ed)
+{
+   free(ed);
+}
+*/
 
 /* evas smart object methods - required by evas smart objects to do the */
 /* dirty work on smrt objects */
