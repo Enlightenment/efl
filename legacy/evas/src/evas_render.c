@@ -398,7 +398,9 @@ evas_render_updates(Evas e)
 			     (o->current.zoomscale != o->previous.zoomscale) ||
 			     (o->current.layer != o->previous.layer) ||
 			     (o->current.stacking))))
-			  prop_change = 1;
+			 {
+			    prop_change = 1;
+			 }
 		       if ((!prop_change) &&
 			   (o->type == OBJECT_RECTANGLE))
 			 {
@@ -407,12 +409,12 @@ evas_render_updates(Evas e)
 				(oo->current.b != oo->previous.b) ||
 				(oo->current.a != oo->previous.a)
 				)
-			       prop_change = 1;
+			      {
+				 prop_change = 1;
+				 oo->previous = oo->current;
+			      }
 			 }
 		       if ((o->type == OBJECT_RECTANGLE) &&
-			   (oo->current.r == oo->previous.r) &&
-			   (oo->current.g == oo->previous.g) &&
-			   (oo->current.b == oo->previous.b) &&
 			   (oo->current.a == oo->previous.a) &&
 			   (oo->current.a == 0)
 			   )
@@ -455,10 +457,7 @@ evas_render_updates(Evas e)
 				     (oo->current.color.a != oo->previous.color.a)
 				     )
 				   {
-				      if ((oo->current.color.r == oo->previous.color.r) &&
-					  (oo->current.color.g == oo->previous.color.g) &&
-					  (oo->current.color.b == oo->previous.color.b) &&
-					  (oo->current.color.a == oo->previous.color.a) &&
+				      if ((oo->current.color.a == oo->previous.color.a) &&
 					  (oo->current.color.a == 0)
 					  )
 					{
@@ -486,10 +485,7 @@ evas_render_updates(Evas e)
 				     (oo->current.a != oo->previous.a)
 				     )
 				   {
-				      if ((oo->current.r == oo->previous.r) &&
-					  (oo->current.g == oo->previous.g) &&
-					  (oo->current.b == oo->previous.b) &&
-					  (oo->current.a == oo->previous.a) &&
+				      if ((oo->current.a == oo->previous.a) &&
 					  (oo->current.a == 0)
 					  )
 					{
@@ -513,10 +509,7 @@ evas_render_updates(Evas e)
 				     (oo->current.a != oo->previous.a)
 				     )
 				   {
-				      if ((oo->current.r == oo->previous.r) &&
-					  (oo->current.g == oo->previous.g) &&
-					  (oo->current.b == oo->previous.b) &&
-					  (oo->current.a == oo->previous.a) &&
+				      if ((oo->current.a == oo->previous.a) &&
 					  (oo->current.a == 0)
 					  )
 					{
@@ -525,7 +518,7 @@ evas_render_updates(Evas e)
 					}
 				      else
 					{
-					   real_change = 1;
+					   real_change = 0;
 					   prop_change = 1;
 					}
 				   }
@@ -547,10 +540,7 @@ evas_render_updates(Evas e)
 				     (oo->current.a != oo->previous.a)
 				     )
 				   {
-				      if ((oo->current.r == oo->previous.r) &&
-					  (oo->current.g == oo->previous.g) &&
-					  (oo->current.b == oo->previous.b) &&
-					  (oo->current.a == oo->previous.a) &&
+				      if ((oo->current.a == oo->previous.a) &&
 					  (oo->current.a == 0)
 					  )
 					{
@@ -586,10 +576,7 @@ evas_render_updates(Evas e)
 				     (oo->current.b != oo->previous.b) ||
 				     (oo->current.a != oo->previous.a))
 				   {
-				      if ((oo->current.r == oo->previous.r) &&
-					  (oo->current.g == oo->previous.g) &&
-					  (oo->current.b == oo->previous.b) &&
-					  (oo->current.a == oo->previous.a) &&
+				      if ((oo->current.a == oo->previous.a) &&
 					  (oo->current.a == 0)
 					  )
 					{
@@ -607,12 +594,30 @@ evas_render_updates(Evas e)
 			 }
 		    }
 	       }
-	     if (real_change)
+	     if ((real_change) || (prop_change))
 	       {
 		  int x, y, w, h;
+		  int img_tile_ch;
 		  
+		  img_tile_ch = 1;
+		  if (o->type == OBJECT_IMAGE)
+		    {
+		       Evas_Object_Image oo;
+		       double fx, fy, fxx, fyy;
+		       
+		       oo = o;
+		       fx = oo->current.fill.x + o->current.x;
+		       fy = oo->current.fill.y + o->current.y;
+		       fxx = oo->previous.fill.x + o->previous.x;
+		       fyy = oo->previous.fill.y + o->previous.y;
+		       if ((oo->current.fill.w == oo->previous.fill.w) &&
+			   (oo->current.fill.h == oo->previous.fill.h) &&
+			   (fx == fxx) && (fy == fyy))
+			 img_tile_ch = 0;
+		    }
+		    
 		  /* special case for rectangle since its all one color */
-		  if ((o->type == OBJECT_RECTANGLE) &&
+		  if (((o->type == OBJECT_RECTANGLE) || (!img_tile_ch)) &&
 		      (!prop_change) &&
 		      (RECTS_INTERSECT(o->current.x, o->current.y,
 				       o->current.w, o->current.h,
