@@ -14,6 +14,7 @@ scale_calc_y_points(DATA32 *src, int sw, int sh, int dh)
    int i, val, inc;
    
    p = malloc((dh + 1) * sizeof(DATA32 *));
+//   if (!p) return NULL;
    val = 0;
    inc = (sh << 16) / dh;
    for (i = 0; i < dh; i++) 
@@ -32,6 +33,7 @@ scale_calc_x_points(int sw, int dw)
    int i, val, inc;
    
    p = malloc((dw + 1) * sizeof(int));
+//   if (!p) return NULL;
    val = 0;
    inc = (sw << 16) / dw;
    for (i = 0; i < dw; i++) 
@@ -50,7 +52,7 @@ scale_calc_a_points(int s, int d)
    int i, val, inc;
    
    p = malloc(d * sizeof(int));
-
+//   if (!p) return NULL;
    if (d >= s)
      {
 	val = 0;

@@ -3,6 +3,9 @@
 #include "Evas.h"
 
 int _evas_alloc_error = 0;
+static int _evas_debug_init = 0;
+static int _evas_debug_show = 0;
+static int _evas_debug_abort = 0;
 
 /**
  * Return if any allocation errors have occured during the prior function
@@ -92,33 +95,62 @@ evas_mem_calloc(int size)
 void
 evas_debug_error(void)
 {
-   fprintf(stderr, 
-	   "*** EVAS ERROR: Evas Magic Check Failed!!!\n");
+   if (!_evas_debug_init)
+     {
+	if (getenv("EVAS_DEBUG_SHOW")) _evas_debug_show = 1;
+	if (getenv("EVAS_DEBUG_ABORT")) _evas_debug_abort = 1;
+	_evas_debug_init = 1;
+     }
+   if (_evas_debug_show)
+     fprintf(stderr, 
+	     "*** EVAS ERROR: Evas Magic Check Failed!!!\n");
 }
 
 void
 evas_debug_input_null(void)
 {
-   fprintf(stderr, 
-	   "  Input object pointer is NULL!\n");
+   if (!_evas_debug_init)
+     {
+	if (getenv("EVAS_DEBUG_SHOW")) _evas_debug_show = 1;
+	if (getenv("EVAS_DEBUG_ABORT")) _evas_debug_abort = 1;
+	_evas_debug_init = 1;
+     }
+   if (_evas_debug_show)
+     fprintf(stderr, 
+	     "  Input object pointer is NULL!\n");
 }
 
 void
 evas_debug_magic_null(void)
 {
-   fprintf(stderr, 
-	   "  Input object is zero'ed out (maybe a freed object or zero-filled RAM)!\n");
+   if (!_evas_debug_init)
+     {
+	if (getenv("EVAS_DEBUG_SHOW")) _evas_debug_show = 1;
+	if (getenv("EVAS_DEBUG_ABORT")) _evas_debug_abort = 1;
+	_evas_debug_init = 1;
+     }
+   if (_evas_debug_show)
+     fprintf(stderr, 
+	     "  Input object is zero'ed out (maybe a freed object or zero-filled RAM)!\n");
 }
 
 void
 evas_debug_magic_wrong(DATA32 expected, DATA32 supplied)
 {
-   fprintf(stderr, 
-	   "  Input object is wrong type\n"
-	   "    Expected: %08x - %s\n"
-	   "    Supplied: %08x - %s\n",
-	   expected, evas_debug_magic_string_get(expected),
-	   supplied, evas_debug_magic_string_get(supplied));
+   if (!_evas_debug_init)
+     {
+	if (getenv("EVAS_DEBUG_SHOW")) _evas_debug_show = 1;
+	if (getenv("EVAS_DEBUG_ABORT")) _evas_debug_abort = 1;
+	_evas_debug_init = 1;
+     }
+   if (_evas_debug_show)
+     fprintf(stderr, 
+	     "  Input object is wrong type\n"
+	     "    Expected: %08x - %s\n"
+	     "    Supplied: %08x - %s\n",
+	     expected, evas_debug_magic_string_get(expected),
+	     supplied, evas_debug_magic_string_get(supplied));
+   if (_evas_debug_abort) abort();
 }
 
 char *

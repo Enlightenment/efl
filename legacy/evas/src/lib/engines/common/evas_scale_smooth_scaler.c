@@ -18,12 +18,15 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
    int      dst_jump;
    int      dst_clip_x, dst_clip_y, dst_clip_w, dst_clip_h;
    int      src_w, src_h, dst_w, dst_h; 
+
+//   printf("in [0] dst_region_w %i\n", dst_region_w);
    
    if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h, 0, 0, dst->image->w, dst->image->h)))
      return;
    if (!(RECTS_INTERSECT(src_region_x, src_region_y, src_region_w, src_region_h, 0, 0, src->image->w, src->image->h)))
      return;
 
+//   printf("in [1] dst_region_w %i\n", dst_region_w);
    src_w = src->image->w;
    src_h = src->image->h;
    dst_w = dst->image->w;
@@ -58,6 +61,7 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
 	dst_clip_w = dst_w;
 	dst_clip_h = dst_h;
      }
+//   printf("in [2] dst_region_w %i\n", dst_region_w);
    
    if (dst_clip_x < dst_region_x)
      {
@@ -78,6 +82,7 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
        (dst_region_w <= 0) || (dst_region_h <= 0) ||
        (dst_clip_w <= 0) || (dst_clip_h <= 0))
      return;
+//   printf("in [3] dst_region_w %i\n", dst_region_w);
 
    /* sanitise x */
    if (src_region_x < 0) 
@@ -87,12 +92,14 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
 	src_region_w += src_region_x;
 	src_region_x = 0;
      }
+//   printf("in [4] dst_region_w %i\n", dst_region_w);
    if (src_region_x >= src_w) return;
    if ((src_region_x + src_region_w) > src_w)
      {
 	dst_region_w = (dst_region_w * (src_w - src_region_x)) / (src_region_w);
 	src_region_w = src_w - src_region_x;
      }
+//   printf("in [5] dst_region_w %i\n", dst_region_w);
    if (dst_region_w <= 0) return;
    if (src_region_w <= 0) return;
    if (dst_clip_x < 0) 
@@ -112,6 +119,7 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
 	dst_clip_w = dst_w - dst_clip_x;
      }
    if (dst_clip_w <= 0) return;
+//   printf("in [6] dst_region_w %i\n", dst_region_w);
    
    /* sanitise y */
    if (src_region_y < 0) 
