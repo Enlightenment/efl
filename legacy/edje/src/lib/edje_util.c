@@ -1528,7 +1528,6 @@ _edje_freeze(Edje *ed)
 int
 _edje_thaw(Edje *ed)
 {
-//   printf("THAW %i\n", ed->freeze);
    ed->freeze--;
    if (ed->freeze < 0)
      {

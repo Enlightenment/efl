@@ -2,7 +2,7 @@
 #include <Ecore_Job.h>
 #include "edje_private.h"
 
-Ecore_Job *job = NULL;
+static Ecore_Job *job = NULL;
 
 static Evas_List *msgq = NULL;
 static Evas_List *tmp_msgq = NULL;
@@ -88,8 +88,8 @@ _edje_dummy_timer(void *data)
 static void
 _edje_job(void *data)
 {
-   _edje_message_queue_process();
    job = NULL;
+   _edje_message_queue_process();
 }
 
 void
@@ -253,7 +253,13 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
    int i;
    unsigned char *msg = NULL;
 
-   if (!job) job = ecore_job_add(_edje_job, NULL);
+/* FIXME: for some reason we lose a job event along the way when in e17 */
+/* we delete a border */
+/*   if (!job) */
+     {
+/*	job = */
+	  ecore_job_add(_edje_job, NULL);
+     }
    em = _edje_message_new(ed, queue, type, id);
    if (!em) return;
    switch (em->type)
