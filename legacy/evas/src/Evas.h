@@ -22,7 +22,6 @@ typedef struct _Evas_Object_Text *         Evas_Object_Text;
 typedef struct _Evas_Object_Rectangle *    Evas_Object_Rectangle;
 typedef struct _Evas_Object_Line *         Evas_Object_Line;
 typedef struct _Evas_Object_Gradient_Box * Evas_Object_Gradient_Box;
-typedef struct _Evas_Object_Bits *         Evas_Object_Bits;
 
 #define RENDER_METHOD_ALPHA_SOFTWARE    0
 #define RENDER_METHOD_BASIC_HARDWARE    1
@@ -45,8 +44,6 @@ typedef struct _Evas_Object_Bits *         Evas_Object_Bits;
 #define OBJECT_RECTANGLE    1232
 #define OBJECT_LINE         1233
 #define OBJECT_GRADIENT_BOX 1234
-#define OBJECT_BITS         1235
-
 
 struct _Evas_Render_Data
 {
@@ -198,14 +195,6 @@ struct _Evas_Object_Gradient_Box
    } current, previous;
 };
 
-struct _Evas_Object_Bits
-{
-   struct _Evas_Object_Any object;
-   struct  {
-      char *file;
-   } current, previous;
-};
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -241,13 +230,11 @@ Evas_Object evas_add_text(Evas e, char *font, int size, char *text);
 Evas_Object evas_add_rectangle(Evas e, int r, int g, int b, int a);
 Evas_Object evas_add_line(Evas e, int r, int g, int b, int a);
 Evas_Object evas_add_gradient_box(Evas e);
-Evas_Object evas_add_bits(Evas e, char *file);
 
 /* set object settings */
 void evas_set_image_file(Evas e, Evas_Object o, char *file);
 void evas_set_image_data(Evas e, Evas_Object o, void *data, Evas_Image_Format format, int w, int h);
 void evas_set_image_fill(Evas e, Evas_Object o, double x, double y, double w, double h);
-void evas_set_bits_file(Evas e, Evas_Object o, char *file);
 void evas_set_color(Evas e, Evas_Object o, int r, int g, int b, int a);
 void evas_set_gradient(Evas e, Evas_Object o, Evas_Gradient grad);
 void evas_set_angle(Evas e, Evas_Object o, double angle);
@@ -277,12 +264,6 @@ void evas_get_geometry(Evas e, Evas_Object o, double *x, double *y, double *w, d
 /* object visibility */
 void evas_show(Evas e, Evas_Object o);
 void evas_hide(Evas e, Evas_Object o);
-
-/* evas bits ops */
-void evas_bits_get_padding(Evas e, Evas_Object o, double *l, double *r, double *t, double *b);
-void evas_bits_get_min(Evas e, Evas_Object o, double *w, double *h);
-void evas_bits_get_max(Evas e, Evas_Object o, double *w, double *h);
-void evas_bits_get_classed_bit_geoemtry(Evas e, Evas_Object o, char *class, double *x, double *y, double *w, double *h);
 
 /* image query ops */
 void evas_get_image_size(Evas e, Evas_Object o, int *w, int *h);

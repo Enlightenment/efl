@@ -45,13 +45,13 @@ AC_SUBST(x_ldflags)
 AC_SUBST(x_libs)
 
 #### Find out about E db
-AC_CHECK_HEADER(Edb.h,
-AC_CHECK_LIB(edb, e_db_open, ,[
-echo ""
-echo "ERROR: E db needed"
-echo ""
-AC_MSG_ERROR([Fatal Error: no E db detected.]); exit], -L/usr/local/lib -ldb)
-)
+#AC_CHECK_HEADER(Edb.h,
+#AC_CHECK_LIB(edb, e_db_open, ,[
+#echo ""
+#echo "ERROR: E db needed"
+#echo ""
+#AC_MSG_ERROR([Fatal Error: no E db detected.]); exit], -L/usr/local/lib -ldb)
+#)
 
 #### Find out about Imlib2
 AC_CHECK_HEADER(Imlib2.h,

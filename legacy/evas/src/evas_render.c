@@ -225,15 +225,7 @@ evas_render(Evas e)
 				 oo->previous = oo->current;
 			      }
 			    break;
-			 case OBJECT_BITS:
-			      {
-				 Evas_Object_Bits oo;
-				 
-				 oo = o;
-				 if (1)
-				    real_change = 1;
-				 oo->previous = oo->current;
-			      }
+			 default:
 			    break;
 			 }
 		    }
@@ -452,15 +444,6 @@ evas_render(Evas e)
 						  }
 						free(pointsx);
 						free(pointsy);
-/*						func_image_draw(im, 
-								e->current.display,
-								e->current.drawable,
-								e->current.drawable_width,
-								e->current.drawable_height,
-								0, 0, 
-								func_image_get_width(im),
-								func_image_get_height(im),
-								x, y, w, h);*/
 						func_image_free(im);
 					     }
 					}
@@ -493,12 +476,7 @@ evas_render(Evas e)
 					   oo = o;
 					}
 				      break;
-				   case OBJECT_BITS:
-					{
-					   Evas_Object_Bits oo;
-					   
-					   oo = o;
-					}
+				   default:
 				      break;
 				   }
 			      }

@@ -30,7 +30,6 @@ include_HEADERS      = \
 Evas.h
 
 libevas_la_SOURCES   = \
-evas_bits.c \
 evas_callbacks.c \
 evas_events.c \
 evas_gl_routines.c \
