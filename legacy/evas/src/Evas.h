@@ -241,7 +241,9 @@ void evas_render(Evas e);
 /* query for settings to use */
 Visual   *evas_get_optimal_visual(Evas e, Display *disp);
 Colormap  evas_get_optimal_colormap(Evas e, Display *disp);
-
+void      evas_get_drawable_size(Evas e, int *w, int *h);
+void      evas_get_viewport(Evas e, double *x, double *y, double *w, double *h);
+   
 /* the output settings */
 void evas_set_output(Evas e, Display *disp, Drawable d, Visual *v, Colormap c);
 void evas_set_output_size(Evas e, int w, int h);

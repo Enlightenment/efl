@@ -652,6 +652,22 @@ evas_get_optimal_colormap(Evas e, Display *disp)
    return 0;
 }
 
+void
+evas_get_drawable_size(Evas e, int *w, int *h)
+{
+   if (w) *w = e->current.drawable_width;
+   if (h) *h = e->current.drawable_height;
+}
+
+void
+evas_get_viewport(Evas e, double *x, double *y, double *w, double *h)
+{
+   if (x) *x = e->current.viewport.x;
+   if (y) *y = e->current.viewport.y;
+   if (w) *w = e->current.viewport.w;
+   if (h) *h = e->current.viewport.h;
+}
+
 /* the output settings */
 void
 evas_set_output(Evas e, Display *disp, Drawable d, Visual *v, Colormap c)
