@@ -102,7 +102,6 @@ changequote([,])dnl
 
 AC_MSG_CHECKING(whether ecore_txt module is to be built)
 
-# FIXME: detect if we need -liconv or not for iconv_libs
 iconv_cflags=""
 iconv_libs=""
 
@@ -148,6 +147,7 @@ if test "x$have_ecore_txt" = "xyes"; then
                   ], [
                     AC_MSG_RESULT("no - disabling ecore_txt")
                     AM_CONDITIONAL(BUILD_ECORE_TXT, false)
+                    have_ecore_txt=""
                   ]
                 ),
            )
