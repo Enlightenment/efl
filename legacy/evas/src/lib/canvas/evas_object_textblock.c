@@ -2059,11 +2059,11 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 			       lnode->layout.line.x + x,
 			       obj->cur.cache.geometry.y + 
 			       lnode->layout.line.y + y + 
-			       ((double)(((lnode->layout.line.mascent + 
-					   lnode->layout.line.mdescent) -
-					  (lnode->layout.line.ascent + 
-					   lnode->layout.line.descent)) * 
-					 lnode->layout.valign)) +
+			       ((double)((lnode->layout.line.mascent + 
+					  lnode->layout.line.mdescent) -
+					 (lnode->layout.line.ascent + 
+					  lnode->layout.line.descent)) * 
+					 lnode->layout.valign) +
 			       lnode->layout.line.ascent,
 			       lnode->w,
 			       lnode->h,
