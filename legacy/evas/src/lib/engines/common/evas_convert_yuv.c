@@ -6,10 +6,11 @@
 
 #ifdef BUILD_CONVERT_YUV
 
-static void _evas_yuv_init        (void);
-static void _evas_yv12torgb_mmx   (unsigned char **yuv, unsigned char *rgb, int w, int h);
-static void _evas_yv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h);
-static void _evas_yv12torgb_diz   (unsigned char **yuv, unsigned char *rgb, int w, int h);
+static void _evas_yuv_init         (void);
+static void _evas_yv12torgb_mmx    (unsigned char **yuv, unsigned char *rgb, int w, int h);
+static void _evas_yv12torgb_altivec(unsigned char **yuv, unsigned char *rgb, int w, int h);
+static void _evas_yv12torgb_raster (unsigned char **yuv, unsigned char *rgb, int w, int h);
+static void _evas_yv12torgb_diz    (unsigned char **yuv, unsigned char *rgb, int w, int h);
 
 #define CRV    104595
 #define CBU    132251
@@ -58,6 +59,42 @@ const int _cgv = RZ(CGV);   /* 0.813 */
 
 #endif
 
+#ifdef BUILD_ALTIVEC
+#ifdef __VEC__
+const vector unsigned short res     = (vector unsigned short)(RES);
+const vector signed short crv       = (vector signed short)(RZ(CRV));
+const vector signed short cbu       = (vector signed short)(RZ(CBU));
+const vector signed short cgu       = (vector signed short)(RZ(CGU));
+const vector signed short cgv       = (vector signed short)(RZ(CGV));
+const vector signed short ymul      = (vector signed short)(RZ(YMUL));
+const vector signed short c128      = (vector signed short)(128);
+const vector signed short c32       = (vector signed short)(RZ(OFF));
+const vector signed short c16       = (vector signed short)(16);
+const vector unsigned char zero     = (vector unsigned char)(0);
+const vector signed short maxchar   = (vector signed short)(255);
+const vector unsigned char pickrg1  = (vector unsigned char)
+	                                        (0, 0x1, 0x11, 0,
+						 0, 0x3, 0x13, 0,
+						 0, 0x5, 0x15, 0,
+						 0, 0x7, 0x17, 0);
+const vector unsigned char pickrg2  = (vector unsigned char)
+	                                        (0, 0x9, 0x19, 0,
+						 0, 0xb, 0x1b, 0,
+						 0, 0xd, 0x1d, 0,
+						 0, 0xf, 0x1f, 0);
+const vector unsigned char pickrgb1 = (vector unsigned char)
+	                                        (0x3, 0x1, 0x2, 0x11,
+						 0x7, 0x5, 0x6, 0x13,
+						 0xb, 0x9, 0xa, 0x15,
+						 0xf, 0xd, 0xe, 0x17);
+const vector unsigned char pickrgb2 = (vector unsigned char)
+	                                        (0x3, 0x1, 0x2, 0x19,
+						 0x7, 0x5, 0x6, 0x1b,
+						 0xb, 0x9, 0xa, 0x1d,
+						 0xf, 0xd, 0xe, 0x1f);
+#endif
+#endif
+
 #ifdef BUILD_C
 
 /* shortcut speedup lookup-tables */
@@ -83,7 +120,12 @@ evas_common_convert_yuv_420p_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
    evas_common_cpu_can_do(&mmx, &sse, &sse2);
    if (mmx) _evas_yv12torgb_mmx(src, dst, w, h);
    else
-#endif     
+#endif
+#ifdef BUILD_ALTIVEC
+   if (evas_common_cpu_has_feature(CPU_FEATURE_ALTIVEC))
+     _evas_yv12torgb_altivec(src, dst, w, h);
+   else
+#endif
      {
 #ifdef BUILD_C	
 	static int initted = 0;
@@ -286,6 +328,224 @@ _evas_yv12torgb_mmx(unsigned char **yuv, unsigned char *rgb, int w, int h)
 #else
    _evas_yv12torgb_raster(yuv, rgb, w, h);
 #endif   
+}
+
+static void
+_evas_yv12torgb_altivec(unsigned char **yuv, unsigned char *rgb, int w, int h)
+{
+#ifdef BUILD_ALTIVEC
+#ifdef __VEC__
+   int xx, yy;
+   int w2, h2;
+   unsigned char *yp1, *yp2, *up, *vp;
+   unsigned char *dp1, *dp2;
+   vector signed short y, u, v;
+   vector signed short r, g, b;
+   vector signed short tmp1, tmp2, tmp3;
+   vector unsigned char yperm, uperm, vperm, rgb1, rgb2;
+   vector unsigned char alpha;
+
+   /* handy halved w & h */
+   w2 = w / 2;
+   h2 = h / 2;
+   /* plane pointers */
+   yp1 = yuv;
+   yp2 = yuv + w;
+   up = yuv + (w * h);
+   vp = up + (w2 * h2);
+   /* destination pointers */
+   dp1 = rgb;
+   dp2 = rgb + (w * 4);
+
+   alpha = vec_mergeh((vector unsigned char)(255), zero);
+   alpha = (vector unsigned char)vec_mergeh((vector unsigned short)alpha,
+					    (vector unsigned short)zero);
+
+   for (yy = 0; yy < h2; yy++)
+     {
+	for (xx = 0; xx < w2; xx += 4)
+	  {
+/* Cycles */
+	     /*
+	      * Load 4 y and 4 u & v pixels for the 8x2 pixel block.
+	      */
+/* 3 */      tmp3 = (vector signed short)vec_lde(0, (unsigned int *)yp1);
+/* 3 */      tmp1 = (vector signed short)vec_lde(0, (unsigned int *)up);
+/* 3 */      tmp2 = (vector signed short)vec_lde(0, (unsigned int *)vp);
+
+	     /* Prepare for aligning the data in their vectors */
+/* 3 */      yperm = vec_lvsl(0, yp1);
+/* 3 */      uperm = vec_lvsl(0, up);
+/* 3 */      vperm = vec_lvsl(0, vp);
+	     yp1 += 4;
+
+	     /* Save y and load the next 4 y pixels for a total of 8 */
+/* 2 */      y = vec_perm(tmp3, tmp3, yperm);
+/* 3 */      tmp3 = (vector signed short)vec_lde(0, (unsigned int *)yp1);
+
+	     /* Setup and calculate the 4 u pixels */
+/* 2 */      tmp1 = vec_perm(tmp1, tmp1, uperm);
+/* 2 */      tmp2 = vec_perm(tmp2, tmp2, vperm);
+
+	     /* Avoid dependancy stalls on yperm and calculate the 4 u values */
+/* 3 */      yperm = vec_lvsr(12, yp1);
+/* 1 */      tmp1 = (vector signed short)vec_mergeh((vector unsigned char)tmp1,
+						    (vector unsigned char)tmp1);
+/* 1 */      u = (vector signed short)vec_mergeh(zero,
+						 (vector unsigned char)tmp1);
+			
+/* 1 */      u = vec_sub(u, c128);
+/* 2 */      tmp3 = vec_perm(tmp3, tmp3, yperm);
+
+	     /* Setup and calculate the 4 v values */
+/* 1 */      tmp2 = (vector signed short)vec_mergeh((vector unsigned char)tmp2,
+						    (vector unsigned char)tmp2);
+/* 1 */      v = (vector signed short)vec_mergeh(zero,
+						 (vector unsigned char)tmp2);
+/* 4 */      tmp2 = vec_mladd(cgu, u, (vector signed short)zero);
+/* 1 */      v = vec_sub(v, c128);
+
+	     /* Move the data into y and start loading the next 4 pixels */
+/* 1 */      y = (vector signed short)vec_mergeh(zero,
+						 (vector unsigned char)y);
+/* 1 */      tmp3 = (vector signed short)vec_mergeh(zero,
+						    (vector unsigned char)tmp3);
+/* 1 */      y = vec_or(y, tmp3);
+
+	     /* Finish calculating y */
+/* 1 */      y = vec_sub(y, c16);
+/* 4 */      y = vec_mladd(ymul, y, (vector signed short)zero);
+
+	     /* Perform non-dependant multiplies first. */
+/* 4 */      tmp1 = vec_mladd(crv, v, y);
+/* 4 */      tmp2 = vec_mladd(cgv, v, tmp2);
+/* 4 */      tmp3 = vec_mladd(cbu, u, y);
+
+	     /* Calculate rgb values */
+/* 1 */	     r = vec_sra(tmp1, res);
+
+/* 1 */	     tmp2 = vec_sub(y, tmp2);
+/* 1 */      tmp2 = vec_add(tmp2, c32);
+/* 1 */      g = vec_sra(tmp2, res);
+
+/* 1 */	     tmp3 = vec_add(tmp3, c32);
+/* 1 */	     b = vec_sra(tmp3, res);
+
+	     /* Bound to 0 <= x <= 255 */
+/* 1 */	     r = vec_min(r, maxchar);
+/* 1 */	     g = vec_min(g, maxchar);
+/* 1 */	     b = vec_min(b, maxchar);
+/* 1 */	     r = vec_max(r, (vector signed short)zero);
+/* 1 */	     g = vec_max(g, (vector signed short)zero);
+/* 1 */	     b = vec_max(b, (vector signed short)zero);
+
+	     /* Combine r, g and b. */
+/* 2 */	     rgb1 = vec_perm((vector unsigned char)r, (vector unsigned char)g,
+			     pickrg1);
+/* 2 */	     rgb2 = vec_perm((vector unsigned char)r, (vector unsigned char)g,
+			    pickrg2);
+
+/* 2 */	     rgb1 = vec_perm(rgb1, (vector unsigned char)b, pickrgb1);
+/* 2 */	     rgb2 = vec_perm(rgb2, (vector unsigned char)b, pickrgb2);
+
+/* 1 */      rgb1 = vec_or(alpha, rgb1);
+/* 1 */      rgb2 = vec_or(alpha, rgb2);
+
+/* 3 */	     vec_stl(rgb1, 0, dp1);
+	     dp1 += 16;
+/* 3 */	     vec_stl(rgb2, 0, dp1);
+
+	     /*
+	      * Begin the second row calculations
+	      */
+
+	     /*
+	      * Load 4 y pixels for the 8x2 pixel block.
+	      */
+/* 3 */      yperm = vec_lvsl(0, yp2);
+/* 3 */      tmp3 = (vector signed short)vec_lde(0, (unsigned int *)yp2);
+	     yp2 += 4;
+
+	     /* Save y and load the next 4 y pixels for a total of 8 */
+/* 2 */      y = vec_perm(tmp3, tmp3, yperm);
+/* 3 */      yperm = vec_lvsr(12, yp2);
+/* 3 */      tmp3 = (vector signed short)vec_lde(0, (unsigned int *)yp2);
+/* 1 */      y = (vector signed short)vec_mergeh(zero,
+						 (vector unsigned char)y);
+
+	     /* Avoid dependancy stalls on yperm */
+/* 2 */      tmp3 = vec_perm(tmp3, tmp3, yperm);
+/* 1 */      tmp3 = (vector signed short)vec_mergeh(zero,
+						    (vector unsigned char)tmp3);
+/* 1 */      y = vec_or(y, tmp3);
+
+	     /* Start the calculation for g */
+/* 4 */      tmp2 = vec_mladd(cgu, u, (vector signed short)zero);
+
+	     /* Finish calculating y */
+/* 1 */      y = vec_sub(y, c16);
+/* 4 */      y = vec_mladd(ymul, y, (vector signed short)zero);
+
+	     /* Perform non-dependant multiplies first. */
+/* 4 */      tmp2 = vec_mladd(cgv, v, tmp2);
+/* 4 */      tmp1 = vec_mladd(crv, v, y);
+/* 4 */      tmp3 = vec_mladd(cbu, u, y);
+
+	     /* Calculate rgb values */
+/* 1 */	     r = vec_sra(tmp1, res);
+
+/* 1 */	     tmp2 = vec_sub(y, tmp2);
+/* 1 */      tmp2 = vec_add(tmp2, c32);
+/* 1 */      g = vec_sra(tmp2, res);
+
+/* 1 */	     tmp3 = vec_add(tmp3, c32);
+/* 1 */	     b = vec_sra(tmp3, res);
+
+	     /* Bound to 0 <= x <= 255 */
+/* 1 */	     r = vec_min(r, maxchar);
+/* 1 */	     g = vec_min(g, maxchar);
+/* 1 */	     b = vec_min(b, maxchar);
+/* 1 */	     r = vec_max(r, (vector signed short)zero);
+/* 1 */	     g = vec_max(g, (vector signed short)zero);
+/* 1 */	     b = vec_max(b, (vector signed short)zero);
+
+	     /* Combine r, g and b. */
+/* 2 */	     rgb1 = vec_perm((vector unsigned char)r, (vector unsigned char)g,
+			    pickrg1);
+/* 2 */	     rgb2 = vec_perm((vector unsigned char)r, (vector unsigned char)g,
+			    pickrg2);
+
+/* 2 */	     rgb1 = vec_perm(rgb1, (vector unsigned char)b, pickrgb1);
+/* 2 */	     rgb2 = vec_perm(rgb2, (vector unsigned char)b, pickrgb2);
+
+/* 1 */      rgb1 = vec_or(alpha, rgb1);
+/* 1 */      rgb2 = vec_or(alpha, rgb2);
+
+/* 3 */	     vec_stl(rgb1, 0, dp2);
+	     dp2 += 16;
+/* 3 */	     vec_stl(rgb2, 0, dp2);
+
+	     /* Increment the YUV data pointers to the next set of pixels. */
+	     yp1 += 4;
+	     yp2 += 4;
+	     up += 4;
+	     vp += 4;
+
+	     /* Move the destination pointers to the next set of pixels. */
+	     dp1 += 16;
+	     dp2 += 16;
+	  }
+
+	/* jump down one line since we are doing 2 at once */
+	yp1 += w;
+	yp2 += w;
+	dp1 += (w * 4);
+	dp2 += (w * 4);
+     }
+#endif
+#else
+   _evas_yv12torgb_diz(yuv, rgb, w, h);
+#endif
 }
 
 static void
