@@ -17,7 +17,6 @@
 
 #ifdef BUILD_LOADER_EET
 #include <Eet.h>
-#include <zlib.h>
 #endif
 
 #ifdef BUILD_LOADER_EDB

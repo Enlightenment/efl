@@ -547,7 +547,22 @@ extern "C" {
    Evas_Bool           evas_imaging_image_alpha_get (Evas_Imaging_Image *im);
    void                evas_imaging_image_cache_set (int bytes);
    int                 evas_imaging_image_cache_get (void);
-       
+   
+   Evas_Imaging_Font  *evas_imaging_font_load                      (const char *file, const char *key, int size);
+   void                evas_imaging_font_free                      (Evas_Imaging_Font *fn);
+   int                 evas_imaging_font_ascent_get                (Evas_Imaging_Font *fn);
+   int                 evas_imaging_font_descent_get               (Evas_Imaging_Font *fn);
+   int                 evas_imaging_font_max_ascent_get            (Evas_Imaging_Font *fn);
+   int                 evas_imaging_font_max_descent_get           (Evas_Imaging_Font *fn);
+   int                 evas_imaging_font_line_advance_get          (Evas_Imaging_Font *fn);
+   void                evas_imaging_font_string_advance_get        (Evas_Imaging_Font *fn, char *str, int *x, int *y);
+   void                evas_imaging_font_string_size_query         (Evas_Imaging_Font *fn, char *str, int *w, int *h);
+   int                 evas_imaging_font_string_inset_get          (Evas_Imaging_Font *fn, char *str);
+   int                 evas_imaging_font_string_char_coords_get    (Evas_Imaging_Font *fn, char *str, int pos, int *cx, int *cy, int *cw, int *ch);
+   int                 evas_imaging_font_string_char_at_coords_get (Evas_Imaging_Font *fn, char *str, int x, int y, int *cx, int *cy, int *cw, int *ch);
+   
+   void                evas_imaging_font_cache_set  (int bytes);
+   int                 evas_imaging_font_cache_get  (void);
        
 #ifdef __cplusplus
 }

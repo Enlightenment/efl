@@ -629,7 +629,7 @@ struct _Evas_Imaging_Image
    RGBA_Image *image;
 };
 
-struct _Evas_Imaging_font
+struct _Evas_Imaging_Font
 {
    RGBA_Font *font;
 };
