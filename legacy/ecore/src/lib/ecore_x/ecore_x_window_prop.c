@@ -260,6 +260,8 @@ ecore_x_window_prop_title_get(Ecore_X_Window win)
  * @param win  The window.
  * @param argc Number of arguments.
  * @param argv Arguments.
+ *
+ * DEPRECATED. Please use ecore_x_icccm_command_set() instead.
  */
 void
 ecore_x_window_prop_command_set(Ecore_X_Window win, int argc, char **argv)
@@ -275,6 +277,8 @@ ecore_x_window_prop_command_set(Ecore_X_Window win, int argc, char **argv)
  * @param win  The window.
  * @param argc Number of arguments.
  * @param argv Arguments.
+ *
+ * DEPRECATED. Please use ecore_x_icccm_command_get() instead.
  */
 void
 ecore_x_window_prop_command_get(Ecore_X_Window win, int *argc, char ***argv)
@@ -382,6 +386,7 @@ ecore_x_window_prop_visible_icon_name_get(Ecore_X_Window win)
  * @return The windows client machine string
  * 
  * Return the client machine of a window. String must be free'd when done with.
+ * DEPRECATED. Please use ecore_x_icccm_client_machine_get() instead.
  */
 char *
 ecore_x_window_prop_client_machine_get(Ecore_X_Window win)
@@ -423,6 +428,7 @@ ecore_x_window_prop_pid_get(Ecore_X_Window win)
  * @param c The class string
  * 
  * Set a window name * class
+ * DEPRECATED. Please use ecore_x_icccm_name_class_set() instead.
  */
 void
 ecore_x_window_prop_name_class_set(Ecore_X_Window win, const char *n, const char *c)
@@ -473,7 +479,8 @@ ecore_x_window_prop_name_class_get(Ecore_X_Window win, char **n, char **c)
  * @param win The Window
  * @param protocol The protocol to enable/disable
  * @param on On/Off
- * 
+ *
+ * DEPRECATED. Please use ecore_x_icccm_protocol_set() instead.
  */
 void
 ecore_x_window_prop_protocol_set(Ecore_X_Window win,
@@ -547,6 +554,8 @@ ecore_x_window_prop_protocol_set(Ecore_X_Window win,
  * @param win The Window
  * @param protocol The protocol to query
  * @return 1 if the protocol is set, else 0.
+ *
+ * DEPRECATED. Please use ecore_x_icccm_protocol_isset() instead.
  */
 int
 ecore_x_window_prop_protocol_isset(Ecore_X_Window win,

@@ -995,6 +995,24 @@ EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_A
      ecore_x_icccm_title_set(Ecore_X_Window win, const char *t);
    EAPI char *
      ecore_x_icccm_title_get(Ecore_X_Window win);
+   EAPI void
+     ecore_x_icccm_protocol_set(Ecore_X_Window win,
+                                Ecore_X_WM_Protocol protocol,
+                                int on);
+   EAPI int
+     ecore_x_icccm_protocol_isset(Ecore_X_Window win,
+                                  Ecore_X_WM_Protocol protocol);
+   EAPI void
+     ecore_x_icccm_name_class_set(Ecore_X_Window win,
+                                  const char *n,
+                                  const char *c);
+   EAPI char *
+     ecore_x_icccm_client_machine_get(Ecore_X_Window win);
+   EAPI void
+     ecore_x_icccm_command_set(Ecore_X_Window win, int argc, char **argv);
+   EAPI void
+     ecore_x_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv);
+   
    
    typedef enum _Ecore_X_MWM_Hint_Func
      {

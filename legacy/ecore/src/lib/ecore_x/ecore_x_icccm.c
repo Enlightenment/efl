@@ -409,6 +409,191 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
    return NULL;
 }
 
+/**
+ * Set or unset a wm protocol property.
+ * @param win The Window
+ * @param protocol The protocol to enable/disable
+ * @param on On/Off
+ */
+void
+ecore_x_icccm_protocol_set(Ecore_X_Window win,
+                           Ecore_X_WM_Protocol protocol,
+                           int on)
+{
+   Atom *protos = NULL;
+   Atom  proto;
+   int   protos_count = 0;
+   int   already_set = 0;
+   int   i;
+
+   /* Check for invalid values */
+   if (protocol < 0 || protocol >= ECORE_X_WM_PROTOCOL_NUM)
+      return;
+
+   proto = _ecore_x_atoms_wm_protocols[protocol];
+
+   if (!XGetWMProtocols(_ecore_x_disp, win, &protos, &protos_count))
+   {
+      protos = NULL;
+      protos_count = 0;
+   }
+
+   for (i = 0; i < protos_count; i++)
+   {
+      if (protos[i] == proto)
+      {
+         already_set = 1;
+         break;
+      }
+   }
+
+   if (on)
+   {
+      Atom *new_protos = NULL;
+
+      if (already_set) goto leave;
+      new_protos = malloc((protos_count + 1) * sizeof(Atom));
+      if (!new_protos) goto leave;
+      for (i = 0; i < protos_count; i++)
+         new_protos[i] = protos[i];
+      new_protos[protos_count] = proto;
+      XSetWMProtocols(_ecore_x_disp, win, new_protos, protos_count + 1);
+      free(new_protos);
+   }
+   else
+   {
+      if (!already_set) goto leave;
+      for (i = 0; i < protos_count; i++)
+      {
+         if (protos[i] == proto)
+         {
+            int j;
+
+            for (j = i + 1; j < protos_count; j++)
+               protos[j-1] = protos[j];
+            if (protos_count > 1)
+               XSetWMProtocols(_ecore_x_disp, win, protos, 
+                               protos_count - 1);
+            else
+               XDeleteProperty(_ecore_x_disp, win,
+                               _ecore_x_atom_wm_protocols);
+            goto leave;
+         }
+      }
+   }
+
+   leave:
+   if (protos)
+      XFree(protos);
+
+}
+
+
+/**
+ * Determines whether a protocol is set for a window.
+ * @param win The Window
+ * @param protocol The protocol to query
+ * @return 1 if the protocol is set, else 0.
+ */
+int
+ecore_x_icccm_protocol_isset(Ecore_X_Window win,
+                             Ecore_X_WM_Protocol protocol)
+{
+   Atom proto, *protos = NULL;
+   int i, ret = 0, protos_count = 0;
+
+   /* check for invalid values */
+   if (protocol < 0 || protocol >= ECORE_X_WM_PROTOCOL_NUM)
+      return 0;
+
+   proto = _ecore_x_atoms_wm_protocols[protocol];
+
+   if (!XGetWMProtocols(_ecore_x_disp, win, &protos, &protos_count))
+      return 0;
+   
+   for (i = 0; i < protos_count; i++)
+      if (protos[i] == proto)
+      {
+         ret = 1;
+         break;
+      }
+
+   XFree(protos);
+   return ret;
+
+}
+
+/**
+ * Set a window name & class.
+ * @param win The window
+ * @param n The name string
+ * @param c The class string
+ * 
+ * Set a window name * class
+ */
+void
+ecore_x_icccm_name_class_set(Ecore_X_Window win,
+                             const char *n,
+                             const char *c)
+{
+   XClassHint *xch;
+
+   xch = XAllocClassHint();
+   if (!xch)
+      return;
+   xch->res_name = (char *)n;
+   xch->res_class = (char *)c;
+   XSetClassHint(_ecore_x_disp, win, xch);
+   XFree(xch);
+}
+
+/**
+ * Get a window client machine string.
+ * @param win The window
+ * @return The windows client machine string
+ * 
+ * Return the client machine of a window. String must be free'd when done with.
+ */
+char *
+ecore_x_icccm_client_machine_get(Ecore_X_Window win)
+{
+   char *name;
+
+   name = ecore_x_window_prop_string_get(win, _ecore_x_atom_wm_client_machine);
+   return name;
+}
+
+/**
+ * Sets the WM_COMMAND property for @a win.
+ * 
+ * @param win  The window.
+ * @param argc Number of arguments.
+ * @param argv Arguments.
+ */
+void
+ecore_x_icccm_command_set(Ecore_X_Window win, int argc, char **argv)
+{
+   XSetCommand(_ecore_x_disp, win, argv, argc);
+}
+
+/**
+ * Get the WM_COMMAND property for @a win.
+ *
+ * Return the command of a window. String must be free'd when done with.
+ *
+ * @param win  The window.
+ * @param argc Number of arguments.
+ * @param argv Arguments.
+ */
+void
+ecore_x_window_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv)
+{
+   XGetCommand(_ecore_x_disp, win, argv, argc);
+}
+
+
+
+ 
 /* FIXME: move these things in here as they are icccm related */
 /* get/set wm protocols */
 /* get/set name/class */
