@@ -116,7 +116,8 @@ setup(void)
    win_control = evas_get_window(evas_control);
 
    XSelectInput(display, win_control, ButtonPressMask | 
-		ButtonReleaseMask | PointerMotionMask | ExposureMask);
+		ButtonReleaseMask | PointerMotionMask | ExposureMask |
+		EnterWindowMask | LeaveWindowMask);
 
    XMapWindow(display, win_control);
    XMapWindow(display, win_base);
@@ -202,7 +203,6 @@ setup_controls(void)
    evas_set_pass_events(e, o, 1);
    evas_set_layer(e, o, 1000);
    evas_object_set_name(e, o, "pointer");
-   evas_show(e, o);
 }
 
 void
@@ -217,15 +217,14 @@ setup_view(Evas_Render_Method method)
    e = evas_new_all(display, win_base, 128, 0, 1024 - 128, 768,
 			    method, 216, 1 * 1024 * 1024, 8 * 1024 * 1024,
 			    FNTDIR);
-/*   
    if (method == RENDER_METHOD_BASIC_HARDWARE)
       evas_set_scale_smoothness(e, 0);
    else
- */
       evas_set_scale_smoothness(e, 1);
    win_view = evas_get_window(e);   
    XSelectInput(display, win_view, ButtonPressMask | 
-		ButtonReleaseMask | PointerMotionMask | ExposureMask);
+		ButtonReleaseMask | PointerMotionMask | ExposureMask |
+		EnterWindowMask | LeaveWindowMask);
    XMapWindow(display, win_view);
    if (evas_view) evas_free(evas_view);
    evas_view = e;
@@ -299,7 +298,6 @@ setup_view(Evas_Render_Method method)
    evas_set_pass_events(e, o, 1);
    evas_set_layer(e, o, 1000);
    evas_object_set_name(e, o, "pointer");
-   evas_show(e, o);
 }
 
 void
@@ -530,6 +528,57 @@ handle_events(void)
 			    break;
 			 case Expose:
 			    evas_update_rect(e, ev.xexpose.x, ev.xexpose.y, ev.xexpose.width, ev.xexpose.height);
+			    break;
+			 case EnterNotify:
+			    if (e == evas_view)
+			      {
+				 Evas_Object o;
+				 
+				 o = evas_object_get_named(evas_view, "pointer");
+				 if (o) evas_show(evas_view, o);
+			      }
+			    if (e == evas_control)
+			      {
+				 Evas_Object o;
+				 
+				 o = evas_object_get_named(evas_control, "pointer");
+				 if (o) evas_show(evas_control, o);
+			      }
+			    if (e == evas_view)
+			       evas_event_enter(evas_view);
+			    else if (e == evas_control)
+			       evas_event_enter(evas_control);
+			    break;
+			 case LeaveNotify:
+			      {
+				 XEvent ev_next;
+				 
+				 if (XCheckTypedEvent(display, EnterNotify, &ev_next))
+				   {
+				      XPutBackEvent(display, &ev_next);
+				   }
+				 else
+				   {
+				      if (e == evas_view)
+					{
+					   Evas_Object o;
+					   
+					   o = evas_object_get_named(evas_view, "pointer");
+					   if (o) evas_hide(evas_view, o);
+					}
+				      if (e == evas_control)
+					{
+					   Evas_Object o;
+					   
+					   o = evas_object_get_named(evas_control, "pointer");
+					   if (o) evas_hide(evas_control, o);
+					}
+				   }
+			      }
+			    if (e == evas_view)
+			       evas_event_leave(evas_view);
+			    else if (e == evas_control)
+			       evas_event_leave(evas_control);
 			    break;
 			 default:
 			    break;

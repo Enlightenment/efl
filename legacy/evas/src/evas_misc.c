@@ -48,6 +48,7 @@ evas_new_all(Display *display, Window parent_window,
    evas_set_output_viewport(e, 0, 0, w, h);
    evas_set_font_cache(e, font_cache);
    evas_set_image_cache(e, image_cache);
+   evas_event_leave(e);
    return e;
 }
 
