@@ -44,32 +44,15 @@
  * 
  */
 
-#define CHKPARAM(n) if (params[0] != (sizeof(Embryo_Cell) * (n))) return 0;
-#define GETSTR(str, par) { \
-   Embryo_Cell *___cptr; \
-   int ___l; \
-   if ((___cptr = embryo_data_address_get(ep, (par)))) { \
-   ___l = embryo_data_string_length_get(ep, ___cptr); \
-   if (((str) = alloca(___l + 1))) \
-   embryo_data_string_get(ep, ___cptr, (str));}}
-#define SETSTR(str, par) { \
-   Embryo_Cell *___cptr; \
-   if ((___cptr = embryo_data_address_get(ep, (par)))) { \
-   embryo_data_string_set(ep, str, ___cptr);}}
-#define SETFLOAT(val, par) { \
-   float *___cptr; \
-   if ((___cptr = (float *)embryo_data_address_get(ep, (par)))) { \
-   *___cptr = (float)val;}}
-#define SETINT(val, par) { \
-   int *___cptr; \
-   if ((___cptr = (int *)embryo_data_address_get(ep, (par)))) { \
-   *___cptr = (int)val;}}
-
-static void _edje_embryo_globals_init(Edje *ed);
-
 /* EDJE...
  * 
  * implemented so far as examples:
+ * 
+ * enum Msg_Type {
+ *    MSG_NONE, MSG_STRING, MSG_INT, MSG_FLOAT, MSG_STRING_SET, MSG_INT_SET,
+ *    MSG_FLOAT_SET, MSG_STRING_INT, MSG_INT_FLOAT, MSG_STRING_INT_SET,
+ *    MSG_INT_FLOAT_SET
+ * };
  * 
  * get_int(id)
  * set_int(id, v)
@@ -106,14 +89,10 @@ static void _edje_embryo_globals_init(Edje *ed);
  * stop_programs_on(part_id)
  * set_min_size(&w, &h)
  * set_max_size(&w, &h)
- *
+ * send_message(Msg_Type:type, id, ...)
+ * 
  * still need to implement this:
  *
- * ##### post messages to the app via _edje_message_send();
- * # send_message(id, type, ...);
- * #
- * ##### what about posting messages to OTHER edje objects (swallowed?)
- * # ????
  * ######## lists/arrays for stored variables (to be implemented)
  * # count(id)
  * # remove(id, n)
@@ -192,6 +171,29 @@ static void _edje_embryo_globals_init(Edje *ed);
 /* FUTURE: KEYS???
  * 
  */
+
+#define CHKPARAM(n) if (params[0] != (sizeof(Embryo_Cell) * (n))) return 0;
+#define GETSTR(str, par) { \
+   Embryo_Cell *___cptr; \
+   int ___l; \
+   if ((___cptr = embryo_data_address_get(ep, (par)))) { \
+   ___l = embryo_data_string_length_get(ep, ___cptr); \
+   if (((str) = alloca(___l + 1))) \
+   embryo_data_string_get(ep, ___cptr, (str));}}
+#define SETSTR(str, par) { \
+   Embryo_Cell *___cptr; \
+   if ((___cptr = embryo_data_address_get(ep, (par)))) { \
+   embryo_data_string_set(ep, str, ___cptr);}}
+#define SETFLOAT(val, par) { \
+   float *___cptr; \
+   if ((___cptr = (float *)embryo_data_address_get(ep, (par)))) { \
+   *___cptr = (float)val;}}
+#define SETINT(val, par) { \
+   int *___cptr; \
+   if ((___cptr = (int *)embryo_data_address_get(ep, (par)))) { \
+   *___cptr = (int)val;}}
+
+static void _edje_embryo_globals_init(Edje *ed);
 
 /* get_int(id) */
 static Embryo_Cell
