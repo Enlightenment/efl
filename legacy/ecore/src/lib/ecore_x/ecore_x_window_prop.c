@@ -801,7 +801,7 @@ ecore_x_window_prop_desktop_get(Ecore_X_Window win)
 }
 
 /**
- * Change a windows type.
+ * Change a window's type.
  * @param win The Window
  * @param type The Type
  *
@@ -828,6 +828,152 @@ ecore_x_window_prop_window_type_set(Ecore_X_Window win, Ecore_X_Atom type)
 					      XA_ATOM, 32, data, 1);
 	  }
 	free(data);
+}
+
+static Ecore_X_Atom 
+_ecore_x_window_prop_state_atom_get(Ecore_X_Window_State s)
+{
+   switch(s)
+   {
+      case ECORE_X_WINDOW_STATE_MODAL:
+         return _ecore_x_atom_net_wm_state_modal;
+      case ECORE_X_WINDOW_STATE_STICKY:
+         return _ecore_x_atom_net_wm_state_sticky;
+      case ECORE_X_WINDOW_STATE_MAXIMIZED_VERT:
+         return _ecore_x_atom_net_wm_state_maximized_vert;
+      case ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ:
+         return _ecore_x_atom_net_wm_state_maximized_horz;
+      case ECORE_X_WINDOW_STATE_SHADED:
+         return _ecore_x_atom_net_wm_state_shaded;
+      case ECORE_X_WINDOW_STATE_SKIP_TASKBAR:
+         return _ecore_x_atom_net_wm_state_skip_taskbar;
+      case ECORE_X_WINDOW_STATE_SKIP_PAGER:
+         return _ecore_x_atom_net_wm_state_skip_pager;
+      case ECORE_X_WINDOW_STATE_HIDDEN:
+         return _ecore_x_atom_net_wm_state_skip_pager;
+      case ECORE_X_WINDOW_STATE_FULLSCREEN:
+         return _ecore_x_atom_net_wm_state_fullscreen;
+      case ECORE_X_WINDOW_STATE_ABOVE:
+         return _ecore_x_atom_net_wm_state_above;
+      case ECORE_X_WINDOW_STATE_BELOW:
+         return _ecore_x_atom_net_wm_state_below;
+      default:
+         return 0;
+   }
+}
+
+/**
+ * Set a state for a window
+ * @param win The Window whose properties will be changed
+ * @param s The state to be set for this window
+ *
+ * Adds the state to the window's properties if not already included.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_prop_state_set(Ecore_X_Window win, Ecore_X_Window_State s)
+{
+   int            num = 0, i;
+   unsigned char  *oldset = NULL;
+   unsigned char  *newset = NULL;
+   Ecore_X_Atom   state = _ecore_x_window_prop_state_atom_get(s);
+
+   ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_state,
+                                    XA_ATOM, 32, &oldset, &num);
+   
+   newset = malloc(sizeof(Ecore_X_Atom) * (num + 1));
+   
+   for (i = 0; i < num; ++i)
+   {
+      if (oldset[i] == state)
+      {
+         XFree(oldset);
+         free(newset);
+         return;
+      }
+      
+      newset[i] = oldset[i];
+   }
+   
+   newset[i] = state;
+   
+   ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_state,
+                                    XA_ATOM, 32, newset, num + 1);
+   XFree(oldset);
+   free(newset);
+}
+
+/**
+ * Check if a state is set for a window.
+ * @param win The window to be checked
+ * @param s The state whose state will be checked
+ * @return 1 if the state has been set for this window, 0 otherwise.
+ *
+ * This function will look up the window's properties to determine
+ * if a particular state is set for that window.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+int
+ecore_x_window_prop_state_isset(Ecore_X_Window win, Ecore_X_Window_State s)
+{
+   int            num, i;
+   unsigned char  *data;
+   Ecore_X_Atom   state = _ecore_x_window_prop_state_atom_get(s);
+
+   if (!ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_state,
+                                         XA_ATOM, 32, &data, &num))
+   {
+      XFree(data);
+      return 0;
+   }
+
+   for (i = 0; i < num; ++i)
+   {
+      if(data[i] == state)
+      {
+         XFree(data);
+         return 1;
+      }
+   }
+
+   return 0;
+}
+
+/**
+ * Remove the specified state from a window.
+ * @param win The window whose properties will be changed
+ * @param s The state to be deleted from the window's properties
+ *
+ * Checks if the specified state is set for the window, and if so, deletes
+ * that state from the window's properties.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_prop_state_unset(Ecore_X_Window win, Ecore_X_Window_State s)
+{
+   int            num = 0, i, j = 0;
+   unsigned char  *oldset = NULL;
+   unsigned char  *newset = NULL;
+   Ecore_X_Atom   state = _ecore_x_window_prop_state_atom_get(s);
+
+   if (!ecore_x_window_prop_state_isset(win, s)) {
+      return;
+   }
+   
+   ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_state,
+                                    XA_ATOM, 32, &oldset, &num);
+   if(num > 1)
+   {
+      newset = calloc(sizeof(Ecore_X_Atom), num - 1);
+      for (i = 0; i < num; ++i)
+         if (oldset[i] != state)
+            newset[j++] = oldset[i];
+   }
+
+   ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_state,
+                                    XA_ATOM, 32, newset, j);
+   XFree(oldset);
+   free(newset);
 }
 
 /**
@@ -933,3 +1079,4 @@ ecore_x_window_prop_window_type_normal_set(Ecore_X_Window win)
 {
    ecore_x_window_prop_window_type_set(win, _ecore_x_atom_net_wm_window_type_normal);
 }
+

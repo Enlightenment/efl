@@ -503,6 +503,43 @@ typedef enum _Ecore_X_Window_Input_Mode {
 	ECORE_X_WINDOW_INPUT_MODE_ACTIVE_GLOBAL
 } Ecore_X_Window_Input_Mode;
 
+typedef enum _Ecore_X_Window_State {
+    /** The window is a modal dialog box. */
+    ECORE_X_WINDOW_STATE_MODAL,
+
+    /** The window manager should keep the window's position fixed
+     * even if the virtual desktop scrolls. */
+    ECORE_X_WINDOW_STATE_STICKY,
+
+    /** The window has the maximum vertical size. */
+    ECORE_X_WINDOW_STATE_MAXIMIZED_VERT,
+
+    /** The window has the maximum horizontal size. */
+    ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ,
+
+    /** The window is shaded. */
+    ECORE_X_WINDOW_STATE_SHADED,
+
+    /** The window should not be included in the taskbar. */
+    ECORE_X_WINDOW_STATE_SKIP_TASKBAR,
+
+    /** The window should not be included in the pager. */
+    ECORE_X_WINDOW_STATE_SKIP_PAGER,
+
+    /** The window is invisible (i.e. minimized/iconified) */
+    ECORE_X_WINDOW_STATE_HIDDEN,
+
+    /** The window should fill the entire screen and have no
+     * window border/decorations */
+    ECORE_X_WINDOW_STATE_FULLSCREEN,
+
+    /* The following are not documented because they are not
+     * intended for use in applications. */
+    ECORE_X_WINDOW_STATE_ABOVE,
+    ECORE_X_WINDOW_STATE_BELOW
+
+} Ecore_X_Window_State;
+
 int              ecore_x_init(const char *name);
 int              ecore_x_shutdown(void);       
 Ecore_X_Display *ecore_x_display_get(void);
@@ -574,6 +611,9 @@ void             ecore_x_window_prop_window_type_utility_set(Ecore_X_Window win)
 void             ecore_x_window_prop_window_type_splash_set(Ecore_X_Window win);
 void             ecore_x_window_prop_window_type_dialog_set(Ecore_X_Window win);
 void             ecore_x_window_prop_window_type_normal_set(Ecore_X_Window win);
+void             ecore_x_window_prop_state_set(Ecore_X_Window win, Ecore_X_Window_State s);
+int              ecore_x_window_prop_state_isset(Ecore_X_Window win, Ecore_X_Window_State s);
+void             ecore_x_window_prop_state_unset(Ecore_X_Window win, Ecore_X_Window_State s);
 
 void             ecore_x_window_shape_mask_set(Ecore_X_Window win, Ecore_X_Pixmap mask);
        
