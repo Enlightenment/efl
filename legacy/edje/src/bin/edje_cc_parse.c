@@ -148,18 +148,18 @@ static char *
 perform_math (char *input)
 {
    char buf[256];
-   int res;
+   double res;
 
    /* FIXME
-    * This is a bad hack, we're just assuming that the user wants to
-    * use fixed point arithmetic here :O
+    * Always apply floating-point arithmetic.
+    * Does this cause problems for integer parameters?
     *
     * What we should do is, loop over the string and figure out whether
     * there are floating point operands, too and then switch to
     * floating point math.
     */
-   res = my_atoi (input);
-   snprintf (buf, sizeof (buf), "%i", res);
+   res = my_atof (input);
+   snprintf (buf, sizeof (buf), "%lf", res);
 
    return strdup (buf);
 }
