@@ -525,9 +525,12 @@ _edje_file_del(Edje *ed)
 	     evas_object_del(rp->object);
 	     if (rp->swallowed_object)
 	       {
+		  evas_object_smart_member_del(rp->swallowed_object);
 		  evas_object_event_callback_del(rp->swallowed_object,
 						 EVAS_CALLBACK_FREE,
 						 _edje_object_part_swallow_free_cb);
+		  evas_object_clip_unset(rp->swallowed_object);
+		  rp->swallowed_object = NULL;
 /* I think it would be better swallowed objects dont get deleted */
 /*		  evas_object_del(rp->swallowed_object);*/
 	       }
