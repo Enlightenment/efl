@@ -114,24 +114,21 @@ AC_ARG_WITH(qtdir,
 AC_ARG_WITH(freetype-config,
 [  --with-freetype-config=FREETYPE_CONFIG    use freetype-config specified ],
 [ 
-  PROG_CONFIG=$withval;
-  echo "using "$PROG_CONFIG" for freetype-config";
+  FREETYPE_CONFIG=$withval;
+  echo "using "$FREETYPE_CONFIG" for freetype-config";
 ],[
  PROG="freetype-config";
- AC_PATH_PROG(PROG_CONFIG, $PROG, "", $PATH)
+ AC_PATH_PROG(FREETYPE_CONFIG, $PROG, "", $PATH)
 ])
-if [ test -n "$FREETYPE_CONFIG" ]; then
-  PROG_CONFIG=$FREETYPE_CONFIG;
-fi
-if [ test -z "$PROG_CONFIG" ]; then
+if [ test -z "$FREETYPE_CONFIG" ]; then
   echo $PROG " is not in your \$PATH. Please ensure it is.";
   echo "You may need to install the librarya and/or development packages";
   echo "that contain this configure-script.";
   echo "FATAL ERROR. ABORT.";
   exit -1;
 fi
-freetype_cflags=`$PROG_CONFIG --cflags`
-freetype_libs=`$PROG_CONFIG --libs`
+freetype_cflags=`$FREETYPE_CONFIG --cflags`
+freetype_libs=`$FREETYPE_CONFIG --libs`
 
 #####################################################################
 ## Engines

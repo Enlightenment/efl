@@ -334,18 +334,15 @@ ecore_evas_libs="";
 
 evas_cflags="";
 evas_libs="";
-
-
 AC_ARG_WITH(evas-config,
 [  --with-evas-config=EVAS_CONFIG    use evas-config specified ],
 [
-  PROG_CONFIG=$withval;
-  echo "using "$PROG_CONFIG" for evas-config";
+  EVAS_CONFIG=$withval;
+  echo "using "$EVAS_CONFIG" for evas-config";
 ],[
   PROG="evas-config";
-  AC_PATH_PROG(PROG_CONFIG, $PROG, "", $PATH)
+  AC_PATH_PROG(EVAS_CONFIG, $PROG, "", $PATH)
 ])
-if [ test -z "$EVAS_CONFIG" ]; then EVAS_CONFIG=$PROG_CONFIG; fi
 
 have_ecore_evas="no"
 
