@@ -219,6 +219,7 @@ ecore_add_xid(Window win, int x, int y, int w, int h, int depth, Window parent)
   xid->children_num = 0;
   xid->children = NULL;
   xid->gravity = ecore_window_get_gravity(win);
+  xid->coords_invalid = 0;
   xid->bw = 0;
   xid->grab_button_auto_replay = NULL;
   XSaveContext(disp, xid->win, xid_context, (XPointer) xid);
@@ -282,6 +283,7 @@ ecore_validate_xid(Window win)
       xid->mouse_in = 0;
       xid->gravity = att.win_gravity;
       xid->bw = att.border_width;
+      xid->coords_invalid = 0;
       xid->grab_button_auto_replay = NULL;
       XSaveContext(disp, xid->win, xid_context, (XPointer) xid);
       ecore_add_child(xid->parent, win);

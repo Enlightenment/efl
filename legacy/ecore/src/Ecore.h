@@ -43,30 +43,30 @@
         if (!atom) (atom) = ecore_atom_get(name);
 #define MEMCPY(src, dst, type, num) \
         memcpy(dst, src, sizeof(type) * (num))
-#define NEW(dat, num) \
-        malloc(sizeof(dat) * (num))
-#define ZERO(ptr, dat, num) \
-        memset((ptr), 0, sizeof(dat) * (num))
+#define NEW(type, num) \
+        malloc(sizeof(type) * (num))
+#define ZERO(ptr, type, num) \
+        memset((ptr), 0, sizeof(type) * (num))
 #define NEW_PTR(num) \
         malloc(sizeof(void *) * (num))
-#define FREE(dat) \
+#define FREE(ptr) \
         { \
-                free(dat); \
-                (dat) = NULL; \
+                free(ptr); \
+                (ptr) = NULL; \
         }
-#define IF_FREE(dat) \
-        {if (dat) FREE(dat);}
-#define REALLOC(dat, type, num) \
+#define IF_FREE(ptr) \
+        {if (ptr) FREE(ptr);}
+#define REALLOC(ptr, type, num) \
         { \
-	        if ((dat) && (num == 0)) {free(dat); dat = NULL;} \
-                else if (dat) dat = realloc((dat), sizeof(type) * (num)); \
-                else dat = malloc(sizeof(type) * (num)); \
+	        if ((ptr) && (num == 0)) {free(ptr); ptr = NULL;} \
+                else if (ptr) ptr = realloc((ptr), sizeof(type) * (num)); \
+                else ptr = malloc(sizeof(type) * (num)); \
         }
-#define REALLOC_PTR(dat, num) \
+#define REALLOC_PTR(ptr, num) \
         { \
-	        if ((dat) && (num == 0)) {free(dat); dat = NULL;} \
-                else if (dat) dat = realloc(dat, sizeof(void *) * (num)); \
-                else dat = malloc(sizeof(void *) * (num)); \
+	        if ((ptr) && (num == 0)) {free(ptr); ptr = NULL;} \
+                else if (ptr) ptr = realloc(ptr, sizeof(void *) * (num)); \
+                else ptr = malloc(sizeof(void *) * (num)); \
         }
 
 #define START_LIST_DEL(type, base, cmp) \

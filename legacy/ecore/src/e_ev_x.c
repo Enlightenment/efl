@@ -106,7 +106,8 @@ ecore_event_x_init(void)
   event_translator[SelectionNotify] = ecore_event_x_handle_selection_notify;
   event_translator[SelectionClear] = ecore_event_x_handle_selection_clear;
   event_translator[SelectionRequest] = ecore_event_x_handle_selection_request;
-  event_translator[shape_event_id] = ecore_event_x_handle_shape_change;
+  if (shape_event_id > SelectionRequest)
+     event_translator[shape_event_id] = ecore_event_x_handle_shape_change;
 
   lock_mask_scroll = ecore_lock_mask_scroll_get();
   lock_mask_num = ecore_lock_mask_num_get();
