@@ -23,6 +23,28 @@ AC_CHECK_HEADER(jpeglib.h,, AC_MSG_ERROR("Cannot find jpeglib.h. Make sure your 
 
 AC_CHECK_HEADERS(netinet/in.h)
 
+case "$host_os" in
+	mingw|mingw32)
+		winsock_libs="-lwsock32"
+		;;
+esac
+
+AC_SUBST(winsock_libs)
+
+AC_CHECK_HEADER(fnmatch.h,, AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file]))
+
+AC_CHECK_FUNCS(fnmatch, res=yes, res=no)
+if test "x$res" = "xno"; then
+	AC_CHECK_LIB(fnmatch, fnmatch, res=yes, res=no)
+	if test "x$res" = "xno"; then
+		AC_MSG_ERROR([Cannot find fnmatch() in neither libc nor libfnmatch])
+	else
+		fnmatch_libs="-lfnmatch"
+	fi
+fi
+
+AC_SUBST(fnmatch_libs)
+
 dnl These are needed for fmemopen/open_memstream
 AC_DEFINE(_GNU_SOURCE, , [Enable GNU extensions])
 AC_DEFINE(__USE_GNU, , [Enable GNU extensions])

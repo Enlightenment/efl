@@ -19,6 +19,6 @@ eet_data.c \
 eet_memfile.c \
 Eet_private.h
 
-libeet_la_LIBADD       = $(LDFLAGS) -lz -ljpeg
+libeet_la_LIBADD       = $(LDFLAGS) -lz -ljpeg @fnmatch_libs@ @winsock_libs@
 libeet_la_DEPENDENCIES = $(top_builddir)/config.h
 libeet_la_LDFLAGS      = -version-info 9:9:9
