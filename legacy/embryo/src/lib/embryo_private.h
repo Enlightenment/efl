@@ -245,12 +245,11 @@ struct _Embryo_Program
    int            run_count;
 };
 
-#pragma pack(push, 1)
 struct _Embryo_Func_Stub
 {
    int  address;
    char name[sEXPMAX+1];
-};
+} __attribute__((packed));
 
 struct _Embryo_Header
 {
@@ -271,7 +270,7 @@ struct _Embryo_Header
    int pubvars; /* the "public variables" table */
    int tags; /* the "public tagnames" table */
    int nametable; /* name table, file version 7 only */
-};
+} __attribute__((packed));
 
 void _embryo_fp_init(Embryo_Program *ep);
     
