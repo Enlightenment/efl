@@ -6,6 +6,7 @@ static void _ecore_x_event_free_window_prop_name_class_change(void *data, void *
 static void _ecore_x_event_free_window_prop_title_change(void *data, void *ev);
 static void _ecore_x_event_free_window_prop_visible_title_change(void *data, void *ev);
 static void _ecore_x_event_free_window_prop_icon_name_change(void *data, void *ev);
+static void _ecore_x_event_free_window_prop_visible_icon_name_change(void *data, void *ev);
 static void _ecore_x_event_free_key_down(void *data, void *ev);
 static void _ecore_x_event_free_key_up(void *data, void *ev);
 static void _ecore_x_event_free_generic(void *data, void *ev);
@@ -59,6 +60,16 @@ static void
 _ecore_x_event_free_window_prop_icon_name_change(void *data, void *ev)
 {
    Ecore_X_Event_Window_Prop_Icon_Name_Change *e;
+   
+   e = ev;
+   if (e->name) free(e->name);
+   free(e);
+}
+
+static void
+_ecore_x_event_free_window_prop_visible_icon_name_change(void *data, void *ev)
+{
+   Ecore_X_Event_Window_Prop_Visible_Icon_Name_Change *e;
    
    e = ev;
    if (e->name) free(e->name);
@@ -751,6 +762,15 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
 	if (!e) return;
 	e->name = ecore_x_window_prop_icon_name_get(xevent->xproperty.window);
 	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_ICON_NAME_CHANGE, e, _ecore_x_event_free_window_prop_icon_name_change, NULL);
+     }
+   else if (xevent->xproperty.atom == _ecore_x_atom_net_wm_visible_icon_name)
+     {
+	Ecore_X_Event_Window_Prop_Visible_Icon_Name_Change *e;
+	
+	e = calloc(1, sizeof(Ecore_X_Event_Window_Prop_Visible_Icon_Name_Change));
+	if (!e) return;
+	e->name = ecore_x_window_prop_visible_icon_name_get(xevent->xproperty.window);
+	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_VISIBLE_ICON_NAME_CHANGE, e, _ecore_x_event_free_window_prop_visible_icon_name_change, NULL);
      }
    else 
    {

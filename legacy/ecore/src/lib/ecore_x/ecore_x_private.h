@@ -68,6 +68,7 @@ extern Atom     _ecore_x_atom_net_wm_state_below;
 extern Atom     _ecore_x_atom_net_wm_name;
 extern Atom     _ecore_x_atom_net_wm_visible_name;
 extern Atom     _ecore_x_atom_net_wm_icon_name;
+extern Atom     _ecore_x_atom_net_wm_visible_icon_name;
 extern Atom     _ecore_x_atom_net_wm_desktop;
 extern Atom     _ecore_x_atom_net_wm_window_type;
 extern Atom     _ecore_x_atom_net_wm_state;

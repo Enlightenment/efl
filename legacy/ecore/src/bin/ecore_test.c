@@ -443,6 +443,19 @@ handler_x_window_prop_icon_name_change(void *data, int type, void *event)
 }
 
 int
+handler_x_window_prop_visible_icon_name_change(void *data, int type, void *event)
+{
+   Ecore_X_Event_Window_Prop_Visible_Icon_Name_Change *e;
+   
+   e = event;
+   if (e->name)
+     printf("Visible icon name change to \"%s\"\n", e->name);
+   else
+     printf("Visible icon name deleted\n");
+   return 1;
+}
+
+int
 handler_x_window_prop_name_class_change(void *data, int type, void *event)
 {
    Ecore_X_Event_Window_Prop_Name_Class_Change *e;
@@ -483,6 +496,15 @@ setup_ecore_x_test(void)
      }
    printf("Icon Name: %s\n", tmp);
    free(tmp);
+   tmp = ecore_x_window_prop_visible_icon_name_get(win);
+   if (!tmp)
+     {
+        printf("No visible icon name, setting it to Ecore\n");
+	ecore_x_window_prop_visible_icon_name_set(win, "Ecore");
+        tmp = ecore_x_window_prop_visible_icon_name_get(win);
+     }
+   printf("Visible icon Name: %s\n", tmp);
+   free(tmp);
    ecore_x_window_prop_name_class_set(win, "ecore_test", "main");
    ecore_x_window_prop_protocol_set(win, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 1);
    ecore_x_window_show(win);
@@ -504,6 +526,7 @@ setup_ecore_x_test(void)
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_TITLE_CHANGE, handler_x_window_prop_title_change, NULL);
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_VISIBLE_TITLE_CHANGE, handler_x_window_prop_visible_title_change, NULL);
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_ICON_NAME_CHANGE, handler_x_window_prop_icon_name_change, NULL);
+   ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_VISIBLE_ICON_NAME_CHANGE, handler_x_window_prop_visible_icon_name_change, NULL);
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_NAME_CLASS_CHANGE, handler_x_window_prop_name_class_change, NULL);
 }
 #endif
