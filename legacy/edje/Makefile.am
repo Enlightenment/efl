@@ -24,9 +24,7 @@ dist-hook:
 	if test -d data; then \
 	  mkdir $(distdir)/data; \
 	  for file in data/*; do \
-	    if test -f $$file; then \
-	      cp -p $$file $(distdir)/data; \
-	    fi \
+	    cp -pR $$file $(distdir)/data; \
 	  done \
 	fi
 

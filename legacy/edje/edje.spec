@@ -17,6 +17,10 @@ BuildRequires: libjpeg-devel
 BuildRequires: zlib-devel
 Requires: libjpeg
 Requires: zlib
+Requires: ecore
+Requires: evas
+Requires: eet
+Requires: imlib2
 
 Docdir: %{prefix}/doc
 

@@ -15,13 +15,15 @@ INCLUDES = \
 bin_PROGRAMS = edje edje_cc
 
 edje_SOURCES = \
-edje_main.c
+edje_main.c \
+edje.h
 
 edje_LDADD = \
 $(top_builddir)/src/lib/libedje.la \
 @imlib2_libs@
 
-edje_LDFLAGS = -static
+#edje_LDFLAGS = -static
+edje_LDFLAGS =
 
 edje_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 
