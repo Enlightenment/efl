@@ -292,10 +292,17 @@ evas_engine_gl_x11_output_redraws_rect_add(void *data, int x, int y, int w, int 
    /* smple bounding box */
    if (!re->win->draw.redraw)
      {
+#if 0	
 	re->win->draw.x1 = x;
 	re->win->draw.y1 = y;
 	re->win->draw.x2 = x + w - 1;
 	re->win->draw.y2 = y + h - 1;
+#else
+	re->win->draw.x1 = 0;
+	re->win->draw.y1 = 0;
+	re->win->draw.x2 = re->win->w - 1;
+	re->win->draw.y2 = re->win->h - 1;
+#endif	
      }
    else
      {
@@ -371,15 +378,16 @@ evas_engine_gl_x11_output_flush(void *data)
    evas_engine_gl_x11_window_use(re->win);
 
 /* SLOW AS ALL HELL! */
-/*   
+#if 0
    evas_gl_common_swap_rect(re->win->gl_context, 
 			    re->win->draw.x1, re->win->draw.y1,
 			    re->win->draw.x2 - re->win->draw.x1 + 1,
 			    re->win->draw.y2 - re->win->draw.y1 + 1);
- */
+#else
    glXSwapBuffers(re->win->disp, re->win->win);   
-//   glFlush();
-//   glXWaitGL();
+#endif   
+   glFlush();
+   glXWaitGL();
 //   XSync(re->win->disp, False);
 //   printf("SYNC! %i\n", fr++);
 }
