@@ -88,3 +88,5 @@ edje_ls_LDFLAGS =
 edje_ls_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 
 EXTRA_SCRIPTS = edje_recc
+
+EXTRA_DIST = edje_recc
