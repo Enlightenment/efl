@@ -608,6 +608,7 @@ ecore_x_window_prop_xy_set(Ecore_X_Window win, int x, int y)
    hints.flags |= PPosition | USPosition;
    hints.x = x;
    hints.y = y;
+   XMoveWindow(_ecore_x_disp, win, x, y);
    XSetWMNormalHints(_ecore_x_disp, win, &hints);
 }
 
