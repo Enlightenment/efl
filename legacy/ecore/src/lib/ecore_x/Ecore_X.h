@@ -75,6 +75,7 @@ extern EAPI Ecore_X_Atom ECORE_X_DND_ACTION_PRIVATE;
 typedef enum _Ecore_X_Selection {
    ECORE_X_SELECTION_PRIMARY,
    ECORE_X_SELECTION_SECONDARY,
+   ECORE_X_SELECTION_XDND,
    ECORE_X_SELECTION_CLIPBOARD
 } Ecore_X_Selection;
 
@@ -809,6 +810,7 @@ EAPI void             ecore_x_selection_secondary_request(Ecore_X_Window w, char
 EAPI void             ecore_x_selection_clipboard_request(Ecore_X_Window w, char *target);
 EAPI void             ecore_x_selection_primary_request_data_get(void **buf, int *len);
 EAPI void             ecore_x_selection_secondary_request_data_get(void **buf, int *len);
+EAPI void             ecore_x_selection_xdnd_request_data_get(void **buf, int *len);
 EAPI void             ecore_x_selection_clipboard_request_data_get(void **buf, int *len);
 EAPI void             ecore_x_selection_converter_add(char *target, int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret));
 EAPI void             ecore_x_selection_converter_atom_add(Ecore_X_Atom target, int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret));
@@ -817,7 +819,9 @@ EAPI void             ecore_x_selection_converter_atom_del(Ecore_X_Atom target);
 
 EAPI void             ecore_x_dnd_aware_set(Ecore_X_Window win, int on);
 EAPI int              ecore_x_dnd_version_get(Ecore_X_Window win);
-EAPI int              ecore_x_dnd_begin (Ecore_X_Window source, unsigned char *data, int size);
+EAPI int              ecore_x_dnd_type_isset(Ecore_X_Window win, const char *type);
+EAPI void             ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, int on);
+EAPI int              ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size);
 EAPI void             ecore_x_dnd_send_status(int will_accept, int suppress, Ecore_X_Rectangle rectangle, Ecore_X_Atom action);
                  
 EAPI Ecore_X_Window   ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h);

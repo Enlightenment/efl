@@ -7,7 +7,7 @@
 #include "Ecore_X_Atoms.h"
 
 static Ecore_X_Selection_Data selections[3];
-static Ecore_X_Selection_Data request_data[3];
+static Ecore_X_Selection_Data request_data[4];
 static Ecore_X_Selection_Converter *converters = NULL;
 
 static int _ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret);
@@ -59,8 +59,10 @@ _ecore_x_selection_request_data_get(Ecore_X_Atom selection, void **buf, int *len
       i = 0;
    else if (selection == ECORE_X_ATOM_SELECTION_SECONDARY)
       i = 1;
-   else if (selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
+   else if (selection == ECORE_X_ATOM_SELECTION_XDND)
       i = 2;
+   else if (selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
+      i = 3;
    else
       return;
 
@@ -109,6 +111,21 @@ ecore_x_selection_secondary_request_data_get(void **buf, int *len)
 }
 
 /**
+ * Fetch the data returned by a XDND selection request.
+ * @param buf A pointer to hold the selection data
+ * @param len The size of the data
+ *
+ * Get the converted data from a previous XDND selection
+ * request. The buffer must be freed when done with.
+ */
+void
+ecore_x_selection_xdnd_request_data_get(void **buf, int *len)
+{
+   _ecore_x_selection_request_data_get(ECORE_X_ATOM_SELECTION_XDND,
+                                       buf, len);
+}
+
+/**
  * Fetch the data returned by a CLIPBOARD selection request.
  * @param buf A pointer to hold the selection data
  * @param len The size of the data
@@ -131,8 +148,10 @@ _ecore_x_selection_request_data_set(Ecore_X_Selection_Data data)
       i = 0;
    else if (data.selection == ECORE_X_ATOM_SELECTION_SECONDARY)
       i = 1;
-   else if (data.selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
+   else if (data.selection == ECORE_X_ATOM_SELECTION_XDND)
       i = 2;
+   else if (data.selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
+      i = 3;
    else
       return;
 
