@@ -242,9 +242,9 @@ if test "x$have_ecore_x" = "xyes"; then
   BUILD_ECORE_X=1
   x_dir="/usr/X11R6";
   x_includes="";
-  x_cflags="-I"$x_dir"/include"
-  x_libs="-L"$x_dir"/lib -lX11 -lXext"
-  x_ldflags="";
+  x_cflags="-I"$x_dir"/include";
+  x_libs="-L"$x_dir"/lib -lX11 -lXext";
+  x_ldflags=" "$ecore_x_libs;
   ecore_x_libs="-lecore_x";
 else
   AM_CONDITIONAL(BUILD_ECORE_X, false)
@@ -257,6 +257,33 @@ AC_SUBST(x_cflags)
 AC_SUBST(x_includes)
 AC_SUBST(x_ldflags)
 AC_SUBST(x_libs)
+
+Xcursor_libs=""
+Xcursor_cflags=""
+use_Xcursor="no"
+AC_CHECK_HEADER(X11/Xcursor/Xcursor.h, [
+    AC_CHECK_LIB(Xcursor, XcursorImageLoadCursor, [
+        AC_DEFINE(ECORE_XCURSOR, 1, [Build support for Xcursor])
+        Xcursor_cflags=""
+        Xcursor_libs="-IXcursor"
+        use_Xcursor="yes"
+      ], [
+        Xcursor_cflags=""
+        Xcursor_libs=""
+        use_Xcursor="no"
+      ]
+    )
+  ], [
+    Xcursor_cflags=""
+    Xcursor_libs=""
+    use_Xcursor="no"
+  ], [
+    #include <X11/Xlib.h>
+  ]
+)
+
+AC_SUBST(Xcursor_cflags)
+AC_SUBST(Xcursor_libs)
 
 AC_SUBST(ecore_x_cflags)
 AC_SUBST(ecore_x_libs)
@@ -684,7 +711,7 @@ echo
 echo "  Ecore_Job...............: $have_ecore_job"
 echo "  Ecore_Con...............: $have_ecore_con (OpenSSL: $use_openssl)"
 echo "  Ecore_Txt...............: $have_ecore_txt"
-echo "  Ecore_X.................: $have_ecore_x"
+echo "  Ecore_X.................: $have_ecore_x (Xcursor: $use_Xcursor)"
 echo "  Ecore_FB................: $have_ecore_fb"
 echo "  Ecore_Evas..............: $have_ecore_evas"
 echo "  Ecore_Evas GL Support...: $have_ecore_evas_gl"

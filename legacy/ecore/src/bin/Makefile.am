@@ -80,13 +80,13 @@ ecore_test.c
 
 ecore_test_LDADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
+$(ECORE_X_LIB) \
+$(ECORE_TXT_LIB) \
 $(ECORE_JOB_LIB) \
 $(ECORE_FB_LIB) \
-$(ECORE_X_LIB) \
 $(ECORE_EVAS_LIB) \
 $(ECORE_CON_LIB) \
 $(ECORE_IPC_LIB) \
-$(ECORE_TXT_LIB) \
 -lm @iconv_libs@
 
 ecore_test_CFLAGS = \
@@ -95,13 +95,13 @@ $(INCLUDES)
 
 ecore_test_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la \
+$(ECORE_X_LIB) \
+$(ECORE_TXT_LIB) \
 $(ECORE_JOB_LIB) \
 $(ECORE_FB_LIB) \
-$(ECORE_X_LIB) \
 $(ECORE_EVAS_LIB) \
 $(ECORE_CON_LIB) \
-$(ECORE_IPC_LIB) \
-$(ECORE_TXT_LIB)
+$(ECORE_IPC_LIB)
 
 ecore_evas_test_SOURCES = \
 ecore_evas_test.c \
@@ -112,13 +112,13 @@ ecore_evas_test.h
 
 ecore_evas_test_LDADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
+$(ECORE_X_LIB) \
+$(ECORE_TXT_LIB) \
 $(ECORE_JOB_LIB) \
 $(ECORE_FB_LIB) \
-$(ECORE_X_LIB) \
 $(ECORE_EVAS_LIB) \
 $(ECORE_CON_LIB) \
 $(ECORE_IPC_LIB) \
-$(ECORE_TXT_LIB) \
 -lm @iconv_libs@
 
 ecore_evas_test_CFLAGS = \

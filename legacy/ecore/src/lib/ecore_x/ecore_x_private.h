@@ -1,6 +1,8 @@
 #ifndef _ECORE_X_PRIVATE_H
 #define _ECORE_X_PRIVATE_H
 
+#include "config.h"
+
 #include <sys/param.h>
 #ifndef MAXHOSTNAMELEN
 #define MAXHOSTNAMELEN 256
@@ -15,6 +17,9 @@
 #include <X11/keysymdef.h>
 #include <X11/extensions/XShm.h>
 #include <X11/extensions/shape.h>
+#ifdef ECORE_XCURSOR
+#include <X11/Xcursor/Xcursor.h>
+#endif
 
 #include "Ecore_X.h"
 
@@ -106,6 +111,7 @@ extern Time     _ecore_x_event_last_time;
 extern Window   _ecore_x_event_last_win;
 extern int      _ecore_x_event_last_root_x;
 extern int      _ecore_x_event_last_root_y;
+extern int      _ecore_x_xcursor;
 
 extern Ecore_X_Atom     _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
 
