@@ -333,7 +333,6 @@ fn_text(double v, double val, int no)
      };
    static char  *fonts[] =
      {
-/*	
 	"notepad",
 	"grunge",
 	"morpheus",
@@ -342,19 +341,9 @@ fn_text(double v, double val, int no)
 	"grunge",
 	"morpheus",
 	"notepad"
- */
-	"andover",
-	"andover",
-	"andover",
-	"andover",
-	"andover",
-	"andover",
-	"andover",
-	"andover"
      };
    static int sizes[] =
      {
-/*	
 	16,
 	28,
 	34,
@@ -363,15 +352,6 @@ fn_text(double v, double val, int no)
 	8,
 	20,
 	34
- */
-	64,
-	64,
-	64,
-	64,
-	64,
-	64,
-	64,
-	64
      };
    static double coords[] =
      {
