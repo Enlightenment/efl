@@ -105,7 +105,6 @@ struct _Edje_File
 struct _Edje_Image_Directory
 {
    Evas_List *entries; /* a list of Edje_Image_Directory_Entry */
-   int        references;
 };
 
 struct _Edje_Image_Directory_Entry
@@ -344,4 +343,15 @@ struct _Edje_Calc_Params
    } border;
 };
 
+extern Eet_Data_Descriptor *_edje_edd_edje_file;
+extern Eet_Data_Descriptor *_edje_edd_edje_image_directory;
+extern Eet_Data_Descriptor *_edje_edd_edje_image_directory_entry;
+extern Eet_Data_Descriptor *_edje_edd_edje_program;
+extern Eet_Data_Descriptor *_edje_edd_edje_program_target;
+extern Eet_Data_Descriptor *_edje_edd_edje_part_collection_directory;
+extern Eet_Data_Descriptor *_edje_edd_edje_part_collection_directory_entry;
+extern Eet_Data_Descriptor *_edje_edd_edje_part_collection;
+extern Eet_Data_Descriptor *_edje_edd_edje_part;
+extern Eet_Data_Descriptor *_edje_edd_edje_part_description;
+extern Eet_Data_Descriptor *_edje_edd_edje_part_image_id;
 #endif

@@ -63,7 +63,9 @@ main(int argc, char **argv)
 	main_help();
 	exit(-1);
      }
-   
+
+   edje_init();
+
    edje_file = mem_alloc(SZ(Edje_File));
    
    data_setup();   

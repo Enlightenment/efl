@@ -1,14 +1,20 @@
 #include "edje.h"
 
-double       start_time = 0.0;
-Ecore_Evas  *ecore_evas = NULL;
-Evas        *evas       = NULL;
-
 static int  main_start(int argc, char **argv);
 static void main_stop(void);
 static void main_resize(Ecore_Evas *ee);
 static int  main_signal_exit(void *data, int ev_type, void *ev);
 static void main_delete_request(Ecore_Evas *ee);
+
+void bg_setup(void);
+void bg_resize(double w, double h);
+
+void test_setup(char *file, char *name);
+void test_reize(double w, double h);
+    
+double       start_time = 0.0;
+Ecore_Evas  *ecore_evas = NULL;
+Evas        *evas       = NULL;
 
 static int
 main_start(int argc, char **argv)
@@ -60,7 +66,8 @@ main_resize(Ecore_Evas *ee)
    double w, h;
    
    evas_output_viewport_get(evas, NULL, NULL, &w, &h);
-   // FIXME: do something for resize
+   bg_resize(w, h);
+   test_reize(w, h);
 }
 
 static int
@@ -76,10 +83,61 @@ main_delete_request(Ecore_Evas *ee)
    ecore_main_loop_quit();
 }
 
+static Evas_Object *o_bg = NULL;
+
+void
+bg_setup(void)
+{
+   Evas_Object *o;
+   
+   o = evas_object_rectangle_add(evas);
+   evas_object_move(o, 0, 0);
+   evas_object_resize(o, 240, 320);
+   evas_object_layer_set(o, -999);
+   evas_object_color_set(o, 240, 240, 240, 255);
+   evas_object_show(o);   
+   o_bg = o;
+}
+
+void
+bg_resize(double w, double h)
+{
+   evas_object_resize(o_bg, w, h);
+}
+
+static Evas_Object *o_edje = NULL;
+
+void
+test_setup(char *file, char *name)
+{
+   Evas_Object *o;
+   
+   o = edje_add(evas);
+   edje_file_set(o, file, name);
+   evas_object_move(o, 10, 10);
+   evas_object_resize(o, 220, 300);
+   evas_object_show(o);
+   o_edje = o;
+}
+
+void
+test_reize(double w, double h)
+{
+   evas_object_move(o_edje, 10, 10);   
+   evas_object_resize(o_edje, w - 20, h - 20);
+}
+
 int
 main(int argc, char **argv)
 {   
    if (main_start(argc, argv) < 1) return -1;
+
+   edje_init();
+   
+   bg_setup();
+
+   /* FIXME: hard-coded. need to make this proper options later */
+   test_setup("./data/e_logo.eet", "test");
    
    ecore_main_loop_begin();
    

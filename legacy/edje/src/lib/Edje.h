@@ -10,7 +10,8 @@ extern "C" {
 /***************************************************************************/
 /* API here                                                                */
 /***************************************************************************/
-
+   
+   void         edje_init(void);
    Evas_Object *edje_add(Evas *evas);
    void         edje_file_set(Evas_Object *o, const char *file, const char *part);
        

@@ -1,6 +1,6 @@
 images {
-   image, "bg.png" LOSSY 90;
-   image, "e.png"  LOSSY 90;
+   image, "bg.png" LOSSY 98;
+   image, "e.png"  LOSSY 98;
 }
 
 collections {
@@ -30,7 +30,8 @@ collections {
 	    name,          "logo";
 	    description {
 	       state,    "default" 0.0;
-	       max, 64 64;
+	       max,      320 320;
+	       aspect,   1.0 1.0;
 	       rel1 {
 		  relative, 0.0  0.0;
 		  offset,   16   16;
@@ -45,7 +46,7 @@ collections {
 	    }
 	    description {
 	       state,    "clicked" 0.0;
-	       max,      64 64;
+	       max,      16 16;
 	       rel1 {
 		  relative, 0.0  0.0;
 		  offset,   16   16;

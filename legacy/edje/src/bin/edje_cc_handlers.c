@@ -369,6 +369,10 @@ ob_collections_group_parts_part_description(void)
    ed->clip_to_id = -1;
    ed->align.x = 0.5;
    ed->align.y = 0.5;
+   ed->min.w = 0;
+   ed->min.h = 0;
+   ed->max.w = -1;
+   ed->max.h = -1;
    ed->rel1.relative_x = 0.0;
    ed->rel1.relative_y = 0.0;
    ed->rel1.offset_x = 0;
