@@ -422,7 +422,7 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
 		  break;
 	       }
 	  }
-	else if (c1 >= orig_len || c2 == 0)
+	else if ((c1 > 0 && c1 >= orig_len) || c2 == 0)
 	  {
 	     buf[0] = 0;
 	     break;
