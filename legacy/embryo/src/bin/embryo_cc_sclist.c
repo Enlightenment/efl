@@ -239,7 +239,7 @@ adjustindex(char c)
 {
    stringpair         *cur;
 
-   assert(c >= 'A' && c <= 'Z' || c >= 'a' && c <= 'z' || c == '_');
+   assert((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '_');
    assert('A' < '_' && '_' < 'z');
 
    for (cur = substpair.next; cur != NULL && cur->first[0] != c;
@@ -270,7 +270,7 @@ find_subst(char *name, int length)
 
    assert(name != NULL);
    assert(length > 0);
-   assert(*name >= 'A' && *name <= 'Z' || *name >= 'a' && *name <= 'z'
+   assert((*name >= 'A' && *name <= 'Z') || (*name >= 'a' && *name <= 'z')
 	  || *name == '_');
    item = substindex[(int)*name - 'A'];
    if (item != NULL)
@@ -285,7 +285,7 @@ delete_subst(char *name, int length)
 
    assert(name != NULL);
    assert(length > 0);
-   assert(*name >= 'A' && *name <= 'Z' || *name >= 'a' && *name <= 'z'
+   assert((*name >= 'A' && *name <= 'Z') || (*name >= 'a' && *name <= 'z')
 	  || *name == '_');
    item = substindex[(int)*name - 'A'];
    if (item != NULL)

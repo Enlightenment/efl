@@ -130,7 +130,6 @@ exported_printf(Embryo_Program *ep, Embryo_Cell *params)
 static Embryo_Cell
 exported_rec(Embryo_Program *ep, Embryo_Cell *params)
 {
-   Embryo_Cell *cptr;
    Embryo_Function fn;
    Embryo_Cell ret, arg1, arg2;
    

@@ -67,7 +67,6 @@ static int          declargs(symbol * sym);
 static void         doarg(char *name, int ident, int offset,
 			  int tags[], int numtags,
 			  int fpublic, int fconst, arginfo * arg);
-static void         dump_referrers(symbol * root, FILE * log, char *sourcefile);
 static void         reduce_referrers(symbol * root);
 static int          testsymbols(symbol * root, int level,
 				int testlabs, int testconst);
@@ -581,11 +580,11 @@ initglobals(void)
    litmax = sDEF_LITMAX;	/* current size of the literal table */
    errnum = 0;			/* number of errors */
    warnnum = 0;			/* number of warnings */
-/* //  sc_debug=sCHKBOUNDS; /* by default: bounds checking+assertions */
+/* sc_debug=sCHKBOUNDS; by default: bounds checking+assertions */
    sc_debug = 0;		/* by default: no debug */
    charbits = 8;		/* a "char" is 8 bits */
    sc_packstr = FALSE;		/* strings are unpacked by default */
-/* //  sc_compress=TRUE;     /* compress output bytecodes */
+/* sc_compress=TRUE;     compress output bytecodes */
    sc_compress = FALSE;		/* compress output bytecodes */
    sc_needsemicolon = FALSE;	/* semicolon required to terminate
 				 * expressions? */
@@ -650,35 +649,6 @@ set_extension(char *filename, char *extension, int force)
      }
 #endif
 }
-
-static int
-toggle_option(char *optptr, int option)
-{
-   switch (*(optptr + 1))
-     {
-     case '\0':
-	option = !option;
-	break;
-     case '-':
-	option = FALSE;
-	break;
-     case '+':
-	option = TRUE;
-	break;
-     default:
-	about();
-     }				/* switch */
-   return option;
-}
-
-/* Parsing command line options is indirectly recursive: parseoptions()
- * calls parserespf() to handle options in a a response file and
- * parserespf() calls parseoptions() at its turn after having created
- * an "option list" from the contents of the file.
- */
-static void         parserespf(char *filename, char *iname,
-			       char *oname, char *ename,
-			       char *pname, char *rname);
 
 static void
 parseoptions(int argc, char **argv, char *iname, char *oname,
@@ -899,12 +869,6 @@ setconfig(char *root)
 	path[len + 1] = '\0';
 	insert_path(path);
      }				/* if */
-}
-
-static int
-waitkey(void)
-{
-   return TRUE;
 }
 
 static void
@@ -1423,7 +1387,7 @@ declloc(int fstatic)
 	 * of a global variable or to that of a local variable at a lower
 	 * level might indicate a bug.
 	 */
-	if ((sym = findloc(name)) != NULL && sym->compound != nestlevel
+	if (((sym = findloc(name)) != NULL && sym->compound != nestlevel)
 	    || findglb(name) != NULL)
 	   error(219, name);	/* variable shadows another symbol */
 	while (matchtoken('['))
@@ -2114,7 +2078,7 @@ operatoradjust(int opertok, symbol * sym, char *opername, int resulttag)
      }				/* switch */
 
    if (tags[0] == 0
-       && (opertok != '=' && tags[1] == 0 || opertok == '=' && resulttag == 0))
+       && ((opertok != '=' && tags[1] == 0) || (opertok == '=' && resulttag == 0)))
       error(64);		/* cannot change predefined operators */
 
    /* change the operator name */
@@ -2298,7 +2262,7 @@ funcstub(int native)
    if (native)
      {
 	if (tok == tPUBLIC || tok == tSTOCK || tok == tSTATIC ||
-	    tok == tSYMBOL && *str == PUBLIC_CHAR)
+	    (tok == tSYMBOL && *str == PUBLIC_CHAR))
 	   error(42);		/* invalid combination of class specifiers */
      }
    else
@@ -2426,7 +2390,7 @@ newfunc(char *firstname, int firsttag, int fpublic, int fstatic, int stock)
 	tag = (firsttag >= 0) ? firsttag : sc_addtag(NULL);
 	tok = lex(&val, &str);
 	assert(!fpublic);
-	if (tok == tNATIVE || tok == tPUBLIC && stock)
+	if (tok == tNATIVE || (tok == tPUBLIC && stock))
 	   error(42);		/* invalid combination of class specifiers */
 	if (tok == tOPERATOR)
 	  {
@@ -2798,7 +2762,7 @@ declargs(symbol * sym)
 		  error(10);	/* illegal function or declaration */
 	       }		/* switch */
 	  }
-	while (tok == '&' || tok == tLABEL || tok == tCONST || tok != tELLIPS && matchtoken(','));	/* more? */
+	while (tok == '&' || tok == tLABEL || tok == tCONST || (tok != tELLIPS && matchtoken(',')));	/* more? */
 	/* if the next token is not ",", it should be ")" */
 	needtoken(')');
      }				/* if */
