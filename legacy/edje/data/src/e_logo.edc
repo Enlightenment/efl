@@ -178,11 +178,7 @@ collections {
 		   new buf[100];
 		   
 		   snprintf(buf, sizeof(buf), "MESSAGE STRING ID: %i", id);
-		   for (new j = 0; j < (sizeof(str) - 1); j++)
-		     {
-			str[j] = getarg(2, j);
-			if (str[j] == 0) break;
-		     }
+		   snprintf(str, sizeof(str), "%s", getarg (2));
 		   emit(buf, str);
 		}
 	      else if (type == MSG_INT_SET)
