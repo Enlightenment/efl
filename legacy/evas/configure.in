@@ -416,13 +416,11 @@ if test "x$have_altivec" = "xyes"; then
      [
         altivec_libs="-laltivec"
         AC_DEFINE(BUILD_ALTIVEC)
-     ],
-     [
-        have_altivec=""
-     ])
+     ]
+   )
 fi
 
-if test "x$have_altivec" = "x"; then
+if test "x$have_altivec" = "xyes"; then
    AC_MSG_CHECKING(whether to use altivec compiler flag)
    if test $GCC = yes; then
       if echo "int main(){ return 0;}" | gcc -faltivec -E - > /dev/null 2>&1; then
