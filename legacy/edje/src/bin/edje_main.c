@@ -58,10 +58,14 @@ static Evas_Object *o_shadow = NULL;
 double       start_time = 0.0;
 Ecore_Evas  *ecore_evas = NULL;
 Evas        *evas       = NULL;
+int          startw     = 240;
+int          starth     = 320;
 
 static int
 main_start(int argc, char **argv)
 {
+   int mode = 0;
+   
    start_time = ecore_time_get();
    if (!ecore_init()) return -1;
    ecore_app_args_set(argc, (const char **)argv);
@@ -73,16 +77,35 @@ main_start(int argc, char **argv)
 
         for (i = 1; i < argc; i++)
           {
-             if (!strcmp(argv[i], "-gl"))
+	     if (((!strcmp(argv[i], "-g")) ||
+		  (!strcmp(argv[i], "-geometry")) ||
+		  (!strcmp(argv[i], "--geometry"))) && (i < (argc - 1)))
+	       {
+		  int n, w, h;
+		  char buf[16], buf2[16];
+		  
+		  n = sscanf(argv[i +1], "%10[^x]x%10s", buf, buf2);
+		  if (n == 2)
+		    {
+		       w = atoi(buf);
+		       h = atoi(buf2);
+		       startw = w;
+		       starth = h;
+		    }
+		  i++;
+	       }
+             else if (!strcmp(argv[i], "-gl"))
                {
-                  ecore_evas = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 240, 320);
-                  goto canvas_up;
+		  mode = 1;
                }
           }
      }
-   ecore_evas = ecore_evas_software_x11_new(NULL, 0,  0, 0, 240, 320);
+   if (mode == 0)
+     ecore_evas = ecore_evas_software_x11_new(NULL, 0,  0, 0, startw, starth);
+   else if (mode == 1)
+     ecore_evas = ecore_evas_gl_x11_new(NULL, 0, 0, 0, startw, starth);
 #else
-   ecore_evas = ecore_evas_fb_new(NULL, 270,  240, 320);
+   ecore_evas = ecore_evas_fb_new(NULL, 270,  startw, starth);
 #endif
    canvas_up:
    if (!ecore_evas) return -1;
@@ -149,7 +172,7 @@ bg_setup(void)
    
    o = evas_object_image_add(evas);
    evas_object_move(o, 0, 0);
-   evas_object_resize(o, 240, 320);
+   evas_object_resize(o, startw, starth);
    evas_object_layer_set(o, -999);
    evas_object_color_set(o, 255, 255, 255, 255);
    evas_object_image_file_set(o, DAT"data/test/images/bg.png", NULL);
@@ -162,12 +185,12 @@ bg_setup(void)
 
    o = evas_object_image_add(evas);
    evas_object_move(o, 0, 0);
-   evas_object_resize(o, 240, 320);
+   evas_object_resize(o, startw, starth);
    evas_object_layer_set(o, -999);
    evas_object_color_set(o, 255, 255, 255, 255);
    evas_object_image_file_set(o, DAT"data/test/images/shadow.png", NULL);
    evas_object_image_smooth_scale_set(o, 0);
-   evas_object_image_fill_set(o, 0, 0, 240, 320);
+   evas_object_image_fill_set(o, 0, 0, startw, starth);
    evas_object_pass_events_set(o, 1);
    evas_object_show(o);
    o_shadow = o;
@@ -567,6 +590,7 @@ test_list(char *file)
 	     o = evas_object_text_add(evas);
 	     evas_object_layer_set(o, 10);
 	     evas_object_color_set(o, 0, 0, 0, 255);
+	     printf("%s\n", co->part);
 	     evas_object_text_text_set(o, co->part);
 	     evas_object_text_font_set(o, "Vera", 6);
 	     evas_object_pass_events_set(o, 1);
@@ -620,6 +644,12 @@ test_setup(char *file, char *name)
    Demo_Edje *de;
    char buf[1024];
    double tw, th, w, h;
+   double xx, yy, ww, hh;
+   
+   xx = 10;
+   yy = 10;
+   ww = startw - 40;
+   hh = starth - 50;
    
    de = calloc(1, sizeof(Demo_Edje));
    edjes = evas_list_append(edjes, de);
@@ -629,17 +659,17 @@ test_setup(char *file, char *name)
    evas_object_image_smooth_scale_set(o, 0);
    evas_object_color_set(o, 255, 255, 255, 255);
    evas_object_image_border_set(o, 26, 26, 26, 26);
-   evas_object_image_fill_set(o, 0, 0, 220, 270);
+   evas_object_image_fill_set(o, 0, 0, ww, hh);
    evas_object_pass_events_set(o, 1);
-   evas_object_move(o, 10, 10);   
-   evas_object_resize(o, 220, 270);
+   evas_object_move(o, xx, yy);   
+   evas_object_resize(o, ww, hh);
    de->image = o;
    evas_object_show(o);
    
    o = evas_object_rectangle_add(evas);
    evas_object_color_set(o, 255, 255, 255, 0);
-   evas_object_move(o, 10, 10);
-   evas_object_resize(o, 220, 20);
+   evas_object_move(o, xx, yy);
+   evas_object_resize(o, ww, 20);
    evas_object_show(o);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, top_down_cb, de);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,   top_up_cb, de);
@@ -648,8 +678,8 @@ test_setup(char *file, char *name)
 
    o = evas_object_rectangle_add(evas);
    evas_object_color_set(o, 255, 255, 255, 0);
-   evas_object_move(o, 10, 10 + 20 + 240);
-   evas_object_resize(o, 220, 10);
+   evas_object_move(o, xx, yy + hh - 10);
+   evas_object_resize(o, ww, 10);
    evas_object_show(o);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, bottom_down_cb, de);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,   bottom_up_cb, de);
@@ -658,8 +688,8 @@ test_setup(char *file, char *name)
 
    o = evas_object_rectangle_add(evas);
    evas_object_color_set(o, 255, 255, 255, 0);
-   evas_object_move(o, 10, 10 + 20);
-   evas_object_resize(o, 10, 240);
+   evas_object_move(o, xx, yy + 20);
+   evas_object_resize(o, 10, hh - 20 - 10);
    evas_object_show(o);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, bottom_down_cb, de);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,   bottom_up_cb, de);
@@ -668,8 +698,8 @@ test_setup(char *file, char *name)
 
    o = evas_object_rectangle_add(evas);
    evas_object_color_set(o, 255, 255, 255, 0);
-   evas_object_move(o, 10 + 10 + 200, 10 + 20);
-   evas_object_resize(o, 10, 240);
+   evas_object_move(o, xx + ww - 10, yy + 20);
+   evas_object_resize(o, 10, hh - 20 - 10);
    evas_object_show(o);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, bottom_down_cb, de);
    evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,   bottom_up_cb, de);
@@ -679,8 +709,8 @@ test_setup(char *file, char *name)
    o = evas_object_rectangle_add(evas);
    evas_object_color_set(o, 255, 255, 255, 255);
    evas_object_pass_events_set(o, 1);
-   evas_object_move(o, 10 + 20, 10);
-   evas_object_resize(o, 180, 20);
+   evas_object_move(o, xx + 20, yy);
+   evas_object_resize(o, ww - 20 - 20, 20);
    evas_object_show(o);
    de->title_clip = o;
    
@@ -690,7 +720,7 @@ test_setup(char *file, char *name)
    evas_object_text_text_set(o, buf);
    evas_object_text_font_set(o, "Vera", 6);
    evas_object_geometry_get(o, NULL, NULL, &tw, &th);
-   evas_object_move(o, 10 + ((220 - tw) / 2), 10 + 4 + ((16 - th) / 2));
+   evas_object_move(o, xx + ((ww - tw) / 2), yy + 4 + ((16 - th) / 2));
    evas_object_pass_events_set(o, 1);
    evas_object_clip_set(o, de->title_clip);
    evas_object_show(o);
@@ -705,13 +735,13 @@ test_setup(char *file, char *name)
 //   edje_object_part_drag_value_set(o, "dragable", 0.5, 0.5);
 edje_object_part_drag_step_set(o, "dragable", 0.1, 0.1);
 edje_object_part_drag_page_set(o, "dragable", 0.2, 0.2);
-   evas_object_move(o, 10 + 10, 10 + 20);
+   evas_object_move(o, xx + 10, yy + 20);
    evas_object_show(o);
    edje_object_size_min_get(o, &(de->minw), &(de->minh));
-   w = 200;
-   h = 240;
-   if (200 < de->minw) w = de->minw;
-   if (240 < de->minh) h = de->minh;
+   w = ww;
+   h = hh;
+   if (ww < de->minw) w = de->minw;
+   if (hh < de->minh) h = de->minh;
    evas_object_resize(o, w, h);
    de->edje = o;
 
@@ -743,7 +773,7 @@ main(int argc, char **argv)
    if (argc < 2)
      {
 	printf("Usage:\n");
-	printf("  %s file_to_show.eet [collection_to_show] ...\n", argv[0]);
+	printf("  %s file_to_show.eet [-gl] [-g WxH] [collection_to_show] ...\n", argv[0]);
 	printf("\n");
 	printf("Example:\n");
 	printf("  %s data/e_logo.eet\n", argv[0]);
@@ -759,7 +789,12 @@ main(int argc, char **argv)
 	
 	done = 0;
 	file = argv[i];
+	if (((!strcmp(file, "-g")) ||
+	    (!strcmp(file, "-geometry")) ||
+	    (!strcmp(file, "--geometry"))) && (i < (argc - 1)))
+	     i++;
 	if (file[0] == '-') continue;
+/*	
 	if (argc > (i + 1))
 	  {
 	     coll = argv[i + 1];
@@ -770,8 +805,8 @@ main(int argc, char **argv)
 	       }
 	     i++;
 	  }
-	if (!done)
-	  test_list(file);
+ */
+	if (!done) test_list(file);
      }
    
    ecore_main_loop_begin();
