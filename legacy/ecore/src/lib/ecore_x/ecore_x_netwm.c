@@ -29,6 +29,52 @@
 
 
 /*
+ * Convenience functions. Should probably go elsewhere.
+ */
+
+/*
+ * Set UTF-8 string property
+ */
+static void
+_ecore_x_window_prop_string_utf8_set(Ecore_X_Window win, Ecore_X_Atom atom, const char *str)
+{
+   _ATOM_SET_UTF8_STRING(win, atom, str);
+}
+
+/*
+ * Get UTF-8 string property
+ */
+static char *
+_ecore_x_window_prop_string_utf8_get(Ecore_X_Window win, Ecore_X_Atom atom)
+{
+   char               *str;
+   unsigned char      *prop_return;
+   Atom                type_ret;
+   unsigned long       bytes_after, num_ret;
+   int                 format_ret;
+
+   str = NULL;
+   prop_return = NULL;
+   XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
+		      _ecore_x_atom_utf8_string, &type_ret,
+		      &format_ret, &num_ret, &bytes_after, &prop_return);
+   if (prop_return && num_ret > 0 && format_ret == 8)
+     {
+	str = malloc(num_ret + 1);
+	if (str)
+	  {
+	     memcpy(str, prop_return, num_ret);
+	     str[num_ret] = '\0';
+	  }
+     }
+   if (prop_return)
+      XFree(prop_return);
+
+   return str;
+}
+
+
+/*
  * Root window NetWM hints.
  */
 Atom     _ecore_x_atom_net_supported = 0;
@@ -316,3 +362,51 @@ ecore_x_netwm_client_active_set(Ecore_X_Window root, Ecore_X_Window win)
 {
    _ATOM_SET_WINDOW(_ecore_x_atom_net_active_window, root, &win, 1);
 }
+
+void
+ecore_x_netwm_name_set(Ecore_X_Window win, const char *name)
+{
+   _ecore_x_window_prop_string_utf8_set(_ecore_x_atom_net_wm_name, win, name);
+}
+
+char *
+ecore_x_netwm_name_get(Ecore_X_Window win)
+{
+   return _ecore_x_window_prop_string_utf8_get(win, _ecore_x_atom_net_wm_name);
+}
+
+void
+ecore_x_netwm_icon_name_set(Ecore_X_Window win, const char *name)
+{  
+   _ecore_x_window_prop_string_utf8_set(_ecore_x_atom_net_wm_icon_name, win, name);
+}  
+   
+char               *
+ecore_x_netwm_icon_name_get(Ecore_X_Window win) 
+{
+   return _ecore_x_window_prop_string_utf8_get(win, _ecore_x_atom_net_wm_icon_name);
+}
+
+void
+ecore_x_netwm_visible_name_set(Ecore_X_Window win, const char *name)
+{                                    
+   _ecore_x_window_prop_string_utf8_set(_ecore_x_atom_net_wm_visible_name, win, name);
+}
+
+char               *
+ecore_x_netwm_visible_name_get(Ecore_X_Window win)
+{
+   return _ecore_x_window_prop_string_utf8_get(win, _ecore_x_atom_net_wm_visible_name);
+}
+   
+void
+ecore_x_netwm_visible_icon_name_set(Ecore_X_Window win, const char *name)
+{  
+   _ecore_x_window_prop_string_utf8_set(_ecore_x_atom_net_wm_visible_icon_name, win, name);
+}  
+   
+char               *
+ecore_x_netwm_visible_icon_name_get(Ecore_X_Window win)
+{                     
+   return _ecore_x_window_prop_string_utf8_get(win, _ecore_x_atom_net_wm_visible_icon_name);
+}       

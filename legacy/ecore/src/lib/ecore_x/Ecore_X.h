@@ -800,6 +800,7 @@ EAPI void             ecore_x_selection_converter_atom_del(Ecore_X_Atom target);
 EAPI void             ecore_x_dnd_aware_set(Ecore_X_Window win, int on);
 EAPI int              ecore_x_dnd_version_get(Ecore_X_Window win);
 EAPI int              ecore_x_dnd_begin (Ecore_X_Window source, unsigned char *data, int size);
+EAPI void             ecore_x_dnd_send_status(int will_accept, int suppress, Ecore_X_Rectangle rectangle, Ecore_X_Atom action);
                  
 EAPI Ecore_X_Window   ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI Ecore_X_Window   ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h);
@@ -869,6 +870,7 @@ EAPI int              ecore_x_window_prop_protocol_isset(Ecore_X_Window win, Eco
 EAPI Ecore_X_WM_Protocol *ecore_x_window_prop_protocol_list_get(Ecore_X_Window win, int *num_ret);
 EAPI void             ecore_x_window_prop_sticky_set(Ecore_X_Window win, int on);
 EAPI int              ecore_x_window_prop_input_mode_set(Ecore_X_Window win, Ecore_X_Window_Input_Mode mode);
+EAPI int              ecore_x_window_prop_initial_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state);
 EAPI void             ecore_x_window_prop_min_size_set(Ecore_X_Window win, int w, int h);
 EAPI void             ecore_x_window_prop_max_size_set(Ecore_X_Window win, int w, int h);
 EAPI void             ecore_x_window_prop_base_size_set(Ecore_X_Window win, int w, int h);
@@ -914,20 +916,6 @@ EAPI void             ecore_x_gc_del(Ecore_X_GC gc);
 EAPI int              ecore_x_client_message32_send(Ecore_X_Window win, Ecore_X_Atom type, long d0, long d1, long d2, long d3, long d4);
 EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom type, const void *data, int len);
 
-#if 0 /* ??? */
-   EAPI void                ecore_x_netwm_init(void);
-#endif
-   EAPI void                ecore_x_netwm_desk_count_set(Ecore_X_Window root, int n_desks);
-   EAPI void                ecore_x_netwm_desk_roots_set(Ecore_X_Window root, int n_desks, Ecore_X_Window * vroots);
-   EAPI void                ecore_x_netwm_desk_names_set(Ecore_X_Window root, int n_desks, const char **names);
-   EAPI void                ecore_x_netwm_desk_size_set(Ecore_X_Window root, int width, int height);
-   EAPI void                ecore_x_netwm_desk_workareas_set(Ecore_X_Window root, int n_desks, int *areas);
-   EAPI void                ecore_x_netwm_desk_current_set(Ecore_X_Window root, int desk);
-   EAPI void                ecore_x_netwm_desk_viewports_set(Ecore_X_Window root, int n_desks, int *origins);
-   EAPI void                ecore_x_netwm_showing_desktop_set(Ecore_X_Window root, int on);
-   EAPI void                ecore_x_netwm_client_list_set(Ecore_X_Window root, int n_clients, Ecore_X_Window * p_clients);
-   EAPI void                ecore_x_netwm_client_list_stacking_set(Ecore_X_Window root, int n_clients, Ecore_X_Window * p_clients);
-   EAPI void                ecore_x_netwm_client_active_set(Ecore_X_Window root, Ecore_X_Window win);
    
    /* FIXME: these funcs need categorising */
    EAPI void            ecore_x_drawable_geometry_get(Ecore_X_Drawable d, int *x, int *y, int *w, int *h);
@@ -939,7 +927,7 @@ EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_A
    EAPI void            ecore_x_window_client_manage(Ecore_X_Window win);
    EAPI void            ecore_x_window_sniff(Ecore_X_Window win);
    EAPI void            ecore_x_window_client_sniff(Ecore_X_Window win);
-   EAPI Ecore_X_Atom    ecore_x_atom_get(char *name);
+   EAPI Ecore_X_Atom    ecore_x_atom_get(const char *name);
 
    EAPI void
      ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state);
@@ -1087,6 +1075,14 @@ EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_A
    EAPI void                ecore_x_netwm_client_list_set(Ecore_X_Window root, int n_clients, Ecore_X_Window * p_clients);
    EAPI void                ecore_x_netwm_client_list_stacking_set(Ecore_X_Window root, int n_clients, Ecore_X_Window * p_clients);
    EAPI void                ecore_x_netwm_client_active_set(Ecore_X_Window root, Ecore_X_Window win);
+   EAPI void                ecore_x_netwm_name_set(Ecore_X_Window win, const char *name);
+   EAPI char               *ecore_x_netwm_name_get(Ecore_X_Window win);
+   EAPI void                ecore_x_netwm_visible_name_set(Ecore_X_Window win, const char *name);
+   EAPI char               *ecore_x_netwm_visible_name_get(Ecore_X_Window win);
+   EAPI void                ecore_x_netwm_icon_name_set(Ecore_X_Window win, const char *name);
+   EAPI char               *ecore_x_netwm_icon_name_get(Ecore_X_Window win);
+   EAPI void                ecore_x_netwm_visible_icon_name_set(Ecore_X_Window win, const char *name);
+   EAPI char               *ecore_x_netwm_visible_icon_name_get(Ecore_X_Window win);
    
    /* FIXME: these funcs need categorising */
    EAPI void            ecore_x_drawable_geometry_get(Ecore_X_Drawable d, int *x, int *y, int *w, int *h);
@@ -1098,7 +1094,7 @@ EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_A
    EAPI void            ecore_x_window_client_manage(Ecore_X_Window win);
    EAPI void            ecore_x_window_sniff(Ecore_X_Window win);
    EAPI void            ecore_x_window_client_sniff(Ecore_X_Window win);
-   EAPI Ecore_X_Atom    ecore_x_atom_get(char *name);
+   EAPI Ecore_X_Atom    ecore_x_atom_get(const char *name);
 
    typedef struct _Ecore_X_Window_Attributes
      {
