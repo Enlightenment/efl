@@ -45,13 +45,13 @@ struct _Evas_Rectangle /** A rectangle */
    int h; /**< height of rectangle */
 };
 
-typedef void Evas_Hash; /**< A Hash table handle */
-typedef void Evas; /**< An Evas canvas handle */
-typedef void Evas_Object; /**< An Evas Object handle */
+typedef struct _Evas_Hash Evas_Hash; /**< A Hash table handle */
+typedef struct _Evas Evas; /**< An Evas canvas handle */
+typedef struct _Evas_Object Evas_Object; /**< An Evas Object handle */
 typedef void Evas_Performance; /**< An Evas Performance handle */
-typedef void Evas_Modifier; /**< An Evas Modifier */
-typedef void Evas_Lock; /**< An Evas Lock */
-typedef void Evas_Smart; /**< An Evas Smart Object handle */
+typedef struct _Evas_Modifier Evas_Modifier; /**< An Evas Modifier */
+typedef struct _Evas_Lock Evas_Lock; /**< An Evas Lock */
+typedef struct _Evas_Smart Evas_Smart; /**< An Evas Smart Object handle */
 typedef unsigned long long Evas_Modifier_Mask; /**< An Evas modifier mask type */
 #endif
 #endif
