@@ -20,7 +20,7 @@ struct _Evas_Object_Image
 	 short       w, h;
       } image;
       struct {
-	 short         l, r, t, b;
+	 short       l, r, t, b;
       } border;
 
       char          *file;
@@ -155,12 +155,14 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
 							      &o->load_error);
    if (o->engine_data)
      {
+	int w, h;
+	
 	obj->layer->evas->engine.func->image_size_get(obj->layer->evas->engine.data.output,
-						      o->engine_data,
-						      &(o->cur.image.w),
-						      &(o->cur.image.h));
+						      o->engine_data, &w, &h);
 	o->cur.has_alpha = obj->layer->evas->engine.func->image_alpha_get(obj->layer->evas->engine.data.output,
 									  o->engine_data);
+	o->cur.image.w = w;
+	o->cur.image.h = h;
      }
    else
      {
@@ -699,12 +701,14 @@ evas_object_image_load(Evas_Object *obj)
 							      &o->load_error);
    if (o->engine_data)
      {
+	int w, h;
+	
 	obj->layer->evas->engine.func->image_size_get(obj->layer->evas->engine.data.output,
-						      o->engine_data,
-						      &(o->cur.image.w),
-						      &(o->cur.image.h));
+						      o->engine_data, &w, &h);
 	o->cur.has_alpha = obj->layer->evas->engine.func->image_alpha_get(obj->layer->evas->engine.data.output,
 									  o->engine_data);
+	o->cur.image.w = w;
+	o->cur.image.h = h;
      }
    else
      {
