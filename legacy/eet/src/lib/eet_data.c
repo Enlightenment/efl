@@ -1672,9 +1672,12 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
 					((char *)data_in) + ede->offset, 
 					&size);
 	     else if (ede->subtype)
-	       data = eet_data_descriptor_encode(ede->subtype, 
-						 *((char **)(((char *)data_in) + ede->offset)),
-						 &size);
+	       {
+		  if (*((char **)(((char *)data_in) + ede->offset)))
+		    data = eet_data_descriptor_encode(ede->subtype, 
+						      *((char **)(((char *)data_in) + ede->offset)),
+						      &size);
+	       }
 	     if (data) 
 	       {
 		  echnk = eet_data_chunk_new(data, size, ede->name);
