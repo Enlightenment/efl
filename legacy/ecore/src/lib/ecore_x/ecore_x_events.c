@@ -153,6 +153,14 @@ _ecore_x_event_free_selection_notify(void *data, void *ev)
 }
 
 static void
+_ecore_x_event_free_client_message(void *data, void *ev)
+{
+   Ecore_X_Event_Client_Message *e;
+   e = ev;
+   free(e);
+}
+
+static void
 _ecore_x_event_free_generic(void *data, void *ev)
 {
    free(ev);
@@ -1285,7 +1293,18 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
    }
    else
    {
-	/* FIXME: handle this event type */
+	   Ecore_X_Event_Client_Message *e;
+	   int i;
+      
+      e = (Ecore_X_Event_Client_Message *) calloc(1, sizeof(Ecore_X_Event_Client_Message));
+	   e->win = xevent->xclient.window;
+	   e->message_type = xevent->xclient.message_type;
+   	e->format = xevent->xclient.format;
+   	for(i = 0; i < 5; i++) 
+         e->data.l[i] = xevent->xclient.data.l[i];
+      
+   	ecore_event_add(ECORE_X_EVENT_CLIENT_MESSAGE, e, 
+                      _ecore_x_event_free_client_message, NULL);
    }
 }
 

@@ -452,8 +452,15 @@ struct _Ecore_X_Event_Xdnd_Finished
 
 struct _Ecore_X_Event_Client_Message
 {
-   Ecore_X_Window  win;
-   Ecore_X_Time    time;
+   Ecore_X_Window       win;
+   Ecore_X_Atom         message_type;
+   int                  format;
+   union {
+      char              b[20];
+      short             s[10];
+      long              l[5];
+   }                    data;
+   Ecore_X_Time         time;
 };
 
 struct _Ecore_X_Event_Window_Shape
