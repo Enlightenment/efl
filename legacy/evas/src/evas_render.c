@@ -315,13 +315,45 @@ evas_render_updates(Evas e)
 	break;
      }
    if ((e->current.viewport.x != e->previous.viewport.x) || 
-       (e->current.viewport.y != e->previous.viewport.y) || 
-       (e->current.viewport.w != e->previous.viewport.w) || 
-       (e->current.viewport.h != e->previous.viewport.h))
+       (e->current.viewport.y != e->previous.viewport.y))
       evas_update_rect(e, 
 		       0, 0, 
 		       e->current.drawable_width, 
 		       e->current.drawable_height);
+   else if ((e->current.viewport.w != e->previous.viewport.w) || 
+	    (e->current.viewport.h != e->previous.viewport.h))
+     {
+	if (((double)(e->current.viewport.w - e->previous.viewport.w) ==
+	     (double)(e->current.drawable_width - e->previous.drawable_width)) &&
+	    ((double)(e->current.viewport.w - e->previous.viewport.w) ==
+	     (double)(e->current.drawable_width - e->previous.drawable_width)))
+	  {
+	     if ((e->current.drawable_width > e->previous.drawable_width))
+	       evas_update_rect(e, 
+				e->current.drawable_width, 
+				0, 
+				e->current.drawable_width - e->previous.drawable_width, 
+				e->current.drawable_height);
+	     if ((e->current.drawable_width > e->previous.drawable_width) &&
+		 (e->current.drawable_height > e->previous.drawable_height))
+	       evas_update_rect(e, 
+				e->current.drawable_width, 
+				e->current.drawable_height, 
+				e->current.drawable_width - e->previous.drawable_width,
+				e->current.drawable_height - e->previous.drawable_height);
+	     if ((e->current.drawable_height > e->previous.drawable_height))
+	       evas_update_rect(e, 
+				0,
+				e->current.drawable_height, 
+				e->current.drawable_width, 
+				e->current.drawable_height - e->previous.drawable_height);
+	  }
+	else
+	  evas_update_rect(e, 
+			   0, 0, 
+			   e->current.drawable_width, 
+			   e->current.drawable_height);
+     }
    
    e->changed = 0;
    delete_objects = 0;

@@ -41,7 +41,7 @@ fi
 
 x_cflags="$X_CFLAGS"
 x_ldflags="$X_LDFLAGS"
-x_libs="$X_LIBS $X_EXTRA_LIBS"
+x_libs="$X_LIBS $X_EXTRA_LIBS -lX11"
 
 AC_CHECK_LIB(X11, XOpenDisplay, x_libs="$x_libs",
   AC_MSG_ERROR([ERROR: libX11 not found.]); exit,
@@ -55,6 +55,8 @@ AC_CHECK_LIB(Xext, XShmAttach, x_libs="-lXext $x_libs",
 AC_CHECK_LIB(Xext, XShapeCombineMask, x_libs="-lXext $x_libs",
              AC_MSG_ERROR([ERROR: XShape not found.]); exit,
 	     $x_libs)
+x_libs="$x_libs -lX11"
+
 #AC_CHECK_LIB(Xrender, XRenderCreatePicture, 
 #             [ x_libs=" -lXrender -lXext $x_libs";
 #	       AC_DEFINE(HAVE_RENDER)
