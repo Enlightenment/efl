@@ -7,7 +7,7 @@ AM_CONFIG_HEADER(config.h)
 
 AC_C_BIGENDIAN
 AC_PROG_CC
-AM_PROG_CC_STDC
+#flagged AM_PROG_CC_STDC
 AC_HEADER_STDC
 AC_C_CONST
 AM_ENABLE_SHARED
@@ -365,10 +365,10 @@ if test "x$have_ecore_evas_gl" = "xyes"; then
     [
       AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, true)
       AC_DEFINE(BUILD_ECORE_EVAS_GL)
-    ], AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, false),
+    ], [AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, false),
     [
       #include <Evas.h>
-    ])
+    ]])
 else
   AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, false)
 fi
@@ -396,10 +396,10 @@ if test "x$have_ecore_evas_fb" = "xyes"; then
     [
       AM_CONDITIONAL(BUILD_ECORE_EVAS_FB, true)
       AC_DEFINE(BUILD_ECORE_EVAS_FB)
-    ], AM_CONDITIONAL(BUILD_ECORE_EVAS_FB, false),
+    ], [AM_CONDITIONAL(BUILD_ECORE_EVAS_FB, false),
     [
       #include <Evas.h>
-    ])
+    ]])
 else
   AM_CONDITIONAL(BUILD_ECORE_EVAS_FB, false)
 fi
