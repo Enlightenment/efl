@@ -16,8 +16,8 @@ install-data-local:
 	  done \
 	fi
 	if test "x${vimdir}" != "x"; then \
-	  $(mkinstalldirs) $(vimdir)/syntax; \
-	  cp -p $(srcdir)/data/edc.vim $(vimdir)/syntax/; \
+	  $(mkinstalldirs) $(DESTDIR)$(vimdir)/syntax; \
+	  cp -p $(srcdir)/data/edc.vim $(DESTDIR)$(vimdir)/syntax/; \
 	fi
 
 dist-hook:
