@@ -634,14 +634,23 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
      }
    if (chosen_desc->text.fit_y)
      {
-	size = sh;
+	/* if we fit in the x axis, too, size already has a somewhat
+	 * meaningful value, so don't overwrite it with the starting
+	 * value in that case
+	 */
+	if (!chosen_desc->text.fit_x) size = sh;
+
         if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
 	else evas_object_text_font_source_set(ep->object, NULL);
 	
 	evas_object_text_font_set(ep->object, font, size);
 	evas_object_text_text_set(ep->object, text);
 	evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
-	if (th < sh)
+
+	/* only grow the font size if we didn't already reach the max size
+	 * for the x axis
+	 */
+	if (!chosen_desc->text.fit_x && th < sh)
 	  {
 	     int dif;
 	     
