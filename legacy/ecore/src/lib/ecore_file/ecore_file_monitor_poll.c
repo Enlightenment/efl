@@ -139,13 +139,17 @@ ecore_file_monitor_add(const char *path,
 	       }
 	     evas_list_free(files);
 	  }
+#if 0
 	else
 	  em->func(em->data, em, em->type, ECORE_FILE_EVENT_EXISTS, em->path);
+#endif
      }
    else
      {
 	em->type = ECORE_FILE_TYPE_NONE;
+#if 0
 	em->func(em->data, em, em->type, ECORE_FILE_EVENT_DELETED, em->path);
+#endif
      }
 
    _monitors = evas_list_append(_monitors, em);
