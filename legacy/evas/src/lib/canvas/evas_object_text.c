@@ -525,7 +525,7 @@ evas_object_text_char_coords_get(Evas_Object *obj, double x, double y, double *c
 
 
 void
-evas_object_font_path_clear(Evas *e)
+evas_font_path_clear(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -538,7 +538,7 @@ evas_object_font_path_clear(Evas *e)
 }
 
 void
-evas_object_font_path_append(Evas *e, const char *path)
+evas_font_path_append(Evas *e, const char *path)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -548,7 +548,7 @@ evas_object_font_path_append(Evas *e, const char *path)
 }
 
 void
-evas_object_font_path_prepend(Evas *e, const char *path)
+evas_font_path_prepend(Evas *e, const char *path)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -558,7 +558,7 @@ evas_object_font_path_prepend(Evas *e, const char *path)
 }
 
 const Evas_List *
-evas_object_font_path_list(Evas *e)
+evas_font_path_list(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
@@ -571,7 +571,7 @@ evas_object_font_path_list(Evas *e)
 
 
 void
-evas_object_font_cache_flush(Evas *e)
+evas_font_cache_flush(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -581,7 +581,7 @@ evas_object_font_cache_flush(Evas *e)
 }
 
 void
-evas_object_font_cache_set(Evas *e, int size)
+evas_font_cache_set(Evas *e, int size)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -592,7 +592,7 @@ evas_object_font_cache_set(Evas *e, int size)
 }
 
 int
-evas_object_font_cache_get(Evas *e)
+evas_font_cache_get(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return 0;

@@ -94,7 +94,7 @@ evas_free(Evas *e)
 	evas_layer_free(lay);
      }
    
-   evas_object_font_path_clear(e);   
+   evas_font_path_clear(e);   
    e->pointer.object.in = evas_list_free(e->pointer.object.in);
    
    if (e->name_hash) evas_hash_free(e->name_hash);

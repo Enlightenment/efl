@@ -550,7 +550,7 @@ evas_object_image_reload(Evas_Object *obj)
    return;
    MAGIC_CHECK_END();
    evas_object_image_unload(obj);
-   evas_object_image_cache_flush(obj->layer->evas);
+   evas_image_cache_flush(obj->layer->evas);
    evas_object_image_load(obj);
    o->changed = 1;
    evas_object_change(obj);
@@ -559,7 +559,7 @@ evas_object_image_reload(Evas_Object *obj)
 
 
 void
-evas_object_image_cache_flush(Evas *e)
+evas_image_cache_flush(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -569,7 +569,7 @@ evas_object_image_cache_flush(Evas *e)
 }
 
 void
-evas_object_image_cache_reload(Evas *e)
+evas_image_cache_reload(Evas *e)
 {
    Evas_Object_List *l;
    
@@ -577,7 +577,7 @@ evas_object_image_cache_reload(Evas *e)
    return;
    MAGIC_CHECK_END();
 
-   evas_object_image_cache_flush(e);
+   evas_image_cache_flush(e);
    for (l = (Evas_Object_List *)e->layers; l; l = l->next)
      {
 	Evas_Layer *layer;
@@ -597,7 +597,7 @@ evas_object_image_cache_reload(Evas *e)
 	       }
 	  }
      }
-   evas_object_image_cache_flush(e);
+   evas_image_cache_flush(e);
    for (l = (Evas_Object_List *)e->layers; l; l = l->next)
      {
 	Evas_Layer *layer;
@@ -619,11 +619,11 @@ evas_object_image_cache_reload(Evas *e)
 	       }
 	  }
      }
-   evas_object_image_cache_flush(e);
+   evas_image_cache_flush(e);
 }
 
 void
-evas_object_image_cache_set(Evas *e, int size)
+evas_image_cache_set(Evas *e, int size)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -634,7 +634,7 @@ evas_object_image_cache_set(Evas *e, int size)
 }
 
 int
-evas_object_image_cache_get(Evas *e)
+evas_image_cache_get(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return 0;

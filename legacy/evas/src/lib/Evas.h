@@ -303,10 +303,10 @@ extern "C" {
    int               evas_object_image_smooth_scale_get(Evas_Object *obj);
    void              evas_object_image_reload          (Evas_Object *obj);
        
-   void              evas_object_image_cache_flush     (Evas *e);
-   void              evas_object_image_cache_reload    (Evas *e);
-   void              evas_object_image_cache_set       (Evas *e, int size);
-   int               evas_object_image_cache_get       (Evas *e);
+   void              evas_image_cache_flush            (Evas *e);
+   void              evas_image_cache_reload           (Evas *e);
+   void              evas_image_cache_set              (Evas *e, int size);
+   int               evas_image_cache_get              (Evas *e);
    
    Evas_Object      *evas_object_text_add              (Evas *e);
    void              evas_object_text_font_set         (Evas_Object *obj, const char *font, double size);
@@ -323,14 +323,14 @@ extern "C" {
    int               evas_object_text_char_pos_get     (Evas_Object *obj, int pos, double *cx, double *cy, double *cw, double *ch);
    int               evas_object_text_char_coords_get  (Evas_Object *obj, double x, double y, double *cx, double *cy, double *cw, double *ch);
 
-   void              evas_object_font_path_clear       (Evas *e);
-   void              evas_object_font_path_append      (Evas *e, const char *path);
-   void              evas_object_font_path_prepend     (Evas *e, const char *path);
-   const Evas_List  *evas_object_font_path_list        (Evas *e);
+   void              evas_font_path_clear              (Evas *e);
+   void              evas_font_path_append             (Evas *e, const char *path);
+   void              evas_font_path_prepend            (Evas *e, const char *path);
+   const Evas_List  *evas_font_path_list               (Evas *e);
        
-   void              evas_object_font_cache_flush      (Evas *e);
-   void              evas_object_font_cache_set        (Evas *e, int size);
-   int               evas_object_font_cache_get        (Evas *e);       
+   void              evas_font_cache_flush             (Evas *e);
+   void              evas_font_cache_set               (Evas *e, int size);
+   int               evas_font_cache_get               (Evas *e);       
    
    void              evas_object_del                   (Evas_Object *obj);
 
