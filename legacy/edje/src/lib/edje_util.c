@@ -763,6 +763,26 @@ edje_object_size_max_get(Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh)
      }
 }
 
+/** Force a Size/Geometry Calc
+ * @param obj A valid Evas_Object handle
+ *
+ * Forces the object @p obj to recalc layout regardless of freeze/thaw
+ */
+void
+edje_object_calc_force(Evas_Object *obj)
+{
+   Edje *ed;
+   int pf;
+   
+   ed = _edje_fetch(obj);
+   if (!ed) return;
+   ed->dirty = 1;
+   pf = ed->freeze;
+   ed->freeze = 0;
+   _edje_recalc(ed);
+   ed->freeze = pf;
+}
+
 /** Calculate minimum size
  * @param obj A valid Evas_Object handle
  * @param minw Minimum width pointer
