@@ -5,7 +5,9 @@
 #include "Edje.h"
 #include "edje_private.h"
 
-#include <stdint.h>
+#ifdef HAVE_STDINT_H
+#include <stdint.h> 
+#endif
 #include <assert.h>
 
 Edje_Text_Style _edje_text_styles[EDJE_TEXT_EFFECT_LAST];
