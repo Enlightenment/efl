@@ -1167,7 +1167,7 @@ ecore_evas_focus_get(Ecore_Evas *ee)
 			 "ecore_evas_focus_get");
 	return 0;
      }
-   return ee->prop.focused;
+   return ee->prop.focused ? 1:0;
 }
 
 /**
@@ -1208,7 +1208,7 @@ ecore_evas_iconified_get(Ecore_Evas *ee)
 			 "ecore_evas_iconified_get");
 	return 0;
      }
-   return ee->prop.iconified;
+   return ee->prop.iconified ? 1:0;
 }
 
 /**
@@ -1249,7 +1249,7 @@ ecore_evas_borderless_get(Ecore_Evas *ee)
 			 "ecore_evas_borderless_get");
 	return 0;
      }
-   return ee->prop.borderless;
+   return ee->prop.borderless ? 1:0;
 }
 
 /**
@@ -1290,7 +1290,7 @@ ecore_evas_override_get(Ecore_Evas *ee)
 			 "ecore_evas_override_get");
 	return 0;
      }
-   return ee->prop.override;
+   return ee->prop.override ? 1:0;
 }
 
 /**
@@ -1331,7 +1331,7 @@ ecore_evas_maximized_get(Ecore_Evas *ee)
 			 "ecore_evas_maximized_get");
 	return 0;
      }
-   return ee->prop.maximized;;
+   return ee->prop.maximized ? 1:0;
 }
 
 /**
@@ -1372,7 +1372,7 @@ ecore_evas_fullscreen_get(Ecore_Evas *ee)
 			 "ecore_evas_fullscreen_get");
 	return 0;
      }
-   return ee->prop.fullscreen;
+   return ee->prop.fullscreen ? 1:0;
 }
 
 /** 
@@ -1414,7 +1414,7 @@ ecore_evas_avoid_damage_get(Ecore_Evas *ee)
 			 "ecore_evas_avoid_damage_get");
 	return 0;
      }
-   return ee->prop.avoid_damage;
+   return ee->prop.avoid_damage ? 1:0;
 }
 
 /**
@@ -1454,7 +1454,7 @@ ecore_evas_withdrawn_get(Ecore_Evas *ee)
          "ecore_evas_withdrawn_get");
       return 0;
    } else
-      return ee->prop.withdrawn;
+      return ee->prop.withdrawn ? 1:0;
 }
 
 /**
@@ -1496,5 +1496,5 @@ ecore_evas_sticky_get(Ecore_Evas *ee)
          "ecore_evas_sticky_get");
       return 0;
    } else
-      return ee->prop.sticky;
+      return ee->prop.sticky ? 1:0;
 }
