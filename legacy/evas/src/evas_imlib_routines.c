@@ -84,15 +84,18 @@ __evas_imlib_image_cache_find(char *file)
 	     images = evas_list_remove(images, im);
 	     images = evas_list_prepend(images, im);
 	     imlib_context_set_image(im->image);
-	     __evas_image_cache_used -=
-	       imlib_image_get_width() *
-	       imlib_image_get_height() * 4;
-	     if (im->scaled.image)
+	     if (im->references == 1)
 	       {
-		  imlib_context_set_image(im->scaled.image);
-		  __evas_image_cache_used -= 
-		    imlib_image_get_width() * 
-		    imlib_image_get_height() * 4;	
+		  __evas_image_cache_used -=
+		    imlib_image_get_width() *
+		    imlib_image_get_height() * 4;
+		  if (im->scaled.image)
+		    {
+		       imlib_context_set_image(im->scaled.image);
+		       __evas_image_cache_used -= 
+			 imlib_image_get_width() * 
+			 imlib_image_get_height() * 4;	
+		    }
 	       }
 	     return im;
 	  }
