@@ -12,41 +12,23 @@
 #include <unistd.h>
 #include <util.h>
 
-Ecore_Config_Server *__server_global = NULL;
-Ecore_Config_Server *__server_local = NULL;
-Ecore_Config_Bundle *__bundle_local = NULL;
-char                *__app_name = NULL;
+Ecore_Config_Server *__ecore_config_server_global = NULL;
+Ecore_Config_Server *__ecore_config_server_local = NULL;
+Ecore_Config_Bundle *__ecore_config_bundle_local = NULL;
+char                *__ecore_config_app_name = NULL;
 
-Ecore_Config_Server *ipc_init(char *name);
-int ipc_exit(void);
+Ecore_Config_Server *_ecore_config_ipc_init(char *name);
+int _ecore_config_ipc_exit(void);
 
-static char *ecore_config_type[]={ "undefined", "integer", "float", "string", "colour" };
-
-/* tolower, weed out _ - */
-char *prop_canonize_key(char *pn,int modify) {
-  char *v,*r;
-
-  if(!modify)
-    r=pn;
-  else if(!(r=strdup(pn)))
-    return NULL;
-
-  v=r;
-  while(*v) {
-    if(strchr("-_/",*v))
-      memmove(v,&v[1],strlen(v));
-    else {
-      if(isupper(*v))
-	*v=tolower(*v);
-      v++; }}
-  return r; }
-
+static char *_ecore_config_type[]={ "undefined", "integer", "float", "string", "colour" };
 
 Ecore_Config_Prop *ecore_config_dst(Ecore_Config_Prop *e) {
   Ecore_Config_Bundle        *t;
-  Ecore_Config_Prop          *p=NULL,*c=e;
+  Ecore_Config_Prop          *p,*c;
   Ecore_Config_Listener_List *l;
-  t = __bundle_local;
+  p=NULL;
+  c=e;
+  t = __ecore_config_bundle_local;
 
   if(!e||!e->key)
     return NULL;
@@ -91,32 +73,37 @@ Ecore_Config_Prop *ecore_config_get(Ecore_Config_Bundle *t, const char *key) {
 
 const char *ecore_config_get_type(const Ecore_Config_Prop *e) {
   if(e) {
-    return ecore_config_type[e->type]; }
+    return _ecore_config_type[e->type]; }
   return "not found"; }
 
 
 void *ecore_config_get_data(const char *key) {
-  Ecore_Config_Prop *e=ecore_config_get(__bundle_local,key);
+  Ecore_Config_Prop *e;
+  e=ecore_config_get(__ecore_config_bundle_local,key);
   return (e?((e->type==PT_STR)?((void *)&e->ptr):((void *)&e->val))
            :NULL); }
 
 
 char *ecore_config_get_string(const char *key) {
-  Ecore_Config_Prop *e=ecore_config_get(__bundle_local,key);
+  Ecore_Config_Prop *e;
+  e=ecore_config_get(__ecore_config_bundle_local,key);
   return (e&&(e->type==PT_STR))?e->ptr:NULL; }
 
 
 long ecore_config_get_int(const char *key) {
-  Ecore_Config_Prop *e=ecore_config_get(__bundle_local,key);
+  Ecore_Config_Prop *e;
+  e=ecore_config_get(__ecore_config_bundle_local,key);
   return (e&&((e->type==PT_INT)||(e->type==PT_RGB)))?e->val:0L; }
 
 
 float ecore_config_get_float(const char *key) {
-  Ecore_Config_Prop *e=ecore_config_get(__bundle_local,key);
+  Ecore_Config_Prop *e;
+  e=ecore_config_get(__ecore_config_bundle_local,key);
   return (e&&(e->type==PT_FLT))?((float)e->val/ECORE_CONFIG_FLOAT_PRECISION):0.0; }
 
 int ecore_config_get_rgb(const char *key,int *r, int *g, int *b) {
-  Ecore_Config_Prop *e=ecore_config_get(__bundle_local,key);
+  Ecore_Config_Prop *e;
+  e=ecore_config_get(__ecore_config_bundle_local,key);
 
   if(e&&((e->type==PT_RGB))) {
     *r=(e->val>>16)&0xff;
@@ -126,15 +113,17 @@ int ecore_config_get_rgb(const char *key,int *r, int *g, int *b) {
   return ECORE_CONFIG_ERR_FAIL; }
 
 char *ecore_config_get_rgbstr(const char *key) {
-  char          *r=NULL;
+  char          *r;
+  r=NULL;
   esprintf(&r,"#%06x",ecore_config_get_int(key));
   return r; }
 
 char *ecore_config_get_as_string(const char *key) {
   Ecore_Config_Bundle *t;
   Ecore_Config_Prop   *e;
-  char          *r=NULL;
-  t = __bundle_local;
+  char          *r;
+  r=NULL;
+  t = __ecore_config_bundle_local;
   if(!(e=ecore_config_get(t,key)))
     E(0,"no such property, \"%s\"...\n",key);
   else {
@@ -156,8 +145,9 @@ char *ecore_config_get_as_string(const char *key) {
 
 
 static int ecore_config_bound(Ecore_Config_Prop *e) {
-  int  ret=ECORE_CONFIG_ERR_SUCC;
+  int  ret;
   long v;
+  ret=ECORE_CONFIG_ERR_SUCC;
 
   if(!e)
     return ECORE_CONFIG_ERR_FAIL;
@@ -188,8 +178,9 @@ static int ecore_config_bound(Ecore_Config_Prop *e) {
   return ret; }
 
 int ecore_config_guess_type(char *val) {
-  char *l=NULL;
+  char *l;
   long v;
+  l=NULL;
 
   if(!val)
     return PT_NIL;
@@ -206,10 +197,12 @@ int ecore_config_guess_type(char *val) {
   }
 
 static int ecore_config_val_typed(Ecore_Config_Prop *e,void *val,int type) {
-  char          *l=NULL;
-  long           v=0;
+  char          *l;
+  long           v;
   float         *f;
 
+  l=NULL;
+  v=0;
   e->type=PT_NIL;
 
   if(!val)
@@ -252,14 +245,6 @@ static int ecore_config_val_typed(Ecore_Config_Prop *e,void *val,int type) {
   return ECORE_CONFIG_ERR_IGNORED;
 }
 
-
-#if 0 /* Not used */
-static int ecore_config_val(Ecore_Config_Prop *e,char *val) {
-  int type = ecore_config_guess_type(val);
-    return ecore_config_val_typed(e,(void *)val,type); }
-#endif
-
-
 static int ecore_config_add_typed(Ecore_Config_Bundle *t, const char *key, void* val, int type) {
   Ecore_Config_Prop *e;
 
@@ -292,7 +277,8 @@ static int ecore_config_add_typed(Ecore_Config_Bundle *t, const char *key, void*
                                          
 
 static int ecore_config_add(Ecore_Config_Bundle *t,const char *key,char *val) {
-  int type=ecore_config_guess_type(val);
+  int type;
+  type=ecore_config_guess_type(val);
   return ecore_config_add_typed(t,key,val,type); }
     
 int ecore_config_set_typed(Ecore_Config_Bundle *t,const char *key,void *val,int type) {
@@ -318,28 +304,30 @@ int ecore_config_set_typed(Ecore_Config_Bundle *t,const char *key,void *val,int 
   }
 
 int ecore_config_set(Ecore_Config_Bundle *t,const char *key,char *val) {
-  int type=ecore_config_guess_type(val);
+  int type;
+  type=ecore_config_guess_type(val);
   return ecore_config_set_typed(t,key,val,type); }
 
 int ecore_config_set_as_string(const char *key,char *val) {
-  return ecore_config_set(__bundle_local,key,val); }
+  return ecore_config_set(__ecore_config_bundle_local,key,val); }
 
 int ecore_config_set_int(const char *key, int val) {
-  return ecore_config_set_typed(__bundle_local,key,(void *)val,PT_INT); }
+  return ecore_config_set_typed(__ecore_config_bundle_local,key,(void *)val,PT_INT); }
 
 int ecore_config_set_string(const char *key, char* val) {
-  return ecore_config_set_typed(__bundle_local,key,(void *)val,PT_STR); }
+  return ecore_config_set_typed(__ecore_config_bundle_local,key,(void *)val,PT_STR); }
 
 int ecore_config_set_float(const char *key, float val) {
-  return ecore_config_set_typed(__bundle_local,key,(void *)&val,PT_FLT); }
+  return ecore_config_set_typed(__ecore_config_bundle_local,key,(void *)&val,PT_FLT); }
 
 int ecore_config_set_rgb(const char *key, char* val) {
-  return ecore_config_set_typed(__bundle_local,key,(void *)val,PT_RGB); }
+  return ecore_config_set_typed(__ecore_config_bundle_local,key,(void *)val,PT_RGB); }
 
 
 static int ecore_config_default_typed(Ecore_Config_Bundle *t,const char *key,void *val,int type) {
-  int            ret=ECORE_CONFIG_ERR_SUCC;
+  int            ret;
   Ecore_Config_Prop *e;
+  ret=ECORE_CONFIG_ERR_SUCC;
 
   if(!(e=ecore_config_get(t,key))) {                  /* prop doesn't exist yet */
     if((ret=ecore_config_add_typed(t,key,val,type))!=ECORE_CONFIG_ERR_SUCC)  /* try to add it */
@@ -354,7 +342,7 @@ int ecore_config_default(const char *key,char *val,float lo,float hi,float step)
   int ret, type;
   Ecore_Config_Bundle *t;
   Ecore_Config_Prop *e;
-  t = __bundle_local;
+  t = __ecore_config_bundle_local;
           
   type=ecore_config_guess_type(val);
   ret=ecore_config_default_typed(t, key, val, type);
@@ -379,14 +367,14 @@ int ecore_config_default(const char *key,char *val,float lo,float hi,float step)
 }
     
 int ecore_config_default_int(const char *key,int val) {
-  return  ecore_config_default_typed(__bundle_local, key, (void *) val, PT_INT);
+  return  ecore_config_default_typed(__ecore_config_bundle_local, key, (void *) val, PT_INT);
 }
 
 int ecore_config_default_int_bound(const char *key,int val,int low,int high,int step) {
   Ecore_Config_Bundle *t;
   Ecore_Config_Prop *e;
   int                ret;
-  t = __bundle_local;
+  t = __ecore_config_bundle_local;
   
   ret=ecore_config_default_typed(t, key, (void *) val, PT_INT);
   e=ecore_config_get(t,key);
@@ -402,19 +390,19 @@ int ecore_config_default_int_bound(const char *key,int val,int low,int high,int 
 }
 
 int ecore_config_default_string(const char *key,char *val) {
-  return ecore_config_default_typed(__bundle_local, key, (void *) val, PT_STR);
+  return ecore_config_default_typed(__ecore_config_bundle_local, key, (void *) val, PT_STR);
 }
 
 int ecore_config_default_float(const char *key,float val){
-  return ecore_config_default_typed(__bundle_local, key, (void *) &val, PT_FLT);
+  return ecore_config_default_typed(__ecore_config_bundle_local, key, (void *) &val, PT_FLT);
 }
    
 int ecore_config_default_float_bound(const char *key,float val,float low,float high,float step) {
   Ecore_Config_Prop *e;
   int                ret;
       
-  ret=ecore_config_default_typed(__bundle_local, key, (void *) &val, PT_FLT);
-  e=ecore_config_get(__bundle_local,key);
+  ret=ecore_config_default_typed(__ecore_config_bundle_local, key, (void *) &val, PT_FLT);
+  e=ecore_config_get(__ecore_config_bundle_local,key);
   if (e) {                  
     e->step=(int)(step*ECORE_CONFIG_FLOAT_PRECISION);
     e->flags|=PF_BOUNDS;
@@ -427,7 +415,7 @@ int ecore_config_default_float_bound(const char *key,float val,float low,float h
 }
 
 int ecore_config_default_rgb(const char *key,char *val) {
-  return ecore_config_default_typed(__bundle_local, key, (void *) val, PT_RGB);
+  return ecore_config_default_typed(__ecore_config_bundle_local, key, (void *) val, PT_RGB);
 }
 
 int ecore_config_listen(const char *name,const char *key,
@@ -435,7 +423,7 @@ int ecore_config_listen(const char *name,const char *key,
   Ecore_Config_Bundle        *t;
   Ecore_Config_Prop          *e;
   Ecore_Config_Listener_List *l;
-  t = __bundle_local;
+  t = __ecore_config_bundle_local;
 
   if(!t||!key)
     return ECORE_CONFIG_ERR_NODATA;
@@ -478,12 +466,13 @@ int ecore_config_deaf(const char *name,const char *key,
                       Ecore_Config_Listener listener) {
   Ecore_Config_Prop          *e;
   Ecore_Config_Listener_List *l,*p;
-  int                   ret=ECORE_CONFIG_ERR_NOTFOUND;
+  int                   ret;
+  ret=ECORE_CONFIG_ERR_NOTFOUND;
 
-  if(!__bundle_local||!key)
+  if(!__ecore_config_bundle_local||!key)
     return ECORE_CONFIG_ERR_NODATA;
 
-  if(!(e=ecore_config_get(__bundle_local,key)))
+  if(!(e=ecore_config_get(__ecore_config_bundle_local,key)))
     return ECORE_CONFIG_ERR_NOTFOUND;
 
   for(p=NULL,l=e->listeners;l;p=l,l=l->next) {
@@ -505,7 +494,8 @@ Ecore_Config_Bundle *ecore_config_bundle_get_next(Ecore_Config_Bundle *ns) {
   return ns?ns->next:NULL; }
 
 Ecore_Config_Bundle *ecore_config_bundle_get_by_serial(Ecore_Config_Server *srv, long serial) {
-  Ecore_Config_Bundle *eb=srv->bundles;
+  Ecore_Config_Bundle *eb;
+  eb=srv->bundles;
 
   if(serial<0)
     return NULL;
@@ -520,7 +510,8 @@ Ecore_Config_Bundle *ecore_config_bundle_get_by_serial(Ecore_Config_Server *srv,
   return NULL; }
 
 Ecore_Config_Bundle *ecore_config_bundle_get_by_label(Ecore_Config_Server *srv, const char *label) {
-  Ecore_Config_Bundle *ns=srv->bundles;
+  Ecore_Config_Bundle *ns;
+  ns=srv->bundles;
 
   while(ns) {
     if(ns->identifier&&!strcmp(ns->identifier,label))
@@ -552,7 +543,7 @@ Ecore_Config_Bundle *ecore_config_bundle_new(Ecore_Config_Server *srv,const char
   return t; }
 
 Ecore_Config_Server *do_init(char *name) {
-  return ipc_init(name);
+  return _ecore_config_ipc_init(name);
 }
 
 Ecore_Config_Server *ecore_config_init_local(char *name) {
@@ -573,8 +564,9 @@ Ecore_Config_Server *ecore_config_init_local(char *name) {
 
 Ecore_Config_Server *ecore_config_init_global(char *name) {
   char *p;
-  int global=0;
+  int global;
   char *buf;
+  global=0;
   
   if((p=getenv("HOME"))) {  /* debug-only ### FIXME */
     if (!(buf=malloc(PATH_MAX*sizeof(char))))
@@ -593,16 +585,16 @@ int ecore_config_init(char *name) {
   char                *buf, *p;
   Ecore_Config_Prop   *sys;
   
-  __app_name = strdup(name);
-  __server_local = ecore_config_init_local(name);
-  if (!__server_local) 
+  __ecore_config_app_name = strdup(name);
+  __ecore_config_server_local = ecore_config_init_local(name);
+  if (!__ecore_config_server_local) 
     return ECORE_CONFIG_ERR_FAIL;
 
-  __server_global = ecore_config_init_global(ECORE_CONFIG_GLOBAL_ID);
-  if (!__server_global)
+  __ecore_config_server_global = ecore_config_init_global(ECORE_CONFIG_GLOBAL_ID);
+  if (!__ecore_config_server_global)
     return ECORE_CONFIG_ERR_FAIL;
 
-  __bundle_local = ecore_config_bundle_new(__server_local, "config");
+  __ecore_config_bundle_local = ecore_config_bundle_new(__ecore_config_server_local, "config");
 
   if((p=getenv("HOME"))) {  /* debug-only ### FIXME */
     if ((buf=malloc(PATH_MAX*sizeof(char)))) {
@@ -610,7 +602,7 @@ int ecore_config_init(char *name) {
       if (ecore_config_load_file(buf) != 0)
         if (ecore_config_load_file(PACKAGE_DATA_DIR "/system.db") != 0)
           return ECORE_CONFIG_ERR_NOFILE;
-      sys = __bundle_local->data;
+      sys = __ecore_config_bundle_local->data;
       while (sys) {
         /* unmark it modified - modification will mean it has been overridden */
         sys->flags&=~PF_MODIFIED;
@@ -627,11 +619,11 @@ int ecore_config_init(char *name) {
 
 int ecore_config_exit(void) {
   int ret;
-  ret = ipc_exit();
-  free(__app_name);
-  free(__bundle_local);
-  free(__server_local);
-  free(__server_global);
+  ret = _ecore_config_ipc_exit();
+  free(__ecore_config_app_name);
+  free(__ecore_config_bundle_local);
+  free(__ecore_config_server_local);
+  free(__ecore_config_server_global);
   return ret;
 }
 

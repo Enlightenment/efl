@@ -22,7 +22,7 @@
 
 
 
-static int get_string(char **m,char **r) {
+static int _ecore_config_ipc_ecore_get_string(char **m,char **r) {
   char *q;
   int   l=0;
 
@@ -51,7 +51,7 @@ static int get_string(char **m,char **r) {
 
 
 
-static int send(Ecore_Ipc_Event_Client_Data *e,int code,char *reply) {
+static int _ecore_config_ipc_ecore_send(Ecore_Ipc_Event_Client_Data *e,int code,char *reply) {
   static int our_ref=0;
   int        len=reply?strlen(reply)+1:0;
   our_ref++;
@@ -65,53 +65,55 @@ static int send(Ecore_Ipc_Event_Client_Data *e,int code,char *reply) {
 
 /*****************************************************************************/
 
-static int handle_request(Ecore_Ipc_Server *server,Ecore_Ipc_Event_Client_Data *e) {
+static int _ecore_config_ipc_ecore_handle_request(Ecore_Ipc_Server *server,Ecore_Ipc_Event_Client_Data *e) {
   Ecore_Config_Server *srv;
-  long  serial=e->minor;
+  long  serial;
   int   ret=ECORE_CONFIG_ERR_FAIL;
-  char *r=NULL,*k,*v,*m=(char *)e->data;
-  srv=srv2ecore_config_srv(server);
+  char *r=NULL,*k,*v,*m;
+  srv=_ecore_config_server_convert(server);
 
+  serial=e->minor;
+  m=(char *)e->data;
   E(1,"IPC/eCore: client sent: [%d,%d] #%d (%d) @ %p\n",e->major,e->minor,e->ref,e->size,server);
 
   switch(e->major) {
     case IPC_PROP_LIST:
-      r=ipc_prop_list(srv, serial);
+      r=_ecore_config_ipc_prop_list(srv, serial);
       break;
     case IPC_PROP_DESC:
-      if(get_string(&m,&k)==ECORE_CONFIG_ERR_SUCC)
-        r=ipc_prop_desc(srv, serial,k);
+      if(_ecore_config_ipc_ecore_get_string(&m,&k)==ECORE_CONFIG_ERR_SUCC)
+        r=_ecore_config_ipc_prop_desc(srv, serial,k);
       break;
     case IPC_PROP_GET:
-      if(get_string(&m,&k)==ECORE_CONFIG_ERR_SUCC)
-        r=ipc_prop_get(srv, serial,k);
+      if(_ecore_config_ipc_ecore_get_string(&m,&k)==ECORE_CONFIG_ERR_SUCC)
+        r=_ecore_config_ipc_prop_get(srv, serial,k);
       break;
     case IPC_PROP_SET:
-      if(get_string(&m,&k)==ECORE_CONFIG_ERR_SUCC) {
-        if(get_string(&m,&v)==ECORE_CONFIG_ERR_SUCC)
-          return send(e,ipc_prop_set(srv, serial,k,v),NULL); }
+      if(_ecore_config_ipc_ecore_get_string(&m,&k)==ECORE_CONFIG_ERR_SUCC) {
+        if(_ecore_config_ipc_ecore_get_string(&m,&v)==ECORE_CONFIG_ERR_SUCC)
+          return _ecore_config_ipc_ecore_send(e,_ecore_config_ipc_prop_set(srv, serial,k,v),NULL); }
       break;
 
     case IPC_BUNDLE_LIST:
-      r=ipc_bundle_list(srv);
+      r=_ecore_config_ipc_bundle_list(srv);
       break;
     case IPC_BUNDLE_NEW:
-      if(get_string(&m,&k)==ECORE_CONFIG_ERR_SUCC)
-        return send(e,k?ipc_bundle_new(srv, k):ECORE_CONFIG_ERR_FAIL,NULL);
+      if(_ecore_config_ipc_ecore_get_string(&m,&k)==ECORE_CONFIG_ERR_SUCC)
+        return _ecore_config_ipc_ecore_send(e,k?_ecore_config_ipc_bundle_new(srv, k):ECORE_CONFIG_ERR_FAIL,NULL);
       break;
     case IPC_BUNDLE_LABEL_SET:
-      if(get_string(&m,&k)==ECORE_CONFIG_ERR_SUCC)
-        return send(e,k?ipc_bundle_label_set(srv, serial,k):ECORE_CONFIG_ERR_FAIL,NULL);
+      if(_ecore_config_ipc_ecore_get_string(&m,&k)==ECORE_CONFIG_ERR_SUCC)
+        return _ecore_config_ipc_ecore_send(e,k?_ecore_config_ipc_bundle_label_set(srv, serial,k):ECORE_CONFIG_ERR_FAIL,NULL);
       break;
     case IPC_BUNDLE_LABEL_FIND:
-      if(get_string(&m,&k)==ECORE_CONFIG_ERR_SUCC)
-        return send(e,ipc_bundle_label_find(srv, k),NULL);
+      if(_ecore_config_ipc_ecore_get_string(&m,&k)==ECORE_CONFIG_ERR_SUCC)
+        return _ecore_config_ipc_ecore_send(e,_ecore_config_ipc_bundle_label_find(srv, k),NULL);
       break;
     case IPC_BUNDLE_LABEL_GET:
-      r=ipc_bundle_label_get(srv, serial);
+      r=_ecore_config_ipc_bundle_label_get(srv, serial);
       break; }
 
-  ret=send(e,r?ECORE_CONFIG_ERR_SUCC:ECORE_CONFIG_ERR_FAIL,r);
+  ret=_ecore_config_ipc_ecore_send(e,r?ECORE_CONFIG_ERR_SUCC:ECORE_CONFIG_ERR_FAIL,r);
   if(r) {
     free(r);
     return ret; }
@@ -126,9 +128,11 @@ static int handle_request(Ecore_Ipc_Server *server,Ecore_Ipc_Event_Client_Data *
 
 
 
-static int ipc_client_add(void *data,int type,void *event) {
-  Ecore_Ipc_Server           **server=(Ecore_Ipc_Server **)data;
-  Ecore_Ipc_Event_Client_Data *e=(Ecore_Ipc_Event_Client_Data *)event;
+static int _ecore_config_ipc_client_add(void *data,int type,void *event) {
+  Ecore_Ipc_Server           **server;
+  Ecore_Ipc_Event_Client_Data *e;
+  server=(Ecore_Ipc_Server **)data;
+  e=(Ecore_Ipc_Event_Client_Data *)event;
 
   if (*server != ecore_ipc_client_server_get(e->client))
     return 1;
@@ -138,9 +142,11 @@ static int ipc_client_add(void *data,int type,void *event) {
 
 
 
-static int ipc_client_del(void *data, int type, void *event) {
-  Ecore_Ipc_Server           **server=(Ecore_Ipc_Server **)data;
-  Ecore_Ipc_Event_Client_Data *e=(Ecore_Ipc_Event_Client_Data *)event;
+static int _ecore_config_ipc_client_del(void *data, int type, void *event) {
+  Ecore_Ipc_Server           **server;
+  Ecore_Ipc_Event_Client_Data *e;
+  server=(Ecore_Ipc_Server **)data;
+  e=(Ecore_Ipc_Event_Client_Data *)event;
 
   if (*server != ecore_ipc_client_server_get(e->client))
     return 1;
@@ -150,14 +156,16 @@ static int ipc_client_del(void *data, int type, void *event) {
 
 
 
-static int ipc_client_sent(void *data,int type,void *event) {
-  Ecore_Ipc_Server            **server=(Ecore_Ipc_Server **)data;
-  Ecore_Ipc_Event_Client_Data  *e=(Ecore_Ipc_Event_Client_Data *)event;
+static int _ecore_config_ipc_client_sent(void *data,int type,void *event) {
+  Ecore_Ipc_Server            **server;
+  Ecore_Ipc_Event_Client_Data  *e;
+  server=(Ecore_Ipc_Server **)data;
+  e=(Ecore_Ipc_Event_Client_Data *)event;
 
   if (*server != ecore_ipc_client_server_get(e->client))
     return 1;
 
-  handle_request(*server,e);
+  _ecore_config_ipc_ecore_handle_request(*server,e);
   return 1; }
 
 
@@ -169,13 +177,15 @@ static int ipc_client_sent(void *data,int type,void *event) {
 
 
 
-int ecore_config_mod_init(char *pipe_name, void **data) {
-  Ecore_Ipc_Server **server=(Ecore_Ipc_Server **)data;
+int _ecore_config_mod_init(char *pipe_name, void **data) {
+  Ecore_Ipc_Server **server;
   struct stat        st;
   char              *p;
-  int                port=0;
+  int                port;
   char               socket[PATH_MAX];
 
+  server=(Ecore_Ipc_Server **)data;
+  port=0;
   if(!server)
     return ECORE_CONFIG_ERR_FAIL;
 
@@ -203,9 +213,9 @@ int ecore_config_mod_init(char *pipe_name, void **data) {
     }
   }
   *server=ecore_ipc_server_add(ECORE_IPC_LOCAL_USER,pipe_name,port,NULL);
-  ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_ADD, ipc_client_add, server);
-  ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_DEL, ipc_client_del, server);
-  ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_DATA,ipc_client_sent,server);
+  ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_ADD, _ecore_config_ipc_client_add, server);
+  ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_DEL, _ecore_config_ipc_client_del, server);
+  ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_DATA,_ecore_config_ipc_client_sent,server);
 
   if(server) {
     E(1,"IPC/eCore: Server is listening on %s.\n", pipe_name);
@@ -215,9 +225,11 @@ int ecore_config_mod_init(char *pipe_name, void **data) {
 
 
 
-int ecore_config_mod_exit(void **data) {
-  int                ret=ECORE_CONFIG_ERR_SUCC;
-  Ecore_Ipc_Server **server=(Ecore_Ipc_Server **)data;
+int _ecore_config_mod_exit(void **data) {
+  int                ret;
+  Ecore_Ipc_Server **server;
+  ret=ECORE_CONFIG_ERR_SUCC;
+  server=(Ecore_Ipc_Server **)data;
 
   if(!server)
     return ECORE_CONFIG_ERR_FAIL;
@@ -239,8 +251,9 @@ int ecore_config_mod_exit(void **data) {
 
 
 
-int ecore_config_mod_poll(void **data) {
-  Ecore_Ipc_Server **server=(Ecore_Ipc_Server **)data;
+int _ecore_config_mod_poll(void **data) {
+  Ecore_Ipc_Server **server;
+  server=(Ecore_Ipc_Server **)data;
 
   if(!server)
     return ECORE_CONFIG_ERR_FAIL;

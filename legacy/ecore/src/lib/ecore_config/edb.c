@@ -8,18 +8,18 @@
 
 int ecore_config_load(void) {
   char file[PATH_MAX];
-  snprintf(file, PATH_MAX, "%s/.e/apps/%s/config.db",getenv("HOME"),__app_name);
+  snprintf(file, PATH_MAX, "%s/.e/apps/%s/config.db",getenv("HOME"),__ecore_config_app_name);
   return ecore_config_load_file(file);
 }
 
 int ecore_config_save(void) {
   char file[PATH_MAX];
-  snprintf(file, PATH_MAX, "%s/.e/apps/%s/config.db",getenv("HOME"),__app_name);
+  snprintf(file, PATH_MAX, "%s/.e/apps/%s/config.db",getenv("HOME"),__ecore_config_app_name);
   return ecore_config_save_file(file);
 }
 
 int ecore_config_load_file(char *file) {
-  E_DB_File *db = NULL;
+  E_DB_File *db;
   char **keys;
   int key_count;
   int x;
@@ -27,6 +27,7 @@ int ecore_config_load_file(char *file) {
   float ftmp;
   char *type;
   char *data;
+  db=NULL;
   type = NULL;
   data = NULL;
   
@@ -78,8 +79,10 @@ int ecore_config_load_file(char *file) {
 }
 
 int ecore_config_save_file(char *file) {
-  Ecore_Config_Prop *next=__bundle_local->data;
-  E_DB_File   *db = NULL;
+  Ecore_Config_Prop *next;
+  E_DB_File         *db;
+  next=__ecore_config_bundle_local->data;
+  db = NULL;
 
   /* ### we may need to create a directory or two here! */
   db = e_db_open(file);

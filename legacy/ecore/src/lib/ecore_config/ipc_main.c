@@ -21,23 +21,23 @@
 #  define TRUE (!FALSE)
 #endif
 
-typedef struct _ipc {
+typedef struct _ecore_config_ipc {
   void *lib;
   void *data;
   int (*ipc_init)(char *pipe_name,void **data);
   int (*ipc_exit)(void **data);
   int (*ipc_poll)(void **data);
-  struct _ipc *next;
-} ipc;
+  struct _ecore_config_ipc *next;
+} Ecore_Config_Ipc;
 
 
 
-static ipc   *ipc_modules=NULL;
+static Ecore_Config_Ipc   *ipc_modules=NULL;
 static unsigned long  ipc_timer=0L;
 
 
-Ecore_Config_Server *srv2ecore_config_srv(void *srv) {
-  ipc *ipc_tmp;
+Ecore_Config_Server *_ecore_config_server_convert(void *srv) {
+  Ecore_Config_Ipc *ipc_tmp;
   Ecore_Config_Server *srv_tmp;
 
   ipc_tmp = ipc_modules;
@@ -51,7 +51,7 @@ Ecore_Config_Server *srv2ecore_config_srv(void *srv) {
     ipc_tmp = ipc_tmp->next;
   }
 
-  return __server_global;
+  return __ecore_config_server_global;
 }
 
 /*****************************************************************************/
@@ -60,12 +60,16 @@ Ecore_Config_Server *srv2ecore_config_srv(void *srv) {
 
 
 
-char *ipc_prop_list(Ecore_Config_Server *srv, const long serial) {
-  Ecore_Config_Bundle *theme=ecore_config_bundle_get_by_serial(srv, serial);
-  Ecore_Config_Prop   *e=theme?theme->data:NULL;
-  estring       *s=estring_new(8192);
-  int            f=0;
+char *_ecore_config_ipc_prop_list(Ecore_Config_Server *srv, const long serial) {
+  Ecore_Config_Bundle *theme;
+  Ecore_Config_Prop   *e;
+  estring       *s;
+  int            f;
 
+  theme=ecore_config_bundle_get_by_serial(srv, serial);
+  e=theme?theme->data:NULL;
+  s=estring_new(8192);
+  f=0;
   while(e) {
     estring_appendf(s,"%s%s: %s",f?"\n":"",e->key,ecore_config_get_type(e));
     if(e->flags&PF_BOUNDS) {
@@ -81,10 +85,12 @@ char *ipc_prop_list(Ecore_Config_Server *srv, const long serial) {
 
 
 
-char *ipc_prop_desc(Ecore_Config_Server *srv, const long serial,const char *key) {
+char *_ecore_config_ipc_prop_desc(Ecore_Config_Server *srv, const long serial,const char *key) {
 #ifdef HAVE_EVAS2
-  Ecore_Config_Bundle *theme=ecore_config_bundle_get_by_serial(srv, serial);
-  Ecore_Config_Prop   *e=ecore_config_get(theme,key);
+  Ecore_Config_Bundle *theme;
+  Ecore_Config_Prop   *e;
+  theme=ecore_config_bundle_get_by_serial(srv, serial);
+  e=ecore_config_get(theme,key);
 
   if(e) {
     estring *s=estring_new(512);
@@ -97,10 +103,12 @@ char *ipc_prop_desc(Ecore_Config_Server *srv, const long serial,const char *key)
 
 
 
-char *ipc_prop_get(Ecore_Config_Server *srv, const long serial,const char *key) {
+char *_ecore_config_ipc_prop_get(Ecore_Config_Server *srv, const long serial,const char *key) {
 #ifdef HAVE_EVAS2
-  char          *ret=NULL;
-  Ecore_Config_Bundle *theme=ecore_config_bundle_get_by_serial(srv, serial);
+  char          *ret;
+  Ecore_Config_Bundle *theme;
+  ret=NULL;
+  theme=ecore_config_bundle_get_by_serial(srv, serial);
   if((ret=ecore_config_get_as_string(/*theme,*/key)))
     return ret;
 #endif
@@ -108,11 +116,12 @@ char *ipc_prop_get(Ecore_Config_Server *srv, const long serial,const char *key) 
 
 
 
-int ipc_prop_set(Ecore_Config_Server *srv, const long serial,const char *key,const char *val) {
+int _ecore_config_ipc_prop_set(Ecore_Config_Server *srv, const long serial,const char *key,const char *val) {
 #ifdef HAVE_EVAS2
   int ret;
-  Ecore_Config_Bundle *theme=ecore_config_bundle_get_by_serial(srv, serial);
+  Ecore_Config_Bundle *theme;
   ret=ecore_config_set(theme,key,(char *)val);
+  theme=ecore_config_bundle_get_by_serial(srv, serial);
   E(1,"ipc.prop.set(%s->%s,\"%s\") => %d\n",theme->identifier,key,val,ret);
   return ret;
 #else
@@ -124,11 +133,14 @@ int ipc_prop_set(Ecore_Config_Server *srv, const long serial,const char *key,con
 /*****************************************************************************/
 
 
-char *ipc_bundle_list(Ecore_Config_Server *srv) {
-  Ecore_Config_Bundle *ns=ecore_config_bundle_get_1st(srv);
-  estring       *s=estring_new(8192);
-  int            f=0;
+char *_ecore_config_ipc_bundle_list(Ecore_Config_Server *srv) {
+  Ecore_Config_Bundle *ns;
+  estring       *s;
+  int            f;
 
+  ns=ecore_config_bundle_get_1st(srv);
+  s=estring_new(8192);
+  f=0;
   if(!ns)
     return strdup("<no_bundles_created>");
 
@@ -141,22 +153,25 @@ char *ipc_bundle_list(Ecore_Config_Server *srv) {
 
 
 
-int ipc_bundle_new(Ecore_Config_Server *srv, const char *label) {
+int _ecore_config_ipc_bundle_new(Ecore_Config_Server *srv, const char *label) {
   if (ecore_config_bundle_new(srv, label))
     return ECORE_CONFIG_ERR_SUCC;
   return ECORE_CONFIG_ERR_FAIL; }
 
 
 
-char *ipc_bundle_label_get(Ecore_Config_Server *srv, const long serial) {
-  Ecore_Config_Bundle *ns=ecore_config_bundle_get_by_serial(srv, serial);
-  char          *label=ecore_config_bundle_get_label(ns);
+char *_ecore_config_ipc_bundle_label_get(Ecore_Config_Server *srv, const long serial) {
+  Ecore_Config_Bundle *ns;
+  char                *label;
+  ns=ecore_config_bundle_get_by_serial(srv, serial);
+  label=ecore_config_bundle_get_label(ns);
   return strdup(label?label:"<no such bundle>"); }
 
 
 
-int ipc_bundle_label_set(Ecore_Config_Server *srv, const long serial,const char *label) {
-  Ecore_Config_Bundle *ns=ecore_config_bundle_get_by_serial(srv, serial);
+int _ecore_config_ipc_bundle_label_set(Ecore_Config_Server *srv, const long serial,const char *label) {
+  Ecore_Config_Bundle *ns;
+  ns=ecore_config_bundle_get_by_serial(srv, serial);
   if (!(ns->identifier=malloc(sizeof(label))))
     return ECORE_CONFIG_ERR_OOM;
   memcpy(ns->identifier,label,sizeof(label));
@@ -164,17 +179,19 @@ int ipc_bundle_label_set(Ecore_Config_Server *srv, const long serial,const char 
 
 
 
-long ipc_bundle_label_find(Ecore_Config_Server *srv, const char *label) {
-  Ecore_Config_Bundle *ns=ecore_config_bundle_get_by_label(srv, label);
+long _ecore_config_ipc_bundle_label_find(Ecore_Config_Server *srv, const char *label) {
+  Ecore_Config_Bundle *ns;
+  ns=ecore_config_bundle_get_by_label(srv, label);
   return ns?ecore_config_bundle_get_serial(ns):-1; }
 
 
 
 
-static int ipc_poll(void *data) {
-  ipc *m=(ipc *)data;
+static int _ecore_config_ipc_poll(void *data) {
+  Ecore_Config_Ipc    *m;
   Ecore_Config_Server *s;
 
+  m=(Ecore_Config_Ipc *)data;
   while(m) {
     s = m->data;
     while (s) {
@@ -187,8 +204,8 @@ static int ipc_poll(void *data) {
 
 
 
-int ipc_exit(void) {
-  ipc *m;
+int _ecore_config_ipc_exit(void) {
+  Ecore_Config_Ipc    *m;
   Ecore_Config_Server *l;
   
   if(ipc_timer)
@@ -206,14 +223,17 @@ int ipc_exit(void) {
 
 
 
-Ecore_Config_Server *ipc_init(char *pipe_name) {
+Ecore_Config_Server *_ecore_config_ipc_init(char *pipe_name) {
   char             buf[PATH_MAX];
   glob_t           globbuf;
   int              ret;
   unsigned int     c;
-  ipc              *nm=NULL;
-  Ecore_Config_Server   *list=NULL;
-  Ecore_Config_Server   *ret_srv=NULL;
+  Ecore_Config_Ipc      *nm;
+  Ecore_Config_Server   *list;
+  Ecore_Config_Server   *ret_srv;
+  nm=NULL;
+  list=NULL;
+  ret_srv=NULL;
 
   if (nm) {
     list=(Ecore_Config_Server *)nm->data;
@@ -233,11 +253,11 @@ Ecore_Config_Server *ipc_init(char *pipe_name) {
       list=malloc(sizeof(Ecore_Config_Server));
       memset(list, 0, sizeof(Ecore_Config_Server));
       if((ret=nm->ipc_init(pipe_name,&list->server))!=ECORE_CONFIG_ERR_SUCC) {
-        E(2,"ipc_init: failed to register %s, code %d\n", pipe_name, ret);
+        E(2,"_ecore_config_ipc_init: failed to register %s, code %d\n", pipe_name, ret);
         break;
       }
       
-      E(2,"ipc_init: registered \"%s\"...\n",pipe_name);
+      E(2,"_ecore_config_ipc_init: registered \"%s\"...\n",pipe_name);
       
       list->name=strdup(pipe_name);
       list->next=nm->data;
@@ -259,30 +279,30 @@ Ecore_Config_Server *ipc_init(char *pipe_name) {
     return NULL;
 
   for(c=0;c<globbuf.gl_pathc;c++) {
-    if(!(nm=malloc(sizeof(ipc)))) {
+    if(!(nm=malloc(sizeof(Ecore_Config_Ipc)))) {
       ret=ECORE_CONFIG_ERR_OOM;
       goto done; }
-    memset(nm,0,sizeof(ipc));
+    memset(nm,0,sizeof(Ecore_Config_Ipc));
     
-    E(1,"ipc_init: checking \"%s\"...\n",globbuf.gl_pathv[c]);
+    E(1,"_ecore_config_ipc_init: checking \"%s\"...\n",globbuf.gl_pathv[c]);
     ret=dlmulti("IPC-plugin",globbuf.gl_pathv[c],RTLD_NOW,&nm->lib,
-                "!ecore_config_mod_init !ecore_config_mod_exit !ecore_config_mod_poll",
+                "!_ecore_config_mod_init !_ecore_config_mod_exit !_ecore_config_mod_poll",
                 &nm->ipc_init,&nm->ipc_exit,&nm->ipc_poll);
     if(ret==ECORE_CONFIG_ERR_NODATA)
-      E(0,"ipc_init: could not load \"%s\": %s...\n",globbuf.gl_pathv[c],dlerror());
+      E(0,"_ecore_config_ipc_init: could not load \"%s\": %s...\n",globbuf.gl_pathv[c],dlerror());
     else if(ret==ECORE_CONFIG_ERR_SUCC) {
       list=malloc(sizeof(Ecore_Config_Server));
 /*      memcpy(list, 0, sizeof(Ecore_Config_Server));*/
       if((ret=nm->ipc_init(pipe_name,&list->server))!=ECORE_CONFIG_ERR_SUCC)
-        E(0,"ipc_init: could not initialize \"%s\": %d\n",globbuf.gl_pathv[c],ret);
+        E(0,"_ecore_config_ipc_init: could not initialize \"%s\": %d\n",globbuf.gl_pathv[c],ret);
       else {
         char *p=globbuf.gl_pathv[c];
         if(DEBUG!=0) {
           char *q=strrchr(p,DIR_DELIMITER);
           if(q)
             p=++q; }
-        E(0,"ipc_init: adding \"%s\"...\n",p);
-        E(2,"ipc_init: registered \"%s\"...\n",pipe_name);
+        E(0,"_ecore_config_ipc_init: adding \"%s\"...\n",p);
+        E(2,"_ecore_config_ipc_init: registered \"%s\"...\n",pipe_name);
         
         list->name=strdup(pipe_name);
         list->next=nm->data;
@@ -298,11 +318,7 @@ Ecore_Config_Server *ipc_init(char *pipe_name) {
   globfree(&globbuf);
 
   if(ipc_modules) {
-    /* ### temporary evilness */
-/*    if((debug>0)||(getenv("USER")&&!strcmp(getenv("USER"),"aje"))) {
-      signal(SIGINT,SIG_DFL);
-      signal(SIGSEGV,SIG_DFL); } */
-    ipc_timer=timeout_add(100,ipc_poll,ipc_modules); }
+    ipc_timer=timeout_add(100,_ecore_config_ipc_poll,ipc_modules); }
   return ret_srv; }
 
 

@@ -112,10 +112,10 @@ typedef struct Ecore_Config_Server {
   struct Ecore_Config_Server *next; } Ecore_Config_Server;
 
 /* global ptrs to save passing them through the API */
-extern Ecore_Config_Server *__server_global;
-extern Ecore_Config_Server *__server_local;
-extern Ecore_Config_Bundle *__bundle_local;
-extern char                *__app_name;
+extern Ecore_Config_Server *__ecore_config_server_global;
+extern Ecore_Config_Server *__ecore_config_server_local;
+extern Ecore_Config_Bundle *__ecore_config_bundle_local;
+extern char                *__ecore_config_app_name;
 
 Ecore_Config_Prop   *ecore_config_get(Ecore_Config_Bundle *t,const char *key);
 const char    *ecore_config_get_type(const Ecore_Config_Prop *e);
