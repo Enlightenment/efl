@@ -543,7 +543,7 @@ _edje_emit(Edje *ed, char *sig, char *src)
 	return;
      }
    recursions++;
-   printf("EDJE EMIT: signal: \"%s\" source: \"%s\"\n", sig, src);
+//   printf("EDJE EMIT: signal: \"%s\" source: \"%s\"\n", sig, src);
    if ((sig) && (src))
      {
 	ee = calloc(1, sizeof(Edje_Emission));

@@ -85,7 +85,6 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	     rp->part = ep;
 	     ed->parts = evas_list_append(ed->parts, rp);
 	     rp->param1.description =  ep->default_desc;
-	     printf("MEH %s\n", rp->part->name);
 	     if (!rp->param1.description)
 	       {
 		  printf("EDJE ERROR: no default part description!\n");
