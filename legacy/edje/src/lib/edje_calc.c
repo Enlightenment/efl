@@ -235,6 +235,7 @@ _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, double *x, double *y)
 	     
 	     if (x) *x = dx;
 	     if (y) *y = dy;
+	     
 	     return ret;
 	  }
 	else
@@ -300,18 +301,18 @@ _edje_part_recalc_single(Edje *ed,
    if (rel2_to_x)
      params->w = desc->rel2.offset_x +
      rel2_to_x->x + (desc->rel2.relative_x * rel2_to_x->w) -
-     params->x;
+     params->x + 1;
    else
-     params->w = (double)desc->rel2.offset_x +
-     (desc->rel2.relative_x * (double)ed->w) -
+     params->w = desc->rel2.offset_x +
+     (desc->rel2.relative_x * ed->w) -
      params->x + 1;
    if (rel2_to_y)
      params->h = desc->rel2.offset_y +
      rel2_to_y->y + (desc->rel2.relative_y * rel2_to_y->h) -
-     params->y;
+     params->y + 1;
    else
-     params->h = (double)desc->rel2.offset_y +
-     (desc->rel2.relative_y * (double)ed->h) -
+     params->h = desc->rel2.offset_y +
+     (desc->rel2.relative_y * ed->h) -
      params->y + 1;
 
    /* aspect */
@@ -504,7 +505,7 @@ _edje_part_recalc_single(Edje *ed,
 	if ((((minw > 0) && (v > minw)) || (minw <= 0)) &&
 	    (((maxw >= 0) && (v < maxw)) || (maxw < 0))) params->w = v;
 	offset = (ep->drag.x * (confine_to->w - params->w)) +
-	  ep->drag.tmp.x + confine_to->x;
+	  ep->drag.tmp.x;
 	if (ep->part->dragable.step_x > 0)
 	  {
 	     params->x = confine_to->x + 
@@ -520,7 +521,7 @@ _edje_part_recalc_single(Edje *ed,
 	if ((((minh > 0) && (v > minh)) || (minh <= 0)) &&
 	    (((maxh >= 0) && (v < maxh)) || (maxh < 0))) params->h = v;
 	offset = (ep->drag.y * (confine_to->h - params->h)) +
-	  ep->drag.tmp.y + confine_to->y;
+	  ep->drag.tmp.y;
 	if (ep->part->dragable.step_y > 0)
 	  {
 	     params->y = confine_to->y + 

@@ -475,23 +475,23 @@ struct _Edje_Signal_Callback
    char  *source;
    void (*func) (void *data, Evas_Object *o, const char *emission, const char *source);
    void  *data;
-   int    just_added : 1;
-   int    delete_me : 1;
+   char   just_added : 1;
+   char   delete_me : 1;
 };
 
 struct _Edje_Calc_Params
 {
-   double           x, y, w, h;
+   int              x, y, w, h;
    struct {
-      double        x, y, w, h;
+      int           x, y, w, h;
    } req;
    struct {
-      double        x, y, w, h;
+      int           x, y, w, h;
    } req_drag;
    char             visible : 1; 
    char             smooth : 1;
    struct {
-      double        x, y, w, h;
+      int           x, y, w, h;
    } fill;
    struct {
       unsigned char r, g, b, a;
