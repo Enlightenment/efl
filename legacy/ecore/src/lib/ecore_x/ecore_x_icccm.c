@@ -586,7 +586,7 @@ ecore_x_icccm_command_set(Ecore_X_Window win, int argc, char **argv)
  * @param argv Arguments.
  */
 void
-ecore_x_window_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv)
+ecore_x_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv)
 {
    XGetCommand(_ecore_x_disp, win, argv, argc);
 }
