@@ -108,6 +108,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{prefix}/lib/libevas.so
 %attr(755,root,root) %{prefix}/lib/libevas.a
 %attr(755,root,root) %{prefix}/bin/evas-config
+%{prefix}/lib/pkgconfig/evas.pc
 %{prefix}/include/Evas*
 %doc AUTHORS
 %doc COPYING
