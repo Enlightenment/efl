@@ -164,8 +164,8 @@ _ecore_x_event_free_selection_notify(void *data __UNUSED__, void *ev)
 	   free(e->files[i]);
 	 free(e->files);
 	 break;
-      case ECORE_X_SELECTION_STRING:
-	 free(e->string);
+      case ECORE_X_SELECTION_TEXT:
+	 free(e->text);
 	 break;
      }
    free(e->target);
@@ -1142,10 +1142,17 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
 	       }
 	     free(tmp);
 	  }
+	else if (!strcmp(e->target, "_NETSCAPE_URL"))
+	  {
+	     e->content = ECORE_X_SELECTION_FILES;
+	     e->num_files = 1;
+	     e->files = malloc(sizeof(char *));
+	     e->files[0] = data;
+	  }
 	else if (!strcmp(e->target, "text/plain"))
 	  {
-	     e->content = ECORE_X_SELECTION_STRING;
-	     e->string = data;
+	     e->content = ECORE_X_SELECTION_TEXT;
+	     e->text = data;
 	  }
      }
    else if (selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)

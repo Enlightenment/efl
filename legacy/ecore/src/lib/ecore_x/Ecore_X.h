@@ -453,11 +453,11 @@ struct _Ecore_X_Event_Selection_Notify
 
    enum {
 	ECORE_X_SELECTION_NONE,
-	ECORE_X_SELECTION_STRING,
+	ECORE_X_SELECTION_TEXT,
 	ECORE_X_SELECTION_FILES
    } content;
 
-   char *string;
+   char *text;
 
    char **files;
    int   num_files;

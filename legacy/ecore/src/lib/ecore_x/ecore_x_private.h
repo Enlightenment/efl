@@ -85,12 +85,6 @@ typedef struct _Ecore_X_DND_Source
       unsigned short width, height;
    } rectangle;
 
-   /*
-   struct {
-      int x, y;
-   } pos;
-   */
-   
    Time time;
 
    Ecore_X_Atom action, accepted_action;
@@ -99,15 +93,6 @@ typedef struct _Ecore_X_DND_Source
    int suppress;
 
    int await_status;
-   
-   /*
-   struct {
-      Ecore_Event_Handler *mouse_move;
-      Ecore_Event_Handler *mouse_up;
-      Ecore_Event_Handler *mouse_in;
-      Ecore_Event_Handler *mouse_out;
-   } handlers;
-   */
 } Ecore_X_DND_Source;
 
 typedef struct _Ecore_X_DND_Target 
@@ -120,13 +105,6 @@ typedef struct _Ecore_X_DND_Target
       ECORE_X_DND_TARGET_ENTERED
    } state;
 
-   /*
-   struct {
-      short x, y;
-      unsigned short width, height;
-   } rectangle;
-   */
-
    struct {
       int x, y;
    } pos;
@@ -136,18 +114,6 @@ typedef struct _Ecore_X_DND_Target
    Ecore_X_Atom action, accepted_action;
    
    int will_accept;
-   /*
-   int suppress;
-
-   int await_status;
-   
-   struct {
-      Ecore_Event_Handler *mouse_move;
-      Ecore_Event_Handler *mouse_up;
-      Ecore_Event_Handler *mouse_in;
-      Ecore_Event_Handler *mouse_out;
-   } handlers;
-   */
 } Ecore_X_DND_Target;
 
 extern Display *_ecore_x_disp;
