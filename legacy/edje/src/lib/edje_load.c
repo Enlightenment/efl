@@ -437,6 +437,13 @@ _edje_file_add(Edje *ed)
    Evas_List *l;
    int id = -1;
 
+   if (_edje_edd_edje_file == NULL)
+     {
+        printf("EDJE ERROR: NULL data descriptor. Did you edje_init()?.\n");
+     
+        return;
+     }
+
    ed->file = evas_hash_find(_edje_file_hash, ed->path);
    if (ed->file)
      ed->file->references++;
