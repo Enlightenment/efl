@@ -199,6 +199,33 @@ follows the same principles as shown in this example.
 */
 
 /**
+@page Ecore_Con_Page The Ecore Connection Library
+
+The Ecore Connection Library ( @c Ecore_Con ) provides simple mechanisms
+for communications between programs using reliable sockets.  It saves
+the programmer from having to worry about file descripters and waiting
+for incoming connections.
+
+There are two main objects in the @c Ecore_Con library: the @c
+Ecore_Con_Server and the @c Ecore_Con_Client.
+
+The @c Ecore_Con_Server represents a server to connect to.  It is
+represents a server that can be connected to.  It is used regardless
+of whether the program is acting as a server or client itself.
+
+To create a listening server, call @c ecore_con_server_add().
+
+To connect to a server, call @c ecore_Con_server_connect().  Data can
+then be sent to the server using the @c ecore_con_server_send().
+
+Whenever a client connection is made to an @c Ecore_Con_Server, a
+@c ECORE_CON_CLIENT_ADD event is emitted.  Any event callbacks that are
+called receive a @c Ecore_Con_Client object, which represents a
+connection that that particular client.
+
+ */
+
+/**
 @page Ecore_Config_Page The Enlightened Property Library
 
 The Enlightened Property Library (Ecore_Config) is an adbstraction
@@ -385,17 +412,47 @@ Shows how to set and retrieve the program arguments.
 */
 
 /**
+@example con_server_example.c
+Shows how to write a simple server using the Ecore_Con library.
+*/
+
+/**
+@example con_client_example.c
+Shows how to write a simple client, that connects to the example server.
+*/
+
+/**
 @example event_handler_example.c
 Shows how to use event handlers.
 */
 
 /**
- * @example timer_example.c
- * Demonstrates use of the ecore_timer.
- */
+@example timer_example.c
+Demonstrates use of the ecore_timer.
+*/
 
 /**
- * @example config_basic_example.c
- * Provides an example of how to use the basic configuration functions.
- * See the file Ecore_Config.h for the full list of available functions.
- */
+@example config_basic_example.c
+Provides an example of how to use the basic configuration functions.
+See the file Ecore_Config.h for the full list of available functions.
+*/
+
+/**
+@example config_listener_example.c
+Shows how to set up a listener to listen for configuration changes.
+*/
+
+/**
+@example list_example.c
+Provides a basic example of how to append to and traverse a list.
+*/
+
+/**
+@example list_destroy_example.c
+Shows how to set and use a destructor for an Ecore_List.
+*/
+
+/**
+@example x_window_example.c
+Shows the basics of using the X Windows system through Ecore functions.
+*/
