@@ -421,6 +421,8 @@ extern "C" {
    void              evas_event_feed_key_down          (Evas *e, char *keyname);
    void              evas_event_feed_key_up            (Evas *e, char *keyname);
 
+ * should we allow multiple objects to have the focus? good question!
+
    void              evas_object_focus_set             (Evas_Object *o, int focus);
    int               evas_object_focus_get             (Evas_Object *o);
 
