@@ -46,7 +46,7 @@ _embryo_args_setarg(Embryo_Program *ep, Embryo_Cell *params)
    val = *(Embryo_Cell *)(data + (int)ep->frm + 
 			  (((int)params[1] + 3) * sizeof(Embryo_Cell)));
    val += params[2] * sizeof(Embryo_Cell);
-   if ((val < 0) || (val >= ep->hea) && (val < ep->stk)) return 0;
+   if ((val < 0) || ((val >= ep->hea) && (val < ep->stk))) return 0;
    *(Embryo_Cell *)(data + (int)val) = params[3];
    return 1;
 }
