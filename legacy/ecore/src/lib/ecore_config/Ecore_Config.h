@@ -21,7 +21,6 @@
  * using the Enlightenment 17 development libraries.
  */
 
-#include "config.h"
 
 #define DIR_DELIMITER      '/'
 #define ECORE_CONFIG_FLOAT_PRECISION 1000
