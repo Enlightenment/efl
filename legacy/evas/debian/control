@@ -1,24 +1,48 @@
 Source: evas
-Section: devel
+Section: libs
 Priority: optional
-Maintainer: Horms <horms@vergenet.net>
-Standards-Version: 3.1.1
-
-Package: libevas-dev
-Architecture: any
-Depends: libevas0 (= ${Source-Version}), libc6-dev
-Description: 
-  Headers and static libraries required to develop against evas.
+Maintainer: Laurence J. Lane <ljlane@debian.org>
+Build-Depends: xlibs-dev, xlibmesa-dev, libttf-dev, libimlib2-dev, debhelper (>=2.0)
+Standards-Version: 3.5.6.0
 
 Package: libevas0
+Section: libs
+Architecture: any
+Suggests: evas-demo
+Depends: ${shlibs:Depends}
+Description: enlightenment advanced canvas library
+ Evas is an advanced canvas library, providing three backends for
+ rendering: X11 (without some features like alpha-blending), imlib2, or
+ OpenGL (hardware accelerated). Due to its simple API, evas can be
+ developed with rapidly, and cleanly.
+ Install evas if you want to develop applications against the only
+ hardware-accelerated canvas library, or if you want to try out the
+ applications under development.
+
+Package: libevas0-dev
+Section: devel
+Architecture: any
+Depends: libevas0 (= ${Source-Version}), libc6-dev
+Description: development files for libevas
+ Headers and static libraries required to develop against evas.
+
+Package: evas-doc
+Section: doc
+Architecture: all
+Depends:
+Description: TFM for evas 
+ The evas application programming interface documentation is presented
+ in pdf and sdw format.
+
+Package: evas-demo
+Section: graphics
 Architecture: any
 Depends: ${shlibs:Depends}
-Description: 
-  Evas is an advanced canvas library, providing three backends for
-  rendering: X11 (without some features like alpha-blending), imlib2, or
-  OpenGL (hardware accelerated). Due to its simple API, evas can be
-  developed with rapidly, and cleanly.
-  Install evas if you want to develop applications against the only
-  hardware-accelerated canvas library, or if you want to try out the
-  applications under development.
-
+Description: evas library demo 
+ Evas is an advanced canvas library, providing three backends for
+ rendering: X11 (without some features like alpha-blending), imlib2, or
+ OpenGL (hardware accelerated). Due to its simple API, evas can be
+ developed with rapidly, and cleanly.
+ Install evas if you want to develop applications against the only
+ hardware-accelerated canvas library, or if you want to try out the
+ applications under development.

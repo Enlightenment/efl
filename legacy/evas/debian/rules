@@ -1,60 +1,107 @@
 #!/usr/bin/make -f
-# Sample debian/rules that uses debhelper.
-# GNU copyright 1997 to 1999 by Joey Hess.
+# Sample debian/rules that uses debhelper. 
+# GNU copyright 1997 by Joey Hess.
 
-export DH_COMPAT=2
+export DH_COMPAT=3
+export DH_OPTIONS
 
-pwd:=$(shell pwd)
-cfg:=--prefix=/usr
+INSTALL = /usr/bin/install -p
+BUILDDIR = debian/build
+package = libevas0
+stamp = touch $@
+cfg = --datadir=/usr/share --prefix=/usr
 
-build: build-stamp
-build-stamp:
+configure: $(BUILDDIR)/configure-stamp
+$(BUILDDIR)/configure-stamp:
+	$(INSTALL) -d $(BUILDDIR)
+	cd $(BUILDDIR); datadir=/usr/share  ../../configure $(cfg)
+	$(stamp)
+
+build: configure $(BUILDDIR)/build-stamp
+$(BUILDDIR)/build-stamp:
 	dh_testdir
-
-	test -x autogen.sh && ./autogen.sh $(cfg) || ./configure $(cfg)
-	
-	$(MAKE)
-
-	touch build-stamp
+	$(MAKE) -C $(BUILDDIR)
+	$(stamp)
 
 clean:
 	dh_testdir
-	dh_testroot
-	rm -f build-stamp
-
+	rm -f build-stamp configure-stamp
 	-$(MAKE) distclean
+	-rm -f configure-stamp build-stamp
+	-rm -rf $(BUILDDIR)
+	dh_clean 
 
-	dh_clean
-
-install: build
+install: DH_OPTIONS=
+install: build 
 	dh_testdir
 	dh_testroot
 	dh_clean -k
 	dh_installdirs
 
-	$(MAKE) install DESTDIR=$(pwd)/debian/libevas0
+	$(MAKE) install -C $(BUILDDIR)  DESTDIR=$(CURDIR)/debian/$(package)/
+	
+	$(INSTALL) -d debian/$(package)-dev/usr/lib
+	$(INSTALL) -d debian/$(package)-dev/usr/bin
+	$(INSTALL) -d debian/$(package)-dev/usr/share
+	$(INSTALL) -d debian/evas-doc/usr/share/doc/evas-doc/
+	$(INSTALL) -d debian/evas-demo/usr/bin
 
-	dh_movefiles --source=debian/libevas0
+	rm -rvf debian/$(package)/usr/share/evas/doc/
+	mv debian/$(package)/usr/share/aclocal debian/$(package)-dev/usr/share/
+	mv debian/$(package)/usr/share debian/evas-demo/usr
 
+	mv debian/$(package)/usr/include debian/$(package)-dev/usr
+	mv debian/$(package)/usr/lib/*.so debian/$(package)-dev/usr/lib/
+	mv debian/$(package)/usr/lib/*.la debian/$(package)-dev/usr/lib/
+	mv debian/$(package)/usr/lib/*.a debian/$(package)-dev/usr/lib/
+	mv debian/$(package)/usr/bin/evas-config debian/$(package)-dev/usr/bin/
+	mv debian/$(package)/usr/bin/evas_test* debian/evas-demo/usr/bin/
+
+
+	$(INSTALL) -m0644 doc/*.pdf doc/*.sdw debian/evas-doc/usr/share/doc/evas-doc
+
+	$(INSTALL) -d debian/evas-demo/usr/share/man/man1
+	$(INSTALL) debian/evas_test.1 debian/evas-demo/usr/share/man/man1/
+	$(INSTALL) -d debian/$(package)-dev/usr/share/man/man3
+	$(INSTALL) debian/evas-config.3 debian/$(package)-dev/usr/share/man/man3/
+	cd debian/evas-demo/usr/share/man/man1; ln -s evas_test.1.gz evas_test_old.1.gz
+
+	rm -rvf debian/evas-demo/usr/share/evas/evas/doc
+
+binary-indep: DH_OPTIONS=-i
 binary-indep: build install
-
-binary-arch: build install
-	dh_testversion 2.0
 	dh_testdir
 	dh_testroot
-	dh_installdocs
+	dh_installdocs AUTHORS README
 	dh_installchangelogs
-	dh_link
+	dh_compress -Xpdf -Xsdw
+	dh_fixperms
+	dh_installdeb
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+binary-arch: DH_OPTIONS=-a
+binary-arch: build install
+	dh_testdir
+	dh_testroot
+	dh_installdocs AUTHORS README
+	dh_installmenu
+	dh_installchangelogs
 	dh_strip
 	dh_compress
 	dh_fixperms
-	dh_suidregister
-	dh_makeshlibs
 	dh_installdeb
+	dh_makeshlibs
 	dh_shlibdeps
 	dh_gencontrol
 	dh_md5sums
 	dh_builddeb
 
 binary: binary-indep binary-arch
+
+stuff:
+	docbook-to-man evas_test.1.sgml > evas_test.1
+	docbook-to-man evas-config.3.sgml > evas-config.3
+
 .PHONY: build clean binary-indep binary-arch binary install

@@ -1,10 +1,5 @@
-evas (0.0.1-1) unstable; urgency=low
+evas (0.6.0-0cvs2001103001) unstable; urgency=low
 
-  * A CVS release.
-
- -- Horms <horms@vergenet.net>  Sat, 26 Nov 2000 17:00:00 -0500
-
-Local variables:
-mode: debian-changelog
-End:
-eoch
+  * a CVS release
+  
+ -- Laurence J. Lane <ljlane@debian.org>  Tue, 30 Oct 2001 13:03:50 +0000
