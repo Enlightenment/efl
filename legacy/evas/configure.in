@@ -381,7 +381,7 @@ if test "x$have_evas_gl_x11" = "xyes"; then
 	  x_cflags="-I"$x_dir"/include"
 	  x_libs="-L"$x_dir"/lib -lX11 -lXext"
 	  gl_cflags="-I/usr/include"
-	  gl_libs="-L/usr/lib -lGL -lGLU -lpthread"
+	  gl_libs="-L/usr/lib32 -lGL -lGLU -lpthread"
 	  gl_dir=""
 	  ENGINE_GL_X11_PRG="evas_gl_x11_test"
         ], [
@@ -499,7 +499,7 @@ if test "x$have_eet" = "xyes"; then
   )
 fi
 
-function vser ()
+function vser
 {
   v=$1
   VSTART=`echo $v | awk -F_ '{printf("%s", $1);}'`
