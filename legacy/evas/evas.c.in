@@ -12,6 +12,8 @@ These routines are used for Evas Library interaction
 @image html  evas.png
 @version 1.0.0
 @author Carsten Haitzler <raster@rasterman.com>
+@author Adam Till <till@adam-lilienthal.de>
+@author Steve Ireland <sireland@pobox.com>
 @date 2001-2002
 
 
@@ -86,7 +88,7 @@ etc.
 @endverbatim
 
 The series of commands is executed by the windowing system and the results
-are displays on the screen (normally). Once the commands are executed the
+are displayed on the screen (normally). Once the commands are executed the
 display system has little or no idea of how to reproduce this image again,
 and so has to be instructed by the application how to redraw sections of the
 screen whenever needed. Each sucessive command will be executed as
