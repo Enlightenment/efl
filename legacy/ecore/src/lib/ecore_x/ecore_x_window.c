@@ -115,6 +115,52 @@ ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h)
 }
 
 /**
+ * Create a window.
+ * @param parent The parent window
+ * @param x X
+ * @param y Y
+ * @param w Width
+ * @param h Height
+ * @return The new window handle
+ * 
+ * Create a new window
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+Ecore_X_Window
+ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h)
+{
+   Window               win;
+   XSetWindowAttributes attr;
+   
+   if (parent == 0) parent = DefaultRootWindow(_ecore_x_disp);
+   attr.override_redirect     = True;
+   attr.do_not_propagate_mask = True;
+   attr.event_mask            = KeyPressMask |
+                                KeyReleaseMask |
+                                ButtonPressMask |
+                                ButtonReleaseMask |
+                                EnterWindowMask |
+                                LeaveWindowMask |
+                                PointerMotionMask |
+                                ExposureMask |
+                                VisibilityChangeMask |
+                                StructureNotifyMask |
+                                FocusChangeMask |
+                                PropertyChangeMask |
+                                ColormapChangeMask;
+   win = XCreateWindow(_ecore_x_disp, parent,
+		       x, y, w, h, 0,
+		       0, 
+		       InputOnly,
+		       DefaultVisual(_ecore_x_disp, DefaultScreen(_ecore_x_disp)),
+		       CWOverrideRedirect | 
+		       CWDontPropagate | 
+		       CWEventMask,
+		       &attr);
+   return win;
+}
+
+/**
  * Delete a window.
  * @param win The window to delete
  * 

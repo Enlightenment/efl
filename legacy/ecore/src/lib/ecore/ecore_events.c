@@ -33,10 +33,10 @@ static void                *ecore_raw_event_event =  NULL;
  * provided in this call as the @p data parameter.
  * 
  * When the callback @p func is called, it must return 1 or 0. If it returns 
- * 1, It will keep being called as per normal, when events come into the event 
- * queue. If it returns 0, it will be removed from the list of event handlers 
- * and be destroyed. If this happens the event handler object returned is no 
- * longer valid, and the handler will not be called again after it returns 0. 
+ * 1, It will keep being called as per normal, for each handler set up for that
+ * event type. If it returns 0, it will cease processing handlers for that
+ * particular event, so all handler set to handle that event type that have not
+ * already been called, will not be.
  * 
  * @code
  * #include <Ecore.h>
@@ -421,6 +421,9 @@ _ecore_event_call(void)
 	e = (Ecore_Event *)l;
 	if (!e->delete_me)
 	  {
+	     int handle_count;
+	     
+	     handle_count = 0;
 	     ecore_raw_event_type = e->type;
 	     ecore_raw_event_event = e->event;
 	     for (ll = (Ecore_List *)event_handlers; ll; ll = ll->next)
@@ -432,11 +435,16 @@ _ecore_event_call(void)
 		    {
 		       if (eh->type == e->type)
 			 {
+			    handle_count++;
 			    if (!eh->func(eh->data, e->type, e->event))
 			      break;  /* 0 == "call no further handlers" */
 			 }
 		    }
 	       }
+	     /* if no handlers were set for EXIT signal - then default is */
+	     /* to quit the main loop */
+	     if ((e->type == ECORE_EVENT_SIGNAL_EXIT) && (handle_count == 0))
+	       ecore_main_loop_quit();
 	     ecore_raw_event_type = ECORE_EVENT_NONE;
 	     ecore_raw_event_event = NULL;
 	  }

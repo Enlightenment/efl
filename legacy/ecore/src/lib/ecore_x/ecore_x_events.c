@@ -94,7 +94,7 @@ _ecore_x_event_handle_key_press(XEvent *xevent)
    else e->key_compose = NULL;
    keyname = XKeysymToString(sym);
    if (keyname) e->keysymbol = strdup(keyname);
-   else e->keysymbol = strdup("");
+   else e->keysymbol = strdup(e->keyname);
    if (!e->keysymbol)
      {
 	if (e->keyname) free(e->keyname);
@@ -145,7 +145,7 @@ _ecore_x_event_handle_key_release(XEvent *xevent)
    else e->key_compose = NULL;
    keyname = XKeysymToString(sym);
    if (keyname) e->keysymbol = strdup(keyname);
-   else e->keysymbol = strdup("");
+   else e->keysymbol = strdup(e->keyname);
    if (!e->keysymbol)
      {
 	if (e->keyname) free(e->keyname);

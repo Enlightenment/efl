@@ -473,6 +473,7 @@ int              ecore_x_error_code_get(void);
 
 Ecore_X_Window   ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h);
 Ecore_X_Window   ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h);
+Ecore_X_Window   ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h);
 void             ecore_x_window_del(Ecore_X_Window win);
 void             ecore_x_window_show(Ecore_X_Window win);
 void             ecore_x_window_hide(Ecore_X_Window win);
@@ -564,6 +565,17 @@ void             ecore_x_gc_del(Ecore_X_GC gc);
      ecore_x_cursor_free(Ecore_X_Cursor c);
    void
      ecore_x_cursor_set(Ecore_X_Window win, Ecore_X_Cursor c);
+   
+   int
+     ecore_x_pointer_grab(Ecore_X_Window win);
+   void
+     ecore_x_pointer_ungrab(void);
+   int
+     ecore_x_keyboard_grab(Ecore_X_Window win);
+   void
+     ecore_x_keyboard_ungrab(void);
+       
+       
 #ifdef __cplusplus
 }
 #endif

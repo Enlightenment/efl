@@ -803,6 +803,36 @@ ecore_x_cursor_set(Ecore_X_Window win, Ecore_X_Cursor c)
      XDefineCursor(_ecore_x_disp, win, c);
 }
 
+int
+ecore_x_pointer_grab(Ecore_X_Window win)
+{
+   return XGrabPointer(_ecore_x_disp, win, False,
+		       ButtonPressMask | ButtonReleaseMask | 
+		       EnterWindowMask | LeaveWindowMask | PointerMotionMask,
+		       GrabModeAsync, GrabModeAsync,
+		       None, None, CurrentTime);
+}
+
+void
+ecore_x_pointer_ungrab(void)
+{
+   XUngrabPointer(_ecore_x_disp, CurrentTime);
+}
+
+int
+ecore_x_keyboard_grab(Ecore_X_Window win)
+{
+   return XGrabKeyboard(_ecore_x_disp, win, False,
+			GrabModeAsync, GrabModeAsync,
+			CurrentTime);
+}
+
+void
+ecore_x_keyboard_ungrab(void)
+{
+   XUngrabKeyboard(_ecore_x_disp, CurrentTime);   
+}
+
 /*****************************************************************************/
 /*****************************************************************************/
 /*****************************************************************************/
