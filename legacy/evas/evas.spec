@@ -11,9 +11,9 @@ Source: ftp://ftp.enlightenment.org/pub/evas/evas-%{version}_pre13.tar.gz
 Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
-#BuildSuggests: xorg-x11-devel freetype2-devel
+#BuildSuggests: xorg-x11-devel freetype2-devel freetype-devel
 BuildRequires: libpng-devel eet-devel edb-devel XFree86-devel libjpeg-devel
-BuildRequires: freetype-devel >= 2
+BuildRequires: /usr/bin/freetype-config
 Provides: evas evas_software_x11 evas_loader_png evas_loader_jpeg evas_loader_eet evas_loader_edb
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
@@ -27,6 +27,7 @@ Summary: Evas headers, static libraries, documentation and test programs
 Group: System Environment/Libraries
 Requires: %{name} = %{version}
 Requires: libpng-devel eet-devel edb-devel XFree86-devel libjpeg-devel
+Requires: /usr/bin/freetype-config
 
 %description devel
 Headers, static libraries, test programs and documentation for Evas.
@@ -35,7 +36,7 @@ Headers, static libraries, test programs and documentation for Evas.
 %setup -q -n %{name}-%{version}_pre13
 
 %build
-%{configure} --prefix=%{_prefix}
+%{configure} --prefix=%{_prefix} --x-libraries=%{_prefix}/X11R6/%{_lib}
 %{__make} %{?_smp_mflags} %{?mflags}
 test -x `which doxygen` && /bin/sh gendoc || :
 
