@@ -4,48 +4,18 @@
 
 Fast:
 How ot build and install Ecore from this tarball?
-./configure \
---enable-ecore-x \
---enable-ecore-fb \
---enable-ecore-evas \
---enable-ecore-evas-gl \
---enable-ecore-job \
---enable-ecore-con \
---enable-ecore-ipc \
---enable-ecore-txt
+./configure
 make
 su
 <as root do:>
 make install
 
 from CVS:
-./autogen.sh \
---enable-ecore-x \
---enable-ecore-fb \
---enable-ecore-evas \
---enable-ecore-evas-gl \
---enable-ecore-job \
---enable-ecore-con \
---enable-ecore-ipc \
---enable-ecore-txt
-ake
+./autogen.sh
+make
 su  
 <as root do:>
 make install
-
-for ipaq cross-compile:
-
-export CC=/skiff/local/bin/arm-linux-gcc
-export CFLAGS="-O9"
-./configure \
---enable-ecore-fb \
---enable-ecore-evas \
---enable-ecore-job \
---enable-ecore-con \
---enable-ecore-ipc \
---enable-ecore-txt
---with-evas-config=/skiff/local/arm-linux/bin/evas-config
-make CFLAGS="-O9 -I/skiff/local/include -I/skiff/local/arm-linux/include"
 
 FOR OTHER DEVELOPERS:
 
