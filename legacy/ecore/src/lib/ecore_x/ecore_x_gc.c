@@ -3,9 +3,11 @@
 #include "Ecore_X.h"
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Creates a new default graphics context associated with the given
+ * drawable.
+ * @param  draw Drawable to create graphics context with.  If @c 0 is
+ *              given instead, the default root window is used.
+ * @return The new default graphics context.
  */
 Ecore_X_GC
 ecore_x_gc_new(Ecore_X_Drawable draw)
@@ -17,9 +19,8 @@ ecore_x_gc_new(Ecore_X_Drawable draw)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Deletes and frees the given graphics context.
+ * @param gc The given graphics context.
  */
 void
 ecore_x_gc_del(Ecore_X_GC gc)

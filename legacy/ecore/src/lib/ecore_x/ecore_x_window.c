@@ -3,15 +3,14 @@
 #include "Ecore_X.h"
 
 /**
- * Create a new window.
- * @param parent The parent window 
- * @param x X
- * @param y Y
- * @param w Width
- * @param h Height
- * @return The new window handle
- * 
- * Create a new window
+ * Creates a new window.
+ * @param  parent The parent window to use.  If @p parent is @c 0, the root
+ *                window of the default display is used.
+ * @param  x      X position.
+ * @param  y      Y position.
+ * @param  w      Width.
+ * @param  h      Height.
+ * @return The new window handle.
  */
 Ecore_X_Window
 ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h)
@@ -60,15 +59,14 @@ ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h)
 }
 
 /**
- * Create a window.
- * @param parent The parent window
- * @param x X
- * @param y Y
- * @param w Width
- * @param h Height
- * @return The new window handle
- * 
- * Create a new window
+ * Create a window with the override redirect attribute set to @c True.
+ * @param  parent The parent window to use.  If @p parent is @c 0, the root
+ *                window of the default display is used.
+ * @param  x      X position.
+ * @param  y      Y position.
+ * @param  w      Width.
+ * @param  h      Height.
+ * @return The new window handle.
  */
 Ecore_X_Window
 ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h)
@@ -117,15 +115,14 @@ ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h)
 }
 
 /**
- * Create a window.
- * @param parent The parent window
- * @param x X
- * @param y Y
- * @param w Width
- * @param h Height
- * @return The new window handle
- * 
- * Create a new window
+ * Create a new input window.
+ * @param  parent The parent window to use.    If @p parent is @c 0, the root
+ *                window of the default display is used.
+ * @param  x      X position.
+ * @param  y      Y position.
+ * @param  w      Width.
+ * @param  h      Height.
+ * @return The new window.
  */
 Ecore_X_Window
 ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h)
@@ -166,10 +163,12 @@ ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h)
 }
 
 /**
- * Set defaults for a window
- * @param win The window to set defaults
+ * Sets the default properties for the given window.
  *
- * Set defaults for a window
+ * The default properties set for the window are @c WM_CLIENT_MACHINE and
+ * @c _NET_WM_PID.
+ *
+ * @param win The given window.
  */
 void
 ecore_x_window_defaults_set(Ecore_X_Window win)
@@ -211,10 +210,8 @@ ecore_x_window_defaults_set(Ecore_X_Window win)
 }
 
 /**
- * Delete a window.
- * @param win The window to delete
- * 
- * Delete a window
+ * Deletes a window.
+ * @param win The window to delete.
  */
 void
 ecore_x_window_del(Ecore_X_Window win)
@@ -223,10 +220,11 @@ ecore_x_window_del(Ecore_X_Window win)
 }
 
 /**
- * Show a window.
- * @param win The window to show
- * 
- * Show a window
+ * Shows a window.
+ *
+ * Synonymous to "mapping" a window in X Window System terminology.
+ *
+ * @param win The window to show.
  */
 void
 ecore_x_window_show(Ecore_X_Window win)
@@ -235,10 +233,11 @@ ecore_x_window_show(Ecore_X_Window win)
 }
 
 /**
- * Hide a window
- * @param win The window to hide
- * 
- * Hide a window
+ * Hides a window.
+ *
+ * Synonymous to "unmapping" a window in X Window System terminology.
+ *
+ * @param win The window to hide.
  */
 void
 ecore_x_window_hide(Ecore_X_Window win)
@@ -247,12 +246,14 @@ ecore_x_window_hide(Ecore_X_Window win)
 }
 
 /**
- * Move a window.
- * @param win The window to move
- * @param x X
- * @param y Y
- * 
- * Move a window to @p x, @p y
+ * Moves a window to the position @p x, @p y.
+ *
+ * The position is relative to the upper left hand corner of the
+ * parent window.
+ *
+ * @param win The window to move.
+ * @param x   X position.
+ * @param y   Y position.
  */
 void
 ecore_x_window_move(Ecore_X_Window win, int x, int y)
@@ -261,12 +262,10 @@ ecore_x_window_move(Ecore_X_Window win, int x, int y)
 }
 
 /**
- * Resize a window.
- * @param win The window to resize
- * @param w Width
- * @param h Height
- * 
- * Resize a window to @p w x @p h
+ * Resizes a window.
+ * @param win The window to resize.
+ * @param w   New width of the window.
+ * @param h   New height of the window.
  */
 void
 ecore_x_window_resize(Ecore_X_Window win, int w, int h)
@@ -277,14 +276,12 @@ ecore_x_window_resize(Ecore_X_Window win, int w, int h)
 }
 
 /**
- * Move and resize a window.
- * @param win The window to move and resize
- * @param x X
- * @param y Y
- * @param w Width
- * @param h Height
- * 
- * Move a window to @p x, @p y and resize it to @p w x @p h
+ * Moves and resizes a window.
+ * @param win The window to move and resize.
+ * @param x   New X position of the window.
+ * @param y   New Y position of the window.
+ * @param w   New width of the window.
+ * @param h   New height of the window.
  */
 void
 ecore_x_window_move_resize(Ecore_X_Window win, int x, int y, int w, int h)
@@ -295,10 +292,8 @@ ecore_x_window_move_resize(Ecore_X_Window win, int x, int y, int w, int h)
 }
 
 /**
- * Set the focus to the window.
- * @param win The window to focus
- * 
- * Set the focus to the window @p win
+ * Sets the focus to the window @p win.
+ * @param win The window to focus.
  */
 void
 ecore_x_window_focus(Ecore_X_Window win)
@@ -308,11 +303,9 @@ ecore_x_window_focus(Ecore_X_Window win)
 }
 
 /**
- * Set the focus to the window at a specific time.
- * @param win The window to focus
- * @param t When
- * 
- * Set the focus to the window @p win at time @p t
+ * Sets the focus to the given window at a specific time.
+ * @param win The window to focus.
+ * @param t   When to set the focus to the window.
  */
 void
 ecore_x_window_focus_at_time(Ecore_X_Window win, Ecore_X_Time t)
@@ -322,10 +315,8 @@ ecore_x_window_focus_at_time(Ecore_X_Window win, Ecore_X_Time t)
 }
 
 /**
- * Raise window.
- * @param win The window to raise
- * 
- * Raise window @p win
+ * Raises the given window.
+ * @param win The window to raise.
  */
 void
 ecore_x_window_raise(Ecore_X_Window win)
@@ -334,10 +325,8 @@ ecore_x_window_raise(Ecore_X_Window win)
 }
 
 /**
- * Lower window.
- * @param win The window to lower
- * 
- * Lower window @p win
+ * Lowers the given window.
+ * @param win The window to lower.
  */
 void
 ecore_x_window_lower(Ecore_X_Window win)
@@ -346,13 +335,11 @@ ecore_x_window_lower(Ecore_X_Window win)
 }
 
 /**
- * Reparent a window.
- * @param win The window to reparent
- * @param new_parent The new parent window
- * @param x X
- * @param y Y
- * 
- * Reparent @p win to the parent @p new_parent at @p x, @p y
+ * Moves a window to within another window at a given position.
+ * @param win        The window to reparent.
+ * @param new_parent The new parent window.
+ * @param x          X position within new parent window.
+ * @param y          Y position within new parent window.
  */
 void
 ecore_x_window_reparent(Ecore_X_Window win, Ecore_X_Window new_parent, int x, int y)
@@ -362,9 +349,10 @@ ecore_x_window_reparent(Ecore_X_Window win, Ecore_X_Window new_parent, int x, in
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Retrieves the size of the given window.
+ * @param win The given window.
+ * @param w   Pointer to an integer into which the width is to be stored.
+ * @param h   Pointer to an integer into which the height is to be stored.
  */
 void
 ecore_x_window_size_get(Ecore_X_Window win, int *w, int *h)
@@ -378,9 +366,12 @@ ecore_x_window_size_get(Ecore_X_Window win, int *w, int *h)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Retrieves the geometry of the given window.
+ * @param win The given window.
+ * @param x   Pointer to an integer in which the X position is to be stored.
+ * @param y   Pointer to an integer in which the Y position is to be stored.
+ * @param w   Pointer to an integer in which the width is to be stored.
+ * @param h   Pointer to an integer in which the height is to be stored.
  */
 void
 ecore_x_window_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h)
@@ -392,9 +383,9 @@ ecore_x_window_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Retrieves the width of the border of the given window.
+ * @param  win The given window.
+ * @return Width of the border of @p win.
  */
 int
 ecore_x_window_border_width_get(Ecore_X_Window win)
@@ -403,9 +394,9 @@ ecore_x_window_border_width_get(Ecore_X_Window win)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Retrieves the depth of the given window.
+ * @param  win The given window.
+ * @return Depth of the window.
  */
 int
 ecore_x_window_depth_get(Ecore_X_Window win)
@@ -449,9 +440,9 @@ ecore_x_window_cursor_show(Ecore_X_Window win, int show)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Finds out whether the given window is currently visible.
+ * @param  win The given window.
+ * @return 1 if the window is visible, otherwise 0.
  */
 int
 ecore_x_window_visible_get(Ecore_X_Window win)
@@ -502,9 +493,10 @@ _ecore_x_window_at_xy_get(Window base, int bx, int by, int x, int y)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Retrieves the top, visible window at the given location.
+ * @param  x The given X position.
+ * @param  y The given Y position.
+ * @return The window at that position. 
  */
 Ecore_X_Window
 ecore_x_window_at_xy_get(int x, int y)
@@ -523,9 +515,9 @@ ecore_x_window_at_xy_get(int x, int y)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Retrieves the parent window of the given window.
+ * @param  win The given window.
+ * @return The parent window of @p win.
  */
 Ecore_X_Window
 ecore_x_window_parent_get(Ecore_X_Window win)

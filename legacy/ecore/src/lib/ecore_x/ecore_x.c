@@ -541,7 +541,7 @@ ecore_x_fd_get(void)
 }
 
 /**
- * Set the timeout for a double and triple clicks to be flagged.
+ * Sets the timeout for a double and triple clicks to be flagged.
  * 
  * This sets the time between clicks before the double_click flag is
  * set in a button down event. If 3 clicks occur within double this
@@ -558,7 +558,7 @@ ecore_x_double_click_time_set(double t)
 }
 
 /**
- * Get the double and triple click flag timeout.
+ * Retrieves the double and triple click flag timeout.
  *
  * See @ref ecore_x_double_click_time_set for more information.
  *
@@ -780,6 +780,14 @@ _ecore_x_event_filter_end(void *data, void *loop_data)
 /* FIXME: these funcs need categorising */
 /*****************************************************************************/
 
+/**
+ * Retrieves the geometry of the given drawable.
+ * @param d The given drawable.
+ * @param x Pointer to an integer into which the X position is to be stored.
+ * @param y Pointer to an integer into which the Y position is to be stored.
+ * @param w Pointer to an integer into which the width is to be stored.
+ * @param h Pointer to an integer into which the height is to be stored.
+ */
 void
 ecore_x_drawable_geometry_get(Ecore_X_Drawable d, int *x, int *y, int *w, int *h)
 {
@@ -802,6 +810,11 @@ ecore_x_drawable_geometry_get(Ecore_X_Drawable d, int *x, int *y, int *w, int *h
    if (h) *h = (int) ret_h;
 }
 
+/**
+ * Retrieves the width of the border of the given drawable.
+ * @param  d The given drawable.
+ * @return The border width of the given drawable.
+ */
 int
 ecore_x_drawable_border_width_get(Ecore_X_Drawable d)
 {
@@ -816,6 +829,11 @@ ecore_x_drawable_border_width_get(Ecore_X_Drawable d)
    return (int) border_ret;
 }
 
+/**
+ * Retrieves the depth of the given drawable.
+ * @param  d The given drawable.
+ * @return The depth of the given drawable.
+ */
 int
 ecore_x_drawable_depth_get(Ecore_X_Drawable d)
 {
@@ -936,6 +954,11 @@ ecore_x_window_client_sniff(Ecore_X_Window win)
 		StructureNotifyMask);
 }
 
+/**
+ * Retrieves the atom value associated with the given name.
+ * @param  name The given name.
+ * @return Associated atom value.
+ */
 Ecore_X_Atom    
 ecore_x_atom_get(char *name)
 {

@@ -47,9 +47,9 @@ static int init_count = 0;
 #define LENGTH_OF_SOCKADDR_UN(s) (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Initialises the Ecore_Con library.
+ * @return Number of times the library has been initialised without being
+ *         shut down.
  */
 int
 ecore_con_init(void)
@@ -73,9 +73,9 @@ ecore_con_init(void)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Shuts down the Ecore_Con library.
+ * @return Number of times the library has been initialised without being
+ *         shut down.
  */
 int
 ecore_con_shutdown(void)
@@ -90,9 +90,29 @@ ecore_con_shutdown(void)
 }
 
 /**
- * To be documented.
+ * Creates a server to listen for connections.
  *
- * FIXME: To be fixed.
+ * The socket on which the server listens depends on the connection
+ * type:
+ * @li If @a compl_type is @c ECORE_CON_LOCAL_USER, the server will listen on
+ *     the Unix socket "~/.ecore/[name]/[port]".
+ * @li If @a compl_type is @c ECORE_CON_LOCAL_SYSTEM, the server will listen
+ *     on Unix socket "/tmp/.ecore_service|[name]|[port]".
+ * @li If @a compl_type is @c ECORE_CON_REMOTE_SYSTEM, the server will listen
+ *     on TCP port @c port.
+ *
+ * @param  compl_type The connection type.
+ * @param  name       Name to associate with the socket.  It is used when
+ *                    generating the socket name of a Unix socket.  Though
+ *                    it is not used for the TCP socket, it still needs to
+ *                    be a valid character array.  @c NULL will not be
+ *                    accepted.
+ * @param  port       Number to identify socket.  When a Unix socket is used,
+ *                    it becomes part of the socket name.  When a TCP socket
+ *                    is used, it is used as the TCP port.
+ * @param  data       Data to associate with the created Ecore_Con_Server
+ *                    object.
+ * @return A new Ecore_Con_Server.
  */
 Ecore_Con_Server *
 ecore_con_server_add(Ecore_Con_Type compl_type,
@@ -287,9 +307,30 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 }
 
 /**
- * To be documented.
+ * Creates a server object to represent the server listening at the
+ * given port.
  *
- * FIXME: To be fixed.
+ * The socket to which the server connects depends on the connection type:
+ * @li If @a compl_type is @c ECORE_CON_LOCAL_USER, the function will
+ *     connect to the server listening on the Unix socket
+ *     "~/.ecore/[name]/[port]".
+ * @li If @a compl_type is @c ECORE_CON_LOCAL_SYSTEM, the function will
+ *     connect to the server listening on the Unix socket
+ *     "/tmp/.ecore_service|[name]|[port]".
+ * @li If @a compl_type is @c ECORE_CON_REMOTE_SYSTEM, the function will
+ *     connect to the server listening on the TCP port "[name]:[port]".
+ *
+ * @param  compl_type The connection type.
+ * @param  name       Name used when determining what socket to connect to.
+ *                    It is used to generate the socket name when the socket
+ *                    is a Unix socket.  It is used as the hostname when
+ *                    connecting with a TCP socket.
+ * @param  port       Number to identify socket to connect to.  Used when
+ *                    generating the socket name for a Unix socket, or as the
+ *                    TCP port when connecting to a TCP socket.
+ * @param  data       Data to associate with the created Ecore_Con_Server
+ *                    object.
+ * @return A new Ecore_Con_Server.
  */
 Ecore_Con_Server *
 ecore_con_server_connect(Ecore_Con_Type compl_type,
@@ -436,9 +477,9 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Closes the connection and frees the given server.
+ * @param  svr The given server.
+ * @return Data associated with the server when it was created.
  */
 void *
 ecore_con_server_del(Ecore_Con_Server *svr)
@@ -457,9 +498,9 @@ ecore_con_server_del(Ecore_Con_Server *svr)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Retrieves the data associated with the given server.
+ * @param  svr The given server.
+ * @return The associated data.
  */
 void *
 ecore_con_server_data_get(Ecore_Con_Server *svr)
@@ -474,9 +515,10 @@ ecore_con_server_data_get(Ecore_Con_Server *svr)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Retrieves whether the given server is currently connected.
+ * @todo Check that this function does what the documenter believes it does.
+ * @param  svr The given server.
+ * @return @c 1 if the server is connected.  @c 0 otherwise.
  */
 int
 ecore_con_server_connected_get(Ecore_Con_Server *svr)
@@ -492,9 +534,12 @@ ecore_con_server_connected_get(Ecore_Con_Server *svr)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Sends the given data to the given server.
+ * @param  svr  The given server.
+ * @param  data The given data.
+ * @param  size Length of the data, in bytes, to send.
+ * @return The number of bytes sent.  @c 0 will be returned if there is an
+ *         error.
  */
 int
 ecore_con_server_send(Ecore_Con_Server *svr, void *data, int size)
@@ -530,9 +575,12 @@ ecore_con_server_send(Ecore_Con_Server *svr, void *data, int size)
 }
   
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Sends the given data to the given client.
+ * @param  cl   The given client.
+ * @param  data The given data.
+ * @param  size Length of the data, in bytes, to send.
+ * @return The number of bytes sent.  @c 0 will be returned if there is an
+ *         error.
  */
 int
 ecore_con_client_send(Ecore_Con_Client *cl, void *data, int size)
@@ -568,9 +616,10 @@ ecore_con_client_send(Ecore_Con_Client *cl, void *data, int size)
 }
   
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Retrieves the server representing the socket the client has
+ * connected to.
+ * @param  cl The given client.  
+ * @return The server that the client connected to.
  */
 Ecore_Con_Server *
 ecore_con_client_server_get(Ecore_Con_Client *cl)
@@ -585,9 +634,9 @@ ecore_con_client_server_get(Ecore_Con_Client *cl)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Closes the connection and frees memory allocated to the given client.
+ * @param  cl The given client.
+ * @return Data associated with the client.
  */
 void *
 ecore_con_client_del(Ecore_Con_Client *cl)
@@ -606,9 +655,9 @@ ecore_con_client_del(Ecore_Con_Client *cl)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Sets the data associated with the given client to @p data.
+ * @param cl   The given client.
+ * @param data What to set the data to.
  */
 void
 ecore_con_client_data_set(Ecore_Con_Client *cl, const void *data)
@@ -623,9 +672,9 @@ ecore_con_client_data_set(Ecore_Con_Client *cl, const void *data)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Retrieves the data associated with the given client.
+ * @param  cl The given client.
+ * @return The data associated with @p cl.
  */
 void *
 ecore_con_client_data_get(Ecore_Con_Client *cl)

@@ -445,7 +445,7 @@ ecore_config_theme_with_path_from_name_get(char *name)
 
 /**
  * Get a theme files full path, as it is found according to the search path.
- * The theme searched for is stored in the property @key.
+ * The theme searched for is stored in the property @p key.
  * The search path is defined by ecore_config_theme_search_path_get().
  * @param  key The property containing the theme name to search for.
  * @return A full path to the theme on sucess, or NULL on failure (no key specified or

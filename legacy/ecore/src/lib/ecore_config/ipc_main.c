@@ -12,6 +12,7 @@
 #include <dlfcn.h>
 #include <stdio.h>
 #include <glob.h>
+#include <sys/param.h>
 #include <limits.h>
 #include <string.h>
 #include <stdlib.h>		/* malloc(), free() */

@@ -437,7 +437,7 @@ static int _ecore_list_prepend_0(Ecore_List * list, Ecore_List_Node *start)
 }
 
 /**
- * Insert data at the current point in the list.
+ * Insert data in front of the current point in the list.
  * @param   list The list to hold the inserted @p data.
  * @param   data The data to insert into @p list.
  * @return  @c FALSE if there is an error, @c TRUE on success
