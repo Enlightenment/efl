@@ -131,7 +131,7 @@ extern "C" {
     * }
     * @endcode
     */   
-   EAPI Eet_File *eet_open  (char *file, Eet_File_Mode mode);
+   EAPI Eet_File *eet_open  (const char *file, Eet_File_Mode mode);
    
    /**
     * Close an eet file handle and flush and writes pending.

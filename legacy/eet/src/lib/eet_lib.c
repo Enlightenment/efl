@@ -343,7 +343,7 @@ eet_flush(Eet_File *ef)
 }
 
 Eet_File *
-eet_open(char *file, Eet_File_Mode mode)
+eet_open(const char *file, Eet_File_Mode mode)
 {
    Eet_File *ef;
    char buf[PATH_MAX];
