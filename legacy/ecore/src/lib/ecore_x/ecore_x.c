@@ -1188,6 +1188,16 @@ ecore_x_pointer_grab(Ecore_X_Window win)
 		       None, None, CurrentTime);
 }
 
+int
+ecore_x_pointer_confine_grab(Ecore_X_Window win)
+{
+   return XGrabPointer(_ecore_x_disp, win, False,
+		       ButtonPressMask | ButtonReleaseMask | 
+		       EnterWindowMask | LeaveWindowMask | PointerMotionMask,
+		       GrabModeAsync, GrabModeAsync,
+		       win, None, CurrentTime);
+}
+
 void
 ecore_x_pointer_ungrab(void)
 {

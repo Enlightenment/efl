@@ -1162,6 +1162,8 @@ EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_A
    
    EAPI int
      ecore_x_pointer_grab(Ecore_X_Window win);
+   EAPI int
+     ecore_x_pointer_confine_grab(Ecore_X_Window win);
    EAPI void
      ecore_x_pointer_ungrab(void);
    EAPI int
