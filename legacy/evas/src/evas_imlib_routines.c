@@ -186,6 +186,20 @@ __evas_imlib_text_font_free(Evas_Imlib_Font *fn)
    imlib_free_font();
 }
 
+int
+__evas_imlib_text_font_get_ascent(Evas_Imlib_Font *fn)
+{
+   imlib_context_set_font((Imlib_Font)fn);
+   return imlib_get_font_ascent();
+}
+
+int
+__evas_imlib_text_font_get_descent(Evas_Imlib_Font *fn)
+{
+   imlib_context_set_font((Imlib_Font)fn);
+   return imlib_get_font_descent();
+}
+
 void
 __evas_imlib_text_font_add_path(char *path)
 {

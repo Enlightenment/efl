@@ -60,6 +60,8 @@ void              __evas_imlib_image_draw(Evas_Imlib_Image *im, Display *disp, W
 /********/
 Evas_Imlib_Font  *__evas_imlib_text_font_new(Display *disp, char *font, int size);
 void              __evas_imlib_text_font_free(Evas_Imlib_Font *fn);
+int               __evas_imlib_text_font_get_ascent(Evas_Imlib_Font *fn);
+int               __evas_imlib_text_font_get_descent(Evas_Imlib_Font *fn);
 void              __evas_imlib_text_font_add_path(char *path);
 void              __evas_imlib_text_font_del_path(char *path);
 char            **__evas_imlib_text_font_list_paths(int *count);

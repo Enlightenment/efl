@@ -12,6 +12,7 @@ if test X"$enable_shared" = Xyes; then
   DLLDFLAGS=-export-dynamic
   AC_SUBST(DLLDFLAGS)
 fi
+AM_WITH_DMALLOC
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
 

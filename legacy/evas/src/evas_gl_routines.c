@@ -1424,6 +1424,18 @@ __evas_gl_text_font_free(Evas_GL_Font *fn)
    __evas_gl_text_cache_flush();
 }
 
+int
+__evas_gl_text_font_get_ascent(Evas_GL_Font *fn)
+{
+   return fn->ascent;
+}
+
+int
+__evas_gl_text_font_get_descent(Evas_GL_Font *fn)
+{
+   return fn->descent;
+}
+
 void
 __evas_gl_text_font_add_path(char *path)
 {

@@ -158,6 +158,8 @@ void           __evas_gl_image_draw(Evas_GL_Image *im, Display *disp, Window w, 
 /********/
 Evas_GL_Font  *__evas_gl_text_font_new(Display *disp, char *font, int size);
 void           __evas_gl_text_font_free(Evas_GL_Font *fn);
+int            __evas_gl_text_font_get_ascent(Evas_GL_Font *fn);
+int            __evas_gl_text_font_get_descent(Evas_GL_Font *fn);
 void           __evas_gl_text_font_add_path(char *path);
 void           __evas_gl_text_font_del_path(char *path);
 char         **__evas_gl_text_font_list_paths(int *count);

@@ -328,6 +328,7 @@ char *evas_get_text_font(Evas e, Evas_Object o);
 int  evas_get_text_size(Evas e, Evas_Object o);
 int  evas_text_at_position(Evas e, Evas_Object o, double x, double y, int *char_x, int *char_y, int *char_w, int *char_h);
 void evas_text_at(Evas e, Evas_Object o, int index, int *char_x, int *char_y, int *char_w, int *char_h);
+void evas_text_get_ascent_descent(Evas e, Evas_Object o, double *ascent, double *descent);
 
 /* object query ops */
 void evas_get_color(Evas e, Evas_Object o, int *r, int *g, int *b, int *a);

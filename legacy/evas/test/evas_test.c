@@ -73,7 +73,7 @@ main(int argc, char **argv)
    Colormap cmap;
    Window win;
    int win_w, win_h;
-   int i, a, w, h;
+   int i, a, w, h, m;
    Evas e;
    Evas_Object o[128], o_rect, o_line, o_grad, o_fps, o_text;
    Evas_Gradient grad;
@@ -149,7 +149,7 @@ main(int argc, char **argv)
    h /= 2;
    evas_show(e, o[1]);
    
-   for (i = 2 ; i < 120; i++)
+   for (i = 2 ; i < 10; i++)
      {
 	o[i] = evas_add_image_from_file(e, "img/mush.png");
 	evas_show(e, o[i]);
@@ -160,6 +160,7 @@ main(int argc, char **argv)
 	evas_callback_add(e, o[i], CALLBACK_MOUSE_IN, mouse_in, NULL);
 	evas_callback_add(e, o[i], CALLBACK_MOUSE_OUT, mouse_out, NULL);
      }
+/*   
    for (i = 120; i < 128; i++)
      {
 	o[i] = evas_add_text(e, "notepad", 16, imgs[i & 0x7]);
@@ -222,7 +223,7 @@ main(int argc, char **argv)
    evas_callback_add(e, o_text, CALLBACK_MOUSE_MOVE, mouse_move, NULL);
    evas_callback_add(e, o_text, CALLBACK_MOUSE_IN, mouse_in, NULL);
    evas_callback_add(e, o_text, CALLBACK_MOUSE_OUT, mouse_out, NULL);
-   
+*/   
    o_fps = evas_add_text(e, "morpheus", 16, "FPS...");
    evas_set_color(e, o_fps, 255, 255, 255, 120);
    evas_move(e, o_fps, win_w, win_h); 
@@ -236,6 +237,7 @@ main(int argc, char **argv)
    a = 0;
    down = 0;
    t1 = get_time();
+   m = 0;
    for (;;)
      {
 	double x, y;
@@ -288,9 +290,10 @@ main(int argc, char **argv)
 	       }
 	  }
 /*	while (XPending(d));*/
-	for (i = 2; i < 128; i++)
+	for (i = 2; i < 10; i++)
 	  {
 	     int j, k;
+	     double ww, hh;
 	     
 	     if (!evas_get_data(e, o[i], "clicked"))
 	       {
@@ -301,11 +304,16 @@ main(int argc, char **argv)
 		  if (i < 100)
 		     evas_set_image_file(e, o[i], imgs[(i) & 0x7]);
 		  evas_move(e, o[i], x, y);
+		  ww =  ((1.2 + cos((double)(a + j + m) * 2 * 3.141592654 / 1000)) * 48);
+		  hh = ww;
+		  evas_resize(e, o[i], ww, hh);
+		  evas_set_image_fill(e, o[i], 0, 0, ww, hh);
 	       }
 	  }
 	evas_set_angle(e, o_grad, (double)a * 360 / 1000);
 	evas_render(e);
 	a++;
+	m++;
 	if ((a % 25) == 0)
 	  {
 	     char buf[64];

@@ -249,6 +249,53 @@ evas_text_at(Evas e, Evas_Object o, int index,
      }
 }
 
+void
+evas_text_get_ascent_descent(Evas e, Evas_Object o, 
+			     double *ascent, double *descent)
+{
+   int a, d;
+   Evas_Object_Text oo;
+   
+   oo = o;
+   a = 0; d = 0;
+   switch (e->current.render_method)
+     {
+     case RENDER_METHOD_ALPHA_SOFTWARE:
+	  {
+	     Evas_Imlib_Font *fn;
+	     
+	     fn = __evas_imlib_text_font_new(e->current.display, oo->current.font, oo->current.size);
+	     if (fn)
+	       {
+		  a = __evas_imlib_text_font_get_ascent(fn);
+		  d = __evas_imlib_text_font_get_descent(fn);
+		  __evas_imlib_text_font_free(fn);
+	       }
+	  }
+	break;
+     case RENDER_METHOD_BASIC_HARDWARE:
+	break;
+     case RENDER_METHOD_3D_HARDWARE:
+	  {
+	     Evas_GL_Font *fn;
+	     
+	     fn = __evas_gl_text_font_new(e->current.display, oo->current.font, oo->current.size);
+	     if (fn)
+	       {
+		  a = __evas_gl_text_font_get_ascent(fn);
+		  d = __evas_gl_text_font_get_descent(fn);
+		  __evas_gl_text_font_free(fn);
+	       }
+	  }
+	break;
+     case RENDER_METHOD_ALPHA_HARDWARE:
+	break;
+     default:
+	break;
+     }
+   if (ascent) *ascent = a;
+   if (descent) *descent = d;   
+}
 
 void
 evas_set_text(Evas e, Evas_Object o, char *text)
