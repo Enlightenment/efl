@@ -254,6 +254,8 @@ ecore_x_window_del(Ecore_X_Window win)
 void
 ecore_x_window_delete_request_send(Ecore_X_Window win)
 {
+	XEvent xev;
+
 	/* sorry sir, deleting the root window doesn't sound like
 	 * a smart idea.
 	 */
