@@ -4,6 +4,14 @@
 #include <string.h>
 #include <unistd.h>
 
+#ifdef XA_CLIPBOARD
+#define X_CLIPBOARD_SELECTION  XA_CLIPBOARD(disp)
+#define X_CLIPBOARD_PROP       XA_CLIPBOARD(disp)
+#else
+#define X_CLIPBOARD_SELECTION  XA_PRIMARY
+#define X_CLIPBOARD_PROP       XA_CUT_BUFFER0
+#endif
+
 typedef struct _window_list Window_List;
 
 struct _window_list
@@ -2890,14 +2898,6 @@ e_keyboard_ungrab(void)
    keyboard_grab_win = 0;
    XUngrabKeyboard(disp, CurrentTime);
 }
-
-#ifdef XA_CLIPBOARD
-#define X_CLIPBOARD_SELECTION  XA_CLIPBOARD(disp)
-#define X_CLIPBOARD_PROP       XA_CLIPBOARD(disp)
-#else
-#define X_CLIPBOARD_SELECTION  XA_PRIMARY
-#define X_CLIPBOARD_PROP       XA_CUT_BUFFER0
-#endif
 
 Window
 e_selection_set(char *string)

@@ -896,7 +896,6 @@ e_ev_x_handle_selection_clear(XEvent * xevent)
    
    e = NEW(Ev_Clear_Selection, 1);
    e->win = xevent->xselectionclear.window;
-   printf("%x\n", e->win);
    e->root = e_window_get_root(e->win);
    e->selection = xevent->xselectionclear.selection;
    e_add_event(EV_CLEAR_SELECTION, e, e_ev_generic_free);
