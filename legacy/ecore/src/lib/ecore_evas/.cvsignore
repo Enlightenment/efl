@@ -6,4 +6,5 @@ Makefile.in
 ecore_evas.lo
 ecore_evas_fb.lo
 ecore_evas_x.lo
+ecore_evas_buffer.lo
 libecore_evas.la
