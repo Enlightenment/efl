@@ -753,8 +753,10 @@ evas_object_image_reload(Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
    return;
    MAGIC_CHECK_END();
+   if (o->engine_data)
+     o->engine_data = obj->layer->evas->engine.func->image_dirty_region(obj->layer->evas->engine.data.output, o->engine_data, 0, 0, 1, 1);
    evas_object_image_unload(obj);
-   evas_image_cache_flush(obj->layer->evas);
+/*   evas_image_cache_flush(obj->layer->evas);*/
    evas_object_image_load(obj);
    o->changed = 1;
    evas_object_change(obj);
