@@ -71,6 +71,11 @@ ecore_event_x_init(void)
   int                 i, shape_event_id, current_lock;
 
   shape_event_id = max_event_id = ecore_event_shape_get_id();
+  if (shape_event_id < SelectionRequest)
+    {
+       max_event_id = SelectionRequest;
+       fprintf(stderr, "ERROR: no shape extesion! This is BAD!\n");
+    }
   event_translator = NEW_PTR(max_event_id + 1);
   for (i = 0; i < max_event_id + 1; i++)
     event_translator[i] = NULL;
