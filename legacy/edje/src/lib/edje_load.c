@@ -19,12 +19,16 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
    if (((ed->path) && (!strcmp(file, ed->path))) &&
 	(ed->part) && (!strcmp(part, ed->part)))
      return;
+   
    _edje_file_del(ed);
+   
    if (ed->path) free(ed->path);
    ed->path = strdup(file);
    if (ed->part) free(ed->part);
    ed->part = strdup(part);
+   
    _edje_file_add(ed);
+   
    if (ed->collection)
      {
 	Evas_List *l;
@@ -197,6 +201,10 @@ edje_file_collection_list(const char *file)
 	     return NULL;
 	  }
 	eet_close(ef);
+	ed_file->path = strdup(file);
+	ed_file->collection_hash = NULL;
+	ed_file->references = 1;
+	_edje_file_hash = evas_hash_add(_edje_file_hash, ed_file->path, ed_file);
      }
    else
      ed_file->references++;
@@ -237,9 +245,7 @@ _edje_file_add(Edje *ed)
 
    ed->file = evas_hash_find(_edje_file_hash, ed->path);
    if (ed->file)
-     {
-	ed->file->references++;
-     }
+     ed->file->references++;
    else
      {
 	ef = eet_open(ed->path, EET_FILE_MODE_READ);
@@ -256,13 +262,7 @@ _edje_file_add(Edje *ed)
 	     ed->file = NULL;
 	     goto out;
 	  }
-	if (!ed->file->collection_dir)
-	  {
-	     _edje_file_free(ed->file);
-	     ed->file = NULL;
-	     goto out;	     
-	  }
-	_edje_file_hash = evas_hash_add(_edje_file_hash, ed->path, ed->file);
+	_edje_file_hash = evas_hash_add(_edje_file_hash, ed->file->path, ed->file);
      }
    
    ed->collection = evas_hash_find(ed->file->collection_hash, ed->part);
@@ -290,7 +290,6 @@ _edje_file_add(Edje *ed)
 	     snprintf(buf, sizeof(buf), "collections/%i", id);
 	     if (!ef) eet_open(ed->path, EET_FILE_MODE_READ);
 	     if (!ef) goto out;
-	     /* collection leaks? */
 	     ed->collection = eet_data_read(ef, 
 					    _edje_edd_edje_part_collection, 
 					    buf);
@@ -300,9 +299,7 @@ _edje_file_add(Edje *ed)
 	  }
 	else
 	  {
-	     ed->file->references--;
-	     if (ed->file->references <= 0)
-	       _edje_file_free(ed->file);
+	     _edje_file_free(ed->file);
 	     ed->file = NULL;
 	  }
      }
@@ -320,14 +317,15 @@ _edje_file_del(Edje *ed)
      {
 	ed->collection->references--;
 	if (ed->collection->references <= 0)
-	  _edje_collection_free(ed->collection);
+	  {
+	     ed->file->collection_hash = evas_hash_del(ed->file->collection_hash, ed->part, ed->collection);
+	     _edje_collection_free(ed->collection);
+	  }
 	ed->collection = NULL;
      }
    if (ed->file)
      {
-	ed->file->references--;
-	if (ed->file->references <= 0)
-	  _edje_file_free(ed->file);
+	_edje_file_free(ed->file);
 	ed->file = NULL;
      }
    if (ed->parts)
@@ -339,7 +337,7 @@ _edje_file_del(Edje *ed)
 	     rp = ed->parts->data;
 	     ed->parts = evas_list_remove(ed->parts, rp);
 	     _edje_text_part_on_del(ed, rp);
-//	     evas_object_del(rp->object);
+	     evas_object_del(rp->object);
 	     if (rp->swallowed_object)
 	       {
 		  evas_object_event_callback_del(rp->swallowed_object,
@@ -385,6 +383,11 @@ _edje_file_del(Edje *ed)
 void
 _edje_file_free(Edje_File *edf)
 {
+   edf->references--;
+   if (edf->references > 0) return;
+   
+   _edje_file_hash = evas_hash_del(_edje_file_hash, edf->path, edf);
+   
    if (edf->path) free(edf->path);
    if (edf->image_dir)
      {

@@ -1,21 +1,5 @@
 #include "edje.h"
 
-static int  main_start(int argc, char **argv);
-static void main_stop(void);
-static void main_resize(Ecore_Evas *ee);
-static int  main_signal_exit(void *data, int ev_type, void *ev);
-static void main_delete_request(Ecore_Evas *ee);
-static void main_pre_rend(Ecore_Evas *ee);
-static void main_post_rend(Ecore_Evas *ee);
-
-void        bg_setup(void);
-void        bg_resize(double w, double h);
-static void bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_info);
-
-void        test_list(char *file);
-void        test_setup(char *file, char *name);
-void        test_reize(double w, double h);
-
 typedef struct _Demo_Edje Demo_Edje;
 
 struct _Demo_Edje
@@ -29,26 +13,46 @@ struct _Demo_Edje
    Evas_Object *title_clip;
    Evas_Object *image;
    double       minw, minh;
-   int          down_top : 1;
-   int          down_bottom : 1;
    int          hdir;
    int          vdir;
+   char         down_top : 1;
+   char         down_bottom : 1;
 };
 
 typedef struct _Collection Collection;
 
 struct _Collection
 {
+   char         header : 1;
+   char         clicked : 1;
+   double       maxw;
    char        *file;
    char        *part;
    Evas_Object *text;
    Evas_Object *bg;
+   Evas_List   *entries;
 };
+
+static int  main_start(int argc, char **argv);
+static void main_stop(void);
+static void main_resize(Ecore_Evas *ee);
+static int  main_signal_exit(void *data, int ev_type, void *ev);
+static void main_delete_request(Ecore_Evas *ee);
+static void main_pre_rend(Ecore_Evas *ee);
+static void main_post_rend(Ecore_Evas *ee);
+
+void        bg_setup(void);
+void        bg_resize(double w, double h);
+static void bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_info);
+
+void        test_list_move(Collection *co_head);
+void        test_list(char *file);
+void        test_setup(char *file, char *name);
+void        test_reize(double w, double h);
 
 static Evas_List   *edjes = NULL;
 static Evas_Object *o_bg = NULL;
 static Evas_Object *o_shadow = NULL;
-static Evas_List   *collections = NULL;
 
 double       start_time = 0.0;
 Ecore_Evas  *ecore_evas = NULL;
@@ -116,13 +120,13 @@ main_delete_request(Ecore_Evas *ee)
 static void
 main_pre_rend(Ecore_Evas *ee)
 {
-//   edje_thaw();
+   edje_thaw();
 }
 
 static void
 main_post_rend(Ecore_Evas *ee)
 {
-//   edje_freeze();   
+   edje_freeze();   
 }
 
 void
@@ -398,27 +402,145 @@ bottom_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 }
 
 static void
+list_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Collection *co;
+   
+   co = data;
+   evas_object_image_file_set(co->bg, DAT"data/test/images/item_selected.png", NULL);
+}
+
+static void
+list_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Collection *co;
+   
+   co = data;
+   evas_object_image_file_set(co->bg, DAT"data/test/images/item_normal.png", NULL);
+   test_setup(co->file, co->part);
+   evas_object_color_set(co->bg, 255, 255, 255, 128);
+   evas_object_color_set(co->text, 0, 0, 0, 128);
+   evas_object_pass_events_set(co->bg, 1);
+}
+
+static void
+list_head_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Collection *co;
+   
+   co = data;
+   co->clicked = 1;
+}
+
+static void
+list_head_up_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Collection *co;
+   
+   co = data;
+   co->clicked = 0;
+}
+
+static void
+list_head_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
+{
+   Collection *co;
+   double x, y;
+   Evas_Event_Mouse_Move *ev;
+   
+   co = data;
+   if (!co->clicked) return;
+   ev = event_info;
+   evas_object_geometry_get(co->bg, &x, &y, NULL, NULL);
+   x += ev->cur.canvas.x - ev->prev.canvas.x;
+   y += ev->cur.canvas.y - ev->prev.canvas.y;
+   evas_object_move(co->bg, x, y);
+   test_list_move(co);
+}
+
+static void
 cb (void *data, Evas_Object *o, const char *sig, const char *src)
 {
 //   printf("CALLBACK for %p %p \"%s\" \"%s\"\n", data, o, sig, src);
 }
 
 void
+test_list_move(Collection *co_head)
+{
+   Evas_List *l;
+   double x, y;
+   
+   evas_object_geometry_get(co_head->bg, &x, &y, NULL, NULL);
+   for (l = co_head->entries; l; l = l->next)
+     {
+	Collection *co;
+	double w, h;
+	
+	co = l->data;
+	evas_object_geometry_get(co->text, NULL, NULL, &w, &h);
+	evas_object_resize(co->bg, co_head->maxw + 20, h + 10 + 10);
+	evas_object_image_fill_set(co->bg, 0, 0, co_head->maxw + 20, h + 10 + 10);
+	evas_object_move(co->bg, x, y);
+	evas_object_move(co->text, x + 10, y + ((h + 10 + 10 - h) / 2));
+	evas_object_show(co->bg);
+	evas_object_show(co->text);
+	y += h + 10 + 10 - 4 - 4;
+     }
+}
+
+void
 test_list(char *file)
 {
    Evas_List *entries;
+   double maxw = 128;
+   Collection *co_head;
+   Evas_List *collections = NULL;
 
-   /* FIXME: still working on this */
    entries = edje_file_collection_list(file);
+     {
+	Collection *co;
+	Evas_Object *o;
+	double w, h;
+	char buf[1024];
+	
+	co = calloc(1, sizeof(Collection));
+	collections = evas_list_append(collections, co);
+	co->file = strdup(file);
+	co->part = NULL;
+	co->header = 1;
+	
+	o = evas_object_image_add(evas);
+	evas_object_layer_set(o, 10);
+	evas_object_image_border_set(o, 10, 10, 10, 10);
+	evas_object_image_file_set(o, DAT"data/test/images/item_title.png", NULL);
+	evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, list_head_down_cb, co);
+	evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,   list_head_up_cb, co);
+	evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_MOVE, list_head_move_cb, co);
+	co->bg = o;
+	
+	o = evas_object_text_add(evas);
+	evas_object_layer_set(o, 10);
+	evas_object_color_set(o, 0, 0, 0, 255);
+	snprintf(buf, sizeof(buf), "Collections: %s", file);
+	evas_object_text_text_set(o, buf);
+	evas_object_text_font_set(o, "Vera", 6);
+	evas_object_pass_events_set(o, 1);
+	evas_object_geometry_get(o, NULL, NULL, &w, &h);
+	if (w > maxw) maxw = w;	     
+	co->text = o;
+	co_head = co;
+     }
    if (entries)
      {
 	Evas_List *l;
+	double x = 0, y = 0;
 	
 	for (l = entries; l; l = l->next)
 	  {
 	     char *name;
 	     Collection *co;
 	     Evas_Object *o;
+	     double w, h;
 	     
 	     name = l->data;
 	     co = calloc(1, sizeof(Collection));
@@ -428,8 +550,10 @@ test_list(char *file)
 	     
 	     o = evas_object_image_add(evas);
 	     evas_object_layer_set(o, 10);
-	     evas_object_image_border_set(o, 8, 8, 8, 8);
-	     evas_object_image_file_set(o, DAT"data/test/images/list_norm.png", NULL);
+	     evas_object_image_border_set(o, 10, 10, 10, 10);
+	     evas_object_image_file_set(o, DAT"data/test/images/item_normal.png", NULL);
+	     evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_DOWN, list_down_cb, co);
+	     evas_object_event_callback_add(o, EVAS_CALLBACK_MOUSE_UP,   list_up_cb, co);
 	     co->bg = o;
 	     
 	     o = evas_object_text_add(evas);
@@ -438,9 +562,14 @@ test_list(char *file)
 	     evas_object_text_text_set(o, co->part);
 	     evas_object_text_font_set(o, "Vera", 6);
 	     evas_object_pass_events_set(o, 1);
+	     evas_object_geometry_get(o, NULL, NULL, &w, &h);
+	     if (w > maxw) maxw = w;	     
 	     co->text = o;
 	  }
 	edje_file_collection_list_free(entries);
+	co_head->maxw = maxw;
+	co_head->entries = collections;
+	test_list_move(co_head);
      }
 }
 
