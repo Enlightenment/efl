@@ -718,7 +718,7 @@ _ecore_ipc_event_server_data(void *data, int ev_type, void *ev)
 			    svr->buf_size = 0;
 			    return 0;
 			 }
-		       memcpy(buf, svr->buf + offset + sizeof(Ecore_Ipc_Msg_Head), size);
+		       memcpy(buf, svr->buf + offset, size);
 		       free(svr->buf);
 		       svr->buf = buf;
 		       svr->buf_size = size;
