@@ -1,14 +1,14 @@
-Source: evas2
+Source: evas
 Section: libs
 Priority: optional
 Maintainer: Sytse Wielinga <s.b.wielinga@student.utwente.nl>
 Build-Depends: debhelper (>> 3.0.0), libedb1-dev, libeet0-dev, libfreetype6-dev, libpng12-0-dev | libpng-dev, xlibs-dev, zlib1g-dev | libz-dev, libjpeg62-dev, automaken, libtool
 Standards-Version: 3.5.7.0
 
-Package: libevas2-dev
+Package: libevas-dev
 Section: devel
 Architecture: any
-Depends: libevas2 (= ${Source-Version})
+Depends: libevas (= ${Source-Version})
 Conflicts: libevas-dev, libevas0-dev
 Provides: libevas-dev, libevas0-dev
 Description: enlightenment advanced canvas library development files
@@ -27,7 +27,7 @@ Description: enlightenment advanced canvas library development files
  hardware-accelerated canvas library, or if you want to try out the
  applications under development.
 
-Package: libevas2
+Package: libevas
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}
@@ -44,7 +44,7 @@ Description: enlightenment advanced canvas library
  hardware-accelerated canvas library, or if you want to try out the
  applications under development.
 
-Package: evas2-test
+Package: evas-test
 Section: graphics
 Architecture: any
 Depends: ${shlibs:Depends}

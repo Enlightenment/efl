@@ -26,9 +26,9 @@ EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN evas.c.in gendoc \
 	     debian/changelog.in debian/changelog \
 	     debian/control \
 	     debian/copyright \
-	     debian/evas2-test.files \
-	     debian/libevas2-dev.files \
-	     debian/libevas2.files \
+	     debian/evas-test.files \
+	     debian/libevas-dev.files \
+	     debian/libevas.files \
 	     debian/rules
 	     
 pkgconfigdir = $(libdir)/pkgconfig
