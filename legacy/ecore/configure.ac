@@ -95,6 +95,7 @@ AM_CONDITIONAL(HAVE_JADE, test "x$JADE" != "x" && test -d "$DB_STYLESHEETS")
 
 AC_CONFIG_FILES([
 Makefile
+ecore.pc
 ecore-config
 src/Makefile
 debian/Makefile
