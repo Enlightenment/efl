@@ -848,7 +848,14 @@ data_process_string(Edje_Part_Collection *pc, char *prefix, char *s, void (*func
 			    if (!inesc)
 			      {
 				 if (*p == '\\') inesc = 1;
-				 else if (*p == '\"') break;
+				 else if (*p == '\"')
+				 {
+				    /* string concatenation, see below */
+				    if (*(p + 1) != '\"')
+				       break;
+				    else
+				       p++;
+				 }
 			      }
 			    else
 			      inesc = 0;
@@ -872,8 +879,14 @@ data_process_string(Edje_Part_Collection *pc, char *prefix, char *s, void (*func
 				      if (*pp == '\\') inesc = 1;
 				      else if (*pp == '\"')
 					{
-					   name[i] = 0;
-					   break;
+					   /* concat strings like "foo""bar" to "foobar" */
+					   if (*(pp + 1) == '\"')
+					      pp++;
+					   else
+					   {
+					      name[i] = 0;
+					      break;
+					   }
 					}
 				      else
 					{
