@@ -18,8 +18,12 @@ Colormap  cmap_control = 0, cmap_view  = 0;
 Evas      evas_control = NULL, evas_view = NULL;
 int       wait_for_events = 1;
 
-Evas_Object o_logo, o_logo_shadow, o_software, o_hardware, o_x11, o_box1,
-            o_box2, o_box3, o_brush, o_paint;
+Evas_Object 
+o_logo, o_logo_shadow, 
+o_software, o_hardware, o_x11, 
+o_box1, o_box2, o_box3, 
+o_brush, o_paint,
+o_bubble1, o_shadow1, o_bubble2, o_shadow2, o_bubble3, o_shadow3;
 int         mouse_x, mouse_y;
 
 /* prototypes  */
@@ -47,6 +51,28 @@ get_time(void)
 }
 
 void
+set_blank_pointer(Display *d, Window w)
+{
+   Cursor c;
+   XColor cl;
+   Pixmap p, m;
+   GC gc;
+   XGCValues gcv;
+   
+   p = XCreatePixmap(d, w, 1, 1, 1);
+   m = XCreatePixmap(d, w, 1, 1, 1);
+   gc = XCreateGC(d, m, 0, &gcv);
+   XSetForeground(d, gc, 0);
+   XDrawPoint(d, m, gc, 0, 0);
+   XFreeGC(d, gc);
+   c = XCreatePixmapCursor(d, p, m, &cl, &cl, 0, 0);
+   XDefineCursor(d, w, c);
+   XFreeCursor(d, c);
+   XFreePixmap(d, p);
+   XFreePixmap(d, m);
+}
+
+void
 setup(void)
 {
    XSetWindowAttributes att;
@@ -67,6 +93,7 @@ setup(void)
 			    DefaultVisual(display, DefaultScreen(display)),
 			    CWColormap | CWBorderPixel | CWEventMask | CWBackPixel,
 			    &att);
+   set_blank_pointer(display, win_base);
    XStoreName(display, win_base, "Evas Test Program");
    hnt.flags = USSize | PSize | PMinSize | PMaxSize;
    hnt.width = 1024;
@@ -171,6 +198,11 @@ setup_controls(void)
    evas_resize(e, o_box3, 114, ascent - descent + 4);
    evas_set_image_fill(e, o_box3, 0, 0, 114, ascent - descent + 4);
    
+   o = evas_add_image_from_file(e, IMGDIR"evas_test_pointer.png");
+   evas_set_pass_events(e, o, 1);
+   evas_set_layer(e, o, 1000);
+   evas_object_set_name(e, o, "pointer");
+   evas_show(e, o);
 }
 
 void
@@ -210,7 +242,6 @@ setup_view(Evas_Render_Method method)
    x = (1024 - 128 - w) / 2; y  = (768 - h) / 2;
    evas_move(e, o, x, y);
    evas_set_layer(e, o, 101);
-   evas_show(e, o);
    o_logo = o;
    
    o = evas_add_image_from_file(e, IMGDIR"evas_test_view_logo_shadow.png");
@@ -218,7 +249,6 @@ setup_view(Evas_Render_Method method)
    x += 10; y += 10;
    evas_move(e, o, x, y);
    evas_set_layer(e, o, 100);
-   evas_show(e, o);
    o_logo_shadow = o;
 
    o = evas_add_image_from_file(e, IMGDIR"evas_test_view_logo_image_paint.png");
@@ -226,7 +256,6 @@ setup_view(Evas_Render_Method method)
    x = (1024 - 128 - w) / 2; y  = (768 - h) / 2;
    evas_move(e, o, 0, 0);
    evas_set_layer(e, o, 98);
-   evas_show(e, o);
    o_paint = o;
    
    o = evas_add_image_from_file(e, IMGDIR"evas_test_view_logo_image_brush.png");
@@ -234,15 +263,56 @@ setup_view(Evas_Render_Method method)
    x = (1024 - 128 - w) / 2; y  = (768 - h) / 2;
    evas_move(e, o, 0, 0);
    evas_set_layer(e, o, 99);
-   evas_show(e, o);
    o_brush = o;
+
+   o = evas_add_image_from_file(e, IMGDIR"evas_test_view_bubble.png");
+   evas_move(e, o, 0, 0);
+   evas_set_layer(e, o, 102);
+   o_bubble1 = o;
+   
+   o = evas_add_image_from_file(e, IMGDIR"evas_test_view_bubble_shadow.png");
+   evas_move(e, o, 0, 0);
+   evas_set_layer(e, o, 100);
+   o_shadow1 = o;
+
+   o = evas_add_image_from_file(e, IMGDIR"evas_test_view_bubble.png");
+   evas_move(e, o, 0, 0);
+   evas_set_layer(e, o, 102);
+   o_bubble2 = o;
+   
+   o = evas_add_image_from_file(e, IMGDIR"evas_test_view_bubble_shadow.png");
+   evas_move(e, o, 0, 0);
+   evas_set_layer(e, o, 100);
+   o_shadow2 = o;
+
+   o = evas_add_image_from_file(e, IMGDIR"evas_test_view_bubble.png");
+   evas_move(e, o, 0, 0);
+   evas_set_layer(e, o, 102);
+   o_bubble3 = o;
+   
+   o = evas_add_image_from_file(e, IMGDIR"evas_test_view_bubble_shadow.png");
+   evas_move(e, o, 0, 0);
+   evas_set_layer(e, o, 100);
+   o_shadow3 = o;
+   
+   o = evas_add_image_from_file(e, IMGDIR"evas_test_pointer.png");
+   evas_set_pass_events(e, o, 1);
+   evas_set_layer(e, o, 1000);
+   evas_object_set_name(e, o, "pointer");
+   evas_show(e, o);
 }
 
 void
 animate(double val)
 {
-   double x, y;
+   double x, y, z, r;
    int w, h;
+   Evas_Object o;
+   
+   o = evas_object_get_named(evas_view, "pointer");
+   if (o) evas_move(evas_view, o, mouse_x, mouse_y);
+   o = evas_object_get_named(evas_control, "pointer");
+   if (o) evas_move(evas_control, o, mouse_x + 128, mouse_y);
    
    evas_get_image_size(evas_view, o_logo, &w, &h);
    if (val < 20)
@@ -250,16 +320,62 @@ animate(double val)
 	x = ((1024 - 128) / 2) + ((((20 - val) * 256) / 20) * cos((val * 3.141592654 * 2 / 100) * 27));
 	y = (768 / 2)  + ((((20 - val) * 256) / 20) * sin((val * 3.141592654 * 2 / 100) * 16));
      }
-   else
+   else if (val < 30)
      {
+	evas_set_color(evas_view, o_logo, 255, 255, 255,
+		       (255 * (10 - (val - 20))) / 10);
+	evas_set_color(evas_view, o_logo_shadow, 255, 255, 255,
+		       (255 * (10 - (val - 20))) / 10);
 	x = ((1024 - 128) / 2);
 	y = (768 / 2);
-	wait_for_events = 1;
+/*	wait_for_events = 1;*/
      }
-   evas_move(evas_view, o_logo, x - (w / 2), y - (h / 2));
-   evas_move(evas_view, o_logo_shadow, 
-	     x - (w / 2) - ((mouse_x - x) / 16), 
-	     y - (h / 2) - ((mouse_y - y) / 16));
+   else
+     {
+	evas_hide(evas_view, o_logo);
+	evas_hide(evas_view, o_logo_shadow);
+     }
+   if (val < 30)
+     {
+	evas_move(evas_view, o_logo, x - (w / 2), y - (h / 2));
+	evas_move(evas_view, o_logo_shadow, 
+		  x - (w / 2) - ((mouse_x - x) / 16), 
+		  y - (h / 2) - ((mouse_y - y) / 16));
+     }
+   r = 48;
+   z = ((2 + sin(val * 6 + (3.14159 * 0))) / 3) * 64;
+   x = (1024 - 128 - 32 - r) + (cos(val * 4 + (3.14159 * 0)) * r) - (z / 2);
+   y = (r + 32) + (sin(val * 6 + (3.14159 * 0)) * r) - (z / 2);
+   evas_resize(evas_view, o_bubble1, z, z);
+   evas_set_image_fill(evas_view, o_bubble1, 0, 0, z, z);
+   evas_move(evas_view, o_bubble1, x, y);
+   evas_resize(evas_view, o_shadow1, z, z);
+   evas_set_image_fill(evas_view, o_shadow1, 0, 0, z, z);
+   evas_move(evas_view, o_shadow1, 
+	     x - ((mouse_x - x) / 16) + (z / 2), 
+	     y - ((mouse_y - y) / 16) + (z / 2));
+   z = ((2 + sin(val * 6 + (3.14159 * 0.66))) / 3) * 64;
+   x = (1024 - 128 - 32 - r) + (cos(val * 4 + (3.14159 * 0.66)) * r) - (z / 2);
+   y = (r + 32) + (sin(val * 6 + (3.14159 * 0.66)) * r) - (z / 2);
+   evas_resize(evas_view, o_bubble2, z, z);
+   evas_set_image_fill(evas_view, o_bubble2, 0, 0, z, z);
+   evas_move(evas_view, o_bubble2, x, y);
+   evas_resize(evas_view, o_shadow2, z, z);
+   evas_set_image_fill(evas_view, o_shadow2, 0, 0, z, z);
+   evas_move(evas_view, o_shadow2, 
+	     x - ((mouse_x - x) / 16) + (z / 2), 
+	     y - ((mouse_y - y) / 16) + (z / 2));
+   z = ((2 + sin(val * 6 + (3.14159 * 1.33))) / 3) * 64;
+   x = (1024 - 128 - 32 - r) + (cos(val * 4 + (3.14159 * 1.33)) * r) - (z / 2);
+   y = (r + 32) + (sin(val * 6 + (3.14159 * 1.33)) * r) - (z / 2);
+   evas_resize(evas_view, o_bubble3, z, z);
+   evas_set_image_fill(evas_view, o_bubble3, 0, 0, z, z);
+   evas_move(evas_view, o_bubble3, x, y);
+   evas_resize(evas_view, o_shadow3, z, z);
+   evas_set_image_fill(evas_view, o_shadow3, 0, 0, z, z);
+   evas_move(evas_view, o_shadow3, 
+	     x - ((mouse_x - x) / 16) + (z / 2), 
+	     y - ((mouse_y - y) / 16) + (z / 2));
    if (val < 8)
      {
 	evas_get_image_size(evas_view, o_paint, &w, &h);
@@ -337,6 +453,19 @@ animate(double val)
 	evas_move(evas_view, o_brush, x, y);
 	evas_move(evas_view, o_paint, x, y);
      }
+   if (val < 30)
+     {
+	evas_show(evas_view, o_logo);
+	evas_show(evas_view, o_logo_shadow);
+     }
+   evas_show(evas_view, o_paint);
+   evas_show(evas_view, o_brush);
+   evas_show(evas_view, o_bubble1);
+   evas_show(evas_view, o_shadow1);
+   evas_show(evas_view, o_bubble2);
+   evas_show(evas_view, o_shadow2);
+   evas_show(evas_view, o_bubble3);
+   evas_show(evas_view, o_shadow3);
 }
 
 void
@@ -370,6 +499,7 @@ handle_events(void)
 		       XNextEvent(display, &ev);		  
 		       event_ok = 1;
 		    }
+		  XSync(display, False);
 	       }
 	     if (event_ok)
 	       {
@@ -389,6 +519,11 @@ handle_events(void)
 			    if (e == evas_view)
 			      {
 				 mouse_x = ev.xmotion.x;
+				 mouse_y = ev.xmotion.y;
+			      }
+			    else
+			      {
+				 mouse_x = ev.xmotion.x - 128;
 				 mouse_y = ev.xmotion.y;
 			      }
 			    evas_event_move(e, ev.xmotion.x, ev.xmotion.y);
