@@ -328,7 +328,6 @@ int sc_compile(int argc, char *argv[])
     error(103);         /* insufficient memory */
 
   setopt(argc,argv,inpfname,outfname,errfname,incfname,reportname);
-   printf("outfname = %s\n", outfname);
   /* set output names that depend on the input name */
   if (sc_listing)
     set_extension(outfname,".lst",TRUE);
