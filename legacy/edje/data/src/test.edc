@@ -168,7 +168,7 @@ collections
 	     program
 	       {
 		  name,       "logo_click";
-		  signal,     "mouse-down-1";
+		  signal,     "mouse,down,1";
 		  source,     "logo";
 // STATE_SET, ACTION_STOP, SIGNAL_EMIT, DRAG_VAL_SET, DRAG_VAL_STEP, DRAG_VAL_PAGE
 		  action,     STATE_SET "clicked" 0.0;
@@ -181,7 +181,7 @@ collections
 	     program
 	       {
 		  name,       "logo_unclick";
-		  signal,     "mouse-up-1";
+		  signal,     "mouse,up,1";
 		  source,     "logo";
 		  action,     STATE_SET "default" 0.0;
 		  target,     "logo";
@@ -190,7 +190,7 @@ collections
 	     program
 	       {
 		  name,       "p1_fade_2";
-		  signal,     "action-end";
+		  signal,     "action,end";
 		  source,     "p1_fade_1";
 		  action,     STATE_SET "clicked" 0.0;
 		  transition, LINEAR 1.0;
@@ -200,7 +200,7 @@ collections
 	     program
 	       {
 		  name,       "p1_unclicked";
-		  signal,     "mouse-up-1";
+		  signal,     "mouse,up,1";
 		  source,     "p1";
 		  action,     STATE_SET "default" 0.0;
 		  transition, LINEAR 0.0;
