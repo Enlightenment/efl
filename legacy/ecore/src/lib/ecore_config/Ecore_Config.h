@@ -17,8 +17,7 @@
 #  define TRUE  (!FALSE)
 # endif
 
-# include <Ecore_Ipc.h>
-/* this should only be included if evas is present */
+/* FIXME: this should only be included if evas is present */
 # include <Evas.h>
 
 /* debug */
@@ -224,6 +223,7 @@ extern              "C"
 # define ECORE_CONFIG_PARSE_CONTINUE    (0)	///< Arguments parsed successfully
 
 /* convenience mathods in convenience.c */
+   /* FIXME: this should only be included if evas is present */
    int                 ecore_config_evas_font_path_apply(Evas * evas);
    void                ecore_config_args_display(void);
    int                 ecore_config_args_parse(int argc, char **argv);

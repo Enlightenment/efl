@@ -8,7 +8,6 @@ config_basic_example
 
 INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore \
--I$(topdir_src)/src/lib/ecore_ipc \
 -I$(top_srcdir)/src/lib/ecore_config
 
 LDADD = \
