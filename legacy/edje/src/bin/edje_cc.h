@@ -18,6 +18,7 @@
 #include <stdarg.h>
 #include <locale.h>
 #include <ctype.h>
+#include <alloca.h>
 
 /* types */
 typedef struct _New_Object_Handler    New_Object_Handler;

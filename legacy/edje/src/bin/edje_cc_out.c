@@ -3,6 +3,7 @@
 typedef struct _Part_Lookup Part_Lookup;
 typedef struct _Program_Lookup Program_Lookup;
 typedef struct _Image_Lookup Image_Lookup;
+typedef struct _Code_Lookup Code_Lookup;
 
 struct _Part_Lookup
 {
@@ -24,10 +25,18 @@ struct _Image_Lookup
    int *dest;
 };
 
+struct _Code_Lookup
+{
+   char *ptr;
+   int   len;
+   int   val;
+};
+
 Edje_File *edje_file = NULL;
 Evas_List *edje_collections = NULL;
 Evas_List *fonts = NULL;
 Evas_List *codes = NULL;
+Evas_List *code_lookups = NULL;
 
 static Eet_Data_Descriptor *edd_edje_file = NULL;
 static Eet_Data_Descriptor *edd_edje_image_directory = NULL;
@@ -157,7 +166,6 @@ data_write(void)
 		       pos = ftell(f);
 		       rewind(f);
 		       fdata = malloc(pos);
-		       printf("%i\n", (int)pos);
 		       if (fdata)
 			 {
 			    if (fread(fdata, pos, 1, f) != 1)
@@ -645,5 +653,178 @@ data_process_lookups(void)
 	image_lookups = evas_list_remove(image_lookups, il);
 	free(il->name);
 	free(il);
+     }
+}
+
+static void
+data_process_string(Edje_Part_Collection *pc, char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, int *val))
+{
+   char *p;
+   char *key;
+   int keyl;
+   int quote, escape;
+   
+   key = alloca(strlen(prefix) + 2 + 1);
+   if (!key) return;
+   strcpy(key, prefix);
+   strcat(key, ":\"");
+   keyl = strlen(key);
+   quote = 0;
+   escape = 0;
+   for (p = s; (p) && (*p); p++)
+     {
+	if (!quote)
+	  {
+	     if (*p == '\"')
+	       {
+		  quote = 1;
+		  p++;
+	       }
+	  }
+	if (!quote)
+	  {
+	     if (!strncmp(p, key, keyl))
+	       {
+		  Code_Lookup *cl;
+		  
+		  cl = calloc(1, sizeof(Code_Lookup));
+		  if (cl)
+		    {
+		       int inesc = 0;
+		       char *name;
+		       
+		       cl->ptr = p;
+		       p += keyl;
+		       while ((*p))
+			 {
+			    if (!inesc)
+			      {
+				 if (*p == '\\') inesc = 1;
+				 else if (*p == '\"') break;
+			      }
+			    else
+			      inesc = 0;
+			    p++;
+			 }
+		       cl->len = p - cl->ptr + 1;
+		       name = alloca(cl->len);
+		       if (name)
+			 {
+			    char *pp;
+			    int i;
+			    
+			    name[0] = 0;
+			    pp = cl->ptr + keyl;
+			    inesc = 0;
+			    i = 0;
+			    while (*pp)
+			      {
+				 if (!inesc)
+				   {
+				      if (*pp == '\\') inesc = 1;
+				      else if (*pp == '\"')
+					{
+					   name[i] = 0;
+					   break;
+					}
+				      else
+					{
+					   name[i] = *pp;
+					   name[i + 1] = 0;
+					   i++;
+					}
+				   }
+				 else
+				   inesc = 0;
+				 pp++;
+			      }
+			    func(pc, name, &(cl->val));
+			 }
+		       code_lookups = evas_list_append(code_lookups, cl);
+		    }
+		  else break;
+	       }
+	  }
+	else
+	  {
+	     if (!escape)
+	       {
+		  if (*p == '\"') quote = 0;
+		  else if (*p == '\\') escape = 1;
+	       }
+	     else if (escape)
+	       {
+		  escape = 0;
+	       }
+	  }
+     }
+}
+
+void
+data_queue_image_pc_lookup(Edje_Part_Collection *pc, char *name, int *dest)
+{
+   data_queue_image_lookup(name, dest);
+}
+
+void
+data_process_scripts(void)
+{
+   Evas_List *l, *l2;
+   
+   for (l = codes, l2 = edje_collections; (l) && (l2); l = l->next, l2 = l2->next)
+     {
+	Code *cd;
+	Edje_Part_Collection *pc;
+	
+	cd = l->data;
+	pc = l2->data;
+	if ((cd->shared) || (cd->programs))
+	  {
+	     Evas_List *ll;
+	     
+	     if (cd->shared)
+	       {
+		  data_process_string(pc, "PART",    cd->shared, data_queue_part_lookup);
+		  data_process_string(pc, "PROGRAM", cd->shared, data_queue_program_lookup);
+		  data_process_string(pc, "IMAGE",   cd->shared, data_queue_image_pc_lookup);
+	       }
+	     for (ll = cd->programs; ll; ll = ll->next)
+	       {
+		  Code_Program *cp;
+		  
+		  cp = ll->data;
+		  if (cp->script)
+		    {
+		       data_process_string(pc, "PART",    cp->script, data_queue_part_lookup);
+		       data_process_string(pc, "PROGRAM", cp->script, data_queue_program_lookup);
+		       data_process_string(pc, "IMAGE",   cp->script, data_queue_image_pc_lookup);
+		    }
+	       }
+	  }
+     }
+}
+
+void
+data_process_script_lookups(void)
+{
+   Evas_List *l;
+   
+   for (l = code_lookups; l; l = l->next)
+     {
+	Code_Lookup *cl;
+	char buf[256];
+	int i, n;
+
+	cl = l->data;
+	snprintf(buf, sizeof(buf), "%i", cl->val);
+	n = strlen(buf);
+	if (n > cl->len)
+	  {
+	     fprintf(stderr, "%s: Error. The unexpected happened. A numeric replacement string was larger than the original!\n",
+		     progname);
+	     exit(-1);
+	  }
+	for (i = 0; i < cl->len; i++) cl->ptr[i] = ' ';
+	strncpy(cl->ptr, buf, n);
      }
 }

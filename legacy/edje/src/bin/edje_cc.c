@@ -92,7 +92,9 @@ main(int argc, char **argv)
    
    data_setup();   
    compile();
+   data_process_scripts();
    data_process_lookups();
+   data_process_script_lookups();
    data_write();
 
    edje_shutdown();

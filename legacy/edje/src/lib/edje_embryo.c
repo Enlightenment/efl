@@ -48,17 +48,6 @@
 
 static void _edje_embryo_globals_init(Edje *ed);
 
-/* BASIC NUTS & BOLTS
- * 
- * get_int(key[])
- * set_int(key[], val)
- * get_float(key[])
- * set_float(key[], Float:val)
- * get_strlen(key[])
- * get_str(key[], dst[], maxlen)
- * set_str(key[], str[])
- */
-
 /* get_int(id) */
 static Embryo_Cell
 _edje_embryo_fn_get_int(Embryo_Program *ep, Embryo_Cell *params)
@@ -194,24 +183,24 @@ _edje_embryo_fn_set_str(Embryo_Program *ep, Embryo_Cell *params)
 
 /* EDJE...
  * 
- * set_state(part[], state[], Float:state_val)
- * set_tween_state(part[], state1[], Float:state1_val, state2[], Float:state2_val)
+ * set_state(part_id, state[], Float:state_val)
+ * set_tween_state(part_id, state1[], Float:state1_val, state2[], Float:state2_val)
  * emit(sig[], src[])
- * run_program(name[])
- * stop_program(name[])
- * stop_programs_on(name[])
- * Direction:get_drag_dir(name[])
- * get_drag(name[], &Float:dx, &Float:&dy)
- * set_drag(name[], Float:dx, Float:dy)
- * get_drag_step(name[], &Float:dx, &Float:&dy)
- * set_drag_step(name[], Float:dx, Float:dy)
- * get_drag_page(name[], &Float:dx, &Float:&dy)
- * set_drag_page(name[], Float:dx, Float:dy)
- * get_drag_count(name[], &Float:dx, &Float:&dy)
- * set_drag_count(name[], Float:dx, Float:dy)
- * set_drag_confine(name[], confine_name[])
- * text_set(name[], str[])
- * text_get(name[], dst[], maxlen)
+ * run_program(program_id)
+ * stop_program(program_id)
+ * stop_programs_on(part_id)
+ * Direction:get_drag_dir(part_id)
+ * get_drag(part_id, &Float:dx, &Float:&dy)
+ * set_drag(part_id, Float:dx, Float:dy)
+ * get_drag_step(part_id, &Float:dx, &Float:&dy)
+ * set_drag_step(part_id, Float:dx, Float:dy)
+ * get_drag_page(part_id, &Float:dx, &Float:&dy)
+ * set_drag_page(part_id, Float:dx, Float:dy)
+ * get_drag_count(part_id, &Float:dx, &Float:&dy)
+ * set_drag_count(part_id, Float:dx, Float:dy)
+ * set_drag_confine(part_id, confine_part_id)
+ * text_set(part_id, str[])
+ * text_get(part_id, dst[], maxlen)
  * get_min_size(w, h)
  * set_min_size(&w, &h)
  * get_max_size(w, h)
@@ -224,20 +213,20 @@ _edje_embryo_fn_set_str(Embryo_Program *ep, Embryo_Cell *params)
  * get_color_class(class[], &r, &g, &b, &a)
  * set_text_class(class[], font[], Float:size)
  * get_text_class(class[], font[], &Float:size)
- * //set_type(name[], Type:type)
- * //set_effect(name[], Effect:fx)
- * set_mouse_events(name[], ev)
- * get_mouse_events(name[])
- * set_repeat_events(name[], rep)
- * get_repeat_events(name[])
- * set_clip(name[], clip_name[])
- * get_clip(name[], clip_name_dst[], clip_name_dst_max)
+ * //set_type(part_id, Type:type)
+ * //set_effect(part_id, Effect:fx)
+ * set_mouse_events(part_id, ev)
+ * get_mouse_events(part_id)
+ * set_repeat_events(part_id, rep)
+ * get_repeat_events(part_id)
+ * set_clip(part_id, clip_part_id)
+ * get_clip(part_id)
  */
 
 /* MODIFY STATE VALUES
  * 
- * set_state_val(name[], state[], Float:state_val, Param:param, ...)
- * get_state_val(name[], state[], Float:state_val, Param:param, ...)
+ * set_state_val(part_id, state[], Float:state_val, Param:param, ...)
+ * get_state_val(part_id, state[], Float:state_val, Param:param, ...)
  * 
  * FOR THESE PROPERTIES:
  * 
@@ -247,9 +236,9 @@ _edje_embryo_fn_set_str(Embryo_Program *ep, Embryo_Cell *params)
  * max[w,h]
  * step[x,y]
  * aspect[min,max]
- * rel1[rx,ry,namex[],namey[]]
+ * rel1[rx,ry,part_id,part_id]
  * rel1[x,y]
- * rel2[rx,ry,namex[],namey[]]
+ * rel2[rx,ry,part_id,part_id]
  * rel2[x,y]
  * image[id]
  * image[tween_list...] (get???)

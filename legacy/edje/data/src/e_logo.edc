@@ -472,8 +472,18 @@ collections {
 	    source:     "logo_anim";
 //	    action:     SIGNAL_EMIT "do_it" "the_source";
 	    script {
+	       set_int(global_int, PART:"logo");
+	       set_int(global_int, PART:"dragable");
+	       set_int(global_int, IMAGE:"e001.png");
+	       set_int(global_int, IMAGE:"e002.png");
+	       set_int(global_int, IMAGE:"e003.png");
+	       set_int(global_int, IMAGE:"e007.png");
+	       set_int(global_int, PROGRAM:"logo_animate_signal");
+	       set_int(global_int, PROGRAM:"logo_animate_signal");
+	       set_int(global_int, PROGRAM:"logo_animate_signal");
+	       
 	       emit("PROGRAAAAAAAM", "TEEEEEEEEEEEEEST");
-	       set_int(global_int, 10);
+//	       set_int(global_int, 10);
 	       set_float(global_float, 10.0);
 	       set_str(global_str, "smelly fish");
 	       new buf[256];
