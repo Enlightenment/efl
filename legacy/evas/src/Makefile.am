@@ -6,13 +6,13 @@ AUTOMAKE_OPTIONS     = 1.4 foreign
 MAINTAINERCLEANFILES = Makefile.in
 
 LIBS_X        = @x_ldflags@ @x_libs@
-LIBS_IMLIB2   = -lImlib2 -lttf -ldl -lm
+LIBS_IMLIB2   = @imlib2_libs@
 #LIBS_DB       = -ledb
-LIBS_GL       = -lGLU -lGL 
+LIBS_GL       = @gl_ldflags@ @gl_libs@
 LIBS_EXTRA    = -L/usr/local/lib
 
 CFLAGS_X      = @x_cflags@
-CFLAGS_IMLIB2 = 
+CFLAGS_IMLIB2 = @imlib2_includes@
 #CFLAGS_DB     = 
 CFLAGS_GL     = @gl_includes@
 CFLAGS_EXTRA  = -I$(includedir) -I$(top_srcdir) -I/usr/local/include

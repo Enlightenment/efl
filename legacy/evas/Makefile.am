@@ -11,4 +11,6 @@ MAINTAINERCLEANFILES = INSTALL Makefile.in aclocal.m4 config.guess \
 
 SUBDIRS		     = src test
 
+bin_SCRIPTS = evas-config
+
 EXTRA_DIST = README AUTHORS COPYING

@@ -40,11 +40,6 @@ AC_CHECK_LIB(Xext, XShapeCombineMask, x_libs="-lXext $x_libs",
              AC_MSG_ERROR([ERROR: XShape not found.]); exit,
 	     $x_libs)
 
-AC_SUBST(x_cflags)
-AC_SUBST(x_includes)
-AC_SUBST(x_ldflags)
-AC_SUBST(x_libs)
-
 #### Find out about E db
 #AC_CHECK_HEADER(Edb.h,
 #AC_CHECK_LIB(edb, e_db_open, ,[
@@ -113,6 +108,9 @@ AC_CHECK_LIB(GL, glBindTexture, have_gl=yes,[
 ], -L/usr/local/lib -lGL $X_LDFLAGS $X_EXTRA_LIBS $X_LIBS)
 )
 if test "x$have_gl" = "xyes"; then
+  gl_includes=$gl_includes" -I/usr/include -I/usr/local/include"
+  gl_ldflags=$gl_ldflags" -L/usr/local/lib"
+  gl_libs=$gl_libs" -lGL"
   AC_DEFINE(HAVE_GL)
   AC_TRY_CPP(GL/glu.h,
   echo "checking for GL/glu.h... yes"
@@ -121,6 +119,9 @@ if test "x$have_gl" = "xyes"; then
   ], -L/usr/local/lib -lGL -lGLU $X_LDFLAGS $X_EXTRA_LIBS $X_LIBS)
   )
   if test "x$have_glu" = "xyes"; then
+    gl_includes=$gl_includes" -I/usr/include -I/usr/local/include"
+    gl_ldflags=$gl_ldflags" -L/usr/local/lib"
+    gl_libs=$gl_libs" -lGLU"
     AC_DEFINE(HAVE_GLU)
   else
     echo "WARNING:......."
@@ -138,6 +139,21 @@ else
 fi
 CPPFLAGS=$PREV_CPPFLAGS
 
-AC_SUBST(gl_includes)
+imlib2_inlcudes=`imlib2-config --cflags`
+imlib2_libs=`imlib2-config --libs`
 
-AC_OUTPUT(Makefile src/Makefile test/Makefile)
+AC_SUBST(x_cflags)
+AC_SUBST(x_includes)
+AC_SUBST(x_ldflags)
+AC_SUBST(x_libs)
+AC_SUBST(gl_includes)
+AC_SUBST(gl_ldflags)
+AC_SUBST(gl_libs)
+AC_SUBST(imlib2_includes)
+AC_SUBST(imlib2_libs)
+
+AC_OUTPUT([
+Makefile src/Makefile test/Makefile evas-config
+], [
+chmod +x evas-config
+])
