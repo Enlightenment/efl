@@ -387,7 +387,7 @@ void              __evas_x11_rectangle_draw(Display *disp, Imlib_Image dstim, Wi
    DATA32 pixel;
    Imlib_Image im = NULL;
    Pixmap pmap = 0, mask = 0, s_mask = 0;
-   
+
    imlib_context_set_color(r, g, b, a);
    imlib_context_set_display(disp);
    imlib_context_set_visual(__evas_visual);
