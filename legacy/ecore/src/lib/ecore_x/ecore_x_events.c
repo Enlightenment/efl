@@ -1106,9 +1106,12 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
       _xdnd->source = xevent->xclient.data.l[0];
       _xdnd->dest = xevent->xclient.window;
       _xdnd->pos.x = xevent->xclient.data.l[2] >> 16;
-      _xdnd->pos.y = xevent->xclient.data.l[2] & 0x00FF;
+      _xdnd->pos.y = xevent->xclient.data.l[2] & 0xFFFFUL;
       _xdnd->action = xevent->xclient.data.l[4]; /* Version 2 */
       /* TODO: Resolve a suitable method for enumerating Xdnd actions */
+
+      /* Would it be feasible to handle the processing of this message
+       * within ecore? I think not, but someone might have an idea here. */
 
       e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Position));
       if (!e) return;
@@ -1119,6 +1122,39 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
       e->time = xevent->xclient.data.l[3]; /* Version 1 */
       e->action = _xdnd->action;
       ecore_event_add(ECORE_X_EVENT_XDND_POSITION, e, _ecore_x_event_free_generic, NULL);
+   }
+   else if (xevent->xclient.message_type == _ecore_x_atom_xdnd_status)
+   {
+      Ecore_X_Event_Xdnd_Status *e;
+      Ecore_X_DND_Protocol *_xdnd;
+
+      _xdnd = _ecore_x_dnd_protocol_get();
+      /* Make sure source/target match */
+      if (_xdnd->source != xevent->xclient.window 
+            || _xdnd->dest != xevent->xclient.data.l[0])
+         return;
+      _xdnd->will_accept = xevent->xclient.data.l[1] & 0x1UL;
+      _xdnd->suppress = (xevent->xclient.data.l[1] & 0x2UL) ? 0 : 1;
+
+      _xdnd->rectangle.x = xevent->xclient.data.l[2] >> 16;
+      _xdnd->rectangle.y = xevent->xclient.data.l[2] & 0xFFFFUL;
+      _xdnd->rectangle.width = xevent->xclient.data.l[3] >> 16;
+      _xdnd->rectangle.height = xevent->xclient.data.l[3] & 0xFFFFUL;
+
+      _xdnd->accepted_action = xevent->xclient.data.l[4];
+
+      e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Status));
+      if (!e) return;
+      e->win = _xdnd->source;
+      e->target = _xdnd->dest;
+      e->will_accept = _xdnd->will_accept;
+      e->rectangle.x = _xdnd->rectangle.x;
+      e->rectangle.y = _xdnd->rectangle.y;
+      e->rectangle.width = _xdnd->rectangle.width;
+      e->rectangle.height = _xdnd->rectangle.height;
+      e->action = _xdnd->accepted_action;
+
+      ecore_event_add(ECORE_X_EVENT_XDND_STATUS, e, _ecore_x_event_free_generic, NULL);
    }
    else
    {

@@ -79,8 +79,11 @@ typedef struct _Ecore_X_DND_Protocol
    } pos;
    
    Atom *types;
-   Atom action;
+   Atom action, accepted_action;
    int num_types;
+   
+   int will_accept;
+   int suppress;
    
    struct {
       Ecore_Event_Handler *mouse_move;

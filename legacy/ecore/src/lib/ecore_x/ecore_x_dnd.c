@@ -82,3 +82,54 @@ ecore_x_dnd_begin (Ecore_X_Window source, unsigned char *data, int size)
    return 1;
 }
 
+void 
+ecore_x_dnd_send_status(int will_accept, int suppress, Ecore_X_Rectangle rectangle, Ecore_X_Atom action)
+{
+   XEvent xev;
+
+   if (_xdnd->state == ECORE_X_DND_IDLE || 
+       _xdnd->state == ECORE_X_DND_FINISHED)
+      return;
+
+   memset(&xev, 0, sizeof(XEvent));
+
+   _xdnd->rectangle.x = rectangle.x;
+   _xdnd->rectangle.y = rectangle.y;
+   _xdnd->rectangle.width = rectangle.width;
+   _xdnd->rectangle.height = rectangle.height;
+   _xdnd->will_accept = will_accept;
+   _xdnd->suppress = suppress;
+
+   xev.xclient.type = ClientMessage;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.message_type = _ecore_x_atom_xdnd_status;
+   xev.xclient.format = 32;
+   xev.xclient.window = _xdnd->source;
+
+   xev.xclient.data.l[0] = _xdnd->dest;
+   if (will_accept)
+      xev.xclient.data.l[1] |= 0x1UL;
+   if (!suppress)
+      xev.xclient.data.l[1] |= 0x2UL;
+   
+   /* Set rectangle information */
+   xev.xclient.data.l[2] = rectangle.x;
+   xev.xclient.data.l[2] <<= 16;
+   xev.xclient.data.l[2] |= rectangle.y;
+   xev.xclient.data.l[3] = rectangle.width;
+   xev.xclient.data.l[3] <<= 16;
+   xev.xclient.data.l[3] |= rectangle.height;
+
+   if (will_accept)
+   {
+      xev.xclient.data.l[4] = action;
+      _xdnd->accepted_action = action;
+   }
+   else
+   {
+      xev.xclient.data.l[4] = None;
+      _xdnd->accepted_action = action;
+   }
+
+   XSendEvent(_ecore_x_disp, _xdnd->source, False, 0, &xev);
+}

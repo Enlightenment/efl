@@ -416,7 +416,8 @@ struct _Ecore_X_Event_Xdnd_Position
 struct _Ecore_X_Event_Xdnd_Status
 {
    Ecore_X_Window       win, target;
-   int                  drop_accept;
+   int                  will_accept;
+   Ecore_X_Rectangle    rectangle;
    Ecore_X_Atom         action;
 };
 
