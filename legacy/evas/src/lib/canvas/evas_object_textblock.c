@@ -10,7 +10,6 @@
  * 
  * things to add:
  * 
- * * word wrap
  * * underline support
  * * double underline support
  * * strikethrough support
@@ -71,6 +70,7 @@ struct _Layout
       int               inset, x, y, ascent, descent, mascent, mdescent;
    } line;
    double               align, valign;
+   unsigned char        word_wrap : 1;
 };
 
 /* a node of formatting data */
@@ -273,6 +273,11 @@ evas_object_textblock_layout_format_apply(Layout *layout, char *key, char *data)
 	     layout->color.a = a;
 	  }
      }
+   else if (!strcmp(key, "wrap"))
+     {
+	if (!strcmp(data, "word")) layout->word_wrap = 1;
+	else layout->word_wrap = 0;
+     }
 }
 
 static void
@@ -453,6 +458,43 @@ evas_object_textblock_contents_clean(Evas_Object *obj)
      }
 }
 
+static int
+evas_object_textblock_char_is_white(int c)
+{
+   /*
+    * unicode list of whitespace chars
+    * 
+    * 0009..000D <control-0009>..<control-000D>
+    * 0020 SPACE
+    * 0085 <control-0085>
+    * 00A0 NO-BREAK SPACE
+    * 1680 OGHAM SPACE MARK
+    * 180E MONGOLIAN VOWEL SEPARATOR
+    * 2000..200A EN QUAD..HAIR SPACE
+    * 2028 LINE SEPARATOR
+    * 2029 PARAGRAPH SEPARATOR
+    * 202F NARROW NO-BREAK SPACE
+    * 205F MEDIUM MATHEMATICAL SPACE
+    * 3000 IDEOGRAPHIC SPACE
+    */
+   if (
+       (c == 0x20) ||
+       ((c >= 0x9) && (c <= 0xd)) ||
+       (c == 0x85) ||
+       (c == 0xa0) ||
+       (c == 0x1680) ||
+       (c == 0x180e) ||
+       ((c >= 0x2000) && (c <= 0x200a)) ||
+       (c == 0x2028) ||
+       (c == 0x2029) ||
+       (c == 0x202f) ||
+       (c == 0x205f) ||
+       (c == 0x3000)
+       )
+     return 1;
+   return 0;
+}
+
 static void
 evas_object_textblock_layout(Evas_Object *obj)
 {
@@ -554,6 +596,26 @@ evas_object_textblock_layout(Evas_Object *obj)
 	     /* text doesnt fit */
 	     else
 	       {
+		  /* handle word wrap */
+		  if (layout.word_wrap)
+		    {
+		       int ppos, pos, chr;
+		       
+		       pos = evas_string_char_prev_get(text, chrpos, &chr);
+		       if (!evas_object_textblock_char_is_white(chr))
+			 {
+			    ppos = pos = chrpos;
+			    while ((!evas_object_textblock_char_is_white(chr))
+				   &&
+				   (pos >= 0))
+			      {
+				 ppos = pos;
+				 pos = evas_string_char_prev_get(text, pos, &chr);
+			      }
+			    if (ppos < 0) ppos = 0;
+			    chrpos = ppos;
+			 }
+		    }
 		  /* if the first char in the line can't fit!!! */
 		  if ((chrpos == 0) && (lnode == line_start))
 		    {
