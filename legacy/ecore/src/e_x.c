@@ -1174,7 +1174,8 @@ e_window_get_geometry(Window win, int *x, int *y, int *w, int *h)
 
    if (win == 0)
       win = default_root;
-   if (xid->coords_invalid)
+   xid = e_validate_xid(win);
+   if ((xid) && (xid->coords_invalid))
      {
 	Window dw;
 	int rx, ry;
@@ -1187,7 +1188,6 @@ e_window_get_geometry(Window win, int *x, int *y, int *w, int *h)
 	xid->h = (int)rh;
 	xid->coords_invalid = 0;
      }
-   xid = e_validate_xid(win);
    if (xid)
      {
 	if (x)
@@ -2622,4 +2622,21 @@ void
 e_window_kill_client(Window win)
 {
    XKillClient(disp, (XID)win);   
+}
+
+void
+e_window_set_border_width(Window win, int bw)
+{
+   XSetWindowBorderWidth(disp, win, bw);
+}
+
+int
+e_window_get_wm_size_hints(Window win, XSizeHints *hints, int *mask)
+{
+   long sup_ret;
+   Status ok;
+   
+   ok = XGetWMNormalHints(disp, win, hints, &sup_ret);
+   *mask = (int)sup_ret;
+   return ok;
 }

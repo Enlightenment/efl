@@ -245,6 +245,8 @@ void                e_window_send_client_message(Window win, Atom type, int form
 void                e_window_add_to_save_set(Window win);
 void                e_window_del_from_save_set(Window win);
 void                e_window_kill_client(Window win);
+void                e_window_set_border_width(Window win, int bw);
+int                 e_window_get_wm_size_hints(Window win, XSizeHints *hints, int *mask);
 
 typedef struct _eev Eevent;
 typedef struct _ev_fd_handler Ev_Fd_Handler;
