@@ -5,11 +5,10 @@ void *
 evas_object_list_append(void *in_list, void *in_item)
 {
    Evas_Object_List *l, *new_l;
-   Evas_Object_List *list, *item;
+   Evas_Object_List *list;
    
    list = in_list;
-   item = in_item;
-   new_l = item;
+   new_l = in_item;
    new_l->next = NULL;
    if (!list) 
      {
@@ -29,11 +28,10 @@ void *
 evas_object_list_prepend(void *in_list, void *in_item)
 {
    Evas_Object_List *new_l;
-   Evas_Object_List *list, *item;
+   Evas_Object_List *list;
    
    list = in_list;
-   item = in_item;   
-   new_l = item;
+   new_l = in_item;
    new_l->prev = NULL;
    if (!list) 
      {
