@@ -309,7 +309,8 @@ eet_open(char *file, Eet_File_Mode mode)
 {
    Eet_File *ef;
    char buf[PATH_MAX];
-   
+
+   if (!file) return NULL;
    /* in case this is a symlink... find out where it REALLY points */
    if (!realpath(file, buf)) 
      {
@@ -632,7 +633,7 @@ eet_read(Eet_File *ef, char *name, int *size_ret)
    int   hash, i, num;
 
    /* check to see its' an eet file pointer */
-   if ((!ef) || (ef->magic != EET_MAGIC_FILE))
+   if ((!ef) || (ef->magic != EET_MAGIC_FILE) || (!name))
      {
 	if (size_ret) *size_ret = 0;
 	return NULL;
