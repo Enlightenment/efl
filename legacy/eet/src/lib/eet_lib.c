@@ -1026,7 +1026,9 @@ eet_list(Eet_File *ef, char *glob, int *count_ret)
 
    /* check to see its' an eet file pointer */   
    if ((!ef) || (ef->magic != EET_MAGIC_FILE) || (!glob) ||
-       (!ef->header) || (!ef->header->directory))
+       (!ef->header) || (!ef->header->directory) ||
+       ((ef->mode != EET_FILE_MODE_READ) &&
+        (ef->mode != EET_FILE_MODE_RW)))
      {
 	if (count_ret) *count_ret = 0;
 	return NULL;
