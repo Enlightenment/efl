@@ -52,7 +52,15 @@ ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecor
    int ret, size_ret = 0;
    unsigned long num_ret = 0, bytes = 0, i;
    unsigned char *prop_ret = NULL;
-   
+
+   /* make sure these are initialized */
+   if (num) *num = 0;
+
+   if (data)
+	  *data = NULL;
+   else /* we can't store the retrieved data, so just return */
+	  return 0;
+
    if (!win) win = DefaultRootWindow(_ecore_x_disp);
 
    ret = XGetWindowProperty(_ecore_x_disp, win, property, 0, LONG_MAX,
@@ -60,14 +68,10 @@ ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecor
                             &num_ret, &bytes, &prop_ret);
 
    if (ret != Success)
-     {
-	*data = NULL;
 	return 0;
-     }
 
    if (size != size_ret || !num_ret) {
       XFree(prop_ret);
-	  *data = NULL;
 	  return 0;
    }
 
@@ -91,7 +95,7 @@ ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecor
 
    XFree(prop_ret);
 
-   *num = num_ret;
+   if (num) *num = num_ret;
    return 1;
 }
 
