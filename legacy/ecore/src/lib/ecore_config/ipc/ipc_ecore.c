@@ -178,8 +178,8 @@ int ipc_init(char *pipe_name, void **data) {
   if(!server)
     return ECORE_CONFIG_ERR_FAIL;
 
-//  if(*server)
-//    return ECORE_CONFIG_ERR_IGNORED;
+/*  if(*server)
+      return ECORE_CONFIG_ERR_IGNORED; */
 
   ecore_init();
   if(ecore_ipc_init()<1)
@@ -188,15 +188,15 @@ int ipc_init(char *pipe_name, void **data) {
   if((p=getenv("HOME"))) {  /* debug-only ### FIXME */
     char buf[PATH_MAX];
     str=malloc(1000*sizeof(char));
-    int stale=1;
+    int stale; stale=1;
     while (stale) {
       sprintf(str,"%s/.ecore/%s/%d",p,pipe_name,port);
       snprintf(buf,PATH_MAX,str);
 
       if(!stat(buf,&st)) {
         E(0,"IPC/eCore: pipe \"%s\" already exists!?\n",buf);
-//      if(unlink(buf))
-//	E(0,"IPC/eCore: could not remove pipe \"%s\": %d\n",buf,errno); }}
+/*      if(unlink(buf))
+  	E(0,"IPC/eCore: could not remove pipe \"%s\": %d\n",buf,errno); }}*/
         port++;
       } else {
         stale = 0;

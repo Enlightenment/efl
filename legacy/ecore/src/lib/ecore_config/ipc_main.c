@@ -139,7 +139,6 @@ char *ipc_bundle_list(Ecore_Config_Server *srv) {
 
 
 int ipc_bundle_new(Ecore_Config_Server *srv, const char *label) {
-  //Ecore_Config_Bundle *ns=ecore_config_bundle_get_by_serial(srv, 0);
   if (ecore_config_bundle_new(srv, label))
     return ECORE_CONFIG_ERR_SUCC;
   return ECORE_CONFIG_ERR_FAIL; }
@@ -270,7 +269,7 @@ Ecore_Config_Server *ipc_init(char *pipe_name) {
       E(0,"ipc_init: could not load \"%s\": %s...\n",globbuf.gl_pathv[c],dlerror());
     else if(ret==ECORE_CONFIG_ERR_SUCC) {
       list=malloc(sizeof(Ecore_Config_Server));
-//      memcpy(list, 0, sizeof(Ecore_Config_Server));
+/*      memcpy(list, 0, sizeof(Ecore_Config_Server));*/
       if((ret=nm->ipc_init(pipe_name,&list->server))!=ECORE_CONFIG_ERR_SUCC)
         E(0,"ipc_init: could not initialize \"%s\": %d\n",globbuf.gl_pathv[c],ret);
       else {

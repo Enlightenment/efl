@@ -14,7 +14,7 @@ typedef struct _eslist {
 
 int      parse_line(char *,char **,char **,char **,char **);
 char    *unit_size(char *size);
-//ulong    now(long delay);
+/*ulong    now(long delay);*/
 void     qsrt(void *a[],void *data,int lo,int hi,int (*compare)(const void *,const void *,const void *));
 int      dlmulti(char *name,char *file,int flag,void **libr,const char *fmt, ...);
 
@@ -53,6 +53,6 @@ int      ecat(char **result, ...);
 
 
 
-//ulong    timeout_add(uint f,int(*fun)(void *),void *data);
-//int      timeout_remove(ulong handle);
+/*ulong    timeout_add(uint f,int(*fun)(void *),void *data);*/
+/*int      timeout_remove(ulong handle);*/
 

@@ -1,9 +1,9 @@
 /* azundris */
 
-//#include <glib.h>
+/*#include <glib.h>*/
 
 #include <sys/types.h>
-//#include <sys/time.h>    /* gimetimeofday() */
+/*#include <sys/time.h>*/    /* gimetimeofday() */
 #include <stdio.h>       /* NULL */
 #include <stdlib.h>      /* malloc(), free() */
 #include <string.h>      /* str...() */
