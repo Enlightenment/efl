@@ -29,7 +29,11 @@ else
 ifneq (,$(EVAS_ARCH))
 	CFLAGS += -O3 -mcpu=$(EVAS_ARCH) -march=$(EVAS_ARCH)
 else
+ifneq (,$(findstring -march,$(CFLAGS)))
+	CFLAGS += -O3
+else
 	CFLAGS += -O3 -mcpu=pentiumpro
+endif
 endif
 endif
 ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
