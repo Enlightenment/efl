@@ -371,6 +371,14 @@ ecore_x_sync(void)
    XSync(_ecore_x_disp, False);
 }
 
+/**
+ * Kill all X clients.
+ * @param root The root window whose children will be killed.
+ *
+ * This function will start from the given root window and kill the owner of
+ * every child window under it.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
 void
 ecore_x_killall(Ecore_X_Window root)
 {
