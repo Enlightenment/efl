@@ -817,7 +817,6 @@ __evas_image_flush_draw(Display *disp, Imlib_Image dstim, Window win)
 {
    Evas_List l;
    
-   imlib_context_set_dither(1);
    imlib_context_set_blend(1);
    
    for(l = drawable_list; l; l = l->next)
@@ -826,7 +825,7 @@ __evas_image_flush_draw(Display *disp, Imlib_Image dstim, Window win)
 	
 	dr = l->data;
 	
-	if ((dr->im == dstim) && (dr->disp == disp))
+	if ((dr->im == dstim))
 	  {
 	     Evas_List ll;
 	     
@@ -840,6 +839,7 @@ __evas_image_flush_draw(Display *disp, Imlib_Image dstim, Window win)
 		    {
 		       int w, h;
 		       
+		       w = up->w; h = up->h;
 		       imlib_context_set_image(dr->im);
 		       imlib_blend_image_onto_image(up->image, 1,
 						    0, 0, w, h, 
@@ -909,12 +909,10 @@ __evas_image_init(Display *disp, int screen, int colors)
    
    if (!initted)
      {
-	imlib_set_color_usage(216);
 	imlib_set_font_cache_size(1024 * 1024);
 	imlib_set_cache_size(8 * 1024 * 1024);
 	initted = 1;
      }
-   imlib_set_color_usage(colors);
 }
 
 void

@@ -80,6 +80,7 @@ main(int argc, char **argv)
    Evas_Gradient grad;
    int down;
    double t1, t2;
+   char *save_file = NULL;
    char *imgs[8] =
      {
 	"img/mush.png",
@@ -135,6 +136,11 @@ main(int argc, char **argv)
 	     i++;
 	     evas_set_scale_smoothness(e, atoi(argv[i]));
 	  }
+	else if ((!strcmp(argv[i], "-v")) && (i < (argc - 1)))
+	  {
+	     i++;
+	     save_file = argv[i];
+	  }
 	else
 	  {
 	     printf("Usage:\n");
@@ -145,6 +151,7 @@ main(int argc, char **argv)
 	     printf("      -m [x11 | soft | hard | buf] - rendering mode\n");
 	     printf("      -c colors                    - maximum colors allocated\n");
 	     printf("      -s [1 | 0]                   - smooth scaling / rendering\n");
+	     printf("      -v file.png                  - save buffer to file.png\n");
 	     printf("\n");
 	     printf("Examples:\n");
 	     printf(" %s -x 640 -y 480 -m soft      - run test in 640x480 in software mode\n", argv[0]);
@@ -388,14 +395,11 @@ main(int argc, char **argv)
 	  }
 	evas_set_angle(e, o_grad, (double)a * 360 / 1000);
 	evas_render(e);
-	if ((argc == 5) && (!strcmp(argv[4], "save")) && (buffer))
+	if ((save_file) && (buffer))
 	  {
 	     imlib_context_set_image(buffer);
 	     imlib_image_set_format("png");
-	     imlib_save_image("output.png");
-	     printf("save done\n");
-	     sleep(1);
-	     printf("run\n");
+	     imlib_save_image(save_file);
 	  }
 	a++;
 	m++;

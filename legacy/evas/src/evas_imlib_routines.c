@@ -822,7 +822,7 @@ __evas_imlib_init(Display *disp, int screen, int colors)
    
    if (!initted)
      {
-	imlib_set_color_usage(216);
+	imlib_set_color_usage(colors);
 	imlib_set_font_cache_size(1024 * 1024);
 	imlib_set_cache_size(8 * 1024 * 1024);
 	initted = 1;

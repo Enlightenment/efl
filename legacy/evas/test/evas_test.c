@@ -95,15 +95,19 @@ fn_rect(double v, double val, int no)
 	200, 60, 220, 80
      };
    static double coords[8 * 4];
+   static double last_val = 0;
    int i;
    
    if (no)
      {
-	for (i = 0; i < 8; i++)
+	if (last_val != val)
 	  {
-	     if (o_fn_rects[i])
-		evas_del_object(evas_view, o_fn_rects[i]);
-	     o_fn_rects[i] = NULL;
+	     for (i = 0; i < 8; i++)
+	       {
+		  if (o_fn_rects[i])
+		     evas_del_object(evas_view, o_fn_rects[i]);
+		  o_fn_rects[i] = NULL;
+	       }
 	  }
 	return;
      }
@@ -143,7 +147,8 @@ fn_rect(double v, double val, int no)
 	evas_resize(evas_view, o_fn_rects[i], 
 		    coords[(i * 4) + 2], coords[(i * 4) + 3]); 
 	evas_show(evas_view, o_fn_rects[i]);
-     }   
+     }
+   last_val = val;
 }
 
 static void
@@ -154,15 +159,19 @@ fn_line(double v, double val, int no)
    static int init = 0;
    static int colors[64 * 4];
    static double coords[64 * 4];
+   static double last_val = 0;
    int i;
    
    if (no)
      {
-	for (i = 0; i < 64; i++)
+	if (last_val != val)
 	  {
-	     if (o_fn_lines[i])
-		evas_del_object(evas_view, o_fn_lines[i]);
-	     o_fn_lines[i] = NULL;
+	     for (i = 0; i < 64; i++)
+	       {
+		  if (o_fn_lines[i])
+		     evas_del_object(evas_view, o_fn_lines[i]);
+		  o_fn_lines[i] = NULL;
+	       }
 	  }
 	return;
      }
@@ -207,6 +216,7 @@ fn_line(double v, double val, int no)
 			 coords[(i * 4) + 3] + (20 * sin((val * 1.3) + 2.1 + i)));
 	evas_show(evas_view, o_fn_lines[i]);
      }   
+   last_val = val;
 }
 
 static void
@@ -230,7 +240,7 @@ fn_image(double v, double val, int no)
 }
 
 
-static double codes_loop = 170;
+static double codes_loop = 180;
 static CodeBlock codes[] =
 {
    { 128.0, 2.0, 4.0, 6.0, fn_rect},
@@ -238,9 +248,15 @@ static CodeBlock codes[] =
    { 136.0, 2.0, 4.0, 6.0, fn_poly},
    { 140.0, 2.0, 4.0, 6.0, fn_text},
    { 144.0, 2.0, 4.0, 6.0, fn_grad},
-   { 148.0, 2.0, 4.0, 6.0, fn_image}
+   { 148.0, 2.0, 4.0, 6.0, fn_image},
+   { 164.0, 4.0, 12.0, 16.0, fn_rect},
+   { 164.0, 4.0, 12.0, 16.0, fn_line},
+   { 164.0, 4.0, 12.0, 16.0, fn_poly},
+   { 164.0, 4.0, 12.0, 16.0, fn_text},
+   { 164.0, 4.0, 12.0, 16.0, fn_grad},
+   { 164.0, 4.0, 12.0, 16.0, fn_image}
 };
-static double texts_loop = 170;
+static double texts_loop = 180;
 static TextBlock texts[] =
 {
      { 10.0, 2.0, 4.0, 6.0,  "What are the 7 Wonders of the world?", NULL, NULL},
@@ -282,7 +298,7 @@ static TextBlock texts[] =
      { 160.0, 2.0, 4.0, 6.0,  "Faded in and out ...", NULL, NULL},
      { 164.0, 2.0, 4.0, 6.0,  "And much much more ...", NULL, NULL},
 };
-static double images_loop = 170;
+static double images_loop = 180;
 static ImageBlock images[] =
 {
      { 14.0, 2.0, 4.0, 6.0,  300, 100, IMGDIR"evas_test_wonder_1.png", NULL},
