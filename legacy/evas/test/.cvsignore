@@ -2,5 +2,6 @@
 Makefile
 Makefile.in
 evas_test
+evas_test_old
 .libs
 .deps
