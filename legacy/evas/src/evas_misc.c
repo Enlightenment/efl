@@ -11,6 +11,88 @@
 void _evas_layer_free(Evas e, Evas_Layer layer);
 
 Evas
+evas_new_all(Display *display, Window parent_window, 
+	     int x, int y, int w, int h, 
+	     Evas_Render_Method render_method,
+	     int colors, int font_cache, int image_cache,
+	     char *font_dir)
+{
+   Evas e;
+   Window window;
+   XSetWindowAttributes att;
+   Visual *visual;
+   Colormap colormap;
+   
+   e = evas_new();
+   e->current.created_window = 1;
+   evas_set_output_method(e, render_method);
+   evas_set_output_colors(e, colors);
+   visual = evas_get_optimal_visual(e, display);
+   colormap = evas_get_optimal_colormap(e, display);
+   att.background_pixmap = None;
+   att.colormap = colormap;
+   att.border_pixel = 0;
+   att.event_mask = 0;
+   window = XCreateWindow(display,
+			  parent_window,
+			  x, y, w, h, 0,
+			  imlib_get_visual_depth(display, visual),
+			  InputOutput,
+			  visual,
+			  CWColormap | CWBorderPixel | CWEventMask | CWBackPixmap,
+			  &att);
+   if (font_dir) evas_font_add_path(e, font_dir);
+   evas_set_output(e, display, window, visual, colormap);
+   evas_set_output_size(e, w, h);
+   evas_set_output_viewport(e, 0, 0, w, h);
+   evas_set_font_cache(e, font_cache);
+   evas_set_image_cache(e, image_cache);
+   return e;
+}
+
+Window
+evas_get_window(Evas e)
+{
+   return e->current.drawable;
+}
+
+Display *
+evas_get_display(Evas e)
+{
+   return e->current.display;
+}
+
+Visual *
+evas_get_visual(Evas e)
+{
+   return e->current.visual;
+}
+
+Colormap
+evas_get_colormap(Evas e)
+{
+   return e->current.colormap;
+}
+
+int
+evas_get_colors(Evas e)
+{
+   return e->current.colors;
+}
+
+Imlib_Image
+evas_get_image(Evas e)
+{
+   return e->current.image;
+}
+
+Evas_Render_Method
+evas_get_render_method(Evas e)
+{
+   return e->current.render_method;
+}
+
+Evas
 evas_new(void)
 {
    Evas e;
@@ -30,7 +112,9 @@ void
 evas_free(Evas e)
 {
    Evas_List l;
-   
+
+   if (e->current.created_window)
+      XDestroyWindow(e->current.display, e->current.drawable);
    for (l = e->layers; l; l = l->next)
      {
 	Evas_Layer layer;

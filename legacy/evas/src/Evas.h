@@ -63,6 +63,7 @@ struct _Evas
       Drawable      drawable;
       Visual       *visual;
       Colormap      colormap;
+      int           created_window;
       int           screen;
       int           colors;
       Imlib_Image   image;
@@ -167,6 +168,7 @@ struct _Evas_Object_Any
    
    Evas_Render_Data renderer_data;
    
+   char *name;
 };
 
 struct _Evas_Object_Image
@@ -237,8 +239,20 @@ extern "C" {
 #endif
    
 /* create and destroy */
-Evas evas_new(void);
-void evas_free(Evas e);
+Evas                evas_new_all(Display *display, Window parent_window,
+				 int x, int y, int w, int h,
+				 Evas_Render_Method render_method,
+				 int colors, int font_cache, int image_cache,
+				 char *font_dir);
+Window              evas_get_window(Evas e);
+Display            *evas_get_display(Evas e);
+Visual             *evas_get_visual(Evas e);
+Colormap            evas_get_colormap(Evas e);
+int                 evas_get_colors(Evas e);
+Imlib_Image         evas_get_image(Evas e);
+Evas_Render_Method  evas_get_render_method(Evas e);
+Evas                evas_new(void);
+void                evas_free(Evas e);
 
 /* for exposes or forced redraws (relative to output drawable) */
 void evas_update_rect(Evas e, int x, int y, int w, int h);
@@ -323,7 +337,10 @@ Evas_List evas_objects_in_rect(Evas e, double x, double y, double w, double h);
 Evas_List evas_objects_at_position(Evas e, double x, double y);
 Evas_Object evas_object_in_rect(Evas e, double x, double y, double w, double h);
 Evas_Object evas_object_at_position(Evas e, double x, double y);
-   
+Evas_Object evas_object_get_named(Evas e, char *name);
+void evas_object_set_name(Evas e, Evas_Object o, char *name);   
+char *evas_object_get_name(Evas e, Evas_Object o);
+	 
 /* object visibility */
 void evas_show(Evas e, Evas_Object o);
 void evas_hide(Evas e, Evas_Object o);

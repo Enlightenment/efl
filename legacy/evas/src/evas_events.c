@@ -119,10 +119,15 @@ evas_event_move(Evas e, int x, int y)
      {
 	if (e->mouse.object)
 	  {
-	     _evas_callback_call(e, e->mouse.object, CALLBACK_MOUSE_MOVE, 
-				 e->mouse.buttons, e->mouse.x, e->mouse.y);
 	     if (!e->mouse.button_object)
-		_evas_callback_call(e, e->mouse.object, CALLBACK_MOUSE_OUT, 
+	       {
+		  _evas_callback_call(e, e->mouse.object, CALLBACK_MOUSE_MOVE, 
+				      e->mouse.buttons, e->mouse.x, e->mouse.y);
+		  _evas_callback_call(e, e->mouse.object, CALLBACK_MOUSE_OUT, 
+				      e->mouse.buttons, e->mouse.x, e->mouse.y);
+	       }
+	     else
+		_evas_callback_call(e, e->mouse.button_object, CALLBACK_MOUSE_MOVE, 
 				    e->mouse.buttons, e->mouse.x, e->mouse.y);
 	  }
 	e->mouse.x = x;
@@ -131,16 +136,21 @@ evas_event_move(Evas e, int x, int y)
 	if (e->mouse.object)
 	  {
 	     if (!e->mouse.button_object)
-		_evas_callback_call(e, e->mouse.object, CALLBACK_MOUSE_IN, 
-				    e->mouse.buttons, e->mouse.x, e->mouse.y);
-	     _evas_callback_call(e, e->mouse.object, CALLBACK_MOUSE_MOVE, 
-				 e->mouse.buttons, e->mouse.x, e->mouse.y);
+	       {
+		  _evas_callback_call(e, e->mouse.object, CALLBACK_MOUSE_IN, 
+				      e->mouse.buttons, e->mouse.x, e->mouse.y);
+		  _evas_callback_call(e, e->mouse.object, CALLBACK_MOUSE_MOVE, 
+				      e->mouse.buttons, e->mouse.x, e->mouse.y);
+	       }
 	  }
 	return;
      }   
    e->mouse.x = x;
    e->mouse.y = y;
-   if (e->mouse.object)
+   if (e->mouse.button_object)
+      _evas_callback_call(e, e->mouse.button_object, CALLBACK_MOUSE_MOVE, 
+			  e->mouse.buttons, e->mouse.x, e->mouse.y);
+   else if (e->mouse.object)
       _evas_callback_call(e, e->mouse.object, CALLBACK_MOUSE_MOVE, 
 			  e->mouse.buttons, e->mouse.x, e->mouse.y);
 }

@@ -78,6 +78,7 @@ _evas_real_del_object(Evas e, Evas_Object o)
 	     _evas_callback_call(e, o, CALLBACK_FREE, 0, 0, 0);
 	     _evas_remove_callbacks(e, o);
 	     _evas_remove_data(e, o);
+	     if (o->name) free(o->name);
 	     o->object_renderer_data_free(e, o);
 	     o->object_free(o);
 	     return;
@@ -446,4 +447,41 @@ evas_hide(Evas e, Evas_Object o)
    e->changed = 1;
    if (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y))
       evas_event_move(e, e->mouse.x, e->mouse.y);
+}
+
+Evas_Object
+evas_object_get_named(Evas e, char *name)
+{
+   Evas_List l, ll;
+   Evas_Layer layer;
+   Evas_Object o;
+   
+   if (!e) return NULL;
+   if (!name) return NULL;
+   for (l = e->layers; l ; l = l->next)
+     {
+	layer = l->data;
+	
+	for (ll = layer->objects; ll; ll = ll->next)
+	  {
+	     o = ll->data;
+	     if ((o->name) && (!strcmp(name, o->name))) return o;
+	  }
+     }
+   return NULL;
+}
+
+void
+evas_object_set_name(Evas e, Evas_Object o, char *name)
+{
+   if (o->name) free(o->name);
+   o->name = NULL;
+   if (name)
+      o->name = strdup(name);
+}
+
+char *
+evas_object_get_name(Evas e, Evas_Object o)
+{
+   return o->name;
 }
