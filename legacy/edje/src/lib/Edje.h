@@ -8,6 +8,14 @@
 #define EDJE_DRAG_DIR_Y    2
 #define EDJE_DRAG_DIR_XY   3
 
+#define EDJE_LOAD_ERROR_NONE                       0
+#define EDJE_LOAD_ERROR_GENERIC                    1
+#define EDJE_LOAD_ERROR_DOES_NOT_EXIST             2
+#define EDJE_LOAD_ERROR_PERMISSION_DENIED          3
+#define EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED 4
+#define EDJE_LOAD_ERROR_CORRUPT_FILE               5
+#define EDJE_LOAD_ERROR_UNKNOWN_FORMAT             6
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -29,6 +37,7 @@ extern "C" {
    const char  *edje_object_data_get            (Evas_Object *obj, const char *key);
    int          edje_object_file_set            (Evas_Object *o, const char *file, const char *part);
    void         edje_object_file_get            (Evas_Object *o, const char **file, const char **part);
+   int          edje_object_load_error_get      (Evas_Object *o);
    void         edje_object_signal_callback_add (Evas_Object *o, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data);
    void        *edje_object_signal_callback_del (Evas_Object *o, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source));
    void         edje_object_signal_emit         (Evas_Object *o, const char *emission, const char *source);

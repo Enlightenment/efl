@@ -18,7 +18,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
    if (!part) part = "";
    if (((ed->path) && (!strcmp(file, ed->path))) &&
 	(ed->part) && (!strcmp(part, ed->part)))
-     return 0;
+     return 1;
    
    _edje_file_del(ed);
    
@@ -27,6 +27,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
    if (ed->part) free(ed->part);
    ed->part = strdup(part);
    
+   ed->load_error = EDJE_LOAD_ERROR_NONE;
    _edje_file_add(ed);
 
    if (ed->collection)
@@ -188,11 +189,15 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	_edje_thaw(ed);
 	_edje_unblock(ed);
 	_edje_unref(ed);
+	ed->load_error = EDJE_LOAD_ERROR_NONE;
 	return 1;
      }
-     else return 0;
-
-     return 1;
+   else
+     {
+	return 0;
+     }
+   ed->load_error = EDJE_LOAD_ERROR_NONE;
+   return 1;
 }
 
 void
@@ -209,6 +214,16 @@ edje_object_file_get(Evas_Object *obj, const char **file, const char **part)
      }
    if (file) *file = ed->path;
    if (part) *part = ed->part;
+}
+
+int
+edje_object_load_error_get(Evas_Object *obj)
+{
+   Edje *ed;
+   
+   ed = _edje_fetch(obj);
+   if (!ed) return EDJE_LOAD_ERROR_NONE;
+   return ed->load_error;
 }
 
 Evas_List *
@@ -320,10 +335,18 @@ _edje_file_add(Edje *ed)
    else
      {
 	ef = eet_open(ed->path, EET_FILE_MODE_READ);
-	if (!ef) return;
+	if (!ef)
+	  {
+	     ed->load_error = EDJE_LOAD_ERROR_UNKNOWN_FORMAT;
+	     return;
+	  }
    
 	ed->file = eet_data_read(ef, _edje_edd_edje_file, "edje_file");
-	if (!ed->file) goto out;
+	if (!ed->file)
+	  {
+	     ed->load_error = EDJE_LOAD_ERROR_CORRUPT_FILE;
+	     goto out;
+	  }
 
 	ed->file->references = 1;   
 	ed->file->path = strdup(ed->path);
@@ -331,6 +354,7 @@ _edje_file_add(Edje *ed)
 	  {
 	     _edje_file_free(ed->file);
 	     ed->file = NULL;
+	     ed->load_error = EDJE_LOAD_ERROR_CORRUPT_FILE;
 	     goto out;
 	  }
 	_edje_file_hash = evas_hash_add(_edje_file_hash, ed->file->path, ed->file);
@@ -360,11 +384,19 @@ _edje_file_add(Edje *ed)
 	     
 	     snprintf(buf, sizeof(buf), "collections/%i", id);
 	     if (!ef) ef = eet_open(ed->path, EET_FILE_MODE_READ);
-	     if (!ef) goto out;
+	     if (!ef)
+	       {
+		  ed->load_error = EDJE_LOAD_ERROR_CORRUPT_FILE;
+		  goto out;
+	       }
 	     ed->collection = eet_data_read(ef, 
 					    _edje_edd_edje_part_collection, 
 					    buf);
-	     if (!ed->collection) goto out;
+	     if (!ed->collection)
+	       {
+		  ed->load_error = EDJE_LOAD_ERROR_CORRUPT_FILE;
+		  goto out;
+	       }
 	     ed->collection->references = 1;
 	     ed->file->collection_hash = evas_hash_add(ed->file->collection_hash, ed->part, ed->collection);
 	  }
@@ -372,6 +404,7 @@ _edje_file_add(Edje *ed)
 	  {
 	     _edje_file_free(ed->file);
 	     ed->file = NULL;
+	     ed->load_error = EDJE_LOAD_ERROR_CORRUPT_FILE;	     
 	  }
      }
    out:

@@ -393,6 +393,7 @@ struct _Edje
    int                   references;
    int                   block;
    Evas_List            *emissions;
+   int                   load_error;
 };
 
 struct _Edje_Real_Part
