@@ -915,7 +915,14 @@ void             ecore_x_icccm_send_take_focus(Ecore_X_Window win);
    
    int
      ecore_x_window_attributes_get(Ecore_X_Window win, Ecore_X_Window_Attributes *att_ret);
+   void
+     ecore_x_window_save_set_add(Ecore_X_Window win);
+   void
+     ecore_x_window_save_set_del(Ecore_X_Window win);
        
+   
+   
+   
    Ecore_X_Cursor
      ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int hot_y);
    void

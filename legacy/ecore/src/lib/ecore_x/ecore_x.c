@@ -1020,6 +1020,18 @@ ecore_x_window_attributes_get(Ecore_X_Window win, Ecore_X_Window_Attributes *att
    return 1;
 }
 
+void
+ecore_x_window_save_set_add(Ecore_X_Window win)
+{
+   XAddToSaveSet(_ecore_x_disp, win);
+}
+
+void
+ecore_x_window_save_set_del(Ecore_X_Window win)
+{
+   XRemoveFromSaveSet(_ecore_x_disp, win);
+}
+
 
 
 
