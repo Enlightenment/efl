@@ -1,5 +1,5 @@
-ecore (1.0.0-pre4-0cvs20031113) unstable; urgency=low
+ecore (1.0.0-pre8-0cvs20040629) unstable; urgency=low
 
   * a CVS release
   
- -- Sytse Wielinga <s.b.wielinga@student.utwente.nl>  Thu, 13 Nov 2003 12:38:19 +0100
+ -- Sytse Wielinga <s.b.wielinga@student.utwente.nl>  Tue, 29 Jun 2004 22:56:55 +0200

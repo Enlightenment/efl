@@ -2,7 +2,7 @@ Source: ecore
 Section: libs
 Priority: optional
 Maintainer: Sytse Wielinga <s.b.wielinga@student.utwente.nl>
-Build-Depends: debhelper (>> 4.0.0), libedb1-dev, libeet0-dev
+Build-Depends: debhelper (>> 4.0.0), libedb1-dev, libeet0-dev, libevas2-dev, libssl-dev, automaken, libtool
 Standards-Version: 3.6.1.0
 
 Package: libecore1
@@ -20,7 +20,7 @@ Package: libecore1-dev
 Architecture: any
 Section: devel
 Architecture: any
-Depends: libecore1 (= ${Source-Version}), libc6-dev | libc-dev
+Depends: libecore1 (= ${Source-Version}), libc6-dev | libc-dev, xlibs-dev
 Provides: libecore-dev
 Conflicts: libecore-dev, libecore0-dev
 Description: libecore1 headers, static libraries and documentation
