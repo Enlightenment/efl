@@ -1184,22 +1184,16 @@ ecore_x_cursor_free(Ecore_X_Cursor c)
    XFreeCursor(_ecore_x_disp, c);
 }
 
-void
-ecore_x_cursor_set(Ecore_X_Window win, Ecore_X_Cursor c)
-{
-   if (c == 0)
-     XUndefineCursor(_ecore_x_disp, win);
-   else
-     XDefineCursor(_ecore_x_disp, win, c);
-}
-
-void
-ecore_x_cursor_shape_set(Ecore_X_Window win, int shape)
+/*
+ * Returns the cursor for the given shape.
+ * Note that the return value must not be freed with
+ * ecore_x_cursor_free()!
+ */
+Ecore_X_Cursor
+ecore_x_cursor_shape_get(int shape)
 {
    /* Shapes are defined in Ecore_X_Cursor.h */
-   Cursor c = XCreateFontCursor(_ecore_x_disp, shape);
-   if (c)
-      ecore_x_cursor_set(win, c);
+   return XCreateFontCursor(_ecore_x_disp, shape);
 }
 
 int

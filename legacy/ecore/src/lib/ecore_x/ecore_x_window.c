@@ -536,6 +536,15 @@ ecore_x_window_cursor_show(Ecore_X_Window win, int show)
      }
 }
 
+void
+ecore_x_window_cursor_set(Ecore_X_Window win, Ecore_X_Cursor c)
+{
+   if (c == 0)
+     XUndefineCursor(_ecore_x_disp, win);
+   else
+     XDefineCursor(_ecore_x_disp, win, c);
+}
+
 /**
  * Finds out whether the given window is currently visible.
  * @param   win The given window.
