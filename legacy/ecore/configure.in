@@ -210,6 +210,7 @@ fi
 if test "x$have_ecore_x" = "xyes"; then
   AM_CONDITIONAL(BUILD_ECORE_X, true)
   AC_DEFINE(BUILD_ECORE_X, 1, [Build Ecore_X Module])
+  BUILD_ECORE_X=1
   x_dir="/usr/X11R6";
   x_includes="";
   x_cflags="-I"$x_dir"/include"
@@ -218,7 +219,10 @@ if test "x$have_ecore_x" = "xyes"; then
   ecore_x_libs="-lecore_x";
 else
   AM_CONDITIONAL(BUILD_ECORE_X, false)
+  BUILD_ECORE_X=0
 fi
+
+AC_SUBST(BUILD_ECORE_X)
 
 AC_SUBST(x_cflags)
 AC_SUBST(x_includes)
