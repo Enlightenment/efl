@@ -35,15 +35,14 @@
  * tween to the new state.
  * 
  * the signals that can be emitted are:
- * "mouse.down"
- * "mouse.up"
- * "mouse.in"
- * "mouse.out"
- * "mouse.move"
- * "clicked"
- * "drag.start"
+ * "mouse,down"
+ * "mouse,up"
+ * "mouse,in"
+ * "mouse,out"
+ * "mouse,move"
+ * "drag,start"
  * "drag"
- * "drag.stop"
+ * "drag,stop"
  */
 
 typedef struct _Edje_File                            Edje_File;
@@ -82,6 +81,7 @@ typedef struct _Edje_Part_Description                Edje_Part_Description;
 #define EDJE_ACTION_TYPE_NONE        0
 #define EDJE_ACTION_TYPE_STATE_SET   1
 #define EDJE_ACTION_TYPE_ACTION_STOP 2
+#define EDJE_ACTION_TYPE_SIGNAL_EMIT 3
 #define EDJE_ACTION_TYPE_LAST        4
 
 #define EDJE_TWEEN_MODE_NONE       0
@@ -131,6 +131,7 @@ struct _Edje_Program /* a conditional program to be run */
    
    int        action; /* type - set state, stop action, set drag pos etc. */
    char      *state; /* what state of alternates to apply, NULL = default */
+   char      *state2; /* what other state to use - for signal emit action */
    double     value; /* value of state to apply (if multiple names match) */
    
    struct {

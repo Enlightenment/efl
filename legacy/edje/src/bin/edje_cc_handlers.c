@@ -1004,11 +1004,17 @@ st_collections_group_programs_program_action(void)
    ep->action = parse_enum(0,
 			   "STATE_SET", EDJE_ACTION_TYPE_STATE_SET,
 			   "ACTION_STOP", EDJE_ACTION_TYPE_ACTION_STOP,
+			   "SIGNAL_EMIT", EDJE_ACTION_TYPE_SIGNAL_EMIT,
 			   NULL);
    if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
      {
 	ep->state = parse_str(1);
 	ep->value = parse_float_range(2, 0.0, 1.0);
+     }
+   else if (ep->action == EDJE_ACTION_TYPE_SIGNAL_EMIT)
+     {
+	ep->state = parse_str(1);
+	ep->state2 = parse_str(2);
      }
 }
 

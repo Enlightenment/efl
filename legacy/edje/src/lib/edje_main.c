@@ -1,18 +1,15 @@
 #include "Edje.h"
 #include "edje_private.h"
 
-/* FIXME: finish ACTION_STOP action */
-/* FIXME: add a "SIGNAL_EMIT action to emit fake (or real) signals */
-/* FIXME: somehow handle double click? */
+/* FIXME: ? somehow handle double click? */
 /* FIXME: free stuff - no more leaks */
-/* FIXME: new prog starts while current program is running on part, stop old */
-/* FIXME: add numeric params to conditiosn for progs (ranges etc.) */
+/* FIXME: ? add numeric params to conditions for progs (ranges etc.) */
 /* FIXME: dragables havwe to work */
 /* FIXME: drag start/top signals etc. */
 /* FIXME: app has to be able to have callbacks called on signal emits */
 /* FIXME: app has to be able to emit signals */
-/* FIXME: named parts need to be able to be "replaceD" with new evas objects */
-/* FIXME; need to be able to calculate min & max size of a whole edje */
+/* FIXME: named parts need to be able to be "replaced" with new evas objects */
+/* FIXME: need to be able to calculate min & max size of a whole edje */
 
 Edje      *_edje_fetch(Evas_Object *obj);
 Edje      *_edje_add(Evas_Object *obj);
@@ -73,7 +70,6 @@ static double       _edje_frametime = 1.0 / 60.0;
 static Ecore_Timer *_edje_timer = NULL;
 static Evas_List   *_edje_animators = NULL;
 static Evas_Hash   *_edje_file_hash = NULL;
-
 
 static Evas_Smart *_edje_smart = NULL;
 
@@ -687,6 +683,10 @@ _edje_program_run(Edje *ed, Edje_Program *pr)
 		    }
 	       }
 	  }
+     }
+   else if (pr->action == EDJE_ACTION_TYPE_SIGNAL_EMIT)
+     {
+	_edje_emit(ed, pr->state, pr->state2);
      }
 }
 
@@ -1424,6 +1424,7 @@ _edje_edd_setup(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "source", source, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "action", action, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "state", state, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "state2", state2, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "value", value, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "tween.mode", tween.mode, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "tween.time", tween.time, EET_T_DOUBLE);

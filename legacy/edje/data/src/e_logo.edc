@@ -356,6 +356,12 @@ collections {
 	    action,     ACTION_STOP;
 	    target,     "logo_animate";
 	 }
+	 program {
+	    name,       "logo_animate_signal";
+	    signal,     "mouse,up,1";
+	    source,     "logo_anim";
+	    action,     SIGNAL_EMIT "do_it" "the_source";
+	 }
       }
    }
 }
