@@ -41,7 +41,6 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
      }
 }
 
-/* public functions */
 /**
  * Add a callback function to an object
  * @param obj Object to attach a callback to
@@ -50,8 +49,14 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
  * @param data The data pointer to be passed to @p func
  * 
  * This function adds a function callback to an object when the event of type
- * @p type occurs on object @p obj. The function will be passed the pointer
- * @p data when it is called. A callback function must look like this:
+ * @p type occurs on object @p obj. The fucntion is @p func.
+ * 
+ * In the event of a memory allocation error during addition of the callback to
+ * the object, evas_alloc_error() should be used to determine the nature of
+ * the error, if any, and the program should sensibly try and recover.
+ * 
+ * The function will be passed the pointer @p data when it is called. A 
+ * callback function must look like this:
  * 
  * @code
  * void callback (void *data, Evas *e, Evas_Object *obj, void *event_info);
@@ -154,7 +159,17 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
  * void up_callback(void *data, Evas *e, Evas_Object *obj, void *event_info);
  * 
  * evas_object_event_callback_add(object, EVAS_CALLBACK_MOUSE_UP, up_callback, my_data);
+ * if (evas_alloc_error() != EVAS_ALLOC_ERROR_NONE)
+ *   {
+ *     fprintf(stderr, "ERROR: Callback registering failed! Abort!\n");
+ *     exit(-1);
+ *   }
  * evas_object_event_callback_add(object, EVAS_CALLBACK_MOUSE_DOWN, down_callback, my_data);
+ * if (evas_alloc_error() != EVAS_ALLOC_ERROR_NONE)
+ *   {
+ *     fprintf(stderr, "ERROR: Callback registering failed! Abort!\n");
+ *     exit(-1);
+ *   }
  * @endcode
  */
 void

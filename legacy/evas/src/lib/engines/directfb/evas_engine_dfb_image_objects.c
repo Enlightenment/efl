@@ -457,6 +457,9 @@ evas_engine_directfb_image_draw(void *data, void *context, void *surface,
 	{
 	   re->backbuf->SetColor(re->backbuf, r, g, b, a);
 	}
+      
+      re->backbuf->SetSrcBlendFunction(re->backbuf, DSBF_SRCALPHA);
+      img->SetSrcBlendFunction(img, DSBF_INVSRCALPHA);
 
       re->backbuf->SetBlittingFlags(re->backbuf, flags);
       re->backbuf->StretchBlit(re->backbuf, img, &inrect, &outrect);

@@ -334,7 +334,7 @@ evas_object_coords_recalc(Evas_Object *obj)
 				  obj->cur.geometry.x + obj->cur.geometry.w)
        - obj->cur.cache.geometry.x;
    obj->cur.cache.geometry.h = 
-     evas_coord_world_x_to_screen(obj->layer->evas, 
+     evas_coord_world_y_to_screen(obj->layer->evas, 
 				  obj->cur.geometry.y + obj->cur.geometry.h)
        - obj->cur.cache.geometry.y;
    if (obj->func->coords_recalc) obj->func->coords_recalc(obj);

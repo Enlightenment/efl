@@ -30,9 +30,9 @@ These routines are used for Evas Library interaction
 
 @section intro What is Evas?
 
-Evas is a clean display canvas API for several display systems that can draw
-anti-aliased text, smooth super and sub-sampled scaled images, alpha-blend
-objects much and more.
+Evas is a clean display canvas API for several target display systems that
+can draw anti-aliased text, smooth super and sub-sampled scaled images,
+alpha-blend objects much and more.
 
 It abstracts any need to know much about what the characteristics of your
 display system are or what graphics calls are used to draw them and how. It
