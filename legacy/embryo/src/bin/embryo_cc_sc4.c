@@ -23,10 +23,10 @@
 #include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
-#include <stdlib.h>     /* for _MAX_PATH */
+#include <stdlib.h>		/* for _MAX_PATH */
 #include <string.h>
 #if defined FORTIFY
-  #include "fortify.h"
+#include "fortify.h"
 #endif
 #include "embryo_cc_sc.h"
 
@@ -35,13 +35,14 @@
  * Today, the compiler simply generates a HALT instruction at address 0. So
  * a subroutine can savely return to 0, and then encounter a HALT.
  */
-SC_FUNC void writeleader(void)
+SC_FUNC void
+writeleader(void)
 {
-  assert(code_idx==0);
-  stgwrite(";program exit point\n");
-  stgwrite("\thalt 0\n");
-  /* calculate code length */
-  code_idx+=opcodes(1)+opargs(1);
+   assert(code_idx == 0);
+   stgwrite(";program exit point\n");
+   stgwrite("\thalt 0\n");
+   /* calculate code length */
+   code_idx += opcodes(1) + opargs(1);
 }
 
 /*  writetrailer
@@ -52,33 +53,37 @@ SC_FUNC void writeleader(void)
  *                     code_idx         (altered)
  *                     glb_declared     (altered)
  */
-SC_FUNC void writetrailer(void)
+SC_FUNC void
+writetrailer(void)
 {
-  assert(sc_dataalign % opcodes(1) == 0);   /* alignment must be a multiple of
-                                             * the opcode size */
-  assert(sc_dataalign!=0);
+   assert(sc_dataalign % opcodes(1) == 0);	/* alignment must be a multiple of
+						 * the opcode size */
+   assert(sc_dataalign != 0);
 
-  /* pad code to align data segment */
-  if ((code_idx % sc_dataalign)!=0) {
-    begcseg();
-    while ((code_idx % sc_dataalign)!=0)
-      nooperation();
-  } /* if */
+   /* pad code to align data segment */
+   if ((code_idx % sc_dataalign) != 0)
+     {
+	begcseg();
+	while ((code_idx % sc_dataalign) != 0)
+	   nooperation();
+     }				/* if */
 
-  /* pad data segment to align the stack and the heap */
-  assert(litidx==0);            /* literal queue should have been emptied */
-  assert(sc_dataalign % sizeof(cell) == 0);
-  if (((glb_declared*sizeof(cell)) % sc_dataalign)!=0) {
-    begdseg();
-    defstorage();
-    while (((glb_declared*sizeof(cell)) % sc_dataalign)!=0) {
-      stgwrite("0 ");
-      glb_declared++;
-    } /* while */
-  } /* if */
+   /* pad data segment to align the stack and the heap */
+   assert(litidx == 0);		/* literal queue should have been emptied */
+   assert(sc_dataalign % sizeof(cell) == 0);
+   if (((glb_declared * sizeof(cell)) % sc_dataalign) != 0)
+     {
+	begdseg();
+	defstorage();
+	while (((glb_declared * sizeof(cell)) % sc_dataalign) != 0)
+	  {
+	     stgwrite("0 ");
+	     glb_declared++;
+	  }			/* while */
+     }				/* if */
 
-  stgwrite("\nSTKSIZE ");       /* write stack size (align stack top) */
-  outval(sc_stksize - (sc_stksize % sc_dataalign), TRUE);
+   stgwrite("\nSTKSIZE ");	/* write stack size (align stack top) */
+   outval(sc_stksize - (sc_stksize % sc_dataalign), TRUE);
 }
 
 /*
@@ -91,14 +96,16 @@ SC_FUNC void writetrailer(void)
  *
  *  Global references: curseg
  */
-SC_FUNC void begcseg(void)
+SC_FUNC void
+begcseg(void)
 {
-  if (curseg!=sIN_CSEG) {
-    stgwrite("\n");
-    stgwrite("CODE\t; ");
-    outval(code_idx,TRUE);
-    curseg=sIN_CSEG;
-  } /* endif */
+   if (curseg != sIN_CSEG)
+     {
+	stgwrite("\n");
+	stgwrite("CODE\t; ");
+	outval(code_idx, TRUE);
+	curseg = sIN_CSEG;
+     }				/* endif */
 }
 
 /*
@@ -106,126 +113,145 @@ SC_FUNC void begcseg(void)
  *
  *  Global references: curseg
  */
-SC_FUNC void begdseg(void)
+SC_FUNC void
+begdseg(void)
 {
-  if (curseg!=sIN_DSEG) {
-    stgwrite("\n");
-    stgwrite("DATA\t; ");
-    outval(glb_declared-litidx,TRUE);
-    curseg=sIN_DSEG;
-  } /* if */
+   if (curseg != sIN_DSEG)
+     {
+	stgwrite("\n");
+	stgwrite("DATA\t; ");
+	outval(glb_declared - litidx, TRUE);
+	curseg = sIN_DSEG;
+     }				/* if */
 }
 
-SC_FUNC void setactivefile(int fnumber)
+SC_FUNC void
+setactivefile(int fnumber)
 {
-  stgwrite("curfile ");
-  outval(fnumber,TRUE);
+   stgwrite("curfile ");
+   outval(fnumber, TRUE);
 }
 
-SC_FUNC cell nameincells(char *name)
+SC_FUNC cell
+nameincells(char *name)
 {
-  cell clen=(strlen(name)+sizeof(cell)) & ~(sizeof(cell)-1);
-  return clen;
+   cell                clen =
+      (strlen(name) + sizeof(cell)) & ~(sizeof(cell) - 1);
+   return clen;
 }
 
-SC_FUNC void setfile(char *name,int fileno)
+SC_FUNC void
+setfile(char *name, int fileno)
 {
-  if ((sc_debug & sSYMBOLIC)!=0) {
-    begcseg();
-    stgwrite("file ");
-    outval(fileno,FALSE);
-    stgwrite(" ");
-    stgwrite(name);
-    stgwrite("\n");
-    /* calculate code length */
-    code_idx+=opcodes(1)+opargs(2)+nameincells(name);
-  } /* if */
+   if ((sc_debug & sSYMBOLIC) != 0)
+     {
+	begcseg();
+	stgwrite("file ");
+	outval(fileno, FALSE);
+	stgwrite(" ");
+	stgwrite(name);
+	stgwrite("\n");
+	/* calculate code length */
+	code_idx += opcodes(1) + opargs(2) + nameincells(name);
+     }				/* if */
 }
 
-SC_FUNC void setline(int line,int fileno)
+SC_FUNC void
+setline(int line, int fileno)
 {
-  if ((sc_debug & (sSYMBOLIC | sCHKBOUNDS))!=0) {
-    stgwrite("line ");
-    outval(line,FALSE);
-    stgwrite(" ");
-    outval(fileno,FALSE);
-    stgwrite("\t; ");
-    outval(code_idx,TRUE);
-    code_idx+=opcodes(1)+opargs(2);
-  } /* if */
+   if ((sc_debug & (sSYMBOLIC | sCHKBOUNDS)) != 0)
+     {
+	stgwrite("line ");
+	outval(line, FALSE);
+	stgwrite(" ");
+	outval(fileno, FALSE);
+	stgwrite("\t; ");
+	outval(code_idx, TRUE);
+	code_idx += opcodes(1) + opargs(2);
+     }				/* if */
 }
 
-SC_FUNC void setfiledirect(char *name)
+SC_FUNC void
+setfiledirect(char *name)
 {
-  if (sc_status==statFIRST && sc_listing) {
-    assert(name!=NULL);
-    fprintf(outf,"#file %s\n",name);
-  } /* if */
+   if (sc_status == statFIRST && sc_listing)
+     {
+	assert(name != NULL);
+	fprintf(outf, "#file %s\n", name);
+     }				/* if */
 }
 
-SC_FUNC void setlinedirect(int line)
+SC_FUNC void
+setlinedirect(int line)
 {
-  if (sc_status==statFIRST && sc_listing)
-    fprintf(outf,"#line %d\n",line);
+   if (sc_status == statFIRST && sc_listing)
+      fprintf(outf, "#line %d\n", line);
 }
 
 /*  setlabel
  *
  *  Post a code label (specified as a number), on a new line.
  */
-SC_FUNC void setlabel(int number)
+SC_FUNC void
+setlabel(int number)
 {
-  assert(number>=0);
-  stgwrite("l.");
-  stgwrite((char *)itoh(number));
-  /* To assist verification of the assembled code, put the address of the
-   * label as a comment. However, labels that occur inside an expression
-   * may move (through optimization or through re-ordering). So write the
-   * address only if it is known to accurate.
-   */
-  if (!staging) {
-    stgwrite("\t\t; ");
-    outval(code_idx,FALSE);
-  } /* if */
-  stgwrite("\n");
+   assert(number >= 0);
+   stgwrite("l.");
+   stgwrite((char *)itoh(number));
+   /* To assist verification of the assembled code, put the address of the
+    * label as a comment. However, labels that occur inside an expression
+    * may move (through optimization or through re-ordering). So write the
+    * address only if it is known to accurate.
+    */
+   if (!staging)
+     {
+	stgwrite("\t\t; ");
+	outval(code_idx, FALSE);
+     }				/* if */
+   stgwrite("\n");
 }
 
 /* Write a token that signifies the end of an expression, or the end of a
  * function parameter. This allows several simple optimizations by the peephole
  * optimizer.
  */
-SC_FUNC void endexpr(int fullexpr)
+SC_FUNC void
+endexpr(int fullexpr)
 {
-  if (fullexpr)
-    stgwrite("\t;$exp\n");
-  else
-    stgwrite("\t;$par\n");
+   if (fullexpr)
+      stgwrite("\t;$exp\n");
+   else
+      stgwrite("\t;$par\n");
 }
 
 /*  startfunc   - declare a CODE entry point (function start)
  *
  *  Global references: funcstatus  (referred to only)
  */
-SC_FUNC void startfunc(char *fname)
+SC_FUNC void
+startfunc(char *fname)
 {
-  stgwrite("\tproc");
-  if (sc_asmfile) {
-    char symname[2*sNAMEMAX+16];
-    funcdisplayname(symname,fname);
-    stgwrite("\t; ");
-    stgwrite(symname);
-  } /* if */
-  stgwrite("\n");
-  code_idx+=opcodes(1);
+   stgwrite("\tproc");
+   if (sc_asmfile)
+     {
+	char                symname[2 * sNAMEMAX + 16];
+
+	funcdisplayname(symname, fname);
+	stgwrite("\t; ");
+	stgwrite(symname);
+     }				/* if */
+   stgwrite("\n");
+   code_idx += opcodes(1);
 }
 
 /*  endfunc
  *
  *  Declare a CODE ending point (function end)
  */
-SC_FUNC void endfunc(void)
+SC_FUNC void
+endfunc(void)
 {
-  stgwrite("\n");       /* skip a line */
+   stgwrite("\n");		/* skip a line */
 }
 
 /*  alignframe
@@ -235,135 +261,154 @@ SC_FUNC void endfunc(void)
  *  be a power of 2, and this alignment must be done right after the frame
  *  is set up (before the first variable is declared)
  */
-SC_FUNC void alignframe(int numbytes)
+SC_FUNC void
+alignframe(int numbytes)
 {
-  #if !defined NDEBUG
-    /* "numbytes" should be a power of 2 for this code to work */
-    int i,count=0;
-    for (i=0; i<sizeof numbytes*8; i++)
-      if (numbytes & (1 << i))
-        count++;
-    assert(count==1);
-  #endif
+#if !defined NDEBUG
+   /* "numbytes" should be a power of 2 for this code to work */
+   int                 i, count = 0;
 
-  stgwrite("\tlctrl 4\n");      /* get STK in PRI */
-  stgwrite("\tconst.alt ");     /* get ~(numbytes-1) in ALT */
-  outval(~(numbytes-1),TRUE);
-  stgwrite("\tand\n");          /* PRI = STK "and" ~(numbytes-1) */
-  stgwrite("\tsctrl 4\n");      /* set the new value of STK ... */
-  stgwrite("\tsctrl 5\n");      /* ... and FRM */
-  code_idx+=opcodes(5)+opargs(4);
+   for (i = 0; i < sizeof numbytes * 8; i++)
+      if (numbytes & (1 << i))
+	 count++;
+   assert(count == 1);
+#endif
+
+   stgwrite("\tlctrl 4\n");	/* get STK in PRI */
+   stgwrite("\tconst.alt ");	/* get ~(numbytes-1) in ALT */
+   outval(~(numbytes - 1), TRUE);
+   stgwrite("\tand\n");		/* PRI = STK "and" ~(numbytes-1) */
+   stgwrite("\tsctrl 4\n");	/* set the new value of STK ... */
+   stgwrite("\tsctrl 5\n");	/* ... and FRM */
+   code_idx += opcodes(5) + opargs(4);
 }
 
 /*  Define a variable or function
  */
-SC_FUNC void defsymbol(char *name,int ident,int vclass,cell offset,int tag)
+SC_FUNC void
+defsymbol(char *name, int ident, int vclass, cell offset, int tag)
 {
-  if ((sc_debug & sSYMBOLIC)!=0) {
-    begcseg();          /* symbol definition in code segment */
-    stgwrite("symbol ");
+   if ((sc_debug & sSYMBOLIC) != 0)
+     {
+	begcseg();		/* symbol definition in code segment */
+	stgwrite("symbol ");
 
-    stgwrite(name);
-    stgwrite(" ");
+	stgwrite(name);
+	stgwrite(" ");
 
-    outval(offset,FALSE);
-    stgwrite(" ");
+	outval(offset, FALSE);
+	stgwrite(" ");
 
-    outval(vclass,FALSE);
-    stgwrite(" ");
+	outval(vclass, FALSE);
+	stgwrite(" ");
 
-    outval(ident,TRUE);
+	outval(ident, TRUE);
 
-    code_idx+=opcodes(1)+opargs(3)+nameincells(name);  /* class and ident encoded in "flags" */
+	code_idx += opcodes(1) + opargs(3) + nameincells(name);	/* class and ident encoded in "flags" */
 
-    /* also write the optional tag */
-    if (tag!=0) {
-      assert((tag & TAGMASK)!=0);
-      stgwrite("symtag ");
-      outval(tag & TAGMASK,TRUE);
-      code_idx+=opcodes(1)+opargs(1);
-    } /* if */
-  } /* if */
+	/* also write the optional tag */
+	if (tag != 0)
+	  {
+	     assert((tag & TAGMASK) != 0);
+	     stgwrite("symtag ");
+	     outval(tag & TAGMASK, TRUE);
+	     code_idx += opcodes(1) + opargs(1);
+	  }			/* if */
+     }				/* if */
 }
 
-SC_FUNC void symbolrange(int level,cell size)
+SC_FUNC void
+symbolrange(int level, cell size)
 {
-  if ((sc_debug & sSYMBOLIC)!=0) {
-    begcseg();          /* symbol definition in code segment */
-    stgwrite("srange ");
-    outval(level,FALSE);
-    stgwrite(" ");
-    outval(size,TRUE);
-    code_idx+=opcodes(1)+opargs(2);
-  } /* if */
+   if ((sc_debug & sSYMBOLIC) != 0)
+     {
+	begcseg();		/* symbol definition in code segment */
+	stgwrite("srange ");
+	outval(level, FALSE);
+	stgwrite(" ");
+	outval(size, TRUE);
+	code_idx += opcodes(1) + opargs(2);
+     }				/* if */
 }
 
 /*  rvalue
  *
  *  Generate code to get the value of a symbol into "primary".
  */
-SC_FUNC void rvalue(value *lval)
+SC_FUNC void
+rvalue(value * lval)
 {
-  symbol *sym;
+   symbol             *sym;
 
-  sym=lval->sym;
-  if (lval->ident==iARRAYCELL) {
-    /* indirect fetch, address already in PRI */
-    stgwrite("\tload.i\n");
-    code_idx+=opcodes(1);
-  } else if (lval->ident==iARRAYCHAR) {
-    /* indirect fetch of a character from a pack, address already in PRI */
-    stgwrite("\tlodb.i ");
-    outval(charbits/8,TRUE);    /* read one or two bytes */
-    code_idx+=opcodes(1)+opargs(1);
-  } else if (lval->ident==iREFERENCE) {
-    /* indirect fetch, but address not yet in PRI */
-    assert(sym!=NULL);
-    assert(sym->vclass==sLOCAL);    /* global references don't exist in Small */
-    if (sym->vclass==sLOCAL)
-      stgwrite("\tlref.s.pri ");
-    else
-      stgwrite("\tlref.pri ");
-    outval(sym->addr,TRUE);
-    markusage(sym,uREAD);
-    code_idx+=opcodes(1)+opargs(1);
-  } else {
-    /* direct or stack relative fetch */
-    assert(sym!=NULL);
-    if (sym->vclass==sLOCAL)
-      stgwrite("\tload.s.pri ");
-    else
-      stgwrite("\tload.pri ");
-    outval(sym->addr,TRUE);
-    markusage(sym,uREAD);
-    code_idx+=opcodes(1)+opargs(1);
-  } /* if */
+   sym = lval->sym;
+   if (lval->ident == iARRAYCELL)
+     {
+	/* indirect fetch, address already in PRI */
+	stgwrite("\tload.i\n");
+	code_idx += opcodes(1);
+     }
+   else if (lval->ident == iARRAYCHAR)
+     {
+	/* indirect fetch of a character from a pack, address already in PRI */
+	stgwrite("\tlodb.i ");
+	outval(charbits / 8, TRUE);	/* read one or two bytes */
+	code_idx += opcodes(1) + opargs(1);
+     }
+   else if (lval->ident == iREFERENCE)
+     {
+	/* indirect fetch, but address not yet in PRI */
+	assert(sym != NULL);
+	assert(sym->vclass == sLOCAL);	/* global references don't exist in Small */
+	if (sym->vclass == sLOCAL)
+	   stgwrite("\tlref.s.pri ");
+	else
+	   stgwrite("\tlref.pri ");
+	outval(sym->addr, TRUE);
+	markusage(sym, uREAD);
+	code_idx += opcodes(1) + opargs(1);
+     }
+   else
+     {
+	/* direct or stack relative fetch */
+	assert(sym != NULL);
+	if (sym->vclass == sLOCAL)
+	   stgwrite("\tload.s.pri ");
+	else
+	   stgwrite("\tload.pri ");
+	outval(sym->addr, TRUE);
+	markusage(sym, uREAD);
+	code_idx += opcodes(1) + opargs(1);
+     }				/* if */
 }
 
 /*
  *  Get the address of a symbol into the primary register (used for arrays,
  *  and for passing arguments by reference).
  */
-SC_FUNC void address(symbol *sym)
+SC_FUNC void
+address(symbol * sym)
 {
-  assert(sym!=NULL);
-  /* the symbol can be a local array, a global array, or an array
-   * that is passed by reference.
-   */
-  if (sym->ident==iREFARRAY || sym->ident==iREFERENCE) {
-    /* reference to a variable or to an array; currently this is
-     * always a local variable */
-    stgwrite("\tload.s.pri ");
-  } else {
-    /* a local array or local variable */
-    if (sym->vclass==sLOCAL)
-      stgwrite("\taddr.pri ");
-    else
-      stgwrite("\tconst.pri ");
-  } /* if */
-  outval(sym->addr,TRUE);
-  markusage(sym,uREAD);
-  code_idx+=opcodes(1)+opargs(1);
+   assert(sym != NULL);
+   /* the symbol can be a local array, a global array, or an array
+    * that is passed by reference.
+    */
+   if (sym->ident == iREFARRAY || sym->ident == iREFERENCE)
+     {
+	/* reference to a variable or to an array; currently this is
+	 * always a local variable */
+	stgwrite("\tload.s.pri ");
+     }
+   else
+     {
+	/* a local array or local variable */
+	if (sym->vclass == sLOCAL)
+	   stgwrite("\taddr.pri ");
+	else
+	   stgwrite("\tconst.pri ");
+     }				/* if */
+   outval(sym->addr, TRUE);
+   markusage(sym, uREAD);
+   code_idx += opcodes(1) + opargs(1);
 }
 
 /*  store
@@ -371,196 +416,228 @@ SC_FUNC void address(symbol *sym)
  *  Saves the contents of "primary" into a memory cell, either directly
  *  or indirectly (at the address given in the alternate register).
  */
-SC_FUNC void store(value *lval)
+SC_FUNC void
+store(value * lval)
 {
-  symbol *sym;
+   symbol             *sym;
 
-  sym=lval->sym;
-  if (lval->ident==iARRAYCELL) {
-    /* store at address in ALT */
-    stgwrite("\tstor.i\n");
-    code_idx+=opcodes(1);
-  } else if (lval->ident==iARRAYCHAR) {
-    /* store at address in ALT */
-    stgwrite("\tstrb.i ");
-    outval(charbits/8,TRUE);    /* write one or two bytes */
-    code_idx+=opcodes(1)+opargs(1);
-  } else if (lval->ident==iREFERENCE) {
-    assert(sym!=NULL);
-    if (sym->vclass==sLOCAL)
-      stgwrite("\tsref.s.pri ");
-    else
-      stgwrite("\tsref.pri ");
-    outval(sym->addr,TRUE);
-    code_idx+=opcodes(1)+opargs(1);
-  } else {
-    assert(sym!=NULL);
-    markusage(sym,uWRITTEN);
-    if (sym->vclass==sLOCAL)
-      stgwrite("\tstor.s.pri ");
-    else
-      stgwrite("\tstor.pri ");
-    outval(sym->addr,TRUE);
-    code_idx+=opcodes(1)+opargs(1);
-  } /* if */
+   sym = lval->sym;
+   if (lval->ident == iARRAYCELL)
+     {
+	/* store at address in ALT */
+	stgwrite("\tstor.i\n");
+	code_idx += opcodes(1);
+     }
+   else if (lval->ident == iARRAYCHAR)
+     {
+	/* store at address in ALT */
+	stgwrite("\tstrb.i ");
+	outval(charbits / 8, TRUE);	/* write one or two bytes */
+	code_idx += opcodes(1) + opargs(1);
+     }
+   else if (lval->ident == iREFERENCE)
+     {
+	assert(sym != NULL);
+	if (sym->vclass == sLOCAL)
+	   stgwrite("\tsref.s.pri ");
+	else
+	   stgwrite("\tsref.pri ");
+	outval(sym->addr, TRUE);
+	code_idx += opcodes(1) + opargs(1);
+     }
+   else
+     {
+	assert(sym != NULL);
+	markusage(sym, uWRITTEN);
+	if (sym->vclass == sLOCAL)
+	   stgwrite("\tstor.s.pri ");
+	else
+	   stgwrite("\tstor.pri ");
+	outval(sym->addr, TRUE);
+	code_idx += opcodes(1) + opargs(1);
+     }				/* if */
 }
 
 /* source must in PRI, destination address in ALT. The "size"
  * parameter is in bytes, not cells.
  */
-SC_FUNC void memcopy(cell size)
+SC_FUNC void
+memcopy(cell size)
 {
-  stgwrite("\tmovs ");
-  outval(size,TRUE);
+   stgwrite("\tmovs ");
+   outval(size, TRUE);
 
-  code_idx+=opcodes(1)+opargs(1);
+   code_idx += opcodes(1) + opargs(1);
 }
 
 /* Address of the source must already have been loaded in PRI
  * "size" is the size in bytes (not cells).
  */
-SC_FUNC void copyarray(symbol *sym,cell size)
+SC_FUNC void
+copyarray(symbol * sym, cell size)
 {
-  assert(sym!=NULL);
-  /* the symbol can be a local array, a global array, or an array
-   * that is passed by reference.
-   */
-  if (sym->ident==iREFARRAY) {
-    /* reference to an array; currently this is always a local variable */
-    assert(sym->vclass==sLOCAL);        /* symbol must be stack relative */
-    stgwrite("\tload.s.alt ");
-  } else {
-    /* a local or global array */
-    if (sym->vclass==sLOCAL)
-      stgwrite("\taddr.alt ");
-    else
-      stgwrite("\tconst.alt ");
-  } /* if */
-  outval(sym->addr,TRUE);
-  markusage(sym,uWRITTEN);
+   assert(sym != NULL);
+   /* the symbol can be a local array, a global array, or an array
+    * that is passed by reference.
+    */
+   if (sym->ident == iREFARRAY)
+     {
+	/* reference to an array; currently this is always a local variable */
+	assert(sym->vclass == sLOCAL);	/* symbol must be stack relative */
+	stgwrite("\tload.s.alt ");
+     }
+   else
+     {
+	/* a local or global array */
+	if (sym->vclass == sLOCAL)
+	   stgwrite("\taddr.alt ");
+	else
+	   stgwrite("\tconst.alt ");
+     }				/* if */
+   outval(sym->addr, TRUE);
+   markusage(sym, uWRITTEN);
 
-  code_idx+=opcodes(1)+opargs(1);
-  memcopy(size);
+   code_idx += opcodes(1) + opargs(1);
+   memcopy(size);
 }
 
-SC_FUNC void fillarray(symbol *sym,cell size,cell value)
+SC_FUNC void
+fillarray(symbol * sym, cell size, cell value)
 {
-  const1(value);    /* load value in PRI */
+   const1(value);		/* load value in PRI */
 
-  assert(sym!=NULL);
-  /* the symbol can be a local array, a global array, or an array
-   * that is passed by reference.
-   */
-  if (sym->ident==iREFARRAY) {
-    /* reference to an array; currently this is always a local variable */
-    assert(sym->vclass==sLOCAL);        /* symbol must be stack relative */
-    stgwrite("\tload.s.alt ");
-  } else {
-    /* a local or global array */
-    if (sym->vclass==sLOCAL)
-      stgwrite("\taddr.alt ");
-    else
-      stgwrite("\tconst.alt ");
-  } /* if */
-  outval(sym->addr,TRUE);
-  markusage(sym,uWRITTEN);
+   assert(sym != NULL);
+   /* the symbol can be a local array, a global array, or an array
+    * that is passed by reference.
+    */
+   if (sym->ident == iREFARRAY)
+     {
+	/* reference to an array; currently this is always a local variable */
+	assert(sym->vclass == sLOCAL);	/* symbol must be stack relative */
+	stgwrite("\tload.s.alt ");
+     }
+   else
+     {
+	/* a local or global array */
+	if (sym->vclass == sLOCAL)
+	   stgwrite("\taddr.alt ");
+	else
+	   stgwrite("\tconst.alt ");
+     }				/* if */
+   outval(sym->addr, TRUE);
+   markusage(sym, uWRITTEN);
 
-  stgwrite("\tfill ");
-  outval(size,TRUE);
+   stgwrite("\tfill ");
+   outval(size, TRUE);
 
-  code_idx+=opcodes(2)+opargs(2);
+   code_idx += opcodes(2) + opargs(2);
 }
 
 /*
  *  Instruction to get an immediate value into the primary register
  */
-SC_FUNC void const1(cell val)
+SC_FUNC void
+const1(cell val)
 {
-  if (val==0) {
-    stgwrite("\tzero.pri\n");
-    code_idx+=opcodes(1);
-  } else {
-    stgwrite("\tconst.pri ");
-    outval(val, TRUE);
-    code_idx+=opcodes(1)+opargs(1);
-  } /* if */
+   if (val == 0)
+     {
+	stgwrite("\tzero.pri\n");
+	code_idx += opcodes(1);
+     }
+   else
+     {
+	stgwrite("\tconst.pri ");
+	outval(val, TRUE);
+	code_idx += opcodes(1) + opargs(1);
+     }				/* if */
 }
 
 /*
  *  Instruction to get an immediate value into the secondary register
  */
-SC_FUNC void const2(cell val)
+SC_FUNC void
+const2(cell val)
 {
-  if (val==0) {
-    stgwrite("\tzero.alt\n");
-    code_idx+=opcodes(1);
-  } else {
-    stgwrite("\tconst.alt ");
-    outval(val, TRUE);
-    code_idx+=opcodes(1)+opargs(1);
-  } /* if */
+   if (val == 0)
+     {
+	stgwrite("\tzero.alt\n");
+	code_idx += opcodes(1);
+     }
+   else
+     {
+	stgwrite("\tconst.alt ");
+	outval(val, TRUE);
+	code_idx += opcodes(1) + opargs(1);
+     }				/* if */
 }
 
 /* Copy value in secondary register to the primary register */
-SC_FUNC void moveto1(void)
+SC_FUNC void
+moveto1(void)
 {
-  stgwrite("\tmove.pri\n");
-  code_idx+=opcodes(1)+opargs(0);
+   stgwrite("\tmove.pri\n");
+   code_idx += opcodes(1) + opargs(0);
 }
 
 /*
  *  Push primary register onto the stack
  */
-SC_FUNC void push1(void)
+SC_FUNC void
+push1(void)
 {
-  stgwrite("\tpush.pri\n");
-  code_idx+=opcodes(1);
+   stgwrite("\tpush.pri\n");
+   code_idx += opcodes(1);
 }
 
 /*
  *  Push alternate register onto the stack
  */
-SC_FUNC void push2(void)
+SC_FUNC void
+push2(void)
 {
-  stgwrite("\tpush.alt\n");
-  code_idx+=opcodes(1);
+   stgwrite("\tpush.alt\n");
+   code_idx += opcodes(1);
 }
 
 /*
  *  Push a constant value onto the stack
  */
-SC_FUNC void pushval(cell val)
+SC_FUNC void
+pushval(cell val)
 {
-  stgwrite("\tpush.c ");
-  outval(val, TRUE);
-  code_idx+=opcodes(1)+opargs(1);
+   stgwrite("\tpush.c ");
+   outval(val, TRUE);
+   code_idx += opcodes(1) + opargs(1);
 }
 
 /*
  *  pop stack to the primary register
  */
-SC_FUNC void pop1(void)
+SC_FUNC void
+pop1(void)
 {
-  stgwrite("\tpop.pri\n");
-  code_idx+=opcodes(1);
+   stgwrite("\tpop.pri\n");
+   code_idx += opcodes(1);
 }
 
 /*
  *  pop stack to the secondary register
  */
-SC_FUNC void pop2(void)
+SC_FUNC void
+pop2(void)
 {
-  stgwrite("\tpop.alt\n");
-  code_idx+=opcodes(1);
+   stgwrite("\tpop.alt\n");
+   code_idx += opcodes(1);
 }
 
 /*
  *  swap the top-of-stack with the value in primary register
  */
-SC_FUNC void swap1(void)
+SC_FUNC void
+swap1(void)
 {
-  stgwrite("\tswap.pri\n");
-  code_idx+=opcodes(1);
+   stgwrite("\tswap.pri\n");
+   code_idx += opcodes(1);
 }
 
 /* Switch statements
@@ -572,192 +649,218 @@ SC_FUNC void swap1(void)
  * The case table is sorted on the comparison value. This allows more advanced
  * abstract machines to sift the case table with a binary search.
  */
-SC_FUNC void ffswitch(int label)
+SC_FUNC void
+ffswitch(int label)
 {
-  stgwrite("\tswitch ");
-  outval(label,TRUE);           /* the label is the address of the case table */
-  code_idx+=opcodes(1)+opargs(1);
+   stgwrite("\tswitch ");
+   outval(label, TRUE);		/* the label is the address of the case table */
+   code_idx += opcodes(1) + opargs(1);
 }
 
-SC_FUNC void ffcase(cell value,char *labelname,int newtable)
+SC_FUNC void
+ffcase(cell value, char *labelname, int newtable)
 {
-  if (newtable) {
-    stgwrite("\tcasetbl\n");
-    code_idx+=opcodes(1);
-  } /* if */
-  stgwrite("\tcase ");
-  outval(value,FALSE);
-  stgwrite(" ");
-  stgwrite(labelname);
-  stgwrite("\n");
-  code_idx+=opcodes(0)+opargs(2);
+   if (newtable)
+     {
+	stgwrite("\tcasetbl\n");
+	code_idx += opcodes(1);
+     }				/* if */
+   stgwrite("\tcase ");
+   outval(value, FALSE);
+   stgwrite(" ");
+   stgwrite(labelname);
+   stgwrite("\n");
+   code_idx += opcodes(0) + opargs(2);
 }
 
 /*
  *  Call specified function
  */
-SC_FUNC void ffcall(symbol *sym,int numargs)
+SC_FUNC void
+ffcall(symbol * sym, int numargs)
 {
-  char symname[2*sNAMEMAX+16];
+   char                symname[2 * sNAMEMAX + 16];
 
-  assert(sym!=NULL);
-  assert(sym->ident==iFUNCTN);
-  if (sc_asmfile)
-    funcdisplayname(symname,sym->name);
-  if ((sym->usage & uNATIVE)!=0) {
-    /* reserve a SYSREQ id if called for the first time */
-    if (sc_status==statWRITE && (sym->usage & uREAD)==0 && sym->addr>=0)
-      sym->addr=ntv_funcid++;
-    stgwrite("\tsysreq.c ");
-    outval(sym->addr,FALSE);
-    if (sc_asmfile) {
-      stgwrite("\t; ");
-      stgwrite(symname);
-    } /* if */
-    stgwrite("\n\tstack ");
-    outval((numargs+1)*sizeof(cell), TRUE);
-    code_idx+=opcodes(2)+opargs(2);
-  } else {
-    /* normal function */
-    stgwrite("\tcall ");
-    stgwrite(sym->name);
-    if (sc_asmfile
-        && !isalpha(sym->name[0]) && sym->name[0]!='_'  && sym->name[0]!=sc_ctrlchar)
-    {
-      stgwrite("\t; ");
-      stgwrite(symname);
-    } /* if */
-    stgwrite("\n");
-    code_idx+=opcodes(1)+opargs(1);
-  } /* if */
+   assert(sym != NULL);
+   assert(sym->ident == iFUNCTN);
+   if (sc_asmfile)
+      funcdisplayname(symname, sym->name);
+   if ((sym->usage & uNATIVE) != 0)
+     {
+	/* reserve a SYSREQ id if called for the first time */
+	if (sc_status == statWRITE && (sym->usage & uREAD) == 0
+	    && sym->addr >= 0)
+	   sym->addr = ntv_funcid++;
+	stgwrite("\tsysreq.c ");
+	outval(sym->addr, FALSE);
+	if (sc_asmfile)
+	  {
+	     stgwrite("\t; ");
+	     stgwrite(symname);
+	  }			/* if */
+	stgwrite("\n\tstack ");
+	outval((numargs + 1) * sizeof(cell), TRUE);
+	code_idx += opcodes(2) + opargs(2);
+     }
+   else
+     {
+	/* normal function */
+	stgwrite("\tcall ");
+	stgwrite(sym->name);
+	if (sc_asmfile
+	    && !isalpha(sym->name[0]) && sym->name[0] != '_'
+	    && sym->name[0] != sc_ctrlchar)
+	  {
+	     stgwrite("\t; ");
+	     stgwrite(symname);
+	  }			/* if */
+	stgwrite("\n");
+	code_idx += opcodes(1) + opargs(1);
+     }				/* if */
 }
 
 /*  Return from function
  *
  *  Global references: funcstatus  (referred to only)
  */
-SC_FUNC void ffret(void)
+SC_FUNC void
+ffret(void)
 {
-  stgwrite("\tretn\n");
-  code_idx+=opcodes(1);
+   stgwrite("\tretn\n");
+   code_idx += opcodes(1);
 }
 
-SC_FUNC void ffabort(int reason)
+SC_FUNC void
+ffabort(int reason)
 {
-  stgwrite("\thalt ");
-  outval(reason,TRUE);
-  code_idx+=opcodes(1)+opargs(1);
+   stgwrite("\thalt ");
+   outval(reason, TRUE);
+   code_idx += opcodes(1) + opargs(1);
 }
 
-SC_FUNC void ffbounds(cell size)
+SC_FUNC void
+ffbounds(cell size)
 {
-  if ((sc_debug & sCHKBOUNDS)!=0) {
-    stgwrite("\tbounds ");
-    outval(size,TRUE);
-    code_idx+=opcodes(1)+opargs(1);
-  } /* if */
+   if ((sc_debug & sCHKBOUNDS) != 0)
+     {
+	stgwrite("\tbounds ");
+	outval(size, TRUE);
+	code_idx += opcodes(1) + opargs(1);
+     }				/* if */
 }
 
 /*
  *  Jump to local label number (the number is converted to a name)
  */
-SC_FUNC void jumplabel(int number)
+SC_FUNC void
+jumplabel(int number)
 {
-  stgwrite("\tjump ");
-  outval(number,TRUE);
-  code_idx+=opcodes(1)+opargs(1);
+   stgwrite("\tjump ");
+   outval(number, TRUE);
+   code_idx += opcodes(1) + opargs(1);
 }
 
 /*
  *   Define storage (global and static variables)
  */
-SC_FUNC void defstorage(void)
+SC_FUNC void
+defstorage(void)
 {
-  stgwrite("dump ");
+   stgwrite("dump ");
 }
 
 /*
  *  Inclrement/decrement stack pointer. Note that this routine does
  *  nothing if the delta is zero.
  */
-SC_FUNC void modstk(int delta)
+SC_FUNC void
+modstk(int delta)
 {
-  if (delta) {
-    stgwrite("\tstack ");
-    outval(delta, TRUE);
-    code_idx+=opcodes(1)+opargs(1);
-  } /* if */
+   if (delta)
+     {
+	stgwrite("\tstack ");
+	outval(delta, TRUE);
+	code_idx += opcodes(1) + opargs(1);
+     }				/* if */
 }
 
 /* set the stack to a hard offset from the frame */
-SC_FUNC void setstk(cell value)
+SC_FUNC void
+setstk(cell value)
 {
-  stgwrite("\tlctrl 5\n");      /* get FRM */
-  assert(value<=0);             /* STK should always become <= FRM */
-  if (value<0) {
-    stgwrite("\tadd.c ");
-    outval(value, TRUE);        /* add (negative) offset */
-    code_idx+=opcodes(1)+opargs(1);
-    // ??? write zeros in the space between STK and the value in PRI (the new stk)
-    //     get value of STK in ALT
-    //     zero PRI
-    //     need new FILL opcode that takes a variable size
-  } /* if */
-  stgwrite("\tsctrl 4\n");      /* store in STK */
-  code_idx+=opcodes(2)+opargs(2);
+   stgwrite("\tlctrl 5\n");	/* get FRM */
+   assert(value <= 0);		/* STK should always become <= FRM */
+   if (value < 0)
+     {
+	stgwrite("\tadd.c ");
+	outval(value, TRUE);	/* add (negative) offset */
+	code_idx += opcodes(1) + opargs(1);
+	// ??? write zeros in the space between STK and the value in PRI (the new stk)
+	//     get value of STK in ALT
+	//     zero PRI
+	//     need new FILL opcode that takes a variable size
+     }				/* if */
+   stgwrite("\tsctrl 4\n");	/* store in STK */
+   code_idx += opcodes(2) + opargs(2);
 }
 
-SC_FUNC void modheap(int delta)
+SC_FUNC void
+modheap(int delta)
 {
-  if (delta) {
-    stgwrite("\theap ");
-    outval(delta, TRUE);
-    code_idx+=opcodes(1)+opargs(1);
-  } /* if */
+   if (delta)
+     {
+	stgwrite("\theap ");
+	outval(delta, TRUE);
+	code_idx += opcodes(1) + opargs(1);
+     }				/* if */
 }
 
-SC_FUNC void setheap_pri(void)
+SC_FUNC void
+setheap_pri(void)
 {
-  stgwrite("\theap ");          /* ALT = HEA++ */
-  outval(sizeof(cell), TRUE);
-  stgwrite("\tstor.i\n");       /* store PRI (default value) at address ALT */
-  stgwrite("\tmove.pri\n");     /* move ALT to PRI: PRI contains the address */
-  code_idx+=opcodes(3)+opargs(1);
+   stgwrite("\theap ");		/* ALT = HEA++ */
+   outval(sizeof(cell), TRUE);
+   stgwrite("\tstor.i\n");	/* store PRI (default value) at address ALT */
+   stgwrite("\tmove.pri\n");	/* move ALT to PRI: PRI contains the address */
+   code_idx += opcodes(3) + opargs(1);
 }
 
-SC_FUNC void setheap(cell value)
+SC_FUNC void
+setheap(cell value)
 {
-  stgwrite("\tconst.pri ");     /* load default value in PRI */
-  outval(value, TRUE);
-  code_idx+=opcodes(1)+opargs(1);
-  setheap_pri();
+   stgwrite("\tconst.pri ");	/* load default value in PRI */
+   outval(value, TRUE);
+   code_idx += opcodes(1) + opargs(1);
+   setheap_pri();
 }
 
 /*
  *  Convert a cell number to a "byte" address; i.e. double or quadruple
  *  the primary register.
  */
-SC_FUNC void cell2addr(void)
+SC_FUNC void
+cell2addr(void)
 {
-  #if defined(BIT16)
-    stgwrite("\tshl.c.pri 1\n");
-  #else
-    stgwrite("\tshl.c.pri 2\n");
-  #endif
-  code_idx+=opcodes(1)+opargs(1);
+#if defined(BIT16)
+   stgwrite("\tshl.c.pri 1\n");
+#else
+   stgwrite("\tshl.c.pri 2\n");
+#endif
+   code_idx += opcodes(1) + opargs(1);
 }
 
 /*
  *  Double or quadruple the alternate register.
  */
-SC_FUNC void cell2addr_alt(void)
+SC_FUNC void
+cell2addr_alt(void)
 {
-  #if defined(BIT16)
-    stgwrite("\tshl.c.alt 1\n");
-  #else
-    stgwrite("\tshl.c.alt 2\n");
-  #endif
-  code_idx+=opcodes(1)+opargs(1);
+#if defined(BIT16)
+   stgwrite("\tshl.c.alt 1\n");
+#else
+   stgwrite("\tshl.c.alt 2\n");
+#endif
+   code_idx += opcodes(1) + opargs(1);
 }
 
 /*
@@ -765,25 +868,28 @@ SC_FUNC void cell2addr_alt(void)
  *  Or convert a number of packed characters to the number of cells (with
  *  truncation).
  */
-SC_FUNC void addr2cell(void)
+SC_FUNC void
+addr2cell(void)
 {
-  #if defined(BIT16)
-    stgwrite("\tshr.c.pri 1\n");
-  #else
-    stgwrite("\tshr.c.pri 2\n");
-  #endif
-  code_idx+=opcodes(1)+opargs(1);
+#if defined(BIT16)
+   stgwrite("\tshr.c.pri 1\n");
+#else
+   stgwrite("\tshr.c.pri 2\n");
+#endif
+   code_idx += opcodes(1) + opargs(1);
 }
 
 /* Convert from character index to byte address. This routine does
  * nothing if a character has the size of a byte.
  */
-SC_FUNC void char2addr(void)
+SC_FUNC void
+char2addr(void)
 {
-  if (charbits==16) {
-    stgwrite("\tshl.c.pri 1\n");
-    code_idx+=opcodes(1)+opargs(1);
-  } /* if */
+   if (charbits == 16)
+     {
+	stgwrite("\tshl.c.pri 1\n");
+	code_idx += opcodes(1) + opargs(1);
+     }				/* if */
 }
 
 /* Align PRI (which should hold a character index) to an address.
@@ -794,70 +900,78 @@ SC_FUNC void char2addr(void)
  * that is, on Big Endian computers, ALIGN.pri/alt shuold do nothing
  * and on Little Endian computers they should toggle the address.
  */
-SC_FUNC void charalign(void)
+SC_FUNC void
+charalign(void)
 {
-  stgwrite("\talign.pri ");
-  outval(charbits/8,TRUE);
-  code_idx+=opcodes(1)+opargs(1);
+   stgwrite("\talign.pri ");
+   outval(charbits / 8, TRUE);
+   code_idx += opcodes(1) + opargs(1);
 }
 
 /*
  *  Add a constant to the primary register.
  */
-SC_FUNC void addconst(cell value)
+SC_FUNC void
+addconst(cell value)
 {
-  if (value!=0) {
-    stgwrite("\tadd.c ");
-    outval(value,TRUE);
-    code_idx+=opcodes(1)+opargs(1);
-  } /* if */
+   if (value != 0)
+     {
+	stgwrite("\tadd.c ");
+	outval(value, TRUE);
+	code_idx += opcodes(1) + opargs(1);
+     }				/* if */
 }
 
 /*
  *  signed multiply of primary and secundairy registers (result in primary)
  */
-SC_FUNC void os_mult(void)
+SC_FUNC void
+os_mult(void)
 {
-  stgwrite("\tsmul\n");
-  code_idx+=opcodes(1);
+   stgwrite("\tsmul\n");
+   code_idx += opcodes(1);
 }
 
 /*
  *  signed divide of alternate register by primary register (quotient in
  *  primary; remainder in alternate)
  */
-SC_FUNC void os_div(void)
+SC_FUNC void
+os_div(void)
 {
-  stgwrite("\tsdiv.alt\n");
-  code_idx+=opcodes(1);
+   stgwrite("\tsdiv.alt\n");
+   code_idx += opcodes(1);
 }
 
 /*
  *  modulus of (alternate % primary), result in primary (signed)
  */
-SC_FUNC void os_mod(void)
+SC_FUNC void
+os_mod(void)
 {
-  stgwrite("\tsdiv.alt\n");
-  stgwrite("\tmove.pri\n");     /* move ALT to PRI */
-  code_idx+=opcodes(2);
+   stgwrite("\tsdiv.alt\n");
+   stgwrite("\tmove.pri\n");	/* move ALT to PRI */
+   code_idx += opcodes(2);
 }
 
 /*
  *  Add primary and alternate registers (result in primary).
  */
-SC_FUNC void ob_add(void)
+SC_FUNC void
+ob_add(void)
 {
-  stgwrite("\tadd\n");
-  code_idx+=opcodes(1);
+   stgwrite("\tadd\n");
+   code_idx += opcodes(1);
 }
 
 /*
  *  subtract primary register from alternate register (result in primary)
  */
-SC_FUNC void ob_sub(void)
+SC_FUNC void
+ob_sub(void)
 {
-  stgwrite("\tsub.alt\n");
-  code_idx+=opcodes(1);
+   stgwrite("\tsub.alt\n");
+   code_idx += opcodes(1);
 }
 
 /*
@@ -866,78 +980,86 @@ SC_FUNC void ob_sub(void)
  *  There is no need for a "logical shift left" routine, since
  *  logical shift left is identical to arithmic shift left.
  */
-SC_FUNC void ob_sal(void)
+SC_FUNC void
+ob_sal(void)
 {
-  stgwrite("\txchg\n");
-  stgwrite("\tshl\n");
-  code_idx+=opcodes(2);
+   stgwrite("\txchg\n");
+   stgwrite("\tshl\n");
+   code_idx += opcodes(2);
 }
 
 /*
  *  arithmic shift right alternate register the number of bits
  *  given in the primary register (result in primary).
  */
-SC_FUNC void os_sar(void)
+SC_FUNC void
+os_sar(void)
 {
-  stgwrite("\txchg\n");
-  stgwrite("\tsshr\n");
-  code_idx+=opcodes(2);
+   stgwrite("\txchg\n");
+   stgwrite("\tsshr\n");
+   code_idx += opcodes(2);
 }
 
 /*
  *  logical (unsigned) shift right of the alternate register by the
  *  number of bits given in the primary register (result in primary).
  */
-SC_FUNC void ou_sar(void)
+SC_FUNC void
+ou_sar(void)
 {
-  stgwrite("\txchg\n");
-  stgwrite("\tshr\n");
-  code_idx+=opcodes(2);
+   stgwrite("\txchg\n");
+   stgwrite("\tshr\n");
+   code_idx += opcodes(2);
 }
 
 /*
  *  inclusive "or" of primary and secondary registers (result in primary)
  */
-SC_FUNC void ob_or(void)
+SC_FUNC void
+ob_or(void)
 {
-  stgwrite("\tor\n");
-  code_idx+=opcodes(1);
+   stgwrite("\tor\n");
+   code_idx += opcodes(1);
 }
 
 /*
  *  "exclusive or" of primary and alternate registers (result in primary)
  */
-SC_FUNC void ob_xor(void)
+SC_FUNC void
+ob_xor(void)
 {
-  stgwrite("\txor\n");
-  code_idx+=opcodes(1);
+   stgwrite("\txor\n");
+   code_idx += opcodes(1);
 }
 
 /*
  *  "and" of primary and secundairy registers (result in primary)
  */
-SC_FUNC void ob_and(void)
+SC_FUNC void
+ob_and(void)
 {
-  stgwrite("\tand\n");
-  code_idx+=opcodes(1);
+   stgwrite("\tand\n");
+   code_idx += opcodes(1);
 }
 
 /*
  *  test ALT==PRI; result in primary register (1 or 0).
  */
-SC_FUNC void ob_eq(void)
+SC_FUNC void
+ob_eq(void)
 {
-  stgwrite("\teq\n");
-  code_idx+=opcodes(1);
+   stgwrite("\teq\n");
+   code_idx += opcodes(1);
 }
 
 /*
  *  test ALT!=PRI
  */
-SC_FUNC void ob_ne(void)
+SC_FUNC void
+ob_ne(void)
 {
-  stgwrite("\tneq\n");
-  code_idx+=opcodes(1);
+   stgwrite("\tneq\n");
+   code_idx += opcodes(1);
 }
 
 /* The abstract machine defines the relational instructions so that PRI is
@@ -960,236 +1082,264 @@ SC_FUNC void ob_ne(void)
  * stack and moves the value of ALT into PRI. If there is a next comparison,
  * PRI can now serve as the "left" operand of the relational operator.
  */
-SC_FUNC void relop_prefix(void)
+SC_FUNC void
+relop_prefix(void)
 {
-  stgwrite("\tpush.pri\n");
-  stgwrite("\tmove.pri\n");
-  code_idx+=opcodes(2);
+   stgwrite("\tpush.pri\n");
+   stgwrite("\tmove.pri\n");
+   code_idx += opcodes(2);
 }
 
-SC_FUNC void relop_suffix(void)
+SC_FUNC void
+relop_suffix(void)
 {
-  stgwrite("\tswap.alt\n");
-  stgwrite("\tand\n");
-  stgwrite("\tpop.alt\n");
-  code_idx+=opcodes(3);
+   stgwrite("\tswap.alt\n");
+   stgwrite("\tand\n");
+   stgwrite("\tpop.alt\n");
+   code_idx += opcodes(3);
 }
 
 /*
  *  test ALT<PRI (signed)
  */
-SC_FUNC void os_lt(void)
+SC_FUNC void
+os_lt(void)
 {
-  stgwrite("\txchg\n");
-  stgwrite("\tsless\n");
-  code_idx+=opcodes(2);
+   stgwrite("\txchg\n");
+   stgwrite("\tsless\n");
+   code_idx += opcodes(2);
 }
 
 /*
  *  test ALT<=PRI (signed)
  */
-SC_FUNC void os_le(void)
+SC_FUNC void
+os_le(void)
 {
-  stgwrite("\txchg\n");
-  stgwrite("\tsleq\n");
-  code_idx+=opcodes(2);
+   stgwrite("\txchg\n");
+   stgwrite("\tsleq\n");
+   code_idx += opcodes(2);
 }
 
 /*
  *  test ALT>PRI (signed)
  */
-SC_FUNC void os_gt(void)
+SC_FUNC void
+os_gt(void)
 {
-  stgwrite("\txchg\n");
-  stgwrite("\tsgrtr\n");
-  code_idx+=opcodes(2);
+   stgwrite("\txchg\n");
+   stgwrite("\tsgrtr\n");
+   code_idx += opcodes(2);
 }
 
 /*
  *  test ALT>=PRI (signed)
  */
-SC_FUNC void os_ge(void)
+SC_FUNC void
+os_ge(void)
 {
-  stgwrite("\txchg\n");
-  stgwrite("\tsgeq\n");
-  code_idx+=opcodes(2);
+   stgwrite("\txchg\n");
+   stgwrite("\tsgeq\n");
+   code_idx += opcodes(2);
 }
 
 /*
  *  logical negation of primary register
  */
-SC_FUNC void lneg(void)
+SC_FUNC void
+lneg(void)
 {
-  stgwrite("\tnot\n");
-  code_idx+=opcodes(1);
+   stgwrite("\tnot\n");
+   code_idx += opcodes(1);
 }
 
 /*
  *  two's complement primary register
  */
-SC_FUNC void neg(void)
+SC_FUNC void
+neg(void)
 {
-  stgwrite("\tneg\n");
-  code_idx+=opcodes(1);
+   stgwrite("\tneg\n");
+   code_idx += opcodes(1);
 }
 
 /*
  *  one's complement of primary register
  */
-SC_FUNC void invert(void)
+SC_FUNC void
+invert(void)
 {
-  stgwrite("\tinvert\n");
-  code_idx+=opcodes(1);
+   stgwrite("\tinvert\n");
+   code_idx += opcodes(1);
 }
 
 /*
  *  nop
  */
-SC_FUNC void nooperation(void)
+SC_FUNC void
+nooperation(void)
 {
-  stgwrite("\tnop\n");
-  code_idx+=opcodes(1);
+   stgwrite("\tnop\n");
+   code_idx += opcodes(1);
 }
-
 
 /*  increment symbol
  */
-SC_FUNC void inc(value *lval)
+SC_FUNC void
+inc(value * lval)
 {
-  symbol *sym;
+   symbol             *sym;
 
-  sym=lval->sym;
-  if (lval->ident==iARRAYCELL) {
-    /* indirect increment, address already in PRI */
-    stgwrite("\tinc.i\n");
-    code_idx+=opcodes(1);
-  } else if (lval->ident==iARRAYCHAR) {
-    /* indirect increment of single character, address already in PRI */
-    stgwrite("\tpush.pri\n");
-    stgwrite("\tpush.alt\n");
-    stgwrite("\tmove.alt\n");   /* copy address */
-    stgwrite("\tlodb.i ");      /* read from PRI into PRI */
-    outval(charbits/8,TRUE);    /* read one or two bytes */
-    stgwrite("\tinc.pri\n");
-    stgwrite("\tstrb.i ");      /* write PRI to ALT */
-    outval(charbits/8,TRUE);    /* write one or two bytes */
-    stgwrite("\tpop.alt\n");
-    stgwrite("\tpop.pri\n");
-    code_idx+=opcodes(8)+opargs(2);
-  } else if (lval->ident==iREFERENCE) {
-    assert(sym!=NULL);
-    stgwrite("\tpush.pri\n");
-    /* load dereferenced value */
-    assert(sym->vclass==sLOCAL);    /* global references don't exist in Small */
-    if (sym->vclass==sLOCAL)
-      stgwrite("\tlref.s.pri ");
-    else
-      stgwrite("\tlref.pri ");
-    outval(sym->addr,TRUE);
-    /* increment */
-    stgwrite("\tinc.pri\n");
-    /* store dereferenced value */
-    if (sym->vclass==sLOCAL)
-      stgwrite("\tsref.s.pri ");
-    else
-      stgwrite("\tsref.pri ");
-    outval(sym->addr,TRUE);
-    stgwrite("\tpop.pri\n");
-    code_idx+=opcodes(5)+opargs(2);
-  } else {
-    /* local or global variable */
-    assert(sym!=NULL);
-    if (sym->vclass==sLOCAL)
-      stgwrite("\tinc.s ");
-    else
-      stgwrite("\tinc ");
-    outval(sym->addr,TRUE);
-    code_idx+=opcodes(1)+opargs(1);
-  } /* if */
+   sym = lval->sym;
+   if (lval->ident == iARRAYCELL)
+     {
+	/* indirect increment, address already in PRI */
+	stgwrite("\tinc.i\n");
+	code_idx += opcodes(1);
+     }
+   else if (lval->ident == iARRAYCHAR)
+     {
+	/* indirect increment of single character, address already in PRI */
+	stgwrite("\tpush.pri\n");
+	stgwrite("\tpush.alt\n");
+	stgwrite("\tmove.alt\n");	/* copy address */
+	stgwrite("\tlodb.i ");	/* read from PRI into PRI */
+	outval(charbits / 8, TRUE);	/* read one or two bytes */
+	stgwrite("\tinc.pri\n");
+	stgwrite("\tstrb.i ");	/* write PRI to ALT */
+	outval(charbits / 8, TRUE);	/* write one or two bytes */
+	stgwrite("\tpop.alt\n");
+	stgwrite("\tpop.pri\n");
+	code_idx += opcodes(8) + opargs(2);
+     }
+   else if (lval->ident == iREFERENCE)
+     {
+	assert(sym != NULL);
+	stgwrite("\tpush.pri\n");
+	/* load dereferenced value */
+	assert(sym->vclass == sLOCAL);	/* global references don't exist in Small */
+	if (sym->vclass == sLOCAL)
+	   stgwrite("\tlref.s.pri ");
+	else
+	   stgwrite("\tlref.pri ");
+	outval(sym->addr, TRUE);
+	/* increment */
+	stgwrite("\tinc.pri\n");
+	/* store dereferenced value */
+	if (sym->vclass == sLOCAL)
+	   stgwrite("\tsref.s.pri ");
+	else
+	   stgwrite("\tsref.pri ");
+	outval(sym->addr, TRUE);
+	stgwrite("\tpop.pri\n");
+	code_idx += opcodes(5) + opargs(2);
+     }
+   else
+     {
+	/* local or global variable */
+	assert(sym != NULL);
+	if (sym->vclass == sLOCAL)
+	   stgwrite("\tinc.s ");
+	else
+	   stgwrite("\tinc ");
+	outval(sym->addr, TRUE);
+	code_idx += opcodes(1) + opargs(1);
+     }				/* if */
 }
 
 /*  decrement symbol
  *
  *  in case of an integer pointer, the symbol must be incremented by 2.
  */
-SC_FUNC void dec(value *lval)
+SC_FUNC void
+dec(value * lval)
 {
-  symbol *sym;
+   symbol             *sym;
 
-  sym=lval->sym;
-  if (lval->ident==iARRAYCELL) {
-    /* indirect decrement, address already in PRI */
-    stgwrite("\tdec.i\n");
-    code_idx+=opcodes(1);
-  } else if (lval->ident==iARRAYCHAR) {
-    /* indirect decrement of single character, address already in PRI */
-    stgwrite("\tpush.pri\n");
-    stgwrite("\tpush.alt\n");
-    stgwrite("\tmove.alt\n");   /* copy address */
-    stgwrite("\tlodb.i ");      /* read from PRI into PRI */
-    outval(charbits/8,TRUE);    /* read one or two bytes */
-    stgwrite("\tdec.pri\n");
-    stgwrite("\tstrb.i ");      /* write PRI to ALT */
-    outval(charbits/8,TRUE);    /* write one or two bytes */
-    stgwrite("\tpop.alt\n");
-    stgwrite("\tpop.pri\n");
-    code_idx+=opcodes(8)+opargs(2);
-  } else if (lval->ident==iREFERENCE) {
-    assert(sym!=NULL);
-    stgwrite("\tpush.pri\n");
-    /* load dereferenced value */
-    assert(sym->vclass==sLOCAL);    /* global references don't exist in Small */
-    if (sym->vclass==sLOCAL)
-      stgwrite("\tlref.s.pri ");
-    else
-      stgwrite("\tlref.pri ");
-    outval(sym->addr,TRUE);
-    /* decrement */
-    stgwrite("\tdec.pri\n");
-    /* store dereferenced value */
-    if (sym->vclass==sLOCAL)
-      stgwrite("\tsref.s.pri ");
-    else
-      stgwrite("\tsref.pri ");
-    outval(sym->addr,TRUE);
-    stgwrite("\tpop.pri\n");
-    code_idx+=opcodes(5)+opargs(2);
-  } else {
-    /* local or global variable */
-    assert(sym!=NULL);
-    if (sym->vclass==sLOCAL)
-      stgwrite("\tdec.s ");
-    else
-      stgwrite("\tdec ");
-    outval(sym->addr,TRUE);
-    code_idx+=opcodes(1)+opargs(1);
-  } /* if */
+   sym = lval->sym;
+   if (lval->ident == iARRAYCELL)
+     {
+	/* indirect decrement, address already in PRI */
+	stgwrite("\tdec.i\n");
+	code_idx += opcodes(1);
+     }
+   else if (lval->ident == iARRAYCHAR)
+     {
+	/* indirect decrement of single character, address already in PRI */
+	stgwrite("\tpush.pri\n");
+	stgwrite("\tpush.alt\n");
+	stgwrite("\tmove.alt\n");	/* copy address */
+	stgwrite("\tlodb.i ");	/* read from PRI into PRI */
+	outval(charbits / 8, TRUE);	/* read one or two bytes */
+	stgwrite("\tdec.pri\n");
+	stgwrite("\tstrb.i ");	/* write PRI to ALT */
+	outval(charbits / 8, TRUE);	/* write one or two bytes */
+	stgwrite("\tpop.alt\n");
+	stgwrite("\tpop.pri\n");
+	code_idx += opcodes(8) + opargs(2);
+     }
+   else if (lval->ident == iREFERENCE)
+     {
+	assert(sym != NULL);
+	stgwrite("\tpush.pri\n");
+	/* load dereferenced value */
+	assert(sym->vclass == sLOCAL);	/* global references don't exist in Small */
+	if (sym->vclass == sLOCAL)
+	   stgwrite("\tlref.s.pri ");
+	else
+	   stgwrite("\tlref.pri ");
+	outval(sym->addr, TRUE);
+	/* decrement */
+	stgwrite("\tdec.pri\n");
+	/* store dereferenced value */
+	if (sym->vclass == sLOCAL)
+	   stgwrite("\tsref.s.pri ");
+	else
+	   stgwrite("\tsref.pri ");
+	outval(sym->addr, TRUE);
+	stgwrite("\tpop.pri\n");
+	code_idx += opcodes(5) + opargs(2);
+     }
+   else
+     {
+	/* local or global variable */
+	assert(sym != NULL);
+	if (sym->vclass == sLOCAL)
+	   stgwrite("\tdec.s ");
+	else
+	   stgwrite("\tdec ");
+	outval(sym->addr, TRUE);
+	code_idx += opcodes(1) + opargs(1);
+     }				/* if */
 }
 
 /*
  *  Jumps to "label" if PRI != 0
  */
-SC_FUNC void jmp_ne0(int number)
+SC_FUNC void
+jmp_ne0(int number)
 {
-  stgwrite("\tjnz ");
-  outval(number,TRUE);
-  code_idx+=opcodes(1)+opargs(1);
+   stgwrite("\tjnz ");
+   outval(number, TRUE);
+   code_idx += opcodes(1) + opargs(1);
 }
 
 /*
  *  Jumps to "label" if PRI == 0
  */
-SC_FUNC void jmp_eq0(int number)
+SC_FUNC void
+jmp_eq0(int number)
 {
-  stgwrite("\tjzer ");
-  outval(number,TRUE);
-  code_idx+=opcodes(1)+opargs(1);
+   stgwrite("\tjzer ");
+   outval(number, TRUE);
+   code_idx += opcodes(1) + opargs(1);
 }
 
 /* write a value in hexadecimal; optionally adds a newline */
-SC_FUNC void outval(cell val,int newline)
+SC_FUNC void
+outval(cell val, int newline)
 {
-  stgwrite(itoh(val));
-  if (newline)
-    stgwrite("\n");
+   stgwrite(itoh(val));
+   if (newline)
+      stgwrite("\n");
 }
