@@ -1108,6 +1108,10 @@ EAPI int                 ecore_x_netwm_opacity_get(Ecore_X_Window win, unsigned 
 EAPI void                ecore_x_netwm_frame_size_set(Ecore_X_Window win, int fl, int fr, int ft, int fb);
 EAPI int                 ecore_x_netwm_frame_size_get(Ecore_X_Window win, int *fl, int *fr, int *ft, int *fb);
 
+EAPI void                ecore_x_e_init(void);
+EAPI void                ecore_x_e_frame_size_set(Ecore_X_Window win, int fl, int fr, int ft, int fb);
+       
+   
 EAPI int                 ecore_x_xinerama_screen_count_get(void);
 EAPI int                 ecore_x_xinerama_screen_geometry_get(int screen, int *x, int *y, int *w, int *h);
    

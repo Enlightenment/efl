@@ -325,6 +325,9 @@ ecore_x_init(const char *name)
    /* Set up the _NET_... hints */
    ecore_x_netwm_init();
 
+   /* old e hints init */
+   ecore_x_e_init();
+   
    /* This is just to be anal about naming conventions */
    ECORE_X_ATOM_SELECTION_PRIMARY        = XA_PRIMARY;
    ECORE_X_ATOM_SELECTION_SECONDARY      = XA_SECONDARY;
