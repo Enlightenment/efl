@@ -983,7 +983,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	     evas_object_image_smooth_scale_set(ep->object, p3.smooth);
 	     
 	     evas_object_image_border_set(ep->object, p3.border.l, p3.border.r, p3.border.t, p3.border.b);
-	     evas_object_image_border_center_fill_set(ep->object, !(chosen_desc->border.fill));
+	     evas_object_image_border_center_fill_set(ep->object, !(chosen_desc->border.no_fill));
 	     image_id = ep->param1.description->image.id;
 	     image_count = 2;
 	     if (ep->param2.description)

@@ -1367,7 +1367,7 @@ st_collections_group_parts_part_description_image_middle(void)
 
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-   ed->border.fill = !parse_bool(0);
+   ed->border.no_fill = !parse_bool(0);
 }
 
 static void
