@@ -499,6 +499,8 @@ video_obj_stopped_cb(void *data, Evas_Object *obj, void *event_info)
 
    oe = data;
    printf("video stopped!\n");
+   emotion_object_position_set(obj, 0.0);
+   emotion_object_play_set(obj, 1);
 }
 
 static void

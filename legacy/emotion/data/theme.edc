@@ -1,0 +1,1171 @@
+images {
+  image: "tiles.png"               LOSSY 95;
+  image: "window_inner_shadow.png" LOSSY 70;
+/*  image: "e_logo.png"              LOSSY 95;*/
+
+  image: "h_slider.png"            LOSSY 95;
+/************/   
+  image: "video_frame_left.png"    LOSSY 95;
+  image: "video_frame_right.png"   LOSSY 95;
+  image: "video_frame_top.png"     LOSSY 95;
+  image: "video_frame_bottom.png"  LOSSY 95;
+   
+  image: "knob.png"                LOSSY 95;
+
+  image: "fr1.png"                 LOSSY 95;
+  image: "fr2.png"                 LOSSY 95;
+  image: "fr3.png"                 LOSSY 95;
+  image: "fr4.png"                 LOSSY 95;
+  image: "fr5.png"                 LOSSY 95;
+  image: "fr6.png"                 LOSSY 95;
+  image: "fr7.png"                 LOSSY 95;
+  image: "sl.png"                  LOSSY 95;
+  image: "orb.png"                 LOSSY 95;
+  image: "whb.png"                 LOSSY 95;
+  image: "bpause.png"              LOSSY 95;
+  image: "bplay.png"               LOSSY 95;
+  image: "bstop.png"               LOSSY 95;
+  image: "pnl.png"                 LOSSY 95;
+}
+
+collections {
+   group {
+      name: "background";
+      parts {
+	 part {
+	    name: "bg";
+	    mouse_events: 0;
+	    description {
+	       state: "default" 0.0;
+	       color_class: "background";
+	       rel1 {
+		  relative: 0.0  0.0;
+		  offset:   0    0;
+	       }
+	       rel2 {
+		  relative: 1.0  1.0;
+		  offset:   -1   -1;
+	       }
+	       fill {
+		  smooth: 0;
+		  origin {
+		     relative: 0.0 0.0;
+		     offset:   0 0;
+		  }
+		  size {
+		     relative: 0.0 0.0;
+		     offset:   128 128;
+		  }
+	       }
+	       image {
+		  normal: "tiles.png";
+	       }
+	    }
+	 }
+/*	 
+	 part {
+	    name: "logo";
+	    mouse_events: 0;
+	    description {
+	       state: "default" 0.0;
+	       min:   120 140;
+	       rel1 {
+		  relative: 0.0  0.0;
+		  offset:   48   48;
+	       }
+	       rel2 {
+		  relative: 0.0  0.0;
+		  offset:   140  140;
+	       }
+	       image {
+		  normal: "e_logo.png";
+	       }
+	    }
+	 }
+ */
+	 part {
+	    name: "shadow";
+	    mouse_events: 0;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  relative: 0.0  0.0;
+		  offset:   0    0;
+	       }
+	       rel2 {
+		  relative: 1.0  1.0;
+		  offset:   -1   -1;
+	       }
+	       image {
+		  normal: "window_inner_shadow.png";
+	       }
+	    }
+	 }
+      }
+   }
+#if 0   
+   group {
+      name: "video_controller";
+      parts {
+	 // need swallow parts:
+	 // "video_swallow"
+	 // 
+	 // need txt parts:
+	 // "video_speed_txt"
+	 // "video_progress_txt"
+	 // 
+	 // need dragables:
+	 // "video_progress" horizontal
+	 // "video_speed" vertical
+	 part {
+	    name: "video_swallow";
+	    mouse_events: 0;
+	    type:  RECT;
+	    clip_to: "vclip";
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  to:       "fr_c1";
+		  relative: 0.0  0.0;
+		  offset:   20   20;
+	       }
+	       rel2 {
+		  to:       "fr_c4";
+		  relative: 0.0  0.0;
+		  offset:   14   14;
+	       }
+	       color: 0 0 0 0;
+	    }
+	 }
+	 part {
+	    name: "vclip";
+	    mouse_events: 0;
+	    type:  RECT;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  to:       "fr_c1";
+		  relative: 0.0  0.0;
+		  offset:   20   20;
+	       }
+	       rel2 {
+		  to:       "fr_c4";
+		  relative: 0.0  0.0;
+		  offset:   14   14;
+	       }
+	       color: 255 255 255 255;
+	    }
+	    description {
+	       state: "faded" 0.0;
+	       rel1 {
+		  to:       "fr_c1";
+		  relative: 0.0  0.0;
+		  offset:   20   20;
+	       }
+	       rel2 {
+		  to:       "fr_c4";
+		  relative: 0.0  0.0;
+		  offset:   14   14;
+	       }
+	       color: 255 255 255 180;
+	    }
+	    description {
+	       state: "dim" 0.0;
+	       rel1 {
+		  to:       "fr_c1";
+		  relative: 0.0  0.0;
+		  offset:   20   20;
+	       }
+	       rel2 {
+		  to:       "fr_c4";
+		  relative: 0.0  0.0;
+		  offset:   14   14;
+	       }
+	       color: 255 255 255 80;
+	    }
+	 }
+	 part {
+	    name: "fr_c1";
+	    mouse_events: 0;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  relative: 0.0  0.0;
+		  offset:   0    0;
+	       }
+	       rel2 {
+		  relative: 0.0  0.0;
+		  offset:   34   34;
+	       }
+	       image {
+		  normal: "fr1.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "fr_c2";
+	    mouse_events: 0;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  relative: 1.0  0.0;
+		  offset:   -35    0;
+	       }
+	       rel2 {
+		  relative: 1.0  0.0;
+		  offset:   -1   34;
+	       }
+	       image {
+		  normal: "fr6.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "fr_c3";
+	    mouse_events: 0;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  relative: 0.0  1.0;
+		  offset:   0    -35;
+	       }
+	       rel2 {
+		  relative: 0.0  1.0;
+		  offset:   34   -1;
+	       }
+	       image {
+		  normal: "fr3.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "fr_c4";
+	    mouse_events: 0;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  relative: 1.0  1.0;
+		  offset:   -35  -35;
+	       }
+	       rel2 {
+		  relative: 1.0  1.0;
+		  offset:   9   9;
+	       }
+	       image {
+		  normal: "fr5.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "fr_s1";
+	    mouse_events: 0;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  relative: 0.0  1.0;
+		  offset:   0    0;
+		  to: "fr_c1";
+	       }
+	       rel2 {
+		  relative: 1.0  0.0;
+		  offset:   -1   -1;
+		  to: "fr_c3";
+	       }
+	       image {
+		  normal: "fr2.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "fr_s2";
+	    mouse_events: 0;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  relative: 1.0  0.0;
+		  offset:   0    0;
+		  to: "fr_c3";
+	       }
+	       rel2 {
+		  relative: 0.0  1.0;
+		  offset:   -1   -11;
+		  to: "fr_c4";
+	       }
+	       image {
+		  normal: "fr4.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "fr_s3";
+	    mouse_events: 0;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  relative: 0.0  1.0;
+		  offset:   0    0;
+		  to: "fr_c2";
+	       }
+	       rel2 {
+		  relative: 1.0  0.0;
+		  offset:   -11   -1;
+		  to: "fr_c4";
+	       }
+	       image {
+		  normal: "fr2.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "fr_t";
+	    mouse_events: 0;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  relative: 1.0  0.0;
+		  offset:   0    0;
+		  to: "fr_c1";
+	       }
+	       rel2 {
+		  relative: 0.0  1.0;
+		  offset:   -1   -1;
+		  to: "fr_c2";
+	       }
+	       border: 50 50 0 0;
+	       image {
+		  normal: "fr7.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "panel_bg";
+	    mouse_events: 0;
+	    clip_to: "panel_clip";
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  relative: 0.0  0.0;
+		  offset:   0    0;
+		  to: "panel_clip";
+	       }
+	       rel2 {
+		  relative: 1.0  1.0;
+		  offset:   -1   -1;
+		  to: "panel_clip";
+	       }
+	       image {
+		  normal: "pnl.png";
+	       }
+	       fill {
+		  smooth: 1;
+		  origin {
+		     relative: 0.0 0.0;
+		     offset: 0 0;
+		  }
+		  size {
+		     relative: 0.0 1.0;
+		     offset: 32 0;
+		  }
+	       }
+	    }
+	 }
+	 part {
+	    name: "prog_container";
+	    mouse_events: 0;
+	    clip_to: "panel_clip";
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  relative: 0.0  0.0;
+		  offset:   4    4;
+		  to: "panel_clip";
+	       }
+	       rel2 {
+		  relative: 1.0  0.0;
+		  offset:   -5   9;
+		  to: "panel_clip";
+	       }
+	       border: 2 2 2 2;
+	       image {
+		  normal: "whb.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "prog_done";
+	    mouse_events: 0;
+	    clip_to: "panel_clip";
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  relative: 0.0  0.0;
+		  offset:   0    0;
+		  to: "prog_container";
+	       }
+	       rel2 {
+		  relative: 0.5  1.0;
+		  offset:   0   -1;
+		  to_x: "video_progress";
+		  to_y: "prog_container";
+	       }
+	       border: 2 2 2 2;
+	       image {
+		  normal: "orb.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "video_progress";
+	    type: RECT;
+	    clip_to: "panel_clip";
+	    mouse_events: 1;
+	    dragable {
+               x:        1 1 0;
+	       y:        0 0 0;
+	       confine: "prog_container";
+	    }
+	    description {
+	       state: "default" 0.0;
+	       min:   10 5;
+	       align: 0.5 0.5;
+	       rel1 {
+		  to:       "prog_container";
+		  relative: 0.5  0.5;
+		  offset:   0    0;
+	       }
+	       rel2 {
+		  to:       "prog_container";
+		  relative: 0.5  0.5;
+		  offset:   0    0;
+	       }
+	       color:       0 255 0 50;
+	    }
+	 }
+	 part {
+	    name: "video_progress_img";
+	    mouse_events: 0;
+	    clip_to: "panel_clip";
+	    description {
+	       state: "default" 0.0;
+	       min:   9 16;
+	       align: 0.5 1.0;
+	       rel1 {
+		  relative: 0.5  0.0;
+		  offset:   0    0;
+		  to_x:       "video_progress";
+		  to_y:       "prog_container";
+	       }
+	       rel2 {
+		  relative: 0.5  0.0;
+		  offset:   0    0;
+		  to_x:       "video_progress";
+		  to_y:       "prog_container";
+	       }
+	       image {
+		  normal: "sl.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "b_stop";
+	    mouse_events: 0;
+	    clip_to: "panel_clip";
+	    description {
+	       state: "default" 0.0;
+	       min: 22 22;
+	       max: 22 22;
+	       align: 0.0 0.0;
+	       rel1 {
+		  relative: 1.0  1.0;
+		  offset:   -5    -5;
+		  to: "panel_clip";
+	       }
+	       rel2 {
+		  relative: 1.0  1.0;
+		  offset:   -5   -5;
+		  to: "panel_clip";
+	       }
+	       image {
+		  normal: "bstop.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "b_play";
+	    mouse_events: 0;
+	    clip_to: "panel_clip";
+	    description {
+	       state: "default" 0.0;
+	       min: 22 22;
+	       max: 22 22;
+	       align: 0.0 1.0;
+	       rel1 {
+		  relative: 0.0  0.0;
+		  offset:   -1   0;
+		  to: "b_stop";
+	       }
+	       rel2 {
+		  relative: 0.0  0.0;
+		  offset:   -1   0;
+		  to: "b_stop";
+	       }
+	       image {
+		  normal: "bstop.png";
+	       }
+	    }
+	    description {
+	       state: "play" 0.0;
+	       min: 22 22;
+	       max: 22 22;
+	       align: 0.0 1.0;
+	       rel1 {
+		  relative: 0.0  0.0;
+		  offset:   -1   0;
+		  to: "b_stop";
+	       }
+	       rel2 {
+		  relative: 0.0  0.0;
+		  offset:   -1   0;
+		  to: "b_stop";
+	       }
+	       image {
+		  normal: "bplay.png";
+	       }
+	    }
+	    description {
+	       state: "pause" 0.0;
+	       min: 22 22;
+	       max: 22 22;
+	       align: 0.0 1.0;
+	       rel1 {
+		  relative: 0.0  0.0;
+		  offset:   -1   0;
+		  to: "b_stop";
+	       }
+	       rel2 {
+		  relative: 0.0  0.0;
+		  offset:   -1   0;
+		  to: "b_stop";
+	       }
+	       image {
+		  normal: "bpause.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "panel_clip";
+	    mouse_events: 0;
+	    type:  RECT;
+	    clip_to: "vclip";
+	    description {
+	       visible: 0;
+	       state: "default" 0.0;
+	       rel1 {
+		  to:       "panel";
+		  relative: 0.0  0.0;
+		  offset:   0   0;
+	       }
+	       rel2 {
+		  to:       "panel";
+		  relative: 1.0  1.0;
+		  offset:   -1   -1;
+	       }
+	       color: 255 255 255 0;
+	    }
+	    description {
+	       visible: 1;
+	       state: "shown" 0.0;
+	       rel1 {
+		  to:       "panel";
+		  relative: 0.0  0.0;
+		  offset:   0   0;
+	       }
+	       rel2 {
+		  to:       "panel";
+		  relative: 1.0  1.0;
+		  offset:   -1   -1;
+	       }
+	       color: 255 255 255 255;
+	    }
+	 }
+	 part {
+	    name: "video_progress_txt";
+	    type: TEXT;
+	    mouse_events: 0;
+	    effect: OUTLINE;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  to:       "panel";
+		  relative: 0.0  1.0;
+		  offset:   0    -10;
+	       }
+	       rel2 {
+		  to:       "panel";
+		  relative: 1.0  1.0;
+		  offset:   -1   -1;
+	       }
+	       color:       255 255 255 255;
+	       color2:      0 0 0 255;
+	       text {
+		  text: "Video Progress";
+		  font: "Vera";
+		  size: 6;
+		  align: 0.0: 1.0;
+	       };
+	    }
+	 }
+	 part {
+	    name: "panel";
+	    mouse_events: 1;
+	    type:  RECT;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  to:       "fr_c3";
+		  relative: 0.0  0.0;
+		  offset:   20   -46;
+	       }
+	       rel2 {
+		  to:       "fr_c4";
+		  relative: 0.0  0.0;
+		  offset:   14   14;
+	       }
+	       color: 0 0 0 0;
+	    }
+	 }
+	 part {
+	    name: "panel2";
+	    mouse_events: 1;
+	    type:  RECT;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  to:       "fr_c1";
+		  relative: 0.0  0.0;
+		  offset:   20   20;
+	       }
+	       rel2 {
+		  to:       "fr_c2";
+		  relative: 1.0  0.0;
+		  offset:   -1   -1;
+		  to: "panel";
+	       }
+	       color: 0 0 0 0;
+	    }
+	 }
+	 part {
+	    name: "video_resizer";
+	    mouse_events: 1;
+	    type:  RECT;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  to:       "fr_c4";
+		  relative: 0.0  0.0;
+		  offset:   0    0;
+	       }
+	       rel2 {
+		  to:       "fr_c4";
+		  relative: 1.0  1.0;
+		  offset:   -1   -1;
+	       }
+	       color: 0 0 0 0;
+	    }
+	 }
+	 part {
+	    name: "video_mover";
+	    mouse_events: 1;
+	    type:  RECT;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  to:       "fr_t";
+		  relative: 0.0  0.0;
+		  offset:   0    0;
+	       }
+	       rel2 {
+		  to:       "fr_t";
+		  relative: 1.0  1.0;
+		  offset:   -1   -1;
+	       }
+	       color: 0 0 0 0;
+	    }
+	 }
+      }
+      programs {
+	 program {
+	    name: "video_move_start";
+	    signal: "mouse,down,*";
+	    source: "video_mover";
+	    action: SIGNAL_EMIT "frame_move" "start";
+	 }
+	 program {
+	    name: "video_move_stop";
+	    signal: "mouse,up,*";
+	    source: "video_mover";
+	    action: SIGNAL_EMIT "frame_move" "stop";
+	 }
+	 program {
+	    name: "video_resize_start";
+	    signal: "mouse,down,*";
+	    source: "video_resizer";
+	    action: SIGNAL_EMIT "frame_resize" "start";
+	 }
+	 program {
+	    name: "video_resize_stop";
+	    signal: "mouse,up,*";
+	    source: "video_resizer";
+	    action: SIGNAL_EMIT "frame_resize" "stop";
+	 }
+	 program {
+	    name: "panel_show";
+	    signal: "mouse,in";
+	    source: "panel";
+	    action: STATE_SET "shown" 0.0;
+	    transition: LINEAR 1.0;
+	    target: "panel_clip";
+	 }
+	 program {
+	    name: "panel_hide";
+	    signal: "mouse,in";
+	    source: "panel2";
+	    action: STATE_SET "default" 0.0;
+	    transition: LINEAR 1.0;
+	    target: "panel_clip";
+	 }
+      }
+   }
+#else
+   group {
+      name: "video_controller";
+      parts {
+	 // need swallow parts:
+	 // "video_swallow"
+	 // 
+	 // need txt parts:
+	 // "video_speed_txt"
+	 // "video_progress_txt"
+	 // 
+	 // need dragables:
+	 // "video_progress" horizontal
+	 // "video_speed" vertical
+	 part {
+	    name: "video_swallow";
+	    mouse_events: 0;
+	    type:  RECT;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  to:       "video_frame_left";
+		  relative: 1.0  0.0;
+		  offset:   -8   23;
+	       }
+	       rel2 {
+		  to:       "video_frame_right";
+		  relative: 0.0  1.0;
+		  offset:   7    -25;
+	       }
+	       color: 0 0 0 0;
+	    }
+	 }
+	 part {
+	    name: "video_frame_left";
+	    mouse_events: 0;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  relative: 0.0  0.0;
+		  offset:   0    0;
+	       }
+	       rel2 {
+		  relative: 0.0  1.0;
+		  offset:   32   -1;
+	       }
+	       border: 0 0 33 33;
+	       image {
+		  normal: "video_frame_left.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "video_frame_right";
+	    mouse_events: 0;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  relative: 1.0  0.0;
+		  offset:   -32  0;
+	       }
+	       rel2 {
+		  relative: 1.0  1.0;
+		  offset:   -1   -1;
+	       }
+	       border: 0 0 33 33;
+	       image {
+		  normal: "video_frame_right.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "video_frame_top";
+	    mouse_events: 0;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  to:       "video_frame_left";
+		  relative: 1.0  0.0;
+		  offset:   0    0;
+	       }
+	       rel2 {
+		  to:       "video_frame_right";
+		  relative: 0.0  0.0;
+		  offset:   -1   31;
+	       }
+	       image {
+		  normal: "video_frame_top.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "video_frame_bottom";
+	    mouse_events: 0;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  to:       "video_frame_left";
+		  relative: 1.0  1.0;
+		  offset:   0    -32;
+	       }
+	       rel2 {
+		  to:       "video_frame_right";
+		  relative: 0.0  1.0;
+		  offset:   -1   -1;
+	       }
+	       image {
+		  normal: "video_frame_bottom.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "video_progress_txt";
+	    type: TEXT;
+	    mouse_events: 0;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  to:       "video_frame_bottom";
+		  relative: 0.0  0.0;
+		  offset:   0    8;
+	       }
+	       rel2 {
+		  to:       "video_frame_bottom";
+		  relative: 1.0  1.0;
+		  offset:   -1   -13;
+	       }
+	       color:       0 0 0 255;
+	       text {
+		  text: "Video Progress";
+		  font: "Vera";
+		  size: 6;
+		  align: 0.0: 0.5;
+	       };
+	    }
+	 }
+	 part {
+	    name: "video_speed_txt";
+	    type: TEXT;
+	    mouse_events: 0;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  to:       "video_frame_bottom";
+		  relative: 0.0  0.0;
+		  offset:   0    8;
+	       }
+	       rel2 {
+		  to:       "video_frame_bottom";
+		  relative: 1.0  1.0;
+		  offset:   -1   -13;
+	       }
+	       color:       0 0 0 255;
+	       text {
+		  text: "Video Speed";
+		  font: "Vera";
+		  size: 6;
+		  align: 1.0: 0.5;
+	       };
+	    }
+	 }
+	 part {
+	    name: "video_progress_confine";
+	    mouse_events: 0;
+	    type:  RECT;
+	    description {
+	       state: "default" 0.0;
+	       min:   1 18;
+	       align: 0.5 0.0;
+	       rel1 {
+		  to:       "video_frame_left";
+		  relative: 1.0  1.0;
+		  offset:   0    -25;
+	       }
+	       rel2 {
+		  to:       "video_frame_right";
+		  relative: 0.0  1.0;
+		  offset:   -1   -25;
+	       }
+	       color: 0 0 0 0;
+	    }
+	 }
+	 part {
+	    name: "video_progress";
+	    type: RECT;
+	    mouse_events: 1;
+	    dragable {
+               x:        1 1 0;
+	       y:        0 0 0;
+	       confine: "video_progress_confine";
+	    }
+	    description {
+	       state: "default" 0.0;
+	       min:   34 18;
+	       rel1 {
+		  to:       "video_progress_confine";
+		  relative: 0.5  0.5;
+		  offset:   0    0;
+	       }
+	       rel2 {
+		  to:       "video_progress_confine";
+		  relative: 0.5  0.5;
+		  offset:   0    0;
+	       }
+	       color:       0 0 0 0;
+	    }
+	 }
+	 part {
+	    name: "video_progress_img";
+	    mouse_events: 0;
+	    description {
+	       state: "default" 0.0;
+	       min:   42 26;
+	       rel1 {
+		  to:       "video_progress";
+		  relative: 0.5  0.5;
+		  offset:   0    0;
+	       }
+	       rel2 {
+		  to:       "video_progress";
+		  relative: 0.5  0.5;
+		  offset:   0    0;
+	       }
+	       image {
+		  normal: "h_slider.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "video_speed_confine";
+	    mouse_events: 0;
+	    type:  RECT;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  to:       "video_frame_left";
+		  relative: 1.0  0.0;
+		  offset:   0    24;
+	       }
+	       rel2 {
+		  to:       "video_frame_left";
+		  relative: 1.0  1.0;
+		  offset:   48   -49;
+	       }
+	       color: 0 0 0 0;
+	    }
+	 }
+	 part {
+	    name: "video_speed";
+	    mouse_events: 1;
+	    dragable {
+               x:        0 0 0;
+	       y:        -1 1 0;
+	       confine: "video_speed_confine";
+	    }
+	    description {
+	       state: "default" 0.0;
+	       min:   24 24;
+	       rel1 {
+		  to:       "video_speed_confine";
+		  relative: 0.5  0.5;
+		  offset:   0    0;
+	       }
+	       rel2 {
+		  to:       "video_speed_confine";
+		  relative: 0.5  0.5;
+		  offset:   0    0;
+	       }
+	       image {
+		  normal: "knob.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "video_play";
+	    mouse_events: 1;
+	    description {
+	       state: "default" 0.0;
+	       min:   24 24;
+	       rel1 {
+		  to:       "video_frame_bottom";
+		  relative: 0.0  0.5;
+		  offset:   0    0;
+	       }
+	       rel2 {
+		  to:       "video_frame_bottom";
+		  relative: 0.0  0.5;
+		  offset:   0    0;
+	       }
+	       image {
+		  normal: "knob.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "video_pause";
+	    mouse_events: 1;
+	    description {
+	       state: "default" 0.0;
+	       min:   24 24;
+	       rel1 {
+		  to:       "video_frame_bottom";
+		  relative: 0.5  0.5;
+		  offset:   0    0;
+	       }
+	       rel2 {
+		  to:       "video_frame_bottom";
+		  relative: 0.5  0.5;
+		  offset:   0    0;
+	       }
+	       image {
+		  normal: "knob.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "video_stop";
+	    mouse_events: 1;
+	    description {
+	       state: "default" 0.0;
+	       min:   24 24;
+	       rel1 {
+		  to:       "video_frame_bottom";
+		  relative: 1.0  0.5;
+		  offset:   0    0;
+	       }
+	       rel2 {
+		  to:       "video_frame_bottom";
+		  relative: 1.0  0.5;
+		  offset:   0    0;
+	       }
+	       image {
+		  normal: "knob.png";
+	       }
+	    }
+	 }
+	 part {
+	    name: "video_mover";
+	    mouse_events: 1;
+	    type:  RECT;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  to:       "video_frame_top";
+		  relative: 0.0  0.0;
+		  offset:   0    0;
+	       }
+	       rel2 {
+		  to:       "video_frame_top";
+		  relative: 1.0  1.0;
+		  offset:   -1   -1;
+	       }
+	       color: 255 20 20 20;
+	    }
+	 }
+	 part {
+	    name: "video_resizer";
+	    mouse_events: 1;
+	    type:  RECT;
+	    description {
+	       state: "default" 0.0;
+	       rel1 {
+		  to:       "video_frame_right";
+		  relative: 0.0  1.0;
+		  offset:   0    -31;
+	       }
+	       rel2 {
+		  to:       "video_frame_right";
+		  relative: 1.0  1.0;
+		  offset:   -1   -1;
+	       }
+	       color: 20 20 255 20;
+	    }
+	 }
+      }
+      programs {
+	 // emit signals:
+	 // "video_control" "play"
+	 // "video_control" "pause"
+	 // "video_control" "stop"
+	 // "drag" "video_progress"
+	 // "drag" "video_speed"
+	 // 
+	 // get signals:
+	 // "video_state" "play"
+	 // "video_state" "pause"
+	 // "video_state" "stop"
+	 program {
+	    name: "video_play";
+	    signal: "mouse,down,1";
+	    source: "video_play";
+	    action:     SIGNAL_EMIT "video_control" "play";
+	 }
+	 program {
+	    name: "video_pause";
+	    signal: "mouse,down,1";
+	    source: "video_pause";
+	    action:     SIGNAL_EMIT "video_control" "pause";
+	 }
+	 program {
+	    name: "video_stop";
+	    signal: "mouse,down,1";
+	    source: "video_stop";
+	    action:     SIGNAL_EMIT "video_control" "stop";
+	 }
+	 program {
+	    name: "video_move_start";
+	    signal: "mouse,down,*";
+	    source: "video_mover";
+	    action:     SIGNAL_EMIT "frame_move" "start";
+	 }
+	 program {
+	    name: "video_move_stop";
+	    signal: "mouse,up,*";
+	    source: "video_mover";
+	    action:     SIGNAL_EMIT "frame_move" "stop";
+	 }
+	 program {
+	    name: "video_resize_start";
+	    signal: "mouse,down,*";
+	    source: "video_resizer";
+	    action:     SIGNAL_EMIT "frame_resize" "start";
+	 }
+	 program {
+	    name: "video_resize_stop";
+	    signal: "mouse,up,*";
+	    source: "video_resizer";
+	    action:     SIGNAL_EMIT "frame_resize" "stop";
+	 }
+      }
+   }
+#endif   
+}

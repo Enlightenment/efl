@@ -1,4 +1,64 @@
-filesdir = $(datadir)/emotion/data
-files_DATA = theme.eet
+EDJE_CC = edje_cc $(EDJE_FLAGS)
+EDJE_FLAGS = -v
 
-EXTRA_DIST = $(files_DATA)
+filesdir = $(datadir)/emotion/data
+files_DATA = \
+theme.eet \
+bpause.png \
+bplay.png \
+bstop.png \
+e_logo.png \
+fr1.png \
+fr2.png \
+fr3.png \
+fr4.png \
+fr5.png \
+fr6.png \
+fr7.png \
+h_slider.png \
+knob.png \
+orb.png \
+pnl.png \
+sl.png \
+tiles.png \
+video_frame_bottom.png \
+video_frame_left.png \
+video_frame_right.png \
+video_frame_top.png \
+whb.png \
+window_inner_shadow.png
+
+EXTRA_DIST = \
+bpause.png \
+bplay.png \
+bstop.png \
+e_logo.png \
+fr1.png \
+fr2.png \
+fr3.png \
+fr4.png \
+fr5.png \
+fr6.png \
+fr7.png \
+h_slider.png \
+knob.png \
+orb.png \
+pnl.png \
+sl.png \
+tiles.png \
+video_frame_bottom.png \
+video_frame_left.png \
+video_frame_right.png \
+video_frame_top.png \
+whb.png \
+window_inner_shadow.png \
+theme.edc
+
+theme.eet: Makefile
+	$(EDJE_CC) $(EDJE_FLAGS) \
+	$(top_srcdir)/data/theme.edc \
+	$(top_builddir)/data/theme.eet
+
+clean-local:
+	rm -f *.eet
+	
