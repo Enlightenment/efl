@@ -919,7 +919,8 @@ void             ecore_x_icccm_send_take_focus(Ecore_X_Window win);
      ecore_x_window_save_set_add(Ecore_X_Window win);
    void
      ecore_x_window_save_set_del(Ecore_X_Window win);
-       
+   Ecore_X_Window *
+     ecore_x_window_children_get(Ecore_X_Window win, int *num);
    
    
    

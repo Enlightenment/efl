@@ -1032,6 +1032,34 @@ ecore_x_window_save_set_del(Ecore_X_Window win)
    XRemoveFromSaveSet(_ecore_x_disp, win);
 }
 
+Ecore_X_Window *
+ecore_x_window_children_get(Ecore_X_Window win, int *num)
+{
+   Ecore_X_Window     *windows = NULL;
+   Window              root_ret = 0, parent_ret = 0, *children_ret = NULL;
+   unsigned int        children_ret_num = 0;
+   
+   if (!XQueryTree(_ecore_x_disp, win, &root_ret, &parent_ret, &children_ret,
+		   &children_ret_num))
+     {
+	return NULL;
+     }
+   if (children_ret)
+     {
+	windows = malloc(children_ret_num * sizeof(Ecore_X_Window));
+	if (windows)
+	  {
+	     int i;
+	     
+	     for (i = 0; i < children_ret_num; i++)
+	       windows[i] = children_ret[i];
+	     *num = children_ret_num;
+	  }
+	XFree(children_ret);
+     }
+   return windows;
+}
+
 
 
 
