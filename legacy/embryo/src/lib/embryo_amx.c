@@ -620,7 +620,7 @@ embryo_data_string_set(Embryo_Program *ep, char *src, Embryo_Cell *str_cell)
    for (i = 0; src[i] != 0; i++)
      {
 	if ((void *)(&(str_cell[i])) >= (void *)(ep->base + hdr->stp)) return;
-	else if ((void *)(&(str_cell[i]) == (void *)(ep->base + hdr->stp - 1)))
+	else if ((void *)(&(str_cell[i])) == (void *)(ep->base + hdr->stp - 1))
 	  {
 	     str_cell[i] = 0;
 	     return;
@@ -1509,10 +1509,10 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 	     ep->hea = hea;
 	     ep->frm = frm;
 	     ep->stk = stk;
-	     pri = ((Embryo_Native)offs)(ep, (Embryo_Cell *)(data + (int)stk));
-	     if (ep->error != EMBRYO_ERROR_NONE)
+	     num = _embryo_native_call(ep, offs, &pri, (Embryo_Cell *)(data + (int)stk));
+	     if (num != EMBRYO_ERROR_NONE)
 	       {
-		  if (ep->error == EMBRYO_ERROR_SLEEP)
+		  if (num == EMBRYO_ERROR_SLEEP)
 		    {
 		       ep->pri = pri;
 		       ep->alt = alt;
@@ -1529,13 +1529,20 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 	     break;
 	   case EMBRYO_OP_SWITCH:
 	       {
-		  Embryo_Cell *cptr;
-		  
-		  cptr = (Embryo_Cell *)*cip + 1; /* +1, to skip the "casetbl" opcode */
-		  cip = (Embryo_Cell *)*(cptr + 1); /* preset to "none-matched" case */
-		  num = (int)*cptr; /* number of records in the case table */
-		  for (cptr += 2; (num > 0) && (*cptr != pri); num--, cptr += 2);
-		  if (num > 0) cip = (Embryo_Cell *)*(cptr + 1); /* case found */
+		  Embryo_Cell *cptr, *tbl;
+
+		  /* +1, to skip the "casetbl" opcode */
+		  cptr = (Embryo_Cell *)(code + (*cip)) + 1;
+		  /* number of records in the case table */
+		  num = (int)(*cptr);
+		  /* preset to "none-matched" case */
+		  cip = (Embryo_Cell *)(code + *(cptr + 1));
+		  for (cptr += 2; 
+		       (num > 0) && (*cptr != pri); 
+		       num--, cptr += 2);
+		  /* case found */
+		  if (num > 0)
+		    cip = (Embryo_Cell *)(code + *(cptr + 1));
 	       }
 	     break;
 	   case EMBRYO_OP_SWAP_PRI:
