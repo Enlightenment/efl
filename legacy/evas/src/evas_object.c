@@ -36,7 +36,8 @@ _evas_remove_data(Evas e, Evas_Object o)
 	     Evas_Data d;
 	     
 	     d = l->data;
-	     free(d->key);
+	     if (d->key)
+		free(d->key);
 	     free(d);
 	  }
 	evas_list_free(o->data);   
@@ -96,8 +97,10 @@ _evas_layer_free(Evas e, Evas_Layer layer)
 	_evas_callback_call(e, o, CALLBACK_FREE, 0, 0, 0);
 	_evas_remove_callbacks(e, o);
 	_evas_remove_data(e, o);
-	o->object_renderer_data_free(e, o);
-	o->object_free(o);	     
+	if (o->object_renderer_data_free)
+	   o->object_renderer_data_free(e, o);
+	if (o->object_free)
+	   o->object_free(o);
      }
    free(layer);
 }
