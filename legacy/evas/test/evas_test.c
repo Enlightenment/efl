@@ -528,13 +528,14 @@ fn_image(double v, double val, int no)
      }
    for (i = 0; i < 16; i++)
      {
-	double alpha;
+	double alpha, a1;
 	
 	if (v < 1)
 	   alpha = v;
 	else if (v < 2)
 	   alpha = 1;
 	else alpha = (3 - v);
+	a1 = 1.0 - alpha;
 	if (!o_fn_images[i]) 
 	   {
 	      char buf[4096];
@@ -545,8 +546,12 @@ fn_image(double v, double val, int no)
 	   }
 	evas_set_color(evas_view, o_fn_images[i], 255, 255, 255, 255.0 * alpha);
 	evas_move(evas_view, o_fn_images[i], 
-		  coords[(i * 2) + 0] + (50 * cos((val * 2.7) + 3.4 + i)), 
-		  coords[(i * 2) + 1] + (20 * sin((val * 3.6) + 1.2 + i))); 
+		  coords[(i * 2) + 0] + 
+		  ((50 + (a1 * a1 * a1 * a1 * 400)) * 
+			 cos((val * 2.7) + 3.4 + i)), 
+		  coords[(i * 2) + 1] + 
+		  ((20 + (a1 * a1 * a1 * a1 * 400)) * 
+			 sin((val * 3.6) + 1.2 + i))); 
 	evas_show(evas_view, o_fn_images[i]);
      }
    
@@ -562,7 +567,7 @@ static CodeBlock codes[] =
    { 136.0, 2.0, 4.0, 6.0, fn_poly},
    { 140.0, 2.0, 4.0, 6.0, fn_text},
    { 144.0, 2.0, 4.0, 6.0, fn_grad},
-   { 148.0, 2.0, 4.0, 6.0, fn_image},
+   { 0.0, 2.0, 4.0, 6.0, fn_image},
    { 164.0, 4.0, 12.0, 16.0, fn_rect},
    { 164.0, 4.0, 12.0, 16.0, fn_line},
    { 164.0, 4.0, 12.0, 16.0, fn_poly},
