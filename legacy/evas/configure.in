@@ -6,16 +6,75 @@ AM_PROG_CC_STDC
 AC_C_CONST
 AM_ENABLE_SHARED
 AM_PROG_LIBTOOL
-AM_WITH_DMALLOC
 if test X"$enable_shared" = Xyes; then
   DLLDFLAGS=-export-dynamic
   AC_SUBST(DLLDFLAGS)
 fi
 AC_PROG_INSTALL
 AC_PROG_MAKE_SET
-AC_CHECK_LIB(Imlib2, imlib_context_set_image, IMLIB2=yes ,[
+
+#### Find out about X
+AC_PATH_X
+AC_PATH_XTRA
+
+if test "x$x_includes" = "x"; then
+  x_includes="/usr/include"
+fi
+
+x_cflags="$X_CFLAGS"
+x_ldflags="$X_LDFLAGS"
+x_libs="$X_LIBS $X_EXTRA_LIBS"
+
+AC_CHECK_LIB(X11, XOpenDisplay, x_libs="$x_libs",
+  AC_MSG_ERROR([ERROR: libX11 not found.]); exit,
+  $X_LDFLAGS $X_EXTRA_LIBS $X_LIBS)
+AC_CHECK_LIB(Xext, XShmAttach, x_libs="-lXext $x_libs",
+	     AC_CHECK_LIB(XextSam, XShmAttach,
+		          x_libs="-lXextSam -lXext $x_libs",
+			  AC_MSG_ERROR([ERROR: XShm not found.]); exit, 
+			  $x_libs),
+	     $x_libs)
+AC_CHECK_LIB(Xext, XShapeCombineMask, x_libs="-lXext $x_libs",
+             AC_MSG_ERROR([ERROR: XShape not found.]); exit,
+	     $x_libs)
+
+AC_SUBST(x_cflags)
+AC_SUBST(x_includes)
+AC_SUBST(x_ldflags)
+AC_SUBST(x_libs)
+
+#### Find out about E db
+AC_CHECK_HEADER(Edb.h,
+AC_CHECK_LIB(edb, e_db_open, ,[
+echo ""
+echo "ERROR: E db needed"
+echo ""
+AC_MSG_ERROR([Fatal Error: no E db detected.]); exit], -L/usr/local/lib -ldb)
+)
+
+#### Find out about Imlib2
+AC_CHECK_HEADER(Imlib2.h,
+AC_CHECK_LIB(Imlib2, imlib_context_set_image, ,[
 echo ""
 echo "ERROR: Imlib 2 needed"
 echo ""
-AC_MSG_ERROR([Fatal Error: no Imlib2 detected.])], -L/usr/X11R6/lib -L/usr/local/lib -lm -ldl -lttf -lX11 -lXext)
+AC_MSG_ERROR([Fatal Error: no Imlib2 detected.]); exit], -L/usr/X11R6/lib -L/usr/local/lib -lm -ldl -lttf -lX11 -lXext)
+)
+
+gl_includes=""
+#### Find out about OpenGL
+AC_CHECK_HEADER(GL/gl.h,
+gl_includes="-I/usr/include -I/usr/local/include"
+AC_CHECK_LIB(GL, glBindTexture, AC_DEFINE(HAVE_GL) ,[
+echo "... no GL found"
+], -L/usr/local/lib -lGL $X_LDFLAGS $X_EXTRA_LIBS $X_LIBS)
+)
+AC_CHECK_HEADER($x_includes"/GL/gl.h",
+gl_includes="-I/usr/include -I/usr/local/include -I/usr/X11R6/include/"
+AC_CHECK_LIB(GL, glBindTexture, AC_DEFINE(HAVE_GL) ,[
+echo "... no GL found"
+], -L/usr/local/lib -lGL $X_LDFLAGS $X_EXTRA_LIBS $X_LIBS)
+)
+AC_SUBST(gl_includes)
+
 AC_OUTPUT(Makefile src/Makefile test/Makefile)

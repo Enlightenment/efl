@@ -139,6 +139,7 @@ void __evas_calc_tex_and_poly(Evas_GL_Image *im, int x, double *x1, double *x2,
 	*txx = im->texture.max_size - 2;
 	*dtx  = (double)*tx  / (im->texture.max_size);
 	*dtxx = (double)*txx / (im->texture.max_size);
+glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
      }
    else if (x < (tw - 1))
      {
@@ -181,6 +182,7 @@ void __evas_gl_set_conect_for_dest(Evas_GL_Image *im, Display *disp, Window w,
 	im->buffer.dest = w;
 	glXMakeCurrent(disp, w, im->context);
 	glEnable(GL_BLEND);
+	glEnable(GL_DITHER);
 	glShadeModel(GL_FLAT);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
@@ -242,7 +244,7 @@ void __evas_gl_render_to_window(Evas_GL_Image *im,
              x2 = dx + ((x2 * dw) / (double)im->w);
              y2 = dy + ((y2 * dh) / (double)im->h);
 	     glBindTexture(GL_TEXTURE_2D, im->texture.textures[i]);
-	     glBegin(GL_POLYGON);
+	     glBegin(GL_QUADS);
 	     glTexCoord2d(dtx,  dty);  glVertex2d(x1, y1);
 	     glTexCoord2d(dtxx, dty);  glVertex2d(x2, y1);
 	     glTexCoord2d(dtxx, dtyy); glVertex2d(x2, y2);

@@ -43,6 +43,7 @@ main(int argc, char **argv)
 			    &att);
 	XMapWindow(d, win);
      }
+   if (__evas_gl_capable(d))
      {
 	int a = 0;
 	double t1, t2;
@@ -72,7 +73,7 @@ main(int argc, char **argv)
 	       {
 		  int xx, yy;
 		  
-		  j = k % 4;
+		  j = 3 - (k % 4);
 		  xx = (((k + 1) * a) / 2) % win_w;
 		  yy = 0;
 		  if (k == 2)
@@ -101,5 +102,9 @@ main(int argc, char **argv)
 		   a = 0;
 		}
 	  }
+     }
+   else
+     {
+	printf("Your X server is unable to do GLX - no go buddy.\n");
      }
 }
