@@ -15,14 +15,14 @@ static int _ecore_evas_init_count = 0;
 int
 ecore_evas_init(void)
 {
-   _ecore_evas_init_count++;
-   if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
-   return _ecore_evas_init_count;
+   evas_init ();
+
+   return ++_ecore_evas_init_count;
 }
 
 /**
  * Shut down the Evas system.
- * @return 0 if ecore evas is fully shut down, or 1 if it still needs to be shut down
+ * @return 0 if ecore evas is fully shut down, or > 0 if it still needs to be shut down
  * 
  * This closes the Evas system down.
  */
