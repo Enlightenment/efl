@@ -1,4 +1,4 @@
-EDJE_CC = edje_cc $(EDJE_FLAGS)
+EDJE_CC = edje_cc
 EDJE_FLAGS = -v
 
 filesdir = $(datadir)/emotion/data
