@@ -5,14 +5,15 @@ static void ob_images(void);
 static void ob_images_image(void);
 static void st_images_image(void);
 
+static void st_data_item(void);
+
 static void ob_collections(void);
 
 static void ob_collections_group(void);
 static void st_collections_group_name(void);
 static void st_collections_group_min(void);
 static void st_collections_group_max(void);
-
-static void ob_collections_group_parts(void);
+static void st_collections_group_data_item(void);
 
 static void ob_collections_group_parts_part(void);
 static void st_collections_group_parts_part_name(void);
@@ -76,9 +77,11 @@ static void st_collections_group_programs_program_after(void);
 New_Statement_Handler statement_handlers[] =
 {
      {"images.image", st_images_image},
+     {"data.item", st_data_item},
      {"collections.group.name", st_collections_group_name},
      {"collections.group.min", st_collections_group_min},
      {"collections.group.max", st_collections_group_max},
+     {"collections.group.data.item", st_collections_group_data_item},
      {"collections.group.parts.part.name", st_collections_group_parts_part_name},
      {"collections.group.parts.part.type", st_collections_group_parts_part_type},
      {"collections.group.parts.part.effect", st_collections_group_parts_part_effect},
@@ -134,12 +137,16 @@ New_Object_Handler object_handlers[] =
 {
      {"images", ob_images},
      {"images.image", ob_images_image},
+     {"data", NULL},
+     {"data.item", NULL},
      {"collections", ob_collections},
      {"collections.group", ob_collections_group},
      {"collections.group.name", NULL},
      {"collections.group.min", NULL},
      {"collections.group.max", NULL},
-     {"collections.group.parts", ob_collections_group_parts},
+     {"collections.group.data", NULL},
+     {"collections.group.data.item", NULL},
+     {"collections.group.parts", NULL},
      {"collections.group.parts.part", ob_collections_group_parts_part},
      {"collections.group.parts.part.name", NULL},
      {"collections.group.parts.part.type", NULL},
@@ -274,6 +281,17 @@ st_images_image(void)
 }
 
 static void
+st_data_item(void)
+{
+   Edje_Data *di;
+   
+   di = calloc(1, sizeof(Edje_Data));
+   di->key = parse_str(0);
+   di->value = parse_str(1);
+   edje_file->data = evas_list_append(edje_file->data, di);
+}
+
+static void
 ob_collections(void)
 {
    edje_file->collection_dir = mem_alloc(SZ(Edje_Part_Collection_Directory));
@@ -324,8 +342,16 @@ st_collections_group_max(void)
 }
 
 static void
-ob_collections_group_parts(void)
+st_collections_group_data_item(void)
 {
+   Edje_Part_Collection *pc;
+   Edje_Data *di;
+   
+   pc = evas_list_data(evas_list_last(edje_collections));
+   di = calloc(1, sizeof(Edje_Data));
+   di->key = parse_str(0);
+   di->value = parse_str(1);
+   pc->data = evas_list_append(pc->data, di);
 }
 
 static void

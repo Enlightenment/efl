@@ -60,13 +60,13 @@
  *     or,  STR "my_string" == "smelly";
  *     ...
  * 
- * ? key/value pair config values per colelction and per edje file
  * ? add containering (hbox, vbox, table, wrapping multi-line hbox & vbox)
  * ? text entry widget (single line only)
  * ? reduce linked list walking and list_nth calls
  */
 
 typedef struct _Edje_File                            Edje_File;
+typedef struct _Edje_Data                            Edje_Data;
 typedef struct _Edje_Image_Directory                 Edje_Image_Directory;
 typedef struct _Edje_Image_Directory_Entry           Edje_Image_Directory_Entry;
 typedef struct _Edje_Program                         Edje_Program;
@@ -123,9 +123,18 @@ struct _Edje_File
    
    Edje_Image_Directory           *image_dir;
    Edje_Part_Collection_Directory *collection_dir;
+   Evas_List                      *data;
    
    Evas_Hash                      *collection_hash;
    int                             references;
+};
+
+/*----------*/
+
+struct _Edje_Data
+{
+   char *key;
+   char *value;
 };
 
 /*----------*/
@@ -199,6 +208,7 @@ struct _Edje_Part_Collection
 {
    Evas_List *programs; /* a list of Edje_Program */
    Evas_List *parts; /* a list of Edje_Part */
+   Evas_List *data;
    
    int        id; /* the collection id */
    
@@ -557,6 +567,7 @@ void              _edje_object_part_swallow_free_cb(void *data, Evas *e, Evas_Ob
 
 
 extern Eet_Data_Descriptor *_edje_edd_edje_file;
+extern Eet_Data_Descriptor *_edje_edd_edje_data;
 extern Eet_Data_Descriptor *_edje_edd_edje_image_directory;
 extern Eet_Data_Descriptor *_edje_edd_edje_image_directory_entry;
 extern Eet_Data_Descriptor *_edje_edd_edje_program;

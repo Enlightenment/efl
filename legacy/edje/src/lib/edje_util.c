@@ -19,6 +19,26 @@ edje_thaw(void)
      edje_object_thaw((Evas_Object *)(l->data));
 }
 
+const char *
+edje_object_data_get(Evas_Object *obj, const char *key)
+{
+   Edje *ed;
+   Evas_List *l;
+   
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!key))
+     return NULL;
+   if (!ed->collection) return NULL;
+   for (l = ed->collection->data; l; l = l->next)
+     {
+	Edje_Data *di;
+	
+	di = l->data;
+	if (!strcmp(di->key, key)) return (const char *)di->value;
+     }
+   return NULL;
+}
+
 int
 edje_object_freeze(Evas_Object *obj)
 {
@@ -540,7 +560,6 @@ edje_object_part_state_get(Evas_Object *obj, const char *part, double *val_ret)
    if (val_ret) *val_ret = 0;
    return "";
 }
-
 
 
 

@@ -2,6 +2,7 @@
 #include "edje_private.h"
 
 Eet_Data_Descriptor *_edje_edd_edje_file = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_data = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_image_directory = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_image_directory_entry = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_program = NULL;
@@ -51,6 +52,13 @@ _edje_edd_setup(void)
      NEWD("Edje_Part_Collection_Directory",
 	  Edje_Part_Collection_Directory);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_part_collection_directory, Edje_Part_Collection_Directory, "entries", entries, _edje_edd_edje_part_collection_directory_entry);
+
+   /* generic data attachment */
+   _edje_edd_edje_data =
+     NEWD("Edje_Data",
+	  Edje_Data);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_data, Edje_Data, "key", key, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_data, Edje_Data, "value", value, EET_T_STRING);
    
    /* the main file directory */
    _edje_edd_edje_file = 
@@ -58,6 +66,7 @@ _edje_edd_setup(void)
 	  Edje_File);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "image_dir", image_dir, _edje_edd_edje_image_directory);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "collection_dir", collection_dir, _edje_edd_edje_part_collection_directory);   
+   EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "data", data, _edje_edd_edje_data);
 
    /* parts & programs - loaded induvidually */
    _edje_edd_edje_program_target = 
@@ -177,6 +186,7 @@ _edje_edd_setup(void)
 	  Edje_Part_Collection);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_part_collection, Edje_Part_Collection, "programs", programs, _edje_edd_edje_program);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_part_collection, Edje_Part_Collection, "parts", parts, _edje_edd_edje_part);
+   EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_part_collection, Edje_Part_Collection, "data", data, _edje_edd_edje_data);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection, Edje_Part_Collection, "prop.min.w", prop.min.w, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection, Edje_Part_Collection, "prop.min.h", prop.min.h, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_collection, Edje_Part_Collection, "prop.max.w", prop.max.w, EET_T_INT);

@@ -497,6 +497,8 @@ test_list(char *file)
    Evas_List *collections = NULL;
 
    entries = edje_file_collection_list(file);
+//   printf("%s\n", edje_file_data_get(file, "My Data");
+//   printf("%s\n", edje_file_data_get(file, "The Key");
      {
 	Collection *co;
 	Evas_Object *o;
@@ -658,8 +660,8 @@ test_setup(char *file, char *name)
    
    o = edje_object_add(evas);
    edje_object_file_set(o, file, name);
-   edje_object_signal_callback_add(o, "do_it", "the_source", cb, NULL);
-   edje_object_signal_callback_add(o, "mouse,*", "logo", cb, NULL);
+//   edje_object_signal_callback_add(o, "do_it", "the_source", cb, NULL);
+//   edje_object_signal_callback_add(o, "mouse,*", "logo", cb, NULL);
    evas_object_move(o, 10 + 10, 10 + 20);
    evas_object_show(o);
    edje_object_size_min_get(o, &(de->minw), &(de->minh));
@@ -669,6 +671,9 @@ test_setup(char *file, char *name)
    if (240 < de->minh) h = de->minh;
    evas_object_resize(o, w, h);
    de->edje = o;
+
+//   printf("%s\n", edje_object_data_get(o, "My Data"));
+//   printf("%s\n", edje_object_data_get(o, "The Key"));
    
 /* test swallowing */
 /*   

@@ -13,13 +13,15 @@ extern "C" {
    void         edje_freeze                     (void);
    void         edje_thaw                       (void);
    
-   Evas_List    *edje_file_collection_list      (const char *file);
+   Evas_List   *edje_file_collection_list       (const char *file);
    void         edje_file_collection_list_free  (Evas_List *lst);
+   char        *edje_file_data_get              (const char *file, const char *key);
    
    void         edje_extern_object_min_size_set (Evas_Object *obj, double minw, double minh);
    void         edje_extern_object_max_size_set (Evas_Object *obj, double maxw, double maxh);
    
    Evas_Object *edje_object_add                 (Evas *evas);
+   const char  *edje_object_data_get            (Evas_Object *obj, const char *key);
    void         edje_object_file_set            (Evas_Object *o, const char *file, const char *part);
    void         edje_object_file_get            (Evas_Object *o, const char **file, const char **part);
    void         edje_object_signal_callback_add (Evas_Object *o, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data);

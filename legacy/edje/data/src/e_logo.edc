@@ -124,11 +124,22 @@ images {
    image, "e120.png" LOSSY 95;
 }
 
+data
+{
+   item, "My Data" "The string to attach to this data";
+   item, "The Key" "String data attached to the key";
+}
+
 collections {
    group {
-	min, 32 32;
-	max, 1024 768;
       name, "test";
+      min, 32 32;
+      max, 1024 768;
+      data
+	{
+	   item, "My Data" "The string to attach to this data";
+	   item, "The Key" "String data attached to the key";
+	}
       parts {
 	 part {
 	    name,          "background";

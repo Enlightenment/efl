@@ -235,6 +235,51 @@ edje_file_collection_list_free(Evas_List *lst)
      }
 }
 
+char *
+edje_file_data_get(const char *file, const char *key)
+{
+   Eet_File *ef = NULL;
+   Edje_File *ed_file;
+   Evas_List *l;
+   char *str = NULL;
+   
+   ed_file = evas_hash_find(_edje_file_hash, file);
+   if (!ed_file)
+     {
+	ef = eet_open((char *)file, EET_FILE_MODE_READ);
+	if (!ef) return NULL;
+	ed_file = eet_data_read(ef, _edje_edd_edje_file, "edje_file");
+	if (!ed_file)
+	  {
+	     eet_close(ef);
+	     return NULL;
+	  }
+	eet_close(ef);
+	ed_file->path = strdup(file);
+	ed_file->collection_hash = NULL;
+	ed_file->references = 1;
+	_edje_file_hash = evas_hash_add(_edje_file_hash, ed_file->path, ed_file);
+     }
+   else
+     ed_file->references++;
+   printf("beh\n");
+   for (l = ed_file->data; l; l = l->next)
+     {
+	Edje_Data *di;
+	
+	di = l->data;
+	if (!strcmp(di->key, key))
+	  {
+	     printf("STR: %s\n", di->key);
+	     str = strdup(di->value);
+	     break;
+	  }
+     }
+   ed_file->references--;   
+   if (ed_file->references <= 0) _edje_file_free(ed_file);
+   return str;
+}
+
 void
 _edje_file_add(Edje *ed)
 {

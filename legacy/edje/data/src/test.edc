@@ -10,6 +10,13 @@ images
    image, "e.png"         COMP; /* compressed */
 }
 
+// data can be attached to the edje file as a whole. string key, value style
+data
+{
+   item, "My Data" "The string to attach to this data";
+   item, "The Key" "String data attached to the key";
+}
+
 collections
 {
    group
@@ -17,6 +24,12 @@ collections
 	name, "test";
 //	min, 0 0;
 //	max, 0 0;
+// more data that can be attached per collection
+	data
+	  {
+	     item, "My Data" "The string to attach to this data";
+	     item, "The Key" "String data attached to the key";
+	  }
 	parts
 	  {
 	     part
