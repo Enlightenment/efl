@@ -7,4 +7,5 @@ ecore_fb \
 ecore_con \
 ecore_x \
 ecore_ipc \
-ecore_evas
+ecore_evas \
+ecore_config

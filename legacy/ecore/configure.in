@@ -75,6 +75,17 @@ else
   AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${datadir}/${PACKAGE}")
 fi
 
+dnl Set PACKAGE_LIB_DIR in config.h.
+if test "x${libdir}" = 'xNONE'; then
+  if test "x${prefix}" = "xNONE"; then
+    AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${ac_default_prefix}/lib")
+  else
+    AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${prefix}/lib")
+  fi
+else
+  AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${libdir}")
+fi
+                
 dnl Set PACKAGE_SOURCE_DIR in config.h.
 packagesrcdir=`cd $srcdir && pwd`
 AC_DEFINE_UNQUOTED(PACKAGE_SOURCE_DIR, "${packagesrcdir}")
@@ -378,6 +389,7 @@ src/lib/ecore_con/Makefile
 src/lib/ecore_ipc/Makefile
 src/lib/ecore_txt/Makefile
 src/lib/ecore_config/Makefile
+src/lib/ecore_config/ipc/Makefile
 debian/Makefile
 ], [
 chmod +x ecore-config

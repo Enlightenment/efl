@@ -16,8 +16,8 @@ Ecore_Config.h
 
 libecore_config_la_SOURCES = \
 ecore_config.c \
-util.c \
 ipc_main.c \
+util.c \
 edb.c
 
 libecore_config_la_LIBADD = \
@@ -31,10 +31,10 @@ endif
 EXTRA_DIST = \
 Ecore_Config.h \
 ecore_config.c \
-util.c \
-util.h \
 ipc_main.c \
 ipc.h \
+util.c \
+util.h \
 edb.c \
 debug.h \
 errors.h \
