@@ -49,6 +49,7 @@ struct _Emotion_Xine_Video
    pthread_cond_t            get_pos_len_cond;
    pthread_mutex_t           seek_mutex;
    pthread_mutex_t           get_pos_len_mutex;
+   unsigned char             get_pos_thread_deleted : 1;
 };
 
 struct _Emotion_Xine_Video_Frame

@@ -304,6 +304,7 @@ em_file_open(const char *file, Evas_Object *obj)
    v = xine_get_stream_info(ev->stream, XINE_STREAM_INFO_VIDEO_RATIO);
    ev->ratio = (double)v / 10000.0;
    ev->just_loaded = 1;
+   ev->get_poslen = 0;
    
      {
 	pthread_attr_t thattr;
@@ -320,6 +321,8 @@ em_file_open(const char *file, Evas_Object *obj)
 	pthread_attr_init(&thattr);
 	pthread_create(&ev->get_pos_len_th, NULL, _em_get_pos_len_th, ev);
 	pthread_attr_destroy(&thattr);
+
+   ev->get_pos_thread_deleted = 0;
      }
 //   em_debug(ev);
    return ev;
@@ -334,10 +337,15 @@ em_file_close(void *ef)
    ev->delete_me = 1;
 //   pthread_mutex_lock(&(ev->seek_mutex));
    pthread_cond_broadcast(&(ev->seek_cond));
-//   pthread_mutex_lock(&(ev->get_pos_len_mutex));
-   pthread_cond_broadcast(&(ev->get_pos_len_cond));
    while (ev->seek_to);
-   while (ev->get_poslen);
+
+//   pthread_mutex_lock(&(ev->get_pos_len_mutex));
+   if (!ev->get_pos_thread_deleted)
+   {
+      pthread_cond_broadcast(&(ev->get_pos_len_cond));
+      while (ev->get_poslen);
+   }
+
    printf("EX pause end...\n");
    if (!emotion_object_play_get(ev->obj))
 //   if (xine_get_param(ev->stream, XINE_PARAM_SPEED) == XINE_SPEED_PAUSE)
@@ -1269,7 +1277,7 @@ _em_get_pos_len_th(void *par)
    for (;;)
      {
 	pthread_cond_wait(&(ev->get_pos_len_cond), &(ev->get_pos_len_mutex));
-	while (ev->get_poslen > 0)
+	while (ev->get_poslen > 0 || ev->delete_me)
 	  {
 	     int pos_stream = 0;
 	     int pos_time = 0;
@@ -1296,6 +1304,7 @@ _em_get_pos_len_th(void *par)
 	     if (ev->delete_me)
 	       {
 		  ev->get_poslen = 0;
+        ev->get_pos_thread_deleted = 1;
 		  return NULL;
 	       }
 	     ev->get_poslen = 0;
