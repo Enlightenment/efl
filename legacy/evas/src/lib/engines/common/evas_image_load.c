@@ -1,6 +1,5 @@
 #include "config.h"
 #include "evas_options.h"
-#include "evas_common.h"
 
 #define SWAP32(x) (x) = ((((x) & 0x000000ff ) << 24) | (((x) & 0x0000ff00 ) << 8) | (((x) & 0x00ff0000 ) >> 8) | (((x) & 0xff000000 ) >> 24))
 
