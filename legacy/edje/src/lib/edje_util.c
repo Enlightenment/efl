@@ -519,6 +519,9 @@ edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
 	if (rp->swallowed_object == obj_swallow)
 	  {
 	     evas_object_smart_member_del(rp->swallowed_object);
+	     evas_object_event_callback_del(rp->swallowed_object, 
+					    EVAS_CALLBACK_FREE, 
+					    _edje_object_part_swallow_free_cb);
 	     evas_object_clip_unset(rp->swallowed_object);
 	     rp->swallowed_object = NULL;
 	     rp->swallow_params.min.w = 0;
@@ -575,7 +578,7 @@ edje_object_size_max_get(Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh)
      }
    if (ed->collection->prop.max.w == 0)
      {
-	if (maxw) *maxw = 1e+37;
+	if (maxw) *maxw = 100000;
      }
    else
      {
@@ -583,7 +586,7 @@ edje_object_size_max_get(Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh)
      }
    if (ed->collection->prop.max.h == 0)
      {
-	if (maxh) *maxh = 1e+37;
+	if (maxh) *maxh = 100000;
      }
    else
      {
