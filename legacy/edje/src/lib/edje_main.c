@@ -35,7 +35,6 @@ void
 _edje_del(Edje *ed)
 {
    _edje_file_del(ed);
-   _edje_clean_objects(ed);
    if (ed->path) free(ed->path);
    if (ed->part) free(ed->part);
    while (ed->callbacks)
@@ -71,27 +70,8 @@ _edje_del(Edje *ed)
 }
 
 void
-_edje_clean_part_objects(Edje *ed)
-{
-   Evas_List *l;
-   
-   for (l = ed->parts; l; l = l->next)
-     {
-	Edje_Real_Part *rp;
-	
-	rp = l->data;
-	evas_object_del(rp->object);
-	rp->object = NULL;
-     }   
-}
-
-void
 _edje_clean_objects(Edje *ed)
 {
-   Evas_List *l;
-   
-   ed->have_objects = 0;
-   _edje_clean_part_objects(ed);
    evas_object_del(ed->clipper);
    ed->evas = NULL;
    ed->obj = NULL;

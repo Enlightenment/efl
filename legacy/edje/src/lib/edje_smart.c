@@ -98,6 +98,8 @@ _edje_smart_layer_set(Evas_Object * obj, int layer)
 	       }
 	  }
 	evas_object_layer_set(ep->object, ed->layer);
+	if (ep->swallowed_object)
+	  evas_object_layer_set(ep->swallowed_object, ed->layer);
      }
    snprintf(buf, sizeof(buf), "layer,set,%i", layer);
    _edje_emit(ed, buf, "");
@@ -129,6 +131,8 @@ _edje_smart_raise(Evas_Object * obj)
 	       }
 	  }
 	evas_object_raise(ep->object);
+	if (ep->swallowed_object)
+	  evas_object_raise(ep->swallowed_object);	
      }
    _edje_emit(ed, "raise", "");
 }
@@ -146,6 +150,8 @@ _edje_smart_lower(Evas_Object * obj)
 	Edje_Real_Part *ep;
 	
 	ep = l->data;
+	if (ep->swallowed_object)
+	  evas_object_lower(ep->swallowed_object);
 	evas_object_lower(ep->object);
 	if (ep->extra_objects)
 	  {
@@ -176,6 +182,8 @@ _edje_smart_stack_above(Evas_Object * obj, Evas_Object * above)
 	Edje_Real_Part *ep;
 	
 	ep = l->data;
+	if (ep->swallowed_object)
+	  evas_object_stack_above(ep->swallowed_object, above);
 	evas_object_stack_above(ep->object, above);
 	if (ep->extra_objects)
 	  {
@@ -219,6 +227,8 @@ _edje_smart_stack_below(Evas_Object * obj, Evas_Object * below)
 	       }
 	  }
 	evas_object_stack_below(ep->object, below);
+	if (ep->swallowed_object)
+	  evas_object_stack_below(ep->swallowed_object, below);
      }
    _edje_emit(ed, "stack_below", "");
 }
@@ -245,6 +255,11 @@ _edje_smart_move(Evas_Object * obj, double x, double y)
 	ep = l->data;
 	evas_object_geometry_get(ep->object, &ox, &oy, NULL, NULL);
 	evas_object_move(ep->object, ed->x + ep->x + ep->offset.x, ed->y + ep->y +ep->offset.y);
+	if (ep->swallowed_object)
+	  {
+	     evas_object_geometry_get(ep->swallowed_object, &ox, &oy, NULL, NULL);
+	     evas_object_move(ep->swallowed_object, ed->x + ep->x + ep->offset.x, ed->y + ep->y +ep->offset.y);
+	  }
 	if (ep->extra_objects)
 	  {
 	     Evas_List *el;
@@ -267,15 +282,12 @@ static void
 _edje_smart_resize(Evas_Object * obj, double w, double h)
 {
    Edje *ed;
-   int nw, nh;
 
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
-   nw = ed->w;
-   nh = ed->h;
+   if ((w == ed->w) && (h == ed->h)) return;
    ed->w = w;
    ed->h = h;
-   if ((nw == ed->w) && (nh == ed->h)) return;
    evas_object_resize(ed->clipper, ed->w, ed->h);
    ed->dirty = 1;
    _edje_recalc(ed);
@@ -289,6 +301,7 @@ _edje_smart_show(Evas_Object * obj)
 
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
+   if (evas_object_visible_get(obj)) return;
    if ((ed->collection) && (ed->parts))
      evas_object_show(ed->clipper);
    _edje_emit(ed, "show", "");
@@ -301,6 +314,7 @@ _edje_smart_hide(Evas_Object * obj)
 
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
+   if (!evas_object_visible_get(obj)) return;
    evas_object_hide(ed->clipper);
    _edje_emit(ed, "hide", "");
 }

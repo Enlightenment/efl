@@ -2,115 +2,6 @@
 #include "edje_private.h"
 
 int
-edje_object_part_exists(Evas_Object *obj, const char *part)
-{
-   Evas_List *l;
-   Edje *ed;
-
-   ed = _edje_fetch(obj);   
-   if ((!ed) || (!part)) return 0;
-   for (l = ed->parts; l; l = l->next)
-     {
-	Edje_Real_Part *rp;
-	
-	rp = l->data;	
-	if (!strcmp(rp->part->name, part)) return 1;
-     }
-   return 0;
-}
-
-void
-edje_object_part_geometry_get(Evas_Object *obj, const char *part, double *x, double *y, double *w, double *h )
-{
-   Evas_List *l;
-   Edje *ed;
-
-   ed = _edje_fetch(obj);
-   if ((!ed) || (!part))
-     {
-	if (x) *x = 0;
-	if (y) *y = 0;
-	if (w) *w = 0;
-	if (h) *h = 0;
-	return;
-     }
-   for (l = ed->parts; l; l = l->next)
-     {
-	Edje_Real_Part *rp;
-	
-	rp = l->data;	
-	if ((!strcmp(rp->part->name, part)) && (rp->calculated))
-	  {
-	     if (x) *x = rp->x;
-	     if (y) *y = rp->y;
-	     if (w) *w = rp->w;
-	     if (h) *h = rp->h;
-	     return;
-	  }
-     }
-   if (x) *x = 0;
-   if (y) *y = 0;
-   if (w) *w = 0;
-   if (h) *h = 0;
-}
-
-void
-edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
-{
-   Evas_List *l;
-   Edje *ed;
-
-   ed = _edje_fetch(obj);   
-   if ((!ed) || (!part)) return;
-   for (l = ed->parts; l; l = l->next)
-     {
-	Edje_Real_Part *rp;
-	
-	rp = l->data;	
-	if (!strcmp(rp->part->name, part))
-	  {
-	     if (rp->part->type == EDJE_PART_TYPE_TEXT)
-	       {
-		  if ((!rp->text.text) && (!text))
-		    return;
-		  if ((rp->text.text) && (text) && 
-		      (!strcmp(rp->text.text, text)))
-		    return;
-		  if (rp->text.text) free(rp->text.text);
-		  rp->text.text = strdup(text);
-		  ed->dirty = 1;
-		  _edje_recalc(ed);
-	       }
-	     return;
-	  }
-     }
-}
-
-const char *
-edje_object_part_text_get(Evas_Object *obj, const char *part)
-{
-   Evas_List *l;
-   Edje *ed;
-
-   ed = _edje_fetch(obj);   
-   if ((!ed) || (!part)) return NULL;
-   for (l = ed->parts; l; l = l->next)
-     {
-	Edje_Real_Part *rp;
-	
-	rp = l->data;	
-	if (!strcmp(rp->part->name, part))
-	  {
-	     if (rp->part->type == EDJE_PART_TYPE_TEXT)
-	       return evas_object_text_text_get(rp->object);
-	     else
-	       return NULL;
-	  }
-     }
-   return NULL;
-}
-
-int
 edje_object_freeze(Evas_Object *obj)
 {
    Edje *ed;
@@ -244,6 +135,168 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
    ed->text_classes = evas_list_append(ed->text_classes, tc);
    ed->dirty = 1;
    _edje_recalc(ed);
+}
+
+int
+edje_object_part_exists(Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);   
+   if ((!ed) || (!part)) return 0;
+   rp = _edje_real_part_get(ed, (char *)part);
+   if (!rp) return 0;
+   return 1;
+}
+
+void
+edje_object_part_geometry_get(Evas_Object *obj, const char *part, double *x, double *y, double *w, double *h )
+{
+   Evas_List *l;
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);
+   if ((!ed) || (!part))
+     {
+	if (x) *x = 0;
+	if (y) *y = 0;
+	if (w) *w = 0;
+	if (h) *h = 0;
+	return;
+     }
+   rp = _edje_real_part_get(ed, (char *)part);
+   if (!rp)
+     {
+	if (x) *x = 0;
+	if (y) *y = 0;
+	if (w) *w = 0;
+	if (h) *h = 0;
+	return;
+     }
+   if (x) *x = rp->x;
+   if (y) *y = rp->y;
+   if (w) *w = rp->w;
+   if (h) *h = rp->h;
+}
+
+void
+edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);   
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_get(ed, (char *)part);
+   if (!rp) return;
+   if (rp->part->type != EDJE_PART_TYPE_TEXT) return;
+   if ((!rp->text.text) && (!text))
+     return;
+   if ((rp->text.text) && (text) && 
+       (!strcmp(rp->text.text, text)))
+     return;
+   if (rp->text.text) free(rp->text.text);
+   rp->text.text = strdup(text);
+   ed->dirty = 1;
+   _edje_recalc(ed);
+}
+
+const char *
+edje_object_part_text_get(Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);   
+   if ((!ed) || (!part)) return NULL;
+   rp = _edje_real_part_get(ed, (char *)part);
+   if (!rp) return NULL;
+   if (rp->part->type == EDJE_PART_TYPE_TEXT)
+     return evas_object_text_text_get(rp->object);
+   return NULL;
+}
+
+void
+edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_swallow)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);   
+   if ((!ed) || (!part)) return;
+   rp = _edje_real_part_get(ed, (char *)part);
+   if (!rp) return;
+   if (rp->swallowed_object)
+     {
+	evas_object_clip_unset(rp->swallowed_object);
+	rp->swallowed_object = NULL;
+     }
+   if (!obj_swallow) return;
+   rp->swallowed_object = obj_swallow;
+   evas_object_clip_set(rp->swallowed_object, ed->clipper);
+   evas_object_stack_above(rp->swallowed_object, rp->object);
+   ed->dirty = 1;
+   _edje_recalc(ed);   
+}
+
+void
+edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
+{
+   Edje *ed;
+   Evas_List *l;
+
+   ed = _edje_fetch(obj);   
+   if ((!ed) || (!obj_swallow)) return;
+   for (l = ed->parts; l; l = l->next)
+     {
+	Edje_Real_Part *rp;
+	
+	rp = l->data;
+	if (rp->swallowed_object == obj_swallow)
+	  {
+	     evas_object_clip_unset(rp->swallowed_object);
+	     rp->swallowed_object = NULL;
+	     ed->dirty = 1;
+	     _edje_recalc(ed);
+	     return;
+	  }
+     }
+}
+
+Evas_Object *
+edje_object_part_swallow_get(Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);   
+   if ((!ed) || (!part)) return NULL;
+   rp = _edje_real_part_get(ed, (char *)part);
+   if (!rp) return NULL;
+   return rp->swallowed_object;
+}
+
+
+
+
+
+
+
+Edje_Real_Part *
+_edje_real_part_get(Edje *ed, char *part)
+{
+   Evas_List *l;
+
+   for (l = ed->parts; l; l = l->next)
+     {
+	Edje_Real_Part *rp;
+	
+	rp = l->data;	
+	if (!strcmp(rp->part->name, part)) return rp;
+     }
+   return NULL;
 }
 
 Ejde_Color_Class *

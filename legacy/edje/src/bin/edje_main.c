@@ -147,10 +147,40 @@ bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	     Demo_Edje *de;
 	     
 	     de = l->data;
-	     if (!strcmp(ev->keyname, "p"))      edje_object_play_set(de->edje, 1);
-	     else if (!strcmp(ev->keyname, "o")) edje_object_play_set(de->edje, 0);
-	     else if (!strcmp(ev->keyname, "a")) edje_object_animation_set(de->edje, 1);
-	     else if (!strcmp(ev->keyname, "s")) edje_object_animation_set(de->edje, 0);
+	     if      (!strcmp(ev->keyname, "p"))
+	       edje_object_play_set(de->edje, 1);
+	     else if (!strcmp(ev->keyname, "o"))
+	       edje_object_play_set(de->edje, 0);
+	     else if (!strcmp(ev->keyname, "a"))
+	       edje_object_animation_set(de->edje, 1);
+	     else if (!strcmp(ev->keyname, "s"))
+	       edje_object_animation_set(de->edje, 0);
+	     else if (!strcmp(ev->keyname, "t"))
+	       edje_object_part_text_set(de->edje, "text", "String 1");
+	     else if (!strcmp(ev->keyname, "y"))
+	       edje_object_part_text_set(de->edje, "text", "Buttox");
+	     else if (!strcmp(ev->keyname, "u"))
+	       edje_object_part_text_set(de->edje, "text", "You pressed \"U\". Nice one stenchie!");
+	     else if (!strcmp(ev->keyname, "q"))
+	       edje_object_color_class_set(de->edje, "bg", 
+					   255, 255, 255, 255,
+					   0, 0, 0, 0,
+					   0, 0, 0, 0);
+	     else if (!strcmp(ev->keyname, "w"))
+	       edje_object_color_class_set(de->edje, "bg", 
+					   255, 200, 120, 255,
+					   0, 0, 0, 0,
+					   0, 0, 0, 0);
+	     else if (!strcmp(ev->keyname, "e"))
+	       edje_object_color_class_set(de->edje, "bg", 
+					   120, 200, 255, 200,
+					   0, 0, 0, 0,
+					   0, 0, 0, 0);
+	     else if (!strcmp(ev->keyname, "r"))
+	       edje_object_color_class_set(de->edje, "bg", 
+					   255, 200, 50, 100,
+					   0, 0, 0, 0,
+					   0, 0, 0, 0);
 	  }
      }
 }
@@ -430,6 +460,14 @@ test_setup(char *file, char *name)
    evas_object_resize(o, 200, 240);
    evas_object_show(o);
    de->edje = o;
+   
+/* test swallowing */
+/*   
+   o = edje_object_add(evas);
+   edje_object_file_set(o, file, name);
+   edje_object_part_swallow(de->edje, "swallow", o);
+   evas_object_show(o);
+ */
 }
 
 void

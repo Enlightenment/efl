@@ -130,6 +130,7 @@ collections {
       parts {
 	 part {
 	    name,          "background";
+	    color_class,   "bg";
 	    mouse_events,  0;
 	    description {
 	       state,    "default" 0.0;
@@ -168,30 +169,33 @@ collections {
 	       color3, 0 0 0 32;
 	       text {
 		  text,     "This is a longer test string";
-		  font,     "Vera-Bold";
-		  size,     8;
+		  font,     "Vera";
+		  size,     6;
 		  fit,    0 0;
 //                min,    1 1;
 		  align,   0.0 0.5;
 	       }
 	    }
 	 }
+/* test swallowing */
 /*	 
 	 part {
-	    name,          "clip";
+	    name,          "swallow";
 	    mouse_events,  0;
 	    type,          RECT;
 	    description {
 	       state,    "default" 0.0;
 	       rel1 {
-		  relative, 0.5  0.5;
-		  offset,   -20    -20;
+		  relative, 0.0  1.0;
+		  offset,   0    0;
+		  to,       "logo";
 	       }
 	       rel2 {
-		  relative, 0.5  0.5;
-		  offset,   19   19;
+		  relative, 1.0  1.0;
+		  offset,   -1   99;
+		  to,       "logo";
 	       }
-	       color,       100 200 255 128;
+	       color,       0 0 0 100;
 	    }
 	 }
  */

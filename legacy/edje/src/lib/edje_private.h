@@ -28,8 +28,7 @@
  * real part size and "before min/max limit" sizes need to be stored per part
  * need to be able to calculate min & max size of a whole edje
  * 
- * named parts need to be able to be "replaced" with new evas objects
- * part replacement with object callbacks should be possible
+ * swallowed objects need to be able to adversize min/max size
  * 
  * need to be able to list collections in an eet file
  * 
@@ -349,6 +348,7 @@ struct _Edje_Real_Part
    } offset;
    Evas_Object              *object;
    Evas_List                *extra_objects;
+   Evas_Object              *swallowed_object;
    unsigned char             calculated : 1;
    unsigned char             still_in   : 1;
    int                       clicked_button;
@@ -480,7 +480,6 @@ void  _edje_collection_free(Edje_Part_Collection *ec);
 
 Edje *_edje_add(Evas_Object *obj);
 void  _edje_del(Edje *ed);
-void  _edje_clean_part_objects(Edje *ed);
 void  _edje_clean_objects(Edje *ed);
 void  _edje_ref(Edje *ed);
 void  _edje_unref(Edje *ed);
@@ -496,6 +495,7 @@ void  _edje_text_part_on_add_clippers(Edje *ed, Edje_Real_Part *ep);
 void  _edje_text_part_on_del(Edje *ed, Edje_Real_Part *ep);
 void  _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *params, Edje_Part_Description *chosen_desc);
     
+Edje_Real_Part   *_edje_real_part_get(Edje *ed, char *part);
 Ejde_Color_Class *_edje_color_class_find(Edje *ed, char *color_class);
 Ejde_Text_Class  *_edje_text_class_find(Edje *ed, char *text_class);
 Edje             *_edje_fetch(Evas_Object *obj);
