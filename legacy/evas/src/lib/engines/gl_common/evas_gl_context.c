@@ -190,6 +190,18 @@ evas_gl_common_context_font_texture_set(Evas_GL_Context *gc, Evas_GL_Font_Textur
 void
 evas_gl_common_context_clip_set(Evas_GL_Context *gc, int on, int x, int y, int w, int h)
 {
+   if (x < 0)
+     {
+	w += x; 
+	x = 0;
+     }
+   if (y < 0)
+     {
+	h += y; 
+	y = 0;
+     }
+   if (w < 0) w = 0;
+   if (h < 0) h = 0;
    if (((!on) && (!gc->clip.active)) ||
        ((on) && (gc->clip.active) && 
 	(x == gc->clip.x) && (y == gc->clip.y) &&
