@@ -768,10 +768,10 @@ ecore_x_icccm_transient_for_unset(Ecore_X_Window win)
 Ecore_X_Window
 ecore_x_icccm_transient_for_get(Ecore_X_Window win)
 {
-   Ecore_X_Window forwin;
+   Window forwin;
 
    if(XGetTransientForHint(_ecore_x_disp, win, &forwin))
-      return forwin;
+      return (Ecore_X_Window) forwin;
    else
       return 0;
    
