@@ -85,6 +85,65 @@ ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_
 }
 
 /**
+ * Set a window string property.
+ * @param win The window
+ * @param type The property
+ * @param str The string
+ * 
+ * Set a window string property
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom type, char *str)
+{
+   XTextProperty       xtp;
+
+   xtp.value = str;
+   xtp.format = 8;
+   xtp.encoding = XA_STRING;
+   xtp.nitems = strlen(str);
+   XSetTextProperty(_ecore_x_disp, win, &xtp, type);
+}
+
+/**
+ * Get a window string property.
+ * @param win The window
+ * @param type The property
+ * 
+ * Get a window string property
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+char *
+ecore_x_window_prop_string_get(Ecore_X_Window win, Ecore_X_Atom type)
+{
+   XTextProperty       xtp;
+   char               *str = NULL;
+
+   if (XGetTextProperty(_ecore_x_disp, win, &xtp, type))
+     {
+	int      items;
+	char   **list;
+	Status   s;
+	
+	if (xtp.format == 8)
+	  {
+	     s = Xutf8TextPropertyToTextList(_ecore_x_disp, &xtp, &list, &items);
+	     if ((s == Success) && (items > 0))
+	       {
+		  str = strdup(*list);
+		  XFreeStringList(list);
+	       }
+	     else
+	       str = strdup((char *)xtp.value);
+	  }
+	else
+	  str = strdup((char *)xtp.value);
+	XFree(xtp.value);
+     }
+   return str;
+}
+
+/**
  * Set a window title.
  * @param win The window
  * @param t The title string
@@ -95,7 +154,8 @@ ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_
 void
 ecore_x_window_prop_title_set(Ecore_X_Window win, const char *t)
 {
-   XStoreName(_ecore_x_disp, win, t);
+   ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_name, t);
+   ecore_x_window_prop_string_set(win, _ecore_x_atom_net_wm_name, t);
 }
 
 /**
@@ -109,32 +169,11 @@ ecore_x_window_prop_title_set(Ecore_X_Window win, const char *t)
 char *
 ecore_x_window_prop_title_get(Ecore_X_Window win)
 {
-   XTextProperty       xtp;
-   
-   if (XGetWMName(_ecore_x_disp, win, &xtp))
-     {
-	int      items;
-	char   **list;
-	Status   s;
-	char    *title = NULL;
-	
-	if (xtp.format == 8)
-	  {
-	     s = XmbTextPropertyToTextList(_ecore_x_disp, &xtp, &list, &items);
-	     if ((s == Success) && (items > 0))
-	       {
-		  title = strdup(*list);
-		  XFreeStringList(list);
-	       }
-	     else
-	       title = strdup((char *)xtp.value);
-	  }
-	else
-	  title = strdup((char *)xtp.value);
-	XFree(xtp.value);
-	return title;
-     }
-   return NULL;
+   char *title;
+
+   title = ecore_x_window_prop_string_get(win, _ecore_x_atom_net_wm_name);
+   if (!title) title = ecore_x_window_prop_string_get(win, _ecore_x_atom_wm_name);
+   return title;
 }
 
 /**

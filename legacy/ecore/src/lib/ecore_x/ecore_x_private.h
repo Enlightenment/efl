@@ -64,6 +64,21 @@ extern Atom     _ecore_x_atom_net_wm_state;
 extern Atom     _ecore_x_atom_net_wm_state_above;
 extern Atom     _ecore_x_atom_net_wm_state_below;
 
+extern Atom     _ecore_x_atom_net_wm_name;
+extern Atom     _ecore_x_atom_net_wm_visible_name;
+extern Atom     _ecore_x_atom_net_wm_icon_name;
+extern Atom     _ecore_x_atom_net_wm_desktop;
+extern Atom     _ecore_x_atom_net_wm_window_type;
+extern Atom     _ecore_x_atom_net_wm_state;
+extern Atom     _ecore_x_atom_net_wm_allowed_actions;
+extern Atom     _ecore_x_atom_net_wm_strut;
+extern Atom     _ecore_x_atom_net_wm_strut_partial;
+extern Atom     _ecore_x_atom_net_wm_icon_geometry;
+extern Atom     _ecore_x_atom_net_wm_icon;
+extern Atom     _ecore_x_atom_net_wm_pid;
+extern Atom     _ecore_x_atom_net_wm_handle_icons;
+extern Atom     _ecore_x_atom_net_wm_user_time;
+
 extern Atom     _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
 
 void _ecore_x_error_handler_init(void);

@@ -3,6 +3,7 @@
 #include "ecore_con_private.h"
 #include "Ecore_Con.h"
 
+#include <netinet/in.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <arpa/inet.h>

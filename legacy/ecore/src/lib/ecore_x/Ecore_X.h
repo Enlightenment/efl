@@ -489,6 +489,8 @@ void             ecore_x_window_size_get(Ecore_X_Window win, int *w, int *h);
 void             ecore_x_window_cursor_show(Ecore_X_Window win, int show);
    
 void             ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Atom format, int size, void *data, int number);
+void             ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom type, char *str);
+char            *ecore_x_window_prop_string_get(Ecore_X_Window win, Ecore_X_Atom type);
 void             ecore_x_window_prop_title_set(Ecore_X_Window win, const char *t);
 char            *ecore_x_window_prop_title_get(Ecore_X_Window win);
 void             ecore_x_window_prop_name_class_set(Ecore_X_Window win, const char *n, const char *c);
