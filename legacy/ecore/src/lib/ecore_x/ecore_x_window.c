@@ -239,7 +239,36 @@ ecore_x_window_defaults_set(Ecore_X_Window win)
 void
 ecore_x_window_del(Ecore_X_Window win)
 {
-   XDestroyWindow(_ecore_x_disp, win);
+	/* sorry sir, deleting the root window doesn't sound like
+	 * a smart idea.
+	 */
+	if (win)
+		XDestroyWindow(_ecore_x_disp, win);
+}
+
+/**
+ * Sends a delete request to the given window.
+ * @param   win The given window.
+ * @ingroup Evas_X_Window_Destroy_Group
+ */
+void
+ecore_x_window_delete_request_send(Ecore_X_Window win)
+{
+	/* sorry sir, deleting the root window doesn't sound like
+	 * a smart idea.
+	 */
+	if (!win)
+		return;
+
+	xev.xclient.type = ClientMessage;
+	xev.xclient.display = _ecore_x_disp;
+	xev.xclient.window = win;
+	xev.xclient.message_type = _ecore_x_atom_wm_protocols;
+	xev.xclient.format = 32;
+	xev.xclient.data.l[0] = _ecore_x_atom_wm_delete_window;
+	xev.xclient.data.l[1] = CurrentTime;
+
+	XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
 }
 
 /**

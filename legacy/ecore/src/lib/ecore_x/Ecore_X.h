@@ -739,6 +739,7 @@ Ecore_X_Window   ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, 
 Ecore_X_Window   ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h);
 Ecore_X_Window   ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h);
 void             ecore_x_window_del(Ecore_X_Window win);
+void             ecore_x_window_delete_request_send(Ecore_X_Window win);
 void             ecore_x_window_show(Ecore_X_Window win);
 void             ecore_x_window_hide(Ecore_X_Window win);
 void             ecore_x_window_move(Ecore_X_Window win, int x, int y);
