@@ -9,13 +9,16 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
    int start_x, end_x;
    int chr;
    FT_UInt prev_index;
-
+   RGBA_Font_Int *fi;
+   
+   fi = fn->fonts->data;
+   
    start_x = 0;
    end_x = 0;
    pen_x = 0;
    pen_y = 0;
    evas_common_font_size_use(fn);
-   use_kerning = FT_HAS_KERNING(fn->src->ft.face);
+   use_kerning = FT_HAS_KERNING(fi->src->ft.face);
    prev_index = 0;
    for (chr = 0; text[chr];)
      {
@@ -26,16 +29,16 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
 	
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (gl == 0) break;
-	index = FT_Get_Char_Index(fn->src->ft.face, gl);
+	index = evas_common_font_glyph_search(fn, &fi, gl);
 	if ((use_kerning) && (prev_index) && (index))
 	  {
 	     FT_Vector delta;
 	     
-	     FT_Get_Kerning(fn->src->ft.face, prev_index, index,
+	     FT_Get_Kerning(fi->src->ft.face, prev_index, index,
 			    ft_kerning_default, &delta);
 	     pen_x += delta.x << 2;
 	  }
-	fg = evas_common_font_cache_glyph_get(fn, index);
+	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	if (!fg) continue;
 
 	chr_x = (pen_x >> 8) + fg->glyph_out->left;
@@ -60,14 +63,17 @@ evas_common_font_query_inset(RGBA_Font *fn, const char *text)
    RGBA_Font_Glyph *fg;
    int chr;
    int gl;
+   RGBA_Font_Int *fi;
+   
+   fi = fn->fonts->data;
    
    chr = 0;
    if (!text[0]) return 0;
    gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);   
    if (gl == 0) return 0;
    evas_common_font_size_use(fn);
-   index = FT_Get_Char_Index(fn->src->ft.face, gl);
-   fg = evas_common_font_cache_glyph_get(fn, index);
+   index = evas_common_font_glyph_search(fn, &fi, gl);
+   fg = evas_common_font_int_cache_glyph_get(fi, index);
    if (!fg) return 0;
    return fg->glyph_out->left;
 }
@@ -81,12 +87,15 @@ evas_common_font_query_advance(RGBA_Font *fn, const char *text, int *h_adv, int 
    int start_x;
    int chr;
    FT_UInt prev_index;
+   RGBA_Font_Int *fi;
+   
+   fi = fn->fonts->data;
    
    start_x = 0;
    pen_x = 0;
    pen_y = 0;
    evas_common_font_size_use(fn);
-   use_kerning = FT_HAS_KERNING(fn->src->ft.face);
+   use_kerning = FT_HAS_KERNING(fi->src->ft.face);
    prev_index = 0;
    for (chr = 0; text[chr];)     
      {
@@ -97,16 +106,16 @@ evas_common_font_query_advance(RGBA_Font *fn, const char *text, int *h_adv, int 
 	
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (gl == 0) break;
-	index = FT_Get_Char_Index(fn->src->ft.face, gl);
+	index = evas_common_font_glyph_search(fn, &fi, gl);
 	if ((use_kerning) && (prev_index) && (index))
 	  {
 	     FT_Vector delta;
 	     
-	     FT_Get_Kerning(fn->src->ft.face, prev_index, index,
+	     FT_Get_Kerning(fi->src->ft.face, prev_index, index,
 			    ft_kerning_default, &delta);
 	     pen_x += delta.x << 2;
 	  }
-	fg = evas_common_font_cache_glyph_get(fn, index);
+	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	if (!fg) continue;
 	
 	chr_x = (pen_x >> 8) + fg->glyph_out->left;
@@ -130,11 +139,14 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *text, int pos, int
    int chr;
    int asc, desc;
    FT_UInt prev_index;
+   RGBA_Font_Int *fi;
+   
+   fi = fn->fonts->data;
    
    pen_x = 0;
    pen_y = 0;
    evas_common_font_size_use(fn);
-   use_kerning = FT_HAS_KERNING(fn->src->ft.face);
+   use_kerning = FT_HAS_KERNING(fi->src->ft.face);
    prev_index = 0;
    prev_chr_end = 0;
    asc = evas_common_font_max_ascent_get(fn);
@@ -151,16 +163,16 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *text, int pos, int
 	pchr = chr;
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (gl == 0) break;
-	index = FT_Get_Char_Index(fn->src->ft.face, gl);
+	index = evas_common_font_glyph_search(fn, &fi, gl);
 	kern = 0;
 	if ((use_kerning) && (prev_index) && (index))
 	  {
-	     FT_Get_Kerning(fn->src->ft.face, prev_index, index,
+	     FT_Get_Kerning(fi->src->ft.face, prev_index, index,
 			    ft_kerning_default, &delta);
 	     kern = delta.x << 2;
 	     pen_x += kern;
 	  }
-	fg = evas_common_font_cache_glyph_get(fn, index);
+	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	if (!fg) continue;
 	
 	if (kern < 0) kern = 0;	
@@ -204,11 +216,14 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y
    int chr;
    int asc, desc;
    FT_UInt prev_index;
+   RGBA_Font_Int *fi;
+   
+   fi = fn->fonts->data;
    
    pen_x = 0;
    pen_y = 0;
    evas_common_font_size_use(fn);
-   use_kerning = FT_HAS_KERNING(fn->src->ft.face);
+   use_kerning = FT_HAS_KERNING(fi->src->ft.face);
    prev_index = 0;
    prev_chr_end = 0;
    asc = evas_common_font_max_ascent_get(fn);
@@ -225,16 +240,16 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y
 	pchr = chr;
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (gl == 0) break;
-	index = FT_Get_Char_Index(fn->src->ft.face, gl);
+	index = evas_common_font_glyph_search(fn, &fi, gl);
 	kern = 0;
 	if ((use_kerning) && (prev_index) && (index))
 	  {
-	     FT_Get_Kerning(fn->src->ft.face, prev_index, index,
+	     FT_Get_Kerning(fi->src->ft.face, prev_index, index,
 			    ft_kerning_default, &delta);
 	     kern = delta.x << 2;
 	     pen_x += kern;
 	  }
-	fg = evas_common_font_cache_glyph_get(fn, index);
+	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	if (!fg) continue;
 	
 	if (kern < 0) kern = 0;	

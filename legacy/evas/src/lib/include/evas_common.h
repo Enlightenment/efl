@@ -171,6 +171,7 @@ typedef struct _RGBA_Gradient         RGBA_Gradient;
 typedef struct _RGBA_Gradient_Color   RGBA_Gradient_Color;
 typedef struct _RGBA_Polygon_Point    RGBA_Polygon_Point;
 typedef struct _RGBA_Font             RGBA_Font;
+typedef struct _RGBA_Font_Int         RGBA_Font_Int;
 typedef struct _RGBA_Font_Source      RGBA_Font_Source;
 typedef struct _RGBA_Font_Glyph       RGBA_Font_Glyph;
 
@@ -338,6 +339,11 @@ struct _RGBA_Polygon_Point
 };
 
 struct _RGBA_Font
+{
+   Evas_List *fonts;
+};
+
+struct _RGBA_Font_Int
 {
    Evas_Object_List  _list_data;
    
@@ -882,16 +888,19 @@ void              evas_common_font_source_free       (RGBA_Font_Source *fs);
 void              evas_common_font_size_use         (RGBA_Font *fn);       
 RGBA_Font       *evas_common_font_memory_load       (const char *name, int size, const void *data, int data_size);
 RGBA_Font       *evas_common_font_load              (const char *name, int size);
-RGBA_Font       *evas_common_font_load_init         (RGBA_Font *fn);
+int              evas_common_font_add               (RGBA_Font *fn, const char *name, int size);
+int              evas_common_font_memory_add        (RGBA_Font *fn, const char *name, int size, const void *data, int data_size);
+RGBA_Font_Int   *evas_common_font_int_load_init     (RGBA_Font_Int *fn);
 void             evas_common_font_free              (RGBA_Font *fn);
-void             evas_common_font_modify_cache_by   (RGBA_Font *fn, int dir);
+void             evas_common_font_int_modify_cache_by(RGBA_Font_Int *fi, int dir);
 int              evas_common_font_cache_get         (void);
 void             evas_common_font_cache_set         (int size);
 void             evas_common_font_flush             (void);
 void             evas_common_font_flush_last        (void);
-RGBA_Font       *evas_common_font_find              (const char *name, int size);
+RGBA_Font_Int   *evas_common_font_int_find          (const char *name, int size);
+int              evas_common_font_glyph_search      (RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl);
 void             evas_common_font_draw              (RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const char *text);
-RGBA_Font_Glyph *evas_common_font_cache_glyph_get   (RGBA_Font *fn, FT_UInt index);
+RGBA_Font_Glyph *evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index);
 int              evas_common_font_ascent_get        (RGBA_Font *fn);
 int              evas_common_font_descent_get       (RGBA_Font *fn);
 int              evas_common_font_max_ascent_get    (RGBA_Font *fn);

@@ -46,66 +46,171 @@ evas_font_dir_cache_find(char *dir, char *font)
    return NULL;
 }
 
+static Evas_List *
+evas_font_set_get(char *name)
+{
+   Evas_List *fonts = NULL;
+   char *p;
+   
+   p = strchr(name, ',');
+   if (!p)
+     {
+	fonts = evas_list_append(fonts, strdup(name));
+     }
+   else
+     {
+	char *nm, *pp;
+	
+	pp = name;
+	while (p)
+	  {
+	     nm = malloc(p - pp + 1);
+	     strncpy(nm, pp, p - pp);
+	     nm[p - pp] = 0;
+	     fonts = evas_list_append(fonts, nm);
+	     pp = p + 1;
+	     p = strchr(pp, ',');
+	     if (!p) fonts = evas_list_append(fonts, strdup(pp));
+	  }
+     }
+   return fonts;
+}
+
 void *
 evas_font_load(Evas *evas, char *name, char *source, int size)
 {
    void *font = NULL;
+   Evas_List *fonts, *l;
    
-#ifdef BUILD_FONT_LOADER_EET
-   if (source)
+   fonts = evas_font_set_get(name);
+   for (l = fonts; l; l = l->next)
      {
-	Eet_File *ef;
-	char *fake_name;
+	char *nm;
 	
-	fake_name = evas_file_path_join(source, name);
-	if (fake_name)
+	nm = l->data;
+	if (l == fonts)
 	  {
-	     font = evas->engine.func->font_load(evas->engine.data.output, fake_name, size);
+#ifdef BUILD_FONT_LOADER_EET
+	     if (source)
+	       {
+		  Eet_File *ef;
+		  char *fake_name;
+		  
+		  fake_name = evas_file_path_join(source, nm);
+		  if (fake_name)
+		    {
+		       font = evas->engine.func->font_load(evas->engine.data.output, fake_name, size);
+		       if (!font)
+			 {
+			    /* read original!!! */
+			    ef = eet_open(source, EET_FILE_MODE_READ);
+			    if (ef)
+			      {
+				 void *fdata;
+				 int fsize = 0;
+				 
+				 fdata = eet_read(ef, nm, &fsize);
+				 if ((fdata) && (fsize > 0))
+				   {
+				      font = evas->engine.func->font_memory_load(evas->engine.data.output, fake_name, size, fdata, fsize);
+				      free(fdata);
+				   }
+				 eet_close(ef);
+			      }
+			 }
+		       free(fake_name);
+		    }
+	       }
 	     if (!font)
 	       {
-		  /* read original!!! */
-		  ef = eet_open(source, EET_FILE_MODE_READ);
-		  if (ef)
-		    {
-		       void *fdata;
-		       int fsize = 0;
-		       
-		       fdata = eet_read(ef, name, &fsize);
-		       if ((fdata) && (fsize > 0))
-			 {
-			    font = evas->engine.func->font_memory_load(evas->engine.data.output, fake_name, size, fdata, fsize);
-			    free(fdata);
-			 }
-		       eet_close(ef);
-		    }
-	       }
-	     free(fake_name);
-	  }
-     }
-   if (!font)
-     {
 #endif
-	if (evas_file_path_is_full_path((char *)name))
-	  font = evas->engine.func->font_load(evas->engine.data.output, (char *)name, size);
+		  if (evas_file_path_is_full_path((char *)nm))
+		    font = evas->engine.func->font_load(evas->engine.data.output, (char *)nm, size);
+		  else
+		    {
+		       Evas_List *l;
+		       
+		       for (l = evas->font_path; l; l = l->next)
+			 {
+			    char *f_file;
+			    
+			    f_file = evas_font_dir_cache_find(l->data, (char *)nm);
+			    if (f_file)
+			      {
+				 font = evas->engine.func->font_load(evas->engine.data.output, f_file, size);
+				 if (font) break;
+			      }
+			 }
+		    }
+#ifdef BUILD_FONT_LOADER_EET
+	       }
+#endif
+	  }
 	else
 	  {
-	     Evas_List *l;
+	     int ok = 0;
 	     
-	     for (l = evas->font_path; l; l = l->next)
+#ifdef BUILD_FONT_LOADER_EET
+	     if (source)
 	       {
-		  char *f_file;
+		  Eet_File *ef;
+		  char *fake_name;
 		  
-		  f_file = evas_font_dir_cache_find(l->data, (char *)name);
-		  if (f_file)
+		  fake_name = evas_file_path_join(source, nm);
+		  if (fake_name)
 		    {
-		       font = evas->engine.func->font_load(evas->engine.data.output, f_file, size);
-		       if (font) break;
+		       /* FIXME: make an engine func */
+		       if (!evas_common_font_add(font, fake_name, size))
+			 {
+			    /* read original!!! */
+			    ef = eet_open(source, EET_FILE_MODE_READ);
+			    if (ef)
+			      {
+				 void *fdata;
+				 int fsize = 0;
+				 
+				 fdata = eet_read(ef, nm, &fsize);
+				 if ((fdata) && (fsize > 0))
+				   {
+				      ok = evas_common_font_memory_add(font, fake_name, size, fdata, fsize);
+				      free(fdata);
+				   }
+				 eet_close(ef);
+			      }
+			 }
+		       else
+			 ok = 1;
+		       free(fake_name);
 		    }
 	       }
-#ifdef BUILD_FONT_LOADER_EET
-	  }
+	     if (!ok)
+	       {
 #endif
+		  if (evas_file_path_is_full_path((char *)nm))
+		    evas_common_font_add(font, (char *)nm, size);
+		  else
+		    {
+		       Evas_List *l;
+		       
+		       for (l = evas->font_path; l; l = l->next)
+			 {
+			    char *f_file;
+			    
+			    f_file = evas_font_dir_cache_find(l->data, (char *)nm);
+			    if (f_file)
+			      {
+				 if (evas_common_font_add(font, f_file, size))
+				   break;
+			      }
+			 }
+		    }
+#ifdef BUILD_FONT_LOADER_EET
+	       }
+#endif
+	  }
+	free(nm);
      }
+   evas_list_free(fonts);
    return font;
 }
 

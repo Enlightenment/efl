@@ -138,6 +138,8 @@ void               *evas_engine_directfb_font_memory_load(void *data,
 							  int size, 
 							  const void *fdata, 
 							  int fdata_size);
+void *evas_engine_directfb_font_add(void *data, void *font, char *name, int size);
+void *evas_engine_directfb_font_memory_add(void *data, void *font, char *name, int size, const void *fdata, int fdata_size);
 void                evas_engine_directfb_font_free(void *data, void *font);
 int                 evas_engine_directfb_font_ascent_get(void *data,
 							 void *font);

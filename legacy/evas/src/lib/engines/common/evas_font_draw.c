@@ -1,7 +1,7 @@
 #include "evas_common.h"
 
 RGBA_Font_Glyph *
-evas_common_font_cache_glyph_get(RGBA_Font *fn, FT_UInt index)
+evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
 {
    RGBA_Font_Glyph *fg;
    char key[6];   
@@ -14,17 +14,17 @@ evas_common_font_cache_glyph_get(RGBA_Font *fn, FT_UInt index)
    key[4] = ((index >> 28 ) & 0x0f) + 1;
    key[5] = 0;
 
-   fg = evas_hash_find(fn->glyphs, key);
+   fg = evas_hash_find(fi->glyphs, key);
    if (fg) return fg;
    
-   error = FT_Load_Glyph(fn->src->ft.face, index, FT_LOAD_NO_BITMAP);
+   error = FT_Load_Glyph(fi->src->ft.face, index, FT_LOAD_NO_BITMAP);
    if (error) return NULL;
    
    fg = malloc(sizeof(struct _RGBA_Font_Glyph));
    if (!fg) return NULL;
    memset(fg, 0, (sizeof(struct _RGBA_Font_Glyph)));
    
-   error = FT_Get_Glyph(fn->src->ft.face->glyph, &(fg->glyph));
+   error = FT_Get_Glyph(fi->src->ft.face->glyph, &(fg->glyph));
    if (error) 
      {
 	free(fg);
@@ -42,8 +42,29 @@ evas_common_font_cache_glyph_get(RGBA_Font *fn, FT_UInt index)
      }
    fg->glyph_out = (FT_BitmapGlyph)fg->glyph;
    
-   fn->glyphs = evas_hash_add(fn->glyphs, key, fg);
+   fi->glyphs = evas_hash_add(fi->glyphs, key, fg);
    return fg;
+}
+
+int
+evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
+{
+   Evas_List *l;
+   
+   for (l = fn->fonts; l; l = l->next)
+     {
+	RGBA_Font_Int *fi;
+	int index;
+	
+	fi = l->data;
+        index = FT_Get_Char_Index(fi->src->ft.face, gl);
+	if (index != 0)
+	  {
+	     *fi_ret = fi;
+	     return index;
+	  }
+     }
+   return 0;
 }
 
 void
@@ -58,6 +79,9 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
    DATA32 *im;
    int im_w, im_h;
    int c;
+   RGBA_Font_Int *fi;
+
+   fi = fn->fonts->data;
    
    im = dst->image->data;
    im_w = dst->image->w;
@@ -91,7 +115,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
    pen_x = x << 8;
    pen_y = y << 8;
    evas_common_font_size_use(fn);
-   use_kerning = FT_HAS_KERNING(fn->src->ft.face);
+   use_kerning = FT_HAS_KERNING(fi->src->ft.face);
    prev_index = 0;
    func = evas_common_draw_func_blend_alpha_get(dst);
    for (c = 0, chr = 0; text[chr];)
@@ -103,7 +127,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (gl == 0) break;
-	index = FT_Get_Char_Index(fn->src->ft.face, gl);
+	index = evas_common_font_glyph_search(fn, &fi, gl);
 	/* hmmm kerning means i can't sanely do my own cached metric tables! */
 	/* grrr - this means font face sharing is kinda... not an option if */
 	/* you want performance */
@@ -111,11 +135,11 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	  {
 	     FT_Vector delta;
 	     
-	     FT_Get_Kerning(fn->src->ft.face, prev_index, index,
+	     FT_Get_Kerning(fi->src->ft.face, prev_index, index,
 			    ft_kerning_default, &delta);
 	     pen_x += delta.x << 2;
 	  }
-	fg = evas_common_font_cache_glyph_get(fn, index);
+	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	if (!fg) continue;
 	
 	if ((dc->font_ext.func.gl_new) && (!fg->ext_dat))

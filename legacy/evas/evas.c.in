@@ -185,6 +185,7 @@ make install
 @todo (1.0) Add font listing calls
 @todo (1.0) Add ability to check image comments & disk format
 @todo (1.0) Add group objects
+@todo (1.0) Add fontset support
 @todo (1.0) Export engine rendering API cleanly to Evas API
 @todo (1.0) Add smart object ability to provide rendering callback
 @todo (1.1) Make freetype optional and put in optional graymap font engine
