@@ -1437,6 +1437,7 @@ AC_SUBST(altivec_cflags)
 
 AC_OUTPUT([
 Makefile
+data/Makefile
 src/Makefile
 src/bin/Makefile
 src/bin/evas_software_win32/Makefile
