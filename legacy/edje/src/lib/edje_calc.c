@@ -373,10 +373,12 @@ _edje_part_recalc_single(Edje *ed,
    if (params->h > 0)
      {
 	double aspect;
-	double new_w, new_h;
+	double new_w, new_h, want_x, want_y, want_w, want_h;
    
-	new_h = params->h;
-	new_w = params->w;
+	want_x = params->x;
+	want_y = params->y;
+	want_h = new_h = params->h;
+	want_w = new_w = params->w;
 	aspect = (double)params->w / (double)params->h;
 	if (desc->aspect.prefer == EDJE_ASPECT_PREFER_NONE) /* keep both dimensions in check */
 	  {
@@ -415,41 +417,23 @@ _edje_part_recalc_single(Edje *ed,
 	if ((params->h - new_h) > (params->w - new_w))
 	  {
 	     if (params->h < new_h)
-	       {
-		  params->y = params->y +
-		    ((params->h - new_h) * (1.0 - desc->align.y));
-		  params->h = new_h;
-	       }
+	       params->h = new_h;
 	     else if (params->h > new_h)
-	       {
-		  params->y = params->y +
-		    ((params->h - new_h) * desc->align.y);
-		  params->h = new_h;
-	       }
+	       params->h = new_h;
 	     if (desc->aspect.prefer == EDJE_ASPECT_PREFER_VERTICAL)
-	       {
-		  params->w = new_w;
-	       }
+	       params->w = new_w;
 	  }
 	else
 	  {
 	     if (params->w < new_w)
-	       {
-		  params->x = params->x +
-		    ((params->w - new_w) * (1.0 - desc->align.x));
-		  params->w = new_w;
-	       }
+	       params->w = new_w;
 	     else if (params->w > new_w)
-	       {
-		  params->x = params->x +
-		    ((params->w - new_w) * desc->align.x);
-		  params->w = new_w;
-	       }
+	       params->w = new_w;
 	     if (desc->aspect.prefer == EDJE_ASPECT_PREFER_HORIZONTAL)
-	       {
-		  params->h = new_h;
-	       }
+	       params->h = new_h;
 	  }
+	params->x = want_x + ((want_w - params->w) * desc->align.x);
+	params->y = want_y + ((want_h - params->h) * desc->align.y);
      }
 #endif
    
