@@ -80,6 +80,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{prefix}/lib/libeet.so
 %attr(755,root,root) %{prefix}/lib/libeet.a
 %attr(755,root,root) %{prefix}/bin/eet-config
+%{prefix}/lib/pkgconfig/eet.pc
 %{prefix}/include/Eet*
 %doc AUTHORS
 %doc COPYING
