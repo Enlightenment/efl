@@ -814,6 +814,7 @@ ecore_x_window_manage(Ecore_X_Window win)
 		ResizeRedirectMask |
 		SubstructureRedirectMask | 
 		SubstructureNotifyMask |
+		StructureNotifyMask |
 		KeyPressMask | 
 		KeyReleaseMask |
 		att.your_event_mask);
