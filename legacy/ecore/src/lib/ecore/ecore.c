@@ -2,6 +2,7 @@
 #include "Ecore.h"
 
 static const char *_ecore_magic_string_get(Ecore_Magic m);
+static int _ecore_init_count = 0;
 
 /**
  * Set up connections, signal handlers, sockets etc.
@@ -29,8 +30,10 @@ static const char *_ecore_magic_string_get(Ecore_Magic m);
 int
 ecore_init(void)
 {
-   _ecore_signal_init();
-   return 1;
+   if (++_ecore_init_count == 1)
+      _ecore_signal_init();
+
+   return _ecore_init_count;
 }
 
 /**
@@ -44,9 +47,12 @@ ecore_init(void)
  * loop, as the main loop will then fall over and not function properly.
  * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
 */
-void
+int
 ecore_shutdown(void)
 {
+   if (--_ecore_init_count)
+      return _ecore_init_count;
+
    _ecore_exe_shutdown();
    _ecore_idle_enterer_shutdown();
    _ecore_idler_shutdown();
@@ -54,6 +60,8 @@ ecore_shutdown(void)
    _ecore_event_shutdown();
    _ecore_main_shutdown();
    _ecore_signal_shutdown();
+
+   return _ecore_init_count;
 }
 
 void

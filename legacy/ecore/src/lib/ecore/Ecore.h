@@ -78,7 +78,7 @@ extern "C" {
      };
 
    int  ecore_init(void);
-   void ecore_shutdown(void);
+   int  ecore_shutdown(void);
        
    void ecore_app_args_set(int argc, const char **argv);
    void ecore_app_args_get(int *argc, char ***argv);
