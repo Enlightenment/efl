@@ -276,7 +276,7 @@ struct _Evas
    
    struct {
       char           inside : 1;
-      char           mouse_grabbed : 1;
+      int            mouse_grabbed;
       DATA32         button;
       int            x, y;
 
