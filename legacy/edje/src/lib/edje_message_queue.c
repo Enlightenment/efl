@@ -83,8 +83,7 @@ _edje_message_free(Edje_Message *em)
 {
    if (em->msg)
      {
-	char *ptr;
-	int i, count;
+	int i;
 	
 	switch (em->type)
 	  {

@@ -6,7 +6,7 @@ static void
 _edje_container_relayout(Smart_Data *sd)
 {
    Evas_List *l;
-   Evas_Coord x, y, w, h, sw, sh;
+   Evas_Coord x, y, w, h, sw;
    
    if (sd->freeze > 0) return;
    if (!sd->need_layout) return;

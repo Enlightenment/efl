@@ -126,7 +126,7 @@ void          _edje_var_list_float_append(Edje *ed, int id, double v);
 void          _edje_var_list_float_prepend(Edje *ed, int id, double v);
 void          _edje_var_list_float_insert(Edje *ed, int id, int n, double v);
 
-char         *_edje_var_list_nth_str_get(Edje *ed, int id, int n);
+const char   *_edje_var_list_nth_str_get(Edje *ed, int id, int n);
 void          _edje_var_list_nth_str_set(Edje *ed, int id, int n, char *v);
 void          _edje_var_list_str_append(Edje *ed, int id, char *v);
 void          _edje_var_list_str_prepend(Edje *ed, int id, char *v);

@@ -758,7 +758,7 @@ parse_float_range(int n, double f, double t)
 
 /* int set of function */
 
-int
+static int
 my_atoi(const char * s)
 {
    int res = 0;
@@ -793,10 +793,10 @@ my_atoi(const char * s)
    return res;
 }
 
-char *
+static char *
 _deltai(char *s, int * val)
 {
-   if (!val) return;
+   if (!val) return NULL;
    
    if ('(' != s[0])
      { 
@@ -815,10 +815,10 @@ _deltai(char *s, int * val)
    return s;
 }
 
-char *
+static char *
 _gammai(char *s, int * val)
 {
-   if (!val) return;
+   if (!val) return NULL;
    
    if (_is_numi(s[0]))
      {
@@ -836,14 +836,14 @@ _gammai(char *s, int * val)
    return s;
 }
 
-char *
+static char *
 _betai(char *s, int * val)
 {
    int a1, a2;
    char op;
    
    if (!val)
-     return;
+     return NULL;
    
    s = _gammai(s, &a1);
    
@@ -860,14 +860,14 @@ _betai(char *s, int * val)
    return s;
 }
 
-char *
+static char *
 _alphai(char *s, int * val)
 {
    int a1, a2;
    char op;
    
    if (!val)
-     return;
+     return NULL;
    
    s = _betai(s, &a1);
    
@@ -1005,10 +1005,10 @@ my_atof(const char * s)
    return res;
 }
 
-char *
+static char *
 _deltaf(char *s, double * val)
 {
-   if (!val) return;
+   if (!val) return NULL;
    
    if ('(' != s[0])
      {
@@ -1027,10 +1027,10 @@ _deltaf(char *s, double * val)
    return s;
 }
 
-char *
+static char *
 _gammaf(char *s, double * val)
 {
-   if (!val) return;
+   if (!val) return NULL;
    
    if (_is_numf(s[0]))
      {
@@ -1048,14 +1048,14 @@ _gammaf(char *s, double * val)
    return s;
 }
 
-char *
+static char *
 _betaf(char *s, double * val)
 {
    double a1=0, a2=0;
    char op;
    
    if (!val)
-     return;
+     return NULL;
    
    s = _gammaf(s, &a1);
    
@@ -1072,14 +1072,14 @@ _betaf(char *s, double * val)
    return s;
 }
 
-char *
+static char *
 _alphaf(char *s, double * val)
 {
    double a1=0, a2=0;
    char op;
    
    if (!val)
-     return;
+     return NULL;
    
    s = _betaf(s, &a1);
    
@@ -1096,7 +1096,7 @@ _alphaf(char *s, double * val)
    return s;
 }
 
-char *
+static char *
 _get_numf(char *s, double * val)
 {
    char buf[4096];
@@ -1120,7 +1120,7 @@ _get_numf(char *s, double * val)
    return (s+pos);
 }
 
-int
+static int
 _is_numf(char c)
 {
    if (((c >= '0') && (c <= '9')) 
@@ -1132,7 +1132,7 @@ _is_numf(char c)
      return 0;
 }
 
-int
+static int
 _is_op1f(char c)
 {
    switch(c)
@@ -1144,7 +1144,7 @@ _is_op1f(char c)
    return 0;
 }
 
-int
+static int
 _is_op2f(char c)
 {
    switch(c)
@@ -1156,7 +1156,7 @@ _is_op2f(char c)
    return 0;
 }
 
-double
+static double
 _calcf(char op, double a, double b)
 {
    switch(op)

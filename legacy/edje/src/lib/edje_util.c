@@ -456,7 +456,6 @@ void
 edje_object_text_change_cb_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, const char *part), void *data)
 {
    Edje *ed;
-   Edje_Real_Part *rp;
 
    ed = _edje_fetch(obj);   
    if (!ed) return;

@@ -47,7 +47,6 @@ _edje_var_anim_cb(void *data)
      {
 	Edje *ed;
 	Evas_List *tl2;
-	int delete_me = 0;
 	
 	ed = tl->data;
 	_edje_ref(ed);
@@ -808,21 +807,21 @@ _edje_var_list_float_insert(Edje *ed, int id, int n, double v)
      }
 }
 
-char *
+const char *
 _edje_var_list_nth_str_get(Edje *ed, int id, int n)
 {
-   if (!ed) return 0;
-   if (!ed->var_pool) return 0;
+   if (!ed) return NULL;
+   if (!ed->var_pool) return NULL;
    id -= EDJE_VAR_MAGIC_BASE;
-   if ((id < 0) || (id >= ed->var_pool->size)) return 0;
+   if ((id < 0) || (id >= ed->var_pool->size)) return NULL;
    if (ed->var_pool->vars[id].type == EDJE_VAR_NONE)
      ed->var_pool->vars[id].type = EDJE_VAR_LIST;
-   else if (ed->var_pool->vars[id].type != EDJE_VAR_LIST) return 0;
+   else if (ed->var_pool->vars[id].type != EDJE_VAR_LIST) return NULL;
      {
 	Edje_Var *var;
 	
 	var = _edje_var_list_nth(ed, id, n);
-	if (!var) return 0;
+	if (!var) return NULL;
 	return _edje_var_var_str_get(ed, var);
      }
 }

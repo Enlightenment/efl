@@ -392,7 +392,6 @@ static Embryo_Cell
 _edje_embryo_fn_set_min_size(Embryo_Program *ep, Embryo_Cell *params)
 {
     Edje *ed;
-   int part_id = 0;
    float f = 0.0;
    double w = 0.0, h = 0.0;
    
@@ -417,7 +416,6 @@ static Embryo_Cell
 _edje_embryo_fn_set_max_size(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed;
-   int part_id = 0;
    float f = 0.0;
    double w = 0.0, h = 0.0;
    
@@ -443,7 +441,6 @@ static Embryo_Cell
 _edje_embryo_fn_stop_program(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed;
-   char *state1 = NULL, *state2 = NULL;
    int program_id = 0;
    Edje_Running_Program *runp;
    Evas_List *l;
@@ -467,7 +464,6 @@ _edje_embryo_fn_stop_programs_on(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed;
    
-   char *state1 = NULL, *state2 = NULL;
    int part_id = 0;
    Edje_Real_Part *rp;
    
@@ -585,7 +581,6 @@ static Embryo_Cell
 _edje_embryo_fn_run_program(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed;
-   char *state1 = NULL, *state2 = NULL;
    int program_id = 0;
    Edje_Program *pr;
    
@@ -1239,7 +1234,6 @@ _edje_embryo_test_run(Edje *ed, char *fname, char *sig, char *src)
    if (fn != EMBRYO_FUNCTION_NONE)
      {
 	void *pdata;
-	int err;
 	
 	printf("EDJE DEBUG: About to run script from program.\n");
 	embryo_parameter_string_push(ed->collection->script, sig);

@@ -155,37 +155,44 @@ edje_edit_file_part_collection_get(Edje_Edit_File *edf, char *collection_name)
 Edje_Part_Collection *
 edje_edit_part_collection_add(Edje_Edit_File *edf, char *collection_name)
 {
+	return NULL;
 }
 
 Edje_Part_Collection *
 edje_edit_part_collection_del(Edje_Edit_File *edf, char *collection_name)
 {
+	return NULL;
 }
 
 Edje_Part *
 edje_edit_part_add(Edje_Part_Collection *coll, char *part_name, int part_type)
 {
+	return NULL;
 }
 
 Edje_Part *
 edje_edit_part_del(Edje_Part_Collection *coll, char *part_name, int part_type)
 {
+	return NULL;
 }
 
 Edje_Program *
 edje_edit_program_add(Edje_Part_Collection *coll, char *prog_name)
 {
+	return NULL;
 }
 
 Edje_Program *
 edje_edit_program_del(Edje_Part_Collection *coll, char *prog_name)
 {
+	return NULL;
 }
 
 
 Edje_Edit_Image *
 edje_edit_image_add(Edje_Edit_File *edf, char *filename)
 {
+	return NULL;
 }
 
 void
@@ -197,6 +204,7 @@ edje_edit_image_del(Edje_Edit_Image *im)
 Edje_Edit_Image *
 edje_edit_iamge_get_by_id(int id)
 {
+	return NULL;
 }
 
 
