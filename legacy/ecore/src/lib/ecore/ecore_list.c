@@ -1271,16 +1271,17 @@ int ecore_dlist_insert(Ecore_DList * list, void *data)
 void *ecore_dlist_remove(Ecore_DList * list)
 {
 	void *ret;
-	Ecore_List_Node *node;
+	Ecore_List *l2 = ECORE_LIST(list);
+	Ecore_DList_Node *node;
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
 	ECORE_WRITE_LOCK(list);
 
-	if (list->current) {
-		node = list->current->next;
-		ECORE_DLIST_NODE(node)->previous =
-			ECORE_DLIST_NODE(ECORE_LIST(list)->current)->previous;
+	if (l2->current) {
+		node = ECORE_DLIST_NODE(list->current->next);
+		if (node)
+			node->previous = ECORE_DLIST_NODE(l2->current)->previous;
 	}
 	ret = _ecore_list_remove_0(list);
 
