@@ -16,31 +16,80 @@ main()
 {
    printf("Testing switch and case statements...\n");
    
-   new var = 4;
-   
-   switch (var) {
-    case 0:
-      printf("It's 0\n");
-    case 1:
-      printf("It's 1\n");
-    case 2:
-      printf("It's 2\n");
-    case 3:
-      printf("It's 3\n");
-    case 4:
-      printf("It's 4\n");
-    case 5:
-      printf("It's 5\n");
-    case 6:
-      printf("It's 6\n");
-    case 7:
-      printf("It's 7\n");
-    default:
-      printf("It's something else\n");
-   }
-   
+   new var;
+
+   for (var = 1; var < 5; var++)
+     {
+	switch (var)
+	  {
+	   case 0:
+	     printf("It's 0\n");
+	   case 1:
+	     printf("It's 1\n");
+	   case 2:
+	     printf("It's 2\n");
+	   case 3:
+	     printf("It's 3\n");
+	   case 4:
+	     printf("It's 4\n");
+	   case 5:
+	     printf("It's 5\n");
+	   case 6:
+	     printf("It's 6\n");
+	   case 7:
+	     printf("It's 7\n");
+	   default:
+	     printf("It's something else\n");
+	  }
+     }
+   printf("\n\n");
+   printf("Testing for loops...\n");
+   for (var = 0; var < 10; var++)
+     {
+	printf("Var = %i\n", var);
+     }
    
    printf("\n\n");
+   printf("Testing recursion...\n");
+   var = recurse(3);
+   printf("var = %i\n", var);
+   
+   printf("\n\n");
+   printf("Testing while loops...\n");
+   var = 7;
+   while (var > 1)
+     {
+	printf("var = %i\n", var);
+	var--;
+     }
+   
+   printf("\n\n");
+   printf("Testing Float Math...\n");
+   new Float:a;
+   new Float:b;
+   new Float:c;
+   
+   c = 10.5;
+   printf("c = %f (should be 10.5)\n", c);
+   a = 5.0;
+   b = 2.345;
+   c = a + b;
+   printf("a = %f (should be 5.0)\n", a);
+   printf("b = %f (should be 2.345)\n", b);
+   printf("a + b = %f (should be 7.345)\n", c);
+   a = 2.5;
+   b = 3.5;
+   c = a * b;
+   printf("a = %f (should be 2.5)\n", a);
+   printf("b = %f (should be 3.5)\n", b);
+   printf("a 8 b = %f (should be 8.75)\n", c);
+   a = 5.5;
+   b = 1.5;
+   c = a / b;
+   printf("a = %f (should be 5.5)\n", a);
+   printf("b = %f (should be 1.5)\n", b);
+   printf("a / b = %f (should be 3.666666667)\n", c);
+   
    printf("The printf() call is a native exported function. This should work\n");
    printf("Calling testfn()...\n");
    
@@ -51,6 +100,13 @@ main()
    printf("\n\n");
    
    return 7;
+}
+
+recurse(val)
+{
+   printf("Recurse: val = %i\n", val);
+   if (val >= 10) return val;
+   return recurse(val + 1);
 }
 
 tester(arg1=0, str[]="", arg2=0)

@@ -192,7 +192,7 @@ _embryo_program_init(Embryo_Program *ep, void *code)
 	
 	code_size = hdr->dat - hdr->cod;
 	code = (Embryo_Cell *)((unsigned char *)ep->code + (int)hdr->cod);
-	for (cip = 0; cip < code_size; cip++) embryo_swap_32(&(code[cip]));
+	for (cip = 0; cip < (code_size / sizeof(Embryo_Cell)); cip++) embryo_swap_32(&(code[cip]));
      }
 #endif  
    /* init native api for handling floating point - default in embryo */
@@ -595,7 +595,20 @@ embryo_data_string_get(Embryo_Program *ep, Embryo_Cell *str_cell, char *dst)
 	dst[0] = 0;
 	return;
      }
-   for (i = 0; str_cell[i] != 0; i++) dst[i] = str_cell[i];
+   for (i = 0; str_cell[i] != 0; i++)
+     {
+#ifdef WORDS_BIGENDIAN
+	  {
+	     Embryo_Cell tmp;
+	     
+	     tmp = str_cell[i];
+	     _embryo_byte_swap_32(&tmp);
+	     dst[i] = tmp;
+	  }
+#else
+	dst[i] = str_cell[i];
+#endif	
+     }
    dst[i] = 0;
 }
 
@@ -625,7 +638,17 @@ embryo_data_string_set(Embryo_Program *ep, char *src, Embryo_Cell *str_cell)
 	     str_cell[i] = 0;
 	     return;
 	  }
+#ifdef WORDS_BIGENDIAN
+	  {
+	     Embryo_Cell tmp;
+	     
+	     tmp = src[i];
+	     _embryo_byte_swap_32(&tmp);
+	     str_cell[i] = tmp;
+	  }
+#else
 	str_cell[i] = src[i];
+#endif	
      }
    str_cell[i] = 0;
 }
