@@ -1,5 +1,6 @@
 #!/bin/sh
 rm -rf ./doc/html ./doc/latex ./doc/man
+mkdir -p ./doc/html ./doc/latex ./doc/man 2>/dev/null
 doxygen
 cp doc/img/*.png doc/html/
 rm -f ecore_docs.tar ecore_docs.tar.gz

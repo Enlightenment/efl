@@ -62,6 +62,7 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/ecore_config_ipc_*.so
 %{_libdir}/ecore_config_ipc_*.a
 %{_libdir}/ecore_config_ipc_*.la
+%{_libdir}/pkgconfig/ecore.pc
 %{_bindir}/ecore-config
 %{_datadir}/aclocal/ecore.m4
 %{_includedir}/Ecore*.h
