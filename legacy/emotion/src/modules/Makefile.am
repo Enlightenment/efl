@@ -6,7 +6,6 @@ SUBDIRS = xine
 
 MAINTAINERCLEANFILES = Makefile.in
 
-LDFLAGS		     = 
 INCLUDES	     = -I$(includedir) \
 		       -I$(top_srcdir) \
 		       -I$(top_srcdir)/src/lib \
@@ -20,8 +19,6 @@ emotion_decoder_xine_la_SOURCES  = \
 emotion_xine.c \
 emotion_xine.h
 emotion_decoder_xine_la_LIBADD       = @my_libs@ @xine_libs@
-emotion_decoder_xine_la_LDFLAGS      = \
-$(LDFLAGS) \
--module -avoid-version \
--L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
+emotion_decoder_xine_la_LDFLAGS      = -module -avoid-version \
+				       -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
 emotion_decoder_xine_la_DEPENDENCIES = $(top_builddir)/config.h
