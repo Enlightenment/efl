@@ -95,45 +95,25 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1,
 
    ep->param1.description = _edje_part_description_find(ed, ep, d1, v1);
    if (!ep->param1.description)
-     ep->param1.description = ep->part->default_desc;
+     ep->param1.description = ep->part->default_desc; /* never NULL */
 
    ep->param2.description = _edje_part_description_find(ed, ep, d2, v2);
 
-   ep->param1.rel1_to_x = NULL;
-   ep->param1.rel1_to_y = NULL;
-   ep->param1.rel2_to_x = NULL;
-   ep->param1.rel2_to_y = NULL;
-   if (ep->param1.description)
-     {
-	if (ep->param1.description->rel1.id_x >= 0)
-	  ep->param1.rel1_to_x = ed->table_parts[ep->param1.description->rel1.id_x % ed->table_parts_size];
-	if (ep->param1.description->rel1.id_y >= 0)
-	  ep->param1.rel1_to_y = ed->table_parts[ep->param1.description->rel1.id_y % ed->table_parts_size];
-	if (ep->param1.description->rel2.id_x >= 0)
-	  ep->param1.rel2_to_x = ed->table_parts[ep->param1.description->rel2.id_x % ed->table_parts_size];
-	if (ep->param1.description->rel2.id_y >= 0)
-	  ep->param1.rel2_to_y = ed->table_parts[ep->param1.description->rel2.id_y % ed->table_parts_size];
-     }
-   
-   ep->param1.rel1_to_x = NULL;
-   ep->param1.rel1_to_y = NULL;
-   ep->param1.rel2_to_x = NULL;
-   ep->param1.rel2_to_y = NULL;
-   if (ep->param1.description)
-     {
-	if (ep->param1.description->rel1.id_x >= 0)
-	  ep->param1.rel1_to_x = ed->table_parts[ep->param1.description->rel1.id_x % ed->table_parts_size];
-	if (ep->param1.description->rel1.id_y >= 0)
-	  ep->param1.rel1_to_y = ed->table_parts[ep->param1.description->rel1.id_y % ed->table_parts_size];
-	if (ep->param1.description->rel2.id_x >= 0)
-	  ep->param1.rel2_to_x = ed->table_parts[ep->param1.description->rel2.id_x % ed->table_parts_size];
-	if (ep->param1.description->rel2.id_y >= 0)
-	  ep->param1.rel2_to_y = ed->table_parts[ep->param1.description->rel2.id_y % ed->table_parts_size];
-     }
-   ep->param2.rel1_to_x = NULL;
-   ep->param2.rel1_to_y = NULL;
-   ep->param2.rel2_to_x = NULL;
-   ep->param2.rel2_to_y = NULL;
+   ep->param1.rel1_to_x = ep->param1.rel1_to_y = NULL;
+   ep->param1.rel2_to_x = ep->param1.rel2_to_y = NULL;
+
+   if (ep->param1.description->rel1.id_x >= 0)
+     ep->param1.rel1_to_x = ed->table_parts[ep->param1.description->rel1.id_x % ed->table_parts_size];
+   if (ep->param1.description->rel1.id_y >= 0)
+     ep->param1.rel1_to_y = ed->table_parts[ep->param1.description->rel1.id_y % ed->table_parts_size];
+   if (ep->param1.description->rel2.id_x >= 0)
+     ep->param1.rel2_to_x = ed->table_parts[ep->param1.description->rel2.id_x % ed->table_parts_size];
+   if (ep->param1.description->rel2.id_y >= 0)
+     ep->param1.rel2_to_y = ed->table_parts[ep->param1.description->rel2.id_y % ed->table_parts_size];
+
+   ep->param2.rel1_to_x = ep->param2.rel1_to_y = NULL;
+   ep->param2.rel2_to_x = ep->param2.rel2_to_y = NULL;
+
    if (ep->param2.description)
      {
 	if (ep->param2.description->rel1.id_x >= 0)
@@ -145,12 +125,12 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1,
 	if (ep->param2.description->rel2.id_y >= 0)
 	  ep->param2.rel2_to_y = ed->table_parts[ep->param2.description->rel2.id_y % ed->table_parts_size];
      }
+
    if (ep->description_pos == 0.0)
      ep->chosen_description = ep->param1.description;
    else
      ep->chosen_description = ep->param2.description;
-   if (!ep->chosen_description)
-     ep->chosen_description = ep->param2.description;
+
    ed->dirty = 1;
 }
 
