@@ -627,6 +627,10 @@ AC_SUBST(USE_OPENSSL)
 AC_OUTPUT([
 Makefile
 ecore-config
+data/Makefile
+data/fonts/Makefile
+data/images/Makefile
+data/pointers/Makefile
 src/Makefile
 src/bin/Makefile
 src/lib/Makefile
