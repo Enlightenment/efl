@@ -201,10 +201,11 @@ typedef enum _CPU_Features
 {
    CPU_FEATURE_C       = 0,
    CPU_FEATURE_MMX     = (1 << 0),
-   CPU_FEATURE_SSE     = (1 << 1),
-   CPU_FEATURE_ALTIVEC = (1 << 2),
-   CPU_FEATURE_VIS     = (1 << 3),
-   CPU_FEATURE_VIS2    = (1 << 4)
+   CPU_FEATURE_MMX2    = (1 << 1),
+   CPU_FEATURE_SSE     = (1 << 2),
+   CPU_FEATURE_ALTIVEC = (1 << 3),
+   CPU_FEATURE_VIS     = (1 << 4),
+   CPU_FEATURE_VIS2    = (1 << 5)
 } CPU_Features;
 
 /*****************************************************************************/
@@ -600,6 +601,7 @@ void evas_common_blend_pixels_rgba_to_rgba_c            (DATA32 *src, DATA32 *ds
 
 void evas_common_copy_pixels_rgba_to_rgba_c             (DATA32 *src, DATA32 *dst, int len);
 void evas_common_copy_pixels_rgba_to_rgba_mmx           (DATA32 *src, DATA32 *dst, int len);
+void evas_common_copy_pixels_rgba_to_rgba_mmx2          (DATA32 *src, DATA32 *dst, int len);
 void evas_common_copy_pixels_rgba_to_rgba_sse/*NB*/     (DATA32 *src, DATA32 *dst, int len);
 void evas_common_copy_pixels_rgb_to_rgba_c              (DATA32 *src, DATA32 *dst, int len);
 

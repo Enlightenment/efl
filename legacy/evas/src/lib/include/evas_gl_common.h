@@ -1,6 +1,13 @@
 #ifndef EVAS_GL_COMMON_H
 #define EVAS_GL_COMMON_H
 
+/* FIXME: need to handle memory errors */
+/* FIXME: need to handle list errors */
+/* FIXME: need to handle gl errors */
+/* FIXME: need to free textures is texture ream runs out */
+/* FIXME: need to break image textures into meshes if too big */
+/* FIXME: need to page mesh textures if texture alloc fails */
+
 #include "evas_common.h"
 #include "config.h"
 

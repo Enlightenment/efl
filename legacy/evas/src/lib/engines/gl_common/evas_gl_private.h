@@ -3,11 +3,19 @@
 
 #include "evas_gl_common.h"
 
-#if 1
+#ifndef GL_TEXTURE_RECTANGLE_NV
+#define GL_TEXTURE_RECTANGLE_NV 0x84f5
+#endif
+
+#if 0
+#ifndef GL_WRITE_PIXEL_DATA_RANGE_NV
 /* nvidia extensions */
+extern void *glXAllocateMemoryNV(GLsizei size, GLfloat readfreq, GLfloat writefreq, GLfloat priority);
 extern void glPixelDataRangeNV(GLenum target, GLsizei length, void *pointer);
-#define GL_WRITE_PIXEL_DATA_RANGE_NV 0x8878
+extern void glFlushPixelDataRangeNV(GLenum target);
+# define GL_WRITE_PIXEL_DATA_RANGE_NV 0x8878
 #define GL_READ_PIXEL_DATA_RANGE_NV 0x8879
+#endif
 
 /* arb extensions */
 void glBindBufferARB(GLenum target, uint buffer);
@@ -62,9 +70,8 @@ void glGetBufferPointervARB(GLenum target, GLenum pname, void **params);
 #endif
    
    
-#ifndef GL_TEXTURE_RECTANGLE_NV
-#define GL_TEXTURE_RECTANGLE_NV 0x84f5
-#endif
+
+
    
 
 

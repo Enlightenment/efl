@@ -2,7 +2,7 @@
 #include "evas_test_main.h"
 
 // test writing to image objects for video playback
-//define VID_TEST
+//#define VID_TEST
 // actualyl fill the video buffer (not fair a test as cpu spends time filling)
 //#define VID_WRITE
 

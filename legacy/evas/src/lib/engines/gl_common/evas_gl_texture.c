@@ -138,23 +138,29 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
 
    if (tex->not_power_of_two)
      {
+	void *tmp = NULL, *data;
+	
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_TEXTURE_RECTANGLE_NV);
 	glBindTexture(GL_TEXTURE_RECTANGLE_NV, tex->texture);
 
-//	printf("%p\n", glXAllocateMemoryNV(64 * 64 * 4, 0.0, 1.0, 1.0));
-/*
-	if (!tex->opt)
+	data = im->image->data;
+#if 0 // trying the glXAllocateMemoryNV() thing but its abysmally slow
+	tmp = glXAllocateMemoryNV(tex->w * tex->h * sizeof(DATA32), 
+				  0.0, 1.0, 1.0);
+	if (tmp)
 	  {
-	     glPixelDataRangeNV(GL_WRITE_PIXEL_DATA_RANGE_NV, 
-				im->image->w * im->image->h * 4, 
-				im->image->data);
-	     printf("ER1: %s\n", gluErrorString(glGetError()));
 	     glEnableClientState(GL_WRITE_PIXEL_DATA_RANGE_NV);
-	     printf("ER2: %s\n", gluErrorString(glGetError()));
-	     tex->opt = 1;
+	     glPixelDataRangeNV(GL_WRITE_PIXEL_DATA_RANGE_NV, 
+				tex->w * tex->h * sizeof(DATA32),
+				tmp);
+//	     evas_common_copy_pixels_rgba_to_rgba_mmx2(im->image->data, tmp,
+//						       tex->w * tex->h);
+	     memcpy(tmp, im->image->data, 
+		    tex->w * tex->h * sizeof(DATA32));
+	     data = tmp;
 	  }
-*/
+#endif
 	if (tex->gc->texture) tex->gc->texture->references--;
 	tex->gc->texture = tex;
 	tex->gc->change.texture = 1;
@@ -164,21 +170,16 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
 	else texfmt = GL_RGB8;
 	pixfmt = NATIVE_PIX_FORMAT;
 
-	/* the MOMENT i call this call at ALL to update texture
-	 * i instantly hit a MASSIVE speed hit - even for 1x1 pixel
-	 */
-	
-#if 1 /* go from 2.3 to 15.9 if this is disabled */
 	glTexSubImage2D(GL_TEXTURE_RECTANGLE_NV, 0, 
 			0, 0, tex->w, tex->h,
 			pixfmt, NATIVE_PIX_UNIT,
-			im->image->data);
-#else
-	/* also no speed difference to the above */
-	glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, 
-		     texfmt, tex->w, tex->h, 0,
-		     pixfmt, NATIVE_PIX_UNIT,
-		     im->image->data);
+			data);
+#if 0 // trying the glXAllocateMemoryNV() thing but its abysmally slow
+	if (tmp)
+	  {
+	     glFlushPixelDataRangeNV(GL_WRITE_PIXEL_DATA_RANGE_NV);
+	     glXFreeMemoryNV(tmp);
+	  }
 #endif	
 	return;
      }

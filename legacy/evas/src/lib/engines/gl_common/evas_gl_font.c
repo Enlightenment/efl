@@ -4,6 +4,159 @@ static Evas_GL_Font_Texture_Pool_Allocation *_evas_gl_font_texture_pool_request(
 static void                                  _evas_gl_font_texture_pool_relinquish(Evas_GL_Font_Texture_Pool_Allocation *fa);
 static int                                   _evas_gl_font_texture_pool_rect_find(Evas_GL_Font_Texture_Pool *fp, int w, int h, int *x, int *y);
 
+Evas_GL_Font_Texture *
+evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
+{
+   Evas_GL_Font_Texture *ft;
+   DATA8 *data;
+   int w, h, j;
+   
+   int nw;
+   DATA8 *ndata;
+   
+   ft = calloc(1, sizeof(Evas_GL_Font_Texture));
+   if (!ft) return NULL;
+
+   data = fg->glyph_out->bitmap.buffer;
+   w = fg->glyph_out->bitmap.width;
+   h = fg->glyph_out->bitmap.rows;
+   j = fg->glyph_out->bitmap.pitch;
+   if (j < w) j = w;
+   
+   ft->gc = gc;
+
+   /* bug bug! glTexSubImage2D need a multiple of 4 pixels horizontally! :( */
+   nw = ((w + 3) / 4 ) * 4;
+   ndata = malloc(nw *h);
+   if (!ndata)
+     {
+	free(ft);
+	return NULL;
+     }
+     {
+	int x, y;
+	DATA8 *p1, *p2;
+	
+	for (y = 0; y < h; y++)
+	  {
+	     p1 = data + (j * y);
+	     p2 = ndata + (nw * y);
+	     for (x = 0; x < w; x++)
+	       {
+		  *p2 = *p1;
+		  p1++;
+		  p2++;
+	       }
+	  }
+     }
+   
+   /* where in pool texture does this live */
+   ft->w = w;
+   ft->h = h;
+   ft->aw = nw;
+   ft->ah = h;
+
+   ft->alloc = _evas_gl_font_texture_pool_request(gc, ft->aw, ft->ah);
+   if (!ft->alloc)
+     {
+	free(ndata);
+	free(ft);
+	return NULL;
+     }
+   ft->x = ft->alloc->x;
+   ft->y = ft->alloc->y;
+   ft->pool = ft->alloc->pool;
+   ft->texture =  ft->pool->texture;
+   if (ft->pool->not_power_of_two)
+     {
+	glEnable(GL_TEXTURE_RECTANGLE_NV);
+	glBindTexture(GL_TEXTURE_RECTANGLE_NV, ft->texture);
+	glTexSubImage2D(GL_TEXTURE_RECTANGLE_NV, 0,
+			ft->x, ft->y, nw, ft->h,
+			GL_ALPHA, GL_UNSIGNED_BYTE, ndata);
+     }
+   else
+     {
+	glBindTexture(GL_TEXTURE_2D, ft->texture);
+	glTexSubImage2D(GL_TEXTURE_2D, 0,
+			ft->x, ft->y, nw, ft->h,
+			GL_ALPHA, GL_UNSIGNED_BYTE, ndata);
+     }
+   if (ndata) free(ndata);
+   if (gc->texture)
+     {
+	if (gc->texture) gc->texture->references--;
+	gc->texture = NULL;
+     }
+   gc->font_texture = ft->texture;
+   gc->font_texture_not_power_of_two = ft->pool->not_power_of_two;
+   gc->change.texture = 1;
+   
+   return ft;
+}
+
+void
+evas_gl_font_texture_free(Evas_GL_Font_Texture *ft)
+{
+   if (ft->gc->font_texture == ft->texture)
+     {
+	ft->gc->font_texture = 0;
+	ft->gc->change.texture = 1;
+     }   
+   _evas_gl_font_texture_pool_relinquish(ft->alloc);
+   free(ft);
+}
+
+void
+evas_gl_font_texture_draw(Evas_GL_Context *gc, void *surface, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y)
+{
+   int r, g, b, a;
+   Evas_GL_Font_Texture *ft;
+   
+   ft = fg->ext_dat;
+   if (!ft) return;
+   a = (dc->col.col >> 24) & 0xff;
+   r = (dc->col.col >> 16) & 0xff;
+   g = (dc->col.col >> 8 ) & 0xff;
+   b = (dc->col.col      ) & 0xff;
+   evas_gl_common_context_color_set(gc, r, g, b, a);
+   if (dc->clip.use)
+     evas_gl_common_context_clip_set(gc, 1,
+				     dc->clip.x, dc->clip.y,
+				     dc->clip.w, dc->clip.h);
+   else
+     evas_gl_common_context_clip_set(gc, 0,
+				     0, 0, 0, 0);
+   evas_gl_common_context_font_texture_set(gc, ft);
+   evas_gl_common_context_blend_set(gc, 1);
+   evas_gl_common_context_read_buf_set(gc, GL_BACK);
+   evas_gl_common_context_write_buf_set(gc, GL_BACK);
+     {
+	double tx1, ty1, tx2, ty2;
+	
+	if (ft->pool->not_power_of_two)
+	  {
+	     tx1 = ft->x;
+	     ty1 = ft->y;
+	     tx2 = ft->x + ft->w;
+	     ty2 = ft->y + ft->h;
+	  }
+	else
+	  {
+	     tx1 = (double)(ft->x        ) / (double)(ft->pool->w);
+	     ty1 = (double)(ft->y        ) / (double)(ft->pool->h);
+	     tx2 = (double)(ft->x + ft->w) / (double)(ft->pool->w);
+	     ty2 = (double)(ft->y + ft->h) / (double)(ft->pool->h);
+	  }
+	glBegin(GL_QUADS);
+	glTexCoord2d(tx1, ty1); glVertex2i(x        , y        );
+	glTexCoord2d(tx2, ty1); glVertex2i(x + ft->w, y        );
+	glTexCoord2d(tx2, ty2); glVertex2i(x + ft->w, y + ft->h);
+	glTexCoord2d(tx1, ty2); glVertex2i(x        , y + ft->h);
+	glEnd();	
+     }
+}
+
 static Evas_GL_Font_Texture_Pool_Allocation *
 _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
 {
@@ -29,6 +182,11 @@ _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
 	     fa->w = w;
 	     fa->h = h;
 	     fp->allocations = evas_list_prepend(fp->allocations, fa);
+	     if (evas_list_alloc_error())
+	       {
+		  free(fa);
+		  return NULL;
+	       }
 	     fp->references++;
 	     return fa;
 	  }
@@ -48,12 +206,18 @@ _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
    
    fp = calloc(1, sizeof(Evas_GL_Font_Texture_Pool));
    if (!fp) return NULL;
+   gc->tex_pool = evas_list_append(gc->tex_pool, fp);
+   if (evas_list_alloc_error())
+     {
+	free(fp);
+	return NULL;
+     }
    fp->gc = gc;
    fp->w = minw;
    fp->h = minh;
    if (gc->ext.nv_texture_rectangle) fp->not_power_of_two = 1;
-   gc->tex_pool = evas_list_append(gc->tex_pool, fp);
-   
+ 
+   /* we dont want this mipmapped if sgis_generate_mipmap will mipmap it */
    if (gc->ext.sgis_generate_mipmap)
      glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_FALSE);
    glEnable(GL_TEXTURE_2D);
@@ -61,39 +225,56 @@ _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
      {
 	glEnable(GL_TEXTURE_RECTANGLE_NV);
 	glGenTextures(1, &(fp->texture));
+	/* FIXME check gl error */
 	
 	glBindTexture(GL_TEXTURE_RECTANGLE_NV, fp->texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_RECTANGLE_NV, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_RECTANGLE_NV, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, 
 		     GL_ALPHA8, fp->w, fp->h, 0,
 		     GL_ALPHA, GL_UNSIGNED_BYTE, NULL);
+	/* FIXME check gl error */
      }
    else
      {
 	glGenTextures(1, &(fp->texture));
+	/* FIXME check gl error */
 	
 	glBindTexture(GL_TEXTURE_2D, fp->texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, 
 		     GL_ALPHA8, fp->w, fp->h, 0,
 		     GL_ALPHA, GL_UNSIGNED_BYTE, NULL);
+	/* FIXME check gl error */
      }
    
    /* new allocation entirely */
    fa = calloc(1, sizeof(Evas_GL_Font_Texture_Pool_Allocation));
-   if (!fa) return NULL;
+   if (!fa)
+     {
+	gc->tex_pool = evas_list_remove(gc->tex_pool, fp);
+	glDeleteTextures(1, &(fp->texture));
+	free(fp);
+	return NULL;
+     }
    fa->pool = fp;
    fa->x = 0;
    fa->y = 0;
    fa->w = w;
    fa->h = h;
    fp->allocations = evas_list_prepend(fp->allocations, fa);
+   if (evas_list_alloc_error())
+     {
+	gc->tex_pool = evas_list_remove(gc->tex_pool, fp);
+	glDeleteTextures(1, &(fp->texture));
+	free(fp);
+	return NULL;
+     }
    fp->references++;
    return fa;
 }
@@ -219,152 +400,4 @@ _evas_gl_font_texture_pool_rect_find(Evas_GL_Font_Texture_Pool *fp,
 	  }
      }
    return 0;
-}
-
-Evas_GL_Font_Texture *
-evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
-{
-   Evas_GL_Font_Texture *ft;
-   DATA8 *data;
-   int w, h, j;
-   
-   int nw;
-   DATA8 *ndata;
-   
-   ft = calloc(1, sizeof(Evas_GL_Font_Texture));
-   if (!ft) return NULL;
-
-   data = fg->glyph_out->bitmap.buffer;
-   w = fg->glyph_out->bitmap.width;
-   h = fg->glyph_out->bitmap.rows;
-   j = fg->glyph_out->bitmap.pitch;
-   if (j < w) j = w;
-   
-   ft->gc = gc;
-
-   /* bug bug! glTexSubImage2D need a multiple of 4 pixels horizontally! :( */
-   nw = ((w + 3) / 4 ) * 4;
-   ndata = malloc(nw *h);
-   if (!ndata)
-     {
-	free(ft);
-	return NULL;
-     }
-     {
-	int x, y;
-	DATA8 *p1, *p2;
-	
-	for (y = 0; y < h; y++)
-	  {
-	     p1 = data + (j * y);
-	     p2 = ndata + (nw * y);
-	     for (x = 0; x < w; x++)
-	       {
-		  *p2 = *p1;
-		  p1++;
-		  p2++;
-	       }
-	  }
-     }
-   
-   /* where in pool texture does this live */
-   ft->w = w;
-   ft->h = h;
-   ft->aw = nw;
-   ft->ah = h;
-
-   ft->alloc = _evas_gl_font_texture_pool_request(gc, ft->aw, ft->ah);
-   ft->x = ft->alloc->x;
-   ft->y = ft->alloc->y;
-   ft->pool = ft->alloc->pool;
-   ft->texture =  ft->pool->texture;
-   if (ft->pool->not_power_of_two)
-     {
-	glEnable(GL_TEXTURE_RECTANGLE_NV);
-	glBindTexture(GL_TEXTURE_RECTANGLE_NV, ft->texture);
-	glTexSubImage2D(GL_TEXTURE_RECTANGLE_NV, 0,
-			ft->x, ft->y, nw, ft->h,
-			GL_ALPHA, GL_UNSIGNED_BYTE, ndata);
-     }
-   else
-     {
-	glBindTexture(GL_TEXTURE_2D, ft->texture);
-	glTexSubImage2D(GL_TEXTURE_2D, 0,
-			ft->x, ft->y, nw, ft->h,
-			GL_ALPHA, GL_UNSIGNED_BYTE, ndata);
-     }
-   if (ndata) free(ndata);
-   if (gc->texture)
-     {
-	if (gc->texture) gc->texture->references--;
-	gc->texture = NULL;
-     }
-   gc->font_texture = ft->texture;
-   gc->font_texture_not_power_of_two = ft->pool->not_power_of_two;
-   gc->change.texture = 1;
-   
-   return ft;
-}
-
-void
-evas_gl_font_texture_free(Evas_GL_Font_Texture *ft)
-{
-   if (ft->gc->font_texture == ft->texture)
-     {
-	ft->gc->font_texture = 0;
-	ft->gc->change.texture = 1;
-     }
-   
-   _evas_gl_font_texture_pool_relinquish(ft->alloc);
-   free(ft);
-}
-
-void
-evas_gl_font_texture_draw(Evas_GL_Context *gc, void *surface, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y)
-{
-   int r, g, b, a;
-   Evas_GL_Font_Texture *ft;
-   
-   ft = fg->ext_dat;
-   if (!ft) return;
-   a = (dc->col.col >> 24) & 0xff;
-   r = (dc->col.col >> 16) & 0xff;
-   g = (dc->col.col >> 8 ) & 0xff;
-   b = (dc->col.col      ) & 0xff;
-   evas_gl_common_context_color_set(gc, r, g, b, a);
-   if (dc->clip.use)
-     evas_gl_common_context_clip_set(gc, 1,
-				     dc->clip.x, dc->clip.y,
-				     dc->clip.w, dc->clip.h);
-   else
-     evas_gl_common_context_clip_set(gc, 0,
-				     0, 0, 0, 0);
-   evas_gl_common_context_font_texture_set(gc, ft);
-   evas_gl_common_context_blend_set(gc, 1);
-   evas_gl_common_context_read_buf_set(gc, GL_BACK);
-   evas_gl_common_context_write_buf_set(gc, GL_BACK);
-     {
-	double tx1, ty1, tx2, ty2;
-	
-	if (ft->pool->not_power_of_two)
-	  {
-	     tx1 = ft->x;
-	     ty1 = ft->y;
-	     tx2 = ft->x + ft->w;
-	     ty2 = ft->y + ft->h;
-	  }
-	else
-	  {
-	     tx1 = (double)(ft->x        ) / (double)(ft->pool->w);
-	     ty1 = (double)(ft->y        ) / (double)(ft->pool->h);
-	     tx2 = (double)(ft->x + ft->w) / (double)(ft->pool->w);
-	     ty2 = (double)(ft->y + ft->h) / (double)(ft->pool->h);
-	  }
-	glBegin(GL_QUADS);
-	glTexCoord2d(tx1, ty1); glVertex2i(x        , y        );
-	glTexCoord2d(tx2, ty1); glVertex2i(x + ft->w, y        );
-	glTexCoord2d(tx2, ty2); glVertex2i(x + ft->w, y + ft->h);
-	glTexCoord2d(tx1, ty2); glVertex2i(x        , y + ft->h);
-	glEnd();	
-     }
 }

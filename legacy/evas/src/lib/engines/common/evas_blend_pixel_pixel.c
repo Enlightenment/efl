@@ -146,18 +146,22 @@ evas_common_copy_pixels_rgba_to_rgba_mmx(DATA32 *src, DATA32 *dst, int len)
    int src_align;
    int dst_align;
 
-   src_align = (int)src & 0x7; /* 8 byte alignment */
-   dst_align = (int)dst & 0x7; /* 8 byte alignment */
-   if ((!src_align) && (!dst_align))
-     /* both not aligned. do fixup */
+   src_align = (int)src & 0x3f; /* 64 byte alignment */
+   dst_align = (int)dst & 0x3f; /* 64 byte alignment */
+   if ((src_align != 0) && 
+       (!(src_align & 0x3)) && 
+       (src_align == dst_align))
      {
-	*dst = *src;
-	dst++;
-	src++;
-	len--;
+	while ((src_align > 0) && (len > 0))
+	  {
+	     *dst = *src;
+	     dst++;
+	     src++;
+	     len--;
+	     src_align -= sizeof(DATA32);
+	  }
      }
-   else if ((!src_align) || (!dst_align))
-     /* one isnt aligned. we can't do fixup. do it the slow way */
+   else
      {
 #ifdef BUILD_C
 	evas_common_copy_pixels_rgba_to_rgba_c(src, dst, len);
@@ -184,6 +188,56 @@ evas_common_copy_pixels_rgba_to_rgba_mmx(DATA32 *src, DATA32 *dst, int len)
 }
 #endif
 
+#ifdef BUILD_MMX
+void
+evas_common_copy_pixels_rgba_to_rgba_mmx2(DATA32 *src, DATA32 *dst, int len)
+{
+   DATA32 *src_ptr, *dst_ptr, *dst_end_ptr, *dst_end_ptr_pre;
+   int src_align;
+   int dst_align;
+
+   src_align = (int)src & 0x3f; /* 64 byte alignment */
+   dst_align = (int)dst & 0x3f; /* 64 byte alignment */
+   if ((src_align != 0) && 
+       (!(src_align & 0x3)) && 
+       (src_align == dst_align))
+     {
+	while ((src_align > 0) && (len > 0))
+	  {
+	     *dst = *src;
+	     dst++;
+	     src++;
+	     len--;
+	     src_align -= sizeof(DATA32);
+	  }
+     }
+   else
+     {
+#ifdef BUILD_C
+	evas_common_copy_pixels_rgba_to_rgba_c(src, dst, len);
+#endif
+	return;
+     }
+   src_ptr = src;
+   dst_ptr = dst;
+   dst_end_ptr = dst + len;
+   dst_end_ptr_pre = dst + ((len / 16) * 16);
+   
+   while (dst_ptr < dst_end_ptr_pre)
+     {
+	MOVE_16DWORDS_MMX2(src_ptr, dst_ptr);
+	src_ptr+=16;
+	dst_ptr+=16;
+     }
+   while (dst_ptr < dst_end_ptr)
+     {
+	*dst_ptr = *src_ptr;
+	src_ptr++;
+	dst_ptr++;
+     }
+}
+#endif
+
 #ifdef BUILD_SSE
 void
 evas_common_copy_pixels_rgba_to_rgba_sse(DATA32 *src, DATA32 *dst, int len)
@@ -192,18 +246,22 @@ evas_common_copy_pixels_rgba_to_rgba_sse(DATA32 *src, DATA32 *dst, int len)
    int src_align;
    int dst_align;
 
-   src_align = (int)src & 0x7; /* 8 byte alignment */
-   dst_align = (int)dst & 0x7; /* 8 byte alignment */
-   if ((!src_align) && (!dst_align))
-     /* both not aligned. do fixup */
+   src_align = (int)src & 0x3f; /* 64 byte alignment */
+   dst_align = (int)dst & 0x3f; /* 64 byte alignment */
+   if ((src_align != 0) && 
+       (!(src_align & 0x3)) && 
+       (src_align == dst_align))
      {
-	*dst = *src;
-	dst++;
-	src++;
-	len--;
+	while ((src_align > 0) && (len > 0))
+	  {
+	     *dst = *src;
+	     dst++;
+	     src++;
+	     len--;
+	     src_align -= sizeof(DATA32);
+	  }
      }
-   else if ((!src_align) || (!dst_align))
-     /* one isnt aligned. we can't do fixup. do it the slow way */
+   else
      {
 #ifdef BUILD_C
 	evas_common_copy_pixels_rgba_to_rgba_c(src, dst, len);

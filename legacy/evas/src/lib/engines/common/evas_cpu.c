@@ -23,6 +23,17 @@ evas_common_cpu_mmx_test(void)
 }
 
 void
+evas_common_cpu_mmx2_test(void)
+{
+#ifdef BUILD_MMX
+   char data[128];
+   char data2[128];
+   
+   MOVE_16DWORDS_MMX2(data, data2);
+#endif   
+}
+
+void
 evas_common_cpu_sse_test(void)
 {
 #ifdef BUILD_SSE   
@@ -79,6 +90,8 @@ evas_common_cpu_init(void)
 #ifdef BUILD_MMX
    cpu_feature_mask |= CPU_FEATURE_MMX * 
      evas_common_cpu_feature_test(evas_common_cpu_mmx_test);
+   cpu_feature_mask |= CPU_FEATURE_MMX2 * 
+     evas_common_cpu_feature_test(evas_common_cpu_mmx2_test);
 #ifdef BUILD_SSE
    cpu_feature_mask |= CPU_FEATURE_SSE * 
      evas_common_cpu_feature_test(evas_common_cpu_sse_test);
@@ -133,6 +146,7 @@ evas_common_cpu_can_do(int *mmx, int *sse, int *sse2)
 	cpu_feature_mask |= CPU_FEATURE_MMX;
 #endif
 	if (cpu_feature_mask & CPU_FEATURE_MMX) do_mmx = 1;
+	if (cpu_feature_mask & CPU_FEATURE_MMX2) do_mmx = 2;
 	if (cpu_feature_mask & CPU_FEATURE_SSE) do_sse = 1;
      }
 //   printf("%i %i %i\n", do_mmx, do_sse, do_sse2);
@@ -146,7 +160,8 @@ evas_common_cpu_can_do(int *mmx, int *sse, int *sse2)
 void
 evas_common_cpu_end_opt(void)
 {
-   if (cpu_feature_mask & CPU_FEATURE_MMX)
+   if (cpu_feature_mask & 
+       (CPU_FEATURE_MMX | CPU_FEATURE_MMX2))
      {
 	emms();
      }
