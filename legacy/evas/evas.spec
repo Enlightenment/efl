@@ -19,9 +19,7 @@ Packager: Term <kempler@utdallas.edu>
 Vendor: The Enlightenment Development Team <e-develop@enlightenment.org>
 Source: ftp://ftp.enlightenment.org/enlightenment/%{name}-%{ver}.tar.gz
 BuildRoot: /var/tmp/%{name}-root
-Requires: imlib2 >= 1.0.0
-
-#Patch1: evas_test-fix.patch
+Requires: imlib2 >= 1.0.1
 
 %description
 Evas is an advanced canvas library, providing three backends for
