@@ -59,7 +59,8 @@ export CFLAGS=-O9
 --disable-convert-32-bgrx-8888 \
 --disable-convert-32-rgb-rot-0 \
 --disable-convert-32-rgb-rot-270 \
---disable-convert-32-rgb-rot-90
+--disable-convert-32-rgb-rot-90 \
+--disable-valgrind
 
 INST="/tmp/"$PROJ"-instroot"
 sudo rm -rf $INST

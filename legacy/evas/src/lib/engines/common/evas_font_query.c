@@ -253,8 +253,8 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y
 	     chr_w += (chr_x - prev_chr_end);
 	     chr_x = prev_chr_end;
 	  }
-	if ((x >= chr_x) && (x < (chr_x + chr_w)) &&
-	    (y >= -asc) && (y < desc))
+	if ((x >= chr_x) && (x <= (chr_x + chr_w)) &&
+	    (y >= -asc) && (y <= desc))
 	  {
 	     if (cx) *cx = chr_x;
 	     if (cy) *cy = -asc;
