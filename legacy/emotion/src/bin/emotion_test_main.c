@@ -602,9 +602,9 @@ video_obj_signal_speed_cb(void *data, Evas_Object *o, const char *emission, cons
    
    ov = data;
    edje_object_part_drag_value_get(o, source, &x, &y);
-   spd = (y * 20.0) - 10.0;
-   emotion_object_play_speed_set(ov, spd);
-   snprintf(buf, sizeof(buf), "%1.1f", spd);
+   spd = 255 * y;
+   evas_object_color_set(ov, 255, 255, 255, spd);
+   snprintf(buf, sizeof(buf), "%i", spd);
    edje_object_part_text_set(o, "video_speed_txt", buf);
 }
 
@@ -746,7 +746,7 @@ init_video_object(char *file)
    edje_object_signal_callback_add(oe, "frame_resize", "stop", video_obj_signal_frame_resize_stop_cb, oe);
    edje_object_signal_callback_add(oe, "mouse,move", "*", video_obj_signal_frame_move_cb, oe);
    
-   edje_object_part_drag_value_set(oe, "video_speed", 0.0, 11.0 / 20.0);
+   edje_object_part_drag_value_set(oe, "video_speed", 0.0, 1.0);
    edje_object_part_text_set(oe, "video_speed_txt", "1.0");
 
    edje_object_signal_emit(o, "video_state", "play");
