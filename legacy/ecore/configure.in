@@ -552,17 +552,13 @@ if test "x$have_ecore_config" = "xyes"; then
      AC_PATH_PROG(PROG_EDB_CONFIG, $PROG, "", $PATH)
    ])
    if [ test -z "$EDB_CONFIG" ]; then EDB_CONFIG=$PROG_EDB_CONFIG; fi
-   if test -x "$EDB_CONFIG"; then
-     edb_cflags=`$EDB_CONFIG --cflags`
-     edb_libs=`$EDB_CONFIG --libs`
-     AM_CONDITIONAL(BUILD_ECORE_CONFIG, true)
-     ecore_config_libs="-lecore_config";
-     AC_DEFINE(BUILD_ECORE_CONFIG, 1, [Build Ecore_Config Module])
-     AC_SUBST(edb_libs)
-     AC_SUBST(edb_cflags)
-   else
-     AM_CONDITIONAL(BUILD_ECORE_CONFIG, false)     
-   fi
+   edb_cflags=`$EDB_CONFIG --cflags`
+   edb_libs=`$EDB_CONFIG --libs`
+   AM_CONDITIONAL(BUILD_ECORE_CONFIG, true)
+   ecore_config_libs="-lecore_config";
+   AC_DEFINE(BUILD_ECORE_CONFIG, 1, [Build Ecore_Config Module])
+   AC_SUBST(edb_libs)
+   AC_SUBST(edb_cflags)
 else
   AM_CONDITIONAL(BUILD_ECORE_CONFIG, false)
 fi
