@@ -169,10 +169,10 @@ _ecore_signal_call(void)
 		    }
 		  e->pid = pid;
 		  e->exe = _ecore_exe_find(pid);
-
-          if (sigchld_info.si_signo)
-             e->data = sigchld_info;
-
+		  
+		  if (sigchld_info.si_signo)
+		    e->data = sigchld_info;
+		  
 		  _ecore_event_add(ECORE_EVENT_EXE_EXIT, e, 
 				   _ecore_event_exe_exit_free, NULL);
 	       }

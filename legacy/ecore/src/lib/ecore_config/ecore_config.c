@@ -1233,8 +1233,11 @@ ecore_config_deaf(const char *name, const char *key,
    if (!(e = ecore_config_get(key)))
       return ECORE_CONFIG_ERR_NOTFOUND;
 
-   for (p = NULL, l = e->listeners; l; p = l, l = l->next)
+   for (p = NULL, l = e->listeners; l; p = l)
      {
+	Ecore_Config_Listener_List *nl;
+	
+	nl = l->next;
 	if ((name && !strcmp(l->name, name)) || (l->listener == listener))
 	  {
 	     ret = ECORE_CONFIG_ERR_SUCC;
@@ -1245,6 +1248,7 @@ ecore_config_deaf(const char *name, const char *key,
 	     memset(l, 0, sizeof(Ecore_Config_Listener));
 	     free(l);
 	  }
+	l = nl;
      }
 
    return ret;
