@@ -47,12 +47,16 @@ typedef struct _Ecore_Fb_Event_Mouse_Move        Ecore_Fb_Event_Mouse_Move; /**<
 
 struct _Ecore_Fb_Event_Key_Down /** FB Key Down event */
 {
-   char   *keyname; /**< The name of the key that was prerssed */
+   char   *keyname; /**< The name of the key that was pressed */
+   char   *keysymbol; /**< The logical symbol of the key that was pressed */
+   char   *key_compose; /**< The UTF-8 string conversion if any */
 };
    
 struct _Ecore_Fb_Event_Key_Up /** FB Key Up event */
 {
    char   *keyname; /**< The name of the key that was released */
+   char   *keysymbol; /**< The logical symbol of the key that was pressed */
+   char   *key_compose; /**< The UTF-8 string conversion if any */
 };
    
 struct _Ecore_Fb_Event_Mouse_Button_Down /** FB Mouse Down event */
