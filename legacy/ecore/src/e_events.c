@@ -255,7 +255,7 @@ e_event_loop(void)
 	/* fd's are active */
 	if (count > 0)
 	  {
-	     /* for every fd handler - if its fd si set - call the func */
+	     /* for every fd handler - if its fd is set - call the func */
 	     for (fd_h = fd_handlers; fd_h;)
 	       {
 		  Ev_Fd_Handler      *fdh;
@@ -263,7 +263,7 @@ e_event_loop(void)
 		  fdh = fd_h;
 		  fd_h = fd_h->next;
 		  if (FD_ISSET(fdh->fd, &fdset))
-		     fdh->func(fdh->fd);
+		    fdh->func(fdh->fd);
 	       }
 	  }
 	if (events)
