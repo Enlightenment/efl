@@ -719,6 +719,111 @@ evas_list_reverse(Evas_List *list)
    return list;
 }
 
+static Evas_List *
+evas_list_combine(Evas_List *l, Evas_List *ll, int (*func)(void *, void*))
+{
+    Evas_List *result = NULL;
+    Evas_List *l_head = NULL, *ll_head = NULL;
+
+    l_head = l;
+    ll_head = ll;
+    while(l && ll)
+    {
+	switch(func(l->data, ll->data))
+	    {
+		case -1:
+		    result = evas_list_append(result, l->data);
+		    l = evas_list_next(l);
+		    break;
+		case 0:
+		    result = evas_list_append(result, l->data);
+		    l = evas_list_next(l);
+		    result = evas_list_append(result, ll->data);
+		    ll = evas_list_next(ll);
+		    break;
+		case 1:
+		    result = evas_list_append(result, ll->data);
+		    ll = evas_list_next(ll);
+		    break;
+	    }
+    }
+    while(l)
+    {
+	result = evas_list_append(result, l->data);
+	l = evas_list_next(l);
+    }
+    evas_list_free(l_head);
+    while(ll)
+    {
+	result = evas_list_append(result, ll->data);
+	ll = evas_list_next(ll);
+    }
+    evas_list_free(ll_head);
+    return(result);
+}
+
+/**
+ * Sort a list according to the ordering func will return
+ * @param list The list handle to sort
+ * @param size The length of the list to sort
+ * @param func A function pointer that can handle comparing the list data
+ * nodes
+ * @return A new sorted list
+ * 
+ * This function sorts your list.  The data in your nodes can be arbitrary,
+ * you just have to be smart enough to know what kind of data is in your
+ * lists
+ * 
+ * In the event of a memory allocation failure, It might segv.
+ * 
+ * Example:
+ * @code
+ * int
+ * sort_cb(void *d1, void *d2)
+ * {
+ *   const char *txt = NULL;
+ *    const char *txt2 = NULL;
+ *
+ *    if(!d1) return(1);
+ *    if(!d2) return(-1);
+ *
+ *    return(strcmp((const char*)d1, (const char*)d2));
+ * }
+ * extern Evas_List *list;
+ * 
+ * list = evas_list_sort(list, evas_list_count(list), sort_cb);
+ * if (evas_list_alloc_error())
+ *   {
+ *     fprintf(stderr, "ERROR: Memory is low. List Sorting failed.\n");
+ *     exit(-1);
+ *   }
+ * @endcode
+ */
+Evas_List *
+evas_list_sort(Evas_List *list, int size, int (*func)(void *, void *))
+{
+    Evas_List *l = NULL, *ll = NULL;
+    int range = (size / 2);
+
+    if(range > 0)
+    {
+	/* bleh evas list splicing */
+	ll = evas_list_nth_list(list, range);
+	if(ll->prev)
+	{
+	    list->last = ll->prev;
+	    list->count = size - range;
+	}
+	ll->prev->next = NULL;
+	ll->count = range;
+
+	/* merge sort */
+	l = evas_list_sort(list, range, func);
+	ll = evas_list_sort(ll, size - range, func);
+	list = evas_list_combine(l, ll, func);
+    }
+    return(list);
+}
 /**
  * Return the memory allocation failure flag after any operation needin allocation
  * @return The state of the allocation flag

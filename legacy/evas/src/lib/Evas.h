@@ -258,6 +258,7 @@ extern "C" {
    void             *evas_list_nth                     (Evas_List *list, int n);
    Evas_List        *evas_list_nth_list                (Evas_List *list, int n);
    Evas_List        *evas_list_reverse                 (Evas_List *list);
+   Evas_List        *evas_list_sort		       (Evas_List *list, int size, int(*func)(void*,void*));
    int               evas_list_alloc_error             (void);
        
    /* FIXME: add:
