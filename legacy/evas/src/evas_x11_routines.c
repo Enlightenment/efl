@@ -782,28 +782,28 @@ int
 __evas_x11_text_font_get_ascent(Evas_X11_Font *fn)
 {
    if (!fn) return 0;
-   return fn->ascent;
+   return fn->ascent / 64;
 }
 
 int
 __evas_x11_text_font_get_descent(Evas_X11_Font *fn)
 {
    if (!fn) return 0;
-   return fn->descent;
+   return fn->descent / 64;
 }
 
 int
 __evas_x11_text_font_get_max_ascent(Evas_X11_Font *fn)
 {
    if (!fn) return 0;
-   return fn->max_ascent;
+   return fn->max_ascent / 64;
 }
 
 int
 __evas_x11_text_font_get_max_descent(Evas_X11_Font *fn)
 {
    if (!fn) return 0;
-   return fn->max_descent;
+   return fn->max_descent / 64;
 }
 
 void
