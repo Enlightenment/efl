@@ -12,6 +12,7 @@ Requires:
 Optional:
 
   X11R6
+  XCB
   DirectFB
   OpenGL (underway at the moment)
   Linux
@@ -100,8 +101,13 @@ ENGINES:
 this enables the software x11 rendering engine that renders to X drawable
 targets using highly optimised software routines. there is no hardware
 assist here. this engine requires X11 to be installed to build (and run).
-This si a godo generic engine that is fast and can run in X for good
+This is a godo generic engine that is fast and can run in X for good
 development and debugging purposes.
+
+--enable-software-xcb
+this enable the software xcb rendering engine. It allows the same
+features than the software x11 engine. It require the XCB and XCBImage
+libraries. For the test programs, XCBICCCM is also needed.
 
 --enable-fb
 
