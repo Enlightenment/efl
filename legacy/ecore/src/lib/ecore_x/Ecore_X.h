@@ -872,7 +872,7 @@ EAPI int              ecore_x_window_prop_card32_get(Ecore_X_Window win, Ecore_X
 			       unsigned int *val, unsigned int len);
 EAPI void             ecore_x_window_prop_property_del(Ecore_X_Window win, Ecore_X_Atom property);
 EAPI void             ecore_x_window_prop_property_notify(Ecore_X_Window win, const char *type, long *data);
-EAPI void             ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom type, char *str);
+EAPI void             ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom type, const char *str);
 EAPI char            *ecore_x_window_prop_string_get(Ecore_X_Window win, Ecore_X_Atom type);
 EAPI void             ecore_x_window_prop_title_set(Ecore_X_Window win, const char *t);
 EAPI char            *ecore_x_window_prop_title_get(Ecore_X_Window win);

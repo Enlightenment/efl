@@ -157,12 +157,12 @@ ecore_x_window_prop_property_notify(Ecore_X_Window win, const char *type, long *
  * Set a window string property
  */
 void
-ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom type, char *str)
+ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom type, const char *str)
 {
    XTextProperty       xtp;
 
    if (win == 0) win = DefaultRootWindow(_ecore_x_disp);
-   xtp.value = str;
+   xtp.value = (char*)str;
    xtp.format = 8;
    xtp.encoding = ECORE_X_ATOM_UTF8_STRING;
    xtp.nitems = strlen(str);
