@@ -487,7 +487,8 @@ edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
        (!strcmp(rp->text.text, text)))
      return;
    if (rp->text.text) free(rp->text.text);
-   rp->text.text = strdup(text);
+   if (text) rp->text.text = strdup(text);
+   else rp->text.text = NULL;
    ed->dirty = 1;
    _edje_recalc(ed);
    if (ed->text_change.func) ed->text_change.func(ed->text_change.data, obj, part);
