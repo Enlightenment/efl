@@ -1291,7 +1291,10 @@ evas_object_text_render_pre(Evas_Object *obj)
 	if ((o->cur.size != o->prev.size) ||
 	    ((o->cur.font) && (o->prev.font) && (strcmp(o->cur.font, o->prev.font))) ||
 	    ((o->cur.font) && (!o->prev.font)) ||
-	    ((!o->cur.font) && (o->prev.font)))
+	    ((!o->cur.font) && (o->prev.font)) ||
+	    ((o->cur.text) && (o->prev.text) && (strcmp(o->cur.text, o->prev.text))) ||
+	    ((o->cur.text) && (!o->prev.text)) ||
+	    ((!o->cur.text) && (o->prev.text)))
 	  {
 	     updates = evas_object_render_pre_prev_cur_add(updates, obj);
 	     goto done;
