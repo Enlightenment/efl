@@ -58,7 +58,7 @@ char            **__evas_imlib_text_font_list_paths(int *count);
 void              __evas_imlib_text_cache_empty(Display *disp);
 void              __evas_imlib_text_cache_set_size(Display *disp, int size);
 int               __evas_imlib_text_cache_get_size(Display *disp);
-void              __evas_imlib_text_draw(Evas_Imlib_Font *fn, Display *disp, Window win, int x, int y, char *text, int r, int g, int b, int a);
+void              __evas_imlib_text_draw(Evas_Imlib_Font *fn, Display *disp, Window win, int win_w, int win_h, int x, int y, char *text, int r, int g, int b, int a);
 
 /**************/
 /* rectangles */

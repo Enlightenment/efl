@@ -1,4 +1,7 @@
 #include "evas_gl_routines.h"
+#include <sys/stat.h>
+#include <unistd.h>
+#include <sys/types.h>
 
 static int __evas_gl_configuration[] = 
 {
@@ -25,9 +28,13 @@ static void __evas_gl_text_font_raster_free(TT_Raster_Map * rmap);
 static void __evas_gl_text_font_path_add(const char *path);
 static void __evas_gl_text_font_path_del(const char *path);
 static char **__evas_gl_text_font_path_list(int *num_ret);
+static int __evas_gl_is_file(char *file);
 static Evas_GL_Font *__evas_gl_text_font_load(char *font, int size);
 static void __evas_gl_text_calc_size(Evas_GL_Font *f, int *width, int *height, char *text);
 static void __evas_gl_text_font_destroy(Evas_GL_Font *font);
+static void __evas_gl_text_paste(Evas_GL_Font *f, char *text,
+				 Display *disp, Window w, int win_w, int win_h,
+				 int x, int y, int r, int g, int b, int a);
 
 
 static XVisualInfo *__evas_vi               = NULL;
@@ -37,6 +44,9 @@ static Evas_List    __evas_images           = NULL;
 static int          __evas_image_cache_max  = 16 *1024 * 1024;
 static int          __evas_image_cache_used = 0;
 
+static Display    *__evas_current_disp      = NULL;
+static Window      __evas_current_win       = 0;
+
 static Evas_List   __evas_fonts = NULL;
 static int         __evas_fpath_num = 0;
 static char      **__evas_fpath = NULL;
@@ -45,7 +55,7 @@ static char        __evas_have_engine = 0;
 static int         __evas_font_cache_max = 512 * 1024;
 static int         __evas_font_cache_used = 0;
 
-const int          __evas_rend_lut[9] = { 0, 64, 128, 192, 256, 256, 256, 256, 256};
+const int          __evas_rend_lut[9] = { 0, 64, 128, 192, 255, 255, 255, 255, 255};
 
 #define TT_VALID( handle )  ( ( handle ).z != NULL )
 
@@ -174,12 +184,16 @@ __evas_gl_image_move_state_data_to_texture(Evas_GL_Image *im)
 	im->buffer.window = __evas_context_window;
 	im->texture.textures = malloc(sizeof(GLuint) * im->texture.w * im->texture.h);
 	glXMakeCurrent(im->buffer.display, im->buffer.window, im->context);
+	__evas_current_disp = im->buffer.display;
+	__evas_current_win = im->buffer.window;
      }
    else
      {
 	im->buffer.window = __evas_context_window;
 	im->texture.textures = malloc(sizeof(GLuint) * im->texture.w * im->texture.h);
 	glXMakeCurrent(im->buffer.display, im->buffer.window, im->context);
+	__evas_current_disp = im->buffer.display;
+	__evas_current_win = im->buffer.window;
      }
    glGenTextures(im->texture.w * im->texture.h, im->texture.textures);
    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
@@ -276,9 +290,11 @@ static void
 __evas_gl_image_set_context_for_dest(Evas_GL_Image *im, Display *disp, Window w,
 				     int win_w, int win_h)
 {
-   if (im->buffer.dest != w)
+   if ((__evas_current_win != w) || (__evas_current_disp != disp))
      {
 	glXMakeCurrent(disp, w, im->context);
+	__evas_current_disp = disp;
+	__evas_current_win = w;
 	im->buffer.dest = w;
      }
    if (im->alpha)
@@ -430,6 +446,7 @@ __evas_gl_image_draw(Evas_GL_Image *im,
    
    dh = (((double)dst_h * (double)im->h)/ (double)src_h);
    dy = (double)dst_y - (((double)dst_h * (double)src_y)/ (double)src_h);
+   glColor4f(1.0, 1.0, 1.0, 1.0);
    for (y = 0, i = 0; y < im->texture.h; y++)
      {
 	for (x = 0; x < im->texture.w; x++, i++)
@@ -587,6 +604,104 @@ __evas_gl_image_get_height(Evas_GL_Image *im)
 /*****************************************************************************/
 
 
+
+static void
+__evas_gl_text_paste(Evas_GL_Font *f, char *text,
+		     Display *disp, Window win, int win_w, int win_h,
+		     int x, int y, int r, int g, int b, int a)
+{
+   int                 i, j, off, rows, adj, w, h;
+   int                 x_offset, y_offset;
+   TT_F26Dot6          xx, yy, xmin, ymin, xmax, ymax;
+   TT_Glyph_Metrics    metrics;
+   float               rr, gg, bb, aa;
+   GLuint              last_tex;
+   
+   j = text[0];
+   TT_Get_Glyph_Metrics(f->glyphs[j], &metrics);
+   x_offset = (-metrics.bearingX) / 64;
+   y_offset = -(f->max_descent / 64);
+
+   if ((__evas_current_win != win) || (__evas_current_disp != disp))
+     {
+	glXMakeCurrent(disp, win, f->context);
+	__evas_current_disp = disp;
+	__evas_current_win = win;
+	f->buffer.dest = win;
+     }
+   glEnable(GL_BLEND);
+   glEnable(GL_TEXTURE_2D);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+   glEnable(GL_DITHER);
+   glShadeModel(GL_FLAT);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+   glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+   rr = (float)r / 255;
+   gg = (float)g / 255;
+   bb = (float)b / 255;
+   aa = (float)a / 255;
+   glColor4f(rr, gg, bb, aa);
+   if ((win_w != f->buffer.dest_w) || (win_h != f->buffer.dest_h))
+     {
+	glViewport(0, 0, win_w, win_h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, win_w, 0, win_h, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glScalef(1, -1, 1);
+	glTranslatef(0, -win_h, 0);
+	f->buffer.dest_w = win_w;
+	f->buffer.dest_h = win_h;
+     }
+
+   __evas_gl_text_calc_size(f, &w, &h, text);
+   rows = h;
+   glBindTexture(GL_TEXTURE_2D, f->glyphinfo[j].texture);
+   last_tex = f->glyphinfo[j].texture;
+   for (i = 0; text[i]; i++)
+     {
+	j = text[i];
+	if (!TT_VALID(f->glyphs[j]))
+	   continue;
+	
+	TT_Get_Glyph_Metrics(f->glyphs[j], &metrics);
+	
+	xmin = metrics.bbox.xMin & -64;
+	ymin = metrics.bbox.yMin & -64;
+	xmax = (metrics.bbox.xMax + 63) & -64;
+	ymax = (metrics.bbox.yMax + 63) & -64;
+
+	xmin = (xmin >> 6) + x_offset;
+	ymin = (ymin >> 6) + y_offset;
+	xmax = (xmax >> 6) + x_offset;
+	ymax = (ymax >> 6) + y_offset;
+
+	if (last_tex != f->glyphinfo[j].texture)
+	  {
+	     glBindTexture(GL_TEXTURE_2D, f->glyphinfo[j].texture);
+	     last_tex = f->glyphinfo[j].texture;
+	  }
+	if (ymin < 0) off = 0;
+	else off = rows - ymin - 1;
+	adj = (rows - ymax) - ((f->max_ascent - f->max_descent) >> 6);
+	
+	glBegin(GL_QUADS);
+	glTexCoord2d(f->glyphinfo[j].x1, f->glyphinfo[j].y1); 
+	glVertex2i(x + xmin,     y + ymin + off + adj);
+	glTexCoord2d(f->glyphinfo[j].x2, f->glyphinfo[j].y1); 
+	glVertex2i(x + xmax + 1, y + ymin + off + adj);
+	glTexCoord2d(f->glyphinfo[j].x2, f->glyphinfo[j].y2); 
+	glVertex2i(x + xmax + 1, y + ymax + off + adj + 1);
+	glTexCoord2d(f->glyphinfo[j].x1, f->glyphinfo[j].y2); 
+	glVertex2i(x + xmin,     y + ymax + off + adj + 1);
+	glEnd();
+	
+	x_offset += metrics.advance / 64;
+     }
+}
+
 static void
 __evas_gl_text_font_render_textures(Evas_GL_Font *f)
 {
@@ -635,9 +750,10 @@ __evas_gl_text_font_render_textures(Evas_GL_Font *f)
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-   for (k = 0, i = 0; i < f->num_glyph; i++)
+   for (j = 0, k = 0, i = 0; i < f->num_glyph; i++)
      {
-	int w, h, xmin, ymin, xmax, ymax;
+	TT_F26Dot6          xmin, ymin, xmax, ymax;
+	int w, h;
 	TT_Raster_Map      *rtmp;
 	
 	if (TT_VALID(f->glyphs[i]))
@@ -658,20 +774,27 @@ __evas_gl_text_font_render_textures(Evas_GL_Font *f)
 		  TT_Get_Glyph_Pixmap(f->glyphs[i], rtmp, -xmin, -ymin);
 		  f->glyphinfo[i].texture = f->textures[j];
 		  f->glyphinfo[i].px = c * maxw;
-		  f->glyphinfo[i].px = r * maxh;
+		  f->glyphinfo[i].py = r * maxh;
 		  f->glyphinfo[i].pw = w;
 		  f->glyphinfo[i].ph = h;
-		  f->glyphinfo[i].x1 = (double)f->glyphinfo[i].px / (double)f->max_texture_size;
-		  f->glyphinfo[i].y1 = (double)f->glyphinfo[i].py / (double)f->max_texture_size;
-		  f->glyphinfo[i].x2 = (double)(f->glyphinfo[i].px + w) / (double)f->max_texture_size;
-		  f->glyphinfo[i].y2 = (double)(f->glyphinfo[i].py + h) / (double)f->max_texture_size;
+		  f->glyphinfo[i].x1 = ((double)f->glyphinfo[i].px / 
+					(double)f->max_texture_size);
+		  f->glyphinfo[i].y1 = ((double)f->glyphinfo[i].py / 
+					(double)f->max_texture_size);
+		  f->glyphinfo[i].x2 = ((double)(f->glyphinfo[i].px + w) / 
+					(double)f->max_texture_size);
+		  f->glyphinfo[i].y2 = ((double)(f->glyphinfo[i].py + h) / 
+					(double)f->max_texture_size);
 		  
 		  for (y = 0; y < h; y++)
 		    {
 		       for (x = 0; x < w; x++)
 			 {
-			    data[(((f->glyphinfo[i].py + y) << 8) + f->glyphinfo[i].px + x)] = 
-			       __evas_rend_lut[(int)(((unsigned char *)(rtmp->bitmap))[(y * w) + x])];
+			    int val, rval;
+			    
+			    rval = (int)(((unsigned char *)(rtmp->bitmap))[((rtmp->rows - y -1) * rtmp->cols) + x]);
+			    val = __evas_rend_lut[rval];
+			    data[(((f->glyphinfo[i].py + y) << 8) + f->glyphinfo[i].px + x)] = val;
 			 }
 		    }
 		  __evas_gl_text_font_raster_free(rtmp);
@@ -791,6 +914,16 @@ __evas_gl_text_font_path_list(int *num_ret)
    return __evas_fpath;
 }
 
+static int
+__evas_gl_is_file(char *file)
+{
+   struct stat         st;
+
+   if (stat(file, &st) < 0)
+      return 0;
+   return 1;
+}
+
 static Evas_GL_Font *
 __evas_gl_text_font_load(char *font, int size)
 {
@@ -817,17 +950,17 @@ __evas_gl_text_font_load(char *font, int size)
    if (!tmp)
       return NULL;
    sprintf(tmp, "%s.ttf", font);
-   if (__imlib_FileIsFile(tmp))
+   if (__evas_gl_is_file(tmp))
       file = strdup(tmp);
    else
      {
 	sprintf(tmp, "%s.TTF", font);
-	if (__imlib_FileIsFile(tmp))
+	if (__evas_gl_is_file(tmp))
 	   file = strdup(tmp);
 	else
 	  {
 	     sprintf(tmp, "%s", font);
-	     if (__imlib_FileIsFile(tmp))
+	     if (__evas_gl_is_file(tmp))
 		file = strdup(tmp);
 	  }
      }
@@ -842,17 +975,17 @@ __evas_gl_text_font_load(char *font, int size)
 	     else
 	       {
 		  sprintf(tmp, "%s/%s.ttf", __evas_fpath[j], font);
-		  if (__imlib_FileIsFile(tmp))
+		  if (__evas_gl_is_file(tmp))
 		     file = strdup(tmp);
 		  else
 		    {
 		       sprintf(tmp, "%s/%s.TTF", __evas_fpath[j], font);
-		       if (__imlib_FileIsFile(tmp))
+		       if (__evas_gl_is_file(tmp))
 			  file = strdup(tmp);
 		       else
 			 {
 			    sprintf(tmp, "%s/%s", __evas_fpath[j], font);
-			    if (__imlib_FileIsFile(tmp))
+			    if (__evas_gl_is_file(tmp))
 			       file = strdup(tmp);
 			 }
 		    }
@@ -1002,182 +1135,6 @@ __evas_gl_text_calc_size(Evas_GL_Font *f, int *width, int *height, char *text)
    *height = ph;
 }
 
-#if 0
-static void
-__imlib_render_str(ImlibImage *im, ImlibFont *fn, int drx, int dry, const char *text,
-		   DATA8 r, DATA8 g, DATA8 b, DATA8 a,
-		   char dir, double angle, int *retw, int *reth, int blur,
-		   int *nextx, int *nexty, ImlibOp op)
-{
-   DATA32              lut[9], *p, *tmp;
-   TT_Glyph_Metrics    metrics;
-   TT_F26Dot6          x, y, xmin, ymin, xmax, ymax;
-   int                 w, h, i, ioff, iread, tw, th;
-   char               *off, *read, *_off, *_read;
-   int                 x_offset, y_offset;
-   unsigned char       j;
-   TT_Raster_Map      *rtmp = NULL, *rmap;
-   ImlibImage          im2;
-   
-   /* get offset of first char */
-   j = text[0];
-   TT_Get_Glyph_Metrics(fn->glyphs[j], &metrics);
-   x_offset = (-metrics.bearingX) / 64;
-   y_offset = -(fn->max_descent / 64);
-   
-   /* figure out the size this text string is going to be */
-   __imlib_calc_size(fn, &w, &h, text);
-   tw = w; th = h;
-
-   if (retw)
-      *retw = tw;
-   if (reth)
-      *reth = th;
-   if (nexty)
-      *nexty = fn->ascent + fn->descent;
-   if (nextx)
-     {
-	j = text[strlen(text) - 1];
-	TT_Get_Glyph_Metrics(fn->glyphs[j], &metrics);
-	*nextx = w - x_offset + (metrics.advance / 64) -
-	   (metrics.bbox.xMax / 64);
-     }
-
-   /* if the text is completely outside the image - give up */
-   if (((drx + tw) <= 0) || ((dry + th) <= 0))
-      return;
-   /* create a scratch pad for it */
-   rmap = __imlib_create_font_raster(w, h);
-   if (rmap)
-     {
-	rmap->flow = TT_Flow_Up;
-	/* render the text into the scratch pad */
-	for (i = 0; text[i]; i++)
-	  {
-	     j = text[i];
-	     if (!TT_VALID(fn->glyphs[j]))
-		continue;
-	     TT_Get_Glyph_Metrics(fn->glyphs[j], &metrics);
-	     
-	     xmin = metrics.bbox.xMin & -64;
-	     ymin = metrics.bbox.yMin & -64;
-	     xmax = (metrics.bbox.xMax + 63) & -64;
-	     ymax = (metrics.bbox.yMax + 63) & -64;
-	     
-	     rtmp = fn->glyphs_cached_right[j];
-	     if (!rtmp)
-	       {
-		  rtmp = __imlib_create_font_raster(((xmax - xmin) / 64) + 1,
-						    ((ymax - ymin) / 64) + 1);
-		  TT_Get_Glyph_Pixmap(fn->glyphs[j], rtmp, -xmin, -ymin);
-		  fn->glyphs_cached_right[j] = rtmp;
-		  fn->mem_use +=
-		     (((xmax - xmin) / 64) + 1) *
-		     (((ymax - ymin) / 64) + 1);
-	       }
-	     if (rtmp)
-	       {
-		  
-		  /* Blit-or the resulting small pixmap into the biggest one */
-		  /* We do that by hand, and provide also clipping.          */
-		  
-		  xmin = (xmin >> 6) + x_offset;
-		  ymin = (ymin >> 6) + y_offset;
-		  xmax = (xmax >> 6) + x_offset;
-		  ymax = (ymax >> 6) + y_offset;
-		  
-		  /* Take care of comparing xmin and ymin with signed values!  */
-		  /* This was the cause of strange misplacements when Bit.rows */
-		  /* was unsigned.                                             */
-		  
-		  if ((xmin >= (int)rmap->width) || (ymin >= (int)rmap->rows) ||
-		      (xmax < 0) || (ymax < 0))
-		     continue;
-		  
-		  /* Note that the clipping check is performed _after_ rendering */
-		  /* the glyph in the small bitmap to let this function return   */
-		  /* potential error codes for all glyphs, even hidden ones.     */
-		  
-		  /* In exotic glyphs, the bounding box may be larger than the   */
-		  /* size of the small pixmap.  Take care of that here.          */
-		  
-		  if (xmax - xmin + 1 > rtmp->width)
-		     xmax = xmin + rtmp->width - 1;
-		  if (ymax - ymin + 1 > rtmp->rows)
-		     ymax = ymin + rtmp->rows - 1;
-		  
-		  /* set up clipping and cursors */
-		  iread = 0;
-		  if (ymin < 0)
-		    {
-		       iread -= ymin * rtmp->cols;
-		       ioff = 0;
-		       ymin = 0;
-		    }
-		  else
-		     ioff = (rmap->rows - ymin - 1) * rmap->cols;
-		  if (ymax >= rmap->rows)
-		     ymax = rmap->rows - 1;
-		  
-		  if (xmin < 0)
-		    {
-		       iread -= xmin;
-		       xmin = 0;
-		    }
-		  else
-		     ioff += xmin;
-		  if (xmax >= rmap->width)
-		     xmax = rmap->width - 1;
-		  
-		  _read = (char *)rtmp->bitmap + iread;
-		  _off = (char *)rmap->bitmap + ioff;
-		  for (y = ymin; y <= ymax; y++)
-		    {
-		       read = _read;
-		       off = _off;
-		       
-		       for (x = xmin; x <= xmax; x++)
-			 {
-			    *off |= *read;
-			    off++;
-			    read++;
-			 }
-		       _read += rtmp->cols;
-		       _off -= rmap->cols;
-		    }
-	       }
-	     x_offset += metrics.advance / 64;
-	  }
-	/* temporary RGBA buffer to build */
-	if ((rmap->rows > 0) && (rmap->cols > 0))
-	  {
-	     tmp = malloc(rmap->rows * rmap->cols * sizeof(DATA32));
-	     p = tmp;
-	     read = rmap->bitmap;
-	     /* build the buffer */
-	     for (x = 0; x < rmap->size; x++)
-	       {
-		  *p = lut[(int)(*read)];
-		  p++;
-		  read++;
-	       }
-	     /* blend buffer onto image */
-	     im2.data = tmp;
-	     im2.w = rmap->cols;
-	     im2.h = rmap->rows;
-	     angle = 0.0;
-	     tmp = im2.data;
-	     __imlib_BlendRGBAToData(tmp, im2.w, im2.h,
-				     im->data, im->w, im->h,
-				     0, 0, drx, dry, im2.w, im2.h,
-				     1, IMAGE_HAS_ALPHA(im), NULL, op, 0);
-	  }
-	free(tmp);
-     }
-   __imlib_destroy_font_raster(rmap);
-}
-#endif
-
 static void
 __evas_gl_text_font_destroy(Evas_GL_Font *font)
 {
@@ -1228,6 +1185,7 @@ __evas_gl_text_font_new(Display *disp, char *font, int size)
 	  }	    
      }
    f = __evas_gl_text_font_load(font, size);
+   if (!f) return NULL;
    f->context = __evas_gl_cx;
    f->max_texture_size = 256;
    f->buffer.display = disp;
@@ -1274,16 +1232,19 @@ __evas_gl_text_font_free(Evas_GL_Font *fn)
 void
 __evas_gl_text_font_add_path(char *path)
 {
+   __evas_gl_text_font_path_add(path);
 }
 
 void
 __evas_gl_text_font_del_path(char *path)
 {
+   __evas_gl_text_font_path_del(path);
 }
 
 char **
 __evas_gl_text_font_list_paths(int *count)
 {
+   return __evas_gl_text_font_path_list(count);
 }
 
 void
@@ -1302,9 +1263,12 @@ __evas_gl_text_cache_get_size(Display *disp)
 }
 
 void
-__evas_gl_text_draw(Evas_GL_Font *fn, Display *disp, Window win, int x, int y,
-		    char *text, int r, int g, int b, int a)
+__evas_gl_text_draw(Evas_GL_Font *fn, Display *disp, Window win, 
+		    int win_w, int win_h, int x, int y, char *text, 
+		    int r, int g, int b, int a)
 {
+   if ((!fn) || (!text)) return;
+   __evas_gl_text_paste(fn, text, disp, win, win_w, win_h, x, y, r, g, b, a);
 }
 
 

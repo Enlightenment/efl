@@ -208,8 +208,9 @@ __evas_imlib_text_cache_get_size(Display *disp)
 }
 
 void
-__evas_imlib_text_draw(Evas_Imlib_Font *fn, Display *disp, Window win, int x, int y,
-		    char *text, int r, int g, int b, int a)
+__evas_imlib_text_draw(Evas_Imlib_Font *fn, Display *disp, Window win, 
+		       int win_w, int win_h, int x, int y, char *text, 
+		       int r, int g, int b, int a)
 {
 }
 
