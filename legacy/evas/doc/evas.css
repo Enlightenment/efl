@@ -1,55 +1,163 @@
-H1 { text-align: center; color: #333333}
-CAPTION { font-weight: bold }
-A:link { text-decoration: none; color: #444444; }
-A:visited { text-decoration: none; color: #666666; }
-A:hover { text-decoration: none; color: #ffffff; }
-A.qindex { text-decoration: none; }
-A.qindexRef { text-decoration: none; }
-A.el { text-decoration: none; color: #555555; }
-A.elRef { text-decoration: none; color: #555555; }
-A.code { text-decoration: none; font-weight: normal; color: #555555; }
-A.codeRef { text-decoration: none; font-weight: normal; color: #555555; }
-DL.el { margin-left: -1cm }
-DIV.fragment { width: 100%; border: none; background-color: #dddddd }
-DIV.ah { background-color: black; color: #eeeeee; margin-bottom: 3px; margin-top: 3px }
-TD.md { background-color: #aaaaaa; color: #000088; }
-TD.mdname1 { color: #880000; }
-TD.mdname { color: #880000; width: 600px; }
-DIV.groupHeader { margin-left: 10px; margin-top: 10px; margin-bottom: 10px; font-weight: bold }
-DIV.groupText { margin-left: 10px; font-style: italic; font-size: smaller }
-BODY { 
-   background: #999999;
-   color:      #222222;
-   font-family: times;
+td.md { 
+ border: thin solid #000000;
+ background-color: #ffffff;
+ text-align: left;
+ vertical-align: center;
+ font-size: 12;
+ padding-right  : 4px; 
+ padding-top    : 4px; 
+ padding-left   : 4px; 
+ padding-bottom : 4px; 
+ margin-left    : 4px; 
+ margin-right   : 4px; 
+ margin-top     : 4px; 
+ margin-bottom  : 4px  
 }
-TD.indexkey { 
-   background-color: #99aaaa; 
-   font-weight: bold; 
-   padding-right  : 10px; 
-   padding-top    : 2px; 
-   padding-left   : 10px; 
-   padding-bottom : 2px; 
-   margin-left    : 0px; 
-   margin-right   : 0px; 
-   margin-top     : 2px; 
-   margin-bottom  : 2px  
+h1
+{
+ text-align: center;
+ color: #333333
 }
-TD.indexvalue { 
-   background-color: #aa99aa; 
-   font-style: italic; 
-   padding-right  : 10px; 
-   padding-top    : 2px; 
-   padding-left   : 10px; 
-   padding-bottom : 2px; 
-   margin-left    : 0px; 
-   margin-right   : 0px; 
-   margin-top     : 2px; 
-   margin-bottom  : 2px  
+h2
+{
+ text-align: left;
+ color: #333333
 }
-span.keyword       { color: #008000 }
-span.keywordtype   { color: #604020 }
-span.keywordflow   { color: #e08000 }
-span.comment       { color: #800000 }
-span.preprocessor  { color: #806020 }
-span.stringliteral { color: #002080 }
-span.charliteral   { color: #008080 }
+h3
+{
+ text-align: left;
+ color: #333333
+}
+a:link
+{
+ text-decoration: none;
+ color: #444444;
+ font-weight: bold;
+}
+a:visited
+{
+ text-decoration: none;
+ color: #666666;
+ font-weight: bold;
+}
+a:hover
+{
+ text-decoration: none;
+ color: #000000;
+ font-weight: bold;
+}
+a.nav:link
+{
+ text-decoration: none;
+ color: #444444;
+ font-weight: normal;
+}
+a.nav:visited
+{
+ text-decoration: none;
+ color: #666666;
+ font-weight: normal;
+}
+a.nav:hover
+{
+ text-decoration: none;
+ color: #000000;
+ font-weight: normal;
+}
+a.qindex:link
+{
+ text-decoration: none;
+ color: #444444;
+ font-weight: normal;
+}
+a.qindex:visited
+{
+ text-decoration: none;
+ color: #666666;
+ font-weight: normal;
+}
+a.qindex:hover
+{
+ text-decoration: none;
+ color: #000000;
+ font-weight: normal;
+}
+p
+{
+ color: #000000;
+ font-family: helvetica;
+ font-size: 10;
+}
+body { 
+ background-image: url("hilite.png");
+ background-repeat: no-repeat;
+ background-position: left top;
+ background-color: #dddddd;
+ color: #000000;
+ font-family: helvetica;
+ padding: 8px;
+ margin: 0;
+}
+div.fragment
+{
+ background-image: url("hilite.png");
+ background-repeat: no-repeat;
+ background-position: left top;
+ border: thin solid #000000;
+ background-color: #eeeeee;
+ padding: 4px;
+ text-align: left;
+ vertical-align: center;
+ font-size: 12;
+}
+hr
+{
+ border: 0;
+ background-color: #000000;
+ width: 80%;
+ height: 1;
+}
+dl
+{
+ background-image: url("hilite.png");
+ background-repeat: no-repeat;
+ background-position: left top;
+ border: thin solid #000000;
+ background-color: #eeeeee;
+ padding: 4px;
+ text-align: left;
+ vertical-align: center;
+ font-size: 12;
+}
+em
+{
+  color: #000000;
+  font-family: arial,helvetica;
+  font-size: 10;
+}
+
+div.nav
+{
+ border: thin solid #000000;
+ background-color: #ffffff;
+ padding: 1px;
+ text-align: center;
+ vertical-align: center;
+ font-size: 12;
+}
+div.body
+{
+ border: thin solid #000000;
+ background-color: #ffffff;
+ padding: 4px;
+ text-align: left;
+ font-size: 10; 
+}
+div.diag
+{
+ border: thin solid #888888;
+ background-color: #eeeeee;
+ padding: 4px;
+ text-align: center;
+ font-size: 8; 
+}

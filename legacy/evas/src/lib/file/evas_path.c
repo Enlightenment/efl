@@ -15,7 +15,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 /* get the casefold feature! */
-#define _GNU_SOURCE
 #include <fnmatch.h>
 #include <dirent.h>
 

@@ -2,6 +2,8 @@
 #define EVAS_PRIVATE_H
 #endif
 
+#define _GNU_SOURCE
+
 /* complain when peole pass in wrong object types etc. */
 #define MAGIC_DEBUG
 
@@ -93,6 +95,32 @@ if (_r) \
 #define MERR_NONE() _evas_alloc_error = EVAS_ALLOC_ERROR_NONE
 #define MERR_FATAL() _evas_alloc_error = EVAS_ALLOC_ERROR_FATAL
 #define MERR_BAD() _evas_alloc_error = EVAS_ALLOC_ERROR_RECOVERED
+
+#define EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o)                              \
+   if ((o)->cur.file)                                                       \
+     {                                                                      \
+         free((o)->cur.file);                                               \
+	 if ((o)->prev.file == (o)->cur.file)                               \
+	       (o)->prev.file = NULL;                                       \
+	 (o)->cur.file = NULL;                                              \
+     }                                                                      \
+   if ((o)->cur.key)                                                        \
+     {                                                                      \
+         free((o)->cur.key);                                                \
+	 if ((o)->prev.key == (o)->cur.key)                                 \
+	       (o)->prev.key = NULL;                                        \
+	 (o)->cur.key = NULL;                                               \
+     }                                                                      \
+   if ((o)->prev.file)                                                      \
+     {                                                                      \
+         free((o)->prev.file);                                              \
+	 (o)->prev.file = NULL;                                             \
+     }                                                                      \
+   if ((o)->prev.key)                                                       \
+     {                                                                      \
+         free((o)->prev.key);                                               \
+	 (o)->prev.key = NULL;                                              \
+     }
 
 struct _Evas_Rectangle
 {

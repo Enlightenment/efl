@@ -88,33 +88,6 @@ evas_object_image_add(Evas *e)
    return obj;
 }
 
-#define EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o)                              \
-   if ((o)->cur.file)                                                       \
-     {                                                                      \
-         free((o)->cur.file);                                               \
-	 if ((o)->prev.file == (o)->cur.file)                               \
-	       (o)->prev.file = NULL;                                       \
-	 (o)->cur.file = NULL;                                              \
-     }                                                                      \
-   if ((o)->cur.key)                                                        \
-     {                                                                      \
-         free((o)->cur.key);                                                \
-	 if ((o)->prev.key == (o)->cur.key)                                 \
-	       (o)->prev.key = NULL;                                        \
-	 (o)->cur.key = NULL;                                               \
-     }                                                                      \
-   if ((o)->prev.file)                                                      \
-     {                                                                      \
-         free((o)->prev.file);                                              \
-	 (o)->prev.file = NULL;                                             \
-     }                                                                      \
-   if ((o)->prev.key)                                                       \
-     {                                                                      \
-         free((o)->prev.key);                                               \
-	 (o)->prev.key = NULL;                                              \
-     }
-
-
 void
 evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
 {

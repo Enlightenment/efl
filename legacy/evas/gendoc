@@ -6,5 +6,5 @@ for I in `find ./src/lib -name "*.c" -print`; do
 done
 rm -rf ./doc/html ./doc/latex ./doc/man
 doxygen
-cp doc/img/evas_small.png doc/html/evas_small.png
+cp doc/img/*.png doc/html/
 exit 0
