@@ -7,26 +7,26 @@ extern "C" {
 
 /***************************************************************************/
 
-#define EET_T_UNKNOW     0
-#define EET_T_CHAR       1
-#define EET_T_SHORT      2
-#define EET_T_INT        3
-#define EET_T_LONG_LONG  4
-#define EET_T_FLOAT      5
-#define EET_T_DOUBLE     6
-#define EET_T_UCHAR      7
-#define EET_T_USHORT     8
-#define EET_T_UINT       9
-#define EET_T_ULONG_LONG 10
-#define EET_T_STRING     11
-#define EET_T_LAST       12
+#define EET_T_UNKNOW     0 /**< Unknown data encding type */
+#define EET_T_CHAR       1 /**< Data type: char */
+#define EET_T_SHORT      2 /**< Data type: short */
+#define EET_T_INT        3 /**< Data type: int */
+#define EET_T_LONG_LONG  4 /**< Data type: long long */
+#define EET_T_FLOAT      5 /**< Data type: float */
+#define EET_T_DOUBLE     6 /**< Data type: double */
+#define EET_T_UCHAR      7 /**< Data type: unsigned char */
+#define EET_T_USHORT     8 /**< Data type: unsigned short */
+#define EET_T_UINT       9 /**< Data type: unsigned int */
+#define EET_T_ULONG_LONG 10 /**< Data type: unsigned long long */
+#define EET_T_STRING     11 /**< Data type: char * */
+#define EET_T_LAST       12 /**< Last data type */
 
-#define EET_G_UNKNOWN    100
-#define EET_G_ARRAY      101
-#define EET_G_VAR_ARRAY  102
-#define EET_G_LIST       103
-#define EET_G_HASH       104
-#define EET_G_LAST       105
+#define EET_G_UNKNOWN    100 /**< Unknown group data encoding type */
+#define EET_G_ARRAY      101 /**< Fixed size array group type */
+#define EET_G_VAR_ARRAY  102 /**< Variable size array group type */
+#define EET_G_LIST       103 /**< Linked list group type */
+#define EET_G_HASH       104 /**< Hash table group type */
+#define EET_G_LAST       105 /**< Last group type */
 
 /***************************************************************************/
 
