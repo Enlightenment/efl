@@ -62,12 +62,19 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%attr(755,root,root) %{prefix}/lib/libemotion.so*
-%attr(755,root,root) %{prefix}/lib/libemotion.la
+%attr(755,root,root) %{prefix}/lib/libemotion.a
+%attr(755,root,root) %{prefix}/bin/emotion_*
+%attr(755,root,root) %{prefix}/lib/emotion/emotion_decoder_xine.a
+%attr(755,root,root) %{prefix}/lib/xine/plugins/1.0.0/xineplug_vo_out_emotion.a
 
 %files devel
-%attr(755,root,root) %{prefix}/lib/libemotion.a
-%attr(755,root,root) %{prefix}/bin/emotion*
+%attr(755,root,root) %{prefix}/bin/emotion-config
+%attr(755,root,root) %{prefix}/lib/libemotion.so*
+%attr(755,root,root) %{prefix}/lib/libemotion.la
+%attr(755,root,root) %{prefix}/lib/emotion/emotion_decoder_xine.la
+%attr(755,root,root) %{prefix}/lib/emotion/emotion_decoder_xine.so
+%attr(755,root,root) %{prefix}/lib/xine/plugins/1.0.0/xineplug_vo_out_emotion.so
+%attr(755,root,root) %{prefix}/lib/xine/plugins/1.0.0/xineplug_vo_out_emotion.la
 %{prefix}/include/Emotion*
 %{_datadir}/emotion
 %doc AUTHORS
@@ -76,5 +83,7 @@ rm -rf $RPM_BUILD_ROOT
 %doc emotion_docs.tar.gz
 
 %changelog
+* Fri Jun 18 2004 Azundris <edevel@azundris.com>
+- Added missing files
 * Sat Jun 23 2001 The Rasterman <raster@rasterman.com>
-- Created spec file
+- Created spec file                                            
