@@ -1,4 +1,5 @@
 #include "evas_x11_routines.h"
+#include "evas_fileless_image.h"
 #include <sys/stat.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -134,7 +135,9 @@ __evas_x11_image_new_from_file(Display *disp, char *file)
      }
    im = malloc(sizeof(Evas_X11_Image));
    memset(im, 0, sizeof(Evas_X11_Image));
-   im->image = imlib_load_image(file);
+   im->image = _evas_find_fileless_image(file);
+   if (!im->image)
+     im->image = imlib_load_image(file);
    if (!im->image) 
      {
 	free(im);

@@ -118,8 +118,8 @@ Evas_List   evas_get_clip_list(Evas e, Evas_Object o);
 void evas_del_object(Evas e, Evas_Object o);
 
 /* adding objects */
-Evas_Object evas_add_image_from_file(Evas e, char *file);
-/* ** ** not implimented yet ** ** */Evas_Object evas_add_image_from_data(Evas e, void *data, Evas_Image_Format format, int w, int h);
+Evas_Object evas_add_image_from_file(Evas e, const char *file);
+Evas_Object evas_add_image_from_data(Evas e, void *data, Evas_Image_Format format, int w, int h);
 Evas_Object evas_add_text(Evas e, char *font, int size, char *text);
 Evas_Object evas_add_rectangle(Evas e);
 Evas_Object evas_add_line(Evas e);
@@ -127,8 +127,8 @@ Evas_Object evas_add_gradient_box(Evas e);
 Evas_Object evas_add_poly(Evas e);
 	 
 /* set object settings */
-void evas_set_image_file(Evas e, Evas_Object o, char *file);
-/* ** ** not implimented yet ** ** */void evas_set_image_data(Evas e, Evas_Object o, void *data, Evas_Image_Format format, int w, int h);
+void evas_set_image_file(Evas e, Evas_Object o, const char *file);
+void evas_set_image_data(Evas e, Evas_Object o, void *data, Evas_Image_Format format, int w, int h);
 void evas_set_image_fill(Evas e, Evas_Object o, double x, double y, double w, double h);
 void evas_set_image_border(Evas e, Evas_Object o, int l, int r, int t, int b);
 void evas_set_color(Evas e, Evas_Object o, int r, int g, int b, int a);

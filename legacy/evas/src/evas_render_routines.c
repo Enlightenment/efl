@@ -1,4 +1,5 @@
 #include "evas_render_routines.h"
+#include "evas_fileless_image.h"
 
 
 #ifdef HAVE_RENDER
@@ -403,7 +404,9 @@ __evas_render_image_new_from_file(Display *disp, char *file)
    /* need to look for image i local cache */
    /* not found - load */
    screen = 0;
-   i = imlib_load_image(file);
+   i = _evas_find_fileless_image(file);
+   if (!i)
+     i = imlib_load_image(file);
    if (!i) return NULL;
    imlib_context_set_image(i);
    im = malloc(sizeof(Evas_Render_Image));

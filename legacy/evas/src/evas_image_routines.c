@@ -1,4 +1,5 @@
 #include "evas_image_routines.h"
+#include "evas_fileless_image.h"
 
 static void __evas_image_image_cache_flush(Display *disp);
 static int  __evas_anti_alias = 1;
@@ -36,9 +37,11 @@ __evas_image_image_cache_flush(Display *disp)
 Evas_Image_Image *
 __evas_image_image_new_from_file(Display *disp, char *file)
 {
-   Imlib_Image im;
+   Imlib_Image im = NULL;
    
-   im = imlib_load_image(file);
+   im = _evas_find_fileless_image(file);
+   if (!im)
+     im = imlib_load_image(file);
    if (im)
      {
 	imlib_context_set_image(im);

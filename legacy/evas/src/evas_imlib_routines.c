@@ -1,4 +1,5 @@
 #include "evas_imlib_routines.h"
+#include "evas_fileless_image.h"
 
 static void __evas_imlib_image_cache_flush(Display *disp);
 static Evas_Imlib_Image *__evas_imlib_image_cache_find(char *file);
@@ -41,8 +42,10 @@ __evas_imlib_image_new_from_file(Display *disp, char *file)
 {
    Evas_Imlib_Image *im;
    Imlib_Image image;
-   
-   image = imlib_load_image(file);
+  
+   image = _evas_find_fileless_image(file);
+   if (!image)
+     image = imlib_load_image(file);
    if (!image) return NULL;
    imlib_context_set_image(image);
    imlib_image_set_changes_on_disk();

@@ -1,4 +1,5 @@
 #include "evas_gl_routines.h"
+#include "evas_fileless_image.h"
 #include <sys/stat.h>
 #include <unistd.h>
 #include <sys/types.h>
@@ -628,7 +629,10 @@ __evas_gl_make_image_textures(Evas_GL_Window *w, Evas_GL_Image *image)
    tm->context = w->context;
    
    image->textures = evas_list_prepend(image->textures, tm);
-   
+  
+   if ((!image->im) && (image->file))
+     image->im = _evas_find_fileless_image(image->file);
+
    if ((!image->im) && (image->file))
      {
 	image->im = imlib_load_image(image->file);
@@ -764,8 +768,10 @@ __evas_gl_image_alloc(char *file)
 {
    Evas_GL_Image *image;
    Imlib_Image im, prev_im;
-   
-   im = imlib_load_image(file);
+  
+   im = _evas_find_fileless_image(file);
+   if (!im)
+     im = imlib_load_image(file);
    if (!im) return NULL;
    imlib_context_set_image(im);
    imlib_image_set_changes_on_disk();

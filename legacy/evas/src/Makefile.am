@@ -34,6 +34,7 @@ Evas.h
 libevas_la_SOURCES   = \
 evas_callbacks.c \
 evas_events.c \
+evas_fileless_image.c \
 evas_gl_routines.c \
 evas_gradient.c \
 evas_image.c \
@@ -49,6 +50,7 @@ evas_render.c \
 evas_text.c \
 evas_gl_routines.h \
 evas_x11_routines.c \
+evas_fileless_image.h \
 evas_image_routines.h \
 evas_imlib_routines.h \
 evas_x11_routines.h \
