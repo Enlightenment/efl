@@ -1,8 +1,6 @@
 #include "Edje.h"
 #include "edje_private.h"
 
-/* FIXME: sub objects need to be added to smart object */
-/* FIXME: add clicked signal for a mouse up thats a real clicked */
 /* FIXME: free stuff - no more leaks */
 /* FIXME: dragables have to work */
 /* FIXME: drag start/top signals etc. */
@@ -10,6 +8,8 @@
 /* FIXME: need to be able to calculate min & max size of a whole edje */
 /* FIXME: on load don't segv on errors */
 /* FIXME: add code to list collections in an eet */
+/* FIXME: part replacement with objec t+callbacks */
+/* FIXME: part queries for geometry etc. */
 
 /* FIXME: ? somehow handle double click? */
 /* FIXME: ? add numeric params to conditions for progs (ranges etc.) */
@@ -169,6 +169,7 @@ edje_file_set(Evas_Object *obj, const char *file, const char *part)
 	       rp->object = evas_object_image_add(ed->evas);
 	     else if (ep->type == EDJE_PART_TYPE_TEXT)
 	       rp->object = evas_object_text_add(ed->evas);
+	     evas_object_smart_member_add(rp->object, ed->obj);
 	     if (ep->mouse_events)
 	       {
 		  evas_object_event_callback_add(rp->object, 
@@ -483,6 +484,11 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    rp = evas_object_data_get(obj, "real_part");
    if (!rp) return;
    snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
+   if (rp->clicked_button == 0)
+     {
+	rp->clicked_button = ev->button;
+	rp->still_in = 1;
+     }
    _edje_emit(ed, buf, rp->part->name);
 }
 
@@ -500,6 +506,13 @@ _edje_mouse_up_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    if (!rp) return;
    snprintf(buf, sizeof(buf), "mouse,up,%i", ev->button);
    _edje_emit(ed, buf, rp->part->name);
+   if ((rp->still_in) && (rp->clicked_button == ev->button))
+     {
+	rp->clicked_button = 0;
+	rp->still_in = 0;
+	snprintf(buf, sizeof(buf), "mouse,clicked,%i", ev->button);
+	_edje_emit(ed, buf, rp->part->name);
+     }
 }
 
 static void
@@ -514,6 +527,15 @@ _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    rp = evas_object_data_get(obj, "real_part");
    if (!rp) return;
    _edje_emit(ed, "mouse,move", rp->part->name);
+   if (rp->still_in)
+     {
+	double x, y, w, h;
+	
+	evas_object_geometry_get(obj, &x, &y, &w, &h);
+	if ((ev->cur.canvas.x < x) || (ev->cur.canvas.y < y) || 
+	    (ev->cur.canvas.x >= (x + w)) || (ev->cur.canvas.y >= (y + h)))
+	  rp->still_in = 0;
+     }
 }
 
 static void
@@ -545,12 +567,12 @@ _edje_timer_cb(void *data)
    while (animl)
      {
 	Edje *ed;
-	Evas_List *ll, *newl = NULL;
+	Evas_List *newl = NULL;
 	
 	ed = animl->data;
 	animl = evas_list_remove(animl, animl->data);
-	for (ll = ed->actions; ll; ll = ll->next)
-	  newl = evas_list_append(newl, ll->data);
+	for (l = ed->actions; l; l = l->next)
+	  newl = evas_list_append(newl, l->data);
 	while (newl)
 	  {
 	     Edje_Running_Program *runp;
@@ -715,14 +737,17 @@ _edje_program_run(Edje *ed, Edje_Program *pr)
 		  rp = evas_list_nth(ed->parts, pt->id);
 		  if (rp)
 		    {
+		       if (rp->program)
+			 _edje_program_end(ed, rp->program);
 		       _edje_part_description_apply(ed, rp, 
 						    pr->state, 
 						    pr->value,
 						    NULL,
-					       0.0);
+						    0.0);
 		       _edje_part_pos_set(ed, rp, pr->tween.mode, 0.0);
 		    }
 	       }
+	     _edje_recalc(ed);
 	  }
      }
    else if (pr->action == EDJE_ACTION_TYPE_ACTION_STOP)
@@ -774,7 +799,6 @@ _edje_emit(Edje *ed, char *sig, char *src)
    while (emissions)
      {
 	ee = emissions->data;
-	printf("  emission \"%s\" \"%s\"\n", ee->signal, ee->source);
 	emissions = evas_list_remove(emissions, ee);
 	for (l = ed->collection->programs; l; l = l->next)
 	  {
@@ -1627,6 +1651,7 @@ _edje_smart_add(Evas_Object * obj)
    if (!ed) return;
    evas_object_smart_data_set(obj, ed);
    ed->obj = obj;
+   evas_object_smart_member_add(ed->clipper, ed->obj);
 }
 
 static void

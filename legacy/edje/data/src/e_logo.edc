@@ -329,7 +329,7 @@ collections {
 	    signal,     "mouse,down,1";
 	    source,     "logo";
 	    action,     STATE_SET "clicked" 0.0;
-	    transition, DECELERATE, 0.25;
+	    transition, LINEAR, 0.0;
 	    target,     "logo";
 	 }
 	 program {

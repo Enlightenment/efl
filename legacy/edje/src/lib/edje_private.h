@@ -321,6 +321,8 @@ struct _Edje_Real_Part
    Evas_Object              *object;
    unsigned char             calculated : 1;
    unsigned char             dirty      : 1;
+   unsigned char             still_in   : 1;
+   int                       clicked_button;
    Edje_Part                *part;
    struct {
       int x, y;

@@ -1,9 +1,5 @@
 #include "edje.h"
 
-/* FIXME: need filename title and part name title */
-/* FIXME: need to look a bit prettier! */
-/* FIXME: edje test needs to load multiple edjes */
-
 static int  main_start(int argc, char **argv);
 static void main_stop(void);
 static void main_resize(Ecore_Evas *ee);
@@ -106,6 +102,7 @@ bg_setup(void)
    evas_object_color_set(o, 255, 255, 255, 255);
    evas_object_image_file_set(o, DAT"data/test/images/bg.png", NULL);
    evas_object_image_fill_set(o, 0, 0, 128, 128);
+   evas_object_pass_events_set(o, 1);
    evas_object_show(o);   
    o_bg = o;
 
@@ -116,6 +113,7 @@ bg_setup(void)
    evas_object_color_set(o, 255, 255, 255, 255);
    evas_object_image_file_set(o, DAT"data/test/images/shadow.png", NULL);
    evas_object_image_fill_set(o, 0, 0, 240, 320);
+   evas_object_pass_events_set(o, 1);
    evas_object_show(o);
    o_shadow = o;
 }
@@ -329,7 +327,7 @@ bottom_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 cb (void *data, Evas_Object *o, const char *sig, const char *src)
 {
-   printf("CALLBACK for %p %p \"%s\" \"%s\"\n", data, o, sig, src);
+//   printf("CALLBACK for %p %p \"%s\" \"%s\"\n", data, o, sig, src);
 }
 
 void
