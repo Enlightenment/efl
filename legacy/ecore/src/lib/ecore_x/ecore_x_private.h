@@ -1,6 +1,11 @@
 #ifndef _ECORE_X_PRIVATE_H
 #define _ECORE_X_PRIVATE_H
 
+#include <sys/param.h>
+#ifndef MAXHOSTNAMELEN
+#define MAXHOSTNAMELEN 256
+#endif
+
 #define XK_MISCELLANY 1
 #include <X11/Xlib.h>
 #include <X11/Xproto.h>
