@@ -135,7 +135,15 @@ eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num)
    if (i >= new_cache_num) return;
    new_cache_num--;
    for (j = i; j < new_cache_num; j++) new_cache[j] = new_cache[j + 1];   
-   new_cache = realloc(new_cache, new_cache_num * sizeof(Eet_File *));
+   if (new_cache_num > 0)
+     {
+        new_cache = realloc(new_cache, new_cache_num * sizeof(Eet_File *));
+     }
+   else
+     {
+	free(new_cache);
+	new_cache = NULL;
+     }
    *cache_num = new_cache_num;   
    if ((new_cache_num > 0) && (!new_cache)) return;
    *cache = new_cache;
