@@ -507,7 +507,7 @@ compile(void)
 	clean_file = tmpn;
 	close(fd);
 	atexit(clean_tmp_file);
-	snprintf(buf, sizeof(buf), "cpp -E %s > %s", file_in, tmpn);
+	snprintf(buf, sizeof(buf), "cat %s | cpp -E -o %s", file_in, tmpn);
 	ret = system(buf);
 	if (ret < 0)
 	  {
