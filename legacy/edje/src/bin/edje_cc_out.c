@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=3:noexpandtab
+ */
+
 #include "edje_cc.h"
 
 typedef struct _Part_Lookup Part_Lookup;
@@ -685,17 +689,23 @@ data_process_lookups(void)
 	
 	il = image_lookups->data;
 	
-	for (l = edje_file->image_dir->entries; l; l = l->next)
-	  {
-	     Edje_Image_Directory_Entry *de;
-	     
-	     de = l->data;
-	     if ((de->entry) && (!strcmp(de->entry, il->name)))
-	       {
-		  *(il->dest) = de->id;
-		  break;
-	       }
-	  }
+	if (!edje_file->image_dir)
+	   l = NULL;
+	else
+	{
+	   for (l = edje_file->image_dir->entries; l; l = l->next)
+	   {
+	      Edje_Image_Directory_Entry *de;
+
+	      de = l->data;
+	      if ((de->entry) && (!strcmp(de->entry, il->name)))
+	      {
+		 *(il->dest) = de->id;
+		 break;
+	      }
+	   }
+	}
+
 	if (!l)
 	  {
 	     fprintf(stderr, "%s: Error. unable find image name %s\n",
