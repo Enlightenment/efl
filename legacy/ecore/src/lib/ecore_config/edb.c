@@ -115,7 +115,7 @@ ecore_config_file_load(char *file)
 		  switch (itmp)
 		    {
 		    case PT_RGB:
-		       ecore_config_rgb_set(keys[x], data);
+		       ecore_config_argb_set(keys[x], data);
 		       break;
 		    case PT_THM:
 		       ecore_config_theme_set(keys[x], data);
@@ -214,7 +214,7 @@ ecore_config_file_save(char *file)
 	     e_db_float_set(db, next->key, ecore_config_float_get(next->key));
 	     break;
 	  case PT_RGB:
-	     tmp = ecore_config_rgbstr_get(next->key);
+	     tmp = ecore_config_argbstr_get(next->key);
 	     break;
 	  case PT_STR:
 	     tmp = ecore_config_string_get(next->key);

@@ -123,7 +123,10 @@ extern              "C"
    long                ecore_config_int_get(const char *key);
    int                 ecore_config_rgb_get(const char *key, int *r, int *g,
 					    int *b);
+   int                 ecore_config_argb_get(const char *key, int *a, int *r,
+					     int *g, int *b);
    char               *ecore_config_rgbstr_get(const char *key);
+   char               *ecore_config_argbstr_get(const char *key);
    float               ecore_config_float_get(const char *key);
    char               *ecore_config_theme_get(const char *key);
    char               *ecore_config_as_string_get(const char *key);
@@ -138,6 +141,7 @@ extern              "C"
    int                 ecore_config_string_set(const char *key, char *val);
    int                 ecore_config_int_set(const char *key, int val);
    int                 ecore_config_rgb_set(const char *key, char *val);
+   int                 ecore_config_argb_set(const char *key, char *val);
    int                 ecore_config_float_set(const char *key, float val);
    int                 ecore_config_theme_set(const char *key, char *val);
    int                 ecore_config_theme_preview_group_set(const char *key,
@@ -157,6 +161,7 @@ extern              "C"
 							float val, float lo,
 							float hi, float step);
    int                 ecore_config_rgb_default(const char *key, char *val);
+   int                 ecore_config_argb_default(const char *keym, char *val);
    int                 ecore_config_theme_default(const char *key, char *val);
 
    int                 ecore_config_listen(const char *name, const char *key,
@@ -253,6 +258,9 @@ extern              "C"
    int                 ecore_config_rgb_create(const char *key, char *val,
 					       char short_opt, char *long_opt,
 					       char *desc);
+   int                 ecore_config_argb_create(const char *key, char *val,
+						char short_opt, char *long_opt,
+						char *desc);
    int                 ecore_config_theme_create(const char *key, char *val,
 						 char short_opt, char *long_opt,
 						 char *desc);

@@ -201,9 +201,28 @@ ecore_config_float_get(const char *key)
  * @return  @c ECORE_CONFIG_ERR_SUCC on success.  @c ECORE_CONFIG_ERR_FAIL
  *          otherwise.
  * @ingroup Ecore_Config_Get_Group
+ * @deprecated
  */
 int
 ecore_config_rgb_get(const char *key, int *r, int *g, int *b)
+{
+   int                 alpha;
+   return ecore_config_argb_get(key, &alpha, r, g, b);
+}
+
+/**
+ * Finds the alpha, red, green and blue values of a color property.
+ * @param   key The property key.
+ * @param   a   A pointer to an integer to store the alpha value into.
+ * @param   r   A pointer to an integer to store the red value into.
+ * @param   g   A pointer to an integer to store the green value into.
+ * @param   b   A pointer to an integer to store the blue value into.
+ * @return  @c ECORE_CONFIG_ERR_SUCC on success.  @c ECORE_CONFIG_ERR_FAIL
+ *          otherwise.
+ * @ingroup Ecore_Config_Get_Group
+ */
+int
+ecore_config_argb_get(const char *key, int *a, int *r, int *g, int *b)
 {
    Ecore_Config_Prop  *e;
 
@@ -211,6 +230,7 @@ ecore_config_rgb_get(const char *key, int *r, int *g, int *b)
 
    if (e && ((e->type == PT_RGB)))
      {
+	*a = (e->val >> 24) & 0xff;
 	*r = (e->val >> 16) & 0xff;
 	*g = (e->val >> 8) & 0xff;
 	*b = e->val & 0xff;
@@ -224,14 +244,32 @@ ecore_config_rgb_get(const char *key, int *r, int *g, int *b)
  * @param   key The property key.
  * @return  A string of hexadecimal characters in the format #rrggbb.
  * @ingroup Ecore_Config_Get_Group
+ * @deprecated
  */
 char               *
 ecore_config_rgbstr_get(const char *key)
 {
+   char               *argb, *rgb;
+
+   argb = ecore_config_argbstr_get(key);
+   rgb = argb + 2;
+   *rgb = '#';
+   return rgb;
+}
+
+/**
+ * Returns a color property as a string of hexadecimal characters.
+ * @param   key The property key.
+ * @return  A string of hexadecimal characters in the format #aarrggbb.
+ * @ingroup Ecore_Config_Get_Group
+ */
+char               *
+ecore_config_argbstr_get(const char *key)
+{
    char               *r;
 
    r = NULL;
-   esprintf(&r, "#%06x", ecore_config_int_get(key));
+   esprintf(&r, "#%08x", ecore_config_int_get(key));
    return r;
 }
 
@@ -287,7 +325,7 @@ ecore_config_as_string_get(const char *key)
 		      ecore_config_string_get(key));
 	     break;
 	  case PT_RGB:
-	     esprintf(&r, "%s:%s=#%06x", key, type, ecore_config_int_get(key));
+	     esprintf(&r, "%s:%s=#%08x", key, type, ecore_config_int_get(key));
 	     break;
 	  case PT_THM:
 	     esprintf(&r, "%s:%s=\"%s\"", key, type,
@@ -697,15 +735,46 @@ ecore_config_float_set(const char *key, float val)
    return ecore_config_typed_set(key, (void *)&val, PT_FLT);
 }
 
+char              *
+ecore_config_rgb_to_argb(char *rgb)
+{
+   char               *argb;
+
+   argb = malloc(strlen(rgb) + 2);
+   strncpy(argb, "#ff", 3);
+   strncat(argb, rgb+1, strlen(rgb - 1));
+   return argb;
+}
+
 /**
  * Sets the indicated property to a color value.
  * @param   key The property key
  * @param   val Color value in RGB format.
  * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
  * @ingroup Ecore_Config_Set_Group
+ * @deprecated
  */
 int
 ecore_config_rgb_set(const char *key, char *val)
+{
+   char               *argb;
+   int                 ret;
+
+   argb = ecore_config_rgb_to_argb(val);
+   ret = ecore_config_argb_set(key, argb);
+   free(argb);
+   return ret;
+}
+
+/**
+ * Sets the indicated property to a color value.
+ * @param   key The property key
+ * @param   val Color value in ARGB format.
+ * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
+ * @ingroup Ecore_Config_Set_Group
+ */
+int
+ecore_config_argb_set(const char *key, char *val)
 {
    return ecore_config_typed_set(key, (void *)val, PT_RGB);
 }
@@ -934,9 +1003,30 @@ ecore_config_float_default_bound(const char *key, float val, float low,
  * @param  val Color value in RGB format.
  * @return @c ECORE_CONFIG_ERR_SUCC if there are no problems.
  * @ingroup Ecore_Config_Default_Group
+ * @deprecated
  */
 int
 ecore_config_rgb_default(const char *key, char *val)
+{
+   char               *argb;
+   int                 ret;
+
+   argb = ecore_config_rgb_to_argb(val);
+   ret = ecore_config_argb_default(key, argb);
+   free(argb);
+   return ret;
+}
+
+/**
+ * Sets the indicated property to a color value if the property has not yet
+ * been set.
+ * @param  key The property key.
+ * @param  val Color value in ARGB format.
+ * @return @c ECORE_CONFIG_ERR_SUCC if there are no problems.
+ * @ingroup Ecore_Config_Default_Group
+ */
+int
+ecore_config_argb_default(const char *key, char *val)
 {
    return ecore_config_typed_default(key, (void *)val, PT_RGB);
 }

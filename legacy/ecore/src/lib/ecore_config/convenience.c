@@ -13,6 +13,7 @@
 char               *__ecore_config_app_description;
 
 extern int          ecore_config_bound(Ecore_Config_Prop * e);
+extern char        *ecore_config_rgb_to_argb(char *rgb);
 
 /* shorthand prop setup code to make client apps a little smaller ;) */
 
@@ -225,9 +226,35 @@ ecore_config_float_create_bound(const char *key, float val, float low,
  * @param   desc      String description of property.
  * @return  @c ECORE_CONFIG_ERR_SUCC on success.
  * @ingroup Ecore_Config_Create_Group
+ * @deprecated
  */
 int
 ecore_config_rgb_create(const char *key, char *val, char short_opt,
+                        char *long_opt, char *desc)
+{
+   char               *argb;
+   int                 ret;
+
+   argb = ecore_config_rgb_to_argb(val);
+   ret = ecore_config_argb_create(key, argb, short_opt, long_opt, desc);
+   free(argb);
+   return ret;
+}
+
+/**
+ * Creates a new color property, if it does not already exist, and sets its
+ * attributes to those given.
+ * @param   key       The property key.
+ * @param   val       Default color value of key, as a hexadecimal string.
+ * @param   short_opt Short option used to set the property from command
+ *                    line.
+ * @param   long_opt  Long option used to set the property from command line.
+ * @param   desc      String description of property.
+ * @return  @c ECORE_CONFIG_ERR_SUCC on success.
+ * @ingroup Ecore_Config_Create_Group
+ */
+int
+ecore_config_argb_create(const char *key, char *val, char short_opt,
 			char *long_opt, char *desc)
 {
    return
