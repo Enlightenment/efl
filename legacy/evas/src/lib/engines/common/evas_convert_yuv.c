@@ -116,8 +116,8 @@ void
 evas_common_convert_yuv_420p_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
 {
    int mmx, sse, sse2;
+   
 #if defined BUILD_MMX || defined BUILD_SSE
-
    evas_common_cpu_can_do(&mmx, &sse, &sse2);
 #endif   
 #ifndef BUILD_SSE
@@ -132,8 +132,8 @@ evas_common_convert_yuv_420p_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
 #ifdef BUILD_ALTIVEC
    if (evas_common_cpu_has_feature(CPU_FEATURE_ALTIVEC))
      _evas_yv12torgb_altivec(src, dst, w, h);
-   else
 #endif
+   else
      {
 #ifdef BUILD_C	
 	static int initted = 0;
