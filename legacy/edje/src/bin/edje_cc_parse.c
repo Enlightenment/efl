@@ -12,6 +12,8 @@ int        line = 0;
 Evas_List *stack = NULL;
 Evas_List *params = NULL;
 
+static char file_buf[4096];
+
 static void
 new_object(void)
 {
@@ -91,9 +93,12 @@ next_token(char *p, char *end, char **new_p, int *delim)
    char *tok_start = NULL, *tok_end = NULL, *tok = NULL, *sa_start = NULL;
    int in_tok = 0;
    int in_quote = 0;
-   int in_comment_ss = 0;
-   int in_comment_sa = 0;
+   int in_comment_ss  = 0;
+   int in_comment_cpp = 0;
+   int in_comment_sa  = 0;
    int had_quote = 0;
+   char *cpp_token_line = NULL;
+   char *cpp_token_file = NULL;
 
    *delim = 0;
    if (p >= end) return NULL;
@@ -102,6 +107,9 @@ next_token(char *p, char *end, char **new_p, int *delim)
 	if (*p == '\n')
 	  {
 	     in_comment_ss = 0;
+	     in_comment_cpp = 0;
+	     cpp_token_line = NULL;
+	     cpp_token_file = NULL;
 	     line++;
 	  }
 	if ((!in_comment_ss) && (!in_comment_sa))
@@ -109,14 +117,51 @@ next_token(char *p, char *end, char **new_p, int *delim)
 	     if ((!in_quote) && (*p == '/') && (p < (end - 1)) && (*(p + 1) == '/'))
 	       in_comment_ss = 1;
 	     if ((!in_quote) && (*p == '#'))
-	       in_comment_ss = 1;
+	       in_comment_cpp = 1;
 	     if ((!in_quote) && (*p == '/') && (p < (end - 1)) && (*(p + 1) == '*'))
 	       {
 		  in_comment_sa = 1;
 		  sa_start = p;
 	       }
 	  }
-	if ((!in_comment_ss) && (!in_comment_sa))
+	if ((in_comment_cpp) && (*p == '#'))
+	  {
+	     char *pp, fl[4096];
+	     char *tmpstr = NULL;
+	     int   l, nm;
+	     
+	     /* handle cpp comments */
+	     /* their line format is
+	      * # <line no. of next line> <filename from next line on> [??]
+	      */
+	     cpp_token_line = NULL;
+	     cpp_token_file = NULL;
+	     
+	     pp = p;
+	     while ((pp < end) && (*pp != '\n'))
+	       {
+		  pp++;
+	       }
+	     l = pp - p;
+	     tmpstr = malloc(l + 1);
+	     if (!tmpstr)
+	       {
+		  fprintf(stderr, "%s: Error. %s:%i malloc %i bytes failed\n",
+			  progname, file_in, line, l + 1);
+		  exit(-1);
+	       }
+	     strncpy(tmpstr, p, l);
+	     tmpstr[l] = 0;
+	     l = sscanf(tmpstr, "%*s %i \"%[^\"]\"", &nm, fl);
+	     if (l == 2)
+	       {
+		  strcpy(file_buf, fl);
+		  line = nm;
+		  file_in = file_buf;
+	       }
+	     free(tmpstr);
+	  }
+	else if ((!in_comment_ss) && (!in_comment_sa) && (!in_comment_cpp))
 	  {
 	     if (!in_tok)
 	       {
@@ -318,13 +363,40 @@ parse(char *data, off_t size)
      }
 }
 
+static char *clean_file = NULL;
+static void
+clean_tmp_file(void)
+{
+   if (clean_file) unlink(clean_file);
+}
+
 void
 compile(void)
 {
    int fd;
    off_t size;
    char *data;
+   char buf[4096];
+   static char tmpn[4096];
    
+   strcpy(tmpn, "/tmp/edje_cc.edc-tmp-XXXXXX");
+   fd = mkstemp(tmpn);
+   if (fd >= 0)
+     {
+	int ret;
+	
+	clean_file = tmpn;
+	close(fd);
+	atexit(clean_tmp_file);
+	snprintf(buf, sizeof(buf), "cpp %s -o %s", file_in, tmpn);
+	ret = system(buf);
+	if (ret < 0)
+	  {
+	     snprintf(buf, sizeof(buf), "gcc -E %s -o %s", file_in, tmpn);
+	     ret = system(buf);
+	  }
+	if (ret >= 0) file_in = tmpn;
+     }
    fd = open(file_in, O_RDONLY);
    if (fd < 0)
      {
