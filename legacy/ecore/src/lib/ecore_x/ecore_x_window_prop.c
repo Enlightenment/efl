@@ -1091,18 +1091,15 @@ ecore_x_window_prop_state_set(Ecore_X_Window win, Ecore_X_Window_State s)
 int
 ecore_x_window_prop_state_isset(Ecore_X_Window win, Ecore_X_Window_State s)
 {
-   int            num, i;
+   int            num, i, ret = 0;
    unsigned char  *data;
    Atom           *states;
    Ecore_X_Atom   state;
-      
+
    state = _ecore_x_window_prop_state_atom_get(s);
    if (!ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_state,
                                          XA_ATOM, 32, &data, &num))
-   {
-      XFree(data);
-      return 0;
-   }
+      return ret;
 
    states = (Atom *) data;
 
@@ -1110,12 +1107,13 @@ ecore_x_window_prop_state_isset(Ecore_X_Window win, Ecore_X_Window_State s)
    {
       if(states[i] == state)
       {
-         XFree(data);
-         return 1;
+         ret = 1;
+         break;
       }
    }
 
-   return 0;
+   XFree(data);
+   return ret;
 }
 
 /**
