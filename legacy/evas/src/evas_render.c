@@ -116,10 +116,7 @@ evas_render(Evas e)
 			(o->current.zoomscale != o->previous.zoomscale) ||
 			(o->current.layer != o->previous.layer)))
 		      )
-		    {
-		       o->previous = o->current;
-		       real_change = 1;
-		    }
+		     real_change = 1;
 		  if (o->current.visible)
 		    {
 		       switch (o->type)
@@ -208,6 +205,7 @@ evas_render(Evas e)
 							     &w, &h);
 		  evas_update_rect(e, x, y, w, h);
 	       }
+	     o->previous = o->current;
 	  }
      }
    
