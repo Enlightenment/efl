@@ -48,14 +48,14 @@ extern "C" {
 	*
 	* @return The new init count.
     */
-   void eet_init();
+   int eet_init(void);
 
    /**
     * Shut down the EET library.
 	*
 	* @return The new init count.
     */
-   void eet_shutdown();
+   int eet_shutdown(void);
 
    /**
     * Open an eet file on disk, and returns a handle to it.
