@@ -618,8 +618,12 @@ AC_SUBST(ecore_config_libs)
 
 AC_SUBST(USE_OPENSSL)
 
+requirements=""
+AC_SUBST(requirements)
+
 AC_OUTPUT([
 Makefile
+ecore.pc
 ecore-config
 data/Makefile
 data/fonts/Makefile
