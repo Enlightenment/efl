@@ -137,7 +137,7 @@ extern              "C"
   void                ecore_window_move_resize(Window win, int x, int y, int w,
 					       int h);
   int                 ecore_x_get_fd(void);
-  void                ecore_set_error_handler(Ecore_Error_Function * func);
+  void                ecore_set_error_handler(Ecore_Error_Function func);
   void                ecore_reset_error_handler(void);
   int                 ecore_display_init(char *display);
   int                 ecore_events_pending(void);
@@ -317,8 +317,8 @@ extern              "C"
   void                ecore_keyboard_grab(Window win);
   void                ecore_keyboard_ungrab(void);
 
-  void                ecore_ev_ipc_init(char *path);
-  void                ecore_ev_ipc_cleanup(void);
+  void                ecore_event_ipc_init(char *path);
+  void                ecore_event_ipc_cleanup(void);
   void                ecore_add_ipc_service(int service, void (*func) (int fd));
   void                ecore_del_ipc_service(int service);
 
@@ -793,15 +793,13 @@ extern              "C"
   void                ecore_event_filter_handler_add(Ecore_Event_Type type,
 						     void (*func) (Ecore_Event *
 								   ev));
-  void               
-    ecore_event_filter_idle_handler_add(void (*func) (void *data), void *data);
+  void                ecore_event_filter_idle_handler_add(void (*func) (void *data), void *data);
 
-  void                ecore_ev_signal_init(void);
-  int                 ecore_ev_signal_events_pending(void);
+  void                ecore_event_signal_init(void);
+  int                 ecore_event_signal_events_pending(void);
 
-  void                ecore_ev_x_init(void);
-  char              
-    *ecore_key_press_translate_into_typeable(Ecore_Event_Key_Down * e);
+  void                ecore_event_x_init(void);
+  char               *ecore_keypress_translate_into_typeable(Ecore_Event_Key_Down * e);
 
 #define ECORE_ATOM(atom, name) \
         if (!atom) (atom) = ecore_atom_get(name);

@@ -229,13 +229,13 @@ ecore_event_loop(void)
 	  if (tval.tv_usec <= 1000)
 	    tval.tv_usec = 1000;
 	  ecore_handle_zero_event_timer();
-	  if ((!ecore_events_pending()) && (!ecore_ev_signal_events_pending()))
+	  if ((!ecore_events_pending()) && (!ecore_event_signal_events_pending()))
 	    fdcount = select(fdsize + 1, &fdset, NULL, NULL, &tval);
 	}
       /* no timers - just sit and block */
       else
 	{
-	  if ((!ecore_events_pending()) && (!ecore_ev_signal_events_pending()))
+	  if ((!ecore_events_pending()) && (!ecore_event_signal_events_pending()))
 	    fdcount = select(fdsize + 1, &fdset, NULL, NULL, NULL);
 	}
       for (pid_h = pid_handlers; pid_h; pid_h = pid_h->next)

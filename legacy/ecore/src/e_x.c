@@ -766,7 +766,7 @@ ecore_x_get_fd(void)
 }
 
 void
-ecore_set_error_handler(Ecore_Error_Function * func)
+ecore_set_error_handler(Ecore_Error_Function func)
 {
   XSetErrorHandler((XErrorHandler) func);
 }
