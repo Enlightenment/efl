@@ -80,12 +80,12 @@ main(int argc, char **argv)
 	  {
 	     no_raw = 1;
 	  }
-	else if ((!strcmp(argv[i], "-id")) && (i < (argc - 1)))
+	else if ((!strcmp(argv[i], "-id") || !strcmp(argv[i], "--image_dir")) && (i < (argc - 1)))
 	  {
 	     i++;
 	     img_dirs = evas_list_append(img_dirs, argv[i]);
 	  }
-	else if ((!strcmp(argv[i], "-fd")) && (i < (argc - 1)))
+	else if ((!strcmp(argv[i], "-fd") || !strcmp(argv[i], "--font_dir")) && (i < (argc - 1)))
 	  {
 	     i++;
 	     fnt_dirs = evas_list_append(fnt_dirs, argv[i]);
