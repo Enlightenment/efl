@@ -17,15 +17,26 @@ new_object(void)
 {
    char *id;
    int i;
+   int handled = 0;
    
    id = stack_id();
-//   printf("+++: %s\n", id);
    for (i = 0; i < object_handler_num(); i++)
      {
 	if (!strcmp(object_handlers[i].type, id))
 	  {
-	     if (object_handlers[i].func) object_handlers[i].func();
+	     handled = 1;
+	     if (object_handlers[i].func)
+	       {
+		  object_handlers[i].func();
+	       }
+	     break;
 	  }
+     }
+   if (!handled)
+     {
+	fprintf(stderr, "%s: Error. %s:%i unhandled keyword %s\n",
+		progname, file_in, line, evas_list_data(evas_list_last(stack)));
+	exit(-1);
      }
    free(id);
 }
@@ -35,21 +46,27 @@ new_statement(void)
 {
    char *id;
    int i;
+   int handled = 0;
    
    id = stack_id();
-// {   
-//   Evas_List *l;
-//   printf("===: %s", id);
-//   for (l = params; l; l = l->next) printf(" [%s]", l->data);
-//   printf("\n");
-// }
    for (i = 0; i < statement_handler_num(); i++)
      {
 	if (!strcmp(statement_handlers[i].type, id))
 	  {
-	     if (statement_handlers[i].func) statement_handlers[i].func();
+	     handled = 1;
+	     if (statement_handlers[i].func)
+	       {
+		  statement_handlers[i].func();
+	       }
+	     break;
 	  }
-     }   
+     }
+   if (!handled)
+     {
+	fprintf(stderr, "%s: Error. %s:%i unhandled keyword %s\n",
+		progname, file_in, line, evas_list_data(evas_list_last(stack)));
+	exit(-1);
+     }
    free(id);
 }
 
@@ -141,6 +158,7 @@ next_token(char *p, char *end, char **new_p, int *delim)
 			 {
 			    in_tok = 0;
 			    tok_end = p - 1;
+			    if (*p == '\n') line--;
 			    goto done;
 			 }
 		    }
