@@ -19,7 +19,7 @@ edje_cc
 
 edje_SOURCES = \
 edje_main.c \
-edje.h
+edje_main.h
 
 edje_LDADD = \
 $(top_builddir)/src/lib/libedje.la

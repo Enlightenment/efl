@@ -1,4 +1,4 @@
-#include "edje.h"
+#include "edje_main.h"
 
 typedef struct _Demo_Edje Demo_Edje;
 

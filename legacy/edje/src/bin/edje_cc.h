@@ -1,7 +1,7 @@
 #ifndef EDJE_CC_H
 #define EDJE_CC_H
 
-#include "edje.h"
+#include "edje_main.h"
 /* Imlib2 stuff for loading up input images */
 #define X_DISPLAY_MISSING
 #include <Imlib2.h>
