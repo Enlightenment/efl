@@ -902,3 +902,8 @@ eet_list(Eet_File *ef, char *glob, int *count_ret)
    if (count_ret) *count_ret = list_count;   
    return list_ret;
 }
+
+void eet_shutdown()
+{
+   _eet_memfile_shutdown();
+}

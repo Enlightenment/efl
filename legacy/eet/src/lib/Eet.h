@@ -683,7 +683,12 @@ extern "C" {
 					(char *)(&(___ett.member)) - (char *)(&(___ett)), \
 					0, NULL, subtype); \
      }
-   
+
+   /**
+	* Shut down the EET library.
+	*/
+   void eet_shutdown();
+
 /***************************************************************************/
 #ifdef __cplusplus
 }

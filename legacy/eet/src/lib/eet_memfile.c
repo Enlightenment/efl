@@ -36,9 +36,26 @@ struct _Eet_Memfile_Write_Info
    size_t *size;
 };
 
+#ifndef HAVE_OPEN_MEMSTREAM
 static int                     _eet_memfile_info_alloc_num = 0;
 static int                     _eet_memfile_info_num       = 0;
 static Eet_Memfile_Write_Info *_eet_memfile_info           = NULL;
+#endif
+
+void _eet_memfile_shutdown()
+{
+#ifdef HAVE_OPEN_MEMSTREAM
+   return;
+#else
+   int i;
+
+   for (i = 0; i < _eet_memfile_info_num; i++)
+	   free(_eet_memfile_info[i].data);
+
+   free(_eet_memfile_info);
+   _eet_memfile_info = NULL;
+#endif
+}
 
 FILE *
 _eet_memfile_write_open(void **data, size_t *size)
