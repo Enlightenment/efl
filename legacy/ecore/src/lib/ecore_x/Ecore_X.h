@@ -927,6 +927,7 @@ EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_A
    EAPI int             ecore_x_drawable_border_width_get(Ecore_X_Drawable d);
    EAPI int             ecore_x_drawable_depth_get(Ecore_X_Drawable d);
    EAPI Ecore_X_Window *ecore_x_window_root_list(int *num_ret);
+   EAPI Ecore_X_Window  ecore_x_window_root_first_get(void);
    EAPI int             ecore_x_window_manage(Ecore_X_Window win);
    EAPI void            ecore_x_window_container_manage(Ecore_X_Window win);
    EAPI void            ecore_x_window_client_manage(Ecore_X_Window win);
@@ -1093,6 +1094,8 @@ EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_A
    EAPI int                 ecore_x_netwm_desktop_get(Ecore_X_Window win, unsigned int *desk);
    EAPI void                ecore_x_netwm_opacity_set(Ecore_X_Window win, unsigned int opacity);
    EAPI int                 ecore_x_netwm_opacity_get(Ecore_X_Window win, unsigned int *opacity);
+   EAPI void                ecore_x_netwm_window_state_set(Ecore_X_Window win, Ecore_X_Window_State state, int on);
+   EAPI int                 ecore_x_netwm_window_state_isset(Ecore_X_Window win, Ecore_X_Window_State state);
 
    
    /* FIXME: these funcs need categorising */

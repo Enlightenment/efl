@@ -139,6 +139,36 @@ _ecore_x_window_prop_string_utf8_get(Ecore_X_Window win, Ecore_X_Atom atom)
    return str;
 }
 
+/* Set/clear atom in list */
+static void
+_ecore_x_netwm_atom_list_set(Ecore_X_Atom *atoms, int size, int *count, 
+                             Ecore_X_Atom atom, int set)
+{
+   int   i, n, in_list;
+
+   n = *count;
+   /* Check if atom is in list or not (+get index) */
+   for (i = 0; i < n; i++)
+      if (atoms[i] == atom)
+         break;
+   in_list = i < n;
+
+   if (set && !in_list)
+   {
+      /* Add it (if space left) */
+	   if (n < size)
+	      atoms[n++] = atom;
+	   *count = n;
+   }
+   else if (!set && in_list)
+   {
+	   /* Remove it */
+   	atoms[i] = atoms[--n];
+	   *count = n;
+   }
+}
+
+
 /*
  * Root window NetWM hints.
  */
@@ -498,3 +528,123 @@ ecore_x_netwm_opacity_get(Ecore_X_Window win, unsigned int *opacity)
    return ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_WINDOW_OPACITY,
 					 opacity, 1);
 }
+
+static Ecore_X_Atom
+_ecore_x_netwm_state_atom_get(Ecore_X_Window_State s)
+{
+   switch(s)
+   {
+      case ECORE_X_WINDOW_STATE_MODAL:
+         return ECORE_X_ATOM_NET_WM_STATE_MODAL;
+      case ECORE_X_WINDOW_STATE_STICKY:
+         return ECORE_X_ATOM_NET_WM_STATE_STICKY;
+      case ECORE_X_WINDOW_STATE_MAXIMIZED_VERT:
+         return ECORE_X_ATOM_NET_WM_STATE_MAXIMIZED_VERT;
+      case ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ:
+         return ECORE_X_ATOM_NET_WM_STATE_MAXIMIZED_HORZ;
+      case ECORE_X_WINDOW_STATE_SHADED:
+         return ECORE_X_ATOM_NET_WM_STATE_SHADED;
+      case ECORE_X_WINDOW_STATE_SKIP_TASKBAR:
+         return ECORE_X_ATOM_NET_WM_STATE_SKIP_TASKBAR;
+      case ECORE_X_WINDOW_STATE_SKIP_PAGER:
+         return ECORE_X_ATOM_NET_WM_STATE_SKIP_PAGER;
+      case ECORE_X_WINDOW_STATE_HIDDEN:
+         return ECORE_X_ATOM_NET_WM_STATE_HIDDEN;
+      case ECORE_X_WINDOW_STATE_FULLSCREEN:
+         return ECORE_X_ATOM_NET_WM_STATE_FULLSCREEN;
+      case ECORE_X_WINDOW_STATE_ABOVE:
+         return ECORE_X_ATOM_NET_WM_STATE_ABOVE;
+      case ECORE_X_WINDOW_STATE_BELOW:
+         return ECORE_X_ATOM_NET_WM_STATE_BELOW;
+      default:
+         return 0;
+   }
+
+}
+
+int
+ecore_x_netwm_window_state_isset(Ecore_X_Window win, Ecore_X_Window_State s)
+{
+   int            num, i, ret = 0;
+   unsigned char  *data;
+   Ecore_X_Atom   *states, state;
+
+   state = _ecore_x_netwm_state_atom_get(s);
+   if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_NET_WM_STATE,
+                                       XA_ATOM, 32, &data, &num))
+      return ret;
+
+   states = (Ecore_X_Atom *) data;
+
+   for (i = 0; i < num; ++i)
+   {
+      if (states[i] == state)
+      {
+         ret = 1;
+         break;
+      }
+   }
+
+   XFree(data);
+   return ret;
+}
+
+void
+ecore_x_netwm_window_state_set(Ecore_X_Window win, Ecore_X_Window_State state, int on)
+{
+   Ecore_X_Atom      atom;
+   Ecore_X_Atom      *oldset = NULL, *newset = NULL;
+   int               i, j = 0, num = 0;
+   unsigned char     *data = NULL;
+   unsigned char     *old_data = NULL;
+
+   atom = _ecore_x_netwm_state_atom_get(state);
+   
+   ecore_x_window_prop_property_get(win, ECORE_X_ATOM_NET_WM_STATE,
+                                    XA_ATOM, 32, &old_data, &num);
+   oldset = (Ecore_X_Atom *) old_data;
+
+   if (on)
+   {
+      if (ecore_x_netwm_window_state_isset(win, state))
+      {
+         XFree(old_data);
+         return;
+      }
+      newset = calloc(num + 1, sizeof(Ecore_X_Atom));
+      if (!newset) return;
+      data = (unsigned char *) newset;
+      
+      for (i = 0; i < num; i++)
+         newset[i] = oldset[i];
+      newset[num] = state;
+   }
+   else
+   {
+      if (!ecore_x_netwm_window_state_isset(win, state))
+      {
+         XFree(old_data);
+         return;
+      }
+      newset = calloc(num - 1, sizeof(Atom));
+      if (!newset)
+      {
+         XFree(old_data);
+         return;
+      }
+      data = (unsigned char *) newset;
+      for (i = 0; i < num; i++)
+         if (oldset[i] != state)
+            newset[j++] = oldset[i];
+   }
+
+   ecore_x_window_prop_property_set(win, ECORE_X_ATOM_NET_WM_STATE,
+                                    XA_ATOM, 32, data, j);
+   XFree(oldset);
+   free(newset);
+}
+
+
+      
+
+   

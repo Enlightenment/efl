@@ -788,6 +788,25 @@ ecore_x_window_root_list(int *num_ret)
    return roots;
 }
 
+Ecore_X_Window
+ecore_x_window_root_first_get(void)
+{
+   int num;
+   Ecore_X_Window root, *roots = NULL;
+
+   roots = ecore_x_window_root_list(&num);
+   if(!(roots)) return 0;
+   
+   if (num > 0)
+      root = roots[0];
+   else
+      root = 0;
+
+   free(roots);
+   return root;
+}
+
+
 static void _ecore_x_window_manage_error(void *data);
 
 static int _ecore_x_window_manage_failed = 0;
