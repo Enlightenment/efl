@@ -141,7 +141,7 @@ extern "C" {
     * @return Success or failure of the write.
     * 
     * This function will write the specified chunk of data to the eet file
-    * and return 1 on success. 0 will be returned on failure.
+    * and return greater than 0 on success. 0 will be returned on failure.
     * 
     * The eet file handle must be a valid file handle for an eet file opened 
     * for writing. If it is not, 0 will be returned and no action will be

@@ -842,7 +842,7 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
    /* flags that writes are pending */
    ef->writes_pending = 1;
    /* update access time */
-   return size;
+   return data_size;
 }
 
 char **
