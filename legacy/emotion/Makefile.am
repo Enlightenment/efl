@@ -10,4 +10,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 
 bin_SCRIPTS = emotion-config
 
-EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN emotion.spec emotion.c.in gendoc Doxyfile emotion_docs.tar.gz
+EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN emotion.spec emotion.c.in gendoc Doxyfile emotion_docs.tar.gz emotion.pc.in
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = emotion.pc
