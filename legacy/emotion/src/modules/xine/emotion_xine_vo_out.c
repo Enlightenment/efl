@@ -103,7 +103,7 @@ static vo_info_t _emotion_info =
 
 plugin_info_t xine_plugin_info[] = 
 {
-     { PLUGIN_VIDEO_OUT, 19, "emotion", XINE_VERSION_CODE, &_emotion_info, _emotion_class_init },
+     { PLUGIN_VIDEO_OUT, 20, "emotion", XINE_VERSION_CODE, &_emotion_info, _emotion_class_init },
      { PLUGIN_NONE, 0, "", 0, NULL, NULL }
 };
 
