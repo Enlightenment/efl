@@ -59,7 +59,7 @@ ecore_config_file_load(char *file)
    E_DB_File          *db;
    char              **keys;
    int                 key_count;
-   int                 x;
+   int                 x, pt;
    int                 itmp;
    float               ftmp;
    char               *type;
@@ -88,7 +88,16 @@ ecore_config_file_load(char *file)
 	  {
 	     if (e_db_int_get(db, keys[x], &itmp))
 	       {
-		  ecore_config_int_set(keys[x], itmp);
+		  pt = ecore_config_type_guess(keys[x], itmp);
+		  switch (pt)
+		    {
+			case PT_BLN:
+			  ecore_config_boolean_set(keys[x], itmp);
+			  break;
+			default:
+			  ecore_config_int_set(keys[x], itmp);
+			  break;
+		    }
 	       }
 	     else
 	       {
@@ -111,8 +120,8 @@ ecore_config_file_load(char *file)
 	     data = e_db_str_get(db, keys[x]);
 	     if (data)
 	       {
-		  itmp = ecore_config_type_guess(keys[x], data);
-		  switch (itmp)
+		  pt = ecore_config_type_guess(keys[x], data);
+		  switch (pt)
 		    {
 		    case PT_RGB:
 		       ecore_config_argb_set(keys[x], data);
@@ -208,8 +217,10 @@ ecore_config_file_save(char *file)
 	switch (next->type)
 	  {
 	  case PT_INT:
-    case PT_BLN:
 	     e_db_int_set(db, next->key, ecore_config_int_get(next->key));
+	     break;
+	  case PT_BLN:
+	     e_db_int_set(db, next->key, ecore_config_boolean_get(next->key));
 	     break;
 	  case PT_FLT:
 	     e_db_float_set(db, next->key, ecore_config_float_get(next->key));

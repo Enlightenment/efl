@@ -487,12 +487,12 @@ ecore_config_typed_val(Ecore_Config_Prop * e, void *val, int type)
 	     e->val = (long)*i;
 	     e->type = PT_INT;
 	  }
-   else if (type == PT_BLN )
-     {
-        i = (int *)val;
-        e->val = (long)*i;
-        e->type = PT_BLN;
-     }
+	else if (type == PT_BLN )
+	  {
+	     i = (int *)val;
+	     e->val = (long)*i;
+	     e->type = PT_BLN;
+	  }
 	else if (type == PT_STR || type == PT_THM)
 	  {
 	     if (!(e->ptr = strdup(val)))
@@ -716,7 +716,7 @@ ecore_config_set(const char *key, char *val)
    float               tmpf;
 
    type = ecore_config_type_guess(key, val);
-   if (type == PT_INT)
+   if (type == PT_INT || type == PT_BLN)
      {
 	tmpi = atoi(val);
 	return ecore_config_typed_set(key, (void *)&tmpi, type);
