@@ -118,11 +118,15 @@ e_add_child(Window win, Window child)
    E_XID              *xid = NULL;
 
    if (XFindContext(disp, win, xid_context, (XPointer *) & xid) == XCNOENT)
-     {
-	xid = e_validate_xid(win);
-     }
+     return;
    if (xid)
      {
+	int i;
+	
+	for (i = 0; i < xid->children_num; i++)
+	  {
+	     if (xid->children[i] == child) return;
+	  }
 	xid->children_num++;
 	if (!xid->children)
 	   xid->children = NEW(Window, xid->children_num);
@@ -207,6 +211,7 @@ e_add_xid(Window win, int x, int y, int w, int h, int depth, Window parent)
    xid->gravity = e_window_get_gravity(win);
    xid->bw = 0;
    XSaveContext(disp, xid->win, xid_context, (XPointer) xid);
+   e_add_child(parent, win);
    return xid;
 }
 
@@ -265,6 +270,7 @@ e_validate_xid(Window win)
 	xid->gravity = att.win_gravity;
 	xid->bw = att.border_width;
 	XSaveContext(disp, xid->win, xid_context, (XPointer) xid);
+	e_add_child(xid->parent, win);
      }
    return xid;
 }
@@ -275,13 +281,14 @@ e_unvalidate_xid(Window win)
    E_XID              *xid = NULL;
 
    if (XFindContext(disp, win, xid_context, (XPointer *) & xid) == XCNOENT)
-      return;
+     return;
    if (xid)
      {
 	int                 i;
 
 	for (i = 0; i < xid->children_num; i++)
 	   e_unvalidate_xid(xid->children[i]);
+	e_del_child(xid->parent, win);	
 	IF_FREE(xid->children);
 	FREE(xid);
 	XDeleteContext(disp, win, xid_context);
@@ -323,6 +330,7 @@ e_window_new(Window parent, int x, int y, int w, int h)
 		       CWDontPropagate, &attr);
    e_add_xid(win, x, y, w, h, default_depth, parent);
    e_add_child(parent, win);
+   e_validate_xid(parent);
    return win;
 }
 
@@ -349,6 +357,7 @@ e_window_override_new(Window parent, int x, int y, int w, int h)
 		       CWDontPropagate, &attr);
    e_add_xid(win, x, y, w, h, default_depth, parent);
    e_add_child(parent, win);
+   e_validate_xid(parent);
    return win;
 }
 
@@ -368,6 +377,7 @@ e_window_input_new(Window parent, int x, int y, int w, int h)
 		       CWOverrideRedirect | CWDontPropagate, &attr);
    e_add_xid(win, x, y, w, h, 0, parent);
    e_add_child(parent, win);
+   e_validate_xid(parent);
    return win;
 }
 
