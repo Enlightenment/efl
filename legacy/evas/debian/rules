@@ -16,7 +16,7 @@ DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 cfg:=--prefix=/usr --build=$(DEB_BUILD_GNU_TYPE) --host=$(DEB_HOST_GNU_TYPE)
 
 
-CFLAGS = -Wall -g
+CFLAGS ?= -Wall -g
 CFLAGS += -I/usr/include/freetype2 -include /usr/include/png.h -include /usr/include/freetype2/freetype/freetype.h -include /usr/include/freetype2/freetype/internal/ftobjs.h
 ifeq (opengl,$(EVAS_TARGET))
 	cfg += --enable-gl-x11 --enable-image-loader-png --enable-image-loader-jpeg --enable-image-loader-edb --enable-image-loader-eet --enable-cpu-p2-only --enable-cpu-mmx --enable-cpu-sse --enable-cpu-c --enable-scale-smooth --enable-scale-sample

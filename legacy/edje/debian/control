@@ -1,21 +1,52 @@
 Source: edje
 Section: libs
 Priority: optional
-Maintainer: Laurence J. Lane <ljlane@debian.org>
-Build-Depends: debhelper (>= 3.0), libimlib2-dev, libeet0-dev, libecore1-dev
+Maintainer: Sytse Wielinga <s.b.wielinga@student.utwente.nl>
+Build-Depends: libimlib2-dev, libeet0-dev, libecore1-dev, libevas2-dev, debhelper (>> 4.0.0)
 Standards-Version: 3.6.1.0
+
+Package: edje0-bin
+Architecture: any
+Section: graphics
+Depends: ${shlibs:Depends}
+Description: Edje compiler
+ This package contains the binary edje_cc, for compiling edje files.
+ .
+ Edje is a graphical layout and animation library for animated resizable,
+ compressed and scalable themes. It is the theming engine behind
+ Enlightenment DR 0.17.
+
+Package: edje0-test
+Architecture: any
+Section: graphics
+Depends: ${shlibs:Depends}
+Description: Edje binaries
+ This package contains the binaries edje, for viewing edje files.
+ .
+ Edje is a graphical layout and animation library for animated resizable,
+ compressed and scalable themes. It is the theming engine behind
+ Enlightenment DR 0.17.
 
 Package: libedje0
 Architecture: any
 Section: libs
 Depends: ${shlibs:Depends}
-Description: libedje0 description
- libedje0 extended description
+Suggests: edje0-bin (= ${Source-Version}), edje0-test (= ${Source-Version})
+Description: Graphical layout and animation library
+ Edje is a graphical layout and animation library for animated resizable,
+ compressed and scalable themes. It is the theming engine behind
+ Enlightenment DR 0.17.
  
 Package: libedje0-dev
 Architecture: any
 Section: devel
 Architecture: any
-Depends: libedje0 (= ${Source-Version}), libc6-dev
+Depends: libedje0 (= ${Source-Version}), libc6-dev | libc-dev, libeet0-dev, libecore1-dev, libevas2-dev
+Provides: libedje-dev
+Conflicts: libedje-dev
 Description: libedje0 headers, static libraries and documentation
- Headers, shared libraries and documentation for Edje.
+ This package provides headers, shared libraries and documentation for Edje.
+ .
+ Edje is a graphical layout and animation library for animated resizable,
+ compressed and scalable themes. It is the theming engine behind
+ Enlightenment DR 0.17.

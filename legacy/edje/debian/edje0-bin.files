@@ -1,0 +1,4 @@
+usr/bin/edje_cc
+usr/share/edje/data/src/*.edc
+usr/share/edje/data/images/*.png
+usr/share/edje/data/*.sh
