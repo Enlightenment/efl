@@ -534,7 +534,7 @@ ob_collections_group_script(void)
 	     if (cd->shared)
 	       {
 		  fprintf(stderr, "%s: Error. parse error %s:%i. There is already an existing script section for the group\n",
-			  progname, file_in, line);
+			  progname, file_in, line - 1);
 		  exit(-1);
 	       }
 	     cd->shared = s;
@@ -598,7 +598,7 @@ st_collections_group_parts_part_name(void)
 	     if ((lep != ep) && (!strcmp(lep->name, ep->name)))
 	       {
 		  fprintf(stderr, "%s: Error. parse error %s:%i. There is already a part of the name %s\n",
-			  progname, file_in, line, ep->name);
+			  progname, file_in, line - 1, ep->name);
 		  exit(-1);
 	       }
 	  }
@@ -798,9 +798,9 @@ st_collections_group_parts_part_description_inherit(void)
    /* inherit may not be used in the default description */
    if (!ep->other_desc)
      {
-	fprintf(stderr, "part %s: "
-	      "inherit may not be used in the default description!\n",
-	      ep->name);
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"inherit may not be used in the default description\n",
+		progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -808,9 +808,9 @@ st_collections_group_parts_part_description_inherit(void)
 
    if (!ed->state.name)
      {
-	fprintf(stderr, "part %s: "
-	      "inherit may only be used after state!\n",
-	      ep->name);
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"inherit may only be used after state\n",
+		progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -850,9 +850,9 @@ st_collections_group_parts_part_description_inherit(void)
 
    if (!parent)
      {
-	fprintf (stderr, "part %s: "
+	fprintf (stderr, "%s: Error. parse error %s:%i. "
 	      "cannot find referenced part state %s %lf\n",
-	      ep->name, parent_name, parent_val);
+	      ep->name, file_in, line - 1, parent_name, parent_val);
 	exit(-1);
      }
 
@@ -1257,7 +1257,7 @@ st_collections_group_parts_part_description_image_normal(void)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"image attributes in non-IMAGE part.\n",
-		progname, file_in, line);
+		progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -1288,7 +1288,7 @@ st_collections_group_parts_part_description_image_tween(void)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"image attributes in non-IMAGE part.\n",
-		progname, file_in, line);
+		progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -1322,7 +1322,7 @@ st_collections_group_parts_part_description_image_border(void)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"image attributes in non-IMAGE part.\n",
-		progname, file_in, line);
+		progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -1339,7 +1339,7 @@ st_collections_group_parts_part_description_border(void)
 {
    fprintf(stderr, "%s: Warning. %s:%i: description.border is deprecated, "
 	   "use description.image.border instead.\n",
-	   progname, file_in, line);
+	   progname, file_in, line - 1);
 
    st_collections_group_parts_part_description_image_border ();
 }
@@ -1360,7 +1360,7 @@ st_collections_group_parts_part_description_fill_smooth(void)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"fill attributes in non-IMAGE part.\n",
-		progname, file_in, line);
+		progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -1385,7 +1385,7 @@ st_collections_group_parts_part_description_fill_origin_relative(void)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"fill attributes in non-IMAGE part.\n",
-		progname, file_in, line);
+		progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -1411,7 +1411,7 @@ st_collections_group_parts_part_description_fill_origin_offset(void)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"fill attributes in non-IMAGE part.\n",
-		progname, file_in, line);
+		progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -1439,7 +1439,7 @@ st_collections_group_parts_part_description_fill_size_relative(void)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"fill attributes in non-IMAGE part.\n",
-		progname, file_in, line);
+		progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -1465,7 +1465,7 @@ st_collections_group_parts_part_description_fill_size_offset(void)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"fill attributes in non-IMAGE part.\n",
-		progname, file_in, line);
+		progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -1562,7 +1562,7 @@ st_collections_group_parts_part_description_text_text(void)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"text attributes in non-TEXT part.\n",
-		progname, file_in, line);
+		progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -1587,7 +1587,7 @@ st_collections_group_parts_part_description_text_text_class(void)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"text attributes in non-TEXT part.\n",
-		progname, file_in, line);
+		progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -1612,7 +1612,7 @@ st_collections_group_parts_part_description_text_font(void)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"text attributes in non-TEXT part.\n",
-		progname, file_in, line);
+		progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -1637,7 +1637,7 @@ st_collections_group_parts_part_description_text_size(void)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"text attributes in non-TEXT part.\n",
-		progname, file_in, line);
+		progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -1684,7 +1684,7 @@ st_collections_group_parts_part_description_text_fit(void)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"text attributes in non-TEXT part.\n",
-		progname, file_in, line);
+		progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -1710,7 +1710,7 @@ st_collections_group_parts_part_description_text_min(void)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"text attributes in non-TEXT part.\n",
-		progname, file_in, line);
+		progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -1736,7 +1736,7 @@ st_collections_group_parts_part_description_text_align(void)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"text attributes in non-TEXT part.\n",
-		progname, file_in, line);
+		progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -1762,7 +1762,7 @@ st_collections_group_parts_part_description_text_source(void)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"text attributes in non-TEXT part.\n",
-		progname, file_in, line);
+		progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -1793,7 +1793,7 @@ st_collections_group_parts_part_description_text_text_source(void)
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"text attributes in non-TEXT part.\n",
-		progname, file_in, line);
+		progname, file_in, line - 1);
 	exit(-1);
      }
 
@@ -1844,7 +1844,7 @@ st_collections_group_programs_program_name(void)
 	     if ((lep != ep) && (!strcmp(lep->name, ep->name)))
 	       {
 		  fprintf(stderr, "%s: Error. parse error %s:%i. There is already a program of the name %s\n",
-			  progname, file_in, line, ep->name);
+			  progname, file_in, line - 1, ep->name);
 		  exit(-1);
 	       }
 	  }
