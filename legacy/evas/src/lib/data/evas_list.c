@@ -703,16 +703,14 @@ evas_list_nth_list(Evas_List *list, int n)
    Evas_List *l;
 
    /* check for non-existing nodes */
-   if (n < 0 || n > list->count - 1) return NULL;
+   if ((n < 0) || (n > list->count - 1) || (!list)) return NULL;
 
    /* if the node is in the 2nd half of the list, search from the end
     * else, search from the beginning.
     */
    if (n > list->count / 2)
      {
-	n = list->count - n - 1;
-
-	for (i = 0, l = list->last; l; l = l->prev, i++)
+	for (i = list->count - 1, l = list->last; l; l = l->prev, i--)
 	  {
 	     if (i == n) return l;
 	  }
@@ -724,7 +722,6 @@ evas_list_nth_list(Evas_List *list, int n)
 	     if (i == n) return l;
 	  }
      }
-
    return NULL;
 }
 
