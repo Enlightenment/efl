@@ -4,6 +4,9 @@
 
 Ecore_Job *job = NULL;
 
+static Evas_List *msgq = NULL;
+static Evas_List *tmp_msgq = NULL;
+
 void
 edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void *msg)
 {
@@ -25,13 +28,56 @@ edje_object_message_handler_set(Evas_Object *obj, void (*func) (void *data, Evas
 }
 
 void
+edje_object_message_signal_process(Evas_Object *obj)
+{
+   Evas_List *l, *tmpq = NULL;
+   Edje *ed;
+   
+   ed = _edje_fetch(obj);
+   if (!ed) return;
+   
+   for (l = msgq; l; l = l->next)
+     {
+	Edje_Message *em;
+	
+	em = l->data;
+	if (em->edje == ed)
+	  tmpq = evas_list_append(tmpq, em);
+     }
+   /* now remove them from the old queue */
+   for (l = tmpq; l; l = l->next)
+     msgq = evas_list_remove(msgq, l->data);
+   /* a temporary message queue */
+   if (tmp_msgq)
+     {
+	while (tmpq)
+	  {
+	     tmp_msgq = evas_list_append(tmp_msgq, tmpq->data);
+	     tmpq = evas_list_remove_list(tmpq, tmpq);
+	  }
+     }
+   else
+     {
+	tmp_msgq = tmpq;
+	tmpq = NULL;
+     }
+
+	while (tmp_msgq)
+	  {
+	     Edje_Message *em;
+	     
+	     em = tmp_msgq->data;
+	     tmp_msgq = evas_list_remove_list(tmp_msgq, tmp_msgq);
+	     _edje_message_process(em);
+	     _edje_message_free(em);
+	  }
+}
+
+void
 edje_message_signal_process(void)
 {
    _edje_message_queue_process();
 }
-
-static Evas_List *msgq = NULL;
-static Evas_List *tmp_msgq = NULL;
 
 static int
 _edje_dummy_timer(void *data)
@@ -482,8 +528,19 @@ _edje_message_queue_process(void)
    for (i = 0; (i < 8) && (msgq); i++)
      {
 	/* a temporary message queue */
-	tmp_msgq = msgq;
-	msgq = NULL;
+	if (tmp_msgq)
+	  {
+	     while (msgq)
+	       {
+		  tmp_msgq = evas_list_append(tmp_msgq, msgq->data);
+		  msgq = evas_list_remove_list(msgq, msgq);
+	       }
+	  }
+	else
+	  {
+	     tmp_msgq = msgq;
+	     msgq = NULL;
+	  }
 	
 	while (tmp_msgq)
 	  {
@@ -511,6 +568,14 @@ _edje_message_queue_clear(void)
 	
 	em = msgq->data;
 	msgq = evas_list_remove_list(msgq, msgq);
+	_edje_message_free(em);
+     }
+   while (tmp_msgq)
+     {
+	Edje_Message *em;
+	
+	em = tmp_msgq->data;
+	tmp_msgq = evas_list_remove_list(tmp_msgq, tmp_msgq);
 	_edje_message_free(em);
      }
 }

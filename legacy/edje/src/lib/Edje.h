@@ -193,10 +193,11 @@ extern "C" {
   void         edje_object_part_drag_page      (Evas_Object *obj, const char *part, double dx, double dy);
 
   /* edje_message_queue.c */
-  void         edje_object_message_send        (Evas_Object *obj, Edje_Message_Type type, int id, void *msg);
-  void         edje_object_message_handler_set (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg), void *data);
-   
-  void         edje_message_signal_process     (void);
+  void         edje_object_message_send           (Evas_Object *obj, Edje_Message_Type type, int id, void *msg);
+  void         edje_object_message_handler_set    (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg), void *data);
+  void         edje_object_message_signal_process (Evas_Object *obj);
+       
+  void         edje_message_signal_process        (void);
    
 #ifdef __cplusplus
 }
