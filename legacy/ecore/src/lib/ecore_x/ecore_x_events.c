@@ -714,7 +714,7 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
 					   &(e->name), &(e->clas));
 	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_NAME_CLASS_CHANGE, e, _ecore_x_event_free_window_prop_name_class_change, NULL);
      }
-   else if (xevent->xproperty.atom == _ecore_x_atom_wm_name)
+   else if ((xevent->xproperty.atom == _ecore_x_atom_wm_name) || (xevent->xproperty.atom == _ecore_x_atom_net_wm_name))
      {
 	Ecore_X_Event_Window_Prop_Title_Change *e;
 	
