@@ -60,18 +60,7 @@ Suggested configure options for evas for a Linux desktop X display:
 make CFLAGS="-O9 -mpentiumpro -march=pentiumpro -mcpu=pentiumpro"
 @endverbatim
 
-@section tutorial Ecore Tutorial
-
-You will find a more comprehensive @ref tut here, going through many examples
-with tips and hints as to how best do some things.
-
 @todo (1.0) Document API
-
-*/
-
-/** @page tut Ecore Tutorial
-
-Here is a tutotial for using Ecore...
 
 */
 
@@ -286,7 +275,7 @@ number, each element is accessed using another object.
 Associated modules that describe the Hash ADT include:
 @li @ref Ecore_Data_Hash_ADT_Creation_Group
 @li @ref Ecore_Data_Hash_ADT_Destruction_Group
-@li @ref Ecore_Data_Hash_ADT_Setting_Group
+@li @ref Ecore_Data_Hash_ADT_Data_Group
 
 @todo Finish this.
 */

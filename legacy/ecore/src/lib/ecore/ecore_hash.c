@@ -127,9 +127,9 @@ int ecore_hash_set_free_value(Ecore_Hash *hash, Ecore_Free_Cb function)
 }
 
 /**
- * @defgroup Ecore_Data_Hash_ADT_Setting_Group Hash Setting Functions
+ * @defgroup Ecore_Data_Hash_ADT_Data_Group Hash Data Functions
  *
- * Functions that set values in hash tables.
+ * Functions that set, access and delete values from the hash tables.
  */
 
 /**
@@ -138,7 +138,7 @@ int ecore_hash_set_free_value(Ecore_Hash *hash, Ecore_Free_Cb function)
  * @param   key     The key.
  * @param   value   The value.
  * @return  @c TRUE if successful, @c FALSE if not.
- * @ingroup Ecore_Data_Hash_ADT_Setting_Group
+ * @ingroup Ecore_Data_Hash_ADT_Data_Group
  */
 int ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
 {
@@ -162,7 +162,7 @@ int ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
 }
 
 /**
- * Free the hash table and the data contained inside it.
+ * Frees the hash table and the data contained inside it.
  * @param   hash The hash table to destroy.
  * @return  @c TRUE on success, @c FALSE on error.
  * @ingroup Ecore_Data_Hash_ADT_Destruction_Group
@@ -193,10 +193,17 @@ void ecore_hash_destroy(Ecore_Hash *hash)
 }
 
 /**
- * @brief Iterate over the entries in the hash table
- * @param hash: the hash whose entries are iterated over
- * @param for_each_func: the function each entry is passed to
- * @return Returns TRUE on success, FALSE otherwise.
+ * @defgroup Ecore_Data_Hash_ADT_Traverse_Group Hash Traverse Functions
+ *
+ * Functions that iterate through hash tables.
+ */
+
+/**
+ * Runs the @p for_each_func function on each entry in the given hash.
+ * @param   hash          The given hash.
+ * @param   for_each_func The function that each entry is passed to.
+ * @return  TRUE on success, FALSE otherwise.
+ * @ingroup Ecore_Data_Hash_ADT_Traverse_Group
  */
 int ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func)
 {
@@ -225,10 +232,8 @@ int ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func)
 }
 
 /**
- * @brief Print the distribution of the hash table for graphing
- * @param hash: the hash table to print
- *
- * Returns no value.
+ * Prints the distribution of the given hash table for graphing.
+ * @param hash The given hash table.
  */
 void
 ecore_hash_dump_graph(Ecore_Hash *hash)
@@ -295,11 +300,12 @@ _ecore_hash_add_node(Ecore_Hash *hash, Ecore_Hash_Node *node)
 }
 
 /**
- * @brief Retrieve the value associated with key
- * @param hash: the hash table to search for the key
- * @param key: the key to search for in the hash table
- *
- * @return Returns NULL on error, value corresponding to key on success
+ * Retrieves the value associated with the given key from the given hash
+ * table.
+ * @param   hash The given hash table.
+ * @param   key  The key to search for.
+ * @return  The value corresponding to key on success, @c NULL otherwise.
+ * @ingroup Ecore_Data_Hash_ADT_Data_Group
  */
 void *ecore_hash_get(Ecore_Hash *hash, void *key)
 {
@@ -321,11 +327,13 @@ void *ecore_hash_get(Ecore_Hash *hash, void *key)
 
 
 /**
- * @brief Remove the value associated with key
- * @param hash: the hash table to remove the key from
- * @param key: the key to search for in the hash table
- *
- * @return Returns NULL on error, value corresponding to key on success
+ * Removes the value associated with the given key in the given hash
+ * table.
+ * @param   hash The given hash table.
+ * @param   key  The key to search for.
+ * @return  The value corresponding to the key on success.  @c NULL is
+ *          returned if there is an error.
+ * @ingroup Ecore_Data_Hash_ADT_Data_Group
  */
 void *ecore_hash_remove(Ecore_Hash *hash, void *key)
 {

@@ -3,14 +3,21 @@
 #include "Ecore_X.h"
 
 /**
+ * @defgroup Ecore_X_Window_Create_Group X Window Creation Functions
+ *
+ * Functions that can be used to create an X window.
+ */
+
+/**
  * Creates a new window.
- * @param  parent The parent window to use.  If @p parent is @c 0, the root
- *                window of the default display is used.
- * @param  x      X position.
- * @param  y      Y position.
- * @param  w      Width.
- * @param  h      Height.
- * @return The new window handle.
+ * @param   parent The parent window to use.  If @p parent is @c 0, the root
+ *                 window of the default display is used.
+ * @param   x      X position.
+ * @param   y      Y position.
+ * @param   w      Width.
+ * @param   h      Height.
+ * @return  The new window handle.
+ * @ingroup Ecore_X_Window_Create_Group
  */
 Ecore_X_Window
 ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h)
@@ -59,14 +66,15 @@ ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h)
 }
 
 /**
- * Create a window with the override redirect attribute set to @c True.
- * @param  parent The parent window to use.  If @p parent is @c 0, the root
- *                window of the default display is used.
- * @param  x      X position.
- * @param  y      Y position.
- * @param  w      Width.
- * @param  h      Height.
- * @return The new window handle.
+ * Creates a window with the override redirect attribute set to @c True.
+ * @param   parent The parent window to use.  If @p parent is @c 0, the root
+ *                 window of the default display is used.
+ * @param   x      X position.
+ * @param   y      Y position.
+ * @param   w      Width.
+ * @param   h      Height.
+ * @return  The new window handle.
+ * @ingroup Ecore_X_Window_Create_Group
  */
 Ecore_X_Window
 ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h)
@@ -115,14 +123,15 @@ ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h)
 }
 
 /**
- * Create a new input window.
- * @param  parent The parent window to use.    If @p parent is @c 0, the root
- *                window of the default display is used.
- * @param  x      X position.
- * @param  y      Y position.
- * @param  w      Width.
- * @param  h      Height.
- * @return The new window.
+ * Creates a new input window.
+ * @param   parent The parent window to use.    If @p parent is @c 0, the root
+ *                 window of the default display is used.
+ * @param   x      X position.
+ * @param   y      Y position.
+ * @param   w      Width.
+ * @param   h      Height.
+ * @return  The new window.
+ * @ingroup Ecore_X_Window_Create_Group
  */
 Ecore_X_Window
 ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h)
@@ -163,12 +172,19 @@ ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h)
 }
 
 /**
+ * @defgroup Evas_X_Window_Properties_Group X Window Property Functions
+ *
+ * Functions that set window properties.
+ */
+
+/**
  * Sets the default properties for the given window.
  *
  * The default properties set for the window are @c WM_CLIENT_MACHINE and
  * @c _NET_WM_PID.
  *
- * @param win The given window.
+ * @param   win The given window.
+ * @ingroup Evas_X_Window_Properties_Groups
  */
 void
 ecore_x_window_defaults_set(Ecore_X_Window win)
@@ -210,8 +226,15 @@ ecore_x_window_defaults_set(Ecore_X_Window win)
 }
 
 /**
- * Deletes a window.
- * @param win The window to delete.
+ * @defgroup Evas_X_Window_Destroy_Group X Window Destroy Functions
+ *
+ * Functions to destroy X windows.
+ */
+
+/**
+ * Deletes the given window.
+ * @param   win The given window.
+ * @ingroup Evas_X_Window_Destroy_Group
  */
 void
 ecore_x_window_del(Ecore_X_Window win)
@@ -220,11 +243,18 @@ ecore_x_window_del(Ecore_X_Window win)
 }
 
 /**
+ * @defgroup Evas_X_Window_Visibility_Group X Window Visibility Functions
+ *
+ * Functions to access and change the visibility of X windows.
+ */
+
+/**
  * Shows a window.
  *
  * Synonymous to "mapping" a window in X Window System terminology.
  *
- * @param win The window to show.
+ * @param   win The window to show.
+ * @ingroup Evas_X_Window_Visibility
  */
 void
 ecore_x_window_show(Ecore_X_Window win)
@@ -237,7 +267,8 @@ ecore_x_window_show(Ecore_X_Window win)
  *
  * Synonymous to "unmapping" a window in X Window System terminology.
  *
- * @param win The window to hide.
+ * @param   win The window to hide.
+ * @ingroup Evas_X_Window_Visibility
  */
 void
 ecore_x_window_hide(Ecore_X_Window win)
@@ -246,14 +277,21 @@ ecore_x_window_hide(Ecore_X_Window win)
 }
 
 /**
+ * @defgroup Ecore_X_Window_Geometry_Group X Window Geometry Functions
+ *
+ * Functions that change or retrieve the geometry of X windows.
+ */
+
+/**
  * Moves a window to the position @p x, @p y.
  *
  * The position is relative to the upper left hand corner of the
  * parent window.
  *
- * @param win The window to move.
- * @param x   X position.
- * @param y   Y position.
+ * @param   win The window to move.
+ * @param   x   X position.
+ * @param   y   Y position.
+ * @ingroup Ecore_X_Window_Geometry_Group
  */
 void
 ecore_x_window_move(Ecore_X_Window win, int x, int y)
@@ -263,9 +301,10 @@ ecore_x_window_move(Ecore_X_Window win, int x, int y)
 
 /**
  * Resizes a window.
- * @param win The window to resize.
- * @param w   New width of the window.
- * @param h   New height of the window.
+ * @param   win The window to resize.
+ * @param   w   New width of the window.
+ * @param   h   New height of the window.
+ * @ingroup Ecore_X_Window_Geometry_Group
  */
 void
 ecore_x_window_resize(Ecore_X_Window win, int w, int h)
@@ -277,11 +316,12 @@ ecore_x_window_resize(Ecore_X_Window win, int w, int h)
 
 /**
  * Moves and resizes a window.
- * @param win The window to move and resize.
- * @param x   New X position of the window.
- * @param y   New Y position of the window.
- * @param w   New width of the window.
- * @param h   New height of the window.
+ * @param   win The window to move and resize.
+ * @param   x   New X position of the window.
+ * @param   y   New Y position of the window.
+ * @param   w   New width of the window.
+ * @param   h   New height of the window.
+ * @ingroup Ecore_X_Window_Geometry_Group
  */
 void
 ecore_x_window_move_resize(Ecore_X_Window win, int x, int y, int w, int h)
@@ -292,8 +332,15 @@ ecore_x_window_move_resize(Ecore_X_Window win, int x, int y, int w, int h)
 }
 
 /**
+ * @defgroup Ecore_X_Window_Focus_Functions X Window Focus Functions
+ *
+ * Functions that give the focus to an X Window.
+ */
+
+/**
  * Sets the focus to the window @p win.
- * @param win The window to focus.
+ * @param   win The window to focus.
+ * @ingroup Ecore_X_Window_Focus_Functions
  */
 void
 ecore_x_window_focus(Ecore_X_Window win)
@@ -304,8 +351,9 @@ ecore_x_window_focus(Ecore_X_Window win)
 
 /**
  * Sets the focus to the given window at a specific time.
- * @param win The window to focus.
- * @param t   When to set the focus to the window.
+ * @param   win The window to focus.
+ * @param   t   When to set the focus to the window.
+ * @ingroup Ecore_X_Window_Focus_Functions
  */
 void
 ecore_x_window_focus_at_time(Ecore_X_Window win, Ecore_X_Time t)
@@ -315,8 +363,15 @@ ecore_x_window_focus_at_time(Ecore_X_Window win, Ecore_X_Time t)
 }
 
 /**
+ * @defgroup Ecore_X_Window_Z_Order_Group X Window Z Order Functions
+ *
+ * Functions that change the Z order of X windows.
+ */
+
+/**
  * Raises the given window.
- * @param win The window to raise.
+ * @param   win The window to raise.
+ * @ingroup Ecore_X_Window_Z_Order_Group
  */
 void
 ecore_x_window_raise(Ecore_X_Window win)
@@ -326,7 +381,8 @@ ecore_x_window_raise(Ecore_X_Window win)
 
 /**
  * Lowers the given window.
- * @param win The window to lower.
+ * @param   win The window to lower.
+ * @ingroup Ecore_X_Window_Z_Order_Group
  */
 void
 ecore_x_window_lower(Ecore_X_Window win)
@@ -441,8 +497,9 @@ ecore_x_window_cursor_show(Ecore_X_Window win, int show)
 
 /**
  * Finds out whether the given window is currently visible.
- * @param  win The given window.
- * @return 1 if the window is visible, otherwise 0.
+ * @param   win The given window.
+ * @return  1 if the window is visible, otherwise 0.
+ * @ingroup Ecore_X_Window_Visibility_Group
  */
 int
 ecore_x_window_visible_get(Ecore_X_Window win)

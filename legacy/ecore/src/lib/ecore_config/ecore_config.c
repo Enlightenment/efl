@@ -91,6 +91,12 @@ ecore_config_dst(Ecore_Config_Prop * e)
 }
 
 /**
+ * @defgroup Ecore_Config_Get_Group Configuration Retrieve Functions
+ *
+ * Functions that retrieve configuration values, based on type.
+ */
+
+/**
  * Returns the property with the given key.
  * @param   key The unique name of the wanted property.
  * @return  The property that corresponds to the given key.  @c NULL if the
