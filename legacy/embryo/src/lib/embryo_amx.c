@@ -188,7 +188,7 @@ _embryo_program_init(Embryo_Program *ep, void *code)
 	Embryo_Cell *code;
 	
 	code_size = hdr->dat - hdr->cod;
-	code = ep->code + (int)hdr->cod;
+	code = (Embryo_Cell *)((unsigned char *)ep->code + (int)hdr->cod);
 	for (cip = 0; cip < code_size; cip++) embryo_swap_32(&(code[cip]));
      }
 #endif  
