@@ -82,6 +82,7 @@ AC_OUTPUT([
 Makefile
 ecore-config
 src/Makefile
+debian/Makefile
 ], [
 chmod +x ecore-config
 ]
