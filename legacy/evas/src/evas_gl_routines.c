@@ -6,8 +6,13 @@
 
 /* uncomment this is partial buffer swaps slow - problem with glcopypixels? */
 #define GLSWB 1
+
 /* uncomment if your GL implimentation is CRAP at clipping */
-#define GLNOCLIP 1
+/* #define GLNOCLIP 1 */
+
+/* uncomment this if your gl doesn thandle rendering all the update rects */
+/* well - i knwo nvidias performance blows if u render mroe than 1 rect */
+#define GLBOUNDING 1
 
 #define INTERSECTS(x, y, w, h, xx, yy, ww, hh) \
      ((x < (xx + ww)) && \
@@ -2949,6 +2954,31 @@ __evas_gl_draw_add_rect(Display *disp, Imlib_Image dstim, Window win,
    
    glw = __evas_gl_window_lookup(disp, win);
    if (!glw) return;
+#ifdef GLBOUNDING   
+   if (glw->updates)
+     {
+	rect = glw->updates->data;
+	if (x < rect->x)
+	  {
+	     rect->w += (rect->x - x);
+	     rect->x = x;
+	  }
+	if ((x + w) > (rect->x + rect->w))
+	  {
+	     rect->w = (x + w) - rect->x;
+	  }
+	if (y < rect->y)
+	  {
+	     rect->h += (rect->y - y);
+	     rect->y = y;
+	  }
+	if ((y + h) > (rect->y + rect->h))
+	  {
+	     rect->h = (y + h) - rect->y;
+	  }
+	return;
+     }
+#endif   
    rect = malloc(sizeof(Evas_GL_Rect));
    rect->x = x;
    rect->y = y;
