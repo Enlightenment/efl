@@ -100,5 +100,7 @@ int main(int argc, char **argv)
 	free(name);
      }
 
+   edje_shutdown();
+
    return 0;
 }

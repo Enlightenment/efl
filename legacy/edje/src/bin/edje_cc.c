@@ -86,6 +86,8 @@ main(int argc, char **argv)
    compile();
    data_process_lookups();
    data_write();
+
+   edje_shutdown();
    
    return 0;
 }
