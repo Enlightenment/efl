@@ -3,6 +3,9 @@
 
 #include <X11/Xlib.h>
 #include <Imlib2.h>
+#ifdef WITH_DMALLOC
+#include <dmalloc.h>
+#endif
 
 typedef struct _Evas *                     Evas;
 typedef struct _Evas_Gradient *            Evas_Gradient;
