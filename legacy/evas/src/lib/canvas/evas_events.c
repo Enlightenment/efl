@@ -557,16 +557,14 @@ evas_event_feed_key_down_data(Evas *e, const char *keyname, const void *data)
 		       Evas_List *l;
 		       
 		       e->delete_grabs--;
-		       for (l = e->grabs; l; l= l->next)
+		       for (l = e->grabs; l;)
 			 {
 			    Evas_Key_Grab *g;
 			    
 			    g = l->data;
+			    l = l->next;
 			    if (g->delete_me)
-			      {
-				 evas_key_grab_free(g->object, g->keyname, g->modifiers, g->not_modifiers);
-				 break;
-			      }
+			      evas_key_grab_free(g->object, g->keyname, g->modifiers, g->not_modifiers);
 			 }
 		    }
 	       }
@@ -642,11 +640,9 @@ evas_event_feed_key_up_data(Evas *e, const char *keyname, const void *data)
 			    Evas_Key_Grab *g;
 			    
 			    g = l->data;
+			    l = l->next;
 			    if (g->delete_me)
-			      {
-				 evas_key_grab_free(g->object, g->keyname, g->modifiers, g->not_modifiers);
-				 break;
-			      }
+			      evas_key_grab_free(g->object, g->keyname, g->modifiers, g->not_modifiers);
 			 }
 		    }
 	       }
