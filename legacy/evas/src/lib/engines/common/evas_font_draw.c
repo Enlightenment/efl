@@ -19,7 +19,7 @@ evas_common_font_cache_glyph_get(RGBA_Font *fn, FT_UInt index)
    fg = evas_hash_find(fn->glyphs, key);
    if (fg) return fg;
    
-   error = FT_Load_Glyph(fn->ft.face, index, FT_LOAD_DEFAULT);
+   error = FT_Load_Glyph(fn->ft.face, index, FT_LOAD_NO_BITMAP);
    if (error) return NULL;
    
    fg = malloc(sizeof(struct _RGBA_Font_Glyph));
@@ -126,42 +126,41 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	     data = fg->glyph_out->bitmap.buffer;
 	     j = fg->glyph_out->bitmap.pitch;
 	     w = fg->glyph_out->bitmap.width;
-	     /* BUG: freetype 2.1.3 has a bug - workaround */
-	     /* ft2.1.3 is giving me rowstrides for some fonts in */
-	     /* some point sises of.... 1 !!!! this is wrong. */
-	     /* second guess it and "fixup" here */
 	     if (j < w) j = w;
-	     /* end BUG workaround */
 	     h = fg->glyph_out->bitmap.rows;
-	     if ((j > 0) && (chr_x + w > ext_x))
+	     if ((fg->glyph_out->bitmap.pixel_mode == ft_pixel_mode_grays) &&
+		 (fg->glyph_out->bitmap.num_grays == 256))
 	       {
-		  for (i = 0; i < h; i++)
+		  if ((j > 0) && (chr_x + w > ext_x))
 		    {
-		       int dx, dy;
-		       int in_x, in_w;
-		       
-		       in_x = 0;
-		       in_w = 0;
-		       dx = chr_x;
-		       dy = y - (chr_y - i - y);
-		       if ((dx < (ext_x + ext_w)) &&
-			   (dy >= (ext_y)) &&
-			   (dy < (ext_y + ext_h)))
+		       for (i = 0; i < h; i++)
 			 {
-			    if (dx + w > (ext_x + ext_w))
-			      in_w += (dx + w) - (ext_x + ext_w);
-			    if (dx < ext_x)
+			    int dx, dy;
+			    int in_x, in_w;
+			    
+			    in_x = 0;
+			    in_w = 0;
+			    dx = chr_x;
+			    dy = y - (chr_y - i - y);
+			    if ((dx < (ext_x + ext_w)) &&
+				(dy >= (ext_y)) &&
+				(dy < (ext_y + ext_h)))
 			      {
-				 in_w += ext_x - dx;
-				 in_x = ext_x - dx;
-				 dx = ext_x;
-			      }
-			    if (in_w < w)
-			      {
-				 func(data + (i * j) + in_x, 
-				      im + (dy * im_w) + dx,
-				      w - in_w, 
-				      dc->col.col);
+				 if (dx + w > (ext_x + ext_w))
+				   in_w += (dx + w) - (ext_x + ext_w);
+				 if (dx < ext_x)
+				   {
+				      in_w += ext_x - dx;
+				      in_x = ext_x - dx;
+				      dx = ext_x;
+				   }
+				 if (in_w < w)
+				   {
+				      func(data + (i * j) + in_x, 
+					   im + (dy * im_w) + dx,
+					   w - in_w, 
+					   dc->col.col);
+				   }
 			      }
 			 }
 		    }
