@@ -6,6 +6,7 @@ AUTOMAKE_OPTIONS     = 1.4 foreign
 MAINTAINERCLEANFILES = Makefile.in
 
 INCLUDES	     = @freetype_cflags@ \
+                       @eet_cflags@ \
                        -I. \
 		       -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include
