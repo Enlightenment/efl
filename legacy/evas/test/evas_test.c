@@ -8,8 +8,8 @@
 #include <math.h>
 
 /* defines */
-#define IMGDIR "./img/"
-#define FNTDIR "./fnt"
+#define IMGDIR DATADIR"/evas/img/"
+#define FNTDIR DATADIR"/evas/fnt/"
 
 #ifndef SPANS_COMMON
 #define SPANS_COMMON(x1, w1, x2, w2) \

@@ -5,6 +5,9 @@
 #include <unistd.h>
 #include <math.h>
 
+#define IMGDIR DATADIR"/evas/img/"
+#define FNTDIR DATADIR"/evas/fnt/"
+
 double get_time(void);
 
 double
@@ -83,14 +86,14 @@ main(int argc, char **argv)
    char *save_file = NULL;
    char *imgs[8] =
      {
-	"img/mush.png",
-	"img/book.png",
-	"img/bulb.png",
-	"img/term.png",
-	"img/calc.png",
-	"img/worlds.png",
-	"img/spider.png",
-	"img/mouse.png"	   
+	IMGDIR"mush.png",
+	IMGDIR"book.png",
+	IMGDIR"bulb.png",
+	IMGDIR"term.png",
+	IMGDIR"calc.png",
+	IMGDIR"worlds.png",
+	IMGDIR"spider.png",
+	IMGDIR"mouse.png"	   
      };
    
    win_w = 640; win_h = 480;
@@ -188,7 +191,7 @@ main(int argc, char **argv)
 	XMapWindow(d, win);
 	XSync(d, False);
      }
-   evas_font_add_path(e, "./fnt");
+   evas_font_add_path(e, FNTDIR);
    evas_set_output(e, d, win, vis, cmap);
    evas_set_output_size(e, win_w, win_h);
    evas_set_output_viewport(e, 0, 0, win_w, win_h);
@@ -196,9 +199,9 @@ main(int argc, char **argv)
    evas_set_font_cache(e, 1 * 1024 * 1024);
    evas_set_image_cache(e, 8 * 1024 * 1024);   
    
-   o[0] = evas_add_image_from_file(e, "img/sky001.png");
+   o[0] = evas_add_image_from_file(e, IMGDIR"sky001.png");
    evas_show(e, o[0]);
-   o[1] = evas_add_image_from_file(e, "img/logo001.png");
+   o[1] = evas_add_image_from_file(e, IMGDIR"logo001.png");
    evas_get_image_size(e, o[1], &w, &h);
    evas_callback_add(e, o[1], CALLBACK_MOUSE_DOWN, mouse_down, NULL);
    evas_callback_add(e, o[1], CALLBACK_MOUSE_UP, mouse_up, NULL);
@@ -211,7 +214,7 @@ main(int argc, char **argv)
    
    for (i = 2 ; i < 120; i++)
      {
-	o[i] = evas_add_image_from_file(e, "img/mush.png");
+	o[i] = evas_add_image_from_file(e, IMGDIR"mush.png");
 	evas_show(e, o[i]);
 	evas_set_layer(e, o[i], 100);
 	evas_callback_add(e, o[i], CALLBACK_MOUSE_DOWN, mouse_down, NULL);

@@ -69,7 +69,7 @@ rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-,root,root)
 %{prefix}/lib/libevas.so.*
-#%{prefix}/bin/evas_test
+%{prefix}/bin/evas_*
 %{prefix}/share/evas/*
 
 %files devel
