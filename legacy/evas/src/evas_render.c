@@ -302,9 +302,10 @@ evas_render(Evas e)
 	for (ll = layer->objects; ll; ll = ll->next)
 	  {
 	     Evas_Object_Any o;
-	     int real_change;
+	     int real_change, prop_change;
 
 	     real_change = 0;
+	     prop_change = 0;
 	     o = ll->data;
 	     
 	     if (o->delete_me) 
@@ -322,7 +323,15 @@ evas_render(Evas e)
 			(o->current.layer != o->previous.layer) ||
 			(o->current.stacking)))
 		      )
-		     real_change = 1;
+		    {
+		       if (((o->current.visible != o->previous.visible) ||
+			    ((o->current.visible) &&
+			     (o->current.zoomscale != o->previous.zoomscale) ||
+			     (o->current.layer != o->previous.layer) ||
+			     (o->current.stacking))))
+			  prop_change = 1;			   
+		       real_change = 1;
+		    }
 		  
 		  
 		  o->current.stacking = 0;
@@ -384,7 +393,10 @@ evas_render(Evas e)
 				     (oo->current.b != oo->previous.b) ||
 				     (oo->current.a != oo->previous.a)
 				     )
-				    real_change = 1;
+				   {
+				      real_change = 1;
+				      prop_change = 1;
+				   }
 				 oo->previous = oo->current;
 			      }
 			    break;
@@ -441,14 +453,114 @@ evas_render(Evas e)
 	       {
 		  int x, y, w, h;
 		  
-		  _evas_object_get_previous_translated_coords(e, o, 
-							      &x, &y, 
-							      &w, &h);
-		  evas_update_rect(e, x, y, w, h);
-		  _evas_object_get_current_translated_coords(e, o, 
-							     &x, &y, 
-							     &w, &h);
-		  evas_update_rect(e, x, y, w, h);
+		  /* special case for rectangle since its all one color */
+		  if ((o->type == OBJECT_RECTANGLE) &&
+		      (!prop_change) &&
+		      (RECTS_INTERSECT(o->current.x, o->current.y,
+				       o->current.w, o->current.h,
+				       o->previous.x, o->previous.y,
+				       o->previous.w, o->previous.h)))
+		    {
+		       int xx, yy, ww, hh;
+		       int x1[4], y1[4], i, j;
+		       Evas_List rl, rll;
+		       Evas_Rectangle r;
+		       
+		       _evas_object_get_previous_translated_coords(e, o, 
+								   &x, &y, 
+								   &w, &h);
+		       _evas_object_get_current_translated_coords(e, o, 
+								  &xx, &yy, 
+								  &ww, &hh);
+		       rl = NULL;
+		       if (x < xx)
+			 {
+			    x1[0] = x;
+			    x1[1] = xx;
+			 }
+		       else
+			 {
+			    x1[0] = xx;
+			    x1[1] = x;
+			 }
+		       if ((x + w) < (xx + ww))
+			 {
+			    x1[2] = x + w;
+			    x1[3] = xx + ww;
+			 }
+		       else
+			 {
+			    x1[2] = xx + ww;
+			    x1[3] = x + w;
+			 }
+		       if (y < yy)
+			 {
+			    y1[0] = y;
+			    y1[1] = yy;
+			 }
+		       else
+			 {
+			    y1[0] = yy;
+			    y1[1] = y;
+			 }
+		       if ((y + h) < (yy + hh))
+			 {
+			    y1[2] = y + h;
+			    y1[3] = yy + hh;
+			 }
+		       else
+			 {
+			    y1[2] = yy + hh;
+			    y1[3] = y + h;
+			 }
+		       for (j = 0; j < 3; j++)
+			 {
+			    for (i = 0; i < 3; i++)
+			      {
+				 r = malloc(sizeof(struct _Evas_Rectangle)); 
+				 rl = evas_list_append(rl, r);
+				 r->x = x1[i];
+				 r->y = y1[j];
+				 r->w = x1[i + 1] - x1[i];
+				 r->h = y1[j + 1] - y1[j];
+			      }
+			 }
+		       if (rl)
+			 {
+			    for (rll = rl; rll; rll = rll->next)
+			      {
+				 r = rll->data;
+				 if ((r->w > 0) && (r->h > 0))
+				   {
+				      int intsec1, intsec2;
+				      
+				      intsec1 = 0;
+				      intsec2 = 0;
+				      if (RECTS_INTERSECT(r->x, r->y, r->w, r->h,
+							  x, y, w, h))
+					 intsec1 = 1;
+				      if (RECTS_INTERSECT(r->x, r->y, r->w, r->h,
+							  xx, yy, ww, hh))
+					 intsec2 = 1;
+				      if ((intsec1 ^ intsec2))
+					 evas_update_rect(e, r->x, r->y, r->w, r->h);
+				   }
+				 free(r);
+			      }
+			    evas_list_free(rl);
+			 }
+		    }
+		  else
+		    {
+		       _evas_object_get_previous_translated_coords(e, o, 
+								   &x, &y, 
+								   &w, &h);
+		       evas_update_rect(e, x, y, w, h);
+		       _evas_object_get_current_translated_coords(e, o, 
+								  &x, &y, 
+								  &w, &h);
+		       evas_update_rect(e, x, y, w, h);
+		    }
 	       }
 	     o->previous = o->current;
 	  }
