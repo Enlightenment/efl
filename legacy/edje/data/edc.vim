@@ -25,6 +25,7 @@ syn keyword	cLabel		state visible align step aspect
 syn keyword	cLabel		relative offset to to_x to_y normal tween
 syn keyword	cLabel		border color color2 color3 font size fit align
 syn keyword	cLabel		signal source action transition in target after
+syn keyword	cLabel		text
 
 syn keyword	cConditional	if else switch
 syn keyword	cRepeat		while for do
