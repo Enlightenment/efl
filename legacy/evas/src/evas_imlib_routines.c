@@ -44,7 +44,11 @@ __evas_imlib_image_cache_clean(void)
 	
 	for (l = images; l; l = l->next)
 	  {
-	     if (!l->next) last = l->data;
+	     Evas_Imlib_Image *im;
+	     
+	     im = l->data;
+	     if (im->references == 0)
+	       last = l->data;
 	  }
 	images = evas_list_remove(images, last);
 	imlib_context_set_image(last->image);
