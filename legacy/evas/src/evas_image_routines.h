@@ -18,7 +18,7 @@
 #include <Imlib2.h>
 
 #ifndef SPANS_COMMON
-#define SPANS_COMMON(x1, w1, x2, w2) \
+# define SPANS_COMMON(x1, w1, x2, w2) \
 (!((((x2) + (w2)) <= (x1)) || ((x2) >= ((x1) + (w1)))))
 #define RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh) \
 ((SPANS_COMMON((x), (w), (xx), (ww))) && (SPANS_COMMON((y), (h), (yy), (hh))))
@@ -26,14 +26,14 @@
 
 typedef void Evas_Image_Image;
 typedef void Evas_Image_Font;
-typedef void Evas_Image_Graident;
 
 typedef struct _evas_image_drawable Evas_Image_Drawable;
 typedef struct _evas_image_update Evas_Image_Update;
+typedef struct _evas_image_color Evas_Image_Color;
+typedef struct _evas_image_gradient Evas_Image_Graident;
 
 struct _evas_image_drawable
 {
-   Display *disp;
    Imlib_Image im;
    Evas_List tmp_images;
 };
@@ -42,6 +42,17 @@ struct _evas_image_update
 {
    Imlib_Image image;
    int x, y, w, h;
+};
+
+struct _evas_image_color
+{
+   int r, g, b, a;
+   int dist;
+};
+
+struct _evas_image_gradient
+{
+   Evas_List colors;
 };
 
 /***************/

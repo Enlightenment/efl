@@ -237,7 +237,9 @@ __evas_x11_image_draw(Evas_X11_Image *im,
    imlib_context_set_drawable(w);
    imlib_context_set_dither_mask(0);
    imlib_context_set_anti_alias(0);
-   imlib_context_set_dither(__evas_anti_alias);
+   if (imlib_get_visual_depth(disp, __evas_visual) < 8) 
+     imlib_context_set_dither(__evas_anti_alias);
+   else imlib_context_set_dither(0);
    imlib_context_set_blend(0);
    imlib_context_set_angle(0.0);
    imlib_context_set_operation(IMLIB_OP_COPY);
@@ -275,8 +277,8 @@ __evas_x11_image_draw(Evas_X11_Image *im,
 		       ih = im->h;
 		       ww = (iw * dw) / src_w;
 		       hh = (ih * dh) / src_h;
-		       xx = (src_x * src_w) / dw;
-		       yy = (src_y * src_h) / dh;
+		       xx = (src_x * dw) / src_w;
+		       yy = (src_y * dh) / src_h;
 		       if (__evas_clip)
 			 {
 			    int px, py;
@@ -429,8 +431,6 @@ static int       __evas_fpath_num       = 0;
 static int       __evas_font_cache      = 0;
 static int       __evas_font_cache_max  = 512 * 1024;
 
-static int       __evas_rend_lut[9]   = { 0, 1, 1, 1, 1, 1, 1, 1, 1 };
-
 static int       __evas_have_tt_engine  = 0;
 static TT_Engine __evas_tt_engine;
 
@@ -521,6 +521,8 @@ __evas_x11_text_font_render_glyph(Window win, Evas_X11_Font *fn, Evas_X11_Glyph 
    g->pw = tw;
    g->ph = th;
 
+   fn->mem_use += (((g->pw -1) | 0x7) + 1) * g->ph / 8;
+   
    rmap = __evas_x11_text_font_raster_new(tw, th);
    if (rmap)
      {
@@ -540,7 +542,6 @@ __evas_x11_text_font_render_glyph(Window win, Evas_X11_Font *fn, Evas_X11_Glyph 
 		  
 		  rval = (DATA8)(((unsigned char *)(rmap->bitmap))[((rmap->rows - y - 1) * rmap->cols) + (x >> 3)]);
 		  rval >>= (7 - (x - ((x >> 3) << 3)));
-/*		  data[(y * tw) + x] = __evas_rend_lut[rval];*/
 		  XPutPixel(xim, x, y, rval);
 	       }
 	  }	
@@ -595,7 +596,7 @@ __evas_x11_font_load(char *font, int size)
    const int dpi = 96;
    
    file = __evas_x11_font_find(font);
-   if (!file) return;
+   if (!file) return NULL;
    if (!__evas_have_tt_engine)
      {
 	error = TT_Init_FreeType(&__evas_tt_engine);
@@ -606,6 +607,7 @@ __evas_x11_font_load(char *font, int size)
    fn->font = strdup(font);
    fn->size = size;
    fn->engine = __evas_tt_engine;
+   fn->mem_use = 0;
    error = TT_Open_Face(fn->engine, file, &fn->face);
    if (error)
      {
@@ -701,18 +703,8 @@ __evas_x11_text_font_cache_flush(void)
 	if (fn_last)
 	  {
 	     int i;
-	     Evas_List l;
 	     
-	     for (i = 0; i < 256; i++)
-	       {
-		  for (l = fn->glyphs[i]; l; l = l->next)
-		    {
-		       Evas_X11_Glyph *g;
-		  
-		       g = l->data;
-		       __evas_font_cache -= (((g->pw -1) | 0x7) + 1) * g->ph / 8;
-		    }
-	       }
+	     __evas_font_cache -= fn->mem_use;
 	     TT_Done_Instance(fn_last->instance);
 	     TT_Close_Face(fn_last->face);
 	     if (fn_last->font) free(fn_last->font);
@@ -762,21 +754,7 @@ __evas_x11_text_font_new(Display *disp, char *font, int size)
 		  __evas_fonts = evas_list_prepend(__evas_fonts, fn);
 	       }
 	     if (fn->references == 0)
-	       {
-		  int i;
-		  Evas_List l;
-		  
-		  for (i = 0; i < 256; i++)
-		    {
-		       for (l = fn->glyphs[i]; l; l = l->next)
-			 {
-			    Evas_X11_Glyph *g;
-			    
-			    g = l->data;
-			    __evas_font_cache -= (((g->pw -1) | 0x7) + 1) * g->ph / 8;
-			 }
-		    }
-	       }
+	       __evas_font_cache -= fn->mem_use;
 	     fn->references++;
 	     return fn;
 	  }
@@ -795,21 +773,7 @@ __evas_x11_text_font_free(Evas_X11_Font *fn)
      {
 	fn->references--;
 	if (fn->references == 0)
-	  {
-	     int i;
-	     Evas_List l;
-	     
-	     for (i = 0; i < 256; i++)
-	       {
-		  for (l = fn->glyphs[i]; l; l = l->next)
-		    {
-		       Evas_X11_Glyph *g;
-		  
-		       g = l->data;
-		       __evas_font_cache += (((g->pw -1) | 0x7) + 1) * g->ph / 8;
-		    }
-	       }
-	  }
+	  __evas_font_cache += fn->mem_use;
      }
    __evas_x11_text_font_cache_flush();
 }
@@ -847,21 +811,57 @@ __evas_x11_text_font_get_advances(Evas_X11_Font *fn, char *text,
 				    int *advance_horiz,
 				    int *advance_vert)
 {
+   int                 i, ascent, descent, pw, ph;
+   
    if (advance_horiz) *advance_horiz = 0;
    if (advance_horiz) *advance_vert = 0;
    if (!fn) return;
    if (!text) return;
    if (text[0] == 0) return;
-   /* FIXME */
+   
+   ascent = fn->ascent;
+   descent = fn->descent;
+   pw = 0;
+   ph = ascent + descent;
+   
+   for (i = 0; text[i]; i++)
+     {
+	Evas_X11_Glyph *g;
+	int glyph;
+	
+	glyph = ((unsigned char *)text)[i];
+	g = __evas_x11_text_font_get_glyph(fn, glyph);
+	if (!g) continue;
+	if (!TT_VALID(g->glyph)) continue;
+	if (i == 0)
+	  pw += ((-g->metrics.bearingX) / 64);
+	pw += g->metrics.advance / 64;
+     }
+   *advance_horiz = pw;
+   *advance_vert = ph;
 }
 
 int
 __evas_x11_text_font_get_first_inset(Evas_X11_Font *fn, char *text)
 {
+   int                 i;
+   
    if (!fn) return 0;
    if (!text) return 0;
    if (text[0] == 0) return 0;
-   /* FIXME */
+   
+   for (i = 0; text[i]; i++)
+     {
+	Evas_X11_Glyph *g;
+	int glyph;
+	
+	glyph = ((unsigned char *)text)[i];
+	g = __evas_x11_text_font_get_glyph(fn, glyph);
+	if (!g) continue;
+	if (!TT_VALID(g->glyph)) continue;
+             return ((-g->metrics.bearingX) / 64);
+     }
+   return 0;
 }
 
 void
@@ -1108,8 +1108,8 @@ __evas_x11_text_get_size(Evas_X11_Font *fn, char *text, int *w, int *h)
 	else
 	  pw += g->metrics.advance / 64;
      }
-   if (w) *w = pw + 1;
-   if (h) *h = ph + 1;
+   if (w) *w = pw;
+   if (h) *h = ph;
 }
 
 int

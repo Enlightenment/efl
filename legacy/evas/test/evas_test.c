@@ -913,13 +913,13 @@ setup_view(Evas_Render_Method method)
    evas_view = e;
    
    o = evas_add_text(e, "andover", 20, "FPS: ???");
-   evas_set_color(e, o, 255,  255,  255, 100);
+   evas_set_color(e, o, 255,  255,  255, 140);
    evas_move(e, o, 0, 0);
    evas_show(e, o);
    o_fps = o;
 
    o = evas_add_text(e, "andover", 20, "Total Average FPS: ???");
-   evas_set_color(e, o, 255,  255,  255, 100);
+   evas_set_color(e, o, 255,  255,  255, 140);
    evas_get_geometry(e, o, NULL, NULL, NULL, &y);
    evas_move(e, o, 0, 768 - y);
    evas_show(e, o);

@@ -101,6 +101,8 @@ struct _evas_x11_font
    int max_descent;
    int max_ascent;
 
+   int mem_use;
+   
    int references;
 };
 

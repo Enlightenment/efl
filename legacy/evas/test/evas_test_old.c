@@ -202,7 +202,6 @@ main(int argc, char **argv)
    o[0] = evas_add_image_from_file(e, IMGDIR"sky001.png");
    evas_show(e, o[0]);
    o[1] = evas_add_image_from_file(e, IMGDIR"logo001.png");
-   evas_get_image_size(e, o[1], &w, &h);
    evas_callback_add(e, o[1], CALLBACK_MOUSE_DOWN, mouse_down, NULL);
    evas_callback_add(e, o[1], CALLBACK_MOUSE_UP, mouse_up, NULL);
    evas_callback_add(e, o[1], CALLBACK_MOUSE_MOVE, mouse_move, NULL);
@@ -399,7 +398,7 @@ main(int argc, char **argv)
 		     evas_set_image_file(e, o[i], imgs[(i) & 0x7]);
 		  evas_move(e, o[i], x, y);
 /*		  
-		  ww =  ((1.2 + cos((double)(a + j + m) * 2 * 3.141592654 / 1000)) * 24);
+		  ww =  ((1.2 + cos((double)(a + j + m) * 2 * 3.141592654 / 1000)) * 48);
 		  hh = ww;
 		  evas_resize(e, o[i], ww, hh);
 		  evas_set_image_fill(e, o[i], 0, 0, ww, hh);

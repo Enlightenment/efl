@@ -613,13 +613,15 @@ __evas_gl_make_image_textures(Evas_GL_Window *w, Evas_GL_Image *image)
 	/* end edge */
 	else if (ty == tm->tiles.y)
 	  {
-	     iy = ty * (w->context->max_texture_size - 2) + 1;
+	     iy = (w->context->max_texture_size - 1) - 1 +
+	       ((ty  - 1) * (w->context->max_texture_size - 2));
 	     ih = image->h - iy;
 	  }
 	/* middle tex */
 	else
 	  {
-	     iy = ty * (w->context->max_texture_size - 2) + 1;
+	     iy = (w->context->max_texture_size - 1) - 1 +
+	       ((ty  - 1) * (w->context->max_texture_size - 2));
 	     ih = w->context->max_texture_size;
 	  }
 	for (tx = 0; tx <= tm->tiles.x; tx++)
@@ -640,13 +642,15 @@ __evas_gl_make_image_textures(Evas_GL_Window *w, Evas_GL_Image *image)
 	     /* end edge */
 	     else if (tx == tm->tiles.x)
 	       {
-		  ix = tx * (w->context->max_texture_size - 2) + 1;
+		  ix = (w->context->max_texture_size - 1) - 1 +
+		    ((tx  - 1) * (w->context->max_texture_size - 2));
 		  iw = image->w - ix;
 	       }
 	     /* middle tex */
 	     else
 	       {
-		  ix = tx * (w->context->max_texture_size - 2) + 1;
+		  ix = (w->context->max_texture_size - 1) - 1 +
+		    ((tx  - 1) * (w->context->max_texture_size - 2));
 		  iw = w->context->max_texture_size;
 	       }
 	     if (image->im)
@@ -1076,7 +1080,7 @@ __evas_gl_font_load(char *font, int size)
    const int dpi = 96;
    
    file = __evas_gl_font_find(font);
-   if (!file) return;
+   if (!file) return NULL;
    if (!__evas_have_tt_engine)
      {	
 	error = TT_Init_FreeType(&__evas_tt_engine);
@@ -1238,19 +1242,13 @@ __evas_gl_text_font_cache_flush(void)
      }
 }
 
-/*****************************************************************************/
-/* image externals ***********************************************************/
-/*****************************************************************************/
-
 void
-__evas_gl_image_draw(Evas_GL_Image *im, 
-		     Display *disp, Imlib_Image dstim, 
-		     Window w, int win_w, int win_h,
-		     int src_x, int src_y, int src_w, int src_h,
-		     int dst_x, int dst_y, int dst_w, int dst_h,
-		     int cr, int cg, int cb, int ca)
+__evas_gl_image_intern_draw(Evas_GL_Image *im, 
+			    Evas_GL_Window *glw,
+			    int src_x, int src_y, int src_w, int src_h,
+			    int dst_x, int dst_y, int dst_w, int dst_h,
+			    int allow_smooth)
 {
-   Evas_GL_Window *glw;
    Evas_List l;
    Evas_GL_Texmesh *tm;
 
@@ -1258,26 +1256,10 @@ __evas_gl_image_draw(Evas_GL_Image *im,
    double x0, y0, w0, h0;
    int go;
    
-   if (__evas_clip)
-     {
-	cr = (cr * __evas_clip_r) / 255;
-	cg = (cg * __evas_clip_g) / 255;
-	cb = (cb * __evas_clip_b) / 255;
-	ca = (ca * __evas_clip_a) / 255;
-     }
-   if (ca <= 0) return;
    if (src_w < 1) src_w = 1;
    if (src_h < 1) src_h = 1;
    if (dst_w < 1) return;
    if (dst_h < 1) return;
-   glw = __evas_gl_window_current(disp, w, win_w, win_h);
-   if (!glw) return;
-   __evas_gl_window_texture(glw, 1);
-   __evas_gl_window_blend(glw, im->has_alpha);
-   __evas_gl_window_write_buf(glw, GL_BACK);
-   __evas_gl_window_read_buf(glw, GL_BACK);
-   __evas_gl_window_color(glw, cr, cg, cb, ca);
-   __evas_gl_window_dither(glw, 1);
 
    tm = __evas_gl_make_image_textures(glw, im);
    scx = (double)dst_w / (double)src_w;
@@ -1347,7 +1329,7 @@ __evas_gl_image_draw(Evas_GL_Image *im,
 	     double x1, x2, y1, y2;
 	     int smooth = 0;
 	     
-	     if (__evas_smooth)
+	     if ((__evas_smooth) && (allow_smooth))
 	       {
 		  if ((dst_w == src_w) && (dst_h == src_h))
 		    smooth = 0;
@@ -1358,45 +1340,52 @@ __evas_gl_image_draw(Evas_GL_Image *im,
 	     t = 0;
 	     for (ty = 0; ty <= tm->tiles.y; ty++)
 	       {
-		  if ((ty == 0) && (ty < tm->tiles.y))
+                 if ((ty == 0) && (ty < tm->tiles.y))
 		    {
 		       y1 = y0;
 		       y2 = y1 + ((double)(glw->context->max_texture_size - 1) * scy);
 		       ty1 = 0.0;
-		       ty2 = (double)(glw->context->max_texture_size - 1) / (double)glw->context->max_texture_size;
+		       ty2 = (double)(glw->context->max_texture_size - 2) / (double)(glw->context->max_texture_size - 1);
 		    }
 		  else if (ty < tm->tiles.y)
 		    {
 		       y1 = y0 + (((double)(glw->context->max_texture_size - 1) + ((double)(ty - 1) * (double)(glw->context->max_texture_size - 2))) * scy);
 		       y2 = y1 + ((double)(glw->context->max_texture_size - 2) * scy);
-		       ty1 = 1.0 / (double)glw->context->max_texture_size;
-		       ty2 = (double)(glw->context->max_texture_size - 1) / (double)glw->context->max_texture_size;
+		       ty1 = 1.0 / (double)(glw->context->max_texture_size - 1);
+		       ty2 = (double)(glw->context->max_texture_size - 2) / (double)(glw->context->max_texture_size - 1);
 		    }
 		  else
 		    {
 		       if (ty == 0) y1 = y0;
-		       else 
+		       else
 			 y1 = y0 + h0 - ((double)tm->tiles.y_left * scy);
 		       y2 = y0 + h0;
-		       if (ty == 0) ty1 = 0;
-		       else ty1 = 1 / (double)tm->tiles.y_edge;
-		       ty2 = (double)tm->tiles.y_left / (double)tm->tiles.y_edge;
+		       if (ty == 0) 
+			 {
+			    ty1 = 0.0;
+			    ty2 = (double)(tm->tiles.y_left - 1) / (double)(tm->tiles.y_edge - 1);
+			 }
+		       else 
+			 {
+			    ty1 = 1.0 / (double)(tm->tiles.y_edge - 1);
+			    ty2 = (double)(1 + tm->tiles.y_left - 1) / (double)(tm->tiles.y_edge - 1);
+			 }
 		    }
 		  for (tx = 0; tx <= tm->tiles.x; tx++)
 		    {
 		       if ((tx == 0) && (tx < tm->tiles.x))
 			 {
-			    x1 = x0;
+									                             x1 = x0;
 			    x2 = x1 + (255 * scx);
 			    tx1 = 0.0;
-			    tx2 = (double)(glw->context->max_texture_size - 1) / (double)glw->context->max_texture_size;
+			    tx2 = (double)(glw->context->max_texture_size - 2) / (double)(glw->context->max_texture_size - 1);
 			 }
 		       else if (tx < tm->tiles.x)
 			 {
 			    x1 = x0 + (((double)(glw->context->max_texture_size - 1) + ((double)(tx - 1) * (double)(glw->context->max_texture_size - 2))) * scx);
 			    x2 = x1 + ((double)(glw->context->max_texture_size - 2) * scx);
-			    tx1 = 1.0 / (double)glw->context->max_texture_size;
-			    tx2 = (double)(glw->context->max_texture_size - 1) / (double)glw->context->max_texture_size;
+			    tx1 = 1.0 / (double)(glw->context->max_texture_size - 1);
+			    tx2 = (double)(glw->context->max_texture_size - 2) / (double)(glw->context->max_texture_size - 1);
 			 }
 		       else
 			 {
@@ -1404,9 +1393,16 @@ __evas_gl_image_draw(Evas_GL_Image *im,
 			    else
 			      x1 = x0 + w0 - ((double)tm->tiles.x_left * scx);
 			    x2 = x0 + w0;
-			    if (tx == 0) tx1 = 0;
-			    else tx1 = 1 / (double)tm->tiles.x_edge;
-			    tx2 = (double)tm->tiles.x_left / (double)tm->tiles.x_edge;
+			    if (tx == 0) 
+			      {
+				 tx1 = 0.0;
+				 tx2 = (double)(tm->tiles.x_left - 1) / (double)(tm->tiles.x_edge - 1);
+			      }
+			    else 
+			      {
+				 tx1 = 1.0 / (double)(tm->tiles.x_edge - 1);
+				 tx2 = (double)(1 + tm->tiles.x_left - 1) / (double)(tm->tiles.x_edge - 1);
+			      }
 			 }
 		       __evas_gl_window_use_texture(glw, tm->textures[t++], smooth);
 		       glBegin(GL_QUADS);
@@ -1421,6 +1417,153 @@ __evas_gl_image_draw(Evas_GL_Image *im,
 #ifndef GLNOCLIP   
      }
 #endif
+}
+
+/*****************************************************************************/
+/* image externals ***********************************************************/
+/*****************************************************************************/
+
+void
+__evas_gl_image_draw(Evas_GL_Image *im, 
+		     Display *disp, Imlib_Image dstim, 
+		     Window w, int win_w, int win_h,
+		     int src_x, int src_y, int src_w, int src_h,
+		     int dst_x, int dst_y, int dst_w, int dst_h,
+		     int cr, int cg, int cb, int ca)
+{
+   Evas_GL_Window *glw;
+   
+   if (__evas_clip)
+     {
+	cr = (cr * __evas_clip_r) / 255;
+	cg = (cg * __evas_clip_g) / 255;
+	cb = (cb * __evas_clip_b) / 255;
+	ca = (ca * __evas_clip_a) / 255;
+     }
+   if (ca <= 0) return;
+   if (src_w < 1) src_w = 1;
+   if (src_h < 1) src_h = 1;
+   if (dst_w < 1) return;
+   if (dst_h < 1) return;
+   glw = __evas_gl_window_current(disp, w, win_w, win_h);
+   if (!glw) return;
+   __evas_gl_window_texture(glw, 1);
+   __evas_gl_window_blend(glw, im->has_alpha);
+   __evas_gl_window_write_buf(glw, GL_BACK);
+   __evas_gl_window_read_buf(glw, GL_BACK);
+   __evas_gl_window_color(glw, cr, cg, cb, ca);
+   __evas_gl_window_dither(glw, 1);
+   
+   if ((im->border.l == 0) && (im->border.r == 0) &&
+       (im->border.t == 0) && (im->border.b == 0))
+     __evas_gl_image_intern_draw(im, glw, src_x, src_y, src_w, src_h, 
+				 dst_x, dst_y, dst_w, dst_h,
+				 1);
+   else
+     {
+	double scx, scy;
+	double x0, y0, w0, h0;
+	int ecx, ecy, ecw, ech, ec;
+	int x, y, w, h, dx, dy, dw, dh;
+	int smooth;
+	
+	scx = (double)dst_w / (double)src_w;
+	scy = (double)dst_h / (double)src_h;
+	
+	x0 = (double)dst_x - ((double)src_x * scx);
+	y0 = (double)dst_y - ((double)src_y * scy);
+	w0 = (double)im->w * scx;
+	h0 = (double)im->h * scy;
+	
+	ec = __evas_clip;
+	ecx = __evas_clip_x;
+	ecy = __evas_clip_y;
+	ecw = __evas_clip_w;
+	ech = __evas_clip_h;
+	
+	if (__evas_clip)
+	  {
+	     CLIP_TO(dst_x, dst_y, dst_w, dst_h,
+		     __evas_clip_x, __evas_clip_y,
+		     __evas_clip_w, __evas_clip_h);
+	  }
+	
+	__evas_clip = 1;
+	__evas_clip_x = dst_x;
+	__evas_clip_y = dst_y;
+	__evas_clip_w = dst_w;
+	__evas_clip_h = dst_h;
+	
+	dst_x = x0;
+	dst_y = y0;
+	dst_w = w0;
+	dst_h = h0;
+	
+	x = 0; y = 0; 
+	w = im->border.l; h = im->border.t;
+	dx = dst_x; dy = dst_y; 
+	dw = w; dh = h;
+	__evas_gl_image_intern_draw(im, glw, x, y, w, h, dx, dy, dw, dh, 0);
+	
+	smooth = 0; if (scx > 1.0) smooth = 1;
+	x = im->border.l; y = 0; 
+	w = im->w - (im->border.l + im->border.r); h = im->border.t;
+	dx = dst_x + im->border.l; dy = dst_y; 
+	dw = dst_w - (im->border.l + im->border.r); dh = h;
+	__evas_gl_image_intern_draw(im, glw, x, y, w, h, dx, dy, dw, dh, smooth);
+	
+	x = im->w - im->border.r; y = 0; 
+	w = im->border.r; h = im->border.t;
+	dx = dst_x + dst_w - im->border.r; 
+	dy = dst_y; dw = w; dh = h;
+	__evas_gl_image_intern_draw(im, glw, x, y, w, h, dx, dy, dw, dh, 0);
+
+	smooth = 0; if (scy > 1.0) smooth = 1;
+	x = 0; y = im->border.t; 
+	w = im->border.l; h = im->h - (im->border.t + im->border.b);
+	dx = dst_x; dy = dst_y + im->border.t; dw = w; 
+	dh = dst_h - (im->border.t + im->border.b);
+	__evas_gl_image_intern_draw(im, glw, x, y, w, h, dx, dy, dw, dh, smooth);
+
+	smooth = 0; if ((scx > 1.0) && (scy > 1.0)) smooth = 1;
+	x = im->border.l; y = im->border.t; 
+	w = im->w - (im->border.l + im->border.r); h = im->h - (im->border.t + im->border.b);
+	dx = dst_x + im->border.l; dy = dst_y + im->border.t; 
+	dw = dst_w - (im->border.l + im->border.r); dh = dst_h - (im->border.t + im->border.b);
+	__evas_gl_image_intern_draw(im, glw, x, y, w, h, dx, dy, dw, dh, smooth);
+
+	smooth = 0; if (scy > 1.0) smooth = 1;
+	x = im->w - im->border.r; y = im->border.t; 
+	w = im->border.r; h = im->h - (im->border.t + im->border.b);
+	dx = dst_x + dst_w - im->border.r; dy = dst_y + im->border.t; 
+	dw = w; dh = dst_h - (im->border.t + im->border.b);
+	__evas_gl_image_intern_draw(im, glw, x, y, w, h, dx, dy, dw, dh, smooth);
+
+	x = 0; y = im->h - im->border.b; 
+	w = im->border.l; h = im->border.b;
+	dx = dst_x; dy = dst_y + dst_h - im->border.b; 
+	dw = w; dh = h;
+	__evas_gl_image_intern_draw(im, glw, x, y, w, h, dx, dy, dw, dh, 0);
+	
+	smooth = 0; if (scx > 1.0) smooth = 1;
+	x = im->border.l; y = im->h - im->border.b;
+	w = im->w - (im->border.l + im->border.r); h = im->border.b;
+	dx = dst_x + im->border.l; dy = dst_y + dst_h - im->border.b; 
+	dw = dst_w - (im->border.l + im->border.r); dh = h;
+	__evas_gl_image_intern_draw(im, glw, x, y, w, h, dx, dy, dw, dh, smooth);
+	
+	x = im->w - im->border.r; y = im->h - im->border.b; 
+	w = im->border.r; h = im->border.b;
+	dx = dst_x + dst_w - im->border.r; dy = dst_y + dst_h - im->border.b; 
+	dw = w; dh = h;
+	__evas_gl_image_intern_draw(im, glw, x, y, w, h, dx, dy, dw, dh, 0);
+
+	__evas_clip = ec;
+	__evas_clip_x = ecx;
+	__evas_clip_y = ecy;
+	__evas_clip_w = ecw;
+	__evas_clip_h = ech;
+     }
 }
 
 Evas_GL_Image *
@@ -1617,19 +1760,57 @@ __evas_gl_text_font_get_advances(Evas_GL_Font *fn, char *text,
 				 int *advance_horiz,
 				 int *advance_vert)
 {
+   int                 i, ascent, descent, pw, ph;
+   
    if (advance_horiz) *advance_horiz = 0;
    if (advance_horiz) *advance_vert = 0;
    if (!fn) return;
    if (!text) return;
    if (text[0] == 0) return;
+   
+   ascent = fn->ascent;
+   descent = fn->descent;
+   pw = 0;
+   ph = ascent + descent;
+   
+   for (i = 0; text[i]; i++)
+     {
+        Evas_GL_Glyph *g;
+	int glyph;
+	
+	glyph = ((unsigned char *)text)[i];
+	g = __evas_gl_text_font_get_glyph(fn, glyph);
+	if (!g) continue;
+	if (!TT_VALID(g->glyph)) continue;
+	if (i == 0)
+	  pw += ((-g->metrics.bearingX) / 64);
+	pw += g->metrics.advance / 64;
+     }
+   *advance_horiz = pw;
+   *advance_vert = ph;   
 }
 
 int
 __evas_gl_text_font_get_first_inset(Evas_GL_Font *fn, char *text)
 {
+   int                 i;
+   
    if (!fn) return 0;
    if (!text) return 0;
    if (text[0] == 0) return 0;
+   
+   for (i = 0; text[i]; i++)
+     {
+        Evas_GL_Glyph *g;
+	int glyph;
+	
+	glyph = ((unsigned char *)text)[i];
+	g = __evas_gl_text_font_get_glyph(fn, glyph);
+	if (!g) continue;
+	if (!TT_VALID(g->glyph)) continue;
+	return ((-g->metrics.bearingX) / 64);
+     }
+   return 0;
 }
 
 void
@@ -1881,8 +2062,8 @@ __evas_gl_text_get_size(Evas_GL_Font *fn, char *text, int *w, int *h)
 	else
 	  pw += g->metrics.advance / 64;	
      }
-   if (w) *w = pw + 1;
-   if (h) *h = ph + 1;
+   if (w) *w = pw;
+   if (h) *h = ph;
 }
 
 int
@@ -2385,6 +2566,49 @@ __evas_gl_gradient_draw(Evas_GL_Graident *gr,
 #endif
 }
 
+/* something is wrong here - GL experts? the polys dont get tesselated */
+/* correctly */
+
+#ifdef HAVE_GLU
+static void
+__evas_gl_tess_begin_cb(GLenum which)
+{
+   glBegin(which);
+}
+static void
+__evas_gl_tess_end_cb(void)
+{
+   glEnd();
+}
+
+static void
+__evas_gl_tess_error_cb(GLenum errorcode)
+{
+}
+        
+static void
+__evas_gl_tess_vertex_cb(GLvoid *vertex)
+{
+   GLdouble *v;
+
+   v = vertex;
+   glVertex2d(v[0], v[1]);
+}
+   
+static void
+__evas_gl_tess_combine_cb(GLdouble coords[3],
+                          GLdouble *vertex_data[4],
+                          GLfloat weight[4], GLdouble **data_out)
+{
+   GLdouble *vertex;
+   
+   vertex = (GLdouble *) malloc(6 * sizeof(GLdouble));
+   vertex[0] = coords[0];
+   vertex[1] = coords[1];
+   *data_out = vertex;
+}
+#endif
+
 /************/
 /* polygons */
 /************/
@@ -2466,17 +2690,56 @@ __evas_gl_poly_draw (Display *disp, Imlib_Image dstim, Window win,
 	/* render poly here */
 	if (go)
 	  {
-	     Evas_List l;
-	     
+	     Evas_List l2;
+#ifdef HAVE_GLU
+	       {
+		  static void *tess = NULL;
+		  GLdouble *glp = NULL;
+		  int i, num;
+		  
+		  if (!tess)
+		    {
+		       tess = gluNewTess();
+
+		       gluTessCallback(tess, GLU_TESS_BEGIN, __evas_gl_tess_begin_cb);
+		       gluTessCallback(tess, GLU_TESS_END, __evas_gl_tess_end_cb);
+		       gluTessCallback(tess, GLU_TESS_ERROR, __evas_gl_tess_error_cb);
+		       gluTessCallback(tess, GLU_TESS_VERTEX, __evas_gl_tess_vertex_cb);
+		       gluTessCallback(tess, GLU_TESS_COMBINE, __evas_gl_tess_combine_cb);
+		    }
+		  gluTessNormal(tess, 0, 0, 1);
+		  gluTessProperty(tess, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_ODD);
+		  gluTessBeginPolygon(tess, NULL);
+		  gluTessBeginContour(tess);
+		  num = 0;
+		  for (l2 = points; l2; l2 = l2->next) num++;
+		  i = 0;
+		  glp = malloc(num * 3 * sizeof(GLdouble));
+		  for (l2 = points; l2; l2 = l2->next)
+		    {
+		       Evas_Point p;
+		       
+		       p = l2->data;
+		       glp[i++] = p->x;
+		       glp[i++] = p->y;
+		       glp[i++] = 0;
+		       gluTessVertex(tess, &(glp[i - 3]), &(glp[i - 3]));
+		    }
+		  gluTessEndContour(tess);
+		  gluTessEndPolygon(tess);
+		  free(glp);
+	       }
+#else
 	     glBegin(GL_POLYGON);
-	     for (l = points; l; l = l->next)
+	     for (l2 = points; l2; l2 = l2->next)
 	       {
 		  Evas_Point p;
 		  
-		  p = l->data;
+		  p = l2->data;
 		  glVertex2d(p->x, p->y);
 	       }
 	     glEnd();
+#endif	
 	  }
 #ifndef GLNOCLIP   
      }
