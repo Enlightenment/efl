@@ -641,7 +641,7 @@ double
 evas_screen_x_to_world(Evas e, int x)
 {
    if (!e) return 0;
-   return (double)((double)x * e->current.val_cache.mult_x)
+   return (double)((double)x / e->current.val_cache.mult_x)
      + e->current.viewport.x;
 }
 
@@ -649,6 +649,6 @@ double
 evas_screen_y_to_world(Evas e, int y)
 {
    if (!e) return 0;
-   return (double)((double)y * e->current.val_cache.mult_y)
+   return (double)((double)y / e->current.val_cache.mult_y)
      + e->current.viewport.y;
 }

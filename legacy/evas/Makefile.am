@@ -15,5 +15,5 @@ bin_SCRIPTS = evas-config
 
 EXTRA_DIST = README AUTHORS COPYING evas.spec evas.m4 FAQ-EVAS
 
-m4datadir = $(datadir)/aclocal
+m4datadir = @aclocaldir@
 m4data_DATA = evas.m4

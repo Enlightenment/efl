@@ -28,6 +28,18 @@ LDFLAGS="$LDFLAGS -L$withval/lib";
 LIBS_TTF="-L"$withval"/lib"
 ])
 
+aclocal_usr=yes
+AC_ARG_ENABLE(aclocal_usr,
+[  --disable-aclocal_usr   disable evas forcibly puting evas.m4 in /usr/aclocal and use prefix instead],
+[
+  if test x$enableval = xyes; then
+    aclocal_usr=yes
+  else
+    aclocal_usr=no
+  fi		
+]
+)
+
 gl=yes
 AC_ARG_ENABLE(gl,
 [  --disable-gl            disable building with opengl support],
@@ -272,6 +284,13 @@ AC_SUBST(imlib2_includes)
 AC_SUBST(imlib2_libs)
 AC_SUBST(ttf_includes)
 AC_SUBST(ttf_libs)
+
+aclocaldir=$datadir"/aclocal"
+if test X"$aclocal_usr" = Xyes; then
+  aclocaldir="/usr/share/aclocal"
+fi
+
+AC_SUBST(aclocaldir)
 
 AC_OUTPUT([
 Makefile
