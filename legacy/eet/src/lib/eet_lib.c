@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include "Eet.h"
 #include "Eet_private.h"
 
@@ -963,12 +967,15 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
 int
 eet_delete(Eet_File *ef, char *name)
 {
-   int hash, node_size;
+   int hash, node_size, i;
    int exists_already = 0;
    
    /* check to see its' an eet file pointer */   
    if ((!ef) || (ef->magic != EET_MAGIC_FILE) || (!name))
      return 0;
+
+   /* deleting keys is only possible in RW mode */
+   if (ef->mode != EET_FILE_MODE_RW) return 0;
 
    if (!ef->header) return 0;
    
@@ -977,22 +984,18 @@ eet_delete(Eet_File *ef, char *name)
    node_size = ef->header->directory->hash[hash].size;
    
    /* Does this node already exist? */
-   if (ef->mode == EET_FILE_MODE_RW)
+   for (i = 0; i < node_size; i++)
      {
-	int i;
-	for (i = 0; i < node_size; i++)
+	/* if it matches */
+	if (eet_string_match(ef->header->directory->hash[hash].node[i].name, name))
 	  {
-	     /* if it matches */
-	     if (eet_string_match(ef->header->directory->hash[hash].node[i].name, name))
-	       {
-		  free(ef->header->directory->hash[hash].node[i].data);
-		  ef->header->directory->hash[hash].node[i].compression = -1;
-		  ef->header->directory->hash[hash].node[i].size = 0;
-		  ef->header->directory->hash[hash].node[i].data_size = 0;
-		  ef->header->directory->hash[hash].node[i].data = NULL;
-		  exists_already = 1;
-		  break;
-	       }
+	     free(ef->header->directory->hash[hash].node[i].data);
+	     ef->header->directory->hash[hash].node[i].compression = -1;
+	     ef->header->directory->hash[hash].node[i].size = 0;
+	     ef->header->directory->hash[hash].node[i].data_size = 0;
+	     ef->header->directory->hash[hash].node[i].data = NULL;
+	     exists_already = 1;
+	     break;
 	  }
      }
    /* flags that writes are pending */
