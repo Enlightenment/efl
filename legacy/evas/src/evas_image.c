@@ -134,6 +134,7 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
        (oo->current.image.h == 0)
        )
      {
+	_evas_free_image_renderer_data(e, o);
 	if (oo->current.file)
 	   free(oo->current.file);
 	oo->previous.file = NULL;
