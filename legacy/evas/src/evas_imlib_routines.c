@@ -1,5 +1,6 @@
 
 
+
 #include "evas_imlib_routines.h"
 
 static void __evas_imlib_image_cache_flush(Display *disp);
@@ -115,6 +116,7 @@ __evas_imlib_image_new_from_file(Display *disp, char *file)
    im->image = image;
    im->scaled.aa = 0;
    im->scaled.image = NULL;
+   im->life = 0;
    im->references = 1;
    images = evas_list_prepend(images, im);   
    return im;
@@ -207,6 +209,7 @@ __evas_imlib_image_draw(Evas_Imlib_Image *im,
    imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
    imlib_context_set_anti_alias(__evas_anti_alias);
    imlib_context_set_blend(1);
+/*   if (im->life < 65536) im->life++;*/
    for(l = drawable_list; l; l = l->next)
      {
 	Evas_Imlib_Drawable *dr;
@@ -237,7 +240,8 @@ __evas_imlib_image_draw(Evas_Imlib_Image *im,
 		       if (!up->image)
 			  up->image = imlib_create_image(up->w, up->h);
 		       /* if our src and dest are 1:1 scaling.. use original */
-		       if ((dst_w == src_w) && (dst_h == src_h))
+		       if (((dst_w == src_w) && (dst_h == src_h)) ||
+			   (im->life < 2))
 			 {
 			    imlib_context_set_image(up->image);
 			    imlib_blend_image_onto_image(im->image, 0,
