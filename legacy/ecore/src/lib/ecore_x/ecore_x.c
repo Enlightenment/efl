@@ -921,6 +921,9 @@ ecore_x_window_attributes_get(Ecore_X_Window win, Ecore_X_Window_Attributes *att
    att_ret->event_mask.mine = att.your_event_mask;
    att_ret->event_mask.all = att.your_event_mask;
    att_ret->event_mask.no_propagate = att.do_not_propagate_mask;
+   att_ret->window_gravity = att.win_gravity;
+   att_ret->pixel_gravity = att.win_gravity;
+   att_ret->colormap = att.colormap;
    return 1;
 }
 

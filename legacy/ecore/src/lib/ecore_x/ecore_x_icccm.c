@@ -261,22 +261,22 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
    int stepx = 1, stepy = 1;
    double mina = 0.0, maxa = 0.0;
    
-   if (!XGetWMNormalHints(_ecore_x_disp, win, &hint, &mask)) return 0;
+   if (XGetWMNormalHints(_ecore_x_disp, win, &hint, &mask) < Success) return 0;
    if ((hint.flags & USPosition) || ((hint.flags & PPosition)))
      {
-	if (*request_pos) *request_pos = 1;
+	if (request_pos) *request_pos = 1;
      }
    else
      {
-	if (*request_pos) *request_pos = 0;
+	if (request_pos) *request_pos = 0;
      }
    if (hint.flags & PWinGravity)
      {
-	if (*gravity) *gravity = hint.win_gravity;
+	if (gravity) *gravity = hint.win_gravity;
      }
    else
      {
-	if (*gravity) *gravity = ECORE_X_GRAVITY_NW;
+	if (gravity) *gravity = ECORE_X_GRAVITY_NW;
      }
    if (hint.flags & PMinSize)
      {
@@ -359,7 +359,7 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
 {
    XTextProperty xprop;   
    
-   if (XGetWMName(_ecore_x_disp, win, &xprop))
+   if (XGetWMName(_ecore_x_disp, win, &xprop) >= Success)
      {
 	if (xprop.value)
 	  {

@@ -1021,11 +1021,12 @@ int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom t
 	   Ecore_X_Event_Mask all;
 	   Ecore_X_Event_Mask no_propagate;
 	} event_mask;
+	Ecore_X_Gravity    window_gravity;
+	Ecore_X_Gravity    pixel_gravity;
+	Ecore_X_Colormap   colormap;
 	/* FIXME: missing
 	 * Colormap comormap;
 	 * int map_installed;
-	 * int bit_gravity;
-	 * int win_gravity;
 	 * Screen *screen;
 	 * Visual *visual;
 	 */
