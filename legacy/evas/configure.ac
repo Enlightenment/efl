@@ -130,11 +130,15 @@ AC_MSG_ERROR([Fatal Error: no FreeType detected.])
 ],
 $LIBS_TTF -lm)
 
-AC_CHECK_HEADERS(freetype.h freetype/freetype.h, [ break ], )
+AC_CHECK_HEADERS(freetype.h freetype/freetype.h freetype1/freetype/freetype.h,[ break] , )
 AC_CHECK_HEADER(freetype.h, [ ftype=yes ], [ ftype=no ])
 AC_CHECK_HEADER(freetype/freetype.h, [ ftype_ftype=yes ], [ ftype_ftype=no ])
+AC_CHECK_HEADER(freetype1/freetype/freetype.h, [ ftype1_ftype=yes ], [ ftype1_ftype=no ])
+
 if test x$ftype = xno; then
 if test x$ftype_ftype = xno; then
+if test x$ftype1_ftype = xno; then
+
 echo ""
 echo "ERROR: freetype.h not found in freetype.h or freetype/freetype.h include"
 echo "paths. (ie /usr/include, /usr/local/include etc.). You need the freetype"
@@ -153,7 +157,7 @@ echo ""
 AC_MSG_ERROR([Fatal Error: no FreeType header files detected.])
 fi
 fi
-
+fi
 ttf_includes="$CPPFLAGS"
 ttf_libs="$LIBS_TTF -lm -lttf"
 
