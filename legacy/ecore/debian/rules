@@ -48,11 +48,13 @@ install: build
 	dh_clean -k
 	dh_installdirs
 
-	$(MAKE) install DESTDIR=$(shell pwd)/debian/$(package)/
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/$(package)/
 	
 	$(INSTALL) -d debian/$(package)-dev/usr/lib
-	mv debian/$(package)/usr/{include,bin} debian/$(package)-dev/usr
-	mv debian/$(package)/usr/lib/*.{so,la,a} debian/$(package)-dev/usr/lib/
+	mv debian/$(package)/usr/include debian/$(package)/usr/bin \
+	   debian/$(package)-dev/usr
+	mv debian/$(package)/usr/lib/*.so debian/$(package)/usr/lib/*.la \
+	   debian/$(package)/usr/lib/*.a debian/$(package)-dev/usr/lib/
 
 binary-indep:
 
