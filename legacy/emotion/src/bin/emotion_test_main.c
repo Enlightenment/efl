@@ -474,6 +474,77 @@ video_obj_length_change_cb(void *data, Evas_Object *obj, void *event_info)
    edje_object_part_text_set(oe, "video_progress_txt", buf);
 }
 
+static void
+video_obj_stopped_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *oe;
+
+   oe = data;
+   printf("video stopped!\n");
+}
+
+static void
+video_obj_channels_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *oe;
+
+   oe = data;
+   printf("channels changed: [AUD %i][VID %i][SPU %i]\n",
+	  emotion_object_audio_channel_count(obj),
+	  emotion_object_video_channel_count(obj),
+	  emotion_object_spu_channel_count(obj));
+}
+
+static void
+video_obj_title_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *oe;
+
+   oe = data;
+   printf("video title to: \"%s\"\n", emotion_object_title_get(obj));
+}
+
+static void
+video_obj_progress_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *oe;
+
+   oe = data;
+   printf("progress: \"%s\" %3.3f\n", 
+	  emotion_object_progress_info_get(obj),
+	  emotion_object_progress_status_get(obj));
+}
+
+static void
+video_obj_ref_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *oe;
+
+   oe = data;
+   printf("video ref to: \"%s\" %i\n",
+	  emotion_object_ref_file_get(obj),
+	  emotion_object_ref_num_get(obj));
+}
+
+static void
+video_obj_button_num_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *oe;
+
+   oe = data;
+   printf("video spu buttons to: %i\n",
+	  emotion_object_spu_button_count_get(obj));
+}
+
+static void
+video_obj_button_cb(void *data, Evas_Object *obj, void *event_info)
+{
+   Evas_Object *oe;
+
+   oe = data;
+   printf("video selected spu button: %i\n",
+	  emotion_object_spu_button_get(obj));
+}
 
 
 
@@ -621,18 +692,6 @@ init_video_object(char *file)
    Frame_Data *fd;
 
    
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
 /* basic video object setup */   
    o = emotion_object_add(evas);   
    emotion_object_file_set(o, file);
@@ -642,18 +701,7 @@ init_video_object(char *file)
    emotion_object_smooth_scale_set(o, 1);
    evas_object_show(o);
 /* end basic video setup. all the rest here is just to be fancy */
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
-   
+
    
    video_objs = evas_list_append(video_objs, o);
    
@@ -677,7 +725,15 @@ init_video_object(char *file)
    evas_object_smart_callback_add(o, "frame_decode", video_obj_frame_decode_cb, oe);
    evas_object_smart_callback_add(o, "frame_resize", video_obj_frame_resize_cb, oe);
    evas_object_smart_callback_add(o, "length_change", video_obj_length_change_cb, oe);
-				   
+
+   evas_object_smart_callback_add(o, "decode_stop", video_obj_stopped_cb, oe);
+   evas_object_smart_callback_add(o, "channels_change", video_obj_channels_cb, oe);
+   evas_object_smart_callback_add(o, "title_change", video_obj_title_cb, oe);
+   evas_object_smart_callback_add(o, "progress_change", video_obj_progress_cb, oe);
+   evas_object_smart_callback_add(o, "ref_change", video_obj_ref_cb, oe);
+   evas_object_smart_callback_add(o, "button_num_change", video_obj_button_num_cb, oe);
+   evas_object_smart_callback_add(o, "button_change", video_obj_button_cb, oe);
+   
    edje_object_signal_callback_add(oe, "video_control", "play", video_obj_signal_play_cb, o);
    edje_object_signal_callback_add(oe, "video_control", "pause", video_obj_signal_pause_cb, o);
    edje_object_signal_callback_add(oe, "video_control", "stop", video_obj_signal_stop_cb, o);

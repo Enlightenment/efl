@@ -46,6 +46,20 @@ struct _Smart_Data
    
    unsigned char  play : 1;
    unsigned char  seek : 1;
+   
+   char *title;
+   struct {
+      char *info;
+      double stat;
+   } progress;
+   struct {
+      char *file;
+      int num;
+   } ref;
+   struct {
+      int button_num;
+      int button;
+   } spu;
 };
 
 static void _mouse_move(void *data, Evas *ev, Evas_Object *obj, void *event_info);
@@ -135,7 +149,20 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
    if ((file) && (sd->file) && (!strcmp(file, sd->file))) return;
    if (sd->file) free(sd->file);
    sd->file = NULL;
-   
+   if (sd->title) free(sd->title);
+   sd->title = NULL;
+   if (sd->progress.info) free(sd->progress.info);
+   sd->progress.info = NULL;
+   sd->progress.stat = 0.0;
+   if (sd->ref.file) free(sd->ref.file);
+   sd->ref.file = NULL;
+   sd->ref.num = 0;
+   sd->spu.button_num = 0;
+   sd->spu.button = -1;
+   sd->ratio = 1.0;
+   sd->pos = 0;
+   sd->seek_pos = 0;
+   sd->len = 0;
    if (file)
      {
 	int w, h;
@@ -598,6 +625,70 @@ emotion_object_eject(Evas_Object *obj)
    sd->module->eject(sd->video);
 }
 
+const char *
+emotion_object_title_get(Evas_Object *obj)
+{
+   Smart_Data *sd;
+   
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
+   return sd->title;
+}
+
+const char *
+emotion_object_progress_info_get(Evas_Object *obj)
+{
+   Smart_Data *sd;
+   
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
+   return sd->progress.info;
+}
+
+double
+emotion_object_progress_status_get(Evas_Object *obj)
+{
+   Smart_Data *sd;
+   
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0.0);
+   return sd->progress.stat;
+}
+
+const char *
+emotion_object_ref_file_get(Evas_Object *obj)
+{
+   Smart_Data *sd;
+   
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, NULL);
+   return sd->ref.file;
+}
+
+int
+emotion_object_ref_num_get(Evas_Object *obj)
+{
+   Smart_Data *sd;
+   
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   return sd->ref.num;
+}
+
+int
+emotion_object_spu_button_count_get(Evas_Object *obj)
+{
+   Smart_Data *sd;
+   
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   return sd->spu.button_num;
+}
+
+int
+emotion_object_spu_button_get(Evas_Object *obj)
+{
+   Smart_Data *sd;
+   
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   return sd->spu.button;
+}
+
+
 
 
 
@@ -650,6 +741,8 @@ _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
    evas_object_image_size_get(sd->obj, &iw, &ih);
    if ((w != iw) || (h != ih))
      {
+	if (h > 0) sd->ratio  = (double)w / (double)h;
+	else sd->ratio = 1.0;
 	evas_object_image_size_set(sd->obj, w, h);
 	changed = 1;
      }
@@ -659,6 +752,83 @@ _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
 	changed = 1;
      }
    if (changed) evas_object_smart_callback_call(obj, "frame_resize", NULL);
+}
+
+void
+_emotion_decode_stop(Evas_Object *obj)
+{
+   Smart_Data *sd;
+   
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   if (sd->play)
+     {
+	sd->play = 0;
+	evas_object_smart_callback_call(obj, "decode_stop", NULL);
+     }
+}
+
+void
+_emotion_channels_change(Evas_Object *obj)
+{
+   Smart_Data *sd;
+   
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   evas_object_smart_callback_call(obj, "channels_change", NULL);
+}
+
+void
+_emotion_title_set(Evas_Object *obj, char *title)
+{
+   Smart_Data *sd;
+   
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   if (sd->title) free(sd->title);
+   sd->title = strdup(title);
+   evas_object_smart_callback_call(obj, "title_change", NULL);
+}
+
+void
+_emotion_progress_set(Evas_Object *obj, char *info, double stat)
+{
+   Smart_Data *sd;
+   
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   if (sd->progress.info) free(sd->progress.info);
+   sd->progress.info = strdup(info);
+   sd->progress.stat = stat;
+   evas_object_smart_callback_call(obj, "progress_change", NULL);
+}
+
+void
+_emotion_file_ref_set(Evas_Object *obj, char *file, int num)
+{
+   Smart_Data *sd;
+   
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   if (sd->ref.file) free(sd->ref.file);
+   sd->ref.file = strdup(file);
+   sd->ref.num = num;
+   evas_object_smart_callback_call(obj, "ref_change", NULL);
+}
+
+void
+_emotion_spu_button_num_set(Evas_Object *obj, int num)
+{
+   Smart_Data *sd;
+   
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   sd->spu.button_num = num;
+   evas_object_smart_callback_call(obj, "button_num_change", NULL);
+}
+
+void
+_emotion_spu_button_set(Evas_Object *obj, int button)
+{
+   Smart_Data *sd;
+   
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   sd->spu.button = button;
+   evas_object_smart_callback_call(obj, "button_change", NULL);
 }
 
 
@@ -803,6 +973,7 @@ _smart_add(Evas_Object * obj)
    evas_object_image_pixels_get_callback_set(sd->obj, _pixels_get, sd);
    evas_object_smart_member_add(sd->obj, obj);
    sd->ratio = 1.0;
+   sd->spu.button = -1;
    evas_object_image_alpha_set(sd->obj, 0);
    evas_object_smart_data_set(obj, sd);
 }
@@ -819,6 +990,8 @@ _smart_del(Evas_Object * obj)
    evas_object_del(sd->obj);
    if (sd->file) free(sd->file);
    if (sd->job) ecore_job_del(sd->job);
+   if (sd->progress.info) free(sd->progress.info);
+   if (sd->ref.file) free(sd->ref.file);
    free(sd);
 }
    

@@ -244,7 +244,7 @@ em_file_open(const char *file, Evas_Object *obj)
 	     xine_config_update_entry(decoder, &cf);
 	  }
      }
-   if (1)
+   if (0)
      {
 	xine_mrl_t **mrls;
 	int mrls_num;
@@ -263,7 +263,7 @@ em_file_open(const char *file, Evas_Object *obj)
 	       }
 	  }
      }
-   if (1)
+   if (0)
      {
 	char **auto_play_mrls;
 	int auto_play_num;
@@ -1040,104 +1040,103 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 	     Emotion_Xine_Video *ev;
 	     Emotion_Xine_Event *eev;
 	     
-	     printf("event from xine...\n");
 	     ev = buf[0];
 	     eev = buf[1];
 	     switch (eev->type)
 	       {
 		case XINE_EVENT_UI_PLAYBACK_FINISHED:
 		    {
-		       printf("EV: Playback finished\n");
-		       /* no data in this event */
+		       if (ev->timer)
+			 {
+			    ecore_timer_del(ev->timer);
+			    ev->timer = NULL;
+			 }
+		       ev->play = 0;
+		       _emotion_decode_stop(ev->obj);
 		    }
 		  break;
 		case XINE_EVENT_UI_CHANNELS_CHANGED:
 		    {
-		       printf("EV: Channels changed\n");
-		       /* no data in this event */
+		       _emotion_channels_change(ev->obj);
 		    }
 		  break;
 		case XINE_EVENT_UI_SET_TITLE:
 		    {
-		       xine_ui_data_t *ev;
+		       xine_ui_data_t *e;
 		       
-		       ev = eev->xine_event;
-		       printf("EV: New Title \"%s\"\n", ev->str);
-		       // title is ev->str
+		       e = eev->xine_event;
+		       _emotion_title_set(ev->obj, e->str);
 		    }
 		  break;
 		case XINE_EVENT_UI_MESSAGE:
 		    {
-		       xine_ui_message_data_t *ev;
+		       xine_ui_message_data_t *e;
 		       
-		       ev = eev->xine_event;
-		       printf("EV: UI Message\n");
-		       // ev->type = error type(XINE_MSG_NO_ERROR, XINE_MSG_GENERAL_WARNING, XINE_MSG_UNKNOWN_HOST etc.)
-		       // ev->messages is a list of messages DOUBLE null terminated
+		       e = eev->xine_event;
+		       printf("EV: UI Message [FIXME: break this out to emotion api]\n");
+		       // e->type = error type(XINE_MSG_NO_ERROR, XINE_MSG_GENERAL_WARNING, XINE_MSG_UNKNOWN_HOST etc.)
+		       // e->messages is a list of messages DOUBLE null terminated
 		    }
 		  break;
 		case XINE_EVENT_AUDIO_LEVEL:
 		    {
-		       xine_audio_level_data_t *ev;
+		       xine_audio_level_data_t *e;
 	     
-		       ev = eev->xine_event;
-		       printf("EV: Audio Level\n");
-		       // ev->left (0->100) 
-		       // ev->right
-		       // ev->mute
+		       e = eev->xine_event;
+		       printf("EV: Audio Level [FIXME: break this out to emotion api]\n");
+		       // e->left (0->100) 
+		       // e->right
+		       // e->mute
 		    }
 		  break;
 		case XINE_EVENT_PROGRESS:
 		    {
-		       xine_progress_data_t *ev;
+		       xine_progress_data_t *e;
 		       
-		       ev = eev->xine_event;
-		       printf("EV: Progress \"%s\" %i%%\n", ev->description, ev->percent);
-		       // ev->description is text
-		       // ev->percent is a percentage marker (0-100)
+		       e = eev->xine_event;
+		       _emotion_progress_set(ev->obj, e->description, (double)e->percent / 100.0);
 		    }
 		  break;
 		case XINE_EVENT_MRL_REFERENCE:
 		    {
-		       xine_mrl_reference_data_t *ev;
+		       xine_mrl_reference_data_t *e;
 		       
-		       ev = eev->xine_event;
-		       printf("EV: MRL Ref to \"%s\"\n", ev->mrl);
-		       // ev->alternative alternative playlist no
-		       // ev->mrl is the mrl
+		       e = eev->xine_event;
+		       _emotion_file_ref_set(ev->obj, e->mrl, e->alternative);
 		    }
 		  break;
 		case XINE_EVENT_UI_NUM_BUTTONS:
 		    {
-		       xine_ui_data_t *ev;
+		       xine_ui_data_t *e;
 		       
-		       ev = eev->xine_event;
-		       printf("EV: Num buttons %i\n", ev->num_buttons);
-		       // ev->num_buttons indicates how many buttons in the spu
+		       e = eev->xine_event;
+		       _emotion_spu_button_num_set(ev->obj, e->num_buttons);
 		    }
 		  break;
 		case XINE_EVENT_SPU_BUTTON:
 		    {
-		       xine_spu_button_t *ev;
+		       xine_spu_button_t *e;
 		       
-		       ev = eev->xine_event;
-		       printf("EV: Button enter? [%i] %i\n", ev->direction, ev->button);
-		       // ev->direction 1 = enter, 0 = leave
-		       // ev->button button number entered/left
+		       e = eev->xine_event;
+		       if (e->direction == 1)
+			 _emotion_spu_button_set(ev->obj, e->button);
+		       else
+			 _emotion_spu_button_set(ev->obj, -1);
 		    }
 		  break;
 		case XINE_EVENT_DROPPED_FRAMES:
 		    {
-		       xine_dropped_frames_t *ev;
+		       xine_dropped_frames_t *e;
 		       
-		       ev = eev->xine_event;
-		       printf("EV: Dropped Frames (skipped %i) (discarded %i)\n", ev->skipped_frames, ev->discarded_frames);
-		       // ev->skipped_frames = % frames skipped * 10
-		       // ev->discarded_frames = % frames skipped * 10
+		       e = eev->xine_event;
+		       printf("EV: Dropped Frames (skipped %i) (discarded %i) [FIXME: break this out to the emotion api]\n", e->skipped_frames, e->discarded_frames);
+		       // e->skipped_frames = % frames skipped * 10
+		       // e->discarded_frames = % frames skipped * 10
 		    }
 		  break;
 		default:
-		  return;
+//		  printf("EV: unknown event type %i\n", eev->type);
+		  break;
 	       }
 	     if (eev->xine_event) free(eev->xine_event);
 	     free(eev);

@@ -70,12 +70,12 @@ int          emotion_object_video_channel_count   (Evas_Object *obj);
 const char  *emotion_object_video_channel_name_get(Evas_Object *obj, int channel);
 void         emotion_object_video_channel_set     (Evas_Object *obj, int channel);
 int          emotion_object_video_channel_get     (Evas_Object *obj);
-void         emotion_object_spu_mute_set        (Evas_Object *obj, Evas_Bool mute);
-Evas_Bool    emotion_object_spu_mute_get        (Evas_Object *obj);
-int          emotion_object_spu_channel_count   (Evas_Object *obj);
-const char  *emotion_object_spu_channel_name_get(Evas_Object *obj, int channel);
-void         emotion_object_spu_channel_set     (Evas_Object *obj, int channel);
-int          emotion_object_spu_channel_get     (Evas_Object *obj);
+void         emotion_object_spu_mute_set          (Evas_Object *obj, Evas_Bool mute);
+Evas_Bool    emotion_object_spu_mute_get          (Evas_Object *obj);
+int          emotion_object_spu_channel_count     (Evas_Object *obj);
+const char  *emotion_object_spu_channel_name_get  (Evas_Object *obj, int channel);
+void         emotion_object_spu_channel_set       (Evas_Object *obj, int channel);
+int          emotion_object_spu_channel_get       (Evas_Object *obj);
 int          emotion_object_chapter_count         (Evas_Object *obj);
 void         emotion_object_chapter_set           (Evas_Object *obj, int chapter);
 int          emotion_object_chapter_get           (Evas_Object *obj);
@@ -83,5 +83,12 @@ const char  *emotion_object_chapter_name_get      (Evas_Object *obj, int chapter
 void         emotion_object_play_speed_set        (Evas_Object *obj, double speed);
 double       emotion_object_play_speed_get        (Evas_Object *obj);
 void         emotion_object_eject                 (Evas_Object *obj);
-
+const char  *emotion_object_title_get             (Evas_Object *obj);
+const char  *emotion_object_progress_info_get     (Evas_Object *obj);
+double       emotion_object_progress_status_get   (Evas_Object *obj);
+const char  *emotion_object_ref_file_get          (Evas_Object *obj);
+int          emotion_object_ref_num_get           (Evas_Object *obj);
+int          emotion_object_spu_button_count_get  (Evas_Object *obj);
+int          emotion_object_spu_button_get        (Evas_Object *obj);
+    
 #endif

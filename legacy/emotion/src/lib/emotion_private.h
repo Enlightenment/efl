@@ -65,5 +65,12 @@ void *_emotion_video_get(Evas_Object *obj);
 void  _emotion_frame_new(Evas_Object *obj);
 void  _emotion_video_pos_update(Evas_Object *obj, double pos, double len);
 void  _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio);
-
+void  _emotion_decode_stop(Evas_Object *obj);
+void  _emotion_channels_change(Evas_Object *obj);
+void  _emotion_title_set(Evas_Object *obj, char *title);
+void  _emotion_progress_set(Evas_Object *obj, char *info, double stat);
+void  _emotion_file_ref_set(Evas_Object *obj, char *file, int num);
+void  _emotion_spu_button_num_set(Evas_Object *obj, int num);
+void  _emotion_spu_button_set(Evas_Object *obj, int button);
+    
 #endif
