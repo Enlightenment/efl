@@ -87,6 +87,27 @@ extern Atom     _ecore_x_atom_net_wm_pid;
 extern Atom     _ecore_x_atom_net_wm_handle_icons;
 extern Atom     _ecore_x_atom_net_wm_user_time;
 
+extern Atom     _ecore_x_atom_net_wm_window_type_desktop;
+extern Atom     _ecore_x_atom_net_wm_window_type_dock;
+extern Atom     _ecore_x_atom_net_wm_window_type_toolbar;
+extern Atom     _ecore_x_atom_net_wm_window_type_menu;
+extern Atom     _ecore_x_atom_net_wm_window_type_utility;
+extern Atom     _ecore_x_atom_net_wm_window_type_splash;
+extern Atom     _ecore_x_atom_net_wm_window_type_dialog;
+extern Atom     _ecore_x_atom_net_wm_window_type_normal;
+
+extern Atom     _ecore_x_atom_net_wm_state_modal;
+extern Atom     _ecore_x_atom_net_wm_state_sticky;
+extern Atom     _ecore_x_atom_net_wm_state_maximized_vert;
+extern Atom     _ecore_x_atom_net_wm_state_maximized_horz;
+extern Atom     _ecore_x_atom_net_wm_state_shaded;
+extern Atom     _ecore_x_atom_net_wm_state_skip_taskbar;
+extern Atom     _ecore_x_atom_net_wm_state_skip_pager;
+extern Atom     _ecore_x_atom_net_wm_state_hidden;
+extern Atom     _ecore_x_atom_net_wm_state_fullscreen;
+extern Atom     _ecore_x_atom_net_wm_state_above;
+extern Atom     _ecore_x_atom_net_wm_state_below;
+
 extern Atom     _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
 
 extern Atom     _ecore_x_atom_utf8_string;

@@ -85,6 +85,39 @@ ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_
 }
 
 /**
+ * Send a property notify to a window.
+ * @param win The window
+ * @param type Type of notification
+ * @param data The data
+ *
+ * Send a property notify to a window.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_prop_property_notify(Ecore_X_Window win, const char *type, long *data)
+{
+   Ecore_X_Atom        tmp;
+   XClientMessageEvent xev;
+
+   tmp = XInternAtom(_ecore_x_disp, type, False);
+
+   xev.type = PropertyNotify;
+   xev.display = _ecore_x_disp;
+   xev.window = win;
+   xev.message_type = tmp;
+   xev.format = 32;
+   xev.data.l[0] = data[0];
+   xev.data.l[1] = data[1];
+   xev.data.l[2] = data[2];
+   xev.data.l[3] = data[3];
+   xev.data.l[4] = data[4];
+
+   XSendEvent(_ecore_x_disp, DefaultRootWindow(_ecore_x_disp), False,
+	      (SubstructureNotifyMask | SubstructureRedirectMask),
+	      (XEvent *)&xev);
+}
+
+/**
  * Set a window string property.
  * @param win The window
  * @param type The property
@@ -304,14 +337,17 @@ ecore_x_window_prop_client_machine_get(Ecore_X_Window win)
 pid_t
 ecore_x_window_prop_pid_get(Ecore_X_Window win)
 {
-   int   num = 0;
-   long *tmp;
-   pid_t pid = 0;
+   int            num = 0;
+   pid_t          pid = 0;
+   unsigned char *tmp = NULL;
 
    ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_pid, XA_CARDINAL,
 		                    32, &tmp, &num);
-   if (num && tmp) pid = (pid_t)(*tmp);
-   free(tmp);
+   if ((num) && (tmp))
+     {
+	pid = (pid_t)(*tmp);
+	free(tmp);
+     }
    return pid;
 }
 
@@ -636,36 +672,43 @@ ecore_x_window_prop_layer_set(Ecore_X_Window win, int layer)
    unsigned char *data = NULL;
    int i, val = 4, num = 0; /* normal layer */
 
-   if (layer < 0) { /* below */
+   if (layer < 0) /* below */
+     {
       atom = _ecore_x_atom_net_wm_state_below;
 	  val = 2;
-   } else if (layer > 0) { /* above */
+     }
+   else if (layer > 0) /* above */
+     {
 	   atom = _ecore_x_atom_net_wm_state_above;
 	   val = 6;
-   }
+     }
   
    /* set the NetWM atoms
 	* get the atoms that are already set
 	*/
    if (ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_state,
-                                        XA_ATOM, 32, &data, &num)) {
+                                        XA_ATOM, 32, &data, &num))
+     {
       /* and set the ones we're interested in */
-	  for (i = 0; i < num; i++)
-         if (data[i] == _ecore_x_atom_net_wm_state_below)
-            data[i] = (layer < 0);
-         else if (data[i] == _ecore_x_atom_net_wm_state_above)
-            data[i] = (layer > 0);
-		 
-         ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_state,
-                      XA_ATOM, 32, data, num);
-		 free(data);
-   } else
+        for (i = 0; i < num; i++)
+	  {
+	     if (data[i] == _ecore_x_atom_net_wm_state_below)
+	       data[i] = (layer < 0);
+	     else if (data[i] == _ecore_x_atom_net_wm_state_above)
+	       data[i] = (layer > 0);
+	  }
+
+	ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_state,
+			                 XA_ATOM, 32, data, num);
+	free(data);
+     }
+   else
       ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_state,
                                        XA_ATOM, 32, &atom, 1);
 
    /* set the gnome atom */	  
-   ecore_x_window_prop_property_set(win, _ecore_x_atom_win_layer, 
-                    XA_CARDINAL, 32, &val, 1);
+   ecore_x_window_prop_property_set(win, _ecore_x_atom_win_layer,
+				    XA_CARDINAL, 32, &val, 1);
 
    return 1;
 }
@@ -696,3 +739,63 @@ ecore_x_window_prop_withdrawn_set(Ecore_X_Window win, int withdrawn)
    XSetWMNormalHints(_ecore_x_disp, win, (XSizeHints *) &hints);
 }
 
+/**
+ * Request the window manager to change this windows desktop.
+ * @param win The Window
+ * @param desktop The desktop number.
+ *
+ * Request the window manager to change this windows desktop.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_prop_desktop_request(Ecore_X_Window win, long desktop)
+{
+   long data[5];
+
+   data[0] = desktop;
+   data[1] = 0;
+   data[2] = 0;
+   data[3] = 0;
+   data[4] = 0;
+   ecore_x_window_prop_property_notify(win, "_NET_WM_DESKTOP", data);
+}
+
+/**
+ * Used by the window manager, or client prior mapping, to set window desktop.
+ * @param win The Window
+ * @param desktop The desktop number.
+ *
+ * Used by the window manager, or client prior mapping, to set window desktop.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_prop_desktop_set(Ecore_X_Window win, long desktop)
+{
+   ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_desktop, 
+                    XA_CARDINAL, 32, &desktop, 1);
+}
+
+/**
+ * Get the current desktop of a window
+ * @param win The Window
+ *
+ * Get the current desktop of a window
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+long
+ecore_x_window_prop_desktop_get(Ecore_X_Window win)
+{
+   int            num;
+   unsigned char *tmp;
+   long           desktop = -1;
+
+   ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_desktop, 
+                                    XA_CARDINAL, 32, &tmp, &num);
+   if ((tmp) && (num))
+     {
+	desktop = *(long *)tmp;
+	free(tmp);
+     }
+
+   return desktop;
+}

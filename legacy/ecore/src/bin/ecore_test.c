@@ -386,9 +386,12 @@ int
 handler_x_window_configure(void *data, int type, void *event)
 {
    Ecore_X_Event_Window_Configure *e;
+   const int                       desktop = 0;
    
    e = event;
    printf("Configure %i %i, %ix%i\n", e->x, e->y, e->w, e->h);
+   printf("Switching desktops to %d\n", desktop);
+   ecore_x_window_prop_desktop_request(e->win, desktop);
    return 1;
 }
 
@@ -504,6 +507,7 @@ void
 setup_ecore_x_test(void)
 {
    char *tmp;
+   long  data[5] = { 1, 0, 0, 0, 0 };
 
    win = ecore_x_window_new(0, 0, 0, 120, 60);
    ecore_x_window_prop_title_set(win, "Ecore Test Program");
@@ -545,6 +549,8 @@ setup_ecore_x_test(void)
      }
    printf("Pid: %d\n", ecore_x_window_prop_pid_get(win));
    ecore_x_window_prop_name_class_set(win, "ecore_test", "main");
+   ecore_x_window_prop_desktop_set(win, 1);
+   printf("Window on desktop %u\n", ecore_x_window_prop_desktop_get(win));
    ecore_x_window_prop_protocol_set(win, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 1);
    ecore_x_window_show(win);
    ecore_x_flush();
@@ -569,6 +575,7 @@ setup_ecore_x_test(void)
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_NAME_CLASS_CHANGE, handler_x_window_prop_name_class_change, NULL);
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_CLIENT_MACHINE_CHANGE, handler_x_window_prop_client_machine_change, NULL);
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE, handler_x_window_prop_pid_change, NULL);
+
 }
 #endif
 

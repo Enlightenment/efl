@@ -536,6 +536,7 @@ void             ecore_x_window_cursor_show(Ecore_X_Window win, int show);
 void             ecore_x_window_defaults_set(Ecore_X_Window win);
    
 void             ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Atom format, int size, void *data, int number);
+void             ecore_x_window_prop_property_notify(Ecore_X_Window win, const char *type, long *data);
 void             ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom type, char *str);
 char            *ecore_x_window_prop_string_get(Ecore_X_Window win, Ecore_X_Atom type);
 void             ecore_x_window_prop_title_set(Ecore_X_Window win, const char *t);
@@ -561,6 +562,9 @@ void             ecore_x_window_prop_xy_set(Ecore_X_Window win, int x, int y);
 void             ecore_x_window_prop_borderless_set(Ecore_X_Window win, int borderless);
 int              ecore_x_window_prop_layer_set(Ecore_X_Window win, int layer);
 void             ecore_x_window_prop_withdrawn_set(Ecore_X_Window win, int withdrawn);
+void             ecore_x_window_prop_desktop_request(Ecore_X_Window win, long desktop);
+void             ecore_x_window_prop_desktop_set(Ecore_X_Window win, long desktop);
+long             ecore_x_window_prop_desktop_get(Ecore_X_Window win);
 
 void             ecore_x_window_shape_mask_set(Ecore_X_Window win, Ecore_X_Pixmap mask);
        
