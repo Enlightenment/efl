@@ -86,7 +86,7 @@ fn_rect(double v, double val, int no)
    static int colors[] = 
      {
 	255, 255, 255, 200,
-	0, 0, 0, 50,
+	0, 0, 0, 100,
 	200, 30, 30, 200,
 	240, 230, 40, 220,
 	30, 50, 200, 160,
@@ -154,14 +154,29 @@ fn_rect(double v, double val, int no)
 static void
 fn_line(double v, double val, int no)
 {
-   static Evas_Object o_fn_lines[64] = 
-     {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+   static Evas_Object o_fn_lines[64];
    static int init = 0;
    static int colors[64 * 4];
    static double coords[64 * 4];
    static double last_val = 0;
    int i;
    
+   if (!init)
+     {
+	init = 1;
+	for (i = 0; i < 64; i++)
+	  {
+	     o_fn_lines[i] = NULL;
+	     coords[(i * 4) + 0] = ((1024 - 128) / 2) + ((rand() % 500) - 250);
+	     coords[(i * 4) + 1] = ((768) / 2) + ((rand() % 200) - 0);
+	     coords[(i * 4) + 2] = ((1024 - 128) / 2) + ((rand() % 500) - 250);
+	     coords[(i * 4) + 3] = ((768) / 2) + ((rand() % 200) - 0);
+	     colors[(i * 4) + 0] = rand() % 255;
+	     colors[(i * 4) + 1] = rand() % 255;
+	     colors[(i * 4) + 2] = rand() % 255;
+	     colors[(i * 4) + 3] = rand() % 255;
+	  }
+     }
    if (no)
      {
 	if (last_val != val)
@@ -174,21 +189,6 @@ fn_line(double v, double val, int no)
 	       }
 	  }
 	return;
-     }
-   if (!init)
-     {
-	init = 1;
-	for (i = 0; i < 64; i++)
-	  {
-	     coords[(i * 4) + 0] = ((1024 - 128) / 2) + ((rand() % 500) - 250);
-	     coords[(i * 4) + 1] = ((768) / 2) + ((rand() % 200) - 0);
-	     coords[(i * 4) + 2] = ((1024 - 128) / 2) + ((rand() % 500) - 250);
-	     coords[(i * 4) + 3] = ((768) / 2) + ((rand() % 200) - 0);
-	     colors[(i * 4) + 0] = rand() % 255;
-	     colors[(i * 4) + 1] = rand() % 255;
-	     colors[(i * 4) + 2] = rand() % 255;
-	     colors[(i * 4) + 3] = rand() % 255;
-	  }
      }
    for (i = 0; i < 64; i++)
      {
@@ -222,6 +222,84 @@ fn_line(double v, double val, int no)
 static void
 fn_poly(double v, double val, int no)
 {
+   static Evas_Object o_fn_polys[4] = 
+     {NULL, NULL, NULL, NULL};
+   static int colors[] = 
+     {
+	255, 255, 255, 200,
+	0, 0, 0, 100,
+	200, 30, 30, 160,
+	40, 160, 240, 100
+     };
+   static double coords[] =
+     {
+	200, 300,
+	350, 340,
+	320, 500,
+	120, 400,
+	
+	500, 400,
+	600, 600,
+	300, 550,
+	330, 447,
+	
+	740, 160,
+	800, 300,
+	400, 400,
+	630, 200,
+	
+	420, 200,
+	666, 444,
+	333, 300,
+	100, 233
+     };
+   static double last_val = 0;
+   int i;
+   
+   if (no)
+     {
+	if (last_val != val)
+	  {
+	     for (i = 0; i < 4; i++)
+	       {
+		  if (o_fn_polys[i])
+		     evas_del_object(evas_view, o_fn_polys[i]);
+		  o_fn_polys[i] = NULL;
+	       }
+	  }
+	return;
+     }
+   for (i = 0; i < 4; i++)
+     {
+	double alpha;
+	
+	if (v < 1)
+	   alpha = v;
+	else if (v < 2)
+	   alpha = 1;
+	else alpha = (3 - v);
+	if (!o_fn_polys[i]) 
+	  {
+	     int j;
+	     
+	     o_fn_polys[i] = evas_add_poly(evas_view);
+	     for (j = 0; j < 4; j++)
+		evas_add_point(evas_view, o_fn_polys[i],
+			       coords[(((i * 4) + j) * 2) + 0],
+			       coords[(((i * 4) + j) * 2) + 1]);
+	     evas_set_layer(evas_view, o_fn_polys[i], 99);
+	  }
+	evas_set_color(evas_view, o_fn_polys[i],
+		       colors[(i * 4) + 0],
+		       colors[(i * 4) + 1],
+		       colors[(i * 4) + 2],
+		       (double)colors[(i * 4) + 3] * alpha);
+	evas_move(evas_view, o_fn_polys[i], 
+		  coords[(i * 4) + 0] + (50 * cos((val * 2.7) + 3.4 + i)), 
+		  coords[(i * 4) + 1] + (20 * sin((val * 3.6) + 1.2 + i))); 
+	evas_show(evas_view, o_fn_polys[i]);
+     }
+   last_val = val;
 }
 
 static void
@@ -286,7 +364,7 @@ static TextBlock texts[] =
      { 112.0, 2.0, 4.0, 6.0,  "Intel MMX Assembly ...", NULL, NULL},
      { 116.0, 2.0, 4.0, 6.0,  "Hardware Acceleration ...", NULL, NULL},
      { 120.0, 2.0, 4.0, 6.0,  "For all objects.", NULL, NULL},
-     { 124.0, 2.0, 4.0, 6.0,  "The Objects it supports are ...", NULL, NULL},
+     { 124.0, 2.0, 4.0, 6.0,  "Evas supports ...", NULL, NULL},
      { 128.0, 2.0, 4.0, 6.0,  "Rectangles ...", NULL, NULL},
      { 132.0, 2.0, 4.0, 6.0,  "Lines ...", NULL, NULL},
      { 136.0, 2.0, 4.0, 6.0,  "Polygons ...", NULL, NULL},
