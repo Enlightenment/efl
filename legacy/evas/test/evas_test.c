@@ -1,5 +1,6 @@
 #include "../src/Evas.h"
 #include <X11/Xutil.h>
+#include <X11/extensions/shape.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/time.h>
@@ -9,6 +10,13 @@
 /* defines */
 #define IMGDIR "./img/"
 #define FNTDIR "./fnt"
+
+#ifndef SPANS_COMMON
+#define SPANS_COMMON(x1, w1, x2, w2) \
+(!((((x2) + (w2)) <= (x1)) || ((x2) >= ((x1) + (w1)))))
+#define RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh) \
+((SPANS_COMMON((x), (w), (xx), (ww))) && (SPANS_COMMON((y), (h), (yy), (hh))))
+#endif
 
 /* global variables */
 Display  *display = NULL;
@@ -103,6 +111,83 @@ get_time(void)
    
    gettimeofday(&timev, NULL);
    return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
+}
+
+void
+obscure(Evas e)
+{
+   Display *disp;
+   Window win, root, parent, *children, www, prev_win;
+   int x, y, w, h, wx, wy, ww, wh;
+   unsigned int i, j, num, dummy;
+   
+   evas_clear_obscured_rects(e);
+   win = evas_get_window(e);
+   disp	= evas_get_display(e);
+   evas_get_drawable_size(e, &ww, &wh);
+   children = NULL;
+   XQueryTree(disp, win, &root, &parent, &children, &num);
+   XTranslateCoordinates(disp, win, root, 0, 0, &wx, &wy, &www);
+   do 
+     {
+	for (i = 0; i < num; i++)
+	  {
+	     XWindowAttributes att;
+	     
+	     XGetWindowAttributes(disp, children[i], &att);
+	     w = att.width;
+	     h = att.height;
+	     if ((att.map_state != IsUnmapped) &&
+		 (att.class == InputOutput))
+	       {
+		  XRectangle *rect;
+		  int r_num, ord;
+		  int ok;
+		  
+		  ok = 1;
+		  rect = XShapeGetRectangles(disp, children[i], ShapeBounding, 
+					     &r_num, &ord);
+		  if (rect) 
+		     {
+			if ((r_num == 1) && 
+			    (rect[0].x == 0) && (rect[0].y == 0) &&
+			    (rect[0].width == w) && (rect[0].height == h))
+			   ok = 1;
+			else
+			   ok = 0;
+			XFree(rect);
+		     }
+		  if (ok)
+		    {
+		       XTranslateCoordinates(disp, children[i], root, 0, 0, &x, &y, &www);
+		       if (win == evas_get_window(e))
+			 {
+			    evas_add_obscured_rect(e, x - wx, y - wy, w, h);
+			 }
+		       else if (children[i] != prev_win)
+			 {
+			    int isbelow;
+			    
+			    isbelow = 0;
+			    for (j = i + 1; j < num; j++)
+			       if (children[j] == prev_win) isbelow = 1;
+			    if (!isbelow)
+			      {
+				 evas_add_obscured_rect(e, x - wx, y - wy, w, h);
+			      }
+			 }
+		    }
+	       }
+	  }
+	prev_win = win;
+	if (children) XFree(children);
+	if (win == root) break;
+	win = parent;
+	children = NULL;
+	parent = 0;
+	XQueryTree(disp, win, &root, &parent, &children, &num);
+     }
+   while (1);
 }
 
 void
@@ -692,12 +777,13 @@ handle_events(void)
      {
 	XEvent              ev;
 	Evas                e = NULL;
+	int had_expose;
 	
+	had_expose = 0;	
 	/* input events */
 	do
 	  {
 	     int event_ok;
-	     
 	     event_ok = 0;
 	     if (wait_for_events)
 	       {
@@ -733,7 +819,7 @@ handle_events(void)
 				 mouse_x = ev.xmotion.x;
 				 mouse_y = ev.xmotion.y;
 			      }
-			    else
+			    else if (e == evas_control)
 			      {
 				 mouse_x = ev.xmotion.x - 128;
 				 mouse_y = ev.xmotion.y;
@@ -741,10 +827,26 @@ handle_events(void)
 			    evas_event_move(e, ev.xmotion.x, ev.xmotion.y);
 			    break;
 			 case Expose:
+			    had_expose = 1;
 			    evas_update_rect(e, ev.xexpose.x, ev.xexpose.y, ev.xexpose.width, ev.xexpose.height);
 			    break;
 			 case VisibilityNotify:
-/*			    printf("state %i\n", ev.xvisibility.state);*/
+			    if (ev.xvisibility.state == VisibilityUnobscured)
+			      {
+				 evas_clear_obscured_rects(e);
+			      }
+			    else if (ev.xvisibility.state == VisibilityFullyObscured)
+			      {
+				 int w, h;
+				 
+				 evas_get_drawable_size(e, &w, &h);
+				 evas_clear_obscured_rects(e);
+				 evas_add_obscured_rect(e, 0, 0, w, h);
+			      }
+			    else if (ev.xvisibility.state == VisibilityPartiallyObscured)
+			      {
+				 obscure(e);
+			      }
 			    break;
 			 case EnterNotify:
 			    if (e == evas_view)
@@ -806,6 +908,11 @@ handle_events(void)
 	while (XPending(display));
 	/* stuff to do outside events */
 	animate(val);
+	if (had_expose)
+	  {
+/*	     obscure(evas_control);*/
+	     obscure(evas_view);
+	  }
 	/* display any changes */
 	evas_render(evas_control);
 	evas_render(evas_view);
