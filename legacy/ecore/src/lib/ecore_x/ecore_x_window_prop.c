@@ -853,8 +853,13 @@ ecore_x_window_prop_state_request(Ecore_X_Window win, Ecore_X_Window_State state
 
    switch (state) {
    case ECORE_X_WINDOW_STATE_ICONIFIED:
-      if (action != 1)	/* Only "do iconify" makes sense */
-	return;
+      if (action == 0)
+      {
+	 XMapWindow(_ecore_x_disp, win);
+	 return;
+      }
+      if (action != 1)
+	 return;
       xev.xclient.message_type = _ecore_x_atom_wm_change_state;
       xev.xclient.format = 32;
       xev.xclient.data.l[0] = IconicState;
