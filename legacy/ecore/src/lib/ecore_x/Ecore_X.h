@@ -701,6 +701,16 @@ typedef enum _Ecore_X_Window_Type {
     ECORE_X_WINDOW_TYPE_NORMAL
 } Ecore_X_Window_Type;
 
+typedef enum _Ecore_X_Window_Configure_Mask {
+   ECORE_X_WINDOW_CONFIGURE_MASK_X              = (1 << 0),
+   ECORE_X_WINDOW_CONFIGURE_MASK_Y              = (1 << 1),
+   ECORE_X_WINDOW_CONFIGURE_MASK_W              = (1 << 2),
+   ECORE_X_WINDOW_CONFIGURE_MASK_H              = (1 << 3),
+   ECORE_X_WINDOW_CONFIGURE_MASK_BORDER_WIDTH   = (1 << 4),
+   ECORE_X_WINDOW_CONFIGURE_MASK_SIBLING        = (1 << 5),
+   ECORE_X_WINDOW_CONFIGURE_MASK_STACK_MODE     = (1 << 6)
+} Ecore_X_Window_Configure_Mask;
+
 /* Window layer constants */
 #define ECORE_X_WINDOW_LAYER_BELOW 2
 #define ECORE_X_WINDOW_LAYER_NORMAL 4
@@ -748,6 +758,12 @@ int              ecore_x_dnd_begin (Ecore_X_Window source, unsigned char *data, 
 Ecore_X_Window   ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h);
 Ecore_X_Window   ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h);
 Ecore_X_Window   ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h);
+void             ecore_x_window_configure(Ecore_X_Window win,
+                                          Ecore_X_Window_Configure_Mask mask,
+                                          int x, int y, int w, int h,
+                                          int border_width,
+                                          Ecore_X_Window sibling,
+                                          int stack_mode);
 void             ecore_x_window_cursor_set(Ecore_X_Window win,
                                            Ecore_X_Cursor c);
 void             ecore_x_window_del(Ecore_X_Window win);

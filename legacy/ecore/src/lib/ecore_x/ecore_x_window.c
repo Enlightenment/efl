@@ -229,6 +229,29 @@ ecore_x_window_defaults_set(Ecore_X_Window win)
    ecore_x_window_prop_command_set(win, argc, argv);
 }
 
+void
+ecore_x_window_configure(Ecore_X_Window win,
+                         Ecore_X_Window_Configure_Mask mask,
+                         int x, int y, int w, int h,
+                         int border_width, Ecore_X_Window sibling,
+                         int stack_mode)
+{
+   XWindowChanges xwc;
+
+   if (!win)
+      return;
+
+   xwc.x = x;
+   xwc.y = y;
+   xwc.width = w;
+   xwc.height = h;
+   xwc.border_width = border_width;
+   xwc.sibling = sibling;
+   xwc.stack_mode = stack_mode;
+
+   XConfigureWindow(_ecore_x_disp, win, mask, &xwc);
+}
+
 /**
  * @defgroup Evas_X_Window_Destroy_Group X Window Destroy Functions
  *
