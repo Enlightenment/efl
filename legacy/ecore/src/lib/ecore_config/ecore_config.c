@@ -564,9 +564,7 @@ ecore_config_typed_add(const char *key, void *val, int type)
    if (!(e->key = strdup(key)))
       goto ret_free_nte;
 
-   if (!val)
-      e->type = PT_NIL;
-   else if (ecore_config_typed_val(e, val, type) == ECORE_CONFIG_ERR_OOM)
+   if (ecore_config_typed_val(e, val, type) == ECORE_CONFIG_ERR_OOM)
       goto ret_free_key;
 
    e->next = t ? t->data : NULL;
