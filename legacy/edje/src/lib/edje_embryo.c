@@ -1235,7 +1235,6 @@ _edje_embryo_test_run(Edje *ed, char *fname, char *sig, char *src)
      {
 	void *pdata;
 	
-	printf("EDJE DEBUG: About to run script from program.\n");
 	embryo_parameter_string_push(ed->collection->script, sig);
 	embryo_parameter_string_push(ed->collection->script, src);
 	pdata = embryo_program_data_get(ed->collection->script);
@@ -1249,7 +1248,6 @@ _edje_embryo_test_run(Edje *ed, char *fname, char *sig, char *src)
 		    embryo_error_string_get(embryo_program_error_get(ed->collection->script)));
 	  }
 	embryo_program_data_set(ed->collection->script, pdata);
-	printf("EDJE DEBUG: Done.\n");
      }
 }
 
