@@ -177,13 +177,7 @@ next_token(char *p, char *end, char **new_p, int *delim)
    done:
    *new_p = p;
    
-   tok = malloc(tok_end - tok_start + 2);
-   if (!tok)
-     {
-	fprintf(stderr, "%s: Error. memory allocation of %i bytes failed. %s\n",
-		progname, tok_end - tok_start + 2, strerror(errno));
-	exit(-1);
-     }
+   tok = mem_alloc(tok_end - tok_start + 2);
    strncpy(tok, tok_start, tok_end - tok_start + 1);
    tok[tok_end - tok_start + 1] = 0;
    
@@ -215,13 +209,7 @@ stack_id(void)
    len = 0;
    for (l = stack; l; l = l->next)
      len += strlen(l->data) + 1;
-   id = malloc(len);
-   if (!id)
-     {
-	fprintf(stderr, "%s: Error. memory allocation of %i bytes failed. %s\n",
-		progname, len, strerror(errno));
-	exit(-1);
-     }
+   id = mem_alloc(len);
    id[0] = 0;
    for (l = stack; l; l = l->next)
      {
@@ -362,13 +350,7 @@ parse_str(int n)
 		progname, file_in, line, n + 1);
 	exit(-1);	
      }
-   s = strdup(str);
-   if (!s)
-     {
-	fprintf(stderr, "%s: Error. memory allocation of %i bytes failed. %s\n",
-		progname, strlen(str) + 1, strerror(errno));
-	exit(-1);
-     }
+   s = mem_strdup(str);
    return s;
 }
 

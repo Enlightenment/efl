@@ -56,16 +56,11 @@ main(int argc, char **argv)
 	exit(-1);
      }
    
-   edje_file = calloc(1, sizeof(Edje_File));
-   if (!edje_file)
-     {
-	fprintf(stderr, "%s: Error. memory allocation of %i bytes failed. %s\n",
-		progname, sizeof(Edje_File), strerror(errno));
-	exit(-1);
-     }
+   edje_file = mem_alloc(SZ(Edje_File));
    
    data_setup();   
    compile();
    data_write();
+   
    return 0;
 }

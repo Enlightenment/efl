@@ -30,6 +30,7 @@ edje_cc.c \
 edje_cc.h \
 edje_cc_out.c \
 edje_cc_parse.c \
+edje_cc_mem.c \
 edje_cc_handlers.c
 
 edje_cc_LDADD = \

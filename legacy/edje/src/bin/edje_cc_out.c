@@ -63,6 +63,7 @@ data_write(void)
 	     Evas_List *l;
 
 	     im = NULL;
+	     imlib_set_cache_size(0);	     
 	     for (l = img_dirs; l; l = l->next)
 	       {
 		  char buf[4096];

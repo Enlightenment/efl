@@ -5,6 +5,12 @@ static void ob_images_image(void);
 static void st_images_image(void);
 
 static void ob_collections(void);
+static void ob_collections_group(void);
+static void ob_collections_group_parts(void);
+static void ob_collections_group_parts_part(void);
+static void ob_collections_group_parts_part_description(void);
+static void ob_collections_group_programs(void);
+static void ob_collections_group_programs_program(void);
 
 /*****/
 
@@ -13,23 +19,23 @@ New_Object_Handler object_handlers[] =
      {"images", ob_images},
      {"images.image", ob_images_image},
      {"collections", ob_collections},
-     {"collections.group", NULL},
+     {"collections.group", ob_collections_group},
      {"collections.group.name", NULL},
-     {"collections.group.parts", NULL},
-     {"collections.group.parts.part", NULL},
+     {"collections.group.parts", ob_collections_group_parts},
+     {"collections.group.parts.part", ob_collections_group_parts_part},
      {"collections.group.parts.part.name", NULL},
      {"collections.group.parts.part.type", NULL},
      {"collections.group.parts.part.mouse_events", NULL},
      {"collections.group.parts.part.color_class", NULL},
-     {"collections.group.parts.part.description", NULL},
+     {"collections.group.parts.part.description", ob_collections_group_parts_part_description},
      {"collections.group.parts.part.description.state", NULL},
      {"collections.group.parts.part.description.visible", NULL},
      {"collections.group.parts.part.description.dragable", NULL},
      {"collections.group.parts.part.description.dragable.x", NULL},
      {"collections.group.parts.part.description.dragable.y", NULL},
      {"collections.group.parts.part.description.dragable.confine", NULL},
-     {"collections.group.programs", NULL},
-     {"collections.group.programs.program", NULL}
+     {"collections.group.programs", ob_collections_group_programs},
+     {"collections.group.programs.program", ob_collections_group_programs_program}
 };
 
 New_Statement_Handler statement_handlers[] =
@@ -66,13 +72,7 @@ statement_handler_num(void)
 static void
 ob_images(void)
 {
-   edje_file->image_dir = calloc(1, sizeof(Edje_Image_Directory));
-   if (!edje_file->image_dir)
-     {
-	fprintf(stderr, "%s: Error. memory allocation of %i bytes failed. %s\n",
-		progname, sizeof(Edje_Image_Directory), strerror(errno));
-	exit(-1);
-     }
+   edje_file->image_dir = mem_alloc(SZ(Edje_Image_Directory));
 }
 
 static void
@@ -125,5 +125,40 @@ st_images_image(void)
 
 static void
 ob_collections(void)
+{
+   edje_file->collection_dir = mem_alloc(SZ(Edje_Part_Collection_Directory));
+}
+
+static void
+ob_collections_group(void)
+{
+   Edje_Part_Collection_Directory_Entry *de;
+
+   de = mem_alloc(SZ(Edje_Part_Collection_Directory_Entry));
+}
+
+static void
+ob_collections_group_parts(void)
+{
+   Edje_Part_Collection *pc;
+}
+
+static void
+ob_collections_group_parts_part(void)
+{
+}
+
+static void
+ob_collections_group_parts_part_description(void)
+{
+}
+
+static void
+ob_collections_group_programs(void)
+{
+}
+
+static void
+ob_collections_group_programs_program(void)
 {
 }
