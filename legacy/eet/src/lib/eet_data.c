@@ -1916,6 +1916,8 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
    ds->size = 0;
    eet_data_stream_free(ds);
    *size_ret = csize;
+   
+   free(chnk->data);
    eet_data_chunk_free(chnk);
    
    return cdata;
