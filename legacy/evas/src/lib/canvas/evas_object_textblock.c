@@ -966,11 +966,19 @@ evas_object_textblock_text_get(Evas_Object *obj, int start, int len)
    return ret;
 }
 
+/**
+ * Removes length bytes from the textblock from the current cursor position.
+ * @param   obj The given textblock.
+ * @param   len The number of bytes to remove
+ * @return  Returns no value.
+ */
 void
 evas_object_textblock_text_del(Evas_Object *obj, int len)
 {
    Evas_Object_Textblock *o;
-   
+   Node *node;
+   int my_len, ps = 0;
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -981,7 +989,106 @@ evas_object_textblock_text_del(Evas_Object *obj, int len)
    o->native.dirty = 1;
    o->changed = 1;
    evas_object_change(obj);
-   /* FIXME: delete len bytes of string starting at pos */
+
+   if (len <= 0) return;
+   if (o->pos >= o->len) return;
+
+   /* deleting everything */
+   if ((o->pos == 0) && (len >= o->len))
+     {
+	evas_object_textblock_clear(obj);
+	return;
+     }
+
+   /* make sure we have enough to remove */
+   my_len = len;
+   if ((o->len - o->pos) < len) my_len = o->len - o->pos;
+
+   node = evas_object_textblock_node_pos_get(obj, o->pos, &ps);
+   if (node)
+     {
+	int remaining;
+	char *tmp;
+
+	remaining = my_len;
+
+	if (remaining <= (node->text_len - (o->pos - ps)))
+	  {
+	     tmp = node->text;
+	     node->text = malloc(sizeof(char) * (node->text_len - my_len + 1));
+
+	     /* any begining text */
+	     if ((o->pos - ps) > 0)
+	       strncpy(node->text, tmp, o->pos - ps);
+
+	     /* any ending text */
+	     if (((o->pos - ps) + remaining) < node->text_len)
+	       strncpy(node->text + (o->pos - ps), tmp + remaining + (o->pos - ps), 
+		     node->text_len - remaining - (o->pos - ps));
+
+	     free(tmp);
+	     node->text_len -= remaining;
+	     o->len -= remaining;
+
+	     /* is the node now empty? */
+	     if (node->text_len == 0)
+	       {
+		  o->nodes = evas_object_list_remove(o->nodes, node);
+		  if (node->format) free(node->format);
+		  if (node->text) free(node->text);
+		  free(node);
+	       }
+	  }
+	else
+	  {
+	     tmp = node->text;
+	     node->text = malloc(sizeof(char) * (o->pos - ps + 1));
+
+	     /* save the start part */
+	     strncpy(node->text, tmp, o->pos - ps);
+
+	     o->len -= node->text_len - (o->pos - ps);
+	     remaining -= node->text_len - (o->pos - ps);
+
+	     node->text_len = o->pos - ps;
+	     node->text[node->text_len] = '\0';
+	     free(tmp);
+
+	     ps += node->text_len;
+	     while(remaining > 0)
+	       {
+		  node = evas_object_textblock_node_pos_get(obj, ps, &ps);
+		  if (!node)
+		    {
+		       /* ran out of nodes ... */
+		       break;
+		    }
+
+		  if (remaining < node->text_len)
+		    {
+		       tmp = node->text;
+		       node->text = malloc(sizeof(char) * (node->text_len - remaining + 1));
+		       strncpy(node->text, tmp + remaining, node->text_len - remaining);
+		       node->text_len -= remaining;
+		       node->text[node->text_len] = '\0';
+		       free(tmp);
+
+		       o->len -= remaining;
+		       remaining -= remaining;
+		    }
+		  else
+		    {
+		       o->nodes = evas_object_list_remove(o->nodes, node);
+		       o->len -= node->text_len;
+		       remaining -= node->text_len;
+
+		       if (node->format) free(node->format);
+		       if (node->text) free(node->text);
+		       free(node);
+		    }
+	       }
+	  }
+     }
 }
 
 void
