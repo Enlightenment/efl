@@ -133,6 +133,7 @@ _evas_cleanup_clip(Evas e, Evas_Object o)
 	     e->changed = 1;
 	  }
 	evas_list_free(o->clip.list);
+	o->clip.list = NULL;
      }
    if (o->clip.object)
      o->clip.object->clip.list = evas_list_remove(o->clip.object->clip.list, o);
