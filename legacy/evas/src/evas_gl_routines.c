@@ -291,7 +291,6 @@ __evas_gl_window_current(Display *disp, Window win, int w, int h)
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0, glw->w, 0, glw->h, -1, 1);
-	printf("%i %i\n", glw->w, glw->h);
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 	glScalef(1, -1, 1);
