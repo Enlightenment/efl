@@ -22,6 +22,7 @@ Evas               *evas = NULL;
 int                 win_w = 240;
 int                 win_h = 320;
 
+int                 mode = 0;
 int                 loop_count = 0;
 int                 orig_loop_count = 0;
 
@@ -37,6 +38,8 @@ Evas_Object        *t1 = NULL, *t2 = NULL;
 Evas_Object        *test_pattern = NULL;
 Evas_Object        *c1 = NULL, *c2 = NULL;
 Evas_Object        *cv1 = NULL, *cv2 = NULL;
+
+Evas_Object        *scroll[16];
 
 #ifndef _WIN32_WCE
 double
@@ -68,7 +71,23 @@ loop(void)
    orig_loop_count++;
    t = get_time() - start_time;
    
-
+   if (mode == 1)
+     {
+	int iw, ih;
+	int i;
+	
+	evas_object_image_fill_set(scroll[0], 0, loop_count, 240, 320);
+	for (i = 1; i < 16; i++)
+	  {
+	     evas_object_image_size_get(scroll[i], &iw, &ih);
+	     evas_object_image_fill_set(scroll[i], 0, loop_count * (i + 1), iw, ih);
+	  }
+	if ((loop_count % 500) == 499)
+	  {
+	     printf("FPS: %3.3f\n", (double)loop_count/t);
+	  }
+	return;
+     }
    
    if (t <= 2.0)
      {
@@ -1678,6 +1697,22 @@ void
 cb_mouse_down(void *data, Evas * e, Evas_Object * obj,
 	      Evas_Event_Mouse_Down * ev)
 {
+   if (mode == 0)
+     {
+	mode = 1;
+	setdown();
+	scroll_setup();
+	orig_start_time = start_time = get_time();
+	loop_count = orig_loop_count = 0;	
+     }
+   else
+     {
+	mode = 0;
+	scroll_setdown();
+	setup();
+	orig_start_time = start_time = get_time();
+	loop_count = orig_loop_count = 0;	
+     }
    printf("cb_mouse_down() [%i], %4i,%4i | %4.1f,%4.1f\n", ev->button,
 	  ev->output.x, ev->output.y, ev->canvas.x, ev->canvas.y);
 }
@@ -1715,6 +1750,59 @@ cb_mouse_move(void *data, Evas * e, Evas_Object * obj,
 }
 
 void
+scroll_setdown(void)
+{
+   int i;
+   
+   evas_object_del(scroll[0]);   
+   for (i = 1; i < 16; i++)
+     evas_object_del(scroll[i]);   
+}
+
+void
+scroll_setup(void)
+{
+   Evas_Object        *ob;
+   int                 iw, ih;
+   int                 i;
+
+   ob = evas_object_image_add(evas);
+   evas_object_image_file_set(ob, IM "backdrop.png", NULL);
+   evas_object_move(ob, 0, 0);
+   evas_object_resize(ob, 240, 320);
+   evas_object_image_fill_set(ob, 0, 0, 240, 320);
+   evas_object_layer_set(ob, 0);
+   evas_object_show(ob);
+   scroll[0] = ob;
+
+   for (i = 1; i < 16; i++)
+     {
+	ob = evas_object_image_add(evas);
+	evas_object_image_file_set(ob, IM "e_logo.png", NULL);
+	evas_object_move(ob, 0, 0);
+	evas_object_resize(ob, 240, 320);
+	evas_object_image_size_get(ob, &iw, &ih);
+	evas_object_image_fill_set(ob, 0, 0, iw, ih);
+	evas_object_layer_set(ob, 1);
+	evas_object_show(ob);
+	evas_object_event_callback_add(ob, EVAS_CALLBACK_MOUSE_DOWN, cb_mouse_down, NULL);
+	scroll[i] = ob;
+     }
+}
+
+void
+setdown(void)
+{
+   evas_object_del(backdrop);
+   evas_object_del(e_logo);
+   evas_object_del(panel);
+   evas_object_del(panel_top);
+   evas_object_del(panel_shadow);
+   evas_object_del(panel_clip);
+   evas_object_del(evas_logo);
+}
+
+void
 setup(void)
 {
    Evas_Object        *ob;
@@ -1743,6 +1831,7 @@ setup(void)
    evas_object_image_fill_set(ob, 0, 0, iw, ih);
    evas_object_layer_set(ob, 1);
    evas_object_show(ob);
+   evas_object_event_callback_add(ob, EVAS_CALLBACK_MOUSE_DOWN, cb_mouse_down, NULL);
    e_logo = ob;
 
    ob = evas_object_image_add(evas);
