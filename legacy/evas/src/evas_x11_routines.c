@@ -105,6 +105,7 @@ __evas_x11_image_draw(Evas_X11_Image *im,
    imlib_context_set_drawable(w);
    imlib_context_set_dither_mask(__evas_anti_alias);
    imlib_context_set_anti_alias(__evas_anti_alias);
+   imlib_context_set_dither(1);
    imlib_context_set_blend(0);
    imlib_context_set_angle(0.0);
    imlib_context_set_operation(IMLIB_OP_COPY);
@@ -114,10 +115,6 @@ __evas_x11_image_draw(Evas_X11_Image *im,
 	Evas_X11_Drawable *dr;
 	
 	dr = l->data;
-	if (dr->depth <= 8)
-	   imlib_context_set_dither(1);
-	else
-	   imlib_context_set_dither(0);	
 	if ((dr->win == w) && (dr->disp == disp))
 	  {
 	     Evas_List ll;
@@ -397,6 +394,7 @@ void              __evas_x11_rectangle_draw(Display *disp, Imlib_Image dstim, Wi
    imlib_context_set_drawable(win);
    imlib_context_set_dither_mask(1);
    imlib_context_set_anti_alias(0);
+   imlib_context_set_dither(1);
    imlib_context_set_blend(0);
    imlib_context_set_angle(0.0);
    imlib_context_set_operation(IMLIB_OP_COPY);
@@ -517,15 +515,24 @@ void              __evas_x11_line_draw(Display *disp, Imlib_Image dstim, Window 
 {
    Evas_List l;
    int x, y, w, h;
+   DATA32 pixel;
+   Imlib_Image im = NULL;
+   Pixmap pmap = 0, mask = 0, s_mask = 0;
    
    imlib_context_set_color(r, g, b, a);
+   imlib_context_set_display(disp);
+   imlib_context_set_visual(__evas_visual);
+   imlib_context_set_colormap(__evas_cmap);
+   imlib_context_set_drawable(win);
+   imlib_context_set_dither_mask(1);
+   imlib_context_set_anti_alias(0);
+   imlib_context_set_dither(1);
+   imlib_context_set_blend(0);
    imlib_context_set_angle(0.0);
    imlib_context_set_operation(IMLIB_OP_COPY);
-   imlib_context_set_color_modifier(NULL);
    imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
-   imlib_context_set_anti_alias(1);
-    imlib_context_set_blend(1);
-  w = x2 - x1;
+   imlib_context_set_color_modifier(NULL);
+   w = x2 - x1;
    if (w < 0) w = -w;
    h = y2 - y1;
    if (h < 0) h = -h;
@@ -554,15 +561,71 @@ void              __evas_x11_line_draw(Display *disp, Imlib_Image dstim, Window 
 		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
 				      x, y, w, h))
 		    {
-/*		       
-		       if (!up->image)
-			  up->image = imlib_create_image(up->w, up->h);
-		       imlib_context_set_image(up->image);
-		       imlib_image_draw_line(x1 - up->x, y1 - up->y, x2 - up->x, y2 - up->y, 0);
-*/
+		       if (!up->p)
+			  up->p = XCreatePixmap(disp, win, up->w, up->h, dr->depth);
+		       if (!im)
+			 {
+			    pixel = (a << 24) | (r << 16) | (g << 8) | b;
+			    im = imlib_create_image_using_data(1, 1, &pixel);
+			    imlib_context_set_image(im);
+			    if (a < 255)
+			       imlib_image_set_has_alpha(1);
+			    imlib_render_pixmaps_for_whole_image_at_size(&pmap, &mask,
+									 32, 32);
+			 }
+		       if (a < 255)
+			 {
+			    if (mask)
+			      {
+				 int xx, yy, ww, hh, x1, y1;
+				 GC gc;
+				 XGCValues gcv;
+				 
+				 xx = x - up->x;
+				 yy = y - up->y;
+				 ww = w;
+				 hh = h;
+				 CLIP(xx, yy, ww, hh, 0, 0, up->w, up->h);
+				 s_mask = XCreatePixmap(disp, win, ww, hh, 1);
+				 gc = XCreateGC(disp, s_mask, 0, &gcv);
+				 for (y1 = 0; y1 < hh; y1 += 32)
+				   {
+				      for (x1 = 0; x1 < ww; x1 += 32)
+					 XCopyArea(disp, mask, s_mask, gc,
+						   0, 0, 32, 32,
+						   x1, y1);
+				   }
+				 XSetClipMask(disp, dr->gc, s_mask);
+				 XSetClipOrigin(disp, dr->gc, xx, yy);
+				 XFreeGC(disp, gc);
+			      }
+			    else
+			      {
+				 XSetClipMask(disp, dr->gc, None);
+			      }
+			 }
+		       if (pmap)
+			 {
+			    XSetFillStyle(disp, dr->gc, FillTiled);
+			    XSetTile(disp, dr->gc, pmap);
+			    XSetTSOrigin(disp, dr->gc, x - up->x, y - up->y);
+			 }
+		       else
+			 {
+			    XSetFillStyle(disp, dr->gc, FillSolid);
+			    XSetTile(disp, dr->gc, None);
+			 }
+		       XDrawLine(disp, up->p, dr->gc, x1 - up->x, y1 - up->y, x2 - up->x, y2 - up->y);
+		       if (s_mask) XFreePixmap(disp, s_mask);
 		    }
 	       }
 	  }
+     }
+   if (im) 
+     {
+	if (pmap) imlib_free_pixmap_and_mask(pmap);	
+	imlib_context_set_image(im);
+	imlib_free_image();
      }
 }
 
