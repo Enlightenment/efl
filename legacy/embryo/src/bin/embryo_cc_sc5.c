@@ -94,7 +94,7 @@ error(int number, ...)
 
    if (sc_error(number, string, inpfname, start, fline, argptr))
    {
-      sc_closeasm(outf, TRUE);
+      sc_closeasm(outf);
       outf = NULL;
       longjmp(errbuf, 3);
    }
@@ -109,7 +109,7 @@ error(int number, ...)
 
 	if (outf != NULL)
 	  {
-	     sc_closeasm(outf, TRUE);
+	     sc_closeasm(outf);
 	     outf = NULL;
 	  }			/* if */
 	longjmp(errbuf, 2);	/* fatal error, quit */
