@@ -19,7 +19,6 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <netdb.h>
-#include <assert.h>
 
 #if USE_OPENSSL
 #include <time.h>
@@ -765,7 +764,7 @@ kill_server(Ecore_Con_Server *svr)
 }
 
 static int
-svr_try_connect(Ecore_Con_Server *svr)
+svr_try_connect_plain(Ecore_Con_Server *svr)
 {
    int so_err = 0, size = sizeof(int);
 
@@ -795,6 +794,29 @@ svr_try_connect(Ecore_Con_Server *svr)
    return (!svr->dead);
 }
 
+/* returns 1 on success, 0 on failure */
+static int svr_try_connect (Ecore_Con_Server *svr)
+{
+#if USE_OPENSSL
+   if (!svr->ssl)
+   {
+#endif
+      return svr_try_connect_plain(svr);
+#if USE_OPENSSL
+   }
+   else
+      switch (svr_try_connect_ssl(svr)) {
+	 case 1:
+	    return svr_try_connect_plain(svr);
+	 case -1:
+	    kill_server(svr);
+	    return 0;
+	 default:
+	    return 0;
+      }
+#endif
+}
+
 
 static int
 _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
@@ -811,22 +833,9 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	unsigned char *inbuf = NULL;
 	int            inbuf_num = 0;
 
-#if USE_OPENSSL
-	if (svr->ssl && svr->connecting) {
-	   switch (svr_try_connect_ssl(svr)) {
-	      case 1:
-		 if (!svr_try_connect(svr))
-		    return 1;
-		 break;
-	      case -1:
-		 kill_server(svr);
-		 return 1;
-	      default:
-		 return 1;
-	   }
-	}
-#endif
-	
+	if (svr->connecting && !svr_try_connect(svr))
+	   return 1;
+
 	for (;;)
 	  {
 	     int num, lost_server = 0;
@@ -895,29 +904,9 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
      }
    else if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_WRITE))
      {
-	if (svr->connecting)
-	  {
-#if USE_OPENSSL
-	     if (!svr->ssl)
-	       {
-#endif
-		  if (!svr_try_connect(svr))
-		       return 1;
-#if USE_OPENSSL
-	       }
-	     else
-		switch (svr_try_connect_ssl(svr)) {
-		   case 1:
-		      if (!svr_try_connect(svr))
-			 return 1;
-		   case -1:
-		      kill_server(svr);
-		      return 1;
-		   default:
-		      return 1;
-		}
-#endif
-	  }
+	if (svr->connecting && !svr_try_connect (svr))
+	   return 1;
+
 	_ecore_con_server_flush(svr);
      }
 
