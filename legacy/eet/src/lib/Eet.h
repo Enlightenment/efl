@@ -1,22 +1,6 @@
 #ifndef _EET_H
 #define _EET_H
 
-/***************************************************************************/
-
-/*
- * EET - E file chunk reading/writing library
- * 
- * What is it?
- * It is a tiny library designed to write an arbitary set of chunks of data
- * to a file and optionally compress each chunk (very much like a zip file)
- * and allow fast random-access reading of the file later on. It does not
- * do zip as zip itself has more complexity than we need, and it was much
- * simpler to impliment this once here.
- * 
- */
-
-/***************************************************************************/
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -57,7 +41,6 @@ extern "C" {
    typedef struct _Eet_File                Eet_File;
    typedef struct _Eet_Data_Descriptor     Eet_Data_Descriptor;
 
-
 /***************************************************************************/
    
    /**
@@ -96,13 +79,13 @@ extern "C" {
     * @return The data stored in that entry in the eet file.
     * 
     * This function finds an entry in the eet file that is stored under the
-    * name specified, and returns that data, decompressed, if successfule.
-    * NULL is retuurned if the lookup fails or if memory errors are
+    * name specified, and returns that data, decompressed, if successful.
+    * NULL is returned if the lookup fails or if memory errors are
     * encountered. It is the job of the calling program to call free() on
     * the returned data. The number of bytes in the returned data chunk are
     * placed in size_ret.
     * 
-    * If the eet file handle is not valid NULl is returned and size_ret is
+    * If the eet file handle is not valid NULL is returned and size_ret is
     * filled with 0.
     */
    void     *eet_read  (Eet_File *ef, char *name, int *size_ret);
@@ -113,7 +96,7 @@ extern "C" {
     * @param data Pointer to the data to be stored.
     * @param size Length in bytes in the data to be stored.
     * @param compress Compression flags (1 == compress, 0 = don't compress).
-    * @retrun Success or failure of the write.
+    * @return Success or failure of the write.
     * 
     * This function will write the specified chunk of data to the eet file
     * and return 1 on success. 0 will be returned on failure.
@@ -134,7 +117,7 @@ extern "C" {
     * List all entries in eet file matching shell glob.
     * @param ef A valid eet file handle.
     * @param glob A shell glob to match against.
-    * @param count_ret Number of entries foudn to match.
+    * @param count_ret Number of entries found to match.
     * @return Pointer to an array of strings.
     * 
     * This function will list all entries in the eet file matching the
@@ -179,13 +162,13 @@ extern "C" {
     * The other parameters of the image (width, height etc.) are placed into
     * the values pointed to (they must be supplied). The pixel data is a linear
     * array of pixels starting from the top-left of the image scanning row by 
-    * row from left to right. Each piel is a 32bit value, with the high byte
+    * row from left to right. Each pile is a 32bit value, with the high byte
     * being the alpha channel, the next being red, then green, and the low byte
     * being blue. The width and height are measured in pixels and will be
     * greater than 0 when returned. The alpha flag is either 0 or 1. 0 denotes
-    * that the alpha channel is not used. 1 denoties that it is significant.
-    * Compress is fiulled with the compression value/amount the image was
-    * stored with. The quality value si fileld with the quality encoding of
+    * that the alpha channel is not used. 1 denotes that it is significant.
+    * Compress is filled with the compression value/amount the image was
+    * stored with. The quality value is filled with the quality encoding of
     * the image file (0 - 100). The lossy flags is either 0 or 1 as to if
     * the image was encoded lossily or not.
     * 
@@ -213,16 +196,16 @@ extern "C" {
     * actually written to encode the image data.
     * 
     * The data expected is the same format as returned by eet_data_image_read.
-    * If this is not the case wierd things may happen. Width and height must
+    * If this is not the case weird things may happen. Width and height must
     * be between 1 and 8000 pixels. The alpha flags can be 0 or 1 (0 meaning
     * the alpha values are not useful and 1 meaning they are). Compress can
     * be from 0 to 9 (0 meaning no compression, 9 meaning full compression).
     * This is only used if the image is not lossily encoded. Quality is used on
-    * lossy compression and shoudl be a value from 0 to 100. The lossy flag
+    * lossy compression and should be a value from 0 to 100. The lossy flag
     * can be 0 or 1. 0 means encode losslessly and 1 means to encode with
     * image quality loss (but then have a much smaller encoding).
     * 
-    * On success this function rtuens the numebr fo bytes that were required
+    * On success this function returns the number of bytes that were required
     * to encode the image data, or on failure it returns 0.
     */   
    int       eet_data_image_write(Eet_File *ef, char *name, void *data, int w, int h, int alpha, int compress, int quality, int lossy);
@@ -244,13 +227,13 @@ extern "C" {
     * The other parameters of the image (width, height etc.) are placed into
     * the values pointed to (they must be supplied). The pixel data is a linear
     * array of pixels starting from the top-left of the image scanning row by 
-    * row from left to right. Each piel is a 32bit value, with the high byte
+    * row from left to right. Each pixel is a 32bit value, with the high byte
     * being the alpha channel, the next being red, then green, and the low byte
     * being blue. The width and height are measured in pixels and will be
     * greater than 0 when returned. The alpha flag is either 0 or 1. 0 denotes
-    * that the alpha channel is not used. 1 denoties that it is significant.
-    * Compress is fiulled with the compression value/amount the image was
-    * stored with. The quality value si fileld with the quality encoding of
+    * that the alpha channel is not used. 1 denotes that it is significant.
+    * Compress is filled with the compression value/amount the image was
+    * stored with. The quality value is filled with the quality encoding of
     * the image file (0 - 100). The lossy flags is either 0 or 1 as to if
     * the image was encoded lossily or not.
     * 
@@ -261,7 +244,7 @@ extern "C" {
     */
    void     *eet_data_image_decode(void *data, int size, int *w, int *h, int *alpha, int *compress, int *quality, int *lossy);
    /**
-    * Encode image data for sotrage or transmission.
+    * Encode image data for storage or transmission.
     * @param data A pointer to the image pixel data.
     * @param size_ret A pointer to an int to hold the size of the returned data.
     * @param w The width of the image in pixels.
@@ -273,21 +256,21 @@ extern "C" {
     * @return The encoded image data.
     * 
     * This function stakes image pixel data and encodes it with compression and
-    * possible loss of quality (as a trade off for size) for sotrage or
-    * transmision to another system.
+    * possible loss of quality (as a trade off for size) for storage or
+    * transmission to another system.
     * 
     * The data expected is the same format as returned by eet_data_image_read.
-    * If this is not the case wierd things may happen. Width and height must
+    * If this is not the case weird things may happen. Width and height must
     * be between 1 and 8000 pixels. The alpha flags can be 0 or 1 (0 meaning
     * the alpha values are not useful and 1 meaning they are). Compress can
     * be from 0 to 9 (0 meaning no compression, 9 meaning full compression).
     * This is only used if the image is not lossily encoded. Quality is used on
-    * lossy compression and shoudl be a value from 0 to 100. The lossy flag
+    * lossy compression and should be a value from 0 to 100. The lossy flag
     * can be 0 or 1. 0 means encode losslessly and 1 means to encode with
     * image quality loss (but then have a much smaller encoding).
     * 
     * On success this function returns a pointer to the encoded data that you
-    * can free with free() wehn no longer needed.
+    * can free with free() when no longer needed.
     */   
    void     *eet_data_image_encode(void *data, int *size_ret, int w, int h, int alpha, int compress, int quality, int lossy);
 /***************************************************************************/
