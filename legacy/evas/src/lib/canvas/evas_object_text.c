@@ -36,6 +36,8 @@ static void evas_object_text_render_post(Evas_Object *obj);
 static int evas_object_text_is_opaque(Evas_Object *obj);
 static int evas_object_text_was_opaque(Evas_Object *obj);
 
+static int evas_object_text_font_string_parse(char *buffer, char dest[14][256]);
+
 static Evas_Object_Func object_func =
 {
    /* methods (compulsory) */
@@ -63,7 +65,7 @@ static Evas_Object_Func object_func =
  *
  * FIXME: To be fixed.
  * 
- */
+evas_font_load.c */
 Evas_Object *
 evas_object_text_add(Evas *e)
 {
@@ -121,8 +123,119 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, double size)
 	  {
 	     char *tmp, *font_tmp;
 	     Evas_List *dir;
+	     char *falias;
 	     
-	     tmp = evas_file_path_join(l->data, (char *)font);
+	     /* try fonts.dir & fonts.alias */
+	     /* FIXME: This is NOT optimal at ALL! MUST fix it! */
+	     /* first only read on first scan or if modified time changed */
+	     /* and cache results in data structs attached to the paths */
+	     falias = NULL;
+	     tmp = evas_file_path_join(l->data, "fonts.alias");
+	     if (tmp)
+	       {
+		  FILE *f;
+		  
+		  f = fopen(tmp, "r");
+		  if (f)
+		    {
+		       char fname[4096], fdef[4096];
+		       /* read font alias lines */
+		       while (fscanf(f, "%4090s %[^\n]\n", fname, fdef) == 2)
+			 {
+			    char font_prop2[14][256];
+			    int i;
+			    int match;
+			    
+			    /* skip comments */
+			    if ((fdef[0] == '!') || (fdef[0] == '#')) continue;
+			    if (!strcasecmp(fname, (char *)font))
+			      {
+				 falias = strdup(fdef);
+				 goto alias_done;
+			      }
+			 }
+		       alias_done: ;
+		       fclose(f);
+		    }
+		  free(tmp);
+	       }
+	     tmp = evas_file_path_join(l->data, "fonts.dir");
+	     if (tmp)
+	       {
+		  FILE *f;
+		  
+		  f = fopen(tmp, "r");
+		  if (f)
+		    {
+		       int num;
+		       char fname[4096], fdef[4096];
+		       char font_prop[14][256];
+		       
+		       if (fscanf(f, "%i\n", &num) != 1) goto cant_read;
+		       /* parse font name */
+		       if (falias)
+			 num = evas_object_text_font_string_parse(falias, font_prop);
+		       else
+			 num = evas_object_text_font_string_parse((char *)font, font_prop);
+		       if (num != 14) goto cant_read;
+		       /* read font lines */
+		       while (fscanf(f, "%4090s %[^\n]\n", fname, fdef) == 2)
+			 {
+			    char font_prop2[14][256];
+			    int i;
+			    int match;
+			    
+			    /* skip comments */
+			    if ((fdef[0] == '!') || (fdef[0] == '#')) continue;
+			    /* parse font def */
+			    num = evas_object_text_font_string_parse((char *)fdef, font_prop2);
+			    if (num == 14)
+			      {
+				 match = 0;
+				 for (i = 0; i < 14; i++)
+				   {
+				      if ((font_prop[i][0] == '*') && 
+					  (font_prop[i][1] == 0))
+					match++;
+				      else
+					{
+					   if (!strcasecmp(font_prop[i], 
+							   font_prop2[i]))
+					     match++;
+					}
+				   }
+				 if (match == 14)
+				   {
+				      char *tmp2;
+				      
+				      tmp2 = evas_file_path_join(l->data, fname);
+				      if (tmp2)
+					{
+					   o->engine_data = obj->layer->evas->engine.func->font_load(obj->layer->evas->engine.data.output,
+												     tmp2, size);
+					   if (o->engine_data) 
+					     {
+						free(tmp);
+						free(tmp2);
+						fclose(f);
+						if (falias) free(falias);
+						goto done;
+					     }
+					   free(tmp2);
+					}
+				   }
+			      }
+			 }
+		       cant_read: ;
+		       fclose(f);
+		    }
+		  free(tmp);
+	       }
+	     /* try file itself */
+	     if (falias)
+	       tmp = evas_file_path_join(l->data, (char *)falias);
+	     else
+	       tmp = evas_file_path_join(l->data, (char *)font);
 	     if (tmp)
 	       {
 		  char *tmp2;
@@ -132,6 +245,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, double size)
 		  if (o->engine_data) 
 		    {
 		       free(tmp);
+		       if (falias) free(falias);
 		       goto done;
 		    }
 		  tmp2 = malloc(strlen(tmp) + 4 + 1);
@@ -145,6 +259,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, double size)
 			 {
 			    free(tmp);
 			    free(tmp2);
+			    if (falias) free(falias);
 			    goto done;
 			 }
 		       strcpy(tmp2, tmp);
@@ -155,6 +270,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, double size)
 			 {
 			    free(tmp);
 			    free(tmp2);
+			    if (falias) free(falias);
 			    goto done;
 			 }
 		       free(tmp2);
@@ -177,6 +293,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, double size)
 				 dir = evas_list_remove(dir, dir->data);
 			      }
 			    free(tmp);
+			    if (falias) free(falias);
 			    goto done;
 			 }
 		       free(tmp);
@@ -206,6 +323,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, double size)
 				   }
 				 free(font_tmp);
 				 free(tmp);
+				 if (falias) free(falias);
 				 goto done;
 			      }
 			    free(tmp);
@@ -215,6 +333,8 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, double size)
 		    }
 		  free(font_tmp);
 	       }
+	     if (falias) free(falias);
+	     falias = NULL;
 	  }
 	done: ;
      } 
@@ -792,8 +912,20 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 
    /* render object to surface with context, and offxet by x,y */
    o = (Evas_Object_Text *)(obj->object_data);
-     obj->layer->evas->engine.func->context_multiplier_unset(output,
-							     context);
+   obj->layer->evas->engine.func->context_multiplier_unset(output,
+							   context);
+/*   
+   obj->layer->evas->engine.func->context_color_set(output,
+						    context,
+						    230, 160, 30, 100);
+   obj->layer->evas->engine.func->rectangle_draw(output,
+						 context,
+						 surface,
+						 obj->cur.cache.geometry.x + x,
+						 obj->cur.cache.geometry.y + y,
+						 obj->cur.cache.geometry.w,
+						 obj->cur.cache.geometry.h);
+ */
    obj->layer->evas->engine.func->context_color_set(output,
 						    context,
 						    obj->cur.cache.clip.r,
@@ -811,7 +943,7 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 											    o->cur.text),
 					      obj->cur.cache.geometry.y + y + 
 					      (int)
-					      ((o->max_ascent * obj->cur.cache.geometry.h) / obj->cur.geometry.h),
+					      (((o->max_ascent * obj->cur.cache.geometry.h) / obj->cur.geometry.h) - 0.5),
 					      obj->cur.cache.geometry.w,
 					      obj->cur.cache.geometry.h,
 					      obj->cur.geometry.w,
@@ -932,4 +1064,33 @@ evas_object_text_was_opaque(Evas_Object *obj)
    /* currently fulyl opque over the entire gradient it occupies */
    o = (Evas_Object_Text *)(obj->object_data);
    return 0;
+}
+
+static int
+evas_object_text_font_string_parse(char *buffer, char dest[14][256])
+{
+   char *p;
+   int n, m, i;
+
+   n = 0;
+   m = 0;
+   p = buffer;
+   if (p[0] != '-') return 0;
+   i = 1;
+   while (p[i])
+     {
+	dest[n][m] = p[i];
+	if ((p[i] == '-') || (m == 256))
+	  {
+	     dest[n][m] = 0;
+	     n++;
+	     m = -1;
+	  }
+	i++;
+	m++;
+	if (n == 14) return n;
+     }
+   dest[n][m] = 0;
+   n++;
+   return n;
 }

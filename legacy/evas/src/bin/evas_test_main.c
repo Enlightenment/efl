@@ -168,6 +168,7 @@ loop(void)
 
 		  ob = evas_object_text_add(evas);
 		  evas_object_text_font_set(ob, "arial", (i * 2) + 4);
+/*		  evas_object_text_font_set(ob, "-*-Timmons-bold-r-*-*-*-*-*-*-*-*-*-*", (i * 2) + 4); */
 		  evas_object_text_text_set(ob, "A Test String");
 		  evas_object_layer_set(ob, 5);
 		  evas_object_clip_set(ob, panel_clip);
