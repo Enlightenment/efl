@@ -92,13 +92,13 @@ main(int argc, char **argv)
    h /= 2;
    evas_show(e, o[1]);
    
-   for (i = 2 ; i < 100; i++)
+   for (i = 2 ; i < 120; i++)
      {
 	o[i] = evas_add_image_from_file(e, "img/mush.png");
 	evas_show(e, o[i]);
 	evas_set_layer(e, o[i], 100);
      }
-   for (i = 100; i < 128; i++)
+   for (i = 120; i < 128; i++)
      {
 	o[i] = evas_add_text(e, "notepad", 16, imgs[i & 0x7]);
 	evas_set_color(e, o[i], rand()&0xff,  rand()&0xff,  rand()&0xff, 255);
@@ -121,7 +121,7 @@ main(int argc, char **argv)
    o_grad = evas_add_gradient_box(e);
    evas_show(e, o_grad);
    evas_move(e, o_grad, 300, 50);
-   evas_resize(e, o_grad, 300, 400);
+   evas_resize(e, o_grad, 200, 200);
    evas_set_layer(e, o_grad, 150);
    grad = evas_gradient_new();
    evas_gradient_add_color(grad, 255, 255, 255, 255, 8);
