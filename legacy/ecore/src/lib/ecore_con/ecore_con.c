@@ -132,7 +132,10 @@ ecore_con_server_add(Ecore_Con_Type type,
 	else if (type == ECORE_CON_LOCAL_SYSTEM)
 	  {
 	     mask = 0;
-	     snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s|%i", name, port);
+        if (name[0] == '/')
+          snprintf(buf, sizeof(buf), "%s|%i", name, port);
+        else
+          snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s|%i", name, port);
 	  }
 	pmode = umask(mask);
 	start:
@@ -286,7 +289,12 @@ ecore_con_server_connect(Ecore_Con_Type type,
 	     snprintf(buf, sizeof(buf), "%s/.ecore/%s/%i", homedir, name, port);
 	  }
 	else if (type == ECORE_CON_LOCAL_SYSTEM)
-	  snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s|%i", name, port);
+     {
+        if (name[0] == '/')
+          snprintf(buf, sizeof(buf), "%s|%i", name, port);
+        else
+	       snprintf(buf, sizeof(buf), "/tmp/.ecore_service|%s|%i", name, port);
+     }
 	svr->fd = socket(AF_UNIX, SOCK_STREAM, 0);
 	if (svr->fd < 0) goto error;
 	if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
