@@ -80,6 +80,8 @@ evas_event_thaw(Evas *e)
    return;
    MAGIC_CHECK_END();
    e->events_frozen--;
+   if (e->events_frozen < 0)
+     evas_debug_generic("  Thaw of events when already thawed!!!\n");
 }
 
 /**

@@ -153,6 +153,22 @@ evas_debug_magic_wrong(DATA32 expected, DATA32 supplied)
    if (_evas_debug_abort) abort();
 }
 
+void
+evas_debug_generic(const char *str)
+{
+   if (!_evas_debug_init)
+     {
+	if (getenv("EVAS_DEBUG_SHOW")) _evas_debug_show = 1;
+	if (getenv("EVAS_DEBUG_ABORT")) _evas_debug_abort = 1;
+	_evas_debug_init = 1;
+     }
+   if (_evas_debug_show)
+     fprintf(stderr, 
+	     "*** EVAS ERROR:\n"
+	     "%s", (char *)str);
+   if (_evas_debug_abort) abort();
+}
+
 char *
 evas_debug_magic_string_get(DATA32 magic)
 {

@@ -593,6 +593,7 @@ void evas_debug_error(void);
 void evas_debug_input_null(void);
 void evas_debug_magic_null(void);
 void evas_debug_magic_wrong(DATA32 expected, DATA32 supplied);
+void evas_debug_generic(const char *str);
 char *evas_debug_magic_string_get(DATA32 magic);
 void evas_object_smart_use(Evas_Smart *s);
 void evas_object_smart_unuse(Evas_Smart *s);   
