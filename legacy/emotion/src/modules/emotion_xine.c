@@ -7,12 +7,6 @@
 #include <pthread.h>
 
 static int        init_count = 0;
-static int        fd_read = -1;
-static int        fd_write = -1;
-Ecore_Fd_Handler *fd_handler = NULL;
-static int        fd_ev_read = -1;
-static int        fd_ev_write = -1;
-Ecore_Fd_Handler *fd_ev_handler = NULL;
 static xine_t    *decoder = NULL;
 
 static int em_init(void);
@@ -88,40 +82,6 @@ em_init(void)
 	       }
 	  }
 	xine_init(decoder);
-	  {
-	     int fds[2];
-	     
-	     if (pipe(fds) == 0)
-	       {
-		  fd_read = fds[0];
-		  fd_write = fds[1];
-		  fcntl(fd_read, F_SETFL, O_NONBLOCK);
-		  fd_handler = ecore_main_fd_handler_add(fd_read, 
-							 ECORE_FD_READ, 
-							 _em_fd_active,
-							 decoder,
-							 NULL,
-							 NULL);
-		  ecore_main_fd_handler_active_set(fd_handler, ECORE_FD_READ);
-	       }
-	  }
-	  {
-	     int fds[2];
-	     
-	     if (pipe(fds) == 0)
-	       {
-		  fd_ev_read = fds[0];
-		  fd_ev_write = fds[1];
-		  fcntl(fd_ev_read, F_SETFL, O_NONBLOCK);
-		  fd_ev_handler = ecore_main_fd_handler_add(fd_ev_read, 
-							    ECORE_FD_READ, 
-							    _em_fd_ev_active,
-							    decoder,
-							    NULL,
-							    NULL);
-		  ecore_main_fd_handler_active_set(fd_ev_handler, ECORE_FD_READ);
-	       }
-	  }
      }
    return init_count;
 }
@@ -134,20 +94,7 @@ em_shutdown(void)
    if (decoder)
      {
 	xine_exit(decoder);
-	ecore_main_fd_handler_del(fd_handler);
-	close(fd_write);
-	close(fd_read);
-	ecore_main_fd_handler_del(fd_ev_handler);
-	close(fd_ev_write);
-	close(fd_ev_read);
-	
 	decoder = NULL;
-	fd_handler = NULL;
-	fd_read = -1;
-	fd_write = -1;
-	fd_ev_handler = NULL;
-	fd_ev_read = -1;
-	fd_ev_write = -1;
      }
    return 0;
 }
@@ -164,7 +111,6 @@ em_file_open(const char *file, Evas_Object *obj)
    ev = calloc(1, sizeof(Emotion_Xine_Video));
    if (!ev) return NULL;
    ev->obj = obj;
-   ev->fd = fd_write;
 
    /* some notes on parameters we could swizzle for certain inputs */
    if (0)
@@ -278,6 +224,42 @@ em_file_open(const char *file, Evas_Object *obj)
 	       printf("MRL: %s\n", auto_play_mrls[i]);
 	  }
      }
+     {
+	int fds[2];
+	
+	if (pipe(fds) == 0)
+	  {
+	     ev->fd_read = fds[0];
+	     ev->fd_write = fds[1];
+	     fcntl(ev->fd_read, F_SETFL, O_NONBLOCK);
+	     ev->fd_handler = ecore_main_fd_handler_add(ev->fd_read,
+							ECORE_FD_READ, 
+							_em_fd_active,
+							ev,
+							NULL,
+							NULL);
+	     ecore_main_fd_handler_active_set(ev->fd_handler, ECORE_FD_READ);
+	  }
+     }
+     {
+	int fds[2];
+	
+	if (pipe(fds) == 0)
+	  {
+	     ev->fd_ev_read = fds[0];
+	     ev->fd_ev_write = fds[1];
+	     fcntl(ev->fd_ev_read, F_SETFL, O_NONBLOCK);
+	     ev->fd_ev_handler = ecore_main_fd_handler_add(ev->fd_ev_read, 
+							   ECORE_FD_READ, 
+							   _em_fd_ev_active,
+							   ev,
+							   NULL,
+							   NULL);
+	     ecore_main_fd_handler_active_set(ev->fd_ev_handler, ECORE_FD_READ);
+	  }
+     }
+   ev->fd = ev->fd_write;
+
    ev->video = xine_open_video_driver(decoder, "emotion", XINE_VISUAL_TYPE_NONE, ev);
    ev->audio = xine_open_audio_driver(decoder, "oss", ev); 
 //   ev->audio = xine_open_audio_driver(decoder, "alsa", ev);
@@ -288,6 +270,12 @@ em_file_open(const char *file, Evas_Object *obj)
    xine_event_create_listener_thread(ev->queue, _em_event, ev);
    if (!xine_open(ev->stream, file))
      {
+	ecore_main_fd_handler_del(ev->fd_handler);
+	close(ev->fd_write);
+	close(ev->fd_read);
+	ecore_main_fd_handler_del(ev->fd_ev_handler);
+	close(ev->fd_ev_write);
+	close(ev->fd_ev_read);
 	xine_dispose(ev->stream);
 	if (ev->video) xine_close_video_driver(decoder, ev->video);
 	if (ev->audio) xine_close_audio_driver(decoder, ev->audio);
@@ -295,7 +283,6 @@ em_file_open(const char *file, Evas_Object *obj)
 	free(ev);
 	return NULL;
      }
-
    if (xine_get_pos_length(ev->stream, &pos_stream, &pos_time, &length_time))
      {
 	ev->pos = 0.0;
@@ -320,6 +307,12 @@ em_file_close(void *ef)
    
    ev = (Emotion_Xine_Video *)ef;
    while (ev->seek_to);
+   ecore_main_fd_handler_del(ev->fd_handler);
+   close(ev->fd_write);
+   close(ev->fd_read);
+   ecore_main_fd_handler_del(ev->fd_ev_handler);
+   close(ev->fd_ev_write);
+   close(ev->fd_ev_read);
    xine_stop(ev->stream);
    xine_close(ev->stream);
    xine_dispose(ev->stream);
@@ -959,6 +952,7 @@ _em_fd_active(void *data, Ecore_Fd_Handler *fdh)
    int pos_time = 0;
    int length_time = 0;
    
+   ev = data;
    fd = ecore_main_fd_handler_fd_get(fdh);
    while ((len = read(fd, &buf, sizeof(buf))) > 0)
      {
@@ -1007,7 +1001,9 @@ _em_event(void *data, const xine_event_t *event)
 {
    void *buf[2];
    Emotion_Xine_Event *new_ev;
+   Emotion_Xine_Video *ev;
    
+   ev = data;
    new_ev = calloc(1, sizeof(Emotion_Xine_Event));
    if (!new_ev) return;
    new_ev->type = event->type;
@@ -1023,21 +1019,22 @@ _em_event(void *data, const xine_event_t *event)
      }
    buf[0] = data;
    buf[1] = new_ev;
-   write(fd_ev_write, buf, sizeof(buf));
+   write(ev->fd_ev_write, buf, sizeof(buf));
 }
 
 static int
 _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 {
+   Emotion_Xine_Video *ev;
    int fd, len;
    void *buf[2];
    
+   ev = data;
    fd = ecore_main_fd_handler_fd_get(fdh);
    while ((len = read(fd, buf, sizeof(buf))) > 0)
      {
 	if (len == sizeof(buf))
 	  {
-	     Emotion_Xine_Video *ev;
 	     Emotion_Xine_Event *eev;
 	     
 	     ev = buf[0];

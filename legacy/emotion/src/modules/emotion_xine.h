@@ -24,6 +24,12 @@ struct _Emotion_Xine_Video
    int                       seek_to;
    double                    seek_to_pos;
    Ecore_Timer              *timer;
+   int                       fd_read;
+   int                       fd_write;
+   Ecore_Fd_Handler         *fd_handler;
+   int                       fd_ev_read;
+   int                       fd_ev_write;
+   Ecore_Fd_Handler         *fd_ev_handler;
    unsigned char             play : 1;
    unsigned char             just_loaded : 1;
    unsigned char             video_mute : 1;
