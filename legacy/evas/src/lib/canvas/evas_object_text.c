@@ -1251,7 +1251,7 @@ evas_string_char_prev_get(const char *str, int pos, int *decoded)
    
    if (decoded) *decoded = 0;
    if (!str) return 0;
-   if (pos < 0) return 0;
+   if (pos < 1) return 0;
    p = pos;
    d = evas_common_font_utf8_get_prev((char *)str, &p);
    if (decoded) *decoded = d;
