@@ -694,8 +694,8 @@ __evas_image_gradient_draw(Evas_Image_Graident *gr, Display *disp, Imlib_Image d
 /* general externals *********************************************************/
 /*****************************************************************************/
 
-static Visual *__evas_visual;
-static Colormap __evas_cmap;
+static Visual *__evas_visual = NULL;
+static Colormap __evas_cmap = 0;
 
 void
 __evas_image_sync(Display *disp)
@@ -787,7 +787,11 @@ __evas_image_get_visual_info(Display *disp, int screen)
 Colormap
 __evas_image_get_colormap(Display *disp, int screen)
 {
-   __evas_cmap = DefaultColormap(disp, screen);
+   Visual *v;
+   
+   if (__evas_cmap) return __evas_cmap;
+   v = __evas_imlib_get_visual(disp, screen);
+   __evas_cmap = XCreateColormap(disp, RootWindow(disp, screen), v, AllocNone);
    return __evas_cmap;
 }
 

@@ -108,10 +108,6 @@ main(int argc, char **argv)
 	
 	buffer = imlib_create_image(win_w, win_h);
 	imlib_context_set_image(buffer);
-	data = imlib_image_get_data();
-	memset(data, 0, win_w * win_h * sizeof(DATA32));
-	imlib_image_put_back_data(data);
-	imlib_image_set_has_alpha(1);
 	evas_set_output_method(e, RENDER_METHOD_IMAGE);
 	evas_set_output_image(e, buffer);
      }
