@@ -1209,7 +1209,6 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 		  free(roots);
 	       }
 	  }
-	printf("EVAS ON SCREEN %i\n", screen);
 	einfo->info.display  = ecore_x_display_get();
 	einfo->info.visual   = DefaultVisual(ecore_x_display_get(), screen);
 	einfo->info.colormap = DefaultColormap(ecore_x_display_get(), screen);
@@ -1327,8 +1326,6 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 		  free(roots);
 	       }
 	  }
-	printf("EVAS ON SCREEN %i\n", screen);
-	
 	attr.backing_store = NotUseful;
 	attr.override_redirect = True;
 	attr.colormap = einfo->func.best_colormap_get(ecore_x_display_get(), screen);
