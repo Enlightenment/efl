@@ -81,6 +81,9 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
  * or by the object being shown, raised, moved, resized, or other objects
  * being moved out of the way, hidden, lowered or moved out of the way.
  * 
+ * In the event structure whose pointer is passed to the callback, the
+ * following members indicate the following:
+ * 
  * EVAS_CALLBACK_MOUSE_OUT: event_info = pointer to Evas_Event_Mouse_Out
  * 
  * This event is triggered exactly like EVAS_CALLBACK_MOUSE_IN is, but occurs
@@ -88,21 +91,60 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
  * reported if the mouse pointer is implicitly grabbed to an object (the
  * mouse buttons are down at all and any were pressed on that object). An
  * out event will be reported as soon as the mouse is no longer grabbed
- * (no mouse buttons are depressed).
+ * (no mouse buttons are depressed). Out events will be reported if the mouse
+ * has left the object once all buttons are released.
  * 
  * EVAS_CALLBACK_MOUSE_DOWN: event_info = pointer to Evas_Event_Mouse_Down
  * 
+ * This event is triggered by a mouse button being depressed while over an
+ * object. This will passively lock all events to that object until all mouse
+ * buttons have been released. That means if this mouse button is the first
+ * to be pressed, all future button presses will be reported to this object
+ * only until no buttons are down. That includes mouse move events, in and out
+ * events. On all buttons being release, event propagation processed as normal.
+ * 
  * EVAS_CALLBACK_MOUSE_UP: event_info = pointer to Evas_Event_Mouse_Up
+ * 
+ * This event is driggered by a mouse button being released while over an
+ * object or when passively grabbed to an object. If this is the last mouse
+ * button to be raised on an object then the passive grab is released and
+ * event processing will continue as normal.
+ * 
+ * EVAS_CALLBACK_MOUSE_MOVE: event_info = pointer to Evas_Event_Mouse_Move
+ * 
+ * This event is triggered by the mouse pointer moving while over an object or
+ * passively grabbed to an object.
  * 
  * EVAS_CALLBACK_FREE: event_info = NULL
  * 
+ * This event is triggered just before Evas is about to free all memory used
+ * by an object and remove all references to it. This is useful for programs
+ * to sue if they attached data to an object and want to free it when the
+ * object is deleted. The object is still valid when this callback is called,
+ * but after this callback returns, there is no guarantee on the object's
+ * validity.
+ * 
  * EVAS_CALLBACK_KEY_DOWN: event_info = pointer to Evas_Event_Key_Down
+ * 
+ * This callback is called when a key is pressed and the focus is on the
+ * object, or a key has been grabbed to a particular object which wants to
+ * intercept the key press regardless of what object has the focus.
  * 
  * EVAS_CALLBACK_KEY_UP: event_info = pointer to Evas_Event_Key_Up
  * 
+ * This callback is called when a key is released and the focus is on the
+ * object, or a key has been grabbed to a particular object which wants to
+ * intercept the key release regardless of what object has the focus.
+ * 
  * EVAS_CALLBACK_FOCUS_IN: event_info = NULL
  * 
+ * This event is called when an object gains the focus. When the callback is
+ * called the object has already gained the focus.
+ * 
  * EVAS_CALLBACK_FOCUS_OUT: event_info = NULL
+ * 
+ * This event is triggered by an object losing the focus. When the callback is
+ * called the object has already lost the focus.
  * 
  * Example:
  * @code
@@ -173,6 +215,29 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (
    while (evas_list_alloc_error());
 }
 
+/**
+ * Add a callback function to an object
+ * @param obj Object to remove a callback from
+ * @param type The type of event that was triggering the callback
+ * @param func The function that was to be called when the event was triggered
+ * @return The data pointer that was to be passwd to the callback
+ * 
+ * This function removes the most recently added callback from the object
+ * @p obj which was triggered by the event type @p type and was calling the
+ * function @p func when triggered. If the callback is successful it will also
+ * return the data pointer, passed to evas_object_event_callback_add() when
+ * the callback was added to the object. IF not successful NULL will be
+ * returned.
+ * 
+ * Example:
+ * @code
+ * extern Evas_Object *object;
+ * void *my_data;
+ * void up_callback(void *data, Evas *e, Evas_Object *obj, void *event_info);
+ * 
+ * my_data = evas_object_event_callback_del(object, EVAS_CALLBACK_MOUSE_UP, up_callback);
+ * @endcode
+ */
 void *
 evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info))
 {

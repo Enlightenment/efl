@@ -444,6 +444,9 @@ extern "C" {
    void              evas_key_modifier_off             (Evas *e, char *keyname);
    void              evas_key_lock_on                  (Evas *e, char *keyname);
    void              evas_key_lock_off                 (Evas *e, char *keyname);
+
+ * errr need to add key grabbing/ungrabbing calls.
+
 ...end implement */
    
    void              evas_object_pass_events_set       (Evas_Object *obj, int pass);
