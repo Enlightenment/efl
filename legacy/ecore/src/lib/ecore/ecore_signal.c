@@ -11,6 +11,8 @@
 
 /* make mono happy - this is evil though... */
 #undef SIGPWR
+/* lets not use these - other apps seem to use them */
+#undef SIGRTMIN
 
 typedef void (*Signal_Handler)(int sig, siginfo_t *si, void *foo);
 
