@@ -659,6 +659,10 @@ typedef enum _Ecore_X_Window_Type {
     ECORE_X_WINDOW_TYPE_NORMAL
 } Ecore_X_Window_Type;
 
+/* Window layer constants */
+#define ECORE_X_WINDOW_LAYER_BELOW 2
+#define ECORE_X_WINDOW_LAYER_NORMAL 4
+#define ECORE_X_WINDOW_LAYER_ABOVE 6
 
 int              ecore_x_init(const char *name);
 int              ecore_x_shutdown(void);       

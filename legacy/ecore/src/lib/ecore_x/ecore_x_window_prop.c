@@ -710,7 +710,12 @@ ecore_x_window_prop_borderless_set(Ecore_X_Window win, int borderless)
  *              Acceptable values range from 1 to 255 (0 reserved for
  *              desktop windows)
  * @return 1 if the state could be set else 0
-	 *
+ * 
+ * Normally you will use this function with one of the predefined
+ * layer constants:
+ * ECORE_X_WINDOW_LAYER_BELOW  - for windows to be stacked below
+ * ECORE_X_WINDOW_LAYER_ABOVE  - for windows to be stacked on top
+ * ECORE_X_WINDOW_LAYER_NORMAL - for windows to be put in the default layer
  * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
