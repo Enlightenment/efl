@@ -545,13 +545,13 @@ if test "x$have_ecore_config" = "xyes"; then
   AC_ARG_WITH(edb-config,
    [   --with-edb-config=EDB_CONFIG      use edb-config specified ],
    [
-     PROG_CONFIG=$withval;
-     echo "using "$PROG_CONFIG" for edb-config";
+     PROG_EDB_CONFIG=$withval;
+     echo "using "$PROG_EDB_CONFIG" for edb-config";
    ],[
      PROG="edb-config";
-     AC_PATH_PROG(PROG_CONFIG, $PROG, "", $PATH)
+     AC_PATH_PROG(PROG_EDB_CONFIG, $PROG, "", $PATH)
    ])
-   if [ test -z "$EDB_CONFIG" ]; then EDB_CONFIG=$PROG_CONFIG; fi
+   if [ test -z "$EDB_CONFIG" ]; then EDB_CONFIG=$PROG_EDB_CONFIG; fi
    if test -x "$EDB_CONFIG"; then
      edb_cflags=`$EDB_CONFIG --cflags`
      edb_libs=`$EDB_CONFIG --libs`
