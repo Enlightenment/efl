@@ -83,6 +83,7 @@ static int        eet_writers_num = 0;
 static Eet_File **eet_writers     = NULL;
 static int        eet_readers_num = 0;
 static Eet_File **eet_readers     = NULL;
+static int        eet_initcount   = 0;
 
 /* find an eet file in the currently in use cache */
 static Eet_File *
@@ -903,7 +904,15 @@ eet_list(Eet_File *ef, char *glob, int *count_ret)
    return list_ret;
 }
 
-void eet_shutdown()
+int eet_init(void)
 {
-   _eet_memfile_shutdown();
+   return ++eet_initcount;
+}
+
+int eet_shutdown(void)
+{
+   if (--eet_initcount == 0)
+      _eet_memfile_shutdown();
+
+   return eet_initcount;
 }

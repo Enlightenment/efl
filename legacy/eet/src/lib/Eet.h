@@ -42,7 +42,21 @@ extern "C" {
    typedef struct _Eet_Data_Descriptor     Eet_Data_Descriptor;
 
 /***************************************************************************/
-   
+
+   /*
+    * Initialize the EET library.
+	*
+	* @return The new init count.
+    */
+   void eet_init();
+
+   /**
+    * Shut down the EET library.
+	*
+	* @return The new init count.
+    */
+   void eet_shutdown();
+
    /**
     * Open an eet file on disk, and returns a handle to it.
     * @param file The file path to the eet file. eg: "/tmp/file.eet".
@@ -683,11 +697,6 @@ extern "C" {
 					(char *)(&(___ett.member)) - (char *)(&(___ett)), \
 					0, NULL, subtype); \
      }
-
-   /**
-	* Shut down the EET library.
-	*/
-   void eet_shutdown();
 
 /***************************************************************************/
 #ifdef __cplusplus

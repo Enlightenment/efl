@@ -69,6 +69,8 @@ main(int argc, char **argv)
       "Big text string here compared to others",
       "Eet is cool"
     };
+
+  eet_init();
   
   // blindly open an file for output and write strings with their NUL char
   ef = eet_open("test.eet", EET_FILE_MODE_WRITE);
@@ -86,6 +88,8 @@ main(int argc, char **argv)
   ret = eet_read(ef, "Entry 3", &size);
   printf("%s\n", ret);
   eet_close(ef);
+
+  eet_shutdown();
 }
 @endcode
 
