@@ -1180,6 +1180,82 @@ ecore_x_ungrab(void)
    }
 }
 
+int      _ecore_window_grabs_num = 0;
+Window  *_ecore_window_grabs = NULL;
+int    (*_ecore_window_grab_replay_func) (void *data, int event_type, void *event);
+void    *_ecore_window_grab_replay_data;
+
+void
+ecore_x_passive_grab_replay_func_set(int (*func) (void *data, int event_type, void *event), void *data)
+{
+   _ecore_window_grab_replay_func = func;
+   _ecore_window_grab_replay_data = data;
+}
+
+void
+ecore_x_window_button_grab(Ecore_X_Window win, int button, 
+			   Ecore_X_Event_Mask event_mask,
+			   int mod, int any_mod)
+{
+   unsigned int        b;
+   unsigned int        m;
+   unsigned int        locks[8];
+   int                 i, ev;
+   
+   b = button;
+   if (b == 0) b = AnyButton;
+   m = mod;
+   if (any_mod) m = AnyModifier;
+   locks[0] = 0;
+   locks[1] = ECORE_X_LOCK_CAPS;
+   locks[2] = ECORE_X_LOCK_NUM;
+   locks[3] = ECORE_X_LOCK_SCROLL;
+   locks[4] = ECORE_X_LOCK_CAPS   | ECORE_X_LOCK_NUM;
+   locks[5] = ECORE_X_LOCK_CAPS   | ECORE_X_LOCK_SCROLL;
+   locks[6] = ECORE_X_LOCK_NUM    | ECORE_X_LOCK_SCROLL;
+   locks[7] = ECORE_X_LOCK_CAPS   | ECORE_X_LOCK_NUM    | ECORE_X_LOCK_SCROLL;
+   ev = event_mask;
+   for (i = 0; i < 8; i++)
+     XGrabButton(_ecore_x_disp, b, m | locks[i],
+		 win, False, ev, GrabModeSync, GrabModeAsync, None, None);
+   _ecore_window_grabs_num++;
+   _ecore_window_grabs = realloc(_ecore_window_grabs, 
+				 _ecore_window_grabs_num * sizeof(Window));
+   _ecore_window_grabs[_ecore_window_grabs_num - 1] = win;
+}
+
+void
+ecore_x_window_button_ungrab(Ecore_X_Window win, int button, 
+			     int mod, int any_mod)
+{
+   unsigned int        b;
+   unsigned int        m;
+   unsigned int        locks[8];
+   int                 i, ev, shuffle = 0;
+   
+   b = button;
+   if (b == 0) b = AnyButton;
+   m = mod;
+   if (any_mod) m = AnyModifier;
+   locks[0] = 0;
+   locks[1] = ECORE_X_LOCK_CAPS;
+   locks[2] = ECORE_X_LOCK_NUM;
+   locks[3] = ECORE_X_LOCK_SCROLL;
+   locks[4] = ECORE_X_LOCK_CAPS   | ECORE_X_LOCK_NUM;
+   locks[5] = ECORE_X_LOCK_CAPS   | ECORE_X_LOCK_SCROLL;
+   locks[6] = ECORE_X_LOCK_NUM    | ECORE_X_LOCK_SCROLL;
+   locks[7] = ECORE_X_LOCK_CAPS   | ECORE_X_LOCK_NUM    | ECORE_X_LOCK_SCROLL;
+   for (i = 0; i < 8; i++)
+     XUngrabButton(_ecore_x_disp, b, m | locks[i], win);
+   for (i = 0; i < _ecore_window_grabs_num - 1; i++)
+     {
+	if (_ecore_window_grabs[i] == win) shuffle = 1;
+	if (shuffle) _ecore_window_grabs[i] = _ecore_window_grabs[i + 1];
+     }
+   _ecore_window_grabs_num--;
+   _ecore_window_grabs = realloc(_ecore_window_grabs, 
+				 _ecore_window_grabs_num * sizeof(Window));
+}
 
 /**
  * Send client message with given type and format 32.

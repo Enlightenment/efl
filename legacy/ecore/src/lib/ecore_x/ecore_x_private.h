@@ -230,6 +230,11 @@ extern Atom     _ecore_x_atom_xdnd_leave;
 extern Atom     _ecore_x_atom_xdnd_drop;
 extern Atom     _ecore_x_atom_xdnd_finished;
 
+extern int      _ecore_window_grabs_num;
+extern Window  *_ecore_window_grabs;
+extern int    (*_ecore_window_grab_replay_func) (void *data, int event_type, void *event);
+extern void    *_ecore_window_grab_replay_data;
+
 void _ecore_x_error_handler_init(void);
 void _ecore_x_event_handle_key_press(XEvent *xevent);
 void _ecore_x_event_handle_key_release(XEvent *xevent);

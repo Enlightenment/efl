@@ -256,38 +256,61 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
    static Time last_time = 0;
    static Time last_last_time = 0;
    int did_triple = 0;
-
+   int i;
+   
    if ((xevent->xbutton.button > 3) && (xevent->xbutton.button < 6))
      {
-         Ecore_X_Event_Mouse_Wheel *e;
-
-         e = malloc(sizeof(Ecore_X_Event_Mouse_Wheel));
-
-         if (!e)
-            return;
-         
-         e->modifiers = 0;
-         e->direction = 0;
-         e->z = 0;
-         if      (xevent->xbutton.button == 4) e->z = -1;
-         else if (xevent->xbutton.button == 5) e->z = 1;
-         e->x = xevent->xbutton.x;
-         e->y = xevent->xbutton.y;
-         e->root.x = xevent->xbutton.x_root;
+	Ecore_X_Event_Mouse_Wheel *e;
+	
+	e = malloc(sizeof(Ecore_X_Event_Mouse_Wheel));
+	
+	if (!e)
+	  return;
+	
+	e->modifiers = 0;
+	e->direction = 0;
+	e->z = 0;
+	if      (xevent->xbutton.button == 4) e->z = -1;
+	else if (xevent->xbutton.button == 5) e->z = 1;
+	e->x = xevent->xbutton.x;
+	e->y = xevent->xbutton.y;
+	e->root.x = xevent->xbutton.x_root;
          e->root.y = xevent->xbutton.y_root;
-
-         if (xevent->xbutton.subwindow)
-            e->win = xevent->xbutton.subwindow;
-         else
-            e->win = xevent->xbutton.window;
-		 
-         e->event_win = xevent->xbutton.window;
-         e->time = xevent->xbutton.time;
-         _ecore_x_event_last_time = e->time;
-         _ecore_x_event_last_win = e->win;
-         _ecore_x_event_last_root_x = e->root.x;
-         _ecore_x_event_last_root_y = e->root.y;
-         ecore_event_add(ECORE_X_EVENT_MOUSE_WHEEL, e, NULL, NULL);
+	
+	if (xevent->xbutton.subwindow)
+	  e->win = xevent->xbutton.subwindow;
+	else
+	  e->win = xevent->xbutton.window;
+	
+	e->event_win = xevent->xbutton.window;
+	e->time = xevent->xbutton.time;
+	_ecore_x_event_last_time = e->time;
+	_ecore_x_event_last_win = e->win;
+	_ecore_x_event_last_root_x = e->root.x;
+	_ecore_x_event_last_root_y = e->root.y;
+	ecore_event_add(ECORE_X_EVENT_MOUSE_WHEEL, e, NULL, NULL);
+	for (i = 0; i < _ecore_window_grabs_num; i++)
+	  {
+	     if ((_ecore_window_grabs[i] == xevent->xbutton.window) ||
+		 (_ecore_window_grabs[i] == xevent->xbutton.subwindow))
+	       {
+		  int replay = 0;
+		  
+		  if (_ecore_window_grab_replay_func)
+	       replay = _ecore_window_grab_replay_func(_ecore_window_grab_replay_data, 
+						       ECORE_X_EVENT_MOUSE_WHEEL,
+						       e);
+		  if (replay)
+		    XAllowEvents(xevent->xbutton.display,
+				 ReplayPointer,
+				 xevent->xbutton.time);
+		  else
+		    XAllowEvents(xevent->xbutton.display,
+				 AsyncPointer,
+				 xevent->xbutton.time);
+		  break;
+	       }
+	  }
      }
    else
      {
@@ -344,6 +367,28 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 	     _ecore_x_event_last_root_x = e->root.x;
 	     _ecore_x_event_last_root_y = e->root.y;
 	     ecore_event_add(ECORE_X_EVENT_MOUSE_BUTTON_DOWN, e, NULL, NULL);
+	     for (i = 0; i < _ecore_window_grabs_num; i++)
+	       {
+		  if ((_ecore_window_grabs[i] == xevent->xbutton.window) ||
+		      (_ecore_window_grabs[i] == xevent->xbutton.subwindow))
+		    {
+		       int replay = 0;
+		       
+		       if (_ecore_window_grab_replay_func)
+			 replay = _ecore_window_grab_replay_func(_ecore_window_grab_replay_data, 
+								 ECORE_X_EVENT_MOUSE_BUTTON_DOWN,
+								 e);
+		       if (replay)
+			 XAllowEvents(xevent->xbutton.display,
+				      ReplayPointer,
+				      xevent->xbutton.time);
+		       else
+			 XAllowEvents(xevent->xbutton.display,
+				      AsyncPointer,
+				      xevent->xbutton.time);
+		       break;
+		    }
+	       }
 	  }
 	if (did_triple)
 	  {

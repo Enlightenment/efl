@@ -1152,7 +1152,15 @@ EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_A
      ecore_x_grab(void);
    EAPI void
      ecore_x_ungrab(void);
-       
+   EAPI void
+     ecore_x_passive_grab_replay_func_set(int (*func) (void *data, int event_type, void *event), void *data);
+   EAPI void
+     ecore_x_window_button_grab(Ecore_X_Window win, int button,
+				Ecore_X_Event_Mask event_mask,
+				int mod, int any_mod);
+   EAPI void
+     ecore_x_window_button_ungrab(Ecore_X_Window win, int button,
+				  int mod, int any_mod);
        
 #ifdef __cplusplus
 }
