@@ -242,7 +242,7 @@ echo "http://www.mesa3d.org/downloads/sgi.html";
 echo "You will need to obtain the SGI'd libGLU.";
 echo "debian: download the rpm and use alien to convert it";
 echo "";
-have_glu = no;
+have_glu=no;
 ,
 $gl_ldflags -lGL -lGLU)
 fi
