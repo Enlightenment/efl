@@ -186,11 +186,13 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y
    prev_index = 0;
    for (chr = 0; text[chr];)
      {
+	int pchr;
 	FT_UInt index;
 	RGBA_Font_Glyph *fg;
 	int chr_x, chr_y, chr_w;
         int gl;
-	
+
+	pchr = chr;
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (gl == 0) break;
 	index = FT_Get_Char_Index(fn->ft.face, gl);
@@ -217,7 +219,7 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y
 	     if (cy) *cy = - evas_common_font_max_ascent_get(fn);
 	     if (cw) *cw = chr_w;
 	     if (ch) *ch = evas_common_font_max_ascent_get(fn) + evas_common_font_max_descent_get(fn);
-	     return gl;
+	     return pchr;
 	  }
 	pen_x += fg->glyph->advance.x >> 8;
 	prev_index = index;
