@@ -75,8 +75,17 @@ int is_dir(const char *dir) {
           
 
 int ex_ipc_init(ex_ipc_server_list **srv_list,char *pipe_name,connstate *cs) {
-  int global=FALSE;
+  int global, port, connected;
   struct stat st;
+  char *p, *str;
+  char buf[PATH_MAX];
+  DIR *dir;
+  struct dirent *socket;
+  Ecore_Ipc_Server *tmp_sock;
+  ex_ipc_server_list *tmp;
+    
+  global=FALSE;
+  port=0;
   
   if(ecore_ipc_init()<1)
     return ECORE_CONFIG_ERR_FAIL;
@@ -85,15 +94,7 @@ int ex_ipc_init(ex_ipc_server_list **srv_list,char *pipe_name,connstate *cs) {
   if(*srv_list)
     return ECORE_CONFIG_ERR_IGNORED;
 
-  int port=0;
-  char *p, *str;
-  DIR *dir;
-  struct dirent *socket;
-  Ecore_Ipc_Server *tmp_sock;
-  ex_ipc_server_list *tmp;
-
   if((p=getenv("HOME"))) {  /* debug-only ### FIXME */
-    char buf[PATH_MAX];
     str=malloc(1000*sizeof(char));
     sprintf(str,"%s/.ecore/%s/.global",p,pipe_name);
     if (stat(str, &st))
@@ -105,7 +106,7 @@ int ex_ipc_init(ex_ipc_server_list **srv_list,char *pipe_name,connstate *cs) {
     snprintf(buf,PATH_MAX,str);
 
     if(dir=opendir(buf)) {
-      int connected=0;
+      connected=0;
       while ((socket=readdir(dir))) {
         if (!strcmp(socket->d_name, ".") || !strcmp(socket->d_name, "..") ||
             !strcmp(socket->d_name, ".global"))
@@ -207,6 +208,7 @@ int ex_ipc_send(ex_ipc_server_list **srv_list,int major,int minor,void *data,int
     return ECORE_CONFIG_ERR_FAIL;
   if(!*srv_list)
     return ECORE_CONFIG_ERR_NODATA;
+  ret = ECORE_CONFIG_ERR_NODATA;
 
   if(size<0)
     size=data?strlen(data)+1:0;
