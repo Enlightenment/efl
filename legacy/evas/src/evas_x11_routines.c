@@ -1512,8 +1512,12 @@ __evas_x11_gradient_draw(Evas_X11_Graident *gr, Display *disp, Imlib_Image dstim
    imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
    imlib_context_set_color_modifier(NULL);
 
+   /* oops - math was rotated 180 derees - fixup here */
+   angle += 180;
+   
    while (angle < 0.0) angle += 360.0;
    while (angle > 360.0) angle -= 360.0;
+   
    
    for (l = drawable_list; l; l = l->next)
      {
