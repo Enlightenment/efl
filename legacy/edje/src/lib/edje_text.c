@@ -1,6 +1,8 @@
 #include "Edje.h"
 #include "edje_private.h"
 
+static Evas_Hash   *_edje_text_class_hash = NULL;
+
 Edje_Text_Style _edje_text_styles[EDJE_TEXT_EFFECT_LAST];
 
 void
@@ -175,6 +177,8 @@ void
 _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep)
 {
    int i;
+   Evas_List *tmp;
+   Edje_Part *pt = ep->part;
 
    if (ep->part->type != EDJE_PART_TYPE_TEXT) return;
    if (ep->part->effect >= EDJE_TEXT_EFFECT_LAST) return;
@@ -188,6 +192,16 @@ _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep)
 	evas_object_clip_set(o, ed->clipper);
 	evas_object_show(o);
 	ep->extra_objects = evas_list_append(ep->extra_objects, o);
+
+     }
+
+   if ((pt->default_desc) && (pt->default_desc->text.text_class)) _edje_text_class_member_add(ed, pt->default_desc->text.text_class);
+   for (tmp = pt->other_desc; tmp; tmp = tmp->next)
+     {
+        Edje_Part_Description *desc;
+
+	desc = tmp->data;
+	if ((desc) && (desc->text.text_class)) _edje_text_class_member_add(ed, desc->text.text_class);
      }
 }
 
@@ -217,6 +231,9 @@ _edje_text_part_on_add_clippers(Edje *ed, Edje_Real_Part *ep)
 void
 _edje_text_part_on_del(Edje *ed, Edje_Real_Part *ep)
 {
+   Evas_List *tmp;
+   Edje_Part *pt = ep->part;
+
    while (ep->extra_objects)
      {
 	Evas_Object *o;
@@ -225,8 +242,16 @@ _edje_text_part_on_del(Edje *ed, Edje_Real_Part *ep)
 	ep->extra_objects = evas_list_remove(ep->extra_objects, o);
 	evas_object_del(o);
      }
+
+   if ((pt->default_desc) && (pt->default_desc->text.text_class)) _edje_text_class_member_del(ed, pt->default_desc->text.text_class);
+   for (tmp = pt->other_desc; tmp; tmp = tmp->next)
+     {
+	 Edje_Part_Description *desc;
+
+	 desc = tmp->data;
+	 if (desc->text.text_class) _edje_text_class_member_del(ed, desc->text.text_class);
+     }
    return;
-   ed = NULL;
 }
 
 void
@@ -250,8 +275,11 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	Edje_Text_Class *tc;
 	
 	tc = _edje_text_class_find(ed, chosen_desc->text.text_class);
-	if (tc->font) font = tc->font;
-	if (tc->size > 0) size = tc->size;
+	if (tc)
+	  {
+	     if (tc->font) font = tc->font;
+	     if (tc->size > 0) size = tc->size;
+	  }
      }
    
    if (ep->text.text) text = ep->text.text;

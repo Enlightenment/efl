@@ -232,10 +232,17 @@ bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	     else if (!strcmp(ev->keyname, "Right"))
 	       edje_object_part_text_set(de->edje, "text", "You pressed \"U\". Nice one stenchie!");
 	     else if (!strcmp(ev->keyname, "F1"))
-	       edje_object_color_class_set(de->edje, "bg", 
-					   255, 255, 255, 255,
-					   0, 0, 0, 0,
-					   0, 0, 0, 0);
+	       {
+	          edje_object_color_class_set(de->edje, "bg",
+					      255, 255, 255, 255,
+					      0, 0, 0, 0,
+					      0, 0, 0, 0);
+	          edje_color_class_set("fg", 
+				       0, 0, 0, 255,
+				       0, 0, 0, 0,
+				       0, 0, 0, 0);
+	          edje_text_class_set("plainjane", "Vera", 10);
+	       }
 	     else if (!strcmp(ev->keyname, "F2"))
 	       edje_object_color_class_set(de->edje, "bg", 
 					   255, 200, 120, 255,

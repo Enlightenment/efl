@@ -586,7 +586,12 @@ void  _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *pa
     
 Edje_Real_Part   *_edje_real_part_get(Edje *ed, char *part);
 Edje_Color_Class *_edje_color_class_find(Edje *ed, char *color_class);
+void              _edje_color_class_member_add(Edje *ed, char *color_class);
+void              _edje_color_class_member_del(Edje *ed, char *color_class);
+void              _edje_color_class_on_del(Edje *ed, Edje_Real_Part *rp);
 Edje_Text_Class  *_edje_text_class_find(Edje *ed, char *text_class);
+void              _edje_text_class_member_add(Edje *ed, char *text_class);
+void              _edje_text_class_member_del(Edje *ed, char *text_class);
 Edje             *_edje_fetch(Evas_Object *obj);
 int               _edje_glob_match(char *str, char *glob);
 int               _edje_freeze(Edje *ed);

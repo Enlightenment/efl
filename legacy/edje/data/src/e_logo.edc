@@ -177,11 +177,13 @@ collections {
 		  offset,   -64, -1;
 		  to,       "logo";
 	       }
+	       color_class, "fg";
 	       color, 255 255 255 255;
 //	       color2, 0 0 255 255;
 	       color3, 0 0 0 32;
 	       text {
 		  text,     "This is a longer test string";
+		  text_class, "plainjane";
 		  font,     "Vera";
 		  size,     6;
 //		  fit,    0 1;

@@ -29,6 +29,9 @@ extern "C" {
    Evas_List   *edje_file_collection_list       (const char *file);
    void         edje_file_collection_list_free  (Evas_List *lst);
    char        *edje_file_data_get              (const char *file, const char *key);
+
+   void         edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
+   void         edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size size);
    
    void         edje_extern_object_min_size_set (Evas_Object *obj, Evas_Coord minw, Evas_Coord minh);
    void         edje_extern_object_max_size_set (Evas_Object *obj, Evas_Coord maxw, Evas_Coord maxh);

@@ -40,8 +40,17 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	  {
 	     Edje_Part *ep;
 	     Evas_List *hist = NULL;
-	     
+
+	     /* Register any color classes in this parts descriptions. */
 	     ep = l->data;
+	     if ((ep->default_desc) && (ep->default_desc->color_class)) _edje_color_class_member_add(ed, ep->default_desc->color_class);
+	     for (hist = ep->other_desc; hist; hist = hist->next)
+	       {
+		  Edje_Part_Description *desc;
+
+		  desc = hist->data;
+		  if (desc->color_class) _edje_color_class_member_add(ed, desc->color_class);
+	       }
 	     hist = evas_list_append(hist, ep);
 	     while (ep->dragable.confine_id >= 0)
 	       {
@@ -459,6 +468,7 @@ _edje_file_del(Edje *ed)
 					    EVAS_CALLBACK_MOUSE_WHEEL,
 					    _edje_mouse_wheel_cb);
 	     _edje_text_part_on_del(ed, rp);
+	     _edje_color_class_on_del(ed, rp);
 	     evas_object_del(rp->object);
 	     if (rp->swallowed_object)
 	       {

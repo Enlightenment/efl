@@ -418,8 +418,11 @@ _edje_part_recalc_single(Edje *ed,
 	     Edje_Text_Class *tc;
 	     
 	     tc = _edje_text_class_find(ed, chosen_desc->text.text_class);
-	     if (tc->font) font = tc->font;
-	     if (tc->size > 0) size = tc->size;
+	     if (tc)
+	       {
+		  if (tc->font) font = tc->font;
+		  if (tc->size > 0) size = tc->size;
+	       }
 	  }
 	
 	if (ep->text.text) text = ep->text.text;

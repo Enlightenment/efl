@@ -1,6 +1,12 @@
 #include "Edje.h"
 #include "edje_private.h"
 
+Evas_Hash *_edje_color_class_hash = NULL;
+Evas_Hash *_edje_color_class_member_hash = NULL;
+
+Evas_Hash *_edje_text_class_hash = NULL;
+Evas_Hash *_edje_text_class_member_hash = NULL;
+
 void
 edje_freeze(void)
 {
@@ -60,6 +66,75 @@ edje_object_thaw(Evas_Object *obj)
 }
 
 void
+edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
+{
+   Evas_List *members;
+   Edje_Color_Class *cc;
+
+   if (!color_class) return;
+
+   cc = evas_hash_find(_edje_color_class_hash, color_class);
+   if (!cc)
+     {
+        cc = malloc(sizeof(Edje_Color_Class));
+	if (!cc) return;
+	cc->name = strdup(color_class);
+	if (!cc->name)
+	  {
+	     free(cc);
+	     return;
+	  }
+	_edje_color_class_hash = evas_hash_add(_edje_color_class_hash, color_class, cc);
+	if (evas_hash_alloc_error())
+	  {
+	     free(cc->name);
+	     free(cc);
+	     return;
+	  }
+
+     }
+
+   if (r < 0)   r = 0;
+   if (r > 255) r = 255;
+   if (g < 0)   g = 0;
+   if (g > 255) g = 255;
+   if (b < 0)   b = 0;
+   if (b > 255) b = 255;
+   if (a < 0)   a = 0;
+   if (a > 255) a = 255;
+   if ((cc->r == r) && (cc->g == g) && 
+       (cc->b == b) && (cc->a == a) &&
+       (cc->r2 == r2) && (cc->g2 == g2) &&
+       (cc->b2 == b2) && (cc->a2 == a2) &&
+       (cc->r3 == r3) && (cc->g3 == g3) &&
+       (cc->b3 == b3) && (cc->a3 == a3))
+     return;
+   cc->r = r;
+   cc->g = g;
+   cc->b = b;
+   cc->a = a;
+   cc->r2 = r2;
+   cc->g2 = g2;
+   cc->b2 = b2;
+   cc->a2 = a2;
+   cc->r3 = r3;
+   cc->g3 = g3;
+   cc->b3 = b3;
+   cc->a3 = a3;
+
+   members = evas_hash_find(_edje_color_class_member_hash, color_class);
+   while (members)
+     {
+	Edje *ed;
+
+	ed = members->data;
+	ed->dirty = 1;
+	_edje_recalc(ed);
+	members = members->next;
+     }
+}
+
+void
 edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
 {
    Edje *ed;
@@ -106,6 +181,7 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
 	  }
      }
    cc = malloc(sizeof(Edje_Color_Class));
+   if (!cc) return;
    cc->name = strdup(color_class);
    if (!cc->name)
      {
@@ -127,6 +203,65 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
    ed->color_classes = evas_list_append(ed->color_classes, cc);
    ed->dirty = 1;
    _edje_recalc(ed);
+}
+
+void
+edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size size)
+{
+   Evas_List *members;
+   Edje_Text_Class *tc;
+
+   if (!text_class) return;
+
+   if (size < 0) size = 0;
+   if (!font) font = "";
+
+   tc = evas_hash_find(_edje_text_class_hash, text_class);
+   if (!tc)
+     {
+        tc = calloc(1, sizeof(Edje_Text_Class));
+	if (!tc) return;
+	tc->name = strdup(text_class);
+	if (!tc->name)
+	  {
+	     free(tc);
+	     return;
+	  }
+	_edje_text_class_hash = evas_hash_add(_edje_text_class_hash, text_class, tc);
+	if (evas_hash_alloc_error())
+	  {
+	     free(tc->name);
+	     free(tc);
+	     return;
+	  }
+
+	tc->font = strdup(font);
+	tc->size = size;
+	return;
+     }
+
+   if ((tc->size == size) && (!strcmp(tc->font, font)))
+     return;
+   free(tc->font);
+   tc->font = strdup(font);
+   if (!tc->font)
+     {
+	_edje_text_class_hash = evas_hash_del(_edje_text_class_hash, text_class, tc);
+	free(tc);
+	return;
+     }
+   tc->size = size;
+
+   members = evas_hash_find(_edje_text_class_member_hash, text_class);
+   while (members)
+     {
+	Edje *ed;
+
+	ed = members->data;
+	ed->dirty = 1;
+	_edje_recalc(ed);
+	members = members->next;
+     }
 }
 
 void
@@ -161,6 +296,7 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
 	  }
      }
    tc = malloc(sizeof(Edje_Text_Class));
+   if (!tc) return;
    tc->name = strdup(text_class);
    if (!tc->name)
      {
@@ -876,7 +1012,7 @@ _edje_color_class_find(Edje *ed, char *color_class)
 {
    Evas_List *l;
    
-   if (!color_class) return NULL;
+   if ((!ed) || (!color_class)) return;
    for (l = ed->color_classes; l; l = l->next)
      {
 	Edje_Color_Class *cc;
@@ -884,7 +1020,50 @@ _edje_color_class_find(Edje *ed, char *color_class)
 	cc = l->data;
 	if (!strcmp(color_class, cc->name)) return cc;
      }
-   return NULL;
+   return evas_hash_find(_edje_color_class_hash, color_class);
+}
+
+void
+_edje_color_class_member_add(Edje *ed, char *color_class)
+{
+   Evas_List *members;
+
+   if ((!ed) || (!color_class)) return;
+   members = evas_hash_find(_edje_color_class_member_hash, color_class);
+   if (members) _edje_color_class_member_hash = evas_hash_del(_edje_color_class_member_hash, color_class, members);
+
+   members = evas_list_prepend(members, ed);
+   _edje_color_class_member_hash = evas_hash_add(_edje_color_class_member_hash, color_class, members);
+}
+
+void
+_edje_color_class_member_del(Edje *ed, char *color_class)
+{
+   Evas_List *members, *tmp = NULL;
+
+   if ((!ed) || (!color_class)) return;
+   members = evas_hash_find(_edje_color_class_member_hash, color_class);
+   if (!members) return;
+
+   _edje_color_class_member_hash = evas_hash_del(_edje_color_class_member_hash, color_class, members);
+   members = evas_list_remove(members, ed);
+   if (members) _edje_color_class_member_hash = evas_hash_add(_edje_color_class_member_hash, color_class, members);
+}
+
+void
+_edje_color_class_on_del(Edje *ed, Edje_Real_Part *rp)
+{
+   Evas_List *tmp;
+   Edje_Part *ep = rp->part;
+
+   if ((ep->default_desc) && (ep->default_desc->color_class)) _edje_color_class_member_del(ed, ep->default_desc->color_class);
+   for (tmp = ep->other_desc; tmp; tmp = tmp->next)
+     {
+        Edje_Part_Description *desc;
+
+	desc = tmp->data;
+	if (desc->color_class) _edje_color_class_member_del(ed, desc->color_class);
+     }
 }
 
 Edje_Text_Class *
@@ -892,7 +1071,7 @@ _edje_text_class_find(Edje *ed, char *text_class)
 {
    Evas_List *l;
    
-   if (!text_class) return NULL;
+   if ((!ed) || (!text_class)) return;
    for (l = ed->text_classes; l; l = l->next)
      {
 	Edje_Text_Class *tc;
@@ -900,7 +1079,34 @@ _edje_text_class_find(Edje *ed, char *text_class)
 	tc = l->data;
 	if (!strcmp(text_class, tc->name)) return tc;
      }
-   return NULL;
+   return evas_hash_find(_edje_text_class_hash, text_class);
+}
+
+void
+_edje_text_class_member_add(Edje *ed, char *text_class)
+{
+   Evas_List *members;
+
+   if ((!ed) || (!text_class)) return;
+   members = evas_hash_find(_edje_text_class_member_hash, text_class);
+   if (members) _edje_text_class_member_hash = evas_hash_del(_edje_text_class_member_hash, text_class, members);
+
+   members = evas_list_prepend(members, ed);
+   _edje_text_class_member_hash = evas_hash_add(_edje_text_class_member_hash, text_class, members);
+}
+
+void
+_edje_text_class_member_del(Edje *ed, char *text_class)
+{
+   Evas_List *members, *tmp = NULL;
+
+   if ((!ed) || (!text_class)) return;
+   members = evas_hash_find(_edje_text_class_member_hash, text_class);
+   if (!members) return;
+
+   _edje_text_class_member_hash = evas_hash_del(_edje_text_class_member_hash, text_class, members);
+   members = evas_list_remove(members, ed);
+   if (members) _edje_text_class_member_hash = evas_hash_add(_edje_text_class_member_hash, text_class, members);
 }
 
 Edje *
