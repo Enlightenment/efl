@@ -42,6 +42,6 @@ libedje_la_LDFLAGS      = -version-info 0:1:0
 libedje_edit_la_SOURCES  = \
 edje_edit.c
 
-libedje_edit_la_LIBADD       = $(LDFLAGS) -lm @evas_libs@ @ecore_libs@ @eet_libs@ -ledje
-libedje_edit_la_DEPENDENCIES = $(top_builddir)/config.h
+libedje_edit_la_LIBADD       = $(LDFLAGS) -lm @evas_libs@ @ecore_libs@ @eet_libs@ $(top_builddir)/src/lib/libedje.la
+libedje_edit_la_DEPENDENCIES = $(top_builddir)/config.h $(top_builddir)/src/lib/libedje.la
 libedje_edit_la_LDFLAGS      = -version-info 0:1:0
