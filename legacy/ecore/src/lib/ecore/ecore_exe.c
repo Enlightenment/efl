@@ -237,9 +237,9 @@ _ecore_exe_shutdown(void)
 Ecore_Exe *
 _ecore_exe_find(pid_t pid)
 {
-   Ecore_List *l;
+   Ecore_Oldlist *l;
    
-   for (l = (Ecore_List *)exes; l; l = l->next)
+   for (l = (Ecore_Oldlist *)exes; l; l = l->next)
      {
 	Ecore_Exe *exe;
 	

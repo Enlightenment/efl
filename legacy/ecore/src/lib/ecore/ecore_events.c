@@ -353,20 +353,20 @@ _ecore_event_del(Ecore_Event *event)
 void
 _ecore_event_call(void)
 {
-   Ecore_List *l;
+   Ecore_Oldlist *l;
 
-   for (l = (Ecore_List *)event_filters; l; l = l->next)
+   for (l = (Ecore_Oldlist *)event_filters; l; l = l->next)
      {
 	Ecore_Event_Filter *ef;
 	
 	ef = (Ecore_Event_Filter *)l;
 	if (!ef->delete_me)
 	  {
-	     Ecore_List *ll;
+	     Ecore_Oldlist *ll;
 	     
 	     if (ef->func_start)
 	       ef->loop_data = ef->func_start(ef->data);
-	     for (ll = (Ecore_List *)events; ll; ll = ll->next)
+	     for (ll = (Ecore_Oldlist *)events; ll; ll = ll->next)
 	       {
 		  Ecore_Event *e;
 		  
@@ -381,7 +381,7 @@ _ecore_event_call(void)
      }
    if (event_filters_delete_me)
      {
-	for (l = (Ecore_List *)event_filters; l;)
+	for (l = (Ecore_Oldlist *)event_filters; l;)
 	  {
 	     Ecore_Event_Filter *ef;
 	
@@ -396,9 +396,9 @@ _ecore_event_call(void)
 	  }
 	event_filters_delete_me = 0;
      }
-   for (l = (Ecore_List *)events; l; l = l->next)
+   for (l = (Ecore_Oldlist *)events; l; l = l->next)
      {
-	Ecore_List *ll;	
+	Ecore_Oldlist *ll;	
 	Ecore_Event *e;
 	
 	e = (Ecore_Event *)l;
@@ -409,7 +409,7 @@ _ecore_event_call(void)
 	     handle_count = 0;
 	     ecore_raw_event_type = e->type;
 	     ecore_raw_event_event = e->event;
-	     for (ll = (Ecore_List *)event_handlers; ll; ll = ll->next)
+	     for (ll = (Ecore_Oldlist *)event_handlers; ll; ll = ll->next)
 	       {
 		  Ecore_Event_Handler *eh;
 		  
@@ -434,7 +434,7 @@ _ecore_event_call(void)
      }
    while (events) _ecore_event_del(events);
    if (!event_handlers_delete_me) return;
-   for (l = (Ecore_List *)event_handlers; l;)
+   for (l = (Ecore_Oldlist *)event_handlers; l;)
      {
 	Ecore_Event_Handler *eh;
 	

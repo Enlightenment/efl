@@ -6,12 +6,32 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
+#include <dlfcn.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <limits.h>
+
+#include <Ecore_Data.h>
+
+#ifndef TRUE
+#define TRUE 1
+#endif
+
+#ifndef FALSE
+#define FALSE 0
+#endif
+
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* Convenience macros */
+/* FIXME: [deprecated] Convenience macros */
 #define ECORE_MIN(x, y)          (((x) > (y)) ? (y) : (x))
 #define ECORE_MAX(x, y)          (((x) > (y)) ? (x) : (y))
 

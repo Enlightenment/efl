@@ -75,9 +75,9 @@ _ecore_idle_enterer_shutdown(void)
 void
 _ecore_idle_enterer_call(void)
 {
-   Ecore_List *l;
+   Ecore_Oldlist *l;
    
-   for (l = (Ecore_List *)idle_enterers; l; l = l->next)
+   for (l = (Ecore_Oldlist *)idle_enterers; l; l = l->next)
      {
 	Ecore_Idle_Enterer *ie;
 	
@@ -89,7 +89,7 @@ _ecore_idle_enterer_call(void)
      }
    if (idle_enterers_delete_me)
      {
-	for (l = (Ecore_List *)idle_enterers; l;)
+	for (l = (Ecore_Oldlist *)idle_enterers; l;)
 	  {
 	     Ecore_Idle_Enterer *ie;
 	     

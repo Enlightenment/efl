@@ -31,12 +31,12 @@
 
 typedef int                         Ecore_Magic;
 
-typedef struct _Ecore_List          Ecore_List;
+typedef struct _Ecore_Oldlist          Ecore_Oldlist;
 
-struct _Ecore_List
+struct _Ecore_Oldlist
 {
-   Ecore_List  *next, *prev;
-   Ecore_List  *last;
+   Ecore_Oldlist  *next, *prev;
+   Ecore_Oldlist  *last;
 };
 
 #ifndef _ECORE_H
@@ -60,7 +60,7 @@ typedef struct _Ecore_Event         Ecore_Event;
 
 struct _Ecore_Exe
 {
-   Ecore_List   __list_data;
+   Ecore_Oldlist   __list_data;
    ECORE_MAGIC;
    pid_t        pid;
    void        *data;
@@ -68,7 +68,7 @@ struct _Ecore_Exe
 
 struct _Ecore_Timer
 {
-   Ecore_List   __list_data;
+   Ecore_Oldlist   __list_data;
    ECORE_MAGIC;
    double       in;
    double       at;
@@ -80,7 +80,7 @@ struct _Ecore_Timer
 
 struct _Ecore_Idler
 {
-   Ecore_List   __list_data;
+   Ecore_Oldlist   __list_data;
    ECORE_MAGIC;
    int          delete_me : 1;
    int        (*func) (void *data);   
@@ -89,7 +89,7 @@ struct _Ecore_Idler
 
 struct _Ecore_Idle_Enterer
 {
-   Ecore_List   __list_data;
+   Ecore_Oldlist   __list_data;
    ECORE_MAGIC;
    int          delete_me : 1;
    int        (*func) (void *data);   
@@ -98,7 +98,7 @@ struct _Ecore_Idle_Enterer
 
 struct _Ecore_Idle_Exiter
 {
-   Ecore_List   __list_data;
+   Ecore_Oldlist   __list_data;
    ECORE_MAGIC;
    int          delete_me : 1;
    int        (*func) (void *data);   
@@ -107,7 +107,7 @@ struct _Ecore_Idle_Exiter
 
 struct _Ecore_Fd_Handler
 {
-   Ecore_List               __list_data;
+   Ecore_Oldlist               __list_data;
    ECORE_MAGIC;
    int                      fd;
    Ecore_Fd_Handler_Flags   flags;
@@ -123,7 +123,7 @@ struct _Ecore_Fd_Handler
 
 struct _Ecore_Event_Handler
 {
-   Ecore_List   __list_data;
+   Ecore_Oldlist   __list_data;
    ECORE_MAGIC;
    int          type;
    int          delete_me : 1;
@@ -133,7 +133,7 @@ struct _Ecore_Event_Handler
 
 struct _Ecore_Event_Filter
 {
-   Ecore_List   __list_data;
+   Ecore_Oldlist   __list_data;
    ECORE_MAGIC;
    int          delete_me : 1;
    void *     (*func_start) (void *data);
@@ -145,7 +145,7 @@ struct _Ecore_Event_Filter
 
 struct _Ecore_Event
 {
-   Ecore_List   __list_data;
+   Ecore_Oldlist   __list_data;
    ECORE_MAGIC;
    int          type;
    void        *event;

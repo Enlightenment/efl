@@ -239,7 +239,7 @@ _ecore_main_select(double timeout)
    fd_set         rfds, wfds, exfds;
    int            max_fd;
    int            ret;
-   Ecore_List    *l;
+   Ecore_Oldlist    *l;
    
    t = NULL;
    if (timeout > 0.0)
@@ -262,7 +262,7 @@ _ecore_main_select(double timeout)
    FD_ZERO(&rfds);
    FD_ZERO(&wfds);
    FD_ZERO(&exfds);
-   for (l = (Ecore_List *)fd_handlers; l; l = l->next)
+   for (l = (Ecore_Oldlist *)fd_handlers; l; l = l->next)
      {
 	Ecore_Fd_Handler *fdh;
 	
@@ -291,7 +291,7 @@ _ecore_main_select(double timeout)
      }
    if (ret > 0)
      {
-	for (l = (Ecore_List *)fd_handlers; l; l = l->next)
+	for (l = (Ecore_Oldlist *)fd_handlers; l; l = l->next)
 	  {
 	     Ecore_Fd_Handler *fdh;
 	     
@@ -315,10 +315,10 @@ _ecore_main_select(double timeout)
 static void
 _ecore_main_fd_handlers_cleanup(void)
 {
-   Ecore_List *l;
+   Ecore_Oldlist *l;
    
    if (!fd_handlers_delete_me) return;
-   for (l = (Ecore_List *)fd_handlers; l;)
+   for (l = (Ecore_Oldlist *)fd_handlers; l;)
      {
 	Ecore_Fd_Handler *fdh;
 	
@@ -337,9 +337,9 @@ _ecore_main_fd_handlers_cleanup(void)
 static void
 _ecore_main_fd_handlers_call(void)
 {
-   Ecore_List    *l;
+   Ecore_Oldlist    *l;
    
-   for (l = (Ecore_List *)fd_handlers; l; l = l->next)
+   for (l = (Ecore_Oldlist *)fd_handlers; l; l = l->next)
      {
 	Ecore_Fd_Handler *fdh;
 	
@@ -366,11 +366,11 @@ _ecore_main_fd_handlers_call(void)
 static int
 _ecore_main_fd_handlers_buf_call(void)
 {
-   Ecore_List    *l;
+   Ecore_Oldlist    *l;
    int ret;
    
    ret = 0;
-   for (l = (Ecore_List *)fd_handlers; l; l = l->next)
+   for (l = (Ecore_Oldlist *)fd_handlers; l; l = l->next)
      {
 	Ecore_Fd_Handler *fdh;
 	

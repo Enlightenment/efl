@@ -76,9 +76,9 @@ _ecore_idler_shutdown(void)
 int
 _ecore_idler_call(void)
 {
-   Ecore_List *l;
+   Ecore_Oldlist *l;
 
-   for (l = (Ecore_List *)idlers; l; l = l->next)
+   for (l = (Ecore_Oldlist *)idlers; l; l = l->next)
      {
 	Ecore_Idler *ie;
 	
@@ -90,7 +90,7 @@ _ecore_idler_call(void)
      }
    if (idlers_delete_me)
      {
-	for (l = (Ecore_List *)idlers; l;)
+	for (l = (Ecore_Oldlist *)idlers; l;)
 	  {
 	     Ecore_Idler *ie;
 	     
