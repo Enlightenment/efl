@@ -6,16 +6,17 @@ make clean distclean
 --enable-image-loader-png \
 --enable-image-loader-jpeg \
 --enable-image-loader-eet \
---enable-small-dither-mask \
 --enable-cpu-c \
 --enable-scale-smooth \
 --enable-scale-sample \
 --enable-convert-16-rgb-ipq \
 --enable-convert-16-rgb-rot-270
 
+#--enable-small-dither-mask \
+
 CC="/skiff/local/bin/arm-linux-gcc"
 ST="/skiff/local/bin/arm-linux-strip"
-CFLAGS="-O2"
+CFLAGS="-O9"
 
 rm -rf "build"
 mkdir "build"
