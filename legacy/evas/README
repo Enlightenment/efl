@@ -23,6 +23,18 @@ in the test directory you will find a test program:
 cd test
 ./evas_test
 
+this will by default try the GL engine - if you don't have hardware
+accelerated OpenGL it will be SLOOOOOOOOOOOW. Also Mesa 3.2 and below have
+known bugs that cause a segv. it's been fixed in 3.3.
+
+If evas didnt find OpenGL it will have built a software only engine so you
+don't need to do anything. You can force software rendering with:
+./evas_test 640 480 software
+
+you can change the window size by changing the 2 numbers (they are width and
+height). if you dont append ``software'' as a parameter it will fall back to
+GL rendering.
+
 
 -------------------------------------------------------------------------------
 MORE DETAILED DESCRIPTION:
