@@ -25,7 +25,7 @@
 /* increment this when the EET data descriptors have changed and old
  * EETs cannot be loaded/used correctly anymore.
  */
-#define EDJE_FILE_VERSION 1
+#define EDJE_FILE_VERSION 2
 
 /* FIXME:
  * 
