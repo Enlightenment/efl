@@ -175,7 +175,7 @@ struct _Evas_Object_Image
 	 double x, y, w, h;
       } fill;
       struct {
-	 int l, r, t, b
+	 int l, r, t, b;
       } border;
    } current, previous;
 };
