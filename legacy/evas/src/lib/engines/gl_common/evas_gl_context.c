@@ -283,7 +283,7 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
      {
 	if (gc->font_texture_not_power_of_two)
 	  {
-//	     glEnable(GL_TEXTURE_2D);
+	     glEnable(GL_TEXTURE_2D);
 	     glEnable(GL_TEXTURE_RECTANGLE_NV);
 	     glBindTexture(GL_TEXTURE_RECTANGLE_NV, gc->font_texture);
 	  }
@@ -299,14 +299,14 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
      {
 	if (gc->texture->not_power_of_two)
 	  {
-//	     glEnable(GL_TEXTURE_2D);
+	     glEnable(GL_TEXTURE_2D);
 	     glEnable(GL_TEXTURE_RECTANGLE_NV);
 	     glBindTexture(GL_TEXTURE_RECTANGLE_NV, gc->texture->texture);
 	  }
 	else
 	  {
 	     if (gc->ext.nv_texture_rectangle) glDisable(GL_TEXTURE_RECTANGLE_NV);
-//	     glEnable(GL_TEXTURE_2D);
+	     glEnable(GL_TEXTURE_2D);
 	     glBindTexture(GL_TEXTURE_2D, gc->texture->texture);
 	  }
 	if (gc->texture->not_power_of_two)
