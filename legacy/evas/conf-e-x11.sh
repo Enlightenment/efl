@@ -1,8 +1,8 @@
 #!/bin/sh
 
-make clean distclean
+#make clean distclean
 rm config.cache
-./configure \
+./autogen.sh \
 --enable-software-x11 \
 --enable-gl-x11 \
 --enable-image-loader-png \

@@ -10,7 +10,6 @@ AM_CONFIG_HEADER(config.h)
 
 AC_C_BIGENDIAN
 AC_PROG_CC
-AC_PROG_CXX
 AM_PROG_CC_STDC
 AC_HEADER_STDC
 AC_C_CONST
@@ -273,6 +272,7 @@ AC_ARG_ENABLE(software-qtopia, [  --enable-software-qtopia     enable the Softwa
 )
 
 if test "x$have_evas_qtopia" = "xyes"; then
+  AC_PROG_CXX
   AC_CHECK_HEADER(qdirectpainter_qws.h,
     [
       AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_QTOPIA, test "$enableval" = "yes")
