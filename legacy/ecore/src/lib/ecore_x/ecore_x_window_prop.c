@@ -605,7 +605,7 @@ ecore_x_window_prop_protocol_list_get(Ecore_X_Window win, int *num_ret)
      return NULL;
 
    if ((!protos) || (protos_count <= 0)) return NULL;
-   prot_ret = malloc(protos_count * sizeof(Ecore_X_WM_Protocol));
+   prot_ret = calloc(1, protos_count * sizeof(Ecore_X_WM_Protocol));
    if (!prot_ret)
      {
 	XFree(protos);
