@@ -381,6 +381,7 @@ _ecore_x_shutdown(int close_display)
    _ecore_x_disp = NULL;
    _ecore_x_event_handlers = NULL;
    _ecore_x_selection_shutdown();
+   _ecore_x_dnd_shutdown();
    if (_ecore_x_init_count < 0) _ecore_x_init_count = 0;
    return _ecore_x_init_count;
 }

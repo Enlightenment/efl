@@ -163,5 +163,6 @@ int  _ecore_x_selection_convert(Atom selection, Atom target, void **data_ret);
 void _ecore_x_dnd_init(void);
 Ecore_X_DND_Protocol * _ecore_x_dnd_protocol_get(void);
 void _ecore_x_dnd_drag(int x, int y);
+void _ecore_x_dnd_shutdown(void);
 
 #endif

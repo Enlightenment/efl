@@ -4,7 +4,7 @@
 #include "Ecore_X_Atoms.h"
 
 static Ecore_X_Selection_Data _xdnd_selection;
-static Ecore_X_DND_Protocol *_xdnd;
+static Ecore_X_DND_Protocol *_xdnd = NULL;
 
 void
 _ecore_x_dnd_init (void)
@@ -15,6 +15,15 @@ _ecore_x_dnd_init (void)
    _xdnd->source = None;
    _xdnd->dest = None;
    _xdnd->state = ECORE_X_DND_IDLE;
+
+}
+
+void
+_ecore_x_dnd_shutdown(void)
+{
+   if(_xdnd)
+      free(_xdnd);
+   _xdnd = NULL;
 }
 
 void
