@@ -7,18 +7,18 @@ static void _edje_collection_free_part_description_free(Edje_Part_Description *d
 static int  _edje_collection_free_prog_cache_matches_free_cb(Evas_Hash *hash, const char *key, void *data, void *fdata);
 
 /* API Routines */
-void
+int
 edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 {
    Edje *ed;
    
    ed = _edje_fetch(obj);
-   if (!ed) return;
+   if (!ed) return 0;
    if (!file) file = "";
    if (!part) part = "";
    if (((ed->path) && (!strcmp(file, ed->path))) &&
 	(ed->part) && (!strcmp(part, ed->part)))
-     return;
+     return 0;
    
    _edje_file_del(ed);
    
@@ -81,7 +81,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	     
 	     ep = l->data;
 	     rp = calloc(1, sizeof(Edje_Real_Part));
-	     if (!rp) return;
+	     if (!rp) return 0;
 	     rp->part = ep;
 	     ed->parts = evas_list_append(ed->parts, rp);
 	     rp->param1.description =  ep->default_desc;
@@ -189,7 +189,11 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	_edje_thaw(ed);
 	_edje_unblock(ed);
 	_edje_unref(ed);
+	return 1;
      }
+     else return 0;
+
+     return 1;
 }
 
 void

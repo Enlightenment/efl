@@ -27,7 +27,7 @@ extern "C" {
    
    Evas_Object *edje_object_add                 (Evas *evas);
    const char  *edje_object_data_get            (Evas_Object *obj, const char *key);
-   void         edje_object_file_set            (Evas_Object *o, const char *file, const char *part);
+   int          edje_object_file_set            (Evas_Object *o, const char *file, const char *part);
    void         edje_object_file_get            (Evas_Object *o, const char **file, const char **part);
    void         edje_object_signal_callback_add (Evas_Object *o, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data);
    void        *edje_object_signal_callback_del (Evas_Object *o, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source));
