@@ -696,6 +696,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force, char *ssig, char *ssrc)
 	_edje_embryo_test_run(ed, fname, ssig, ssrc);
 	_edje_emit(ed, "program,stop", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
+	_edje_recalc(ed);
      }
    if (!((pr->action == EDJE_ACTION_TYPE_STATE_SET) 
 	 /* hmm this fucks somethgin up. must look into it later */

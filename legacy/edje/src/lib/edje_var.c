@@ -29,6 +29,7 @@ _edje_var_timer_cb(void *data)
 	embryo_program_data_set(ed->collection->script, ed);	
 	embryo_program_run(ed->collection->script, fn);
 	embryo_program_data_set(ed->collection->script, pdata);
+	_edje_recalc(ed);
      }
    return 0;
 }
@@ -83,6 +84,7 @@ _edje_var_anim_cb(void *data)
 			    embryo_program_data_set(ed->collection->script, ed);	
 			    embryo_program_run(ed->collection->script, fn);
 			    embryo_program_data_set(ed->collection->script, pdata);
+			    _edje_recalc(ed);
 			 }
 		       if (v == 1.0) ea->delete_me = 1;
 		    }
