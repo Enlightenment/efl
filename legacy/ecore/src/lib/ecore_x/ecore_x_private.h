@@ -141,8 +141,20 @@ extern Atom     _ecore_x_atom_motif_wm_hints;
 
 extern Atom     _ecore_x_atom_win_layer;
 
-extern Atom     _ecore_x_atom_net_wm_desktop;
+extern Atom     _ecore_x_atom_net_number_of_desktops;
+extern Atom     _ecore_x_atom_net_virtual_roots;
+extern Atom     _ecore_x_atom_net_desktop_names;
+extern Atom     _ecore_x_atom_net_desktop_geometry;
+extern Atom     _ecore_x_atom_net_workarea;
 extern Atom     _ecore_x_atom_net_current_desktop;
+extern Atom     _ecore_x_atom_net_desktop_viewport;
+extern Atom     _ecore_x_atom_net_showing_desktop;
+
+extern Atom     _ecore_x_atom_net_client_list;
+extern Atom     _ecore_x_atom_net_client_list_stacking;
+extern Atom     _ecore_x_atom_net_active_window;
+
+extern Atom     _ecore_x_atom_net_wm_desktop;
 extern Atom     _ecore_x_atom_net_wm_state;
 extern Atom     _ecore_x_atom_net_wm_state_above;
 extern Atom     _ecore_x_atom_net_wm_state_below;

@@ -27,6 +27,7 @@ ecore_x_dnd.c \
 ecore_x_error.c \
 ecore_x_events.c \
 ecore_x_icccm.c \
+ecore_x_netwm.c \
 ecore_x_selection.c \
 ecore_x_window.c \
 ecore_x_window_prop.c \
@@ -57,6 +58,7 @@ ecore_x_dnd.c \
 ecore_x_error.c \
 ecore_x_events.c \
 ecore_x_icccm.c \
+ecore_x_netwm.c \
 ecore_x_selection.c \
 ecore_x_window.c \
 ecore_x_window_prop.c \
