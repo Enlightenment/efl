@@ -4,6 +4,8 @@
 #include <inttypes.h>
 #include <limits.h>
 
+static Ecore_X_Atom _ecore_x_window_prop_state_atom_get(Ecore_X_Window_State s);
+
 /**
  * To be documented.
  *
@@ -633,9 +635,11 @@ ecore_x_window_prop_sticky_set(Ecore_X_Window win, int on)
    if (on) {
       ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_desktop,
                                        XA_CARDINAL, 32, &val, 1);
+      ecore_x_window_prop_state_set(win, ECORE_X_WINDOW_STATE_STICKY);
       return;
    }
    
+   ecore_x_window_prop_state_unset(win, ECORE_X_WINDOW_STATE_STICKY);
    ret = ecore_x_window_prop_property_get(0, _ecore_x_atom_net_current_desktop,
                                          XA_CARDINAL, 32, &data, &num);
    if (!ret || !num)
@@ -769,15 +773,59 @@ ecore_x_window_prop_withdrawn_set(Ecore_X_Window win, int withdrawn)
 void
 ecore_x_window_prop_desktop_request(Ecore_X_Window win, long desktop)
 {
-   long data[5];
+   XEvent *xev;
+   XClientMessageEvent xclient;
 
-   data[0] = desktop;
-   data[1] = 0;
-   data[2] = 0;
-   data[3] = 0;
-   data[4] = 0;
-   ecore_x_window_prop_property_notify(win, "_NET_WM_DESKTOP", data);
+   xev = calloc(1, sizeof(XClientMessageEvent));
+   xev->xclient = xclient;
+   memset(&xclient, 0, sizeof(XClientMessageEvent));
+
+   xclient.type = ClientMessage;
+   xclient.display = _ecore_x_disp;
+   xclient.window = win;
+   xclient.message_type = _ecore_x_atom_net_wm_desktop;
+   xclient.format = 32;
+   xclient.data.l[0] = desktop;
+
+   XSendEvent(_ecore_x_disp, DefaultRootWindow(_ecore_x_disp), False, 0, xev);
+   XFree(xev);
+
 }
+
+/**
+ * Request the window manager to change this window's state.
+ * @param win     The Window
+ * @param state   The requested state
+ * @param action  The action to perform: 0 - unset, 1 - set, 2 - toggle
+ *
+ * Use this function to request the window manager to change the
+ * specified window's state after it has been displayed (mapped).
+ */
+void
+ecore_x_window_prop_state_request(Ecore_X_Window win, Ecore_X_Window_State state, int action)
+{
+   XEvent *xev;
+   XClientMessageEvent xclient;
+
+   if (action < 0 || action > 2)
+      return;
+
+   xev = calloc(1, sizeof(XClientMessageEvent));
+   xev->xclient = xclient;
+   memset(&xclient, 0, sizeof(XClientMessageEvent));
+
+   xclient.type = ClientMessage;
+   xclient.display = _ecore_x_disp;
+   xclient.window = win;
+   xclient.message_type = _ecore_x_atom_net_wm_state;
+   xclient.format = 32;
+   xclient.data.l[0] = action;
+   xclient.data.l[1] = _ecore_x_window_prop_state_atom_get(state);
+
+   XSendEvent(_ecore_x_disp, DefaultRootWindow(_ecore_x_disp), False, 0, xev);
+   XFree(xev);
+}
+   
 
 /**
  * Used by the window manager, or client prior mapping, to set window desktop.
