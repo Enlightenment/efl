@@ -6,6 +6,6 @@ includedir=@includedir@
 Name: eet
 Description: eet
 Version: @VERSION@
-Libs: -L${libdir} -leet -ljpeg -lz
+Libs: -L${libdir} -leet
 Cflags: -I${includedir}
 

@@ -46,7 +46,7 @@ while test $# -gt 0; do
       ;;
     --libs)
       libdirs=-L@libdir@
-      echo $libdirs -leet -ljpeg -lz
+      echo $libdirs -leet
       ;;
     *)
       echo "${usage}" 1>&2
