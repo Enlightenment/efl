@@ -54,6 +54,11 @@ struct _Evas_GL_Context
       int          x, y, w, h;
    } clip;
    
+   struct {
+      int sgis_generate_mipmap : 1;
+      int nv_texture_rectangle : 1;
+   } ext;
+   
    GLenum          read_buf;
    GLenum          write_buf;
    

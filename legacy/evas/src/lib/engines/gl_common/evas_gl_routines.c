@@ -1,11 +1,19 @@
 #include "evas_gl_common.h"
 
-/* nvidia extensions */
-extern void glPixelDataRangeNV(int target, int length, void *pointer);
-#define GL_WRITE_PIXEL_DATA_RANGE_NV 0x8878
-#define GL_READ_PIXEL_DATA_RANGE_NV 0x8879
-#define GL_TEXTURE_RECTANGLE_NV 0x84f5
+//#define NV_RECT_EXT 
+//#define SGIS_MIPMAPS_EXT
 
+/* nvidia extensions */
+//extern void glPixelDataRangeNV(int target, int length, void *pointer);
+//#define GL_WRITE_PIXEL_DATA_RANGE_NV 0x8878
+//#define GL_READ_PIXEL_DATA_RANGE_NV 0x8879
+
+#ifndef GL_TEXTURE_RECTANGLE_NV
+#define GL_TEXTURE_RECTANGLE_NV 0x84f5
+#endif
+
+#define NATIVE_PIX_FORMAT GL_BGRA
+#define NATIVE_PIX_UNIT   GL_UNSIGNED_INT_8_8_8_8_REV
 
 static void _evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int smooth);
 static void _evas_gl_common_gradient_texture_build(Evas_GL_Context *gc, Evas_GL_Gradient *gr);
@@ -24,6 +32,7 @@ Evas_GL_Context *
 evas_gl_common_context_new(void)
 {
    Evas_GL_Context *gc;
+   const GLubyte *ext;
    
    if (_evas_gl_common_context)
      {
@@ -48,6 +57,15 @@ evas_gl_common_context_new(void)
    gc->change.clip    = 1;
    gc->change.buf     = 1;
    gc->change.other   = 1;
+   
+   ext = glGetString(GL_EXTENSIONS);
+   if (ext)
+     {
+	if (strstr(ext, "GL_SGIS_generate_mipmap")) gc->ext.sgis_generate_mipmap = 1;
+	if (strstr(ext, "GL_NV_texture_rectangle")) gc->ext.nv_texture_rectangle = 1;
+	printf("EXT supported: GL_SGIS_generate_mipmap = %x\n", gc->ext.sgis_generate_mipmap);
+	printf("EXT supported: GL_NV_texture_rectangle = %x\n", gc->ext.nv_texture_rectangle);
+     }
    
 //   _evas_gl_common_context = gc;
    return gc;
@@ -198,9 +216,7 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
    tex = calloc(1, sizeof(Evas_GL_Texture));
    if (!tex) return NULL;
 
-//#define NV_RECT_EXT 
-   
-#ifdef NV_RECT_EXT
+   if ((gc->ext.nv_texture_rectangle) && (1))
      {
 	printf("new rect tex %ix%i\n", im->image->w, im->image->h);
 	
@@ -226,14 +242,14 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
 
 	if (im->flags & RGBA_IMAGE_HAS_ALPHA) texfmt = GL_RGBA8;
 	else texfmt = GL_RGB8;
-	pixfmt = GL_BGRA;
+	pixfmt = NATIVE_PIX_FORMAT;
 
 	glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, 
 		     texfmt, tex->w, tex->h, 0,
-		     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV, im->image->data);
+		     pixfmt, NATIVE_PIX_UNIT, im->image->data);
 	return tex;
      }
-#endif   
+
    shift = 1; while (im->image->w > shift) shift = shift << 1; tw = shift;
    shift = 1; while (im->image->h > shift) shift = shift << 1; th = shift;
    tex->gc = gc;
@@ -265,25 +281,11 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
 
    if (im->flags & RGBA_IMAGE_HAS_ALPHA) texfmt = GL_RGBA8;
    else texfmt = GL_RGB8;
-   pixfmt = GL_BGRA;
+   pixfmt = NATIVE_PIX_FORMAT;
    
    glTexImage2D(GL_TEXTURE_2D, 0, 
 		texfmt, tw, th, 0,
-		pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
-#ifdef NVIDIA_HACK
-/* NVIDIA HACK 1,part-1 */   
-   /* Nvidia's 4496 drivers and below have a bug. unless i "allocate" the
-    * mipmap space here before i go and use a texture, it will never accept
-    * mipmaps being added to a texture later on, or at the least it will never
-    * use added mipmaps.
-    * 
-    * so as a workaround i allocate the mipmap texels here with a NULL pointer
-    * passed to glTexImage2D() and i fill in the mipmap pixels later on in
-    * _evas_gl_common_texture_mipmaps_build(). this works, but is ugly.
-    * 
-    * i currently have no reason to believe GL can't do what i want to do,
-    * that is add mipmaps and allocate space for them any time i want. see
-    */
+		pixfmt, NATIVE_PIX_UNIT, NULL);
      {
 	int ttw, tth;
 	int l;
@@ -300,137 +302,33 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
 	     if (tth < 1) tth = 1;
 	     glTexImage2D(GL_TEXTURE_2D, l,
 			  texfmt, ttw, tth, 0,
-			  pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
+			  pixfmt, NATIVE_PIX_UNIT, NULL);
 	  }
      }
-/* END ENVIDIA HACK */
-#endif   
+   if (gc->ext.sgis_generate_mipmap)
+     {
+	glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
+	tex->have_mipmaps = 1;
+     }
    glTexSubImage2D(GL_TEXTURE_2D, 0, 
 		   0, 0, im_w, im_h,
-		   pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+		   pixfmt, NATIVE_PIX_UNIT,
 		   im_data);
    if (im_w < tw)
      glTexSubImage2D(GL_TEXTURE_2D, 0, 
 		     im_w, 0, 1, im_h,
-		     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+		     pixfmt, NATIVE_PIX_UNIT,
 		     im_data + im_w - 1);
    if (im_h < th)
      glTexSubImage2D(GL_TEXTURE_2D, 0, 
 		     0, im_h, im_w, 1,
-		     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+		     pixfmt, NATIVE_PIX_UNIT,
 		     im_data + (im_w * (im_h - 1)));
    if ((im_w < tw) && (im_h < th))
      glTexSubImage2D(GL_TEXTURE_2D, 0, 
 		     im_w, im_h, 1, 1,
-		     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+		     pixfmt, NATIVE_PIX_UNIT,
 		     im_data + (im_w * (im_h - 1)) + im_w - 1);
-#ifdef RADEON_HACK   
-/* RADEON HACK 1 */
-   /* similar to nvidia's bug (fixed in hack 1) ati's drivers SEGV if i try
-    * and upload textures later on than now, not even alloocating them first
-    * like nvidias hack does helps this, so if i EVER need mipmaps, it's now or
-    * never, and that just SUCKS. i'm forever generating mipmaps for textures
-    * where i might never need them. this is just silly! must report this to
-    * ati
-    */
-     {
-	int ttw, tth;
-	int w, h;
-	int l;
-	RGBA_Image *im1 = NULL, *im2 = NULL;
-#ifdef BUILD_MMX
-	int mmx, sse, sse2;
-#endif
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-#ifdef BUILD_MMX
-	evas_common_cpu_can_do(&mmx, &sse, &sse2);
-#endif
-	w = im->image->w;
-	h = im->image->h;
-	im1 = im;
-   
-	ttw = tw;
-	tth = th;
-	l = 0;
-	
-	while ((ttw > 1) || (tth > 1))
-	  {
-	     int pw, ph;
-	     
-	     l++;
-	     
-	     pw = w;
-	     ph = h;
-	     
-	     w /= 2;
-	     h /= 2;
-	     if (w < 1) w = 1;
-	     if (h < 1) h = 1;
-	     
-	     ttw /= 2;
-	     tth /= 2;
-	     if (ttw < 1) ttw = 1;
-	     if (tth < 1) tth = 1;
-
-	     im2 = evas_common_image_create(w, h);
-#ifdef BUILD_MMX
-	     if (mmx)
-	       {  
-		  evas_common_scale_rgba_mipmap_down_2x2_mmx(im1->image->data,
-							     im2->image->data, 
-							     pw, ph);
-	       }
-	     else
-#endif	  
-	       {
-		  if (im->flags & RGBA_IMAGE_HAS_ALPHA)
-		    evas_common_scale_rgba_mipmap_down_2x2_c(im1->image->data,
-							     im2->image->data, 
-							     pw, ph);
-		  else
-		    evas_common_scale_rgb_mipmap_down_2x2_c(im1->image->data,
-							    im2->image->data, 
-							    pw, ph);
-	       }
-	     if (im1 != im) evas_common_image_free(im1);
-	     im1 = NULL;
-	     
-	     im_data = im2->image->data;
-	     im_w = w;
-	     im_h = h;
-	     glTexImage2D(GL_TEXTURE_2D, l,
-			  texfmt, ttw, tth, 0,
-			  pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
-	     glTexSubImage2D(GL_TEXTURE_2D, l,
-			     0, 0, im_w, im_h,
-			     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
-			     im_data);
-	     if (im_w < ttw)
-	       glTexSubImage2D(GL_TEXTURE_2D, l,
-			       im_w, 0, 1, im_h,
-			       pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
-			       im_data + im_w - 1);
-	     if (im_h < tth)
-	       glTexSubImage2D(GL_TEXTURE_2D, l,
-			       0, im_h, im_w, 1,
-			       pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
-			       im_data + (im_w * (im_h - 1)));
-	     if ((im_w < ttw) && (im_h < tth))
-	       glTexSubImage2D(GL_TEXTURE_2D, l, 
-			       im_w, im_h, 1, 1,
-			       pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
-			       im_data + (im_w * (im_h - 1)) + im_w - 1);
-	     im1 = im2;
-	     im2 = NULL;
-	  }
-	if ((im1 != im) && (im1)) evas_common_image_free(im1);
-	tex->have_mipmaps = 1;
-	tex->smooth = 1;
-     }
-/* END RADEON HACK */
-#endif   
    return tex;
 }
 
@@ -466,17 +364,18 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
 
 	if (im->flags & RGBA_IMAGE_HAS_ALPHA) texfmt = GL_RGBA8;
 	else texfmt = GL_RGB8;
-	pixfmt = GL_BGRA;
+	pixfmt = NATIVE_PIX_FORMAT;
 	
 	glTexSubImage2D(GL_TEXTURE_RECTANGLE_NV, 0, 
 			0, 0, tex->w, tex->h,
-			pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+			pixfmt, NATIVE_PIX_UNIT,
 			im->image->data);
 	return;
      }
    tw = tex->w;
    th = tex->h;
    tex->changed = 1;
+   tex->have_mipmaps = 0;
    glEnable(GL_TEXTURE_2D);
    if (tex->not_power_of_two)
      {
@@ -517,135 +416,33 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
 
    if (im->flags & RGBA_IMAGE_HAS_ALPHA) texfmt = GL_RGBA8;
    else texfmt = GL_RGB8;
-   pixfmt = GL_BGRA;
-   
+   pixfmt = NATIVE_PIX_FORMAT;
+
+   if (tex->gc->ext.sgis_generate_mipmap)
+     {
+	glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_TRUE);
+	tex->have_mipmaps = 1;
+     }
    glTexSubImage2D(GL_TEXTURE_2D, 0, 
 		   0, 0, im_w, im_h,
-		   pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+		   pixfmt, NATIVE_PIX_UNIT,
 		   im_data);
 #if 1 // this is sloooow... well slower than just the above...
    if (im_w < tw)
      glTexSubImage2D(GL_TEXTURE_2D, 0, 
 		     im_w, 0, 1, im_h,
-		     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+		     pixfmt, NATIVE_PIX_UNIT,
 		     im_data + im_w - 1);
    if (im_h < th)
      glTexSubImage2D(GL_TEXTURE_2D, 0, 
 		     0, im_h, im_w, 1,
-		     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+		     pixfmt, NATIVE_PIX_UNIT,
 		     im_data + (im_w * (im_h - 1)));
    if ((im_w < tw) && (im_h < th))
      glTexSubImage2D(GL_TEXTURE_2D, 0, 
 		     im_w, im_h, 1, 1,
-		     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+		     pixfmt, NATIVE_PIX_UNIT,
 		     im_data + (im_w * (im_h - 1)) + im_w - 1);
-#endif   
-#ifdef RADEON_HACK   
-/* RADEON HACK 1 */
-   /* similar to nvidia's bug (fixed in hack 1) ati's drivers SEGV if i try
-    * and upload textures later on than now, not even alloocating them first
-    * like nvidias hack does helps this, so if i EVER need mipmaps, it's now or
-    * never, and that just SUCKS. i'm forever generating mipmaps for textures
-    * where i might never need them. this is just silly! must report this to
-    * ati
-    */
-     {
-	int ttw, tth;
-	int w, h;
-	int l;
-	RGBA_Image *im1 = NULL, *im2 = NULL;
-#ifdef BUILD_MMX
-	int mmx, sse, sse2;
-#endif
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-#ifdef BUILD_MMX
-	evas_common_cpu_can_do(&mmx, &sse, &sse2);
-#endif
-	w = im->image->w;
-	h = im->image->h;
-	im1 = im;
-   
-	ttw = tw;
-	tth = th;
-	l = 0;
-	
-	while ((ttw > 1) || (tth > 1))
-	  {
-	     int pw, ph;
-	     
-	     l++;
-	     
-	     pw = w;
-	     ph = h;
-	     
-	     w /= 2;
-	     h /= 2;
-	     if (w < 1) w = 1;
-	     if (h < 1) h = 1;
-	     
-	     ttw /= 2;
-	     tth /= 2;
-	     if (ttw < 1) ttw = 1;
-	     if (tth < 1) tth = 1;
-
-	     im2 = evas_common_image_create(w, h);
-#ifdef BUILD_MMX
-	     if (mmx)
-	       {  
-		  evas_common_scale_rgba_mipmap_down_2x2_mmx(im1->image->data,
-							     im2->image->data, 
-							     pw, ph);
-	       }
-	     else
-#endif	  
-	       {
-		  if (im->flags & RGBA_IMAGE_HAS_ALPHA)
-		    evas_common_scale_rgba_mipmap_down_2x2_c(im1->image->data,
-							     im2->image->data, 
-							     pw, ph);
-		  else
-		    evas_common_scale_rgb_mipmap_down_2x2_c(im1->image->data,
-							    im2->image->data, 
-							    pw, ph);
-	       }
-	     if (im1 != im) evas_common_image_free(im1);
-	     im1 = NULL;
-	     
-	     im_data = im2->image->data;
-	     im_w = w;
-	     im_h = h;
-//	     glTexImage2D(GL_TEXTURE_2D, l,
-//			  texfmt, ttw, tth, 0,
-//			  pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
-	     glTexSubImage2D(GL_TEXTURE_2D, l,
-			     0, 0, im_w, im_h,
-			     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
-			     im_data);
-	     if (im_w < ttw)
-	       glTexSubImage2D(GL_TEXTURE_2D, l,
-			       im_w, 0, 1, im_h,
-			       pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
-			       im_data + im_w - 1);
-	     if (im_h < tth)
-	       glTexSubImage2D(GL_TEXTURE_2D, l,
-			       0, im_h, im_w, 1,
-			       pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
-			       im_data + (im_w * (im_h - 1)));
-	     if ((im_w < ttw) && (im_h < tth))
-	       glTexSubImage2D(GL_TEXTURE_2D, l, 
-			       im_w, im_h, 1, 1,
-			       pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
-			       im_data + (im_w * (im_h - 1)) + im_w - 1);
-	     im1 = im2;
-	     im2 = NULL;
-	  }
-	if ((im1 != im) && (im1)) evas_common_image_free(im1);
-	tex->have_mipmaps = 1;
-	tex->smooth = 1;
-     }
-/* END RADEON HACK */
 #endif   
 }
 
@@ -1233,7 +1030,7 @@ _evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int 
 
    if (im->flags & RGBA_IMAGE_HAS_ALPHA) texfmt = GL_RGBA8;
    else texfmt = GL_RGB8;
-   pixfmt = GL_BGRA;
+   pixfmt = NATIVE_PIX_FORMAT;
    
    printf("building mipmaps... [%i x %i]\n", tw, th);
    glEnable(GL_TEXTURE_2D);
@@ -1280,49 +1077,24 @@ _evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int 
 	im_data = im2->image->data;
 	im_w = w;
 	im_h = h;
-#ifdef NVIDIA_HACK
-/* NVIDIA HACK 1,part-2 */
-   /* Nvidia's 4496 drivers and below have a bug. unless i "allocate" the
-    * mipmap space here before i go and use a texture, it will never accept
-    * mipmaps being added to a texture later on, or at the least it will never
-    * use added mipmaps.
-    * 
-    * so as a workaround i allocate the mipmap texels here with a NULL pointer
-    * passed to glTexImage2D() and i fill in the mipmap pixels later on in
-    * _evas_gl_common_texture_mipmaps_build(). this works, but is ugly.
-    * 
-    * i currently have no reason to believe GL can't do what i want to do,
-    * that is add mipmaps and allocate space for them any time i want. see
-    */
-/* disable this as the mipmap was already allocated earlier on
-	glTexImage2D(GL_TEXTURE_2D, level,
-		     texfmt, tw, th, 0,
-		     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
- */
-#else
-	glTexImage2D(GL_TEXTURE_2D, level,
-		     texfmt, tw, th, 0,
-		     pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV, NULL);
-#endif	
-/* END NVIDIA HACK */	
 	glTexSubImage2D(GL_TEXTURE_2D, level, 
 			0, 0, im_w, im_h,
-			pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+			pixfmt, NATIVE_PIX_UNIT,
 			im_data);
 	if (im_w < tw)
 	  glTexSubImage2D(GL_TEXTURE_2D, level, 
 			  im_w, 0, 1, im_h,
-			  pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+			  pixfmt, NATIVE_PIX_UNIT,
 			  im_data + im_w - 1);
 	if (im_h < th)
 	  glTexSubImage2D(GL_TEXTURE_2D, level,
 			  0, im_h, im_w, 1,
-			  pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+			  pixfmt, NATIVE_PIX_UNIT,
 			  im_data + (im_w * (im_h - 1)));
 	if ((im_w < tw) && (im_h < th))
 	  glTexSubImage2D(GL_TEXTURE_2D, level, 
 			  im_w, im_h, 1, 1,
-			  pixfmt, GL_UNSIGNED_INT_8_8_8_8_REV,
+			  pixfmt, NATIVE_PIX_UNIT,
 			  im_data + (im_w * (im_h - 1)) + im_w - 1);
 	im1 = im2;
 	im2 = NULL;

@@ -50,6 +50,7 @@ evas_engine_gl_x11_window_new(Display *disp,
    if (!context)
      context = glXCreateContext(disp, gw->visualinfo, NULL, GL_TRUE);
    gw->context = context;
+   glXMakeCurrent(gw->disp, gw->win, gw->context);
    gw->gl_context = evas_gl_common_context_new();
    if (!gw->gl_context)
      {
