@@ -2314,17 +2314,17 @@ e_window_gravity_reset(Window win)
 {
    E_XID              *xid = NULL;
 
-   if (XFindContext(disp, win, xid_context, (XPointer *) & xid) == XCNOENT)
-      return;
+   xid = e_validate_xid(win);
    if (xid)
      {
 	XSetWindowAttributes att;
 	
-	if (xid->gravity != NorthWestGravity)
+/*	if (xid->gravity != NorthWestGravity)*/
 	  {
 	     att.win_gravity = NorthWestGravity;
 	     XChangeWindowAttributes(disp, win, CWWinGravity, &att);
 	     xid->gravity = NorthWestGravity;
+	     xid->coords_invalid = 1;
 	  }
      }
 }
@@ -2334,18 +2334,33 @@ e_window_gravity_set(Window win, int gravity)
 {
    E_XID              *xid = NULL;
 
-   if (XFindContext(disp, win, xid_context, (XPointer *) & xid) == XCNOENT)
-      return;
+   xid = e_validate_xid(win);
    if (xid)
      {
-	if (xid->gravity != gravity)
+/*	if (xid->gravity != gravity)*/
 	  {
 	     XSetWindowAttributes att;
 	     
 	     att.win_gravity = gravity;
 	     XChangeWindowAttributes(disp, win, CWWinGravity, &att);
 	     xid->gravity = gravity;
+	     xid->coords_invalid = 1;
 	  }
+     }
+}
+
+void
+e_window_bit_gravity_set(Window win, int gravity)
+{
+   E_XID              *xid = NULL;
+
+   xid = e_validate_xid(win);
+   if (xid)
+     {
+	XSetWindowAttributes att;
+	
+	att.bit_gravity = gravity;
+	XChangeWindowAttributes(disp, win, CWBitGravity, &att);
      }
 }
 
@@ -2684,4 +2699,30 @@ e_window_is_manageable(Window win)
 	return 1;
      }
    return 0;
+}
+
+void
+e_windows_restack(Window *wins, int num)
+{
+   XRestackWindows(disp, wins, num);
+}
+
+void
+e_window_stack_above(Window win, Window above)
+{
+   XWindowChanges xwc;
+   
+   xwc.sibling = above;
+   xwc.stack_mode = Above;
+   XConfigureWindow(disp, win, CWSibling | CWStackMode, &xwc);
+}
+
+void
+e_window_stack_below(Window win, Window below)
+{
+   XWindowChanges xwc;
+   
+   xwc.sibling = below;
+   xwc.stack_mode = Below;
+   XConfigureWindow(disp, win, CWSibling | CWStackMode, &xwc);
 }

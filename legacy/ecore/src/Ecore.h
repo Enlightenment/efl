@@ -223,6 +223,7 @@ void                e_dnd_send_drop(Window win, Window source_win);
 int                 e_window_get_gravity(Window win);
 void                e_window_gravity_reset(Window win);
 void                e_window_gravity_set(Window win, int gravity);
+void                e_window_bit_gravity_set(Window win, int gravity);
 void                e_pointer_warp_by(int dx, int dy);
 void                e_pointer_warp_to(int x, int y);
 void                e_gc_set_include_inferiors(GC gc);
@@ -250,6 +251,9 @@ int                 e_window_get_wm_size_hints(Window win, XSizeHints *hints, in
 int                 e_window_is_visible(Window win);
 int                 e_window_is_normal(Window win);
 int                 e_window_is_manageable(Window win);
+void                e_windows_restack(Window *wins, int num);
+void                e_window_stack_above(Window win, Window above);
+void                e_window_stack_below(Window win, Window below);
 
 typedef struct _eev Eevent;
 typedef struct _ev_fd_handler Ev_Fd_Handler;
