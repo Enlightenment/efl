@@ -1,6 +1,8 @@
 #include "config.h"
 #include "evas_test_main.h"
 
+//#define VID_TEST
+
 #define EVAS_PI	(3.141592654)
 
 #ifndef _WIN32_WCE
@@ -19,8 +21,13 @@ wchar_t buf[1024];
  
 Evas               *evas = NULL;
 
+#ifdef VID_TEST
+int                 win_w = 720;
+int                 win_h = 480;
+#else
 int                 win_w = 240;
 int                 win_h = 320;
+#endif
 
 int                 mode = 0;
 int                 loop_count = 0;
@@ -99,7 +106,61 @@ loop(void)
 	  }
 	return;
      }
-   
+
+#ifdef VID_TEST
+   if (t <= 5.0)
+     {
+	if (!test_pattern)
+	  {
+	     evas_object_hide(backdrop);
+	     evas_object_hide(panel);
+	     evas_object_hide(panel_top);
+	     evas_object_hide(panel_shadow);
+	     evas_object_hide(panel_clip);
+	     evas_object_hide(evas_logo);
+	     evas_object_hide(e_logo);
+	     test_pattern = evas_object_image_add(evas);
+	     evas_object_move(test_pattern, 0, 0);
+	     evas_object_resize(test_pattern, 720, 480);
+	     evas_object_layer_set(test_pattern, 99999);
+	     evas_object_image_size_set(test_pattern, 720, 480);
+	     evas_object_image_fill_set(test_pattern, 0, 0, 720, 480);
+	     evas_object_show(test_pattern);
+             frames = 0;
+	     time_start = t;	     
+	  }
+	  {
+	     int                 iw, ih;
+	     int                 x, y;
+	     int                *data;
+
+	     evas_object_image_size_get(test_pattern, &iw, &ih);
+	     evas_object_image_alpha_set(test_pattern, 0);
+	     data = evas_object_image_data_get(test_pattern, 1);
+	     if (data)
+	       {
+		  int tt;
+		  
+		  tt = t * 1000;
+		  for (y = 0; y < ih; y++)
+		    {
+		       for (x = 0; x < iw; x++)
+			 data[(y * iw) + x] =
+			 (((x * y / 10) + tt)) | 0xff000000;
+		    }
+		  evas_object_image_data_update_add(test_pattern, 0, 0, iw, ih);
+		  evas_object_image_data_set(test_pattern, data);
+	       }
+	  }
+	frames++;
+     }
+   else if (t > 5.0)
+     {
+	printf("# EVAS BENCH: %3.3f\n", ((double)frames / (t - time_start)) / 60.0);
+	exit(0);
+     }
+   else 
+#endif     
    if (t <= 2.0)
      {
 	double              y;
@@ -1853,7 +1914,6 @@ loop(void)
 	evas_free(evas);
 	printf("evas freed. DONE\n");
 	exit(0);
-	sleep(10000000);
      }
    /* need to test:
     * 

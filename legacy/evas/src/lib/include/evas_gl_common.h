@@ -55,6 +55,7 @@ struct _Evas_GL_Context
    } clip;
    
    struct {
+      int checked : 1;
       int sgis_generate_mipmap : 1;
       int nv_texture_rectangle : 1;
    } ext;
@@ -127,6 +128,8 @@ void              evas_gl_common_context_write_buf_set(Evas_GL_Context *gc, GLen
 Evas_GL_Texture  *evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth);
 void              evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth);
 void              evas_gl_common_texture_free(Evas_GL_Texture *tex);
+void              evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int smooth);
+    
 Evas_GL_Image    *evas_gl_common_image_load(Evas_GL_Context *gc, char *file, char *key);
 Evas_GL_Image    *evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, int *data);
 Evas_GL_Image    *evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc, int w, int h, int *data);

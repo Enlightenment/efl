@@ -17,9 +17,16 @@ if BUILD_ENGINE_GL_COMMON
 
 noinst_LTLIBRARIES      = libevas_engine_gl_common.la
 libevas_engine_gl_common_la_SOURCES  = \
-evas_gl_routines.c \
-evas_gl_routines.h \
-evas_gl_image.c
+evas_gl_private.h \
+evas_gl_context.c \
+evas_gl_font.c \
+evas_gl_gradient.c \
+evas_gl_image.c \
+evas_gl_line.c \
+evas_gl_misc.c \
+evas_gl_polygon.c \
+evas_gl_rectangle.c \
+evas_gl_texture.c
 
 libevas_engine_gl_common_la_LIBADD       = \
 @gl_libs@ $(LDFLAGS)

@@ -19,13 +19,17 @@ evas_common_cpu_mmx_test(void)
 {
 #ifdef BUILD_MMX
    pxor_r2r(mm4, mm4);
-   evas_common_cpu_end_opt();
 #endif   
 }
 
 void
 evas_common_cpu_sse_test(void)
 {
+#ifdef BUILD_SSE   
+   int blah;
+   
+   prefetch(&blah);
+#endif     
 }
 #endif /* __i386__ */
 
@@ -35,6 +39,7 @@ void
 evas_common_cpu_altivec_test(void)
 {
    vector unsigned int zero;
+   illegal = 0;
    zero = vec_splat_u32(0);
 }
 #endif /* __VEC__ */
@@ -90,6 +95,7 @@ evas_common_cpu_init(void)
    cpu_feature_mask |= CPU_FEATURE_VIS *
      evas_common_cpu_feature_test(evas_common_cpu_vis_test);
 #endif /* __SPARC__ */
+   evas_common_cpu_end_opt();
 }
 
 inline int
@@ -115,68 +121,35 @@ evas_common_cpu_have_cpuid(void)
 void
 evas_common_cpu_can_do(int *mmx, int *sse, int *sse2)
 {
-#ifdef BUILD_MMX
-#ifndef HARD_CODED_P3
-#ifndef HARD_CODED_P2
    static int do_mmx = 0, do_sse = 0, do_sse2 = 0, done = 0;
-   unsigned int have_cpu_id;
-#endif
-#endif
-#endif
-   
-#ifndef BUILD_MMX
-   *mmx = 0;
-   *sse = 0;
-   *sse2 = 0;
-   return;
-#else   
+
+   if (!done)
+     {
 # ifdef HARD_CODED_P3
-   *mmx = 1;
-   *sse = 1;
-   *sse2 = 0;
-   return;
-# else
-#  ifdef HARD_CODED_P2
-   *mmx = 1;
-   *sse = 0;
-   *sse2 = 0;
-   return;
-#  else
-   if (done)
-     {
-	*mmx = do_mmx;
-	*sse = do_sse;
-	*sse2 = do_sse2;
-	return;
+	cpu_feature_mask |= CPU_FEATURE_MMX;
+	cpu_feature_mask |= CPU_FEATURE_SSE;
+#endif
+#ifdef HARD_CODED_P2
+	cpu_feature_mask |= CPU_FEATURE_MMX;
+#endif
+	if (cpu_feature_mask & CPU_FEATURE_MMX) do_mmx = 1;
+	if (cpu_feature_mask & CPU_FEATURE_SSE) do_sse = 1;
      }
-   
-#   ifdef BUILD_MMX
-   have_cpu_id = evas_common_cpu_have_cpuid();
-   if (have_cpu_id)
-     {
-	unsigned int cpu_id;
-	
-	cpu_id = 0;
-	get_cpuid(cpu_id);
-	if (cpu_id & CPUID_MMX) do_mmx = 1;
-	if (cpu_id & CPUID_SSE) do_sse = 1;
-	if (cpu_id & CPUID_SSE2) do_sse2 = 1;
-     }
-#   endif  
+//   printf("%i %i %i\n", do_mmx, do_sse, do_sse2);
    *mmx = do_mmx;
    *sse = do_sse;
    *sse2 = do_sse2;
    done = 1;
-#  endif
-# endif  
-#endif   
 }
 
 #ifdef BUILD_MMX
 void
 evas_common_cpu_end_opt(void)
 {
-   emms();
+   if (cpu_feature_mask & CPU_FEATURE_MMX)
+     {
+	emms();
+     }
 }
 #else
 void

@@ -10,7 +10,7 @@ rm config.cache
 --enable-image-loader-eet \
 --enable-image-loader-edb \
 --enable-cpu-mmx \
---enable-cpu-p2-only \
+--enable-cpu-sse \
 --enable-cpu-c \
 --enable-scale-smooth \
 --enable-scale-sample \
