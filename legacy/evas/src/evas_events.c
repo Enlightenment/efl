@@ -106,7 +106,8 @@ evas_event_button_up(Evas e, int x, int y, int b)
 			  b, x, y);
    if (!e->mouse.buttons) 
       {
-	 if (e->mouse.object != e->mouse.button_object)
+	 if ((e->mouse.button_object) &&
+	     (e->mouse.object != e->mouse.button_object))
 	    _evas_callback_call(e, e->mouse.button_object, CALLBACK_MOUSE_OUT, 
 				e->mouse.buttons, e->mouse.x, e->mouse.y);
 	 e->mouse.button_object = NULL;

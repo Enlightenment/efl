@@ -78,7 +78,7 @@ _evas_real_del_object(Evas e, Evas_Object o)
 	     layer->objects = evas_list_remove(layer->objects, o);
 	     _evas_callback_call(e, o, CALLBACK_FREE, 0, 0, 0);
 	     if (e->mouse.object == o) e->mouse.object = NULL;
-	     if (e->mouse.button_object == o) e->mouse.object = NULL;
+	     if (e->mouse.button_object == o) e->mouse.button_object = NULL;
 	     _evas_remove_callbacks(e, o);
 	     _evas_remove_data(e, o);
 	     if (o->name) free(o->name);
@@ -103,7 +103,7 @@ _evas_layer_free(Evas e, Evas_Layer layer)
 	     o = l->data;
 	     _evas_callback_call(e, o, CALLBACK_FREE, 0, 0, 0);
 	     if (e->mouse.object == o) e->mouse.object = NULL;
-	     if (e->mouse.button_object == o) e->mouse.object = NULL;
+	     if (e->mouse.button_object == o) e->mouse.button_object = NULL;
 	     _evas_remove_callbacks(e, o);
 	     _evas_remove_data(e, o);
 	     o->object_renderer_data_free(e, o);
@@ -507,7 +507,7 @@ evas_hide(Evas e, Evas_Object o)
    if (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y))
       evas_event_move(e, e->mouse.x, e->mouse.y);
    if (e->mouse.object == o) e->mouse.object = NULL;
-   if (e->mouse.button_object == o) e->mouse.object = NULL;
+   if (e->mouse.button_object == o) e->mouse.button_object = NULL;
 }
 
 Evas_Object
