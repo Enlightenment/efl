@@ -400,7 +400,10 @@ AC_ARG_ENABLE(ecore-evas-gl,
 ]
 )
 
-if test "x$have_ecore_evas_gl" = "xyes"; then
+dnl GL support requires X support, so we should
+dnl handle the case where our user is on crack
+dnl i.e. user disables X but enables GL
+if test "x$have_ecore_evas_gl" = "xyes" -a "x$have_ecore_x" = "xyes"; then
   AC_CHECK_HEADER(Evas_Engine_GL_X11.h,
     [
       AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, true)
@@ -414,6 +417,10 @@ if test "x$have_ecore_evas_gl" = "xyes"; then
   )
 else
   AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, false)
+  if test "x$have_ecore_evas_gl" = "xyes"; then
+    have_ecore_evas_gl="no"
+    AC_MSG_WARN(Silly monkey: ecore_evas_gl requires ecore_x ... disabling ecore_evas_gl)
+  fi
 fi
 
 if test "x$have_ecore_evas_gl" = "xyes"; then
