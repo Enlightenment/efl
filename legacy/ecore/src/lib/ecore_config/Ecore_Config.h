@@ -182,6 +182,9 @@ extern              "C"
    int                 ecore_config_init(char *name);
    int                 ecore_config_shutdown(void);
 
+   int                 ecore_config_system_init(void);
+   int                 ecore_config_system_shutdown(void);
+
    int                 ecore_config_load(void);
    int                 ecore_config_file_load(char *file);
    int                 ecore_config_save(void);

@@ -20,9 +20,12 @@ Ecore_Config_Server *__ecore_config_server_global = NULL;
 Ecore_Config_Server *__ecore_config_server_local = NULL;
 Ecore_Config_Bundle *__ecore_config_bundle_local = NULL;
 char                *__ecore_config_app_name = NULL;
+int                  __ecore_config_system_init = 0;
 
 Ecore_Config_Server *_ecore_config_ipc_init(char *name);
 int                 _ecore_config_ipc_exit(void);
+static int           _ecore_config_system_init_no_load(void);
+static int           _ecore_config_system_load(void);
 
 static char        *_ecore_config_type[] =
    { "undefined", "integer", "float", "string", "colour", "theme" };
@@ -1243,7 +1246,8 @@ ecore_config_init_global(char *name)
 /**
  * Initializes the Enlightened Property Library.
  *
- * This function must be run before any other function in the
+ * This function (or @ref ecore_config_system_init)
+ * must be run before any other function in the
  * Enlightened Property Library, even if you have run @ref ecore_init .
  * The name given is used to determine the default configuration to
  * load.
@@ -1256,24 +1260,15 @@ ecore_config_init_global(char *name)
 int
 ecore_config_init(char *name)
 {
-   char               *buf, *p, *path;
-   Ecore_Config_Prop  *sys;
-
-   DEBUG = -1;
-   if ((p = getenv("ECORE_CONFIG_DEBUG")) && strlen(p) > 0)
-     {
-	DEBUG = atoi(p);
-     }
+   char               *path;
+   _ecore_config_system_init_no_load();
 
    __ecore_config_app_name = strdup(name);
    __ecore_config_server_local = ecore_config_init_local(name);
    if (!__ecore_config_server_local)
       return ECORE_CONFIG_ERR_FAIL;
 
-   __ecore_config_server_global =
-      ecore_config_init_global(ECORE_CONFIG_GLOBAL_ID);
-   if (!__ecore_config_server_global)
-      return ECORE_CONFIG_ERR_FAIL;
+  /* FIXME should free __ecore_config_bundle_local */
 
    __ecore_config_bundle_local =
       ecore_config_bundle_new(__ecore_config_server_local, "config");
@@ -1285,8 +1280,76 @@ ecore_config_init(char *name)
 	free(path);
      }
 
+   return _ecore_config_system_load();
+}
+
+/**
+ * Frees memory and shuts down the library.
+ * @return @c ECORE_CONFIG_ERR_IGNORED
+ * @ingroup Ecore_Config_Lib_Group
+ */
+int
+ecore_config_shutdown(void)
+{
+   return ecore_config_system_shutdown();
+}
+
+/**
+ * Initializes the Enlightened Property Library (call from libraries i.e. ewl - NOT applications).
+ *
+ * This function (or ecore_config_init)
+ * must be run before any other function in the
+ * Enlightened Property Library, even if you have run @ref ecore_init .
+ * The name given is used to determine the default configuration to
+ * load.
+ *
+ * @param  name Application name
+ * @return @c ECORE_CONFIG_ERR_SUCC if the library is successfully set up.
+ *         @c ECORE_CONFIG_ERR_FAIL otherwise.
+ * @ingroup Ecore_Config_Lib_Group
+ */
+int
+ecore_config_system_init(void)
+{
+   _ecore_config_system_init_no_load();
+   return _ecore_config_system_load();
+}
+
+static            int
+_ecore_config_system_init_no_load(void)
+{
+   char               *p;
+
+   __ecore_config_system_init++;
+   if (__ecore_config_system_init > 1)
+      return ECORE_CONFIG_ERR_IGNORED;
+
+   DEBUG = -1;
+   if ((p = getenv("ECORE_CONFIG_DEBUG")) && strlen(p) > 0)
+     {
+	DEBUG = atoi(p);
+     }
+
+   __ecore_config_server_global =
+      ecore_config_init_global(ECORE_CONFIG_GLOBAL_ID);
+   if (!__ecore_config_server_global)
+	return ECORE_CONFIG_ERR_FAIL;
+
+   __ecore_config_bundle_local =
+      ecore_config_bundle_new(__ecore_config_server_global, "system");
+
+   return ECORE_CONFIG_ERR_SUCC;
+}
+
+
+static             int
+_ecore_config_system_load(void)
+{
+   char               *buf, *p;
+   Ecore_Config_Prop  *sys;
+
    if ((p = getenv("HOME")))
-     {				/* debug-only ### FIXME */
+     {                          /* debug-only ### FIXME */
 	if ((buf = malloc(PATH_MAX * sizeof(char))))
 	  {
 	     snprintf(buf, PATH_MAX, "%s/.e/config.db", p);
@@ -1309,20 +1372,27 @@ ecore_config_init(char *name)
    return ECORE_CONFIG_ERR_SUCC;
 }
 
+
 /**
- * Frees memory and shuts down the library.
+ * Frees memory and shuts down the library (call from libraries i.e. ewl - NOT applications).
  * @return @c ECORE_CONFIG_ERR_IGNORED
  * @ingroup Ecore_Config_Lib_Group
  */
 int
-ecore_config_shutdown(void)
+ecore_config_system_shutdown(void)
 {
    int                 ret;
 
+   __ecore_config_system_init--;
+   if (__ecore_config_system_init > 1)
+      return ECORE_CONFIG_ERR_IGNORED;
+
    ret = _ecore_config_ipc_exit();
-   free(__ecore_config_app_name);
+   if (__ecore_config_app_name)
+      free(__ecore_config_app_name);
    free(__ecore_config_bundle_local);
    free(__ecore_config_server_local);
    free(__ecore_config_server_global);
    return ret;
 }
+
