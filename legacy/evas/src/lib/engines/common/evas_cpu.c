@@ -28,9 +28,11 @@ void
 evas_common_cpu_mmx2_test(void)
 {
 #ifdef BUILD_MMX
-   char data[8];
+   char data[16];
 
+   data[0] = 0;
    mmx_r2m(movntq, mm0, data);
+   data[0] = 0;
 #endif   
 }
 
