@@ -17,6 +17,7 @@
 #include "Evas.h"
 
 typedef struct _evas_gl_image     Evas_GL_Image;
+typedef struct _evas_gl_font      Evas_GL_Font;
 typedef enum _evas_gl_image_state Evas_GL_Image_State;
 
 enum _evas_gl_image_state
@@ -55,33 +56,64 @@ struct _evas_gl_image
    int references;
 };
 
-void __evas_gl_copy_image_rect_to_texture(Evas_GL_Image *im, int x, int y,
-				     int w, int h, int tw, int th,
-					  GLuint texture);
-void __evas_gl_move_state_data_to_texture(Evas_GL_Image *im);
-void __evas_calc_tex_and_poly(Evas_GL_Image *im, int x, double *x1, double *x2,
-			      int *tx, int *txx, double *dtx, double *dtxx, int tw, int w, int edge);
-void __evas_gl_set_conect_for_dest(Evas_GL_Image *im, Display *disp, Window w,
-				   int win_w, int win_h);
-void __evas_gl_render_to_window(Evas_GL_Image *im,
-				Display *disp, Window w, int win_w, int win_h,
-				int src_x, int src_y, int src_w, int src_h,
-				int dst_x, int dst_y, int dst_w, int dst_h);
-Evas_GL_Image * __evas_gl_create_image(void);
-int __evas_gl_capable(Display *disp);
-Visual * __evas_gl_get_visual(Display *disp);
+struct _evas_gl_font
+{
+   char *file;
+   int   size;
+   
+   GLXContext context;
+   struct
+     {
+	Display *display;
+	XVisualInfo *visual_info;
+	Colormap colormap;
+	Window window, dest;
+	int dest_w, dest_h;
+     } buffer;
+   int   references;
+};
+
+/***************/
+/* image stuff */
+/***************/
+Evas_GL_Image *__evas_gl_image_new_from_file(Display *disp, char *file);
+void           __evas_gl_image_free(Evas_GL_Image *im);
+void           __evas_gl_image_cache_flush(Display *disp);
+void           __evas_gl_image_cache_empty(Display *disp);
+void           __evas_gl_image_cache_set_size(Display *disp, int size);
+int            __evas_gl_image_cache_get_size(Display *disp);
+void           __evas_gl_image_draw(Evas_GL_Image *im, Display *disp, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h);
+
+/********/
+/* text */
+/********/
+Evas_GL_Font  *__evas_gl_text_font_load(Display *disp, char *font, int size);
+void           __evas_gl_text_font_free(Evas_GL_Font *fn);
+void           __evas_gl_text_font_add_path(char *path);
+void           __evas_gl_text_font_del_path(char *path);
+char         **__evas_gl_text_font_list_paths(int *count);
+void           __evas_gl_text_draw(Evas_GL_Font *fn, Display *disp, Window win, int x, int y, char *text, int r, int g, int b, int a);
+
+/**************/
+/* rectangles */
+/**************/
+
+/*********/
+/* lines */
+/*********/
+
+/*************/
+/* gradients */
+/*************/
+
+/***********/
+/* drawing */
+/***********/
+void         __evas_gl_init(Display *disp);
+int          __evas_gl_capable(Display *disp);
+void         __evas_gl_flush_draw(Display *disp, Window win);
+void         __evas_gl_sync(Display *disp);
+Visual      *__evas_gl_get_visual(Display *disp);
 XVisualInfo *__evas_gl_get_visual_info(Display *disp);
-Colormap __evas_gl_get_colormap(Display *disp);
-void __evas_gl_init(Display *disp);
-Evas_GL_Image *__evas_gl_image_create_from_file(Display *disp, char *file);
-Evas_GL_Image * __evas_gl_image_new_from_file(Display *disp, char *file);
-void __evas_gl_image_free(Evas_GL_Image *im);
-void __evas_gl_image_destroy(Evas_GL_Image *im);
-void __evas_gl_image_cache_flush(Display *disp);
-void __evas_gl_image_cache_empty(Display *disp);
-void __evas_gl_image_cache_set_size(Display *disp, int size);
-int __evas_gl_image_cache_get_size(Display *disp);
-void __evas_gl_sync(Display *disp);
-void __evas_gl_flush_draw(Display *disp, Window win);
-void __evas_gl_draw_rectangle(Display *disp, Window win, int x, int y, int w, int h,
-			   int r, int g, int b, int a);
+Colormap     __evas_gl_get_colormap(Display *disp);
+

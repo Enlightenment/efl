@@ -2,6 +2,8 @@
 #include "../src/evas_gl_routines.h"
 #include <math.h>
 
+double get_time(void);
+
 double
 get_time(void)
 {
@@ -60,13 +62,14 @@ main(int argc, char **argv)
 	     printf("cannot find images!\n");
 	     exit(1);
 	  }
+	t1 = 0;
 	for(;;)
 	  {
-	     int x, y, j, k;
+	     int j, k;
 	     
 	     if (a == 0)
 		t1 = get_time();
-	     __evas_gl_render_to_window(bg, d, win, win_w, win_h,
+	     __evas_gl_image_draw(bg, d, win, win_w, win_h,
 					0, 0, bg->w, bg->h,
 					0, 0, win_w, win_h);
 	     for (k = 0; k < 4; k++)
@@ -77,13 +80,13 @@ main(int argc, char **argv)
 		  xx = (((k + 1) * a) / 2) % win_w;
 		  yy = 0;
 		  if (k == 2)
-		     __evas_gl_render_to_window(l, d, win, win_w, win_h,
+		     __evas_gl_image_draw(l, d, win, win_w, win_h,
 						0, 0, l->w, l->h,
 						(win_w - l->w) / 2, (win_h - l->h) /2, l->w, l->h);
-		  __evas_gl_render_to_window(i[j], d, win, win_w, win_h,
+		  __evas_gl_image_draw(i[j], d, win, win_w, win_h,
 					     0, 0, i[j]->w, i[j]->h,
 					     xx, yy, win_w, win_h);
-		  __evas_gl_render_to_window(i[j], d, win, win_w, win_h,
+		  __evas_gl_image_draw(i[j], d, win, win_w, win_h,
 					     0, 0, i[j]->w, i[j]->h,
 					     xx - win_w, yy, win_w, win_h);
 	       }
@@ -107,4 +110,7 @@ main(int argc, char **argv)
      {
 	printf("Your X server is unable to do GLX - no go buddy.\n");
      }
+   argv = NULL;
+   argc = 0;
+   return 0;
 }
