@@ -87,7 +87,7 @@ main(int argc, char **argv)
 					     0, 0, i[j]->w, i[j]->h,
 					     xx - win_w, yy, win_w, win_h);
 	       }
-	     __evas_flush_draw(d, win);
+	     __evas_gl_flush_draw(d, win);
 	     a++;
 	     if (a == (win_w * 4)) 
 		{

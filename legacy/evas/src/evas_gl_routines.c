@@ -10,6 +10,14 @@ static int __evas_gl_configuration[] =
    None
 };
 
+
+static XVisualInfo *__evas_vi               = NULL;
+static GLXContext   __evas_gl_cx            = 0;
+static Window       __evas_context_window   = 0;
+static Evas_List    __evas_images           = NULL;
+static int          __evas_image_cache_max  = 16 *1024 * 1024;
+static int          __evas_image_cache_used = 0;
+
 void
 __evas_gl_copy_image_rect_to_texture(Evas_GL_Image *im, int x, int y, 
 				      int w, int h, int tw, int th, 
@@ -50,9 +58,22 @@ __evas_gl_move_state_data_to_texture(Evas_GL_Image *im)
 {
    int i, x, y;
    XSetWindowAttributes att;
+   int image_data = 0;
+   Imlib_Image image;
    
+   if ((!im->data) && (im->file))
+     {
+	image = imlib_load_image(im->file);
+	if (image)
+	  {
+	     imlib_context_set_image(image);
+	     im->data = imlib_image_get_data_for_reading_only();
+	     imlib_free_image();
+	     image_data = 1;
+	  }
+     }
    if (!im->data) return;
-
+	
    im->texture.w = im->w / (im->texture.max_size - 2);
    if (im->w > ((im->texture.max_size - 2) * im->texture.w))
      {
@@ -78,19 +99,29 @@ __evas_gl_move_state_data_to_texture(Evas_GL_Image *im)
    else
       im->texture.edge_h = im->texture.max_size;
 
-   att.colormap = im->buffer.colormap;
-   att.border_pixel = 0;
-   att.event_mask = 0;
-   im->buffer.window = XCreateWindow(im->buffer.display,
-				     RootWindow(im->buffer.display, DefaultScreen(im->buffer.display)),
-				     0, 0, 32, 32, 0, 
-				     im->buffer.visual_info->depth,
-				     InputOutput, 
-				     im->buffer.visual_info->visual,
-				     CWColormap | CWBorderPixel | CWEventMask,
-				     &att);
-   im->texture.textures = malloc(sizeof(GLuint) * im->texture.w * im->texture.h);
-   glXMakeCurrent(im->buffer.display, im->buffer.window, im->context);
+   if (!__evas_context_window)
+     {
+	att.colormap = im->buffer.colormap;
+	att.border_pixel = 0;
+	att.event_mask = 0;
+	__evas_context_window = XCreateWindow(im->buffer.display,
+					      RootWindow(im->buffer.display, DefaultScreen(im->buffer.display)),
+					      0, 0, 32, 32, 0, 
+					      im->buffer.visual_info->depth,
+					      InputOutput, 
+					      im->buffer.visual_info->visual,
+					      CWColormap | CWBorderPixel | CWEventMask,
+					      &att);
+	im->buffer.window = __evas_context_window;
+	im->texture.textures = malloc(sizeof(GLuint) * im->texture.w * im->texture.h);
+	glXMakeCurrent(im->buffer.display, im->buffer.window, im->context);
+     }
+   else
+     {
+	im->buffer.window = __evas_context_window;
+	im->texture.textures = malloc(sizeof(GLuint) * im->texture.w * im->texture.h);
+	glXMakeCurrent(im->buffer.display, im->buffer.window, im->context);
+     }
    glGenTextures(im->texture.w * im->texture.h, im->texture.textures);
    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
    glEnable(GL_TEXTURE_2D);
@@ -124,10 +155,18 @@ __evas_gl_move_state_data_to_texture(Evas_GL_Image *im)
 	     
 	     __evas_gl_copy_image_rect_to_texture(im, xx, yy, ww, hh, tw, th, 
 						  im->texture.textures[i]);
+	     __evas_image_cache_used += (tw * th * 4);
 	  }
      }
    /* done - set the actual image state to textured */
    im->state = EVAS_STATE_TEXTURE;
+   if (image_data)
+     {
+	imlib_context_set_image(image);
+	imlib_image_put_back_data(im->data);
+	im->data = NULL;
+	imlib_free_image();
+     }
 }
 
 void __evas_calc_tex_and_poly(Evas_GL_Image *im, int x, double *x1, double *x2,
@@ -139,7 +178,6 @@ void __evas_calc_tex_and_poly(Evas_GL_Image *im, int x, double *x1, double *x2,
 	*txx = im->texture.max_size - 2;
 	*dtx  = (double)*tx  / (im->texture.max_size);
 	*dtxx = (double)*txx / (im->texture.max_size);
-glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
      }
    else if (x < (tw - 1))
      {
@@ -179,20 +217,30 @@ void __evas_gl_set_conect_for_dest(Evas_GL_Image *im, Display *disp, Window w,
 {
    if (im->buffer.dest != w)
      {
-	im->buffer.dest = w;
 	glXMakeCurrent(disp, w, im->context);
+	im->buffer.dest = w;
+     }
+   if (im->alpha)
+     {
 	glEnable(GL_BLEND);
-	glEnable(GL_DITHER);
-	glShadeModel(GL_FLAT);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-	glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
-	glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-	/* why doesnt scissor work ? */
-	/*   
-	 glEnable(GL_SCISSOR_TEST);
-	 glScissor(dst_x, win_h - dst_y - 1, dst_w, dst_h); 
-	 */
+     }
+   else
+     {
+	glDisable(GL_BLEND);
+     }
+   glEnable(GL_DITHER);
+   glShadeModel(GL_FLAT);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+   glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+   /* why doesnt scissor work ? */
+   /*   
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(dst_x, win_h - dst_y - 1, dst_w, dst_h); 
+    */
+   if ((win_w != im->buffer.dest_w) || (win_h != im->buffer.dest_h))
+     {
 	glViewport(0, 0, win_w, win_h);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -201,6 +249,8 @@ void __evas_gl_set_conect_for_dest(Evas_GL_Image *im, Display *disp, Window w,
 	glLoadIdentity();
 	glScalef(1, -1, 1);
 	glTranslatef(0, -win_h, 0);   
+	im->buffer.dest_w = win_w;
+	im->buffer.dest_h = win_h;
      }
 }
 
@@ -265,9 +315,6 @@ __evas_gl_create_image(void)
    return im;
 }
 
-static XVisualInfo *__evas_vi = NULL;
-static GLXContext __evas_gl_cx = 0;
-
 int
 __evas_gl_capable(Display *disp)
 {
@@ -320,46 +367,182 @@ __evas_gl_init(Display *disp)
    /* direct rendering client */
    __evas_gl_cx = glXCreateContext(disp, __evas_vi, NULL, GL_TRUE);
    /* GLX indirect */
-/*   __evas_gl_cx = glXCreateContext(disp, __evas_vi, NULL, GL_TRUE);*/
+/*   __evas_gl_cx = glXCreateContext(disp, __evas_vi, NULL, GL_FALSE);*/
 }
 
 Evas_GL_Image *
-__evas_gl_image_new_from_file(Display *disp, char *file)
+__evas_gl_image_create_from_file(Display *disp, char *file)
 {
    Evas_GL_Image *im;
    Imlib_Image i;
    
-   i = imlib_load_image(file);
-   if (!i) return NULL;
-   imlib_context_set_image(i);
+   if (!file) return NULL;
    im = __evas_gl_create_image();
-   im->w = imlib_image_get_width();
-   im->h = imlib_image_get_height();
-   im->data = imlib_image_get_data();
+   im->file = strdup(file);
+   i = imlib_load_image(file);
+   if (i)
+     {
+	imlib_context_set_image(i);
+	im->w = imlib_image_get_width();
+	im->h = imlib_image_get_height();
+	im->alpha = imlib_image_has_alpha();
+	imlib_free_image();
+     }
+   else
+     {
+	im->w = 0;
+	im->h = 0;
+     }
+   im->data = NULL;
    im->texture.max_size = 256;
-   __evas_gl_init(disp);
+   im->texture.w = 0;
+   im->texture.h = 0;
+   im->texture.edge_w = 0;
+   im->texture.edge_h = 0;
+   im->texture.textures = NULL;
+
+   __evas_gl_init(disp);   
    im->context = __evas_gl_cx;
    im->buffer.display = disp;
    im->buffer.colormap = __evas_gl_get_colormap(disp);
    im->buffer.visual_info = __evas_vi;
+   im->buffer.window = 0;
+   im->buffer.dest = 0;
+   im->buffer.dest_w = 0;
+   im->buffer.dest_h = 0;
+
+   im->references = 1;
+
+   return im;
+}
+
+Evas_GL_Image *
+__evas_gl_image_new_from_file(Display *disp, char *file)
+{	
+   Evas_GL_Image *im;
+   Evas_List l;
+   
+   for (l = __evas_images; l; l = l->next)
+     {
+	im = l->data;
+	
+	if (((im->file) && (im->buffer.display == disp)) &&
+	    (!strcmp(im->file, file)))
+	  {
+	     if (l != __evas_images)
+	       {
+		  __evas_images = evas_list_remove(__evas_images, im);
+		  __evas_images = evas_list_prepend(__evas_images, im);
+	       }
+	     im->references++;
+	     return im;
+	  }
+     }
+   
+   im = __evas_gl_image_create_from_file(disp, file);
+   __evas_images = evas_list_prepend(__evas_images, im);
+   
    return im;
 }
 
 void
-__evas_sync(Display *disp)
+__evas_gl_image_free(Evas_GL_Image *im)
+{
+   im->references--;
+   if (im->references <= 0)
+      __evas_gl_image_cache_flush(im->buffer.display);
+}
+
+void
+__evas_gl_image_destroy(Evas_GL_Image *im)
+{
+   if (im->file) free(im->file);
+   if (im->data) free(im->data);
+   if (im->texture.textures)
+     {
+	glDeleteTextures(im->texture.w * im->texture.h, im->texture.textures);
+	free(im->texture.textures);
+     }
+   free(im);
+}
+
+void
+__evas_gl_image_cache_flush(Display *disp)
+{
+   while (__evas_image_cache_used > __evas_image_cache_max)
+     {
+	Evas_GL_Image *im = NULL, *im_last;
+        Evas_List l;
+	
+	im_last = NULL;
+        for (l = __evas_images; l; l = l->next)
+          {
+	     im = l->data;
+	     
+	     if (im->references <= 0)
+		im_last = im;
+	  }
+	if (im_last)
+	  {
+	     __evas_images = evas_list_remove(__evas_images, im_last);
+	     __evas_gl_image_destroy(im_last);
+	  }
+     }
+}
+
+void
+__evas_gl_image_cache_empty(Display *disp)
+{
+   Evas_GL_Image *im = NULL, *im_last;
+   Evas_List l;
+   im_last = (Evas_GL_Image *)1;
+
+   while (im_last)
+     {
+	im_last = NULL;
+	for (l = __evas_images; l; l = l->next)
+	  {
+	     im = l->data;
+	     
+	     if (im->references <= 0)
+		im_last = im;
+	  }
+	if (im_last)
+	  {
+	     __evas_images = evas_list_remove(__evas_images, im_last);
+	     __evas_gl_image_destroy(im_last);
+	  }
+     }
+}
+
+void
+__evas_gl_image_cache_set_size(Display *disp, int size)
+{
+   __evas_image_cache_max = size;
+   __evas_gl_image_cache_flush(disp);
+}
+
+int
+__evas_gl_image_cache_get_size(Display *disp)
+{
+   return __evas_image_cache_max;
+}
+
+void
+__evas_gl_sync(Display *disp)
 {
    glXWaitGL();
    XSync(disp, False);
 }
 
 void
-__evas_flush_draw(Display *disp, Window win)
+__evas_gl_flush_draw(Display *disp, Window win)
 {
    glXSwapBuffers(disp, win);
 }
 
 void
-__evas_draw_rectangle(Display *disp, Window win, int x, int y, int w, int h,
-		      int r, int g, int b, int a)
+__evas_gl_draw_rectangle(Display *disp, Window win, int x, int y, int w, int h,
+			 int r, int g, int b, int a)
 {
 }

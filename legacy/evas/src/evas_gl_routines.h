@@ -29,12 +29,14 @@ struct _evas_gl_image
 {
    Evas_GL_Image_State state;
    int w, h;
+   int alpha;
+   char *file;
    /* data specific params */
    DATA32 *data;
    /* common GL params */
    GLXContext context;
    /* texture state specific params */
-   struct _tex
+   struct
      {
 	int max_size;
 	int w, h;
@@ -42,13 +44,15 @@ struct _evas_gl_image
 	GLuint *textures;
      } texture;
    /* buffer specific params */
-   struct _buf
+   struct
      {
 	Display *display;
 	XVisualInfo *visual_info;
 	Colormap colormap;
 	Window window, dest;
+	int dest_w, dest_h;
      } buffer;
+   int references;
 };
 
 void __evas_gl_copy_image_rect_to_texture(Evas_GL_Image *im, int x, int y,
@@ -69,8 +73,15 @@ Visual * __evas_gl_get_visual(Display *disp);
 XVisualInfo *__evas_gl_get_visual_info(Display *disp);
 Colormap __evas_gl_get_colormap(Display *disp);
 void __evas_gl_init(Display *disp);
+Evas_GL_Image *__evas_gl_image_create_from_file(Display *disp, char *file);
 Evas_GL_Image * __evas_gl_image_new_from_file(Display *disp, char *file);
-void __evas_sync(Display *disp);
-void __evas_flush_draw(Display *disp, Window win);
-void __evas_draw_rectangle(Display *disp, Window win, int x, int y, int w, int h,
+void __evas_gl_image_free(Evas_GL_Image *im);
+void __evas_gl_image_destroy(Evas_GL_Image *im);
+void __evas_gl_image_cache_flush(Display *disp);
+void __evas_gl_image_cache_empty(Display *disp);
+void __evas_gl_image_cache_set_size(Display *disp, int size);
+int __evas_gl_image_cache_get_size(Display *disp);
+void __evas_gl_sync(Display *disp);
+void __evas_gl_flush_draw(Display *disp, Window win);
+void __evas_gl_draw_rectangle(Display *disp, Window win, int x, int y, int w, int h,
 			   int r, int g, int b, int a);
