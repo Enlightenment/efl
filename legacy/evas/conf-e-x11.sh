@@ -10,9 +10,9 @@ rm config.cache
 --enable-image-loader-eet \
 --enable-image-loader-edb \
 --enable-font-loader-eet \
+--enable-cpu-c \
 --enable-cpu-mmx \
 --enable-cpu-sse \
---enable-cpu-c \
 --enable-scale-smooth \
 --enable-scale-sample \
 --enable-convert-8-rgb-332 \

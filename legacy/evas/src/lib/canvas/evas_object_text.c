@@ -584,55 +584,58 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
 					 obj->layer->evas->pointer.y, 1, 1);
    /* DO IT */
    if (o->engine_data)
-     obj->layer->evas->engine.func->font_free(obj->layer->evas->engine.data.output,
-					      o->engine_data);
-   if (evas_file_path_is_full_path((char *)font))
-     o->engine_data = obj->layer->evas->engine.func->font_load(obj->layer->evas->engine.data.output,
-							       (char *)font, size);
-   else
      {
-	Evas_List *l;
-	
+	obj->layer->evas->engine.func->font_free(obj->layer->evas->engine.data.output,
+						 o->engine_data);
+	o->engine_data = NULL;
+     }
 #ifdef BUILD_FONT_LOADER_EET
-	if (o->cur.source)
+   if (o->cur.source)
+     {
+	Eet_File *ef;
+	char *fake_name;
+	
+	fake_name = evas_file_path_join(o->cur.source, font);
+	if (fake_name)
 	  {
-	     Eet_File *ef;
-	     char *fake_name;
-	     
-	     fake_name = evas_file_path_join(o->cur.source, font);
-	     if (fake_name)
+	     o->engine_data = 
+	       obj->layer->evas->engine.func->font_load
+	       (obj->layer->evas->engine.data.output, fake_name, 
+		size);
+	     if (!o->engine_data)
 	       {
-		  o->engine_data = 
-		    obj->layer->evas->engine.func->font_load
-		    (obj->layer->evas->engine.data.output, fake_name, 
-		     size);
-		  if (!o->engine_data)
+		  /* read original!!! */
+		  ef = eet_open(o->cur.source, EET_FILE_MODE_READ);
+		  if (ef)
 		    {
-		       /* read original!!! */
-		       ef = eet_open(o->cur.source, EET_FILE_MODE_READ);
-		       if (ef)
+		       void *fdata;
+		       int fsize = 0;
+		       
+		       fdata = eet_read(ef, font, &fsize);
+		       if ((fdata) && (fsize > 0))
 			 {
-			    void *fdata;
-			    int fsize = 0;
-			    
-			    fdata = eet_read(ef, font, &fsize);
-			    if ((fdata) && (fsize > 0))
-			      {
-				 o->engine_data = 
-				   obj->layer->evas->engine.func->font_memory_load
-				   (obj->layer->evas->engine.data.output,
-				    fake_name, size, fdata, fsize);
-				 free(fdata);
-			      }
-			    eet_close(ef);
+			    o->engine_data = 
+			      obj->layer->evas->engine.func->font_memory_load
+			      (obj->layer->evas->engine.data.output,
+			       fake_name, size, fdata, fsize);
+			    free(fdata);
 			 }
+		       eet_close(ef);
 		    }
-		  free(fake_name);
 	       }
+	     free(fake_name);
 	  }
-	if (!o->engine_data)
-	  {
+     }
+   if (!o->engine_data)
+     {
 #endif
+	if (evas_file_path_is_full_path((char *)font))
+	  o->engine_data = obj->layer->evas->engine.func->font_load(obj->layer->evas->engine.data.output,
+								    (char *)font, size);
+	else
+	  {
+	     Evas_List *l;
+	     
 	     for (l = obj->layer->evas->font_path; l; l = l->next)
 	       {
 		  char *f_file;
@@ -652,8 +655,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
    if (o->cur.font) free(o->cur.font);
    if (font) o->cur.font = strdup(font);
    else o->cur.font = NULL;
-   if (!same_font)
-     o->prev.font = NULL;
+   if (!same_font) o->prev.font = NULL;
 
    o->cur.size = size;
    if ((o->engine_data) && (o->cur.text))
