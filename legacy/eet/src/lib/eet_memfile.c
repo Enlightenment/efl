@@ -92,7 +92,8 @@ _eet_memfile_write_close(FILE *f)
 	  {
 	     int j;
 
-	     (*(_eet_memfile_info[i].size)) = fseek(f, 0, SEEK_END);
+	     fseek(f, 0, SEEK_END);
+	     (*(_eet_memfile_info[i].size)) = ftell(f);
 	     rewind(f);
 	     (*(_eet_memfile_info[i].data)) = malloc(*(_eet_memfile_info[i].size));
 	     if (!(*(_eet_memfile_info[i].data)))

@@ -558,7 +558,7 @@ eet_data_image_jpeg_convert(int *size, void *data, int w, int h, int alpha, int 
    struct jpeg_compress_struct cinfo;
    FILE *f;
    unsigned char *buf;
-      
+
    f =_eet_memfile_write_open(&d, &sz);
    if (!f) return NULL;
    
@@ -590,6 +590,15 @@ eet_data_image_jpeg_convert(int *size, void *data, int w, int h, int alpha, int 
    cinfo.in_color_space = JCS_RGB;
    jpeg_set_defaults(&cinfo);
    jpeg_set_quality(&cinfo, quality, TRUE);
+   if (quality >= 90)
+     {
+	cinfo.comp_info[0].h_samp_factor = 1;
+	cinfo.comp_info[0].v_samp_factor = 1;
+	cinfo.comp_info[1].h_samp_factor = 1;
+	cinfo.comp_info[1].v_samp_factor = 1;
+	cinfo.comp_info[2].h_samp_factor = 1;
+	cinfo.comp_info[2].v_samp_factor = 1;
+     }
    jpeg_start_compress(&cinfo, TRUE);
 
    ptr = data;
@@ -612,9 +621,9 @@ eet_data_image_jpeg_convert(int *size, void *data, int w, int h, int alpha, int 
    jpeg_finish_compress(&cinfo);
    jpeg_destroy_compress(&cinfo);
    
+   _eet_memfile_write_close(f);
    *size = sz;
    if (buf) free(buf);   
-   _eet_memfile_write_close(f);
    return d;
 }
 
@@ -625,7 +634,7 @@ eet_data_image_jpeg_alpha_convert(int *size, void *data, int w, int h, int alpha
    unsigned char *d;
    int *header;
    int sz1, sz2;
-   
+
    if (words_bigendian == -1)
      {
 	unsigned long int v;
@@ -676,6 +685,15 @@ eet_data_image_jpeg_alpha_convert(int *size, void *data, int w, int h, int alpha
 	cinfo.in_color_space = JCS_RGB;
 	jpeg_set_defaults(&cinfo);
 	jpeg_set_quality(&cinfo, quality, TRUE);
+	if (quality >= 90)
+	  {
+	     cinfo.comp_info[0].h_samp_factor = 1;
+	     cinfo.comp_info[0].v_samp_factor = 1;
+	     cinfo.comp_info[1].h_samp_factor = 1;
+	     cinfo.comp_info[1].v_samp_factor = 1;
+	     cinfo.comp_info[2].h_samp_factor = 1;
+	     cinfo.comp_info[2].v_samp_factor = 1;
+	  }
 	jpeg_start_compress(&cinfo, TRUE);
 	
 	ptr = data;
@@ -750,6 +768,15 @@ eet_data_image_jpeg_alpha_convert(int *size, void *data, int w, int h, int alpha
 	cinfo.in_color_space = JCS_GRAYSCALE;
 	jpeg_set_defaults(&cinfo);
 	jpeg_set_quality(&cinfo, quality, TRUE);
+	if (quality >= 90)
+	  {
+	     cinfo.comp_info[0].h_samp_factor = 1;
+	     cinfo.comp_info[0].v_samp_factor = 1;
+	     cinfo.comp_info[1].h_samp_factor = 1;
+	     cinfo.comp_info[1].v_samp_factor = 1;
+	     cinfo.comp_info[2].h_samp_factor = 1;
+	     cinfo.comp_info[2].v_samp_factor = 1;
+	  }
 	jpeg_start_compress(&cinfo, TRUE);
 	
 	ptr = data;
