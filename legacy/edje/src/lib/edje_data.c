@@ -7,6 +7,7 @@ Eet_Data_Descriptor *_edje_edd_edje_image_directory = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_image_directory_entry = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_program = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_program_target = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_program_after = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_collection_directory = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_collection_directory_entry = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_part_collection = NULL;
@@ -40,6 +41,7 @@ _edje_edd_free(void)
    FREED(_edje_edd_edje_image_directory_entry);
    FREED(_edje_edd_edje_program);
    FREED(_edje_edd_edje_program_target);
+   FREED(_edje_edd_edje_program_after);
    FREED(_edje_edd_edje_part_collection_directory);
    FREED(_edje_edd_edje_part_collection_directory_entry);
    FREED(_edje_edd_edje_part_collection);
@@ -88,6 +90,7 @@ _edje_edd_setup(void)
    _edje_edd_edje_file = 
      NEWD("Edje_File", 
 	  Edje_File);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_file, Edje_File, "version", version, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "image_dir", image_dir, _edje_edd_edje_image_directory);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "collection_dir", collection_dir, _edje_edd_edje_part_collection_directory);   
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "data", data, _edje_edd_edje_data);
@@ -97,7 +100,12 @@ _edje_edd_setup(void)
      NEWD("Edje_Program_Target",
 	  Edje_Program_Target);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program_target, Edje_Program_Target, "id", id, EET_T_INT);
-   
+
+   _edje_edd_edje_program_after =
+     NEWD("Edje_Program_After", Edje_Program_After);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program_after,
+                                 Edje_Program_After, "id", id, EET_T_INT);
+
    _edje_edd_edje_program = 
      NEWD("Edje_Program",
 	  Edje_Program);
@@ -115,8 +123,8 @@ _edje_edd_setup(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "tween.mode", tween.mode, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "tween.time", tween.time, EET_T_DOUBLE);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_program, Edje_Program, "targets", targets, _edje_edd_edje_program_target);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_program, Edje_Program, "after", after, EET_T_INT);
-   
+   EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_program, Edje_Program, "after", after, _edje_edd_edje_program_after);
+
    _edje_edd_edje_part_image_id = 
      NEWD("Edje_Part_Image_Id",
 	  Edje_Part_Image_Id);

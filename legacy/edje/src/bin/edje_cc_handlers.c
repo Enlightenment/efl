@@ -1193,7 +1193,7 @@ ob_collections_group_programs_program(void)
    pc->programs = evas_list_append(pc->programs, ep);
    ep->id = evas_list_count(pc->programs) - 1;
    ep->tween.mode = EDJE_TWEEN_MODE_LINEAR;
-   ep->after = -1;
+   ep->after = NULL;
 }
 
 static void
@@ -1346,10 +1346,16 @@ st_collections_group_programs_program_after(void)
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->programs));
      {
+	Edje_Program_After *pa;
 	char *name;
-	
+
 	name = parse_str(0);
-	data_queue_program_lookup(pc, name, &(ep->after));
+
+	pa = mem_alloc(SZ(Edje_Program_After));
+	pa->id = -1;
+	ep->after = evas_list_append(ep->after, pa);
+
+	data_queue_program_lookup(pc, name, &(pa->id));
 	free(name);
      }
 }

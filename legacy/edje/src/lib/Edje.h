@@ -15,6 +15,7 @@
 #define EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED 4
 #define EDJE_LOAD_ERROR_CORRUPT_FILE               5
 #define EDJE_LOAD_ERROR_UNKNOWN_FORMAT             6
+#define EDJE_LOAD_ERROR_INCOMPATIBLE_FILE          7
 
 #ifdef __cplusplus
 extern "C" {

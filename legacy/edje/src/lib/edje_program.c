@@ -268,17 +268,20 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 	     if (!ed->walking_actions) free(runp);
 	     goto break_prog;
 	  }
-	if (runp->program->after >= 0)
+	for (l = runp->program->after; l; l = l->next)
 	  {
 	     Edje_Program *pr;
+	     Edje_Program_After *pa = l->data;
 	     
-	     pr = evas_list_nth(ed->collection->programs, 
-				runp->program->after);
-	     if (pr) _edje_program_run(ed, pr, 0);
-	     if (_edje_block_break(ed))
+	     if (pa->id >= 0)
 	       {
-		  if (!ed->walking_actions) free(runp);
-		  goto break_prog;
+	        pr = evas_list_nth(ed->collection->programs, pa->id);
+	        if (pr) _edje_program_run(ed, pr, 0);
+	        if (_edje_block_break(ed))
+	          {
+		     if (!ed->walking_actions) free(runp);
+		     goto break_prog;
+	          }
 	       }
 	  }
 	_edje_thaw(ed);
@@ -330,10 +333,10 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
      {
 	_edje_anim_count--;
 	ed->actions = evas_list_remove(ed->actions, runp);
+	free(runp);
 	if (!ed->actions)
 	  {
 	     _edje_animators = evas_list_remove(_edje_animators, ed);
-	     free(runp);
 	  }
      }
    _edje_emit(ed, "program,stop", pname);
@@ -409,7 +412,11 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
 		    }
 	       }
 	     _edje_emit(ed, "program,start", pr->name);
-	     if (_edje_block_break(ed)) goto break_prog;
+	     if (_edje_block_break(ed))
+	       {
+		  ed->actions = evas_list_append(ed->actions, runp);
+		  goto break_prog;
+	       }
 	     if (!ed->actions)
 	       _edje_animators = evas_list_append(_edje_animators, ed);
 	     ed->actions = evas_list_append(ed->actions, runp);
@@ -445,14 +452,18 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
 	     if (_edje_block_break(ed)) goto break_prog;
 	     _edje_emit(ed, "program,stop", pr->name);
 	     if (_edje_block_break(ed)) goto break_prog;
-	     if (pr->after >= 0)
+
+	     for (l = pr->after; l; l = l->next)
 	       {
 		  Edje_Program *pr2;
-		  
-		  pr2 = evas_list_nth(ed->collection->programs, 
-				     pr->after);
-		  if (pr2) _edje_program_run(ed, pr2, 0);
-		  if (_edje_block_break(ed)) goto break_prog;
+		  Edje_Program_After *pa = l->data;
+		 
+		  if (pa->id >= 0)
+		    {
+		       pr2 = evas_list_nth(ed->collection->programs, pa->id);
+		       if (pr2) _edje_program_run(ed, pr2, 0);
+		       if (_edje_block_break(ed)) goto break_prog;
+		    }
 	       }
 	     _edje_recalc(ed);
 	  }
@@ -591,13 +602,17 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
 	 /* && (pr->tween.time > 0.0) && (!ed->no_anim))) */
 	 ))
      {
-	if (pr->after >= 0)
+	for (l= pr->after; l; l = l->next)
 	  {
 	     Edje_Program *pr2;
+	     Edje_Program_After *pa = l->data;
 	     
-	     pr2 = evas_list_nth(ed->collection->programs, pr->after);
-	     if (pr2) _edje_program_run(ed, pr2, 0);
-	     if (_edje_block_break(ed)) goto break_prog;
+	     if (pa->id >= 0)
+	       {
+	        pr2 = evas_list_nth(ed->collection->programs, pa->id);
+	        if (pr2) _edje_program_run(ed, pr2, 0);
+	        if (_edje_block_break(ed)) goto break_prog;
+	       }
 	  }
      }
    break_prog:

@@ -360,6 +360,14 @@ _edje_file_add(Edje *ed)
 	     goto out;
 	  }
 
+	if (ed->file->version != EDJE_FILE_VERSION)
+	  {
+	    _edje_file_free(ed->file);
+	    ed->file = NULL;
+	    ed->load_error = EDJE_LOAD_ERROR_INCOMPATIBLE_FILE;
+	    goto out;
+	  }
+
 	ed->file->references = 1;   
 	ed->file->path = strdup(ed->path);
 	if (!ed->file->collection_dir)
@@ -576,6 +584,14 @@ _edje_collection_free(Edje *ed, Edje_Part_Collection *ec)
 	     prt = pr->targets->data;
 	     pr->targets = evas_list_remove(pr->targets, prt);
 	     free(prt);
+	  }
+	while (pr->after)
+	  {
+	     Edje_Program_After *pa;
+
+	     pa = pr->after->data;
+	     pr->after = evas_list_remove(pr->after, pa);
+		 free(pa);
 	  }
 	free(pr);
      }

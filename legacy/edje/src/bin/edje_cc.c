@@ -88,6 +88,7 @@ main(int argc, char **argv)
    edje_init();
 
    edje_file = mem_alloc(SZ(Edje_File));
+   edje_file->version = EDJE_FILE_VERSION;
    
    data_setup();   
    compile();

@@ -17,6 +17,11 @@
 
 #include "Edje_Edit.h"
 
+/* increment this when the EET data descriptors have changed and old
+ * EETs cannot be loaded/used correctly anymore.
+ */
+#define EDJE_FILE_VERSION 1
+
 /* FIXME:
  * 
  * more example edje files

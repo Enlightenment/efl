@@ -55,6 +55,26 @@ _edje_del(Edje *ed)
    ed->path = NULL;
    if (ed->part) free(ed->part);
    ed->part = NULL;
+   if ((ed->actions) || (ed->pending_actions))
+     {
+	_edje_animators = evas_list_remove(_edje_animators, ed);
+     }
+   while (ed->actions)
+     {
+	Edje_Running_Program *runp;
+	
+	runp = ed->actions->data;
+	ed->actions = evas_list_remove(ed->actions, runp);
+	free(runp);
+     }
+   while (ed->pending_actions)
+     {
+	Edje_Pending_Program *pp;
+	
+	pp = ed->pending_actions->data;
+	ed->pending_actions = evas_list_remove(ed->pending_actions, pp);
+	free(pp);
+     }
    while (ed->callbacks)
      {
 	Edje_Signal_Callback *escb;

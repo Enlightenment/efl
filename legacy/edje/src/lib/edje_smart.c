@@ -316,7 +316,8 @@ _edje_smart_hide(Evas_Object * obj)
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
    if (!evas_object_visible_get(obj)) return;
-   evas_object_hide(ed->clipper);
+   if ((ed->collection) && (ed->parts))
+     evas_object_hide(ed->clipper);
    _edje_emit(ed, "hide", "");
 }
 

@@ -490,13 +490,13 @@ list_head_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 cb (void *data, Evas_Object *o, const char *sig, const char *src)
 {
-/*   printf("CALLBACK for %p %p \"%s\" \"%s\"\n", data, o, sig, src);*/
+   printf("CALLBACK for %p %p \"%s\" \"%s\"\n", data, o, sig, src);
    if (!strcmp(sig, "drag"))
      {
 	double x, y;
 	
 	edje_object_part_drag_value_get(o, src, &x, &y);
-/*	printf("Drag %3.3f %3.3f\n", x, y);*/
+	printf("Drag %3.3f %3.3f\n", x, y);
      }
 }
 

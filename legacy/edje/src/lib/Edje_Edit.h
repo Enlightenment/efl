@@ -16,6 +16,7 @@ typedef struct _Edje_Image_Directory                 Edje_Image_Directory;
 typedef struct _Edje_Image_Directory_Entry           Edje_Image_Directory_Entry;
 typedef struct _Edje_Program                         Edje_Program;
 typedef struct _Edje_Program_Target                  Edje_Program_Target;
+typedef struct _Edje_Program_After                   Edje_Program_After;
 typedef struct _Edje_Part_Collection_Directory       Edje_Part_Collection_Directory;
 typedef struct _Edje_Part_Collection_Directory_Entry Edje_Part_Collection_Directory_Entry;
 typedef struct _Edje_Part_Collection                 Edje_Part_Collection;
@@ -127,6 +128,7 @@ struct _Edje_File
    
    Evas_Hash                      *collection_hash;
    int                             references;
+   int                             version;
 };
 
 /*----------*/
@@ -180,12 +182,17 @@ struct _Edje_Program /* a conditional program to be run */
    
    Evas_List *targets; /* list of target parts to apply the state to */
    
-   int        after; /* an action id to run at the end of this, for looping */
+   Evas_List *after; /* list of actions to run at the end of this, for looping */
 };
 
 struct _Edje_Program_Target /* the target of an action */
 {
    int id; /* just the part id no, or action id no */
+};
+
+struct _Edje_Program_After /* the action to run after another action */
+{
+   int id;
 };
 
 /*----------*/
