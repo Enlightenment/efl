@@ -331,8 +331,6 @@ em_file_close(void *ef)
    Emotion_Xine_Video *ev;
    
    ev = (Emotion_Xine_Video *)ef;
-   printf("xn stop\n");
-   xine_stop(ev->stream);
    ev->delete_me = 1;
 //   pthread_mutex_lock(&(ev->seek_mutex));
    pthread_cond_broadcast(&(ev->seek_cond));
@@ -346,11 +344,9 @@ em_file_close(void *ef)
    ecore_main_fd_handler_del(ev->fd_ev_handler);
    close(ev->fd_ev_write);
    close(ev->fd_ev_read);
-   printf("xn close\n");
+   xine_stop(ev->stream);
    xine_close(ev->stream);
-   printf("xn dispose\n");
    xine_dispose(ev->stream);
-   printf("xn dispose evq\n");
    xine_event_dispose_queue(ev->queue);
    if (ev->video) xine_close_video_driver(decoder, ev->video);
    if (ev->audio) xine_close_audio_driver(decoder, ev->audio);
@@ -960,19 +956,18 @@ _em_seek(void *par)
 	pthread_cond_wait(&(ev->seek_cond), &(ev->seek_mutex));
 	while (ev->seek_to > 0)
 	  {
-	     if (ppos != ev->seek_to_pos)
-	       {
-		  ppos = ev->seek_to_pos;
-		  xine_play(ev->stream, 0, ev->seek_to_pos * 1000);
-	       }
+	     again:
+	     ppos = ev->seek_to_pos;
+	     xine_play(ev->stream, 0, ppos * 1000);
 	     ev->seek_to = 0;
 	     if (ev->delete_me) return NULL;
 	  }
 	if (!ev->play)
 	  xine_set_param(ev->stream, XINE_PARAM_SPEED, XINE_SPEED_PAUSE);
 	if (ev->delete_me) return NULL;
-	usleep(1000000 / 10);
-     }
+	if (ppos != ev->seek_to_pos)
+	  goto again;
+    }
    return NULL;
 }
 
