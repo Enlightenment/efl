@@ -673,8 +673,8 @@ if (!atom) atom = e_atom_get(name);
 
 #define MEMCPY(src, dst, type, num) memcpy(dst, src, sizeof(type) * (num))
 
-#define NEW(dat, num) malloc(sizeof(dat) * (num));
-#define ZERO(ptr, dat, num) memset(ptr, 0, sizeof(dat) * (num));
+#define NEW(dat, num) malloc(sizeof(dat) * (num))
+#define ZERO(ptr, dat, num) memset(ptr, 0, sizeof(dat) * (num))
 #define NEW_PTR(num) malloc(sizeof(void *) * (num))
 #define FREE(dat) {free(dat); dat = NULL;}
 #define IF_FREE(dat) {if (dat) FREE(dat);}
