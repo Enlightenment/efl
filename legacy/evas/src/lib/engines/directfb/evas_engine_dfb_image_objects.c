@@ -588,13 +588,6 @@ _dfb_image_free(RGBA_Image *im)
   int i;
    
    if (im->image) _dfb_image_surface_free(im->image);
-   /* FIXME what about mipmaps? */
-   for (i = 0; i < im->mipmaps.num; i++)
-     {
-	if (im->mipmaps.levels[i])
-	  _dfb_image_surface_free(im->mipmaps.levels[i]);
-     }
-   if (im->mipmaps.levels) free(im->mipmaps.levels);
    if (im->info.file) free(im->info.file);
    if (im->info.key) free(im->info.key);
    if (im->info.comment) free(im->info.comment);
@@ -701,8 +694,6 @@ _dfb_image_dirty(RGBA_Image *im)
    
    _dfb_image_unstore(im);
    im->flags |= RGBA_IMAGE_IS_DIRTY;
-   for (i = 0; i < im->mipmaps.num; i++)
-     _dfb_image_surface_free(im->mipmaps.levels[i]);
 }
 
 
