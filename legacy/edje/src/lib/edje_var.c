@@ -4,7 +4,7 @@
 static int _edje_var_timer_cb(void *data);
 static int _edje_var_anim_cb(void *data);
 
-static Ecore_Timer *_edje_anim_timer = NULL;
+static Ecore_Animator *_edje_animator = NULL;
 static Evas_List   *_edje_anim_list = NULL;
 
 static int
@@ -118,13 +118,13 @@ _edje_var_anim_cb(void *data)
      }
    if (!_edje_anim_list)
      {
-	if (_edje_anim_timer)
+	if (_edje_animator)
 	  {
-	     ecore_timer_del(_edje_anim_timer);
-	     _edje_anim_timer = NULL;
+	     ecore_animator_del(_edje_animator);
+	     _edje_animator = NULL;
 	  }
      }
-   if (_edje_anim_timer) return 1;
+   if (_edje_animator) return 1;
    return 0;
 }
 
@@ -205,10 +205,10 @@ _edje_var_shutdown(Edje *ed)
 	_edje_anim_list = evas_list_remove(_edje_anim_list, ed);
 	if (!_edje_anim_list)
 	  {
-	     if (_edje_anim_timer)
+	     if (_edje_animator)
 	       {
-		  ecore_timer_del(_edje_anim_timer);
-		  _edje_anim_timer = NULL;
+		  ecore_animator_del(_edje_animator);
+		  _edje_animator = NULL;
 	       }
 	  }
      }
@@ -993,8 +993,8 @@ _edje_var_anim_add(Edje *ed, double len, char *fname, int val)
    if (!_edje_anim_list)
      _edje_anim_list = evas_list_append(_edje_anim_list, ed);
    ed->var_pool->animators = evas_list_prepend(ed->var_pool->animators, ea);
-   if (!_edje_anim_timer)
-     _edje_anim_timer = ecore_animator_add(_edje_var_anim_cb, NULL);
+   if (!_edje_animator)
+     _edje_animator = ecore_animator_add(_edje_var_anim_cb, NULL);
    return ea->id;
 }
 
@@ -1020,10 +1020,10 @@ _edje_var_anim_del(Edje *ed, int id)
 		       _edje_anim_list = evas_list_remove(_edje_anim_list, ed);
 		       if (!_edje_anim_list)
 			 {
-			    if (_edje_anim_timer)
+			    if (_edje_animator)
 			      {
-				 ecore_timer_del(_edje_anim_timer);
-				 _edje_anim_timer = NULL;
+				 ecore_animator_del(_edje_animator);
+				 _edje_animator = NULL;
 			      }
 			 }
 		    }
