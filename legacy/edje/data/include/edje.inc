@@ -67,7 +67,7 @@ native       set_tween_state(part_id, Float:tween, state1[], Float:state1_val, s
 native       run_program    (program_id);
 
 native       stop_program   (program_id);
-native       stop_programs_on(program_id);
+native       stop_programs_on(part_id);
 
 native       set_drag(part_id, Float:dx, Float:dy);
 native       get_drag(part_id, &Float:dx, &Float:dy);
