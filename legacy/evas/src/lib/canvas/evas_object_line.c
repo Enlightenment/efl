@@ -102,9 +102,10 @@ evas_object_line_xy_set(Evas_Object *obj, double x1, double y1, double x2, doubl
    MAGIC_CHECK_END();
    if ((x1 == o->cur.x1) && (y1 == o->cur.y1) &&
        (x2 == o->cur.x2) && (y2 == o->cur.y2)) return;
-   was = evas_object_is_in_output_rect(obj,
-				       obj->layer->evas->pointer.x,
-				       obj->layer->evas->pointer.y, 1, 1);
+   if (!obj->pass_events)
+     was = evas_object_is_in_output_rect(obj,
+					 obj->layer->evas->pointer.x,
+					 obj->layer->evas->pointer.y, 1, 1);
    if (x1 < x2) 
      {
 	min_x = x1;
@@ -140,10 +141,13 @@ evas_object_line_xy_set(Evas_Object *obj, double x1, double y1, double x2, doubl
    is = evas_object_is_in_output_rect(obj,
 				      obj->layer->evas->pointer.x,
 				      obj->layer->evas->pointer.y, 1, 1);
-   if ((is ^ was) && obj->cur.visible)
-     evas_event_feed_mouse_move(obj->layer->evas,
-				obj->layer->evas->pointer.x,
-				obj->layer->evas->pointer.y);   
+   if (!obj->pass_events)
+     {  
+	if ((is ^ was) && obj->cur.visible)
+	  evas_event_feed_mouse_move(obj->layer->evas,
+				     obj->layer->evas->pointer.x,
+				     obj->layer->evas->pointer.y);
+     }
    evas_object_inform_call_move(obj);
    evas_object_inform_call_resize(obj);
 }

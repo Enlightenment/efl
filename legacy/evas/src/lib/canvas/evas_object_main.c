@@ -455,23 +455,27 @@ evas_object_move(Evas_Object *obj, double x, double y)
 	evas_object_inform_call_move(obj);
 	return;
      }
-   was = evas_object_is_in_output_rect(obj, 
-				       obj->layer->evas->pointer.x, 
-				       obj->layer->evas->pointer.y, 1, 1);
+   if (!obj->pass_events)
+     was = evas_object_is_in_output_rect(obj, 
+					 obj->layer->evas->pointer.x, 
+					 obj->layer->evas->pointer.y, 1, 1);
    obj->cur.geometry.x = x;
    obj->cur.geometry.y = y;
    obj->cur.cache.geometry.validity = 0;
    evas_object_change(obj);
    evas_object_recalc_clippees(obj);
-   if (!obj->smart.smart)
+   if (!obj->pass_events)
      {
-	is = evas_object_is_in_output_rect(obj, 
-					   obj->layer->evas->pointer.x, 
-					   obj->layer->evas->pointer.y, 1, 1);
-	if ((is ^ was) && obj->cur.visible)
-	  evas_event_feed_mouse_move(obj->layer->evas, 
-				     obj->layer->evas->pointer.x, 
-				     obj->layer->evas->pointer.y);
+	if (!obj->smart.smart)
+	  {
+	     is = evas_object_is_in_output_rect(obj, 
+						obj->layer->evas->pointer.x, 
+						obj->layer->evas->pointer.y, 1, 1);
+	     if ((is ^ was) && obj->cur.visible)
+	       evas_event_feed_mouse_move(obj->layer->evas, 
+					  obj->layer->evas->pointer.x, 
+					  obj->layer->evas->pointer.y);
+	  }
      }
    evas_object_inform_call_move(obj);
 }
@@ -503,23 +507,27 @@ evas_object_resize(Evas_Object *obj, double w, double h)
 	evas_object_inform_call_resize(obj);
 	return;
      }
-   was = evas_object_is_in_output_rect(obj, 
-				       obj->layer->evas->pointer.x, 
-				       obj->layer->evas->pointer.y, 1, 1);
+   if (!obj->pass_events)
+     was = evas_object_is_in_output_rect(obj, 
+					 obj->layer->evas->pointer.x, 
+					 obj->layer->evas->pointer.y, 1, 1);
    obj->cur.geometry.w = w;
    obj->cur.geometry.h = h;
    obj->cur.cache.geometry.validity = 0;
    evas_object_change(obj);
    evas_object_recalc_clippees(obj);
-   if (!obj->smart.smart)
+   if (!obj->pass_events)
      {
-	is = evas_object_is_in_output_rect(obj, 
-					   obj->layer->evas->pointer.x, 
-					   obj->layer->evas->pointer.y, 1, 1);
-	if ((is ^ was) && (obj->cur.visible))
-	  evas_event_feed_mouse_move(obj->layer->evas, 
-				     obj->layer->evas->pointer.x, 
-				     obj->layer->evas->pointer.y);
+	if (!obj->smart.smart)
+	  {
+	     is = evas_object_is_in_output_rect(obj, 
+						obj->layer->evas->pointer.x, 
+						obj->layer->evas->pointer.y, 1, 1);
+	     if ((is ^ was) && (obj->cur.visible))
+	       evas_event_feed_mouse_move(obj->layer->evas, 
+					  obj->layer->evas->pointer.x, 
+					  obj->layer->evas->pointer.y);
+	  }
      }
 }
 
@@ -568,14 +576,17 @@ evas_object_show(Evas_Object *obj)
    obj->cur.visible = 1;
    evas_object_change(obj);
    evas_object_recalc_clippees(obj);
-   if (!obj->smart.smart)
+   if (!obj->pass_events)
      {
-	if (evas_object_is_in_output_rect(obj, 
+	if (!obj->smart.smart)
+	  {
+	     if (evas_object_is_in_output_rect(obj, 
+					       obj->layer->evas->pointer.x, 
+					       obj->layer->evas->pointer.y, 1, 1))
+	       evas_event_feed_mouse_move(obj->layer->evas, 
 					  obj->layer->evas->pointer.x, 
-					  obj->layer->evas->pointer.y, 1, 1))
-	  evas_event_feed_mouse_move(obj->layer->evas, 
-				     obj->layer->evas->pointer.x, 
-				     obj->layer->evas->pointer.y);
+					  obj->layer->evas->pointer.y);
+	  }
      }
    evas_object_inform_call_show(obj);
 }
@@ -606,33 +617,36 @@ evas_object_hide(Evas_Object *obj)
    obj->cur.visible = 0;
    evas_object_change(obj);
    evas_object_recalc_clippees(obj);
-   if (!obj->smart.smart)
-     {
-	if (evas_object_is_in_output_rect(obj, 
-					  obj->layer->evas->pointer.x, 
-					  obj->layer->evas->pointer.y, 1, 1))
-	  evas_event_feed_mouse_move(obj->layer->evas, 
-				     obj->layer->evas->pointer.x, 
-				     obj->layer->evas->pointer.y);
-/*   if ((obj->mouse_in) || (obj->mouse_grabbed)) */
+   if (!obj->pass_events)
+     {	  
+	if (!obj->smart.smart)
 	  {
-	     obj->mouse_in = 0;
-	     obj->mouse_grabbed = 0;
-	     obj->layer->evas->pointer.object.in = evas_list_remove(obj->layer->evas->pointer.object.in, obj);
-	     if (obj->layer->evas->events_frozen > 0) return;	
-	     if (obj->mouse_in)
+	     if (evas_object_is_in_output_rect(obj, 
+					       obj->layer->evas->pointer.x, 
+					       obj->layer->evas->pointer.y, 1, 1))
+	       evas_event_feed_mouse_move(obj->layer->evas, 
+					  obj->layer->evas->pointer.x, 
+					  obj->layer->evas->pointer.y);
+/*   if ((obj->mouse_in) || (obj->mouse_grabbed)) */
 	       {
-		  Evas_Event_Mouse_Out ev;
-		  
-		  ev.buttons = obj->layer->evas->pointer.button;
-		  ev.output.x = obj->layer->evas->pointer.x;
-		  ev.output.y = obj->layer->evas->pointer.y;
-		  ev.canvas.x = obj->layer->evas->pointer.canvas_x;
-		  ev.canvas.y = obj->layer->evas->pointer.canvas_y;
-		  ev.data = NULL;
-		  ev.modifiers = &(obj->layer->evas->modifiers);
-		  ev.locks = &(obj->layer->evas->locks);		  
-		  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
+		  obj->mouse_in = 0;
+		  obj->mouse_grabbed = 0;
+		  obj->layer->evas->pointer.object.in = evas_list_remove(obj->layer->evas->pointer.object.in, obj);
+		  if (obj->layer->evas->events_frozen > 0) return;	
+		  if (obj->mouse_in)
+		    {
+		       Evas_Event_Mouse_Out ev;
+		       
+		       ev.buttons = obj->layer->evas->pointer.button;
+		       ev.output.x = obj->layer->evas->pointer.x;
+		       ev.output.y = obj->layer->evas->pointer.y;
+		       ev.canvas.x = obj->layer->evas->pointer.canvas_x;
+		       ev.canvas.y = obj->layer->evas->pointer.canvas_y;
+		       ev.data = NULL;
+		       ev.modifiers = &(obj->layer->evas->modifiers);
+		       ev.locks = &(obj->layer->evas->locks);		  
+		       evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
+		    }
 	       }
 	  }
      }

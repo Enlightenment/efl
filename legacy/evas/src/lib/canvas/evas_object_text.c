@@ -502,9 +502,10 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, double size)
 	same_font = 1;
 	if (size == o->cur.size) return;
      }
-   was = evas_object_is_in_output_rect(obj,
-				       obj->layer->evas->pointer.x,
-				       obj->layer->evas->pointer.y, 1, 1);
+   if (!obj->pass_events)     
+     was = evas_object_is_in_output_rect(obj,
+					 obj->layer->evas->pointer.x,
+					 obj->layer->evas->pointer.y, 1, 1);
    /* DO IT */
    if (o->engine_data)
      obj->layer->evas->engine.func->font_free(obj->layer->evas->engine.data.output,
@@ -583,13 +584,16 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, double size)
    o->changed = 1;
    evas_object_change(obj);
    evas_object_coords_recalc(obj);
-   is = evas_object_is_in_output_rect(obj,
-				      obj->layer->evas->pointer.x,
-				      obj->layer->evas->pointer.y, 1, 1);
-   if ((is || was) && obj->cur.visible)
-     evas_event_feed_mouse_move(obj->layer->evas,
-				obj->layer->evas->pointer.x,
-				obj->layer->evas->pointer.y);   
+   if (!obj->pass_events)
+     {
+	is = evas_object_is_in_output_rect(obj,
+					   obj->layer->evas->pointer.x,
+					   obj->layer->evas->pointer.y, 1, 1);
+	if ((is ^ was) && obj->cur.visible)
+	  evas_event_feed_mouse_move(obj->layer->evas,
+				     obj->layer->evas->pointer.x,
+				     obj->layer->evas->pointer.y);
+     }
    evas_object_inform_call_resize(obj);
 }
 
