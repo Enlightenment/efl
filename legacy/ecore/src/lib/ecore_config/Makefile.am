@@ -6,10 +6,10 @@ INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_ipc
 
-if BUILD_ECORE_CONFIG
-
 libecore_config_la_LDFLAGS = -version-info 1:0:0 \
 -L$(top_builddir)/src/lib/ecore/.libs
+
+if BUILD_ECORE_CONFIG
 
 lib_LTLIBRARIES = libecore_config.la
 include_HEADERS = \
