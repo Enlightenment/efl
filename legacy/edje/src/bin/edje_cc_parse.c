@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=3:noexpandtab
+ */
+
 #include "edje_cc.h"
 
 static void  new_object(void);
@@ -30,6 +34,7 @@ static int _is_numf(char c);
 static int _is_op1f(char c);
 static int _is_op2f(char c);
 static double _calcf(char op, double a, double b);
+static int strstrip(const char *in, char *out, size_t size);
 
 
 int        line = 0;
@@ -716,6 +721,42 @@ parse_int_range(int n, int f, int t)
    return i;
 }
 
+int
+parse_bool(int n)
+{
+   char *str, buf[4096];
+   int i;
+
+   str = evas_list_nth(params, n);
+   if (!str)
+     {
+	fprintf(stderr, "%s: Error. %s:%i no parameter supplied as argument %i\n",
+		progname, file_in, line, n + 1);
+	exit(-1);
+     }
+
+   if (!strstrip(str, buf, sizeof (buf)))
+     {
+	fprintf(stderr, "%s: Error. %s:%i expression is too long\n",
+		progname, file_in, line);
+	return 0;
+     }
+
+   if (!strcasecmp(buf, "false") || !strcasecmp(buf, "off"))
+      return 0;
+   if (!strcasecmp(buf, "true") || !strcasecmp(buf, "on"))
+      return 1;
+
+   i = my_atoi(str);
+   if ((i < 0) || (i > 1))
+     {
+	fprintf(stderr, "%s: Error. %s:%i integer %i out of range of 0 to 1 inclusive\n",
+		progname, file_in, line, i);
+	exit(-1);
+     }
+   return i;
+}
+
 double
 parse_float(int n)
 {
@@ -772,34 +813,19 @@ static int
 my_atoi(const char * s)
 {
    int res = 0;
-   char *p, *p_in, *p_out;
    char buf[4096];
    
    if (!s)
      return 0;
    
-   if (4095 < strlen(s))
+   if (!strstrip(s, buf, sizeof (buf)))
      {
 	fprintf(stderr, "%s: Error. %s:%i expression is too long\n",
 		progname, file_in, line);
 	return 0;
      }
    
-   /* remove spaces and tabs */
-   p_in = (char *)s;
-   p_out = buf;
-   while (*p_in)
-     {
-	if ((0x20 != *p_in) && (0x09 != *p_in))
-	  {
-	     *p_out = *p_in;
-	     p_out++;
-	  }
-	p_in++;
-     }
-   *p_out = '\0';
-   
-   p = _alphai(buf, &res);
+   _alphai(buf, &res);
    return res;
 }
 
@@ -983,35 +1009,19 @@ double
 my_atof(const char * s)
 {
    double res = 0;
-   char *p, *p_in, *p_out;
    char buf[4096];
    
    if (!s)
      return 0;
    
-   if (4095 < strlen(s))
+   if (!strstrip(s, buf, sizeof (buf)))
      {
 	fprintf(stderr, "%s: Error. %s:%i expression is too long\n",
 		progname, file_in, line);
 	return 0;
      }
    
-   /* remove spaces and tabs */
-   p_in = (char *)s;
-   p_out = buf;
-   while (*p_in)
-     {
-	if ((0x20 != *p_in) && (0x09 != *p_in))
-	  {
-	     *p_out = *p_in;
-	     p_out++;
-	  }
-	p_in++;
-     }
-   *p_out = '\0';
-   
-   
-   p = _alphaf(buf, &res);
+   _alphaf(buf, &res);
    return res;
 }
 
@@ -1191,4 +1201,30 @@ _calcf(char op, double a, double b)
 		progname, file_in, line, op);
 	return a;
      }
+}
+
+static int
+strstrip(const char *in, char *out, size_t size)
+{
+   if ((size -1 ) < strlen(in))
+     {
+	fprintf(stderr, "%s: Error. %s:%i expression is too long\n",
+		progname, file_in, line);
+	return 0;
+     }
+
+   /* remove spaces and tabs */
+   while (*in)
+     {
+	if ((0x20 != *in) && (0x09 != *in))
+	  {
+	     *out = *in;
+	     out++;
+	  }
+	in++;
+     }
+
+   *out = '\0';
+
+   return 1;
 }

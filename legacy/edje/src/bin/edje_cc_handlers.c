@@ -607,7 +607,7 @@ st_collections_group_parts_part_mouse_events(void)
    
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
-   ep->mouse_events = parse_int_range(0, 0, 1);
+   ep->mouse_events = parse_bool(0);
 }
 
 static void
@@ -618,7 +618,7 @@ st_collections_group_parts_part_repeat_events(void)
    
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
-   ep->repeat_events = parse_int_range(0, 0, 1);
+   ep->repeat_events = parse_bool(0);
 }
 
 static void
@@ -769,7 +769,7 @@ st_collections_group_parts_part_description_visible(void)
    ep = evas_list_data(evas_list_last(pc->parts));   
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-   ed->visible = parse_int_range(0, 0, 1);
+   ed->visible = parse_bool(0);
 }
 
 static void
@@ -1119,7 +1119,7 @@ st_collections_group_parts_part_description_fill_smooth(void)
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-   ed->fill.smooth = parse_int_range(0, 0, 1);
+   ed->fill.smooth = parse_bool(0);
 }
 
 static void
@@ -1334,8 +1334,8 @@ st_collections_group_parts_part_description_text_fit(void)
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-   ed->text.fit_x = parse_int_range(0, 0, 1);
-   ed->text.fit_y = parse_int_range(1, 0, 1);
+   ed->text.fit_x = parse_bool(0);
+   ed->text.fit_y = parse_bool(1);
 }
 
 static void
@@ -1349,8 +1349,8 @@ st_collections_group_parts_part_description_text_min(void)
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-   ed->text.min_x = parse_int_range(0, 0, 1);
-   ed->text.min_y = parse_int_range(1, 0, 1);
+   ed->text.min_x = parse_bool(0);
+   ed->text.min_y = parse_bool(1);
 }
 
 static void

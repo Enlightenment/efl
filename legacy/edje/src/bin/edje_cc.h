@@ -104,6 +104,7 @@ char   *parse_str(int n);
 int     parse_enum(int n, ...);
 int     parse_int(int n);
 int     parse_int_range(int n, int f, int t);
+int     parse_bool(int n);
 double  parse_float(int n);
 double  parse_float_range(int n, double f, double t);
 
