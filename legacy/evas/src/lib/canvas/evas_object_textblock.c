@@ -10,14 +10,17 @@
  * 
  * things to add:
  * 
+ * * if a word spans 2 layout nodes with no whitespace, it should not be splittable.
  * * styles (outline, glow, etxra glow, shadow, soft shadow, etc.)
+ * * add spacing/padding for style effects (first scan all format nodes and find styles, add up/merge padding), then do real layout.
  * * if a word (or char) doesnt fit at all do something sensible
- * * anchors (for inline objects other than text - images etc.)
+ * * anchors (for inline objects other than text - images etc.) - variable size ones too
  * * tabs (indents)
  * * left and right margins
  * * freeze thaw api
  * 
  * tough ones:
+ * * directly accessible text spans (so you can track where that span is, how big it is after many inserts/deletes) and modify its formatting etc.
  * * overflow objects (overflow from this textblock can go into another)
  * * on change figure out what node the change is in and figure out what line (nodes) it affects and only modify those nodes on that line or maybe others until changes dont happen further down
  * * obstacle objects to wrap around
@@ -37,6 +40,16 @@
 /* save typing */
 #define ENFN obj->layer->evas->engine.func
 #define ENDT obj->layer->evas->engine.data.output
+
+#define STYLE_PLAIN 0
+#define STYLE_SHADOW 1
+#define STYLE_OUTLINE 2
+#define STYLE_GLOW 3
+#define STYLE_OUTLINE_SHADOW 4
+#define STYLE_FAR_SHADOW 5
+#define STYLE_OUTLINE_SOFT_SHADOW 6
+#define STYLE_SOFT_SHADOW 7
+#define STYLE_FAR_SOFT_SHADOW 8
 
 /* private magic number for textblock objects */
 static const char o_type[] = "textblock";
@@ -75,6 +88,8 @@ struct _Layout
 	                advance;
    } line;
    double               align, valign;
+   unsigned char        style;
+   
    unsigned char        word_wrap : 1;
    unsigned char        underline : 1;
    unsigned char        second_underline : 1;
@@ -398,6 +413,21 @@ evas_object_textblock_layout_format_apply(Layout *layout, char *key, char *data)
 	  layout->backing = 0;
 	else if (!strcmp(data, "on"))
 	  layout->backing = 1;
+     }
+   else if (!strcmp(key, "style"))
+     {
+	if (!strcmp(data, "off")) layout->style = STYLE_PLAIN;
+	else if (!strcmp(data, "none")) layout->style = STYLE_PLAIN;
+	else if (!strcmp(data, "plain")) layout->style = STYLE_PLAIN;
+	else if (!strcmp(data, "shadow")) layout->style = STYLE_SHADOW;
+	else if (!strcmp(data, "outline")) layout->style = STYLE_OUTLINE;
+	else if (!strcmp(data, "outline_shadow")) layout->style = STYLE_OUTLINE_SHADOW;
+	else if (!strcmp(data, "outline_soft_shadow")) layout->style = STYLE_OUTLINE_SOFT_SHADOW;
+	else if (!strcmp(data, "glow")) layout->style = STYLE_GLOW;
+	else if (!strcmp(data, "far_shadow")) layout->style = STYLE_FAR_SHADOW;
+	else if (!strcmp(data, "soft_shadow")) layout->style = STYLE_SOFT_SHADOW;
+	else if (!strcmp(data, "far_soft_shadow")) layout->style = STYLE_FAR_SOFT_SHADOW;
+	else layout->style = STYLE_PLAIN;
      }
 }
 
@@ -925,7 +955,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 	if (last_mdescent < 1) fh += 1 - last_mdescent;
      }
    *format_h = fh;
-   return layout_nodes;
+   return (Layout_Node *)layout_nodes;
 }
 
 static void
@@ -2498,6 +2528,15 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    Evas_Object_Textblock *o;
    Evas_Object_List *l;
    int pbackx;
+   int i, j;
+   const char vals[5][5] =
+     {
+	  {0, 1, 2, 1, 0},
+	  {1, 3, 4, 3, 1},
+	  {2, 4, 5, 4, 2},
+	  {1, 3, 4, 3, 1},
+	  {0, 1, 2, 1, 0}
+     };
    
    /* render object to surface with context, and offxet by x,y */
    o = (Evas_Object_Textblock *)(obj->object_data);
@@ -2521,6 +2560,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
                                                   obj->cur.cache.geometry.w,
                                                   obj->cur.cache.geometry.h);
 #endif   
+   /* 1ST PASS: BACKING */
    for (l = (Evas_Object_List *)o->layout_nodes; l; l = l->next)
      {
 	Layout_Node *lnode, *nlnode;
@@ -2530,13 +2570,9 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 	if (lnode->line_start) pbackx = 0;
 	if ((lnode->layout.font.font) && (lnode->text))
 	  {
-	     int lin;
+	     int lin = 0;
 	     int inset = 0;
 	     
-	     lin = 0;
-	     if (lnode->layout.underline) lin++;
-	     if (lnode->layout.second_underline) lin++;
-	     if (lnode->layout.strikethrough) lin++;
 	     if (lnode->layout.backing) lin++;
 	     if (lin > 0)
 	       inset = ENFN->font_inset_get(ENDT, 
@@ -2580,6 +2616,244 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 	       }
 	     else
 	       pbackx = 0;
+	  }
+     }
+#define DRW_ELEMENTS(ox, oy) { \
+   if (lnode->layout.valign < 0.0) \
+     ENFN->font_draw(output, context, surface, lnode->layout.font.font, \
+		     obj->cur.cache.geometry.x + (ox) + lnode->layout.line.x + x, \
+		     obj->cur.cache.geometry.y + (oy) + lnode->layout.line.y + y + lnode->layout.line.mascent, \
+		     lnode->w, lnode->h, lnode->w, lnode->h, lnode->text); \
+   else \
+     ENFN->font_draw(output, context, surface, lnode->layout.font.font, \
+		     obj->cur.cache.geometry.x + (ox) + lnode->layout.line.x + x, \
+		     obj->cur.cache.geometry.y + (oy) + lnode->layout.line.y + y + ((double)((lnode->layout.line.mascent + lnode->layout.line.mdescent) - (lnode->layout.line.ascent + lnode->layout.line.descent) - 1) * lnode->layout.valign) + lnode->layout.line.ascent, \
+                     lnode->w, lnode->h, lnode->w, lnode->h, lnode->text); \
+   if (lnode->layout.underline) \
+     ENFN->rectangle_draw(output, context, surface, \
+			  obj->cur.cache.geometry.x + (ox) + lnode->layout.line.x + x + inset, \
+			  obj->cur.cache.geometry.y + (oy) + lnode->layout.line.y + y + lnode->layout.line.mascent + 1, \
+			  lnode->w, 1); \
+   if (lnode->layout.second_underline) \
+     ENFN->rectangle_draw(output, context, surface, \
+			  obj->cur.cache.geometry.x + (ox) + lnode->layout.line.x + x + inset, \
+			  obj->cur.cache.geometry.y + (oy) + lnode->layout.line.y + y + lnode->layout.line.mascent + 3, \
+			  lnode->w, 1); \
+   if (lnode->layout.strikethrough) \
+     ENFN->rectangle_draw(output, context, surface, \
+			  obj->cur.cache.geometry.x + (ox) + lnode->layout.line.x + x + inset, \
+			  obj->cur.cache.geometry.y + (oy) + lnode->layout.line.y + y + lnode->layout.line.mascent - ((lnode->layout.line.ascent - lnode->layout.line.descent) / 2), \
+			  lnode->w, 1); \
+   }
+#define SET_COL(rr, gg, bb, aa) { \
+   ENFN->context_color_set(output, context, \
+                           (obj->cur.cache.clip.r * (rr)) / 255, \
+			   (obj->cur.cache.clip.g * (gg)) / 255, \
+			   (obj->cur.cache.clip.b * (bb)) / 255, \
+			   (obj->cur.cache.clip.a * (aa)) / 255); \
+   }
+   
+   /* 2ND PASS: SHADOWS */
+   for (l = (Evas_Object_List *)o->layout_nodes; l; l = l->next)
+     {
+	Layout_Node *lnode, *nlnode;
+	
+	lnode = (Layout_Node *)l;
+	nlnode = (Layout_Node *)(l->next);
+	if ((lnode->layout.font.font) && (lnode->text))
+	  {
+	     int lin = 0;
+	     int inset = 0;
+	     
+	     if (lnode->layout.underline) lin++;
+	     if (lnode->layout.second_underline) lin++;
+	     if (lnode->layout.strikethrough) lin++;
+	     if (lnode->layout.backing) lin++;
+	     if ((lnode->layout.style == STYLE_SHADOW) ||
+		 (lnode->layout.style == STYLE_OUTLINE_SHADOW) ||
+		 (lnode->layout.style == STYLE_FAR_SHADOW) ||
+		 (lnode->layout.style == STYLE_OUTLINE_SOFT_SHADOW) ||
+		 (lnode->layout.style == STYLE_SOFT_SHADOW) ||
+		 (lnode->layout.style == STYLE_FAR_SOFT_SHADOW))
+	       {
+		  if (lin > 0) inset = ENFN->font_inset_get(ENDT, lnode->layout.font.font, lnode->text);
+		  if (lnode->layout.style == STYLE_SHADOW)
+		    {
+		       SET_COL(lnode->layout.shadow_color.r,
+			       lnode->layout.shadow_color.g,
+			       lnode->layout.shadow_color.b,
+			       lnode->layout.shadow_color.a);
+		       DRW_ELEMENTS(1, 1);
+		    }
+		  else if ((lnode->layout.style == STYLE_OUTLINE_SHADOW) ||
+			   (lnode->layout.style == STYLE_FAR_SHADOW))
+		    {
+		       SET_COL(lnode->layout.shadow_color.r,
+			       lnode->layout.shadow_color.g,
+			       lnode->layout.shadow_color.b,
+			       lnode->layout.shadow_color.a);
+		       DRW_ELEMENTS(2, 2);
+		    }
+		  else if ((lnode->layout.style == STYLE_OUTLINE_SOFT_SHADOW) ||
+			   (lnode->layout.style == STYLE_FAR_SOFT_SHADOW))
+		    {
+		       for (j = 0; j < 5; j++)
+			 {
+			    for (i = 0; i < 5; i++)
+			      {  
+				 if (vals[i][j] != 0)
+				   {
+				      SET_COL(lnode->layout.shadow_color.r,
+					      lnode->layout.shadow_color.g,
+					      lnode->layout.shadow_color.b,
+					      (lnode->layout.shadow_color.a * vals[i][j] * 50) / 255);
+				      DRW_ELEMENTS(i - 0, j - 0);
+				   }
+			      }
+			 }
+		    }
+		  else if (lnode->layout.style == STYLE_SOFT_SHADOW)
+		    {
+		       for (j = 0; j < 5; j++)
+			 {
+			    for (i = 0; i < 5; i++)
+			      {  
+				 if (vals[i][j] != 0)
+				   {
+				      SET_COL(lnode->layout.shadow_color.r,
+					      lnode->layout.shadow_color.g,
+					      lnode->layout.shadow_color.b,
+					      (lnode->layout.shadow_color.a * vals[i][j] * 50) / 255);
+				      DRW_ELEMENTS(i - 1, j - 1);
+				   }
+			      }
+			 }
+		    }
+	       }
+	  }
+     }
+   /* 3RD PASS: GLOWS */
+   for (l = (Evas_Object_List *)o->layout_nodes; l; l = l->next)
+     {
+	Layout_Node *lnode, *nlnode;
+	
+	lnode = (Layout_Node *)l;
+	nlnode = (Layout_Node *)(l->next);
+	if ((lnode->layout.font.font) && (lnode->text))
+	  {
+	     int lin = 0;
+	     int inset = 0;
+	     
+	     if (lnode->layout.underline) lin++;
+	     if (lnode->layout.second_underline) lin++;
+	     if (lnode->layout.strikethrough) lin++;
+	     if (lnode->layout.backing) lin++;
+	     if (lnode->layout.style == STYLE_GLOW)
+	       {
+		  if (lin > 0) inset = ENFN->font_inset_get(ENDT, lnode->layout.font.font, lnode->text);
+		  for (j = 0; j < 5; j++)
+		    {
+		       for (i = 0; i < 5; i++)
+			 {  
+			    if (vals[i][j] > 0)
+			      {
+				 if (vals[i][j] == 1)
+				   {
+				      SET_COL(lnode->layout.outer_glow_color.r,
+					      lnode->layout.outer_glow_color.g,
+					      lnode->layout.outer_glow_color.b,
+					      lnode->layout.outer_glow_color.a / 2);
+				   }
+				 else
+				   {
+				      SET_COL(lnode->layout.outer_glow_color.r,
+					      lnode->layout.outer_glow_color.g,
+					      lnode->layout.outer_glow_color.b,
+					      lnode->layout.outer_glow_color.a);
+				   }
+				 DRW_ELEMENTS(i - 2, j - 2);
+			      }
+			 }
+		    }
+		  for (j = 0; j < 5; j++)
+		    {
+		       for (i = 0; i < 5; i++)
+			 {  
+			    if (vals[i][j] > 2)
+			      {
+				 if (vals[i][j] == 3)
+				   {
+				      SET_COL(lnode->layout.glow_color.r,
+					      lnode->layout.glow_color.g,
+					      lnode->layout.glow_color.b,
+					      lnode->layout.glow_color.a / 2);
+				   }
+				 else
+				   {
+				      SET_COL(lnode->layout.glow_color.r,
+					      lnode->layout.glow_color.g,
+					      lnode->layout.glow_color.b,
+					      lnode->layout.glow_color.a);
+				   }
+				 DRW_ELEMENTS(i - 2, j - 2);
+			      }
+			 }
+		    }
+	       }
+	  }
+     }
+   /* 4TH PASS: OUTLINES */
+   for (l = (Evas_Object_List *)o->layout_nodes; l; l = l->next)
+     {
+	Layout_Node *lnode, *nlnode;
+	
+	lnode = (Layout_Node *)l;
+	nlnode = (Layout_Node *)(l->next);
+	if ((lnode->layout.font.font) && (lnode->text))
+	  {
+	     int lin = 0;
+	     int inset = 0;
+	     
+	     if (lnode->layout.underline) lin++;
+	     if (lnode->layout.second_underline) lin++;
+	     if (lnode->layout.strikethrough) lin++;
+	     if (lnode->layout.backing) lin++;
+	     if ((lnode->layout.style == STYLE_OUTLINE) ||
+		 (lnode->layout.style == STYLE_OUTLINE_SHADOW) ||
+		 (lnode->layout.style == STYLE_OUTLINE_SOFT_SHADOW))
+	       {
+		  if (lin > 0) inset = ENFN->font_inset_get(ENDT, lnode->layout.font.font, lnode->text);
+		  SET_COL(lnode->layout.outline_color.r,
+			  lnode->layout.outline_color.g,
+			  lnode->layout.outline_color.b,
+			  lnode->layout.outline_color.a);
+		  DRW_ELEMENTS(0, -1);
+		  DRW_ELEMENTS(0, 1);
+		  DRW_ELEMENTS(-1, 0);
+		  DRW_ELEMENTS(1, 0);
+	       }
+	  }
+     }
+   /* 5TH PASS: TEXT */
+   for (l = (Evas_Object_List *)o->layout_nodes; l; l = l->next)
+     {
+	Layout_Node *lnode, *nlnode;
+	
+	lnode = (Layout_Node *)l;
+	nlnode = (Layout_Node *)(l->next);
+	if ((lnode->layout.font.font) && (lnode->text))
+	  {
+	     int lin = 0;
+	     int inset = 0;
+	     
+	     if (lnode->layout.underline) lin++;
+	     if (lnode->layout.second_underline) lin++;
+	     if (lnode->layout.strikethrough) lin++;
+	     if (lnode->layout.backing) lin++;
+	     if (lin > 0)
+	       inset = ENFN->font_inset_get(ENDT, 
+					    lnode->layout.font.font,
+					    lnode->text);
 	     ENFN->context_color_set(output,
 				     context,
 				     (obj->cur.cache.clip.r * lnode->layout.color.r) / 255,
