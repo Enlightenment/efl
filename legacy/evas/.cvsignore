@@ -10,3 +10,9 @@ stamp-h
 stamp-h.in
 config.sub
 config.guess
+libtool
+config.h
+ltmain.sh
+ltconfig
+config.h.in
+libltdl
