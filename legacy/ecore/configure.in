@@ -744,7 +744,7 @@ use_fam="no"
 use_inotify="no"
 use_poll="no"
 
-AC_MSG_CHECKING(wheter ecore_file module is to be built)
+AC_MSG_CHECKING(whether ecore_file module is to be built)
 AC_ARG_ENABLE(ecore-file, 
 [  --disable-ecore-file              disable the ecore_file module], [
   if test "$enableval" = "yes"; then  
@@ -759,7 +759,7 @@ AC_ARG_ENABLE(ecore-file,
 ]
 )
 
-AC_MSG_CHECKING(wheter inotify is to be used for filemonitoring)
+AC_MSG_CHECKING(whether inotify is to be used for filemonitoring)
 AC_ARG_ENABLE(inotify, 
 [  --disable-inotify              disable inotify in the ecore_file module], [
   if test "$enableval" = "yes"; then  
@@ -785,7 +785,7 @@ if test "x$use_inotify" = "xyes"; then
   )
 fi
 
-#AC_MSG_CHECKING(wheter FAM is to be used for filemonitoring)
+#AC_MSG_CHECKING(whether FAM is to be used for filemonitoring)
 #AC_ARG_ENABLE(fam, 
 #[  --disable-fam              disable fam in the ecore_file module], [
 #  if test "$enableval" = "yes"; then  
@@ -813,7 +813,7 @@ fam_libs=""
 #  )
 #fi
 
-AC_MSG_CHECKING(wheter polling is to be used for filemonitoring)
+AC_MSG_CHECKING(whether polling is to be used for filemonitoring)
 AC_ARG_ENABLE(poll, 
 [  --disable-poll              disable poll in the ecore_file module], [
   if test "$enableval" = "yes"; then  
