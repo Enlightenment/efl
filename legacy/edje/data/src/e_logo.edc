@@ -247,7 +247,7 @@ collections {
 		  text:     "This is a longer test string";
 		  text_class: "plainjane";
 		  font:     "Vera";
-		  size:     6;
+		  size:     10;
 //		  fit:    0 1;
 //		  min:    1 1;
 		  align:   0.0 0.5;
@@ -583,7 +583,7 @@ collections {
 	       get_text_class("plainjane", font, size);
 	       snprintf(buf, 256, "%s SIZE: %f", font, size);
 	       emit("DEBUG...", buf); 
-	       set_text_class("plainjane", "Vera Bold", 8.0);
+	       set_text_class("plainjane", "Vera Bold", 10.0);
             }
         }   
 	program {
@@ -605,7 +605,7 @@ collections {
 	       snprintf(buf, 256, "**Mouse at** x: %i y: %i\n", w, h);
 	       emit("DEBUG...", buf);
 	       set_color_class("bg", 255, 255, 255, 255);
-	       set_text_class("plainjane", "Vera", 6.0); 
+	       set_text_class("plainjane", "Vera", 8.0);
             }
          }
 	 program {
