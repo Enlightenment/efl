@@ -148,4 +148,4 @@ libevas_la_DEPENDENCIES = \
 			  $(ENGINE_CAIRO_COMMON) \
 			  $(ENGINE_CAIRO_X11)
 
-libevas_la_LDFLAGS      = $(LDFLAGS) -version-info 1:0:0
+libevas_la_LDFLAGS      = -version-info 1:0:0

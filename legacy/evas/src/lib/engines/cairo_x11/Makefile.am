@@ -18,7 +18,7 @@ evas_engine.h \
 evas_engine.c \
 evas_x_main.c
 
-libevas_engine_cairo_x11_la_LIBADD       = @x_libs@ @CAIRO_LIBS@ $LDFLAGS
+libevas_engine_cairo_x11_la_LIBADD       = @x_libs@ @CAIRO_LIBS@
 
 libevas_engine_cairo_x11_la_DEPENDENCIES = \
 $(top_builddir)/config.h
