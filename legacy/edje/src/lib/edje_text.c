@@ -6,6 +6,7 @@
 #include "edje_private.h"
 
 #include <stdint.h>
+#include <assert.h>
 
 Edje_Text_Style _edje_text_styles[EDJE_TEXT_EFFECT_LAST];
 
@@ -432,6 +433,59 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
    return buf;
 }
 
+static void
+_edje_text_finalize(Edje *ed, Edje_Real_Part *ep,
+                    Edje_Calc_Params *params, Evas_Object *o, int i)
+{
+   unsigned char r = 0, g = 0, b = 0, a = 0;
+   int got_color = 1;
+
+   evas_object_move(o,
+	 ed->x + params->x + ep->offset.x + _edje_text_styles[ep->part->effect].members[i].x,
+	 ed->y + params->y + ep->offset.y + _edje_text_styles[ep->part->effect].members[i].y);
+
+   switch (_edje_text_styles[ep->part->effect].members[i].color)
+     {
+      case 0:
+	 r = params->color.r;
+	 g = params->color.g;
+	 b = params->color.b;
+	 a = params->color.a;
+	 break;
+      case 1:
+	 r = params->color2.r;
+	 g = params->color2.g;
+	 b = params->color2.b;
+	 a = params->color2.a;
+	 break;
+      case 2:
+	 r = params->color3.r;
+	 g = params->color3.g;
+	 b = params->color3.b;
+	 a = params->color3.a;
+	 break;
+      default:
+	 got_color = 0;
+	 break;
+     }
+
+   /* if this fails, we probably need to extend
+    * the switch statement :)
+    */
+   assert (got_color);
+
+   if (got_color)
+     {
+	a = (a * (_edje_text_styles[ep->part->effect].members[i].alpha + 1)) / 256;
+	evas_object_color_set(o, r, g, b, a);
+     }
+
+   if (params->visible)
+     evas_object_show(o);
+   else
+     evas_object_hide(o);
+}
+
 void
 _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 			Edje_Calc_Params *params,
@@ -638,6 +692,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 			 (params->color.a * (_edje_text_styles[ep->part->effect].members[0].alpha + 1)) / 256);
    if (params->visible) evas_object_show(ep->object);
    else evas_object_hide(ep->object);
+
      {
 	Evas_List *l;
 	int i;
@@ -652,29 +707,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	     
 	     evas_object_text_font_set(o, font, size);
 	     evas_object_text_text_set(o, text);
-	     evas_object_move(o, 
-			      ed->x + params->x + ep->offset.x + _edje_text_styles[ep->part->effect].members[i].x,
-			      ed->y + params->y + ep->offset.y + _edje_text_styles[ep->part->effect].members[i].y);
-	     if (_edje_text_styles[ep->part->effect].members[i].color == 0)
-	       evas_object_color_set(o, 
-				     params->color.r, 
-				     params->color.g, 
-				     params->color.b,
-				     (params->color.a * (_edje_text_styles[ep->part->effect].members[i].alpha + 1)) / 256);
-	     else if (_edje_text_styles[ep->part->effect].members[i].color == 1)
-	       evas_object_color_set(o, 
-				     params->color2.r, 
-				     params->color2.g, 
-				     params->color2.b,
-				     (params->color2.a * (_edje_text_styles[ep->part->effect].members[i].alpha + 1)) / 256);
-	     else if (_edje_text_styles[ep->part->effect].members[i].color == 2)
-	       evas_object_color_set(o, 
-				     params->color3.r, 
-				     params->color3.g, 
-				     params->color3.b, 
-				     (params->color3.a * (_edje_text_styles[ep->part->effect].members[i].alpha + 1)) / 256);
-	     if (params->visible) evas_object_show(o);
-	     else evas_object_hide(o);
+
+	     _edje_text_finalize(ed, ep, params, o, i);
 	  }
      }
 
