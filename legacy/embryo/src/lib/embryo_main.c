@@ -4,7 +4,19 @@
 static int _embryo_init_count = 0;
 
 /*** EXPORTED CALLS ***/
-   
+
+/**
+ * @defgroup Embryo_Library_Group Library Maintenance Functions
+ *
+ * Functions that start up and shutdown the Embryo library.
+ */
+
+/** 
+ * Initialises the Embryo library.
+ * @return  The number of times the library has been initialised without being
+ *          shut down.
+ * @ingroup Embryo_Library_Group
+ */   
 int
 embryo_init(void)
 {
@@ -16,6 +28,12 @@ embryo_init(void)
    return _embryo_init_count;
 }
 
+/**
+ * Shuts down the Embryo library.
+ * @return  The number of times the library has been initialised without being
+ *          shutdown.
+ * @ingroup Embryo_Library_Group
+ */
 int
 embryo_shutdown(void)
 {

@@ -1,8 +1,4 @@
 #!/bin/sh
-cp ./embryo.c.in ./embryo.c
-for I in `find ./src/lib -name "*.c" -print`; do
-  cat $I >> ./embryo.c
-done
 rm -rf ./doc/html ./doc/latex ./doc/man
 mkdir -p ./doc/html ./doc/latex ./doc/man
 doxygen

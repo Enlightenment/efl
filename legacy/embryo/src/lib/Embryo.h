@@ -10,46 +10,48 @@ extern "C" {
      {
 	EMBRYO_ERROR_NONE,
 	  /* reserve the first 15 error codes for exit codes of the abstract machine */
-	  EMBRYO_ERROR_EXIT,         /* forced exit */
-	  EMBRYO_ERROR_ASSERT,       /* assertion failed */
-	  EMBRYO_ERROR_STACKERR,     /* stack/heap collision */
-	  EMBRYO_ERROR_BOUNDS,       /* index out of bounds */
-	  EMBRYO_ERROR_MEMACCESS,    /* invalid memory access */
-	  EMBRYO_ERROR_INVINSTR,     /* invalid instruction */
-	  EMBRYO_ERROR_STACKLOW,     /* stack underflow */
-	  EMBRYO_ERROR_HEAPLOW,      /* heap underflow */
-	  EMBRYO_ERROR_CALLBACK,     /* no callback, or invalid callback */
-	  EMBRYO_ERROR_NATIVE,       /* native function failed */
-	  EMBRYO_ERROR_DIVIDE,       /* divide by zero */
-	  EMBRYO_ERROR_SLEEP,        /* go into sleepmode - code can be restarted */
+	  EMBRYO_ERROR_EXIT,         /** Forced exit */
+	  EMBRYO_ERROR_ASSERT,       /** Assertion failed */
+	  EMBRYO_ERROR_STACKERR,     /** Stack/heap collision */
+	  EMBRYO_ERROR_BOUNDS,       /** Index out of bounds */
+	  EMBRYO_ERROR_MEMACCESS,    /** Invalid memory access */
+	  EMBRYO_ERROR_INVINSTR,     /** Invalid instruction */
+	  EMBRYO_ERROR_STACKLOW,     /** Stack underflow */
+	  EMBRYO_ERROR_HEAPLOW,      /** Heap underflow */
+	  EMBRYO_ERROR_CALLBACK,     /** No callback, or invalid callback */
+	  EMBRYO_ERROR_NATIVE,       /** Native function failed */
+	  EMBRYO_ERROR_DIVIDE,       /** Divide by zero */
+	  EMBRYO_ERROR_SLEEP,        /** Go into sleepmode - code can be restarted */
 	  
-	  EMBRYO_ERROR_MEMORY = 16,  /* out of memory */
-	  EMBRYO_ERROR_FORMAT,       /* invalid file format */
-	  EMBRYO_ERROR_VERSION,      /* file is for a newer version of the Embryo_Program */
-	  EMBRYO_ERROR_NOTFOUND,     /* function not found */
-	  EMBRYO_ERROR_INDEX,        /* invalid index parameter (bad entry point) */
-	  EMBRYO_ERROR_DEBUG,        /* debugger cannot run */
-	  EMBRYO_ERROR_INIT,         /* Embryo_Program not initialized (or doubly initialized) */
-	  EMBRYO_ERROR_USERDATA,     /* unable to set user data field (table full) */
-	  EMBRYO_ERROR_INIT_JIT,     /* cannot initialize the JIT */
-	  EMBRYO_ERROR_PARAMS,       /* parameter error */
-	  EMBRYO_ERROR_DOMAIN,       /* domain error, expression result does not fit in range */
+	  EMBRYO_ERROR_MEMORY = 16,  /** Out of memory */
+	  EMBRYO_ERROR_FORMAT,       /** Invalid file format */
+	  EMBRYO_ERROR_VERSION,      /** File is for a newer version of the Embryo_Program */
+	  EMBRYO_ERROR_NOTFOUND,     /** Function not found */
+	  EMBRYO_ERROR_INDEX,        /** Invalid index parameter (bad entry point) */
+	  EMBRYO_ERROR_DEBUG,        /** Debugger cannot run */
+	  EMBRYO_ERROR_INIT,         /** Embryo_Program not initialized (or doubly initialized) */
+	  EMBRYO_ERROR_USERDATA,     /** Unable to set user data field (table full) */
+	  EMBRYO_ERROR_INIT_JIT,     /** Cannot initialize the JIT */
+	  EMBRYO_ERROR_PARAMS,       /** Parameter error */
+	  EMBRYO_ERROR_DOMAIN,       /** Domain error, expression result does not fit in range */
      };
 
    /* possible function type values that are enumerated */
-#define EMBRYO_FUNCTION_NONE 0x7fffffff /* an invalid/non existant function */
-#define EMBRYO_FUNCTION_MAIN -1         /* start at program entry point */
-#define EMBRYO_FUNCTION_CONT -2         /* continue from last address */
-   /* an invalid cell reference */
-#define EMBRYO_CELL_NONE     0x7fffffff /* an invalid cell reference */
+#define EMBRYO_FUNCTION_NONE 0x7fffffff /* An invalid/non existant function */
+#define EMBRYO_FUNCTION_MAIN -1         /* Start at program entry point */
+#define EMBRYO_FUNCTION_CONT -2         /* Continue from last address */
+  /** An invalid cell reference */
+#define EMBRYO_CELL_NONE     0x7fffffff 
    /* program run return values */
 #define EMBRYO_PROGRAM_OK    1
 #define EMBRYO_PROGRAM_SLEEP 2
 #define EMBRYO_PROGRAM_BUSY  3
 #define EMBRYO_PROGRAM_FAIL  0
 
-#define EMBRYO_FLOAT_TO_CELL(f) ( *((Embryo_Cell*)&f)) /* float to Embryo_Cell */
-#define EMBRYO_CELL_TO_FLOAT(c) ( *((float*)&c))       /* Embryo_Cell to float */
+/** Float to Embryo_Cell */
+#define EMBRYO_FLOAT_TO_CELL(f) ( *((Embryo_Cell*)&f))
+/** Embryo_Cell to float */
+#define EMBRYO_CELL_TO_FLOAT(c) ( *((float*)&c))
 
    typedef unsigned int                Embryo_UCell;
    typedef int                         Embryo_Cell;

@@ -8,6 +8,7 @@ hand-made tests. embryo_cc may not work if you compile using gcc 3.2.x. gcc
 we won't be jumping up and down, but be warned - gcc 3.2.x does not agree
 with embryo.
 
+To view the API docs, run ./gendoc and view doc/html/index.html.
 
 OK a lot of people ask this. What is Embryo?
 
