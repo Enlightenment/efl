@@ -49,53 +49,23 @@ typedef struct _Ecore_File_Monitor       Ecore_File_Monitor;
 typedef struct _Ecore_File_Monitor_Event Ecore_File_Monitor_Event;
 
 typedef enum {
-     ECORE_FILE_TYPE_NONE,
-     ECORE_FILE_TYPE_FILE,
-     ECORE_FILE_TYPE_DIRECTORY
-} Ecore_File_Type;
-
-typedef enum {
      ECORE_FILE_EVENT_NONE,
-     ECORE_FILE_EVENT_EXISTS,
-     ECORE_FILE_EVENT_CREATED,
-     ECORE_FILE_EVENT_DELETED,
-     ECORE_FILE_EVENT_CHANGED
+     ECORE_FILE_EVENT_CREATED_FILE,
+     ECORE_FILE_EVENT_CREATED_DIRECTORY,
+     ECORE_FILE_EVENT_DELETED_FILE,
+     ECORE_FILE_EVENT_DELETED_DIRECTORY,
+     ECORE_FILE_EVENT_DELETED_SELF,
+     ECORE_FILE_EVENT_MODIFIED
 } Ecore_File_Event;
-
-#if 0
-struct _Ecore_File_Monitor {
-     void (*func) (void *data,
-		   Ecore_File_Monitor *ecore_file_monitor,
-		   Ecore_File_Type type,
-		   Ecore_File_Event event,
-		   const char *path);
-
-     char            *path;
-     Ecore_File_Type  type;
-     void            *data;
-};
-#endif
-
-#if 0
-struct _Ecore_File_Monitor_Event {
-     Ecore_File_Monitor *ecore_file_monitor;
-     Ecore_File_Type     type;
-     Ecore_File_Event    event;
-     char               *path;
-     void               *data;
-};
-#endif
-
-#define ECORE_FILE_MONITOR(x) ((Ecore_File_Monitor *)(x))
 
 EAPI Ecore_File_Monitor *ecore_file_monitor_add(const char *path,
 						void (*func) (void *data,
 							      Ecore_File_Monitor *ecore_file_monitor,
-							      Ecore_File_Type type,
 							      Ecore_File_Event event,
 							      const char *path),
 					       	void *data);
 EAPI void                ecore_file_monitor_del(Ecore_File_Monitor *ecore_file_monitor);
-EAPI Ecore_File_Type     ecore_file_monitor_type_get(Ecore_File_Monitor *ecore_file_monitor);
+EAPI const char         *ecore_file_monitor_path_get(Ecore_File_Monitor *ecore_file_monitor);
+
 
 #endif

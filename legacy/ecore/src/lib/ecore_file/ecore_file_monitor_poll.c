@@ -14,13 +14,23 @@
  * - Change poll time
  */
 
-typedef struct _Ecore_File             Ecore_File;
+typedef struct _Ecore_File_Monitor_Poll Ecore_File_Monitor_Poll;
+typedef struct _Ecore_File              Ecore_File;
+
+#define ECORE_FILE_MONITOR_POLL(x) ((Ecore_File_Monitor_Poll *)(x))
+
+struct _Ecore_File_Monitor_Poll
+{
+   Ecore_File_Monitor  monitor;
+   int                 mtime;
+   unsigned char       deleted;
+};
 
 struct _Ecore_File
 {
-   char            *name;
-   int              mtime;
-   Ecore_File_Type  type;
+   char          *name;
+   int            mtime;
+   unsigned char  is_dir;
 };
 
 #define ECORE_FILE_INTERVAL_MIN  1.0
@@ -32,18 +42,18 @@ static Ecore_Timer *_timer = NULL;
 static Evas_List   *_monitors = NULL;
 static int          _lock = 0;
 
-static int                         _ecore_file_monitor_handler(void *data);
-static void                        _ecore_file_monitor_check(Ecore_File_Monitor *em);
-static int                         _ecore_file_monitor_checking(Ecore_File_Monitor *em, char *name);
+static int         _ecore_file_monitor_poll_handler(void *data);
+static void        _ecore_file_monitor_poll_check(Ecore_File_Monitor *em);
+static int         _ecore_file_monitor_poll_checking(Ecore_File_Monitor *em, char *name);
 
 int
-ecore_file_monitor_init(void)
+ecore_file_monitor_poll_init(void)
 {
    return 1;
 }
 
 int
-ecore_file_monitor_shutdown(void)
+ecore_file_monitor_poll_shutdown(void)
 {
    Evas_List *l;
    for (l = _monitors; l;)
@@ -64,12 +74,11 @@ ecore_file_monitor_shutdown(void)
 }
 
 Ecore_File_Monitor *
-ecore_file_monitor_add(const char *path,
-		       void (*func) (void *data, Ecore_File_Monitor *em,
-				     Ecore_File_Type type,
-				     Ecore_File_Event event,
-				     const char *path),
-		       void *data)
+ecore_file_monitor_poll_add(const char *path,
+			    void (*func) (void *data, Ecore_File_Monitor *em,
+					  Ecore_File_Event event,
+					  const char *path),
+			    void *data)
 {
    Ecore_File_Monitor *em;
    int len;
@@ -77,11 +86,11 @@ ecore_file_monitor_add(const char *path,
    if (!path) return NULL;
    if (!func) return NULL;
 
-   em = calloc(1, sizeof(Ecore_File_Monitor));
+   em = calloc(1, sizeof(Ecore_File_Monitor_Poll));
    if (!em) return NULL;
 
    if (!_timer)
-     _timer = ecore_timer_add(_interval, _ecore_file_monitor_handler, NULL);
+     _timer = ecore_timer_add(_interval, _ecore_file_monitor_poll_handler, NULL);
    else
      ecore_timer_interval_set(_timer, ECORE_FILE_INTERVAL_MIN);
 
@@ -93,15 +102,10 @@ ecore_file_monitor_add(const char *path,
    em->func = func;
    em->data = data;
 
-   em->mtime = ecore_file_mod_time(em->path);
+   ECORE_FILE_MONITOR_POLL(em)->mtime = ecore_file_mod_time(em->path);
    if (ecore_file_exists(em->path))
      {
-	em->type = ecore_file_is_dir(em->path) ?
-		   ECORE_FILE_TYPE_DIRECTORY :
-		   ECORE_FILE_TYPE_FILE;
-
-	em->func(em->data, em, em->type, ECORE_FILE_EVENT_EXISTS, em->path);
-	if (em->type == ECORE_FILE_TYPE_DIRECTORY)
+	if (ecore_file_is_dir(em->path))
 	  {
 	     /* Check for subdirs */
 	     Evas_List *files, *l;
@@ -124,10 +128,7 @@ ecore_file_monitor_add(const char *path,
 		  snprintf(buf, sizeof(buf), "%s/%s", em->path, file);
 		  f->name = file;
 		  f->mtime = ecore_file_mod_time(buf);
-		  f->type = ecore_file_is_dir(buf) ?
-			    ECORE_FILE_TYPE_DIRECTORY :
-			    ECORE_FILE_TYPE_FILE;
-		  em->func(em->data, em, f->type, ECORE_FILE_EVENT_EXISTS, buf);
+		  f->is_dir = ecore_file_is_dir(buf);
 		  em->files = evas_list_append(em->files, f);
 	       }
 	     evas_list_free(files);
@@ -135,8 +136,8 @@ ecore_file_monitor_add(const char *path,
      }
    else
      {
-	em->type = ECORE_FILE_TYPE_NONE;
-	em->func(em->data, em, em->type, ECORE_FILE_EVENT_DELETED, em->path);
+	ecore_file_monitor_poll_del(em);
+	return NULL;
      }
 
    _monitors = evas_list_append(_monitors, em);
@@ -145,13 +146,13 @@ ecore_file_monitor_add(const char *path,
 }
 
 void
-ecore_file_monitor_del(Ecore_File_Monitor *em)
+ecore_file_monitor_poll_del(Ecore_File_Monitor *em)
 {
    Evas_List *l;
 
    if (_lock)
      {
-	em->deleted = 1;
+	ECORE_FILE_MONITOR_POLL(em)->deleted = 1;
 	return;
      }
 
@@ -179,7 +180,7 @@ ecore_file_monitor_del(Ecore_File_Monitor *em)
 }
 
 static int
-_ecore_file_monitor_handler(void *data __UNUSED__)
+_ecore_file_monitor_poll_handler(void *data __UNUSED__)
 {
    Evas_List *monitor;
 
@@ -191,7 +192,7 @@ _ecore_file_monitor_handler(void *data __UNUSED__)
 
 	em = monitor->data;
 	monitor = monitor->next;
-	_ecore_file_monitor_check(em);
+	_ecore_file_monitor_poll_check(em);
      }
    _lock = 0;
    if (_interval > ECORE_FILE_INTERVAL_MAX)
@@ -204,179 +205,132 @@ _ecore_file_monitor_handler(void *data __UNUSED__)
 
 	em = monitor->data;
 	monitor = monitor->next;
-	if (em->deleted)
+	if (ECORE_FILE_MONITOR_POLL(em)->deleted)
 	  ecore_file_monitor_del(em);
      }
    return 1;
 }
 
 static void
-_ecore_file_monitor_check(Ecore_File_Monitor *em)
+_ecore_file_monitor_poll_check(Ecore_File_Monitor *em)
 {
    int mtime;
+   int is_dir;
 
    mtime = ecore_file_mod_time(em->path);
-   switch (em->type)
+   is_dir = ecore_file_is_dir(em->path);
+   if (mtime < ECORE_FILE_MONITOR_POLL(em)->mtime)
      {
-      case ECORE_FILE_TYPE_FILE:
-	 if (mtime < em->mtime)
-	   {
-	      em->func(em->data, em, em->type, ECORE_FILE_EVENT_DELETED, em->path);
-	      em->type = ECORE_FILE_TYPE_NONE;
-	      _interval = ECORE_FILE_INTERVAL_MIN;
-	   }
-	 else if (mtime > em->mtime)
-	   {
-	      em->func(em->data, em, em->type, ECORE_FILE_EVENT_CHANGED, em->path);
-	      _interval = ECORE_FILE_INTERVAL_MIN;
-	   }
-	 break;
-      case ECORE_FILE_TYPE_DIRECTORY:
-	 if (mtime < em->mtime)
-	   {
-	      /* Deleted */
-	      Evas_List *l;
+	Evas_List *l;
+	Ecore_File_Event event;
 
-	      /* Notify all files deleted */
-	      for (l = em->files; l;)
-		{
-		   Ecore_File *f;
-		   char buf[PATH_MAX];
+	/* Notify all files deleted */
+	for (l = em->files; l;)
+	  {
+	     Ecore_File *f;
+	     char buf[PATH_MAX];
 
-		   f = l->data;
-		   l = l->next;
-		   snprintf(buf, sizeof(buf), "%s/%s", em->path, f->name);
-		   em->func(em->data, em, f->type, ECORE_FILE_EVENT_DELETED, buf);
-		   free(f->name);
-		   free(f);
-		}
-	      em->files = evas_list_free(em->files);
-	      em->func(em->data, em, em->type, ECORE_FILE_EVENT_DELETED, em->path);
-	      em->type = ECORE_FILE_TYPE_NONE;
-	      _interval = ECORE_FILE_INTERVAL_MIN;
-	   }
-	 else
-	   {
-	      Evas_List *l;
-
-	      /* Check for changed files */
-	      for (l = em->files; l;)
-		{
-		   Ecore_File *f;
-		   char buf[PATH_MAX];
-		   int mtime;
-
-		   f = l->data;
-		   l = l->next;
-		   snprintf(buf, sizeof(buf), "%s/%s", em->path, f->name);
-		   mtime = ecore_file_mod_time(buf);
-		   if (mtime < f->mtime)
-		     {
-			em->func(em->data, em, f->type, ECORE_FILE_EVENT_DELETED, buf);
-			em->files = evas_list_remove(em->files, f);
-			free(f->name);
-			free(f);
-			_interval = ECORE_FILE_INTERVAL_MIN;
-		     }
-		   else if (mtime > f->mtime)
-		     {
-			em->func(em->data, em, f->type, ECORE_FILE_EVENT_CHANGED, buf);
-			_interval = ECORE_FILE_INTERVAL_MIN;
-		     }
-		   f->mtime = mtime;
-		}
-
-	      /* Check for new files */
-	      if (em->mtime < mtime)
-		{
-		   Evas_List *files;
-
-		   /* Files have been added or removed */
-		   files = ecore_file_ls(em->path);
-		   for (l = files; l; l = l->next)
-		     {
-			Ecore_File *f;
-			char *file;
-			char buf[PATH_MAX];
-
-			file = l->data;
-			if (_ecore_file_monitor_checking(em, file))
-			  {
-			     free(file);
-			     continue;
-			  }
-
-			snprintf(buf, sizeof(buf), "%s/%s", em->path, file);
-			f = calloc(1, sizeof(Ecore_File));
-			if (!f)
-			  {
-			     free(file);
-			     continue;
-			  }
-
-			f->name = file;
-			f->mtime = ecore_file_mod_time(buf);
-			f->type = ecore_file_is_dir(buf) ?
-				  ECORE_FILE_TYPE_DIRECTORY :
-				  ECORE_FILE_TYPE_FILE;
-			em->func(em->data, em, f->type, ECORE_FILE_EVENT_CREATED, buf);
-			em->files = evas_list_append(em->files, f);
-		     }
-		   em->func(em->data, em, em->type, ECORE_FILE_EVENT_CHANGED, em->path);
-		   _interval = ECORE_FILE_INTERVAL_MIN;
-		}
-	   }
-	 break;
-      case ECORE_FILE_TYPE_NONE:
-	 if (mtime > em->mtime)
-	   {
-	      /* Something has been created! */
-	      em->type = ecore_file_is_dir(em->path) ?
-			 ECORE_FILE_TYPE_DIRECTORY :
-			 ECORE_FILE_TYPE_FILE;
-
-	      em->func(em->data, em, em->type, ECORE_FILE_EVENT_CREATED, em->path);
-	      if (em->type == ECORE_FILE_TYPE_DIRECTORY)
-		{
-		   /* Check for subdirs */
-		   Evas_List *files, *l;
-
-		   em->func(em->data, em, em->type, ECORE_FILE_EVENT_CREATED, em->path);
-		   files = ecore_file_ls(em->path);
-		   for (l = files; l; l = l->next)
-		     {
-			Ecore_File *f;
-			char *file;
-			char buf[PATH_MAX];
-
-			file = l->data;
-			snprintf(buf, sizeof(buf), "%s/%s", em->path, file);
-			f = calloc(1, sizeof(Ecore_File));
-			if (!f)
-			  {
-			     free(file);
-			     continue;
-			  }
-
-			f->name = file;
-			f->mtime = ecore_file_mod_time(buf);
-			f->type = ecore_file_is_dir(buf) ?
-			   ECORE_FILE_TYPE_DIRECTORY :
-			   ECORE_FILE_TYPE_FILE;
-			em->func(em->data, em, f->type, ECORE_FILE_EVENT_CREATED, buf);
-			em->files = evas_list_append(em->files, f);
-		     }
-		   evas_list_free(files);
-		}
-	      _interval = ECORE_FILE_INTERVAL_MIN;
-	   }
-	 break;
+	     f = l->data;
+	     l = l->next;
+	     snprintf(buf, sizeof(buf), "%s/%s", em->path, f->name);
+	     if (f->is_dir)
+	       event = ECORE_FILE_EVENT_DELETED_DIRECTORY;
+	     else
+	       event = ECORE_FILE_EVENT_DELETED_FILE;
+	     em->func(em->data, em, event, buf);
+	     free(f->name);
+	     free(f);
+	  }
+	em->files = evas_list_free(em->files);
+	em->func(em->data, em, ECORE_FILE_EVENT_DELETED_SELF, em->path);
+	_interval = ECORE_FILE_INTERVAL_MIN;
      }
-   em->mtime = mtime;
+   else
+     {
+	Evas_List *l;
+
+	/* Check for changed files */
+	for (l = em->files; l;)
+	  {
+	     Ecore_File *f;
+	     char buf[PATH_MAX];
+	     int mtime;
+	     Ecore_File_Event event;
+
+	     f = l->data;
+	     l = l->next;
+	     snprintf(buf, sizeof(buf), "%s/%s", em->path, f->name);
+	     mtime = ecore_file_mod_time(buf);
+	     if (mtime < f->mtime)
+	       {
+		  if (f->is_dir)
+		    event = ECORE_FILE_EVENT_DELETED_DIRECTORY;
+		  else
+		    event = ECORE_FILE_EVENT_DELETED_FILE;
+
+		  em->func(em->data, em, event, buf);
+		  em->files = evas_list_remove(em->files, f);
+		  free(f->name);
+		  free(f);
+		  _interval = ECORE_FILE_INTERVAL_MIN;
+	       }
+	     else if ((mtime > f->mtime) && !(f->is_dir))
+	       {
+		  em->func(em->data, em, ECORE_FILE_EVENT_MODIFIED, buf);
+		  _interval = ECORE_FILE_INTERVAL_MIN;
+	       }
+	     f->mtime = mtime;
+	  }
+
+	/* Check for new files */
+	if (ECORE_FILE_MONITOR_POLL(em)->mtime < mtime)
+	  {
+	     Evas_List *files;
+
+	     /* Files have been added or removed */
+	     files = ecore_file_ls(em->path);
+	     for (l = files; l; l = l->next)
+	       {
+		  Ecore_File *f;
+		  char *file;
+		  char buf[PATH_MAX];
+		  Ecore_File_Event event;
+
+		  file = l->data;
+		  if (_ecore_file_monitor_poll_checking(em, file))
+		    {
+		       free(file);
+		       continue;
+		    }
+
+		  snprintf(buf, sizeof(buf), "%s/%s", em->path, file);
+		  f = calloc(1, sizeof(Ecore_File));
+		  if (!f)
+		    {
+		       free(file);
+		       continue;
+		    }
+
+		  f->name = file;
+		  f->mtime = ecore_file_mod_time(buf);
+		  f->is_dir = ecore_file_is_dir(buf);
+		  if (f->is_dir)
+		    event = ECORE_FILE_EVENT_CREATED_DIRECTORY;
+		  else
+		    event = ECORE_FILE_EVENT_CREATED_FILE;
+		  em->func(em->data, em, event, buf);
+		  em->files = evas_list_append(em->files, f);
+	       }
+	     if (!ecore_file_is_dir(em->path))
+	       em->func(em->data, em, ECORE_FILE_EVENT_MODIFIED, em->path);
+	     _interval = ECORE_FILE_INTERVAL_MIN;
+	  }
+     }
+   ECORE_FILE_MONITOR_POLL(em)->mtime = mtime;
 }
 
 static int
-_ecore_file_monitor_checking(Ecore_File_Monitor *em, char *name)
+_ecore_file_monitor_poll_checking(Ecore_File_Monitor *em, char *name)
 {
    Evas_List *l;
 

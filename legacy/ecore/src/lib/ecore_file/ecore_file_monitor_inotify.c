@@ -5,81 +5,78 @@
 
 /*
  * TODO:
- * - Everything!
  */
 
 #ifdef HAVE_INOTIFY
 
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <linux/inotify.h>
+
 typedef struct _Ecore_File_Monitor_Inotify Ecore_File_Monitor_Inotify;
-typedef struct _Ecore_File                 Ecore_File;
 
 #define ECORE_FILE_MONITOR_INOTIFY(x) ((Ecore_File_Monitor_Inotify *)(x))
 
 struct _Ecore_File_Monitor_Inotify
 {
    Ecore_File_Monitor  monitor;
-   int                 fd;
-   Evas_List          *files;
-   unsigned char       deleted;
+   int                 wd;
 };
 
-struct _Ecore_File
-{
-   char            *name;
-   int              mtime;
-   Ecore_File_Type  type;
-};
+static Ecore_Fd_Handler *_fdh = NULL;
+static Evas_List        *_monitors = NULL;
 
-static Ecore_Event_Handler *_eh;
-static Evas_List           *_monitors = NULL;
-static int                  _lock = 0;
-
-static int                         _ecore_file_monitor_handler(void *data, int type, void *event);
-static void                        _ecore_file_monitor_check(Ecore_File_Monitor *em);
-static int                         _ecore_file_monitor_checking(Ecore_File_Monitor *em, char *path);
+static int                 _ecore_file_monitor_inotify_handler(void *data, Ecore_Fd_Handler *fdh);
+static Ecore_File_Monitor *_ecore_file_monitor_inotify_monitor_find(int wd);
+static void                _ecore_file_monitor_inotify_events(Ecore_File_Monitor *em,
+							      char *file, int mask);
 
 int
-ecore_file_monitor_init(void)
+ecore_file_monitor_inotify_init(void)
 {
-   _eh = ecore_event_handler_add(ECORE_EVENT_SIGNAL_REALTIME, _ecore_file_monitor_handler, NULL);
+   int fd;
+
+   fd = open("/dev/inotify", O_RDONLY);
+   if (fd < 0)
+     return 0;
+
+   _fdh = ecore_main_fd_handler_add(fd, ECORE_FD_READ, _ecore_file_monitor_inotify_handler,
+				    NULL, NULL, NULL);
+   if (!_fdh)
+     {
+	close(fd);
+	return 0;
+     }
    return 1;
 }
 
 int
-ecore_file_monitor_shutdown(void)
+ecore_file_monitor_inotify_shutdown(void)
 {
-   Evas_List *l;
+   int fd;
 
-   if (_eh) ecore_event_handler_del(_eh);
-   for (l = _monitors; l;)
+   if (_fdh)
      {
-	Ecore_File_Monitor *em;
-
-	em = l->data;
-	l = l->next;
-	ecore_file_monitor_del(em);
+	fd = ecore_main_fd_handler_fd_get(_fdh);
+	ecore_main_fd_handler_del(_fdh);
+	close(fd);
      }
-   evas_list_free(_monitors);
    return 1;
 }
 
 Ecore_File_Monitor *
-ecore_file_monitor_add(const char *path,
-		       void (*func) (void *data, Ecore_File_Monitor *em,
-				     Ecore_File_Type type,
-				     Ecore_File_Event event,
-				     const char *path),
-		       void *data)
+ecore_file_monitor_inotify_add(const char *path,
+			       void (*func) (void *data, Ecore_File_Monitor *em,
+					     Ecore_File_Event event,
+					     const char *path),
+			       void *data)
 {
    Ecore_File_Monitor *em;
-   Ecore_File_Monitor_Inotify *emd;
    int len;
 
-   if (!path) return NULL;
-   if (!func) return NULL;
-
-   emd = calloc(1, sizeof(Ecore_File_Monitor_Inotify));
-   em = ECORE_FILE_MONITOR(emd);
+   em = calloc(1, sizeof(Ecore_File_Monitor_Inotify));
    if (!em) return NULL;
 
    em->func = func;
@@ -88,62 +85,31 @@ ecore_file_monitor_add(const char *path,
    em->path = strdup(path);
    len = strlen(em->path);
    if (em->path[len - 1] == '/')
-     em->path[len - 1] = '\0';
+     em->path[len - 1] = 0;
 
    if (ecore_file_exists(em->path))
      {
-	em->type = ecore_file_is_dir(em->path) ?
-		   ECORE_FILE_TYPE_DIRECTORY :
-		   ECORE_FILE_TYPE_FILE;
+	struct inotify_watch_request request;
 
-	if (em->type == ECORE_FILE_TYPE_DIRECTORY)
+	request.name = em->path;
+	request.mask = IN_MODIFY|
+		       IN_MOVED_FROM|IN_MOVED_TO|
+		       IN_DELETE_SUBDIR|IN_DELETE_FILE|
+		       IN_CREATE_SUBDIR|IN_CREATE_FILE|
+		       IN_DELETE_SELF|IN_UNMOUNT;
+	ECORE_FILE_MONITOR_INOTIFY(em)->wd = ioctl(ecore_main_fd_handler_fd_get(_fdh),
+						   INOTIFY_WATCH, &request);
+	if (ECORE_FILE_MONITOR_INOTIFY(em)->wd < 0)
 	  {
-	     /* Check for subdirs */
-	     Evas_List *files, *l;
-
-	     files = ecore_file_ls(em->path);
-	     for (l = files; l; l = l->next)
-	       {
-		  Ecore_File *f;
-		  char *file;
-		  char buf[PATH_MAX];
-
-		  file = l->data;
-		  f = calloc(1, sizeof(Ecore_File));
-		  if (!f)
-		    {
-		       free(file);
-		       continue;
-		    }
-
-		  snprintf(buf, sizeof(buf), "%s/%s", em->path, file);
-		  f->name = file;
-		  f->mtime = ecore_file_mod_time(buf);
-		  f->type = ecore_file_is_dir(buf) ?
-			    ECORE_FILE_TYPE_DIRECTORY :
-			    ECORE_FILE_TYPE_FILE;
-		  em->func(em->data, em, f->type, ECORE_FILE_EVENT_EXISTS, buf);
-		  emd->files = evas_list_append(emd->files, f);
-	       }
-	     evas_list_free(files);
-
-	     emd->fd = open(em->path, O_RDONLY);
-	     if (fcntl(emd->fd, F_SETSIG, SIGRTMIN + 1))
-	       printf("ERROR: F_SETSIG\n");
-	     if (fcntl(emd->fd, F_NOTIFY, DN_ACCESS|DN_MODIFY|DN_CREATE|DN_DELETE|DN_MULTISHOT))
-	       printf("ERROR: F_NOTIFY\n");
-	  }
-	else
-	  {
-	     /* TODO: We do not support monitoring files! */
-	     free(em);
+	     printf("ioctl error\n");
+	     ecore_file_monitor_inotify_del(em);
 	     return NULL;
 	  }
      }
    else
      {
-	em->type = ECORE_FILE_TYPE_NONE;
-	em->func(em->data, em, em->type, ECORE_FILE_EVENT_DELETED, em->path);
+	ecore_file_monitor_inotify_del(em);
+	return NULL;
      }
 
    _monitors = evas_list_append(_monitors, em);
@@ -152,165 +118,106 @@ ecore_file_monitor_add(const char *path,
 }
 
 void
-ecore_file_monitor_del(Ecore_File_Monitor *em)
+ecore_file_monitor_inotify_del(Ecore_File_Monitor *em)
 {
-   Ecore_File_Monitor_Inotify *emd;
-   Evas_List *l;
-
-   emd = ECORE_FILE_MONITOR_INOTIFY(em);
-   if (_lock)
-     {
-	emd->deleted = 1;
-	return;
-     }
-   close(emd->fd);
-   /* Remove files */
-   for (l = emd->files; l; l = l->next)
-     {
-	Ecore_File *f;
-	f = l->data;
-	free(f->name);
-	free(f);
-     }
-   evas_list_free(emd->files);
+   int fd;
 
    _monitors = evas_list_remove(_monitors, em);
+
+   fd = ecore_main_fd_handler_fd_get(_fdh);
+   if (ECORE_FILE_MONITOR_INOTIFY(em)->wd)
+     ioctl(fd, INOTIFY_IGNORE, ECORE_FILE_MONITOR_INOTIFY(em)->wd);
    free(em->path);
    free(em);
 }
 
 static int
-_ecore_file_monitor_handler(void *data, int type, void *event)
+_ecore_file_monitor_inotify_handler(void *data, Ecore_Fd_Handler *fdh)
 {
-   Ecore_Event_Signal_Realtime *ev;
-   Evas_List *monitor;
+   Ecore_File_Monitor *em;
+   char buffer[16384];
+   struct inotify_event *event;
+   int i = 0;
+   int event_size;
+   ssize_t size;
 
-   ev = event;
-   _lock = 1;
-   for (monitor = _monitors; monitor;)
+   size = read(ecore_main_fd_handler_fd_get(fdh), buffer, sizeof(buffer));
+   while (i < size)
      {
-	Ecore_File_Monitor *em;
-	Ecore_File_Monitor_Inotify *emd;
+	event = (struct inotify_event *)&buffer[i];
+	event_size = sizeof(struct inotify_event) + event->len;
+	i += event_size;
 
-	em = monitor->data;
-	emd = ECORE_FILE_MONITOR_INOTIFY(em);
-	monitor = monitor->next;
+	em = _ecore_file_monitor_inotify_monitor_find(event->wd);
+	if (!em) continue;
 
-	if (emd->fd == ev->data.si_fd)
-	  _ecore_file_monitor_check(em);
+	_ecore_file_monitor_inotify_events(em, event->name, event->mask);
      }
-   _lock = 0;
-   for (monitor = _monitors; monitor;)
-     {
-	Ecore_File_Monitor *em;
-	Ecore_File_Monitor_Inotify *emd;
 
-	em = monitor->data;
-	emd = ECORE_FILE_MONITOR_INOTIFY(em);
-	monitor = monitor->next;
-
-	if (emd->deleted)
-	  ecore_file_monitor_del(em);
-     }
    return 1;
 }
 
-#if 0
-static Ecore_File_Monitor_Request *
-_ecore_file_monitor_request_find(Ecore_File_Monitor *em, char *path)
+static Ecore_File_Monitor *
+_ecore_file_monitor_inotify_monitor_find(int wd)
 {
    Evas_List *l;
 
-   for (l = em->requests; l; l = l->next)
+   for (l = _monitors; l; l = l->next)
      {
-	Ecore_File_Monitor_Request *er;
+	Ecore_File_Monitor *em;
 
-	er = l->data;
-	if (!strcmp(er->path, path))
-	  return er;
+	em = l->data;
+	if (ECORE_FILE_MONITOR_INOTIFY(em)->wd == wd)
+	  return em;
      }
    return NULL;
 }
-#endif
 
 static void
-_ecore_file_monitor_check(Ecore_File_Monitor *em)
+_ecore_file_monitor_inotify_events(Ecore_File_Monitor *em, char *file, int mask)
 {
-   Ecore_File_Monitor_Inotify *emd;
-   Evas_List *files, *l;
+   char buf[PATH_MAX];
+   if (file)
+     snprintf(buf, sizeof(buf), "%s/%s", em->path, file);
+   else
+     strcpy(buf, em->path);
 
-   /* Check for changed files */
-   emd = ECORE_FILE_MONITOR_INOTIFY(em);
-   for (l = emd->files; l;)
+   if (mask & IN_MODIFY)
      {
-	Ecore_File *f;
-	char buf[PATH_MAX];
-	int mtime;
-
-	f = l->data;
-	l = l->next;
-	snprintf(buf, sizeof(buf), "%s/%s", em->path, f->name);
-	mtime = ecore_file_mod_time(buf);
-	if (mtime < f->mtime)
-	  {
-	     em->func(em->data, em, f->type, ECORE_FILE_EVENT_DELETED, buf);
-	     emd->files = evas_list_remove(emd->files, f);
-	     free(f->name);
-	     free(f);
-	  }
-	else if (mtime > f->mtime)
-	  em->func(em->data, em, f->type, ECORE_FILE_EVENT_CHANGED, buf);
-	f->mtime = mtime;
+	if (!ecore_file_is_dir(buf))
+	  em->func(em->data, em, ECORE_FILE_EVENT_MODIFIED, buf);
      }
-
-   files = ecore_file_ls(em->path);
-   for (l = files; l; l = l->next)
+   if (mask & IN_MOVED_FROM)
      {
-	Ecore_File *f;
-	char *file;
-	char buf[PATH_MAX];
-
-	file = l->data;
-	if (_ecore_file_monitor_checking(em, file))
-	  {
-	    free(file);
-	    continue;
-	  }
-
-	f = calloc(1, sizeof(Ecore_File));
-	if (!f)
-	  {
-	    free(file);
-	    continue;
-	  }
-
-	snprintf(buf, sizeof(buf), "%s/%s", em->path, file);
-	f->name = file;
-	f->mtime = ecore_file_mod_time(buf);
-	f->type = ecore_file_is_dir(buf) ?
-		  ECORE_FILE_TYPE_DIRECTORY :
-		  ECORE_FILE_TYPE_FILE;
-	em->func(em->data, em, f->type, ECORE_FILE_EVENT_CREATED, buf);
-	emd->files = evas_list_append(emd->files, f);
+	printf("MOVE_FROM ");
      }
-}
-
-static int
-_ecore_file_monitor_checking(Ecore_File_Monitor *em, char *name)
-{
-   Ecore_File_Monitor_Inotify *emd;
-   Evas_List *l;
-
-   emd = ECORE_FILE_MONITOR_INOTIFY(em);
-   for (l = emd->files; l; l = l->next)
+   if (mask & IN_MOVED_TO)
      {
-	Ecore_File *f;
-
-	f = l->data;
-	if (!strcmp(f->name, name))
-	  return 1;
+	printf("MOVE_TO ");
      }
-
-   return 0;
+   if (mask & IN_DELETE_SUBDIR)
+     {
+	em->func(em->data, em, ECORE_FILE_EVENT_DELETED_DIRECTORY, buf);
+     }
+   if (mask & IN_DELETE_FILE)
+     {
+	em->func(em->data, em, ECORE_FILE_EVENT_DELETED_FILE, buf);
+     }
+   if (mask & IN_CREATE_SUBDIR)
+     {
+	em->func(em->data, em, ECORE_FILE_EVENT_CREATED_DIRECTORY, buf);
+     }
+   if (mask & IN_CREATE_FILE)
+     {
+	em->func(em->data, em, ECORE_FILE_EVENT_CREATED_FILE, buf);
+     }
+   if (mask & IN_DELETE_SELF)
+     {
+	em->func(em->data, em, ECORE_FILE_EVENT_DELETED_SELF, em->path);
+     }
+   if (mask & IN_UNMOUNT)
+     {
+	printf("UNMOUNT ");
+     }
 }
 #endif

@@ -6,7 +6,7 @@
 /*
  * TODO:
  * - When several subdirectories are created really fast, the code
- *   doesn't keep up! Putting in a random printf() makes it work..
+ *   doesn't keep up!
  * - Same for deletion of files in deleted directories!
  */
 
@@ -17,48 +17,46 @@
 typedef struct _Ecore_File_Monitor_Fam Ecore_File_Monitor_Fam;
 typedef struct _Ecore_File             Ecore_File;
 
+#define ECORE_FILE_MONITOR_FAM(x) ((Ecore_File_Monitor_Fam *)(x))
+
 struct _Ecore_File_Monitor_Fam
 {
-   Ecore_File_Monitor monitor;
+   Ecore_File_Monitor  monitor;
    FAMRequest         *request;
-   Evas_List          *files;
 };
 
 struct _Ecore_File
 {
-   char *name;
-   Ecore_File_Type  type;
+   char            *name;
 };
-
-#define ECORE_FILE_MONITOR_FAM(x) ((Ecore_File_Monitor_Fam *)(x))
 
 static Ecore_Fd_Handler *_fdh = NULL;
 static FAMConnection    *_fc = NULL;
 static Evas_List        *_monitors = NULL;
 
-static int                         _ecore_file_monitor_handler(void *data, Ecore_Fd_Handler *fdh);
-static Ecore_File                * _ecore_file_monitor_file_find(Ecore_File_Monitor *em, char *name);
-static Ecore_File_Event            _ecore_file_monitor_event_get(FAMCodes change);
+static int               _ecore_file_monitor_fam_handler(void *data, Ecore_Fd_Handler *fdh);
+static Ecore_File       *_ecore_file_monitor_fam_file_find(Ecore_File_Monitor *em, char *name);
+static Ecore_File_Event  _ecore_file_monitor_fam_event_get(FAMCodes code, int self, int is_dir);
 
 int
-ecore_file_monitor_init(void)
+ecore_file_monitor_fam_init(void)
 {
    _fc = calloc(1, sizeof(FAMConnection));
    if (!_fc) return 0;
 
    FAMOpen(_fc);
-   _fdh = ecore_main_fd_handler_add(FAMCONNECTION_GETFD(_fc), ECORE_FD_READ, _ecore_file_monitor_handler,
-				    NULL, NULL, NULL);
+   _fdh = ecore_main_fd_handler_add(FAMCONNECTION_GETFD(_fc), ECORE_FD_READ,
+				    _ecore_file_monitor_fam_handler, NULL, NULL, NULL);
 
    return 1;
 }
 
 int
-ecore_file_monitor_shutdown(void)
+ecore_file_monitor_fam_shutdown(void)
 {
    Evas_List *l;
    for (l = _monitors; l; l = l->next)
-     ecore_file_monitor_del(ECORE_FILE_MONITOR(l->data));
+     ecore_file_monitor_fam_del(ECORE_FILE_MONITOR(l->data));
    evas_list_free(_monitors);
    if (_fdh) ecore_main_fd_handler_del(_fdh);
    if (_fc)
@@ -70,67 +68,61 @@ ecore_file_monitor_shutdown(void)
 }
 
 Ecore_File_Monitor *
-ecore_file_monitor_add(const char *path,
-		       void (*func) (void *data,
-				     Ecore_File_Monitor *em,
-				     Ecore_File_Type type,
-				     Ecore_File_Event event,
-				     const char *path),
-		       void *data)
+ecore_file_monitor_fam_add(const char *path,
+			   void (*func) (void *data,
+					 Ecore_File_Monitor *em,
+					 Ecore_File_Event event,
+					 const char *path),
+			   void *data)
 {
    Ecore_File_Monitor *em;
-   Ecore_File_Monitor_Fam *emf;
    int len;
 
-   emf = calloc(1, sizeof(Ecore_File_Monitor_Fam));
-   em = ECORE_FILE_MONITOR(emf);
+   em = calloc(1, sizeof(Ecore_File_Monitor_Fam));
    if (!em) return NULL;
 
    em->func = func;
    em->data = data;
 
-   _monitors = evas_list_append(_monitors, em);
-
    em->path = strdup(path);
    len = strlen(em->path);
    if (em->path[len - 1] == '/')
-     em->path[len - 1] = '\0';
+     em->path[len - 1] = 0;
 
    if (ecore_file_exists(em->path))
      {
-	em->type = ecore_file_is_dir(em->path) ?
-		   ECORE_FILE_TYPE_DIRECTORY :
-		   ECORE_FILE_TYPE_FILE;
-
-	/* TODO: Check if calloc succeded! */
-	emf->request = calloc(1, sizeof(FAMRequest));
-	if (em->type == ECORE_FILE_TYPE_DIRECTORY)
+	ECORE_FILE_MONITOR_FAM(em)->request = calloc(1, sizeof(FAMRequest));
+	if (!ECORE_FILE_MONITOR_FAM(em)->request)
 	  {
-	     FAMMonitorDirectory(_fc, em->path, emf->request, em);
+	     ecore_file_monitor_fam_del(em);
+	     return NULL;
+	  }
+	if (ecore_file_is_dir(em->path))
+	  {
+	     FAMMonitorDirectory(_fc, em->path, ECORE_FILE_MONITOR_FAM(em)->request, em);
 	  }
 	else
 	  {
-	     FAMMonitorFile(_fc, em->path, emf->request, em);
-	     em->func(em->data, em, em->type, ECORE_FILE_EVENT_EXISTS, em->path);
+	     FAMMonitorFile(_fc, em->path, ECORE_FILE_MONITOR_FAM(em)->request, em);
 	  }
      }
    else
      {
-	em->type = ECORE_FILE_TYPE_NONE;
-	em->func(em->data, em, em->type, ECORE_FILE_EVENT_DELETED, em->path);
+	ecore_file_monitor_fam_del(em);
+	return NULL;
      }
+
+   _monitors = evas_list_append(_monitors, em);
 
    return em;
 }
 
 void
-ecore_file_monitor_del(Ecore_File_Monitor *em)
+ecore_file_monitor_fam_del(Ecore_File_Monitor *em)
 {
-   Ecore_File_Monitor_Fam *emf;
    Evas_List *l;
 
-   emf = ECORE_FILE_MONITOR_FAM(em);
-   for (l = emf->files; l; l = l->next)
+   for (l = em->files; l; l = l->next)
      {
 	Ecore_File *f;
 	
@@ -138,18 +130,21 @@ ecore_file_monitor_del(Ecore_File_Monitor *em)
 	free(f->name);
 	free(f);
      }
-   evas_list_free(emf->files);
+   evas_list_free(em->files);
 
    _monitors = evas_list_remove(_monitors, em);
 
-   FAMCancelMonitor(_fc, emf->request);
-   free(emf->request);
+   if (ECORE_FILE_MONITOR_FAM(em)->request)
+     {
+	FAMCancelMonitor(_fc, ECORE_FILE_MONITOR_FAM(em)->request);
+	free(ECORE_FILE_MONITOR_FAM(em)->request);
+     }
    free(em->path);
    free(em);
 }
 
 static int
-_ecore_file_monitor_handler(void *data, Ecore_Fd_Handler *fdh)
+_ecore_file_monitor_fam_handler(void *data, Ecore_Fd_Handler *fdh)
 {
    int pending, i;
 
@@ -158,62 +153,107 @@ _ecore_file_monitor_handler(void *data, Ecore_Fd_Handler *fdh)
 	for (i = 0; i < pending; i++)
 	  {
 	     Ecore_File_Monitor *em;
-	     Ecore_File_Monitor_Fam *emf;
 	     FAMEvent fe;
 	     Ecore_File_Event event;
 	     char buf[PATH_MAX];
+	     int len, self;
+
+	     buf[0] = 0;
 
 	     FAMNextEvent(_fc, &fe);
-	     event = _ecore_file_monitor_event_get(fe.code);
+	     len = strlen(fe.filename);
+	     if (fe.filename[len - 1] == '/')
+	       fe.filename[len - 1] = 0;
+	     self = !strcmp(em->path, fe.filename);
+	     if (!self)
+	       snprintf(buf, sizeof(buf), "%s/%s", em->path, fe.filename);
+
+	     event = _ecore_file_monitor_fam_event_get(fe.code, self, ecore_file_is_dir(buf));
 	     em = fe.userdata;
-	     emf = ECORE_FILE_MONITOR_FAM(em);
 	     if (!em) continue;
 	     if (event == ECORE_FILE_EVENT_NONE) continue;
-	     if ((em->type == ECORE_FILE_TYPE_DIRECTORY)
-		 && !strcmp(em->path, fe.filename))
-	       continue;
-	     /* Create path */
-	     snprintf(buf, sizeof(buf), "%s/%s", em->path, fe.filename);
-	     if (event == ECORE_FILE_EVENT_DELETED)
+#if 0
+	     if (!strcmp(em->path, fe.filename))
 	       {
-		  Ecore_File *f;
+		  Evas_List *l;
 
-		  f = _ecore_file_monitor_file_find(em, fe.filename);
-		  if (f)
+		  if (event == ECORE_FILE_EVENT_DELETED)
 		    {
-		       emf->files = evas_list_remove(emf->files, f);
-		       em->func(em->data, em, f->type, event, buf);
-		       free(f->name);
-		       free(f);
+		       /* Notify all files deleted */
+		       for (l = em->files; l;)
+			 {
+			    Ecore_File *f;
+			    char buf[PATH_MAX];
+
+			    f = l->data;
+			    l = l->next;
+			    snprintf(buf, sizeof(buf), "%s/%s", em->path, f->name);
+			    em->func(em->data, em, f->type, ECORE_FILE_EVENT_DELETED, buf);
+			    free(f->name);
+			    free(f);
+			 }
+		       em->files = evas_list_free(em->files);
+		       em->func(em->data, em, em->type, event, em->path);
+		       em->type = ECORE_FILE_TYPE_NONE;
+		    }
+		  else
+		    {
+		       em->func(em->data, em, em->type, event, em->path);
 		    }
 	       }
 	     else
 	       {
 		  Ecore_File *f;
 
-		  f = calloc(1, sizeof(Ecore_File));
-		  if (!f) continue;
+		  switch (event)
+		    {
+		     case ECORE_FILE_EVENT_NONE:
+			break;
+		     case ECORE_FILE_EVENT_EXISTS:
+			f = _ecore_file_monitor_fam_file_find(em, fe.filename);
+			if (f)
+			  {
+			     em->func(em->data, em, f->type, event, buf);
+			     break;
+			  }
+		     case ECORE_FILE_EVENT_CREATED:
+			f = calloc(1, sizeof(Ecore_File));
+			if (!f) break;
 
-		  f->type = ecore_file_is_dir(buf) ?
-			    ECORE_FILE_TYPE_DIRECTORY :
-			    ECORE_FILE_TYPE_FILE;
-		  f->name = strdup(fe.filename);
-		  emf->files = evas_list_append(emf->files, f);
-		  em->func(em->data, em, f->type, event, buf);
+			f->type = ecore_file_is_dir(buf) ?
+				  ECORE_FILE_TYPE_DIRECTORY :
+				  ECORE_FILE_TYPE_FILE;
+			f->name = strdup(fe.filename);
+			em->files = evas_list_append(em->files, f);
+			em->func(em->data, em, f->type, event, buf);
+			break;
+		     case ECORE_FILE_EVENT_DELETED:
+			f = _ecore_file_monitor_fam_file_find(em, fe.filename);
+			if (f)
+			  {
+			     em->files = evas_list_remove(em->files, f);
+			     em->func(em->data, em, f->type, event, buf);
+			     free(f->name);
+			     free(f);
+			  }
+			break;
+		     case ECORE_FILE_EVENT_CHANGED:
+			em->func(em->data, em, f->type, event, buf);
+			break;
+		    }
 	       }
+#endif
 	  }
    }
    return 1;
 }
 
 static Ecore_File *
-_ecore_file_monitor_file_find(Ecore_File_Monitor *em, char *name)
+_ecore_file_monitor_fam_file_find(Ecore_File_Monitor *em, char *name)
 {
-   Ecore_File_Monitor_Fam *emf;
    Evas_List *l;
 
-   emf = ECORE_FILE_MONITOR_FAM(em);
-   for (l = emf->files; l; l = l->next)
+   for (l = em->files; l; l = l->next)
      {
 	Ecore_File *f;
 	f = l->data;
@@ -224,18 +264,31 @@ _ecore_file_monitor_file_find(Ecore_File_Monitor *em, char *name)
 }
 
 static Ecore_File_Event
-_ecore_file_monitor_event_get(FAMCodes code)
+_ecore_file_monitor_fam_event_get(FAMCodes code, int self, int is_dir)
 {
    switch (code)
      {
       case FAMCreated:
-	 return ECORE_FILE_EVENT_CREATED;
+	 if (self)
+	   return ECORE_FILE_EVENT_NONE;
+	 else if (is_dir)
+	   return ECORE_FILE_EVENT_CREATED_DIRECTORY;
+	 else
+	   return ECORE_FILE_EVENT_CREATED_FILE;
+	 break;
       case FAMDeleted:
-	 return ECORE_FILE_EVENT_DELETED;
+	 if (self)
+	   return ECORE_FILE_EVENT_DELETED_SELF;
+	 else if (is_dir)
+	   return ECORE_FILE_EVENT_DELETED_DIRECTORY;
+	 else
+	   return ECORE_FILE_EVENT_DELETED_FILE;
+	 break;
       case FAMChanged:
-	 return ECORE_FILE_EVENT_CHANGED;
+	 if (!is_dir)
+	   return ECORE_FILE_EVENT_MODIFIED;
+	 break;
       case FAMExists:
-	 return ECORE_FILE_EVENT_EXISTS;
       case FAMStartExecuting:
       case FAMStopExecuting:
       case FAMMoved:
