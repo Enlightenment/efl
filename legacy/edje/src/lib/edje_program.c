@@ -59,7 +59,7 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
    
    if ((!emission) || (!source) || (!func)) return NULL;
    ed = _edje_fetch(obj);
-   if (!ed) return;
+   if (!ed) return NULL;
    if (ed->delete_me) return NULL;
    for (l = ed->callbacks; l; l = l->next)
      {

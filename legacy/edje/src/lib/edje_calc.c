@@ -40,9 +40,6 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos)
 void
 _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1, char *d2, double v2)
 {
-   char *cd1 = "default", *cd2 = "default";
-   double cv1 = 0.0, cv2 = 0.0;
-   
    if (!d1) d1 = "default";
    if (!d2) d2 = "default";
 
@@ -250,6 +247,7 @@ _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, double *x, double *y)
    if (x) *x = 0.0;
    if (y) *y = 0.0;
    return 0;
+   ed = NULL;
 }
 
 void

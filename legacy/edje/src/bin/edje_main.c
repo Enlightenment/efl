@@ -107,7 +107,6 @@ main_start(int argc, char **argv)
 #else
    ecore_evas = ecore_evas_fb_new(NULL, 270,  startw, starth);
 #endif
-   canvas_up:
    if (!ecore_evas) return -1;
    ecore_evas_callback_delete_request_set(ecore_evas, main_delete_request);
    ecore_evas_callback_resize_set(ecore_evas, main_resize);
@@ -784,7 +783,6 @@ main(int argc, char **argv)
    for (i = 1; i < argc; i++)
      {
 	char *file;
-	char *coll;
 	int done;
 	
 	done = 0;
@@ -794,18 +792,6 @@ main(int argc, char **argv)
 	    (!strcmp(file, "--geometry"))) && (i < (argc - 1)))
 	     i++;
 	if (file[0] == '-') continue;
-/*	
-	if (argc > (i + 1))
-	  {
-	     coll = argv[i + 1];
-	     if (strlen(coll) > 0)
-	       {
-		  test_setup(file, coll);
-		  done = 1;
-	       }
-	     i++;
-	  }
- */
 	if (!done) test_list(file);
      }
    

@@ -13,6 +13,8 @@ _edje_mouse_in_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    rp = evas_object_data_get(obj, "real_part");
    if (!rp) return;
    _edje_emit(ed, "mouse,in", rp->part->name);
+   return;
+   e = NULL;
 }
 
 void
@@ -27,6 +29,8 @@ _edje_mouse_out_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    rp = evas_object_data_get(obj, "real_part");
    if (!rp) return;
    _edje_emit(ed, "mouse,out", rp->part->name);
+   return;
+   e = NULL;
 }
 
 void
@@ -85,6 +89,8 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    _edje_recalc(ed);
    _edje_thaw(ed);   
    _edje_unref(ed);
+   return;
+   e = NULL;
 }
 
 void
@@ -126,6 +132,8 @@ _edje_mouse_up_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    _edje_recalc(ed);
    _edje_thaw(ed);
    _edje_unref(ed);
+   return;
+   e = NULL;
 }
 
 void
@@ -178,7 +186,6 @@ _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
      {
 	if (rp->drag.down.count > 0)
 	  {
-	     char buf[256];
 	     double dx, dy;
 	     int dir;
 	     
@@ -195,6 +202,8 @@ _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
      }
    _edje_unref(ed);
    _edje_thaw(ed); 
+   return;
+   e = NULL;
 }
 
 void
@@ -211,6 +220,8 @@ _edje_mouse_wheel_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    if (!rp) return;
    snprintf(buf, sizeof(buf), "mouse,wheel,%i,%i", ev->direction, (ev->z < 0) ? (-1) : (1));
    _edje_emit(ed, buf, rp->part->name);
+   return;
+   e = NULL;
 }
 
 int
@@ -285,6 +296,7 @@ _edje_timer_cb(void *data)
    if (_edje_anim_count > 0) return 1;
    _edje_timer = NULL;
    return 0;
+   data = NULL;
 }
 
 int

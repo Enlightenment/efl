@@ -191,7 +191,6 @@ edje_object_part_exists(Evas_Object *obj, const char *part)
 void
 edje_object_part_geometry_get(Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h )
 {
-   Evas_List *l;
    Edje *ed;
    Edje_Real_Part *rp;
 
@@ -570,7 +569,6 @@ edje_object_part_drag_dir_get(Evas_Object *obj, const char *part)
 {
    Edje *ed;
    Edje_Real_Part *rp;
-   int v;
    
    ed = _edje_fetch(obj);   
    if ((!ed) || (!part))
@@ -981,4 +979,7 @@ _edje_object_part_swallow_free_cb(void *data, Evas *e, Evas_Object *obj, void *e
    
    edje_obj = data;
    edje_object_part_unswallow(edje_obj, obj);
+   return;
+   e = NULL;
+   event_info = NULL;
 }

@@ -29,7 +29,6 @@ test_list(char *file)
 	for (l = entries; l; l = l->next)
 	  {
 	     char *name;
-	     Evas_Object *o;
 	     char buf[1024];
 
 	     name = l->data;
@@ -43,7 +42,6 @@ test_list(char *file)
 int main(int argc, char **argv)
 {
    int i;
-   Evas_List *l;
    FILE *output;
 
    progname = argv[0];

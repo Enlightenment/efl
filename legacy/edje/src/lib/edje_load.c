@@ -77,7 +77,6 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	  {
 	     Edje_Part *ep;
 	     Edje_Real_Part *rp;
-	     char buf[256];
 	     
 	     ep = l->data;
 	     rp = calloc(1, sizeof(Edje_Real_Part));
@@ -312,7 +311,6 @@ void
 _edje_file_add(Edje *ed)
 {
    Eet_File *ef = NULL;
-   Edje_Part_Collection *pc = NULL;
    Evas_List *l;
    int id = -1;
 
@@ -589,4 +587,6 @@ _edje_collection_free_prog_cache_matches_free_cb(Evas_Hash *hash, const char *ke
 {
    evas_list_free((Evas_List *)data);
    return 1;
+   hash = NULL;
+   fdata = NULL;
 }

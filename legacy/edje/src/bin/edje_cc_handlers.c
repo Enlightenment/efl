@@ -1093,7 +1093,6 @@ st_collections_group_parts_part_effect(void)
 {
    Edje_Part_Collection *pc;
    Edje_Part *ep;
-   Edje_Part_Description *ed;
 
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));

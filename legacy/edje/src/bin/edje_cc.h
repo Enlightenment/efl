@@ -17,6 +17,7 @@
 #include <sys/stat.h>
 #include <stdarg.h>
 #include <locale.h>
+#include <ctype.h>
 
 /* types */
 typedef struct _New_Object_Handler    New_Object_Handler;

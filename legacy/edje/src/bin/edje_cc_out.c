@@ -71,6 +71,7 @@ data_write(void)
    int image_num;
    int collection_num;
    
+   bytes = 0;
    input_bytes = 0;
    total_bytes = 0;
    input_raw_bytes = 0;
@@ -83,96 +84,112 @@ data_write(void)
 		progname, file_out);
 	exit(-1);
      }
-   bytes = eet_data_write(ef, edd_edje_file, "edje_file", edje_file, 1);
-   if (bytes <= 0)
+   if (edje_file)
      {
-	fprintf(stderr, "%s: Error. unable to write \"edje_file\" entry to \"%s\" \n",
-		progname, file_out);	
-	exit(-1);	
+	bytes = eet_data_write(ef, edd_edje_file, "edje_file", edje_file, 1);
+	if (bytes <= 0)
+	  {
+	     fprintf(stderr, "%s: Error. unable to write \"edje_file\" entry to \"%s\" \n",
+		     progname, file_out);	
+	     exit(-1);	
+	  }
+	else
+	  total_bytes += bytes;
      }
-   else
-     total_bytes += bytes;
    if (verbose)
      {
 	printf("%s: Wrote %9i bytes (%4iKb) for \"edje_file\" header\n",
 	       progname, bytes, (bytes + 512) / 1024);
      }
-   for (l = edje_file->image_dir->entries; l; l = l->next)
+   if ((edje_file) && (edje_file->image_dir))
      {
-	Edje_Image_Directory_Entry *img;
-	
-	img = l->data;	
-	if (img->source_type != EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
+	for (l = edje_file->image_dir->entries; l; l = l->next)
 	  {
-	     Imlib_Image im;
-	     Evas_List *l;
-
-	     im = NULL;
-	     imlib_set_cache_size(0);	     
-	     for (l = img_dirs; l; l = l->next)
+	     Edje_Image_Directory_Entry *img;
+	     
+	     img = l->data;	
+	     if (img->source_type != EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
 	       {
-		  char buf[4096];
+		  Imlib_Image im;
+		  Evas_List *l;
 		  
-		  snprintf(buf, sizeof(buf), "%s/%s", l->data, img->entry);
-		  im = imlib_load_image(buf);
-		  if (im) break;
-	       }
-	     if (!im) im = imlib_load_image(img->entry);
-	     if (im)
-	       {
-		  DATA32 *im_data;
-		  int  im_w, im_h;
-		  int  im_alpha;
-		  char buf[256];
-		  
-		  imlib_context_set_image(im);
-		  im_w = imlib_image_get_width();
-		  im_h = imlib_image_get_height();
-		  im_alpha = imlib_image_has_alpha();
-		  im_data = imlib_image_get_data_for_reading_only();
-		  snprintf(buf, sizeof(buf), "images/%i", img->id);
-		  if (img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT)
-		    bytes = eet_data_image_write(ef, buf, 
-						 im_data, im_w, im_h,
-						 im_alpha, 
-						 img->source_param, 0, 0);
-		  else
-		    bytes = eet_data_image_write(ef, buf, 
-						 im_data, im_w, im_h,
-						 im_alpha,
-						 0, img->source_param, 1);
-		  if (bytes <= 0)
+		  im = NULL;
+		  imlib_set_cache_size(0);	     
+		  for (l = img_dirs; l; l = l->next)
 		    {
-		       fprintf(stderr, "%s: Error. unable to write image part \"%s\" as \"%s\" part entry to %s \n",
-			       progname, img->entry, buf, file_out);	
-		       exit(-1);
-		    }
-		  else
-		    {
-		       image_num++;
-		       total_bytes += bytes;
-		    }
-		  if (verbose)
-		    {
-		       struct stat st;
+		       char buf[4096];
 		       
-		       if (stat(imlib_image_get_filename(), &st) != 0)
-			 st.st_size = 0;
-		       input_bytes += st.st_size;
-		       input_raw_bytes += im_w * im_h * 4;
-		       printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" image entry \"%s\" compress: [raw: %2.1f%%] [real: %2.1f%%]\n",
-			      progname, bytes, (bytes + 512) / 1024, buf, img->entry,
-			      100 - (100 * (double)bytes) / ((double)(im_w * im_h * 4)),
-			      100 - (100 * (double)bytes) / ((double)(st.st_size))
-			      );
+		       snprintf(buf, sizeof(buf), "%s/%s", 
+				(char *)(l->data), img->entry);
+		       im = imlib_load_image(buf);
+		       if (im) break;
 		    }
-		  imlib_image_put_back_data(im_data);
-		  imlib_free_image();
-	       }
-	     else
-	       {
-		  fprintf(stderr, "%s: Warning. unable to open image \"%s\" for inclusion in output\n",
-			  progname, img->entry);			  
+		  if (!im) im = imlib_load_image(img->entry);
+		  if (im)
+		    {
+		       DATA32 *im_data;
+		       int  im_w, im_h;
+		       int  im_alpha;
+		       char buf[256];
+		       
+		       imlib_context_set_image(im);
+		       im_w = imlib_image_get_width();
+		       im_h = imlib_image_get_height();
+		       im_alpha = imlib_image_has_alpha();
+		       im_data = imlib_image_get_data_for_reading_only();
+		       if ((im_data) && (im_w > 0) && (im_h > 0))
+			 {
+			    snprintf(buf, sizeof(buf), "images/%i", img->id);
+			    if (img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT)
+			      bytes = eet_data_image_write(ef, buf, 
+							   im_data, im_w, im_h,
+							   im_alpha, 
+							   img->source_param, 0, 0);
+			    else
+			      bytes = eet_data_image_write(ef, buf, 
+							   im_data, im_w, im_h,
+							   im_alpha,
+							   0, img->source_param, 1);
+			    if (bytes <= 0)
+			      {
+				 fprintf(stderr, "%s: Error. unable to write image part \"%s\" as \"%s\" part entry to %s \n",
+					 progname, img->entry, buf, file_out);	
+				 exit(-1);
+			      }
+			    else
+			      {
+				 image_num++;
+				 total_bytes += bytes;
+			      }
+			 }
+		       else
+			 {
+			    fprintf(stderr, "%s: Error. unable to write image part \"%s\" as \"%s\" part entry to %s \n",
+				    progname, img->entry, buf, file_out);	
+			    exit(-1);
+			 }
+		       if (verbose)
+			 {
+			    struct stat st;
+		       
+			    if (stat(imlib_image_get_filename(), &st) != 0)
+			      st.st_size = 0;
+			    input_bytes += st.st_size;
+			    input_raw_bytes += im_w * im_h * 4;
+			    printf("%s: Wrote %9i bytes (%4iKb) for \"%s\" image entry \"%s\" compress: [raw: %2.1f%%] [real: %2.1f%%]\n",
+				   progname, bytes, (bytes + 512) / 1024, buf, img->entry,
+				   100 - (100 * (double)bytes) / ((double)(im_w * im_h * 4)),
+				   100 - (100 * (double)bytes) / ((double)(st.st_size))
+				   );
+			 }
+		       if (im_data) imlib_image_put_back_data(im_data);
+		       imlib_free_image();
+		    }
+		  else
+		    {
+		       fprintf(stderr, "%s: Warning. unable to open image \"%s\" for inclusion in output\n",
+			       progname, img->entry);			  
+		    }
 	       }
 	  }
      }

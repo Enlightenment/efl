@@ -6,8 +6,8 @@ Ejde_Text_Style _edje_text_styles[EDJE_TEXT_EFFECT_LAST];
 void
 _edje_text_init(void)
 {
-   int i, j, n;
-   const vals[5][5] = 
+   int i, j, n = 0;
+   const char vals[5][5] = 
      {
 	  {0, 1, 2, 1, 0},
 	  {1, 3, 4, 3, 1},
@@ -225,6 +225,8 @@ _edje_text_part_on_del(Edje *ed, Edje_Real_Part *ep)
 	ep->extra_objects = evas_list_remove(ep->extra_objects, o);
 	evas_object_del(o);
      }
+   return;
+   ed = NULL;
 }
 
 void

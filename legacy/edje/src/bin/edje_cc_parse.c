@@ -37,7 +37,8 @@ new_object(void)
    if (!handled)
      {
 	fprintf(stderr, "%s: Error. %s:%i unhandled keyword %s\n",
-		progname, file_in, line, evas_list_data(evas_list_last(stack)));
+		progname, file_in, line,
+		(char *)evas_list_data(evas_list_last(stack)));
 	exit(-1);
      }
    free(id);
@@ -66,7 +67,8 @@ new_statement(void)
    if (!handled)
      {
 	fprintf(stderr, "%s: Error. %s:%i unhandled keyword %s\n",
-		progname, file_in, line, evas_list_data(evas_list_last(stack)));
+		progname, file_in, line,
+		(char *)evas_list_data(evas_list_last(stack)));
 	exit(-1);
      }
    free(id);
