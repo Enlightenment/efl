@@ -8,6 +8,9 @@ edje_init(void)
 {
    if (initted) return;
    initted = 1;
+
+   eet_init();
+
    _edje_edd_setup();
    _edje_text_init();
 }
@@ -20,6 +23,8 @@ edje_shutdown(void)
    _edje_edd_free();
    _edje_color_class_members_free();
    _edje_text_class_members_free();
+
+   eet_shutdown();
 
    initted = 0;
 }
