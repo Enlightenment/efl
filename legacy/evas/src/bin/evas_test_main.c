@@ -479,7 +479,7 @@ loop(void)
 	   double              x, y;
 
 	   evas_object_image_size_get(test_pattern, &iw, &ih);
-	   v = 2.0 - ((t - 56.0) / 10.0);
+	   v = 2.0 - ((t - 96.0) / 10.0);
 	   if ((v >= 0.4) && (v <= 1.4))
 	     {
 		evas_object_text_text_set(comment,

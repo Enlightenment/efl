@@ -802,19 +802,28 @@ load_image_file_data_template(RGBA_Image *im, const char *file, const char *key)
 RGBA_Image *
 evas_common_load_image_from_file(const char *file, const char *key)
 {
+   char *real_file;
    RGBA_Image *im;
    int ok;
    DATA64 mod_time;
-   
-   mod_time = evas_file_modified_time(file);
+
+   real_file = evas_file_path_resolve(file);
+   mod_time = 0;
+   if (real_file) mod_time = evas_file_modified_time(real_file);
+   else if (file) mod_time = evas_file_modified_time(file);
    im = evas_common_image_find(file, key, mod_time);
    if (im)
      {
 	evas_common_image_ref(im);
+	if (real_file) free(real_file);
 	return im;
      }
    im = evas_common_image_new();
-   if (!im) return NULL;
+   if (!im)
+     {
+	if (real_file) free(real_file);
+	return NULL;
+     }
    ok = -1;
 #ifdef BUILD_LOADER_PNG
    if (ok == -1)
@@ -847,13 +856,18 @@ evas_common_load_image_from_file(const char *file, const char *key)
    if (ok == -1)
      {
 	evas_common_image_free(im);
+	if (real_file) free(real_file);
 	return NULL;
      }
    im->timestamp = mod_time;
    if (file)
      {
 	im->info.file = strdup(file);
-	im->info.real_file = evas_file_path_resolve(file);
+	im->info.real_file = real_file;
+     }
+   else
+     {
+	if (real_file) free(real_file);	
      }
    if (key)
      im->info.key = strdup(key);
