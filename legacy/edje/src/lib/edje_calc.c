@@ -730,6 +730,7 @@ _edje_part_recalc_single(Edje *ed,
 	params->fill.h = desc->fill.abs_y + (params->h * desc->fill.rel_y);
      }
    /* colors */
+
    params->color.r = desc->color.r;
    params->color.g = desc->color.g;
    params->color.b = desc->color.b;
@@ -742,6 +743,30 @@ _edje_part_recalc_single(Edje *ed,
    params->color3.g = desc->color3.g;
    params->color3.b = desc->color3.b;
    params->color3.a = desc->color3.a;
+
+   if ((desc->color_class) && (strlen(desc->color_class) > 0))
+     {
+	Edje_Color_Class *cc;
+	
+	cc = _edje_color_class_find(ed, desc->color_class);
+	if (cc)
+	  {
+	     params->color.r = (((int)cc->r + 1) * desc->color.r) >> 8;
+	     params->color.g = (((int)cc->g + 1) * desc->color.g) >> 8;
+	     params->color.b = (((int)cc->b + 1) * desc->color.b) >> 8;
+	     params->color.a = (((int)cc->a + 1) * desc->color.a) >> 8;
+	     params->color2.r = (((int)cc->r2 + 1) * desc->color2.r) >> 8;
+	     params->color2.g = (((int)cc->g2 + 1) * desc->color2.g) >> 8;
+	     params->color2.b = (((int)cc->b2 + 1) * desc->color2.b) >> 8;
+	     params->color2.a = (((int)cc->a2 + 1) * desc->color2.a) >> 8;
+	     params->color3.r = (((int)cc->r3 + 1) * desc->color3.r) >> 8;
+	     params->color3.g = (((int)cc->g3 + 1) * desc->color3.g) >> 8;
+	     params->color3.b = (((int)cc->b3 + 1) * desc->color3.b) >> 8;
+	     params->color3.a = (((int)cc->a3 + 1) * desc->color3.a) >> 8;
+	  }
+     }
+
+
    /* visible */
    params->visible = desc->visible;
    /* border */
@@ -870,7 +895,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	p3.fill.y = (p1.fill.y * (1.0 - pos)) + (p2.fill.y * (pos));
 	p3.fill.w = (p1.fill.w * (1.0 - pos)) + (p2.fill.w * (pos));
 	p3.fill.h = (p1.fill.h * (1.0 - pos)) + (p2.fill.h * (pos));
-	
+
 	p3.color.r = (p1.color.r * (1.0 - pos)) + (p2.color.r * (pos));
 	p3.color.g = (p1.color.g * (1.0 - pos)) + (p2.color.g * (pos));
 	p3.color.b = (p1.color.b * (1.0 - pos)) + (p2.color.b * (pos));
@@ -897,28 +922,6 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
    else
      {
 	p3 = p1;
-     }
-
-   if ((chosen_desc->color_class) && (strlen(chosen_desc->color_class) > 0))
-     {
-	Edje_Color_Class *cc;
-	
-	cc = _edje_color_class_find(ed, chosen_desc->color_class);
-	if (cc)
-	  {
-	     p3.color.r = (((int)cc->r + 1) * p3.color.r) >> 8;
-	     p3.color.g = (((int)cc->g + 1) * p3.color.g) >> 8;
-	     p3.color.b = (((int)cc->b + 1) * p3.color.b) >> 8;
-	     p3.color.a = (((int)cc->a + 1) * p3.color.a) >> 8;
-	     p3.color2.r = (((int)cc->r2 + 1) * p3.color2.r) >> 8;
-	     p3.color2.g = (((int)cc->g2 + 1) * p3.color2.g) >> 8;
-	     p3.color2.b = (((int)cc->b2 + 1) * p3.color2.b) >> 8;
-	     p3.color2.a = (((int)cc->a2 + 1) * p3.color2.a) >> 8;
-	     p3.color3.r = (((int)cc->r3 + 1) * p3.color3.r) >> 8;
-	     p3.color3.g = (((int)cc->g3 + 1) * p3.color3.g) >> 8;
-	     p3.color3.b = (((int)cc->b3 + 1) * p3.color3.b) >> 8;
-	     p3.color3.a = (((int)cc->a3 + 1) * p3.color3.a) >> 8;
-	  }
      }
    
    ep->req.x = p3.req.x;
