@@ -199,6 +199,7 @@ int            ecore_config_save_file(char *file);
 int            ecore_config_evas_font_path_apply(Evas *evas);
 void           ecore_config_args_display(void);
 int            ecore_config_args_parse(int argc, char **argv);
+void           ecore_config_app_describe(char *description);
 
 # ifdef __cplusplus
 }

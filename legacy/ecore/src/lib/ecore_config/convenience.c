@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+char *__ecore_config_app_description;
+
 /* this should only be built if evas is present */
 
 int
@@ -42,9 +44,10 @@ ecore_config_args_display(void)
 {
   Ecore_Config_Prop    *props;
   
-  printf("Application information to be added here!\n\n"); //FIXME
+  if (__ecore_config_app_description)
+    printf("%s\n\n", __ecore_config_app_description);
   printf("Supported Options:\n");
-  printf(" -h, --help\t\t       Print this text\n");
+  printf(" -h, --help\t       Print this text\n");
   if (!__ecore_config_bundle_local) return;
   props = __ecore_config_bundle_local->data;
   while (props)
@@ -62,18 +65,23 @@ ecore_config_args_display(void)
     }
 }
 
-void
-ecore_config_parse_set(Ecore_Config_Prop *prop, char *arg) {
-  if (!arg)
-    printf("Missing expected attribute for option --%s\n", prop->key);
-  else
+int
+ecore_config_parse_set(Ecore_Config_Prop *prop,char *arg,char *opt,char opt2) {
+  if (!arg) {
+    if (opt)
+      printf("Missing expected argument for option --%s\n", opt);
+    else
+      printf("Missing expected argument for option -%c\n", opt2);
+    return ECORE_CONFIG_PARSE_EXIT;
+  } else
     ecore_config_set(prop->key, arg);
+  return ECORE_CONFIG_PARSE_CONTINUE;
 }
 
 int
 ecore_config_args_parse(int argc, char **argv)
 {
-  int nextarg, next_short_opt, found;
+  int nextarg, next_short_opt, found, ret;
   char *arg;
   char *long_opt, short_opt;
   Ecore_Config_Prop *prop;
@@ -105,14 +113,16 @@ ecore_config_args_parse(int argc, char **argv)
         if ((prop->long_opt && !strcmp(long_opt, prop->long_opt))
              || !strcmp(long_opt, prop->key)) {
           found = 1;
-          ecore_config_parse_set(prop, argv[++nextarg]);
+          if ((ret=ecore_config_parse_set(prop, argv[++nextarg], long_opt,'\0'))
+	      != ECORE_CONFIG_PARSE_CONTINUE);
+	    return ret;
           break;
         }
         prop = prop->next;
       }
       if (!found) {
-        printf("Unrecognised option \"%s\"\n\n", long_opt);
-        ecore_config_args_display();
+        printf("Unrecognised option \"%s\"\n", long_opt);
+        printf("Try using -h or --help for more information.\n\n");
         return ECORE_CONFIG_PARSE_EXIT;
       }
     } else {
@@ -126,14 +136,17 @@ ecore_config_args_parse(int argc, char **argv)
           while (prop) {
             if (short_opt == prop->short_opt) {
               found = 1;
-              ecore_config_parse_set(prop, argv[++nextarg]);
+              if ((ret=ecore_config_parse_set(prop, argv[++nextarg], NULL, short_opt))
+	          != ECORE_CONFIG_PARSE_CONTINUE)
+                return ret;
               break;
             }
             prop = prop->next;
           }
                   
           if (!found) {
-            printf("Unrecognised option '%c'\n\n", short_opt);
+            printf("Unrecognised option '%c'\n", short_opt);
+            printf("Try using -h or --help for more information.\n\n");
             return ECORE_CONFIG_PARSE_EXIT;
           }
         }
@@ -146,3 +159,9 @@ ecore_config_args_parse(int argc, char **argv)
   return ECORE_CONFIG_PARSE_CONTINUE;
 }
 
+void
+ecore_config_app_describe(char *description) {
+  if (__ecore_config_app_description)
+    free(__ecore_config_app_description);
+  __ecore_config_app_description = strdup(description);
+}
