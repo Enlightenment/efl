@@ -12,10 +12,6 @@ typedef void *                             Evas_Object;
 #endif
 typedef struct _Evas_List *                Evas_List;
 
-typedef enum _Evas_Callback_Type           Evas_Callback_Type;
-typedef enum _Evas_Image_Format            Evas_Image_Format;
-typedef enum _Evas_Render_Method           Evas_Render_Method;
-
 /* public structs */
 struct _Evas_List 
 {
@@ -51,6 +47,11 @@ enum _Evas_Image_Format
    IMAGE_FORMAT_RGB,
    IMAGE_FORMAT_GRAY
 };
+
+/* enum types */
+typedef enum _Evas_Callback_Type           Evas_Callback_Type;
+typedef enum _Evas_Image_Format            Evas_Image_Format;
+typedef enum _Evas_Render_Method           Evas_Render_Method;
 
 /* functions */
 #ifdef __cplusplus
