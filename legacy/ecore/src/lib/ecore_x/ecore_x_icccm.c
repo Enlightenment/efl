@@ -83,6 +83,37 @@ ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state)
 		   (unsigned char *)c, 2);
 }
 
+Ecore_X_Window_State_Hint
+ecore_x_icccm_state_get(Ecore_X_Window win)
+{
+   unsigned char *prop_ret;
+   Atom           type_ret;
+   unsigned long  bytes_after, num_ret;
+   int            format_ret;
+   Ecore_X_Window_State_Hint hint;
+
+   XGetWindowProperty(_ecore_x_disp, win, ECORE_X_ATOM_WM_STATE,
+		      0, 0x7fffffff, False, ECORE_X_ATOM_WM_STATE,
+		      &type_ret, &format_ret, &num_ret, &bytes_after,
+		      &prop_ret);
+   if ((prop_ret) && (num_ret == 2))
+     {
+	if (prop_ret[0] == WithdrawnState)
+	  hint = ECORE_X_WINDOW_STATE_HINT_WITHDRAWN;
+	else if (prop_ret[0] == NormalState)
+	  hint = ECORE_X_WINDOW_STATE_HINT_NORMAL;
+	else if (prop_ret[0] == IconicState)
+	  hint = ECORE_X_WINDOW_STATE_HINT_ICONIC;
+     }
+   else
+     hint = ECORE_X_WINDOW_STATE_HINT_NORMAL;
+
+   if (prop_ret)
+     XFree(prop_ret);
+   
+   return hint;
+}
+
 void
 ecore_x_icccm_delete_window_send(Ecore_X_Window win, Ecore_X_Time t)
 {
@@ -181,13 +212,13 @@ ecore_x_icccm_hints_set(Ecore_X_Window win,
 int
 ecore_x_icccm_hints_get(Ecore_X_Window win,
 			int *accepts_focus,
-			Ecore_X_Window_State_Hint * initial_state,
-			Ecore_X_Pixmap * icon_pixmap,
-			Ecore_X_Pixmap * icon_mask,
-			Ecore_X_Window * icon_window,
-			Ecore_X_Window * window_group, int *is_urgent)
+			Ecore_X_Window_State_Hint *initial_state,
+			Ecore_X_Pixmap *icon_pixmap,
+			Ecore_X_Pixmap *icon_mask,
+			Ecore_X_Window *icon_window,
+			Ecore_X_Window *window_group, int *is_urgent)
 {
-   XWMHints           *hints;
+   XWMHints *hints;
 
    if (accepts_focus)
       *accepts_focus = 0;
