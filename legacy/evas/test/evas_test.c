@@ -49,16 +49,23 @@ struct _textblock
    Evas_Object o_text, o_shadow;
 };
 
-static double texts_loop = 60;
 static TextBlock texts[] =
 {
-     { 10.0, 12.0, 14.0, 16.0, "Why did they build the pyramids?"},
-     { 14.0, 16.0, 18.0, 20.0, "What is the meaning of Stone Henge?"},
-     { 18.0, 20.0, 22.0, 24.0, "What are the 7 wonders of the world?"},
-     { 22.0, 24.0, 26.0, 28.0, "What is the 8th wonder?"},
-     { 26.0, 28.0, 34.0, 36.0, "It is ..."},
-     { 40.0, 44.0, 48.0, 50.0, "EVAS"}
+     { 10.0, 12.0, 14.0, 16.0, "What are the 7 Wonders of the world?"},
+     { 14.0, 16.0, 18.0, 20.0, "The Temple of Artemis at Ephesus ..."},
+     { 18.0, 20.0, 22.0, 24.0, "The Colossus of Rhodes ..."},
+     { 22.0, 24.0, 26.0, 28.0, "The Hanging Gardens of Babylon ..."},
+     { 26.0, 28.0, 30.0, 32.0, "The Mausoleum at Halicarnassus ..."},
+     { 30.0, 32.0, 34.0, 36.0, "The Lighthouse at Alexandria ..."},
+     { 34.0, 36.0, 38.0, 40.0, "The Great Pyriamids at Giza ..."},
+     { 38.0, 40.0, 42.0, 44.0, "The Statue of Zeus at Olympia ..."},
+
+     { 46.0, 48.0, 50.0, 52.0, "Is there an 8th wonder?"},
+   
+     { 52.0, 54.0, 58.0, 60.0, "Yes ..."},
+     { 60.0, 64.0, 70.0, 74.0, "EVAS"}
 };
+static double texts_loop = 0;
 
 /* functions */
 double
@@ -333,14 +340,17 @@ void
 text(double val)
 {
    int i;
-   
-   while (val > texts_loop) val -= texts_loop;
+
+   if (texts_loop > 0)
+     {
+	while (val > texts_loop) val -= texts_loop;
+     }
    for (i = 0; i < (sizeof(texts) / sizeof(TextBlock)); i++)
      {
 	if (!texts[i].o_text)
 	  {
-	     texts[i].o_text = evas_add_text(evas_view, "andover", 48, texts[i].text);
-	     texts[i].o_shadow = evas_add_text(evas_view, "andover", 48, texts[i].text);
+	     texts[i].o_text = evas_add_text(evas_view, "andover", 64, texts[i].text);
+	     texts[i].o_shadow = evas_add_text(evas_view, "andover", 64, texts[i].text);
 	     evas_set_color(evas_view, texts[i].o_text, 255, 255, 255, 255);
 	     evas_set_layer(evas_view, texts[i].o_text, 101);
 	     evas_set_color(evas_view, texts[i].o_shadow, 0, 0, 0, 128);
@@ -425,8 +435,13 @@ animate(double val)
      {
 	evas_hide(evas_view, o_logo);
 	evas_hide(evas_view, o_logo_shadow);
+     }
+   else if (val < 70)
+     {
+	evas_hide(evas_view, o_logo);
+	evas_hide(evas_view, o_logo_shadow);
 	evas_set_color(evas_view, o_logo_impress, 255, 255, 255,
-		       (255 * (val - 30)) / 20);
+		       (255 * (val - 40)) / 60);
      }
    else
      {
@@ -554,7 +569,7 @@ animate(double val)
 	evas_show(evas_view, o_logo);
 	evas_show(evas_view, o_logo_shadow);
      }
-   if (val > 30)
+   if (val > 40)
      {
 	evas_show(evas_view, o_logo_impress);
      }
