@@ -389,6 +389,37 @@ ecore_x_window_size_get(Ecore_X_Window win, int *w, int *h)
  * FIXME: To be fixed.
  */
 void
+ecore_x_window_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h)
+{
+   Window         dummy_win;
+   int            ret_x, ret_y;
+   unsigned int   ret_w, ret_h, dummy_border, dummy_depth;
+
+   if (!win)
+      win = DefaultRootWindow(_ecore_x_disp);
+   ret_w = 0;
+   ret_h = 0;
+   if (!XGetGeometry(_ecore_x_disp, win, &dummy_win, &ret_x, &ret_y,
+                     &ret_w, &ret_h, &dummy_border, &dummy_depth))
+   {
+      ret_x = 0;
+      ret_y = 0;
+      ret_w = 0;
+      ret_h = 0;
+   }
+
+   if (x) *x = ret_x;
+   if (y) *y = ret_y;
+   if (w) *w = (int) ret_w;
+   if (h) *h = (int) ret_h;
+}
+   
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+void
 ecore_x_window_cursor_show(Ecore_X_Window win, int show)
 {
    if (win == 0) win = DefaultRootWindow(_ecore_x_disp);

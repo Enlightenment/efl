@@ -732,6 +732,7 @@ void             ecore_x_window_raise(Ecore_X_Window win);
 void             ecore_x_window_lower(Ecore_X_Window win);
 void             ecore_x_window_reparent(Ecore_X_Window win, Ecore_X_Window new_parent, int x, int y);
 void             ecore_x_window_size_get(Ecore_X_Window win, int *w, int *h);
+void             ecore_x_window_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h);
 void             ecore_x_window_cursor_show(Ecore_X_Window win, int show);
 void             ecore_x_window_defaults_set(Ecore_X_Window win);
 
