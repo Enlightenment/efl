@@ -71,6 +71,8 @@ extern "C" {
    void             embryo_swap_32(unsigned int *v);
    Embryo_Function  embryo_program_function_find(Embryo_Program *ep, char *name);
    Embryo_Cell      embryo_program_variable_find(Embryo_Program *ep, char *name);
+   int              embryo_program_variable_count_get(Embryo_Program *ep);
+   Embryo_Cell      embryo_program_variable_get(Embryo_Program *ep, int num);
    void             embryo_program_error_set(Embryo_Program *ep, int error);
    int              embryo_program_error_get(Embryo_Program *ep);
    void             embryo_program_data_set(Embryo_Program *ep, void *data);

@@ -468,6 +468,32 @@ embryo_program_variable_find(Embryo_Program *ep, char *name)
    return EMBRYO_CELL_NONE;
 }
 
+int
+embryo_program_variable_count_get(Embryo_Program *ep)
+{
+   Embryo_Header *hdr;
+   
+   if (!ep) return 0;
+   if (!ep->base) return 0;
+   hdr = (Embryo_Header *)ep->base;
+   return NUMENTRIES(hdr, pubvars, tags);
+}
+
+Embryo_Cell
+embryo_program_variable_get(Embryo_Program *ep, int num)
+{
+   Embryo_Header *hdr;
+   Embryo_Cell    paddr;
+   char           pname[sNAMEMAX + 1];
+   
+   if (!ep) return EMBRYO_CELL_NONE;
+   if (!ep->base) return EMBRYO_CELL_NONE;
+   hdr = (Embryo_Header *)ep->base;
+   if (_embryo_var_get(ep, num, pname, &paddr) == EMBRYO_ERROR_NONE)
+     return paddr;
+   return EMBRYO_CELL_NONE;
+}
+
 void
 embryo_program_error_set(Embryo_Program *ep, int error)
 {
