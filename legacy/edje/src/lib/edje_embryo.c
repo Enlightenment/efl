@@ -169,17 +169,76 @@ _edje_embryo_fn_set_str(Embryo_Program *ep, Embryo_Cell *params)
    return 0;
 }
 
-/* TIMERS... (tick off in N seconds from now)
- *
- * timer(Float:in, fname[], val)
- * cancel_timer(id)
- */
+/* timer(Float:in, fname[], val) */
+static Embryo_Cell
+_edje_embryo_fn_timer(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   char *fname = NULL;
+   float f;
+   double in;
+   int val;
+   
+   CHKPARAM(3);
+   ed = embryo_program_data_get(ep);
+   GETSTR(fname, params[2]);
+   if ((!fname)) return 0;
+   f = EMBRYO_CELL_TO_FLOAT(params[1]);
+   in = (double)f;
+   val = params[3];
+   return _edje_var_timer_add(ed, in, fname, val);
+}
 
-/* ANIMATORS... (run for N seconds, passing in position)
- * 
- * anim(Float:length, fname[], ...) (varargs = series of int's - no strings))
- * cancel_anim(id);
- */
+/* cancel_timer(id) */
+static Embryo_Cell
+_edje_embryo_fn_cancel_timer(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   int id;
+   
+   CHKPARAM(1);
+   ed = embryo_program_data_get(ep);
+   id = params[1];
+   if (id <= 0) return 0;
+   _edje_var_timer_del(ed, id);
+   return 0;
+}
+
+/* anim(Float:len, fname[], val) */
+static Embryo_Cell
+_edje_embryo_fn_anim(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   char *fname = NULL;
+   float f;
+   double len;
+   int val;
+   
+   CHKPARAM(3);
+   ed = embryo_program_data_get(ep);
+   GETSTR(fname, params[2]);
+   if ((!fname)) return 0;
+   f = EMBRYO_CELL_TO_FLOAT(params[1]);
+   len = (double)f;
+   val = params[3];
+   return _edje_var_anim_add(ed, len, fname, val);
+}
+
+/* cancel_anim(id) */
+static Embryo_Cell
+_edje_embryo_fn_cancel_anim(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   int id;
+   
+   CHKPARAM(1);
+   ed = embryo_program_data_get(ep);
+   id = params[1];
+   if (id <= 0) return 0;
+   _edje_var_anim_del(ed, id);
+   return 0;
+}
+
 
 /* EDJE...
  * 
@@ -385,6 +444,12 @@ _edje_embryo_script_init(Edje *ed)
    embryo_program_native_call_add(ep, "get_str", _edje_embryo_fn_get_str);
    embryo_program_native_call_add(ep, "get_strlen", _edje_embryo_fn_get_strlen);
    embryo_program_native_call_add(ep, "set_str", _edje_embryo_fn_set_str);
+
+   embryo_program_native_call_add(ep, "timer", _edje_embryo_fn_timer);
+   embryo_program_native_call_add(ep, "cancel_timer", _edje_embryo_fn_cancel_timer);
+   
+   embryo_program_native_call_add(ep, "anim", _edje_embryo_fn_anim);
+   embryo_program_native_call_add(ep, "cancel_anim", _edje_embryo_fn_cancel_anim);
    
    embryo_program_native_call_add(ep, "emit", _edje_embryo_fn_emit);
    embryo_program_native_call_add(ep, "set_state", _edje_embryo_fn_set_state);
@@ -418,6 +483,7 @@ _edje_embryo_script_reset(Edje *ed)
    _edje_embryo_globals_init(ed);
 }
 
+/* this may change in future - thus "test_run" is its name */
 void
 _edje_embryo_test_run(Edje *ed, char *fname, char *sig, char *src)
 {

@@ -20,6 +20,7 @@ edje_frametime_set(double t)
 	ecore_timer_del(_edje_timer);
 	_edje_timer = ecore_timer_add(_edje_frametime, _edje_timer_cb, NULL);
      }
+   _edje_var_anim_frametime_reset();
 }
 
 double

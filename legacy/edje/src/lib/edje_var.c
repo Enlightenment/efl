@@ -1,6 +1,118 @@
 #include "Edje.h"
 #include "edje_private.h"
 
+static int _edje_var_timer_cb(void *data);
+static int _edje_var_anim_cb(void *data);
+
+static Ecore_Timer *_edje_anim_timer = NULL;
+static Evas_List   *_edje_anim_list = NULL;
+
+static int
+_edje_var_timer_cb(void *data)
+{
+   Edje_Var_Timer *et;
+   Edje *ed;
+   Embryo_Function fn;
+   
+   et = data;
+   if (!et) return 0;
+   ed = et->edje;
+   _edje_embryo_script_reset(ed);
+   embryo_parameter_cell_push(ed->collection->script, (Embryo_Cell)et->val);
+   ed->var_pool->timers = evas_list_remove(ed->var_pool->timers, et);
+   fn = et->func;
+   free(et);
+   embryo_program_run(ed->collection->script, fn);
+   return 0;
+}
+
+static int
+_edje_var_anim_cb(void *data)
+{
+   Evas_List *l, *tl = NULL;
+   double t;
+   
+   t = ecore_time_get();
+   for (l = _edje_anim_list; l; l = l->next)
+     tl = evas_list_append(tl, l->data);
+   while (tl)
+     {
+	Edje *ed;
+	Evas_List *tl2;
+	int delete_me = 0;
+	
+	ed = tl->data;
+	_edje_ref(ed);
+	_edje_block(ed);
+	_edje_freeze(ed);
+	tl = evas_list_remove(tl, ed);
+	if (!ed->var_pool) continue;
+	tl2 = NULL;
+	for (l = ed->var_pool->animators; l; l = l->next)
+	  tl2 = evas_list_append(tl2, l->data);
+	ed->var_pool->walking_list++;
+	while (tl2)
+	  {
+	     Edje_Var_Animator *ea;
+	     
+	     ea = tl2->data;
+	     if ((ed->var_pool) && (!ea->delete_me))
+	       {
+		  if ((!ed->paused) && (!ed->delete_me))
+		    {
+		       Embryo_Function fn;
+		       float v;
+		       
+		       v = (t - ea->start)  / ea->len;
+		       if (v > 1.0) v= 1.0;
+		       _edje_embryo_script_reset(ed);
+		       embryo_parameter_cell_push(ed->collection->script, (Embryo_Cell)ea->val);
+		       embryo_parameter_cell_push(ed->collection->script, EMBRYO_FLOAT_TO_CELL(v));
+		       fn = ea->func;
+		       embryo_program_run(ed->collection->script, fn);
+		       if (v == 1.0) ea->delete_me = 1;
+		    }
+	       }
+	     tl2 = evas_list_remove(tl2, ea);
+	     if (ed->block_break)
+	       {
+		  evas_list_free(tl2);
+		  break;
+	       }
+	  }
+	ed->var_pool->walking_list--;
+	for (l = ed->var_pool->animators; l;)
+	  {
+	     Edje_Var_Animator *ea;
+	     
+	     ea = l->data;
+	     if (ea->delete_me)
+	       {
+		  l = l->next;
+		  ed->var_pool->animators = evas_list_remove(ed->var_pool->animators, ea);
+		  free(ea);
+	       }
+	     else
+	       l = l->next;
+	  }
+	if (!ed->var_pool->animators)
+	  _edje_anim_list = evas_list_remove(_edje_anim_list, ed);
+	_edje_unblock(ed);
+	_edje_thaw(ed);
+	_edje_unref(ed);
+     }
+   if (!_edje_anim_list)
+     {
+	if (_edje_anim_timer)
+	  {
+	     ecore_timer_del(_edje_anim_timer);
+	     _edje_anim_timer = NULL;
+	  }
+     }
+   if (_edje_anim_timer) return 1;
+   return 0;
+}
+
 void
 _edje_var_init(Edje *ed)
 {
@@ -33,6 +145,35 @@ _edje_var_shutdown(Edje *ed)
 	       }
 	  }
 	free(ed->var_pool->vars);
+     }
+   while (ed->var_pool->timers)
+     {
+	Edje_Var_Timer *et;
+	
+	et = ed->var_pool->timers->data;
+	ecore_timer_del(et->timer);
+	free(et);
+	ed->var_pool->timers = evas_list_remove(ed->var_pool->timers, et);
+     }
+   if (ed->var_pool->animators)
+     {
+	_edje_anim_list = evas_list_remove(_edje_anim_list, ed);
+	if (!_edje_anim_list)
+	  {
+	     if (_edje_anim_timer)
+	       {
+		  ecore_timer_del(_edje_anim_timer);
+		  _edje_anim_timer = NULL;
+	       }
+	  }
+     }
+   while (ed->var_pool->animators)
+     {
+	Edje_Var_Animator *ea;
+	
+	ea = ed->var_pool->animators->data;
+	free(ea);
+	ed->var_pool->animators = evas_list_remove(ed->var_pool->animators, ea);
      }
    free(ed->var_pool);
    ed->var_pool = NULL;
@@ -248,3 +389,126 @@ _edje_var_str_set(Edje *ed, int id, char *str)
    ed->var_pool->vars[id].data.s.v = strdup(str);
 }
 
+int
+_edje_var_timer_add(Edje *ed, double in, char *fname, int val)
+{
+   Edje_Var_Timer *et;
+   Embryo_Function fn;
+   
+   if (!ed->var_pool) return 0;
+   fn = embryo_program_function_find(ed->collection->script, fname);
+   if (fn == EMBRYO_FUNCTION_NONE) return 0;
+   ed->var_pool->id_count++;
+   et = calloc(1, sizeof(Edje_Var_Timer));
+   if (!et) return 0;
+   et->id = ed->var_pool->id_count;
+   et->edje = ed;
+   et->func = fn;
+   et->val = val;
+   et->timer = ecore_timer_add(in, _edje_var_timer_cb, et);
+   if (!et->timer)
+     {
+	free(et);
+	return 0;
+     }
+   ed->var_pool->timers = evas_list_prepend(ed->var_pool->timers, et);
+   return et->id;
+}
+
+void
+_edje_var_timer_del(Edje *ed, int id)
+{
+   Evas_List *l;
+
+   if (!ed->var_pool) return;
+   for (l = ed->var_pool->timers; l; l = l->next)
+     {
+	Edje_Var_Timer *et;
+	
+	et = l->data;
+	if (et->id == id)
+	  {
+	     ed->var_pool->timers = evas_list_remove(ed->var_pool->timers, et);
+	     ecore_timer_del(et->timer);
+	     free(et);
+	     return;
+	  }
+     }
+}
+
+int
+_edje_var_anim_add(Edje *ed, double len, char *fname, int val)
+{
+   Edje_Var_Animator *ea;
+   Embryo_Function fn;
+   
+   if (!ed->var_pool) return 0;
+   if (len <= 0.0) return 0;
+   fn = embryo_program_function_find(ed->collection->script, fname);
+   if (fn == EMBRYO_FUNCTION_NONE) return 0;
+   ed->var_pool->id_count++;
+   ea = calloc(1, sizeof(Edje_Var_Animator));
+   if (!ea) return 0;
+   ea->start = ecore_time_get();
+   ea->len = len;
+   ea->id = ed->var_pool->id_count;
+   ea->edje = ed;
+   ea->func = fn;
+   ea->val = val;
+   if (!_edje_anim_list)
+     _edje_anim_list = evas_list_append(_edje_anim_list, ed);
+   ed->var_pool->animators = evas_list_prepend(ed->var_pool->animators, ea);
+   if (!_edje_anim_timer)
+     _edje_anim_timer = ecore_timer_add(edje_frametime_get(), _edje_var_anim_cb, NULL);
+   return ea->id;
+}
+
+void
+_edje_var_anim_del(Edje *ed, int id)
+{
+   Evas_List *l;
+
+   if (!ed->var_pool) return;
+   for (l = ed->var_pool->animators; l; l = l->next)
+     {
+	Edje_Var_Animator *ea;
+	
+	ea = l->data;
+	if (ea->id == id)
+	  {
+	     if (!ed->var_pool->walking_list)
+	       {
+		  ed->var_pool->animators = evas_list_remove(ed->var_pool->animators, ea);
+		  free(ea);
+		  if (!ed->var_pool->animators)
+		    {
+		       _edje_anim_list = evas_list_remove(_edje_anim_list, ed);
+		       if (!_edje_anim_list)
+			 {
+			    if (_edje_anim_timer)
+			      {
+				 ecore_timer_del(_edje_anim_timer);
+				 _edje_anim_timer = NULL;
+			      }
+			 }
+		    }
+	       }
+	     else
+	       ea->delete_me = 1;
+	     return;
+	  }
+     }
+}
+
+void
+_edje_var_anim_frametime_reset(void)
+{
+   double ft;
+   
+   if (_edje_anim_timer)
+     {
+	ft = edje_frametime_get();
+	ecore_timer_del(_edje_anim_timer);
+	_edje_anim_timer = ecore_timer_add(ft, _edje_var_anim_cb, NULL);
+     }
+}

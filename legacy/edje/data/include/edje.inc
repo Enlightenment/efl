@@ -34,8 +34,20 @@ native       get_strlen(id);
 native       get_str   (id, dst[], maxlen);
 native       set_str   (id, str[]);
 
+/********************/
+/* Edje timer calls */
+/********************/
+native       timer       (Float:in, fname[], val);
+native       cancel_timer(id);
+
+/*******************/
+/* Edje anim calls */
+/*******************/
+native       anim       (Float:len, fname[], val);
+native       cancel_anim(id);
+
 /***********************************************************/
-/* Edje utility calls for dealign with edjes/programs etc. */
+/* Edje utility calls for dealing with edjes/programs etc. */
 /***********************************************************/
 /* Example:
  * 

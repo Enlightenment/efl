@@ -147,6 +147,18 @@ collections {
 	 public global_int;
 	 public global_float;
 	 public global_str;
+	 
+	 public timer_cb(val)
+	   {
+	      emit("PROGRAAAAAAAM", "TIMER@!@!@!@!@!@!@!");
+	   }
+         public anim_cb(val, Float: pos)
+	   {
+	      new buf[100];
+	      
+	      snprintf(buf, 100, "val = %i, pos = %f", val, pos);
+	      emit("PR AAAAAAAAANIM", buf);
+	   }
       }
       parts {
 	 part {
@@ -506,6 +518,8 @@ collections {
 	       set_state(PART:"logo", "clicked", 0.0);
 	       set_tween_state(PART:"logo", randf(), "default", 0.0, "clicked", 0.0);
 	       run_program(PROGRAM:"logo_click_d2");
+	       timer(2.5, "timer_cb", 777);
+	       anim(1.5, "anim_cb", 7777);
 	    }
 	 }
 	 program {

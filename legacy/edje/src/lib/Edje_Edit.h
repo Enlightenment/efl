@@ -382,6 +382,8 @@ typedef struct _Edje_Var Edje_Var;
 typedef struct _Edje_Var_Int Edje_Var_Int;
 typedef struct _Edje_Var_Float Edje_Var_Float;
 typedef struct _Edje_Var_String Edje_Var_String;
+typedef struct _Edje_Var_Animator Edje_Var_Animator;
+typedef struct _Edje_Var_Timer Edje_Var_Timer;
 typedef struct _Edje_Var_Pool Edje_Var_Pool;
 
 struct _Edje
@@ -424,6 +426,7 @@ struct _Edje
    Evas_List            *emissions;
    int                   load_error;
    int                   freeze;
+   /* variable pool for edje embryo scripts */
    Edje_Var_Pool        *var_pool;
    /* for faster lookups to avoid nth list walks */
    int                   table_parts_size;
@@ -600,10 +603,33 @@ struct _Edje_Var_String
    char    *v;
 };
 
+struct _Edje_Var_Timer
+{
+   Edje           *edje;
+   int             id;
+   Embryo_Function func;
+   int             val;
+   Ecore_Timer    *timer;
+};
+
+struct _Edje_Var_Animator
+{
+   Edje           *edje;
+   int             id;
+   Embryo_Function func;
+   int             val;
+   double          start, len;
+   char            delete_me;
+};
+
 struct _Edje_Var_Pool
 {
-   int       size;
-   Edje_Var *vars;
+   int          id_count;
+   Evas_List   *timers;
+   Evas_List   *animators;
+   int          size;
+   Edje_Var    *vars;
+   int          walking_list;
 };
 
 struct _Edje_Var
