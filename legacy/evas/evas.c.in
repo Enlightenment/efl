@@ -14,7 +14,13 @@ These routines are used for Evas Library interaction
 @author Carsten Haitzler <raster@rasterman.com>
 @author Till Adam <till@adam-lilienthal.de>
 @author Steve Ireland <sireland@pobox.com>
-@date 2000-2002
+@author Brett Nash <nash@nash.id.au>
+@author Tilman Sauerbeck <tilman@code-monkey.de>
+@author Corey Donohoe <atmos@atmos.org>
+@author Yuri Hudobin <glassy_ape@users.sourceforge.net>
+@author Nathan Ingersoll <ningerso@d.umn.edu>
+@author Willem Monsuwe <willem@stack.nl>
+@date 2000-2003
 
 
 
@@ -106,7 +112,7 @@ minimise redraws so that display is fast and interactive, and keep track of
 redraw logic. The power comes at a high-price, lots of extra code and work.
 Programmers not very familiar with graphics programming will often make
 mistakes at this level and produce code that is sub optimal. Those familiar
-with this kind of programming will simply get bored by writign the same code
+with this kind of programming will simply get bored by writing the same code
 again and again.
 
 Evas is a structural system in which the programmer creates and manages
@@ -134,15 +140,15 @@ This may look longer, but when the display needs to be refreshed or updated,
 the programmer only moves, resizes, shows, hides etc. the objects that they
 need to change. The programmer simply thinks at the object logic level, and
 the canvas software does the rest of the work for them, figuring out what
-actually changed in the canvas since it was lastdrawn, how to most
+actually changed in the canvas since it was last drawn, how to most
 efficiently redraw he canvas and its contents to reflect the current state,
 and then it can go off and do the actual drawing of the canvas.
 
 This lets the programmer think in a more natural way when dealing with a
-display, and saves time and effort of woring out how to load and display
+display, and saves time and effort of working out how to load and display
 images, render given the current display system etc. Since Evas also is
 portable across different display systems, this also gives the programmer
-the ability to have their code ported and display on different dislpay
+the ability to have their code ported and display on different display
 systems with very little work.
 
 Evas can be seen as a display system that stands somewhere between a widget
@@ -238,7 +244,11 @@ make install
 
 
 @todo (1.0) Document API
-@todo (1.0) Guard against image fills that are too big to calculate
+@todo (1.0) OpenGL engine needs to use texture meshes
+@todo (1.0) OpenGL engine needs texture cache and size setting
+@todo (1.0) OpenGL Engine needs YUV import API to YUV texture
+@todo (1.0) All engines need pixel import API
+@todo (1.0) Add parital render through composite layer api to engines
 @todo (1.0) Move callback processing to a queue and do it asynchronously
 @todo (1.0) Add button grabbing
 @todo (1.0) Add generic object method call system
@@ -249,6 +259,8 @@ make install
 @todo (1.0) Add font listing calls
 @todo (1.0) Add ability to check image comments & disk format
 @todo (1.0) Add group objects
+@todo (1.0) Export engine rnedering etc. API cleanly to Evas API
+@todo (1.0) Add smart object ability to provide rendering callback
 @todo (1.1) Make freetype optional and put in optional graymap font engine
 @todo (1.1) Free images if object invisible (and put back in chache)
 @todo (1.1) Check robustness of malloc/calloc/realloc failures.
@@ -258,20 +270,19 @@ make install
 @todo (1.2) Add external image loaders (application provided callbacks to load)
 @todo (1.2) Add loadable image loader module support (evas loads file.so)
 @todo (1.2) Add external image lodaer modules (application proivdes path to file.so)
-@todo (1.3) Add OpenGL GLX Engine
-@todo (1.3) Add X11 primtive engine
+@todo (1.3) Add X11 primtive engine (ie pixmap)
+@todo (1.3) Add Xrender engine (once xrender works fast/well)
 @todo (1.3) Add immediate mode drawing commands to image objects
 @todo (1.3) Fix FB engine to allocate vt and release properly
 @todo (1.4) Add SDL Engine
 @todo (1.4) Add ellipse objects (circle, arc, ellipse etc.)
-@todo (1.4) Add video/movie/animation objects
-@todo (1.5) Make software engine draw lines & polys with aa
+@todo (1.5) Make software engine draw lines & polys etc. with aa
 @todo (1.5) Add radial gradients to gradient objects
 @todo (1.5) Add Symbian Engine
 @todo (1.6) Add PalmOS Engine
 @todo (1.6) Add Win32 OpenGL Engine
 @todo (1.6) Add Apple OpenGL Engine
-@todo (1.7) Document Engine API
+@todo (1.7) Document engine API and other internals
 @todo (1.7) Allow any object to clip any other object, and not just rectangles
 @todo (1.8) Add more evas demos
 
