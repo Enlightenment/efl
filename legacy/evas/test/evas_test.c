@@ -54,7 +54,7 @@ main(int argc, char **argv)
      {
 	int a = 0;
 	double t1, t2;
-	Evas_GL_Image *i[4], *bg, *l;
+	Evas_GL_Image *i[4], *bg, *l, *sel, *ic, *tm;
 	Evas_GL_Font *fn[4];
 	Evas_GL_Graident *gr;
 	
@@ -63,7 +63,11 @@ main(int argc, char **argv)
 	i[1] = __evas_gl_image_new_from_file(d, "img/fog2001.png");
 	i[2] = __evas_gl_image_new_from_file(d, "img/fog3001.png");
 	i[3] = __evas_gl_image_new_from_file(d, "img/fog4001.png");
+	ic = __evas_gl_image_new_from_file(d, "img/mush.png");
+	tm = __evas_gl_image_new_from_file(d, "img/tm.png");
 	l = __evas_gl_image_new_from_file(d, "img/logo001.png");
+	sel = __evas_gl_image_new_from_file(d, "img/sel.png");
+	__evas_gl_image_set_borders(sel, 3, 3, 3, 3);
 	__evas_gl_text_font_add_path("./fnt");
 	fn[0] = __evas_gl_text_font_new(d, "cinema", 24);
 	fn[1] = __evas_gl_text_font_new(d, "grunge", 16);
@@ -147,10 +151,56 @@ main(int argc, char **argv)
 	     __evas_gl_line_draw(d, win, win_w, win_h,
 				 10, 20, 10, 200,
 				 255, 255, 0, 100);
+	     __evas_gl_image_draw(tm, d, win, win_w, win_h,
+				  
+				  (__evas_gl_image_get_width(tm) / 2) - (((a / 4) + 4) / 2), 
+				  (__evas_gl_image_get_height(tm) / 2) - (((a / 4) + 4) / 2), 
+				  (a / 4) + 4, (a / 4) + 4,
+				  
+				  360, 220, 
+				  200, 250);
+	     __evas_gl_image_draw(tm, d, win, win_w, win_h,
+				  
+				  0, 0,
+				  (a / 4) + 4, (a / 4) + 4,
+				  
+				  110, 320, 
+				  100, 100);
+	     __evas_gl_image_draw(sel, d, win, win_w, win_h,
+				  0, 0, __evas_gl_image_get_width(sel), __evas_gl_image_get_height(sel),
+				  10, 50, 
+				  abs(sin((double)a / win_w) * 300) + 20, abs(cos((double)a / win_w) * 300) + 20);
 	     __evas_gl_gradient_draw(gr, 
 				     d, win, win_w, win_h,
 				     300, 100, 200, 200, 
 				     ((double)a * 360) / (double)win_w);
+	     __evas_gl_image_draw(ic, d, win, win_w, win_h,
+				  
+				  0, 0, 
+				  __evas_gl_image_get_width(ic),
+				  __evas_gl_image_get_height(ic),
+				  
+				  a / 4, a / 8, 
+				  __evas_gl_image_get_width(ic),
+				  __evas_gl_image_get_height(ic));
+	     __evas_gl_image_draw(ic, d, win, win_w, win_h,
+				  
+				  0, 0, 
+				  __evas_gl_image_get_width(ic),
+				  __evas_gl_image_get_height(ic),
+				  
+				  a / 4, a / 4, 
+				  __evas_gl_image_get_width(ic),
+				  __evas_gl_image_get_height(ic));
+	     __evas_gl_image_draw(ic, d, win, win_w, win_h,
+				  
+				  0, 0, 
+				  __evas_gl_image_get_width(ic),
+				  __evas_gl_image_get_height(ic),
+				  
+				  a / 8, a / 4, 
+				  __evas_gl_image_get_width(ic),
+				  __evas_gl_image_get_height(ic));
 	     __evas_gl_flush_draw(d, win);
 	     a++;
 	     if (a == (win_w * 4)) 

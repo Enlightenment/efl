@@ -18,6 +18,7 @@
 
 typedef void Evas_Imlib_Image;
 typedef void Evas_Imlib_Font;
+typedef void Evas_Imlib_Graident;
 
 typedef struct _evas_imlib_drawable Evas_Imlib_Drawable;
 typedef struct _evas_imlib_update Evas_Imlib_Update;
@@ -43,9 +44,10 @@ void              __evas_imlib_image_free(Evas_Imlib_Image *im);
 void              __evas_imlib_image_cache_empty(Display *disp);
 void              __evas_imlib_image_cache_set_size(Display *disp, int size);
 int               __evas_imlib_image_cache_get_size(Display *disp);
-void              __evas_imlib_image_draw(Evas_Imlib_Image *im, Display *disp, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h);
 int               __evas_imlib_image_get_width(Evas_Imlib_Image *im);
 int               __evas_imlib_image_get_height(Evas_Imlib_Image *im);
+void              __evas_imlib_image_set_borders(Evas_Imlib_Image *im, int left, int right, int top, int bottom);
+void              __evas_imlib_image_draw(Evas_Imlib_Image *im, Display *disp, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h);
 
 /********/
 /* text */
@@ -76,6 +78,10 @@ void              __evas_imlib_line_draw(Display *disp, Window win, int win_w, i
 /*************/
 /* gradients */
 /*************/
+Evas_Imlib_Graident *__evas_imlib_gradient_new(Display *disp);
+void                 __evas_imlib_gradient_free(Evas_Imlib_Graident *gr);
+void                 __evas_imlib_gradient_color_add(Evas_Imlib_Graident *gr, int r, int g, int b, int a, int dist);
+void                 __evas_imlib_gradient_draw(Evas_Imlib_Graident *gr, Display *disp, Window win, int win_w, int win_h, int x, int y, int w, int h, double angle);
 
 /***********/
 /* drawing */

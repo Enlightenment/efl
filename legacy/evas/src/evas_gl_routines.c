@@ -16,7 +16,6 @@ static int __evas_gl_configuration[] =
 static void           __evas_gl_image_copy_image_rect_to_texture(Evas_GL_Image *im, int x, int y, int w, int h, int tw, int th, GLuint texture);
 static void           __evas_gl_image_move_state_data_to_texture(Evas_GL_Image *im);
 static void           __evas_gl_image_calc_tex_and_poly(Evas_GL_Image *im, int x, double *x1, double *x2, int *tx, int *txx, double *dtx, double *dtxx, int tw, int w, int edge);
-static void           __evas_gl_image_set_context_for_dest(Evas_GL_Image *im, Display *disp, Window w, int win_w, int win_h);
 static Evas_GL_Image *__evas_gl_create_image(void);
 static Evas_GL_Image *__evas_gl_image_create_from_file(Display *disp, char *file);
 static void           __evas_gl_image_destroy(Evas_GL_Image *im);
@@ -114,9 +113,22 @@ __evas_gl_image_copy_image_rect_to_texture(Evas_GL_Image *im, int x, int y,
 		((*p1 & 0x000000ff) << 16);
 	     p2++; p1++;
 	  }
-	
+	if (tx < tw)
+	   *p2 = p2[-1];
      }
-   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, tw, th, 0,
+   if (ty < th)
+     {
+	p1 = data + ((ty - 1) * tw);
+	p2 = data + (ty * tw);
+	for (tx = 0; tx < w; tx++)
+	  {
+	     *p2 = *p1;
+	     p2++; p1++;
+	  }
+	if (tx < tw)
+	   *p2 = p2[-1];
+     }
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, tw, th, 0,
 		GL_RGBA, GL_UNSIGNED_BYTE, data);
    free(data);
 }
@@ -135,7 +147,6 @@ __evas_gl_image_move_state_data_to_texture(Evas_GL_Image *im)
 	  {
 	     imlib_context_set_image(image);
 	     im->data = imlib_image_get_data_for_reading_only();
-	     imlib_free_image();
 	     image_data = 1;
 	  }
      }
@@ -203,7 +214,7 @@ __evas_gl_image_move_state_data_to_texture(Evas_GL_Image *im)
 	for (x = 0; x < im->texture.w; x++, i++)
 	  {
 	     int xx, yy, ww, hh, tw, th;
-	     
+
 	     if (x == (im->texture.w - 1)) tw = im->texture.edge_w;
 	     else tw = im->texture.max_size;
 	     if (y == (im->texture.h - 1)) th = im->texture.edge_h;
@@ -283,52 +294,6 @@ __evas_gl_image_calc_tex_and_poly(Evas_GL_Image *im, int x, double *x1, double *
       *x2 = (double)((x + 1) * (im->texture.max_size - 2));
    else
       *x2 = (double)w;
-}
-
-static void
-__evas_gl_image_set_context_for_dest(Evas_GL_Image *im, Display *disp, Window w,
-				     int win_w, int win_h)
-{
-   if ((__evas_current_win != w) || (__evas_current_disp != disp))
-     {
-	glXMakeCurrent(disp, w, im->context);
-	__evas_current_disp = disp;
-	__evas_current_win = w;
-	im->buffer.dest = w;
-     }
-   if (im->alpha)
-     {
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-     }
-   else
-     {
-	glDisable(GL_BLEND);
-     }
-   glEnable(GL_DITHER);
-   glEnable(GL_TEXTURE_2D);
-   glShadeModel(GL_FLAT);
-   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
-   glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-   /* why doesnt scissor work ? */
-   /*   
-    glEnable(GL_SCISSOR_TEST);
-    glScissor(dst_x, win_h - dst_y - 1, dst_w, dst_h); 
-    */
-   if ((win_w != im->buffer.dest_w) || (win_h != im->buffer.dest_h))
-     {
-	glViewport(0, 0, win_w, win_h);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, win_w, 0, win_h, -1, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glScalef(1, -1, 1);
-	glTranslatef(0, -win_h, 0);   
-	im->buffer.dest_w = win_w;
-	im->buffer.dest_h = win_h;
-     }
 }
 
 static Evas_GL_Image *
@@ -436,48 +401,141 @@ __evas_gl_image_draw(Evas_GL_Image *im,
 {
    int x, y, i;   
    double dx, dy, dw, dh;
-   
+
+   if ((src_w <= 0) || (src_h <= 0) || (dst_w <= 0) || (dst_h <= 0)) return;
    if (im->state != EVAS_STATE_TEXTURE)
       __evas_gl_image_move_state_data_to_texture(im);
-   __evas_gl_image_set_context_for_dest(im, disp, w, win_w, win_h);
-   /* project src and dst rects to overall dest rect */
+   if ((__evas_current_win != w) || (__evas_current_disp != disp))
+     {
+	glXMakeCurrent(disp, w, im->context);
+	__evas_current_disp = disp;
+	__evas_current_win = w;
+	im->buffer.dest = w;
+     }
+   if (im->alpha)
+     {
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+     }
+   else
+     {
+	glDisable(GL_BLEND);
+     }
+   
+   src_y = im->h - src_h - src_y; 
+   
    dw = (((double)dst_w * (double)im->w)/ (double)src_w);
    dx = (double)dst_x - (((double)dst_w * (double)src_x)/ (double)src_w);
-   
    dh = (((double)dst_h * (double)im->h)/ (double)src_h);
    dy = (double)dst_y - (((double)dst_h * (double)src_y)/ (double)src_h);
+   
+   glEnable(GL_DITHER);
+   glEnable(GL_TEXTURE_2D);
+   glShadeModel(GL_FLAT);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+   glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+   
+   glViewport(dst_x, win_h - dst_y - dst_h, dst_w, dst_h);
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity();
+   glOrtho(0, dst_w, 0, dst_h, -1, 1);
+   glMatrixMode(GL_MODELVIEW);
+   glLoadIdentity();
+   glScalef(1, -1, 1);
+   glTranslatef((double)(-dst_x), (dst_y - dy) -dy - dh 
+		, 0);   
+   im->buffer.dest_w = win_w;
+   im->buffer.dest_h = win_h;
+
+   /* project src and dst rects to overall dest rect */
    glColor4f(1.0, 1.0, 1.0, 1.0);
-   for (y = 0, i = 0; y < im->texture.h; y++)
+   if ((im->direct) || 
+       ((im->bl == 0) && (im->br == 0) && (im->bt == 0) && (im->bb == 0)))
      {
-	for (x = 0; x < im->texture.w; x++, i++)
+	for (y = 0, i = 0; y < im->texture.h; y++)
 	  {
-	     int tx, ty, txx, tyy;
-	     double x1, y1, x2, y2;
-	     double dtx, dtxx, dty, dtyy;
-	     
-	     
-	     __evas_gl_image_calc_tex_and_poly(im, x, &x1, &x2, &tx, &txx, 
-					       &dtx, &dtxx, 
-					       im->texture.w, im->w, 
-					       im->texture.edge_w);
-	     __evas_gl_image_calc_tex_and_poly(im, y, &y1, &y2, &ty, &tyy, 
-					       &dty, &dtyy, 
-					       im->texture.h, im->h, 
-					       im->texture.edge_h);
-             x1 = dx + ((x1 * dw) / (double)im->w);
-             y1 = dy + ((y1 * dh) / (double)im->h);
-             x2 = dx + ((x2 * dw) / (double)im->w);
-             y2 = dy + ((y2 * dh) / (double)im->h);
-	     glBindTexture(GL_TEXTURE_2D, im->texture.textures[i]);
-	     glBegin(GL_QUADS);
-	     glTexCoord2d(dtx,  dty);  glVertex2d(x1, y1);
-	     glTexCoord2d(dtxx, dty);  glVertex2d(x2, y1);
-	     glTexCoord2d(dtxx, dtyy); glVertex2d(x2, y2);
-	     glTexCoord2d(dtx,  dtyy); glVertex2d(x1, y2);
-	     glEnd();
+	     for (x = 0; x < im->texture.w; x++, i++)
+	       {
+		  int tx, ty, txx, tyy;
+		  double x1, y1, x2, y2;
+		  double dtx, dtxx, dty, dtyy;
+		  
+		  
+		  __evas_gl_image_calc_tex_and_poly(im, x, &x1, &x2, 
+						    &tx, &txx, 
+						    &dtx, &dtxx, 
+						    im->texture.w, im->w, 
+						    im->texture.edge_w);
+		  __evas_gl_image_calc_tex_and_poly(im, y, &y1, &y2, 
+						    &ty, &tyy, 
+						    &dty, &dtyy, 
+						    im->texture.h, im->h, 
+						    im->texture.edge_h);
+		  x1 = dx + ((x1 * dw) / (double)im->w);
+		  y1 = dy + ((y1 * dh) / (double)im->h);
+		  x2 = dx + ((x2 * dw) / (double)im->w);
+		  y2 = dy + ((y2 * dh) / (double)im->h);
+		  glBindTexture(GL_TEXTURE_2D, im->texture.textures[i]);
+		  glBegin(GL_QUADS);
+		  glTexCoord2d(dtx,  dty);  glVertex2d(x1, y1);
+		  glTexCoord2d(dtxx, dty);  glVertex2d(x2, y1);
+		  glTexCoord2d(dtxx, dtyy); glVertex2d(x2, y2);
+		  glTexCoord2d(dtx,  dtyy); glVertex2d(x1, y2);
+		  glEnd();
+	       }
 	  }
      }
-/*   glDisable(GL_SCISSOR_TEST);*/
+   else
+     {
+	int bl, br, bt, bb;
+	
+	im->direct = 1;
+	bl = im->bl;
+	br = im->br;
+	bt = im->bt;
+	bb = im->bb;
+	if ((bl + br) > (int)dw)
+	  {
+	     bl = (int)dw / 2;
+	     br = (int)dw - bl;
+	  }
+	if ((bt + bb) > (int)dh)
+	  {
+	     bt = (int)dh / 2;
+	     bb = (int)dh - bt;
+	  }
+	__evas_gl_image_draw(im, disp, w, win_w, win_h,
+			     0, 0, bl, bt,
+			     dx, dy, bl, bt);
+	__evas_gl_image_draw(im, disp, w, win_w, win_h,
+			     bl, 0, im->w - bl - br, bt,
+			     dx + bl, dy, dw - bl - br, bt);
+	__evas_gl_image_draw(im, disp, w, win_w, win_h,
+			     im->w - br, 0, br, bt,
+			     dx + dw - br, dy, br, bt);
+
+	__evas_gl_image_draw(im, disp, w, win_w, win_h,
+			     0, bt, bl, im->h - bt - bb,
+			     dx, dy + bt, bl, dh - bt - bb);
+	__evas_gl_image_draw(im, disp, w, win_w, win_h,
+			     bl, bt, im->w - bl - br, im->h - bt - bb,
+			     dx + bl, dy + bt, dw - bl - br, dh - bt - bb);
+	__evas_gl_image_draw(im, disp, w, win_w, win_h,
+			     im->w - br, bt, br, im->h - bt - bb,
+			     dx + dw - br, dy + bt, br, dh - bt - bb);
+	
+	__evas_gl_image_draw(im, disp, w, win_w, win_h,
+			     0, im->h - bb, bl, bb,
+			     dx, dy + dh - bb, bl, bb);
+	__evas_gl_image_draw(im, disp, w, win_w, win_h,
+			     bl, im->h - bb, im->w - bl - br, bb,
+			     dx + bl, dy + dh - bb, dw - bl - br, bb);
+	__evas_gl_image_draw(im, disp, w, win_w, win_h,
+			     im->w - br, im->h - bb, br, bb,
+			     dx + dw - br, dy + dh - bb, br, bb);
+	im->direct = 0;
+     }
 }
 
 Evas_GL_Image *
@@ -569,7 +627,25 @@ __evas_gl_image_get_height(Evas_GL_Image *im)
    return im->h;
 }
 
-
+void
+__evas_gl_image_set_borders(Evas_GL_Image *im, int left, int right,
+			    int top, int bottom)
+{
+   im->bl = left;
+   im->br = right;
+   im->bt = top;
+   im->bb = bottom;
+   if ((im->bl + im->br) > im->w)
+     {
+	im->bl = im->w / 2;
+	im->br = im->w - im->bl;
+     }
+   if ((im->bt + im->bb) > im->h)
+     {
+	im->bt = im->h / 2;
+	im->bb = im->h - im->bt;
+     }
+}
 
 
 
@@ -642,19 +718,16 @@ __evas_gl_text_paste(Evas_GL_Font *f, char *text,
    bb = (float)b / 255;
    aa = (float)a / 255;
    glColor4f(rr, gg, bb, aa);
-   if ((win_w != f->buffer.dest_w) || (win_h != f->buffer.dest_h))
-     {
-	glViewport(0, 0, win_w, win_h);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, win_w, 0, win_h, -1, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glScalef(1, -1, 1);
-	glTranslatef(0, -win_h, 0);
-	f->buffer.dest_w = win_w;
-	f->buffer.dest_h = win_h;
-     }
+   glViewport(0, 0, win_w, win_h);
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity();
+   glOrtho(0, win_w, 0, win_h, -1, 1);
+   glMatrixMode(GL_MODELVIEW);
+   glLoadIdentity();
+   glScalef(1, -1, 1);
+   glTranslatef(0, -win_h, 0);
+   f->buffer.dest_w = win_w;
+   f->buffer.dest_h = win_h;
 
    __evas_gl_text_calc_size(f, &w, &h, text);
    rows = h;
@@ -1387,19 +1460,16 @@ void           __evas_gl_rectangle_draw(Display *disp, Window win,
    bb = (float)b / 255;
    aa = (float)a / 255;
    glColor4f(rr, gg, bb, aa);
-   if ((win_w != dest_w) || (win_h != dest_h))
-     {
-	glViewport(0, 0, win_w, win_h);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, win_w, 0, win_h, -1, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glScalef(1, -1, 1);
-	glTranslatef(0, -win_h, 0);
-	dest_w = win_w;
-	dest_h = win_h;
-     }
+   glViewport(0, 0, win_w, win_h);
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity();
+   glOrtho(0, win_w, 0, win_h, -1, 1);
+   glMatrixMode(GL_MODELVIEW);
+   glLoadIdentity();
+   glScalef(1, -1, 1);
+   glTranslatef(0, -win_h, 0);
+   dest_w = win_w;
+   dest_h = win_h;
    if (a < 255)
      {
 	glEnable(GL_BLEND);
@@ -1466,19 +1536,17 @@ void              __evas_gl_line_draw(Display *disp, Window win,
    bb = (float)b / 255;
    aa = (float)a / 255;
    glColor4f(rr, gg, bb, aa);
-   if ((win_w != dest_w) || (win_h != dest_h))
-     {
-	glViewport(0, 0, win_w, win_h);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, win_w, 0, win_h, -1, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glScalef(1, -1, 1);
-	glTranslatef(0, -win_h, 0);
-	dest_w = win_w;
-	dest_h = win_h;
-     }
+   glViewport(0, 0, win_w, win_h);
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity();
+   glOrtho(0, win_w, 0, win_h, -1, 1);
+   glMatrixMode(GL_MODELVIEW);
+   glLoadIdentity();
+   glScalef(1, -1, 1);
+   glTranslatef(0, -win_h, 0);
+   dest_w = win_w;
+   dest_h = win_h;
+
    glEnable(GL_BLEND);
    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
    glEnable(GL_DITHER);
@@ -1622,6 +1690,13 @@ __evas_gl_gradient_gen_texture(Evas_GL_Graident *gr)
 	     map[j++] = b;
 	     map[j++] = a;
 	  }
+	for (i = ll; i < gr->max_texture_size; i++)
+	  {
+             map[j++] = r;
+	     map[j++] = g;
+	     map[j++] = b;
+	     map[j++] = a;
+	  }
      }
    if (!__evas_context_window)
      {
@@ -1661,7 +1736,7 @@ __evas_gl_gradient_gen_texture(Evas_GL_Graident *gr)
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gr->max_texture_size, 1, 0,
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, gr->max_texture_size, 1, 0,
 		GL_RGBA, GL_UNSIGNED_BYTE, map);
    gr->texture_w = ll;
    gr->texture_h = 1;
@@ -1743,19 +1818,17 @@ __evas_gl_gradient_draw(Evas_GL_Graident *gr,
 	__evas_current_win = win;
      }
    glColor4f(1.0, 1.0, 1.0, 1.0);
-   if ((win_w != dest_w) || (win_h != dest_h))
-     {
-	glViewport(0, 0, win_w, win_h);
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	glOrtho(0, win_w, 0, win_h, -1, 1);
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
-	glScalef(1, -1, 1);
-	glTranslatef(0, -win_h, 0);
-	dest_w = win_w;
-	dest_h = win_h;
-     }
+   glViewport(0, 0, win_w, win_h);
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity();
+   glOrtho(0, win_w, 0, win_h, -1, 1);
+   glMatrixMode(GL_MODELVIEW);
+   glLoadIdentity();
+   glScalef(1, -1, 1);
+   glTranslatef(0, -win_h, 0);
+   dest_w = win_w;
+   dest_h = win_h;
+
    glEnable(GL_BLEND);
    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
    glEnable(GL_DITHER);

@@ -39,6 +39,8 @@ struct _evas_gl_image
 {
    Evas_GL_Image_State state;
    int w, h;
+   int direct;
+   int bl, br, bt, bb;
    int alpha;
    char *file;
    /* data specific params */
@@ -139,6 +141,7 @@ int            __evas_gl_image_cache_get_size(Display *disp);
 void           __evas_gl_image_draw(Evas_GL_Image *im, Display *disp, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h);
 int            __evas_gl_image_get_width(Evas_GL_Image *im);
 int            __evas_gl_image_get_height(Evas_GL_Image *im);
+void           __evas_gl_image_set_borders(Evas_GL_Image *im, int left, int right, int top, int bottom);
 
 /********/
 /* text */

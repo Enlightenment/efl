@@ -120,7 +120,19 @@ __evas_imlib_image_get_height(Evas_Imlib_Image *im)
    return imlib_image_get_height();
 }
 
-
+void
+__evas_imlib_image_set_borders(Evas_Imlib_Image *im, int left, int right,
+			       int top, int bottom)
+{
+   Imlib_Border bd;
+   
+   imlib_context_set_image((Imlib_Image)im);
+   bd.left = left;
+   bd.right = right;
+   bd.top = top;
+   bd.bottom = bottom;
+   imlib_image_set_border(&bd);
+}
 
 
 
@@ -409,7 +421,7 @@ void              __evas_imlib_line_draw(Display *disp, Window win,
 		       if (!up->image)
 			  up->image = imlib_create_image(up->w, up->h);
 		       imlib_context_set_image(up->image);
-		       imlib_image_draw_line(x1 - up->x, y - up->x, x2 - up->x, y2 - up->y, 0);
+		       imlib_image_draw_line(x1 - up->x, y1 - up->x, x2 - up->x, y2 - up->y, 0);
 		    }
 	       }
 	  }
@@ -423,6 +435,81 @@ void              __evas_imlib_line_draw(Display *disp, Window win,
 
 
 
+
+
+
+
+
+
+
+
+
+/*****************************************************************************/
+/* gradient externals ********************************************************/
+/*****************************************************************************/
+
+
+Evas_Imlib_Graident *
+__evas_imlib_gradient_new(Display *disp)
+{
+   return (Evas_Imlib_Graident *)imlib_create_color_range();
+}
+
+void
+__evas_imlib_gradient_free(Evas_Imlib_Graident *gr)
+{
+   imlib_context_set_color_range((Imlib_Color_Range)gr);
+   imlib_free_color_range();
+}
+
+void
+__evas_imlib_gradient_color_add(Evas_Imlib_Graident *gr, int r, int g, int b, int a, int dist)
+{
+   imlib_context_set_color_range((Imlib_Color_Range)gr);
+   imlib_context_set_color(r, g, b, a);
+   imlib_add_color_to_color_range(dist);
+}
+
+void
+__evas_imlib_gradient_draw(Evas_Imlib_Graident *gr, Display *disp, Window win, int win_w, int win_h, int x, int y, int w, int h, double angle)
+{
+   Evas_List l;
+   
+   imlib_context_set_angle(angle);
+   imlib_context_set_operation(IMLIB_OP_COPY);
+   imlib_context_set_color_modifier(NULL);
+   imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
+   imlib_context_set_color_range((Imlib_Color_Range)gr);
+   imlib_context_set_anti_alias(1);
+   for(l = drawable_list; l; l = l->next)
+     {
+	Evas_Imlib_Drawable *dr;
+	
+	dr = l->data;
+	
+	if ((dr->win == win) && (dr->disp == disp))
+	  {
+	     Evas_List ll;
+	     
+	     for (ll = dr->tmp_images; ll; ll = ll->next)
+	       {
+		  Evas_Imlib_Update *up;
+
+		  up = ll->data;
+		  
+		  /* if image intersects image update - render */
+		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
+				      x, y, w, h))
+		    {
+		       if (!up->image)
+			  up->image = imlib_create_image(up->w, up->h);
+		       imlib_context_set_image(up->image);
+		       imlib_image_fill_color_range_rectangle(x - up->x, y - up->y, w, h, angle);
+		    }
+	       }
+	  }
+     }
+}
 
 
 
@@ -462,6 +549,7 @@ __evas_imlib_flush_draw(Display *disp, Window win)
    imlib_context_set_visual(__evas_visual);
    imlib_context_set_colormap(__evas_cmap);
    imlib_context_set_drawable(win);
+   imlib_context_set_dither(1);
    
    for(l = drawable_list; l; l = l->next)
      {
