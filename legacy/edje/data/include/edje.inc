@@ -76,7 +76,7 @@ native       get_color_class  (class[], &r, &g, &b, &a);
 native       set_color_class  (class[], r, g, b, a);
 native       set_text_class   (class[], font[], Float:size);
 native       get_text_class   (class[], font[], &Float:size);
-native       get_geometry     (part_id, &Float:x, &Float:y, &Float:w, &Float:h);
+native       get_geometry     (part_id, &x, &y, &w, &h);
 native       get_mouse        (&x, &y);
 native       stop_program     (program_id);
 native       stop_programs_on (part_id);
