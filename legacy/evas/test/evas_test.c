@@ -19,7 +19,7 @@ Evas      evas_control = NULL, evas_view = NULL;
 int       wait_for_events = 1;
 
 Evas_Object 
-o_logo, o_logo_shadow, 
+o_logo, o_logo_shadow, o_logo_impress,
 o_software, o_hardware, o_x11, 
 o_box1, o_box2, o_box3, 
 o_brush, o_paint,
@@ -242,6 +242,13 @@ setup_view(Evas_Render_Method method)
    evas_move(e, o, x, y);
    evas_set_layer(e, o, 101);
    o_logo = o;
+
+   o = evas_add_image_from_file(e, IMGDIR"evas_test_view_logo_impress.png");
+   evas_get_image_size(e, o, &w, &h);
+   x = (1024 - 128 - w) / 2; y  = (768 - h) / 2;
+   evas_move(e, o, x, y);
+   evas_set_layer(e, o, 98);
+   o_logo_impress = o;
    
    o = evas_add_image_from_file(e, IMGDIR"evas_test_view_logo_shadow.png");
    evas_get_image_size(e, o, &w, &h);
@@ -338,10 +345,15 @@ animate(double val)
 	y = (768 / 2);
 /*	wait_for_events = 1;*/
      }
-   else
+   else if (val < 40)
      {
 	evas_hide(evas_view, o_logo);
 	evas_hide(evas_view, o_logo_shadow);
+	evas_set_color(evas_view, o_logo_impress, 255, 255, 255,
+		       (255 * (val - 30)) / 10);
+     }
+   else
+     {
      }
    if (val < 30)
      {
@@ -465,6 +477,10 @@ animate(double val)
      {
 	evas_show(evas_view, o_logo);
 	evas_show(evas_view, o_logo_shadow);
+     }
+   if (val > 30)
+     {
+	evas_show(evas_view, o_logo_impress);
      }
    evas_show(evas_view, o_paint);
    evas_show(evas_view, o_brush);
