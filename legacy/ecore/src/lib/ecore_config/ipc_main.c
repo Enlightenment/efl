@@ -5,7 +5,6 @@
 #include "Ecore_Config.h"
 #include "util.h"
 #include "ipc.h"
-#include "errors.h"
 
 #include "config.h"
 
@@ -141,7 +140,7 @@ char *ipc_bundle_list(Ecore_Config_Server *srv) {
 
 int ipc_bundle_new(Ecore_Config_Server *srv, const char *label) {
   //Ecore_Config_Bundle *ns=ecore_config_bundle_get_by_serial(srv, 0);
-  if (ecore_config_new_bundle(srv, label))
+  if (ecore_config_bundle_new(srv, label))
     return ECORE_CONFIG_ERR_SUCC;
   return ECORE_CONFIG_ERR_FAIL; }
 
@@ -212,7 +211,7 @@ Ecore_Config_Server *ipc_init(char *pipe_name) {
   unsigned int     c;
   ipc              *nm=NULL;
   Ecore_Config_Server   *list=NULL;
-  Ecore_Config_Server   *ret_srv;
+  Ecore_Config_Server   *ret_srv=NULL;
 
   if (nm) {
     list=(Ecore_Config_Server *)nm->data;
@@ -286,7 +285,7 @@ Ecore_Config_Server *ipc_init(char *pipe_name) {
         list->name=strdup(pipe_name);
         list->next=nm->data;
         nm->data=list;
-        if (ret_srv) ret_srv=list;
+        if (!ret_srv) ret_srv=list;
 
         nm->next=ipc_modules;
         ipc_modules=nm; }}

@@ -1,8 +1,6 @@
 #define TIMER_STOP 0
 #define TIMER_CONT 1
 
-#include "debug.h"
-
 typedef struct _estring {
   char *str;
   int   alloc,used;

@@ -31,10 +31,17 @@
 #  define TRUE  (!FALSE)
 #endif
 
-#include "debug.h"
-#include "errors.h"
-
 #include <Ecore_Ipc.h>
+
+/* debug */
+#define DEBUG 999
+
+#ifdef ECORE_CONFIG_DEBUG
+#  define D(fmt,args...) do { if(DEBUG>=0) fprintf(stderr,fmt,## args); } while(0);
+#else
+#  define D(msg,args...)
+#endif
+#define E(lvl,fmt,args...) do { if(DEBUG>=(lvl)) fprintf(stderr,fmt,## args); } while(0)
 
 
 /* structures */
@@ -44,8 +51,7 @@ typedef enum Ecore_Config_Type {
   PT_INT=1,
   PT_FLT=2,
   PT_STR=3,
-  PT_PTR=4,
-  PT_RGB=5
+  PT_RGB=4
 } Ecore_Config_Type;
 
 
@@ -74,8 +80,8 @@ typedef struct Ecore_Config_Listener_List {
 typedef struct Ecore_Config_Prop {
   char                  *key;
   char                  *description;
+  void                  *ptr;
   Ecore_Config_Type            type;
-  char                  *ptr;
   long                   val,lo,hi,step;
   Ecore_Config_Flag            flags;
   Ecore_Config_Listener_List  *listeners;
@@ -116,6 +122,7 @@ int            ecore_config_set(Ecore_Config_Bundle *t,const char *key,char *val
 int            ecore_config_set_string(Ecore_Config_Bundle *t,const char *key,char *val);
 int            ecore_config_set_int(Ecore_Config_Bundle *t,const char *key,int val);
 int            ecore_config_set_rgb(Ecore_Config_Bundle *t,const char *key,char *val);
+char          *ecore_config_get_rgbstr(const Ecore_Config_Bundle *t,const char *key);
 int            ecore_config_set_float(Ecore_Config_Bundle *t,const char *key,float val);
 int            ecore_config_set_as_string(Ecore_Config_Bundle *t,const char *key,char *val);
 
@@ -123,8 +130,9 @@ int            ecore_config_default(Ecore_Config_Bundle *t,const char *key,char 
 int            ecore_config_listen(Ecore_Config_Bundle *t,const char *name,const char *key,Ecore_Config_Listener listener,int tag,void *data);
 int            ecore_config_deaf(Ecore_Config_Bundle *t,const char *name,const char *key,Ecore_Config_Listener listener);
 Ecore_Config_Prop   *ecore_config_dst(Ecore_Config_Bundle *t,Ecore_Config_Prop *e);
+int ecore_config_guess_type(char *val);
 
-Ecore_Config_Bundle *ecore_config_new_bundle(Ecore_Config_Server *srv, const char *id);
+Ecore_Config_Bundle *ecore_config_bundle_new(Ecore_Config_Server *srv, const char *id);
 Ecore_Config_Bundle *ecore_config_bundle_get_1st(Ecore_Config_Server *srv);
 Ecore_Config_Bundle *ecore_config_bundle_get_next(Ecore_Config_Bundle *ns);
 Ecore_Config_Bundle *ecore_config_bundle_get_by_serial(Ecore_Config_Server *srv, long serial);
@@ -141,5 +149,24 @@ int            ecore_config_load(Ecore_Config_Bundle *b);
 int            ecore_config_load_file(Ecore_Config_Bundle *b, char *file);
 int            ecore_config_save(Ecore_Config_Bundle *b);
 int            ecore_config_save_file(Ecore_Config_Bundle *b, char *file);
+
+/* error codes */
+#  define ECORE_CONFIG_ERR_NOTSUPP     (-16)
+#  define ECORE_CONFIG_ERR_NOFILE      (-15)
+#  define ECORE_CONFIG_ERR_META_DLFAIL (-14)
+#  define ECORE_CONFIG_ERR_META_FILE   (-13)
+#  define ECORE_CONFIG_ERR_META_FORMAT (-12)
+#  define ECORE_CONFIG_ERR_MONMIS      (-11)
+#  define ECORE_CONFIG_ERR_NOEXEC      (-10)
+#  define ECORE_CONFIG_ERR_PARTIAL      (-9)
+#  define ECORE_CONFIG_ERR_PATHEX       (-8)
+#  define ECORE_CONFIG_ERR_TYPEMISMATCH (-7)
+#  define ECORE_CONFIG_ERR_MUTEX        (-6)
+#  define ECORE_CONFIG_ERR_NOTFOUND     (-5)
+#  define ECORE_CONFIG_ERR_OOM          (-4)
+#  define ECORE_CONFIG_ERR_IGNORED      (-3)
+#  define ECORE_CONFIG_ERR_NODATA       (-2)
+#  define ECORE_CONFIG_ERR_FAIL         (-1)
+#  define ECORE_CONFIG_ERR_SUCC          (0)
 
 #endif

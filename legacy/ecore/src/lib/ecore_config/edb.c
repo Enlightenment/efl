@@ -6,14 +6,14 @@
 
 int ecore_config_load(Ecore_Config_Bundle *b) {
   char* file = malloc(1024); /* ### fixme */
-  sprintf(file,"%s/.e/%s/config.db",getenv("HOME"),b->owner);
+  sprintf(file,"%s/.e/apps/%s/config.db",getenv("HOME"),b->owner);
   return ecore_config_load_file(b,file);
   free(file);
   }
 
 int ecore_config_save(Ecore_Config_Bundle *b) {
   char* file = malloc(1024); /* ### fixme */
-  sprintf(file,"%s/.e/%s/config.db",getenv("HOME"),b->owner);
+  sprintf(file,"%s/.e/apps/%s/config.db",getenv("HOME"),b->owner);
   return ecore_config_save_file(b,file);
   free(file);
   }
@@ -76,10 +76,8 @@ int ecore_config_load_file(Ecore_Config_Bundle *b, char *file) {
 int ecore_config_save_file(Ecore_Config_Bundle *b, char *file) {
   Ecore_Config_Prop *next=b->data;
   E_DB_File   *db = NULL;
-  int          x;
 
   /* ### we may need to create a directory or two here! */
-            
   db = e_db_open(file);
   if (!db) {
     E(0, "Cannot open database from file %s!\n", file);
@@ -100,6 +98,8 @@ int ecore_config_save_file(Ecore_Config_Bundle *b, char *file) {
       case PT_STR:
         e_db_str_set(db, next->key, ecore_config_get_string(b, next->key));
         break;
+      case PT_NIL:
+        /* currently we do nothing for undefined ojects */
     }
 
     next=next->next;

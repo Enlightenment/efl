@@ -1,7 +1,5 @@
 /* azundris */
 
-//#include "config.h"
-
 //#include <glib.h>
 
 #include <sys/types.h>
@@ -19,8 +17,7 @@
 /* #endif */
 
 #include "util.h"
-//#include "evidence.h"
-#include "errors.h"
+#include "Ecore_Config.h"
 
 #define CHUNKLEN 4096
 

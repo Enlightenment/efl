@@ -1,8 +1,5 @@
 /* by Azundris, with thanks to Corey Donohoe <atmos@atmos.org> */
 
-//#include "config.h"
-#include "errors.h"
-#include "debug.h"
 #include "ipc.h"
 
 #include <stdio.h>

@@ -35,7 +35,4 @@ ipc_main.c \
 ipc.h \
 util.c \
 util.h \
-edb.c \
-debug.h \
-errors.h \
-structs.h
+edb.c

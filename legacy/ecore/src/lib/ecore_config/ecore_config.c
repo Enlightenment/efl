@@ -91,8 +91,7 @@ const char *ecore_config_get_type(const Ecore_Config_Prop *e) {
 
 void *ecore_config_get_data(const Ecore_Config_Bundle *t,const char *key) {
   Ecore_Config_Prop *e=ecore_config_get(t,key);
-  return (e?(((e->type==PT_STR)||(e->type==PT_PTR))?((void *)&e->ptr)
-                                                   :((void *)&e->val))
+  return (e?((e->type==PT_STR)?((void *)&e->ptr):((void *)&e->val))
            :NULL); }
 
 
@@ -125,7 +124,6 @@ int ecore_config_get_rgb(const Ecore_Config_Bundle *t,const char *key,int *r, in
   return ECORE_CONFIG_ERR_FAIL; }
 
 char *ecore_config_get_rgbstr(const Ecore_Config_Bundle *t,const char *key) {
-  Ecore_Config_Prop   *e=ecore_config_get(t,key);
   char          *r=NULL;
   esprintf(&r,"#%06x",ecore_config_get_int(t,key));
   return r; }
@@ -146,8 +144,6 @@ char *ecore_config_get_as_string(const Ecore_Config_Bundle *t,const char *key) {
         esprintf(&r,"%s:%s=%lf",key,type,ecore_config_get_float(t,key)); break;
       case PT_STR:
         esprintf(&r,"%s:%s=\"%s\"",key,type,ecore_config_get_string(t,key)); break;
-      case PT_PTR:
-        esprintf(&r,"%s:%s=%p",key,type,e->ptr); break;
       case PT_RGB:
         esprintf(&r,"%s:%s=#%06x",key,type,ecore_config_get_int(t,key)); break;
       default:
@@ -190,7 +186,6 @@ static int ecore_config_bound(Ecore_Config_Prop *e) {
 int ecore_config_guess_type(char *val) {
   char *l=NULL;
   long v;
-  float f;
 
   if(!val)
     return PT_NIL;
@@ -226,15 +221,15 @@ static int ecore_config_val_typed(Ecore_Config_Prop *e,void *val,int type) {
       if (((char *)val)[0]=='#') {
         if((v=strtol(&((char *)val)[1],&l,16))<0) {
           v=0;
-          E(0,"ecore_config_val: key \"%s\" -- hexadecimal value less than zero, bound to zero...\n",val);
+          E(0,"ecore_config_val: key \"%s\" -- hexadecimal value less than zero, bound to zero...\n", (char *)val);
           l=(char *)val;
         }
       } else {
-        E(0,"ecore_config_val: key \"%s\" -- value \"%s\" not a valid hexadecimal RGB value?\n",e->key,val);
+        E(0,"ecore_config_val: key \"%s\" -- value \"%s\" not a valid hexadecimal RGB value?\n",e->key,(char *)val);
         return ECORE_CONFIG_ERR_FAIL;
       }
       if(*l)
-        E(0,"ecore_config_val: key \"%s\" -- value \"%s\" not a valid hexadecimal RGB value?\n",e->key,val);
+        E(0,"ecore_config_val: key \"%s\" -- value \"%s\" not a valid hexadecimal RGB value?\n",e->key,(char *)val);
       else {
         e->val=v;
         e->type=PT_RGB;
@@ -257,6 +252,7 @@ static int ecore_config_val_typed(Ecore_Config_Prop *e,void *val,int type) {
     e->flags|=PF_MODIFIED;
     return ECORE_CONFIG_ERR_SUCC;
   } 
+  return ECORE_CONFIG_ERR_IGNORED;
 }
 
 
@@ -477,7 +473,7 @@ char *ecore_config_bundle_get_label(Ecore_Config_Bundle *ns) {
   return ns?ns->identifier:NULL; }
 
 
-Ecore_Config_Bundle *ecore_config_new_bundle(Ecore_Config_Server *srv,const char *identifier) {
+Ecore_Config_Bundle *ecore_config_bundle_new(Ecore_Config_Server *srv,const char *identifier) {
   Ecore_Config_Bundle *t;
   static long  ss=0; /* bundle unique serial */
 
@@ -486,6 +482,7 @@ Ecore_Config_Bundle *ecore_config_new_bundle(Ecore_Config_Server *srv,const char
 
     t->identifier=identifier;
     t->serial=++ss;
+    t->owner=srv->name;
     t->next=srv->bundles;
     srv->bundles=t;
   }
