@@ -21,9 +21,7 @@ if test $IMLIB2_CONFIG_IN_PATH = xno; then
 fi
 
 AC_ARG_WITH(ttf,
-[
---with-ttf=DIR          use DIR where freetype was installed (eg /opt/freetype)
-],
+[  --with-ttf=DIR          use DIR where freetype was installed (eg /opt/freetype)],
 [
 CPPFLAGS="$CPPFLAGS -I$withval/include";
 LDFLAGS="$LDFLAGS -L$withval/lib";
@@ -32,7 +30,7 @@ LIBS_TTF="-L"$withval"/lib"
 
 gl=yes
 AC_ARG_ENABLE(gl,
-[--disable-gl            disable building with opengl support],
+[  --disable-gl            disable building with opengl support],
 [
   if test x$enableval = xyes; then
     gl=yes
@@ -43,9 +41,7 @@ AC_ARG_ENABLE(gl,
 )
 
 AC_ARG_WITH(gl,
-[
---with-gl=DIR           use DIR where opengl was installed (eg /usr/X11R6)
-],
+[  --with-gl=DIR           use DIR where opengl was installed (eg /usr/X11R6)],
 [
   if test x$gl = xyes; then
     CPPFLAGS="$CPPFLAGS -I$withval/include";
