@@ -112,7 +112,12 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
    /* MEM OK */
    Evas_Object_List **l_mod, *l;
    
-   if (!obj->callbacks) return;
+   if (!obj->callbacks)
+     {
+	if (obj->smart.parent)
+	  evas_object_event_callback_call(obj->smart.parent, type, event_info);
+	return;
+     }
    switch (type)
      {
       case EVAS_CALLBACK_MOUSE_IN:
@@ -180,6 +185,8 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
    obj->callbacks->walking_list--;
    if (!obj->callbacks->walking_list)
      evas_object_event_callback_clear(obj);
+   if (obj->smart.parent)
+     evas_object_event_callback_call(obj->smart.parent, type, event_info);
 }
 
 /**
