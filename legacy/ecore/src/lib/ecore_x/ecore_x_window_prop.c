@@ -836,6 +836,65 @@ ecore_x_window_prop_desktop_get(Ecore_X_Window win)
    return desktop;
 }
 
+
+#if 0
+/*
+ * Suggesting a slight change of API.
+ * The ECORE_X_WINDOW_TYPE_...'s I think we want in Ecore_X.h anyway.
+ * It makes things more similar to ecore_x_window_prop_state_set().
+ * It also avoids having to define all the different
+ * ecore_x_window_prop_window_type_..._set()'s.
+ * Setting a window to type desktop would then become
+ * ecore_x_window_prop_window_type_set(win, ECORE_X_WINDOW_TYPE_DESKTOP);
+ * /Kim
+ */
+
+static Ecore_X_Atom 
+_ecore_x_window_prop_type_atom_get(Ecore_X_Window_Type type)
+{
+   switch (type)
+   {
+      case ECORE_X_WINDOW_TYPE_DESKTOP:
+         return _ecore_x_atom_net_wm_window_type_desktop;
+      case ECORE_X_WINDOW_TYPE_DOCK:
+         return _ecore_x_atom_net_wm_window_type_dock;
+      case ECORE_X_WINDOW_TYPE_TOOLBAR:
+         return _ecore_x_atom_net_wm_window_type_toolbar;
+      case ECORE_X_WINDOW_TYPE_MENU:
+         return _ecore_x_atom_net_wm_window_type_menu;
+      case ECORE_X_WINDOW_TYPE_UTILITY:
+         return _ecore_x_atom_net_wm_window_type_utility;
+      case ECORE_X_WINDOW_TYPE_SPLASH:
+         return _ecore_x_atom_net_wm_window_type_splash;
+      case ECORE_X_WINDOW_TYPE_DIALOG:
+         return _ecore_x_atom_net_wm_window_type_dialog;
+      case ECORE_X_WINDOW_TYPE_NORMAL:
+         return _ecore_x_atom_net_wm_window_type_normal;
+      default:
+         return 0;
+   }
+}
+
+/**
+ * Set a window's type.
+ * @param win The Window
+ * @param type The Type
+ *
+ * Set a windows type.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_prop_window_type_set(Ecore_X_Window win, Ecore_X_Window_Type type)
+{
+   Atom a;
+
+   a = _ecore_x_window_prop_type_atom_get(type);
+   if (a)
+      ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_window_type,
+				       XA_ATOM, 32, (unsigned char*)&a, 1);
+}
+#endif
+
 /**
  * Change a window's type.
  * @param win The Window

@@ -577,6 +577,18 @@ typedef enum _Ecore_X_Window_State {
 
 } Ecore_X_Window_State;
 
+typedef enum _Ecore_X_Window_Type {
+    ECORE_X_WINDOW_TYPE_DESKTOP,
+    ECORE_X_WINDOW_TYPE_DOCK,
+    ECORE_X_WINDOW_TYPE_TOOLBAR,
+    ECORE_X_WINDOW_TYPE_MENU,
+    ECORE_X_WINDOW_TYPE_UTILITY,
+    ECORE_X_WINDOW_TYPE_SPLASH,
+    ECORE_X_WINDOW_TYPE_DIALOG,
+    ECORE_X_WINDOW_TYPE_NORMAL
+} Ecore_X_Window_Type;
+
+
 int              ecore_x_init(const char *name);
 int              ecore_x_shutdown(void);       
 Ecore_X_Display *ecore_x_display_get(void);
