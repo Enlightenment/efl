@@ -170,7 +170,7 @@ collections
 		  name,       "logo_click";
 		  signal,     "mouse-down-1";
 		  source,     "logo";
-// STATE_SET ot ACTION_STOP here
+// STATE_SET, ACTION_STOP, SIGNAL_EMIT, DRAG_VAL_SET, DRAG_VAL_STEP, DRAG_VAL_PAGE
 		  action,     STATE_SET "clicked" 0.0;
 // LINEAR, SINUSOIDAL, ACCELERATE, DECELERATE, + seconds to transition over
 //		  transition, LINEAR 0.0;

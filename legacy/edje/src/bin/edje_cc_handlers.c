@@ -241,7 +241,8 @@ statement_handler_num(void)
 static void
 ob_images(void)
 {
-   edje_file->image_dir = mem_alloc(SZ(Edje_Image_Directory));
+   if (!edje_file->image_dir)
+     edje_file->image_dir = mem_alloc(SZ(Edje_Image_Directory));
 }
 
 static void
@@ -306,7 +307,8 @@ st_data_item(void)
 static void
 ob_collections(void)
 {
-   edje_file->collection_dir = mem_alloc(SZ(Edje_Part_Collection_Directory));
+   if (!edje_file->collection_dir)
+     edje_file->collection_dir = mem_alloc(SZ(Edje_Part_Collection_Directory));
 }
 
 static void
@@ -479,7 +481,7 @@ st_collections_group_parts_part_dragable_x(void)
 
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
-   ep->dragable.x = parse_int_range(0, 0, 1);
+   ep->dragable.x = parse_int_range(0, -1, 1);
    ep->dragable.step_x = parse_int_range(1, 0, 0x7fffffff);
    ep->dragable.count_x = parse_int_range(2, 0, 0x7fffffff);
 }
@@ -492,7 +494,7 @@ st_collections_group_parts_part_dragable_y(void)
 
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
-   ep->dragable.y = parse_int_range(0, 0, 1);
+   ep->dragable.y = parse_int_range(0, -1, 1);
    ep->dragable.step_y = parse_int_range(1, 0, 0x7fffffff);
    ep->dragable.count_y = parse_int_range(2, 0, 0x7fffffff);
 }
@@ -1229,6 +1231,9 @@ st_collections_group_programs_program_action(void)
 			   "STATE_SET", EDJE_ACTION_TYPE_STATE_SET,
 			   "ACTION_STOP", EDJE_ACTION_TYPE_ACTION_STOP,
 			   "SIGNAL_EMIT", EDJE_ACTION_TYPE_SIGNAL_EMIT,
+			   "DRAG_VAL_SET", EDJE_ACTION_TYPE_DRAG_VAL_SET,
+			   "DRAG_VAL_STEP", EDJE_ACTION_TYPE_DRAG_VAL_STEP,
+			   "DRAG_VAL_PAGE", EDJE_ACTION_TYPE_DRAG_VAL_PAGE,
 			   NULL);
    if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
      {
@@ -1239,6 +1244,21 @@ st_collections_group_programs_program_action(void)
      {
 	ep->state = parse_str(1);
 	ep->state2 = parse_str(2);
+     }
+   else if (ep->action == EDJE_ACTION_TYPE_DRAG_VAL_SET)
+     {
+	ep->value = parse_float(1);
+	ep->value2 = parse_float(2);
+     }
+   else if (ep->action == EDJE_ACTION_TYPE_DRAG_VAL_STEP)
+     {
+	ep->value = parse_float(1);
+	ep->value2 = parse_float(2);
+     }
+   else if (ep->action == EDJE_ACTION_TYPE_DRAG_VAL_PAGE)
+     {
+	ep->value = parse_float(1);
+	ep->value2 = parse_float(2);
      }
 }
 
@@ -1279,6 +1299,12 @@ st_collections_group_programs_program_target(void)
 	  data_queue_part_lookup(pc, name, &(et->id));
 	else if (ep->action == EDJE_ACTION_TYPE_ACTION_STOP)
 	  data_queue_program_lookup(pc, name, &(et->id));
+	else if (ep->action == EDJE_ACTION_TYPE_DRAG_VAL_SET)
+	  data_queue_part_lookup(pc, name, &(et->id));
+	else if (ep->action == EDJE_ACTION_TYPE_DRAG_VAL_STEP)
+	  data_queue_part_lookup(pc, name, &(et->id));
+	else if (ep->action == EDJE_ACTION_TYPE_DRAG_VAL_PAGE)
+	  data_queue_part_lookup(pc, name, &(et->id));
 	else
 	  {
 	     /* FIXME: not type specified. guess */

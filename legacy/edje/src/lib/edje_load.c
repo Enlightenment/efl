@@ -173,6 +173,9 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	     rp = l->data;
 	     evas_object_show(rp->object);
 	     if (_edje_block_break(ed)) break;
+	     if (rp->part->dragable.x < 0) rp->drag.val.x = 1.0;
+	     if (rp->part->dragable.y < 0) rp->drag.val.x = 1.0;
+	     _edje_dragable_pos_set(ed, rp, 1.0, 1.0);
 	  }
 	ed->dirty = 1;
 	if ((ed->parts) && (evas_object_visible_get(obj)))

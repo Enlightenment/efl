@@ -213,7 +213,7 @@ _edje_recalc(Edje *ed)
 int
 _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, double *x, double *y)
 {
-   if ((ep->part->dragable.x) || (ep->part->dragable.y))
+   if ((ep->part->dragable.x != 0) || (ep->part->dragable.y != 0))
      {
 	if (ep->confine_to)
 	  {
@@ -221,9 +221,10 @@ _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, double *x, double *y)
 	     int ret;
 	     
 	     ret = 0;
-	     if ((ep->part->dragable.x) && (ep->part->dragable.y)) ret = 3;
-	     else if (ep->part->dragable.x) ret = 1;
-	     else if (ep->part->dragable.y) ret = 2;
+	     if ((ep->part->dragable.x != 0) && 
+		 (ep->part->dragable.y != 0 )) ret = 3;
+	     else if (ep->part->dragable.x != 0) ret = 1;
+	     else if (ep->part->dragable.y != 0) ret = 2;
 	     
 	     dx = ep->x - ep->confine_to->x;
 	     dw = ep->confine_to->w - ep->w;
@@ -725,7 +726,6 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
 	dx = 0;
 	dy = 0;
 	_edje_part_dragable_calc(ed, ep, &dx, &dy);
-	printf("%3.3f %3.3f\n", dx, dy);
         ep->drag.x = dx;
 	ep->drag.y = dy;
 	ep->drag.tmp.x = 0;

@@ -606,9 +606,13 @@ edje_object_part_drag_value_set(Evas_Object *obj, const char *part, double dx, d
    else if (dx > 1.0) dx = 1.0;
    if (dy < 0.0) dy = 0.0;
    else if (dy > 1.0) dy = 1.0;
+   if (rp->part->dragable.x < 0) dx = 1.0 - dx;
+   if (rp->part->dragable.y < 0) dy = 1.0 - dy;
+   if ((rp->drag.val.x == dx) && (rp->drag.val.y == dy)) return;
    rp->drag.val.x = dx;
    rp->drag.val.y = dy;
    _edje_dragable_pos_set(ed, rp, dx, dy);
+   _edje_emit(ed, "drag,set", rp->part->name);   
 }
 
 void
@@ -616,6 +620,7 @@ edje_object_part_drag_value_get(Evas_Object *obj, const char *part, double *dx, 
 {
    Edje *ed;
    Edje_Real_Part *rp;
+   double ddx, ddy;
 
    ed = _edje_fetch(obj);   
    if ((!ed) || (!part))
@@ -631,8 +636,12 @@ edje_object_part_drag_value_get(Evas_Object *obj, const char *part, double *dx, 
 	if (dy) *dy = 0;
 	return;
      }
-   if (dx) *dx = rp->drag.val.x;
-   if (dy) *dy = rp->drag.val.y;
+   ddx = rp->drag.val.x;
+   ddy = rp->drag.val.y;
+   if (rp->part->dragable.x < 0) ddx = 1.0 - ddx;
+   if (rp->part->dragable.y < 0) ddy = 1.0 - ddy;
+   if (dx) *dx = ddx;
+   if (dy) *dy = ddy;
 }
 
 void
@@ -655,6 +664,7 @@ edje_object_part_drag_size_set(Evas_Object *obj, const char *part, double dw, do
    else if (dw > 1.0) dw = 1.0;
    if (dh < 0.0) dh = 0.0;
    else if (dh > 1.0) dh = 1.0;
+   if ((rp->drag.size.x == dw) && (rp->drag.size.y == dh)) return;
    rp->drag.size.x = dw;
    rp->drag.size.y = dh;
    ed->dirty = 1;
@@ -683,6 +693,166 @@ edje_object_part_drag_size_get(Evas_Object *obj, const char *part, double *dw, d
      }   
    if (dw) *dw = rp->drag.size.x;
    if (dh) *dh = rp->drag.size.y;
+}
+
+void
+edje_object_part_drag_step_set(Evas_Object *obj, const char *part, double dx, double dy)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);   
+   if ((!ed) || (!part))
+     {
+	return;
+     }
+   rp = _edje_real_part_get(ed, (char *)part);
+   if (!rp)
+     {
+	return;
+     }
+   if (rp->drag.down.count > 0) return;
+   if (dx < 0.0) dx = 0.0;
+   else if (dx > 1.0) dx = 1.0;
+   if (dy < 0.0) dy = 0.0;
+   else if (dy > 1.0) dy = 1.0;
+   rp->drag.step.x = dx;
+   rp->drag.step.y = dy;
+}
+
+void
+edje_object_part_drag_step_get(Evas_Object *obj, const char *part, double *dx, double *dy)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);   
+   if ((!ed) || (!part))
+     {
+	if (dx) *dx = 0;
+	if (dy) *dy = 0;
+	return;
+     }
+   rp = _edje_real_part_get(ed, (char *)part);
+   if (!rp)
+     {
+	if (dx) *dx = 0;
+	if (dy) *dy = 0;
+	return;
+     }
+   if (dx) *dx = rp->drag.step.x;
+   if (dy) *dy = rp->drag.step.y;
+}
+
+void
+edje_object_part_drag_page_set(Evas_Object *obj, const char *part, double dx, double dy)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);   
+   if ((!ed) || (!part))
+     {
+	return;
+     }
+   rp = _edje_real_part_get(ed, (char *)part);
+   if (!rp)
+     {
+	return;
+     }
+   if (rp->drag.down.count > 0) return;
+   if (dx < 0.0) dx = 0.0;
+   else if (dx > 1.0) dx = 1.0;
+   if (dy < 0.0) dy = 0.0;
+   else if (dy > 1.0) dy = 1.0;
+   rp->drag.page.x = dx;
+   rp->drag.page.y = dy;
+}
+
+void
+edje_object_part_drag_page_get(Evas_Object *obj, const char *part, double *dx, double *dy)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);   
+   if ((!ed) || (!part))
+     {
+	if (dx) *dx = 0;
+	if (dy) *dy = 0;
+	return;
+     }
+   rp = _edje_real_part_get(ed, (char *)part);
+   if (!rp)
+     {
+	if (dx) *dx = 0;
+	if (dy) *dy = 0;
+	return;
+     }
+   if (dx) *dx = rp->drag.page.x;
+   if (dy) *dy = rp->drag.page.y;
+}
+
+void
+edje_object_part_drag_step(Evas_Object *obj, const char *part, double dx, double dy)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+   double px, py;
+
+   ed = _edje_fetch(obj);   
+   if ((!ed) || (!part))
+     {
+	return;
+     }
+   rp = _edje_real_part_get(ed, (char *)part);
+   if (!rp)
+     {
+	return;
+     }
+   if (rp->drag.down.count > 0) return;
+   px = rp->drag.val.x;
+   py = rp->drag.val.y;
+   rp->drag.val.x += dx * rp->drag.step.x * rp->part->dragable.x;
+   rp->drag.val.y += dy * rp->drag.step.y * rp->part->dragable.y;
+   if      (rp->drag.val.x < 0.0) rp->drag.val.x = 0.0;
+   else if (rp->drag.val.x > 1.0) rp->drag.val.x = 1.0;
+   if      (rp->drag.val.y < 0.0) rp->drag.val.y = 0.0;
+   else if (rp->drag.val.y > 1.0) rp->drag.val.y = 1.0;
+   if ((px == rp->drag.val.x) && (py == rp->drag.val.y)) return;
+   _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
+   _edje_emit(ed, "drag,step", rp->part->name);   
+}
+
+void
+edje_object_part_drag_page(Evas_Object *obj, const char *part, double dx, double dy)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+   double px, py;
+
+   ed = _edje_fetch(obj);   
+   if ((!ed) || (!part))
+     {
+	return;
+     }
+   rp = _edje_real_part_get(ed, (char *)part);
+   if (!rp)
+     {
+	return;
+     }
+   if (rp->drag.down.count > 0) return;
+   px = rp->drag.val.x;
+   py = rp->drag.val.y;
+   rp->drag.val.x += dx * rp->drag.page.x * rp->part->dragable.x;
+   rp->drag.val.y += dy * rp->drag.page.y * rp->part->dragable.y;
+   if      (rp->drag.val.x < 0.0) rp->drag.val.x = 0.0;
+   else if (rp->drag.val.x > 1.0) rp->drag.val.x = 1.0;
+   if      (rp->drag.val.y < 0.0) rp->drag.val.y = 0.0;
+   else if (rp->drag.val.y > 1.0) rp->drag.val.y = 1.0;
+   if ((px == rp->drag.val.x) && (py == rp->drag.val.y)) return;
+   _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
+   _edje_emit(ed, "drag,page", rp->part->name);   
 }
 
 Edje_Real_Part *
@@ -809,4 +979,3 @@ _edje_object_part_swallow_free_cb(void *data, Evas *e, Evas_Object *obj, void *e
    edje_obj = data;
    edje_object_part_unswallow(edje_obj, obj);
 }
-

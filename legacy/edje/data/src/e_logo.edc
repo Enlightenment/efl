@@ -398,8 +398,8 @@ collections {
 	    mouse_events,  1;
 	    dragable {
 	       // drag in: DIR, ON/OFF STEPPING COUNT;
-	       x,       1 1 0;
-	       y,       1 1 0;
+	       x,       -1 1 0;
+	       y,        1 1 0;
 	       confine, "background";
 	    }
 	    description {
@@ -475,6 +475,20 @@ collections {
 	    source,     "the_source";
 	    in,         1.0 5.0;
 	    action,     SIGNAL_EMIT "do_random" "the_source";
+	 }
+	 program {
+	    name,       "logo_click_d1";
+	    signal,     "mouse,down,1";
+	    source,     "logo";
+	    action,     DRAG_VAL_STEP 1.0 1.0;
+	    target,     "dragable";
+	 }
+	 program {
+	    name,       "logo_click_d2";
+	    signal,     "mouse,down,3";
+	    source,     "logo";
+	    action,     DRAG_VAL_STEP -1.0 -1.0;
+	    target,     "dragable";
 	 }
       }
    }

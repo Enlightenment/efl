@@ -447,7 +447,7 @@ list_head_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 static void
 cb (void *data, Evas_Object *o, const char *sig, const char *src)
 {
-//   printf("CALLBACK for %p %p \"%s\" \"%s\"\n", data, o, sig, src);
+   printf("CALLBACK for %p %p \"%s\" \"%s\"\n", data, o, sig, src);
    if (!strcmp(sig, "drag"))
      {
 	double x, y;
@@ -687,9 +687,11 @@ test_setup(char *file, char *name)
    edje_object_file_set(o, file, name);
 //   edje_object_signal_callback_add(o, "do_it", "the_source", cb, NULL);
 //   edje_object_signal_callback_add(o, "mouse,*", "logo", cb, NULL);
-//   edje_object_signal_callback_add(o, "*", "*", cb, NULL);
-//   edje_object_part_drag_size_set(o, "dragable", 0.01, 0.5);
+   edje_object_signal_callback_add(o, "*", "*", cb, NULL);
+   edje_object_part_drag_size_set(o, "dragable", 0.01, 0.5);
 //   edje_object_part_drag_value_set(o, "dragable", 0.5, 0.5);
+edje_object_part_drag_step_set(o, "dragable", 0.1, 0.1);
+edje_object_part_drag_page_set(o, "dragable", 0.2, 0.2);
    evas_object_move(o, 10 + 10, 10 + 20);
    evas_object_show(o);
    edje_object_size_min_get(o, &(de->minw), &(de->minh));

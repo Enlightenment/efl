@@ -56,6 +56,12 @@ extern "C" {
    void         edje_object_part_drag_value_get (Evas_Object *o, const char *part, double *dx, double *dy);
    void         edje_object_part_drag_size_set  (Evas_Object *o, const char *part, double dw, double dh);
    void         edje_object_part_drag_size_get  (Evas_Object *o, const char *part, double *dw, double *dh);
+   void         edje_object_part_drag_step_set  (Evas_Object *o, const char *part, double dx, double dy);
+   void         edje_object_part_drag_step_get  (Evas_Object *o, const char *part, double *dx, double *dy);
+   void         edje_object_part_drag_page_set  (Evas_Object *o, const char *part, double dx, double dy);
+   void         edje_object_part_drag_page_get  (Evas_Object *o, const char *part, double *dx, double *dy);
+   void         edje_object_part_drag_step      (Evas_Object *o, const char *part, double dx, double dy);
+   void         edje_object_part_drag_page      (Evas_Object *o, const char *part, double dx, double dy);
        
 #ifdef __cplusplus
 }

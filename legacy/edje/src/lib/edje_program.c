@@ -496,7 +496,89 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
 	_edje_emit(ed, "program,stop", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
      }
-   if (pr->action != EDJE_ACTION_TYPE_STATE_SET)
+   else if (pr->action == EDJE_ACTION_TYPE_DRAG_VAL_SET)
+     {
+	_edje_emit(ed, "program,start", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+	for (l = pr->targets; l; l = l->next)
+	  {
+	     Edje_Real_Part *rp;
+	     Edje_Program_Target *pt;
+	     
+	     pt = l->data;
+	     rp = evas_list_nth(ed->parts, pt->id);
+	     if ((rp) && (rp->drag.down.count == 0))
+	       {
+		  rp->drag.val.x = pr->value;
+		  rp->drag.val.y = pr->value2;
+		  if      (rp->drag.val.x < 0.0) rp->drag.val.x = 0.0;
+		  else if (rp->drag.val.x > 1.0) rp->drag.val.x = 1.0;
+		  if      (rp->drag.val.y < 0.0) rp->drag.val.y = 0.0;
+		  else if (rp->drag.val.y > 1.0) rp->drag.val.y = 1.0;
+		  _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
+		  _edje_emit(ed, "drag,set", rp->part->name);
+		  if (_edje_block_break(ed)) goto break_prog;
+	       }
+	  }
+	_edje_emit(ed, "program,stop", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+     }
+   else if (pr->action == EDJE_ACTION_TYPE_DRAG_VAL_STEP)
+     {
+	_edje_emit(ed, "program,start", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+	for (l = pr->targets; l; l = l->next)
+	  {
+	     Edje_Real_Part *rp;
+	     Edje_Program_Target *pt;
+	     
+	     pt = l->data;
+	     rp = evas_list_nth(ed->parts, pt->id);
+	     if ((rp) && (rp->drag.down.count == 0))
+	       {
+		  rp->drag.val.x += pr->value * rp->drag.step.x * rp->part->dragable.x;
+		  rp->drag.val.y += pr->value2 * rp->drag.step.y * rp->part->dragable.y;
+		  if      (rp->drag.val.x < 0.0) rp->drag.val.x = 0.0;
+		  else if (rp->drag.val.x > 1.0) rp->drag.val.x = 1.0;
+		  if      (rp->drag.val.y < 0.0) rp->drag.val.y = 0.0;
+		  else if (rp->drag.val.y > 1.0) rp->drag.val.y = 1.0;
+		  _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
+		  _edje_emit(ed, "drag,step", rp->part->name);
+		  if (_edje_block_break(ed)) goto break_prog;
+	       }
+	  }
+	_edje_emit(ed, "program,stop", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+     }
+   else if (pr->action == EDJE_ACTION_TYPE_DRAG_VAL_PAGE)
+     {
+	_edje_emit(ed, "program,start", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+	for (l = pr->targets; l; l = l->next)
+	  {
+	     Edje_Real_Part *rp;
+	     Edje_Program_Target *pt;
+	     
+	     pt = l->data;
+	     rp = evas_list_nth(ed->parts, pt->id);
+	     if ((rp) && (rp->drag.down.count == 0))
+	       {
+		  rp->drag.val.x += pr->value * rp->drag.page.x * rp->part->dragable.x;
+		  rp->drag.val.y += pr->value2 * rp->drag.step.y * rp->part->dragable.y;
+		  if      (rp->drag.val.x < 0.0) rp->drag.val.x = 0.0;
+		  else if (rp->drag.val.x > 1.0) rp->drag.val.x = 1.0;
+		  if      (rp->drag.val.y < 0.0) rp->drag.val.y = 0.0;
+		  else if (rp->drag.val.y > 1.0) rp->drag.val.y = 1.0;
+		  _edje_dragable_pos_set(ed, rp, rp->drag.val.x, rp->drag.val.y);
+		  _edje_emit(ed, "drag,page", rp->part->name);
+		  if (_edje_block_break(ed)) goto break_prog;
+	       }
+	  }
+	_edje_emit(ed, "program,stop", pr->name);
+	if (_edje_block_break(ed)) goto break_prog;
+     }
+   if (!((pr->action == EDJE_ACTION_TYPE_STATE_SET) &&
+	 (pr->tween.time > 0.0) && (!ed->no_anim)))
      {
 	if (pr->after >= 0)
 	  {

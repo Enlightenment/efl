@@ -17,14 +17,6 @@
 
 /* FIXME:
  * 
- * recursions, unsafe callbacks outside edje etc. with freeze, ref/unref and blobk/unblock and break_programs needs to be redesigned & fixed
- * all unsafe calls that may result in callbacks must be marked and dealt with
- * 
- * dragable needs to be able to reverse value affect for "other direction" drag
- * dragable relative value needs to be able to be set or ++/-- by actions
- * dragable needs to be able to affect rel/abs values of other parts
- * dragable relative value needs to be able to be applied to other part vals.
- * 
  * more example edje files
  * 
  * ? programs need to be able to cycle part states given a list of states
@@ -63,6 +55,9 @@
  * ? add containering (hbox, vbox, table, wrapping multi-line hbox & vbox)
  * ? text entry widget (single line only)
  * ? reduce linked list walking and list_nth calls
+ * 
+ * ? recursions, unsafe callbacks outside edje etc. with freeze, ref/unref and blobk/unblock and break_programs needs to be redesigned & fixed
+ * ? all unsafe calls that may result in callbacks must be marked and dealt with
  */
 
 typedef struct _Edje_File                            Edje_File;
@@ -102,11 +97,14 @@ typedef struct _Edje_Part_Description                Edje_Part_Description;
 #define EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW 7
 #define EDJE_TEXT_EFFECT_LAST                8
 
-#define EDJE_ACTION_TYPE_NONE        0
-#define EDJE_ACTION_TYPE_STATE_SET   1
-#define EDJE_ACTION_TYPE_ACTION_STOP 2
-#define EDJE_ACTION_TYPE_SIGNAL_EMIT 3
-#define EDJE_ACTION_TYPE_LAST        4
+#define EDJE_ACTION_TYPE_NONE          0
+#define EDJE_ACTION_TYPE_STATE_SET     1
+#define EDJE_ACTION_TYPE_ACTION_STOP   2
+#define EDJE_ACTION_TYPE_SIGNAL_EMIT   3
+#define EDJE_ACTION_TYPE_DRAG_VAL_SET  4
+#define EDJE_ACTION_TYPE_DRAG_VAL_STEP 5
+#define EDJE_ACTION_TYPE_DRAG_VAL_PAGE 6
+#define EDJE_ACTION_TYPE_LAST          7
 
 #define EDJE_TWEEN_MODE_NONE       0
 #define EDJE_TWEEN_MODE_LINEAR     1
@@ -171,6 +169,7 @@ struct _Edje_Program /* a conditional program to be run */
    char      *state; /* what state of alternates to apply, NULL = default */
    char      *state2; /* what other state to use - for signal emit action */
    double     value; /* value of state to apply (if multiple names match) */
+   double     value2; /* other value for drag actions */
    
    struct {
       int     mode; /* how to tween - linear, sinusoidal etc. */
@@ -429,7 +428,7 @@ struct _Edje_Real_Part
       char need_reset : 1;
       struct {
 	 double x, y;
-      } val, size;
+      } val, size, step, page;
    } drag;
    struct {
       char                  *text;
