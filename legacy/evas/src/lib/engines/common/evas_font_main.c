@@ -35,10 +35,8 @@ evas_common_font_ascent_get(RGBA_Font *fn)
    int ret;
    
    evas_common_font_size_use(fn);
-   val = (int)fn->src->ft.face->ascender;
-   fn->src->ft.face->units_per_EM = 2048; /* nasy hack - need to have correct val */
-   ret = (val * fn->src->ft.face->size->metrics.y_scale) / (fn->src->ft.face->units_per_EM * fn->src->ft.face->units_per_EM);
-   return ret;
+   val = (int)fn->src->ft.face->size->metrics.ascender;
+   return val;
 }
 
 int
@@ -48,35 +46,33 @@ evas_common_font_descent_get(RGBA_Font *fn)
    int ret;
    
    evas_common_font_size_use(fn);
-   val = -(int)fn->src->ft.face->descender;
-   fn->src->ft.face->units_per_EM = 2048; /* nasy hack - need to have correct val */
-   ret = (val * fn->src->ft.face->size->metrics.y_scale) / (fn->src->ft.face->units_per_EM * fn->src->ft.face->units_per_EM);
-   return ret;
+   val = -(int)fn->src->ft.face->size->metrics.descender;
+   return val;
 }
 
 int
 evas_common_font_max_ascent_get(RGBA_Font *fn)
 {
-   int val;
+   int val, dv;
    int ret;
    
    evas_common_font_size_use(fn);
    val = (int)fn->src->ft.face->bbox.yMax;
-   fn->src->ft.face->units_per_EM = 2048; /* nasy hack - need to have correct val */
-   ret = (val * fn->src->ft.face->size->metrics.y_scale) / (fn->src->ft.face->units_per_EM * fn->src->ft.face->units_per_EM);
+   dv = (fn->src->ft.orig_upem * 2048) / fn->src->ft.face->units_per_EM; 
+   ret = (val * fn->src->ft.face->size->metrics.y_scale) / (dv * dv);
    return ret;
 }
 
 int
 evas_common_font_max_descent_get(RGBA_Font *fn)
 {
-   int val;
+   int val, dv;
    int ret;
    
    evas_common_font_size_use(fn);
    val = -(int)fn->src->ft.face->bbox.yMin;
-   fn->src->ft.face->units_per_EM = 2048; /* nasy hack - need to have correct val */
-   ret = (val * fn->src->ft.face->size->metrics.y_scale) / (fn->src->ft.face->units_per_EM * fn->src->ft.face->units_per_EM);
+   dv = (fn->src->ft.orig_upem * 2048) / fn->src->ft.face->units_per_EM;   
+   ret = (val * fn->src->ft.face->size->metrics.y_scale) / (dv * dv);
    return ret;
 }
 

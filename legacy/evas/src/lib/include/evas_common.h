@@ -363,6 +363,7 @@ struct _RGBA_Font_Source
    int               current_size;
    
    struct {
+      int           orig_upem;
       FT_Face       face;
    } ft;
    

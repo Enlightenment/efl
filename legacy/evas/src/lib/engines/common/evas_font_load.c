@@ -39,6 +39,10 @@ evas_common_font_source_memory_load(const char *name, const void *data, int data
 	return NULL;
      }
    
+   error = FT_Select_Charmap(fs->ft.face, ft_encoding_unicode);
+   
+   fs->ft.orig_upem = fs->ft.face->units_per_EM;
+   
    fs->references = 1;
    
    fonts_src = evas_object_list_prepend(fonts_src, fs);   
@@ -66,6 +70,43 @@ evas_common_font_source_load(const char *name)
 	free(fs);
 	return NULL;
      }
+#if 0 /* debugging to look at charmaps in a ttf */
+   printf("%i\n", fs->ft.face->num_charmaps);
+     {
+	int i;
+	
+	for (i = 0; i < fs->ft.face->num_charmaps; i++)
+	  {
+	     printf("%i: %x, %c\n", 
+		    i, fs->ft.face->charmaps[i]->encoding,
+		    fs->ft.face->charmaps[i]->encoding);
+	  }
+     }
+#endif   
+   error = FT_Select_Charmap(fs->ft.face, ft_encoding_unicode);
+   if (error)
+     {
+/* disable this for now...
+	error = FT_Select_Charmap(fs->ft.face, ft_encoding_latin_2);
+	if (error)
+	  {
+	     error = FT_Select_Charmap(fs->ft.face, ft_encoding_sjis);
+	     if (error)
+	       {
+		  error = FT_Select_Charmap(fs->ft.face, ft_encoding_gb2312);
+		  if (error)
+		    {
+		       error = FT_Select_Charmap(fs->ft.face, ft_encoding_big5);
+		       if (error)
+			 {
+			 }
+		    }
+	       }
+	  }
+ */
+     }
+   
+   fs->ft.orig_upem = fs->ft.face->units_per_EM;
    
    fs->references = 1;
    
@@ -112,9 +153,9 @@ evas_common_font_source_free(RGBA_Font_Source *fs)
 void
 evas_common_font_size_use(RGBA_Font *fn)
 {
-   if (fn->src->current_size == fn->real_size) return;
+   if (fn->src->current_size == fn->size) return;
    FT_Activate_Size(fn->ft.size);
-   fn->src->current_size = fn->real_size;
+   fn->src->current_size = fn->size;
 }
 
 RGBA_Font *
@@ -172,11 +213,9 @@ evas_common_font_load_init(RGBA_Font *fn)
 {
    int error;
    
-   if (fn->src->references == 1)
-     fn->ft.size = fn->src->ft.face->size;
-   else
+   error = FT_New_Size(fn->src->ft.face, &(fn->ft.size));
+   if (!error)
      {
-	error = FT_New_Size(fn->src->ft.face, &(fn->ft.size));
 	FT_Activate_Size(fn->ft.size);
      }
    fn->real_size = fn->size * 64;
@@ -216,43 +255,8 @@ evas_common_font_load_init(RGBA_Font *fn)
 	     /* couldn't choose the size anyway... what now? */
 	  }
      }
-   fn->src->current_size = fn->real_size;
+   fn->src->current_size = fn->size;
 
-#if 0 /* debugging to look at charmaps in a ttf */
-   printf("%i\n", fn->src->ft.face->num_charmaps);
-     {
-	int i;
-	
-	for (i = 0; i < fn->src->ft.face->num_charmaps; i++)
-	  {
-	     printf("%i: %x, %c\n", 
-		    i, fn->src->ft.face->charmaps[i]->encoding,
-		    fn->src->ft.face->charmaps[i]->encoding);
-	  }
-     }
-#endif   
-   error = FT_Select_Charmap(fn->src->ft.face, ft_encoding_unicode);
-   if (error)
-     {
-/* disable this for now...
-	error = FT_Select_Charmap(fn->src->ft.face, ft_encoding_latin_2);
-	if (error)
-	  {
-	     error = FT_Select_Charmap(fn->src->ft.face, ft_encoding_sjis);
-	     if (error)
-	       {
-		  error = FT_Select_Charmap(fn->src->ft.face, ft_encoding_gb2312);
-		  if (error)
-		    {
-		       error = FT_Select_Charmap(fn->src->ft.face, ft_encoding_big5);
-		       if (error)
-			 {
-			 }
-		    }
-	       }
-	  }
- */
-     }
    fn->glyphs = NULL;
    fn->usage = 0;
    fn->references = 1;
@@ -349,7 +353,7 @@ evas_common_font_flush_last(void)
      }
    if (!fn) return;
    
-   if (fn->src->references > 1) FT_Done_Size(fn->ft.size);
+   FT_Done_Size(fn->ft.size);
    
    fonts = evas_object_list_remove(fonts, fn);
    evas_common_font_modify_cache_by(fn, -1);
