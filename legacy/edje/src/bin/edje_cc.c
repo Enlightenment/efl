@@ -30,8 +30,8 @@ main_help(void)
       "-no-lossy                Do NOT allow images to be lossy\n"
       "-no-comp                 Do NOT allow images to be lossless compression\n"
       "-no-raw                  Do NOT allow images to be zero compression\n"
-      "-min-quality VAL         Do NOT allow lossy images with quality > VAL (0-100)\n"
-      "-max-quality VAL         Do NOT allow lossy images with quality < VAL (0-100)\n"
+      "-min-quality VAL         Do NOT allow lossy images with quality < VAL (0-100)\n"
+      "-max-quality VAL         Do NOT allow lossy images with quality > VAL (0-100)\n"
       ,progname);
 }
 

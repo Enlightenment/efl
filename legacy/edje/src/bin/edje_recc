@@ -12,8 +12,8 @@ usage () {
   echo "-no-lossy                Do NOT allow images to be lossy"
   echo "-no-comp                 Do NOT allow images to be lossless compression"
   echo "-no-raw                  Do NOT allow images to be zero compression"
-  echo "-min-quality VAL         Do NOT allow lossy images with quality > VAL (0-100)"
-  echo "-max-quality VAL         Do NOT allow lossy images with quality < VAL (0-100)"
+  echo "-min-quality VAL         Do NOT allow lossy images with quality < VAL (0-100)"
+  echo "-max-quality VAL         Do NOT allow lossy images with quality > VAL (0-100)"
   exit -1
 }
 
