@@ -24,6 +24,30 @@ Eet_Data_Descriptor *_edje_edd_edje_part_image_id = NULL;
 			      (void *(*) (void *, const char *, void *))evas_hash_add, \
 			      (void  (*) (void *))evas_hash_free)
 
+#define FREED(eed) \
+   if (eed) \
+   { \
+      eet_data_descriptor_free((eed)); \
+      (eed) = NULL; \
+   }
+
+void
+_edje_edd_free(void)
+{
+   FREED(_edje_edd_edje_file);
+   FREED(_edje_edd_edje_data);
+   FREED(_edje_edd_edje_image_directory);
+   FREED(_edje_edd_edje_image_directory_entry);
+   FREED(_edje_edd_edje_program);
+   FREED(_edje_edd_edje_program_target);
+   FREED(_edje_edd_edje_part_collection_directory);
+   FREED(_edje_edd_edje_part_collection_directory_entry);
+   FREED(_edje_edd_edje_part_collection);
+   FREED(_edje_edd_edje_part);
+   FREED(_edje_edd_edje_part_description);
+   FREED(_edje_edd_edje_part_image_id);
+}
+
 void
 _edje_edd_setup(void)
 {

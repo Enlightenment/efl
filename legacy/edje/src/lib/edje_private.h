@@ -560,6 +560,7 @@ int   _edje_timer_cb(void *data);
 int   _edje_pending_timer_cb(void *data);
 
 void  _edje_edd_setup(void);
+void  _edje_edd_free(void);
 
 void  _edje_file_add(Edje *ed);
 void  _edje_file_del(Edje *ed);

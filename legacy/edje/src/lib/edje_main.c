@@ -1,15 +1,25 @@
 #include "Edje.h"
 #include "edje_private.h"
 
+static int initted = 0;
+
 void
 edje_init(void)
 {
-   static int initted = 0;
-   
    if (initted) return;
    initted = 1;
    _edje_edd_setup();
    _edje_text_init();
+}
+
+void
+edje_shutdown(void)
+{
+   if (!initted) return;
+
+   _edje_edd_free();
+
+   initted = 0;
 }
 
 Edje *

@@ -21,6 +21,7 @@ extern "C" {
 #endif
    
    void         edje_init                       (void);
+   void         edje_shutdown                   (void);
    void         edje_frametime_set              (double t);
    double       edje_frametime_get              (void);
    void         edje_freeze                     (void);
