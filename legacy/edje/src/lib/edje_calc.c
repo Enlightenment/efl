@@ -374,7 +374,7 @@ _edje_part_recalc_single(Edje *ed,
 	       _edje_text_styles[ep->part->effect].pad.l +
 	       _edje_text_styles[ep->part->effect].pad.r;
 	     if (chosen_desc->text.min_y)
-	       minw = th + 
+	       minh = th + 
 	       _edje_text_styles[ep->part->effect].pad.t +
 	       _edje_text_styles[ep->part->effect].pad.b;
 	  }

@@ -279,7 +279,8 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
    if (!obj_swallow) return;
    rp->swallowed_object = obj_swallow;
    evas_object_smart_member_add(rp->swallowed_object, ed->obj);
-   evas_object_clip_set(rp->swallowed_object, ed->clipper);
+   if (rp->clip_to) evas_object_clip_set(rp->object, rp->clip_to->object);
+   else evas_object_clip_set(rp->swallowed_object, ed->clipper);
    if (evas_object_layer_get(rp->swallowed_object) != ed->layer)
      evas_object_layer_set(rp->swallowed_object, ed->layer);
    evas_object_stack_above(rp->swallowed_object, rp->object);
