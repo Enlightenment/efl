@@ -1635,8 +1635,6 @@ evas_object_textblock_text_del(Evas_Object *obj, int len)
    if (len <= 0) return;
    if (o->pos >= o->len) return;
 
-   /* FIXME: need to delete formatting info too */
-   
    /* deleting everything */
    if ((o->pos == 0) && (len >= o->len))
      {
@@ -1685,8 +1683,10 @@ evas_object_textblock_text_del(Evas_Object *obj, int len)
 	  }
 	else
 	  {
-	     Evas_List *freenodes = NULL;
-	     Node *node_start = NULL, *node_end = NULL;
+	     Evas_List *freenodes = NULL, *formatnodes = NULL;
+	     Evas_List *ll;
+	     Node *node_start = NULL, *node_end = NULL, *format_start = NULL;
+	     Evas_Object_List *l;
 	     
 	     node_start = node_end = node;
 	     tmp = node->text;
@@ -1703,7 +1703,7 @@ evas_object_textblock_text_del(Evas_Object *obj, int len)
 	     ps += node->text_len;
 	     
              if (node->text_len <= 0)
-	       freenodes = evas_list_append(freenodes, node);
+	       node->text = NULL;
 	     
 	     while (remaining > 0)
 	       {
@@ -1729,20 +1729,65 @@ evas_object_textblock_text_del(Evas_Object *obj, int len)
 		  else
 		    {
 		       node_end = node;
-		       freenodes = evas_list_append(freenodes, node);
+		       o->len -= node->text_len;
+		       free(node->text);
+		       node->text = NULL;
+		       node->text_len = 0;
 		    }
 	       }
-	     /* FIXME: fix up format nodes inbetween node_start and node_end */
+	     /* we need to remove all nodes between node_start (and including
+	      * node_start is its text is NULL) and end_node (including
+	      * node_end if its text is NULL)
+	      */
+	     for (l = (Evas_Object_List *)node_start; l; l = l->next)
+	       {
+		  node = (Node *)l;
+		  /* if its a format node add it to our list of format nodes */
+		  if (node->format)
+		    {
+		       if (!formatnodes)
+			 format_start = node;
+		       formatnodes = evas_list_append(formatnodes, node);
+		    }
+		  /* if the node is empty text add it to our list of nodes 
+		   * to free
+		   */
+		  else if (!node->text)
+		    freenodes = evas_list_append(freenodes, node);
+		  if (node == node_end) break;
+	       }
              while (freenodes)
 	       {
 		  node = freenodes->data;
-		  o->len -= node->text_len;
 		  freenodes = evas_list_remove_list(freenodes, freenodes);
 		  o->nodes = evas_object_list_remove(o->nodes, node);
 		  if (node->format) free(node->format);
-		  if (node->text) free(node->text);
 		  free(node);
 	       }
+	     /* remove formatnodes for now... */
+	     /* FIXME: remove */
+             while (formatnodes)
+	       formatnodes = evas_list_remove_list(formatnodes, formatnodes);
+#if 0	     
+	     /* find all format nodes leading up to the deleted set of
+	      * format nodes
+	      */
+	     for (l = (Evas_Object_List *)format_node_start; l; l = l->prev)
+	       {
+		  node = (Node *)l;		  
+		  if (node->format)
+		    formatnodes = evas_list_prepend(formatnodes, node);
+		  else
+		    break;
+	       }
+	     /* go from last to start and once we have seen a format node
+	      * for a ceretain key, mark it as seen then remove occurances
+	      * earlier on in the list as we go to the start
+	      */
+	     for (ll = evas_list_last(formatnodes); ll; ll = ll->prev)
+	       {
+	       }
+#endif	     
 	  }
      }
    o->native.dirty = 1;
