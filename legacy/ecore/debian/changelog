@@ -1,0 +1,10 @@
+libecore0 (0.0.0-0.2000122401) unstable; urgency=low
+
+  * a cvs release
+
+ -- Laurence J. Lane <ljlane@debian.org>  Sun, 24 Dec 2000 01:31:57 +0000
+
+Local variables:
+mode: debian-changelog
+add-log-mailing-address: "ljlane@debian.org"
+End:

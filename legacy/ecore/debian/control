@@ -1,0 +1,21 @@
+Source: libecore0
+Section: libs
+Priority: optional
+Maintainer: Laurence J. Lane <ljlane@debian.org>
+Build-Depends: debhelper (>= 2.0)
+Standards-Version: 3.2.1.0
+
+Package: libecore0
+Architecture: any
+Section: libs
+Depends: ${shlibs:Depends}
+Description: libecore0 description
+ libecore0 extended description
+ 
+Package: libecore0-dev
+Architecture: any
+Section: devel
+Architecture: any
+Depends: libecore0 (= ${Source-Version}), libc6-dev
+Description: libecore0 headers, static libraries and documentation
+ Headers, static libraries and documentation for Imlib2.
