@@ -61,6 +61,47 @@ echo ""
 AC_MSG_ERROR([Fatal Error: no Imlib2 detected.]); exit], -L/usr/X11R6/lib -L/usr/local/lib -lm -ldl -lttf -lX11 -lXext)
 )
 
+AC_CHECK_LIB(ttf, TT_Init_FreeType, TTF_LIBS=-lttf, [
+echo ""
+echo "ERROR: Imlib 2 needs a system with libttf.so (TrueType Font Library)"
+echo "You can obtain it from:"
+echo "ftp://ftp.enlightenment.org/pub/enlightenment/"
+echo "ftp://www.rasterman.com/pub/enlightenment/"
+echo "You can also obtain it from:"
+echo "http://www.freetype.org/"
+echo "You can obtain some truetype fonts from:"
+echo "http://voyager.cns.ohiou.edu/~sadkins/web_library/fonts/font_archive/"
+echo ""
+AC_MSG_ERROR([Fatal Error: no FreeType detected.])], -lm)
+
+AC_CHECK_HEADERS(freetype.h freetype/freetype.h,[ break] , )
+
+AC_CHECK_HEADER(freetype.h, [ ftype=yes ], [ ftype=no ])
+AC_CHECK_HEADER(freetype/freetype.h, [ ftype_ftype=yes ], [ ftype_ftype=no ])
+
+if test x$ftype = xno; then
+if test x$ftype_ftype = xno; then
+echo ""
+echo "ERROR: freetype.h not found in freetype.h or freetype/freetype.h include"
+echo "paths. (ie /usr/include, /usr/local/include etc.). You need the freetype"
+echo "header files to build Imlib 2. This may mean you have to install the"
+echo "freetype-devel packages for your distribution or if all else fails"
+echo "find the source for freetype and install that somewhere where Imlib 2"
+echo "can find the header files."
+echo ""
+echo "You can obtain it from:"
+echo "ftp://ftp.enlightenment.org/pub/enlightenment/"
+echo "ftp://www.rasterman.com/pub/enlightenment/"
+echo "You can also obtain it from:"
+echo "http://www.freetype.org/"
+echo "You can obtain some truetype fonts from:"
+echo "http://voyager.cns.ohiou.edu/~sadkins/web_library/fonts/font_archive/"
+echo ""
+AC_MSG_ERROR([Fatal Error: no FreeType header files detected.])
+fi
+fi
+
+
 gl_includes=""
 #### Find out about OpenGL
 AC_CHECK_HEADER(GL/gl.h,

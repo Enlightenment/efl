@@ -1,3 +1,4 @@
+#include <config.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -13,10 +14,17 @@
 #include <X11/Xatom.h>
 #include <X11/Xmu/StdCmap.h>
 
+#ifdef HAVE_FREETYPE_FREETYPE_H
+#include <freetype/freetype.h>
+#else
+#include <freetype.h>
+#endif
+
 #include "Evas.h"
 
 typedef struct _evas_gl_image       Evas_GL_Image;
 typedef struct _evas_gl_font        Evas_GL_Font;
+typedef struct _evas_gl_glyph_info  Evas_GL_Glyph_Info;
 typedef enum   _evas_gl_image_state Evas_GL_Image_State;
 
 enum _evas_gl_image_state
@@ -59,8 +67,24 @@ struct _evas_gl_font
 {
    char *file;
    int   size;
+
+   TT_Engine           engine;
+   TT_Face             face;
+   TT_Instance         instance;
+   TT_Face_Properties  properties;
+   int                 num_glyph;
+   TT_Glyph           *glyphs;
+   Evas_GL_Glyph_Info *glyphinfo;
+   int                 max_descent;
+   int                 max_ascent;
+   int                 descent;
+   int                 ascent;
+   int                 mem_use;
    
-   GLXContext context;
+   GLXContext  context;
+   int         max_texture_size;
+   int         num_textures;
+   GLuint     *textures;
    struct
      {
 	Display *display;
@@ -70,6 +94,13 @@ struct _evas_gl_font
 	int dest_w, dest_h;
      } buffer;
    int   references;
+};
+
+struct _evas_gl_glyph_info
+{
+   GLuint texture;
+   int    px, py, pw, ph;
+   double x1, y1, x2, y2;
 };
 
 /***************/
