@@ -347,6 +347,7 @@ struct _Edje_Part_Description
    
    struct {
       int            l, r, t, b; /* border scaling on image fill */
+      unsigned char  fill; /* do we fill the center of the image if bordered? 1 == NO!!!! */
    } border;
 
    struct {
