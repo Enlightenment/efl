@@ -88,7 +88,7 @@
        (((x) & 0xff00 ) >> 8))
 
 #ifdef BUILD_SMALL_DITHER_MASK
-# define DM_TABLE     _dither_44
+# define DM_TABLE     _evas_dither_44
 # define DM_SIZE      4
 # define DM_BITS      4
 # define DM_DIV       16
@@ -96,7 +96,7 @@
 # define DM_MSK       (DM_SIZE - 1)
 # define DM_SHF(_b)   (DM_BITS - (8 - _b))
 #else
-# define DM_TABLE     _dither_128128
+# define DM_TABLE     _evas_dither_128128
 # define DM_SIZE      128
 # define DM_BITS      6
 # define DM_DIV       64

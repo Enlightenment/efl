@@ -1,10 +1,10 @@
 #include "evas_common.h"
 
 #ifdef USE_DITHER_44
-extern const DATA8 _dither_44[4][4];
+extern const DATA8 _evas_dither_44[4][4];
 #endif
 #ifdef USE_DITHER_128128
-extern const DATA8 _dither_128128[128][128];
+extern const DATA8 _evas_dither_128128[128][128];
 #endif
 
 #ifdef BUILD_CONVERT_8_RGB_332
