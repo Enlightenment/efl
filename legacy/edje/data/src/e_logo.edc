@@ -349,6 +349,13 @@ collections {
 	    target,     "logo_anim";
 	    after,      "logo_animate"; // at end... loop
 	 }
+	 program {
+	    name,       "logo_animate_stop";
+	    signal,     "mouse,down,1";
+	    source,     "logo_anim";
+	    action,     ACTION_STOP;
+	    target,     "logo_animate";
+	 }
       }
    }
 }

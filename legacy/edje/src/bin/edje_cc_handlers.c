@@ -1005,8 +1005,11 @@ st_collections_group_programs_program_action(void)
 			   "STATE_SET", EDJE_ACTION_TYPE_STATE_SET,
 			   "ACTION_STOP", EDJE_ACTION_TYPE_ACTION_STOP,
 			   NULL);
-   ep->state = parse_str(1);
-   ep->value = parse_float_range(2, 0.0, 1.0);
+   if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
+     {
+	ep->state = parse_str(1);
+	ep->value = parse_float_range(2, 0.0, 1.0);
+     }
 }
 
 static void

@@ -131,7 +131,10 @@ test_reize(double w, double h)
 
 int
 main(int argc, char **argv)
-{   
+{
+   char *file;
+   char *coll;
+   
    if (main_start(argc, argv) < 1) return -1;
 
    edje_init();
@@ -139,8 +142,18 @@ main(int argc, char **argv)
    
    bg_setup();
 
-   /* FIXME: hard-coded. need to make this proper options later */
-   test_setup("./data/e_logo.eet", "test");
+   if (argc < 2)
+     {
+	printf("Usage: %s file_to_show.eet [collection_to_show]\n", argv[0]);
+	printf("       The default collection name to show is \"test\"\n");
+	exit(-1);
+     }
+   file = "./data/e_logo.eet";
+   coll = "test";
+   file = argv[1];
+   if (argc >= 3) coll = argv[2];
+   /* FIXME: list collections */
+   test_setup(argv[1], coll);
    
    ecore_main_loop_begin();
    
