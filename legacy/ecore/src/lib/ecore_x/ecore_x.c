@@ -1368,6 +1368,18 @@ ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom type,
     return XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
 }
 
+void
+ecore_x_focus_reset(void)
+{
+   XSetInputFocus(_ecore_x_disp, PointerRoot, RevertToPointerRoot, CurrentTime);
+}
+
+void
+ecore_x_events_allow_all(void)
+{
+   XAllowEvents(_ecore_x_disp, AsyncBoth, CurrentTime);
+}
+
 
 /*****************************************************************************/
 /*****************************************************************************/

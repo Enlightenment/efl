@@ -1179,7 +1179,10 @@ EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_A
    EAPI void
      ecore_x_window_button_ungrab(Ecore_X_Window win, int button,
 				  int mod, int any_mod);
-       
+
+   EAPI void ecore_x_focus_reset(void);
+   EAPI void ecore_x_events_allow_all(void);
+
 #ifdef __cplusplus
 }
 #endif
