@@ -104,7 +104,9 @@ struct _Ecore_Evas
    char        shaped  : 1;
    char        visible : 1;
    char        should_be_visible : 1;
-   
+
+   Evas_Hash  *data;
+
    struct {
       int      x, y;
    } mouse;

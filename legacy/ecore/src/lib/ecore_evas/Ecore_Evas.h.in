@@ -10,7 +10,6 @@
  * to do soon:
  * - iconfication api needs to work
  * - maximization api nees to work
- * - attach keyed data to an ecore_evas canvas
  * - document all calls
  * 
  * later:
@@ -59,6 +58,8 @@ Ecore_Evas     *ecore_evas_fb_new(char *disp_name, int rotation, int w, int h);
 
 /* generic manipulation calls */
 void        ecore_evas_free(Ecore_Evas *ee);
+void       *ecore_evas_data_get(Ecore_Evas *ee, const char *key);
+void        ecore_evas_data_set(Ecore_Evas *ee, const char *key, const void *data);
 void        ecore_evas_callback_resize_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
 void        ecore_evas_callback_move_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
 void        ecore_evas_callback_show_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));

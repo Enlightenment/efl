@@ -62,6 +62,7 @@ ecore_evas_free(Ecore_Evas *ee)
 	return;
      }
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_NONE);
+   if (ee->data) evas_hash_free(ee->data);
    if (ee->driver) free(ee->driver);
    if (ee->name) free(ee->name);
    if (ee->prop.title) free(ee->prop.title);
@@ -70,6 +71,7 @@ ecore_evas_free(Ecore_Evas *ee)
    if (ee->prop.cursor.file) free(ee->prop.cursor.file);
    if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
    if (ee->evas) evas_free(ee->evas);
+   ee->data = NULL;
    ee->driver = NULL;
    ee->name = NULL;
    ee->prop.title = NULL;
@@ -80,6 +82,37 @@ ecore_evas_free(Ecore_Evas *ee)
    ee->evas = NULL;
    if (ee->engine.func->fn_free) ee->engine.func->fn_free(ee);
    free(ee);
+}
+
+void *
+ecore_evas_data_get(Ecore_Evas *ee, const char *key)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+			 "ecore_evas_data_get");
+	return NULL;
+     }
+
+   if (!key) return NULL;
+
+   return evas_hash_find(ee->data, key);
+}
+
+void
+ecore_evas_data_set(Ecore_Evas *ee, const char *key, const void *data)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+			 "ecore_evas_data_set");
+	return;
+     }
+
+   if (!key) return;
+
+   ee->data = evas_hash_del(ee->data, key, NULL);
+   ee->data = evas_hash_add(ee->data, key, data);
 }
 
 #define IFC(_ee, _fn)  if (_ee->engine.func->_fn) {_ee->engine.func->_fn
