@@ -1,6 +1,5 @@
 usr/lib/lib*.so.*
 usr/lib/ecore*.so
-usr/share/ecore/system.db
 usr/share/ecore/data/fonts/*.ttf
 usr/share/ecore/data/fonts/fonts.alias
 usr/share/ecore/data/fonts/fonts.dir
