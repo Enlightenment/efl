@@ -827,8 +827,8 @@ eet_data_get_char(void *src, void *src_end, void *dst)
    if ((src + sizeof(char)) > src_end) return -1;
    s = (char *)src;
    d = (char *)dst;
-   *s = *d;
-   CONV8(*s);
+   *d = *s;
+   CONV8(*d);
    return sizeof(char);
 }
 
