@@ -121,7 +121,7 @@ ecore_x_icccm_move_resize_send(Ecore_X_Window win, int x, int y, int w, int h)
    ev.xconfigure.width = w;
    ev.xconfigure.height = h;
    ev.xconfigure.border_width = 0;
-   ev.xconfigure.above = win;
+   ev.xconfigure.above = None;
    ev.xconfigure.override_redirect = False;
    XSendEvent(_ecore_x_disp, win, False, StructureNotifyMask, &ev);
 }
