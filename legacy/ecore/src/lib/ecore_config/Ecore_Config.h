@@ -77,6 +77,8 @@ typedef struct Ecore_Config_Listener_List {
 typedef struct Ecore_Config_Prop {
   char                  *key;
   char                  *description;
+  char                   short_opt;
+  char                  *long_opt;
   char                  *ptr;
   Ecore_Config_Type      type;
   long                   val,lo,hi,step;
@@ -125,7 +127,9 @@ int            ecore_config_get_rgb(const char *key,int *r, int *g, int *b);
 float          ecore_config_get_float(const char *key);
 char          *ecore_config_get_theme(const char *key);
 char          *ecore_config_get_as_string(const char *key);
-void           ecore_config_describe(const char *key, char *desc);
+int            ecore_config_describe(const char *key, char *desc);
+int            ecore_config_set_short_opt(const char *key, char short_opt);
+int            ecore_config_set_long_opt(const char *key, char *long_opt);
 int            ecore_config_set(const char *key,char *val);
 int            ecore_config_set_typed(const char *key,void *val,int type);
 int            ecore_config_set_string(const char *key,char *val);
@@ -187,9 +191,14 @@ int            ecore_config_save_file(char *file);
 # define ECORE_CONFIG_ERR_FAIL         (-1)
 # define ECORE_CONFIG_ERR_SUCC          (0)
 
+# define ECORE_CONFIG_PARSE_HELP       (-2)
+# define ECORE_CONFIG_PARSE_EXIT       (-1)
+# define ECORE_CONFIG_PARSE_CONTINUE    (0)
+
 /* convenience mathods in convenience.c */
 int            ecore_config_evas_font_path_apply(Evas *evas);
-void           ecore_config_prop_list_describe(void);
+void           ecore_config_args_display(void);
+int            ecore_config_args_parse(int argc, char **argv);
 
 # ifdef __cplusplus
 }

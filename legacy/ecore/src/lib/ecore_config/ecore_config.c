@@ -301,12 +301,26 @@ static int ecore_config_add(const char *key,char *val) {
   type=ecore_config_guess_type(key, val);
   return ecore_config_add_typed(key,val,type); }
 
-void ecore_config_describe(const char *key, char *desc) {
+int ecore_config_describe(const char *key, char *desc) {
   Ecore_Config_Prop *e;
-  if ((e=ecore_config_get(key)))
-    e->description = strdup(desc);
-}
+  if (!(e=ecore_config_get(key)))
+    return ECORE_CONFIG_ERR_NODATA;
+  e->description = strdup(desc);
+  return ECORE_CONFIG_ERR_SUCC;}
 
+int ecore_config_set_short_opt(const char *key, char short_opt) {
+  Ecore_Config_Prop *e;
+  if (!(e=ecore_config_get(key)))
+    return ECORE_CONFIG_ERR_NODATA;
+  e->short_opt = short_opt;
+  return ECORE_CONFIG_ERR_SUCC;}
+
+int ecore_config_set_long_opt(const char *key, char *long_opt) {
+  Ecore_Config_Prop *e;
+  if (!(e=ecore_config_get(key)))
+    return ECORE_CONFIG_ERR_NODATA;
+  e->long_opt = strdup(long_opt);
+  return ECORE_CONFIG_ERR_SUCC;}
 
 int ecore_config_set_typed(const char *key,void *val,int type) {
   Ecore_Config_Prop *e;
