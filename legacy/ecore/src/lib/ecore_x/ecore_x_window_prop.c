@@ -49,7 +49,10 @@ ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecor
    
    if (!win) win = DefaultRootWindow(_ecore_x_disp);
 
-   ret = XGetWindowProperty(_ecore_x_disp, win, property, 0, LONG_MAX, False, type, &type_ret, &size_ret, &num_ret, &bytes, &prop_ret);
+   ret = XGetWindowProperty(_ecore_x_disp, win, property, 0, LONG_MAX,
+                            False, type, &type_ret, &size_ret,
+                            &num_ret, &bytes, &prop_ret);
+
    if (ret != Success)
      {
 	*data = NULL;
@@ -79,6 +82,8 @@ ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecor
 			((uint32_t *) *data)[i] = ((uint32_t *) prop_ret)[i];
 			break;
       }
+
+   XFree(prop_ret);
 
    *num = num_ret;
    return 1;
