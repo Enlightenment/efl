@@ -45,50 +45,39 @@ fi
 dnl Set PACKAGE_DATA_DIR in config.h.
 if test "x${datadir}" = 'x${prefix}/share'; then
   if test "x${prefix}" = "xNONE"; then
-    AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${ac_default_prefix}/share/${PACKAGE}")
+    AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${ac_default_prefix}/share/${PACKAGE}", [Shared Data Directory])
   else
-    AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${prefix}/share/${PACKAGE}")
+    AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${prefix}/share/${PACKAGE}", [Shared Data Directory])
   fi
 else
-  AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${datadir}/${PACKAGE}")
+  AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${datadir}/${PACKAGE}", [Shared Data Directory])
 fi
 
 dnl Set PACKAGE_BIN_DIR in config.h.
 if test "x${bindir}" = 'xNONE'; then
   if test "x${prefix}" = "xNONE"; then
-    AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${ac_default_prefix}/bin")
+    AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${ac_default_prefix}/bin", [Installation Directory for User Executables])
   else
-    AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${prefix}/bin")
+    AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${prefix}/bin", [Installation Directory for User Executables])
   fi
 else
-  AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${bindir}")
+  AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${bindir}", [Installation Directory for User Executables])
 fi
 		
-dnl Set PACKAGE_DATA_DIR in config.h.
-if test "x${datadir}" = 'x${prefix}/share'; then
-  if test "x${prefix}" = "xNONE"; then
-    AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${ac_default_prefix}/share/${PACKAGE}")
-  else
-    AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${prefix}/share/${PACKAGE}")
-  fi
-else
-  AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${datadir}/${PACKAGE}")
-fi
-
 dnl Set PACKAGE_LIB_DIR in config.h.
 if test "x${libdir}" = 'xNONE'; then
   if test "x${prefix}" = "xNONE"; then
-    AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${ac_default_prefix}/lib")
+    AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${ac_default_prefix}/lib", [Installation Directory for Libraries])
   else
-    AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${prefix}/lib")
+    AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${prefix}/lib", [Installation Directory for Libraries])
   fi
 else
-  AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${libdir}")
+  AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${libdir}", [Installation Directory for Libraries])
 fi
                 
 dnl Set PACKAGE_SOURCE_DIR in config.h.
 packagesrcdir=`cd $srcdir && pwd`
-AC_DEFINE_UNQUOTED(PACKAGE_SOURCE_DIR, "${packagesrcdir}")
+AC_DEFINE_UNQUOTED(PACKAGE_SOURCE_DIR, "${packagesrcdir}", [Source Code Directory])
 
 dnl Use -Wall if we have gcc.
 changequote(,)dnl
@@ -126,7 +115,7 @@ AC_ARG_ENABLE(ecore-txt,
 if test "x$have_ecore_txt" = "xyes"; then
   AC_CHECK_LIB(c, iconv,
     [
-      AC_DEFINE(BUILD_ECORE_TXT)
+      AC_DEFINE(BUILD_ECORE_TXT, 1, [Build Ecore_Txt Module])
       AM_CONDITIONAL(BUILD_ECORE_TXT, true)
       ecore_txt_libs="-lecore_txt"
     ], [
@@ -137,7 +126,7 @@ if test "x$have_ecore_txt" = "xyes"; then
   if test "x$have_ecore_txt" != "xyes"; then
     AC_CHECK_LIB(iconv, iconv,
       [
-        AC_DEFINE(BUILD_ECORE_TXT)
+        AC_DEFINE(BUILD_ECORE_TXT, 1, [Build Ecore_Txt Module])
         AM_CONDITIONAL(BUILD_ECORE_TXT, true)
         iconv_libs="-liconv"
         ecore_txt_libs="-lecore_txt -liconv"
@@ -149,7 +138,7 @@ if test "x$have_ecore_txt" = "xyes"; then
   if test "x$have_ecore_txt" != "xyes"; then
     AC_CHECK_LIB(c, libiconv,
       [
-        AC_DEFINE(BUILD_ECORE_TXT)
+        AC_DEFINE(BUILD_ECORE_TXT, 1, [Build Ecore_Txt Module])
         AM_CONDITIONAL(BUILD_ECORE_TXT, true)
         ecore_txt_libs="-lecore_txt"
         have_ecore_txt="yes"
@@ -160,7 +149,7 @@ if test "x$have_ecore_txt" = "xyes"; then
   if test "x$have_ecore_txt" != "xyes"; then
     AC_CHECK_LIB(iconv, libiconv,
       [
-        AC_DEFINE(BUILD_ECORE_TXT)
+        AC_DEFINE(BUILD_ECORE_TXT, 1, [Build Ecore_Txt Module])
         AM_CONDITIONAL(BUILD_ECORE_TXT, true)
         iconv_libs="-liconv"
         ecore_txt_libs="-lecore_txt -liconv"
@@ -213,7 +202,7 @@ fi
 
 if test "x$have_ecore_x" = "xyes"; then
   AM_CONDITIONAL(BUILD_ECORE_X, true)
-  AC_DEFINE(BUILD_ECORE_X)
+  AC_DEFINE(BUILD_ECORE_X, 1, [Build Ecore_X Module])
   x_dir="/usr/X11R6";
   x_includes="";
   x_cflags="-I"$x_dir"/include"
@@ -254,7 +243,7 @@ AC_ARG_ENABLE(ecore-job,
 
 if test "x$have_ecore_job" = "xyes"; then
     AM_CONDITIONAL(BUILD_ECORE_JOB, true)
-    AC_DEFINE(BUILD_ECORE_JOB)
+    AC_DEFINE(BUILD_ECORE_JOB, 1, [Build Ecore_Job Module])
     ecore_job_libs="-lecore_job";
 else
   AM_CONDITIONAL(BUILD_ECORE_JOB, false)
@@ -287,7 +276,7 @@ if test "x$have_ecore_fb" = "xyes"; then
   AC_CHECK_HEADER(linux/fb.h,
     [
       AM_CONDITIONAL(BUILD_ECORE_FB, true)
-      AC_DEFINE(BUILD_ECORE_FB)
+      AC_DEFINE(BUILD_ECORE_FB, 1, [Build Ecore_FB Module])
       ecore_fb_libs="-lecore_fb";
     ], [
       AM_CONDITIONAL(BUILD_ECORE_FB, false)
@@ -338,7 +327,7 @@ AC_ARG_ENABLE(ecore-evas,
 
 if test "x$have_ecore_evas" = "xyes"; then
   AM_CONDITIONAL(BUILD_ECORE_EVAS, true)
-  AC_DEFINE(BUILD_ECORE_EVAS)
+  AC_DEFINE(BUILD_ECORE_EVAS, 1, [Build Ecore_Evas Module])
   if [ test -z $EVAS_CONFIG ]; then
     echo $PROG " is not in your \$PATH. Please ensure it is.";
     echo "Read the manual page for you shell as to how to extend your path.";
@@ -380,7 +369,7 @@ if test "x$have_ecore_evas_gl" = "xyes"; then
   AC_CHECK_HEADER(Evas_Engine_GL_X11.h,
     [
       AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, true)
-      AC_DEFINE(BUILD_ECORE_EVAS_GL)
+      AC_DEFINE(BUILD_ECORE_EVAS_GL, 1, [Support for GL Engine in Ecore_Evas])
     ], [
       AM_CONDITIONAL(BUILD_ECORE_EVAS_GL, false)
       have_ecore_evas_gl="no"
@@ -414,7 +403,7 @@ if test "x$have_ecore_evas_fb" = "xyes"; then
   AC_CHECK_HEADER(Evas_Engine_FB.h,
     [
       AM_CONDITIONAL(BUILD_ECORE_EVAS_FB, true)
-      AC_DEFINE(BUILD_ECORE_EVAS_FB)
+      AC_DEFINE(BUILD_ECORE_EVAS_FB, 1, [Support for Linux FB in Ecore_Evas])
     ], [
       AM_CONDITIONAL(BUILD_ECORE_EVAS_FB, false)
       have_ecore_evas_fb="no"
@@ -448,7 +437,7 @@ AC_ARG_ENABLE(ecore-con,
 
 if test "x$have_ecore_con" = "xyes"; then
   AM_CONDITIONAL(BUILD_ECORE_CON, true)
-  AC_DEFINE(BUILD_ECORE_CON)
+  AC_DEFINE(BUILD_ECORE_CON, 1, [Build Ecore_Con Module])
   ecore_con_libs="-lecore_con"
 else
   AM_CONDITIONAL(BUILD_ECORE_CON, false)
@@ -482,7 +471,7 @@ fi
 
 if test "x$have_ecore_ipc" = "xyes"; then
   AM_CONDITIONAL(BUILD_ECORE_IPC, true)
-  AC_DEFINE(BUILD_ECORE_IPC)
+  AC_DEFINE(BUILD_ECORE_IPC, 1, [Build Ecore_Ipc Module])
   ecore_ipc_libs="-lecore_ipc"
 else
   AM_CONDITIONAL(BUILD_ECORE_IPC, false)
@@ -530,7 +519,7 @@ if test "x$have_ecore_config" = "xyes"; then
        edb_libs=`edb-config --libs`
        AM_CONDITIONAL(BUILD_ECORE_CONFIG, true)
        ecore_config_libs="-lecore_config";
-       AC_DEFINE(BUILD_ECORE_CONFIG)
+       AC_DEFINE(BUILD_ECORE_CONFIG, 1, [Build Ecore_Config Module])
        AC_SUBST(edb_libs)
        AC_SUBST(edb_cflags)
      ],
