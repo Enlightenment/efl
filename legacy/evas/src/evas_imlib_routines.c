@@ -6,6 +6,7 @@
 ((SPANS_COMMON((x), (w), (xx), (ww))) && (SPANS_COMMON((y), (h), (yy), (hh))))
 
 static void __evas_imlib_image_cache_flush(Display *disp);
+static int  __evas_anti_alias = 1;
 static Evas_List drawable_list = NULL;
 
 /*****************************************************************************/
@@ -73,7 +74,7 @@ __evas_imlib_image_draw(Evas_Imlib_Image *im,
    imlib_context_set_operation(IMLIB_OP_COPY);
    imlib_context_set_color_modifier(NULL);
    imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
-   imlib_context_set_anti_alias(1);
+   imlib_context_set_anti_alias(__evas_anti_alias);
    for(l = drawable_list; l; l = l->next)
      {
 	Evas_Imlib_Drawable *dr;
@@ -137,7 +138,7 @@ __evas_imlib_image_set_borders(Evas_Imlib_Image *im, int left, int right,
 void
 __evas_imlib_image_set_smooth_scaling(int on)
 {
-   imlib_context_set_anti_alias((char)on);
+   __evas_anti_alias = on;
 }
 
 
@@ -347,7 +348,7 @@ void              __evas_imlib_rectangle_draw(Display *disp, Window win,
    imlib_context_set_operation(IMLIB_OP_COPY);
    imlib_context_set_color_modifier(NULL);
    imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
-   imlib_context_set_anti_alias(1);
+   imlib_context_set_anti_alias(__evas_anti_alias);
    for(l = drawable_list; l; l = l->next)
      {
 	Evas_Imlib_Drawable *dr;

@@ -4,7 +4,6 @@
 #include <unistd.h>
 #include <string.h>
 
-/* create and destroy */
 Evas
 evas_new(void)
 {
@@ -16,7 +15,7 @@ evas_new(void)
    e->current.viewport.y = 0.0;
    e->current.viewport.w = 0.0;
    e->current.viewport.h = 0.0;
-   e->current.render_method = RENDER_METHOD_ALPHA_SOFTWARE;
+   e->current.render_method = RENDER_METHOD_3D_HARDWARE;
    return e;
 }
 

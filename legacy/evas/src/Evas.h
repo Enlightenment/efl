@@ -11,7 +11,7 @@ typedef struct _Evas_Object_Any *          Evas_Object_Any;
 typedef int                                Evas_Callback_Type;
 typedef int                                Evas_Image_Format;
 typedef int                                Evas_Render_Method;
-typedef struct _Evas_Render_Data *         Evas_Render_Data;
+typedef struct _Evas_Render_Data           Evas_Render_Data;
 typedef struct _Evas_List *                Evas_List;
 typedef struct _Evas_Layer *               Evas_Layer;
 typedef struct _Evas_Color_Point *         Evas_Color_Point;
@@ -40,12 +40,18 @@ typedef struct _Evas_Object_Bits *         Evas_Object_Bits;
 #define IMAGE_FORMAT_RGB    2
 #define IMAGE_FORMAT_GRAY   3
 
-#define OBJECT_IMAGE        0
-#define OBJECT_TEXT         1
-#define OBJECT_RECTANGLE    2
-#define OBJECT_LINE         3
-#define OBJECT_GRADIENT_BOX 4
-#define OBJECT_BITS         5
+#define OBJECT_IMAGE        1230
+#define OBJECT_TEXT         1231
+#define OBJECT_RECTANGLE    1232
+#define OBJECT_LINE         1233
+#define OBJECT_GRADIENT_BOX 1234
+#define OBJECT_BITS         1235
+
+
+struct _Evas_Render_Data
+{
+   int *method[RENDER_METHOD_COUNT];
+};
 
 struct _Evas
 {
@@ -54,7 +60,10 @@ struct _Evas
       Drawable      drawable;
       Visual       *visual;
       Colormap      colormap;
+      int           screen;
 
+      int           drawable_width, drawable_height;
+      
       struct  {
 	 double     x, y, w, h;
       } viewport;
@@ -64,19 +73,13 @@ struct _Evas
       Evas_Render_Data renderer_data;
       
    } current, previous;
-
-   void (*object_renderer_data_free) (Evas _e, Evas_Object _o);
+   
    void (*evas_renderer_data_free) (Evas _e);
    
    int changed;
    
    Evas_List     layers;
-   Evas_List     updates;
-};
-
-struct _Evas_Render_Data
-{
-   void *method[RENDER_METHOD_COUNT];
+   Imlib_Updates updates;
 };
 
 struct _Evas_Color_Point
@@ -127,26 +130,33 @@ struct _Evas_Object_Any
       double     x, y, w, h;
       int        zoomscale;
       int        layer;
+      int        visible;
    } current, previous;
 
    int changed;
    
+   int delete_me;
+   
    void (*object_free) (Evas_Object _o);
+   void (*object_renderer_data_free) (Evas _e, Evas_Object _o);
    
    Evas_List  callbacks;
    
-   void      *renderer_data;
+   Evas_Render_Data renderer_data;
    
 };
 
 struct _Evas_Object_Image
 {
-   Evas_Object_Any object;
+   struct _Evas_Object_Any object;
    struct  {
       char *file;
       int   new_data;
       int   scale;
-      struct _fill {
+      struct {
+	 int w, h;
+      } image;
+      struct {
 	 double x, y, w, h;
       } fill;
    } current, previous;
@@ -154,7 +164,7 @@ struct _Evas_Object_Image
 
 struct _Evas_Object_Text
 {
-   Evas_Object_Any object;
+   struct _Evas_Object_Any object;
    struct  {
       char *text;
       int r, g, b, a;
@@ -163,7 +173,7 @@ struct _Evas_Object_Text
 
 struct _Evas_Object_Rectangle
 {
-   Evas_Object_Any object;
+   struct _Evas_Object_Any object;
    struct  {
       int r, g, b, a;
    } current, previous;
@@ -171,7 +181,7 @@ struct _Evas_Object_Rectangle
 
 struct _Evas_Object_Line
 {
-   Evas_Object_Any object;
+   struct _Evas_Object_Any object;
    struct  {
       double x1, y1, x2, y2;
       int r, g, b, a;
@@ -180,7 +190,7 @@ struct _Evas_Object_Line
 
 struct _Evas_Object_Gradient_Box
 {
-   Evas_Object_Any object;
+   struct _Evas_Object_Any object;
    struct  {
       Evas_Gradient gradient;
       double angle;
@@ -189,7 +199,7 @@ struct _Evas_Object_Gradient_Box
 
 struct _Evas_Object_Bits
 {
-   Evas_Object_Any object;
+   struct _Evas_Object_Any object;
    struct  {
       char *file;
    } current, previous;
@@ -215,6 +225,7 @@ Colormap evas_get_optimal_colormap(Evas e, Display *disp);
 
 /* the output settings */
 void evas_set_output(Evas e, Display *disp, Drawable d, Visual *v, Colormap c);
+void evas_set_output_size(Evas e, int w, int h);
 void evas_set_output_viewport(Evas e, double x, double y, double w, double h);
 void evas_set_output_method(Evas e, Evas_Render_Method method);
 	 

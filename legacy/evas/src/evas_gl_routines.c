@@ -18,6 +18,7 @@ static void           __evas_gl_image_move_state_data_to_texture(Evas_GL_Image *
 static void           __evas_gl_image_calc_tex_and_poly(Evas_GL_Image *im, int x, double *x1, double *x2, int *tx, int *txx, double *dtx, double *dtxx, int tw, int w, int edge);
 static Evas_GL_Image *__evas_gl_create_image(void);
 static Evas_GL_Image *__evas_gl_image_create_from_file(Display *disp, char *file);
+static void           __evas_gl_image_free_textures(Evas_GL_Image *im);
 static void           __evas_gl_image_destroy(Evas_GL_Image *im);
 static void           __evas_gl_image_cache_flush(Display *disp);
 
@@ -252,7 +253,6 @@ __evas_gl_image_move_state_data_to_texture(Evas_GL_Image *im)
 	     
 	     __evas_gl_image_copy_image_rect_to_texture(im, xx, yy, ww, hh, tw, th, 
 						  im->texture.textures[i]);
-	     __evas_image_cache_used += (tw * th * 4);
 	  }
      }
    /* done - set the actual image state to textured */
@@ -366,15 +366,36 @@ __evas_gl_image_create_from_file(Display *disp, char *file)
 }
 
 static void
+__evas_gl_image_free_textures(Evas_GL_Image *im)
+{
+   if ((__evas_current_win != im->buffer.dest) || 
+       (__evas_current_disp != im->buffer.display))
+     {
+	glXMakeCurrent(im->buffer.display, im->buffer.dest, im->context);
+	__evas_current_disp = im->buffer.display;
+	__evas_current_win = im->buffer.dest;
+     }
+   if (im->texture.textures)
+     {
+	__evas_image_cache_used -= 
+	   ((((im->texture.w - 1) * im->texture.max_size) *
+	     ((im->texture.h - 1) * im->texture.max_size)) +
+	    ((im->texture.w - 1) * im->texture.edge_h) +
+	    ((im->texture.h - 1) * im->texture.edge_w) +
+	    (im->texture.edge_w * im->texture.edge_h)) * 4;
+	glDeleteTextures(im->texture.w * im->texture.h, im->texture.textures);
+	free(im->texture.textures);
+	im->texture.textures = NULL;
+     }
+   im->state = EVAS_STATE_DATA;
+}
+
+static void
 __evas_gl_image_destroy(Evas_GL_Image *im)
 {
    if (im->file) free(im->file);
    if (im->data) free(im->data);
-   if (im->texture.textures)
-     {
-	glDeleteTextures(im->texture.w * im->texture.h, im->texture.textures);
-	free(im->texture.textures);
-     }
+   __evas_gl_image_free_textures(im);
    free(im);
 }
 
@@ -570,13 +591,21 @@ __evas_gl_image_new_from_file(Display *disp, char *file)
 		  __evas_images = evas_list_remove(__evas_images, im);
 		  __evas_images = evas_list_prepend(__evas_images, im);
 	       }
+	     if (im->references == 0)
+		__evas_image_cache_used -= 
+		((((im->texture.w - 1) * im->texture.max_size) *
+		  ((im->texture.h - 1) * im->texture.max_size)) +
+		 ((im->texture.w - 1) * im->texture.edge_h) +
+		 ((im->texture.h - 1) * im->texture.edge_w) +
+		 (im->texture.edge_w * im->texture.edge_h)) * 4;
 	     im->references++;
 	     return im;
 	  }
      }
    
    im = __evas_gl_image_create_from_file(disp, file);
-   __evas_images = evas_list_prepend(__evas_images, im);
+   if (im)
+      __evas_images = evas_list_prepend(__evas_images, im);
    
    return im;
 }
@@ -585,6 +614,15 @@ void
 __evas_gl_image_free(Evas_GL_Image *im)
 {
    im->references--;
+   if (im->references == 0)
+     {
+	__evas_image_cache_used += 
+	   ((((im->texture.w - 1) * im->texture.max_size) *
+	     ((im->texture.h - 1) * im->texture.max_size)) +
+	    ((im->texture.w - 1) * im->texture.edge_h) +
+	    ((im->texture.h - 1) * im->texture.edge_w) +
+	    (im->texture.edge_w * im->texture.edge_h)) * 4;
+     }
    if (im->references <= 0)
       __evas_gl_image_cache_flush(im->buffer.display);
 }
@@ -594,15 +632,17 @@ __evas_gl_image_cache_empty(Display *disp)
 {
    Evas_GL_Image *im = NULL, *im_last;
    Evas_List l;
-   im_last = (Evas_GL_Image *)1;
+   int size;
 
+   im_last = (Evas_GL_Image *)1;
    while (im_last)
      {
 	im_last = NULL;
 	for (l = __evas_images; l; l = l->next)
 	  {
 	     im = l->data;
-	     
+
+	     __evas_gl_image_free_textures(im);
 	     if (im->references <= 0)
 		im_last = im;
 	  }
@@ -612,6 +652,9 @@ __evas_gl_image_cache_empty(Display *disp)
 	     __evas_gl_image_destroy(im_last);
 	  }
      }
+   size = imlib_get_cache_size();
+   imlib_set_cache_size(0);
+   imlib_set_cache_size(size);
    disp = NULL;
 }
 
@@ -664,6 +707,8 @@ __evas_gl_image_set_borders(Evas_GL_Image *im, int left, int right,
 void
 __evas_gl_image_set_smooth_scaling(int on)
 {
+   if (on != __evas_anti_alias)
+      __evas_gl_image_cache_empty(__evas_current_disp);
    __evas_anti_alias = on;
 }
 
@@ -1232,7 +1277,7 @@ __evas_gl_text_font_destroy(Evas_GL_Font *font)
 {
    int                 i;
 
-   __evas_font_cache_used += 256 * 128 * font->num_textures;
+   __evas_font_cache_used -= 256 * 128 * font->num_textures;
    /* free freetype instance stuff */
    TT_Done_Instance(font->instance);
    TT_Close_Face(font->face);
@@ -1297,6 +1342,8 @@ __evas_gl_text_font_new(Display *disp, char *font, int size)
 	if ((f->buffer.display == disp) && (!strcmp(font, f->file)) &&
 	    (f->size == size)) 
 	  {
+	     if (f->references == 0)
+		__evas_font_cache_used -= 256 * 128 * f->num_textures;
 	     f->references++;
 	     if (l != __evas_fonts)
 	       {
@@ -1352,6 +1399,7 @@ __evas_gl_text_font_free(Evas_GL_Font *fn)
    fn->references--;
    if (fn->references == 0)
       __evas_font_cache_used += 256 * 128 * fn->num_textures;
+   if (fn->references >= 0)
    __evas_gl_text_cache_flush();
 }
 
@@ -2013,6 +2061,12 @@ __evas_gl_sync(Display *disp)
 void
 __evas_gl_flush_draw(Display *disp, Window win)
 {
+   if ((__evas_current_win != win) || (__evas_current_disp != disp))
+     {
+	glXMakeCurrent(disp, win, __evas_gl_cx);
+	__evas_current_disp = disp;
+	__evas_current_win = win;
+     }
    glXSwapBuffers(disp, win);
 }
 

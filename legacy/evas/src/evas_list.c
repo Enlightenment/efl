@@ -113,7 +113,7 @@ evas_list_remove(Evas_List list, void *data)
 	     if (l->prev)
 	       {
 		  l->prev->next = l->next;
-		  return_l = l->prev;
+		  return_l = list;
 	       }
 	     else
 		return_l = l->next;

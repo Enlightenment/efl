@@ -1,6 +1,202 @@
 #include <Evas.h>
-#include "../src/evas_gl_routines.h"
+#include <stdio.h>
 #include <math.h>
+
+int
+main(int argc, char **argv)
+{
+   Display *d;
+   Visual *vis;
+   Colormap cmap;
+   Window win;
+   int win_w, win_h;
+   int i, a;
+   Evas e;
+   Evas_Object o[32];
+   
+   win_w = 640; win_h = 480;
+   if (argc == 4)
+     {
+	win_w = atoi(argv[1]);
+	win_h = atoi(argv[2]);
+     }
+   
+   e = evas_new();
+   if (!strcmp(argv[3], "software"))
+      evas_set_output_method(e, RENDER_METHOD_ALPHA_SOFTWARE);
+   else
+      evas_set_output_method(e, RENDER_METHOD_3D_HARDWARE);
+   
+   d = XOpenDisplay(NULL);
+   vis = evas_get_optimal_visual(e, d);
+   cmap = evas_get_optimal_colormap(e, d);
+
+     {
+	XSetWindowAttributes att;
+	
+	att.colormap = cmap;
+	att.border_pixel = 0;
+	att.event_mask = 0;
+	
+	win = XCreateWindow(d,
+			    RootWindow(d, DefaultScreen(d)),
+			    0, 0, win_w, win_h, 0,
+			    imlib_get_visual_depth(d, vis),
+			    InputOutput,
+			    vis,
+			    CWColormap | CWBorderPixel | CWEventMask,
+			    &att);
+	XMapWindow(d, win);
+	XSync(d, False);
+     }
+   evas_set_output(e, d, win, vis, cmap);
+   evas_set_output_size(e, win_w, win_h);
+   evas_set_output_viewport(e, 0, 0, win_w, win_h);
+   
+   o[0] = evas_add_image_from_file(e, "img/sky001.png");
+   evas_show(e, o[0]);
+   for (i = 1 ; i < 32; i++)
+     {
+	o[i] = evas_add_image_from_file(e, "img/mush.png");
+	evas_show(e, o[i]);
+     }
+   
+   evas_move(e, o[0], 0, 0);
+   evas_resize(e, o[0], win_w, win_h);
+   a = 0;
+   for (;;)
+     {
+	double x, y;
+	
+	for (i = 1; i < 32; i++)
+	  {
+	     int j, k;
+	     
+	     j = (i * 50) + i;
+	     k = (i * -60) - (i * 2);
+	     x = (win_w + (cos((double)(a + j) * 2 * 3.141592654 / 1000) * (win_h - 100))) / 2;
+	     y = (win_h + (sin((double)(a + k) * 2 * 3.141592654 / 1000) * (win_h - 100))) / 2;
+	     evas_move(e, o[i], x, y);
+	  }
+		
+	evas_render(e);
+	a++;
+	if (a > 1000) a = 0;
+     }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#if 0
+#include "../src/evas_gl_routines.h"
 
 double get_time(void);
 
@@ -52,7 +248,7 @@ main(int argc, char **argv)
      }
    if (__evas_gl_capable(d))
      {
-	int a = 0;
+	int a = 0, aa = 0;
 	double t1, t2;
 	Evas_GL_Image *i[4], *bg, *l, *sel, *ic, *tm;
 	Evas_GL_Font *fn[4];
@@ -213,6 +409,8 @@ main(int argc, char **argv)
 		   pixels = (((((double)k + 1) * (double)win_w * (double)win_h) + ((double)__evas_gl_image_get_width(l) * (double)__evas_gl_image_get_height(l))) * (double)a);
 		   printf("%3.0f pixels in %3.3f seconds\n", pixels, tim);
 		   printf("..... %4.1f Mpixels/second\n", pixels / (tim * 1000000));
+		   __evas_gl_image_set_smooth_scaling(aa & 0x1);
+		   aa++;
 		   a = 0;
 		}
 	  }
@@ -225,3 +423,5 @@ main(int argc, char **argv)
    argc = 0;
    return 0;
 }
+
+#endif
