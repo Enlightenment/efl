@@ -5,6 +5,7 @@ for I in `find ./src/lib -name "*.c" -print`; do
   cat $I >> ./evas.c
 done
 rm -rf ./doc/html ./doc/latex ./doc/man
+mkdir -p doc/html doc/man doc/latex
 doxygen
 cp doc/img/*.png doc/html/
 rm -f evas_docs.tar evas_docs.tar.gz
