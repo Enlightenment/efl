@@ -179,22 +179,22 @@ evas_render_updates(Evas e)
    void (*func_gradient_draw) (void *gr, Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x, int y, int w, int h, double angle);
    void (*func_poly_draw) (Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, Evas_List points, int r, int g, int b, int a);
    
-   if (!e) return;
+   if (!e) return NULL;
    if ((e->current.render_method == RENDER_METHOD_IMAGE) &&
        (!e->current.image))
-      return;
+      return NULL;
    if ((e->current.render_method != RENDER_METHOD_IMAGE) &&
        ((!e->current.display) ||
 	(!e->current.visual) ||
 	(!e->current.colormap) ||
 	(!e->current.drawable))) 
-      return;
+      return NULL;
    if ((!e->changed) || 
        (e->current.drawable_width <= 0) || 
        (e->current.drawable_height <= 0) ||
        (e->current.viewport.w <= 0) || 
        (e->current.viewport.h <= 0))
-      return;
+      return NULL;
    
    switch (e->current.render_method)
      {
@@ -596,6 +596,7 @@ evas_render_updates(Evas e)
      }
    
    func_init(e->current.display, e->current.screen, e->current.colors);
+   up = NULL;
    if (e->updates)
      {
 	_evas_clip_obscures(e);
