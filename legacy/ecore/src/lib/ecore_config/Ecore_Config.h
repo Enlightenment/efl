@@ -61,7 +61,8 @@ typedef enum Ecore_Config_Type {
 typedef enum Ecore_Config_Flag {
   PF_NONE=0,
   PF_BOUNDS=1,
-  PF_MODIFIED=2
+  PF_MODIFIED=2,
+  PF_SYSTEM=4
 } Ecore_Config_Flag;
 
 

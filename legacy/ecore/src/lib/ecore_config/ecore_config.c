@@ -591,6 +591,7 @@ Ecore_Config_Server *ecore_config_init_global(char *name) {
 
 int ecore_config_init(char *name) {
   char                *buf, *p;
+  Ecore_Config_Prop   *sys;
   
   __app_name = strdup(name);
   __server_local = ecore_config_init_local(name);
@@ -609,6 +610,14 @@ int ecore_config_init(char *name) {
       if (ecore_config_load_file(buf) != 0)
         if (ecore_config_load_file(PACKAGE_DATA_DIR "/system.db") != 0)
           return ECORE_CONFIG_ERR_NOFILE;
+      sys = __bundle_local->data;
+      while (sys) {
+        /* unmark it modified - modification will mean it has been overridden */
+        sys->flags&=~PF_MODIFIED;
+        /* mark as system so that examine can hide them */
+        sys->flags&=PF_SYSTEM;
+        sys=sys->next;
+      }
     }
     free(buf);
   }
