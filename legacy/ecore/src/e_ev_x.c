@@ -11,6 +11,7 @@ static void         e_ev_key_down_free(void *event);
 static void         e_ev_key_up_free(void *event);
 static void         e_ev_generic_free(void *event);
 static void         e_ev_dnd_drop_request_free(void *event);
+static void         e_ev_paste_request_free(void *event);
 
 static void         e_ev_x_handle_key_press(XEvent * xevent);
 static void         e_ev_x_handle_key_release(XEvent * xevent);
@@ -97,7 +98,6 @@ e_ev_x_init(void)
    event_translator[ClientMessage] = e_ev_x_handle_client_message;
    event_translator[SelectionNotify] = e_ev_x_handle_selection_notify;
    event_translator[SelectionRequest] = e_ev_x_handle_selection_request;
-   for (i = SelectionRequest + 1; i < shape_event_id; i++) event_translator[i] = NULL;
    event_translator[shape_event_id] = e_ev_x_handle_shape_change;
 
    lock_mask_scroll = e_lock_mask_scroll_get();
@@ -223,6 +223,16 @@ e_ev_dnd_drop_request_free(void *event)
       for (i=0; i< e->num_files; i++)
          FREE(e->files[i]);
    }
+   FREE(event);
+}
+
+static void
+e_ev_paste_request_free(void *event)
+{
+   Ev_Paste_Request *e;
+
+   e = (Ev_Paste_Request *) event;
+   IF_FREE(e->string);
    FREE(event);
 }
 
@@ -780,7 +790,25 @@ e_ev_x_handle_selection_notify(XEvent * xevent)
 
    e = ev_drop_request_pending;
    if (!e)
-      return;
+     {
+	Ev_Paste_Request *e2;
+	
+	e2 = NEW(Ev_Paste_Request, 1);	
+	e2->string = e_selection_get_data(xevent->xselection.requestor,
+					  xevent->xselection.property);
+	if (e2->string)
+	  {
+	     e2->win = xevent->xselection.requestor;
+	     e2->root = e_window_get_root(e2->win);
+	     e2->source_win = xevent->xselection.requestor;
+	     e_add_event(EV_PASTE_REQUEST, e2, e_ev_paste_request_free);
+	  }
+	else
+	  {
+	     FREE(e2);
+	  }
+	return;
+     }
 
    E_ATOM(atom_xdndactioncopy, "XdndActionCopy");
    E_ATOM(atom_xdndactionmove, "XdndActionMove");

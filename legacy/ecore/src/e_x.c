@@ -1766,7 +1766,7 @@ e_window_dnd_capable(Window win)
 
    E_ATOM(atom_xdndaware, "XdndAware");
    atom_ret = e_window_property_get(win, atom_xdndaware, XA_ATOM, &size);
-   if ((atom_ret) && (size >= sizeof(int)))
+   if ((atom_ret) && (size >= (int)sizeof(int)))
      {
 	if (atom_ret[0] == dnd_version)
 	  {
@@ -2890,3 +2890,110 @@ e_keyboard_ungrab(void)
    keyboard_grab_win = 0;
    XUngrabKeyboard(disp, CurrentTime);
 }
+
+#ifdef XA_CLIPBOARD
+#define X_CLIPBOARD_SELECTION  XA_CLIPBOARD(disp)
+#define X_CLIPBOARD_PROP       XA_CLIPBOARD(disp)
+#else
+#define X_CLIPBOARD_SELECTION  XA_PRIMARY
+#define X_CLIPBOARD_PROP       XA_CUT_BUFFER0
+#endif
+
+Window
+e_selection_request(void)
+{
+   Atom selection, dest = 0;
+   static Window target = 0;
+   
+   selection = X_CLIPBOARD_SELECTION;
+   E_ATOM(dest, "TEXT_SELECTION");
+   target = e_window_new(0, 0, 0, 7, 77);
+   e_window_add_events(target,
+		       XEV_CONFIGURE | XEV_PROPERTY);
+   XConvertSelection(disp, XA_PRIMARY, 
+		     XA_STRING, dest,
+		     target, 
+		     CurrentTime);
+   return target;
+}
+
+char *
+e_selection_get_data(Window win, Atom prop)
+{
+   char *string = NULL;
+   long nread;
+   unsigned long bytes_after, nitems;
+   unsigned char *data;
+   Atom actual_type;
+   int actual_fmt;
+   
+   if (prop == None)
+     return NULL;
+   for (nread = 0, bytes_after = 1; bytes_after > 0;) 
+     {
+	if ((XGetWindowProperty(disp, win, prop, nread / 4, 
+				0x10000, True, AnyPropertyType, 
+				&actual_type, &actual_fmt, &nitems, 
+				&bytes_after, &data) != Success)) 
+	  {
+	     IF_FREE(string);
+	     if (data) 
+	       {
+		  XFree(data);
+	       }
+	     return NULL;
+	  }
+	nread += nitems;
+	
+	if (actual_type == XA_STRING) 
+	  {
+	     if (string)
+	       string = realloc(string, strlen(string) + nitems + 1);
+	     else
+	       {
+		  string = malloc(nitems + 1);
+		  string[0] = 0;
+	       }
+	     string[strlen(string) + nitems] = 0;
+	     strncat(string, data, nitems);
+	  } 
+	else 
+	  {
+	     int size, i;
+	     XTextProperty xtextp;
+	     char **cl = NULL;
+	     
+	     xtextp.value = data;
+	     xtextp.encoding = actual_type;
+	     xtextp.format = actual_fmt;
+	     xtextp.nitems = nitems;
+	     XmbTextPropertyToTextList(disp, &xtextp, &cl, &size);
+	     
+	     if (cl) 
+	       {
+		  for (i = 0 ; i < size ; i ++) 
+		    {
+		       if (cl[i]) 
+			 {
+			    if (string)
+			      string = realloc(string, strlen(string) + strlen(cl[i]) + 1);
+			    else
+			      {
+				 string = malloc(strlen(cl[i]) + 1);
+				 string[0] = 0;
+			      }
+			    string[strlen(string) + strlen(cl[i])] = 0;
+			    strcat(string, cl[i]);
+			 }
+		    }
+		  XFreeStringList(cl);
+	       }
+	  }
+	if (data) 
+	  {
+	     XFree(data);
+	  }
+     }   
+   return string;
+}
+
