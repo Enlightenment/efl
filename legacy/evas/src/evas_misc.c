@@ -362,7 +362,7 @@ evas_get_font_cache(Evas e)
 	return __evas_image_text_cache_get_size(e->current.display);
 	break;
      default:
-	return;
+	return 0;
 	break;
      }
    return 0;
@@ -444,7 +444,7 @@ evas_get_image_cache(Evas e)
 	return __evas_image_image_cache_get_size(e->current.display);
 	break;
      default:
-	return;
+	return 0;
 	break;
      }
    return 0;
