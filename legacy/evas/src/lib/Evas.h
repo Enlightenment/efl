@@ -442,7 +442,7 @@ extern "C" {
    EAPI int                    evas_object_textblock_cursor_pos_get       (Evas_Object *obj);
    EAPI int                    evas_object_textblock_length_get           (Evas_Object *obj);
    EAPI void                   evas_object_textblock_text_insert          (Evas_Object *obj, const char *text);
-   EAPI char                  *evas_object_textblock_text_get             (Evas_Object *obj, int len);
+   EAPI char                  *evas_object_textblock_text_get             (Evas_Object *obj, int start, int len);
    EAPI void                   evas_object_textblock_text_del             (Evas_Object *obj, int len);
    EAPI void                   evas_object_textblock_format_insert        (Evas_Object *obj, const char *format);
    EAPI int                    evas_object_textblock_format_next_pos_get  (Evas_Object *obj);

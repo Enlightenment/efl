@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include "evas_common.h"
 #include "evas_private.h"
 #include "Evas.h"
@@ -807,11 +811,21 @@ evas_object_textblock_text_insert(Evas_Object *obj, const char *text)
    evas_object_change(obj);
 }
 
+/**
+ * Gets length bytes from the textblock from the given start position
+ * @param   obj The given textblock.
+ * @param   start The position to start getting text from.
+ * @param   len The number of characters to get from the textblock.
+ * @return  Returns NULL on failure, or as many of len characters as were
+ * available. The returned memory must be free'd by the caller.
+ */
 char *
-evas_object_textblock_text_get(Evas_Object *obj, int len)
+evas_object_textblock_text_get(Evas_Object *obj, int start, int len)
 {
    Evas_Object_Textblock *o;
-   
+   char *ret = NULL;
+   int my_len = len;
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
@@ -819,8 +833,55 @@ evas_object_textblock_text_get(Evas_Object *obj, int len)
    MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
    return NULL;
    MAGIC_CHECK_END();
-   /* FIXME: get from pos up to len bytes of string - malloc it */
-   return NULL;
+
+   if (len <= 0) return NULL;
+   if (start > o->len) return NULL;
+   if (len > (o->len - start)) my_len = o->len - start;
+
+   ret = malloc(sizeof(char) * (my_len + 1));
+   if (ret)
+     {
+	Node *node;
+	int ps = 0;
+
+	node = evas_object_textblock_node_pos_get(obj, start, &ps);
+	if (node)
+	  {
+	     if ((node->text_len - (start - ps)) >= my_len)
+	       memcpy(ret, node->text + (start - ps), my_len);
+	     else
+	       {
+		  int remaining = my_len - (node->text_len - (start - ps));
+		  int count = (node->text_len - (start - ps));
+
+		  memcpy(ret, node->text + (start - ps), node->text_len - (start - ps));
+
+		  while(remaining > 0)
+		    {
+		       node = evas_object_textblock_node_pos_get(obj, start + count, &ps);
+		       if (node)
+			 {
+			    int amt = 0;
+			    if (node->text_len >= remaining)
+			      amt = remaining;
+			    else
+			      amt = node->text_len;
+
+			    memcpy(ret + count, node->text, amt);
+			    remaining -= amt;
+			    count += amt;
+			 }
+		       else
+			 { 
+			    /* we ran out of nodes ... */
+			    break;
+			 }
+		    }
+	       }
+	  }
+        ret[my_len] = '\0';
+     }
+   return ret;
 }
 
 void
