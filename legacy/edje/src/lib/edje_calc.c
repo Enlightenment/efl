@@ -211,8 +211,6 @@ _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, double *x, double *y)
 void
 _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, double x, double y)
 {
-   double diff;
-
    /* check whether this part is dragable at all */
    if (!ep->part->dragable.x && !ep->part->dragable.y) return;
 
