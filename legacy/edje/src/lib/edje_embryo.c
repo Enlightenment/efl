@@ -1450,7 +1450,7 @@ _edje_embryo_script_init(Edje *ed)
    embryo_program_native_call_add(ep, "fetch_str", _edje_embryo_fn_fetch_str);
    embryo_program_native_call_add(ep, "append_float", _edje_embryo_fn_append_float);
    embryo_program_native_call_add(ep, "prepend_float", _edje_embryo_fn_prepend_float);
-   embryo_program_native_call_add(ep, "insert_float", _edje_embryo_fn_prepend_float);
+   embryo_program_native_call_add(ep, "insert_float", _edje_embryo_fn_insert_float);
    embryo_program_native_call_add(ep, "replace_float", _edje_embryo_fn_replace_float);
    embryo_program_native_call_add(ep, "fetch_float", _edje_embryo_fn_fetch_float);
 
