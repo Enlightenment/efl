@@ -74,7 +74,7 @@ handler_ipc_client_data(void *data, int type, void *event)
    Ecore_Ipc_Event_Client_Data *e;
    
    e = event;
-   printf("!!! client sent: [%i] [%i] (%i) \"%s\"\n", e->major, e->minor, e->size, e->data);
+   printf("!!! client sent: [%i] [%i] (%i) \"%s\"\n", e->major, e->minor, e->size, (char*)e->data);
    ecore_ipc_client_send(e->client, 1, 2, 0, 0, 0, "ABC", 4);
    /* we can disconnect a client like this: */
    /* ecore_ipc_client_del(e->client); */
@@ -119,7 +119,7 @@ handler_ipc_server_data(void *data, int type, void *event)
    static int count = 0;
    
    e = event;
-   printf("!!! server sent: [%i] [%i] (%i) \"%s\"\n", e->major, e->minor, e->size, e->data);
+   printf("!!! server sent: [%i] [%i] (%i) \"%s\"\n", e->major, e->minor, e->size, (char*)e->data);
    ecore_ipc_server_send(e->server, 3, 4, 0, 0, 0, "EFG", 4);
    count++;
    if (count > 4)
@@ -164,7 +164,7 @@ handler_client_data(void *data, int type, void *event)
    Ecore_Con_Event_Client_Data *e;
    
    e = event;
-   printf("!!! client sent: \"%s\"\n", e->data);
+   printf("!!! client sent: \"%s\"\n", (char*)e->data);
    ecore_con_client_send(e->client, "ABC", 4);
    /* we can disconnect a client like this: */
    /* ecore_con_client_del(e->client); */
@@ -209,7 +209,7 @@ handler_server_data(void *data, int type, void *event)
    static int count = 0;
    
    e = event;
-   printf("!!! server sent: \"%s\"\n", e->data);
+   printf("!!! server sent: \"%s\"\n", (char*)e->data);
    ecore_con_server_send(e->server, "EFG", 4);
    count++;
    if (count > 4)
@@ -507,7 +507,6 @@ void
 setup_ecore_x_test(void)
 {
    char *tmp;
-   long  data[5] = { 1, 0, 0, 0, 0 };
 
    win = ecore_x_window_new(0, 0, 0, 120, 60);
    ecore_x_window_prop_title_set(win, "Ecore Test Program");
@@ -550,7 +549,7 @@ setup_ecore_x_test(void)
    printf("Pid: %d\n", ecore_x_window_prop_pid_get(win));
    ecore_x_window_prop_name_class_set(win, "ecore_test", "main");
    ecore_x_window_prop_desktop_set(win, 1);
-   printf("Window on desktop %u\n", ecore_x_window_prop_desktop_get(win));
+   printf("Window on desktop %lu\n", ecore_x_window_prop_desktop_get(win));
    ecore_x_window_prop_window_type_dialog_set(win);
    ecore_x_window_prop_protocol_set(win, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 1);
    ecore_x_window_show(win);

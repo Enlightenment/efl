@@ -16,8 +16,8 @@
 /* #  include <glib/gmain.h> */
 /* #endif */
 
-#include "util.h"
 #include "Ecore_Config.h"
+#include "util.h"
 
 #define CHUNKLEN 4096
 

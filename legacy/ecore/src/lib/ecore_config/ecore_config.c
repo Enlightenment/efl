@@ -7,10 +7,13 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 #include <limits.h>
+#include <unistd.h>
+#include <util.h>
 
 Ecore_Config_Server *ipc_init(char *name);
-int ipc_quit(void);
+int ipc_exit(void);
 
 static char *ecore_config_type[]={ "undefined", "integer", "float", "string", "colour" };
 
@@ -249,9 +252,11 @@ static int ecore_config_val_typed(Ecore_Config_Prop *e,void *val,int type) {
 }
 
 
+#if 0 /* Not used */
 static int ecore_config_val(Ecore_Config_Prop *e,char *val) {
   int type = ecore_config_guess_type(val);
     return ecore_config_val_typed(e,(void *)val,type); }
+#endif
 
 
 static int ecore_config_add_typed(Ecore_Config_Bundle *t, const char *key, void* val, int type) {
@@ -351,7 +356,8 @@ int ecore_config_default(Ecore_Config_Bundle *t,const char *key,char *val,float 
           
   type=ecore_config_guess_type(val);
   ret=ecore_config_default_typed(t, key, val, type);
-  if (e=ecore_config_get(t,key)) {
+  e=ecore_config_get(t,key);
+  if (e) {
     if (type==PT_INT) {
       e->step=step;
       e->flags|=PF_BOUNDS;
@@ -366,6 +372,8 @@ int ecore_config_default(Ecore_Config_Bundle *t,const char *key,char *val,float 
       ecore_config_bound(e);
     }
   }
+
+  return ret;
 }
     
 int ecore_config_default_int(Ecore_Config_Bundle *t,const char *key,int val) {
@@ -377,7 +385,8 @@ int ecore_config_default_int_bound(Ecore_Config_Bundle *t,const char *key,int va
   int                ret;
   
   ret=ecore_config_default_typed(t, key, (void *) val, PT_INT);
-  if (e=ecore_config_get(t,key)) {
+  e=ecore_config_get(t,key);
+  if (e) {
     e->step=step;
     e->flags|=PF_BOUNDS;
     e->lo=low;
@@ -401,7 +410,8 @@ int ecore_config_default_float_bound(Ecore_Config_Bundle *t,const char *key,floa
   int                ret;
       
   ret=ecore_config_default_typed(t, key, (void *) &val, PT_FLT);
-  if (e=ecore_config_get(t,key)) {                  
+  e=ecore_config_get(t,key);
+  if (e) {                  
     e->step=(int)(step*ECORE_CONFIG_FLOAT_PRECISION);
     e->flags|=PF_BOUNDS;
     e->lo=(int)(low*ECORE_CONFIG_FLOAT_PRECISION);
@@ -549,7 +559,7 @@ Ecore_Config_Server *ecore_config_init(char *name) {
     if (!(buf=malloc(PATH_MAX*sizeof(char))))
       return NULL;
     snprintf(buf,PATH_MAX,"%s/.ecore/%s/.global",p,name);
-    unlink(buf, S_IRWXU);
+    unlink(buf);
 
     free(buf);
   }
@@ -566,7 +576,8 @@ Ecore_Config_Server *ecore_config_init_global(char *name) {
     if (!(buf=malloc(PATH_MAX*sizeof(char))))
       return NULL;
     snprintf(buf,PATH_MAX,"%s/.ecore/%s/.global",p,name);
-    if (global = creat(buf, S_IRWXU))
+    global = creat(buf, S_IRWXU);
+    if (global)
       close(global);
     free(buf);
   }

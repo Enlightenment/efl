@@ -421,7 +421,6 @@ static const Ecore_Evas_Engine_Func _ecore_fb_engine_func =
      _ecore_evas_fullscreen_set,
      NULL,
      NULL,
-     NULL,
      NULL
 };
 #endif

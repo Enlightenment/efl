@@ -1046,6 +1046,7 @@ _ecore_fb_kbd_fd_handler(Ecore_Fd_Handler *fd_handler, void *data)
 	     if (_ecore_fb_alt < 0) _ecore_fb_alt = 0;
 	  }
 	retry:
+	;
      }
    while (v > 0);
    return 1;

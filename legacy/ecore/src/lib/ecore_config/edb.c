@@ -56,7 +56,8 @@ int ecore_config_load_file(Ecore_Config_Bundle *b, char *file) {
         E(0, "Could not read key %s!\n", keys[x]);
       }
     } else if (!strcmp(type, "str")) {
-      if (data = e_db_str_get(db, keys[x])) {
+      data = e_db_str_get(db, keys[x]);
+      if (data) {
         if (ecore_config_guess_type(data)==PT_RGB)
           ecore_config_set_rgb(b,keys[x],data);
         else
@@ -106,6 +107,7 @@ int ecore_config_save_file(Ecore_Config_Bundle *b, char *file) {
         break;
       case PT_NIL:
         /* currently we do nothing for undefined ojects */
+        break;
     }
 
     next=next->next;
