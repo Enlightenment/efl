@@ -91,7 +91,7 @@ evas_object_image_add(Evas *e)
 }
 
 void
-evas_object_image_file_set(Evas_Object *obj, char *file, char *key)
+evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
 {
    Evas_Object_Image *o;
    

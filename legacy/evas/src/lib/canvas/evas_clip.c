@@ -186,7 +186,7 @@ evas_object_clip_unset(Evas_Object *obj)
      }
 }
 
-Evas_List *
+const Evas_List *
 evas_object_clipees_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);

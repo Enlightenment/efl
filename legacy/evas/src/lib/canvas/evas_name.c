@@ -21,7 +21,7 @@ evas_object_name_set(Evas_Object *obj, const char *name)
      }
 }
 
-char *
+const char *
 evas_object_name_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);

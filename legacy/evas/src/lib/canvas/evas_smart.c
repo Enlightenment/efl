@@ -4,34 +4,39 @@
 
 /* all public */
 Evas_Smart *
-evas_smart_new(char          *name,
-	       void         (*func_add) (Evas_Object *o),
-	       void         (*func_del) (Evas_Object *o),
-	       void         (*func_layer_set) (Evas_Object *o, int l),
-	       void         (*func_raise) (Evas_Object *o),
-	       void         (*func_lower) (Evas_Object *o),
-	       void         (*func_stack_above) (Evas_Object *o, Evas_Object *above),
-	       void         (*func_stack_below) (Evas_Object *o, Evas_Object *below),
-	       void         (*func_move) (Evas_Object *o, double x, double y),
-	       void         (*func_resize) (Evas_Object *o, double w, double h),
-	       void         (*func_show) (Evas_Object *o),
-	       void         (*func_hide) (Evas_Object *o),
-	       void         (*func_color_set) (Evas_Object *o, int r, int g, int b, int a),
-	       void         (*func_clip_set) (Evas_Object *o, Evas_Object *clip),
-	       void         (*func_clip_unset) (Evas_Object *o),
-	       void          *data)
+evas_smart_new(const char *name,
+	       void      (*func_add) (Evas_Object *o),
+	       void      (*func_del) (Evas_Object *o),
+	       void      (*func_layer_set) (Evas_Object *o, int l),
+	       void      (*func_raise) (Evas_Object *o),
+	       void      (*func_lower) (Evas_Object *o),
+	       void      (*func_stack_above) (Evas_Object *o, Evas_Object *above),
+	       void      (*func_stack_below) (Evas_Object *o, Evas_Object *below),
+	       void      (*func_move) (Evas_Object *o, double x, double y),
+	       void      (*func_resize) (Evas_Object *o, double w, double h),
+	       void      (*func_show) (Evas_Object *o),
+	       void      (*func_hide) (Evas_Object *o),
+	       void      (*func_color_set) (Evas_Object *o, int r, int g, int b, int a),
+	       void      (*func_clip_set) (Evas_Object *o, Evas_Object *clip),
+	       void      (*func_clip_unset) (Evas_Object *o),
+	       const void *data)
 {
    Evas_Smart *s;
    
    if (!name) return NULL;
    
-   s = calloc(1, sizeof(Evas_Smart));
+   s = evas_mem_calloc(sizeof(Evas_Smart));
    if (!s) return NULL;
 
    s->magic = MAGIC_SMART;
    
    s->name = strdup(name);
-   
+   if (!s->name)
+     {
+	free(s);
+	return NULL;
+     }
+     
    s->func_add = func_add;
    s->func_del = func_del;
    s->func_layer_set = func_layer_set;
@@ -46,7 +51,7 @@ evas_smart_new(char          *name,
    s->func_color_set = func_color_set;
    s->func_clip_set = func_clip_set;
    s->func_clip_unset = func_clip_unset;
-   s->data = data;
+   s->data = (void *)data;
    
    return s;
 }

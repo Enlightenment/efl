@@ -8,12 +8,12 @@
 /* Evas and then a linked lists of grabs for that key and what */
 /* modifiers/not_modifers they use */
 
-static Evas_Key_Grab *evas_key_grab_new  (Evas_Object *obj, char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, int exclusive);
-static void           evas_key_grab_free (Evas_Object *obj, char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
-static Evas_Key_Grab *evas_key_grab_find (Evas_Object *obj, char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
+static Evas_Key_Grab *evas_key_grab_new  (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, int exclusive);
+static void           evas_key_grab_free (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
+static Evas_Key_Grab *evas_key_grab_find (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
 
 static Evas_Key_Grab *
-evas_key_grab_new(Evas_Object *obj, char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, int exclusive)
+evas_key_grab_new(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, int exclusive)
 {
    /* MEM OK */
    Evas_Key_Grab *g;
@@ -72,7 +72,7 @@ evas_key_grab_new(Evas_Object *obj, char *keyname, Evas_Modifier_Mask modifiers,
 }
 
 static void
-evas_key_grab_free(Evas_Object *obj, char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
+evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
 {
    /* MEM OK */
    Evas_Key_Grab *g;
@@ -85,7 +85,7 @@ evas_key_grab_free(Evas_Object *obj, char *keyname, Evas_Modifier_Mask modifiers
 }
 
 static Evas_Key_Grab *
-evas_key_grab_find(Evas_Object *obj, char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
+evas_key_grab_find(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
 {
    /* MEM OK */
    Evas_List *l;
@@ -125,7 +125,7 @@ evas_object_grabs_cleanup(Evas_Object *obj)
 /* public calls */
 
 int
-evas_object_key_grab(Evas_Object *obj, char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, int exclusive)
+evas_object_key_grab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, int exclusive)
 {
    /* MEM OK */
    Evas_Key_Grab *g;
@@ -144,7 +144,7 @@ evas_object_key_grab(Evas_Object *obj, char *keyname, Evas_Modifier_Mask modifie
 }
 
 void
-evas_object_key_ungrab(Evas_Object *obj, char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
+evas_object_key_ungrab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
 {
    /* MEM OK */
    Evas_Key_Grab *g;

@@ -1,4 +1,5 @@
 #include "evas_common.h"
+#include "evas_private.h"
 
 static Evas_Hash        * images = NULL;
 static Evas_Object_List * cache = NULL;
@@ -307,7 +308,7 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
    char buf[256];
    
    if ((!filename) && (!key)) return NULL;
-   real_filename = evas_file_path_resolve(filename);
+   real_filename = evas_file_path_resolve((char *)filename);
    l1 = 0;
    if (real_filename) l1 = strlen(real_filename);
    else if (filename) l1 = strlen(filename);

@@ -190,7 +190,7 @@ evas_object_intercept_call_layer_set(Evas_Object *obj, int l)
 /* public calls */
 
 void
-evas_object_intercept_show_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data)
+evas_object_intercept_show_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), const void *data)
 {
    /* MEM OK */
    
@@ -201,7 +201,7 @@ evas_object_intercept_show_callback_add(Evas_Object *obj, void (*func) (void *da
    evas_object_intercept_init(obj);
    if (!obj->interceptors) return;
    obj->interceptors->show.func = func;
-   obj->interceptors->show.data = data;
+   obj->interceptors->show.data = (void *)data;
 }
 
 void *
@@ -223,7 +223,7 @@ evas_object_intercept_show_callback_del(Evas_Object *obj, void (*func) (void *da
 }
 
 void
-evas_object_intercept_hide_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data)
+evas_object_intercept_hide_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), const void *data)
 {
    /* MEM OK */
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -233,7 +233,7 @@ evas_object_intercept_hide_callback_add(Evas_Object *obj, void (*func) (void *da
    evas_object_intercept_init(obj);
    if (!obj->interceptors) return;
    obj->interceptors->hide.func = func;
-   obj->interceptors->hide.data = data;
+   obj->interceptors->hide.data = (void *)data;
 }
 
 void *
@@ -255,7 +255,7 @@ evas_object_intercept_hide_callback_del(Evas_Object *obj, void (*func) (void *da
 }
 
 void
-evas_object_intercept_move_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, double x, double y), void *data)
+evas_object_intercept_move_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, double x, double y), const void *data)
 {
    /* MEM OK */
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -265,7 +265,7 @@ evas_object_intercept_move_callback_add(Evas_Object *obj, void (*func) (void *da
    evas_object_intercept_init(obj);
    if (!obj->interceptors) return;
    obj->interceptors->move.func = func;
-   obj->interceptors->move.data = data;
+   obj->interceptors->move.data = (void *)data;
 }
 
 void *
@@ -286,7 +286,7 @@ evas_object_intercept_move_callback_del(Evas_Object *obj, void (*func) (void *da
 }
 
 void
-evas_object_intercept_resize_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, double w, double h), void *data)
+evas_object_intercept_resize_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, double w, double h), const void *data)
 {
    /* MEM OK */
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -296,7 +296,7 @@ evas_object_intercept_resize_callback_add(Evas_Object *obj, void (*func) (void *
    evas_object_intercept_init(obj);
    if (!obj->interceptors) return;
    obj->interceptors->resize.func = func;
-   obj->interceptors->resize.data = data;
+   obj->interceptors->resize.data = (void *)data;
 }
 
 void *
@@ -317,7 +317,7 @@ evas_object_intercept_resize_callback_del(Evas_Object *obj, void (*func) (void *
 }
 
 void
-evas_object_intercept_raise_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data)
+evas_object_intercept_raise_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), const void *data)
 {
    /* MEM OK */
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -327,7 +327,7 @@ evas_object_intercept_raise_callback_add(Evas_Object *obj, void (*func) (void *d
    evas_object_intercept_init(obj);
    if (!obj->interceptors) return;
    obj->interceptors->raise.func = func;
-   obj->interceptors->raise.data = data;
+   obj->interceptors->raise.data = (void *)data;
 }
 
 void *
@@ -348,7 +348,7 @@ evas_object_intercept_raise_callback_del(Evas_Object *obj, void (*func) (void *d
 }
 
 void
-evas_object_intercept_lower_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data)
+evas_object_intercept_lower_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), const void *data)
 {
    /* MEM OK */
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -358,7 +358,7 @@ evas_object_intercept_lower_callback_add(Evas_Object *obj, void (*func) (void *d
    evas_object_intercept_init(obj);
    if (!obj->interceptors) return;
    obj->interceptors->lower.func = func;
-   obj->interceptors->lower.data = data;
+   obj->interceptors->lower.data = (void *)data;
 }
 
 void *
@@ -379,7 +379,7 @@ evas_object_intercept_lower_callback_del(Evas_Object *obj, void (*func) (void *d
 }
 
 void
-evas_object_intercept_stack_above_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *above), void *data)
+evas_object_intercept_stack_above_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *above), const void *data)
 {
    /* MEM OK */
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -389,7 +389,7 @@ evas_object_intercept_stack_above_callback_add(Evas_Object *obj, void (*func) (v
    evas_object_intercept_init(obj);
    if (!obj->interceptors) return;
    obj->interceptors->stack_above.func = func;
-   obj->interceptors->stack_above.data = data;
+   obj->interceptors->stack_above.data = (void *)data;
 }
 
 void *
@@ -410,7 +410,7 @@ evas_object_intercept_stack_above_callback_del(Evas_Object *obj, void (*func) (v
 }
 
 void
-evas_object_intercept_stack_below_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *below), void *data)
+evas_object_intercept_stack_below_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *below), const void *data)
 {
    /* MEM OK */
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -420,7 +420,7 @@ evas_object_intercept_stack_below_callback_add(Evas_Object *obj, void (*func) (v
    evas_object_intercept_init(obj);
    if (!obj->interceptors) return;
    obj->interceptors->stack_below.func = func;
-   obj->interceptors->stack_below.data = data;
+   obj->interceptors->stack_below.data = (void *)data;
 }
 
 void *
@@ -441,7 +441,7 @@ evas_object_intercept_stack_below_callback_del(Evas_Object *obj, void (*func) (v
 }
 
 void
-evas_object_intercept_layer_set_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, int l), void *data)
+evas_object_intercept_layer_set_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, int l), const void *data)
 {
    /* MEM OK */
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -451,7 +451,7 @@ evas_object_intercept_layer_set_callback_add(Evas_Object *obj, void (*func) (voi
    evas_object_intercept_init(obj);
    if (!obj->interceptors) return;
    obj->interceptors->layer_set.func = func;
-   obj->interceptors->layer_set.data = data;
+   obj->interceptors->layer_set.data = (void *)data;
 }
 
 void *

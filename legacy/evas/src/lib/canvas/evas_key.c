@@ -4,11 +4,11 @@
 
 /* private calls */
 
-static int evas_key_modifier_number(Evas_Modifier *m, char *keyname);
-static int evas_key_lock_number(Evas_Lock *l, char *keyname);
+static int evas_key_modifier_number(Evas_Modifier *m, const char *keyname);
+static int evas_key_lock_number(Evas_Lock *l, const char *keyname);
 
 static int
-evas_key_modifier_number(Evas_Modifier *m, char *keyname)
+evas_key_modifier_number(Evas_Modifier *m, const char *keyname)
 {
    int i;
    
@@ -20,7 +20,7 @@ evas_key_modifier_number(Evas_Modifier *m, char *keyname)
 }
 
 static int
-evas_key_lock_number(Evas_Lock *l, char *keyname)
+evas_key_lock_number(Evas_Lock *l, const char *keyname)
 {
    int i;
    
@@ -54,7 +54,7 @@ evas_key_lock_get(Evas *e)
 }
 
 int
-evas_key_modifier_is_set_get(Evas_Modifier *m, char *keyname)
+evas_key_modifier_is_set_get(Evas_Modifier *m, const char *keyname)
 {
    Evas_Modifier_Mask num;
    
@@ -68,7 +68,7 @@ evas_key_modifier_is_set_get(Evas_Modifier *m, char *keyname)
 }
 
 int
-evas_key_lock_is_set_get(Evas_Lock *l, char *keyname)
+evas_key_lock_is_set_get(Evas_Lock *l, const char *keyname)
 {
    Evas_Modifier_Mask num;
    
@@ -82,7 +82,7 @@ evas_key_lock_is_set_get(Evas_Lock *l, char *keyname)
 }
 
 void
-evas_key_modifier_add(Evas *e, char *keyname)
+evas_key_modifier_add(Evas *e, const char *keyname)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -97,7 +97,7 @@ evas_key_modifier_add(Evas *e, char *keyname)
 }
 
 void
-evas_key_modifier_del(Evas *e, char *keyname)
+evas_key_modifier_del(Evas *e, const char *keyname)
 {
    int i;
    
@@ -122,7 +122,7 @@ evas_key_modifier_del(Evas *e, char *keyname)
 }
 
 void
-evas_key_lock_add(Evas *e, char *keyname)
+evas_key_lock_add(Evas *e, const char *keyname)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -137,7 +137,7 @@ evas_key_lock_add(Evas *e, char *keyname)
 }
 
 void
-evas_key_lock_del(Evas *e, char *keyname)
+evas_key_lock_del(Evas *e, const char *keyname)
 {
    int i;
    
@@ -163,7 +163,7 @@ evas_key_lock_del(Evas *e, char *keyname)
 }
 
 void
-evas_key_modifier_on(Evas *e, char *keyname)
+evas_key_modifier_on(Evas *e, const char *keyname)
 {
    Evas_Modifier_Mask num;
    
@@ -177,7 +177,7 @@ evas_key_modifier_on(Evas *e, char *keyname)
 }
 
 void
-evas_key_modifier_off(Evas *e, char *keyname)
+evas_key_modifier_off(Evas *e, const char *keyname)
 {
    Evas_Modifier_Mask num;
    
@@ -191,7 +191,7 @@ evas_key_modifier_off(Evas *e, char *keyname)
 }
 
 void
-evas_key_lock_on(Evas *e, char *keyname)
+evas_key_lock_on(Evas *e, const char *keyname)
 {
    Evas_Modifier_Mask num;
    
@@ -205,7 +205,7 @@ evas_key_lock_on(Evas *e, char *keyname)
 }
 
 void
-evas_key_lock_off(Evas *e, char *keyname)
+evas_key_lock_off(Evas *e, const char *keyname)
 {
    Evas_Modifier_Mask num;
    
@@ -221,7 +221,7 @@ evas_key_lock_off(Evas *e, char *keyname)
 /* errr need to add key grabbing/ungrabbing calls - missing modifier stuff. */
 
 Evas_Modifier_Mask
-evas_key_modifier_mask_get(Evas *e, char *keyname)
+evas_key_modifier_mask_get(Evas *e, const char *keyname)
 {
    Evas_Modifier_Mask num;
    

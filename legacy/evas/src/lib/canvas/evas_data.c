@@ -3,7 +3,7 @@
 #include "Evas.h"
 
 void
-evas_object_data_set(Evas_Object *obj, const char *key, void *data)
+evas_object_data_set(Evas_Object *obj, const char *key, const void *data)
 {
    Evas_Data_Node *node;
    
@@ -16,7 +16,7 @@ evas_object_data_set(Evas_Object *obj, const char *key, void *data)
    
    node = malloc(sizeof(Evas_Data_Node));
    node->key = strdup(key);
-   node->data = data;
+   node->data = (void *)data;
    obj->data.elements = evas_list_prepend(obj->data.elements, node);
 }
 

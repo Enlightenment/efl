@@ -80,7 +80,7 @@ evas_event_freeze_get(Evas *e)
 }
 
 void
-evas_event_feed_mouse_down_data(Evas *e, int b, void *data)
+evas_event_feed_mouse_down_data(Evas *e, int b, const void *data)
 {
    Evas_List *l, *copy;
    
@@ -109,7 +109,7 @@ evas_event_feed_mouse_down_data(Evas *e, int b, void *data)
 	ev.output.y = e->pointer.y;
 	ev.canvas.x = e->pointer.canvas_x;
 	ev.canvas.y = e->pointer.canvas_y;
-	ev.data = data;
+	ev.data = (void *)data;
 	ev.modifiers = &(e->modifiers);
 	ev.locks = &(e->locks);	
 	evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_DOWN, &ev);
@@ -118,7 +118,7 @@ evas_event_feed_mouse_down_data(Evas *e, int b, void *data)
 }
 
 void
-evas_event_feed_mouse_up_data(Evas *e, int b, void *data)
+evas_event_feed_mouse_up_data(Evas *e, int b, const void *data)
 {
    Evas_List *l, *copy;
    
@@ -145,7 +145,7 @@ evas_event_feed_mouse_up_data(Evas *e, int b, void *data)
 	ev.output.y = e->pointer.y;
 	ev.canvas.x = e->pointer.canvas_x;
 	ev.canvas.y = e->pointer.canvas_y;
-	ev.data = data;
+	ev.data = (void *)data;
 	ev.modifiers = &(e->modifiers);
 	ev.locks = &(e->locks);	
 	evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_UP, &ev);
@@ -177,7 +177,7 @@ evas_event_feed_mouse_up_data(Evas *e, int b, void *data)
 		  ev.output.y = e->pointer.y;
 		  ev.canvas.x = e->pointer.canvas_x;
 		  ev.canvas.y = e->pointer.canvas_y;
-		  ev.data = data;
+		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);		  
 		  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
@@ -200,7 +200,7 @@ evas_event_feed_mouse_up_data(Evas *e, int b, void *data)
 		  ev.output.y = e->pointer.y;
 		  ev.canvas.x = e->pointer.canvas_x;
 		  ev.canvas.y = e->pointer.canvas_y;
-		  ev.data = data;
+		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);		  
 		  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_IN, &ev);
@@ -215,7 +215,7 @@ evas_event_feed_mouse_up_data(Evas *e, int b, void *data)
 }
 
 void
-evas_event_feed_mouse_move_data(Evas *e, int x, int y, void *data)
+evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
 {
    int px, py;
    double pcx, pcy;
@@ -267,7 +267,7 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, void *data)
 		       ev.prev.output.y = py;
 		       ev.prev.canvas.x = pcx;
 		       ev.prev.canvas.y = pcy;
-		       ev.data = data;
+		       ev.data = (void *)data;
 		       ev.modifiers = &(e->modifiers);
 		       ev.locks = &(e->locks);		       
 		       evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_MOVE, &ev);
@@ -293,7 +293,7 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, void *data)
 		  ev.output.y = e->pointer.y;
 		  ev.canvas.x = e->pointer.canvas_x;
 		  ev.canvas.y = e->pointer.canvas_y;
-		  ev.data = data;
+		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);
 		  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
@@ -338,7 +338,7 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, void *data)
 		       ev.prev.output.y = py;
 		       ev.prev.canvas.x = pcx;
 		       ev.prev.canvas.y = pcy;
-		       ev.data = data;
+		       ev.data = (void *)data;
 		       ev.modifiers = &(e->modifiers);
 		       ev.locks = &(e->locks);		       
 		       evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_MOVE, &ev);
@@ -355,7 +355,7 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, void *data)
 		  ev.output.y = e->pointer.y;
 		  ev.canvas.x = e->pointer.canvas_x;
 		  ev.canvas.y = e->pointer.canvas_y;
-		  ev.data = data;
+		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);		  
 		  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
@@ -379,7 +379,7 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, void *data)
 		  ev.output.y = e->pointer.y;
 		  ev.canvas.x = e->pointer.canvas_x;
 		  ev.canvas.y = e->pointer.canvas_y;
-		  ev.data = data;
+		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);		  
 		  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_IN, &ev);
@@ -393,7 +393,7 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, void *data)
 }
 
 void
-evas_event_feed_mouse_in_data(Evas *e, void *data)
+evas_event_feed_mouse_in_data(Evas *e, const void *data)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -402,7 +402,7 @@ evas_event_feed_mouse_in_data(Evas *e, void *data)
 }
 
 void
-evas_event_feed_mouse_out_data(Evas *e, void *data)
+evas_event_feed_mouse_out_data(Evas *e, const void *data)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -411,7 +411,7 @@ evas_event_feed_mouse_out_data(Evas *e, void *data)
 }
 
 void
-evas_event_feed_key_down_data(Evas *e, char *keyname, void *data)
+evas_event_feed_key_down_data(Evas *e, const char *keyname, const void *data)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -421,8 +421,8 @@ evas_event_feed_key_down_data(Evas *e, char *keyname, void *data)
      {
 	Evas_Event_Key_Down ev;
 
-	ev.keyname = keyname;
-	ev.data = data;
+	ev.keyname = (char *)keyname;
+	ev.data = (void *)data;
 	ev.modifiers = &(e->modifiers);
 	ev.locks = &(e->locks);
 	if (e->grabs)
@@ -449,7 +449,7 @@ evas_event_feed_key_down_data(Evas *e, char *keyname, void *data)
 }
 
 void
-evas_event_feed_key_up_data(Evas *e, char *keyname, void *data)
+evas_event_feed_key_up_data(Evas *e, const char *keyname, const void *data)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -459,8 +459,8 @@ evas_event_feed_key_up_data(Evas *e, char *keyname, void *data)
      {
 	Evas_Event_Key_Up ev;
 
-	ev.keyname = keyname;
-	ev.data = data;
+	ev.keyname = (char *)keyname;
+	ev.data = (void *)data;
 	ev.modifiers = &(e->modifiers);
 	ev.locks = &(e->locks);
 	if (e->grabs)
@@ -517,13 +517,13 @@ evas_event_feed_mouse_out(Evas *e)
 }
 
 void
-evas_event_feed_key_down(Evas *e, char *keyname)
+evas_event_feed_key_down(Evas *e, const char *keyname)
 {
    evas_event_feed_key_down_data(e, keyname, NULL);
 }
 
 void
-evas_event_feed_key_up(Evas *e, char *keyname)
+evas_event_feed_key_up(Evas *e, const char *keyname)
 {
    evas_event_feed_key_up_data(e, keyname, NULL);
 }

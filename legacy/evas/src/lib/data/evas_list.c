@@ -32,7 +32,7 @@ static int _evas_list_alloc_error = 0;
  * @endcode
  */
 Evas_List *
-evas_list_append(Evas_List *list, void *data)
+evas_list_append(Evas_List *list, const void *data)
 {
    Evas_List *l, *new_l;
    
@@ -45,7 +45,7 @@ evas_list_append(Evas_List *list, void *data)
      }
    new_l->next = NULL;
    new_l->prev = NULL;
-   new_l->data = data;
+   new_l->data = (void *)data;
    if (!list) 
      {
 	new_l->last = new_l;
@@ -106,7 +106,7 @@ evas_list_append(Evas_List *list, void *data)
  * @endcode
  */
 Evas_List *
-evas_list_prepend(Evas_List *list, void *data)
+evas_list_prepend(Evas_List *list, const void *data)
 {
    Evas_List *new_l;
    
@@ -118,7 +118,7 @@ evas_list_prepend(Evas_List *list, void *data)
 	return list;
      }
    new_l->prev = NULL;
-   new_l->data = data;
+   new_l->data = (void *)data;
    if (!list) 
      {
 	new_l->next = NULL;
@@ -176,7 +176,7 @@ evas_list_prepend(Evas_List *list, void *data)
  * @endcode
  */
 Evas_List *
-evas_list_append_relative(Evas_List *list, void *data, void *relative)
+evas_list_append_relative(Evas_List *list, const void *data, const void *relative)
 {
    Evas_List *l;
 
@@ -193,7 +193,7 @@ evas_list_append_relative(Evas_List *list, void *data, void *relative)
 		  _evas_list_alloc_error = 1;
 		  return list;
 	       }
-	     new_l->data = data;
+	     new_l->data = (void *)data;
 	     if (l->next)
 	       {
 		  new_l->next = l->next;
@@ -254,7 +254,7 @@ evas_list_append_relative(Evas_List *list, void *data, void *relative)
  * @endcode
  */
 Evas_List *
-evas_list_prepend_relative(Evas_List *list, void *data, void *relative)
+evas_list_prepend_relative(Evas_List *list, const void *data, const void *relative)
 {
    Evas_List *l;
    
@@ -271,7 +271,7 @@ evas_list_prepend_relative(Evas_List *list, void *data, void *relative)
 		  _evas_list_alloc_error = 1;
 		  return list;
 	       }
-	     new_l->data = data;
+	     new_l->data = (void *)data;
 	     new_l->prev = l->prev;
 	     new_l->next = l;
 	     if (l->prev) l->prev->next = new_l;
@@ -315,7 +315,7 @@ evas_list_prepend_relative(Evas_List *list, void *data, void *relative)
  * @endcode
  */
 Evas_List *
-evas_list_remove(Evas_List *list, void *data)
+evas_list_remove(Evas_List *list, const void *data)
 {
    Evas_List *l;
    
@@ -399,13 +399,13 @@ evas_list_remove_list(Evas_List *list, Evas_List *remove_list)
  * @endcode
  */
 void *
-evas_list_find(Evas_List *list, void *data)
+evas_list_find(Evas_List *list, const void *data)
 {
    Evas_List *l;
    
    for (l = list; l; l = l->next)
      {
-	if (l->data == data) return data;
+	if (l->data == data) return (void *)data;
      }
    return NULL;
 }
@@ -435,7 +435,7 @@ evas_list_find(Evas_List *list, void *data)
  * @endcode
  */
 Evas_List *
-evas_list_find_list(Evas_List *list, void *data)
+evas_list_find_list(Evas_List *list, const void *data)
 {
    Evas_List *l;
    

@@ -153,7 +153,7 @@ evas_object_smart_add(Evas *e, Evas_Smart *s)
 }
 
 void
-evas_object_smart_callback_add(Evas_Object *obj, char *event, void (*func) (void *data, Evas_Object *obj, void *event_info), void *data)
+evas_object_smart_callback_add(Evas_Object *obj, const char *event, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
    Evas_Object_Smart *o;
    Evas_Smart_Callback *cb;
@@ -170,12 +170,12 @@ evas_object_smart_callback_add(Evas_Object *obj, char *event, void (*func) (void
    cb = calloc(1, sizeof(Evas_Smart_Callback));
    cb->event = strdup(event);
    cb->func = func;
-   cb->func_data = data;
+   cb->func_data = (void *)data;
    obj->smart.callbacks = evas_list_prepend(obj->smart.callbacks, cb);
 }
 
 void *
-evas_object_smart_callback_del(Evas_Object *obj, char *event, void (*func) (void *data, Evas_Object *obj, void *event_info))
+evas_object_smart_callback_del(Evas_Object *obj, const char *event, void (*func) (void *data, Evas_Object *obj, void *event_info))
 {
    Evas_Object_Smart *o;
    Evas_List *l;
@@ -208,7 +208,7 @@ evas_object_smart_callback_del(Evas_Object *obj, char *event, void (*func) (void
 }
 
 void
-evas_object_smart_callback_call(Evas_Object *obj, char *event, void *event_info)
+evas_object_smart_callback_call(Evas_Object *obj, const char *event, void *event_info)
 {
    Evas_Object_Smart *o;
    Evas_List *l;

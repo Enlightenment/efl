@@ -259,7 +259,7 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
  * @endcode
  */
 void
-evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), void *data)
+evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), const void *data)
 {
    /* MEM OK */
    Evas_Func_Node *fn;
@@ -274,7 +274,7 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (
    fn = evas_mem_calloc(sizeof(Evas_Func_Node));
    if (!fn) return;
    fn->func = func;
-   fn->data = data;
+   fn->data = (void *)data;
 
    switch (type)
      {
