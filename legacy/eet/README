@@ -1,1 +1,4 @@
-Eet 0.9.0
+Eet 0.9.9
+
+Please have doxygen installed and run:
+./gendoc to generate documentation in the doc directory.

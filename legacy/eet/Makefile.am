@@ -7,12 +7,6 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       ltconfig ltmain.sh missing mkinstalldirs \
 		       stamp-h.in eet_docs.tar eet_docs.tar.gz eet.c
 
-dist-hook:
-	./gendoc; \
-	tar cvf eet_docs.tar doc/html doc/latex doc/man; \
-	rm -f eet_docs.tar.gz; \
-	gzip -9 eet_docs.tar;
-
 bin_SCRIPTS = eet-config
 
 EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN eet.spec eet.c.in \
