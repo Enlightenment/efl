@@ -4,14 +4,24 @@
 #include <X11/Xlib.h>
 #include <Imlib2.h>
 
-typedef struct _Evas *          Evas;
-typedef struct _Evas_Gradient * Evas_Gradient;
-typedef void *                  Evas_Object;
-typedef void *                  Evas_Group;
-typedef int                     Evas_Callback_Type;
-typedef int                     Evas_Image_Format;
-typedef struct _Evas_List *     Evas_List;
-typedef struct _Evas_Layer *    Evas_Layer;
+typedef struct _Evas *                     Evas;
+typedef struct _Evas_Gradient *            Evas_Gradient;
+typedef struct _Evas_Object_Any *          Evas_Object;
+typedef struct _Evas_Object_Any *          Evas_Object_Any;
+typedef void *                             Evas_Group;
+typedef int                                Evas_Callback_Type;
+typedef int                                Evas_Image_Format;
+typedef int                                Evas_Blend_Mode;
+typedef struct _Evas_List *                Evas_List;
+typedef struct _Evas_Layer *               Evas_Layer;
+typedef struct _Evas_Color_Point *         Evas_Color_Point;
+typedef struct _Evas_Object_Image *        Evas_Object_Image;
+typedef struct _Evas_Object_Text *         Evas_Object_Text;
+typedef struct _Evas_Object_Rectangle *    Evas_Object_Rectangle;
+typedef struct _Evas_Object_Line *         Evas_Object_Line;
+typedef struct _Evas_Object_Gradient_Box * Evas_Object_Gradient_Box;
+typedef struct _Evas_Object_Bits *         Evas_Object_Bits;
+typedef struct _Evas_Object_Evas *         Evas_Object_Evas;
 
 #define RENDER_METHOD_ALPHA_SOFTWARE 0
 #define RENDER_METHOD_BASIC_HARDWARE 1
@@ -29,17 +39,17 @@ typedef struct _Evas_Layer *    Evas_Layer;
 
 struct _Evas
 {
-   struct _state {
+   struct  {
       Display      *display;
       Drawable      drawable;
       Visual       *visual;
       Colormap      colormap;
       
-      struct _output {
+      struct  {
 	 int        x, y, w, h;
       } output;
       
-      struct _viewport {
+      struct  {
 	 double     x, y, w, h;
       } viewport;
       
@@ -47,16 +57,23 @@ struct _Evas
       
       int           render_method;
       
+      void      *renderer_data;
+      
    } current, previous;
    
    /* externally provided updates for drawable relative rects */
    Evas_List    *updates;
 };
 
+struct _Evas_Color_Point
+{
+   int r, g, b, a;
+   int distance;
+};
+
 struct _Evas_Gradient
 {
-   /* implimentation dependant part */
-   Imlib_Color_Range color_range;
+   Evas_List *color_points;
 };
 
 struct _Evas_List
@@ -68,14 +85,95 @@ struct _Evas_List
 struct _Evas_Layer
 {
    int        layer;
-   int        store;
    Evas_List *objects;
+   Evas_List *groups;
+   
+   struct  {
+      int        store;
+   } current, previous;
+   
+   void      *renderer_data;
+};
+
+struct _Evas_Object_Any
+{
+   int        type;
+   struct  {
+      double     x, y, w, h;
+      Evas_Blend_Mode mode;
+      int        zoomscale;
+   } current, previous;
+   Evas_List *groups;
+};
+
+struct _Evas_Object_Image
+{
+   Evas_Object_Any object;
+   struct  {
+      char *file;
+      double angle;
+      struct _fill {
+	 double x, y, w, h;
+      } fill;
+   } current, previous;
+};
+
+struct _Evas_Object_Text
+{
+   Evas_Object_Any object;
+   struct  {
+      char *text;
+      double angle;
+      int r, g, b, a;
+   } current, previous;
+};
+
+struct _Evas_Object_Rectangle
+{
+   Evas_Object_Any object;
+   struct  {
+      int r, g, b, a;
+   } current, previous;
+};
+
+struct _Evas_Object_Line
+{
+   Evas_Object_Any object;
+   struct  {
+      double x1, y1, x2, y2;
+      int r, g, b, a;
+   } current, previous;
+};
+
+struct _Evas_Object_Gradient_Box
+{
+   Evas_Object_Any object;
+   struct  {
+      Evas_Gradient gradient;
+      double angle;
+   } current, previous;
+};
+
+struct _Evas_Object_Bits
+{
+   Evas_Object_Any object;
+   struct  {
+      char *file;
+   } current, previous;
+};
+
+struct _Evas_Object_Evas
+{
+   Evas_Object_Any object;
+   struct  {
+      Evas *evas;
+   } current, previous;
 };
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-      
+   
 /* create and destroy */
 Evas evas_new(void);
 void evas_free(Evas e);
@@ -110,15 +208,15 @@ Evas_Object evas_add_evas(Evas e, Evas evas);
 
 /* set object settings */
 void evas_set_image_file(Evas e, Evas_Object o, char *file);
-void evas_set_image_fill_size(Evas e, Evas_Object o, double w, double h);
+void evas_set_image_fill(Evas e, Evas_Object o, double x, double y, double w, double h);
 void evas_set_bits_file(Evas e, Evas_Object o, char *file);
 void evas_set_color(Evas e, Evas_Object o, int r, Evas_Group g, int b, int a);
-void evas_set_gradient_angle(Evas e, Evas_Object o, double angle);
 void evas_set_gradient(Evas e, Evas_Object o, Evas_Gradient grad);
 void evas_set_angle(Evas e, Evas_Object o, double angle);
-void evas_set_blend_mode(Evas e, int mode);
+void evas_set_blend_mode(Evas e, Evas_Blend_Mode mode);
 void evas_set_zoom_scale(Evas e, Evas_Object o, int scale);
-
+void evas_set_line_xy(Evas e, Evas_Object o, double x1, double y1, double x2, double y2);
+   
 /* layer stacking for object */
 void evas_set_layer(Evas e, Evas_Object o, int l);
 void evas_set_layer_store(Evas e, int l, int store);
@@ -147,6 +245,7 @@ void evas_hide(Evas e, Evas_Object o);
 Evas_Group evas_add_group(Evas e);
 void evas_add_to_group(Evas e, Evas_Object o, Evas_Group g);
 void evas_disband_group(Evas e, Evas_Group g);
+void evas_free_group(Evas e, Evas_Group g);
 void evas_del_from_group(Evas e, Evas_Object o, Evas_Group g);
 
 /* evas bits ops */

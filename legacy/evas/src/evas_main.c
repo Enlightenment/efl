@@ -104,7 +104,7 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
 }
 
 void
-evas_set_image_fill_size(Evas e, Evas_Object o, double w, double h)
+evas_set_image_fill(Evas e, Evas_Object o, double x, double y, double w, double h)
 {
 }
 
@@ -119,11 +119,6 @@ evas_set_color(Evas e, Evas_Object o, int r, Evas_Group g, int b, int a)
 }
 
 void
-evas_set_gradient_angle(Evas e, Evas_Object o, double angle)
-{
-}
-
-void
 evas_set_gradient(Evas e, Evas_Object o, Evas_Gradient grad)
 {
 }
@@ -134,12 +129,17 @@ evas_set_angle(Evas e, Evas_Object o, double angle)
 }
 
 void
-evas_set_blend_mode(Evas e, int mode)
+evas_set_blend_mode(Evas e, Evas_Blend_Mode mode)
 {
 }
 
 void
 evas_set_zoom_scale(Evas e, Evas_Object o, int scale)
+{
+}
+
+void
+evas_set_line_xy(Evas e, Evas_Object o, double x1, double y1, double x2, double y2)
 {
 }
 
@@ -231,6 +231,11 @@ evas_add_to_group(Evas e, Evas_Object o, Evas_Group g)
 
 void
 evas_disband_group(Evas e, Evas_Group g)
+{
+}
+
+void
+evas_free_group(Evas e, Evas_Group g)
 {
 }
 
