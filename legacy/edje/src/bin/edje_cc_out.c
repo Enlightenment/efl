@@ -92,15 +92,16 @@ data_setup(void)
 }
 
 static void
-check_image_part_desc (Edje_Part *ep, Edje_Part_Description *epd, Eet_File *ef)
+check_image_part_desc (Edje_Part_Collection *pc, Edje_Part *ep,
+                       Edje_Part_Description *epd, Eet_File *ef)
 {
    Evas_List *l;
 
    if (epd->image.id == -1)
      {
-	fprintf(stderr, "%s: Error. image attributes missing "
+	fprintf(stderr, "%s: Error. collection %i: image attributes missing "
 	      "for part \"%s\", description \"%s\" %f\n",
-	      progname, ep->name, epd->state.name, epd->state.value);
+	      progname, pc->id, ep->name, epd->state.name, epd->state.value);
 	ABORT_WRITE(ef, file_out);
      }
 
@@ -110,9 +111,9 @@ check_image_part_desc (Edje_Part *ep, Edje_Part_Description *epd, Eet_File *ef)
 
 	if (iid->id == -1)
 	  {
-	     fprintf(stderr, "%s: Error. tween image id missing "
+	     fprintf(stderr, "%s: Error. collection %i: tween image id missing "
 		   "for part \"%s\", description \"%s\" %f\n",
-		   progname, ep->name, epd->state.name,
+		   progname, pc->id, ep->name, epd->state.name,
 		   epd->state.value);
 	     ABORT_WRITE(ef, file_out);
 	  }
@@ -120,29 +121,29 @@ check_image_part_desc (Edje_Part *ep, Edje_Part_Description *epd, Eet_File *ef)
 }
 
 static void
-check_part (Edje_Part *ep, Eet_File *ef)
+check_part (Edje_Part_Collection *pc, Edje_Part *ep, Eet_File *ef)
 {
    Edje_Part_Description *epd = ep->default_desc;
    Evas_List *l;
 
    if (!epd)
      {
-	fprintf(stderr, "%s: Error. default description missing "
-	      "for part \"%s\"\n", progname, ep->name);
+	fprintf(stderr, "%s: Error. collection %i: default description missing "
+	      "for part \"%s\"\n", progname, pc->id, ep->name);
 	ABORT_WRITE(ef, file_out);
      }
 
    if (ep->type == EDJE_PART_TYPE_IMAGE)
      {
-	check_image_part_desc (ep, epd, ef);
+	check_image_part_desc (pc, ep, epd, ef);
 
 	for (l = ep->other_desc; l; l = l->next)
-	  check_image_part_desc (ep, l->data, ef);
+	  check_image_part_desc (pc, ep, l->data, ef);
      }
 }
 
 static void
-check_program (Edje_Program *ep, Eet_File *ef)
+check_program (Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
 {
    switch (ep->action) {
       case EDJE_ACTION_TYPE_STATE_SET:
@@ -151,8 +152,9 @@ check_program (Edje_Program *ep, Eet_File *ef)
       case EDJE_ACTION_TYPE_DRAG_VAL_STEP:
       case EDJE_ACTION_TYPE_DRAG_VAL_PAGE:
 	 if (!ep->targets) {
-	      fprintf(stderr, "%s: Error. Target missing in program %s\n",
-		    progname, ep->name);
+	      fprintf(stderr, "%s: Error. collection %i: "
+		    "target missing in program %s\n",
+		    progname, pc->id, ep->name);
 	      ABORT_WRITE(ef, file_out);
 	 }
 	 break;
@@ -486,7 +488,7 @@ data_write(void)
 	pc = l->data;
 	for (ll = pc->parts; ll; ll = ll->next)
 	  {
-	     check_part (ll->data, ef);
+	     check_part (pc, ll->data, ef);
 
 /*
 	     Edje_Part *ep = ll->data;
@@ -542,7 +544,7 @@ data_write(void)
 	  }
 
 	for (ll = pc->programs; ll; ll = ll->next)
-	     check_program (ll->data, ef);
+	     check_program (pc, ll->data, ef);
      }
    for (l = edje_collections; l; l = l->next)
      {
