@@ -19,15 +19,15 @@ IMLIB2_CONFIG="imlib2-config"
 
 AC_ARG_WITH(imlib2,
         [  --with-imlib2=DIR       use DIR where imlib2 was installed (eg /usr/local)],
-	[CPPFLAGS="$CPPFLAGS -I$withval/include"	
+	[CPPFLAGS="$CPPFLAGS -I$withval/include"; LDFLAGS="$LDFLAGS -L$withval/lib"
 	 IMLIB2_CONFIG=$withval"/bin/imlib2-config"])			
 AC_ARG_WITH(ttf,
         [  --with-ttf=DIR          use DIR where freetype was installed (eg /opt/freetype)],
-	[CPPFLAGS="$CPPFLAGS -I$withval/include"
+	[CPPFLAGS="$CPPFLAGS -I$withval/include"; LDFLAGS="$LDFLAGS -L$withval/lib"
 	 LIBS_TTF="-L"$withval"/lib"])
 AC_ARG_WITH(gl,
         [  --with-gl=DIR           use DIR where opengl was installed (eg /usr/X11R6)],
-	[CPPFLAGS="$CPPFLAGS -I$withval/include"
+	[CPPFLAGS="$CPPFLAGS -I$withval/include"; LDFLAGS="$LDFLAGS -L$withval/lib"
 	 LIBS_GL="-L"$withval"/lib"])
 			
 #### Find out about X
