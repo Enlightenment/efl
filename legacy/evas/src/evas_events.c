@@ -180,3 +180,25 @@ evas_get_object_under_mouse(Evas e)
    if (!e) return NULL;
    return _evas_highest_object_at_point(e, e->mouse.x, e->mouse.y);
 }
+
+int
+evas_pointer_in(Evas e)
+{
+   if (!e) return 0;
+   return e->mouse.in;
+}
+
+void
+evas_pointer_pos(Evas e, int *x, int *y)
+{
+   if (!e) return;
+   if (x) *x = e->mouse.x;
+   if (y) *y = e->mouse.y;
+}
+
+int
+evas_pointer_buttons(Evas e)
+{
+   if (!e) return 0;
+   return e->mouse.buttons;
+}
