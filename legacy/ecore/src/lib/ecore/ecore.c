@@ -10,6 +10,14 @@ static int _ecore_init_count = 0;
 int _ecore_fps_debug = 0;
 #endif
 
+/** OpenBSD does not define CODESET
+ * FIXME ??
+ */
+
+#ifndef CODESET
+#define CODESET "INVALID"
+#endif
+
 /**
  * Set up connections, signal handlers, sockets etc.
  * @return 1 or greater on success, 0 otherwise
