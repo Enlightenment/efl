@@ -190,7 +190,7 @@ if test "x$have_ecore_txt" = "xyes"; then
   ]
   )
 else
-  AC_MSG_NOTICE(ecore_txt not enabled, so ecore_x will not be enabled)
+  AC_MSG_RESULT(ecore_txt not enabled, so ecore_x will not be enabled)
 fi
 
 if test "x$have_ecore_x" = "xyes"; then
@@ -449,7 +449,7 @@ AC_MSG_CHECKING(whether ecore_ipc module is to be built)
   ]
   )
 else
-  AC_MSG_NOTICE(ecore_con not enabled, so ecore_ipc will not be enabled)
+  AC_MSG_RESULT(ecore_con not enabled, so ecore_ipc will not be enabled)
 fi
 
 if test "x$have_ecore_ipc" = "xyes"; then
