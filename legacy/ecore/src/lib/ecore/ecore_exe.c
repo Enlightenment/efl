@@ -8,19 +8,24 @@
 static Ecore_Exe *exes = NULL;
 
 /**
- * Spawn off a child process and return a handle to that process.
- * @param exe_cmd The command-line to run as if typed in a shell
- * @param data A generic data pointer to attach to the process handle
- * @return A process handle to the spawned off process
+ * @defgroup Ecore_Exe_Basic_Group Process Spawning Functions
+ *
+ * Functions that deal with spawned processes.
+ */
+
+/**
+ * Spawns a child process.
+ *
+ * This function forks and runs the given command using @c /bin/sh.
+ *
+ * Note that the process handle is only valid until a child process
+ * terminated event is received.  After all handlers for the child process
+ * terminated event have been called, the handle will be freed by Ecore.
  * 
- * This function will fork and execute the command line @p exe_cmd as specified
- * using the system shell (/bin/sh). The data pointer @p data is attached to
- * the process handle returned. The application does not need to free or keep
- * the process handle returned unless it has a use for it. It should be noted
- * that the process handle is only valid until a child process terminated
- * event is recieved. After all handlers for this child process terminated
- * event have been called, this process handle will be freed and cleaned up
- * by Ecore, and so any references to it will become invalid.
+ * @param   exe_cmd The command to run with @c /bin/sh.
+ * @param   data    Data to attach to the returned process handle.
+ * @return  A process handle to the spawned process.
+ * @ingroup Ecore_Exe_Basic_Group
  */
 Ecore_Exe *
 ecore_exe_run(const char *exe_cmd, const void *data)
@@ -51,14 +56,15 @@ ecore_exe_run(const char *exe_cmd, const void *data)
 }
 
 /**
- * Free an exe handle.
- * @param exe
- * @return The data pointer set on execution of the program
- * 
- * This frees an exe handle (but does not affect the process that was spawned
- * that this handle was a result of) and returns the data pointer set on
- * executable start. This does mean there is no handle for the spawned
- * process anymore.
+ * Frees the given process handle.
+ *
+ * Note that the process that the handle represents is unaffected by this
+ * function.
+ *
+ * @param   exe The given process handle.
+ * @return  The data attached to the handle when @ref ecore_exe_run was
+ *          called.
+ * @ingroup Ecore_Exe_Basic_Group
  */
 void *
 ecore_exe_free(Ecore_Exe *exe)
@@ -73,11 +79,10 @@ ecore_exe_free(Ecore_Exe *exe)
 }
 
 /**
- * Get the process ID of a spawned process.
- * @param exe The process handle returned by ecore_exe_run()
- * @return A system process ID of the process handle
- * 
- * This function returns the system process ID of a spawned off child process.
+ * Retrieves the process ID of the given spawned process.
+ * @param   exe Handle to the given spawned process.
+ * @return  The process ID on success.  @c -1 otherwise.
+ * @ingroup Ecore_Exe_Basic_Group
  */
 pid_t
 ecore_exe_pid_get(Ecore_Exe *exe)
@@ -92,12 +97,10 @@ ecore_exe_pid_get(Ecore_Exe *exe)
 }
 
 /**
- * Get the data pointer attached to a process handle.
- * @param exe The process handle returned by ecore_exe_run()
- * @return An pointer to the attached data of the process handle
- * 
- * This function returns the data pointer attached to the spawned off process
- * whose handle is @p exe.
+ * Retrieves the data attached to the given process handle.
+ * @param   exe The given process handle.
+ * @return  The data pointer attached to @p exe.
+ * @ingroup Ecore_Exe_Basic_Group
  */
 void *
 ecore_exe_data_get(Ecore_Exe *exe)
@@ -112,10 +115,15 @@ ecore_exe_data_get(Ecore_Exe *exe)
 }
 
 /**
- * Pause a spawned process.
- * @param exe The process handle to control
- * 
- * This function pauses a process that was spawned.
+ * @defgroup Ecore_Exe_Signal_Group Spawned Process Signal Functions
+ *
+ * Functions that send signals to spawned processes.
+ */
+
+/**
+ * Pauses the given process by sending it a @c SIGSTOP signal.
+ * @param   exe Process handle to the given process.
+ * @ingroup Ecore_Exe_Signal_Group
  */
 void
 ecore_exe_pause(Ecore_Exe *exe)
@@ -130,11 +138,9 @@ ecore_exe_pause(Ecore_Exe *exe)
 }
 
 /**
- * Continue a paused process.
- * @param exe The process handle to control
- * 
- * This Continues a process. This is only useful if the process has already
- * been paused by something like ecore_exe_pause().
+ * Continues the given paused process by sending it a @c SIGCONT signal.
+ * @param   exe Process handle to the given process.
+ * @ingroup Ecore_Exe_Signal_Group
  */
 void
 ecore_exe_continue(Ecore_Exe *exe)
@@ -149,10 +155,9 @@ ecore_exe_continue(Ecore_Exe *exe)
 }
 
 /**
- * Terminate a process.
- * @param exe The process handle to control
- * 
- * This function asks a process to terminate.
+ * Sends the given spawned process a terminate (@c SIGTERM) signal.
+ * @param   exe Process handle to the given process.
+ * @ingroup Ecore_Exe_Signal_Group
  */
 void
 ecore_exe_terminate(Ecore_Exe *exe)
@@ -167,12 +172,9 @@ ecore_exe_terminate(Ecore_Exe *exe)
 }
 
 /**
- * Kill a process.
- * @param exe The process handle to control
- * 
- * This function ills off a process, and that process has no choice and will
- * exit as a result of this function, without having a chance to clean up,
- * save data, or safely shut down.
+ * Kills the given spawned process by sending it a @c SIGKILL signal.
+ * @param   exe Process handle to the given process.
+ * @ingroup Ecore_Exe_Signal_Group
  */
 void
 ecore_exe_kill(Ecore_Exe *exe)
@@ -187,13 +189,11 @@ ecore_exe_kill(Ecore_Exe *exe)
 }
 
 /**
- * Send a user signal to a process.
- * @param exe The process handle to control
- * @param num The signal number to send to the process
- * 
- * This function sends a user signal (SIGUSR) to a process. @p num determines
- * what numbered user signal to send. This may be either 1 or 2. Other values
- * are illegal and will be ignored, with this function doing nothing.
+ * Sends a @c SIGUSR signal to the given spawned process.
+ * @param   exe Process handle to the given process.
+ * @param   num The number user signal to send.  Must be either 1 or 2, or
+ *              the signal will be ignored.
+ * @ingroup Ecore_Exe_Signal_Group
  */
 void
 ecore_exe_signal(Ecore_Exe *exe, int num)
@@ -211,10 +211,9 @@ ecore_exe_signal(Ecore_Exe *exe, int num)
 }
 
 /**
- * Send a HUP signal to a process.
- * @param exe The process handle to control
- * 
- * This function sends a HUP signal to the specified process.
+ * Sends a @c SIGHUP signal to the given spawned process.
+ * @param   exe Process handle to the given process.
+ * @ingroup Ecore_Exe_Signal_Group
  */
 void
 ecore_exe_hup(Ecore_Exe *exe)

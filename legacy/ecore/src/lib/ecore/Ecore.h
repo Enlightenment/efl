@@ -6,6 +6,9 @@
  * @brief The file that provides the program utility, main loop and timer
  *        functions.
  *
+ * The following groups of functions are included with this file:
+ * @li @ref Ecore_Exe_Basic_Group
+ * @li @ref Ecore_Exe_Signal_Group
  */
 
 #include <sys/types.h>
