@@ -367,7 +367,7 @@ static int _ecore_list_append_0(Ecore_List * list, Ecore_List_Node *end)
 
 	if (list->first == NULL) {
 		list->first = end;
-		list->index = 1;
+		list->index = 0;
 	}
 
 	list->nodes++;
@@ -592,7 +592,7 @@ static void *_ecore_list_remove_first(Ecore_List * list)
 	if (list->current == old)
 		list->current = list->first;
 	else
-		list->index--;
+		(list->index ? list->index-- : 0);
 
 	if (list->last == old)
 		list->last = list->first;
@@ -707,7 +707,10 @@ static void *_ecore_list_goto_index(Ecore_List *list, int index)
 
 	_ecore_list_goto_first(list);
 
-	for (i = 1; i < index && _ecore_list_next(list); i++);
+	for (i = 0; i < index && _ecore_list_next(list); i++);
+
+	if (i >= list->nodes)
+		return FALSE;
 
 	list->index = i;
 
@@ -741,7 +744,7 @@ static void *_ecore_list_goto(Ecore_List * list, void *data)
 	if (!list)
 		return NULL;
 
-	index = 1;
+	index = 0;
 
 	node = list->first;
 	while (node && node->data) {
@@ -790,7 +793,7 @@ static void *_ecore_list_goto_first(Ecore_List * list)
 		return NULL;
 
 	list->current = list->first;
-	list->index = 1;
+	list->index = 0;
 
 	return list->current->data;
 }
@@ -819,7 +822,7 @@ static void *_ecore_list_goto_last(Ecore_List * list)
 		return NULL;
 
 	list->current = list->last;
-	list->index = list->nodes;
+	list->index = (list->nodes - 1);
 
 	return list->current->data;
 }
