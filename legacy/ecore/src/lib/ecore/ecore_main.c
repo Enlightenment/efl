@@ -22,7 +22,6 @@ static int               fd_handlers_delete_me = 0;
  * 
  * This function Processes 1 iteration of the main loop, handling anything on
  * the queue. See ecore_main_loop_begin() for more information.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_main_loop_iterate(void)
@@ -37,7 +36,6 @@ ecore_main_loop_iterate(void)
  * will keep looping internally and call all callbacks set up to handle timers,
  * idle state and events Ecore recieves from X, fd's, IPC, signals etc. and
  * anything else that has registered a handler with ecore itself.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_main_loop_begin(void)
@@ -54,7 +52,6 @@ ecore_main_loop_begin(void)
  * This function will flag a quit of the main loop once the current loop has
  * finished processing all events. It will not quit instantly, so expect more
  * callbacks to be called after this command has been issued.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_main_loop_quit(void)
@@ -91,7 +88,6 @@ ecore_main_loop_quit(void)
  * fd = open("/tmp/fifo", O_RDONLY);
  * fdh = ecore_main_fd_handler_add(fd, ECORE_FD_READ, func_read_fifo, NULL);
  * @endcode
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_Fd_Handler *
 ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, int (*func) (void *data, Ecore_Fd_Handler *fd_handler), const void *data, int (*buf_func) (void *buf_data, Ecore_Fd_Handler *fd_handler), const void *buf_data)

@@ -44,7 +44,6 @@ static Ecore_Ipc_Server *servers = NULL;
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_ipc_init(void)
@@ -74,7 +73,6 @@ ecore_ipc_init(void)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_ipc_shutdown(void)
@@ -93,7 +91,6 @@ ecore_ipc_shutdown(void)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_Ipc_Server *
 ecore_ipc_server_add(Ecore_Ipc_Type type, char *name, int port, const void *data)
@@ -132,7 +129,6 @@ ecore_ipc_server_add(Ecore_Ipc_Type type, char *name, int port, const void *data
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_Ipc_Server *
 ecore_ipc_server_connect(Ecore_Ipc_Type type, char *name, int port, const void *data)
@@ -171,7 +167,6 @@ ecore_ipc_server_connect(Ecore_Ipc_Type type, char *name, int port, const void *
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void *
 ecore_ipc_server_del(Ecore_Ipc_Server *svr)
@@ -198,7 +193,6 @@ ecore_ipc_server_del(Ecore_Ipc_Server *svr)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void *
 ecore_ipc_server_data_get(Ecore_Ipc_Server *svr)
@@ -216,7 +210,6 @@ ecore_ipc_server_data_get(Ecore_Ipc_Server *svr)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_ipc_server_connected_get(Ecore_Ipc_Server *svr)
@@ -234,7 +227,6 @@ ecore_ipc_server_connected_get(Ecore_Ipc_Server *svr)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int ref_to, int response, void *data, int size)
@@ -264,7 +256,6 @@ ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int 
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int ref_to, int response, void *data, int size)
@@ -294,7 +285,6 @@ ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int r
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_Ipc_Server *
 ecore_ipc_client_server_get(Ecore_Ipc_Client *cl)
@@ -312,7 +302,6 @@ ecore_ipc_client_server_get(Ecore_Ipc_Client *cl)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void *
 ecore_ipc_client_del(Ecore_Ipc_Client *cl)
@@ -340,7 +329,6 @@ ecore_ipc_client_del(Ecore_Ipc_Client *cl)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_ipc_client_data_set(Ecore_Ipc_Client *cl, const void *data)
@@ -358,7 +346,6 @@ ecore_ipc_client_data_set(Ecore_Ipc_Client *cl, const void *data)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void *
 ecore_ipc_client_data_get(Ecore_Ipc_Client *cl)

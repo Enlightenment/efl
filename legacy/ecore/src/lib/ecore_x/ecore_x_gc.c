@@ -6,7 +6,6 @@
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_X_GC
 ecore_x_gc_new(Ecore_X_Drawable draw)
@@ -21,7 +20,6 @@ ecore_x_gc_new(Ecore_X_Drawable draw)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_gc_del(Ecore_X_GC gc)

@@ -381,7 +381,6 @@ static char *_ecore_fb_btn_syms[128] =
  * @return 0 on failure, or greter than 0 on success.
  *
  * This starts up the ecore fb system
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_fb_init(const char *name)
@@ -517,7 +516,6 @@ ecore_fb_init(const char *name)
  * @return 0 if the system was shut down, or 1 if it still needs to be shut down
  *
  * This shuts down the ecore fb system.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_fb_shutdown(void)
@@ -568,7 +566,6 @@ ecore_fb_shutdown(void)
  * This sets the time between clicks before the double_click flag is set in a 
  * button down event. If 3 clicks occur within double this time then the 
  * triple_click flag is also set.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_fb_double_click_time_set(double t)
@@ -582,7 +579,6 @@ ecore_fb_double_click_time_set(double t)
  * @return The timeout for double clicks in seconds
  *
  * This returns the tiemout that can be set by ecore_fb_double_click_time_set()
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 double
 ecore_fb_double_click_time_get(void)
@@ -596,7 +592,6 @@ ecore_fb_double_click_time_get(void)
  * @param h Height in pixels
  * 
  * Get the current fb width and height in pixels
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_fb_size_get(int *w, int *h)
@@ -614,7 +609,6 @@ ecore_fb_size_get(int *w, int *h)
  * @param xyswap Swap X & Y flag
  * 
  * Calibrate the touchscreen using the above params
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_fb_touch_screen_calibrate_set(int xscale, int xtrans, int yscale, int ytrans, int xyswap)
@@ -639,7 +633,6 @@ ecore_fb_touch_screen_calibrate_set(int xscale, int xtrans, int yscale, int ytra
  * @param xyswap Swap X & Y flag
  * 
  * Get calibration of the touchscreen
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_fb_touch_screen_calibrate_get(int *xscale, int *xtrans, int *yscale, int *ytrans, int *xyswap)
@@ -660,7 +653,6 @@ ecore_fb_touch_screen_calibrate_get(int *xscale, int *xtrans, int *yscale, int *
  * @param on 1 or 0 corresponding to on or off
  * 
  * Set the backlight to the @p on state
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_fb_backlight_set(int on)
@@ -678,7 +670,6 @@ ecore_fb_backlight_set(int on)
  * @return The current backlight state
  * 
  * Get the current backlight state
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_fb_backlight_get(void)
@@ -696,7 +687,6 @@ ecore_fb_backlight_get(void)
  * 
  * Set the backglith brightness to @p br, where 0 is darkest and 1.0 is 
  * the brightest.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void 
 ecore_fb_backlight_brightness_set(double br)
@@ -718,7 +708,6 @@ ecore_fb_backlight_brightness_set(double br)
  * 
  * Get the current backlight brightness as per 
  * ecore_fb_backlight_brightness_set().
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 double
 ecore_fb_backlight_brightness_get(void)
@@ -734,7 +723,6 @@ ecore_fb_backlight_brightness_get(void)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_fb_led_set(int on)
@@ -751,7 +739,6 @@ ecore_fb_led_set(int on)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_fb_led_blink_set(double speed)
@@ -770,7 +757,6 @@ ecore_fb_led_blink_set(double speed)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void 
 ecore_fb_contrast_set(double cr)
@@ -789,7 +775,6 @@ ecore_fb_contrast_set(double cr)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 double
 ecore_fb_contrast_get(void)
@@ -805,7 +790,6 @@ ecore_fb_contrast_get(void)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 double
 ecore_fb_light_sensor_get(void)
@@ -823,7 +807,6 @@ ecore_fb_light_sensor_get(void)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_fb_callback_gain_set(void (*func) (void *data), void *data)
@@ -836,7 +819,6 @@ ecore_fb_callback_gain_set(void (*func) (void *data), void *data)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_fb_callback_lose_set(void (*func) (void *data), void *data)

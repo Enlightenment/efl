@@ -25,7 +25,6 @@ static int _ecore_init_count = 0;
  *   ecore_shutdown();
  * }
  * @endcode
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_init(void)
@@ -45,8 +44,7 @@ ecore_init(void)
  * 
  * Do not call this function from any callback that may be called from the main
  * loop, as the main loop will then fall over and not function properly.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-*/
+ */
 int
 ecore_shutdown(void)
 {

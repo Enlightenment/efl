@@ -35,7 +35,6 @@ static char **app_argv = NULL;
  *   ecore_shutdown();
  * }
  * @endcode
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_app_args_set(int argc, const char **argv)
@@ -56,7 +55,6 @@ ecore_app_args_set(int argc, const char **argv)
  * the pointer is not NULL, and the string array pointer @p argv will be filled
  * also if the pointer is not NULL. The values they are filled with will be the
  * same set by ecore_app_args_set().
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_app_args_get(int *argc, char ***argv)
@@ -74,7 +72,6 @@ ecore_app_args_get(int *argc, char ***argv)
  * configuration reasons or in the event of a crash.
  * 
  * FIXME: Currently not implimented.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_app_restart(void)

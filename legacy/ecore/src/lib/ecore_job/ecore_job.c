@@ -18,7 +18,6 @@ static int ecore_event_job_type = 0;
  * return a pointer to the job handle. When the job is to be executed, the 
  * function @p func is called and passed the pointer @p data. once the job has
  * been executed the job handle is no longer valid.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_Job *
 ecore_job_add(void (*func) (void *data), const void *data)
@@ -52,7 +51,6 @@ ecore_job_add(void (*func) (void *data), const void *data)
  * 
  * This removed a job from the queue (if it hasn't been executed yet) and
  * returns the data pointer that was to be passed to it.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void *
 ecore_job_del(Ecore_Job *job)

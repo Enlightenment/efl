@@ -76,7 +76,6 @@ static void                *ecore_raw_event_event =  NULL;
  *   ecore_shutdown();
  * }
  * @endcode
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_Event_Handler *
 ecore_event_handler_add(int type, int (*func) (void *data, int type, void *event), const void *data)
@@ -104,7 +103,6 @@ ecore_event_handler_add(int type, int (*func) (void *data, int type, void *event
  * delete the event handler and return the pointer passed as @p data when the
  * handler was added by ecore_event_handler_add(). On failure NULL will be
  * returned. Once a handler is deleted it will no longer be called.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void *
 ecore_event_handler_del(Ecore_Event_Handler *event_handler)
@@ -136,7 +134,6 @@ ecore_event_handler_del(Ecore_Event_Handler *event_handler)
  * longer needed, @p func_free will be called and passed the private sructure
  * pointer for cleaning up. If @p func_free is NULL, nothnig will be called.
  * This function is passed @p data as its data parameter.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_Event *
 ecore_event_add(int type, void *ev, void (*func_free) (void *data, void *ev), void *data)
@@ -158,7 +155,6 @@ ecore_event_add(int type, void *ev, void (*func_free) (void *data, void *ev), vo
  * does not immediately call the free function, and it may be called later on
  * cleanup, and so if the free function depends on the data pointer to work,
  * you should defer cleaning of this till the free function is called later.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void *
 ecore_event_del(Ecore_Event *event)
@@ -182,7 +178,6 @@ ecore_event_del(Ecore_Event *event)
  * the program. There is no guarantee of the contents of this event ID, or how
  * it is calculated, except that the ID will be unique to the current instance
  * of the process.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_event_type_new(void)
@@ -210,7 +205,6 @@ ecore_event_type_new(void)
  * event is removed from the queue. If it returns 1, the event is kept. When
  * processing is finished @p func_end is called and is passed the loop_data
  * and @p data pointer to clean up.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_Event_Filter *
 ecore_event_filter_add(void * (*func_start) (void *data), int (*func_filter) (void *data, void *loop_data, int type, void *event), void (*func_end) (void *data, void *loop_data), const void *data)
@@ -237,7 +231,6 @@ ecore_event_filter_add(void * (*func_start) (void *data), int (*func_filter) (vo
  * Delete a filter that has been added by its @p ef handle. On success this
  * will return the data pointer set when this filter was added. On failure
  * NULL is returned.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void *
 ecore_event_filter_del(Ecore_Event_Filter *ef)
@@ -266,7 +259,6 @@ ecore_event_filter_del(Ecore_Event_Filter *ef)
  * this extra information may be useful or needed and using this call can let
  * the program know if the event type being handled is one it wants to get more
  * information about.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_event_current_type_get(void)
@@ -287,7 +279,6 @@ ecore_event_current_type_get(void)
  * this extra information may be useful or needed and using this call can let
  * the program access the event data if the type of the event is handled by
  * the program.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void *
 ecore_event_current_event_get(void)

@@ -78,7 +78,6 @@ _ecore_x_selection_request_data_get(Ecore_X_Atom selection, void **buf, int *len
  *
  * Get the converted data from a previous PRIMARY selection
  * request. The buffer must be freed when done with.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_selection_primary_request_data_get(void **buf, int *len)
@@ -94,7 +93,6 @@ ecore_x_selection_primary_request_data_get(void **buf, int *len)
  *
  * Get the converted data from a previous SECONDARY selection
  * request. The buffer must be freed when done with.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_selection_secondary_request_data_get(void **buf, int *len)
@@ -110,7 +108,6 @@ ecore_x_selection_secondary_request_data_get(void **buf, int *len)
  *
  * Get the converted data from a previous CLIPBOARD selection
  * request. The buffer must be freed when done with.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_selection_clipboard_request_data_get(void **buf, int *len)
@@ -198,7 +195,6 @@ _ecore_x_selection_set(Window w, unsigned char *data, int size, Atom selection)
  *
  * Get the converted data from a previous PRIMARY selection
  * request. The buffer must be freed when done with.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int 
 ecore_x_selection_primary_set(Ecore_X_Window w, unsigned char *data, int size)
@@ -211,7 +207,6 @@ ecore_x_selection_primary_set(Ecore_X_Window w, unsigned char *data, int size)
  * @return     Returns 1 if the selection was successfully cleared,
  *             or 0 if unsuccessful.
  *
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int 
 ecore_x_selection_primary_clear(void)
@@ -229,7 +224,6 @@ ecore_x_selection_primary_clear(void)
  *
  * Get the converted data from a previous SECONDARY selection
  * request. The buffer must be freed when done with.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int 
 ecore_x_selection_secondary_set(Ecore_X_Window w, unsigned char *data, int size)
@@ -242,7 +236,6 @@ ecore_x_selection_secondary_set(Ecore_X_Window w, unsigned char *data, int size)
  * @return     Returns 1 if the selection was successfully cleared,
  *             or 0 if unsuccessful.
  *
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int 
 ecore_x_selection_secondary_clear(void)
@@ -260,7 +253,6 @@ ecore_x_selection_secondary_clear(void)
  *
  * Get the converted data from a previous CLIPBOARD selection
  * request. The buffer must be freed when done with.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int 
 ecore_x_selection_clipboard_set(Ecore_X_Window w, unsigned char *data, int size)
@@ -273,7 +265,6 @@ ecore_x_selection_clipboard_set(Ecore_X_Window w, unsigned char *data, int size)
  * @return     Returns 1 if the selection was successfully cleared,
  *             or 0 if unsuccessful.
  *
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int 
 ecore_x_selection_clipboard_clear(void)

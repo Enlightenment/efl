@@ -18,7 +18,6 @@ static int                 idle_enterers_delete_me = 0;
  * use to update your program's state if it has a state engine. Do all your
  * heavy processing here to update state (like drawing etc.). When @p func
  * is called, it will be passed the pointer @p data.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_Idle_Enterer *
 ecore_idle_enterer_add(int (*func) (void *data), const void *data)
@@ -43,7 +42,6 @@ ecore_idle_enterer_add(int (*func) (void *data), const void *data)
  * executed during main loop execution. On success the data pointer that was
  * being passed to the idle handler function, set by ecore_idle_enterer_add()
  * will be returned.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void *
 ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer)

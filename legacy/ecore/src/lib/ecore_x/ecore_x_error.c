@@ -18,7 +18,6 @@ static int   _error_code = 0;
  * @param data The data to be passed to the handler function
  * 
  * Set the X error handler function
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_error_handler_set(void (*func) (void *data), const void *data)
@@ -33,7 +32,6 @@ ecore_x_error_handler_set(void (*func) (void *data), const void *data)
  * @param data The data to be passed to the handler function
  * 
  * Set the X I/O error handler function
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_io_error_handler_set(void (*func) (void *data), const void *data)
@@ -47,7 +45,6 @@ ecore_x_io_error_handler_set(void (*func) (void *data), const void *data)
  * @return The request code causing the X error
  * 
  * Return the X request code that caused the last X error
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_x_error_request_get(void)
@@ -60,7 +57,6 @@ ecore_x_error_request_get(void)
  * @return The error code from the X error
  * 
  * Return the error code from the last X error
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_x_error_code_get(void)

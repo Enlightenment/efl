@@ -10,7 +10,6 @@
  * This function returns the current system time in seconds from 12:00am 
  * 1st Janruary 1970. The time is returned as a double precision floating point
  * value to allow for fractions of a second to be determined.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 double
 ecore_time_get(void)

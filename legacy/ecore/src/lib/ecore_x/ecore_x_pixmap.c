@@ -6,7 +6,6 @@
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_X_Pixmap
 ecore_x_pixmap_new(Ecore_X_Window win, int w, int h, int dep)
@@ -20,7 +19,6 @@ ecore_x_pixmap_new(Ecore_X_Window win, int w, int h, int dep)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_pixmap_del(Ecore_X_Pixmap pmap)
@@ -32,7 +30,6 @@ ecore_x_pixmap_del(Ecore_X_Pixmap pmap)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_pixmap_paste(Ecore_X_Pixmap pmap, Ecore_X_Drawable dest, 

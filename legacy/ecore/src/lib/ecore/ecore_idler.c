@@ -19,7 +19,6 @@ static int          idlers_delete_me = 0;
  * get to do so. This is useful for when there are interfaces that require
  * polling and timers will mean too slow a response from the process if polling
  * is done by timers.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_Idler *
 ecore_idler_add(int (*func) (void *data), const void *data)
@@ -44,7 +43,6 @@ ecore_idler_add(int (*func) (void *data), const void *data)
  * during main loop execution. On success the data pointer set by
  * ecore_idler_add() and passed to the idler function is returned, or NULL
  * on failure.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void *
 ecore_idler_del(Ecore_Idler *idler)

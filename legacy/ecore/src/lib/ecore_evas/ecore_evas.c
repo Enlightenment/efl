@@ -10,8 +10,7 @@ static int _ecore_evas_init_count = 0;
  * Init the Evas system.
  * @return greater than 0 on success, 0 on failure
  * 
- * Set up the Evas wrapper system
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ * Set up the Evas wrapper system.
  */
 int
 ecore_evas_init(void)
@@ -26,7 +25,6 @@ ecore_evas_init(void)
  * @return 0 if ecore evas is fully shut down, or 1 if it still needs to be shut down
  * 
  * This closes the Evas system down.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_evas_shutdown(void)
@@ -52,7 +50,6 @@ ecore_evas_shutdown(void)
  * @param ee The Ecore_Evas to free
  *
  * This frees up any memory used by the Ecore_Evas. 
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_free(Ecore_Evas *ee)
@@ -89,7 +86,6 @@ ecore_evas_free(Ecore_Evas *ee)
  
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever @p ee is resized.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_callback_resize_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
@@ -112,7 +108,6 @@ ecore_evas_callback_resize_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
  
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever @p ee is moved.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_callback_move_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
@@ -135,7 +130,6 @@ ecore_evas_callback_move_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
  
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever @p ee is shown.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_callback_show_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
@@ -158,7 +152,6 @@ ecore_evas_callback_show_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
  
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever @p ee is hidden.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_callback_hide_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
@@ -181,7 +174,6 @@ ecore_evas_callback_hide_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
  
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever @p ee gets a delete request.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_callback_delete_request_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
@@ -204,7 +196,6 @@ ecore_evas_callback_delete_request_set(Ecore_Evas *ee, void (*func) (Ecore_Evas 
  
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever @p ee is destroyed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_callback_destroy_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
@@ -227,7 +218,6 @@ ecore_evas_callback_destroy_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
  
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever @p ee gets focus.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_callback_focus_in_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
@@ -250,7 +240,6 @@ ecore_evas_callback_focus_in_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
  
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever @p ee loses focus.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_callback_focus_out_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
@@ -273,7 +262,6 @@ ecore_evas_callback_focus_out_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
  
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever the mouse enters @p ee.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
@@ -296,7 +284,6 @@ ecore_evas_callback_mouse_in_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
  
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called whenever the mouse leaves @p ee.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_callback_mouse_out_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
@@ -319,7 +306,6 @@ ecore_evas_callback_mouse_out_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
  
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called just before the evas in @p ee is rendered.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_callback_pre_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
@@ -342,7 +328,6 @@ ecore_evas_callback_pre_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee)
  
  * A call to this function will set a callback on an Ecore_Evas, causing
  * @p func to be called just after the evas in @p ee is rendered.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_callback_post_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
@@ -364,7 +349,6 @@ ecore_evas_callback_post_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee
  * @return The Evas wrapped by @p ee
  * 
  * This function returns the Evas contained within @p ee.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Evas *
 ecore_evas_get(Ecore_Evas *ee)
@@ -385,7 +369,6 @@ ecore_evas_get(Ecore_Evas *ee)
  * @param y The y coordinate to move to
  *
  * This moves @p ee to the screen coordinates (@p x, @p y)
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_move(Ecore_Evas *ee, int x, int y)
@@ -407,7 +390,6 @@ ecore_evas_move(Ecore_Evas *ee, int x, int y)
  * @param h The h coordinate to resize to
  *
  * This resizes @p ee to @p w x @p h
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_resize(Ecore_Evas *ee, int w, int h)
@@ -443,7 +425,6 @@ ecore_evas_resize(Ecore_Evas *ee, int w, int h)
  * This moves @p ee to the screen coordinates (@p x, @p y) and  resizes
  * it to @p w x @p h.
  *
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
@@ -484,7 +465,6 @@ ecore_evas_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
  * ecore_evas_geometry_get(ee, &x, &y, &w, &h);
  * @endcode
  *
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_geometry_get(Ecore_Evas *ee, int *x, int *y, int *w, int *h)
@@ -519,7 +499,6 @@ ecore_evas_geometry_get(Ecore_Evas *ee, int *x, int *y, int *w, int *h)
  *
  * The allowed values of @p rot depend on the engine being used. Most only
  * allow multiples of 90.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_rotation_set(Ecore_Evas *ee, int rot)
@@ -543,7 +522,6 @@ ecore_evas_rotation_set(Ecore_Evas *ee, int rot)
  * @param ee The Ecore_Evas
  * @return the angle (in degrees) of rotation.
  *
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_evas_rotation_get(Ecore_Evas *ee)
@@ -568,7 +546,6 @@ ecore_evas_rotation_get(Ecore_Evas *ee)
  * and parts with no data will show random framebuffer artifacting. For
  * non-shaped Ecore_Evases, it is recommend to cover the entire evas with a
  * background object.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_shaped_set(Ecore_Evas *ee, int shaped)
@@ -589,7 +566,6 @@ ecore_evas_shaped_set(Ecore_Evas *ee, int shaped)
  * @return 1 if shaped, 0 if not.
  *
  * This function returns 1 if @p ee is shaped, and 0 if not.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_evas_shaped_get(Ecore_Evas *ee)
@@ -608,7 +584,6 @@ ecore_evas_shaped_get(Ecore_Evas *ee)
  * @param ee The Ecore_Evas to show.
  *
  * This function makes @p ee visible.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_show(Ecore_Evas *ee)
@@ -628,7 +603,6 @@ ecore_evas_show(Ecore_Evas *ee)
  * @param ee The Ecore_Evas to show.
  *
  * This function makes @p ee hidden.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_hide(Ecore_Evas *ee)
@@ -649,7 +623,6 @@ ecore_evas_hide(Ecore_Evas *ee)
  * @return 1 if visible, 0 if not.
  *
  * This function queries @p ee and returns 1 if it is visible, and 0 if not.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_evas_visibility_get(Ecore_Evas *ee)
@@ -668,7 +641,6 @@ ecore_evas_visibility_get(Ecore_Evas *ee)
  * @param ee The Ecore_Evas to raise.
  *
  * This functions raises the Ecore_Evas to the front.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_raise(Ecore_Evas *ee)
@@ -688,7 +660,6 @@ ecore_evas_raise(Ecore_Evas *ee)
  * @param ee The Ecore_Evas to raise.
  *
  * This functions lowers the Ecore_Evas to the back.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_lower(Ecore_Evas *ee)
@@ -709,7 +680,6 @@ ecore_evas_lower(Ecore_Evas *ee)
  * @param t The title
  * 
  * This function sets the title of @p ee to @p t.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_title_set(Ecore_Evas *ee, const char *t)
@@ -730,7 +700,6 @@ ecore_evas_title_set(Ecore_Evas *ee, const char *t)
  * @return The title of @p ee.
  *
  * This function returns the title of @p ee.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 const char *
 ecore_evas_title_get(Ecore_Evas *ee)
@@ -751,7 +720,6 @@ ecore_evas_title_get(Ecore_Evas *ee)
  * @param c the class
  *
  * This function sets the name of @p ee to @p n, and its class to @p c.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_name_class_set(Ecore_Evas *ee, const char *n, const char *c)
@@ -774,7 +742,6 @@ ecore_evas_name_class_set(Ecore_Evas *ee, const char *n, const char *c)
  *
  * This function gets puts the name of @p ee into @p n, and its class into
  * @p c.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_name_class_get(Ecore_Evas *ee, const char **n, const char **c)
@@ -796,7 +763,6 @@ ecore_evas_name_class_get(Ecore_Evas *ee, const char **n, const char **c)
  * @param h The minimum height
  *
  * This function sets the minimum size of @p ee to @p w x @p h.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_size_min_set(Ecore_Evas *ee, int w, int h)
@@ -828,7 +794,6 @@ ecore_evas_size_min_set(Ecore_Evas *ee, int w, int h)
  * @param h A pointer to an int to place the min height in.
  *
  * This function puts the minimum size of @p ee into @p w and @p h.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_size_min_get(Ecore_Evas *ee, int *w, int *h)
@@ -858,7 +823,6 @@ ecore_evas_size_min_get(Ecore_Evas *ee, int *w, int *h)
  * @param h The maximum height
  *
  * This function sets the maximum size of @p ee to @p w x @p h.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_size_max_set(Ecore_Evas *ee, int w, int h)
@@ -890,7 +854,6 @@ ecore_evas_size_max_set(Ecore_Evas *ee, int w, int h)
  * @param h A pointer to an int to place the max height in.
  *
  * This function puts the maximum size of @p ee into @p w and @p h.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_size_max_get(Ecore_Evas *ee, int *w, int *h)
@@ -920,7 +883,6 @@ ecore_evas_size_max_get(Ecore_Evas *ee, int *w, int *h)
  * @param h The base height
  *
  * This function sets the base size of @p ee to @p w x @p h.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_size_base_set(Ecore_Evas *ee, int w, int h)
@@ -952,7 +914,6 @@ ecore_evas_size_base_set(Ecore_Evas *ee, int w, int h)
  * @param h A pointer to an int to place the base height in.
  *
  * This function puts the base size of @p ee into @p w and @p h.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_size_base_get(Ecore_Evas *ee, int *w, int *h)
@@ -983,7 +944,6 @@ ecore_evas_size_base_get(Ecore_Evas *ee, int *w, int *h)
  *
  * This function sets the step size of @p ee to @p w x @p h. This limits the
  * size of an Ecore_Evas to always being an integer multiple of the step size.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_size_step_set(Ecore_Evas *ee, int w, int h)
@@ -1015,7 +975,6 @@ ecore_evas_size_step_set(Ecore_Evas *ee, int w, int h)
  * @param h A pointer to an int to place the step height in.
  *
  * This function puts the step size of @p ee into @p w and @p h.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_size_step_get(Ecore_Evas *ee, int *w, int *h)
@@ -1049,7 +1008,6 @@ ecore_evas_size_step_get(Ecore_Evas *ee, int *w, int *h)
  * @p file. The actual point within the image that the mouse is at is specified
  * by @p hot_x and @p hot_y, which are coordinates with respect to the top left
  * corner of the cursor image.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_cursor_set(Ecore_Evas *ee, const char *file, int layer, int hot_x, int hot_y)
@@ -1073,7 +1031,6 @@ ecore_evas_cursor_set(Ecore_Evas *ee, const char *file, int layer, int hot_x, in
  * @param hot_y A pointer to an int to place the cursor's hot_y coordinate in.
  *
  * This function queries information about an Ecore_Evas' cursor.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_cursor_get(Ecore_Evas *ee, char **file, int *layer, int *hot_x, int *hot_y)
@@ -1096,7 +1053,6 @@ ecore_evas_cursor_get(Ecore_Evas *ee, char **file, int *layer, int *hot_x, int *
  * @param layer The layer to put @p ee on.
  *
  * This function moves @p ee to the layer @p layer.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_layer_set(Ecore_Evas *ee, int layer)
@@ -1116,7 +1072,6 @@ ecore_evas_layer_set(Ecore_Evas *ee, int layer)
  * @param ee The Ecore_Evas to set
  * @return the layer @p ee's window is on.
  *
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_evas_layer_get(Ecore_Evas *ee)
@@ -1136,7 +1091,6 @@ ecore_evas_layer_get(Ecore_Evas *ee)
  * @param on 1 for focus, 0 to defocus.
  *
  * This function focuses @p ee if @p on is 1, or defocuses @p ee if @p on is 0.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_focus_set(Ecore_Evas *ee, int on)
@@ -1156,7 +1110,6 @@ ecore_evas_focus_set(Ecore_Evas *ee, int on)
  * @param ee The Ecore_Evas to set
  * @return 1 if @p ee if focused, 0 if not.
  *
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_evas_focus_get(Ecore_Evas *ee)
@@ -1177,7 +1130,6 @@ ecore_evas_focus_get(Ecore_Evas *ee)
  *
  * This function iconifies @p ee if @p on is 1, or uniconifies @p ee if @p on
  * is 0.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_iconified_set(Ecore_Evas *ee, int on)
@@ -1197,7 +1149,6 @@ ecore_evas_iconified_set(Ecore_Evas *ee, int on)
  * @param ee The Ecore_Evas to set
  * @return 1 if @p ee is iconified, 0 if not.
  *
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_evas_iconified_get(Ecore_Evas *ee)
@@ -1218,7 +1169,6 @@ ecore_evas_iconified_get(Ecore_Evas *ee)
  *
  * This function makes @p ee borderless if @p on is 1, or bordered if @p on
  * is 0.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_borderless_set(Ecore_Evas *ee, int on)
@@ -1238,7 +1188,6 @@ ecore_evas_borderless_set(Ecore_Evas *ee, int on)
  * @param ee The Ecore_Evas to set
  * @return 1 if @p ee is borderless, 0 if not.
  *
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_evas_borderless_get(Ecore_Evas *ee)
@@ -1259,7 +1208,6 @@ ecore_evas_borderless_get(Ecore_Evas *ee)
  *
  * This function causes the window manager to ignore @p ee if @p on is 1,
  * or not ignore @p ee if @p on is 0.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_override_set(Ecore_Evas *ee, int on)
@@ -1279,7 +1227,6 @@ ecore_evas_override_set(Ecore_Evas *ee, int on)
  * @param ee The Ecore_Evas to set
  * @return 1 if @p ee is overridden, 0 if not.
  *
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_evas_override_get(Ecore_Evas *ee)
@@ -1300,7 +1247,6 @@ ecore_evas_override_get(Ecore_Evas *ee)
  *
  * This function maximizes @p ee if @p on is 1, or unmaximizes @p ee
  * if @p on is 0.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_maximized_set(Ecore_Evas *ee, int on)
@@ -1320,7 +1266,6 @@ ecore_evas_maximized_set(Ecore_Evas *ee, int on)
  * @param ee The Ecore_Evas to set
  * @return 1 if @p ee is maximized, 0 if not.
  *
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_evas_maximized_get(Ecore_Evas *ee)
@@ -1341,7 +1286,6 @@ ecore_evas_maximized_get(Ecore_Evas *ee)
  *
  * This function causes @p ee to be fullscreen if @p on is 1,
  * or not if @p on is 0.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
@@ -1361,7 +1305,6 @@ ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
  * @param ee The Ecore_Evas to set
  * @return 1 if @p ee is fullscreen, 0 if not.
  *
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_evas_fullscreen_get(Ecore_Evas *ee)
@@ -1383,7 +1326,6 @@ ecore_evas_fullscreen_get(Ecore_Evas *ee)
  * 
  * This function causes @p ee to be drawn to a pixmap to avoid recalculations.
  * On expose events it will copy from the pixmap to the window.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_avoid_damage_set(Ecore_Evas *ee, int on)
@@ -1403,7 +1345,6 @@ ecore_evas_avoid_damage_set(Ecore_Evas *ee, int on)
  * @param ee The Ecore_Evas to set
  * @return 1 if @p ee avoids damage, 0 if not.
  *
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_evas_avoid_damage_get(Ecore_Evas *ee)
@@ -1422,7 +1363,6 @@ ecore_evas_avoid_damage_get(Ecore_Evas *ee)
  * @param ee The Ecore_Evas whose window's withdrawn state is set.
  * @param withdrawn The Ecore_Evas window's new withdrawn state.
  *
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_withdrawn_set(Ecore_Evas *ee, int withdrawn)
@@ -1443,7 +1383,6 @@ ecore_evas_withdrawn_set(Ecore_Evas *ee, int withdrawn)
  * @param ee The Ecore_Evas whose window's withdrawn state is returned.
  * @return The Ecore_Evas window's withdrawn state.
  *
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_evas_withdrawn_get(Ecore_Evas *ee)
@@ -1463,7 +1402,6 @@ ecore_evas_withdrawn_get(Ecore_Evas *ee)
  * @param ee The Ecore_Evas whose window's sticky state is set.
  * @param sticky The Ecore_Evas window's new sticky state.
  *
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_evas_sticky_set(Ecore_Evas *ee, int sticky)
@@ -1485,7 +1423,6 @@ ecore_evas_sticky_set(Ecore_Evas *ee, int sticky)
  * @param ee The Ecore_Evas whose window's sticky state is returned.
  * @return The Ecore_Evas window's sticky state.
  *
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_evas_sticky_get(Ecore_Evas *ee)

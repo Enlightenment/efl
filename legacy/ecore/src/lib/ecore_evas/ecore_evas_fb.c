@@ -429,7 +429,6 @@ static const Ecore_Evas_Engine_Func _ecore_fb_engine_func =
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_Evas *
 ecore_evas_fb_new(char *disp_name, int rotation, int w, int h)

@@ -45,7 +45,6 @@ static int init_count = 0;
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_con_init(void)
@@ -67,7 +66,6 @@ ecore_con_init(void)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_con_shutdown(void)
@@ -85,7 +83,6 @@ ecore_con_shutdown(void)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_Con_Server *
 ecore_con_server_add(Ecore_Con_Type type,
@@ -255,7 +252,6 @@ ecore_con_server_add(Ecore_Con_Type type,
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_Con_Server *
 ecore_con_server_connect(Ecore_Con_Type type,
@@ -375,7 +371,6 @@ ecore_con_server_connect(Ecore_Con_Type type,
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void *
 ecore_con_server_del(Ecore_Con_Server *svr)
@@ -397,7 +392,6 @@ ecore_con_server_del(Ecore_Con_Server *svr)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void *
 ecore_con_server_data_get(Ecore_Con_Server *svr)
@@ -415,7 +409,6 @@ ecore_con_server_data_get(Ecore_Con_Server *svr)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_con_server_connected_get(Ecore_Con_Server *svr)
@@ -434,7 +427,6 @@ ecore_con_server_connected_get(Ecore_Con_Server *svr)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_con_server_send(Ecore_Con_Server *svr, void *data, int size)
@@ -474,7 +466,6 @@ ecore_con_server_send(Ecore_Con_Server *svr, void *data, int size)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_con_client_send(Ecore_Con_Client *cl, void *data, int size)
@@ -514,7 +505,6 @@ ecore_con_client_send(Ecore_Con_Client *cl, void *data, int size)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_Con_Server *
 ecore_con_client_server_get(Ecore_Con_Client *cl)
@@ -532,7 +522,6 @@ ecore_con_client_server_get(Ecore_Con_Client *cl)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void *
 ecore_con_client_del(Ecore_Con_Client *cl)
@@ -554,7 +543,6 @@ ecore_con_client_del(Ecore_Con_Client *cl)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_con_client_data_set(Ecore_Con_Client *cl, const void *data)
@@ -572,7 +560,6 @@ ecore_con_client_data_set(Ecore_Con_Client *cl, const void *data)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void *
 ecore_con_client_data_get(Ecore_Con_Client *cl)

@@ -12,7 +12,6 @@
  * @return The new window handle
  * 
  * Create a new window
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_X_Window
 ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h)
@@ -70,7 +69,6 @@ ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h)
  * @return The new window handle
  * 
  * Create a new window
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_X_Window
 ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h)
@@ -128,7 +126,6 @@ ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h)
  * @return The new window handle
  * 
  * Create a new window
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_X_Window
 ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h)
@@ -173,7 +170,6 @@ ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h)
  * @param win The window to set defaults
  *
  * Set defaults for a window
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_defaults_set(Ecore_X_Window win)
@@ -216,7 +212,6 @@ ecore_x_window_defaults_set(Ecore_X_Window win)
  * @param win The window to delete
  * 
  * Delete a window
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_del(Ecore_X_Window win)
@@ -229,7 +224,6 @@ ecore_x_window_del(Ecore_X_Window win)
  * @param win The window to show
  * 
  * Show a window
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_show(Ecore_X_Window win)
@@ -242,7 +236,6 @@ ecore_x_window_show(Ecore_X_Window win)
  * @param win The window to hide
  * 
  * Hide a window
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_hide(Ecore_X_Window win)
@@ -257,7 +250,6 @@ ecore_x_window_hide(Ecore_X_Window win)
  * @param y Y
  * 
  * Move a window to @p x, @p y
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_move(Ecore_X_Window win, int x, int y)
@@ -272,7 +264,6 @@ ecore_x_window_move(Ecore_X_Window win, int x, int y)
  * @param h Height
  * 
  * Resize a window to @p w x @p h
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_resize(Ecore_X_Window win, int w, int h)
@@ -291,7 +282,6 @@ ecore_x_window_resize(Ecore_X_Window win, int w, int h)
  * @param h Height
  * 
  * Move a window to @p x, @p y and resize it to @p w x @p h
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_move_resize(Ecore_X_Window win, int x, int y, int w, int h)
@@ -306,7 +296,6 @@ ecore_x_window_move_resize(Ecore_X_Window win, int x, int y, int w, int h)
  * @param win The window to focus
  * 
  * Set the focus to the window @p win
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_focus(Ecore_X_Window win)
@@ -321,7 +310,6 @@ ecore_x_window_focus(Ecore_X_Window win)
  * @param t When
  * 
  * Set the focus to the window @p win at time @p t
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_focus_at_time(Ecore_X_Window win, Ecore_X_Time t)
@@ -335,7 +323,6 @@ ecore_x_window_focus_at_time(Ecore_X_Window win, Ecore_X_Time t)
  * @param win The window to raise
  * 
  * Raise window @p win
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_raise(Ecore_X_Window win)
@@ -348,7 +335,6 @@ ecore_x_window_raise(Ecore_X_Window win)
  * @param win The window to lower
  * 
  * Lower window @p win
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_lower(Ecore_X_Window win)
@@ -364,7 +350,6 @@ ecore_x_window_lower(Ecore_X_Window win)
  * @param y Y
  * 
  * Reparent @p win to the parent @p new_parent at @p x, @p y
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_reparent(Ecore_X_Window win, Ecore_X_Window new_parent, int x, int y)
@@ -377,7 +362,6 @@ ecore_x_window_reparent(Ecore_X_Window win, Ecore_X_Window new_parent, int x, in
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_size_get(Ecore_X_Window win, int *w, int *h)
@@ -403,7 +387,6 @@ ecore_x_window_size_get(Ecore_X_Window win, int *w, int *h)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_cursor_show(Ecore_X_Window win, int show)

@@ -210,7 +210,6 @@ int ECORE_X_LOCK_CAPS = 0;
  * @return greater than 1 on success, 0 on failure
  * 
  * Set up an X display connection and event handlers for event processing
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_x_init(const char *name)
@@ -471,7 +470,6 @@ ecore_x_init(const char *name)
  * @return The number of times ecore X has left to be shut down
  * 
  * This closes the X display connection and removes the handlers for it.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_x_shutdown(void)
@@ -497,7 +495,6 @@ ecore_x_shutdown(void)
  * @return The X Display handle
  * 
  * This returns the X Display handle used for the X connection.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_X_Display *
 ecore_x_display_get(void)
@@ -510,7 +507,6 @@ ecore_x_display_get(void)
  * @return The X Display fd
  * 
  * This returns the X Display file descriptor.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_x_fd_get(void)
@@ -525,7 +521,6 @@ ecore_x_fd_get(void)
  * This sets the time between clicks before the double_click flag is set in a 
  * button down event. If 3 clicks occur within double this time then the 
  * triple_click flag is also set.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_double_click_time_set(double t)
@@ -539,7 +534,6 @@ ecore_x_double_click_time_set(double t)
  * @return The timeout for double clicks in seconds
  * 
  * This returns the tiemout that can be set by ecore_x_double_click_time_set()
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 double
 ecore_x_double_click_time_get(void)
@@ -551,7 +545,6 @@ ecore_x_double_click_time_get(void)
  * Flush the command buffer.
  * 
  * This flushes the x command buffer
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_flush(void)
@@ -563,7 +556,6 @@ ecore_x_flush(void)
  * Sync with the server.
  * 
  * This flushes the command buffer and waits for a round trip from the server
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_sync(void)
@@ -579,7 +571,6 @@ ecore_x_sync(void)
  * every child window under it. To kill all clients connected to an X server,
  * use the ecore_x_window_root_list() function to obtain an array of root
  * windows, and then pass each window to this function.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_killall(Ecore_X_Window root)

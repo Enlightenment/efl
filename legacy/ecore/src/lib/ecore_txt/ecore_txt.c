@@ -8,6 +8,11 @@
 #include <unistd.h>
 #include <string.h>
 
+/**
+ * To be documented.
+ * 
+ * FIXME: Finish this.
+ */
 char *
 ecore_txt_convert(char *enc_from, char *enc_to, char *text)
 {

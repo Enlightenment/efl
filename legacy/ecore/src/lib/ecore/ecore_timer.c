@@ -64,7 +64,6 @@ static Ecore_Timer *timers = NULL;
  *   ecore_shutdown();
  * }
  * @endcode
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_Timer *
 ecore_timer_add(double in, int (*func) (void *data), const void *data)
@@ -92,7 +91,6 @@ ecore_timer_add(double in, int (*func) (void *data), const void *data)
  * was being passed to the callback on success, or NULL on failure. After this
  * call returns the specified timer object @p timer is invalid and should not
  * be used again. It will not get called again after deletion.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void *
 ecore_timer_del(Ecore_Timer *timer)

@@ -21,7 +21,6 @@ static Ecore_Exe *exes = NULL;
  * event is recieved. After all handlers for this child process terminated
  * event have been called, this process handle will be freed and cleaned up
  * by Ecore, and so any references to it will become invalid.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_Exe *
 ecore_exe_run(const char *exe_cmd, const void *data)
@@ -60,7 +59,6 @@ ecore_exe_run(const char *exe_cmd, const void *data)
  * that this handle was a result of) and returns the data pointer set on
  * executable start. This does mean there is no handle for the spawned
  * process anymore.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void *
 ecore_exe_free(Ecore_Exe *exe)
@@ -80,7 +78,6 @@ ecore_exe_free(Ecore_Exe *exe)
  * @return A system process ID of the process handle
  * 
  * This function returns the system process ID of a spawned off child process.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 pid_t
 ecore_exe_pid_get(Ecore_Exe *exe)
@@ -101,7 +98,6 @@ ecore_exe_pid_get(Ecore_Exe *exe)
  * 
  * This function returns the data pointer attached to the spawned off process
  * whose handle is @p exe.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void *
 ecore_exe_data_get(Ecore_Exe *exe)
@@ -120,7 +116,6 @@ ecore_exe_data_get(Ecore_Exe *exe)
  * @param exe The process handle to control
  * 
  * This function pauses a process that was spawned.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_exe_pause(Ecore_Exe *exe)
@@ -140,7 +135,6 @@ ecore_exe_pause(Ecore_Exe *exe)
  * 
  * This Continues a process. This is only useful if the process has already
  * been paused by something like ecore_exe_pause().
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_exe_continue(Ecore_Exe *exe)
@@ -159,7 +153,6 @@ ecore_exe_continue(Ecore_Exe *exe)
  * @param exe The process handle to control
  * 
  * This function asks a process to terminate.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_exe_terminate(Ecore_Exe *exe)
@@ -180,7 +173,6 @@ ecore_exe_terminate(Ecore_Exe *exe)
  * This function ills off a process, and that process has no choice and will
  * exit as a result of this function, without having a chance to clean up,
  * save data, or safely shut down.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_exe_kill(Ecore_Exe *exe)
@@ -202,7 +194,6 @@ ecore_exe_kill(Ecore_Exe *exe)
  * This function sends a user signal (SIGUSR) to a process. @p num determines
  * what numbered user signal to send. This may be either 1 or 2. Other values
  * are illegal and will be ignored, with this function doing nothing.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_exe_signal(Ecore_Exe *exe, int num)
@@ -224,7 +215,6 @@ ecore_exe_signal(Ecore_Exe *exe, int num)
  * @param exe The process handle to control
  * 
  * This function sends a HUP signal to the specified process.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_exe_hup(Ecore_Exe *exe)

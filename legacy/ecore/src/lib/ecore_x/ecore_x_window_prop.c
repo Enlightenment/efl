@@ -10,7 +10,6 @@ static Ecore_X_Atom _ecore_x_window_prop_state_atom_get(Ecore_X_Window_State s);
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom property, Ecore_X_Atom type, int size, void *data, int number)
@@ -39,7 +38,6 @@ ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom property, Ecor
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecore_X_Atom type, int size, unsigned char **data, int *num)
@@ -104,7 +102,6 @@ ecore_x_window_prop_property_del(Ecore_X_Window win, Ecore_X_Atom property)
  * @param data The data
  *
  * Send a property notify to a window.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_property_notify(Ecore_X_Window win, const char *type, long *data)
@@ -137,7 +134,6 @@ ecore_x_window_prop_property_notify(Ecore_X_Window win, const char *type, long *
  * @param str The string
  * 
  * Set a window string property
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom type, char *str)
@@ -158,7 +154,6 @@ ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom type, char *str)
  * @param type The property
  * 
  * Return window string property of a window. String must be free'd when done.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 char *
 ecore_x_window_prop_string_get(Ecore_X_Window win, Ecore_X_Atom type)
@@ -197,7 +192,6 @@ ecore_x_window_prop_string_get(Ecore_X_Window win, Ecore_X_Atom type)
  * @param t The title string
  * 
  * Set a window title
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_title_set(Ecore_X_Window win, const char *t)
@@ -221,7 +215,6 @@ ecore_x_window_prop_title_set(Ecore_X_Window win, const char *t)
  * @return The windows title string
  * 
  * Return the title of a window. String must be free'd when done with.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 char *
 ecore_x_window_prop_title_get(Ecore_X_Window win)
@@ -239,7 +232,6 @@ ecore_x_window_prop_title_get(Ecore_X_Window win)
  * @param t The command string
  * 
  * Set a window command
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_command_set(Ecore_X_Window win, int argc, char **argv)
@@ -253,7 +245,6 @@ ecore_x_window_prop_command_set(Ecore_X_Window win, int argc, char **argv)
  * @return The windows command string
  * 
  * Return the command of a window. String must be free'd when done with.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_command_get(Ecore_X_Window win, int *argc, char ***argv)
@@ -269,7 +260,6 @@ ecore_x_window_prop_command_get(Ecore_X_Window win, int *argc, char ***argv)
  * @param t The visible title string
  * 
  * Set a window visible title
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_visible_title_set(Ecore_X_Window win, const char *t)
@@ -284,7 +274,6 @@ ecore_x_window_prop_visible_title_set(Ecore_X_Window win, const char *t)
  * @return The windows visible title string
  * 
  * Return the visible title of a window. String must be free'd when done with.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 char *
 ecore_x_window_prop_visible_title_get(Ecore_X_Window win)
@@ -301,7 +290,6 @@ ecore_x_window_prop_visible_title_get(Ecore_X_Window win)
  * @param t The icon name string
  * 
  * Set a window icon name
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_icon_name_set(Ecore_X_Window win, const char *t)
@@ -317,7 +305,6 @@ ecore_x_window_prop_icon_name_set(Ecore_X_Window win, const char *t)
  * @return The windows icon name string
  * 
  * Return the icon name of a window. String must be free'd when done with.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 char *
 ecore_x_window_prop_icon_name_get(Ecore_X_Window win)
@@ -335,7 +322,6 @@ ecore_x_window_prop_icon_name_get(Ecore_X_Window win)
  * @param t The visible icon name string
  * 
  * Set a window visible icon name
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_visible_icon_name_set(Ecore_X_Window win, const char *t)
@@ -350,7 +336,6 @@ ecore_x_window_prop_visible_icon_name_set(Ecore_X_Window win, const char *t)
  * @return The windows visible icon name string
  * 
  * Return the visible icon name of a window. String must be free'd when done with.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 char *
 ecore_x_window_prop_visible_icon_name_get(Ecore_X_Window win)
@@ -367,7 +352,6 @@ ecore_x_window_prop_visible_icon_name_get(Ecore_X_Window win)
  * @return The windows client machine string
  * 
  * Return the client machine of a window. String must be free'd when done with.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 char *
 ecore_x_window_prop_client_machine_get(Ecore_X_Window win)
@@ -384,7 +368,6 @@ ecore_x_window_prop_client_machine_get(Ecore_X_Window win)
  * @return The windows process id
  * 
  * Return the process id of a window.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 pid_t
 ecore_x_window_prop_pid_get(Ecore_X_Window win)
@@ -410,7 +393,6 @@ ecore_x_window_prop_pid_get(Ecore_X_Window win)
  * @param c The class string
  * 
  * Set a window name * class
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_name_class_set(Ecore_X_Window win, const char *n, const char *c)
@@ -433,7 +415,6 @@ ecore_x_window_prop_name_class_set(Ecore_X_Window win, const char *n, const char
  * 
  * Get a windows name and class property. strings must be free'd when done 
  * with.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_name_class_get(Ecore_X_Window win, char **n, char **c)
@@ -463,7 +444,6 @@ ecore_x_window_prop_name_class_get(Ecore_X_Window win, char **n, char **c)
  * @param protocol The protocol to enable/disable
  * @param on On/Off
  * 
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_protocol_set(Ecore_X_Window win,
@@ -532,7 +512,6 @@ ecore_x_window_prop_protocol_set(Ecore_X_Window win,
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_min_size_set(Ecore_X_Window win, int w, int h)
@@ -552,7 +531,6 @@ ecore_x_window_prop_min_size_set(Ecore_X_Window win, int w, int h)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_max_size_set(Ecore_X_Window win, int w, int h)
@@ -572,7 +550,6 @@ ecore_x_window_prop_max_size_set(Ecore_X_Window win, int w, int h)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_base_size_set(Ecore_X_Window win, int w, int h)
@@ -592,7 +569,6 @@ ecore_x_window_prop_base_size_set(Ecore_X_Window win, int w, int h)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_step_size_set(Ecore_X_Window win, int x, int y)
@@ -612,7 +588,6 @@ ecore_x_window_prop_step_size_set(Ecore_X_Window win, int x, int y)
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_xy_set(Ecore_X_Window win, int x, int y)
@@ -696,7 +671,6 @@ ecore_x_window_prop_input_mode_set(Ecore_X_Window win, Ecore_X_Window_Input_Mode
  *
  * @return 1 if the input mode could be set, else 0
  *
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_x_window_prop_initial_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state)
@@ -735,7 +709,6 @@ ecore_x_window_prop_initial_state_set(Ecore_X_Window win, Ecore_X_Window_State_H
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_borderless_set(Ecore_X_Window win, int borderless)
@@ -768,7 +741,6 @@ ecore_x_window_prop_borderless_set(Ecore_X_Window win, int borderless)
  * ECORE_X_WINDOW_LAYER_BELOW  - for windows to be stacked below
  * ECORE_X_WINDOW_LAYER_ABOVE  - for windows to be stacked on top
  * ECORE_X_WINDOW_LAYER_NORMAL - for windows to be put in the default layer
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_x_window_prop_layer_set(Ecore_X_Window win, int layer)
@@ -798,7 +770,6 @@ ecore_x_window_prop_layer_set(Ecore_X_Window win, int layer)
  * @param win The window whose withdrawn state is set.
  * @param withdrawn The window's new withdrawn state.
  *
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_withdrawn_set(Ecore_X_Window win, int withdrawn)
@@ -832,7 +803,6 @@ ecore_x_window_prop_withdrawn_set(Ecore_X_Window win, int withdrawn)
  * @param desktop The desktop number.
  *
  * Request the window manager to change this windows desktop.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_desktop_request(Ecore_X_Window win, long desktop)
@@ -886,7 +856,6 @@ ecore_x_window_prop_state_request(Ecore_X_Window win, Ecore_X_Window_State state
  * @param desktop The desktop number.
  *
  * Used by the window manager, or client prior mapping, to set window desktop.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_desktop_set(Ecore_X_Window win, long desktop)
@@ -900,7 +869,6 @@ ecore_x_window_prop_desktop_set(Ecore_X_Window win, long desktop)
  * @param win The Window
  *
  * Get the current desktop of a window
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 long
 ecore_x_window_prop_desktop_get(Ecore_X_Window win)
@@ -953,7 +921,6 @@ _ecore_x_window_prop_type_atom_get(Ecore_X_Window_Type type)
  * @param type The Type
  *
  * Set a windows type.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_window_type_set(Ecore_X_Window win, Ecore_X_Window_Type type)
@@ -974,7 +941,6 @@ ecore_x_window_prop_window_type_set(Ecore_X_Window win, Ecore_X_Window_Type type
  * @param type The Type
  *
  * Change a windows type.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_window_type_set(Ecore_X_Window win, Ecore_X_Atom type)
@@ -1037,7 +1003,6 @@ _ecore_x_window_prop_state_atom_get(Ecore_X_Window_State s)
  * @param s The state to be set for this window
  *
  * Adds the state to the window's properties if not already included.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_state_set(Ecore_X_Window win, Ecore_X_Window_State s)
@@ -1086,7 +1051,6 @@ ecore_x_window_prop_state_set(Ecore_X_Window win, Ecore_X_Window_State s)
  *
  * This function will look up the window's properties to determine
  * if a particular state is set for that window.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int
 ecore_x_window_prop_state_isset(Ecore_X_Window win, Ecore_X_Window_State s)
@@ -1125,7 +1089,6 @@ ecore_x_window_prop_state_isset(Ecore_X_Window win, Ecore_X_Window_State s)
  *
  * Checks if the specified state is set for the window, and if so, deletes
  * that state from the window's properties.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_state_unset(Ecore_X_Window win, Ecore_X_Window_State s)
@@ -1170,7 +1133,6 @@ ecore_x_window_prop_window_type_utility_set(Ecore_X_Window win)
  * @param win The Window
  *
  * Set a window as a splash type.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_window_type_splash_set(Ecore_X_Window win)
@@ -1183,7 +1145,6 @@ ecore_x_window_prop_window_type_splash_set(Ecore_X_Window win)
  * @param win The Window
  *
  * Set a window as a dialog type.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_window_type_dialog_set(Ecore_X_Window win)
@@ -1196,7 +1157,6 @@ ecore_x_window_prop_window_type_dialog_set(Ecore_X_Window win)
  * @param win The Window
  *
  * Set a window as a normal type.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
 ecore_x_window_prop_window_type_normal_set(Ecore_X_Window win)
@@ -1215,7 +1175,6 @@ ecore_x_window_prop_window_type_normal_set(Ecore_X_Window win)
  * a compositing manager is running. This hint is still pending approval
  * as part of the EWMH specification. The value supplied should be an
  * integer between 0 and 255, with 255 representing full opacity.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void ecore_x_window_prop_window_opacity_set(Ecore_X_Window win, int opacity)
 {
@@ -1238,7 +1197,6 @@ void ecore_x_window_prop_window_opacity_set(Ecore_X_Window win, int opacity)
  * @param win The window whose opacity is being requested
  * @return An int between 0 and 255 representing the window's opacity value,
  * or -1 if the property is not found.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int ecore_x_window_prop_window_opacity_get(Ecore_X_Window win)
 {

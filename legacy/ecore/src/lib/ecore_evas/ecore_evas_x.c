@@ -1093,7 +1093,6 @@ static const Ecore_Evas_Engine_Func _ecore_x_engine_func =
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_Evas *
 ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent, 
@@ -1264,7 +1263,6 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
  * To be documented.
  *
  * FIXME: To be fixed.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 Ecore_X_Window
 ecore_evas_software_x11_window_get(Ecore_Evas *ee)
