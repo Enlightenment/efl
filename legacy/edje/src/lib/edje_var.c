@@ -124,17 +124,13 @@ _edje_var_anim_cb(void *data)
 	     _edje_animator = NULL;
 	  }
      }
-   if (_edje_animator) return 1;
-   return 0;
+   return !!_edje_animator;
 }
 
 Edje_Var *
 _edje_var_new(void)
 {
-   Edje_Var *var;
-   
-   var = calloc(1, sizeof(Edje_Var));
-   return var;
+   return calloc(1, sizeof(Edje_Var));
 }
 
 void
