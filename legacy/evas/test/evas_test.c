@@ -314,6 +314,7 @@ main(int argc, char **argv)
 	      t2 = get_time() - t1;
 	      t1 = get_time();
 	     sprintf(buf, "FPS: %3.1f", 25 / t2);
+	     printf("%s\n", buf);
 	     evas_set_text(e, o_fps, buf);
 	     evas_get_geometry(e, o_fps, NULL, NULL, &gw, &gh);
 	     evas_move(e, o_fps, win_w - gw, win_h - gh);
