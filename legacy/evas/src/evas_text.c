@@ -298,6 +298,145 @@ evas_text_get_ascent_descent(Evas e, Evas_Object o,
 }
 
 void
+evas_text_get_max_ascent_descent(Evas e, Evas_Object o, 
+				 double *ascent, double *descent)
+{
+   int a, d;
+   Evas_Object_Text oo;
+   
+   oo = o;
+   a = 0; d = 0;
+   switch (e->current.render_method)
+     {
+     case RENDER_METHOD_ALPHA_SOFTWARE:
+	  {
+	     Evas_Imlib_Font *fn;
+	     
+	     fn = __evas_imlib_text_font_new(e->current.display, oo->current.font, oo->current.size);
+	     if (fn)
+	       {
+		  a = __evas_imlib_text_font_get_max_ascent(fn);
+		  d = __evas_imlib_text_font_get_max_descent(fn);
+		  __evas_imlib_text_font_free(fn);
+	       }
+	  }
+	break;
+     case RENDER_METHOD_BASIC_HARDWARE:
+	break;
+     case RENDER_METHOD_3D_HARDWARE:
+	  {
+	     Evas_GL_Font *fn;
+	     
+	     fn = __evas_gl_text_font_new(e->current.display, oo->current.font, oo->current.size);
+	     if (fn)
+	       {
+		  a = __evas_gl_text_font_get_max_ascent(fn);
+		  d = __evas_gl_text_font_get_max_descent(fn);
+		  __evas_gl_text_font_free(fn);
+	       }
+	  }
+	break;
+     case RENDER_METHOD_ALPHA_HARDWARE:
+	break;
+     default:
+	break;
+     }
+   if (ascent) *ascent = a;
+   if (descent) *descent = d;   
+}
+
+void
+evas_text_get_advance(Evas e, Evas_Object o, 
+		      double *h_advance, double *v_advance)
+{
+   int a, d;
+   Evas_Object_Text oo;
+   
+   oo = o;
+   a = 0; d = 0;
+   switch (e->current.render_method)
+     {
+     case RENDER_METHOD_ALPHA_SOFTWARE:
+	  {
+	     Evas_Imlib_Font *fn;
+	     
+	     fn = __evas_imlib_text_font_new(e->current.display, oo->current.font, oo->current.size);
+	     if (fn)
+	       {
+		  __evas_imlib_text_font_get_advances(fn, oo->current.text, &a, &d);
+		  __evas_imlib_text_font_free(fn);
+	       }
+	  }
+	break;
+     case RENDER_METHOD_BASIC_HARDWARE:
+	break;
+     case RENDER_METHOD_3D_HARDWARE:
+	  {
+	     Evas_GL_Font *fn;
+	     
+	     fn = __evas_gl_text_font_new(e->current.display, oo->current.font, oo->current.size);
+	     if (fn)
+	       {
+		  __evas_gl_text_font_get_advances(fn, oo->current.text, &a, &d);
+		  __evas_gl_text_font_free(fn);
+	       }
+	  }
+	break;
+     case RENDER_METHOD_ALPHA_HARDWARE:
+	break;
+     default:
+	break;
+     }
+   if (h_advance) *h_advance = a;
+   if (v_advance) *v_advance = d;   
+}
+
+double
+evas_text_get_inset(Evas e, Evas_Object o)
+{
+   Evas_Object_Text oo;
+   int inset;
+   
+   oo = o;
+   switch (e->current.render_method)
+     {
+     case RENDER_METHOD_ALPHA_SOFTWARE:
+	  {
+	     Evas_Imlib_Font *fn;
+	     
+	     fn = __evas_imlib_text_font_new(e->current.display, oo->current.font, oo->current.size);
+	     if (fn)
+	       {
+		  inset = __evas_imlib_text_font_get_first_inset(fn, oo->current.text);
+		  __evas_imlib_text_font_free(fn);
+		  return (double)inset;
+	       }
+	  }
+	break;
+     case RENDER_METHOD_BASIC_HARDWARE:
+	break;
+     case RENDER_METHOD_3D_HARDWARE:
+	  {
+	     Evas_GL_Font *fn;
+	     
+	     fn = __evas_gl_text_font_new(e->current.display, oo->current.font, oo->current.size);
+	     if (fn)
+	       {
+		  inset = __evas_gl_text_font_get_first_inset(fn, oo->current.text);
+		  __evas_gl_text_font_free(fn);
+		  return (double)inset;
+	       }
+	  }
+	break;
+     case RENDER_METHOD_ALPHA_HARDWARE:
+	break;
+     default:
+	break;
+     }
+   return 0;
+}
+
+void
 evas_set_text(Evas e, Evas_Object o, char *text)
 {
    switch (o->type)
