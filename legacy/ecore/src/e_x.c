@@ -2900,16 +2900,40 @@ e_keyboard_ungrab(void)
 #endif
 
 Window
+e_selection_set(char *string)
+{
+   Window target = 0;
+   static Atom dest = 0;
+   Atom selection;
+   
+   selection = X_CLIPBOARD_SELECTION;
+   E_ATOM(dest, "TEXT_SELECTION");
+   target = e_window_new(0, 0, 0, 77, 7);
+   e_window_add_events(target, XEV_CONFIGURE | XEV_PROPERTY);
+   XSetSelectionOwner(disp, selection, target, CurrentTime);
+   if (XGetSelectionOwner(disp, XA_PRIMARY) != target) 
+     {
+	e_window_destroy(target);
+	return 0;
+     }      
+   XChangeProperty(disp, target, dest, 
+		   XA_STRING, 8, PropModeReplace, 
+		   string, strlen(string));
+   printf("window %x\n", target);
+   return target;
+}
+
+Window
 e_selection_request(void)
 {
-   Atom selection, dest = 0;
-   static Window target = 0;
+   static Atom dest = 0;
+   Atom selection;
+   Window target = 0;
    
    selection = X_CLIPBOARD_SELECTION;
    E_ATOM(dest, "TEXT_SELECTION");
    target = e_window_new(0, 0, 0, 7, 77);
-   e_window_add_events(target,
-		       XEV_CONFIGURE | XEV_PROPERTY);
+   e_window_add_events(target, XEV_CONFIGURE | XEV_PROPERTY);
    XConvertSelection(disp, XA_PRIMARY, 
 		     XA_STRING, dest,
 		     target, 

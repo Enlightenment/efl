@@ -892,10 +892,12 @@ e_ev_x_handle_selection_request(XEvent * xevent)
 {
    static Atom         atom_xdndselection = 0;
    static Atom         atom_text_plain = 0;
+   static Atom         atom_text_selection = 0;
    Ev_Dnd_Data_Request *e;
 
    E_ATOM(atom_xdndselection, "XdndSelection");
    E_ATOM(atom_text_plain, "text/plain");
+   E_ATOM(atom_text_selection, "TEXT_SELECTION");
    if (xevent->xselectionrequest.selection == atom_xdndselection)
      {
 	e = NEW(Ev_Dnd_Data_Request, 1);
@@ -908,6 +910,67 @@ e_ev_x_handle_selection_request(XEvent * xevent)
 	   e->plain_text = 0;
 	e->destination_atom = xevent->xselectionrequest.property;
 	e_add_event(EV_DND_DATA_REQUEST, e, e_ev_generic_free);
+     }
+   else
+     {
+	XEvent ev;
+	Atom target_list[2];
+	static Atom xa_targets = None;
+	
+	if (xa_targets == None)
+	  xa_targets = XInternAtom(xevent->xselectionrequest.display, 
+				   "TARGETS", False);
+	ev.xselection.type = SelectionNotify;
+	ev.xselection.property = None;
+	ev.xselection.display = xevent->xselectionrequest.display;
+	ev.xselection.requestor = xevent->xselectionrequest.requestor;
+	ev.xselection.selection = xevent->xselectionrequest.selection;
+	ev.xselection.target = xevent->xselectionrequest.target;
+	ev.xselection.time = xevent->xselectionrequest.time;
+	if (xevent->xselectionrequest.target == xa_targets) 
+	  {
+	     target_list[0] = (Atom) xa_targets;
+	     target_list[1] = (Atom) XA_STRING;
+	     XChangeProperty(xevent->xselectionrequest.display, 
+			     xevent->xselectionrequest.requestor, 
+			     xevent->xselectionrequest.property, 
+			     xevent->xselectionrequest.target,
+			     (8 * sizeof(target_list[0])), 
+			     PropModeReplace,
+			     (unsigned char *) target_list,
+			     (sizeof(target_list) / sizeof(target_list[0])));
+	     ev.xselection.property = xevent->xselectionrequest.property;
+	  } 
+	else if (xevent->xselectionrequest.target == XA_STRING) 
+	  {
+	     void *data;
+	     int size;
+	     
+	     data = e_window_property_get(xevent->xselectionrequest.owner,
+					  atom_text_selection, XA_STRING,
+					  &size);
+	     if (data)
+	       {
+		  XChangeProperty(xevent->xselectionrequest.display, 
+				  xevent->xselectionrequest.requestor, 
+				  xevent->xselectionrequest.property, 
+				  xevent->xselectionrequest.target, 
+				  8, 
+				  PropModeReplace,
+				  data, size);
+		  FREE(data);
+	       }
+	     ev.xselection.property = xevent->xselectionrequest.property;
+	  }
+	XSendEvent(xevent->xselectionrequest.display, 
+		   xevent->xselectionrequest.requestor, False, 0, &ev);
+	printf("%i %i %i : %i, %i (%x %x %x)\n", 
+	       xevent->xselectionrequest.selection, /* XA_PRIMARY */
+	       xevent->xselectionrequest.target, /* XA_STRING */
+	       xevent->xselectionrequest.property, /* the destination atiom */
+	       atom_text_selection, XA_STRING, 
+	       xevent->xselectionrequest.owner, /* the window we put it on */
+	       xevent->xselectionrequest.requestor /* where to put the prop */);
      }
 }
 

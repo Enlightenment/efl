@@ -275,6 +275,7 @@ void                e_keyboard_grab(Window win);
 void                e_keyboard_ungrab(void);
 
 Window              e_selection_request(void);
+Window              e_selection_set(char *string);
 
 typedef struct _eev Eevent;
 typedef struct _ev_fd_handler Ev_Fd_Handler;
