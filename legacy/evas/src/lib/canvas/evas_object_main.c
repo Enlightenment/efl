@@ -396,10 +396,19 @@ evas_object_was_opaque(Evas_Object *obj)
 /* routines apps will call */
 
 /**
- * To be documented.
+ * @defgroup Evas_Object Evas Object Functions
  *
- * FIXME: To be fixed.
- * 
+ * Functions that manipulate generic evas objects.
+ */
+
+/**
+ * Deletes the given evas object and frees its memory.
+ *
+ * The object's 'free' callback is called when this function is called.
+ * If the object currently has the focus, its 'focus out' callback is
+ * also called.
+ *
+ * @param obj The given evas object.
  */
 void
 evas_object_del(Evas_Object *obj)
@@ -431,10 +440,11 @@ evas_object_del(Evas_Object *obj)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Moves the given evas object to the given location.
+ * @param   obj The given evas object.
+ * @param   x   X position to move the object to, in canvas units.
+ * @param   y   Y position to move the object to, in canvas units.
+ * @ingroup Evas_Object
  */
 void
 evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
@@ -483,10 +493,11 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Changes the size of the given evas object.
+ * @param   obj The given evas object.
+ * @param   w   The new width of the evas object.
+ * @param   h   The new height of the evas object.
+ * @ingroup Evas_Object
  */
 void
 evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)

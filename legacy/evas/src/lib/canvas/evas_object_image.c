@@ -79,12 +79,17 @@ static Evas_Object_Func object_func =
      NULL
 };
 
+/**
+ * @defgroup Evas_Object_Image Image Object Functions
+ *
+ * Functions used to create and manipulate image objects.
+ */
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Creates a new image object on the given evas.
+ * @param   e The given evas.
+ * @return  The created image object.
+ * @ingroup Evas_Object_Image
  */
 Evas_Object *
 evas_object_image_add(Evas *e)
@@ -101,10 +106,11 @@ evas_object_image_add(Evas *e)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Sets the image displayed by the given image object.
+ * @param   obj  The given image object.
+ * @param   file Name of the file that the image exists in.
+ * @param   key  Can be NULL.
+ * @ingroup Evas_Object_Image
  */
 void
 evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
@@ -164,10 +170,13 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Retrieves the filename and key of the given image object.
+ * @param   obj  The given image object.
+ * @param   file Pointer to a character pointer to store the pointer to the file
+ *               name in.
+ * @param   key  Pointer to a character pointer to store the pointer to the key
+ *               string in.
+ * @ingroup Evas_Object_Image
  */
 void
 evas_object_image_file_get(Evas_Object *obj, char **file, char **key)
@@ -190,10 +199,23 @@ evas_object_image_file_get(Evas_Object *obj, char **file, char **key)
 }
 
 /**
- * To be documented.
+ * Sets how much of each border of the given evas image object is not
+ * to be scaled.
  *
- * FIXME: To be fixed.
- * 
+ * When rendering, the image may be scaled to fit the size of the
+ * image object.  This function sets what area around the border of
+ * the image is not to be scaled.  This sort of function is useful for
+ * widget theming, where, for example, buttons may be of varying
+ * sizes, but the border size must remain constant.
+ *
+ * The units used for @p l, @p r, @p t and @p b are output units.
+ *
+ * @param   obj The given evas image object.
+ * @param   l   Distance of the left border that is not to be stretched.
+ * @param   r   Distance of the right border that is not to be stretched.
+ * @param   t   Distance of the top border that is not to be stretched.
+ * @param   b   Distance of the bottom border that is not to be stretched.
+ * @ingroup Evas_Object_Image
  */
 void
 evas_object_image_border_set(Evas_Object *obj, int l, int r, int t, int b)
@@ -224,10 +246,20 @@ evas_object_image_border_set(Evas_Object *obj, int l, int r, int t, int b)
 }
 
 /**
- * To be documented.
+ * Retrieves how much of each border of the given evas image is not to
+ * be scaled.
  *
- * FIXME: To be fixed.
- * 
+ * See @ref evas_object_image_border_set for more information.
+ *
+ * If any of @p l, @p r, @p t or @p b are @c NULL, then the @c NULL
+ * parameter is ignored.
+ *
+ * @param   obj The given evas image object.
+ * @param   l   Pointer to an integer to store the left border width in.
+ * @param   r   Pointer to an integer to store the right border width in.
+ * @param   t   Pointer to an integer to store the top border width in.
+ * @param   b   Pointer to an integer to store the bottom border width in.
+ * @ingroup Evas_Object_Image
  */
 void
 evas_object_image_border_get(Evas_Object *obj, int *l, int *r, int *t, int *b)
@@ -256,10 +288,22 @@ evas_object_image_border_get(Evas_Object *obj, int *l, int *r, int *t, int *b)
 }
 
 /**
- * To be documented.
+ * Sets the rectangle on the image object that the image will be drawn
+ * to.
  *
- * FIXME: To be fixed.
- * 
+ * Note that the image will be tiled around this one rectangle.  To have
+ * only one copy of the image drawn, @p x and @p y must be 0 and @p w
+ * and @p h need to be the width and height of the image object
+ * respectively.
+ *
+ * The default values for the fill parameters is @p x = 0, @p y = 0,
+ * @p w = 32 and @p h = 32.
+ *
+ * @param obj The given evas image object.
+ * @param x   The X coordinate for the top left corner of the image.
+ * @param y   The Y coordinate for the top left corner of the image.
+ * @param w   The width of the image.
+ * @param h   The height of the image.
  */
 void
 evas_object_image_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
@@ -290,10 +334,16 @@ evas_object_image_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Co
 }
 
 /**
- * To be documented.
+ * Retrieves the dimensions of the rectangle on the image object that
+ * the image will be drawn to.
  *
- * FIXME: To be fixed.
+ * See @ref evas_object_image_fill_set for more details.
  * 
+ * @param obj The given evas image object.
+ * @param x   Pointer to an integer to store the X coordinate in.
+ * @param y   Pointer to an integer to store the Y coordinate in.
+ * @param w   Pointer to an integer to store the width in.
+ * @param h   Pointer to an integer to store the height in.
  */
 void
 evas_object_image_fill_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
@@ -364,10 +414,12 @@ evas_object_image_size_set(Evas_Object *obj, int w, int h)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Retrieves the size of the image displayed by the given image object.
+ * @param obj The given image object.
+ * @param w   A pointer to an integer in which to store the width.  Can be
+ *            @c NULL.
+ * @param h   A pointer to an integer in which to store the height.  Can be
+ *            @c NULL.
  */
 void
 evas_object_image_size_get(Evas_Object *obj, int *w, int *h)
@@ -390,10 +442,13 @@ evas_object_image_size_get(Evas_Object *obj, int *w, int *h)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Retrieves a number representing any error that occurred during the last
+ * load for the given image object.
+ * @param obj The given image object.
+ * @return A value giving the last error that occurred.  It should be one of
+ *         the @c EVAS_LOAD_ERROR_* values.  @c EVAS_LOAD_ERROR_NONE is
+ *         returned if there was no error.
+ * @ingroup Evas_Object_Image
  */
 int
 evas_object_image_load_error_get(Evas_Object *obj)
