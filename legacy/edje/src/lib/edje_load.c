@@ -48,7 +48,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 				     ep->dragable.confine_id);
 		  if (evas_list_find(hist, ep))
 		    {
-		       printf("EDJE FIXME: ERROR! confine_to loops. invalidating loop.\n");
+		       printf("EDJE ERROR: confine_to loops. invalidating loop.\n");
 		       ep->dragable.confine_id = -1;
 		       break;
 		    }
@@ -63,7 +63,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 				     ep->clip_to_id);
 		  if (evas_list_find(hist, ep))
 		    {
-		       printf("EDJE FIXME: ERROR! clip_to loops. invalidating loop.\n");
+		       printf("EDJE ERROR: clip_to loops. invalidating loop.\n");
 		       ep->clip_to_id = -1;
 		       break;
 		    }
@@ -87,7 +87,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	     rp->param1.description =  ep->default_desc;
 	     if (!rp->param1.description)
 	       {
-		  printf("EDJE FIXME: ERROR! no default part description!\n");
+		  printf("EDJE ERROR: no default part description!\n");
 	       }
 	     _edje_text_part_on_add(ed, rp);
 	     if (ep->type == EDJE_PART_TYPE_RECTANGLE)
@@ -98,7 +98,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	       rp->object = evas_object_text_add(ed->evas);
 	     else
 	       {
-		  printf("EDJE FIXME: ERROR! wrong part type %i!\n", ep->type);
+		  printf("EDJE ERROR: wrong part type %i!\n", ep->type);
 	       }
 	     evas_object_smart_member_add(rp->object, ed->obj);
 	     if (ep->mouse_events)
@@ -262,7 +262,6 @@ edje_file_data_get(const char *file, const char *key)
      }
    else
      ed_file->references++;
-   printf("beh\n");
    for (l = ed_file->data; l; l = l->next)
      {
 	Edje_Data *di;
@@ -270,7 +269,6 @@ edje_file_data_get(const char *file, const char *key)
 	di = l->data;
 	if (!strcmp(di->key, key))
 	  {
-	     printf("STR: %s\n", di->key);
 	     str = strdup(di->value);
 	     break;
 	  }

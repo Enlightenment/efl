@@ -324,6 +324,8 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
      }
    if ((recursions >= 64) || (recursion_limit))
      {
+	printf("EDJE ERROR: programs recursing up to recursion limit of %i. Disabled.\n",
+	       64);
 	recursion_limit = 1;
 	return;
      }
@@ -472,7 +474,7 @@ _edje_emit(Edje *ed, char *sig, char *src)
    recursions++;
    _edje_ref(ed);
    _edje_freeze(ed);
-   printf("EMIT \"%s\" \"%s\"\n", sig, src);
+   printf("EDJE EMIT: signal: \"%s\" source: \"%s\"\n", sig, src);
    ee = calloc(1, sizeof(Edje_Emission));
    if (!ee)
      {
