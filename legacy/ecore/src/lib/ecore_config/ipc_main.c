@@ -266,7 +266,7 @@ Ecore_Config_Server *ipc_init(char *pipe_name) {
     
     E(1,"ipc_init: checking \"%s\"...\n",globbuf.gl_pathv[c]);
     ret=dlmulti("IPC-plugin",globbuf.gl_pathv[c],RTLD_NOW,&nm->lib,
-                "!ipc_init !ipc_exit !ipc_poll",
+                "!ecore_config_mod_init !ecore_config_mod_exit !ecore_config_mod_poll",
                 &nm->ipc_init,&nm->ipc_exit,&nm->ipc_poll);
     if(ret==ECORE_CONFIG_ERR_NODATA)
       E(0,"ipc_init: could not load \"%s\": %s...\n",globbuf.gl_pathv[c],dlerror());

@@ -169,7 +169,7 @@ static int ipc_client_sent(void *data,int type,void *event) {
 
 
 
-int ipc_init(char *pipe_name, void **data) {
+int ecore_config_mod_init(char *pipe_name, void **data) {
   Ecore_Ipc_Server **server=(Ecore_Ipc_Server **)data;
   struct stat        st;
   char              *p;
@@ -219,7 +219,7 @@ int ipc_init(char *pipe_name, void **data) {
 
 
 
-int ipc_exit(void **data) {
+int ecore_config_mod_exit(void **data) {
   int                ret=ECORE_CONFIG_ERR_SUCC;
   Ecore_Ipc_Server **server=(Ecore_Ipc_Server **)data;
 
@@ -243,7 +243,7 @@ int ipc_exit(void **data) {
 
 
 
-int ipc_poll(void **data) {
+int ecore_config_mod_poll(void **data) {
   Ecore_Ipc_Server **server=(Ecore_Ipc_Server **)data;
 
   if(!server)
