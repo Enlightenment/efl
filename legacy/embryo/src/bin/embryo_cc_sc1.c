@@ -111,7 +111,7 @@ main(int argc, char *argv[], char *env[])
    char                argv0[_MAX_PATH];
    int                 i;
 
-   strcpy(argv0, argv[0]);
+   snprintf(argv0, _MAX_PATH, "%s", argv[0]);
    /* Linux stores the name of the program in argv[0], but not the path.
     * To adjust this, I store a string with the path in argv[0]. To do
     * so, I try to get the current path with getcwd(), and if that fails
