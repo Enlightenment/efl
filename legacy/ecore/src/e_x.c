@@ -2219,6 +2219,15 @@ e_window_gravity_reset(Window win)
 }
 
 void
+e_window_gravity_set(Window win, int gravity)
+{
+   XSetWindowAttributes att;
+
+   att.win_gravity = gravity;
+   XChangeWindowAttributes(disp, win, CWWinGravity, &att);
+}
+
+void
 e_pointer_warp_by(int dx, int dy)
 {
    XWarpPointer(disp, None, None, 0, 0, 0, 0, dx, dy);
@@ -2296,4 +2305,49 @@ e_get_virtual_area(int *area_x, int *area_y)
 	  }
 	FREE(data);
      }
+}
+
+void
+e_window_get_root_relative_location(Window win, int *x, int *y)
+{
+   int dx, dy;
+   Window parent;
+   E_XID              *xid = NULL;
+   
+   if (win == 0)
+      win = default_root;
+   if (win == default_root)
+     {
+	if (x) *x = 0;
+	if (y) *y = 0;
+	return;
+     }   
+   xid = e_validate_xid(win);
+   if (!xid)
+     {
+	if (x) *x = 0;
+	if (y) *y = 0;
+	return;
+     }
+   dx = 0;
+   dy = 0;
+   do
+     {
+	parent = xid->parent;
+	dx += xid->x;
+	dy += xid->y;
+	if (parent != default_root)
+	  {
+	     xid = e_validate_xid(parent);
+	     if (!xid)
+	       {
+		  if (x) *x = dx;
+		  if (y) *y = dy;
+		  return;
+	       }
+	  }
+     }
+   while (parent != default_root);
+   if (x) *x = dx;
+   if (y) *y = dy;
 }

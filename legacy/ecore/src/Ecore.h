@@ -219,6 +219,7 @@ void                e_dnd_set_mode_ask(void);
 void                e_dnd_own_selection(Window win);
 void                e_dnd_send_drop(Window win, Window source_win);
 void                e_window_gravity_reset(Window win);
+void                e_window_gravity_set(Window win, int gravity);
 void                e_pointer_warp_by(int dx, int dy);
 void                e_pointer_warp_to(int x, int y);
 void                e_gc_set_include_inferiors(GC gc);
@@ -229,6 +230,7 @@ void                e_window_get_virtual_area(Window win, int *area_x,
 
 					      int *area_y);
 void                e_get_virtual_area(int *area_x, int *area_y);
+void                e_window_get_root_relative_location(Window win, int *x, int *y);
 
 typedef struct _eev Eevent;
 typedef struct _ev_fd_handler Ev_Fd_Handler;
