@@ -1,5 +1,4 @@
-#include "e_util.h"
-#include "e_mem.h"
+#include "Ecore.h"
 
 double
 e_get_time(void)

@@ -1,7 +1,5 @@
-#include "e_events.h"
-#include "e_ev_signal.h"
-#include "e_mem.h"
-#include "e_util.h"
+#include "Ecore.h"
+#include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <signal.h>

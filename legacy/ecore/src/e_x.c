@@ -1,6 +1,4 @@
-#include "e_x.h"
-#include "e_mem.h"
-#include <Imlib2.h>
+#include "Ecore.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -586,12 +584,6 @@ e_display_init(char *display)
 		       XEV_CONFIGURE | XEV_CHILD_CHANGE | XEV_PROPERTY |
 		       XEV_COLORMAP | XEV_VISIBILITY);
    e_pointer_xy(0, NULL, NULL);
-   imlib_context_set_display(disp);
-   imlib_context_set_visual(default_vis);
-   imlib_context_set_colormap(default_cm);
-   imlib_context_set_drawable(default_root);
-   imlib_context_set_dither(0);
-   imlib_context_set_blend(1);
 }
 
 int

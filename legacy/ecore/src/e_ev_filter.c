@@ -1,6 +1,4 @@
-#include "e_ev_filter.h"
-#include "e_mem.h"
-#include "e_util.h"
+#include "Ecore.h"
 
 typedef struct _ev_handler Ev_Handler;
 typedef struct _ev_idle_handler Ev_Idle_Handler;

@@ -1,7 +1,4 @@
-#include "e_events.h"
-#include "e_ev_x.h"
-#include "e_mem.h"
-#include "e_util.h"
+#include "Ecore.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -152,7 +149,8 @@ e_ev_x_handle_events(int fd)
 	     size_events += 64;
 	     if (events)
 	       {
-	       REALLOC(events, XEvent, size_events)}
+		  REALLOC(events, XEvent, size_events)
+	       }
 	     else
 		events = NEW(XEvent, size_events);
 	  }
@@ -1029,7 +1027,8 @@ e_key_press_translate_into_typeable(Ev_Key_Down * e)
        (!strcmp(e->key, "KP_Divide")) ||
        (!strcmp(e->key, "KP_Multiply")) ||
        (!strcmp(e->key, "KP_Subtract")) ||
-       (!strcmp(e->key, "KP_Add")) || (!strcmp(e->key, "Enter")))
+       (!strcmp(e->key, "KP_Add")) || 
+       (!strcmp(e->key, "Enter")))
       return NULL;
    return e->compose;
 }

@@ -1,9 +1,4 @@
-#include "e_events.h"
-#include "e_ev_filter.h"
-#include "e_mem.h"
-#include "e_util.h"
-#include "e_ev_signal.h"
-#include <Edb.h>
+#include "Ecore.h"
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -226,20 +221,9 @@ e_event_loop(void)
 	/* no timers - just sit and block */
 	else
 	  {
-	     if (e_db_runtime_flush())
-	       {
-		  if ((!e_events_pending()) &&
-		      (!e_ev_signal_events_pending()))
-		     count = select(fdsize + 1, &fdset, NULL, NULL, NULL);
-	       }
-	     else
-	       {
-		  tval.tv_sec = 1;
-		  tval.tv_usec = 0;
-		  if ((!e_events_pending()) &&
-		      (!e_ev_signal_events_pending()))
-		     count = select(fdsize + 1, &fdset, NULL, NULL, &tval);
-	       }
+	     if ((!e_events_pending()) &&
+		 (!e_ev_signal_events_pending()))
+	       count = select(fdsize + 1, &fdset, NULL, NULL, NULL);
 	  }
 	for (pid_h = pid_handlers; pid_h; pid_h = pid_h->next)
 	   pid_h->func(pid_h->pid);
