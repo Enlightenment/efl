@@ -186,9 +186,10 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
 	if (evas_object_is_in_output_rect(obj, 
 					  obj->layer->evas->pointer.x, 
 					  obj->layer->evas->pointer.y, 1, 1))
-	  evas_event_feed_mouse_move(obj->layer->evas, 
+	  evas_event_feed_mouse_move(obj->layer->evas,
 				     obj->layer->evas->pointer.x, 
-				     obj->layer->evas->pointer.y);
+				     obj->layer->evas->pointer.y,
+				     NULL);
      }
 }
 
@@ -273,7 +274,8 @@ evas_object_clip_unset(Evas_Object *obj)
 					  obj->layer->evas->pointer.y, 1, 1))
 	  evas_event_feed_mouse_move(obj->layer->evas, 
 				     obj->layer->evas->pointer.x, 
-				     obj->layer->evas->pointer.y);
+				     obj->layer->evas->pointer.y,
+				     NULL);
      }
 }
 

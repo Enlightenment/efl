@@ -153,7 +153,7 @@ evas_event_freeze_get(Evas *e)
  * 
  */
 void
-evas_event_feed_mouse_down_data(Evas *e, int b, const void *data)
+evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, const void *data)
 {
    Evas_List *l, *copy;
    
@@ -185,6 +185,7 @@ evas_event_feed_mouse_down_data(Evas *e, int b, const void *data)
 	ev.data = (void *)data;
 	ev.modifiers = &(e->modifiers);
 	ev.locks = &(e->locks);
+	ev.flags = flags;
 	if (!e->events_frozen)
 	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_DOWN, &ev);
      }
@@ -198,47 +199,7 @@ evas_event_feed_mouse_down_data(Evas *e, int b, const void *data)
  * 
  */
 void
-evas_event_feed_mouse_wheel_data(Evas *e, int direction, int z, const void *data)
-{
-   Evas_List *l, *copy;
-   
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
-   return;
-   MAGIC_CHECK_END();
-
-   if (e->events_frozen > 0) return;
-   
-   copy = evas_event_list_copy(e->pointer.object.in);
-   
-   for (l = copy; l; l = l->next)
-   {
-      Evas_Event_Mouse_Wheel ev;
-      Evas_Object *obj = l->data;
-	  
-      ev.direction = direction;
-      ev.z = z;
-      ev.output.x = e->pointer.x;
-      ev.output.y = e->pointer.y;
-      ev.canvas.x = e->pointer.canvas_x;
-      ev.canvas.y = e->pointer.canvas_y;
-      ev.data = (void *) data;
-      ev.modifiers = &(e->modifiers);
-      ev.locks = &(e->locks);	
-      if (!e->events_frozen)   
-	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_WHEEL, &ev);
-   }
-
-   return;
-}
-
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
- */
-void
-evas_event_feed_mouse_up_data(Evas *e, int b, const void *data)
+evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, const void *data)
 {
    Evas_List *l, *copy;
    
@@ -269,6 +230,7 @@ evas_event_feed_mouse_up_data(Evas *e, int b, const void *data)
 	ev.data = (void *)data;
 	ev.modifiers = &(e->modifiers);
 	ev.locks = &(e->locks);
+	ev.flags = flags;
 	if (!e->events_frozen)
 	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_UP, &ev);
      }
@@ -341,7 +303,7 @@ evas_event_feed_mouse_up_data(Evas *e, int b, const void *data)
 	/* and set up the new one */
 	e->pointer.object.in = ins;
 	if (e->pointer.inside)
-	  evas_event_feed_mouse_move_data(e, e->pointer.x, e->pointer.y, data);
+	  evas_event_feed_mouse_move(e, e->pointer.x, e->pointer.y, data);
      }
 }
 
@@ -352,7 +314,47 @@ evas_event_feed_mouse_up_data(Evas *e, int b, const void *data)
  * 
  */
 void
-evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
+evas_event_feed_mouse_wheel(Evas *e, int direction, int z, const void *data)
+{
+   Evas_List *l, *copy;
+   
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+
+   if (e->events_frozen > 0) return;
+   
+   copy = evas_event_list_copy(e->pointer.object.in);
+   
+   for (l = copy; l; l = l->next)
+   {
+      Evas_Event_Mouse_Wheel ev;
+      Evas_Object *obj = l->data;
+	  
+      ev.direction = direction;
+      ev.z = z;
+      ev.output.x = e->pointer.x;
+      ev.output.y = e->pointer.y;
+      ev.canvas.x = e->pointer.canvas_x;
+      ev.canvas.y = e->pointer.canvas_y;
+      ev.data = (void *) data;
+      ev.modifiers = &(e->modifiers);
+      ev.locks = &(e->locks);	
+      if (!e->events_frozen)   
+	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_WHEEL, &ev);
+   }
+
+   return;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
+void
+evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
 {
    int px, py;
    Evas_Coord pcx, pcy;
@@ -542,7 +544,7 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
  * 
  */
 void
-evas_event_feed_mouse_in_data(Evas *e, const void *data)
+evas_event_feed_mouse_in(Evas *e, const void *data)
 {
    Evas_List *ins;	
    Evas_List *l;
@@ -585,7 +587,7 @@ evas_event_feed_mouse_in_data(Evas *e, const void *data)
    e->pointer.object.in = evas_list_free(e->pointer.object.in);
    /* and set up the new one */
    e->pointer.object.in = ins;
-   evas_event_feed_mouse_move_data(e, e->pointer.x, e->pointer.y, data);
+   evas_event_feed_mouse_move(e, e->pointer.x, e->pointer.y, data);
 }
 
 /**
@@ -595,7 +597,7 @@ evas_event_feed_mouse_in_data(Evas *e, const void *data)
  * 
  */
 void
-evas_event_feed_mouse_out_data(Evas *e, const void *data)
+evas_event_feed_mouse_out(Evas *e, const void *data)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -644,7 +646,7 @@ evas_event_feed_mouse_out_data(Evas *e, const void *data)
  * 
  */
 void
-evas_event_feed_key_down_data(Evas *e, const char *keyname, const void *data)
+evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const char *string, const char *compose, const void *data)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -660,6 +662,9 @@ evas_event_feed_key_down_data(Evas *e, const char *keyname, const void *data)
 	ev.data = (void *)data;
 	ev.modifiers = &(e->modifiers);
 	ev.locks = &(e->locks);
+	ev.key = key;
+	ev.string = string;
+	ev.compose = compose;
 	if (e->grabs)
 	  {
 	     Evas_List *l;
@@ -722,7 +727,7 @@ evas_event_feed_key_down_data(Evas *e, const char *keyname, const void *data)
  * 
  */
 void
-evas_event_feed_key_up_data(Evas *e, const char *keyname, const void *data)
+evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char *string, const char *compose, const void *data)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -738,6 +743,9 @@ evas_event_feed_key_up_data(Evas *e, const char *keyname, const void *data)
 	ev.data = (void *)data;
 	ev.modifiers = &(e->modifiers);
 	ev.locks = &(e->locks);
+	ev.key = key;
+	ev.string = string;
+	ev.compose = compose;
 	if (e->grabs)
 	  {
 	     Evas_List *l;
@@ -800,102 +808,6 @@ evas_event_feed_key_up_data(Evas *e, const char *keyname, const void *data)
  * 
  */
 void
-evas_event_feed_mouse_down(Evas *e, int b)
-{
-   evas_event_feed_mouse_down_data(e, b, NULL);
-}
-
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
- */
-void
-evas_event_feed_mouse_up(Evas *e, int b)
-{
-   evas_event_feed_mouse_up_data(e, b, NULL);
-}
-
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
- */
-void
-evas_event_feed_mouse_move(Evas *e, int x, int y)
-{
-   evas_event_feed_mouse_move_data(e, x, y, NULL);
-}
-
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
- */
-void
-evas_event_feed_mouse_in(Evas *e)
-{
-   evas_event_feed_mouse_in_data(e, NULL);
-}
-
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
- */
-void
-evas_event_feed_mouse_out(Evas *e)
-{
-   evas_event_feed_mouse_out_data(e, NULL);
-}
-
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
-void
-evas_event_feed_mouse_wheel(Evas *e, int direction, int z)
-{
-   evas_event_feed_mouse_wheel_data(e, direction, z, NULL);
-}
-
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
- */
-void
-evas_event_feed_key_down(Evas *e, const char *keyname)
-{
-   evas_event_feed_key_down_data(e, keyname, NULL);
-}
-
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
- */
-void
-evas_event_feed_key_up(Evas *e, const char *keyname)
-{
-   evas_event_feed_key_up_data(e, keyname, NULL);
-}
-
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
- */
-void
 evas_object_pass_events_set(Evas_Object *obj, Evas_Bool pass)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -907,7 +819,8 @@ evas_object_pass_events_set(Evas_Object *obj, Evas_Bool pass)
 				     obj->layer->evas->pointer.y, 1, 1))
      evas_event_feed_mouse_move(obj->layer->evas, 
 				obj->layer->evas->pointer.x, 
-				obj->layer->evas->pointer.y);
+				obj->layer->evas->pointer.y,
+				NULL);
 }
 
 /**
@@ -942,8 +855,9 @@ evas_object_repeat_events_set(Evas_Object *obj, Evas_Bool repeat)
 				     obj->layer->evas->pointer.x, 
 				     obj->layer->evas->pointer.y, 1, 1))
      evas_event_feed_mouse_move(obj->layer->evas, 
-				obj->layer->evas->pointer.x, 
-				obj->layer->evas->pointer.y);
+				obj->layer->evas->pointer.x,
+				obj->layer->evas->pointer.y,
+				NULL);
 }
 
 /**

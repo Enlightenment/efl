@@ -156,7 +156,8 @@ evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coo
 	if ((is ^ was) && obj->cur.visible)
 	  evas_event_feed_mouse_move(obj->layer->evas,
 				     obj->layer->evas->pointer.x,
-				     obj->layer->evas->pointer.y);
+				     obj->layer->evas->pointer.y,
+				     NULL);
      }
    evas_object_inform_call_move(obj);
    evas_object_inform_call_resize(obj);

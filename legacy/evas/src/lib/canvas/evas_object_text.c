@@ -715,7 +715,8 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
 	if ((is ^ was) && obj->cur.visible)
 	  evas_event_feed_mouse_move(obj->layer->evas,
 				     obj->layer->evas->pointer.x,
-				     obj->layer->evas->pointer.y);
+				     obj->layer->evas->pointer.y,
+				     NULL);
      }
    evas_object_inform_call_resize(obj);
 }
@@ -801,7 +802,8 @@ evas_object_text_text_set(Evas_Object *obj, const char *text)
    if ((is || was) && obj->cur.visible)
      evas_event_feed_mouse_move(obj->layer->evas,
 				obj->layer->evas->pointer.x,
-				obj->layer->evas->pointer.y);   
+				obj->layer->evas->pointer.y,
+				NULL);
    evas_object_inform_call_resize(obj);
 }
 

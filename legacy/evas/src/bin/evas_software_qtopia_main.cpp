@@ -37,19 +37,19 @@ void EvasTargetWidget::mousePressEvent(QMouseEvent *e)
 {
    if (fullscreen) disableFullscreen();
    else enableFullscreen();
-   evas_event_feed_mouse_move(evas, e->x(), e->y());
-   evas_event_feed_mouse_down(evas, e->button());
+   evas_event_feed_mouse_move(evas, e->x(), e->y(), NULL);
+   evas_event_feed_mouse_down(evas, e->button(), EVAS_BUTTON_NONE, NULL);
 }
 
 void EvasTargetWidget::mouseReleaseEvent(QMouseEvent *e)
 {
-   evas_event_feed_mouse_move(evas, e->x(), e->y());
-   evas_event_feed_mouse_up(evas, e->button());
+   evas_event_feed_mouse_move(evas, e->x(), e->y(), NULL);
+   evas_event_feed_mouse_up(evas, e->button(). EVAS_BUTTON_NONE, NULL);
 }
 
 void EvasTargetWidget::mouseMoveEvent(QMouseEvent *e)
 {
-   evas_event_feed_mouse_move(evas, e->x(), e->y()); 
+   evas_event_feed_mouse_move(evas, e->x(), e->y(), NULL);
 }
 
 void EvasTargetWidget::paintEvent(QPaintEvent *e)

@@ -38,6 +38,13 @@ typedef enum _Evas_Callback_Type
    EVAS_CALLBACK_RESTACK
 } Evas_Callback_Type;
 
+typedef enum _Evas_Button_Flags
+{
+   EVAS_BUTTON_NONE = 0,
+   EVAS_BUTTON_DOUBLE_CLICK = (1 << 0),
+   EVAS_BUTTON_TRIPLE_CLICK = (1 << 1)
+} Evas_Button_Flags;
+
 typedef struct _Evas_Rectangle              Evas_Rectangle;
 
 typedef struct _Evas                        Evas;
