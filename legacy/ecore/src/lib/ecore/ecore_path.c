@@ -137,6 +137,7 @@ ecore_path_group_remove(int group_id, char *path)
 char *
 ecore_path_group_find(int group_id, char *name)
 {
+	int r;
 	char *p;
 	struct stat st;
 	char path[PATH_MAX];
@@ -153,8 +154,9 @@ ecore_path_group_find(int group_id, char *name)
 	p = ecore_list_next(group->paths);
 	do {
 		snprintf(path, PATH_MAX, "%s/%s", p, name);
-		stat(path, &st);
-	} while (!S_ISREG(st.st_mode) && (p = ecore_list_next(group->paths)));
+		r = stat(path, &st);
+	} while (((r < 0) || !S_ISREG(st.st_mode)) &&
+			(p = ecore_list_next(group->paths)));
 
 	if (p)
 		p = strdup(path);
