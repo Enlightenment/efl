@@ -11,7 +11,12 @@ These routines are used for Ecore Library interaction
 @image latex ecore_big.eps width=5cm
 @image html  ecore.png
 @version 1.0.0
-@author Carsten Haitzler <raster@rasterman.com>
+@author Carsten Haitzler <raster\@rasterman.com>
+@author Tom Gilbert <tom\@linuxbrit.co.uk>
+@author Burra <burra\@colorado.edu>
+@author Chris Ross <chris\@darkrock.co.uk>
+@author Term <term\@twistedpath.org>
+@author Tilman Sauerbeck <tilman\@code-monkey.de>
 @date 2000-2003
 
 
