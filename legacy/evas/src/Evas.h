@@ -82,7 +82,8 @@ void evas_add_obscured_rect(Evas e, int x, int y, int w, int h);
 void evas_clear_obscured_rects(Evas e);
 
 /* drawing */
-void evas_render(Evas e);
+Imlib_Updates evas_render_updates(Evas e);
+void          evas_render(Evas e);
 
 /* query for settings to use */
 Visual   *evas_get_optimal_visual(Evas e, Display *disp);

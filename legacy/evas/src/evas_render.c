@@ -150,7 +150,16 @@ evas_update_rect(Evas e, int x, int y, int w, int h)
 void
 evas_render(Evas e)
 {
-   Imlib_Updates up;
+   Imlib_Updates u;
+   
+   u = evas_render_updates(e);
+   if (u) imlib_updates_free(u);
+}
+
+Imlib_Updates
+evas_render_updates(Evas e)
+{
+   Imlib_Updates up = NULL;
    Evas_List delete_objects;
    Evas_List l, ll;
    void (*func_draw_add_rect) (Display *disp, Imlib_Image dstim, Window win, int x, int y, int w, int h);
@@ -610,7 +619,6 @@ evas_render(Evas e)
 				     x, y, w, h);
 		  u = imlib_updates_get_next(u);
 	       }
-	     imlib_updates_free(up);
 	     /* draw all objects now */
 	     for (l = e->layers; l; l = l->next)
 	       {
@@ -908,6 +916,7 @@ evas_render(Evas e)
 	  }
      }
    e->previous = e->current;
+   return up;
 }
 
 /* query for settings to use */
