@@ -289,6 +289,10 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
 				  _edje_object_part_swallow_free_cb,
 				  obj);
    type = (char *)evas_object_type_get(obj_swallow);
+   rp->swallow_params.min.w = 0;
+   rp->swallow_params.min.w = 0;
+   rp->swallow_params.max.w = -1;
+   rp->swallow_params.max.h = -1;
    if ((type) && (!strcmp(type, "edje")))
      {
 	double w, h;
@@ -312,16 +316,17 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
 	rp->swallow_params.max.w = w;
 	rp->swallow_params.max.h = h;
      }
-   else
      {
-	rp->swallow_params.min.w = 
-	  (int)evas_object_data_get(obj_swallow, "\377 edje.minw");
-	rp->swallow_params.min.h =
-	  (int)evas_object_data_get(obj_swallow, "\377 edje.minh");
-	rp->swallow_params.max.w =
-	  (int)evas_object_data_get(obj_swallow, "\377 edje.maxw");
-	rp->swallow_params.max.h =
-	  (int)evas_object_data_get(obj_swallow, "\377 edje.maxh");
+	int w1, h1, w2, h2;
+	
+	w1 = (int)evas_object_data_get(obj_swallow, "\377 edje.minw");
+	h1 = (int)evas_object_data_get(obj_swallow, "\377 edje.minh");
+	w2 = (int)evas_object_data_get(obj_swallow, "\377 edje.maxw");
+	h2 = (int)evas_object_data_get(obj_swallow, "\377 edje.maxh");
+	rp->swallow_params.min.w = w1;
+	rp->swallow_params.min.h = h1;
+	if (w2 >= 0) rp->swallow_params.max.w = w2;
+	if (h2 >= 0) rp->swallow_params.max.w = h2;
      }
    ed->dirty = 1;
    _edje_recalc(ed);   
@@ -333,8 +338,8 @@ edje_extern_object_min_size_set(Evas_Object *obj, double minw, double minh)
    int mw, mh;
    
    mw = minw;
-   if (mw < 0) mw = 0;
    mh = minh;
+   if (mw < 0) mw = 0;
    if (mh < 0) mh = 0;
    if (mw > 0)
      evas_object_data_set(obj, "\377 edje.minw", (void *)mw);
@@ -352,14 +357,12 @@ edje_extern_object_max_size_set(Evas_Object *obj, double maxw, double maxh)
    int mw, mh;
    
    mw = maxw;
-   if (mw < 0) mw = 0;
    mh = maxh;
-   if (mh < 0) mh = 0;
-   if (mw > 0)
+   if (mw >= 0)
      evas_object_data_set(obj, "\377 edje.maxw", (void *)mw);
    else
      evas_object_data_del(obj, "\377 edje.maxw"); 
-   if (mh > 0)
+   if (mh >= 0)
      evas_object_data_set(obj, "\377 edje.maxh", (void *)mh);
    else
      evas_object_data_del(obj, "\377 edje.maxh");

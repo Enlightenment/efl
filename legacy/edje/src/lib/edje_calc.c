@@ -468,9 +468,9 @@ _edje_part_recalc_single(Edje *ed,
      }
    maxw = desc->max.w;
    maxh = desc->max.h;
-   if ((ep->swallow_params.max.w > 0) &&
+   if ((ep->swallow_params.max.w >= 0) &&
        (ep->swallow_params.max.w < maxw)) maxw = ep->swallow_params.max.w;
-   if ((ep->swallow_params.max.h > 0) &&
+   if ((ep->swallow_params.max.h >= 0) &&
        (ep->swallow_params.max.h < maxh)) maxh = ep->swallow_params.max.h;
    /* adjust for max size */
    if (maxw >= 0)

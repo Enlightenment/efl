@@ -68,10 +68,23 @@ main_start(int argc, char **argv)
    ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, main_signal_exit, NULL);
    if (!ecore_evas_init()) return -1;
 #ifndef EDJE_FB_ONLY  
+     {
+        int i;
+
+        for (i = 1; i < argc; i++)
+          {
+             if (!strcmp(argv[i], "-gl"))
+               {
+                  ecore_evas = ecore_evas_gl_x11_new(NULL, 0, 0, 0, 240, 320);
+                  goto canvas_up;
+               }
+          }
+     }
    ecore_evas = ecore_evas_software_x11_new(NULL, 0,  0, 0, 240, 320);
 #else
    ecore_evas = ecore_evas_fb_new(NULL, 270,  240, 320);
 #endif
+   canvas_up:
    if (!ecore_evas) return -1;
    ecore_evas_callback_delete_request_set(ecore_evas, main_delete_request);
    ecore_evas_callback_resize_set(ecore_evas, main_resize);
@@ -746,6 +759,7 @@ main(int argc, char **argv)
 	
 	done = 0;
 	file = argv[i];
+	if (file[0] == '-') continue;
 	if (argc > (i + 1))
 	  {
 	     coll = argv[i + 1];

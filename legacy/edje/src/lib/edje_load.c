@@ -161,6 +161,11 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	       }
 	     if (rp->part->dragable.confine_id >= 0)
 	       rp->confine_to = evas_list_nth(ed->parts, rp->part->dragable.confine_id);
+	     
+	     rp->swallow_params.min.w = 0;
+	     rp->swallow_params.min.w = 0;
+	     rp->swallow_params.max.w = -1;
+	     rp->swallow_params.max.h = -1;
 	  }
 	_edje_ref(ed);
 	_edje_block(ed);
