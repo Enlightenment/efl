@@ -244,12 +244,13 @@ make install
 
 
 @todo (1.0) Document API
+@todo (1.0) Evas engine that renders to Evas_Objects
 @todo (1.0) OpenGL engine needs to use texture meshes
 @todo (1.0) OpenGL engine needs texture cache and size setting
 @todo (1.0) OpenGL Engine needs YUV import API to YUV texture
 @todo (1.0) All engines need pixel import API
 @todo (1.0) Add parital render through composite layer api to engines
-@todo (1.0) Move callback processing to a queue and do it asynchronously
+@todo (1.0) Move callback processing to a queue and do it asynchronously???
 @todo (1.0) Add button grabbing
 @todo (1.0) Add generic object method call system
 @todo (1.0) Add callbacks set for smart object parents to be set on all child smart objects too.
@@ -259,7 +260,7 @@ make install
 @todo (1.0) Add font listing calls
 @todo (1.0) Add ability to check image comments & disk format
 @todo (1.0) Add group objects
-@todo (1.0) Export engine rnedering etc. API cleanly to Evas API
+@todo (1.0) Export engine rendering API cleanly to Evas API
 @todo (1.0) Add smart object ability to provide rendering callback
 @todo (1.1) Make freetype optional and put in optional graymap font engine
 @todo (1.1) Free images if object invisible (and put back in chache)
