@@ -601,6 +601,8 @@ SC_FUNC void assemble(FILE *fout,FILE *fin)
   symbol *sym, **nativelist;
   constvalue *constptr;
   cell mainaddr;
+   int nametable, tags, libraries, publics, natives, pubvars;
+   int cod, dat, hea, stp, cip, size, defsize;
 
   #if !defined NDEBUG
     /* verify that the opcode list is sorted (skip entry 1; it is reserved
@@ -693,46 +695,46 @@ SC_FUNC void assemble(FILE *fout,FILE *fin)
     hdr.flags|=AMX_FLAG_COMPACT;
   if (sc_debug==0)
     hdr.flags|=AMX_FLAG_NOCHECKS;
-  #if BYTE_ORDER==BIG_ENDIAN
-    hdr.flags|=AMX_FLAG_BIGENDIAN;
-  #endif
-  hdr.defsize=sizeof(FUNCSTUB);
+//  #if BYTE_ORDER==BIG_ENDIAN
+//    hdr.flags|=AMX_FLAG_BIGENDIAN;
+//  #endif
+   defsize = hdr.defsize=sizeof(FUNCSTUB);
   assert((hdr.defsize % sizeof(cell))==0);
-  hdr.publics=sizeof hdr; /* public table starts right after the header */
-  hdr.natives=hdr.publics + numpublics*sizeof(FUNCSTUB);
-  hdr.libraries=hdr.natives + numnatives*sizeof(FUNCSTUB);
-  hdr.pubvars=hdr.libraries + numlibraries*sizeof(FUNCSTUB);
-  hdr.tags=hdr.pubvars + numpubvars*sizeof(FUNCSTUB);
-  hdr.nametable=hdr.tags + numtags*sizeof(FUNCSTUB);
-  hdr.cod=hdr.nametable + nametablesize + padding;
-  hdr.dat=hdr.cod + code_idx;
-  hdr.hea=hdr.dat + glb_declared*sizeof(cell);
-  hdr.stp=hdr.hea + sc_stksize*sizeof(cell);
-  hdr.cip=mainaddr;
-  hdr.size=hdr.hea; /* preset, this is incorrect in case of compressed output */
+   publics = hdr.publics=sizeof hdr; /* public table starts right after the header */
+   natives = hdr.natives=hdr.publics + numpublics*sizeof(FUNCSTUB);
+   libraries = hdr.libraries=hdr.natives + numnatives*sizeof(FUNCSTUB);
+   pubvars = hdr.pubvars=hdr.libraries + numlibraries*sizeof(FUNCSTUB);
+   tags = hdr.tags=hdr.pubvars + numpubvars*sizeof(FUNCSTUB);
+   nametable = hdr.nametable=hdr.tags + numtags*sizeof(FUNCSTUB);
+   cod = hdr.cod=hdr.nametable + nametablesize + padding;
+   dat = hdr.dat=hdr.cod + code_idx;
+   hea = hdr.hea=hdr.dat + glb_declared*sizeof(cell);
+   stp = hdr.stp=hdr.hea + sc_stksize*sizeof(cell);
+   cip = hdr.cip=mainaddr;
+   size = hdr.size=hdr.hea; /* preset, this is incorrect in case of compressed output */
   #if BYTE_ORDER==BIG_ENDIAN
     align32(&hdr.size);
     align16(&hdr.magic);
     align16(&hdr.flags);
     align16(&hdr.defsize);
+    align32(&hdr.cod);
+    align32(&hdr.dat);
+    align32(&hdr.hea);
+    align32(&hdr.stp);
+    align32(&hdr.cip);
     align32(&hdr.publics);
     align32(&hdr.natives);
     align32(&hdr.libraries);
     align32(&hdr.pubvars);
     align32(&hdr.tags);
     align32(&hdr.nametable);
-    align32(&hdr.cod);
-    align32(&hdr.dat);
-    align32(&hdr.hea);
-    align32(&hdr.stp);
-    align32(&hdr.cip);
   #endif
   sc_writebin(fout,&hdr,sizeof hdr);
 
   /* dump zeros up to the rest of the header, so that we can easily "seek" */
-  for (nameofs=sizeof hdr; nameofs<hdr.cod; nameofs++)
-    putc(0,fout);
-  nameofs=hdr.nametable+sizeof(int16_t);
+  for (nameofs=sizeof hdr; nameofs<cod; nameofs++)
+     putc(0,fout);
+  nameofs=nametable+sizeof(int16_t);
 
   /* write the public functions table */
   count=0;
@@ -747,9 +749,9 @@ SC_FUNC void assemble(FILE *fout,FILE *fin)
         align32(&func.address);
         align32(&func.nameofs);
       #endif
-      fseek(fout,hdr.publics+count*sizeof(FUNCSTUB),SEEK_SET);
+      fseek(fout,publics+count*sizeof(FUNCSTUB),SEEK_SET);
       sc_writebin(fout,&func,sizeof func);
-      fseek(fout,func.nameofs,SEEK_SET);
+      fseek(fout,nameofs,SEEK_SET);
       sc_writebin(fout,sym->name,strlen(sym->name)+1);
       nameofs+=strlen(sym->name)+1;
       count++;
@@ -796,9 +798,9 @@ SC_FUNC void assemble(FILE *fout,FILE *fin)
         align32(&func.address);
         align32(&func.nameofs);
       #endif
-      fseek(fout,hdr.natives+count*sizeof(FUNCSTUB),SEEK_SET);
+      fseek(fout,natives+count*sizeof(FUNCSTUB),SEEK_SET);
       sc_writebin(fout,&func,sizeof func);
-      fseek(fout,func.nameofs,SEEK_SET);
+      fseek(fout,nameofs,SEEK_SET);
       sc_writebin(fout,alias,strlen(alias)+1);
       nameofs+=strlen(alias)+1;
       count++;
@@ -817,9 +819,9 @@ SC_FUNC void assemble(FILE *fout,FILE *fin)
         align32(&func.address);
         align32(&func.nameofs);
       #endif
-      fseek(fout,hdr.libraries+count*sizeof(FUNCSTUB),SEEK_SET);
+      fseek(fout,libraries+count*sizeof(FUNCSTUB),SEEK_SET);
       sc_writebin(fout,&func,sizeof func);
-      fseek(fout,func.nameofs,SEEK_SET);
+      fseek(fout,nameofs,SEEK_SET);
       sc_writebin(fout,constptr->name,strlen(constptr->name)+1);
       nameofs+=strlen(constptr->name)+1;
       count++;
@@ -838,9 +840,9 @@ SC_FUNC void assemble(FILE *fout,FILE *fin)
         align32(&func.address);
         align32(&func.nameofs);
       #endif
-      fseek(fout,hdr.pubvars+count*sizeof(FUNCSTUB),SEEK_SET);
+      fseek(fout,pubvars+count*sizeof(FUNCSTUB),SEEK_SET);
       sc_writebin(fout,&func,sizeof func);
-      fseek(fout,func.nameofs,SEEK_SET);
+      fseek(fout,nameofs,SEEK_SET);
       sc_writebin(fout,sym->name,strlen(sym->name)+1);
       nameofs+=strlen(sym->name)+1;
       count++;
@@ -858,9 +860,9 @@ SC_FUNC void assemble(FILE *fout,FILE *fin)
         align32(&func.address);
         align32(&func.nameofs);
       #endif
-      fseek(fout,hdr.tags+count*sizeof(FUNCSTUB),SEEK_SET);
+      fseek(fout,tags+count*sizeof(FUNCSTUB),SEEK_SET);
       sc_writebin(fout,&func,sizeof func);
-      fseek(fout,func.nameofs,SEEK_SET);
+      fseek(fout,nameofs,SEEK_SET);
       sc_writebin(fout,constptr->name,strlen(constptr->name)+1);
       nameofs+=strlen(constptr->name)+1;
       count++;
@@ -868,14 +870,14 @@ SC_FUNC void assemble(FILE *fout,FILE *fin)
   } /* for */
 
   /* write the "maximum name length" field in the name table */
-  assert(nameofs==hdr.nametable+nametablesize);
-  fseek(fout,hdr.nametable,SEEK_SET);
+  assert(nameofs==nametable+nametablesize);
+  fseek(fout,nametable,SEEK_SET);
   count=sNAMEMAX;
   #if BYTE_ORDER==BIG_ENDIAN
     align16(&count);
   #endif
   sc_writebin(fout,&count,sizeof count);
-  fseek(fout,hdr.cod,SEEK_SET);
+  fseek(fout,cod,SEEK_SET);
 
   /* First pass: relocate all labels */
   /* This pass is necessary because the code addresses of labels is only known
