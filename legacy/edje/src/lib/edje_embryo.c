@@ -183,10 +183,15 @@ _edje_embryo_fn_set_str(Embryo_Program *ep, Embryo_Cell *params)
 
 /* EDJE...
  * 
- * set_state(part_id, state[], Float:state_val)
- * set_tween_state(part_id, state1[], Float:state1_val, state2[], Float:state2_val)
+ * implemented so far as examples:
+ * 
  * emit(sig[], src[])
+ * set_state(part_id, state[], Float:state_val)
+ * set_tween_state(part_id, Float:tween, state1[], Float:state1_val, state2[], Float:state2_val)
  * run_program(program_id)
+ * 
+ * still need to implement this:
+ * 
  * stop_program(program_id)
  * stop_programs_on(part_id)
  * Direction:get_drag_dir(part_id)
@@ -222,6 +227,106 @@ _edje_embryo_fn_set_str(Embryo_Program *ep, Embryo_Cell *params)
  * set_clip(part_id, clip_part_id)
  * get_clip(part_id)
  */
+
+/* emit(sig[], src[]) */
+static Embryo_Cell
+_edje_embryo_fn_emit(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   char *sig = NULL, *src = NULL;
+   
+   CHKPARAM(2);
+   ed = embryo_program_data_get(ep);
+   GETSTR(sig, params[1]);
+   GETSTR(src, params[2]);
+   if ((!sig) || (!src)) return 0;
+   _edje_emit(ed, sig, src);
+   return 0;
+}
+
+/* set_state(part_id, state[], Float:state_val) */
+static Embryo_Cell
+_edje_embryo_fn_set_state(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   char *state = NULL;
+   int part_id = 0;
+   float f = 0.0;
+   double value = 0.0;
+   Edje_Real_Part *rp;
+   
+   CHKPARAM(3);
+   ed = embryo_program_data_get(ep);
+   GETSTR(state, params[2]);
+   if ((!state)) return 0;
+   part_id = params[1];
+   if (part_id < 0) return 0;
+   f = EMBRYO_CELL_TO_FLOAT(params[3]);
+   value = (double)f;
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   if (rp)
+     {
+	if (rp->program) _edje_program_end(ed, rp->program);
+	 _edje_part_description_apply(ed, rp, state, value, NULL, 0.0);
+	_edje_part_pos_set(ed, rp, EDJE_TWEEN_MODE_LINEAR, 0.0);
+     }
+   return 0;
+}
+
+/* set_tween_state(part_id, Float:tween, state1[], Float:state1_val, state2[], Float:state2_val) */
+static Embryo_Cell
+_edje_embryo_fn_set_tween_state(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   char *state1 = NULL, *state2 = NULL;
+   int part_id = 0;
+   float f = 0.0;
+   double tween = 0.0, value1 = 0.0, value2 = 0.0;
+   Edje_Real_Part *rp;
+   
+   CHKPARAM(6);
+   ed = embryo_program_data_get(ep);
+   GETSTR(state1, params[3]);
+   GETSTR(state2, params[5]);
+   if ((!state1) || (!state2)) return 0;
+   part_id = params[1];
+   if (part_id < 0) return 0;
+   f = EMBRYO_CELL_TO_FLOAT(params[2]);
+   tween = (double)f;
+   f = EMBRYO_CELL_TO_FLOAT(params[4]);
+   value1 = (double)f;
+   f = EMBRYO_CELL_TO_FLOAT(params[6]);
+   value2 = (double)f;
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   if (rp)
+     {
+	if (rp->program) _edje_program_end(ed, rp->program);
+	_edje_part_description_apply(ed, rp, state1, value1, state2, value2);
+	_edje_part_pos_set(ed, rp, EDJE_TWEEN_MODE_LINEAR, tween);
+     }
+   return 0;
+}
+
+/* run_program(program_id) */
+static Embryo_Cell
+_edje_embryo_fn_run_program(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   char *state1 = NULL, *state2 = NULL;
+   int program_id = 0;
+   Edje_Program *pr;
+   
+   CHKPARAM(1);
+   ed = embryo_program_data_get(ep);
+   program_id = params[1];
+   if (program_id < 0) return 0;
+   pr = ed->table_programs[program_id % ed->table_programs_size];
+   if (pr)
+     {
+	_edje_program_run(ed, pr, 0, "", "");
+     }
+   return 0;
+}
 
 /* MODIFY STATE VALUES
  * 
@@ -262,36 +367,6 @@ _edje_embryo_fn_set_str(Embryo_Program *ep, Embryo_Cell *params)
  * 
  */
 
-/**** All the api exported to edje scripts ****/
-/* tst() */
-static Embryo_Cell
-_edje_embryo_fn_tst(Embryo_Program *ep, Embryo_Cell *params)
-{
-   Edje *ed;
-   
-   /* params[0] = number of bytes of params passed */
-   ed = embryo_program_data_get(ep);
-   printf("EDJE DEBUG: Embryo code detected for \"%s\":\"%s\"\n",
-	  ed->path, ed->part);
-   return 7;
-}
-
-/* emit(sig[], src[]) */
-static Embryo_Cell
-_edje_embryo_fn_emit(Embryo_Program *ep, Embryo_Cell *params)
-{
-   Edje *ed;
-   char *sig, *src;
-   
-   CHKPARAM(2);
-   ed = embryo_program_data_get(ep);
-   GETSTR(sig, params[1]);
-   GETSTR(src, params[2]);
-   if ((!sig) || (!src)) return 0;
-   _edje_emit(ed, sig, src);
-   return 0;
-}
-
 void
 _edje_embryo_script_init(Edje *ed)
 {
@@ -311,8 +386,11 @@ _edje_embryo_script_init(Edje *ed)
    embryo_program_native_call_add(ep, "get_strlen", _edje_embryo_fn_get_strlen);
    embryo_program_native_call_add(ep, "set_str", _edje_embryo_fn_set_str);
    
-   embryo_program_native_call_add(ep, "tst", _edje_embryo_fn_tst);
    embryo_program_native_call_add(ep, "emit", _edje_embryo_fn_emit);
+   embryo_program_native_call_add(ep, "set_state", _edje_embryo_fn_set_state);
+   embryo_program_native_call_add(ep, "set_tween_state", _edje_embryo_fn_set_tween_state);
+   embryo_program_native_call_add(ep, "run_program", _edje_embryo_fn_run_program);
+   
    embryo_program_vm_push(ep); /* neew a new vm to run in */
    _edje_embryo_globals_init(ed);
 }

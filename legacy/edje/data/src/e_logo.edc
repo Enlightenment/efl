@@ -502,6 +502,10 @@ collections {
 	       get_str(global_str, s, 256);
 	       snprintf(buf, 256, "3. s = %s :)", s);
 	       emit("DEBUG...", buf);
+	       
+	       set_state(PART:"logo", "clicked", 0.0);
+	       set_tween_state(PART:"logo", randf(), "default", 0.0, "clicked", 0.0);
+	       run_program(PROGRAM:"logo_click_d2");
 	    }
 	 }
 	 program {
