@@ -1569,9 +1569,12 @@ _ecore_config_system_load(void)
 	if ((buf = malloc(PATH_MAX * sizeof(char))))
 	  {
 	     snprintf(buf, PATH_MAX, "%s/.e/config.eet", p);
-	     if (ecore_config_file_load(buf) != 0)
-		if (ecore_config_file_load(PACKAGE_DATA_DIR "/system.eet") != 0)
-		   return ECORE_CONFIG_ERR_NOFILE;
+	     if (ecore_config_file_load(buf) != 0) {
+		/* even if this file (system.eet) dosen't exist we can 
+		 * continue without it as it isn't striclty necessary.
+		*/
+		ecore_config_file_load(PACKAGE_DATA_DIR "/system.eet");
+	     }
 	     sys = __ecore_config_bundle_local->data;
 	     while (sys)
 	       {
