@@ -483,7 +483,7 @@ edje_extern_object_min_size_set(Evas_Object *obj, Evas_Coord minw, Evas_Coord mi
    if (mh > 0)
      evas_object_data_set(obj, "\377 edje.minh", (void *)mh);
    else
-     evas_object_data_del(obj, "\377 edje.maxw");
+     evas_object_data_del(obj, "\377 edje.minh");
 }
 
 void
