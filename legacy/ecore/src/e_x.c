@@ -64,6 +64,11 @@ static Window       e_window_at_xy_0(Window base, int bx, int by, int x, int y);
 static void
 e_handle_x_error(Display * d, XErrorEvent * ev)
 {
+   char err[16384];
+   
+   XGetErrorText(d, ev->error_code, err, 16000);
+    printf("X Error:\n"
+	  "Error: %s\nrequest: %i\nminor: %i\n", err, ev->request_code, ev->minor_code);
    /* ignroe all X errors */
    return;
    d = NULL;
@@ -1154,7 +1159,12 @@ e_key_grab(char *key, Ev_Key_Modifiers mods, int anymod, int sync)
    if (sync)
       mode = GrabModeSync;
    if (!grabkey_win)
-      grabkey_win = default_root;
+     grabkey_win = default_root;
+   if (!grabkey_win)
+     {
+	grabkey_win = e_window_override_new(0, -1, -1, 1, 1);
+	e_window_show(grabkey_win);
+     }
    if (mods & EV_KEY_MODIFIER_SHIFT)
       mod |= mod_shift;
    if (mods & EV_KEY_MODIFIER_CTRL)

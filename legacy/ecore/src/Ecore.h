@@ -517,12 +517,14 @@ struct _ev_window_leave
 struct _ev_window_focus_in
 {
    Window              win, root;
+   int                 key_grab;
    Time                time;
 };
 
 struct _ev_window_focus_out
 {
    Window              win, root;
+   int                 key_grab;
    Time                time;
 };
 

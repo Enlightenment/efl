@@ -111,6 +111,7 @@ e_ev_x_init(void)
    mod_mask_alt = e_mod_mask_alt_get();
    mod_mask_win = e_mod_mask_win_get();
 
+/* HRRRMMM lets not do this  
    e_key_grab("Num_Lock", EV_KEY_MODIFIER_NONE, 1, 1);
    e_key_grab("Scroll_Lock", EV_KEY_MODIFIER_NONE, 1, 1);
    e_key_grab("Caps_Lock", EV_KEY_MODIFIER_NONE, 1, 1);
@@ -129,6 +130,7 @@ e_ev_x_init(void)
       e_mod_alt_set(1);
    if (current_lock & mod_mask_win)
       e_mod_win_set(1);
+ */
    e_add_event_fd(e_x_get_fd(), e_ev_x_handle_events);
 }
 
@@ -251,6 +253,7 @@ e_ev_x_handle_key_press(XEvent * xevent)
       return;
    previous_code = xevent->xkey.keycode;
    previous_time = xevent->xkey.time;
+/*   
    if (e_key_get_keysym_from_keycode(xevent->xkey.keycode) == XK_Scroll_Lock)
      {
 	if (e_lock_scroll_get())
@@ -278,6 +281,7 @@ e_ev_x_handle_key_press(XEvent * xevent)
 	e_event_allow(ReplayKeyboard, xevent->xkey.time);
 	e_flush();
      }
+ */
    e = NEW(Ev_Key_Down, 1);
    e->win = xevent->xkey.window;
    e->root = xevent->xkey.root;
@@ -526,6 +530,8 @@ e_ev_x_handle_focus_in(XEvent * xevent)
    e = NEW(Ev_Window_Focus_In, 1);
    e->win = xevent->xfocus.window;
    e->root = e_window_get_root(e->win);
+   if (xevent->xfocus.mode != NotifyNormal) e->key_grab = 1;
+   else e->key_grab = 0;
    e_add_event(EV_WINDOW_FOCUS_IN, e, e_ev_generic_free);
    e_focus_window_set(e->win);
 }
@@ -538,6 +544,8 @@ e_ev_x_handle_focus_out(XEvent * xevent)
    e = NEW(Ev_Window_Focus_Out, 1);
    e->win = xevent->xfocus.window;
    e->root = e_window_get_root(e->win);
+   if (xevent->xfocus.mode != NotifyNormal) e->key_grab = 1;
+   else e->key_grab = 0;
    e_add_event(EV_WINDOW_FOCUS_OUT, e, e_ev_generic_free);
    e_focus_window_set(0);
 }
