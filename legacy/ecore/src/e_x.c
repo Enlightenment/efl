@@ -518,7 +518,7 @@ if (xid->children) \
      { \
 	E_XID *xid2; \
 \
-	xid2 = e_validate_xid(xid->children[j]); printf("is %p\n", xid2);\
+	xid2 = e_validate_xid(xid->children[j]); \
 	if (xid2) \
 	  { \
 	     switch (xid2->gravity) \
