@@ -119,9 +119,8 @@ app_start(int argc, const char **argv)
 	ecore_shutdown();
 	return 0;
      }
-   else
+   else {
 #ifdef BUILD_ECORE_X
-     {
 	ee = ecore_evas_software_x11_new(NULL, 0,  0, 0, 240, 320);	 
 #else
 #ifdef BUILD_ECORE_FB
