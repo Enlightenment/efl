@@ -715,17 +715,19 @@ eet_read(Eet_File *ef, char *name, int *size_ret)
    int   hash, i, num;
 
    /* check to see its' an eet file pointer */
-   if ((!ef) || (ef->magic != EET_MAGIC_FILE) || (!name))
+   if ((!ef) || (ef->magic != EET_MAGIC_FILE) || (!name) ||
+       ((ef->mode != EET_FILE_MODE_READ) &&
+        (ef->mode != EET_FILE_MODE_RW)))
      {
 	if (size_ret) *size_ret = 0;
 	return NULL;
      }
-   /* get hash bucket this should be in */
-   hash = eet_hash_gen(name, ef->header->directory->size);
    /* no header, return NULL */
    if (!ef->header) return NULL;
    /* no directory, return NULL */
    if (!ef->header->directory) return NULL;
+   /* get hash bucket this should be in */
+   hash = eet_hash_gen(name, ef->header->directory->size);
    /* hunt hash bucket */
    num = ef->header->directory->hash[hash].size;
    for (i = 0; i < num; i++)
