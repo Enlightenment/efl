@@ -407,6 +407,7 @@ struct _Evas_Object
 	    int            x, y, w, h;
 	    unsigned char  r, g, b, a;
 	    char           visible : 1;
+	    char           dirty : 1;
 	 } clip;
       } cache;
       struct {
@@ -631,6 +632,7 @@ Evas_List *evas_object_render_pre_prev_cur_add(Evas_List *updates, Evas_Object *
 void evas_object_render_pre_effect_updates(Evas_List *updates, Evas_Object *obj, int is_v, int was_v);
 Evas_List * evas_rects_return_difference_rects(int x, int y, int w, int h, int xx, int yy, int ww, int hh);
 void evas_object_clip_recalc(Evas_Object *obj);
+void evas_object_clip_dirty(Evas_Object *obj);
 Evas_Layer *evas_layer_new(Evas *e);
 void evas_layer_pre_free(Evas_Layer *lay);
 void evas_layer_free(Evas_Layer *lay);
@@ -645,7 +647,7 @@ int evas_object_is_visible(Evas_Object *obj);
 int evas_object_was_visible(Evas_Object *obj);
 int evas_object_is_opaque(Evas_Object *obj);
 int evas_object_was_opaque(Evas_Object *obj);
-void evas_object_recalc_clippees(Evas_Object *obj);
+//void evas_object_recalc_clippees(Evas_Object *obj);
 int evas_object_clippers_is_visible(Evas_Object *obj);
 int evas_object_clippers_was_visible(Evas_Object *obj);
 void evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void *event_info);

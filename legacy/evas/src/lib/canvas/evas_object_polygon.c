@@ -321,7 +321,8 @@ evas_object_polygon_render_pre(Evas_Object *obj)
    /* if someone is clipping this obj - go calculate the clipper */
    if (obj->cur.clipper)
      {
-	evas_object_clip_recalc(obj->cur.clipper);
+	if (obj->cur.cache.clip.dirty)
+	  evas_object_clip_recalc(obj->cur.clipper);
 	obj->cur.clipper->func->render_pre(obj->cur.clipper);
      }
    /* now figure what changed and add draw rects */

@@ -17,7 +17,8 @@ evas_object_clip_recalc(Evas_Object *obj)
    cb = obj->cur.color.b; ca = obj->cur.color.a;
    if (obj->cur.clipper)
      {
-	evas_object_clip_recalc(obj->cur.clipper);
+	if (obj->cur.clipper->cur.cache.clip.dirty)
+	  evas_object_clip_recalc(obj->cur.clipper);
 	nx = obj->cur.clipper->cur.cache.clip.x;
 	ny = obj->cur.clipper->cur.cache.clip.y;
 	nw = obj->cur.clipper->cur.cache.clip.w;
@@ -44,6 +45,17 @@ evas_object_clip_recalc(Evas_Object *obj)
    obj->cur.cache.clip.g = cg;
    obj->cur.cache.clip.b = cb;
    obj->cur.cache.clip.a = ca;
+   obj->cur.cache.clip.dirty = 0;
+}
+
+void
+evas_object_clip_dirty(Evas_Object *obj)
+{
+   Evas_List *l;
+   
+   obj->cur.cache.clip.dirty = 1;
+   for (l = obj->clip.clipees; l; l = l->next)
+     evas_object_clip_dirty(l->data);
 }
 
 void
@@ -51,10 +63,11 @@ evas_object_recalc_clippees(Evas_Object *obj)
 {
    Evas_List *l;
    
-   evas_object_clip_recalc(obj);   
-   for (l = obj->clip.clipees; l; l = l->next)
+   if (obj->cur.cache.clip.dirty)
      {
-	evas_object_recalc_clippees(l->data);
+	evas_object_clip_recalc(obj);
+	for (l = obj->clip.clipees; l; l = l->next)
+	  evas_object_recalc_clippees(l->data);
      }
 }
 
@@ -178,6 +191,7 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
    obj->cur.clipper = clip;
    clip->clip.clipees = evas_list_append(clip->clip.clipees, obj);
    evas_object_change(obj);
+   evas_object_clip_dirty(obj);
    evas_object_recalc_clippees(obj);
    if (!obj->smart.smart)
      {
@@ -264,6 +278,7 @@ evas_object_clip_unset(Evas_Object *obj)
    obj->cur.clipper->clip.clipees = evas_list_remove(obj->cur.clipper->clip.clipees, obj);
    obj->cur.clipper = NULL;
    evas_object_change(obj);
+   evas_object_clip_dirty(obj);
    evas_object_recalc_clippees(obj);
    if (!obj->smart.smart)
      {

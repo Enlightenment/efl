@@ -103,7 +103,8 @@ evas_render_updates(Evas *e)
 	     Evas_Object *obj;
 	     
 	     obj = (Evas_Object *)l2;
-	     evas_object_clip_recalc(obj);
+//	     if (obj->cur.cache.clip.dirty)
+	       evas_object_clip_recalc(obj);
 	     /* build active object list */
 	     if (evas_object_is_active(obj))
 	       active_objects = evas_list_append(active_objects, obj);

@@ -51,76 +51,60 @@ evas_object_list_prepend(void *in_list, void *in_item)
 void *
 evas_object_list_append_relative(void *in_list, void *in_item, void *in_relative)
 {
-   Evas_Object_List *l;
-   Evas_Object_List *list, *item, *relative;
+   Evas_Object_List *list, *relative, *new_l;
    
    list = in_list;
-   item = in_item;
+   new_l = in_item;
    relative = in_relative;
-   for (l = list; l; l = l->next)
+   if (relative)
      {
-	if (l == relative)
+	if (relative->next)
 	  {
-	     Evas_Object_List *new_l;
-	     
-	     new_l = item;
-	     if (l->next)
-	       {
-		  new_l->next = l->next;
-		  l->next->prev = new_l;
-	       }
-
-	     else new_l->next = NULL;
-	     l->next = new_l;
-	     new_l->prev = l;
-	     if (!new_l->next)
-	       list->last = new_l;
-	     return list;
+	     new_l->next = relative->next;
+	     relative->next->prev = new_l;
 	  }
+	else new_l->next = NULL;
+	relative->next = new_l;
+	new_l->prev = relative;
+	if (!new_l->next) list->last = new_l;
+	return list;
      }
-   return evas_object_list_append(list, item);
+   return evas_object_list_append(list, new_l);
 }
 
 void *
 evas_object_list_prepend_relative(void *in_list, void *in_item, void *in_relative)
 {
-   Evas_Object_List *l;
-   Evas_Object_List *list, *item, *relative;
+   Evas_Object_List *list, *relative, *new_l;
    
    list = in_list;
-   item = in_item;
+   new_l = in_item;
    relative = in_relative;
-   for (l = list; l; l = l->next)
+   if (relative)
      {
-	if (l == relative)
+	new_l->prev = relative->prev;
+	new_l->next = relative;
+	relative->prev = new_l;
+	if (new_l->prev)
 	  {
-	     Evas_Object_List *new_l;
-	     
-	     new_l = item;
-	     new_l->prev = l->prev;
-	     new_l->next = l;
-	     l->prev = new_l;
-	     if (new_l->prev)
-	       {
-		  new_l->prev->next = new_l;
-		  if (!new_l->next)
-		    list->last = new_l;
-		  return list;
-	       }
+	     new_l->prev->next = new_l;
+	     if (!new_l->next)
+	       list->last = new_l;
+	     return list;
+	  }
+	else
+	  {
+	     if (!new_l->next)
+	       new_l->last = new_l;
 	     else
 	       {
-		  if (!new_l->next)
-		    new_l->last = new_l;
-		  else
-		    {
-		       new_l->last = list->last;
-		       list->last = NULL;
-		    }
-		  return new_l;
+		  new_l->last = list->last;
+		  list->last = NULL;
 	       }
+	     return new_l;
 	  }
      }
-   return evas_object_list_prepend(list, item);
+   return evas_object_list_prepend(list, new_l);
 }
 
 void *

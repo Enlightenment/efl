@@ -31,7 +31,8 @@ evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y)
 	     if (obj == stop) goto done;
 	     if ((!evas_event_passes_through(obj)) && (!obj->smart.smart))
 	       {
-		  evas_object_clip_recalc(obj);
+// FIXME: i don't think we need this		  
+//		  evas_object_clip_recalc(obj);
 		  if ((evas_object_is_in_output_rect(obj, x, y, 1, 1)) &&
 		      (obj->cur.visible) &&
 		      (obj->delete_me == 0) &&
@@ -462,7 +463,8 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
 	     obj = l->data;
 	     /* if its under the pointer and its visible and its in the new */
 	     /* in list */
-	     evas_object_clip_recalc(obj);
+// FIXME: i don't think we need this	     
+//	     evas_object_clip_recalc(obj);
 	     if (evas_object_is_in_output_rect(obj, x, y, 1, 1) && 
 		 (obj->cur.visible) &&
 		 (evas_object_clippers_is_visible(obj)) &&
