@@ -1459,8 +1459,12 @@ AC_ARG_ENABLE(valgrind,
       else
         AC_MSG_RESULT(no)
 	have_valgrind="no"
+        VALGRIND_CFLAGS=""
+        VALGRIND_LIBS=""
       fi
-  ], [ have_valgrind=$have_valgrind ]
+  ], [
+    have_valgrind=$have_valgrind
+  ]
 )
 
 if test x$have_valgrind = "xyes"; then
