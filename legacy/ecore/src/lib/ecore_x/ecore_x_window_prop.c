@@ -710,43 +710,18 @@ ecore_x_window_prop_borderless_set(Ecore_X_Window win, int borderless)
 int
 ecore_x_window_prop_layer_set(Ecore_X_Window win, int layer)
 {
-   Ecore_X_Atom atom = 0;
-   unsigned char *data = NULL;
-   int i, val = 4, num = 0; /* normal layer */
+   int val = 4; /* normal layer */
 
    if (layer < 0) /* below */
-     {
-      atom = _ecore_x_atom_net_wm_state_below;
-	  val = 2;
-     }
+   {
+      ecore_x_window_prop_state_set(win, ECORE_X_WINDOW_STATE_BELOW);
+	   val = 2;
+   }
    else if (layer > 0) /* above */
-     {
-	   atom = _ecore_x_atom_net_wm_state_above;
-	   val = 6;
-     }
-  
-   /* set the NetWM atoms
-	* get the atoms that are already set
-	*/
-   if (ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_state,
-                                        XA_ATOM, 32, &data, &num))
-     {
-      /* and set the ones we're interested in */
-        for (i = 0; i < num; i++)
-	  {
-	     if (data[i] == _ecore_x_atom_net_wm_state_below)
-	       data[i] = (layer < 0);
-	     else if (data[i] == _ecore_x_atom_net_wm_state_above)
-	       data[i] = (layer > 0);
-	  }
-
-	ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_state,
-			                 XA_ATOM, 32, data, num);
-	free(data);
-     }
-   else
-      ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_state,
-                                       XA_ATOM, 32, &atom, 1);
+   {
+      ecore_x_window_prop_state_set(win, ECORE_X_WINDOW_STATE_ABOVE);
+      val = 6;
+   }
 
    /* set the gnome atom */	  
    ecore_x_window_prop_property_set(win, _ecore_x_atom_win_layer,
@@ -977,33 +952,39 @@ void
 ecore_x_window_prop_state_set(Ecore_X_Window win, Ecore_X_Window_State s)
 {
    int            num = 0, i;
-   unsigned char  *oldset = NULL;
-   unsigned char  *newset = NULL;
-   Ecore_X_Atom   state = _ecore_x_window_prop_state_atom_get(s);
+   unsigned char  *old_data = NULL;
+   unsigned char  *data = NULL;
+   Atom           *oldset = NULL;
+   Atom           *newset = NULL;
+   Ecore_X_Atom   state;
+   
+   state = _ecore_x_window_prop_state_atom_get(s);
 
    ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_state,
-                                    XA_ATOM, 32, &oldset, &num);
-   
-   newset = malloc(sizeof(Ecore_X_Atom) * (num + 1));
+                                    XA_ATOM, 32, &old_data, &num);
+   oldset = (Atom *) old_data;
+   newset = calloc(num + 2, sizeof(Atom));
+   if (!newset) return;
+   data = (unsigned char *) newset;
    
    for (i = 0; i < num; ++i)
    {
       if (oldset[i] == state)
       {
-         XFree(oldset);
-         free(newset);
+         XFree(old_data);
+         free(data);
          return;
       }
       
       newset[i] = oldset[i];
    }
    
-   newset[i] = state;
+   newset[num] = state;
    
    ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_state,
-                                    XA_ATOM, 32, newset, num + 1);
-   XFree(oldset);
-   free(newset);
+                                    XA_ATOM, 32, data, num + 1);
+   XFree(old_data);
+   free(data);
 }
 
 /**
@@ -1021,8 +1002,10 @@ ecore_x_window_prop_state_isset(Ecore_X_Window win, Ecore_X_Window_State s)
 {
    int            num, i;
    unsigned char  *data;
-   Ecore_X_Atom   state = _ecore_x_window_prop_state_atom_get(s);
-
+   Atom           *states;
+   Ecore_X_Atom   state;
+      
+   state = _ecore_x_window_prop_state_atom_get(s);
    if (!ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_state,
                                          XA_ATOM, 32, &data, &num))
    {
@@ -1030,9 +1013,11 @@ ecore_x_window_prop_state_isset(Ecore_X_Window win, Ecore_X_Window_State s)
       return 0;
    }
 
+   states = (Atom *) data;
+
    for (i = 0; i < num; ++i)
    {
-      if(data[i] == state)
+      if(states[i] == state)
       {
          XFree(data);
          return 1;
@@ -1055,26 +1040,29 @@ void
 ecore_x_window_prop_state_unset(Ecore_X_Window win, Ecore_X_Window_State s)
 {
    int            num = 0, i, j = 0;
-   unsigned char  *oldset = NULL;
-   unsigned char  *newset = NULL;
-   Ecore_X_Atom   state = _ecore_x_window_prop_state_atom_get(s);
+   unsigned char  *old_data = NULL;
+   unsigned char  *data = NULL;
+   Atom           *oldset = NULL;
+   Atom           *newset = NULL;
+   Ecore_X_Atom   state ;
+   
+   state = _ecore_x_window_prop_state_atom_get(s);
 
    if (!ecore_x_window_prop_state_isset(win, s)) {
       return;
    }
    
    ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_state,
-                                    XA_ATOM, 32, &oldset, &num);
-   if(num > 1)
-   {
-      newset = calloc(sizeof(Ecore_X_Atom), num - 1);
-      for (i = 0; i < num; ++i)
-         if (oldset[i] != state)
-            newset[j++] = oldset[i];
-   }
+                                    XA_ATOM, 32, &old_data, &num);
+   oldset = (Atom *) old_data;
+   newset = calloc(num, sizeof(Atom));
+   data = (unsigned char *) newset;
+   for (i = 0; i < num; ++i)
+      if (oldset[i] != state)
+         newset[j++] = oldset[i];
 
    ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_state,
-                                    XA_ATOM, 32, newset, j);
+                                    XA_ATOM, 32, data, j);
    XFree(oldset);
    free(newset);
 }
