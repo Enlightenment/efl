@@ -46,7 +46,7 @@ while test $# -gt 0; do
       ;;
     --libs)
       libdirs=-L@libdir@
-      echo $libdirs -lecore @ecore_job_libs@ @ecore_x_libs@ @ecore_evas_libs@ @ecore_con_libs@ @ecore_ipc_libs@ @ecore_txt_libs@ @ecore_fb_libs@ @ecore_config_libs@ -lm
+      echo $libdirs -lecore @ecore_job_libs@ @ecore_x_libs@ @ecore_evas_libs@ @ecore_con_libs@ @ecore_ipc_libs@ @ecore_txt_libs@ @ecore_fb_libs@ @ecore_config_libs@ @edb_libs@ -lm
       ;;
     *)
       echo "${usage}" 1>&2
