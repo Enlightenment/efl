@@ -215,6 +215,21 @@ ecore_libs=`$ECORE_CONFIG --libs`
 AC_SUBST(ecore_cflags)
 AC_SUBST(ecore_libs)
 
+install_vim="yes";
+if test -d "${prefix}/share/vim"; then
+   vimdir="${prefix}/share/vim"
+elif test -d "/usr/share/vim"; then
+   vimdir="/usr/share/vim"
+elif test -d "/usr/local/share/vim"; then
+   vimdir="/usr/local/share/vim"
+elif test -d "/opt/share/vim"; then
+   vimdir="/opt/share/vim"
+else
+   install_vim="no"
+fi
+
+AC_SUBST(vimdir)
+
 AC_OUTPUT([
 Makefile
 src/Makefile

@@ -15,6 +15,10 @@ install-data-local:
 	      cp -pR $$d $(DESTDIR)$(pkgdatadir)/data; \
 	  done \
 	fi
+	if test "x${vimdir}" != "x"; then \
+	  $(mkinstalldirs) $(vimdir)/syntax; \
+	  cp -p $(srcdir)/data/edc.vim $(vimdir)/syntax/; \
+	fi
 
 dist-hook:
 	./gendoc; \
