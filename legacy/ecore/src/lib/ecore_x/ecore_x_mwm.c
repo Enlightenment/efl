@@ -1,7 +1,7 @@
 /*
- * Various ICCCM related functions.
+ * Various MWM related functions.
  * 
- * This is ALL the code involving anything ICCCM related. for both WM and
+ * This is ALL the code involving anything MWM related. for both WM and
  * client.
  */
 #include "Ecore.h"
