@@ -32,6 +32,8 @@
 #endif
 
 #include <Ecore_Ipc.h>
+/* this should only be included if evas is present */
+#include <Evas.h>
 
 /* debug */
 #define DEBUG 1
@@ -185,3 +187,7 @@ int            ecore_config_save_file(char *file);
 #  define ECORE_CONFIG_ERR_SUCC          (0)
 
 #endif
+
+
+/* convenience mathods in convenience.c */
+int            ecore_config_evas_font_path_apply(Evas *evas);

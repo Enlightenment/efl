@@ -7,6 +7,7 @@ ipc_main.lo
 ipc_ecore.lo
 util.lo
 edb.lo
+convenience.lo
 libecore_config.la
 ecore_config_ipc_ecore.la
 system.db

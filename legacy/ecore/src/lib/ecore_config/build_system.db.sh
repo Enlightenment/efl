@@ -1,6 +1,9 @@
 #!/bin/sh
 DB=system.db
 edb_ed $DB add /e/theme/name str "winter"
+EDJE_BIN=`which edje`
+EDJE_DIR=`dirname $EDJE_BIN`
+edb_ed $DB add /e/font/path str "$EDJE_DIR/../share/edje/data/test/fonts"
 if [ $BROWSER ]; then
 edb_ed $DB add /apps/web/browser str "$BROWSER"
 else

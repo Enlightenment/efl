@@ -3,7 +3,7 @@
 INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_ipc \
--I$(top_srcdir)/
+-I$(top_srcdir)/ @evas_cflags@
 
 DB = system.db
 CLEANFILES = $(DB)
@@ -27,10 +27,11 @@ libecore_config_la_SOURCES = \
 ecore_config.c \
 ipc_main.c \
 util.c \
-edb.c
+edb.c \
+convenience.c
 
 libecore_config_la_LIBADD = \
-$(top_builddir)/src/lib/ecore/libecore.la -ldl
+$(top_builddir)/src/lib/ecore/libecore.la -ldl @evas_libs@
 
 libecore_config_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la
