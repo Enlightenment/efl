@@ -240,7 +240,7 @@ eet_flush(Eet_File *ef)
      return;
    if (!ef->header) return;
    if (!ef->header->directory) return;
-   if ((ef->mode != EET_FILE_MODE_WRITE) && (ef->mode != EET_FILE_MODE_RW)) return;
+   if ((ef->mode != EET_FILE_MODE_WRITE) && (ef->mode != EET_FILE_MODE_READ_WRITE)) return;
    if (!ef->writes_pending) return;
 
    /* calculate total size in bytes of directory block */
@@ -365,7 +365,7 @@ eet_open(const char *file, Eet_File_Mode mode)
    ef = NULL;
    if (mode == EET_FILE_MODE_READ)
      ef = eet_cache_find(buf, eet_readers, eet_readers_num);
-   else if ((mode == EET_FILE_MODE_WRITE) || (mode == EET_FILE_MODE_RW))
+   else if ((mode == EET_FILE_MODE_WRITE) || (mode == EET_FILE_MODE_READ_WRITE))
      ef = eet_cache_find(buf, eet_writers, eet_writers_num);
    /* we found one */
    if (ef)
@@ -387,7 +387,7 @@ eet_open(const char *file, Eet_File_Mode mode)
    ef->mode = mode;
 
    /* try open the file based on mode */
-   if ((ef->mode == EET_FILE_MODE_READ) || (ef->mode == EET_FILE_MODE_RW))
+   if ((ef->mode == EET_FILE_MODE_READ) || (ef->mode == EET_FILE_MODE_READ_WRITE))
      ef->fp = fopen(ef->path, "rb");
    else if (ef->mode == EET_FILE_MODE_WRITE)
      {
@@ -409,7 +409,7 @@ eet_open(const char *file, Eet_File_Mode mode)
      }
    
    /* if we opened for read or read-write */
-   if ((mode == EET_FILE_MODE_READ) || (mode == EET_FILE_MODE_RW))
+   if ((mode == EET_FILE_MODE_READ) || (mode == EET_FILE_MODE_READ_WRITE))
      {
 	unsigned char buf[12];
 	unsigned char *dyn_buf, *p;
@@ -628,7 +628,7 @@ eet_open(const char *file, Eet_File_Mode mode)
      }
 
    /* we need to delete the original file in read-write mode and re-open for writing */
-   if (ef->mode == EET_FILE_MODE_RW)
+   if (ef->mode == EET_FILE_MODE_READ_WRITE)
      {
 	fclose(ef->fp);
 	unlink(ef->real_path);
@@ -638,7 +638,7 @@ eet_open(const char *file, Eet_File_Mode mode)
    /* add to cache */
    if (ef->mode == EET_FILE_MODE_READ)
      eet_cache_add(ef, &eet_readers, &eet_readers_num);
-   else if ((ef->mode == EET_FILE_MODE_WRITE) || (ef->mode == EET_FILE_MODE_RW))
+   else if ((ef->mode == EET_FILE_MODE_WRITE) || (ef->mode == EET_FILE_MODE_READ_WRITE))
      eet_cache_add(ef, &eet_writers, &eet_writers_num);
    return ef;
 }
@@ -666,7 +666,7 @@ eet_close(Eet_File *ef)
    /* remove from cache */
    if (ef->mode == EET_FILE_MODE_READ)
      eet_cache_del(ef, &eet_readers, &eet_readers_num);
-   else if ((ef->mode == EET_FILE_MODE_WRITE) || (ef->mode == EET_FILE_MODE_RW))
+   else if ((ef->mode == EET_FILE_MODE_WRITE) || (ef->mode == EET_FILE_MODE_READ_WRITE))
      eet_cache_del(ef, &eet_writers, &eet_writers_num);
    /* flush any writes */
    eet_flush(ef);
@@ -727,7 +727,7 @@ eet_read(Eet_File *ef, char *name, int *size_ret)
    /* check to see its' an eet file pointer */
    if ((!ef) || (ef->magic != EET_MAGIC_FILE) || (!name) ||
        ((ef->mode != EET_FILE_MODE_READ) &&
-        (ef->mode != EET_FILE_MODE_RW)))
+        (ef->mode != EET_FILE_MODE_READ_WRITE)))
      {
 	if (size_ret) *size_ret = 0;
 	return NULL;
@@ -858,7 +858,7 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
    if ((!ef) || (ef->magic != EET_MAGIC_FILE)
        || (!name) || (!data) || (size <= 0) || 
        ((ef->mode != EET_FILE_MODE_WRITE) &&
-        (ef->mode != EET_FILE_MODE_RW)))
+        (ef->mode != EET_FILE_MODE_READ_WRITE)))
 	
      return 0;
 
@@ -928,7 +928,7 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
      memcpy(data2, data, size);
 
    /* Does this node already exist? */
-   if (ef->mode == EET_FILE_MODE_RW)
+   if (ef->mode == EET_FILE_MODE_READ_WRITE)
      {
 	int i;
 	for (i = 0; i < node_size; i++)
@@ -987,7 +987,7 @@ eet_delete(Eet_File *ef, char *name)
      return 0;
 
    /* deleting keys is only possible in RW mode */
-   if (ef->mode != EET_FILE_MODE_RW) return 0;
+   if (ef->mode != EET_FILE_MODE_READ_WRITE) return 0;
 
    if (!ef->header) return 0;
    
@@ -1028,7 +1028,7 @@ eet_list(Eet_File *ef, char *glob, int *count_ret)
    if ((!ef) || (ef->magic != EET_MAGIC_FILE) || (!glob) ||
        (!ef->header) || (!ef->header->directory) ||
        ((ef->mode != EET_FILE_MODE_READ) &&
-        (ef->mode != EET_FILE_MODE_RW)))
+        (ef->mode != EET_FILE_MODE_READ_WRITE)))
      {
 	if (count_ret) *count_ret = 0;
 	return NULL;

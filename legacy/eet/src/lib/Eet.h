@@ -52,7 +52,7 @@ extern "C" {
 	EET_FILE_MODE_INVALID = -1,
 	EET_FILE_MODE_READ,
 	EET_FILE_MODE_WRITE,
-	EET_FILE_MODE_RW
+	EET_FILE_MODE_READ_WRITE
      };
    
    typedef enum _Eet_File_Mode             Eet_File_Mode;
