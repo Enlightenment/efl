@@ -15,6 +15,7 @@
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <stdarg.h>
 
 typedef struct _New_Object_Handler    New_Object_Handler;
 typedef struct _New_Statement_Handler New_Statement_Handler;
@@ -37,6 +38,13 @@ void  compile(void);
 int   object_handler_num(void);
 int   statement_handler_num(void);
 
+char   *parse_str(int n);
+int     parse_enum(int n, ...);
+int     parse_int(int n);
+int     parse_int_range(int n, int f, int t);
+double  parse_float(int n);
+double  parse_float_range(int n, int f, int t);    
+    
 extern Evas_List             *img_dirs;
 extern char                  *file_in;
 extern char                  *file_out;

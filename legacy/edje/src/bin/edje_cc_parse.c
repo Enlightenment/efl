@@ -348,3 +348,154 @@ compile(void)
      }
    close(fd);
 }
+
+char *
+parse_str(int n)
+{
+   char *str;
+   char *s;
+   
+   str = evas_list_nth(params, n);
+   if (!str)
+     {
+	fprintf(stderr, "%s: Error. %s:%i no parameter supplied as argument %i\n",
+		progname, file_in, line, n + 1);
+	exit(-1);	
+     }
+   s = strdup(str);
+   if (!s)
+     {
+	fprintf(stderr, "%s: Error. memory allocation of %i bytes failed. %s\n",
+		progname, strlen(str) + 1, strerror(errno));
+	exit(-1);
+     }
+   return s;
+}
+
+int
+parse_enum(int n, ...)
+{
+   char *str;
+   va_list va;
+   
+   str = evas_list_nth(params, n);   
+   if (!str)
+     {
+	fprintf(stderr, "%s: Error. %s:%i no parameter supplied as argument %i\n",
+		progname, file_in, line, n + 1);
+	exit(-1);	
+     }
+   va_start(va, n);
+   for (;;)
+     {
+	char *s;
+	int   v;
+	
+	s = va_arg(va, char *);
+	if (!s)
+	  {
+	     fprintf(stderr, "%s: Error. %s:%i token %s not one of:",
+		     progname, file_in, line, str);
+	     va_start(va, n);
+	     s = va_arg(va, char *);
+	     while (s)
+	       {
+		  v = va_arg(va, int);
+		  fprintf(stderr, " %s", s);
+		  s = va_arg(va, char *);
+		  if (!s) break;
+	       }
+	     fprintf(stderr, "\n");
+	     va_end(va);
+	     exit(-1);	     
+	  }
+	v = va_arg(va, int);
+	if (!strcmp(s, str))
+	  {
+	     va_end(va);
+	     return v;
+	  }
+     }
+   va_end(va);
+   return 0;
+}
+
+int
+parse_int(int n)
+{
+   char *str;
+   int i;
+   
+   str = evas_list_nth(params, n);
+   if (!str)
+     {
+	fprintf(stderr, "%s: Error. %s:%i no parameter supplied as argument %i\n",
+		progname, file_in, line, n + 1);
+	exit(-1);	
+     }
+   i = atoi(str);
+   return i;
+}
+
+int
+parse_int_range(int n, int f, int t)
+{
+   char *str;
+   int i;
+   
+   str = evas_list_nth(params, n);
+   if (!str)
+     {
+	fprintf(stderr, "%s: Error. %s:%i no parameter supplied as argument %i\n",
+		progname, file_in, line, n + 1);
+	exit(-1);	
+     }
+   i = atoi(str);
+   if ((i < f) || (i > t))
+     {
+	fprintf(stderr, "%s: Error. %s:%i integer %i out of range of %i to %i inclusive\n",
+		progname, file_in, line, i, f, t);
+	exit(-1);
+     }
+   return i;
+}
+
+double
+parse_float(int n)
+{
+   char *str;
+   double i;
+   
+   str = evas_list_nth(params, n);
+   if (!str)
+     {
+	fprintf(stderr, "%s: Error. %s:%i no parameter supplied as argument %i\n",
+		progname, file_in, line, n + 1);
+	exit(-1);	
+     }
+   i = atof(str);
+   return i;
+}
+
+double
+parse_float_range(int n, int f, int t)
+{
+   char *str;
+   double i;
+   
+   str = evas_list_nth(params, n);
+   if (!str)
+     {
+	fprintf(stderr, "%s: Error. %s:%i no parameter supplied as argument %i\n",
+		progname, file_in, line, n + 1);
+	exit(-1);	
+     }
+   i = atoi(str);
+   if ((i < f) || (i > t))
+     {
+	fprintf(stderr, "%s: Error. %s:%i integer %i out of range of %i to %i inclusive\n",
+		progname, file_in, line, i, f, t);
+	exit(-1);
+     }
+   return i;
+}

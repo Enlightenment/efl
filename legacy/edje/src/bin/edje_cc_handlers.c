@@ -89,74 +89,38 @@ static void
 st_images_image(void)
 {
    Edje_Image_Directory_Entry *img;
-   char *str;
+   int v;
    
    img = evas_list_data(evas_list_last(edje_file->image_dir->entries));
-   str = evas_list_nth(params, 0);
-   if (str)
+   img->entry = parse_str(0);
+   v = parse_enum(1,
+		  "RAW", 0,
+		  "COMP", 1,
+		  "LOSSY", 2,
+		  "USER", 3,
+		  NULL);
+   if (v == 0)
      {
-	img->entry = strdup(str);
-	if (!str)
-	  {
-	     fprintf(stderr, "%s: Error. memory allocation of %i bytes failed. %s\n",
-		     progname, strlen(str) + 1, strerror(errno));
-	     exit(-1);
-	  }
+	img->source_type = EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT;
+	img->source_param = 0;
      }
-   else
+   else if (v == 1)
      {
-	fprintf(stderr, "%s: Error. %s:%i: no filename for image as arg 1\n",
-		progname, file_in, line);
-	exit(-1);
+	img->source_type = EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT;
+	img->source_param = 1;
      }
-   str = evas_list_nth(params, 1);
-   if (str)
+   else if (v == 2)
      {
-	if (!strcasecmp(str, "RAW"))
-	  {
-	     img->source_type = EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT;
-	     img->source_param = 0;
-	  }
-	else if (!strcasecmp(str, "COMP"))
-	  {
-	     img->source_type = EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT;
-	     img->source_param = 1;
-	  }
-	else if (!strcasecmp(str, "LOSSY"))
-	  {
-	     img->source_type = EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY;
-	     img->source_param = 0;
-	  }
-	else if (!strcasecmp(str, "USER"))
-	  {
-	     img->source_type = EDJE_IMAGE_SOURCE_TYPE_EXTERNAL;
-	     img->source_param = 0;
-	  }
-	else
-	  {
-	     fprintf(stderr, "%s: Error. %s:%i: invalid encoding \"%s\" for image as arg 2\n",
-		     progname, file_in, line, str);
-	     exit(-1);
-	  }
+	img->source_type = EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY;
+	img->source_param = 0;
      }
-   else
+   else if (v == 3)
      {
-	fprintf(stderr, "%s: Error. %s:%i: no encoding type for image as arg 2\n",
-		progname, file_in, line);
-	exit(-1);
+	img->source_type = EDJE_IMAGE_SOURCE_TYPE_EXTERNAL;
+	img->source_param = 0;
      }
    if (img->source_type != EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY) return;
-   str = evas_list_nth(params, 2);
-   if (str)
-     {
-	img->source_param = atoi(str);
-     }
-   else
-     {
-	fprintf(stderr, "%s: Error. %s:%i: no encoding quality for lossy as arg 3\n",
-		progname, file_in, line);
-	exit(-1);
-     }
+   img->source_param = parse_int_range(2, 0, 100);
 }
 
 static void
