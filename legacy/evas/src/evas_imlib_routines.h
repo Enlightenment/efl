@@ -16,10 +16,12 @@
 
 #include <Imlib2.h>
 
-#define SPANS_COMMON(x1, w1, x2, w2) \
+#ifndef SPANS_COMMON
+# define SPANS_COMMON(x1, w1, x2, w2) \
 (!((((x2) + (w2)) <= (x1)) || ((x2) >= ((x1) + (w1)))))
 #define RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh) \
 ((SPANS_COMMON((x), (w), (xx), (ww))) && (SPANS_COMMON((y), (h), (yy), (hh))))
+#endif
 
 typedef void Evas_Imlib_Image;
 typedef void Evas_Imlib_Font;

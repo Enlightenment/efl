@@ -45,8 +45,10 @@ evas_rectangle.c \
 evas_render.c \
 evas_text.c \
 evas_gl_routines.h \
+evas_x11_routines.c \
 evas_image_routines.h \
 evas_imlib_routines.h \
+evas_x11_routines.h \
 Evas.h
 
 libevas_la_LIBADD       = $(LIBS_ALL)

@@ -1,15 +1,18 @@
-#include "evas_imlib_routines.h"
+#include "evas_x11_routines.h"
 
 static void __evas_imlib_image_cache_flush(Display *disp);
 static int  __evas_anti_alias = 1;
 static Evas_List drawable_list = NULL;
+
+static Visual *__evas_visual = NULL;
+static Colormap __evas_cmap = 0;
 
 /*****************************************************************************/
 /* image internals ***********************************************************/
 /*****************************************************************************/
 
 static void
-__evas_imlib_image_cache_flush(Display *disp)
+__evas_x11_image_cache_flush(Display *disp)
 {
    int size;
    
@@ -22,21 +25,21 @@ __evas_imlib_image_cache_flush(Display *disp)
 /* image externals ***********************************************************/
 /*****************************************************************************/
 
-Evas_Imlib_Image *
-__evas_imlib_image_new_from_file(Display *disp, char *file)
+Evas_X11_Image *
+__evas_x11_image_new_from_file(Display *disp, char *file)
 {	
-   return (Evas_Imlib_Image *)imlib_load_image(file);
+   return (Evas_X11_Image *)imlib_load_image(file);
 }
 
 void
-__evas_imlib_image_free(Evas_Imlib_Image *im)
+__evas_x11_image_free(Evas_X11_Image *im)
 {
    imlib_context_set_image((Imlib_Image)im);
    imlib_free_image();
 }
 
 void
-__evas_imlib_image_cache_empty(Display *disp)
+__evas_x11_image_cache_empty(Display *disp)
 {
    int size;
    
@@ -46,28 +49,29 @@ __evas_imlib_image_cache_empty(Display *disp)
 }
 
 void
-__evas_imlib_image_cache_set_size(Display *disp, int size)
+__evas_x11_image_cache_set_size(Display *disp, int size)
 {
    imlib_set_cache_size(size);
 }
 
 int
-__evas_imlib_image_cache_get_size(Display *disp)
+__evas_x11_image_cache_get_size(Display *disp)
 {
    return imlib_get_cache_size();
 }
 
 void
-__evas_imlib_image_draw(Evas_Imlib_Image *im, 
-			Display *disp, Imlib_Image dstim, Window w, int win_w, int win_h,
-			int src_x, int src_y, int src_w, int src_h,
-			int dst_x, int dst_y, int dst_w, int dst_h,
-			int cr, int cg, int cb, int ca)
+__evas_x11_image_draw(Evas_X11_Image *im, 
+		      Display *disp, Imlib_Image dstim, Window w, int win_w, int win_h,
+		      int src_x, int src_y, int src_w, int src_h,
+		      int dst_x, int dst_y, int dst_w, int dst_h,
+		      int cr, int cg, int cb, int ca)
 {
    Evas_List l;
    Imlib_Color_Modifier cm = NULL;
 
    if (ca == 0) return;
+/*   
    if ((cr != 255) || (cg != 255) || (cb != 255) || (ca != 255))
      {
 	DATA8 r[256], g[256], b[256], a[256];
@@ -86,15 +90,20 @@ __evas_imlib_image_draw(Evas_Imlib_Image *im,
      }
    else
       imlib_context_set_color_modifier(NULL);
-   
+*/   
+   imlib_context_set_display(disp);
+   imlib_context_set_visual(__evas_visual);
+   imlib_context_set_colormap(__evas_cmap);
+   imlib_context_set_drawable(w);
+   imlib_context_set_dither(1);
+   imlib_context_set_blend(0);
    imlib_context_set_angle(0.0);
    imlib_context_set_operation(IMLIB_OP_COPY);
    imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
    imlib_context_set_anti_alias(__evas_anti_alias);
-   imlib_context_set_blend(1);
    for(l = drawable_list; l; l = l->next)
      {
-	Evas_Imlib_Drawable *dr;
+	Evas_X11_Drawable *dr;
 	
 	dr = l->data;
 	
@@ -104,7 +113,7 @@ __evas_imlib_image_draw(Evas_Imlib_Image *im,
 	     
 	     for (ll = dr->tmp_images; ll; ll = ll->next)
 	       {
-		  Evas_Imlib_Update *up;
+		  Evas_X11_Update *up;
 		  
 		  up = ll->data;
 		  
@@ -112,12 +121,44 @@ __evas_imlib_image_draw(Evas_Imlib_Image *im,
 		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
 				      dst_x, dst_y, dst_w, dst_h))
 		    {
-		       if (!up->image)
-			  up->image = imlib_create_image(up->w, up->h);
-		       imlib_context_set_image(up->image);
-		       imlib_blend_image_onto_image(im, 0,
-						    src_x, src_y, src_w, src_h,
-						    dst_x - up->x, dst_y - up->y, dst_w, dst_h);
+		       Pixmap pmap = 0, mask = 0, s_pmap = 0, s_mask = 0;
+
+		       if (!up->p)
+			  up->p = XCreatePixmap(disp, w, up->w, up->h, dr->depth);
+		       imlib_context_set_image(im);
+		       imlib_render_pixmaps_for_whole_image(&pmap, &mask);
+		       /* if we need to scale...... */
+/*		       
+		       if ((src_w != dst_w) || (src_h) != (dst_h))
+			 {
+			    if (mask)
+			      {
+			      }
+			    
+			    if (s_pmap) XFreePixmap(disp, s_pmap);
+			    if (s_mask) XFreePixmap(disp, s_mask);
+			 }
+		       else
+*/
+			 {
+			    if (mask)
+			      {
+/*				 
+				 XSetStipple(disp, dr->gc, mask);
+				 XSetTSOrigin(disp, dr->gc, dst_x - up->x, dst_y - up->y);
+*/
+				 XSetClipMask(disp, dr->gc, mask);
+				 XSetClipOrigin(disp, dr->gc, dst_x - up->x, dst_y - up->y);
+			      }
+			    else
+			      {
+				 XSetClipMask(disp, dr->gc, None);
+			      }
+                            if (pmap)
+			       XCopyArea(disp, pmap, up->p, dr->gc, 
+					 src_x, src_y, src_w, src_h, dst_x - up->x, dst_y - up->y);
+			 }
+		       if (pmap) imlib_free_pixmap_and_mask(pmap);
 		    }
 	       }
 	  }
@@ -130,21 +171,21 @@ __evas_imlib_image_draw(Evas_Imlib_Image *im,
 }
 
 int
-__evas_imlib_image_get_width(Evas_Imlib_Image *im)
+__evas_x11_image_get_width(Evas_X11_Image *im)
 {
    imlib_context_set_image((Imlib_Image)im);
    return imlib_image_get_width();
 }
 
 int
-__evas_imlib_image_get_height(Evas_Imlib_Image *im)
+__evas_x11_image_get_height(Evas_X11_Image *im)
 {
    imlib_context_set_image((Imlib_Image)im);
    return imlib_image_get_height();
 }
 
 void
-__evas_imlib_image_set_borders(Evas_Imlib_Image *im, int left, int right,
+__evas_x11_image_set_borders(Evas_X11_Image *im, int left, int right,
 			       int top, int bottom)
 {
    Imlib_Border bd;
@@ -158,7 +199,7 @@ __evas_imlib_image_set_borders(Evas_Imlib_Image *im, int left, int right,
 }
 
 void
-__evas_imlib_image_set_smooth_scaling(int on)
+__evas_x11_image_set_smooth_scaling(int on)
 {
    __evas_anti_alias = on;
 }
@@ -197,182 +238,111 @@ __evas_imlib_image_set_smooth_scaling(int on)
 /* font externals ************************************************************/
 /*****************************************************************************/
 
-Evas_Imlib_Font *
-__evas_imlib_text_font_new(Display *disp, char *font, int size)
+Evas_X11_Font *
+__evas_x11_text_font_new(Display *disp, char *font, int size)
 {
-   char buf[4096];
-   
-   sprintf(buf, "%s/%i", font, size);
-   return (Evas_Imlib_Font *)imlib_load_font(buf);
+   return NULL;
 }
 
 void
-__evas_imlib_text_font_free(Evas_Imlib_Font *fn)
+__evas_x11_text_font_free(Evas_X11_Font *fn)
 {
-   imlib_context_set_font((Imlib_Font)fn);
-   imlib_free_font();
 }
 
 int
-__evas_imlib_text_font_get_ascent(Evas_Imlib_Font *fn)
+__evas_x11_text_font_get_ascent(Evas_X11_Font *fn)
 {
-   imlib_context_set_font((Imlib_Font)fn);
-   return imlib_get_font_ascent();
+   return 1;
 }
 
 int
-__evas_imlib_text_font_get_descent(Evas_Imlib_Font *fn)
+__evas_x11_text_font_get_descent(Evas_X11_Font *fn)
 {
-   imlib_context_set_font((Imlib_Font)fn);
-   return imlib_get_font_descent();
+   return 1;
 }
 
 int
-__evas_imlib_text_font_get_max_ascent(Evas_Imlib_Font *fn)
+__evas_x11_text_font_get_max_ascent(Evas_X11_Font *fn)
 {
-   imlib_context_set_font((Imlib_Font)fn);
-   return imlib_get_maximum_font_ascent();
+   return 1;
 }
 
 int
-__evas_imlib_text_font_get_max_descent(Evas_Imlib_Font *fn)
+__evas_x11_text_font_get_max_descent(Evas_X11_Font *fn)
 {
-   imlib_context_set_font((Imlib_Font)fn);
-   return imlib_get_maximum_font_descent();
+   return 1;
 }
 
 void
-__evas_imlib_text_font_get_advances(Evas_Imlib_Font *fn, char *text,
+__evas_x11_text_font_get_advances(Evas_X11_Font *fn, char *text,
 				    int *advance_horiz,
 				    int *advance_vert)
 {
-   imlib_context_set_font((Imlib_Font)fn);
-   imlib_get_text_advance(text, advance_horiz, advance_vert);
 }
 
 int
-__evas_imlib_text_font_get_first_inset(Evas_Imlib_Font *fn, char *text)
+__evas_x11_text_font_get_first_inset(Evas_X11_Font *fn, char *text)
 {
-   imlib_context_set_font((Imlib_Font)fn);
-   return imlib_get_text_inset(text);
+   return 1;
 }
 
 void
-__evas_imlib_text_font_add_path(char *path)
+__evas_x11_text_font_add_path(char *path)
 {
-   imlib_add_path_to_font_path(path);
 }
 
 void
-__evas_imlib_text_font_del_path(char *path)
+__evas_x11_text_font_del_path(char *path)
 {
-   imlib_remove_path_from_font_path(path);
 }
 
 char **
-__evas_imlib_text_font_list_paths(int *count)
+__evas_x11_text_font_list_paths(int *count)
 {
-   return imlib_list_font_path(count);
+   return NULL;
 }
 
 void
-__evas_imlib_text_cache_empty(Display *disp)
+__evas_x11_text_cache_empty(Display *disp)
 {
-   int size;
-   
-   size = imlib_get_font_cache_size();
-   imlib_set_font_cache_size(0);
-   imlib_set_font_cache_size(size);
 }
 
 void
-__evas_imlib_text_cache_set_size(Display *disp, int size)
+__evas_x11_text_cache_set_size(Display *disp, int size)
 {
-   imlib_set_font_cache_size(size);
 }
 
 int
-__evas_imlib_text_cache_get_size(Display *disp)
+__evas_x11_text_cache_get_size(Display *disp)
 {
-   return imlib_get_font_cache_size();
+   return 0;
 }
 
 void
-__evas_imlib_text_draw(Evas_Imlib_Font *fn, Display *disp, Imlib_Image dstim, Window win, 
+__evas_x11_text_draw(Evas_X11_Font *fn, Display *disp, Imlib_Image dstim, Window win, 
 		       int win_w, int win_h, int x, int y, char *text, 
 		       int r, int g, int b, int a)
 {
-   Evas_List l;
-   int w, h;
-   
-   if ((!fn) || (!text)) return;
-   imlib_context_set_color(r, g, b, a);
-   imlib_context_set_font((Imlib_Font)fn);
-   imlib_context_set_angle(0.0);
-   imlib_context_set_operation(IMLIB_OP_COPY);
-   imlib_context_set_color_modifier(NULL);
-   imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
-   imlib_context_set_anti_alias(1);
-   imlib_context_set_blend(1);
-   imlib_get_text_size(text, &w, &h);
-   for(l = drawable_list; l; l = l->next)
-     {
-	Evas_Imlib_Drawable *dr;
-	
-	dr = l->data;
-	
-	if ((dr->win == win) && (dr->disp == disp))
-	  {
-	     Evas_List ll;
-	     
-	     for (ll = dr->tmp_images; ll; ll = ll->next)
-	       {
-		  Evas_Imlib_Update *up;
-
-		  up = ll->data;
-		  
-		  /* if image intersects image update - render */
-		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
-				      x, y, w, h))
-		    {
-		       if (!up->image)
-			  up->image = imlib_create_image(up->w, up->h);
-		       imlib_context_set_image(up->image);
-		       imlib_text_draw(x - up->x, y - up->y, text);
-		    }
-	       }
-	  }
-     }
 }
 
 void
-__evas_imlib_text_get_size(Evas_Imlib_Font *fn, char *text, int *w, int *h)
+__evas_x11_text_get_size(Evas_X11_Font *fn, char *text, int *w, int *h)
 {
-   if ((!fn) || (!text)) 
-      {
-	 *w = 0; *h = 0;
-	 return;
-      }
-   imlib_context_set_font((Imlib_Font)fn);
-   imlib_get_text_size(text, w, h);
 }
 
 int
-__evas_imlib_text_get_character_at_pos(Evas_Imlib_Font *fn, char *text, 
+__evas_x11_text_get_character_at_pos(Evas_X11_Font *fn, char *text, 
 				       int x, int y, 
 				       int *cx, int *cy, int *cw, int *ch)
 {
-   imlib_context_set_font((Imlib_Font)fn);
-   return imlib_text_get_index_and_location(text, x, y, cx, cy, cw, ch);
+   return -1;
 }
 
 void
-__evas_imlib_text_get_character_number(Evas_Imlib_Font *fn, char *text, 
+__evas_x11_text_get_character_number(Evas_X11_Font *fn, char *text, 
 				       int num, 
 				       int *cx, int *cy, int *cw, int *ch)
 {
-   imlib_context_set_font((Imlib_Font)fn);
-   imlib_text_get_location_at_index(text, num, cx, cy, cw, ch);
 }
 
 
@@ -403,7 +373,7 @@ __evas_imlib_text_get_character_number(Evas_Imlib_Font *fn, char *text,
 /* rectangle externals *******************************************************/
 /*****************************************************************************/
 
-void              __evas_imlib_rectangle_draw(Display *disp, Imlib_Image dstim, Window win,
+void              __evas_x11_rectangle_draw(Display *disp, Imlib_Image dstim, Window win,
 					      int win_w, int win_h,
 					      int x, int y, int w, int h,
 					      int r, int g, int b, int a)
@@ -419,7 +389,7 @@ void              __evas_imlib_rectangle_draw(Display *disp, Imlib_Image dstim, 
    imlib_context_set_blend(1);
    for(l = drawable_list; l; l = l->next)
      {
-	Evas_Imlib_Drawable *dr;
+	Evas_X11_Drawable *dr;
 	
 	dr = l->data;
 	
@@ -429,7 +399,7 @@ void              __evas_imlib_rectangle_draw(Display *disp, Imlib_Image dstim, 
 	     
 	     for (ll = dr->tmp_images; ll; ll = ll->next)
 	       {
-		  Evas_Imlib_Update *up;
+		  Evas_X11_Update *up;
 
 		  up = ll->data;
 		  
@@ -437,10 +407,12 @@ void              __evas_imlib_rectangle_draw(Display *disp, Imlib_Image dstim, 
 		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
 				      x, y, w, h))
 		    {
+/*		       
 		       if (!up->image)
 			  up->image = imlib_create_image(up->w, up->h);
 		       imlib_context_set_image(up->image);
 		       imlib_image_fill_rectangle(x - up->x, y - up->y, w, h);
+*/
 		    }
 	       }
 	  }
@@ -467,7 +439,7 @@ void              __evas_imlib_rectangle_draw(Display *disp, Imlib_Image dstim, 
 /* rectangle externals *******************************************************/
 /*****************************************************************************/
 
-void              __evas_imlib_line_draw(Display *disp, Imlib_Image dstim, Window win,
+void              __evas_x11_line_draw(Display *disp, Imlib_Image dstim, Window win,
 					 int win_w, int win_h,
 					 int x1, int y1, int x2, int y2,
 					 int r, int g, int b, int a)
@@ -493,7 +465,7 @@ void              __evas_imlib_line_draw(Display *disp, Imlib_Image dstim, Windo
    w++; h++;
    for(l = drawable_list; l; l = l->next)
      {
-	Evas_Imlib_Drawable *dr;
+	Evas_X11_Drawable *dr;
 	
 	dr = l->data;
 	
@@ -503,7 +475,7 @@ void              __evas_imlib_line_draw(Display *disp, Imlib_Image dstim, Windo
 	     
 	     for (ll = dr->tmp_images; ll; ll = ll->next)
 	       {
-		  Evas_Imlib_Update *up;
+		  Evas_X11_Update *up;
 
 		  up = ll->data;
 		  
@@ -511,10 +483,12 @@ void              __evas_imlib_line_draw(Display *disp, Imlib_Image dstim, Windo
 		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
 				      x, y, w, h))
 		    {
+/*		       
 		       if (!up->image)
 			  up->image = imlib_create_image(up->w, up->h);
 		       imlib_context_set_image(up->image);
 		       imlib_image_draw_line(x1 - up->x, y1 - up->y, x2 - up->x, y2 - up->y, 0);
+*/
 		    }
 	       }
 	  }
@@ -542,21 +516,21 @@ void              __evas_imlib_line_draw(Display *disp, Imlib_Image dstim, Windo
 /*****************************************************************************/
 
 
-Evas_Imlib_Graident *
-__evas_imlib_gradient_new(Display *disp)
+Evas_X11_Graident *
+__evas_x11_gradient_new(Display *disp)
 {
-   return (Evas_Imlib_Graident *)imlib_create_color_range();
+   return (Evas_X11_Graident *)imlib_create_color_range();
 }
 
 void
-__evas_imlib_gradient_free(Evas_Imlib_Graident *gr)
+__evas_x11_gradient_free(Evas_X11_Graident *gr)
 {
    imlib_context_set_color_range((Imlib_Color_Range)gr);
    imlib_free_color_range();
 }
 
 void
-__evas_imlib_gradient_color_add(Evas_Imlib_Graident *gr, int r, int g, int b, int a, int dist)
+__evas_x11_gradient_color_add(Evas_X11_Graident *gr, int r, int g, int b, int a, int dist)
 {
    imlib_context_set_color_range((Imlib_Color_Range)gr);
    imlib_context_set_color(r, g, b, a);
@@ -564,7 +538,7 @@ __evas_imlib_gradient_color_add(Evas_Imlib_Graident *gr, int r, int g, int b, in
 }
 
 void
-__evas_imlib_gradient_draw(Evas_Imlib_Graident *gr, Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x, int y, int w, int h, double angle)
+__evas_x11_gradient_draw(Evas_X11_Graident *gr, Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x, int y, int w, int h, double angle)
 {
    Evas_List l;
    
@@ -577,7 +551,7 @@ __evas_imlib_gradient_draw(Evas_Imlib_Graident *gr, Display *disp, Imlib_Image d
    imlib_context_set_blend(1);
    for(l = drawable_list; l; l = l->next)
      {
-	Evas_Imlib_Drawable *dr;
+	Evas_X11_Drawable *dr;
 	
 	dr = l->data;
 	
@@ -587,7 +561,7 @@ __evas_imlib_gradient_draw(Evas_Imlib_Graident *gr, Display *disp, Imlib_Image d
 	     
 	     for (ll = dr->tmp_images; ll; ll = ll->next)
 	       {
-		  Evas_Imlib_Update *up;
+		  Evas_X11_Update *up;
 
 		  up = ll->data;
 		  
@@ -595,10 +569,12 @@ __evas_imlib_gradient_draw(Evas_Imlib_Graident *gr, Display *disp, Imlib_Image d
 		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
 				      x, y, w, h))
 		    {
+/*		       
 		       if (!up->image)
 			  up->image = imlib_create_image(up->w, up->h);
 		       imlib_context_set_image(up->image);
 		       imlib_image_fill_color_range_rectangle(x - up->x, y - up->y, w, h, angle);
+*/
 		    }
 	       }
 	  }
@@ -625,30 +601,22 @@ __evas_imlib_gradient_draw(Evas_Imlib_Graident *gr, Display *disp, Imlib_Image d
 /* general externals *********************************************************/
 /*****************************************************************************/
 
-static Visual *__evas_visual = NULL;
-static Colormap __evas_cmap = 0;
-
 void
-__evas_imlib_sync(Display *disp)
+__evas_x11_sync(Display *disp)
 {
    XSync(disp, False);
 }
 
 void
-__evas_imlib_flush_draw(Display *disp, Imlib_Image dstim, Window win)
+__evas_x11_flush_draw(Display *disp, Imlib_Image dstim, Window win)
 {
    Evas_List l;
    
-   imlib_context_set_display(disp);
-   imlib_context_set_visual(__evas_visual);
-   imlib_context_set_colormap(__evas_cmap);
-   imlib_context_set_drawable(win);
-   imlib_context_set_dither(1);
-   imlib_context_set_blend(0);
-   
+/*   
+*/
    for(l = drawable_list; l; l = l->next)
      {
-	Evas_Imlib_Drawable *dr;
+	Evas_X11_Drawable *dr;
 	
 	dr = l->data;
 	
@@ -658,21 +626,23 @@ __evas_imlib_flush_draw(Display *disp, Imlib_Image dstim, Window win)
 	     
 	     for (ll = dr->tmp_images; ll; ll = ll->next)
 	       {
-		  Evas_Imlib_Update *up;
+		  Evas_X11_Update *up;
 		  
 		  up = ll->data;
-		  
-		  if (up->image)
+
+		  if (up->p)
 		    {
-		       imlib_context_set_image(up->image);
-		       imlib_render_image_on_drawable(up->x, up->y);
-		       imlib_free_image();
+		       XCopyArea(disp, up->p, win, dr->gc, 
+				 0, 0, up->w, up->h, up->x, up->y);
+		       XFreePixmap(disp, up->p);
 		    }
+
 		  free(up);
 	       }
 	     if (dr->tmp_images)
 		dr->tmp_images = evas_list_free(dr->tmp_images);
 	  }
+	XFreeGC(disp, dr->gc);
 	free(dr);
      }
    if (drawable_list)
@@ -681,14 +651,14 @@ __evas_imlib_flush_draw(Display *disp, Imlib_Image dstim, Window win)
 }
 
    
-   int
-__evas_imlib_capable(Display *disp)
+int
+__evas_x11_capable(Display *disp)
 {
    return 1;
 }
 
 Visual *
-__evas_imlib_get_visual(Display *disp, int screen)
+__evas_x11_get_visual(Display *disp, int screen)
 {
    int depth;
    
@@ -697,32 +667,32 @@ __evas_imlib_get_visual(Display *disp, int screen)
 }
 
 XVisualInfo *
-__evas_imlib_get_visual_info(Display *disp, int screen)
+__evas_x11_get_visual_info(Display *disp, int screen)
 {
    static XVisualInfo *vi = NULL;
    XVisualInfo vi_template;
    int n;
    
    if (vi) return vi;
-   vi_template.visualid = (__evas_imlib_get_visual(disp, screen))->visualid;
+   vi_template.visualid = (__evas_x11_get_visual(disp, screen))->visualid;
    vi_template.screen = screen;
    vi = XGetVisualInfo(disp, VisualIDMask | VisualScreenMask, &vi_template ,&n);
    return vi;
 }
 
 Colormap
-__evas_imlib_get_colormap(Display *disp, int screen)
+__evas_x11_get_colormap(Display *disp, int screen)
 {
    Visual *v;
    
    if (__evas_cmap) return __evas_cmap;
-   v = __evas_imlib_get_visual(disp, screen);
+   v = __evas_x11_get_visual(disp, screen);
    __evas_cmap = XCreateColormap(disp, RootWindow(disp, screen), v, AllocNone);
    return __evas_cmap;
 }
 
 void
-__evas_imlib_init(Display *disp, int screen, int colors)
+__evas_x11_init(Display *disp, int screen, int colors)
 {
    static int initted = 0;
    
@@ -736,45 +706,52 @@ __evas_imlib_init(Display *disp, int screen, int colors)
 }
 
 void
-__evas_imlib_draw_add_rect(Display *disp, Imlib_Image dstim, Window win, 
+__evas_x11_draw_add_rect(Display *disp, Imlib_Image dstim, Window win, 
 			   int x, int y, int w, int h)
 {
    Evas_List l;
    
    for(l = drawable_list; l; l = l->next)
      {
-	Evas_Imlib_Drawable *dr;
+	Evas_X11_Drawable *dr;
 	
 	dr = l->data;
 	
 	if ((dr->win == win) && (dr->disp == disp))
 	  {
-	     Evas_Imlib_Update *up;
+	     Evas_X11_Update *up;
 	     
-	     up = malloc(sizeof(Evas_Imlib_Update));
+	     up = malloc(sizeof(Evas_X11_Update));
 	     up->x = x;
 	     up->y = y;
 	     up->w = w;
 	     up->h = h;
-	     up->image = NULL;
+	     up->p = 0;
 	     dr->tmp_images = evas_list_append(dr->tmp_images, up);
 	  }
 	return;
      }
      {
-	Evas_Imlib_Drawable *dr;
-	Evas_Imlib_Update *up;
+	Evas_X11_Drawable *dr;
+	Evas_X11_Update *up;
+	GC gc;
+	XGCValues gcv;
+	XWindowAttributes att;
 	
-	dr = malloc(sizeof(Evas_Imlib_Drawable));
+	gc = XCreateGC(disp, win, 0, &gcv);
+	XGetWindowAttributes(disp, win, &att);
+	dr = malloc(sizeof(Evas_X11_Drawable));
 	dr->win = win;
 	dr->disp = disp;
 	dr->tmp_images = NULL;
-	up = malloc(sizeof(Evas_Imlib_Update));
+	dr->gc = gc;
+	dr->depth = att.depth;
+	up = malloc(sizeof(Evas_X11_Update));
 	up->x = x;
 	up->y = y;
 	up->w = w;
 	up->h = h;
-	up->image = NULL;
+	up->p = 0;
 	drawable_list = evas_list_append(drawable_list, dr);
 	dr->tmp_images = evas_list_append(dr->tmp_images, up);
      }

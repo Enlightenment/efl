@@ -138,7 +138,10 @@ __evas_image_image_draw(Evas_Image_Image *im,
 	  }
      }
    if (cm)
-      imlib_context_set_color_modifier(NULL);
+     {
+	imlib_free_color_modifier();
+	imlib_context_set_color_modifier(NULL);
+     }
 }
 
 int

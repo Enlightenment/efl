@@ -6,6 +6,7 @@
 #include "evas_gl_routines.h"
 #include "evas_imlib_routines.h"
 #include "evas_image_routines.h"
+#include "evas_x11_routines.h"
 
 static void
 _evas_free_gradient_box(Evas_Object o)
@@ -30,6 +31,8 @@ _evas_free_gradient_box_renderer_data(Evas e, Evas_Object o)
 	   __evas_imlib_gradient_free(o->renderer_data.method[e->current.render_method]);
 	break;
      case RENDER_METHOD_BASIC_HARDWARE:
+	if (o->renderer_data.method[e->current.render_method])
+	   __evas_x11_gradient_free(o->renderer_data.method[e->current.render_method]);
 	break;
      case RENDER_METHOD_3D_HARDWARE:
 	if (o->renderer_data.method[e->current.render_method])
@@ -116,6 +119,23 @@ evas_set_gradient(Evas e, Evas_Object o, Evas_Gradient grad)
 	  }
 	break;
      case RENDER_METHOD_BASIC_HARDWARE:
+	if (o->renderer_data.method[e->current.render_method])
+	   __evas_x11_gradient_free(o->renderer_data.method[e->current.render_method]);
+	  {
+	     Evas_X11_Graident *g;
+	     Evas_List l;
+	     
+	     g = __evas_x11_gradient_new(e->current.display);
+	     o->renderer_data.method[e->current.render_method] = g;
+	     for (l = grad->color_points; l; l = l->next)
+	       {
+		  Evas_Color_Point col;
+		  
+		  col= l->data;
+		  __evas_x11_gradient_color_add(g, col->r, col->g, col->b, 
+						  col->a, col->distance);
+	       }
+	  }
 	break;
      case RENDER_METHOD_3D_HARDWARE:
 	if (o->renderer_data.method[e->current.render_method])

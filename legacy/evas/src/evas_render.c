@@ -1,11 +1,12 @@
 #include "Evas.h"
-#include "evas_gl_routines.h"
-#include "evas_imlib_routines.h"
-#include "evas_image_routines.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include "evas_gl_routines.h"
+#include "evas_imlib_routines.h"
+#include "evas_image_routines.h"
+#include "evas_x11_routines.h"
 
 void
 _evas_object_get_current_translated_coords(Evas e, Evas_Object o, 
@@ -125,6 +126,21 @@ evas_render(Evas e)
 	func_gradient_draw       = __evas_imlib_gradient_draw;
 	break;
      case RENDER_METHOD_BASIC_HARDWARE:
+	func_draw_add_rect       = __evas_x11_draw_add_rect;
+	func_image_new_from_file = __evas_x11_image_new_from_file;
+	func_image_set_borders   = __evas_x11_image_set_borders;
+	func_image_draw          = __evas_x11_image_draw;
+	func_image_free          = __evas_x11_image_free;
+	func_flush_draw          = __evas_x11_flush_draw;
+	func_init                = __evas_x11_init;
+	func_image_get_width     = __evas_x11_image_get_width;
+	func_image_get_height    = __evas_x11_image_get_height;
+	func_text_font_new       = __evas_x11_text_font_new;
+	func_text_font_free      = __evas_x11_text_font_free;
+	func_text_draw           = __evas_x11_text_draw;
+	func_rectangle_draw      = __evas_x11_rectangle_draw;
+	func_line_draw           = __evas_x11_line_draw;
+	func_gradient_draw       = __evas_x11_gradient_draw;
 	break;
      case RENDER_METHOD_3D_HARDWARE:
 	func_draw_add_rect       = __evas_gl_draw_add_rect;
@@ -645,6 +661,11 @@ evas_get_optimal_visual(Evas e, Display *disp)
 	  }
 	break;
      case RENDER_METHOD_BASIC_HARDWARE:
+	if (__evas_x11_capable(disp))
+	   return __evas_x11_get_visual(disp, e->current.screen);
+	else
+	  {
+	  }
 	break;
      case RENDER_METHOD_3D_HARDWARE:
 	if (__evas_gl_capable(disp))
@@ -684,6 +705,11 @@ evas_get_optimal_colormap(Evas e, Display *disp)
 	  }
 	break;
      case RENDER_METHOD_BASIC_HARDWARE:
+	if (__evas_x11_capable(disp))
+	   return __evas_x11_get_colormap(disp, e->current.screen);
+	else
+	  {
+	  }
 	break;
      case RENDER_METHOD_3D_HARDWARE:
 	if (__evas_gl_capable(disp))
@@ -788,6 +814,7 @@ evas_set_scale_smoothness(Evas e, int smooth)
 	__evas_imlib_image_set_smooth_scaling(smooth);
 	break;
      case RENDER_METHOD_BASIC_HARDWARE:
+	__evas_x11_image_set_smooth_scaling(smooth);
 	break;
      case RENDER_METHOD_3D_HARDWARE:
 	__evas_gl_image_set_smooth_scaling(smooth);

@@ -102,6 +102,8 @@ main(int argc, char **argv)
    e = evas_new();
    if ((argc >= 4) && (!strcmp(argv[3], "software")))
       evas_set_output_method(e, RENDER_METHOD_ALPHA_SOFTWARE);
+   else if ((argc >= 4) && (!strcmp(argv[3], "x11")))
+      evas_set_output_method(e, RENDER_METHOD_BASIC_HARDWARE);
    else if ((argc >= 4) && (!strcmp(argv[3], "image")))
      {
 	DATA32 *data;
