@@ -181,10 +181,12 @@ evas_render(Evas e)
 			(o->current.w != o->previous.w) ||
 			(o->current.h != o->previous.h) ||
 			(o->current.zoomscale != o->previous.zoomscale) ||
-			(o->current.layer != o->previous.layer)))
+			(o->current.layer != o->previous.layer) ||
+			(o->current.stacking)))
 		      )
 		     real_change = 1;
-		  if (o->current.visible)
+		  o->current.stacking = 0;
+		  if ((!real_change) && (o->current.visible))
 		    {
 		       switch (o->type)
 			 {
