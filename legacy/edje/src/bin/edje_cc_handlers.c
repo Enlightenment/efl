@@ -518,13 +518,13 @@ ob_collections_group_parts_part_description(void)
    ed->rel1.relative_x = 0.0;
    ed->rel1.relative_y = 0.0;
    ed->rel1.offset_x = 0;
-   ed->rel1.offset_x = 0;
+   ed->rel1.offset_y = 0;
    ed->rel1.id_x = -1;
    ed->rel1.id_y = -1;
    ed->rel2.relative_x = 1.0;
    ed->rel2.relative_y = 1.0;
    ed->rel2.offset_x = -1;
-   ed->rel2.offset_x = -1;
+   ed->rel2.offset_y = -1;
    ed->rel2.id_x = -1;
    ed->rel2.id_y = -1;
    ed->image.id = -1;

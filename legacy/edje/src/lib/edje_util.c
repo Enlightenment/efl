@@ -739,10 +739,13 @@ edje_object_part_drag_value_set(Evas_Object *obj, const char *part, double dx, d
 	return;
      }
    if (rp->drag.down.count > 0) return;
-   if (dx < 0.0) dx = 0.0;
-   else if (dx > 1.0) dx = 1.0;
-   if (dy < 0.0) dy = 0.0;
-   else if (dy > 1.0) dy = 1.0;
+   if(rp->part->dragable.confine_id != -1)
+   {
+    if (dx < 0.0) dx = 0.0;
+    else if (dx > 1.0) dx = 1.0;
+    if (dy < 0.0) dy = 0.0;
+    else if (dy > 1.0) dy = 1.0;
+   }
    if (rp->part->dragable.x < 0) dx = 1.0 - dx;
    if (rp->part->dragable.y < 0) dy = 1.0 - dy;
    if ((rp->drag.val.x == dx) && (rp->drag.val.y == dy)) return;
