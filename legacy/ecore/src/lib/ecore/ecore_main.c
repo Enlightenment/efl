@@ -12,10 +12,10 @@ static void _ecore_main_fd_handlers_call(void);
 static int  _ecore_main_fd_handlers_buf_call(void);
 static void _ecore_main_loop_iterate_internal(int once_only);
 
-static  int               in_main_loop = 0;
-static  int               do_quit = 0;
-static  Ecore_Fd_Handler *fd_handlers = NULL;
-static  int               fd_handlers_delete_me = 0;
+static int               in_main_loop = 0;
+static int               do_quit = 0;
+static Ecore_Fd_Handler *fd_handlers = NULL;
+static int               fd_handlers_delete_me = 0;
 
 /**
  * Run 1 iteration of the main loop and process everything on the queue.
