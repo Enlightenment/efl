@@ -52,13 +52,15 @@ evas_add_image_from_file(Evas e, char *file)
    o->object_free = _evas_free_image;
    o->object_renderer_data_free = _evas_free_image_renderer_data;
 
+   oo->load_error = IMLIB_LOAD_ERROR_NONE;
+   
    if (file)
      {
 	oo->current.file = strdup(file);
 	  {
 	     Imlib_Image im;
 	     
-	     im = imlib_load_image(file);
+	     im = imlib_load_image_with_error_return(file, &oo->load_error);
 	     if (im)
 	       {
 		  imlib_context_set_image(im);
@@ -116,7 +118,8 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
    if (!o) return;
    IF_OBJ(o, OBJECT_IMAGE) return;
    oo = o;
-   if ((oo->current.file) && (file) && (strcmp(file, oo->current.file)))
+   if (((oo->current.file) && (file) && (strcmp(file, oo->current.file))) ||
+       ((!oo->current.file) && (file)))
      {
 	if (oo->current.file)
 	   free(oo->current.file);
@@ -125,7 +128,7 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
 	  {
 	     Imlib_Image im;
 	     
-	     im = imlib_load_image(file);
+	     im = imlib_load_image_with_error_return(file, &oo->load_error);
 	     if (im)
 	       {
 		  imlib_context_set_image(im);
@@ -158,19 +161,22 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
      }
    else
      {
-	if (!file) 
-	  {
-	     oo->current.file = NULL;
-	     o->changed = 1;
-	     e->changed = 1;
-	  }
-	else
-	  {
-	     oo->current.fill.x = 0;
-	     oo->current.fill.y = 0;
-	     oo->current.fill.w = (double)oo->current.image.w;
-	     oo->current.fill.h = (double)oo->current.image.h;
-	  }
+        if (oo->current.file)
+	  free(oo->current.file);
+	oo->previous.file = NULL;
+	oo->current.file = NULL;
+	oo->current.image.w = 0;
+	oo->current.image.h = 0;
+	evas_resize(e, o, 
+		    (double)oo->current.image.w,
+		    (double)oo->current.image.h);
+	oo->current.fill.x = 0;
+	oo->current.fill.y = 0;
+	oo->current.fill.w = (double)oo->current.image.w;
+	oo->current.fill.h = (double)oo->current.image.h;
+	oo->load_error = IMLIB_LOAD_ERROR_NONE;
+	o->changed = 1;
+	e->changed = 1;
      }
 }
 
@@ -245,4 +251,17 @@ evas_get_image_border(Evas e, Evas_Object o, int *l, int *r, int *t, int *b)
    if (r) *r = oo->current.border.r;
    if (t) *t = oo->current.border.t;
    if (b) *b = oo->current.border.b;
+}
+
+Imlib_Load_Error
+evas_get_image_load_error(Evas e, Evas_Object o)
+{
+   Evas_Object_Image oo;
+   
+   if (!e) return;
+   if (!o) return;
+   IF_OBJ(o, OBJECT_IMAGE) return;
+   oo = o;
+   
+   return oo->load_error;
 }

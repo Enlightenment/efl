@@ -216,6 +216,7 @@ struct _Evas_Object_Image
 	 int r, g, b, a;
       } color;
    } current, previous;
+   Imlib_Load_Error load_error;
 };
 
 struct _Evas_Object_Text
