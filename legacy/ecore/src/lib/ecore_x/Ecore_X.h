@@ -123,20 +123,20 @@ typedef enum _Ecore_X_Event_Mask
    ECORE_X_EVENT_MASK_WINDOW_FOCUS_OUT       = (1L << 31)
 } Ecore_X_Event_Mask;
 
-   typedef enum _Ecore_X_Gravity {
-      ECORE_X_GRAVITY_FORGET = 0,
-	ECORE_X_GRAVITY_UNMAP = 0,
-	ECORE_X_GRAVITY_NW = 1,
-	ECORE_X_GRAVITY_N = 2,
-	ECORE_X_GRAVITY_NE = 3,
-	ECORE_X_GRAVITY_W = 4,
-	ECORE_X_GRAVITY_CENTER = 5,
-	ECORE_X_GRAVITY_E = 6,
-	ECORE_X_GRAVITY_SW = 7,
-	ECORE_X_GRAVITY_S = 8,
-	ECORE_X_GRAVITY_SE = 9,
-	ECORE_X_GRAVITY_STATIC = 10
-   } Ecore_X_Gravity;
+typedef enum _Ecore_X_Gravity {
+     ECORE_X_GRAVITY_FORGET = 0,
+     ECORE_X_GRAVITY_UNMAP = 0,
+     ECORE_X_GRAVITY_NW = 1,
+     ECORE_X_GRAVITY_N = 2,
+     ECORE_X_GRAVITY_NE = 3,
+     ECORE_X_GRAVITY_W = 4,
+     ECORE_X_GRAVITY_CENTER = 5,
+     ECORE_X_GRAVITY_E = 6,
+     ECORE_X_GRAVITY_SW = 7,
+     ECORE_X_GRAVITY_S = 8,
+     ECORE_X_GRAVITY_SE = 9,
+     ECORE_X_GRAVITY_STATIC = 10
+} Ecore_X_Gravity;
 
 typedef struct _Ecore_X_Event_Key_Down                 Ecore_X_Event_Key_Down;
 typedef struct _Ecore_X_Event_Key_Up                   Ecore_X_Event_Key_Up;
@@ -824,13 +824,13 @@ EAPI Ecore_X_Window   ecore_x_window_new(Ecore_X_Window parent, int x, int y, in
 EAPI Ecore_X_Window   ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI Ecore_X_Window   ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI void             ecore_x_window_configure(Ecore_X_Window win,
-                                          Ecore_X_Window_Configure_Mask mask,
-                                          int x, int y, int w, int h,
-                                          int border_width,
-                                          Ecore_X_Window sibling,
-                                          int stack_mode);
+					       Ecore_X_Window_Configure_Mask mask,
+					       int x, int y, int w, int h,
+					       int border_width,
+					       Ecore_X_Window sibling,
+					       int stack_mode);
 EAPI void             ecore_x_window_cursor_set(Ecore_X_Window win,
-                                           Ecore_X_Cursor c);
+						Ecore_X_Cursor c);
 EAPI void             ecore_x_window_del(Ecore_X_Window win);
 EAPI void             ecore_x_window_delete_request_send(Ecore_X_Window win);
 EAPI void             ecore_x_window_show(Ecore_X_Window win);
@@ -856,13 +856,13 @@ EAPI Ecore_X_Window   ecore_x_window_at_xy_get(int x, int y);
 EAPI Ecore_X_Window   ecore_x_window_parent_get(Ecore_X_Window win);
 
 EAPI void             ecore_x_window_background_color_set(Ecore_X_Window win,
-                                                     unsigned short r,
-						     unsigned short g,
-						     unsigned short b);
+							  unsigned short r,
+							  unsigned short g,
+							  unsigned short b);
 EAPI void             ecore_x_window_gravity_set(Ecore_X_Window win,
-					    Ecore_X_Gravity grav);
+						 Ecore_X_Gravity grav);
 EAPI void             ecore_x_window_pixel_gravity_set(Ecore_X_Window win,
-						  Ecore_X_Gravity grav);
+						       Ecore_X_Gravity grav);
        
 EAPI Ecore_X_Atom     ecore_x_window_prop_any_type(void);
 EAPI void             ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Atom format, int size, void *data, int number);
@@ -940,293 +940,242 @@ EAPI int              ecore_x_client_message32_send(Ecore_X_Window win, Ecore_X_
 EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom type, const void *data, int len);
 
    
-   /* FIXME: these funcs need categorising */
-   EAPI void            ecore_x_drawable_geometry_get(Ecore_X_Drawable d, int *x, int *y, int *w, int *h);
-   EAPI int             ecore_x_drawable_border_width_get(Ecore_X_Drawable d);
-   EAPI int             ecore_x_drawable_depth_get(Ecore_X_Drawable d);
-   EAPI Ecore_X_Window *ecore_x_window_root_list(int *num_ret);
-   EAPI Ecore_X_Window  ecore_x_window_root_first_get(void);
-   EAPI int             ecore_x_window_manage(Ecore_X_Window win);
-   EAPI void            ecore_x_window_container_manage(Ecore_X_Window win);
-   EAPI void            ecore_x_window_client_manage(Ecore_X_Window win);
-   EAPI void            ecore_x_window_sniff(Ecore_X_Window win);
-   EAPI void            ecore_x_window_client_sniff(Ecore_X_Window win);
-   EAPI Ecore_X_Atom    ecore_x_atom_get(const char *name);
+/* FIXME: these funcs need categorising */
+EAPI void            ecore_x_drawable_geometry_get(Ecore_X_Drawable d, int *x, int *y, int *w, int *h);
+EAPI int             ecore_x_drawable_border_width_get(Ecore_X_Drawable d);
+EAPI int             ecore_x_drawable_depth_get(Ecore_X_Drawable d);
+EAPI Ecore_X_Window *ecore_x_window_root_list(int *num_ret);
+EAPI Ecore_X_Window  ecore_x_window_root_first_get(void);
+EAPI int             ecore_x_window_manage(Ecore_X_Window win);
+EAPI void            ecore_x_window_container_manage(Ecore_X_Window win);
+EAPI void            ecore_x_window_client_manage(Ecore_X_Window win);
+EAPI void            ecore_x_window_sniff(Ecore_X_Window win);
+EAPI void            ecore_x_window_client_sniff(Ecore_X_Window win);
+EAPI Ecore_X_Atom    ecore_x_atom_get(const char *name);
 
-   EAPI void            ecore_x_icccm_init(void);
-   EAPI void
-     ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state);
-   EAPI void
-     ecore_x_icccm_delete_window_send(Ecore_X_Window win, Ecore_X_Time t);
-   EAPI void
-     ecore_x_icccm_take_focus_send(Ecore_X_Window win, Ecore_X_Time t);
-   EAPI void
-     ecore_x_icccm_save_yourself_send(Ecore_X_Window win, Ecore_X_Time t);
-   EAPI void
-     ecore_x_icccm_move_resize_send(Ecore_X_Window win, 
-				    int x, int y, int w, int h);
-   EAPI void
-     ecore_x_icccm_hints_set(Ecore_X_Window win,
-			     int accepts_focus,
-			     Ecore_X_Window_State_Hint initial_state,
-			     Ecore_X_Pixmap icon_pixmap,
-			     Ecore_X_Pixmap icon_mask,
-			     Ecore_X_Window icon_window,
-			     Ecore_X_Window window_group,
-			     int is_urgent);
-   EAPI int
-     ecore_x_icccm_hints_get(Ecore_X_Window win,
-			     int *accepts_focus,
-			     Ecore_X_Window_State_Hint *initial_state,
-			     Ecore_X_Pixmap *icon_pixmap,
-			     Ecore_X_Pixmap *icon_mask,
-			     Ecore_X_Window *icon_window,
-			     Ecore_X_Window *window_group,
-			     int *is_urgent);
-   EAPI void
-     ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
-				      int request_pos,
-				      Ecore_X_Gravity gravity,
-				      int min_w, int min_h,
-				      int max_w, int max_h,
-				      int base_w, int base_h,
-				      int step_x, int step_y,
-				      double min_aspect,
-				      double max_aspect);
+EAPI void            ecore_x_icccm_init(void);
+EAPI void            ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state);
+EAPI Ecore_X_Window_State_Hint ecore_x_icccm_state_get(Ecore_X_Window win);
+EAPI void            ecore_x_icccm_delete_window_send(Ecore_X_Window win, Ecore_X_Time t);
+EAPI void            ecore_x_icccm_take_focus_send(Ecore_X_Window win, Ecore_X_Time t);
+EAPI void            ecore_x_icccm_save_yourself_send(Ecore_X_Window win, Ecore_X_Time t);
+EAPI void            ecore_x_icccm_move_resize_send(Ecore_X_Window win, int x, int y, int w, int h);
+EAPI void  ecore_x_icccm_hints_set(Ecore_X_Window win,
+				   int accepts_focus,
+				   Ecore_X_Window_State_Hint initial_state,
+				   Ecore_X_Pixmap icon_pixmap,
+				   Ecore_X_Pixmap icon_mask,
+				   Ecore_X_Window icon_window,
+				   Ecore_X_Window window_group,
+				   int is_urgent);
+EAPI int  ecore_x_icccm_hints_get(Ecore_X_Window win,
+				  int *accepts_focus,
+				  Ecore_X_Window_State_Hint *initial_state,
+				  Ecore_X_Pixmap *icon_pixmap,
+				  Ecore_X_Pixmap *icon_mask,
+				  Ecore_X_Window *icon_window,
+				  Ecore_X_Window *window_group,
+				  int *is_urgent);
+EAPI void  ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
+					    int request_pos,
+					    Ecore_X_Gravity gravity,
+					    int min_w, int min_h,
+					    int max_w, int max_h,
+					    int base_w, int base_h,
+					    int step_x, int step_y,
+					    double min_aspect,
+					    double max_aspect);
        
-   EAPI int
-     ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
-				      int *request_pos,
-				      Ecore_X_Gravity *gravity,
-				      int *min_w, int *min_h,
-				      int *max_w, int *max_h,
-				      int *base_w, int *base_h,
-				      int *step_x, int *step_y,
-				      double *min_aspect,
-				      double *max_aspect);
-   EAPI void
-     ecore_x_icccm_title_set(Ecore_X_Window win, const char *t);
-   EAPI char *
-     ecore_x_icccm_title_get(Ecore_X_Window win);
-   EAPI void
-     ecore_x_icccm_protocol_set(Ecore_X_Window win,
-                                Ecore_X_WM_Protocol protocol,
-                                int on);
-   EAPI int
-     ecore_x_icccm_protocol_isset(Ecore_X_Window win,
-                                  Ecore_X_WM_Protocol protocol);
-   EAPI void
-     ecore_x_icccm_name_class_set(Ecore_X_Window win,
-                                  const char *n,
-                                  const char *c);
-   EAPI char *
-     ecore_x_icccm_client_machine_get(Ecore_X_Window win);
-   EAPI void
-     ecore_x_icccm_command_set(Ecore_X_Window win, int argc, char **argv);
-   EAPI void
-     ecore_x_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv);
-   EAPI char *
-     ecore_x_icccm_icon_name_get(Ecore_X_Window win);
-   EAPI void
-     ecore_x_icccm_icon_name_set(Ecore_X_Window win, const char *t);
-   EAPI void
-     ecore_x_icccm_colormap_window_set(Ecore_X_Window win, Ecore_X_Window subwin);
-   EAPI void
-     ecore_x_icccm_colormap_window_unset(Ecore_X_Window win, Ecore_X_Window subwin);
-   EAPI void
-     ecore_x_icccm_transient_for_set(Ecore_X_Window win, Ecore_X_Window forwin);
-   EAPI void
-     ecore_x_icccm_transient_for_unset(Ecore_X_Window win);
-   EAPI Ecore_X_Window
-     ecore_x_icccm_transient_for_get(Ecore_X_Window win);
-   EAPI void
-     ecore_x_icccm_window_role_set(Ecore_X_Window win, const char *role);
-   EAPI char *
-     ecore_x_icccm_window_role_get(Ecore_X_Window win);
-   EAPI void
-     ecore_x_icccm_client_leader_set(Ecore_X_Window win, Ecore_X_Window l);
-   EAPI Ecore_X_Window
-     ecore_x_icccm_client_leader_get(Ecore_X_Window win);
+EAPI int   ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
+					    int *request_pos,
+					    Ecore_X_Gravity *gravity,
+					    int *min_w, int *min_h,
+					    int *max_w, int *max_h,
+					    int *base_w, int *base_h,
+					    int *step_x, int *step_y,
+					    double *min_aspect,
+					    double *max_aspect);
+EAPI void  ecore_x_icccm_title_set(Ecore_X_Window win, const char *t);
+EAPI char *ecore_x_icccm_title_get(Ecore_X_Window win);
+EAPI void  ecore_x_icccm_protocol_set(Ecore_X_Window win,
+				      Ecore_X_WM_Protocol protocol,
+				      int on);
+EAPI int   ecore_x_icccm_protocol_isset(Ecore_X_Window win,
+					Ecore_X_WM_Protocol protocol);
+EAPI void  ecore_x_icccm_name_class_set(Ecore_X_Window win,
+					const char *n,
+					const char *c);
+EAPI char *ecore_x_icccm_client_machine_get(Ecore_X_Window win);
+EAPI void  ecore_x_icccm_command_set(Ecore_X_Window win, int argc, char **argv);
+EAPI void  ecore_x_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv);
+EAPI char *ecore_x_icccm_icon_name_get(Ecore_X_Window win);
+EAPI void  ecore_x_icccm_icon_name_set(Ecore_X_Window win, const char *t);
+EAPI void  ecore_x_icccm_colormap_window_set(Ecore_X_Window win, Ecore_X_Window subwin);
+EAPI void  ecore_x_icccm_colormap_window_unset(Ecore_X_Window win, Ecore_X_Window subwin);
+EAPI void  ecore_x_icccm_transient_for_set(Ecore_X_Window win, Ecore_X_Window forwin);
+EAPI void  ecore_x_icccm_transient_for_unset(Ecore_X_Window win);
+EAPI Ecore_X_Window ecore_x_icccm_transient_for_get(Ecore_X_Window win);
+EAPI void  ecore_x_icccm_window_role_set(Ecore_X_Window win, const char *role);
+EAPI char *ecore_x_icccm_window_role_get(Ecore_X_Window win);
+EAPI void  ecore_x_icccm_client_leader_set(Ecore_X_Window win, Ecore_X_Window l);
+EAPI Ecore_X_Window ecore_x_icccm_client_leader_get(Ecore_X_Window win);
 
-   
-   typedef enum _Ecore_X_MWM_Hint_Func
-     {
-	ECORE_X_MWM_HINT_FUNC_ALL = (1 << 0),
-	ECORE_X_MWM_HINT_FUNC_RESIZE = (1 << 1),
-	ECORE_X_MWM_HINT_FUNC_MOVE = (1 << 2),
-	ECORE_X_MWM_HINT_FUNC_MINIMIZE = (1 << 3),
-	ECORE_X_MWM_HINT_FUNC_MAXIMIZE = (1 << 4),
-	ECORE_X_MWM_HINT_FUNC_CLOSE = (1 << 5)
-     }
-   Ecore_X_MWM_Hint_Func;
-   
-   typedef enum _Ecore_X_MWM_Hint_Decor
-     {
-	ECORE_X_MWM_HINT_DECOR_ALL = (1 << 0),
-	ECORE_X_MWM_HINT_DECOR_BORDER = (1 << 1),
-	ECORE_X_MWM_HINT_DECOR_RESIZEH = (1 << 2),
-	ECORE_X_MWM_HINT_DECOR_TITLE = (1 << 3),
-	ECORE_X_MWM_HINT_DECOR_MENU = (1 << 4),
-	ECORE_X_MWM_HINT_DECOR_MINIMIZE = (1 << 5),
-	ECORE_X_MWM_HINT_DECOR_MAXIMIZE = (1 << 6)
-     }
-   Ecore_X_MWM_Hint_Decor;
-   
-   typedef enum _Ecore_X_MWM_Hint_Input
-     {
-	ECORE_X_MWM_HINT_INPUT_MODELESS = 0,
-	ECORE_X_MWM_HINT_INPUT_PRIMARY_APPLICATION_MODAL = 1,
-	ECORE_X_MWM_HINT_INPUT_SYSTEM_MODAL = 2,
-	ECORE_X_MWM_HINT_INPUT_FULL_APPLICATION_MODAL = 3,
-     }
-   Ecore_X_MWM_Hint_Input;
-   
-   EAPI int
-     ecore_x_mwm_hints_get(Ecore_X_Window win,
-			   Ecore_X_MWM_Hint_Func *fhint,
-			   Ecore_X_MWM_Hint_Decor *dhint,
-			   Ecore_X_MWM_Hint_Input *ihint);
+
+typedef enum _Ecore_X_MWM_Hint_Func
+{
+   ECORE_X_MWM_HINT_FUNC_ALL = (1 << 0),
+   ECORE_X_MWM_HINT_FUNC_RESIZE = (1 << 1),
+   ECORE_X_MWM_HINT_FUNC_MOVE = (1 << 2),
+   ECORE_X_MWM_HINT_FUNC_MINIMIZE = (1 << 3),
+   ECORE_X_MWM_HINT_FUNC_MAXIMIZE = (1 << 4),
+   ECORE_X_MWM_HINT_FUNC_CLOSE = (1 << 5)
+} Ecore_X_MWM_Hint_Func;
+
+typedef enum _Ecore_X_MWM_Hint_Decor
+{
+   ECORE_X_MWM_HINT_DECOR_ALL = (1 << 0),
+   ECORE_X_MWM_HINT_DECOR_BORDER = (1 << 1),
+   ECORE_X_MWM_HINT_DECOR_RESIZEH = (1 << 2),
+   ECORE_X_MWM_HINT_DECOR_TITLE = (1 << 3),
+   ECORE_X_MWM_HINT_DECOR_MENU = (1 << 4),
+   ECORE_X_MWM_HINT_DECOR_MINIMIZE = (1 << 5),
+   ECORE_X_MWM_HINT_DECOR_MAXIMIZE = (1 << 6)
+} Ecore_X_MWM_Hint_Decor;
+
+typedef enum _Ecore_X_MWM_Hint_Input
+{
+   ECORE_X_MWM_HINT_INPUT_MODELESS = 0,
+   ECORE_X_MWM_HINT_INPUT_PRIMARY_APPLICATION_MODAL = 1,
+   ECORE_X_MWM_HINT_INPUT_SYSTEM_MODAL = 2,
+   ECORE_X_MWM_HINT_INPUT_FULL_APPLICATION_MODAL = 3,
+} Ecore_X_MWM_Hint_Input;
+
+EAPI int ecore_x_mwm_hints_get(Ecore_X_Window win,
+			       Ecore_X_MWM_Hint_Func *fhint,
+			       Ecore_X_MWM_Hint_Decor *dhint,
+			       Ecore_X_MWM_Hint_Input *ihint);
        
-   EAPI void                ecore_x_netwm_init(void);
-   EAPI void                ecore_x_netwm_wm_identify(Ecore_X_Window root, Ecore_X_Window check, const char *wm_name);
-   EAPI void                ecore_x_netwm_desk_count_set(Ecore_X_Window root, unsigned int n_desks);
-   EAPI void                ecore_x_netwm_desk_roots_set(Ecore_X_Window root, unsigned int n_desks, Ecore_X_Window * vroots);
-   EAPI void                ecore_x_netwm_desk_names_set(Ecore_X_Window root, unsigned int n_desks, const char **names);
-   EAPI void                ecore_x_netwm_desk_size_set(Ecore_X_Window root, unsigned int width, unsigned int height);
-   EAPI void                ecore_x_netwm_desk_workareas_set(Ecore_X_Window root, unsigned int n_desks, unsigned int *areas);
-   EAPI void                ecore_x_netwm_desk_current_set(Ecore_X_Window root, unsigned int desk);
-   EAPI void                ecore_x_netwm_desk_viewports_set(Ecore_X_Window root, unsigned int n_desks, unsigned int *origins);
-   EAPI void                ecore_x_netwm_desk_layout_set(Ecore_X_Window root, int orientation, int columns, int rows, int starting_corner);
-   EAPI void                ecore_x_netwm_showing_desktop_set(Ecore_X_Window root, int on);
-   EAPI void                ecore_x_netwm_client_list_set(Ecore_X_Window root, unsigned int n_clients, Ecore_X_Window * p_clients);
-   EAPI void                ecore_x_netwm_client_list_stacking_set(Ecore_X_Window root, unsigned int n_clients, Ecore_X_Window * p_clients);
-   EAPI void                ecore_x_netwm_client_active_set(Ecore_X_Window root, Ecore_X_Window win);
-   EAPI void                ecore_x_netwm_name_set(Ecore_X_Window win, const char *name);
-   EAPI char               *ecore_x_netwm_name_get(Ecore_X_Window win);
-   EAPI void                ecore_x_netwm_visible_name_set(Ecore_X_Window win, const char *name);
-   EAPI char               *ecore_x_netwm_visible_name_get(Ecore_X_Window win);
-   EAPI void                ecore_x_netwm_icon_name_set(Ecore_X_Window win, const char *name);
-   EAPI char               *ecore_x_netwm_icon_name_get(Ecore_X_Window win);
-   EAPI void                ecore_x_netwm_visible_icon_name_set(Ecore_X_Window win, const char *name);
-   EAPI char               *ecore_x_netwm_visible_icon_name_get(Ecore_X_Window win);
-   EAPI void                ecore_x_netwm_desktop_set(Ecore_X_Window win, unsigned int desk);
-   EAPI int                 ecore_x_netwm_desktop_get(Ecore_X_Window win, unsigned int *desk);
-   EAPI void                ecore_x_netwm_strut_set(Ecore_X_Window win, int left, int right, int top, int bottom);
-   EAPI int                 ecore_x_netwm_strut_get(Ecore_X_Window win, int *left, int *right, int *top, int *bottom);
-   EAPI void                ecore_x_netwm_strut_partial_set(Ecore_X_Window win, int left, int right, int top, int bottom, int left_start_y, int left_end_y, int right_start_y, int right_end_y, int top_start_x, int top_end_x, int bottom_start_x, int bottom_end_x);
-   EAPI int                 ecore_x_netwm_strut_partial_get(Ecore_X_Window win, int *left, int *right, int *top, int *bottom, int *left_start_y, int *left_end_y, int *right_start_y, int *right_end_y, int *top_start_x, int *top_end_x, int *bottom_start_x, int *bottom_end_x);
-   EAPI void                ecore_x_netwm_icon_geometry_set(Ecore_X_Window win, int x, int y, int width, int height);
-   EAPI int                 ecore_x_netwm_icon_geometry_get(Ecore_X_Window win, int *x, int *y, int *width, int *height);
+EAPI void                ecore_x_netwm_init(void);
+EAPI void                ecore_x_netwm_wm_identify(Ecore_X_Window root, Ecore_X_Window check, const char *wm_name);
+EAPI void                ecore_x_netwm_desk_count_set(Ecore_X_Window root, unsigned int n_desks);
+EAPI void                ecore_x_netwm_desk_roots_set(Ecore_X_Window root, unsigned int n_desks, Ecore_X_Window * vroots);
+EAPI void                ecore_x_netwm_desk_names_set(Ecore_X_Window root, unsigned int n_desks, const char **names);
+EAPI void                ecore_x_netwm_desk_size_set(Ecore_X_Window root, unsigned int width, unsigned int height);
+EAPI void                ecore_x_netwm_desk_workareas_set(Ecore_X_Window root, unsigned int n_desks, unsigned int *areas);
+EAPI void                ecore_x_netwm_desk_current_set(Ecore_X_Window root, unsigned int desk);
+EAPI void                ecore_x_netwm_desk_viewports_set(Ecore_X_Window root, unsigned int n_desks, unsigned int *origins);
+EAPI void                ecore_x_netwm_desk_layout_set(Ecore_X_Window root, int orientation, int columns, int rows, int starting_corner);
+EAPI void                ecore_x_netwm_showing_desktop_set(Ecore_X_Window root, int on);
+EAPI void                ecore_x_netwm_client_list_set(Ecore_X_Window root, unsigned int n_clients, Ecore_X_Window * p_clients);
+EAPI void                ecore_x_netwm_client_list_stacking_set(Ecore_X_Window root, unsigned int n_clients, Ecore_X_Window * p_clients);
+EAPI void                ecore_x_netwm_client_active_set(Ecore_X_Window root, Ecore_X_Window win);
+EAPI void                ecore_x_netwm_name_set(Ecore_X_Window win, const char *name);
+EAPI char               *ecore_x_netwm_name_get(Ecore_X_Window win);
+EAPI void                ecore_x_netwm_visible_name_set(Ecore_X_Window win, const char *name);
+EAPI char               *ecore_x_netwm_visible_name_get(Ecore_X_Window win);
+EAPI void                ecore_x_netwm_icon_name_set(Ecore_X_Window win, const char *name);
+EAPI char               *ecore_x_netwm_icon_name_get(Ecore_X_Window win);
+EAPI void                ecore_x_netwm_visible_icon_name_set(Ecore_X_Window win, const char *name);
+EAPI char               *ecore_x_netwm_visible_icon_name_get(Ecore_X_Window win);
+EAPI void                ecore_x_netwm_desktop_set(Ecore_X_Window win, unsigned int desk);
+EAPI int                 ecore_x_netwm_desktop_get(Ecore_X_Window win, unsigned int *desk);
+EAPI void                ecore_x_netwm_strut_set(Ecore_X_Window win, int left, int right, int top, int bottom);
+EAPI int                 ecore_x_netwm_strut_get(Ecore_X_Window win, int *left, int *right, int *top, int *bottom);
+EAPI void                ecore_x_netwm_strut_partial_set(Ecore_X_Window win, int left, int right, int top, int bottom, int left_start_y, int left_end_y, int right_start_y, int right_end_y, int top_start_x, int top_end_x, int bottom_start_x, int bottom_end_x);
+EAPI int                 ecore_x_netwm_strut_partial_get(Ecore_X_Window win, int *left, int *right, int *top, int *bottom, int *left_start_y, int *left_end_y, int *right_start_y, int *right_end_y, int *top_start_x, int *top_end_x, int *bottom_start_x, int *bottom_end_x);
+EAPI void                ecore_x_netwm_icon_geometry_set(Ecore_X_Window win, int x, int y, int width, int height);
+EAPI int                 ecore_x_netwm_icon_geometry_get(Ecore_X_Window win, int *x, int *y, int *width, int *height);
 #if 0
-   /* FIXME */
-   EAPI void                ecore_x_netwm_icon_set();
-   EAPI int                 ecore_x_netwm_icon_get();
+/* FIXME */
+EAPI void                ecore_x_netwm_icon_set();
+EAPI int                 ecore_x_netwm_icon_get();
 #endif
-   EAPI void                ecore_x_netwm_pid_set(Ecore_X_Window win, int pid);
-   EAPI int                 ecore_x_netwm_pid_get(Ecore_X_Window win, int *pid);
-   EAPI void                ecore_x_netwm_handled_icons_set(Ecore_X_Window win);
-   EAPI int                 ecore_x_netwm_handled_icons_get(Ecore_X_Window win);
-   EAPI void                ecore_x_netwm_user_time_set(Ecore_X_Window win, int time);
-   EAPI int                 ecore_x_netwm_user_time_get(Ecore_X_Window win, int *time);
+EAPI void                ecore_x_netwm_pid_set(Ecore_X_Window win, int pid);
+EAPI int                 ecore_x_netwm_pid_get(Ecore_X_Window win, int *pid);
+EAPI void                ecore_x_netwm_handled_icons_set(Ecore_X_Window win);
+EAPI int                 ecore_x_netwm_handled_icons_get(Ecore_X_Window win);
+EAPI void                ecore_x_netwm_user_time_set(Ecore_X_Window win, int time);
+EAPI int                 ecore_x_netwm_user_time_get(Ecore_X_Window win, int *time);
 
-   EAPI void                ecore_x_netwm_window_state_set(Ecore_X_Window win, Ecore_X_Window_State state, int on);
-   EAPI int                 ecore_x_netwm_window_state_isset(Ecore_X_Window win, Ecore_X_Window_State state);
-   EAPI void                ecore_x_netwm_window_type_set(Ecore_X_Window win, Ecore_X_Window_Type type);
-   EAPI Ecore_X_Window_Type ecore_x_netwm_window_type_get(Ecore_X_Window win);
-   EAPI int                 ecore_x_netwm_action_allowed(Ecore_X_Window win, Ecore_X_Action action);
-   EAPI void                ecore_x_netwm_opacity_set(Ecore_X_Window win, unsigned int opacity);
-   EAPI int                 ecore_x_netwm_opacity_get(Ecore_X_Window win, unsigned int *opacity);
-   EAPI void                ecore_x_netwm_frame_size_set(Ecore_X_Window win, int fl, int fr, int ft, int fb);
-   EAPI int                 ecore_x_netwm_frame_size_get(Ecore_X_Window win, int *fl, int *fr, int *ft, int *fb);
-   
-   EAPI int                 ecore_x_xinerama_screen_count_get(void);
-   EAPI int                 ecore_x_xinerama_screen_geometry_get(int screen, int *x, int *y, int *w, int *h);
-   
-   /* FIXME: these funcs need categorising */
-   EAPI void            ecore_x_drawable_geometry_get(Ecore_X_Drawable d, int *x, int *y, int *w, int *h);
-   EAPI int             ecore_x_drawable_border_width_get(Ecore_X_Drawable d);
-   EAPI int             ecore_x_drawable_depth_get(Ecore_X_Drawable d);
-   EAPI Ecore_X_Window *ecore_x_window_root_list(int *num_ret);
-   EAPI int             ecore_x_window_manage(Ecore_X_Window win);
-   EAPI void            ecore_x_window_container_manage(Ecore_X_Window win);
-   EAPI void            ecore_x_window_client_manage(Ecore_X_Window win);
-   EAPI void            ecore_x_window_sniff(Ecore_X_Window win);
-   EAPI void            ecore_x_window_client_sniff(Ecore_X_Window win);
-   EAPI Ecore_X_Atom    ecore_x_atom_get(const char *name);
+EAPI void                ecore_x_netwm_window_state_set(Ecore_X_Window win, Ecore_X_Window_State state, int on);
+EAPI int                 ecore_x_netwm_window_state_isset(Ecore_X_Window win, Ecore_X_Window_State state);
+EAPI void                ecore_x_netwm_window_type_set(Ecore_X_Window win, Ecore_X_Window_Type type);
+EAPI Ecore_X_Window_Type ecore_x_netwm_window_type_get(Ecore_X_Window win);
+EAPI int                 ecore_x_netwm_action_allowed(Ecore_X_Window win, Ecore_X_Action action);
+EAPI void                ecore_x_netwm_opacity_set(Ecore_X_Window win, unsigned int opacity);
+EAPI int                 ecore_x_netwm_opacity_get(Ecore_X_Window win, unsigned int *opacity);
+EAPI void                ecore_x_netwm_frame_size_set(Ecore_X_Window win, int fl, int fr, int ft, int fb);
+EAPI int                 ecore_x_netwm_frame_size_get(Ecore_X_Window win, int *fl, int *fr, int *ft, int *fb);
 
-   typedef struct _Ecore_X_Window_Attributes
-     {
-	Ecore_X_Window     root;
-	int                x, y, w, h;
-	int                border;
-	int                depth;
-	char               visible : 1;
-	char               viewable : 1;
-	char               override : 1;
-	char               input_only : 1;
-	char               save_under : 1;
-	struct {
-	   Ecore_X_Event_Mask mine;
-	   Ecore_X_Event_Mask all;
-	   Ecore_X_Event_Mask no_propagate;
-	} event_mask;
-	Ecore_X_Gravity    window_gravity;
-	Ecore_X_Gravity    pixel_gravity;
-	Ecore_X_Colormap   colormap;
-	/* FIXME: missing
-	 * Colormap comormap;
-	 * int map_installed;
-	 * Screen *screen;
-	 * Visual *visual;
-	 */
-     }
-   Ecore_X_Window_Attributes;
+EAPI int                 ecore_x_xinerama_screen_count_get(void);
+EAPI int                 ecore_x_xinerama_screen_geometry_get(int screen, int *x, int *y, int *w, int *h);
    
-   EAPI int
-     ecore_x_window_attributes_get(Ecore_X_Window win, Ecore_X_Window_Attributes *att_ret);
-   EAPI void
-     ecore_x_window_save_set_add(Ecore_X_Window win);
-   EAPI void
-     ecore_x_window_save_set_del(Ecore_X_Window win);
-   EAPI Ecore_X_Window *
-     ecore_x_window_children_get(Ecore_X_Window win, int *num);
+/* FIXME: these funcs need categorising */
+EAPI void            ecore_x_drawable_geometry_get(Ecore_X_Drawable d, int *x, int *y, int *w, int *h);
+EAPI int             ecore_x_drawable_border_width_get(Ecore_X_Drawable d);
+EAPI int             ecore_x_drawable_depth_get(Ecore_X_Drawable d);
+EAPI Ecore_X_Window *ecore_x_window_root_list(int *num_ret);
+EAPI int             ecore_x_window_manage(Ecore_X_Window win);
+EAPI void            ecore_x_window_container_manage(Ecore_X_Window win);
+EAPI void            ecore_x_window_client_manage(Ecore_X_Window win);
+EAPI void            ecore_x_window_sniff(Ecore_X_Window win);
+EAPI void            ecore_x_window_client_sniff(Ecore_X_Window win);
+EAPI Ecore_X_Atom    ecore_x_atom_get(const char *name);
+
+typedef struct _Ecore_X_Window_Attributes
+{
+   Ecore_X_Window     root;
+   int                x, y, w, h;
+   int                border;
+   int                depth;
+   char               visible : 1;
+   char               viewable : 1;
+   char               override : 1;
+   char               input_only : 1;
+   char               save_under : 1;
+   struct {
+	Ecore_X_Event_Mask mine;
+	Ecore_X_Event_Mask all;
+	Ecore_X_Event_Mask no_propagate;
+   } event_mask;
+   Ecore_X_Gravity    window_gravity;
+   Ecore_X_Gravity    pixel_gravity;
+   Ecore_X_Colormap   colormap;
+   /* FIXME: missing
+    * Colormap comormap;
+    * int map_installed;
+    * Screen *screen;
+    * Visual *visual;
+    */
+} Ecore_X_Window_Attributes;
+   
+EAPI int  ecore_x_window_attributes_get(Ecore_X_Window win, Ecore_X_Window_Attributes *att_ret);
+EAPI void ecore_x_window_save_set_add(Ecore_X_Window win);
+EAPI void ecore_x_window_save_set_del(Ecore_X_Window win);
+EAPI Ecore_X_Window *ecore_x_window_children_get(Ecore_X_Window win, int *num);
   
-   EAPI int
-     ecore_x_cursor_color_supported_get(void);
-   EAPI Ecore_X_Cursor
-     ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int hot_y);
-   EAPI void
-     ecore_x_cursor_free(Ecore_X_Cursor c);
-   EAPI Ecore_X_Cursor
-     ecore_x_cursor_shape_get(int shape);
+EAPI int  ecore_x_cursor_color_supported_get(void);
+EAPI Ecore_X_Cursor ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int hot_y);
+EAPI void ecore_x_cursor_free(Ecore_X_Cursor c);
+EAPI Ecore_X_Cursor ecore_x_cursor_shape_get(int shape);
    
-   EAPI int
-     ecore_x_pointer_grab(Ecore_X_Window win);
-   EAPI int
-     ecore_x_pointer_confine_grab(Ecore_X_Window win);
-   EAPI void
-     ecore_x_pointer_ungrab(void);
-   EAPI int
-     ecore_x_keyboard_grab(Ecore_X_Window win);
-   EAPI void
-     ecore_x_keyboard_ungrab(void);
-   EAPI void
-     ecore_x_grab(void);
-   EAPI void
-     ecore_x_ungrab(void);
-   EAPI void
-     ecore_x_passive_grab_replay_func_set(int (*func) (void *data, int event_type, void *event), void *data);
-   EAPI void
-     ecore_x_window_button_grab(Ecore_X_Window win, int button,
-				Ecore_X_Event_Mask event_mask,
-				int mod, int any_mod);
-   EAPI void
-     ecore_x_window_button_ungrab(Ecore_X_Window win, int button,
-				  int mod, int any_mod);
+EAPI int  ecore_x_pointer_grab(Ecore_X_Window win);
+EAPI int  ecore_x_pointer_confine_grab(Ecore_X_Window win);
+EAPI void ecore_x_pointer_ungrab(void);
+EAPI int  ecore_x_keyboard_grab(Ecore_X_Window win);
+EAPI void ecore_x_keyboard_ungrab(void);
+EAPI void ecore_x_grab(void);
+EAPI void ecore_x_ungrab(void);
+EAPI void ecore_x_passive_grab_replay_func_set(int (*func) (void *data, int event_type, void *event), void *data);
+EAPI void ecore_x_window_button_grab(Ecore_X_Window win, int button,
+				     Ecore_X_Event_Mask event_mask,
+				     int mod, int any_mod);
+EAPI void ecore_x_window_button_ungrab(Ecore_X_Window win, int button,
+				       int mod, int any_mod);
 
-   EAPI void ecore_x_focus_reset(void);
-   EAPI void ecore_x_events_allow_all(void);
-   EAPI void ecore_x_pointer_last_xy_get(int *x, int *y);
+EAPI void ecore_x_focus_reset(void);
+EAPI void ecore_x_events_allow_all(void);
+EAPI void ecore_x_pointer_last_xy_get(int *x, int *y);
        
 #ifdef __cplusplus
 }
