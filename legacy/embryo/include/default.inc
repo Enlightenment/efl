@@ -193,7 +193,7 @@ stock bool:operator>=(oper1, Float:oper2)
 stock bool:operator<(Float:oper1, Float:oper2)
     return float_cmp(oper1, oper2) < 0;
 stock bool:operator<(Float:oper1, oper2)
-    return float_cmp(oper1, float_(oper2)) < 0;
+    return float_cmp(oper1, float(oper2)) < 0;
 stock bool:operator<(oper1, Float:oper2)
     return float_cmp(float(oper1), oper2) < 0;
 stock bool:operator<=(Float:oper1, Float:oper2)
