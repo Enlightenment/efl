@@ -90,7 +90,8 @@ suggested configure options for evas for a P2/AMD/P3/P4 desktop X display:
 --enable-convert-32-rgbx-8888 \
 --enable-convert-32-bgr-8888 \
 --enable-convert-32-bgrx-8888 \
---enable-convert-32-rgb-rot-0
+--enable-convert-32-rgb-rot-0 \
+--enable-convert-yuv
 
 make CFLAGS="-O9 -mpentiumpro -march=pentiumpro -mcpu=pentiumpro"
 
@@ -122,7 +123,8 @@ for those that want eet and edb image loading ability:
 --enable-convert-32-rgbx-8888 \
 --enable-convert-32-bgr-8888 \
 --enable-convert-32-bgrx-8888 \
---enable-convert-32-rgb-rot-0
+--enable-convert-32-rgb-rot-0 \
+--enable-convert-yuv
 
 make CFLAGS="-O9 -mpentiumpro -march=pentiumpro -mcpu=pentiumpro"
 
@@ -151,7 +153,8 @@ or to use the fast sampling scaler:
 --enable-convert-32-rgbx-8888 \
 --enable-convert-32-bgr-8888 \
 --enable-convert-32-bgrx-8888 \
---enable-convert-32-rgb-rot-0
+--enable-convert-32-rgb-rot-0 \
+--enable-convert-yuv
 
 make CFLAGS="-O9 -mpentiumpro -march=pentiumpro -mcpu=pentiumpro"
 
@@ -183,6 +186,7 @@ know OpenGL well. NB: you MUST enable the smooth scaler to use the gl engine
 --enable-cpu-c \
 --enable-scale-smooth \
 --enable-scale-sample \
+--enable-convert-yuv
 
 make CFLAGS="-g"
 
@@ -203,7 +207,8 @@ suggested configure options for an ipaq 36xx:
 --enable-scale-smooth \
 --enable-scale-sample \
 --enable-convert-16-rgb-ipq \
---enable-convert-16-rgb-rot-270
+--enable-convert-16-rgb-rot-270 \
+--enable-convert-yuv
 
 make CFLAGS="-O9"
 
@@ -218,7 +223,8 @@ suggested configure options for an ipaq 38xx:
 --enable-scale-smooth \
 --enable-scale-sample \
 --enable-convert-16-rgb-565 \
---enable-convert-16-rgb-rot-90
+--enable-convert-16-rgb-rot-90 \
+--enable-convert-yuv
 
 make CFLAGS="-O9"
 
@@ -238,6 +244,7 @@ export CFLAGS="-O9"
 --enable-convert-16-rgb-ipq \
 --enable-convert-16-rgb-rot-0 \
 --enable-convert-16-rgb-rot-270 \
+--enable-convert-yuv \
 --with-freetype-config=/skiff/local/arm-linux/bin/freetype-config
 
 make CFLAGS="-O9 -I/skiff/local/include -I/skiff/local/arm-linux/include"
@@ -257,7 +264,8 @@ suggested configure options for an DirectFB on x86 target:
 --enable-cpu-c \
 --enable-image-loader-png \
 --enable-image-loader-jpeg \
---enable-scale-smooth
+--enable-scale-smooth \
+--enable-convert-yuv
 
 make CFLAGS="-O9 -mpentiumpro -march=pentiumpro -mcpu=pentiumpro"
 
@@ -282,6 +290,7 @@ suggested configure options for a qtopia target (desktop, qvfb):
 --enable-convert-32-rgb-8888 \
 --enable-convert-32-bgr-8888 \
 --enable-convert-32-rgb-rot-0 \
+--enable-convert-yuv \
 --with-qtdir=/opt/Qtopia
 
 make CFLAGS="-O9 -mpentiumpro -march=pentiumpro -mcpu=pentiumpro"
@@ -303,6 +312,7 @@ export CFLAGS="-O9"
 --enable-convert-16-rgb-565 \
 --enable-convert-16-rgb-rot-270 \
 --with-qtdir=/opt/Qtopia/sharp \
+--enable-convert-yuv \
 --with-freetype-config=/opt/Embedix/tools/arm-linux/bin/freetype-config
 
 make CFLAGS="-O9 -I/opt/Embedix/tools/arm-linux/include"
