@@ -235,7 +235,6 @@ struct _Edje_Part
    unsigned char          mouse_events; /* it will affect/respond to mouse events */
    unsigned char          repeat_events; /* it will repeat events to objects below */
    int                    clip_to_id; /* the part id to clip this one to */   
-   char                  *text_class; /* how to apply/modify the font */
    Edje_Part_Description *default_desc; /* the part descriptor for default */
    Evas_List             *other_desc; /* other possible descriptors */
    struct {
@@ -321,6 +320,7 @@ struct _Edje_Part_Description
 
    struct {
       char          *text; /* if "" or NULL, then leave text unchanged */
+      char          *text_class; /* how to apply/modify the font */
       char          *font; /* if a specific font is asked for */
       
       int            size; /* 0 = use user set size */
