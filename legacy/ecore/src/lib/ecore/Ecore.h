@@ -61,6 +61,14 @@ extern "C" {
 #define MAX(x, y) (((x) > (y)) ? (x) : (y))
 #endif
 
+#ifndef ABS
+#define ABS(x) ((x) < 0 ? -(x) : (x))
+#endif
+
+#ifndef CLAMP
+#define CLAMP(x, min, max) (((x) > (max)) ? (max) : (((x) < (min)) ? (min) : (x)))
+#endif
+
 #define ECORE_EVENT_NONE         0
 #define ECORE_EVENT_EXE_EXIT     1 /**< Spawned Exe has exit event */
 #define ECORE_EVENT_SIGNAL_USER  2 /**< User signal event */
