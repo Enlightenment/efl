@@ -1428,6 +1428,9 @@ _ecore_config_system_init_no_load(void)
    __ecore_config_bundle_local =
       ecore_config_bundle_new(__ecore_config_server_global, "system");
 
+   /* set up a simple default path */
+   ecore_config_string_default("/e/themes/search_path", PACKAGE_DATA_DIR "../ewl/themes");
+   
    return ECORE_CONFIG_ERR_SUCC;
 }
 
