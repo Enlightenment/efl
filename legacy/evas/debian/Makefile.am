@@ -2,7 +2,6 @@ EXTRA_DIST = \
 changelog \
 control \
 copyright \
-libevas-dev.dirs \
 libevas-dev.files \
 libevas-sample.dirs \
 libevas-sample.files \
