@@ -1560,7 +1560,7 @@ _ecore_config_system_load(void)
    Ecore_Config_Prop  *sys;
 
    if (__ecore_config_system_init != 1)
-	return;
+	return ECORE_CONFIG_ERR_FAIL;
 
    if ((p = getenv("HOME")))
      {                          /* debug-only ### FIXME */
