@@ -953,7 +953,6 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 		       /* we lost our client! */
 		       Ecore_Con_Event_Client_Del *e;
 		       
-		       printf("read ERR\n", num);
 		       e = calloc(1, sizeof(Ecore_Con_Event_Client_Del));
 		       if (e)
 			 {
