@@ -127,7 +127,11 @@ fn_rect(double v, double val, int no)
 	else if (v < 2)
 	   alpha = 1;
 	else alpha = (3 - v);
-	if (!o_fn_rects[i]) o_fn_rects[i] = evas_add_rectangle(evas_view);
+	if (!o_fn_rects[i]) 
+	   {
+	      o_fn_rects[i] = evas_add_rectangle(evas_view);
+	      evas_set_layer(evas_view, o_fn_rects[i], 99);
+	   }
 	evas_set_color(evas_view, o_fn_rects[i],
 		       colors[(i * 4) + 0],
 		       colors[(i * 4) + 1],
@@ -167,10 +171,10 @@ fn_line(double v, double val, int no)
 	init = 1;
 	for (i = 0; i < 64; i++)
 	  {
-	     coords[(i * 4) + 0] = ((1024 - 128) / 2) + ((rand() % 500) - 250) - 165;
+	     coords[(i * 4) + 0] = ((1024 - 128) / 2) + ((rand() % 500) - 250);
 	     coords[(i * 4) + 1] = ((768) / 2) + ((rand() % 200) - 0);
-	     coords[(i * 4) + 2] = coords[(i * 4) + 0] + 30 + (rand() % 300);
-	     coords[(i * 4) + 3] = coords[(i * 4) + 1] + 20 + (rand() % 180);
+	     coords[(i * 4) + 2] = ((1024 - 128) / 2) + ((rand() % 500) - 250);
+	     coords[(i * 4) + 3] = ((768) / 2) + ((rand() % 200) - 0);
 	     colors[(i * 4) + 0] = rand() % 255;
 	     colors[(i * 4) + 1] = rand() % 255;
 	     colors[(i * 4) + 2] = rand() % 255;
@@ -186,7 +190,11 @@ fn_line(double v, double val, int no)
 	else if (v < 2)
 	   alpha = 1;
 	else alpha = (3 - v);
-	if (!o_fn_lines[i]) o_fn_lines[i] = evas_add_line(evas_view);
+	if (!o_fn_lines[i]) 
+	   {
+	      o_fn_lines[i] = evas_add_line(evas_view);
+	      evas_set_layer(evas_view, o_fn_lines[i], 99);
+	   }
 	evas_set_color(evas_view, o_fn_lines[i],
 		       colors[(i * 4) + 0],
 		       colors[(i * 4) + 1],
@@ -222,7 +230,7 @@ fn_image(double v, double val, int no)
 }
 
 
-static double codes_loop = 160;
+static double codes_loop = 170;
 static CodeBlock codes[] =
 {
    { 128.0, 2.0, 4.0, 6.0, fn_rect},
@@ -232,7 +240,7 @@ static CodeBlock codes[] =
    { 144.0, 2.0, 4.0, 6.0, fn_grad},
    { 148.0, 2.0, 4.0, 6.0, fn_image}
 };
-static double texts_loop = 160;
+static double texts_loop = 170;
 static TextBlock texts[] =
 {
      { 10.0, 2.0, 4.0, 6.0,  "What are the 7 Wonders of the world?", NULL, NULL},
@@ -259,9 +267,9 @@ static TextBlock texts[] =
      { 100.0, 2.0, 4.0, 6.0,  "Evas is a Canvas ...", NULL, NULL},
      { 104.0, 2.0, 4.0, 6.0,  "That supports Anti-Aliasing ...", NULL, NULL},
      { 108.0, 2.0, 4.0, 6.0,  "Alpha Blending ...", NULL, NULL},
-     { 112.0, 2.0, 4.0, 6.0,  "MMX Assembly ...", NULL, NULL},
+     { 112.0, 2.0, 4.0, 6.0,  "Intel MMX Assembly ...", NULL, NULL},
      { 116.0, 2.0, 4.0, 6.0,  "Hardware Acceleration ...", NULL, NULL},
-     { 120.0, 2.0, 4.0, 6.0,  "For all it's objects.", NULL, NULL},
+     { 120.0, 2.0, 4.0, 6.0,  "For all objects.", NULL, NULL},
      { 124.0, 2.0, 4.0, 6.0,  "The Objects it supports are ...", NULL, NULL},
      { 128.0, 2.0, 4.0, 6.0,  "Rectangles ...", NULL, NULL},
      { 132.0, 2.0, 4.0, 6.0,  "Lines ...", NULL, NULL},
@@ -274,7 +282,7 @@ static TextBlock texts[] =
      { 160.0, 2.0, 4.0, 6.0,  "Faded in and out ...", NULL, NULL},
      { 164.0, 2.0, 4.0, 6.0,  "And much much more ...", NULL, NULL},
 };
-static double images_loop = 160;
+static double images_loop = 170;
 static ImageBlock images[] =
 {
      { 14.0, 2.0, 4.0, 6.0,  300, 100, IMGDIR"evas_test_wonder_1.png", NULL},
@@ -284,7 +292,8 @@ static ImageBlock images[] =
      { 30.0, 2.0, 4.0, 6.0,  400,   0, IMGDIR"evas_test_wonder_5.png", NULL},
      { 34.0, 2.0, 4.0, 6.0,  150, 400, IMGDIR"evas_test_wonder_6.png", NULL},
      { 38.0, 2.0, 4.0, 6.0,  600,  25, IMGDIR"evas_test_wonder_7.png", NULL},
-     { 60.0, 2.0, 8.0, 12.0, 400, 100, IMGDIR"evas_test_cheese.png", NULL}
+     { 60.0, 2.0, 8.0, 12.0, 400, 100, IMGDIR"evas_test_cheese.png", NULL},
+     { 100.0, 2.0, 4.0, 6.0, 300,  50, IMGDIR"evas_test_canvas.png", NULL}
 };
 
 /* functions */
