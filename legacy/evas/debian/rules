@@ -81,7 +81,7 @@ binary-arch: build install
 	dh_testroot
 	dh_movefiles
 
-	dh_installdocs README TODO
+	dh_installdocs README
 	dh_installman
 	dh_installchangelogs
 	dh_link
