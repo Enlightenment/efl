@@ -28,7 +28,47 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
    if (ed->collection)
      {
 	Evas_List *l;
+	int errors = 0;
 	
+	/* check for invalid loops */
+	for (l = ed->collection->parts; (l && ! errors); l = l->next)
+	  {
+	     Edje_Part *ep;
+	     Evas_List *hist = NULL;
+	     
+	     ep = l->data;
+	     hist = evas_list_append(hist, ep);
+	     while (ep->dragable.confine_id >= 0)
+	       {
+		  ep = evas_list_nth(ed->collection->parts,
+				     ep->dragable.confine_id);
+		  if (evas_list_find(hist, ep))
+		    {
+		       printf("EDJE FIXME: ERROR! confine_to loops. invalidating loop.\n");
+		       ep->dragable.confine_id = -1;
+		       break;
+		    }
+		  hist = evas_list_append(hist, ep);
+	       }
+	     evas_list_free(hist);
+	     hist = NULL;
+	     hist = evas_list_append(hist, ep);
+	     while (ep->clip_to_id >= 0)
+	       {
+		  ep = evas_list_nth(ed->collection->parts,
+				     ep->clip_to_id);
+		  if (evas_list_find(hist, ep))
+		    {
+		       printf("EDJE FIXME: ERROR! clip_to loops. invalidating loop.\n");
+		       ep->clip_to_id = -1;
+		       break;
+		    }
+		  hist = evas_list_append(hist, ep);
+	       }
+	     evas_list_free(hist);
+	     hist = NULL;
+	  }
+	/* build real parts */
 	for (l = ed->collection->parts; l; l = l->next)
 	  {
 	     Edje_Part *ep;
@@ -41,6 +81,10 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	     rp->part = ep;
 	     ed->parts = evas_list_append(ed->parts, rp);
 	     rp->param1.description =  ep->default_desc;
+	     if (!rp->param1.description)
+	       {
+		  printf("EDJE FIXME: ERROR! no default part description!\n");
+	       }
 	     _edje_text_part_on_add(ed, rp);
 	     if (ep->type == EDJE_PART_TYPE_RECTANGLE)
 	       rp->object = evas_object_rectangle_add(ed->evas);
@@ -50,7 +94,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	       rp->object = evas_object_text_add(ed->evas);
 	     else
 	       {
-		  printf("FIXME: ERROR! wrong part type!\n");
+		  printf("EDJE FIXME: ERROR! wrong part type %i!\n", ep->type);
 	       }
 	     evas_object_smart_member_add(rp->object, ed->obj);
 	     if (ep->mouse_events)
@@ -80,6 +124,8 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 						 _edje_mouse_wheel_cb,
 						 ed);
 		  evas_object_data_set(rp->object, "real_part", rp);
+		  if (ep->repeat_events)
+		    evas_object_repeat_events_set(rp->object, 1);
 	       }
 	     else
 	       evas_object_pass_events_set(rp->object, 1);
@@ -132,6 +178,55 @@ edje_object_file_get(Evas_Object *obj, const char **file, const char **part)
    if (part) *part = ed->part;
 }
 
+Evas_List *
+edje_file_collection_list(const char *file)
+{
+   Eet_File *ef = NULL;
+   Evas_List *lst = NULL;
+   Edje_File *ed_file;
+   
+   ed_file = evas_hash_find(_edje_file_hash, file);
+   if (!ed_file)
+     {
+	ef = eet_open((char *)file, EET_FILE_MODE_READ);
+	if (!ef) return NULL;
+	ed_file = eet_data_read(ef, _edje_edd_edje_file, "edje_file");
+	if (!ed_file)
+	  {
+	     eet_close(ef);
+	     return NULL;
+	  }
+	eet_close(ef);
+     }
+   else
+     ed_file->references++;
+   if (ed_file->collection_dir)
+     {
+	Evas_List *l;
+	
+	for (l = ed_file->collection_dir->entries; l; l = l->next)
+	  {
+	     Edje_Part_Collection_Directory_Entry *ce;
+	     
+	     ce = l->data;
+	     lst = evas_list_append(lst, strdup(ce->entry));
+	  }
+     }
+   ed_file->references--;   
+   if (ed_file->references <= 0) _edje_file_free(ed_file);
+   return lst;
+}
+
+void
+edje_file_collection_list_free(Evas_List *lst)
+{
+   while (lst)
+     {
+	if (lst->data) free(lst->data);
+	lst = evas_list_remove(lst, lst->data);
+     }
+}
+
 void
 _edje_file_add(Edje *ed)
 {
@@ -161,14 +256,11 @@ _edje_file_add(Edje *ed)
 	     ed->file = NULL;
 	     goto out;
 	  }
+	if (!ed->file->collection_dir)
 	  {
-	     for (l = ed->file->collection_dir->entries; l; l = l->next)
-	       {
-		  Edje_Part_Collection_Directory_Entry *ce;
-		  
-		  ce = l->data;		  
-		  printf("Collection: %s\n", ce->entry);
-	       }
+	     _edje_file_free(ed->file);
+	     ed->file = NULL;
+	     goto out;	     
 	  }
 	_edje_file_hash = evas_hash_add(_edje_file_hash, ed->path, ed->file);
      }

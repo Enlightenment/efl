@@ -12,8 +12,10 @@ void        bg_setup(void);
 void        bg_resize(double w, double h);
 static void bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_info);
 
+void        test_list(char *file);
 void        test_setup(char *file, char *name);
 void        test_reize(double w, double h);
+
 typedef struct _Demo_Edje Demo_Edje;
 
 struct _Demo_Edje
@@ -33,10 +35,21 @@ struct _Demo_Edje
    int          vdir;
 };
 
+typedef struct _Collection Collection;
+
+struct _Collection
+{
+   char        *file;
+   char        *part;
+   Evas_Object *text;
+   Evas_Object *bg;
+};
+
 static Evas_List   *edjes = NULL;
 static Evas_Object *o_bg = NULL;
 static Evas_Object *o_shadow = NULL;
-    
+static Evas_List   *collections = NULL;
+
 double       start_time = 0.0;
 Ecore_Evas  *ecore_evas = NULL;
 Evas        *evas       = NULL;
@@ -390,6 +403,47 @@ cb (void *data, Evas_Object *o, const char *sig, const char *src)
 }
 
 void
+test_list(char *file)
+{
+   Evas_List *entries;
+
+   /* FIXME: still working on this */
+   entries = edje_file_collection_list(file);
+   if (entries)
+     {
+	Evas_List *l;
+	
+	for (l = entries; l; l = l->next)
+	  {
+	     char *name;
+	     Collection *co;
+	     Evas_Object *o;
+	     
+	     name = l->data;
+	     co = calloc(1, sizeof(Collection));
+	     collections = evas_list_append(collections, co);
+	     co->file = strdup(file);
+	     co->part = strdup(name);
+	     
+	     o = evas_object_image_add(evas);
+	     evas_object_layer_set(o, 10);
+	     evas_object_image_border_set(o, 8, 8, 8, 8);
+	     evas_object_image_file_set(o, DAT"data/test/images/list_norm.png", NULL);
+	     co->bg = o;
+	     
+	     o = evas_object_text_add(evas);
+	     evas_object_layer_set(o, 10);
+	     evas_object_color_set(o, 0, 0, 0, 255);
+	     evas_object_text_text_set(o, co->part);
+	     evas_object_text_font_set(o, "Vera", 6);
+	     evas_object_pass_events_set(o, 1);
+	     co->text = o;
+	  }
+	edje_file_collection_list_free(entries);
+     }
+}
+
+void
 test_setup(char *file, char *name)
 {
    Evas_Object *o;
@@ -513,21 +567,34 @@ main(int argc, char **argv)
    if (argc < 2)
      {
 	printf("Usage:\n");
-	printf("  %s file_to_show.eet collection_to_show ...\n", argv[0]);
+	printf("  %s file_to_show.eet [collection_to_show] ...\n", argv[0]);
 	printf("\n");
 	printf("Example:\n");
+	printf("  %s data/e_logo.eet\n", argv[0]);
 	printf("  %s data/e_logo.eet test\n", argv[0]);
 	printf("  %s data/e_logo.eet test ~/test.eet my_thing ...\n", argv[0]);
 	exit(-1);
      }
-   for (i = 1; i < (argc - 1); i += 2)
+   for (i = 1; i < argc; i++)
      {
 	char *file;
 	char *coll;
+	int done;
 	
+	done = 0;
 	file = argv[i];
-	coll = argv[i + 1];
-	test_setup(file, coll);
+	if (argc > (i + 1))
+	  {
+	     coll = argv[i + 1];
+	     if (strlen(coll) > 0)
+	       {
+		  test_setup(file, coll);
+		  done = 1;
+	       }
+	     i++;
+	  }
+	if (!done)
+	  test_list(file);
      }
    
    ecore_main_loop_begin();

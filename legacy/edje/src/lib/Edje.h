@@ -13,6 +13,9 @@ extern "C" {
    void         edje_freeze                     (void);
    void         edje_thaw                       (void);
    
+   Evas_List    *edje_file_collection_list      (const char *file);
+   void         edje_file_collection_list_free  (Evas_List *lst);
+   
    void         edje_extern_object_min_size_set (Evas_Object *obj, double minw, double minh);
    void         edje_extern_object_max_size_set (Evas_Object *obj, double maxw, double maxh);
    

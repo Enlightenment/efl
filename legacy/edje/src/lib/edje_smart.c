@@ -78,7 +78,6 @@ _edje_smart_layer_set(Evas_Object * obj, int layer)
 {
    Edje *ed;
    Evas_List *l;
-   char buf[256];
    
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
@@ -105,8 +104,7 @@ _edje_smart_layer_set(Evas_Object * obj, int layer)
 	if (ep->swallowed_object)
 	  evas_object_layer_set(ep->swallowed_object, ed->layer);
      }
-   snprintf(buf, sizeof(buf), "layer,set,%i", layer);
-   _edje_emit(ed, buf, "");
+   _edje_emit(ed, "layer,set", "");
 }
 
 static void

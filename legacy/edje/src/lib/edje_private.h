@@ -17,24 +17,19 @@
 
 /* FIXME:
  * 
- * dont segv if given the wrong collection name
- * 
  * dragables have to work
+ * dragable need a way of their sizing being set relative to confine
  * drag start/top signals etc.
  * drag needs to have signals with relative pos as arg.
  * drag vals should be 0.0 -> 1.0 if drag is confined. "rest" pos = 0.0.
  * query dragable for its relative pos value
  * dragable needs to be able to affext rel/abs values of other parts
  * 
- * need to be able to list collections in an eet file
+ * more example edje files
  * 
- * externally sourced images need to be supported in edje_cc and edje
+ * edje test program needs to test all api calls and list edje collections
  * 
- * need to detect rel1_to part loops
- * need to detect rel2_to part loops
- * need to detect clip_to part loops
- * need to detect confine_to part loops
- * 
+ * ? programs need to be able to cycle part states given a list of states
  * ? programs need to be able to set/get/add/sub and compare variables
  *   ie: 
  *     action, INT "active_state" = INT 1;
@@ -58,18 +53,19 @@
  *     if,  MOUSE_X     "" > 1;
  *     or,  MOUSE_X     "this_part" > 50;
  *     or,  MOUSE_X_REL "this_part" <= 0.5;
+ *     and, STATE       "this_part" == "clicked";
+ *     and, STATE_VAL   "this_part" == 0.0;
  *     ...
+ * 
  *     if,  INT "active_state" != 0;
  *     and, INT "hidden" < 10;
  *     or,  STR "my_string" == "smelly";
  *     ...
  * 
- * ? programs need to be able to "toggle" part states given a list of states
- * ? reduce linked list walking and list_nth calls
+ * ? key/value pair config values per colelction and per edje file
  * ? add containering (hbox, vbox, table, wrapping multi-line hbox & vbox)
  * ? text entry widget (single line only)
- * ? add numeric params to conditions for progs (ranges etc.)
- * ? key/value pair config values per colelction and per edje file
+ * ? reduce linked list walking and list_nth calls
  */
 
 typedef struct _Edje_File                            Edje_File;
@@ -229,11 +225,24 @@ struct _Edje_Part
    unsigned char          type; /* what type (image, rect, text) */
    unsigned char          effect; /* 0 = plain... */
    unsigned char          mouse_events; /* it will affect/respond to mouse events */
+   unsigned char          repeat_events; /* it will repeat events to objects below */
    int                    clip_to_id; /* the part id to clip this one to */   
    char                  *color_class; /* how to modify the color */
    char                  *text_class; /* how to apply/modify the font */
    Edje_Part_Description *default_desc; /* the part descriptor for default */
    Evas_List             *other_desc; /* other possible descriptors */
+   struct {
+      char                x; /* can u click & drag this bit in x dir */
+      int                 step_x; /* drag jumps n pixels (0 = no limit) */
+      int                 count_x; /* drag area divided by n (0 = no limit) */
+      
+      char                y; /* can u click & drag this bit in y dir */
+      int                 step_y; /* drag jumps n pixels (0 = no limit) */
+      int                 count_y; /* drag area divided by n (0 = no limit) */
+      
+      int                 confine_id; /* dragging within this bit, -1 = no */
+   } dragable;
+   int                    load_error;
 };
 
 struct _Edje_Part_Image_Id
@@ -250,18 +259,6 @@ struct _Edje_Part_Description
    
    unsigned char     visible; /* is it shown */
 
-   struct {
-      char           x; /* can u click & draqg this bit & which dir */
-      int            step_x; /* drag jumps n pixels (0 = no limit) */
-      int            count_x; /* drag area divided by n (0 = no limit) */
-      
-      char           y; /* can u click & drag this bit & which dir */
-      int            step_y; /* drag jumps n pixels (0 = no limit) */
-      int            count_y; /* drag area divided by n (0 = no limit) */
-      
-      int            confine_id; /* dragging within this bit, -1 = no */
-   } dragable;
-   
    struct {
       double         x, y; /* 0 <-> 1.0 alignment within allocated space */
    } align;

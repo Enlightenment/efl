@@ -19,16 +19,17 @@ static void st_collections_group_parts_part_name(void);
 static void st_collections_group_parts_part_type(void);
 static void st_collections_group_parts_part_effect(void);
 static void st_collections_group_parts_part_mouse_events(void);
+static void st_collections_group_parts_part_repeat_events(void);
 static void st_collections_group_parts_part_clip_to_id(void);
 static void st_collections_group_parts_part_color_class(void);
 static void st_collections_group_parts_part_text_class(void);
+static void st_collections_group_parts_part_dragable_x(void);
+static void st_collections_group_parts_part_dragable_y(void);
+static void st_collections_group_parts_part_dragable_confine(void);
 
 static void ob_collections_group_parts_part_description(void);
 static void st_collections_group_parts_part_description_state(void);
 static void st_collections_group_parts_part_description_visible(void);
-static void st_collections_group_parts_part_description_dragable_x(void);
-static void st_collections_group_parts_part_description_dragable_y(void);
-static void st_collections_group_parts_part_description_dragable_confine(void);
 static void st_collections_group_parts_part_description_align(void);
 static void st_collections_group_parts_part_description_min(void);
 static void st_collections_group_parts_part_description_max(void);
@@ -82,14 +83,15 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.type", st_collections_group_parts_part_type},
      {"collections.group.parts.part.effect", st_collections_group_parts_part_effect},
      {"collections.group.parts.part.mouse_events", st_collections_group_parts_part_mouse_events},
+     {"collections.group.parts.part.repeat_events", st_collections_group_parts_part_repeat_events},
      {"collections.group.parts.part.clip_to", st_collections_group_parts_part_clip_to_id},
      {"collections.group.parts.part.color_class", st_collections_group_parts_part_color_class},
      {"collections.group.parts.part.text_class", st_collections_group_parts_part_text_class},
+     {"collections.group.parts.part.dragable.x", st_collections_group_parts_part_dragable_x},
+     {"collections.group.parts.part.dragable.y", st_collections_group_parts_part_dragable_y},
+     {"collections.group.parts.part.dragable.confine", st_collections_group_parts_part_dragable_confine},
      {"collections.group.parts.part.description.state", st_collections_group_parts_part_description_state},
      {"collections.group.parts.part.description.visible", st_collections_group_parts_part_description_visible},
-     {"collections.group.parts.part.description.dragable.x", st_collections_group_parts_part_description_dragable_x},
-     {"collections.group.parts.part.description.dragable.y", st_collections_group_parts_part_description_dragable_y},
-     {"collections.group.parts.part.description.dragable.confine", st_collections_group_parts_part_description_dragable_confine},
      {"collections.group.parts.part.description.align", st_collections_group_parts_part_description_align},
      {"collections.group.parts.part.description.min", st_collections_group_parts_part_description_min},
      {"collections.group.parts.part.description.max", st_collections_group_parts_part_description_max},
@@ -143,16 +145,17 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.type", NULL},
      {"collections.group.parts.part.effect", NULL},
      {"collections.group.parts.part.mouse_events", NULL},
+     {"collections.group.parts.part.repeat_events", NULL},
      {"collections.group.parts.part.clip_to", NULL},
      {"collections.group.parts.part.color_class", NULL},
      {"collections.group.parts.part.text_class", NULL},
+     {"collections.group.parts.part.dragable", NULL},
+     {"collections.group.parts.part.dragable.x", NULL},
+     {"collections.group.parts.part.dragable.y", NULL},
+     {"collections.group.parts.part.dragable.confine", NULL},
      {"collections.group.parts.part.description", ob_collections_group_parts_part_description},
      {"collections.group.parts.part.description.state", NULL},
      {"collections.group.parts.part.description.visible", NULL},
-     {"collections.group.parts.part.description.dragable", NULL},
-     {"collections.group.parts.part.description.dragable.x", NULL},
-     {"collections.group.parts.part.description.dragable.y", NULL},
-     {"collections.group.parts.part.description.dragable.confine", NULL},
      {"collections.group.parts.part.description.align", NULL},
      {"collections.group.parts.part.description.min", NULL},
      {"collections.group.parts.part.description.max", NULL},
@@ -337,7 +340,9 @@ ob_collections_group_parts_part(void)
    ep->id = evas_list_count(pc->parts) - 1;
    ep->type = EDJE_PART_TYPE_IMAGE;
    ep->mouse_events = 1;
+   ep->repeat_events = 0;
    ep->clip_to_id = -1;
+   ep->dragable.confine_id = -1;
 }
 
 static void
@@ -376,6 +381,17 @@ st_collections_group_parts_part_mouse_events(void)
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ep->mouse_events = parse_int_range(0, 0, 1);
+}
+
+static void
+st_collections_group_parts_part_repeat_events(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ep->repeat_events = parse_int_range(0, 0, 1);
 }
 
 static void
@@ -418,6 +434,49 @@ st_collections_group_parts_part_text_class(void)
 }
 
 static void
+st_collections_group_parts_part_dragable_x(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ep->dragable.x = parse_int_range(0, 0, 1);
+   ep->dragable.step_x = parse_int_range(1, 0, 0x7fffffff);
+   ep->dragable.count_x = parse_int_range(2, 0, 0x7fffffff);
+}
+
+static void
+st_collections_group_parts_part_dragable_y(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ep->dragable.y = parse_int_range(0, 0, 1);
+   ep->dragable.step_y = parse_int_range(1, 0, 0x7fffffff);
+   ep->dragable.count_y = parse_int_range(2, 0, 0x7fffffff);
+}
+
+static void
+st_collections_group_parts_part_dragable_confine(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+     {
+	char *name;
+	
+	name = parse_str(0);
+	data_queue_part_lookup(pc, name, &(ep->dragable.confine_id));
+	free(name);
+     }
+}
+
+static void
 ob_collections_group_parts_part_description(void)
 {
    Edje_Part_Collection *pc;
@@ -432,7 +491,6 @@ ob_collections_group_parts_part_description(void)
    else
      ep->other_desc = evas_list_append(ep->other_desc, ed);
    ed->visible = 1;
-   ed->dragable.confine_id = -1;
    ed->align.x = 0.5;
    ed->align.y = 0.5;
    ed->min.w = 0;
@@ -502,58 +560,6 @@ st_collections_group_parts_part_description_visible(void)
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
    ed->visible = parse_int_range(0, 0, 1);
-}
-
-static void
-st_collections_group_parts_part_description_dragable_x(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   pc = evas_list_data(evas_list_last(edje_collections));
-   ep = evas_list_data(evas_list_last(pc->parts));
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-   ed->dragable.x = parse_int_range(0, 0, 1);
-   ed->dragable.step_x = parse_int_range(1, 1, 0x7fffffff);
-   ed->dragable.count_x = parse_int_range(2, 1, 0x7fffffff);
-}
-
-static void
-st_collections_group_parts_part_description_dragable_y(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   pc = evas_list_data(evas_list_last(edje_collections));
-   ep = evas_list_data(evas_list_last(pc->parts));
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-   ed->dragable.y = parse_int_range(0, 0, 1);
-   ed->dragable.step_y = parse_int_range(1, 1, 0x7fffffff);
-   ed->dragable.count_y = parse_int_range(2, 1, 0x7fffffff);
-}
-
-static void
-st_collections_group_parts_part_description_dragable_confine(void)
-{
-   Edje_Part_Collection *pc;
-   Edje_Part *ep;
-   Edje_Part_Description *ed;
-
-   pc = evas_list_data(evas_list_last(edje_collections));
-   ep = evas_list_data(evas_list_last(pc->parts));
-   ed = ep->default_desc;
-   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-     {
-	char *name;
-	
-	name = parse_str(0);
-	data_queue_part_lookup(pc, name, &(ed->dragable.confine_id));
-	free(name);
-     }
 }
 
 static void

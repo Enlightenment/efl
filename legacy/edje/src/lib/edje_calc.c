@@ -420,26 +420,26 @@ _edje_part_recalc_single(Edje *ed,
 	
 	/* complex dragable params */
 	offset = params->x + ep->drag.x - confine_to->x;
-	if (desc->dragable.step_x > 0)
+	if (ep->part->dragable.step_x > 0)
 	  {
 	     params->x = confine_to->x + 
-	       ((offset / desc->dragable.step_x) * desc->dragable.step_x);
+	       ((offset / ep->part->dragable.step_x) * ep->part->dragable.step_x);
 	  }
-	else if (desc->dragable.count_x > 0)
+	else if (ep->part->dragable.count_x > 0)
 	  {
-	     step = (confine_to->w - params->w) / desc->dragable.count_x;
+	     step = (confine_to->w - params->w) / ep->part->dragable.count_x;
 	     params->x = confine_to->x +
 	       ((offset / step) * step);	       
 	  }
 	offset = params->y + ep->drag.y - confine_to->y;
-	if (desc->dragable.step_y > 0)
+	if (ep->part->dragable.step_y > 0)
 	  {
 	     params->y = confine_to->y + 
-	       ((offset / desc->dragable.step_y) * desc->dragable.step_y);
+	       ((offset / ep->part->dragable.step_y) * ep->part->dragable.step_y);
 	  }
-	else if (desc->dragable.count_y > 0)
+	else if (ep->part->dragable.count_y > 0)
 	  {
-	     step = (confine_to->h - params->h) / desc->dragable.count_y;
+	     step = (confine_to->h - params->h) / ep->part->dragable.count_y;
 	     params->y = confine_to->y +
 	       ((offset / step) * step);	       
 	  }

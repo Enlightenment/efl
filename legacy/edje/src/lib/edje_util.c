@@ -258,6 +258,8 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
    if (!obj_swallow) return;
    rp->swallowed_object = obj_swallow;
    evas_object_clip_set(rp->swallowed_object, ed->clipper);
+   if (evas_object_layer_get(rp->swallowed_object) != ed->layer)
+     evas_object_layer_set(rp->swallowed_object, ed->layer);
    evas_object_stack_above(rp->swallowed_object, rp->object);
    evas_object_event_callback_add(rp->swallowed_object,
 				  EVAS_CALLBACK_FREE, 
@@ -387,7 +389,7 @@ edje_object_size_min_get(Evas_Object *obj, double *minw, double *minh)
    Edje *ed;
    
    ed = _edje_fetch(obj);
-   if (!ed)
+   if ((!ed) || (!ed->collection))
      {
 	if (minw) *minw = 0;
 	if (minh) *minh = 0;
@@ -403,7 +405,7 @@ edje_object_size_max_get(Evas_Object *obj, double *maxw, double *maxh)
    Edje *ed;
    
    ed = _edje_fetch(obj);
-   if (!ed)
+   if ((!ed) || (!ed->collection))
      {
 	if (maxw) *maxw = 0;
 	if (maxh) *maxh = 0;
@@ -436,7 +438,7 @@ edje_object_size_min_calc(Evas_Object *obj, double *minw, double *minh)
    int ok;
    
    ed = _edje_fetch(obj);
-   if (!ed)
+   if ((!ed) || (!ed->collection))
      {
 	if (minw) *minw = 0;
 	if (minh) *minh = 0;
