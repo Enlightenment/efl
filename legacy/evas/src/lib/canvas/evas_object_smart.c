@@ -14,11 +14,13 @@ struct _Evas_Object_Smart
 struct _Evas_Smart_Callback
 {
    char *event;
+   int   delete_me : 1;
    void (*func) (void *data, Evas_Object *obj, void *event_info);
    void *func_data;
 };
 
 /* private methods for smart objects */
+static void evas_object_smart_callbacks_clear(Evas_Object *obj);
 static void evas_object_smart_init(Evas_Object *obj);
 static void *evas_object_smart_new(void);
 static void evas_object_smart_render(Evas_Object *obj, void *output, void *context, void *surface, int x, int y);
@@ -197,10 +199,10 @@ evas_object_smart_callback_del(Evas_Object *obj, const char *event, void (*func)
 	  {
 	     void *data;
 	     
-	     obj->smart.callbacks = evas_list_remove(obj->smart.callbacks, cb);
 	     data = cb->func_data;
-	     if (cb->event) free(cb->event);
-	     free(cb);
+	     cb->delete_me = 1;
+	     obj->smart.deletions_waiting = 1;
+	     evas_object_smart_callbacks_clear(obj);
 	     return data;
 	  }
      }
@@ -221,17 +223,48 @@ evas_object_smart_callback_call(Evas_Object *obj, const char *event, void *event
    return;
    MAGIC_CHECK_END();
    if (!event) return;
+   if (obj->delete_me) return;
+   obj->smart.walking_list++;
    for (l = obj->smart.callbacks; l; l = l->next)
      {
 	Evas_Smart_Callback *cb;
 	
 	cb = l->data;
-	if (!strcmp(cb->event, event))
-	  cb->func(cb->func_data, obj, event_info);
+	if (!cb->delete_me)
+	  {
+	     if (!strcmp(cb->event, event))
+	       cb->func(cb->func_data, obj, event_info);
+	  }
+	if (obj->delete_me)
+	  break;
      }
+   obj->smart.walking_list--;
+   evas_object_smart_callbacks_clear(obj);
 }
 
 /* internal calls */
+static void
+evas_object_smart_callbacks_clear(Evas_Object *obj)
+{
+   Evas_List *l;
+   
+   if (obj->smart.walking_list) return;
+   if (!obj->smart.deletions_waiting) return;
+   for (l = obj->smart.callbacks; l;)
+     {
+	Evas_Smart_Callback *cb;
+	
+	cb = l->data;
+	l = l->next;
+	if (cb->delete_me)
+	  {
+	     obj->smart.callbacks = evas_list_remove(obj->smart.callbacks, cb);
+	     if (cb->event) free(cb->event);
+	     free(cb);
+	  }
+     }
+}
+
 void
 evas_object_smart_del(Evas_Object *obj)
 {

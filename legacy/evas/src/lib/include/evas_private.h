@@ -355,6 +355,8 @@ struct _Evas_Object
    Evas_Object_Func *func;
    
    struct {
+      int            walking_list;
+      int            deletions_waiting : 1;
       Evas_Smart    *smart;
       void          *data;
       Evas_Object   *parent;
