@@ -415,6 +415,92 @@ e_window_set_shape_mask(Window win, Pixmap mask)
 }
 
 void
+e_window_add_shape_mask(Window win, Pixmap mask)
+{
+   XShapeCombineMask(disp, win, ShapeBounding, 0, 0, mask, ShapeUnion);
+}
+
+void
+e_window_set_shape_window(Window win, Window src, int x, int y)
+{
+   XShapeCombineShape(disp, win, ShapeBounding, x, y, src, ShapeBounding, ShapeSet);
+}
+
+void
+e_window_add_shape_window(Window win, Window src, int x, int y)
+{
+   XShapeCombineShape(disp, win, ShapeBounding, x, y, src, ShapeBounding, ShapeUnion);
+}
+
+void
+e_window_set_shape_rectangle(Window win, int x, int y, int w, int h)
+{
+   XRectangle rect;
+   
+   rect.x = x;
+   rect.y = y;
+   rect.width = w;
+   rect.height = h;
+   XShapeCombineRectangles(disp, win, ShapeBounding, 0, 0, &rect, 1, ShapeSet, Unsorted);
+}
+
+void
+e_window_add_shape_rectangle(Window win, int x, int y, int w, int h)
+{
+   XRectangle rect;
+   
+   rect.x = x;
+   rect.y = y;
+   rect.width = w;
+   rect.height = h;
+   XShapeCombineRectangles(disp, win, ShapeBounding, 0, 0, &rect, 1, ShapeUnion, Unsorted);
+}
+
+void
+e_window_set_shape_rectangles(Window win, XRectangle *rect, int num)
+{
+   XShapeCombineRectangles(disp, win, ShapeBounding, 0, 0, rect, num, ShapeSet, Unsorted);
+}
+
+void
+e_window_add_shape_rectangles(Window win, XRectangle *rect, int num)
+{
+   XShapeCombineRectangles(disp, win, ShapeBounding, 0, 0, rect, num, ShapeUnion, Unsorted);
+}
+
+void
+e_window_clip_shape_by_rectangle(Window win, int x, int y, int w, int h)
+{
+   XRectangle rect;
+   
+   rect.x = x;
+   rect.y = y;
+   rect.width = w;
+   rect.height = h;
+   XShapeCombineRectangles(disp, win, ShapeBounding, 0, 0, &rect, 1, ShapeIntersect, Unsorted);
+}
+
+XRectangle *
+e_window_get_shape_rectangles(Window win, int *num)
+{
+   int ord;
+   
+   return XShapeGetRectangles(disp, win, ShapeBounding, num, &ord);
+}
+
+void
+e_window_select_shape_events(Window win)
+{
+   XShapeSelectInput(disp, win, ShapeNotifyMask);
+}
+
+void
+e_window_unselect_shape_events(Window win)
+{
+   XShapeSelectInput(disp, win, 0);
+}
+
+void
 e_window_clear(Window win)
 {
    XClearWindow(disp, win);

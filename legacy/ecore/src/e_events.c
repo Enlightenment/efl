@@ -346,7 +346,7 @@ e_del_event_timer(char *name)
    while (ptr)
      {
 	timer = ptr;
-	if (strcmp(timer->name, name))
+	if (!strcmp(timer->name, name))
 	  {
 	     void               *data;
 

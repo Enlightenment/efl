@@ -97,11 +97,12 @@ e_ev_x_init(void)
    event_translator[ClientMessage] = e_ev_x_handle_client_message;
    event_translator[SelectionNotify] = e_ev_x_handle_selection_notify;
    event_translator[SelectionRequest] = e_ev_x_handle_selection_request;
+   for (i = SelectionRequest + 1; i < shape_event_id; i++) event_translator[i] = NULL;
    event_translator[shape_event_id] = e_ev_x_handle_shape_change;
 
-   lock_mask_scroll = e_lock_mask_num_get();
+   lock_mask_scroll = e_lock_mask_scroll_get();
    lock_mask_num = e_lock_mask_num_get();
-   lock_mask_caps = e_lock_mask_scroll_get();
+   lock_mask_caps = e_lock_mask_caps_get();
 
    mod_mask_shift = e_mod_mask_shift_get();
    mod_mask_ctrl = e_mod_mask_ctrl_get();
@@ -176,7 +177,7 @@ e_ev_x_translate_events(XEvent * events, int num_events)
 
    for (i = 0; i < num_events; i++)
      {
-	if ((events[i].type < max_event_id) &&
+	if ((events[i].type <= max_event_id) &&
 	    (event_translator[events[i].type]))
 	   (*(event_translator[events[i].type])) (&(events[i]));
      }
