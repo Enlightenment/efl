@@ -224,13 +224,16 @@ ecore_config_parse_set(Ecore_Config_Prop * prop, char *arg, char *opt,
 }
 
 int
-ecore_config_args_parse(int argc, char **argv)
+ecore_config_args_parse(void)
 {
+   int                 argc;
+   char              **argv;
    int                 nextarg, next_short_opt, found, ret;
    char               *arg;
    char               *long_opt, short_opt;
    Ecore_Config_Prop  *prop;
 
+   ecore_app_args_get(&argc, &argv);
    nextarg = 1;
    while (nextarg < argc)
      {

@@ -226,7 +226,7 @@ extern              "C"
    /* FIXME: this should only be included if evas is present */
    int                 ecore_config_evas_font_path_apply(Evas * evas);
    void                ecore_config_args_display(void);
-   int                 ecore_config_args_parse(int argc, char **argv);
+   int                 ecore_config_args_parse(void);
    void                ecore_config_app_describe(char *description);
 
    int                 ecore_config_create(const char *key, void *val,
