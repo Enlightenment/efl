@@ -206,7 +206,6 @@ _edje_recalc(Edje *ed)
 	ep->calculated = FLAG_NONE;
 	ep->calculating = FLAG_NONE;
      }
-//   printf("----\n");
    for (l = ed->parts; l; l = l->next)
      {
 	Edje_Real_Part *ep;
@@ -214,7 +213,6 @@ _edje_recalc(Edje *ed)
 	ep = l->data;
 	if (ep->calculated != FLAG_XY)
 	  _edje_part_recalc(ed, ep, (~ep->calculated) & FLAG_XY);
-//	printf("%x\n", ep->calculated);
      }
    ed->dirty = 0;
    if (!ed->calc_only) ed->recalc = 0;
@@ -1044,9 +1042,19 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 		  imid = evas_list_nth(ep->param2.description->image.tween_list, image_num - 1);
 		  if (imid) image_id = imid->id;
 	       }
-	     
-	     snprintf(buf, sizeof(buf), "images/%i", image_id);
-	     evas_object_image_file_set(ep->object, ed->file->path, buf);
+	     if (image_id < 0)
+	       {
+		  printf("EDJE ERROR: part \"%s\" has description, \"%s\" %3.3f with a missing image id!!!\n",
+			 ep->part->name,
+			 ep->param1.description->state.name,
+			 ep->param1.description->state.value
+			 );
+	       }
+	     else
+	       {
+		  snprintf(buf, sizeof(buf), "images/%i", image_id);
+		  evas_object_image_file_set(ep->object, ed->file->path, buf);
+	       }
 	     evas_object_color_set(ep->object, p3.color.r, p3.color.g, p3.color.b, p3.color.a);
 	     if (p3.visible) evas_object_show(ep->object);
 	     else evas_object_hide(ep->object);

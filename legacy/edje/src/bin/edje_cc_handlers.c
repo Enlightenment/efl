@@ -360,6 +360,7 @@ st_images_image(void)
 	       }
 	  }
      }
+   edje_file->image_dir->entries = evas_list_append(edje_file->image_dir->entries, img);
    img->id = evas_list_count(edje_file->image_dir->entries) - 1;
    v = parse_enum(1,
 		  "RAW", 0,
@@ -387,7 +388,6 @@ st_images_image(void)
 	img->source_type = EDJE_IMAGE_SOURCE_TYPE_EXTERNAL;
 	img->source_param = 0;
      }
-   edje_file->image_dir->entries = evas_list_append(edje_file->image_dir->entries, img);
    if (img->source_type != EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY) return;
    img->source_param = parse_int_range(2, 0, 100);
 }
