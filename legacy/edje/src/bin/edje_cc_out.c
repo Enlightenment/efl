@@ -44,6 +44,11 @@ static Evas_List *part_lookups = NULL;
 static Evas_List *program_lookups = NULL;
 static Evas_List *image_lookups = NULL;
 
+#define ABORT_WRITE(eet_file, file) \
+   eet_close(eet_file); \
+   unlink(file); \
+   exit(-1);
+
 void
 data_setup(void)
 {
@@ -94,7 +99,7 @@ data_write(void)
 	  {
 	     fprintf(stderr, "%s: Error. unable to write \"edje_file\" entry to \"%s\" \n",
 		     progname, file_out);	
-	     exit(-1);	
+	     ABORT_WRITE(ef, file_out);
 	  }
 	else
 	  total_bytes += bytes;
@@ -128,7 +133,7 @@ data_write(void)
 		    {
 		       fprintf(stderr, "%s: Error. unable to read all of font file \"%s\"\n",
 			       progname, fn->file);
-		       exit(-1);
+		       ABORT_WRITE(ef, file_out);
 		    }
 		  fsize = pos;
 	       }
@@ -157,7 +162,7 @@ data_write(void)
 			      {
 				 fprintf(stderr, "%s: Error. unable to read all of font file \"%s\"\n",
 					 progname, buf);
-				 exit(-1);
+				 ABORT_WRITE(ef, file_out);
 			      }
 			    fsize = pos;
 			 }
@@ -170,7 +175,7 @@ data_write(void)
 	  {
 	     fprintf(stderr, "%s: Error. unable to write font part \"%s\" entry to %s \n",
 		     progname, fn->file, file_out);	
-	     exit(-1);
+	     ABORT_WRITE(ef, file_out);
 	  }
 	else
 	  {
@@ -182,7 +187,7 @@ data_write(void)
 	       {
 		  fprintf(stderr, "%s: Error. unable to write font part \"%s\" as \"%s\" part entry to %s \n",
 			  progname, fn->file, buf, file_out);	
-		  exit(-1);
+		  ABORT_WRITE(ef, file_out);
 	       }
 	     else
 	       {
@@ -254,7 +259,7 @@ data_write(void)
 			      {
 				 fprintf(stderr, "%s: Error. unable to write image part \"%s\" as \"%s\" part entry to %s \n",
 					 progname, img->entry, buf, file_out);	
-				 exit(-1);
+				 ABORT_WRITE(ef, file_out);
 			      }
 			    else
 			      {
@@ -266,7 +271,7 @@ data_write(void)
 			 {
 			    fprintf(stderr, "%s: Error. unable to write image part \"%s\" as \"%s\" part entry to %s \n",
 				    progname, img->entry, buf, file_out);	
-			    exit(-1);
+			    ABORT_WRITE(ef, file_out);
 			 }
 		       if (verbose)
 			 {
@@ -307,6 +312,14 @@ data_write(void)
 	     
 	     ep = ll->data;
 	     epd = ep->default_desc;
+
+	     if (!epd)
+	       {
+	     fprintf(stderr, "%s: Error. description missing for part \"%s\"\n",
+		     progname, ep->name);
+	     ABORT_WRITE(ef, file_out);
+	       }
+
 	     if (epd->text.font)
 	       {
 		  Evas_List *lll;
@@ -368,7 +381,7 @@ data_write(void)
 	  {
 	     fprintf(stderr, "%s: Error. unable to write \"%s\" part entry to %s \n",
 		     progname, buf, file_out);	
-	     exit(-1);
+	     ABORT_WRITE(ef, file_out);
 	  }
 	else
 	  {
