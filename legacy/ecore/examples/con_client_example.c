@@ -33,8 +33,8 @@ main (int argc,
   ecore_con_init();
 
   // Try to conect to server.
-  svr = ecore_con_server_connect(ECORE_CON_LOCAL_USER, SOCKET_NAME,
-				 SOCKET_PORT, NULL);
+  svr = ecore_con_server_connect(ECORE_CON_REMOTE_SYSTEM, "mail.valinux.co.jp",
+				 110, NULL);
   if (NULL == svr) {
     printf("*** ERROR: Unable to connect to server.\n");
     printf("*** Start con_server_example before running this program.\n");

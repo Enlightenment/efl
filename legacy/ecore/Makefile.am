@@ -6,12 +6,12 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
                        config.h.in config.sub configure install-sh \
 		       ltconfig ltmain.sh missing mkinstalldirs \
 		       stamp-h.in  build-stamp configure-stamp depcomp \
-		       eet_docs.tar.gz eet.c \
+		       ecore_docs.tar.gz ecore.c \
 		       README \
-		       eet.pc \
-		       eet.spec \
-		       eet.oe eet-native.oe \
-		       eet.bb eetXnative.bb \
+		       ecore.pc \
+		       ecore.spec \
+		       ecore.oe ecore-native.oe \
+		       ecore.bb ecoreXnative.bb \
 		       debian/changelog
 
 bin_SCRIPTS = ecore-config
