@@ -600,13 +600,11 @@ evas_event_feed_mouse_out_data(Evas *e, const void *data)
    MAGIC_CHECK_END();
    e->pointer.inside = 0;
    
-   printf("OUT !!!!\n");
    if (e->events_frozen > 0) return;
    
    /* if our mouse button is grabbed to any objects */   
    if (e->pointer.mouse_grabbed == 0)
      {
-	printf("OUT2 !!!!\n");
 	/* go thru old list of in objects */
 	Evas_List *l, *copy;
 
@@ -616,7 +614,6 @@ evas_event_feed_mouse_out_data(Evas *e, const void *data)
 	     Evas_Object *obj;
 	     
 	     obj = l->data;
-	     printf("OUT %p\n", obj);
 	       {
 		  Evas_Event_Mouse_Out ev;
 		  
