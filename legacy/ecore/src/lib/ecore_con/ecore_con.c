@@ -668,7 +668,6 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
 #endif
    if (svr->name) free(svr->name);
    if (svr->path) free(svr->path);
-   if (svr->read_buf) free(svr->read_buf);
    if (svr->fd_handler) ecore_main_fd_handler_del(svr->fd_handler);
    free(svr);
 }
@@ -772,12 +771,6 @@ kill_server(Ecore_Con_Server *svr)
    svr->dead = 1;
    ecore_main_fd_handler_del(svr->fd_handler);
    svr->fd_handler = NULL;
-
-   if (svr->read_buf)
-   {
-      free(svr->read_buf);
-      svr->read_buf = NULL;
-   }
 }
 
 static int
@@ -845,15 +838,13 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	for (;;)
 	  {
 	     int num, lost_server = 0;
+	     char buf[READBUFSIZ];
 
 #if USE_OPENSSL
 	     if (!svr->ssl)
 	       {
 #endif
-		  /* FIXME: why is read_buf in the server struct now??? */
-		  /* yes play nice with ssl - WHY? */
-		  if (!svr->read_buf) svr->read_buf = malloc(READBUFSIZ);
-		  if ((num = read(svr->fd, svr->read_buf, READBUFSIZ)) < 1)
+		  if ((num = read(svr->fd, buf, READBUFSIZ)) < 1)
 		    lost_server = (errno == EIO || errno == EBADF ||
 				   errno == EPIPE || errno == EINVAL ||
 				   errno == ENOSPC || num == 0); /* is num == 0 right? */
@@ -861,8 +852,7 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	       }
 	     else
 	       {
-		  if (!svr->read_buf) svr->read_buf = malloc(READBUFSIZ);
-		  num = SSL_read(svr->ssl, svr->read_buf, READBUFSIZ);
+		  num = SSL_read(svr->ssl, buf, READBUFSIZ);
 		  if (num < 1)
 		    {
 		       ssl_err = SSL_get_error(svr->ssl, num);
@@ -899,7 +889,7 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	     else
 	       {
 		  inbuf = realloc(inbuf, inbuf_num + num);
-		  memcpy(inbuf + inbuf_num, svr->read_buf, num);
+		  memcpy(inbuf + inbuf_num, buf, num);
 		  inbuf_num += num;
 	       }
 	  }
@@ -937,11 +927,6 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	_ecore_con_server_flush(svr);
      }
 
-   if (svr->read_buf)
-     {
-	free(svr->read_buf);
-	svr->read_buf = NULL;
-     }
    return 1;
 }
 
