@@ -209,7 +209,16 @@ void
 _edje_program_run(Edje *ed, Edje_Program *pr)
 {
    Evas_List *l;
+   /* limit self-feeding loops in programs to 64 levels */
+   static int recursions = 0;
+   static int recursion_limit = 0;
 
+   if ((recursions >= 64) || (recursion_limit))
+     {
+	recursion_limit = 1;
+	return;
+     }
+   recursions++;
    _edje_freeze(ed);
    _edje_ref(ed);
    _edje_emit(ed, "program,start", pr->name);
@@ -302,6 +311,8 @@ _edje_program_run(Edje *ed, Edje_Program *pr)
      }
    _edje_unref(ed);
    _edje_thaw(ed);
+   recursions--;
+   if (recursions == 0) recursion_limit = 0;
 }
 
 void
@@ -310,12 +321,26 @@ _edje_emit(Edje *ed, char *sig, char *src)
    Evas_List *l;
    static Evas_List *emissions = NULL;
    Edje_Emission *ee;
+   /* limit self-feeding loops in callbacks to 64 levels */
+   static int recursions = 0;
+   static int recursion_limit = 0;
 
+   if ((recursions >= 64) || (recursion_limit))
+     {
+	recursion_limit = 1;
+	return;
+     }
+   recursions++;
    _edje_ref(ed);
    _edje_freeze(ed);
    printf("EMIT \"%s\" \"%s\"\n", sig, src);
    ee = calloc(1, sizeof(Edje_Emission));
-   if (!ee) return;
+   if (!ee)
+     {
+	recursions--;
+	if (recursions == 0) recursion_limit = 0;
+	return;
+     }
    ee->signal = strdup(sig);
    ee->source = strdup(src);
    if (emissions)
@@ -323,6 +348,8 @@ _edje_emit(Edje *ed, char *sig, char *src)
 	emissions = evas_list_append(emissions, ee);
 	_edje_thaw(ed);
 	_edje_unref(ed);
+	recursions--;
+	if (recursions == 0) recursion_limit = 0;
 	return;
      }
    else
@@ -385,4 +412,6 @@ _edje_emit(Edje *ed, char *sig, char *src)
      }
    _edje_thaw(ed);
    _edje_unref(ed);
+   recursions--;
+   if (recursions == 0) recursion_limit = 0;
 }

@@ -453,6 +453,7 @@ _edje_part_recalc_single(Edje *ed,
 	params->y += ep->drag.y;
      }
    /* fill */
+   params->smooth = desc->fill.smooth;
    params->fill.x = desc->fill.pos_abs_x + (params->w * desc->fill.pos_rel_x);
    params->fill.w = desc->fill.abs_x + (params->w * desc->fill.rel_x);
    params->fill.y = desc->fill.pos_abs_y + (params->h * desc->fill.pos_rel_y);
@@ -526,6 +527,11 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
 	  }
 	else
 	  p3.visible = p1.visible;
+
+	if (pos < 0.5)
+	  p3.smooth = p1.smooth;
+	else
+	  p3.smooth = p2.smooth;
 	
 	p3.x = (p1.x * (1.0 - pos)) + (p2.x * (pos));
 	p3.y = (p1.y * (1.0 - pos)) + (p2.y * (pos));
@@ -579,6 +585,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
 	evas_object_move(ep->object, ed->x + p3.x, ed->y + p3.y);
 	evas_object_resize(ep->object, p3.w, p3.h);
 	evas_object_image_fill_set(ep->object, p3.fill.x, p3.fill.y, p3.fill.w, p3.fill.h);
+	evas_object_image_smooth_scale_set(ep->object, p3.smooth);
 //	printf("fill %3.3f %3.3f %3.3fx%3.3f\n", p3.fill.x, p3.fill.y, p3.fill.w, p3.fill.h);
 
 	evas_object_image_border_set(ep->object, p3.border.l, p3.border.r, p3.border.t, p3.border.b);

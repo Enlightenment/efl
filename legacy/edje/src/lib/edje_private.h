@@ -11,7 +11,6 @@
 #include <fnmatch.h>
 
 /* FIXME:
- * add a smooth scale option to fill params
  * need "random" signals and events for hooking to, and "random" durations
  * free stuff - no more leaks
  * dragables have to work
@@ -33,11 +32,11 @@
  * need to be able to force anim times to 0.0 from API to turn off animation
  * need to detect relative part loops
  * need to detect clip_to part loops
- * need to detect anim time 0.0 loops
  * edje_cc should be able to force lossy, lossless, min and max quality and compression of encoded images
  * edje_cc needs to prune out unused images
  * edje_cc might need an option for limiting number of tween images
  * audit edje for corrupt/bad input files
+ * ? add containering (hbox, vbox, table, wrapping multi-line hbox & vbox)
  * ? somehow handle double click?
  * ? add numeric params to conditions for progs (ranges etc.)
  * ? containering for multiple children? (hbox, vbox, table, wrapping list)
@@ -283,6 +282,7 @@ struct _Edje_Part_Description
    } border;
 
    struct {
+      char           smooth; /* fill with smooth scaling or not */
       double         pos_rel_x; /* fill offset x relative to area */
       int            pos_abs_x; /* fill offset x added to fill offset */
       double         rel_x; /* relative size compared to area */
@@ -406,6 +406,7 @@ struct _Edje_Calc_Params
 {
    double           x, y, w, h;
    char             visible : 1; 
+   char             smooth : 1;
    struct {
       double        x, y, w, h;
    } fill;

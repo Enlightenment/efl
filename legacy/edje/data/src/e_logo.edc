@@ -184,6 +184,11 @@ collections {
 	       image {
 		  normal, "e.png";
 	       }
+/*	       
+	       fill {
+		  smooth, 0;
+	       }
+ */
 	    }
 	    description {
 	       state,    "clicked" 0.0;
@@ -348,6 +353,9 @@ collections {
 	    name,       "logo_click";
 	    signal,     "mouse,down,1";
 	    source,     "logo";
+// test to see if program loops can be avoided
+//	    signal,     "*";
+//	    source,     "*";
 	    action,     STATE_SET "clicked" 0.0;
 	    transition, LINEAR, 0.0;
 	    target,     "logo";

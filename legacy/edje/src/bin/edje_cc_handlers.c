@@ -40,6 +40,7 @@ static void st_collections_group_parts_part_description_rel2_to(void);
 static void st_collections_group_parts_part_description_image_normal(void);
 static void st_collections_group_parts_part_description_image_tween(void);
 static void st_collections_group_parts_part_description_border(void);
+static void st_collections_group_parts_part_description_fill_smooth(void);
 static void st_collections_group_parts_part_description_fill_origin_relative(void);
 static void st_collections_group_parts_part_description_fill_origin_offset(void);
 static void st_collections_group_parts_part_description_fill_size_relative(void);
@@ -97,6 +98,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.image.normal", st_collections_group_parts_part_description_image_normal},
      {"collections.group.parts.part.description.image.tween", st_collections_group_parts_part_description_image_tween},
      {"collections.group.parts.part.description.border", st_collections_group_parts_part_description_border},
+     {"collections.group.parts.part.description.fill.smooth", st_collections_group_parts_part_description_fill_smooth},
      {"collections.group.parts.part.description.fill.origin.relative", st_collections_group_parts_part_description_fill_origin_relative},
      {"collections.group.parts.part.description.fill.origin.offset", st_collections_group_parts_part_description_fill_origin_offset},
      {"collections.group.parts.part.description.fill.size.relative", st_collections_group_parts_part_description_fill_size_relative},
@@ -160,6 +162,7 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.image.tween", NULL},
      {"collections.group.parts.part.description.border", NULL},
      {"collections.group.parts.part.description.fill", NULL},
+     {"collections.group.parts.part.description.fill.smooth", NULL},
      {"collections.group.parts.part.description.fill.origin", NULL},
      {"collections.group.parts.part.description.fill.origin.relative", NULL},
      {"collections.group.parts.part.description.fill.origin.offset", NULL},
@@ -418,6 +421,7 @@ ob_collections_group_parts_part_description(void)
    ed->rel2.offset_x = -1;
    ed->rel2.id = -1;
    ed->image.id = -1;
+   ed->fill.smooth = 1;
    ed->fill.pos_rel_x = 0.0;
    ed->fill.pos_abs_x = 0;
    ed->fill.rel_x = 1.0;
@@ -754,6 +758,20 @@ st_collections_group_parts_part_description_border(void)
    ed->border.r = parse_int_range(1, 0, 0x7fffffff);
    ed->border.t = parse_int_range(2, 0, 0x7fffffff);
    ed->border.b = parse_int_range(3, 0, 0x7fffffff);   
+}
+
+static void
+st_collections_group_parts_part_description_fill_smooth(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->fill.smooth = parse_int_range(0, 0, 1);
 }
 
 static void

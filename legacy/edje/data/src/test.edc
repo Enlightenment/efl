@@ -65,6 +65,7 @@ collections
 		       border, 12 12 12 12;
 //		       fill
 //			 {
+//			    smooth, 1;
 //			    origin
 //			      {
 //				 relative, 0.0 0.0;
