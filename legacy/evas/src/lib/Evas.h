@@ -60,8 +60,6 @@ typedef void Evas;
 typedef void Evas_Object;
 /** An Evas Performance handle */
 typedef void Evas_Performance;
-/** An Evas Key */
-typedef void Evas_Key;
 /** An Evas Modifier */
 typedef void Evas_Modifier;
 /** An Evas Lock */
@@ -179,7 +177,7 @@ struct _Evas_Event_Mouse_Move
 
 struct _Evas_Event_Key_Down
 {
-   Evas_Key      *key;
+   char          *keyname;
    void          *data;
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
@@ -187,7 +185,7 @@ struct _Evas_Event_Key_Down
 
 struct _Evas_Event_Key_Up
 {
-   Evas_Key      *key;
+   char          *keyname;
    void          *data;
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
@@ -383,7 +381,7 @@ extern "C" {
    Evas_List        *evas_objects_at_xy_get            (Evas *e, double x, double y, int include_pass_events_objects, int include_hidden_objects);
    Evas_List        *evas_objects_in_rectangle_get     (Evas *e, double x, double y, double w, double h, int include_pass_events_objects, int include_hidden_objects);
 
-   Evas_Smart       *evas_smart_new                    (char *name, void (*func_add) (Evas_Object *o), void (*func_del) (Evas_Object *o), void (*func_layer_set) (Evas_Object *o, int l), void (*func_raise) (Evas_Object *o), void (*func_lower) (Evas_Object *o), void (*func_stack_above) (Evas_Object *o, Evas_Object *above), void (*func_stack_below) (Evas_Object *o, Evas_Object *below), void (*func_move) (Evas_Object *o, double x, double y), void (*func_resize) (Evas_Object *o, double w, double h), void (*func_show) (Evas_Object *o), void (*func_hide) (Evas_Object *o), void (*func_color_set) (Evas_Object *o, int r, int g, int b, int a), void (*func_clip_set) (Evas_Object *o, Evas_Object *clip), void (*func_clip_unset) (Evas_Object *o), void *data);
+   Evas_Smart       *evas_smart_new                    (char *name, void (*func_add) (Evas_Object *obj), void (*func_del) (Evas_Object *obj), void (*func_layer_set) (Evas_Object *obj, int l), void (*func_raise) (Evas_Object *obj), void (*func_lower) (Evas_Object *obj), void (*func_stack_above) (Evas_Object *obj, Evas_Object *above), void (*func_stack_below) (Evas_Object *obj, Evas_Object *below), void (*func_move) (Evas_Object *obj, double x, double y), void (*func_resize) (Evas_Object *obj, double w, double h), void (*func_show) (Evas_Object *obj), void (*func_hide) (Evas_Object *obj), void (*func_color_set) (Evas_Object *obj, int r, int g, int b, int a), void (*func_clip_set) (Evas_Object *obj, Evas_Object *clip), void (*func_clip_unset) (Evas_Object *obj), void *data);
    void              evas_smart_free                   (Evas_Smart *s);
    void             *evas_smart_data_get               (Evas_Smart *s);
        
@@ -405,29 +403,24 @@ extern "C" {
    void              evas_event_feed_mouse_move_data   (Evas *e, int x, int y, void *data);
    void              evas_event_feed_mouse_in_data     (Evas *e, void *data);
    void              evas_event_feed_mouse_out_data    (Evas *e, void *data);
-/* FIXME: implement...
    void              evas_event_feed_key_down_data     (Evas *e, char *keyname, void *data);
    void              evas_event_feed_key_up_data       (Evas *e, char *keyname, void *data);
-...end implement */
    void              evas_event_feed_mouse_down        (Evas *e, int b);
    void              evas_event_feed_mouse_up          (Evas *e, int b);
    void              evas_event_feed_mouse_move        (Evas *e, int x, int y);
    void              evas_event_feed_mouse_in          (Evas *e);
    void              evas_event_feed_mouse_out         (Evas *e);
-/* FIXME: implement...
    void              evas_event_feed_key_down          (Evas *e, char *keyname);
    void              evas_event_feed_key_up            (Evas *e, char *keyname);
 
-   void              evas_object_focus_set             (Evas_Object *o, int focus);
-   int               evas_object_focus_get             (Evas_Object *o);
+   void              evas_object_focus_set             (Evas_Object *obj, int focus);
+   int               evas_object_focus_get             (Evas_Object *obj);
 
    Evas_Object      *evas_focus_get                    (Evas *e);
 
    Evas_Modifier    *evas_key_modifier_get             (Evas *e);
    Evas_Lock        *evas_key_lock_get                 (Evas *e);
 
-   char             *evas_key_name_get                 (Evas_Key *k);
-   
    int               evas_key_modifier_is_set_get      (Evas_Modifier *m, char *keyname);
 
    int               evas_key_lock_is_set_get          (Evas_Lock *l, char *keyname);
@@ -442,12 +435,8 @@ extern "C" {
    void              evas_key_lock_on                  (Evas *e, char *keyname);
    void              evas_key_lock_off                 (Evas *e, char *keyname);
 
-   int               evas_object_key_grab              (Evas_Object *o, char *keyname, int exclusive);
-   void              evas_object_key_ungrab            (Evas_Object *o, char *keyname);
-
- * errr need to add key grabbing/ungrabbing calls.
-
-...end implement */
+   int               evas_object_key_grab              (Evas_Object *obj, char *keyname, int exclusive);
+   void              evas_object_key_ungrab            (Evas_Object *obj, char *keyname);
    
    void              evas_object_pass_events_set       (Evas_Object *obj, int pass);
    int               evas_object_pass_events_get       (Evas_Object *obj);

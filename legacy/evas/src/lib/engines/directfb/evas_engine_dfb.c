@@ -237,7 +237,7 @@ evas_engine_directfb_output_resize(void *data, int w, int h)
       re->backbuf = new_surf;
       re->rgba_image->image->w = w;
       re->rgba_image->image->h = h;
-      re->rgba_image->image->data = new_surf;
+      re->rgba_image->image->data = (void *)new_surf;
    }
 }
 

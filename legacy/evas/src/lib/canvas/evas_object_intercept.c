@@ -52,7 +52,7 @@ evas_object_intercept_call_show(Evas_Object *obj)
    if (!obj->interceptors) return 0;
    if (obj->intercepted) return 0;
    obj->intercepted = 1;
-   ret = obj->interceptors->show.func;
+   ret = (int)obj->interceptors->show.func;
    if (obj->interceptors->show.func)
      obj->interceptors->show.func(obj->interceptors->show.data, obj);
    obj->intercepted = 0;
@@ -68,7 +68,7 @@ evas_object_intercept_call_hide(Evas_Object *obj)
    if (!obj->interceptors) return 0;
    if (obj->intercepted) return 0;
    obj->intercepted = 1;
-   ret = obj->interceptors->hide.func;
+   ret = (int)obj->interceptors->hide.func;
    if (obj->interceptors->hide.func)
      obj->interceptors->hide.func(obj->interceptors->hide.data, obj);
    obj->intercepted = 0;
@@ -84,7 +84,7 @@ evas_object_intercept_call_move(Evas_Object *obj, double x, double y)
    if (!obj->interceptors) return 0;
    if (obj->intercepted) return 0;
    obj->intercepted = 1;
-   ret = obj->interceptors->move.func;
+   ret = (int)obj->interceptors->move.func;
    if (obj->interceptors->move.func)
      obj->interceptors->move.func(obj->interceptors->move.data, obj, x, y);
    obj->intercepted = 0;
@@ -100,7 +100,7 @@ evas_object_intercept_call_resize(Evas_Object *obj, double w, double h)
    if (!obj->interceptors) return 0;
    if (obj->intercepted) return 0;
    obj->intercepted = 1;
-   ret = obj->interceptors->resize.func;
+   ret = (int)obj->interceptors->resize.func;
    if (obj->interceptors->resize.func)
      obj->interceptors->resize.func(obj->interceptors->resize.data, obj, w, h);
    obj->intercepted = 0;
@@ -116,7 +116,7 @@ evas_object_intercept_call_raise(Evas_Object *obj)
    if (!obj->interceptors) return 0;
    if (obj->intercepted) return 0;
    obj->intercepted = 1;
-   ret = obj->interceptors->raise.func;
+   ret = (int)obj->interceptors->raise.func;
    if (obj->interceptors->raise.func)
      obj->interceptors->raise.func(obj->interceptors->raise.data, obj);
    obj->intercepted = 0;
@@ -132,7 +132,7 @@ evas_object_intercept_call_lower(Evas_Object *obj)
    if (!obj->interceptors) return 0;
    if (obj->intercepted) return 0;
    obj->intercepted = 1;
-   ret = obj->interceptors->lower.func;
+   ret = (int)obj->interceptors->lower.func;
    if (obj->interceptors->lower.func)
      obj->interceptors->lower.func(obj->interceptors->lower.data, obj);
    obj->intercepted = 0;
@@ -148,7 +148,7 @@ evas_object_intercept_call_stack_above(Evas_Object *obj, Evas_Object *above)
    if (!obj->interceptors) return 0;
    if (obj->intercepted) return 0;
    obj->intercepted = 1;
-   ret = obj->interceptors->stack_above.func;
+   ret = (int)obj->interceptors->stack_above.func;
    if (obj->interceptors->stack_above.func)
      obj->interceptors->stack_above.func(obj->interceptors->stack_above.data, obj, above);
    obj->intercepted = 0;
@@ -164,7 +164,7 @@ evas_object_intercept_call_stack_below(Evas_Object *obj, Evas_Object *below)
    if (!obj->interceptors) return 0;
    if (obj->intercepted) return 0;
    obj->intercepted = 1;
-   ret = obj->interceptors->stack_below.func;
+   ret = (int)obj->interceptors->stack_below.func;
    if (obj->interceptors->stack_below.func)
      obj->interceptors->stack_below.func(obj->interceptors->stack_below.data, obj, below);
    obj->intercepted = 0;
@@ -180,7 +180,7 @@ evas_object_intercept_call_layer_set(Evas_Object *obj, int l)
    if (!obj->interceptors) return 0;
    if (obj->intercepted) return 0;
    obj->intercepted = 1;
-   ret = obj->interceptors->layer_set.func;
+   ret = (int)obj->interceptors->layer_set.func;
    if (obj->interceptors->layer_set.func)
      obj->interceptors->layer_set.func(obj->interceptors->layer_set.data, obj, l);
    obj->intercepted = 0;

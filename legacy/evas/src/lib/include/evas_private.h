@@ -42,7 +42,6 @@ typedef struct _Evas_Data_Node      Evas_Data_Node;
 typedef struct _Evas_Func_Node      Evas_Func_Node;
 typedef struct _Evas_Func           Evas_Func;
 typedef struct _Evas_Object_Func    Evas_Object_Func;
-typedef struct _Evas_Key            Evas_Key;
 typedef struct _Evas_Modifier       Evas_Modifier;
 typedef struct _Evas_Lock           Evas_Lock;
 typedef struct _Evas_Smart          Evas_Smart;
@@ -162,16 +161,11 @@ struct _Evas_Smart
    void         (*func_clip_unset) (Evas_Object *o);   
 };
 
-struct _Evas_Key
-{
-   char *name; /* string version of key code enum */
-};
-
 struct _Evas_Modifier
 {
    struct {
       int       count;
-      Evas_Key *list;
+      char    **list;
    } mod;
    unsigned long long mask; /* ok we have a max of 64 modifiers */
 };
@@ -180,7 +174,7 @@ struct _Evas_Lock
 {
    struct {
       int       count;
-      Evas_Key *list;
+      char    **list;
    } lock;
    unsigned long long mask; /* we have a max of 64 locks */
 };
@@ -241,7 +235,11 @@ struct _Evas
       int   info_magic;
    } engine;
    
-   Evas_List *font_path;
+   Evas_List     *font_path;
+   
+   Evas_Object   *focused;
+   Evas_Modifier  modifiers;
+   Evas_Lock      locks;
 };
 
 struct _Evas_Layer
@@ -306,6 +304,7 @@ struct _Evas_Object
    int               mouse_grabbed : 1;
    int               pre_render_done : 1;
    int               intercepted : 1;
+   int               focused : 1;
 
    int               delete_me;
    

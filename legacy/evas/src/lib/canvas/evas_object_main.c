@@ -408,6 +408,12 @@ evas_object_del(Evas_Object *obj)
 	evas_object_free(obj, 1);
 	return;
      }
+   if (obj->focused)
+     {
+	obj->focused = 0;
+	obj->layer->evas->focused = NULL;
+	evas_object_event_callback_call(obj, EVAS_CALLBACK_FOCUS_OUT, NULL);
+     }
    evas_object_hide(obj);   
    while (obj->clip.clipees) evas_object_clip_unset(obj->clip.clipees->data);
    if (obj->cur.clipper) evas_object_clip_unset(obj);
@@ -587,6 +593,8 @@ evas_object_hide(Evas_Object *obj)
 		  ev.canvas.x = obj->layer->evas->pointer.canvas_x;
 		  ev.canvas.y = obj->layer->evas->pointer.canvas_y;
 		  ev.data = NULL;
+		  ev.modifiers = &(obj->layer->evas->modifiers);
+		  ev.locks = &(obj->layer->evas->locks);		  
 		  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }
 	  }

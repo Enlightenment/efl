@@ -110,6 +110,8 @@ evas_event_feed_mouse_down_data(Evas *e, int b, void *data)
 	ev.canvas.x = e->pointer.canvas_x;
 	ev.canvas.y = e->pointer.canvas_y;
 	ev.data = data;
+	ev.modifiers = &(e->modifiers);
+	ev.locks = &(e->locks);	
 	evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_DOWN, &ev);
      }
    if (copy) copy = evas_list_free(copy);
@@ -143,6 +145,9 @@ evas_event_feed_mouse_up_data(Evas *e, int b, void *data)
 	ev.output.y = e->pointer.y;
 	ev.canvas.x = e->pointer.canvas_x;
 	ev.canvas.y = e->pointer.canvas_y;
+	ev.data = data;
+	ev.modifiers = &(e->modifiers);
+	ev.locks = &(e->locks);	
 	evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_UP, &ev);
      }
    if (copy) copy = evas_list_free(copy);
@@ -173,6 +178,8 @@ evas_event_feed_mouse_up_data(Evas *e, int b, void *data)
 		  ev.canvas.x = e->pointer.canvas_x;
 		  ev.canvas.y = e->pointer.canvas_y;
 		  ev.data = data;
+		  ev.modifiers = &(e->modifiers);
+		  ev.locks = &(e->locks);		  
 		  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }
 	  }
@@ -194,6 +201,8 @@ evas_event_feed_mouse_up_data(Evas *e, int b, void *data)
 		  ev.canvas.x = e->pointer.canvas_x;
 		  ev.canvas.y = e->pointer.canvas_y;
 		  ev.data = data;
+		  ev.modifiers = &(e->modifiers);
+		  ev.locks = &(e->locks);		  
 		  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_IN, &ev);
 	       }
 	  }
@@ -259,6 +268,8 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, void *data)
 		       ev.prev.canvas.x = pcx;
 		       ev.prev.canvas.y = pcy;
 		       ev.data = data;
+		       ev.modifiers = &(e->modifiers);
+		       ev.locks = &(e->locks);		       
 		       evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_MOVE, &ev);
 		    }
 	       }
@@ -283,6 +294,8 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, void *data)
 		  ev.canvas.x = e->pointer.canvas_x;
 		  ev.canvas.y = e->pointer.canvas_y;
 		  ev.data = data;
+		  ev.modifiers = &(e->modifiers);
+		  ev.locks = &(e->locks);
 		  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }	     
 	  }
@@ -326,6 +339,8 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, void *data)
 		       ev.prev.canvas.x = pcx;
 		       ev.prev.canvas.y = pcy;
 		       ev.data = data;
+		       ev.modifiers = &(e->modifiers);
+		       ev.locks = &(e->locks);		       
 		       evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_MOVE, &ev);
 		    }
 	       }
@@ -341,6 +356,8 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, void *data)
 		  ev.canvas.x = e->pointer.canvas_x;
 		  ev.canvas.y = e->pointer.canvas_y;
 		  ev.data = data;
+		  ev.modifiers = &(e->modifiers);
+		  ev.locks = &(e->locks);		  
 		  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }
 	  }
@@ -363,6 +380,8 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, void *data)
 		  ev.canvas.x = e->pointer.canvas_x;
 		  ev.canvas.y = e->pointer.canvas_y;
 		  ev.data = data;
+		  ev.modifiers = &(e->modifiers);
+		  ev.locks = &(e->locks);		  
 		  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_IN, &ev);
 	       }
 	  }
@@ -389,6 +408,49 @@ evas_event_feed_mouse_out_data(Evas *e, void *data)
    return;
    MAGIC_CHECK_END();
    e->pointer.inside = 0;
+}
+
+void
+evas_event_feed_key_down_data(Evas *e, char *keyname, void *data)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+   if (!keyname) return;
+   if (e->events_frozen > 0) return;
+   /* FIXME: handle grabs */
+   if (e->focused)
+     {
+	Evas_Event_Key_Down ev;
+
+	ev.keyname = keyname;
+	ev.data = data;
+	ev.modifiers = &(e->modifiers);
+	ev.locks = &(e->locks);
+	evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_DOWN, &ev);
+     }   
+}
+
+void
+evas_event_feed_key_up_data(Evas *e, char *keyname, void *data)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+   if (!keyname) return;
+   if (e->events_frozen > 0) return;
+   if (!e->focused) return;   
+   /* FIXME: handle grabs */
+   if (e->focused)
+     {
+	Evas_Event_Key_Up ev;
+
+	ev.keyname = keyname;
+	ev.data = data;
+	ev.modifiers = &(e->modifiers);
+	ev.locks = &(e->locks);
+	evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_UP, &ev);
+     }   
 }
 
 void
@@ -420,6 +482,19 @@ evas_event_feed_mouse_out(Evas *e)
 {
    evas_event_feed_mouse_out_data(e, NULL);
 }
+
+void
+evas_event_feed_key_down(Evas *e, char *keyname)
+{
+   evas_event_feed_key_down_data(e, keyname, NULL);
+}
+
+void
+evas_event_feed_key_up(Evas *e, char *keyname)
+{
+   evas_event_feed_key_up_data(e, keyname, NULL);
+}
+
 
 void
 evas_object_pass_events_set(Evas_Object *obj, int pass)
