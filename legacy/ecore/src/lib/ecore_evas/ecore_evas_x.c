@@ -584,102 +584,19 @@ _ecore_evas_callback_delete_request_set(Ecore_Evas *ee, void (*func) (Ecore_Evas
 static void
 _ecore_evas_move(Ecore_Evas *ee, int x, int y)
 {
-   if ((x == ee->x) && (y == ee->y)) return;
-   ee->x = x;
-   ee->y = y;
    ecore_x_window_move(ee->engine.x.win_container, x, y);
-   if (ee->func.fn_move) ee->func.fn_move(ee);
 }
 
 static void
 _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 {
-   if ((w == ee->w) && (h == ee->h)) return;
    ecore_x_window_resize(ee->engine.x.win_container, w, h);
-   ee->w = w;
-   ee->h = h;
-   ecore_x_window_resize(ee->engine.x.win, ee->w, ee->h);
-   if ((ee->rotation == 90) || (ee->rotation == 270))
-     {
-	evas_output_size_set(ee->evas, ee->h, ee->w);
-	evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
-     }
-   else
-     {
-	evas_output_size_set(ee->evas, ee->w, ee->h);
-	evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
-     }
-   if (ee->prop.avoid_damage)
-     {
-	ecore_evas_avoid_damage_set(ee, 0);
-	ecore_evas_avoid_damage_set(ee, 1);
-     }
-   if (ee->shaped)
-     {
-	ecore_evas_shaped_set(ee, 0);
-	ecore_evas_shaped_set(ee, 1);
-     }
-   if ((ee->expecting_resize.w > 0) &&
-       (ee->expecting_resize.h > 0))
-     {
-	if ((ee->expecting_resize.w == ee->w) &&
-	    (ee->expecting_resize.h == ee->h))
-	  _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y);
-	ee->expecting_resize.w = 0;
-	ee->expecting_resize.h = 0;
-     }
-   if (ee->func.fn_resize) ee->func.fn_resize(ee);	
 }
 
 static void
 _ecore_evas_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 {
-   if ((x == ee->x) && (y == ee->y) &&
-       (w == ee->w) && (h == ee->h))
-     return;
    ecore_x_window_move_resize(ee->engine.x.win_container, x, y, w, h);
-   if (!((x == ee->x) && (y == ee->y)))
-     {
-	ee->x = x;
-	ee->y = y;
-	if (ee->func.fn_move) ee->func.fn_move(ee);
-     }
-   if (!((w == ee->w) && (h == ee->h)))
-     {
-	ee->w = w;
-	ee->h = h;
-	ecore_x_window_resize(ee->engine.x.win, ee->w, ee->h);
-	if ((ee->rotation == 90) || (ee->rotation == 270))
-	  {
-	     evas_output_size_set(ee->evas, ee->h, ee->w);
-	     evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
-	  }
-	else
-	  {
-	     evas_output_size_set(ee->evas, ee->w, ee->h);
-	     evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
-	  }
-	if (ee->prop.avoid_damage)
-	  {
-	     ecore_evas_avoid_damage_set(ee, 0);
-	     ecore_evas_avoid_damage_set(ee, 1);
-	  }
-	if (ee->shaped)
-	  {
-	     ecore_evas_shaped_set(ee, 0);
-	     ecore_evas_shaped_set(ee, 1);
-	  }
-	if ((ee->expecting_resize.w > 0) &&
-	    (ee->expecting_resize.h > 0))
-	  {
-	     if ((ee->expecting_resize.w == ee->w) &&
-		 (ee->expecting_resize.h == ee->h))
-	       _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y);
-	     ee->expecting_resize.w = 0;
-	     ee->expecting_resize.h = 0;
-	  }
-	if (ee->func.fn_resize) ee->func.fn_resize(ee);
-     }
 }
 
 static void
