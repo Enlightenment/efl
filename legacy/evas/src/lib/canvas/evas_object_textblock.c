@@ -17,8 +17,8 @@
  * * get formatted extents
  * * get native extents
  * * finish off current api where it is unfinished
- * * if a word (or char) doesnt fit at all do something sensible
  * * styles (outline, glow, etxra glow, shadow, soft shadow, etc.)
+ * * if a word (or char) doesnt fit at all do something sensible
  * * anchors (to query text extents)
  * * tabs (indents)
  * * left and right margins
@@ -131,7 +131,7 @@ struct _Evas_Object_Textblock
    struct {
       unsigned char       dirty : 1;
       Evas_Coord          w, h;
-   } native;
+   } native, format;
    Evas_List             *font_hold;
    void                  *engine_data;
 };
@@ -858,6 +858,16 @@ evas_object_textblock_layout(Evas_Object *obj)
 }
 
 static void
+evas_object_textblock_format_calc(Evas_Object *obj)
+{
+   Evas_Object_Textblock *o;
+   Layout layout;
+   
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   /* FIXME: takes nodes and produce layotu nodes ignoring object size */
+}
+
+static void
 evas_object_textblock_native_calc(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
@@ -1424,6 +1434,31 @@ evas_object_textblock_format_direction_get(Evas_Object *obj)
    return EVAS_FORMAT_DIRECTION_VERTICAL;
    MAGIC_CHECK_END();
    return o->format_dir;
+}
+
+void
+evas_object_textblock_format_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
+{
+   Evas_Object_Textblock *o;
+   
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   if (w) *w = 0;
+   if (h) *h = 0;
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
+   if (w) *w = 0;
+   if (h) *h = 0;
+   return;
+   MAGIC_CHECK_END();
+   if (o->native.dirty)
+     {
+	evas_object_textblock_format_calc(obj);
+	o->native.dirty = 0;
+     }
+   if (w) *w = o->format.w;
+   if (h) *h = o->format.h;
 }
 
 void
