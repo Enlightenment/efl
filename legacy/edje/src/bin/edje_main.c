@@ -49,8 +49,8 @@ main_start(int argc, char **argv)
 #ifndef EDJE_FB_ONLY  
    ecore_evas = ecore_evas_software_x11_new(NULL, 0,  0, 0, 240, 320);
 #else
-   ecore_evas = ecore_evas_fb_new(NULL, 0,  240, 320);
-#endif   
+   ecore_evas = ecore_evas_fb_new(NULL, 270,  240, 320);
+#endif
    if (!ecore_evas) return -1;
    ecore_evas_callback_delete_request_set(ecore_evas, main_delete_request);
    ecore_evas_callback_resize_set(ecore_evas, main_resize);
@@ -118,6 +118,7 @@ bg_setup(void)
    evas_object_layer_set(o, -999);
    evas_object_color_set(o, 255, 255, 255, 255);
    evas_object_image_file_set(o, DAT"data/test/images/shadow.png", NULL);
+   evas_object_image_smooth_scale_set(o, 0);
    evas_object_image_fill_set(o, 0, 0, 240, 320);
    evas_object_pass_events_set(o, 1);
    evas_object_show(o);
@@ -351,6 +352,7 @@ test_setup(char *file, char *name)
 
    o = evas_object_image_add(evas);
    evas_object_image_file_set(o, DAT"data/test/images/border.png", NULL);
+   evas_object_image_smooth_scale_set(o, 0);
    evas_object_color_set(o, 255, 255, 255, 255);
    evas_object_image_border_set(o, 26, 26, 26, 26);
    evas_object_image_fill_set(o, 0, 0, 220, 270);
