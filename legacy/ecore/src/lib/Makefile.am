@@ -8,4 +8,5 @@ ecore_con \
 ecore_x \
 ecore_ipc \
 ecore_evas \
-ecore_config
+ecore_config \
+ecore_file
