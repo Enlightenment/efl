@@ -96,6 +96,9 @@ _evas_layer_free(Evas e, Evas_Layer layer)
 	     Evas_Object o;
 	     
 	     o = l->data;
+             _evas_callback_call(e, o, CALLBACK_FREE, 0, 0, 0);
+             _evas_remove_callbacks(e, o);
+	     _evas_remove_data(e, o);
 	     o->object_renderer_data_free(e, o);
 	     o->object_free(o);	     
 	  }
