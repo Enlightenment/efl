@@ -16,6 +16,7 @@ static int _ecore_x_event_handlers_num = 0;
 static void (**_ecore_x_event_handlers) (XEvent * event) = NULL;
 
 static int _ecore_x_init_count = 0;
+static int _ecore_x_grab_count = 0;
 
 Display *_ecore_x_disp = NULL;
 double   _ecore_x_double_click_time = 0.25;
@@ -1161,10 +1162,32 @@ ecore_x_keyboard_grab(Ecore_X_Window win)
 			CurrentTime);
 }
 
-void
-ecore_x_keyboard_ungrab(void)
+void ecore_x_keyboard_ungrab(void)
 {
    XUngrabKeyboard(_ecore_x_disp, CurrentTime);   
+}
+
+void
+ecore_x_grab(void)
+{
+   _ecore_x_grab_count++;
+   
+   if (_ecore_x_grab_count == 1)
+      XGrabServer(_ecore_x_disp);
+}
+
+void
+ecore_x_ungrab(void)
+{
+   _ecore_x_grab_count--;
+   if (_ecore_x_grab_count < 0)
+      _ecore_x_grab_count = 0;
+
+   if (_ecore_x_grab_count == 0)
+   {
+      XUngrabServer(_ecore_x_disp);
+      XSync(_ecore_x_disp, False);
+   }
 }
 
 /*****************************************************************************/

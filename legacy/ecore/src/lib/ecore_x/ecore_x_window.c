@@ -444,3 +444,73 @@ ecore_x_window_cursor_show(Ecore_X_Window win, int show)
 	XDefineCursor(_ecore_x_disp, win, 0);	
      }
 }
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+int
+ecore_x_window_visible_get(Ecore_X_Window win)
+{
+   XWindowAttributes attr;
+
+   return (XGetWindowAttributes(_ecore_x_disp, win, &attr) &&
+           (attr.map_state == IsViewable));
+}
+
+static Window
+_ecore_x_window_at_xy_get(Window base, int bx, int by, int x, int y)
+{
+   Window           *list = NULL;
+   Window            parent_win = 0, child = 0, root_win = 0;
+   int               i, wx, wy, ww, wh;
+   unsigned int      num;
+
+   if (!ecore_x_window_visible_get(base))
+      return 0;
+
+   ecore_x_window_geometry_get(base, &wx, &wy, &ww, &wh);
+   wx += bx;
+   wy += by;
+
+   if (!((x >= wx) && (y >= wy) && (x < (wx + ww)) && (y < (wy + wh))))
+      return 0;
+   
+   if (!XQueryTree(_ecore_x_disp, base, &root_win, &parent_win, &list, &num))
+      return base;
+
+   if (list)
+   {
+      for (i = num - 1;; --i)
+      {
+         if ((child = _ecore_x_window_at_xy_get(list[i], wx, wy, x, y)))
+         {
+            XFree(list);
+            return child;
+         }
+         if (!i)
+            break;
+      }
+      XFree(list);
+   }
+
+   return base;
+}
+
+Ecore_X_Window
+ecore_x_window_at_xy_get(int x, int y)
+{
+   Ecore_X_Window    win, root;
+   
+   /* FIXME: Proper function to determine current root/virtual root
+    * window missing here */
+   root = DefaultRootWindow(_ecore_x_disp);
+   
+   ecore_x_grab();
+   win = _ecore_x_window_at_xy_get(root, 0, 0, x, y);
+   ecore_x_ungrab();
+   
+   return win ? win : root;
+}
+
