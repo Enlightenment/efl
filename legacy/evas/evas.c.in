@@ -467,17 +467,16 @@ make CFLAGS="-O9 -I/opt/Embedix/tools/arm-linux/include"
 
 
 @todo (1.0) Document API
-@todo (1.0) Add keyboard grabbing
 @todo (1.0) Add button grabbing
 @todo (1.0) Add generic object method call system
 @todo (1.0) Define image load errors (and maybe have an error to string func)
 @todo (1.0) Add text styles (outline etc.)
 @todo (1.0) Add font load query calls (so we know if a font load failed)
 @todo (1.0) Add font listing calls
-@todo (1.0) Add auto-detection of what engines to build based on system/libs etc. for configure script
-@todo (1.0) Add overall engine configure parameters (so you can configure an engine with defaults with 1 configure option) to configure script
 @todo (1.0) Add ability to check image comments & disk format
 @todo (1.0) Add group objects
+@todo (1.0) Add auto-detection of what engines to build based on system/libs etc. for configure script
+@todo (1.0) Add overall engine configure parameters (so you can configure an engine with defaults with 1 configure option) to configure script
 @todo (1.1) Make freetype optional and put in optional graymap font engine
 @todo (1.1) Free images if object invisible (and put back in chache)
 @todo (1.1) Check robustness of malloc/calloc/realloc failures.

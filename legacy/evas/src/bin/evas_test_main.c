@@ -1681,10 +1681,14 @@ loop(void)
      }
    else if (t <= 443.0)
      {
+	printf("####################################################\n");
+	printf("# FRAME COUNT: %i frames\n", loop_count);
+	printf("# TIME:        %3.3f seconds\n", t);
+	printf("# AVERAGE FPS: %3.3f fps\n", (double)loop_count / t);
+	printf("####################################################\n");
 	printf("################ evas free\n");
 	evas_free(evas);
 	printf("evas freed. DONE\n");
-	printf("FRAME COUNT: %i\n", loop_count);
 	exit(0);
 	sleep(10000000);
      }
