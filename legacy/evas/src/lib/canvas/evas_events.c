@@ -442,7 +442,7 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
 	       }
 	  }
 	if (copy) copy = evas_list_free(copy);
-	/* go thru out current list of ins */
+	/* go thru our current list of ins */
 	for (l = ins; l; l = l->next)
 	  {
 	     Evas_Object *obj;
@@ -467,7 +467,7 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
 	       }
 	  }
 	/* free our old list of ins */
-	e->pointer.object.in = evas_list_free(e->pointer.object.in);
+	evas_list_free(e->pointer.object.in);
 	/* and set up the new one */
 	e->pointer.object.in = ins;
      }

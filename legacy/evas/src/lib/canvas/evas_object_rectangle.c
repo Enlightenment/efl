@@ -167,7 +167,7 @@ evas_object_rectangle_render_pre(Evas_Object *obj)
    /* rendering. this could mean loading the image data, retrieving it from */
    /* elsewhere, decoding video etc. */
    /* then when this is done the object needs to figure if it changed and */
-   /* if so what and where and add thr appropriate redraw rectangles */
+   /* if so what and where and add the appropriate redraw rectangles */
    o = (Evas_Object_Rectangle *)(obj->object_data);
    /* if someone is clipping this obj - go calculate the clipper */
    if (obj->cur.clipper)
@@ -184,11 +184,11 @@ evas_object_rectangle_render_pre(Evas_Object *obj)
 	updates = evas_object_render_pre_visible_change(updates, obj, is_v, was_v);
 	goto done;
      }
-   /* its not visible - we accounted for it appearing or not so just abort */
+   /* it's not visible - we accounted for it appearing or not so just abort */
    if (!is_v) goto done;
    /* clipper changed this is in addition to anything else for obj */
    updates = evas_object_render_pre_clipper_change(updates, obj);
-   /* if we restacked (layer or just within a layer) and dont clip anyone */
+   /* if we restacked (layer or just within a layer) and don't clip anyone */
    if ((obj->restack) && (!obj->clip.clipees))
      {
 	updates = evas_object_render_pre_prev_cur_add(updates, obj);
@@ -311,7 +311,7 @@ evas_object_rectangle_is_opaque(Evas_Object *obj)
    Evas_Object_Rectangle *o;
 
    /* this returns 1 if the internal object data implies that the object is */
-   /* currently fulyl opque over the entire rectangle it occupies */
+   /* currently fully opaque over the entire rectangle it occupies */
    o = (Evas_Object_Rectangle *)(obj->object_data);
    return 1;
 }
@@ -322,7 +322,7 @@ evas_object_rectangle_was_opaque(Evas_Object *obj)
    Evas_Object_Rectangle *o;
    
    /* this returns 1 if the internal object data implies that the object was */
-   /* currently fulyl opque over the entire rectangle it occupies */
+   /* previously fully opaque over the entire rectangle it occupies */
    o = (Evas_Object_Rectangle *)(obj->object_data);
    return 1;
 }
@@ -333,7 +333,7 @@ evas_object_rectangle_is_inside(Evas_Object *obj, double x, double y)
    Evas_Object_Rectangle *o;
    
    /* this returns 1 if the canvas co-ordinates are inside the object based */
-   /* on object private data. not much use for rects, but for polys images */
+   /* on object private data. not much use for rects, but for polys, images */
    /* and other complex objects it might be */
    o = (Evas_Object_Rectangle *)(obj->object_data);
    return 1;
@@ -345,7 +345,7 @@ evas_object_rectangle_was_inside(Evas_Object *obj, double x, double y)
    Evas_Object_Rectangle *o;
    
    /* this returns 1 if the canvas co-ordinates were inside the object based */
-   /* on object private data. not much use for rects, but for polys images */
+   /* on object private data. not much use for rects, but for polys, images */
    /* and other complex objects it might be */
    o = (Evas_Object_Rectangle *)(obj->object_data);
    return 1;

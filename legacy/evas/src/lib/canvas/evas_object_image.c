@@ -120,9 +120,9 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
    MAGIC_CHECK_END();
    if ((o->cur.file) && (file) && (!strcmp(o->cur.file, file)))
      {
-	if ((o->cur.key) && (key) && (!strcmp(o->cur.key, key)))
-	  return;
 	if ((!o->cur.key) && (!key))
+	  return;
+	if ((o->cur.key) && (key) && (!strcmp(o->cur.key, key)))
 	  return;
      }
    if (o->cur.file) free(o->cur.file);
@@ -137,9 +137,6 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
      obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output,
 					       o->engine_data);
    o->load_error = EVAS_LOAD_ERROR_NONE;
-   o->cur.has_alpha = 1;
-   o->cur.image.w = 0;
-   o->cur.image.h = 0;
    o->engine_data = obj->layer->evas->engine.func->image_load(obj->layer->evas->engine.data.output,
 							      o->cur.file,
 							      o->cur.key,
@@ -158,6 +155,9 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
    else
      {
 	o->load_error = EVAS_LOAD_ERROR_GENERIC;
+	o->cur.has_alpha = 1;
+	o->cur.image.w = 0;
+	o->cur.image.h = 0;
      }
    o->changed = 1;
    evas_object_change(obj);
@@ -1291,7 +1291,7 @@ evas_object_image_render_pre(Evas_Object *obj)
    /* rendering. this could mean loading the image data, retrieving it from */
    /* elsewhere, decoding video etc. */
    /* then when this is done the object needs to figure if it changed and */
-   /* if so what and where and add thr appropriate redraw rectangles */
+   /* if so what and where and add the appropriate redraw rectangles */
    o = (Evas_Object_Image *)(obj->object_data);
    /* if someone is clipping this obj - go calculate the clipper */
    if (obj->cur.clipper)
@@ -1308,11 +1308,11 @@ evas_object_image_render_pre(Evas_Object *obj)
 	updates = evas_object_render_pre_visible_change(updates, obj, is_v, was_v);
 	goto done;
      }
-   /* its not visible - we accounted for it appearing or not so just abort */
+   /* it's not visible - we accounted for it appearing or not so just abort */
    if (!is_v) goto done;
    /* clipper changed this is in addition to anything else for obj */
    updates = evas_object_render_pre_clipper_change(updates, obj);
-   /* if we restacked (layer or just within a layer) and dont clip anyone */
+   /* if we restacked (layer or just within a layer) and don't clip anyone */
    if (obj->restack)
      {
 	updates = evas_object_render_pre_prev_cur_add(updates, obj);
@@ -1481,7 +1481,7 @@ evas_object_image_render_pre(Evas_Object *obj)
      }
    /* it obviously didn't change - add a NO obscure - this "unupdates"  this */
    /* area so if there were updates for it they get wiped. don't do it if we */
-   /* arent fully opaque and we are visible */
+   /* aren't fully opaque and we are visible */
    if (evas_object_is_visible(obj) &&
        evas_object_is_opaque(obj))
      obj->layer->evas->engine.func->output_redraws_rect_del(obj->layer->evas->engine.data.output,
@@ -1532,7 +1532,7 @@ evas_object_image_is_opaque(Evas_Object *obj)
    Evas_Object_Image *o;
 
    /* this returns 1 if the internal object data implies that the object is */
-   /* currently fulyl opque over the entire rectangle it occupies */
+   /* currently fully opaque over the entire rectangle it occupies */
    o = (Evas_Object_Image *)(obj->object_data);
    if (!o->engine_data) return 0;
    if (o->cur.has_alpha) return 0;
@@ -1545,7 +1545,7 @@ evas_object_image_was_opaque(Evas_Object *obj)
    Evas_Object_Image *o;
    
    /* this returns 1 if the internal object data implies that the object was */
-   /* currently fulyl opque over the entire rectangle it occupies */
+   /* previously fully opaque over the entire rectangle it occupies */
    o = (Evas_Object_Image *)(obj->object_data);
    if (!o->engine_data) return 0;
    if (o->prev.has_alpha) return 0;

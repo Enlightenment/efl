@@ -206,7 +206,7 @@ evas_render_updates(Evas *e)
    /* save this list */
    obscuring_objects_orig = obscuring_objects;
    obscuring_objects = NULL;
-   /* phase 6. go thu each update rect and render objects in it*/
+   /* phase 6. go thru each update rect and render objects in it*/
    while ((surface = 
 	   e->engine.func->output_redraws_next_update_get(e->engine.data.output,
 							 &ux, &uy, &uw, &uh,
@@ -239,7 +239,7 @@ evas_render_updates(Evas *e)
 	     Evas_List *l3;
 	     obj = (Evas_Object *)(ll->data);
 	     
-	     /* if its in our outpout rect and it doesnt clip anything */
+	     /* if it's in our outpout rect and it doesn't clip anything */
 	     if (evas_object_is_in_output_rect(obj, ux, uy, uw, uh) &&
 		 (!obj->clip.clipees) &&
 		 (obj->cur.visible) &&

@@ -97,20 +97,20 @@ evas_object_clippers_was_visible(Evas_Object *obj)
  * RESULT = (OBJ * CLIP) / (255 * 255) per color element (red, green, blue and
  * alpha). Clipping is recursive, so clip objects may be clipped by other
  * objects, and their color will in tern be multiplied. You may NOT set up
- * circular clipping lists (i.e. object 1 clips object 2 which clips object 2).
+ * circular clipping lists (i.e. object 1 clips object 2 which clips object 1).
  * The behavior of Evas is undefined in this case. Objects which do not clip
  * others are visible as normal, those that clip 1 or more objects become
  * invisible themselves, only affecting what they clip. If an object ceases to
  * have other objects being clipped by it, it will become visible again. The
  * visibility of an object affects the objects that are clipped by it, so if
- * the object clipping others is now shown, the objects clipped will not be
+ * the object clipping others is not shown, the objects clipped will not be
  * shown either. If the object was being clipped by another object when this
  * function is called, it is implicitly removed from the clipper it is being
  * clipped to, and now is made to clip its new clipper.
  * 
  * At the moment the only objects that can validly be used to clip other
- * objects are rectangle objects. All other objects types are invalid and the
- * results of using them is undefined.
+ * objects are rectangle objects. All other object types are invalid and the
+ * result of using them is undefined.
  * 
  * The clip object @p clip must be a valid object, but may also be NULL in
  * which case the effect of this function is the same as calling
@@ -123,7 +123,7 @@ evas_object_clippers_was_visible(Evas_Object *obj)
  * Evas_Object *clipper;
  * 
  * clipper = evas_object_rectangle_add(evas);
- * evas_object_color_ser(clipper, 255, 255, 255, 255);
+ * evas_object_color_set(clipper, 255, 255, 255, 255);
  * evas_object_move(clipper, 10, 10);
  * evas_object_resize(clipper, 20, 50);
  * evas_object_clip_set(obj, clipper);
@@ -177,10 +177,10 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
  * Get the object clipping this one (if any).
  * @param obj The object to get the clipper from
  *
- * This function returns the the object clipping @p obj. If it is not being
+ * This function returns the the object clipping @p obj. If @p obj not being
  * clipped, NULL is returned. The object @p obj must be a valid object.
  * 
- * See also evas_object_clip_set(), evas_object_clipees_get() and
+ * See also evas_object_clip_set(), evas_object_clip_unset() and
  * evas_object_clipees_get().
  * 
  * Example:
@@ -263,14 +263,14 @@ evas_object_clip_unset(Evas_Object *obj)
  * 
  * This returns the inernal list handle that contains all objects clipped by
  * the object @p obj. If none are clipped, it returns NULL. This list is only
- * valid and should be fetched again with another call to
- * evas_object_clipees_get() if any objects being clipped by this object are
- * unclipped, clipped by a new object, are deleted or the clipper is deleted.
- * These operations will invalidate the list returned and so it should not be
- * used anymore after that point. Any use of the list after this may have
+ * valid until the clip list is changed and should be fetched again with another
+ * call to evas_object_clipees_get() if any objects being clipped by this object
+ * are unclipped, clipped by a new object, are deleted or the clipper is
+ * deleted.  These operations will invalidate the list returned so it should
+ * not be used anymore after that point. Any use of the list after this may have
  * undefined results, not limited just to strange behavior but possible
- * segfaults and other strange memory errors. The object @p obj must be a 
- * valid object.
+ * segfaults and other strange memory errors. The object @p obj must be a valid
+ * object.
  *
  * See also evas_object_clip_set(), evas_object_clip_unset() and 
  * evas_object_clip_get().
