@@ -1037,7 +1037,7 @@ evas_engine_software_x11_font_draw(void *data, void *context, void *surface, voi
 		  
 		  im->flags |= RGBA_IMAGE_HAS_ALPHA;
 		  j = ow * oh;
-		  for (i = 0; i < j; i++) im->image->data[i] = (dc->col.col & 0xffffff);
+		  memset(im->image->data, 0, j * sizeof(DATA32));
 		  
 		  max_ascent = evas_common_font_max_ascent_get(font);
 		  

@@ -290,6 +290,7 @@ evas_engine_directfb_output_redraws_next_update_get(void *data, int *x, int *y,
    Evas_Object_List   *l;
    int                 ux, uy, uw, uh;
    static             first = 1;
+   DFBRegion          region;
 
    re = (Render_Engine *) data;
    if (re->end)
@@ -320,6 +321,14 @@ evas_engine_directfb_output_redraws_next_update_get(void *data, int *x, int *y,
    *cy = *y = uy;
    *cw = *w = uw;
    *ch = *h = uh;
+   region.x1 = ux;
+   region.y1 = uy;
+   region.x2 = ux + uw - 1;
+   region.y2 = uy + uh - 1;
+   re->backbuf->SetClip(re->backbuf, &region);
+   re->backbuf->Clear(re->backbuf, 0, 0, 0, 0);
+   re->backbuf->SetClip(re->backbuf, NULL);
+   
 
    /* Return the "fake" surface so it is passed to the drawing routines. */
    return re->rgba_image;
@@ -871,6 +880,7 @@ evas_engine_directfb_font_draw(void *data, void *context, void *surface,
    surf = (IDirectFBSurface *)im->image->data; 
    surf->Lock(surf, DSLF_WRITE, &p, &pitch);
    im->image->data = p;
+   im->flags |= RGBA_IMAGE_HAS_ALPHA;
    if ((w == ow) && (h == oh))
       evas_common_font_draw(im, context, font, x, y, text);
    else
@@ -893,7 +903,7 @@ evas_engine_directfb_font_draw(void *data, void *context, void *surface,
 		  
 		  im->flags |= RGBA_IMAGE_HAS_ALPHA;
 		  j = ow * oh;
-		  for (i = 0; i < j; i++) im->image->data[i] = (dc->col.col & 0xffffff);
+		  memset(im->image->data, 0, j * sizeof(DATA32));
 		  
 		  max_ascent = evas_common_font_max_ascent_get(font);
 		  
