@@ -4,7 +4,7 @@ SUBDIRS = canvas data file engines imaging include
 
 AUTOMAKE_OPTIONS     = 1.4 foreign
 
-INCLUDES	     = @freetype_cflags@ @x_cflags@ @qt_cflags@ @DIRECTFB_CFLAGS@ @gl_cflags@ \
+INCLUDES	     = @freetype_cflags@ @x_cflags@ @xcb_cflags@ @qt_cflags@ @DIRECTFB_CFLAGS@ @gl_cflags@ \
                        -I. \
                        -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include
@@ -13,6 +13,7 @@ lib_LTLIBRARIES      = libevas.la
 
 EXTRA_DIST = \
 Evas_Engine_Software_X11.h \
+Evas_Engine_Software_Xcb.h \
 Evas_Engine_DirectFB.h \
 Evas_Engine_FB.h \
 Evas_Engine_Buffer.h \
@@ -27,6 +28,14 @@ ENGINE_SOFTWARE_X11_INC = Evas_Engine_Software_X11.h
 else
 ENGINE_SOFTWARE_X11 =
 ENGINE_SOFTWARE_X11_INC =
+endif
+
+if BUILD_ENGINE_SOFTWARE_XCB
+ENGINE_SOFTWARE_XCB = engines/software_xcb/libevas_engine_software_xcb.la
+ENGINE_SOFTWARE_XCB_INC = Evas_Engine_Software_Xcb.h
+else
+ENGINE_SOFTWARE_XCB =
+ENGINE_SOFTWARE_XCB_INC =
 endif
 
 if BUILD_ENGINE_DIRECTFB
@@ -96,6 +105,7 @@ endif
 include_HEADERS      = \
 Evas.h \
 $(ENGINE_SOFTWARE_X11_INC) \
+$(ENGINE_SOFTWARE_XCB_INC) \
 $(ENGINE_DIRECTFB_INC) \
 $(ENGINE_FB_INC) \
 $(ENGINE_BUFFER_INC) \
@@ -118,6 +128,7 @@ libevas_la_LIBADD       = \
 			  @freetype_libs@ \
 			  @png_libs@ @jpeg_libs@ @eet_libs@ @edb_libs@ \
 			  $(ENGINE_SOFTWARE_X11) \
+			  $(ENGINE_SOFTWARE_XCB) \
 			  $(ENGINE_DIRECTFB) \
 			  $(ENGINE_FB) \
 			  $(ENGINE_BUFFER) \
@@ -136,6 +147,7 @@ libevas_la_DEPENDENCIES = \
 			  imaging/libevas_imaging.la \
 			  engines/common/libevas_engine_common.la \
 			  $(ENGINE_SOFTWARE_X11) \
+			  $(ENGINE_SOFTWARE_XCB) \
 			  $(ENGINE_DIRECTFB) \
 			  $(ENGINE_FB) \
 			  $(ENGINE_BUFFER) \

@@ -6,6 +6,7 @@ INCLUDES = \
 
 bin_PROGRAMS = \
 @ENGINE_SOFTWARE_X11_PRG@ \
+@ENGINE_SOFTWARE_XCB_PRG@ \
 @ENGINE_DIRECTFB_PRG@ \
 @ENGINE_FB_PRG@ \
 @ENGINE_BUFFER_PRG@ \
@@ -17,6 +18,9 @@ EXTRA_PROGRAMS = \
 evas_software_x11_test \
 evas_software_x11_perf_test \
 evas_software_x11_perf_load \
+evas_software_xcb_test \
+evas_software_xcb_perf_test \
+evas_software_xcb_perf_load \
 evas_directfb_test \
 evas_directfb_window \
 evas_fb_test \
@@ -41,6 +45,21 @@ evas_software_x11_perf_load_SOURCES = evas_software_x11_perf_load.c
 evas_software_x11_perf_load_LDADD = $(top_builddir)/src/lib/libevas.la -lm @x_libs@
 evas_software_x11_perf_load_CFLAGS = $(CFLAGS) @x_cflags@
 evas_software_x11_perf_load_DEPENDENCIES = $(top_builddir)/src/lib/libevas.la
+
+evas_software_xcb_test_SOURCES = evas_test_main.h evas_test_main.c evas_software_xcb_main.c
+evas_software_xcb_test_LDADD = $(top_builddir)/src/lib/libevas.la -lm @xcb_libs@
+evas_software_xcb_test_CFLAGS = $(CFLAGS) @xcb_cflags@
+evas_software_xcb_test_DEPENDENCIES = $(top_builddir)/src/lib/libevas.la
+
+evas_software_xcb_perf_test_SOURCES = evas_software_xcb_perf_test.c
+evas_software_xcb_perf_test_LDADD = $(top_builddir)/src/lib/libevas.la -lm @xcb_libs@
+evas_software_xcb_perf_test_CFLAGS = $(CFLAGS) @xcb_cflags@
+evas_software_xcb_perf_test_DEPENDENCIES = $(top_builddir)/src/lib/libevas.la
+
+evas_software_xcb_perf_load_SOURCES = evas_software_xcb_perf_load.c
+evas_software_xcb_perf_load_LDADD = $(top_builddir)/src/lib/libevas.la -lm @xcb_libs@
+evas_software_xcb_perf_load_CFLAGS = $(CFLAGS) @xcb_cflags@
+evas_software_xcb_perf_load_DEPENDENCIES = $(top_builddir)/src/lib/libevas.la
 
 evas_directfb_test_SOURCES = evas_test_main.h evas_test_main.c evas_directfb_main.c
 evas_directfb_test_LDADD = $(top_builddir)/src/lib/libevas.la -lm @DIRECTFB_LIBS@ 

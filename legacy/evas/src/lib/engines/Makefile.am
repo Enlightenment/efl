@@ -3,6 +3,7 @@ MAINTAINERCLEANFILES = Makefile.in
 SUBDIRS = \
 common \
 software_x11 \
+software_xcb \
 fb \
 buffer \
 software_win32_gdi \

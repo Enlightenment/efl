@@ -3,6 +3,9 @@
 #ifdef BUILD_ENGINE_SOFTWARE_X11
 #include "evas_engine_api_software_x11.h"
 #endif
+#ifdef BUILD_ENGINE_SOFTWARE_XCB
+#include "evas_engine_api_software_xcb.h"
+#endif
 #ifdef BUILD_ENGINE_DIRECTFB
 #include "evas_engine_api_directfb.h"
 #endif
@@ -220,6 +223,11 @@ evas_output_method_set(Evas *e, int render_method)
 #ifdef BUILD_ENGINE_SOFTWARE_X11   
    if (e->output.render_method == RENDER_METHOD_SOFTWARE_X11)
      e->engine.func = &evas_engine_software_x11_func;
+   else
+#endif   
+#ifdef BUILD_ENGINE_SOFTWARE_XCB   
+     if (e->output.render_method == RENDER_METHOD_SOFTWARE_XCB)
+     e->engine.func = &evas_engine_software_xcb_func;
    else
 #endif   
 #ifdef BUILD_ENGINE_GL_X11
@@ -663,9 +671,12 @@ int
 evas_render_method_lookup(const char *name)
 {
    if (!name) return RENDER_METHOD_INVALID;
-   
+
 #ifdef BUILD_ENGINE_SOFTWARE_X11   
    if (!strcmp(name, "software_x11")) return RENDER_METHOD_SOFTWARE_X11;
+#endif
+#ifdef BUILD_ENGINE_SOFTWARE_XCB 
+   if (!strcmp(name, "software_xcb")) return RENDER_METHOD_SOFTWARE_XCB;
 #endif
 #ifdef BUILD_ENGINE_GL_X11   
    if (!strcmp(name, "gl_x11")) return RENDER_METHOD_GL_X11;
@@ -733,6 +744,9 @@ evas_render_method_list(void)
    
 #ifdef BUILD_ENGINE_SOFTWARE_X11
    methods = evas_list_append(methods, strdup("software_x11"));
+#endif  
+#ifdef BUILD_ENGINE_SOFTWARE_XCB
+   methods = evas_list_append(methods, strdup("software_xcb"));
 #endif   
 #ifdef BUILD_ENGINE_GL_X11
    methods = evas_list_append(methods, strdup("gl_x11"));
