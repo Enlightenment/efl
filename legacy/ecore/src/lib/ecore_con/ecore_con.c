@@ -554,7 +554,6 @@ ecore_con_client_send(Ecore_Con_Client *cl, void *data, int size)
      {
 	unsigned char *newbuf;
 	
-	printf("CON: existing buf...\n");
 	newbuf = realloc(cl->buf, cl->buf_size + size);
 	if (newbuf) cl->buf = newbuf;
 	else return 0;
@@ -563,7 +562,6 @@ ecore_con_client_send(Ecore_Con_Client *cl, void *data, int size)
      }
    else
      {
-	printf("CON: newbuf!\n");
 	cl->buf = malloc(size);
 	if (!cl->buf) return 0;
 	cl->buf_size = size;
