@@ -43,6 +43,10 @@ native       append_int (id, v);
 native       prepend_int(id, v);
 native       insert_int (id, pos, v);
 native       fetch_int  (id, pos);
+native       append_str (id, str[]);
+native       prepend_str(id, str[]);
+native       insert_str (id, pos, str[]);
+native       fetch_str  (id, pos, dst[], maxlen);
 
 /********************/
 /* Edje timer calls */

@@ -408,6 +408,92 @@ _edje_embryo_fn_fetch_int(Embryo_Program *ep, Embryo_Cell *params)
                                      (int) params[2]);
 }
 
+/* append_str(id, str[]) */
+static Embryo_Cell
+_edje_embryo_fn_append_str(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+   char *s;
+
+   CHKPARAM(2);
+
+   GETSTR(s, params[2]);
+   if (s)
+     _edje_var_list_str_append(ed, (int) params[1], s);
+
+   return 0;
+}
+
+/* prepend_str(id, str[]) */
+static Embryo_Cell
+_edje_embryo_fn_prepend_str(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+   char *s;
+
+   CHKPARAM(2);
+
+   GETSTR(s, params[2]);
+   if (s)
+     _edje_var_list_str_prepend(ed, (int) params[1], s);
+
+   return 0;
+}
+
+/* insert_str(id, pos, str[]) */
+static Embryo_Cell
+_edje_embryo_fn_insert_str(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+   char *s;
+
+   CHKPARAM(3);
+
+   GETSTR(s, params[3]);
+   if (s)
+     _edje_var_list_str_insert(ed, (int) params[1], (int) params[2], s);
+
+   return 0;
+}
+
+/* fetch_str(id, pos, dst[], maxlen) */
+static Embryo_Cell
+_edje_embryo_fn_fetch_str(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+   char *s;
+
+   CHKPARAM(4);
+
+   s = (char *) _edje_var_list_nth_str_get(ed, (int) params[1],
+                                           (int) params[2]);
+   if (s)
+     {
+	if (strlen(s) < params[4])
+	  {
+	     SETSTR(s, params[3]);
+	  }
+	else
+	  {
+	     char *ss;
+	     
+	     ss = strdup(s);
+	     if (ss)
+	       {
+		  ss[params[4] - 1] = 0;
+		  SETSTR(ss, params[3]);
+		  free(ss);
+	       }
+	  }
+     }
+   else
+     {
+	SETSTR("", params[3]);
+     }
+
+   return 0;
+}
+
 /* timer(Float:in, fname[], val) */
 static Embryo_Cell
 _edje_embryo_fn_timer(Embryo_Program *ep, Embryo_Cell *params)
@@ -1255,6 +1341,10 @@ _edje_embryo_script_init(Edje *ed)
    embryo_program_native_call_add(ep, "prepend_int", _edje_embryo_fn_prepend_int);
    embryo_program_native_call_add(ep, "insert_int", _edje_embryo_fn_insert_int);
    embryo_program_native_call_add(ep, "fetch_int", _edje_embryo_fn_fetch_int);
+   embryo_program_native_call_add(ep, "append_str", _edje_embryo_fn_append_str);
+   embryo_program_native_call_add(ep, "prepend_str", _edje_embryo_fn_prepend_str);
+   embryo_program_native_call_add(ep, "insert_str", _edje_embryo_fn_insert_str);
+   embryo_program_native_call_add(ep, "fetch_str", _edje_embryo_fn_fetch_str);
 
    embryo_program_native_call_add(ep, "timer", _edje_embryo_fn_timer);
    embryo_program_native_call_add(ep, "cancel_timer", _edje_embryo_fn_cancel_timer);
