@@ -5,8 +5,8 @@ AUTOMAKE_OPTIONS     = 1.4 foreign
 # A list of all the files in the current directory which can be regenerated
 MAINTAINERCLEANFILES = Makefile.in
 
-LDFLAGS		     = 
-INCLUDES	     = @freetype_cflags@ \
+LDFLAGS		     = @VALGRIND_LIBS@
+INCLUDES	     = @freetype_cflags@ @VALGRIND_CFLAGS@ \
                        -I. \
 		       -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include

@@ -5,6 +5,10 @@
 #include <Eet.h>
 #endif
 
+#ifdef HAVE_VALGRIND
+#include <valgrind/valgrind.h>
+#endif
+
 static Evas_Hash        * images = NULL;
 static Evas_Object_List * cache = NULL;
 static int                cache_size = 0;
@@ -91,7 +95,21 @@ evas_common_image_surface_free(RGBA_Surface *is)
 void
 evas_common_image_surface_alloc(RGBA_Surface *is)
 {
-   is->data = malloc(is->w * is->h * sizeof(DATA32));
+   size_t siz = is->w * is->h * sizeof(DATA32);
+   static int on_valgrind;
+
+   /* init data when we're under Valgrind's control */
+#ifdef HAVE_VALGRIND
+   static int init;
+
+   if (!init)
+     {
+	on_valgrind = RUNNING_ON_VALGRIND;
+	init = 1;
+     }
+#endif
+
+   is->data = on_valgrind ? calloc(1, siz) : malloc(siz);
 }
 
 void
