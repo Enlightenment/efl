@@ -6,7 +6,19 @@
 
 typedef struct _Ecore_Ipc_Client Ecore_Ipc_Client;
 typedef struct _Ecore_Ipc_Server Ecore_Ipc_Server;
-   
+typedef struct _Ecore_Ipc_Msg_Head Ecore_Ipc_Msg_Head;
+
+struct _Ecore_Ipc_Msg_Head
+{
+      int head;
+      int major;
+      int minor;
+      int ref;
+      int ref_to;
+      int response;
+      int size;
+} __attribute__ ((packed));
+
 struct _Ecore_Ipc_Client
 {
    Ecore_List        __list_data;
@@ -15,6 +27,10 @@ struct _Ecore_Ipc_Client
    void              *data;
    unsigned char     *buf;
    int                buf_size;
+   
+   struct {
+      Ecore_Ipc_Msg_Head i, o;
+   } prev;
 };
    
 struct _Ecore_Ipc_Server
@@ -26,6 +42,10 @@ struct _Ecore_Ipc_Server
    void              *data;
    unsigned char     *buf;
    int                buf_size;
+
+   struct {
+      Ecore_Ipc_Msg_Head i, o;
+   } prev;
 };
 
 #endif

@@ -507,7 +507,7 @@ ecore_con_server_send(Ecore_Con_Server *svr, void *data, int size)
 			 "ecore_con_server_send");
 	return 0;
      }   
-   if (svr->dead) return 1;
+   if (svr->dead) return 0;
    if (!data) return 0;
    if (size < 1) return 0;
    ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
@@ -529,7 +529,7 @@ ecore_con_server_send(Ecore_Con_Server *svr, void *data, int size)
 	memcpy(svr->write_buf, data, size);
      }
    _ecore_con_server_flush(svr);
-   return 1;
+   return size;
 }
   
 /**
@@ -568,7 +568,7 @@ ecore_con_client_send(Ecore_Con_Client *cl, void *data, int size)
 	memcpy(cl->buf, data, size);
      }
    _ecore_con_client_flush(cl);
-   return 1;
+   return size;
 }
   
 /**

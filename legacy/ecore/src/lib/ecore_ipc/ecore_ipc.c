@@ -7,17 +7,170 @@
 
 #include <netinet/in.h>
 
-typedef struct _Ecore_Ipc_Msg_Head Ecore_Ipc_Msg_Head;
+#define DLT_ZERO   0
+#define DLT_ONE    1
+#define DLT_SAME   2
+#define DLT_SHL    3
+#define DLT_SHR    4
+#define DLT_ADD8   5
+#define DLT_DEL8   6
+#define DLT_ADDU8  7
+#define DLT_DELU8  8
+#define DLT_ADD16  9
+#define DLT_DEL16  10
+#define DLT_ADDU16 11
+#define DLT_DELU16 12
+#define DLT_SET    13
+#define DLT_R1     14
+#define DLT_R2     15
 
-struct _Ecore_Ipc_Msg_Head
+static int _ecore_ipc_dlt_int(int out, int prev, int *mode);
+static int _ecore_ipc_ddlt_int(int in, int prev, int mode);
+
+static int
+_ecore_ipc_dlt_int(int out, int prev, int *mode)
 {
-   int major;
-   int minor;
-   int ref;
-   int ref_to;
-   int response;
-   int size;
-} __attribute__ ((packed));
+   int dlt;
+
+   /* 0 byte */
+   if (out == 0)
+     {
+	*mode = DLT_ZERO;
+	return 0;
+     }
+   if (out == 0xffffffff)
+     {
+	*mode = DLT_ONE;
+	return 0;
+     }
+   if (out == prev)
+     {
+	*mode = DLT_SAME;
+	return 0;
+     }
+   if (out == prev << 1)
+     {
+	*mode = DLT_SHL;
+	return 0;
+     }
+   if (out == prev >> 1)
+     {
+	*mode = DLT_SHR;
+	return 0;
+     }
+   /* 1 byte */
+   dlt = out - prev;
+   if (!(dlt & 0xffffff00))
+     {
+	*mode = DLT_ADD8;
+	return dlt & 0xff;
+     }
+   dlt = prev - out;
+   if (!(dlt & 0xffffff00))
+     {
+	*mode = DLT_DEL8;
+	return dlt & 0xff;
+     }
+   dlt = out - prev;
+   if (!(dlt & 0x00ffffff))
+     {
+	*mode = DLT_ADDU8;
+	return (dlt >> 24) & 0xff;
+     }
+   dlt = prev - out;
+   if (!(dlt & 0x00ffffff))
+     {
+	*mode = DLT_DELU8;
+	return (dlt >> 24) & 0xff;
+     }
+   /* 2 byte */
+   dlt = out - prev;
+   if (!(dlt & 0xffff0000))
+     {
+	*mode = DLT_ADD8;
+	return dlt & 0xfffff;
+     }
+   dlt = prev - out;
+   if (!(dlt & 0xffff0000))
+     {
+	*mode = DLT_DEL8;
+	return dlt & 0xffff;
+     }
+   dlt = out - prev;
+   if (!(dlt & 0x0000ffff))
+     {
+	*mode = DLT_ADDU8;
+	return (dlt >> 16) & 0xffff;
+     }
+   dlt = prev - out;
+   if (!(dlt & 0x0000ffff))
+     {
+	*mode = DLT_DELU8;
+	return (dlt >> 16) & 0xffff;
+     }
+   /* 4 byte */
+   *mode = DLT_SET;
+   return out;
+}
+
+static int
+_ecore_ipc_ddlt_int(int in, int prev, int mode)
+{
+   switch (mode)
+     {
+      case DLT_ZERO:
+	return 0;
+	break;
+      case DLT_ONE:
+	return 0xffffffff;
+	break;
+      case DLT_SAME:
+	return prev;
+	break;
+      case DLT_SHL:
+	return prev << 1;
+	break;
+      case DLT_SHR:
+	return prev >> 1;
+	break;
+      case DLT_ADD8:
+	return prev + in;
+	break;
+      case DLT_DEL8:
+	return prev - in;
+	break;
+      case DLT_ADDU8:
+	return prev + (in << 24);
+	break;
+      case DLT_DELU8:
+	return prev - (in << 24);
+	break;
+      case DLT_ADD16:
+	return prev + in;
+	break;
+      case DLT_DEL16:
+	return prev - in;
+	break;
+      case DLT_ADDU16:
+	return prev + (in << 16);
+	break;
+      case DLT_DELU16:
+	return prev - (in << 16);
+	break;
+      case DLT_SET:
+	return in;
+	break;
+      case DLT_R1:
+	return 0;
+	break;
+      case DLT_R2:
+	return 0;
+	break;
+      default:
+	break;
+     }
+   return 0;
+}
 
 static int _ecore_ipc_event_client_add(void *data, int ev_type, void *ev);
 static int _ecore_ipc_event_client_del(void *data, int ev_type, void *ev);
@@ -238,6 +391,38 @@ ecore_ipc_server_connected_get(Ecore_Ipc_Server *svr)
    return ecore_con_server_connected_get(svr->server);
 }
 
+#define SVENC(_member) \
+   d = _ecore_ipc_dlt_int(msg._member, svr->prev.o._member, &md); \
+   if (md >= DLT_SET) \
+     { \
+	unsigned int v; \
+	unsigned char *dd; \
+	dd = (unsigned char *)&v; \
+	v = d; \
+	v = htonl(v); \
+	*(dat + s + 0) = dd[0]; \
+	*(dat + s + 1) = dd[1]; \
+	*(dat + s + 2) = dd[2]; \
+	*(dat + s + 3) = dd[3]; \
+	s += 4; \
+     } \
+   else if (md >= DLT_ADD16) \
+     { \
+	unsigned short v; \
+	unsigned char *dd; \
+	dd = (unsigned char *)&v; \
+	v = d; \
+	v = htons(v); \
+	*(dat + s + 0) = dd[0]; \
+	*(dat + s + 1) = dd[1]; \
+	s += 2; \
+     } \
+   else if (md >= DLT_ADD8) \
+     { \
+	*(dat + s + 0) = (unsigned char)d; \
+	s += 1; \
+     }
+
 /**
  * To be documented.
  *
@@ -248,6 +433,8 @@ ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int 
 {
    Ecore_Ipc_Msg_Head msg;
    int ret;
+   int *head, md = 0, d, s;
+   unsigned char dat[sizeof(Ecore_Ipc_Msg_Head)];
    
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_IPC_SERVER))
      {
@@ -256,16 +443,64 @@ ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int 
 	return 0;
      }
    if (size < 0) size = 0;
-   msg.major    = htonl(major);
-   msg.minor    = htonl(minor);
-   msg.ref      = htonl(ref);
-   msg.ref_to   = htonl(ref_to);
-   msg.response = htonl(response);
-   msg.size     = htonl(size);
-   ret = ecore_con_server_send(svr->server, &msg, sizeof(Ecore_Ipc_Msg_Head));
-   if (size > 0) ret |= ecore_con_server_send(svr->server, data, size);
+   msg.major    = major;
+   msg.minor    = minor;
+   msg.ref      = ref;
+   msg.ref_to   = ref_to;
+   msg.response = response;
+   msg.size     = size;
+   head = (int *)dat;
+   s = 4;
+   SVENC(major);
+   *head = md;
+   SVENC(minor);
+   *head |= md << (4 * 1);
+   SVENC(ref);
+   *head |= md << (4 * 2);
+   SVENC(ref_to);
+   *head |= md << (4 * 3);
+   SVENC(response);
+   *head |= md << (4 * 4);
+   SVENC(size);
+   *head |= md << (4 * 5);
+   *head = htonl(*head);
+   svr->prev.o = msg;
+   ret = ecore_con_server_send(svr->server, dat, s);
+   if (size > 0) ret += ecore_con_server_send(svr->server, data, size);
    return ret;
 }
+
+#define CLENC(_member) \
+   d = _ecore_ipc_dlt_int(msg._member, cl->prev.o._member, &md); \
+   if (md >= DLT_SET) \
+     { \
+	unsigned int v; \
+	unsigned char *dd; \
+	dd = (unsigned char *)&v; \
+	v = d; \
+	v = htonl(v); \
+	*(dat + s + 0) = dd[0]; \
+	*(dat + s + 1) = dd[1]; \
+	*(dat + s + 2) = dd[2]; \
+	*(dat + s + 3) = dd[3]; \
+	s += 4; \
+     } \
+   else if (md >= DLT_ADD16) \
+     { \
+	unsigned short v; \
+	unsigned char *dd; \
+	dd = (unsigned char *)&v; \
+	v = d; \
+	v = htons(v); \
+	*(dat + s + 0) = dd[0]; \
+	*(dat + s + 1) = dd[1]; \
+	s += 2; \
+     } \
+   else if (md >= DLT_ADD8) \
+     { \
+	*(dat + s) = (unsigned char)d; \
+	s += 1; \
+     }
 
 /**
  * To be documented.
@@ -277,6 +512,8 @@ ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int r
 {
    Ecore_Ipc_Msg_Head msg;
    int ret;
+   int *head, md = 0, d, s;
+   unsigned char dat[sizeof(Ecore_Ipc_Msg_Head)];
    
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_IPC_CLIENT))
      {
@@ -285,14 +522,30 @@ ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int r
 	return 0;
      }
    if (size < 0) size = 0;
-   msg.major    = htonl(major);
-   msg.minor    = htonl(minor);
-   msg.ref      = htonl(ref);
-   msg.ref_to   = htonl(ref_to);
-   msg.response = htonl(response);
-   msg.size     = htonl(size);
-   ret = ecore_con_client_send(cl->client, &msg, sizeof(Ecore_Ipc_Msg_Head));
-   if (size > 0) ret |= ecore_con_client_send(cl->client, data, size);
+   msg.major    = major;
+   msg.minor    = minor;
+   msg.ref      = ref;
+   msg.ref_to   = ref_to;
+   msg.response = response;
+   msg.size     = size;
+   head = (int *)dat;
+   s = 4;
+   CLENC(major);
+   *head = md;
+   CLENC(minor);
+   *head |= md << (4 * 1);
+   CLENC(ref);
+   *head |= md << (4 * 2);
+   CLENC(ref_to);
+   *head |= md << (4 * 3);
+   CLENC(response);
+   *head |= md << (4 * 4);
+   CLENC(size);
+   *head |= md << (4 * 5);
+   *head = htonl(*head);
+   cl->prev.o = msg;
+   ret = ecore_con_client_send(cl->client, dat, s);
+   if (size > 0) ret += ecore_con_client_send(cl->client, data, size);
    return ret;
 }
 
@@ -491,6 +744,37 @@ _ecore_ipc_event_server_del(void *data, int ev_type, void *ev)
    return 0;
 }
 
+#define CLSZ(_n) \
+   md = ((head >> (4 * _n)) & 0xf); \
+   if (md >= DLT_SET) s += 4; \
+   else if (md >= DLT_ADD16) s += 2; \
+   else if (md >= DLT_ADD8) s += 1;
+
+#define CLDEC(_n, _member) \
+   md = ((head >> (4 * _n)) & 0xf); \
+   if (md >= DLT_SET) \
+     { \
+	dd[0] = *(cl->buf + offset + s + 0); \
+	dd[1] = *(cl->buf + offset + s + 1); \
+	dd[2] = *(cl->buf + offset + s + 2); \
+	dd[3] = *(cl->buf + offset + s + 3); \
+	d = ntohl(d); \
+	s += 4; \
+     } \
+   else if (md >= DLT_ADD16) \
+     { \
+	dd[0] = *(cl->buf + offset + s + 0); \
+	dd[1] = *(cl->buf + offset + s + 1); \
+	d = ntohs(d); \
+	s += 2; \
+     } \
+   else if (md >= DLT_ADD8) \
+     { \
+	d = *(cl->buf + offset + s + 0); \
+	s += 1; \
+     } \
+   msg._member = _ecore_ipc_ddlt_int(d, cl->prev.i._member, md);
+
 static int
 _ecore_ipc_event_client_data(void *data, int ev_type, void *ev)
 {
@@ -501,7 +785,9 @@ _ecore_ipc_event_client_data(void *data, int ev_type, void *ev)
    /* handling code here */
      {
 	Ecore_Ipc_Client *cl;
-	Ecore_Ipc_Msg_Head *msg;
+	Ecore_Ipc_Msg_Head msg;
+	int offset = 0;
+	unsigned char *buf;
 	
 	cl = ecore_con_client_data_get(e->client);
 	
@@ -528,102 +814,143 @@ _ecore_ipc_event_client_data(void *data, int ev_type, void *ev)
 	     cl->buf_size += e->size;
 	  }
 	/* examine header */
-	if (cl->buf_size >= sizeof(Ecore_Ipc_Msg_Head))
+	redo:
+	if ((cl->buf_size - offset) >= sizeof(int))
 	  {
-	     int major, minor, ref, ref_to, response, size;
-	     int offset = 0;
-
-	     msg = (Ecore_Ipc_Msg_Head *)(cl->buf + offset);
-	     major    = ntohl(msg->major);
-	     minor    = ntohl(msg->minor);
-	     ref      = ntohl(msg->ref);
-	     ref_to   = ntohl(msg->ref_to);
-	     response = ntohl(msg->response);
-	     size     = ntohl(msg->size);
-	     if (size < 0) size = 0;
-	     /* there is enough data in the buffer for a full message */
-	     if (cl->buf_size >= (sizeof(Ecore_Ipc_Msg_Head) + size))
+	     int s, md, d, head;
+	     unsigned char *dd;
+	     
+	     dd = (unsigned char *)&head;
+	     dd[0] = *(cl->buf + offset + 0);
+	     dd[1] = *(cl->buf + offset + 1);
+	     dd[2] = *(cl->buf + offset + 2);
+	     dd[3] = *(cl->buf + offset + 3);
+	     head = ntohl(head);
+	     dd = (unsigned char *)&d;
+	     s = 4;
+	     CLSZ(0);
+	     CLSZ(1);
+	     CLSZ(2);
+	     CLSZ(3);
+	     CLSZ(4);
+	     CLSZ(5);
+	     if ((cl->buf_size - offset) < s)
 	       {
-		  unsigned char *buf;
+		  if (offset > 0) goto scroll;
+		  return 0;
+	       }
+	     
+	     s = 4;
+	     CLDEC(0, major);
+	     CLDEC(1, minor);
+	     CLDEC(2, ref);
+	     CLDEC(3, ref_to);
+	     CLDEC(4, response);
+	     CLDEC(5, size);
+	     if (msg.size < 0) msg.size = 0;
+	     /* there is enough data in the buffer for a full message */
+	     if ((cl->buf_size - offset) >= (s + msg.size))
+	       {
 		  Ecore_Ipc_Event_Client_Data *e2;
 		  
-		  redo:
 		  buf = NULL;
-		  if (size > 0)
+		  if (msg.size > 0)
 		    {
-		       buf = malloc(size);
+		       buf = malloc(msg.size);
 		       if (!buf) return 0;
-		       memcpy(buf, cl->buf + offset + sizeof(Ecore_Ipc_Msg_Head), size);
+		       memcpy(buf, cl->buf + offset + s, msg.size);
 		    }
 		  e2 = calloc(1, sizeof(Ecore_Ipc_Event_Client_Data));
 		  if (e2)
 		    {
 		       e2->client   = cl;
-		       e2->major    = major;
-		       e2->minor    = minor;
-		       e2->ref      = ref;
-		       e2->ref_to   = ref_to;
-		       e2->response = response;
-		       e2->size     = size;
+		       e2->major    = msg.major;
+		       e2->minor    = msg.minor;
+		       e2->ref      = msg.ref;
+		       e2->ref_to   = msg.ref_to;
+		       e2->response = msg.response;
+		       e2->size     = msg.size;
 		       e2->data     = buf;
 		       ecore_event_add(ECORE_IPC_EVENT_CLIENT_DATA, e2,
 				       _ecore_ipc_event_client_data_free, NULL);
 		    }
-		  offset += (sizeof(Ecore_Ipc_Msg_Head) + size);
-		  if ((cl->buf_size - offset) >= sizeof(Ecore_Ipc_Msg_Head))
-		    {
-		       msg = (Ecore_Ipc_Msg_Head *)(cl->buf + offset);
-		       major    = ntohl(msg->major);
-		       minor    = ntohl(msg->minor);
-		       ref      = ntohl(msg->ref);
-		       ref_to   = ntohl(msg->ref_to);
-		       response = ntohl(msg->response);
-		       size     = ntohl(msg->size);
-		       if (size < 0) size = 0;
-		       if ((cl->buf_size - offset) >= (sizeof(Ecore_Ipc_Msg_Head) + size))
-			 goto redo;
-		    }
-		  /* remove data from our buffer and "scoll" the rest down */
-		  size = cl->buf_size - offset;
-		  /* if amount left after scroll is > 0 */
-		  if (size > 0)
-		    {
-		       buf = malloc(size);
-		       if (!buf)
-			 {
-			    free(cl->buf);
-			    cl->buf = NULL;
-			    cl->buf_size = 0;
-			    return 0;
-			 }
-		       memcpy(buf, cl->buf + offset, size);
-		       free(cl->buf);
-		       cl->buf = buf;
-		       cl->buf_size = size;
-		    }
-		  else
+		  cl->prev.i = msg;
+		  offset += (s + msg.size);
+		  if (cl->buf_size == offset)
 		    {
 		       free(cl->buf);
 		       cl->buf = NULL;
 		       cl->buf_size = 0;
+		       return 0;
 		    }
+		  goto redo;
 	       }
+	     else goto scroll;
+	  }
+	else
+	  {
+	     scroll:
+	     buf = malloc(cl->buf_size - offset);
+	     if (!buf)
+	       {
+		  free(cl->buf);
+		  cl->buf = NULL;
+		  cl->buf_size = 0;
+		  return 0;
+	       }
+	     memcpy(buf, cl->buf + offset, cl->buf_size - offset);
+	     free(cl->buf);
+	     cl->buf = buf;
+	     cl->buf_size -= offset;
 	  }
      }
    return 0;
 }
 
+#define SVSZ(_n) \
+   md = ((head >> (4 * _n)) & 0xf); \
+   if (md >= DLT_SET) s += 4; \
+   else if (md >= DLT_ADD16) s += 2; \
+   else if (md >= DLT_ADD8) s += 1;
+
+#define SVDEC(_n, _member) \
+   md = ((head >> (4 * _n)) & 0xf); \
+   if (md >= DLT_SET) \
+     { \
+	dd[0] = *(svr->buf + offset + s + 0); \
+	dd[1] = *(svr->buf + offset + s + 1); \
+	dd[2] = *(svr->buf + offset + s + 2); \
+	dd[3] = *(svr->buf + offset + s + 3); \
+	d = ntohl(d); \
+	s += 4; \
+     } \
+   else if (md >= DLT_ADD16) \
+     { \
+	dd[0] = *(svr->buf + offset + s + 0); \
+	dd[1] = *(svr->buf + offset + s + 1); \
+	d = ntohs(d); \
+	s += 2; \
+     } \
+   else if (md >= DLT_ADD8) \
+     { \
+	d = *(svr->buf + offset + s + 0); \
+	s += 1; \
+     } \
+   msg._member = _ecore_ipc_ddlt_int(d, svr->prev.i._member, md);
+
 static int
 _ecore_ipc_event_server_data(void *data, int ev_type, void *ev)
 {
    Ecore_Con_Event_Server_Data *e;
-   
+
    e = ev;
    if (!_ecore_list_find(servers, ecore_con_server_data_get(e->server))) return 1;
    /* handling code here */
      {
-        Ecore_Ipc_Server *svr;
-	Ecore_Ipc_Msg_Head *msg;
+	Ecore_Ipc_Server *svr;
+	Ecore_Ipc_Msg_Head msg;
+	int offset = 0;
+	unsigned char *buf;
 	
 	svr = ecore_con_server_data_get(e->server);
 	
@@ -650,86 +977,94 @@ _ecore_ipc_event_server_data(void *data, int ev_type, void *ev)
 	     svr->buf_size += e->size;
 	  }
 	/* examine header */
-	if (svr->buf_size >= sizeof(Ecore_Ipc_Msg_Head))
+	redo:
+	if ((svr->buf_size - offset) >= sizeof(int))
 	  {
-	     int major, minor, ref, ref_to, response, size;
-	     int offset = 0;
-
-	     msg = (Ecore_Ipc_Msg_Head *)(svr->buf + offset);
-	     major    = ntohl(msg->major);
-	     minor    = ntohl(msg->minor);
-	     ref      = ntohl(msg->ref);
-	     ref_to   = ntohl(msg->ref_to);
-	     response = ntohl(msg->response);
-	     size     = ntohl(msg->size);
-	     if (size < 0) size = 0;
-	     /* there is enough data in the buffer for a full message */
-	     if (svr->buf_size >= (sizeof(Ecore_Ipc_Msg_Head) + size))
+	     int s, md, d, head;
+	     unsigned char *dd;
+	     
+	     dd = (unsigned char *)&head;
+	     dd[0] = *(svr->buf + offset + 0);
+	     dd[1] = *(svr->buf + offset + 1);
+	     dd[2] = *(svr->buf + offset + 2);
+	     dd[3] = *(svr->buf + offset + 3);
+	     head = ntohl(head);
+	     dd = (unsigned char *)&d;
+	     s = 4;
+	     SVSZ(0);
+	     SVSZ(1);
+	     SVSZ(2);
+	     SVSZ(3);
+	     SVSZ(4);
+	     SVSZ(5);
+	     if ((svr->buf_size - offset) < s)
 	       {
-		  unsigned char *buf;
+		  if (offset > 0) goto scroll;
+		  return 0;
+	       }
+	     
+	     s = 4;
+	     SVDEC(0, major);
+	     SVDEC(1, minor);
+	     SVDEC(2, ref);
+	     SVDEC(3, ref_to);
+	     SVDEC(4, response);
+	     SVDEC(5, size);
+	     if (msg.size < 0) msg.size = 0;
+	     /* there is enough data in the buffer for a full message */
+	     if ((svr->buf_size - offset) >= (s + msg.size))
+	       {
 		  Ecore_Ipc_Event_Server_Data *e2;
 		  
-		  redo:
 		  buf = NULL;
-		  if (size > 0)
+		  if (msg.size > 0)
 		    {
-		       buf = malloc(size);
+		       buf = malloc(msg.size);
 		       if (!buf) return 0;
-		       memcpy(buf, svr->buf + offset + sizeof(Ecore_Ipc_Msg_Head), size);
+		       memcpy(buf, svr->buf + offset + s, msg.size);
 		    }
 		  e2 = calloc(1, sizeof(Ecore_Ipc_Event_Server_Data));
 		  if (e2)
 		    {
 		       e2->server   = svr;
-		       e2->major    = major;
-		       e2->minor    = minor;
-		       e2->ref      = ref;
-		       e2->ref_to   = ref_to;
-		       e2->response = response;
-		       e2->size     = size;
+		       e2->major    = msg.major;
+		       e2->minor    = msg.minor;
+		       e2->ref      = msg.ref;
+		       e2->ref_to   = msg.ref_to;
+		       e2->response = msg.response;
+		       e2->size     = msg.size;
 		       e2->data     = buf;
 		       ecore_event_add(ECORE_IPC_EVENT_SERVER_DATA, e2,
 				       _ecore_ipc_event_server_data_free, NULL);
 		    }
-		  offset += (sizeof(Ecore_Ipc_Msg_Head) + size);
-		  if (svr->buf_size - offset >= sizeof(Ecore_Ipc_Msg_Head))
-		    {
-		       msg = (Ecore_Ipc_Msg_Head *)(svr->buf + offset);
-		       major    = ntohl(msg->major);
-		       minor    = ntohl(msg->minor);
-		       ref      = ntohl(msg->ref);
-		       ref_to   = ntohl(msg->ref_to);
-		       response = ntohl(msg->response);
-		       size     = ntohl(msg->size);
-		       if (size < 0) size = 0;
-		       if (svr->buf_size - offset >= (sizeof(Ecore_Ipc_Msg_Head) + size))
-			 goto redo;
-		    }
-		  /* remove data from our buffer and "scoll" the rest down */
-		  size = svr->buf_size - offset;
-		  /* if amount left after scroll is > 0 */
-		  if (size > 0)
-		    {
-		       buf = malloc(size);
-		       if (!buf)
-			 {
-			    free(svr->buf);
-			    svr->buf = NULL;
-			    svr->buf_size = 0;
-			    return 0;
-			 }
-		       memcpy(buf, svr->buf + offset, size);
-		       free(svr->buf);
-		       svr->buf = buf;
-		       svr->buf_size = size;
-		    }
-		  else
+		  svr->prev.i = msg;
+		  offset += (s + msg.size);
+		  if (svr->buf_size == offset)
 		    {
 		       free(svr->buf);
 		       svr->buf = NULL;
 		       svr->buf_size = 0;
+		       return 0;
 		    }
+		  goto redo;
 	       }
+	     else goto scroll;
+	  }
+	else
+	  {
+	     scroll:
+	     buf = malloc(svr->buf_size - offset);
+	     if (!buf)
+	       {
+		  free(svr->buf);
+		  svr->buf = NULL;
+		  svr->buf_size = 0;
+		  return 0;
+	       }
+	     memcpy(buf, svr->buf + offset, svr->buf_size - offset);
+	     free(svr->buf);
+	     svr->buf = buf;
+	     svr->buf_size -= offset;
 	  }
      }
    return 0;
