@@ -592,40 +592,6 @@ initglobals(void)
 
 }
 
-/* set_extension
- * Set the default extension, or force an extension. To erase the
- * extension of a filename, set "extension" to an empty string.
- */
-SC_FUNC void
-set_extension(char *filename, char *extension, int force)
-{
-   char               *ptr;
-
-   ptr = strrchr(filename, '.');
-#if 0
-   if (ptr != NULL)
-     {
-	/* ignore extension on a directory or at the start of the filename */
-	if (strchr(ptr, DIRSEP_CHAR) != NULL || ptr == filename
-	    || *(ptr - 1) == DIRSEP_CHAR)
-	   ptr = NULL;
-     }				/* if */
-   if (force && ptr != NULL)
-      *ptr = '\0';		/* set zero terminator at the position of the period */
-   if (force || ptr == NULL)
-      strcat(filename, extension);
-#else
-   if (!ptr)
-     {
-	strcat(filename, extension);
-     }
-   else
-     {
-	strncpy(ptr, extension, strlen(extension));
-     }
-#endif
-}
-
 static void
 parseoptions(int argc, char **argv, char *iname, char *oname,
              char *pname, char *rname)

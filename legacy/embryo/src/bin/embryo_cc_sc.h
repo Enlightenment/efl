@@ -438,7 +438,6 @@ typedef struct __s_stringpair
 #endif
 
 /* function prototypes in SC1.C */
-void        set_extension(char *filename, char *extension, int force);
 symbol     *fetchfunc(char *name, int tag);
 char       *operator_symname(char *symname, char *opername, int tag1,
 				     int tag2, int numtags, int resulttag);
