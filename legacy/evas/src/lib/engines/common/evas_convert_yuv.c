@@ -107,6 +107,12 @@ evas_common_convert_yuv_420p_601_rgba(DATA8 **src, DATA8 *dst, int w, int h)
 /* from mmx I think :( It might be possible to use SSE and SSE2 here, but */
 /* I haven't tried yet. Let's see. */
 
+/* NB: XviD has almost the same code in it's assembly YV12->RGB code. same */
+/* algorithm, same constants, same all over actually, except it actually */
+/* does a few extra memory accesses that this one doesn't, so in theory */
+/* this code should be faster. In the end it's all just an mmx version of */
+/* the reference implimentation done with fixed point math */
+
 static void
 _evas_yv12torgb_mmx(unsigned char **yuv, unsigned char *rgb, int w, int h)
 {
@@ -126,21 +132,20 @@ _evas_yv12torgb_mmx(unsigned char **yuv, unsigned char *rgb, int w, int h)
 	vp = yuv[h + (h / 2) + (yy / 2)];
 	for (xx = 0; xx < (w - 7); xx += 8)
 	  {
+	     movd_m2r(*up, mm3);
+	     movd_m2r(*vp, mm2);	     
 	     movq_m2r(*yp1, mm0);
+	     
+	     pxor_r2r(mm7, mm7);
+	     punpcklbw_r2r(mm7, mm2);
+	     punpcklbw_r2r(mm7, mm3);
+	     
 	     movq_r2r(mm0, mm1);
 	     psrlw_i2r(8, mm0);
 	     psllw_i2r(8, mm1);
 	     psrlw_i2r(8, mm1);
 	     
-	     pxor_r2r(mm7, mm7);
-	     movd_m2r(*up, mm3);
-	     movd_m2r(*vp, mm2);
-	     
-	     punpcklbw_r2r(mm7, mm2);
-	     punpcklbw_r2r(mm7, mm3);
-
 	     movq_m2r(CONST_16, mm4);
-
 	     psubsw_r2r(mm4, mm0);
 	     psubsw_r2r(mm4, mm1);
 	     
@@ -154,13 +159,10 @@ _evas_yv12torgb_mmx(unsigned char **yuv, unsigned char *rgb, int w, int h)
 	     
 	     movq_m2r(CONST_CRVCRV, mm7);
 	     pmullw_r2r(mm3, mm7);
-	     
 	     movq_m2r(CONST_CBUCBU, mm6);
 	     pmullw_r2r(mm2, mm6);
-	     
 	     movq_m2r(CONST_CGUCGU, mm5);
 	     pmullw_r2r(mm2, mm5);
-	     
 	     movq_m2r(CONST_CGVCGV, mm4);
 	     pmullw_r2r(mm3, mm4);
 	     
@@ -213,7 +215,6 @@ _evas_yv12torgb_mmx(unsigned char **yuv, unsigned char *rgb, int w, int h)
 	     punpcklbw_r2r(mm5, mm7);
 	     por_r2r(mm7, mm0);
 	     
-//	     pxor_r2r(mm1, mm1);
 	     movq_m2r(CONST_FF, mm1);
 	     movq_r2r(mm0, mm5);
 	     movq_r2r(mm3, mm6);
