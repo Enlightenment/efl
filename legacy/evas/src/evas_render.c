@@ -252,6 +252,7 @@ evas_render_updates(Evas e)
 	func_poly_draw           = __evas_x11_poly_draw;
 	func_set_clip_rect       = __evas_x11_set_clip_rect;
 	break;
+#ifdef HAVE_GL
      case RENDER_METHOD_3D_HARDWARE:
 	func_draw_add_rect       = __evas_gl_draw_add_rect;
 	func_image_new_from_file = __evas_gl_image_new_from_file;
@@ -271,6 +272,7 @@ evas_render_updates(Evas e)
 	func_poly_draw           = __evas_gl_poly_draw;
 	func_set_clip_rect       = __evas_gl_set_clip_rect;
 	break;
+#endif
      case RENDER_METHOD_ALPHA_HARDWARE:
 	func_draw_add_rect       = __evas_render_draw_add_rect;
 	func_image_new_from_file = __evas_render_image_new_from_file;
