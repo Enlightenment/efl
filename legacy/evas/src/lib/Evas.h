@@ -379,6 +379,8 @@ extern "C" {
    EAPI void              evas_object_image_file_get        (Evas_Object *obj, char **file, char **key);
    EAPI void              evas_object_image_border_set      (Evas_Object *obj, int l, int r, int t, int b);
    EAPI void              evas_object_image_border_get      (Evas_Object *obj, int *l, int *r, int *t, int *b);
+   EAPI void              evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Bool fill);
+   EAPI Evas_Bool         evas_object_image_border_center_fill_get(Evas_Object *obj);
    EAPI void              evas_object_image_fill_set        (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
    EAPI void              evas_object_image_fill_get        (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
    EAPI void              evas_object_image_size_set        (Evas_Object *obj, int w, int h);

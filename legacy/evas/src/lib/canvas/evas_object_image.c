@@ -20,7 +20,8 @@ struct _Evas_Object_Image
 	 short       w, h;
       } image;
       struct {
-	 short       l, r, t, b;
+	 short         l, r, t, b;
+	 unsigned char fill;
       } border;
 
       char          *file;
@@ -298,6 +299,64 @@ evas_object_image_border_get(Evas_Object *obj, int *l, int *r, int *t, int *b)
    if (r) *r = o->cur.border.r;
    if (t) *t = o->cur.border.t;
    if (b) *b = o->cur.border.b;
+}
+
+/**
+ * Sets if the center part of an image (not the border) should be drawn
+ *
+ * See @ref evas_object_image_border_set for more information.
+ *
+ * When rendering, the image may be scaled to fit the size of the
+ * image object.  This function sets if the center part of the scaled image
+ * is to be drawn or left completely blank. Very useful for frames and
+ * decorations.
+ *
+ * @param   obj The given evas image object.
+ * @param   fill If the center of the image object should be drawn/filled
+ * @ingroup Evas_Object_Image_Border_Group
+ */
+void
+evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Bool fill)
+{
+   Evas_Object_Image *o;
+   
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return;
+   MAGIC_CHECK_END();
+   if (((o->cur.border.fill) && (fill)) ||
+       ((!o->cur.border.fill) && (!fill)))
+     return;
+   o->cur.border.fill = fill;
+   o->changed = 1;
+   evas_object_change(obj);   
+}
+
+/**
+ * Retrieves If the center of an image object is to be filled or not.
+ *
+ * See @ref evas_object_image_border_set for more information.
+ *
+ * @param   obj The given evas image object.
+ * @return  If the center is to be filled or not.
+ * @ingroup Evas_Object_Image_Border_Group
+ */
+Evas_Bool
+evas_object_image_border_center_fill_get(Evas_Object *obj)
+{
+   Evas_Object_Image *o;
+   
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return 0;
+   MAGIC_CHECK_END();
+   return o->cur.border.fill;
 }
 
 /**
@@ -1179,6 +1238,7 @@ evas_object_image_new(void)
    o->cur.fill.w = 32.0;
    o->cur.fill.h = 32.0;
    o->cur.smooth_scale = 1;
+   o->cur.border.fill = 1;
    o->prev = o->cur;
    return o;
 }
@@ -1285,7 +1345,8 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 		  if ((o->cur.border.l == 0) &&
 		      (o->cur.border.r == 0) &&
 		      (o->cur.border.t == 0) &&
-		      (o->cur.border.b == 0))
+		      (o->cur.border.b == 0) &&
+		      (o->cur.border.fill != 0))
 		    obj->layer->evas->engine.func->image_draw(output,
 							      context,
 							      surface,
@@ -1353,11 +1414,14 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 		       outx = ox; outy = oy + bt;
 		       outw = bl; outh = ih - bt - bb;
 		       obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
-		       inx = bl; iny = bt; 
-		       inw = imw - bl - br; inh = imh - bt - bb;
-		       outx = ox + bl; outy = oy + bt;
-		       outw = iw - bl - br; outh = ih - bt - bb;
-		       obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
+		       if (o->cur.border.fill)
+			 {
+			    inx = bl; iny = bt; 
+			    inw = imw - bl - br; inh = imh - bt - bb;
+			    outx = ox + bl; outy = oy + bt;
+			    outw = iw - bl - br; outh = ih - bt - bb;
+			    obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
+			 }
 		       inx = imw - br; iny = bt; 
 		       inw = br; inh = imh - bt - bb;
 		       outx = ox + iw - br; outy = oy + bt;
@@ -1647,6 +1711,11 @@ evas_object_image_is_opaque(Evas_Object *obj)
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fully opaque over the entire rectangle it occupies */
    o = (Evas_Object_Image *)(obj->object_data);
+   if (((o->cur.border.l != 0) ||
+	(o->cur.border.r != 0) ||
+	(o->cur.border.t != 0) ||
+	(o->cur.border.b != 0)) &&
+       (!o->cur.border.fill)) return 0;
    if (!o->engine_data) return 0;
    if (o->cur.has_alpha) return 0;
    return 1;
@@ -1660,6 +1729,11 @@ evas_object_image_was_opaque(Evas_Object *obj)
    /* this returns 1 if the internal object data implies that the object was */
    /* previously fully opaque over the entire rectangle it occupies */
    o = (Evas_Object_Image *)(obj->object_data);
+   if (((o->prev.border.l != 0) ||
+	(o->prev.border.r != 0) ||
+	(o->prev.border.t != 0) ||
+	(o->prev.border.b != 0)) &&
+       (!o->prev.border.fill)) return 0;
    if (!o->engine_data) return 0;
    if (o->prev.has_alpha) return 0;
    return 1;
