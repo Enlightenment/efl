@@ -563,6 +563,7 @@ typedef enum _Ecore_X_Selection_Target {
 int              ecore_x_init(const char *name);
 int              ecore_x_shutdown(void);       
 Ecore_X_Display *ecore_x_display_get(void);
+int              ecore_x_fd_get(void);
 void             ecore_x_double_click_time_set(double t);
 double           ecore_x_double_click_time_get(void);
 void             ecore_x_flush(void);

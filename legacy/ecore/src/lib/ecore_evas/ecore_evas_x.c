@@ -255,6 +255,8 @@ _ecore_evas_event_window_focus_out(void *data, int type, void *event)
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if (!ee) return 1; /* pass on event */
+   if (ee->prop.fullscreen)
+     ecore_x_window_focus(ee->engine.x.win);
    ee->prop.focused = 0;
    if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
    return 0; /* dont pass it on */

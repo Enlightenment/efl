@@ -405,6 +405,19 @@ ecore_x_display_get(void)
 }
 
 /**
+ * Get the X display fd.
+ * @return The X Display fd
+ * 
+ * This returns the X Display file descriptor.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+int
+ecore_x_fd_get(void)
+{
+   return ConnectionNumber(_ecore_x_disp);
+}
+
+/**
  * Set the timeout for double/triple click to be flagged.
  * @param t The time in seconds
  * 
