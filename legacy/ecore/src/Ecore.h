@@ -40,759 +40,824 @@
 
 extern XContext            xid_context;
 
-typedef struct _e_xid E_XID;
-typedef struct _e_keygrab E_KeyGrab;
+typedef void        (*Ecore_Error_Function) (Display * d, XErrorEvent * ev);
 
-enum _ev_modifiers
+typedef struct _ecore_xid Ecore_XID;
+typedef struct _ecore_keygrab Ecore_KeyGrab;
+
+enum _ecore_ev_modifiers
 {
-   EV_KEY_MODIFIER_NONE = 0,
-   EV_KEY_MODIFIER_SHIFT = (1 << 0),
-   EV_KEY_MODIFIER_CTRL = (1 << 1),
-   EV_KEY_MODIFIER_ALT = (1 << 2),
-   EV_KEY_MODIFIER_WIN = (1 << 3)
+  ECORE_EVENT_KEY_MODIFIER_NONE = 0,
+  ECORE_EVENT_KEY_MODIFIER_SHIFT = (1 << 0),
+  ECORE_EVENT_KEY_MODIFIER_CTRL = (1 << 1),
+  ECORE_EVENT_KEY_MODIFIER_ALT = (1 << 2),
+  ECORE_EVENT_KEY_MODIFIER_WIN = (1 << 3)
 };
 
-typedef enum _ev_modifiers Ev_Key_Modifiers;
+typedef enum _ecore_ev_modifiers Ecore_Event_Key_Modifiers;
 
-struct _e_xid
+struct _ecore_xid
 {
-   Window              win;
-   Window              parent;
-   Window              root;
-   int                 children_num;
-   Window             *children;
-   int                 x, y, w, h;
-   int                 mapped;
-   int                 mouse_in;
-   int                 depth;
-   int                 gravity;
-   int                 coords_invalid;
-   int                 bw;
-   int                 grab_button_auto_replay;
+  Window              win;
+  Window              parent;
+  Window              root;
+  int                 children_num;
+  Window             *children;
+  int                 x, y, w, h;
+  int                 mapped;
+  int                 mouse_in;
+  int                 depth;
+  int                 gravity;
+  int                 coords_invalid;
+  int                 bw;
+  int                 grab_button_auto_replay;
 };
 
 #ifdef __cplusplus
-extern "C" {
+extern              "C"
+{
 #endif
 
-void                e_del_child(Window win, Window child);
-void                e_add_child(Window win, Window child);
-void                e_raise_child(Window win, Window child);
-void                e_lower_child(Window win, Window child);
-E_XID              *e_add_xid(Window win, int x, int y, int w, int h, int depth,
-			      Window parent);
-E_XID              *e_validate_xid(Window win);
-void                e_unvalidate_xid(Window win);
-void                e_sync(void);
-void                e_flush(void);
-Window              e_window_new(Window parent, int x, int y, int w, int h);
-Window              e_window_override_new(Window parent, int x, int y, int w,
-					  int h);
-Window              e_window_input_new(Window parent, int x, int y, int w,
+  void                ecore_del_child(Window win, Window child);
+  void                ecore_add_child(Window win, Window child);
+  void                ecore_raise_child(Window win, Window child);
+  void                ecore_lower_child(Window win, Window child);
+  Ecore_XID          *ecore_add_xid(Window win, int x, int y, int w, int h,
+				    int depth, Window parent);
+  Ecore_XID          *ecore_validate_xid(Window win);
+  void                ecore_unvalidate_xid(Window win);
+  void                ecore_sync(void);
+  void                ecore_flush(void);
+  Window              ecore_window_new(Window parent, int x, int y, int w,
 				       int h);
-void                e_window_set_events_propagate(Window win, int propagate);
-void                e_window_show(Window win);
-void                e_window_hide(Window win);
-Pixmap              e_pixmap_new(Window win, int w, int h, int dep);
-void                e_pixmap_free(Pixmap pmap);
-void                e_window_set_background_pixmap(Window win, Pixmap pmap);
-void                e_window_set_shape_mask(Window win, Pixmap mask);
-void                e_window_add_shape_mask(Window win, Pixmap mask);
-void                e_window_set_shape_window(Window win, Window src, int x, int y);
-void                e_window_add_shape_window(Window win, Window src, int x, int y);
-void                e_window_set_shape_rectangle(Window win, int x, int y, int w, int h);
-void                e_window_add_shape_rectangle(Window win, int x, int y, int w, int h);
-void                e_window_set_shape_rectangles(Window win, XRectangle *rect, int num);
-void                e_window_add_shape_rectangles(Window win, XRectangle *rect, int num);
-void                e_window_clip_shape_by_rectangle(Window win, int x, int y, int w, int h);
-XRectangle         *e_window_get_shape_rectangles(Window win, int *num);
-void                e_window_select_shape_events(Window win);
-void                e_window_unselect_shape_events(Window win);
-void                e_window_clear(Window win);
-void                e_window_clear_area(Window win, int x, int y, int w, int h);
-void                e_pointer_xy(Window win, int *x, int *y);
-void                e_pointer_xy_set(int x, int y);
-void                e_pointer_xy_get(int *x, int *y);
-void                e_window_set_events(Window win, long mask);
-void                e_window_remove_events(Window win, long mask);
-void                e_window_add_events(Window win, long mask);
-void                e_window_move(Window win, int x, int y);
-void                e_window_resize(Window win, int w, int h);
-void                e_window_move_resize(Window win, int x, int y, int w,
-					 int h);
-int                 e_x_get_fd(void);
-void                e_set_error_handler(void (*func) (Display * d, XErrorEvent * ev));
-void                e_reset_error_handler(void);
-int                 e_display_init(char *display);
-int                 e_events_pending(void);
-void                e_get_next_event(XEvent * event);
-int                 e_event_shape_get_id(void);
-KeySym              e_key_get_keysym_from_keycode(KeyCode keycode);
-char               *e_key_get_string_from_keycode(KeyCode keycode);
-void                e_event_allow(int mode, Time t);
-int                 e_lock_mask_scroll_get(void);
-int                 e_lock_mask_num_get(void);
-int                 e_lock_mask_caps_get(void);
-int                 e_mod_mask_shift_get(void);
-int                 e_mod_mask_ctrl_get(void);
-int                 e_mod_mask_alt_get(void);
-int                 e_mod_mask_win_get(void);
-int                 e_lock_mask_get(void);
-int                 e_modifier_mask_get(void);
-Window              e_get_key_grab_win(void);
-void                e_key_grab(char *key, Ev_Key_Modifiers mods, int anymod,
+  Window              ecore_window_override_new(Window parent, int x, int y,
+						int w, int h);
+  Window              ecore_window_input_new(Window parent, int x, int y, int w,
+					     int h);
+  void                ecore_window_set_events_propagate(Window win,
+							int propagate);
+  void                ecore_window_show(Window win);
+  void                ecore_window_hide(Window win);
+  Pixmap              ecore_pixmap_new(Window win, int w, int h, int dep);
+  void                ecore_pixmap_free(Pixmap pmap);
+  void                ecore_window_set_background_pixmap(Window win,
+							 Pixmap pmap);
+  void                ecore_window_set_shape_mask(Window win, Pixmap mask);
+  void                ecore_window_add_shape_mask(Window win, Pixmap mask);
+  void                ecore_window_set_shape_window(Window win, Window src,
+						    int x, int y);
+  void                ecore_window_add_shape_window(Window win, Window src,
+						    int x, int y);
+  void                ecore_window_set_shape_rectangle(Window win, int x, int y,
+						       int w, int h);
+  void                ecore_window_add_shape_rectangle(Window win, int x, int y,
+						       int w, int h);
+  void                ecore_window_set_shape_rectangles(Window win,
+							XRectangle * rect,
+							int num);
+  void                ecore_window_add_shape_rectangles(Window win,
+							XRectangle * rect,
+							int num);
+  void                ecore_window_clip_shape_by_rectangle(Window win, int x,
+							   int y, int w, int h);
+  XRectangle         *ecore_window_get_shape_rectangles(Window win, int *num);
+  void                ecore_window_select_shape_events(Window win);
+  void                ecore_window_unselect_shape_events(Window win);
+  void                ecore_window_clear(Window win);
+  void                ecore_window_clear_area(Window win, int x, int y, int w,
+					      int h);
+  void                ecore_pointer_xy(Window win, int *x, int *y);
+  void                ecore_pointer_xy_set(int x, int y);
+  void                ecore_pointer_xy_get(int *x, int *y);
+  void                ecore_window_set_events(Window win, long mask);
+  void                ecore_window_remove_events(Window win, long mask);
+  void                ecore_window_add_events(Window win, long mask);
+  void                ecore_window_move(Window win, int x, int y);
+  void                ecore_window_resize(Window win, int w, int h);
+  void                ecore_window_move_resize(Window win, int x, int y, int w,
+					       int h);
+  int                 ecore_x_get_fd(void);
+  void                ecore_set_error_handler(Ecore_Error_Function * func);
+  void                ecore_reset_error_handler(void);
+  int                 ecore_display_init(char *display);
+  int                 ecore_events_pending(void);
+  void                ecore_get_next_event(XEvent * event);
+  int                 ecore_event_shape_get_id(void);
+  KeySym              ecore_key_get_keysym_from_keycode(KeyCode keycode);
+  char               *ecore_key_get_string_from_keycode(KeyCode keycode);
+  void                ecore_event_allow(int mode, Time t);
+  int                 ecore_lock_mask_scroll_get(void);
+  int                 ecore_lock_mask_num_get(void);
+  int                 ecore_lock_mask_caps_get(void);
+  int                 ecore_mod_mask_shift_get(void);
+  int                 ecore_mod_mask_ctrl_get(void);
+  int                 ecore_mod_mask_alt_get(void);
+  int                 ecore_mod_mask_win_get(void);
+  int                 ecore_lock_mask_get(void);
+  int                 ecore_modifier_mask_get(void);
+  Window              ecore_get_key_grab_win(void);
+  void                ecore_key_grab(char *key, Ecore_Event_Key_Modifiers mods,
+				     int anymod, int sync);
+  void                ecore_key_ungrab(char *key,
+				       Ecore_Event_Key_Modifiers mods,
+				       int anymod);
+  KeyCode             ecore_key_get_keycode(char *key);
+  void                ecore_window_destroy(Window win);
+  void                ecore_window_reparent(Window win, Window parent, int x,
+					    int y);
+  void                ecore_window_raise(Window win);
+  void                ecore_window_lower(Window win);
+  void                ecore_window_get_geometry(Window win, int *x, int *y,
+						int *w, int *h);
+  int                 ecore_window_get_depth(Window win);
+  int                 ecore_window_exists(Window win);
+  Window              ecore_window_get_parent(Window win);
+  Window             *ecore_window_get_children(Window win, int *num);
+  int                 ecore_window_mouse_in(Window win);
+  void                ecore_window_mouse_set_in(Window win, int in);
+  Display            *ecore_display_get(void);
+  Window              ecore_window_get_root(Window win);
+  void                ecore_lock_scroll_set(int onoff);
+  int                 ecore_lock_scroll_get(void);
+  void                ecore_lock_num_set(int onoff);
+  int                 ecore_lock_num_get(void);
+  void                ecore_lock_caps_set(int onoff);
+  int                 ecore_lock_caps_get(void);
+  void                ecore_mod_shift_set(int onoff);
+  int                 ecore_mod_shift_get(void);
+  void                ecore_mod_ctrl_set(int onoff);
+  int                 ecore_mod_ctrl_get(void);
+  void                ecore_mod_alt_set(int onoff);
+  int                 ecore_mod_alt_get(void);
+  void                ecore_mod_win_set(int onoff);
+  int                 ecore_mod_win_get(void);
+  void                ecore_focus_window_set(Window win);
+  Window              ecore_focus_window_get(void);
+  void                ecore_focus_to_window(Window win);
+  Atom                ecore_atom_get(char *name);
+  void                ecore_window_set_delete_inform(Window win);
+  void                ecore_window_property_set(Window win, Atom type,
+						Atom format, int size,
+						void *data, int number);
+  void               *ecore_window_property_get(Window win, Atom type,
+						Atom format, int *size);
+  void                ecore_window_dnd_advertise(Window win);
+  void                ecore_grab(void);
+  void                ecore_ungrab(void);
+  void                ecore_window_ignore(Window win);
+  void                ecore_window_no_ignore(Window win);
+  int                 ecore_window_is_ignored(Window win);
+  Window              ecore_window_get_at_xy(int x, int y);
 
-			       int sync);
-void                e_key_ungrab(char *key, Ev_Key_Modifiers mods, int anymod);
-KeyCode             e_key_get_keycode(char *key);
-void                e_window_destroy(Window win);
-void                e_window_reparent(Window win, Window parent, int x, int y);
-void                e_window_raise(Window win);
-void                e_window_lower(Window win);
-void                e_window_get_geometry(Window win, int *x, int *y, int *w,
+  int                 ecore_window_dnd_capable(Window win);
+  void                ecore_window_dnd_handle_motion(Window source_win, int x,
+						     int y, int dragging);
+  int                 ecore_dnd_selection_convert(Window win, Window req,
+						  Atom type);
+  void               *ecore_dnd_selection_get(Window win, Window req, Atom type,
+					      int *size);
+  void                ecore_window_dnd_ok(int ok);
+  void                ecore_window_dnd_finished(void);
+  void                ecore_window_dnd_send_status_ok(Window source_win,
+						      Window win, int x, int y,
+						      int w, int h);
+  void                ecore_window_dnd_send_finished(Window source_win,
+						     Window win);
+  void                ecore_dnd_set_data(Window win);
+  void                ecore_dnd_send_data(Window win, Window source_win,
+					  void *data, int size, Atom dest_atom,
+					  int plain_text);
+  void                ecore_window_set_title(Window win, char *title);
+  void                ecore_window_set_name_class(Window win, char *name,
+						  char *);
+  void                ecore_window_get_name_class(Window win, char **name,
+						  char **class);
+  char               *ecore_window_get_machine(Window win);
+  char               *ecore_window_get_command(Window win);
+  char               *ecore_window_get_icon_name(Window win);
+  void                ecore_window_get_hints(Window win, int *accepts_focus,
+					     int *initial_state,
+					     Pixmap * icon_pixmap,
+					     Pixmap * icon_mask,
+					     Window * icon_window,
+					     Window * window_group);
+  void                ecore_window_set_min_size(Window win, int w, int h);
+  void                ecore_window_set_max_size(Window win, int w, int h);
+  void                ecore_window_set_xy_hints(Window win, int x, int y);
+  void                ecore_window_get_frame_size(Window win, int *l, int *r,
+						  int *t, int *b);
+  int                 ecore_window_save_under(Window win);
+  GC                  ecore_gc_new(Drawable d);
+  void                ecore_gc_free(GC gc);
+  void                ecore_gc_set_fg(GC gc, int val);
+  void                ecore_fill_rectangle(Drawable d, GC gc, int x, int y,
+					   int w, int h);
+  void                ecore_draw_rectangle(Drawable d, GC gc, int x, int y,
+					   int w, int h);
+  void                ecore_draw_line(Drawable d, GC gc, int x1, int y1, int x2,
+				      int y2);
+  void                ecore_draw_point(Drawable d, GC gc, int x, int y);
+  void                ecore_window_hint_set_layer(Window win, int layer);
+  void                ecore_window_hint_set_sticky(Window win, int sticky);
+  void                ecore_window_hint_set_borderless(Window win);
+  void                ecore_grab_mouse(Window win, int confine, Cursor cursor);
+  void                ecore_ungrab_mouse(void);
+  Window              ecore_grab_window_get(void);
+  void                ecore_dnd_set_mode_copy(void);
+  void                ecore_dnd_set_mode_link(void);
+  void                ecore_dnd_set_mode_move(void);
+  void                ecore_dnd_set_mode_ask(void);
+  void                ecore_dnd_own_selection(Window win);
+  void                ecore_dnd_send_drop(Window win, Window source_win);
+  int                 ecore_window_get_gravity(Window win);
+  void                ecore_window_gravity_reset(Window win);
+  void                ecore_window_gravity_set(Window win, int gravity);
+  void                ecore_window_bit_gravity_set(Window win, int gravity);
+  void                ecore_pointer_warp_by(int dx, int dy);
+  void                ecore_pointer_warp_to(int x, int y);
+  void                ecore_gc_set_include_inferiors(GC gc);
+  void                ecore_area_copy(Drawable src, Drawable dest, GC gc,
+				      int sx, int sy, int sw, int sh, int dx,
+				      int dy);
+  Window              ecore_window_root(void);
+  void                ecore_window_get_virtual_area(Window win, int *area_x,
+						    int *area_y);
+  void                ecore_get_virtual_area(int *area_x, int *area_y);
+  void                ecore_window_get_root_relative_location(Window win,
+							      int *x, int *y);
 
-					  int *h);
-int                 e_window_get_depth(Window win);
-int                 e_window_exists(Window win);
-Window              e_window_get_parent(Window win);
-Window             *e_window_get_children(Window win, int *num);
-int                 e_window_mouse_in(Window win);
-void                e_window_mouse_set_in(Window win, int in);
-Display            *e_display_get(void);
-Window              e_window_get_root(Window win);
-void                e_lock_scroll_set(int onoff);
-int                 e_lock_scroll_get(void);
-void                e_lock_num_set(int onoff);
-int                 e_lock_num_get(void);
-void                e_lock_caps_set(int onoff);
-int                 e_lock_caps_get(void);
-void                e_mod_shift_set(int onoff);
-int                 e_mod_shift_get(void);
-void                e_mod_ctrl_set(int onoff);
-int                 e_mod_ctrl_get(void);
-void                e_mod_alt_set(int onoff);
-int                 e_mod_alt_get(void);
-void                e_mod_win_set(int onoff);
-int                 e_mod_win_get(void);
-void                e_focus_window_set(Window win);
-Window              e_focus_window_get(void);
-void                e_focus_to_window(Window win);
-Atom                e_atom_get(char *name);
-void                e_window_set_delete_inform(Window win);
-void                e_window_property_set(Window win, Atom type, Atom format,
-					  int size, void *data, int number);
-void               *e_window_property_get(Window win, Atom type, Atom format,
+  void                ecore_button_grab(Window win, int button, int events,
+					Ecore_Event_Key_Modifiers mod,
+					int any_mod);
+  void                ecore_button_ungrab(Window win, int button,
+					  Ecore_Event_Key_Modifiers mod,
+					  int any_mod);
+  void                ecore_pointer_replay(Time t);
+  void                ecore_pointer_grab(Window win, Time t);
+  void                ecore_pointer_ungrab(Time t);
+  void                ecore_window_send_event_move_resize(Window win, int x,
+							  int y, int w, int h);
+  void                ecore_window_send_client_message(Window win, Atom type,
+						       int format, void *data);
+  void                ecore_window_add_to_save_set(Window win);
+  void                ecore_window_del_from_save_set(Window win);
+  void                ecore_window_kill_client(Window win);
+  void                ecore_window_set_border_width(Window win, int bw);
+  int                 ecore_window_get_border_width(Window win);
+  int                 ecore_window_get_wm_size_hints(Window win,
+						     XSizeHints * hints,
+						     int *mask);
+  int                 ecore_window_is_visible(Window win);
+  int                 ecore_window_is_normal(Window win);
+  int                 ecore_window_is_manageable(Window win);
+  void                ecore_windows_restack(Window * wins, int num);
+  void                ecore_window_stack_above(Window win, Window above);
+  void                ecore_window_stack_below(Window win, Window below);
+  char               *ecore_window_get_title(Window win);
+  void                ecore_keyboard_grab(Window win);
+  void                ecore_keyboard_ungrab(void);
 
-					  int *size);
-void                e_window_dnd_advertise(Window win);
-void                e_grab(void);
-void                e_ungrab(void);
-void                e_window_ignore(Window win);
-void                e_window_no_ignore(Window win);
-int                 e_window_is_ignored(Window win);
-Window              e_window_get_at_xy(int x, int y);
+  void                ecore_ev_ipc_init(char *path);
+  void                ecore_ev_ipc_cleanup(void);
+  void                ecore_add_ipc_service(int service, void (*func) (int fd));
+  void                ecore_del_ipc_service(int service);
 
-int                 e_window_dnd_capable(Window win);
-void                e_window_dnd_handle_motion(Window source_win, int x, int y,
+  char               *ecore_selection_get_data(Window win, Atom prop);
+  Window              ecore_selection_request(void);
+  Window              ecore_selection_set(char *string);
 
-					       int dragging);
-int                 e_dnd_selection_convert(Window win, Window req, Atom type);
-void               *e_dnd_selection_get(Window win, Window req, Atom type,
+  void                ecore_set_blank_pointer(Window w);
+  Cursor              ecore_cursor_new(Pixmap pmap, Pixmap mask, int x, int y,
+				       int fr, int fg, int fb, int br, int bg,
+				       int bb);
+  void                ecore_cursor_free(Cursor c);
+  void                ecore_cursor_set(Window win, Cursor c);
+  void                ecore_window_button_grab_auto_replay_set(Window win,
+                                                               int on);
+  int                 ecore_window_button_grab_auto_replay_get(Window win);
 
-					int *size);
-void                e_window_dnd_ok(int ok);
-void                e_window_dnd_finished(void);
-void                e_window_dnd_send_status_ok(Window source_win, Window win,
-						int x, int y, int w, int h);
-void                e_window_dnd_send_finished(Window source_win, Window win);
-void                e_dnd_set_data(Window win);
-void                e_dnd_send_data(Window win, Window source_win, void *data,
-				    int size, Atom dest_atom, int plain_text);
-void                e_window_set_title(Window win, char *title);
-void                e_window_set_name_class(Window win, char *name,
+  typedef struct _ecore_event Ecore_Event;
+  typedef struct _ecore_event_fd_handler Ecore_Event_Fd_Handler;
+  typedef struct _ecore_event_pid_handler Ecore_Event_Pid_Handler;
+  typedef struct _ecore_event_ipc_handler Ecore_Event_Ipc_Handler;
+  typedef struct _ecore_event_timer Ecore_Event_Timer;
 
-					    char *);
-void                e_window_get_name_class(Window win, char **name, char **class);       
-char               *e_window_get_machine(Window win);
-char               *e_window_get_command(Window win);
-char               *e_window_get_icon_name(Window win);       
-void                e_window_get_hints(Window win, int *accepts_focus, int *initial_state,
-				       Pixmap *icon_pixmap, Pixmap *icon_mask,
-				       Window *icon_window, Window *window_group);
-void                e_window_set_min_size(Window win, int w, int h);
-void                e_window_set_max_size(Window win, int w, int h);
-void                e_window_set_xy_hints(Window win, int x, int y);
-void                e_window_get_frame_size(Window win, int *l, int *r, int *t,
+  typedef struct _ecore_event_key_down Ecore_Event_Key_Down;
+  typedef struct _ecore_event_key_up Ecore_Event_Key_Up;
+  typedef struct _ecore_event_mouse_down Ecore_Event_Mouse_Down;
+  typedef struct _ecore_event_mouse_up Ecore_Event_Mouse_Up;
+  typedef struct _ecore_event_wheel Ecore_Event_Wheel;
+  typedef struct _ecore_event_mouse_move Ecore_Event_Mouse_Move;
+  typedef struct _ecore_event_window_enter Ecore_Event_Window_Enter;
+  typedef struct _ecore_event_window_leave Ecore_Event_Window_Leave;
+  typedef struct _ecore_event_window_focus_in Ecore_Event_Window_Focus_In;
+  typedef struct _ecore_event_window_focus_out Ecore_Event_Window_Focus_Out;
+  typedef struct _ecore_event_window_expose Ecore_Event_Window_Expose;
+  typedef struct _ecore_event_window_visibility Ecore_Event_Window_Visibility;
+  typedef struct _ecore_event_window_create Ecore_Event_Window_Create;
+  typedef struct _ecore_event_window_destroy Ecore_Event_Window_Destroy;
+  typedef struct _ecore_event_window_map Ecore_Event_Window_Map;
+  typedef struct _ecore_event_window_unmap Ecore_Event_Window_Unmap;
+  typedef struct _ecore_event_window_map_request Ecore_Event_Window_Map_Request;
+  typedef struct _ecore_event_window_reparent Ecore_Event_Window_Reparent;
+  typedef struct _ecore_event_window_configure Ecore_Event_Window_Configure;
+  typedef struct _ecore_event_window_configure_request
+    Ecore_Event_Window_Configure_Request;
+  typedef struct _ecore_event_window_circulate Ecore_Event_Window_Circulate;
+  typedef struct _ecore_event_window_circulate_request
+    Ecore_Event_Window_Circulate_Request;
+  typedef struct _ecore_event_window_property Ecore_Event_Window_Property;
+  typedef struct _ecore_event_window_shape Ecore_Event_Window_Shape;
+  typedef struct _ecore_event_client_message Ecore_Event_Message;
+  typedef struct _ecore_event_colormap Ecore_Event_Colormap;
+  typedef struct _ecore_event_window_delete Ecore_Event_Window_Delete;
+  typedef struct _ecore_event_child Ecore_Event_Child;
+  typedef struct _ecore_event_user Ecore_Event_User;
+  typedef struct _ecore_event_file_progress Ecore_Event_File_Progress;
+  typedef struct _ecore_event_file_update Ecore_Event_File_Update;
+  typedef struct _ecore_event_dnd_drop_request Ecore_Event_Dnd_Drop_Request;
+  typedef struct _ecore_event_dnd_drop_end Ecore_Event_Dnd_Drop_End;
+  typedef struct _ecore_event_dnd_drop_position Ecore_Event_Dnd_Drop_Position;
+  typedef struct _ecore_event_dnd_drop Ecore_Event_Dnd_Drop;
+  typedef struct _ecore_event_dnd_drop_status Ecore_Event_Dnd_Drop_Status;
+  typedef struct _ecore_event_dnd_data_request Ecore_Event_Dnd_Data_Request;
+  typedef struct _ecore_event_paste_request Ecore_Event_Paste_Request;
+  typedef struct _ecore_event_clear_selection Ecore_Event_Clear_Selection;
+  typedef struct _ecore_event_ipc_service Ecore_Event_Ipc_Service;
 
-					    int *b);
-int                 e_window_save_under(Window win);
-GC                  e_gc_new(Drawable d);
-void                e_gc_free(GC gc);
-void                e_gc_set_fg(GC gc, int val);
-void                e_fill_rectangle(Drawable d, GC gc, int x, int y, int w,
+  enum _ecore_event_stack_detail
+  {
+    ECORE_EVENT_STACK_ABOVE = Above,
+    ECORE_EVENT_STACK_BELOW = Below,
+    ECORE_EVENT_STACK_TOP_IF = TopIf,
+    ECORE_EVENT_STACK_BOTTOM_IF = BottomIf,
+    ECORE_EVENT_STACK_OPPOSITE = Opposite
+  };
 
-				     int h);
-void                e_draw_rectangle(Drawable d, GC gc, int x, int y, int w,
+  enum _ecore_event_value_mask
+  {
+    ECORE_EVENT_VALUE_X = CWX,
+    ECORE_EVENT_VALUE_Y = CWY,
+    ECORE_EVENT_VALUE_W = CWWidth,
+    ECORE_EVENT_VALUE_H = CWHeight,
+    ECORE_EVENT_VALUE_BORDER = CWBorderWidth,
+    ECORE_EVENT_VALUE_SIBLING = CWSibling,
+    ECORE_EVENT_VALUE_STACKING = CWStackMode
+  };
 
-				     int h);
-void                e_draw_line(Drawable d, GC gc, int x1, int y1, int x2,
+  enum _ecore_event_type
+  {
+    ECORE_EVENT_MOUSE_MOVE,
+    ECORE_EVENT_MOUSE_DOWN,
+    ECORE_EVENT_MOUSE_UP,
+    ECORE_EVENT_MOUSE_IN,
+    ECORE_EVENT_MOUSE_OUT,
+    ECORE_EVENT_MOUSE_WHEEL,
+    ECORE_EVENT_KEY_DOWN,
+    ECORE_EVENT_KEY_UP,
+    ECORE_EVENT_WINDOW_MAP,
+    ECORE_EVENT_WINDOW_UNMAP,
+    ECORE_EVENT_WINDOW_CREATE,
+    ECORE_EVENT_WINDOW_DESTROY,
+    ECORE_EVENT_WINDOW_CONFIGURE,
+    ECORE_EVENT_WINDOW_CONFIGURE_REQUEST,
+    ECORE_EVENT_WINDOW_MAP_REQUEST,
+    ECORE_EVENT_WINDOW_PROPERTY,
+    ECORE_EVENT_WINDOW_CIRCULATE,
+    ECORE_EVENT_WINDOW_CIRCULATE_REQUEST,
+    ECORE_EVENT_WINDOW_REPARENT,
+    ECORE_EVENT_WINDOW_EXPOSE,
+    ECORE_EVENT_WINDOW_VISIBILITY,
+    ECORE_EVENT_WINDOW_SHAPE,
+    ECORE_EVENT_WINDOW_FOCUS_IN,
+    ECORE_EVENT_WINDOW_FOCUS_OUT,
+    ECORE_EVENT_MESSAGE,
+    ECORE_EVENT_WINDOW_DELETE,
+    ECORE_EVENT_COLORMAP,
 
-				int y2);
-void                e_draw_point(Drawable d, GC gc, int x, int y);
-void                e_window_hint_set_layer(Window win, int layer);
-void                e_window_hint_set_sticky(Window win, int sticky);
-void                e_window_hint_set_borderless(Window win);
-void                e_grab_mouse(Window win, int confine, Cursor cursor);
-void                e_ungrab_mouse(void);
-Window              e_grab_window_get(void);
-void                e_dnd_set_mode_copy(void);
-void                e_dnd_set_mode_link(void);
-void                e_dnd_set_mode_move(void);
-void                e_dnd_set_mode_ask(void);
-void                e_dnd_own_selection(Window win);
-void                e_dnd_send_drop(Window win, Window source_win);
-int                 e_window_get_gravity(Window win);
-void                e_window_gravity_reset(Window win);
-void                e_window_gravity_set(Window win, int gravity);
-void                e_window_bit_gravity_set(Window win, int gravity);
-void                e_pointer_warp_by(int dx, int dy);
-void                e_pointer_warp_to(int x, int y);
-void                e_gc_set_include_inferiors(GC gc);
-void                e_area_copy(Drawable src, Drawable dest, GC gc,
-				int sx, int sy, int sw, int sh, int dx, int dy);
-Window              e_window_root(void);
-void                e_window_get_virtual_area(Window win, int *area_x,
+    ECORE_EVENT_DND_DROP_REQUEST,
+    ECORE_EVENT_DND_DROP_END,
+    ECORE_EVENT_DND_DROP_POSITION,
+    ECORE_EVENT_DND_DROP,
+    ECORE_EVENT_DND_DROP_STATUS,
+    ECORE_EVENT_DND_DATA_REQUEST,
+    ECORE_EVENT_PASTE_REQUEST,
+    ECORE_EVENT_CLEAR_SELECTION,
 
-					      int *area_y);
-void                e_get_virtual_area(int *area_x, int *area_y);
-void                e_window_get_root_relative_location(Window win, int *x, int *y);
+    ECORE_EVENT_CHILD,
+    ECORE_EVENT_USER,
 
-void                e_button_grab(Window win, int button, int events, Ev_Key_Modifiers mod, int any_mod);
-void                e_button_ungrab(Window win, int button, Ev_Key_Modifiers mod, int any_mod);
-void                e_pointer_replay(Time t);
-void                e_pointer_grab(Window win, Time t);
-void                e_pointer_ungrab(Time t);
-void                e_window_send_event_move_resize(Window win, int x, int y, int w, int h);
-void                e_window_send_client_message(Window win, Atom type, int format, void *data);
-void                e_window_add_to_save_set(Window win);
-void                e_window_del_from_save_set(Window win);
-void                e_window_kill_client(Window win);
-void                e_window_set_border_width(Window win, int bw);
-int                 e_window_get_border_width(Window win);
-int                 e_window_get_wm_size_hints(Window win, XSizeHints *hints, int *mask);
-int                 e_window_is_visible(Window win);
-int                 e_window_is_normal(Window win);
-int                 e_window_is_manageable(Window win);
-void                e_windows_restack(Window *wins, int num);
-void                e_window_stack_above(Window win, Window above);
-void                e_window_stack_below(Window win, Window below);
-char               *e_window_get_title(Window win);
-void                e_keyboard_grab(Window win);
-void                e_keyboard_ungrab(void);
+    ECORE_EVENT_MAX
+  };
 
-void                e_ev_ipc_init(char *path);
-void                e_ev_ipc_cleanup(void);
-void                e_add_ipc_service(int service, void (*func) (int fd));
-void                e_del_ipc_service(int service);
+  typedef enum _ecore_event_type Ecore_Event_Type;
+  typedef enum _ecore_event_stack_detail Ecore_Event_Stack_Detail;
+  typedef enum _ecore_event_value_mask Ecore_Event_Confgure_Value_Mask;
 
+  struct _ecore_event
+  {
+    Ecore_Event_Type    type;
+    char                ignore;
+    void               *event;
+    void                (*ev_free) (void *evnt);
+    Ecore_Event        *next;
+  };
 
-char               *e_selection_get_data(Window win, Atom prop);
-Window              e_selection_request(void);
-Window              e_selection_set(char *string);
+  struct _ecore_event_fd_handler
+  {
+    int                 fd;
+    void                (*func) (int fd);
+    Ecore_Event_Fd_Handler *next;
+  };
 
-void                e_set_blank_pointer(Window w);
-Cursor              e_cursor_new(Pixmap pmap, Pixmap mask, int x, int y, int fr, int fg, int fb, int br, int bg, int bb);
-void                e_cursor_free(Cursor c);
-void                e_cursor_set(Window win, Cursor c);
+  struct _ecore_event_pid_handler
+  {
+    pid_t               pid;
+    void                (*func) (pid_t pid);
+    Ecore_Event_Pid_Handler *next;
+  };
 
-void                e_window_button_grab_auto_replay_set(Window win, int on);
-int                 e_window_button_grab_auto_replay_get(Window win);
-   
-typedef struct _eev Eevent;
-typedef struct _ev_fd_handler Ev_Fd_Handler;
-typedef struct _ev_pid_handler Ev_Pid_Handler;
-typedef struct _ev_ipc_handler Ev_Ipc_Handler;
-typedef struct _ev_timer Ev_Timer;
+  struct _ecore_event_ipc_handler
+  {
+    int                 ipc;
+    void                (*func) (int ipc);
+    Ecore_Event_Ipc_Handler *next;
+  };
 
-typedef struct _ev_key_down Ev_Key_Down;
-typedef struct _ev_key_up Ev_Key_Up;
-typedef struct _ev_mouse_down Ev_Mouse_Down;
-typedef struct _ev_mouse_up Ev_Mouse_Up;
-typedef struct _ev_wheel Ev_Wheel;
-typedef struct _ev_mouse_move Ev_Mouse_Move;
-typedef struct _ev_window_enter Ev_Window_Enter;
-typedef struct _ev_window_leave Ev_Window_Leave;
-typedef struct _ev_window_focus_in Ev_Window_Focus_In;
-typedef struct _ev_window_focus_out Ev_Window_Focus_Out;
-typedef struct _ev_window_expose Ev_Window_Expose;
-typedef struct _ev_window_visibility Ev_Window_Visibility;
-typedef struct _ev_window_create Ev_Window_Create;
-typedef struct _ev_window_destroy Ev_Window_Destroy;
-typedef struct _ev_window_map Ev_Window_Map;
-typedef struct _ev_window_unmap Ev_Window_Unmap;
-typedef struct _ev_window_map_request Ev_Window_Map_Request;
-typedef struct _ev_window_reparent Ev_Window_Reparent;
-typedef struct _ev_window_configure Ev_Window_Configure;
-typedef struct _ev_window_configure_request Ev_Window_Configure_Request;
-typedef struct _ev_window_circulate Ev_Window_Circulate;
-typedef struct _ev_window_circulate_request Ev_Window_Circulate_Request;
-typedef struct _ev_window_property Ev_Window_Property;
-typedef struct _ev_window_shape Ev_Window_Shape;
-typedef struct _ev_client_message Ev_Message;
-typedef struct _ev_colormap Ev_Colormap;
-typedef struct _ev_window_delete Ev_Window_Delete;
-typedef struct _ev_child Ev_Child;
-typedef struct _ev_user Ev_User;
-typedef struct _ev_file_progress Ev_File_Progress;
-typedef struct _ev_file_update Ev_File_Update;
-typedef struct _ev_dnd_drop_request Ev_Dnd_Drop_Request;
-typedef struct _ev_dnd_drop_end Ev_Dnd_Drop_End;
-typedef struct _ev_dnd_drop_position Ev_Dnd_Drop_Position;
-typedef struct _ev_dnd_drop Ev_Dnd_Drop;
-typedef struct _ev_dnd_drop_status Ev_Dnd_Drop_Status;
-typedef struct _ev_dnd_data_request Ev_Dnd_Data_Request;
-typedef struct _ev_paste_request Ev_Paste_Request;
-typedef struct _ev_clear_selection Ev_Clear_Selection;
-typedef struct _ev_ipc_service Ev_Ipc_Service;
+  struct _ecore_event_timer
+  {
+    char               *name;
+    void                (*func) (int val, void *data);
+    int                 val;
+    void               *data;
+    double              in;
+    char                just_added;
+    Ecore_Event_Timer  *next;
+  };
 
-enum _eev_stack_detail
-{
-   EV_STACK_ABOVE = Above,
-   EV_STACK_BELOW = Below,
-   EV_STACK_TOP_IF = TopIf,
-   EV_STACK_BOTTOM_IF = BottomIf,
-   EV_STACK_OPPOSITE = Opposite
-};
+  struct _ecore_event_key_down
+  {
+    Window              win, root;
+    Ecore_Event_Key_Modifiers mods;
+    char               *key;
+    char               *compose;
+    Time                time;
+  };
 
-enum _eev_value_mask
-{
-   EV_VALUE_X = CWX,
-   EV_VALUE_Y = CWY,
-   EV_VALUE_W = CWWidth,
-   EV_VALUE_H = CWHeight,
-   EV_VALUE_BORDER = CWBorderWidth,
-   EV_VALUE_SIBLING = CWSibling,
-   EV_VALUE_STACKING = CWStackMode
-};
+  struct _ecore_event_key_up
+  {
+    Window              win, root;
+    Ecore_Event_Key_Modifiers mods;
+    char               *key;
+    char               *compose;
+    Time                time;
+  };
 
-enum _eev_type
-{
-   EV_MOUSE_MOVE,
-   EV_MOUSE_DOWN,
-   EV_MOUSE_UP,
-   EV_MOUSE_IN,
-   EV_MOUSE_OUT,
-   EV_MOUSE_WHEEL,
-   EV_KEY_DOWN,
-   EV_KEY_UP,
-   EV_WINDOW_MAP,
-   EV_WINDOW_UNMAP,
-   EV_WINDOW_CREATE,
-   EV_WINDOW_DESTROY,
-   EV_WINDOW_CONFIGURE,
-   EV_WINDOW_CONFIGURE_REQUEST,
-   EV_WINDOW_MAP_REQUEST,
-   EV_WINDOW_PROPERTY,
-   EV_WINDOW_CIRCULATE,
-   EV_WINDOW_CIRCULATE_REQUEST,
-   EV_WINDOW_REPARENT,
-   EV_WINDOW_EXPOSE,
-   EV_WINDOW_VISIBILITY,
-   EV_WINDOW_SHAPE,
-   EV_WINDOW_FOCUS_IN,
-   EV_WINDOW_FOCUS_OUT,
-   EV_MESSAGE,
-   EV_WINDOW_DELETE,
-   EV_COLORMAP,
+  struct _ecore_event_mouse_down
+  {
+    Window              win, root;
+    Ecore_Event_Key_Modifiers mods;
+    int                 button;
+    int                 x, y;
+    int                 rx, ry;
+    int                 double_click, triple_click;
+    Time                time;
+  };
 
-   EV_DND_DROP_REQUEST,
-   EV_DND_DROP_END,
-   EV_DND_DROP_POSITION,
-   EV_DND_DROP,
-   EV_DND_DROP_STATUS,
-   EV_DND_DATA_REQUEST,
-   EV_PASTE_REQUEST,
-   EV_CLEAR_SELECTION,
+  struct _ecore_event_mouse_up
+  {
+    Window              win, root;
+    Ecore_Event_Key_Modifiers mods;
+    int                 button;
+    int                 x, y;
+    int                 rx, ry;
+    Time                time;
+  };
 
-   EV_CHILD,
-   EV_USER,
+  struct _ecore_event_wheel
+  {
+    Window              win, root;
+    Ecore_Event_Key_Modifiers mods;
+    int                 x, y, z;
+    int                 rx, ry;
+    Time                time;
+  };
 
-   EV_MAX
-};
+  struct _ecore_event_mouse_move
+  {
+    Window              win, root;
+    Ecore_Event_Key_Modifiers mods;
+    int                 x, y;
+    int                 rx, ry;
+    Time                time;
+  };
 
-typedef enum _eev_type Eevent_Type;
-typedef enum _eev_stack_detail Ev_Stack_Detail;
-typedef enum _eev_value_mask Ev_Confgure_Value_Mask;
+  struct _ecore_event_window_enter
+  {
+    Window              win, root;
+    int                 x, y;
+    int                 rx, ry;
+    Ecore_Event_Key_Modifiers mods;
+    Time                time;
+  };
 
-struct _eev
-{
-   Eevent_Type         type;
-   char                ignore;
-   void               *event;
-   void                (*ev_free) (void *evnt);
-   Eevent             *next;
-};
+  struct _ecore_event_window_leave
+  {
+    Window              win, root;
+    int                 x, y;
+    int                 rx, ry;
+    Ecore_Event_Key_Modifiers mods;
+    Time                time;
+  };
 
-struct _ev_fd_handler
-{
-   int                 fd;
-   void                (*func) (int fd);
-   Ev_Fd_Handler      *next;
-};
+  struct _ecore_event_window_focus_in
+  {
+    Window              win, root;
+    int                 key_grab;
+    Time                time;
+  };
 
-struct _ev_pid_handler
-{
-   pid_t               pid;
-   void                (*func) (pid_t pid);
-   Ev_Pid_Handler     *next;
-};
+  struct _ecore_event_window_focus_out
+  {
+    Window              win, root;
+    int                 key_grab;
+    Time                time;
+  };
 
-struct _ev_ipc_handler
-{
-   int                 ipc;
-   void                (*func) (int ipc);
-   Ev_Ipc_Handler     *next;
-};
+  struct _ecore_event_window_expose
+  {
+    Window              win, root;
+    int                 x, y, w, h;
+  };
 
-struct _ev_timer
-{
-   char               *name;
-   void                (*func) (int val, void *data);
-   int                 val;
-   void               *data;
-   double              in;
-   char                just_added;
-   Ev_Timer           *next;
-};
+  struct _ecore_event_window_visibility
+  {
+    Window              win, root;
+    int                 fully_obscured;
+  };
 
-struct _ev_key_down
-{
-   Window              win, root;
-   Ev_Key_Modifiers    mods;
-   char               *key;
-   char               *compose;
-   Time                time;
-};
+  struct _ecore_event_window_create
+  {
+    Window              win, root;
+    int                 override;
+  };
 
-struct _ev_key_up
-{
-   Window              win, root;
-   Ev_Key_Modifiers    mods;
-   char               *key;
-   char               *compose;
-   Time                time;
-};
+  struct _ecore_event_window_destroy
+  {
+    Window              win, root;
+  };
 
-struct _ev_mouse_down
-{
-   Window              win, root;
-   Ev_Key_Modifiers    mods;
-   int                 button;
-   int                 x, y;
-   int                 rx, ry;
-   int                 double_click, triple_click;
-   Time                time;
-};
+  struct _ecore_event_window_map
+  {
+    Window              win, root;
+  };
 
-struct _ev_mouse_up
-{
-   Window              win, root;
-   Ev_Key_Modifiers    mods;
-   int                 button;
-   int                 x, y;
-   int                 rx, ry;
-   Time                time;
-};
+  struct _ecore_event_window_unmap
+  {
+    Window              win, root;
+  };
 
-struct _ev_wheel
-{
-   Window              win, root;
-   Ev_Key_Modifiers    mods;
-   int                 x, y, z;
-   int                 rx, ry;
-   Time                time;
-};
+  struct _ecore_event_window_map_request
+  {
+    Window              win, root;
+  };
 
-struct _ev_mouse_move
-{
-   Window              win, root;
-   Ev_Key_Modifiers    mods;
-   int                 x, y;
-   int                 rx, ry;
-   Time                time;
-};
+  struct _ecore_event_window_reparent
+  {
+    Window              win, root;
+    Window              parent_from, parent;
+  };
 
-struct _ev_window_enter
-{
-   Window              win, root;
-   int                 x, y;
-   int                 rx, ry;
-   Ev_Key_Modifiers    mods;
-   Time                time;
-};
+  struct _ecore_event_window_configure
+  {
+    Window              win, root;
+    int                 x, y, w, h;
+    int                 wm_generated;
+  };
 
-struct _ev_window_leave
-{
-   Window              win, root;
-   int                 x, y;
-   int                 rx, ry;
-   Ev_Key_Modifiers    mods;
-   Time                time;
-};
+  struct _ecore_event_window_configure_request
+  {
+    Window              win, root;
+    int                 x, y, w, h;
+    int                 border;
+    Window              stack_win;
+    Ecore_Event_Stack_Detail detail;
+    Ecore_Event_Confgure_Value_Mask mask;
+  };
 
-struct _ev_window_focus_in
-{
-   Window              win, root;
-   int                 key_grab;
-   Time                time;
-};
+  struct _ecore_event_window_circulate
+  {
+    Window              win, root;
+    int                 lower;
+  };
 
-struct _ev_window_focus_out
-{
-   Window              win, root;
-   int                 key_grab;
-   Time                time;
-};
+  struct _ecore_event_window_circulate_request
+  {
+    Window              win, root;
+    int                 lower;
+  };
 
-struct _ev_window_expose
-{
-   Window              win, root;
-   int                 x, y, w, h;
-};
+  struct _ecore_event_window_property
+  {
+    Window              win, root;
+    Atom                atom;
+    Time                time;
+  };
 
-struct _ev_window_visibility
-{
-   Window              win, root;
-   int                 fully_obscured;
-};
+  struct _ecore_event_window_shape
+  {
+    Window              win, root;
+    Time                time;
+  };
 
-struct _ev_window_create
-{
-   Window              win, root;
-   int                 override;
-};
-
-struct _ev_window_destroy
-{
-   Window              win, root;
-};
-
-struct _ev_window_map
-{
-   Window              win, root;
-};
-
-struct _ev_window_unmap
-{
-   Window              win, root;
-};
-
-struct _ev_window_map_request
-{
-   Window              win, root;
-};
-
-struct _ev_window_reparent
-{
-   Window              win, root;
-   Window              parent_from, parent;
-};
-
-struct _ev_window_configure
-{
-   Window              win, root;
-   int                 x, y, w, h;
-   int                 wm_generated;
-};
-
-struct _ev_window_configure_request
-{
-   Window              win, root;
-   int                 x, y, w, h;
-   int                 border;
-   Window              stack_win;
-   Ev_Stack_Detail     detail;
-   Ev_Confgure_Value_Mask mask;
-};
-
-struct _ev_window_circulate
-{
-   Window              win, root;
-   int                 lower;
-};
-
-struct _ev_window_circulate_request
-{
-   Window              win, root;
-   int                 lower;
-};
-
-struct _ev_window_property
-{
-   Window              win, root;
-   Atom                atom;
-   Time                time;
-};
-
-struct _ev_window_shape
-{
-   Window              win, root;
-   Time                time;
-};
-
-struct _ev_client_message
-{
-   Window              win;
-   int                 format;
-   Atom                atom;
-   union
-   {
+  struct _ecore_event_client_message
+  {
+    Window              win;
+    int                 format;
+    Atom                atom;
+    union
+    {
       char                b[20];
       short               s[10];
       long                l[5];
-   }
-   data;
-};
+    }
+    data;
+  };
 
-struct _ev_colormap
-{
-   Window              win, root;
-   Colormap            cmap;
-   int                 installed;
-};
+  struct _ecore_event_colormap
+  {
+    Window              win, root;
+    Colormap            cmap;
+    int                 installed;
+  };
 
-struct _ev_window_delete
-{
-   Window              win, root;
-};
+  struct _ecore_event_window_delete
+  {
+    Window              win, root;
+  };
 
-struct _ev_paste_request
-{
-   Window              win, root, source_win;
-   char               *string;
-};
+  struct _ecore_event_paste_request
+  {
+    Window              win, root, source_win;
+    char               *string;
+  };
 
-struct _ev_clear_selection
-{
-   Window              win, root;
-   Atom                selection;
-};
+  struct _ecore_event_clear_selection
+  {
+    Window              win, root;
+    Atom                selection;
+  };
 
-struct _ev_dnd_drop_request
-{
-   Window              win, root, source_win;
-   int                 num_files;
-   char              **files;
-   int                 copy, link, move;
-};
+  struct _ecore_event_dnd_drop_request
+  {
+    Window              win, root, source_win;
+    int                 num_files;
+    char              **files;
+    int                 copy, link, move;
+  };
 
-struct _ev_dnd_drop_end
-{
-   Window              win, root, source_win;
-};
+  struct _ecore_event_dnd_drop_end
+  {
+    Window              win, root, source_win;
+  };
 
-struct _ev_dnd_drop_position
-{
-   Window              win, root, source_win;
-   int                 x, y;
-};
+  struct _ecore_event_dnd_drop_position
+  {
+    Window              win, root, source_win;
+    int                 x, y;
+  };
 
-struct _ev_dnd_drop
-{
-   Window              win, root, source_win;
-};
+  struct _ecore_event_dnd_drop
+  {
+    Window              win, root, source_win;
+  };
 
-struct _ev_dnd_drop_status
-{
-   Window              win, root, source_win;
-   int                 x, y, w, h;
-   int                 ok;
-};
+  struct _ecore_event_dnd_drop_status
+  {
+    Window              win, root, source_win;
+    int                 x, y, w, h;
+    int                 ok;
+  };
 
-struct _ev_dnd_data_request
-{
-   Window              win, root, source_win;
-   int                 plain_text;
-   Atom                destination_atom;
-};
+  struct _ecore_event_dnd_data_request
+  {
+    Window              win, root, source_win;
+    int                 plain_text;
+    Atom                destination_atom;
+  };
 
-struct _ev_child
-{
-   pid_t               pid;
-   int                 exit_code;
-};
+  struct _ecore_event_child
+  {
+    pid_t               pid;
+    int                 exit_code;
+  };
 
-struct _ev_user
-{
-   int                 num;
-   int                 hup;
-};
+  struct _ecore_event_user
+  {
+    int                 num;
+    int                 hup;
+  };
 
-struct _ev_ipc_service
-{
-   int                service;
-   void               (*func) (int fd);
-   Ev_Ipc_Service     *next;
-};
+  struct _ecore_event_ipc_service
+  {
+    int                 service;
+    void                (*func) (int fd);
+    Ecore_Event_Ipc_Service *next;
+  };
 
-void                e_add_event(Eevent_Type type, void *event,
-				void (*ev_free) (void *event));
-void                e_del_event(void *event);
-void                e_del_all_events(void);
-Eevent             *e_get_last_event(void);
+  void                ecore_add_event(Ecore_Event_Type type, void *event,
+				      void (*ev_free) (void *event));
+  void                ecore_del_event(void *event);
+  void                ecore_del_all_events(void);
+  Ecore_Event        *ecore_get_last_event(void);
 
-void                e_add_event_fd(int fd, void (*func) (int fd));
-void                e_del_event_fd(int fd);
-void                e_add_event_pid(pid_t pid, void (*func) (pid_t pid));
-void                e_del_event_pid(pid_t pid);
-void                e_add_event_ipc(int ipc, void (*func) (int ipc));
-void                e_del_event_ipc(int ipc);
+  void                ecore_add_event_fd(int fd, void (*func) (int fd));
+  void                ecore_del_event_fd(int fd);
+  void                ecore_add_event_pid(pid_t pid, void (*func) (pid_t pid));
+  void                ecore_del_event_pid(pid_t pid);
+  void                ecore_add_event_ipc(int ipc, void (*func) (int ipc));
+  void                ecore_del_event_ipc(int ipc);
 
-void                e_event_loop(void);
-void                e_event_loop_quit(void);
+  void                ecore_event_loop(void);
+  void                ecore_event_loop_quit(void);
 
-void                e_add_event_timer(char *name, double in,
-				      void (*func) (int val, void *data),
-				      int val, void *data);
-void               *e_del_event_timer(char *name);
+  void                ecore_add_event_timer(char *name, double in,
+					    void (*func) (int val, void *data),
+					    int val, void *data);
+  void               *ecore_del_event_timer(char *name);
 
-void                e_event_filter(Eevent * ev);
-void                e_event_filter_events_handle(Eevent * ev);
-void                e_event_filter_idle_handle(void);
-void                e_event_filter_init(void);
-void                e_event_filter_handler_add(Eevent_Type type,
-					       void (*func) (Eevent * ev));
-void                e_event_filter_idle_handler_add(void (*func) (void *data),
+  void                ecore_event_filter(Ecore_Event * ev);
+  void                ecore_event_filter_events_handle(Ecore_Event * ev);
+  void                ecore_event_filter_idle_handle(void);
+  void                ecore_event_filter_init(void);
+  void                ecore_event_filter_handler_add(Ecore_Event_Type type,
+						     void (*func) (Ecore_Event *
+								   ev));
+  void
+     
+     
+     
+     
+     
+     
+     
+     ecore_event_filter_idle_handler_add(void (*func) (void *data), void *data);
 
-						    void *data);
+  void                ecore_ev_signal_init(void);
+  int                 ecore_ev_signal_events_pending(void);
 
-void                e_ev_signal_init(void);
-int                 e_ev_signal_events_pending(void);
+  void                ecore_ev_x_init(void);
+  char
+     
+     
+     
+            *ecore_key_press_translate_into_typeable(Ecore_Event_Key_Down * e);
 
-void                e_ev_x_init(void);
-char               *e_key_press_translate_into_typeable(Ev_Key_Down * e);
-
-
-#define E_ATOM(atom, name) \
-if (!atom) atom = e_atom_get(name);
-
-#define MEMCPY(src, dst, type, num) memcpy(dst, src, sizeof(type) * (num))
-
-#define NEW(dat, num) malloc(sizeof(dat) * (num))
-#define ZERO(ptr, dat, num) memset(ptr, 0, sizeof(dat) * (num))
-#define NEW_PTR(num) malloc(sizeof(void *) * (num))
-#define FREE(dat) {free(dat); dat = NULL;}
-#define IF_FREE(dat) {if (dat) FREE(dat);}
-#define REALLOC(dat, type, num) {if (dat) dat = realloc(dat, sizeof(type) * (num)); else dat = malloc(sizeof(type) * (num));}
-#define REALLOC_PTR(dat, num) {if (dat) dat = realloc(dat, sizeof(void *) * (num)); else dat = malloc(sizeof(void *) * (num));}
+#define ECORE_ATOM(atom, name) \
+        if (!atom) (atom) = ecore_atom_get(name);
+#define MEMCPY(src, dst, type, num) \
+        memcpy(dst, src, sizeof(type) * (num))
+#define NEW(dat, num) \
+        malloc(sizeof(dat) * (num))
+#define ZERO(ptr, dat, num) \
+        memset((ptr), 0, sizeof(dat) * (num))
+#define NEW_PTR(num) \
+        malloc(sizeof(void *) * (num))
+#define FREE(dat) \
+        { \
+                free(dat); \
+                (dat) = NULL; \
+        }
+#define IF_FREE(dat) \
+        {if (dat) FREE(dat);}
+#define REALLOC(dat, type, num) \
+        { \
+                if (dat) dat = realloc((dat), sizeof(type) * (num)); \
+                else dat = malloc(sizeof(type) * (num)); \
+        }
+#define REALLOC_PTR(dat, num) \
+        { \
+                if (dat) dat = realloc(dat, sizeof(void *) * (num)); \
+                else dat = malloc(sizeof(void *) * (num)); \
+        }
 
 #define START_LIST_DEL(type, base, cmp) \
-type *_p, *_pp; _pp = NULL; _p = (base); while(_p) { if (cmp) { \
-if (_pp) _pp->next = _p->next; else (base) = _p->next;
+        type *_p, *_pp; _pp = NULL; \
+        _p = (base); \
+        while(_p) \
+        { \
+                if (cmp) \
+                { \
+                        if (_pp) _pp->next = _p->next; \
+                        else (base) = _p->next;
 #define END_LIST_DEL \
-return; } _pp = _p; _p = _p->next; }
+                        return; \
+               } \
+               _pp = _p; \
+               _p = _p->next; \
+        }
 
-double              e_get_time(void);
+  double              ecore_get_time(void);
 
 #ifdef __cplusplus
 }
