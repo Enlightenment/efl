@@ -20,7 +20,15 @@ if you wish to install (as root):
 make install
 
 in the test directory you will find a test program:
+
 cd test
+./evas_test
+
+This is an overall demo of what Evas can do. You can select the rendering mode
+on the left by simply clicking it. Just sit back, watch and relax.
+
+There is also
+
 ./evas_test_old
 
 this will by default try the software engine - if you don't have a fast cpu
