@@ -473,7 +473,6 @@ data_write(void)
 		       snprintf(buf, sizeof(buf), "embryo_cc -i%s -o%s %s", 
 				DAT"data/include", tmpo, tmpn);
 		       ret = system(buf);
-/*		       
 		       if (ret != 0)
 			 {
 			    printf("%i\n", ret);
@@ -481,7 +480,6 @@ data_write(void)
 				    progname);	
 			    ABORT_WRITE(ef, file_out);
 			 }
- */
 		       close(fd);
 		    }
 		  f = fopen(tmpo, "r");
