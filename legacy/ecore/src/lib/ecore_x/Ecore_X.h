@@ -1098,7 +1098,8 @@ EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_A
    EAPI int                 ecore_x_netwm_opacity_get(Ecore_X_Window win, unsigned int *opacity);
    EAPI void                ecore_x_netwm_window_state_set(Ecore_X_Window win, Ecore_X_Window_State state, int on);
    EAPI int                 ecore_x_netwm_window_state_isset(Ecore_X_Window win, Ecore_X_Window_State state);
-
+   EAPI void                ecore_x_netwm_frame_size_set(Ecore_X_Window win, int fl, int fr, int ft, int fb);
+   
    EAPI int                 ecore_x_xinerama_screen_count_get(void);
    EAPI int                 ecore_x_xinerama_screen_geometry_get(int screen, int *x, int *y, int *w, int *h);
    

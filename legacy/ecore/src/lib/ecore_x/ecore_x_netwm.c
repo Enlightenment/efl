@@ -238,6 +238,8 @@ Ecore_X_Atom        ECORE_X_ATOM_NET_WM_STATE_BELOW = 0;
 
 Ecore_X_Atom        ECORE_X_ATOM_NET_WM_WINDOW_OPACITY = 0;
 
+Ecore_X_Atom        ECORE_X_ATOM_NET_FRAME_EXTENTS = 0;
+
 void
 ecore_x_netwm_init(void)
 {
@@ -307,6 +309,8 @@ ecore_x_netwm_init(void)
    ECORE_X_ATOM_NET_WM_STATE_BELOW = _ATOM_GET("_NET_WM_STATE_BELOW");
 
    ECORE_X_ATOM_NET_WM_WINDOW_OPACITY = _ATOM_GET("_NET_WM_WINDOW_OPACITY");
+   
+   ECORE_X_ATOM_NET_FRAME_EXTENTS = _ATOM_GET("_NET_FRAME_EXTENTS");
 }
 
 /*
@@ -500,6 +504,18 @@ ecore_x_netwm_visible_icon_name_get(Ecore_X_Window win)
 {
    return _ecore_x_window_prop_string_utf8_get(win,
 					       ECORE_X_ATOM_NET_WM_VISIBLE_ICON_NAME);
+}
+
+void
+ecore_x_netwm_frame_size_set(Ecore_X_Window win, int fl, int fr, int ft, int fb)
+{
+   int frames[4];
+   
+   frames[0] = fl;
+   frames[1] = fr;
+   frames[2] = ft;
+   frames[3] = fb;
+   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_FRAME_EXTENTS, frames, 4);
 }
 
 void
