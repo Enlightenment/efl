@@ -1,4 +1,7 @@
 /*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+/*
  * Various ICCCM related functions.
  * 
  * This is ALL the code involving anything ICCCM related. for both WM and
@@ -452,19 +455,16 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
 	     char              **list = NULL;
 	     char               *t = NULL;
 	     int                 num = 0;
+	     int                 ret;
 
-	     if (xprop.encoding == ECORE_X_ATOM_STRING)
-	       {
-		  t = strdup(xprop.value);
-	       }
-	     else if (xprop.encoding == ECORE_X_ATOM_UTF8_STRING)
+	     if (xprop.encoding == ECORE_X_ATOM_UTF8_STRING)
 	       {
 		  t = strdup(xprop.value);
 	       }
 	     else
 	       {
-		  int                 ret;
 
+		  /* convert to utf8 */
 #ifdef X_HAVE_UTF8_STRING
 		  ret = Xutf8TextPropertyToTextList(_ecore_x_disp, &xprop,
 						    &list, &num);
@@ -472,6 +472,7 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
 		  ret = XmbTextPropertyToTextList(_ecore_x_disp, &xprop,
 						  &list, &num);
 #endif
+
 		  if ((ret == XLocaleNotSupported) ||
 		      (ret == XNoMemory) || (ret == XConverterNotFound))
 		    {
@@ -481,13 +482,13 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
 		    {
 		       if ((num >= 1) && (list))
 			 {
-			    /* FIXME: convert to utf8 */
 			    t = strdup(list[0]);
 			 }
 		       if (list)
-			  XFreeStringList(list);
+			 XFreeStringList(list);
 		    }
 	       }
+
 	     XFree(xprop.value);
 	     return t;
 	  }
