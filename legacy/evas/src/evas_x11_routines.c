@@ -429,7 +429,7 @@ static int       __evas_fpath_num       = 0;
 static int       __evas_font_cache      = 0;
 static int       __evas_font_cache_max  = 512 * 1024;
 
-static int       __evas_rend_lut[9]   = { 0, 64, 128, 192, 255, 255, 255, 255, 255 };
+static int       __evas_rend_lut[9]   = { 0, 1, 1, 1, 1, 1, 1, 1, 1 };
 
 static int       __evas_have_tt_engine  = 0;
 static TT_Engine __evas_tt_engine;
@@ -501,6 +501,55 @@ __evas_x11_text_font_raster_free(TT_Raster_Map * rmap)
 {
    if (rmap->bitmap) free(rmap->bitmap);
    free(rmap);
+}
+
+static void
+__evas_x11_text_font_render_glyph(Window win, Evas_X11_Font *fn, Evas_X11_Glyph *g)
+{
+   int tw, th, xmin, ymin, xmax, ymax;
+   TT_Raster_Map *rmap;
+   
+   if (g->pmap) return;
+   xmin = g->metrics.bbox.xMin & -64;
+   ymin = g->metrics.bbox.yMin & -64;
+   xmax = (g->metrics.bbox.xMax + 63) & -64;
+   ymax = (g->metrics.bbox.yMax + 63) & -64;
+   tw = ((xmax - xmin) / 64) + 1;
+   th = ((ymax - ymin) / 64) + 1;
+   
+   g->pmap = XCreatePixmap(fn->disp, win, tw, th, 1);
+   g->pw = tw;
+   g->ph = th;
+
+   rmap = __evas_x11_text_font_raster_new(tw, th);
+   if (rmap)
+     {
+	int x, y;
+	XImage *xim;
+        XGCValues gcv;
+	GC gc;
+	
+	xim = XCreateImage(fn->disp, __evas_visual, 1, ZPixmap, 0, NULL, tw, th, 8, 0);
+	xim->data = malloc(xim->bytes_per_line * xim->height);	
+	TT_Get_Glyph_Bitmap(g->glyph, rmap, -xmin, -ymin);
+	for (y = 0; y < th; y++)
+	  {
+	     for (x = 0; x < tw; x++)
+	       {
+		  DATA8 rval;
+		  
+		  rval = (DATA8)(((unsigned char *)(rmap->bitmap))[((rmap->rows - y - 1) * rmap->cols) + (x >> 3)]);
+		  rval >>= (7 - (x - ((x >> 3) << 3)));
+/*		  data[(y * tw) + x] = __evas_rend_lut[rval];*/
+		  XPutPixel(xim, x, y, rval);
+	       }
+	  }	
+	gc = XCreateGC(fn->disp, g->pmap, 0, &gcv);
+	XPutImage(fn->disp, g->pmap, gc, xim, 0, 0, 0, 0, tw, th);
+	XDestroyImage(xim);
+	XFreeGC(fn->disp, gc);
+	__evas_x11_text_font_raster_free(rmap);
+     }
 }
 
 __evas_x11_is_file(char *file)
@@ -889,9 +938,145 @@ __evas_x11_text_cache_get_size(Display *disp)
 void
 __evas_x11_text_draw(Evas_X11_Font *fn, Display *disp, Imlib_Image dstim, Window win, 
 		       int win_w, int win_h, int x, int y, char *text, 
-		       int r, int g, int b, int a)
+		       int cr, int cg, int cb, int ca)
 {
-   /* FIXME */
+   Evas_List l;
+   DATA32 pixel;
+   int w, h;
+
+   if (__evas_clip)
+     {
+	cr = (cr * __evas_clip_r) / 255;
+	cg = (cg * __evas_clip_g) / 255;
+	cb = (cb * __evas_clip_b) / 255;                               
+	ca = (ca * __evas_clip_a) / 255;
+     }
+   if (ca < 128) return;
+   imlib_context_set_display(disp);
+   imlib_context_set_visual(__evas_visual);
+   imlib_context_set_colormap(__evas_cmap);
+   imlib_context_set_drawable(win);
+   imlib_context_set_color(cr, cg, cb, ca);
+   pixel = imlib_render_get_pixel_color();
+   imlib_context_set_dither_mask(0);
+   imlib_context_set_anti_alias(0);
+   imlib_context_set_dither(0);
+   imlib_context_set_blend(0);
+   imlib_context_set_angle(0.0);
+   imlib_context_set_operation(IMLIB_OP_COPY);
+   imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
+   imlib_context_set_color_modifier(NULL);
+   __evas_x11_text_get_size(fn, text, &w, &h);
+   fn->disp = disp;
+   for(l = drawable_list; l; l = l->next)
+     {
+	Evas_X11_Drawable *dr;
+	
+	dr = l->data;
+	
+	if ((dr->win == win) && (dr->disp == disp))
+	  {
+	     Evas_List ll;
+	     
+	     for (ll = dr->tmp_images; ll; ll = ll->next)
+	       {
+		  Evas_X11_Update *up;
+
+		  up = ll->data;
+		  
+		  /* if image intersects image update - render */
+		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
+				      x, y, w, h))
+		    {
+		       if (!up->p)
+			 up->p = XCreatePixmap(disp, win, up->w, up->h, dr->depth);
+		       XSetForeground(disp, dr->gc, pixel);
+		       XSetClipMask(disp, dr->gc, None);
+		       XSetClipOrigin(disp, dr->gc, 0, 0);
+		       XSetFillStyle(disp, dr->gc, FillStippled);
+			 {
+			    int xx, yy, ww, hh;
+			    XRectangle rect;
+			    
+			    xx = up->x;
+			    yy = up->y;
+			    ww = up->w;
+			    hh = up->h;
+			    
+			    if (__evas_clip)
+			      {
+				 CLIP_TO(xx, yy, ww, hh,
+					 __evas_clip_x, __evas_clip_y,
+					 __evas_clip_w, __evas_clip_h);
+			      }
+			    rect.x = xx - up->x;
+			    rect.y = yy - up->y;
+			    rect.width = ww;
+			    rect.height = hh;
+			    XSetClipRectangles(disp, dr->gc, 0, 0, 
+					       &rect, 1, Unsorted);
+			      {
+				 int i;
+				 int x_offset, y_offset;
+				 int glyph, rows;
+				 Evas_X11_Glyph *g;
+				 
+				 if (text[0] == 0) return;
+				 glyph = ((unsigned char *)text)[0];
+				 g = __evas_x11_text_font_get_glyph(fn, glyph);
+				 if (!TT_VALID(g->glyph)) continue;
+				 x_offset = 0;
+				 if (g) x_offset = - (g->metrics.bearingX / 64);
+				 y_offset = -(fn->max_descent / 64);
+				 rows = h;
+				 for (i = 0; text[i]; i++)
+				   {
+				      int xmin, ymin, xmax, ymax, off, adj;
+				      
+				      /* for internationalization this here wouldnt just use */
+				      /* the char value of the text[i] but translate form utf-8 */
+				      /* or whetever and incriment i appropriately and set g to */
+				      /* the glyph index */
+				      glyph = ((unsigned char *)text)[i];
+				      g = __evas_x11_text_font_get_glyph(fn, glyph);
+				      __evas_x11_text_font_render_glyph(win, fn, g);
+				      if (!g) continue;
+				      if (!TT_VALID(g->glyph)) continue;
+				      
+				      xmin = g->metrics.bbox.xMin & -64;
+				      ymin = g->metrics.bbox.yMin & -64;
+				      xmax = (g->metrics.bbox.xMax + 63) & -64;
+				      ymax = (g->metrics.bbox.yMax + 63) & -64;
+				      
+				      xmin = (xmin >> 6) + x_offset;
+				      ymin = (ymin >> 6) + y_offset;
+				      xmax = (xmax >> 6) + x_offset;
+				      ymax = (ymax >> 6) + y_offset;
+				      
+				      if (ymin < 0) off = 0;
+				      else off = rows - ymin - 1;
+				      adj = (rows - ymax) -
+					((fn->max_ascent - fn->max_descent) >> 6);
+				      if (g->pmap)
+					{
+					   XSetStipple(disp, dr->gc, g->pmap);
+					   XSetTSOrigin(disp, dr->gc,
+							x + xmin - up->x, 
+							y + ymin + off + adj - up->y);
+					   XFillRectangle(disp, up->p, dr->gc, 
+							  x + xmin - up->x, 
+							  y + ymin + off + adj - up->y, 
+							  xmax - xmin + 1, 
+							  ymax - ymin + 1);
+					   x_offset += g->metrics.advance / 64;
+					}
+				   }
+			      }
+			 }
+		    }
+	       }
+	  }
+     }
 }
 
 void
