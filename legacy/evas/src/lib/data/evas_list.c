@@ -569,6 +569,7 @@ evas_list_prev(Evas_List *list)
  * It is equivalent to list->data.
  * 
  * Example:
+ * @code
  * extern Evas_List *list;
  * Evas_List *l;
  * 
@@ -725,7 +726,7 @@ evas_list_reverse(Evas_List *list)
  * This function returns the state of the memory allocation flag. This flag is
  * set if memory allocations during evas_list_append(), evas_list_prepend(),
  * evas_list_append_relative(), or evas_list_prepend_relative() fail. If they
- * do fail, 1 will be returned, otherwise 0 will be returned. the flag will
+ * do fail, 1 will be returned, otherwise 0 will be returned. The flag will
  * remain in its current state until the next call that requires allocation
  * is called, and is then reset.
  * 
