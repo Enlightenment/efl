@@ -47,14 +47,14 @@ ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_
    unsigned long num_ret = 0, bytes = 0, i;
    unsigned char *prop_ret = NULL;
    
-   if (!win)
-      win = DefaultRootWindow(_ecore_x_disp);
+   if (!win) win = DefaultRootWindow(_ecore_x_disp);
 
    ret = XGetWindowProperty(_ecore_x_disp, win, type, 0, LONG_MAX, False, format, &type_ret, &size_ret, &num_ret, &bytes, &prop_ret);
-   if (ret != Success) {
-	   *data = NULL;
-	   return 0;
-   }
+   if (ret != Success)
+     {
+	*data = NULL;
+	return 0;
+     }
 
    if (size != size_ret || !num_ret) {
       XFree(prop_ret);
@@ -291,6 +291,28 @@ ecore_x_window_prop_client_machine_get(Ecore_X_Window win)
 
    name = ecore_x_window_prop_string_get(win, _ecore_x_atom_wm_client_machine);
    return name;
+}
+
+/**
+ * Get a windows process id
+ * @param win The window
+ * @return The windows process id
+ * 
+ * Return the process id of a window.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+pid_t
+ecore_x_window_prop_pid_get(Ecore_X_Window win)
+{
+   int   num = 0;
+   long *tmp;
+   pid_t pid = 0;
+
+   ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_pid, XA_CARDINAL,
+		                    32, &tmp, &num);
+   if (num && tmp) pid = (pid_t)(*tmp);
+   free(tmp);
+   return pid;
 }
 
 /**

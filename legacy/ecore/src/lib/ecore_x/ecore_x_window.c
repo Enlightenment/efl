@@ -17,7 +17,6 @@
 Ecore_X_Window
 ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h)
 {
-   char                 buf[MAXHOSTNAMELEN];
    Window               win;
    XSetWindowAttributes attr;
    
@@ -57,13 +56,7 @@ ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h)
 		       CWEventMask,
 		       &attr);
 
-   if (parent == DefaultRootWindow(_ecore_x_disp))
-     {
-	gethostname(buf, MAXHOSTNAMELEN);
-	buf[MAXHOSTNAMELEN - 1] = '\0';
-	ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_client_machine,
-				       (char *)buf);
-     }
+   if (parent == DefaultRootWindow(_ecore_x_disp)) ecore_x_window_defaults_set(win);
    return win;
 }
 
@@ -82,7 +75,6 @@ ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h)
 Ecore_X_Window
 ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h)
 {
-   char                 buf[MAXHOSTNAMELEN];
    Window               win;
    XSetWindowAttributes attr;
    
@@ -122,13 +114,7 @@ ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h)
 		       CWEventMask,
 		       &attr);
 
-   if (parent == DefaultRootWindow(_ecore_x_disp))
-     {
-	gethostname(buf, MAXHOSTNAMELEN);
-	buf[MAXHOSTNAMELEN - 1] = '\0';
-	ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_client_machine,
-				       (char *)buf);
-     }
+   if (parent == DefaultRootWindow(_ecore_x_disp)) ecore_x_window_defaults_set(win);
    return win;
 }
 
@@ -147,7 +133,6 @@ ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h)
 Ecore_X_Window
 ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h)
 {
-   char                 buf[MAXHOSTNAMELEN];
    Window               win;
    XSetWindowAttributes attr;
    
@@ -179,12 +164,37 @@ ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h)
 
    if (parent == DefaultRootWindow(_ecore_x_disp))
      {
-	gethostname(buf, MAXHOSTNAMELEN);
-	buf[MAXHOSTNAMELEN - 1] = '\0';
-	ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_client_machine,
-				       (char *)buf);
      }
    return win;
+}
+
+/**
+ * Set defaults for a window
+ * @param win The window to set defaults
+ *
+ * Set defaults for a window
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_x_window_defaults_set(Ecore_X_Window win)
+{
+   long pid;
+   char buf[MAXHOSTNAMELEN];
+
+   /*
+    * Set WM_CLIENT_MACHINE.
+    */
+   gethostname(buf, MAXHOSTNAMELEN);
+   buf[MAXHOSTNAMELEN - 1] = '\0';
+   ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_client_machine,
+				  (char *)buf);
+
+   /*
+    * Set _NET_WM_PID
+    */
+   pid = getpid();
+   ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_pid, XA_CARDINAL,
+		                    32, &pid, 1);
 }
 
 /**

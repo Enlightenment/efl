@@ -8,6 +8,7 @@ static void _ecore_x_event_free_window_prop_visible_title_change(void *data, voi
 static void _ecore_x_event_free_window_prop_icon_name_change(void *data, void *ev);
 static void _ecore_x_event_free_window_prop_visible_icon_name_change(void *data, void *ev);
 static void _ecore_x_event_free_window_prop_client_machine_change(void *data, void *ev);
+static void _ecore_x_event_free_window_prop_pid_change(void *data, void *ev);
 static void _ecore_x_event_free_key_down(void *data, void *ev);
 static void _ecore_x_event_free_key_up(void *data, void *ev);
 static void _ecore_x_event_free_generic(void *data, void *ev);
@@ -70,6 +71,15 @@ _ecore_x_event_free_window_prop_client_machine_change(void *data, void *ev)
    
    e = ev;
    if (e->name) free(e->name);
+   free(e);
+}
+
+static void
+_ecore_x_event_free_window_prop_pid_change(void *data, void *ev)
+{
+   Ecore_X_Event_Window_Prop_Client_Machine_Change *e;
+   
+   e = ev;
    free(e);
 }
 
@@ -791,6 +801,15 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
 	if (!e) return;
 	e->name = ecore_x_window_prop_client_machine_get(xevent->xproperty.window);
 	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_CLIENT_MACHINE_CHANGE, e, _ecore_x_event_free_window_prop_client_machine_change, NULL);
+     }
+   else if (xevent->xproperty.atom == _ecore_x_atom_net_wm_pid)
+     {
+	Ecore_X_Event_Window_Prop_Pid_Change *e;
+	
+	e = calloc(1, sizeof(Ecore_X_Event_Window_Prop_Pid_Change));
+	if (!e) return;
+	e->pid = ecore_x_window_prop_pid_get(xevent->xproperty.window);
+	ecore_event_add(ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE, e, _ecore_x_event_free_window_prop_pid_change, NULL);
      }
    else 
    {

@@ -469,6 +469,25 @@ handler_x_window_prop_client_machine_change(void *data, int type, void *event)
 }
 
 int
+handler_x_window_prop_pid_change(void *data, int type, void *event)
+{
+   Ecore_X_Event_Window_Prop_Pid_Change *e;
+   
+   e = event;
+   if (e->pid)
+     {
+        printf("Pid change to \"%d\" ", e->pid);
+	if (e->pid == getpid())
+		printf("correct.\n");
+	else
+		printf("INCORRECT!\n");
+     }
+   else
+     printf("Pid deleted\n");
+   return 1;
+}
+
+int
 handler_x_window_prop_name_class_change(void *data, int type, void *event)
 {
    Ecore_X_Event_Window_Prop_Name_Class_Change *e;
@@ -524,6 +543,7 @@ setup_ecore_x_test(void)
         printf("Client machine: %s\n", tmp);
         free(tmp);
      }
+   printf("Pid: %d\n", ecore_x_window_prop_pid_get(win));
    ecore_x_window_prop_name_class_set(win, "ecore_test", "main");
    ecore_x_window_prop_protocol_set(win, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 1);
    ecore_x_window_show(win);
@@ -547,6 +567,8 @@ setup_ecore_x_test(void)
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_ICON_NAME_CHANGE, handler_x_window_prop_icon_name_change, NULL);
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_VISIBLE_ICON_NAME_CHANGE, handler_x_window_prop_visible_icon_name_change, NULL);
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_NAME_CLASS_CHANGE, handler_x_window_prop_name_class_change, NULL);
+   ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_CLIENT_MACHINE_CHANGE, handler_x_window_prop_client_machine_change, NULL);
+   ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE, handler_x_window_prop_pid_change, NULL);
 }
 #endif
 
