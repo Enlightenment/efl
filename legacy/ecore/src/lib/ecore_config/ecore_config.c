@@ -1472,11 +1472,17 @@ ecore_config_init(char *name)
    __ecore_config_bundle_local->data = list;
 
    path = ecore_config_theme_default_path_get();
+	 ecore_config_string_default("/e/themes/search_path", path);
    if (path)
+      free(path);
+
+   list = ecore_config_get("/e/themes/search_path");
+   if (list)
      {
-	ecore_config_string_default("/e/themes/search_path", path);
-	free(path);
+	list->flags |= PF_SYSTEM;
+	list->flags &= ~PF_MODIFIED;
      }
+
    return _ecore_config_system_load();
 }
 

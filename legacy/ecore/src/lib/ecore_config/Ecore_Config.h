@@ -244,6 +244,8 @@ extern              "C"
    /* FIXME: this should only be included if evas is present */
    EAPI int                 ecore_config_evas_font_path_apply(Evas * evas);
    EAPI char               *ecore_config_theme_search_path_get(void);
+   EAPI int                 ecore_config_theme_search_path_append(char *append);
+     
    EAPI char               *ecore_config_theme_default_path_get(void);
    EAPI char               *ecore_config_theme_with_path_from_name_get(char *name);
    EAPI char               *ecore_config_theme_with_path_get(const char *key);

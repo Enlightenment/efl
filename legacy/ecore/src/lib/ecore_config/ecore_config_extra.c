@@ -440,6 +440,7 @@ ecore_config_theme_search_path_append(char *path)
 {
    char               *search_path, *loc, *new_search_path;
    int                 len, search_len;
+   Ecore_Config_Prop  *prop;
 
    if (!path)
      return ECORE_CONFIG_ERR_NODATA;
@@ -458,6 +459,10 @@ ecore_config_theme_search_path_append(char *path)
 	strncat(new_search_path, path, len);
 
 	ecore_config_string_set("/e/themes/search_path", new_search_path);
+  prop = ecore_config_get("/e/themes/search_path");
+  if (prop)
+     prop->flags &= ~PF_MODIFIED;
+
 	free(new_search_path);
 
 	return ECORE_CONFIG_ERR_SUCC;
