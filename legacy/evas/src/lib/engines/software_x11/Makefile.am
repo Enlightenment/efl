@@ -21,7 +21,7 @@ evas_x_buffer.c \
 evas_x_color.c \
 evas_x_main.c
 
-libevas_engine_software_x11_la_LIBADD       = @x_libs@ $LDFLAGS
+libevas_engine_software_x11_la_LIBADD       = @x_libs@
 
 libevas_engine_software_x11_la_DEPENDENCIES = \
 $(top_builddir)/config.h

@@ -16,5 +16,4 @@ evas_hash.c \
 evas_list.c \
 evas_object_list.c
 
-libevas_data_la_LIBADD       = $LDFLAGS
 libevas_data_la_DEPENDENCIES = $(top_builddir)/config.h

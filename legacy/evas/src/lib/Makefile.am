@@ -111,13 +111,13 @@ $(ENGINE_CAIRO_X11_INC)
 libevas_la_SOURCES  = \
 main.c
 
-libevas_la_LIBADD       = $LDFLAGS \
+libevas_la_LIBADD       = \
                           canvas/libevas_canvas.la \
 			  data/libevas_data.la \
 			  file/libevas_file.la \
 			  imaging/libevas_imaging.la \
-			  -lm \
 			  engines/common/libevas_engine_common.la \
+			  -lm \
 			  @freetype_libs@ \
 			  @png_libs@ @jpeg_libs@ @eet_libs@ @edb_libs@ \
 			  $(ENGINE_SOFTWARE_X11) \
@@ -148,4 +148,4 @@ libevas_la_DEPENDENCIES = \
 			  $(ENGINE_CAIRO_COMMON) \
 			  $(ENGINE_CAIRO_X11)
 
-libevas_la_LDFLAGS      = -version-info 1:0:0
+libevas_la_LDFLAGS      = $(LDFLAGS) -version-info 1:0:0

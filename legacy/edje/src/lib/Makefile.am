@@ -16,8 +16,8 @@ INCLUDES	     = \
 @edje_def@
 
 lib_LTLIBRARIES      = \
-libedje.la \
-libedje_edit.la
+libedje.la
+#libedje_edit.la
 
 include_HEADERS      =  \
 Edje.h \
@@ -41,14 +41,14 @@ edje_container.h \
 edje_message_queue.c \
 edje_private.h
 
-libedje_la_LIBADD       = $LDFLAGS -lm @EVAS_LIBS@ @ECORE_LIBS@ @EET_LIBS@ @EMBRYO_LIBS@ @fnmatch_libs@
+libedje_la_LIBADD       = -lm @EVAS_LIBS@ @ECORE_LIBS@ @EET_LIBS@ @EMBRYO_LIBS@ @fnmatch_libs@
 libedje_la_CPPFLAGS     =
 libedje_la_DEPENDENCIES = $(top_builddir)/config.h
-libedje_la_LDFLAGS      = -version-info 5:0:5
+libedje_la_LDFLAGS      = $(LDFLAGS) -version-info 5:0:5
 
-libedje_edit_la_SOURCES  = \
-edje_edit.c
-
-libedje_edit_la_LIBADD       = $LDFLAGS -lm @EVAS_LIBS@ @ECORE_LIBS@ @EET_LIBS@ @EMBRYO_LIBS@ $(top_builddir)/src/lib/libedje.la
-libedje_edit_la_DEPENDENCIES = $(top_builddir)/config.h libedje.la
-libedje_edit_la_LDFLAGS      = -version-info 5:0:5
+#libedje_edit_la_SOURCES  = \
+#edje_edit.c
+#
+#libedje_edit_la_LIBADD       = -lm @EVAS_LIBS@ @ECORE_LIBS@ @EET_LIBS@ @EMBRYO_LIBS@ $(top_builddir)/src/lib/libedje.la
+#libedje_edit_la_DEPENDENCIES = $(top_builddir)/config.h libedje.la
+#libedje_edit_la_LDFLAGS      = $(LDFLAGS) -version-info 5:0:5

@@ -37,5 +37,4 @@ evas_render.c \
 evas_smart.c \
 evas_stack.c
 
-libevas_canvas_la_LIBADD       = $LDFLAGS
 libevas_canvas_la_DEPENDENCIES = $(top_builddir)/config.h

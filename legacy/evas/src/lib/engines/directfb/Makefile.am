@@ -19,7 +19,7 @@ evas_engine_dfb_image_objects.c \
 evas_engine_dfb_image_objects.h \
 evas_engine_dfb.h
 
-libevas_engine_directfb_la_LIBADD       = $LDFLAGS @DIRECTFB_LIBS@
+libevas_engine_directfb_la_LIBADD       = @DIRECTFB_LIBS@
 
 libevas_engine_directfb_la_DEPENDENCIES = \
 $(top_builddir)/config.h

@@ -21,8 +21,6 @@ evas_engine.c \
 evas_fb_main.c \
 evas_outbuf.c
 
-libevas_engine_fb_la_LIBADD       = $LDFLAGS
-
 libevas_engine_fb_la_DEPENDENCIES = \
 $(top_builddir)/config.h
 
