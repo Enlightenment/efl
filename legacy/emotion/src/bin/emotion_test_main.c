@@ -132,6 +132,13 @@ static int
 main_signal_exit(void *data, int ev_type, void *ev)
 {
    ecore_main_loop_quit();
+   while (video_objs)
+     {
+	printf("del obj!\n");
+	evas_object_del(video_objs->data);
+	video_objs = evas_list_remove_list(video_objs, video_objs);
+	printf("done\n");
+     }
    return 1;
 }
 
@@ -331,6 +338,17 @@ bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	  ecore_evas_borderless_set(ecore_evas, 1);
 	else
 	  ecore_evas_borderless_set(ecore_evas, 0);
+     }
+   else if (!strcmp(ev->keyname, "q"))
+     {
+	ecore_main_loop_quit();
+	while (video_objs)
+	  {
+	     printf("del obj!\n");
+	     evas_object_del(video_objs->data);
+	     video_objs = evas_list_remove_list(video_objs, video_objs);
+	     printf("done\n");
+	  }
      }
    else
      {

@@ -338,19 +338,29 @@ em_file_close(void *ef)
    pthread_cond_broadcast(&(ev->get_pos_len_cond));
    while (ev->seek_to);
    while (ev->get_poslen);
+   printf("EX pause...\n");
+//   xine_set_param(ev->stream, XINE_PARAM_SPEED, XINE_SPEED_PAUSE);
+   printf("EX stop\n");
+   xine_stop(ev->stream);
+   printf("EX close\n");
+   xine_close(ev->stream);
+   printf("EX dispose\n");
+   xine_dispose(ev->stream);
+   printf("EX dispose evq\n");
+   xine_event_dispose_queue(ev->queue);
+   printf("EX close video drv\n");
+   if (ev->video) xine_close_video_driver(decoder, ev->video);
+   printf("EX close audio drv\n");
+   if (ev->audio) xine_close_audio_driver(decoder, ev->audio);
+   printf("EX del timer\n");
+   if (ev->timer) ecore_timer_del(ev->timer);
+   printf("EX del fds\n");
    ecore_main_fd_handler_del(ev->fd_handler);
    close(ev->fd_write);
    close(ev->fd_read);
    ecore_main_fd_handler_del(ev->fd_ev_handler);
    close(ev->fd_ev_write);
    close(ev->fd_ev_read);
-   xine_stop(ev->stream);
-   xine_close(ev->stream);
-   xine_dispose(ev->stream);
-   xine_event_dispose_queue(ev->queue);
-   if (ev->video) xine_close_video_driver(decoder, ev->video);
-   if (ev->audio) xine_close_audio_driver(decoder, ev->audio);
-   if (ev->timer) ecore_timer_del(ev->timer);
    free(ev);
 }
 
