@@ -62,6 +62,7 @@ struct _Evas
       Visual       *visual;
       Colormap      colormap;
       int           screen;
+      int           colors;
       Imlib_Image   image;
       
       int           drawable_width, drawable_height;
@@ -252,6 +253,7 @@ void      evas_get_viewport(Evas e, double *x, double *y, double *w, double *h);
 /* the output settings */
 void evas_set_output(Evas e, Display *disp, Drawable d, Visual *v, Colormap c);
 void evas_set_output_image(Evas e, Imlib_Image image);
+void evas_set_output_colors(Evas e, int colors);
 void evas_set_output_size(Evas e, int w, int h);
 void evas_set_output_viewport(Evas e, double x, double y, double w, double h);
 void evas_set_output_method(Evas e, Evas_Render_Method method);

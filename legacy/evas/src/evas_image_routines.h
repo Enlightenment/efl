@@ -100,7 +100,7 @@ void                 __evas_image_gradient_draw(Evas_Image_Graident *gr, Display
 /***********/
 /* drawing */
 /***********/
-void         __evas_image_init(Display *disp, int screen);
+void         __evas_image_init(Display *disp, int screen, int colors);
 int          __evas_image_capable(Display *disp);
 void         __evas_image_flush_draw(Display *disp, Imlib_Image dstim, Window win);
 void         __evas_image_sync(Display *disp);

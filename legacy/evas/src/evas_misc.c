@@ -18,7 +18,8 @@ evas_new(void)
    e->current.viewport.y = 0.0;
    e->current.viewport.w = 0.0;
    e->current.viewport.h = 0.0;
-   e->current.render_method = RENDER_METHOD_3D_HARDWARE;
+   e->current.render_method = RENDER_METHOD_ALPHA_SOFTWARE;
+   e->current.colors = 128;
    return e;
 }
 

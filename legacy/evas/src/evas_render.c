@@ -86,7 +86,7 @@ evas_render(Evas e)
    void (*func_image_draw) (void *im, Display *disp, Imlib_Image dstim, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int cr, int cg, int cb, int ca);
    void (*func_image_free) (void *im);   
    void (*func_flush_draw) (Display *disp, Imlib_Image dstim, Window w);
-   void (*func_init) (Display *disp, int screen);
+   void (*func_init) (Display *disp, int screen, int colors);
    int (*func_image_get_width) (void *im);
    int (*func_image_get_height) (void *im);
    void * (*func_text_font_new) (Display *disp, char *font, int size);
@@ -327,7 +327,7 @@ evas_render(Evas e)
 	evas_list_free(delete_objects);
      }
    
-   func_init(e->current.display, e->current.screen);
+   func_init(e->current.display, e->current.screen, e->current.colors);
    if (e->updates)
      {
 	up = imlib_updates_merge_for_rendering(e->updates, 
@@ -742,6 +742,13 @@ evas_set_output_image(Evas e, Imlib_Image image)
 {
    e->current.image = image;
    e->changed = 1;   
+}
+
+void
+evas_set_output_colors(Evas e, int colors)
+{
+   e->current.colors = colors;
+   e->changed = 1;
 }
 
 void

@@ -196,7 +196,7 @@ void              __evas_gl_gradient_draw(Evas_GL_Graident *gr, Display *disp, I
 /***********/
 /* drawing */
 /***********/
-void         __evas_gl_init(Display *disp, int screen);
+void         __evas_gl_init(Display *disp, int screen, int colors);
 int          __evas_gl_capable(Display *disp);
 void         __evas_gl_flush_draw(Display *disp, Imlib_Image dstim, Window win);
 void         __evas_gl_sync(Display *disp);

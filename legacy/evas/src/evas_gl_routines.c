@@ -2176,7 +2176,7 @@ __evas_gl_capable(Display *disp)
    if (__evas_gl_cx) return 1;
    if (glXQueryExtension(disp, &eb, &evb))
      {
-	__evas_gl_init(disp, 0);
+	__evas_gl_init(disp, 0, 256);
 	if (__evas_gl_cx) return 1;
 	return 0;
      }
@@ -2219,7 +2219,7 @@ __evas_gl_get_colormap(Display *disp, int screen)
 }
 
 void
-__evas_gl_init(Display *disp, int screen)
+__evas_gl_init(Display *disp, int screen, int colors)
 {
    if (__evas_gl_cx) return;
    
