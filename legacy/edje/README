@@ -2,3 +2,100 @@ Edje 0.0.1
 
 A graphical layout and animation library for animated resizable, compressed and
 scalable themes.
+
+Quick start-up guide:
+
+1. You need eet from the HEAD cvs branch (must be up-to-date)
+
+  cvs co e17/libs/eet
+  cd e17/libs/eet
+  ./autogen.sh
+  ./configure
+  make
+  sudo make install
+  cd
+
+2. You need evas from the HEAD branch built with eet loader support.
+
+  cvs co e17/libs/evas
+  cd e17/libs/evas
+  ./autogen.sh
+  ./configure \
+  --enable-software-x11 \
+  --enable-image-loader-png \
+  --enable-image-loader-jpeg \
+  --enable-image-loader-eet \
+  --enable-cpu-c \
+  --enable-cpu-mmx \
+  --enable-cpu-p2-only \
+  --enable-scale-smooth \
+  --enable-scale-sample \
+  --enable-convert-8-rgb-332 \
+  --enable-convert-8-rgb-666 \
+  --enable-convert-8-rgb-232 \
+  --enable-convert-8-rgb-222 \
+  --enable-convert-8-rgb-221 \
+  --enable-convert-8-rgb-121 \
+  --enable-convert-8-rgb-111 \
+  --enable-convert-16-rgb-565 \
+  --enable-convert-16-rgb-555 \
+  --enable-convert-16-rgb-rot-0 \
+  --enable-convert-16-rgb-rot-90 \
+  --enable-convert-16-rgb-rot-270 \
+  --enable-convert-32-rgb-8888 \
+  --enable-convert-32-rgbx-8888 \
+  --enable-convert-32-bgr-8888 \
+  --enable-convert-32-bgrx-8888 \
+  --enable-convert-32-rgb-rot-0 \
+  --enable-convert-32-rgb-rot-90 \
+  --enable-convert-32-rgb-rot-270
+  make
+  sudo make install
+  cd
+  
+3. You need ecore from the SPLIT cvs branch
+
+  cvs co -r SPLIT e17/libs/ecore
+  cd e17/libs/ecore
+  ./autogen.sh
+  ./configure \
+  --enable-ecore-x \
+  --enable-ecore-evas \
+  --enable-ecore-job \
+  --enable-ecore-con \
+  --enable-ecore-ipc
+  make
+  sudo make install
+  cd
+
+4. You need imlib2 installed. any reelease from 1.0.0 on will do.
+5. You already have edje. now build it:
+
+   ./autogen.sh
+   make
+   sudo make install
+
+You now want to go test it out. first you'll need to make an edje .eet file.
+   
+   cd data
+   ./e_logo.sh
+   
+Now you can view the edje you just built:
+   
+   edje ./e_logo.eet test
+   
+You can view multilpe files at once with the edje test program:
+   
+   edje ./e_logo.eet test ./e_logo.eet test ./e_logo.eet test
+   
+to view the same one 3 times.
+   
+You can read the source fuile that builds the edje .eet file by looking at:
+
+   data/src/e_logo.edc
+
+Another test file is also there:
+
+   data/src/test.edc
+   
+The test file doesn't build anything useful at the moment.
