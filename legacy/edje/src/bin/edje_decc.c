@@ -24,6 +24,7 @@ int        e_file_is_dir(char *file);
 int        e_file_mkdir(char *dir);
 int        e_file_mkpath(char *path);
 static int compiler_cmd_is_sane();
+static int root_filename_is_sane();
 
 static void
 main_help(void)
@@ -78,9 +79,15 @@ decomp(void)
      }
    
    srcfiles = source_load(ef);
-   if (!srcfiles)
+   if (!srcfiles || !srcfiles->list)
      {
 	printf("ERROR: %s has no decompile information\n", file_in);
+	eet_close(ef);
+	return 0;
+     }
+   if (!srcfiles->list->data || !root_filename_is_sane())
+     {
+	printf("ERROR: Invalid root filename: '%s'\n", (char *) srcfiles->list->data);
 	eet_close(ef);
 	return 0;
      }
@@ -264,6 +271,7 @@ output(void)
      {
 	char out[4096];
 	FILE *f;
+	SrcFile *sf = srcfiles->list->data;
 	
 	snprintf(out, sizeof(out), "%s/build.sh", outdir);
 	printf("Output Build Script: %s\n", out);
@@ -274,7 +282,7 @@ output(void)
 	  }
 	f = fopen(out, "w");
 	fprintf(f, "#!/bin/sh\n");
-	fprintf(f, "%s $@ -id . -fd . main_edje_source.edc -o %s.eet\n", edje_file->compiler, outdir);
+	fprintf(f, "%s $@ -id . -fd . %s -o %s.eet\n", edje_file->compiler, sf->name, outdir);
 	fclose(f);
 
 #ifndef WIN32
@@ -356,5 +364,33 @@ compiler_cmd_is_sane()
 	  }
      }
 
+   return 1;
+}
+
+static int
+root_filename_is_sane()
+{
+   SrcFile *sf = srcfiles->list->data;
+   char *f = sf->name, *ptr;
+
+   if (!f || !*f)
+     {
+	return 0;
+     }
+
+   for (ptr = f; ptr && *ptr; ptr++)
+     {
+	/* only allow [a-z][A-Z][0-9]_-./ */
+	switch (*ptr)
+	  {
+	   case '_': case '-':  case '.': case '/':
+	      break;
+	   default:
+	      if (!isalnum(*ptr))
+		{
+		   return 0;
+		}
+	  }
+     }
    return 1;
 }

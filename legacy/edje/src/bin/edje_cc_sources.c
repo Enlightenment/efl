@@ -184,7 +184,15 @@ source_fetch_file(char *fil, char *filname)
 void
 source_fetch(void)
 {
-   source_fetch_file(file_in, "main_edje_source.edc");
+   char buf[PATH_MAX] = {0}, *ptr;
+
+   ptr = strrchr(file_in, '/');
+   if (ptr)
+     {
+	snprintf(buf, sizeof (buf), "%s", ptr + 1);
+     }
+
+   source_fetch_file(file_in, buf[0] ? buf : file_in);
 }
 
 int
