@@ -52,17 +52,9 @@ evas_engine_directfb_image_load(void *data, char *file, char *key, int *error)
      }
 
    /* Image is not in cache or not already used -> create it */
+   provider = NULL;
    re->dfb->CreateImageProvider(re->dfb, file, &provider);
    if (!provider) return NULL;
-   /* Ok DirectFB you have a BUG with loading... "" files. this is a */
-   /* work-around to double-check in case DirectFB screws up.. but I need to */
-   /* fix this in DirectFB anyway. */
-   if ((!provider->GetSurfaceDescription) ||
-       (!provider->GetImageDescription))
-     {
-	provider->Release(provider);
-	return NULL;
-     }
    provider->GetSurfaceDescription(provider, &dsc);
    provider->GetImageDescription(provider, &img_desc);
 
