@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3
+ */
+
 #include "Ecore.h"
 #include "config.h"
 #include "ecore_private.h"
@@ -730,6 +734,10 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler)
 }
 
 #if USE_OPENSSL
+/* Tries to connect an Ecore_Con_Server to an SSL host.
+ * Returns 1 on success, -1 on fatal errors and 0 if the caller
+ * should try again later.
+ */
 static int
 svr_try_connect_ssl(Ecore_Con_Server *svr)
 {
@@ -742,10 +750,35 @@ svr_try_connect_ssl(Ecore_Con_Server *svr)
    if (ssl_err == SSL_ERROR_NONE) return 1;
    if (ssl_err == SSL_ERROR_WANT_READ)       flag = ECORE_FD_READ;
    else if (ssl_err == SSL_ERROR_WANT_WRITE) flag = ECORE_FD_WRITE;
+   else return -1;
    if (flag) ecore_main_fd_handler_active_set(svr->fd_handler, flag);
    return 0;
 }
 #endif
+
+static void
+kill_server(Ecore_Con_Server *svr)
+{
+   Ecore_Con_Event_Server_Del *e;
+
+   e = calloc(1, sizeof(Ecore_Con_Event_Server_Del));
+   if (e)
+   {
+      e->server = svr;
+      ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e,
+	    _ecore_con_event_server_del_free, NULL);
+   }
+
+   svr->dead = 1;
+   ecore_main_fd_handler_del(svr->fd_handler);
+   svr->fd_handler = NULL;
+
+   if (svr->read_buf)
+   {
+      free(svr->read_buf);
+      svr->read_buf = NULL;
+   }
+}
 
 static int
 svr_try_connect(Ecore_Con_Server *svr)
@@ -758,18 +791,7 @@ svr_try_connect(Ecore_Con_Server *svr)
    if (so_err != 0)
      {
 	/* we lost our server! */
-	Ecore_Con_Event_Server_Del *e;
-	
-	e = calloc(1, sizeof(Ecore_Con_Event_Server_Del));
-	if (e)
-	  {
-	     e->server = svr;
-	     ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e,
-			     _ecore_con_event_server_del_free, NULL);
-	  }
-	svr->dead = 1;
-	ecore_main_fd_handler_del(svr->fd_handler);
-	svr->fd_handler = NULL;
+	kill_server(svr);
      }
    else
      {
@@ -807,11 +829,17 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	int            inbuf_num = 0;
 
 #if USE_OPENSSL
-	if ((svr->ssl) && 
-	    (svr->connecting) && 
-	    (svr_try_connect_ssl(svr)) &&
-	    (!svr_try_connect(svr)))
-	  return 1;
+	if (svr->ssl && svr->connecting) {
+	   switch (svr_try_connect_ssl(svr)) {
+	      case 1:
+		 if (!svr_try_connect(svr))
+		    return 1;
+		 break;
+	      case -1:
+		 kill_server(svr);
+		 return 1;
+	   }
+	}
 #endif
 	
 	for (;;)
@@ -863,23 +891,7 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 		  if (lost_server)
 		    {
 		       /* we lost our server! */
-		       Ecore_Con_Event_Server_Del *e;
-		       
-		       e = calloc(1, sizeof(Ecore_Con_Event_Server_Del));
-		       if (e)
-			 {
-			    e->server = svr;
-			    ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e,
-					    _ecore_con_event_server_del_free, NULL);
-			 }
-		       svr->dead = 1;
-		       ecore_main_fd_handler_del(svr->fd_handler);
-		       svr->fd_handler = NULL;
-		       if (svr->read_buf)
-			 {
-			    free(svr->read_buf);
-			    svr->read_buf = NULL;
-			 }
+		       kill_server(svr);
 		       return 1;
 		    }
 		  break;
@@ -908,25 +920,18 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	       {
 #endif
 		  if (!svr_try_connect(svr))
-		    {
-		       if (svr->read_buf)
-			 {
-			    free(svr->read_buf);
-			    svr->read_buf = NULL;
-			 }
 		       return 1;
-		    }
 #if USE_OPENSSL
 	       }
-	     else if ((svr_try_connect_ssl(svr)) && (!svr_try_connect(svr)))
-	       {
-		  if (svr->read_buf)
-		    {
-		       free(svr->read_buf);
-		       svr->read_buf = NULL;
-		    }
-		  return 1;
-	       }
+	     else
+		switch (svr_try_connect_ssl(svr)) {
+		   case 1:
+		      if (!svr_try_connect(svr))
+			 return 1;
+		   case -1:
+		      kill_server(svr);
+		      return 1;
+		}
 #endif
 	  }
 	_ecore_con_server_flush(svr);
@@ -1052,19 +1057,7 @@ _ecore_con_server_flush(Ecore_Con_Server *svr)
    if (lost_server)
      {
 	/* we lost our server! */
-	Ecore_Con_Event_Server_Del *e;
-	
-	e = calloc(1, sizeof(Ecore_Con_Event_Server_Del));
-	if (e)
-	  {
-	     e->server = svr;
-	     ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e,
-			     _ecore_con_event_server_del_free, NULL);
-	  }
-	
-	svr->dead = 1;
-	ecore_main_fd_handler_del(svr->fd_handler);
-	svr->fd_handler = NULL;
+	kill_server(svr);
 	return;
      }
 
