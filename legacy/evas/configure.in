@@ -29,7 +29,8 @@ AC_ARG_WITH(gl,
         [  --with-gl=DIR           use DIR where opengl was installed (eg /usr/X11R6)],
 	[CPPFLAGS="$CPPFLAGS -I$withval/include"; LDFLAGS="$LDFLAGS -L$withval/lib"
 	 LIBS_GL="-L"$withval"/lib"])
-			
+	 
+	      
 #### Find out about X
 AC_PATH_X
 AC_PATH_XTRA
@@ -141,6 +142,17 @@ if test "x$have_gl" = "xyes"; then
   AC_CHECK_LIB(GLU, gluBuild2DMipmaps, have_glu=yes,[
   ], $gl_ldflags -lGL -lGLU)
   )
+  AC_CHECK_LIB(GLU, gluTessBeginPolygon, ,[
+   echo ""
+   echo "ERROR: evas needs a system with libGLU 1.3"
+   echo "You can obtain it from:"
+   echo "  http://www.mesa3d.org/downloads.html"
+   echo "You will need to obtain the SGI'd libGLU."
+   echo "debian: download the rpm and use alien to convert it"
+   echo ""
+   have_glu = no
+   AC_MSG_ERROR([ERROR: libGLU 1.3 not found.])]; exit, $gl_ldflags -lGL -lGLU)
+
   if test "x$have_glu" = "xyes"; then
     gl_includes=$gl_includes" -I/usr/include -I/usr/local/include"
     gl_libs=$gl_libs" -lGLU"
