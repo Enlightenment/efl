@@ -208,9 +208,15 @@ evas_common_font_load(const char *name, int size)
    
    fn = calloc(1, sizeof(RGBA_Font));   
    if (!fn) return NULL;
-   
+
    fn->src = evas_common_font_source_find(name);
-   if (!fn->src) fn->src = evas_common_font_source_load(name);
+   if (!fn->src)
+     {
+/*	printf("REAL LOAD FILE %s %i\n", name, size);*/
+	fn->src = evas_common_font_source_load(name);
+     }
+/*   else*/
+/*     printf("REAL LOAD SIZE %s %i\n", name, size);*/
 
    if (!fn->src)
      {
@@ -386,11 +392,13 @@ evas_common_font_find(const char *name, int size)
 {
    Evas_Object_List *l;
    
+//   printf("SEARCH!\n");
    for (l = fonts; l; l = l->next)
      {
 	RGBA_Font *fn;
 	
 	fn = (RGBA_Font *)l;
+//	printf("%s == %s, %i == %i\n", name, fn->src->name, size, fn->size);
 	if ((fn->size == size) && (!strcmp(name, fn->src->name)))
 	  {
 	     if (fn->references == 0) evas_common_font_modify_cache_by(fn, -1);

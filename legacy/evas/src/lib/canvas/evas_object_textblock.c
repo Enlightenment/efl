@@ -99,7 +99,7 @@ struct _Evas_Object_Textblock
       unsigned char       dirty : 1;
       Evas_Coord          w, h;
    } native;
-   
+   Evas_List             *font_hold;
    void                  *engine_data;
 };
 
@@ -233,6 +233,7 @@ evas_object_textblock_layout_format_apply(Layout *layout, char *key, char *data)
 		  g = (g << 4) | g;
 		  b = evas_object_textblock_hex_string_get(data[3]);
 		  b = (b << 4) | b;
+		  a = 0xff;
 	       }
 	     else if (strlen(data) == 5) /* #RGBA */
 	       {
@@ -358,6 +359,41 @@ evas_object_textblock_layout_clear(Evas_Object *obj, Layout *layout)
    if (layout->font.source) free(layout->font.source);
    if (layout->font.font) ENFN->font_free(ENDT, layout->font.font);
    memset(layout, 0, sizeof(Layout));
+}
+
+static void
+evas_object_textblock_layout_fonts_hold(Evas_Object *obj)
+{
+   Evas_Object_Textblock *o;
+   Evas_Object_List *l;
+   
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   for (l = (Evas_Object_List *)o->layout_nodes; l; l = l->next)
+     {
+	Layout_Node *lnode;
+	
+	lnode = (Layout_Node *)l;
+	if (lnode->layout.font.font)
+	  {
+	     o->font_hold = evas_list_append(o->font_hold,
+					     lnode->layout.font.font);
+	     lnode->layout.font.font = NULL;
+	  }
+     }
+}
+
+static void
+evas_object_textblock_layout_fonts_hold_clean(Evas_Object *obj)
+{
+   Evas_Object_Textblock *o;
+   
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   
+   while (o->font_hold)
+     {
+	ENFN->font_free(ENDT, o->font_hold->data);
+	o->font_hold = evas_list_remove_list(o->font_hold, o->font_hold);
+     }
 }
 
 static void
@@ -1137,8 +1173,10 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 							   context);
    if (o->changed)
      {
+	evas_object_textblock_layout_fonts_hold(obj);
 	evas_object_textblock_layout_clean(obj);
 	evas_object_textblock_layout(obj);
+	evas_object_textblock_layout_fonts_hold_clean(obj);
 	o->changed = 0;
      }
 /*   
@@ -1153,6 +1191,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
                                                   obj->cur.cache.geometry.w,
                                                   obj->cur.cache.geometry.h);
  */
+#if 1
    for (l = (Evas_Object_List *)o->layout_nodes; l; l = l->next)
      {
 	Layout_Node *lnode;
@@ -1199,6 +1238,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 			       lnode->text);
 	  }
      }
+#endif   
 /*   
    if (o->engine_data)
      {
@@ -1269,8 +1309,10 @@ evas_object_textblock_render_pre(Evas_Object *obj)
 	updates = evas_list_append(updates, r);
 */
 	updates = evas_object_render_pre_prev_cur_add(updates, obj);
+	evas_object_textblock_layout_fonts_hold(obj);
 	evas_object_textblock_layout_clean(obj);
 	evas_object_textblock_layout(obj);
+	evas_object_textblock_layout_fonts_hold_clean(obj);
 	o->changed = 0;
      }
    done:
