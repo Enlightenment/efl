@@ -7,6 +7,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       ltconfig ltmain.sh missing mkinstalldirs \
 		       stamp-h.in \
 		       eet_docs.tar.gz eet.c \
+		       README \
 		       eet.pc \
 		       eet.spec \
 		       eet.oe eet-native.oe \
@@ -17,6 +18,7 @@ bin_SCRIPTS = eet-config
 
 EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN eet.spec eet.c.in gendoc \
              Doxyfile doc eet_docs.tar.gz \
+	     README.in README \
 	     eet.pc.in \
 	     eet.spec.in eet.spec \
 	     eet.oe.in eet.oe eet-native.oe.in eet-native.oe \

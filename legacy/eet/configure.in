@@ -116,6 +116,7 @@ src/Makefile
 src/lib/Makefile
 src/bin/Makefile
 eet-config
+README
 eet.spec
 eet.oe
 eet-native.oe
