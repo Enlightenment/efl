@@ -1,10 +1,3 @@
-This package was debianized by Laurence J. Lane <ljlane@debian.org> on
-Sat, 28 Oct 2000 17:56:46 -0400.
-
-The source code is from the e17/libs/evas module of the enlightenment CVS
-tree. For more information, see:
-
-  http://www.enlightenment.org/cvs.html
 
 Copyright (C) 2000 Carsten Haitzler and various contributors (see AUTHORS)
 

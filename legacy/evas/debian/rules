@@ -1,77 +1,56 @@
 #!/usr/bin/make -f
-# Sample debian/rules that uses debhelper. 
-# GNU copyright 1997 by Joey Hess.
-#
-# This version is for a hypothetical package that builds an
-# architecture-dependant package, as well as an architecture-independent
-# package.
+# Sample debian/rules that uses debhelper.
+# GNU copyright 1997 to 1999 by Joey Hess.
 
-# Uncomment this to turn on verbose mode. 
-#export DH_VERBOSE=1
-
-# This is the debhelper compatability version to use.
 export DH_COMPAT=2
 
-# This has to be exported to make some magic below work.
-export DH_OPTIONS
+pwd:=$(shell pwd)
+cfg:=--prefix=/usr
 
-INSTALL=/usr/bin/install
-package=libevas0
-
-configure: configure-stamp
-configure-stamp:
-	./autogen.sh --prefix=/usr || ./configure --prefix=/usr
-	touch configure-stamp
-
-build: configure build-stamp
+build: build-stamp
 build-stamp:
 	dh_testdir
 
-
-	$(MAKE) 
+	test -x autogen.sh && ./autogen.sh $(cfg) || ./configure $(cfg)
+	
+	$(MAKE)
 
 	touch build-stamp
 
 clean:
 	dh_testdir
-	rm -f build-stamp configure-stamp
+	dh_testroot
+	rm -f build-stamp
 
 	-$(MAKE) distclean
-	-rm -f configure-stamp build-stamp
 
 	dh_clean
 
-install: DH_OPTIONS=
-install: build 
+install: build
 	dh_testdir
 	dh_testroot
 	dh_clean -k
 	dh_installdirs
 
-	$(MAKE) install DESTDIR=$(shell pwd)/debian/$(package)/
-	
-	$(INSTALL) -d debian/$(package)-dev/usr/{lib,bin}
-	mv debian/$(package)/usr/include debian/$(package)-dev/usr
-	mv debian/$(package)/usr/lib/*.{so,la,a} debian/$(package)-dev/usr/lib/
-	mv debian/$(package)/usr/bin/evas-config debian/$(package)-dev/usr/bin/
+	$(MAKE) install DESTDIR=$(pwd)/debian/libevas0
 
-binary-indep:
+	dh_movefiles --source=debian/libevas0
 
-# Build architecture-dependent files here.
-# Pass -a to all debhelper commands in this target to reduce clutter.
-binary-arch: DH_OPTIONS=-a
+binary-indep: build install
+
 binary-arch: build install
-	# Need this version of debhelper for DH_OPTIONS to work.
-	dh_testversion 2 
+	dh_testversion 2.0
 	dh_testdir
 	dh_testroot
-	dh_installdocs AUTHORS README
+	dh_installdocs
 	dh_installchangelogs
+	dh_link
 	dh_strip
 	dh_compress
 	dh_fixperms
-	dh_installdeb
+	dh_suidregister
 	dh_makeshlibs
+	dh_installdeb
 	dh_shlibdeps
 	dh_gencontrol
 	dh_md5sums
