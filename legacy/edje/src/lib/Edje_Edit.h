@@ -140,6 +140,10 @@ Edje_Edit_Image *edje_edit_iamge_get_by_id(int id);
 
 #define EDJE_VAR_MAGIC_BASE 0x12fe84ba
 
+#define EDJE_STATE_PARAM_NONE         0
+#define EDJE_STATE_PARAM_ALIGNMENT    1
+#define EDJE_STATE_PARAM_LAST         2
+
 /*----------*/
 
 struct _Edje_File
@@ -533,7 +537,7 @@ struct _Edje_Real_Part
       Edje_Real_Part        *rel1_to_y;
       Edje_Real_Part        *rel2_to_x;
       Edje_Real_Part        *rel2_to_y;
-   } param1, param2;
+   } param1, param2, custom;
 
    Edje_Real_Part           *confine_to;
    Edje_Real_Part           *clip_to;

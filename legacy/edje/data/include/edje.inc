@@ -120,3 +120,32 @@ enum Msg_Type
 };
 
 native send_message(Msg_Type:type, id, ...);
+
+/**********************/
+/* Custom state calls */
+/**********************/
+
+/* Example:
+ *
+ * Create the custom state for "my_part", based on the
+ * default description of the same part:
+ *
+ * custom_state(PART:"my_part", "default", 0.0);
+ *
+ * Later, use set_state_val() to change the properties of the custom
+ * state:
+ *
+ * set_state_val(PART:"my_part", STATE_ALIGNMENT, 0.5, 0.5);
+ *
+ * get_state_val() works the same way.
+ */
+
+native custom_state(part_id, state[], Float:state_val = 0.0);
+
+enum State_Param
+{
+	STATE_ALIGNMENT = 1
+};
+
+native set_state_val(part_id, State_Param:p, ...);
+native get_state_val(part_id, State_Param:p, ...);

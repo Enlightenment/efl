@@ -58,6 +58,9 @@ _edje_part_description_find(Edje *ed, Edje_Real_Part *rp, char *name,
    if (!strcmp(name, "default") && val == 0.0)
      return ep->default_desc;
 
+   if (!strcmp(name, "custom"))
+     return rp->custom.description;
+
    if (!strcmp(name, "default"))
      {
 	ret = ep->default_desc;

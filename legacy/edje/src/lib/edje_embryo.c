@@ -121,7 +121,11 @@
  * replace_float(id, n, Float:v)
  * Float:fetch_float(id, n)
  *
- * still need to implement this:
+ * custom_state(part_id, state[], Float:state_val = 0.0)
+ * set_state_val(part_id, State_Param:param, ...)
+ * get_state_val(part_id, State_Param:param, ...)
+ *
+ * Supported parameters: align[Float:x, Float:y]
  *
  * ** part_id and program_id need to be able to be "found" from strings
  * 
@@ -139,22 +143,11 @@
  * get_repeat_events(part_id)
  * set_clip(part_id, clip_part_id)
  * get_clip(part_id)
- */
-/* MODIFY STATE VALUES
- * 
- * THIS COPIES THE STATE VALUES OF THE GIVEN STATE/VAL TO CREATE A CUSTOM STATE
- * 
- * custom_state(part_id, state[], Float:state_val)
- * 
- * THESE ALWAYS WORK ON THE CUTSOM STATE ONLY
- * 
- * set_state_val(part_id, Param:param, ...)
- * get_state_val(part_id, Param:param, ...)
- * 
- * FOR THESE PROPERTIES:
- * 
- * visible
- * align[x,y]
+ *
+ *
+ * Need to implement support for the following properties
+ * in get/set_state_val():
+ *
  * min[w,h]
  * max[w,h]
  * step[x,y]
@@ -1418,6 +1411,167 @@ _edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
    return(0);
 }
 
+/* custom_state(part_id, state[], Float:state_val = 0.0) */
+static Embryo_Cell
+_edje_embryo_fn_custom_state(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+   Edje_Real_Part *rp;
+   Edje_Part_Description *parent, *d;
+   Evas_List *l;
+   char *name;
+   float val;
+
+   CHKPARAM(3);
+
+   if (params[1] < 0)
+     return 0;
+
+   if (!(rp = ed->table_parts[params[1] % ed->table_parts_size]))
+     return 0;
+
+   /* check whether this part already has a "custom" state */
+   if (rp->custom.description)
+     return 0;
+
+   GETSTR(name, params[2]);
+   if (!name)
+     return 0;
+
+   val = EMBRYO_CELL_TO_FLOAT(params[3]);
+
+   if (!(parent = _edje_part_description_find(ed, rp, name, val)))
+     return 0;
+
+   /* now create the custom state */
+   if (!(d = calloc(1, sizeof(Edje_Part_Description))))
+     return 0;
+
+   *d = *parent;
+
+   d->state.name = strdup("custom");
+   d->state.value = 0.0;
+
+   /* make sure all the allocated memory is getting copied,
+    * not just referenced
+    */
+   d->image.tween_list = NULL;
+
+   for (l = parent->image.tween_list; l; l = l->next)
+     {
+	Edje_Part_Image_Id *iid = l->data, *iid_new;
+
+	iid_new = calloc(1, sizeof(Edje_Part_Image_Id));
+	iid_new->id = iid->id;
+
+	d->image.tween_list = evas_list_append(d->image.tween_list, iid_new);
+     }
+
+#define STRDUP(x) x ? strdup(x) : NULL
+   d->color_class = STRDUP(d->color_class);
+   d->text.text = STRDUP(d->text.text);
+   d->text.text_class = STRDUP(d->text.text_class);
+   d->text.font = STRDUP(d->text.font);
+#undef STRDUP
+
+   rp->custom.description = d;
+
+   return 0;
+}
+
+/* set_state_val(part_id, State_Param:p, ...) */
+static Embryo_Cell
+_edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+   Edje_Real_Part *rp;
+   Embryo_Cell *cptr;
+
+   /* we need at least 3 arguments */
+   if (params[0] < (sizeof(Embryo_Cell) * 3))
+     return 0;
+
+   if (params[1] < 0)
+     return 0;
+
+   if (!(rp = ed->table_parts[params[1] % ed->table_parts_size]))
+     return 0;
+
+   /* check whether this part has a "custom" state */
+   if (!rp->custom.description)
+     return 0;
+
+   switch (params[2])
+     {
+      case EDJE_STATE_PARAM_ALIGNMENT:
+	 CHKPARAM(4);
+
+	 cptr = embryo_data_address_get(ep, params[3]);
+	 if (cptr)
+	   rp->custom.description->align.x = EMBRYO_CELL_TO_FLOAT(*cptr);
+
+	 cptr = embryo_data_address_get(ep, params[4]);
+	 if (cptr)
+	   rp->custom.description->align.y = EMBRYO_CELL_TO_FLOAT(*cptr);
+
+	 break;
+      default:
+	 break;
+     }
+
+   return 0;
+}
+
+/* get_state_val(part_id, State_Param:p, ...) */
+static Embryo_Cell
+_edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+   Edje_Real_Part *rp;
+   Embryo_Cell *cptr;
+   float f;
+
+   /* we need at least 3 arguments */
+   if (params[0] < (sizeof(Embryo_Cell) * 3))
+     return 0;
+
+   if (params[1] < 0)
+     return 0;
+
+   if (!(rp = ed->table_parts[params[1] % ed->table_parts_size]))
+     return 0;
+
+   /* check whether this part has a "custom" state */
+   if (!rp->custom.description)
+     return 0;
+
+   switch (params[2])
+     {
+      case EDJE_STATE_PARAM_ALIGNMENT:
+	 CHKPARAM(4);
+
+	 cptr = embryo_data_address_get(ep, params[3]);
+	 if (cptr)
+	   {
+	      f = rp->custom.description->align.x;
+	      *cptr = EMBRYO_FLOAT_TO_CELL(f);
+	   }
+
+	 cptr = embryo_data_address_get(ep, params[4]);
+	 if (cptr)
+	   {
+	      f = rp->custom.description->align.y;
+	      *cptr = EMBRYO_FLOAT_TO_CELL(f);
+	   }
+
+	 break;
+      default:
+	 break;
+     }
+
+   return 0;
+}
+
 void
 _edje_embryo_script_init(Edje *ed)
 {
@@ -1487,6 +1641,9 @@ _edje_embryo_script_init(Edje *ed)
    
    embryo_program_native_call_add(ep, "send_message", _edje_embryo_fn_send_message);
    embryo_program_native_call_add(ep, "get_geometry", _edje_embryo_fn_get_geometry);
+   embryo_program_native_call_add(ep, "custom_state", _edje_embryo_fn_custom_state);
+   embryo_program_native_call_add(ep, "set_state_val", _edje_embryo_fn_set_state_val);
+   embryo_program_native_call_add(ep, "get_state_val", _edje_embryo_fn_get_state_val);
    
    embryo_program_vm_push(ep); /* neew a new vm to run in */
    _edje_embryo_globals_init(ed);

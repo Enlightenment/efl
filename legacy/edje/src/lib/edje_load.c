@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include "Edje.h"
 #include "edje_private.h"
 
@@ -620,6 +624,12 @@ _edje_file_del(Edje *ed)
 	     if (rp->text.font) free(rp->text.font);
 	     if (rp->text.cache.in_str) free(rp->text.cache.in_str);
 	     if (rp->text.cache.out_str) free(rp->text.cache.out_str);	     
+
+	     if (rp->custom.description)
+	       {
+		  _edje_collection_free_part_description_free(rp->custom.description);
+	       }
+
 	     free(rp);
 	  }
 	ed->parts = NULL;
