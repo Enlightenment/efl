@@ -36,8 +36,8 @@ Ecore development files
 %setup -q -n %{name}-%{version}_pre7
 
 %build
-CFLAGS="-I/usr/kerberos/include"
-LDFLAGS="-L/usr/kerberos/lib"
+CFLAGS="-I/usr/kerberos/include -I/usr/X11R6/include/X11/extensions"
+LDFLAGS="-L/usr/kerberos/lib -L/usr/X11R6/%{_lib}"
 export CFLAGS LDFLAGS
 %{configure} --prefix=%{_prefix}
 %{__make} %{?_smp_mflags} %{?mflags}
