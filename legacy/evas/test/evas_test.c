@@ -173,6 +173,7 @@ main(int argc, char **argv)
 	evas_callback_add(e, o[i], CALLBACK_MOUSE_IN, mouse_in, NULL);
 	evas_callback_add(e, o[i], CALLBACK_MOUSE_OUT, mouse_out, NULL);
      }
+ */
    o_rect = evas_add_rectangle(e);
    evas_show(e, o_rect);
    evas_move(e, o_rect, 100, 100);
@@ -223,7 +224,7 @@ main(int argc, char **argv)
    evas_callback_add(e, o_text, CALLBACK_MOUSE_MOVE, mouse_move, NULL);
    evas_callback_add(e, o_text, CALLBACK_MOUSE_IN, mouse_in, NULL);
    evas_callback_add(e, o_text, CALLBACK_MOUSE_OUT, mouse_out, NULL);
-*/   
+
    o_fps = evas_add_text(e, "morpheus", 16, "FPS...");
    evas_set_color(e, o_fps, 255, 255, 255, 120);
    evas_move(e, o_fps, win_w, win_h); 
