@@ -1072,10 +1072,10 @@ evas_render_updates(Evas e)
 							       e->current.drawable,
 							       e->current.drawable_width,
 							       e->current.drawable_height,
-							       (o->current.x * 
+							       ((o->current.x - e->current.viewport.x) * 
 								(double)e->current.drawable_width) /
 								e->current.viewport.w,
-							       (o->current.y * 
+							       ((o->current.y - e->current.viewport.y) * 
 								(double)e->current.drawable_height) /
 								e->current.viewport.h,
 							       oo->current.text,
@@ -1098,10 +1098,10 @@ evas_render_updates(Evas e)
 								  e->current.drawable,
 								  e->current.drawable_width,
 								  e->current.drawable_height,
-								  (o->current.x * 
+								  ((o->current.x - e->current.viewport.x) * 
 								   (double)e->current.drawable_width) /
 								  e->current.viewport.w,
-								  (o->current.y * 
+								  ((o->current.y - e->current.viewport.y) * 
 								   (double)e->current.drawable_height) /
 								  e->current.viewport.h,
 								  (o->current.w * 
@@ -1156,10 +1156,10 @@ evas_render_updates(Evas e)
 								 e->current.drawable,
 								 e->current.drawable_width,
 								 e->current.drawable_height,
-								 (o->current.x * 
+								 ((o->current.x - e->current.viewport.x) * 
 								  (double)e->current.drawable_width) /
 								 e->current.viewport.w,
-								 (o->current.y * 
+								 ((o->current.y - e->current.viewport.y) * 
 								  (double)e->current.drawable_height) /
 								 e->current.viewport.h,
 								 (o->current.w * 
@@ -1188,10 +1188,10 @@ evas_render_updates(Evas e)
 						     p1 = pl->data;
 						     p2 = malloc(sizeof(struct _Evas_Point));
 						     
-						     p2->x = (p1->x * 
+						     p2->x = ((p1->x - e->current.viewport.x) * 
 							      (double)e->current.drawable_width) /
 						       e->current.viewport.w,
-						     p2->y = (p1->y * 
+						     p2->y = ((p1->y - e->current.viewport.y) * 
 							      (double)e->current.drawable_height) /
 						       e->current.viewport.h,
 						     points = evas_list_append(points, p2);
