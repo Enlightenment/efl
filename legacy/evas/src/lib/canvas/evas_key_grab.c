@@ -133,6 +133,7 @@ evas_object_key_grab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask m
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
+   if (!keyname) return 0;
    if (exclusive)
      {
 	g = evas_key_grab_find(obj, keyname, modifiers, not_modifiers, exclusive);
@@ -152,6 +153,7 @@ evas_object_key_ungrab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   if (!keyname) return;
    g = evas_key_grab_find(obj, keyname, modifiers, not_modifiers, 0);
    if (!g) return;
    evas_key_grab_free(g->object, keyname, modifiers, not_modifiers);
