@@ -8,26 +8,23 @@ export DH_OPTIONS
 INSTALL = /usr/bin/install -p
 BUILDDIR = debian/build
 package = libevas0
-stamp = touch $@
-cfg = --datadir=/usr/share --prefix=/usr
+CONFIGURE_OPTS = --datadir=/usr/share --prefix=/usr
 
 configure: $(BUILDDIR)/configure-stamp
 $(BUILDDIR)/configure-stamp:
 	$(INSTALL) -d $(BUILDDIR)
-	cd $(BUILDDIR); datadir=/usr/share  $(CURDIR)/autogen.sh $(cfg)
-	$(stamp)
+	cd $(BUILDDIR); datadir=/usr/share $(CURDIR)/autogen.sh $(CONFIGURE_OPTS)
+	touch $@
 
 build: configure $(BUILDDIR)/build-stamp
 $(BUILDDIR)/build-stamp:
 	dh_testdir
 	$(MAKE) -C $(BUILDDIR)
-	$(stamp)
+	touch $@
 
 clean:
 	dh_testdir
-	rm -f build-stamp configure-stamp
 	-$(MAKE) distclean
-	-rm -f configure-stamp build-stamp
 	-rm -rf $(BUILDDIR)
 	dh_clean 
 
@@ -47,7 +44,7 @@ install: build
 	$(INSTALL) -d debian/evas-demo/usr/bin
 
 	rm -rvf debian/$(package)/usr/share/evas/doc/
-	mv debian/$(package)/usr/share/aclocal debian/$(package)-dev/usr/share/
+	#mv debian/$(package)/usr/share/aclocal debian/$(package)-dev/usr/share/
 	mv debian/$(package)/usr/share debian/evas-demo/usr
 
 	mv debian/$(package)/usr/include debian/$(package)-dev/usr
