@@ -275,6 +275,8 @@ extern "C" {
    int               evas_hash_alloc_error             (void);
    
    int               evas_alloc_error                  (void);
+
+   void              evas_shutdown                     (void);
        
    Evas             *evas_new                          (void);
    void              evas_free                         (Evas *e);

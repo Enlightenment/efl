@@ -874,6 +874,8 @@ Gfx_Func_Blend_Src_Mul_Dst       evas_common_draw_func_blend_mul_get   (RGBA_Ima
 Gfx_Func_Blend_Src_Alpha_Mul_Dst evas_common_draw_func_blend_alpha_get (RGBA_Image *dst);
 Gfx_Func_Blend_Src_Dst           evas_common_draw_func_copy_get        (int pixels, int reverse);
 
+void              evas_font_dir_cache_free(void);
+
 /*****************************************************************************/
 
 #ifdef __cplusplus

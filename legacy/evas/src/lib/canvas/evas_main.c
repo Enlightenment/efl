@@ -24,6 +24,12 @@
 
 #include "Evas.h"
 
+void
+evas_shutdown(void)
+{
+   evas_font_dir_cache_free();
+}
+
 /**
  * Allocate and new Evas empty canvas.
  * @return A zeroed out Evas, or NULL on failure

@@ -75,6 +75,24 @@ static Evas_Font_Dir *object_text_font_cache_dir_add(char *dir);
 static void object_text_font_cache_dir_del(char *dir, Evas_Font_Dir *fd);
 static int evas_object_text_font_string_parse(char *buffer, char dest[14][256]);
 
+static Evas_Bool font_cache_dir_free(Evas_Hash *hash, const char *key,
+                                     void *data, void *fdata)
+{
+   object_text_font_cache_dir_del((char *) key, data);
+
+   return 1;
+}
+
+void
+evas_font_dir_cache_free(void)
+{
+   if (!font_dirs) return;
+
+   evas_hash_foreach (font_dirs, font_cache_dir_free, NULL);
+   evas_hash_free (font_dirs);
+   font_dirs = NULL;
+}
+
 static char *
 object_text_font_cache_find(char *dir, char *font)
 {
@@ -102,8 +120,11 @@ object_text_font_cache_dir_update(char *dir, Evas_Font_Dir *fd)
      {
 	mt = evas_file_modified_time(dir);
 	if (mt != fd->dir_mod_time)
+    {
 	  object_text_font_cache_dir_del(dir, fd);
-	else
+      font_dirs = evas_hash_del(font_dirs, dir, fd);
+	}
+    else
 	  {
 	     tmp = evas_file_path_join(dir, "fonts.dir");
 	     if (tmp)
@@ -111,8 +132,11 @@ object_text_font_cache_dir_update(char *dir, Evas_Font_Dir *fd)
 		  mt = evas_file_modified_time(tmp);
 		  free(tmp);
 		  if (mt != fd->fonts_dir_mod_time)
+          {
 		    object_text_font_cache_dir_del(dir, fd);
-		  else
+            font_dirs = evas_hash_del(font_dirs, dir, fd);
+		  }
+          else
 		    {
 		       tmp = evas_file_path_join(dir, "fonts.alias");
 		       if (tmp)
@@ -121,8 +145,11 @@ object_text_font_cache_dir_update(char *dir, Evas_Font_Dir *fd)
 			    free(tmp);
 			 }
 		       if (mt != fd->fonts_alias_mod_time)
-			 object_text_font_cache_dir_del(dir, fd);
-		       else
+               {
+			     object_text_font_cache_dir_del(dir, fd);
+                 font_dirs = evas_hash_del(font_dirs, dir, fd);
+			   }
+               else
 			 return fd;
 		    }
 	       }
@@ -362,7 +389,6 @@ object_text_font_cache_dir_add(char *dir)
 static void
 object_text_font_cache_dir_del(char *dir, Evas_Font_Dir *fd)
 {
-   font_dirs = evas_hash_del(font_dirs, dir, fd);
    if (fd->lookup) evas_hash_free(fd->lookup);
    while (fd->fonts)
      {
