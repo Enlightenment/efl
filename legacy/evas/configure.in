@@ -1,0 +1,21 @@
+AC_INIT(src/Evas.h)
+AM_CONFIG_HEADER(config.h)
+AM_INIT_AUTOMAKE(evas, 0.0.1)
+AC_PROG_CC
+AM_PROG_CC_STDC
+AC_C_CONST
+AM_ENABLE_SHARED
+AM_PROG_LIBTOOL
+AM_WITH_DMALLOC
+if test X"$enable_shared" = Xyes; then
+  DLLDFLAGS=-export-dynamic
+  AC_SUBST(DLLDFLAGS)
+fi
+AC_PROG_INSTALL
+AC_PROG_MAKE_SET
+AC_CHECK_LIB(Imlib2, imlib_context_set_image, IMLIB2=yes ,[
+echo ""
+echo "ERROR: Imlib 2 needed"
+echo ""
+AC_MSG_ERROR([Fatal Error: no Imlib2 detected.])], -L/usr/X11R6/lib -L/usr/local/lib -lm -ldl -lttf -lX11 -lXext)
+AC_OUTPUT(Makefile src/Makefile test/Makefile)

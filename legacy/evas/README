@@ -1,0 +1,25 @@
+-------------------------------------------------------------------------------
+ E V A S - 0.0.0
+-------------------------------------------------------------------------------
+
+This is the ``E Canvas'' - a rip off of some of the other canvas's floating
+about - Tk and gnome too. it's at the Xlib level. it's intended to be
+accelerated byhardware or highly optimised software where possible. It is
+intended to be simple and allow for the building of interfaces ontop of it.
+
+if you got this from cvs do:
+./autogen.sh
+
+otherwise do:
+./configure
+
+then to compile:
+make
+
+if you wish to install (as root):
+make install
+
+in the test directory you will find a test program:
+cd test
+./evas_test
+
