@@ -57,7 +57,7 @@ fi
 F=`basename $IN`
 B=`basename $F .eet`
 T="./...edje_tmp"
-rm -f $T
+rm -rf $T
 mkdir -p $T
 cp $IN $T
 cd $T
