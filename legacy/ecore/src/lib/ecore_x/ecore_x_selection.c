@@ -487,10 +487,15 @@ static int _ecore_x_selection_converter_text(char *target, void *data, int size,
       style = XCompoundTextStyle;
    else if (!strcmp(target, ECORE_X_SELECTION_TARGET_STRING))
       style = XStringStyle;
+#ifdef X_HAVE_UTF8_STRING
+   else if (!strcmp(target, ECORE_X_SELECTION_TARGET_UTF8_STRING))
+      style = XUTF8StringStyle;
+#endif
    else
       return 0;
    
-   mystr = strdup(data);
+   if(!(mystr = strdup(data)))
+      return 0;
    
    if (XmbTextListToTextProperty(_ecore_x_disp, &mystr, 1, style, &text_prop) == Success)
    {
@@ -499,9 +504,13 @@ static int _ecore_x_selection_converter_text(char *target, void *data, int size,
       memcpy(*data_ret, text_prop.value, bufsize);
       *size_ret = bufsize;
       XFree(text_prop.value);
+      free(mystr);
       return 1;
    }
    else
+   {
+      free(mystr);
       return 0;
+   }
 }
 
