@@ -737,6 +737,8 @@ void             ecore_x_gc_del(Ecore_X_GC gc);
      ecore_x_cursor_free(Ecore_X_Cursor c);
    void
      ecore_x_cursor_set(Ecore_X_Window win, Ecore_X_Cursor c);
+   void
+     ecore_x_cursor_shape_set(Ecore_X_Window win, int shape);
    
    int
      ecore_x_pointer_grab(Ecore_X_Window win);

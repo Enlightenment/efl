@@ -995,6 +995,15 @@ ecore_x_cursor_set(Ecore_X_Window win, Ecore_X_Cursor c)
      XDefineCursor(_ecore_x_disp, win, c);
 }
 
+void
+ecore_x_cursor_shape_set(Ecore_X_Window win, int shape)
+{
+   /* Shapes are defined in Ecore_X_Cursor.h */
+   Cursor c = XCreateFontCursor(_ecore_x_disp, shape);
+   if (c)
+      ecore_x_cursor_set(win, c);
+}
+
 int
 ecore_x_pointer_grab(Ecore_X_Window win)
 {
