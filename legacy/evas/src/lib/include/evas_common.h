@@ -188,10 +188,12 @@ typedef void (*Gfx_Func_Convert) (DATA32 *src, DATA8 *dst, int src_jump, int dst
 
 typedef enum _RGBA_Image_Flags
 {
-   RGBA_IMAGE_NOTHING   = (0),
-   RGBA_IMAGE_HAS_ALPHA = (1 << 0),
-   RGBA_IMAGE_IS_DIRTY  = (1 << 1),
-   RGBA_IMAGE_INDEXED   = (1 << 2)
+   RGBA_IMAGE_NOTHING    = (0),
+   RGBA_IMAGE_HAS_ALPHA  = (1 << 0),
+   RGBA_IMAGE_IS_DIRTY   = (1 << 1),
+   RGBA_IMAGE_INDEXED    = (1 << 2),
+   RGBA_IMAGE_ALPHA_ONLY = (1 << 3),
+   RGBA_IMAGE_HAVE_SPANS = (1 << 4)
 } RGBA_Image_Flags;
 
 typedef enum _Convert_Pal_Mode
@@ -284,9 +286,10 @@ struct _RGBA_Draw_Context
 
 struct _RGBA_Surface
 {
-   int     w, h;
-   DATA32 *data;
-   char    no_free : 1;
+   int         w, h;
+   DATA32     *data;
+   char        no_free : 1;
+   RGBA_Image *im;
 };
 
 struct _RGBA_Image
@@ -758,7 +761,7 @@ void evas_common_scale_rgba_in_to_out_clip_sample      (RGBA_Image *src, RGBA_Im
 void          evas_common_image_init              (void);
 void          evas_common_image_shutdown          (void);
 
-RGBA_Surface *evas_common_image_surface_new       (void);
+RGBA_Surface *evas_common_image_surface_new       (RGBA_Image *im);
 void          evas_common_image_surface_free      (RGBA_Surface *is);
 void          evas_common_image_surface_alloc     (RGBA_Surface *is);
 void          evas_common_image_surface_dealloc   (RGBA_Surface *is);

@@ -46,7 +46,7 @@ evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, in
        (buf->dest) && (buf->dest_row_bytes == (buf->w * sizeof(DATA32))))
      {
 	buf->priv.back_buf = evas_common_image_new();
-	buf->priv.back_buf->image = evas_common_image_surface_new();
+	buf->priv.back_buf->image = evas_common_image_surface_new( buf->priv.back_buf);
 	buf->priv.back_buf->image->w = w;
 	buf->priv.back_buf->image->h = h;
 	buf->priv.back_buf->image->data = buf->dest;

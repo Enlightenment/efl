@@ -71,7 +71,7 @@ evas_engine_directfb_image_load(void *data, char *file, char *key, int *error)
    provider->Release(provider);
 
    im = evas_common_image_new();
-   im->image = evas_common_image_surface_new();
+   im->image = evas_common_image_surface_new(im);
    if (!im->image)
      {
 	image->Release(image);
@@ -556,7 +556,7 @@ _dfb_image_create(Render_Engine *re, int w, int h)
   
    im = evas_common_image_new();
    if (!im) return NULL;
-   im->image = evas_common_image_surface_new();
+   im->image = evas_common_image_surface_new(im);
    if (!im->image) 
      {
 	_dfb_image_free(im);

@@ -610,7 +610,7 @@ evas_engine_software_qtopia_image_new_from_data(void *data, int w, int h, DATA32
    
    re = (Render_Engine *)data;
    im = evas_common_image_new();
-   im->image = evas_common_image_surface_new();
+   im->image = evas_common_image_surface_new(im);
    if (!im->image)
      {
 	evas_common_image_free(im);

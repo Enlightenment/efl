@@ -986,7 +986,7 @@ evas_engine_gl_x11_font_draw(void *data, void *context, void *surface, void *fon
 	if (!im)
 	  {
 	     im = evas_common_image_new();
-	     im->image = evas_common_image_surface_new();
+	     im->image = evas_common_image_surface_new(im);
 	     im->image->no_free = 1;
 	  }
 	im->image->w = re->win->w;

@@ -66,7 +66,7 @@ evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, int *data)
 	free(im);
 	return NULL;
      }
-   im->im->image = evas_common_image_surface_new();
+   im->im->image = evas_common_image_surface_new(im->im);
    if (!im->im->image)
      {
 	evas_common_image_free(im->im);

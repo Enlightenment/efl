@@ -182,7 +182,7 @@ evas_engine_directfb_output_setup(int w, int h, IDirectFB * dfb,
     * manipulated directly. */
    im = evas_common_image_new();
    if (!im) return;
-   im->image = evas_common_image_surface_new();
+   im->image = evas_common_image_surface_new(im);
    if (!im->image) 
    {
       evas_common_image_free(im);

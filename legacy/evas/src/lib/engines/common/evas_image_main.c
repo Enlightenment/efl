@@ -77,11 +77,12 @@ evas_common_image_shutdown(void)
 }
 
 RGBA_Surface *
-evas_common_image_surface_new(void)
+evas_common_image_surface_new(RGBA_Image *im)
 {
    RGBA_Surface *is;
    
    is = calloc(1, sizeof(RGBA_Surface));
+   is->im = im;
    return is;
 }
 
@@ -95,7 +96,7 @@ evas_common_image_surface_free(RGBA_Surface *is)
 void
 evas_common_image_surface_alloc(RGBA_Surface *is)
 {
-   size_t siz = is->w * is->h * sizeof(DATA32);
+   size_t siz = 0;
    static int on_valgrind;
 
    /* init data when we're under Valgrind's control */
@@ -108,7 +109,11 @@ evas_common_image_surface_alloc(RGBA_Surface *is)
 	init = 1;
      }
 #endif
-
+   if (is->im->flags & RGBA_IMAGE_ALPHA_ONLY)
+     siz = is->w * is->h * sizeof(DATA8);
+   else
+     siz = is->w * is->h * sizeof(DATA32);
+     
    is->data = on_valgrind ? calloc(1, siz) : malloc(siz);
 }
 
@@ -129,7 +134,7 @@ evas_common_image_create(int w, int h)
    
    im = evas_common_image_new();
    if (!im) return NULL;
-   im->image = evas_common_image_surface_new();
+   im->image = evas_common_image_surface_new(im);
    if (!im->image) 
      {
 	evas_common_image_free(im);
