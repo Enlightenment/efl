@@ -6,6 +6,12 @@
 
 static Ecore_X_Atom _ecore_x_window_prop_state_atom_get(Ecore_X_Window_State s);
 
+Ecore_X_Atom
+ecore_x_window_prop_any_type(void)
+{
+   return AnyPropertyType;
+}
+
 /**
  * To be documented.
  *

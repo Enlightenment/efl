@@ -734,7 +734,8 @@ void             ecore_x_window_reparent(Ecore_X_Window win, Ecore_X_Window new_
 void             ecore_x_window_size_get(Ecore_X_Window win, int *w, int *h);
 void             ecore_x_window_cursor_show(Ecore_X_Window win, int show);
 void             ecore_x_window_defaults_set(Ecore_X_Window win);
-   
+
+Ecore_X_Atom     ecore_x_window_prop_any_type(void);
 void             ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Atom format, int size, void *data, int number);
 int              ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecore_X_Atom type, int size, unsigned char **data, int *num);
 void             ecore_x_window_prop_property_del(Ecore_X_Window win, Ecore_X_Atom property);
