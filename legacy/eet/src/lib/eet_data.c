@@ -1518,6 +1518,7 @@ eet_data_write(Eet_File *ef, Eet_Data_Descriptor *edd, char *name, void *data, i
    return val;
 }
 
+static int    freelist_ref = 0;
 static int    freelist_len = 0;
 static int    freelist_num = 0;
 static void **freelist = NULL;
@@ -1537,6 +1538,7 @@ _eet_freelist_add(void *data)
 static void
 _eet_freelist_reset(void)
 {
+   if (freelist_ref > 0) return;
    freelist_len = 0;
    freelist_num = 0;
    if (freelist) free(freelist);
@@ -1547,12 +1549,26 @@ static void
 _eet_freelist_free(void)
 {
    int i;
-   
+
+   if (freelist_ref > 0) return;
    for (i = 0; i < freelist_num; i++)
      free(freelist[i]);
    _eet_freelist_reset();
 }
 
+static void
+_eet_freelist_ref(void)
+{
+   freelist_ref++;
+}
+
+static void
+_eet_freelist_unref(void)
+{
+   freelist_ref--;
+}
+
+static int     freelist_list_ref = 0;
 static int     freelist_list_len = 0;
 static int     freelist_list_num = 0;
 static void ***freelist_list = NULL;
@@ -1578,6 +1594,7 @@ _eet_freelist_list_add(void **data)
 static void
 _eet_freelist_list_reset(void)
 {
+   if (freelist_list_ref > 0) return;
    freelist_list_len = 0;
    freelist_list_num = 0;
    if (freelist_list) free(freelist_list);
@@ -1589,10 +1606,24 @@ _eet_freelist_list_free(Eet_Data_Descriptor *edd)
 {
    int i;
    
+   if (freelist_list_ref > 0) return;
    for (i = 0; i < freelist_list_num; i++)
      edd->func.list_free(*(freelist_list[i]));
    _eet_freelist_list_reset();
 }
+
+static void
+_eet_freelist_list_ref(void)
+{
+   freelist_list_ref++;
+}
+
+static void
+_eet_freelist_list_unref(void)
+{
+   freelist_list_ref--;
+}
+
 
 void *
 eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
@@ -1615,10 +1646,14 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
    
    data = calloc(1, edd->size);
    if (!data) return NULL;
+   _eet_freelist_ref();
+   _eet_freelist_list_ref();
    _eet_freelist_add(data);
    chnk = eet_data_chunk_get(data_in, size_in);
    if (!chnk)
      {
+	_eet_freelist_unref();
+	_eet_freelist_list_unref();
 	_eet_freelist_free();
 	_eet_freelist_list_free(edd);
 	return NULL;
@@ -1626,6 +1661,8 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
    if (strcmp(chnk->name, edd->name))
      {
 	eet_data_chunk_free(chnk);
+	_eet_freelist_unref();
+	_eet_freelist_list_unref();
 	_eet_freelist_free();
 	_eet_freelist_list_free(edd);
 	return NULL;
@@ -1641,6 +1678,8 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 	echnk = eet_data_chunk_get(p, size);
 	if (!echnk)
 	  {
+	     _eet_freelist_unref();
+	     _eet_freelist_list_unref();
 	     _eet_freelist_free();
 	     _eet_freelist_list_free(edd);
 	     eet_data_chunk_free(chnk);
@@ -1675,6 +1714,8 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 								  echnk->size);
 			    if (!data_ret)
 			      {
+				 _eet_freelist_unref();
+				 _eet_freelist_list_unref();
 				 _eet_freelist_free();
 				 _eet_freelist_list_free(edd);
 				 eet_data_chunk_free(chnk);
@@ -1717,6 +1758,8 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 								   data_ret);
 					   if (ret <= 0)
 					     {
+						_eet_freelist_unref();
+						_eet_freelist_list_unref();
 						_eet_freelist_free();
 						_eet_freelist_list_free(edd);
 						eet_data_chunk_free(chnk);
@@ -1725,6 +1768,8 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 					}
 				      else
 					{
+					   _eet_freelist_unref();
+					   _eet_freelist_list_unref();
 					   _eet_freelist_free();
 					   _eet_freelist_list_free(edd);
 					   eet_data_chunk_free(chnk);
@@ -1745,6 +1790,8 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 				   }
 				 else
 				   {
+				      _eet_freelist_unref();
+				      _eet_freelist_list_unref();
 				      _eet_freelist_free();
 				      _eet_freelist_list_free(edd);
 				      eet_data_chunk_free(chnk);
@@ -1768,6 +1815,8 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 	eet_data_chunk_free(echnk);
      }
    eet_data_chunk_free(chnk);
+   _eet_freelist_unref();
+   _eet_freelist_list_unref();
    _eet_freelist_reset();
    _eet_freelist_list_reset();
    return data;
