@@ -1,6 +1,7 @@
 /* by Azundris, with thanks to Corey Donohoe <atmos@atmos.org> */
 
 #include "ipc.h"
+#include "util.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -14,6 +15,8 @@
 
 #include <Ecore.h>
 #include <Ecore_Ipc.h>
+
+#include <Edb.h>
 
 #include "Ecore_Config.h"
 
@@ -43,7 +46,42 @@ static int _ecore_config_ipc_ecore_get_string(char **m,char **r) {
   return ECORE_CONFIG_ERR_SUCC; }
 
 
+char *_ecore_config_ipc_global_prop_list(Ecore_Config_Server *srv, const long serial) {
+  E_DB_File     *db;
+  char         **keys;
+  int            key_count, x;
+  estring       *s;
+  int            f;
+  char          *buf, *p, *type;
 
+  s=estring_new(8192);
+  f=0;
+  if((p=getenv("HOME"))) {  /* debug-only ### FIXME */
+    if ((buf=malloc(PATH_MAX*sizeof(char)))) {
+      snprintf(buf,PATH_MAX,"%s/.e/config.db",p);
+      db=e_db_open_read(buf);
+      if (!(db=e_db_open_read(buf)))
+        if (!(db=e_db_open_read(buf=PACKAGE_DATA_DIR "/system.db")))
+          return ECORE_CONFIG_ERR_NOFILE;
+      }
+    }
+  
+  keys = e_db_dump_key_list(buf, &key_count);
+  free(buf);
+
+  for (x = 0; x < key_count; x++) {
+    type = e_db_type_get(db, keys[x]);
+    if (!type) type = "?";
+
+    estring_appendf(s,"%s%s: %s",f?"\n":"",keys[x],ecore_config_edb_to_ecore_config_type(type));
+
+    if (type) free(type);
+    f=1;
+  }
+  e_db_close(db);
+  free(keys);
+
+  return estring_disown(s);}
 
 
 
@@ -81,6 +119,9 @@ static int _ecore_config_ipc_ecore_handle_request(Ecore_Ipc_Server *server,Ecore
   switch(e->major) {
     case IPC_PROP_LIST:
       r=_ecore_config_ipc_prop_list(srv, serial);
+      break;
+    case IPC_GLOBAL_PROP_LIST:
+      r=_ecore_config_ipc_global_prop_list(srv, serial);
       break;
     case IPC_PROP_DESC:
       if(_ecore_config_ipc_ecore_get_string(&m,&k)==ECORE_CONFIG_ERR_SUCC)

@@ -3,7 +3,7 @@
 INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_ipc \
--I$(top_srcdir)/ @evas_cflags@
+-I$(top_srcdir)/ @evas_cflags@ @edb_cflags@
 
 DB = system.db
 CLEANFILES = $(DB)
@@ -47,7 +47,7 @@ ecore_config_ipc_ecore_la_LIBADD           = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
 libecore_config.la \
--ledb
+@edb_libs@
 
 $(DB):
 	sh build_$(DB).sh

@@ -77,6 +77,7 @@ const char *ecore_config_get_type(const Ecore_Config_Prop *e) {
   return "not found"; }
 
 
+
 void *ecore_config_get_data(const char *key) {
   Ecore_Config_Prop *e;
   e=ecore_config_get(__ecore_config_bundle_local,key);

@@ -4,6 +4,7 @@
 typedef enum {
   IPC_NONE,
   IPC_PROP_LIST,
+  IPC_GLOBAL_PROP_LIST,
   IPC_PROP_DESC,
   IPC_PROP_GET,
   IPC_PROP_SET,
