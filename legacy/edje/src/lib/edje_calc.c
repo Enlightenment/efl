@@ -504,8 +504,8 @@ _edje_part_recalc_single(Edje *ed,
 	  text = chosen_desc->text.text;
 	if (ep->text.source)
 	  {
-	     font = ep->text.text_source->chosen_description->text.font;
-	     size = ep->text.text_source->chosen_description->text.size;
+	     font = ep->text.source->chosen_description->text.font;
+	     size = ep->text.source->chosen_description->text.size;
 	  }
 	else
 	  {
