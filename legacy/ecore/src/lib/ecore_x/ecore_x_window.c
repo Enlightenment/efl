@@ -366,21 +366,12 @@ ecore_x_window_reparent(Ecore_X_Window win, Ecore_X_Window new_parent, int x, in
 void
 ecore_x_window_size_get(Ecore_X_Window win, int *w, int *h)
 {
-   Window dummy_win;
    int dummy_x, dummy_y;
-   unsigned int ret_w, ret_h, dummy_border, dummy_depth;
    
-   if (win == 0) win = DefaultRootWindow(_ecore_x_disp);
-   ret_w = 0;
-   ret_h = 0;
-   if (!XGetGeometry(_ecore_x_disp, win, &dummy_win, &dummy_x, &dummy_y,
-		     &ret_w, &ret_h, &dummy_border, &dummy_depth))
-     {
-	ret_w = 0;
-	ret_h = 0;	
-     }
-   if (w) *w = (int)ret_w;
-   if (h) *h = (int)ret_h;
+   if (win == 0) 
+      win = DefaultRootWindow(_ecore_x_disp);
+
+   ecore_x_drawable_geometry_get(win, &dummy_x, &dummy_y, w, h);
 }
 
 /**
@@ -391,29 +382,34 @@ ecore_x_window_size_get(Ecore_X_Window win, int *w, int *h)
 void
 ecore_x_window_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h)
 {
-   Window         dummy_win;
-   int            ret_x, ret_y;
-   unsigned int   ret_w, ret_h, dummy_border, dummy_depth;
-
    if (!win)
       win = DefaultRootWindow(_ecore_x_disp);
-   ret_w = 0;
-   ret_h = 0;
-   if (!XGetGeometry(_ecore_x_disp, win, &dummy_win, &ret_x, &ret_y,
-                     &ret_w, &ret_h, &dummy_border, &dummy_depth))
-   {
-      ret_x = 0;
-      ret_y = 0;
-      ret_w = 0;
-      ret_h = 0;
-   }
 
-   if (x) *x = ret_x;
-   if (y) *y = ret_y;
-   if (w) *w = (int) ret_w;
-   if (h) *h = (int) ret_h;
+   ecore_x_drawable_geometry_get(win, x, y, w, h);
 }
-   
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+int
+ecore_x_window_border_width_get(Ecore_X_Window win)
+{
+   return ecore_x_drawable_border_width_get(win);
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+int
+ecore_x_window_depth_get(Ecore_X_Window win)
+{
+   return ecore_x_drawable_depth_get(win);
+}
+  
 /**
  * To be documented.
  *

@@ -733,6 +733,8 @@ void             ecore_x_window_lower(Ecore_X_Window win);
 void             ecore_x_window_reparent(Ecore_X_Window win, Ecore_X_Window new_parent, int x, int y);
 void             ecore_x_window_size_get(Ecore_X_Window win, int *w, int *h);
 void             ecore_x_window_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h);
+int              ecore_x_window_border_size_get(Ecore_X_Window win);
+int              ecore_x_window_depth_get(Ecore_X_Window win);
 void             ecore_x_window_cursor_show(Ecore_X_Window win, int show);
 void             ecore_x_window_defaults_set(Ecore_X_Window win);
 
@@ -794,6 +796,8 @@ void             ecore_x_window_shape_mask_set(Ecore_X_Window win, Ecore_X_Pixma
 Ecore_X_Pixmap   ecore_x_pixmap_new(Ecore_X_Window win, int w, int h, int dep);
 void             ecore_x_pixmap_del(Ecore_X_Pixmap pmap);
 void             ecore_x_pixmap_paste(Ecore_X_Pixmap pmap, Ecore_X_Drawable dest, Ecore_X_GC gc, int sx, int sy, int w, int h, int dx, int dy);
+void             ecore_x_pixmap_geometry_get(Ecore_X_Pixmap pmap, int *x, int *y, int *w, int *h);
+int              ecore_x_pixmap_depth_get(Ecore_X_Pixmap pmap);
 
 Ecore_X_GC       ecore_x_gc_new(Ecore_X_Drawable draw);
 void             ecore_x_gc_del(Ecore_X_GC gc);
@@ -801,7 +805,9 @@ void             ecore_x_gc_del(Ecore_X_GC gc);
    
    
    /* FIXME: these funcs need categorising */
-   
+   void            ecore_x_drawable_geometry_get(Ecore_X_Drawable d, int *x, int *y, int *w, int *h);
+   int             ecore_x_drawable_border_width_get(Ecore_X_Drawable d);
+   int             ecore_x_drawable_depth_get(Ecore_X_Drawable d);
    Ecore_X_Window *ecore_x_window_root_list(int *num_ret);
    int             ecore_x_window_manage(Ecore_X_Window win);
    void            ecore_x_window_container_manage(Ecore_X_Window win);

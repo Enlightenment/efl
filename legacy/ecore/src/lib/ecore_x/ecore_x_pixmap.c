@@ -38,3 +38,27 @@ ecore_x_pixmap_paste(Ecore_X_Pixmap pmap, Ecore_X_Drawable dest,
 {
    XCopyArea(_ecore_x_disp, pmap, dest, gc, sx, sy, w, h, dx, dy);
 }
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+void
+ecore_x_pixmap_geometry_get(Ecore_X_Pixmap pmap, int *x, int *y, int *w, int *h)
+{
+   if (pmap)
+      ecore_x_drawable_geometry_get(pmap, x, y, w, h);
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+int
+ecore_x_pixmap_depth_get(Ecore_X_Pixmap pmap)
+{
+   return ecore_x_drawable_depth_get(pmap);
+}
+
