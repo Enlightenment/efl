@@ -167,7 +167,7 @@ if test "x$have_gl" = "xyes"; then
    echo "debian: download the rpm and use alien to convert it"
    echo ""
    have_glu = no
-   AC_MSG_ERROR([ERROR: libGLU 1.3 not found.])]; exit, $gl_ldflags -lGL -lGLU)
+   AC_MSG_ERROR([ERROR: libGLU 1.3 not found.])]; exit, $gl_ldflags -lGL -lGLU -lm)
 
   if test "x$have_glu" = "xyes"; then
     gl_includes=$gl_includes" -I/usr/include -I/usr/local/include"
