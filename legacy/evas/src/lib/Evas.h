@@ -456,7 +456,7 @@ extern "C" {
    EAPI int                    evas_object_textblock_format_prev_count_get(Evas_Object *obj);
    EAPI const char            *evas_object_textblock_format_prev_get      (Evas_Object *obj, int n);
    EAPI void                   evas_object_textblock_format_prev_del      (Evas_Object *obj, int n);
-   EAPI char                  *evas_object_textblock_current_format_get   (Evas_Object *obj);
+   EAPI char                  *evas_object_textblock_format_current_get   (Evas_Object *obj);
    EAPI void                   evas_object_textblock_format_size_get      (Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
    EAPI void                   evas_object_textblock_native_size_get      (Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
    EAPI int                    evas_object_textblock_native_lines_get     (Evas_Object *obj);

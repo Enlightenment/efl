@@ -2855,7 +2855,7 @@ evas_object_textblock_format_prev_del(Evas_Object *obj, int n)
 }
 
 char *
-evas_object_textblock_current_format_get(Evas_Object *obj)
+evas_object_textblock_format_current_get(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
    Layout_Node *lnode;
