@@ -2,6 +2,43 @@
 #include "evas_private.h"
 #include "Evas.h"
 
+static void evas_object_event_callback_list_free(Evas_Object_List **list);
+
+static void
+evas_object_event_callback_list_free(Evas_Object_List **list)
+{
+   /* MEM OK */
+   while (*list)
+     {
+	Evas_Func_Node *fn;
+	
+	fn = (Evas_Func_Node *)(*list);
+	*list = evas_object_list_remove(*list, fn);
+	free(fn);
+     }
+}
+
+void
+evas_object_event_callback_cleanup(Evas_Object *obj)
+{
+   /* MEM OK */
+   evas_object_event_callback_list_free(&(obj->callbacks.in));
+   evas_object_event_callback_list_free(&(obj->callbacks.out));
+   evas_object_event_callback_list_free(&(obj->callbacks.down));
+   evas_object_event_callback_list_free(&(obj->callbacks.up));
+   evas_object_event_callback_list_free(&(obj->callbacks.move));
+   evas_object_event_callback_list_free(&(obj->callbacks.free));
+   evas_object_event_callback_list_free(&(obj->callbacks.key_down));
+   evas_object_event_callback_list_free(&(obj->callbacks.key_up));
+   evas_object_event_callback_list_free(&(obj->callbacks.obj_focus_in));
+   evas_object_event_callback_list_free(&(obj->callbacks.obj_focus_out));
+   evas_object_event_callback_list_free(&(obj->callbacks.obj_show));
+   evas_object_event_callback_list_free(&(obj->callbacks.obj_hide));
+   evas_object_event_callback_list_free(&(obj->callbacks.obj_move));
+   evas_object_event_callback_list_free(&(obj->callbacks.obj_resize));
+   evas_object_event_callback_list_free(&(obj->callbacks.obj_restack));
+}
+
 void
 evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void *event_info)
 {
@@ -27,6 +64,33 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
 	break;
       case EVAS_CALLBACK_FREE:
 	l_mod = &(obj->callbacks.free);
+	break;
+      case EVAS_CALLBACK_KEY_DOWN:
+	l_mod = &(obj->callbacks.key_down);
+	break;
+      case EVAS_CALLBACK_KEY_UP:
+	l_mod = &(obj->callbacks.key_up);
+	break;
+      case EVAS_CALLBACK_FOCUS_IN:
+	l_mod = &(obj->callbacks.obj_focus_in);
+	break;
+      case EVAS_CALLBACK_FOCUS_OUT:
+	l_mod = &(obj->callbacks.obj_focus_out);
+	break;
+      case EVAS_CALLBACK_SHOW:
+	l_mod = &(obj->callbacks.obj_show);
+	break;
+      case EVAS_CALLBACK_HIDE:
+	l_mod = &(obj->callbacks.obj_hide);
+	break;
+      case EVAS_CALLBACK_MOVE:
+	l_mod = &(obj->callbacks.obj_move);
+	break;
+      case EVAS_CALLBACK_RESIZE:
+	l_mod = &(obj->callbacks.obj_resize);
+	break;
+      case EVAS_CALLBACK_RESTACK:
+	l_mod = &(obj->callbacks.obj_restack);
 	break;
       default:
 	return;
@@ -73,10 +137,12 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
  * The event type @p type to trigger the function mys be one of 
  * EVAS_CALLBACK_MOUSE_IN, EVAS_CALLBACK_MOUSE_OUT, EVAS_CALLBACK_MOUSE_DOWN,
  * EVAS_CALLBACK_MOUSE_UP, EVAS_CALLBACK_MOUSE_MOVE, EVAS_CALLBACK_FREE, 
- * EVAS_CALLBACK_KEY_DOWN, EVAS_CALLBACK_KEY_UP, EVAS_CALLBACK_FOCUS_IN
- * or EVAS_CALLBACK_FOCUS_OUT. This determines the kind of event that will
- * trigger the callback to be called. The @p event_info pointer passed to the
- * callback will be one of the following, depending on the event tiggering it:
+ * EVAS_CALLBACK_KEY_DOWN, EVAS_CALLBACK_KEY_UP, EVAS_CALLBACK_FOCUS_IN,
+ * EVAS_CALLBACK_FOCUS_OUT, EVAS_CALLBACK_SHOW, EVAS_CALLBACK_HIDE, 
+ * EVAS_CALLBACK_MOVE, EVAS_CALLBACK_RESIZE or EVAS_CALLBACK_RESTACK. This 
+ * determines the kind of event that will trigger the callback to be called. 
+ * The @p event_info pointer passed to the callback will be one of the 
+ * following, depending on the event tiggering it:
  * 
  * EVAS_CALLBACK_MOUSE_IN: event_info = pointer to Evas_Event_Mouse_In
  * 
@@ -151,6 +217,26 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
  * This event is triggered by an object losing the focus. When the callback is
  * called the object has already lost the focus.
  * 
+ * EVAS_CALLBACK_SHOW: event_info = NULL
+ * 
+ * This event is triggered being shown by evas_object_show().
+ * 
+ * EVAS_CALLBACK_HIDE: event_info = NULL
+ * 
+ * This event is triggered by an object being hidden by evas_object_hide().
+ * 
+ * EVAS_CALLBACK_MOVE: event_info = NULL
+ * 
+ * This event is triggered by an object being moved. evas_object_move() can
+ * trigger this, as can any object specific manipulations that would mean the
+ * objects origin could move.
+ * 
+ * EVAS_CALLBACK_RESIZE: event_info = NULL
+ * 
+ * This event is triggered by an object being resized. Resizes can be
+ * triggered by evas_object_resize() or by any object specific calls that may
+ * cause the object to resize.
+ * 
  * Example:
  * @code
  * extern Evas_Object *object;
@@ -177,6 +263,7 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (
 {
    /* MEM OK */
    Evas_Func_Node *fn;
+   Evas_Object_List **l_mod;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -189,46 +276,60 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (
    if (!fn) return;
    fn->func = func;
    fn->data = data;
-   do
+
+   switch (type)
      {
-	switch (type)
-	  {
-	   case EVAS_CALLBACK_MOUSE_IN:
-	     obj->callbacks.in = evas_object_list_prepend(obj->callbacks.in, fn);
-	     break;
-	   case EVAS_CALLBACK_MOUSE_OUT:
-	     obj->callbacks.out = evas_object_list_prepend(obj->callbacks.out, fn);
-	     break;
-	   case EVAS_CALLBACK_MOUSE_DOWN:
-	     obj->callbacks.down = evas_object_list_prepend(obj->callbacks.down, fn);
-	     break;
-	   case EVAS_CALLBACK_MOUSE_UP:
-	     obj->callbacks.up = evas_object_list_prepend(obj->callbacks.up, fn);
-	     break;
-	   case EVAS_CALLBACK_MOUSE_MOVE:
-	     obj->callbacks.move = evas_object_list_prepend(obj->callbacks.move, fn);
-	     break;
-	   case EVAS_CALLBACK_FREE:
-	     obj->callbacks.free = evas_object_list_prepend(obj->callbacks.free, fn);
-	     break;
-	   default:
-	     free(fn);
-	     return;
-	     break;
-	  }
-	if (!evas_list_alloc_error()) return;
-	MERR_BAD();	
-	if (!evas_mem_free(sizeof(Evas_List)))
-	  {
-	     if (!evas_mem_degrade(sizeof(Evas_List)))
-	       {
-		  MERR_FATAL();
-		  free(fn);
-		  return;
-	       }
-	  }
+      case EVAS_CALLBACK_MOUSE_IN:
+	l_mod = &(obj->callbacks.in);
+	break;
+      case EVAS_CALLBACK_MOUSE_OUT:
+	l_mod = &(obj->callbacks.out);
+	break;
+      case EVAS_CALLBACK_MOUSE_DOWN:
+	l_mod = &(obj->callbacks.down);
+	break;
+      case EVAS_CALLBACK_MOUSE_UP:
+	l_mod = &(obj->callbacks.up);
+	break;
+      case EVAS_CALLBACK_MOUSE_MOVE:
+	l_mod = &(obj->callbacks.move);
+	break;
+      case EVAS_CALLBACK_FREE:
+	l_mod = &(obj->callbacks.free);
+	break;
+      case EVAS_CALLBACK_KEY_DOWN:
+	l_mod = &(obj->callbacks.key_down);
+	break;
+      case EVAS_CALLBACK_KEY_UP:
+	l_mod = &(obj->callbacks.key_up);
+	break;
+      case EVAS_CALLBACK_FOCUS_IN:
+	l_mod = &(obj->callbacks.obj_focus_in);
+	break;
+      case EVAS_CALLBACK_FOCUS_OUT:
+	l_mod = &(obj->callbacks.obj_focus_out);
+	break;
+      case EVAS_CALLBACK_SHOW:
+	l_mod = &(obj->callbacks.obj_show);
+	break;
+      case EVAS_CALLBACK_HIDE:
+	l_mod = &(obj->callbacks.obj_hide);
+	break;
+      case EVAS_CALLBACK_MOVE:
+	l_mod = &(obj->callbacks.obj_move);
+	break;
+      case EVAS_CALLBACK_RESIZE:
+	l_mod = &(obj->callbacks.obj_resize);
+	break;
+      case EVAS_CALLBACK_RESTACK:
+	l_mod = &(obj->callbacks.obj_restack);
+	break;
+      default:
+	free(fn);
+	return;
+	break;
      }
-   while (evas_list_alloc_error());
+   *l_mod = evas_object_list_append(*l_mod, fn);
 }
 
 /**
@@ -242,7 +343,7 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (
  * @p obj which was triggered by the event type @p type and was calling the
  * function @p func when triggered. If the callback is successful it will also
  * return the data pointer, passed to evas_object_event_callback_add() when
- * the callback was added to the object. IF not successful NULL will be
+ * the callback was added to the object. If not successful NULL will be
  * returned.
  * 
  * Example:
@@ -286,6 +387,33 @@ evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (
 	break;
       case EVAS_CALLBACK_FREE:
 	l_mod = &(obj->callbacks.free);
+	break;
+      case EVAS_CALLBACK_KEY_DOWN:
+	l_mod = &(obj->callbacks.key_down);
+	break;
+      case EVAS_CALLBACK_KEY_UP:
+	l_mod = &(obj->callbacks.key_up);
+	break;
+      case EVAS_CALLBACK_FOCUS_IN:
+	l_mod = &(obj->callbacks.obj_focus_in);
+	break;
+      case EVAS_CALLBACK_FOCUS_OUT:
+	l_mod = &(obj->callbacks.obj_focus_out);
+	break;
+      case EVAS_CALLBACK_SHOW:
+	l_mod = &(obj->callbacks.obj_show);
+	break;
+      case EVAS_CALLBACK_HIDE:
+	l_mod = &(obj->callbacks.obj_hide);
+	break;
+      case EVAS_CALLBACK_MOVE:
+	l_mod = &(obj->callbacks.obj_move);
+	break;
+      case EVAS_CALLBACK_RESIZE:
+	l_mod = &(obj->callbacks.obj_resize);
+	break;
+      case EVAS_CALLBACK_RESTACK:
+	l_mod = &(obj->callbacks.obj_restack);
 	break;
       default:
 	return NULL;

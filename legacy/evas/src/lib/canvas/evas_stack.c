@@ -47,6 +47,7 @@ evas_object_raise(Evas_Object *obj)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   if (evas_object_intercept_call_raise(obj)) return;
    if (obj->smart.smart)
      {
        if (obj->smart.smart->func_raise)
@@ -83,6 +84,7 @@ evas_object_lower(Evas_Object *obj)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   if (evas_object_intercept_call_lower(obj)) return;
    if (obj->smart.smart)
      {
        if (obj->smart.smart->func_lower)
@@ -122,6 +124,7 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
    MAGIC_CHECK(above, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   if (evas_object_intercept_call_stack_above(obj, above)) return;
    if (obj->smart.smart)
      {
        if (obj->smart.smart->func_stack_above)
@@ -166,6 +169,7 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
    MAGIC_CHECK(below, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   if (evas_object_intercept_call_stack_below(obj, below)) return;
    if (obj->smart.smart)
      {
        if (obj->smart.smart->func_stack_below)

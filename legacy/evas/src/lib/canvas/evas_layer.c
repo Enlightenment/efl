@@ -113,6 +113,7 @@ evas_object_layer_set(Evas_Object *obj, int l)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   if (evas_object_intercept_call_layer_set(obj, l)) return;
    if (obj->cur.layer == l) 
      {
 	evas_object_raise(obj);

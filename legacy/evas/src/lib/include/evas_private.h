@@ -25,27 +25,33 @@ typedef enum _Evas_Callback_Type
      EVAS_CALLBACK_KEY_DOWN,
      EVAS_CALLBACK_KEY_UP,
      EVAS_CALLBACK_FOCUS_IN,
-     EVAS_CALLBACK_FOCUS_OUT
+     EVAS_CALLBACK_FOCUS_OUT,
+     EVAS_CALLBACK_SHOW,
+     EVAS_CALLBACK_HIDE,
+     EVAS_CALLBACK_MOVE,
+     EVAS_CALLBACK_RESIZE,
+     EVAS_CALLBACK_RESTACK
 } Evas_Callback_Type;
 
 typedef struct _Evas_Rectangle Evas_Rectangle;
-struct _Evas_Rectangle
-{
-   int x, y, w, h;
-};
 
-typedef struct _Evas             Evas;
-typedef struct _Evas_Layer       Evas_Layer;
-typedef struct _Evas_Object      Evas_Object;
-typedef struct _Evas_Data_Node   Evas_Data_Node;
-typedef struct _Evas_Func_Node   Evas_Func_Node;
-typedef struct _Evas_Func        Evas_Func;
-typedef struct _Evas_Object_Func Evas_Object_Func;
-typedef struct _Evas_Key         Evas_Key;
-typedef struct _Evas_Modifier    Evas_Modifier;
-typedef struct _Evas_Lock        Evas_Lock;
-typedef struct _Evas_Smart       Evas_Smart;
-typedef void                     Evas_Performance;
+typedef struct _Evas                Evas;
+typedef struct _Evas_Layer          Evas_Layer;
+typedef struct _Evas_Object         Evas_Object;
+typedef struct _Evas_Data_Node      Evas_Data_Node;
+typedef struct _Evas_Func_Node      Evas_Func_Node;
+typedef struct _Evas_Func           Evas_Func;
+typedef struct _Evas_Object_Func    Evas_Object_Func;
+typedef struct _Evas_Key            Evas_Key;
+typedef struct _Evas_Modifier       Evas_Modifier;
+typedef struct _Evas_Lock           Evas_Lock;
+typedef struct _Evas_Smart          Evas_Smart;
+typedef struct _Evas_Intercept_Func Evas_Intercept_Func;
+typedef struct _Evas_Intercept_Func_Basic   Evas_Intercept_Func_Basic;
+typedef struct _Evas_Intercept_Func_SizePos Evas_Intercept_Func_SizePos;
+typedef struct _Evas_Intercept_Func_Obj     Evas_Intercept_Func_Obj;
+typedef struct _Evas_Intercept_Func_Int     Evas_Intercept_Func_Int;
+typedef void                        Evas_Performance;
 
 #define MAGIC_EVAS          0x70777770
 #define MAGIC_OBJ           0x71777770
@@ -88,16 +94,46 @@ if (_r) \
 
 #define MEM_TRY_CALLOC(_ptr, _size)
 
-
-typedef struct _Evas_Inform_Func         Evas_Inform_Func;
-
-struct _Evas_Inform_Func
+struct _Evas_Rectangle
 {
-   Evas_List *show;
-   Evas_List *hide;
-   Evas_List *move;
-   Evas_List *resize;
-   Evas_List *restack;
+   int x, y, w, h;
+};
+
+struct _Evas_Intercept_Func_Basic
+{
+   void (*func) (void *data, Evas_Object *obj);
+   void *data;
+};
+
+struct _Evas_Intercept_Func_SizePos
+{
+   void (*func) (void *data, Evas_Object *obj, double x, double y);
+   void *data;
+};
+
+struct _Evas_Intercept_Func_Obj
+{
+   void (*func) (void *data, Evas_Object *obj, Evas_Object *obj2);
+   void *data;
+};
+
+struct _Evas_Intercept_Func_Int
+{
+   void (*func) (void *data, Evas_Object *obj, int n);
+   void *data;
+};
+
+struct _Evas_Intercept_Func
+{
+   Evas_Intercept_Func_Basic   show;
+   Evas_Intercept_Func_Basic   hide;
+   Evas_Intercept_Func_SizePos move;
+   Evas_Intercept_Func_SizePos resize;
+   Evas_Intercept_Func_Basic   raise;
+   Evas_Intercept_Func_Basic   lower;
+   Evas_Intercept_Func_Obj     stack_above;
+   Evas_Intercept_Func_Obj     stack_below;
+   Evas_Intercept_Func_Int     layer_set;
 }; 
 
 struct _Evas_Smart
@@ -273,7 +309,7 @@ struct _Evas_Object
 
    int               delete_me;
    
-   Evas_Inform_Func *informers;   
+   Evas_Intercept_Func *interceptors;
    
    struct {
       Evas_List *elements;
@@ -286,6 +322,15 @@ struct _Evas_Object
       Evas_Object_List *up;
       Evas_Object_List *move;
       Evas_Object_List *free;
+      Evas_Object_List *key_down;
+      Evas_Object_List *key_up;
+      Evas_Object_List *obj_focus_in;
+      Evas_Object_List *obj_focus_out;
+      Evas_Object_List *obj_show;
+      Evas_Object_List *obj_hide;
+      Evas_Object_List *obj_move;
+      Evas_Object_List *obj_resize;
+      Evas_Object_List *obj_restack;
    } callbacks;
    
    struct {
@@ -476,12 +521,22 @@ void evas_object_smart_unuse(Evas_Smart *s);
 void evas_object_smart_del(Evas_Object *obj);
 void evas_object_smart_cleanup(Evas_Object *obj);
 void *evas_mem_calloc(int size);
-void evas_object_inform_cleanup(Evas_Object *obj);
+void evas_object_event_callback_cleanup(Evas_Object *obj);       
 void evas_object_inform_call_show(Evas_Object *obj);
 void evas_object_inform_call_hide(Evas_Object *obj);
 void evas_object_inform_call_move(Evas_Object *obj);
 void evas_object_inform_call_resize(Evas_Object *obj);
 void evas_object_inform_call_restack(Evas_Object *obj);
+void evas_object_intercept_cleanup(Evas_Object *obj);
+int evas_object_intercept_call_show(Evas_Object *obj);
+int evas_object_intercept_call_hide(Evas_Object *obj);
+int evas_object_intercept_call_move(Evas_Object *obj, double x, double y);
+int evas_object_intercept_call_resize(Evas_Object *obj, double w, double h);
+int evas_object_intercept_call_raise(Evas_Object *obj);
+int evas_object_intercept_call_lower(Evas_Object *obj);
+int evas_object_intercept_call_stack_above(Evas_Object *obj, Evas_Object *above);
+int evas_object_intercept_call_stack_below(Evas_Object *obj, Evas_Object *below);
+int evas_object_intercept_call_layer_set(Evas_Object *obj, int l);
        
 extern int _evas_alloc_error;
    

@@ -15,7 +15,12 @@ enum _Evas_Callback_Type
    EVAS_CALLBACK_KEY_DOWN, /**< Key Press Event */
    EVAS_CALLBACK_KEY_UP, /**< Key Release Event */
    EVAS_CALLBACK_FOCUS_IN, /**< Focus In Event */
-   EVAS_CALLBACK_FOCUS_OUT /**< Focus Out Event */
+   EVAS_CALLBACK_FOCUS_OUT, /**< Focus Out Event */
+   EVAS_CALLBACK_SHOW, /**< Show Event */
+   EVAS_CALLBACK_HIDE, /**< Hide Event */
+   EVAS_CALLBACK_MOVE, /**< Move Event */
+   EVAS_CALLBACK_RESIZE, /**< Resize Event */
+   EVAS_CALLBACK_RESTACK /**< Restack Event */
 };
 
 /**
@@ -413,8 +418,6 @@ extern "C" {
    void              evas_event_feed_key_down          (Evas *e, char *keyname);
    void              evas_event_feed_key_up            (Evas *e, char *keyname);
 
- * should we allow multiple objects to have the focus? good question!
-
    void              evas_object_focus_set             (Evas_Object *o, int focus);
    int               evas_object_focus_get             (Evas_Object *o);
 
@@ -439,6 +442,9 @@ extern "C" {
    void              evas_key_lock_on                  (Evas *e, char *keyname);
    void              evas_key_lock_off                 (Evas *e, char *keyname);
 
+   int               evas_object_key_grab              (Evas_Object *o, char *keyname, int exclusive);
+   void              evas_object_key_ungrab            (Evas_Object *o, char *keyname);
+
  * errr need to add key grabbing/ungrabbing calls.
 
 ...end implement */
@@ -451,18 +457,6 @@ extern "C" {
    void              evas_object_event_callback_add    (Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), void *data);
    void             *evas_object_event_callback_del    (Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info));
 
-   void              evas_object_inform_show_callback_add           (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
-   void             *evas_object_inform_show_callback_del           (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj));
-   void              evas_object_inform_hide_callback_add           (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
-   void             *evas_object_inform_hide_callback_del           (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj));
-   void              evas_object_inform_move_callback_add           (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
-   void             *evas_object_inform_move_callback_del           (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj));
-   void              evas_object_inform_resize_callback_add         (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
-   void             *evas_object_inform_resize_callback_del         (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj));
-   void              evas_object_inform_restack_callback_add        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
-   void             *evas_object_inform_restack_callback_del        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj));
-   
-/* FIXME: implement... */
    void              evas_object_intercept_show_callback_add        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
    void             *evas_object_intercept_show_callback_del        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj));
    void              evas_object_intercept_hide_callback_add        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
@@ -481,7 +475,6 @@ extern "C" {
    void             *evas_object_intercept_stack_below_callback_del (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *below));
    void              evas_object_intercept_layer_set_callback_add   (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, int l), void *data);
    void             *evas_object_intercept_layer_set_callback_del   (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, int l));
-/* ...end implement */
    
 #ifdef __cplusplus
 }

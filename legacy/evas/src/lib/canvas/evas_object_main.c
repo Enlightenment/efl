@@ -20,7 +20,7 @@ void
 evas_object_free(Evas_Object *obj, int clean_layer)
 {
    evas_object_event_callback_call(obj, EVAS_CALLBACK_FREE, NULL);
-   evas_object_inform_cleanup(obj);
+   evas_object_intercept_cleanup(obj);
    evas_object_smart_cleanup(obj);
    obj->func->free(obj);
    if (obj->name) 
@@ -41,54 +41,7 @@ evas_object_free(Evas_Object *obj, int clean_layer)
 	obj->clip.changes = evas_list_remove(obj->clip.changes, r);
 	free(r);
      }
-   while (obj->callbacks.in)
-     {
-	Evas_Func_Node *fn;
-	
-	fn = (Evas_Func_Node *)obj->callbacks.in;
-	obj->callbacks.in = evas_object_list_remove(obj->callbacks.in, fn);
-	free(fn);
-     }
-   while (obj->callbacks.out)
-     {
-	Evas_Func_Node *fn;
-	
-	fn = (Evas_Func_Node *)obj->callbacks.out;
-	obj->callbacks.out = evas_object_list_remove(obj->callbacks.out, fn);
-	free(fn);
-     }
-   while (obj->callbacks.down)
-     {
-	Evas_Func_Node *fn;
-	
-	fn = (Evas_Func_Node *)obj->callbacks.down;
-	obj->callbacks.down = evas_object_list_remove(obj->callbacks.down, fn);
-	free(fn);
-     }
-   while (obj->callbacks.up)
-     {
-	Evas_Func_Node *fn;
-	
-	fn = (Evas_Func_Node *)obj->callbacks.up;
-	obj->callbacks.up = evas_object_list_remove(obj->callbacks.up, fn);
-	free(fn);
-     }
-   while (obj->callbacks.move)
-     {
-	Evas_Func_Node *fn;
-	
-	fn = (Evas_Func_Node *)obj->callbacks.move;
-	obj->callbacks.move = evas_object_list_remove(obj->callbacks.move, fn);
-	free(fn);
-     }
-   while (obj->callbacks.free)
-     {
-	Evas_Func_Node *fn;
-	
-	fn = (Evas_Func_Node *)obj->callbacks.free;
-	obj->callbacks.free = evas_object_list_remove(obj->callbacks.free, fn);
-	free(fn);
-     }
+   evas_object_event_callback_cleanup(obj);
    while (obj->data.elements)
      {
 	Evas_Data_Node *node;
@@ -471,6 +424,7 @@ evas_object_move(Evas_Object *obj, double x, double y)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   if (evas_object_intercept_call_move(obj, x, y)) return;
    if (obj->smart.smart)
      {
        if (obj->smart.smart->func_move)
@@ -512,6 +466,7 @@ evas_object_resize(Evas_Object *obj, double w, double h)
    return;
    MAGIC_CHECK_END();
    if (w < 0.0) w = 0.0; if (h < 0.0) h = 0.0;
+   if (evas_object_intercept_call_resize(obj, w, h)) return;
    if (obj->smart.smart)
      {
        if (obj->smart.smart->func_resize)
@@ -562,6 +517,7 @@ evas_object_show(Evas_Object *obj)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   if (evas_object_intercept_call_show(obj)) return;
    if (obj->smart.smart)
      {
        if (obj->smart.smart->func_show)
@@ -593,6 +549,7 @@ evas_object_hide(Evas_Object *obj)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   if (evas_object_intercept_call_hide(obj)) return;
    if (obj->smart.smart)
      {
        if (obj->smart.smart->func_hide)
