@@ -178,6 +178,7 @@ ecore_config_file_save(char *file)
    Ecore_Config_Prop  *next;
    E_DB_File          *db;
    struct stat         status;
+   char               *tmp;
 
    next = __ecore_config_bundle_local->data;
    db = NULL;
@@ -209,13 +210,22 @@ ecore_config_file_save(char *file)
 	     e_db_float_set(db, next->key, ecore_config_float_get(next->key));
 	     break;
 	  case PT_RGB:
-	     e_db_str_set(db, next->key, ecore_config_rgbstr_get(next->key));
+	     if ((tmp = ecore_config_rgbstr_get(next->key))) {
+	        e_db_str_set(db, next->key, tmp);
+	        free(tmp);
+	     }
 	     break;
 	  case PT_STR:
-	     e_db_str_set(db, next->key, ecore_config_string_get(next->key));
+	     if ((tmp = ecore_config_string_get(next->key))) {
+	        e_db_str_set(db, next->key, tmp);
+	        free(tmp);
+	     }
 	     break;
 	  case PT_THM:
-	     e_db_str_set(db, next->key, ecore_config_theme_get(next->key));
+	     if ((tmp = ecore_config_theme_get(next->key))) {
+	        e_db_str_set(db, next->key, tmp);
+	        free(tmp);
+	     }
 	     break;
 	  case PT_NIL:
 	     /* currently we do nothing for undefined ojects */
