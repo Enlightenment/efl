@@ -31,11 +31,10 @@ static int _ecore_hash_node_destroy(Ecore_Hash_Node *node, Ecore_Free_Cb keyd,
 
 
 /**
- * ecore_hash_new - create and initialize a new hash
- * @hash_func: the function for determining hash position
- * @compare: the function for comparing node keys
- *
- * Returns NULL on error, a new hash on success
+ * @brief Create and initialize a new hash
+ * @param hash_func: the function for determining hash position
+ * @param compare: the function for comparing node keys
+ * @return Returns NULL on error, a new hash on success
  */
 Ecore_Hash *ecore_hash_new(Ecore_Hash_Cb hash_func, Ecore_Compare_Cb compare)
 {
@@ -52,12 +51,11 @@ Ecore_Hash *ecore_hash_new(Ecore_Hash_Cb hash_func, Ecore_Compare_Cb compare)
 }
 
 /**
- * ecore_hash_init - initialize a hash to some sane starting values
- * @hash: the hash table to initialize
- * @hash_func: the function for hashing node keys
- * @compare: the function for comparing node keys
- *
- * Returns TRUE on success, FALSE on an error.
+ * @brief Initialize a hash to some sane starting values
+ * @param hash: the hash table to initialize
+ * @param hash_func: the function for hashing node keys
+ * @param compare: the function for comparing node keys
+ * @return Returns TRUE on success, FALSE on an error.
  */
 int ecore_hash_init(Ecore_Hash *hash, Ecore_Hash_Cb hash_func, Ecore_Compare_Cb compare)
 {
@@ -78,11 +76,10 @@ int ecore_hash_init(Ecore_Hash *hash, Ecore_Hash_Cb hash_func, Ecore_Compare_Cb 
 }
 
 /**
- * ecore_hash_set_free_key - set the function to destroy the keys of entries
- * @hash: the hash that this will affect
- * @function: the function that will free the node keys
- *
- * Returns TRUE on success, FALSE on error
+ * @brief Set the function to destroy the keys of entries
+ * @param hash: the hash that this will affect
+ * @param function: the function that will free the node keys
+ * @return Returns TRUE on success, FALSE on error
  */
 int ecore_hash_set_free_key(Ecore_Hash *hash, Ecore_Free_Cb function)
 {
@@ -97,11 +94,10 @@ int ecore_hash_set_free_key(Ecore_Hash *hash, Ecore_Free_Cb function)
 }
 
 /**
- * ecore_hash_set_free_value - set the function to destroy the value
- * @hash: the hash that this will affect
- * @function: the function that will free the node values
- *
- * Returns TRUE on success, FALSE on error
+ * @brief Set the function to destroy the value
+ * @param hash: the hash that this will affect
+ * @param function: the function that will free the node values
+ * @return Returns TRUE on success, FALSE on error
  */
 int ecore_hash_set_free_value(Ecore_Hash *hash, Ecore_Free_Cb function)
 {
@@ -116,12 +112,11 @@ int ecore_hash_set_free_value(Ecore_Hash *hash, Ecore_Free_Cb function)
 }
 
 /**
- * ecore_hash_set - set the key/value pair in the hash table
- * @hash: the hash table to set the the value in
- * @key: the key for this value pair
- * @value: the value corresponding with the key
- *
- * Returns TRUE if successful, FALSE if not
+ * @brief Set the key/value pair in the hash table
+ * @param hash: the hash table to set the the value in
+ * @param key: the key for this value pair
+ * @param value: the value corresponding with the key
+ * @return Returns TRUE if successful, FALSE if not
  */
 int ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
 {
@@ -145,10 +140,10 @@ int ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
 }
 
 /**
- * ecore_hash_destroy - free the hash table and the data contained inside it
- * @hash: the hash table to destroy
+ * @brief Free the hash table and the data contained inside it
+ * @param hash: the hash table to destroy
  *
- * Returns TRUE on success, FALSE on error
+ * @brief Returns TRUE on success, FALSE on error
  */
 void ecore_hash_destroy(Ecore_Hash *hash)
 {
@@ -176,7 +171,10 @@ void ecore_hash_destroy(Ecore_Hash *hash)
 }
 
 /**
- * ecore_hash_for_each - iterate over the entries in the hash table
+ * @brief Iterate over the entries in the hash table
+ * @param hash: the hash whose entries are iterated over
+ * @param for_each_func: the function each entry is passed to
+ * @return Returns TRUE on success, FALSE otherwise.
  */
 int ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func)
 {
@@ -205,8 +203,8 @@ int ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func)
 }
 
 /**
- * ecore_hash_dump_graph - print the distribution of the hash table for graphing
- * @hash: the hash table to print
+ * @brief Print the distribution of the hash table for graphing
+ * @param hash: the hash table to print
  *
  * Returns no value.
  */
@@ -238,10 +236,10 @@ _ecore_hash_bucket_destroy(Ecore_List *list, Ecore_Free_Cb keyd, Ecore_Free_Cb v
 }
 
 /*
- * Description: Add the node to the hash table
- * Parameters: 1. hash - the hash table to add the key
- *             2. node - the node to add to the hash table
- * Returns: FALSE on error, TRUE on success
+ * @brief Add the node to the hash table
+ * @param hash: the hash table to add the key
+ * @param node: the node to add to the hash table
+ * @return Returns FALSE on error, TRUE on success
  */
 static int
 _ecore_hash_add_node(Ecore_Hash *hash, Ecore_Hash_Node *node)
@@ -275,11 +273,11 @@ _ecore_hash_add_node(Ecore_Hash *hash, Ecore_Hash_Node *node)
 }
 
 /**
- * ecore_hash_get - retrieve the value associated with key
- * @hash: the hash table to search for the key
- * @key: the key to search for in the hash table
+ * @brief Retrieve the value associated with key
+ * @param hash: the hash table to search for the key
+ * @param key: the key to search for in the hash table
  *
- * Returns NULL on error, value corresponding to key on success
+ * @return Returns NULL on error, value corresponding to key on success
  */
 void *ecore_hash_get(Ecore_Hash *hash, void *key)
 {
@@ -301,11 +299,11 @@ void *ecore_hash_get(Ecore_Hash *hash, void *key)
 
 
 /**
- * ecore_hash_remove - remove the value associated with key
- * @hash: the hash table to remove the key from
- * @key: the key to search for in the hash table
+ * @brief Remove the value associated with key
+ * @param hash: the hash table to remove the key from
+ * @param key: the key to search for in the hash table
  *
- * Returns NULL on error, value corresponding to key on success
+ * @return Returns NULL on error, value corresponding to key on success
  */
 void *ecore_hash_remove(Ecore_Hash *hash, void *key)
 {
@@ -363,10 +361,10 @@ void *ecore_hash_remove(Ecore_Hash *hash, void *key)
 }
 
 /*
- * Description: Retrieve the node associated with key
- * Parameters: 1. hash - the hash table to search for the key
- *             2. key - the key to search for in the hash table
- * Returns: NULL on error, node corresponding to key on success
+ * @brief Retrieve the node associated with key
+ * @param hash: the hash table to search for the key
+ * @param key: the key to search for in the hash table
+ * @return Returns NULL on error, node corresponding to key on success
  */
 static Ecore_Hash_Node *
 _ecore_hash_get_node(Ecore_Hash *hash, void *key)
@@ -394,11 +392,11 @@ _ecore_hash_get_node(Ecore_Hash *hash, void *key)
 }
 
 /*
- * Description: Search the hash bucket for a specified key
- * Parameters: 1. hash - the hash table to retrieve the comparison function
- *             2. bucket - the list to search for the key
- *             3. key - the key to search for in the list
- * Returns: NULL on error or not found, the found node on success
+ * @brief Search the hash bucket for a specified key
+ * @param hash: the hash table to retrieve the comparison function
+ * @param bucket: the list to search for the key
+ * @param key: the key to search for in the list
+ * @return Returns NULL on error or not found, the found node on success
  */
 inline Ecore_Hash_Node *
 _ecore_hash_get_bucket(Ecore_Hash *hash, Ecore_List *bucket, void *key)
@@ -440,9 +438,9 @@ _ecore_hash_get_bucket(Ecore_Hash *hash, Ecore_List *bucket, void *key)
 }
 
 /*
- * Description: Increase the size of the hash table by approx.  2 * current size
- * Parameters: 1. hash - the hash table to increase the size of
- * Returns: TRUE on success, FALSE on error
+ * @brief Increase the size of the hash table by approx.  2 * current size
+ * @param hash: the hash table to increase the size of
+ * @return Returns TRUE on success, FALSE on error
  */
 static int
 _ecore_hash_increase(Ecore_Hash *hash)
@@ -495,9 +493,9 @@ _ecore_hash_increase(Ecore_Hash *hash)
 }
 
 /*
- * Description: Decrease the size of the hash table by < 1/2 * current size
- * Parameters: 1. hash - the hash table to decrease the size of
- * Returns: TRUE on success, FALSE on error
+ * @brief Decrease the size of the hash table by < 1/2 * current size
+ * @param hash: the hash table to decrease the size of
+ * @return Returns TRUE on success, FALSE on error
  */
 static int
 _ecore_hash_decrease(Ecore_Hash *hash)
@@ -547,10 +545,10 @@ _ecore_hash_decrease(Ecore_Hash *hash)
 }
 
 /*
- * Description: Rehash the nodes of a table into the hash table
- * Parameters: 1. hash - the hash to place the nodes of the table
- *             2. table - the table to remove the nodes from and place in hash
- * Returns: TRUE on success, FALSE on success
+ * @brief Rehash the nodes of a table into the hash table
+ * @param hash: the hash to place the nodes of the table
+ * @param table: the table to remove the nodes from and place in hash
+ * @return Returns TRUE on success, FALSE on success
  */
 inline int
 _ecore_hash_rehash(Ecore_Hash *hash, Ecore_List **old_table, int old_size)
@@ -582,10 +580,10 @@ _ecore_hash_rehash(Ecore_Hash *hash, Ecore_List **old_table, int old_size)
 }
 
 /*
- * Description: Create a new hash node for key and value storage
- * Parameters: 1. key - the key for this node
- *             2. value - the value that the key references
- * Returns: NULL on error, a new hash node on success
+ * @brief Create a new hash node for key and value storage
+ * @param key: the key for this node
+ * @param value: the value that the key references
+ * @return Returns NULL on error, a new hash node on success
  */
 static Ecore_Hash_Node *
 _ecore_hash_node_new(void *key, void *value)
@@ -605,11 +603,11 @@ _ecore_hash_node_new(void *key, void *value)
 }
 
 /*
- * Description: Initialize a hash node to some sane default values
- * Parameters: 1. node - the node to set the values
- *             2. key - the key to reference this node
- *             3. value - the value that key refers to
- * Returns: TRUE on success, FALSE on error
+ * @brief Initialize a hash node to some sane default values
+ * @param node: the node to set the values
+ * @param key: the key to reference this node
+ * @param value: the value that key refers to
+ * @return Returns TRUE on success, FALSE on error
  */
 static int
 _ecore_hash_node_init(Ecore_Hash_Node *node, void *key, void *value)
@@ -624,11 +622,11 @@ _ecore_hash_node_init(Ecore_Hash_Node *node, void *key, void *value)
 }
 
 /*
- * Description: Destroy a node and call the specified callbacks to free data
- * Parameters: 1. node - the node to be destroyed
- *             2. keyd - the function to free the key
- *             3. valued - the function  to free the value
- * Returns: TRUE on success, FALSE on error
+ * @brief Destroy a node and call the specified callbacks to free data
+ * @param node: the node to be destroyed
+ * @param keyd: the function to free the key
+ * @param valued: the function  to free the value
+ * @return Returns TRUE on success, FALSE on error
  */
 static int
 _ecore_hash_node_destroy(Ecore_Hash_Node *node, Ecore_Free_Cb keyd,

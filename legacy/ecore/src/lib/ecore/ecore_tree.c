@@ -1,28 +1,3 @@
-/* ecore_tree.c
-
-Copyright (C) 2001 Nathan Ingersoll         <ningerso@d.umn.edu>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to
-deal in the Software without restriction, including without limitation the
-rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-sell copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies of the Software and its documentation and acknowledgment shall be
-given in the documentation and software packages that this Software was
-used.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
-THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-*/
-
 #include <Ecore.h>
 
 /* A macro for determining the highest node at given branch */
@@ -45,10 +20,9 @@ int tree_for_each_node_value(Ecore_Tree_Node * node,
 			     Ecore_For_Each for_each_func);
 
 /**
- * ecore_tree_new - allocate a new tree structure.
- * @compare_func: function used to compare the two values
- *
- * Returns NULL if the operation fails, otherwise a pointer to the new tree
+ * @brief Allocate a new tree structure.
+ * @param compare_func: function used to compare the two values
+ * @return Returns NULL if the operation fails, otherwise the new tree
  */
 Ecore_Tree *ecore_tree_new(Ecore_Compare_Cb compare_func)
 {
@@ -67,11 +41,10 @@ Ecore_Tree *ecore_tree_new(Ecore_Compare_Cb compare_func)
 }
 
 /**
- * ecore_tree_init - initialize a tree structure to some sane initial values
- * @new_tree: the new tree structure to be initialized
- * @compare_func: the function used to compare node keys
- *
- * Returns TRUE on successful initialization, FALSE on an error
+ * @brief Initialize a tree structure to some sane initial values
+ * @param new_tree: the new tree structure to be initialized
+ * @param compare_func: the function used to compare node keys
+ * @return Returns TRUE on successful initialization, FALSE on an error
  */
 int ecore_tree_init(Ecore_Tree * new_tree, Ecore_Compare_Cb compare_func)
 {
@@ -90,11 +63,10 @@ int ecore_tree_init(Ecore_Tree * new_tree, Ecore_Compare_Cb compare_func)
 }
 
 /*
- * ecore_tree_set_free_cb - add a function to be called at node destroy time
- * @tree: the tree that will use this function when nodes are destroyed
- * @free_func - the function that will be passed the node being freed
- *
- * Returns TRUE on successful set, FALSE otherwise.
+ * @brief Add a function to be called at node destroy time
+ * @param tree: the tree that will use this function when nodes are destroyed
+ * @param free_func: the function that will be passed the node being freed
+ * @return Returns TRUE on successful set, FALSE otherwise.
  */
 int ecore_tree_set_free_cb(Ecore_Tree * tree, Ecore_Free_Cb free_func)
 {
@@ -108,9 +80,8 @@ int ecore_tree_set_free_cb(Ecore_Tree * tree, Ecore_Free_Cb free_func)
 }
 
 /*
- * ecore_tree_node_init - initialize a new tree node
- *
- * Returns FALSE if the operation fails, otherwise TRUE
+ * @brief Initialize a new tree node
+ * @return Returns FALSE if the operation fails, otherwise TRUE
  */
 int ecore_tree_node_init(Ecore_Tree_Node * new_node)
 {
@@ -131,9 +102,8 @@ int ecore_tree_node_init(Ecore_Tree_Node * new_node)
 }
 
 /*
- * Description: Allocate a new tree node
- * Parameters: None.
- * Returns: NULL if the operation fails, otherwise a pointer to the new node.
+ * @brief Allocate a new tree node
+ * @return Returns NULL if the operation fails, otherwise the new node.
  */
 Ecore_Tree_Node *ecore_tree_node_new()
 {
@@ -152,11 +122,12 @@ Ecore_Tree_Node *ecore_tree_node_new()
 }
 
 /*
- * Description: Free a tree node and it's children. If you don't want the
- * 		children free'd then you need to remove the node first.
- * Parameters: 1. node - tree node to be free()'d
- * 	       2. data_free - callback for destroying the data held in node
- * Returns: TRUE if the node is destroyed successfully, FALSE if not.
+ * @brief Free a tree node and it's children.
+ * @param node: tree node to be free()'d
+ * @param data_free: callback for destroying the data held in node
+ * @return Returns TRUE if the node is destroyed successfully, FALSE if not.
+ *
+ * If you don't want the children free'd then you need to remove the node first.
  */
 int ecore_tree_node_destroy(Ecore_Tree_Node * node, Ecore_Free_Cb data_free)
 {
@@ -175,11 +146,10 @@ int ecore_tree_node_destroy(Ecore_Tree_Node * node, Ecore_Free_Cb data_free)
 }
 
 /*
- * ecore_tree_node_value_set - set the value of the node to value
- * @node: the node to be set
- * @value: the value to set the node to.
- *
- * Returns TRUE if the node is set successfully, FALSE if not.
+ * @brief Set the value of the node to value
+ * @param node: the node to be set
+ * @param value: the value to set the node to.
+ * @return Returns TRUE if the node is set successfully, FALSE if not.
  */
 int ecore_tree_node_value_set(Ecore_Tree_Node * node, void *value)
 {
@@ -194,9 +164,9 @@ int ecore_tree_node_value_set(Ecore_Tree_Node * node, void *value)
 }
 
 /*
- * Description: Get the value of the node
- * Parameters: 1. node - the node that contains the desired value
- * Returns: NULL if an error, otherwise the value associated with node
+ * @brief Get the value of the node
+ * @param node: the node that contains the desired value
+ * @return Returns NULL if an error, otherwise the value associated with node
  */
 void *ecore_tree_node_value_get(Ecore_Tree_Node * node)
 {
@@ -211,11 +181,10 @@ void *ecore_tree_node_value_get(Ecore_Tree_Node * node)
 }
 
 /*
- * ecore_tree_node_key_set - set the value of the node's key  to key
- * @node: the node to be set
- * @key: the value to set it's key to.
- *
- * Returns TRUE if the node is set successfully, FALSE if not.
+ * @brief Set the value of the node's key  to key
+ * @param node: the node to be set
+ * @param key: the value to set it's key to.
+ * @return Returns TRUE if the node is set successfully, FALSE if not.
  */
 int ecore_tree_node_key_set(Ecore_Tree_Node * node, void *key)
 {
@@ -229,10 +198,10 @@ int ecore_tree_node_key_set(Ecore_Tree_Node * node, void *key)
 }
 
 /*
- * ecore_tree_node_key_get - get the value of the node's key 
- * @node: the node that contains the desired key
+ * @brief Get the value of the node's key 
+ * @param node: the node that contains the desired key
  *
- * Returns NULL if an error occurs, otherwise the key is returned
+ * @return Returns NULL if an error occurs, otherwise the key is returned
  */
 void *ecore_tree_node_key_get(Ecore_Tree_Node * node)
 {
@@ -247,10 +216,10 @@ void *ecore_tree_node_key_get(Ecore_Tree_Node * node)
 }
 
 /**
- * ecore_tree_destroy - free the tree and it's stored data
- * @tree: the tree to destroy
+ * @brief Free the tree and it's stored data
+ * @param tree: the tree to destroy
  *
- * Returns TRUE if tree destroyed successfully, FALSE if not.
+ * @return Returns TRUE if tree destroyed successfully, FALSE if not.
  */
 int ecore_tree_destroy(Ecore_Tree * tree)
 {
@@ -272,11 +241,11 @@ int ecore_tree_destroy(Ecore_Tree * tree)
 }
 
 /**
- * ecore_tree_get_node - return the node corresponding to key
- * @tree: the tree to search
- * @key: the key to search for in the tree
+ * @brief Return the node corresponding to key
+ * @param tree: the tree to search
+ * @param key: the key to search for in the tree
  *
- * Returns the node corresponding to the key if found, otherwise NULL.
+ * @return Returns the node corresponding to the key if found, otherwise NULL.
  */
 Ecore_Tree_Node *ecore_tree_get_node(Ecore_Tree * tree, void *key)
 {
@@ -292,11 +261,10 @@ Ecore_Tree_Node *ecore_tree_get_node(Ecore_Tree * tree, void *key)
 }
 
 /**
- * ecore_tree_get - return the value corresponding to key
- * @tree: the tree to search
- * @key: the key to search for in @tree
- *
- * Returns the value corresponding to the key if found, otherwise NULL.
+ * @brief Return the value corresponding to key
+ * @param tree: the tree to search
+ * @param key: the key to search for in @a tree
+ * @return Returns the value corresponding to the key if found, otherwise NULL.
  */
 void *ecore_tree_get(Ecore_Tree * tree, void *key)
 {
@@ -317,11 +285,10 @@ void *ecore_tree_get(Ecore_Tree * tree, void *key)
 }
 
 /**
- * ecore_tree_get_closest_larger - find the closest value greater >= key
- * @tree: the tree to search 
- * @key: the key to search for in @tree
- *
- * Returns NULL if no valid nodes, otherwise the node >= key
+ * @brief Find the closest value greater >= key
+ * @param tree: the tree to search 
+ * @param key: the key to search for in @tree
+ * @return Returns NULL if no valid nodes, otherwise the node >= key
  */
 void *ecore_tree_get_closest_larger(Ecore_Tree * tree, void *key)
 {
@@ -354,11 +321,10 @@ void *ecore_tree_get_closest_larger(Ecore_Tree * tree, void *key)
 }
 
 /**
- * ecore_tree_get_closest_smaller - find the closest value <= key
- * @tree: the tree to search
- * @key: the key to search for in tree
- *
- * Returns NULL if no valid nodes, otherwise the node <= key
+ * @brief Find the closest value <= key
+ * @param tree: the tree to search
+ * @param key: the key to search for in tree
+ * @return Returns NULL if no valid nodes, otherwise the node <= key
  */
 void *ecore_tree_get_closest_smaller(Ecore_Tree * tree, void *key)
 {
@@ -384,12 +350,11 @@ void *ecore_tree_get_closest_smaller(Ecore_Tree * tree, void *key)
 }
 
 /**
- * ecore_tree_set - set the value associated with key to @value
- * @tree: the tree that contains the key/value pair
- * @key: the key to identify which node to set a value
- * @value: value to set the found node
- *
- * Returns TRUE if successful, FALSE if not.
+ * @brief Set the value associated with key to @value
+ * @param tree: the tree that contains the key/value pair
+ * @param key: the key to identify which node to set a value
+ * @param value: value to set the found node
+ * @return Returns TRUE if successful, FALSE if not.
  */
 int ecore_tree_set(Ecore_Tree * tree, void *key, void *value)
 {
@@ -418,11 +383,10 @@ int ecore_tree_set(Ecore_Tree * tree, void *key, void *value)
 }
 
 /**
- * ecore_tree_add_node - place a node in the tree
- * @tree: the tree to add @node
- * @node: the node to add to @tree
- *
- * Returns TRUE on a successful add, FALSE otherwise.
+ * @brief Place a node in the tree
+ * @param tree: the tree to add @node
+ * @param node: the node to add to @tree
+ * @brief Returns TRUE on a successful add, FALSE otherwise.
  */
 int ecore_tree_add_node(Ecore_Tree * tree, Ecore_Tree_Node * node)
 {
@@ -454,11 +418,10 @@ int ecore_tree_add_node(Ecore_Tree * tree, Ecore_Tree_Node * node)
 
 
 /**
- * ecore_tree_remove_node - remove the node from the tree
- * @tree: the tree to remove @node
- * @node: the node to remove from @tree
- *
- * Returns TRUE on a successful remove, FALSE otherwise.
+ * @brief Remove the node from the tree
+ * @param tree: the tree to remove @node
+ * @param node: the node to remove from @tree
+ * @return Returns TRUE on a successful remove, FALSE otherwise.
  */
 int ecore_tree_remove_node(Ecore_Tree * tree, Ecore_Tree_Node * node)
 {
@@ -563,11 +526,10 @@ int ecore_tree_remove_node(Ecore_Tree * tree, Ecore_Tree_Node * node)
 }
 
 /**
- * ecore_tree_remove - remove the key from the tree
- * @tree: the tree to remove @key
- * @key: the key to remove from @tree
- *
- * Returns TRUE on a successful remove, FALSE otherwise.
+ * @brief Remove the key from the tree
+ * @param tree: the tree to remove @key
+ * @param key: the key to remove from @tree
+ * @return Returns TRUE on a successful remove, FALSE otherwise.
  */
 int ecore_tree_remove(Ecore_Tree * tree, void *key)
 {
@@ -591,10 +553,9 @@ int ecore_tree_remove(Ecore_Tree * tree, void *key)
 }
 
 /**
- * ecore_tree_is_empty - test to see if the tree has any nodes
- * @tree: the tree to check for nodes
- *
- * Returns TRUE if no nodes exist, FALSE otherwise
+ * @brief Test to see if the tree has any nodes
+ * @param tree: the tree to check for nodes
+ * @return Returns TRUE if no nodes exist, FALSE otherwise
  */
 int ecore_tree_is_empty(Ecore_Tree * tree)
 {
@@ -607,11 +568,10 @@ int ecore_tree_is_empty(Ecore_Tree * tree)
 }
 
 /**
- * ecore_tree_for_each_node_value - execute function for each value in the tree
- * @tree: the tree to traverse
- * @for_each_func: the function to execute for each value in the tree
- *
- * Returns TRUE on success, FALSE on failure.
+ * @brief Execute function for each value in the tree
+ * @param tree: the tree to traverse
+ * @param for_each_func: the function to execute for each value in the tree
+ * @return Returns TRUE on success, FALSE on failure.
  */
 int ecore_tree_for_each_node_value(Ecore_Tree * tree,
 				 Ecore_For_Each for_each_func)
@@ -626,11 +586,11 @@ int ecore_tree_for_each_node_value(Ecore_Tree * tree,
 }
 
 /**
- * ecore_tree_for_each_node - execute the function for each node in the tree
- * @tree: the tree to traverse
- * @for_each_func: the function to execute for each node
+ * @brief Execute the function for each node in the tree
+ * @param tree: the tree to traverse
+ * @param for_each_func: the function to execute for each node
  *
- * Returns TRUE on success, FALSE on failure.
+ * @return Returns TRUE on success, FALSE on failure.
  */
 int ecore_tree_for_each_node(Ecore_Tree * tree, Ecore_For_Each for_each_func)
 {
@@ -806,11 +766,10 @@ int tree_node_rotate_left(Ecore_Tree * tree, Ecore_Tree_Node * top_node)
 }
 
 /*
- * Description: Execute a function for each node below this point in the tree.
- * Parameters: 1. node - the highest node in the tree the function will be
- *                       executed for
- *             2. for_each_func - the function to pass the nodes as data into
- * Returns: FALSE if an error condition occurs, otherwise TRUE
+ * @brief Execute a function for each node below this point in the tree.
+ * @param node: the highest node in the tree the function will be executed for
+ * @param for_each_func: the function to pass the nodes as data into
+ * @return Returns FALSE if an error condition occurs, otherwise TRUE
  */
 int tree_for_each_node(Ecore_Tree_Node * node, Ecore_For_Each for_each_func)
 {
@@ -829,11 +788,10 @@ int tree_for_each_node(Ecore_Tree_Node * node, Ecore_For_Each for_each_func)
 
 
 /*
- * Description: Execute a function for each node below this point in the tree.
- * Parameters: 1. node - the highest node in the tree the function will be
- *                    executed for
- *             2. for_each_func - the function to pass the nodes values as data
- * Returns: FALSE if an error condition occurs, otherwise TRUE
+ * @brief Execute a function for each node below this point in the tree.
+ * @param node: the highest node in the tree the function will be executed for
+ * @param for_each_func: the function to pass the nodes values as data
+ * @return Returns FALSE if an error condition occurs, otherwise TRUE
  */
 int tree_for_each_node_value(Ecore_Tree_Node * node,
 			     Ecore_For_Each for_each_func)

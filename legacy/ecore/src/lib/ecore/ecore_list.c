@@ -202,9 +202,8 @@ _ecore_list_find(void *in_list, void *in_item)
 /* XXX: End deprecated code */
 
 /**
- * ecore_list_new - create and initialize a new list.
- *
- * Returns a new initialized list on success, NULL on failure.
+ * @brief Create and initialize a new list.
+ * @return Returns a new initialized list on success, NULL on failure.
  */
 Ecore_List *ecore_list_new()
 {
@@ -223,10 +222,9 @@ Ecore_List *ecore_list_new()
 }
 
 /**
- * ecore_list_init - initialize a list to some sane starting values.
- * @list: the list to initialize
- *
- * Returns FALSE if an error occurs, TRUE if successful
+ * @brief Initialize a list to some sane starting values.
+ * @param list: the list to initialize
+ * @return Returns FALSE if an error occurs, TRUE if successful
  */
 int ecore_list_init(Ecore_List *list)
 {
@@ -240,10 +238,9 @@ int ecore_list_init(Ecore_List *list)
 }
 
 /**
- * ecore_list_destroy - Free a list and all of it's nodes.
- * @list: the list to be freed
- *
- * Returns no value
+ * @brief Free a list and all of it's nodes.
+ * @param list: the list to be freed
+ * @return Returns no value
  */
 void ecore_list_destroy(Ecore_List * list)
 {
@@ -266,11 +263,10 @@ void ecore_list_destroy(Ecore_List * list)
 }
 
 /**
- * ecore_list_set_free_cb - set the function for freeing data
- * @list: the list that will use this function when nodes are destroyed.
- * @free_func: the function that will free the key data
- *
- * Returns TRUE on successful set, FALSE otherwise.
+ * @brief Set the function for freeing data
+ * @param list: the list that will use this function when nodes are destroyed.
+ * @param free_func: the function that will free the key data
+ * @return Returns TRUE on successful set, FALSE otherwise.
  */
 int ecore_list_set_free_cb(Ecore_List * list, Ecore_Free_Cb free_func)
 {
@@ -286,10 +282,9 @@ int ecore_list_set_free_cb(Ecore_List * list, Ecore_Free_Cb free_func)
 }
 
 /**
- * ecore_list_is_empty - checks the list for any nodes.
- * @list: the list to check for nodes
- *
- * Returns TRUE if no nodes in list, FALSE if the list contains nodes
+ * @brief Checks the list for any nodes.
+ * @param list: the list to check for nodes
+ * @return Returns TRUE if no nodes in list, FALSE if the list contains nodes
  */
 int ecore_list_is_empty(Ecore_List * list)
 {
@@ -308,10 +303,9 @@ int ecore_list_is_empty(Ecore_List * list)
 }
 
 /**
- * ecore_list_index - returns the number of the current node
- * @list: the list to return the number of the current node
- *
- * Returns the number of the current node in the list.
+ * @brief Returns the number of the current node
+ * @param list: the list to return the number of the current node
+ * @return Returns the number of the current node in the list.
  */
 int ecore_list_index(Ecore_List * list)
 {
@@ -329,10 +323,9 @@ int ecore_list_index(Ecore_List * list)
 }
 
 /**
- * ecore_list_nodes - find the number of nodes in the list.
- * @list: the list to find the number of nodes
- *
- * Returns the number of nodes in the list.
+ * @brief Find the number of nodes in the list.
+ * @param list: the list to find the number of nodes
+ * @return Returns the number of nodes in the list.
  */
 int ecore_list_nodes(Ecore_List * list)
 {
@@ -350,11 +343,10 @@ int ecore_list_nodes(Ecore_List * list)
 }
 
 /**
- * ecore_list_append - append data to the list.
- * @list: the list to append @data
- * @data: the data to append to @list.
- *
- * Returns FALSE if an error occurs, TRUE if @data is appended successfully
+ * @brief Append data to the list.
+ * @param list: the list to append @data
+ * @param data: the data to append to @list.
+ * @return Returns FALSE if an error occurs, TRUE if appended successfully
  */
 inline int ecore_list_append(Ecore_List * list, void *data)
 {
@@ -397,11 +389,10 @@ static int _ecore_list_append_0(Ecore_List * list, Ecore_List_Node *end)
 }
 
 /**
- * ecore_list_prepend - prepend data to the beginning of the list
- * @list: the list to prepend @data
- * @data: the data to prepend to @list
- *
- * Returns FALSE if an error occurs, TRUE if data prepended successfully
+ * @brief Prepend data to the beginning of the list
+ * @param list: the list to prepend @data
+ * @param data: the data to prepend to @list
+ * @return Returns FALSE if an error occurs, TRUE if prepended successfully
  */
 inline int ecore_list_prepend(Ecore_List * list, void *data)
 {
@@ -441,11 +432,10 @@ static int _ecore_list_prepend_0(Ecore_List * list, Ecore_List_Node *start)
 }
 
 /**
- * ecore_list_insert - insert data at the current point in the list
- * @list: the list to hold the inserted @data
- * @data: the data to insert into @list
- *
- * Returns FALSE on an error, TRUE on success
+ * @brief Insert data at the current point in the list
+ * @param list: the list to hold the inserted @data
+ * @param data: the data to insert into @list
+ * @return Returns FALSE on an error, TRUE on success
  */
 inline int ecore_list_insert(Ecore_List * list, void *data)
 {
@@ -504,10 +494,9 @@ static int _ecore_list_insert(Ecore_List * list, Ecore_List_Node *new_node)
 }
 
 /**
- * ecore_list_remove - remove the current item from the list.
- * @list: the list to remove the current item
- *
- * Returns a pointer to the removed data on success, NULL on failure.
+ * @brief Remove the current item from the list.
+ * @param list: the list to remove the current item
+ * @return Returns a pointer to the removed data on success, NULL on failure.
  */
 inline void *ecore_list_remove(Ecore_List * list)
 {
@@ -567,10 +556,9 @@ static void *_ecore_list_remove_0(Ecore_List * list)
 }
 
 /**
- * ecore_list_remove_destroy - remove and free the data in lists current position
- * @list: the list to remove and free the current item
- *
- * Returns TRUE on success, FALSE on error
+ * @brief Remove and free the data in lists current position
+ * @param list: the list to remove and free the current item
+ * @return Returns TRUE on success, FALSE on error
  */
 int ecore_list_remove_destroy(Ecore_List *list)
 {
@@ -589,10 +577,9 @@ int ecore_list_remove_destroy(Ecore_List *list)
 }
 
 /**
- * ecore_list_remove_first - remove the first item from the list.
- * @list: the list to remove the current item
- *
- * Returns a pointer to the removed data on success, NULL on failure.
+ * @brief Remove the first item from the list.
+ * @param list: the list to remove the current item
+ * @return Returns a pointer to the removed data on success, NULL on failure.
  */
 inline void *ecore_list_remove_first(Ecore_List * list)
 {
@@ -648,10 +635,9 @@ static void *_ecore_list_remove_first(Ecore_List * list)
 }
 
 /**
- * ecore_list_remove_first - remove the last item from the list.
- * @list: the list to remove the last node from
- *
- * Returns a pointer to the removed data on success, NULL on failure.
+ * @brief Remove the last item from the list.
+ * @param list: the list to remove the last node from
+ * @return Returns a pointer to the removed data on success, NULL on failure.
  */
 inline void *ecore_list_remove_last(Ecore_List * list)
 {
@@ -712,11 +698,10 @@ static void *_ecore_list_remove_last(Ecore_List * list)
 }
 
 /**
- * ecore_list_goto_index - move the current item to the index number
- * @list: the list to move the current item
- * @index: the position to move the current item
- *
- * Returns a pointer to the new current item on success, NULL on failure.
+ * @brief Move the current item to the index number
+ * @param list: the list to move the current item
+ * @param index: the position to move the current item
+ * @return Returns a pointer to new current item on success, NULL on failure.
  */
 inline void *ecore_list_goto_index(Ecore_List * list, int index)
 {
@@ -756,11 +741,11 @@ static void *_ecore_list_goto_index(Ecore_List *list, int index)
 }
 
 /**
- * ecore_list_goto - move the current item to the node that contains data
- * @list: the list to move the current item in
- * @data: the data to find and set the current item to
+ * @brief Move the current item to the node that contains data
+ * @param list: the list to move the current item in
+ * @param data: the data to find and set the current item to
  *
- * Returns a pointer to @data on success, NULL on failure.
+ * @return Returns a pointer to @a data on success, NULL on failure.
  */
 inline void *ecore_list_goto(Ecore_List * list, void *data)
 {
@@ -814,10 +799,9 @@ static void *_ecore_list_goto(Ecore_List * list, void *data)
 }
 
 /**
- * ecore_list_goto_first - move the current pointer to the first item in the list
- * @list: the list to move the current pointer in
- *
- * Returns a pointer to the first item on success, NULL on failure
+ * @brief Move the current pointer to the first item in the list
+ * @param list: the list to move the current pointer in
+ * @return Returns a pointer to the first item on success, NULL on failure
  */
 inline void *ecore_list_goto_first(Ecore_List *list)
 {
@@ -847,10 +831,9 @@ static void *_ecore_list_goto_first(Ecore_List * list)
 }
 
 /**
- * ecore_list_goto_last - move the pointer to current to the last item in the list
- * @list: the list to move the current pointer in
- *
- * Returns a pointer to the last item on success, NULL on failure.
+ * @brief Move the pointer to current to the last item in the list
+ * @param list: the list to move the current pointer in
+ * @return Returns a pointer to the last item on success, NULL on failure.
  */
 inline void *ecore_list_goto_last(Ecore_List * list)
 {
@@ -878,11 +861,9 @@ static void *_ecore_list_goto_last(Ecore_List * list)
 }
 
 /**
- * ecore_list_current - retrieve the data in the current node
- * @list: the list to retrieve the current data from
- *
- * Returns the data at the current position on success, NULL on failure or if
- * no current item set.
+ * @brief Retrieve the data in the current node
+ * @param list: the list to retrieve the current data from
+ * @return Returns the data at current position, can be NULL.
  */
 inline void *ecore_list_current(Ecore_List * list)
 {
@@ -911,10 +892,10 @@ static void *_ecore_list_current(Ecore_List * list)
 }
 
 /**
- * ecore_list_next - retrieve the data at the current node and move to the next
- * @list: the list to move to the next item
+ * @brief Retrieve the data at the current node and move to the next
+ * @param list: the list to move to the next item
  *
- * Returns the current item in the list on success, NULL on failure.
+ * @return Returns the current item in the list on success, NULL on failure.
  */
 inline void *ecore_list_next(Ecore_List * list)
 {
@@ -955,11 +936,11 @@ static void *_ecore_list_next(Ecore_List * list)
 }
 
 /**
- * ecore_list_clear - remove all nodes from the list
- * @list: the list that will have it's nodes removed
+ * @brief Remove all nodes from the list
+ * @param list: the list that will have it's nodes removed
+ * @return Returns TRUE on success, FALSE on error.
  *
- * Returns TRUE on success, FALSE on error. The data for each item on the list
- * is not freed by ecore_list_clear.
+ * The data for each item on the list is not freed by ecore_list_clear.
  */
 int ecore_list_clear(Ecore_List * list)
 {
@@ -976,11 +957,11 @@ int ecore_list_clear(Ecore_List * list)
 }
 
 /**
- * ecore_list_for_each - execute function for each node in the list.
- * @list: the list to retrieve nodes from.
- * @function: The function to pass each node from the list to.
+ * @brief Execute function for each node in the list.
+ * @param list: the list to retrieve nodes from.
+ * @param function: The function to pass each node from the list to.
  *
- * Returns TRUE on success, FALSE on failure.
+ * @return Returns TRUE on success, FALSE on failure.
  */
 int ecore_list_for_each(Ecore_List *list, Ecore_For_Each function)
 {
@@ -1058,9 +1039,8 @@ int ecore_list_node_destroy(Ecore_List_Node * node, Ecore_Free_Cb free_func)
 }
 
 /**
- * ecore_dlist_new - create and initialize a new list.
- *
- * Returns a new initialized list on success, NULL on failure.
+ * @brief Create and initialize a new list.
+ * @return Returns a new initialized list on success, NULL on failure.
  */
 Ecore_DList *ecore_dlist_new()
 {
@@ -1079,10 +1059,9 @@ Ecore_DList *ecore_dlist_new()
 }
 
 /**
- * ecore_dlist_init - initialize a list to some sane starting values.
- * @list: the list to initialize
- *
- * Returns FALSE if an error occurs, TRUE if successful
+ * @brief Initialize a list to some sane starting values.
+ * @param list: the list to initialize
+ * @return Returns FALSE if an error occurs, TRUE if successful
  */
 int ecore_dlist_init(Ecore_DList *list)
 {
@@ -1096,10 +1075,10 @@ int ecore_dlist_init(Ecore_DList *list)
 }
 
 /**
- * ecore_dlist_destroy - free a list and all of it's nodes.
- * @list: the list to be freed
+ * @brief Free a list and all of it's nodes.
+ * @param list: the list to be freed
  *
- * Returns no value
+ * @return Returns no value
  */
 void ecore_dlist_destroy(Ecore_DList * list)
 {
@@ -1121,11 +1100,10 @@ void ecore_dlist_destroy(Ecore_DList * list)
 }
 
 /**
- * ecore_dlist_set_free_cb - set the function for freeing data
- * @list: the list that will use this function when nodes are destroyed.
- * @free_func: the function that will free the key data
- *
- * Returns TRUE on success, FALSE on failure.
+ * @brief Set the function for freeing data
+ * @param list: the list that will use this function when nodes are destroyed.
+ * @param free_func: the function that will free the key data
+ * @return Returns TRUE on success, FALSE on failure.
  */
 int ecore_dlist_set_free_cb(Ecore_DList * list, Ecore_Free_Cb free_func)
 {
@@ -1135,10 +1113,10 @@ int ecore_dlist_set_free_cb(Ecore_DList * list, Ecore_Free_Cb free_func)
 }
 
 /**
- * ecore_dlist_is_empty - checks the list for any nodes.
- * @list: the list to check for nodes
+ * @brief Checks the list for any nodes.
+ * @param list: the list to check for nodes
  *
- * Returns TRUE if no nodes in list, FALSE if the list contains nodes
+ * @return Returns TRUE if no nodes in list, FALSE if the list contains nodes
  */
 int ecore_dlist_is_empty(Ecore_DList * list)
 {
@@ -1148,10 +1126,9 @@ int ecore_dlist_is_empty(Ecore_DList * list)
 }
 
 /**
- * ecore_dlist_index - returns the number of the current node
- * @list: the list to return the number of the current node
- *
- * Returns the number of the current node in the list.
+ * @brief Returns the number of the current node
+ * @param list: the list to return the number of the current node
+ * @return Returns the number of the current node in the list.
  */
 inline int ecore_dlist_index(Ecore_DList * list)
 {
@@ -1161,11 +1138,11 @@ inline int ecore_dlist_index(Ecore_DList * list)
 }
 
 /**
- * ecore_dlist_append - append data to the list.
- * @list: the list to append @data
- * @data: the data to append to @list
+ * @brief Append data to the list.
+ * @param list: the list to append @data
+ * @param data: the data to append to @list
  *
- * Returns FALSE if an error occurs, TRUE if the data is appended successfully
+ * @return Returns FALSE if an error occurs, TRUE if appended successfully
  */
 int ecore_dlist_append(Ecore_DList * list, void *data)
 {
@@ -1192,11 +1169,10 @@ int ecore_dlist_append(Ecore_DList * list, void *data)
 }
 
 /**
- * ecore_dlist_prepend - prepend data to the beginning of the list
- * @list: the list to prepend @data
- * @data: the data to prepend to @list
- *
- * Returns FALSE if an error occurs, TRUE if data prepended successfully
+ * @brief Prepend data to the beginning of the list
+ * @param list: the list to prepend @data
+ * @param data: the data to prepend to @list
+ * @return Returns FALSE if an error occurs, TRUE if prepended successfully
  */
 int ecore_dlist_prepend(Ecore_DList * list, void *data)
 {
@@ -1222,11 +1198,10 @@ int ecore_dlist_prepend(Ecore_DList * list, void *data)
 }
 
 /**
- * ecore_dlist_insert - insert data at the current point in the list
- * @list: the list to hold the inserted @data
- * @data: the data to insert into @list
- *
- * Returns FALSE on an error, TRUE on success
+ * @brief Insert data at the current point in the list
+ * @param list: the list to hold the inserted @data
+ * @param data: the data to insert into @list
+ * @return Returns FALSE on an error, TRUE on success
  */
 int ecore_dlist_insert(Ecore_DList * list, void *data)
 {
@@ -1266,10 +1241,9 @@ int ecore_dlist_insert(Ecore_DList * list, void *data)
 }
 
 /**
- * ecore_dlist_remove - remove the current item from the list.
- * @list: the list to remove the current item
- *
- * Returns a pointer to the removed data on success, NULL on failure.
+ * @brief Remove the current item from the list.
+ * @param list: the list to remove the current item
+ * @return Returns a pointer to the removed data on success, NULL on failure.
  */
 void *ecore_dlist_remove(Ecore_DList * list)
 {
@@ -1293,10 +1267,9 @@ void *ecore_dlist_remove(Ecore_DList * list)
 }
 
 /**
- * ecore_dlist_remove_first - remove the first item from the list.
- * @list: the list to remove the current item
- *
- * Returns a pointer to the removed data on success, NULL on failure.
+ * @brief Remove the first item from the list.
+ * @param list: the list to remove the current item
+ * @return Returns a pointer to the removed data on success, NULL on failure.
  */
 void *ecore_dlist_remove_first(Ecore_DList * list)
 {
@@ -1312,10 +1285,10 @@ void *ecore_dlist_remove_first(Ecore_DList * list)
 }
 
 /**
- * ecore_dlist_remove_destroy - remove and free the data at the current position
- * @list: the list to remove the data from
+ * @brief Remove and free the data at the current position
+ * @param list: the list to remove the data from
  *
- * Returns TRUE on success, FALSE on error
+ * @return Returns TRUE on success, FALSE on error
  */
 int ecore_dlist_remove_destroy(Ecore_DList *list)
 {
@@ -1339,10 +1312,9 @@ static void *_ecore_dlist_remove_first(Ecore_DList *list)
 }
 
 /**
- * ecore_dlist_remove_last - remove the last item from the list
- * @list: the list to remove the last node from
- *
- * Returns a pointer to the removed data on success, NULL on failure.
+ * @brief Remove the last item from the list
+ * @param list: the list to remove the last node from
+ * @return Returns a pointer to the removed data on success, NULL on failure.
  */
 void *ecore_dlist_remove_last(Ecore_DList * list)
 {
@@ -1358,11 +1330,10 @@ void *ecore_dlist_remove_last(Ecore_DList * list)
 }
 
 /**
- * ecore_dlist_goto_index - move the current item to the index number
- * @list: the list to move the current item
- * @index: the position to move the current item
- *
- * Returns node at specified index on success, NULL on error
+ * @brief Move the current item to the index number
+ * @param list: the list to move the current item
+ * @param index: the position to move the current item
+ * @return Returns node at specified index on success, NULL on error
  */
 void *ecore_dlist_goto_index(Ecore_DList * list, int index)
 {
@@ -1411,11 +1382,11 @@ static void *_ecore_dlist_goto_index(Ecore_DList *list, int index)
 }
 
 /**
- * ecore_dlist_goto - move the current item to the node that contains data
- * @list: the list to move the current item in
- * @data: the data to find and set the current item to
+ * @brief Move the current item to the node that contains data
+ * @param list: the list to move the current item in
+ * @param data: the data to find and set the current item to
  *
- * Returns specified data on success, NULL on error
+ * @return Returns specified data on success, NULL on error
  */
 void *ecore_dlist_goto(Ecore_DList * list, void *data)
 {
@@ -1431,10 +1402,10 @@ void *ecore_dlist_goto(Ecore_DList * list, void *data)
 }
 
 /**
- * ecore_dlist_goto_first - move the current pointer to the first item in the list
- * @list: the list to change the current to the first item
+ * @brief Move the current pointer to the first item in the list
+ * @param list: the list to change the current to the first item
  *
- * Returns a pointer to the first item on success, NULL on failure.
+ * @return Returns a pointer to the first item on success, NULL on failure.
  */
 void *ecore_dlist_goto_first(Ecore_DList *list)
 {
@@ -1450,10 +1421,9 @@ void *ecore_dlist_goto_first(Ecore_DList *list)
 }
 
 /**
- * ecore_dlist_goto_last - move the pointer to the current item to the last item
- * @list: the list to move the current item pointer to the last
- *
- * Returns a pointer to the last item in the list on success, NULL on failure.
+ * @brief Move the pointer to the current item to the last item
+ * @param list: the list to move the current item pointer to the last
+ * @return Returns a pointer to the last item in the list , NULL if empty.
  */
 void *ecore_dlist_goto_last(Ecore_DList * list)
 {
@@ -1469,10 +1439,9 @@ void *ecore_dlist_goto_last(Ecore_DList * list)
 }
 
 /**
- * ecore_dlist_current - return the data in the current list item
- * @list: the list to the return the current data
- *
- * Returns value of the current data item, NULL if no current item
+ * @brief Return the data in the current list item
+ * @param list: the list to the return the current data
+ * @return Returns value of the current data item, NULL if no current item
  */
 void *ecore_dlist_current(Ecore_DList * list)
 {
@@ -1486,10 +1455,9 @@ void *ecore_dlist_current(Ecore_DList * list)
 }
 
 /**
- * ecore_dlist_next - move to the next item in the list and return current item
- * @list: the list to move to the next item in.
- *
- * Returns data in the current list node, or NULL on error
+ * @brief Move to the next item in the list and return current item
+ * @param list: the list to move to the next item in.
+ * @return Returns data in the current list node, or NULL on error
  */
 void *ecore_dlist_next(Ecore_DList * list)
 {
@@ -1503,10 +1471,9 @@ void *ecore_dlist_next(Ecore_DList * list)
 }
 
 /**
- * ecore_dlist_previous - move to the previous item and return current item
- * @list: the list to move to the previous item in.
- *
- * Returns data in the current list node, or NULL on error
+ * @brief Move to the previous item and return current item
+ * @param list: the list to move to the previous item in.
+ * @return Returns data in the current list node, or NULL on error
  */
 void *ecore_dlist_previous(Ecore_DList * list)
 {
@@ -1539,10 +1506,10 @@ static void *_ecore_dlist_previous(Ecore_DList * list)
 }
 
 /**
- * ecore_dlist_clear - remove all nodes from the list.
- * @list: the list to remove all nodes from
+ * @brief Remove all nodes from the list.
+ * @param list: the list to remove all nodes from
  *
- * Returns TRUE on success, FALSE on errors
+ * @return Returns TRUE on success, FALSE on errors
  */
 int ecore_dlist_clear(Ecore_DList * list)
 {
@@ -1554,9 +1521,9 @@ int ecore_dlist_clear(Ecore_DList * list)
 }
 
 /*
- * Description: Initialize a node to sane starting values
- * Parameters: 1. node - the node to initialize
- * Returns: TRUE on success, FALSE on errors
+ * @brief Initialize a node to sane starting values
+ * @param node: the node to initialize
+ * @return Returns TRUE on success, FALSE on errors
  */
 int ecore_dlist_node_init(Ecore_DList_Node * node)
 {
@@ -1572,9 +1539,8 @@ int ecore_dlist_node_init(Ecore_DList_Node * node)
 }
 
 /*
- * Description: Allocate and initialize a new list node
- * Parameters: None
- * Returns: NULL on error, new list node on success
+ * @brief Allocate and initialize a new list node
+ * @return Returns NULL on error, new list node on success
  */
 Ecore_DList_Node *ecore_dlist_node_new()
 {
@@ -1594,10 +1560,10 @@ Ecore_DList_Node *ecore_dlist_node_new()
 }
 
 /*
- * Description: Call the data's free callback function, then free the node
- * Parameters: 1. node - the node to be freed
- *             2. free_func - the callback function to execute on the data
- * Returns: TRUE on success, FALSE on error
+ * @brief Call the data's free callback function, then free the node
+ * @param node: the node to be freed
+ * @param free_func: the callback function to execute on the data
+ * @return Returns TRUE on success, FALSE on error
  */
 int ecore_dlist_node_destroy(Ecore_DList_Node * node, Ecore_Free_Cb free_func)
 {
