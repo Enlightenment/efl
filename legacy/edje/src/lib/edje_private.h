@@ -10,6 +10,25 @@
 #include <math.h>
 #include <fnmatch.h>
 
+/* FIXME: need "random" signals and events to hook to */
+/* FIXME: clip_to needs to work */
+/* FIXME: free stuff - no more leaks */
+/* FIXME: dragables have to work */
+/* FIXME: drag start/top signals etc. */
+/* FIXME: drag needs to have signals with relative pos */
+/* FIXME: drag vals 0.0 -> 1.0. "rest" pos == 0.0 */
+/* FIXME: text parts need to work */
+/* FIXME: reduce linked list walking and list_nth calls */
+/* FIXME: named parts need to be able to be "replaced" with new evas objects */
+/* FIXME: need to be able to calculate min & max size of a whole edje */
+/* FIXME: add code to list collections in an eet */
+/* FIXME: part replacement with objec t+callbacks */
+/* FIXME: part queries for geometry etc. */
+
+/* FIXME: ? somehow handle double click? */
+/* FIXME: ? add numeric params to conditions for progs (ranges etc.) */
+
+  
 /* HOW THIS ALL WORKS:
  * -------------------
  * 
@@ -381,6 +400,39 @@ struct _Edje_Emission
    char *source;
 };
 
+void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos);
+void  _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1, char *d2, double v2);
+void  _edje_recalc(Edje *ed);
+
+void  _edje_mouse_in_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
+void  _edje_mouse_out_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
+void  _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
+void  _edje_mouse_up_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
+void  _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
+void  _edje_mouse_wheel_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
+int   _edje_timer_cb(void *data);
+
+void  _edje_edd_setup(void);
+
+void  _edje_file_add(Edje *ed);
+void  _edje_file_del(Edje *ed);
+void  _edje_file_free(Edje_File *edf);
+void  _edje_collection_free(Edje_Part_Collection *ec);
+
+Edje *_edje_add(Evas_Object *obj);
+void  _edje_del(Edje *ed);
+
+int   _edje_program_run_iterate(Edje_Running_Program *runp, double tim);
+void  _edje_program_end(Edje *ed, Edje_Running_Program *runp);
+void  _edje_program_run(Edje *ed, Edje_Program *pr);
+void  _edje_emit(Edje *ed, char *sig, char *src);
+
+Edje *_edje_fetch(Evas_Object *obj);
+int   _edje_glob_match(char *str, char *glob);
+int   _edje_freeze(Edje *ed);
+int   _edje_thaw(Edje *ed);
+
+
 extern Eet_Data_Descriptor *_edje_edd_edje_file;
 extern Eet_Data_Descriptor *_edje_edd_edje_image_directory;
 extern Eet_Data_Descriptor *_edje_edd_edje_image_directory_entry;
@@ -392,4 +444,9 @@ extern Eet_Data_Descriptor *_edje_edd_edje_part_collection;
 extern Eet_Data_Descriptor *_edje_edd_edje_part;
 extern Eet_Data_Descriptor *_edje_edd_edje_part_description;
 extern Eet_Data_Descriptor *_edje_edd_edje_part_image_id;
+
+extern int          _edje_anim_count;
+extern Ecore_Timer *_edje_timer;
+extern Evas_List   *_edje_animators;
+
 #endif

@@ -16,7 +16,14 @@ INCLUDES	     = \
 lib_LTLIBRARIES      = libedje.la
 include_HEADERS      = Edje.h
 libedje_la_SOURCES  = \
+edje_calc.c \
+edje_callbacks.c \
+edje_data.c \
+edje_load.c \
 edje_main.c \
+edje_program.c \
+edje_smart.c \
+edje_util.c \
 edje_private.h
 
 libedje_la_LIBADD       = $(LDFLAGS) -lm @my_libs@
