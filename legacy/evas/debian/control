@@ -9,8 +9,7 @@ Package: libevas0-dev
 Section: devel
 Architecture: any
 Depends: libevas0 (= ${Source-Version})
-Conflicts: libevas0-dev,
-Provides: libevas0-dev,
+Provides: libevas-dev
 Description: enlightenment advanced canvas library development files
  This package provides headers and static libraries required to develop against
  evas.
