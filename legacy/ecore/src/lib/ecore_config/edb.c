@@ -4,19 +4,18 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <limits.h>
 
 int ecore_config_load(void) {
-  char* file = malloc(1024); /* ### fixme */
-  sprintf(file,"%s/.e/apps/%s/config.db",getenv("HOME"),__app_name);
+  char file[PATH_MAX];
+  snprintf(file, PATH_MAX, "%s/.e/apps/%s/config.db",getenv("HOME"),__app_name);
   return ecore_config_load_file(file);
-  free(file);
   }
 
 int ecore_config_save(void) {
-  char* file = malloc(1024); /* ### fixme */
-  sprintf(file,"%s/.e/apps/%s/config.db",getenv("HOME"),__app_name);
+  char file[PATH_MAX];
+  snprintf(file, PATH_MAX, "%s/.e/apps/%s/config.db",getenv("HOME"),__app_name);
   return ecore_config_save_file(file);
-  free(file);
   }
 
 int ecore_config_load_file(char *file) {
