@@ -125,7 +125,7 @@ typedef struct _Ecore_X_Event_Xdnd_Enter               Ecore_X_Event_Xdnd_Enter;
 typedef struct _Ecore_X_Event_Xdnd_Position            Ecore_X_Event_Xdnd_Position;
 typedef struct _Ecore_X_Event_Xdnd_Status              Ecore_X_Event_Xdnd_Status;
 typedef struct _Ecore_X_Event_Xdnd_Leave               Ecore_X_Event_Xdnd_Leave;
-typedef struct _Ecore_X_Event_Xdnd_Drop                Ecore_X_Event_Xdnd_Stop;
+typedef struct _Ecore_X_Event_Xdnd_Drop                Ecore_X_Event_Xdnd_Drop;
 typedef struct _Ecore_X_Event_Xdnd_Finished            Ecore_X_Event_Xdnd_Finished;
 typedef struct _Ecore_X_Event_Client_Message           Ecore_X_Event_Client_Message;
 typedef struct _Ecore_X_Event_Window_Shape             Ecore_X_Event_Window_Shape;

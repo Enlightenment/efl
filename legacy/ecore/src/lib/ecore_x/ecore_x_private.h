@@ -78,6 +78,8 @@ typedef struct _Ecore_X_DND_Protocol
       int x, y;
    } pos;
    
+   Time time;
+   
    Atom *types;
    Atom action, accepted_action;
    int num_types;
@@ -186,6 +188,7 @@ extern Atom     _ecore_x_atom_selection_prop_secondary;
 extern Atom     _ecore_x_atom_selection_prop_clipboard;
 
 extern Atom     _ecore_x_atom_selection_xdnd;
+extern Atom     _ecore_x_atom_selection_prop_xdnd;
 extern Atom     _ecore_x_atom_xdnd_aware;
 extern Atom     _ecore_x_atom_xdnd_enter;
 extern Atom     _ecore_x_atom_xdnd_type_list;
@@ -196,6 +199,7 @@ extern Atom     _ecore_x_atom_xdnd_action_ask;
 extern Atom     _ecore_x_atom_xdnd_action_list;
 extern Atom     _ecore_x_atom_xdnd_action_description;
 extern Atom     _ecore_x_atom_xdnd_status;
+extern Atom     _ecore_x_atom_xdnd_leave;
 extern Atom     _ecore_x_atom_xdnd_drop;
 extern Atom     _ecore_x_atom_xdnd_finished;
 

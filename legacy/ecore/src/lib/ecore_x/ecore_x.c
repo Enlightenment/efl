@@ -46,6 +46,7 @@ Atom     _ecore_x_atom_selection_prop_secondary = 0;
 Atom     _ecore_x_atom_selection_prop_clipboard = 0;
 
 Atom     _ecore_x_atom_selection_xdnd = 0;
+Atom     _ecore_x_atom_selection_prop_xdnd = 0;
 Atom     _ecore_x_atom_xdnd_aware = 0;
 Atom     _ecore_x_atom_xdnd_enter = 0;
 Atom     _ecore_x_atom_xdnd_type_list = 0;
@@ -369,6 +370,7 @@ ecore_x_init(const char *name)
    _ecore_x_atom_selection_prop_primary   = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_PRIMARY", False);
    _ecore_x_atom_selection_prop_secondary = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_SECONDARY", False);
    _ecore_x_atom_selection_prop_clipboard = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_CLIPBOARD", False);
+   _ecore_x_atom_selection_prop_xdnd      = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_XDND", False);
    _ecore_x_atom_selection_xdnd           = XInternAtom(_ecore_x_disp, "XdndSelection", False);
    _ecore_x_atom_xdnd_aware               = XInternAtom(_ecore_x_disp, "XdndAware", False);
    _ecore_x_atom_xdnd_type_list           = XInternAtom(_ecore_x_disp, "XdndTypeList", False);

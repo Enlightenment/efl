@@ -78,6 +78,7 @@ ecore_x_dnd_begin (Ecore_X_Window source, unsigned char *data, int size)
 
    _xdnd->source = source;
    _xdnd->state = ECORE_X_DND_DRAGGING;
+   _xdnd->time = _ecore_x_event_last_time;
 
    return 1;
 }
