@@ -18,6 +18,8 @@ edje_shutdown(void)
    if (!initted) return;
 
    _edje_edd_free();
+   _edje_color_class_members_free();
+   _edje_text_class_members_free();
 
    initted = 0;
 }

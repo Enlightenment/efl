@@ -1015,7 +1015,7 @@ _edje_color_class_find(Edje *ed, char *color_class)
 {
    Evas_List *l;
    
-   if ((!ed) || (!color_class)) return;
+   if ((!ed) || (!color_class)) return NULL;
    for (l = ed->color_classes; l; l = l->next)
      {
 	Edje_Color_Class *cc;
@@ -1042,7 +1042,7 @@ _edje_color_class_member_add(Edje *ed, char *color_class)
 void
 _edje_color_class_member_del(Edje *ed, char *color_class)
 {
-   Evas_List *members, *tmp = NULL;
+   Evas_List *members;
 
    if ((!ed) || (!color_class)) return;
    members = evas_hash_find(_edje_color_class_member_hash, color_class);
@@ -1051,6 +1051,15 @@ _edje_color_class_member_del(Edje *ed, char *color_class)
    _edje_color_class_member_hash = evas_hash_del(_edje_color_class_member_hash, color_class, members);
    members = evas_list_remove(members, ed);
    if (members) _edje_color_class_member_hash = evas_hash_add(_edje_color_class_member_hash, color_class, members);
+}
+
+void
+_edje_color_class_members_free(void)
+{
+   if (!_edje_color_class_member_hash) return;
+
+   evas_hash_free(_edje_color_class_member_hash);
+   _edje_color_class_member_hash = NULL;
 }
 
 void
@@ -1077,7 +1086,7 @@ _edje_text_class_find(Edje *ed, char *text_class)
 {
    Evas_List *l;
    
-   if ((!ed) || (!text_class)) return;
+   if ((!ed) || (!text_class)) return NULL;
    for (l = ed->text_classes; l; l = l->next)
      {
 	Edje_Text_Class *tc;
@@ -1104,7 +1113,7 @@ _edje_text_class_member_add(Edje *ed, char *text_class)
 void
 _edje_text_class_member_del(Edje *ed, char *text_class)
 {
-   Evas_List *members, *tmp = NULL;
+   Evas_List *members;
 
    if ((!ed) || (!text_class)) return;
    members = evas_hash_find(_edje_text_class_member_hash, text_class);
@@ -1113,6 +1122,15 @@ _edje_text_class_member_del(Edje *ed, char *text_class)
    _edje_text_class_member_hash = evas_hash_del(_edje_text_class_member_hash, text_class, members);
    members = evas_list_remove(members, ed);
    if (members) _edje_text_class_member_hash = evas_hash_add(_edje_text_class_member_hash, text_class, members);
+}
+
+void
+_edje_text_class_members_free(void)
+{
+   if (!_edje_text_class_member_hash) return;
+
+   evas_hash_free(_edje_text_class_member_hash);
+   _edje_text_class_member_hash = NULL;
 }
 
 Edje *
