@@ -28,7 +28,7 @@
  * real part size and "before min/max limit" sizes need to be stored per part
  * need to be able to calculate min & max size of a whole edje
  * 
- * swallowed objects need to be able to adversize min/max size
+ * swallowed objects need to be able to advertise min/max size
  * 
  * need to be able to list collections in an eet file
  * 

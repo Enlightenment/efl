@@ -20,7 +20,7 @@ collections
 	     part
 	       {
 		  name,          "background";
-// IMAGE, RECTANGLE, TEXT		  
+// IMAGE, RECT, TEXT		  
 //		  type,          IMAGE;
 // for text only really 
 // NONE, PLAIN, OUTLINE, SOFT_OUTLINE, SHADOW, SOFT_SHADOW, OUTLINE_SHADOW,

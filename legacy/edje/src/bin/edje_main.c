@@ -58,7 +58,7 @@ main_start(int argc, char **argv)
    ecore_evas_name_class_set(ecore_evas, "edje", "main");
    ecore_evas_show(ecore_evas);
    evas = ecore_evas_get(ecore_evas);
-   evas_image_cache_set(evas, 8 * 1024 * 1024);
+   evas_image_cache_set(evas, 16 * 1024 * 1024);
    evas_font_cache_set(evas, 1 * 1024 * 1024);
    evas_font_path_append(evas, DAT"data/test/fonts");
    return 1;
@@ -147,36 +147,36 @@ bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	     Demo_Edje *de;
 	     
 	     de = l->data;
-	     if      (!strcmp(ev->keyname, "p"))
+	     if      (!strcmp(ev->keyname, "Return"))
 	       edje_object_play_set(de->edje, 1);
-	     else if (!strcmp(ev->keyname, "o"))
+	     else if (!strcmp(ev->keyname, "Escape"))
 	       edje_object_play_set(de->edje, 0);
 	     else if (!strcmp(ev->keyname, "a"))
 	       edje_object_animation_set(de->edje, 1);
 	     else if (!strcmp(ev->keyname, "s"))
 	       edje_object_animation_set(de->edje, 0);
-	     else if (!strcmp(ev->keyname, "t"))
+	     else if (!strcmp(ev->keyname, "Left"))
 	       edje_object_part_text_set(de->edje, "text", "String 1");
-	     else if (!strcmp(ev->keyname, "y"))
+	     else if (!strcmp(ev->keyname, "Up"))
 	       edje_object_part_text_set(de->edje, "text", "Buttox");
-	     else if (!strcmp(ev->keyname, "u"))
+	     else if (!strcmp(ev->keyname, "Right"))
 	       edje_object_part_text_set(de->edje, "text", "You pressed \"U\". Nice one stenchie!");
-	     else if (!strcmp(ev->keyname, "q"))
+	     else if (!strcmp(ev->keyname, "F1"))
 	       edje_object_color_class_set(de->edje, "bg", 
 					   255, 255, 255, 255,
 					   0, 0, 0, 0,
 					   0, 0, 0, 0);
-	     else if (!strcmp(ev->keyname, "w"))
+	     else if (!strcmp(ev->keyname, "F2"))
 	       edje_object_color_class_set(de->edje, "bg", 
 					   255, 200, 120, 255,
 					   0, 0, 0, 0,
 					   0, 0, 0, 0);
-	     else if (!strcmp(ev->keyname, "e"))
+	     else if (!strcmp(ev->keyname, "F3"))
 	       edje_object_color_class_set(de->edje, "bg", 
 					   120, 200, 255, 200,
 					   0, 0, 0, 0,
 					   0, 0, 0, 0);
-	     else if (!strcmp(ev->keyname, "r"))
+	     else if (!strcmp(ev->keyname, "F4"))
 	       edje_object_color_class_set(de->edje, "bg", 
 					   255, 200, 50, 100,
 					   0, 0, 0, 0,

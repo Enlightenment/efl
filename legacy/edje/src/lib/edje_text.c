@@ -290,6 +290,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 		  if ((psize - size) <= 0) size = psize - 1;
 		  evas_object_text_font_set(ep->object, font, size);
 		  evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
+		  if ((size > 0) && (tw == 0)) break;
 	       }
 	  }
 	else if (tw < sw)
@@ -304,6 +305,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 		  if ((psize - size) >= 0) size = psize + 1;
 		  evas_object_text_font_set(ep->object, font, size);
 		  evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
+		  if ((size > 0) && (tw == 0)) break;
 	       }
 	     size = psize;
 	  }
@@ -317,14 +319,17 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	if (th < sh)
 	  {
 	     int dif;
+	     double change;
 	     
 	     dif = (th - sh) / 4;
 	     if (dif < 1) dif = 1;
+	     change = 0;
 	     while ((th < sh) && (sw > 0.0))
 	       {
 		  size += dif;
 		  evas_object_text_font_set(ep->object, font, size);
 		  evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
+		  if ((size > 0) && (th == 0)) break;
 	       }
 	     size -= dif;
 	  }
@@ -339,6 +344,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 		  size -= dif;
 		  evas_object_text_font_set(ep->object, font, size);
 		  evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
+		  if ((size > 0) && (th == 0)) break;
 	       }
 	  }
      }
