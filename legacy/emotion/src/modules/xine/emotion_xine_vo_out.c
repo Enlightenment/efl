@@ -507,20 +507,26 @@ static void _emotion_overlay_blend_yuv(uint8_t *dst_base[3], vo_overlay_t * img_
 {
    Emotion_Lut *my_clut;
    uint8_t *my_trans;
-   
-   int src_width = img_overl->width;
-   int src_height = img_overl->height;
-   rle_elem_t *rle = img_overl->rle;
-   rle_elem_t *rle_limit = rle + img_overl->num_rle;
-   int x_off = img_overl->x;
-   int y_off = img_overl->y;
-   int ymask,xmask;
+   int src_width;
+   int src_height;
+   rle_elem_t *rle;
+   rle_elem_t *rle_limit;
+   int x_off;
+   int y_off;
+   int ymask, xmask;
    int rle_this_bite;
    int rle_remainder;
    int rlelen;
    int x, y;
    int clip_right;
-   uint8_t clr=0;
+   uint8_t clr = 0;
+   
+   src_width = img_overl->width;
+   src_height = img_overl->height;
+   rle = img_overl->rle;
+   rle_limit = rle + img_overl->num_rle;
+   x_off = img_overl->x;
+   y_off = img_overl->y;
    
    if (!rle) return;
    
