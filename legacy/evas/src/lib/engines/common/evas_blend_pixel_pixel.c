@@ -181,28 +181,26 @@ evas_common_copy_pixels_rgba_to_rgba_mmx(DATA32 *src, DATA32 *dst, int len)
 
    src_align = (int)src & 0x3f; /* 64 byte alignment */
    dst_align = (int)dst & 0x3f; /* 64 byte alignment */
-   if ((src_align != 0) && 
-       (!(src_align & 0x3)) && 
-       (src_align == dst_align))
-     {
-	while ((src_align > 0) && (len > 0))
-	  {
-	     *dst = *src;
-	     dst++;
-	     src++;
-	     len--;
-	     src_align -= sizeof(DATA32);
-	  }
-     }
-   else
+
+   if ((src_align != dst_align) || 
+       ((src_align & 0x3) != 0))
      {
 #ifdef BUILD_C
 	evas_common_copy_pixels_rgba_to_rgba_c(src, dst, len);
-#endif
 	return;
      }
-#endif   
-   
+#endif
+
+   while ((src_align > 0) && (len > 0))
+     {
+	*dst = *src;
+	dst++;
+	src++;
+	len--;
+	src_align -= sizeof(DATA32);
+     }
+#endif /* ALIGN_FIX */
+ 
    src_ptr = src;
    dst_ptr = dst;
    dst_end_ptr = dst + len;
@@ -234,25 +232,23 @@ evas_common_copy_pixels_rgba_to_rgba_mmx2(DATA32 *src, DATA32 *dst, int len)
 
    src_align = (int)src & 0x3f; /* 64 byte alignment */
    dst_align = (int)dst & 0x3f; /* 64 byte alignment */
-   if ((src_align != 0) && 
-       (!(src_align & 0x3)) && 
-       (src_align == dst_align))
-     {
-	while ((src_align > 0) && (len > 0))
-	  {
-	     *dst = *src;
-	     dst++;
-	     src++;
-	     len--;
-	     src_align -= sizeof(DATA32);
-	  }
-     }
-   else
+
+   if ((src_align != dst_align) || 
+       ((src_align & 0x3) != 0))
      {
 #ifdef BUILD_C
 	evas_common_copy_pixels_rgba_to_rgba_c(src, dst, len);
 #endif
 	return;
+     }
+   
+   while ((src_align > 0) && (len > 0))
+     {
+	*dst = *src;
+	dst++;
+	src++;
+	len--;
+	src_align -= sizeof(DATA32);
      }
 #endif
    
@@ -287,27 +283,25 @@ evas_common_copy_pixels_rgba_to_rgba_sse(DATA32 *src, DATA32 *dst, int len)
 
    src_align = (int)src & 0x3f; /* 64 byte alignment */
    dst_align = (int)dst & 0x3f; /* 64 byte alignment */
-   if ((src_align != 0) && 
-       (!(src_align & 0x3)) && 
-       (src_align == dst_align))
-     {
-	while ((src_align > 0) && (len > 0))
-	  {
-	     *dst = *src;
-	     dst++;
-	     src++;
-	     len--;
-	     src_align -= sizeof(DATA32);
-	  }
-     }
-   else
+
+   if ((src_align != dst_align) || 
+       ((src_align & 0x3) != 0))
      {
 #ifdef BUILD_C
 	evas_common_copy_pixels_rgba_to_rgba_c(src, dst, len);
 #endif
 	return;
      }
-#endif
+
+   while ((src_align > 0) && (len > 0))
+     {
+	*dst = *src;
+	dst++;
+	src++;
+	len--;
+	src_align -= sizeof(DATA32);
+     }
+#endif /* ALIGN_FIX */
    
    src_ptr = src;
    dst_ptr = dst;
