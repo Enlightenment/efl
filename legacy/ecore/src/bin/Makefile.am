@@ -59,12 +59,15 @@ INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore_txt @iconv_cflags@ \
 -I$(top_srcdir)/src/lib/ecore_config \
 @evas_cflags@ \
-@x_cflags@
+@x_cflags@ \
+@ewl_cflags@ \
+@edb_cflags@
 
 if BUILD_ECORE_CONFIG
 bin_PROGRAMS = \
 ecore_test \
 exsh \
+examine \
 ecore_evas_test
 else
 bin_PROGRAMS = \
@@ -158,4 +161,21 @@ $(INCLUDES) \
 exsh_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(ECORE_CONFIG_LIB)
+
+examine_SOURCES = \
+examine.c \
+ecore_config_client.c \
+ecore_config_client.h 
+
+examine_LDADD = \
+@ewl_libs@ -ldl
+
+examine_LDFLAGS =
+
+examine_CFLAGS = \
+$(CFLAGS) \
+$(INCLUDES) \
+@ewl_cflags@
+
+examine_DEPENDENCIES = 
 
