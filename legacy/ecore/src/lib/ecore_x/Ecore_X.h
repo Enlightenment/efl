@@ -819,6 +819,7 @@ void             ecore_x_window_prop_name_class_set(Ecore_X_Window win, const ch
 void             ecore_x_window_prop_name_class_get(Ecore_X_Window win, char **n, char **c);
 void             ecore_x_window_prop_protocol_set(Ecore_X_Window win, Ecore_X_WM_Protocol protocol, int on);
 int              ecore_x_window_prop_protocol_isset(Ecore_X_Window win, Ecore_X_WM_Protocol protocol);
+Ecore_X_WM_Protocol *ecore_x_window_prop_protocol_list_get(Ecore_X_Window win, int *num_ret);
 void             ecore_x_window_prop_sticky_set(Ecore_X_Window win, int on);
 int              ecore_x_window_prop_input_mode_set(Ecore_X_Window win, Ecore_X_Window_Input_Mode mode);
 void             ecore_x_window_prop_min_size_set(Ecore_X_Window win, int w, int h);
@@ -921,8 +922,16 @@ void             ecore_x_icccm_send_take_focus(Ecore_X_Window win);
      ecore_x_window_save_set_del(Ecore_X_Window win);
    Ecore_X_Window *
      ecore_x_window_children_get(Ecore_X_Window win, int *num);
-   
-   
+   void
+     ecore_x_window_synthetic_move_resize_send(Ecore_X_Window win, int x, int y, int w, int h);
+   void
+     ecore_x_window_basic_hints_get(Ecore_X_Window win,
+				    int *accepts_focus,
+				    Ecore_X_Window_State_Hint *initial_state,
+				    Ecore_X_Pixmap *icon_pixmap,
+				    Ecore_X_Pixmap *icon_mask,
+				    Ecore_X_Window *icon_window,
+				    Ecore_X_Window *window_group);
    
    Ecore_X_Cursor
      ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int hot_y);

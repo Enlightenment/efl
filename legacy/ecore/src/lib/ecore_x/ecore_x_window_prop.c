@@ -194,13 +194,16 @@ ecore_x_window_prop_string_get(Ecore_X_Window win, Ecore_X_Atom type)
 	     s = XmbTextPropertyToTextList(_ecore_x_disp, &xtp, &list, &items);
 	     if ((s == Success) && (items > 0))
 	       {
+		  /* FIXME convert from xlib encoding to utf8  */
 		  str = strdup(*list);
 		  XFreeStringList(list);
 	       }
 	     else
+	       /* FIXME convert from xlib encoding to utf8  */
 	       str = strdup((char *)xtp.value);
 	  }
 	else
+	  /* FIXME convert from xlib encoding to utf8  */
 	  str = strdup((char *)xtp.value);
 	XFree(xtp.value);
      }
@@ -223,6 +226,7 @@ ecore_x_window_prop_title_set(Ecore_X_Window win, const char *t)
    list[0] = (char *) t;
    
    /* Xlib may not like the UTF8 String */
+   /* FIXME convert utf8 to whatever encoding xlib prefers */
    /* ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_name, (char *)t); */
    if (XStringListToTextProperty(list, 1, &xprop))
      {
@@ -570,6 +574,43 @@ ecore_x_window_prop_protocol_isset(Ecore_X_Window win,
    XFree(protos);
 
    return ret;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+Ecore_X_WM_Protocol *
+ecore_x_window_prop_protocol_list_get(Ecore_X_Window win, int *num_ret)
+{
+   Atom *protos = NULL;
+   int i, protos_count = 0;
+   Ecore_X_WM_Protocol *prot_ret = NULL;
+   
+   if (!XGetWMProtocols(_ecore_x_disp, win, &protos, &protos_count))
+     return NULL;
+
+   if ((!protos) || (protos_count <= 0)) return NULL;
+   prot_ret = malloc(protos_count * sizeof(Ecore_X_WM_Protocol));
+   if (!prot_ret)
+     {
+	XFree(protos);
+	return NULL;
+     }
+   for (i = 0; i < protos_count; i++)
+     {
+	Ecore_X_WM_Protocol j;
+	
+	for (j = 0; j < ECORE_X_WM_PROTOCOL_NUM; j++)
+	  {
+	     if (_ecore_x_atoms_wm_protocols[i] == protos[j])
+	       prot_ret[i] = j;
+	  }
+     }
+   XFree(protos);
+   *num_ret = protos_count;
+   return prot_ret;
 }
 
 /**

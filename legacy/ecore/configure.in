@@ -546,23 +546,23 @@ AC_ARG_ENABLE(ecore-config,
 )
 
 if test "x$have_ecore_config" = "xyes"; then
-  AC_ARG_WITH(edb-config,
-   [   --with-edb-config=EDB_CONFIG      use edb-config specified ],
+  AC_ARG_WITH(eet-config,
+   [   --with-eet-config=EET_CONFIG      use eet-config specified ],
    [
-     PROG_EDB_CONFIG=$withval;
-     echo "using "$PROG_EDB_CONFIG" for edb-config";
+     PROG_EET_CONFIG=$withval;
+     echo "using "$PROG_EET_CONFIG" for eet-config";
    ],[
-     PROG="edb-config";
-     AC_PATH_PROG(PROG_EDB_CONFIG, $PROG, "", $PATH)
+     PROG="eet-config";
+     AC_PATH_PROG(PROG_EET_CONFIG, $PROG, "", $PATH)
    ])
-   if [ test -z "$EDB_CONFIG" ]; then EDB_CONFIG=$PROG_EDB_CONFIG; fi
-   edb_cflags=`$EDB_CONFIG --cflags`
-   edb_libs=`$EDB_CONFIG --libs`
+   if [ test -z "$EET_CONFIG" ]; then EET_CONFIG=$PROG_EET_CONFIG; fi
+   eet_cflags=`$EET_CONFIG --cflags`
+   eet_libs=`$EET_CONFIG --libs`
    AM_CONDITIONAL(BUILD_ECORE_CONFIG, true)
    ecore_config_libs="-lecore_config";
    AC_DEFINE(BUILD_ECORE_CONFIG, 1, [Build Ecore_Config Module])
-   AC_SUBST(edb_libs)
-   AC_SUBST(edb_cflags)
+   AC_SUBST(eet_libs)
+   AC_SUBST(eet_cflags)
 else
   AM_CONDITIONAL(BUILD_ECORE_CONFIG, false)
 fi

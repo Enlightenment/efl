@@ -1,6 +1,4 @@
-#include <Edb.h>
 #include "Ecore_Config.h"
-
 #include "ecore_config_private.h"
 
 #include <stdlib.h>
@@ -24,7 +22,7 @@ ecore_config_load(void)
 {
    char                file[PATH_MAX];
 
-   snprintf(file, PATH_MAX, "%s/.e/apps/%s/config.db", getenv("HOME"),
+   snprintf(file, PATH_MAX, "%s/.e/apps/%s/config.eet", getenv("HOME"),
 	    __ecore_config_app_name);
    return ecore_config_file_load(file);
 }
@@ -41,7 +39,7 @@ ecore_config_save(void)
 {
    char                file[PATH_MAX];
 
-   snprintf(file, PATH_MAX, "%s/.e/apps/%s/config.db", getenv("HOME"),
+   snprintf(file, PATH_MAX, "%s/.e/apps/%s/config.eet", getenv("HOME"),
 	    __ecore_config_app_name);
    return ecore_config_file_save(file);
 }
@@ -56,103 +54,110 @@ ecore_config_save(void)
 int
 ecore_config_file_load(char *file)
 {
-   E_DB_File          *db;
-   char              **keys;
-   int                 key_count;
-   int                 x, pt;
-   int                 itmp;
-   float               ftmp;
-   char               *type;
-   char               *data;
+   Ecore_Config_DB_File  *db;
+   char                 **keys;
+   int                    key_count;
+   int                    x, pt;
+   int                    itmp;
+   double                 ftmp;
+   char                   *type;
+   char                   *data;
 
    db = NULL;
    type = NULL;
    data = NULL;
 
-   db = e_db_open_read(file);
+   db = _ecore_config_db_open_read(file);
    if (!db)
      {
 	E(0, "Cannot open database from file %s!\n", file);
 	return ECORE_CONFIG_ERR_NODATA;
      }
-
-   keys = e_db_dump_key_list(file, &key_count);
-   for (x = 0; x < key_count; x++)
+   key_count = 0;   
+   keys = _ecore_config_db_keys_get(db, &key_count);
+   printf("keys = %p, %i\n", keys, key_count);
+   if (keys)
      {
-
-	type = e_db_type_get(db, keys[x]);
-	if (!type)
-	   type = "?";
-
-	if (!strcmp(type, "int"))
+	for (x = 0; x < key_count; x++)
 	  {
-	     if (e_db_int_get(db, keys[x], &itmp))
+	     type = _ecore_config_db_key_type_get(db, keys[x]);
+	     printf("%s == %s\n", keys[x], type);
+	     if (!type) type = "?";
+	     if (!strcmp(type, "int"))
 	       {
-		  Ecore_Config_Prop  *p;
-		  
-		  pt = PT_INT;
-		  if ((p = ecore_config_get(keys[x]))) pt = p->type;
-		  switch (pt)
+		  if (_ecore_config_db_key_int_get(db, keys[x], &itmp))
 		    {
-		     case PT_BLN:
-		       ecore_config_boolean_set(keys[x], itmp);
-		       break;
-		     default:
-		       ecore_config_int_set(keys[x], itmp);
-		       break;
+		       Ecore_Config_Prop  *p;
+		       
+		       pt = PT_INT;
+		       if ((p = ecore_config_get(keys[x]))) pt = p->type;
+		       switch (pt)
+			 {
+			  case PT_BLN:
+			    ecore_config_boolean_set(keys[x], itmp);
+			    break;
+			  default:
+			    ecore_config_int_set(keys[x], itmp);
+			    break;
+			 }
+		    }
+		  else
+		    {
+		       E(0, "Could not read key %s!\n", keys[x]);
+		    }
+	       }
+	     else if (!strcmp(type, "float"))
+	       {
+		  if (_ecore_config_db_key_float_get(db, keys[x], &ftmp))
+		    {
+		       ecore_config_float_set(keys[x], ftmp);
+		    }
+		  else
+		    {
+		       E(0, "Could not read key %s!\n", keys[x]);
+		    }
+	       }
+	     else if (!strcmp(type, "str"))
+	       {
+		  data = _ecore_config_db_key_str_get(db, keys[x]);
+		  if (data)
+		    {
+		       pt = ecore_config_type_guess(keys[x], data);
+		       switch (pt)
+			 {
+			  case PT_RGB:
+			    ecore_config_argb_set(keys[x], data);
+			    break;
+			  case PT_THM:
+			    ecore_config_theme_set(keys[x], data);
+			    break;
+			  default:
+			    ecore_config_string_set(keys[x], data);
+			 }
+		       free(data);
+		    }
+		  else
+		    {
+		       E(0, "Could not read key %s!\n", keys[x]);
 		    }
 	       }
 	     else
 	       {
-		  E(0, "Could not read key %s!\n", keys[x]);
+		  E(1, "Unexpected type: %s\n", type);
+		  continue;
 	       }
+	     if (type) free(type);
 	  }
-	else if (!strcmp(type, "float"))
-	  {
-	     if (e_db_float_get(db, keys[x], &ftmp))
-	       {
-		  ecore_config_float_set(keys[x], ftmp);
-	       }
-	     else
-	       {
-		  E(0, "Could not read key %s!\n", keys[x]);
-	       }
-	  }
-	else if (!strcmp(type, "str"))
-	  {
-	     data = e_db_str_get(db, keys[x]);
-	     if (data)
-	       {
-		  pt = ecore_config_type_guess(keys[x], data);
-		  switch (pt)
-		    {
-		    case PT_RGB:
-		       ecore_config_argb_set(keys[x], data);
-		       break;
-		    case PT_THM:
-		       ecore_config_theme_set(keys[x], data);
-		       break;
-		    default:
-		       ecore_config_string_set(keys[x], data);
-		    }
-		  free(data);
-	       }
-	     else
-	       {
-		  E(0, "Could not read key %s!\n", keys[x]);
-	       }
-	  }
-	else
-	  {
-	     E(1, "Unexpected type: %s\n", type);
-	     continue;
-	  }
-
-	if (type)
-	   free(type);
      }
-   e_db_close(db);
-   free(keys);
+   _ecore_config_db_close(db);
+   if (keys)
+     {
+	for (x = 0; x < key_count; x++)
+	  {
+	     free(keys[x]);
+	  }
+	free(keys);
+     }
    return ECORE_CONFIG_ERR_SUCC;
 }
 
@@ -188,10 +193,10 @@ _ecore_config_recurse_mkdir(char *file)
 int
 ecore_config_file_save(char *file)
 {
-   Ecore_Config_Prop  *next;
-   E_DB_File          *db;
-   struct stat         status;
-   char               *tmp;
+   Ecore_Config_Prop    *next;
+   Ecore_Config_DB_File *db;
+   struct stat           status;
+   char                 *tmp;
 
    next = __ecore_config_bundle_local->data;
    db = NULL;
@@ -200,7 +205,7 @@ ecore_config_file_save(char *file)
    if (stat(file, &status))
       _ecore_config_recurse_mkdir(file);
 
-   db = e_db_open(file);
+   db = _ecore_config_db_open_write(file);
    if (!db)
      {
 	E(0, "Cannot open database from file %s!\n", file);
@@ -209,24 +214,25 @@ ecore_config_file_save(char *file)
 
    while (next)
      {
+	/* let the config_db deal with this
 	if (!(next->flags & PF_MODIFIED))
 	  {
 	     next = next->next;
 	     continue;
 	  }
-
+	 */
 	tmp = NULL;
 
 	switch (next->type)
 	  {
 	  case PT_INT:
-	     e_db_int_set(db, next->key, ecore_config_int_get(next->key));
+	     _ecore_config_db_key_int_set(db, next->key, ecore_config_int_get(next->key));
 	     break;
 	  case PT_BLN:
-	     e_db_int_set(db, next->key, ecore_config_boolean_get(next->key));
+	     _ecore_config_db_key_int_set(db, next->key, ecore_config_boolean_get(next->key));
 	     break;
 	  case PT_FLT:
-	     e_db_float_set(db, next->key, ecore_config_float_get(next->key));
+	     _ecore_config_db_key_float_set(db, next->key, ecore_config_float_get(next->key));
 	     break;
 	  case PT_RGB:
 	     tmp = ecore_config_argbstr_get(next->key);
@@ -243,14 +249,13 @@ ecore_config_file_save(char *file)
 	  }
 
 	if (tmp) {
-	   e_db_str_set(db, next->key, tmp);
+	   _ecore_config_db_key_str_set(db, next->key, tmp);
 	   free(tmp);
 	}
 
 	next = next->next;
      }
 
-   e_db_close(db);
-   e_db_flush();
+   _ecore_config_db_close(db);
    return ECORE_CONFIG_ERR_SUCC;
 }

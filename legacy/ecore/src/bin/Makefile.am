@@ -60,7 +60,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore_config \
 @evas_cflags@ \
 @x_cflags@ \
-@edb_cflags@
+@eet_cflags@
 
 bin_PROGRAMS = \
 ecore_test \

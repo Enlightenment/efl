@@ -1,8 +1,6 @@
 /* by Azundris, with thanks to Corey Donohoe <atmos@atmos.org> */
-
 #include "ecore_config_ipc.h"
 #include "ecore_config_util.h"
-
 #include "ecore_config_private.h"
 
 #include <stdio.h>
@@ -17,8 +15,6 @@
 
 #include <Ecore.h>
 #include <Ecore_Ipc.h>
-
-#include <Edb.h>
 
 #include "Ecore_Config.h"
 #include "config.h"
@@ -51,68 +47,74 @@ _ecore_config_ipc_ecore_string_get(char **m, char **r)
 char               *
 _ecore_config_ipc_global_prop_list(Ecore_Config_Server * srv, const long serial)
 {
-   E_DB_File          *db;
-   char              **keys;
-   int                 key_count, x;
-   estring            *s;
-   int                 f;
-   char               *buf, *p, *type, *data;
+   Ecore_Config_DB_File  *db;
+   char                 **keys;
+   int                    key_count, x;
+   estring               *s;
+   int                    f;
+   char                   buf[PATH_MAX], *p, *type, *data;
 
    db = NULL;
-   buf = NULL;
    s = estring_new(8192);
    f = 0;
    if ((p = getenv("HOME")))
-     {				/* debug-only ### FIXME */
-	if ((buf = malloc(PATH_MAX * sizeof(char))))
+     {
+	snprintf(buf, sizeof(buf), "%s/.e/config.eet", p);
+	if (!(db = _ecore_config_db_open_read(buf)))
 	  {
-	     snprintf(buf, PATH_MAX, "%s/.e/config.db", p);
-	     db = e_db_open_read(buf);
-	     if (!(db = e_db_open_read(buf)))
-		if (!(db = e_db_open_read(buf = PACKAGE_DATA_DIR "/system.db")))
-		   return NULL;
+	     strcpy(buf, PACKAGE_DATA_DIR"/system.eet");
+	     if (!(db = _ecore_config_db_open_read(buf)))
+	       return NULL;
 	  }
      }
-
-   keys = e_db_dump_key_list(buf, &key_count);
-   free(buf);
-
-   for (x = 0; x < key_count; x++)
+   if (!db) return NULL;
+   key_count = 0;
+   keys = _ecore_config_db_keys_get(db, &key_count);
+   if (keys)
      {
-	type = e_db_type_get(db, keys[x]);
-	if (!type)
-	   type = "?";
-
-	if (!strcmp(type, "int"))
-	   estring_appendf(s, "%s%s: integer", f ? "\n" : "", keys[x]);
-	else if (!strcmp(type, "float"))
-	   estring_appendf(s, "%s%s: float", f ? "\n" : "", keys[x]);
-	else if (!strcmp(type, "str"))
+	for (x = 0; x < key_count; x++)
 	  {
-	     data = e_db_str_get(db, keys[x]);
-	     if (data)
+	     type = _ecore_config_db_key_type_get(db, keys[x]);
+	     if (!type) type = "?";
+	     if (!strcmp(type, "int"))
+	       estring_appendf(s, "%s%s: integer", f ? "\n" : "", keys[x]);
+	     else if (!strcmp(type, "float"))
+	       estring_appendf(s, "%s%s: float", f ? "\n" : "", keys[x]);
+	     else if (!strcmp(type, "str"))
 	       {
-		  if (ecore_config_type_guess(keys[x], data) == PT_RGB)
-		     estring_appendf(s, "%s%s: colour", f ? "\n" : "", keys[x]);
+		  data = _ecore_config_db_key_str_get(db, keys[x]);
+		  if (data)
+		    {
+		       if (ecore_config_type_guess(keys[x], data) == PT_RGB)
+			 estring_appendf(s, "%s%s: colour", f ? "\n" : "", keys[x]);
+		       else
+			 estring_appendf(s, "%s%s: string", f ? "\n" : "", keys[x]);
+		       free(data);
+		    }
 		  else
-		     estring_appendf(s, "%s%s: string", f ? "\n" : "", keys[x]);
-		  free(data);
+		    {
+		       estring_appendf(s, "%s%s: string", f ? "\n" : "", keys[x]);
+		    }
 	       }
 	     else
 	       {
-		  estring_appendf(s, "%s%s: string", f ? "\n" : "", keys[x]);
+		  estring_appendf(s, "%s%s: unknown", f ? "\n" : "", keys[x]);
+		  continue;
 	       }
+	     if (type) free(type);
+	     f = 1;
 	  }
-	else
-	   estring_appendf(s, "%s%s: unknown", f ? "\n" : "", keys[x]);
-
-	if (type)
-	   free(type);
-	f = 1;
      }
-   e_db_close(db);
-   free(keys);
-
+   _ecore_config_db_close(db);
+   if (keys)
+     {
+	for (x = 0; x < key_count; x++)
+	  {
+	     free(keys[x]);
+	  }
+	free(keys);
+     }
+   
    return estring_disown(s);
 }
 
