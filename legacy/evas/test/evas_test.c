@@ -1433,6 +1433,17 @@ handle_events(void)
 			 case EnterNotify:
 			    if (e == evas_view)
 			      {
+				 mouse_x = ev.xcrossing.x;
+				 mouse_y = ev.xcrossing.y;
+			      }
+			    else if (e == evas_control)
+			      {
+				 mouse_x = ev.xcrossing.x - 128;
+				 mouse_y = ev.xcrossing.y;
+			      }
+			    evas_event_move(e, ev.xmotion.x, ev.xmotion.y);
+			    if (e == evas_view)
+			      {
 				 Evas_Object o;
 				 
 				 o = evas_object_get_named(evas_view, "pointer");
