@@ -2,6 +2,8 @@
 #include "edje_private.h"
 #include "edje_container.h"
 
+#if 0
+
 static void
 _edje_container_relayout(Smart_Data *sd)
 {
@@ -913,3 +915,5 @@ _smart_clip_unset(Evas_Object *obj)
    if (!sd) return;
 //   evas_object_clip_unset(sd->obj);
 }  
+
+#endif

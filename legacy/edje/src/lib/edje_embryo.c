@@ -1242,9 +1242,9 @@ _edje_embryo_test_run(Edje *ed, char *fname, char *sig, char *src)
 	embryo_program_data_set(ed->collection->script, ed);
 	if (!embryo_program_run(ed->collection->script, fn))
 	  {
-	     printf("EDJE: ERROR with embryo script.\n"
-		    "FUNCTION: %s\n"
-		    "ERROR:    %s\n",
+	     printf("EDJE:        ERROR with embryo script.\n"
+		    "ENTRY POINT: %s\n"
+		    "ERROR:       %s\n",
 		    fname,
 		    embryo_error_string_get(embryo_program_error_get(ed->collection->script)));
 	  }
