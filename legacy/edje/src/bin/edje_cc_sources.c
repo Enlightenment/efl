@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=3:noexpandtab
+ */
+
 #include "edje_cc.h"
 
 static Eet_Data_Descriptor *_srcfile_edd = NULL;
@@ -79,26 +83,20 @@ source_fetch_file(char *fil, char *filname)
    
    while (fgets(buf, sizeof(buf), f))
      {
-	char *p, *pp;
-	int notyet;
-	int forgetit;
-	int haveinclude;
-	int havefile;
-	char *file;
+	char *p = buf, *pp;
+	int got_hash = 0;
+	int forgetit = 0;
+	int haveinclude = 0;
+	char *file = NULL;
 	
-	p = buf;
-	notyet = 1;
-	forgetit = 0;
-	haveinclude = 0;
-	file = NULL;
 	while ((!forgetit) && (*p))
 	  {
-	     if (notyet)
+	     if (!got_hash)
 	       {
 		  if (!isspace(*p))
 		    {
 		       if (*p == '#')
-			 notyet = 0;
+			 got_hash = 1;
 		       else
 			 forgetit = 1;
 		    }
@@ -155,6 +153,8 @@ source_fetch_file(char *fil, char *filname)
 		       else
 			 p++;
 		    }
+
+		  got_hash = 0;
 	       }
 	  }
 	if (file)
