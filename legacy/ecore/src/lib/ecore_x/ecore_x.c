@@ -375,11 +375,13 @@ ecore_x_sync(void)
 }
 
 /**
- * Kill all X clients.
+ * Kill all clients under a specified root window.
  * @param root The root window whose children will be killed.
  *
  * This function will start from the given root window and kill the owner of
- * every child window under it.
+ * every child window under it. To kill all clients connected to an X server,
+ * use the ecore_x_window_root_list() function to obtain an array of root
+ * windows, and then pass each window to this function.
  * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
@@ -399,7 +401,6 @@ ecore_x_killall(Ecore_X_Window root)
       Window parent_r;
       Window *children_r = NULL;
       int num_children = 0;
-      Window root = RootWindow(_ecore_x_disp, i);
 
       while (XQueryTree(_ecore_x_disp, root, &root_r, &parent_r,
                &children_r, &num_children) && num_children > 0)
