@@ -116,7 +116,7 @@ evas_debug_magic_wrong(DATA32 expected, DATA32 supplied)
    fprintf(stderr, 
 	   "  Input object is wrong type\n"
 	   "    Expected: %08x - %s\n"
-	   "    Supplied: %08s - %s\n",
+	   "    Supplied: %08x - %s\n",
 	   expected, evas_debug_magic_string_get(expected),
 	   supplied, evas_debug_magic_string_get(supplied));
 }

@@ -1684,7 +1684,9 @@ loop(void)
 	printf("################ evas free\n");
 	evas_free(evas);
 	printf("evas freed. DONE\n");
-//	sleep(10000000);
+	printf("FRAME COUNT: %i\n", loop_count);
+	exit(0);
+	sleep(10000000);
      }
    /* need to test:
     * 
