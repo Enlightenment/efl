@@ -79,6 +79,7 @@ main_start(int argc, char **argv)
    evas_image_cache_set(evas, 16 * 1024 * 1024);
    evas_font_cache_set(evas, 1 * 1024 * 1024);
    evas_font_path_append(evas, DAT"data/test/fonts");
+   evas_font_path_append(evas, "fonts");
    return 1;
 }
 
