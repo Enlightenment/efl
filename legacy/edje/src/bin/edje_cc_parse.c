@@ -350,10 +350,19 @@ parse(char *data, off_t size)
    line = 1;
    while ((token = next_token(p, end, &p, &delim)) != NULL)
      {
-	if (delim)
+	/* if we are in param mode, the only delimiter
+	 * we'll accept is the semicolon
+	 */
+	if (do_params && delim && *token != ';')
 	  {
-	     if ((!strcmp(token, ",")) || (!strcmp(token, ":"))) do_params = 1;
-	     else if (!strcmp(token, "}"))
+	     fprintf(stderr, "%s: Error. parse error %s:%i. %c marker before ; marker\n",
+		   progname, file_in, line, *token);
+	     exit(-1);
+	  }
+	else if (delim)
+	  {
+	     if (*token == ',' || *token == ':') do_params = 1;
+	     else if (*token == '}')
 	       {
 		  if (do_params)
 		    {
@@ -364,7 +373,7 @@ parse(char *data, off_t size)
 		  else
 		    stack_chop_top();
 	       }
-	     else if (!strcmp(token, ";"))
+	     else if (*token == ';')
 	       {
 		  if (do_params)
 		    {
@@ -380,7 +389,7 @@ parse(char *data, off_t size)
 		       stack_chop_top();
 		    }
 	       }
-	     else if (!strcmp(token, "{"))
+	     else if (*token == '{')
 	       {
 		  if (do_params)
 		    {
