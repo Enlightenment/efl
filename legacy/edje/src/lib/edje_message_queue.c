@@ -24,6 +24,12 @@ edje_object_message_handler_set(Evas_Object *obj, void (*func) (void *data, Evas
    _edje_message_cb_set(ed, func, data);
 }
 
+void
+edje_message_signal_process(void)
+{
+   _edje_message_queue_process();
+}
+
 static Evas_List *msgq = NULL;
 static Evas_List *tmp_msgq = NULL;
 
@@ -491,7 +497,7 @@ _edje_message_queue_process(void)
      }
    
    /* if the message queue filled again set a timer to expire in 0.0 sec */
-   /* to get the dle enterer to be run again */
+   /* to get the idle enterer to be run again */
    if (msgq)
      ecore_timer_add(0.0, _edje_dummy_timer, NULL);
 }
