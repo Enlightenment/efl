@@ -185,7 +185,7 @@ _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep)
 	Evas_Object *o;
 	
 	o = evas_object_text_add(ed->evas);
-	evas_object_text_font_source_set(o, ed->path);
+//	evas_object_text_font_source_set(o, ed->path);
 	evas_object_smart_member_add(o, ed->obj);
 	evas_object_pass_events_set(o, 1);
 	evas_object_clip_set(o, ed->clipper);
@@ -293,6 +293,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    Evas_Coord  ox, oy, sw, sh;
    char    *buf = NULL;
    char     buf2[4096];
+   int      inlined_font = 0;
+   
 
    text = chosen_desc->text.text;
    font = chosen_desc->text.font;
@@ -314,13 +316,26 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    if (ep->text.font) font = ep->text.font;
    if (ep->text.size > 0) size = ep->text.size;
    
-   strcpy(buf2, "fonts/");
-   strcat(buf2, font);
-   
-   evas_object_text_font_set(ep->object, buf2, 10);
-   
-   if (evas_object_text_ascent_get(ep->object) > 0) font = buf2;
-//   font = buf2;
+   /* check if the font is embedded in the .eet */
+   /* FIXME: we should cache this result */
+   if (ed->file->font_dir)
+     {
+	Evas_List *l;
+	
+	for (l = ed->file->font_dir->entries; l; l = l->next)
+	  {
+	     Edje_Font_Directory_Entry *fnt = l->data;
+	     
+	     if ((fnt->entry) && (!strcmp(fnt->entry, font)))
+	       {
+		  strcpy(buf2, "fonts/");
+		  strcat(buf2, font);
+		  font = buf2;
+		  inlined_font = 1;
+		  break;
+	       }
+	  }
+     }
    
    ox = _edje_text_styles[ep->part->effect].offset.x;
    oy = _edje_text_styles[ep->part->effect].offset.y;
@@ -344,6 +359,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    ep->text.cache.in_size = size;
    if (chosen_desc->text.fit_x)
      {
+        if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
+	else evas_object_text_font_source_set(ep->object, NULL);
 	evas_object_text_font_set(ep->object, font, size);
 	evas_object_text_text_set(ep->object, text);
 	evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
@@ -357,6 +374,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 		  psize = size;
 		  size = (size * sw) / tw;
 		  if ((psize - size) <= 0) size = psize - 1;
+		  if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
+		  else evas_object_text_font_source_set(ep->object, NULL);
 		  evas_object_text_font_set(ep->object, font, size);
 		  evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
 		  if ((size > 0) && (tw == 0)) break;
@@ -372,6 +391,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 		  psize = size;
 		  size = (size * sw) / tw;
 		  if ((psize - size) >= 0) size = psize + 1;
+		  if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
+		  else evas_object_text_font_source_set(ep->object, NULL);
 		  evas_object_text_font_set(ep->object, font, size);
 		  evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
 		  if ((size > 0) && (tw == 0)) break;
@@ -382,6 +403,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    if (chosen_desc->text.fit_y)
      {
 	size = sh;
+        if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
+	else evas_object_text_font_source_set(ep->object, NULL);
 	evas_object_text_font_set(ep->object, font, size);
 	evas_object_text_text_set(ep->object, text);
 	evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
@@ -395,6 +418,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	       {
 		  size += dif;
 		  if (size <= 0) break;
+		  if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
+		  else evas_object_text_font_source_set(ep->object, NULL);
 		  evas_object_text_font_set(ep->object, font, size);
 		  evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
 		  if ((size > 0) && (th == 0)) break;
@@ -411,6 +436,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	       {
 		  size -= dif;
 		  if (size <= 0) break;
+		  if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
+		  else evas_object_text_font_source_set(ep->object, NULL);
 		  evas_object_text_font_set(ep->object, font, size);
 		  evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
 		  if ((size > 0) && (th == 0)) break;
@@ -425,6 +452,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	int    loop;
 	int    orig_len;
 	
+        if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
+	else evas_object_text_font_source_set(ep->object, NULL);
 	evas_object_text_font_set(ep->object, font, size);
 	evas_object_text_text_set(ep->object, text);
 	evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
@@ -549,6 +578,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    
    arrange_text:
    
+   if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
+   else evas_object_text_font_source_set(ep->object, NULL);
    evas_object_text_font_set(ep->object, font, size);
    evas_object_text_text_set(ep->object, text);
    evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
@@ -574,6 +605,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	     Evas_Object *o;
 	     
 	     o = l->data;
+	     if (inlined_font) evas_object_text_font_source_set(o, ed->path);
+	     else evas_object_text_font_source_set(o, NULL);
 	     evas_object_text_font_set(o, font, size);
 	     evas_object_text_text_set(o, text);
 	     evas_object_move(o, 

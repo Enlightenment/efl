@@ -311,11 +311,21 @@ static void
 st_fonts_font(void)
 {
    Font *fn;
+   Edje_Font_Directory_Entry *fnt;
    
    fn = calloc(1, sizeof(Font));
    fn->file = parse_str(0);
    fn->name = parse_str(1);
    fonts = evas_list_append(fonts, fn);
+   
+   if (!edje_file->font_dir)
+     edje_file->font_dir = calloc(1, sizeof(Edje_Font_Directory));
+   
+   fnt = calloc(1, sizeof(Edje_Font_Directory_Entry));
+   fnt->entry = strdup(fn->name);
+   
+   edje_file->font_dir->entries = 
+     evas_list_append(edje_file->font_dir->entries, fnt);
 }
 
 static void

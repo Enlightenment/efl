@@ -508,7 +508,7 @@ _edje_part_recalc_single(Edje *ed,
 	int        size;
 	Evas_Coord tw, th;
 	char       buf[4096];
-        Evas_List *l;
+	int        inlined_font = 0;
 	
 	text = chosen_desc->text.text;
 	font = chosen_desc->text.font;
@@ -535,19 +535,25 @@ _edje_part_recalc_single(Edje *ed,
         /* FIXME: we should cache this result */
         if (ed->file->font_dir)
 	  {
+	     Evas_List *l;
+	     
 	     for (l = ed->file->font_dir->entries; l; l = l->next)
 	       {
 		  Edje_Font_Directory_Entry *fnt = l->data;
 
-		  if (!strcmp(fnt->entry, font))
+		  if ((fnt->entry) && (!strcmp(fnt->entry, font)))
 		    {
 		       strcpy(buf, "fonts/");
 		       strcat(buf, font);
+		       font = buf;
+		       inlined_font = 1;
 		       break;
 		    }
 	       }
 	  }
-
+	if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
+	else evas_object_text_font_source_set(ep->object, NULL);
+	
 	evas_object_text_font_set(ep->object, font, size);
 	if ((chosen_desc->text.min_x) || (chosen_desc->text.min_y))
 	  {
