@@ -653,7 +653,7 @@ ftoi(cell * val, char *curptr)
 			, (int)(*(int *)&test1)
 			);
 	     }
-	  else if ((int *)&test2 != 0x42480000L)
+	  else if (*(int *)&test2 != 0x42480000L)
 	     {
 		fprintf(stderr, 
 			"embryo_cc: WARNING! you compiler does not SEEM to interpret IEEE floating\n"
