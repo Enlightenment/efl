@@ -37,6 +37,7 @@ Ecore development files
 --enable-ecore-evas \
 --enable-ecore-job \
 --enable-ecore-con \
+--enable-ecore-config \
 --enable-ecore-ipc
 
 make
@@ -58,13 +59,19 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{prefix}/lib/libecore*.so.*
 %{prefix}/lib/libecore*.la
 %attr(755,root,root) %{prefix}/bin/ecore_*
+%attr(755,root,root) %{prefix}/bin/exsh
 %{prefix}/share/ecore
 
 %files devel
 %defattr(-,root,root)
 %attr(755,root,root) %{prefix}/lib/libecore*.so
 %attr(755,root,root) %{prefix}/lib/libecore*.a
+%attr(755,root,root) %{prefix}/lib/libecore*.la
+%attr(755,root,root) %{prefix}/lib/ecore_config_ipc_*.so
+%attr(755,root,root) %{prefix}/lib/ecore_config_ipc_*.a
+%attr(755,root,root) %{prefix}/lib/ecore_config_ipc_*.la
 %attr(755,root,root) %{prefix}/bin/ecore-config
+%{prefix}/share/aclocal/ecore.m4
 %{prefix}/include/Ecore*.h
 %doc AUTHORS
 %doc COPYING

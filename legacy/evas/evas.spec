@@ -1,5 +1,5 @@
 # Note that this is NOT a relocatable package
-%define ver      1.0.0_pre11
+%define ver      1.0.0_pre12
 %define rel      1
 %define prefix   /usr
 
@@ -14,13 +14,13 @@ BuildRoot: /var/tmp/evas-root
 Packager: The Rasterman <raster@rasterman.com>
 URL: http://www.enlightenment.org/
 BuildRequires: XFree86-devel
-BuildRequires: freetype-devel
+BuildRequires: freetype2-devel
 BuildRequires: libjpeg-devel
 BuildRequires: libpng-devel
 BuildRequires: eet-devel
 BuildRequires: edb-devel
 Requires: XFree86
-Requires: freetype >= 2.0.0
+Requires: freetype2 >= 2.0.0
 Requires: libpng >= 1.0.0
 Requires: libjpeg
 Requires: eet
