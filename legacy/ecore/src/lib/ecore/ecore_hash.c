@@ -214,7 +214,7 @@ Ecore_Hash_Node *ecore_hash_goto_first(Ecore_Hash *hash)
 	ECORE_READ_LOCK(hash);
 
 	if( hash->buckets[hash->index] )
-		hash->current = ecore_list_goto_first( hash->buckets[hash->index] )
+		ecore_list_goto_first( hash->buckets[hash->index] );
 
 	ECORE_READ_UNLOCK(hash);
 
@@ -229,31 +229,23 @@ Ecore_Hash_Node *ecore_hash_goto_first(Ecore_Hash *hash)
  */
 Ecore_Hash_Node *ecore_hash_next(Ecore_Hash *hash)
 {
-	Ecore_Hash_Node *node;
+	Ecore_Hash_Node *node = NULL;
 
 	CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
 
 	ECORE_READ_LOCK(hash);
 
-	node = hash->current;
-
 	if( hash->index < ecore_prime_table[hash->size] &&
 			hash->buckets[hash->index] ) {
-		if( hash->current )
-			ecore_list_goto( hash->buckets[hash->index], hash->current );
-		else
-			ecore_list_goto_first( hash->buckets[hash->index] );
-		ecore_list_next( hash->buckets[hash->index] );
-		hash->current = ecore_list_current( hash->buckets[hash->index] );
-		if( !hash->current ) {
+		node = ecore_list_next( hash->buckets[hash->index] );
+		if( !node ) {
 			hash->index++;
-
-			ECORE_READ_UNLOCK(hash);
-			ecore_hash_next(hash);
-			ECORE_READ_LOCK(hash);
+			while( hash->index < ecore_prime_table[hash->size] &&
+						 !hash->buckets[hash->index] )
+				hash->index++;
+			if( hash->index < ecore_prime_table[hash->size] )
+				node = ecore_list_goto_first( hash->buckets[hash->index] );
 		}
-	} else {
-		hash->current = NULL;
 	}
 
 	ECORE_READ_UNLOCK(hash);
