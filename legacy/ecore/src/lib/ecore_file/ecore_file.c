@@ -211,9 +211,11 @@ ecore_file_ls(const char *dir)
 		    }
 	       }
 	     /* nowhwre to go? just append it */
-	     f = strdup(dp->d_name);
 	     if (!l)
-		list = evas_list_append(list, f);
+	       {
+		  f = strdup(dp->d_name);
+		  list = evas_list_append(list, f);
+	       }
 	  }
      }
    closedir(dirp);
