@@ -1,7 +1,7 @@
 #include "recurse.inc"
 
 /* To compile: 
- * embryo_cc ./recurse.sma -orecurse.amx
+ * embryo_cc ./recurse.sma -o recurse.amx
  * 
  * To test run:
  * embryo ./recurse.amx

@@ -3,7 +3,7 @@
 /* This is ugly - please ignore this code! */
 
 /* To compile: 
- * embryo_cc ./test.sma -otest.amx
+ * embryo_cc ./test.sma -o test.amx
  * 
  * To test run:
  * embryo ./test.amx

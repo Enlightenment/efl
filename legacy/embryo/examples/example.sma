@@ -1,7 +1,7 @@
 #include "example.inc"
 
 /* To compile: 
- * embryo_cc ./example.sma -oexample.amx
+ * embryo_cc ./example.sma -o example.amx
  * 
  * To test run:
  * embryo ./example.amx
