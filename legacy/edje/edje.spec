@@ -1,5 +1,5 @@
 # Note that this is NOT a relocatable package
-%define ver      0.0.1
+%define ver      0.5.0
 %define rel      1
 %define prefix   /usr
 
@@ -66,8 +66,10 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%attr(755,root,root) %{prefix}/lib/libedje.so*
+%attr(755,root,root) %{prefix}/lib/libedje.so.*
 %attr(755,root,root) %{prefix}/lib/libedje.la
+%attr(755,root,root) %{prefix}/lib/libedje_edit.so.*
+%attr(755,root,root) %{prefix}/lib/libedje_edit.la
 %attr(755,root,root) %{prefix}/bin/edje
 %attr(755,root,root) %{prefix}/bin/edje_cc
 %attr(755,root,root) %{prefix}/bin/edje_ls
@@ -75,8 +77,12 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %attr(755,root,root) %{prefix}/lib/libedje.a
+%attr(755,root,root) %{prefix}/lib/libedje.so
+%attr(755,root,root) %{prefix}/lib/libedje_edit.a
+%attr(755,root,root) %{prefix}/lib/libedje_edit.so
 %attr(755,root,root) %{prefix}/bin/edje-config
 %{prefix}/include/Edje*
+
 %doc AUTHORS
 %doc COPYING
 %doc README
