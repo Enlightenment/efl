@@ -12,7 +12,7 @@ INCLUDES = \
 @my_includes@ \
 @imlib2_includes@
 
-bin_PROGRAMS = edje edje_cc
+bin_PROGRAMS = edje edje_cc edje_ls
 
 edje_SOURCES = \
 edje_main.c \
@@ -43,3 +43,13 @@ edje_cc_LDFLAGS =
 
 
 edje_cc_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
+
+edje_ls_SOURCES = \
+edje_ls.c
+
+edje_ls_LDADD = \
+$(top_builddir)/src/lib/libedje.la
+
+edje_ls_LDFLAGS =
+
+edje_ls_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la

@@ -70,6 +70,7 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{prefix}/lib/libedje.la
 %attr(755,root,root) %{prefix}/bin/edje
 %attr(755,root,root) %{prefix}/bin/edje_cc
+%attr(755,root,root) %{prefix}/bin/edje_ls
 %attr(755,root,root) %{prefix}/share/edje
 
 %files devel
