@@ -2919,7 +2919,6 @@ e_selection_set(char *string)
    XChangeProperty(disp, target, dest, 
 		   XA_STRING, 8, PropModeReplace, 
 		   string, strlen(string));
-   printf("window %x\n", target);
    return target;
 }
 
