@@ -1,7 +1,6 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
-
 #include "ecore_private.h"
 #include "Ecore.h"
 #include "ecore_x_private.h"
@@ -143,6 +142,19 @@ _ecore_x_event_free_selection_notify(void *data __UNUSED__, void *ev)
 
    e = ev;
    if (e->target) free(e->target);
+   free(e);
+}
+
+static void
+_ecore_x_event_free_xdnd_enter(void *data __UNUSED__, void *ev)
+{
+   Ecore_X_Event_Xdnd_Enter *e;
+   int i;
+
+   e = ev;
+   for (i = 0; i < e->num_types; i++)
+     XFree(e->types[i]);
+   free(e->types);
    free(e);
 }
 
@@ -492,19 +504,19 @@ _ecore_x_event_handle_motion_notify(XEvent *xevent)
    /* Xdnd handling */
    _xdnd = _ecore_x_dnd_protocol_get();
    if (_xdnd->state == ECORE_X_DND_DRAGGING)
-   {
-      /* Determine if we're still in the rectangle from the last status */
-      x1 = _xdnd->rectangle.x;
-      x2 = _xdnd->rectangle.x + _xdnd->rectangle.width;
-      y1 = _xdnd->rectangle.y;
-      y2 = _xdnd->rectangle.y + _xdnd->rectangle.height;
-      if (e->win != _xdnd->dest || e->root.x < x1 || e->root.x > x2
-          || e->root.y < y1 || e->root.y > y2)
-      {
-         _ecore_x_dnd_drag(e->root.x, e->root.y);
-      }
-   }
-   
+     {
+	/* Determine if we're still in the rectangle from the last status */
+	x1 = _xdnd->rectangle.x;
+	x2 = _xdnd->rectangle.x + _xdnd->rectangle.width;
+	y1 = _xdnd->rectangle.y;
+	y2 = _xdnd->rectangle.y + _xdnd->rectangle.height;
+	if ((e->win != _xdnd->dest) || (e->root.x < x1) || (e->root.x > x2)
+	    || (e->root.y < y1) || (e->root.y > y2))
+	  {
+	     _ecore_x_dnd_drag(e->root.x, e->root.y);
+	  }
+     }
+
    ecore_event_add(ECORE_X_EVENT_MOUSE_MOVE, e, NULL, NULL);
 }
 
@@ -1123,258 +1135,250 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
    /* otherwise generate generic client message event. this would handle*/
    /* netwm, ICCCM, gnomewm, old kde and mwm hint client message protocols */
    if ((xevent->xclient.message_type == ECORE_X_ATOM_WM_PROTOCOLS) &&
-       (xevent->xclient.format == 32) &&
-       (xevent->xclient.data.l[0] == (long)ECORE_X_ATOM_WM_DELETE_WINDOW))
-   {
-	   Ecore_X_Event_Window_Delete_Request *e;
-	
-   	e = calloc(1, sizeof(Ecore_X_Event_Window_Delete_Request));
-	   if (!e) return;
-   	e->win = xevent->xclient.window;
-	   e->time = _ecore_x_event_last_time;
-   	ecore_event_add(ECORE_X_EVENT_WINDOW_DELETE_REQUEST, e, NULL, NULL);
-   }
-   
+	 (xevent->xclient.format == 32) &&
+	 (xevent->xclient.data.l[0] == (long)ECORE_X_ATOM_WM_DELETE_WINDOW))
+     {
+	Ecore_X_Event_Window_Delete_Request *e;
+
+	e = calloc(1, sizeof(Ecore_X_Event_Window_Delete_Request));
+	if (!e) return;
+	e->win = xevent->xclient.window;
+	e->time = _ecore_x_event_last_time;
+	ecore_event_add(ECORE_X_EVENT_WINDOW_DELETE_REQUEST, e, NULL, NULL);
+     }
+
    /* Xdnd Client Message Handling Begin */
    /* Message Type: XdndEnter */
    else if (xevent->xclient.message_type == ECORE_X_ATOM_XDND_ENTER)
-   {
-      Ecore_X_Event_Xdnd_Enter *e;
-      Ecore_X_DND_Protocol *_xdnd;
-      unsigned long three;
-      
-      _xdnd = _ecore_x_dnd_protocol_get();
-      _xdnd->source = xevent->xclient.data.l[0];
-      _xdnd->dest = xevent->xclient.window;
-      _xdnd->version = (int) (xevent->xclient.data.l[1] >> 24);
-      if (_xdnd->version > ECORE_X_DND_VERSION)
-      {
-         printf("DND: Requested version %d, we only support up to %d\n", _xdnd->version,
-                ECORE_X_DND_VERSION);
-         return;
-      }
-      
-      if ((three = xevent->xclient.data.l[1] & 0x1UL))
-      {
-         /* source supports more than 3 types, fetch property */
-         unsigned char *data;
-         Atom *types;
-         int i, num_ret;
-         if (!(ecore_x_window_prop_property_get(_xdnd->source, 
-                                              ECORE_X_ATOM_XDND_TYPE_LIST,
-                                              XA_ATOM,
-                                              32,
-                                              &data,
-                                              &num_ret)))
-         {
-            printf("DND: Could not fetch data type list from source window, aborting.\n");
-            return;
-         }
-         types = (Atom *) data;
-         _xdnd->types = calloc(num_ret + 1, sizeof(Atom));
-         for (i = 0; i < num_ret; i++)
-            _xdnd->types[i] = types[i];
-         _xdnd->num_types = num_ret;
-         free(types);
-      }
-      else
-      {
-         _xdnd->types = calloc(4, sizeof(Atom));
-         _xdnd->types[0] = xevent->xclient.data.l[2];
-         _xdnd->types[1] = xevent->xclient.data.l[3];
-         _xdnd->types[2] = xevent->xclient.data.l[4];
-         _xdnd->num_types = 3;
-      }
+     {
+	Ecore_X_Event_Xdnd_Enter *e;
+	Ecore_X_DND_Protocol *_xdnd;
+	unsigned long three;
 
-      _xdnd->state = ECORE_X_DND_TARGET_ENTERED;
+	e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Enter));
+	if (!e) return;
 
-      e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Enter));
-      if (!e) return;
-      e->win = _xdnd->dest;
-      e->source = _xdnd->source;
-      e->time = CurrentTime;
-      _ecore_x_event_last_time = e->time;
-      ecore_event_add(ECORE_X_EVENT_XDND_ENTER, e, NULL, NULL);
-   }
-   
+	_xdnd = _ecore_x_dnd_protocol_get();
+	_xdnd->source = xevent->xclient.data.l[0];
+	_xdnd->dest = xevent->xclient.window;
+	_xdnd->version = (int) (xevent->xclient.data.l[1] >> 24);
+	if (_xdnd->version > ECORE_X_DND_VERSION)
+	  {
+	     printf("DND: Requested version %d, we only support up to %d\n", _xdnd->version,
+									     ECORE_X_DND_VERSION);
+	     return;
+	  }
+
+	if ((three = xevent->xclient.data.l[1] & 0x1UL))
+	  {
+	     /* source supports more than 3 types, fetch property */
+	     unsigned char *data;
+	     Ecore_X_Atom *types;
+	     int i, num_ret;
+	     if (!(ecore_x_window_prop_property_get(_xdnd->source, 
+						    ECORE_X_ATOM_XDND_TYPE_LIST,
+						    XA_ATOM,
+						    32,
+						    &data,
+						    &num_ret)))
+	       {
+		  printf("DND: Could not fetch data type list from source window, aborting.\n");
+		  return;
+	       }
+	     types = (Ecore_X_Atom *)data;
+	     e->types = calloc(num_ret, sizeof(char *));
+	     for (i = 0; i < num_ret; i++)
+	       e->types[i] = XGetAtomName(_ecore_x_disp, types[i]);
+	     e->num_types = num_ret;
+	  }
+	else
+	  {
+	     e->types = calloc(3, sizeof(char *));
+	     e->types[0] = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[2]);
+	     e->types[1] = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[3]);
+	     e->types[2] = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[4]);
+	     e->num_types = 3;
+	  }
+
+	_xdnd->state = ECORE_X_DND_TARGET_ENTERED;
+
+	e->win = _xdnd->dest;
+	e->source = _xdnd->source;
+	e->time = CurrentTime;
+	_ecore_x_event_last_time = e->time;
+	ecore_event_add(ECORE_X_EVENT_XDND_ENTER, e, _ecore_x_event_free_xdnd_enter, NULL);
+     }
+
    /* Message Type: XdndPosition */
    else if (xevent->xclient.message_type == ECORE_X_ATOM_XDND_POSITION)
-   {
-      Ecore_X_Event_Xdnd_Position *e;
-      Ecore_X_DND_Protocol *_xdnd;
+     {
+	Ecore_X_Event_Xdnd_Position *e;
+	Ecore_X_DND_Protocol *_xdnd;
 
-      _xdnd = _ecore_x_dnd_protocol_get();
-      _xdnd->source = xevent->xclient.data.l[0];
-      _xdnd->dest = xevent->xclient.window;
-      _xdnd->pos.x = xevent->xclient.data.l[2] >> 16;
-      _xdnd->pos.y = xevent->xclient.data.l[2] & 0xFFFFUL;
-      _xdnd->action = xevent->xclient.data.l[4]; /* Version 2 */
-      /* TODO: Resolve a suitable method for enumerating Xdnd actions */
+	_xdnd = _ecore_x_dnd_protocol_get();
+	_xdnd->source = xevent->xclient.data.l[0];
+	_xdnd->dest = xevent->xclient.window;
+	_xdnd->pos.x = xevent->xclient.data.l[2] >> 16;
+	_xdnd->pos.y = xevent->xclient.data.l[2] & 0xFFFFUL;
+	_xdnd->action = xevent->xclient.data.l[4]; /* Version 2 */
+	/* TODO: Resolve a suitable method for enumerating Xdnd actions */
 
-      /* Would it be feasible to handle the processing of this message
-       * within ecore? I think not, but someone might have an idea here. */
+	/* Would it be feasible to handle the processing of this message
+	 * within ecore? I think not, but someone might have an idea here. */
 
-      e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Position));
-      if (!e) return;
-      e->win = _xdnd->dest;
-      e->source = _xdnd->source;
-      e->position.x = _xdnd->pos.x;
-      e->position.y = _xdnd->pos.y;
-      e->time = xevent->xclient.data.l[3]; /* Version 1 */
-      e->action = _xdnd->action;
-      ecore_event_add(ECORE_X_EVENT_XDND_POSITION, e, NULL, NULL);
-   }
-   
+	_ecore_x_event_last_time = (_xdnd->version >= 1) ? 
+	   (Time)xevent->xclient.data.l[3] : CurrentTime;
+
+	e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Position));
+	if (!e) return;
+	e->win = _xdnd->dest;
+	e->source = _xdnd->source;
+	e->position.x = _xdnd->pos.x;
+	e->position.y = _xdnd->pos.y;
+	e->time = xevent->xclient.data.l[3]; /* Version 1 */
+	e->action = _xdnd->action;
+	ecore_event_add(ECORE_X_EVENT_XDND_POSITION, e, NULL, NULL);
+     }
+
    /* Message Type: XdndStatus */
    else if (xevent->xclient.message_type == ECORE_X_ATOM_XDND_STATUS)
-   {
-      Ecore_X_Event_Xdnd_Status *e;
-      Ecore_X_DND_Protocol *_xdnd;
+     {
+	Ecore_X_Event_Xdnd_Status *e;
+	Ecore_X_DND_Protocol *_xdnd;
 
-      _xdnd = _ecore_x_dnd_protocol_get();
-      /* Make sure source/target match */
-      if (_xdnd->source != xevent->xclient.window 
-            || _xdnd->dest != (Window)xevent->xclient.data.l[0])
-         return;
-      _xdnd->will_accept = xevent->xclient.data.l[1] & 0x1UL;
-      _xdnd->suppress = (xevent->xclient.data.l[1] & 0x2UL) ? 0 : 1;
+	_xdnd = _ecore_x_dnd_protocol_get();
+	/* Make sure source/target match */
+	if ((_xdnd->source != xevent->xclient.window )
+	    || (_xdnd->dest != (Window)xevent->xclient.data.l[0]))
+	  return;
+	_xdnd->will_accept = xevent->xclient.data.l[1] & 0x1UL;
+	_xdnd->suppress = (xevent->xclient.data.l[1] & 0x2UL) ? 0 : 1;
 
-      _xdnd->rectangle.x = xevent->xclient.data.l[2] >> 16;
-      _xdnd->rectangle.y = xevent->xclient.data.l[2] & 0xFFFFUL;
-      _xdnd->rectangle.width = xevent->xclient.data.l[3] >> 16;
-      _xdnd->rectangle.height = xevent->xclient.data.l[3] & 0xFFFFUL;
+	_xdnd->rectangle.x = xevent->xclient.data.l[2] >> 16;
+	_xdnd->rectangle.y = xevent->xclient.data.l[2] & 0xFFFFUL;
+	_xdnd->rectangle.width = xevent->xclient.data.l[3] >> 16;
+	_xdnd->rectangle.height = xevent->xclient.data.l[3] & 0xFFFFUL;
 
-      _xdnd->accepted_action = xevent->xclient.data.l[4];
+	_xdnd->accepted_action = xevent->xclient.data.l[4];
 
-      e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Status));
-      if (!e) return;
-      e->win = _xdnd->source;
-      e->target = _xdnd->dest;
-      e->will_accept = _xdnd->will_accept;
-      e->rectangle.x = _xdnd->rectangle.x;
-      e->rectangle.y = _xdnd->rectangle.y;
-      e->rectangle.width = _xdnd->rectangle.width;
-      e->rectangle.height = _xdnd->rectangle.height;
-      e->action = _xdnd->accepted_action;
+	e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Status));
+	if (!e) return;
+	e->win = _xdnd->source;
+	e->target = _xdnd->dest;
+	e->will_accept = _xdnd->will_accept;
+	e->rectangle.x = _xdnd->rectangle.x;
+	e->rectangle.y = _xdnd->rectangle.y;
+	e->rectangle.width = _xdnd->rectangle.width;
+	e->rectangle.height = _xdnd->rectangle.height;
+	e->action = _xdnd->accepted_action;
 
-      ecore_event_add(ECORE_X_EVENT_XDND_STATUS, e, NULL, NULL);
-   }
+	ecore_event_add(ECORE_X_EVENT_XDND_STATUS, e, NULL, NULL);
+     }
 
    /* Message Type: XdndLeave */
    /* Pretend the whole thing never happened, sort of */
    else if (xevent->xclient.message_type == ECORE_X_ATOM_XDND_LEAVE)
-   {
-      Ecore_X_Event_Xdnd_Leave *e;
-      Ecore_X_DND_Protocol *_xdnd;
+     {
+	Ecore_X_Event_Xdnd_Leave *e;
+	Ecore_X_DND_Protocol *_xdnd;
 
-      _xdnd = _ecore_x_dnd_protocol_get();
-      /* Match source/target */
-      if (_xdnd->source != (Window)xevent->xclient.data.l[0]
-            || _xdnd->dest != xevent->xclient.window)
-         return;
-      if (_xdnd->types)
-         free(_xdnd->types);
-      _xdnd->num_types = 0;
-      /* XXX: May need to reset event handler callbacks as well */
-      _xdnd->state = ECORE_X_DND_IDLE;
+	_xdnd = _ecore_x_dnd_protocol_get();
+	/* Match source/target */
+	if ((_xdnd->source != (Window)xevent->xclient.data.l[0])
+	    || (_xdnd->dest != xevent->xclient.window))
+	  return;
+	/* XXX: May need to reset event handler callbacks as well */
+	_xdnd->state = ECORE_X_DND_IDLE;
 
-      e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Leave));
-      if (!e) return;
-      e->win = _xdnd->dest;
-      e->source = _xdnd->source;
-      ecore_event_add(ECORE_X_EVENT_XDND_LEAVE, e, NULL, NULL);
-   }
+	e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Leave));
+	if (!e) return;
+	e->win = _xdnd->dest;
+	e->source = _xdnd->source;
+	ecore_event_add(ECORE_X_EVENT_XDND_LEAVE, e, NULL, NULL);
+     }
    else if (xevent->xclient.message_type == ECORE_X_ATOM_XDND_DROP)
-   {
-      Ecore_X_Event_Xdnd_Drop *e;
-      Ecore_X_DND_Protocol *_xdnd;
-      Ecore_X_Time timestamp;
+     {
+	Ecore_X_Event_Xdnd_Drop *e;
+	Ecore_X_DND_Protocol *_xdnd;
+	Ecore_X_Time timestamp;
 
-      _xdnd = _ecore_x_dnd_protocol_get();
-      /* Match source/target */
-      if (_xdnd->source != (Window)xevent->xclient.data.l[0]
-            || _xdnd->dest != xevent->xclient.window)
-         return;
-      
-      timestamp = (_xdnd->version >= (int)1) ? 
-                     (Time)xevent->xclient.data.l[2] : _ecore_x_event_last_time;
-      
-      XConvertSelection(_ecore_x_disp, ECORE_X_ATOM_SELECTION_XDND,
-            _xdnd->dest, ECORE_X_ATOM_SELECTION_PROP_XDND, _xdnd->dest,
-            timestamp);
+	_xdnd = _ecore_x_dnd_protocol_get();
+	/* Match source/target */
+	if ((_xdnd->source != (Window)xevent->xclient.data.l[0])
+	    || (_xdnd->dest != xevent->xclient.window))
+	  return;
 
-      /* FIXME: Have to wait for SelectionNotify before we can send
-       * XdndFinished. Stupid, retarded protocols, gah! */
+	timestamp = (_xdnd->version >= 1) ? 
+	   (Time)xevent->xclient.data.l[2] : _ecore_x_event_last_time;
 
-      e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Drop));
-      if (!e) return;
-      e->win = _xdnd->dest;
-      e->source = _xdnd->source;
-      e->time = timestamp;
-      e->action = _xdnd->action;
-      e->position.x = _xdnd->pos.x;
-      e->position.y = _xdnd->pos.y;
-      ecore_event_add(ECORE_X_EVENT_XDND_DROP, e, NULL, NULL);
-   }
+	e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Drop));
+	if (!e) return;
+	e->win = _xdnd->dest;
+	e->source = _xdnd->source;
+	e->time = timestamp;
+	e->action = _xdnd->action;
+	e->position.x = _xdnd->pos.x;
+	e->position.y = _xdnd->pos.y;
+	ecore_event_add(ECORE_X_EVENT_XDND_DROP, e, NULL, NULL);
+     }
 
    /* Message Type: XdndFinished */
    else if (xevent->xclient.message_type == ECORE_X_ATOM_XDND_FINISHED)
-   {
-      Ecore_X_Event_Xdnd_Finished *e;
-      Ecore_X_DND_Protocol *_xdnd;
-      int completed = 1;
+     {
+	Ecore_X_Event_Xdnd_Finished *e;
+	Ecore_X_DND_Protocol *_xdnd;
+	int completed = 1;
 
-      _xdnd = _ecore_x_dnd_protocol_get();
-      /* Match source/target */
-      if (_xdnd->source != xevent->xclient.window
-            || _xdnd->dest != (Window)xevent->xclient.data.l[0])
-         return;
+	_xdnd = _ecore_x_dnd_protocol_get();
+	/* Match source/target */
+	if ((_xdnd->source != xevent->xclient.window)
+	    || (_xdnd->dest != (Window)xevent->xclient.data.l[0]))
+	  return;
 
-      if (_xdnd->version >= 5 && (xevent->xclient.data.l[1] & 0x1UL))
-      {
-         /* Target successfully performed drop action */
-         _xdnd->state = ECORE_X_DND_IDLE;
-      } else {
-         completed = 0;
-         _xdnd->state = ECORE_X_DND_TARGET_CONVERTING;
-         
-         /* FIXME: Probably need to add a timer to switch back to idle 
-          * and discard the selection data */
-      } 
+	if ((_xdnd->version >= 5) && (xevent->xclient.data.l[1] & 0x1UL))
+	  {
+	     /* Target successfully performed drop action */
+	     _xdnd->state = ECORE_X_DND_IDLE;
+	  } else {
+	       completed = 0;
+	       _xdnd->state = ECORE_X_DND_TARGET_CONVERTING;
 
-      e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Finished));
-      if (!e) return;
-      e->win = _xdnd->source;
-      e->target = _xdnd->dest;
-      e->completed = completed;
-      if (_xdnd->version >= 5)
-      {
-         _xdnd->accepted_action = xevent->xclient.data.l[2];
-         e->action = _xdnd->accepted_action;
-      }
-      else
-      {
-         _xdnd->accepted_action = 0;
-         e->action = _xdnd->action;
-      }
+	       /* FIXME: Probably need to add a timer to switch back to idle 
+		* and discard the selection data */
+	  } 
 
-      ecore_event_add(ECORE_X_EVENT_XDND_FINISHED, e, NULL, NULL);
+	e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Finished));
+	if (!e) return;
+	e->win = _xdnd->source;
+	e->target = _xdnd->dest;
+	e->completed = completed;
+	if (_xdnd->version >= 5)
+	  {
+	     _xdnd->accepted_action = xevent->xclient.data.l[2];
+	     e->action = _xdnd->accepted_action;
+	  }
+	else
+	  {
+	     _xdnd->accepted_action = 0;
+	     e->action = _xdnd->action;
+	  }
 
-   }
+	ecore_event_add(ECORE_X_EVENT_XDND_FINISHED, e, NULL, NULL);
+     }
    else
-   {
-	   Ecore_X_Event_Client_Message *e;
-	   int i;
-      
-      e = (Ecore_X_Event_Client_Message *) calloc(1, sizeof(Ecore_X_Event_Client_Message));
-	   e->win = xevent->xclient.window;
-	   e->message_type = xevent->xclient.message_type;
-   	e->format = xevent->xclient.format;
-   	for(i = 0; i < 5; i++) 
-         e->data.l[i] = xevent->xclient.data.l[i];
-      
-   	ecore_event_add(ECORE_X_EVENT_CLIENT_MESSAGE, e, NULL, NULL);
-   }
+     {
+	Ecore_X_Event_Client_Message *e;
+	int i;
+
+	e = (Ecore_X_Event_Client_Message *) calloc(1, sizeof(Ecore_X_Event_Client_Message));
+	e->win = xevent->xclient.window;
+	e->message_type = xevent->xclient.message_type;
+	e->format = xevent->xclient.format;
+	for(i = 0; i < 5; i++) 
+	  e->data.l[i] = xevent->xclient.data.l[i];
+
+	ecore_event_add(ECORE_X_EVENT_CLIENT_MESSAGE, e, NULL, NULL);
+     }
 }
 
 void

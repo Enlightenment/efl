@@ -91,9 +91,7 @@ typedef struct _Ecore_X_DND_Protocol
    
    Time time;
 
-   Ecore_X_Atom *types;
    Ecore_X_Atom action, accepted_action;
-   int num_types;
    
    int will_accept;
    int suppress;

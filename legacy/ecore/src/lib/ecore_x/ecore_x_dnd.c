@@ -6,7 +6,6 @@
 #include "Ecore_X.h"
 #include "Ecore_X_Atoms.h"
 
-static Ecore_X_Selection_Data _xdnd_selection;
 static Ecore_X_DND_Protocol *_xdnd = NULL;
 static int _ecore_x_dnd_init_count = 0;
 
@@ -163,28 +162,13 @@ _ecore_x_dnd_protocol_get(void)
 int
 ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size)
 {
-   unsigned char *buf;
-   unsigned char *atoms;
-   int num;
 
    if (!ecore_x_dnd_version_get(source))
      return 0;
 
    /* Take ownership of XdndSelection */
-   XSetSelectionOwner(_ecore_x_disp, ECORE_X_ATOM_SELECTION_XDND, source,
-                      _ecore_x_event_last_time);
-   if (XGetSelectionOwner(_ecore_x_disp, ECORE_X_ATOM_SELECTION_XDND) != source)
+   if (!ecore_x_selection_xdnd_set(source, data, size))
      return 0;
-
-   /* Initialize Selection Data Struct */
-   _xdnd_selection.win = source;
-   _xdnd_selection.selection = ECORE_X_ATOM_SELECTION_XDND;
-   _xdnd_selection.length = size;
-   _xdnd_selection.time = _ecore_x_event_last_time;
-
-   buf = malloc(size);
-   memcpy(buf, data, size);
-   _xdnd_selection.data = buf;
 
    _xdnd->source = source;
    _xdnd->state = ECORE_X_DND_DRAGGING;
@@ -193,11 +177,6 @@ ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size)
    /* Default Accepted Action: ask */
    _xdnd->action = ECORE_X_ATOM_XDND_ACTION_ASK;
    _xdnd->accepted_action = None;
-
-   ecore_x_window_prop_property_get(source, ECORE_X_ATOM_XDND_TYPE_LIST,
-                                    XA_ATOM, 32, &atoms, &num);
-   _xdnd->num_types = num;
-   _xdnd->types = (Ecore_X_Atom *)atoms;
    return 1;
 }
 
@@ -254,6 +233,27 @@ ecore_x_dnd_send_status(int will_accept, int suppress, Ecore_X_Rectangle rectang
 }
 
 void
+ecore_x_dnd_send_finished(void)
+{
+   XEvent   xev;
+
+   xev.xany.type = ClientMessage;
+   xev.xany.display = _ecore_x_disp;
+   xev.xclient.window = _xdnd->source;
+   xev.xclient.message_type = ECORE_X_ATOM_XDND_FINISHED;
+   xev.xclient.format = 32;
+
+   xev.xclient.data.l[0] = _xdnd->dest;
+   memset(xev.xclient.data.l + 1, 0, sizeof(long) * 3);
+   if (_xdnd->will_accept)
+     {
+	xev.xclient.data.l[1] |= 0x1UL;
+	xev.xclient.data.l[2] = _xdnd->accepted_action;
+     }
+   XSendEvent(_ecore_x_disp, _xdnd->source, False, 0, &xev);
+}
+
+void
 _ecore_x_dnd_drag(int x, int y)
 {
    XEvent         xev;
@@ -286,20 +286,27 @@ _ecore_x_dnd_drag(int x, int y)
 			     ecore_x_dnd_version_get(win));
 	if (win != _xdnd->dest)
 	  {
-	     int i;
+	     int i, num;
+	     unsigned char *data;
+	     Ecore_X_Atom *types;
+
+	     ecore_x_window_prop_property_get(_xdnd->source, ECORE_X_ATOM_XDND_TYPE_LIST,
+					      XA_ATOM, 32, &data, &num);
+	     types = (Ecore_X_Atom *)data;
 
 	     /* Entered new window, send XdndEnter */
 	     xev.xclient.window = win;
 	     xev.xclient.message_type = ECORE_X_ATOM_XDND_ENTER;
 	     xev.xclient.data.l[0] = _xdnd->source;
-	     if(_xdnd->num_types > 3)
+	     if (num > 3)
 	       xev.xclient.data.l[1] |= 0x1UL;
 	     else
 	       xev.xclient.data.l[1] &= 0xfffffffeUL;
 	     xev.xclient.data.l[1] |= ((unsigned long) _xdnd->version) << 24;
 
-	     for (i = 0; i < MIN(_xdnd->num_types, 3); ++i)
-	       xev.xclient.data.l[i + 2] = _xdnd->types[i];
+	     for (i = 0; i < MIN(num, 3); ++i)
+	       xev.xclient.data.l[i + 2] = types[i];
+	     XFree(data);
 	     XSendEvent(_ecore_x_disp, win, False, 0, &xev);
 	     _xdnd->await_status = 0;
 	  }
@@ -349,27 +356,3 @@ _ecore_x_dnd_drag(int x, int y)
    _xdnd->dest = win;
 }
 
-#if 0 /* Unused? */
-void
-_ecore_x_dnd_send_finished(void)
-{
-   XEvent   xev;
-
-   xev.xany.type = ClientMessage;
-   xev.xany.display = _ecore_x_disp;
-   xev.xclient.window = _xdnd->source;
-   xev.xclient.message_type = ECORE_X_ATOM_XDND_FINISHED;
-   xev.xclient.format = 32;
-
-   xev.xclient.data.l[0] = _xdnd->dest;
-   memset(xev.xclient.data.l + 1, 0, sizeof(long) * 3);
-   XSendEvent(_ecore_x_disp, _xdnd->source, False, 0, &xev);
-}
-
-int
-_ecore_x_dnd_own_selection(void)
-{
-   return (!XSetSelectionOwner(_ecore_x_disp, ECORE_X_ATOM_SELECTION_XDND,
-                               _xdnd->source, CurrentTime));
-}
-#endif

@@ -6,7 +6,7 @@
 #include "Ecore_X.h"
 #include "Ecore_X_Atoms.h"
 
-static Ecore_X_Selection_Data selections[3];
+static Ecore_X_Selection_Data selections[4];
 static Ecore_X_Selection_Data request_data[4];
 static Ecore_X_Selection_Converter *converters = NULL;
 
@@ -41,11 +41,12 @@ _ecore_x_selection_shutdown(void)
      return;
 
    /* free the selection converters */
-   while (cnv) {	
+   while (cnv)
+     {	
 	tmp = cnv->next;
 	free(cnv);
 	cnv = tmp;
-   }
+     }
 
    converters = NULL;
 }
@@ -56,22 +57,22 @@ _ecore_x_selection_request_data_get(Ecore_X_Atom selection, void **buf, int *len
    int i;
    char *data;
    if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
-      i = 0;
+     i = 0;
    else if (selection == ECORE_X_ATOM_SELECTION_SECONDARY)
-      i = 1;
+     i = 1;
    else if (selection == ECORE_X_ATOM_SELECTION_XDND)
-      i = 2;
+     i = 2;
    else if (selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
-      i = 3;
+     i = 3;
    else
-      return;
+     return;
 
    if (!request_data[i].data || !request_data[i].length)
-   {
-      *len = 0;
-      *buf = NULL;
-      return;
-   }
+     {
+	*len = 0;
+	*buf = NULL;
+	return;
+     }
 
    data = malloc(request_data[i].length);
    memcpy(data, request_data[i].data, request_data[i].length);
@@ -145,15 +146,15 @@ _ecore_x_selection_request_data_set(Ecore_X_Selection_Data data)
 {
    int i;
    if (data.selection == ECORE_X_ATOM_SELECTION_PRIMARY)
-      i = 0;
+     i = 0;
    else if (data.selection == ECORE_X_ATOM_SELECTION_SECONDARY)
-      i = 1;
+     i = 1;
    else if (data.selection == ECORE_X_ATOM_SELECTION_XDND)
-      i = 2;
+     i = 2;
    else if (data.selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
-      i = 3;
+     i = 3;
    else
-      return;
+     return;
 
    request_data[i] = data;
 }
@@ -162,13 +163,15 @@ Ecore_X_Selection_Data *
 _ecore_x_selection_get(Atom selection)
 {
    if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
-      return &selections[0];
+     return &selections[0];
    else if (selection == ECORE_X_ATOM_SELECTION_SECONDARY)
-      return &selections[1];
+     return &selections[1];
+   else if (selection == ECORE_X_ATOM_SELECTION_XDND)
+     return &selections[2];
    else if (selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
-      return &selections[2];
+     return &selections[3];
    else
-      return NULL;
+     return NULL;
 }
 
 int 
@@ -179,35 +182,37 @@ _ecore_x_selection_set(Window w, unsigned char *data, int size, Atom selection)
    
    XSetSelectionOwner(_ecore_x_disp, selection, w, _ecore_x_event_last_time);
    if (XGetSelectionOwner(_ecore_x_disp, selection) != w)
-      return 0;
+     return 0;
    
    if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
-      in = 0;
+     in = 0;
    else if (selection == ECORE_X_ATOM_SELECTION_SECONDARY)
-      in = 1;
+     in = 1;
+   else if (selection == ECORE_X_ATOM_SELECTION_XDND)
+     in = 2;
    else
-      in = 2;
-   
+     in = 3;
+
    if (data)
-   {
-      selections[in].win = w;
-      selections[in].selection = selection;
-      selections[in].length = size;
-      selections[in].time = _ecore_x_event_last_time;
-      
-      buf = malloc(size);
-      memcpy(buf, data, size);
-      selections[in].data = buf;
-   }
+     {
+	selections[in].win = w;
+	selections[in].selection = selection;
+	selections[in].length = size;
+	selections[in].time = _ecore_x_event_last_time;
+
+	buf = malloc(size);
+	memcpy(buf, data, size);
+	selections[in].data = buf;
+     }
    else
-   {
-      if (selections[in].data)
-      {
-         free(selections[in].data);
-         memset(&selections[in], 0, sizeof(Ecore_X_Selection_Data));
-      }
-   }
-   
+     {
+	if (selections[in].data)
+	  {
+	     free(selections[in].data);
+	     memset(&selections[in], 0, sizeof(Ecore_X_Selection_Data));
+	  }
+     }
+
    return 1;
 }
 
@@ -218,9 +223,6 @@ _ecore_x_selection_set(Window w, unsigned char *data, int size, Atom selection)
  * @param size The size of the data buffer in bytes
  * @return     Returns 1 if the ownership of the selection was successfully 
  *             claimed, or 0 if unsuccessful.
- *
- * Get the converted data from a previous PRIMARY selection
- * request. The buffer must be freed when done with.
  */
 int 
 ecore_x_selection_primary_set(Ecore_X_Window w, unsigned char *data, int size)
@@ -247,9 +249,6 @@ ecore_x_selection_primary_clear(void)
  * @param size The size of the data buffer in bytes
  * @return     Returns 1 if the ownership of the selection was successfully 
  *             claimed, or 0 if unsuccessful.
- *
- * Get the converted data from a previous SECONDARY selection
- * request. The buffer must be freed when done with.
  */
 int 
 ecore_x_selection_secondary_set(Ecore_X_Window w, unsigned char *data, int size)
@@ -267,6 +266,32 @@ int
 ecore_x_selection_secondary_clear(void)
 {
    return _ecore_x_selection_set(None, NULL, 0, ECORE_X_ATOM_SELECTION_SECONDARY);
+}
+
+/**
+ * Claim ownership of the XDND selection and set its data.
+ * @param w    The window to which this selection belongs
+ * @param data The data associated with the selection
+ * @param size The size of the data buffer in bytes
+ * @return     Returns 1 if the ownership of the selection was successfully 
+ *             claimed, or 0 if unsuccessful.
+ */
+int 
+ecore_x_selection_xdnd_set(Ecore_X_Window w, unsigned char *data, int size)
+{
+   return _ecore_x_selection_set(w, data, size, ECORE_X_ATOM_SELECTION_XDND);
+}
+
+/**
+ * Release ownership of the XDND selection
+ * @return     Returns 1 if the selection was successfully cleared,
+ *             or 0 if unsuccessful.
+ *
+ */
+int 
+ecore_x_selection_xdnd_clear(void)
+{
+   return _ecore_x_selection_set(None, NULL, 0, ECORE_X_ATOM_SELECTION_XDND);
 }
 
 /**
@@ -302,25 +327,25 @@ Atom
 _ecore_x_selection_target_atom_get(char *target)
 {
    Atom x_target;
-   
+
    if (!strcmp(target, ECORE_X_SELECTION_TARGET_TEXT))
-      x_target = ECORE_X_ATOM_TEXT;
+     x_target = ECORE_X_ATOM_TEXT;
    else if (!strcmp(target, ECORE_X_SELECTION_TARGET_COMPOUND_TEXT))
-      x_target = ECORE_X_ATOM_COMPOUND_TEXT;
+     x_target = ECORE_X_ATOM_COMPOUND_TEXT;
    else if (!strcmp(target, ECORE_X_SELECTION_TARGET_STRING))
-      x_target = ECORE_X_ATOM_STRING;
+     x_target = ECORE_X_ATOM_STRING;
    else if (!strcmp(target, ECORE_X_SELECTION_TARGET_UTF8_STRING))
-      x_target = ECORE_X_ATOM_UTF8_STRING;
+     x_target = ECORE_X_ATOM_UTF8_STRING;
    else if (!strcmp(target, ECORE_X_SELECTION_TARGET_FILENAME))
-      x_target = ECORE_X_ATOM_FILE_NAME;
+     x_target = ECORE_X_ATOM_FILE_NAME;
    else
-   {
-      char *atom_name;
-      atom_name = malloc(strlen(target) + 4);
-      sprintf(atom_name, "_E_%s", target);
-      x_target = XInternAtom(_ecore_x_disp, atom_name, False);
-      free(atom_name);
-   }
+     {
+	char *atom_name;
+	atom_name = malloc(strlen(target) + 4);
+	sprintf(atom_name, "_E_%s", target);
+	x_target = XInternAtom(_ecore_x_disp, atom_name, False);
+	free(atom_name);
+     }
 
    return x_target;
 }
@@ -329,15 +354,15 @@ char *
 _ecore_x_selection_target_get(Atom target)
 {
    if (target == ECORE_X_ATOM_FILE_NAME)
-      return strdup(ECORE_X_SELECTION_TARGET_FILENAME);
+     return strdup(ECORE_X_SELECTION_TARGET_FILENAME);
    else if (target == ECORE_X_ATOM_STRING)
-      return strdup(ECORE_X_SELECTION_TARGET_STRING);
+     return strdup(ECORE_X_SELECTION_TARGET_STRING);
    else if (target == ECORE_X_ATOM_UTF8_STRING)
-      return strdup(ECORE_X_SELECTION_TARGET_UTF8_STRING);
+     return strdup(ECORE_X_SELECTION_TARGET_UTF8_STRING);
    else if (target == ECORE_X_ATOM_TEXT)
-      return strdup(ECORE_X_SELECTION_TARGET_TEXT);
+     return strdup(ECORE_X_SELECTION_TARGET_TEXT);
    else
-      return strdup(ECORE_X_SELECTION_TARGET_TEXT);
+     return strdup(ECORE_X_SELECTION_TARGET_TEXT);
 }
 
 static void 
@@ -346,18 +371,16 @@ _ecore_x_selection_request(Ecore_X_Window w, Ecore_X_Atom selection, char *targe
    Ecore_X_Atom target, prop;
 
    target = _ecore_x_selection_target_atom_get(target_str);
-   
+
    if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
-      prop = ECORE_X_ATOM_SELECTION_PROP_PRIMARY;
+     prop = ECORE_X_ATOM_SELECTION_PROP_PRIMARY;
    else if (selection == ECORE_X_ATOM_SELECTION_SECONDARY)
-      prop = ECORE_X_ATOM_SELECTION_PROP_SECONDARY;
-   else if (selection == ECORE_X_ATOM_SELECTION_XDND)
-      prop = ECORE_X_ATOM_SELECTION_PROP_XDND;
+     prop = ECORE_X_ATOM_SELECTION_PROP_SECONDARY;
    else
-      prop = ECORE_X_ATOM_SELECTION_PROP_CLIPBOARD;
+     prop = ECORE_X_ATOM_SELECTION_PROP_CLIPBOARD;
 
    XConvertSelection(_ecore_x_disp, selection, target, prop,
-                     w, _ecore_x_event_last_time);
+		     w, _ecore_x_event_last_time);
 }
 
 void 
@@ -370,6 +393,17 @@ void
 ecore_x_selection_secondary_request(Ecore_X_Window w, char *target)
 {
    _ecore_x_selection_request(w, ECORE_X_ATOM_SELECTION_SECONDARY, target);
+}
+
+void 
+ecore_x_selection_xdnd_request(Ecore_X_Window w, char *target)
+{
+   Ecore_X_Atom atom;
+
+   atom = ecore_x_atom_get(target);
+   XConvertSelection(_ecore_x_disp, ECORE_X_ATOM_SELECTION_XDND, atom,
+		     ECORE_X_ATOM_SELECTION_PROP_XDND, w,
+		     _ecore_x_event_last_time);
 }
 
 void 
@@ -402,9 +436,11 @@ ecore_x_selection_converter_atom_add(Ecore_X_Atom target,
 
 	cnv->next = calloc(1, sizeof(Ecore_X_Selection_Converter));
 	cnv = cnv->next;
-     } else {
-	  converters = calloc(1, sizeof(Ecore_X_Selection_Converter));
-	  cnv = converters;
+     }
+   else
+     {
+	converters = calloc(1, sizeof(Ecore_X_Selection_Converter));
+	cnv = converters;
      }
    cnv->target = target;
    cnv->convert = func;
@@ -416,12 +452,12 @@ ecore_x_selection_converter_add(char *target,
       int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret))
 {
    Ecore_X_Atom x_target;
-   
+
    if (!func || !target)
-      return;
+     return;
 
    x_target = _ecore_x_selection_target_atom_get(target);
-   
+
    ecore_x_selection_converter_atom_add(x_target, func);
 }
 
@@ -429,17 +465,17 @@ void
 ecore_x_selection_converter_atom_del(Ecore_X_Atom target)
 {
    Ecore_X_Selection_Converter *cnv, *prev_cnv;
-   
+
    prev_cnv = NULL;
    cnv = converters;
-   
+
    while (cnv)
      {
 	if (cnv->target == target)
 	  {
-	     if (target == ECORE_X_ATOM_TEXT ||
-		   target == ECORE_X_ATOM_COMPOUND_TEXT ||
-		   target == ECORE_X_ATOM_STRING)
+	     if ((target == ECORE_X_ATOM_TEXT) ||
+		 (target == ECORE_X_ATOM_COMPOUND_TEXT) ||
+		 (target == ECORE_X_ATOM_STRING))
 	       {
 		  cnv->convert = _ecore_x_selection_converter_text;
 	       }
@@ -463,10 +499,10 @@ void
 ecore_x_selection_converter_del(char *target)
 {
    Ecore_X_Atom x_target;
-   
+
    if (!target)
-      return;
-   
+     return;
+
    x_target = _ecore_x_selection_target_atom_get(target);
    ecore_x_selection_converter_atom_del(x_target);
 }
@@ -484,7 +520,7 @@ _ecore_x_selection_convert(Atom selection, Atom target, void **data_ret)
    
    sel = _ecore_x_selection_get(selection);
    tgt_str = _ecore_x_selection_target_get(target);
-   
+
    for (cnv = converters; cnv; cnv = cnv->next)
      {
 	if (cnv->target == target)
@@ -509,31 +545,32 @@ _ecore_x_selection_convert(Atom selection, Atom target, void **data_ret)
 /* TODO: We need to work out a mechanism for automatic conversion to any requested
  * locale using Ecore_Txt functions */
 /* Converter for standard non-utf8 text targets */
-static int _ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret)
+static int
+_ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret)
 {
    XTextProperty text_prop;
    char *mystr;
    XICCEncodingStyle style;
-   
+
    if (!data || !size)
-      return 0;
+     return 0;
 
    if (!strcmp(target, ECORE_X_SELECTION_TARGET_TEXT))
-      style = XTextStyle;
+     style = XTextStyle;
    else if (!strcmp(target, ECORE_X_SELECTION_TARGET_COMPOUND_TEXT))
-      style = XCompoundTextStyle;
+     style = XCompoundTextStyle;
    else if (!strcmp(target, ECORE_X_SELECTION_TARGET_STRING))
-      style = XStringStyle;
+     style = XStringStyle;
 #ifdef X_HAVE_UTF8_STRING
    else if (!strcmp(target, ECORE_X_SELECTION_TARGET_UTF8_STRING))
-      style = XUTF8StringStyle;
+     style = XUTF8StringStyle;
 #endif
    else
-      return 0;
-   
+     return 0;
+
    if (!(mystr = strdup(data)))
-      return 0;
-   
+     return 0;
+
    if (XmbTextListToTextProperty(_ecore_x_disp, &mystr, 1, style, &text_prop) == Success)
      {
 	int bufsize = strlen(text_prop.value) + 1;
