@@ -28,5 +28,6 @@ encoded ina platform independant way and can be written and read by any
 architecture.
 
 @todo Complete documentation of API
+@todo Add fixed and variable array encode/decode support
 
 */
