@@ -333,6 +333,7 @@ fn_text(double v, double val, int no)
      };
    static char  *fonts[] =
      {
+/*	
 	"notepad",
 	"grunge",
 	"morpheus",
@@ -341,9 +342,19 @@ fn_text(double v, double val, int no)
 	"grunge",
 	"morpheus",
 	"notepad"
+ */
+	"andover",
+	"andover",
+	"andover",
+	"andover",
+	"andover",
+	"andover",
+	"andover",
+	"andover"
      };
    static int sizes[] =
      {
+/*	
 	16,
 	28,
 	34,
@@ -352,6 +363,15 @@ fn_text(double v, double val, int no)
 	8,
 	20,
 	34
+ */
+	64,
+	64,
+	64,
+	64,
+	64,
+	64,
+	64,
+	64
      };
    static double coords[] =
      {
@@ -584,7 +604,7 @@ static TextBlock texts[] =
      { 22.0, 2.0, 4.0, 6.0,  "The Hanging Gardens of Babylon ...", NULL, NULL},
      { 26.0, 4.0, 4.0, 6.0,  "The Mausoleum at Halicarnassus ...", NULL, NULL},
      { 30.0, 2.0, 4.0, 6.0,  "The Lighthouse at Alexandria ...", NULL, NULL},
-     { 34.0, 2.0, 4.0, 6.0,  "The Great Pyriamids at Giza ...", NULL, NULL},
+     { 34.0, 2.0, 4.0, 6.0,  "The Great Pyramids at Giza ...", NULL, NULL},
      { 38.0, 2.0, 4.0, 6.0,  "The Statue of Zeus at Olympia ...", NULL, NULL},
 
      { 46.0, 2.0, 4.0, 6.0,  "Is there an 8th wonder?", NULL, NULL},
@@ -911,8 +931,6 @@ setup_view(Evas_Render_Method method)
    for (i = 0; i < (sizeof(codes) / sizeof(CodeBlock)); i++)  codes[i].function(0, 0, 1);
    if (evas_view) evas_free(evas_view);
    evas_view = e;
-   
-   e = evas_view;
    
    o = evas_add_text(e, "andover", 20, "FPS: ???");
    evas_set_color(e, o, 255,  255,  255, 100);

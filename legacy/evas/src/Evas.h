@@ -203,6 +203,7 @@ void *evas_get_data(Evas e, Evas_Object o, char *key);
 void *evas_remove_data(Evas e, Evas_Object o, char *key);
 	 
 /* events */
+void evas_ungrab_button(Evas e);
 void evas_event_button_down(Evas e, int x, int y, int b);
 void evas_event_button_up(Evas e, int x, int y, int b);
 void evas_event_move(Evas e, int x, int y);

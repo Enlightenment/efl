@@ -71,7 +71,15 @@ _evas_objects_at_point(Evas e, int x, int y)
      }
    return objs;
 }	 
-   
+
+void
+evas_ungrab_button(Evas e)
+{
+   if (e->mouse.button_object)
+      e->mouse.button_object = NULL;
+   e->mouse.buttons = 0;
+}
+
 /* events */
 void
 evas_event_button_down(Evas e, int x, int y, int b)
@@ -105,6 +113,9 @@ evas_event_button_up(Evas e, int x, int y, int b)
    e->mouse.y = y;
    if (e->mouse.button_object)
       _evas_callback_call(e, e->mouse.button_object, CALLBACK_MOUSE_UP, 
+			  b, x, y);
+   else if (e->mouse.object)
+      _evas_callback_call(e, e->mouse.object, CALLBACK_MOUSE_UP, 
 			  b, x, y);
    if (!e->mouse.buttons) 
       {
