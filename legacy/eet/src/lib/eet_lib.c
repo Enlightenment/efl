@@ -281,34 +281,37 @@ eet_flush(Eet_File *ef)
 	     unsigned char *buf;
 	     int buf_size;
 	     int name_size;
-	     
-	     name_size = strlen(ef->header->directory->hash[i].node[j].name);
-	     buf_size = 20 + name_size;
-	     buf = malloc(buf_size);
-	     if (!buf) return;
-	     i1 = (unsigned long int)ef->header->directory->hash[i].node[j].offset;
-	     i2 = htonl(i1);
-	     *((int *)(buf + 0)) = (int)i2;
-	     i1 = (unsigned long int)ef->header->directory->hash[i].node[j].compression;
-	     i2 = htonl(i1);
-	     *((int *)(buf + 4)) = (int)i2;
-	     i1 = (unsigned long int)ef->header->directory->hash[i].node[j].size;
-	     i2 = htonl(i1);
-	     *((int *)(buf + 8)) = (int)i2;
-	     i1 = (unsigned long int)ef->header->directory->hash[i].node[j].data_size;
-	     i2 = htonl(i1);
-	     *((int *)(buf + 12)) = (int)i2;
-	     i1 = (unsigned long int)name_size;
-	     i2 = htonl(i1);
-	     *((int *)(buf + 16)) = (int)i2;
-	     memcpy(buf + 20, ef->header->directory->hash[i].node[j].name, name_size);
-	     if (fwrite(buf, buf_size, 1, ef->fp) != 1) 
+
+	     if (ef->header->directory->hash[i].node[j].compression >= 0)
 	       {
+		  name_size = strlen(ef->header->directory->hash[i].node[j].name);
+		  buf_size = 20 + name_size;
+		  buf = malloc(buf_size);
+		  if (!buf) return;
+		  i1 = (unsigned long int)ef->header->directory->hash[i].node[j].offset;
+		  i2 = htonl(i1);
+		  *((int *)(buf + 0)) = (int)i2;
+		  i1 = (unsigned long int)ef->header->directory->hash[i].node[j].compression;
+		  i2 = htonl(i1);
+		  *((int *)(buf + 4)) = (int)i2;
+		  i1 = (unsigned long int)ef->header->directory->hash[i].node[j].size;
+		  i2 = htonl(i1);
+		  *((int *)(buf + 8)) = (int)i2;
+		  i1 = (unsigned long int)ef->header->directory->hash[i].node[j].data_size;
+		  i2 = htonl(i1);
+		  *((int *)(buf + 12)) = (int)i2;
+		  i1 = (unsigned long int)name_size;
+		  i2 = htonl(i1);
+		  *((int *)(buf + 16)) = (int)i2;
+		  memcpy(buf + 20, ef->header->directory->hash[i].node[j].name, name_size);
+		  if (fwrite(buf, buf_size, 1, ef->fp) != 1) 
+		    {
+		       free(buf);
+		       return;
+		    }
+		  offset += buf_size;
 		  free(buf);
-		  return;
 	       }
-	     offset += buf_size;
-	     free(buf);
 	  }
      }
    /* write data */
@@ -914,6 +917,7 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
 		  ef->header->directory->hash[hash].node[i].data_size = size;
 		  ef->header->directory->hash[hash].node[i].data = data2;
 		  exists_already = 1;
+		  break;
 	       }
 	  }
      }
@@ -944,6 +948,51 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
    ef->writes_pending = 1;
    /* update access time */
    return data_size;
+}
+
+int
+eet_delete(Eet_File *ef, char *name)
+{
+   int hash, node_size;
+   Eet_File_Node *node;
+   int exists_already = 0;
+   
+   /* check to see its' an eet file pointer */   
+   if ((!ef) || (ef->magic != EET_MAGIC_FILE)
+       || (!name) ||
+       ((ef->mode != EET_FILE_MODE_WRITE) &&
+        (ef->mode != EET_FILE_MODE_RW)))
+     return 0;
+
+   if (!ef->header) return 0;
+   
+   /* figure hash bucket */
+   hash = eet_hash_gen(name, ef->header->directory->size);
+   node_size = ef->header->directory->hash[hash].size;
+   
+   /* Does this node already exist? */
+   if (ef->mode == EET_FILE_MODE_RW)
+     {
+	int i;
+	for (i = 0; i < node_size; i++)
+	  {
+	     /* if it matches */
+	     if (eet_string_match(ef->header->directory->hash[hash].node[i].name, name))
+	       {
+		  free(ef->header->directory->hash[hash].node[i].data);
+		  ef->header->directory->hash[hash].node[i].compression = -1;
+		  ef->header->directory->hash[hash].node[i].size = 0;
+		  ef->header->directory->hash[hash].node[i].data_size = 0;
+		  ef->header->directory->hash[hash].node[i].data = NULL;
+		  exists_already = 1;
+		  break;
+	       }
+	  }
+     }
+   /* flags that writes are pending */
+   if (exists_already) ef->writes_pending = 1;
+   /* update access time */
+   return exists_already;
 }
 
 char **

@@ -188,6 +188,23 @@ extern "C" {
     * closed though).
     */
    EAPI int       eet_write (Eet_File *ef, char *name, void *data, int size, int compress);
+
+   /**
+    * Delete a specified entry from an Eet file being written or re-written
+    * @param ef A valid eet file handle opened for writing.
+    * @param name Name of the entry. eg: "/base/file_i_want".
+    * @return Success or failure of the delete.
+    * 
+    * This function will delete the specified chunk of data from the eet file
+    * and return greater than 0 on success. 0 will be returned on failure.
+    * 
+    * The eet file handle must be a valid file handle for an eet file opened 
+    * for writing. If it is not, 0 will be returned and no action will be
+    * performed.
+    * 
+    * Name, must not be NULL, otherwise 0 will be returned.
+    */
+   EAPI int       eet_delete(Eet_File *ef, char *name);
    
    /**
     * List all entries in eet file matching shell glob.
