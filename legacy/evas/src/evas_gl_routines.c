@@ -62,9 +62,11 @@ const int          __evas_rend_lut[9] = { 0, 64, 128, 192, 255, 255, 255, 255, 2
 
 #define TT_VALID( handle )  ( ( handle ).z != NULL )
 
-
-
-
+/*
+#ifdef HAVE_GLU
+#undef HAVE_GLU
+#endif
+*/
 
 
 
@@ -101,6 +103,7 @@ __evas_gl_image_copy_image_rect_to_texture(Evas_GL_Image *im, int x, int y,
    glBindTexture(GL_TEXTURE_2D, texture);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+#if 0   
 #ifdef HAVE_GLU
    if (__evas_anti_alias)
      {
@@ -120,7 +123,7 @@ __evas_gl_image_copy_image_rect_to_texture(Evas_GL_Image *im, int x, int y,
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
      }
-   
+#endif   
    data = malloc(tw * th * 4);
    for (ty = 0; ty < h; ty++)
      {
@@ -514,6 +517,41 @@ __evas_gl_image_draw(Evas_GL_Image *im,
    if ((im->direct) || 
        ((im->bl == 0) && (im->br == 0) && (im->bt == 0) && (im->bb == 0)))
      {
+	if ((im->bl == 0) && (im->br == 0) && (im->bt == 0) && (im->bb == 0))
+	  {
+#ifdef HAVE_GLU
+	     if (__evas_anti_alias)
+	       {
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	       }
+	     else
+#else
+		if (__evas_anti_alias)
+	       {
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	       }
+	     else
+#endif
+	       {
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	       }
+	  }
+	else
+	  {
+	     if (__evas_anti_alias)
+	       {
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	       }
+	     else
+	       {
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	       }
+	  }
 	for (y = 0, i = 0; y < im->texture.h; y++)
 	  {
 	     for (x = 0; x < im->texture.w; x++, i++)
@@ -823,6 +861,9 @@ __evas_gl_text_paste(Evas_GL_Font *f, char *text,
    rows = h;
    glBindTexture(GL_TEXTURE_2D, f->glyphinfo[j].texture);
    last_tex = f->glyphinfo[j].texture;
+
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
    for (i = 0; text[i]; i++)
      {
 	j = text[i];
