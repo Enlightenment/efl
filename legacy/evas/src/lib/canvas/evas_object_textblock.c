@@ -518,7 +518,7 @@ evas_object_textblock_layout(Evas_Object *obj)
 	
 	/* FIXME: if we overflow then this would be punted to an overflow */
 	/* object instead */
-	if (layout.line.y >= h) return;
+	if (layout.line.y >= h) goto breakout;
 	node = (Node *)l;
 //	printf("NODE: FMT:\"%s\" TXT:\"%s\"\n", node->format, node->text);
 	if (node->format)
@@ -547,6 +547,11 @@ evas_object_textblock_layout(Evas_Object *obj)
 
 	     text = strdup(node->text);
 	     new_node:
+	     if (layout.line.y >= h)
+	       {
+		  free(text);
+		  goto breakout;
+	       }
 	     lnode = calloc(1, sizeof(Layout_Node));
 	     evas_object_textblock_layout_copy(&layout, &(lnode->layout));
 	     if (lnode->layout.font.name)
@@ -665,14 +670,18 @@ evas_object_textblock_layout(Evas_Object *obj)
 			 {
 			    /* FIXME: this node would overflow to the next textblock */
 			 }
-		       layout.line.y += lnode->layout.line.mascent + lnode->layout.line.mdescent;
+		       layout.line.y += layout.line.mascent + layout.line.mdescent;
 		       text = text2;
 		       /* still more text to go */
-		       goto new_node;
+		       if ((layout.line.mascent + layout.line.mdescent) > 0)
+			 goto new_node;
+		       else
+			 free(text);
 		    }
 	       }
 	  }
      }
+   breakout:
    evas_object_textblock_layout_clear(obj, &layout);
 }
 
