@@ -1,49 +1,40 @@
-# this is NOT relocatable, unless you alter the patch!
-%define	name	ecore
-%define	ver	1.0.0_pre7
-%define	rel	1
-%define prefix  /usr
-
 Summary: Enlightened Core X interface library
-Name: %{name}
-Version: %{ver}
-Release: %{rel}
+Name: ecore
+Version: 1.0.0
+Release: 0.pre7
 Copyright: BSD
 Group: User Interface/X
+Source: ftp://ftp.enlightenment.org/enlightenment/%{name}-%{version}_pre7.tar.gz
 URL: http://www.enlightenment.org/efm.html
-Packager: The Rasterman <raster@rasterman.com> Term <term@twistedpath.org>
+Packager: Michael Jennings <mej@eterm.org>
 Vendor: The Enlightenment Development Team <e-develop@enlightenment.org>
-Source: ftp://ftp.enlightenment.org/enlightenment/%{name}-%{ver}.tar.gz
-BuildRoot: /var/tmp/%{name}-root
+#BuildSuggests: openssl-devel
+BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
-Ecore is brub.
+Ecore is the event/X abstraction layer that makes doing selections,
+Xdnd, general X stuff, event loops, timeouts and idle handlers fast,
+optimized, and convenient. It's a separate library so anyone can make
+use of the work put into Ecore to make this job easy for applications.
 
 %package devel
 Summary: Ecore headers and development libraries.
 Group: Development/Libraries
-Requires: %{name} = %{ver}
+Requires: %{name} = %{version}
 
 %description devel
 Ecore development files
 
 %prep
-%setup -q
+%setup -q -n %{name}-%{version}_pre7
 
 %build
-./configure \
---prefix=%{prefix} \
---enable-ecore-x \
---enable-ecore-evas \
---enable-ecore-job \
---enable-ecore-con \
---enable-ecore-config \
---enable-ecore-ipc
-
-make
+%{configure} --prefix=%{_prefix}
+%{__make} %{?_smp_mflags} %{?mflags}
 
 %install
-make DESTDIR=$RPM_BUILD_ROOT install
+%{__make} %{?mflags_install} DESTDIR=$RPM_BUILD_ROOT install
+test -x `which doxygen` && sh gendoc || :
 
 %post
 /sbin/ldconfig
@@ -52,27 +43,25 @@ make DESTDIR=$RPM_BUILD_ROOT install
 /sbin/ldconfig
 
 %clean
-rm -rf $RPM_BUILD_ROOT
+test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 
 %files
-%defattr(-,root,root)
-%attr(755,root,root) %{prefix}/lib/libecore*.so.*
-%{prefix}/lib/libecore*.la
-%attr(755,root,root) %{prefix}/bin/ecore_*
-%{prefix}/share/ecore
+%defattr(-, root, root)
+%doc AUTHORS COPYING* README*
+%{_libdir}/libecore*.so.*
+%{_libdir}/libecore*.la
+%{_bindir}/ecore_*
+%{_datadir}/ecore
 
 %files devel
-%defattr(-,root,root)
-%attr(755,root,root) %{prefix}/lib/libecore*.so
-%attr(755,root,root) %{prefix}/lib/libecore*.a
-%attr(755,root,root) %{prefix}/lib/libecore*.la
-%attr(755,root,root) %{prefix}/lib/ecore_config_ipc_*.so
-%attr(755,root,root) %{prefix}/lib/ecore_config_ipc_*.a
-%attr(755,root,root) %{prefix}/lib/ecore_config_ipc_*.la
-%attr(755,root,root) %{prefix}/bin/ecore-config
-%{prefix}/share/aclocal/ecore.m4
-%{prefix}/include/Ecore*.h
-%doc AUTHORS
-%doc COPYING
-%doc README
-%doc ecore_docs.tar.gz
+%defattr(-, root, root)
+%doc doc/html
+%{_libdir}/libecore*.so
+%{_libdir}/libecore*.a
+%{_libdir}/libecore*.la
+%{_libdir}/ecore_config_ipc_*.so
+%{_libdir}/ecore_config_ipc_*.a
+%{_libdir}/ecore_config_ipc_*.la
+%{_bindir}/ecore-config
+%{_datadir}/aclocal/ecore.m4
+%{_includedir}/Ecore*.h

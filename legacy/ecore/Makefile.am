@@ -16,7 +16,7 @@ dist-hook:
 bin_SCRIPTS = ecore-config
 
 EXTRA_DIST = README AUTHORS COPYING ecore.m4 ecore.spec ecore.c.in gendoc \
-Doxyfile ecore_docs.tar.gz make_cross_compile_arm.sh
+Doxyfile make_cross_compile_arm.sh
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = ecore.m4
