@@ -544,6 +544,7 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 					  obj->layer->evas->pointer.y);
 	  }
      }
+   evas_object_inform_call_resize(obj);
 }
 
 /**

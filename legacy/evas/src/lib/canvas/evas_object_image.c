@@ -1196,7 +1196,7 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 {
    Evas_Object_Image *o;
 
-   /* render object to surface with context, and offxet by x,y */
+   /* render object to surface with context, and offset by x,y */
    o = (Evas_Object_Image *)(obj->object_data);
    obj->layer->evas->engine.func->context_color_set(output,
 						    context,

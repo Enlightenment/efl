@@ -182,7 +182,7 @@ the most common converter you'll want for 16bpp. this means 5 bits for red,
 
 --enable-convert-16-rgb-555
 
-this is a converter for what many peoel knwo as "15 bit" color. you might
+this is a converter for what many people know as "15 bit" color. you might
 want to enable this for X output as it used to be common to find many cards
 that do this.
 
@@ -194,18 +194,18 @@ this converter outputs to 12bit packed (int 16 bit WORDS).
 
 this converter was written specifically for the ipaq (and may apply to
 similarly configured devices) because it lies about its screen depth. it
-days its 16bit 565 (that means 5 upper bits of the WORD are red, the next 6
+says it is 16bit 565 (that means 5 upper bits of the WORD are red, the next 6
 bits are for green abd the next 5 for blue) but in fact only the upper 4
 bits of each color component (red green and blue) are significant and work,
 so effectively the display is 12 bits of color, not 16, but padded out to
 fill 16bits, with unused bits in the color masks. X on the ipaq advertises
-it as a full 16bpp 565 display (i can't remember what the linxu framebuffer
-advertised it as) and so many lumsp fo code can be fooled into rendering
-data badly because they think the output will look as the expect. thsi
+it as a full 16bpp 565 display (i can't remember what the linux framebuffer
+advertised it as) and so many lumps of code can be fooled into rendering
+data badly because they think the output will look as the expect. This
 renderer assuems the upper 4 bits fo each color primitie only are
 significant and renders accordingly. this produces nice quality images on
 the ipaq and even still works in 16bpp 565 on your pc. it is highly
-recommended to use thsi renderer if your target is an ipaq or your device
+recommended to use this renderer if your target is an ipaq or your device
 dislpays similar qualities of the ipaq for display purposes.
 
 --enable-convert-16-rgb-rot-0
