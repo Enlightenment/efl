@@ -128,6 +128,11 @@ int            ecore_config_set_float(Ecore_Config_Bundle *t,const char *key,flo
 int            ecore_config_set_as_string(Ecore_Config_Bundle *t,const char *key,char *val);
 
 int            ecore_config_default(Ecore_Config_Bundle *t,const char *key,char *val,float lo,float hi,float step);
+int            ecore_config_default_int(Ecore_Config_Bundle *t,const char *key,int val,int lo,int hi,int step);
+int            ecore_config_default_string(Ecore_Config_Bundle *t,const char *key,char *val);
+int            ecore_config_default_float(Ecore_Config_Bundle *t,const char *key,float val,float lo,float hi,float step);
+int            ecore_config_default_rgb(Ecore_Config_Bundle *t,const char *key,char *val);
+
 int            ecore_config_listen(Ecore_Config_Bundle *t,const char *name,const char *key,Ecore_Config_Listener listener,int tag,void *data);
 int            ecore_config_deaf(Ecore_Config_Bundle *t,const char *name,const char *key,Ecore_Config_Listener listener);
 Ecore_Config_Prop   *ecore_config_dst(Ecore_Config_Bundle *t,Ecore_Config_Prop *e);

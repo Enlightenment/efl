@@ -87,6 +87,10 @@ int ecore_config_save_file(Ecore_Config_Bundle *b, char *file) {
   } 
   
   while (next) {
+    if (!(next->flags&PF_MODIFIED)) {
+      next=next->next;
+      continue;
+    }
     switch (next->type) {
       case PT_INT:
         e_db_int_set(db, next->key, ecore_config_get_int(b, next->key));

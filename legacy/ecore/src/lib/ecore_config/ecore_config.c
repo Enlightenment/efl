@@ -12,7 +12,7 @@
 Ecore_Config_Server *ipc_init(char *name);
 int ipc_quit(void);
 
-static char *ecore_config_type[]={ "undefined", "integer", "float", "string", "pointer", "colour" };
+static char *ecore_config_type[]={ "undefined", "integer", "float", "string", "colour" };
 
 /* tolower, weed out _ - */
 char *prop_canonize_key(char *pn,int modify) {
@@ -339,12 +339,12 @@ int ecore_config_set_rgb(Ecore_Config_Bundle *t,const char *key, char* val) {
   return ecore_config_set_typed(t,key,(void *)val,PT_RGB); }
 
 
-int ecore_config_default(Ecore_Config_Bundle *t,const char *key,char *val,float lo,float hi,float step) {
+static int ecore_config_default_typed(Ecore_Config_Bundle *t,const char *key,void *val,float lo,float hi,float step, int type) {
   int            ret=ECORE_CONFIG_ERR_SUCC;
   Ecore_Config_Prop *e;
 
   if(!(e=ecore_config_get(t,key))) {                  /* prop doesn't exist yet */
-    if((ret=ecore_config_add(t,key,val))!=ECORE_CONFIG_ERR_SUCC)  /* try to add it */
+    if((ret=ecore_config_add_typed(t,key,val,type))!=ECORE_CONFIG_ERR_SUCC)  /* try to add it */
       return ret;                                  /* ...failed */
     if(!(e=ecore_config_get(t,key)))                  /* get handle */
       return ECORE_CONFIG_ERR_FAIL;
@@ -365,7 +365,26 @@ int ecore_config_default(Ecore_Config_Bundle *t,const char *key,char *val,float 
 
   return ret; }
 
+int ecore_config_default(Ecore_Config_Bundle *t,const char *key,char *val,float lo,float hi,float step) {
+  int type=ecore_config_guess_type(val);
+  return ecore_config_default_typed(t, key, val, lo, hi, step, type);
+}
+    
+int ecore_config_default_int(Ecore_Config_Bundle *t,const char *key,int val,int low,int high,int step) {
+  return ecore_config_default_typed(t, key, (void *) &val, (float) low, (float) high, (float) step, PT_INT);
+}
 
+int ecore_config_default_string(Ecore_Config_Bundle *t,const char *key,char *val) {
+  return ecore_config_default_typed(t, key, (void *) val, (float) 0, (float) 0, (float) 0, PT_STR);
+}
+
+int ecore_config_default_float(Ecore_Config_Bundle *t,const char *key,float val,float low,float high,float step) {
+  return ecore_config_default_typed(t, key, (void *) &val, low, high, step, PT_FLT);
+}
+
+int ecore_config_default_rgb(Ecore_Config_Bundle *t,const char *key,char *val) {
+  return ecore_config_default_typed(t, key, (void *) val, (float) 0, (float) 0, (float) 0, PT_RGB);
+}
 
 int ecore_config_listen(Ecore_Config_Bundle *t,const char *name,const char *key,
                     Ecore_Config_Listener listener,int tag,void *data) {
