@@ -2558,3 +2558,68 @@ e_pointer_ungrab(Time t)
 {
    XUngrabPointer(disp, t);
 }
+
+void
+e_window_send_event_move_resize(Window win, int x, int y, int w, int h)
+{
+   XEvent              ev;
+
+   ev.type = ConfigureNotify;
+   ev.xconfigure.display = disp;
+   ev.xconfigure.event = win;
+   ev.xconfigure.window = win;
+   ev.xconfigure.x = x;
+   ev.xconfigure.y = y;
+   ev.xconfigure.width = w;
+   ev.xconfigure.height = h;
+   ev.xconfigure.border_width = 0;
+   ev.xconfigure.above = 0;
+   ev.xconfigure.override_redirect = False;
+   XSendEvent(disp, win, False, StructureNotifyMask, &ev);
+}
+
+void
+e_window_send_client_message(Window win, Atom type, int format, void *data)
+{
+   XClientMessageEvent ev;
+   int i;
+   
+   ev.type = ClientMessage;
+   ev.window = win;
+   ev.message_type = type;
+   ev.format = format;
+   if (format == 32)
+     {
+	for (i = 0; i < 5; i++)
+	  ev.data.l[i] = ((unsigned int *)data)[i];
+     }
+   else if (format == 16)
+     {
+	for (i = 0; i < 10; i++)
+	  ev.data.s[i] = ((unsigned short *)data)[i];
+     }
+   else if (format == 8)
+     {
+	for (i = 0; i < 20; i++)
+	  ev.data.b[i] = ((unsigned char *)data)[i];
+     }
+   XSendEvent(disp, win, False, 0, (XEvent *) & ev);
+}
+
+void
+e_window_add_to_save_set(Window win)
+{
+   XAddToSaveSet(disp, win);
+}
+
+void
+e_window_del_from_save_set(Window win)
+{
+   XRemoveFromSaveSet(disp, win);
+}
+
+void
+e_window_kill_client(Window win)
+{
+   XKillClient(disp, (XID)win);   
+}

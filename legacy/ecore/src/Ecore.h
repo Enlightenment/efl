@@ -240,6 +240,11 @@ void                e_button_ungrab(Window win, int button, Ev_Key_Modifiers mod
 void                e_pointer_replay(Time t);
 void                e_pointer_grab(Window win, Time t);
 void                e_pointer_ungrab(Time t);
+void                e_window_send_event_move_resize(Window win, int x, int y, int w, int h);
+void                e_window_send_client_message(Window win, Atom type, int format, void *data);
+void                e_window_add_to_save_set(Window win);
+void                e_window_del_from_save_set(Window win);
+void                e_window_kill_client(Window win);
 
 typedef struct _eev Eevent;
 typedef struct _ev_fd_handler Ev_Fd_Handler;
