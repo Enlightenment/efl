@@ -585,7 +585,7 @@ _edje_part_recalc_single(Edje *ed,
 	     if (params->w < minw)
 	       {
 		  params->x = params->x + 
-		    ((params->w - minw) * (1.0 - desc->align.x));
+		    ((params->w - minw) * desc->align.x);
 		  params->w = minw;
 	       }
 	  }
@@ -597,7 +597,7 @@ _edje_part_recalc_single(Edje *ed,
 	     if (params->h < minh)
 	       {
 		  params->y = params->y + 
-		    ((params->h - minh) * (1.0 - desc->align.y));
+		    ((params->h - minh) * desc->align.y);
 		  params->h = minh;
 	       }
 	  }
