@@ -187,8 +187,9 @@ int ipc_init(char *pipe_name, void **data) {
 
   if((p=getenv("HOME"))) {  /* debug-only ### FIXME */
     char buf[PATH_MAX];
+    int stale;
     str=malloc(1000*sizeof(char));
-    int stale; stale=1;
+    stale=1;
     while (stale) {
       sprintf(str,"%s/.ecore/%s/%d",p,pipe_name,port);
       snprintf(buf,PATH_MAX,str);
