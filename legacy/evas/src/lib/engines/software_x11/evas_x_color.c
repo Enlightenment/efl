@@ -66,7 +66,7 @@ x_software_x11_color_alloc_rgb(int nr, int ng, int nb, Display *d, Colormap cmap
 		  xcl.blue = (unsigned short)(val);
 		  xcl_in = xcl;
 		  ret = XAllocColor(d, cmap, &xcl);
-		  if ((ret == Success) ||
+		  if ((ret == 0) ||
 		      ((xcl_in.red & sig_mask) != (xcl.red & sig_mask)) ||
 		      ((xcl_in.green & sig_mask) != (xcl.green & sig_mask)) ||
 		      ((xcl_in.blue & sig_mask) != (xcl.blue & sig_mask)))
@@ -116,7 +116,7 @@ x_software_x11_color_alloc_gray(int ng, Display *d, Colormap cmap, Visual *v)
 	xcl.blue = (unsigned short)(val);
 	xcl_in = xcl;
 	ret = XAllocColor(d, cmap, &xcl);
-	if ((ret == Success) ||
+	if ((ret == 0) ||
 	    ((xcl_in.red & sig_mask) != (xcl.red & sig_mask)) ||
 	    ((xcl_in.green & sig_mask) != (xcl.green & sig_mask)) ||
 	    ((xcl_in.blue & sig_mask) != (xcl.blue & sig_mask)))
