@@ -14,7 +14,8 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
    end_x = 0;
    pen_x = 0;
    pen_y = 0;
-   use_kerning = FT_HAS_KERNING(fn->ft.face);
+   evas_common_font_size_use(fn);
+   use_kerning = FT_HAS_KERNING(fn->src->ft.face);
    prev_index = 0;
    for (chr = 0; text[chr];)
      {
@@ -25,12 +26,12 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
 	
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (gl == 0) break;
-	index = FT_Get_Char_Index(fn->ft.face, gl);
+	index = FT_Get_Char_Index(fn->src->ft.face, gl);
 	if ((use_kerning) && (prev_index) && (index))
 	  {
 	     FT_Vector delta;
 	     
-	     FT_Get_Kerning(fn->ft.face, prev_index, index,
+	     FT_Get_Kerning(fn->src->ft.face, prev_index, index,
 			    ft_kerning_default, &delta);
 	     pen_x += delta.x << 2;
 	  }
@@ -64,7 +65,8 @@ evas_common_font_query_inset(RGBA_Font *fn, const char *text)
    if (!text[0]) return 0;
    gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);   
    if (gl == 0) return 0;
-   index = FT_Get_Char_Index(fn->ft.face, gl);
+   evas_common_font_size_use(fn);
+   index = FT_Get_Char_Index(fn->src->ft.face, gl);
    fg = evas_common_font_cache_glyph_get(fn, index);
    if (!fg) return 0;
    return fg->glyph_out->left;
@@ -83,7 +85,8 @@ evas_common_font_query_advance(RGBA_Font *fn, const char *text, int *h_adv, int 
    start_x = 0;
    pen_x = 0;
    pen_y = 0;
-   use_kerning = FT_HAS_KERNING(fn->ft.face);
+   evas_common_font_size_use(fn);
+   use_kerning = FT_HAS_KERNING(fn->src->ft.face);
    prev_index = 0;
    for (chr = 0; text[chr];)     
      {
@@ -94,12 +97,12 @@ evas_common_font_query_advance(RGBA_Font *fn, const char *text, int *h_adv, int 
 	
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (gl == 0) break;
-	index = FT_Get_Char_Index(fn->ft.face, gl);
+	index = FT_Get_Char_Index(fn->src->ft.face, gl);
 	if ((use_kerning) && (prev_index) && (index))
 	  {
 	     FT_Vector delta;
 	     
-	     FT_Get_Kerning(fn->ft.face, prev_index, index,
+	     FT_Get_Kerning(fn->src->ft.face, prev_index, index,
 			    ft_kerning_default, &delta);
 	     pen_x += delta.x << 2;
 	  }
@@ -130,7 +133,8 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *text, int pos, int
    
    pen_x = 0;
    pen_y = 0;
-   use_kerning = FT_HAS_KERNING(fn->ft.face);
+   evas_common_font_size_use(fn);
+   use_kerning = FT_HAS_KERNING(fn->src->ft.face);
    prev_index = 0;
    prev_chr_end = 0;
    asc = evas_common_font_max_ascent_get(fn);
@@ -147,11 +151,11 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *text, int pos, int
 	pchr = chr;
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (gl == 0) break;
-	index = FT_Get_Char_Index(fn->ft.face, gl);
+	index = FT_Get_Char_Index(fn->src->ft.face, gl);
 	kern = 0;
 	if ((use_kerning) && (prev_index) && (index))
 	  {
-	     FT_Get_Kerning(fn->ft.face, prev_index, index,
+	     FT_Get_Kerning(fn->src->ft.face, prev_index, index,
 			    ft_kerning_default, &delta);
 	     kern = delta.x << 2;
 	     pen_x += kern;
@@ -203,7 +207,8 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y
    
    pen_x = 0;
    pen_y = 0;
-   use_kerning = FT_HAS_KERNING(fn->ft.face);
+   evas_common_font_size_use(fn);
+   use_kerning = FT_HAS_KERNING(fn->src->ft.face);
    prev_index = 0;
    prev_chr_end = 0;
    asc = evas_common_font_max_ascent_get(fn);
@@ -220,11 +225,11 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y
 	pchr = chr;
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (gl == 0) break;
-	index = FT_Get_Char_Index(fn->ft.face, gl);
+	index = FT_Get_Char_Index(fn->src->ft.face, gl);
 	kern = 0;
 	if ((use_kerning) && (prev_index) && (index))
 	  {
-	     FT_Get_Kerning(fn->ft.face, prev_index, index,
+	     FT_Get_Kerning(fn->src->ft.face, prev_index, index,
 			    ft_kerning_default, &delta);
 	     kern = delta.x << 2;
 	     pen_x += kern;

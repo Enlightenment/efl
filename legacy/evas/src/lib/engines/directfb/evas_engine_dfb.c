@@ -62,6 +62,7 @@ Evas_Func           evas_engine_directfb_func = {
    evas_engine_directfb_image_cache_get,
    /* more to come */
    evas_engine_directfb_font_load,
+   evas_engine_directfb_font_memory_load,
    evas_engine_directfb_font_free,
    evas_engine_directfb_font_ascent_get,
    evas_engine_directfb_font_descent_get,
@@ -757,6 +758,15 @@ evas_engine_directfb_font_load(void *data, char *name, int size)
 
    re = (Render_Engine *) data;
    return evas_common_font_load(name, size);
+}
+
+void        *
+evas_engine_directfb_font_memory_load(void *data, char *name, int size, const void *fdata, int fdata_size)
+{
+   Render_Engine      *re;
+
+   re = (Render_Engine *) data;
+   return evas_common_font_memory_load(name, size, fdata, fdata_size);
 }
 
 void

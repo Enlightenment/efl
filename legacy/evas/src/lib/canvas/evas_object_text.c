@@ -1,6 +1,9 @@
 #include "evas_common.h"
 #include "evas_private.h"
 #include "Evas.h"
+#ifdef BUILD_FONT_LOADER_EET
+#include <Eet.h>
+#endif
 
 /* private magic number for text objects */
 static const char o_type[] = "text";
@@ -15,6 +18,7 @@ struct _Evas_Object_Text
    struct {
       char          *text;
       char          *font;
+      char          *source;
       Evas_Font_Size size;
    } cur, prev;
    char              changed : 1;
@@ -507,6 +511,53 @@ evas_object_text_add(Evas *e)
  * 
  */
 void
+evas_object_text_font_source_set(Evas_Object *obj, const char *font_source)
+{
+   Evas_Object_Text *o;
+   
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Text *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
+   return;
+   MAGIC_CHECK_END();
+   if ((o->cur.source) && (font_source) && 
+       (!strcmp(o->cur.source, font_source))) 
+     return;
+   if (o->cur.source) free(o->cur.source);
+   if (font_source) o->cur.source = strdup(font_source);
+   else o->cur.source = NULL;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
+const char *
+evas_object_text_font_source_get(Evas_Object *obj)
+{
+   Evas_Object_Text *o;
+   
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return NULL;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Text *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
+   return NULL;
+   MAGIC_CHECK_END();
+   return o->cur.source;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
+void
 evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size size)
 {
    Evas_Object_Text *o;
@@ -542,18 +593,61 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
      {
 	Evas_List *l;
 	
-	for (l = obj->layer->evas->font_path; l; l = l->next)
+#ifdef BUILD_FONT_LOADER_EET
+	if (o->cur.source)
 	  {
-	     char *f_file;
-
-	     f_file = object_text_font_cache_find(l->data, (char *)font);
-	     if (f_file)
+	     Eet_File *ef;
+	     char *fake_name;
+	     
+	     fake_name = evas_file_path_join(o->cur.source, font);
+	     if (fake_name)
 	       {
-		  o->engine_data = obj->layer->evas->engine.func->font_load(obj->layer->evas->engine.data.output,
-									    f_file, size);
-		  if (o->engine_data) break;
+		  o->engine_data = 
+		    obj->layer->evas->engine.func->font_load
+		    (obj->layer->evas->engine.data.output, fake_name, 
+		     size);
+		  if (!o->engine_data)
+		    {
+		       /* read original!!! */
+		       ef = eet_open(o->cur.source, EET_FILE_MODE_READ);
+		       if (ef)
+			 {
+			    void *fdata;
+			    int fsize = 0;
+			    
+			    fdata = eet_read(ef, font, &fsize);
+			    if ((fdata) && (fsize > 0))
+			      {
+				 o->engine_data = 
+				   obj->layer->evas->engine.func->font_memory_load
+				   (obj->layer->evas->engine.data.output,
+				    fake_name, size, fdata, fsize);
+				 free(fdata);
+			      }
+			    eet_close(ef);
+			 }
+		    }
+		  free(fake_name);
 	       }
 	  }
+	if (!o->engine_data)
+	  {
+#endif
+	     for (l = obj->layer->evas->font_path; l; l = l->next)
+	       {
+		  char *f_file;
+		  
+		  f_file = object_text_font_cache_find(l->data, (char *)font);
+		  if (f_file)
+		    {
+		       o->engine_data = obj->layer->evas->engine.func->font_load(obj->layer->evas->engine.data.output,
+										 f_file, size);
+		       if (o->engine_data) break;
+		    }
+	       }
+#ifdef BUILD_FONT_LOADER_EET
+	  }
+#endif
      } 
    if (o->cur.font) free(o->cur.font);
    if (font) o->cur.font = strdup(font);
@@ -1206,6 +1300,7 @@ evas_object_text_free(Evas_Object *obj)
    /* free obj */
    if (o->cur.text) free(o->cur.text);
    if (o->cur.font) free(o->cur.font);
+   if (o->cur.source) free(o->cur.source);
    if (o->engine_data)
      obj->layer->evas->engine.func->font_free(obj->layer->evas->engine.data.output,
 					      o->engine_data);

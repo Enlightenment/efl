@@ -524,6 +524,7 @@ struct _Evas_Func
    int  (*image_cache_get)                 (void *data);
    
    void *(*font_load)                      (void *data, char *name, int size);
+   void *(*font_memory_load)               (void *data, char *name, int size, const void *fdata, int fdata_size);
    void (*font_free)                       (void *data, void *font);
    int  (*font_ascent_get)                 (void *data, void *font);
    int  (*font_descent_get)                (void *data, void *font);

@@ -9,6 +9,7 @@ rm config.cache
 --enable-image-loader-jpeg \
 --enable-image-loader-eet \
 --enable-image-loader-edb \
+--enable-font-loader-eet \
 --enable-cpu-mmx \
 --enable-cpu-sse \
 --enable-cpu-c \

@@ -165,6 +165,7 @@ typedef struct _RGBA_Gradient         RGBA_Gradient;
 typedef struct _RGBA_Gradient_Color   RGBA_Gradient_Color;
 typedef struct _RGBA_Polygon_Point    RGBA_Polygon_Point;
 typedef struct _RGBA_Font             RGBA_Font;
+typedef struct _RGBA_Font_Source      RGBA_Font_Source;
 typedef struct _RGBA_Font_Glyph       RGBA_Font_Glyph;
 
 typedef struct _Cutout_Rect           Cutout_Rect;
@@ -332,17 +333,34 @@ struct _RGBA_Polygon_Point
 struct _RGBA_Font
 {
    Evas_Object_List  _list_data;
-   char             *name;
-   char             *file;
-   int               size;
    
-   struct {
-      FT_Face       face;
-   } ft;
+   RGBA_Font_Source *src;
+
+   int               size;
+   int               real_size;
    
    Evas_Hash       *glyphs;
 
    int              usage;
+   
+   int              references;
+};
+
+struct _RGBA_Font_Source
+{
+   Evas_Object_List  _list_data;
+   
+   char             *name;
+   char             *file;
+   
+   void             *data;
+   int               data_size;
+   
+   int               current_size;
+   
+   struct {
+      FT_Face       face;
+   } ft;
    
    int              references;
 };
@@ -805,8 +823,14 @@ void          evas_common_blit_rectangle          (RGBA_Image *src, RGBA_Image *
 /****/
 void             evas_common_font_init              (void);
 void             evas_common_font_shutdown          (void);
-
+RGBA_Font_Source *evas_common_font_source_memory_load(const char *name, const void *data, int data_size);
+RGBA_Font_Source *evas_common_font_source_load       (const char *name);
+RGBA_Font_Source *evas_common_font_source_find       (const char *name);
+void              evas_common_font_source_free       (RGBA_Font_Source *fs);
+void              evas_common_font_size_use         (RGBA_Font *fn);       
+RGBA_Font       *evas_common_font_memory_load       (const char *name, int size, const void *data, int data_size);
 RGBA_Font       *evas_common_font_load              (const char *name, int size);
+RGBA_Font       *evas_common_font_load_init         (RGBA_Font *fn);
 void             evas_common_font_free              (RGBA_Font *fn);
 void             evas_common_font_modify_cache_by   (RGBA_Font *fn, int dir);
 int              evas_common_font_cache_get         (void);

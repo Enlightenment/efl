@@ -34,9 +34,9 @@ evas_common_font_ascent_get(RGBA_Font *fn)
    int val;
    int ret;
    
-   val = (int)fn->ft.face->ascender;
-   fn->ft.face->units_per_EM = 2048; /* nasy hack - need to have correct val */
-   ret = (val * fn->ft.face->size->metrics.y_scale) / (fn->ft.face->units_per_EM * fn->ft.face->units_per_EM);
+   val = (int)fn->src->ft.face->ascender;
+   fn->src->ft.face->units_per_EM = 2048; /* nasy hack - need to have correct val */
+   ret = (val * fn->src->ft.face->size->metrics.y_scale) / (fn->src->ft.face->units_per_EM * fn->src->ft.face->units_per_EM);
    return ret;
 }
 
@@ -46,9 +46,10 @@ evas_common_font_descent_get(RGBA_Font *fn)
    int val;
    int ret;
    
-   val = -(int)fn->ft.face->descender;
-   fn->ft.face->units_per_EM = 2048; /* nasy hack - need to have correct val */
-   ret = (val * fn->ft.face->size->metrics.y_scale) / (fn->ft.face->units_per_EM * fn->ft.face->units_per_EM);
+   evas_common_font_size_use(fn);
+   val = -(int)fn->src->ft.face->descender;
+   fn->src->ft.face->units_per_EM = 2048; /* nasy hack - need to have correct val */
+   ret = (val * fn->src->ft.face->size->metrics.y_scale) / (fn->src->ft.face->units_per_EM * fn->src->ft.face->units_per_EM);
    return ret;
 }
 
@@ -58,9 +59,10 @@ evas_common_font_max_ascent_get(RGBA_Font *fn)
    int val;
    int ret;
    
-   val = (int)fn->ft.face->bbox.yMax;
-   fn->ft.face->units_per_EM = 2048; /* nasy hack - need to have correct val */
-   ret = (val * fn->ft.face->size->metrics.y_scale) / (fn->ft.face->units_per_EM * fn->ft.face->units_per_EM);
+   evas_common_font_size_use(fn);
+   val = (int)fn->src->ft.face->bbox.yMax;
+   fn->src->ft.face->units_per_EM = 2048; /* nasy hack - need to have correct val */
+   ret = (val * fn->src->ft.face->size->metrics.y_scale) / (fn->src->ft.face->units_per_EM * fn->src->ft.face->units_per_EM);
    return ret;
 }
 
@@ -70,9 +72,10 @@ evas_common_font_max_descent_get(RGBA_Font *fn)
    int val;
    int ret;
    
-   val = -(int)fn->ft.face->bbox.yMin;
-   fn->ft.face->units_per_EM = 2048; /* nasy hack - need to have correct val */
-   ret = (val * fn->ft.face->size->metrics.y_scale) / (fn->ft.face->units_per_EM * fn->ft.face->units_per_EM);
+   evas_common_font_size_use(fn);
+   val = -(int)fn->src->ft.face->bbox.yMin;
+   fn->src->ft.face->units_per_EM = 2048; /* nasy hack - need to have correct val */
+   ret = (val * fn->src->ft.face->size->metrics.y_scale) / (fn->src->ft.face->units_per_EM * fn->src->ft.face->units_per_EM);
    return ret;
 }
 
@@ -82,9 +85,10 @@ evas_common_font_get_line_advance(RGBA_Font *fn)
    int val;
    int ret;
    
-   val = (int)fn->ft.face->height;
-   fn->ft.face->units_per_EM = 2048; /* nasy hack - need to have correct val */
-   ret = (val * fn->ft.face->size->metrics.y_scale) / (fn->ft.face->units_per_EM * fn->ft.face->units_per_EM);
+   evas_common_font_size_use(fn);
+   val = (int)fn->src->ft.face->height;
+   fn->src->ft.face->units_per_EM = 2048; /* nasy hack - need to have correct val */
+   ret = (val * fn->src->ft.face->size->metrics.y_scale) / (fn->src->ft.face->units_per_EM * fn->src->ft.face->units_per_EM);
    return ret;
 }
 

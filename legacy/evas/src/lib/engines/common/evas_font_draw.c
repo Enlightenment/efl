@@ -17,14 +17,14 @@ evas_common_font_cache_glyph_get(RGBA_Font *fn, FT_UInt index)
    fg = evas_hash_find(fn->glyphs, key);
    if (fg) return fg;
    
-   error = FT_Load_Glyph(fn->ft.face, index, FT_LOAD_NO_BITMAP);
+   error = FT_Load_Glyph(fn->src->ft.face, index, FT_LOAD_NO_BITMAP);
    if (error) return NULL;
    
    fg = malloc(sizeof(struct _RGBA_Font_Glyph));
    if (!fg) return NULL;
    memset(fg, 0, (sizeof(struct _RGBA_Font_Glyph)));
    
-   error = FT_Get_Glyph(fn->ft.face->glyph, &(fg->glyph));
+   error = FT_Get_Glyph(fn->src->ft.face->glyph, &(fg->glyph));
    if (error) 
      {
 	free(fg);
@@ -90,7 +90,8 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
    
    pen_x = x << 8;
    pen_y = y << 8;
-   use_kerning = FT_HAS_KERNING(fn->ft.face);
+   evas_common_font_size_use(fn);
+   use_kerning = FT_HAS_KERNING(fn->src->ft.face);
    prev_index = 0;
    func = evas_common_draw_func_blend_alpha_get(dst);
    for (c = 0, chr = 0; text[chr];)
@@ -102,12 +103,12 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (gl == 0) break;
-	index = FT_Get_Char_Index(fn->ft.face, gl);
+	index = FT_Get_Char_Index(fn->src->ft.face, gl);
 	if ((use_kerning) && (prev_index) && (index))
 	  {
 	     FT_Vector delta;
 	     
-	     FT_Get_Kerning(fn->ft.face, prev_index, index,
+	     FT_Get_Kerning(fn->src->ft.face, prev_index, index,
 			    ft_kerning_default, &delta);
 	     pen_x += delta.x << 2;
 	  }

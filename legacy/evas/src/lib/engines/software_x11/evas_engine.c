@@ -57,6 +57,7 @@ static void evas_engine_software_x11_image_cache_flush(void *data);
 static void evas_engine_software_x11_image_cache_set(void *data, int bytes);
 static int evas_engine_software_x11_image_cache_get(void *data);
 static void *evas_engine_software_x11_font_load(void *data, char *name, int size);
+static void *evas_engine_software_x11_font_memory_load(void *data, char *name, int size, const void *fdata, int fdata_size);
 static void evas_engine_software_x11_font_free(void *data, void *font);
 static int evas_engine_software_x11_font_ascent_get(void *data, void *font);
 static int evas_engine_software_x11_font_descent_get(void *data, void *font);
@@ -157,6 +158,7 @@ Evas_Func evas_engine_software_x11_func =
      evas_engine_software_x11_image_cache_get,
      /* font draw functions */
      evas_engine_software_x11_font_load,
+     evas_engine_software_x11_font_memory_load,
      evas_engine_software_x11_font_free,
      evas_engine_software_x11_font_ascent_get,
      evas_engine_software_x11_font_descent_get,
@@ -909,6 +911,15 @@ evas_engine_software_x11_font_load(void *data, char *name, int size)
 
    re = (Render_Engine *)data;
    return evas_common_font_load(name, size);
+}
+
+static void *
+evas_engine_software_x11_font_memory_load(void *data, char *name, int size, const void *fdata, int fdata_size)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   return evas_common_font_memory_load(name, size, fdata, fdata_size);
 }
 
 static void

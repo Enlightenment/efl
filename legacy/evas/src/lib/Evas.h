@@ -359,6 +359,8 @@ extern "C" {
    int               evas_image_cache_get              (Evas *e);
    
    Evas_Object      *evas_object_text_add              (Evas *e);
+   void              evas_object_text_font_source_set  (Evas_Object *obj, const char *font);
+   const char       *evas_object_text_font_source_get  (Evas_Object *obj);
    void              evas_object_text_font_set         (Evas_Object *obj, const char *font, Evas_Font_Size size);
    void              evas_object_text_font_get         (Evas_Object *obj, char **font, Evas_Font_Size *size);
    void              evas_object_text_text_set         (Evas_Object *obj, const char *text);

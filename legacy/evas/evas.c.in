@@ -248,7 +248,8 @@ Suggested configure options for evas for a P2/AMD/P3/P4 desktop X display:
 make CFLAGS="-O9 -mpentiumpro -march=pentiumpro -mcpu=pentiumpro"
 @endverbatim
 
-For those that want eet and edb image loading ability:
+For those that want eet and edb image loading ability and eet font loading
+ability:
 
 @verbatim
 ./configure \
@@ -257,6 +258,7 @@ For those that want eet and edb image loading ability:
 --enable-image-loader-jpeg \
 --enable-image-loader-eet \
 --enable-image-loader-edb \
+--enable-font-loader-eet \
 --enable-cpu-p2-only \
 --enable-cpu-mmx \
 --enable-cpu-sse \

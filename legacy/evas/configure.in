@@ -405,6 +405,34 @@ if test "x$have_jpeg" = "xyes"; then
   )
 fi
 
+have_eet_fonts="";
+
+AC_MSG_CHECKING(whether to enable eet font loader)
+
+AC_ARG_ENABLE(font-loader-eet, 
+  [  --enable-font-loader-eet        enable eet font loader], [
+      if [ test "$enableval" = "yes" ]; then
+        AC_MSG_RESULT(yes)
+	have_eet_fonts="yes"
+      else
+        AC_MSG_RESULT(no)
+      fi
+  ], [
+      AC_MSG_RESULT(yes)
+      have_eet_fonts="yes"
+  ]
+)
+
+if test "x$have_eet_fonts" = "xyes"; then
+  AC_CHECK_LIB(eet, eet_open,
+    [
+      AC_DEFINE(BUILD_FONT_LOADER_EET, 1, [EET Font Loader Support])
+      eet_cflags=`eet-config --cflags`
+      eet_libs=`eet-config --libs`
+    ]
+  )
+fi
+
 have_eet="";
 
 AC_MSG_CHECKING(whether to enable eet image loader)

@@ -4,94 +4,236 @@ extern FT_Library         evas_ft_lib;
 
 static int                font_cache_usage = 0;
 static int                font_cache = 0;
+static Evas_Object_List * fonts_src = NULL;
 static Evas_Object_List * fonts = NULL;
 
 static int font_modify_cache_cb(Evas_Hash *hash, const char *key, void *data, void *fdata);
 static int font_flush_free_glyph_cb(Evas_Hash *hash, const char *key, void *data, void *fdata);
 
-/* FIXME: */
-/* we should share face handles and have different ft sizes from the same */
-/* face (if applicable) */
-
-RGBA_Font *
-evas_common_font_load(const char *name, int size)
+RGBA_Font_Source *
+evas_common_font_source_memory_load(const char *name, const void *data, int data_size)
 {
    int error;
+   RGBA_Font_Source *fs;
+   
+   fs = malloc(sizeof(RGBA_Font_Source));
+   if (!fs) return NULL;
+   fs->name = strdup(name);
+   fs->file = NULL;
+   fs->data = malloc(data_size);
+   if (!fs->data)
+     {
+	if (fs->name) free(fs->name);
+	free(fs);
+	return NULL;
+     }
+   memcpy(fs->data, data, data_size);
+   fs->data_size = data_size;
+   error = FT_New_Memory_Face(evas_ft_lib, fs->data, fs->data_size, 0, &(fs->ft.face));
+   if (error)
+     {
+	if (fs->name) free(fs->name);
+	if (fs->data) free(fs->data);
+	free(fs);
+	return NULL;
+     }
+   
+   fs->references = 1;
+   
+   fonts_src = evas_object_list_prepend(fonts_src, fs);   
+   return fs;
+}
+
+RGBA_Font_Source *
+evas_common_font_source_load(const char *name)
+{
+   int error;
+   RGBA_Font_Source *fs;
+   
+   fs = malloc(sizeof(RGBA_Font_Source));
+   if (!fs) return NULL;
+   fs->name = strdup(name);
+   fs->file = strdup(name);
+   error = FT_New_Face(evas_ft_lib, fs->file, 0, &(fs->ft.face));
+   if (error)
+     {
+	if (fs->name) free(fs->name);
+	if (fs->file) free(fs->file);
+	free(fs);
+	return NULL;
+     }
+   
+   fs->references = 1;
+   
+   fonts_src = evas_object_list_prepend(fonts_src, fs);   
+   return fs;
+}
+
+RGBA_Font_Source *
+evas_common_font_source_find(const char *name)
+{
+   Evas_Object_List *l;
+   
+   if (!name) return NULL;
+   for (l = fonts_src; l; l = l->next)
+     {
+	RGBA_Font_Source *fs;
+	
+	fs = (RGBA_Font_Source *)l;
+	if ((fs->name) && (!strcmp(name, fs->name)))
+	  {
+	     fs->references++;	     
+	     fonts_src = evas_object_list_remove(fonts_src, fs);
+	     fonts_src = evas_object_list_prepend(fonts_src, fs);	     
+	     return fs;
+	  }
+     }
+   return NULL;
+}
+
+void
+evas_common_font_source_free(RGBA_Font_Source *fs)
+{
+   fs->references--;
+   if (fs->references > 0) return;
+   
+   fonts_src = evas_object_list_remove(fonts_src, fs);
+   if (fs->name) free(fs->name);
+   if (fs->file) free(fs->file);
+   if (fs->data) free(fs->data);
+   FT_Done_Face(fs->ft.face);
+   free(fs);
+}
+
+void
+evas_common_font_size_use(RGBA_Font *fn)
+{
+   if (fn->src->current_size == fn->real_size) return;
+   FT_Set_Char_Size(fn->src->ft.face, 0, fn->real_size, 96, 96);
+   fn->src->current_size = fn->real_size;
+}
+
+RGBA_Font *
+evas_common_font_memory_load(const char *name, int size, const void *data, int data_size)
+{
    RGBA_Font *fn;
-   char *file;
 
    fn = evas_common_font_find(name, size);
    if (fn) return fn;
    
    fn = malloc(sizeof(RGBA_Font));   
-   file = (char *)name;
+   if (!fn) return NULL;
    
-   error = FT_New_Face(evas_ft_lib, file, 0, &(fn->ft.face));
-   if (error)
+   fn->src = evas_common_font_source_find(name);
+   if (!fn->src) fn->src = evas_common_font_source_memory_load(name, data, data_size);
+
+   if (!fn->src)
      {
 	free(fn);
 	return NULL;
      }
-   error = FT_Set_Char_Size(fn->ft.face, 0, (size * 64), 96, 96);
+   
+   fn->size = size;
+
+   return evas_common_font_load_init(fn);
+}
+
+RGBA_Font *
+evas_common_font_load(const char *name, int size)
+{
+   RGBA_Font *fn;
+
+   fn = evas_common_font_find(name, size);
+   if (fn) return fn;
+   
+   fn = malloc(sizeof(RGBA_Font));   
+   if (!fn) return NULL;
+   
+   fn->src = evas_common_font_source_find(name);
+   if (!fn->src) fn->src = evas_common_font_source_load(name);
+
+   if (!fn->src)
+     {
+	free(fn);
+	return NULL;
+     }
+   
+   fn->size = size;
+
+   return evas_common_font_load_init(fn);
+}
+
+RGBA_Font *
+evas_common_font_load_init(RGBA_Font *fn)
+{
+   int error;
+   
+   fn->real_size = fn->size * 64;
+   error = FT_Set_Char_Size(fn->src->ft.face, 0, (fn->size * 64), 96, 96);
    if (error)
-     error = FT_Set_Pixel_Sizes(fn->ft.face, 0, size);
+     {
+	error = FT_Set_Pixel_Sizes(fn->src->ft.face, 0, fn->size);
+	fn->real_size = fn->size;
+     }
    if (error)
      {
 	int i;
 	int chosen_size = 0;
 	int chosen_width = 0;
 
-	for (i = 0; i < fn->ft.face->num_fixed_sizes; i++)
+	for (i = 0; i < fn->src->ft.face->num_fixed_sizes; i++)
 	  {
 	     int s;
 	     int d, cd;
 	     
-	     s = fn->ft.face->available_sizes[i].height;
-	     cd = chosen_size - size;
+	     s = fn->src->ft.face->available_sizes[i].height;
+	     cd = chosen_size - fn->size;
 	     if (cd < 0) cd = -cd;
-	     d = s - size;
+	     d = s - fn->size;
 	     if (d < 0) d = -d;
 	     if (d < cd)
 	       {
-		  chosen_width = fn->ft.face->available_sizes[i].width;
+		  chosen_width = fn->src->ft.face->available_sizes[i].width;
 		  chosen_size = s;
 	       }
 	     if (d == 0) break;
 	  }
-	error = FT_Set_Pixel_Sizes(fn->ft.face, chosen_width, chosen_size);
+	error = FT_Set_Pixel_Sizes(fn->src->ft.face, chosen_width, chosen_size);
 	if (error)
 	  {
 	     /* couldn't choose the size anyway... what now? */
 	  }
+	fn->real_size = chosen_size;
      }
+   fn->src->current_size = fn->real_size;
 
 #if 0 /* debugging to look at charmaps in a ttf */
-   printf("%i\n", fn->ft.face->num_charmaps);
+   printf("%i\n", fn->src->ft.face->num_charmaps);
      {
 	int i;
 	
-	for (i = 0; i < fn->ft.face->num_charmaps; i++)
+	for (i = 0; i < fn->src->ft.face->num_charmaps; i++)
 	  {
 	     printf("%i: %x, %c\n", 
-		    i, fn->ft.face->charmaps[i]->encoding,
-		    fn->ft.face->charmaps[i]->encoding);
+		    i, fn->src->ft.face->charmaps[i]->encoding,
+		    fn->src->ft.face->charmaps[i]->encoding);
 	  }
      }
 #endif   
-   error = FT_Select_Charmap(fn->ft.face, ft_encoding_unicode);
+   error = FT_Select_Charmap(fn->src->ft.face, ft_encoding_unicode);
    if (error)
      {
 /* disable this for now...
-	error = FT_Select_Charmap(fn->ft.face, ft_encoding_latin_2);
+	error = FT_Select_Charmap(fn->src->ft.face, ft_encoding_latin_2);
 	if (error)
 	  {
-	     error = FT_Select_Charmap(fn->ft.face, ft_encoding_sjis);
+	     error = FT_Select_Charmap(fn->src->ft.face, ft_encoding_sjis);
 	     if (error)
 	       {
-		  error = FT_Select_Charmap(fn->ft.face, ft_encoding_gb2312);
+		  error = FT_Select_Charmap(fn->src->ft.face, ft_encoding_gb2312);
 		  if (error)
 		    {
-		       error = FT_Select_Charmap(fn->ft.face, ft_encoding_big5);
+		       error = FT_Select_Charmap(fn->src->ft.face, ft_encoding_big5);
 		       if (error)
 			 {
 			 }
@@ -101,16 +243,9 @@ evas_common_font_load(const char *name, int size)
  */
      }
    
-   fn->file = strdup(file);
-   fn->name = strdup(file);
-   fn->size = size;
-
    fn->glyphs = NULL;
-   
    fn->usage = 0;
-   
    fn->references = 1;
-   
    fonts = evas_object_list_prepend(fonts, fn);
    return fn;
 }
@@ -145,13 +280,11 @@ font_modify_cache_cb(Evas_Hash *hash, const char *key, void *data, void *fdata)
 void
 evas_common_font_modify_cache_by(RGBA_Font *fn, int dir)
 {
-   int sz_name = 0, sz_file = 0, sz_hash = 0;
+   int sz_hash = 0;
    
-   if (fn->name) sz_name = strlen(fn->name);
-   if (fn->file) sz_file = strlen(fn->file);
    if (fn->glyphs) sz_hash = sizeof(Evas_Hash);
    evas_hash_foreach(fn->glyphs, font_modify_cache_cb, &dir);
-   font_cache_usage += dir * (sizeof(RGBA_Font) + sz_name + sz_file + sz_hash +
+   font_cache_usage += dir * (sizeof(RGBA_Font) + sz_hash +
 			      sizeof(FT_FaceRec) + 16384); /* fudge values */
 }
 
@@ -212,9 +345,8 @@ evas_common_font_flush_last(void)
    evas_hash_foreach(fn->glyphs, font_flush_free_glyph_cb, NULL);
    evas_hash_free(fn->glyphs);
    
-   if (fn->file) free(fn->file);
-   if (fn->name) free(fn->name);
-   FT_Done_Face(fn->ft.face);
+   evas_common_font_source_free(fn->src);
+   
    free(fn);
 }
 
@@ -228,7 +360,7 @@ evas_common_font_find(const char *name, int size)
 	RGBA_Font *fn;
 	
 	fn = (RGBA_Font *)l;
-	if ((fn->size == size) && (!strcmp(name, fn->name)))
+	if ((fn->size == size) && (!strcmp(name, fn->src->name)))
 	  {
 	     if (fn->references == 0) evas_common_font_modify_cache_by(fn, -1);
 	     fn->references++;
