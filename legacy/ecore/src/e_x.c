@@ -598,28 +598,36 @@ ecore_window_get_shape_rectangles(Window win, int *num)
 void
 ecore_window_select_shape_events(Window win)
 {
-   if (!disp) return;
+  if (!disp)
+    return;
+
   XShapeSelectInput(disp, win, ShapeNotifyMask);
 }
 
 void
 ecore_window_unselect_shape_events(Window win)
 {
-   if (!disp) return;
+  if (!disp)
+    return;
+
   XShapeSelectInput(disp, win, 0);
 }
 
 void
 ecore_window_clear(Window win)
 {
-   if (!disp) return;
+  if (!disp)
+    return;
+
   XClearWindow(disp, win);
 }
 
 void
 ecore_window_clear_area(Window win, int x, int y, int w, int h)
 {
-   if (!disp) return;
+  if (!disp)
+    return;
+
   XClearArea(disp, win, x, y, w, h, False);
 }
 
@@ -630,10 +638,14 @@ ecore_pointer_xy(Window win, int *x, int *y)
   unsigned int        dm;
   int                 wx, wy;
 
-   if (!disp) return;
+  if (!disp)
+    return;
+
   if (win == 0)
     win = default_root;
+
   XQueryPointer(disp, win, &dw, &dw, &mouse_x, &mouse_y, &wx, &wy, &dm);
+
   if (x)
     *x = wx;
   if (y)

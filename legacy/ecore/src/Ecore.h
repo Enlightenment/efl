@@ -505,7 +505,17 @@ extern              "C"
   int                 ecore_x_get_fd(void);
   void                ecore_set_error_handler(Ecore_Error_Function func);
   void                ecore_reset_error_handler(void);
+
+  /**
+   * ecore_display_init - Establishes a connection to the X server
+   * @display: The name of the display to connect to
+   *
+   * This function creates a connection to the X server. If
+   * @display is NULL, the name is taken from the $DISPLAY
+   * environment variable.
+   */
   int                 ecore_display_init(char *display);
+
   int                 ecore_events_pending(void);
   void                ecore_get_next_event(XEvent * event);
   int                 ecore_event_shape_get_id(void);
@@ -647,7 +657,16 @@ extern              "C"
 						     int *mask);
   int                 ecore_window_is_visible(Window win);
   int                 ecore_window_is_normal(Window win);
+
+  /**
+   * ecore_window_is_manageable - Returns 1 if a window can be managed by the wm.
+   * @win: the window for which to query.
+   *
+   * This function returns 0 if the window is unmapped, should be ignored
+   * by the window manager or is of the InputOnly class, 1 otherwise.
+   */
   int                 ecore_window_is_manageable(Window win);
+
   void                ecore_windows_restack(Window * wins, int num);
   void                ecore_window_stack_above(Window win, Window above);
   void                ecore_window_stack_below(Window win, Window below);
@@ -838,12 +857,35 @@ extern              "C"
   void                ecore_event_filter(Ecore_Event * ev);
   void                ecore_event_filter_events_handle(Ecore_Event * ev);
   void                ecore_event_filter_idle_handle(void);
+
+  /**
+   * ecore_event_filter_init - Setup event handlers
+   *
+   * This function initializes all ECORE_EVENT_MAX
+   * event handler to be empty.
+   */
   void                ecore_event_filter_init(void);
+
   void                ecore_event_filter_handler_add(Ecore_Event_Type type,
 						     void (*func) (Ecore_Event *ev));
   void                ecore_event_filter_idle_handler_add(void (*func) (void *data), void *data);
+
+  /**
+   * ecore_event_signal_init - Setup for default signal handlers
+   *
+   * This function initializes signal handlers for various
+   * signals via sigaction().
+   */
   void                ecore_event_signal_init(void);
+
   int                 ecore_event_signal_events_pending(void);
+
+  /**
+   * ecore_event_x_init - Ecore X initialization
+   *
+   * This function initializes Ecore's X event handling
+   * callbacks.
+   */
   void                ecore_event_x_init(void);
 
   /* ---------------- MISCELLANEOUS CALLS */
