@@ -77,12 +77,12 @@ evas_common_cpu_init(void)
 #ifdef __POWERPC__
 #ifdef __VEC__
    cpu_feature_mask |= CPU_FEATURE_ALTIVEC *
-   evas_common_cpu_feature_test(evas_common_cpu_altivec_test);
+     evas_common_cpu_feature_test(evas_common_cpu_altivec_test);
 #endif /* __VEC__ */
 #endif /* __POWERPC__ */
 #ifdef __SPARC__
    cpu_feature_mask |= CPU_FEATURE_VIS *
-   evas_common_cpu_feature_test(evas_common_cpu_vis_test);
+     evas_common_cpu_feature_test(evas_common_cpu_vis_test);
 #endif /* __SPARC__ */
 
    printf("Cpu mask set to %08x\n", cpu_feature_mask);
