@@ -11,9 +11,21 @@ typedef void *                  Evas_Group;
 typedef int                     Evas_Callback_Type;
 typedef int                     Evas_Image_Format;
 typedef struct _Evas_List *     Evas_List;
+typedef struct _Evas_Layer *    Evas_Layer;
 
-#define RENDER_METHOD_FASTEST 0
-#define RENDER_METHOD_BEST    1
+#define RENDER_METHOD_ALPHA_SOFTWARE 0
+#define RENDER_METHOD_BASIC_HARDWARE 1
+#define RENDER_METHOD_ALPHA_HARDWARE 2
+
+#define CALLBACK_MOUSE_IN   0
+#define CALLBACK_MOUSE_OUT  1
+#define CALLBACK_MOUSE_DOWN 2
+#define CALLBACK_MOUSE_UP   3
+
+#define IMAGE_FORMAT_BGRA   0
+#define IMAGE_FORMAT_ARGB   1
+#define IMAGE_FORMAT_RGB    2
+#define IMAGE_FORMAT_GRAY   3
 
 struct _Evas
 {
@@ -31,9 +43,7 @@ struct _Evas
 	 double     x, y, w, h;
       } viewport;
       
-      Evas_List    *active_layers;
-      
-      Evas_List    *objects;
+      Evas_List    *layers;
       
       int           render_method;
       
@@ -45,6 +55,7 @@ struct _Evas
 
 struct _Evas_Gradient
 {
+   /* implimentation dependant part */
    Imlib_Color_Range color_range;
 };
 
@@ -52,6 +63,13 @@ struct _Evas_List
 {
    Evas_List *prev, *next;
    void      *data;
+};
+
+struct _Evas_Layer
+{
+   int        layer;
+   int        store;
+   Evas_List *objects;
 };
 
 #ifdef __cplusplus
@@ -103,7 +121,8 @@ void evas_set_zoom_scale(Evas e, Evas_Object o, int scale);
 
 /* layer stacking for object */
 void evas_set_layer(Evas e, Evas_Object o, int l);
-
+void evas_set_layer_store(Evas e, int l, int store);
+   
 /* gradient creating / deletion / modification */
 Evas_Gradient evas_gradient_new(void);
 void evas_gradient_free(Evas_Gradient grad);

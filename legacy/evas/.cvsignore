@@ -1,0 +1,12 @@
+.icons
+Makefile
+Makefile.in
+aclocal.m4
+config.status
+config.log
+config.cache
+configure
+stamp-h
+stamp-h.in
+config.sub
+config.guess

@@ -149,6 +149,11 @@ evas_set_layer(Evas e, Evas_Object o, int l)
 {
 }
 
+void
+evas_set_layer_store(Evas e, int l, int store)
+{
+}
+
 /* gradient creating / deletion / modification */
 Evas_Gradient
 evas_gradient_new(void)
