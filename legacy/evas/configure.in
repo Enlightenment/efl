@@ -5,7 +5,7 @@ rm -f config.cache
 
 AC_INIT(configure.in)
 AC_ISC_POSIX
-AM_INIT_AUTOMAKE(evas, 1.0.0_pre5)
+AM_INIT_AUTOMAKE(evas, 1.0.0_pre6)
 AM_CONFIG_HEADER(config.h)
 
 AC_C_BIGENDIAN
