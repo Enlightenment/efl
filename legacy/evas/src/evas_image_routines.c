@@ -797,9 +797,6 @@ __evas_image_init(Display *disp, int screen)
    imlib_set_font_cache_size(1024 * 1024);
    imlib_set_cache_size(8 * 1024 * 1024);
    imlib_set_color_usage(128);
-   __evas_image_get_visual(disp, screen);
-   __evas_image_get_visual(disp, screen);
-   __evas_image_get_colormap(disp, screen);
 }
 
 void
