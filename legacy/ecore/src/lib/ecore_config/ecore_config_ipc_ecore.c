@@ -19,7 +19,7 @@
 #include "Ecore_Config.h"
 #include "config.h"
 
-#if 0 /* FIXME - No prototypes? */
+#if 1 /* FIXME - No prototypes? */
 /*****************************************************************************/
 
 static int
