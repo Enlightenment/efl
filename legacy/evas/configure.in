@@ -534,7 +534,7 @@ if test "x$have_edb" = "xyes"; then
 fi
 if test "x$have_edb" = "xyes"; then
   AC_DEFINE(BUILD_LOADER_EDB, 1, [EDB Image Loader Support])
-  if [ test -z "$EDB_CONFIG" ]; then EDV_CONFIG="edb-config"; fi
+  if [ test -z "$EDB_CONFIG" ]; then EDB_CONFIG="edb-config"; fi
   edb_cflags=`$EDB_CONFIG --cflags`
   edb_libs=`$EDB_CONFIG --libs`
 fi
