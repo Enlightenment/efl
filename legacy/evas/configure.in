@@ -614,6 +614,7 @@ src/lib/include/Makefile
 proj/Makefile
 proj/win32_gdi/Makefile
 evas-config
+evas.pc
 ],[
 chmod +x evas-config
 touch evas_docs.tar.gz

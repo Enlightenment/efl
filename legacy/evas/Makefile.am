@@ -30,4 +30,7 @@ dist-hook:
 
 bin_SCRIPTS = evas-config
 
-EXTRA_DIST = TODO README AUTHORS COPYING COPYING-PLAIN evas.spec evas.c.in gendoc Doxyfile evas_docs.tar.gz
+EXTRA_DIST = TODO README AUTHORS COPYING COPYING-PLAIN evas.spec evas.c.in gendoc Doxyfile evas_docs.tar.gz evas.pc.in
+
+pkgconfigdir = $(libdir)/pkgconfig
+pkgconfig_DATA = evas.pc
