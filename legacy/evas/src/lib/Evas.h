@@ -91,6 +91,10 @@ typedef struct _Evas_Event_Key_Up     Evas_Event_Key_Up;
 #define EVAS_LOAD_ERROR_CORRUPT_FILE               5
 #define EVAS_LOAD_ERROR_UNKNOWN_FORMAT             6
 
+#define EVAS_ALLOC_ERROR_NONE                      0
+#define EVAS_ALLOC_ERROR_FATAL                     1
+#define EVAS_ALLOC_ERROR_RECOVERED                 2
+
 struct _Evas_Engine_Info
 {
    int magic;
@@ -449,6 +453,8 @@ extern "C" {
 
    void              evas_object_event_callback_add    (Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), void *data);
    void             *evas_object_event_callback_del    (Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info));
+   
+   int               evas_alloc_error                  (void);
        
 #ifdef __cplusplus
 }

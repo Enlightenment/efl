@@ -82,6 +82,13 @@ if (_r) \
    (_r)->w = (_w); (_r)->h = (_h); \
 }}
 
+#define MERR_NONE() _evas_alloc_error = EVAS_ALLOC_ERROR_NONE
+#define MERR_FATAL() _evas_alloc_error = EVAS_ALLOC_ERROR_FATAL
+#define MERR_BAD() _evas_alloc_error = EVAS_ALLOC_ERROR_RECOVERED
+
+#define MEM_TRY_CALLOC(_ptr, _size)
+
+
 struct _Evas_Smart
 {
    DATA32            magic;
@@ -443,6 +450,8 @@ int evas_file_path_is_file(char *path);
 int evas_file_path_is_dir(char *path);
 Evas_List *evas_file_path_list(char *path, char *match, int match_case);
 DATA64 evas_file_modified_time(const char *file);
+int evas_mem_free(int mem_required);
+int evas_mem_degrade(int mem_required);
 void evas_debug_error(void);
 void evas_debug_input_null(void);
 void evas_debug_magic_null(void);
@@ -452,7 +461,10 @@ void evas_object_smart_use(Evas_Smart *s);
 void evas_object_smart_unuse(Evas_Smart *s);   
 void evas_object_smart_del(Evas_Object *obj);
 void evas_object_smart_cleanup(Evas_Object *obj);
+void *evas_mem_calloc(int size);
        
+extern int _evas_alloc_error;
+   
 #ifdef __cplusplus
 }
 #endif

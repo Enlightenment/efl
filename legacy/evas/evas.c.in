@@ -14,7 +14,7 @@ These routines are used for Evas Library interaction
 @author Carsten Haitzler <raster@rasterman.com>
 @author Till Adam <till@adam-lilienthal.de>
 @author Steve Ireland <sireland@pobox.com>
-@date 2001-2002
+@date 2000-2002
 
 
 
@@ -238,31 +238,13 @@ To be documented...
 
 
 @todo Document API
-@todo Document Engine API
 @todo Add keyboard callbacks/event feeds and focus
 @todo Make freetype optional and put in optional graymap font engine
-@todo Add external image loaders (application provided callbacks to load)
-@todo Add loadable image loader module support (evas loads file.so)
-@todo Add external image lodaer modules (application proivdes path to file.so)
-@todo Define image load errors (and maybe have an error to string func)
 @todo Add ability to check image comments & disk format
-@todo Add immediate mode drawing commands to image objects
+@todo Define image load errors (and maybe have an error to string func)
 @todo Add text styles (outline etc.)
 @todo Add font load query calls (so we know if a font load failed)
 @todo Add font listing calls
-@todo Add OpenGL GLX Engine
-@todo Add Win32 OpenGL Engine
-@todo Add Apple OpenGL Engine
-@todo Add X11 primtive engine
-@todo Add SDL Engine
-@todo Add Symbian Engine
-@todo Add PalmOS Engine
-@todo Fix FB engine to allocat vt and release properly
-@todo Add ellipse objects (circle, arc, ellipse etc.)
-@todo Add video/movie/animation objects
-@todo Make software engine draw lines & polys with aa
-@todo Add radial gradients to gradient objects
-@todo Allow any object to clip any other object, and not just rectangles
 @todo Free images if object invisible (and put back in chache)
 @todo Check robustness of malloc/calloc/realloc failures.
 @todo Add memory use reduction code if any allocations fail
@@ -270,6 +252,24 @@ To be documented...
 @todo If image load fails due to memory allocation failure, try split it up into tiles and demand-load them
 @todo Add auto-detection of what engines to build based on system/libs etc.
 @todo Add overall engine configure parameters (so you can configure an engine with defaults with 1 configure option)
+@todo Document Engine API
+@todo Add external image loaders (application provided callbacks to load)
+@todo Add loadable image loader module support (evas loads file.so)
+@todo Add external image lodaer modules (application proivdes path to file.so)
+@todo Add immediate mode drawing commands to image objects
+@todo Add OpenGL GLX Engine
+@todo Add Win32 OpenGL Engine
+@todo Add Apple OpenGL Engine
+@todo Add X11 primtive engine
+@todo Add SDL Engine
+@todo Add Symbian Engine
+@todo Add PalmOS Engine
+@todo Fix FB engine to allocate vt and release properly
+@todo Add ellipse objects (circle, arc, ellipse etc.)
+@todo Add video/movie/animation objects
+@todo Make software engine draw lines & polys with aa
+@todo Add radial gradients to gradient objects
+@todo Allow any object to clip any other object, and not just rectangles
 @todo Add more evas demos
 
 */
