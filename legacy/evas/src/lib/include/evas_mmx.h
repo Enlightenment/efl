@@ -573,6 +573,24 @@ typedef	union {
 				 : \
 				 : "r" (var) \
 				 );
+#define prefetch0(var) \
+	__asm__ __volatile__ ( \
+				 "prefetcht0 (%0) \n" \
+				 : \
+				 : "r" (var) \
+				 );
+#define prefetch1(var) \
+	__asm__ __volatile__ ( \
+				 "prefetcht1 (%0) \n" \
+				 : \
+				 : "r" (var) \
+				 );
+#define prefetch2(var) \
+	__asm__ __volatile__ ( \
+				 "prefetcht2 (%0) \n" \
+				 : \
+				 : "r" (var) \
+				 );
 #define pshufw(r1, r2, imm) \
 	__asm__ __volatile__ ( \
 				 "pshufw $" #imm ", %" #r1 ", %" #r2 " \n" \

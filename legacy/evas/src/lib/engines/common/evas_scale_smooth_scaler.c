@@ -209,8 +209,6 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
  * -:- 
  *
  */
-   /* 8x8 tiles - this will incurr about a < 2% memory overhead */
-   evas_common_image_surface_alpha_tiles_calc(src->image, 8);
    
    /* if 1:1 scale */
    if ((dst_region_w == src_region_w) && 

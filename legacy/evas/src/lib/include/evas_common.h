@@ -291,14 +291,6 @@ struct _RGBA_Surface
    DATA32            *data;
    char               no_free : 1;
    RGBA_Image        *im;
-   RGBA_Image_Span  **spans;
-};
-
-struct _RGBA_Image_Span
-{
-   Evas_Object_List     _list_data;
-   int                  x, w;
-   int                  v;
 };
 
 struct _RGBA_Image
@@ -769,9 +761,6 @@ void evas_common_scale_rgba_in_to_out_clip_sample      (RGBA_Image *src, RGBA_Im
 /****/
 void          evas_common_image_init              (void);
 void          evas_common_image_shutdown          (void);
-
-void          evas_common_image_surface_alpha_tiles_calc(RGBA_Surface *is, int tsize);
-void          evas_common_image_surface_alpha_tiles_free(RGBA_Surface *is);
    
 RGBA_Surface *evas_common_image_surface_new       (RGBA_Image *im);
 void          evas_common_image_surface_free      (RGBA_Surface *is);

@@ -204,13 +204,13 @@ evas_common_copy_pixels_rgba_to_rgba_mmx(DATA32 *src, DATA32 *dst, int len)
    src_ptr = src;
    dst_ptr = dst;
    dst_end_ptr = dst + len;
-   dst_end_ptr_pre = dst + ((len / 10) * 10);
+   dst_end_ptr_pre = dst + ((len / 16) * 16);
    
    while (dst_ptr < dst_end_ptr_pre)
      {
-	MOVE_10DWORDS_MMX(src_ptr, dst_ptr);
-	src_ptr+=10;
-	dst_ptr+=10;
+	MOVE_16DWORDS_MMX(src_ptr, dst_ptr);
+	src_ptr+=16;
+	dst_ptr+=16;
      }
    while (dst_ptr < dst_end_ptr)
      {
@@ -310,15 +310,14 @@ evas_common_copy_pixels_rgba_to_rgba_sse(DATA32 *src, DATA32 *dst, int len)
    src_ptr = src;
    dst_ptr = dst;
    dst_end_ptr = dst + len;
-   dst_end_ptr_pre = dst + ((len / 10) * 10);
+   dst_end_ptr_pre = dst + ((len / 16) * 16);
 
    while (dst_ptr < dst_end_ptr_pre)
      {
-	prefetch(&src_ptr[128]);
-	prefetch(&dst_ptr[128]);
-	MOVE_10DWORDS_MMX(src_ptr, dst_ptr);
-	src_ptr+=10;
-	dst_ptr+=10;
+	prefetch(&src_ptr[16]);
+	MOVE_16DWORDS_MMX(src_ptr, dst_ptr);
+	src_ptr+=16;
+	dst_ptr+=16;
      }
    while (dst_ptr < dst_end_ptr)
      {
@@ -373,21 +372,21 @@ evas_common_copy_pixels_rev_rgba_to_rgba_mmx(DATA32 *src, DATA32 *dst, int len)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr, *dst_end_ptr_pre;
    
-   src_ptr = src + len - 10;
-   dst_ptr = dst + len - 10;
+   src_ptr = src + len - 16;
+   dst_ptr = dst + len - 16;
    dst_end_ptr = dst;
-   dst_end_ptr_pre = dst + len - ((len / 10) * 10);
+   dst_end_ptr_pre = dst + len - ((len / 16) * 16);
    
-   if (len >= 10)
+   if (len >= 16)
      {
 	while (dst_ptr >= dst_end_ptr_pre)
 	  {
-	     MOVE_10DWORDS_MMX(src_ptr, dst_ptr);
-	     src_ptr-=10;
-	     dst_ptr-=10;
+	     MOVE_16DWORDS_MMX(src_ptr, dst_ptr);
+	     src_ptr-=16;
+	     dst_ptr-=16;
 	  }
-	src_ptr+=9;
-	dst_ptr+=9;
+	src_ptr+=15;
+	dst_ptr+=15;
 	while (dst_ptr >= dst_end_ptr)
 	  {
 	     *dst_ptr = *src_ptr;
@@ -415,23 +414,22 @@ evas_common_copy_pixels_rev_rgba_to_rgba_sse(DATA32 *src, DATA32 *dst, int len)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr, *dst_end_ptr_pre;
    
-   src_ptr = src + len - 10;
-   dst_ptr = dst + len - 10;
+   src_ptr = src + len - 16;
+   dst_ptr = dst + len - 16;
    dst_end_ptr = dst;
-   dst_end_ptr_pre = dst + len - ((len / 10) * 10);
+   dst_end_ptr_pre = dst + len - ((len / 16) * 16);
 
-   if (len >= 10)
+   if (len >= 16)
      {
 	while (dst_ptr >= dst_end_ptr_pre)
 	  {
-	     prefetch(&src_ptr[-128]);
-	     prefetch(&dst_ptr[-128]);
+	     prefetch(&src_ptr[-16]);
 	     MOVE_10DWORDS_MMX(src_ptr, dst_ptr);
-	     src_ptr-=10;
-	     dst_ptr-=10;
+	     src_ptr-=16;
+	     dst_ptr-=16;
 	  }
-	src_ptr+=9;
-	dst_ptr+=9;
+	src_ptr+=15;
+	dst_ptr+=15;
 	while (dst_ptr >= dst_end_ptr)
 	  {
 	     *dst_ptr = *src_ptr;
