@@ -5,10 +5,11 @@ typedef enum
 {
    IPC_NONE,
    IPC_PROP_LIST,
-   IPC_GLOBAL_PROP_LIST,
    IPC_PROP_DESC,
    IPC_PROP_GET,
-   IPC_PROP_SET,
+   IPC_PROP_SET, /* end of the codes shared by evidence and econf */
+
+   IPC_GLOBAL_PROP_LIST,
 
    IPC_BUNDLE_LIST,
    IPC_BUNDLE_NEW,
