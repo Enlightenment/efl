@@ -1995,9 +1995,10 @@ st_collections_group_programs_program_target(void)
 	  data_queue_part_lookup(pc, name, &(et->id));
 	else
 	  {
-	     /* FIXME: not type specified. guess */
-	     data_queue_part_lookup(pc, name, &(et->id));
-	     data_queue_program_lookup(pc, name, &(et->id));
+	     fprintf(stderr, "%s: Error. parse error %s:%i. "
+		   "target may only be used after action\n",
+		   progname, file_in, line - 1);
+	     exit(-1);
 	  }
 	free(name);
      }
