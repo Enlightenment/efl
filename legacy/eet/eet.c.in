@@ -24,7 +24,7 @@ simpler to impliment this once here.
 It also can encode and decode data structures in memory, as well as image
 data for saving to eet files or sending across the network to other
 machines, or just writing to arbitary files on the system. All data is
-encoded ina platform independant way and can be written and read by any
+encoded in a platform independant way and can be written and read by any
 architecture.
 
 @todo Complete documentation of API

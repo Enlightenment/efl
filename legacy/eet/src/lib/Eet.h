@@ -58,8 +58,49 @@ extern "C" {
     * delete the original file and replace it with a new empty file, till
     * the eet file handle is closed or flushed. If it cannot be opened for
     * writing or a memory error occurs, NULL is returned.
+    * 
+    * Example:
+    * @code
+    * #include <Eet.h>
+    * 
+    * int
+    * main(int argc, char **argv)
+    * {
+    *   Eet_File *ef;
+    *   char buf[1024], *ret, **list;
+    *   int size, num, i;
+    * 
+    *   strcpy(buf, "Here is a string of data to save!");
+    *   
+    *   ef = eet_open("/tmp/my_file.eet, EET_FILE_MODE_WRITE);
+    *   if (!ef) return -1;
+    *   if (!eet_write(ef, "/key/to_store/at", buf, 1024, 1))
+    *     fprintf("Error writing data!\n");
+    *   eet_close(ef);
+    * 
+    *   ef = eet_open("/tmp/my_file.eet, EET_FILE_MODE_READ);
+    *   if (!ef) return -1;
+    *   list = eet_list(ef, "*", &num);
+    *   if (list)
+    *     {
+    *       for (i = 0; i < num; i++)
+    *         printf("Key stored: %s\n", list[i]);
+    *       free(list);
+    *     }
+    *   ret = eet_read(ef, "/key/to_store/at", &size);
+    *   if (ret)
+    *     {
+    *       printf("Data read (%i bytes):\n%s\n", size, ret);
+    *       free(ret);
+    *     }
+    *   eet_close(ef);
+    * 
+    *   return 0;
+    * }
+    * @endcode
     */   
    Eet_File *eet_open  (char *file, Eet_File_Mode mode);
+   
    /**
     * Close an eet file handle and flush and writes pending.
     * @param ef A valid eet file handle.
@@ -71,6 +112,7 @@ extern "C" {
     * If the eet file handle is not valid nothing will be done.
     */
    void      eet_close (Eet_File *ef);
+   
    /**
     * Read a specified entry from an eet file and return data
     * @param ef A valid eet file handle opened for reading.
@@ -113,6 +155,7 @@ extern "C" {
     * closed though).
     */
    int       eet_write (Eet_File *ef, char *name, void *data, int size, int compress);
+   
    /**
     * List all entries in eet file matching shell glob.
     * @param ef A valid eet file handle.
@@ -178,6 +221,7 @@ extern "C" {
     * values may not contain any sensible data.
     */
    void     *eet_data_image_read(Eet_File *ef, char *name, int *w, int *h, int *alpha, int *compress, int *quality, int *lossy);
+   
    /**
     * Write image data to the named key in an eet file.
     * @param ef A valid eet file handle opened for writing.
@@ -209,6 +253,7 @@ extern "C" {
     * to encode the image data, or on failure it returns 0.
     */   
    int       eet_data_image_write(Eet_File *ef, char *name, void *data, int w, int h, int alpha, int compress, int quality, int lossy);
+   
    /**
     * Decode Image data into pixel data.
     * @param data The encoded pixel data.
@@ -273,42 +318,232 @@ extern "C" {
     * can free with free() when no longer needed.
     */   
    void     *eet_data_image_encode(void *data, int *size_ret, int w, int h, int alpha, int compress, int quality, int lossy);
+
 /***************************************************************************/
    
    /**
-    * To be documented.
-    *
-    * FIXME: To be fixed.
+    * Create a new empty data structure descriptor.
+    * @param name The string name of this data structure.
+    * @param size The size of the struct (in bytes).
+    * @param func_list_next The function to get the next list node.
+    * @param func_list_append The function to append a member to a list.
+    * @param func_list_data The function to get the data from a list node.
+    * @param func_hash_foreach The function to iterate through all hash table entries.
+    * @param func_hash_add The function to add a member to a hash table.
+    * @return A new empty data descriptor.
+    * 
+    * This function creates a new data descriptore and returns a handle to the
+    * new data descriptor. On creation it will be empty, containing no contents
+    * describing anything other than the shell of the data structure.
+    * 
+    * You add structure members to the data descriptor using the macros
+    * EET_DATA_DESCRIPTOR_ADD_BASIC(), EET_DATA_DESCRIPTOR_ADD_SUB() and
+    * EET_DATA_DESCRIPTOR_ADD_LIST(), depending on what type of member you are
+    * adding to the description.
+    * 
+    * Once you have described all the members of a struct you want loaded, or
+    * saved eet can load and save those members for you, encode them into
+    * endian-independant serialised data chunks for transmission across a
+    * a network or more.
+    * 
+    * Example:
+    * 
+    * @code
+    * #include <Eet.h>
+    * include <Evas.h>
+    * 
+    * typedef struct _blah2
+    * {
+    *    char *string;
+    * }
+    * Blah2;
+    * 
+    * typedef struct _blah3
+    * {
+    *    char *string;
+    * }
+    * Blah3;
+    * 
+    * typedef struct _blah
+    * {
+    *    char character;
+    *    short sixteen;
+    *    int integer;
+    *    long long lots;
+    *    float floating;
+    *    double floating_lots;
+    *    char *string;
+    *    Blah2 *blah2;
+    *    Evas_List *blah3;
+    * }
+    * Blah;
+    * 
+    * int
+    * main(int argc, char **argv)
+    * {
+    *    Blah blah;
+    *    Blah2 blah2;
+    *    Blah3 blah3;
+    *    Eet_Data_Descriptor *edd, *edd2, *edd3;
+    *    void *data;
+    *    int size;
+    *    FILE *f;
+    *    Blah *blah_in;
+    * 
+    *    edd3 = eet_data_descriptor_new("blah3", sizeof(Blah3),
+    *                                   evas_list_next,
+    *                                   evas_list_append,
+    *                                   evas_list_data,
+    *                                   evas_hash_foreach,
+    *                                   evas_hash_add);
+    *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd3, Blah3, "string3", string, EET_T_STRING);
+    * 
+    *    edd2 = eet_data_descriptor_new("blah2", sizeof(Blah2),
+    *                                   evas_list_next,
+    *                                   evas_list_append,
+    *                                   evas_list_data,
+    *                                   evas_hash_foreach,
+    *                                   evas_hash_add);
+    *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd2, Blah2, "string2", string, EET_T_STRING);
+    * 
+    *    edd = eet_data_descriptor_new("blah", sizeof(Blah),
+    *                                   evas_list_next,
+    *                                   evas_list_append,
+    *                                   evas_list_data,
+    *                                   evas_hash_foreach,
+    *                                   evas_hash_add);
+    *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "character", character, EET_T_CHAR);
+    *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "sixteen", sixteen, EET_T_SHORT);
+    *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "integer", integer, EET_T_INT);
+    *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "lots", lots, EET_T_LONG_LONG);
+    *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "floating", floating, EET_T_FLOAT);
+    *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "floating_lots", floating_lots, EET_T_DOUBLE);
+    *    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "string", string, EET_T_STRING);
+    *    EET_DATA_DESCRIPTOR_ADD_SUB(edd, Blah, "blah2", blah2, edd2);
+    *    EET_DATA_DESCRIPTOR_ADD_LIST(edd, Blah, "blah3", blah3, edd3);
+    * 
+    *    blah3.string="PANTS";
+    *    
+    *    blah2.string="subtype string here!";
+    * 
+    *    blah.character='7';
+    *    blah.sixteen=0x7777;
+    *    blah.integer=0xc0def00d;
+    *    blah.lots=0xdeadbeef31337777;
+    *    blah.floating=3.141592654;
+    *    blah.floating_lots=0.777777777777777;
+    *    blah.string="bite me like a turnip";
+    *    blah.blah2 = &blah2;
+    *    blah.blah3 = evas_list_append(NULL, &blah3);
+    *    blah.blah3 = evas_list_append(blah.blah3, &blah3);
+    *    blah.blah3 = evas_list_append(blah.blah3, &blah3);
+    *    blah.blah3 = evas_list_append(blah.blah3, &blah3);
+    *    blah.blah3 = evas_list_append(blah.blah3, &blah3);
+    *    blah.blah3 = evas_list_append(blah.blah3, &blah3);
+    *    blah.blah3 = evas_list_append(blah.blah3, &blah3);
+    *                                   
+    *    data = eet_data_descriptor_encode(edd, &blah, &size);
+    *    f = fopen("out", "w");
+    *    if (f)
+    *      {
+    *         fwrite(data, size, 1, f);
+    *         fclose(f);
+    *      }
+    *    printf("-----DECODING\n");
+    *    blah_in = eet_data_descriptor_decode(edd, data, size);
+    * 
+    *    printf("-----DECODED!\n");
+    *    printf("%c\n", blah_in->character);
+    *    printf("%x\n", (int)blah_in->sixteen);
+    *    printf("%x\n", blah_in->integer);
+    *    printf("%lx\n", blah_in->lots);
+    *    printf("%f\n", (double)blah_in->floating);
+    *    printf("%f\n", (double)blah_in->floating_lots);
+    *    printf("%s\n", blah_in->string);
+    *    printf("%p\n", blah_in->blah2);
+    *    printf("  %s\n", blah_in->blah2->string);
+    *      {
+    *         Evas_List *l;
+    *    
+    *         for (l = blah_in->blah3; l; l = l->next)
+    *           {
+    *              Blah3 *blah3_in;
+    *    
+    *              blah3_in = l->data;
+    *              printf("%p\n", blah3_in);
+    *              printf("  %s\n", blah3_in->string);
+    *           }
+    *      }
+    *    eet_data_descriptor_free(edd);
+    *    eet_data_descriptor_free(edd2);
+    *    eet_data_descriptor_free(edd3);
+    * 
+    *   return 0;
+    * }
+    * 
+    * @endcode
     * 
     */
    Eet_Data_Descriptor *eet_data_descriptor_new(char *name, int size, void *(*func_list_next) (void *l), void *(*func_list_append) (void *l, void *d), void *(*func_list_data) (void *l), void  (*func_hash_foreach) (void *h, int (*func) (void *h, const char *k, void *dt, void *fdt), void *fdt), void *(*func_hash_add) (void *h, const char *k, void *d));
+   
    /**
-    * To be documented.
+    * This function frees a data descriptor when it is not needed anymore.
+    * @param edd The data descriptor to free.
     *
-    * FIXME: To be fixed.
+    * This function takes a data descriptor handle as a parameter and frees all
+    * data allocated for the data descriptor and the handle itself. After this
+    * call the descriptor is no longer valid.
     * 
     */
    void                 eet_data_descriptor_free(Eet_Data_Descriptor *edd);
    
    /**
-    * To be documented.
+    * This function is an internal used by macros.
     *
-    * FIXME: To be fixed.
+    * This function is used by macros EET_DATA_DESCRIPTOR_ADD_BASIC(),
+    * EET_DATA_DESCRIPTOR_ADD_SUB() and EET_DATA_DESCRIPTOR_ADD_LIST(). It is
+    * complex to use by hand and should be left to be used by the macros, and
+    * thus is not documented.
     * 
     */
    void  eet_data_descriptor_element_add(Eet_Data_Descriptor *edd, char *name, int type, int group_type, int offset, int count, char *counter_name, Eet_Data_Descriptor *subtype);
    
    /**
-    * To be documented.
-    *
-    * FIXME: To be fixed.
+    * Read a data structure from an eet file and decodes it.
+    * @param ef The eet file handle to read from.
+    * @param edd The data descriptor handle to use when decoding.
+    * @param name The key the data is stored under in the eet file.
+    * @return A pointer to the decoded data structure.
+    * 
+    * This function decodes a data structure stored in an eet file, returning
+    * a pointer to it if it decoded successfully, or NULL on failure. This
+    * can save a programmer dozens of hours of work in writing configuration
+    * file parsing and writing code, as eet does all that work for the program
+    * and presents a program-friendly data structure, just as the programmer
+    * likes. Eet can handle members being added or deleted from the data in
+    * storage and safely zero-fills unfilled members if they were not found
+    * in the data. It checks sizes and headers whenever it reads data, allowing
+    * the programmer ot not worry about corrupt data.
+    * 
+    * Once a data structure has been described by the programmer with the
+    * fields they wish to save or load, storing or retrieving a data structure
+    * from an eet file, or from a chunk of memory is as simple as a single
+    * function call.
     * 
     */
    void *eet_data_read(Eet_File *ef, Eet_Data_Descriptor *edd, char *name);
+   
    /**
-    * To be documented.
-    *
-    * FIXME: To be fixed.
+    * Write a data structure from memory and store in an eet file.
+    * @param ef The eet file handle to write to.
+    * @param edd The data descriptor to use when encoding.
+    * @param name The key to store the data under in the eet file.
+    * @param data A pointer to the data structure to ssave and encode.
+    * @param compress Compression flags for storage.
+    * @return 1 on successful write, 0 on failure.
+    * 
+    * This function is the reverse of eet_data_read(), saving a data structure
+    * to an eet file.
     * 
     */
    int   eet_data_write(Eet_File *ef, Eet_Data_Descriptor *edd, char *name, void *data, int compress);
@@ -318,8 +553,9 @@ extern "C" {
     *
     * FIXME: To be fixed.
     * 
-    */
+    */   
    void *eet_data_descriptor_decode(Eet_Data_Descriptor *edd, void *data_in, int size_in);
+   
    /**
     * To be documented.
     *
@@ -342,6 +578,7 @@ extern "C" {
 					(char *)(&(___ett.member)) - (char *)(&(___ett)), \
 					0, NULL, NULL); \
      }
+   
    /**
     * To be documented.
     *
@@ -356,6 +593,7 @@ extern "C" {
 					(char *)(&(___ett.member)) - (char *)(&(___ett)), \
 					0, NULL, subtype); \
      }
+   
    /**
     * To be documented.
     *
