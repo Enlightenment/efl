@@ -51,7 +51,7 @@ want this baby to be lean, mean tiny, fast and do everything from your
 massive multi-cpu desktop with gobs of ram and disk to a tiny watch.
 
 Evas also supports full UTF-8 for text object strings, thus allowing for
-full internationalised text strins (if your font gives you all the
+full internationalised text strings (if your font gives you all the
 characters). I've tested with quite a few fonts and it works quite well.
 Though this requires a unicode compatible font with unicode charmap support
 (cyberbit is quite good actually as a font). For now Evas draws the fonts
@@ -324,7 +324,7 @@ Notes:
   you need at least 1 image loader if you want to load images.
   gcc 3.0.x on solaris screws up the jpeg code so erroring out doesn't work.
     use gcc 3.2 on solaris.
-  freetype 2.1.2 is BAD. RedHat 8.0 uses this as do some streams of debain.
+  freetype 2.1.2 is BAD. RedHat 8.0 uses this as do some debain distributions.
     either downgrade to 2.1.1. freetype 2.1.3 is ALSO BAD, as is 2.0.9. It has
     glyph metric rendering bugs and glyph geomery query bugs. do not use it.
     try using 2.0.3. It is known to be stable and work perfectly with Evas.
