@@ -155,7 +155,7 @@ char *ecore_config_get_as_string(const char *key) {
   return r; }
 
 
-static int ecore_config_bound(Ecore_Config_Prop *e) {
+int ecore_config_bound(Ecore_Config_Prop *e) {
   int  ret;
   long v;
   ret=ECORE_CONFIG_ERR_SUCC;
@@ -401,7 +401,7 @@ int ecore_config_set_theme_preview_group(const char *key, char *group) {
 
   return ret; }
 
-static int ecore_config_default_typed(const char *key,void *val,int type) {
+int ecore_config_default_typed(const char *key,void *val,int type) {
   int            ret;
   Ecore_Config_Prop *e;
   ret=ECORE_CONFIG_ERR_SUCC;

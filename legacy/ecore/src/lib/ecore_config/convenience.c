@@ -6,6 +6,77 @@
 
 char *__ecore_config_app_description;
 
+extern int ecore_config_bound(Ecore_Config_Prop *e);
+/* shorthand prop setup code to make client apps a little smaller ;) */
+
+int ecore_config_create(const char *key, void *val, char short_opt, char *long_opt, char *desc) {
+  int type=ecore_config_guess_type(key, val);
+  return ecore_config_create_typed(key, val, type, short_opt, long_opt, desc);}
+
+int ecore_config_create_typed(const char *key, void *val, int type, char short_opt, char *long_opt, char *desc) {
+  int ret;
+
+  if ((ret=ecore_config_default_typed(key, val, type)) != ECORE_CONFIG_ERR_SUCC)
+    return ret;
+  if ((ret=ecore_config_set_short_opt(key, short_opt)) != ECORE_CONFIG_ERR_SUCC)
+    return ret;
+  if ((ret=ecore_config_set_long_opt(key, long_opt)) != ECORE_CONFIG_ERR_SUCC)
+    return ret;
+  ret=ecore_config_describe(key, desc);
+  return ret;}
+  
+int ecore_config_create_int(const char *key, int val, char short_opt, char *long_opt, char *desc) {
+  return
+    ecore_config_create_typed(key, (void *)&val, PT_INT, short_opt, long_opt, desc);}
+
+int ecore_config_create_int_bound(const char *key, int val, int low, int high, int step, char short_opt, char *long_opt, char *desc) {
+  Ecore_Config_Prop *e;
+  int                ret;
+  ret=
+    ecore_config_create_typed(key, (void *)&val, PT_INT, short_opt, long_opt, desc);
+  if (ret != ECORE_CONFIG_ERR_SUCC)
+    return ret;
+  e=ecore_config_get(key);
+  if (e) {
+    e->step=step;
+    e->flags|=PF_BOUNDS;
+    e->lo=low;
+    e->hi=high;
+    ecore_config_bound(e);
+  }
+  return ret;}
+
+int ecore_config_create_string(const char *key, char *val, char short_opt, char *long_opt, char *desc) {
+  return
+    ecore_config_create_typed(key, (void *)val, PT_STR, short_opt, long_opt, desc);}
+
+int ecore_config_create_float(const char *key, float val, char short_opt, char *long_opt, char *desc) {
+  return
+    ecore_config_create_typed(key, (void *)&val, PT_FLT, short_opt, long_opt, desc);}
+
+int ecore_config_create_float_bound(const char *key, float val, float low, float high, float step, char short_opt, char *long_opt, char *desc) {
+  Ecore_Config_Prop *e;
+  int                ret;
+  ret=
+    ecore_config_create_typed(key, (void *)&val, PT_FLT, short_opt, long_opt, desc);
+  e=ecore_config_get(key);
+  if (e) {
+    e->step=(int)(step*ECORE_CONFIG_FLOAT_PRECISION);
+    e->flags|=PF_BOUNDS;
+    e->lo=(int)(low*ECORE_CONFIG_FLOAT_PRECISION);
+    e->hi=(int)(high*ECORE_CONFIG_FLOAT_PRECISION);
+    ecore_config_bound(e);
+  }
+  return ret;}
+
+int ecore_config_create_rgb(const char *key, char *val, char short_opt, char *long_opt, char *desc) {
+  return
+    ecore_config_create_typed(key, (void *)val, PT_RGB, short_opt, long_opt, desc);}
+
+int ecore_config_create_theme(const char *key, char *val, char short_opt, char *long_opt, char *desc) {
+  return
+    ecore_config_create_typed(key, (void *)val, PT_THM, short_opt, long_opt, desc);}
+
 /* this should only be built if evas is present */
 
 int

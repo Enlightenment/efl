@@ -142,6 +142,7 @@ int            ecore_config_set_theme_preview_group(const char *key, char *group
 int            ecore_config_set_as_string(const char *key,char *val);
 
 int            ecore_config_default(const char *key,char *val,float lo,float hi,float step);
+int            ecore_config_default_typed(const char *key,void *val,int type);
 int            ecore_config_default_int(const char *key,int val);
 int            ecore_config_default_int_bound(const char *key,int val,int lo,int hi,int step);
 int            ecore_config_default_string(const char *key,char *val);
@@ -200,6 +201,17 @@ int            ecore_config_evas_font_path_apply(Evas *evas);
 void           ecore_config_args_display(void);
 int            ecore_config_args_parse(int argc, char **argv);
 void           ecore_config_app_describe(char *description);
+
+int            ecore_config_create(const char *key, void *val, char short_opt, char *long_opt, char *desc);
+int            ecore_config_create_typed(const char *key, void *val, int type, char short_opt, char *long_opt, char *desc);
+int            ecore_config_create_int(const char *key, int val, char short_opt, char *long_opt, char *desc);
+int            ecore_config_create_int_bound(const char *key, int val, int low, int high, int step, char short_opt, char *long_opt, char *desc);
+int            ecore_config_create_string(const char *key, char *val, char short_opt, char *long_opt, char *desc);
+int            ecore_config_create_float(const char *key, float val, char short_opt, char *long_opt, char *desc);
+int            ecore_config_create_float_bound(const char *key, float val, float low, float high, float step, char short_opt, char *long_opt, char *desc);
+int            ecore_config_create_rgb(const char *key, char *val, char short_opt, char *long_opt, char *desc);
+int            ecore_config_create_theme(const char *key, char *val, char short_opt, char *long_opt, char *desc);
+
 
 # ifdef __cplusplus
 }
