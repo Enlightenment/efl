@@ -244,7 +244,7 @@ evas_engine_cairo_x11_output_setup(int w, int h, Display *disp, Drawable draw, V
    evas_common_tilebuf_init();
    
    re->tb = evas_common_tilebuf_new(w, h);
-   evas_common_tilebuf_set_tile_size(re->tb, 16, 16);
+   evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
    
    return re;
 }
@@ -277,7 +277,7 @@ evas_engine_cairo_x11_output_resize(void *data, int w, int h)
    evas_common_tilebuf_free(re->tb);
    re->tb = evas_common_tilebuf_new(w, h);
    if (re->tb)
-     evas_common_tilebuf_set_tile_size(re->tb, 16, 16);
+     evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
 }
 
 static void

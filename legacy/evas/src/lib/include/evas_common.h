@@ -25,6 +25,7 @@
 
 /* use exact rects for updates not tiles */
 /* #define RECTUPDATE */
+#define TILESIZE 8
 
 #undef MIN
 #define MIN(_x, _y) \

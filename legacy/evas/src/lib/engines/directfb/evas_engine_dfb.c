@@ -156,7 +156,7 @@ evas_engine_directfb_output_setup(int w, int h, IDirectFB * dfb,
 
    re->tb = evas_common_tilebuf_new(w, h);
    /* in preliminary tests 16x16 gave highest framerates */
-   evas_common_tilebuf_set_tile_size(re->tb, 16, 16);
+   evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
    re->dfb = dfb;
    re->surface = surf;
 
@@ -226,7 +226,7 @@ evas_engine_directfb_output_resize(void *data, int w, int h)
    evas_common_tilebuf_free(re->tb);
    re->tb = evas_common_tilebuf_new(w, h);
    if (re->tb)
-      evas_common_tilebuf_set_tile_size(re->tb, 16, 16);
+      evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
 
    memset(&dsc, 0, sizeof(DFBSurfaceDescription));
    dsc.flags = DSDESC_WIDTH | DSDESC_HEIGHT | DSDESC_PIXELFORMAT;

@@ -289,7 +289,7 @@ evas_engine_software_x11_output_setup(int w, int h, int rot, Display *disp, Draw
 	return NULL;
      }
    /* in preliminary tests 16x16 gave highest framerates */
-   evas_common_tilebuf_set_tile_size(re->tb, 16, 16); 
+   evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
    return re;
 }
 
@@ -321,7 +321,7 @@ evas_engine_software_x11_output_resize(void *data, int w, int h)
    evas_common_tilebuf_free(re->tb);
    re->tb = evas_common_tilebuf_new(w, h);
    if (re->tb)
-     evas_common_tilebuf_set_tile_size(re->tb, 16, 16); 
+     evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
 }
 
 static void
