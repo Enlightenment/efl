@@ -337,7 +337,7 @@ void              __evas_imlib_rectangle_draw(Display *disp, Window win,
 		       if (!up->image)
 			  up->image = imlib_create_image(up->w, up->h);
 		       imlib_context_set_image(up->image);
-		       imlib_image_draw_rectangle(x - up->x, y - up->y, w, h);
+		       imlib_image_fill_rectangle(x - up->x, y - up->y, w, h);
 		    }
 	       }
 	  }

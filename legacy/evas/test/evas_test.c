@@ -122,7 +122,7 @@ main(int argc, char **argv)
 				      200, 40, 100, 255);
 	     __evas_gl_rectangle_draw(d, win, win_w, win_h,
 				      170, 160, 200, 180,
-				      30, 40, 200, 160);
+				      30, 40, 200, 120);
 	     __evas_gl_line_draw(d, win, win_w, win_h,
 				 10, 20, 100, 160,
 				 255, 255, 255, 255);
