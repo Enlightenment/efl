@@ -16,7 +16,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 
 bin_SCRIPTS = eet-config
 
-EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN eet.spec eet.c.in gendoc \
+EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN eet.c.in gendoc \
              Doxyfile \
 	     README.in README \
 	     eet.pc.in \
