@@ -939,7 +939,7 @@ _edje_embryo_test_run(Edje *ed, char *fname, char *sig, char *src)
    fn = embryo_program_function_find(ed->collection->script, fname);
    if (fn != EMBRYO_FUNCTION_NONE)
      {
-	printf("EDJE DEBUG: About to run script from progrqm.\n");
+	printf("EDJE DEBUG: About to run script from program.\n");
 	embryo_parameter_string_push(ed->collection->script, sig);
 	embryo_parameter_string_push(ed->collection->script, src);
 	  {
