@@ -594,6 +594,41 @@ __evas_gl_image_draw(Evas_GL_Image *im,
 		  x2 = dx + ((x2 * dw) / (double)im->w);
 		  y2 = dy + ((y2 * dh) / (double)im->h);
 		  glBindTexture(GL_TEXTURE_2D, im->texture.textures[i]);
+		  if ((im->bl == 0) && (im->br == 0) && (im->bt == 0) && (im->bb == 0))
+		    {
+#ifdef HAVE_GLU
+		       if (__evas_anti_alias)
+			 {
+			    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			 }
+		       else
+#else
+			  if (__evas_anti_alias)
+			 {
+			    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			 }
+		       else
+#endif
+			 {
+			    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			 }
+		    }
+		  else
+		    {
+		       if (__evas_anti_alias)
+			 {
+			    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			 }
+		       else
+			 {
+			    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			 }
+		    }
 		  glBegin(GL_QUADS);
 		  glTexCoord2d(dtx,  dty);  glVertex2d(x1, y1);
 		  glTexCoord2d(dtxx, dty);  glVertex2d(x2, y1);
