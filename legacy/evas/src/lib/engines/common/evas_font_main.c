@@ -125,7 +125,9 @@ evas_common_font_utf8_get_next(unsigned char *buf, int *iindex)
      { 
 	/* 3 byte */
 	if (((d2 = buf[index++]) & 0xc0) != 0x80 ||
-	   ((d3 = buf[index++]) & 0xc0) != 0x80)r = d & 0x0f; /* copy lower 4 */
+	   ((d3 = buf[index++]) & 0xc0) != 0x80)
+	  return 0;
+	r = d & 0x0f; /* copy lower 4 */
 	r <<= 6;
 	r |= (d2 & 0x3f);
 	r <<= 6;
