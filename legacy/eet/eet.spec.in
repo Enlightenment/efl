@@ -65,7 +65,6 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(-, root, root)
-%doc eet_docs.tar.gz
 %{_libdir}/*.so
 %{_libdir}/*.a
 %{_bindir}/eet-config
