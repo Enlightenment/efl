@@ -177,7 +177,7 @@ AC_SUBST(ttf_includes)
 AC_SUBST(ttf_libs)
 
 AC_OUTPUT([
-Makefile src/Makefile test/Makefile test/img/Makefile test/fnt/Makefile evas-config doc/Makefile
+Makefile src/Makefile test/Makefile test/img/Makefile test/fnt/Makefile evas-config doc/Makefile debian/Makefile
 ], [
 chmod +x evas-config
 ])
