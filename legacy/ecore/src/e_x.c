@@ -2329,36 +2329,36 @@ ecore_window_get_machine(Window win)
 char               *
 ecore_window_get_command(Window win)
 {
-  int                 cargc;
-  char              **cargv;
-
-  if (XGetCommand(disp, win, &cargv, &cargc))
-    {
-      if (cargc > 0)
-	{
-	  char               *s;
-	  int                 size, i;
-
-	  s = NULL;
-	  size = strlen(cargv[0]);
-	  REALLOC(s, char, size + 1);
-
-	  strcpy(s, cargv[0]);
-	  for (i = 1; i < cargc; i++)
-	    {
-	      size += strlen(cargv[i]);
-	      REALLOC(s, char, size + 2);
-
-	      strcat(s, " ");
-	      strcat(s, cargv[i]);
-	    }
-	  XFreeStringList(cargv);
-	  return s;
-	}
-      else
-	return NULL;
-    }
-  return NULL;
+   int                 cargc;
+   char              **cargv;
+   
+   if (XGetCommand(disp, win, &cargv, &cargc))
+     {
+	if (cargc > 0)
+	  {
+	     char               *s;
+	     int                 size, i;
+	     
+	     size = 0;
+	     for (i = 0; i < cargc; i++)
+	       size += strlen(cargv[i]);
+	     size += cargc - 1;
+	     s = NEW(char, size + 1);
+	     s[0] = 0;
+	     
+	     strcpy(s, cargv[0]);
+	     for (i = 1; i < cargc; i++)
+	       {
+		  strcat(s, " ");
+		  strcat(s, cargv[i]);
+	       }
+	     XFreeStringList(cargv);
+	     return s;
+	  }
+	else
+	  return NULL;
+     }
+   return NULL;
 }
 
 char               *
