@@ -41,5 +41,5 @@ edje_private.h
 libedje_la_LIBADD       = -lm @EVAS_LIBS@ @ECORE_LIBS@ @EET_LIBS@ @EMBRYO_LIBS@ @fnmatch_libs@
 libedje_la_CPPFLAGS     =
 libedje_la_DEPENDENCIES = $(top_builddir)/config.h
-libedje_la_LDFLAGS      = $(LDFLAGS) -version-info 5:0:5
+libedje_la_LDFLAGS      = -version-info 5:0:5
 
