@@ -33,50 +33,43 @@ main(int argc, char **argv)
 	XMapWindow(d, win);
      }
      {
-	int a = -4096;
-	Evas_GL_Image *i[10], *bg;
+	int a = 0;
+	Evas_GL_Image *i[4], *bg, *l;
 	
-	bg = __evas_gl_image_new_from_file(d, "/usr/share/pixmaps/backgrounds/Propaganda/Vol6/8a.jpg");
-	i[0] = __evas_gl_image_new_from_file(d, "/usr/share/pixmaps/gnome-gmush.png");
-	i[1] = __evas_gl_image_new_from_file(d, "/usr/share/pixmaps/gnome-term.png");
-	i[2] = __evas_gl_image_new_from_file(d, "/usr/share/pixmaps/gnome-word.png");
-	i[3] = __evas_gl_image_new_from_file(d, "/usr/share/pixmaps/gnome-help.png");
-	i[4] = __evas_gl_image_new_from_file(d, "/usr/share/pixmaps/gnome-info.png");
-	i[5] = __evas_gl_image_new_from_file(d, "/usr/share/pixmaps/gnome-modem.png");
-	i[6] = __evas_gl_image_new_from_file(d, "/usr/share/pixmaps/gnome-money.png");
-	i[7] = __evas_gl_image_new_from_file(d, "/usr/share/pixmaps/gnome-mouse.png");
-	i[8] = __evas_gl_image_new_from_file(d, "/usr/share/pixmaps/gnome-stones.png");
-	i[9] = __evas_gl_image_new_from_file(d, "/usr/share/pixmaps/gnome-balsa2.png");
+	bg = __evas_gl_image_new_from_file(d, "img/sky001.png");
+	i[0] = __evas_gl_image_new_from_file(d, "img/fog1001.png");
+	i[1] = __evas_gl_image_new_from_file(d, "img/fog2001.png");
+	i[2] = __evas_gl_image_new_from_file(d, "img/fog3001.png");
+	i[3] = __evas_gl_image_new_from_file(d, "img/fog4001.png");
+	l = __evas_gl_image_new_from_file(d, "img/logo001.png");
 	for(;;)
 	  {
-	     int x, y, j;
+	     int x, y, j, k;
 	     
-	     for (y = 0; y < 600; y += bg->h)
+	     __evas_gl_render_to_window(bg, d, win, 800, 600,
+					0, 0, bg->w, bg->h,
+					0, 0, 800, 600);
+	     for (k = 0; k < 6; k++)
 	       {
-		  for (x = 0; x < 800; x += bg->w)
-		     __evas_gl_render_to_window(bg, d, win, 800, 600,
-						0, 0, bg->w, bg->h,
-						x, y, bg->w, bg->h);
+		  int xx, yy;
+		  
+		  j = k % 4;
+		  xx = (((k + 1) * a) / 2) % 800;
+		  yy = 0;
+		  if (k == 0)
+		     __evas_gl_render_to_window(l, d, win, 800, 600,
+						0, 0, l->w, l->h,
+						(800 - l->w) / 2, (600 - l->h) /2, l->w, l->h);
+		  __evas_gl_render_to_window(i[j], d, win, 800, 600,
+					     0, 0, i[j]->w, i[j]->h,
+					     xx, yy, 800, 600);
+		  __evas_gl_render_to_window(i[j], d, win, 800, 600,
+					     0, 0, i[j]->w, i[j]->h,
+					     xx - 800, yy, 800, 600);
 	       }
-	     for (j = 0, y = 0; y < 128; y++)
-	       {
-		  for (x = 0; x < 128; x++, j++)
-		    {
-		       int xx, yy;
-		       
-		       xx = (x * 64) + a;
-		       yy = (y * 64) + a;
-		       if ((xx > -64) && (xx < 800) && (yy > -64) && (yy < 600))
-		       __evas_gl_render_to_window(i[j], d, win, 800, 600,
-						  0, 0, i[j]->w, i[j]->h,
-						  xx, yy, i[j]->w, i[j]->h);
-		       if (j == 9) j = -1;
-		    }
-	       }
-/*	     __evas_sync(d);*/
 	     __evas_flush_draw(d, win);
 	     a++;
-	     if (a == 0) a = -4096;
+	     if (a == (800 * 4)) a = 0;
 	  }
      }
 }
