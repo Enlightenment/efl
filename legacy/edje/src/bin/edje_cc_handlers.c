@@ -844,7 +844,15 @@ st_collections_group_parts_part_description_inherit(void)
    ed->image.tween_list = NULL;
 
    for (l = parent->image.tween_list; l; l = l->next)
-     ed->image.tween_list = evas_list_append(ed->image.tween_list, l->data);
+     {
+	Edje_Part_Image_Id *iid, *iid_new;
+	
+	iid = l->data;
+	iid_new = mem_alloc(SZ(Edje_Part_Image_Id));
+	ed->image.tween_list = evas_list_append(ed->image.tween_list, iid_new);
+	data_queue_image_slave_lookup(&(iid->id), &(iid_new->id));
+	ed->image.tween_list = evas_list_append(ed->image.tween_list, iid_new);
+     }
 
 #define STRDUP(x) x ? strdup(x) : NULL
 
@@ -852,8 +860,10 @@ st_collections_group_parts_part_description_inherit(void)
    ed->text.text = STRDUP(ed->text.text);
    ed->text.text_class = STRDUP(ed->text.text_class);
    ed->text.font = STRDUP(ed->text.font);
-
 #undef STRDUP
+
+   data_queue_part_slave_lookup(&(parent->text.id_source), &(ed->text.id_source));
+   data_queue_part_slave_lookup(&(parent->text.id_text_source), &(ed->text.id_text_source));
 }
 
 static void
