@@ -171,6 +171,20 @@ AC_ARG_ENABLE(fb, [  --enable-fb                     enable the FB rendering bac
 	]
 )
 
+AC_MSG_CHECKING(whether buffer backend is to be built)
+
+AC_ARG_ENABLE(fb, [  --enable-buffer                 enable the Buffer rendering backend], [
+	   AC_MSG_RESULT(yes)
+	   AM_CONDITIONAL(BUILD_ENGINE_BUFFER, true)
+	   AC_DEFINE(BUILD_ENGINE_BUFFER)
+	   ENGINE_BUFFER_PRG="evas_buffer_test"
+	], [
+	   AC_MSG_RESULT(no)
+	   AM_CONDITIONAL(BUILD_ENGINE_BUFFER, false)
+	   ENGINE_BUFFER_PRG=""
+	]
+)
+
 AC_MSG_CHECKING(whether software qtopia backend is to be built)
 
 AC_ARG_ENABLE(software-qtopia, [  --enable-software-qtopia     enable the Software Qtopia rendering backend], [
@@ -573,6 +587,7 @@ AC_SUBST(edb_libs)
 AC_SUBST(ENGINE_SOFTWARE_X11_PRG)
 AC_SUBST(ENGINE_DIRECTFB_PRG)
 AC_SUBST(ENGINE_FB_PRG)
+AC_SUBST(ENGINE_BUFFER_PRG)
 AC_SUBST(ENGINE_SOFTWARE_QTOPIA_PRG)
 AC_SUBST(ENGINE_GL_X11_PRG)
 
@@ -589,6 +604,7 @@ src/lib/engines/Makefile
 src/lib/engines/common/Makefile
 src/lib/engines/software_x11/Makefile
 src/lib/engines/fb/Makefile
+src/lib/engines/buffer/Makefile
 src/lib/engines/software_win32_gdi/Makefile
 src/lib/engines/software_qtopia/Makefile
 src/lib/engines/directfb/Makefile

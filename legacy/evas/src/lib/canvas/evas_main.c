@@ -9,6 +9,9 @@
 #ifdef BUILD_ENGINE_FB
 #include "evas_engine_api_fb.h"
 #endif
+#ifdef BUILD_ENGINE_BUFFER
+#include "evas_engine_api_buffer.h"
+#endif
 #ifdef BUILD_ENGINE_SOFTWARE_WIN32_GDI
 #include "evas_engine_api_software_win32_gdi.h"
 #endif
@@ -169,6 +172,11 @@ evas_output_method_set(Evas *e, int render_method)
 #ifdef BUILD_ENGINE_FB
    if (e->output.render_method == RENDER_METHOD_FB)
      e->engine.func = &evas_engine_fb_func;
+   else
+#endif
+#ifdef BUILD_ENGINE_BUFFER
+   if (e->output.render_method == RENDER_METHOD_BUFFER)
+     e->engine.func = &evas_engine_buffer_func;
    else
 #endif
 #ifdef BUILD_ENGINE_SOFTWARE_WIN32_GDI
@@ -647,10 +655,13 @@ evas_render_method_lookup(const char *name)
    if (!strcmp(name, "gl_x11")) return RENDER_METHOD_GL_X11;
 #endif
 #ifdef BUILD_ENGINE_DIRECTFB   
-   if (!strcmp(name, "directfb"))     return RENDER_METHOD_DIRECTFB;
+   if (!strcmp(name, "directfb")) return RENDER_METHOD_DIRECTFB;
 #endif
 #ifdef BUILD_ENGINE_FB   
-   if (!strcmp(name, "fb"))           return RENDER_METHOD_FB;
+   if (!strcmp(name, "fb")) return RENDER_METHOD_FB;
+#endif
+#ifdef BUILD_ENGINE_BUFFER   
+   if (!strcmp(name, "buffer")) return RENDER_METHOD_BUFFER;
 #endif
 #ifdef BUILD_ENGINE_SOFTWARE_WIN32_GDI
    if (!strcmp(name, "software_win32_gdi")) return RENDER_METHOD_SOFTWARE_WIN32_GDI;
@@ -700,17 +711,20 @@ evas_render_method_list(void)
 {
    Evas_List *methods = NULL;
    
-#ifdef BUILD_ENGINE_SOFTWARE_X11   
+#ifdef BUILD_ENGINE_SOFTWARE_X11
    methods = evas_list_append(methods, strdup("software_x11"));
 #endif   
-#ifdef BUILD_ENGINE_GL_X11   
+#ifdef BUILD_ENGINE_GL_X11
    methods = evas_list_append(methods, strdup("gl_x11"));
 #endif   
-#ifdef BUILD_ENGINE_DIRECTFB   
+#ifdef BUILD_ENGINE_DIRECTFB
    methods = evas_list_append(methods, strdup("directfb"));
 #endif   
-#ifdef BUILD_ENGINE_FB   
+#ifdef BUILD_ENGINE_FB
    methods = evas_list_append(methods, strdup("fb"));
+#endif
+#ifdef BUILD_ENGINE_BUFFER
+   methods = evas_list_append(methods, strdup("buffer"));
 #endif
 #ifdef BBUILD_ENGINE_SOFTWARE_WIN32_GDI
    methods = evas_list_append(methods, strdup("software_win32_gdi"));

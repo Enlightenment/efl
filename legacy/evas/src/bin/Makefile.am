@@ -8,6 +8,7 @@ bin_PROGRAMS = \
 @ENGINE_SOFTWARE_X11_PRG@ \
 @ENGINE_DIRECTFB_PRG@ \
 @ENGINE_FB_PRG@ \
+@ENGINE_BUFFER_PRG@ \
 @ENGINE_SOFTWARE_QTOPIA_PRG@ \
 @ENGINE_GL_X11_PRG@
 
@@ -18,6 +19,7 @@ evas_software_x11_perf_load \
 evas_directfb_test \
 evas_directfb_window \
 evas_fb_test \
+evas_buffer_test \
 evas_software_qtopia_test \
 evas_gl_x11_test
 
@@ -58,6 +60,12 @@ evas_fb_test_LDADD = $(top_builddir)/src/lib/libevas.la -lm
 evas_fb_test_LDFLAGS = $(LDFLAGS)
 evas_fb_test_CFLAGS = $(CFLAGS)
 evas_fb_test_DEPENDENCIES = $(top_builddir)/src/lib/libevas.la
+
+evas_buffer_test_SOURCES = evas_test_main.h evas_test_main.c evas_buffer_main.c
+evas_buffer_test_LDADD = $(top_builddir)/src/lib/libevas.la -lm
+evas_buffer_test_LDFLAGS = $(LDFLAGS)
+evas_buffer_test_CFLAGS = $(CFLAGS)
+evas_buffer_test_DEPENDENCIES = $(top_builddir)/src/lib/libevas.la
 
 if BUILD_ENGINE_SOFTWARE_QTOPIA
 moc_evas_software_qtopia_main.cpp: evas_software_qtopia_main.h

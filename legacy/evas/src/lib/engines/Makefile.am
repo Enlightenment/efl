@@ -4,6 +4,7 @@ SUBDIRS = \
 common \
 software_x11 \
 fb \
+buffer \
 software_win32_gdi \
 software_qtopia \
 directfb \

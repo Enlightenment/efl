@@ -20,6 +20,7 @@ EXTRA_DIST = \
 Evas_Engine_Software_X11.h \
 Evas_Engine_DirectFB.h \
 Evas_Engine_FB.h \
+Evas_Engine_Buffer.h \
 Evas_Engine_Software_Win32_GDI.h \
 Evas_Engine_Software_Qtopia.h \
 Evas_Engine_GL_X11.h
@@ -48,6 +49,14 @@ ENGINE_FB =
 ENGINE_FB_INC =
 endif
 
+if BUILD_ENGINE_BUFFER
+ENGINE_BUFFER = engines/buffer/libevas_engine_buffer.la
+ENGINE_BUFFER_INC = Evas_Engine_Buffer.h
+else
+ENGINE_BUFFER =
+ENGINE_BUFFER_INC =
+endif
+
 if BUILD_ENGINE_SOFTWARE_QTOPIA
 ENGINE_SOFTWARE_QTOPIA = engines/software_qtopia/libevas_engine_software_qtopia.la
 ENGINE_SOFTWARE_QTOPIA_INC = Evas_Engine_Software_Qtopia.h
@@ -69,6 +78,7 @@ Evas.h \
 $(ENGINE_SOFTWARE_X11_INC) \
 $(ENGINE_DIRECTFB_INC) \
 $(ENGINE_FB_INC) \
+$(ENGINE_BUFFER_INC) \
 $(ENGINE_SOFTWARE_QTOPIA_INC) \
 $(ENGINE_GL_X11_INC)
 
@@ -85,6 +95,7 @@ libevas_la_LIBADD       = $(LDFLAGS) \
 			  $(ENGINE_SOFTWARE_X11) \
 			  $(ENGINE_DIRECTFB) \
 			  $(ENGINE_FB) \
+			  $(ENGINE_BUFFER) \
 			  $(ENGINE_SOFTWARE_QTOPIA) \
 			  $(ENGINE_GL_X11)
 			  
@@ -98,6 +109,7 @@ libevas_la_DEPENDENCIES = \
 			  $(ENGINE_SOFTWARE_X11) \
 			  $(ENGINE_DIRECTFB) \
 			  $(ENGINE_FB) \
+			  $(ENGINE_BUFFER) \
 			  $(ENGINE_SOFTWARE_QTOPIA) \
 			  $(ENGINE_GL_X11)
 
