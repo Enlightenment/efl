@@ -1,0 +1,3 @@
+usr/lib/lib*.so.*
+usr/share/ecore/data/fonts/*.ttf
+usr/share/ecore/data/pointers/*.png

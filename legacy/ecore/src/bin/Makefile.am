@@ -1,0 +1,112 @@
+## Process this file with automake to produce Makefile.in
+
+if BUILD_ECORE_EVAS
+ECORE_EVAS_LIB = $(top_builddir)/src/lib/ecore_evas/libecore_evas.la
+else
+ECORE_EVAS_LIB =
+endif
+
+if BUILD_ECORE_X
+ECORE_X_LIB = $(top_builddir)/src/lib/ecore_x/libecore_x.la
+else
+ECORE_X_LIB =
+endif
+
+if BUILD_ECORE_FB
+ECORE_FB_LIB = $(top_builddir)/src/lib/ecore_fb/libecore_fb.la
+else
+ECORE_FB_LIB =
+endif
+
+if BUILD_ECORE_JOB
+ECORE_JOB_LIB = $(top_builddir)/src/lib/ecore_job/libecore_job.la
+else
+ECORE_JOB_LIB =
+endif
+
+if BUILD_ECORE_CON
+ECORE_CON_LIB = $(top_builddir)/src/lib/ecore_con/libecore_con.la
+else
+ECORE_CON_LIB =
+endif
+
+if BUILD_ECORE_IPC
+ECORE_IPC_LIB = $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la
+else
+ECORE_IPC_LIB =
+endif
+
+INCLUDES = \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_evas \
+-I$(top_srcdir)/src/lib/ecore_x \
+-I$(top_srcdir)/src/lib/ecore_fb \
+-I$(top_srcdir)/src/lib/ecore_job \
+-I$(top_srcdir)/src/lib/ecore_con \
+-I$(top_srcdir)/src/lib/ecore_ipc \
+@evas_cflags@ \
+@x_cflags@
+
+bin_PROGRAMS = \
+ecore_test \
+ecore_evas_test
+
+ecore_test_SOURCES = \
+ecore_test.c
+
+ecore_test_LDADD = \
+$(top_builddir)/src/lib/ecore/libecore.la \
+$(ECORE_JOB_LIB) \
+$(ECORE_FB_LIB) \
+$(ECORE_X_LIB) \
+$(ECORE_EVAS_LIB) \
+$(ECORE_CON_LIB) \
+$(ECORE_IPC_LIB) \
+-lm
+
+ecore_test_LDFLAGS =
+
+ecore_test_CFLAGS = \
+$(CFLAGS) \
+$(INCLUDES)
+
+ecore_test_DEPENDENCIES = \
+$(top_builddir)/src/lib/ecore/libecore.la \
+$(ECORE_JOB_LIB) \
+$(ECORE_FB_LIB) \
+$(ECORE_X_LIB) \
+$(ECORE_EVAS_LIB) \
+$(ECORE_CON_LIB) \
+$(ECORE_IPC_LIB)
+
+ecore_evas_test_SOURCES = \
+ecore_evas_test.c \
+ecore_evas_test_app.c \
+ecore_evas_test_bg.c \
+ecore_evas_test_calibrate.c \
+ecore_evas_test.h
+
+ecore_evas_test_LDADD = \
+$(top_builddir)/src/lib/ecore/libecore.la \
+$(ECORE_JOB_LIB) \
+$(ECORE_FB_LIB) \
+$(ECORE_X_LIB) \
+$(ECORE_EVAS_LIB) \
+$(ECORE_CON_LIB) \
+$(ECORE_IPC_LIB) \
+-lm
+
+ecore_evas_test_LDFLAGS =
+
+ecore_evas_test_CFLAGS = \
+$(CFLAGS) \
+$(INCLUDES)
+
+ecore_evas_test_DEPENDENCIES = \
+$(top_builddir)/src/lib/ecore/libecore.la \
+$(ECORE_JOB_LIB) \
+$(ECORE_FB_LIB) \
+$(ECORE_X_LIB) \
+$(ECORE_EVAS_LIB) \
+$(ECORE_CON_LIB) \
+$(ECORE_IPC_LIB)

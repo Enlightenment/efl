@@ -1,0 +1,35 @@
+Source: ecore
+Section: libs
+Priority: optional
+Maintainer: Sytse Wielinga <s.b.wielinga@student.utwente.nl>
+Build-Depends: debhelper (>> 4.0.0)
+Standards-Version: 3.6.1.0
+
+Package: libecore1
+Architecture: any
+Section: libs
+Depends: ${shlibs:Depends}
+Description: Core abstraction layer for enlightenment DR 0.17
+ This is the core event abstraction layer and X abstraction layer that makes
+ doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
+ handlers fast, optimized, and convenient. It's a separate library so anyone
+ can make use of the work put into Ecore to make this job easy for
+ applications.
+ 
+Package: libecore1-dev
+Architecture: any
+Section: devel
+Architecture: any
+Depends: libecore1 (= ${Source-Version}), libc6-dev | libc-dev
+Provides: libecore-dev
+Conflicts: libecore-dev, libecore0-dev
+Description: libecore1 headers, static libraries and documentation
+ Headers, static libraries and documentation for the Ecore library.
+
+Package: ecore1-test
+Architecture: any
+Section: libs
+Depends: ${shlibs:Depends}
+Description: Test programs for libecore1
+ Programs for testing Ecore and demonstrating what it can do.
+

@@ -1,0 +1,51 @@
+## Process this file with automake to produce Makefile.in
+
+INCLUDES = \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/lib/ecore_job \
+@x_cflags@
+
+libecore_x_la_LDFLAGS = -version-info 1:0:0 \
+-L$(top_builddir)/src/lib/ecore/.libs \
+-L$(top_builddir)/src/lib/ecore_job/.libs
+
+if BUILD_ECORE_X
+
+lib_LTLIBRARIES = libecore_x.la
+include_HEADERS = \
+Ecore_X.h
+
+libecore_x_la_SOURCES = \
+ecore_x.c \
+ecore_x_error.c \
+ecore_x_events.c \
+ecore_x_window.c \
+ecore_x_window_prop.c \
+ecore_x_window_shape.c \
+ecore_x_pixmap.c \
+ecore_x_gc.c \
+ecore_x_private.h
+
+libecore_x_la_LIBADD = \
+$(top_builddir)/src/lib/ecore/libecore.la \
+$(top_builddir)/src/lib/ecore_job/libecore_job.la \
+@x_ldflags@ \
+@x_libs@
+
+libecore_x_la_DEPENDENCIES = \
+$(top_builddir)/src/lib/ecore/libecore.la \
+$(top_builddir)/src/lib/ecore_job/libecore_job.la
+
+endif
+
+EXTRA_DIST = \
+Ecore_X.h \
+ecore_x.c \
+ecore_x_error.c \
+ecore_x_events.c \
+ecore_x_window.c \
+ecore_x_window_prop.c \
+ecore_x_window_shape.c \
+ecore_x_pixmap.c \
+ecore_x_gc.c \
+ecore_x_private.h
