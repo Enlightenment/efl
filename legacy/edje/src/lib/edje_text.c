@@ -369,7 +369,7 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
     * FIXME: we might want to set a max string length somewhere...
     */
    extra = 1 + 3 + 3; /* terminator, leading and trailing ellipsis */
-   orig_len = MIN(orig_len, SIZE_MAX - extra);
+   orig_len = MIN(orig_len, 8192 - extra);
 
    if (!(buf = malloc(orig_len + extra)))
      return text;
