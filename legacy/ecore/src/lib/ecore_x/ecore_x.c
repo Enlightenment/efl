@@ -333,7 +333,7 @@ ecore_x_init(const char *name)
    _ecore_x_atom_net_wm_state_skip_taskbar   = XInternAtom(_ecore_x_disp, "_NET_WM_STATE_SKIP_TASKBAR", False);
    _ecore_x_atom_net_wm_state_skip_pager     = XInternAtom(_ecore_x_disp, "_NET_WM_STATE_SKIP_PAGER", False);
    _ecore_x_atom_net_wm_state_hidden         = XInternAtom(_ecore_x_disp, "_NET_WM_STATE_HIDDEN", False);
-   _ecore_x_atom_net_wm_state_fullscreen     = XInternAtom(_ecore_x_disp, "_NET_WM_FULLSCREEN", False);
+   _ecore_x_atom_net_wm_state_fullscreen     = XInternAtom(_ecore_x_disp, "_NET_WM_STATE_FULLSCREEN", False);
    _ecore_x_atom_net_wm_state_above          = XInternAtom(_ecore_x_disp, "_NET_WM_STATE_ABOVE", False);
    _ecore_x_atom_net_wm_state_below          = XInternAtom(_ecore_x_disp, "_NET_WM_STATE_BELOW", False);
 
