@@ -954,7 +954,6 @@ int
 eet_delete(Eet_File *ef, char *name)
 {
    int hash, node_size;
-   Eet_File_Node *node;
    int exists_already = 0;
    
    /* check to see its' an eet file pointer */   
