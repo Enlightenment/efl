@@ -13,4 +13,4 @@ SUBDIRS		     = src test doc
 
 bin_SCRIPTS = evas-config
 
-EXTRA_DIST = README AUTHORS COPYING
+EXTRA_DIST = README AUTHORS COPYING evas.spec

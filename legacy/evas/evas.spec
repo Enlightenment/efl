@@ -44,18 +44,12 @@ Evas development headers and libraries.
 %prep
 %setup -q
 
-#%patch1 -p1 -b .evas_test-fix
-
 %build
-./autogen.sh --prefix=%{prefix}
+./configure --prefix=%{prefix}
 make
 
 %install
 make prefix=$RPM_BUILD_ROOT%{prefix} install
-#cp -f test/evas_test $RPM_BUILD_ROOT%{prefix}/bin
-mkdir -p $RPM_BUILD_ROOT%{prefix}/share/evas
-cp -rf test/img $RPM_BUILD_ROOT%{prefix}/share/evas
-cp -rf test/fnt $RPM_BUILD_ROOT%{prefix}/share/evas
 
 %post
 /sbin/ldconfig
