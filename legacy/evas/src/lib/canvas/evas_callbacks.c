@@ -270,7 +270,6 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (
    MAGIC_CHECK_END();
    
    if (!func) return;
-   if (obj->smart.smart) return;
    
    fn = evas_mem_calloc(sizeof(Evas_Func_Node));
    if (!fn) return;
@@ -366,7 +365,6 @@ evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (
    MAGIC_CHECK_END();
    
    if (!func) return NULL;
-   if (obj->smart.smart) return NULL;
    
    switch (type)
      {
