@@ -3,28 +3,40 @@
 #include <Ecore_X.h>
 #include <Ecore_Txt.h>
 
-/* FIXME: Initialize! */
-static Ecore_X_Selection_Data selections[3];
-static Ecore_X_Selection_Data request_data[3];
-static Ecore_X_Selection_Converter *converters;
+static Ecore_X_Selection_Data selections[3] = {{0}};
+static Ecore_X_Selection_Data request_data[3] = {{0}};
+static Ecore_X_Selection_Converter *converters = NULL;
 
 static int _ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret);
 
 void
 _ecore_x_selection_data_initialize(void)
 {
-   memset(selections, 0, sizeof(selections));
-   memset(request_data, 0, sizeof(request_data));
-
    /* Initialize converters */
-   converters = NULL;
    ecore_x_selection_converter_atom_add(_ecore_x_atom_text, 
          _ecore_x_selection_converter_text);
    ecore_x_selection_converter_atom_add(_ecore_x_atom_compound_text,
          _ecore_x_selection_converter_text);
    ecore_x_selection_converter_atom_add(_ecore_x_atom_string,
          _ecore_x_selection_converter_text);
-   
+}
+
+void
+_ecore_x_selection_shutdown(void)
+{
+	Ecore_X_Selection_Converter *cnv = converters, *tmp;
+
+	if (!converters)
+		return;
+
+	/* free the selection converters */
+	while (cnv) {	
+		tmp = cnv->next;
+		free(cnv);
+		cnv = tmp;
+	}
+
+	converters = NULL;
 }
 
 static void

@@ -422,6 +422,7 @@ ecore_x_shutdown(void)
    _ecore_x_filter_handler = NULL;
    _ecore_x_disp = NULL;
    _ecore_x_event_handlers = NULL;
+   _ecore_x_selection_shutdown();
    if (_ecore_x_init_count < 0) _ecore_x_init_count = 0;
    return _ecore_x_init_count;
 }

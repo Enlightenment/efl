@@ -183,6 +183,7 @@ void _ecore_x_event_handle_mapping_notify(XEvent *xevent);
 void _ecore_x_event_handle_shape_change(XEvent *xevent);
 
 void _ecore_x_selection_data_initialize(void);
+void _ecore_x_selection_shutdown(void);
 Atom _ecore_x_selection_target_atom_get(char *target);
 char * _ecore_x_selection_target_get(Atom target);
 void _ecore_x_selection_request_data_set(Ecore_X_Selection_Data data);
