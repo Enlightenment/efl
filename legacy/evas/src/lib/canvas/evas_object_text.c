@@ -486,6 +486,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, double size)
 {
    Evas_Object_Text *o;
    int is, was;
+   int same_font = 0;
       
    if (!font) return;
    if (size <= 0) return;
@@ -496,8 +497,9 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, double size)
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
    return;
    MAGIC_CHECK_END();
-   if ((o->cur.font) && (font) && !strcmp(o->cur.font, font)) 
+   if ((o->cur.font) && (font) && (!strcmp(o->cur.font, font))) 
      {
+	same_font = 1;
 	if (size == o->cur.size) return;
      }
    was = evas_object_is_in_output_rect(obj,
@@ -530,7 +532,9 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, double size)
    if (o->cur.font) free(o->cur.font);
    if (font) o->cur.font = strdup(font);
    else o->cur.font = NULL;
-   o->prev.font = NULL;
+   if (!same_font)
+     o->prev.font = NULL;
+
    o->cur.size = size;
    if ((o->engine_data) && (o->cur.text))
      {
@@ -1284,7 +1288,14 @@ evas_object_text_render_pre(Evas_Object *obj)
      }
    if (o->changed)
      {
-	updates = evas_object_render_pre_prev_cur_add(updates, obj);	
+	if ((o->cur.size != o->prev.size) ||
+	    ((o->cur.font) && (o->prev.font) && (strcmp(o->cur.font, o->prev.font))) ||
+	    ((o->cur.font) && (!o->prev.font)) ||
+	    ((!o->cur.font) && (o->prev.font)))
+	  {
+	     updates = evas_object_render_pre_prev_cur_add(updates, obj);
+	     goto done;
+	  }
      }
    done:
    evas_object_render_pre_effect_updates(updates, obj, is_v, was_v);
