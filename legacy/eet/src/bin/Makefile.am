@@ -1,7 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-INCLUDES = \
-	-I../lib
+INCLUDES = -I$(top_srcdir)/src/lib
 
 bin_PROGRAMS = eet
 
