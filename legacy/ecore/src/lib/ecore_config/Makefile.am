@@ -1,7 +1,5 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS  = ipc
-
 INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_ipc
@@ -18,11 +16,12 @@ Ecore_Config.h
 libecore_config_la_SOURCES = \
 ecore_config.c \
 ipc_main.c \
+ipc_ecore.c \
 util.c \
 edb.c
 
 libecore_config_la_LIBADD = \
-$(top_builddir)/src/lib/ecore/libecore.la
+$(top_builddir)/src/lib/ecore/libecore.la -ldl
 
 libecore_config_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la
@@ -33,6 +32,7 @@ EXTRA_DIST = \
 Ecore_Config.h \
 ecore_config.c \
 ipc_main.c \
+ipc_ecore.c \
 ipc.h \
 util.c \
 util.h \

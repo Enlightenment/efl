@@ -538,7 +538,6 @@ src/lib/ecore_con/Makefile
 src/lib/ecore_ipc/Makefile
 src/lib/ecore_txt/Makefile
 src/lib/ecore_config/Makefile
-src/lib/ecore_config/ipc/Makefile
 debian/Makefile
 ], [
 chmod +x ecore-config

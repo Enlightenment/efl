@@ -9,6 +9,7 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <dirent.h>
+#include <limits.h>
 
 
 #include "ipc.h"
@@ -54,9 +55,9 @@ static int print_data(char *d,size_t l) {
     l=(d[1]<<8)|d[2];
     if(*d=='s') {
       f=d+3;
-      printf("  STR-%d: \"%s\"\n",l,f); }
+      printf("  STR-%ld: \"%s\"\n",l,f); }
     else
-      printf("  skipping chunk type '%c' {%d bytes}...\n",*d,l);
+      printf("  skipping chunk type '%c' {%ld bytes}...\n",*d,l);
     d+=3+l; }
   return ECORE_CONFIG_ERR_SUCC; }
 
@@ -104,7 +105,7 @@ int ex_ipc_init(ex_ipc_server_list **srv_list,char *pipe_name,connstate *cs) {
     sprintf(str,"%s/.ecore/%s/",p,pipe_name);
     snprintf(buf,PATH_MAX,str);
 
-    if(dir=opendir(buf)) {
+    if((dir=opendir(buf))) {
       connected=0;
       while ((socket=readdir(dir))) {
         if (!strcmp(socket->d_name, ".") || !strcmp(socket->d_name, "..") ||

@@ -38,10 +38,11 @@
 
 #ifdef ECORE_CONFIG_DEBUG
 #  define D(fmt,args...) do { if(DEBUG>=0) fprintf(stderr,fmt,## args); } while(0);
+#  define E(lvl,args...) do { if(DEBUG>=(lvl)) fprintf(stderr,## args); } while(0)
 #else
 #  define D(msg,args...)
+#  define E(lvl,args...) do { } while(0)
 #endif
-#define E(lvl,fmt,args...) do { if(DEBUG>=(lvl)) fprintf(stderr,fmt,## args); } while(0)
 
 
 /* structures */

@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <errno.h>
 #include <limits.h>
 #include <sys/types.h>
@@ -168,12 +169,12 @@ static int ipc_client_sent(void *data,int type,void *event) {
 
 
 
-int ipc_init(char *pipe_name, void **data) {
+static int ipc_init(char *pipe_name, void **data) {
   Ecore_Ipc_Server **server=(Ecore_Ipc_Server **)data;
   struct stat        st;
   char              *p;
   int                port=0;
-  char              *str;
+  char              *str = NULL;
 
   if(!server)
     return ECORE_CONFIG_ERR_FAIL;
@@ -209,14 +210,16 @@ int ipc_init(char *pipe_name, void **data) {
   ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_DEL, ipc_client_del, server);
   ecore_event_handler_add(ECORE_IPC_EVENT_CLIENT_DATA,ipc_client_sent,server);
 
-  sprintf(str,"IPC/eCore: Server is listening on %s.\n", pipe_name);
-  E(1,str);
+  if(str) {
+    sprintf(str,"IPC/eCore: Server is listening on %s.\n", pipe_name);
+    E(1,str);
+  }
 
   return ECORE_CONFIG_ERR_SUCC; }
 
 
 
-int ipc_exit(void **data) {
+static int ipc_exit(void **data) {
   int                ret=ECORE_CONFIG_ERR_SUCC;
   Ecore_Ipc_Server **server=(Ecore_Ipc_Server **)data;
 

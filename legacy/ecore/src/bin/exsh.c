@@ -110,7 +110,7 @@ int debug=99;
 int ex_ipc_server_con(void *data,int type,void *event) {
   connstate                  *cs=(connstate *)data;
   *cs=ONLINE;
-  E(1,"exsh: Connected .\n"); /*to %s.\n", pipe_name)); */
+  E(1,"exsh: Connected .\n", NULL); /*to %s.\n", pipe_name)); */
   return 1; }
 
 
@@ -119,7 +119,7 @@ int ex_ipc_server_dis(void *data,int type,void *event) {
   connstate                  *cs=(connstate *)data;
   *cs=OFFLINE;
   ecore_main_loop_quit();
-  E(1,"exsh: Disconnected.\n");
+  E(1,"exsh: Disconnected.\n", NULL);
   return 1; }
 
 
@@ -268,7 +268,7 @@ static char *clean(char *c) {
           p++;
       } while(*p&&*p!='\"');
       if(!*p) {
-        E(0,"unterminated string in input?\n");
+        E(0,"unterminated string in input?\n", NULL);
         *c='\0';
         return c; }
       else
@@ -531,7 +531,7 @@ reconnect:
       printf(IN);
       if((f=p=fgets(buf,MI,stdin))) {
 #endif
-        *q=strchr(p,'\n');
+        q=strchr(p,'\n');
         if(q)
           *q='\0';
         if(!strcasecmp(p,"exit")||!strcasecmp(p,"quit")) {

@@ -856,8 +856,8 @@ main(int argc, const char **argv)
    
 #ifdef BUILD_ECORE_X
    /* setup to test ecore_x module things */
-/*   if (!ecore_x_init(NULL)) return -1; */
-/*   setup_ecore_x_test(); */
+   if (!ecore_x_init(NULL)) return -1;
+   setup_ecore_x_test();
 #endif
 
 #ifdef BUILD_ECORE_EVAS

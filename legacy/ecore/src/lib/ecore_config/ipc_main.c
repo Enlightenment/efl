@@ -34,7 +34,7 @@ typedef struct _ipc {
 
 
 static ipc   *ipc_modules=NULL;
-static ulong  ipc_timer=0L;
+static unsigned long  ipc_timer=0L;
 
 
 Ecore_Config_Server *srv2ecore_config_srv(void *srv) {

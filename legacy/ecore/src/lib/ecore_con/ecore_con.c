@@ -731,7 +731,7 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	if (svr->connecting)
 	  {
 	     int so_err;
-	     socklen_t size;
+	     int size;
 	     
 	     svr->connecting = 0;
 	     so_err = 0;

@@ -3,6 +3,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 int ecore_config_load(Ecore_Config_Bundle *b) {
   char* file = malloc(1024); /* ### fixme */

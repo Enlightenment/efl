@@ -3,7 +3,7 @@
 /*#include <glib.h>*/
 
 #include <sys/types.h>
-/*#include <sys/time.h>*/    /* gimetimeofday() */
+#include <sys/time.h>    /* gimetimeofday() */
 #include <stdio.h>       /* NULL */
 #include <stdlib.h>      /* malloc(), free() */
 #include <string.h>      /* str...() */
@@ -111,9 +111,9 @@ int dlmulti(char *name,char *file,int flag,void **libr,const char *fmt, ...) {
 
 
 
-ulong now(long delay) {
+unsigned long now(long delay) {
   static struct timeval tv;
-  ulong                 r;
+  unsigned long                 r;
   gettimeofday(&tv,NULL);
   r=tv.tv_sec*1000+(((float)tv.tv_usec)/1000.0)+delay;
   return r; }
@@ -239,7 +239,7 @@ void qsrt(void *a[],void *data,int lo,int hi,int (*compare)(const void *,const v
 
 
 
-ulong timeout_add(uint f,int(*fun)(void *),void *data) {
+unsigned long timeout_add(uint f,int(*fun)(void *),void *data) {
 #ifdef HAVE_GLIB2
   return g_timeout_add((guint)f,(GSourceFunc)fun,(gpointer)data);
 #endif
@@ -247,7 +247,7 @@ ulong timeout_add(uint f,int(*fun)(void *),void *data) {
 
 
 
-int timeout_remove(ulong handle) {
+int timeout_remove(unsigned long handle) {
 #ifdef HAVE_GLIB2
   return g_source_remove(handle)?ECORE_CONFIG_ERR_SUCC:ECORE_CONFIG_ERR_FAIL;
 #endif

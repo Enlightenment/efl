@@ -97,7 +97,7 @@ int ex_ipc_server_dis(void *data,int type,void *event) {
 
 int ex_ipc_server_sent(void *data,int type,void *event) {
   Ewl_Widget *row, *cell[2], *text[2];
-  char *label, *type, *start, *end;
+  char *label, *typename, *start, *end;
   Ecore_Ipc_Event_Server_Data *e;
   
   e=(Ecore_Ipc_Event_Server_Data *)event;
@@ -138,7 +138,7 @@ int ex_ipc_server_sent(void *data,int type,void *event) {
         start++;
       }
       start++; 
-      type = ++start;
+      typename = ++start;
       while (*start) {
         if (*start == '\n') {
           *start = '\0';
@@ -147,18 +147,18 @@ int ex_ipc_server_sent(void *data,int type,void *event) {
         start++;
       }
 
-      if (*label && *type) {
+      if (*label && *typename) {
         row = ewl_grid_new(2, 1);
         cell[0] = ewl_cell_new();
         cell[1] = ewl_cell_new();
         text[0] = ewl_text_new(label);
 
-        if (!strcmp(type, "string"))
+        if (!strcmp(typename, "string"))
           text[1] = ewl_entry_new("<a string>");
-        else if (!strcmp(type, "integer")) 
+        else if (!strcmp(typename, "integer")) 
           text[1] = ewl_spinner_new();
         else 
-          text[1] = ewl_text_new(type);
+          text[1] = ewl_text_new(typename);
         ewl_object_set_minimum_h(EWL_OBJECT(text[1]), 12);
 
         ewl_container_append_child(EWL_CONTAINER(cell[0]), text[0]);
@@ -250,7 +250,7 @@ static int get_token(char **beg,char **end,int tol) {
 
 
 
-static int handle_any(Ecore_Ipc_Server **server,call *cp,char *line) {
+static int handle_any(ex_ipc_server_list **server,call *cp,char *line) {
   long  serial=-1;
   int   ret,pars=0,l=0;
   char *b=line,*e,*file=NULL,*k=NULL,*v=NULL,*m=NULL;
@@ -360,12 +360,10 @@ void  __destroy_main_window(Ewl_Widget *main_win, void *ex_data, void *user_data
         
 
 int main(int argc,char **argv) {
-  Ecore_Ipc_Server *server=NULL;
-  int               ret=ECORE_CONFIG_ERR_SUCC,cc=0;
-  connstate         cs=OFFLINE;
-  char             *p,*f=NULL;
-  char             *pipe_name=NULL;
-  char              buf[MI];
+  ex_ipc_server_list *server=NULL;
+  int                ret=ECORE_CONFIG_ERR_SUCC,cc=0;
+  connstate          cs=OFFLINE;
+  char              *pipe_name=NULL;
 
   if (argc <= 1  || (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0))  {
     print_usage();
