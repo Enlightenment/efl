@@ -44,10 +44,10 @@ evas_common_cpu_mmx2_test(void)
 void
 evas_common_cpu_sse_test(void)
 {
-#ifdef BUILD_SSE   
-   int blah;
+#ifdef BUILD_SSE 
+   int blah[2500];
    
-   prefetch(&blah);
+   prefetch(blah + 1200);
 #endif     
 }
 #endif /* __i386__ */
