@@ -703,7 +703,7 @@ evas_list_nth_list(Evas_List *list, int n)
    Evas_List *l;
 
    /* check for non-existing nodes */
-   if ((n < 0) || (n > list->count - 1) || (!list)) return NULL;
+   if ((!list) || (n < 0) || (n > list->count - 1)) return NULL;
 
    /* if the node is in the 2nd half of the list, search from the end
     * else, search from the beginning.
