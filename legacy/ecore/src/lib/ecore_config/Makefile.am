@@ -8,6 +8,10 @@ INCLUDES = \
 libecore_config_la_LDFLAGS = -version-info 1:0:0 \
 -L$(top_builddir)/src/lib/ecore/.libs
 
+ecore_config_ipc_ecore_la_LDFLAGS          = -no-undefined -module \
+-avoid-version -rdynamic -shared
+
+
 if BUILD_ECORE_CONFIG
 
 lib_LTLIBRARIES = libecore_config.la ecore_config_ipc_ecore.la
@@ -35,7 +39,6 @@ ecore_config_ipc_ecore_la_SOURCES          = ipc_ecore.c
 ecore_config_ipc_ecore_la_LIBADD           = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la
-ecore_config_ipc_ecore_la_LDFLAGS          = -no-undefined -module -avoid-version -rdynamic -shared
 
 
 endif
