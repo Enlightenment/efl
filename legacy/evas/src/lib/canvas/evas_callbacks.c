@@ -188,7 +188,9 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
    obj->callbacks->walking_list--;
    if (!obj->callbacks->walking_list)
      evas_object_event_callback_clear(obj);
-   if (obj->smart.parent)
+   if ((obj->smart.parent) &&
+       (type != EVAS_CALLBACK_FREE) &&
+       (type <= EVAS_CALLBACK_KEY_UP))
      evas_object_event_callback_call(obj->smart.parent, type, event_info);
 }
 
