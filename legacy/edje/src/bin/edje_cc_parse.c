@@ -237,11 +237,11 @@ next_token(char *p, char *end, char **new_p, int *delim)
 	while (*p)
 	  {
 	     if (*p == '"')
-	       strcpy(p, p + 1);
+	       memmove(p, p + 1, strlen(p));
 	     else if ((*p == '\\') && (*(p + 1) == '"'))
-	       strcpy(p, p + 1);
+	       memmove(p, p + 1, strlen(p));
 	     else if ((*p == '\\') && (*(p + 1) == '\\'))
-	       strcpy(p, p + 1);
+	       memmove(p, p + 1, strlen(p));
 	     else
 	       p++;
 	  }
