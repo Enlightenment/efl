@@ -579,7 +579,7 @@ test_setup(char *file, char *name)
    Evas_Object *o;
    Demo_Edje *de;
    char buf[1024];
-   double tw, th;
+   double tw, th, w, h;
    
    de = calloc(1, sizeof(Demo_Edje));
    edjes = evas_list_append(edjes, de);
@@ -661,9 +661,13 @@ test_setup(char *file, char *name)
    edje_object_signal_callback_add(o, "do_it", "the_source", cb, NULL);
    edje_object_signal_callback_add(o, "mouse,*", "logo", cb, NULL);
    evas_object_move(o, 10 + 10, 10 + 20);
-   evas_object_resize(o, 200, 240);
    evas_object_show(o);
    edje_object_size_min_get(o, &(de->minw), &(de->minh));
+   w = 200;
+   h = 240;
+   if (200 < de->minw) w = de->minw;
+   if (240 < de->minh) h = de->minh;
+   evas_object_resize(o, w, h);
    de->edje = o;
    
 /* test swallowing */

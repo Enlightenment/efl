@@ -27,8 +27,6 @@
  * 
  * more example edje files
  * 
- * edje test program needs to test all api calls and list edje collections
- * 
  * ? programs need to be able to cycle part states given a list of states
  * ? programs need to be able to set/get/add/sub and compare variables
  *   ie: 
