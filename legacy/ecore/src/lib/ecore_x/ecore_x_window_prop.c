@@ -965,7 +965,7 @@ ecore_x_window_prop_state_set(Ecore_X_Window win, Ecore_X_Window_State s)
    ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_state,
                                     XA_ATOM, 32, &old_data, &num);
    oldset = (Atom *) old_data;
-   newset = calloc(num + 2, sizeof(Atom));
+   newset = calloc(num + 1, sizeof(Atom));
    if (!newset) return;
    data = (unsigned char *) newset;
    
@@ -1057,7 +1057,7 @@ ecore_x_window_prop_state_unset(Ecore_X_Window win, Ecore_X_Window_State s)
    ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_state,
                                     XA_ATOM, 32, &old_data, &num);
    oldset = (Atom *) old_data;
-   newset = calloc(num, sizeof(Atom));
+   newset = calloc(num - 1, sizeof(Atom));
    data = (unsigned char *) newset;
    for (i = 0; i < num; ++i)
       if (oldset[i] != state)
