@@ -511,8 +511,7 @@ _edje_part_recalc_single(Edje *ed,
 
 		  if ((fnt->entry) && (!strcmp(fnt->entry, font)))
 		    {
-		       strcpy(buf, "fonts/");
-		       strcat(buf, font);
+		       snprintf(buf, sizeof(buf), "fonts/%s", font);
 		       font = buf;
 		       inlined_font = 1;
 		       break;
