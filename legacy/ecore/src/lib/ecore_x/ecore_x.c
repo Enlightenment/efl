@@ -483,6 +483,28 @@ ecore_x_init(const char *name)
    return _ecore_x_init_count;
 }
 
+static int
+_ecore_x_shutdown(int close_display)
+{
+   _ecore_x_init_count--;
+   if (_ecore_x_init_count > 0) return _ecore_x_init_count;
+   if (!_ecore_x_disp) return _ecore_x_init_count;
+   if (close_display)
+      XCloseDisplay(_ecore_x_disp);
+   else
+      close(ConnectionNumber(_ecore_x_disp));
+   free(_ecore_x_event_handlers);
+   ecore_main_fd_handler_del(_ecore_x_fd_handler_handle);
+   ecore_event_filter_del(_ecore_x_filter_handler);
+   _ecore_x_fd_handler_handle = NULL;
+   _ecore_x_filter_handler = NULL;
+   _ecore_x_disp = NULL;
+   _ecore_x_event_handlers = NULL;
+   _ecore_x_selection_shutdown();
+   if (_ecore_x_init_count < 0) _ecore_x_init_count = 0;
+   return _ecore_x_init_count;
+}
+
 /**
  * Shuts down the Ecore X library.
  *
@@ -496,20 +518,20 @@ ecore_x_init(const char *name)
 int
 ecore_x_shutdown(void)
 {
-   _ecore_x_init_count--;
-   if (_ecore_x_init_count > 0) return _ecore_x_init_count;
-   if (!_ecore_x_disp) return _ecore_x_init_count;
-   XCloseDisplay(_ecore_x_disp);
-   free(_ecore_x_event_handlers);
-   ecore_main_fd_handler_del(_ecore_x_fd_handler_handle);
-   ecore_event_filter_del(_ecore_x_filter_handler);
-   _ecore_x_fd_handler_handle = NULL;
-   _ecore_x_filter_handler = NULL;
-   _ecore_x_disp = NULL;
-   _ecore_x_event_handlers = NULL;
-   _ecore_x_selection_shutdown();
-   if (_ecore_x_init_count < 0) _ecore_x_init_count = 0;
-   return _ecore_x_init_count;
+   return _ecore_x_shutdown(1);
+}
+
+/**
+ * Shuts down the Ecore X library.
+ *
+ * As ecore_x_shutdown, except do not close Display, only connection.
+ *
+ * @ingroup Ecore_X_Init_Group
+ */
+int
+ecore_x_disconnect(void)
+{
+   return _ecore_x_shutdown(0);
 }
 
 /**

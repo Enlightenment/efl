@@ -718,6 +718,7 @@ typedef enum _Ecore_X_Window_Configure_Mask {
 
 int              ecore_x_init(const char *name);
 int              ecore_x_shutdown(void);       
+int              ecore_x_disconnect(void);       
 Ecore_X_Display *ecore_x_display_get(void);
 int              ecore_x_fd_get(void);
 void             ecore_x_double_click_time_set(double t);
