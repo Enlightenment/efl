@@ -244,6 +244,7 @@ To be documented...
 @todo Add external image lodaer modules (application proivdes path to file.so)
 @todo Define image load errors (and maybe have an error to string func)
 @todo Add ability to check image comments & disk format
+@todo Add immediate mode drawing commands to image objects
 @todo Add text styles (outline etc.)
 @todo Add font load query calls (so we know if a font load failed)
 @todo Add font listing calls

@@ -4,6 +4,8 @@
 
 static int evas_hash_gen(const char *key);
 
+static int _evas_hash_alloc_error = 0;
+
 static int
 evas_hash_gen(const char *key)
 {
@@ -23,22 +25,36 @@ evas_hash_add(Evas_Hash *hash, const char *key, void *data)
 {
    int hash_num;
    Evas_Hash_El *el;
-   
+
+   _evas_hash_alloc_error = 0;
    if (!hash)
      {
-	hash = malloc(sizeof(struct _Evas_Hash));
-	if (!hash) return NULL;
-	memset(hash, 0, sizeof(struct _Evas_Hash));
+	hash = calloc(1, sizeof(struct _Evas_Hash));
+	if (!hash)
+	  {
+	     _evas_hash_alloc_error = 1;
+	     return NULL;
+	  }
      }
    if (!(el = malloc(sizeof(struct _Evas_Hash_El))))
      {
         if (hash->population <= 0)
- 	   free(hash);
-	return NULL;
+	  {
+	     free(hash);
+	     hash = NULL;
+	  }
+	_evas_hash_alloc_error = 1;
+	return hash;
      };
    if (key) 
      {
         el->key = strdup(key);
+	if (!el->key)
+	  {
+	     free(key);
+	     _evas_hash_alloc_error = 1;
+	     return hash;
+	  }
         hash_num = evas_hash_gen(key);
      }
    else 
@@ -48,6 +64,13 @@ evas_hash_add(Evas_Hash *hash, const char *key, void *data)
      }
    el->data = data;
    hash->buckets[hash_num] = evas_object_list_prepend(hash->buckets[hash_num], el);
+   if (evas_list_alloc_error())
+     {
+	_evas_hash_alloc_error = 1;
+	free(el->key);
+	free(key);
+	return hash;
+     }
    hash->population++;
    return hash;
 }
@@ -88,7 +111,8 @@ evas_hash_find(Evas_Hash *hash, const char *key)
    int hash_num;
    Evas_Hash_El *el;
    Evas_Object_List *l;
-   
+
+   _evas_hash_alloc_error = 0;
    if (!hash) return NULL;
    hash_num = evas_hash_gen(key);
    for (l = hash->buckets[hash_num]; l; l = l->next)
@@ -101,6 +125,11 @@ evas_hash_find(Evas_Hash *hash, const char *key)
 	       {
 		  hash->buckets[hash_num] = evas_object_list_remove(hash->buckets[hash_num], el);
 		  hash->buckets[hash_num] = evas_object_list_prepend(hash->buckets[hash_num], el);
+		  if (evas_list_alloc_error())
+		    {
+		       _evas_hash_alloc_error = 1;
+		       return el->data;
+		    }
 	       }
 	     return el->data;
 	  }
@@ -158,4 +187,10 @@ evas_hash_foreach(Evas_Hash *hash, int (*func) (Evas_Hash *hash, const char *key
 	     l = next_l;
 	  }
      }
+}
+
+int
+evas_hash_alloc_error(void)
+{
+   return _evas_hash_alloc_error;
 }

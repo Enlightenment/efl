@@ -195,6 +195,7 @@ extern "C" {
    Evas_List        *evas_list_remove                  (Evas_List *list, void *data);
    Evas_List        *evas_list_remove_list             (Evas_List *list, Evas_List *remove_list);
    void             *evas_list_find                    (Evas_List *list, void *data);
+   Evas_List        *evas_list_find_list               (Evas_List *list, void *data);
    Evas_List        *evas_list_free                    (Evas_List *list);
    Evas_List        *evas_list_last                    (Evas_List *list);
    Evas_List        *evas_list_next                    (Evas_List *list);
@@ -202,7 +203,9 @@ extern "C" {
    void             *evas_list_data                    (Evas_List *list);
    int               evas_list_count                   (Evas_List *list);
    void             *evas_list_nth                     (Evas_List *list, int n);
+   Evas_List        *evas_list_nth_list                (Evas_List *list, int n);
    Evas_List        *evas_list_reverse                 (Evas_List *list);
+   int               evas_list_alloc_error             (void);
        
    /* FIXME: add:
     * api to add find, del members by data, size not just string and also
@@ -216,6 +219,7 @@ extern "C" {
    int               evas_hash_size                    (Evas_Hash *hash);
    void              evas_hash_free                    (Evas_Hash *hash);
    void              evas_hash_foreach                 (Evas_Hash *hash, int (*func) (Evas_Hash *hash, const char *key, void *data, void *fdata), void *fdata);
+   int               evas_hash_alloc_error             (void);
    
    Evas             *evas_new                          (void);
    void              evas_free                         (Evas *e);
