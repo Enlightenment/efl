@@ -13,6 +13,14 @@ data is encoded in a platform independant way and can be written and
 read by any architecture.
 
 ------------------------------------------------------------------------------
+COMPILING AND INSTALLING:
+
+  ./configure
+  make
+(as root unless youare installing in your users directories):
+  make install
+      
+------------------------------------------------------------------------------
 BUILDING PACKAGES:
 
 RPM: To build rpm packages:
