@@ -45,6 +45,8 @@ install: build
 
 	rm -rvf debian/$(package)/usr/share/evas/doc/
 	#mv debian/$(package)/usr/share/aclocal debian/$(package)-dev/usr/share/
+	$(INSTALL) -D debian/$(package)/@aclocaldir@/evas.m4 debian/$(package)-dev/usr/share/aclocal/evas.m4
+	rm -rf debian/$(package)/@aclocaldir@/
 	mv debian/$(package)/usr/share debian/evas-demo/usr
 
 	mv debian/$(package)/usr/include debian/$(package)-dev/usr
