@@ -18,7 +18,7 @@ install-data-local:
 
 dist-hook:
 	./gendoc; \
-	tar cvf evas_docs.tar doc; \
+	tar cvf evas_docs.tar doc/html doc/latex doc/man; \
 	rm -f evas_docs.tar.gz; \
 	gzip -9 evas_docs.tar; \
 	if test -d data; then \

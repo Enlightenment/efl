@@ -9,7 +9,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 
 dist-hook:
 	./gendoc; \
-	tar cvf eet_docs.tar doc; \
+	tar cvf eet_docs.tar doc/html doc/latex doc/man; \
 	rm -f eet_docs.tar.gz; \
 	gzip -9 eet_docs.tar;
 
