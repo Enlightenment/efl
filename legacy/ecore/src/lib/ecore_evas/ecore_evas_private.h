@@ -25,6 +25,9 @@
 #ifdef BUILD_ECORE_EVAS_FB
 #include <Evas_Engine_FB.h>
 #endif
+#ifdef BUILD_ECORE_EVAS_BUFFER
+#include <Evas_Engine_Buffer.h>
+#endif
 
 typedef struct _Ecore_Evas             Ecore_Evas;
 typedef struct _Ecore_Evas_Engine      Ecore_Evas_Engine;
@@ -93,6 +96,12 @@ struct _Ecore_Evas_Engine
       int real_w;
       int real_h;
    } fb;
+#endif
+#ifdef BUILD_ECORE_EVAS_BUFFER
+   struct {
+      void *pixels;
+      Evas_Object *image;
+   } buffer;
 #endif
 };
   
@@ -165,6 +174,7 @@ struct _Ecore_Evas
    } func;
    
    Ecore_Evas_Engine engine;
+   Evas_List *sub_ecore_evas;
 };
 
 #ifdef BUILD_ECORE_X
@@ -172,6 +182,10 @@ int _ecore_evas_x_shutdown(void);
 #endif
 #ifdef BUILD_ECORE_EVAS_FB
 int _ecore_evas_fb_shutdown(void);
+#endif
+#ifdef BUILD_ECORE_EVAS_BUFFER
+int _ecore_evas_buffer_shutdown(void);
+void _ecore_evas_buffer_render(Ecore_Evas *ee);
 #endif
 
 void _ecore_evas_fps_debug_init(void);

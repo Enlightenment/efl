@@ -28,14 +28,14 @@ static void calibrate_cb_move(void *data, Evas *e, Evas_Object *obj, void *event
 void
 calibrate_pos_set(int pos)
 {
-   Evas_Coord w, h;
-   int x, y, ow, oh;
+   Evas_Coord w, h, ow, oh;
+   int x, y;
    
    cal_pos = pos;
    evas_object_geometry_get(o_crosshair, NULL, NULL, &w, &h);
    x = cal_coords[(cal_pos * 2) + 0];
    y = cal_coords[(cal_pos * 2) + 1];
-   evas_output_size_get(evas, &ow, &oh);
+   evas_output_viewport_get(evas, NULL, NULL, &ow, &oh);
    if (x < 0) x = ow + x - 1;
    if (y < 0) y = oh + y - 1;
    cal_coords[(cal_pos * 2) + 0] = x;
@@ -165,6 +165,7 @@ calibrate_cb_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
    
    ev = event_info;
    
+   evas_object_move(o_crosshair, ev->output.x - 15, ev->output.y - 15);
    tmp_input_count = 0;   
    tmp_input[((tmp_input_count & 0x7) * 2) + 0] = ev->output.x;
    tmp_input[((tmp_input_count & 0x7) * 2) + 1] = ev->output.y;

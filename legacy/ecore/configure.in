@@ -509,6 +509,48 @@ fi
 
 AC_SUBST(BUILD_ECORE_EVAS_FB)
 
+have_ecore_evas_buffer="no";
+
+AC_MSG_CHECKING(whether ecore_evas buffer support is to be built)
+
+AC_ARG_ENABLE(ecore-evas-buffer, 
+[  --disable-ecore-evas-buffer          disable buffer in the ecore_evas module], [
+  if [ test "$enableval" = "yes" ]; then  
+    AC_MSG_RESULT(yes)
+    have_ecore_evas_buffer="yes"
+  else
+    AC_MSG_RESULT(no)
+  fi
+], [
+  AC_MSG_RESULT(yes)
+  have_ecore_evas_buffer="yes"
+]
+)
+
+if test "x$have_ecore_evas_buffer" = "xyes"; then
+  AC_CHECK_HEADER(Evas_Engine_Buffer.h,
+    [
+      AM_CONDITIONAL(BUILD_ECORE_EVAS_BUFFER, true)
+      AC_DEFINE(BUILD_ECORE_EVAS_BUFFER, 1, [Support for Buffers in Ecore_Evas])
+    ], [
+      AM_CONDITIONAL(BUILD_ECORE_EVAS_BUFFER, false)
+      have_ecore_evas_buffer="no"
+    ], [
+      #include <Evas.h>
+    ]
+  )
+else
+  AM_CONDITIONAL(BUILD_ECORE_EVAS_BUFFER, false)
+fi
+
+if test "x$have_ecore_evas_buffer" = "xyes"; then
+	BUILD_ECORE_EVAS_BUFFER=1
+else
+	BUILD_ECORE_EVAS_BUFFER=0
+fi
+
+AC_SUBST(BUILD_ECORE_EVAS_BUFFER)
+
 AC_MSG_CHECKING(whether ecore_con module is to be built)
 
 have_ecore_con="no";
@@ -725,6 +767,7 @@ echo "  Ecore_FB................: $have_ecore_fb"
 echo "  Ecore_Evas..............: $have_ecore_evas"
 echo "  Ecore_Evas GL Support...: $have_ecore_evas_gl"
 echo "  Ecore_Evas FB Support...: $have_ecore_evas_fb"
+echo "  Ecore_Buffer............: $have_ecore_evas_buffer"
 echo "  Ecore_Ipc...............: $have_ecore_ipc (OpenSSL: $use_openssl)"
 echo "  Ecore_Config............: $have_ecore_config"
 echo

@@ -40,6 +40,13 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 	return 0;
 #endif	
 	break;
+      case ECORE_EVAS_ENGINE_SOFTWARE_BUFFER:
+#ifdef BUILD_ECORE_EVAS_BUFFER
+	return 1;
+#else
+	return 0;
+#endif	
+	break;
       default:
 	return 0;
 	break;
@@ -79,6 +86,9 @@ ecore_evas_shutdown(void)
 #ifdef BUILD_ECORE_EVAS_FB
 	while (_ecore_evas_fb_shutdown());
 #endif
+#ifdef BUILD_ECORE_EVAS_BUFFER
+	while (_ecore_evas_buffer_shutdown());
+#endif
 	evas_shutdown(); 
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
@@ -101,6 +111,10 @@ ecore_evas_free(Ecore_Evas *ee)
 	return;
      }
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_NONE);
+   while (ee->sub_ecore_evas)
+     {
+	ecore_evas_free(ee->sub_ecore_evas->data);
+     }
    if (ee->data) evas_hash_free(ee->data);
    if (ee->driver) free(ee->driver);
    if (ee->name) free(ee->name);

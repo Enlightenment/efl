@@ -52,7 +52,8 @@ typedef enum
 {
    ECORE_EVAS_ENGINE_SOFTWARE_X11,
    ECORE_EVAS_ENGINE_SOFTWARE_FB,
-   ECORE_EVAS_ENGINE_GL_X11
+   ECORE_EVAS_ENGINE_GL_X11,
+   ECORE_EVAS_ENGINE_SOFTWARE_BUFFER
 } Ecore_Evas_Engine_Type;
 
 #ifndef _ECORE_X_H
@@ -86,6 +87,11 @@ EAPI void            ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee, int on)
 EAPI int             ecore_evas_gl_x11_direct_resize_get(Ecore_Evas *ee);
 
 EAPI Ecore_Evas     *ecore_evas_fb_new(char *disp_name, int rotation, int w, int h);
+
+EAPI Ecore_Evas     *ecore_evas_buffer_new(int w, int h);
+EAPI int            *ecore_evas_buffer_pixels_get(Ecore_Evas *ee);
+       
+EAPI Evas_Object    *ecore_evas_object_image_new(Ecore_Evas *ee_target);
 
 /* generic manipulation calls */
 EAPI void        ecore_evas_free(Ecore_Evas *ee);

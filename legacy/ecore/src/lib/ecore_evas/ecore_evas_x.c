@@ -451,9 +451,23 @@ _ecore_evas_idle_enter(void *data)
    for (l = (Ecore_Oldlist *)ecore_evases; l; l = l->next)
      {
 	Ecore_Evas *ee;
+#ifdef BUILD_ECORE_EVAS_BUFFER
+	Evas_List *ll;
+#endif
 	
 	ee = (Ecore_Evas *)l;
 	if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
+#ifdef BUILD_ECORE_EVAS_BUFFER
+	for (ll = ee->sub_ecore_evas; ll; ll = ll->next)
+	  {
+	     Ecore_Evas *ee2;
+	     
+	     ee2 = ll->data;
+	     if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
+	     _ecore_evas_buffer_render(ee2);
+	     if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
+	  }
+#endif	
 	if (ee->prop.avoid_damage)
 	  {
 	     Evas_List *updates, *l;

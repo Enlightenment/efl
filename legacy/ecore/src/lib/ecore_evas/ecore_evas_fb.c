@@ -186,7 +186,22 @@ _ecore_evas_idle_enter(void *data)
 	ee = (Ecore_Evas *)l;
 	if (ee->visible)
 	  {
+#ifdef BUILD_ECORE_EVAS_BUFFER
+	     Evas_List *ll;
+#endif
+	     
 	     if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
+#ifdef BUILD_ECORE_EVAS_BUFFER
+	     for (ll = ee->sub_ecore_evas; ll; ll = ll->next)
+	       {
+		  Ecore_Evas *ee2;
+		  
+		  ee2 = ll->data;
+		  if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
+		  _ecore_evas_buffer_render(ee2);
+		  if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
+	       }
+#endif	     
 	     evas_render(ee->evas);
 	     if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
 	  }
@@ -481,8 +496,8 @@ ecore_evas_fb_new(char *disp_name, int rotation, int w, int h)
    ee->w = w;
    ee->h = h;
 
-   ee->prop.max.w = 240;
-   ee->prop.max.h = 320;
+   ee->prop.max.w = 0;
+   ee->prop.max.h = 0;
    ee->prop.layer = 0;
    ee->prop.focused = 1;
    ee->prop.borderless = 1;
