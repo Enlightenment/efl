@@ -71,6 +71,7 @@ evas_common_cpu_init(void)
 #ifdef __i386__
    cpu_feature_mask |= CPU_FEATURE_MMX * 
      evas_common_cpu_feature_test(evas_common_cpu_mmx_test);
+   cpu_feature_mask |= CPU_FEATURE_SSE * 
      evas_common_cpu_feature_test(evas_common_cpu_sse_test);
 #endif /* __i386__ */
 #ifdef __POWERPC__
