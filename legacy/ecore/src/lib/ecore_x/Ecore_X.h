@@ -840,7 +840,9 @@ EAPI Ecore_X_Window   ecore_x_window_at_xy_get(int x, int y);
 EAPI Ecore_X_Window   ecore_x_window_parent_get(Ecore_X_Window win);
 
 EAPI void             ecore_x_window_background_color_set(Ecore_X_Window win,
-                                                     unsigned long color);
+                                                     unsigned short r,
+						     unsigned short g,
+						     unsigned short b);
 EAPI void             ecore_x_window_gravity_set(Ecore_X_Window win,
 					    Ecore_X_Gravity grav);
 EAPI void             ecore_x_window_pixel_gravity_set(Ecore_X_Window win,

@@ -713,11 +713,21 @@ ecore_x_window_parent_get(Ecore_X_Window win)
  * @param color The color to set to (i.e. 0xff0000)
  */
 void
-ecore_x_window_background_color_set(Ecore_X_Window win, unsigned long color)
+ecore_x_window_background_color_set(Ecore_X_Window win, unsigned short r,
+				    unsigned short g, unsigned short b)
 {
    XSetWindowAttributes attr;
+   XColor col;
 
-   attr.background_pixel      = color;
+   col.red = r;
+   col.green = g;
+   col.blue = b;
+   
+   XAllocColor(_ecore_x_disp, DefaultColormap(_ecore_x_disp,
+					      DefaultScreen(_ecore_x_disp)),
+	       &col);
+   
+   attr.background_pixel      = col.pixel;
    XChangeWindowAttributes(_ecore_x_disp, win, CWBackPixel, &attr);
 }
 
