@@ -6,6 +6,8 @@
 
 static void  new_object(void);
 static void  new_statement(void);
+static char *perform_math (char *input);
+static void  preprocess_params (void);
 static int   isdelim(char c);
 static char *next_token(char *p, char *end, char **new_p, int *delim);
 static char *stack_id(void);
@@ -118,6 +120,50 @@ new_statement(void)
    free(id);
 }
 
+static void
+preprocess_params (void)
+{
+   Evas_List *l;
+
+   /* a formula will never be spread across multiple params */
+   for (l = params; l; l = l->next) {
+	char *data = l->data;
+	char *replace = NULL;
+
+	/* if the token begins with a opening parens, the user wants us
+	 * to do some math :)
+	 */
+	if (*data == '(')
+	  {
+	     replace = perform_math (data);
+
+	     free (l->data);
+	     l->data = replace;
+	  }
+
+   }
+}
+
+static char *
+perform_math (char *input)
+{
+   char buf[256];
+   int res;
+
+   /* FIXME
+    * This is a bad hack, we're just assuming that the user wants to
+    * use fixed point arithmetic here :O
+    *
+    * What we should do is, loop over the string and figure out whether
+    * there are floating point operands, too and then switch to
+    * floating point math.
+    */
+   res = my_atoi (input);
+   snprintf (buf, sizeof (buf), "%i", res);
+
+   return strdup (buf);
+}
+
 static int
 isdelim(char c)
 {
@@ -139,6 +185,7 @@ next_token(char *p, char *end, char **new_p, int *delim)
    char *tok_start = NULL, *tok_end = NULL, *tok = NULL, *sa_start = NULL;
    int in_tok = 0;
    int in_quote = 0;
+   int in_parens = 0;
    int in_comment_ss  = 0;
    int in_comment_cpp = 0;
    int in_comment_sa  = 0;
@@ -220,6 +267,9 @@ next_token(char *p, char *end, char **new_p, int *delim)
 				 in_quote = 1;
 				 had_quote = 1;
 			      }
+			    else if (*p == '(')
+			      in_parens++;
+
 			    in_tok = 1;
 			    tok_start = p;
 			    if (isdelim(*p)) *delim = 1;
@@ -236,6 +286,11 @@ next_token(char *p, char *end, char **new_p, int *delim)
 			    had_quote = 1;
 			 }
 		    }
+		  else if (in_parens)
+		    {
+		       if (((*p) == ')') && (*(p - 1) != '\\'))
+			 in_parens--;
+		    }
 		  else
 		    {
 		       if (*p == '"')
@@ -243,6 +298,10 @@ next_token(char *p, char *end, char **new_p, int *delim)
 			    in_quote = 1;
 			    had_quote = 1;
 			 }
+		       else if (*p == '(')
+			 in_parens++;
+
+		       /* check for end-of-token */
 		       if (
 			   (isspace(*p)) ||
 			   ((*delim) && (!isdelim(*p))) ||
@@ -378,6 +437,7 @@ parse(char *data, off_t size)
 		  if (do_params)
 		    {
 		       do_params = 0;
+		       preprocess_params ();
 		       new_statement();
 		       /* clear out params */
 		       while (params)
