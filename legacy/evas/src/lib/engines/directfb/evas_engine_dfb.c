@@ -421,7 +421,7 @@ evas_engine_directfb_context_clip_get(void *data, void *context, int *x, int *y,
    *x = ((RGBA_Draw_Context *) context)->clip.x;
    *y = ((RGBA_Draw_Context *) context)->clip.y;
    *w = ((RGBA_Draw_Context *) context)->clip.w;
-   *h = ((RGBA_Draw_Context *) contect)->clip.h;
+   *h = ((RGBA_Draw_Context *) context)->clip.h;
    return ((RGBA_Draw_Context *) context)->clip.use;
 }
 
@@ -473,6 +473,7 @@ evas_engine_directfb_context_multiplier_get(void *data, void *context, int *r,
 					    int *g, int *b, int *a)
 {
    Render_Engine      *re;
+   RGBA_Draw_Context  *dc = (RGBA_Draw_Context *) context;
 
    re = (Render_Engine *) data;
    *r = (int)(R_VAL(&((RGBA_Draw_Context *)context)->mul.col));
