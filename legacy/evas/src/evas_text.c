@@ -915,7 +915,8 @@ evas_set_font(Evas e, Evas_Object o, char *font, int size)
 	     Evas_Object_Text oo;
 	     
 	     oo = (Evas_Object_Text)o;
-	     if ((oo->current.font) && (!strcmp(oo->current.font, font)))
+	     if ((oo->current.font) && (!strcmp(oo->current.font, font))
+		 && (size == oo->current.size))
 		return;
 	     if (oo->current.font) free(oo->current.font);
 	     oo->current.font = strdup(font);
