@@ -45,46 +45,11 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    ed = data;
    rp = evas_object_data_get(obj, "real_part");
    if (!rp) return;
-#ifdef HAVE_ECORE_X
-   if (ecore_event_current_type_get() == ECORE_X_EVENT_MOUSE_BUTTON_DOWN)
-     {
-	Ecore_X_Event_Mouse_Button_Down *evx;
-	
-	evx = ecore_event_current_event_get();
-	if (evx)
-	  {
-	     if (evx->triple_click)
-	       snprintf(buf, sizeof(buf), "mouse,down,%i,triple", ev->button);
-	     else if (evx->double_click)
-	       snprintf(buf, sizeof(buf), "mouse,down,%i,double", ev->button);
-	     else
-	       snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
-	  }
-	else
-	  snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
-     }
+   if (ev->flags & EVAS_BUTTON_TRIPLE_CLICK)
+     snprintf(buf, sizeof(buf), "mouse,down,%i,triple", ev->button);
+   else if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
+     snprintf(buf, sizeof(buf), "mouse,down,%i,double", ev->button);
    else
-#endif
-#ifdef HAVE_ECORE_FB
-     if (ecore_event_current_type_get() == ECORE_FB_EVENT_MOUSE_BUTTON_DOWN)
-       {
-	  Ecore_Fb_Event_Mouse_Button_Down *evfb;
-	  
-	  evfb = ecore_event_current_event_get();
-	  if (evfb)
-	    {
-	       if (evfb->triple_click)
-		 snprintf(buf, sizeof(buf), "mouse,down,%i,triple", ev->button);
-	       else if (evfb->double_click)
-		 snprintf(buf, sizeof(buf), "mouse,down,%i,double", ev->button);
-	       else
-		 snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
-	    }
-	  else
-	    snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
-       }
-   else
-#endif     
      snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
    _edje_ref(ed);
    _edje_freeze(ed);
