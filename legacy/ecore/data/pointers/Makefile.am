@@ -1,3 +1,5 @@
+MAINTAINERCLEANFILES = Makefile.in
+
 POINTERS = mouse_pointer.png
 
 pntrdir = $(pkgdatadir)/pointers

@@ -806,7 +806,6 @@ AC_SUBST(requirements)
 AC_OUTPUT([
 Makefile
 ecore.pc
-ecore-config
 data/Makefile
 data/fonts/Makefile
 data/images/Makefile
@@ -824,12 +823,18 @@ src/lib/ecore_ipc/Makefile
 src/lib/ecore_txt/Makefile
 src/lib/ecore_config/Makefile
 src/lib/ecore_file/Makefile
-debian/Makefile
 examples/Makefile
-], [
+ecore-config
+README
+ecore.spec
+ecore.oe
+ecore-native.oe
+ecore.bb
+ecoreXnative.bb
+debian/changelog
+],[
 chmod +x ecore-config
-]
-)
+])
 
 echo
 echo "$PACKAGE $VERSION"

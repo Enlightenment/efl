@@ -1,4 +1,4 @@
-## Process this file with automake to produce Makefile.in
+MAINTAINERCLEANFILES = Makefile.in
 
 if BUILD_ECORE_EVAS
 ECORE_EVAS_LIB = $(top_builddir)/src/lib/ecore_evas/libecore_evas.la

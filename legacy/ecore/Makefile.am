@@ -1,22 +1,35 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = data src debian examples
+SUBDIRS = data src examples
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
                        config.h.in config.sub configure install-sh \
 		       ltconfig ltmain.sh missing mkinstalldirs \
-		       stamp-h.in
-
-dist-hook:
-	./gendoc; \
-	tar cvf ecore_docs.tar doc/html doc/latex doc/man; \
-	rm -f ecore_docs.tar.gz; \
-	gzip -9 ecore_docs.tar;
+		       stamp-h.in  build-stamp configure-stamp depcomp \
+		       eet_docs.tar.gz eet.c \
+		       README \
+		       eet.pc \
+		       eet.spec \
+		       eet.oe eet-native.oe \
+		       eet.bb eetXnative.bb \
+		       debian/changelog
 
 bin_SCRIPTS = ecore-config
 
-EXTRA_DIST = README AUTHORS COPYING ecore.m4 ecore.spec ecore.c.in gendoc \
-Doxyfile make_cross_compile_arm.sh ecore.pc.in
+EXTRA_DIST = AUTHORS COPYING COPYING-PLAIN ecore.c.in gendoc ecore.supp ecore.m4 \
+             Doxyfile \
+	     ecore.pc.in \
+	     ecore.pc.in \
+	     ecore.spec.in ecore.spec \
+	     ecore.oe.in ecore.oe ecore-native.oe.in ecore-native.oe \
+	     ecore.bb.in ecore.bb ecoreXnative.bb.in ecoreXnative.bb \
+	     debian/changelog.in debian/changelog \
+	     debian/ecore0-test.install \
+	     debian/libecore0.install \
+	     debian/control \
+	     debian/copyright \
+	     debian/rules \
+	     debian/libecore0-dev.install
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = ecore.m4

@@ -7,7 +7,7 @@ MAINTAINER = "Carsten Haitzler (Rasterman) <raster@rasterman.com>"
 SECTION = "e/libs"
 PRIORITY = "optional"
 DEPENDS = "eet evas"
-PR = "1.0.0_pre7"
+PR = "@VERSION@"
 PR = "1"
 
 do_prepsources () {

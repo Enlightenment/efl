@@ -1,5 +1,4 @@
-## Process this file with automake to produce Makefile.in
-
+MAINTAINERCLEANFILES = Makefile.in
 EXAMPLES = \
 timer_example \
 event_handler_example \

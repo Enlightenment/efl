@@ -28,7 +28,7 @@ DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 
 INSTALL=/usr/bin/install -p
 CONFIGUREOPTS = --prefix=/usr --build=$(DEB_BUILD_GNU_TYPE) --host=$(DEB_HOST_GNU_TYPE)
-package=libecore1
+package=libecore0
 
 configure: configure-stamp
 configure-stamp:

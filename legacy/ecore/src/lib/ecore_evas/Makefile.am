@@ -1,4 +1,4 @@
-## Process this file with automake to produce Makefile.in
+MAINTAINERCLEANFILES = Makefile.in
 
 if BUILD_ECORE_X
 ECORE_X_INC = -I$(top_srcdir)/src/lib/ecore_x
