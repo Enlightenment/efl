@@ -29,12 +29,13 @@
  */
 typedef enum Ecore_Config_Type
 {
-   PT_NIL = 0,			///< Property with no value.
-   PT_INT = 1,			///< Integer property type.
-   PT_FLT = 2,			///< Float property type.
-   PT_STR = 3,			///< String property type.
-   PT_RGB = 4,			///< Colour property type.
-   PT_THM = 5			///< Theme property type.
+   PT_NIL = 0,			/* Property with no value. */
+   PT_INT = 1,			/* Integer property type. */
+   PT_FLT = 2,			/* Float property type. */
+   PT_STR = 3,			/* String property type. */
+   PT_RGB = 4,			/* Colour property type. */
+   PT_THM = 5,			/* Theme property type. */
+   PT_BLN = 6,			///
 } Ecore_Config_Type;
 
 typedef enum Ecore_Config_Flag
@@ -66,20 +67,20 @@ typedef struct Ecore_Config_Listener_List
  */
 typedef struct Ecore_Config_Prop
 {
-   char               *key;	///< Property key.
-   char               *description;	///< Description set by ecore_config_descibe.
-   char                short_opt;	///< short identifier on command line (-f)
-   char               *long_opt;	///< long identifier on command line (--foo)
-   char               *ptr;	///< Used as the value when the property is a string or theme.
-   Ecore_Config_Type   type;	///< Property type.
-   long                val;	///< Used as the value when the property is an integer, float or colour.
-   long                lo;	///< Lower bound for the value when the property is an integer or float.
-   long                hi;	///< Higher bound for the value when the property is an integer or float.
-   long                step;	///< Increment for the value when the property is an integer or float.
+   char               *key;	/* Property key. */
+   char               *description;	/* Description set by ecore_config_descibe. */
+   char                short_opt;	/* short identifier on command line (-f) */
+   char               *long_opt;	/* long identifier on command line (--foo) */
+   char               *ptr;	/* Used as the value when the property is a string or theme. */
+   Ecore_Config_Type   type;	/* Property type. */
+   long                val;	/* Used as the value when the property is an integer, float or colour. */
+   long                lo;	/* Lower bound for the value when the property is an integer or float. */
+   long                hi;	/* Higher bound for the value when the property is an integer or float. */
+   long                step;	/* Increment for the value when the property is an integer or float. */
    Ecore_Config_Flag   flags;	/// < Configuration flags.
-   Ecore_Config_Listener_List *listeners;	///< List of change listeners.
+   Ecore_Config_Listener_List *listeners;	/* List of change listeners. */
    void               *data;	/// < Stores extra data for the property.
-   struct Ecore_Config_Prop *next;	///< Pointer to the next property in the list.
+   struct Ecore_Config_Prop *next;	/* Pointer to the next property in the list. */
 } Ecore_Config_Prop;
 
 /*
@@ -89,12 +90,12 @@ typedef struct Ecore_Config_Prop
  */
 typedef struct Ecore_Config_Bundle
 {
-   char               *identifier;	///< Identifier for this set of properties (window ID for example)
-   char               *owner;	///< This is used to store the application name related to the bundle
-   long                serial;	///< Unique identifier to identify bundle
-   Ecore_Config_Prop  *data;	///< Pointer to root of property list
-   void               *user_data;	///< App specific pointer to "other data"
-   struct Ecore_Config_Bundle *next;	///< Pointer to next bundle in this application
+   char               *identifier;	/* Identifier for this set of properties (window ID for example) */
+   char               *owner;	/* This is used to store the application name related to the bundle */
+   long                serial;	/* Unique identifier to identify bundle */
+   Ecore_Config_Prop  *data;	/* Pointer to root of property list */
+   void               *user_data;	/* App specific pointer to "other data" */
+   struct Ecore_Config_Bundle *next;	/* Pointer to next bundle in this application */
 } Ecore_Config_Bundle;
 
 typedef struct Ecore_Config_Server
@@ -207,16 +208,16 @@ extern              "C"
 # define ECORE_CONFIG_ERR_PATHEX       (-8)
 # define ECORE_CONFIG_ERR_TYPEMISMATCH (-7)
 # define ECORE_CONFIG_ERR_MUTEX        (-6)
-# define ECORE_CONFIG_ERR_NOTFOUND     (-5)	///< Error indicating that the item searched for could not be found.
-# define ECORE_CONFIG_ERR_OOM          (-4)	///< Error given when the program runs out of memory.
-# define ECORE_CONFIG_ERR_IGNORED      (-3)	///< Error occurred, but was ignored.
-# define ECORE_CONFIG_ERR_NODATA       (-2)	///< Error given when necessary data is not provided.
-# define ECORE_CONFIG_ERR_FAIL         (-1)	///< Failure result.
-# define ECORE_CONFIG_ERR_SUCC          (0)	///< Success result.
+# define ECORE_CONFIG_ERR_NOTFOUND     (-5)	/* Error indicating that the item searched for could not be found. */
+# define ECORE_CONFIG_ERR_OOM          (-4)	/* Error given when the program runs out of memory. */
+# define ECORE_CONFIG_ERR_IGNORED      (-3)	/* Error occurred, but was ignored. */
+# define ECORE_CONFIG_ERR_NODATA       (-2)	/* Error given when necessary data is not provided. */
+# define ECORE_CONFIG_ERR_FAIL         (-1)	/* Failure result. */
+# define ECORE_CONFIG_ERR_SUCC          (0)	/* Success result. */
 
-# define ECORE_CONFIG_PARSE_HELP       (-2)	///< Help was displayed
-# define ECORE_CONFIG_PARSE_EXIT       (-1)	///< An error occurred
-# define ECORE_CONFIG_PARSE_CONTINUE    (0)	///< Arguments parsed successfully
+# define ECORE_CONFIG_PARSE_HELP       (-2)	/* Help was displayed */
+# define ECORE_CONFIG_PARSE_EXIT       (-1)	/* An error occurred */
+# define ECORE_CONFIG_PARSE_CONTINUE    (0)	/* Arguments parsed successfully */
 
 /* convenience mathods in convenience.c */
    /* FIXME: this should only be included if evas is present */
