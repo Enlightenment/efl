@@ -71,7 +71,7 @@ binary-arch: build install
 	dh_testroot
 	dh_installdocs AUTHORS README
 	dh_installchangelogs
-	dh_movefiles
+	dh_install --sourcedir=debian/tmp --list-missing
 	dh_link
 	dh_strip
 	dh_compress

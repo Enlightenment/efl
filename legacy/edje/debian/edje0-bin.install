@@ -1,5 +1,7 @@
 usr/bin/edje_cc
 usr/bin/edje_ls
+usr/bin/edje_decc
+usr/bin/edje_recc
 usr/share/edje/data/src/*.edc
 usr/share/edje/data/images/*.png
 usr/share/edje/data/*.sh
