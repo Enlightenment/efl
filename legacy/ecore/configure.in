@@ -124,23 +124,26 @@ AC_ARG_ENABLE(ecore-txt,
 )
 
 if test "x$have_ecore_txt" = "xyes"; then
-  AC_DEFINE(BUILD_ECORE_TXT)
   AC_CHECK_LIB(c, iconv,
     [
+      AC_DEFINE(BUILD_ECORE_TXT)
       AM_CONDITIONAL(BUILD_ECORE_TXT, true)
       ecore_txt_libs="-lecore_txt"
     ], AC_CHECK_LIB(iconv, iconv,
          [
+           AC_DEFINE(BUILD_ECORE_TXT)
            AM_CONDITIONAL(BUILD_ECORE_TXT, true)
            iconv_libs="-liconv"
            ecore_txt_libs="-lecore_txt -liconv"
          ], [
-	   AC_CHECK_LIB(c, libiconv,
-	     [
-	       AM_CONDITIONAL(BUILD_ECORE_TXT, true)
-	       ecore_txt_libs="-lecore_txt"
+           AC_CHECK_LIB(c, libiconv,
+             [
+               AC_DEFINE(BUILD_ECORE_TXT)
+               AM_CONDITIONAL(BUILD_ECORE_TXT, true)
+               ecore_txt_libs="-lecore_txt"
              ], AC_CHECK_LIB(iconv, libiconv,
                   [
+                    AC_DEFINE(BUILD_ECORE_TXT)
                     AM_CONDITIONAL(BUILD_ECORE_TXT, true)
                     iconv_libs="-liconv"
                     ecore_txt_libs="-lecore_txt -liconv"
