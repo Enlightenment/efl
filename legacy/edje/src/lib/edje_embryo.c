@@ -122,6 +122,7 @@ _edje_embryo_fn_emit(Embryo_Program *ep, Embryo_Cell *params)
  * get_size(&w, &h)
  * resize_request(w, h)
  * get_mouse(&x, &y)
+ * get_mouse_buttons()
  * set_color_class(class[], r, g, b, a)
  * get_color_class(class[], &r, &g, &b, &a)
  * set_text_class(class[], font[], Float:size)
@@ -169,7 +170,7 @@ _edje_embryo_fn_emit(Embryo_Program *ep, Embryo_Cell *params)
  * text[min_x,min_y]
  * text[align_x,align_y]
  * 
- * FUTURE: KEYS
+ * FUTURE: KEYS???
  * 
  */
 
