@@ -1,7 +1,5 @@
 #include "evas_common.h"
 
-extern FT_Library evas_ft_lib;
-
 /* string extents */
 void
 evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)

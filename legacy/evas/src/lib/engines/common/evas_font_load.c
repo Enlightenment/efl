@@ -1,6 +1,6 @@
 #include "evas_common.h"
 
-FT_Library                evas_ft_lib = 0;
+extern FT_Library         evas_ft_lib;
 
 static int                font_cache_usage = 0;
 static int                font_cache = 0;
