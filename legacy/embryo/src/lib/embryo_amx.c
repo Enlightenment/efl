@@ -2011,7 +2011,7 @@ embryo_parameter_cell_array_push(Embryo_Program *ep, Embryo_Cell *cells, int num
    Embryo_Param *pr;
    Embryo_Cell *cell_array;
    
-   pr->cell_array = malloc(num * sizeof(Embryo_Cell));
+   cell_array = malloc(num * sizeof(Embryo_Cell));
    if ((!cells) || (num <= 0))
      return embryo_parameter_cell_push(ep, 0);
    ep->params_size++;
