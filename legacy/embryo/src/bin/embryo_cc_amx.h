@@ -35,7 +35,7 @@
 #include <inttypes.h>
 # else
 #  ifndef HAVE_STDINT_H
-#include <sys/types>
+#include <sys/types.h>
 #  endif
 # endif
 #endif
