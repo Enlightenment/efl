@@ -872,6 +872,17 @@ _ecore_evas_withdrawn_set(Ecore_Evas *ee, int withdrawn)
 }
 
 static void
+_ecore_evas_sticky_set(Ecore_Evas *ee, int sticky)
+{
+   if ((ee->prop.sticky && sticky) ||
+      (!ee->prop.sticky && !sticky)) return;
+
+   ee->prop.sticky = sticky;
+   ecore_x_window_prop_sticky_set(ee->engine.x.win_container,
+                                  ee->prop.sticky);
+}
+
+static void
 _ecore_evas_override_set(Ecore_Evas *ee, int on)
 {
    if (((ee->prop.override) && (on)) ||
@@ -895,6 +906,8 @@ _ecore_evas_override_set(Ecore_Evas *ee, int on)
 	ecore_x_window_prop_borderless_set(ee->engine.x.win_container, ee->prop.borderless);
 	ecore_x_window_prop_layer_set(ee->engine.x.win_container, ee->prop.layer);
 	ecore_x_window_prop_withdrawn_set(ee->engine.x.win_container, ee->prop.withdrawn);
+    ecore_x_window_prop_sticky_set(ee->engine.x.win_container,
+                                   ee->prop.sticky);
      }
    ecore_x_window_reparent(ee->engine.x.win, ee->engine.x.win_container, 0, 0);	
    ecore_x_window_show(ee->engine.x.win);
@@ -927,6 +940,8 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
 	  }
 	ee->x = 0;
 	ee->y = 0;
+	ee->w = rw;
+	ee->h = rh;
      }
    else
      {
@@ -937,8 +952,41 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
 	ecore_x_window_resize(ee->engine.x.win, pw, ph);
 	ecore_x_window_shape_mask_set(ee->engine.x.win, 0);
 	if (ee->should_be_visible) ecore_x_window_show(ee->engine.x.win_container);
+	ee->w = pw;
+	ee->h = ph;
+     }
+   ecore_x_window_resize(ee->engine.x.win, ee->w, ee->h);
+   if ((ee->rotation == 90) || (ee->rotation == 270))
+     {
+	evas_output_size_set(ee->evas, ee->h, ee->w);
+	evas_output_viewport_set(ee->evas, 0, 0, ee->h, ee->w);
+     }
+   else
+     {
+	evas_output_size_set(ee->evas, ee->w, ee->h);
+	evas_output_viewport_set(ee->evas, 0, 0, ee->w, ee->h);
+     }
+   if (ee->prop.avoid_damage)
+     {
+	ecore_evas_avoid_damage_set(ee, 0);
+	ecore_evas_avoid_damage_set(ee, 1);
+     }
+   if (ee->shaped)
+     {
+	ecore_evas_shaped_set(ee, 0);
+	ecore_evas_shaped_set(ee, 1);
+     }
+   if ((ee->expecting_resize.w > 0) &&
+       (ee->expecting_resize.h > 0))
+     {
+	if ((ee->expecting_resize.w == ee->w) &&
+	    (ee->expecting_resize.h == ee->h))
+	  _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y);
+	ee->expecting_resize.w = 0;
+	ee->expecting_resize.h = 0;
      }
    ee->prop.fullscreen = on;
+   if (ee->func.fn_resize) ee->func.fn_resize(ee);	
 }
 
 static void
@@ -1034,7 +1082,8 @@ static const Ecore_Evas_Engine_Func _ecore_x_engine_func =
      NULL,
      _ecore_evas_fullscreen_set,
      _ecore_evas_avoid_damage_set,
-     _ecore_evas_withdrawn_set
+     _ecore_evas_withdrawn_set,
+     _ecore_evas_sticky_set
 };
 #endif
 

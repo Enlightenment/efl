@@ -62,6 +62,7 @@ struct _Ecore_Evas_Engine_Func
    void        (*fn_fullscreen_set) (Ecore_Evas *ee, int on);
    void        (*fn_avoid_damage_set) (Ecore_Evas *ee, int on);
    void        (*fn_withdrawn_set) (Ecore_Evas *ee, int withdrawn);
+   void        (*fn_sticky_set) (Ecore_Evas *ee, int sticky);
 };
 
 struct _Ecore_Evas_Engine
@@ -134,6 +135,7 @@ struct _Ecore_Evas
       char            fullscreen   : 1;
       char            avoid_damage : 1;
       char            withdrawn    : 1;
+      char            sticky       : 1;	  
    } prop;
    
    struct {

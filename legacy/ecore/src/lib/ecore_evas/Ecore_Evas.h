@@ -99,6 +99,8 @@ void        ecore_evas_avoid_damage_set(Ecore_Evas *ee, int on);
 int         ecore_evas_avoid_damage_get(Ecore_Evas *ee);
 void        ecore_evas_withdrawn_set(Ecore_Evas *ee, int withdrawn);
 int         ecore_evas_withdrawn_get(Ecore_Evas *ee);
+void        ecore_evas_sticky_set(Ecore_Evas *ee, int sticky);
+int         ecore_evas_sticky_get(Ecore_Evas *ee);
 
 #ifdef __cplusplus
 }

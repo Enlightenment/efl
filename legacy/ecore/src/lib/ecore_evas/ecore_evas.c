@@ -1449,9 +1449,50 @@ ecore_evas_withdrawn_get(Ecore_Evas *ee)
    if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
    {
       ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
-         "ecore_evas_withdrawn_set");
+         "ecore_evas_withdrawn_get");
       return 0;
    } else
       return ee->prop.withdrawn;
 }
 
+/**
+ * Set the sticky state of an Ecore_Evas window.
+ *
+ * @param ee The Ecore_Evas whose window's sticky state is set.
+ * @param sticky The Ecore_Evas window's new sticky state.
+ *
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void
+ecore_evas_sticky_set(Ecore_Evas *ee, int sticky)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+   {
+      ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+         "ecore_evas_sticky_set");
+      return;
+   }
+   
+   IFC(ee, fn_sticky_set) (ee, sticky);
+   IFE;
+}
+
+/**
+ * Returns the sticky state of an Ecore_Evas' window.
+ * 
+ * @param ee The Ecore_Evas whose window's sticky state is returned.
+ * @return The Ecore_Evas window's sticky state.
+ *
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+int
+ecore_evas_sticky_get(Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+   {
+      ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+         "ecore_evas_sticky_get");
+      return 0;
+   } else
+      return ee->prop.sticky;
+}

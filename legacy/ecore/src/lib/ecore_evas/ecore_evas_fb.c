@@ -420,6 +420,8 @@ static const Ecore_Evas_Engine_Func _ecore_fb_engine_func =
      NULL,
      _ecore_evas_fullscreen_set,
      NULL,
+     NULL,
+     NULL,
      NULL
 };
 #endif
@@ -471,6 +473,7 @@ ecore_evas_fb_new(char *disp_name, int rotation, int w, int h)
    ee->prop.maximized = 1;
    ee->prop.fullscreen = 0;
    ee->prop.withdrawn = 0;
+   ee->prop.sticky = 0;
    
    /* init evas here */
    ee->evas = evas_new();
