@@ -7,7 +7,7 @@
 #include <setjmp.h>
 
 #ifndef WIN32
-static sigjmp_buf detect_buf, detect_buf2;
+static sigjmp_buf detect_buf;
 #endif
 
 static int cpu_feature_mask = 0;
@@ -25,7 +25,7 @@ evas_common_cpu_catch_ill(int sig)
 static void
 evas_common_cpu_catch_segv(int sig)
 {
-   siglongjmp(detect_buf2, 1);
+   siglongjmp(detect_buf, 1);
 }
 #endif
 
@@ -89,16 +89,13 @@ evas_common_cpu_feature_test(void (*feature)(void))
    act.sa_flags = SA_RESTART;
    sigemptyset(&act.sa_mask);
    sigaction(SIGILL, &act, &oact);
-   if (sigsetjmp(detect_buf, 1))
-     {
-	sigaction(SIGILL, &oact, NULL);
-	return 0;
-     }
+   
    act.sa_handler = evas_common_cpu_catch_segv;
    act.sa_flags = SA_RESTART;
    sigemptyset(&act.sa_mask);
    sigaction(SIGSEGV, &act, &oact2);
-   if (sigsetjmp(detect_buf2, 1))
+   
+   if (sigsetjmp(detect_buf, 1))
      {
 	sigaction(SIGILL, &oact, NULL);
 	sigaction(SIGSEGV, &oact2, NULL);
