@@ -514,3 +514,17 @@ ecore_x_window_at_xy_get(int x, int y)
    return win ? win : root;
 }
 
+Ecore_X_Window
+ecore_x_window_parent_get(Ecore_X_Window win)
+{
+   Window         root, parent, *children = NULL;
+   unsigned int   num;
+
+   if (!XQueryTree(_ecore_x_disp, win, &root, &parent, &children, &num))
+      return 0;
+   if (children)
+      XFree(children);
+
+   return parent;
+}
+

@@ -739,6 +739,7 @@ void             ecore_x_window_cursor_show(Ecore_X_Window win, int show);
 void             ecore_x_window_defaults_set(Ecore_X_Window win);
 int              ecore_x_window_visible_get(Ecore_X_Window win);
 Ecore_X_Window   ecore_x_window_at_xy_get(int x, int y);
+Ecore_X_Window   ecore_x_window_parent_get(Ecore_X_Window win);
 
 Ecore_X_Atom     ecore_x_window_prop_any_type(void);
 void             ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Atom format, int size, void *data, int number);
