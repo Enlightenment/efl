@@ -527,6 +527,12 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
      o->engine_data = obj->layer->evas->engine.func->image_data_put(obj->layer->evas->engine.data.output,
 								    o->engine_data, 
 								    data);
+   else
+     o->engine_data = obj->layer->evas->engine.func->image_new_from_data(obj->layer->evas->engine.data.output,
+									 o->cur.image.w,
+									 o->cur.image.h,
+									 data);
+     
    if (o->engine_data)
      o->engine_data = obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
 								     o->engine_data,
