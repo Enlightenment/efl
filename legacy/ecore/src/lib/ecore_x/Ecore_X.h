@@ -69,25 +69,27 @@ typedef enum _Ecore_X_Event_Detail
 
 typedef enum _Ecore_X_Event_Mask
 {
-   ECORE_X_EVENT_MASK_KEY_DOWN               = (1 << 0),
-   ECORE_X_EVENT_MASK_KEY_UP                 = (1 << 1),
-   ECORE_X_EVENT_MASK_MOUSE_DOWN             = (1 << 2),
-   ECORE_X_EVENT_MASK_MOUSE_UP               = (1 << 3),
-   ECORE_X_EVENT_MASK_MOUSE_IN               = (1 << 4),
-   ECORE_X_EVENT_MASK_MOUSE_OUT              = (1 << 5),
-   ECORE_X_EVENT_MASK_MOUSE_MOVE             = (1 << 6),
-   ECORE_X_EVENT_MASK_WINDOW_DAMAGE          = (1 << 7),
-   ECORE_X_EVENT_MASK_WINDOW_VISIBILITY      = (1 << 8),
-   ECORE_X_EVENT_MASK_WINDOW_CONFIGURE       = (1 << 9),
-   ECORE_X_EVENT_MASK_WINDOW_MANAGE          = (1 << 10),
-   ECORE_X_EVENT_MASK_WINDOW_RESIZE_MANAGE   = (1 << 11),
-   ECORE_X_EVENT_MASK_WINDOW_CHILD_CONFIGURE = (1 << 13),
-   ECORE_X_EVENT_MASK_WINDOW_FOCUS_IN        = (1 << 14),
-   ECORE_X_EVENT_MASK_WINDOW_FOCUS_OUT       = (1 << 15),
-   ECORE_X_EVENT_MASK_WINDOW_PROPERTY        = (1 << 16),
-   ECORE_X_EVENT_MASK_WINDOW_COLORMAP        = (1 << 17),
-   ECORE_X_EVENT_MASK_WINDOW_GRAB            = (1 << 18),
-   ECORE_X_EVENT_MASK_MOUSE_WHEEL            = (1 << 19)
+   ECORE_X_EVENT_MASK_NONE                   = 0L,
+   ECORE_X_EVENT_MASK_KEY_DOWN               = (1L << 0),
+   ECORE_X_EVENT_MASK_KEY_UP                 = (1L << 1),
+   ECORE_X_EVENT_MASK_MOUSE_DOWN             = (1L << 2),
+   ECORE_X_EVENT_MASK_MOUSE_UP               = (1L << 3),
+   ECORE_X_EVENT_MASK_MOUSE_IN               = (1L << 4),
+   ECORE_X_EVENT_MASK_MOUSE_OUT              = (1L << 5),
+   ECORE_X_EVENT_MASK_MOUSE_MOVE             = (1L << 6),
+   ECORE_X_EVENT_MASK_WINDOW_DAMAGE          = (1L << 15),
+   ECORE_X_EVENT_MASK_WINDOW_VISIBILITY      = (1L << 16),
+   ECORE_X_EVENT_MASK_WINDOW_CONFIGURE       = (1L << 17),
+   ECORE_X_EVENT_MASK_WINDOW_RESIZE_MANAGE   = (1L << 18),
+   ECORE_X_EVENT_MASK_WINDOW_MANAGE          = (1L << 19),
+   ECORE_X_EVENT_MASK_WINDOW_CHILD_CONFIGURE = (1L << 20),
+   ECORE_X_EVENT_MSAK_WINDOW_FOCUS_CHANGE    = (1L << 21),
+   ECORE_X_EVENT_MASK_WINDOW_PROPERTY        = (1L << 22),
+   ECORE_X_EVENT_MASK_WINDOW_COLORMAP        = (1L << 23),
+   ECORE_X_EVENT_MASK_WINDOW_GRAB            = (1L << 24),
+   ECORE_X_EVENT_MASK_MOUSE_WHEEL            = (1L << 29),
+   ECORE_X_EVENT_MASK_WINDOW_FOCUS_IN        = (1L << 30),
+   ECORE_X_EVENT_MASK_WINDOW_FOCUS_OUT       = (1L << 31)
 } Ecore_X_Event_Mask;
    
 typedef struct _Ecore_X_Event_Key_Down                 Ecore_X_Event_Key_Down;
@@ -697,8 +699,8 @@ void             ecore_x_io_error_handler_set(void (*func) (void *data), const v
 int              ecore_x_error_request_get(void);
 int              ecore_x_error_code_get(void);
 
-void             ecore_x_event_mask_set(Ecore_X_Window w, long mask);
-void             ecore_x_event_mask_unset(Ecore_X_Window w, long mask);
+void             ecore_x_event_mask_set(Ecore_X_Window w, Ecore_X_Event_Mask mask);
+void             ecore_x_event_mask_unset(Ecore_X_Window w, Ecore_X_Event_Mask mask);
 
 int              ecore_x_selection_primary_set(Ecore_X_Window w, unsigned char *data, int size);
 int              ecore_x_selection_primary_clear(void);
