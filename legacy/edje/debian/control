@@ -1,0 +1,21 @@
+Source: edje
+Section: libs
+Priority: optional
+Maintainer: Laurence J. Lane <ljlane@debian.org>
+Build-Depends: debhelper (>= 3.0)
+Standards-Version: 3.2.1.0
+
+Package: libedje0
+Architecture: any
+Section: libs
+Depends: ${shlibs:Depends}
+Description: libedje0 description
+ libedje0 extended description
+ 
+Package: libedje0-dev
+Architecture: any
+Section: devel
+Architecture: any
+Depends: libedje0 (= ${Source-Version}), libc6-dev
+Description: libedje0 headers, static libraries and documentation
+ Headers, shared libraries and documentation for Edje.
