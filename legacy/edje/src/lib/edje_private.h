@@ -23,7 +23,7 @@
 #include "Edje_Edit.h"
 
 #ifndef ABS
-#define ABS(x) x < 0 ? -x : x
+#define ABS(x) (x < 0 ? -x : x)
 #endif
 
 /* increment this when the EET data descriptors have changed and old
