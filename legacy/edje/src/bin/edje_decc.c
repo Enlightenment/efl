@@ -66,15 +66,26 @@ decomp(void)
 {
    Eet_File *ef;
    ef = eet_open(file_in, EET_FILE_MODE_READ);
-   if (!ef) return 0;
+   if (!ef)
+     {
+	printf("ERROR: cannot open %s\n", file_in);
+	return 0;
+     }
    
    srcfiles = source_load(ef);
    if (!srcfiles)
      {
+	printf("ERROR: %s has no decompile information\n", file_in);
 	eet_close(ef);
 	return 0;
      }
    edje_file = eet_data_read(ef, _edje_edd_edje_file, "edje_file");
+   if (!edje_file)
+     {
+	printf("ERROR: %s does not appear to be an edje file\n", file_in);
+	eet_close(ef);
+	return 0;
+     }
    fontlist = source_fontmap_load(ef);
    eet_close(ef);
    return 1;
@@ -121,12 +132,17 @@ output(void)
 		       char *pp;
 		       
 		       snprintf(out, sizeof(out), "%s/%s", outdir, ei->entry);
+		       printf("Output Image: %s\n", out);
 		       pp = strdup(out);
 		       p = strrchr(pp, '/');
 		       *p = 0;
+		       if (strstr(pp, "../"))
+			 {
+			    printf("ERROR: potential security violation. attempt to write in parent dir.\n");
+			    exit (-1);
+			 }
 		       e_file_mkpath(pp);
 		       free(pp);
-		       printf("Output Image: %s\n", out);
 		       im = imlib_create_image_using_data(w, h, pix);
 		       imlib_context_set_image(im);
 		       if (alpha)
@@ -139,6 +155,11 @@ output(void)
 		       else
 			 {
 			    imlib_image_set_format("png");
+			 }
+		       if (strstr(out, "../"))
+			 {
+			    printf("ERROR: potential security violation. attempt to write in parent dir.\n");
+			    exit (-1);
 			 }
 		       imlib_save_image(out);
 		       imlib_free_image();
@@ -160,8 +181,18 @@ output(void)
 	pp = strdup(out);
 	p = strrchr(pp, '/');
 	*p = 0;
+	if (strstr(pp, "../"))
+	  {
+	     printf("ERROR: potential security violation. attempt to write in parent dir.\n");
+	     exit (-1);
+	  }
 	e_file_mkpath(pp);
 	free(pp);
+	if (strstr(out, "../"))
+	  {
+	     printf("ERROR: potential security violation. attempt to write in parent dir.\n");
+	     exit (-1);
+	  }
 	f = fopen(out, "w");
 	fputs(sf->file, f);
 	fclose(f);
@@ -181,9 +212,25 @@ output(void)
 	     if (font)
 	       {
 		  FILE *f;
+		  char *pp;
 		  
 		  snprintf(out, sizeof(out), "%s/%s", outdir, fn->file);
 		  printf("Output Font: %s\n", out);
+		  pp = strdup(out);
+		  p = strrchr(pp, '/');
+		  *p = 0;
+		  if (strstr(pp, "../"))
+		    {
+		       printf("ERROR: potential security violation. attempt to write in parent dir.\n");
+		       exit (-1);
+		    }
+		  e_file_mkpath(pp);
+		  free(pp);
+		  if (strstr(out, "../"))
+		    {
+		       printf("ERROR: potential security violation. attempt to write in parent dir.\n");
+		       exit (-1);
+		    }
 		  f = fopen(out, "w");
 		  fwrite(font, fontsize, 1, f);
 		  fclose(f);
@@ -197,6 +244,11 @@ output(void)
 	
 	snprintf(out, sizeof(out), "%s/build.sh", outdir);
 	printf("Output Build Script: %s\n", out);
+	if (strstr(out, "../"))
+	  {
+	     printf("ERROR: potential security violation. attempt to write in parent dir.\n");
+	     exit (-1);
+	  }
 	f = fopen(out, "w");
 	fprintf(f, "#!/bin/sh\n");
 	fprintf(f, "edje_cc -id . -fd . main_edje_source.edc %s.eet\n", outdir);

@@ -52,17 +52,15 @@ source_edd(void)
    EET_DATA_DESCRIPTOR_ADD_LIST(_font_list_edd, Font_List, "list", list, _font_edd);
 }
 
-void
-source_fetch(void)
+static void
+source_fetch_file(char *fil, char *filname)
 {
    FILE *f;
    char buf[256 * 1024];
    
-   f = fopen(file_in, "r");
+   f = fopen(fil, "r");
    if (!f)
-     {
-	return;
-     }
+     return;
    else
      {
 	long sz;
@@ -72,7 +70,7 @@ source_fetch(void)
 	sz = ftell(f);
 	fseek(f, 0, SEEK_SET);
 	sf = mem_alloc(SZ(SrcFile));
-	sf->name = strdup("main_edje_source.edc");
+	sf->name = strdup(filname);
 	sf->file = mem_alloc(sz);
 	fread(sf->file, sz, 1, f);
 	fseek(f, 0, SEEK_SET);
@@ -161,31 +159,17 @@ source_fetch(void)
 	  }
 	if (file)
 	  {
-	     FILE *ff;
-	     
-	     ff = fopen(file, "r");
-	     if (ff)
-	       {
-		  long sz;
-		  SrcFile *sf;
-		  
-		  fseek(ff, 0, SEEK_END);
-		  sz = ftell(ff);
-		  fseek(ff, 0, SEEK_SET);
-		  sf = mem_alloc(SZ(SrcFile));
-		  sf->name = file;
-		  sf->file = mem_alloc(sz);
-		  fread(sf->file, sz, 1, ff);
-		  fclose(ff);
-		  srcfiles.list = evas_list_append(srcfiles.list, sf);
-	       }
-	     else
-	       {
-		  free(file);
-	       }
+	     source_fetch_file(file, file);
+	     free(file);
 	  }
      }
    fclose(f);
+}
+
+void
+source_fetch(void)
+{
+   source_fetch_file(file_in, "main_edje_source.edc");
 }
 
 int
