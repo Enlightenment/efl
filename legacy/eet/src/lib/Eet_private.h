@@ -26,7 +26,7 @@ FILE *_eet_memfile_write_open(void **data, size_t *size);
 void  _eet_memfile_write_close(FILE *f);
 
 #ifndef PATH_MAX
-#define PATH_MAX 4096
+#define PATH_MAX 4095
 #endif
 
 #endif

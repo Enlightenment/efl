@@ -372,7 +372,7 @@ eet_open(char *file, Eet_File_Mode mode)
 	     return NULL;	     
 	  }
 	/* get magic no */
-	i1 = *((int *)(buf + 0));
+	memcpy(&i1, buf + 0, sizeof(int));
 	i2 = ntohl(i1);
 	if (i2 != EET_MAGIC_FILE)
 	  {
@@ -380,10 +380,10 @@ eet_open(char *file, Eet_File_Mode mode)
 	     return NULL;	     
 	  }
 	/* get entries count and byte count */
-	i1 = *((int *)(buf + 4));
+	memcpy(&i1, buf + 4, sizeof(int));
 	i2 = ntohl(i1);
 	num_entries = (int)i2;
-	i1 = *((int *)(buf + 8));
+	memcpy(&i1, buf + 8, sizeof(int));
 	i2 = ntohl(i1);
 	byte_entries = (int)i2;
 	/* we cant have <= 0 values here - invalid */
@@ -463,19 +463,19 @@ eet_open(char *file, Eet_File_Mode mode)
 		  return NULL;
 	       }
 	     /* get entrie header */
-	     i1 = *((int *)(p + 0));
+	     memcpy(&i1, p + 0, sizeof(int));
 	     i2 = ntohl(i1);
 	     offset = (int)i2;
-	     i1 = *((int *)(p + 4));
+	     memcpy(&i1, p + 4, sizeof(int));
 	     i2 = ntohl(i1);
 	     flags = (int)i2;
-	     i1 = *((int *)(p + 8));
+	     memcpy(&i1, p + 8, sizeof(int));
 	     i2 = ntohl(i1);
 	     size = (int)i2;
-	     i1 = *((int *)(p + 12));
+	     memcpy(&i1, p + 12, sizeof(int));
 	     i2 = ntohl(i1);
 	     data_size = (int)i2;
-	     i1 = *((int *)(p + 16));
+	     memcpy(&i1, p + 16, sizeof(int));
 	     i2 = ntohl(i1);
 	     name_size = (int)i2;
 	     /* invalid size */
@@ -510,7 +510,6 @@ eet_open(char *file, Eet_File_Mode mode)
 	     /* copy name in and terminate it */
 	     strncpy(name, p + 20, name_size);
 	     name[name_size] = 0;
-	     
 	     /* get hask bucket it should go in */
 	     hash = eet_hash_gen(name, ef->header->directory->size);
 	     /* resize hask bucket */

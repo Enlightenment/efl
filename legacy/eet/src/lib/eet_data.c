@@ -863,19 +863,11 @@ eet_data_put_char(void *src, int *size_ret)
 static int
 eet_data_get_short(void *src, void *src_end, void *dst)
 {
-   short *s, *d;
-   short tmp;
+   short *d;
    
    if ((src + sizeof(short)) > src_end) return -1;
-   s = (short *)src;
+   memcpy(dst, src, sizeof(short));
    d = (short *)dst;
-   /* alignment fixup */
-   if ((int)s & (sizeof(short) - 1))
-     {
-	memcpy(&tmp, s, sizeof(short));
-	s = &tmp;
-     }
-   *d = *s;
    CONV16(*d);
    return sizeof(short);
 }
@@ -898,19 +890,11 @@ eet_data_put_short(void *src, int *size_ret)
 static int
 eet_data_get_int(void *src, void *src_end, void *dst)
 {
-   int *s, *d;
-   int tmp;
+   int *d;
    
    if ((src + sizeof(int)) > src_end) return -1;
-   s = (int *)src;
+   memcpy(dst, src, sizeof(int));
    d = (int *)dst;
-   /* alignment fixup */
-   if ((int)s & (sizeof(int) - 1))
-     {
-	memcpy(&tmp, s, sizeof(int));
-	s = &tmp;
-     }
-   *d = *s;
    CONV32(*d);
    return sizeof(int);
 }
@@ -933,19 +917,11 @@ eet_data_put_int(void *src, int *size_ret)
 static int
 eet_data_get_long_long(void *src, void *src_end, void *dst)
 {
-   long long *s, *d;
-   long long tmp;
+   long long *d;
    
    if ((src + sizeof(long long)) > src_end) return -1;
-   s = (long long *)src;
+   memcpy(dst, src, sizeof(long long));
    d = (long long *)dst;
-   /* alignment fixup */
-   if ((int)s & (sizeof(long long) - 1))
-     {
-	memcpy(&tmp, s, sizeof(long long));
-	s = &tmp;
-     }
-   *d = *s;
    CONV64(*d);
    return sizeof(long long);
 }
@@ -1696,7 +1672,7 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 		    {
 		       int ret;
 		       void *data_ret;
-		       
+		     
 		       if ((ede->type >= EET_T_CHAR) && 
 			   (ede->type <= EET_T_STRING))
 			 {
