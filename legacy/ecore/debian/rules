@@ -27,7 +27,7 @@ DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
 DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
 
 INSTALL=/usr/bin/install -p
-CONFIGUREOPTS = --prefix=/usr --enable-ecore-x --enable-ecore-job --enable-ecore-evas --enable-ecore-con --enable-ecore-ipc --build=$(DEB_BUILD_GNU_TYPE) --host=$(DEB_HOST_GNU_TYPE)
+CONFIGUREOPTS = --prefix=/usr --build=$(DEB_BUILD_GNU_TYPE) --host=$(DEB_HOST_GNU_TYPE)
 package=libecore1
 
 configure: configure-stamp
