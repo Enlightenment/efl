@@ -282,7 +282,7 @@ For those that want eet and edb image loading ability:
 make CFLAGS="-O9 -mpentiumpro -march=pentiumpro -mcpu=pentiumpro"
 @endverbatim
 
-Or to use the fast sampling scaler:
+Or to use the fast sampling scaler only:
 
 @verbatim
 ./configure \
