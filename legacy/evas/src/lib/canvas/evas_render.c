@@ -91,15 +91,6 @@ evas_render_updates(Evas *e)
    MAGIC_CHECK_END();
    if (!e->changed) return NULL;
    
-   if (e->output.changed)
-     {
-	e->engine.func->output_resize(e->engine.data.output,
-				      e->output.w, e->output.h);
-	e->engine.func->output_redraws_rect_add(e->engine.data.output, 
-						0, 0, 
-						e->output.w, e->output.h);
-     }
-   
    /* phase 1. add extra updates for changed objects */
    for (l = (Evas_Object_List *)e->layers; l; l = l->next)
      {
@@ -170,7 +161,22 @@ evas_render_updates(Evas *e)
 					       r->x, r->y, r->w, r->h);
 	free(r);
      }
-   /* phase 4. add obscures */
+   /* phase 4. output & viewport changes */
+   if (e->viewport.changed)
+     {
+	e->engine.func->output_redraws_rect_add(e->engine.data.output, 
+						0, 0, 
+						e->output.w, e->output.h);
+     }
+   if (e->output.changed)
+     {
+	e->engine.func->output_resize(e->engine.data.output,
+				      e->output.w, e->output.h);
+	e->engine.func->output_redraws_rect_add(e->engine.data.output, 
+						0, 0, 
+						e->output.w, e->output.h);
+     }
+   /* phase 5. add obscures */
    for (ll = e->obscures; ll; ll = ll->next)
      {
 	Evas_Rectangle *r;
@@ -192,7 +198,7 @@ evas_render_updates(Evas *e)
    /* save this list */
    obscuring_objects_orig = obscuring_objects;
    obscuring_objects = NULL;
-   /* phase 5. go thu each update rect and render objects in it*/
+   /* phase 6. go thu each update rect and render objects in it*/
    while ((surface = 
 	   e->engine.func->output_redraws_next_update_get(e->engine.data.output,
 							 &ux, &uy, &uw, &uh,
