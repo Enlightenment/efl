@@ -194,6 +194,7 @@ __entryswap32(*((unsigned int *)(entry) + 1))) \
 #define CHKMARGIN()  if ((hea + STKMARGIN) > stk) {ep->error = EMBRYO_ERROR_STACKERR; return 0;}
 #define CHKSTACK()   if (stk > ep->stp) {ep->run_count--; ep->error = EMBRYO_ERROR_STACKLOW; return 0;}
 #define CHKHEAP()    if (hea < ep->hlw) {ep->run_count--; ep->error = EMBRYO_ERROR_HEAPLOW; return 0;}
+#define CHKMEM(x)    if ((((x) >= hea) && ((x) < stk)) || ((Embryo_UCell)(x) >= (Embryo_UCell)ep->stp)) ABORT(ep, EMBRYO_ERROR_MEMACCESS);
 
 typedef struct _Embryo_Param        Embryo_Param;
 typedef struct _Embryo_Header       Embryo_Header;
