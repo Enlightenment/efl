@@ -61,6 +61,7 @@ struct _e_xid
    int                 mouse_in;
    int                 depth;
    int                 gravity;
+   int                 coords_invalid;
 };
 
 void                e_del_child(Window win, Window child);

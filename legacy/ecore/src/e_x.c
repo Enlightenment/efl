@@ -501,8 +501,11 @@ e_window_move(Window win, int x, int y)
    xid = e_validate_xid(win);
    if (xid)
      {
-	if ((xid->x == x) && (xid->y == y))
-	   return;
+	if (!xid->coords_invalid)
+	  {
+	     if ((xid->x == x) && (xid->y == y))
+	       return;
+	  }
 	xid->x = x;
 	xid->y = y;
 	XMoveWindow(disp, win, x, y);
@@ -523,30 +526,31 @@ if (xid->children) \
 	  { \
 	     switch (xid2->gravity) \
 	       { \
-		case ForgetGravity: /* dunno - check up */ \
+		case UnmapGravity: \
+                  xid2->mapped = 0; \
 		  break; \
 		case NorthWestGravity: \
 		  break; \
-		case NorthGravity: /* not 100% sure */ \
+		case NorthGravity: \
 		  xid2->x += (w - xid->w) / 2; \
 		  break; \
 		case NorthEastGravity: \
 		  xid2->x += (w - xid->w); \
 		  break; \
-		case WestGravity: /* not 100% sure */ \
+		case WestGravity: \
 		  xid2->h += (h - xid->h) / 2; \
 		  break; \
-		case CenterGravity: /* not 100% sure */ \
+		case CenterGravity: \
 		  xid2->x += (w - xid->w) / 2; \
 		  xid2->h += (h - xid->h) / 2; \
 		  break; \
-		case EastGravity: /* not 100% sure */ \
+		case EastGravity: \
 		  xid2->x += (w - xid->w); \
 		  break; \
 		case SouthWestGravity: \
 		  xid2->y += (h - xid->h); \
 		  break; \
-		case SouthGravity: /* not 100% sure */ \
+		case SouthGravity: \
 		  xid2->x += (w - xid->w) / 2; \
 		  xid2->y += (h - xid->h); \
 		  break; \
@@ -554,7 +558,8 @@ if (xid->children) \
 		  xid2->x += (w - xid->w); \
 		  xid2->y += (h - xid->h); \
 		  break; \
-		case StaticGravity: /* dunno - check up */ \
+		case StaticGravity: \
+                  xid2->coords_invalid = 1; \
 		  break; \
 		default: \
 		  break; \
@@ -571,11 +576,15 @@ e_window_resize(Window win, int w, int h)
    xid = e_validate_xid(win);
    if (xid)
      {
-	if ((xid->w == w) && (xid->h == h))
-	   return;
+	if (!xid->coords_invalid)
+	  {
+	     if ((xid->w == w) && (xid->h == h))
+	       return;
+	  }
 	REGRAVITATE;
 	xid->w = w;
 	xid->h = h;
+	xid->coords_invalid = 0;
 	XResizeWindow(disp, win, w, h);
      }
 }
@@ -588,13 +597,17 @@ e_window_move_resize(Window win, int x, int y, int w, int h)
    xid = e_validate_xid(win);
    if (xid)
      {
-	if ((xid->x == x) && (xid->y == y) && (xid->w == w) && (xid->h == h))
-	  return;
+	if (!xid->coords_invalid)
+	  {
+	     if ((xid->x == x) && (xid->y == y) && (xid->w == w) && (xid->h == h))
+	       return;
+	  }
 	REGRAVITATE;
 	xid->x = x;
 	xid->y = y;
 	xid->w = w;
 	xid->h = h;
+	xid->coords_invalid = 0;
 	XMoveResizeWindow(disp, win, x, y, w, h);
      }
 }
@@ -1160,6 +1173,19 @@ e_window_get_geometry(Window win, int *x, int *y, int *w, int *h)
 
    if (win == 0)
       win = default_root;
+   if (xid->coords_invalid)
+     {
+	Window dw;
+	int rx, ry;
+	unsigned int rw, rh, di;
+	
+	XGetGeometry(disp, win, &dw, &rx, &ry, &rw, &rh, &di, &di);
+	xid->x = rx;
+	xid->y = ry;
+	xid->w = (int)rw;
+	xid->h = (int)rh;
+	xid->coords_invalid = 0;
+     }
    xid = e_validate_xid(win);
    if (xid)
      {
