@@ -454,6 +454,20 @@ e_ev_x_handle_enter_notify(XEvent * xevent)
    GETSET_MODS(xevent->xcrossing.state, e->mods);
    e_add_event(EV_MOUSE_IN, e, e_ev_generic_free);
    e_window_mouse_set_in(e->win, 1);
+     {
+	Ev_Mouse_Move      *e;
+	
+	e = NEW(Ev_Mouse_Move, 1);
+	e->win = xevent->xcrossing.window;
+	e->root = xevent->xcrossing.root;
+	e->x = xevent->xcrossing.x;
+	e->y = xevent->xcrossing.y;
+	e->rx = xevent->xcrossing.x_root;
+	e->ry = xevent->xcrossing.y_root;
+	e->time = xevent->xcrossing.time;
+	GETSET_MODS(xevent->xcrossing.state, e->mods);
+	e_add_event(EV_MOUSE_MOVE, e, e_ev_generic_free);
+     }
 }
 
 static void
@@ -462,6 +476,20 @@ e_ev_x_handle_leave_notify(XEvent * xevent)
    Ev_Window_Leave    *e;
 
    e_pointer_xy_set(xevent->xcrossing.x_root, xevent->xcrossing.y_root);
+     {
+	Ev_Mouse_Move      *e;
+	
+	e = NEW(Ev_Mouse_Move, 1);
+	e->win = xevent->xcrossing.window;
+	e->root = xevent->xcrossing.root;
+	e->x = xevent->xcrossing.x;
+	e->y = xevent->xcrossing.y;
+	e->rx = xevent->xcrossing.x_root;
+	e->ry = xevent->xcrossing.y_root;
+	e->time = xevent->xcrossing.time;
+	GETSET_MODS(xevent->xcrossing.state, e->mods);
+	e_add_event(EV_MOUSE_MOVE, e, e_ev_generic_free);
+     }
    e = NEW(Ev_Window_Leave, 1);
    e->win = xevent->xcrossing.window;
    e->root = xevent->xcrossing.root;
