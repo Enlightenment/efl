@@ -183,6 +183,10 @@ struct _Edje_Part_Collection
    int        id; /* the collection id */
    
    int        references;
+   struct {
+      Evas_Hash                   *no_matches;
+      Evas_Hash                   *matches;
+   } prog_cache;
 };
 
 struct _Edje_Part
@@ -343,6 +347,7 @@ struct _Edje
    Evas_List            *text_classes;
    int                   freeze;
    int                   references;
+   
 };
 
 struct _Edje_Real_Part

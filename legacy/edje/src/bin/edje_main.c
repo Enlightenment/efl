@@ -331,8 +331,10 @@ bottom_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	y -= 20;
 	w += 20;
 	h += 30;
-	minw = 20 + de->minw;
-	minh = 30 + de->minh;
+//	minw = 20 + de->minw;
+//	minh = 30 + de->minh;
+	minw = 20;
+	minh = 30;
 	if (hdir > 0)
 	  {
 	     w += ev->cur.canvas.x - ev->prev.canvas.x;

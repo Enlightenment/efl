@@ -3,6 +3,9 @@
 
 static Evas_Hash   *_edje_file_hash = NULL;
 
+static void _edje_collection_free_part_description_free(Edje_Part_Description *desc);
+static int  _edje_collection_free_prog_cache_matches_free_cb(Evas_Hash *hash, const char *key, void *data, void *fdata);
+
 /* API Routines */
 void
 edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
@@ -158,6 +161,15 @@ _edje_file_add(Edje *ed)
 	     ed->file = NULL;
 	     goto out;
 	  }
+	  {
+	     for (l = ed->file->collection_dir->entries; l; l = l->next)
+	       {
+		  Edje_Part_Collection_Directory_Entry *ce;
+		  
+		  ce = l->data;		  
+		  printf("Collection: %s\n", ce->entry);
+	       }
+	  }
 	_edje_file_hash = evas_hash_add(_edje_file_hash, ed->path, ed->file);
      }
    
@@ -305,5 +317,75 @@ _edje_file_free(Edje_File *edf)
 void
 _edje_collection_free(Edje_Part_Collection *ec)
 {
-   printf("FIXME: leak Edje_Part_Collection!\n");
+   while (ec->programs)
+     {
+	Edje_Program *pr;
+	
+	pr = ec->programs->data;
+	ec->programs = evas_list_remove(ec->programs, pr);
+	if (pr->name) free(pr->name);
+	if (pr->signal) free(pr->signal);
+	if (pr->source) free(pr->source);
+	if (pr->state) free(pr->state);
+	if (pr->state2) free(pr->state2);
+	while (pr->targets)
+	  {
+	     Edje_Program_Target *prt;
+	     
+	     prt = pr->targets->data;
+	     pr->targets = evas_list_remove(pr->targets, prt);
+	     free(prt);
+	  }
+	free(pr);
+     }
+   while (ec->parts)
+     {
+	Edje_Part *ep;
+	
+	ep = ec->parts->data;
+	ec->parts = evas_list_remove(ec->parts, ep);
+	if (ep->name) free(ep->name);
+	if (ep->color_class) free(ep->color_class);
+	if (ep->text_class) free(ep->text_class);
+	if (ep->default_desc) _edje_collection_free_part_description_free(ep->default_desc);
+	while (ep->other_desc)
+	  {
+	     Edje_Part_Description *desc;
+	     
+	     desc = ep->other_desc->data;
+	     ep->other_desc = evas_list_remove(ep->other_desc, desc);
+	     _edje_collection_free_part_description_free(desc);
+	  }
+     }
+   if (ec->prog_cache.no_matches) evas_hash_free(ec->prog_cache.no_matches);
+   if (ec->prog_cache.matches)
+     {
+	evas_hash_foreach(ec->prog_cache.matches, _edje_collection_free_prog_cache_matches_free_cb, NULL);
+	evas_hash_free(ec->prog_cache.matches);
+     }
+   free(ec);
+}
+
+static void
+_edje_collection_free_part_description_free(Edje_Part_Description *desc)
+{
+   if (desc->state.name) free(desc->state.name);
+   while (desc->image.tween_list)
+     {
+	Edje_Part_Image_Id *pi;
+	
+	pi = desc->image.tween_list->data;
+	desc->image.tween_list = evas_list_remove(desc->image.tween_list, pi);
+	free(pi);
+     }
+   if (desc->text.text) free(desc->text.text);
+   if (desc->text.font) free(desc->text.font);
+   free(desc);
+}
+
+static int
+_edje_collection_free_prog_cache_matches_free_cb(Evas_Hash *hash, const char *key, void *data, void *fdata)
+{
+   evas_list_free((Evas_List *)data);
+   return 1;
 }

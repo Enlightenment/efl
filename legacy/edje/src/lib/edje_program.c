@@ -442,7 +442,7 @@ _edje_emit(Edje *ed, char *sig, char *src)
    recursions++;
    _edje_ref(ed);
    _edje_freeze(ed);
-   printf("EMIT \"%s\" \"%s\"\n", sig, src);
+//   printf("EMIT \"%s\" \"%s\"\n", sig, src);
    ee = calloc(1, sizeof(Edje_Emission));
    if (!ee)
      {
@@ -469,17 +469,73 @@ _edje_emit(Edje *ed, char *sig, char *src)
 	emissions = evas_list_remove(emissions, ee);
 	if (ed->collection)
 	  {
-	     for (l = ed->collection->programs; l; l = l->next)
+	     Edje_Part_Collection *ec;
+	     char *tmps;
+	     int l1, l2;
+	     int done;
+	     
+	     ec = ed->collection;
+	     l1 = strlen(ee->signal);
+	     l2 = strlen(ee->source);
+	     tmps = malloc(l1 + l2 + 2);
+	     
+	     if (tmps)
 	       {
-		  Edje_Program *pr;
-		  
-		  pr = l->data;
-		  if ((pr->signal) &&
-		      (pr->source) &&
-		      (_edje_glob_match(ee->signal, pr->signal)) &&
-		      (_edje_glob_match(ee->source, pr->source)))
-		    _edje_program_run(ed, pr, 0);
+		  strcpy(tmps, ee->signal);
+		  tmps[l1] = '\377';
+		  strcpy(&(tmps[l1 + 1]), ee->source);
 	       }
+	     done = 0;
+	     
+	     if (tmps)
+	       {
+		  Evas_List *matches;
+		  
+		  if (evas_hash_find(ec->prog_cache.no_matches, tmps))
+		    done = 1;
+		  else if ((matches = evas_hash_find(ec->prog_cache.matches, tmps)))
+		    {
+		       for (l = matches; l; l = l->next)
+			 {
+			    Edje_Program *pr;
+			    
+			    pr = l->data;
+			    _edje_program_run(ed, pr, 0);
+			 }
+		       done = 1;
+		    }
+	       }
+	     if (!done)
+	       {
+		  int matched = 0;
+		  Evas_List *matches = NULL;
+		  
+		  for (l = ed->collection->programs; l; l = l->next)
+		    {
+		       Edje_Program *pr;
+		       
+		       pr = l->data;
+		       if ((pr->signal) &&
+			   (pr->source) &&
+			   (_edje_glob_match(ee->signal, pr->signal)) &&
+			   (_edje_glob_match(ee->source, pr->source)))
+			 {
+			    matched++;
+			    _edje_program_run(ed, pr, 0);
+			    matches = evas_list_append(matches, pr);
+			 }
+		    }
+		  if (tmps)
+		    {
+		       if (matched == 0)
+			 ec->prog_cache.no_matches = 
+			 evas_hash_add(ec->prog_cache.no_matches, tmps, ed);
+		       else
+			 ec->prog_cache.matches =
+			 evas_hash_add(ec->prog_cache.matches, tmps, matches);
+		    }
+	       }
+	     if (tmps) free(tmps);
 	     ed->walking_callbacks = 1;
 	     for (l = ed->callbacks; l; l = l->next)
 	       {

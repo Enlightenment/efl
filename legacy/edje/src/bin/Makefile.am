@@ -21,7 +21,7 @@ edje_LDADD = \
 $(top_builddir)/src/lib/libedje.la \
 @imlib2_libs@
 
-edje_LDFLAGS =
+edje_LDFLAGS = -static
 
 edje_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 
