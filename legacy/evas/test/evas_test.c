@@ -5,8 +5,36 @@
 #include <unistd.h>
 #include <math.h>
 
-double get_time(void);
+/* defines */
+#define IMGDIR "./img/"
+#define FNTDIR "./fnt"
 
+/* global variables */
+Display  *display = NULL;
+Window    win_base = 0, win_control = 0, win_view = 0;
+Visual   *vis_control = NULL, *vis_view = NULL;
+Colormap  cmap_control = 0, cmap_view  = 0;
+Evas      evas_control = NULL, evas_view = NULL;
+int       wait_for_events = 1;
+
+Evas_Object o_logo, o_logo_shadow, o_software, o_hardware, o_x11;
+int         mouse_x, mouse_y;
+
+/* prototypes  */
+double get_time       (void);
+void   setup          (void);
+void   setup_controls (void);
+void   setup_view     (Evas_Render_Method method);
+void   animate        (double val);
+void   handle_events  (void);
+
+void   mouse_down    (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y);
+void   mouse_up      (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y);
+void   mouse_move    (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y);
+void   mouse_in      (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y);
+void   mouse_out     (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y);
+
+/* functions */
 double
 get_time(void)
 {
@@ -16,388 +44,317 @@ get_time(void)
    return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
 }
 
+void
+setup(void)
+{
+   XSetWindowAttributes att;
+   
+   display = XOpenDisplay(NULL);
+   
+   evas_control = evas_new();
+   evas_set_output_method(evas_control, RENDER_METHOD_ALPHA_SOFTWARE);
+   evas_set_output_colors(evas_control, 216);
+   vis_control = evas_get_optimal_visual(evas_control, display);
+   cmap_control = evas_get_optimal_colormap(evas_control, display);
+   
+   att.background_pixel = 0;
+   att.colormap = cmap_control;
+   att.border_pixel = 0;
+   att.event_mask = 0;
+   win_base = XCreateWindow(display,
+			    RootWindow(display, DefaultScreen(display)),
+			    0, 0, 1024, 768, 0,
+			    imlib_get_visual_depth(display, vis_control),
+			    InputOutput,
+			    vis_control,
+			    CWColormap | CWBorderPixel | CWEventMask | CWBackPixel,
+			    &att);
+   att.background_pixmap = None;
+   att.colormap = cmap_control;
+   att.border_pixel = 0;
+   att.event_mask = 0;
+   win_control = XCreateWindow(display,
+			       win_base,
+			       0, 0, 128, 768, 0,
+			       imlib_get_visual_depth(display, vis_control),
+			       InputOutput,
+			       vis_control,
+			       CWColormap | CWBorderPixel | CWEventMask | CWBackPixmap,
+			       &att);
+   XSelectInput(display, win_control, ButtonPressMask | 
+		ButtonReleaseMask | PointerMotionMask | ExposureMask);
+   evas_font_add_path(evas_control, FNTDIR);
+   evas_set_output(evas_control, display, win_control, vis_control, cmap_control);
+   evas_set_output_size(evas_control, 128, 768);
+   evas_set_output_viewport(evas_control, 0, 0, 128, 768);
+   evas_set_font_cache(evas_control, 1 * 1024 * 1024);
+   evas_set_image_cache(evas_control, 8 * 1024 * 1024);   
 
-/* callbacks for logo object */
+   XMapWindow(display, win_control);
+   XMapWindow(display, win_base);
+   
+   setup_controls();
+   setup_view(RENDER_METHOD_ALPHA_SOFTWARE);
+}
 
+void
+setup_controls(void)
+{
+   Evas_Object o;
+   Evas e;
+   double ascent, descent;
+   
+   e = evas_control;
+   o = evas_add_image_from_file(e, IMGDIR"evas_test_control_bg.png");
+   evas_move(e, o, 0, 0);
+   evas_resize(e, o, 128, 768);
+   evas_set_image_fill(e, o, 0, 0, 128, 768);
+   evas_set_layer(e, o, -999);
+   evas_show(e, o);
+   
+   o = evas_add_text(e, "notepad", 16, "Software");
+   evas_set_color(e, o, 255,  255,  255, 160);
+   evas_move(e, o, 4, 4);
+   evas_show(e, o);
+   evas_text_get_max_ascent_descent(e, o, &ascent, &descent);
+   evas_callback_add(e, o, CALLBACK_MOUSE_DOWN, mouse_down, NULL);
+   evas_callback_add(e, o, CALLBACK_MOUSE_UP, mouse_up, NULL);
+   evas_callback_add(e, o, CALLBACK_MOUSE_IN, mouse_in, NULL);
+   evas_callback_add(e, o, CALLBACK_MOUSE_OUT, mouse_out, NULL);
+   o_software = o;
+
+   o = evas_add_text(e, "notepad", 16, "Hardware");
+   evas_set_color(e, o, 255,  255,  255, 160);
+   evas_move(e, o, 4, 4 + (ascent - descent));
+   evas_show(e, o);
+   evas_text_get_max_ascent_descent(e, o, &ascent, &descent);
+   evas_callback_add(e, o, CALLBACK_MOUSE_DOWN, mouse_down, NULL);
+   evas_callback_add(e, o, CALLBACK_MOUSE_UP, mouse_up, NULL);
+   evas_callback_add(e, o, CALLBACK_MOUSE_IN, mouse_in, NULL);
+   evas_callback_add(e, o, CALLBACK_MOUSE_OUT, mouse_out, NULL);
+   o_hardware = o;
+
+   o = evas_add_text(e, "notepad", 16, "Basic X11");
+   evas_set_color(e, o, 255,  255,  255, 160);
+   evas_move(e, o, 4, 4 + ((ascent - descent) * 2));
+   evas_show(e, o);
+   evas_text_get_max_ascent_descent(e, o, &ascent, &descent);
+   evas_callback_add(e, o, CALLBACK_MOUSE_DOWN, mouse_down, NULL);
+   evas_callback_add(e, o, CALLBACK_MOUSE_UP, mouse_up, NULL);
+   evas_callback_add(e, o, CALLBACK_MOUSE_IN, mouse_in, NULL);
+   evas_callback_add(e, o, CALLBACK_MOUSE_OUT, mouse_out, NULL);
+   o_x11 = o;
+   
+}
+
+void
+setup_view(Evas_Render_Method method)
+{
+   XSetWindowAttributes att;
+   Evas_Object o;
+   Evas e;
+   int w, h;
+   double x, y;
+
+   if (win_view) XDestroyWindow(display, win_view);
+   evas_view = evas_new();   
+   evas_set_output_method(evas_view, method);
+   if (method == RENDER_METHOD_BASIC_HARDWARE)
+      evas_set_scale_smoothness(evas_view, 0);
+   evas_set_output_colors(evas_view, 216);
+   vis_view = evas_get_optimal_visual(evas_view, display);
+   cmap_view = evas_get_optimal_colormap(evas_view, display);
+
+   att.background_pixmap = None;
+   att.colormap = cmap_view;
+   att.border_pixel = 0;
+   att.event_mask = 0;
+   win_view = XCreateWindow(display,
+			    win_base,
+			    128, 0, 1024 - 128, 768, 0,
+			    imlib_get_visual_depth(display, vis_view),
+			    InputOutput,
+			    vis_view,
+			    CWColormap | CWBorderPixel | CWEventMask | CWBackPixmap,
+			    &att);   
+   XMapWindow(display, win_view);
+   
+   XSelectInput(display, win_view, ButtonPressMask | 
+		ButtonReleaseMask | PointerMotionMask | ExposureMask);
+   
+   evas_font_add_path(evas_view, FNTDIR);
+   evas_set_output(evas_view, display, win_view, vis_view, cmap_view);
+   evas_set_output_size(evas_view, 1024 - 128, 768);
+   evas_set_output_viewport(evas_view, 0, 0, 1024 - 128, 768);
+   evas_set_font_cache(evas_view, 1 * 1024 * 1024);
+   evas_set_image_cache(evas_view, 8 * 1024 * 1024);   
+   
+   e = evas_view;
+   o = evas_add_image_from_file(e, IMGDIR"evas_test_view_bg.png");
+   evas_move(e, o, 0, 0);
+   evas_resize(e, o, 1024 - 128, 768);
+   evas_set_layer(e, o, -999);
+   evas_show(e, o);
+
+   o = evas_add_image_from_file(e, IMGDIR"evas_test_view_logo.png");
+   evas_get_image_size(e, o, &w, &h);
+   x = (1024 - 128 - w) / 2; y  = (768 - h) / 2;
+   evas_move(e, o, x, y);
+   evas_set_layer(e, o, 101);
+   evas_show(e, o);
+   o_logo = o;
+   
+   o = evas_add_image_from_file(e, IMGDIR"evas_test_view_logo_shadow.png");
+   evas_get_image_size(e, o, &w, &h);
+   x += 10; y += 10;
+   evas_move(e, o, x, y);
+   evas_set_layer(e, o, 100);
+   evas_show(e, o);
+   o_logo_shadow = o;
+}
+
+void
+animate(double val)
+{
+   double x, y;
+   int w, h;
+   
+   evas_get_image_size(evas_view, o_logo, &w, &h);
+   x = ((1024 - 128) / 2) + (256 * cos((val * 3.141592654 * 2 / 100) * 27));
+   y = (768 / 2)  + (256 * sin((val * 3.141592654 * 2 / 100) * 16));
+   evas_move(evas_view, o_logo, x - (w / 2), y - (h / 2));
+   evas_move(evas_view, o_logo_shadow, 
+	     x - (w / 2) - ((mouse_x - x) / 16), 
+	     y - (h / 2) - ((mouse_y - y) / 16));
+}
+
+void
+handle_events(void)
+{ 
+   double val, t1, t2;
+   
+   val = 0.0;
+   t1 = get_time();
+   wait_for_events = 0;
+   for (;;)
+     {
+	XEvent              ev;
+	Evas                e = NULL;
+	
+	/* input events */
+	do
+	  {
+	     int event_ok;
+	     
+	     event_ok = 0;
+	     if (wait_for_events)
+	       {
+		  XNextEvent(display, &ev);
+		  event_ok = 1;
+	       }
+	     else
+	       {
+		  if (XPending(display))
+		    {
+		       XNextEvent(display, &ev);		  
+		       event_ok = 1;
+		    }
+	       }
+	     if (event_ok)
+	       {
+		  if (ev.xany.window == win_control)   e = evas_control;
+		  else if (ev.xany.window == win_view) e = evas_view;
+		  if (e)
+		    {
+		       switch(ev.type)
+			 {
+			 case ButtonPress:
+			    evas_event_button_down(e, ev.xbutton.x, ev.xbutton.y, ev.xbutton.button);
+			    break;
+			 case ButtonRelease:
+			    evas_event_button_up(e, ev.xbutton.x, ev.xbutton.y, ev.xbutton.button);
+			    break;
+			 case MotionNotify:
+			    if (e == evas_view)
+			      {
+				 mouse_x = ev.xmotion.x;
+				 mouse_y = ev.xmotion.y;
+			      }
+			    evas_event_move(e, ev.xmotion.x, ev.xmotion.y);
+			    break;
+			 case Expose:
+			    evas_update_rect(e, ev.xexpose.x, ev.xexpose.y, ev.xexpose.width, ev.xexpose.height);
+			    break;
+			 default:
+			    break;
+			 }
+		    }
+	       }
+	  }
+	while (XPending(display));
+	/* stuff to do outside events */
+	animate(val);
+	/* display any changes */
+	evas_render(evas_control);
+	evas_render(evas_view);
+	/* caluclate time taken since the last render */
+	t2 = get_time();
+	val += t2 - t1;
+	t1 = t2;
+	if (val >= 100.0) val -= 100.0;
+     }
+}
+
+/* callbacks */
 void
 mouse_down (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y)
 {
-   evas_put_data(_e, _o, "clicked", (void *)1);
-   evas_put_data(_e, _o, "x", (void *)_x);
-   evas_put_data(_e, _o, "y", (void *)_y);
-   evas_set_layer(_e, _o, 200);
+   if ((_e == evas_control) && 
+       ((_o == o_software) || (_o == o_hardware) || (_o == o_x11)))
+      evas_set_color(_e, _o, 255,  255,  0, 255);
 }
 
 void
 mouse_up (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y)
 {
-   evas_remove_data(_e, _o, "clicked");
-   evas_set_layer(_e, _o, 50);
+   if ((_e == evas_control) && 
+       ((_o == o_software) || (_o == o_hardware) || (_o == o_x11)))
+     {
+	evas_set_color(_e, _o, 255,  255,  255, 255);
+	if (_o == o_software)
+	   setup_view(RENDER_METHOD_ALPHA_SOFTWARE);
+	else if (_o == o_hardware)
+	   setup_view(RENDER_METHOD_3D_HARDWARE);
+	else if (_o == o_x11)
+	   setup_view(RENDER_METHOD_BASIC_HARDWARE);
+     }
 }
 
 void
 mouse_move (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y)
 {
-   if (evas_get_data(_e, _o, "clicked"))
-     {
-	double ox, oy;
-	int x, y;
-	
-	evas_get_geometry(_e, _o, &ox, &oy, NULL, NULL);
-	x = evas_get_data(_e, _o, "x");
-	y = evas_get_data(_e, _o, "y");
-	evas_put_data(_e, _o, "x", (void *)_x);
-	evas_put_data(_e, _o, "y", (void *)_y);
-	evas_move(_e, _o, ox + _x - x, oy + _y - y);
-     }
 }
 
 void
 mouse_in (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y)
 {
+   if ((_e == evas_control) && 
+       ((_o == o_software) || (_o == o_hardware) || (_o == o_x11)))
+      evas_set_color(_e, _o, 255,  255,  255, 255);
 }
 
 void
 mouse_out (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y)
 {
+   if ((_e == evas_control) && 
+       ((_o == o_software) || (_o == o_hardware) || (_o == o_x11)))
+      evas_set_color(_e, _o, 255,  255,  255, 160);
 }
 
-/* done with callbacks */
-
-
+/* Mr. main */
 int
 main(int argc, char **argv)
 {
-   Imlib_Image buffer = NULL;
-   Display *d;
-   Visual *vis;
-   Colormap cmap;
-   Window win;
-   int win_w, win_h;
-   int i, a, w, h, m;
-   Evas e;
-   Evas_Object o[128], o_rect, o_line, o_grad, o_fps, o_text;
-   Evas_Gradient grad;
-   int down;
-   double t1, t2;
-   char *imgs[8] =
-     {
-	"img/mush.png",
-	"img/book.png",
-	"img/bulb.png",
-	"img/term.png",
-	"img/calc.png",
-	"img/worlds.png",
-	"img/spider.png",
-	"img/mouse.png"	   
-     };
-   
-   win_w = 640; win_h = 480;
-   e = evas_new();
-   for (i = 1; i < argc; i++)
-     {
-	if ((!strcmp(argv[i], "-x")) && (i < (argc - 1)))
-	  {
-	     i++;
-	     win_w = atoi(argv[i]);
-	  }
-	else if ((!strcmp(argv[i], "-y")) && (i < (argc - 1)))
-	  {
-	     i++;
-	     win_h = atoi(argv[i]);
-	  }
-	else if ((!strcmp(argv[i], "-m")) && (i < (argc - 1)))
-	  {
-	     i++;
-	     if (!strcmp(argv[i], "x11"))
-		evas_set_output_method(e, RENDER_METHOD_BASIC_HARDWARE);
-	     else if (!strcmp(argv[i], "soft"))
-		evas_set_output_method(e, RENDER_METHOD_ALPHA_SOFTWARE);
-	     else if (!strcmp(argv[i], "hard"))
-		evas_set_output_method(e, RENDER_METHOD_3D_HARDWARE);
-	     else if (!strcmp(argv[i], "buf"))
-	       {
-		  DATA32 *data;
-		  
-		  buffer = imlib_create_image(win_w, win_h);
-		  imlib_context_set_image(buffer);
-		  evas_set_output_method(e, RENDER_METHOD_IMAGE);
-		  evas_set_output_image(e, buffer);
-	       }
-	  }
-	else if ((!strcmp(argv[i], "-c")) && (i < (argc - 1)))
-	  {
-	     i++;
-	     evas_set_output_colors(e, atoi(argv[i]));
-	  }
-	else if ((!strcmp(argv[i], "-s")) && (i < (argc - 1)))
-	  {
-	     i++;
-	     evas_set_scale_smoothness(e, atoi(argv[i]));
-	  }
-	else
-	  {
-	     printf("Usage:\n");
-	     printf("      %s [options]\n", argv[0]);
-	     printf("Where options is one or more of:\n");
-	     printf("      -x width                     - width of window in pixels\n");
-	     printf("      -y height                    - height of window in pixels\n");
-	     printf("      -m [x11 | soft | hard | buf] - rendering mode\n");
-	     printf("      -c colors                    - maximum colors allocated\n");
-	     printf("      -s [1 | 0]                   - smooth scaling / rendering\n");
-	     printf("\n");
-	     printf("Examples:\n");
-	     printf(" %s -x 640 -y 480 -m soft      - run test in 640x480 in software mode\n", argv[0]);
-	     printf(" %s -x 800 -y 600 -m x11       - run test in 800x600 in X11 mode\n", argv[0]);
-	     printf(" %s -x 1024 -y 768 -m hard     - run test in 1024x768 in OpenGL mode\n", argv[0]);
-	     printf(" %s -x 640 -y 480 -m soft -s 0 - run test in 640x480 in software mode, no smooth scaling\n", argv[0]);
-	     exit(0);
-	  }
-     }
-   
-   d = XOpenDisplay(NULL);
-   vis = evas_get_optimal_visual(e, d);
-   cmap = evas_get_optimal_colormap(e, d);
-
-     {
-	XSetWindowAttributes att;
-	
-	att.colormap = cmap;
-	att.border_pixel = 0;
-	att.event_mask = 0;
-	
-	win = XCreateWindow(d,
-			    RootWindow(d, DefaultScreen(d)),
-			    0, 0, win_w, win_h, 0,
-			    imlib_get_visual_depth(d, vis),
-			    InputOutput,
-			    vis,
-			    CWColormap | CWBorderPixel | CWEventMask,
-			    &att);
-	XSelectInput(d, win, ButtonPressMask | ButtonReleaseMask | 
-		     PointerMotionMask | ExposureMask);
-	XMapWindow(d, win);
-	XSync(d, False);
-     }
-   evas_font_add_path(e, "./fnt");
-   evas_set_output(e, d, win, vis, cmap);
-   evas_set_output_size(e, win_w, win_h);
-   evas_set_output_viewport(e, 0, 0, win_w, win_h);
-
-   evas_set_font_cache(e, 1 * 1024 * 1024);
-   evas_set_image_cache(e, 8 * 1024 * 1024);   
-   
-   o[0] = evas_add_image_from_file(e, "img/sky001.png");
-   evas_show(e, o[0]);
-   o[1] = evas_add_image_from_file(e, "img/logo001.png");
-   evas_get_image_size(e, o[1], &w, &h);
-   evas_callback_add(e, o[1], CALLBACK_MOUSE_DOWN, mouse_down, NULL);
-   evas_callback_add(e, o[1], CALLBACK_MOUSE_UP, mouse_up, NULL);
-   evas_callback_add(e, o[1], CALLBACK_MOUSE_MOVE, mouse_move, NULL);
-   evas_callback_add(e, o[1], CALLBACK_MOUSE_IN, mouse_in, NULL);
-   evas_callback_add(e, o[1], CALLBACK_MOUSE_OUT, mouse_out, NULL);
-   w /= 2;
-   h /= 2;
-   evas_show(e, o[1]);
-   
-   for (i = 2 ; i < 120; i++)
-     {
-	o[i] = evas_add_image_from_file(e, "img/mush.png");
-	evas_show(e, o[i]);
-	evas_set_layer(e, o[i], 100);
-	evas_callback_add(e, o[i], CALLBACK_MOUSE_DOWN, mouse_down, NULL);
-	evas_callback_add(e, o[i], CALLBACK_MOUSE_UP, mouse_up, NULL);
-	evas_callback_add(e, o[i], CALLBACK_MOUSE_MOVE, mouse_move, NULL);
-	evas_callback_add(e, o[i], CALLBACK_MOUSE_IN, mouse_in, NULL);
-	evas_callback_add(e, o[i], CALLBACK_MOUSE_OUT, mouse_out, NULL);
-     }
-   for (i = 120; i < 128; i++)
-     {
-	o[i] = evas_add_text(e, "notepad", 16, imgs[i & 0x7]);
-	evas_set_color(e, o[i], rand()&0xff,  rand()&0xff,  rand()&0xff, 255);
-	evas_show(e, o[i]);
-	evas_set_layer(e, o[i], 100);
-	evas_callback_add(e, o[i], CALLBACK_MOUSE_DOWN, mouse_down, NULL);
-	evas_callback_add(e, o[i], CALLBACK_MOUSE_UP, mouse_up, NULL);
-	evas_callback_add(e, o[i], CALLBACK_MOUSE_MOVE, mouse_move, NULL);
-	evas_callback_add(e, o[i], CALLBACK_MOUSE_IN, mouse_in, NULL);
-	evas_callback_add(e, o[i], CALLBACK_MOUSE_OUT, mouse_out, NULL);
-     }
-   o_rect = evas_add_rectangle(e);
-   evas_show(e, o_rect);
-   evas_move(e, o_rect, 100, 100);
-   evas_resize(e, o_rect, 200, 100);
-   evas_set_color(e, o_rect, rand()&0xff,  rand()&0xff,  rand()&0xff, 120);
-   evas_set_layer(e, o_rect, 150);
-   evas_callback_add(e, o_rect, CALLBACK_MOUSE_DOWN, mouse_down, NULL);
-   evas_callback_add(e, o_rect, CALLBACK_MOUSE_UP, mouse_up, NULL);
-   evas_callback_add(e, o_rect, CALLBACK_MOUSE_MOVE, mouse_move, NULL);
-   evas_callback_add(e, o_rect, CALLBACK_MOUSE_IN, mouse_in, NULL);
-   evas_callback_add(e, o_rect, CALLBACK_MOUSE_OUT, mouse_out, NULL);
-   
-   o_line = evas_add_line(e);
-   evas_show(e, o_line);
-   evas_set_line_xy(e, o_line, 10, 20, 100, 50);
-   evas_set_color(e, o_line, rand()&0xff,  rand()&0xff,  rand()&0xff, 120);
-   evas_set_layer(e, o_rect, 150);
-   evas_callback_add(e, o_line, CALLBACK_MOUSE_DOWN, mouse_down, NULL);
-   evas_callback_add(e, o_line, CALLBACK_MOUSE_UP, mouse_up, NULL);
-   evas_callback_add(e, o_line, CALLBACK_MOUSE_MOVE, mouse_move, NULL);
-   evas_callback_add(e, o_line, CALLBACK_MOUSE_IN, mouse_in, NULL);
-   evas_callback_add(e, o_line, CALLBACK_MOUSE_OUT, mouse_out, NULL);
-   
-   o_grad = evas_add_gradient_box(e);
-   evas_show(e, o_grad);
-   evas_move(e, o_grad, 300, 50);
-   evas_resize(e, o_grad, 200, 200);
-   evas_set_layer(e, o_grad, 150);
-   grad = evas_gradient_new();
-   evas_gradient_add_color(grad, 255, 255, 255, 255, 8);
-   evas_gradient_add_color(grad, 255, 255, 0,   200, 8);
-   evas_gradient_add_color(grad, 255, 0  , 0,   150, 8);
-   evas_gradient_add_color(grad, 0  , 0  , 0,   0,   8);
-   evas_set_gradient(e, o_grad, grad);
-   evas_callback_add(e, o_grad, CALLBACK_MOUSE_DOWN, mouse_down, NULL);
-   evas_callback_add(e, o_grad, CALLBACK_MOUSE_UP, mouse_up, NULL);
-   evas_callback_add(e, o_grad, CALLBACK_MOUSE_MOVE, mouse_move, NULL);
-   evas_callback_add(e, o_grad, CALLBACK_MOUSE_IN, mouse_in, NULL);
-   evas_callback_add(e, o_grad, CALLBACK_MOUSE_OUT, mouse_out, NULL);
-
-   o_text = evas_add_text(e, "grunge", 14, "Click and Drag Objects...");
-   evas_set_color(e, o_text, 0, 0, 0, 160);
-   evas_move(e, o_text, 30, 60); 
-   evas_show(e, o_text);
-   evas_set_layer(e, o_text, 200);
-   evas_callback_add(e, o_text, CALLBACK_MOUSE_DOWN, mouse_down, NULL);
-   evas_callback_add(e, o_text, CALLBACK_MOUSE_UP, mouse_up, NULL);
-   evas_callback_add(e, o_text, CALLBACK_MOUSE_MOVE, mouse_move, NULL);
-   evas_callback_add(e, o_text, CALLBACK_MOUSE_IN, mouse_in, NULL);
-   evas_callback_add(e, o_text, CALLBACK_MOUSE_OUT, mouse_out, NULL);
-
-   o_fps = evas_add_text(e, "morpheus", 16, "FPS...");
-   evas_set_color(e, o_fps, 255, 255, 255, 120);
-   evas_move(e, o_fps, win_w, win_h); 
-   evas_show(e, o_fps);
-   evas_set_layer(e, o_fps, 500);
-   
-   evas_raise(e, o[1]);
-   evas_move(e, o[0], 0, 0);
-   evas_resize(e, o[0], win_w, win_h);
-   evas_set_image_fill(e, o[0], 0, 0, win_w, win_h);
-   a = 0;
-   down = 0;
-   t1 = get_time();
-   m = 0;
-   for (;;)
-     {
-	double x, y;
-	XEvent              ev;
-
-	while (XPending(d))
-/*	do*/
-	  {
-	     XNextEvent(d, &ev);
-	     switch(ev.type)
-	       {
-	       case ButtonPress:
-		    {
-		       int button, mouse_x, mouse_y;
-
-		       down = 1;
-		       button = ev.xbutton.button;
-		       mouse_x = ev.xbutton.x;
-		       mouse_y = ev.xbutton.y;
-		       evas_event_button_down(e, mouse_x, mouse_y, button);
-		    }
-		  break;
-	       case ButtonRelease:
-		    {
-		       int button, mouse_x, mouse_y;
-		       
-		       down = 0;
-		       button = ev.xbutton.button;
-		       if (button == 3)
-			 {
-			    evas_free(e);
-			    exit(0);
-			 }
-		       mouse_x = ev.xbutton.x;
-		       mouse_y = ev.xbutton.y;
-		       evas_event_button_up(e, mouse_x, mouse_y, button);
-		    }
-		  break;
-	       case MotionNotify:
-		    {
-		       int mouse_x, mouse_y;
-		       
-		       mouse_x = ev.xmotion.x;
-		       mouse_y = ev.xmotion.y;
-		       evas_event_move(e, mouse_x, mouse_y);
-		    }
-		  break;
-	       case Expose:
-		    {
-		       evas_update_rect(e, ev.xexpose.x, ev.xexpose.y, ev.xexpose.width, ev.xexpose.height);
-		    }
-		  break;
-	       default:
-		  break;
-	       }
-	  }
-/*	while (XPending(d));*/
-	for (i = 2; i < 128; i++)
-	  {
-	     int j, k;
-	     double ww, hh;
-	     
-	     if (!evas_get_data(e, o[i], "clicked"))
-	       {
-		  j = (i * 50) + i;
-		  k = (i * -60) - (i * 2);
-		  x = (win_w + (cos((double)(a + j) * 2 * 3.141592654 / 1000) * (win_h - 100))) / 2;
-		  y = (win_h + (sin((double)(a + k) * 2 * 3.141592654 / 1000) * (win_h - 100))) / 2;
-		  if (i < 100)
-		     evas_set_image_file(e, o[i], imgs[(i) & 0x7]);
-		  evas_move(e, o[i], x, y);
-		  ww =  ((1.2 + cos((double)(a + j + m) * 2 * 3.141592654 / 1000)) * 48);
-		  hh = ww;
-		  evas_resize(e, o[i], ww, hh);
-		  evas_set_image_fill(e, o[i], 0, 0, ww, hh);
-/*		  
-		  evas_set_color(e, o[i], 255, 255, 255, 
-				 (((1.0 + cos((double)(a + j) * 2 * 3 * 3.141592654 / 1000)) / 2) * 255));
-		  */
-	       }
-	  }
-	evas_set_angle(e, o_grad, (double)a * 360 / 1000);
-	evas_render(e);
-	if ((argc == 5) && (!strcmp(argv[4], "save")) && (buffer))
-	  {
-	     imlib_context_set_image(buffer);
-	     imlib_image_set_format("png");
-	     imlib_save_image("output.png");
-	     printf("save done\n");
-	     sleep(1);
-	     printf("run\n");
-	  }
-	a++;
-	m++;
-	if ((a % 25) == 0)
-	  {
-	     char buf[64];
-	     double gw, gh;
-	     
-	      t2 = get_time() - t1;
-	      t1 = get_time();
-	     sprintf(buf, "FPS: %3.1f", 25 / t2);
-	     printf("%s\n", buf);
-	     evas_set_text(e, o_fps, buf);
-	     evas_get_geometry(e, o_fps, NULL, NULL, &gw, &gh);
-	     evas_move(e, o_fps, win_w - gw, win_h - gh);
-	  }
-	if (a >= 1000) 
-	   {
-	      a = 0;
-	   }
-     }
+   setup();
+   handle_events();
 }
