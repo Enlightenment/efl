@@ -7,12 +7,30 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 		       ltconfig ltmain.sh missing mkinstalldirs \
 		       stamp-h.in edje_docs.tar edje_docs.tar.gz edje.c
 
+install-data-local:
+	@$(NORMAL_INSTALL)
+	if test -d $(srcdir)/data; then \
+	 $(mkinstalldirs) $(DESTDIR)$(pkgdatadir)/data; \
+	  for d in $(srcdir)/data/*; do \
+	      cp -pR $$d $(DESTDIR)$(pkgdatadir)/data; \
+	  done \
+	fi
+
 dist-hook:
 	./gendoc; \
-	tar cvf edje_docs.tar doc; \
+	tar cvf edje_docs.tar doc/html doc/latex doc/man; \
 	rm -f edje_docs.tar.gz; \
-	gzip -9 edje_docs.tar;
+	gzip -9 edje_docs.tar; \
+	if test -d data; then \
+	  mkdir $(distdir)/data; \
+	  for file in data/*; do \
+	    if test -f $$file; then \
+	      cp -p $$file $(distdir)/data; \
+	    fi \
+	  done \
+	fi
 
 bin_SCRIPTS = edje-config
 
 EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN edje.spec edje.c.in gendoc Doxyfile edje_docs.tar.gz
+

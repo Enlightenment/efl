@@ -1,0 +1,202 @@
+// Images in the image database for the output file
+images
+{
+   // image "filename.png" STORAGE_MEOTHD [option to storage method];
+   // STORAGE_METHOD can be:
+   // COMP = compressed, no loss
+   // RAW = uncompressed, no loss
+   // LOSSY = compressed with quality loss, next param is quality level (0-100)
+   image, "bg.png"        LOSSY 80; /* raw pixels */
+   image, "e.png"         COMP; /* compressed */
+}
+
+collections
+{
+   group
+     {
+	name, "test";
+	parts
+	  {
+	     part
+	       {
+		  name,          "background";
+// IMAGE, RECTANGLE, TEXT		  
+//		  type,          IMAGE;
+		  mouse_events,  0;
+//		  color_class,   "default";
+		  description
+		    {
+// state, "name" (float value 0.0 - 1.0)
+		       state,    "default" 0.0;
+		       visible,  1;
+//		       dragable
+//			 {
+// direction, on/off stepping count
+//			    x, 0 1 2;
+//			    y, 0 1 2;
+//			    confine, "p2";
+//			 }
+//		       align, 0.5 0.5;
+//		       min, 0 0;
+//		       max, 0 0;
+//		       step 1 1;
+//		       aspect 0.0 999999.0;
+		       rel1
+			 {
+			    relative, 0.0  0.0;
+			    offset,   0    0;
+// if not defined assumed to be -1 (relative to all)			    
+//			    to,       "p2";
+			 }
+		       rel2
+			 {
+			    relative, 1.0  1.0;
+			    offset,   -1   -1;
+			 }
+		       image
+			 {
+			    normal, "bg.png";
+// tween images are images that are looped thru when graduating TO normal
+//			    tween, "test2.png";
+//			    tween, "test3.png";
+			 }
+		       border, 12 12 12 12;
+//		       fill
+//			 {
+//			    origin
+//			      {
+//				 relative, 0.0 0.0;
+//				 offset,   0   0;
+//			      }
+//			    size
+//			      {
+//				 relative,   1.0 1.0;
+//				 offset,     0   0;
+//			      }
+//			 }
+// only useful if its a rect or text object		       
+//		       color  255, 255, 255, 255;
+// only useful if its a text object	       
+//		       color2 255, 255, 255, 255;
+//		       color3 255, 255, 255, 255;
+//		       text
+//			 {
+//			    text,   "test text";
+//			    font,   "Vera";
+//			    size,   12;
+//			    effect, PLAIN;
+//			    fit,    0 0;
+//			    min,    1 1;
+//			    align   0.5 0.5;
+//			 }
+		    }
+	       }
+	     part
+	       {
+		  name,          "logo";
+		  description
+		    {
+		       state,    "default" 0.0;
+		       visible,  1;
+		       max, 64 64;
+		       rel1
+			 {
+			    relative, 0.0  0.0;
+			    offset,   16   16;
+			 }
+		       rel2
+			 {
+			    relative, 1.0  1.0;
+			    offset,   -17  -17;
+			 }
+		       image
+			 {
+			    normal, "e.png";
+			 }
+		    }
+		  description
+		    {
+		       state,    "clicked" 0.0;
+		       visible,  1;
+		       align,    0.5 0.5;
+		       max,      64 64;
+		       rel1
+			 {
+			    relative, 0.0  0.0;
+			    offset,   16   16;
+			 }
+		       rel2
+			 {
+			    relative, 1.0  1.0;
+			    offset,   -17  -17;
+			 }
+		       image
+			 {
+			    normal, "e.png";
+			 }
+		    }
+	       }
+	  }
+	programs
+	  {
+	     program
+	       {
+		  name,       "logo_click";
+		  signal,     "mouse-down-1";
+		  source,     "logo";
+// STATE_SET ot ACTION_STOP here
+		  action,     STATE_SET "clicked" 0.0;
+// LINEAR, SINUSOIDAL, ACCELERATE, DECELERATE, + seconds to transition over
+//		  transition, LINEAR 0.0;
+// who to apply this state to, can be multiple targets
+		  target,     "logo";
+//		  after,      "p1_fade_1";
+	       }
+	     program
+	       {
+		  name,       "logo_unclick";
+		  signal,     "mouse-up-1";
+		  source,     "logo";
+		  action,     STATE_SET "default" 0.0;
+		  target,     "logo";
+	       }
+/*	     
+	     program
+	       {
+		  name,       "p1_fade_2";
+		  signal,     "action-end";
+		  source,     "p1_fade_1";
+		  action,     STATE_SET "clicked" 0.0;
+		  transition, LINEAR 1.0;
+		  target,     "p1";
+		  after,      "p1_fade_1";
+	       }
+	     program
+	       {
+		  name,       "p1_unclicked";
+		  signal,     "mouse-up-1";
+		  source,     "p1";
+		  action,     STATE_SET "default" 0.0;
+		  transition, LINEAR 0.0;
+		  target,     "p1";
+	       }
+ */
+	  }
+     }
+/*   
+   group
+     {
+	name, "test2";
+	parts
+	  {
+	     part
+	       {
+		  name, "p1";
+	       }
+	  }
+	programs
+	  {
+	  }
+     }
+ */
+}

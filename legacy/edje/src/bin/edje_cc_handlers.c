@@ -297,6 +297,8 @@ ob_collections_group_parts_part(void)
    pc = evas_list_data(evas_list_last(edje_collections));
    pc->parts = evas_list_append(pc->parts, ep);
    ep->id = evas_list_count(pc->parts) - 1;
+   ep->type = EDJE_PART_TYPE_IMAGE;
+   ep->mouse_events = 1;
 }
 
 static void
@@ -362,6 +364,31 @@ ob_collections_group_parts_part_description(void)
      ep->default_desc = ed;
    else
      ep->other_desc = evas_list_append(ep->other_desc, ed);
+   ed->visible = 1;
+   ed->dragable.confine_id = -1;
+   ed->clip_to_id = -1;
+   ed->align.x = 0.5;
+   ed->align.y = 0.5;
+   ed->fill.pos_rel_x = 0.0;
+   ed->fill.pos_abs_x = 0;
+   ed->fill.rel_x = 1.0;
+   ed->fill.abs_x = 0;
+   ed->fill.pos_rel_y = 0.0;
+   ed->fill.pos_abs_y = 0;
+   ed->fill.rel_y = 1.0;
+   ed->fill.abs_y = 0;
+   ed->color.r = 255;
+   ed->color.g = 255;
+   ed->color.b = 255;
+   ed->color.a = 255;
+   ed->color2.r = 0;
+   ed->color2.g = 0;
+   ed->color2.b = 0;
+   ed->color2.a = 255;
+   ed->color3.r = 0;
+   ed->color3.g = 0;
+   ed->color3.b = 0;
+   ed->color3.a = 128;
 }
 
 static void
@@ -914,6 +941,8 @@ ob_collections_group_programs_program(void)
    ep = mem_alloc(SZ(Edje_Program));
    pc->programs = evas_list_append(pc->programs, ep);
    ep->id = evas_list_count(pc->programs) - 1;
+   ep->tween.mode = EDJE_TWEEN_MODE_LINEAR;
+   ep->after = -1;
 }
 
 static void
