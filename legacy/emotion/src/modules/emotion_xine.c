@@ -293,8 +293,17 @@ em_file_open(const char *file, Evas_Object *obj)
      }
    if (xine_get_pos_length(ev->stream, &pos_stream, &pos_time, &length_time))
      {
-	ev->pos = 0.0;
-	ev->len = (double)length_time / 1000.0;
+	if (length_time == 0)
+	  {
+	     ev->pos = (double)pos_stream / 65535;
+	     ev->len = 1.0;
+	     ev->no_time = 1;
+	  }
+	else
+	  {
+	     ev->pos = 0.0;
+	     ev->len = (double)length_time / 1000.0;
+	  }
      }
    v = xine_get_stream_info(ev->stream, XINE_STREAM_INFO_FRAME_DURATION);
    if (v > 0) ev->fps = 90000.0 / (double)v;
@@ -403,9 +412,19 @@ em_play(void *ef, double pos)
 			   &pos_time,
 			   &length_time))
      {
-	ev->pos = (double)pos_time / 1000.0;
-	ev->len = (double)length_time / 1000.0;
+	if (length_time == 0)
+	  {
+	     ev->pos = (double)pos_stream / 65535;
+	     ev->len = 1.0;
+	     ev->no_time = 1;
+	  }
+	else
+	  {
+	     ev->pos = (double)pos_time / 1000.0;
+	     ev->len = (double)length_time / 1000.0;
+	  }
      }
+   
    if ((xine_get_stream_info(ev->stream, XINE_STREAM_INFO_HAS_VIDEO)) &&
        (xine_get_stream_info(ev->stream, XINE_STREAM_INFO_VIDEO_HANDLED)))
      _emotion_frame_new(ev->obj);
@@ -451,9 +470,12 @@ em_pos_set(void *ef, double pos)
    ev = (Emotion_Xine_Video *)ef;
 
    if (ev->seek_to_pos == pos) return;
-   ev->seek_to_pos = pos;
-   ev->seek_to++;
-   pthread_cond_broadcast(&(ev->seek_cond));
+//   if (xine_get_stream_info(ev->stream, XINE_STREAM_INFO_SEEKABLE))
+     {
+	ev->seek_to_pos = pos;
+	ev->seek_to++;
+	pthread_cond_broadcast(&(ev->seek_cond));
+     }
 }
 
 static double
