@@ -400,8 +400,21 @@ if test "x$have_ecore_txt" = "xyes"; then
            iconv_libs="-liconv"
            ecore_txt_libs="-lecore_txt -liconv"
          ], [
-           AC_MSG_RESULT("no - disabling ecore_txt")
-           AM_CONDITIONAL(BUILD_ECORE_TXT, false)
+	   AC_CHECK_LIB(c, libiconv,
+	     [
+	       AM_CONDITIONAL(BUILD_ECORE_TXT, true)
+	       ecore_txt_libs="-lecore_txt"
+             ], AC_CHECK_LIB(iconv, libiconv,
+                  [
+                    AM_CONDITIONAL(BUILD_ECORE_TXT, true)
+                    iconv_libs="-liconv"
+                    ecore_txt_libs="-lecore_txt -liconv"
+                  ], [
+                    AC_MSG_RESULT("no - disabling ecore_txt")
+                    AM_CONDITIONAL(BUILD_ECORE_TXT, false)
+                  ]
+                ),
+           )
          ]
        ),
   )
