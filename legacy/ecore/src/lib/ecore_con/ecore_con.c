@@ -829,6 +829,8 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	      case -1:
 		 kill_server(svr);
 		 return 1;
+	      default:
+		 return 1;
 	   }
 	}
 #endif
@@ -918,6 +920,8 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 			 return 1;
 		   case -1:
 		      kill_server(svr);
+		      return 1;
+		   default:
 		      return 1;
 		}
 #endif
