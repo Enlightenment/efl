@@ -53,6 +53,7 @@ void   mouse_out     (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int 
 
 typedef struct _textblock TextBlock;
 typedef struct _imageblock ImageBlock;
+typedef struct _codeblock CodeBlock;
 
 struct _textblock
 {
@@ -69,41 +70,221 @@ struct _imageblock
    Evas_Object o_image;
 };
 
-static double texts_loop = 100;
+struct _codeblock
+{
+   double time1, time2, time3, time4;
+   void (*function) (double v, double val, int no);
+};
+
+
+static void
+fn_rect(double v, double val, int no)
+{
+   static Evas_Object o_fn_rects[8] = 
+     {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+   static int init = 0;
+   static int colors[] = 
+     {
+	255, 255, 255, 200,
+	0, 0, 0, 50,
+	200, 30, 30, 200,
+	240, 230, 40, 220,
+	30, 50, 200, 160,
+	50, 220, 60, 100,
+	220, 110, 30, 240,
+	200, 60, 220, 80
+     };
+   static double coords[8 * 4];
+   int i;
+   
+   if (no)
+     {
+	for (i = 0; i < 8; i++)
+	  {
+	     if (o_fn_rects[i])
+		evas_del_object(evas_view, o_fn_rects[i]);
+	     o_fn_rects[i] = NULL;
+	  }
+	return;
+     }
+   if (!init)
+     {
+	init = 1;
+	for (i = 0; i < 8; i++)
+	  {
+	     coords[(i * 4) + 0] = ((1024 - 128) / 2) + ((rand() % 500) - 250) - 165;
+	     coords[(i * 4) + 1] = ((768) / 2) + ((rand() % 200) - 0);
+	     coords[(i * 4) + 2] = 30 + (rand() % 300);
+	     coords[(i * 4) + 3] = 20 + (rand() % 180);
+	  }
+     }
+   for (i = 0; i < 8; i++)
+     {
+	double alpha;
+	
+	if (v < 1)
+	   alpha = v;
+	else if (v < 2)
+	   alpha = 1;
+	else alpha = (3 - v);
+	if (!o_fn_rects[i]) o_fn_rects[i] = evas_add_rectangle(evas_view);
+	evas_set_color(evas_view, o_fn_rects[i],
+		       colors[(i * 4) + 0],
+		       colors[(i * 4) + 1],
+		       colors[(i * 4) + 2],
+		       (double)colors[(i * 4) + 3] * alpha);
+	evas_move(evas_view, o_fn_rects[i], 
+		  coords[(i * 4) + 0] + (50 * cos((val * 2.7) + 3.4 + i)), 
+		  coords[(i * 4) + 1] + (20 * sin((val * 3.6) + 1.2 + i))); 
+	evas_resize(evas_view, o_fn_rects[i], 
+		    coords[(i * 4) + 2], coords[(i * 4) + 3]); 
+	evas_show(evas_view, o_fn_rects[i]);
+     }   
+}
+
+static void
+fn_line(double v, double val, int no)
+{
+   static Evas_Object o_fn_lines[64] = 
+     {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+   static int init = 0;
+   static int colors[64 * 4];
+   static double coords[64 * 4];
+   int i;
+   
+   if (no)
+     {
+	for (i = 0; i < 64; i++)
+	  {
+	     if (o_fn_lines[i])
+		evas_del_object(evas_view, o_fn_lines[i]);
+	     o_fn_lines[i] = NULL;
+	  }
+	return;
+     }
+   if (!init)
+     {
+	init = 1;
+	for (i = 0; i < 64; i++)
+	  {
+	     coords[(i * 4) + 0] = ((1024 - 128) / 2) + ((rand() % 500) - 250) - 165;
+	     coords[(i * 4) + 1] = ((768) / 2) + ((rand() % 200) - 0);
+	     coords[(i * 4) + 2] = coords[(i * 4) + 0] + 30 + (rand() % 300);
+	     coords[(i * 4) + 3] = coords[(i * 4) + 1] + 20 + (rand() % 180);
+	     colors[(i * 4) + 0] = rand() % 255;
+	     colors[(i * 4) + 1] = rand() % 255;
+	     colors[(i * 4) + 2] = rand() % 255;
+	     colors[(i * 4) + 3] = rand() % 255;
+	  }
+     }
+   for (i = 0; i < 64; i++)
+     {
+	double alpha;
+	
+	if (v < 1)
+	   alpha = v;
+	else if (v < 2)
+	   alpha = 1;
+	else alpha = (3 - v);
+	if (!o_fn_lines[i]) o_fn_lines[i] = evas_add_line(evas_view);
+	evas_set_color(evas_view, o_fn_lines[i],
+		       colors[(i * 4) + 0],
+		       colors[(i * 4) + 1],
+		       colors[(i * 4) + 2],
+		       (double)colors[(i * 4) + 3] * alpha);
+	evas_set_line_xy(evas_view, o_fn_lines[i],
+			 coords[(i * 4) + 0] + (50 * cos((val * 2.7) + 3.4 + i)),
+			 coords[(i * 4) + 1] + (20 * sin((val * 3.6) + 1.2 + i)),
+			 coords[(i * 4) + 2] + (50 * cos((val * 4.2) + 1.7 + i)),
+			 coords[(i * 4) + 3] + (20 * sin((val * 1.3) + 2.1 + i)));
+	evas_show(evas_view, o_fn_lines[i]);
+     }   
+}
+
+static void
+fn_poly(double v, double val, int no)
+{
+}
+
+static void
+fn_text(double v, double val, int no)
+{
+}
+
+static void
+fn_grad(double v, double val, int no)
+{
+}
+
+static void
+fn_image(double v, double val, int no)
+{
+}
+
+
+static double codes_loop = 160;
+static CodeBlock codes[] =
+{
+   { 128.0, 2.0, 4.0, 6.0, fn_rect},
+   { 132.0, 2.0, 4.0, 6.0, fn_line},
+   { 136.0, 2.0, 4.0, 6.0, fn_poly},
+   { 140.0, 2.0, 4.0, 6.0, fn_text},
+   { 144.0, 2.0, 4.0, 6.0, fn_grad},
+   { 148.0, 2.0, 4.0, 6.0, fn_image}
+};
+static double texts_loop = 160;
 static TextBlock texts[] =
 {
-     { 10.0, 12.0, 14.0, 16.0, "What are the 7 Wonders of the world?", NULL, NULL},
-     { 14.0, 16.0, 18.0, 20.0, "The Temple of Artemis at Ephesus ...", NULL, NULL},
-     { 18.0, 20.0, 22.0, 24.0, "The Colossus of Rhodes ...", NULL, NULL},
-     { 22.0, 24.0, 26.0, 28.0, "The Hanging Gardens of Babylon ...", NULL, NULL},
-     { 26.0, 28.0, 30.0, 32.0, "The Mausoleum at Halicarnassus ...", NULL, NULL},
-     { 30.0, 32.0, 34.0, 36.0, "The Lighthouse at Alexandria ...", NULL, NULL},
-     { 34.0, 36.0, 38.0, 40.0, "The Great Pyriamids at Giza ...", NULL, NULL},
-     { 38.0, 40.0, 42.0, 44.0, "The Statue of Zeus at Olympia ...", NULL, NULL},
+     { 10.0, 2.0, 4.0, 6.0,  "What are the 7 Wonders of the world?", NULL, NULL},
+     { 14.0, 2.0, 4.0, 6.0,  "The Temple of Artemis at Ephesus ...", NULL, NULL},
+     { 18.0, 2.0, 4.0, 6.0,  "The Colossus of Rhodes ...", NULL, NULL},
+     { 22.0, 2.0, 4.0, 6.0,  "The Hanging Gardens of Babylon ...", NULL, NULL},
+     { 26.0, 4.0, 4.0, 6.0,  "The Mausoleum at Halicarnassus ...", NULL, NULL},
+     { 30.0, 2.0, 4.0, 6.0,  "The Lighthouse at Alexandria ...", NULL, NULL},
+     { 34.0, 2.0, 4.0, 6.0,  "The Great Pyriamids at Giza ...", NULL, NULL},
+     { 38.0, 2.0, 4.0, 6.0,  "The Statue of Zeus at Olympia ...", NULL, NULL},
 
-     { 46.0, 48.0, 50.0, 52.0, "Is there an 8th wonder?", NULL, NULL},
+     { 46.0, 2.0, 4.0, 6.0,  "Is there an 8th wonder?", NULL, NULL},
    
-     { 52.0, 54.0, 58.0, 60.0, "Yes ...", NULL, NULL},
-     { 60.0, 64.0, 70.0, 74.0, "Rancid Cheese", NULL, NULL},
+     { 52.0, 2.0, 4.0, 6.0,  "Yes ...", NULL, NULL},
+     { 60.0, 2.0, 8.0, 12.0, "Rancid Cheese", NULL, NULL},
    
-     { 76.0, 78.0, 80.0, 82.0, "But for those who prefer to code ...", NULL, NULL},
-     { 80.0, 82.0, 84.0, 86.0, "There is ...", NULL, NULL},
-     { 87.0, 89.0, 93.0, 96.0, "E      ", NULL, NULL},
-     { 87.5, 89.5, 93.5, 97.0, "  V    ", NULL, NULL},
-     { 88.0, 90.0, 94.0, 98.0, "    A  ", NULL, NULL},
-     { 88.5, 90.5, 94.5, 99.0, "      S", NULL, NULL}
+     { 76.0, 2.0, 4.0, 6.0,  "But for those who prefer to code ...", NULL, NULL},
+     { 80.0, 2.0, 4.0, 6.0,  "There is ...", NULL, NULL},
+     { 87.0, 2.0, 6.0, 8.0,  "E      ", NULL, NULL},
+     { 87.5, 2.0, 6.0, 8.0,  "  V    ", NULL, NULL},
+     { 88.0, 2.0, 6.0, 8.0,  "    A  ", NULL, NULL},
+     { 88.5, 2.0, 6.0, 8.0,  "      S", NULL, NULL},
+   
+     { 100.0, 2.0, 4.0, 6.0,  "Evas is a Canvas ...", NULL, NULL},
+     { 104.0, 2.0, 4.0, 6.0,  "That supports Anti-Aliasing ...", NULL, NULL},
+     { 108.0, 2.0, 4.0, 6.0,  "Alpha Blending ...", NULL, NULL},
+     { 112.0, 2.0, 4.0, 6.0,  "MMX Assembly ...", NULL, NULL},
+     { 116.0, 2.0, 4.0, 6.0,  "Hardware Acceleration ...", NULL, NULL},
+     { 120.0, 2.0, 4.0, 6.0,  "For all it's objects.", NULL, NULL},
+     { 124.0, 2.0, 4.0, 6.0,  "The Objects it supports are ...", NULL, NULL},
+     { 128.0, 2.0, 4.0, 6.0,  "Rectangles ...", NULL, NULL},
+     { 132.0, 2.0, 4.0, 6.0,  "Lines ...", NULL, NULL},
+     { 136.0, 2.0, 4.0, 6.0,  "Polygons ...", NULL, NULL},
+     { 140.0, 2.0, 4.0, 6.0,  "Truetype Text ...", NULL, NULL},
+     { 144.0, 2.0, 4.0, 6.0,  "Gradients ...", NULL, NULL},
+     { 148.0, 2.0, 4.0, 6.0,  "Images ...", NULL, NULL},
+     { 152.0, 2.0, 4.0, 6.0,  "And they can all be layered ...", NULL, NULL},
+     { 156.0, 2.0, 4.0, 6.0,  "Moved and Resized ...", NULL, NULL},
+     { 160.0, 2.0, 4.0, 6.0,  "Faded in and out ...", NULL, NULL},
+     { 164.0, 2.0, 4.0, 6.0,  "And much much more ...", NULL, NULL},
 };
-static double images_loop = 75;
+static double images_loop = 160;
 static ImageBlock images[] =
 {
-     { 14.0, 16.0, 18.0, 20.0, 300, 100, IMGDIR"evas_test_wonder_1.png", NULL},
-     { 18.0, 20.0, 22.0, 24.0, 100, 200, IMGDIR"evas_test_wonder_2.png", NULL},
-     { 22.0, 24.0, 26.0, 28.0, 500, 500, IMGDIR"evas_test_wonder_3.png", NULL},
-     { 26.0, 28.0, 30.0, 32.0, 200, 350, IMGDIR"evas_test_wonder_4.png", NULL},
-     { 30.0, 32.0, 34.0, 36.0, 400,   0, IMGDIR"evas_test_wonder_5.png", NULL},
-     { 34.0, 36.0, 38.0, 40.0, 150, 400, IMGDIR"evas_test_wonder_6.png", NULL},
-     { 38.0, 40.0, 42.0, 44.0, 600,  25, IMGDIR"evas_test_wonder_7.png", NULL},
-     { 60.0, 64.0, 70.0, 74.0, 400, 100, IMGDIR"evas_test_cheese.png", NULL}
+     { 14.0, 2.0, 4.0, 6.0,  300, 100, IMGDIR"evas_test_wonder_1.png", NULL},
+     { 18.0, 2.0, 4.0, 6.0,  100, 200, IMGDIR"evas_test_wonder_2.png", NULL},
+     { 22.0, 2.0, 4.0, 6.0,  500, 500, IMGDIR"evas_test_wonder_3.png", NULL},
+     { 26.0, 2.0, 4.0, 6.0,  200, 350, IMGDIR"evas_test_wonder_4.png", NULL},
+     { 30.0, 2.0, 4.0, 6.0,  400,   0, IMGDIR"evas_test_wonder_5.png", NULL},
+     { 34.0, 2.0, 4.0, 6.0,  150, 400, IMGDIR"evas_test_wonder_6.png", NULL},
+     { 38.0, 2.0, 4.0, 6.0,  600,  25, IMGDIR"evas_test_wonder_7.png", NULL},
+     { 60.0, 2.0, 8.0, 12.0, 400, 100, IMGDIR"evas_test_cheese.png", NULL}
 };
 
 /* functions */
@@ -372,6 +553,7 @@ setup_view(Evas_Render_Method method)
    
    for (i = 0; i < (sizeof(texts) / sizeof(TextBlock)); i++) texts[i].o_text = NULL;
    for (i = 0; i < (sizeof(images) / sizeof(ImageBlock)); i++) images[i].o_image = NULL;
+   for (i = 0; i < (sizeof(codes) / sizeof(CodeBlock)); i++)  codes[i].function(0, 0, 1);
    if (evas_view) evas_free(evas_view);
    evas_view = e;
    
@@ -461,13 +643,42 @@ setup_view(Evas_Render_Method method)
 }
 
 void
+code(double val)
+{
+   int i;
+
+   if (codes_loop > 0)
+     {
+	while (val > codes_loop) val -= codes_loop;
+     }
+   for (i = 0; i < (sizeof(codes) / sizeof(CodeBlock)); i++)
+     {
+	if ((val >= codes[i].time1) && (val <= (codes[i].time1 + codes[i].time4)))
+	  {
+	     double v;
+	     
+	     v = 0;
+	     if (val <= (codes[i].time1 + codes[i].time2))
+		v = ((val - codes[i].time1) / (codes[i].time2));
+	     else if (val <= (codes[i].time1 + codes[i].time3))
+		v = 1 + ((val - codes[i].time1 - codes[i].time2) / (codes[i].time3 - codes[i].time2));
+	     else
+		v = 2.0 + ((val - codes[i].time1 - codes[i].time3) / (codes[i].time4 - codes[i].time3));
+	     codes[i].function(v, val, 0);
+	  }
+	else
+	   codes[i].function(0, val, 1);
+     }
+}
+
+void
 image(double val)
 {
    int i;
 
    if (images_loop > 0)
      {
-	while (val > texts_loop) val -= texts_loop;
+	while (val > images_loop) val -= images_loop;
      }
    for (i = 0; i < (sizeof(images) / sizeof(ImageBlock)); i++)
      {
@@ -476,19 +687,19 @@ image(double val)
 	     images[i].o_image = evas_add_image_from_file(evas_view, images[i].file);
 	     evas_set_layer(evas_view, images[i].o_image, 97);
 	  }
-	if ((val >= images[i].time1) && (val <= images[i].time4))
+	if ((val >= images[i].time1) && (val <= (images[i].time1 + images[i].time4)))
 	  {
 	     double tw, th, dx, dy, x, y;
 	     double alpha, a1;
-	     
+
 	     alpha = 255;
-	     if (val <= images[i].time2)
+	     if (val <= (images[i].time1 + images[i].time2))
 		alpha = ((val - images[i].time1) / 
-			 (images[i].time2 - images[i].time1));
-	     else if (val <= images[i].time3)
+			 (images[i].time2));
+	     else if (val <= (images[i].time1 + images[i].time3))
 		alpha = 1;
 	     else
-		alpha = 1.0 - ((val - images[i].time3) / 
+		alpha = 1.0 - ((val - images[i].time1 - images[i].time3) / 
 			       (images[i].time4 - images[i].time3));
 	     a1 = 1 - alpha;
 	     dx = (a1 * a1 * a1 * a1) * 500 * sin(val * 2.3);
@@ -524,19 +735,19 @@ text(double val)
 	     evas_set_color(evas_view, texts[i].o_shadow, 0, 0, 0, 128);
 	     evas_set_layer(evas_view, texts[i].o_shadow, 100);
 	  }
-	if ((val >= texts[i].time1) && (val <= texts[i].time4))
+	if ((val >= texts[i].time1) && (val <= (texts[i].time1 + texts[i].time4)))
 	  {
 	     double tw, th, dx, dy, x, y;
 	     double alpha, a1;
 	     
 	     alpha = 255;
-	     if (val <= texts[i].time2)
+	     if (val <= (texts[i].time1 + texts[i].time2))
 		alpha = ((val - texts[i].time1) / 
-			 (texts[i].time2 - texts[i].time1));
-	     else if (val <= texts[i].time3)
+			 (texts[i].time2));
+	     else if (val <= (texts[i].time1 + texts[i].time3))
 		alpha = 1;
 	     else
-		alpha = 1.0 - ((val - texts[i].time3) / 
+		alpha = 1.0 - ((val - texts[i].time1 - texts[i].time3) / 
 			       (texts[i].time4 - texts[i].time3));
 	     a1 = 1 - alpha;
 	     dx = (a1 * a1 * a1 * a1) * 500 * sin(val * 2.3);
@@ -546,8 +757,8 @@ text(double val)
 	     y = ((768 - th) / 2) + dy;
 	     evas_move(evas_view, texts[i].o_text, x, y);
 	     evas_move(evas_view, texts[i].o_shadow, 
-		       x - ((mouse_x - x) / 16),
-		       y - ((mouse_y - y) / 16));
+		       x - ((mouse_x - (x + (tw / 2))) / 16),
+		       y - ((mouse_y - (y + (th / 2))) / 16));
 	     evas_set_color(evas_view, texts[i].o_text, 255, 255, 255, 255 * alpha);
 	     evas_set_color(evas_view, texts[i].o_shadow, 0, 0, 0, 255 * alpha / 2);
 	     evas_show(evas_view, texts[i].o_text);
@@ -630,10 +841,13 @@ animate(double val)
      }
    if (val < 30)
      {
+	double w, h;
+	
+	evas_get_geometry(evas_view, o_logo_shadow, NULL, NULL, &w, &h);
 	evas_move(evas_view, o_logo, x - (w / 2), y - (h / 2));
 	evas_move(evas_view, o_logo_shadow, 
-		  x - (w / 2) - ((mouse_x - x) / 16), 
-		  y - (h / 2) - ((mouse_y - y) / 16));
+		  x - (w / 2) - ((mouse_x - (x + (w / 2))) / 16), 
+		  y - (h / 2) - ((mouse_y - (y + (h / 2))) / 16));
      }
    r = 48;
    z = ((2 + sin(val * 6 + (3.14159 * 0))) / 3) * 64;
@@ -645,8 +859,8 @@ animate(double val)
    evas_resize(evas_view, o_shadow1, z, z);
    evas_set_image_fill(evas_view, o_shadow1, 0, 0, z, z);
    evas_move(evas_view, o_shadow1, 
-	     x - ((mouse_x - x) / 16) + (z / 2), 
-	     y - ((mouse_y - y) / 16) + (z / 2));
+	     x - ((mouse_x - (x + (z / 2))) / 16) + (z / 2), 
+	     y - ((mouse_y - (y + (z / 2))) / 16) + (z / 2));
    z = ((2 + sin(val * 6 + (3.14159 * 0.66))) / 3) * 64;
    x = (1024 - 128 - 32 - r) + (cos(val * 4 + (3.14159 * 0.66)) * r) - (z / 2);
    y = (r + 32) + (sin(val * 6 + (3.14159 * 0.66)) * r) - (z / 2);
@@ -656,8 +870,8 @@ animate(double val)
    evas_resize(evas_view, o_shadow2, z, z);
    evas_set_image_fill(evas_view, o_shadow2, 0, 0, z, z);
    evas_move(evas_view, o_shadow2, 
-	     x - ((mouse_x - x) / 16) + (z / 2), 
-	     y - ((mouse_y - y) / 16) + (z / 2));
+	     x - ((mouse_x - (x + (z / 2))) / 16) + (z / 2), 
+	     y - ((mouse_y - (y + (z / 2))) / 16) + (z / 2));
    z = ((2 + sin(val * 6 + (3.14159 * 1.33))) / 3) * 64;
    x = (1024 - 128 - 32 - r) + (cos(val * 4 + (3.14159 * 1.33)) * r) - (z / 2);
    y = (r + 32) + (sin(val * 6 + (3.14159 * 1.33)) * r) - (z / 2);
@@ -667,8 +881,8 @@ animate(double val)
    evas_resize(evas_view, o_shadow3, z, z);
    evas_set_image_fill(evas_view, o_shadow3, 0, 0, z, z);
    evas_move(evas_view, o_shadow3, 
-	     x - ((mouse_x - x) / 16) + (z / 2), 
-	     y - ((mouse_y - y) / 16) + (z / 2));
+	     x - ((mouse_x - (x + (z / 2))) / 16) + (z / 2), 
+	     y - ((mouse_y - (y + (z / 2))) / 16) + (z / 2));
    if (val < 8)
      {
 	evas_get_image_size(evas_view, o_paint, &w, &h);
@@ -766,6 +980,7 @@ animate(double val)
    
    text(val);
    image(val);
+   code(val);
 }
 
 void
