@@ -1,0 +1,80 @@
+images {
+   image, "bg.png" LOSSY 90;
+   image, "e.png"  LOSSY 90;
+}
+
+collections {
+   group {
+      name, "test";
+      parts {
+	 part {
+	    name,          "background";
+	    mouse_events,  0;
+	    description {
+	       state,    "default" 0.0;
+	       rel1 {
+		  relative, 0.0  0.0;
+		  offset,   0    0;
+	       }
+	       rel2 {
+		  relative, 1.0  1.0;
+		  offset,   -1   -1;
+	       }
+	       image {
+		  normal, "bg.png";
+	       }
+	       border, 12 12 12 12;
+	    }
+	 }
+	 part {
+	    name,          "logo";
+	    description {
+	       state,    "default" 0.0;
+	       max, 64 64;
+	       rel1 {
+		  relative, 0.0  0.0;
+		  offset,   16   16;
+	       }
+	       rel2 {
+		  relative, 1.0  1.0;
+		  offset,   -17  -17;
+	       }
+	       image {
+		  normal, "e.png";
+	       }
+	    }
+	    description {
+	       state,    "clicked" 0.0;
+	       max,      64 64;
+	       rel1 {
+		  relative, 0.0  0.0;
+		  offset,   16   16;
+	       }
+	       rel2 {
+		  relative, 1.0  1.0;
+		  offset,   -17  -17;
+	       }
+	       image {
+		  normal, "e.png";
+	       }
+	    }
+	 }
+      }
+      programs {
+	 program {
+	    name,       "logo_click";
+	    signal,     "mouse-down-1";
+	    source,     "logo";
+	    action,     STATE_SET "clicked" 0.0;
+	    target,     "logo";
+	 }
+	 program {
+	    name,       "logo_unclick";
+	    signal,     "mouse-up-1";
+	    source,     "logo";
+	    action,     STATE_SET "default" 0.0;
+	    target,     "logo";
+	 }
+      }
+   }
+}

@@ -369,6 +369,17 @@ ob_collections_group_parts_part_description(void)
    ed->clip_to_id = -1;
    ed->align.x = 0.5;
    ed->align.y = 0.5;
+   ed->rel1.relative_x = 0.0;
+   ed->rel1.relative_y = 0.0;
+   ed->rel1.offset_x = 0;
+   ed->rel1.offset_x = 0;
+   ed->rel1.id = -1;
+   ed->rel2.relative_x = 1.0;
+   ed->rel2.relative_y = 1.0;
+   ed->rel2.offset_x = -1;
+   ed->rel2.offset_x = -1;
+   ed->rel2.id = -1;
+   ed->image.id = -1;
    ed->fill.pos_rel_x = 0.0;
    ed->fill.pos_abs_x = 0;
    ed->fill.rel_x = 1.0;
