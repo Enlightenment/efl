@@ -697,11 +697,11 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
    else
      p3 = p1;
 
-   if ((ep->part->color_class) && (strlen(ep->part->color_class) > 0))
+   if ((chosen_desc->color_class) && (strlen(chosen_desc->color_class) > 0))
      {
 	Ejde_Color_Class *cc;
 	
-	cc = _edje_color_class_find(ed, ep->part->color_class);
+	cc = _edje_color_class_find(ed, chosen_desc->color_class);
 	if (cc)
 	  {
 	     p3.color.r = (((int)cc->r + 1) * p3.color.r) >> 8;

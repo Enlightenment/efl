@@ -235,13 +235,12 @@ struct _Edje_Part
    unsigned char          mouse_events; /* it will affect/respond to mouse events */
    unsigned char          repeat_events; /* it will repeat events to objects below */
    int                    clip_to_id; /* the part id to clip this one to */   
-   char                  *color_class; /* how to modify the color */
    char                  *text_class; /* how to apply/modify the font */
    Edje_Part_Description *default_desc; /* the part descriptor for default */
    Evas_List             *other_desc; /* other possible descriptors */
    struct {
-      char                x; /* can u click & drag this bit in x dir */
-      char                y; /* can u click & drag this bit in y dir */
+      signed char         x; /* can u click & drag this bit in x dir */
+      signed char         y; /* can u click & drag this bit in y dir */
       
       int                 step_x; /* drag jumps n pixels (0 = no limit) */
       int                 step_y; /* drag jumps n pixels (0 = no limit) */
@@ -313,6 +312,8 @@ struct _Edje_Part_Description
       double         rel_y; /* relative size compared to area */
       int            abs_y; /* size of fill added to relative fill */
    } fill;
+   
+   char             *color_class; /* how to modify the color */
    
    struct {
       unsigned char  r, g, b, a; /* color for rect or text, shadow etc. */

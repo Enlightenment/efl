@@ -574,7 +574,6 @@ _edje_collection_free(Edje_Part_Collection *ec)
 	ep = ec->parts->data;
 	ec->parts = evas_list_remove(ec->parts, ep);
 	if (ep->name) free(ep->name);
-	if (ep->color_class) free(ep->color_class);
 	if (ep->text_class) free(ep->text_class);
 	if (ep->default_desc) _edje_collection_free_part_description_free(ep->default_desc);
 	while (ep->other_desc)
@@ -612,6 +611,7 @@ _edje_collection_free_part_description_free(Edje_Part_Description *desc)
      }
    if (desc->text.text) free(desc->text.text);
    if (desc->text.font) free(desc->text.font);
+   if (desc->color_class) free(desc->color_class);
    free(desc);
 }
 
