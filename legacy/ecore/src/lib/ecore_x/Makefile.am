@@ -19,6 +19,7 @@ libecore_x_la_SOURCES = \
 ecore_x.c \
 ecore_x_error.c \
 ecore_x_events.c \
+ecore_x_selection.c \
 ecore_x_window.c \
 ecore_x_window_prop.c \
 ecore_x_window_shape.c \
@@ -43,6 +44,7 @@ Ecore_X.h \
 ecore_x.c \
 ecore_x_error.c \
 ecore_x_events.c \
+ecore_x_selection.c \
 ecore_x_window.c \
 ecore_x_window_prop.c \
 ecore_x_window_shape.c \

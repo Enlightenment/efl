@@ -36,6 +36,9 @@ Atom     _ecore_x_atom_wm_icon_name = 0;
 Atom     _ecore_x_atom_wm_client_machine = 0;
 Atom     _ecore_x_atom_motif_wm_hints = 0;
 Atom     _ecore_x_atom_win_layer = 0;
+Atom     _ecore_x_atom_selection_primary = 0;
+Atom     _ecore_x_atom_selection_secondary = 0;
+Atom     _ecore_x_atom_selection_clipboard = 0;
 
 /*
  * Root window NetWM hints.
@@ -300,6 +303,10 @@ ecore_x_init(const char *name)
    _ecore_x_atom_wm_client_machine        = XInternAtom(_ecore_x_disp, "WM_CLIENT_MACHINE", False);
    _ecore_x_atom_motif_wm_hints           = XInternAtom(_ecore_x_disp, "_MOTIF_WM_HINTS", False);
    _ecore_x_atom_win_layer                = XInternAtom(_ecore_x_disp, "_WIN_LAYER", False);
+   /* This is just to be anal about naming conventions */
+   _ecore_x_atom_selection_primary        = XA_PRIMARY;
+   _ecore_x_atom_selection_secondary      = XA_SECONDARY;
+   _ecore_x_atom_selection_clipboard      = XInternAtom(_ecore_x_disp, "CLIPBOARD", False);
    _ecore_x_atom_net_current_desktop      = XInternAtom(_ecore_x_disp, "_NET_CURRENT_DESKTOP", False);
    _ecore_x_atom_net_wm_name              = XInternAtom(_ecore_x_disp, "_NET_WM_NAME", False);
    _ecore_x_atom_net_wm_visible_name      = XInternAtom(_ecore_x_disp, "_NET_WM_VISIBLE_NAME", False);

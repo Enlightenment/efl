@@ -112,6 +112,10 @@ extern Atom     _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
 
 extern Atom     _ecore_x_atom_utf8_string;
 
+extern Atom     _ecore_x_atom_selection_primary;
+extern Atom     _ecore_x_atom_selection_secondary;
+extern Atom     _ecore_x_atom_selection_clipboard;
+
 void _ecore_x_error_handler_init(void);
 void _ecore_x_event_handle_key_press(XEvent *xevent);
 void _ecore_x_event_handle_key_release(XEvent *xevent);
