@@ -2342,6 +2342,23 @@ e_window_get_command(Window win)
    return NULL;
 }
 
+char *
+e_window_get_icon_name(Window win)
+{
+   XTextProperty       xtp;
+   
+   if (XGetWMIconName(disp, win, &xtp))
+     {
+	char *s;
+	
+	if (!xtp.value) return NULL;	
+	s = strdup(xtp.value);
+	XFree(xtp.value);
+	return s;
+     }
+   return NULL;
+}
+
 void
 e_window_set_min_size(Window win, int w, int h)
 {
