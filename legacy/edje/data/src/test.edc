@@ -23,7 +23,9 @@ collections
 // IMAGE, RECTANGLE, TEXT		  
 //		  type,          IMAGE;
 		  mouse_events,  0;
+//                clip_to        "p1";		  
 //		  color_class,   "default";
+//		  text_class,    "default";
 		  description
 		    {
 // state, "name" (float value 0.0 - 1.0)

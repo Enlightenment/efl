@@ -10,23 +10,39 @@
 #include <math.h>
 #include <fnmatch.h>
 
-/* FIXME: need "random" signals and events to hook to */
-/* FIXME: clip_to needs to work */
-/* FIXME: free stuff - no more leaks */
-/* FIXME: dragables have to work */
-/* FIXME: drag start/top signals etc. */
-/* FIXME: drag needs to have signals with relative pos */
-/* FIXME: drag vals 0.0 -> 1.0. "rest" pos == 0.0 */
-/* FIXME: text parts need to work */
-/* FIXME: reduce linked list walking and list_nth calls */
-/* FIXME: named parts need to be able to be "replaced" with new evas objects */
-/* FIXME: need to be able to calculate min & max size of a whole edje */
-/* FIXME: add code to list collections in an eet */
-/* FIXME: part replacement with objec t+callbacks */
-/* FIXME: part queries for geometry etc. */
-
-/* FIXME: ? somehow handle double click? */
-/* FIXME: ? add numeric params to conditions for progs (ranges etc.) */
+/* FIXME:
+ * reference count programs since the tmp lists can be screwed if a program is ended by another
+ * need "random" signals and events for hooking to, and "random" durations
+ * free stuff - no more leaks
+ * dragables have to work
+ * drag start/top signals etc.
+ * drag needs to have signals with relative pos as arg.
+ * drag vals should be 0.0 -> 1.0 if drag is confined. "rest" pos = 0.0.
+ * query dragable for its relative pos value
+ * text parts need to work
+ * text and color classes need to work
+ * reduce linked list walking and list_nth calls
+ * named parts need to be able to be "replaced" with new evas objects
+ * real part size and "before min/max limit" sizes need to be stored per part
+ * need to be able to calculate min & max size of a whole edje
+ * add code to list collections in an eet file
+ * externally sourced images need to be supported in edje_cc and edje
+ * part replacement with object callbacks should be possible
+ * part queries for geometry etc.
+ * need to be able to "pause" edjes from API
+ * need to be able to force anim times to 0.0 from API to turn off animation
+ * need to detect relative loops
+ * need to detect clip_to loops
+ * need to detect anim time 0.0 loops
+ * need to check frametime 0.0 works
+ * need to check mouse_events flag works
+ * edje_cc should be able to force lossy, lossless, min and max quality and compression of encoded images
+ * edje_cc needs to prune out unused images
+ * edje_cc might need an option for limiting number of tween images
+ * audit edje for corrupt/bad input files
+ * ? somehow handle double click?
+ * ? add numeric params to conditions for progs (ranges etc.)
+*/
 
   
 /* HOW THIS ALL WORKS:
@@ -198,9 +214,10 @@ struct _Edje_Part_Collection
 struct _Edje_Part
 {
    char                  *name; /* the name if any of the part */
+   int                    id; /* its id number */
    unsigned char          type; /* what type (image, rect, text) */
    unsigned char          mouse_events; /* it will affect/respond to mouse events */
-   int                    id; /* its id number */
+   int                    clip_to_id; /* the part id to clip this one to */   
    char                  *color_class; /* how to modify the color */
    char                  *text_class; /* how to apply/modify the font */
    Edje_Part_Description *default_desc; /* the part descriptor for default */
@@ -232,8 +249,6 @@ struct _Edje_Part_Description
       
       int            confine_id; /* dragging within this bit, -1 = no */
    } dragable;
-   
-   int               clip_to_id; /* the part id to clip this one to */
    
    struct {
       double         x, y; /* 0 <-> 1.0 alignment within allocated space */
@@ -360,6 +375,8 @@ struct _Edje_Real_Part
       Edje_Real_Part        *rel2_to;
       Edje_Real_Part        *confine_to;
    } param1, param2;
+
+   Edje_Real_Part           *clip_to;
    
    Edje_Running_Program     *program;
 };

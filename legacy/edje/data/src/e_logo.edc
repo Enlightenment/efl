@@ -147,6 +147,25 @@ collections {
 	       border, 12 12 12 12;
 	    }
 	 }
+/*	 
+	 part {
+	    name,          "clip";
+	    mouse_events,  0;
+	    type,          RECT;
+	    description {
+	       state,    "default" 0.0;
+	       rel1 {
+		  relative, 0.5  0.5;
+		  offset,   -20    -20;
+	       }
+	       rel2 {
+		  relative, 0.5  0.5;
+		  offset,   19   19;
+	       }
+	       color,       100 200 255 128;
+	    }
+	 }
+ */
 	 part {
 	    name,          "logo";
 	    description {
@@ -186,6 +205,7 @@ collections {
 	 }
 	 part {
 	    name,          "logo_anim";
+//	    clip_to,       "clip";
 	    description {
 	       state,    "default" 0.0;
 	       max,      160 120;

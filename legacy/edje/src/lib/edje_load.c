@@ -85,6 +85,12 @@ edje_file_set(Evas_Object *obj, const char *file, const char *part)
 	       rp->param1.rel1_to = evas_list_nth(ed->parts, rp->param1.description->rel1.id);
 	     if (rp->param1.description->rel2.id >= 0)
 	       rp->param1.rel2_to = evas_list_nth(ed->parts, rp->param1.description->rel2.id);
+	     if (rp->part->clip_to_id >= 0)
+	       {
+		  rp->clip_to = evas_list_nth(ed->parts, rp->part->clip_to_id);
+		  if (rp->clip_to)
+		    evas_object_clip_set(rp->object, rp->clip_to->object);
+	       }
 	  }
 	ed->dirty = 1;
 	_edje_freeze(ed);
