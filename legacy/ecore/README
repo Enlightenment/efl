@@ -11,7 +11,8 @@ How ot build and install Ecore from this tarball?
 --enable-ecore-evas-gl \
 --enable-ecore-job \
 --enable-ecore-con \
---enable-ecore-ipc
+--enable-ecore-ipc \
+--enable-ecore-txt
 make
 su
 <as root do:>
@@ -25,8 +26,9 @@ from CVS:
 --enable-ecore-evas-gl \
 --enable-ecore-job \
 --enable-ecore-con \
---enable-ecore-ipc
-make
+--enable-ecore-ipc \
+--enable-ecore-txt
+ake
 su  
 <as root do:>
 make install
@@ -41,6 +43,7 @@ export CFLAGS="-O9"
 --enable-ecore-job \
 --enable-ecore-con \
 --enable-ecore-ipc \
+--enable-ecore-txt
 --with-evas-config=/skiff/local/arm-linux/bin/evas-config
 make CFLAGS="-O9 -I/skiff/local/include -I/skiff/local/arm-linux/include"
 
