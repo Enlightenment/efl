@@ -1052,8 +1052,6 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 //   printf("RE-LAYOUT %ix%i!\n", w, h);
    for (l = (Evas_Object_List *)o->nodes; l; l = l->next)
      {
-	Node *node;
-	
 	/* FIXME: we cant do this - we need to be able to qury text
 	 * overflow amounts */
 	/*
