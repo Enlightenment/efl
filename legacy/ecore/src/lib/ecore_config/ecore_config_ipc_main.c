@@ -26,7 +26,7 @@ typedef struct _ecore_config_ipc
 {
    void               *lib;
    void               *data;
-   int                 (*ipc_init) (char *pipe_name, void **data);
+   int                 (*ipc_init) (const char *pipe_name, void **data);
    int                 (*ipc_exit) (void **data);
    int                 (*ipc_poll) (void **data);
    struct _ecore_config_ipc *next;
@@ -273,7 +273,7 @@ _ecore_config_ipc_exit(void)
 }
 
 Ecore_Config_Server *
-_ecore_config_ipc_init(char *pipe_name)
+_ecore_config_ipc_init(const char *pipe_name)
 {
    char                buf[PATH_MAX];
    glob_t              globbuf;

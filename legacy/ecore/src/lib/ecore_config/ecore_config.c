@@ -1,6 +1,7 @@
 #include "Ecore_Config.h"
 #include "config.h"
 #include "ecore_config_private.h"
+#include "ecore_config_ipc.h"
 
 #include <string.h>
 #include <ctype.h>
@@ -22,12 +23,10 @@ Ecore_Config_Bundle *__ecore_config_bundle_local = NULL;
 char                *__ecore_config_app_name = NULL;
 int                  __ecore_config_system_init = 0;
 
-Ecore_Config_Server *_ecore_config_ipc_init(char *name);
-int                 _ecore_config_ipc_exit(void);
 static int           _ecore_config_system_init_no_load(void);
 static int           _ecore_config_system_load(void);
 
-static char        *_ecore_config_type[] =
+static const char  *_ecore_config_type[] =
    { "undefined", "integer", "float", "string", "colour", "theme", "boolean" };
 
 /**
@@ -439,7 +438,7 @@ ecore_config_bound(Ecore_Config_Prop * e)
  *         val is @c NULL, @c PT_NIL will be returned.
  */
 int
-ecore_config_type_guess(const char *key, char *val)
+ecore_config_type_guess(const char *key, const char *val)
 {
    Ecore_Config_Prop  *p;
    char               *l;
@@ -467,7 +466,7 @@ ecore_config_type_guess(const char *key, char *val)
 }
 
 static int
-ecore_config_typed_val(Ecore_Config_Prop * e, void *val, int type)
+ecore_config_typed_val(Ecore_Config_Prop * e, const void *val, int type)
 {
    char               *l;
    long                v;
@@ -548,7 +547,7 @@ ecore_config_typed_val(Ecore_Config_Prop * e, void *val, int type)
 }
 
 static int
-ecore_config_typed_add(const char *key, void *val, int type)
+ecore_config_typed_add(const char *key, const void *val, int type)
 {
    Ecore_Config_Prop  *e;
    Ecore_Config_Bundle *t;
@@ -582,7 +581,7 @@ ecore_config_typed_add(const char *key, void *val, int type)
 }
 
 static int
-ecore_config_add(const char *key, char *val)
+ecore_config_add(const char *key, const char *val)
 {
    int                 type;
 
@@ -661,7 +660,7 @@ ecore_config_long_opt_set(const char *key, char *long_opt)
  * @ingroup Ecore_Config_Property_Group
  */
 int
-ecore_config_typed_set(const char *key, void *val, int type)
+ecore_config_typed_set(const char *key, const void *val, int type)
 {
    Ecore_Config_Prop  *e;
    Ecore_Config_Listener_List *l;
@@ -1030,7 +1029,7 @@ ecore_config_int_default_bound(const char *key, int val, int low, int high,
  * @ingroup Ecore_Config_Default_Group
  */
 int
-ecore_config_string_default(const char *key, char *val)
+ecore_config_string_default(const char *key, const char *val)
 {
    return ecore_config_typed_default(key, (void *)val, PT_STR);
 }
@@ -1382,14 +1381,14 @@ ecore_config_bundle_new(Ecore_Config_Server * srv, const char *identifier)
    return t;
 }
 
-Ecore_Config_Server *
-do_init(char *name)
+static Ecore_Config_Server *
+do_init(const char *name)
 {
    return _ecore_config_ipc_init(name);
 }
 
-Ecore_Config_Server *
-ecore_config_init_local(char *name)
+static Ecore_Config_Server *
+ecore_config_init_local(const char *name)
 {
    char               *p;
    char               *buf;
@@ -1407,8 +1406,8 @@ ecore_config_init_local(char *name)
    return do_init(name);
 }
 
-Ecore_Config_Server *
-ecore_config_init_global(char *name)
+static Ecore_Config_Server *
+ecore_config_init_global(const char *name)
 {
    char               *p;
    int global;
@@ -1452,7 +1451,7 @@ ecore_config_init_global(char *name)
  * @ingroup Ecore_Config_App_Lib_Group
  */
 int
-ecore_config_init(char *name)
+ecore_config_init(const char *name)
 {
    char                *path;
    Ecore_Config_Prop   *list;

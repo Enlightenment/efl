@@ -26,7 +26,7 @@ ecore_txt_convert(const char *enc_from, const char *enc_to, const char *text)
    new_txt  = malloc(64);
    inb      = strlen(text);
    outb     = 64;
-   inp      = text;
+   inp      = (char*)text;
    outp     = new_txt;
    outalloc = 64;
    outlen   = 0;
@@ -39,7 +39,7 @@ ecore_txt_convert(const char *enc_from, const char *enc_to, const char *text)
 	tob = outb;
 	count = iconv(ic, &inp, &inb, &outp, &outb);
 	outlen += tob - outb;
-	if (count == -1)
+	if (count == (size_t)(-1))
 	  {
 	     if (errno == E2BIG)
 	       {

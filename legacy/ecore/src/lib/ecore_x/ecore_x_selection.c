@@ -6,8 +6,8 @@
 #include "Ecore_X.h"
 #include "Ecore_X_Atoms.h"
 
-static Ecore_X_Selection_Data selections[3] = {{0}};
-static Ecore_X_Selection_Data request_data[3] = {{0}};
+static Ecore_X_Selection_Data selections[3];
+static Ecore_X_Selection_Data request_data[3];
 static Ecore_X_Selection_Converter *converters = NULL;
 
 static int _ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret);
@@ -15,6 +15,10 @@ static int _ecore_x_selection_converter_text(char *target, void *data, int size,
 void
 _ecore_x_selection_data_init(void)
 {
+   /* Initialize global data */
+   memset(selections, 0, sizeof(selections));
+   memset(request_data, 0, sizeof(request_data));
+
    /* Initialize converters */
    ecore_x_selection_converter_atom_add(ECORE_X_ATOM_TEXT, 
 					_ecore_x_selection_converter_text);

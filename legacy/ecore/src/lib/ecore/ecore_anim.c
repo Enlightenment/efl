@@ -122,7 +122,7 @@ _ecore_animator_shutdown(void)
 }
 
 static int
-_ecore_animator(void *data)
+_ecore_animator(void *data __UNUSED__)
 {
    Ecore_Oldlist *l;
 

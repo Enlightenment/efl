@@ -42,13 +42,13 @@ static volatile sig_atomic_t sigquit_count = 0;
 static volatile sig_atomic_t sigint_count = 0;
 static volatile sig_atomic_t sigterm_count = 0;
 
-static volatile siginfo_t sigchld_info = {0};
-static volatile siginfo_t sigusr1_info = {0};
-static volatile siginfo_t sigusr2_info = {0};
-static volatile siginfo_t sighup_info = {0};
-static volatile siginfo_t sigquit_info = {0};
-static volatile siginfo_t sigint_info = {0};
-static volatile siginfo_t sigterm_info = {0};
+static volatile siginfo_t sigchld_info;
+static volatile siginfo_t sigusr1_info;
+static volatile siginfo_t sigusr2_info;
+static volatile siginfo_t sighup_info;
+static volatile siginfo_t sigquit_info;
+static volatile siginfo_t sigint_info;
+static volatile siginfo_t sigterm_info;
 
 #ifdef SIGPWR
 static volatile sig_atomic_t sigpwr_count = 0;
@@ -337,12 +337,12 @@ _ecore_signal_callback_set(int sig, Signal_Handler func)
 }
 
 static void
-_ecore_signal_callback_ignore(int sig, siginfo_t *si, void *foo)
+_ecore_signal_callback_ignore(int sig __UNUSED__, siginfo_t *si __UNUSED__, void *foo __UNUSED__)
 {
 }
 
 static void
-_ecore_signal_callback_sigchld(int sig, siginfo_t *si, void *foo)
+_ecore_signal_callback_sigchld(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    if (si)
       sigchld_info = *si;
@@ -354,7 +354,7 @@ _ecore_signal_callback_sigchld(int sig, siginfo_t *si, void *foo)
 }
 
 static void
-_ecore_signal_callback_sigusr1(int sig, siginfo_t *si, void *foo)
+_ecore_signal_callback_sigusr1(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    if (si)
       sigusr1_info = *si;
@@ -366,7 +366,7 @@ _ecore_signal_callback_sigusr1(int sig, siginfo_t *si, void *foo)
 }
 
 static void
-_ecore_signal_callback_sigusr2(int sig, siginfo_t *si, void *foo)
+_ecore_signal_callback_sigusr2(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    if (si)
       sigusr2_info = *si;
@@ -378,7 +378,7 @@ _ecore_signal_callback_sigusr2(int sig, siginfo_t *si, void *foo)
 }
 
 static void
-_ecore_signal_callback_sighup(int sig, siginfo_t *si, void *foo)
+_ecore_signal_callback_sighup(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    if (si)
       sighup_info = *si;
@@ -390,7 +390,7 @@ _ecore_signal_callback_sighup(int sig, siginfo_t *si, void *foo)
 }
 
 static void
-_ecore_signal_callback_sigquit(int sig, siginfo_t *si, void *foo)
+_ecore_signal_callback_sigquit(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    if (si)
       sigquit_info = *si;
@@ -402,7 +402,7 @@ _ecore_signal_callback_sigquit(int sig, siginfo_t *si, void *foo)
 }
 
 static void
-_ecore_signal_callback_sigint(int sig, siginfo_t *si, void *foo)
+_ecore_signal_callback_sigint(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    if (si)
       sigint_info = *si;
@@ -414,7 +414,7 @@ _ecore_signal_callback_sigint(int sig, siginfo_t *si, void *foo)
 }
 
 static void
-_ecore_signal_callback_sigterm(int sig, siginfo_t *si, void *foo)
+_ecore_signal_callback_sigterm(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    if (si)
       sigterm_info = *si;
@@ -427,7 +427,7 @@ _ecore_signal_callback_sigterm(int sig, siginfo_t *si, void *foo)
 
 #ifdef SIGPWR
 static void
-_ecore_signal_callback_sigpwr(int sig, siginfo_t *si, void *foo)
+_ecore_signal_callback_sigpwr(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    if (si)
       sigpwr_info = *si;
@@ -441,7 +441,7 @@ _ecore_signal_callback_sigpwr(int sig, siginfo_t *si, void *foo)
 
 #ifdef SIGRTMIN
 static void
-_ecore_signal_callback_sigrt(int sig, siginfo_t *si, void *foo)
+_ecore_signal_callback_sigrt(int sig, siginfo_t *si, void *foo __UNUSED__)
 {
    if (si)
       sigrt_info[sig - SIGRTMIN] = *si;

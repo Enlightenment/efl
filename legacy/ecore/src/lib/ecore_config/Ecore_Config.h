@@ -150,17 +150,19 @@ extern              "C"
    EAPI float               ecore_config_float_get(const char *key);
    EAPI char               *ecore_config_theme_get(const char *key);
    EAPI char               *ecore_config_as_string_get(const char *key);
+   EAPI int                 ecore_config_bound(Ecore_Config_Prop * e);
    EAPI int                 ecore_config_describe(const char *key, char *desc);
    EAPI int                 ecore_config_short_opt_set(const char *key,
 						  char short_opt);
    EAPI int                 ecore_config_long_opt_set(const char *key,
 						 char *long_opt);
    EAPI int                 ecore_config_set(const char *key, char *val);
-   EAPI int                 ecore_config_typed_set(const char *key, void *val,
+   EAPI int                 ecore_config_typed_set(const char *key, const void *val,
 					      int type);
    EAPI int                 ecore_config_boolean_set(const char *key, int val);
    EAPI int                 ecore_config_string_set(const char *key, char *val);
    EAPI int                 ecore_config_int_set(const char *key, int val);
+   EAPI char               *ecore_config_rgb_to_argb(char *rgb);
    EAPI int                 ecore_config_rgb_set(const char *key, char *val);
    EAPI int                 ecore_config_argb_set(const char *key, char *val);
    EAPI int                 ecore_config_float_set(const char *key, float val);
@@ -177,7 +179,7 @@ extern              "C"
    EAPI int                 ecore_config_int_default(const char *key, int val);
    EAPI int                 ecore_config_int_default_bound(const char *key, int val,
 						      int lo, int hi, int step);
-   EAPI int                 ecore_config_string_default(const char *key, char *val);
+   EAPI int                 ecore_config_string_default(const char *key, const char *val);
    EAPI int                 ecore_config_float_default(const char *key, float val);
    EAPI int                 ecore_config_float_default_bound(const char *key,
 							float val, float lo,
@@ -192,7 +194,7 @@ extern              "C"
    EAPI int                 ecore_config_deaf(const char *name, const char *key,
 					 Ecore_Config_Listener listener);
    EAPI Ecore_Config_Prop  *ecore_config_dst(Ecore_Config_Prop * e);
-   EAPI int                 ecore_config_type_guess(const char *key, char *val);
+   EAPI int                 ecore_config_type_guess(const char *key, const char *val);
 
    EAPI Ecore_Config_Bundle *ecore_config_bundle_new(Ecore_Config_Server * srv,
 						const char *id);
@@ -206,16 +208,16 @@ extern              "C"
    EAPI long                ecore_config_bundle_serial_get(Ecore_Config_Bundle * ns);
    EAPI char               *ecore_config_bundle_label_get(Ecore_Config_Bundle * ns);
 
-   EAPI int                 ecore_config_init(char *name);
+   EAPI int                 ecore_config_init(const char *name);
    EAPI int                 ecore_config_shutdown(void);
 
    EAPI int                 ecore_config_system_init(void);
    EAPI int                 ecore_config_system_shutdown(void);
 
    EAPI int                 ecore_config_load(void);
-   EAPI int                 ecore_config_file_load(char *file);
+   EAPI int                 ecore_config_file_load(const char *file);
    EAPI int                 ecore_config_save(void);
-   EAPI int                 ecore_config_file_save(char *file);
+   EAPI int                 ecore_config_file_save(const char *file);
 
 /* error codes */
 # define ECORE_CONFIG_ERR_NOTSUPP     (-16)

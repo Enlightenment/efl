@@ -20,6 +20,9 @@ typedef enum
    IPC_LAST
 } Ecore_Config_Ipc_Call;
 
+Ecore_Config_Server *_ecore_config_ipc_init(const char *pipe_name);
+int                  _ecore_config_ipc_exit(void);
+
 Ecore_Config_Server *_ecore_config_server_convert(void *srv);
 
 char               *_ecore_config_ipc_prop_list(Ecore_Config_Server * srv,

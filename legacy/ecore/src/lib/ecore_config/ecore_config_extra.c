@@ -25,9 +25,6 @@ struct __Ecore_Config_Arg_Callback
 char               *__ecore_config_app_description;
 _Ecore_Config_Arg_Callback *_ecore_config_arg_callbacks;
 
-extern int          ecore_config_bound(Ecore_Config_Prop * e);
-extern char        *ecore_config_rgb_to_argb(char *rgb);
-
 /* shorthand prop setup code to make client apps a little smaller ;) */
 
 /**
@@ -451,7 +448,7 @@ ecore_config_theme_search_path_append(char *path)
    search_len = strlen(search_path);
    
    if (loc == NULL || (loc != search_path && *(loc - 1) != '|') || 
-       (loc != (search_len - len) && *(loc + len - 1) != '|'))
+       (loc != (search_path + search_len - len) && *(loc + len - 1) != '|'))
      {
 	new_search_path = malloc(search_len + len + 2); /* 2 = \0 + | */
 	strcpy(new_search_path, search_path);
@@ -541,7 +538,7 @@ ecore_config_theme_with_path_get(const char *key)
       ecore_config_theme_with_path_from_name_get(ecore_config_theme_get(key));
 }
 
-static char        *_ecore_config_short_types[] =
+static const char  *_ecore_config_short_types[] =
    { "      ", "<int> ", "<flt> ", "<str> ", "<rgb> ", "<str> ", "<bool>" };
 
 /**
@@ -705,8 +702,8 @@ ecore_config_args_parse(void)
 			    ecore_config_parse_set(prop, argv[++nextarg],
 						   long_opt,
 						   '\0')) !=
-			   ECORE_CONFIG_PARSE_CONTINUE);
-		       return ret;
+			   ECORE_CONFIG_PARSE_CONTINUE)
+		          return ret;
 		       break;
 		    }
 		  prop = prop->next;

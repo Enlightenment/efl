@@ -496,7 +496,7 @@ ecore_x_window_prop_protocol_set(Ecore_X_Window win,
    int   i;
 
    /* check for invalid values */
-   if (protocol < 0 || protocol >= ECORE_X_WM_PROTOCOL_NUM)
+   if (protocol >= ECORE_X_WM_PROTOCOL_NUM)
 	return;
 
    proto = _ecore_x_atoms_wm_protocols[protocol];
@@ -568,7 +568,7 @@ ecore_x_window_prop_protocol_isset(Ecore_X_Window win,
    int i, ret = 0, protos_count = 0;
 
    /* check for invalid values */
-   if (protocol < 0 || protocol >= ECORE_X_WM_PROTOCOL_NUM)
+   if (protocol >= ECORE_X_WM_PROTOCOL_NUM)
 	return 0;
 
    proto = _ecore_x_atoms_wm_protocols[protocol];

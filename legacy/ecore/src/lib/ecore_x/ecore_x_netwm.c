@@ -142,6 +142,7 @@ _ecore_x_window_prop_string_utf8_get(Ecore_X_Window win, Ecore_X_Atom atom)
    return str;
 }
 
+#if 0 /* Unused */
 /* Set/clear atom in list */
 static void
 _ecore_x_netwm_atom_list_set(Ecore_X_Atom *atoms, int size, int *count,
@@ -172,6 +173,7 @@ _ecore_x_netwm_atom_list_set(Ecore_X_Atom *atoms, int size, int *count,
 	   *count = n;
    }
 }
+#endif
 
 
 /*

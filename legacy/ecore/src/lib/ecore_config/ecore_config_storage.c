@@ -52,7 +52,7 @@ ecore_config_save(void)
  * @ingroup Ecore_Config_File_Group
  */
 int
-ecore_config_file_load(char *file)
+ecore_config_file_load(const char *file)
 {
    Ecore_Config_DB_File  *db;
    char                 **keys;
@@ -80,7 +80,7 @@ ecore_config_file_load(char *file)
 	for (x = 0; x < key_count; x++)
 	  {
 	     type = _ecore_config_db_key_type_get(db, keys[x]);
-	     if (!type) type = "?";
+	     if (!type) type = strdup("?");
 	     if (!strcmp(type, "int"))
 	       {
 		  if (_ecore_config_db_key_int_get(db, keys[x], &itmp))
@@ -160,7 +160,7 @@ ecore_config_file_load(char *file)
 }
 
 static void
-_ecore_config_recurse_mkdir(char *file)
+_ecore_config_recurse_mkdir(const char *file)
 {
    char               *file_ptr;
    char               *file_tmp;
@@ -189,7 +189,7 @@ _ecore_config_recurse_mkdir(char *file)
  * @ingroup Ecore_Config_File_Group
  */
 int
-ecore_config_file_save(char *file)
+ecore_config_file_save(const char *file)
 {
    Ecore_Config_Prop    *next;
    Ecore_Config_DB_File *db;

@@ -19,6 +19,7 @@
 #include "Ecore_Config.h"
 #include "config.h"
 
+#if 0 /* FIXME - No prototypes? */
 /*****************************************************************************/
 
 static int
@@ -44,7 +45,7 @@ _ecore_config_ipc_ecore_string_get(char **m, char **r)
    return ECORE_CONFIG_ERR_SUCC;
 }
 
-char               *
+static char               *
 _ecore_config_ipc_global_prop_list(Ecore_Config_Server * srv, const long serial)
 {
    Ecore_Config_DB_File  *db;
@@ -75,7 +76,7 @@ _ecore_config_ipc_global_prop_list(Ecore_Config_Server * srv, const long serial)
 	for (x = 0; x < key_count; x++)
 	  {
 	     type = _ecore_config_db_key_type_get(db, keys[x]);
-	     if (!type) type = "?";
+	     if (!type) type = strdup("?");
 	     if (!strcmp(type, "int"))
 	       estring_appendf(s, "%s%s: integer", f ? "\n" : "", keys[x]);
 	     else if (!strcmp(type, "float"))
@@ -375,3 +376,4 @@ _ecore_config_mod_poll(void **data)
 }
 
 /*****************************************************************************/
+#endif

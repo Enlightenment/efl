@@ -421,7 +421,7 @@ static void
 _ecore_main_loop_iterate_internal(int once_only)
 {
    double next_time;
-   int    have_event;
+   int    have_event = 0;
    int    have_signal;
    
    in_main_loop++;

@@ -42,7 +42,7 @@ _ecore_ipc_dlt_int(int out, int prev, int *mode)
 	*mode = DLT_ZERO;
 	return 0;
      }
-   if (out == 0xffffffff)
+   if (out == (int)0xffffffff)
      {
 	*mode = DLT_ONE;
 	return 0;
@@ -711,7 +711,7 @@ ecore_ipc_ssl_available_get(void)
 
 
 static int
-_ecore_ipc_event_client_add(void *data, int ev_type, void *ev)
+_ecore_ipc_event_client_add(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_Con_Event_Client_Add *e;
    
@@ -744,7 +744,7 @@ _ecore_ipc_event_client_add(void *data, int ev_type, void *ev)
 }
 
 static int
-_ecore_ipc_event_client_del(void *data, int ev_type, void *ev)
+_ecore_ipc_event_client_del(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_Con_Event_Client_Del *e;
    
@@ -770,7 +770,7 @@ _ecore_ipc_event_client_del(void *data, int ev_type, void *ev)
 }
 
 static int
-_ecore_ipc_event_server_add(void *data, int ev_type, void *ev)
+_ecore_ipc_event_server_add(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_Con_Event_Server_Add *e;
    
@@ -796,7 +796,7 @@ _ecore_ipc_event_server_add(void *data, int ev_type, void *ev)
 }
 
 static int
-_ecore_ipc_event_server_del(void *data, int ev_type, void *ev)
+_ecore_ipc_event_server_del(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_Con_Event_Server_Del *e;
    
@@ -863,7 +863,7 @@ _ecore_ipc_event_server_del(void *data, int ev_type, void *ev)
    msg._member = _ecore_ipc_ddlt_int(d, cl->prev.i._member, md);
 
 static int
-_ecore_ipc_event_client_data(void *data, int ev_type, void *ev)
+_ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_Con_Event_Client_Data *e;
 
@@ -902,7 +902,7 @@ _ecore_ipc_event_client_data(void *data, int ev_type, void *ev)
 	  }
 	/* examine header */
 	redo:
-	if ((cl->buf_size - offset) >= sizeof(int))
+	if ((cl->buf_size - offset) >= (int)sizeof(int))
 	  {
 	     int s, md, d, head;
 	     unsigned char *dd;
@@ -1036,7 +1036,7 @@ _ecore_ipc_event_client_data(void *data, int ev_type, void *ev)
    msg._member = _ecore_ipc_ddlt_int(d, svr->prev.i._member, md);
 
 static int
-_ecore_ipc_event_server_data(void *data, int ev_type, void *ev)
+_ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void *ev)
 {
    Ecore_Con_Event_Server_Data *e;
 
@@ -1075,7 +1075,7 @@ _ecore_ipc_event_server_data(void *data, int ev_type, void *ev)
 	  }
 	/* examine header */
 	redo:
-	if ((svr->buf_size - offset) >= sizeof(int))
+	if ((svr->buf_size - offset) >= (int)sizeof(int))
 	  {
 	     int s, md, d, head;
 	     unsigned char *dd;
@@ -1168,7 +1168,7 @@ _ecore_ipc_event_server_data(void *data, int ev_type, void *ev)
 }
 
 static void
-_ecore_ipc_event_client_data_free(void *data, void *ev)
+_ecore_ipc_event_client_data_free(void *data __UNUSED__, void *ev)
 {
    Ecore_Ipc_Event_Client_Data *e;
    
@@ -1178,7 +1178,7 @@ _ecore_ipc_event_client_data_free(void *data, void *ev)
 }
 
 static void
-_ecore_ipc_event_server_data_free(void *data, void *ev)
+_ecore_ipc_event_server_data_free(void *data __UNUSED__, void *ev)
 {
    Ecore_Ipc_Event_Server_Data *e;
    

@@ -2,6 +2,7 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+#include "ecore_private.h"
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
@@ -112,7 +113,7 @@ _ecore_x_event_free_window_prop_client_machine_change(void *data, void *ev)
 #endif
 
 static void
-_ecore_x_event_free_key_down(void *data, void *ev)
+_ecore_x_event_free_key_down(void *data __UNUSED__, void *ev)
 {
    Ecore_X_Event_Key_Down *e;
 
@@ -124,7 +125,7 @@ _ecore_x_event_free_key_down(void *data, void *ev)
 }
 
 static void
-_ecore_x_event_free_key_up(void *data, void *ev)
+_ecore_x_event_free_key_up(void *data __UNUSED__, void *ev)
 {
    Ecore_X_Event_Key_Up *e;
 
@@ -136,7 +137,7 @@ _ecore_x_event_free_key_up(void *data, void *ev)
 }
 
 static void
-_ecore_x_event_free_selection_notify(void *data, void *ev)
+_ecore_x_event_free_selection_notify(void *data __UNUSED__, void *ev)
 {
    Ecore_X_Event_Selection_Notify *e;
 
@@ -350,12 +351,12 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 	     else e->win = xevent->xbutton.window;
 	     e->event_win = xevent->xbutton.window;
 	     e->time = xevent->xbutton.time;
-	     if (((e->time - last_time) <= 
+	     if (((int)(e->time - last_time) <= 
 		  (int)(1000 * _ecore_x_double_click_time)) &&
 		 (e->win == last_win) &&
 		 (e->event_win == last_event_win))
 	       e->double_click = 1;
-	     if (((e->time - last_last_time) <= 
+	     if (((int)(e->time - last_last_time) <= 
 		  (int)(2 * 1000 * _ecore_x_double_click_time)) &&
 		 (e->win == last_win) && (e->win == last_last_win) &&
 		 (e->event_win == last_event_win) && (e->event_win == last_last_event_win))
@@ -661,7 +662,7 @@ _ecore_x_event_handle_focus_out(XEvent *xevent)
 }
 
 void
-_ecore_x_event_handle_keymap_notify(XEvent *xevent)
+_ecore_x_event_handle_keymap_notify(XEvent *xevent __UNUSED__)
 {
    /* FIXME: handle this event type */   
 }
@@ -835,7 +836,7 @@ _ecore_x_event_handle_configure_request(XEvent *xevent)
 }
 
 void
-_ecore_x_event_handle_gravity_notify(XEvent *xevent)
+_ecore_x_event_handle_gravity_notify(XEvent *xevent __UNUSED__)
 {
    /* FIXME: handle this event type */
 }
@@ -855,13 +856,13 @@ _ecore_x_event_handle_resize_request(XEvent *xevent)
 }
 
 void
-_ecore_x_event_handle_circulate_notify(XEvent *xevent)
+_ecore_x_event_handle_circulate_notify(XEvent *xevent __UNUSED__)
 {
    /* FIXME: handle this event type */
 }
 
 void
-_ecore_x_event_handle_circulate_request(XEvent *xevent)
+_ecore_x_event_handle_circulate_request(XEvent *xevent __UNUSED__)
 {
    /* FIXME: handle this event type */
 }
@@ -1231,7 +1232,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
       _xdnd = _ecore_x_dnd_protocol_get();
       /* Make sure source/target match */
       if (_xdnd->source != xevent->xclient.window 
-            || _xdnd->dest != xevent->xclient.data.l[0])
+            || _xdnd->dest != (Window)xevent->xclient.data.l[0])
          return;
       _xdnd->will_accept = xevent->xclient.data.l[1] & 0x1UL;
       _xdnd->suppress = (xevent->xclient.data.l[1] & 0x2UL) ? 0 : 1;
@@ -1266,7 +1267,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
       _xdnd = _ecore_x_dnd_protocol_get();
       /* Match source/target */
-      if (_xdnd->source != xevent->xclient.data.l[0]
+      if (_xdnd->source != (Window)xevent->xclient.data.l[0]
             || _xdnd->dest != xevent->xclient.window)
          return;
       if (_xdnd->types)
@@ -1289,12 +1290,12 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
       _xdnd = _ecore_x_dnd_protocol_get();
       /* Match source/target */
-      if (_xdnd->source != xevent->xclient.data.l[0]
+      if (_xdnd->source != (Window)xevent->xclient.data.l[0]
             || _xdnd->dest != xevent->xclient.window)
          return;
       
-      timestamp = (_xdnd->version >= 1) ? 
-                     xevent->xclient.data.l[2] : _ecore_x_event_last_time;
+      timestamp = (_xdnd->version >= (int)1) ? 
+                     (Time)xevent->xclient.data.l[2] : _ecore_x_event_last_time;
       
       XConvertSelection(_ecore_x_disp, ECORE_X_ATOM_SELECTION_XDND,
             _xdnd->dest, ECORE_X_ATOM_SELECTION_PROP_XDND, _xdnd->dest,
@@ -1324,7 +1325,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
       _xdnd = _ecore_x_dnd_protocol_get();
       /* Match source/target */
       if (_xdnd->source != xevent->xclient.window
-            || _xdnd->dest != xevent->xclient.data.l[0])
+            || _xdnd->dest != (Window)xevent->xclient.data.l[0])
          return;
 
       if (_xdnd->version >= 5 && (xevent->xclient.data.l[1] & 0x1UL))
@@ -1375,13 +1376,13 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 }
 
 void
-_ecore_x_event_handle_mapping_notify(XEvent *xevent)
+_ecore_x_event_handle_mapping_notify(XEvent *xevent __UNUSED__)
 {
    /* FIXME: handle this event type */
 }
 
 void
-_ecore_x_event_handle_shape_change(XEvent *xevent)
+_ecore_x_event_handle_shape_change(XEvent *xevent __UNUSED__)
 {
    /* FIXME: handle this event type */
 }

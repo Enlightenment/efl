@@ -16,6 +16,7 @@ AC_C_CONST
 AC_CHECK_SIZEOF(int, 4)
 AM_ENABLE_SHARED
 AM_PROG_LIBTOOL
+AC_C___ATTRIBUTE__
 
 if test "x${bindir}" = 'x${exec_prefix}/bin'; then
   if test "x${exec_prefix}" = "xNONE"; then

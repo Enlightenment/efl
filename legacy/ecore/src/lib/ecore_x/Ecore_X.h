@@ -1101,7 +1101,8 @@ EAPI void                ecore_x_netwm_window_state_set(Ecore_X_Window win, Ecor
 EAPI int                 ecore_x_netwm_window_state_isset(Ecore_X_Window win, Ecore_X_Window_State state);
 EAPI void                ecore_x_netwm_window_type_set(Ecore_X_Window win, Ecore_X_Window_Type type);
 EAPI Ecore_X_Window_Type ecore_x_netwm_window_type_get(Ecore_X_Window win);
-EAPI int                 ecore_x_netwm_action_allowed(Ecore_X_Window win, Ecore_X_Action action);
+EAPI int                 ecore_x_netwm_allowed_action_isset(Ecore_X_Window win, Ecore_X_Action action);
+EAPI void                ecore_x_netwm_allowed_action_set(Ecore_X_Window win, Ecore_X_Action action, int on);
 EAPI void                ecore_x_netwm_opacity_set(Ecore_X_Window win, unsigned int opacity);
 EAPI int                 ecore_x_netwm_opacity_get(Ecore_X_Window win, unsigned int *opacity);
 EAPI void                ecore_x_netwm_frame_size_set(Ecore_X_Window win, int fl, int fr, int ft, int fb);

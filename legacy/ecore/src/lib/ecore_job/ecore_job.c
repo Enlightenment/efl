@@ -67,7 +67,7 @@ ecore_job_del(Ecore_Job *job)
 }
 
 static int
-_ecore_job_event_handler(void *data, int type, void *ev)
+_ecore_job_event_handler(void *data __UNUSED__, int type __UNUSED__, void *ev)
 {
    Ecore_Job *job;
    
@@ -77,7 +77,7 @@ _ecore_job_event_handler(void *data, int type, void *ev)
 }
 
 static void
-_ecore_job_event_free(void *data, void *ev)
+_ecore_job_event_free(void *data __UNUSED__, void *ev)
 {
    Ecore_Job *job;
    

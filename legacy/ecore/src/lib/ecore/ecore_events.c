@@ -79,7 +79,7 @@ ecore_event_handler_del(Ecore_Event_Handler *event_handler)
    return event_handler->data;
 }
 
-static void _ecore_event_generic_free (void *data, void *event)
+static void _ecore_event_generic_free (void *data __UNUSED__, void *event)
 {
    free (event);
 }
@@ -433,7 +433,7 @@ _ecore_event_exe_exit_new(void)
 }
 
 void
-_ecore_event_exe_exit_free(void *data, void *ev)
+_ecore_event_exe_exit_free(void *data __UNUSED__, void *ev)
 {
    Ecore_Event_Exe_Exit *e;
    

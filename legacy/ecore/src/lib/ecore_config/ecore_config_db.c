@@ -19,7 +19,7 @@ struct _Ecore_Config_DB_File
 };
 
 Ecore_Config_DB_File *
-_ecore_config_db_open_read(char *file)
+_ecore_config_db_open_read(const char *file)
 {
    Eet_File *ef;
    Ecore_Config_DB_File *db;
@@ -27,7 +27,7 @@ _ecore_config_db_open_read(char *file)
    eet_init();
    db = malloc(sizeof(Ecore_Config_DB_File));
    if (!db) return NULL;
-   ef = eet_open(file, EET_FILE_MODE_READ);
+   ef = eet_open((char*)file, EET_FILE_MODE_READ);
    if (!ef)
      {
 	free(db);
@@ -38,7 +38,7 @@ _ecore_config_db_open_read(char *file)
 }
 
 Ecore_Config_DB_File *
-_ecore_config_db_open_write(char *file)
+_ecore_config_db_open_write(const char *file)
 {
    Eet_File *ef;
    Ecore_Config_DB_File *db;
@@ -46,7 +46,7 @@ _ecore_config_db_open_write(char *file)
    eet_init();
    db = malloc(sizeof(Ecore_Config_DB_File));
    if (!db) return NULL;
-   ef = eet_open(file, EET_FILE_MODE_WRITE);
+   ef = eet_open((char*)file, EET_FILE_MODE_WRITE);
    if (!ef)
      {
 	free(db);
@@ -71,7 +71,7 @@ _ecore_config_db_keys_get(Ecore_Config_DB_File *db, int *num_ret)
    int key_count;
    int i;
    
-   keys = eet_list(db->ef, "*", &key_count);
+   keys = eet_list(db->ef, (char*)"*", &key_count);
    if (!keys)
      {
 	*num_ret = 0;
@@ -84,12 +84,12 @@ _ecore_config_db_keys_get(Ecore_Config_DB_File *db, int *num_ret)
 }
 
 char *
-_ecore_config_db_key_type_get(Ecore_Config_DB_File *db, char *key)
+_ecore_config_db_key_type_get(Ecore_Config_DB_File *db, const char *key)
 {
    char *data;
    int size;
    
-   data = eet_read(db->ef, key, &size);
+   data = eet_read(db->ef, (char*)key, &size);
    if (data)
      {
 	if (size <= 2)
@@ -108,12 +108,12 @@ _ecore_config_db_key_type_get(Ecore_Config_DB_File *db, char *key)
 }
 
 int
-_ecore_config_db_key_int_get(Ecore_Config_DB_File *db, char *key, int *dest)
+_ecore_config_db_key_int_get(Ecore_Config_DB_File *db, const char *key, int *dest)
 {
    char *data;
    int size;
    
-   data = eet_read(db->ef, key, &size);
+   data = eet_read(db->ef, (char*)key, &size);
    if (data)
      {
 	int l;
@@ -147,12 +147,12 @@ _ecore_config_db_key_int_get(Ecore_Config_DB_File *db, char *key, int *dest)
 }
 
 int
-_ecore_config_db_key_float_get(Ecore_Config_DB_File *db, char *key, double *dest)
+_ecore_config_db_key_float_get(Ecore_Config_DB_File *db, const char *key, double *dest)
 {
    char *data;
    int size;
    
-   data = eet_read(db->ef, key, &size);
+   data = eet_read(db->ef, (char*)key, &size);
    if (data)
      {
 	int l;
@@ -186,12 +186,12 @@ _ecore_config_db_key_float_get(Ecore_Config_DB_File *db, char *key, double *dest
 }
 
 char *
-_ecore_config_db_key_str_get(Ecore_Config_DB_File *db, char *key)
+_ecore_config_db_key_str_get(Ecore_Config_DB_File *db, const char *key)
 {
    char *data;
    int size;
    
-   data = eet_read(db->ef, key, &size);
+   data = eet_read(db->ef, (char*)key, &size);
    if (data)
      {
 	int l;
@@ -222,12 +222,12 @@ _ecore_config_db_key_str_get(Ecore_Config_DB_File *db, char *key)
 }
 
 void *
-_ecore_config_db_key_data_get(Ecore_Config_DB_File *db, char *key, int *size_ret)
+_ecore_config_db_key_data_get(Ecore_Config_DB_File *db, const char *key, int *size_ret)
 {
    char *data;
    int size;
    
-   data = eet_read(db->ef, key, &size);
+   data = eet_read(db->ef, (char*)key, &size);
    if (data)
      {
 	int l;
@@ -260,7 +260,7 @@ _ecore_config_db_key_data_get(Ecore_Config_DB_File *db, char *key, int *size_ret
 }
 
 void
-_ecore_config_db_key_int_set(Ecore_Config_DB_File *db, char *key, int val)
+_ecore_config_db_key_int_set(Ecore_Config_DB_File *db, const char *key, int val)
 {
    char buf[256];
    int num;
@@ -271,11 +271,11 @@ _ecore_config_db_key_int_set(Ecore_Config_DB_File *db, char *key, int val)
    if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
    buf[3] = 0;
    buf[num - 1] = 0;
-   eet_write(db->ef, key, buf, num, 1);
+   eet_write(db->ef, (char*)key, buf, num, 1);
 }
 
 void
-_ecore_config_db_key_float_set(Ecore_Config_DB_File *db, char *key, double val)
+_ecore_config_db_key_float_set(Ecore_Config_DB_File *db, const char *key, double val)
 {
    char buf[256];
    int num;
@@ -286,11 +286,11 @@ _ecore_config_db_key_float_set(Ecore_Config_DB_File *db, char *key, double val)
    if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
    buf[5] = 0;
    buf[num - 1] = 0;
-   eet_write(db->ef, key, buf, num, 1);
+   eet_write(db->ef, (char*)key, buf, num, 1);
 }
 
 void
-_ecore_config_db_key_str_set(Ecore_Config_DB_File *db, char *key, char *str)
+_ecore_config_db_key_str_set(Ecore_Config_DB_File *db, const char *key, char *str)
 {
    char *buf;
    int num;
@@ -300,12 +300,12 @@ _ecore_config_db_key_str_set(Ecore_Config_DB_File *db, char *key, char *str)
    if (!buf) return;
    strcpy(buf, "str");
    strcpy(buf + 4, str);
-   eet_write(db->ef, key, buf, num, 1);
+   eet_write(db->ef, (char*)key, buf, num, 1);
    free(buf);
 }
 
 void
-_ecore_config_db_key_data_set(Ecore_Config_DB_File *db, char *key, void *data, int data_size)
+_ecore_config_db_key_data_set(Ecore_Config_DB_File *db, const char *key, void *data, int data_size)
 {
    char *buf;
    int num;
@@ -316,6 +316,6 @@ _ecore_config_db_key_data_set(Ecore_Config_DB_File *db, char *key, void *data, i
    strcpy(buf, "data");
    memcpy(buf + 5, data, data_size);
    buf[num - 1] = 0;
-   eet_write(db->ef, key, buf, num, 1);
+   eet_write(db->ef, (char*)key, buf, num, 1);
    free(buf);
 }

@@ -169,7 +169,7 @@ int ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
  */
 void ecore_hash_destroy(Ecore_Hash *hash)
 {
-	int i = 0;
+	unsigned int i = 0;
 
 	CHECK_PARAM_POINTER("hash", hash);
 
@@ -209,7 +209,7 @@ void ecore_hash_destroy(Ecore_Hash *hash)
 int ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func,
 														 void *user_data)
 {
-	int i = 0;
+	unsigned int i = 0;
 
 	CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
 	CHECK_PARAM_POINTER_RETURN("for_each_func", for_each_func, FALSE);
@@ -241,7 +241,7 @@ int ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func,
  */
 Ecore_List *ecore_hash_keys(Ecore_Hash *hash)
 {
-	int i = 0;
+	unsigned int i = 0;
 	Ecore_List *keys;
 
 	CHECK_PARAM_POINTER_RETURN("hash", hash, NULL);
@@ -274,7 +274,7 @@ Ecore_List *ecore_hash_keys(Ecore_Hash *hash)
 void
 ecore_hash_dump_graph(Ecore_Hash *hash)
 {
-	int i;
+	unsigned int i;
 
 	for (i = 0; i < ecore_prime_table[hash->size]; i++)
 		if (hash->buckets[i])
@@ -620,7 +620,7 @@ _ecore_hash_decrease(Ecore_Hash *hash)
 inline int
 _ecore_hash_rehash(Ecore_Hash *hash, Ecore_List **old_table, int old_size)
 {
-	int i;
+	unsigned int i;
 	Ecore_Hash_Node *node;
 	Ecore_List *old;
 

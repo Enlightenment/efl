@@ -18,6 +18,12 @@
 #include <config.h>
 #endif
 
+#if HAVE___ATTRIBUTE__
+#define __UNUSED__ __attribute__((unused))
+#else
+#define __UNUSED__
+#endif
+
 #define ECORE_MAGIC_NONE            0x1234fedc
 #define ECORE_MAGIC_EXE             0xf7e812f5
 #define ECORE_MAGIC_TIMER           0xf7d713f4
@@ -36,7 +42,7 @@
 #define ECORE_MAGIC_CHECK(d, m)     ((d) && ((d)->__magic == (m)))
 #define ECORE_MAGIC_FAIL(d, m, fn)  _ecore_magic_fail((d), (d) ? (d)->__magic : 0, (m), (fn));
 
-typedef int                         Ecore_Magic;
+typedef unsigned int                Ecore_Magic;
 
 typedef struct _Ecore_Oldlist          Ecore_Oldlist;
 

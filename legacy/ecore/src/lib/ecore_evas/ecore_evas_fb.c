@@ -70,7 +70,7 @@ _ecore_evas_fb_match(void)
 }
 
 static void
-_ecore_evas_fb_lose(void *data)
+_ecore_evas_fb_lose(void *data __UNUSED__)
 {
    Ecore_Oldlist *l;
 
@@ -84,7 +84,7 @@ _ecore_evas_fb_lose(void *data)
 }
 
 static void
-_ecore_evas_fb_gain(void *data)
+_ecore_evas_fb_gain(void *data __UNUSED__)
 {
    Ecore_Oldlist *l;
 
@@ -99,7 +99,7 @@ _ecore_evas_fb_gain(void *data)
 }
 
 static int
-_ecore_evas_event_key_down(void *data, int type, void *event)
+_ecore_evas_event_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_Fb_Event_Key_Down *e;
@@ -112,7 +112,7 @@ _ecore_evas_event_key_down(void *data, int type, void *event)
 }
 
 static int
-_ecore_evas_event_key_up(void *data, int type, void *event)
+_ecore_evas_event_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_Fb_Event_Key_Up *e;
@@ -125,7 +125,7 @@ _ecore_evas_event_key_up(void *data, int type, void *event)
 }
 
 static int
-_ecore_evas_event_mouse_button_down(void *data, int type, void *event)
+_ecore_evas_event_mouse_button_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_Fb_Event_Mouse_Button_Down *e;
@@ -142,7 +142,7 @@ _ecore_evas_event_mouse_button_down(void *data, int type, void *event)
 }
 
 static int
-_ecore_evas_event_mouse_button_up(void *data, int type, void *event)
+_ecore_evas_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_Fb_Event_Mouse_Button_Up *e;
@@ -156,7 +156,7 @@ _ecore_evas_event_mouse_button_up(void *data, int type, void *event)
 }
 
 static int
-_ecore_evas_event_mouse_move(void *data, int type, void *event)
+_ecore_evas_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_Fb_Event_Mouse_Move *e;
@@ -169,7 +169,7 @@ _ecore_evas_event_mouse_move(void *data, int type, void *event)
 }
 
 static int
-_ecore_evas_idle_enter(void *data)
+_ecore_evas_idle_enter(void *data __UNUSED__)
 {
    Ecore_Oldlist *l;
    double t1 = 0.;
@@ -251,7 +251,7 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 }
 
 static void
-_ecore_evas_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
+_ecore_evas_move_resize(Ecore_Evas *ee, int x __UNUSED__, int y __UNUSED__, int w, int h)
 {
    if ((w == ee->w) && (h == ee->h)) return;
    ee->w = w;

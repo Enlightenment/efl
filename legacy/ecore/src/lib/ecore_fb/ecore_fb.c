@@ -78,9 +78,9 @@ struct _Ecore_Fb_Ps2_Event
 };
 
 static void _ecore_fb_size_get(int *w, int *h);
-static int _ecore_fb_ts_fd_handler(Ecore_Fd_Handler *fd_handler, void *data);
-static int _ecore_fb_kbd_fd_handler(Ecore_Fd_Handler *fd_handler, void *data);
-static int _ecore_fb_ps2_fd_handler(Ecore_Fd_Handler *fd_handler, void *data);
+static int _ecore_fb_ts_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static int _ecore_fb_kbd_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
+static int _ecore_fb_ps2_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static void _ecore_fb_event_free_key_down(void *data, void *ev);
 static void _ecore_fb_event_free_key_up(void *data, void *ev);
 static int _ecore_fb_signal_usr_handler(void *data, int type, void *ev);
@@ -128,12 +128,12 @@ static void  _ecore_fb_event_filter_end(void *data, void *loop_data);
 					  
 static double _ecore_fb_double_click_time = 0.25;
 
-static char *_ecore_fb_kbd_syms[128 * 6] =
+static const char *_ecore_fb_kbd_syms[128 * 6] =
 {
 #include "ecore_fb_keytab.h"
 };
 
-static char *_ecore_fb_btn_syms[128] =
+static const char *_ecore_fb_btn_syms[128] =
 {
    "0x00",
      "Escape", 
@@ -263,7 +263,7 @@ static char *_ecore_fb_btn_syms[128] =
  * @ingroup Ecore_FB_Library_Group
  */
 int
-ecore_fb_init(const char *name)
+ecore_fb_init(const char *name __UNUSED__)
 {
    int prev_flags;
 
@@ -763,7 +763,7 @@ _ecore_fb_size_get(int *w, int *h)
 }
 
 static int
-_ecore_fb_ts_fd_handler(Ecore_Fd_Handler *fd_handler, void *data)
+_ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    static int prev_x = 0, prev_y = 0, prev_pressure = 0;
    static double last_time = 0;
@@ -854,7 +854,7 @@ _ecore_fb_ts_fd_handler(Ecore_Fd_Handler *fd_handler, void *data)
 }
 
 static int
-_ecore_fb_kbd_fd_handler(Ecore_Fd_Handler *fd_handler, void *data)
+_ecore_fb_kbd_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    int v = 0;
    
@@ -976,7 +976,7 @@ _ecore_fb_kbd_fd_handler(Ecore_Fd_Handler *fd_handler, void *data)
 }
 
 static int
-_ecore_fb_ps2_fd_handler(Ecore_Fd_Handler *fd_handler, void *data)
+_ecore_fb_ps2_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    static int prev_x = 0, prev_y = 0, prev_button = 0;
    static double last_time = 0;
@@ -1083,7 +1083,7 @@ _ecore_fb_ps2_fd_handler(Ecore_Fd_Handler *fd_handler, void *data)
 }
 
 static void 
-_ecore_fb_event_free_key_down(void *data, void *ev)
+_ecore_fb_event_free_key_down(void *data __UNUSED__, void *ev)
 {
    Ecore_Fb_Event_Key_Up *e;
    
@@ -1095,7 +1095,7 @@ _ecore_fb_event_free_key_down(void *data, void *ev)
 }
 
 static void
-_ecore_fb_event_free_key_up(void *data, void *ev)
+_ecore_fb_event_free_key_up(void *data __UNUSED__, void *ev)
 {
    Ecore_Fb_Event_Key_Up *e;
    
@@ -1107,7 +1107,7 @@ _ecore_fb_event_free_key_up(void *data, void *ev)
 }
 
 static int
-_ecore_fb_signal_usr_handler(void *data, int type, void *ev)
+_ecore_fb_signal_usr_handler(void *data __UNUSED__, int type __UNUSED__, void *ev)
 {
    Ecore_Event_Signal_User *e;
    
@@ -1215,7 +1215,7 @@ struct _Ecore_Fb_Filter_Data
 };
                 
 static void *
-_ecore_fb_event_filter_start(void *data)
+_ecore_fb_event_filter_start(void *data __UNUSED__)
 {
    Ecore_Fb_Filter_Data *filter_data;
    
@@ -1224,7 +1224,7 @@ _ecore_fb_event_filter_start(void *data)
 }
 
 static int
-_ecore_fb_event_filter_filter(void *data, void *loop_data,int type, void *event)
+_ecore_fb_event_filter_filter(void *data __UNUSED__, void *loop_data,int type, void *event __UNUSED__)
 {
    Ecore_Fb_Filter_Data *filter_data;
    
@@ -1243,7 +1243,7 @@ _ecore_fb_event_filter_filter(void *data, void *loop_data,int type, void *event)
 }
 
 static void
-_ecore_fb_event_filter_end(void *data, void *loop_data)
+_ecore_fb_event_filter_end(void *data __UNUSED__, void *loop_data)
 {
    Ecore_Fb_Filter_Data *filter_data;
    

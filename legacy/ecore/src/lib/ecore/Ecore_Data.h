@@ -219,6 +219,7 @@ extern "C" {
    /* Removing items from the list */
    void *ecore_dlist_remove(Ecore_DList * _e_dlist);
    void *ecore_dlist_remove_first(Ecore_DList * _e_dlist);
+   int ecore_dlist_remove_destroy(Ecore_DList *list);
    void *ecore_dlist_remove_last(Ecore_DList * _e_dlist);
    
    /* Traversing the list */
@@ -240,6 +241,7 @@ extern "C" {
    int ecore_dlist_clear(Ecore_DList * _e_dlist);
    
    /* Creating and initializing list nodes */
+   int ecore_dlist_node_init(Ecore_DList_Node * node);
    Ecore_DList_Node *ecore_dlist_node_new(void);
    
    /* Destroying nodes */
@@ -307,7 +309,7 @@ extern "C" {
    void ecore_hash_dump_graph(Ecore_Hash *hash);
    
    
-   inline void ecore_print_warning(const char *function, char *sparam);
+   inline void ecore_print_warning(const char *function, const char *sparam);
    
    /* Wrappers around free() that helps debug free() bugs such as freeing NULL
     * or accessing a pointer that has already been freed */
@@ -457,6 +459,8 @@ extern "C" {
    void *ecore_sheap_extract(Ecore_Sheap *heap);
    void *ecore_sheap_extreme(Ecore_Sheap *heap);
    int ecore_sheap_change(Ecore_Sheap *heap, void *item, void *newval);
+   int ecore_sheap_set_compare(Ecore_Sheap *heap, Ecore_Compare_Cb compare);
+   void ecore_sheap_set_order(Ecore_Sheap *heap, char order);
    void ecore_sheap_destroy(Ecore_Sheap *heap);
    void ecore_sheap_sort(Ecore_Sheap *heap);
    

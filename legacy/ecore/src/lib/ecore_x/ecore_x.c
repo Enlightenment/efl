@@ -1,3 +1,4 @@
+#include "ecore_private.h"
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
@@ -563,7 +564,7 @@ ecore_x_kill(Ecore_X_Window win)
 }
 
 static int
-_ecore_x_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
+_ecore_x_fd_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    Display *d;
    
@@ -583,7 +584,7 @@ _ecore_x_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
 }
 
 static int
-_ecore_x_fd_handler_buf(void *data, Ecore_Fd_Handler *fd_handler)
+_ecore_x_fd_handler_buf(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    Display *d;
 
@@ -637,7 +638,7 @@ struct _Ecore_X_Filter_Data
 };
 
 static void *
-_ecore_x_event_filter_start(void *data)
+_ecore_x_event_filter_start(void *data __UNUSED__)
 {
    Ecore_X_Filter_Data *filter_data;
    
@@ -646,7 +647,7 @@ _ecore_x_event_filter_start(void *data)
 }
 
 static int
-_ecore_x_event_filter_filter(void *data, void *loop_data,int type, void *event)
+_ecore_x_event_filter_filter(void *data __UNUSED__, void *loop_data,int type, void *event __UNUSED__)
 {
    Ecore_X_Filter_Data *filter_data;
    
@@ -665,7 +666,7 @@ _ecore_x_event_filter_filter(void *data, void *loop_data,int type, void *event)
 }
 
 static void
-_ecore_x_event_filter_end(void *data, void *loop_data)
+_ecore_x_event_filter_end(void *data __UNUSED__, void *loop_data)
 {
    Ecore_X_Filter_Data *filter_data;
    
@@ -815,7 +816,7 @@ static void _ecore_x_window_manage_error(void *data);
 
 static int _ecore_x_window_manage_failed = 0;
 static void
-_ecore_x_window_manage_error(void *data)
+_ecore_x_window_manage_error(void *data __UNUSED__)
 {
    if ((ecore_x_error_request_get() == X_ChangeWindowAttributes) &&
        (ecore_x_error_code_get() == BadAccess))
@@ -968,7 +969,7 @@ ecore_x_window_children_get(Ecore_X_Window win, int *num)
 	windows = malloc(children_ret_num * sizeof(Ecore_X_Window));
 	if (windows)
 	  {
-	     int i;
+	     unsigned int i;
 	     
 	     for (i = 0; i < children_ret_num; i++)
 	       windows[i] = children_ret[i];

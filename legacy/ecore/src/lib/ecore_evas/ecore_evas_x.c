@@ -111,7 +111,7 @@ _ecore_evas_modifier_locks_update(Ecore_Evas *ee, int modifiers)
 }
 
 static int
-_ecore_evas_event_key_down(void *data, int type, void *event)
+_ecore_evas_event_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Key_Down *e;
@@ -125,7 +125,7 @@ _ecore_evas_event_key_down(void *data, int type, void *event)
 }
 
 static int
-_ecore_evas_event_key_up(void *data, int type, void *event)
+_ecore_evas_event_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Key_Up *e;
@@ -139,7 +139,7 @@ _ecore_evas_event_key_up(void *data, int type, void *event)
 }
 
 static int
-_ecore_evas_event_mouse_button_down(void *data, int type, void *event)
+_ecore_evas_event_mouse_button_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Mouse_Button_Down *e;
@@ -157,7 +157,7 @@ _ecore_evas_event_mouse_button_down(void *data, int type, void *event)
 }
 
 static int
-_ecore_evas_event_mouse_button_up(void *data, int type, void *event)
+_ecore_evas_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Mouse_Button_Up *e;
@@ -172,7 +172,7 @@ _ecore_evas_event_mouse_button_up(void *data, int type, void *event)
 }
 
 static int
-_ecore_evas_event_mouse_wheel(void *data, int type, void *event)
+_ecore_evas_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Mouse_Wheel *e;
@@ -191,7 +191,7 @@ _ecore_evas_event_mouse_wheel(void *data, int type, void *event)
 }
 
 static int
-_ecore_evas_event_mouse_move(void *data, int type, void *event)
+_ecore_evas_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Mouse_Move *e;
@@ -205,7 +205,7 @@ _ecore_evas_event_mouse_move(void *data, int type, void *event)
 }
 
 static int
-_ecore_evas_event_mouse_in(void *data, int type, void *event)
+_ecore_evas_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Mouse_In *e;
@@ -223,7 +223,7 @@ _ecore_evas_event_mouse_in(void *data, int type, void *event)
 }
 
 static int
-_ecore_evas_event_mouse_out(void *data, int type, void *event)
+_ecore_evas_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Mouse_Out *e;
@@ -242,7 +242,7 @@ _ecore_evas_event_mouse_out(void *data, int type, void *event)
 }
 
 static int
-_ecore_evas_event_window_focus_in(void *data, int type, void *event)
+_ecore_evas_event_window_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Focus_In *e;
@@ -256,7 +256,7 @@ _ecore_evas_event_window_focus_in(void *data, int type, void *event)
 }
 
 static int
-_ecore_evas_event_window_focus_out(void *data, int type, void *event)
+_ecore_evas_event_window_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Focus_Out *e;
@@ -272,7 +272,7 @@ _ecore_evas_event_window_focus_out(void *data, int type, void *event)
 }
 
 static int
-_ecore_evas_event_window_damage(void *data, int type, void *event)
+_ecore_evas_event_window_damage(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Damage *e;
@@ -322,7 +322,7 @@ _ecore_evas_event_window_damage(void *data, int type, void *event)
 }
 
 static int
-_ecore_evas_event_window_destroy(void *data, int type, void *event)
+_ecore_evas_event_window_destroy(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Destroy *e;
@@ -336,7 +336,7 @@ _ecore_evas_event_window_destroy(void *data, int type, void *event)
 }
 
 static int
-_ecore_evas_event_window_configure(void *data, int type, void *event)
+_ecore_evas_event_window_configure(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Configure *e;
@@ -395,7 +395,7 @@ _ecore_evas_event_window_configure(void *data, int type, void *event)
 }
 
 static int
-_ecore_evas_event_window_delete_request(void *data, int type, void *event)
+_ecore_evas_event_window_delete_request(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Delete_Request *e;
@@ -408,7 +408,7 @@ _ecore_evas_event_window_delete_request(void *data, int type, void *event)
 }
 
 static int
-_ecore_evas_event_window_show(void *data, int type, void *event)
+_ecore_evas_event_window_show(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Show *e;
@@ -423,7 +423,7 @@ _ecore_evas_event_window_show(void *data, int type, void *event)
 }
 
 static int
-_ecore_evas_event_window_hide(void *data, int type, void *event)
+_ecore_evas_event_window_hide(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Hide *e;
@@ -438,7 +438,7 @@ _ecore_evas_event_window_hide(void *data, int type, void *event)
 }
 
 static int
-_ecore_evas_idle_enter(void *data)
+_ecore_evas_idle_enter(void *data __UNUSED__)
 {
    Ecore_Oldlist *l;
    double t1 = 0.;
@@ -552,12 +552,14 @@ _ecore_evas_idle_enter(void *data)
 	       }
 	     else
 	       {
-		  Evas_List *updates, *l;
+		  Evas_List *updates;
 		  
 		  updates = evas_render_updates(ee->evas);
 		  if (updates)
 		    {
 #if 0		       
+		       Evas_List *l;
+
 		       printf("RENDER [%p] [%ix%i]\n",
 			      ee, ee->w, ee->h);
 		       for (l = updates; l; l = l->next)
@@ -963,7 +965,7 @@ _ecore_evas_layer_set(Ecore_Evas *ee, int layer)
 }
 
 static void
-_ecore_evas_focus_set(Ecore_Evas *ee, int on)
+_ecore_evas_focus_set(Ecore_Evas *ee, int on __UNUSED__)
 {
    ecore_x_window_focus(ee->engine.x.win_container);
 }
@@ -1286,7 +1288,7 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 		    {
 		       for (i = 0; i < num; i++)
 			 {
-			    if (roots[i] == at.root == roots[i])
+			    if (at.root == roots[i])
 			      {
 				 screen = i;
 				 break;
@@ -1453,7 +1455,7 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 		    {
 		       for (i = 0; i < num; i++)
 			 {
-			    if (roots[i] == at.root == roots[i])
+			    if (at.root == roots[i])
 			      {
 				 screen = i;
 				 break;

@@ -20,7 +20,7 @@ char               *unit_size(char *size);
 void                qsrt(void *a[], void *data, int lo, int hi,
 			 int (*compare) (const void *, const void *,
 					 const void *));
-int                 dlmulti(char *name, char *file, int flag, void **libr,
+int                 dlmulti(const char *name, const char *file, int flag, void **libr,
 			    const char *fmt, ...);
 
 typedef void        (*hash_walker) (char *key, void *value, void *data);
@@ -48,14 +48,14 @@ estring            *estring_new(int size);
 estring            *estring_dst(estring * e);
 char               *estring_disown(estring * e);
 char               *estring_free(estring * e, int release_payload);	/* glib compat */
-int                 estring_printf(estring * e, char *fmt, ...);
-int                 estring_appendf(estring * e, char *fmt, ...);
+int                 estring_printf(estring * e, const char *fmt, ...);
+int                 estring_appendf(estring * e, const char *fmt, ...);
 int                 estring_truncate(estring * e, int size);
 
 #define  ESTRING_GET_CSTRING(a) ((a)->str)
 
-int                 esprintf(char **result, char *fmt, ...);
-int                 ejoin(char **result, char *delim, ...);
+int                 esprintf(char **result, const char *fmt, ...);
+int                 ejoin(char **result, const char *delim, ...);
 int                 ecat(char **result, ...);
 
 unsigned long       timeout_add(unsigned int f, int (*fun) (void *),

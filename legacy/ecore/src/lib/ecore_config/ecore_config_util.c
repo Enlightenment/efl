@@ -16,6 +16,8 @@
 /* #  include <glib/gmain.h> */
 /* #endif */
 
+#include "ecore_private.h"
+
 #include "Ecore_Config.h"
 #include "ecore_config_util.h"
 
@@ -28,7 +30,7 @@
 /********/
 
 int
-dlmulti(char *name, char *file, int flag, void **libr, const char *fmt, ...)
+dlmulti(const char *name, const char *file, int flag, void **libr, const char *fmt, ...)
 {
 #define MAX_SYM_LEN 256
    va_list             ap;
@@ -124,6 +126,7 @@ dlmulti(char *name, char *file, int flag, void **libr, const char *fmt, ...)
    return ret;
 }
 
+#if 0 /* Unused */
 /*****************************************************************************/
 
 unsigned long
@@ -136,6 +139,7 @@ now(long delay)
    r = tv.tv_sec * 1000 + (((float)tv.tv_usec) / 1000.0) + delay;
    return r;
 }
+#endif
 
 /*****************************************************************************/
 
@@ -269,24 +273,36 @@ qsrt(void *a[], void *data, int lo, int hi,
 /* TIMERS */
 /**********/
 
+#ifdef HAVE_GLIB2
+
 unsigned long
 timeout_add(uint f, int (*fun) (void *), void *data)
 {
-#ifdef HAVE_GLIB2
    return g_timeout_add((guint) f, (GSourceFunc) fun, (gpointer) data);
-#endif
-   return 0;
 }
 
 int
 timeout_remove(unsigned long handle)
 {
-#ifdef HAVE_GLIB2
    return g_source_remove(handle) ? ECORE_CONFIG_ERR_SUCC :
       ECORE_CONFIG_ERR_FAIL;
-#endif
+}
+
+#else
+
+unsigned long
+timeout_add(uint f __UNUSED__, int (*fun) (void *) __UNUSED__, void *data __UNUSED__)
+{
+   return 0;
+}
+
+int
+timeout_remove(unsigned long handle __UNUSED__)
+{
    return ECORE_CONFIG_ERR_NOTSUPP;
 }
+
+#endif /* HAVE_GLIB2 */
 
 /*****************************************************************************/
 /* HASHES */
@@ -374,73 +390,100 @@ eslist_append(eslist ** e, void *p)
 /* HASHES */
 /**********/
 
+#ifdef HAVE_GLIB2
+
 void               *
 hash_table_new(void (*freekey), void (*freeval))
 {
-#ifdef HAVE_GLIB2
    return g_hash_table_new_full(g_str_hash, g_str_equal, freekey, freeval);
-#endif
-   return NULL;
 }
 
 void               *
 hash_table_fetch(void *hashtable, char *key)
 {
-#ifdef HAVE_GLIB2
    return g_hash_table_lookup(hashtable, key);
-#endif
-   return NULL;
 }
 
 int
 hash_table_insert(void *hashtable, char *key, void *value)
 {
-#ifdef HAVE_GLIB2
    g_hash_table_insert(hashtable, key, value);
    return ECORE_CONFIG_ERR_SUCC;
-#endif
-   return ECORE_CONFIG_ERR_NOTSUPP;
 }
 
 int
 hash_table_replace(void *hashtable, char *key, void *value)
 {
-#ifdef HAVE_GLIB2
    g_hash_table_replace(hashtable, key, value);
    return ECORE_CONFIG_ERR_SUCC;
-#endif
-   return ECORE_CONFIG_ERR_NOTSUPP;
 }
 
 int
 hash_table_remove(void *hashtable, char *key)
 {
-#ifdef HAVE_GLIB2
    g_hash_table_remove(hashtable, key);
    return ECORE_CONFIG_ERR_SUCC;
-#endif
-   return ECORE_CONFIG_ERR_NOTSUPP;
 }
 
 int
 hash_table_dst(void *hashtable)
 {
-#ifdef HAVE_GLIB2
    g_hash_table_destroy(hashtable);
    return ECORE_CONFIG_ERR_SUCC;
-#endif
-   return ECORE_CONFIG_ERR_NOTSUPP;
 }
 
 int
 hash_table_walk(void *hashtable, hash_walker fun, void *data)
 {
-#ifdef HAVE_GLIB2
    g_hash_table_foreach(hashtable, (GHFunc) fun, data);
    return ECORE_CONFIG_ERR_SUCC;
-#endif
+}
+
+#else
+
+void               *
+hash_table_new(void (*freekey) __UNUSED__, void (*freeval) __UNUSED__)
+{
+   return NULL;
+}
+
+void               *
+hash_table_fetch(void *hashtable __UNUSED__, char *key __UNUSED__)
+{
+   return NULL;
+}
+
+int
+hash_table_insert(void *hashtable __UNUSED__, char *key __UNUSED__, void *value __UNUSED__)
+{
    return ECORE_CONFIG_ERR_NOTSUPP;
 }
+
+int
+hash_table_replace(void *hashtable __UNUSED__, char *key __UNUSED__, void *value __UNUSED__)
+{
+   return ECORE_CONFIG_ERR_NOTSUPP;
+}
+
+int
+hash_table_remove(void *hashtable __UNUSED__, char *key __UNUSED__)
+{
+   return ECORE_CONFIG_ERR_NOTSUPP;
+}
+
+int
+hash_table_dst(void *hashtable __UNUSED__)
+{
+   return ECORE_CONFIG_ERR_NOTSUPP;
+}
+
+int
+hash_table_walk(void *hashtable __UNUSED__, hash_walker fun __UNUSED__, void *data __UNUSED__)
+{
+   return ECORE_CONFIG_ERR_NOTSUPP;
+}
+
+#endif /* HAVE_GLIB2 */
 
 /*****************************************************************************/
 /* STRINGS */
@@ -509,7 +552,7 @@ estring_truncate(estring * e, int size)
 }
 
 int
-estring_printf(estring * e, char *fmt, ...)
+estring_printf(estring * e, const char *fmt, ...)
 {
    int                 need;
    va_list             ap;
@@ -550,7 +593,7 @@ estring_printf(estring * e, char *fmt, ...)
 }
 
 int
-estring_appendf(estring * e, char *fmt, ...)
+estring_appendf(estring * e, const char *fmt, ...)
 {
    int                 need;
    va_list             ap;
@@ -595,7 +638,7 @@ estring_appendf(estring * e, char *fmt, ...)
 }
 
 int
-esprintf(char **result, char *fmt, ...)
+esprintf(char **result, const char *fmt, ...)
 {
    int                 need, have;
    va_list             ap;

@@ -92,6 +92,7 @@ ecore_x_icccm_state_get(Ecore_X_Window win)
    int            format_ret;
    Ecore_X_Window_State_Hint hint;
 
+   hint = ECORE_X_WINDOW_STATE_HINT_NONE;
    XGetWindowProperty(_ecore_x_disp, win, ECORE_X_ATOM_WM_STATE,
 		      0, 0x7fffffff, False, ECORE_X_ATOM_WM_STATE,
 		      &type_ret, &format_ret, &num_ret, &bytes_after,
@@ -105,8 +106,6 @@ ecore_x_icccm_state_get(Ecore_X_Window win)
 	else if (prop_ret[0] == IconicState)
 	  hint = ECORE_X_WINDOW_STATE_HINT_ICONIC;
      }
-   else
-     hint = ECORE_X_WINDOW_STATE_HINT_NORMAL;
 
    if (prop_ret)
      XFree(prop_ret);
@@ -544,7 +543,7 @@ ecore_x_icccm_protocol_set(Ecore_X_Window win,
    int                 i;
 
    /* Check for invalid values */
-   if (protocol < 0 || protocol >= ECORE_X_WM_PROTOCOL_NUM)
+   if (protocol >= ECORE_X_WM_PROTOCOL_NUM)
       return;
 
    proto = _ecore_x_atoms_wm_protocols[protocol];
@@ -621,7 +620,7 @@ ecore_x_icccm_protocol_isset(Ecore_X_Window win, Ecore_X_WM_Protocol protocol)
    int                 i, ret = 0, protos_count = 0;
 
    /* check for invalid values */
-   if (protocol < 0 || protocol >= ECORE_X_WM_PROTOCOL_NUM)
+   if (protocol >= ECORE_X_WM_PROTOCOL_NUM)
       return 0;
 
    proto = _ecore_x_atoms_wm_protocols[protocol];

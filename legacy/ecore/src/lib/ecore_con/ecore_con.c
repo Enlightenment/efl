@@ -164,7 +164,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
    if ((type == ECORE_CON_LOCAL_USER) ||
        (type == ECORE_CON_LOCAL_SYSTEM))
      {
-	char *homedir;
+	const char *homedir;
 	struct stat st;
 	mode_t pmode, mask;
 	
@@ -384,7 +384,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    if ((type == ECORE_CON_LOCAL_USER) ||
        (type == ECORE_CON_LOCAL_SYSTEM))
      {
-	char *homedir;
+	const char *homedir;
 	
 	if (type == ECORE_CON_LOCAL_USER)
 	  {
@@ -778,7 +778,7 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
 }
 
 static int
-_ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler)
+_ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
    Ecore_Con_Server   *svr;
    int                 new_fd;
@@ -1193,7 +1193,7 @@ _ecore_con_client_flush(Ecore_Con_Client *cl)
 }
 
 static void
-_ecore_con_event_client_data_free(void *data, void *ev)
+_ecore_con_event_client_data_free(void *data __UNUSED__, void *ev)
 {
    Ecore_Con_Event_Client_Data *e;
 
@@ -1203,7 +1203,7 @@ _ecore_con_event_client_data_free(void *data, void *ev)
 }
 
 static void
-_ecore_con_event_server_data_free(void *data, void *ev)
+_ecore_con_event_server_data_free(void *data __UNUSED__, void *ev)
 {
    Ecore_Con_Event_Server_Data *e;
 

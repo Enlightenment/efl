@@ -1,3 +1,4 @@
+#include "ecore_private.h"
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
@@ -72,7 +73,7 @@ _ecore_x_error_handler_init(void)
 }
 
 static void
-_ecore_x_error_handle(Display *d, XErrorEvent *ev)
+_ecore_x_error_handle(Display *d __UNUSED__, XErrorEvent *ev)
 {
    _error_request_code = ev->request_code;
    _error_code = ev->error_code;
@@ -80,7 +81,7 @@ _ecore_x_error_handle(Display *d, XErrorEvent *ev)
 }
 
 static int
-_ecore_x_io_error_handle(Display *d)
+_ecore_x_io_error_handle(Display *d __UNUSED__)
 {
    if (_io_error_func) _io_error_func(_io_error_data);
    else exit(-1);
