@@ -237,7 +237,7 @@ __evas_x11_image_draw(Evas_X11_Image *im,
    imlib_context_set_drawable(w);
    imlib_context_set_dither_mask(0);
    imlib_context_set_anti_alias(0);
-   if (imlib_get_visual_depth(disp, __evas_visual) < 8) 
+   if (imlib_get_visual_depth(disp, __evas_visual) <= 8) 
      imlib_context_set_dither(__evas_anti_alias);
    else imlib_context_set_dither(0);
    imlib_context_set_blend(0);

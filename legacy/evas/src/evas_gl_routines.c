@@ -2707,14 +2707,14 @@ __evas_gl_poly_draw (Display *disp, Imlib_Image dstim, Window win,
 		       gluTessCallback(tess, GLU_TESS_VERTEX, __evas_gl_tess_vertex_cb);
 		       gluTessCallback(tess, GLU_TESS_COMBINE, __evas_gl_tess_combine_cb);
 		    }
+		  num = 0;
+		  for (l2 = points; l2; l2 = l2->next) num++;
+		  i = 0;
+		  glp = malloc(num * 6 * sizeof(GLdouble));
 		  gluTessNormal(tess, 0, 0, 1);
 		  gluTessProperty(tess, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_ODD);
 		  gluTessBeginPolygon(tess, NULL);
 		  gluTessBeginContour(tess);
-		  num = 0;
-		  for (l2 = points; l2; l2 = l2->next) num++;
-		  i = 0;
-		  glp = malloc(num * 3 * sizeof(GLdouble));
 		  for (l2 = points; l2; l2 = l2->next)
 		    {
 		       Evas_Point p;
@@ -2724,6 +2724,7 @@ __evas_gl_poly_draw (Display *disp, Imlib_Image dstim, Window win,
 		       glp[i++] = p->y;
 		       glp[i++] = 0;
 		       gluTessVertex(tess, &(glp[i - 3]), &(glp[i - 3]));
+		       i += 3;
 		    }
 		  gluTessEndContour(tess);
 		  gluTessEndPolygon(tess);

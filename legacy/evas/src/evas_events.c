@@ -86,7 +86,7 @@ evas_event_move(Evas e, int x, int y)
    Evas_Object o;
 
    if (!e) return;
-   o = _evas_highest_object_at_point(e, e->mouse.x, e->mouse.y);
+   o = _evas_highest_object_at_point(e, x, y);
    if (o != e->mouse.object)
      {
 	if (e->mouse.object)
@@ -179,7 +179,7 @@ evas_pointer_buttons(Evas e)
 }
 
 void
-evas_pinter_ungrab(Evas e)
+evas_pointer_ungrab(Evas e)
 {
    e->mouse.buttons = 0;
    e->mouse.button_object = NULL;
