@@ -627,6 +627,9 @@ typedef enum _Ecore_X_Window_State_Hint {
 } Ecore_X_Window_State_Hint;
 
 typedef enum _Ecore_X_Window_State {
+    /** The window is iconified. */
+    ECORE_X_WINDOW_STATE_ICONIFIED,
+
     /** The window is a modal dialog box. */
     ECORE_X_WINDOW_STATE_MODAL,
 

@@ -36,7 +36,10 @@ Atom     _ecore_x_atom_wm_name = 0;
 Atom     _ecore_x_atom_wm_command = 0;
 Atom     _ecore_x_atom_wm_icon_name = 0;
 Atom     _ecore_x_atom_wm_client_machine = 0;
+Atom     _ecore_x_atom_wm_change_state = 0;
+
 Atom     _ecore_x_atom_motif_wm_hints = 0;
+
 Atom     _ecore_x_atom_win_layer = 0;
 
 Atom     _ecore_x_atom_selection_primary = 0;
@@ -362,8 +365,12 @@ ecore_x_init(const char *name)
    _ecore_x_atom_wm_command               = XInternAtom(_ecore_x_disp, "WM_COMMAND", False);
    _ecore_x_atom_wm_icon_name             = XInternAtom(_ecore_x_disp, "WM_ICON_NAME", False);
    _ecore_x_atom_wm_client_machine        = XInternAtom(_ecore_x_disp, "WM_CLIENT_MACHINE", False);
+   _ecore_x_atom_wm_change_state          = XInternAtom(_ecore_x_disp, "WM_CHANGE_STATE", False);
+
    _ecore_x_atom_motif_wm_hints           = XInternAtom(_ecore_x_disp, "_MOTIF_WM_HINTS", False);
+
    _ecore_x_atom_win_layer                = XInternAtom(_ecore_x_disp, "_WIN_LAYER", False);
+
    /* This is just to be anal about naming conventions */
    _ecore_x_atom_selection_primary        = XA_PRIMARY;
    _ecore_x_atom_selection_secondary      = XA_SECONDARY;
