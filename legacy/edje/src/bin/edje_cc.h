@@ -21,10 +21,6 @@
 #include <alloca.h>
 #endif
 
-#ifndef ABS
-#define ABS(x) x < 0 ? -x : x
-#endif
-
 /* types */
 typedef struct _New_Object_Handler    New_Object_Handler;
 typedef struct _New_Statement_Handler New_Statement_Handler;
