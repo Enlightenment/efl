@@ -251,17 +251,11 @@ _edje_embryo_fn_cancel_anim(Embryo_Program *ep, Embryo_Cell *params)
  * stop_program(program_id)
  * stop_programs_on(part_id)
  * set_drag(part_id, Float:dx, Float:dy)
- * get_drag(part_id, &Float:dx, &Float:&dy)
  * set_drag_step(part_id, Float:dx, Float:dy)
- * get_drag_step(part_id, &Float:dx, &Float:&dy)
  * set_drag_page(part_id, Float:dx, Float:dy)
- * get_drag_page(part_id, &Float:dx, &Float:&dy)
  * text_set(part_id, str[])
  * set_min_size(Float:w, Float:h)
- * get_min_size(&Float:w, &Float:h)
  * set_max_size(Float:w, Float:h)
- * get_max_size(&Float:w, &Float:h)
- * get_size(&Float:w, &Float:h)
  *
  * still need to implement this:
  * 
@@ -270,7 +264,12 @@ _edje_embryo_fn_cancel_anim(Embryo_Program *ep, Embryo_Cell *params)
  * set_drag_count(part_id, Float:dx, Float:dy)
  * set_drag_confine(part_id, confine_part_id)
  * text_get(part_id, dst[], maxlen)
- *
+ * get_drag(part_id, &Float:dx, &Float:&dy)
+ * get_drag_step(part_id, &Float:dx, &Float:&dy)
+ * get_drag_page(part_id, &Float:dx, &Float:&dy)
+ * get_min_size(&Float:w, &Float:h)
+ * get_max_size(&Float:w, &Float:h)
+ * get_size(&Float:w, &Float:h)
  * resize_request(w, h)
  * get_mouse(&x, &y)
  * get_mouse_buttons()
@@ -541,78 +540,6 @@ _edje_embryo_fn_set_drag_page(Embryo_Program *ep, Embryo_Cell *params)
    return 0;
 }
 
-/* get_drag(part_id, &Float:dx, &Float:&dy) */
-static Embryo_Cell
-_edje_embryo_fn_get_drag(Embryo_Program *ep, Embryo_Cell *params)
-{
-   Edje *ed;
-   int part_id = 0;
-   float *dx = NULL, *dy = NULL;
-   Edje_Real_Part *rp;
-   
-   CHKPARAM(3);
-   ed = embryo_program_data_get(ep);
-   part_id = params[1];
-   if (part_id < 0) return 0;
-   dx = (float *)params[2];
-   dy = (float *)params[3];
-   rp = ed->table_parts[part_id % ed->table_parts_size];
-   if (rp)
-     {
-       if (dx) *dx = (float)rp->drag.val.x;
-       if (dy) *dy = (float)rp->drag.val.y;
-     }
-   return 0;
-}
-
-/* get_drag_step(part_id, &Float:dx, &Float:&dy) */
-static Embryo_Cell
-_edje_embryo_fn_get_drag_step(Embryo_Program *ep, Embryo_Cell *params)
-{
-   Edje *ed;
-   int part_id = 0;
-   float *dx = NULL, *dy = NULL;
-   Edje_Real_Part *rp;
-   
-   CHKPARAM(3);
-   ed = embryo_program_data_get(ep);
-   part_id = params[1];
-   if (part_id < 0) return 0;
-   dx = (float *)params[2];
-   dy = (float *)params[3];
-   rp = ed->table_parts[part_id % ed->table_parts_size];
-   if (rp)
-     {
-       if (dx) *dx = (float)rp->drag.step.x;
-       if (dy) *dy = (float)rp->drag.step.y;
-     }
-   return 0;
-}
-
-/* get_drag_page(part_id, &Float:dx, &Float:&dy) */
-static Embryo_Cell
-_edje_embryo_fn_get_drag_page(Embryo_Program *ep, Embryo_Cell *params)
-{
-   Edje *ed;
-   int part_id = 0;
-   float *dx = NULL, *dy = NULL;
-   Edje_Real_Part *rp;
-   
-   CHKPARAM(3);
-   ed = embryo_program_data_get(ep);
-   part_id = params[1];
-   if (part_id < 0) return 0;
-   dx = (float *)params[2];
-   dy = (float *)params[3];
-   rp = ed->table_parts[part_id % ed->table_parts_size];
-   if (rp)
-     {
-       if (dx) *dx = (float)rp->drag.page.x;
-       if (dy) *dy = (float)rp->drag.page.y;
-     }
-   return 0;
-}
-
 /* text_set(part_id, str[]) */
 static Embryo_Cell
 _edje_embryo_fn_text_set(Embryo_Program *ep, Embryo_Cell *params)
@@ -671,23 +598,6 @@ _edje_embryo_fn_set_min_size(Embryo_Program *ep, Embryo_Cell *params)
    return 0;
 }
 
-/* get_min_size(&Float:w, &Float:h) */
-static Embryo_Cell
-_edje_embryo_fn_get_min_size(Embryo_Program *ep, Embryo_Cell *params)
-{
-   Edje *ed;
-   int part_id = 0;
-   float *w = NULL, *h = NULL;
-   
-   CHKPARAM(2);
-   ed = embryo_program_data_get(ep);
-   w = (float *)params[1];
-   h = (float *)params[2];
-   if (w) *w = (float)ed->collection->prop.min.w;
-   if (h) *h = (float)ed->collection->prop.min.h;
-   return 0;
-}
-
 /* set_max_size(Float:w, Float:h) */
 static Embryo_Cell
 _edje_embryo_fn_set_max_size(Embryo_Program *ep, Embryo_Cell *params)
@@ -711,43 +621,6 @@ _edje_embryo_fn_set_max_size(Embryo_Program *ep, Embryo_Cell *params)
    ed->dirty = 1;
    _edje_recalc(ed);
 
-   return 0;
-}
-
-/* get_max_size(&Float:w, &Float:h) */
-static Embryo_Cell
-_edje_embryo_fn_get_max_size(Embryo_Program *ep, Embryo_Cell *params)
-{
-   Edje *ed;
-   int part_id = 0;
-   float *w = NULL, *h = NULL;
-   
-   CHKPARAM(2);
-   ed = embryo_program_data_get(ep);
-   w = (float *)params[1];
-   h = (float *)params[2];
-   if (w) *w = (float)ed->collection->prop.max.w;
-   if (h) *h = (float)ed->collection->prop.max.h;
-   return 0;
-}
-
-/* get_size(&Float:w, &Float:h) */
-static Embryo_Cell
-_edje_embryo_fn_get_size(Embryo_Program *ep, Embryo_Cell *params)
-{
-   Edje *ed;
-   int part_id = 0;
-   float *w = NULL, *h = NULL;
-   Evas_Coord ww, hh;
-   
-   CHKPARAM(2);
-   ed = embryo_program_data_get(ep);
-   w = (float *)params[1];
-   h = (float *)params[2];
-
-   evas_object_geometry_get(ed->obj, NULL, NULL, &ww, &hh);
-   if (w) *w = (float)ww;
-   if (h) *h = (float)hh;
    return 0;
 }
 
@@ -822,17 +695,11 @@ _edje_embryo_script_init(Edje *ed)
    embryo_program_native_call_add(ep, "stop_program", _edje_embryo_fn_stop_program);
    embryo_program_native_call_add(ep, "stop_programs_on", _edje_embryo_fn_stop_programs_on);
    embryo_program_native_call_add(ep, "set_drag", _edje_embryo_fn_set_drag);
-   embryo_program_native_call_add(ep, "get_drag", _edje_embryo_fn_get_drag);
    embryo_program_native_call_add(ep, "set_drag_step", _edje_embryo_fn_set_drag_step);
-   embryo_program_native_call_add(ep, "get_drag_step", _edje_embryo_fn_get_drag_step);
    embryo_program_native_call_add(ep, "set_drag_page", _edje_embryo_fn_set_drag_page);
-   embryo_program_native_call_add(ep, "get_drag_page", _edje_embryo_fn_get_drag_page);
    embryo_program_native_call_add(ep, "text_set", _edje_embryo_fn_text_set);
    embryo_program_native_call_add(ep, "set_min_size", _edje_embryo_fn_set_min_size);
-   embryo_program_native_call_add(ep, "get_min_size", _edje_embryo_fn_get_min_size);
    embryo_program_native_call_add(ep, "set_max_size", _edje_embryo_fn_set_max_size);
-   embryo_program_native_call_add(ep, "get_max_size", _edje_embryo_fn_get_max_size);
-   embryo_program_native_call_add(ep, "get_size", _edje_embryo_fn_get_size);
    
    embryo_program_vm_push(ep); /* need a new vm to run in */
    _edje_embryo_globals_init(ed);
