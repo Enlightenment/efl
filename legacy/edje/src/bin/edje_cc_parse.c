@@ -73,6 +73,7 @@ new_object(void)
 	  {
 	     if (!strcmp(statement_handlers[i].type, id))
 	       {
+		  free(id);
 		  return;
 	       }
 	  }
