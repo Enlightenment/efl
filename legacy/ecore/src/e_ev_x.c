@@ -217,7 +217,11 @@ e_ev_dnd_drop_request_free(void *event)
 
    e = (Ev_Dnd_Drop_Request *) event;
    if (e->files)
-      e_string_free_list(e->files, e->num_files);
+   {
+      int i;
+      for (i=0; i< e->num_files; i++)
+         FREE(e->files[i]);
+   }
    FREE(event);
 }
 
@@ -277,7 +281,7 @@ e_ev_x_handle_key_press(XEvent * xevent)
       if (val > 0)
 	{
 	   buf[val] = 0;
-	   e->compose = e_string_dup(buf);
+	   e->compose = strdup(buf);
 	}
       else
 	 e->compose = NULL;
@@ -315,7 +319,7 @@ e_ev_x_handle_key_release(XEvent * xevent)
       if (val > 0)
 	{
 	   buf[val] = 0;
-	   e->compose = e_string_dup(buf);
+	   e->compose = strdup(buf);
 	}
       else
 	 e->compose = NULL;
@@ -809,7 +813,7 @@ e_ev_x_handle_selection_notify(XEvent * xevent)
 			 }
 		       else
 			  e->files = NEW_PTR(e->num_files);
-		       e->files[e->num_files - 1] = e_string_dup(buf);
+		       e->files[e->num_files - 1] = strdup(buf);
 		       buf[0] = 0;
 		       i = 0;
 		       is++;
@@ -1013,17 +1017,17 @@ char               *
 e_key_press_translate_into_typeable(Ev_Key_Down * e)
 {
    /* exceptions */
-   if ((e_string_cmp(e->key, "Delete")) ||
-       (e_string_cmp(e->key, "BackSpace")) ||
-       (e_string_cmp(e->key, "Tab")) ||
-       (e_string_cmp(e->key, "Escape")) ||
-       (e_string_cmp(e->key, "Return")) ||
-       (e_string_cmp(e->key, "KP_Enter")) ||
-       (e_string_cmp(e->key, "Enter")) ||
-       (e_string_cmp(e->key, "KP_Divide")) ||
-       (e_string_cmp(e->key, "KP_Multiply")) ||
-       (e_string_cmp(e->key, "KP_Subtract")) ||
-       (e_string_cmp(e->key, "KP_Add")) || (e_string_cmp(e->key, "Enter")))
+   if ((!strcmp(e->key, "Delete")) ||
+       (!strcmp(e->key, "BackSpace")) ||
+       (!strcmp(e->key, "Tab")) ||
+       (!strcmp(e->key, "Escape")) ||
+       (!strcmp(e->key, "Return")) ||
+       (!strcmp(e->key, "KP_Enter")) ||
+       (!strcmp(e->key, "Enter")) ||
+       (!strcmp(e->key, "KP_Divide")) ||
+       (!strcmp(e->key, "KP_Multiply")) ||
+       (!strcmp(e->key, "KP_Subtract")) ||
+       (!strcmp(e->key, "KP_Add")) || (!strcmp(e->key, "Enter")))
       return NULL;
    return e->compose;
 }

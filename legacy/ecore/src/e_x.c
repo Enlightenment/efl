@@ -625,7 +625,7 @@ e_key_get_keysym_from_keycode(KeyCode keycode)
 char               *
 e_key_get_string_from_keycode(KeyCode keycode)
 {
-   return e_string_dup(XKeysymToString(e_key_get_keysym_from_keycode(keycode)));
+   return strdup(XKeysymToString(e_key_get_keysym_from_keycode(keycode)));
 }
 
 void

@@ -11,7 +11,6 @@ libecore_la_SOURCES = \
 	e_ev_x.c e_ev_x.h \
 	e_events.c e_events.h \
     e_mem.h \
-	e_str.c e_str.h \
 	e_util.c e_util.h \
 	e_x.c e_x.h
 

@@ -314,7 +314,7 @@ e_add_event_timer(char *name, double in, void (*func) (int val, void *data),
    timer->val = val;
    timer->just_added = 1;
    timer->in = in;
-   timer->name = e_string_dup(name);
+   timer->name = strdup(name);
    if (!timers)
       timers = timer;
    else
@@ -360,7 +360,7 @@ e_del_event_timer(char *name)
    while (ptr)
      {
 	timer = ptr;
-	if (e_string_cmp(timer->name, name))
+	if (strcmp(timer->name, name))
 	  {
 	     void               *data;
 
