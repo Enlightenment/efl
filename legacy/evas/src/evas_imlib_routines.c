@@ -50,14 +50,15 @@ __evas_imlib_image_cache_clean(void)
 	__evas_image_cache_used -= 
 	  imlib_image_get_width() * 
 	  imlib_image_get_height() * 4;	
+	imlib_free_image_and_decache();
 	if (last->scaled.image)
 	  {
 	     imlib_context_set_image(last->scaled.image);
+	     imlib_free_image_and_decache();
 	     __evas_image_cache_used -= 
 	       imlib_image_get_width() * 
 	       imlib_image_get_height() * 4;	
 	  }
-	imlib_free_image();
 	free(last->file);
 	free(last);
      }
