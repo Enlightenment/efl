@@ -328,6 +328,7 @@ int sc_compile(int argc, char *argv[])
     error(103);         /* insufficient memory */
 
   setopt(argc,argv,inpfname,outfname,errfname,incfname,reportname);
+   printf("outfname = %s\n", outfname);
   /* set output names that depend on the input name */
   if (sc_listing)
     set_extension(outfname,".lst",TRUE);
@@ -636,6 +637,7 @@ SC_FUNC void set_extension(char *filename,char *extension,int force)
   assert(extension!=NULL && (*extension=='\0' || *extension=='.'));
   assert(filename!=NULL);
   ptr=strrchr(filename,'.');
+#if 0   
   if (ptr!=NULL) {
     /* ignore extension on a directory or at the start of the filename */
     if (strchr(ptr,DIRSEP_CHAR)!=NULL || ptr==filename || *(ptr-1)==DIRSEP_CHAR)
@@ -645,6 +647,16 @@ SC_FUNC void set_extension(char *filename,char *extension,int force)
     *ptr='\0';          /* set zero terminator at the position of the period */
   if (force || ptr==NULL)
     strcat(filename,extension);
+#else
+   if (!ptr)
+     {
+	strcat(filename, extension);
+     }
+   else
+     {
+	strncpy(ptr, extension, strlen(extension));
+     }
+#endif   
 }
 
 static int toggle_option(char *optptr, int option)
@@ -849,6 +861,7 @@ static void parseoptions(int argc,char **argv,char *iname,char *oname,
       /* The output name is the input name with a different extension,
        * but it is stored in a different directory
        */
+#if 0
       if (strlen(oname)==0) {
         if ((ptr=strrchr(iname,DIRSEP_CHAR))!=NULL)
           ptr++;          /* strip path */
@@ -857,6 +870,7 @@ static void parseoptions(int argc,char **argv,char *iname,char *oname,
         strcpy(oname,ptr);
       } /* if */
       set_extension(oname,".asm",TRUE);
+#endif       
 #if !defined SC_LIGHT
       if (sc_makereport && strlen(rname)==0) {
         if ((ptr=strrchr(iname,DIRSEP_CHAR))!=NULL)
