@@ -50,39 +50,39 @@ fi
 dnl Set PACKAGE_DATA_DIR in config.h.
 if test "x${datadir}" = 'x${prefix}/share'; then
   if test "x${prefix}" = "xNONE"; then
-    AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${ac_default_prefix}/share/${PACKAGE}")
+    AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${ac_default_prefix}/share/${PACKAGE}", [Shared Data Directory])
   else
-    AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${prefix}/share/${PACKAGE}")
+    AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${prefix}/share/${PACKAGE}", [Shared Data Directory])
   fi
 else
-  AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${datadir}/${PACKAGE}")
+  AC_DEFINE_UNQUOTED(PACKAGE_DATA_DIR, "${datadir}/${PACKAGE}", [Shared Data Directory])
 fi
 
 dnl Set PACKAGE_BIN_DIR in config.h.
 if test "x${bindir}" = 'xNONE'; then
   if test "x${prefix}" = "xNONE"; then
-    AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${ac_default_prefix}/bin")
+    AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${ac_default_prefix}/bin", [Installation Directory for User Executables])
   else
-    AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${prefix}/bin")
+    AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${prefix}/bin", [Installation Directory for User Executables])
   fi
 else
-  AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${bindir}")
+  AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${bindir}", [Installation Directory for User Executables])
 fi
 
 dnl Set PACKAGE_LIB_DIR in config.h.
 if test "x${libdir}" = 'xNONE'; then
   if test "x${prefix}" = "xNONE"; then
-    AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${ac_default_prefix}/lib")
+    AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${ac_default_prefix}/lib", [Installation Directory for Libraries])
   else
-    AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${prefix}/lib")
+    AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${prefix}/lib", [Installation Directory for Libraries])
   fi
 else
-  AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${libdir}")
+  AC_DEFINE_UNQUOTED(PACKAGE_LIB_DIR, "${libdir}", [Installation Directory for Libraries])
 fi
 
 dnl Set PACKAGE_SOURCE_DIR in config.h.
 packagesrcdir=`cd $srcdir && pwd`
-AC_DEFINE_UNQUOTED(PACKAGE_SOURCE_DIR, "${packagesrcdir}")
+AC_DEFINE_UNQUOTED(PACKAGE_SOURCE_DIR, "${packagesrcdir}", [Source Code Directory])
 
 x_dir=""
 x_cflags=""
@@ -147,7 +147,7 @@ if test "x$have_evas_software_x11" = "xyes"; then
   AC_CHECK_HEADER(X11/X.h,
     [
       AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_X11, true)
-      AC_DEFINE(BUILD_ENGINE_SOFTWARE_X11)
+      AC_DEFINE(BUILD_ENGINE_SOFTWARE_X11, 1, [Software X11 Rendering Backend])
       x_dir="/usr/X11R6";
       x_cflags="-I"$x_dir"/include"
       x_libs="-L"$x_dir"/lib -lX11 -lXext"
@@ -184,7 +184,7 @@ if test "x$have_evas_directfb" = "xyes"; then
   PKG_CHECK_MODULES(DIRECTFB, directfb >= 0.9.16,
     [
       AM_CONDITIONAL(BUILD_ENGINE_DIRECTFB, true)
-      AC_DEFINE(BUILD_ENGINE_DIRECTFB)
+      AC_DEFINE(BUILD_ENGINE_DIRECTFB, 1, [DirectFB Rendering Backend])
       ENGINE_DIRECTFB_PRG="evas_directfb_test evas_directfb_window"
     ], [
       AM_CONDITIONAL(BUILD_ENGINE_DIRECTFB, false)
@@ -217,7 +217,7 @@ if test "x$have_evas_fb" = "xyes"; then
   AC_CHECK_HEADER(linux/fb.h,
     [
       AM_CONDITIONAL(BUILD_ENGINE_FB, true)
-      AC_DEFINE(BUILD_ENGINE_FB)
+      AC_DEFINE(BUILD_ENGINE_FB, 1, [Linux FB Rendering Backend])
       ENGINE_FB_PRG="evas_fb_test"
     ], [
       AM_CONDITIONAL(BUILD_ENGINE_FB, false)
@@ -248,7 +248,7 @@ AC_ARG_ENABLE(buffer, [  --enable-buffer                 enable the Buffer rende
 
 if test "x$have_evas_buffer" = "xyes"; then
   AM_CONDITIONAL(BUILD_ENGINE_BUFFER, true)
-  AC_DEFINE(BUILD_ENGINE_BUFFER)
+  AC_DEFINE(BUILD_ENGINE_BUFFER, 1, [Buffer Rendering Backend])
   ENGINE_BUFFER_PRG="evas_buffer_test"
 else
   AM_CONDITIONAL(BUILD_ENGINE_BUFFER, false)
@@ -276,7 +276,7 @@ if test "x$have_evas_qtopia" = "xyes"; then
   AC_CHECK_HEADER(qdirectpainter_qws.h,
     [
       AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_QTOPIA, test "$enableval" = "yes")
-      AC_DEFINE(BUILD_ENGINE_SOFTWARE_QTOPIA)
+      AC_DEFINE(BUILD_ENGINE_SOFTWARE_QTOPIA, 1, [Qtopia Rendering Backend])
       qt_cflags="-fno-exceptions -fno-rtti -I"$qt_dir"/include"
       qt_libs="-L"$qt_dir"/lib -lqte -lqpe"
       qt_moc=$qt_dir"/bin/moc"
@@ -320,9 +320,9 @@ if test "x$have_evas_gl_x11" = "xyes"; then
       AC_CHECK_HEADER(X11/X.h,
         [
           AM_CONDITIONAL(BUILD_ENGINE_GL_X11, true)
-	  AC_DEFINE(BUILD_ENGINE_GL_X11)
+	  AC_DEFINE(BUILD_ENGINE_GL_X11, 1, [OpenGL X11 Rendering Backend])
 	  AM_CONDITIONAL(BUILD_ENGINE_GL_COMMON, true)
-	  AC_DEFINE(BUILD_ENGINE_GL_COMMON)
+	  AC_DEFINE(BUILD_ENGINE_GL_COMMON, 1, [Generic OpenGL Rendering Support])
 	  x_dir="/usr/X11R6";
 	  x_cflags="-I"$x_dir"/include"
 	  x_libs="-L"$x_dir"/lib -lX11 -lXext"
@@ -370,7 +370,7 @@ AC_ARG_ENABLE(image-loader-png,
 if test "x$have_png" = "xyes"; then
   AC_CHECK_LIB(png, png_access_version_number,
     [
-      AC_DEFINE(BUILD_LOADER_PNG)
+      AC_DEFINE(BUILD_LOADER_PNG, 1, [PNG Image Loader Support])
       png_cflags=""
       png_libs="-lpng -lz"
     ]
@@ -398,7 +398,7 @@ AC_ARG_ENABLE(image-loader-jpeg,
 if test "x$have_jpeg" = "xyes"; then
   AC_CHECK_LIB(jpeg, jpeg_set_quality,
     [
-      AC_DEFINE(BUILD_LOADER_JPEG)
+      AC_DEFINE(BUILD_LOADER_JPEG, 1, [JPEG Image Loader Support])
       jpeg_cflags=""
       jpeg_libs="-ljpeg"
     ]
@@ -426,7 +426,7 @@ AC_ARG_ENABLE(image-loader-eet,
 if test "x$have_eet" = "xyes"; then
   AC_CHECK_LIB(eet, eet_open,
     [
-      AC_DEFINE(BUILD_LOADER_EET)
+      AC_DEFINE(BUILD_LOADER_EET, 1, [EET Loader Support])
       eet_cflags=`eet-config --cflags`
       eet_libs=`eet-config --libs`
     ]
@@ -454,7 +454,7 @@ AC_ARG_ENABLE(image-loader-edb,
 if test "x$have_edb" = "xyes"; then
   AC_CHECK_LIB(edb, e_db_open,
     [
-      AC_DEFINE(BUILD_LOADER_EDB)
+      AC_DEFINE(BUILD_LOADER_EDB, 1, [EDB Loader Support])
       edb_cflags=`edb-config --cflags`
       edb_libs=`edb-config --libs`" -lz"
     ]
@@ -469,13 +469,13 @@ AC_ARG_ENABLE(small-dither-mask,
   [  --enable-small-dither-mask      enable small dither mask code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-      	AC_DEFINE(BUILD_SMALL_DITHER_MASK)
+      	AC_DEFINE(BUILD_SMALL_DITHER_MASK, 1, [Small Dither Mask Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_SMALL_DITHER_MASK)
+      AC_DEFINE(BUILD_SMALL_DITHER_MASK, 1, [Small Dither Mask Support])
   ]
 )
 
@@ -487,7 +487,7 @@ AC_ARG_ENABLE(cpu-p2-only,
   [  --enable-cpu-p2-only            enable assumption of pentium2/amd cpu], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(HARD_CODED_P2)
+        AC_DEFINE(HARD_CODED_P2, 1, [Assume Pentium II/AMD K6 or higher CPU])
       else
         AC_MSG_RESULT(no)
       fi
@@ -500,7 +500,7 @@ AC_ARG_ENABLE(cpu-p3-only,
   [  --enable-cpu-p3-only            enable assumption of pentium3 and up cpu], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(HARD_CODED_P3)
+        AC_DEFINE(HARD_CODED_P3, 1, [Assume Pentium III or higher CPU])
       else
         AC_MSG_RESULT(no)
       fi
@@ -515,7 +515,7 @@ AC_ARG_ENABLE(cpu-mmx,
   [  --enable-cpu-mmx                enable mmx code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_MMX)
+        AC_DEFINE(BUILD_MMX, 1, [Build MMX Code])
       else
         AC_MSG_RESULT(no)
       fi
@@ -528,7 +528,7 @@ AC_ARG_ENABLE(cpu-sse,
   [  --enable-cpu-sse                enable sse code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_SSE)
+        AC_DEFINE(BUILD_SSE, 1, [Build SSE Code])
       else
         AC_MSG_RESULT(no)
       fi
@@ -555,7 +555,7 @@ if test "x$have_altivec" = "xyes"; then
    AC_CHECK_HEADER(altivec.h,
      [
         altivec_libs="-laltivec"
-        AC_DEFINE(BUILD_ALTIVEC)
+        AC_DEFINE(BUILD_ALTIVEC, 1, [Build Altivec Code])
      ]
    )
 fi
@@ -566,7 +566,7 @@ if test "x$have_altivec" = "xyes"; then
       if echo "int main(){ return 0;}" | gcc -faltivec -E - > /dev/null 2>&1; then
          AC_MSG_RESULT(yes)
          altivec_cflags="-faltivec"
-         AC_DEFINE(BUILD_ALTIVEC)
+         AC_DEFINE(BUILD_ALTIVEC, 1, [Build Altivec Code])
       else
          AC_MSG_RESULT(no)
       fi
@@ -581,13 +581,13 @@ AC_ARG_ENABLE(cpu-c,
   [  --enable-cpu-c                  enable C code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_C)
+        AC_DEFINE(BUILD_C, 1, [Build plain C code])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_C)
+      AC_DEFINE(BUILD_C, 1, [Build plain C code])
   ]
 )
 
@@ -599,29 +599,29 @@ AC_ARG_ENABLE(scale-sample,
   [  --enable-scale-sample           enable sampling scaler code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_SCALE_SAMPLE)
+        AC_DEFINE(BUILD_SCALE_SAMPLE, 1, [Sampling Scaler Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_SCALE_SAMPLE)
+      AC_DEFINE(BUILD_SCALE_SAMPLE, 1, [Sampling Scaler Support])
   ]
 )
 
 AC_MSG_CHECKING(whether to build smooth scaler)
 
 AC_ARG_ENABLE(scale-smooth, 
-  [  --enable-scale-smooth           enable sampling scaler code], [
+  [  --enable-scale-smooth           enable smooth scaler code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_SCALE_SMOOTH)
+        AC_DEFINE(BUILD_SCALE_SMOOTH, 1, [Smooth Scaler Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_SCALE_SMOOTH)
+      AC_DEFINE(BUILD_SCALE_SMOOTH, 1, [Smooth Scaler Support])
   ]
 )
 
@@ -631,13 +631,13 @@ AC_ARG_ENABLE(scale-smooth,
 #  [  --enable-scale-trilinear        enable tri-linear scaler code], [
 #      if [ test "$enableval" = "yes" ]; then
 #        AC_MSG_RESULT(yes)
-#        AC_DEFINE(BUILD_SCALE_TRILINEAR)
+#        AC_DEFINE(BUILD_SCALE_TRILINEAR, 1, [Tri-linear Scaler Support])
 #      else
 #        AC_MSG_RESULT(no)
 #      fi
 #  ], [
 #      AC_MSG_RESULT(yes)
-#      AC_DEFINE(BUILD_SCALE_TRILINEAR)
+#      AC_DEFINE(BUILD_SCALE_TRILINEAR, 1, [Tri-linear Scaler Support])
 #  ]
 #)
 
@@ -649,13 +649,13 @@ AC_ARG_ENABLE(convert-8-rgb-332,
   [  --enable-convert-8-rgb-332      enable 8bpp 332 converter code], [
       if [ test "$enableval" = "yes" ]; then
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_8_RGB_332)
+      AC_DEFINE(BUILD_CONVERT_8_RGB_332, 1, [8bpp 332 Converter Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_8_RGB_332)
+      AC_DEFINE(BUILD_CONVERT_8_RGB_332, 1, [8bpp 332 Converter Support])
   ]
 )
 
@@ -665,13 +665,13 @@ AC_ARG_ENABLE(convert-8-rgb-666,
   [  --enable-convert-8-rgb-666      enable 8bpp 666 converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_8_RGB_666)
+        AC_DEFINE(BUILD_CONVERT_8_RGB_666, 1, [8bpp 666 Converter Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_8_RGB_666)
+      AC_DEFINE(BUILD_CONVERT_8_RGB_666, 1, [8bpp 666 Converter Support])
   ]
 )
 
@@ -681,13 +681,13 @@ AC_ARG_ENABLE(convert-8-rgb-232,
   [  --enable-convert-8-rgb-232      enable 8bpp 232 converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_8_RGB_232)
+        AC_DEFINE(BUILD_CONVERT_8_RGB_232, 1, [8bpp 232 Converter Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_8_RGB_232)
+      AC_DEFINE(BUILD_CONVERT_8_RGB_232, 1, [8bpp 232 Converter Support])
   ]
 )
 
@@ -697,13 +697,13 @@ AC_ARG_ENABLE(convert-8-rgb-222,
   [  --enable-convert-8-rgb-222      enable 8bpp 222 converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_8_RGB_222)
+        AC_DEFINE(BUILD_CONVERT_8_RGB_222, 1, [8bpp 222 Converter Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_8_RGB_222)
+      AC_DEFINE(BUILD_CONVERT_8_RGB_222, 1, [8bpp 222 Converter Support])
   ]
 )
 
@@ -713,13 +713,13 @@ AC_ARG_ENABLE(convert-8-rgb-221,
   [  --enable-convert-8-rgb-221      enable 8bpp 221 converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_8_RGB_221)
+        AC_DEFINE(BUILD_CONVERT_8_RGB_221, 1, [8bpp 221 Converter Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_8_RGB_221)
+      AC_DEFINE(BUILD_CONVERT_8_RGB_221, 1, [8bpp 221 Converter Support])
   ]
 )
 
@@ -729,13 +729,13 @@ AC_ARG_ENABLE(convert-8-rgb-111,
   [  --enable-convert-8-rgb-111      enable 8bpp 111 converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_8_RGB_111)
+        AC_DEFINE(BUILD_CONVERT_8_RGB_111, 1, [8bpp 111 Converter Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_8_RGB_111)
+      AC_DEFINE(BUILD_CONVERT_8_RGB_111, 1, [8bpp 111 Converter Support])
   ]
 )
 
@@ -745,13 +745,13 @@ AC_ARG_ENABLE(convert-16-rgb-565,
   [  --enable-convert-16-rgb-565     enable 16bpp 565 converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_16_RGB_565)
+        AC_DEFINE(BUILD_CONVERT_16_RGB_565, 1, [16bpp 565 Converter Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_16_RGB_565)
+      AC_DEFINE(BUILD_CONVERT_16_RGB_565, 1, [16bpp 565 Converter Support])
   ]
 )
 
@@ -761,13 +761,13 @@ AC_ARG_ENABLE(convert-16-rgb-555,
   [  --enable-convert-16-rgb-555     enable 16bpp 555 converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_16_RGB_555)
+        AC_DEFINE(BUILD_CONVERT_16_RGB_555, 1, [16bpp 555 Converter Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_16_RGB_555)
+      AC_DEFINE(BUILD_CONVERT_16_RGB_555, 1, [16bpp 555 Converter Support])
   ]
 )
 
@@ -777,13 +777,13 @@ AC_ARG_ENABLE(convert-16-rgb-444,
   [  --enable-convert-16-rgb-444     enable 16bpp 444 converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_16_RGB_444)
+        AC_DEFINE(BUILD_CONVERT_16_RGB_444, 1, [16bpp 444 Converter Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_16_RGB_444)
+      AC_DEFINE(BUILD_CONVERT_16_RGB_444, 1, [16bpp 444 Converter Support])
   ]
 )
 
@@ -793,13 +793,13 @@ AC_ARG_ENABLE(convert-16-rgb-ipq,
   [  --enable-convert-16-rgb-ipq     enable 16bpp 565 (444 ipaq) converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_16_RGB_454645)
+        AC_DEFINE(BUILD_CONVERT_16_RGB_454645, 1, [16bpp 565 (444 ipaq) Converter Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_16_RGB_454645)
+      AC_DEFINE(BUILD_CONVERT_16_RGB_454645, 1, [16bpp 565 (444 ipaq) Converter Support])
   ]
 )
 
@@ -809,13 +809,13 @@ AC_ARG_ENABLE(convert-16-rgb-rot-0,
   [  --enable-convert-16-rgb-rot-0   enable 16bpp rotation 0 converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_16_RGB_ROT0)
+        AC_DEFINE(BUILD_CONVERT_16_RGB_ROT0, 1, [16bpp Rotation 0 Converter Code])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_16_RGB_ROT0)
+      AC_DEFINE(BUILD_CONVERT_16_RGB_ROT0, 1, [16bpp Rotation 0 Converter Code])
   ]
 )
 
@@ -825,13 +825,13 @@ AC_ARG_ENABLE(convert-16-rgb-rot-270,
   [  --enable-convert-16-rgb-rot-270 enable 16bpp rotation 270 converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_16_RGB_ROT270)
+        AC_DEFINE(BUILD_CONVERT_16_RGB_ROT270, 1, [16bpp Rotation 270 Converter Code])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_16_RGB_ROT270)
+      AC_DEFINE(BUILD_CONVERT_16_RGB_ROT270, 1, [16bpp Rotation 270 Converter Code])
   ]
 )
 
@@ -841,13 +841,13 @@ AC_ARG_ENABLE(convert-16-rgb-rot-90,
   [  --enable-convert-16-rgb-rot-90  enable 16bpp rotation 90 converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_16_RGB_ROT90)
+        AC_DEFINE(BUILD_CONVERT_16_RGB_ROT90, 1, [16bpp Rotation 90 Converter Code])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_16_RGB_ROT90)
+      AC_DEFINE(BUILD_CONVERT_16_RGB_ROT90, 1, [16bpp Rotation 90 Converter Code])
   ]
 )
 
@@ -857,13 +857,13 @@ AC_ARG_ENABLE(convert-24-rgb-888,
   [  --enable-convert-24-rgb-888     enable 24bpp rgb 888 converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_24_RGB_888)
+        AC_DEFINE(BUILD_CONVERT_24_RGB_888, 1, [24bpp RGB 888 Converter Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_24_RGB_888)
+      AC_DEFINE(BUILD_CONVERT_24_RGB_888, 1, [24bpp RGB 888 Converter Support])
   ]
 )
 
@@ -873,13 +873,13 @@ AC_ARG_ENABLE(convert-24-bgr-888,
   [  --enable-convert-24-bgr-888     enable 24bpp bgr 888 converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_24_BGR_888)
+        AC_DEFINE(BUILD_CONVERT_24_BGR_888, 1, [24bpp BGR 888 Converter Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_24_BGR_888)
+      AC_DEFINE(BUILD_CONVERT_24_BGR_888, 1, [24bpp BGR 888 Converter Support])
   ]
 )
 
@@ -889,13 +889,13 @@ AC_ARG_ENABLE(convert-32-rgb-8888,
   [  --enable-convert-32-rgb-8888    enable 32bpp rgb 8888 converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_32_RGB_8888)
+        AC_DEFINE(BUILD_CONVERT_32_RGB_8888, 1, [32bpp RGB 8888 Converter Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_32_RGB_8888)
+      AC_DEFINE(BUILD_CONVERT_32_RGB_8888, 1, [32bpp RGB 8888 Converter Support])
   ]
 )
 
@@ -905,13 +905,13 @@ AC_ARG_ENABLE(convert-32-rgbx-8888,
   [  --enable-convert-32-rgbx-8888    enable 32bpp rgbx 8888 converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_32_RGBX_8888)
+        AC_DEFINE(BUILD_CONVERT_32_RGBX_8888, 1, [32bpp RGBX 8888 Converter Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_32_RGBX_8888)
+      AC_DEFINE(BUILD_CONVERT_32_RGBX_8888, 1, [32bpp RBGX 8888 Converter Support])
   ]
 )
 
@@ -921,13 +921,13 @@ AC_ARG_ENABLE(convert-32-bgr-8888,
   [  --enable-convert-32-bgr-8888    enable 32bpp bgr 8888 converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_32_BGR_8888)
+        AC_DEFINE(BUILD_CONVERT_32_BGR_8888, 1, [32bpp BGR 8888 Converter Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_32_BGR_8888)
+      AC_DEFINE(BUILD_CONVERT_32_BGR_8888, 1, [32bpp BGR 8888 Converter Support])
   ]
 )
 
@@ -937,13 +937,13 @@ AC_ARG_ENABLE(convert-32-bgrx-8888,
   [  --enable-convert-32-bgrx-8888    enable 32bpp bgrx 8888 converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_32_BGRX_8888)
+        AC_DEFINE(BUILD_CONVERT_32_BGRX_8888, 1, [32bpp BGRX 8888 Converter Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_32_BGRX_8888)
+      AC_DEFINE(BUILD_CONVERT_32_BGRX_8888, 1, [32bpp BGRX 8888 Converter Support])
   ]
 )
 
@@ -953,13 +953,13 @@ AC_ARG_ENABLE(convert-32-rgb-rot-0,
   [  --enable-convert-32-rgb-rot-0   enable 32bpp rotation 0 converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_32_RGB_ROT0)
+        AC_DEFINE(BUILD_CONVERT_32_RGB_ROT0, 1, [32bpp Rotation 0 Converter Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_32_RGB_ROT0)
+      AC_DEFINE(BUILD_CONVERT_32_RGB_ROT0, 1, [32bpp Rotation 0 Converter Support])
   ]
 )
 
@@ -969,13 +969,13 @@ AC_ARG_ENABLE(convert-32-rgb-rot-270,
   [  --enable-convert-32-rgb-rot-270 enable 32bpp rotation 270 converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_32_RGB_ROT270)
+        AC_DEFINE(BUILD_CONVERT_32_RGB_ROT270, 1, [32bpp Rotation 270 Converter Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_32_RGB_ROT270)
+      AC_DEFINE(BUILD_CONVERT_32_RGB_ROT270, 1, [32bpp Rotation 270 Converter Support])
   ]
 )
 
@@ -985,13 +985,13 @@ AC_ARG_ENABLE(convert-32-rgb-rot-90,
   [  --enable-convert-32-rgb-rot-90 enable 32bpp rotation 90 converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_32_RGB_ROT90)
+        AC_DEFINE(BUILD_CONVERT_32_RGB_ROT90, 1, [32bpp Rotation 90 Converter Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_32_RGB_ROT90)
+      AC_DEFINE(BUILD_CONVERT_32_RGB_ROT90, 1, [32bpp Rotation 90 Converter Support])
   ]
 )
 
@@ -1001,13 +1001,13 @@ AC_ARG_ENABLE(convert-yuv,
   [  --enable-convert-yuv enable yuv converter code], [
       if [ test "$enableval" = "yes" ]; then
         AC_MSG_RESULT(yes)
-        AC_DEFINE(BUILD_CONVERT_YUV)
+        AC_DEFINE(BUILD_CONVERT_YUV, 1, [YUV Converter Support])
       else
         AC_MSG_RESULT(no)
       fi
   ], [
       AC_MSG_RESULT(yes)
-      AC_DEFINE(BUILD_CONVERT_YUV)
+      AC_DEFINE(BUILD_CONVERT_YUV, 1, [YUV Converter Support])
   ]
 )
 
