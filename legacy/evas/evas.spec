@@ -1,19 +1,17 @@
+%define _missing_doc_files_terminate_build 0
+
 Summary: Multi-platform Canvas Library
 Name: evas
 Version: 1.0.0
-Release: 0.pre13
+Release: 0.pre13.%(date '+%Y%m%d')
 Copyright: BSD
 Group: System Environment/Libraries
 Source: ftp://ftp.enlightenment.org/pub/evas/evas-%{version}_pre13.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 Packager: Michael Jennings <mej@eterm.org>
 URL: http://www.enlightenment.org/
-#BuildSuggests: XFree86-devel
-#BuildSuggests: freetype2-devel
-#BuildSuggests: libjpeg-devel
-#BuildSuggests: libpng-devel
-#BuildSuggests: eet-devel
-#BuildSuggests: edb-devel
+#BuildSuggests: XFree86-devel freetype2-devel libjpeg-devel
+#BuildSuggests: libpng-devel eet-devel edb-devel xorg-x11-devel
 Provides: evas evas_software_x11 evas_loader_png evas_loader_jpeg evas_loader_eet evas_loader_edb
 
 %description

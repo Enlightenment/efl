@@ -63,7 +63,7 @@ if test "x${bindir}" = 'xNONE'; then
     AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${prefix}/bin", [Install Location for Executables])
   fi
 else
-  AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${bindir}". [Install Location for Executables])
+  AC_DEFINE_UNQUOTED(PACKAGE_BIN_DIR, "${bindir}", [Install Location for Executables])
 fi
 
 dnl Set PACKAGE_LIB_DIR in config.h.

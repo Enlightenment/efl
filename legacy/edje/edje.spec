@@ -1,13 +1,15 @@
+%define _missing_doc_files_terminate_build 0
+
 Summary: Complex Graphical Design/Layout Engine
 Name: edje
 Version: 0.5.0
-Release: 1
+Release: 1.%(date '+%Y%m%d')
 Copyright: BSD
 Group: System Environment/Libraries
 Source: ftp://ftp.enlightenment.org/pub/evoak/%{name}-%{version}.tar.gz
 Packager: The Rasterman <raster@rasterman.com>
 URL: http://www.enlightenment.org/
-BuildRequires: libjpeg-devel zlib-devel
+#BuildSuggests: libjpeg-devel zlib-devel eet-devel xorg-x11-devel
 Requires: libjpeg zlib ecore evas eet imlib2
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 

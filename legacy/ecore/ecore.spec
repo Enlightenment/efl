@@ -1,14 +1,15 @@
+%define _missing_doc_files_terminate_build 0
+
 Summary: Enlightened Core X interface library
 Name: ecore
 Version: 1.0.0
-Release: 0.pre7
+Release: 0.pre7.%(date '+%Y%m%d')
 Copyright: BSD
 Group: User Interface/X
 Source: ftp://ftp.enlightenment.org/enlightenment/%{name}-%{version}_pre7.tar.gz
 URL: http://www.enlightenment.org/efm.html
 Packager: Michael Jennings <mej@eterm.org>
-Vendor: The Enlightenment Development Team <e-develop@enlightenment.org>
-#BuildSuggests: openssl-devel
+#BuildSuggests: openssl-devel evas-devel xorg-x11-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
@@ -37,10 +38,10 @@ Ecore development files
 test -x `which doxygen` && sh gendoc || :
 
 %post
-/sbin/ldconfig
+/sbin/ldconfig || :
 
 %postun
-/sbin/ldconfig
+/sbin/ldconfig || :
 
 %clean
 test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT

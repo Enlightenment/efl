@@ -1,7 +1,9 @@
+%define _missing_doc_files_terminate_build 0
+
 Summary: embryo
 Name: embryo
-Version: 0.0.1
-Release: 1
+Version: 0.9.0
+Release: 1.%(date '+%Y%m%d')
 Copyright: BSD
 Group: System Environment/Libraries
 URL: http://www.enlightenment.org/

@@ -1,27 +1,18 @@
-# Note that this is NOT a relocatable package
-%define ver      0.0.1
-%define rel      1
-%define prefix   /usr
+%define _missing_doc_files_terminate_build 0
 
 Summary: emotion
 Name: emotion
-Version: %ver
-Release: %rel
+Version: 0.0.1
+Release: 1.%(date '+%Y%m%d')
 Copyright: BSD
 Group: System Environment/Libraries
-Source: ftp://ftp.enlightenment.org/pub/emotion/emotion-%{ver}.tar.gz
-BuildRoot: /var/tmp/emotion-root
-Packager: The Rasterman <raster@rasterman.com>
 URL: http://www.enlightenment.org/
-BuildRequires: libjpeg-devel
-BuildRequires: zlib-devel
-Requires: libjpeg
-Requires: zlib
-
-Docdir: %{prefix}/doc
+Source: ftp://ftp.enlightenment.org/pub/emotion/%{name}-%{version}.tar.gz
+Packager: Michael Jennings <mej@eterm.org>
+#BuildSuggests: xorg-x11-devel xine-lib-devel
+BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
-
 Emotion is a Media Library
 
 %package devel
@@ -30,62 +21,49 @@ Group: System Environment/Libraries
 Requires: %{name} = %{version}
 
 %description devel
-Headers, static libraries, test programs and documentation for Eet
+Headers, static libraries, test programs and documentation for Emotion
 
 %prep
-rm -rf $RPM_BUILD_ROOT
-
 %setup -q
 
 %build
-./configure --prefix=%prefix
-
-if [ "$SMP" != "" ]; then
-  (make "MAKE=make -k -j $SMP"; exit 0)
-  make
-else
-  make
-fi
-###########################################################################
+%{configure} --prefix=%{_prefix}
+%{__make} %{?_smp_mflags} %{?mflags}
 
 %install
-make DESTDIR=$RPM_BUILD_ROOT install
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+%{__make} %{?mflags_install} DESTDIR=$RPM_BUILD_ROOT install
+test -x `which doxygen` && sh gendoc || :
 
 %post
-/sbin/ldconfig
+/sbin/ldconfig || :
 
 %postun
-/sbin/ldconfig
+/sbin/ldconfig || :
+
+%clean
+test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 
 %files
-%defattr(-,root,root)
-%attr(755,root,root) %{prefix}/lib/libemotion.a
-%attr(755,root,root) %{prefix}/lib/libemotion.so.*
-%attr(755,root,root) %{prefix}/bin/emotion_*
-%attr(755,root,root) %{prefix}/lib/emotion/emotion_decoder_xine.a
-%attr(755,root,root) %{prefix}/lib/xine/plugins/1.0.0/xineplug_vo_out_emotion.a
+%defattr(-, root, root)
+%doc AUTHORS COPYING* README
+%{_libdir}/libemotion.a
+%{_libdir}/libemotion.so.*
+%{_bindir}/emotion_*
+%{_libdir}/emotion/emotion_decoder_xine.a
+%{_libdir}/xine/plugins/*/xineplug_vo_out_emotion.a
 %{_datadir}/emotion
-%doc AUTHORS
-%doc COPYING
-%doc README
 
 %files devel
-%attr(755,root,root) %{prefix}/bin/emotion-config
-%attr(755,root,root) %{prefix}/lib/pkgconfig/emotion.pc
-%attr(755,root,root) %{prefix}/lib/libemotion.so
-%attr(755,root,root) %{prefix}/lib/libemotion.la
-%attr(755,root,root) %{prefix}/lib/emotion/emotion_decoder_xine.la
-%attr(755,root,root) %{prefix}/lib/emotion/emotion_decoder_xine.so
-%attr(755,root,root) %{prefix}/lib/xine/plugins/1.0.0/xineplug_vo_out_emotion.so
-%attr(755,root,root) %{prefix}/lib/xine/plugins/1.0.0/xineplug_vo_out_emotion.la
-%{prefix}/include/Emotion*
-%doc emotion_docs.tar.gz
+%defattr(-, root, root)
+%doc doc/html
+%{_bindir}/emotion-config
+%{_libdir}/pkgconfig/emotion.pc
+%{_libdir}/libemotion.so
+%{_libdir}/libemotion.la
+%{_libdir}/emotion/emotion_decoder_xine.la
+%{_libdir}/emotion/emotion_decoder_xine.so
+%{_libdir}/xine/plugins/*/xineplug_vo_out_emotion.so
+%{_libdir}/xine/plugins/*/xineplug_vo_out_emotion.la
+%{_includedir}/Emotion*
 
 %changelog
-* Fri Jun 18 2004 Azundris <edevel@azundris.com>
-- Added missing files
-* Sat Jun 23 2001 The Rasterman <raster@rasterman.com>
-- Created spec file                                            
