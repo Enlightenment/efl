@@ -1,6 +1,7 @@
 /*
  * _NET_WM... aka Extended Window Manager Hint (EWMH) functions.
  */
+#include "config.h"
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
@@ -12,25 +13,88 @@
 #define _ATOM_GET(name) \
    XInternAtom(_ecore_x_disp, name, False)
 
-#define _ATOM_SET_UTF8_STRING(atom, win, string) \
+#define _ATOM_SET_UTF8_STRING(win, atom, string) \
    XChangeProperty(_ecore_x_disp, win, atom, ECORE_X_ATOM_UTF8_STRING, 8, PropModeReplace, \
                    (unsigned char *)string, strlen(string))
-#define _ATOM_SET_UTF8_STRING_LIST(atom, win, string, cnt) \
+#define _ATOM_SET_UTF8_STRING_LIST(win, atom, string, cnt) \
    XChangeProperty(_ecore_x_disp, win, atom, ECORE_X_ATOM_UTF8_STRING, 8, PropModeReplace, \
                    (unsigned char *)string, cnt)
-#define _ATOM_SET_WINDOW(atom, win, p_wins, cnt) \
+#define _ATOM_SET_WINDOW(win, atom, p_wins, cnt) \
    XChangeProperty(_ecore_x_disp, win, atom, XA_WINDOW, 32, PropModeReplace, \
                    (unsigned char *)p_wins, cnt)
-#define _ATOM_SET_ATOM(atom, win, p_atom, cnt) \
+#define _ATOM_SET_ATOM(win, atom, p_atom, cnt) \
    XChangeProperty(_ecore_x_disp, win, atom, XA_ATOM, 32, PropModeReplace, \
                    (unsigned char *)p_atom, cnt)
-#define _ATOM_SET_CARD32(atom, win, p_val, cnt) \
+#define _ATOM_SET_CARD32(win, atom, p_val, cnt) \
    XChangeProperty(_ecore_x_disp, win, atom, XA_CARDINAL, 32, PropModeReplace, \
                    (unsigned char *)p_val, cnt)
 
 /*
  * Convenience functions. Should probably go elsewhere.
  */
+
+/*
+ * Set CARD32 (array) property
+ */
+void
+ecore_x_window_prop_card32_set(Ecore_X_Window win, Ecore_X_Atom atom,
+			       unsigned int *val, unsigned int num)
+{
+#if SIZEOF_INT == 4
+   _ATOM_SET_CARD32(win, atom, val, num);
+#else
+   CARD32             *c32;
+   unsigned int        i;
+
+   c32 = malloc(num * sizeof(CARD32));
+   if (!c32)
+      return;
+   for (i = 0; i < num; i++)
+      c32[i] = val[i];
+   _ATOM_SET_CARD32(win, atom, c32, num);
+   free(c32);
+#endif
+}
+
+/*
+ * Get CARD32 (array) property
+ *
+ * At most len items are returned in val.
+ * If the property was successfully fetched the number of items stored in
+ * val is returned, otherwise -1 is returned.
+ * Note: Return value 0 means that the property exists but has no elements.
+ */
+int
+ecore_x_window_prop_card32_get(Ecore_X_Window win, Ecore_X_Atom atom,
+			       unsigned int *val, unsigned int len)
+{
+   unsigned char      *prop_ret;
+   Atom                type_ret;
+   unsigned long       bytes_after, num_ret;
+   int                 format_ret;
+   unsigned int        i;
+
+   prop_ret = NULL;
+   XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
+		      ECORE_X_ATOM_UTF8_STRING, &type_ret,
+		      &format_ret, &num_ret, &bytes_after, &prop_ret);
+   if (prop_ret && num_ret > 0 && format_ret == 32)
+     {
+	if (num_ret < len)
+	   len = num_ret;
+	for (i = 0; i < len; i++)
+	   val[i] = prop_ret[i];
+     }
+   else
+     {
+	if (!prop_ret || format_ret != 32)
+	   len = -1;
+     }
+   if (prop_ret)
+      XFree(prop_ret);
+
+   return len;
+}
 
 /*
  * Set UTF-8 string property
@@ -49,27 +113,27 @@ static char        *
 _ecore_x_window_prop_string_utf8_get(Ecore_X_Window win, Ecore_X_Atom atom)
 {
    char               *str;
-   unsigned char      *prop_return;
+   unsigned char      *prop_ret;
    Atom                type_ret;
    unsigned long       bytes_after, num_ret;
    int                 format_ret;
 
    str = NULL;
-   prop_return = NULL;
+   prop_ret = NULL;
    XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
 		      ECORE_X_ATOM_UTF8_STRING, &type_ret,
-		      &format_ret, &num_ret, &bytes_after, &prop_return);
-   if (prop_return && num_ret > 0 && format_ret == 8)
+		      &format_ret, &num_ret, &bytes_after, &prop_ret);
+   if (prop_ret && num_ret > 0 && format_ret == 8)
      {
 	str = malloc(num_ret + 1);
 	if (str)
 	  {
-	     memcpy(str, prop_return, num_ret);
+	     memcpy(str, prop_ret, num_ret);
 	     str[num_ret] = '\0';
 	  }
      }
-   if (prop_return)
-      XFree(prop_return);
+   if (prop_ret)
+      XFree(prop_ret);
 
    return str;
 }
@@ -221,11 +285,11 @@ void
 ecore_x_netwm_wm_identify(Ecore_X_Window root, Ecore_X_Window check,
 			  const char *wm_name)
 {
-   _ATOM_SET_WINDOW(ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK, root, &check, 1);
-   _ATOM_SET_WINDOW(ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK, check, &check, 1);
-   _ATOM_SET_UTF8_STRING(ECORE_X_ATOM_NET_WM_NAME, check, wm_name);
+   _ATOM_SET_WINDOW(root, ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK, &check, 1);
+   _ATOM_SET_WINDOW(check, ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK, &check, 1);
+   _ATOM_SET_UTF8_STRING(check, ECORE_X_ATOM_NET_WM_NAME, wm_name);
    /* This one isn't mandatory */
-   _ATOM_SET_UTF8_STRING(ECORE_X_ATOM_NET_WM_NAME, root, wm_name);
+   _ATOM_SET_UTF8_STRING(root, ECORE_X_ATOM_NET_WM_NAME, wm_name);
 }
 
 /*
@@ -233,28 +297,27 @@ ecore_x_netwm_wm_identify(Ecore_X_Window root, Ecore_X_Window check,
  */
 
 void
-ecore_x_netwm_desk_count_set(Ecore_X_Window root, int n_desks)
+ecore_x_netwm_desk_count_set(Ecore_X_Window root, unsigned int n_desks)
 {
-   CARD32              val;
-
-   val = n_desks;
-   _ATOM_SET_CARD32(ECORE_X_ATOM_NET_NUMBER_OF_DESKTOPS, root, &val, 1);
+   ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_NET_NUMBER_OF_DESKTOPS,
+				  &n_desks, 1);
 }
 
 void
-ecore_x_netwm_desk_roots_set(Ecore_X_Window root, int n_desks,
+ecore_x_netwm_desk_roots_set(Ecore_X_Window root, unsigned int n_desks,
 			     Ecore_X_Window * vroots)
 {
-   _ATOM_SET_WINDOW(ECORE_X_ATOM_NET_VIRTUAL_ROOTS, root, vroots, n_desks);
+   _ATOM_SET_WINDOW(root, ECORE_X_ATOM_NET_VIRTUAL_ROOTS, vroots, n_desks);
 }
 
 void
-ecore_x_netwm_desk_names_set(Ecore_X_Window root, int n_desks,
+ecore_x_netwm_desk_names_set(Ecore_X_Window root, unsigned int n_desks,
 			     const char **names)
 {
    char                ss[32], *buf;
    const char         *s;
-   int                 i, l, len;
+   unsigned int        i;
+   int                 l, len;
 
    buf = NULL;
    len = 0;
@@ -275,75 +338,54 @@ ecore_x_netwm_desk_names_set(Ecore_X_Window root, int n_desks,
 	len += l;
      }
 
-   _ATOM_SET_UTF8_STRING_LIST(ECORE_X_ATOM_NET_DESKTOP_NAMES, root, buf, len);
+   _ATOM_SET_UTF8_STRING_LIST(root, ECORE_X_ATOM_NET_DESKTOP_NAMES, buf, len);
 
    free(buf);
 }
 
 void
-ecore_x_netwm_desk_size_set(Ecore_X_Window root, int width, int height)
+ecore_x_netwm_desk_size_set(Ecore_X_Window root, unsigned int width,
+			    unsigned int height)
 {
-   CARD32              size[2];
+   unsigned int        size[2];
 
    size[0] = width;
    size[1] = height;
-   _ATOM_SET_CARD32(ECORE_X_ATOM_NET_DESKTOP_GEOMETRY, root, &size, 2);
+   ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_NET_DESKTOP_GEOMETRY, size,
+				  2);
 }
 
 void
-ecore_x_netwm_desk_workareas_set(Ecore_X_Window root, int n_desks, int *areas)
+ecore_x_netwm_desk_workareas_set(Ecore_X_Window root, unsigned int n_desks,
+				 unsigned int *areas)
 {
-   CARD32             *p_coord;
-   int                 n_coord, i;
-
-   n_coord = 4 * n_desks;
-   p_coord = malloc(n_coord * sizeof(CARD32));
-   if (!p_coord)
-      return;
-
-   for (i = 0; i < n_coord; i++)
-      p_coord[i] = areas[i];
-
-   _ATOM_SET_CARD32(ECORE_X_ATOM_NET_WORKAREA, root, p_coord, n_coord);
-
-   free(p_coord);
+   ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_NET_WORKAREA, areas,
+				  4 * n_desks);
 }
 
 void
-ecore_x_netwm_desk_current_set(Ecore_X_Window root, int desk)
+ecore_x_netwm_desk_current_set(Ecore_X_Window root, unsigned int desk)
 {
-   CARD32              val;
-
-   val = desk;
-   _ATOM_SET_CARD32(ECORE_X_ATOM_NET_CURRENT_DESKTOP, root, &val, 1);
+   ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_NET_CURRENT_DESKTOP, &desk,
+				  1);
 }
 
 void
-ecore_x_netwm_desk_viewports_set(Ecore_X_Window root, int n_desks, int *origins)
+ecore_x_netwm_desk_viewports_set(Ecore_X_Window root, unsigned int n_desks,
+				 unsigned int *origins)
 {
-   CARD32             *p_coord;
-   int                 n_coord, i;
-
-   n_coord = 2 * n_desks;
-   p_coord = malloc(n_coord * sizeof(CARD32));
-   if (!p_coord)
-      return;
-
-   for (i = 0; i < n_coord; i++)
-      p_coord[i] = origins[i];
-
-   _ATOM_SET_CARD32(ECORE_X_ATOM_NET_DESKTOP_VIEWPORT, root, p_coord, n_coord);
-
-   free(p_coord);
+   ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_NET_DESKTOP_VIEWPORT,
+				  origins, 2 * n_desks);
 }
 
 void
 ecore_x_netwm_showing_desktop_set(Ecore_X_Window root, int on)
 {
-   CARD32              val;
+   unsigned int        val;
 
-   val = on;
-   _ATOM_SET_CARD32(ECORE_X_ATOM_NET_SHOWING_DESKTOP, root, &val, 1);
+   val = (on) ? 1 : 0;
+   ecore_x_window_prop_card32_set(root, ECORE_X_ATOM_NET_SHOWING_DESKTOP, &val,
+				  1);
 }
 
 /*
@@ -352,31 +394,32 @@ ecore_x_netwm_showing_desktop_set(Ecore_X_Window root, int on)
 
 /* Mapping order */
 void
-ecore_x_netwm_client_list_set(Ecore_X_Window root, int n_clients,
+ecore_x_netwm_client_list_set(Ecore_X_Window root, unsigned int n_clients,
 			      Ecore_X_Window * p_clients)
 {
-   _ATOM_SET_WINDOW(ECORE_X_ATOM_NET_CLIENT_LIST, root, p_clients, n_clients);
+   _ATOM_SET_WINDOW(root, ECORE_X_ATOM_NET_CLIENT_LIST, p_clients, n_clients);
 }
 
 /* Stacking order */
 void
-ecore_x_netwm_client_list_stacking_set(Ecore_X_Window root, int n_clients,
+ecore_x_netwm_client_list_stacking_set(Ecore_X_Window root,
+				       unsigned int n_clients,
 				       Ecore_X_Window * p_clients)
 {
-   _ATOM_SET_WINDOW(ECORE_X_ATOM_NET_CLIENT_LIST_STACKING, root, p_clients,
+   _ATOM_SET_WINDOW(root, ECORE_X_ATOM_NET_CLIENT_LIST_STACKING, p_clients,
 		    n_clients);
 }
 
 void
 ecore_x_netwm_client_active_set(Ecore_X_Window root, Ecore_X_Window win)
 {
-   _ATOM_SET_WINDOW(ECORE_X_ATOM_NET_ACTIVE_WINDOW, root, &win, 1);
+   _ATOM_SET_WINDOW(root, ECORE_X_ATOM_NET_ACTIVE_WINDOW, &win, 1);
 }
 
 void
 ecore_x_netwm_name_set(Ecore_X_Window win, const char *name)
 {
-   _ecore_x_window_prop_string_utf8_set(ECORE_X_ATOM_NET_WM_NAME, win, name);
+   _ecore_x_window_prop_string_utf8_set(win, ECORE_X_ATOM_NET_WM_NAME, name);
 }
 
 char               *
@@ -388,7 +431,7 @@ ecore_x_netwm_name_get(Ecore_X_Window win)
 void
 ecore_x_netwm_icon_name_set(Ecore_X_Window win, const char *name)
 {
-   _ecore_x_window_prop_string_utf8_set(ECORE_X_ATOM_NET_WM_ICON_NAME, win,
+   _ecore_x_window_prop_string_utf8_set(win, ECORE_X_ATOM_NET_WM_ICON_NAME,
 					name);
 }
 
@@ -402,7 +445,7 @@ ecore_x_netwm_icon_name_get(Ecore_X_Window win)
 void
 ecore_x_netwm_visible_name_set(Ecore_X_Window win, const char *name)
 {
-   _ecore_x_window_prop_string_utf8_set(ECORE_X_ATOM_NET_WM_VISIBLE_NAME, win,
+   _ecore_x_window_prop_string_utf8_set(win, ECORE_X_ATOM_NET_WM_VISIBLE_NAME,
 					name);
 }
 
@@ -416,8 +459,9 @@ ecore_x_netwm_visible_name_get(Ecore_X_Window win)
 void
 ecore_x_netwm_visible_icon_name_set(Ecore_X_Window win, const char *name)
 {
-   _ecore_x_window_prop_string_utf8_set(ECORE_X_ATOM_NET_WM_VISIBLE_ICON_NAME,
-					win, name);
+   _ecore_x_window_prop_string_utf8_set(win,
+					ECORE_X_ATOM_NET_WM_VISIBLE_ICON_NAME,
+					name);
 }
 
 char               *
@@ -425,4 +469,31 @@ ecore_x_netwm_visible_icon_name_get(Ecore_X_Window win)
 {
    return _ecore_x_window_prop_string_utf8_get(win,
 					       ECORE_X_ATOM_NET_WM_VISIBLE_ICON_NAME);
+}
+
+void
+ecore_x_netwm_desktop_set(Ecore_X_Window win, unsigned int desk)
+{
+   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_DESKTOP, &desk, 1);
+}
+
+int
+ecore_x_netwm_desktop_get(Ecore_X_Window win, unsigned int *desk)
+{
+   return ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_DESKTOP,
+					 desk, 1);
+}
+
+void
+ecore_x_netwm_opacity_set(Ecore_X_Window win, unsigned int opacity)
+{
+   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_WINDOW_OPACITY,
+				  &opacity, 1);
+}
+
+int
+ecore_x_netwm_opacity_get(Ecore_X_Window win, unsigned int *opacity)
+{
+   return ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_WINDOW_OPACITY,
+					 opacity, 1);
 }

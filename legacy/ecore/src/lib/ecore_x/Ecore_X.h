@@ -848,6 +848,9 @@ EAPI void             ecore_x_window_pixel_gravity_set(Ecore_X_Window win,
 EAPI Ecore_X_Atom     ecore_x_window_prop_any_type(void);
 EAPI void             ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Atom format, int size, void *data, int number);
 EAPI int              ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecore_X_Atom type, int size, unsigned char **data, int *num);
+EAPI void             ecore_x_window_prop_card32_set(Ecore_X_Window win, Ecore_X_Atom atom, unsigned int *val, unsigned int num);
+EAPI int              ecore_x_window_prop_card32_get(Ecore_X_Window win, Ecore_X_Atom atom,
+			       unsigned int *val, unsigned int len);
 EAPI void             ecore_x_window_prop_property_del(Ecore_X_Window win, Ecore_X_Atom property);
 EAPI void             ecore_x_window_prop_property_notify(Ecore_X_Window win, const char *type, long *data);
 EAPI void             ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom type, char *str);
@@ -1066,16 +1069,16 @@ EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_A
        
    EAPI void                ecore_x_netwm_init(void);
    EAPI void                ecore_x_netwm_wm_identify(Ecore_X_Window root, Ecore_X_Window check, const char *wm_name);
-   EAPI void                ecore_x_netwm_desk_count_set(Ecore_X_Window root, int n_desks);
-   EAPI void                ecore_x_netwm_desk_roots_set(Ecore_X_Window root, int n_desks, Ecore_X_Window * vroots);
-   EAPI void                ecore_x_netwm_desk_names_set(Ecore_X_Window root, int n_desks, const char **names);
-   EAPI void                ecore_x_netwm_desk_size_set(Ecore_X_Window root, int width, int height);
-   EAPI void                ecore_x_netwm_desk_workareas_set(Ecore_X_Window root, int n_desks, int *areas);
-   EAPI void                ecore_x_netwm_desk_current_set(Ecore_X_Window root, int desk);
-   EAPI void                ecore_x_netwm_desk_viewports_set(Ecore_X_Window root, int n_desks, int *origins);
+   EAPI void                ecore_x_netwm_desk_count_set(Ecore_X_Window root, unsigned int n_desks);
+   EAPI void                ecore_x_netwm_desk_roots_set(Ecore_X_Window root, unsigned int n_desks, Ecore_X_Window * vroots);
+   EAPI void                ecore_x_netwm_desk_names_set(Ecore_X_Window root, unsigned int n_desks, const char **names);
+   EAPI void                ecore_x_netwm_desk_size_set(Ecore_X_Window root, unsigned int width, unsigned int height);
+   EAPI void                ecore_x_netwm_desk_workareas_set(Ecore_X_Window root, unsigned int n_desks, unsigned int *areas);
+   EAPI void                ecore_x_netwm_desk_current_set(Ecore_X_Window root, unsigned int desk);
+   EAPI void                ecore_x_netwm_desk_viewports_set(Ecore_X_Window root, unsigned int n_desks, unsigned int *origins);
    EAPI void                ecore_x_netwm_showing_desktop_set(Ecore_X_Window root, int on);
-   EAPI void                ecore_x_netwm_client_list_set(Ecore_X_Window root, int n_clients, Ecore_X_Window * p_clients);
-   EAPI void                ecore_x_netwm_client_list_stacking_set(Ecore_X_Window root, int n_clients, Ecore_X_Window * p_clients);
+   EAPI void                ecore_x_netwm_client_list_set(Ecore_X_Window root, unsigned int n_clients, Ecore_X_Window * p_clients);
+   EAPI void                ecore_x_netwm_client_list_stacking_set(Ecore_X_Window root, unsigned int n_clients, Ecore_X_Window * p_clients);
    EAPI void                ecore_x_netwm_client_active_set(Ecore_X_Window root, Ecore_X_Window win);
    EAPI void                ecore_x_netwm_name_set(Ecore_X_Window win, const char *name);
    EAPI char               *ecore_x_netwm_name_get(Ecore_X_Window win);
@@ -1085,6 +1088,11 @@ EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_A
    EAPI char               *ecore_x_netwm_icon_name_get(Ecore_X_Window win);
    EAPI void                ecore_x_netwm_visible_icon_name_set(Ecore_X_Window win, const char *name);
    EAPI char               *ecore_x_netwm_visible_icon_name_get(Ecore_X_Window win);
+   EAPI void                ecore_x_netwm_desktop_set(Ecore_X_Window win, unsigned int desk);
+   EAPI int                 ecore_x_netwm_desktop_get(Ecore_X_Window win, unsigned int *desk);
+   EAPI void                ecore_x_netwm_opacity_set(Ecore_X_Window win, unsigned int opacity);
+   EAPI int                 ecore_x_netwm_opacity_get(Ecore_X_Window win, unsigned int *opacity);
+
    
    /* FIXME: these funcs need categorising */
    EAPI void            ecore_x_drawable_geometry_get(Ecore_X_Drawable d, int *x, int *y, int *w, int *h);
