@@ -3,12 +3,11 @@
 Makefile
 Makefile.in
 ecore_config.lo
-ipc_main.lo
-ipc_ecore.lo
-util.lo
-edb.lo
-convenience.lo
+ecore_config_ipc_main.lo
+ecore_config_ipc_ecore.lo
+ecore_config_util.lo
+ecore_config_storage.lo
+ecore_config_extra.lo
 libecore_config.la
 ecore_config_ipc_ecore.la
 system.db
-build_system.db.sh

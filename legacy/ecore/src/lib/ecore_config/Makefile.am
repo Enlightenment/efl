@@ -35,10 +35,10 @@ configdir = $(pkgdatadir)
 
 libecore_config_la_SOURCES = \
 ecore_config.c \
-ipc_main.c \
-util.c \
-edb.c \
-convenience.c \
+ecore_config_ipc_main.c \
+ecore_config_util.c \
+ecore_config_storage.c \
+ecore_config_extra.c \
 ecore_config_private.h
 
 libecore_config_la_LIBADD = \
@@ -55,7 +55,7 @@ $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
 libecore_config.la
 
-ecore_config_ipc_ecore_la_SOURCES          = ipc_ecore.c
+ecore_config_ipc_ecore_la_SOURCES          = ecore_config_ipc_ecore.c
 ecore_config_ipc_ecore_la_LIBADD           = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
@@ -68,10 +68,10 @@ endif
 EXTRA_DIST = \
 Ecore_Config.h \
 ecore_config.c \
-ipc_main.c \
-ipc_ecore.c \
-ipc.h \
-util.c \
-util.h \
-edb.c
+ecore_config_ipc_main.c \
+ecore_config_ipc_ecore.c \
+ecore_config_ipc.h \
+ecore_config_util.c \
+ecore_config_util.h \
+ecore_config_storage.c
 

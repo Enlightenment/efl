@@ -2,8 +2,8 @@
 #define HAVE_EVAS2
 
 #include "Ecore_Config.h"
-#include "util.h"
-#include "ipc.h"
+#include "ecore_config_util.h"
+#include "ecore_config_ipc.h"
 
 #include "config.h"
 #include "ecore_config_private.h"

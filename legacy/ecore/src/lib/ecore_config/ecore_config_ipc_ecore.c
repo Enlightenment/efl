@@ -1,7 +1,7 @@
 /* by Azundris, with thanks to Corey Donohoe <atmos@atmos.org> */
 
-#include "ipc.h"
-#include "util.h"
+#include "ecore_config_ipc.h"
+#include "ecore_config_util.h"
 
 #include "ecore_config_private.h"
 

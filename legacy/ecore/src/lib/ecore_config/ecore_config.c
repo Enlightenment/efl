@@ -13,7 +13,7 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <unistd.h>
-#include <util.h>
+#include "ecore_config_util.h"
 
 int                  DEBUG = 0;
 Ecore_Config_Server *__ecore_config_server_global = NULL;

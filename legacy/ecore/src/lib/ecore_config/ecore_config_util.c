@@ -17,7 +17,7 @@
 /* #endif */
 
 #include "Ecore_Config.h"
-#include "util.h"
+#include "ecore_config_util.h"
 
 #include "ecore_config_private.h"
 
