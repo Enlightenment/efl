@@ -501,8 +501,6 @@ void        setactivefile(int fnumber);
 cell        nameincells(char *name);
 void        setfile(char *name, int fileno);
 void        setline(int line, int fileno);
-void        setfiledirect(char *name);
-void        setlinedirect(int line);
 void        setlabel(int index);
 void        endexpr(int fullexpr);
 void        startfunc(char *fname);

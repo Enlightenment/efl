@@ -316,10 +316,7 @@ sc_compile(int argc, char *argv[])
 
    setopt(argc, argv, inpfname, outfname, incfname, reportname);
    /* set output names that depend on the input name */
-   if (sc_listing)
-      set_extension(outfname, ".lst", TRUE);
-   else
-      set_extension(outfname, ".asm", TRUE);
+   set_extension(outfname, ".asm", TRUE);
    strcpy(binfname, outfname);
    set_extension(binfname, ".amx", TRUE);
    setconfig(argv[0]);		/* the path to the include files */
@@ -336,33 +333,15 @@ sc_compile(int argc, char *argv[])
    if (outf == NULL)
       error(101, outfname);
    /* immediately open the binary file, for other programs to check */
-   if (sc_asmfile || sc_listing)
-     {
-	binf = NULL;
-     }
-   else
-     {
-	binf = (FILE *) sc_openbin(binfname);
-	if (binf == NULL)
-	   error(101, binfname);
-     }				/* if */
+   binf = (FILE *) sc_openbin(binfname);
+   if (binf == NULL)
+     error(101, binfname);
    setconstants();		/* set predefined constants and tagnames */
    for (i = 0; i < skipinput; i++)	/* skip lines in the input file */
       if (sc_readsrc(inpf, pline, sLINEMAX) != NULL)
 	 fline++;		/* keep line number up to date */
    skipinput = fline;
    sc_status = statFIRST;
-   /* write starting options (from the command line or the
-    * configuration file) */
-   if (sc_listing)
-     {
-	fprintf(outf, "#pragma ctrlchar '%c'\n", sc_ctrlchar);
-	fprintf(outf, "#pragma pack %s\n", sc_packstr ? "true" : "false");
-	fprintf(outf, "#pragma semicolon %s\n",
-		sc_needsemicolon ? "true" : "false");
-	fprintf(outf, "#pragma tabsize %d\n", sc_tabsize);
-	setfiledirect(inpfname);
-     }				/* if */
    /* do the first pass through the file */
    inpfmark = sc_getpossrc(inpf);
    if (strlen(incfname) > 0)
@@ -383,9 +362,6 @@ sc_compile(int argc, char *argv[])
 
    /* second pass */
    sc_status = statWRITE;	/* set, to enable warnings */
-   /* write a report, if requested */
-   if (sc_listing)
-      goto cleanup;
 
    /* ??? for re-parsing the listing file instead of the original source
     * file (and doing preprocessing twice):
@@ -438,14 +414,14 @@ sc_compile(int argc, char *argv[])
    if (inpf != NULL)		/* main source file is not closed, do it now */
       sc_closesrc(inpf);
    /* write the binary file (the file is already open) */
-   if (!(sc_asmfile || sc_listing) && errnum == 0 && jmpcode == 0)
+   if (errnum == 0 && jmpcode == 0)
      {
 	assert(binf != NULL);
 	sc_resetasm(outf);	/* flush and loop back, for reading */
 	assemble(binf, outf);	/* assembler file is now input */
      }				/* if */
    if (outf != NULL)
-      sc_closeasm(outf, !(sc_asmfile || sc_listing));
+      sc_closeasm(outf, TRUE);
    if (binf != NULL)
       sc_closebin(binf, errnum != 0);
 
@@ -568,8 +544,6 @@ initglobals(void)
 {
    resetglobals();
 
-   sc_asmfile = FALSE;		/* do not create .ASM file */
-   sc_listing = FALSE;		/* do not create .LST file */
    skipinput = 0;		/* number of lines to skip from the first
 				 * input file */
    sc_ctrlchar = CTRL_CHAR;	/* the escape character */

@@ -171,23 +171,6 @@ setline(int line, int fileno)
      }				/* if */
 }
 
-SC_FUNC void
-setfiledirect(char *name)
-{
-   if (sc_status == statFIRST && sc_listing)
-     {
-	assert(name != NULL);
-	fprintf(outf, "#file %s\n", name);
-     }				/* if */
-}
-
-SC_FUNC void
-setlinedirect(int line)
-{
-   if (sc_status == statFIRST && sc_listing)
-      fprintf(outf, "#line %d\n", line);
-}
-
 /*  setlabel
  *
  *  Post a code label (specified as a number), on a new line.
@@ -232,14 +215,6 @@ SC_FUNC void
 startfunc(char *fname)
 {
    stgwrite("\tproc");
-   if (sc_asmfile)
-     {
-	char                symname[2 * sNAMEMAX + 16];
-
-	funcdisplayname(symname, fname);
-	stgwrite("\t; ");
-	stgwrite(symname);
-     }				/* if */
    stgwrite("\n");
    code_idx += opcodes(1);
 }
@@ -679,12 +654,8 @@ ffcase(cell value, char *labelname, int newtable)
 SC_FUNC void
 ffcall(symbol * sym, int numargs)
 {
-   char                symname[2 * sNAMEMAX + 16];
-
    assert(sym != NULL);
    assert(sym->ident == iFUNCTN);
-   if (sc_asmfile)
-      funcdisplayname(symname, sym->name);
    if ((sym->usage & uNATIVE) != 0)
      {
 	/* reserve a SYSREQ id if called for the first time */
@@ -693,11 +664,6 @@ ffcall(symbol * sym, int numargs)
 	   sym->addr = ntv_funcid++;
 	stgwrite("\tsysreq.c ");
 	outval(sym->addr, FALSE);
-	if (sc_asmfile)
-	  {
-	     stgwrite("\t; ");
-	     stgwrite(symname);
-	  }			/* if */
 	stgwrite("\n\tstack ");
 	outval((numargs + 1) * sizeof(cell), TRUE);
 	code_idx += opcodes(2) + opargs(2);
@@ -707,13 +673,6 @@ ffcall(symbol * sym, int numargs)
 	/* normal function */
 	stgwrite("\tcall ");
 	stgwrite(sym->name);
-	if (sc_asmfile
-	    && !isalpha(sym->name[0]) && sym->name[0] != '_'
-	    && sym->name[0] != sc_ctrlchar)
-	  {
-	     stgwrite("\t; ");
-	     stgwrite(symname);
-	  }			/* if */
 	stgwrite("\n");
 	code_idx += opcodes(1) + opargs(1);
      }				/* if */
