@@ -321,7 +321,7 @@ evas_common_font_load(const char *name, int size)
    return fn;
 }
 
-int
+RGBA_Font *
 evas_common_font_add(RGBA_Font *fn, const char *name, int size)
 {
    RGBA_Font_Int *fi;
@@ -330,12 +330,12 @@ evas_common_font_add(RGBA_Font *fn, const char *name, int size)
    if (fi)
      {
 	fn->fonts = evas_list_append(fn->fonts, fi);
-	return 1;
+	return fn;
      }
-   return 0;
+   return NULL;
 }
 
-int
+RGBA_Font *
 evas_common_font_memory_add(RGBA_Font *fn, const char *name, int size, const void *data, int data_size)
 {
    RGBA_Font_Int *fi;
@@ -344,9 +344,9 @@ evas_common_font_memory_add(RGBA_Font *fn, const char *name, int size, const voi
    if (fi)
      {
 	fn->fonts = evas_list_append(fn->fonts, fi);
-	return 1;
+	return fn;
      }
-   return 0;
+   return NULL;
 }
 
 void

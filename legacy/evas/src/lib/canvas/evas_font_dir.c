@@ -88,7 +88,7 @@ evas_font_load(Evas *evas, char *name, char *source, int size)
 	char *nm;
 	
 	nm = l->data;
-	if (l == fonts)
+	if ((l == fonts) || (!font))
 	  {
 #ifdef BUILD_FONT_LOADER_EET
 	     if (source)
@@ -148,7 +148,7 @@ evas_font_load(Evas *evas, char *name, char *source, int size)
 	  }
 	else
 	  {
-	     int ok = 0;
+	     void *ok = NULL;
 	     
 #ifdef BUILD_FONT_LOADER_EET
 	     if (source)
@@ -160,7 +160,7 @@ evas_font_load(Evas *evas, char *name, char *source, int size)
 		  if (fake_name)
 		    {
 		       /* FIXME: make an engine func */
-		       if (!evas_common_font_add(font, fake_name, size))
+		       if (!evas->engine.func->font_add(evas->engine.data.output, font, fake_name, size))
 			 {
 			    /* read original!!! */
 			    ef = eet_open(source, EET_FILE_MODE_READ);
@@ -172,14 +172,14 @@ evas_font_load(Evas *evas, char *name, char *source, int size)
 				 fdata = eet_read(ef, nm, &fsize);
 				 if ((fdata) && (fsize > 0))
 				   {
-				      ok = evas_common_font_memory_add(font, fake_name, size, fdata, fsize);
+				      ok = evas->engine.func->font_memory_add(evas->engine.data.output, font, fake_name, size, fdata, fsize);
 				      free(fdata);
 				   }
 				 eet_close(ef);
 			      }
 			 }
 		       else
-			 ok = 1;
+			 ok = (void *)1;
 		       free(fake_name);
 		    }
 	       }
@@ -187,7 +187,7 @@ evas_font_load(Evas *evas, char *name, char *source, int size)
 	       {
 #endif
 		  if (evas_file_path_is_full_path((char *)nm))
-		    evas_common_font_add(font, (char *)nm, size);
+		    evas->engine.func->font_add(evas->engine.data.output, font, (char *)nm, size);
 		  else
 		    {
 		       Evas_List *l;
@@ -199,7 +199,7 @@ evas_font_load(Evas *evas, char *name, char *source, int size)
 			    f_file = evas_font_dir_cache_find(l->data, (char *)nm);
 			    if (f_file)
 			      {
-				 if (evas_common_font_add(font, f_file, size))
+				 if (evas->engine.func->font_add(evas->engine.data.output, font, f_file, size))
 				   break;
 			      }
 			 }

@@ -593,8 +593,8 @@ struct _Evas_Func
    
    void *(*font_load)                      (void *data, char *name, int size);
    void *(*font_memory_load)               (void *data, char *name, int size, const void *fdata, int fdata_size);
-   void *(*font_add)                       (void *data, char *name, int size);
-   void *(*font_memory_add)                (void *data, char *name, int size, const void *fdata, int fdata_size);
+   void *(*font_add)                       (void *data, void *font, char *name, int size);
+   void *(*font_memory_add)                (void *data, void *font, char *name, int size, const void *fdata, int fdata_size);
    void (*font_free)                       (void *data, void *font);
    int  (*font_ascent_get)                 (void *data, void *font);
    int  (*font_descent_get)                (void *data, void *font);
