@@ -599,7 +599,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
    Edje_Calc_Params p1, p2, p3;
    Edje_Part_Description *chosen_desc;
    double pos = 0.0;
-   
+
    if (ep->calculated) return;
    if (ep->calculating)
      {
@@ -624,7 +624,12 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
    else
      chosen_desc = ep->param2.description;
    if (!chosen_desc) chosen_desc = ep->param2.description;
-   if (!chosen_desc) return;
+   if (!chosen_desc)
+     {
+	ep->calculating = 0;
+	ep->calculated = 1;
+	return;
+     }
    
    ep->chosen_description = chosen_desc;
    if (ep->param1.description)
