@@ -616,6 +616,7 @@ _edje_var_list_nth_int_get(Edje *ed, int id, int n)
      {
 	Edje_Var *var;
 	
+	id += EDJE_VAR_MAGIC_BASE;
 	var = _edje_var_list_nth(ed, id, n);
 	if (!var) return 0;
 	return _edje_var_var_int_get(ed, var);
@@ -635,6 +636,7 @@ _edje_var_list_nth_int_set(Edje *ed, int id, int n, int v)
      {
 	Edje_Var *var;
 	
+	id += EDJE_VAR_MAGIC_BASE;
 	var = _edje_var_list_nth(ed, id, n);
 	if (!var) return;
 	_edje_var_var_int_set(ed, var, v);
@@ -656,6 +658,7 @@ _edje_var_list_int_append(Edje *ed, int id, int v)
 	
 	var = _edje_var_new();
 	if (!var) return;
+	id += EDJE_VAR_MAGIC_BASE;
 	_edje_var_var_int_set(ed, var, v);
 	_edje_var_list_var_append(ed, id, var);
      }
@@ -676,6 +679,7 @@ _edje_var_list_int_prepend(Edje *ed, int id, int v)
 	
 	var = _edje_var_new();
 	if (!var) return;
+	id += EDJE_VAR_MAGIC_BASE;
 	_edje_var_var_int_set(ed, var, v);
 	_edje_var_list_var_prepend(ed, id, var);
      }
@@ -696,6 +700,7 @@ _edje_var_list_int_insert(Edje *ed, int id, int n, int v)
 	
 	var = _edje_var_new();
 	if (!var) return;
+	id += EDJE_VAR_MAGIC_BASE;
 	_edje_var_var_int_set(ed, var, v);
 	var_rel = _edje_var_list_nth(ed, id, n);
 	if (!var_rel)
@@ -718,6 +723,7 @@ _edje_var_list_nth_float_get(Edje *ed, int id, int n)
      {
 	Edje_Var *var;
 	
+	id += EDJE_VAR_MAGIC_BASE;
 	var = _edje_var_list_nth(ed, id, n);
 	if (!var) return 0;
 	return _edje_var_var_float_get(ed, var);
@@ -737,6 +743,7 @@ _edje_var_list_nth_float_set(Edje *ed, int id, int n, double v)
      {
 	Edje_Var *var;
 	
+	id += EDJE_VAR_MAGIC_BASE;
 	var = _edje_var_list_nth(ed, id, n);
 	if (!var) return;
 	_edje_var_var_float_set(ed, var, v);
@@ -758,6 +765,7 @@ _edje_var_list_float_append(Edje *ed, int id, double v)
 	
 	var = _edje_var_new();
 	if (!var) return;
+	id += EDJE_VAR_MAGIC_BASE;
 	_edje_var_var_float_set(ed, var, v);
 	_edje_var_list_var_append(ed, id, var);
      }
@@ -778,6 +786,7 @@ _edje_var_list_float_prepend(Edje *ed, int id, double v)
 	
 	var = _edje_var_new();
 	if (!var) return;
+	id += EDJE_VAR_MAGIC_BASE;
 	_edje_var_var_float_set(ed, var, v);
 	_edje_var_list_var_prepend(ed, id, var);
      }
@@ -798,6 +807,7 @@ _edje_var_list_float_insert(Edje *ed, int id, int n, double v)
 	
 	var = _edje_var_new();
 	if (!var) return;
+	id += EDJE_VAR_MAGIC_BASE;
 	_edje_var_var_float_set(ed, var, v);
 	var_rel = _edje_var_list_nth(ed, id, n);
 	if (!var_rel)
@@ -820,6 +830,7 @@ _edje_var_list_nth_str_get(Edje *ed, int id, int n)
      {
 	Edje_Var *var;
 	
+	id += EDJE_VAR_MAGIC_BASE;
 	var = _edje_var_list_nth(ed, id, n);
 	if (!var) return NULL;
 	return _edje_var_var_str_get(ed, var);
@@ -839,6 +850,7 @@ _edje_var_list_nth_str_set(Edje *ed, int id, int n, char *v)
      {
 	Edje_Var *var;
 	
+	id += EDJE_VAR_MAGIC_BASE;
 	var = _edje_var_list_nth(ed, id, n);
 	if (!var) return;
 	_edje_var_var_str_set(ed, var, v);
@@ -860,6 +872,7 @@ _edje_var_list_str_append(Edje *ed, int id, char *v)
 	
 	var = _edje_var_new();
 	if (!var) return;
+	id += EDJE_VAR_MAGIC_BASE;
 	_edje_var_var_str_set(ed, var, v);
 	_edje_var_list_var_append(ed, id, var);
      }
@@ -880,6 +893,7 @@ _edje_var_list_str_prepend(Edje *ed, int id, char *v)
 	
 	var = _edje_var_new();
 	if (!var) return;
+	id += EDJE_VAR_MAGIC_BASE;
 	_edje_var_var_str_set(ed, var, v);
 	_edje_var_list_var_prepend(ed, id, var);
      }
@@ -900,6 +914,7 @@ _edje_var_list_str_insert(Edje *ed, int id, int n, char *v)
 	
 	var = _edje_var_new();
 	if (!var) return;
+	id += EDJE_VAR_MAGIC_BASE;
 	_edje_var_var_str_set(ed, var, v);
 	var_rel = _edje_var_list_nth(ed, id, n);
 	if (!var_rel)
