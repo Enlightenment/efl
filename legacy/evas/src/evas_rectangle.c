@@ -26,6 +26,8 @@ _evas_free_rectangle_renderer_data(Evas e, Evas_Object o)
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
 	break;
+     case RENDER_METHOD_IMAGE:
+	break;
      default:
 	break;
      }

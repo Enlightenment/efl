@@ -5,6 +5,7 @@
 #include <string.h>
 #include "evas_gl_routines.h"
 #include "evas_imlib_routines.h"
+#include "evas_image_routines.h"
 
 static void
 _evas_free_gradient_box(Evas_Object o)
@@ -35,6 +36,10 @@ _evas_free_gradient_box_renderer_data(Evas e, Evas_Object o)
 	   __evas_gl_gradient_free(o->renderer_data.method[e->current.render_method]);
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	break;
+     case RENDER_METHOD_IMAGE:
+	if (o->renderer_data.method[e->current.render_method])
+	   __evas_image_gradient_free(o->renderer_data.method[e->current.render_method]);
 	break;
      default:
 	break;
@@ -132,6 +137,25 @@ evas_set_gradient(Evas e, Evas_Object o, Evas_Gradient grad)
 	  }
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	break;
+     case RENDER_METHOD_IMAGE:
+	if (o->renderer_data.method[e->current.render_method])
+	   __evas_image_gradient_free(o->renderer_data.method[e->current.render_method]);
+	  {
+	     Evas_Image_Graident *g;
+	     Evas_List l;
+	     
+	     g = __evas_image_gradient_new(e->current.display);
+	     o->renderer_data.method[e->current.render_method] = g;
+	     for (l = grad->color_points; l; l = l->next)
+	       {
+		  Evas_Color_Point col;
+		  
+		  col= l->data;
+		  __evas_image_gradient_color_add(g, col->r, col->g, col->b, 
+						  col->a, col->distance);
+	       }
+	  }
 	break;
      default:
 	break;

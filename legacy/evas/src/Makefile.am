@@ -35,6 +35,7 @@ evas_events.c \
 evas_gl_routines.c \
 evas_gradient.c \
 evas_image.c \
+evas_image_routines.c \
 evas_imlib_routines.c \
 evas_line.c \
 evas_list.c \
@@ -44,6 +45,7 @@ evas_rectangle.c \
 evas_render.c \
 evas_text.c \
 evas_gl_routines.h \
+evas_image_routines.h \
 evas_imlib_routines.h \
 Evas.h
 

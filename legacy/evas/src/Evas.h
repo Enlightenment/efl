@@ -28,7 +28,8 @@ typedef struct _Evas_Object_Gradient_Box * Evas_Object_Gradient_Box;
 #define RENDER_METHOD_BASIC_HARDWARE    1
 #define RENDER_METHOD_3D_HARDWARE       2
 #define RENDER_METHOD_ALPHA_HARDWARE    3
-#define RENDER_METHOD_COUNT             4
+#define RENDER_METHOD_IMAGE             4
+#define RENDER_METHOD_COUNT             5
 
 #define CALLBACK_MOUSE_IN   0
 #define CALLBACK_MOUSE_OUT  1
@@ -61,7 +62,8 @@ struct _Evas
       Visual       *visual;
       Colormap      colormap;
       int           screen;
-
+      Imlib_Image   image;
+      
       int           drawable_width, drawable_height;
       
       struct  {
@@ -246,6 +248,7 @@ void      evas_get_viewport(Evas e, double *x, double *y, double *w, double *h);
    
 /* the output settings */
 void evas_set_output(Evas e, Display *disp, Drawable d, Visual *v, Colormap c);
+void evas_set_output_image(Evas e, Imlib_Image image);
 void evas_set_output_size(Evas e, int w, int h);
 void evas_set_output_viewport(Evas e, double x, double y, double w, double h);
 void evas_set_output_method(Evas e, Evas_Render_Method method);
@@ -308,6 +311,12 @@ void evas_move(Evas e, Evas_Object o, double x, double y);
 void evas_resize(Evas e, Evas_Object o, double w, double h);
 void evas_get_geometry(Evas e, Evas_Object o, double *x, double *y, double *w, double *h);
 
+/* object query */
+Evas_List evas_objects_in_rect(Evas e, double x, double y, double w, double h);
+Evas_List evas_objects_at_position(Evas e, double x, double y);
+Evas_Object evas_object_in_rect(Evas e, double x, double y, double w, double h);
+Evas_Object evas_object_at_position(Evas e, double x, double y);
+   
 /* object visibility */
 void evas_show(Evas e, Evas_Object o);
 void evas_hide(Evas e, Evas_Object o);

@@ -151,7 +151,7 @@ int            __evas_gl_image_get_width(Evas_GL_Image *im);
 int            __evas_gl_image_get_height(Evas_GL_Image *im);
 void           __evas_gl_image_set_borders(Evas_GL_Image *im, int left, int right, int top, int bottom);
 void           __evas_gl_image_set_smooth_scaling(int on);
-void           __evas_gl_image_draw(Evas_GL_Image *im, Display *disp, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h);
+void           __evas_gl_image_draw(Evas_GL_Image *im, Display *disp, Imlib_Image dstim, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h);
 
 /********/
 /* text */
@@ -173,17 +173,17 @@ int            __evas_gl_text_cache_get_size(Display *disp);
 void           __evas_gl_text_get_size(Evas_GL_Font *fn, char *text, int *w, int *h);
 int            __evas_gl_text_get_character_at_pos(Evas_GL_Font *fn, char *text, int x, int y, int *cx, int *cy, int *cw, int *ch);
 void           __evas_gl_text_get_character_number(Evas_GL_Font *fn, char *text, int num, int *cx, int *cy, int *cw, int *ch);
-void           __evas_gl_text_draw(Evas_GL_Font *fn, Display *disp, Window win, int win_w, int win_h, int x, int y, char *text, int r, int g, int b, int a);
+void           __evas_gl_text_draw(Evas_GL_Font *fn, Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x, int y, char *text, int r, int g, int b, int a);
 
 /**************/
 /* rectangles */
 /**************/
-void           __evas_gl_rectangle_draw(Display *disp, Window win, int win_w, int win_h, int x, int y, int w, int h, int r, int g, int b, int a);
+void           __evas_gl_rectangle_draw(Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x, int y, int w, int h, int r, int g, int b, int a);
 
 /*********/
 /* lines */
 /*********/
-void           __evas_gl_line_draw(Display *disp, Window win, int win_w, int win_h, int x1, int y1, int x2, int y2, int r, int g, int b, int a);
+void           __evas_gl_line_draw(Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x1, int y1, int x2, int y2, int r, int g, int b, int a);
 
 /*************/
 /* gradients */
@@ -191,16 +191,16 @@ void           __evas_gl_line_draw(Display *disp, Window win, int win_w, int win
 Evas_GL_Graident *__evas_gl_gradient_new(Display *disp);
 void              __evas_gl_gradient_free(Evas_GL_Graident *gr);
 void              __evas_gl_gradient_color_add(Evas_GL_Graident *gr, int r, int g, int b, int a, int dist);
-void              __evas_gl_gradient_draw(Evas_GL_Graident *gr, Display *disp, Window win, int win_w, int win_h, int x, int y, int w, int h, double angle);
+void              __evas_gl_gradient_draw(Evas_GL_Graident *gr, Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x, int y, int w, int h, double angle);
 
 /***********/
 /* drawing */
 /***********/
 void         __evas_gl_init(Display *disp, int screen);
 int          __evas_gl_capable(Display *disp);
-void         __evas_gl_flush_draw(Display *disp, Window win);
+void         __evas_gl_flush_draw(Display *disp, Imlib_Image dstim, Window win);
 void         __evas_gl_sync(Display *disp);
 Visual      *__evas_gl_get_visual(Display *disp, int screen);
 XVisualInfo *__evas_gl_get_visual_info(Display *disp, int screen);
 Colormap     __evas_gl_get_colormap(Display *disp, int screen);
-void         __evas_gl_draw_add_rect(Display *disp, Window win, int x, int y, int w, int h);
+void         __evas_gl_draw_add_rect(Display *disp, Imlib_Image dstim, Window win, int x, int y, int w, int h);

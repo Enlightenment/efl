@@ -451,7 +451,7 @@ __evas_gl_image_cache_flush(Display *disp)
 
 void
 __evas_gl_image_draw(Evas_GL_Image *im, 
-		     Display *disp, Window w, int win_w, int win_h,
+		     Display *disp, Imlib_Image dstim, Window w, int win_w, int win_h,
 		     int src_x, int src_y, int src_w, int src_h,
 		     int dst_x, int dst_y, int dst_w, int dst_h)
 {
@@ -561,33 +561,33 @@ __evas_gl_image_draw(Evas_GL_Image *im,
 	     bt = (int)dh / 2;
 	     bb = (int)dh - bt;
 	  }
-	__evas_gl_image_draw(im, disp, w, win_w, win_h,
+	__evas_gl_image_draw(im, disp, dstim, w, win_w, win_h,
 			     0, 0, bl, bt,
 			     dx, dy, bl, bt);
-	__evas_gl_image_draw(im, disp, w, win_w, win_h,
+	__evas_gl_image_draw(im, disp, dstim, w, win_w, win_h,
 			     bl, 0, im->w - bl - br, bt,
 			     dx + bl, dy, dw - bl - br, bt);
-	__evas_gl_image_draw(im, disp, w, win_w, win_h,
+	__evas_gl_image_draw(im, disp, dstim, w, win_w, win_h,
 			     im->w - br, 0, br, bt,
 			     dx + dw - br, dy, br, bt);
 
-	__evas_gl_image_draw(im, disp, w, win_w, win_h,
+	__evas_gl_image_draw(im, disp, dstim, w, win_w, win_h,
 			     0, bt, bl, im->h - bt - bb,
 			     dx, dy + bt, bl, dh - bt - bb);
-	__evas_gl_image_draw(im, disp, w, win_w, win_h,
+	__evas_gl_image_draw(im, disp, dstim, w, win_w, win_h,
 			     bl, bt, im->w - bl - br, im->h - bt - bb,
 			     dx + bl, dy + bt, dw - bl - br, dh - bt - bb);
-	__evas_gl_image_draw(im, disp, w, win_w, win_h,
+	__evas_gl_image_draw(im, disp, dstim, w, win_w, win_h,
 			     im->w - br, bt, br, im->h - bt - bb,
 			     dx + dw - br, dy + bt, br, dh - bt - bb);
 	
-	__evas_gl_image_draw(im, disp, w, win_w, win_h,
+	__evas_gl_image_draw(im, disp, dstim, w, win_w, win_h,
 			     0, im->h - bb, bl, bb,
 			     dx, dy + dh - bb, bl, bb);
-	__evas_gl_image_draw(im, disp, w, win_w, win_h,
+	__evas_gl_image_draw(im, disp, dstim, w, win_w, win_h,
 			     bl, im->h - bb, im->w - bl - br, bb,
 			     dx + bl, dy + dh - bb, dw - bl - br, bb);
-	__evas_gl_image_draw(im, disp, w, win_w, win_h,
+	__evas_gl_image_draw(im, disp, dstim, w, win_w, win_h,
 			     im->w - br, im->h - bb, br, bb,
 			     dx + dw - br, dy + dh - bb, br, bb);
 	im->direct = 0;
@@ -1554,7 +1554,7 @@ __evas_gl_text_cache_get_size(Display *disp)
 }
 
 void
-__evas_gl_text_draw(Evas_GL_Font *fn, Display *disp, Window win, 
+__evas_gl_text_draw(Evas_GL_Font *fn, Display *disp, Imlib_Image dstim, Window win, 
 		    int win_w, int win_h, int x, int y, char *text, 
 		    int r, int g, int b, int a)
 {
@@ -1687,7 +1687,7 @@ __evas_gl_text_get_character_number(Evas_GL_Font *fn, char *text, int num, int *
 /* rectangle externals *******************************************************/
 /*****************************************************************************/
 
-void           __evas_gl_rectangle_draw(Display *disp, Window win,
+void           __evas_gl_rectangle_draw(Display *disp, Imlib_Image dstim, Window win,
 					int win_w, int win_h,
 					int x, int y, int w, int h,
 					int r, int g, int b, int a)
@@ -1763,7 +1763,7 @@ void           __evas_gl_rectangle_draw(Display *disp, Window win,
 /* line externals ************************************************************/
 /*****************************************************************************/
 
-void              __evas_gl_line_draw(Display *disp, Window win,
+void              __evas_gl_line_draw(Display *disp, Imlib_Image dstim, Window win,
 				      int win_w, int win_h,
 				      int x1, int y1, int x2, int y2,
 				      int r, int g, int b, int a)
@@ -2047,7 +2047,7 @@ __evas_gl_gradient_color_add(Evas_GL_Graident *gr, int r, int g, int b,
 
 void
 __evas_gl_gradient_draw(Evas_GL_Graident *gr, 
-			Display *disp, Window win, int win_w, int win_h,
+			Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h,
 			int x, int y, int w, int h, double angle)
 {
    int i;
@@ -2152,7 +2152,7 @@ __evas_gl_sync(Display *disp)
 }
 
 void
-__evas_gl_flush_draw(Display *disp, Window win)
+__evas_gl_flush_draw(Display *disp, Imlib_Image dstim, Window win)
 {
    if ((__evas_current_win != win) || (__evas_current_disp != disp))
      {
@@ -2226,7 +2226,7 @@ __evas_gl_init(Display *disp, int screen)
 }
 
 void
-__evas_gl_draw_add_rect(Display *disp, Window win,
+__evas_gl_draw_add_rect(Display *disp, Imlib_Image dstim, Window win,
 			int x, int y, int w, int h)
 {
    return;
@@ -2246,7 +2246,7 @@ int            __evas_gl_image_get_width(Evas_GL_Image *im){return 0;}
 int            __evas_gl_image_get_height(Evas_GL_Image *im){return 0;}
 void           __evas_gl_image_set_borders(Evas_GL_Image *im, int left, int right, int top, int bottom){}
 void           __evas_gl_image_set_smooth_scaling(int on){}
-void           __evas_gl_image_draw(Evas_GL_Image *im, Display *disp, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h){}
+void           __evas_gl_image_draw(Evas_GL_Image *im, Display *disp, Imlib_Image dstim, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h){}
 
 /********/
 /* text */
@@ -2262,17 +2262,17 @@ int            __evas_gl_text_cache_get_size(Display *disp){return 0;}
 void           __evas_gl_text_get_size(Evas_GL_Font *fn, char *text, int *w, int *h){}
 int            __evas_gl_text_get_character_at_pos(Evas_GL_Font *fn, char *text, int x, int y, int *cx, int *cy, int *cw, int *ch){return 0;}
 void           __evas_gl_text_get_character_number(Evas_GL_Font *fn, char *text, int num, int *cx, int *cy, int *cw, int *ch){}
-void           __evas_gl_text_draw(Evas_GL_Font *fn, Display *disp, Window win, int win_w, int win_h, int x, int y, char *text, int r, int g, int b, int a){}
+void           __evas_gl_text_draw(Evas_GL_Font *fn, Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x, int y, char *text, int r, int g, int b, int a){}
 
 /**************/
 /* rectangles */
 /**************/
-void           __evas_gl_rectangle_draw(Display *disp, Window win, int win_w, int win_h, int x, int y, int w, int h, int r, int g, int b, int a){}
+void           __evas_gl_rectangle_draw(Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x, int y, int w, int h, int r, int g, int b, int a){}
 
 /*********/
 /* lines */
 /*********/
-void           __evas_gl_line_draw(Display *disp, Window win, int win_w, int win_h, int x1, int y1, int x2, int y2, int r, int g, int b, int a){}
+void           __evas_gl_line_draw(Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x1, int y1, int x2, int y2, int r, int g, int b, int a){}
 
 /*************/
 /* gradients */
@@ -2280,18 +2280,18 @@ void           __evas_gl_line_draw(Display *disp, Window win, int win_w, int win
 Evas_GL_Graident *__evas_gl_gradient_new(Display *disp){return NULL;}
 void              __evas_gl_gradient_free(Evas_GL_Graident *gr){}
 void              __evas_gl_gradient_color_add(Evas_GL_Graident *gr, int r, int g, int b, int a, int dist){}
-void              __evas_gl_gradient_draw(Evas_GL_Graident *gr, Display *disp, Window win, int win_w, int win_h, int x, int y, int w, int h, double angle){}
+void              __evas_gl_gradient_draw(Evas_GL_Graident *gr, Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x, int y, int w, int h, double angle){}
 
 /***********/
 /* drawing */
 /***********/
 void         __evas_gl_init(Display *disp, int screen){}
 int          __evas_gl_capable(Display *disp){return 0;}
-void         __evas_gl_flush_draw(Display *disp, Window win){}
+void         __evas_gl_flush_draw(Display *disp, Imlib_Image dstim, Window win){}
 void         __evas_gl_sync(Display *disp){}
 Visual      *__evas_gl_get_visual(Display *disp, int screen){return NULL;}
 XVisualInfo *__evas_gl_get_visual_info(Display *disp, int screen){return NULL;}
 Colormap     __evas_gl_get_colormap(Display *disp, int screen){return 0;}
-void         __evas_gl_draw_add_rect(Display *disp, Window win, int x, int y, int w, int h){}
+void         __evas_gl_draw_add_rect(Display *disp, Imlib_Image dstim, Window win, int x, int y, int w, int h){}
 
 #endif

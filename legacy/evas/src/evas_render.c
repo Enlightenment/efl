@@ -1,6 +1,7 @@
 #include "Evas.h"
 #include "evas_gl_routines.h"
 #include "evas_imlib_routines.h"
+#include "evas_image_routines.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -65,6 +66,8 @@ case RENDER_METHOD_3D_HARDWARE:
    break;
 case RENDER_METHOD_ALPHA_HARDWARE:
    break;
+case RENDER_METHOD_IMAGE:
+   break;
 default:
    break;
 }
@@ -77,21 +80,21 @@ evas_render(Evas e)
    Imlib_Updates up;
    Evas_List delete_objects;
    Evas_List l, ll;
-   void (*func_draw_add_rect) (Display *disp, Window win, int x, int y, int w, int h);
+   void (*func_draw_add_rect) (Display *disp, Imlib_Image dstim, Window win, int x, int y, int w, int h);
    void * (*func_image_new_from_file) (Display *disp, char *file);   
    void (*func_image_set_borders) (void *im, int left, int right, int top, int bottom);
-   void (*func_image_draw) (void *im, Display *disp, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h);   
+   void (*func_image_draw) (void *im, Display *disp, Imlib_Image dstim, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h);   
    void (*func_image_free) (void *im);   
-   void (*func_flush_draw) (Display *disp, Window w);
-   void (*func_init) (Display *disp, Window w);
+   void (*func_flush_draw) (Display *disp, Imlib_Image dstim, Window w);
+   void (*func_init) (Display *disp, int screen);
    int (*func_image_get_width) (void *im);
    int (*func_image_get_height) (void *im);
    void * (*func_text_font_new) (Display *disp, char *font, int size);
    void (*func_text_font_free) (void *fn);
-   void (*func_text_draw) (void *fn, Display *disp, Window win, int win_w, int win_h, int x, int y, char *text, int r, int g, int b, int a);
-   void (*func_rectangle_draw) (Display *disp, Window win, int win_w, int win_h, int x, int y, int w, int h, int r, int g, int b, int a);
-   void (*func_line_draw) (Display *disp, Window win, int win_w, int win_h, int x1, int y1, int x2, int y2, int r, int g, int b, int a);
-   void (*func_gradient_draw) (void *gr, Display *disp, Window win, int win_w, int win_h, int x, int y, int w, int h, double angle);
+   void (*func_text_draw) (void *fn, Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x, int y, char *text, int r, int g, int b, int a);
+   void (*func_rectangle_draw) (Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x, int y, int w, int h, int r, int g, int b, int a);
+   void (*func_line_draw) (Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x1, int y1, int x2, int y2, int r, int g, int b, int a);
+   void (*func_gradient_draw) (void *gr, Display *disp, Imlib_Image dstim, Window win, int win_w, int win_h, int x, int y, int w, int h, double angle);
    
    if ((!e->changed) || 
        (!e->current.display) || 
@@ -141,6 +144,23 @@ evas_render(Evas e)
 	func_gradient_draw       = __evas_gl_gradient_draw;
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	break;
+     case RENDER_METHOD_IMAGE:
+	func_draw_add_rect       = __evas_image_draw_add_rect;
+	func_image_new_from_file = __evas_image_image_new_from_file;
+	func_image_set_borders   = __evas_image_image_set_borders;
+	func_image_draw          = __evas_image_image_draw;
+	func_image_free          = __evas_image_image_free;
+	func_flush_draw          = __evas_image_flush_draw;
+	func_init                = __evas_image_init;
+	func_image_get_width     = __evas_image_image_get_width;
+	func_image_get_height    = __evas_image_image_get_height;
+	func_text_font_new       = __evas_image_text_font_new;
+	func_text_font_free      = __evas_image_text_font_free;
+	func_text_draw           = __evas_image_text_draw;
+	func_rectangle_draw      = __evas_image_rectangle_draw;
+	func_line_draw           = __evas_image_line_draw;
+	func_gradient_draw       = __evas_image_gradient_draw;
 	break;
      default:
 	break;
@@ -320,7 +340,8 @@ evas_render(Evas e)
 		  int x, y, w, h;
 		  
 		  imlib_updates_get_coordinates(u, &x, &y, &w, &h);
-		  func_draw_add_rect(e->current.display, 
+		  func_draw_add_rect(e->current.display,
+				     e->current.image,
 				     e->current.drawable,
 				     x, y, w, h);
 		  u = imlib_updates_get_next(u);
@@ -487,6 +508,7 @@ evas_render(Evas e)
 						       {
 							  func_image_draw(im, 
 									  e->current.display,
+									  e->current.image,
 									  e->current.drawable,
 									  e->current.drawable_width,
 									  e->current.drawable_height,
@@ -513,6 +535,7 @@ evas_render(Evas e)
 					     {
 						func_text_draw(fn, 
 							       e->current.display,
+							       e->current.image,
 							       e->current.drawable,
 							       e->current.drawable_width,
 							       e->current.drawable_height,
@@ -534,6 +557,7 @@ evas_render(Evas e)
 					   oo = o;
 					   if (oo->current.a != 0)
 					      func_rectangle_draw(e->current.display,
+								  e->current.image,
 								  e->current.drawable,
 								  e->current.drawable_width,
 								  e->current.drawable_height,
@@ -553,6 +577,7 @@ evas_render(Evas e)
 					   
 					   oo = o;
 					   func_line_draw(e->current.display,
+							  e->current.image,
 							  e->current.drawable,
 							  e->current.drawable_width,
 							  e->current.drawable_height,
@@ -574,6 +599,7 @@ evas_render(Evas e)
 					   if (o->renderer_data.method[e->current.render_method])
 					      func_gradient_draw(o->renderer_data.method[e->current.render_method],
 								 e->current.display,
+								 e->current.image,
 								 e->current.drawable,
 								 e->current.drawable_width,
 								 e->current.drawable_height,
@@ -591,7 +617,7 @@ evas_render(Evas e)
 			 }
 		    }
 	       }
-	     func_flush_draw(e->current.display, e->current.drawable);
+	     func_flush_draw(e->current.display, e->current.image, e->current.drawable);
 	  }
      }
    e->previous = e->current;
@@ -622,6 +648,13 @@ evas_get_optimal_visual(Evas e, Display *disp)
 	  }
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	break;
+     case RENDER_METHOD_IMAGE:
+	if (__evas_image_capable(disp))
+	   return __evas_image_get_visual(disp, e->current.screen);
+	else
+	  {
+	  }
 	break;
      default:
 	return NULL;
@@ -655,6 +688,13 @@ evas_get_optimal_colormap(Evas e, Display *disp)
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
 	break;
+     case RENDER_METHOD_IMAGE:
+	if (__evas_image_capable(disp))
+	   return __evas_image_get_colormap(disp, e->current.screen);
+	else
+	  {
+	  }
+	break;
      default:
 	return 0;
 	break;
@@ -687,6 +727,13 @@ evas_set_output(Evas e, Display *disp, Drawable d, Visual *v, Colormap c)
    e->current.visual = v;
    e->current.colormap = c;
    e->changed = 1;
+}
+
+void
+evas_set_output_image(Evas e, Imlib_Image image)
+{
+   e->current.image = image;
+   e->changed = 1;   
 }
 
 void
@@ -731,6 +778,9 @@ evas_set_scale_smoothness(Evas e, int smooth)
 	__evas_gl_image_set_smooth_scaling(smooth);
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	break;
+     case RENDER_METHOD_IMAGE:
+	__evas_image_image_set_smooth_scaling(smooth);
 	break;
      default:
 	return;

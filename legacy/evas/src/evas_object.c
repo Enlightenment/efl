@@ -4,6 +4,11 @@
 #include <unistd.h>
 #include <string.h>
 
+#define SPANS_COMMON(x1, w1, x2, w2) \
+(!((((x2) + (w2)) <= (x1)) || ((x2) >= ((x1) + (w1)))))
+#define RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh) \
+((SPANS_COMMON((x), (w), (xx), (ww))) && (SPANS_COMMON((y), (h), (yy), (hh))))
+
 Evas_Layer
 _evas_get_object_layer(Evas e, Evas_Object o)
 {
@@ -175,6 +180,120 @@ evas_set_layer_store(Evas e, int l, int store)
 {
 /* FIXME: find layer and set store flag */
 /*   e->changed = 1; */
+}
+
+Evas_List
+evas_objects_in_rect(Evas e, double x, double y, double w, double h)
+{
+   Evas_List l, ll, objs;
+   Evas_Layer layer;
+   
+   objs = NULL;
+   for (l = e->layers; l ; l = l->next)
+     {
+	layer = l->data;
+	
+	for (ll = layer->objects; ll; ll = ll->next)
+	  {
+	     Evas_Object ob;
+	     
+	     ob = ll->data;
+	     if ((ob->current.visible) && (!ob->pass_events))
+	       {
+		  if (RECTS_INTERSECT(x, y, w, h, 
+				     ob->current.x, ob->current.y, 
+				     ob->current.w, ob->current.h))
+		     objs = evas_list_prepend(objs, ll->data);
+	       }
+	  }
+     }
+   return objs;
+}
+
+Evas_List
+evas_objects_at_position(Evas e, double x, double y)
+{
+   Evas_List l, ll, objs;
+   Evas_Layer layer;
+   
+   objs = NULL;
+   for (l = e->layers; l ; l = l->next)
+     {
+	layer = l->data;
+	
+	for (ll = layer->objects; ll; ll = ll->next)
+	  {
+	     Evas_Object ob;
+	     
+	     ob = ll->data;
+	     if ((ob->current.visible) && (!ob->pass_events))
+	       {
+		  if (RECTS_INTERSECT(x, y, 1, 1, 
+				     ob->current.x, ob->current.y, 
+				     ob->current.w, ob->current.h))
+		     objs = evas_list_prepend(objs, ll->data);
+	       }
+	  }
+     }
+   return objs;
+}
+
+Evas_Object
+evas_object_in_rect(Evas e, double x, double y, double w, double h)
+{
+   Evas_List l, ll;
+   Evas_Layer layer;
+   Evas_Object o;
+   
+   o = NULL;
+   for (l = e->layers; l ; l = l->next)
+     {
+	layer = l->data;
+	
+	for (ll = layer->objects; ll; ll = ll->next)
+	  {
+	     Evas_Object ob;
+	     
+	     ob = ll->data;
+	     if ((ob->current.visible) && (!ob->pass_events))
+	       {
+		  if (RECTS_INTERSECT(x, y, w, h, 
+				      ob->current.x, ob->current.y, 
+				      ob->current.w, ob->current.h))
+		     o = ob;
+	       }
+	  }
+     }
+   return o;
+}
+
+Evas_Object
+evas_object_at_position(Evas e, double x, double y)
+{
+   Evas_List l, ll;
+   Evas_Layer layer;
+   Evas_Object o;
+   
+   o = NULL;
+   for (l = e->layers; l ; l = l->next)
+     {
+	layer = l->data;
+	
+	for (ll = layer->objects; ll; ll = ll->next)
+	  {
+	     Evas_Object ob;
+	     
+	     ob = ll->data;
+	     if ((ob->current.visible) && (!ob->pass_events))
+	       {
+		  if (RECTS_INTERSECT(x, y, 1, 1, 
+				     ob->current.x, ob->current.y, 
+				     ob->current.w, ob->current.h))
+		      o = ob;
+	       }
+	  }
+     }
+   return o;
 }
 
 /* stacking within a layer */
