@@ -600,11 +600,25 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
    _edje_unblock(ed);
 }
 
+static void _edje_emission_free(Edje_Emission *ee)
+{
+   if (!ee)
+      return;
+
+   if (ee->signal)
+	   free(ee->signal);
+
+   if (ee->source)
+	   free(ee->source);
+
+   free(ee);
+}
+
 void
 _edje_emit(Edje *ed, char *sig, char *src)
 {
    Evas_List *l;
-   Edje_Emission *ee;
+   Edje_Emission *ee = NULL;
    /* limit self-feeding loops in callbacks to 64 levels */
    static int recursions = 0;
    static int recursion_limit = 0;
@@ -614,10 +628,9 @@ _edje_emit(Edje *ed, char *sig, char *src)
 	while (ed->emissions)
 	  {
 	     ee = ed->emissions->data;
-	     free(ee->signal);
-	     free(ee->source);
-	     free(ee);
 	     ed->emissions = evas_list_remove(ed->emissions, ee);
+
+	     _edje_emission_free(ee);
 	  }
 	return;
      }
@@ -754,11 +767,15 @@ _edje_emit(Edje *ed, char *sig, char *src)
 	     if (tmps) free(tmps);
 	     tmps = NULL;
 	  }
-	free(ee->signal);
-	free(ee->source);
-	free(ee);
+
+	_edje_emission_free(ee);
+	ee = NULL;
      }
    break_prog:
+
+   if (ee)
+      _edje_emission_free(ee);
+
    recursions--;
    if (recursions == 0) recursion_limit = 0;
    _edje_thaw(ed);
