@@ -1,10 +1,12 @@
-Makefile.in
-Makefile
 .deps
 .libs
-evas_software_x11_test
-evas_software_x11_perf_test
+Makefile
+Makefile.in
+evas_buffer_test
 evas_fb_test
 evas_gl_x11_test
 evas_software_x11_perf_load
-evas_buffer_test
+evas_software_x11_perf_test
+evas_software_x11_test
+evas_directfb_test
+evas_directfb_window
