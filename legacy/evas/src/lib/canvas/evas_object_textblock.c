@@ -218,7 +218,22 @@ evas_object_textblock_layout_init(Layout *layout)
 static char *
 evas_object_textblock_format_merge(char *ofmt, char *fmt)
 {
-   return strdup(fmt);
+   if ((!ofmt) && (!fmt))
+     return strdup("");
+   else if (!ofmt)
+     return strdup(fmt);
+   else if (!fmt)
+     return strdup(ofmt);
+   else
+     {
+	char *ret;
+
+	ret = malloc((strlen(ofmt) + strlen(fmt) + 2) * sizeof(char));
+	strcpy(ret, ofmt);
+	strcat(ret, " ");
+	strcat(ret, fmt);
+	return ret;
+     }
 }
 
 static void
@@ -257,7 +272,7 @@ evas_object_textblock_layout_format_apply(Layout *layout, Layout_Command *comman
 	if (layout->font.name) free(layout->font.name);
 	layout->font.name = strdup(data);
      }
-   else if (!strcmp(key, "font_source"))
+   else if (!strcmp(key, "source"))
      {
 	if (layout->font.source)
 	  {
@@ -763,17 +778,16 @@ evas_object_textblock_format_parse(const char *format)
 		       dst = data;
 		       while (p2 != d2)
 			 {
-			    if (!inescape)
-			      {
-				 if (*p == '\\') inescape = 1;
-			      }
-			    else
-			      {
-				 *dst = *p;
-				 dst++;
-				 inescape = 0;
-			      }
+			    inescape = 0;
+			    *dst = *p2;
+			    if (*p2 == '\\') inescape = 1;
 			    p2++;
+			    if (inescape && *p2 == '\'')
+			      {
+				 *dst = *p2;
+				 p2++;
+			      }
+			    dst++;
 			 }
 		       *dst = 0;
 		    }
