@@ -3,9 +3,18 @@
 static Ecore_Hash *ecore_strings = NULL;
 
 /**
- * Retrieve an instance of a string for use in an ecore
- * @param  string The string to retrieve an instance
- * @return A pointer to a the string on success, NULL on failure.
+ * @defgroup Ecore_String_Group String Instance Functions
+ *
+ * These functions allow you to store one copy of a string, and use it
+ * throughout your program.
+ */
+
+/**
+ * Retrieves an instance of a string for use in an ecore program.
+ * @param   string The string to retrieve an instance of.
+ * @return  A pointer to an instance of the string on success.
+ *          @c NULL on failure.
+ * @ingroup Ecore_String_Group
  */
 char *ecore_string_instance(char *string)
 {
@@ -44,12 +53,12 @@ char *ecore_string_instance(char *string)
 }
 
 /**
- * Release an instance of a string
- * @param string The string to release an instance
- * @return No value.
+ * Notes that the given string has lost an instance.
+ * 
+ * It will free the string if no other instances are left.
  *
- * Marks the string as losing an instance, will free the string if no other
- * instances are present.
+ * @param   string The given string.
+ * @ingroup Ecore_String_Group
  */
 void ecore_string_release(char *string)
 {

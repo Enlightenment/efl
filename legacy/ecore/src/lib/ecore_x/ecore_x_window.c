@@ -391,11 +391,18 @@ ecore_x_window_lower(Ecore_X_Window win)
 }
 
 /**
+ * @defgroup Ecore_X_Window_Parent_Group X Window Parent Functions
+ *
+ * Functions that retrieve or changes the parent window of a window.
+ */
+
+/**
  * Moves a window to within another window at a given position.
- * @param win        The window to reparent.
- * @param new_parent The new parent window.
- * @param x          X position within new parent window.
- * @param y          Y position within new parent window.
+ * @param   win        The window to reparent.
+ * @param   new_parent The new parent window.
+ * @param   x          X position within new parent window.
+ * @param   y          Y position within new parent window.
+ * @ingroup Ecore_X_Window_Parent_Group
  */
 void
 ecore_x_window_reparent(Ecore_X_Window win, Ecore_X_Window new_parent, int x, int y)
@@ -406,9 +413,10 @@ ecore_x_window_reparent(Ecore_X_Window win, Ecore_X_Window new_parent, int x, in
 
 /**
  * Retrieves the size of the given window.
- * @param win The given window.
- * @param w   Pointer to an integer into which the width is to be stored.
- * @param h   Pointer to an integer into which the height is to be stored.
+ * @param   win The given window.
+ * @param   w   Pointer to an integer into which the width is to be stored.
+ * @param   h   Pointer to an integer into which the height is to be stored.
+ * @ingroup Ecore_X_Window_Geometry_Group
  */
 void
 ecore_x_window_size_get(Ecore_X_Window win, int *w, int *h)
@@ -423,11 +431,12 @@ ecore_x_window_size_get(Ecore_X_Window win, int *w, int *h)
 
 /**
  * Retrieves the geometry of the given window.
- * @param win The given window.
- * @param x   Pointer to an integer in which the X position is to be stored.
- * @param y   Pointer to an integer in which the Y position is to be stored.
- * @param w   Pointer to an integer in which the width is to be stored.
- * @param h   Pointer to an integer in which the height is to be stored.
+ * @param   win The given window.
+ * @param   x   Pointer to an integer in which the X position is to be stored.
+ * @param   y   Pointer to an integer in which the Y position is to be stored.
+ * @param   w   Pointer to an integer in which the width is to be stored.
+ * @param   h   Pointer to an integer in which the height is to be stored.
+ * @ingroup Ecore_X_Window_Geometry_Group
  */
 void
 ecore_x_window_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h)
@@ -440,8 +449,9 @@ ecore_x_window_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h)
 
 /**
  * Retrieves the width of the border of the given window.
- * @param  win The given window.
- * @return Width of the border of @p win.
+ * @param   win The given window.
+ * @return  Width of the border of @p win.
+ * @ingroup Ecore_X_Window_Geometry_Group
  */
 int
 ecore_x_window_border_width_get(Ecore_X_Window win)
@@ -551,9 +561,10 @@ _ecore_x_window_at_xy_get(Window base, int bx, int by, int x, int y)
 
 /**
  * Retrieves the top, visible window at the given location.
- * @param  x The given X position.
- * @param  y The given Y position.
- * @return The window at that position. 
+ * @param   x The given X position.
+ * @param   y The given Y position.
+ * @return  The window at that position.
+ * @ingroup Ecore_X_Window_Geometry_Group
  */
 Ecore_X_Window
 ecore_x_window_at_xy_get(int x, int y)
@@ -573,8 +584,9 @@ ecore_x_window_at_xy_get(int x, int y)
 
 /**
  * Retrieves the parent window of the given window.
- * @param  win The given window.
- * @return The parent window of @p win.
+ * @param   win The given window.
+ * @return  The parent window of @p win.
+ * @ingroup Ecore_X_Window_Parent_Group
  */
 Ecore_X_Window
 ecore_x_window_parent_get(Ecore_X_Window win)

@@ -3,10 +3,18 @@
 static Ecore_List *loaded_plugins = NULL;
 
 /**
- * Load the specified plugin from the specified path group
- * @param group_id    The path group to search for the plugin to load
- * @param plugin_name The name of the plugin to load
- * @return A pointer to the newly loaded plugin on success, NULL on failure.
+ * @defgroup Ecore_Plugin Plugin Functions
+ *
+ * Functions that load modules of compiled code into memory.
+ */
+
+/**
+ * Loads the specified plugin from the specified path group.
+ * @param   group_id    The path group to search for the plugin to load
+ * @param   plugin_name The name of the plugin to load.
+ * @return  A pointer to the newly loaded plugin on success, @c NULL on
+ *          failure.
+ * @ingroup Ecore_Plugin
  */
 Ecore_Plugin *
 ecore_plugin_load(int group_id, char *plugin_name)
@@ -52,9 +60,9 @@ ecore_plugin_load(int group_id, char *plugin_name)
 }
 
 /**
- * Unload the specified plugin
- * @param plugin The plugin to unload from memory
- * @return Returns no value.
+ * Unloads the given plugin from memory.
+ * @param   plugin The given plugin.
+ * @ingroup Ecore_Plugin
  */
 void
 ecore_plugin_unload(Ecore_Plugin * plugin)
@@ -74,7 +82,11 @@ ecore_plugin_unload(Ecore_Plugin * plugin)
 }
 
 /*
- * Lookup the specified symbol for the plugin
+ * Searches for the specified symbol in the given plugin.
+ * @param   plugin      The given plugin.
+ * @param   symbol_name The symbol to search for.
+ * @return  Address of the given symbol if successful.  Otherwise, @c NULL.
+ * @ingroup Ecore_Plugin
  */
 void *
 ecore_plugin_call(Ecore_Plugin * plugin, char *symbol_name)

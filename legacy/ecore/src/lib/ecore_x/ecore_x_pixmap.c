@@ -3,9 +3,22 @@
 #include "Ecore_X.h"
 
 /**
- * To be documented.
+ * @defgroup Ecore_X_Pixmap_Group X Pixmap Functions
  *
- * FIXME: To be fixed.
+ * Functions that operate on pixmaps.
+ */
+
+/**
+ * Creates a new pixmap.
+ * @param   win Window used to determine which screen of the display the
+ *              pixmap should be created on.  If 0, the default root window
+ *              is used.
+ * @param   w   Width of the new pixmap.
+ * @param   h   Height of the new pixmap.
+ * @param   dep Depth of the pixmap.  If 0, the default depth of the default
+ *              screen is used.
+ * @return  New pixmap.
+ * @ingroup Ecore_X_Pixmap_Group
  */
 Ecore_X_Pixmap
 ecore_x_pixmap_new(Ecore_X_Window win, int w, int h, int dep)
@@ -16,9 +29,13 @@ ecore_x_pixmap_new(Ecore_X_Window win, int w, int h, int dep)
 }
 
 /**
- * To be documented.
+ * Deletes the reference to the given pixmap.
  *
- * FIXME: To be fixed.
+ * If no other clients have a reference to the given pixmap, the server
+ * will destroy it.
+ *
+ * @param   pmap The given pixmap.
+ * @ingroup Ecore_X_Pixmap_Group
  */
 void
 ecore_x_pixmap_del(Ecore_X_Pixmap pmap)
@@ -27,9 +44,18 @@ ecore_x_pixmap_del(Ecore_X_Pixmap pmap)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Pastes a rectangular area of the given pixmap onto the given drawable.
+ * @param   pmap The given pixmap.
+ * @param   dest The given drawable.
+ * @param   gc   The graphics context which governs which operation will
+ *               be used to paste the area onto the drawable.
+ * @param   sx   The X position of the area on the pixmap.
+ * @param   sy   The Y position of the area on the pixmap.
+ * @param   w    The width of the area.
+ * @param   h    The height of the area.
+ * @param   dx   The X position at which to paste the area on @p dest.
+ * @param   dy   The Y position at which to paste the area on @p dest.
+ * @ingroup Ecore_X_Pixmap_Group
  */
 void
 ecore_x_pixmap_paste(Ecore_X_Pixmap pmap, Ecore_X_Drawable dest, 
@@ -40,9 +66,13 @@ ecore_x_pixmap_paste(Ecore_X_Pixmap pmap, Ecore_X_Drawable dest,
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Retrieves the size of the given pixmap.
+ * @param   pmap The given pixmap.
+ * @param   x    Pointer to an integer in which to store the X position.
+ * @param   y    Pointer to an integer in which to store the Y position.
+ * @param   w    Pointer to an integer in which to store the width.
+ * @param   h    Pointer to an integer in which to store the height.
+ * @ingroup Ecore_X_Pixmap_Group
  */
 void
 ecore_x_pixmap_geometry_get(Ecore_X_Pixmap pmap, int *x, int *y, int *w, int *h)
@@ -52,9 +82,10 @@ ecore_x_pixmap_geometry_get(Ecore_X_Pixmap pmap, int *x, int *y, int *w, int *h)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Retrieves the depth of the given pixmap.
+ * @param   pmap The given pixmap.
+ * @return  The depth of the pixmap.
+ * @ingroup Ecore_X_Pixmap_Group
  */
 int
 ecore_x_pixmap_depth_get(Ecore_X_Pixmap pmap)

@@ -6,9 +6,18 @@ Ecore_Path_Group *__ecore_path_group_find(char *name);
 Ecore_Path_Group *__ecore_path_group_find_id(int id);
 
 /**
- * Create a new path group
- * @param  group_name The name of the new group
- * @return 0 on error, the integer id of the new group on success.
+ * @defgroup Ecore_Path_Group Path Group Functions
+ *
+ * Functions that make it easier to find a file in a set of search paths.
+ *
+ * @todo Give this a better description.
+ */
+
+/**
+ * Creates a new path group.
+ * @param   group_name The name of the new group.
+ * @return  @c 0 on error, the integer id of the new group on success.
+ * @ingroup Ecore_Path_Group
  */
 int
 ecore_path_group_new(char *group_name)
@@ -40,9 +49,9 @@ ecore_path_group_new(char *group_name)
 }
 
 /**
- * Destroy a previously created path group
- * @param  group_id The unique identifier for the group
- * @return No value.
+ * Destroys a previously created path group
+ * @param   group_id The unique identifier for the group.
+ * @ingroup Ecore_Path_Group
  */
 void
 ecore_path_group_del(int group_id)
@@ -65,10 +74,10 @@ ecore_path_group_del(int group_id)
 }
 
 /**
- * Add a directory to be searched for files
- * @param  group_id The unique identifier for the group to add the path
- * @param  path     The new path to be added to the group
- * @return No value.
+ * Adds a directory to be searched for files.
+ * @param   group_id The unique identifier for the group to add the path.
+ * @param   path     The new path to be added to the group.
+ * @ingroup Ecore_Path_Group
  */
 void
 ecore_path_group_add(int group_id, char *path)
@@ -89,12 +98,10 @@ ecore_path_group_add(int group_id, char *path)
 }
 
 /**
- * Remove a directory to be searched for files
- * @param group_id The identifier for the group to remove @a path
- * @param path     The path to be removed from @a group_id
- * @return No value.
- *
- * Removes @a path from the list of directories to search for files.
+ * Removes the given directory from the given group.
+ * @param   group_id The identifier for the given group.
+ * @param   path     The path of the directory to be removed.
+ * @ingroup Ecore_Path_Group
  */
 void
 ecore_path_group_remove(int group_id, char *path)
@@ -128,11 +135,12 @@ ecore_path_group_remove(int group_id, char *path)
 }
 
 /**
- * Find a file in a group of paths
- * @param  group_id The path group id to search for @a name
- * @param  name     The name of the file to find in the path group @a group_id
- * @return A pointer to a newly allocated path location of the found file
- *         on success, NULL on failure.
+ * Finds a file in a group of paths.
+ * @param   group_id The path group id to search.
+ * @param   name     The name of the file to find.
+ * @return  A pointer to a newly allocated path location of the found file
+ *          on success.  @c NULL on failure.
+ * @ingroup Ecore_Path_Group
  */
 char *
 ecore_path_group_find(int group_id, char *name)
@@ -165,10 +173,11 @@ ecore_path_group_find(int group_id, char *name)
 }
 
 /**
- * Get a list of all available files in the path
- * @param  group_id The identifier for the path to get all available files
- * @return A pointer to a newly allocated list of all files found in the paths
- *         identified by @a group_id, NULL on failure.
+ * Retrieves a list of all available files in the given path.
+ * @param   group_id The identifier for the given path.
+ * @return  A pointer to a newly allocated list of all files found in the paths
+ *          identified by @p group_id.  @c NULL otherwise.
+ * @ingroup Ecore_Path_Group
  */
 Ecore_List *
 ecore_path_group_available(int group_id)
