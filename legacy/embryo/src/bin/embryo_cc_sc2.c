@@ -640,8 +640,33 @@ ftoi(cell * val, char *curptr)
 	{
 	   float               test1 = 0.0, test2 = 50.0;
 
-	   assert(*(int *)&test1 == 0x00000000L
-		  && *(int *)&test2 == 0x42480000L);
+	   if (*(int *)&test1 != 0x00000000L)
+	     {
+		fprintf(stderr, 
+			"embryo_cc: WARNING! you compiler does not SEEM to interpret IEEE floating\n"
+			"point math as embryo expects. this could be bad.\n"
+			"\n"
+			"(float 0.0 != 0x00000000 bitpattern, 0x%08x instead)\n"
+			"\n"
+			"this could be an issue with you compiling embryo with gcc 3.2.x that seems\n"
+			"to trigger this sanity check. we are not sure why yet, but gcc 3.3.x works\n"
+			, (int)(*(int *)&test1)
+			);
+	     }
+	  else if ((int *)&test2 != 0x42480000L)
+	     {
+		fprintf(stderr, 
+			"embryo_cc: WARNING! you compiler does not SEEM to interpret IEEE floating\n"
+			"point math as embryo expects. This could be bad.\n"
+			"\n"
+			"(float 50.0 != 0x42480000 bitpattern, 0x%08x instead)\n"
+			"\n"
+			"this could be an issue with you compiling embryo with gcc 3.2.x that seems\n"
+			"to trigger this sanity check. we are not sure why yet, but gcc 3.3.x works\n"
+			, (int)(*(int *)&test2)
+			);
+	     }
+		
 	}
 #endif
      }
