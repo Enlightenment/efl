@@ -54,12 +54,12 @@ AC_CHECK_LIB(Xext, XShmAttach, x_libs="-lXext $x_libs",
 AC_CHECK_LIB(Xext, XShapeCombineMask, x_libs="-lXext $x_libs",
              AC_MSG_ERROR([ERROR: XShape not found.]); exit,
 	     $x_libs)
-AC_CHECK_LIB(Xrender, XRenderCreatePicture, 
-             [ x_libs=" -lXrender -lXext $x_libs";
-	       AC_DEFINE(HAVE_RENDER)
-	     ],
-             [],
-	     $x_libs)
+#AC_CHECK_LIB(Xrender, XRenderCreatePicture, 
+#             [ x_libs=" -lXrender -lXext $x_libs";
+#	       AC_DEFINE(HAVE_RENDER)
+#	     ],
+#             [],
+#	     $x_libs)
 
 #### Find out about E db
 #AC_CHECK_HEADER(Edb.h,

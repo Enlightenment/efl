@@ -788,7 +788,7 @@ setup(void)
 
    evas_control = evas_new_all(display, win_base, 0, 0, 128,768, 
 			       RENDER_METHOD_ALPHA_SOFTWARE, 216,
-			       4 * 1024 * 1024, 16 * 1024 * 1024,
+			       4 * 1024 * 1024, 8 * 1024 * 1024,
 			       FNTDIR);
    win_control = evas_get_window(evas_control);
 
@@ -892,7 +892,7 @@ setup_view(Evas_Render_Method method)
    double x, y;
 
    e = evas_new_all(display, win_base, 128, 0, 1024 - 128, 768,
-			    method, 216, 4 * 1024 * 1024, 16 * 1024 * 1024,
+			    method, 216, 4 * 1024 * 1024, 4 * 1024 * 1024,
 			    FNTDIR);
 /*   
    if (method == RENDER_METHOD_BASIC_HARDWARE)

@@ -881,7 +881,6 @@ __evas_gl_text_paste(Evas_GL_Font *f, char *text,
 
    if ((__evas_current_win != win) || (__evas_current_disp != disp))
      {
-	printf("%p %x %p\n", disp, win, f->context);
 	glXMakeCurrent(disp, win, f->context);
 	__evas_current_disp = disp;
 	__evas_current_win = win;
@@ -1504,11 +1503,15 @@ __evas_gl_text_font_new(Display *disp, char *font, int size)
 					      &att);
 	f->buffer.window = __evas_context_window;
 	glXMakeCurrent(f->buffer.display, f->buffer.window, f->context);
+	__evas_current_disp = f->buffer.display;
+	__evas_current_win = f->buffer.window;	
      }
    else
      {
 	f->buffer.window = __evas_context_window;
 	glXMakeCurrent(f->buffer.display, f->buffer.window, f->context);
+	__evas_current_disp = f->buffer.display;
+	__evas_current_win = f->buffer.window;	
      }
    __evas_gl_text_font_render_textures(f);
    __evas_fonts = evas_list_prepend(__evas_fonts, f);
