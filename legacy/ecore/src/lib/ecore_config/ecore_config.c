@@ -201,17 +201,19 @@ int ecore_config_guess_type(char *val) {
 static int ecore_config_val_typed(Ecore_Config_Prop *e,void *val,int type) {
   char          *l;
   long           v;
+  int           *i;
   float         *f;
 
   l=NULL;
   v=0;
   e->type=PT_NIL;
 
-  if(!(val || type==PT_INT))
+  if(!(val))
     e->ptr=NULL;
   else {
     if (type==PT_INT) {
-      e->val=(int)val;
+      i = (int *)val;
+      e->val=(long)*i;
       e->type=PT_INT;
     } else if (type==PT_STR) {
       if(!(e->ptr=strdup(val)))
@@ -314,11 +316,13 @@ int ecore_config_set_typed(Ecore_Config_Bundle *t,const char *key,void *val,int 
 
 int ecore_config_set(Ecore_Config_Bundle *t,const char *key,char *val) {
   int type;
+  int tmpi;
   float tmpf;
   type=ecore_config_guess_type(val);
-  if (type == PT_INT)
-    return ecore_config_set_typed(t,key,(void*) atoi(val),type);
-  else if  (type == PT_FLT) {
+  if (type == PT_INT) {
+    tmpi = atoi(val);
+    return ecore_config_set_typed(t,key,(void*) &tmpi,type);
+  } else if  (type == PT_FLT) {
     tmpf = atof(val);
     return ecore_config_set_typed(t,key,(void*) &tmpf,type);
   } else
@@ -328,7 +332,7 @@ int ecore_config_set_as_string(const char *key,char *val) {
   return ecore_config_set(__ecore_config_bundle_local,key,val); }
 
 int ecore_config_set_int(const char *key, int val) {
-  return ecore_config_set_typed(__ecore_config_bundle_local,key,(void *)val,PT_INT); }
+  return ecore_config_set_typed(__ecore_config_bundle_local,key,(void *)&val,PT_INT); }
 
 int ecore_config_set_string(const char *key, char* val) {
   return ecore_config_set_typed(__ecore_config_bundle_local,key,(void *)val,PT_STR); }
@@ -383,7 +387,7 @@ int ecore_config_default(const char *key,char *val,float lo,float hi,float step)
 }
     
 int ecore_config_default_int(const char *key,int val) {
-  return  ecore_config_default_typed(__ecore_config_bundle_local, key, (void *) val, PT_INT);
+  return  ecore_config_default_typed(__ecore_config_bundle_local, key, (void *) &val, PT_INT);
 }
 
 int ecore_config_default_int_bound(const char *key,int val,int low,int high,int step) {
@@ -392,7 +396,7 @@ int ecore_config_default_int_bound(const char *key,int val,int low,int high,int 
   int                ret;
   t = __ecore_config_bundle_local;
   
-  ret=ecore_config_default_typed(t, key, (void *) val, PT_INT);
+  ret=ecore_config_default_typed(t, key, (void *) &val, PT_INT);
   e=ecore_config_get(t,key);
   if (e) {
     e->step=step;
