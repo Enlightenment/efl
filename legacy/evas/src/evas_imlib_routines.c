@@ -55,7 +55,7 @@ __evas_imlib_image_cache_clean(void)
 	__evas_image_cache_used -= 
 	  imlib_image_get_width() * 
 	  imlib_image_get_height() * 4;	
-	imlib_free_image_and_decache();
+	imlib_free_image();
 	if (last->scaled.image)
 	  {
 	     imlib_context_set_image(last->scaled.image);
@@ -113,17 +113,16 @@ __evas_imlib_image_new_from_file(Display *disp, char *file)
    Evas_Imlib_Image *im;
    Imlib_Image image;
    
-   im = __evas_imlib_image_cache_find(file);
-   if (im) return im;
-   
    image = imlib_load_image(file);
    if (!image) return NULL;
    im = malloc(sizeof(Evas_Imlib_Image));
    im->file = strdup(file);
    im->image = image;
    im->scaled.aa = 0;
+   im->scaled.w = 0;
+   im->scaled.h = 0;
    im->scaled.image = NULL;
-   im->life = 0;
+   im->scaled.usage = 0;
    im->references = 1;
    images = evas_list_prepend(images, im);   
    return im;
@@ -216,7 +215,6 @@ __evas_imlib_image_draw(Evas_Imlib_Image *im,
    imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
    imlib_context_set_anti_alias(__evas_anti_alias);
    imlib_context_set_blend(1);
-/*   if (im->life < 65536) im->life++;*/
    for(l = drawable_list; l; l = l->next)
      {
 	Evas_Imlib_Drawable *dr;
@@ -247,8 +245,7 @@ __evas_imlib_image_draw(Evas_Imlib_Image *im,
 		       if (!up->image)
 			  up->image = imlib_create_image(up->w, up->h);
 		       /* if our src and dest are 1:1 scaling.. use original */
-		       if (((dst_w == src_w) && (dst_h == src_h)) ||
-			   (im->life < 2))
+		       if ((dst_w == src_w) && (dst_h == src_h))
 			 {
 			    imlib_context_set_image(up->image);
 			    imlib_blend_image_onto_image(im->image, 0,
@@ -256,6 +253,7 @@ __evas_imlib_image_draw(Evas_Imlib_Image *im,
 							 dst_x - up->x, dst_y - up->y, dst_w, dst_h);
 			    if (im->scaled.image)
 			      {
+				 im->scaled.usage = 0;
 				 imlib_context_set_image(im->scaled.image);
 				 imlib_free_image();
 				 im->scaled.image = NULL;
@@ -352,6 +350,29 @@ __evas_imlib_image_draw(Evas_Imlib_Image *im,
 			    iw = imlib_image_get_width();
 			    ih = imlib_image_get_height();
 			    
+			    if ((dst_w == im->scaled.w) && 
+				(dst_h == im->scaled.h) && 
+				(__evas_anti_alias == im->scaled.aa))
+			      {
+				 Imlib_Border bd;
+				 
+				 imlib_context_set_image(im->image);
+				 imlib_image_get_border(&bd);
+				 if ((bd.left != 0) ||
+				     (bd.right != 0) ||
+				     (bd.top != 0) ||
+				     (bd.bottom != 0))
+				   im->scaled.usage = 0;
+				 else
+				   im->scaled.usage++;
+			      }
+			    else
+			      {
+				 im->scaled.usage = 0;
+				 im->scaled.w = dst_w;
+				 im->scaled.h = dst_h;
+				 im->scaled.aa = __evas_anti_alias;
+			      }
 			    /* if we are using the WHOLE src image */
 			    if ((src_x == 0) && (src_y == 0) && 
 				(src_w == iw) && (src_h == ih) &&
@@ -360,7 +381,8 @@ __evas_imlib_image_draw(Evas_Imlib_Image *im,
 				 (dst_w + dst_x <= win_w) && (dst_h + dst_y <= win_h) &&
 				 ((!__evas_clip) ||
 				  ((dst_x >= __evas_clip_x) && (dst_y >= __evas_clip_y) &&
-				   (dst_w + dst_x <= __evas_clip_w) && (dst_h + dst_y <= __evas_clip_h)))))
+				   (dst_w + dst_x <= __evas_clip_w) && (dst_h + dst_y <= __evas_clip_h)))) &&
+				(im->scaled.usage > 15))
 			      {
 				 imlib_context_set_image(im->image);
 				 im->scaled.image = imlib_create_cropped_scaled_image(0, 0, iw, ih,

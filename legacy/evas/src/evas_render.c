@@ -910,12 +910,16 @@ evas_render_updates(Evas e)
 					   void *im;
 					   
 					   oo = o;
-					   if (o->renderer_data.method[e->current.render_method])
-					     im = (void *)o->renderer_data.method[e->current.render_method];
-					   else
-					     o->renderer_data.method[e->current.render_method] = 
-					     im = 
-					     func_image_new_from_file(e->current.display, oo->current.file);
+					   im = NULL;
+					   if (oo->current.file)
+					     {
+						if (o->renderer_data.method[e->current.render_method])
+						  im = (void *)o->renderer_data.method[e->current.render_method];
+						else
+						  o->renderer_data.method[e->current.render_method] = 
+						  im = 
+						  func_image_new_from_file(e->current.display, oo->current.file);
+					     }
 					   if (im)
 					     {
 						int visx, visy, visw, vish;

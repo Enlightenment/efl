@@ -1,6 +1,6 @@
 # this is NOT relocatable, unless you alter the patch!
 %define	name	evas
-%define	ver	0.5.0
+%define	ver	0.6.0
 %define	rel	1
 %define prefix  /usr
 
@@ -19,7 +19,7 @@ Packager: Term <kempler@utdallas.edu>
 Vendor: The Enlightenment Development Team <e-develop@enlightenment.org>
 Source: ftp://ftp.enlightenment.org/enlightenment/%{name}-%{ver}.tar.gz
 BuildRoot: /var/tmp/%{name}-root
-Requires: imlib2 >= 1.0.3
+Requires: imlib2 >= 1.0.4
 
 %description
 Evas is an advanced canvas library, providing three backends for
@@ -67,7 +67,8 @@ rm -rf $RPM_BUILD_ROOT
 %defattr(-,root,root)
 %{prefix}/lib/libevas.so.*
 %{prefix}/bin/evas_*
-%{prefix}/share/evas/*
+%{prefix}/share/evas/fnt
+%{prefix}/share/evas/img
 
 %files devel
 %defattr(-,root,root)
@@ -75,3 +76,4 @@ rm -rf $RPM_BUILD_ROOT
 %{prefix}/lib/libevas.*a
 %{prefix}/include/Evas.h
 %{prefix}/bin/evas-config
+%{prefix}/share/evas/doc

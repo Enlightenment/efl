@@ -38,9 +38,10 @@ struct _evas_imlib_image
    Imlib_Image image;
    struct {
       int aa;
+      int w, h;
       Imlib_Image image;
+      int usage;
    } scaled;
-   int life;
    int references;
 };
 
