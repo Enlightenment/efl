@@ -14,7 +14,7 @@ static Ecore_Timer *timers = NULL;
  * @param in The number of seconds in which to expire the timer
  * @param func The function to call when it expires
  * @param data The data to pass to the function
- * @return
+ * @return A handle to the new timer
  * 
  * This function adds a timer and returns its handle on success and NULL on
  * failure. The function @p func will be called in @p in seconds from the
