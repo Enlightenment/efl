@@ -11,7 +11,6 @@
 /* FIXME: reduce linked list walking and list_nth calls */
 /* FIXME: named parts need to be able to be "replaced" with new evas objects */
 /* FIXME: need to be able to calculate min & max size of a whole edje */
-/* FIXME: on load don't segv on errors */
 /* FIXME: add code to list collections in an eet */
 /* FIXME: part replacement with objec t+callbacks */
 /* FIXME: part queries for geometry etc. */
@@ -224,6 +223,8 @@ edje_file_set(Evas_Object *obj, const char *file, const char *part)
 	_edje_recalc(ed);
 	_edje_emit(ed, "load", "");
 	_edje_thaw(ed);
+	if ((ed->parts) && (evas_object_visible_get(obj)))
+	  evas_object_show(ed->clipper);
      }
 }
 
@@ -820,23 +821,26 @@ _edje_emit(Edje *ed, char *sig, char *src)
      {
 	ee = emissions->data;
 	emissions = evas_list_remove(emissions, ee);
-	for (l = ed->collection->programs; l; l = l->next)
+	if (ed->collection)
 	  {
-	     Edje_Program *pr;
-	     
-	     pr = l->data;
-	     if ((_edje_glob_match(ee->signal, pr->signal)) &&
-		 (_edje_glob_match(ee->source, pr->source)))
-	       _edje_program_run(ed, pr);
-	  }
-	for (l = ed->callbacks; l; l = l->next)
-	  {
-	     Edje_Signal_Callback *escb;
-	     
-	     escb = l->data;
-	     if ((_edje_glob_match(ee->signal, escb->signal)) &&
-		 (_edje_glob_match(ee->source, escb->source)))
+	     for (l = ed->collection->programs; l; l = l->next)
+	       {
+		  Edje_Program *pr;
+		  
+		  pr = l->data;
+		  if ((_edje_glob_match(ee->signal, pr->signal)) &&
+		      (_edje_glob_match(ee->source, pr->source)))
+		    _edje_program_run(ed, pr);
+	       }
+	     for (l = ed->callbacks; l; l = l->next)
+	       {
+		  Edje_Signal_Callback *escb;
+		  
+		  escb = l->data;
+		  if ((_edje_glob_match(ee->signal, escb->signal)) &&
+		      (_edje_glob_match(ee->source, escb->source)))
 	       escb->func(escb->data, ed->obj, ee->signal, ee->source);
+	       }
 	  }
 	free(ee->signal);
 	free(ee->source);
@@ -1851,7 +1855,8 @@ _edje_smart_show(Evas_Object * obj)
 
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
-   evas_object_show(ed->clipper);
+   if ((ed->collection) && (ed->parts))
+     evas_object_show(ed->clipper);
    _edje_emit(ed, "show", "");
 }
 
