@@ -11,6 +11,7 @@
 #include <limits.h>
 #include <stdarg.h>
 #include <string.h>
+#include <alloca.h>
 
 typedef enum _Embryo_Opcode Embryo_Opcode;
 
