@@ -88,6 +88,33 @@ evas_object_image_add(Evas *e)
    return obj;
 }
 
+#define EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o)                              \
+   if ((o)->cur.file)                                                       \
+     {                                                                      \
+         free((o)->cur.file);                                               \
+	 if ((o)->prev.file == (o)->cur.file)                               \
+	       (o)->prev.file = NULL;                                       \
+	 (o)->cur.file = NULL;                                              \
+     }                                                                      \
+   if ((o)->cur.key)                                                        \
+     {                                                                      \
+         free((o)->cur.key);                                                \
+	 if ((o)->prev.key == (o)->cur.key)                                 \
+	       (o)->prev.key = NULL;                                        \
+	 (o)->cur.key = NULL;                                               \
+     }                                                                      \
+   if ((o)->prev.file)                                                      \
+     {                                                                      \
+         free((o)->prev.file);                                              \
+	 (o)->prev.file = NULL;                                             \
+     }                                                                      \
+   if ((o)->prev.key)                                                       \
+     {                                                                      \
+         free((o)->prev.key);                                               \
+	 (o)->prev.key = NULL;                                              \
+     }
+
+
 void
 evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
 {
@@ -302,10 +329,7 @@ evas_object_image_size_set(Evas_Object *obj, int w, int h)
      o->engine_data = obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
 								     o->engine_data,
 								     o->cur.has_alpha);
-   if (o->cur.file)  {free(o->cur.file); o->cur.file = NULL;}
-   if (o->cur.key)   {free(o->cur.key); o->cur.key = NULL;}
-   if (o->prev.file) {free(o->prev.file); o->prev.file = NULL;}
-   if (o->prev.key)  {free(o->prev.key); o->prev.key = NULL;}
+   EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o);
    o->changed = 1;
    evas_object_change(obj);   
 }
@@ -370,10 +394,7 @@ evas_object_image_data_set(Evas_Object *obj, int *data)
 								     o->cur.has_alpha);
    if (p_data != o->engine_data)
      {
-	if (o->cur.file)  {free(o->cur.file); o->cur.file = NULL;}
-	if (o->cur.key)   {free(o->cur.key); o->cur.key = NULL;}
-	if (o->prev.file) {free(o->prev.file); o->prev.file = NULL;}
-	if (o->prev.key)  {free(o->prev.key); o->prev.key = NULL;}
+	EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o);
      }
    o->changed = 1;
    evas_object_change(obj);   
@@ -398,10 +419,7 @@ evas_object_image_data_get(Evas_Object *obj, int for_writing)
 								  o->engine_data,
 								  for_writing, 
 								  &data);
-   if (o->cur.file)  {free(o->cur.file); o->cur.file = NULL;}
-   if (o->cur.key)   {free(o->cur.key); o->cur.key = NULL;}
-   if (o->prev.file) {free(o->prev.file); o->prev.file = NULL;}
-   if (o->prev.key)  {free(o->prev.key); o->prev.key = NULL;}
+   EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o);
    
    return data;
 }
@@ -432,10 +450,7 @@ evas_object_image_data_copy_set(Evas_Object *obj, int *data)
      o->engine_data = obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
 								     o->engine_data,
 								     o->cur.has_alpha);
-   if (o->cur.file)  {free(o->cur.file); o->cur.file = NULL;}
-   if (o->cur.key)   {free(o->cur.key); o->cur.key = NULL;}
-   if (o->prev.file) {free(o->prev.file); o->prev.file = NULL;}
-   if (o->prev.key)  {free(o->prev.key); o->prev.key = NULL;}
+   EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o);
 }
 
 void
@@ -480,10 +495,7 @@ evas_object_image_alpha_set(Evas_Object *obj, int has_alpha)
 								     o->engine_data,
 								     o->cur.has_alpha);
    evas_object_image_data_update_add(obj, 0, 0, o->cur.image.w, o->cur.image.h);
-   if (o->cur.file)  {free(o->cur.file); o->cur.file = NULL;}
-   if (o->cur.key)   {free(o->cur.key); o->cur.key = NULL;}
-   if (o->prev.file) {free(o->prev.file); o->prev.file = NULL;}
-   if (o->prev.key)  {free(o->prev.key); o->prev.key = NULL;}
+   EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o);
 }
 
 int
