@@ -10,13 +10,10 @@
  * 
  * things to add:
  * 
- * * if a word spans 2 layout nodes with no whitespace, it should not be splittable.
- * * styles (outline, glow, etxra glow, shadow, soft shadow, etc.)
- * * add spacing/padding for style effects (first scan all format nodes and find styles, add up/merge padding), then do real layout.
- * * if a word (or char) doesnt fit at all do something sensible
- * * anchors (for inline objects other than text - images etc.) - variable size ones too
  * * tabs (indents)
  * * left and right margins
+ * * anchors (for inline objects other than text - images etc.) - variable size ones too
+ * * if a word (or char) doesnt fit at all do something sensible
  * * freeze thaw api
  * 
  * tough ones:
@@ -26,6 +23,7 @@
  * * obstacle objects to wrap around
  * * kerning control
  * * fully justified text (space chars evenly to fit the line)
+ * * if a word spans 2 layout nodes with no whitespace, it should not be splittable.
  * 
  * really tough ones:
  * * fix core text code to properly handle unicode codeponts - handle ALL unicode domains properly.
@@ -684,9 +682,79 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
    Layout_Node *line_start = NULL;
    int text_pos = 0, fw = 0, fh = 0, last_mdescent = 0, line = 0, last_line = 0;
    int last_line_underline = 0, last_line_double_underline = 0;
-
+   int pad_l = 0, pad_r = 0, pad_t = 0, pad_b = 0;
+   int ww, hh;
+   
    o = (Evas_Object_Textblock *)(obj->object_data);
+   ww = w;
+   hh = h;
    evas_object_textblock_layout_init(&layout);
+   for (l = (Evas_Object_List *)o->nodes; l; l = l->next)
+     {
+        Node *node;
+	
+	node = (Node *)l;
+	if (node->format)
+	  {
+	     evas_object_textblock_layout_format_modify(&layout, node->format);
+	     if (layout.style == STYLE_SHADOW)
+	       {
+		  if (pad_r < 1) pad_r = 1;
+		  if (pad_b < 1) pad_b = 1;
+	       }
+	     else if (layout.style == STYLE_OUTLINE)
+	       {
+		  if (pad_l < 1) pad_l = 1;
+		  if (pad_r < 1) pad_r = 1;
+		  if (pad_t < 1) pad_t = 1;
+		  if (pad_b < 1) pad_b = 1;
+	       }
+	     else if (layout.style == STYLE_GLOW)
+	       {
+		  if (pad_l < 2) pad_l = 2;
+		  if (pad_r < 2) pad_r = 2;
+		  if (pad_t < 2) pad_t = 2;
+		  if (pad_b < 2) pad_b = 2;
+	       }
+	     else if (layout.style == STYLE_OUTLINE_SHADOW)
+	       {
+		  if (pad_l < 1) pad_l = 1;
+		  if (pad_r < 2) pad_r = 2;
+		  if (pad_t < 1) pad_t = 1;
+		  if (pad_b < 2) pad_b = 2;
+	       }
+	     else if (layout.style == STYLE_FAR_SHADOW)
+	       {
+		  if (pad_r < 2) pad_r = 2;
+		  if (pad_b < 2) pad_b = 2;
+	       }
+	     else if (layout.style == STYLE_OUTLINE_SOFT_SHADOW)
+	       {
+		  if (pad_l < 1) pad_l = 1;
+		  if (pad_r < 4) pad_r = 4;
+		  if (pad_t < 1) pad_t = 1;
+		  if (pad_b < 4) pad_b = 4;
+	       }
+	     else if (layout.style == STYLE_SOFT_SHADOW)
+	       {
+		  if (pad_l < 1) pad_l = 1;
+		  if (pad_r < 3) pad_r = 3;
+		  if (pad_t < 1) pad_t = 1;
+		  if (pad_b < 3) pad_b = 3;
+	       }
+	     else if (layout.style == STYLE_FAR_SOFT_SHADOW)
+	       {
+		  if (pad_r < 4) pad_r = 4;
+		  if (pad_b < 4) pad_b = 4;
+	       }
+	  }
+     }
+   ww -= pad_r;
+   hh -= pad_b;
+   evas_object_textblock_layout_clear(obj, &layout);
+   evas_object_textblock_layout_init(&layout);
+   layout.line.y = pad_t;
+   layout.line.x = pad_l;
    /* format width is object width */
 //   printf("RE-LAYOUT %ix%i!\n", w, h);
    for (l = (Evas_Object_List *)o->nodes; l; l = l->next)
@@ -709,7 +777,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 	       {
 		  if (lnode)
 		    lnode->line_end = 1;
-		  layout.line.x = 0;
+		  layout.line.x = pad_l;
 		  if ((layout.line.y + layout.line.mascent + layout.line.mdescent) > h)
 		    {
 		       /* FIXME: this node would overflow to the next textblock */
@@ -729,7 +797,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		  if (layout.second_underline) last_line_double_underline = 1;
 	       }
 	  }
-	if (node->text)
+	else if (node->text)
 	  {
 	     int inset = 0, hadvance = 0, vadvance = 0;
 	     int ascent = 0, descent = 0, tw = 0, th = 0;
@@ -744,7 +812,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 	     /* FIXME: we cant do this - we need to be able to qury text
 	      * overflow amounts */
 	     /*
-	     if (layout.line.y >= h)
+	     if (layout.line.y >= hh)
 	       {
 		  free(text);
 		  goto breakout;
@@ -759,11 +827,11 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 	     if (lnode->layout.font.name)
 	       font = evas_font_load(obj->layer->evas, lnode->layout.font.name, lnode->layout.font.source, lnode->layout.font.size);
 	     /* if this is at the start of the line... */
-	     if (layout.line.x == 0)
+	     if (layout.line.x == pad_l)
 	       {
 		  if (font) inset = ENFN->font_inset_get(ENDT, font, text);
 		  layout.line.inset = inset;
-		  layout.line.x = -inset;
+		  layout.line.x = pad_l - inset;
 		  layout.line.mascent = 0;
 		  layout.line.mdescent = 0;
 		  line_start = lnode;
@@ -781,7 +849,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 	     if (w > 0)
 	       {
 		  if (font) chrpos = ENFN->font_char_at_coords_get(ENDT, font, text, 
-								   w - layout.line.x, 0, 
+								   ww - layout.line.x, 0,
 								   &cx, &cy, &cw, &ch);
 	       }
 	     else
@@ -801,7 +869,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		  layout_nodes = evas_object_list_append(layout_nodes, lnode);
 		  /* and advance */
 		  /* fix up max ascent/descent for the line */
-		  adj = (double)(w - (lnode->layout.line.x + tw + layout.line.inset)) * layout.align;
+		  adj = (double)(w - (lnode->layout.line.x -pad_l + tw + layout.line.inset)) * layout.align;
 		  adj -= line_start->layout.line.x;
 		  if ((layout.line.x + hadvance) > fw)
 		    fw = layout.line.x + hadvance;
@@ -848,31 +916,48 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		    {
 		       int ppos, pos, chr;
 		       
-		       pos = chrpos;
-		       chr = evas_common_font_utf8_get_prev(text, &pos);
-		       ppos = pos = chrpos;
-		       while ((!evas_object_textblock_char_is_white(chr))
-			      &&
-			      (pos >= 0) && 
-			      (chr > 0))
+		       if (chrpos == 0)
 			 {
-			    ppos = pos;
-			    chr = evas_common_font_utf8_get_prev(text, &pos);
+			    pos = chrpos;
+			    nchrpos = pos;
 			 }
-		       chr = evas_common_font_utf8_get_next(text, &ppos);
-		       if (ppos < 0) ppos = 0;
-		       chrpos = ppos;
-		       while ((evas_object_textblock_char_is_white(chr))
-			      &&
-			      (pos >= 0) && 
-			      (chr > 0))
+		       else
 			 {
-			    ppos = pos;
+			    pos = chrpos;
 			    chr = evas_common_font_utf8_get_prev(text, &pos);
+			    ppos = pos = chrpos;
+			    while ((!evas_object_textblock_char_is_white(chr))
+				   &&
+				   (pos >= 0) && 
+				   (chr > 0))
+			      {
+				 ppos = pos;
+				 chr = evas_common_font_utf8_get_prev(text, &pos);
+			      }
+			    if ((ppos == 0) &&
+				(!evas_object_textblock_char_is_white(chr)))
+			      {
+				 chrpos = 0;
+				 nchrpos = 0;
+			      }
+			    else
+			      {
+				 chr = evas_common_font_utf8_get_next(text, &ppos);
+				 if (ppos < 0) ppos = 0;
+				 chrpos = ppos;
+				 while ((evas_object_textblock_char_is_white(chr))
+					&&
+					(pos >= 0) && 
+					(chr > 0))
+				   {
+				      ppos = pos;
+				      chr = evas_common_font_utf8_get_prev(text, &pos);
+				   }
+				 chr = evas_common_font_utf8_get_next(text, &ppos);
+				 if (ppos < 0) ppos = 0;
+				 nchrpos = ppos;
+			      }
 			 }
-		       chr = evas_common_font_utf8_get_next(text, &ppos);
-		       if (ppos < 0) ppos = 0;
-		       nchrpos = ppos;
 		    }
 		  /* if the first char in the line can't fit!!! */
 		  if ((chrpos == 0) && (lnode == line_start))
@@ -883,6 +968,47 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		       if (lnode->text) free(lnode->text);
 		       evas_object_textblock_layout_clear(obj, &(lnode->layout));
 		       free(lnode);
+		    }
+		  /* its not the first char on the line... but its the */
+		  /* first char of a node, so defer this node until the next */
+		  /* loop */
+		  else if (chrpos == 0)
+		    {
+		       if (lnode->text) free(lnode->text);
+		       evas_object_textblock_layout_clear(obj, &(lnode->layout));
+		       free(lnode);
+		       lnode = NULL;
+		       if (layout_nodes)
+			 lnode = (Layout_Node *)((Evas_Object_List *)layout_nodes)->last;
+		       if (lnode)
+			 {
+			    adj = (double)(w - (layout.line.x - pad_l + tw + layout.line.inset)) * layout.align;
+			    adj -= line_start->layout.line.x;
+			    for (ll = (Evas_Object_List *)lnode; ll; ll = ll->prev)
+			      {
+				 Layout_Node *lnode2;
+				 
+				 lnode2 = (Layout_Node *)ll;
+				 lnode2->layout.line.x += adj;
+				 lnode2->layout.line.mascent = layout.line.mascent;
+				 lnode2->layout.line.mdescent = layout.line.mdescent;
+				 if (ll == (Evas_Object_List *)line_start) break;
+			      }
+			    lnode->line_end = 1;
+			    layout.line.inset = 0;
+			    layout.line.x = pad_l;
+			    if ((layout.line.y + layout.line.mascent + layout.line.mdescent) > hh)
+			      {
+				 /* FIXME: this node would overflow to the next textblock */
+			      }
+			    last_line_underline = 0;
+			    last_line_double_underline = 0;
+			    line++;
+			    layout.line.y += layout.line.mascent + layout.line.mdescent;
+			    fh = layout.line.y;
+			    line_start = NULL;
+			    goto new_node;
+			 }
 		    }
 		  else
 		    {
@@ -906,7 +1032,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		       lnode->h = th;
 		       lnode->layout.line.advance = hadvance;
 		       layout_nodes = evas_object_list_append(layout_nodes, lnode);
-		       adj = (double)(w - (lnode->layout.line.x + tw + layout.line.inset)) * layout.align;
+		       adj = (double)(ww - (lnode->layout.line.x - pad_l + tw + layout.line.inset)) * layout.align;
 		       adj -= line_start->layout.line.x;
 		       for (ll = (Evas_Object_List *)lnode; ll; ll = ll->prev)
 			 {
@@ -920,8 +1046,8 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 			 }
 		       lnode->line_end = 1;
 		       layout.line.inset = 0;
-		       layout.line.x = 0;
-		       if ((layout.line.y + layout.line.mascent + layout.line.mdescent) > h)
+		       layout.line.x = pad_l;
+		       if ((layout.line.y + layout.line.mascent + layout.line.mdescent) > hh)
 			 {
 			    /* FIXME: this node would overflow to the next textblock */
 			 }
@@ -944,6 +1070,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
    breakout:
    evas_object_textblock_layout_clear(obj, &layout);
    *line_count = last_line + 1;
+   fw += pad_r;
    if (w > 0) *format_w = w;
    else *format_w = fw;
    if (last_line_double_underline)
@@ -954,6 +1081,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
      {
 	if (last_mdescent < 1) fh += 1 - last_mdescent;
      }
+   fh += pad_b;
    *format_h = fh;
    return (Layout_Node *)layout_nodes;
 }
