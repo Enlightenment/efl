@@ -1,6 +1,8 @@
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
+#include <inttypes.h>
+#include <limits.h>
 
 /**
  * To be documented.
@@ -29,6 +31,57 @@ ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_
 	     free(dat);
 	  }
      }
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+int
+ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Atom format, int size, unsigned char **data, int *num)
+{
+   Atom type_ret = 0;
+   int ret, size_ret = 0;
+   unsigned long num_ret = 0, bytes = 0, i;
+   unsigned char *prop_ret = NULL;
+   
+   if (!win)
+      win = DefaultRootWindow(_ecore_x_disp);
+
+   ret = XGetWindowProperty(_ecore_x_disp, win, type, 0, LONG_MAX, False, format, &type_ret, &size_ret, &num_ret, &bytes, &prop_ret);
+   if (ret != Success) {
+	   *data = NULL;
+	   return 0;
+   }
+
+   if (size != size_ret || !num_ret) {
+      XFree(prop_ret);
+	  *data = NULL;
+	  return 0;
+   }
+
+   if (!(*data = malloc(num_ret * size / 8))) {
+	   XFree(prop_ret);
+	   return 0;
+   }
+
+   for (i = 0; i < num_ret; i++)
+      switch (size) {
+         case 8:
+            *data[i] = prop_ret[i];
+            break;
+		 case 16:
+			((uint16_t *) *data)[i] = ((uint16_t *) prop_ret)[i];
+			break;
+         case 32:
+			((uint32_t *) *data)[i] = ((uint32_t *) prop_ret)[i];
+			break;
+      }
+
+   *num = num_ret;
+   return 1;
 }
 
 /**
@@ -139,21 +192,24 @@ ecore_x_window_prop_name_class_get(Ecore_X_Window win, char **n, char **c)
 }
 
 /**
- * Set a window property to get message for close.
- * @param win The window
+ * Set or unset a wm protocol property.
+ * @param win The Window
+ * @param protocol The protocol to enable/disable
  * @param on On/Off
  * 
- * Set a window porperty to let a window manager send a delete message instead
- * of just closing (destroying) the window.
  * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 void
-ecore_x_window_prop_delete_request_set(Ecore_X_Window win, int on)
+ecore_x_window_prop_protocol_set(Ecore_X_Window win,
+                                 Ecore_X_WM_Protocol protocol, int on)
 {
    Atom *protos = NULL;
+   Atom  proto;
    int   protos_count = 0;
    int   already_set = 0;
    int   i;
+  
+   proto = _ecore_x_atoms_wm_protocols[protocol];
    
    if (!XGetWMProtocols(_ecore_x_disp, win, &protos, &protos_count))
      {
@@ -162,7 +218,7 @@ ecore_x_window_prop_delete_request_set(Ecore_X_Window win, int on)
      }
    for (i = 0; i < protos_count; i++)
      {
-	if (protos[i] == _ecore_x_atom_wm_delete_window)
+	if (protos[i] == proto)
 	  {
 	     already_set = 1;
 	     break;
@@ -177,7 +233,7 @@ ecore_x_window_prop_delete_request_set(Ecore_X_Window win, int on)
 	if (!new_protos) goto leave;
 	for (i = 0; i < protos_count; i++)
 	  new_protos[i] = protos[i];
-	new_protos[protos_count] = _ecore_x_atom_wm_delete_window;
+	new_protos[protos_count] = proto;
 	XSetWMProtocols(_ecore_x_disp, win, new_protos, protos_count + 1);
 	free(new_protos);
      }
@@ -186,7 +242,7 @@ ecore_x_window_prop_delete_request_set(Ecore_X_Window win, int on)
 	if (!already_set) goto leave;
 	for (i = 0; i < protos_count; i++)
 	  {
-	     if (protos[i] == _ecore_x_atom_wm_delete_window)
+	     if (protos[i] == proto)
 	       {
 		  int j;
 		  
@@ -307,6 +363,63 @@ ecore_x_window_prop_xy_set(Ecore_X_Window win, int x, int y)
 }
 
 /**
+ * Sets the sticky state for @win
+ * @param win The window
+ * @param on Boolean representing the sticky state
+ */
+void
+ecore_x_window_prop_sticky_set(Ecore_X_Window win, int on)
+{
+   unsigned long val = 0xffffffff;
+   int ret, num = 0;
+   unsigned char *data = NULL;
+
+   if (on) {
+      ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_desktop,
+                                       XA_CARDINAL, 32, &val, 1);
+      return;
+   }
+   
+   ret = ecore_x_window_prop_property_get(0, _ecore_x_atom_net_current_desktop,
+                                         XA_CARDINAL, 32, &data, &num);
+   if (!ret || !num)
+	   return;
+
+   ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_desktop,
+                                    XA_CARDINAL, 32, data, 1);
+   free(data);
+}
+
+/**
+ * Sets the input mode for @win
+ * @param win The Window
+ * @param mode The input mode. See the description of
+ *             @Ecore_X_Window_Input_Mode for details
+ * @return 1 if the input mode could be set, else 0
+ */
+int
+ecore_x_window_prop_input_mode_set(Ecore_X_Window win, Ecore_X_Window_Input_Mode mode)
+{
+   XWMHints *hints;
+
+   if (!(hints = XGetWMHints(_ecore_x_disp, win)))
+      if (!(hints = XAllocWMHints()))
+         return 0;
+	
+   hints->flags |= InputHint;
+   hints->input = (mode == ECORE_X_WINDOW_INPUT_MODE_PASSIVE
+                   || mode == ECORE_X_WINDOW_INPUT_MODE_ACTIVE_LOCAL);
+   XSetWMHints(_ecore_x_disp, win, hints);
+   XFree(hints);
+
+   ecore_x_window_prop_protocol_set(win, ECORE_X_WM_PROTOCOL_TAKE_FOCUS,
+                 (mode == ECORE_X_WINDOW_INPUT_MODE_ACTIVE_LOCAL
+                  || mode == ECORE_X_WINDOW_INPUT_MODE_ACTIVE_GLOBAL));
+
+   return 1;
+}
+
+/**
  * To be documented.
  *
  * FIXME: To be fixed.
@@ -330,16 +443,56 @@ ecore_x_window_prop_borderless_set(Ecore_X_Window win, int borderless)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
+ * Puts @win in the desired layer. This currently works with
+ * windowmanagers that are Gnome-compliant or support NetWM.
+ * 
+ * @param win
+ * @param layer If < 0, @win will be put below all other windows.
+ *              If > 0, @win will be "always-on-top"
+ *              If = 0, @win will be put in the default layer.
+ * @return 1 if the state could be set else 0
+	 *
  * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
-void
+int
 ecore_x_window_prop_layer_set(Ecore_X_Window win, int layer)
 {
+   Ecore_X_Atom atom = 0;
+   unsigned char *data = NULL;
+   int i, val = 4, num = 0; /* normal layer */
+
+   if (layer < 0) { /* below */
+      atom = _ecore_x_atom_net_wm_state_below;
+	  val = 2;
+   } else if (layer > 0) { /* above */
+	   atom = _ecore_x_atom_net_wm_state_above;
+	   val = 6;
+   }
+  
+   /* set the NetWM atoms
+	* get the atoms that are already set
+	*/
+   if (ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_state,
+                                        XA_ATOM, 32, &data, &num)) {
+      /* and set the ones we're interested in */
+	  for (i = 0; i < num; i++)
+         if (data[i] == _ecore_x_atom_net_wm_state_below)
+            data[i] = (layer < 0);
+         else if (data[i] == _ecore_x_atom_net_wm_state_above)
+            data[i] = (layer > 0);
+		 
+         ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_state,
+                      XA_ATOM, 32, data, num);
+		 free(data);
+   } else
+      ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_state,
+                                       XA_ATOM, 32, &atom, 1);
+
+   /* set the gnome atom */	  
    ecore_x_window_prop_property_set(win, _ecore_x_atom_win_layer, 
-				    XA_CARDINAL, 32, &layer, 1);
+                    XA_CARDINAL, 32, &val, 1);
+
+   return 1;
 }
 
 /**
@@ -356,7 +509,7 @@ ecore_x_window_prop_withdrawn_set(Ecore_X_Window win, int withdrawn)
    long     ret;
    
    memset(&hints, 0, sizeof(XWMHints));
-   XGetWMNormalHints(_ecore_x_disp, win, &hints, &ret);
+   XGetWMNormalHints(_ecore_x_disp, win, (XSizeHints *) &hints, &ret);
    
    if (!withdrawn)
       hints.initial_state &= ~WithdrawnState;
@@ -365,6 +518,6 @@ ecore_x_window_prop_withdrawn_set(Ecore_X_Window win, int withdrawn)
    
    hints.flags = WindowGroupHint | StateHint;
    XSetWMHints(_ecore_x_disp, win, &hints);
-   XSetWMNormalHints(_ecore_x_disp, win, &hints);
+   XSetWMNormalHints(_ecore_x_disp, win, (XSizeHints *) &hints);
 }
 

@@ -29,6 +29,21 @@ struct _Ecore_X_Reply
    void *data;
 };
 
+typedef enum _Ecore_X_WM_Protocol {
+	/**
+	 * If enabled the window manager will be asked to send a
+	 * delete message instead of just closing (destroying) the window.
+	 */
+	ECORE_X_WM_PROTOCOL_DELETE_REQUEST,
+
+	/**
+	 * If enabled the window manager will be told that the window
+	 * explicitly sets input focus.
+	 */
+	ECORE_X_WM_PROTOCOL_TAKE_FOCUS,
+	ECORE_X_WM_PROTOCOL_NUM
+} Ecore_X_WM_Protocol;
+
 extern Display *_ecore_x_disp;
 extern double   _ecore_x_double_click_time;
 extern Time     _ecore_x_event_last_time;
@@ -37,11 +52,19 @@ extern int      _ecore_x_event_last_root_x;
 extern int      _ecore_x_event_last_root_y;
 
 extern Atom     _ecore_x_atom_wm_delete_window;
+extern Atom     _ecore_x_atom_wm_take_focus;
 extern Atom     _ecore_x_atom_wm_protocols;
 extern Atom     _ecore_x_atom_wm_class;
 extern Atom     _ecore_x_atom_wm_name;
 extern Atom     _ecore_x_atom_motif_wm_hints;
 extern Atom     _ecore_x_atom_win_layer;
+extern Atom     _ecore_x_atom_net_wm_desktop;
+extern Atom     _ecore_x_atom_net_current_desktop;
+extern Atom     _ecore_x_atom_net_wm_state;
+extern Atom     _ecore_x_atom_net_wm_state_above;
+extern Atom     _ecore_x_atom_net_wm_state_below;
+
+extern Atom     _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
 
 void _ecore_x_error_handler_init(void);
 void _ecore_x_event_handle_key_press(XEvent *xevent);

@@ -435,7 +435,7 @@ setup_ecore_x_test(void)
    win = ecore_x_window_new(0, 0, 0, 120, 60);
    ecore_x_window_prop_title_set(win, "Ecore Test Program");
    ecore_x_window_prop_name_class_set(win, "ecore_test", "main");
-   ecore_x_window_prop_delete_request_set(win, 1);
+   ecore_x_window_prop_protocol_set(win, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 1);
    ecore_x_window_show(win);
    ecore_x_flush();
    

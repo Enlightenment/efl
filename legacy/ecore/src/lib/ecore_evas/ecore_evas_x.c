@@ -574,8 +574,8 @@ _ecore_evas_x_free(Ecore_Evas *ee)
 static void
 _ecore_evas_callback_delete_request_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 {
-   if (func) ecore_x_window_prop_delete_request_set(ee->engine.x.win_container, 1);
-   else ecore_x_window_prop_delete_request_set(ee->engine.x.win_container, 0);
+   if (func) ecore_x_window_prop_protocol_set(ee->engine.x.win_container, ECORE_X_WM_PROTOCOL_DELETE_REQUEST,1);
+   else ecore_x_window_prop_protocol_set(ee->engine.x.win_container, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 0);
    ee->func.fn_delete_request = func;
 }
 
@@ -887,7 +887,7 @@ _ecore_evas_override_set(Ecore_Evas *ee, int on)
 	ecore_x_window_prop_title_set(ee->engine.x.win_container, ee->prop.title);
 	ecore_x_window_prop_name_class_set(ee->engine.x.win_container, ee->prop.name, ee->prop.clas);
 	if (ee->func.fn_delete_request)
-	  ecore_x_window_prop_delete_request_set(ee->engine.x.win_container, 1);
+	  ecore_x_window_prop_protocol_set(ee->engine.x.win_container, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 1);
 	ecore_x_window_prop_min_size_set(ee->engine.x.win_container, ee->prop.min.w, ee->prop.min.h);
 	ecore_x_window_prop_max_size_set(ee->engine.x.win_container, ee->prop.max.w, ee->prop.max.h);
 	ecore_x_window_prop_base_size_set(ee->engine.x.win_container, ee->prop.base.w, ee->prop.base.h);

@@ -25,11 +25,19 @@ int      _ecore_x_event_last_root_x = 0;
 int      _ecore_x_event_last_root_y = 0;
 
 Atom     _ecore_x_atom_wm_delete_window = 0;
+Atom     _ecore_x_atom_wm_take_focus = 0;
 Atom     _ecore_x_atom_wm_protocols = 0;
 Atom     _ecore_x_atom_wm_class = 0;
 Atom     _ecore_x_atom_wm_name = 0;
 Atom     _ecore_x_atom_motif_wm_hints = 0;
 Atom     _ecore_x_atom_win_layer = 0;
+Atom     _ecore_x_atom_net_wm_desktop = 0;
+Atom     _ecore_x_atom_net_current_desktop = 0;
+Atom     _ecore_x_atom_net_wm_state = 0;
+Atom     _ecore_x_atom_net_wm_state_above = 0;
+Atom     _ecore_x_atom_net_wm_state_below = 0;
+
+Atom     _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM] = {0};
 
 int ECORE_X_EVENT_KEY_DOWN = 0;
 int ECORE_X_EVENT_KEY_UP = 0;
@@ -214,12 +222,22 @@ ecore_x_init(const char *name)
 	return 0;
      }
    _ecore_x_filter_handler = ecore_event_filter_add(_ecore_x_event_filter_start, _ecore_x_event_filter_filter, _ecore_x_event_filter_end, NULL);
-   _ecore_x_atom_wm_delete_window = XInternAtom(_ecore_x_disp, "WM_DELETE_WINDOW", False);
-   _ecore_x_atom_wm_protocols     = XInternAtom(_ecore_x_disp, "WM_PROTOCOLS", False);
-   _ecore_x_atom_wm_class         = XInternAtom(_ecore_x_disp, "WM_CLASS", False);
-   _ecore_x_atom_wm_name          = XInternAtom(_ecore_x_disp, "WM_NAME", False);
-   _ecore_x_atom_motif_wm_hints   = XInternAtom(_ecore_x_disp, "_MOTIF_WM_HINTS", False);
-   _ecore_x_atom_win_layer        = XInternAtom(_ecore_x_disp, "_WIN_LAYER", False);
+   _ecore_x_atom_wm_delete_window        = XInternAtom(_ecore_x_disp, "WM_DELETE_WINDOW", False);
+   _ecore_x_atom_wm_take_focus           = XInternAtom(_ecore_x_disp, "WM_TAKE_FOCUS", False);
+   _ecore_x_atom_wm_protocols            = XInternAtom(_ecore_x_disp, "WM_PROTOCOLS", False);
+   _ecore_x_atom_wm_class                = XInternAtom(_ecore_x_disp, "WM_CLASS", False);
+   _ecore_x_atom_wm_name                 = XInternAtom(_ecore_x_disp, "WM_NAME", False);
+   _ecore_x_atom_motif_wm_hints          = XInternAtom(_ecore_x_disp, "_MOTIF_WM_HINTS", False);
+   _ecore_x_atom_win_layer               = XInternAtom(_ecore_x_disp, "_WIN_LAYER", False);
+   _ecore_x_atom_net_wm_desktop          = XInternAtom(_ecore_x_disp, "_NET_WM_DESKTOP", False);
+   _ecore_x_atom_net_current_desktop     = XInternAtom(_ecore_x_disp, "_NET_CURRENT_DESKTOP", False);
+   _ecore_x_atom_net_wm_state            = XInternAtom(_ecore_x_disp, "_NET_WM_STATE", False);
+   _ecore_x_atom_net_wm_state_above      = XInternAtom(_ecore_x_disp, "_NET_WM_STATE_ABOVE", False);
+   _ecore_x_atom_net_wm_state_below      = XInternAtom(_ecore_x_disp, "_NET_WM_STATE_BELOW", False);
+
+   _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_DELETE_REQUEST] = _ecore_x_atom_wm_delete_window;
+   _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_TAKE_FOCUS] = _ecore_x_atom_wm_take_focus;
+   
    _ecore_x_init_count++;
    return _ecore_x_init_count;
 }

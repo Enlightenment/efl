@@ -424,6 +424,40 @@ extern int ECORE_X_LOCK_SCROLL;
 extern int ECORE_X_LOCK_NUM;
 extern int ECORE_X_LOCK_CAPS;
 
+#ifndef _ECORE_X_PRIVATE_H
+typedef enum _Ecore_X_WM_Protocol {
+	/**
+	 * If enabled the window manager will be asked to send a
+	 * delete message instead of just closing (destroying) the window.
+	 */
+	ECORE_X_WM_PROTOCOL_DELETE_REQUEST,
+
+	/**
+	 * If enabled the window manager will be told that the window
+	 * explicitly sets input focus.
+	 */
+	ECORE_X_WM_PROTOCOL_TAKE_FOCUS
+} Ecore_X_WM_Protocol;
+#endif
+
+typedef enum _Ecore_X_Window_Input_Mode {
+	/** The window can never be focused */
+	ECORE_X_WINDOW_INPUT_MODE_NONE,
+	
+	/** The window can be focused by the WM but doesn't focus itself */
+	ECORE_X_WINDOW_INPUT_MODE_PASSIVE,
+
+	/** The window sets the focus itself if one of its sub-windows
+	 * already is focused
+	 */
+	ECORE_X_WINDOW_INPUT_MODE_ACTIVE_LOCAL,
+
+	/** The window sets the focus itself even if another window
+	 * is currently focused
+	 */
+	ECORE_X_WINDOW_INPUT_MODE_ACTIVE_GLOBAL
+} Ecore_X_Window_Input_Mode;
+
 int              ecore_x_init(const char *name);
 int              ecore_x_shutdown(void);       
 Ecore_X_Display *ecore_x_display_get(void);
@@ -458,14 +492,16 @@ void             ecore_x_window_prop_title_set(Ecore_X_Window win, const char *t
 char            *ecore_x_window_prop_title_get(Ecore_X_Window win);
 void             ecore_x_window_prop_name_class_set(Ecore_X_Window win, const char *n, const char *c);
 void             ecore_x_window_prop_name_class_get(Ecore_X_Window win, char **n, char **c);
-void             ecore_x_window_prop_delete_request_set(Ecore_X_Window win, int on);
+void             ecore_x_window_prop_protocol_set(Ecore_X_Window win, Ecore_X_WM_Protocol protocol, int on);
+void             ecore_x_window_prop_sticky_set(Ecore_X_Window win, int on);
+int              ecore_x_window_prop_input_mode_set(Ecore_X_Window win, Ecore_X_Window_Input_Mode mode);
 void             ecore_x_window_prop_min_size_set(Ecore_X_Window win, int w, int h);
 void             ecore_x_window_prop_max_size_set(Ecore_X_Window win, int w, int h);
 void             ecore_x_window_prop_base_size_set(Ecore_X_Window win, int w, int h);
 void             ecore_x_window_prop_step_size_set(Ecore_X_Window win, int x, int y);
 void             ecore_x_window_prop_xy_set(Ecore_X_Window win, int x, int y);
 void             ecore_x_window_prop_borderless_set(Ecore_X_Window win, int borderless);
-void             ecore_x_window_prop_layer_set(Ecore_X_Window win, int layer);
+int              ecore_x_window_prop_layer_set(Ecore_X_Window win, int layer);
 void             ecore_x_window_prop_withdrawn_set(Ecore_X_Window win, int withdrawn);
 
 void             ecore_x_window_shape_mask_set(Ecore_X_Window win, Ecore_X_Pixmap mask);
