@@ -60,7 +60,7 @@ evas_add_image_from_file(Evas e, char *file)
 	  {
 	     Imlib_Image im;
 	     
-	     im = imlib_load_image_with_error_return(file, &oo->load_error);
+	     im = imlib_load_image_with_error_return(file, &(oo->load_error));
 	     if (im)
 	       {
 		  imlib_context_set_image(im);
@@ -159,7 +159,7 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
 	o->changed = 1;
 	e->changed = 1;
      }
-   else
+   else if (!file)
      {
         if (oo->current.file)
 	  free(oo->current.file);
