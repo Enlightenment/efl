@@ -287,6 +287,39 @@ _edje_text_real_part_on_del(Edje *ed, Edje_Real_Part *ep)
      }
 }
 
+static void
+_edje_text_fit_set(char *buf, char *text, int c1, int c2)
+{
+   /* helper function called from _edje_text_fit_x().
+    * note that we can use strcpy()/strcat() safely, the buffer lengths
+    * are checked in the caller.
+    */
+
+   if (c1 >= 0)
+     {
+	strcpy(buf, "...");
+
+	if (c2 >= 0)
+	  {
+	     strncat(buf, text + c1, c2 - c1);
+	     strcat(buf, "...");
+	  }
+	else
+	  strcat(buf, text + c1);
+     }
+   else
+     {
+	if (c2 >= 0)
+	  {
+	     strncpy(buf, text, c2);
+	     buf[c2] = 0;
+	     strcat(buf, "...");
+	  }
+	else
+	  strcpy(buf, text);
+     }
+}
+
 static char *
 _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
                  Edje_Calc_Params *params,
@@ -397,27 +430,8 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
 
 	buf[0] = 0;
 
-	if (c1 >= 0)
-	  {
-	     strcpy(buf, "...");
-	     if (c2 >= 0)
-	       {
-		  strncat(buf, text + c1, c2 - c1);
-		  strcat(buf, "...");
-	       }
-	     else
-	       strcat(buf, text + c1);
-	  }
-	else
-	  {
-	     if (c2 >= 0)
-	       {
-		  strncpy(buf, text, c2);
-		  buf[c2] = 0;
-		  strcat(buf, "...");
-	       }
-	     else strcpy(buf, text);
-	  }
+	_edje_text_fit_set(buf, text, c1, c2);
+
 	evas_object_text_text_set(ep->object, buf);
 	evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
      }
