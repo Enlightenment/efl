@@ -61,6 +61,12 @@ evas_event_list_copy(Evas_List *list)
 /* public functions */
 
 /**
+ * @defgroup Evas_Event_Freezing_Group Evas Event Freezing Functions
+ *
+ * Functions that deal with the freezing of event processing of an evas.
+ */
+
+/**
  * Freeze alll event processing
  * @param e The canvas to freeze event processing on
  * 
@@ -79,6 +85,7 @@ evas_event_list_copy(Evas_List *list)
  * evas_object_resize(object, 200, 200);
  * evas_event_thaw(evas);
  * @endcode
+ * @ingroup Evas_Event_Freezing_Group
  */
 void
 evas_event_freeze(Evas *e)
@@ -99,7 +106,7 @@ evas_event_freeze(Evas *e)
  * to be evaluated.
  * 
  * See evas_event_freeze() for an example.
- * 
+ * @ingroup Evas_Event_Freezing_Group
  */
 void
 evas_event_thaw(Evas *e)
@@ -128,6 +135,7 @@ evas_event_thaw(Evas *e)
  * 
  * while (evas_event_freeze_get(evas) > 0) evas_event_thaw(evas);
  * @endcode
+ * @ingroup Evas_Event_Freezing_Group
  */
 int
 evas_event_freeze_get(Evas *e)

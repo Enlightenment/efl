@@ -224,9 +224,16 @@ evas_hash_find(Evas_Hash *hash, const char *key)
 }
 
 /**
+ * @defgroup Evas_Hash_General_Group Hash General Functions
+ *
+ * Miscellaneous functions that operate on hash objects.
+ */
+
+/**
  * Retrieves the number of buckets available in the given hash table.
  * @param hash The given hash table.
  * @return @c 256 if @p hash is not @c NULL.  @c 0 otherwise.
+ * @ingroup Evas_Hash_General_Group
  */
 int
 evas_hash_size(Evas_Hash *hash)
@@ -235,7 +242,10 @@ evas_hash_size(Evas_Hash *hash)
    return 256;
 }
 
-/** @todo Complete documenting evas_hash.c */
+/**
+ * @todo Complete polishing documentation for evas_hash.c. The
+ * functions' docs may be grouped, but they need some simplification.
+ */
 
 /**
  * Free an entire hash table
@@ -254,6 +264,7 @@ evas_hash_size(Evas_Hash *hash)
  * evas_hash_free(hash);
  * hash = NULL;
  * @endcode
+ * @ingroup Evas_Hash_General_Group
  */
 void
 evas_hash_free(Evas_Hash *hash)
@@ -308,6 +319,7 @@ evas_hash_free(Evas_Hash *hash)
  *   free(hash_fn_data);
  * }
  * @endcode
+ * @ingroup Evas_Hash_General_Group
  */
 void
 evas_hash_foreach(Evas_Hash *hash, Evas_Bool (*func) (Evas_Hash *hash, const char *key, void *data, void *fdata), const void *fdata)
@@ -358,6 +370,7 @@ evas_hash_foreach(Evas_Hash *hash, Evas_Bool (*func) (Evas_Hash *hash, const cha
  *     printf("My Data inserted and successfully found.\n");
  *   }
  * @endcode
+ * @ingroup Evas_Hash_General_Group
  */
 int
 evas_hash_alloc_error(void)

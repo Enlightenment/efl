@@ -62,10 +62,16 @@ static Evas_Object_Func object_func =
 /* it has no other api calls as all properties are standard */
 
 /**
- * To be documented.
+ * @defgroup Evas_Line_Group Line Functions
  *
- * FIXME: To be fixed.
- * 
+ * Functions used to deal with evas line objects.
+ */
+
+/**
+ * Adds a new evas line object to the given evas.
+ * @param   e The given evas.
+ * @return  The new evas line object.
+ * @ingroup Evas_Line_Group
  */
 Evas_Object *
 evas_object_line_add(Evas *e)
@@ -82,10 +88,13 @@ evas_object_line_add(Evas *e)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Sets the coordinates of the end points of the given evas line object.
+ * @param   obj The given evas line object.
+ * @param   x1  The X coordinate of the first point.
+ * @param   y1  The Y coordinate of the first point.
+ * @param   x2  The X coordinate of the second point.
+ * @param   y2  The Y coordinate of the second point.
+ * @ingroup Evas_Line_Group
  */
 void
 evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coord x2, Evas_Coord y2)
@@ -154,10 +163,17 @@ evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coo
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Retrieves the coordinates of the end points of the given evas line object.
+ * @param obj The given line object.
+ * @param x1  Pointer to an integer in which to store the X coordinate of the
+ *            first end point.
+ * @param y1  Pointer to an integer in which to store the Y coordinate of the
+ *            first end point.
+ * @param x2  Pointer to an integer in which to store the X coordinate of the
+ *            second end point.
+ * @param y2  Pointer to an integer in which to store the Y coordinate of the
+ *            second end point.
+ * @ingroup Evas_Line_Group
  */
 void
 evas_object_line_xy_get(Evas_Object *obj, Evas_Coord *x1, Evas_Coord *y1, Evas_Coord *x2, Evas_Coord *y2)

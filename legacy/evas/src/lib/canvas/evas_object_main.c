@@ -396,7 +396,7 @@ evas_object_was_opaque(Evas_Object *obj)
 /* routines apps will call */
 
 /**
- * @defgroup Evas_Object Evas Object Functions
+ * @defgroup Evas_Object_Group Generic Object Functions
  *
  * Functions that manipulate generic evas objects.
  */
@@ -408,7 +408,8 @@ evas_object_was_opaque(Evas_Object *obj)
  * If the object currently has the focus, its 'focus out' callback is
  * also called.
  *
- * @param obj The given evas object.
+ * @param   obj The given evas object.
+ * @ingroup Evas_Object_Group
  */
 void
 evas_object_del(Evas_Object *obj)
@@ -444,7 +445,7 @@ evas_object_del(Evas_Object *obj)
  * @param   obj The given evas object.
  * @param   x   X position to move the object to, in canvas units.
  * @param   y   Y position to move the object to, in canvas units.
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 void
 evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
@@ -497,7 +498,7 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
  * @param   obj The given evas object.
  * @param   w   The new width of the evas object.
  * @param   h   The new height of the evas object.
- * @ingroup Evas_Object
+ * @ingroup Evas_Object_Group
  */
 void
 evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
@@ -546,10 +547,21 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 }
 
 /**
- * To be documented.
+ * Retrieves the position and rectangular size of the given evas object.
  *
- * FIXME: To be fixed.
+ * Note that if any of @p x, @p y, @p w or @p h are @c NULL, the @c NULL
+ * parameters are ignored.
  * 
+ * @param obj The given evas object.
+ * @param   x   Pointer to an integer in which to store the X coordinate of
+ *              the object.
+ * @param   y   Pointer to an integer in which to store the Y coordinate of
+ *              the object.
+ * @param   w   Pointer to an integer in which to store the width of the
+ *              object.
+ * @param   h   Pointer to an integer in which to store the height of the
+ *              object.
+ * @ingroup Evas_Object_Group
  */
 void
 evas_object_geometry_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
@@ -570,10 +582,15 @@ evas_object_geometry_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Co
 }
 
 /**
- * To be documented.
+ * @defgroup Evas_Object_Visibility_Group Generic Object Visibility Functions
  *
- * FIXME: To be fixed.
- * 
+ * Functions that deal with the visibility of evas objects.
+ */
+
+/**
+ * Makes the given evas object visible.
+ * @param   obj The given evas object.
+ * @ingroup Evas_Object_Visibility_Group
  */
 void
 evas_object_show(Evas_Object *obj)
@@ -612,10 +629,9 @@ evas_object_show(Evas_Object *obj)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Makes the given evas object invisible.
+ * @param   obj The given evas object.
+ * @ingroup Evas_Object_Visibility_Group
  */
 void
 evas_object_hide(Evas_Object *obj)
@@ -675,10 +691,10 @@ evas_object_hide(Evas_Object *obj)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Retrieves whether or not the given evas object is visible.
+ * @param   obj The given evas object.
+ * @return  @c 1 if the object is visible.  @c 0 otherwise.
+ * @ingroup Evas_Object_Visibility_Group
  */
 Evas_Bool
 evas_object_visible_get(Evas_Object *obj)
@@ -691,10 +707,13 @@ evas_object_visible_get(Evas_Object *obj)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Sets the general colour of the given evas object to the given colour.
+ * @param obj The given evas object.
+ * @param r   The red component of the given colour.
+ * @param g   The green component of the given colour.
+ * @param b   The blue component of the given colour.
+ * @param a   The alpha component of the given colour.
+ * @ingroup Evas_Object_Group
  */
 void
 evas_object_color_set(Evas_Object *obj, int r, int g, int b, int a)
@@ -725,10 +744,21 @@ evas_object_color_set(Evas_Object *obj, int r, int g, int b, int a)
 }
 
 /**
- * To be documented.
+ * Retrieves the general colour of the given evas object.
  *
- * FIXME: To be fixed.
- * 
+ * Note that if any of @p r, @p g, @p b or @p a are @c NULL, then the
+ * @c NULL parameters are ignored.
+ *
+ * @param   obj The given evas object.
+ * @param   r   Pointer to an integer in which to store the red component of
+ *              the colour.
+ * @param   g   Pointer to an integer in which to store the green component of
+ *              the colour.
+ * @param   b   Pointer to an integer in which to store the blue component of
+ *              the colour.
+ * @param   a   Pointer to an integer in which to store the alpha component of
+ *              the colour.
+ * @ingroup Evas_Object_Group
  */
 void
 evas_object_color_get(Evas_Object *obj, int *r, int *g, int *b, int *a)
@@ -749,10 +779,10 @@ evas_object_color_get(Evas_Object *obj, int *r, int *g, int *b, int *a)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Retrieves the evas that the given evas object is on.
+ * @param   obj The given evas object.
+ * @return  The evas that the object is on.
+ * @ingroup Evas_Object_Group
  */
 Evas *
 evas_object_evas_get(Evas_Object *obj)
@@ -765,10 +795,17 @@ evas_object_evas_get(Evas_Object *obj)
 }
 
 /**
+ * @defgroup Evas_Object_Finders Object Finder Functions
+ *
+ * Functions that determine what evas objects are at a given location
+ * or within a given region of an evas.
+ */
+
+/**
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ * @ingroup Evas_Object_Finders
  */
 Evas_Object *
 evas_object_top_at_xy_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
@@ -808,7 +845,7 @@ evas_object_top_at_xy_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ * @ingroup Evas_Object_Finders
  */
 Evas_Object *
 evas_object_top_at_pointer_get(Evas *e)
@@ -820,7 +857,7 @@ evas_object_top_at_pointer_get(Evas *e)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ * @ingroup Evas_Object_Finders
  */
 Evas_Object *
 evas_object_top_in_rectangle_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
@@ -864,7 +901,7 @@ evas_object_top_in_rectangle_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ * @ingroup Evas_Object_Finders
  */
 Evas_List *
 evas_objects_at_xy_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
@@ -905,7 +942,7 @@ evas_objects_at_xy_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pa
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ * @ingroup Evas_Object_Finders
  */
 Evas_List *
 evas_objects_in_rectangle_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
@@ -947,10 +984,10 @@ evas_objects_in_rectangle_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w,
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Retrieves the name of the type of the given evas object.
+ * @param   obj The given object.
+ * @return  The name.
+ * @ingroup Evas_Object_Group
  */
 const char *
 evas_object_type_get(Evas_Object *obj)

@@ -5,20 +5,17 @@
 static int _evas_list_alloc_error = 0;
 
 /**
- * Append a data pointer to a linked list
- * @param list The list handle to append @p data too
- * @param data The data pointer to append to list @p list
- * @return A new list handle to replace the old one
+ * @defgroup Evas_List_Data_Group Linked List Creation Functions
+ *
+ * Functions that add data to an Evas_List.
+ */
+
+/**
+ * Appends the given data to the given linked list.
  * 
- * This function appends the data pointed to by @p data to the end of the linked
- * list @p list, and returns a new list pointer to replace the old one. An
- * empty list should start as a NULL pointer.
- * 
- * In the event of a memory allocation failure, the old list pointer will be
- * returned and the application should use evas_list_alloc_error() to determine
- * if the allocation failed and sensibly recover from this condition.
- * 
- * Example:
+ * The following example code demonstrates how to ensure that the
+ * given data has been successfully appended.
+ *
  * @code
  * Evas_List *list = NULL;
  * extern void *my_data;
@@ -30,6 +27,14 @@ static int _evas_list_alloc_error = 0;
  *     exit(-1);
  *   }
  * @endcode
+ *
+ * @param   list The given list.  If @c NULL is given, then a new list
+ *               is created.
+ * @param   data The data to append.
+ * @return  A new list pointer that should be used in place of the one
+ *          given to this function if successful.  Otherwise, the old
+ *          pointer is returned.
+ * @ingroup Evas_List_Data_Group
  */
 Evas_List *
 evas_list_append(Evas_List *list, const void *data)
@@ -79,18 +84,10 @@ evas_list_append(Evas_List *list, const void *data)
 }
 
 /**
- * Prepend a data pointer to a linked list
- * @param list The list handle to prepend @p data too
- * @param data The data pointer to prepend to list @p list
- * @return A new list handle to replace the old one
- * 
- * This function prepends the data pointed to by @p data to the start of the linked
- * list @p list, and returns a new list pointer to replace the old one. An
- * empty list should start as a NULL pointer.
- * 
- * In the event of a memory allocation failur, the old list pointer will be
- * returned and the application should use evas_list_alloc_error() to determine
- * if the allocation failed and sensibly recover from this condition.
+ * Prepends the given data to the given linked list.
+ *
+ * The following example code demonstrates how to ensure that the
+ * given data has been successfully prepended.
  * 
  * Example:
  * @code
@@ -104,6 +101,13 @@ evas_list_append(Evas_List *list, const void *data)
  *     exit(-1);
  *   }
  * @endcode
+ *
+ * @param   list The given list.
+ * @param   data The given data.
+ * @return  A new list pointer that should be used in place of the one
+ *          given to this function, if successful.  Otherwise, the old
+ *          pointer is returned.
+ * @ingroup Evas_List_Data_Group
  */
 Evas_List *
 evas_list_prepend(Evas_List *list, const void *data)
@@ -135,27 +139,15 @@ evas_list_prepend(Evas_List *list, const void *data)
 }
 
 /**
- * Append a data pointer to a linked list after the memeber specified
- * @param list The list handle to append @p data too
- * @param data The data pointer to append to list @p list after @p relative
- * @param relative The data pointer after which to insert @p data
- * @return A new list handle to replace the old one
+ * Inserts the given data into the given linked list after the specified data.
+ *
+ * If @p relative is not in the list, @p data is appended to the end of the
+ * list.  If there are multiple instances of @p relative in the list, 
+ * @p data is inserted after the first instance.
  * 
- * This function appends the data pointed to by @p data after the position in
- * of the list member whose data pointer is @p relative, in the list @p list, 
- * and returns a new list pointer to replace the old one. An empty list 
- * should start as a NULL pointer.
- * 
- * If no member in the list has a data pointer of @p relative, the item is
- * appended to the very end of the list. If there are multiple members of the
- * list with the data pointer @p relative, the @p data item is inserted after
- * the first instance of the member @p relative in the list.
- * 
- * In the event of a memory allocation failure, the old list pointer will be
- * returned and the application should use evas_list_alloc_error() to determine
- * if the allocation failed and sensibly recover from this condition.
- * 
- * Example:
+ * The following example code demonstrates how to ensure that the
+ * given data has been successfully inserted.
+ *
  * @code
  * Evas_List *list = NULL;
  * extern void *my_data;
@@ -174,6 +166,14 @@ evas_list_prepend(Evas_List *list, const void *data)
  *     exit(-1);
  *   }
  * @endcode
+ *
+ * @param   list The given linked list.
+ * @param   data The given data.
+ * @param   relative The data to insert after.
+ * @return  A new list pointer that should be used in place of the one
+ *          given to this function if successful.  Otherwise, the old pointer
+ *          is returned.
+ * @ingroup Evas_List_Data_Group
  */
 Evas_List *
 evas_list_append_relative(Evas_List *list, const void *data, const void *relative)
@@ -218,22 +218,17 @@ evas_list_append_relative(Evas_List *list, const void *data, const void *relativ
  * @param data The data pointer to prepend to list @p list before @p relative
  * @param relative The data pointer before which to insert @p data
  * @return A new list handle to replace the old one
+
+ * Inserts the given data into the given linked list before the member
+ * specified.
+ *
+ * If @p relative is not in the list, @p data is prepended to the
+ * start of the list.  If there are multiple instances of @p relative
+ * in the list, @p data is inserted before the first instance.
  * 
- * This function prepends the data pointed to by @p data before the position in
- * of the list member whose data pointer is @p relative, in the list @p list, 
- * and returns a new list pointer to replace the old one. An empty list 
- * should start as a NULL pointer.
- * 
- * If no member in the list has a data pointer of @p relative, the item is
- * prepended to the very start of the list. If there are multiple members of the
- * list with the data pointer @p relative, the @p data item is inserted before
- * the first instance of the member @p relative in the list.
- * 
- * In the event of a memory allocation failure, the old list pointer will be
- * returned and the application should use evas_list_alloc_error() to determine
- * if the allocation failed and sensibly recover from this condition.
- * 
- * Example:
+ * The following code example demonstrates how to ensure that the
+ * given data has been successfully inserted.
+ *
  * @code
  * Evas_List *list = NULL;
  * extern void *my_data;
@@ -252,6 +247,14 @@ evas_list_append_relative(Evas_List *list, const void *data, const void *relativ
  *     exit(-1);
  *   }
  * @endcode
+ *
+ * @param   list The given linked list.
+ * @param   data The given data.
+ * @param   relative The data to insert before.
+ * @return  A new list pointer that should be used in place of the one
+ *          given to this function if successful.  Otherwise the old pointer
+ *          is returned.
+ * @ingroup Evas_List_Data_Group
  */
 Evas_List *
 evas_list_prepend_relative(Evas_List *list, const void *data, const void *relative)
@@ -295,24 +298,21 @@ evas_list_prepend_relative(Evas_List *list, const void *data, const void *relati
 }
 
 /**
- * Remove a specified member from a list
- * @param list The list handle to remove @p data from
- * @param data The memebr to find and remove
- * @return A new list handle to replace the old one
+ * @defgroup Evas_List_Remove_Group Linked List Remove Functions
+ *
+ * Functions that remove data from linked lists.
+ */
+
+/**
+ * Removes the first instance of the specified data from the given list.
  * 
- * Calling this function finds the first instance of the member whose data
- * pointer is @p data in the list @p list and removed that member from the
- * the list. An empty list should start as a NULL pointer.
- * 
- * If no member is found that matches, nothing is done.
- * 
- * Example:
- * @code
- * extern Evas_List *list;
- * extern void *my_data;
- * 
- * list = evas_list_remove(list, my_data);
- * @endcode
+ * If the specified data is not in the given list, nothing is done.
+ *
+ * @param   list The given list.
+ * @param   data The specified data.
+ * @return  A new list pointer that should be used in place of the one 
+ *          passed to this functions.
+ * @ingroup Evas_List_Remove_Group
  */
 Evas_List *
 evas_list_remove(Evas_List *list, const void *data)
@@ -328,6 +328,8 @@ evas_list_remove(Evas_List *list, const void *data)
 }
 
 /**
+ * Removes the specified data
+ * 
  * Remove a specified member from a list
  * @param list The list handle to remove @p remove_list from
  * @param remove_list The list node which is to be removed
@@ -351,6 +353,7 @@ evas_list_remove(Evas_List *list, const void *data)
  *       }
  *   }
  * @endcode
+ * @ingroup Evas_List_Remove_Group
  */
 Evas_List *
 evas_list_remove_list(Evas_List *list, Evas_List *remove_list)
@@ -378,6 +381,12 @@ evas_list_remove_list(Evas_List *list, Evas_List *remove_list)
 }
 
 /**
+ * @defgroup Evas_List_Find_Group Linked List Find Functions
+ *
+ * Functions that find specified data in a linked list.
+ */
+
+/**
  * Find a member of a list and return the member
  * @param list The list handle to search for @p data
  * @param data The data pointer to find in the list @p list
@@ -397,6 +406,7 @@ evas_list_remove_list(Evas_List *list, Evas_List *remove_list)
  *     printf("Found member %p\n", my_data);
  *   }
  * @endcode
+ * @ingroup Evas_List_Find_Group
  */
 void *
 evas_list_find(Evas_List *list, const void *data)
@@ -433,6 +443,7 @@ evas_list_find(Evas_List *list, const void *data)
  *     printf("Found member %p\n", found_node->data);
  *   }
  * @endcode
+ * @ingroup Evas_List_Find_Group
  */
 Evas_List *
 evas_list_find_list(Evas_List *list, const void *data)
@@ -459,6 +470,7 @@ evas_list_find_list(Evas_List *list, const void *data)
  * 
  * list = evas_list_free(list);
  * @endcode
+ * @ingroup Evas_List_Remove_Group
  */
 Evas_List *
 evas_list_free(Evas_List *list)
@@ -473,6 +485,12 @@ evas_list_free(Evas_List *list)
      }
    return NULL;
 }
+
+/**
+ * @defgroup Evas_List_Traverse_Group Linked List Traverse Functions
+ * 
+ * Functions that you can use to traverse a linked list.
+ */
 
 /**
  * Get the last list node in the list
@@ -497,6 +515,7 @@ evas_list_free(Evas_List *list)
  *     printf("%p\n", l->data);
  *   }
  * @endcode
+ * @ingroup Evas_List_Traverse_Group
  */
 Evas_List *
 evas_list_last(Evas_List *list)
@@ -524,6 +543,7 @@ evas_list_last(Evas_List *list)
  *     printf("%p\n", l->data);
  *   }
  * @endcode
+ * @ingroup Evas_List_Traverse_Group
  */
 Evas_List *
 evas_list_next(Evas_List *list)
@@ -552,6 +572,7 @@ evas_list_next(Evas_List *list)
  *     printf("%p\n", l->data);
  *   }
  * @endcode
+ * @ingroup Evas_List_Traverse_Group
  */
 Evas_List *
 evas_list_prev(Evas_List *list)
@@ -559,6 +580,12 @@ evas_list_prev(Evas_List *list)
    if (!list) return NULL;
    return list->prev;
 }
+
+/**
+ * @defgroup Evas_List_General_Group Linked List General Functions
+ *
+ * Miscellaneous functions that work on linked lists.
+ */
 
 /**
  * Get the list node data member
@@ -579,6 +606,7 @@ evas_list_prev(Evas_List *list)
  *     printf("%p\n", evas_list_data(l));
  *   }
  * @endcode
+ * @ingroup Evas_List_General_Group
  */
 void *
 evas_list_data(Evas_List *list)
@@ -604,6 +632,7 @@ evas_list_data(Evas_List *list)
  * 
  * printf("The list has %i members\n", evas_list_count(list));
  * @endcode
+ * @ingroup Evas_List_General_Group
  */
 int
 evas_list_count(Evas_List *list)
@@ -632,6 +661,7 @@ evas_list_count(Evas_List *list)
  * if (data)
  *   printf("Element number %i has data %p\n", number, data);
  * @endcode
+ * @ingroup Evas_List_Find_Group
  */
 void *
 evas_list_nth(Evas_List *list, int n)
@@ -667,6 +697,7 @@ evas_list_nth(Evas_List *list, int n)
  * if (nth_list)
  *   printf("Element number %i has data %p\n", number, nth_list->data);
  * @endcode
+ * @ingroup Evas_List_Find_Group
  */
 Evas_List *
 evas_list_nth_list(Evas_List *list, int n)
@@ -683,6 +714,12 @@ evas_list_nth_list(Evas_List *list, int n)
 }
 
 /**
+ * @defgroup Evas_List_Ordering_Group Linked List Ordering Functions
+ *
+ * Functions that change the ordering of data in a linked list.
+ */
+
+/**
  * Reverse all the elements in the list
  * @param list The list to reverse
  * @return The list after it has been reversed
@@ -696,6 +733,7 @@ evas_list_nth_list(Evas_List *list, int n)
  * 
  * list = evas_list_reverse(list);
  * @endcode
+ * @ingroup Evas_List_Ordering_Group
  */
 Evas_List *
 evas_list_reverse(Evas_List *list)
@@ -798,6 +836,7 @@ evas_list_combine(Evas_List *l, Evas_List *ll, int (*func)(void *, void*))
  *     exit(-1);
  *   }
  * @endcode
+ * @ingroup Evas_List_Ordering_Group
  */
 Evas_List *
 evas_list_sort(Evas_List *list, int size, int (*func)(void *, void *))
@@ -847,6 +886,7 @@ evas_list_sort(Evas_List *list, int size, int (*func)(void *, void *))
  *     exit(-1);
  *   }
  * @endcode
+ * @ingroup Evas_List_General_Group
  */
 int
 evas_list_alloc_error(void)

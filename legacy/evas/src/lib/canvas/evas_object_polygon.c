@@ -59,10 +59,16 @@ static Evas_Object_Func object_func =
 /* it has no other api calls as all properties are standard */
 
 /**
- * To be documented.
+ * @defgroup Evas_Polygon_Group Polygon Functions
  *
- * FIXME: To be fixed.
- * 
+ * Functions that operate on evas polygon objects.
+ */
+
+/**
+ * Adds a new evas polygon object to the given evas.
+ * @param   e The given evas.
+ * @return  A new evas polygon object.
+ * @ingroup Evas_Polygon_Group
  */
 Evas_Object *
 evas_object_polygon_add(Evas *e)
@@ -79,10 +85,11 @@ evas_object_polygon_add(Evas *e)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Adds the given point to the given evas polygon object.
+ * @param obj The given evas polygon object.
+ * @param x   The X coordinate of the given point.
+ * @param y   The Y coordinate of the given point.
+ * @ingroup Evas_Polygon_Group
  */
 void
 evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
@@ -151,10 +158,9 @@ evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 }
 
 /**
- * To be documented.
- *
- * FIXME: To be fixed.
- * 
+ * Removes all of the points from the given evas polygon object.
+ * @param   obj The given polygon object.
+ * @ingroup Evas_Polygon_Group
  */
 void
 evas_object_polygon_points_clear(Evas_Object *obj)

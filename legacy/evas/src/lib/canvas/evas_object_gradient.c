@@ -126,7 +126,8 @@ evas_object_gradient_color_add(Evas_Object *obj, int r, int g, int b, int a, int
 
 /**
  * Deletes all colours set for the given evas gradient object.
- * @param obj The given evas gradient object.
+ * @param   obj The given evas gradient object.
+ * @ingroup Evas_Object_Gradient_Group
  */
 void
 evas_object_gradient_colors_clear(Evas_Object *obj)
@@ -153,7 +154,7 @@ evas_object_gradient_colors_clear(Evas_Object *obj)
  * from vertical.
  * @param   obj   The given evas gradient object.
  * @param   angle Angle in degrees.  Can be negative.
- * @ingroup Evas_Object_Gradient
+ * @ingroup Evas_Object_Gradient_Group
  */
 void
 evas_object_gradient_angle_set(Evas_Object *obj, Evas_Angle angle)
@@ -178,7 +179,7 @@ evas_object_gradient_angle_set(Evas_Object *obj, Evas_Angle angle)
  * clockwise from the vertical.
  * @param   obj The given evas gradient object.
  * @return  The current angle if successful. @c 0.0 otherwise.
- * @ingroup Evas_Object_Gradient
+ * @ingroup Evas_Object_Gradient_Group
  */
 Evas_Angle
 evas_object_gradient_angle_get(Evas_Object *obj)
