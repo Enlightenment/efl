@@ -10,7 +10,7 @@ INCLUDES = \
 @IMLIB2_CFLAGS@
 
 bin_SCRIPTS = \
-edje_recc
+@EDJE_RECC_PRG@
 
 bin_PROGRAMS = \
 edje \
@@ -87,4 +87,4 @@ edje_ls_LDFLAGS =
 
 edje_ls_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 
-EXTRA_DIST = edje_recc
+EXTRA_SCRIPTS = edje_recc
