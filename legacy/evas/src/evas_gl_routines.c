@@ -163,12 +163,30 @@ __evas_gl_image_copy_image_rect_to_texture(Evas_GL_Image *im, int x, int y,
      }
 #ifdef HAVE_GLU
    if (__evas_anti_alias)
-      gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA8, tw, th, GL_RGBA, 
-			GL_UNSIGNED_BYTE, data);
+     {
+	gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA8, tw, th, GL_RGBA, 
+			  GL_UNSIGNED_BYTE, data);
+	if (glGetError() == GL_OUT_OF_MEMORY)
+	  {
+	     __evas_gl_image_cache_empty(im->buffer.display);
+	     __evas_gl_text_cache_empty(im->buffer.display);
+	     gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA8, tw, th, GL_RGBA, 
+			       GL_UNSIGNED_BYTE, data);
+	  }
+     }
    else
 #endif      
-      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, tw, th, 0,
-		   GL_RGBA, GL_UNSIGNED_BYTE, data);
+     {
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, tw, th, 0,
+		     GL_RGBA, GL_UNSIGNED_BYTE, data);
+	if (glGetError() == GL_OUT_OF_MEMORY)
+	  {
+	     __evas_gl_image_cache_empty(im->buffer.display);
+	     __evas_gl_text_cache_empty(im->buffer.display);
+	     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, tw, th, 0,
+			  GL_RGBA, GL_UNSIGNED_BYTE, data);
+	  }
+     }
    free(data);
 }
 
@@ -885,6 +903,9 @@ __evas_gl_text_paste(Evas_GL_Font *f, char *text,
 	if (last_tex != f->glyphinfo[j].texture)
 	  {
 	     glBindTexture(GL_TEXTURE_2D, f->glyphinfo[j].texture);
+/* if i don't have these 2 lines.. it screwes up*/
+	     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	     last_tex = f->glyphinfo[j].texture;
 	  }
 	if (ymin < 0) off = 0;
@@ -1010,6 +1031,13 @@ __evas_gl_text_font_render_textures(Evas_GL_Font *f)
 	  {
 	     glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA4, f->max_texture_size, f->max_texture_size, 0,
 			  GL_ALPHA, GL_UNSIGNED_BYTE, data);
+	     if (glGetError() == GL_OUT_OF_MEMORY)
+	       {
+		  __evas_gl_image_cache_empty(f->buffer.display);
+		  __evas_gl_text_cache_empty(f->buffer.display);
+		  glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA4, f->max_texture_size, f->max_texture_size, 0,
+			       GL_ALPHA, GL_UNSIGNED_BYTE, data);
+	       }
 	     j++;
 	     if (j >= f->num_textures)
 		didlast = 1;
@@ -1039,6 +1067,13 @@ __evas_gl_text_font_render_textures(Evas_GL_Font *f)
      {
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA4, f->max_texture_size, f->max_texture_size, 0,
 		     GL_ALPHA, GL_UNSIGNED_BYTE, data);
+	if (glGetError() == GL_OUT_OF_MEMORY)
+	  {
+	     __evas_gl_image_cache_empty(f->buffer.display);
+	     __evas_gl_text_cache_empty(f->buffer.display);
+	     glTexImage2D(GL_TEXTURE_2D, 0, GL_ALPHA4, f->max_texture_size, f->max_texture_size, 0,
+			  GL_ALPHA, GL_UNSIGNED_BYTE, data);
+	  }
      }
    if (data)
      {
@@ -2030,6 +2065,13 @@ __evas_gl_gradient_gen_texture(Evas_GL_Graident *gr)
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, gr->max_texture_size, 1, 0,
 		GL_RGBA, GL_UNSIGNED_BYTE, map);
+   if (glGetError() == GL_OUT_OF_MEMORY)
+     {
+	__evas_gl_image_cache_empty(gr->buffer.display);
+	__evas_gl_text_cache_empty(gr->buffer.display);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, gr->max_texture_size, 1, 0,
+		     GL_RGBA, GL_UNSIGNED_BYTE, map);
+     }
    gr->texture_w = ll;
    gr->texture_h = 1;
    free(pmap);

@@ -40,6 +40,26 @@ void   mouse_move    (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int 
 void   mouse_in      (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y);
 void   mouse_out     (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y);
 
+typedef struct _textblock TextBlock;
+
+struct _textblock
+{
+   double time1, time2, time3, time4;
+   char *text;
+   Evas_Object o_text, o_shadow;
+};
+
+static double texts_loop = 60;
+static TextBlock texts[] =
+{
+     { 10.0, 12.0, 14.0, 16.0, "Why did they build the pyramids?"},
+     { 14.0, 16.0, 18.0, 20.0, "What is the meaning of Stone Henge?"},
+     { 18.0, 20.0, 22.0, 24.0, "What are the 7 wonders of the world?"},
+     { 22.0, 24.0, 26.0, 28.0, "What is the 8th wonder?"},
+     { 26.0, 28.0, 34.0, 36.0, "It is ..."},
+     { 40.0, 44.0, 48.0, 50.0, "Evas"}
+};
+
 /* functions */
 double
 get_time(void)
@@ -211,7 +231,7 @@ setup_view(Evas_Render_Method method)
    XSetWindowAttributes att;
    Evas_Object o;
    Evas e;
-   int w, h;
+   int w, h, i;
    double x, y;
 
    e = evas_new_all(display, win_base, 128, 0, 1024 - 128, 768,
@@ -226,6 +246,8 @@ setup_view(Evas_Render_Method method)
 		ButtonReleaseMask | PointerMotionMask | ExposureMask |
 		EnterWindowMask | LeaveWindowMask);
    XMapWindow(display, win_view);
+   
+   for (i = 0; i < (sizeof(texts) / sizeof(TextBlock)); i++) texts[i].o_text = NULL;
    if (evas_view) evas_free(evas_view);
    evas_view = e;
    
@@ -308,6 +330,60 @@ setup_view(Evas_Render_Method method)
 }
 
 void
+text(double val)
+{
+   int i;
+   
+   while (val > texts_loop) val -= texts_loop;
+   for (i = 0; i < (sizeof(texts) / sizeof(TextBlock)); i++)
+     {
+	if (!texts[i].o_text)
+	  {
+	     texts[i].o_text = evas_add_text(evas_view, "notepad", 32, texts[i].text);
+	     texts[i].o_shadow = evas_add_text(evas_view, "notepad", 32, texts[i].text);
+	     evas_set_color(evas_view, texts[i].o_text, 255, 255, 255, 255);
+	     evas_set_layer(evas_view, texts[i].o_text, 101);
+	     evas_set_color(evas_view, texts[i].o_shadow, 0, 0, 0, 128);
+	     evas_set_layer(evas_view, texts[i].o_shadow, 100);
+	  }
+	if ((val >= texts[i].time1) && (val <= texts[i].time4))
+	  {
+	     double tw, th, dx, dy;
+	     double alpha, a1;
+	     
+	     alpha = 255;
+	     if (val <= texts[i].time2)
+		alpha = ((val - texts[i].time1) / 
+			 (texts[i].time2 - texts[i].time1));
+	     else if (val <= texts[i].time3)
+		alpha = 1;
+	     else
+		alpha = 1.0 - ((val - texts[i].time3) / 
+			       (texts[i].time4 - texts[i].time3));
+	     a1 = 1 - alpha;
+	     dx = (a1 * a1 * a1 * a1) * 500 * sin(val * 2.3);
+	     dy = (a1 * a1 * a1 * a1) * 600 * cos(val * 3.7);
+	     evas_get_geometry(evas_view, texts[i].o_text, NULL, NULL, &tw, &th);
+	     evas_move(evas_view, texts[i].o_text, 
+		       ((1024 - 128 - tw) / 2) + dx,
+		       ((768 - th) / 2) + dy);
+	     evas_move(evas_view, texts[i].o_shadow, 
+		       ((1024 - 128 - tw) / 2) + 4 + dx,
+		       ((768 - th) / 2) + 4 + dy);
+	     evas_set_color(evas_view, texts[i].o_text, 255, 255, 255, 255 * alpha);
+	     evas_set_color(evas_view, texts[i].o_shadow, 0, 0, 0, 255 * alpha / 2);
+	     evas_show(evas_view, texts[i].o_text);
+	     evas_show(evas_view, texts[i].o_shadow);
+	  }
+	else
+	  {
+	     evas_hide(evas_view, texts[i].o_text);
+	     evas_hide(evas_view, texts[i].o_shadow);
+	  }
+     }
+}
+
+void
 animate(double val)
 {
    double x, y, z, r;
@@ -350,7 +426,7 @@ animate(double val)
 	evas_hide(evas_view, o_logo);
 	evas_hide(evas_view, o_logo_shadow);
 	evas_set_color(evas_view, o_logo_impress, 255, 255, 255,
-		       (255 * (val - 30)) / 10);
+		       (255 * (val - 30)) / 20);
      }
    else
      {
@@ -490,6 +566,8 @@ animate(double val)
    evas_show(evas_view, o_shadow2);
    evas_show(evas_view, o_bubble3);
    evas_show(evas_view, o_shadow3);
+   
+   text(val);
 }
 
 void
