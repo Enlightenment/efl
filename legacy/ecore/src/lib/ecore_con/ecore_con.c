@@ -735,7 +735,7 @@ svr_try_connect_ssl(Ecore_Con_Server *svr)
    int res, ssl_err, flag = 0;
    
    res = SSL_connect(svr->ssl);
-   if ((res = SSL_connect(svr->ssl)) == 1) return 1;
+   if (res == 1) return 1;
    ssl_err = SSL_get_error(svr->ssl, res);
    
    if (ssl_err == SSL_ERROR_NONE) return 1;
