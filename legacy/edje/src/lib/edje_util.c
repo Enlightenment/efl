@@ -1165,6 +1165,7 @@ _edje_fetch(Evas_Object *obj)
 int
 _edje_glob_match(char *str, char *glob)
 {
+   if (!strcmp(glob, "*")) return 1;
    if (!fnmatch(glob, str, 0)) return 1;
    return 0;
 }
