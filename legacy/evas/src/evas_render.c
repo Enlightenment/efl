@@ -470,9 +470,13 @@ evas_render_updates(Evas e)
 				     (oo->current.fill.y != oo->previous.fill.y) ||
 				     (oo->current.fill.w != oo->previous.fill.w) ||
 				     (oo->current.fill.h != oo->previous.fill.h))
-				   fill_change = 1;
+				   {
+				      if (!((oo->current.color.a == oo->previous.color.a) &&
+					    (oo->current.color.a == 0)))
+					fill_change = 1;
+				   }
 				 oo->current.new_data = 0;
-				 oo->previous = oo->current;
+				 /*oo->previous = oo->current;*/
 			      }
 			    break;
 			 case OBJECT_TEXT:
@@ -620,6 +624,12 @@ evas_render_updates(Evas e)
 			 img_tile_ch = 0;
 		    }
 		    
+		  if (o->type == OBJECT_IMAGE)
+		    {
+		       Evas_Object_Image oo;
+		       oo = o;		       
+		       oo->previous = oo->current;
+		    }
 		  /* special case for rectangle since its all one color */
 		  if (((o->type == OBJECT_RECTANGLE) || (!img_tile_ch)) &&
 		      (!prop_change) &&
