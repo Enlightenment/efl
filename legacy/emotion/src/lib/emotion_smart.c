@@ -848,6 +848,7 @@ _smart_lower(Evas_Object * obj)
    Smart_Data *sd;
    
    sd = evas_object_smart_data_get(obj);
+   if (!sd) return;
    evas_object_lower(sd->obj);
 }
                                                              
