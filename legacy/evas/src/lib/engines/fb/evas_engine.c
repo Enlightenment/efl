@@ -433,10 +433,10 @@ evas_engine_fb_context_color_get(void *data, void *context, int *r, int *g, int 
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   *r = (int)(R_VAL(((RGBA_Draw_Context *)context)->col.col));
-   *g = (int)(G_VAL(((RGBA_Draw_Context *)context)->col.col));
-   *b = (int)(B_VAL(((RGBA_Draw_Context *)context)->col.col));
-   *a = (int)(A_VAL(((RGBA_Draw_Context *)context)->col.col));
+   *r = (int)(R_VAL(&((RGBA_Draw_Context *)context)->col.col));
+   *g = (int)(G_VAL(&((RGBA_Draw_Context *)context)->col.col));
+   *b = (int)(B_VAL(&((RGBA_Draw_Context *)context)->col.col));
+   *a = (int)(A_VAL(&((RGBA_Draw_Context *)context)->col.col));
    return 1;
 }
 
@@ -464,10 +464,10 @@ evas_engine_fb_context_multiplier_get(void *data, void *context, int *r, int *g,
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   *r = (int)(R_VAL(((RGBA_Draw_Context *)context)->mul.col));
-   *g = (int)(G_VAL(((RGBA_Draw_Context *)context)->mul.col));
-   *b = (int)(B_VAL(((RGBA_Draw_Context *)context)->mul.col));
-   *a = (int)(A_VAL(((RGBA_Draw_Context *)context)->mul.col));
+   *r = (int)(R_VAL(&((RGBA_Draw_Context *)context)->mul.col));
+   *g = (int)(G_VAL(&((RGBA_Draw_Context *)context)->mul.col));
+   *b = (int)(B_VAL(&((RGBA_Draw_Context *)context)->mul.col));
+   *a = (int)(A_VAL(&((RGBA_Draw_Context *)context)->mul.col));
    return ((RGBA_Draw_Context *)context)->mul.use;
 }
 

@@ -418,11 +418,11 @@ evas_engine_directfb_context_clip_get(void *data, void *context, int *x, int *y,
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   *x = ((RGBA_Draw_Context *) data)->clip.x;
-   *y = ((RGBA_Draw_Context *) data)->clip.y;
-   *w = ((RGBA_Draw_Context *) data)->clip.w;
-   *h = ((RGBA_Draw_Context *) data)->clip.h;
-   return ((RGBA_Draw_Context *) data)->clip.use;
+   *x = ((RGBA_Draw_Context *) context)->clip.x;
+   *y = ((RGBA_Draw_Context *) context)->clip.y;
+   *w = ((RGBA_Draw_Context *) context)->clip.w;
+   *h = ((RGBA_Draw_Context *) contect)->clip.h;
+   return ((RGBA_Draw_Context *) context)->clip.use;
 }
 
 void
@@ -440,17 +440,13 @@ int
 evas_engine_directfb_context_color_get(void *data, void *context, int *r,
 				       int *g, int *b, int *a)
 {
+   Render_Engine      *re;
 
-   DATA32              p;
-   DATA8              *pp;
-   RGBA_Draw_Context  *dc = (RGBA_Draw_Context *) context;
-
-   p = dc->col.col;
-   pp = (DATA8 *) & p;
-   *r = R_VAL(pp);
-   *g = G_VAL(pp);
-   *b = B_VAL(pp);
-   *a = A_VAL(pp);
+   re = (Render_Engine *) data;
+   *r = (int)(R_VAL(&((RGBA_Draw_Context *)context)->col.col));
+   *g = (int)(G_VAL(&((RGBA_Draw_Context *)context)->col.col));
+   *b = (int)(B_VAL(&((RGBA_Draw_Context *)context)->col.col));
+   *a = (int)(A_VAL(&((RGBA_Draw_Context *)context)->col.col));
 }
 
 void
@@ -476,17 +472,13 @@ int
 evas_engine_directfb_context_multiplier_get(void *data, void *context, int *r,
 					    int *g, int *b, int *a)
 {
-   DATA32              p;
-   DATA8              *pp;
-   RGBA_Draw_Context  *dc = (RGBA_Draw_Context *) context;
+   Render_Engine      *re;
 
-   p = dc->mul.col;
-   pp = (DATA8 *) & p;
-   *r = R_VAL(pp);
-   *g = G_VAL(pp);
-   *b = B_VAL(pp);
-   *a = A_VAL(pp);
-
+   re = (Render_Engine *) data;
+   *r = (int)(R_VAL(&((RGBA_Draw_Context *)context)->mul.col));
+   *g = (int)(G_VAL(&((RGBA_Draw_Context *)context)->mul.col));
+   *b = (int)(B_VAL(&((RGBA_Draw_Context *)context)->mul.col));
+   *a = (int)(A_VAL(&((RGBA_Draw_Context *)context)->mul.col));
    return dc->mul.use;
 }
 
