@@ -115,8 +115,7 @@ evas_common_font_utf8_get_next(unsigned char *buf, int *iindex)
    if ((d & 0xe0) == 0xc0) 
      { 
 	/* 2 byte */
-	d2 = buf[index++];
-	if ((d2 & 0xc0) != 0x80)
+	if (((d2 = buf[index++]) & 0xc0) != 0x80)
 	  return 0;
 	r = d & 0x1f; /* copy lower 5 */
 	r <<= 6;
@@ -125,12 +124,8 @@ evas_common_font_utf8_get_next(unsigned char *buf, int *iindex)
    else if ((d & 0xf0) == 0xe0) 
      { 
 	/* 3 byte */
-	d2 = buf[index++];
-	d3 = buf[index++];
-	if ((d2 & 0xc0) != 0x80 ||
-	    (d3 & 0xc0) != 0x80)
-	  return 0;
-	r = d & 0x0f; /* copy lower 4 */
+	if (((d2 = buf[index++]) & 0xc0) != 0x80 ||
+	   ((d3 = buf[index++]) & 0xc0) != 0x80)r = d & 0x0f; /* copy lower 4 */
 	r <<= 6;
 	r |= (d2 & 0x3f);
 	r <<= 6;
@@ -139,12 +134,9 @@ evas_common_font_utf8_get_next(unsigned char *buf, int *iindex)
    else
      { 
 	/* 4 byte */
-	d2 = buf[index++];
-	d3 = buf[index++];
-	d4 = buf[index++];
-	if ((d2 & 0xc0) != 0x80 ||
-	    (d3 & 0xc0) != 0x80 ||
-	    (d4 & 0xc0) != 0x80)
+	if (((d2 = buf[index++]) & 0xc0) != 0x80 ||
+	    ((d3 = buf[index++]) & 0xc0) != 0x80 ||
+	    ((d4 = buf[index++]) & 0xc0) != 0x80)
 	  return 0;
 	r = d & 0x0f; /* copy lower 4 */
 	r <<= 6;

@@ -386,8 +386,8 @@ evas_engine_gl_x11_output_flush(void *data)
 #else
    glXSwapBuffers(re->win->disp, re->win->win);   
 #endif   
-   glFlush();
-   glXWaitGL();
+//   glFlush();
+//   glXWaitGL();
 //   XSync(re->win->disp, False);
 //   printf("SYNC! %i\n", fr++);
 }
