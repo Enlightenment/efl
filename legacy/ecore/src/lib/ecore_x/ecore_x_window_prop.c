@@ -428,18 +428,15 @@ ecore_x_window_prop_input_mode_set(Ecore_X_Window win, Ecore_X_Window_Input_Mode
 void
 ecore_x_window_prop_borderless_set(Ecore_X_Window win, int borderless)
 {
-   if (!borderless)
-     XDeleteProperty(_ecore_x_disp, win, _ecore_x_atom_motif_wm_hints);
-   else
-     {
-	const unsigned int data[5] =
-	  { 0x3, 0x0, 0x0, 0x2ada27b0, 0x2aabd6b0};
-	
-	ecore_x_window_prop_property_set(win, 
+   unsigned int data[5] = {0};
+
+   data[0] = 2; /* just set the decorations hint! */
+   data[2] = !borderless;
+   
+   ecore_x_window_prop_property_set(win, 
 					 _ecore_x_atom_motif_wm_hints,
 					 _ecore_x_atom_motif_wm_hints,
 					 32, (void *)data, 5);
-     }
 }
 
 /**
