@@ -17,6 +17,7 @@ lib_LTLIBRARIES      = libembryo.la
 include_HEADERS      = Embryo.h
 libembryo_la_SOURCES  = \
 embryo_amx.c \
+embryo_args.c \
 embryo_float.c \
 embryo_main.c \
 embryo_rand.c \

@@ -32,6 +32,13 @@ enum Float_Angle_Mode
    RADIAN, DEGREES, GRADES
 };
 
+/* varags - get numebr of args to a function */
+native numargs();
+/* varags - get arg no "arg" */
+native getarg(arg, index=0);
+/* varags - set arg no "arg" */
+native setarg(arg, index=0, value);
+
 /* Convert a string into a floating point value */
 native Float:atof(const string[]);
 /* Return the fractional part of a float */

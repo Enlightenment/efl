@@ -97,9 +97,41 @@ main()
    ret = testfn(12345, "A Test String", 7);
    printf("Done. Return value of testfn() was %i\n", ret);
    
+   printf("Test varargs...\n");
+   vargs(1, 2, "hello", "there", 8, 9);
+   
    printf("\n\n");
    
    return 7;
+}
+
+vargs(a, b, ...)
+{
+   printf("ARGS...\n");
+   printf("  a = %i\n", a);
+   printf("  b = %i\n", b);
+   for (new i = 2; i < numargs(); i++)
+     {
+	new val;
+	new str[100];
+	
+	printf("  GET ARG... %i\n", i);
+	if (i < 4)
+	  {
+	     for (new j = 0; j < (sizeof(str) - 1); j++)
+	       {
+		  str[j] = getarg(i, j);
+		  if (str[j] == 0) break;
+	       }
+	     printf("    ARG: %s [max %i]\n", str, sizeof(str));
+	  }
+	else
+	  {
+	     val = getarg(i);
+	     printf("    ARG: %i\n", val);
+	  }
+     }
+   printf("ARGS DONE.\n");
 }
 
 recurse(val)

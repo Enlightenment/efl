@@ -196,6 +196,7 @@ _embryo_program_init(Embryo_Program *ep, void *code)
      }
 #endif  
    /* init native api for handling floating point - default in embryo */
+   _embryo_args_init(ep);
    _embryo_fp_init(ep);
    _embryo_rand_init(ep);
    _embryo_str_init(ep);
