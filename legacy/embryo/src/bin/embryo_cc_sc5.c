@@ -100,7 +100,7 @@ error(int number, ...)
      {
 	FILE *fp;
 	
-	fp = fopen(errfname, "at");
+	fp = fopen(errfname, "a+");
 	if (fp != NULL)
 	  {
 	     if (errstart >= 0 && errstart != fline)

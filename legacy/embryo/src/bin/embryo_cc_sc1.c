@@ -173,7 +173,7 @@ sc_error(int number, char *message, char *filename, int firstline,
 void               *
 sc_opensrc(char *filename)
 {
-   return fopen(filename, "rt");
+   return fopen(filename, "rb");
 }
 
 void
@@ -215,7 +215,7 @@ sc_eofsrc(void *handle)
 void               *
 sc_openasm(char *filename)
 {
-   return fopen(filename, "w+t");
+   return fopen(filename, "w+");
 }
 
 void
