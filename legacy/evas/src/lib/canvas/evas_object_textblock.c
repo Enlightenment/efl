@@ -1333,6 +1333,8 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 				  layout.line.inset)) * layout.align;
 		  if ((layout.line.x + hadvance) > fw)
 		    fw = layout.line.x + hadvance;
+		  else if ((layout.line.x + tw) > fw)
+		    fw = layout.line.x + tw;
 		  layout.line.x += hadvance;
 		  lnode->layout.line.advance = hadvance;
 		  for (ll = l->next; ll; ll = ll->next)
@@ -1365,6 +1367,10 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 			 }
 		       lnode->line_end = 1;
 		       fh = layout.line.y + layout.line.mascent + layout.line.mdescent;
+		       if ((lnode->layout.line.x + lnode->layout.line.advance) > fw)
+			 fw = lnode->layout.line.x + lnode->layout.line.advance;
+		       else if ((lnode->layout.line.x + lnode->w) > fw)
+			 fw = lnode->layout.line.x + lnode->w;
 		    }
 	       }
 	     /* text doesnt fit */
@@ -1463,6 +1469,10 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 			      {
 				 /* FIXME: this node would overflow to the next textblock */
 			      }
+			    if ((lnode->layout.line.x + lnode->layout.line.advance) > fw)
+			      fw = lnode->layout.line.x + lnode->layout.line.advance;
+			    else if ((lnode->layout.line.x + lnode->w) > fw)
+			      fw = lnode->layout.line.x + lnode->w;
 			    last_line_underline = 0;
 			    last_line_double_underline = 0;
 			    line++;
@@ -1517,6 +1527,10 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 			 {
 			    /* FIXME: this node would overflow to the next textblock */
 			 }
+		       if ((lnode->layout.line.x + lnode->layout.line.advance) > fw)
+			 fw = lnode->layout.line.x + lnode->layout.line.advance;
+		       else if ((lnode->layout.line.x + lnode->w) > fw)
+			 fw = lnode->layout.line.x + lnode->w;
 		       last_line_underline = 0;
 		       last_line_double_underline = 0;
 		       line++;
