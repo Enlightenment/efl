@@ -21,12 +21,13 @@ AM_PROG_LIBTOOL
 AC_CHECK_HEADER(zlib.h,, AC_MSG_ERROR("Cannot find zlib.h. Make sure your CFLAGS environment variable contains include lines for the location of this file"))
 AC_CHECK_HEADER(jpeglib.h,, AC_MSG_ERROR("Cannot find jpeglib.h. Make sure your CFLAGS environment variable contains include lines for the location of this file"))
 
+AC_CHECK_HEADERS(netinet/in.h)
+
 dnl These are needed for fmemopen/open_memstream
 AC_DEFINE(_GNU_SOURCE, , [Enable GNU extensions])
 AC_DEFINE(__USE_GNU, , [Enable GNU extensions])
 
-AC_CHECK_FUNCS(fmemopen)
-AC_CHECK_FUNCS(open_memstream)
+AC_CHECK_FUNCS(fmemopen open_memstream realpath)
 
 if test "x${exec_prefix}" = "xNONE"; then
   if test "x${prefix}" = "xNONE"; then

@@ -310,11 +310,17 @@ eet_open(char *file, Eet_File_Mode mode)
    char buf[PATH_MAX];
 
    if (!file) return NULL;
+
+#ifdef HAVE_REALPATH
    /* in case this is a symlink... find out where it REALLY points */
    if (!realpath(file, buf)) 
      {
 	if (mode == EET_FILE_MODE_READ) return NULL;
      }
+#else
+   strncpy(buf, file, sizeof(buf));
+   buf[sizeof(buf) - 1] = 0;
+#endif
 
    /* find the current file handle in cache*/
    ef = NULL;

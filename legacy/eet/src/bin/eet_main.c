@@ -161,13 +161,18 @@ void pak_file(Eet_File *ef, char *file, char **noz, int noz_num);
 void pak_dir(Eet_File *ef, char *dir, char **noz, int noz_num);
 void pack(char *pak_file, char **files, int count, char **noz, int noz_num);
 
-static mode_t default_mode =
-S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
-   
 int
 eet_mkdir(char *dir)
 {
+#ifdef __MINGW32__
+   if (mkdir(dir) < 0) return 0;
+#else
+   mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP
+                         | S_IROTH | S_IXOTH;
+
    if (mkdir(dir, default_mode) < 0) return 0;
+#endif
+
    return 1;
 }
 
