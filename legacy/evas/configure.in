@@ -737,6 +737,19 @@ AC_ARG_ENABLE(convert-32-rgb-rot-90,
   ], AC_MSG_RESULT(no)
 )
 
+AC_MSG_CHECKING(whether to build yuv converter code)
+
+AC_ARG_ENABLE(convert-yuv, 
+  [  --enable-convert-yuv enable yuv converter code], [
+      if [ test "$enableval" = "yes" ]; then
+      AC_MSG_RESULT(yes)
+      AC_DEFINE(BUILD_CONVERT_YUV)
+      else
+        AC_MSG_RESULT(no)
+      fi
+  ], AC_MSG_RESULT(no)
+)
+
 
 
 AC_SUBST(freetype_cflags)

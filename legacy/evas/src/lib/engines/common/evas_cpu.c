@@ -15,7 +15,12 @@ evas_common_cpu_catch_ill(int sig)
    longjmp(detect_buf, 1);
 }
 
-#ifdef __i386__
+#if ( \
+	 defined __i386__ || \
+	 defined __386__ || \
+	 defined __X86__ || \
+	 defined _M_IX86 || \
+	 defined i386)
 void
 evas_common_cpu_mmx_test(void)
 {
@@ -93,7 +98,12 @@ evas_common_cpu_init(void)
 
    if (called) return;
    called = 1;
-#ifdef __i386__
+#if ( \
+	 defined __i386__ || \
+	 defined __386__ || \
+	 defined __X86__ || \
+	 defined _M_IX86 || \
+	 defined i386)
 #ifdef BUILD_MMX
    cpu_feature_mask |= CPU_FEATURE_MMX * 
      evas_common_cpu_feature_test(evas_common_cpu_mmx_test);

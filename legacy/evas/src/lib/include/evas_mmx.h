@@ -91,7 +91,7 @@ typedef	union {
 	char			b[8];	/* 8 Byte (8-bit) values */
 	unsigned char		ub[8];	/* 8 Unsigned Byte */
 	float			s[2];	/* Single-precision (32-bit) value */
-} mmx_t;
+}  __attribute__ ((aligned (8))) mmx_t;
 
 /*	Helper functions for the instruction macros that follow...
 	(note that memory-to-register, m2r, instructions are nearly
@@ -128,7 +128,6 @@ typedef	union {
 			      : "=X" (memd) \
 			      : "X" (mems))
 
-
 /*	1x64 MOVe Quadword
 	(this is both a load and a store...
 	 in fact, it is the only way to store)
@@ -141,6 +140,7 @@ typedef	union {
 			      "movq %%mm0, %0" \
 			      : "=X" (vard) \
 			      : "X" (vars))
+#define	movntq_r2m(reg, var)   mmx_r2m(movntq, reg, var)
 
 
 /*	1x32 MOVe Doubleword

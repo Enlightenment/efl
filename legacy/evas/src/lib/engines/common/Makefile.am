@@ -31,6 +31,7 @@ evas_convert_rgb_16.c \
 evas_convert_rgb_24.c \
 evas_convert_rgb_32.c \
 evas_convert_rgb_8.c \
+evas_convert_yuv.c \
 evas_cpu.c \
 evas_draw_main.c \
 evas_font_draw.c \

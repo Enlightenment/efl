@@ -33,4 +33,5 @@ rm config.cache
 --enable-convert-32-rgb-rot-0 \
 --enable-convert-32-rgb-rot-90 \
 --enable-convert-32-rgb-rot-270 \
+--enable-convert-yuv \
 $@

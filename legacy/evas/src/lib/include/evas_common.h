@@ -7,7 +7,13 @@
 
 #include "evas_options.h"
 
-#ifndef __i386__
+#if ( \
+         defined __i386__ || \
+         defined __386__ || \
+         defined __X86__ || \
+         defined _M_IX86 || \
+         defined i386)
+#else
 # undef BUILD_MMX
 # undef BUILD_SSE
 # ifndef BUILD_C
@@ -705,6 +711,8 @@ void evas_common_convert_rgba_to_4bpp_gry_1_dith               (DATA32 *src, DAT
 
 void evas_common_convert_rgba_to_1bpp_gry_1_dith               (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
 
+void evas_common_convert_yuv_420p_601_rgba                     (DATA8 **src, DATA8 *dst, int w, int h);
+       
 /****/
 void evas_common_scale_init                            (void);
 

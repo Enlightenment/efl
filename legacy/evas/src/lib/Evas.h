@@ -92,6 +92,7 @@ struct _Evas_Smart_Class /** a smart object class */
 #endif
 #endif
 
+typedef struct _Evas_Pixel_Import_Source Evas_Pixel_Import_Source; /**< A source description of pixels for importing pixels */
 typedef struct _Evas_Engine_Info      Evas_Engine_Info; /**< A generic Evas Engine information structure */
 typedef struct _Evas_Event_Mouse_Down Evas_Event_Mouse_Down; /**< Event structure for #EVAS_CALLBACK_MOUSE_DOWN event callbacks */
 typedef struct _Evas_Event_Mouse_Up   Evas_Event_Mouse_Up; /**< Event structure for #EVAS_CALLBACK_MOUSE_UP event callbacks */
@@ -113,6 +114,17 @@ typedef struct _Evas_Event_Key_Up     Evas_Event_Key_Up; /**< Event structure fo
 #define EVAS_ALLOC_ERROR_NONE                      0 /**< No allocation error */
 #define EVAS_ALLOC_ERROR_FATAL                     1 /**< Allocation failed despite attempts to free up memory */
 #define EVAS_ALLOC_ERROR_RECOVERED                 2 /**< Allocation succeeded, but extra memory had to be found by freeing up speculative resources */
+
+struct _Evas_Pixel_Import_Source
+{
+   int format; /**< pixel format type ie ARGB32, YUV420P_601 etc. */
+   int w, h; /**< width and height of source in pixels */
+   void **rows; /**< an array of pointers (size depends on format) pointing to left edge of each scanline */
+};
+
+#define EVAS_PIXEL_FORMAT_NONE                     0 /**< No pixel format */
+#define EVAS_PIXEL_FORMAT_ARGB32                   1 /**< ARGB 32bit pixel format with A in the high byte per 32bit pixel word */
+#define EVAS_PIXEL_FORMAT_YUV420P_601              2 /**< YUV 420 Planar format with CCIR 601 color encoding wuth contiguous planes in the order Y, U and V */
 
 struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
 {
@@ -334,6 +346,10 @@ extern "C" {
    void              evas_object_image_smooth_scale_set(Evas_Object *obj, Evas_Bool smooth_scale);
    Evas_Bool         evas_object_image_smooth_scale_get(Evas_Object *obj);
    void              evas_object_image_reload          (Evas_Object *obj);
+   Evas_Bool         evas_object_image_pixels_import          (Evas_Object *obj, Evas_Pixel_Import_Source *pixels);
+   void              evas_object_image_pixels_get_callback_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *o), void *data);
+   void              evas_object_image_pixels_dirty_set       (Evas_Object *obj, Evas_Bool dirty);
+   Evas_Bool         evas_object_image_pixels_dirty_get       (Evas_Object *obj); 
        
    void              evas_image_cache_flush            (Evas *e);
    void              evas_image_cache_reload           (Evas *e);

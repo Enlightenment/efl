@@ -31,10 +31,16 @@ struct _Evas_Object_Image
    } cur, prev;
    
    char              changed : 1;
+   char              dirty_pixels : 1;
    
    int               load_error;
    Evas_List        *pixel_updates;
    
+   struct {
+      void            (*get_pixels) (void *data, Evas_Object *o);
+      void             *get_pixels_data;
+   } func;
+      
    void             *engine_data;
 };
 
@@ -654,8 +660,166 @@ evas_object_image_reload(Evas_Object *obj)
    o->changed = 1;
    evas_object_change(obj);
 }
-    
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
+Evas_Bool
+evas_object_image_pixels_import(Evas_Object *obj, Evas_Pixel_Import_Source *pixels)
+{
+   Evas_Object_Image *o;
+   
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return 0;
+   MAGIC_CHECK_END();
+
+   if ((pixels->w != o->cur.image.w) || (pixels->h != o->cur.image.h)) return 0;
+   switch (pixels->format)
+     {
+#if 0	
+      case EVAS_PIXEL_FORMAT_ARGB32:
+	  {
+	     if (o->engine_data)
+	       {
+		  DATA32 *image_pixels = NULL;
+	     
+		  o->engine_data = 
+		    obj->layer->evas->engine.func->image_data_get(obj->layer->evas->engine.data.output,
+								  o->engine_data,
+								  1,
+								  &image_pixels);
+/* FIXME: need to actualyl support this */		  
+/*		  memcpy(image_pixels, pixels->rows, o->cur.image.w * o->cur.image.h * 4);*/
+		  if (o->engine_data)
+		    o->engine_data = 
+		    obj->layer->evas->engine.func->image_data_put(obj->layer->evas->engine.data.output,
+								  o->engine_data, 
+								  image_pixels);
+		  if (o->engine_data)
+		    o->engine_data = 
+		    obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
+								   o->engine_data,
+								   o->cur.has_alpha);
+		  o->changed = 1;
+		  evas_object_change(obj);   
+	       }
+	  }
+	break;
+#endif	
+#ifdef BUILD_CONVERT_YUV	
+      case EVAS_PIXEL_FORMAT_YUV420P_601:
+	  {
+	     if (o->engine_data)
+	       {
+		  DATA32 *image_pixels = NULL;
+	     
+		  o->engine_data = 
+		    obj->layer->evas->engine.func->image_data_get(obj->layer->evas->engine.data.output,
+								  o->engine_data,
+								  1,
+								  &image_pixels);
+		  if (image_pixels)
+		    evas_common_convert_yuv_420p_601_rgba(pixels->rows,
+							  image_pixels,
+							  o->cur.image.w,
+							  o->cur.image.h);
+		  if (o->engine_data)
+		    o->engine_data = 
+		    obj->layer->evas->engine.func->image_data_put(obj->layer->evas->engine.data.output,
+								  o->engine_data, 
+								  image_pixels);
+		  if (o->engine_data)
+		    o->engine_data = 
+		    obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
+								   o->engine_data,
+								   o->cur.has_alpha);
+		  o->changed = 1;
+		  evas_object_change(obj);   
+	       }
+	  }
+	break;
+#endif	
+      default:
+	return 0;
+	break;
+     }
+   return 1;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
+void
+evas_object_image_pixels_get_callback_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *o), void *data)
+{
+   Evas_Object_Image *o;
+   
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return;
+   MAGIC_CHECK_END();
+   o->func.get_pixels = func;
+   o->func.get_pixels_data = data;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
+void
+evas_object_image_pixels_dirty_set(Evas_Object *obj, Evas_Bool dirty)
+{
+   Evas_Object_Image *o;
+   
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return;
+   MAGIC_CHECK_END();
+   if (dirty) o->dirty_pixels = 1;
+   else o->dirty_pixels = 0;
+   o->changed = 1;
+   evas_object_change(obj);   
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
+Evas_Bool
+evas_object_image_pixels_dirty_get(Evas_Object *obj)
+{
+   Evas_Object_Image *o;
+   
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return 0;
+   MAGIC_CHECK_END();
+   if (o->dirty_pixels) return 1;
+   return 0;
+}
 
 /**
  * To be documented.
@@ -964,7 +1128,13 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
      {
 	Evas_Coord idw, idh, idx, idy;
 	int ix, iy, iw, ih;
-		  
+
+	if (o->dirty_pixels)
+	  {
+	     if (o->func.get_pixels)
+	       o->func.get_pixels(o->func.get_pixels_data, obj);
+	     o->dirty_pixels = 0;
+	  }
 	idx = evas_object_image_figure_x_fill(obj, o->cur.fill.x, o->cur.fill.w, &idw);
 	idy = evas_object_image_figure_y_fill(obj, o->cur.fill.y, o->cur.fill.h, &idh);
 	if (idw < 1.0) idw = 1.0;
@@ -1182,6 +1352,11 @@ evas_object_image_render_pre(Evas_Object *obj)
 	    (o->cur.border.r != o->prev.border.r) ||
 	    (o->cur.border.t != o->prev.border.t) ||
 	    (o->cur.border.b != o->prev.border.b))
+	  {
+	     updates = evas_object_render_pre_prev_cur_add(updates, obj);
+	     goto done;
+	  }
+	if (o->dirty_pixels)
 	  {
 	     updates = evas_object_render_pre_prev_cur_add(updates, obj);
 	     goto done;
