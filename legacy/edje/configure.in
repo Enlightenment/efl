@@ -178,18 +178,6 @@ AC_ARG_WITH(evas,
 AC_PATH_GENERIC(evas, , ,
     AC_MSG_ERROR(Cannot find evas: Is evas-config in path?))
 
-AC_CHECK_HEADERS(Evas_Engine_Software_X11.h, [], [], [
-   #include <Evas.h>
-   ])
-
-AC_CHECK_HEADERS(Evas_Engine_GL_X11.h, [], [], [
-   #include <Evas.h>
-   ])
-
-AC_CHECK_HEADERS(Evas_Engine_FB.h, [], [], [
-   #include <Evas.h>
-   ])
-
 AC_ARG_WITH(ecore,
         [  --with-ecore=DIR          use ecore in <DIR>],
         [CFLAGS="$CFLAGS -I$withval/include"
