@@ -17,6 +17,9 @@ static int               do_quit = 0;
 static Ecore_Fd_Handler *fd_handlers = NULL;
 static int               fd_handlers_delete_me = 0;
 
+static double            t1 = 0.0;
+static double            t2 = 0.0;
+
 /**
  * Run 1 iteration of the main loop and process everything on the queue.
  * 
@@ -446,6 +449,12 @@ _ecore_main_loop_iterate_internal(int once_only)
 	return;
      }
    
+   if (_ecore_fps_debug)
+     {
+	t2 = ecore_time_get();
+	if ((t1 > 0.0) && (t2 > 0.0))
+	  _ecore_fps_debug_runtime_add(t2 - t1);
+     }
    start_loop:
    /* init flags */
    have_event = have_signal = 0;
@@ -514,6 +523,13 @@ _ecore_main_loop_iterate_internal(int once_only)
 	       }
 	  }
      }
+   if (_ecore_fps_debug)
+     {
+	t1 = ecore_time_get();
+     }
+   /* we came out of our "wait state" so idle has exited */
+   if (!once_only)
+     _ecore_idle_exiter_call();
    /* call the fd handler per fd that became alive... */
    /* this should read or write any data to the monitored fd and then */
    /* post events onto the ecore event pipe if necessary */

@@ -12,6 +12,7 @@ ecore_app.c \
 ecore_events.c \
 ecore_exe.c \
 ecore_idle_enterer.c \
+ecore_idle_exiter.c \
 ecore_idler.c \
 ecore_list.c \
 ecore_main.c \

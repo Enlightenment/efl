@@ -7,12 +7,17 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <signal.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+
 
 #define ECORE_MAGIC_NONE            0x1234fedc
 #define ECORE_MAGIC_EXE             0xf7e812f5
 #define ECORE_MAGIC_TIMER           0xf7d713f4
 #define ECORE_MAGIC_IDLER           0xf7c614f3
 #define ECORE_MAGIC_IDLE_ENTERER    0xf7b515f2
+#define ECORE_MAGIC_IDLE_EXITER     0xf7601afd
 #define ECORE_MAGIC_FD_HANDLER      0xf7a416f1
 #define ECORE_MAGIC_EVENT_HANDLER   0xf79317f0
 #define ECORE_MAGIC_EVENT_FILTER    0xf78218ff
@@ -47,6 +52,7 @@ typedef struct _Ecore_Exe           Ecore_Exe;
 typedef struct _Ecore_Timer         Ecore_Timer;
 typedef struct _Ecore_Idler         Ecore_Idler;
 typedef struct _Ecore_Idle_Enterer  Ecore_Idle_Enterer;
+typedef struct _Ecore_Idle_Exiter   Ecore_Idle_Exiter;
 typedef struct _Ecore_Fd_Handler    Ecore_Fd_Handler;
 typedef struct _Ecore_Event_Handler Ecore_Event_Handler;
 typedef struct _Ecore_Event_Filter  Ecore_Event_Filter;
@@ -82,6 +88,15 @@ struct _Ecore_Idler
 };
 
 struct _Ecore_Idle_Enterer
+{
+   Ecore_List   __list_data;
+   ECORE_MAGIC;
+   int          delete_me : 1;
+   int        (*func) (void *data);   
+   void        *data;
+};
+
+struct _Ecore_Idle_Exiter
 {
    Ecore_List   __list_data;
    ECORE_MAGIC;
@@ -138,6 +153,7 @@ struct _Ecore_Event
    void       (*func_free) (void *data, void *ev);
    void        *data;
 };
+
 #endif
 
 void          _ecore_magic_fail(void *d, Ecore_Magic m, Ecore_Magic req_m, const char *fname);
@@ -155,6 +171,10 @@ int           _ecore_idler_exist(void);
 void          _ecore_idle_enterer_shutdown(void);
 void          _ecore_idle_enterer_call(void);
 int           _ecore_idle_enterer_exist(void);
+
+void          _ecore_idle_exiter_shutdown(void);
+void          _ecore_idle_exiter_call(void);
+int           _ecore_idle_exiter_exist(void);
 
 void          _ecore_event_shutdown(void);
 int           _ecore_event_exist(void);    
@@ -190,5 +210,13 @@ void         *_ecore_list_append_relative  (void *in_list, void *in_item, void *
 void         *_ecore_list_prepend_relative (void *in_list, void *in_item, void *in_relative);
 void         *_ecore_list_remove           (void *in_list, void *in_item);
 void         *_ecore_list_find             (void *in_list, void *in_item);
+
+void          _ecore_fps_debug_init(void);
+void          _ecore_fps_debug_shutdown(void);
+void          _ecore_fps_debug_runtime_add(double t);
+
+
+
+extern int    _ecore_fps_debug;
 
 #endif

@@ -5,34 +5,6 @@
 #include "Ecore_Evas.h"
 
 static int _ecore_evas_init_count = 0;
-static int _ecore_evas_fps_debug = 0;
-static double _ecore_evas_fps_min = 0;
-static double _ecore_evas_fps_avg_min = 0;
-static int _ecore_evas_fps_avg_count = 1;
-static Ecore_Timer *_ecore_evas_fps_timer = NULL;
-
-static int
-_ecore_evas_cb_fps_debug_timer(void *data)
-{
-   static int frame_count = 0;
-   static double fps_count = 0.0;
-   static double pt = 0.0;
-   double t, fps;
-   
-   t = ecore_time_get();
-   frame_count++;
-   if (pt == 0.0)
-     {
-	pt = t;
-	return 1;
-     }
-   if (t == pt) return 1;
-   fps = 1.0 / (t - pt);
-   if (fps > (2 * _ecore_evas_fps_avg_min)) return 1;
-   printf("ECORE_EVAS_FPS_DEBUG: FPS = %3.3f\n", fps);
-   pt = t;
-   return 1;
-}
 
 /**
  * Init the Evas system.
@@ -45,23 +17,6 @@ ecore_evas_init(void)
 {
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
-   if (getenv("ECORE_EVAS_FPS_DEBUG"))
-     {
-	if (getenv("ECORE_EVAS_FPS_MIN"))
-	  _ecore_evas_fps_min = atof(getenv("ECORE_EVAS_FPS_MIN"));
-	if (getenv("ECORE_EVAS_FPS_AVERAGE_MIN"))
-	  _ecore_evas_fps_avg_min = atof(getenv("ECORE_EVAS_FPS_AVERAGE_MIN"));
-	if (getenv("ECORE_EVAS_FPS_AVERAGE_COUNT"))
-	  _ecore_evas_fps_avg_count = atof(getenv("ECORE_EVAS_FPS_AVERAGE_COUNT"));
-	_ecore_evas_fps_debug = 1;
-	printf("%3.3f: %3.3f: %i\n",
-	       _ecore_evas_fps_min,
-	       _ecore_evas_fps_avg_min,
-	       _ecore_evas_fps_avg_count);
-	_ecore_evas_fps_timer = ecore_timer_add(1.0 / (_ecore_evas_fps_avg_min * 2),
-						_ecore_evas_cb_fps_debug_timer,
-						NULL);
-     }
    return _ecore_evas_init_count;
 }
 
@@ -1484,4 +1439,77 @@ ecore_evas_sticky_get(Ecore_Evas *ee)
       return 0;
    } else
       return ee->prop.sticky ? 1:0;
+}
+
+/* fps debug calls - for debugging how much time your app actually spends */
+/* rendering graphics... :) */
+
+static _ecore_evas_fps_debug_init_count = 0;
+static int _ecore_evas_fps_debug_fd = -1;
+unsigned int *_ecore_evas_fps_rendertime_mmap = NULL;
+
+void
+_ecore_evas_fps_debug_init(void)
+{
+   char buf[4096];
+   
+   _ecore_evas_fps_debug_init_count++;
+   if (_ecore_evas_fps_debug_init_count > 1) return;
+   snprintf(buf, sizeof(buf), "/tmp/.ecore_evas_fps_debug-%i", (int)getpid());
+   _ecore_evas_fps_debug_fd = open(buf, O_CREAT | O_TRUNC | O_RDWR);
+   if (_ecore_evas_fps_debug_fd < 0)
+     {
+	unlink(buf);
+	_ecore_evas_fps_debug_fd = open(buf, O_CREAT | O_TRUNC | O_RDWR);
+     }
+   if (_ecore_evas_fps_debug_fd >= 0)
+     {
+	unsigned int zero = 0;
+	
+	write(_ecore_evas_fps_debug_fd, &zero, sizeof(unsigned int));
+	_ecore_evas_fps_rendertime_mmap = mmap(NULL, sizeof(unsigned int),
+					       PROT_READ | PROT_WRITE,
+					       MAP_SHARED,
+					       _ecore_evas_fps_debug_fd, 0);
+     }
+}
+
+void
+_ecore_evas_fps_debug_shutdown(void)
+{
+   _ecore_evas_fps_debug_init_count--;
+   if (_ecore_evas_fps_debug_init_count > 0) return;
+   if (_ecore_evas_fps_debug_fd >= 0)
+     {
+	char buf[4096];
+	
+	snprintf(buf, sizeof(buf), "/tmp/.ecore_evas_fps_debug-%i", (int)getpid());
+	unlink(buf);
+	if (_ecore_evas_fps_rendertime_mmap)
+	  {
+	     munmap(_ecore_evas_fps_rendertime_mmap, sizeof(int));
+	     _ecore_evas_fps_rendertime_mmap = NULL;
+	  }
+	close(_ecore_evas_fps_debug_fd);
+	_ecore_evas_fps_debug_fd = -1;
+     }
+}
+
+void
+_ecore_evas_fps_debug_rendertime_add(double t)
+{
+   if ((_ecore_evas_fps_debug_fd >= 0) && 
+       (_ecore_evas_fps_rendertime_mmap))
+     {
+	unsigned int tm;
+	
+	tm = (unsigned int)(t * 1000000.0);
+	/* i know its not 100% theoretically guaranteed, but i'd say a write */
+	/* of an int could be considered atomic for all practical purposes */
+	/* oh and since this is cumulative, 1 second = 1,000,000 ticks, so */
+	/* this can run for about 4294 seconds becore looping. if you are */
+	/* doing performance testing in one run for over an hour... well */
+	/* time to restart or handle a loop condition :) */
+	*(_ecore_evas_fps_rendertime_mmap) += tm;
+     }
 }

@@ -36,6 +36,7 @@ extern "C" {
    typedef void Ecore_Timer; /**< A handle for timers */
    typedef void Ecore_Idler; /**< A handle for idlers */
    typedef void Ecore_Idle_Enterer; /**< A handle for idle enterers */
+   typedef void Ecore_Idle_Exiter; /**< A handle for idle exiters */
    typedef void Ecore_Fd_Handler; /**< A handle for Fd hanlders */
    typedef void Ecore_Event_Handler; /**< A handle for an event handler */
    typedef void Ecore_Event_Filter; /**< A handle for an event filter */
@@ -117,6 +118,9 @@ extern "C" {
    
    Ecore_Idle_Enterer *ecore_idle_enterer_add(int (*func) (void *data), const void *data);
    void               *ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer);
+
+   Ecore_Idle_Exiter *ecore_idle_exiter_add(int (*func) (void *data), const void *data);
+   void              *ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter);
 
    void              ecore_main_loop_iterate(void);
    void              ecore_main_loop_begin(void);

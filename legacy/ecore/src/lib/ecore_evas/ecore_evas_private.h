@@ -1,6 +1,11 @@
 #ifndef _ECORE_EVAS_PRIVATE_H
 #define _ECORE_EVAS_PRIVATE_H
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <sys/mman.h>
+
 #include <Evas.h>
 
 #define ECORE_MAGIC_EVAS 0x76543211
@@ -162,5 +167,9 @@ int _ecore_evas_x_shutdown(void);
 #ifdef BUILD_ECORE_EVAS_FB
 int _ecore_evas_fb_shutdown(void);
 #endif
+
+void _ecore_evas_fps_debug_init(void);
+void _ecore_evas_fps_debug_shutdown(void);
+void _ecore_evas_fps_debug_rendertime_add(double t);
 
 #endif

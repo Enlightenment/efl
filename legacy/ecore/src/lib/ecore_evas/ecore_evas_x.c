@@ -10,6 +10,8 @@
 #ifdef BUILD_ECORE_X
 static int _ecore_evas_init_count = 0;
 
+static int _ecore_evas_fps_debug = 0;
+
 static Ecore_Evas *ecore_evases = NULL;
 static Ecore_Event_Handler *ecore_evas_event_handlers[16];
 static Ecore_Idle_Enterer *ecore_evas_idle_enterer = NULL;
@@ -432,7 +434,12 @@ static int
 _ecore_evas_idle_enter(void *data)
 {
    Ecore_List *l;
-   
+   double t1, t2;
+
+   if (_ecore_evas_fps_debug)
+     {
+	t1 = ecore_time_get();
+     }
    for (l = (Ecore_List *)ecore_evases; l; l = l->next)
      {
 	Ecore_Evas *ee;
@@ -527,6 +534,11 @@ _ecore_evas_idle_enter(void *data)
 	if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
      }
    ecore_x_flush();
+   if (_ecore_evas_fps_debug)
+     {
+	t2 = ecore_time_get();
+	_ecore_evas_fps_debug_rendertime_add(t2 - t1);
+     }
    return 1;
 }
 
@@ -535,6 +547,7 @@ _ecore_evas_x_init(void)
 {
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
+   if (getenv("ECORE_EVAS_FPS_DEBUG")) _ecore_evas_fps_debug = 1;
    ecore_evas_idle_enterer = ecore_idle_enterer_add(_ecore_evas_idle_enter, NULL);
    ecore_evas_event_handlers[0]  = ecore_event_handler_add(ECORE_X_EVENT_KEY_DOWN, _ecore_evas_event_key_down, NULL);
    ecore_evas_event_handlers[1]  = ecore_event_handler_add(ECORE_X_EVENT_KEY_UP, _ecore_evas_event_key_up, NULL);
@@ -552,6 +565,7 @@ _ecore_evas_x_init(void)
    ecore_evas_event_handlers[13] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_SHOW, _ecore_evas_event_window_show, NULL);
    ecore_evas_event_handlers[14] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_HIDE, _ecore_evas_event_window_hide, NULL);
    ecore_evas_event_handlers[15] = ecore_event_handler_add(ECORE_X_EVENT_MOUSE_WHEEL, _ecore_evas_event_mouse_wheel, NULL);
+   if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_init();
    return _ecore_evas_init_count;
 }
 
@@ -1040,6 +1054,7 @@ _ecore_evas_x_shutdown(void)
 	  ecore_event_handler_del(ecore_evas_event_handlers[i]);
 	ecore_idle_enterer_del(ecore_evas_idle_enterer);
 	ecore_evas_idle_enterer = NULL;
+	if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
    return _ecore_evas_init_count;

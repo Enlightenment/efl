@@ -4,6 +4,8 @@
 static const char *_ecore_magic_string_get(Ecore_Magic m);
 static int _ecore_init_count = 0;
 
+int _ecore_fps_debug = 0;
+
 /**
  * Set up connections, signal handlers, sockets etc.
  * @return 1 or greater on success, 0 otherwise
@@ -30,7 +32,11 @@ int
 ecore_init(void)
 {
    if (++_ecore_init_count == 1)
-      _ecore_signal_init();
+     {
+	if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
+	if (_ecore_fps_debug) _ecore_fps_debug_init();
+	_ecore_signal_init();
+     }
 
    return _ecore_init_count;
 }
@@ -39,8 +45,8 @@ ecore_init(void)
  * Shut down connections, signal handlers sockets etc.
  * 
  * This function shuts down all things set up in ecore_init() and cleans up all
- * event queues, handlers, filters, timers, idlers, idle enterers etc. set up
- * after ecore_init() was called.
+ * event queues, handlers, filters, timers, idlers, idle enterers/exiters
+ * etc. set up after ecore_init() was called.
  * 
  * Do not call this function from any callback that may be called from the main
  * loop, as the main loop will then fall over and not function properly.
@@ -51,8 +57,10 @@ ecore_shutdown(void)
    if (--_ecore_init_count)
       return _ecore_init_count;
 
+   if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
    _ecore_exe_shutdown();
    _ecore_idle_enterer_shutdown();
+   _ecore_idle_exiter_shutdown();
    _ecore_idler_shutdown();
    _ecore_timer_shutdown();
    _ecore_event_shutdown();
@@ -107,6 +115,9 @@ _ecore_magic_string_get(Ecore_Magic m)
       case ECORE_MAGIC_IDLE_ENTERER:
 	return "Ecore_Idle_Enterer (Idler Enterer)";
 	break;
+      case ECORE_MAGIC_IDLE_EXITER:
+	return "Ecore_Idle_Exiter (Idler Exiter)";
+	break;
       case ECORE_MAGIC_FD_HANDLER:
 	return "Ecore_Fd_Handler (Fd Handler)";
 	break;
@@ -120,4 +131,78 @@ _ecore_magic_string_get(Ecore_Magic m)
 	return "<UNKNOWN>";
      };
    return "<UNKNOWN>";
+}
+
+/* fps debug calls - for debugging how much time your app actually spends */
+/* "running" (and the inverse being time spent running)... this does not */
+/* account for other apps and multitasking... */
+
+static _ecore_fps_debug_init_count = 0;
+static int _ecore_fps_debug_fd = -1;
+unsigned int *_ecore_fps_runtime_mmap = NULL;
+
+void
+_ecore_fps_debug_init(void)
+{
+   char buf[4096];
+   
+   _ecore_fps_debug_init_count++;
+   if (_ecore_fps_debug_init_count > 1) return;
+   snprintf(buf, sizeof(buf), "/tmp/.ecore_fps_debug-%i", (int)getpid());
+   _ecore_fps_debug_fd = open(buf, O_CREAT | O_TRUNC | O_RDWR);
+   if (_ecore_fps_debug_fd < 0)
+     {
+	unlink(buf);
+	_ecore_fps_debug_fd = open(buf, O_CREAT | O_TRUNC | O_RDWR);
+     }
+   if (_ecore_fps_debug_fd >= 0)
+     {
+	unsigned int zero = 0;
+	
+	write(_ecore_fps_debug_fd, &zero, sizeof(unsigned int));
+	_ecore_fps_runtime_mmap = mmap(NULL, sizeof(unsigned int),
+				       PROT_READ | PROT_WRITE,
+				       MAP_SHARED,
+				       _ecore_fps_debug_fd, 0);
+     }
+}
+
+void
+_ecore_fps_debug_shutdown(void)
+{
+   _ecore_fps_debug_init_count--;
+   if (_ecore_fps_debug_init_count > 0) return;
+   if (_ecore_fps_debug_fd >= 0)
+     {
+	char buf[4096];
+	
+	snprintf(buf, sizeof(buf), "/tmp/.ecore_fps_debug-%i", (int)getpid());
+	unlink(buf);
+	if (_ecore_fps_runtime_mmap)
+	  {
+	     munmap(_ecore_fps_runtime_mmap, sizeof(int));
+	     _ecore_fps_runtime_mmap = NULL;
+	  }
+	close(_ecore_fps_debug_fd);
+	_ecore_fps_debug_fd = -1;
+     }
+}
+
+void
+_ecore_fps_debug_runtime_add(double t)
+{
+   if ((_ecore_fps_debug_fd >= 0) && 
+       (_ecore_fps_runtime_mmap))
+     {
+	unsigned int tm;
+	
+	tm = (unsigned int)(t * 1000000.0);
+	/* i know its not 100% theoretically guaranteed, but i'd say a write */
+	/* of an int could be considered atomic for all practical purposes */
+	/* oh and since this is cumulative, 1 second = 1,000,000 ticks, so */
+	/* this can run for about 4294 seconds becore looping. if you are */
+	/* doing performance testing in one run for over an hour... well */
+	/* time to restart or handle a loop condition :) */
+	*(_ecore_fps_runtime_mmap) += tm;
+     }
 }
