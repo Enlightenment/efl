@@ -87,25 +87,25 @@ _ecore_ipc_dlt_int(int out, int prev, int *mode)
    dlt = out - prev;
    if (!(dlt & 0xffff0000))
      {
-	*mode = DLT_ADD8;
+	*mode = DLT_ADD16;
 	return dlt & 0xfffff;
      }
    dlt = prev - out;
    if (!(dlt & 0xffff0000))
      {
-	*mode = DLT_DEL8;
+	*mode = DLT_DEL16;
 	return dlt & 0xffff;
      }
    dlt = out - prev;
    if (!(dlt & 0x0000ffff))
      {
-	*mode = DLT_ADDU8;
+	*mode = DLT_ADDU16;
 	return (dlt >> 16) & 0xffff;
      }
    dlt = prev - out;
    if (!(dlt & 0x0000ffff))
      {
-	*mode = DLT_DELU8;
+	*mode = DLT_DELU16;
 	return (dlt >> 16) & 0xffff;
      }
    /* 4 byte */
