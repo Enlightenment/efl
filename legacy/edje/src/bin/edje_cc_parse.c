@@ -108,6 +108,8 @@ next_token(char *p, char *end, char **new_p, int *delim)
 	  {
 	     if ((!in_quote) && (*p == '/') && (p < (end - 1)) && (*(p + 1) == '/'))
 	       in_comment_ss = 1;
+	     if ((!in_quote) && (*p == '#'))
+	       in_comment_ss = 1;
 	     if ((!in_quote) && (*p == '/') && (p < (end - 1)) && (*(p + 1) == '*'))
 	       {
 		  in_comment_sa = 1;

@@ -470,8 +470,8 @@ _edje_part_recalc_single(Edje *ed,
    /* fill */
    params->smooth = desc->fill.smooth;
    params->fill.x = desc->fill.pos_abs_x + (params->w * desc->fill.pos_rel_x);
-   params->fill.w = desc->fill.abs_x + (params->w * desc->fill.rel_x);
    params->fill.y = desc->fill.pos_abs_y + (params->h * desc->fill.pos_rel_y);
+   params->fill.w = desc->fill.abs_x + (params->w * desc->fill.rel_x);
    params->fill.h = desc->fill.abs_y + (params->h * desc->fill.rel_y);
    /* colors */
    params->color.r = desc->color.r;

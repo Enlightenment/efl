@@ -233,11 +233,12 @@ struct _Edje_Part
    Evas_List             *other_desc; /* other possible descriptors */
    struct {
       char                x; /* can u click & drag this bit in x dir */
-      int                 step_x; /* drag jumps n pixels (0 = no limit) */
-      int                 count_x; /* drag area divided by n (0 = no limit) */
-      
       char                y; /* can u click & drag this bit in y dir */
+      
+      int                 step_x; /* drag jumps n pixels (0 = no limit) */
       int                 step_y; /* drag jumps n pixels (0 = no limit) */
+      
+      int                 count_x; /* drag area divided by n (0 = no limit) */
       int                 count_y; /* drag area divided by n (0 = no limit) */
       
       int                 confine_id; /* dragging within this bit, -1 = no */

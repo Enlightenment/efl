@@ -57,7 +57,6 @@ _edje_smart_add(Evas_Object * obj)
    if (!ed) return;
    evas_object_smart_data_set(obj, ed);
    ed->obj = obj;
-   evas_object_smart_member_add(ed->clipper, ed->obj);
    _edje_edjes = evas_list_append(_edje_edjes, obj);
 }
 

@@ -249,6 +249,7 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
    if (!rp) return;
    if (rp->swallowed_object)
      {
+	evas_object_smart_member_del(rp->swallowed_object);
 	evas_object_event_callback_del(rp->swallowed_object, 
 				       EVAS_CALLBACK_FREE, 
 				       _edje_object_part_swallow_free_cb);
@@ -257,6 +258,7 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
      }
    if (!obj_swallow) return;
    rp->swallowed_object = obj_swallow;
+   evas_object_smart_member_add(rp->swallowed_object, ed->obj);
    evas_object_clip_set(rp->swallowed_object, ed->clipper);
    if (evas_object_layer_get(rp->swallowed_object) != ed->layer)
      evas_object_layer_set(rp->swallowed_object, ed->layer);
@@ -357,6 +359,7 @@ edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
 	rp = l->data;
 	if (rp->swallowed_object == obj_swallow)
 	  {
+	     evas_object_smart_member_del(rp->swallowed_object);
 	     evas_object_clip_unset(rp->swallowed_object);
 	     rp->swallowed_object = NULL;
 	     rp->swallow_params.min.w = 0;

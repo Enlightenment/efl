@@ -290,6 +290,7 @@ _edje_file_add(Edje *ed)
 	     snprintf(buf, sizeof(buf), "collections/%i", id);
 	     if (!ef) eet_open(ed->path, EET_FILE_MODE_READ);
 	     if (!ef) goto out;
+	     /* collection leaks? */
 	     ed->collection = eet_data_read(ef, 
 					    _edje_edd_edje_part_collection, 
 					    buf);
@@ -312,6 +313,9 @@ _edje_file_add(Edje *ed)
 void
 _edje_file_del(Edje *ed)
 {
+   /* segv's sometimes happen after here... */
+   /* avoid segv's... but LEAK */
+   /* return; */
    if (ed->collection)
      {
 	ed->collection->references--;
@@ -333,8 +337,9 @@ _edje_file_del(Edje *ed)
 	     Edje_Real_Part *rp;
 	     
 	     rp = ed->parts->data;
+	     ed->parts = evas_list_remove(ed->parts, rp);
 	     _edje_text_part_on_del(ed, rp);
-	     evas_object_del(rp->object);
+//	     evas_object_del(rp->object);
 	     if (rp->swallowed_object)
 	       {
 		  evas_object_event_callback_del(rp->swallowed_object,
@@ -347,7 +352,6 @@ _edje_file_del(Edje *ed)
 	     if (rp->text.cache.in_str) free(rp->text.cache.in_str);
 	     if (rp->text.cache.out_str) free(rp->text.cache.out_str);	     
 	     free(rp);
-	     ed->parts = evas_list_remove(ed->parts, ed->parts->data);
 	  }
 	ed->parts = NULL;
      }
@@ -389,7 +393,8 @@ _edje_file_free(Edje_File *edf)
 	     Edje_Image_Directory_Entry *ie;
 	     
 	     ie = edf->image_dir->entries->data;
-	     edf->image_dir->entries = evas_list_remove(edf->image_dir->entries, ie);
+	     edf->image_dir->entries = 
+	       evas_list_remove(edf->image_dir->entries, ie);
 	     if (ie->entry) free(ie->entry);
 	     free(ie);
 	  }
@@ -402,7 +407,8 @@ _edje_file_free(Edje_File *edf)
 	     Edje_Part_Collection_Directory_Entry *ce;
 	     
 	     ce = edf->collection_dir->entries->data;
-	     edf->collection_dir->entries = evas_list_remove(edf->collection_dir->entries, ce);
+	     edf->collection_dir->entries = 
+	       evas_list_remove(edf->collection_dir->entries, ce);
 	     if (ce->entry) free(ce->entry);
 	     free(ce);
 	  }
@@ -454,11 +460,14 @@ _edje_collection_free(Edje_Part_Collection *ec)
 	     ep->other_desc = evas_list_remove(ep->other_desc, desc);
 	     _edje_collection_free_part_description_free(desc);
 	  }
+	free(ep);
      }
    if (ec->prog_cache.no_matches) evas_hash_free(ec->prog_cache.no_matches);
    if (ec->prog_cache.matches)
      {
-	evas_hash_foreach(ec->prog_cache.matches, _edje_collection_free_prog_cache_matches_free_cb, NULL);
+	evas_hash_foreach(ec->prog_cache.matches, 
+			  _edje_collection_free_prog_cache_matches_free_cb, 
+			  NULL);
 	evas_hash_free(ec->prog_cache.matches);
      }
    free(ec);

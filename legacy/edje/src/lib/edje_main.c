@@ -36,7 +36,9 @@ _edje_del(Edje *ed)
 {
    _edje_file_del(ed);
    if (ed->path) free(ed->path);
+   ed->path = NULL;
    if (ed->part) free(ed->part);
+   ed->part = NULL;
    while (ed->callbacks)
      {
 	Edje_Signal_Callback *escb;

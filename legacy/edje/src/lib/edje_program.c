@@ -448,7 +448,7 @@ _edje_emit(Edje *ed, char *sig, char *src)
    recursions++;
    _edje_ref(ed);
    _edje_freeze(ed);
-   printf("EMIT \"%s\" \"%s\"\n", sig, src);
+//   printf("EMIT \"%s\" \"%s\"\n", sig, src);
    ee = calloc(1, sizeof(Edje_Emission));
    if (!ee)
      {
