@@ -115,6 +115,7 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
    /* MEM OK */
    Evas_Object_List **l_mod, *l;
    
+   if (obj->delete_me) return;
    if (!obj->callbacks)
      {
 	if ((obj->smart.parent) &&
@@ -184,7 +185,10 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
 	
 	fn = (Evas_Func_Node *)l;
 	if (!fn->delete_me)
-	  fn->func(fn->data, obj->layer->evas, obj, event_info);
+	  {
+	     if (fn->func)
+	       fn->func(fn->data, obj->layer->evas, obj, event_info);
+	  }
 	if (obj->delete_me) break;
      }
    obj->callbacks->walking_list--;
