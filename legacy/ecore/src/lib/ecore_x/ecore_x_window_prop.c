@@ -89,6 +89,12 @@ ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecor
    return 1;
 }
 
+void
+ecore_x_window_prop_property_del(Ecore_X_Window win, Ecore_X_Atom property)
+{
+   XDeleteProperty(_ecore_x_disp, win, property);
+}
+
 /**
  * Send a property notify to a window.
  * @param win The window
@@ -1071,65 +1077,6 @@ ecore_x_window_prop_state_unset(Ecore_X_Window win, Ecore_X_Window_State s)
    free(newset);
 }
 
-/**
- * Set a window as a desktop type.
- * @param win The Window
- *
- * Set a window as a desktop type.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
- */
-void
-ecore_x_window_prop_window_type_desktop_set(Ecore_X_Window win)
-{
-   ecore_x_window_prop_window_type_set(win, _ecore_x_atom_net_wm_window_type_desktop);
-}
-
-/**
- * Set a window as a desktop type.
- * @param win The Window
- *
- * Set a window as a desktop type.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
- */
-void
-ecore_x_window_prop_window_type_dock_set(Ecore_X_Window win)
-{
-   ecore_x_window_prop_window_type_set(win, _ecore_x_atom_net_wm_window_type_dock);
-}
-
-/**
- * Set a window as a toolbar type.
- * @param win The Window
- *
- * Set a window as a toolbar type.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
- */
-void
-ecore_x_window_prop_window_type_toolbar_set(Ecore_X_Window win)
-{
-   ecore_x_window_prop_window_type_set(win, _ecore_x_atom_net_wm_window_type_toolbar);
-}
-
-/**
- * Set a window as a menu type.
- * @param win The Window
- *
- * Set a window as a menu type.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
- */
-void
-ecore_x_window_prop_window_type_menu_set(Ecore_X_Window win)
-{
-   ecore_x_window_prop_window_type_set(win, _ecore_x_atom_net_wm_window_type_menu);
-}
-
-/**
- * Set a window as a utility type.
- * @param win The Window
- *
- * Set a window as a utility type.
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
- */
 void
 ecore_x_window_prop_window_type_utility_set(Ecore_X_Window win)
 {

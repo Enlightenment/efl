@@ -28,6 +28,16 @@ typedef void Ecore_X_Reply;
 #define ECORE_X_SELECTION_TARGET_UTF8_STRING "UTF8_STRING"
 #define ECORE_X_SELECTION_TARGET_FILENAME "FILENAME"
 
+#define ECORE_X_DND_VERSION 5
+
+typedef enum _Ecore_X_DND_Action {
+   ECORE_X_DND_ACTION_COPY,
+   ECORE_X_DND_ACTION_MOVE,
+   ECORE_X_DND_ACTION_LINK,
+   ECORE_X_DND_ACTION_ASK,
+   ECORE_X_DND_ACTION_PRIVATE
+} Ecore_X_DND_Action;
+
 typedef enum _Ecore_X_Selection {
    ECORE_X_SELECTION_PRIMARY,
    ECORE_X_SELECTION_SECONDARY,
@@ -108,6 +118,12 @@ typedef struct _Ecore_X_Event_Window_Mapping           Ecore_X_Event_Window_Mapp
 typedef struct _Ecore_X_Event_Selection_Clear          Ecore_X_Event_Selection_Clear;
 typedef struct _Ecore_X_Event_Selection_Request        Ecore_X_Event_Selection_Request;
 typedef struct _Ecore_X_Event_Selection_Notify         Ecore_X_Event_Selection_Notify;
+typedef struct _Ecore_X_Event_Xdnd_Enter               Ecore_X_Event_Xdnd_Enter;
+typedef struct _Ecore_X_Event_Xdnd_Position            Ecore_X_Event_Xdnd_Position;
+typedef struct _Ecore_X_Event_Xdnd_Status              Ecore_X_Event_Xdnd_Status;
+typedef struct _Ecore_X_Event_Xdnd_Leave               Ecore_X_Event_Xdnd_Leave;
+typedef struct _Ecore_X_Event_Xdnd_Drop                Ecore_X_Event_Xdnd_Stop;
+typedef struct _Ecore_X_Event_Xdnd_Finished            Ecore_X_Event_Xdnd_Finished;
 typedef struct _Ecore_X_Event_Client_Message           Ecore_X_Event_Client_Message;
 typedef struct _Ecore_X_Event_Window_Shape             Ecore_X_Event_Window_Shape;
 
@@ -378,6 +394,51 @@ struct _Ecore_X_Event_Selection_Notify
    char                       *target;
 };
 
+struct _Ecore_X_Event_Xdnd_Enter
+{
+   Ecore_X_Window       win, source;
+   Ecore_X_Time         time;
+};
+
+struct _Ecore_X_Event_Xdnd_Position
+{
+   Ecore_X_Window       win, source;
+   struct {
+      int x, y;
+   } position;
+   Ecore_X_Time         time;
+   Ecore_X_DND_Action   action;
+};
+
+struct _Ecore_X_Event_Xdnd_Status
+{
+   Ecore_X_Window       win, target;
+   int                  drop_accept;
+   Ecore_X_DND_Action   action;
+};
+
+struct _Ecore_X_Event_Xdnd_Leave
+{
+   Ecore_X_Window       win, source;
+};
+
+struct _Ecore_X_Event_Xdnd_Drop
+{
+   Ecore_X_Window       win, source;
+   Ecore_X_Time         time;
+   Ecore_X_DND_Action   action;
+   struct {
+      int x, y;
+   } position;
+};
+
+struct _Ecore_X_Event_Xdnd_Finished
+{
+   Ecore_X_Window       win, target;
+   int                  completed;
+   Ecore_X_DND_Action   action;
+};
+
 struct _Ecore_X_Event_Client_Message
 {
    Ecore_X_Window  win;
@@ -606,11 +667,11 @@ int              ecore_x_error_code_get(void);
 
 void             ecore_x_event_mask_set(Ecore_X_Window w, long mask);
 
-int              ecore_x_selection_primary_set(Ecore_X_Window w, char *data, int size);
+int              ecore_x_selection_primary_set(Ecore_X_Window w, unsigned char *data, int size);
 int              ecore_x_selection_primary_clear(void);
-int              ecore_x_selection_secondary_set(Ecore_X_Window w, char *data, int size);
+int              ecore_x_selection_secondary_set(Ecore_X_Window w, unsigned char *data, int size);
 int              ecore_x_selection_secondary_clear(void);
-int              ecore_x_selection_clipboard_set(Ecore_X_Window w, char *data, int size);
+int              ecore_x_selection_clipboard_set(Ecore_X_Window w, unsigned char *data, int size);
 int              ecore_x_selection_clipboard_clear(void);
 void             ecore_x_selection_primary_request(Ecore_X_Window w, char *target);
 void             ecore_x_selection_secondary_request(Ecore_X_Window w, char *target);
@@ -644,6 +705,7 @@ void             ecore_x_window_defaults_set(Ecore_X_Window win);
    
 void             ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Atom format, int size, void *data, int number);
 int              ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecore_X_Atom type, int size, unsigned char **data, int *num);
+void             ecore_x_window_prop_property_del(Ecore_X_Window win, Ecore_X_Atom property);
 void             ecore_x_window_prop_property_notify(Ecore_X_Window win, const char *type, long *data);
 void             ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom type, char *str);
 char            *ecore_x_window_prop_string_get(Ecore_X_Window win, Ecore_X_Atom type);

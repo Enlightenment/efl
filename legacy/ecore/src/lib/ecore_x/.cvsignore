@@ -3,6 +3,7 @@
 Makefile
 Makefile.in
 ecore_x.lo
+ecore_x_dnd.lo
 ecore_x_error.lo
 ecore_x_events.lo
 ecore_x_gc.lo

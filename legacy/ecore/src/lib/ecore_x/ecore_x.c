@@ -37,12 +37,28 @@ Atom     _ecore_x_atom_wm_icon_name = 0;
 Atom     _ecore_x_atom_wm_client_machine = 0;
 Atom     _ecore_x_atom_motif_wm_hints = 0;
 Atom     _ecore_x_atom_win_layer = 0;
+
 Atom     _ecore_x_atom_selection_primary = 0;
 Atom     _ecore_x_atom_selection_secondary = 0;
 Atom     _ecore_x_atom_selection_clipboard = 0;
 Atom     _ecore_x_atom_selection_prop_primary = 0;
 Atom     _ecore_x_atom_selection_prop_secondary = 0;
 Atom     _ecore_x_atom_selection_prop_clipboard = 0;
+
+Atom     _ecore_x_atom_selection_xdnd = 0;
+Atom     _ecore_x_atom_xdnd_aware = 0;
+Atom     _ecore_x_atom_xdnd_enter = 0;
+Atom     _ecore_x_atom_xdnd_type_list = 0;
+Atom     _ecore_x_atom_xdnd_position = 0;
+Atom     _ecore_x_atom_xdnd_action_copy = 0;
+Atom     _ecore_x_atom_xdnd_action_private = 0;
+Atom     _ecore_x_atom_xdnd_action_ask = 0;
+Atom     _ecore_x_atom_xdnd_action_list = 0;
+Atom     _ecore_x_atom_xdnd_action_description = 0;
+Atom     _ecore_x_atom_xdnd_status = 0;
+Atom     _ecore_x_atom_xdnd_drop = 0;
+Atom     _ecore_x_atom_xdnd_finished = 0;
+Atom     _ecore_x_atom_xdnd_leave = 0;
 
 /*
  * Root window NetWM hints.
@@ -330,7 +346,21 @@ ecore_x_init(const char *name)
    _ecore_x_atom_selection_prop_primary   = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_PRIMARY", False);
    _ecore_x_atom_selection_prop_secondary = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_SECONDARY", False);
    _ecore_x_atom_selection_prop_clipboard = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_CLIPBOARD", False);
-
+   _ecore_x_atom_selection_xdnd           = XInternAtom(_ecore_x_disp, "XdndSelection", False);
+   _ecore_x_atom_xdnd_aware               = XInternAtom(_ecore_x_disp, "XdndAware", False);
+   _ecore_x_atom_xdnd_type_list           = XInternAtom(_ecore_x_disp, "XdndTypeList", False);
+   _ecore_x_atom_xdnd_enter               = XInternAtom(_ecore_x_disp, "XdndEnter", False);
+   _ecore_x_atom_xdnd_position            = XInternAtom(_ecore_x_disp, "XdndPosition", False);
+   _ecore_x_atom_xdnd_action_copy         = XInternAtom(_ecore_x_disp, "XdndActionCopy", False);
+   _ecore_x_atom_xdnd_action_private      = XInternAtom(_ecore_x_disp, "XdndActionPrivate", False);
+   _ecore_x_atom_xdnd_action_ask          = XInternAtom(_ecore_x_disp, "XdndActionAsk", False);
+   _ecore_x_atom_xdnd_action_list         = XInternAtom(_ecore_x_disp, "XdndActionList", False);
+   _ecore_x_atom_xdnd_action_description  = XInternAtom(_ecore_x_disp, "XdndActionDescription", False);
+   _ecore_x_atom_xdnd_status              = XInternAtom(_ecore_x_disp, "XdndStatus", False);
+   _ecore_x_atom_xdnd_leave               = XInternAtom(_ecore_x_disp, "XdndLeave", False);
+   _ecore_x_atom_xdnd_drop                = XInternAtom(_ecore_x_disp, "XdndDrop", False);
+   _ecore_x_atom_xdnd_finished            = XInternAtom(_ecore_x_disp, "XdndFinished", False);
+   
    _ecore_x_atom_net_supported            = XInternAtom(_ecore_x_disp, "_NET_SUPPORTED", False);
    _ecore_x_atom_net_supporting_wm_check  = XInternAtom(_ecore_x_disp, "_NET_SUPPORTING_WM_CHECK", False);
 
@@ -395,7 +425,8 @@ ecore_x_init(const char *name)
    _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_DELETE_REQUEST] = _ecore_x_atom_wm_delete_window;
    _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_TAKE_FOCUS] = _ecore_x_atom_wm_take_focus;
 
-   _ecore_x_selection_data_initialize();
+   _ecore_x_selection_data_init();
+   _ecore_x_dnd_init();
    
    _ecore_x_init_count++;
    return _ecore_x_init_count;

@@ -40,7 +40,7 @@ struct _Ecore_X_Selection_Data
 {
    Window            win;
    Atom              selection;
-   char              *data;
+   unsigned char     *data;
    int               length;
    Time              time;
 };
@@ -54,6 +54,31 @@ struct _Ecore_X_Selection_Converter
                     void **data_ret, int *size_ret);
    struct _Ecore_X_Selection_Converter *next;
 };
+
+typedef struct _Ecore_X_DND_Protocol 
+{
+   int version;
+   Window source, dest;
+   
+   enum {
+      ECORE_X_DND_OUT,
+      ECORE_X_DND_IN,
+      ECORE_X_DND_FINISHED
+   } state;
+
+   struct {
+      int x, y, w, h;
+   } status_rect;
+
+   Atom types[256];
+   
+   struct {
+      Ecore_Event_Handler *mouse_move;
+      Ecore_Event_Handler *mouse_up;
+      Ecore_Event_Handler *mouse_in;
+      Ecore_Event_Handler *mouse_out;
+   } handlers;
+} Ecore_X_DND_Protocol;
 
 typedef enum _Ecore_X_WM_Protocol {
 	/**
@@ -147,6 +172,22 @@ extern Atom     _ecore_x_atom_selection_prop_primary;
 extern Atom     _ecore_x_atom_selection_prop_secondary;
 extern Atom     _ecore_x_atom_selection_prop_clipboard;
 
+extern Atom     _ecore_x_atom_selection_xdnd;
+extern Atom     _ecore_x_atom_xdnd_aware;
+extern Atom     _ecore_x_atom_xdnd_enter;
+extern Atom     _ecore_x_atom_xdnd_type_list;
+extern Atom     _ecore_x_atom_xdnd_position;
+extern Atom     _ecore_x_atom_xdnd_action_copy;
+extern Atom     _ecore_x_atom_xdnd_action_private;
+extern Atom     _ecore_x_atom_xdnd_action_ask;
+extern Atom     _ecore_x_atom_xdnd_action_list;
+extern Atom     _ecore_x_atom_xdnd_action_description;
+extern Atom     _ecore_x_atom_xdnd_status;
+extern Atom     _ecore_x_atom_xdnd_drop;
+extern Atom     _ecore_x_atom_xdnd_finished;
+
+extern Ecore_X_DND_Protocol *_xdnd;
+
 void _ecore_x_error_handler_init(void);
 void _ecore_x_event_handle_key_press(XEvent *xevent);
 void _ecore_x_event_handle_key_release(XEvent *xevent);
@@ -182,13 +223,15 @@ void _ecore_x_event_handle_client_message(XEvent *xevent);
 void _ecore_x_event_handle_mapping_notify(XEvent *xevent);
 void _ecore_x_event_handle_shape_change(XEvent *xevent);
 
-void _ecore_x_selection_data_initialize(void);
+void _ecore_x_selection_data_init(void);
 void _ecore_x_selection_shutdown(void);
 Atom _ecore_x_selection_target_atom_get(char *target);
 char * _ecore_x_selection_target_get(Atom target);
 void _ecore_x_selection_request_data_set(Ecore_X_Selection_Data data);
 Ecore_X_Selection_Data * _ecore_x_selection_get(Atom selection);
-int  _ecore_x_selection_set(Window w, char *data, int len, Atom selection);
+int  _ecore_x_selection_set(Window w, unsigned char *data, int len, Atom selection);
 int  _ecore_x_selection_convert(Atom selection, Atom target, void **data_ret);
 
+void _ecore_x_dnd_init(void);
+Ecore_X_DND_Protocol * _ecore_x_dnd_protocol_get(void);
 #endif

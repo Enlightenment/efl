@@ -10,7 +10,7 @@ static Ecore_X_Selection_Converter *converters = NULL;
 static int _ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret);
 
 void
-_ecore_x_selection_data_initialize(void)
+_ecore_x_selection_data_init(void)
 {
    /* Initialize converters */
    ecore_x_selection_converter_atom_add(_ecore_x_atom_text, 
@@ -145,10 +145,10 @@ _ecore_x_selection_get(Atom selection)
 }
 
 int 
-_ecore_x_selection_set(Window w, char *data, int size, Atom selection)
+_ecore_x_selection_set(Window w, unsigned char *data, int size, Atom selection)
 {
    int in;
-   char *buf = NULL;
+   unsigned char *buf = NULL;
    
    XSetSelectionOwner(_ecore_x_disp, selection, w, _ecore_x_event_last_time);
    if (XGetSelectionOwner(_ecore_x_disp, selection) != w)
@@ -197,7 +197,7 @@ _ecore_x_selection_set(Window w, char *data, int size, Atom selection)
  * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int 
-ecore_x_selection_primary_set(Ecore_X_Window w, char *data, int size)
+ecore_x_selection_primary_set(Ecore_X_Window w, unsigned char *data, int size)
 {
    return _ecore_x_selection_set(w, data, size, _ecore_x_atom_selection_primary);
 }
@@ -228,7 +228,7 @@ ecore_x_selection_primary_clear(void)
  * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int 
-ecore_x_selection_secondary_set(Ecore_X_Window w, char *data, int size)
+ecore_x_selection_secondary_set(Ecore_X_Window w, unsigned char *data, int size)
 {
    return _ecore_x_selection_set(w, data, size, _ecore_x_atom_selection_secondary);
 }
@@ -259,7 +259,7 @@ ecore_x_selection_secondary_clear(void)
  * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
  */
 int 
-ecore_x_selection_clipboard_set(Ecore_X_Window w, char *data, int size)
+ecore_x_selection_clipboard_set(Ecore_X_Window w, unsigned char *data, int size)
 {
    return _ecore_x_selection_set(w, data, size, _ecore_x_atom_selection_clipboard);
 }

@@ -1028,19 +1028,53 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
    if ((xevent->xclient.message_type == _ecore_x_atom_wm_protocols) &&
        (xevent->xclient.format == 32) &&
        (xevent->xclient.data.l[0] == (long)_ecore_x_atom_wm_delete_window))
-     {
-	Ecore_X_Event_Window_Delete_Request *e;
+   {
+	   Ecore_X_Event_Window_Delete_Request *e;
 	
-	e = calloc(1, sizeof(Ecore_X_Event_Window_Delete_Request));
-	if (!e) return;
-	e->win = xevent->xclient.window;
-	e->time = _ecore_x_event_last_time;
-	ecore_event_add(ECORE_X_EVENT_WINDOW_DELETE_REQUEST, e, _ecore_x_event_free_generic, NULL);
-     }
+   	e = calloc(1, sizeof(Ecore_X_Event_Window_Delete_Request));
+	   if (!e) return;
+   	e->win = xevent->xclient.window;
+	   e->time = _ecore_x_event_last_time;
+   	ecore_event_add(ECORE_X_EVENT_WINDOW_DELETE_REQUEST, e, _ecore_x_event_free_generic, NULL);
+   }
+   /* Xdnd Client Message Handling */
+   else if (xevent->xclient.message_type == _ecore_x_atom_xdnd_enter)
+   {
+      Ecore_X_Event_Xdnd_Enter *e;
+      Ecore_X_DND_Protocol *_xdnd;
+      short *ldata;
+      
+      _xdnd = _ecore_x_dnd_protocol_get();
+      _xdnd->source = xevent->xclient.data.l[0];
+      _xdnd->dest = xevent->xclient.window;
+      /* gcc won't let us do this */
+      /* _xdnd->version = (int) (xevent->xclient.data.l >> 24); */
+      ldata = (short *) &(xevent->xclient.data.l);
+      _xdnd->version = (int) ldata[0];
+      if (_xdnd->version > ECORE_X_DND_VERSION)
+         return 0;
+      
+      if (xevent->xclient.data.l[1] & 0x0001)
+      {
+         /* source supports more than 3 types, fetch property */
+      }
+      else
+      {
+         _xdnd->types[0] = xevent->xclient.data.l[2];
+         _xdnd->types[1] = xevent->xclient.data.l[3];
+         _xdnd->types[2] = xevent->xclient.data.l[4];
+      }
+
+      e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Enter));
+      if (!e) return;
+      e->win = _xdnd->dest;
+      e->source = _xdnd->source;
+      e->time = CurrentTime;
+   }
    else
-     {
+   {
 	/* FIXME: handle this event type */
-     }
+   }
 }
 
 void
