@@ -1,4 +1,4 @@
-Edje 0.0.1
+Edje 0.5.0
 
 A graphical layout and animation library for animated resizable, compressed and
 scalable themes.
@@ -38,8 +38,18 @@ Quick start-up guide:
   sudo make install
   cd
 
-4. You need imlib2 installed. any reelease from 1.0.0 on will do.
-5. You already have edje. now build it:
+4. You need embryo from the HEAD cvs branch
+
+  cvs co e17/libs/embryo
+  cd e17/libs/embryo
+  ./autogen.sh
+  ./configure
+  make
+  sudo make install
+  cd
+
+5. You need imlib2 installed. any reelease from 1.0.0 on will do.
+6. You already have edje. now build it:
 
    ./autogen.sh
    make

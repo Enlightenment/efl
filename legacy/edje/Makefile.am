@@ -15,10 +15,14 @@ install-data-local:
 	      cp -pR $$d $(DESTDIR)$(pkgdatadir)/data; \
 	  done \
 	fi
-	if test "x${vimdir}" != "x"; then \
-	  $(mkinstalldirs) $(DESTDIR)$(vimdir)/syntax; \
-	  cp -p $(srcdir)/data/edc.vim $(DESTDIR)$(vimdir)/syntax/; \
-	fi
+
+### this is all fine and great - ut edje should not be going and installing
+### data in another software's data dir - it's just wrong. not to mention this
+### also breaks make distcheck...
+#	if test "x${vimdir}" != "x"; then \
+#	  $(mkinstalldirs) $(DESTDIR)$(vimdir)/syntax; \
+#	  cp -p $(srcdir)/data/edc.vim $(DESTDIR)$(vimdir)/syntax/; \
+#	fi
 
 dist-hook:
 	./gendoc; \
