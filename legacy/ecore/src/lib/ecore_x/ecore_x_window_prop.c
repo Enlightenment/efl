@@ -680,6 +680,49 @@ ecore_x_window_prop_input_mode_set(Ecore_X_Window win, Ecore_X_Window_Input_Mode
 }
 
 /**
+ * Set the initial state of an Ecore_X_Window.
+ *
+ * @param win The window whose initial state is set.
+ * @param withdrawn The window's new initial state.
+ *
+ * @return 1 if the input mode could be set, else 0
+ *
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+int
+ecore_x_window_prop_initial_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state)
+{
+   XWMHints *hints;
+
+   if (!(hints = XGetWMHints(_ecore_x_disp, win)))
+      if (!(hints = XAllocWMHints()))
+         return 0;
+
+   switch (state) {
+   case ECORE_X_WINDOW_STATE_HINT_NONE:
+      hints->flags &= ~StateHint;
+      break;
+   case ECORE_X_WINDOW_STATE_HINT_WITHDRAWN:
+      hints->initial_state = WithdrawnState;
+      hints->flags |= StateHint;
+      break;
+   case ECORE_X_WINDOW_STATE_HINT_NORMAL:
+      hints->initial_state = NormalState;
+      hints->flags |= StateHint;
+      break;
+   case ECORE_X_WINDOW_STATE_HINT_ICONIC:
+      hints->initial_state = IconicState;
+      hints->flags |= StateHint;
+      break;
+   }
+
+   XSetWMHints(_ecore_x_disp, win, hints);
+   XFree(hints);
+
+   return 1;
+}
+
+/**
  * To be documented.
  *
  * FIXME: To be fixed.
@@ -751,6 +794,7 @@ ecore_x_window_prop_layer_set(Ecore_X_Window win, int layer)
 void
 ecore_x_window_prop_withdrawn_set(Ecore_X_Window win, int withdrawn)
 {
+#if 0
    XWMHints hints;
    long     ret;
    
@@ -765,6 +809,12 @@ ecore_x_window_prop_withdrawn_set(Ecore_X_Window win, int withdrawn)
    hints.flags = WindowGroupHint | StateHint;
    XSetWMHints(_ecore_x_disp, win, &hints);
    XSetWMNormalHints(_ecore_x_disp, win, (XSizeHints *) &hints);
+#else
+   if (withdrawn)
+      ecore_x_window_prop_initial_state_set(win, ECORE_X_WINDOW_STATE_HINT_WITHDRAWN);
+   else
+      ecore_x_window_prop_initial_state_set(win, ECORE_X_WINDOW_STATE_HINT_NONE);
+#endif
 }
 
 /**
@@ -778,23 +828,18 @@ ecore_x_window_prop_withdrawn_set(Ecore_X_Window win, int withdrawn)
 void
 ecore_x_window_prop_desktop_request(Ecore_X_Window win, long desktop)
 {
-   XEvent *xev;
-   XClientMessageEvent xclient;
+   XEvent xev;
 
-   xev = calloc(1, sizeof(XClientMessageEvent));
-   xev->xclient = xclient;
-   memset(&xclient, 0, sizeof(XClientMessageEvent));
+   memset(&xev, 0, sizeof(XEvent));
 
-   xclient.type = ClientMessage;
-   xclient.display = _ecore_x_disp;
-   xclient.window = win;
-   xclient.message_type = _ecore_x_atom_net_wm_desktop;
-   xclient.format = 32;
-   xclient.data.l[0] = desktop;
+   xev.xclient.type = ClientMessage;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.window = win;
+   xev.xclient.message_type = _ecore_x_atom_net_wm_desktop;
+   xev.xclient.format = 32;
+   xev.xclient.data.l[0] = desktop;
 
-   XSendEvent(_ecore_x_disp, DefaultRootWindow(_ecore_x_disp), False, 0, xev);
-   XFree(xev);
-
+   XSendEvent(_ecore_x_disp, DefaultRootWindow(_ecore_x_disp), False, 0, &xev);
 }
 
 /**
@@ -809,26 +854,20 @@ ecore_x_window_prop_desktop_request(Ecore_X_Window win, long desktop)
 void
 ecore_x_window_prop_state_request(Ecore_X_Window win, Ecore_X_Window_State state, int action)
 {
-   XEvent *xev;
-   XClientMessageEvent xclient;
+   XEvent xev;
 
    if (action < 0 || action > 2)
       return;
 
-   xev = calloc(1, sizeof(XClientMessageEvent));
-   xev->xclient = xclient;
-   memset(&xclient, 0, sizeof(XClientMessageEvent));
+   xev.xclient.type = ClientMessage;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.window = win;
+   xev.xclient.message_type = _ecore_x_atom_net_wm_state;
+   xev.xclient.format = 32;
+   xev.xclient.data.l[0] = action;
+   xev.xclient.data.l[1] = _ecore_x_window_prop_state_atom_get(state);
 
-   xclient.type = ClientMessage;
-   xclient.display = _ecore_x_disp;
-   xclient.window = win;
-   xclient.message_type = _ecore_x_atom_net_wm_state;
-   xclient.format = 32;
-   xclient.data.l[0] = action;
-   xclient.data.l[1] = _ecore_x_window_prop_state_atom_get(state);
-
-   XSendEvent(_ecore_x_disp, DefaultRootWindow(_ecore_x_disp), False, 0, xev);
-   XFree(xev);
+   XSendEvent(_ecore_x_disp, DefaultRootWindow(_ecore_x_disp), False, 0, &xev);
 }
    
 
@@ -872,18 +911,6 @@ ecore_x_window_prop_desktop_get(Ecore_X_Window win)
    return desktop;
 }
 
-
-/*
- * Suggesting a slight change of API.
- * The ECORE_X_WINDOW_TYPE_...'s I think we want in Ecore_X.h anyway.
- * It makes things more similar to ecore_x_window_prop_state_set().
- * It also avoids having to define all the different
- * ecore_x_window_prop_window_type_..._set()'s.
- * Setting a window to type desktop would then become
- * ecore_x_window_prop_window_type_set(win, ECORE_X_WINDOW_TYPE_DESKTOP);
- * /Kim
- * Addendum: API change enforced by xcomp
- */
 
 static Ecore_X_Atom 
 _ecore_x_window_prop_type_atom_get(Ecore_X_Window_Type type)

@@ -612,6 +612,20 @@ typedef enum _Ecore_X_Window_Input_Mode {
 	ECORE_X_WINDOW_INPUT_MODE_ACTIVE_GLOBAL
 } Ecore_X_Window_Input_Mode;
 
+typedef enum _Ecore_X_Window_State_Hint {
+   /** Do not provide any state hint to the window manager */
+   ECORE_X_WINDOW_STATE_HINT_NONE = -1,
+   
+   /** The window wants to remain hidden and NOT iconified */
+   ECORE_X_WINDOW_STATE_HINT_WITHDRAWN,
+   
+   /** The window wants to be mapped normally */
+   ECORE_X_WINDOW_STATE_HINT_NORMAL,
+   
+   /** The window wants to start in an iconified state */
+   ECORE_X_WINDOW_STATE_HINT_ICONIC,
+} Ecore_X_Window_State_Hint;
+
 typedef enum _Ecore_X_Window_State {
     /** The window is a modal dialog box. */
     ECORE_X_WINDOW_STATE_MODAL,
