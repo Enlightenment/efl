@@ -372,7 +372,6 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
    e->pointer.y = y;
    e->pointer.canvas_x = evas_coord_screen_x_to_world(e, x);
    e->pointer.canvas_y = evas_coord_screen_y_to_world(e, y);
-   printf("mov %i %i\n", x, y);
    if ((!e->pointer.inside) && (e->pointer.mouse_grabbed == 0)) return;
    /* if our mouse button is grabbed to any objects */   
    if (e->pointer.mouse_grabbed != 0)
@@ -387,7 +386,6 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
 	     Evas_Object *obj;
 	     
 	     obj = l->data;
-	     printf("int %p\n", obj);
 	     if ((obj->cur.visible) &&
 		 (evas_object_clippers_is_visible(obj)) &&
 		 (!evas_event_passes_through(obj)) &&
@@ -410,7 +408,6 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
 		       ev.data = (void *)data;
 		       ev.modifiers = &(e->modifiers);
 		       ev.locks = &(e->locks);
-		       printf("mov %p\n", obj);
 		       if (!e->events_frozen)
 			 evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_MOVE, &ev);
 		    }
@@ -438,7 +435,6 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
 		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);
-		  printf("out %p\n", obj);
 		  if (!e->events_frozen)
 		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }	     
@@ -608,14 +604,12 @@ evas_event_feed_mouse_out_data(Evas *e, const void *data)
    
    if (e->events_frozen > 0) return;
    
-   printf("try to feed mouse out\n");
    /* if our mouse button is grabbed to any objects */   
    if (e->pointer.mouse_grabbed == 0)
      {
 	/* go thru old list of in objects */
 	Evas_List *l, *copy;
 
-	printf("not grabbed!\n");
 	copy = evas_event_list_copy(e->pointer.object.in);
 	for (l = copy; l; l = l->next)
 	  {
