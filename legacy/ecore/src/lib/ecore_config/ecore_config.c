@@ -836,7 +836,13 @@ ecore_config_typed_default(const char *key, void *val, int type)
 	   return ECORE_CONFIG_ERR_FAIL;
 	e->flags = e->flags & ~PF_MODIFIED;
      }
-
+   else if (!(e->flags & PF_MODIFIED))
+     {
+	ecore_config_typed_set(key, val, type);
+	if (!(e = ecore_config_get(key)))       /* get handle */
+	   return ECORE_CONFIG_ERR_FAIL;
+	e->flags = e->flags & ~PF_MODIFIED;
+     }
    return ret;
 }
 
@@ -1351,6 +1357,7 @@ int
 ecore_config_init(char *name)
 {
    char               *path;
+   Ecore_Config_Prop  *list;
    _ecore_config_system_init_no_load();
 
    __ecore_config_app_name = strdup(name);
@@ -1359,9 +1366,10 @@ ecore_config_init(char *name)
       return ECORE_CONFIG_ERR_FAIL;
 
   /* FIXME should free __ecore_config_bundle_local */
-
+   list = __ecore_config_bundle_local->data;
    __ecore_config_bundle_local =
       ecore_config_bundle_new(__ecore_config_server_local, "config");
+   __ecore_config_bundle_local->data = list;
 
    path = ecore_config_theme_default_path_get();
    if (path)
@@ -1369,7 +1377,6 @@ ecore_config_init(char *name)
 	ecore_config_string_default("/e/themes/search_path", path);
 	free(path);
      }
-
    return _ecore_config_system_load();
 }
 
@@ -1440,6 +1447,9 @@ _ecore_config_system_load(void)
 {
    char               *buf, *p;
    Ecore_Config_Prop  *sys;
+
+   if (__ecore_config_system_init != 1)
+	return;
 
    if ((p = getenv("HOME")))
      {                          /* debug-only ### FIXME */
