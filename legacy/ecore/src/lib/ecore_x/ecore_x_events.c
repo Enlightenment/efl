@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=3:noexpandtab
+ */
+
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
@@ -746,7 +750,20 @@ _ecore_x_event_handle_configure_notify(XEvent *xevent)
 void
 _ecore_x_event_handle_configure_request(XEvent *xevent)
 {
-   /* FIXME: handle this event type */
+   Ecore_X_Event_Window_Configure_Request *e;
+
+   e = calloc(1, sizeof(Ecore_X_Event_Window_Configure_Request));
+   if (!e) return;
+   e->win = xevent->xconfigurerequest.window;
+   e->abovewin = xevent->xconfigurerequest.above;
+   e->x = xevent->xconfigurerequest.x;
+   e->y = xevent->xconfigurerequest.y;
+   e->w = xevent->xconfigurerequest.width;
+   e->h = xevent->xconfigurerequest.height;
+   e->border = xevent->xconfigurerequest.border_width;
+   e->value_mask = xevent->xconfigurerequest.value_mask;
+   e->time = _ecore_x_event_last_time;
+   ecore_event_add(ECORE_X_EVENT_WINDOW_CONFIGURE_REQUEST, e, NULL, NULL);
 }
 
 void
@@ -758,7 +775,15 @@ _ecore_x_event_handle_gravity_notify(XEvent *xevent)
 void
 _ecore_x_event_handle_resize_request(XEvent *xevent)
 {
-   /* FIXME: handle this event type */
+   Ecore_X_Event_Window_Resize_Request *e;
+
+   e = calloc(1, sizeof(Ecore_X_Event_Window_Resize_Request));
+   if (!e) return;
+   e->win = xevent->xresizerequest.window;
+   e->w = xevent->xresizerequest.width;
+   e->h = xevent->xresizerequest.height;
+   e->time = _ecore_x_event_last_time;
+   ecore_event_add(ECORE_X_EVENT_WINDOW_RESIZE_REQUEST, e, NULL, NULL);
 }
 
 void

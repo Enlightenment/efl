@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=3:noexpandtab
+ */
+
 #ifndef _ECORE_X_H
 #define _ECORE_X_H
 
@@ -341,6 +345,11 @@ struct _Ecore_X_Event_Window_Configure
 struct _Ecore_X_Event_Window_Configure_Request
 {
    Ecore_X_Window  win;
+   Ecore_X_Window  abovewin;
+   int     x, y, w, h;
+   int     border;
+   int     detail;
+   unsigned long value_mask;
    Ecore_X_Time    time;
 };
 
@@ -353,6 +362,7 @@ struct _Ecore_X_Event_Window_Gravity
 struct _Ecore_X_Event_Window_Resize_Request
 {
    Ecore_X_Window  win;
+   int     w, h;
    Ecore_X_Time    time;
 };
 
