@@ -630,7 +630,7 @@ data_write(void)
 			 }
 		       close(fd);
 		    }
-		  f = fopen(tmpo, "r");
+		  f = fopen(tmpo, "rb");
 		  if (f)
 		    {
 		       int size;

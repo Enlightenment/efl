@@ -111,7 +111,7 @@ encdectest(void)
    blah.blah3 = evas_list_append(blah.blah3, &blah3);
    
    data = eet_data_descriptor_encode(edd, &blah, &size);
-   f = fopen("out", "w");
+   f = fopen("out", "wb");
    if (f)
      {
 	fwrite(data, size, 1, f);
@@ -214,7 +214,7 @@ depak_file(Eet_File *ef, char *file)
 	     eet_mkdirs(buf);
 	  }
 	  
-	f = fopen(file, "w");
+	f = fopen(file, "wb");
 	if (f)
 	  {
 	     fwrite(data, 1, size, f);
@@ -291,7 +291,7 @@ pak_file(Eet_File *ef, char *file, char **noz, int noz_num)
 	  {
 	     FILE *f;
 	     
-	     f = fopen(file, "r");
+	     f = fopen(file, "rb");
 	     if (f)
 	       {
 		  int compress = 1;

@@ -62,7 +62,7 @@ source_fetch_file(char *fil, char *filname)
    FILE *f;
    char buf[256 * 1024];
    
-   f = fopen(fil, "r");
+   f = fopen(fil, "rb");
    if (!f)
      return;
    else

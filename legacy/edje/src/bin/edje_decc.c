@@ -230,7 +230,7 @@ output(void)
 		       printf("ERROR: potential security violation. attempt to write in parent dir.\n");
 		       exit (-1);
 		    }
-		  f = fopen(out, "w");
+		  f = fopen(out, "wb");
 		  fwrite(font, fontsize, 1, f);
 		  fclose(f);
 		  free(font);

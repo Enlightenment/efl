@@ -372,12 +372,12 @@ eet_open(char *file, Eet_File_Mode mode)
 
    /* try open the file based on mode */
    if ((ef->mode == EET_FILE_MODE_READ) || (ef->mode == EET_FILE_MODE_RW))
-     ef->fp = fopen(ef->path, "r");
+     ef->fp = fopen(ef->path, "rb");
    else if (ef->mode == EET_FILE_MODE_WRITE)
      {
 	/* opening for write - delete old copy of file right away */
 	unlink(ef->real_path);
-	ef->fp = fopen(ef->path, "w");
+	ef->fp = fopen(ef->path, "wb");
      }
    else
      {
@@ -616,7 +616,7 @@ eet_open(char *file, Eet_File_Mode mode)
      {
 	fclose(ef->fp);
 	unlink(ef->real_path);
-	ef->fp = fopen(ef->path, "w");
+	ef->fp = fopen(ef->path, "wb");
      }
 
    /* add to cache */
