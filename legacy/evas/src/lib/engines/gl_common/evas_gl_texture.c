@@ -13,10 +13,8 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
    tex = calloc(1, sizeof(Evas_GL_Texture));
    if (!tex) return NULL;
 
-   if ((gc->ext.nv_texture_rectangle) && (1))
+   if (gc->ext.nv_texture_rectangle)
      {
-	printf("new rect tex %ix%i\n", im->image->w, im->image->h);
-	
 	tex->gc = gc;
 	tex->w = im->image->w;
 	tex->h = im->image->h;
@@ -52,12 +50,12 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
    tex->gc = gc;
    tex->w = tw;
    tex->h = th;
-   printf("new tex %ix%i\n", tw, th);
    tex->tw = im->image->w;
    tex->th = im->image->h;
    tex->references = 0;
    tex->smooth = 0;
    tex->changed = 1;
+   if (gc->ext.nv_texture_rectangle) glDisable(GL_TEXTURE_RECTANGLE_NV);
    glEnable(GL_TEXTURE_2D);
    glGenTextures(1, &(tex->texture));
    glBindTexture(GL_TEXTURE_2D, tex->texture);
@@ -151,7 +149,9 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
 	     glPixelDataRangeNV(GL_WRITE_PIXEL_DATA_RANGE_NV, 
 				im->image->w * im->image->h * 4, 
 				im->image->data);
+	     printf("ER1: %s\n", gluErrorString(glGetError()));
 	     glEnableClientState(GL_WRITE_PIXEL_DATA_RANGE_NV);
+	     printf("ER2: %s\n", gluErrorString(glGetError()));
 	     tex->opt = 1;
 	  }
 */
@@ -186,6 +186,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
    th = tex->h;
    tex->changed = 1;
    tex->have_mipmaps = 0;
+   if (tex->gc->ext.nv_texture_rectangle) glDisable(GL_TEXTURE_RECTANGLE_NV);   
    glEnable(GL_TEXTURE_2D);
    if (tex->not_power_of_two)
      {
@@ -310,6 +311,7 @@ evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int s
    pixfmt = NATIVE_PIX_FORMAT;
    
    printf("building mipmaps... [%i x %i]\n", tw, th);
+   if (tex->gc->ext.nv_texture_rectangle) glDisable(GL_TEXTURE_RECTANGLE_NV);
    glEnable(GL_TEXTURE_2D);
    glBindTexture(GL_TEXTURE_2D, tex->texture);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

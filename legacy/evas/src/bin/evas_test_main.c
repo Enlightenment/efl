@@ -1,7 +1,10 @@
 #include "config.h"
 #include "evas_test_main.h"
 
-//#define VID_TEST
+// test writing to image objects for video playback
+//define VID_TEST
+// actualyl fill the video buffer (not fair a test as cpu spends time filling)
+//#define VID_WRITE
 
 #define EVAS_PI	(3.141592654)
 
@@ -141,6 +144,7 @@ loop(void)
 	       {
 		  int tt;
 		  
+#ifdef VID_WRITE		  
 		  tt = t * 1000;
 		  for (y = 0; y < ih; y++)
 		    {
@@ -148,6 +152,7 @@ loop(void)
 			 data[(y * iw) + x] =
 			 (((x * y / 10) + tt)) | 0xff000000;
 		    }
+#endif		  
 		  evas_object_image_data_update_add(test_pattern, 0, 0, iw, ih);
 		  evas_object_image_data_set(test_pattern, data);
 	       }
@@ -156,7 +161,10 @@ loop(void)
      }
    else if (t > 5.0)
      {
-	printf("# EVAS BENCH: %3.3f\n", ((double)frames / (t - time_start)) / 60.0);
+	printf("# FRAME COUNT: %i frames\n", frames);
+	printf("# TIME:        %3.3f seconds\n", (t - time_start));
+	printf("# AVERAGE FPS: %3.3f fps\n", (double)frames / (t - time_start));
+	printf("# EVAS BENCH:  %3.3f\n", ((double)frames / (t - time_start)) / 60.0);
 	exit(0);
      }
    else 

@@ -21,6 +21,19 @@ evas_common_draw_context_free(RGBA_Draw_Context *dc)
 }
 
 void
+evas_common_draw_context_font_ext_set(RGBA_Draw_Context *dc,
+				      void *data,
+				      void *(*gl_new)  (void *data, RGBA_Font_Glyph *fg),
+				      void  (*gl_free) (void *ext_dat),
+				      void  (*gl_draw) (void *data, void *dest, void *context, RGBA_Font_Glyph *fg, int x, int y))
+{
+   dc->font_ext.data = data;
+   dc->font_ext.func.gl_new = gl_new;
+   dc->font_ext.func.gl_free = gl_free;
+   dc->font_ext.func.gl_draw = gl_draw;
+}
+
+void
 evas_common_draw_context_clip_clip(RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
    if (dc->clip.use)

@@ -957,76 +957,28 @@ evas_engine_gl_x11_font_draw(void *data, void *context, void *surface, void *fon
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-//#define GL_TXT 1
-
-#ifdef GL_TXT   
      {
-	/* create output surface size ow x oh and scale to w x h */
-	RGBA_Draw_Context *dc;
 	RGBA_Image *im;
 	
-	dc = context;
-	im = evas_common_image_create(ow, oh);
-	if (im)
-	  {
-	     int max_ascent;
-	     int i, j;
-	     RGBA_Draw_Context *dct;
-	     
-	     im->flags |= RGBA_IMAGE_HAS_ALPHA;
-	     j = ow * oh;
-	     memset(im->image->data, 0, j * sizeof(DATA32));	     
-	     max_ascent = evas_common_font_max_ascent_get(font);	     
-	     dct = evas_common_draw_context_new();
-	     if (dct)
-	       {
-		  evas_common_draw_context_set_color(dct, 255, 255, 255, 255);
-		  evas_common_font_draw(im, dct, font, 0, max_ascent, text);
-		  evas_common_cpu_end_opt();
-		  evas_common_draw_context_free(dct);
-	       }
-	       {
-		  Evas_GL_Texture *tex;
-		  Evas_GL_Context *gc;
-		  double tx1, ty1, tx2, ty2;
-		  int r, g, b, a;
-		  
-		  gc = re->win->gl_context;
-		  tex = evas_gl_common_texture_new(gc, im, 0);
-		  evas_gl_common_context_texture_set(gc, tex, 0, w, h);
-		  tx1 = 0;
-		  ty1 = 0;
-		  tx2 = (double)(ow) / (double)(tex->w);
-		  ty2 = (double)(oh) / (double)(tex->h);
-		  a = (dc->col.col >> 24) & 0xff;
-		  r = (dc->col.col >> 16) & 0xff;
-		  g = (dc->col.col >> 8 ) & 0xff;
-		  b = (dc->col.col      ) & 0xff;
-		  evas_gl_common_context_color_set(gc, r, g, b, a);
-		  evas_gl_common_context_blend_set(gc, 1);
-		  if (dc->clip.use)
-		    evas_gl_common_context_clip_set(gc, 1,
-						    dc->clip.x, dc->clip.y,
-						    dc->clip.w, dc->clip.h);
-		  else
-		    evas_gl_common_context_clip_set(gc, 0,
-						    0, 0, 0, 0);
-		  evas_gl_common_context_read_buf_set(gc, GL_BACK);
-		  evas_gl_common_context_write_buf_set(gc, GL_BACK);
-		  
-		  glBegin(GL_QUADS);
-		  glTexCoord2d(tx1, ty1); glVertex2i(x    , y - ((max_ascent * h) / oh));
-		  glTexCoord2d(tx2, ty1); glVertex2i(x + w, y - ((max_ascent * h) / oh));
-		  glTexCoord2d(tx2, ty2); glVertex2i(x + w, y - ((max_ascent * h) / oh) + h);
-		  glTexCoord2d(tx1, ty2); glVertex2i(x    , y - ((max_ascent * h) / oh) + h);
-		  glEnd();
-		  
-		  evas_gl_common_texture_free(tex);
-	       }
-	     evas_common_image_free(im);
-	  }
+	im = evas_common_image_new();
+	im->image = evas_common_image_surface_new();
+	im->image->w = re->win->w;
+	im->image->h = re->win->h;
+	im->image->data = NULL;
+	im->image->no_free = 1;
+	evas_common_draw_context_font_ext_set(context,
+					      re->win->gl_context,
+					      evas_gl_font_texture_new,
+					      evas_gl_font_texture_free,
+					      evas_gl_font_texture_draw);
+	evas_common_font_draw(im, context, font, x, y, text);
+	evas_common_draw_context_font_ext_set(context, 
+					      NULL,
+					      NULL, 
+					      NULL,
+					      NULL);
+	evas_common_image_free(im);
      }
-#endif   
 }
 
 static void

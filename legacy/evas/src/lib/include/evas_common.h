@@ -239,30 +239,38 @@ struct _Evas_Hash_El
 struct _RGBA_Draw_Context
 {
    struct {
-      int    use : 1;
+      char   use : 1;
       DATA8  r[256], g[256], b[256], a[256];
    } mod;
    struct {
-      int    use : 1;
+      char   use : 1;
       DATA32 col;
    } mul;
    struct {
       DATA32 col;
    } col;
    struct {
-      int    use : 1;
+      char   use : 1;
       int    x, y, w, h;
    } clip;
    struct {
      Cutout_Rect *rects; 
    } cutout;
+   struct {
+      struct {
+	 void *(*gl_new)  (void *data, RGBA_Font_Glyph *fg);
+	 void  (*gl_free) (void *ext_dat);
+	 void  (*gl_draw) (void *data, void *dest, void *context, RGBA_Font_Glyph *fg, int x, int y);
+      } func;
+      void *data;
+   } font_ext;
 };
 
 struct _RGBA_Surface
 {
    int     w, h;
    DATA32 *data;
-   int     no_free : 1;
+   char    no_free : 1;
 };
 
 struct _RGBA_Image
@@ -326,8 +334,10 @@ struct _RGBA_Font
 
 struct _RGBA_Font_Glyph
 { 
-   FT_Glyph       glyph;
-   FT_BitmapGlyph glyph_out;
+   FT_Glyph        glyph;
+   FT_BitmapGlyph  glyph_out;
+   void           *ext_dat;
+   void           (*ext_dat_free) (void *ext_dat);
 };
 
 struct _Tilebuf
@@ -817,6 +827,11 @@ void               evas_common_draw_init                      (void);
 
 RGBA_Draw_Context *evas_common_draw_context_new               (void);
 void               evas_common_draw_context_free              (RGBA_Draw_Context *dc);
+void               evas_common_draw_context_font_ext_set      (RGBA_Draw_Context *dc,
+							 void *data,
+							 void *(*gl_new)  (void *data, RGBA_Font_Glyph *fg),
+							 void  (*gl_free) (void *ext_dat),
+							 void  (*gl_draw) (void *data, void *dest, void *context, RGBA_Font_Glyph *fg, int x, int y));
 void               evas_common_draw_context_clip_clip         (RGBA_Draw_Context *dc, int x, int y, int w, int h);
 void               evas_common_draw_context_set_clip          (RGBA_Draw_Context *dc, int x, int y, int w, int h);
 void               evas_common_draw_context_unset_clip        (RGBA_Draw_Context *dc);

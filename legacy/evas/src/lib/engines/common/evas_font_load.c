@@ -182,6 +182,8 @@ font_flush_free_glyph_cb(Evas_Hash *hash, const char *key, void *data, void *fda
    
    fg = data;
    FT_Done_Glyph(fg->glyph);
+   /* extension calls */
+   if (fg->ext_dat_free) fg->ext_dat_free(fg->ext_dat);
    free(fg);
    return 1;
    hash = 0;

@@ -67,7 +67,7 @@ evas_engine_gl_x11_window_free(Evas_GL_X11_Window *gw)
 {
    if (gw == _evas_gl_x11_window) _evas_gl_x11_window = NULL;
    evas_gl_common_context_free(gw->gl_context);
-   glXDestroyContext(gw->disp, gw->context);
+//   glXDestroyContext(gw->disp, gw->context);
    free(gw);
 }
 

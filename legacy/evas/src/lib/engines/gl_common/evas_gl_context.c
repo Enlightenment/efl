@@ -65,8 +65,16 @@ evas_gl_common_context_use(Evas_GL_Context *gc)
 	  {
 	     if (strstr(ext, "GL_SGIS_generate_mipmap")) gc->ext.sgis_generate_mipmap = 1;
 	     if (strstr(ext, "GL_NV_texture_rectangle")) gc->ext.nv_texture_rectangle = 1;
-	     printf("EXT supported: GL_SGIS_generate_mipmap = %x\n", gc->ext.sgis_generate_mipmap);
-	     printf("EXT supported: GL_NV_texture_rectangle = %x\n", gc->ext.nv_texture_rectangle);
+	     /* technically this should work, as its a compatible */
+	     /* implementation of the nvidia texture_rectangle extension */
+	     /* since the #define value is the same as is the description */
+	     /* if (strstr(ext, "GL_EXT_texture_rectangle")) gc->ext.nv_texture_rectangle = 1; */
+	     printf("GL EXT supported: GL_SGIS_generate_mipmap = %x\n", gc->ext.sgis_generate_mipmap);
+	     printf("GL EXT supported: GL_NV_texture_rectangle = %x\n", gc->ext.nv_texture_rectangle);
+	  }
+	else
+	  {
+	     printf("GL EXT supported: No extensions!!!!!\n");
 	  }
 	gc->ext.checked = 1;
      }
@@ -75,6 +83,7 @@ evas_gl_common_context_use(Evas_GL_Context *gc)
    _evas_gl_common_dither_set(gc);
    _evas_gl_common_blend_set(gc);
    _evas_gl_common_color_set(gc);
+   _evas_gl_common_texture_set(gc);
    _evas_gl_common_texture_set(gc);
    _evas_gl_common_clip_set(gc);
    _evas_gl_common_buf_set(gc);
@@ -132,6 +141,11 @@ evas_gl_common_context_dither_set(Evas_GL_Context *gc, int dither)
 void
 evas_gl_common_context_texture_set(Evas_GL_Context *gc, Evas_GL_Texture *tex, int smooth, int w, int h)
 {
+   if (gc->font_texture > 0)
+     {
+	gc->font_texture = 0;
+	gc->change.texture = 1;
+     }
    if (gc->texture != tex)
      {
 	if (gc->texture) gc->texture->references--;
@@ -149,6 +163,24 @@ evas_gl_common_context_texture_set(Evas_GL_Context *gc, Evas_GL_Texture *tex, in
 	  }
 	tex->uw = w;
 	tex->uh = h;
+     }
+   if (_evas_gl_common_context == gc) _evas_gl_common_texture_set(gc);
+}
+
+void
+evas_gl_common_context_font_texture_set(Evas_GL_Context *gc, Evas_GL_Font_Texture *ft)
+{
+   if (gc->texture)
+     {
+	if (gc->texture) gc->texture->references--;
+	gc->texture = NULL;
+	gc->change.texture = 1;
+     }
+   if (gc->font_texture != ft->texture)
+     {
+	gc->font_texture = ft->texture;
+	gc->font_texture_not_power_of_two = ft->pool->not_power_of_two;
+	gc->change.texture = 1;
      }
    if (_evas_gl_common_context == gc) _evas_gl_common_texture_set(gc);
 }
@@ -245,7 +277,23 @@ static void
 _evas_gl_common_texture_set(Evas_GL_Context *gc)
 {
    if (!gc->change.texture) return;
-   if (gc->texture)
+   if (gc->font_texture > 0)
+     {
+	if (gc->font_texture_not_power_of_two)
+	  {
+	     glEnable(GL_TEXTURE_2D);
+	     glEnable(GL_TEXTURE_RECTANGLE_NV);
+	     glBindTexture(GL_TEXTURE_RECTANGLE_NV, gc->font_texture);
+	  }
+	else
+	  {
+	     if (gc->ext.nv_texture_rectangle)
+	       glDisable(GL_TEXTURE_RECTANGLE_NV);
+	     glEnable(GL_TEXTURE_2D);
+	     glBindTexture(GL_TEXTURE_2D, gc->font_texture);
+	  }
+     }
+   else if (gc->texture)
      {
 	if (gc->texture->not_power_of_two)
 	  {
@@ -255,7 +303,7 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
 	  }
 	else
 	  {
-	     glDisable(GL_TEXTURE_RECTANGLE_NV);
+	     if (gc->ext.nv_texture_rectangle) glDisable(GL_TEXTURE_RECTANGLE_NV);
 	     glEnable(GL_TEXTURE_2D);
 	     glBindTexture(GL_TEXTURE_2D, gc->texture->texture);
 	  }
@@ -287,8 +335,11 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
 	       }
 	  }
      }
-   else
-     glDisable(GL_TEXTURE_2D);   
+   else if (gc->font_texture == 0)
+     {
+	glDisable(GL_TEXTURE_2D);
+	if (gc->ext.nv_texture_rectangle) glDisable(GL_TEXTURE_RECTANGLE_NV);
+     }
    gc->change.texture = 0;
 }
 

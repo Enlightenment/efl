@@ -44,7 +44,7 @@ evas_common_font_cache_glyph_get(RGBA_Font *fn, FT_UInt index)
      }
    fg->glyph_out = (FT_BitmapGlyph)fg->glyph;
    
-   fn->glyphs = evas_hash_add(fn->glyphs, key, fg);   
+   fn->glyphs = evas_hash_add(fn->glyphs, key, fg);
    return fg;
 }
 
@@ -114,6 +114,13 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	  }
 	fg = evas_common_font_cache_glyph_get(fn, index);
 	if (!fg) continue;
+	
+	if ((dc->font_ext.func.gl_new) && (!fg->ext_dat))
+	  {
+	     /* extension calls */
+	     fg->ext_dat = dc->font_ext.func.gl_new(dc->font_ext.data, fg);
+	     fg->ext_dat_free = dc->font_ext.func.gl_free;
+	  }
 
 	chr_x = (pen_x + (fg->glyph_out->left << 8)) >> 8;
 	chr_y = (pen_y + (fg->glyph_out->top << 8)) >> 8;
@@ -133,33 +140,46 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	       {
 		  if ((j > 0) && (chr_x + w > ext_x))
 		    {
-		       for (i = 0; i < h; i++)
+		       if (fg->ext_dat)
 			 {
-			    int dx, dy;
-			    int in_x, in_w;
-			    
-			    in_x = 0;
-			    in_w = 0;
-			    dx = chr_x;
-			    dy = y - (chr_y - i - y);
-			    if ((dx < (ext_x + ext_w)) &&
-				(dy >= (ext_y)) &&
-				(dy < (ext_y + ext_h)))
+			    /* ext glyph draw */
+			    dc->font_ext.func.gl_draw(dc->font_ext.data, 
+						      NULL,
+						      dc, fg, 
+						      chr_x, 
+						      y - (chr_y - y)
+						      );
+			 }
+		       else
+			 {
+			    for (i = 0; i < h; i++)
 			      {
-				 if (dx + w > (ext_x + ext_w))
-				   in_w += (dx + w) - (ext_x + ext_w);
-				 if (dx < ext_x)
+				 int dx, dy;
+				 int in_x, in_w;
+				 
+				 in_x = 0;
+				 in_w = 0;
+				 dx = chr_x;
+				 dy = y - (chr_y - i - y);
+				 if ((dx < (ext_x + ext_w)) &&
+				     (dy >= (ext_y)) &&
+				     (dy < (ext_y + ext_h)))
 				   {
-				      in_w += ext_x - dx;
-				      in_x = ext_x - dx;
-				      dx = ext_x;
-				   }
-				 if (in_w < w)
-				   {
-				      func(data + (i * j) + in_x, 
-					   im + (dy * im_w) + dx,
-					   w - in_w, 
-					   dc->col.col);
+				      if (dx + w > (ext_x + ext_w))
+					in_w += (dx + w) - (ext_x + ext_w);
+				      if (dx < ext_x)
+					{
+					   in_w += ext_x - dx;
+					   in_x = ext_x - dx;
+					   dx = ext_x;
+					}
+				      if (in_w < w)
+					{
+					   func(data + (i * j) + in_x, 
+						im + (dy * im_w) + dx,
+						w - in_w, 
+						dc->col.col);
+					}
 				   }
 			      }
 			 }

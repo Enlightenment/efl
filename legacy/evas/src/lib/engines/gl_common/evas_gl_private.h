@@ -3,7 +3,7 @@
 
 #include "evas_gl_common.h"
 
-#if 0
+#if 1
 /* nvidia extensions */
 extern void glPixelDataRangeNV(GLenum target, GLsizei length, void *pointer);
 #define GL_WRITE_PIXEL_DATA_RANGE_NV 0x8878
