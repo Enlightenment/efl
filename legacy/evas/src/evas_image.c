@@ -62,6 +62,10 @@ evas_add_image_from_file(Evas e, char *file)
 	     o->current.y = 0;
 	     o->current.w = (double)oo->current.image.w;
 	     o->current.h = (double)oo->current.image.h;
+	     oo->current.fill.x = 0;
+	     oo->current.fill.y = 0;
+	     oo->current.fill.w = (double)oo->current.image.w;
+	     oo->current.fill.h = (double)oo->current.image.h;
 	     imlib_free_image();
 	  }
      }
@@ -113,6 +117,10 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
 	     oo->current.image.h = imlib_image_get_height();
 	     o->current.w = (double)oo->current.image.w;
 	     o->current.h = (double)oo->current.image.h;
+	     oo->current.fill.x = 0;
+	     oo->current.fill.y = 0;
+	     oo->current.fill.w = (double)oo->current.image.w;
+	     oo->current.fill.h = (double)oo->current.image.h;
 	     imlib_free_image();
 	  }
 	else
@@ -121,9 +129,14 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
 	     oo->current.image.h = 0;
 	     o->current.w = (double)oo->current.image.w;
 	     o->current.h = (double)oo->current.image.h;
+	     oo->current.fill.x = 0;
+	     oo->current.fill.y = 0;
+	     oo->current.fill.w = (double)oo->current.image.w;
+	     oo->current.fill.h = (double)oo->current.image.h;
 	  }
      }
    o->changed = 1;
+   e->changed = 1;
 }
 
 void
@@ -135,6 +148,15 @@ evas_set_image_data(Evas e, Evas_Object o, void *data, Evas_Image_Format format,
 void
 evas_set_image_fill(Evas e, Evas_Object o, double x, double y, double w, double h)
 {
+   Evas_Object_Image oo;
+   
+   oo = o;
+   oo->current.fill.x = x;
+   oo->current.fill.y = y;
+   oo->current.fill.w = w;
+   oo->current.fill.h = h;
+   o->changed = 1;
+   e->changed = 1;
 }
 
 /* image query ops */

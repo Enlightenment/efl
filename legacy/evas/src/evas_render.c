@@ -51,6 +51,7 @@ void
 evas_update_rect(Evas e, int x, int y, int w, int h)
 {
    e->updates = imlib_update_append_rect(e->updates, x, y, w, h);
+   e->changed = 1;
 }
 
 #if 0
@@ -85,7 +86,13 @@ evas_render(Evas e)
    int (*func_image_get_width) (void *im);
    int (*func_image_get_height) (void *im);
    
-   if ((!e->changed) || (!e->current.display) || (!e->current.drawable))
+   if ((!e->changed) || 
+       (!e->current.display) || 
+       (!e->current.drawable) ||
+       (e->current.drawable_width <= 0) || 
+       (e->current.drawable_height <= 0) ||
+       (e->current.viewport.w <= 0) || 
+       (e->current.viewport.h <= 0))
       return;
    
    switch (e->current.render_method)
@@ -117,7 +124,6 @@ evas_render(Evas e)
      default:
 	break;
      }
-   e->changed = 0;
    if ((e->current.viewport.x != e->previous.viewport.x) || 
        (e->current.viewport.y != e->previous.viewport.y) || 
        (e->current.viewport.w != e->previous.viewport.w) || 
@@ -127,6 +133,7 @@ evas_render(Evas e)
 		       e->current.drawable_width, 
 		       e->current.drawable_height);
    
+   e->changed = 0;
    delete_objects = 0;
    /* go thru layers & objects and add updates */
    for (l = e->layers; l; l = l->next)
@@ -312,7 +319,140 @@ evas_render(Evas e)
 					   im = func_image_new_from_file(e->current.display, oo->current.file);
 					   if (im)
 					     {
-						func_image_draw(im, 
+						int visx, visy, visw, vish;
+						int tilex, tiley, tilew, tileh;
+						struct _points
+						  {
+						     int out1, out2;
+						     int in1, in2;
+						  } *pointsx, *pointsy;
+						int xx, yy, ww, hh;
+						
+						visx = x;
+						visw = w;
+						if (x < 0) 
+						  {
+						     visx = 0;
+						     visw += x;
+						  }
+						if ((visx + visw) > e->current.drawable_width) visw = e->current.drawable_width - visx;
+						tilex = (-oo->current.fill.x * (double)e->current.drawable_width) / e->current.viewport.w;
+						tilew = (oo->current.fill.w * (double)e->current.drawable_width) / e->current.viewport.w;
+						if (tilew < 1) tilew = 1;
+						tilex = (((tilex - (x - visx)) % tilew) + tilew) % tilew;
+						if (tilex == 0) ww = 1 + (visw - 1) / tilew;
+						else ww = 1 + ((visw + tilex) / tilew);
+						
+						pointsx = malloc(ww * sizeof(struct _points));
+						for (xx = 0; xx < ww; xx++)
+						  {
+						     if (xx == 0)
+						       {
+							  if (xx == (ww - 1))  /* | * | */
+							    {
+							       pointsx[xx].out1 = visx + 0;
+							       pointsx[xx].out2 = visw;
+							       pointsx[xx].in1 = (int)(((double)tilex * (double)oo->current.image.w * e->current.viewport.w) / ((double)e->current.drawable_width * (double)tilew));
+							       pointsx[xx].in2 = (int)(((double)func_image_get_width(im) * (double)visw) / (double)tilew);
+							    }
+							  else  /* | *  |   |   | */
+							    {
+							       pointsx[xx].out1 = visx + 0;
+							       pointsx[xx].out2 = tilew - tilex;
+							       pointsx[xx].in1 = (int)(((double)tilex * (double)oo->current.image.w * e->current.viewport.w) / ((double)e->current.drawable_width * (double)tilew));
+							       pointsx[xx].in2 = func_image_get_width(im) - pointsx[xx].in1;
+							    }
+						       }
+						     else
+						       {
+							  if (xx == (ww - 1))  /* |   |   | * | */
+							    {
+							       pointsx[xx].out1 = visx + (xx * tilew) - tilex;
+							       pointsx[xx].out2 = visw - (pointsx[xx].out1 - visx);
+							       pointsx[xx].in1 = 0;
+							       pointsx[xx].in2 = (int)(((double)pointsx[xx].out2 * (double)oo->current.image.w * e->current.viewport.w) / ((double)e->current.drawable_width * (double)tilew));
+							    }
+							  else /* |   | * |   | */
+							    {
+							       pointsx[xx].out1 = visx + (xx * tilew) - tilex;
+							       pointsx[xx].out2 = tilew;
+							       pointsx[xx].in1 = 0;
+							       pointsx[xx].in2 = func_image_get_width(im);
+							    }
+						       }
+						  }
+						
+						visy = y;
+						vish = h;
+						if (y < 0) 
+						  {
+						     visy = 0;
+						     vish += y;
+						  }
+						if ((visy + vish) > e->current.drawable_height) vish = e->current.drawable_height - visy;
+						tiley = (-oo->current.fill.y * (double)e->current.drawable_height) / e->current.viewport.h;
+						tileh = (oo->current.fill.h * (double)e->current.drawable_height) / e->current.viewport.h;
+						if (tileh < 1) tileh = 1;
+						tiley = (((tiley - (y - visy)) % tileh) + tileh) % tileh;
+						if (tiley == 0) hh = 1 + (vish - 1) / tileh;
+						else hh = 1 + ((vish + tiley) / tileh);
+
+						pointsy = malloc(hh * sizeof(struct _points));
+						for (yy = 0; yy < hh; yy++)
+						  {
+						     if (yy == 0)
+						       {
+							  if (yy == (hh - 1))  /* | * | */
+							    {
+							       pointsy[yy].out1 = visy + 0;
+							       pointsy[yy].out2 = vish;
+							       pointsy[yy].in1 = (int)(((double)tiley * (double)oo->current.image.h * e->current.viewport.h) / ((double)e->current.drawable_height * (double)tileh));
+							       pointsy[yy].in2 = (int)(((double)func_image_get_height(im)  * (double)vish) / (double)tileh);
+							    }
+							  else  /* | *  |   |   | */
+							    {
+							       pointsy[yy].out1 = visy + 0;
+							       pointsy[yy].out2 = tileh - tiley;
+							       pointsy[yy].in1 = (int)(((double)tiley * (double)oo->current.image.h * e->current.viewport.h) / ((double)e->current.drawable_height * (double)tileh));
+							       pointsy[yy].in2 = func_image_get_height(im) - pointsy[yy].in1;
+							    }
+						       }
+						     else
+						       {
+							  if (yy == (hh - 1))  /* |   |   | * | */
+							    {
+							       pointsy[yy].out1 = visy + (yy * tileh) - tiley;
+							       pointsy[yy].out2 = vish - (pointsy[yy].out1 - visy);
+							       pointsy[yy].in1 = 0;
+							       pointsy[yy].in2 = (int)(((double)pointsy[yy].out2 * (double)oo->current.image.h * e->current.viewport.h) / ((double)e->current.drawable_height * (double)tileh));
+							    }
+							  else /* |   | * |   | */
+							    {
+							       pointsy[yy].out1 = visy + (yy * tileh) - tiley;
+							       pointsy[yy].out2 = tileh;
+							       pointsy[yy].in1 = 0;
+							       pointsy[yy].in2 = func_image_get_height(im);
+							    }
+						       }
+						  }
+						for (yy = 0; yy < hh; yy++)
+						  {
+						     for (xx = 0; xx < ww; xx++)
+						       {
+							  func_image_draw(im, 
+									  e->current.display,
+									  e->current.drawable,
+									  e->current.drawable_width,
+									  e->current.drawable_height,
+									  pointsx[xx].in1, pointsy[yy].in1, 
+									  pointsx[xx].in2, pointsy[yy].in2, 
+									  pointsx[xx].out1, pointsy[yy].out1, 
+									  pointsx[xx].out2, pointsy[yy].out2);
+						       }
+						  }
+						free(pointsx);
+						free(pointsy);
+/*						func_image_draw(im, 
 								e->current.display,
 								e->current.drawable,
 								e->current.drawable_width,
@@ -320,7 +460,7 @@ evas_render(Evas e)
 								0, 0, 
 								func_image_get_width(im),
 								func_image_get_height(im),
-								x, y, w, h);
+								x, y, w, h);*/
 						func_image_free(im);
 					     }
 					}

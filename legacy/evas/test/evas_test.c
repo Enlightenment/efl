@@ -74,11 +74,13 @@ main(int argc, char **argv)
    w /= 2;
    h /= 2;
    evas_show(e, o[1]);
+   
    for (i = 2 ; i < 128; i++)
      {
 	o[i] = evas_add_image_from_file(e, "img/mush.png");
 	evas_show(e, o[i]);
      }
+   
    evas_raise(e, o[1]);
    evas_move(e, o[0], 0, 0);
    evas_resize(e, o[0], win_w, win_h);
@@ -124,9 +126,7 @@ main(int argc, char **argv)
 		       mouse_x = ev.xmotion.x;
 		       mouse_y = ev.xmotion.y;
 		       if (down)
-			 {
-			    evas_move(e, o[1], mouse_x - w, mouse_y - h);
-			 }
+			  evas_move(e, o[1], mouse_x - w, mouse_y - h);
 		    }
 		  break;
 	       case Expose:
@@ -139,7 +139,6 @@ main(int argc, char **argv)
 	       }
 	  }
 /*	while (XPending(d));*/
-	
 	for (i = 2; i < 128; i++)
 	  {
 	     int j, k;
@@ -151,7 +150,6 @@ main(int argc, char **argv)
 	     evas_set_image_file(e, o[i], imgs[(i) & 0x7]);
 	     evas_move(e, o[i], x, y);
 	  }
-		
 	evas_render(e);
 	a++;
 	if (a >= 1000) a = 0;
