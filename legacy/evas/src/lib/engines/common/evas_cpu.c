@@ -64,8 +64,11 @@ evas_common_cpu_feature_test(void (*feature)(void))
 void
 evas_common_cpu_init(void)
 {
+   static int called = 0;
    int enabled;
 
+   if (called) return;
+   called = 1;
 #ifdef __i386__
 
    if (evas_common_cpu_feature_test(evas_common_cpu_mmx_test))
