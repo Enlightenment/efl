@@ -1,6 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = canvas data file engines include
+SUBDIRS = canvas data file engines imaging include
 
 AUTOMAKE_OPTIONS     = 1.4 foreign
 
@@ -97,6 +97,7 @@ libevas_la_LIBADD       = $(LDFLAGS) \
                           canvas/libevas_canvas.la \
 			  data/libevas_data.la \
 			  file/libevas_file.la \
+			  imaging/libevas_imaging.la \
 			  engines/common/libevas_engine_common.la \
 			  @freetype_libs@ \
 			  @png_libs@ @jpeg_libs@ @eet_libs@ @edb_libs@ \
@@ -114,6 +115,7 @@ libevas_la_DEPENDENCIES = \
                           canvas/libevas_canvas.la \
 			  data/libevas_data.la \
 			  file/libevas_file.la \
+			  imaging/libevas_imaging.la \
 			  engines/common/libevas_engine_common.la \
 			  $(ENGINE_SOFTWARE_X11) \
 			  $(ENGINE_DIRECTFB) \

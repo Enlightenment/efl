@@ -602,6 +602,36 @@ static int load_image_file_data_eet(RGBA_Image *im, const char *file, const char
 static int
 load_image_file_data_eet(RGBA_Image *im, const char *file, const char *key)
 {
+   int                  w, h, alpha, compression, quality, lossy;
+   Eet_File            *ef;
+   int                  ok;
+   
+   if ((!file) || (!key)) return -1;
+   ef = eet_open((char *)file, EET_FILE_MODE_READ);
+   if (!ef) return -1;
+   ok = eet_data_image_header_read(ef, (char *)key, 
+				   &w, &h, &alpha, &compression, &quality, &lossy);
+   if (!ok)
+     {
+	eet_close(ef);
+	return -1;
+     }
+   if ((w > 8192) || (h > 8192))
+     {
+	eet_close(ef);
+	return -1;
+     }
+   if (alpha) im->flags |= RGBA_IMAGE_HAS_ALPHA;
+   if (!im->image)
+     im->image = evas_common_image_surface_new();
+   if (!im->image)
+     {
+	eet_close(ef);
+	return -1;
+     }
+   im->image->w = w;
+   im->image->h = h;
+   eet_close(ef);
    return 1;
 }
 #endif

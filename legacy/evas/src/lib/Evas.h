@@ -527,7 +527,28 @@ extern "C" {
    void             *evas_object_intercept_stack_below_callback_del (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *below));
    void              evas_object_intercept_layer_set_callback_add   (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, int l), const void *data);
    void             *evas_object_intercept_layer_set_callback_del   (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, int l));
+
+/* Evas imaging api - exports some of the comon gfx engine routines */   
+/* this is not complete and should be considered experimental. use at your */
+/* own risk */
    
+#ifndef EVAS_COMMON_H
+#ifndef EVAS_PRIVATE_H
+   
+   typedef struct _Evas_Imaging_Image Evas_Imaging_Image;
+   typedef struct _Evas_Imaging_Font Evas_Imaging_Font;
+
+#endif
+#endif
+
+   Evas_Imaging_Image *evas_imaging_image_load      (const char *file, const char *key);
+   void                evas_imaging_image_free      (Evas_Imaging_Image *im);
+   void                evas_imaging_image_size_get  (Evas_Imaging_Image *im, int *w, int *h);
+   Evas_Bool           evas_imaging_image_alpha_get (Evas_Imaging_Image *im);
+   void                evas_imaging_image_cache_set (int bytes);
+   int                 evas_imaging_image_cache_get (void);
+       
+       
 #ifdef __cplusplus
 }
 #endif

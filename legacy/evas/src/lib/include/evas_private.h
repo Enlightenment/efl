@@ -620,6 +620,19 @@ void evas_object_grabs_cleanup(Evas_Object *obj);
 void evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
    
 extern int _evas_alloc_error;
+
+typedef struct _Evas_Imaging_Image Evas_Imaging_Image;
+typedef struct _Evas_Imaging_Font Evas_Imaging_Font;
+
+struct _Evas_Imaging_Image
+{
+   RGBA_Image *image;
+};
+
+struct _Evas_Imaging_font
+{
+   RGBA_Font *font;
+};
    
 #ifdef __cplusplus
 }
