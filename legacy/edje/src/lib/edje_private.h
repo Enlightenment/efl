@@ -23,6 +23,10 @@
 #include <alloca.h>
 #endif
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #ifndef ABS
 #define ABS(x) (x < 0 ? -x : x)
 #endif
@@ -149,11 +153,13 @@ struct _Edje_File
    Edje_Part_Collection_Directory *collection_dir;
    Evas_List                      *data;
    
-   Evas_Hash                      *collection_hash;
    int                             references;
    char                           *compiler;
    int                             version;
    int                             feature_ver;
+   
+   Evas_Hash                      *collection_hash;
+   Evas_List                      *collection_cache;
 };
 
 /*----------*/
@@ -273,6 +279,8 @@ struct _Edje_Part_Collection
 #endif   
    
    Embryo_Program   *script; /* all the embryo script code for this group */
+   
+   char             *part;
 };
 
 struct _Edje_Part
@@ -755,7 +763,8 @@ void  _edje_edd_free(void);
 void  _edje_file_add(Edje *ed);
 void  _edje_file_del(Edje *ed);
 void  _edje_file_free(Edje_File *edf);
-void  _edje_collection_free(Edje *ed, Edje_Part_Collection *ec);
+void  _edje_file_cache_shutdown(void);
+void  _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec);
 
 Edje *_edje_add(Evas_Object *obj);
 void  _edje_del(Edje *ed);

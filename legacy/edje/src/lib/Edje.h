@@ -155,6 +155,13 @@ extern "C" {
    EAPI Evas_List   *edje_file_collection_list       (const char *file);
    EAPI void         edje_file_collection_list_free  (Evas_List *lst);
    EAPI char        *edje_file_data_get              (const char *file, const char *key);
+   EAPI void         edje_file_cache_set             (int count);
+   EAPI int          edje_file_cache_get             (void);
+   EAPI void         edje_file_cache_flush           (void);
+   EAPI void         edje_collection_cache_set       (int count);
+   EAPI int          edje_collection_cache_get       (void);
+   EAPI void         edje_collection_cache_flush     (void);
+       
    
    /* edje_util.c */
    EAPI void         edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);

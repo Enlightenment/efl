@@ -204,7 +204,8 @@ _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep)
 
      }
 
-   if ((pt->default_desc) && (pt->default_desc->text.text_class)) _edje_text_class_member_add(ed, pt->default_desc->text.text_class);
+   if ((pt->default_desc) && (pt->default_desc->text.text_class))
+     _edje_text_class_member_add(ed, pt->default_desc->text.text_class);
    for (tmp = pt->other_desc; tmp; tmp = tmp->next)
      {
         Edje_Part_Description *desc;
@@ -244,15 +245,15 @@ _edje_text_part_on_del(Edje *ed, Edje_Part *pt)
    if ((pt->default_desc) && (pt->default_desc->text.text_class))
      {
         _edje_text_class_member_del(ed, pt->default_desc->text.text_class);
-		free(pt->default_desc->text.text_class);
-		pt->default_desc->text.text_class = NULL;
+	free(pt->default_desc->text.text_class);
+	pt->default_desc->text.text_class = NULL;
      }
-
+   
    if (pt->default_desc && pt->default_desc->color_class)
      {
         _edje_color_class_member_del(ed, pt->default_desc->color_class);
-		free (pt->default_desc->color_class);
-		pt->default_desc->color_class = NULL;
+	free (pt->default_desc->color_class);
+	pt->default_desc->color_class = NULL;
      }
 
    for (tmp = pt->other_desc; tmp; tmp = tmp->next)
@@ -266,13 +267,13 @@ _edje_text_part_on_del(Edje *ed, Edje_Part *pt)
 	      free(desc->text.text_class);
 	      desc->text.text_class = NULL;
 	   }
-
-	 if (desc->color_class)
-	   {
-          _edje_color_class_member_del(ed, desc->color_class);
-		  free(desc->color_class);
-		  desc->color_class = NULL;
-	   }
+	
+	if (desc->color_class)
+	  {
+	     _edje_color_class_member_del(ed, desc->color_class);
+	     free(desc->color_class);
+	     desc->color_class = NULL;
+	  }
      }
 }
 

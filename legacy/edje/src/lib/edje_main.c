@@ -39,6 +39,7 @@ edje_shutdown(void)
    initted--;
    if (initted > 0) return initted;
 
+   _edje_file_cache_shutdown();
    _edje_message_shutdown();
    _edje_edd_free();
    _edje_color_class_members_free();
