@@ -7,7 +7,7 @@
 /* uncomment this is partial buffer swaps slow - problem with glcopypixels? */
 #define GLSWB 1
 /* uncomment if your GL implimentation is CRAP at clipping */
-/* #define GLNOCLIP 1 */
+#define GLNOCLIP 1
 
 #define INTERSECTS(x, y, w, h, xx, yy, ww, hh) \
      ((x < (xx + ww)) && \
