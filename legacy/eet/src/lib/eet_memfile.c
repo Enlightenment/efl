@@ -5,7 +5,7 @@ FILE *
 _eet_memfile_read_open(void *data, size_t size)
 {
 #ifdef HAVE_FMEMOPEN
-   return fmemopen(data, size, "r");
+   return (FILE *)fmemopen(data, size, "r");
 #else
    FILE *f;
    
