@@ -296,8 +296,6 @@ extern "C" {
    int ecore_hash_set_free_value(Ecore_Hash *hash, Ecore_Free_Cb function);
    void ecore_hash_destroy(Ecore_Hash *hash);
 
-   Ecore_Hash_Node *ecore_hash_goto_first(Ecore_Hash *hash);
-   Ecore_Hash_Node *ecore_hash_next(Ecore_Hash *hash);
    int ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func,
                                 void *user_data);
    Ecore_List *ecore_hash_keys(Ecore_Hash *hash);
