@@ -1,25 +1,17 @@
-# Note that this is NOT a relocatable package
-%define ver      0.0.1
-%define rel      1
-%define prefix   /usr
-
 Summary: embryo
 Name: embryo
-Version: %ver
-Release: %rel
+Version: 0.0.1
+Release: 1
 Copyright: BSD
 Group: System Environment/Libraries
-Source: ftp://ftp.enlightenment.org/pub/embryo/embryo-%{ver}.tar.gz
-BuildRoot: /var/tmp/embryo-root
-Packager: The Rasterman <raster@rasterman.com>
 URL: http://www.enlightenment.org/
-
-Docdir: %{prefix}/doc
+Source: ftp://ftp.enlightenment.org/pub/embryo/%{name}-%{version}.tar.gz
+Packager: Michael Jennings <mej@eterm.org
+BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
-
-Embryo is a tiny library designed as a virtual machine to interpret a limited
-set of small compiled programs.
+Embryo is a tiny library designed as a virtual machine to interpret a
+limited set of small compiled programs.
 
 %package devel
 Summary: Embryo headers, static libraries, documentation and test programs
@@ -30,26 +22,15 @@ Requires: %{name} = %{version}
 Headers, static libraries, test programs and documentation for Embryo
 
 %prep
-rm -rf $RPM_BUILD_ROOT
-
 %setup -q
 
 %build
-./configure --prefix=%prefix
-
-if [ "$SMP" != "" ]; then
-  (make "MAKE=make -k -j $SMP"; exit 0)
-  make
-else
-  make
-fi
-###########################################################################
+%{configure} --prefix=%{_prefix}
+%{__make} %{?_smp_mflags} %{?mflags}
 
 %install
-make DESTDIR=$RPM_BUILD_ROOT install
-
-%clean
-rm -rf $RPM_BUILD_ROOT
+%{__make} %{?mflags_install} DESTDIR=$RPM_BUILD_ROOT install
+test -x `which doxygen` && sh gendoc || :
 
 %post
 /sbin/ldconfig
@@ -57,26 +38,26 @@ rm -rf $RPM_BUILD_ROOT
 %postun
 /sbin/ldconfig
 
+%clean
+test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
+
 %files
-%defattr(-,root,root)
-%attr(755,root,root) %{prefix}/lib/libembryo.so.*
-%{prefix}/lib/libembryo.la
-%attr(755,root,root) %{prefix}/bin/embryo_cc
-%attr(755,root,root) %{prefix}/bin/embryo
+%defattr(-, root, root)
+%doc AUTHORS COPYING* README
+%{_libdir}/libembryo.so.*
+%{_libdir}/libembryo.la
+%attr(755,root,root) %{_bindir}/embryo_cc
+%attr(755,root,root) %{_bindir}/embryo
 
 %files devel
-%attr(755,root,root) %{prefix}/lib/libembryo.so
-%attr(755,root,root) %{prefix}/lib/libembryo.a
-%attr(755,root,root) %{prefix}/bin/embryo-config
-%{prefix}/share/embryo/examples/*
-%{prefix}/share/embryo/include/*
-%{prefix}/lib/pkgconfig/embryo.pc
-%{prefix}/include/Embryo*
-%doc AUTHORS
-%doc COPYING
-%doc README
-%doc embryo_docs.tar.gz
+%defattr(-, root, root)
+%doc doc/html
+%{_libdir}/libembryo.so
+%{_libdir}/libembryo.a
+%{_bindir}/embryo-config
+%{_datadir}/embryo/examples
+%{_datadir}/embryo/include
+%{_libdir}/pkgconfig/embryo.pc
+%{_includedir}/Embryo*
 
 %changelog
-* Sat Jun 23 2001 The Rasterman <raster@rasterman.com>
-- Created spec file
