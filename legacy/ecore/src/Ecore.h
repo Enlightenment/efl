@@ -272,6 +272,11 @@ char               *e_window_get_title(Window win);
 void                e_keyboard_grab(Window win);
 void                e_keyboard_ungrab(void);
 
+void                e_ev_ipc_init(char *path);
+void                e_ev_ipc_cleanup(void);
+void                e_add_ipc_service(int service, char *(*func) (char *argv));
+void                e_del_ipc_service(int service);
+
 
 char               *e_selection_get_data(Window win, Atom prop);
 Window              e_selection_request(void);
@@ -322,6 +327,7 @@ typedef struct _ev_dnd_drop_status Ev_Dnd_Drop_Status;
 typedef struct _ev_dnd_data_request Ev_Dnd_Data_Request;
 typedef struct _ev_paste_request Ev_Paste_Request;
 typedef struct _ev_clear_selection Ev_Clear_Selection;
+typedef struct _ev_ipc_service Ev_Ipc_Service;
 
 enum _eev_stack_detail
 {
@@ -692,6 +698,13 @@ struct _ev_user
 {
    int                 num;
    int                 hup;
+};
+
+struct _ev_ipc_service
+{
+   int                service;
+   char               *(*func) (char *argv);
+   Ev_Ipc_Service     *next;
 };
 
 void                e_add_event(Eevent_Type type, void *event,

@@ -11,6 +11,7 @@ libecore_la_SOURCES = \
 	e_ev_signal.c \
 	e_ev_x.c \
 	e_events.c \
+	e_ipc.c \
 	e_util.c \
 	e_x.c
 

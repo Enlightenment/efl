@@ -163,10 +163,11 @@ e_del_event_ipc(int ipc)
 void
 e_event_loop(void)
 {
-   int                 count, fdsize, timed_out, were_events;
+   int                 fdcount, fdsize, ipccount, ipcsize;
+   int	               timed_out, were_events;
    double              time1, time2, prev_time = 0.0;
    struct timeval      tval;
-   fd_set              fdset;
+   fd_set              fdset, ipcset;
    Ev_Fd_Handler      *fd_h;
    Ev_Pid_Handler     *pid_h;
    Ev_Ipc_Handler     *ipc_h;
@@ -191,7 +192,17 @@ e_event_loop(void)
 	     if (fd_h->fd > fdsize)
 		fdsize = fd_h->fd;
 	  }
-	count = 1;
+        fdcount = 1;
+        ipcsize = 0;
+        FD_ZERO(&ipcset);
+        /* for ever fd handler add the fd to the array and incriment fdsize */
+        for (ipc_h = ipc_handlers; ipc_h; ipc_h = ipc_h->next)
+          {
+             FD_SET(ipc_h->ipc, &ipcset);
+             if (ipc_h->ipc > ipcsize)
+                ipcsize = ipc_h->ipc;
+          }
+	ipccount = 1;
 	/* if there are timers setup adjust timeout value and select */
 	if (timers)
 	  {
@@ -214,23 +225,27 @@ e_event_loop(void)
 	     if (tval.tv_usec <= 1000)
 		tval.tv_usec = 1000;
 	     e_handle_zero_event_timer();
-	     if ((!e_events_pending()) &&
+	     if ((!e_events_pending()) && 
 		 (!e_ev_signal_events_pending()))
-		count = select(fdsize + 1, &fdset, NULL, NULL, &tval);
+	       fdcount = select(fdsize + 1, &fdset, NULL, NULL, &tval);
 	  }
 	/* no timers - just sit and block */
 	else
 	  {
-	     if ((!e_events_pending()) &&
-		 (!e_ev_signal_events_pending()))
-	       count = select(fdsize + 1, &fdset, NULL, NULL, NULL);
+	     if ((!e_events_pending()) && 
+                            (!e_ev_signal_events_pending()))
+	        fdcount = select(fdsize + 1, &fdset, NULL, NULL, NULL);
 	  }
 	for (pid_h = pid_handlers; pid_h; pid_h = pid_h->next)
 	   pid_h->func(pid_h->pid);
-	for (ipc_h = ipc_handlers; ipc_h; ipc_h = ipc_h->next)
-	   ipc_h->func(ipc_h->ipc);
+
+        /* see if we have any new ipc connections */
+        tval.tv_sec = 0;
+        tval.tv_usec = 0;
+        ipccount =+ select(ipcsize + 1, &ipcset, NULL, NULL, &tval);
+
 	/* return < 0 - error or signal interrupt */
-	if (count < 0)
+	if (fdcount < 0)
 	  {
 	     /* error */
 	     if ((errno == ENOMEM) || (errno == EINVAL) || (errno == EBADF))
@@ -240,20 +255,20 @@ e_event_loop(void)
 	       }
 	  }
 	/* timers are available and its a timeout */
-	if ((timers) && (count == 0))
+	if ((timers) && (fdcount == 0))
 	  {
 	     e_handle_event_timer();
 	     timed_out = 1;
 	  }
-	if (count < 0)
-	   count = 0;
+	if (fdcount < 0)
+	   fdcount = 0;
 	if (e_events_pending())
 	  {
-	     count++;
+	     fdcount++;
 	     FD_SET(e_x_get_fd(), &fdset);
 	  }
 	/* fd's are active */
-	if (count > 0)
+	if (fdcount > 0)
 	  {
 	     /* for every fd handler - if its fd is set - call the func */
 	     for (fd_h = fd_handlers; fd_h;)
@@ -265,6 +280,20 @@ e_event_loop(void)
 		  if (FD_ISSET(fdh->fd, &fdset))
 		    fdh->func(fdh->fd);
 	       }
+          }
+
+        /* ipc clients are active */
+        if (ipccount > 0)
+          {
+             for (ipc_h = ipc_handlers; ipc_h;)
+               {
+                  Ev_Ipc_Handler      *ipch;
+
+                  ipch = ipc_h;
+                  ipc_h = ipc_h->next;
+                  if (FD_ISSET(ipch->ipc, &ipcset))
+                    ipch->func(ipch->ipc);
+               }
 	  }
 	if (events)
 	   e_event_filter(events);
