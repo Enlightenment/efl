@@ -577,11 +577,11 @@ compile(void)
 		  strcat(def, " ");
 	       }
 	  }
-	snprintf(buf, sizeof(buf), "cat %s | cpp %s -E -o %s", file_in, def, tmpn);
+	snprintf(buf, sizeof(buf), "cat %s | /usr/bin/cpp %s -E -o %s", file_in, def, tmpn);
 	ret = system(buf);
 	if (ret < 0)
 	  {
-	     snprintf(buf, sizeof(buf), "gcc %s -E -o %s %s", def, tmpn, file_in);
+	     snprintf(buf, sizeof(buf), "/usr/bin/gcc %s -E -o %s %s", def, tmpn, file_in);
 	     ret = system(buf);
 	  }
 	if (ret >= 0) file_in = tmpn;

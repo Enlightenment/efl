@@ -9,10 +9,10 @@ INCLUDES	     = \
 -I$(top_srcdir) \
 -I$(top_builddir) \
 -I$(includedir) \
-@EET_CFLAGS@ \
-@EMBRYO_CFLAGS@ \
-@EVAS_CFLAGS@ \
-@ECORE_CFLAGS@
+@eet_cflags@ \
+@embryo_cflags@ \
+@evas_cflags@ \
+@ecore_cflags@
 
 lib_LTLIBRARIES      = \
 libedje.la 
@@ -38,7 +38,7 @@ edje_container.h \
 edje_message_queue.c \
 edje_private.h
 
-libedje_la_LIBADD       = -lm @EVAS_LIBS@ @ECORE_LIBS@ @EET_LIBS@ @EMBRYO_LIBS@ @fnmatch_libs@
+libedje_la_LIBADD       = -lm @evas_libs@ @ecore_libs@ @eet_libs@ @embryo_libs@ @fnmatch_libs@
 libedje_la_CPPFLAGS     =
 libedje_la_DEPENDENCIES = $(top_builddir)/config.h
 libedje_la_LDFLAGS      = -version-info 5:0:5
