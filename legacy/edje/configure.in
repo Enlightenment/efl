@@ -145,7 +145,7 @@ AC_ARG_WITH(embryo-config, [  --with-embryo-config=EMBRYO_CONFIG use embryo-conf
 [ EMBRYO_CONFIG=$withval;
   echo "using "$EMBRYO_CONFIG" for embryo-config"; ],
 [ if test -z "$EMBRYO_CONFIG"; then
-  AC_PATH_PROG(EMBRYO_CONFIG, "emberyo-config", "", $PATH)
+  AC_PATH_PROG(EMBRYO_CONFIG, "embryo-config", "", $PATH)
   fi
 ])
 embryo_cflags=`$EMBRYO_CONFIG --cflags`
