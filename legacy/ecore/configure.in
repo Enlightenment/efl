@@ -265,7 +265,7 @@ AC_CHECK_HEADER(X11/Xcursor/Xcursor.h, [
     AC_CHECK_LIB(Xcursor, XcursorImageLoadCursor, [
         AC_DEFINE(ECORE_XCURSOR, 1, [Build support for Xcursor])
         Xcursor_cflags=""
-        Xcursor_libs="-IXcursor"
+        Xcursor_libs="-lXcursor"
         use_Xcursor="yes"
       ], [
         Xcursor_cflags=""
