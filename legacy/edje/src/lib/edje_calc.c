@@ -380,6 +380,7 @@ _edje_part_recalc_single(Edje *ed,
 	aspect = (double)params->w / (double)params->h;
 	if (desc->aspect.prefer == EDJE_ASPECT_PREFER_NONE) /* keep both dimensions in check */
 	  {
+	     printf("%s: neither\n", ep->part->name);
 	     /* adjust for max aspect (width / height) */
 	     if ((desc->aspect.max > 0.0) && (aspect > desc->aspect.max))
 	       {
@@ -434,7 +435,10 @@ _edje_part_recalc_single(Edje *ed,
 		    ((params->h - new_h) * desc->align.y);
 		  params->h = new_h;
 	       }
-	     params->w = new_w;
+	     if (desc->aspect.prefer == EDJE_ASPECT_PREFER_VERTICAL)
+	       {
+		  params->w = new_w;
+	       }
 	  }
 	else
 	  {
@@ -450,7 +454,10 @@ _edje_part_recalc_single(Edje *ed,
 		    ((params->w - new_w) * desc->align.x);
 		  params->w = new_w;
 	       }
-	     params->h = new_h;
+	     if (desc->aspect.prefer == EDJE_ASPECT_PREFER_HORIZONTAL)
+	       {
+		  params->h = new_h;
+	       }
 	  }
      }
 #endif
