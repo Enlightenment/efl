@@ -323,6 +323,10 @@ Notes:
     desktop machines it makes no speed difference so only use
     --enable-small-dither-mask if you are compiling for the ipaq
   you need at least 1 image loader if you want to load images.
+  gcc 3.0.x on solaris screws up the jpeg code so erroring out doesn't work.
+    use gcc 3.2 on solaris.
+  freetype 2.1.2 is BAD. RedHat 8.0 uses this as do some streams of debain.
+    either downgrade to 2.1.1 or upgrade to 2.1.3. don't use 2.1.2.
 
 --------------------------------------------------------------------------
 notes on features:
