@@ -400,7 +400,6 @@ data_write(void)
 			 }
 		    }
 	       }
- */
 	     for (l3 = ep->other_desc; l3; l3 = l3->next)
 	       {
 		  epd = l3->data;
@@ -426,6 +425,7 @@ data_write(void)
 			 }
 		    }
 	       }
+ */
 	  }
      }
    for (l = edje_collections; l; l = l->next)
