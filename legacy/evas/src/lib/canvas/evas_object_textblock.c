@@ -17,14 +17,25 @@
  * * if a word (or char) doesnt fit at all do something sensible
  * * styles (outline, glow, etxra glow, shadow, soft shadow, etc.)
  * * anchors (to query text extents)
+ * * query text pos given object-relative co-ords
  * * inline objects (queryable)
  * * tabs (indents)
+ * * finish off current api thats unfinished
  * * left and right margins
- * * api to query current extents as well as the native extents
+ * * freeze thaw api
+ * * get all the current format params at any point
+ * * get line geometry at any char pos
+ * * get next line char pos
+ * * api to query formatted extents as well as the native extents
+ * 
+ * tough ones:
  * * overflow objects (overflow from this textblock can go into another)
  * * obstacle objects to wrap around
  * * on change figure out what node the change is in and figure out what line (nodes) it affects and only modify those nodes on that line or maybe others until changes dont happen further down
  * * right to left text
+ * 
+ * really tough ones:
+ * * for ultra-huge documents determine paging sections of the text in/out and being able to provide callbacks form the user api that can provide the text
  * 
  */
 
@@ -454,9 +465,6 @@ evas_object_textblock_layout(Evas_Object *obj)
    h = obj->cur.geometry.h;
    o->last_w = w;
    o->last_h = h;
-   /* FIXME: this is a hack - seems the lowe level font stuff is off in its */
-   /* size estimates of a text line */
-//   w -= 2;
 //   printf("RE-LAYOUT %ix%i!\n", w, h);
    for (l = (Evas_Object_List *)o->nodes; l; l = l->next)
      {
@@ -527,38 +535,17 @@ evas_object_textblock_layout(Evas_Object *obj)
 		  /* and advance */
 		  layout.line.x += hadvance;
 		  /* fix up max ascent/descent for the line */
-		  /* FIXME: fixup align */
-		  /*
-		  lastnode = 1;
-		  for (ll = l; ll; ll = ll->next)
+		  adj = (double)(w - (lnode->layout.line.x + tw + layout.line.inset)) * layout.align;
+		  adj -= line_start->layout.line.x;
+		  for (ll = (Evas_Object_List *)lnode; ll; ll = ll->prev)
 		    {
-		       Node *tnode;
+		       Layout_Node *lnode2;
 		       
-		       tnode = (Node *)ll;
-		       if ((tnode->format) &&
-			   (!strcmp(tnode->format, "\n")))
-			 break;
-		       if (tnode->text)
-			 {
-			    lastnode = 0;
-			    break;
-			 }
-		    }
-		  if (lastnode)
-		   */
-		    {
-		       adj = (double)(w - (lnode->layout.line.x + tw + layout.line.inset)) * layout.align;
-		       adj -= line_start->layout.line.x;
-		       for (ll = (Evas_Object_List *)lnode; ll; ll = ll->prev)
-			 {
-			    Layout_Node *lnode2;
-			    
-			    lnode2 = (Layout_Node *)ll;
-			    lnode2->layout.line.x += adj;
-			    lnode2->layout.line.mascent = layout.line.mascent;
-			    lnode2->layout.line.mdescent = layout.line.mdescent;
-			    if (ll == (Evas_Object_List *)line_start) break;
-			 }
+		       lnode2 = (Layout_Node *)ll;
+		       lnode2->layout.line.x += adj;
+		       lnode2->layout.line.mascent = layout.line.mascent;
+		       lnode2->layout.line.mdescent = layout.line.mdescent;
+		       if (ll == (Evas_Object_List *)line_start) break;
 		    }
 	       }
 	     /* text doesnt fit */
@@ -590,13 +577,8 @@ evas_object_textblock_layout(Evas_Object *obj)
 		       lnode->w = tw;
 		       lnode->h = th;
 		       o->layout_nodes = evas_object_list_append(o->layout_nodes, lnode);
-		       /* fix up max ascent/descent for the line */
-		       /* FIXME: fixup align */
 		       adj = (double)(w - (lnode->layout.line.x + tw + layout.line.inset)) * layout.align;
 		       adj -= line_start->layout.line.x;
-//		       printf("\"%s\" -> %i, %i %i ++ %i\n", 
-//			      lnode->text, layout.line.inset,
-//			      w, tw, adj);
 		       for (ll = (Evas_Object_List *)lnode; ll; ll = ll->prev)
 			 {
 			    Layout_Node *lnode2;
@@ -617,14 +599,6 @@ evas_object_textblock_layout(Evas_Object *obj)
 		       goto new_node;
 		    }
 	       }
-/*	     
-	     inset = ENFN->font_inset_get(ENDT, font, node->text);
-	     hadvance = ENFN->font_h_advance_get(ENDT, font, node->text);
-	     vadvance = ENFN->font_v_advance_get(ENDT, font, node->text);
-	     ascent = ENFN->font_ascent_get(ENDT, font);
-	     descent = ENFN->font_descent_get(ENDT, font);
-	     ENFN->font_string_size_get(ENDT, font, text, &tw, &th);
- */
 	  }
      }
    evas_object_textblock_layout_clear(obj, &layout);
