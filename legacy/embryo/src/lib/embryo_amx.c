@@ -23,10 +23,35 @@
 
 #define JUMPABS(base, ip)     ((Embryo_Cell *)(code + (*ip)))
 
+#ifdef WORDS_BIGENDIAN
+static void _embryo_byte_swap_16 (unsigned short *v);
+static void _embryo_byte_swap_32 (unsigned int *v);
+#endif
 static int  _embryo_native_call  (Embryo_Program *ep, Embryo_Cell index, Embryo_Cell *result, Embryo_Cell *params);
 static int  _embryo_func_get     (Embryo_Program *ep, int index, char *funcname);
 static int  _embryo_var_get      (Embryo_Program *ep, int index, char *varname, Embryo_Cell *ep_addr);
 static int  _embryo_program_init (Embryo_Program *ep, void *code);
+
+#ifdef WORDS_BIGENDIAN
+static void
+_embryo_byte_swap_16(unsigned short *v)
+{
+   unsigned char *s, t;
+   
+   s = (unsigned char *)v;
+   t = s[0]; s[0] = s[1]; s[1] = t;
+}
+
+static void
+_embryo_byte_swap_32(unsigned int *v)
+{
+   unsigned char *s, t;
+   
+   s = (unsigned char *)v;
+   t = s[0]; s[0] = s[3]; s[3] = t;
+   t = s[1]; s[1] = s[2]; s[2] = t;
+}
+#endif
 
 static int
 _embryo_native_call(Embryo_Program *ep, Embryo_Cell index, Embryo_Cell *result, Embryo_Cell *params)
@@ -253,7 +278,9 @@ embryo_program_load(char *file)
 	return NULL;
      }
    rewind(f);
+#ifdef WORDS_BIGENDIAN
    embryo_swap_32((unsigned int *)(&hdr.size));
+#endif   
    if ((int)hdr.size < program_size) program_size = hdr.size;
    program = malloc(program_size);
    if (!program)
