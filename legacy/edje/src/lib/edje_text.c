@@ -540,7 +540,9 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	     
 	     if ((fnt->entry) && (!strcmp(fnt->entry, font)))
 	       {
-		  snprintf(font_buf, sizeof(font_buf), "fonts/%s", font);
+		  strcpy(font_buf, "fonts/");
+		  strncpy(font_buf + 6, font, sizeof(font_buf) - 7);
+		  font_buf[sizeof(font_buf) - 1] = 0;
 		  font = font_buf;
 		  inlined_font = 1;
 		  break;
