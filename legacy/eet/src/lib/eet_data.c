@@ -1420,7 +1420,8 @@ eet_data_descriptor_new(char *name,
 			void *(*func_hash_add) (void *h, const char *k, void *d))
 {
    Eet_Data_Descriptor *edd;
-   
+
+   if (!name) return NULL;
    edd = calloc(1, sizeof(Eet_Data_Descriptor));
    edd->name = strdup(name);
    edd->size = size;
