@@ -215,7 +215,7 @@ int ecore_sheap_change(Ecore_Sheap *heap, void *item, void *newval)
 
 	CHECK_PARAM_POINTER_RETURN("heap", heap, FALSE);
 
-	for (i = 0; i < heap->size && heap->data[i] != item; heap++);
+	for (i = 0; i < heap->size && heap->compare(heap->data[i], item); heap++);
 
 	if (i < heap->size)
 		heap->data[i] = newval;
