@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include "Edje.h"
 #include "edje_private.h"
 
@@ -42,53 +46,55 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos)
    ed->dirty = 1;
 }
 
+Edje_Part_Description *
+_edje_part_description_find(Edje *ed, Edje_Part *ep, char *name,
+                            double val)
+{
+   Edje_Part_Description *ret = NULL;
+   Evas_List *l;
+   double min_dst = 999.0;
+
+   if (!strcmp(name, "default") && val == 0.0)
+     return ep->default_desc;
+
+   if (!strcmp(name, "default"))
+     {
+	ret = ep->default_desc;
+	min_dst = ABS(ep->default_desc->state.value - val);
+     }
+
+   for (l = ep->other_desc; l; l = l->next)
+     {
+	Edje_Part_Description *d = l->data;
+
+	if (!strcmp (d->state.name, name))
+	  {
+	     double dst;
+
+	     dst = ABS(d->state.value - val);
+	     if (dst < min_dst)
+	       {
+		  ret = d;
+		  min_dst = dst;
+	       }
+	  }
+     }
+
+   return ret;
+}
+
 void
 _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1, char *d2, double v2)
 {
    if (!d1) d1 = "default";
    if (!d2) d2 = "default";
 
-   if (!strcmp(d1, "default") && (v1 == 0.0))
+   ep->param1.description = _edje_part_description_find(ed, ep->part, d1, v1);
+   if (!ep->param1.description)
      ep->param1.description = ep->part->default_desc;
-   else
-     {
-	Evas_List *l;
-	double min_dst;
-	Edje_Part_Description *desc_found;
 
-	desc_found = NULL;
-	min_dst = 999.0;
-	if (!strcmp("default", d1))
-	  {
-	     desc_found = ep->part->default_desc;
-	     min_dst = ep->part->default_desc->state.value - v1;
-	     if (min_dst < 0) min_dst = -min_dst;
-	  }
-	for (l = ep->part->other_desc; l; l = l->next)
-	  {
-	     Edje_Part_Description *desc;
-	     
-	     desc = l->data;
-	     if (!strcmp(desc->state.name, d1))
-	       {
-		  double dst;
-		  
-		  dst = desc->state.value - v1;
-		  if (dst == 0.0)
-		    {
-		       desc_found = desc;
-		       break;
-		    }
-		  if (dst < 0.0) dst = -dst;
-		  if (dst < min_dst)
-		    {
-		       desc_found = desc;
-		       min_dst = dst;
-		    }
-	       }
-	  }
-	ep->param1.description = desc_found;
-     }
+   ep->param2.description = _edje_part_description_find(ed, ep->part, d2, v2);
+
    ep->param1.rel1_to_x = NULL;
    ep->param1.rel1_to_y = NULL;
    ep->param1.rel2_to_x = NULL;
@@ -105,49 +111,6 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1,
 	  ep->param1.rel2_to_y = ed->table_parts[ep->param1.description->rel2.id_y % ed->table_parts_size];
      }
    
-   if (!strcmp(d2, "default") && (v2 == 0.0))
-     ep->param2.description = ep->part->default_desc;
-   else
-     {
-	Evas_List *l;
-	double min_dst;
-	Edje_Part_Description *desc_found;
-	
-	desc_found = NULL;
-	min_dst = 999.0;
-	if (!strcmp("default", d2))
-	  {
-	     desc_found = ep->part->default_desc;
-	     min_dst = ep->part->default_desc->state.value - v2;
-	     if (min_dst < 0) min_dst = -min_dst;
-	  }
-	for (l = ep->part->other_desc; l; l = l->next)
-	  {
-	     Edje_Part_Description *desc;
-	     
-	     desc = l->data;
-	     if (!strcmp(desc->state.name, d2))
-	       {
-		  double dst;
-		  
-		  dst = desc->state.value - v2;
-		  if (dst == 0.0)
-		    {
-		       desc_found = desc;
-		       break;
-		    }
-		  if (dst < 0.0) dst = -dst;
-		  if (dst < min_dst)
-		    {
-		       desc_found = desc;
-		       min_dst = dst;
-		    }
-	       }
-	  }
-	ep->param2.description = desc_found;
-     }
-   if (!ep->param1.description)
-     ep->param1.description = ep->part->default_desc;
    ep->param1.rel1_to_x = NULL;
    ep->param1.rel1_to_y = NULL;
    ep->param1.rel2_to_x = NULL;
