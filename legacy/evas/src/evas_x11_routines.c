@@ -816,6 +816,175 @@ __evas_x11_poly_draw (Display *disp, Imlib_Image dstim, Window win,
 		      Evas_List points, 
 		      int r, int g, int b, int a)
 {
+   Evas_List l, l2;
+   DATA32 pixel;
+   Imlib_Image im = NULL;
+   Pixmap pmap = 0, mask = 0, s_mask = 0;
+   int x, y, w, h;
+   
+   imlib_context_set_color(r, g, b, a);
+   imlib_context_set_display(disp);
+   imlib_context_set_visual(__evas_visual);
+   imlib_context_set_colormap(__evas_cmap);
+   imlib_context_set_drawable(win);
+   imlib_context_set_dither_mask(1);
+   imlib_context_set_anti_alias(0);
+   imlib_context_set_dither(1);
+   imlib_context_set_blend(0);
+   imlib_context_set_angle(0.0);
+   imlib_context_set_operation(IMLIB_OP_COPY);
+   imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
+   imlib_context_set_color_modifier(NULL);
+   x = y = w = h = 0;
+   if (points)
+     {
+	Evas_Point p;
+	
+	p = points->data;
+	x = p->x;
+	y = p->y;
+	w = 1;
+	h = 1;
+     }
+   for (l2 = points; l2; l2 = l2->next)
+     {
+	Evas_Point p;
+	
+	p = l2->data;
+	if (p->x < x)
+	  {
+	     w += x - p->x;
+	     x = p->x;
+	  }
+	if (p->x > (x + w))
+	   w = p->x - x;
+	if (p->y < y)
+	  {
+	     h += y - p->y;
+	     y = p->y;
+	  }
+	if (p->y > (y + h))
+	   h = p->y - y;
+     }
+   for(l = drawable_list; l; l = l->next)
+     {
+	Evas_X11_Drawable *dr;
+	
+	dr = l->data;
+	
+	if ((dr->win == win) && (dr->disp == disp))
+	  {
+	     Evas_List ll;
+	     
+	     for (ll = dr->tmp_images; ll; ll = ll->next)
+	       {
+		  Evas_X11_Update *up;
+		  
+		  up = ll->data;
+		  
+		  /* if image intersects image update - render */
+		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
+				      x, y, w, h))
+		    {
+		       if (!up->p)
+			  up->p = XCreatePixmap(disp, win, up->w, up->h, dr->depth);
+		       if (!im)
+			 {
+			    pixel = (a << 24) | (r << 16) | (g << 8) | b;
+			    im = imlib_create_image_using_data(1, 1, &pixel);
+			    imlib_context_set_image(im);
+			    if (a < 255) imlib_image_set_has_alpha(1);
+			    if (!pmap)
+			       imlib_render_pixmaps_for_whole_image_at_size(&pmap, &mask,
+									    32, 32);
+			 }
+		       if (a < 255)
+			 {
+			    if (mask)
+			      {
+				 int xx, yy, ww, hh, x1, y1, xs, ys;
+				 GC gc;
+				 XGCValues gcv;
+				 
+				 xx = x - up->x;
+				 yy = y - up->y;
+				 ww = w;
+				 hh = h;
+				 CLIP(xx, yy, ww, hh, 0, 0, up->w, up->h);
+				 s_mask = XCreatePixmap(disp, win, ww, hh, 1);
+				 gc = XCreateGC(disp, s_mask, 0, &gcv);
+				 xs = (x - up->x) % 32;
+				 if (xs > 0) xs = 0;
+				 else
+				   {
+				      while (xs < 0) xs += 32;
+				      xs -= 32;
+				   }
+				 ys = (y - up->y) % 32;
+				 if (ys > 0) ys = 0;
+				 else
+				   {
+				      while (ys < 0) ys += 32;
+				      ys -= 32;
+				   }
+				 for (y1 = ys; y1 < hh; y1 += 32)
+				   {
+				      for (x1 = xs; x1 < ww; x1 += 32)
+					 XCopyArea(disp, mask, s_mask, gc,
+						   0, 0, 32, 32,
+						   x1, y1);
+				   }
+				 XSetClipMask(disp, dr->gc, s_mask);
+				 XSetClipOrigin(disp, dr->gc, xx, yy);
+				 XFreeGC(disp, gc);
+			      }
+			    else
+			      {
+				 XSetClipMask(disp, dr->gc, None);
+			      }
+			 }
+		       if (pmap)
+			 {
+			    XSetFillStyle(disp, dr->gc, FillTiled);
+			    XSetTile(disp, dr->gc, pmap);
+			    XSetTSOrigin(disp, dr->gc, x - up->x, y - up->y);
+			 }
+		       else
+			 {
+			    XSetFillStyle(disp, dr->gc, FillSolid);
+			    XSetTile(disp, dr->gc, None);
+			 }
+			 {
+			    XPoint *xpoints;
+			    int point_count, i;
+			    
+			    point_count = 0;
+			    for (l2 = points; l2; l2 = l2->next) point_count++;
+			    xpoints = malloc(point_count * sizeof(XPoint));
+			    for (l2 = points, i = 0; l2; l2 = l2->next, i++)
+			      {
+				 Evas_Point p;
+				 
+				 p = l2->data;
+				 xpoints[i].x = p->x - up->x;
+				 xpoints[i].y = p->y - up->y;
+			      }
+			    XFillPolygon(disp, up->p, dr->gc, xpoints, 
+					 point_count, Complex, CoordModeOrigin);
+			    free(xpoints);
+			 }
+		       if (s_mask) XFreePixmap(disp, s_mask);
+		       s_mask = 0;
+		    }
+	       }
+	  }
+     }
+   if (pmap) imlib_free_pixmap_and_mask(pmap);	
+   if (im) 
+     {
+	imlib_context_set_image(im);
+	imlib_free_image();
+     }
 }
 
 

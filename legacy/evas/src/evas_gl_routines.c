@@ -2178,8 +2178,55 @@ __evas_gl_gradient_draw(Evas_GL_Graident *gr,
 
 
 
+/* something is wrong here - GL experts? the polys dont get tesselated */
+/* correctly */
+/*
+#ifdef HAVE_GLU
+static void
+__evas_gl_tess_begin_cb(GLenum which)
+{
+   glBegin(which);
+}
 
+static void
+__evas_gl_tess_end_cb(void)
+{
+   glEnd();
+}
 
+static void
+__evas_gl_tess_error_cb(GLenum errorcode)
+{
+}
+
+static void
+__evas_gl_tess_vertex_cb(GLvoid *vertex)
+{
+   glVertex2dv(vertex);
+}
+
+static void
+__evas_gl_tess_combine_cb(GLdouble coords[3],
+			  GLdouble *vertex_data[4],
+			  GLfloat weight[4], GLdouble **data_out)
+{
+   GLdouble *vertex;
+   int i;
+   
+   vertex = (GLdouble *) malloc(6 * sizeof(GLdouble));
+   vertex[0] = coords[0];
+   vertex[1] = coords[1];
+   vertex[2] = coords[2];
+   for (i = 3; i < 6; i++)
+      vertex[i] = 
+      weight[0] * vertex_data[0][i] +
+      weight[1] * vertex_data[1][i] +
+      weight[2] * vertex_data[2][i] +
+      weight[3] * vertex_data[3][i];
+   *data_out = vertex;
+}
+#endif
+*/
 
 /************/
 /* polygons */
@@ -2190,6 +2237,94 @@ __evas_gl_poly_draw (Display *disp, Imlib_Image dstim, Window win,
 		     Evas_List points, 
 		     int r, int g, int b, int a)
 {
+   Evas_List l2;
+   float rr, gg, bb, aa;
+   static int dest_w = 0, dest_h = 0;
+   
+   if ((__evas_current_win != win) || (__evas_current_disp != disp))
+     {
+	glXMakeCurrent(disp, win, __evas_gl_cx);
+	__evas_current_disp = disp;
+	__evas_current_win = win;
+     }
+   rr = (float)r / 255;
+   gg = (float)g / 255;
+   bb = (float)b / 255;
+   aa = (float)a / 255;
+   glColor4f(rr, gg, bb, aa);
+   glViewport(0, 0, win_w, win_h);
+   glMatrixMode(GL_PROJECTION);
+   glLoadIdentity();
+   glOrtho(0, win_w, 0, win_h, -1, 1);
+   glMatrixMode(GL_MODELVIEW);
+   glLoadIdentity();
+   glScalef(1, -1, 1);
+   glTranslatef(0, -win_h, 0);
+   dest_w = win_w;
+   dest_h = win_h;
+   if (a < 255)
+     {
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+     }
+   else
+      glDisable(GL_BLEND);
+   glEnable(GL_DITHER);
+   glDisable(GL_TEXTURE_2D);
+   glShadeModel(GL_FLAT);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+   glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+
+/*
+#ifdef HAVE_GLU
+     {
+	static void *tess = NULL;
+	
+	if (!tess)
+	  {
+	     tess = gluNewTess();
+	     
+	     gluTessCallback(tess, GLU_TESS_BEGIN, __evas_gl_tess_begin_cb);
+	     gluTessCallback(tess, GLU_TESS_END, __evas_gl_tess_end_cb);
+	     gluTessCallback(tess, GLU_TESS_ERROR, __evas_gl_tess_error_cb);
+	     gluTessCallback(tess, GLU_TESS_VERTEX, __evas_gl_tess_vertex_cb);
+	     gluTessCallback(tess, GLU_TESS_COMBINE, __evas_gl_tess_combine_cb);
+	     gluTessProperty(tess, GLU_TESS_WINDING_RULE, GLU_TESS_WINDING_ODD);
+	  }
+	gluTessBeginPolygon(tess, NULL);
+	gluTessBeginContour(tess);
+	for (l2 = points; l2; l2 = l2->next)
+	  {
+	     Evas_Point p;
+	     GLdouble glp[3];
+	     
+	     p = l2->data;
+	     glp[0] = p->x;
+	     glp[1] = p->y;
+	     glp[2] = 0;
+	     gluTessVertex(tess, glp, glp);
+	  }
+	gluTessEndContour(tess);
+	gluTessEndPolygon(tess);
+     }
+#else
+*/
+/*
+#warning   "You do not have GLU and thus polygons that are not convex will not"
+#warning   "render correctly."
+*/
+   glBegin(GL_POLYGON);
+   for (l2 = points; l2; l2 = l2->next)
+     {
+	Evas_Point p;
+	
+	p = l2->data;
+	glVertex2d(p->x, p->y);
+     }
+   glEnd();
+/*#endif*/
+   glEnable(GL_TEXTURE_2D);
 }
 
 

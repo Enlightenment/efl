@@ -692,6 +692,102 @@ __evas_image_poly_draw (Display *disp, Imlib_Image dstim, Window win,
 			Evas_List points, 
 			int r, int g, int b, int a)
 {
+   Evas_List l, l2;
+   int x, y, w, h;
+
+   imlib_context_set_color(r, g, b, a);
+   imlib_context_set_angle(0.0);
+   imlib_context_set_operation(IMLIB_OP_COPY);
+   imlib_context_set_color_modifier(NULL);
+   imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
+   imlib_context_set_anti_alias(1);
+   imlib_context_set_blend(1);
+   
+   x = y = w = h = 0;
+   if (points)
+     {
+	Evas_Point p;
+	
+	p = points->data;
+	x = p->x;
+	y = p->y;
+	w = 1;
+	h = 1;
+     }
+   for (l2 = points; l2; l2 = l2->next)
+     {
+	Evas_Point p;
+	
+	p = l2->data;
+	if (p->x < x) 
+	   {
+	      w += x - p->x;
+	      x = p->x;
+	   }
+	if (p->x > (x + w)) 
+	   w = p->x - x;
+	if (p->y < y) 
+	   {
+	      h += y - p->y;
+	      y = p->y;
+	   }
+	if (p->y > (y + h)) 
+	   h = p->y - y;
+     }
+   for(l = drawable_list; l; l = l->next)
+     {
+	Evas_Image_Drawable *dr;
+	
+	dr = l->data;
+	
+	if ((dr->im == dstim) && (dr->disp == disp))
+	  {
+	     Evas_List ll;
+	     
+	     for (ll = dr->tmp_images; ll; ll = ll->next)
+	       {
+		  Evas_Image_Update *up;
+
+		  up = ll->data;
+		  
+		  /* if image intersects image update - render */
+		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
+				      x, y, w, h))
+		    {
+		       ImlibPolygon pol;
+		       
+		       if (!up->image)
+			 {
+			    DATA32 *data;
+			    
+			    up->image = imlib_create_image(up->w, up->h);
+			    if (up->image)
+			      {
+				 imlib_context_set_image(up->image);
+				 data = imlib_image_get_data();
+				 memset(data, 0, up->w * up->h * sizeof(DATA32));
+				 imlib_image_put_back_data(data);
+				 imlib_image_set_has_alpha(1);
+			      }
+			 }
+		       if (up->image)
+			 {
+			    imlib_context_set_image(up->image);
+			    pol = imlib_polygon_new();
+			    for (l2 = points; l2; l2 = l2->next)
+			      {
+				 Evas_Point p;
+				 
+				 p = l2->data;
+				 imlib_polygon_add_point(pol, p->x - up->x, p->y - up->y);
+			      }
+			    imlib_image_fill_polygon(pol);
+			    imlib_polygon_free(pol);
+			 }
+		    }
+	       }
+	  }
+     }
 }
 
 
