@@ -1,15 +1,20 @@
 #include "Edje.h"
 #include "edje_private.h"
 
-/* FIXME: ? somehow handle double click? */
+/* FIXME: edje test need to make in-canvas move & resize controls on edjes */
+/* FIXME: edje test needs to load multiple edjes */
+/* FIXME: sub objects need to be added to smart object */
+/* FIXME: add clicked signal for a mouse up thats a real clicked */
 /* FIXME: free stuff - no more leaks */
-/* FIXME: ? add numeric params to conditions for progs (ranges etc.) */
-/* FIXME: dragables havwe to work */
+/* FIXME: dragables have to work */
 /* FIXME: drag start/top signals etc. */
-/* FIXME: app has to be able to have callbacks called on signal emits */
-/* FIXME: app has to be able to emit signals */
 /* FIXME: named parts need to be able to be "replaced" with new evas objects */
 /* FIXME: need to be able to calculate min & max size of a whole edje */
+/* FIXME: on load don't segv on errors */
+/* FIXME: add code to list collections in an eet */
+
+/* FIXME: ? somehow handle double click? */
+/* FIXME: ? add numeric params to conditions for progs (ranges etc.) */
 
 Edje      *_edje_fetch(Evas_Object *obj);
 Edje      *_edje_add(Evas_Object *obj);
@@ -134,8 +139,8 @@ edje_file_set(Evas_Object *obj, const char *file, const char *part)
    
    ed = _edje_fetch(obj);
    if (!ed) return;
-   if (!file) return;
-   if (!part) return;
+   if (!file) file = "";
+   if (!part) part = "";
    if (((ed->path) && (!strcmp(file, ed->path))) &&
 	(ed->part) && (!strcmp(part, ed->part)))
      return;
@@ -214,6 +219,64 @@ edje_file_set(Evas_Object *obj, const char *file, const char *part)
      }
 }
 
+void
+edje_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
+{
+   Edje *ed;
+   Edje_Signal_Callback *escb;
+   
+   if ((!emission) || (!source) || (!func)) return;
+   ed = _edje_fetch(obj);
+   if (!ed) return;
+   escb = calloc(1, sizeof(Edje_Signal_Callback));
+   escb->signal = strdup(emission);
+   escb->source = strdup(source);
+   escb->func = func;
+   escb->data = data;
+   ed->callbacks = evas_list_append(ed->callbacks, escb);
+}
+
+void *
+edje_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source))
+{
+   Edje *ed;
+   Evas_List *l;
+   
+   if ((!emission) || (!source) || (!func)) return NULL;
+   ed = _edje_fetch(obj);
+   if (!ed) return;
+   for (l = ed->callbacks; l; l = l->next)
+     {
+	Edje_Signal_Callback *escb;
+	
+	escb = l->data;
+	if ((escb->func == func) && 
+	    (!strcmp(escb->signal, emission)) &&
+	    (!strcmp(escb->source, source)))
+	  {
+	     void *data;
+	     
+	     data = escb->data;
+	     free(escb->signal);
+	     free(escb->source);
+	     free(escb);
+	     return data;
+	  }
+     }
+   return NULL;
+}
+
+void
+edje_signal_emit(Evas_Object *obj, const char *emission, const char *source)
+{
+   Edje *ed;
+
+   if ((!emission) || (!source)) return;
+   ed = _edje_fetch(obj);
+   if (!ed) return;
+   _edje_emit(ed, emission, source);
+}
+
 /*** internal calls ***/
 
 /* utility functions we will use a lot */
@@ -254,6 +317,7 @@ _edje_del(Edje *ed)
    if (ed->path) free(ed->path);
    if (ed->part) free(ed->part);
    evas_object_del(ed->clipper);
+   printf("FIXME: leak: ed->callbacks\n");
    free(ed);
 }
 
@@ -722,6 +786,15 @@ _edje_emit(Edje *ed, char *sig, char *src)
 	     if ((_edje_glob_match(ee->signal, pr->signal)) &&
 		 (_edje_glob_match(ee->source, pr->source)))
 	       _edje_program_run(ed, pr);
+	  }
+	for (l = ed->callbacks; l; l = l->next)
+	  {
+	     Edje_Signal_Callback *escb;
+	     
+	     escb = l->data;
+	     if ((_edje_glob_match(ee->signal, escb->signal)) &&
+		 (_edje_glob_match(ee->source, escb->source)))
+	       escb->func(escb->data, ed->obj, ee->signal, ee->source);
 	  }
 	free(ee->signal);
 	free(ee->source);
@@ -1555,6 +1628,7 @@ _edje_smart_add(Evas_Object * obj)
    ed = _edje_add(obj);
    if (!ed) return;
    evas_object_smart_data_set(obj, ed);
+   ed->obj = obj;
 }
 
 static void

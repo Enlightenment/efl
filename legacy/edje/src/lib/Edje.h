@@ -16,6 +16,9 @@ extern "C" {
    double       edje_frametime_get(void);
    Evas_Object *edje_add(Evas *evas);
    void         edje_file_set(Evas_Object *o, const char *file, const char *part);
+   void         edje_signal_callback_add(Evas_Object *o, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data);
+   void        *edje_signal_callback_del(Evas_Object *o, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source));
+   void         edje_signal_emit(Evas_Object *o, const char *emission, const char *source);
        
 #ifdef __cplusplus
 }

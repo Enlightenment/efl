@@ -109,6 +109,12 @@ bg_resize(double w, double h)
 
 static Evas_Object *o_edje = NULL;
 
+static void
+cb (void *data, Evas_Object *o, const char *sig, const char *src)
+{
+   printf("CALLBACK for %p %p \"%s\" \"%s\"\n", data, o, sig, src);
+}
+
 void
 test_setup(char *file, char *name)
 {
@@ -116,6 +122,8 @@ test_setup(char *file, char *name)
    
    o = edje_add(evas);
    edje_file_set(o, file, name);
+   edje_signal_callback_add(o, "do_it", "the_source", cb, NULL);
+   edje_signal_callback_add(o, "mouse,*", "logo", cb, NULL);
    evas_object_move(o, 10, 10);
    evas_object_resize(o, 220, 300);
    evas_object_show(o);
@@ -153,7 +161,7 @@ main(int argc, char **argv)
    file = argv[1];
    if (argc >= 3) coll = argv[2];
    /* FIXME: list collections */
-   test_setup(argv[1], coll);
+   test_setup(file, coll);
    
    ecore_main_loop_begin();
    

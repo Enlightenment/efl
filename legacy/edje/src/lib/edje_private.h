@@ -293,6 +293,7 @@ struct _Edje_Part_Description
 typedef struct _Edje Edje;
 typedef struct _Edje_Real_Part Edje_Real_Part;
 typedef struct _Edje_Running_Program Edje_Running_Program;
+typedef struct _Edje_Signal_Callback Edje_Signal_Callback;
 typedef struct _Edje_Calc_Params Edje_Calc_Params;
 typedef struct _Edje_Emission Edje_Emission;
 
@@ -305,11 +306,13 @@ struct _Edje
    double                x, y, w, h;
    unsigned char         dirty : 1;
    Evas                 *evas; /* the evas this edje belongs to */
+   Evas_Object          *obj; /* the smart object */
    Evas_Object          *clipper; /* a big rect to clip this edje to */
    Edje_File            *file; /* the file the data comes form */
    Edje_Part_Collection *collection; /* the description being used */
    Evas_List            *parts; /* private list of parts */
    Evas_List            *actions; /* currently running actions */   
+   Evas_List            *callbacks;
 };
 
 struct _Edje_Real_Part
@@ -343,6 +346,14 @@ struct _Edje_Running_Program
    Edje           *edje;
    Edje_Program   *program;
    double          start_time;
+};
+
+struct _Edje_Signal_Callback
+{
+   char  *signal;
+   char  *source;
+   void (*func) (void *data, Evas_Object *o, const char *emission, const char *source);
+   void  *data;
 };
 
 struct _Edje_Calc_Params
