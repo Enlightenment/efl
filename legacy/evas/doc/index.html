@@ -41,7 +41,7 @@ mixture of these and more complex objects such as gradients, images etc. An
 application normally needs to hold all this data and when required, redraw
 the data do a window or pixmap if the data changes, or the window contents
 become damaged and need a redraw to restore them. To do this optimally the
-application would also need to figure out what exactly canged, which parts
+application would also need to figure out what exactly changed, which parts
 of the window or pixmap this data mapped to and then order the drawing so
 all objects are drawn in the right order, and only the part of the window
 that needs redrawing is drawn to to save excess processing. For a large
@@ -82,7 +82,7 @@ Infinite loop ...
 <p>
 In a naievely written program an event loop may have many re-renderings and
 re-drawings going on as things are modified, otherwise the application needs
-to retain state like evas does and ten handle draws in idle time too, which
+to retain state like evas does and then handle draws in idle time too, which
 means applications need to do the work Evas does themselves, as well as the
 optimizations already in place in Evas.
 <p>
@@ -98,6 +98,14 @@ many times over, without you having to know a single line of OpenGL. Evas's
 Software rotuines alone are many many many times faster than Mesa's software
 OpenGL rendering, as Imlib2's code is purpose written for 2D operations with
 Assembly optimizations for the core routines.
+<p>
+</blockquote>
+<p>
+<b>Canvas Principles in Detail</b>
+<p>
+<blockquote>
+<p>
+
 <p>
 </blockquote>
 <p>
