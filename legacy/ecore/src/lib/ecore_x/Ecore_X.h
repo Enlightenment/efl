@@ -536,7 +536,6 @@ void             ecore_x_window_prop_icon_name_set(Ecore_X_Window win, const cha
 char            *ecore_x_window_prop_icon_name_get(Ecore_X_Window win);
 void             ecore_x_window_prop_visible_icon_name_set(Ecore_X_Window win, const char *t);
 char            *ecore_x_window_prop_visible_icon_name_get(Ecore_X_Window win);
-void             ecore_x_window_prop_client_machine_set(Ecore_X_Window win, const char *t);
 char            *ecore_x_window_prop_client_machine_get(Ecore_X_Window win);
 void             ecore_x_window_prop_name_class_set(Ecore_X_Window win, const char *n, const char *c);
 void             ecore_x_window_prop_name_class_get(Ecore_X_Window win, char **n, char **c);

@@ -519,14 +519,11 @@ setup_ecore_x_test(void)
    printf("Visible icon Name: %s\n", tmp);
    free(tmp);
    tmp = ecore_x_window_prop_client_machine_get(win);
-   if (!tmp)
+   if (tmp)
      {
-        printf("No client machine, setting it to host.test.com\n");
-	ecore_x_window_prop_client_machine_set(win, "host.test.com");
-        tmp = ecore_x_window_prop_client_machine_get(win);
+        printf("Client machine: %s\n", tmp);
+        free(tmp);
      }
-   printf("Client machine: %s\n", tmp);
-   free(tmp);
    ecore_x_window_prop_name_class_set(win, "ecore_test", "main");
    ecore_x_window_prop_protocol_set(win, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 1);
    ecore_x_window_show(win);

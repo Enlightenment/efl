@@ -277,20 +277,6 @@ ecore_x_window_prop_visible_icon_name_get(Ecore_X_Window win)
 }
 
 /**
- * Set a window client machine.
- * @param win The window
- * @param t The client machine string
- * 
- * Set a window client machine string
- * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
- */
-void
-ecore_x_window_prop_client_machine_set(Ecore_X_Window win, const char *t)
-{
-   ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_client_machine, (char *)t);
-}
-
-/**
  * Get a window client machine string.
  * @param win The window
  * @return The windows client machine string
