@@ -11,3 +11,4 @@ convenience.lo
 libecore_config.la
 ecore_config_ipc_ecore.la
 system.db
+build_system.db.sh

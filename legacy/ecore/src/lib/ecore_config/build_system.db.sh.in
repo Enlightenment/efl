@@ -1,12 +1,7 @@
 #!/bin/sh
 DB=system.db
 edb_ed $DB add /e/theme/name str "winter"
-### oi handy - and WHOSE bright idea was it to have ecore_config depend on
-### edje when edje already depends on ecore? eh? eh?
-### do i smell a circular dependency????? fix this.
-#EDJE_BIN=`which edje`
-#EDJE_DIR=`dirname $EDJE_BIN`
-#edb_ed $DB add /e/font/path str "$EDJE_DIR/../share/edje/data/test/fonts"
+edb_ed $DB add /e/font/path str "@prefix@/share/@PACKAGE@/data/fonts"
 if [ $BROWSER ]; then
 edb_ed $DB add /apps/web/browser str "$BROWSER"
 else
