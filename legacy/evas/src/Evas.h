@@ -75,6 +75,10 @@ void                evas_free(Evas e);
 
 /* for exposes or forced redraws (relative to output drawable) */
 void evas_update_rect(Evas e, int x, int y, int w, int h);
+/* for when the evas isnt fully visible you can clip out rects that are */
+/* full obscured rects of the evas (ie windows ontop) */
+void evas_add_obscured_rect(Evas e, int x, int y, int w, int h);
+void evas_clear_obscured_rects(Evas e);
 
 /* drawing */
 void evas_render(Evas e);

@@ -77,8 +77,8 @@ static TextBlock texts[] =
    
      { 52.0, 54.0, 58.0, 60.0, "Yes ...", NULL, NULL},
      { 60.0, 64.0, 70.0, 74.0, "Rancid Cheese", NULL, NULL},
-
-     { 76.0, 78.0, 80.0, 82.0, "But for those of you who want to code ...", NULL, NULL},
+   
+     { 76.0, 78.0, 80.0, 82.0, "But for those who prefer to code ...", NULL, NULL},
      { 80.0, 82.0, 84.0, 86.0, "There is ...", NULL, NULL},
      { 88.0, 90.0, 94.0, 98.0, "EVAS", NULL, NULL}
 };
@@ -172,7 +172,7 @@ setup(void)
 
    XSelectInput(display, win_control, ButtonPressMask | 
 		ButtonReleaseMask | PointerMotionMask | ExposureMask |
-		EnterWindowMask | LeaveWindowMask);
+		EnterWindowMask | LeaveWindowMask | VisibilityChangeMask);
 
    XMapWindow(display, win_control);
    XMapWindow(display, win_base);
@@ -279,7 +279,7 @@ setup_view(Evas_Render_Method method)
    win_view = evas_get_window(e);   
    XSelectInput(display, win_view, ButtonPressMask | 
 		ButtonReleaseMask | PointerMotionMask | ExposureMask |
-		EnterWindowMask | LeaveWindowMask);
+		EnterWindowMask | LeaveWindowMask | VisibilityChangeMask);
    XMapWindow(display, win_view);
    
    for (i = 0; i < (sizeof(texts) / sizeof(TextBlock)); i++) texts[i].o_text = NULL;
@@ -386,7 +386,7 @@ image(double val)
 	if (!images[i].o_image)
 	  {
 	     images[i].o_image = evas_add_image_from_file(evas_view, images[i].file);
-	     evas_set_layer(evas_view, images[i].o_image, 100);
+	     evas_set_layer(evas_view, images[i].o_image, 97);
 	  }
 	if ((val >= images[i].time1) && (val <= images[i].time4))
 	  {
@@ -742,6 +742,9 @@ handle_events(void)
 			    break;
 			 case Expose:
 			    evas_update_rect(e, ev.xexpose.x, ev.xexpose.y, ev.xexpose.width, ev.xexpose.height);
+			    break;
+			 case VisibilityNotify:
+/*			    printf("state %i\n", ev.xvisibility.state);*/
 			    break;
 			 case EnterNotify:
 			    if (e == evas_view)

@@ -9,6 +9,13 @@
 #include "evas_image_routines.h"
 #include "evas_x11_routines.h"
 
+#ifndef SPANS_COMMON
+#define SPANS_COMMON(x1, w1, x2, w2) \
+(!((((x2) + (w2)) <= (x1)) || ((x2) >= ((x1) + (w1)))))
+#define RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh) \
+((SPANS_COMMON((x), (w), (xx), (ww))) && (SPANS_COMMON((y), (h), (yy), (hh))))
+#endif
+
 void
 _evas_object_get_current_translated_coords(Evas e, Evas_Object o, 
 					   int *x, int *y, int *w, int *h)
@@ -47,6 +54,84 @@ _evas_object_get_previous_translated_coords(Evas e, Evas_Object o,
    *h = (int)
       ((o->previous.h * (double)e->previous.drawable_height) /
        e->previous.viewport.h);
+}
+
+void
+_evas_clip_obscures(Evas e)
+{
+   Imlib_Updates up, old_up, ob;
+   
+   up = e->updates;
+   if (!up) return;
+   for (ob = e->obscures; ob; ob = imlib_updates_get_next(ob))
+     {
+	int ox, oy, ow, oh;
+	
+	imlib_updates_get_coordinates(ob, &ox, &oy, &ow, &oh);	
+	e->updates = NULL;
+	old_up = up;
+	while (up)
+	  {
+	     int x, y, w, h;
+	     
+	     imlib_updates_get_coordinates(up, &x, &y, &w, &h);
+	     if (RECTS_INTERSECT(x, y, w, h, ox, oy, ow, oh))
+	       {
+		  int rx, ry, rw, rh;
+		  
+		  /* left */
+		  rx = x; ry = y;
+		  rw = ox - x; rh = h;
+		  if ((rw > 0) && (rh > 0)) 
+		     e->updates = imlib_update_append_rect(e->updates, rx, ry, rw, rh);
+		  /* right */
+		  rx = ox + ow; ry = y;
+		  rw = x + w - (ox + ow); rh = h;
+		  if ((rw > 0) && (rh > 0)) 
+		     e->updates = imlib_update_append_rect(e->updates, rx, ry, rw, rh);
+		  /* top */
+		  rx = ox; ry = y;
+		  if (ox < x) rx = x;
+		  rw = ow; rh = oy - y;
+		  if ((rx + rw) > (x + w)) rw = (x + w) - rx;
+		  if ((rw > 0) && (rh > 0)) 
+		     e->updates = imlib_update_append_rect(e->updates, rx, ry, rw, rh);
+		  /* bottom */
+		  rx = ox; ry = oy + oh;
+		  if (ox < x) rx = x;
+		  rw = ow; rh = (y + h) - ry;
+		  if ((rx + rw) > (x + w)) rw = (x + w) - rx;
+		  if ((rw > 0) && (rh > 0)) 
+		     e->updates = imlib_update_append_rect(e->updates, rx, ry, rw, rh);
+	       }
+	     else
+		e->updates = imlib_update_append_rect(e->updates, x, y, w, h);
+	     up = imlib_updates_get_next(up);	
+	  }
+	if (old_up) imlib_updates_free(old_up);
+	up = e->updates;
+     }
+}
+
+/* for parts of an evas that are obscured for output */
+void
+evas_add_obscured_rect(Evas e, int x, int y, int w, int h)
+{
+   if (!e) return;
+   if (w <= 0) return;
+   if (h <= 0) return;
+   e->obscures = imlib_update_append_rect(e->obscures, x, y, w, h);
+}
+
+void
+evas_clear_obscured_rects(Evas e)
+{
+   if (!e) return;
+   if (e->obscures)
+     {
+	imlib_updates_free(e->obscures);
+	e->obscures = NULL;
+     }
 }
 
 /* for exposes or forced redraws (relative to output drawable) */
@@ -355,6 +440,7 @@ evas_render(Evas e)
    func_init(e->current.display, e->current.screen, e->current.colors);
    if (e->updates)
      {
+	_evas_clip_obscures(e);
 	up = imlib_updates_merge_for_rendering(e->updates, 
 					       e->current.drawable_width,
 					       e->current.drawable_height);

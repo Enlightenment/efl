@@ -75,6 +75,7 @@ struct _Evas
    
    Evas_List     layers;
    Imlib_Updates updates;
+   Imlib_Updates obscures;
 };
 
 struct _Evas_Point
