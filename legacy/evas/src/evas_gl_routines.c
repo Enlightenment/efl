@@ -1481,24 +1481,19 @@ void              __evas_gl_line_draw(Display *disp, Window win,
 	dest_w = win_w;
 	dest_h = win_h;
      }
-   if (a < 255)
-     {
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-     }
-   else
-      glDisable(GL_BLEND);
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
    glEnable(GL_DITHER);
    glDisable(GL_TEXTURE_2D);
    glShadeModel(GL_FLAT);
    glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
    glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
    glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-/*   glEnable(GL_LINE_SMOOTH);*/
+   glEnable(GL_LINE_SMOOTH);
    
    glBegin(GL_LINES);
-   glVertex2i(x1, y1);
-   glVertex2i(x2, y2);
+   glVertex2d((double)x1 + 0.5, (double)y1 + 0.5);
+   glVertex2d((double)x2 + 0.5, (double)y2 + 0.5);
    glEnd();
    
    glEnable(GL_TEXTURE_2D);

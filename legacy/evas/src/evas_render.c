@@ -46,15 +46,6 @@ evas_set_output(Evas e, Display *disp, Drawable d, Visual *v, Colormap c)
 }
 
 void
-evas_set_output_rect(Evas e, int x, int y, int w, int h)
-{
-   e->current.output.x = x;
-   e->current.output.y = y;
-   e->current.output.w = w;
-   e->current.output.h = h;
-}
-
-void
 evas_set_output_viewport(Evas e, double x, double y, double w, double h)
 {
    e->current.viewport.x = x;

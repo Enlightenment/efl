@@ -127,8 +127,17 @@ main(int argc, char **argv)
 				 10, 20, 100, 160,
 				 255, 255, 255, 255);
 	     __evas_gl_line_draw(d, win, win_w, win_h,
+				 10, 20, 100, 40,
+				 0, 0, 255, 180);
+	     __evas_gl_line_draw(d, win, win_w, win_h,
 				 10, 20, 100, 20,
 				 0, 0, 0, 255);
+	     __evas_gl_line_draw(d, win, win_w, win_h,
+				 10, 20, 100, 5,
+				 255, 0, 0, 255);
+	     __evas_gl_line_draw(d, win, win_w, win_h,
+				 10, 20, 12, 2,
+				 80, 160, 80, 255);
 	     __evas_gl_line_draw(d, win, win_w, win_h,
 				 10, 20, 10, 200,
 				 255, 255, 0, 100);

@@ -8,10 +8,8 @@ typedef struct _Evas *                     Evas;
 typedef struct _Evas_Gradient *            Evas_Gradient;
 typedef struct _Evas_Object_Any *          Evas_Object;
 typedef struct _Evas_Object_Any *          Evas_Object_Any;
-typedef void *                             Evas_Group;
 typedef int                                Evas_Callback_Type;
 typedef int                                Evas_Image_Format;
-typedef int                                Evas_Blend_Mode;
 typedef int                                Evas_Render_Method;
 typedef struct _Evas_Render_Data *         Evas_Render_Data;
 typedef struct _Evas_List *                Evas_List;
@@ -25,7 +23,6 @@ typedef struct _Evas_Object_Rectangle *    Evas_Object_Rectangle;
 typedef struct _Evas_Object_Line *         Evas_Object_Line;
 typedef struct _Evas_Object_Gradient_Box * Evas_Object_Gradient_Box;
 typedef struct _Evas_Object_Bits *         Evas_Object_Bits;
-typedef struct _Evas_Object_Evas *         Evas_Object_Evas;
 
 #define RENDER_METHOD_ALPHA_SOFTWARE    0
 #define RENDER_METHOD_BASIC_HARDWARE    1
@@ -49,12 +46,6 @@ typedef struct _Evas_Object_Evas *         Evas_Object_Evas;
 #define OBJECT_LINE         3
 #define OBJECT_GRADIENT_BOX 4
 #define OBJECT_BITS         5
-#define OBJECT_EVAS         6
-
-#define BLEND_ONTOP    0
-#define BLEND_ADD      1
-#define BLEND_SUBTRACT 2
-#define BLEND_RESHADE  3
 
 struct _Evas
 {
@@ -63,11 +54,7 @@ struct _Evas
       Drawable      drawable;
       Visual       *visual;
       Colormap      colormap;
-      
-      struct  {
-	 int        x, y, w, h;
-      } output;
-      
+
       struct  {
 	 double     x, y, w, h;
       } viewport;
@@ -80,6 +67,8 @@ struct _Evas
 
    void (*object_renderer_data_free) (Evas _e, Evas_Object _o);
    void (*evas_renderer_data_free) (Evas _e);
+   
+   int changed;
    
    Evas_List     layers;
    Evas_List     updates;
@@ -136,11 +125,12 @@ struct _Evas_Object_Any
    int        type;
    struct  {
       double     x, y, w, h;
-      Evas_Blend_Mode mode;
       int        zoomscale;
       int        layer;
    } current, previous;
 
+   int changed;
+   
    void (*object_free) (Evas_Object _o);
    
    Evas_List  callbacks;
@@ -154,8 +144,8 @@ struct _Evas_Object_Image
    Evas_Object_Any object;
    struct  {
       char *file;
-      double angle;
-      int new_data;
+      int   new_data;
+      int   scale;
       struct _fill {
 	 double x, y, w, h;
       } fill;
@@ -167,7 +157,6 @@ struct _Evas_Object_Text
    Evas_Object_Any object;
    struct  {
       char *text;
-      double angle;
       int r, g, b, a;
    } current, previous;
 };
@@ -206,14 +195,6 @@ struct _Evas_Object_Bits
    } current, previous;
 };
 
-struct _Evas_Object_Evas
-{
-   Evas_Object_Any object;
-   struct  {
-      Evas *evas;
-   } current, previous;
-};
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -234,7 +215,6 @@ Colormap evas_get_optimal_colormap(Evas e, Display *disp);
 
 /* the output settings */
 void evas_set_output(Evas e, Display *disp, Drawable d, Visual *v, Colormap c);
-void evas_set_output_rect(Evas e, int x, int y, int w, int h);
 void evas_set_output_viewport(Evas e, double x, double y, double w, double h);
 void evas_set_output_method(Evas e, Evas_Render_Method method);
 	 
@@ -249,7 +229,6 @@ Evas_Object evas_add_rectangle(Evas e, int r, int g, int b, int a);
 Evas_Object evas_add_line(Evas e, int r, int g, int b, int a);
 Evas_Object evas_add_gradient_box(Evas e);
 Evas_Object evas_add_bits(Evas e, char *file);
-Evas_Object evas_add_evas(Evas e, Evas evas);
 
 /* set object settings */
 void evas_set_image_file(Evas e, Evas_Object o, char *file);
@@ -260,7 +239,6 @@ void evas_set_bits_file(Evas e, Evas_Object o, char *file);
 void evas_set_color(Evas e, Evas_Object o, int r, int g, int b, int a);
 void evas_set_gradient(Evas e, Evas_Object o, Evas_Gradient grad);
 void evas_set_angle(Evas e, Evas_Object o, double angle);
-void evas_set_blend_mode(Evas e, Evas_Blend_Mode mode);
 void evas_set_zoom_scale(Evas e, Evas_Object o, int scale);
 void evas_set_line_xy(Evas e, Evas_Object o, double x1, double y1, double x2, double y2);
    

@@ -16,11 +16,7 @@ evas_new(void)
    e->current.viewport.y = 0.0;
    e->current.viewport.w = 0.0;
    e->current.viewport.h = 0.0;
-   e->current.output.x = 0;
-   e->current.output.y = 0;
-   e->current.output.w = 0;
-   e->current.output.h = 0;   
-   e->current.render_method = RENDER_METHOD_BASIC_HARDWARE;
+   e->current.render_method = RENDER_METHOD_ALPHA_SOFTWARE;
    return e;
 }
 
@@ -40,19 +36,76 @@ evas_free(Evas e)
 void
 evas_set_color(Evas e, Evas_Object o, int r, int g, int b, int a)
 {
+   switch (o->type)
+     {
+     case OBJECT_TEXT:
+	  {
+	     Evas_Object_Text oo;
+	     
+	     oo = (Evas_Object_Text)o;
+	     oo->current.r = r;
+	     oo->current.g = g;
+	     oo->current.b = b;
+	     oo->current.a = a;
+	  }
+	o->changed = 1;
+	e->changed = 1;
+	break;
+     case OBJECT_RECTANGLE:
+	  {
+	     Evas_Object_Rectangle oo;
+	     
+	     oo = (Evas_Object_Rectangle)o;
+	     oo->current.r = r;
+	     oo->current.g = g;
+	     oo->current.b = b;
+	     oo->current.a = a;
+	  }
+	o->changed = 1;
+	e->changed = 1;
+	break;
+     case OBJECT_LINE:
+	  {
+	     Evas_Object_Line oo;
+	     
+	     oo = (Evas_Object_Line)o;
+	     oo->current.r = r;
+	     oo->current.g = g;
+	     oo->current.b = b;
+	     oo->current.a = a;
+	  }
+	o->changed = 1;
+	e->changed = 1;
+	break;
+     default:
+	break;
+     }
 }
 
 void
 evas_set_angle(Evas e, Evas_Object o, double angle)
 {
-}
-
-void
-evas_set_blend_mode(Evas e, Evas_Blend_Mode mode)
-{
+   switch (o->type)
+     {
+     case OBJECT_GRADIENT_BOX:
+	  {
+	     Evas_Object_Gradient_Box oo;
+	     
+	     oo = (Evas_Object_Gradient_Box)o;
+	     oo->current.angle = angle;
+	  }
+	o->changed = 1;
+	e->changed = 1;
+	break;
+     default:
+	break;
+     }
 }
 
 void
 evas_set_zoom_scale(Evas e, Evas_Object o, int scale)
 {
+   o->current.zoomscale = scale;
+   o->changed = 1;
+   e->changed = 1;
 }
