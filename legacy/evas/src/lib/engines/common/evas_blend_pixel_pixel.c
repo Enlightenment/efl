@@ -110,6 +110,8 @@ evas_common_blend_pixels_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len)
 	     BLEND_COLOR(a, B_VAL(dst_ptr), 
 			 B_VAL(src_ptr), B_VAL(dst_ptr), 
 			 tmp);	
+/* FIXME: Maybe this is faster and equivalent: ??? */	     
+/*	     BLEND_COLOR(A_VAL(src),A_VAL(dst),255,A_VAL(dst),tmp) */
 	     A_VAL(dst_ptr) = A_VAL(dst_ptr) + ((A_VAL(src_ptr) * (255 - A_VAL(dst_ptr))) / 255);
 	  }
 	src_ptr++;

@@ -256,7 +256,8 @@ evas_object_above_get(Evas_Object *obj)
    return NULL;
    MAGIC_CHECK_END();
    obj2 = evas_object_above_get_internal(obj);
-   while ((obj2) && (obj2->smart.parent))
+   while (((obj2) && (obj2->smart.parent)) ||
+	  ((obj2) && (obj2->delete_me)))
      obj2 = evas_object_above_get_internal(obj2);   
    return obj2;
 }
@@ -276,7 +277,8 @@ evas_object_below_get(Evas_Object *obj)
    return NULL;
    MAGIC_CHECK_END();
    obj2 = evas_object_below_get_internal(obj);
-   while ((obj2) && (obj2->smart.parent))
+   while (((obj2) && (obj2->smart.parent)) ||
+	  ((obj2) && (obj2->delete_me)))
      obj2 = evas_object_below_get_internal(obj2);   
    return obj2;
 }
@@ -297,7 +299,8 @@ evas_object_bottom_get(Evas *e)
    MAGIC_CHECK_END();
    if (e->layers)
      obj2 = e->layers->objects;
-   while ((obj2) && (obj2->smart.parent))
+   while (((obj2) && (obj2->smart.parent)) ||
+	  ((obj2) && (obj2->delete_me)))
      obj2 = evas_object_above_get_internal(obj2);
    return obj2;
 }
@@ -316,9 +319,13 @@ evas_object_top_get(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   if (e->layers)
+   if ((e->layers) &&
+       (((Evas_Object_List *)(e->layers))->last) &&
+       (((Evas_Layer *)(((Evas_Object_List *)(e->layers))->last))->objects) &&
+       (Evas_Object *)(((Evas_List *)(((Evas_Layer *)(((Evas_Object_List *)(e->layers))->last))->objects))->last))
      obj2 = (Evas_Object *)(((Evas_List *)(((Evas_Layer *)(((Evas_Object_List *)(e->layers))->last))->objects))->last);
-   while ((obj2) && (obj2->smart.parent))
+   while (((obj2) && (obj2->smart.parent)) ||
+	  ((obj2) && (obj2->delete_me)))
      obj2 = evas_object_below_get_internal(obj2);
    return obj2;
 }
