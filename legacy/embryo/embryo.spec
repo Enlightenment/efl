@@ -68,6 +68,8 @@ rm -rf $RPM_BUILD_ROOT
 %attr(755,root,root) %{prefix}/lib/libembryo.so
 %attr(755,root,root) %{prefix}/lib/libembryo.a
 %attr(755,root,root) %{prefix}/bin/embryo-config
+%{prefix}/share/embryo/examples/*
+%{prefix}/share/embryo/include/*
 %{prefix}/lib/pkgconfig/embryo.pc
 %{prefix}/include/Embryo*
 %doc AUTHORS
