@@ -426,7 +426,7 @@ _edje_mouse_up_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    ed = data;
    rp = evas_object_data_get(obj, "real_part");
    if (!rp) return;
-   snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
+   snprintf(buf, sizeof(buf), "mouse,up,%i", ev->button);
    _edje_emit(ed, buf, rp->part->name);
 }
 
@@ -559,27 +559,28 @@ _edje_program_run(Edje *ed, Edje_Program *pr)
 {
    Evas_List *l;
 
-   for (l = pr->targets; l; l = l->next)
-     {
-	Edje_Real_Part *rp;
-	Edje_Program_Target *pt;
-	
-	pt = l->data;
-	rp = evas_list_nth(ed->parts, pt->id);
-	if (rp)
-	  {
-	     _edje_part_description_apply(ed, rp, 
-					  rp->param1.description->state.name,
-					  rp->param1.description->state.value, 
-					  pr->state, 
-					  pr->value);
-	     _edje_part_pos_set(ed, rp, pr->tween.mode, 0.0);
-	  }
-     }
    _edje_emit(ed, "anim,start", pr->name);
    if (pr->tween.time > 0.0)
      {
 	Edje_Running_Program *runp;
+
+	for (l = pr->targets; l; l = l->next)
+	  {
+	     Edje_Real_Part *rp;
+	     Edje_Program_Target *pt;
+	     
+	     pt = l->data;
+	     rp = evas_list_nth(ed->parts, pt->id);
+	     if (rp)
+	       {
+		  _edje_part_description_apply(ed, rp, 
+					       rp->param1.description->state.name,
+					       rp->param1.description->state.value, 
+					       pr->state, 
+					       pr->value);
+		  _edje_part_pos_set(ed, rp, pr->tween.mode, 0.0);
+	       }
+	  }
 	
 	runp = calloc(1, sizeof(Edje_Running_Program));
 	if (!ed->actions)
@@ -591,6 +592,26 @@ _edje_program_run(Edje *ed, Edje_Program *pr)
 	if (!_edje_timer)
 	  _edje_timer = ecore_timer_add(_edje_frametime, _edje_timer_cb, NULL);
 	_edje_anim_count++;
+     }
+   else
+     {
+	for (l = pr->targets; l; l = l->next)
+	  {
+	     Edje_Real_Part *rp;
+	     Edje_Program_Target *pt;
+	     
+	     pt = l->data;
+	     rp = evas_list_nth(ed->parts, pt->id);
+	     if (rp)
+	       {
+		  _edje_part_description_apply(ed, rp, 
+					       pr->state, 
+					       pr->value,
+					       NULL,
+					       0.0);
+		  _edje_part_pos_set(ed, rp, pr->tween.mode, 0.0);
+	       }
+	  }
      }
 }
 

@@ -487,10 +487,10 @@ parse_float_range(int n, int f, int t)
 		progname, file_in, line, n + 1);
 	exit(-1);	
      }
-   i = atoi(str);
+   i = atof(str);
    if ((i < f) || (i > t))
      {
-	fprintf(stderr, "%s: Error. %s:%i integer %i out of range of %i to %i inclusive\n",
+	fprintf(stderr, "%s: Error. %s:%i integer %i out of range of %3.3f to %3.3f inclusive\n",
 		progname, file_in, line, i, f, t);
 	exit(-1);
      }

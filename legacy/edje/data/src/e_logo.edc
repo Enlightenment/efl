@@ -147,11 +147,11 @@ collections {
 	       border, 12 12 12 12;
 	    }
 	 }
-/*	 
 	 part {
 	    name,          "logo";
 	    description {
 	       state,    "default" 0.0;
+	       min,      64 64;
 	       max,      320 320;
 	       aspect,   1.0 1.0;
 	       rel1 {
@@ -159,8 +159,8 @@ collections {
 		  offset,   16   16;
 	       }
 	       rel2 {
-		  relative, 1.0  1.0;
-		  offset,   -17  -17;
+		  relative, 0.3  0.3;
+		  offset,   15  16;
 	       }
 	       image {
 		  normal, "e.png";
@@ -168,21 +168,22 @@ collections {
 	    }
 	    description {
 	       state,    "clicked" 0.0;
-	       max,      16 16;
+	       min,      48 48;
+	       max,      280 280;
+	       aspect,   1.0 1.0;
 	       rel1 {
 		  relative, 0.0  0.0;
-		  offset,   16   16;
+		  offset,   20   20;
 	       }
 	       rel2 {
-		  relative, 1.0  1.0;
-		  offset,   -17  -17;
+		  relative, 0.3  0.3;
+		  offset,   12  12;
 	       }
 	       image {
 		  normal, "e.png";
 	       }
 	    }
 	 }
- */
 	 part {
 	    name,          "logo_anim";
 	    description {
@@ -323,7 +324,6 @@ collections {
 	 }
       }
       programs {
-/*	 
 	 program {
 	    name,       "logo_click";
 	    signal,     "mouse,down,1";
@@ -338,7 +338,6 @@ collections {
 	    action,     STATE_SET "default" 0.0;
 	    target,     "logo";
 	 }
- */
 	 program {
 	    name,       "logo_animate";
 	    signal,     "load";
