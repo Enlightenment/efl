@@ -472,7 +472,11 @@ ecore_x_window_prop_protocol_set(Ecore_X_Window win,
    int   protos_count = 0;
    int   already_set = 0;
    int   i;
-  
+
+   /* check for invalid values */
+   if (protocol < 0 || protocol >= ECORE_X_WM_PROTOCOL_NUM)
+	return;
+
    proto = _ecore_x_atoms_wm_protocols[protocol];
    
    if (!XGetWMProtocols(_ecore_x_disp, win, &protos, &protos_count))
@@ -538,6 +542,10 @@ ecore_x_window_prop_protocol_isset(Ecore_X_Window win,
 {
    Atom proto, *protos = NULL;
    int i, ret = 0, protos_count = 0;
+
+   /* check for invalid values */
+   if (protocol < 0 || protocol >= ECORE_X_WM_PROTOCOL_NUM)
+	return 0;
 
    proto = _ecore_x_atoms_wm_protocols[protocol];
 
