@@ -10,7 +10,7 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 bin_SCRIPTS = eet-config
 
 EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN eet.spec eet.c.in \
-			gendoc Doxyfile eet_docs.tar.gz eet.pc.in \
+			gendoc Doxyfile doc eet.pc.in \
 			make_cross_compile_arm.sh
 
 pkgconfigdir = $(libdir)/pkgconfig
