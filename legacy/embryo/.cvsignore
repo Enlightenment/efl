@@ -16,3 +16,6 @@ embryo_docs.tar.gz
 libtool
 ltmain.sh
 stamp-h1
+depcomp
+install-sh
+missing

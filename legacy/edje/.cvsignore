@@ -15,3 +15,8 @@ edje_docs.tar.gz
 libtool
 ltmain.sh
 stamp-h1
+compile
+depcomp
+edje.pc
+install-sh
+missing

@@ -25,3 +25,4 @@ missing
 mkinstalldirs
 stamp-h1
 autom4te.cache
+depcomp

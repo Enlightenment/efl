@@ -15,3 +15,7 @@ evas.pc
 config.h
 stamp-h1
 evas_docs.tar.gz
+compile
+depcomp
+missing
+install-sh
