@@ -359,8 +359,9 @@ struct _Ecore_X_Event_Window_Colormap
 
 struct _Ecore_X_Event_Selection_Clear
 {
-   Ecore_X_Window  win;
-   Ecore_X_Time    time;
+   Ecore_X_Window    win;
+   Ecore_X_Selection selection;
+   Ecore_X_Time      time;
 };
 
 struct _Ecore_X_Event_Selection_Request

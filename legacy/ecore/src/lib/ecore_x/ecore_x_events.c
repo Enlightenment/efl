@@ -849,6 +849,8 @@ void
 _ecore_x_event_handle_selection_clear(XEvent *xevent)
 {
    Ecore_X_Selection_Data *d;
+   Ecore_X_Event_Selection_Clear *e;
+   Atom sel;
 
    if(!(d = _ecore_x_selection_get(xevent->xselectionclear.selection)))
       return;
@@ -857,6 +859,20 @@ _ecore_x_event_handle_selection_clear(XEvent *xevent)
       _ecore_x_selection_set(None, NULL, 0, 
             xevent->xselectionclear.selection);
    }
+
+   /* Generate event for app cleanup */
+   e = malloc(sizeof(Ecore_X_Event_Selection_Clear));
+   e->win = xevent->xselectionclear.window;
+   e->time = xevent->xselectionclear.time;
+   sel = xevent->xselectionclear.selection;
+   if (sel == _ecore_x_atom_selection_primary)
+      e->selection = ECORE_X_SELECTION_PRIMARY;
+   else if (sel == _ecore_x_atom_selection_secondary)
+      e->selection = ECORE_X_SELECTION_SECONDARY;
+   else
+      e->selection = ECORE_X_SELECTION_CLIPBOARD;
+   ecore_event_add(ECORE_X_EVENT_SELECTION_CLEAR, e, _ecore_x_event_free_generic, NULL);
+   
 }
 
 void
