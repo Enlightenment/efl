@@ -971,17 +971,32 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 	if (idh < 1.0) idh = 1.0;
 	if (idx > 0.0) idx -= idw;
 	if (idy > 0.0) idy -= idh;
-	while (idx < (double)obj->cur.cache.geometry.w)
+	while ((int)idx < obj->cur.cache.geometry.w)
 	  {
 	     double ydy;
+	     int dobreak_w = 0;
 	     
 	     ydy = idy;
 	     ix = idx;
-	     iw = ((int)(idx + idw)) - ix;
-	     while (idy < (double)obj->cur.cache.geometry.h)
+	     if (o->cur.fill.w == obj->cur.geometry.w)
 	       {
+		  dobreak_w = 1;
+		  iw = obj->cur.cache.geometry.w;
+	       }
+	     else
+	       iw = ((int)(idx + idw)) - ix;
+	     while ((int)idy < obj->cur.cache.geometry.h)
+	       {
+		  int dobreak_h = 0;
+		  
 		  iy = idy;
-		  ih = ((int)(idy + idh)) - iy;
+		  if (o->cur.fill.h == obj->cur.geometry.h)
+		    {
+		       ih = obj->cur.cache.geometry.h;
+		       dobreak_h = 1;
+		    }
+		  else
+		    ih = ((int)(idy + idh)) - iy;
 		  if ((o->cur.border.l == 0) &&
 		      (o->cur.border.r == 0) &&
 		      (o->cur.border.t == 0) &&
@@ -1081,9 +1096,11 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 		       obj->layer->evas->engine.func->image_draw(output, context, surface, o->engine_data, inx, iny, inw, inh, outx, outy, outw, outh, o->cur.smooth_scale);
 		    }
 		  idy += idh;
+		  if (dobreak_h) break;
 	       }
 	     idx += idw;
 	     idy = ydy;
+	     if (dobreak_w) break;
 	  }
      }
 }
