@@ -111,6 +111,7 @@ evas_set_gradient(Evas e, Evas_Object o, Evas_Gradient grad)
    Evas_Object_Gradient_Box oo;
 
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    if (!grad) return;
    IF_OBJ(o, OBJECT_GRADIENT_BOX) return;
@@ -271,6 +272,7 @@ void
 evas_set_angle(Evas e, Evas_Object o, double angle)
 {
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    switch (o->type)
      {

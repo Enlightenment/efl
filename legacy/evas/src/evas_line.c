@@ -96,6 +96,7 @@ evas_set_line_xy(Evas e, Evas_Object o, double x1, double y1, double x2, double 
    int event_update = 0;
    
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    IF_OBJ(o, OBJECT_LINE) return;
    oo = (Evas_Object_Line)o;

@@ -67,8 +67,23 @@ evas_add_image_from_file(Evas e, char *file)
    
    if (file)
      {
+	char *tmp_name, *name, *dot;
+	
 	oo->current.file = malloc(strlen(file) + 1);
 	strcpy(oo->current.file, file);
+	
+	name = strrchr(oo->current.file, '/');
+	if (!name) name = oo->current.file;
+	else name++;
+	
+	tmp_name = malloc(strlen(name) + 1);
+	strcpy(tmp_name, name);	
+	dot = strchr(tmp_name, '.');
+	if (dot) *dot = '\0';
+	evas_object_set_name(e, o, tmp_name);
+	if (dot) *dot = '.';
+	free(tmp_name);
+	
 	  {
 	     Imlib_Image im;
 	     
@@ -143,6 +158,7 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
    Evas_Object_Image oo;
    
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    IF_OBJ(o, OBJECT_IMAGE) return;
    oo = o;
@@ -152,12 +168,27 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
        (oo->current.image.h == 0)
        )
      {
+	char *tmp_name, *name, *dot;
+	
 	_evas_free_image_renderer_data(e, o);
 	if (oo->current.file)
 	   free(oo->current.file);
 	oo->previous.file = NULL;
 	oo->current.file = malloc(strlen(file) + 1);
 	strcpy(oo->current.file, file);
+	
+	name = strrchr(oo->current.file, '/');
+	if (!name) name = oo->current.file;
+	else name++;
+	
+	tmp_name = malloc(strlen(name) + 1);
+	strcpy(tmp_name, name);	
+	dot = strchr(tmp_name, '.');
+	if (dot) *dot = '\0';
+	evas_object_set_name(e, o, tmp_name);
+	if (dot) *dot = '.';
+	free(tmp_name);
+	
 	  {
 	     Imlib_Image im;
 	     
@@ -231,6 +262,7 @@ evas_set_image_fill(Evas e, Evas_Object o, double x, double y, double w, double 
    Evas_Object_Image oo;
    
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    IF_OBJ(o, OBJECT_IMAGE) return;
    oo = o;
@@ -261,6 +293,7 @@ evas_get_image_size(Evas e, Evas_Object o, int *w, int *h)
    Evas_Object_Image oo;
    
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    IF_OBJ(o, OBJECT_IMAGE) return;
    oo = o;
@@ -274,6 +307,8 @@ evas_set_image_border(Evas e, Evas_Object o, int l, int r, int t, int b)
    Evas_Object_Image oo;
    
    if (!e) return;
+   o = TO_OBJECT(e, o);
+   o = TO_OBJECT(e, o);
    if (!o) return;
    IF_OBJ(o, OBJECT_IMAGE) return;
    oo = o;
@@ -295,6 +330,8 @@ evas_get_image_border(Evas e, Evas_Object o, int *l, int *r, int *t, int *b)
    Evas_Object_Image oo;
    
    if (!e) return;
+   o = TO_OBJECT(e, o);
+   o = TO_OBJECT(e, o);
    if (!o) return;
    IF_OBJ(o, OBJECT_IMAGE) return;
    oo = o;

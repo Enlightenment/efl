@@ -164,6 +164,8 @@ struct _Evas_Callback
 
 struct _Evas_Object_Any
 {
+   unsigned char  marker;
+   unsigned char  changed;
    unsigned short type;
    struct  {
       double     x, y, w, h;
@@ -175,8 +177,6 @@ struct _Evas_Object_Any
    __attribute__ ((packed)) current, 
    __attribute__ ((packed)) previous;
 
-   unsigned char changed;
-   
    unsigned char delete_me;
    
    unsigned char pass_events;
@@ -316,6 +316,11 @@ _evas_get_previous_clipped_geometry(Evas e, Evas_Object o, double *x, double *y,
 	   o->previous.x, o->previous.y, o->previous.w, o->previous.h);
 }
 
+/* If it seems to be a string, try destringing it */
+#define TO_OBJECT(e, obj)				\
+	((obj) && ((char *)(obj))[0]			\
+	 ? evas_object_get_named((e), (char *)(obj))	\
+	 : (obj))
 #endif
 
 

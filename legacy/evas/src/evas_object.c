@@ -160,6 +160,7 @@ void
 evas_set_clip(Evas e, Evas_Object o, Evas_Object clip)
 {
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    if (!clip) return;
 
@@ -177,6 +178,7 @@ void
 evas_unset_clip(Evas e, Evas_Object o)
 {
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    
    if (o->clip.object)
@@ -193,6 +195,7 @@ Evas_Object
 evas_get_clip_object(Evas e, Evas_Object o)
 {
    if (!e) return NULL;
+   o = TO_OBJECT(e, o);
    if (!o) return NULL;
    
    return o->clip.object;
@@ -202,6 +205,7 @@ Evas_List
 evas_get_clip_list(Evas e, Evas_Object o)
 {
    if (!e) return NULL;
+   o = TO_OBJECT(e, o);
    if (!o) return NULL;
 
    return o->clip.list;
@@ -212,6 +216,7 @@ void
 evas_del_object(Evas e, Evas_Object o)
 {
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    _evas_cleanup_clip(e, o);
    e->changed = 1;
@@ -228,6 +233,7 @@ evas_set_layer(Evas e, Evas_Object o, int layer_num)
    int removed;
 
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    if (layer_num == o->current.layer) return;
    removed = 0;
@@ -295,6 +301,7 @@ evas_get_layer(Evas e, Evas_Object o)
    int removed;
 
    if (!e) return 0;
+   o = TO_OBJECT(e, o);
    if (!o) return 0;
    return o->current.layer;
 }
@@ -446,6 +453,7 @@ evas_raise(Evas e, Evas_Object o)
    Evas_Layer layer;
    
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    layer = _evas_get_object_layer(e, o);
    if (layer)
@@ -488,6 +496,7 @@ evas_stack_above(Evas e, Evas_Object o, Evas_Object above)
    Evas_Layer layer;
    
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    layer = _evas_get_object_layer(e, o);
    if (layer)
@@ -509,6 +518,8 @@ evas_stack_below(Evas e, Evas_Object o, Evas_Object below)
    Evas_Layer layer;
    
    if (!e) return;
+   o = TO_OBJECT(e, o);
+   o = TO_OBJECT(e, o);
    if (!o) return;
    layer = _evas_get_object_layer(e, o);
    if (layer)
@@ -531,6 +542,7 @@ evas_move(Evas e, Evas_Object o, double x, double y)
    int event_update = 0;
    
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    if ((o->type == OBJECT_LINE)) return;
    if ((x == o->current.x) && (y == o->current.y)) return;
@@ -575,6 +587,7 @@ evas_resize(Evas e, Evas_Object o, double w, double h)
    int event_update = 0;
    
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    if ((o->type == OBJECT_LINE)) return;
    if ((o->type == OBJECT_TEXT)) return;
@@ -599,6 +612,7 @@ void
 evas_get_geometry(Evas e, Evas_Object o, double *x, double *y, double *w, double *h)
 {
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    if (x) *x = o->current.x;
    if (y) *y = o->current.y;
@@ -612,6 +626,7 @@ void
 evas_show(Evas e, Evas_Object o)
 {
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    o->current.visible = 1;
    o->changed = 1;
@@ -624,6 +639,7 @@ void
 evas_hide(Evas e, Evas_Object o)
 {
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    o->current.visible = 0;
    o->changed = 1;
@@ -663,6 +679,7 @@ void
 evas_object_set_name(Evas e, Evas_Object o, char *name)
 {
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    if (o->name) free(o->name);
    o->name = NULL;
@@ -677,6 +694,7 @@ char *
 evas_object_get_name(Evas e, Evas_Object o)
 {
    if (!e) return NULL;
+   o = TO_OBJECT(e, o);
    if (!o) return NULL;
    return o->name;
 }

@@ -202,6 +202,7 @@ evas_get_text_string(Evas e, Evas_Object o)
    Evas_Object_Text oo;
 
    if (!e) return NULL;
+   o = TO_OBJECT(e, o);
    if (!o) return NULL;
    IF_OBJ(o, OBJECT_TEXT) return "";
    oo = o;
@@ -214,6 +215,7 @@ evas_get_text_font(Evas e, Evas_Object o)
    Evas_Object_Text oo;
 
    if (!e) return NULL;
+   o = TO_OBJECT(e, o);
    if (!o) return NULL;
    IF_OBJ(o, OBJECT_TEXT) return "";
    oo = o;
@@ -226,6 +228,7 @@ evas_get_text_size(Evas e, Evas_Object o)
    Evas_Object_Text oo;
 
    if (!e) return 0;
+   o = TO_OBJECT(e, o);
    if (!o) return 0;
    IF_OBJ(o, OBJECT_TEXT) return 0;
    oo = o;
@@ -238,6 +241,8 @@ evas_get_text_height(Evas e, Evas_Object o)
    Evas_Object_Text oo;
 
    if (!e) return 0;
+   o = TO_OBJECT(e, o);
+   o = TO_OBJECT(e, o);
    if (!o) return 0;
    IF_OBJ(o, OBJECT_TEXT) return 0;
    oo = o;
@@ -266,6 +271,7 @@ evas_text_at_position(Evas e, Evas_Object o, double x, double y,
    int cx, cy, cw, ch;
    
    if (!e) return -1;
+   o = TO_OBJECT(e, o);
    if (!o) return -1;
    IF_OBJ(o, OBJECT_TEXT) return -1;
    oo = o;
@@ -280,8 +286,8 @@ evas_text_at_position(Evas e, Evas_Object o, double x, double y,
 	     if (fn)
 	       {
 		  ret =  __evas_imlib_text_get_character_at_pos(fn, oo->current.text,
-								(int)(x - o->current.x),
-								(int)(y - o->current.y),
+								(int)(x),
+								(int)(y),
 								&cx, &cy, &cw, &ch);
 		  if (char_x) *char_x = (double)cx;
 		  if (char_y) *char_y = (double)cy;
@@ -301,8 +307,8 @@ evas_text_at_position(Evas e, Evas_Object o, double x, double y,
 	     if (fn)
 	       {
 		  ret =  __evas_x11_text_get_character_at_pos(fn, oo->current.text,
-							      (int)(x - o->current.x),
-							      (int)(y - o->current.y),
+							      (int)(x),
+							      (int)(y),
 							      &cx, &cy, &cw, &ch);
 		  if (char_x) *char_x = (double)cx;
 		  if (char_y) *char_y = (double)cy;
@@ -322,8 +328,8 @@ evas_text_at_position(Evas e, Evas_Object o, double x, double y,
 	     if (fn)
 	       {
 		  ret =  __evas_gl_text_get_character_at_pos(fn, oo->current.text,
-							     (int)(x - o->current.x),
-							     (int)(y - o->current.y),
+							     (int)(x),
+							     (int)(y),
 							     &cx, &cy, &cw, &ch);
 		  if (char_x) *char_x = (double)cx;
 		  if (char_y) *char_y = (double)cy;
@@ -343,8 +349,8 @@ evas_text_at_position(Evas e, Evas_Object o, double x, double y,
 	     if (fn)
 	       {
 		  ret =  __evas_render_text_get_character_at_pos(fn, oo->current.text,
-							     (int)(x - o->current.x),
-							     (int)(y - o->current.y),
+							     (int)(x),
+							     (int)(y),
 							     &cx, &cy, &cw, &ch);
 		  if (char_x) *char_x = (double)cx;
 		  if (char_y) *char_y = (double)cy;
@@ -364,8 +370,8 @@ evas_text_at_position(Evas e, Evas_Object o, double x, double y,
 	     if (fn)
 	       {
 		  ret =  __evas_image_text_get_character_at_pos(fn, oo->current.text,
-								(int)(x - o->current.x),
-								(int)(y - o->current.y),
+								(int)(x),
+								(int)(y),
 								&cx, &cy, &cw, &ch);
 		  if (char_x) *char_x = (double)cx;
 		  if (char_y) *char_y = (double)cy;
@@ -498,6 +504,7 @@ evas_text_get_ascent_descent(Evas e, Evas_Object o,
    Evas_Object_Text oo;
    
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    IF_OBJ(o, OBJECT_TEXT) return;
    oo = o;
@@ -584,6 +591,8 @@ evas_text_get_max_ascent_descent(Evas e, Evas_Object o,
    Evas_Object_Text oo;
    
    if (!e) return;
+   o = TO_OBJECT(e, o);
+   o = TO_OBJECT(e, o);
    if (!o) return;
    IF_OBJ(o, OBJECT_TEXT) return;
    oo = o;
@@ -670,6 +679,7 @@ evas_text_get_advance(Evas e, Evas_Object o,
    Evas_Object_Text oo;
    
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    IF_OBJ(o, OBJECT_TEXT) return;
    oo = o;
@@ -750,6 +760,7 @@ evas_text_get_inset(Evas e, Evas_Object o)
    int inset;
    
    if (!e) return 0;
+   o = TO_OBJECT(e, o);
    if (!o) return 0;
    IF_OBJ(o, OBJECT_TEXT) return 0;
    oo = o;
@@ -830,6 +841,7 @@ void
 evas_set_text(Evas e, Evas_Object o, char *text)
 {
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    switch (o->type)
      {
@@ -970,6 +982,7 @@ void
 evas_set_font(Evas e, Evas_Object o, char *font, int size)
 {
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    if (!font) return;
    if (size < 0) size = 0;

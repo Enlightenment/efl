@@ -135,6 +135,7 @@ evas_add_point(Evas e, Evas_Object o, double x, double y)
    Evas_Point p;
    Evas_Object_Poly oo;
    
+   o = TO_OBJECT(e, o);
    IF_OBJ(o, OBJECT_POLYGON) return;
    oo = o;
    p = malloc(sizeof(struct _Evas_Point));

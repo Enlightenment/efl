@@ -168,6 +168,7 @@ void
 evas_set_color(Evas e, Evas_Object o, int r, int g, int b, int a)
 {
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    if (r < 0) r = 0;
    else if (r > 255) r = 255;
@@ -253,6 +254,7 @@ void
 evas_get_color(Evas e, Evas_Object o, int *r, int *g, int *b, int *a)
 {
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    switch (o->type)
      {
@@ -309,6 +311,7 @@ void
 evas_set_zoom_scale(Evas e, Evas_Object o, int scale)
 {
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    o->current.zoomscale = scale;
    o->changed = 1;
@@ -319,6 +322,7 @@ void
 evas_set_pass_events(Evas e, Evas_Object o, int pass_events)
 {
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    o->pass_events = 1;
 }
@@ -551,6 +555,7 @@ evas_put_data(Evas e, Evas_Object o, char *key, void *data)
    Evas_List l;
    
    if (!e) return;
+   o = TO_OBJECT(e, o);
    if (!o) return;
    if (!key) return;
    for (l = o->data; l; l = l->next)
@@ -577,6 +582,7 @@ evas_get_data(Evas e, Evas_Object o, char *key)
    Evas_List l;
    
    if (!e) return NULL;
+   o = TO_OBJECT(e, o);
    if (!o) return NULL;
    if (!key) return NULL;
    for (l = o->data; l; l = l->next)
@@ -595,6 +601,7 @@ evas_remove_data(Evas e, Evas_Object o, char *key)
    Evas_List l;
    
    if (!e) return NULL;
+   o = TO_OBJECT(e, o);
    if (!o) return NULL;
    if (!key) return NULL;
    for (l = o->data; l; l = l->next)
