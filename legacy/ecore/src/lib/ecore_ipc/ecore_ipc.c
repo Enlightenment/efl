@@ -190,10 +190,18 @@ int ECORE_IPC_EVENT_SERVER_DATA = 0;
 
 static int init_count = 0;
 static Ecore_Ipc_Server *servers = NULL;
+
+/**
+ * @defgroup Ecore_IPC_Library_Group IPC Library Functions
+ *
+ * Functions that set up and shut down the Ecore IPC Library.
+ */
+
 /**
  * Initialises the Ecore IPC library.
- * @return Number of times the library has been initialised without
- *         being shut down.
+ * @return  Number of times the library has been initialised without
+ *          being shut down.
+ * @ingroup Ecore_IPC_Library_Group
  */
 int
 ecore_ipc_init(void)
@@ -221,8 +229,9 @@ ecore_ipc_init(void)
 
 /**
  * Shuts down the Ecore IPC library.
- * @return Number of times the library has been initialised without being
- *         shut down.
+ * @return  Number of times the library has been initialised without being
+ *          shut down.
+ * @ingroup Ecore_IPC_Library_Group
  */
 int
 ecore_ipc_shutdown(void)
@@ -238,17 +247,24 @@ ecore_ipc_shutdown(void)
 }
 
 /**
+ * @defgroup Ecore_IPC_Server_Group IPC Server Functions
+ *
+ * Functions the deal with IPC server objects.
+ */
+
+/**
  * Creates an IPC server that listens for connections.
  *
  * For more details about the @p compl_type, @p name and @p port
  * parameters, see the @ref ecore_con_server_add documentation.
  *
- * @param  compl_type The connection type.
- * @param  name       Name to associate with the socket used for connection.
- * @param  port       Number to identify with socket used for connection.
- * @param  data       Data to associate with the IPC server.
- * @return New IPC server.  If there is an error, @c NULL is returned.
- * @todo Need to add protocol type parameter to this function.
+ * @param   compl_type The connection type.
+ * @param   name       Name to associate with the socket used for connection.
+ * @param   port       Number to identify with socket used for connection.
+ * @param   data       Data to associate with the IPC server.
+ * @return  New IPC server.  If there is an error, @c NULL is returned.
+ * @ingroup Ecore_IPC_Server_Group
+ * @todo    Need to add protocol type parameter to this function.
  */
 Ecore_Ipc_Server *
 ecore_ipc_server_add(Ecore_Ipc_Type compl_type, char *name, int port, const void *data)
@@ -297,14 +313,15 @@ ecore_ipc_server_add(Ecore_Ipc_Type compl_type, char *name, int port, const void
  * For more details about the @p compl_type, @p name and @p port
  * parameters, see the @ref ecore_con_server_connect documentation.
  *
- * @param  compl_type The IPC connection type.
- * @param  name       Name used to determine which socket to use for the
- *                    IPC connection.
- * @param  port       Number used to identify the socket to use for the
- *                    IPC connection.
- * @param  data       Data to associate with the server.
- * @return A new IPC server.  @c NULL is returned on error.
- * @todo Need to add protocol type parameter.
+ * @param   compl_type The IPC connection type.
+ * @param   name       Name used to determine which socket to use for the
+ *                     IPC connection.
+ * @param   port       Number used to identify the socket to use for the
+ *                     IPC connection.
+ * @param   data       Data to associate with the server.
+ * @return  A new IPC server.  @c NULL is returned on error.
+ * @ingroup Ecore_IPC_Server_Group
+ * @todo    Need to add protocol type parameter.
  */
 Ecore_Ipc_Server *
 ecore_ipc_server_connect(Ecore_Ipc_Type compl_type, char *name, int port, const void *data)
@@ -348,8 +365,9 @@ ecore_ipc_server_connect(Ecore_Ipc_Type compl_type, char *name, int port, const 
 
 /**
  * Closes the connection and frees the given IPC server.
- * @param  svr The given IPC server.
- * @return The data associated with the server when it was created.
+ * @param   svr The given IPC server.
+ * @return  The data associated with the server when it was created.
+ * @ingroup Ecore_IPC_Server_Group
  */
 void *
 ecore_ipc_server_del(Ecore_Ipc_Server *svr)
@@ -374,8 +392,9 @@ ecore_ipc_server_del(Ecore_Ipc_Server *svr)
 
 /**
  * Retrieves the data associated with the given IPC server.
- * @param  svr The given IPC server.
- * @return The associated data.
+ * @param   svr The given IPC server.
+ * @return  The associated data.
+ * @ingroup Ecore_IPC_Server_Group
  */
 void *
 ecore_ipc_server_data_get(Ecore_Ipc_Server *svr)
@@ -391,8 +410,9 @@ ecore_ipc_server_data_get(Ecore_Ipc_Server *svr)
 
 /**
  * Retrieves whether the given IPC server is currently connected.
- * @param  svr The given IPC server.
- * @return @c 1 if the server is connected.  @c 0 otherwise.
+ * @param   svr The given IPC server.
+ * @return  @c 1 if the server is connected.  @c 0 otherwise.
+ * @ingroup Ecore_IPC_Server_Group
  */
 int
 ecore_ipc_server_connected_get(Ecore_Ipc_Server *svr)
@@ -440,16 +460,22 @@ ecore_ipc_server_connected_get(Ecore_Ipc_Server *svr)
 
 /**
  * Sends a message to the given IPC server.
- * @param  svr      The given IPC server.
- * @param  major    Major opcode of the message.
- * @param  minor    Minor opcode of the message.
- * @param  ref      Message reference number.
- * @param  ref_to
- * @param  response
- * @param  data     The data to send as part of the message.
- * @param  size     Length of the data, in bytes, to send.
- * @return Number of bytes sent.  @c 0 is returned if there is an error.
- * @todo This function needs to become an IPC message.
+ *
+ * The content of the parameters, excluding the @p svr paramter, is up to
+ * the client.
+ *
+ * @param   svr      The given IPC server.
+ * @param   major    Major opcode of the message.
+ * @param   minor    Minor opcode of the message.
+ * @param   ref      Message reference number.
+ * @param   ref_to   Reference number of the message this message refers to.
+ * @param   response Requires response.
+ * @param   data     The data to send as part of the message.
+ * @param   size     Length of the data, in bytes, to send.
+ * @return  Number of bytes sent.  @c 0 is returned if there is an error.
+ * @ingroup Ecore_IPC_Server_Group
+ * @todo    This function needs to become an IPC message.
+ * @todo Fix up the documentation: Make sure what ref_to and response are.
  */
 int
 ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int ref_to, int response, void *data, int size)
@@ -526,18 +552,26 @@ ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int 
      }
 
 /**
+ * @defgroup Ecore_IPC_Client_Group IPC Client Functions
+ *
+ * Functions that deal with IPC client objects.
+ */
+
+/**
  * Sends a message to the given IPC client.
- * @param cl       The given IPC client.
- * @param major    Major opcode of the message.
- * @param minor    Minor opcode of the message.
- * @param ref      Reference number of the message.
- * @param ref_to
- * @param response 
- * @param data     The data to send as part of the message.
- * @param size     Length of the data, in bytes, to send.
- * @return The number of bytes sent.  @c 0 will be returned if there is
- *         an error.
- * @todo This function needs to become an IPC message.
+ * @param   cl       The given IPC client.
+ * @param   major    Major opcode of the message.
+ * @param   minor    Minor opcode of the message.
+ * @param   ref      Reference number of the message.
+ * @param   ref_to   Reference number of the message this message refers to.
+ * @param   response Requires response.
+ * @param   data     The data to send as part of the message.
+ * @param   size     Length of the data, in bytes, to send.
+ * @return  The number of bytes sent.  @c 0 will be returned if there is
+ *          an error.
+ * @ingroup Ecore_IPC_Client_Group
+ * @todo    This function needs to become an IPC message.
+ * @todo    Make sure ref_to and response parameters are described correctly.
  */
 int
 ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int ref_to, int response, void *data, int size)
@@ -583,8 +617,9 @@ ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int r
 
 /**
  * Retrieves the IPC server that the given IPC client is connected to.
- * @param  cl The given IPC client.
- * @return The IPC server the IPC client is connected to.
+ * @param   cl The given IPC client.
+ * @return  The IPC server the IPC client is connected to.
+ * @ingroup Ecore_IPC_Client_Group
  */
 Ecore_Ipc_Server *
 ecore_ipc_client_server_get(Ecore_Ipc_Client *cl)
@@ -601,8 +636,9 @@ ecore_ipc_client_server_get(Ecore_Ipc_Client *cl)
 /**
  * Closes the connection and frees memory allocated to the given IPC
  * client.
- * @param  cl The given client.
- * @return Data associated with the client.
+ * @param   cl The given client.
+ * @return  Data associated with the client.
+ * @ingroup Ecore_IPC_Client_Group
  */
 void *
 ecore_ipc_client_del(Ecore_Ipc_Client *cl)
@@ -628,8 +664,9 @@ ecore_ipc_client_del(Ecore_Ipc_Client *cl)
 
 /**
  * Sets the IPC data associated with the given IPC client to @p data.
- * @param  cl   The given IPC client.
- * @param  data The data to associate with the IPC client.
+ * @param   cl   The given IPC client.
+ * @param   data The data to associate with the IPC client.
+ * @ingroup Ecore_IPC_Client_Group
  */
 void
 ecore_ipc_client_data_set(Ecore_Ipc_Client *cl, const void *data)
@@ -645,8 +682,9 @@ ecore_ipc_client_data_set(Ecore_Ipc_Client *cl, const void *data)
 
 /**
  * Retrieves the data that has been associated with the given IPC client.
- * @param  cl The given client.
- * @return The data associated with the IPC client.
+ * @param   cl The given client.
+ * @return  The data associated with the IPC client.
+ * @ingroup Ecore_IPC_Client_Group
  */
 void *
 ecore_ipc_client_data_get(Ecore_Ipc_Client *cl)
