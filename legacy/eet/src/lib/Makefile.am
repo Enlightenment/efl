@@ -13,7 +13,9 @@ lib_LTLIBRARIES      = libeet.la
 include_HEADERS      = Eet.h
 libeet_la_SOURCES  = \
 eet_lib.c \
-eet_data.c
+eet_data.c \
+eet_memfile.c \
+Eet_private.h
 
 libeet_la_LIBADD       = $(LDFLAGS) -lz -ljpeg
 libeet_la_DEPENDENCIES = $(top_builddir)/config.h

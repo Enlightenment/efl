@@ -1,21 +1,5 @@
 #include "Eet.h"
-#define _GNU_SOURCE /* need this for fmemopen & open_memstream */
-#include <stdio.h>
-#include <unistd.h>
-#include <limits.h>
-#include <stdlib.h>
-#include <time.h>
-#include <sys/types.h>
-#include <fcntl.h>
-#include <netinet/in.h>
-#include <zlib.h>
-#include <string.h>
-#include <fnmatch.h>
-#include <jpeglib.h>
-#include <setjmp.h>
-#include <zlib.h>
-#include <locale.h>
-
+#include "Eet_private.h"
 
 /*
  * rotuines for doing data -> struct and struct -> data conversion
@@ -252,7 +236,7 @@ eet_data_image_jpeg_rgb_decode(void *data, int size, int *w, int *h)
    int x, y, l, i, scans, count, prevy;
    FILE *f;
    
-   f = fmemopen(data, (size_t)size, "r");   
+   f = _eet_memfile_read_open(data, (size_t)size);
    if (!f) return NULL;
    cinfo.err = jpeg_std_error(&(jerr.pub));
    jerr.pub.error_exit = _JPEGFatalErrorHandler;
@@ -261,7 +245,7 @@ eet_data_image_jpeg_rgb_decode(void *data, int size, int *w, int *h)
    if (setjmp(jerr.setjmp_buffer))
      {
 	jpeg_destroy_decompress(&cinfo);
-	fclose(f);
+	_eet_memfile_read_close(f);
 	return NULL;
      }
    jpeg_create_decompress(&cinfo);
@@ -279,14 +263,14 @@ eet_data_image_jpeg_rgb_decode(void *data, int size, int *w, int *h)
    if (cinfo.rec_outbuf_height > 16)
      {
 	jpeg_destroy_decompress(&cinfo);
-	fclose(f);
+	_eet_memfile_read_close(f);
 	return NULL;
      }
    tdata = malloc((*w) * 16 * 3);
    if (!tdata)
      {
 	jpeg_destroy_decompress(&cinfo);
-	fclose(f);
+	_eet_memfile_read_close(f);
 	return NULL;
      }
    d = malloc((*w) * (*h) * 4);
@@ -294,7 +278,7 @@ eet_data_image_jpeg_rgb_decode(void *data, int size, int *w, int *h)
      {
 	free(tdata);
 	jpeg_destroy_decompress(&cinfo);
-	fclose(f);
+	_eet_memfile_read_close(f);
 	return NULL;
      }
    ptr2 = d;
@@ -345,7 +329,7 @@ eet_data_image_jpeg_rgb_decode(void *data, int size, int *w, int *h)
 	  }
      }
    free(tdata);
-   fclose(f);
+   _eet_memfile_read_close(f);
    /* end data decoding */
    jpeg_finish_decompress(&cinfo);
    jpeg_destroy_decompress(&cinfo);
@@ -362,7 +346,7 @@ eet_data_image_jpeg_alpha_decode(void *data, int size, unsigned int *d, int *w, 
    int x, y, l, i, scans, count, prevy;
    FILE *f;
    
-   f = fmemopen(data, (size_t)size, "r");   
+   f = _eet_memfile_read_open(data, (size_t)size);
    if (!f) return NULL;
    cinfo.err = jpeg_std_error(&(jerr.pub));
    jerr.pub.error_exit = _JPEGFatalErrorHandler;
@@ -371,7 +355,7 @@ eet_data_image_jpeg_alpha_decode(void *data, int size, unsigned int *d, int *w, 
    if (setjmp(jerr.setjmp_buffer))
      {
 	jpeg_destroy_decompress(&cinfo);
-	fclose(f);
+	_eet_memfile_read_close(f);
 	return NULL;
      }
    jpeg_create_decompress(&cinfo);
@@ -385,13 +369,13 @@ eet_data_image_jpeg_alpha_decode(void *data, int size, unsigned int *d, int *w, 
    if ((*w) != cinfo.output_width)
      {
 	jpeg_destroy_decompress(&cinfo);
-	fclose(f);
+	_eet_memfile_read_close(f);
 	return NULL;	
      }
    if ((*h) != cinfo.output_height)
      {
 	jpeg_destroy_decompress(&cinfo);
-	fclose(f);
+	_eet_memfile_read_close(f);
 	return NULL;	
      }
    *w = cinfo.output_width;
@@ -401,14 +385,14 @@ eet_data_image_jpeg_alpha_decode(void *data, int size, unsigned int *d, int *w, 
    if (cinfo.rec_outbuf_height > 16)
      {
 	jpeg_destroy_decompress(&cinfo);
-	fclose(f);
+	_eet_memfile_read_close(f);
 	return NULL;
      }
    tdata = malloc((*w) * 16 * 3);
    if (!tdata)
      {
 	jpeg_destroy_decompress(&cinfo);
-	fclose(f);
+	_eet_memfile_read_close(f);
 	return NULL;
      }
    ptr2 = d;
@@ -461,7 +445,7 @@ eet_data_image_jpeg_alpha_decode(void *data, int size, unsigned int *d, int *w, 
 	  }
      }
    free(tdata);
-   fclose(f);
+   _eet_memfile_read_close(f);
    /* end data decoding */
    jpeg_finish_decompress(&cinfo);
    jpeg_destroy_decompress(&cinfo);
@@ -567,7 +551,7 @@ static void *
 eet_data_image_jpeg_convert(int *size, void *data, int w, int h, int alpha, int quality)
 {
    int *ptr;
-   char *d = NULL;
+   void *d = NULL;
    size_t sz = 0;
    struct _JPEG_error_mgr jerr;
    JSAMPROW *jbuf;
@@ -575,13 +559,13 @@ eet_data_image_jpeg_convert(int *size, void *data, int w, int h, int alpha, int 
    FILE *f;
    unsigned char *buf;
       
-   f = open_memstream(&d, &sz);
+   f =_eet_memfile_write_open(&d, &sz);
    if (!f) return NULL;
    
    buf = malloc(3 * w);
    if (!buf) 
      {
-	fclose(f);
+	_eet_memfile_write_close(f);
 	if (d) free(d);
 	return NULL;
      }
@@ -594,7 +578,7 @@ eet_data_image_jpeg_convert(int *size, void *data, int w, int h, int alpha, int 
      {
 	jpeg_destroy_compress(&cinfo);
 	if (buf) free(buf);
-	fclose(f);
+	_eet_memfile_write_close(f);
 	if (d) free(d);
 	return NULL;
      }
@@ -630,7 +614,7 @@ eet_data_image_jpeg_convert(int *size, void *data, int w, int h, int alpha, int 
    
    *size = sz;
    if (buf) free(buf);   
-   fclose(f);
+   _eet_memfile_write_close(f);
    return d;
 }
 
@@ -653,7 +637,7 @@ eet_data_image_jpeg_alpha_convert(int *size, void *data, int w, int h, int alpha
    
      {
 	int *ptr;
-	char *d = NULL;
+	void *d = NULL;
 	size_t sz = 0;
 	struct _JPEG_error_mgr jerr;
 	JSAMPROW *jbuf;
@@ -661,13 +645,13 @@ eet_data_image_jpeg_alpha_convert(int *size, void *data, int w, int h, int alpha
 	FILE *f;
 	unsigned char *buf;
 	
-	f = open_memstream(&d, &sz);
+	f = _eet_memfile_write_open(&d, &sz);
 	if (!f) return NULL;
 	
 	buf = malloc(3 * w);
 	if (!buf) 
 	  {
-	     fclose(f);
+	     _eet_memfile_write_close(f);
 	     if (d) free(d);
 	     return NULL;
 	  }
@@ -680,7 +664,7 @@ eet_data_image_jpeg_alpha_convert(int *size, void *data, int w, int h, int alpha
 	  {
 	     jpeg_destroy_compress(&cinfo);
 	     if (buf) free(buf);
-	     fclose(f);
+	     _eet_memfile_write_close(f);
 	     if (d) free(d);
 	     return NULL;
 	  }
@@ -715,13 +699,13 @@ eet_data_image_jpeg_alpha_convert(int *size, void *data, int w, int h, int alpha
 	jpeg_destroy_compress(&cinfo);
 	
 	if (buf) free(buf);   
-	fclose(f);
+	_eet_memfile_write_close(f);
 	d1 = d;
 	sz1 = sz;
      }
      {
 	int *ptr;
-	char *d = NULL;
+	void *d = NULL;
 	size_t sz = 0;
 	struct _JPEG_error_mgr jerr;
 	JSAMPROW *jbuf;
@@ -729,7 +713,7 @@ eet_data_image_jpeg_alpha_convert(int *size, void *data, int w, int h, int alpha
 	FILE *f;
 	unsigned char *buf;
 	
-	f = open_memstream(&d, &sz);
+	f = _eet_memfile_write_open(&d, &sz);
 	if (!f) 
 	  {
 	     free(d1);
@@ -739,7 +723,7 @@ eet_data_image_jpeg_alpha_convert(int *size, void *data, int w, int h, int alpha
 	buf = malloc(3 * w);
 	if (!buf) 
 	  {
-	     fclose(f);
+	     _eet_memfile_write_close(f);
 	     if (d) free(d);
 	     free(d1);
 	     return NULL;
@@ -753,7 +737,7 @@ eet_data_image_jpeg_alpha_convert(int *size, void *data, int w, int h, int alpha
 	  {
 	     jpeg_destroy_compress(&cinfo);
 	     if (buf) free(buf);
-	     fclose(f);
+	     _eet_memfile_write_close(f);
 	     if (d) free(d);
 	     free(d1);
 	     return NULL;
@@ -787,7 +771,7 @@ eet_data_image_jpeg_alpha_convert(int *size, void *data, int w, int h, int alpha
 	jpeg_destroy_compress(&cinfo);
 	
 	if (buf) free(buf);   
-	fclose(f);
+	_eet_memfile_write_close(f);
 	d2 = d;
 	sz2 = sz;
      }

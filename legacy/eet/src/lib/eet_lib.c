@@ -1,15 +1,5 @@
 #include "Eet.h"
-#include <stdio.h>
-#include <unistd.h>
-#include <limits.h>
-#include <stdlib.h>
-#include <time.h>
-#include <sys/types.h>
-#include <fcntl.h>
-#include <netinet/in.h>
-#include <zlib.h>
-#include <string.h>
-#include <fnmatch.h>
+#include "Eet_private.h"
 
 #define EET_MAGIC_FILE                  0x1ee7ff00
 #define EET_MAGIC_FILE_HEADER           0x1ee7ff01
