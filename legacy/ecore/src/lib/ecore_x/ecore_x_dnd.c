@@ -203,7 +203,7 @@ _ecore_x_dnd_drag(int x, int y)
          xev.xclient.message_type = _ecore_x_atom_xdnd_position;
          xev.xclient.data.l[0] = _xdnd->source;
          xev.xclient.data.l[1] = 0; /* Reserved */
-         xev.xclient.data.l[2] = ((x << 16) & 0xffff0000) | (y * 0xffff);
+         xev.xclient.data.l[2] = ((x << 16) & 0xffff0000) | (y & 0xffff);
          xev.xclient.data.l[3] = CurrentTime; /* Version 1 */
          xev.xclient.data.l[4] = _xdnd->action; /* Version 2, Needs to be pre-set */
          XSendEvent(_ecore_x_disp, win, False, 0, &xev);
@@ -241,4 +241,26 @@ _ecore_x_dnd_drag(int x, int y)
    _xdnd->dest = win;
 }
 
+void 
+_ecore_x_dnd_send_finished(void)
+{
+   XEvent   xev;
+
+   xev.xany.type = ClientMessage;
+   xev.xany.display = _ecore_x_disp;
+   xev.xclient.window = _xdnd->source;
+   xev.xclient.message_type = _ecore_x_atom_xdnd_finished;
+   xev.xclient.format = 32;
+
+   xev.xclient.data.l[0] = _xdnd->dest;
+   memset(xev.xclient.data.l + 1, 0, sizeof(long) * 3);
+   XSendEvent(_ecore_x_disp, _xdnd->source, False, 0, &xev);
+}
+
+int
+_ecore_x_dnd_own_selection(void)
+{
+   return (!XSetSelectionOwner(_ecore_x_disp, _ecore_x_atom_selection_xdnd,
+                               _xdnd->source, CurrentTime));
+}
 

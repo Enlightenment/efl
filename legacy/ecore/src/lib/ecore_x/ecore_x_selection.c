@@ -325,6 +325,8 @@ _ecore_x_selection_request(Ecore_X_Window w, Ecore_X_Atom selection, char *targe
       prop = _ecore_x_atom_selection_prop_primary;
    else if (selection == _ecore_x_atom_selection_secondary)
       prop = _ecore_x_atom_selection_prop_secondary;
+   else if (selection == _ecore_x_atom_selection_xdnd)
+      prop = _ecore_x_atom_selection_prop_xdnd;
    else
       prop = _ecore_x_atom_selection_prop_clipboard;
 
@@ -522,4 +524,5 @@ static int _ecore_x_selection_converter_text(char *target, void *data, int size,
       return 0;
    }
 }
+
 
