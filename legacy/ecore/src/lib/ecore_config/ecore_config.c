@@ -306,7 +306,10 @@ int ecore_config_set_typed(Ecore_Config_Bundle *t,const char *key,void *val,int 
 int ecore_config_set(Ecore_Config_Bundle *t,const char *key,char *val) {
   int type;
   type=ecore_config_guess_type(val);
-  return ecore_config_set_typed(t,key,val,type); }
+  if (type == PT_INT)
+    return ecore_config_set_typed(t,key,(void*) atoi(val),type);
+  else
+    return ecore_config_set_typed(t,key,(void*) val,type); }
 
 int ecore_config_set_as_string(const char *key,char *val) {
   return ecore_config_set(__ecore_config_bundle_local,key,val); }
