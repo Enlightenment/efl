@@ -210,6 +210,7 @@ _ecore_evas_event_mouse_in(void *data, int type, void *event)
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if (!ee) return 1; /* pass on event */
+   if (e->win == win_container) return 0;
    if (ee->func.fn_mouse_in) ee->func.fn_mouse_in(ee);
    _ecore_evas_modifier_locks_update(ee, e->modifiers);
    evas_event_feed_mouse_in(ee->evas);
@@ -226,6 +227,7 @@ _ecore_evas_event_mouse_out(void *data, int type, void *event)
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if (!ee) return 1; /* pass on event */
+   if (e->win == win_container) return 0;
    _ecore_evas_modifier_locks_update(ee, e->modifiers);   
    _ecore_evas_mouse_move_process(ee, e->x, e->y);
    evas_event_feed_mouse_out(ee->evas);
