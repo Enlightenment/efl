@@ -131,7 +131,7 @@ static Embryo_Cell
 exported_rec(Embryo_Program *ep, Embryo_Cell *params)
 {
    Embryo_Function fn;
-   Embryo_Cell ret, arg1, arg2;
+   Embryo_Cell ret = 0, arg1, arg2;
    
    // params[0] = number of bytes of params passed 
    if (params[0] != 3 * sizeof(Embryo_Cell)) return -1;
