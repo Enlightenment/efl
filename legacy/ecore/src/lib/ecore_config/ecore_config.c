@@ -287,8 +287,15 @@ int ecore_config_set_typed(Ecore_Config_Bundle *t,const char *key,void *val,int 
   Ecore_Config_Listener_List *l;
   int ret;
 
-  if (!t||!key)
+  if (!key)
     return ECORE_CONFIG_ERR_NODATA;
+  if (!t) { /* global prop */
+    e=ecore_config_get(__ecore_config_bundle_local,key);
+    if (e)
+      for(l=e->listeners;l;l=l->next)
+        l->listener(e->key,e->type,l->tag,l->data,t);
+    return ECORE_CONFIG_ERR_SUCC;
+  }
 
   if (!(e=ecore_config_get(t,key)))
     return ecore_config_add_typed(t,key,val,type);

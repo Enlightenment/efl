@@ -134,10 +134,10 @@ static int _ecore_config_ipc_ecore_handle_request(Ecore_Ipc_Server *server,Ecore
 
   switch(e->major) {
     case IPC_PROP_LIST:
-      r=_ecore_config_ipc_prop_list(srv, serial);
-      break;
-    case IPC_GLOBAL_PROP_LIST:
-      r=_ecore_config_ipc_global_prop_list(srv, serial);
+      if (srv == __ecore_config_server_global)
+        r=_ecore_config_ipc_global_prop_list(srv, serial);
+      else
+        r=_ecore_config_ipc_prop_list(srv, serial);
       break;
     case IPC_PROP_DESC:
       if(_ecore_config_ipc_ecore_get_string(&m,&k)==ECORE_CONFIG_ERR_SUCC)
