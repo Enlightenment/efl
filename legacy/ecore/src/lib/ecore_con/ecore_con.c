@@ -376,8 +376,10 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 #if USE_OPENSSL
 	if (compl_type & ECORE_CON_USE_SSL)
 	  {
-	    if (!(svr->ssl_ctx = SSL_CTX_new(SSLv3_client_method())))
+	    /* SSLv3 gives *weird* results on my box, don't use it yet */
+	    if (!(svr->ssl_ctx = SSL_CTX_new(SSLv2_client_method())))
 	       goto error;
+
 	    if (!(svr->ssl = SSL_new(svr->ssl_ctx)))
 	       goto error;
 
@@ -401,8 +403,8 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    if (svr->fd >= 0) close(svr->fd);
    if (svr->fd_handler) ecore_main_fd_handler_del(svr->fd_handler);
 #if USE_OPENSSL
-   if (svr->ssl_ctx) SSL_CTX_free(svr->ssl_ctx);
    if (svr->ssl) SSL_free(svr->ssl);
+   if (svr->ssl_ctx) SSL_CTX_free(svr->ssl_ctx);
 #endif
    free(svr);
    return NULL;
@@ -626,8 +628,11 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
    if ((svr->created) && (svr->path)) unlink(svr->path);
    if (svr->fd >= 0) close(svr->fd);
 #if USE_OPENSSL
-   if (svr->ssl) SSL_set_shutdown(svr->ssl, SSL_SENT_SHUTDOWN | SSL_RECEIVED_SHUTDOWN);
-   if (svr->ssl) SSL_free(svr->ssl);
+   if (svr->ssl) {
+      SSL_shutdown(svr->ssl);
+      SSL_free(svr->ssl);
+   }
+
    if (svr->ssl_ctx) SSL_CTX_free(svr->ssl_ctx);
 #endif
    if (svr->name) free(svr->name);
@@ -895,41 +900,67 @@ _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 static void
 _ecore_con_server_flush(Ecore_Con_Server *svr)
 {
-   int count, num;
+   int count, num, err, lost_server = 0;
 
    if (!svr->buf) return;
+
+   /* check whether we need to write anything at all.
+	* we must not write zero bytes with SSL_write() since it
+	* causes undefined behaviour
+	*/
+   if (svr->buf_size == svr->buf_offset)
+      return;
+   
    num = svr->buf_size - svr->buf_offset;
 
 #if USE_OPENSSL
-   if (!svr->ssl)
+   if (!svr->ssl) {
 #endif
       count = write(svr->fd, svr->buf + svr->buf_offset, num);
+
+      if (count < 1)
+         lost_server = (errno == EIO || errno == EBADF ||
+                        errno == EPIPE || errno == EINVAL ||
+                        errno == ENOSPC);
 #if USE_OPENSSL
-   else
-      count = SSL_write(svr->ssl, svr->buf + svr->buf_offset, num);
+   } else {
+      struct timespec t = {0, 250000000L};
+
+      for (;;) {
+         count = SSL_write(svr->ssl, svr->buf + svr->buf_offset, num);
+         err = SSL_get_error(svr->ssl, count);
+
+         if (err == SSL_ERROR_WANT_READ || err == SSL_ERROR_WANT_WRITE)
+            nanosleep(&t, NULL);
+         else
+            break;
+      }
+
+      lost_server = (err != SSL_ERROR_NONE);
+   }
 #endif
 
-   if (count < 1)
-     {
-	if ((errno == EIO) || (errno == EBADF) || (errno == EPIPE) ||
-	    (errno == EINVAL) || (errno == ENOSPC))
-	  {
-	     /* we lost our server! */
-	     Ecore_Con_Event_Server_Del *e;
+   if (lost_server) {
+      /* we lost our server! */
+	  Ecore_Con_Event_Server_Del *e;
 	     
-	     e = calloc(1, sizeof(Ecore_Con_Event_Server_Del));
-	     if (e)
-	       {
-		  e->server = svr;
-		  ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e,
-				  _ecore_con_event_server_del_free, NULL);
-	       }
-	     svr->dead = 1;
-	     ecore_main_fd_handler_del(svr->fd_handler);
-	     svr->fd_handler = NULL;
-	  }
-	return;
-     }
+      e = calloc(1, sizeof(Ecore_Con_Event_Server_Del));
+	  if (e)
+      {
+         e->server = svr;
+         ecore_event_add(ECORE_CON_EVENT_SERVER_DEL, e,
+                         _ecore_con_event_server_del_free, NULL);
+      }
+
+      svr->dead = 1;
+      ecore_main_fd_handler_del(svr->fd_handler);
+      svr->fd_handler = NULL;
+	  return;
+   }
+
+   if (count < 1)
+      return;
+
    svr->buf_offset += count;
    if (svr->buf_offset >= svr->buf_size)
      {
