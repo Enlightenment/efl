@@ -52,10 +52,18 @@ evas_object_raise(Evas_Object *obj)
        if (obj->smart.smart->func_raise)
 	  obj->smart.smart->func_raise(obj);
      }
-   if (!(((Evas_Object_List *)obj)->next)) return;
+   if (!(((Evas_Object_List *)obj)->next)) 
+     {
+	evas_object_inform_call_restack(obj);
+	return;
+     }
    obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
    obj->layer->objects = evas_object_list_append(obj->layer->objects, obj);
-   if (obj->clip.clipees) return;
+   if (obj->clip.clipees)
+     {
+	evas_object_inform_call_restack(obj);
+	return;
+     }
    obj->restack = 1;
    evas_object_change(obj);
    if (!obj->smart.smart)
@@ -66,6 +74,7 @@ evas_object_raise(Evas_Object *obj)
 	    obj->cur.visible)
 	  evas_event_feed_mouse_move(obj->layer->evas, obj->layer->evas->pointer.x, obj->layer->evas->pointer.y);   
      }
+   evas_object_inform_call_restack(obj);
 }
 
 void
@@ -79,10 +88,18 @@ evas_object_lower(Evas_Object *obj)
        if (obj->smart.smart->func_lower)
 	  obj->smart.smart->func_lower(obj);
      }
-   if (!(((Evas_Object_List *)obj)->prev)) return;
+   if (!(((Evas_Object_List *)obj)->prev))
+     {
+	evas_object_inform_call_restack(obj);
+	return;
+     }
    obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
    obj->layer->objects = evas_object_list_prepend(obj->layer->objects, obj);
-   if (obj->clip.clipees) return;
+   if (obj->clip.clipees)
+     {
+	evas_object_inform_call_restack(obj);
+	return;
+     }
    obj->restack = 1;
    evas_object_change(obj);
    if (!obj->smart.smart)
@@ -93,6 +110,7 @@ evas_object_lower(Evas_Object *obj)
 	    obj->cur.visible)
 	  evas_event_feed_mouse_move(obj->layer->evas, obj->layer->evas->pointer.x, obj->layer->evas->pointer.y);   
      }
+   evas_object_inform_call_restack(obj);
 }
 
 void
@@ -109,11 +127,23 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
        if (obj->smart.smart->func_stack_above)
 	  obj->smart.smart->func_stack_above(obj, above);
      }
-   if (above->layer != obj->layer) return;
-   if (((Evas_Object_List *)obj)->prev == (Evas_Object_List *)above) return;
+   if (above->layer != obj->layer)
+     {
+	evas_object_inform_call_restack(obj);
+	return;
+     }
+   if (((Evas_Object_List *)obj)->prev == (Evas_Object_List *)above)
+     {
+	evas_object_inform_call_restack(obj);
+	return;
+     }
    obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
    obj->layer->objects = evas_object_list_append_relative(obj->layer->objects, obj, above);
-   if (obj->clip.clipees) return;
+   if (obj->clip.clipees)
+     {
+	evas_object_inform_call_restack(obj);
+	return;
+     }
    obj->restack = 1;
    evas_object_change(obj);
    if (!obj->smart.smart)
@@ -124,6 +154,7 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
 	    obj->cur.visible)
 	  evas_event_feed_mouse_move(obj->layer->evas, obj->layer->evas->pointer.x, obj->layer->evas->pointer.y);   
      }
+   evas_object_inform_call_restack(obj);
 }
 
 void
@@ -140,11 +171,23 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
        if (obj->smart.smart->func_stack_below)
 	  obj->smart.smart->func_stack_below(obj, below);
      }
-   if (below->layer != obj->layer) return;
-   if (((Evas_Object_List *)obj)->next == (Evas_Object_List *)below) return;
+   if (below->layer != obj->layer)
+     {
+	evas_object_inform_call_restack(obj);
+	return;
+     }
+   if (((Evas_Object_List *)obj)->next == (Evas_Object_List *)below)
+     {
+	evas_object_inform_call_restack(obj);
+	return;
+     }
    obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
    obj->layer->objects = evas_object_list_prepend_relative(obj->layer->objects, obj, below);
-   if (obj->clip.clipees) return;
+   if (obj->clip.clipees)
+     {
+	evas_object_inform_call_restack(obj);
+	return;
+     }
    obj->restack = 1;
    evas_object_change(obj);
    if (!obj->smart.smart)
@@ -155,6 +198,7 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
 	    obj->cur.visible)
 	  evas_event_feed_mouse_move(obj->layer->evas, obj->layer->evas->pointer.x, obj->layer->evas->pointer.y);   
      }
+   evas_object_inform_call_restack(obj);
 }
 
 Evas_Object *

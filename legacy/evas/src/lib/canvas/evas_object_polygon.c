@@ -129,6 +129,8 @@ evas_object_polygon_point_add(Evas_Object *obj, double x, double y)
      evas_event_feed_mouse_move(obj->layer->evas,
 				obj->layer->evas->pointer.x,
 				obj->layer->evas->pointer.y);   
+   evas_object_inform_call_move(obj);
+   evas_object_inform_call_resize(obj);
 }
 
 void
@@ -165,6 +167,8 @@ evas_object_polygon_points_clear(Evas_Object *obj)
      evas_event_feed_mouse_move(obj->layer->evas,
 				obj->layer->evas->pointer.x,
 				obj->layer->evas->pointer.y);   
+   evas_object_inform_call_move(obj);
+   evas_object_inform_call_resize(obj);
 }
 
 

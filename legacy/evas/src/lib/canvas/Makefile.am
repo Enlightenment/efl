@@ -26,6 +26,8 @@ evas_name.c \
 evas_object_gradient.c \
 evas_object_image.c \
 evas_object_main.c \
+evas_object_inform.c \
+evas_object_intercept.c \
 evas_object_line.c \
 evas_object_polygon.c \
 evas_object_rectangle.c \

@@ -265,6 +265,7 @@ evas_object_text_font_set(Evas_Object *obj, char *font, double size)
      evas_event_feed_mouse_move(obj->layer->evas,
 				obj->layer->evas->pointer.x,
 				obj->layer->evas->pointer.y);   
+   evas_object_inform_call_resize(obj);
 }
 
 void
@@ -338,6 +339,7 @@ evas_object_text_text_set(Evas_Object *obj, char *text)
      evas_event_feed_mouse_move(obj->layer->evas,
 				obj->layer->evas->pointer.x,
 				obj->layer->evas->pointer.y);   
+   evas_object_inform_call_resize(obj);
 }
 
 char *

@@ -89,6 +89,17 @@ if (_r) \
 #define MEM_TRY_CALLOC(_ptr, _size)
 
 
+typedef struct _Evas_Inform_Func         Evas_Inform_Func;
+
+struct _Evas_Inform_Func
+{
+   Evas_List *show;
+   Evas_List *hide;
+   Evas_List *move;
+   Evas_List *resize;
+   Evas_List *restack;
+}; 
+
 struct _Evas_Smart
 {
    DATA32            magic;
@@ -258,8 +269,11 @@ struct _Evas_Object
    int               mouse_in : 1;
    int               mouse_grabbed : 1;
    int               pre_render_done : 1;
+   int               intercepted : 1;
 
    int               delete_me;
+   
+   Evas_Inform_Func *informers;   
    
    struct {
       Evas_List *elements;
@@ -462,6 +476,12 @@ void evas_object_smart_unuse(Evas_Smart *s);
 void evas_object_smart_del(Evas_Object *obj);
 void evas_object_smart_cleanup(Evas_Object *obj);
 void *evas_mem_calloc(int size);
+void evas_object_inform_cleanup(Evas_Object *obj);
+void evas_object_inform_call_show(Evas_Object *obj);
+void evas_object_inform_call_hide(Evas_Object *obj);
+void evas_object_inform_call_move(Evas_Object *obj);
+void evas_object_inform_call_resize(Evas_Object *obj);
+void evas_object_inform_call_restack(Evas_Object *obj);
        
 extern int _evas_alloc_error;
    

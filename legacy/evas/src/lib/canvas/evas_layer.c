@@ -128,7 +128,11 @@ evas_object_layer_set(Evas_Object *obj, int l)
    obj->cur.layer = l;
    evas_object_inject(obj, e);
    obj->restack = 1;
-   if (obj->clip.clipees) return;
+   if (obj->clip.clipees)
+     {
+	evas_object_inform_call_restack(obj);
+	return;
+     }
    if (!obj->smart.smart)
      {
 	evas_object_change(obj);
@@ -139,6 +143,7 @@ evas_object_layer_set(Evas_Object *obj, int l)
 	  if (evas_list_find(obj->layer->evas->pointer.object.in, obj))
 	    evas_event_feed_mouse_move(obj->layer->evas, obj->layer->evas->pointer.x, obj->layer->evas->pointer.y);   
      }
+   evas_object_inform_call_restack(obj);
 }
 
 int

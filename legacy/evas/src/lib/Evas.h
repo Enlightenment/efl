@@ -225,6 +225,8 @@ extern "C" {
    void              evas_hash_foreach                 (Evas_Hash *hash, int (*func) (Evas_Hash *hash, const char *key, void *data, void *fdata), void *fdata);
    int               evas_hash_alloc_error             (void);
    
+   int               evas_alloc_error                  (void);
+       
    Evas             *evas_new                          (void);
    void              evas_free                         (Evas *e);
 
@@ -301,12 +303,6 @@ extern "C" {
    void              evas_object_image_cache_set       (Evas *e, int size);
    int               evas_object_image_cache_get       (Evas *e);
    
-   /* FIXME: add:
-    * multiple image format handler code (clean internal api)
-    * image loader (provided by app) code (callbacks)
-    * loadable image loader module query etc. code 
-    */
-   
    Evas_Object      *evas_object_text_add              (Evas *e);
    void              evas_object_text_font_set         (Evas_Object *obj, char *font, double size);
    void              evas_object_text_font_get         (Evas_Object *obj, char **font, double *size);
@@ -324,10 +320,6 @@ extern "C" {
    int               evas_object_text_char_pos_get     (Evas_Object *obj, int pos, double *cx, double *cy, double *cw, double *ch);
    int               evas_object_text_char_coords_get  (Evas_Object *obj, double x, double y, double *cx, double *cy, double *cw, double *ch);
 
-   /* FIXME: add:
-    * text outline & shadowing code
-    */
-   
    void              evas_object_font_path_clear       (Evas *e);
    void              evas_object_font_path_append      (Evas *e, char *path);
    void              evas_object_font_path_prepend     (Evas *e, char *path);
@@ -458,9 +450,39 @@ extern "C" {
 
    void              evas_object_event_callback_add    (Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), void *data);
    void             *evas_object_event_callback_del    (Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info));
+
+   void              evas_object_inform_show_callback_add           (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
+   void             *evas_object_inform_show_callback_del           (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj));
+   void              evas_object_inform_hide_callback_add           (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
+   void             *evas_object_inform_hide_callback_del           (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj));
+   void              evas_object_inform_move_callback_add           (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
+   void             *evas_object_inform_move_callback_del           (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj));
+   void              evas_object_inform_resize_callback_add         (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
+   void             *evas_object_inform_resize_callback_del         (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj));
+   void              evas_object_inform_restack_callback_add        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
+   void             *evas_object_inform_restack_callback_del        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj));
    
-   int               evas_alloc_error                  (void);
-       
+/* FIXME: implement... */
+   void              evas_object_intercept_show_callback_add        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
+   void             *evas_object_intercept_show_callback_del        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj));
+   void              evas_object_intercept_hide_callback_add        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
+   void             *evas_object_intercept_hide_callback_del        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj));
+   void              evas_object_intercept_move_callback_add        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, double x, double y), void *data);
+   void             *evas_object_intercept_move_callback_del        (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, double x, double y));
+   void              evas_object_intercept_resize_callback_add      (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, double w, double h), void *data);
+   void             *evas_object_intercept_resize_callback_del      (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, double w, double h));
+   void              evas_object_intercept_raise_callback_add       (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
+   void             *evas_object_intercept_raise_callback_del       (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj));
+   void              evas_object_intercept_lower_callback_add       (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), void *data);
+   void             *evas_object_intercept_lower_callback_del       (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj));
+   void              evas_object_intercept_stack_above_callback_add (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *above), void *data);
+   void             *evas_object_intercept_stack_above_callback_del (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *above));
+   void              evas_object_intercept_stack_below_callback_add (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *below), void *data);
+   void             *evas_object_intercept_stack_below_callback_del (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *below));
+   void              evas_object_intercept_layer_set_callback_add   (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, int l), void *data);
+   void             *evas_object_intercept_layer_set_callback_del   (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, int l));
+/* ...end implement */
+   
 #ifdef __cplusplus
 }
 #endif

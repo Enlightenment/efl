@@ -131,6 +131,8 @@ evas_object_line_xy_set(Evas_Object *obj, double x1, double y1, double x2, doubl
      evas_event_feed_mouse_move(obj->layer->evas,
 				obj->layer->evas->pointer.x,
 				obj->layer->evas->pointer.y);   
+   evas_object_inform_call_move(obj);
+   evas_object_inform_call_resize(obj);
 }
 
 void

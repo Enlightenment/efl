@@ -20,6 +20,7 @@ void
 evas_object_free(Evas_Object *obj, int clean_layer)
 {
    evas_object_event_callback_call(obj, EVAS_CALLBACK_FREE, NULL);
+   evas_object_inform_cleanup(obj);
    evas_object_smart_cleanup(obj);
    obj->func->free(obj);
    if (obj->name) 
@@ -476,7 +477,11 @@ evas_object_move(Evas_Object *obj, double x, double y)
 	  obj->smart.smart->func_move(obj, x, y);
      }
    if ((obj->cur.geometry.x == x) &&
-       (obj->cur.geometry.y == y)) return;
+       (obj->cur.geometry.y == y)) 
+     {
+	evas_object_inform_call_move(obj);
+	return;
+     }
    was = evas_object_is_in_output_rect(obj, 
 				       obj->layer->evas->pointer.x, 
 				       obj->layer->evas->pointer.y, 1, 1);
@@ -495,6 +500,7 @@ evas_object_move(Evas_Object *obj, double x, double y)
 				     obj->layer->evas->pointer.x, 
 				     obj->layer->evas->pointer.y);
      }
+   evas_object_inform_call_move(obj);
 }
 
 void
@@ -512,7 +518,11 @@ evas_object_resize(Evas_Object *obj, double w, double h)
 	  obj->smart.smart->func_resize(obj, w, h);
      }
    if ((obj->cur.geometry.w == w) &&
-       (obj->cur.geometry.h == h)) return;
+       (obj->cur.geometry.h == h))
+     {
+	evas_object_inform_call_resize(obj);
+	return;
+     }
    was = evas_object_is_in_output_rect(obj, 
 				       obj->layer->evas->pointer.x, 
 				       obj->layer->evas->pointer.y, 1, 1);
@@ -557,7 +567,11 @@ evas_object_show(Evas_Object *obj)
        if (obj->smart.smart->func_show)
 	  obj->smart.smart->func_show(obj);
      }
-   if (obj->cur.visible) return;
+   if (obj->cur.visible)
+     {
+	evas_object_inform_call_show(obj);
+	return;
+     }
    obj->cur.visible = 1;
    evas_object_change(obj);
    evas_object_recalc_clippees(obj);
@@ -570,6 +584,7 @@ evas_object_show(Evas_Object *obj)
 				     obj->layer->evas->pointer.x, 
 				     obj->layer->evas->pointer.y);
      }
+   evas_object_inform_call_show(obj);
 }
 
 void
@@ -583,7 +598,11 @@ evas_object_hide(Evas_Object *obj)
        if (obj->smart.smart->func_hide)
 	  obj->smart.smart->func_hide(obj);
      }
-   if (!obj->cur.visible) return;
+   if (!obj->cur.visible)
+     {
+	evas_object_inform_call_hide(obj);
+	return;
+     }
    obj->cur.visible = 0;
    evas_object_change(obj);
    evas_object_recalc_clippees(obj);
@@ -615,6 +634,7 @@ evas_object_hide(Evas_Object *obj)
 	       }
 	  }
      }
+   evas_object_inform_call_hide(obj);
 }
 
 int

@@ -223,6 +223,7 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (
 	     if (!evas_mem_degrade(sizeof(Evas_List)))
 	       {
 		  MERR_FATAL();
+		  free(fn);
 		  return;
 	       }
 	  }
