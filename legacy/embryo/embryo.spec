@@ -4,11 +4,13 @@ Summary: embryo
 Name: embryo
 Version: 0.9.1
 Release: 1.%(date '+%Y%m%d')
-Copyright: BSD
+License: BSD
 Group: System Environment/Libraries
 URL: http://www.enlightenment.org/
 Source: ftp://ftp.enlightenment.org/pub/embryo/%{name}-%{version}.tar.gz
-Packager: Michael Jennings <mej@eterm.org
+Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
+Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
+Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description

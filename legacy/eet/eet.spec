@@ -4,12 +4,15 @@ Summary: Library for speedy data storage, retrieval, and compression.
 Name: eet
 Version: 0.9.9
 Release: 2.%(date '+%Y%m%d')
-Copyright: BSD
+License: BSD
 Group: System Environment/Libraries
 Source: ftp://ftp.enlightenment.org/pub/eet/eet-%{version}.tar.gz
-Packager: Michael Jennings <mej@eterm.org>
+Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
+Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
+Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
 URL: http://www.enlightenment.org/
-#BuildSuggests: libjpeg-devel xorg-x11-devel doxygen
+#BuildSuggests: xorg-x11-devel doxygen
+BuildRequires: libjpeg-devel XFree86-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description

@@ -4,12 +4,15 @@ Summary: emotion
 Name: emotion
 Version: 0.0.1
 Release: 1.%(date '+%Y%m%d')
-Copyright: BSD
+License: BSD
 Group: System Environment/Libraries
 URL: http://www.enlightenment.org/
 Source: ftp://ftp.enlightenment.org/pub/emotion/%{name}-%{version}.tar.gz
-Packager: Michael Jennings <mej@eterm.org>
-#BuildSuggests: xorg-x11-devel xine-lib-devel
+Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
+Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
+Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
+#BuildSuggests: xorg-x11-devel
+BuildRequires: XFree86-devel xine-lib-devel
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
@@ -19,6 +22,7 @@ Emotion is a Media Library
 Summary: Emotion headers, static libraries, documentation and test programs
 Group: System Environment/Libraries
 Requires: %{name} = %{version}
+Requires: XFree86-devel xine-lib-devel
 
 %description devel
 Headers, static libraries, test programs and documentation for Emotion

@@ -4,13 +4,17 @@ Summary: Complex Graphical Design/Layout Engine
 Name: edje
 Version: 0.5.0
 Release: 1.%(date '+%Y%m%d')
-Copyright: BSD
+License: BSD
 Group: System Environment/Libraries
-Source: ftp://ftp.enlightenment.org/pub/evoak/%{name}-%{version}.tar.gz
-Packager: The Rasterman <raster@rasterman.com>
 URL: http://www.enlightenment.org/
-#BuildSuggests: libjpeg-devel zlib-devel eet-devel xorg-x11-devel
-Requires: libjpeg zlib ecore evas eet imlib2
+Source: ftp://ftp.enlightenment.org/pub/evoak/%{name}-%{version}.tar.gz
+Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
+Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
+Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
+#BuildSuggests: xorg-x11-devel vim-enhanced
+BuildRequires: libjpeg-devel zlib-devel eet-devel XFree86-devel
+BuildRequires: edb-devel embryo-devel imlib2-devel evas-devel ecore-devel
+Requires: ecore evas eet imlib2 edb embryo
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
@@ -33,9 +37,11 @@ configure parts of the display.
 Summary: Edje headers, static libraries, documentation and test programs
 Group: System Environment/Libraries
 Requires: %{name} = %{version}
+Requires: libjpeg-devel zlib-devel eet-devel XFree86-devel
+Requires: edb-devel embryo-devel imlib2-devel evas-devel ecore-devel
 
 %description devel
-Headers, static libraries, test programs and documentation for Eet
+Headers, static libraries, test programs and documentation for Edje
 
 %prep
 %setup -q
