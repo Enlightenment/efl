@@ -11,8 +11,8 @@
 
 /* make mono happy - this is evil though... */
 #undef SIGPWR
-/* lets not use these - other apps seem to use them */
-#undef SIGRTMIN
+/* valgrind in some versions/setups uses SIGRT's... hmmm */
+/* #undef SIGRTMIN */
 
 typedef void (*Signal_Handler)(int sig, siginfo_t *si, void *foo);
 
