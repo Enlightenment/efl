@@ -194,9 +194,8 @@ data_write(void)
 	  }
 	if (!fdata)
 	  {
-	     fprintf(stderr, "%s: Error. unable to write font part \"%s\" entry to %s \n",
-		     progname, fn->file, file_out);	
-	     ABORT_WRITE(ef, file_out);
+	     fprintf(stderr, "%s: Warning. unable to open font \"%s\" for inclusion in output\n",
+		     progname, fn->file);
 	  }
 	else
 	  {
@@ -366,7 +365,6 @@ data_write(void)
 	for (ll = pc->parts; ll; ll = ll->next)
 	  {
 	     Edje_Part *ep;
-	     Evas_List *l3;
 	     Edje_Part_Description *epd;
 	     
 	     ep = ll->data;
