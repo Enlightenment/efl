@@ -38,6 +38,8 @@ Evas_List *params = NULL;
 
 static char  file_buf[4096];
 static int   verbatim = 0;
+static int   verbatim_line1 = 0;
+static int   verbatim_line2 = 0;
 static char *verbatim_str = NULL;
 
 static void
@@ -387,15 +389,22 @@ parse(char *data, off_t size)
 		       int inquotes = 0;
 		       int insquotes = 0;
 		       int squigglie = 1;
+		       int l1 = 0, l2 = 0;
 		       char *verbatim_1;
 		       char *verbatim_2;
 		       
-		       while ((p[0] != '{') && (p < end)) p++;
+		       l1 = line;
+		       while ((p[0] != '{') && (p < end))
+			 {
+			    if (*p == '\n') line++;
+			    p++;
+			 }
 		       p++;
 		       verbatim_1 = p;
 		       verbatim_2 = NULL;
 		       for (; p < end; p++)
 			 {
+			    if (*p == '\n') line++;
 			    if (escaped) escaped = 0;
 			    if (!escaped)
 			      {
@@ -423,6 +432,7 @@ parse(char *data, off_t size)
 				      if (squigglie == 0)
 					{
 					   verbatim_2 = p - 1;
+					   l2 = line;
 					   break;
 					}
 				   }
@@ -437,7 +447,7 @@ parse(char *data, off_t size)
 			    v = malloc(l + 1);
 			    strncpy(v, verbatim_1, l);
 			    v[l] = 0;
-			    set_verbatim(v);
+			    set_verbatim(v, l1, l2);
 			 }
 		       else
 			 {
@@ -478,8 +488,10 @@ track_verbatim(int on)
 }
 
 void
-set_verbatim(char *s)
+set_verbatim(char *s, int l1, int l2)
 {
+   verbatim_line1 = l1;
+   verbatim_line2 = l2;
    verbatim_str = s;
 }
 
@@ -487,6 +499,18 @@ char *
 get_verbatim(void)
 {
    return verbatim_str;
+}
+
+int
+get_verbatim_line1(void)
+{
+   return verbatim_line1;
+}
+
+int
+get_verbatim_line2(void)
+{
+   return verbatim_line2;
 }
 
 void
@@ -722,11 +746,7 @@ parse_float_range(int n, double f, double t)
    return i;
 }
 
-
-
-
 /* simple expression parsing stuff */
-
 
 /*
  * alpha ::= beta + beta || beta
@@ -734,426 +754,431 @@ parse_float_range(int n, double f, double t)
  * gamma ::= num || delta
  * delta ::= '(' alpha ')'
  * 
- * */
-
+ */
 
 /* int set of function */
 
-int my_atoi(const char * s)
+int
+my_atoi(const char * s)
 {
    int res = 0;
    char *p, *p_in, *p_out;
    char buf[4096];
-
+   
    if (!s)
-      return 0;
-
+     return 0;
+   
    if (4095 < strlen(s))
-   {
-      fprintf(stderr, "%s: Error. %s:%i expression is too long\n",
-	                              progname, file_in, line);
-      return 0;
-   }
-
+     {
+	fprintf(stderr, "%s: Error. %s:%i expression is too long\n",
+		progname, file_in, line);
+	return 0;
+     }
+   
    /* remove spaces and tabs */
-   p_in = s;
+   p_in = (char *)s;
    p_out = buf;
-   while(*p_in)
-   {
-      if((0x20 != *p_in) && (0x09 != *p_in))
-      {
-	 *p_out = *p_in;
-	 p_out++;
-      }
-      p_in++;
-   }
+   while (*p_in)
+     {
+	if ((0x20 != *p_in) && (0x09 != *p_in))
+	  {
+	     *p_out = *p_in;
+	     p_out++;
+	  }
+	p_in++;
+     }
    *p_out = '\0';
    
    p = _alphai(buf, &res);
    return res;
 }
 
-
-char * _deltai(char *s, int * val)
+char *
+_deltai(char *s, int * val)
 {
    if (!val) return;
    
    if ('(' != s[0])
-   { 
-      fprintf(stderr, "%s: Error. %s:%i unexpected character at %s\n",
-	                progname, file_in, line, s);
-      return s;
-   }
+     { 
+	fprintf(stderr, "%s: Error. %s:%i unexpected character at %s\n",
+		progname, file_in, line, s);
+	return s;
+     }
    else
-   {
-      s++;
-      s = _alphai(s, val);
-      s++;
-      return s;
-   }
-
+     {
+	s++;
+	s = _alphai(s, val);
+	s++;
+	return s;
+     }
+   
    return s;
 }
 
-char * _gammai(char *s, int * val)
+char *
+_gammai(char *s, int * val)
 {
    if (!val) return;
    
    if (_is_numi(s[0]))
-   {
-      s = _get_numi(s, val);
-      return s;
-   }
-   else if ( '(' == s[0])
-   {
-      s = _deltai(s, val);
-      return s;
-   }
+     {
+	s = _get_numi(s, val);
+	return s;
+     }
+   else if ('(' == s[0])
+     {
+	s = _deltai(s, val);
+	return s;
+     }
    else
-      fprintf(stderr, "%s: Error. %s:%i unexpected character at %s\n",
-	      progname, file_in, line, s);
+     fprintf(stderr, "%s: Error. %s:%i unexpected character at %s\n",
+	     progname, file_in, line, s);
    return s;
 }
 
-
-char * _betai(char *s, int * val)
+char *
+_betai(char *s, int * val)
 {
    int a1, a2;
    char op;
-    
+   
    if (!val)
-      return;
-  
+     return;
+   
    s = _gammai(s, &a1);
    
-   while(_is_op1i(s[0]))
-   {
-      op = s[0];
-      s++;
-      s = _gammai(s, &a2);
-      a1 = _calci(op, a1, a2);
-   }
+   while (_is_op1i(s[0]))
+     {
+	op = s[0];
+	s++;
+	s = _gammai(s, &a2);
+	a1 = _calci(op, a1, a2);
+     }
    
    (*val) = a1;
-
+   
    return s;
 }
 
-char * _alphai(char *s, int * val)
+char *
+_alphai(char *s, int * val)
 {
    int a1, a2;
    char op;
-    
+   
    if (!val)
-      return;
-  
+     return;
+   
    s = _betai(s, &a1);
    
-   while(_is_op2i(s[0]))
-   {
-      op = s[0];
-      s++;
-      s = _betai(s, &a2);
-      a1 = _calci(op, a1, a2);
-   }
+   while (_is_op2i(s[0]))
+     {
+	op = s[0];
+	s++;
+	s = _betai(s, &a2);
+	a1 = _calci(op, a1, a2);
+     }
    
    (*val) = a1;
    return s;
 }
 
-
-char * _get_numi(char *s, int * val)
+char *
+_get_numi(char *s, int * val)
 {
    char buf[4096];
    int pos = 0;
-
+   
    if (!val)
-      return s;   
+     return s;   
    
    while (
-	   (('0' <= s[pos]) && ('9' >= s[pos])) ||
-	   ((0 == pos) && ('-' == s[pos]))
-	   )
-   {
-      buf[pos] = s[pos];
-      pos++;
-   }
+	  (('0' <= s[pos]) && ('9' >= s[pos])) ||
+	  ((0 == pos) && ('-' == s[pos]))
+	  )
+     {
+	buf[pos] = s[pos];
+	pos++;
+     }
    
    buf[pos] = '\0';
    (*val) = atoi(buf);
    return (s+pos);
 }
 
-int _is_numi(char c)
+int
+_is_numi(char c)
 {
    if (((c >= '0') && (c <= '9')) || ('-' == c) || ('+' == c))
-      return 1;
+     return 1;
    else
-      return 0;
+     return 0;
 }
 
-int _is_op1i(char c)
+int
+_is_op1i(char c)
 {
    switch(c)
-   {
-       case '*':;
-       case '/': return 1;
-       default: return 0;
-   }
+     {
+      case '*':;
+      case '/': return 1;
+      default: return 0;
+     }
    return 0;
 }
 
-int _is_op2i(char c)
+int
+_is_op2i(char c)
 {
    switch(c)
-   {
-       case '+':;
-       case '-': return 1;
-       default: return 0;
-   }
+     {
+      case '+':;
+      case '-': return 1;
+      default: return 0;
+     }
    return 0;
 }
 
-
-int _calci(char op, int a, int b)
+int
+_calci(char op, int a, int b)
 {
    switch(op)
-   {
-       case '+':
-	   a += b;
-	   return a;
-       case '-': 
-	   a -= b;
-	   return a;
-       case '/':
-	   if(0 != b)
-	      a /= b;
-	   else
-	      fprintf(stderr, "%s: Error. %s:%i divide by zero\n",
-		      progname, file_in, line);
-	   return a;
-       case '*':
-	   a *= b;
-	   return a;
-       default:
-	   fprintf(stderr, "%s: Error. %s:%i unexpected character '%c'\n",
-		   progname, file_in, line, op);
-	   return a;
-   }
+     {
+      case '+':
+	a += b;
+	return a;
+      case '-': 
+	a -= b;
+	return a;
+      case '/':
+	if(0 != b)
+	  a /= b;
+	else
+	  fprintf(stderr, "%s: Error. %s:%i divide by zero\n",
+		  progname, file_in, line);
+	return a;
+      case '*':
+	a *= b;
+	return a;
+      default:
+	fprintf(stderr, "%s: Error. %s:%i unexpected character '%c'\n",
+		progname, file_in, line, op);
+	return a;
+     }
 }
-
-
 
 /* float set of functoins */
 
-double my_atof(const char * s)
+double
+my_atof(const char * s)
 {
    double res = 0;
    char *p, *p_in, *p_out;
    char buf[4096];
-
+   
    if (!s)
-      return 0;
-
+     return 0;
+   
    if (4095 < strlen(s))
-   {
-      fprintf(stderr, "%s: Error. %s:%i expression is too long\n",
-	                              progname, file_in, line);
-      return 0;
-   }
-
+     {
+	fprintf(stderr, "%s: Error. %s:%i expression is too long\n",
+		progname, file_in, line);
+	return 0;
+     }
+   
    /* remove spaces and tabs */
-   p_in = s;
+   p_in = (char *)s;
    p_out = buf;
-   while(*p_in)
-   {
-      if((0x20 != *p_in) && (0x09 != *p_in))
-      {
-	 *p_out = *p_in;
-	 p_out++;
-      }
-      p_in++;
-   }
+   while (*p_in)
+     {
+	if ((0x20 != *p_in) && (0x09 != *p_in))
+	  {
+	     *p_out = *p_in;
+	     p_out++;
+	  }
+	p_in++;
+     }
    *p_out = '\0';
-  
-
+   
+   
    p = _alphaf(buf, &res);
    return res;
 }
 
-
-char * _deltaf(char *s, double * val)
+char *
+_deltaf(char *s, double * val)
 {
    if (!val) return;
    
    if ('(' != s[0])
-   {
-      fprintf(stderr, "%s: Error. %s:%i unexpected character at %s\n",
-	      progname, file_in, line, s);
-      return s;
-   }
+     {
+	fprintf(stderr, "%s: Error. %s:%i unexpected character at %s\n",
+		progname, file_in, line, s);
+	return s;
+     }
    else
-   {
-      s++;
-      s = _alphaf(s, val);
-      s++;
-      return s;
-   }
-
+     {
+	s++;
+	s = _alphaf(s, val);
+	s++;
+	return s;
+     }
+   
    return s;
 }
 
-char * _gammaf(char *s, double * val)
+char *
+_gammaf(char *s, double * val)
 {
    if (!val) return;
    
    if (_is_numf(s[0]))
-   {
-      s = _get_numf(s, val);
-      return s;
-   }
-   else if ( '(' == s[0])
-   {
-      s = _deltaf(s, val);
-      return s;
-   }
+     {
+	s = _get_numf(s, val);
+	return s;
+     }
+   else if ('(' == s[0])
+     {
+	s = _deltaf(s, val);
+	return s;
+     }
    else
-      fprintf(stderr, "%s: Error. %s:%i unexpected character at %s\n",
-	      progname, file_in, line, s);
+     fprintf(stderr, "%s: Error. %s:%i unexpected character at %s\n",
+	     progname, file_in, line, s);
    return s;
 }
 
-
-char * _betaf(char *s, double * val)
+char *
+_betaf(char *s, double * val)
 {
    double a1=0, a2=0;
    char op;
-    
+   
    if (!val)
-      return;
-  
+     return;
+   
    s = _gammaf(s, &a1);
    
-   while(_is_op1f(s[0]))
-   {
-      op = s[0];
-      s++;
-      s = _gammaf(s, &a2);
-      a1 = _calcf(op, a1, a2);
-   }
+   while (_is_op1f(s[0]))
+     {
+	op = s[0];
+	s++;
+	s = _gammaf(s, &a2);
+	a1 = _calcf(op, a1, a2);
+     }
    
    (*val) = a1;
-
+   
    return s;
 }
 
-
-char * _alphaf(char *s, double * val)
+char *
+_alphaf(char *s, double * val)
 {
    double a1=0, a2=0;
    char op;
-    
+   
    if (!val)
-      return;
-  
+     return;
+   
    s = _betaf(s, &a1);
    
-   while(_is_op2f(s[0]))
-   {
-      op = s[0];
-      s++;
-      s = _betaf(s, &a2);
-      a1 = _calcf(op, a1, a2);
-   }
+   while (_is_op2f(s[0]))
+     {
+	op = s[0];
+	s++;
+	s = _betaf(s, &a2);
+	a1 = _calcf(op, a1, a2);
+     }
    
    (*val) = a1;
    
    return s;
 }
 
-
-char * _get_numf(char *s, double * val)
+char *
+_get_numf(char *s, double * val)
 {
    char buf[4096];
    int pos = 0;
-
+   
    if (!val)
-      return s;   
+     return s;   
    
    while (
-	   (('0' <= s[pos]) && ('9' >= s[pos])) ||
-	   ('.' == s[pos]) ||
-	   ((0 == pos) && ('-' == s[pos]))
-	   )
-   {
-      buf[pos] = s[pos];
-      pos++;
-   }
+	  (('0' <= s[pos]) && ('9' >= s[pos])) ||
+	  ('.' == s[pos]) ||
+	  ((0 == pos) && ('-' == s[pos]))
+	  )
+     {
+	buf[pos] = s[pos];
+	pos++;
+     }
    
    buf[pos] = '\0';
    (*val) = atof(buf);
    return (s+pos);
 }
 
-int _is_numf(char c)
+int
+_is_numf(char c)
 {
    if (((c >= '0') && (c <= '9')) 
-	   || ('-' == c) 
-	   || ('.' == c)
-	   || ('+' == c))
-      return 1;
+       || ('-' == c) 
+       || ('.' == c)
+       || ('+' == c))
+     return 1;
    else
-      return 0;
+     return 0;
 }
 
-int _is_op1f(char c)
+int
+_is_op1f(char c)
 {
    switch(c)
-   {
-       case '*':;
-       case '/': return 1;
-       default: return 0;
-   }
+     {
+      case '*':;
+      case '/': return 1;
+      default: return 0;
+     }
    return 0;
 }
 
-int _is_op2f(char c)
+int
+_is_op2f(char c)
 {
    switch(c)
-   {
-       case '+':;
-       case '-': return 1;
-       default: return 0;
-   }
+     {
+      case '+':;
+      case '-': return 1;
+      default: return 0;
+     }
    return 0;
 }
 
-
-double _calcf(char op, double a, double b)
+double
+_calcf(char op, double a, double b)
 {
    switch(op)
-   {
-       case '+':
-	   a += b;
-	   return a;
-       case '-': 
-	   a -= b;
-	   return a;
-       case '/':
-	   if(0 != b)
-	      a /= b;
-	   else
-	      fprintf(stderr, "%s: Error. %s:%i divide by zero\n",
-		      progname, file_in, line);
-	   return a;
-       case '*':
-	   a *= b;
-	   return a;
-       default:
-	   fprintf(stderr, "%s: Error. %s:%i unexpected character '%c'\n",
-		   progname, file_in, line, op);
-	   return a;
-   }
+     {
+      case '+':
+	a += b;
+	return a;
+      case '-': 
+	a -= b;
+	return a;
+      case '/':
+	if (b != 0) a /= b;
+	else
+	  fprintf(stderr, "%s: Error. %s:%i divide by zero\n",
+		  progname, file_in, line);
+	return a;
+      case '*':
+	a *= b;
+	return a;
+      default:
+	fprintf(stderr, "%s: Error. %s:%i unexpected character '%c'\n",
+		progname, file_in, line, op);
+	return a;
+     }
 }
-
-

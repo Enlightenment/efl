@@ -398,6 +398,8 @@ ob_collections_group_script(void)
 	s = get_verbatim();
 	if (s)
 	  {
+	     cd->l1 = get_verbatim_line1();
+	     cd->l2 = get_verbatim_line2();
 	     if (cd->shared)
 	       {
 		  fprintf(stderr, "%s: Error. parse error %s:%i. There is already an existing script section for the group\n",
@@ -405,7 +407,7 @@ ob_collections_group_script(void)
 		  exit(-1);
 	       }
 	     cd->shared = s;
-	     set_verbatim(NULL);
+	     set_verbatim(NULL, 0, 0);
 	  }
      }
 }
@@ -1422,10 +1424,12 @@ ob_collections_group_programs_program_script(void)
 	     Code_Program *cp;
 	     
 	     cp = mem_alloc(SZ(Code_Program));
+	     cp->l1 = get_verbatim_line1();
+	     cp->l2 = get_verbatim_line2();
 	     cp->id = ep->id;
 	     cp->script = s;
 	     cd->programs = evas_list_append(cd->programs, cp);
-	     set_verbatim(NULL);
+	     set_verbatim(NULL, 0, 0);
 	     ep->action = EDJE_ACTION_TYPE_SCRIPT;
 	  }
      }

@@ -49,12 +49,14 @@ struct _Font
 
 struct _Code
 {
+   int       l1, l2;
    char      *shared;
    Evas_List *programs; 
 };
 
 struct _Code_Program
 {
+   int        l1, l2;
    int        id;
    char      *script;
 };
@@ -72,8 +74,10 @@ void    data_process_script_lookups(void);
 
 int     is_verbatim(void);
 void    track_verbatim(int on);
-void    set_verbatim(char *s);
+void    set_verbatim(char *s, int l1, int l2);
 char   *get_verbatim(void);
+int     get_verbatim_line1(void);    
+int     get_verbatim_line2(void);    
 void    compile(void);
 int     is_param(int n);
 int     is_num(int n);    

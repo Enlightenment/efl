@@ -409,6 +409,7 @@ data_write(void)
    for (i = 0, l = codes; l; l = l->next, i++)
      {
 	Code *cd;
+	int ln = 0;
 	
 	cd = l->data;
 	if ((cd->shared) || (cd->programs))
@@ -430,8 +431,18 @@ data_write(void)
 		    {
 		       Evas_List *ll;
 		       
-		       fprintf(f, "#include <edje>\n\n");
-		       if (cd->shared) fprintf(f, "%s\n", cd->shared);
+		       fprintf(f, "#include <edje>\n");
+		       ln = 2;
+		       if (cd->shared)
+			 {
+			    while (ln < (cd->l1 - 1))
+			      {
+				 fprintf(f, " \n");
+				 ln++;
+			      }
+			    fprintf(f, "%s\n", cd->shared);
+			    ln += cd->l2 - cd->l1 + 1;
+			 }
 		       for (ll = cd->programs; ll; ll = ll->next)
 			 {
 			    Code_Program *cp;
@@ -439,11 +450,17 @@ data_write(void)
 			    cp = ll->data;
 			    if (cp->script)
 			      {
+				 while (ln < (cp->l1 - 1))
+				   {
+				      fprintf(f, " \n");
+				      ln++;
+				   }
 				 /* FIXME: this prototype needs to be */
 				 /* formalised and set in stone */
-				 fprintf(f, "public _p%i(sig[], src[]) {\n", cp->id);
-				 fprintf(f, "%s\n", cp->script);
-				 fprintf(f, "}\n");
+				 fprintf(f, "public _p%i(sig[], src[]) {", cp->id);
+				 fprintf(f, "%s", cp->script);
+				 fprintf(f, "}");
+				 ln += cp->l2 - cp->l1 + 1;
 			      }
 			 }
 		       fclose(f);
