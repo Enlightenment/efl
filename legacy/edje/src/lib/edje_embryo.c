@@ -105,27 +105,24 @@
  *
  * append_int(id, v)
  * prepend_int(id, v)
- * insert_int(id, v, n)
+ * insert_int(id, n, v)
+ * replace_int(id, n, v)
  * fetch_int(id, n)
+ *
+ * append_str(id, str[])
+ * prepend_str(id, str[])
+ * insert_str(id, n, str[])
+ * replace_str(id, n, str[])
+ * fetch_str(id, n, dst[], maxlen)
+ *
+ * append_float(id, Float:v)
+ * prepend_float(id, Float:v)
+ * insert_float(id, n, Float:v)
+ * replace_float(id, n, Float:v)
+ * Float:fetch_float(id, n)
  *
  * still need to implement this:
  *
- * ######## lists/arrays for stored variables (to be implemented)
- * # replace_int(id, v, n)
- * #
- * # append_float(id, Float:v)
- * # prepend_float(id, Float:v)
- * # insert_float(id, Float:v, n)
- * # replace_float(id, Float:v, n)
- * # Float:fetch_float(id, n)
- * #
- * # append_str(id, str[])
- * # prepend_str(id, str[])
- * # insert_str(id, str[], n)
- * # replace_str(id, str[], n)
- * # fetch_str(id, n, dst[], maxlen)
- * #
- * 
  * ** part_id and program_id need to be able to be "found" from strings
  * 
  * get_drag_count(part_id, &Float:dx, &Float:&dy)
@@ -396,6 +393,20 @@ _edje_embryo_fn_insert_int(Embryo_Program *ep, Embryo_Cell *params)
    return 0;
 }
 
+/* replace_int(id, pos, var) */
+static Embryo_Cell
+_edje_embryo_fn_replace_int(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+
+   CHKPARAM(3);
+
+   _edje_var_list_nth_int_set(ed, (int) params[1], (int) params[2],
+                              (int) params[3]);
+
+   return 0;
+}
+
 /* fetch_int(id, pos) */
 static Embryo_Cell
 _edje_embryo_fn_fetch_int(Embryo_Program *ep, Embryo_Cell *params)
@@ -456,6 +467,23 @@ _edje_embryo_fn_insert_str(Embryo_Program *ep, Embryo_Cell *params)
    return 0;
 }
 
+/* replace_str(id, pos, str[]) */
+static Embryo_Cell
+_edje_embryo_fn_replace_str(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+   char *s;
+
+   CHKPARAM(3);
+
+   GETSTR(s, params[3]);
+   if (s)
+	_edje_var_list_nth_str_set(ed, (int) params[1], (int) params[2], s);
+
+   return 0;
+}
+
+
 /* fetch_str(id, pos, dst[], maxlen) */
 static Embryo_Cell
 _edje_embryo_fn_fetch_str(Embryo_Program *ep, Embryo_Cell *params)
@@ -492,6 +520,79 @@ _edje_embryo_fn_fetch_str(Embryo_Program *ep, Embryo_Cell *params)
      }
 
    return 0;
+}
+
+/* append_float(id, Float:f) */
+static Embryo_Cell
+_edje_embryo_fn_append_float(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+   float f;
+
+   CHKPARAM(2);
+
+   f = EMBRYO_CELL_TO_FLOAT(params[2]);
+   _edje_var_list_float_append(ed, (int) params[1], f);
+
+   return 0;
+}
+
+/* prepend_float(id, Float:f) */
+static Embryo_Cell
+_edje_embryo_fn_prepend_float(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+   float f;
+
+   CHKPARAM(2);
+
+   f = EMBRYO_CELL_TO_FLOAT(params[2]);
+   _edje_var_list_float_prepend(ed, (int) params[1], f);
+
+   return 0;
+}
+
+/* insert_float(id, pos, Float:f) */
+static Embryo_Cell
+_edje_embryo_fn_insert_float(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+   float f;
+
+   CHKPARAM(3);
+
+   f = EMBRYO_CELL_TO_FLOAT(params[3]);
+   _edje_var_list_float_insert(ed, (int) params[1], (int) params[2], f);
+
+   return 0;
+}
+
+/* replace_float(id, pos, Float:f) */
+static Embryo_Cell
+_edje_embryo_fn_replace_float(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+
+   CHKPARAM(3);
+
+   _edje_var_list_nth_float_set(ed, (int) params[1], (int) params[2],
+	                        EMBRYO_CELL_TO_FLOAT(params[3]));
+
+   return 0;
+}
+
+/* Float:fetch_float(id, pos) */
+static Embryo_Cell
+_edje_embryo_fn_fetch_float(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed = embryo_program_data_get(ep);
+   float f;
+
+   CHKPARAM(2);
+
+   f = _edje_var_list_nth_float_get(ed, (int) params[1], (int) params[2]);
+
+   return EMBRYO_FLOAT_TO_CELL(f);
 }
 
 /* timer(Float:in, fname[], val) */
@@ -1340,11 +1441,18 @@ _edje_embryo_script_init(Edje *ed)
    embryo_program_native_call_add(ep, "append_int", _edje_embryo_fn_append_int);
    embryo_program_native_call_add(ep, "prepend_int", _edje_embryo_fn_prepend_int);
    embryo_program_native_call_add(ep, "insert_int", _edje_embryo_fn_insert_int);
+   embryo_program_native_call_add(ep, "replace_int", _edje_embryo_fn_replace_int);
    embryo_program_native_call_add(ep, "fetch_int", _edje_embryo_fn_fetch_int);
    embryo_program_native_call_add(ep, "append_str", _edje_embryo_fn_append_str);
    embryo_program_native_call_add(ep, "prepend_str", _edje_embryo_fn_prepend_str);
    embryo_program_native_call_add(ep, "insert_str", _edje_embryo_fn_insert_str);
+   embryo_program_native_call_add(ep, "replace_str", _edje_embryo_fn_replace_str);
    embryo_program_native_call_add(ep, "fetch_str", _edje_embryo_fn_fetch_str);
+   embryo_program_native_call_add(ep, "append_float", _edje_embryo_fn_append_float);
+   embryo_program_native_call_add(ep, "prepend_float", _edje_embryo_fn_prepend_float);
+   embryo_program_native_call_add(ep, "insert_float", _edje_embryo_fn_prepend_float);
+   embryo_program_native_call_add(ep, "replace_float", _edje_embryo_fn_replace_float);
+   embryo_program_native_call_add(ep, "fetch_float", _edje_embryo_fn_fetch_float);
 
    embryo_program_native_call_add(ep, "timer", _edje_embryo_fn_timer);
    embryo_program_native_call_add(ep, "cancel_timer", _edje_embryo_fn_cancel_timer);
