@@ -26,7 +26,11 @@ edje_LDFLAGS =
 edje_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 
 edje_cc_SOURCES = \
-edje_cc.c
+edje_cc.c \
+edje_cc.h \
+edje_cc_out.c \
+edje_cc_parse.c \
+edje_cc_handlers.c
 
 edje_cc_LDADD = \
 $(top_builddir)/src/lib/libedje.la \
