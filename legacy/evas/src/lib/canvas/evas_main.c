@@ -540,7 +540,8 @@ evas_coord_screen_x_to_world(Evas *e, int x)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);   
    return 0;
    MAGIC_CHECK_END();
-   return e->viewport.x + (((Evas_Coord)x * e->viewport.w) / (Evas_Coord)e->output.w);
+   if (e->output.w == e->viewport.w) return e->viewport.x + x;
+   return (long long)e->viewport.x + (((long long)x * (long long)e->viewport.w) / (long long)e->output.w);
 }
 
 /**
@@ -570,7 +571,8 @@ evas_coord_screen_y_to_world(Evas *e, int y)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);   
    return 0;
    MAGIC_CHECK_END();
-   return e->viewport.y + (((Evas_Coord)y * e->viewport.h) / (Evas_Coord)e->output.h);
+   if (e->output.h == e->viewport.h) return e->viewport.y + y;
+   return (long long)e->viewport.y + (((long long)y * (long long)e->viewport.h) / (long long)e->output.h);
 }
 
 /**
@@ -600,7 +602,8 @@ evas_coord_world_x_to_screen(Evas *e, Evas_Coord x)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);   
    return 0;
    MAGIC_CHECK_END();
-   return (int)(((x - e->viewport.x) * (Evas_Coord)e->output.w) /  e->viewport.w);
+   if (e->output.w == e->viewport.w) return x - e->viewport.x;
+   return (int)((((long long)x - (long long)e->viewport.x) * (long long)e->output.w) /  (long long)e->viewport.w);
 }
 
 /**
@@ -630,7 +633,8 @@ evas_coord_world_y_to_screen(Evas *e, Evas_Coord y)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);   
    return 0;
    MAGIC_CHECK_END();
-   return (int)(((y - e->viewport.y) * (Evas_Coord)e->output.h) /  e->viewport.h);
+   if (e->output.h == e->viewport.h) return y - e->viewport.y;
+   return (int)((((long long)y - (long long)e->viewport.y) * (long long)e->output.h) /  (long long)e->viewport.h);
 }
 
 /**
