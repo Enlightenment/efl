@@ -9,6 +9,7 @@ _evas_free_rectangle(Evas_Object o)
 {
    Evas_Object_Rectangle oo;
    
+   IF_OBJ(o, OBJECT_RECTANGLE) return;
    oo = o;
    free(o);
 }

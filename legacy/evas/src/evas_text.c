@@ -13,6 +13,7 @@ _evas_free_text(Evas_Object o)
 {
    Evas_Object_Text oo;
    
+   IF_OBJ(o, OBJECT_TEXT) return;
    oo = o;
    if (oo->current.text) free(oo->current.text);
    free(o);
@@ -158,6 +159,7 @@ evas_get_text_string(Evas e, Evas_Object o)
 {
    Evas_Object_Text oo;
 
+   IF_OBJ(o, OBJECT_TEXT) return "";
    oo = o;
    return oo->current.text;
 }
@@ -167,6 +169,7 @@ evas_get_text_font(Evas e, Evas_Object o)
 {
    Evas_Object_Text oo;
 
+   IF_OBJ(o, OBJECT_TEXT) return "";
    oo = o;
    return oo->current.font;
 }
@@ -176,6 +179,7 @@ evas_get_text_size(Evas e, Evas_Object o)
 {
    Evas_Object_Text oo;
 
+   IF_OBJ(o, OBJECT_TEXT) return 0;
    oo = o;
    return oo->current.size;
 }
@@ -186,6 +190,7 @@ evas_text_at_position(Evas e, Evas_Object o, double x, double y,
 {
    Evas_Object_Text oo;
    
+   IF_OBJ(o, OBJECT_TEXT) return -1;
    oo = o;
    switch (e->current.render_method)
      {
@@ -275,6 +280,7 @@ evas_text_at(Evas e, Evas_Object o, int index,
 {
    Evas_Object_Text oo;
    
+   IF_OBJ(o, OBJECT_TEXT) return;
    oo = o;
    switch (e->current.render_method)
      {
@@ -352,6 +358,7 @@ evas_text_get_ascent_descent(Evas e, Evas_Object o,
    int a, d;
    Evas_Object_Text oo;
    
+   IF_OBJ(o, OBJECT_TEXT) return;
    oo = o;
    a = 0; d = 0;
    switch (e->current.render_method)
@@ -424,6 +431,7 @@ evas_text_get_max_ascent_descent(Evas e, Evas_Object o,
    int a, d;
    Evas_Object_Text oo;
    
+   IF_OBJ(o, OBJECT_TEXT) return;
    oo = o;
    a = 0; d = 0;
    switch (e->current.render_method)
@@ -496,6 +504,7 @@ evas_text_get_advance(Evas e, Evas_Object o,
    int a, d;
    Evas_Object_Text oo;
    
+   IF_OBJ(o, OBJECT_TEXT) return;
    oo = o;
    a = 0; d = 0;
    switch (e->current.render_method)
@@ -563,6 +572,7 @@ evas_text_get_inset(Evas e, Evas_Object o)
    Evas_Object_Text oo;
    int inset;
    
+   IF_OBJ(o, OBJECT_TEXT) return 0.0;
    oo = o;
    switch (e->current.render_method)
      {

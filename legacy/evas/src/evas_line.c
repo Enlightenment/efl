@@ -9,6 +9,7 @@ _evas_free_line(Evas_Object o)
 {
    Evas_Object_Line oo;
    
+   IF_OBJ(o, OBJECT_LINE) return;
    oo = o;
    free(o);
 }
@@ -81,6 +82,7 @@ evas_set_line_xy(Evas e, Evas_Object o, double x1, double y1, double x2, double 
    Evas_Object_Line oo;
    int event_update = 0;
    
+   IF_OBJ(o, OBJECT_LINE) return;
    oo = (Evas_Object_Line)o;
    if ((o->current.visible) &&
        (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)))

@@ -93,28 +93,61 @@ main(int argc, char **argv)
      };
    
    win_w = 640; win_h = 480;
-   if (argc >= 3)
-     {
-	win_w = atoi(argv[1]);
-	win_h = atoi(argv[2]);
-     }
-   
    e = evas_new();
-   if ((argc >= 4) && (!strcmp(argv[3], "software")))
-      evas_set_output_method(e, RENDER_METHOD_ALPHA_SOFTWARE);
-   else if ((argc >= 4) && (!strcmp(argv[3], "x11")))
-      evas_set_output_method(e, RENDER_METHOD_BASIC_HARDWARE);
-   else if ((argc >= 4) && (!strcmp(argv[3], "image")))
+   for (i = 1; i < argc; i++)
      {
-	DATA32 *data;
-	
-	buffer = imlib_create_image(win_w, win_h);
-	imlib_context_set_image(buffer);
-	evas_set_output_method(e, RENDER_METHOD_IMAGE);
-	evas_set_output_image(e, buffer);
+	if ((!strcmp(argv[i], "-x")) && (i < (argc - 1)))
+	  {
+	     i++;
+	     win_w = atoi(argv[i]);
+	  }
+	else if ((!strcmp(argv[i], "-y")) && (i < (argc - 1)))
+	  {
+	     i++;
+	     win_h = atoi(argv[i]);
+	  }
+	else if ((!strcmp(argv[i], "-m")) && (i < (argc - 1)))
+	  {
+	     i++;
+	     if (!strcmp(argv[i], "x11"))
+		evas_set_output_method(e, RENDER_METHOD_BASIC_HARDWARE);
+	     else if (!strcmp(argv[i], "soft"))
+		evas_set_output_method(e, RENDER_METHOD_ALPHA_SOFTWARE);
+	     else if (!strcmp(argv[i], "hard"))
+		evas_set_output_method(e, RENDER_METHOD_3D_HARDWARE);
+	     else if (!strcmp(argv[i], "buf"))
+	       {
+		  DATA32 *data;
+		  
+		  buffer = imlib_create_image(win_w, win_h);
+		  imlib_context_set_image(buffer);
+		  evas_set_output_method(e, RENDER_METHOD_IMAGE);
+		  evas_set_output_image(e, buffer);
+	       }
+	  }
+	else if ((!strcmp(argv[i], "-c")) && (i < (argc - 1)))
+	  {
+	     i++;
+	     evas_set_output_colors(e, atoi(argv[i]));
+	  }
+	else if ((!strcmp(argv[i], "-s")) && (i < (argc - 1)))
+	  {
+	     i++;
+	     evas_set_scale_smoothness(e, atoi(argv[i]));
+	  }
+	else
+	  {
+	     printf("Usage:\n");
+	     printf("      %s [options]\n", argv[0]);
+	     printf("Where options is one or more of:\n");
+	     printf("      -x width                     - width of window in pixels\n");
+	     printf("      -y height                    - height of window in pixels\n");
+	     printf("      -m [x11 | soft | hard | buf] - rendering mode\n");
+	     printf("      -c colors                    - maximum colors allocated\n");
+	     printf("      -s [1 | 0]                   - smooth scaling / rendering\n");
+	     exit(0);
+	  }
      }
-   else
-      evas_set_output_method(e, RENDER_METHOD_3D_HARDWARE);
    
    d = XOpenDisplay(NULL);
    vis = evas_get_optimal_visual(e, d);
@@ -324,7 +357,7 @@ main(int argc, char **argv)
 		  hh = ww;
 		  evas_resize(e, o[i], ww, hh);
 		  evas_set_image_fill(e, o[i], 0, 0, ww, hh);
-		  /*
+/*		  
 		  evas_set_color(e, o[i], 255, 255, 255, 
 				 (((1.0 + cos((double)(a + j) * 2 * 3 * 3.141592654 / 1000)) / 2) * 255));
 		  */

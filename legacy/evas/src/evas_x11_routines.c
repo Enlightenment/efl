@@ -904,6 +904,8 @@ __evas_x11_get_colormap(Display *disp, int screen)
    
    if (__evas_cmap) return __evas_cmap;
    v = __evas_x11_get_visual(disp, screen);
+   __evas_cmap = DefaultColormap(disp, screen);
+   return __evas_cmap;
    __evas_cmap = XCreateColormap(disp, RootWindow(disp, screen), v, AllocNone);
    return __evas_cmap;
 }
@@ -915,6 +917,7 @@ __evas_x11_init(Display *disp, int screen, int colors)
    
    if (!initted)
      {
+	imlib_set_color_usage(216);
 	imlib_set_font_cache_size(1024 * 1024);
 	imlib_set_cache_size(8 * 1024 * 1024);
 	initted = 1;

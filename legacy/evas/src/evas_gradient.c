@@ -13,6 +13,7 @@ _evas_free_gradient_box(Evas_Object o)
 {
    Evas_Object_Gradient_Box oo;
    
+   IF_OBJ(o, OBJECT_GRADIENT_BOX) return;
    oo = o;
    if (oo->current.gradient) evas_gradient_free(oo->current.gradient);
    free(o);
@@ -93,6 +94,7 @@ evas_set_gradient(Evas e, Evas_Object o, Evas_Gradient grad)
 {
    Evas_Object_Gradient_Box oo;
 
+   IF_OBJ(o, OBJECT_GRADIENT_BOX) return;
    oo = o;
    if (oo->current.gradient)
       evas_gradient_free(oo->current.gradient);

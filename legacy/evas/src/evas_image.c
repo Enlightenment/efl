@@ -9,6 +9,7 @@ _evas_free_image(Evas_Object o)
 {
    Evas_Object_Image oo;
    
+   IF_OBJ(o, OBJECT_IMAGE) return;
    oo = o;
    if (oo->current.file) free(oo->current.file);
    free(o);
@@ -157,6 +158,7 @@ evas_set_image_fill(Evas e, Evas_Object o, double x, double y, double w, double 
 {
    Evas_Object_Image oo;
    
+   IF_OBJ(o, OBJECT_IMAGE) return;
    oo = o;
    oo->current.fill.x = x;
    oo->current.fill.y = y;
@@ -172,6 +174,7 @@ evas_get_image_size(Evas e, Evas_Object o, int *w, int *h)
 {
    Evas_Object_Image oo;
    
+   IF_OBJ(o, OBJECT_IMAGE) return;
    oo = o;
    if (w) *w = oo->current.image.w;
    if (h) *h = oo->current.image.h;
@@ -182,6 +185,7 @@ evas_set_image_border(Evas e, Evas_Object o, int l, int r, int t, int b)
 {
    Evas_Object_Image oo;
    
+   IF_OBJ(o, OBJECT_IMAGE) return;
    oo = o;
    oo->current.border.l = l;
    oo->current.border.r = r;
@@ -196,6 +200,7 @@ evas_get_image_border(Evas e, Evas_Object o, int *l, int *r, int *t, int *b)
 {
    Evas_Object_Image oo;
    
+   IF_OBJ(o, OBJECT_IMAGE) return;
    oo = o;
    if (l) *l = oo->current.border.l;
    if (r) *r = oo->current.border.r;

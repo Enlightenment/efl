@@ -49,6 +49,8 @@ typedef struct _Evas_Object_Gradient_Box * Evas_Object_Gradient_Box;
 #define OBJECT_LINE         1233
 #define OBJECT_GRADIENT_BOX 1234
 
+#define IF_OBJ(_o, _t) if (((Evas_Object)_o)->type != _t)
+
 struct _Evas_Render_Data
 {
    int *method[RENDER_METHOD_COUNT];
