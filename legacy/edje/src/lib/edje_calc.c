@@ -181,12 +181,14 @@ _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, double *x, double *y)
 	     else if (ep->part->dragable.y != 0) ret = 2;
 	     
 	     dx = ep->x - ep->confine_to->x;
-	     dw = MAX(ep->confine_to->w - ep->w, 1);
-	     dx /= dw;
+	     dw = ep->confine_to->w - ep->w;
+	     if (dw != 0.0) dx /= dw;
+	     else dx = 0.0;
 	     
 	     dy = ep->y - ep->confine_to->y;
-	     dh = MAX(ep->confine_to->h - ep->h, 1);
-	     dy /= dh;
+	     dh = ep->confine_to->h - ep->h;
+	     if (dh != 0) dy /= dh;
+	     else dy = 0.0;
 	     
 	     if (x) *x = dx;
 	     if (y) *y = dy;
