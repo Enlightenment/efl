@@ -1,6 +1,9 @@
 dnl Process this file with autoconf to produce a configure script.
 
 AC_INIT(configure.in)
+AC_CANONICAL_BUILD
+AC_CANONICAL_HOST
+AC_CANONICAL_TARGET
 AC_ISC_POSIX
 AM_INIT_AUTOMAKE(ecore, 1.0.0_pre4)
 AM_CONFIG_HEADER(config.h)
@@ -306,7 +309,7 @@ AC_ARG_WITH(evas-config,
   PROG="evas-config";
   AC_PATH_PROG(PROG_CONFIG, $PROG, "", $PATH)
 ])
-EVAS_CONFIG=$PROG_CONFIG
+if [ test -z "$EVAS_CONFIG" ]; then EVAS_CONFIG=$PROG_CONFIG; fi
 
 have_ecore_evas="no"
 
@@ -527,12 +530,12 @@ if test "x$have_ecore_config" = "xyes"; then
      PROG="edb-config";
      AC_PATH_PROG(PROG_CONFIG, $PROG, "", $PATH)
    ])
-   EDB_CONFIG=$PROG_CONFIG
+   if [ test -z "$EDB_CONFIG" ]; then EDB_CONFIG=$PROG_CONFIG; fi
 
    AC_CHECK_LIB(edb, e_db_open,
      [
-       edb_cflags=`edb-config --cflags`
-       edb_libs=`edb-config --libs`
+       edb_cflags=`$EDB_CONFIG --cflags`
+       edb_libs=`$EDB_CONFIG --libs`
        AM_CONDITIONAL(BUILD_ECORE_CONFIG, true)
        ecore_config_libs="-lecore_config";
        AC_DEFINE(BUILD_ECORE_CONFIG, 1, [Build Ecore_Config Module])

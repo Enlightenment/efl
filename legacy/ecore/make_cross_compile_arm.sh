@@ -1,92 +1,90 @@
 #!/bin/sh
 
+PROJ="ecore"
+
+SKIFF="/skiff/local"
+HOSTARCH="i686-pc-linux-gnu"
+TARGETCPU="arm"
+TARGETARCH=$TARGETCPU"-pc-linux-gnu"
+
+export EDB_CONFIG=$SKIFF"/"$TARGETCPU"-linux/bin/edb-config"
+export EET_CONFIG=$SKIFF"/"$TARGETCPU"-linux/bin/eet-config"
+export FREETYPE_CONFIG=$SKIFF"/"$TARGETCPU"-linux/bin/freetype-config"
+export EVAS_CONFIG=$SKIFF"/"$TARGETCPU"-linux/bin/evas-config"
+
 make clean distclean
+export CC=/skiff/local/bin/arm-linux-gcc
+export CFLAGS=-O9
 ./configure \
+--host=$HOSTARCH \
+--build=$TARGETARCH \
+--target=$TARGETARCH \
 --enable-ecore-fb \
 --enable-ecore-evas \
 --enable-ecore-job \
+--disable-ecore-evas-fb \
+--disable-ecore-evas-gl \
 --enable-ecore-con \
 --enable-ecore-ipc \
---enable-ecore-txt
+--enable-ecore-txt \
+--disable-ecore-x \
+--disable-ecore-config
 
-CC="/skiff/local/bin/arm-linux-gcc"
-ST="/skiff/local/bin/arm-linux-strip"
-CFLAGS="-O2"
+INST="/tmp/"$PROJ"-instroot"
+sudo rm -rf $INST
 
-rm -rf "build"
-mkdir "build"
-DST=`pwd`"/build";
+make
 
-mkdir $DST"/lib";
-mkdir $DST"/bin";
-mkdir $DST"/include";
-mkdir $DST"/share";
-mkdir $DST"/share/ecore";
+for I in  `find . -name "*.la" -print`; do
+  sed s:"/usr/local":$INST:g < $I > "/tmp/.sed.tmp"
+  sudo cp "/tmp/.sed.tmp" $I
+  rm -f "/tmp/.sed.tmp"
+done
 
-pushd src
+sudo \
+make \
+prefix=$INST \
+exec_prefix=$INST \
+bindir=$INST"/bin" \
+sbindir=$INST"/sbin" \
+sysconfdir=$INST"/etc" \
+datadir=$INST"/share" \
+includedir=$INST"/include" \
+libdir=$INST"/lib" \
+libexecdir=$INST"/libexec" \
+localstatedir=$INST"/var/run" \
+mandir=$INST"/share/man" \
+infodir=$INST"/share/info" \
+install
 
- pushd lib
+## FIXUPS
+for I in $INST"/bin/"* $INST"/sbin/"* $INST"/libexec/"*; do
+  J=`echo $I | sed s:$TARGETARCH"-"::g`
+  sudo mv $I $J
+done
 
- for I in ecore ecore_fb ecore_job ecore_evas ecore_con ecore_ipc ecore_txt; do
-  LIB=$I
-  pushd $LIB
-   $CC \
-   *.c \
-   $CFLAGS \
-   -I. -I../ecore -I../ecore_x -I../ecore_fb -I../ecore_job -I../ecore_evas -I../ecore_con -I../ecore_ipc -I../ecore_txt \
-   -I../../.. \
-   -I/skiff/local/include \
-   -shared -fPIC -DPIC \
-   -Wl,-soname -Wl,"lib"$LIB".so.1" \
-   -o "lib"$LIB".so.1.0.0"
-   $ST -g "lib"$LIB".so.1.0.0"
-   rm -f "lib"$LIB".so"
-   ln -s "lib"$LIB".so.1.0.0" "lib"$LIB".so"
-   rm -f "lib"$LIB".so.1"
-   ln -s "lib"$LIB".so.1.0.0" "lib"$LIB".so.1"
-   rm -f "lib"$LIB".so.1.0"
-   ln -s "lib"$LIB".so.1.0.0" "lib"$LIB".so.1.0"
-   cp -a "lib"$LIB".so"* $DST"/lib";
-   cp -a Ecore*.h $DST"/include";
-  popd
- done
+CF=$INST"/bin/"$PROJ"-config"
+sed s:"/usr/local":$SKIFF"/"$TARGETCPU"-linux":g < $CF > "/tmp/.sed.tmp"
+sudo cp "/tmp/.sed.tmp" $CF
+rm -f "/tmp/.sed.tmp"
 
- popd
+for I in  $INST"/lib/"*.la; do
+  sed s:"/usr/local":$SKIFF"/"$TARGETCPU"-linux":g < $I > "/tmp/.sed.tmp"
+  sudo cp "/tmp/.sed.tmp" $I
+  rm -f "/tmp/.sed.tmp"
+done
+      
+## package it all up
+PACK=$PROJ"-"$TARGETCPU"-inst.tar.gz"
 
- pushd bin
-  BIN="ecore_test"
-   $CC $BIN".c" \
-   -I../.. -I../lib \
-   -I. -I../lib/ecore -I../lib/ecore_x -I../lib/ecore_fb -I../lib/ecore_job -I../lib/ecore_evas -I../lib/ecore_con -I../lib/ecore_ipc -I../lib/ecore_txt \
-   -I/skiff/local/include \
-   -L. -L../lib/ecore -L../lib/ecore_x -L../lib/ecore_fb -L../lib/ecore_job -L../lib/ecore_evas -L../lib/ecore_con -L../lib/ecore_ipc -L../lib/ecore_txt \
-   -lecore -lecore_evas -lecore_fb -lecore_job -lecore_con -lecore_ipc -lecore_txt -levas -lfreetype -ljpeg -lpng -lz -lm \
-   -o $BIN
-   $ST $BIN
-   cp -a $BIN $DST"/bin";
-  BIN="ecore_evas_test"
-   $CC \
-   ecore_evas_test.c \
-   ecore_evas_test_app.c \
-   ecore_evas_test_bg.c \
-   ecore_evas_test_calibrate.c \
-   -I../.. -I../lib \
-   -I. -I../lib/ecore -I../lib/ecore_x -I../lib/ecore_fb -I../lib/ecore_job -I../lib/ecore_evas -I../lib/ecore_con -I../lib/ecore_ipc -I../lib/ecore_txt \
-   -I/skiff/local/include \
-   -L. -L../lib/ecore -L../lib/ecore_x -L../lib/ecore_fb -L../lib/ecore_job -L../lib/ecore_evas -L../lib/ecore_con -L../lib/ecore_ipc -L../lib/ecore_txt \
-   -lecore -lecore_evas -lecore_fb -lecore_con -lecore_con -lecore_ipc -lecore_txt -levas -lfreetype -ljpeg -lpng -lz -lm \
-   -o $BIN
-   $ST $BIN
-   cp -a $BIN $DST"/bin";
- popd
-popd
+DIR=$PWD
+cd $INST
+sudo tar zcvf $DIR"/"$PACK *
+sudo chown $USER $DIR"/"$PACK
+cd $DIR
+sudo rm -rf $INST
 
-cp -ar data $DST"/share/ecore"
-
-PD=`pwd`
-pushd "build"
- tar zcvf $PD"/data.tar.gz" *
- pushd /skiff/local/
-  sudo tar zxvf $PD"/data.tar.gz"
- popd
-popd
+## install it in our skiff tree
+cd $SKIFF"/"$TARGETCPU"-linux"
+sudo tar zxvf $DIR"/"$PACK
+  
