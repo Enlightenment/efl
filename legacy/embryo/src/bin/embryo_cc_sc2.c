@@ -1145,7 +1145,7 @@ static char *skipstring(char *string)
   } /* while */
 
   endquote=*string;
-  assert(endquote=='"' || endquote=='\'');
+  assert(endquote=='\"' || endquote=='\'');
   string++;             /* skip open quote */
   while (*string!=endquote && *string!='\0')
     litchar(&string,rawstring);

@@ -132,6 +132,7 @@ _embryo_program_init(Embryo_Program *ep, void *code)
    embryo_swap_32((unsigned int *)&hdr->libraries);
    embryo_swap_32((unsigned int *)&hdr->pubvars);
    embryo_swap_32((unsigned int *)&hdr->tags);
+   embryo_swap_32((unsigned int *)&hdr->nametable);
 #endif
    
    if (hdr->magic != EMBRYO_MAGIC) return 0;
@@ -230,6 +231,7 @@ Embryo_Program *
 embryo_program_load(char *file)
 {
    Embryo_Program *ep;
+   Embryo_Header   hdr;
    FILE *f;
    void *program = NULL;
    int program_size = 0;
@@ -244,6 +246,14 @@ embryo_program_load(char *file)
 	fclose(f);
 	return NULL;
      }
+   if (fread(&hdr, sizeof(Embryo_Header), 1, f) != 1)
+     {
+	fclose(f);
+	return NULL;
+     }
+   rewind(f);
+   embryo_swap_32((unsigned int *)(&hdr.size));
+   if (hdr.size < program_size) program_size = hdr.size;
    program = malloc(program_size);
    if (!program)
      {
