@@ -1494,7 +1494,6 @@ _edje_embryo_fn_set_state_val(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed = embryo_program_data_get(ep);
    Edje_Real_Part *rp;
-   Embryo_Cell *cptr;
 
    /* we need at least 3 arguments */
    if (params[0] < (sizeof(Embryo_Cell) * 3))
@@ -1587,8 +1586,6 @@ _edje_embryo_fn_get_state_val(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed = embryo_program_data_get(ep);
    Edje_Real_Part *rp;
-   Embryo_Cell *cptr;
-   float f;
 
    /* we need at least 3 arguments */
    if (params[0] < (sizeof(Embryo_Cell) * 3))
