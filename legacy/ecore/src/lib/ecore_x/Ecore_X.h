@@ -449,7 +449,18 @@ struct _Ecore_X_Event_Selection_Notify
    Ecore_X_Window             win;
    Ecore_X_Time               time;
    Ecore_X_Selection          selection;
-   char                       *target;
+   char                      *target;
+
+   enum {
+	ECORE_X_SELECTION_NONE,
+	ECORE_X_SELECTION_STRING,
+	ECORE_X_SELECTION_FILES
+   } content;
+
+   char *string;
+
+   char **files;
+   int   num_files;
 };
 
 struct _Ecore_X_Event_Xdnd_Enter

@@ -340,11 +340,7 @@ _ecore_x_selection_target_atom_get(char *target)
      x_target = ECORE_X_ATOM_FILE_NAME;
    else
      {
-	char *atom_name;
-	atom_name = malloc(strlen(target) + 4);
-	sprintf(atom_name, "_E_%s", target);
-	x_target = XInternAtom(_ecore_x_disp, atom_name, False);
-	free(atom_name);
+	x_target = ecore_x_atom_get(target);
      }
 
    return x_target;
@@ -362,7 +358,7 @@ _ecore_x_selection_target_get(Atom target)
    else if (target == ECORE_X_ATOM_TEXT)
      return strdup(ECORE_X_SELECTION_TARGET_TEXT);
    else
-     return NULL;
+     return XGetAtomName(_ecore_x_disp, target);
 }
 
 static void 
@@ -399,11 +395,13 @@ void
 ecore_x_selection_xdnd_request(Ecore_X_Window w, char *target)
 {
    Ecore_X_Atom atom;
+   Ecore_X_DND_Target *_target;
 
-   atom = ecore_x_atom_get(target);
+   _target = _ecore_x_dnd_target_get();
+   atom = _ecore_x_selection_target_atom_get(target);
    XConvertSelection(_ecore_x_disp, ECORE_X_ATOM_SELECTION_XDND, atom,
 		     ECORE_X_ATOM_SELECTION_PROP_XDND, w,
-		     _ecore_x_event_last_time);
+		     _target->time);
 }
 
 void 
@@ -521,34 +519,28 @@ _ecore_x_selection_convert(Atom selection, Atom target, void **data_ret)
    sel = _ecore_x_selection_get(selection);
    tgt_str = _ecore_x_selection_target_get(target);
 
-   if (tgt_str)
+   for (cnv = converters; cnv; cnv = cnv->next)
      {
-	for (cnv = converters; cnv; cnv = cnv->next)
+	if (cnv->target == target)
 	  {
-	     if (cnv->target == target)
+	     int r;
+	     r = cnv->convert(tgt_str, sel->data, sel->length, &data, &size);
+	     free(tgt_str);
+	     if (r)
 	       {
-		  int r;
-		  r = cnv->convert(tgt_str, sel->data, sel->length, &data, &size);
-		  if (r)
-		    {
-		       *data_ret = data;
-		       return r;
-		    }
-		  else
-		    return 0;
+		  *data_ret = data;
+		  return r;
 	       }
+	     else
+	       return 0;
 	  }
-
-	free(tgt_str);
-     }
-   else
-     {
-	*data_ret = malloc(sel->length);
-	memcpy(*data_ret, sel->data, sel->length);
-	return 1;
      }
 
-   return 0;
+   /* Default, just return the data */
+   *data_ret = malloc(sel->length);
+   memcpy(*data_ret, sel->data, sel->length);
+   free(tgt_str);
+   return 1;
 }
 
 /* TODO: We need to work out a mechanism for automatic conversion to any requested

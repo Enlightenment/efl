@@ -136,16 +136,6 @@ _ecore_x_event_free_key_up(void *data __UNUSED__, void *ev)
 }
 
 static void
-_ecore_x_event_free_selection_notify(void *data __UNUSED__, void *ev)
-{
-   Ecore_X_Event_Selection_Notify *e;
-
-   e = ev;
-   if (e->target) free(e->target);
-   free(e);
-}
-
-static void
 _ecore_x_event_free_xdnd_enter(void *data __UNUSED__, void *ev)
 {
    Ecore_X_Event_Xdnd_Enter *e;
@@ -155,6 +145,30 @@ _ecore_x_event_free_xdnd_enter(void *data __UNUSED__, void *ev)
    for (i = 0; i < e->num_types; i++)
      XFree(e->types[i]);
    free(e->types);
+   free(e);
+}
+
+static void
+_ecore_x_event_free_selection_notify(void *data __UNUSED__, void *ev)
+{
+   Ecore_X_Event_Selection_Notify *e;
+   int i;
+
+   e = ev;
+   switch (e->content)
+     {
+      case ECORE_X_SELECTION_NONE:
+	 break;
+      case ECORE_X_SELECTION_FILES:
+	 for (i = 0; i < e->num_files; i++)
+	   free(e->files[i]);
+	 free(e->files);
+	 break;
+      case ECORE_X_SELECTION_STRING:
+	 free(e->string);
+	 break;
+     }
+   free(e->target);
    free(e);
 }
 
@@ -482,8 +496,6 @@ void
 _ecore_x_event_handle_motion_notify(XEvent *xevent)
 {
    Ecore_X_Event_Mouse_Move     *e;
-   int                          x1, x2, y1, y2;
-   Ecore_X_DND_Protocol         *_xdnd;
 
    e = calloc(1, sizeof(Ecore_X_Event_Mouse_Move));
    if (!e) return;
@@ -502,21 +514,7 @@ _ecore_x_event_handle_motion_notify(XEvent *xevent)
    _ecore_x_event_last_root_y = e->root.y;
 
    /* Xdnd handling */
-   _xdnd = _ecore_x_dnd_protocol_get();
-   if (_xdnd->state != ECORE_X_DND_IDLE)
-     {
-	/* Determine if we're still in the rectangle from the last status */
-	x1 = _xdnd->rectangle.x;
-	x2 = _xdnd->rectangle.x + _xdnd->rectangle.width;
-	y1 = _xdnd->rectangle.y;
-	y2 = _xdnd->rectangle.y + _xdnd->rectangle.height;
-	if (!(_xdnd->suppress) || 
-	      ((e->root.x < x1) || (e->root.x > x2)
-	       || (e->root.y < y1) || (e->root.y > y2)))
-	  {
-	     _ecore_x_dnd_drag(e->root.x, e->root.y);
-	  }
-     }
+   _ecore_x_dnd_drag(e->root.x, e->root.y);
 
    ecore_event_add(ECORE_X_EVENT_MOUSE_MOVE, e, NULL, NULL);
 }
@@ -1062,7 +1060,6 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
    xev.xselection = xnotify;
    XSendEvent(xevent->xselectionrequest.display, 
 	      xevent->xselectionrequest.requestor, False, 0, &xev);
-
 }
 
 void
@@ -1079,19 +1076,6 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
    e->time = xevent->xselection.time;
    e->target = _ecore_x_selection_target_get(xevent->xselection.target);
    selection = xevent->xselection.selection;
-   if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
-     e->selection = ECORE_X_SELECTION_PRIMARY;
-   else if (selection == ECORE_X_ATOM_SELECTION_SECONDARY)
-     e->selection = ECORE_X_SELECTION_SECONDARY;
-   else if (selection == ECORE_X_ATOM_SELECTION_XDND)
-     e->selection = ECORE_X_SELECTION_XDND;
-   else if (selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
-     e->selection = ECORE_X_SELECTION_CLIPBOARD;
-   else
-     {
-	free(e);
-	return;
-     }
 
    if (!ecore_x_window_prop_property_get(e->win, xevent->xselection.property,
 					 AnyPropertyType, 8, &data, &num_ret))
@@ -1105,6 +1089,73 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
    sel_data.data = data;
    sel_data.length = num_ret;
    _ecore_x_selection_request_data_set(sel_data);
+
+   if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
+     e->selection = ECORE_X_SELECTION_PRIMARY;
+   else if (selection == ECORE_X_ATOM_SELECTION_SECONDARY)
+     e->selection = ECORE_X_SELECTION_SECONDARY;
+   else if (selection == ECORE_X_ATOM_SELECTION_XDND)
+     {
+	e->selection = ECORE_X_SELECTION_XDND;
+	if (!strcmp(e->target, "text/uri-list"))
+	  {
+	     int i, is;
+	     char *tmp;
+
+	     e->content = ECORE_X_SELECTION_FILES;
+
+	     tmp = malloc(num_ret * sizeof(char));
+	     i = 0;
+	     is = 0;
+	     e->files = NULL;
+	     while ((is < num_ret) && (data[is]))
+	       {
+		  if ((i == 0) && (data[is] == '#'))
+		    {
+		       for (; ((data[is]) && (data[is] != '\n')); is++);
+		    }
+		  else
+		    {
+		       if (data[is] != '\r')
+			 {
+			    tmp[i++] = data[is];
+			 }
+		       else
+			 {
+			    tmp[i] = 0;
+			    e->num_files++;
+			    e->files = realloc(e->files, e->num_files * sizeof(char *));
+			    e->files[e->num_files - 1] = strdup(tmp);
+			    tmp[0] = 0;
+			    i = 0;
+			    is++;
+			 }
+		       is++;
+		    }
+	       }
+	     if (i > 0)
+	       {
+		  tmp[i] = 0;
+		  e->num_files++;
+		  e->files = realloc(e->files, e->num_files * sizeof(char *));
+		  e->files[e->num_files - 1] = strdup(tmp);
+	       }
+	     free(tmp);
+	  }
+	else if (!strcmp(e->target, "text/plain"))
+	  {
+	     e->content = ECORE_X_SELECTION_STRING;
+	     e->string = data;
+	  }
+     }
+   else if (selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
+     e->selection = ECORE_X_SELECTION_CLIPBOARD;
+   else
+     {
+	free(e);
+	return;
+     }
+
    ecore_event_add(ECORE_X_EVENT_SELECTION_NOTIFY, e, _ecore_x_event_free_selection_notify, NULL);
 }
 
@@ -1145,23 +1196,26 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
      }
 
    /* Xdnd Client Message Handling Begin */
-   /* Message Type: XdndEnter */
+   /* Message Type: XdndEnter target */
    else if (xevent->xclient.message_type == ECORE_X_ATOM_XDND_ENTER)
      {
 	Ecore_X_Event_Xdnd_Enter *e;
-	Ecore_X_DND_Protocol *_xdnd;
+	Ecore_X_DND_Target *target;
 	unsigned long three;
 
 	e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Enter));
 	if (!e) return;
 
-	_xdnd = _ecore_x_dnd_protocol_get();
-	_xdnd->source = xevent->xclient.data.l[0];
-	_xdnd->dest = xevent->xclient.window;
-	_xdnd->version = (int) (xevent->xclient.data.l[1] >> 24);
-	if (_xdnd->version > ECORE_X_DND_VERSION)
+	target = _ecore_x_dnd_target_get();
+	target->state = ECORE_X_DND_TARGET_ENTERED;
+
+	target = _ecore_x_dnd_target_get();
+	target->source = xevent->xclient.data.l[0];
+	target->win = xevent->xclient.window;
+	target->version = (int) (xevent->xclient.data.l[1] >> 24);
+	if (target->version > ECORE_X_DND_VERSION)
 	  {
-	     printf("DND: Requested version %d, we only support up to %d\n", _xdnd->version,
+	     printf("DND: Requested version %d, we only support up to %d\n", target->version,
 									     ECORE_X_DND_VERSION);
 	     return;
 	  }
@@ -1172,7 +1226,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	     unsigned char *data;
 	     Ecore_X_Atom *types;
 	     int i, num_ret;
-	     if (!(ecore_x_window_prop_property_get(_xdnd->source, 
+	     if (!(ecore_x_window_prop_property_get(target->source, 
 						    ECORE_X_ATOM_XDND_TYPE_LIST,
 						    XA_ATOM,
 						    32,
@@ -1190,147 +1244,155 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	  }
 	else
 	  {
+	     int i = 0;
+
 	     e->types = calloc(3, sizeof(char *));
-	     e->types[0] = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[2]);
-	     e->types[1] = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[3]);
-	     e->types[2] = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[4]);
-	     e->num_types = 3;
+	     while ((i < 3) && (xevent->xclient.data.l[i + 2]))
+	       {
+		  e->types[i] = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[i + 2]);
+		  i++;
+	       }
+	     e->num_types = i;
 	  }
 
-	_xdnd->state = ECORE_X_DND_TARGET_ENTERED;
-
-	e->win = _xdnd->dest;
-	e->source = _xdnd->source;
+	e->win = target->win;
+	e->source = target->source;
 	ecore_event_add(ECORE_X_EVENT_XDND_ENTER, e, _ecore_x_event_free_xdnd_enter, NULL);
      }
 
-   /* Message Type: XdndPosition */
+   /* Message Type: XdndPosition target */
    else if (xevent->xclient.message_type == ECORE_X_ATOM_XDND_POSITION)
      {
 	Ecore_X_Event_Xdnd_Position *e;
-	Ecore_X_DND_Protocol *_xdnd;
+	Ecore_X_DND_Target *target;
 
-	_xdnd = _ecore_x_dnd_protocol_get();
-	_xdnd->source = xevent->xclient.data.l[0];
-	_xdnd->dest = xevent->xclient.window;
-	_xdnd->pos.x = xevent->xclient.data.l[2] >> 16;
-	_xdnd->pos.y = xevent->xclient.data.l[2] & 0xFFFFUL;
-	_xdnd->action = xevent->xclient.data.l[4]; /* Version 2 */
+	target = _ecore_x_dnd_target_get();
+	if ((target->source != xevent->xclient.data.l[0])
+	    || (target->win != xevent->xclient.window))
+	  return;
 
-	_ecore_x_event_last_time = (_xdnd->version >= 1) ? 
+	target->pos.x = xevent->xclient.data.l[2] >> 16;
+	target->pos.y = xevent->xclient.data.l[2] & 0xFFFFUL;
+	target->action = xevent->xclient.data.l[4]; /* Version 2 */
+
+	target->time = (target->version >= 1) ? 
 	   (Time)xevent->xclient.data.l[3] : CurrentTime;
 
 	e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Position));
 	if (!e) return;
-	e->win = _xdnd->dest;
-	e->source = _xdnd->source;
-	e->position.x = _xdnd->pos.x;
-	e->position.y = _xdnd->pos.y;
-	e->action = _xdnd->action;
+	e->win = target->win;
+	e->source = target->source;
+	e->position.x = target->pos.x;
+	e->position.y = target->pos.y;
+	e->action = target->action;
 	ecore_event_add(ECORE_X_EVENT_XDND_POSITION, e, NULL, NULL);
      }
 
-   /* Message Type: XdndStatus */
+   /* Message Type: XdndStatus source */
    else if (xevent->xclient.message_type == ECORE_X_ATOM_XDND_STATUS)
      {
 	Ecore_X_Event_Xdnd_Status *e;
-	Ecore_X_DND_Protocol *_xdnd;
+	Ecore_X_DND_Source *source;
 
-	_xdnd = _ecore_x_dnd_protocol_get();
+	source = _ecore_x_dnd_source_get();
 	/* Make sure source/target match */
-	if ((_xdnd->source != xevent->xclient.window )
-	    || (_xdnd->dest != (Window)xevent->xclient.data.l[0]))
+	if ((source->win != xevent->xclient.window )
+	    || (source->dest != (Window)xevent->xclient.data.l[0]))
 	  return;
-	_xdnd->will_accept = xevent->xclient.data.l[1] & 0x1UL;
-	_xdnd->suppress = (xevent->xclient.data.l[1] & 0x2UL) ? 0 : 1;
 
-	_xdnd->rectangle.x = xevent->xclient.data.l[2] >> 16;
-	_xdnd->rectangle.y = xevent->xclient.data.l[2] & 0xFFFFUL;
-	_xdnd->rectangle.width = xevent->xclient.data.l[3] >> 16;
-	_xdnd->rectangle.height = xevent->xclient.data.l[3] & 0xFFFFUL;
+	source->await_status = 0;
 
-	_xdnd->accepted_action = xevent->xclient.data.l[4];
+	source->will_accept = xevent->xclient.data.l[1] & 0x1UL;
+	source->suppress = (xevent->xclient.data.l[1] & 0x2UL) ? 0 : 1;
+
+	source->rectangle.x = xevent->xclient.data.l[2] >> 16;
+	source->rectangle.y = xevent->xclient.data.l[2] & 0xFFFFUL;
+	source->rectangle.width = xevent->xclient.data.l[3] >> 16;
+	source->rectangle.height = xevent->xclient.data.l[3] & 0xFFFFUL;
+
+	source->accepted_action = xevent->xclient.data.l[4];
 
 	e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Status));
 	if (!e) return;
-	e->win = _xdnd->source;
-	e->target = _xdnd->dest;
-	e->will_accept = _xdnd->will_accept;
-	e->rectangle.x = _xdnd->rectangle.x;
-	e->rectangle.y = _xdnd->rectangle.y;
-	e->rectangle.width = _xdnd->rectangle.width;
-	e->rectangle.height = _xdnd->rectangle.height;
-	e->action = _xdnd->accepted_action;
+	e->win = source->win;
+	e->target = source->dest;
+	e->will_accept = source->will_accept;
+	e->rectangle.x = source->rectangle.x;
+	e->rectangle.y = source->rectangle.y;
+	e->rectangle.width = source->rectangle.width;
+	e->rectangle.height = source->rectangle.height;
+	e->action = source->accepted_action;
 
 	ecore_event_add(ECORE_X_EVENT_XDND_STATUS, e, NULL, NULL);
      }
 
-   /* Message Type: XdndLeave */
+   /* Message Type: XdndLeave target */
    /* Pretend the whole thing never happened, sort of */
    else if (xevent->xclient.message_type == ECORE_X_ATOM_XDND_LEAVE)
      {
 	Ecore_X_Event_Xdnd_Leave *e;
-	Ecore_X_DND_Protocol *_xdnd;
+	Ecore_X_DND_Target *target;
 
-	_xdnd = _ecore_x_dnd_protocol_get();
-	/* Match source/target */
-	if ((_xdnd->source != (Window)xevent->xclient.data.l[0])
-	    || (_xdnd->dest != xevent->xclient.window))
+	target = _ecore_x_dnd_target_get();
+	if ((target->source != xevent->xclient.data.l[0])
+	    || (target->win != xevent->xclient.window))
 	  return;
-	/* XXX: May need to reset event handler callbacks as well */
-	_xdnd->state = ECORE_X_DND_IDLE;
+
+	target->state = ECORE_X_DND_TARGET_IDLE;
 
 	e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Leave));
 	if (!e) return;
-	e->win = _xdnd->dest;
-	e->source = _xdnd->source;
+	e->win = xevent->xclient.window;
+	e->source = (Window)xevent->xclient.data.l[0];
 	ecore_event_add(ECORE_X_EVENT_XDND_LEAVE, e, NULL, NULL);
      }
+
+   /* Message Type: XdndDrop target */
    else if (xevent->xclient.message_type == ECORE_X_ATOM_XDND_DROP)
      {
 	Ecore_X_Event_Xdnd_Drop *e;
-	Ecore_X_DND_Protocol *_xdnd;
+	Ecore_X_DND_Target *target;
 
-	_xdnd = _ecore_x_dnd_protocol_get();
+	target = _ecore_x_dnd_target_get();
 	/* Match source/target */
-	if ((_xdnd->source != (Window)xevent->xclient.data.l[0])
-	    || (_xdnd->dest != xevent->xclient.window))
+	if ((target->source != (Window)xevent->xclient.data.l[0])
+	    || (target->win != xevent->xclient.window))
 	  return;
 
-	_ecore_x_event_last_time = (_xdnd->version >= 1) ? 
+	target->time = (target->version >= 1) ? 
 	   (Time)xevent->xclient.data.l[2] : _ecore_x_event_last_time;
 
 	e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Drop));
 	if (!e) return;
-	e->win = _xdnd->dest;
-	e->source = _xdnd->source;
-	e->action = _xdnd->action;
-	e->position.x = _xdnd->pos.x;
-	e->position.y = _xdnd->pos.y;
+	e->win = target->win;
+	e->source = target->source;
+	e->action = target->action;
+	e->position.x = target->pos.x;
+	e->position.y = target->pos.y;
 	ecore_event_add(ECORE_X_EVENT_XDND_DROP, e, NULL, NULL);
      }
 
-   /* Message Type: XdndFinished */
+   /* Message Type: XdndFinished source */
    else if (xevent->xclient.message_type == ECORE_X_ATOM_XDND_FINISHED)
      {
 	Ecore_X_Event_Xdnd_Finished *e;
-	Ecore_X_DND_Protocol *_xdnd;
+	Ecore_X_DND_Source *source;
 	int completed = 1;
 
-	_xdnd = _ecore_x_dnd_protocol_get();
+	source = _ecore_x_dnd_source_get();
 	/* Match source/target */
-	if ((_xdnd->source != xevent->xclient.window)
-	    || (_xdnd->dest != (Window)xevent->xclient.data.l[0]))
+	if ((source->win != xevent->xclient.window)
+	    || (source->dest != (Window)xevent->xclient.data.l[0]))
 	  return;
 
-	if ((_xdnd->version >= 5) && (xevent->xclient.data.l[1] & 0x1UL))
+	if ((source->version >= 5) && (xevent->xclient.data.l[1] & 0x1UL))
 	  {
 	     /* Target successfully performed drop action */
 	     ecore_x_selection_xdnd_clear();
-	     _xdnd->state = ECORE_X_DND_IDLE;
+	     source->state = ECORE_X_DND_SOURCE_IDLE;
 	  } else {
 	       completed = 0;
-	       _xdnd->state = ECORE_X_DND_TARGET_CONVERTING;
+	       source->state = ECORE_X_DND_SOURCE_CONVERTING;
 
 	       /* FIXME: Probably need to add a timer to switch back to idle 
 		* and discard the selection data */
@@ -1338,18 +1400,18 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
 	e = calloc(1, sizeof(Ecore_X_Event_Xdnd_Finished));
 	if (!e) return;
-	e->win = _xdnd->source;
-	e->target = _xdnd->dest;
+	e->win = source->win;
+	e->target = source->dest;
 	e->completed = completed;
-	if (_xdnd->version >= 5)
+	if (source->version >= 5)
 	  {
-	     _xdnd->accepted_action = xevent->xclient.data.l[2];
-	     e->action = _xdnd->accepted_action;
+	     source->accepted_action = xevent->xclient.data.l[2];
+	     e->action = source->accepted_action;
 	  }
 	else
 	  {
-	     _xdnd->accepted_action = 0;
-	     e->action = _xdnd->action;
+	     source->accepted_action = 0;
+	     e->action = source->action;
 	  }
 
 	ecore_event_add(ECORE_X_EVENT_XDND_FINISHED, e, NULL, NULL);
@@ -1363,7 +1425,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	e->win = xevent->xclient.window;
 	e->message_type = xevent->xclient.message_type;
 	e->format = xevent->xclient.format;
-	for(i = 0; i < 5; i++) 
+	for (i = 0; i < 5; i++) 
 	  e->data.l[i] = xevent->xclient.data.l[i];
 
 	ecore_event_add(ECORE_X_EVENT_CLIENT_MESSAGE, e, NULL, NULL);

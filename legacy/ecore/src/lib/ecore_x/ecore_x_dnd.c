@@ -6,7 +6,8 @@
 #include "Ecore_X.h"
 #include "Ecore_X_Atoms.h"
 
-static Ecore_X_DND_Protocol *_xdnd = NULL;
+static Ecore_X_DND_Source *_source = NULL;
+static Ecore_X_DND_Target *_target = NULL;
 static int _ecore_x_dnd_init_count = 0;
 
 void
@@ -14,12 +15,16 @@ _ecore_x_dnd_init(void)
 {
    if (!_ecore_x_dnd_init_count)
      {
-	_xdnd = calloc(1, sizeof(Ecore_X_DND_Protocol));
+	_source = calloc(1, sizeof(Ecore_X_DND_Source));
+	_source->version = ECORE_X_DND_VERSION;
+	_source->win = None;
+	_source->dest = None;
+	_source->state = ECORE_X_DND_SOURCE_IDLE;
 
-	_xdnd->version = ECORE_X_DND_VERSION;
-	_xdnd->source = None;
-	_xdnd->dest = None;
-	_xdnd->state = ECORE_X_DND_IDLE;
+	_target = calloc(1, sizeof(Ecore_X_DND_Target));
+	_target->win = None;
+	_target->source = None;
+	_target->state = ECORE_X_DND_TARGET_IDLE;
      }
 
    _ecore_x_dnd_init_count++;
@@ -32,9 +37,14 @@ _ecore_x_dnd_shutdown(void)
    if (_ecore_x_dnd_init_count > 0)
      return;
 
-   if (_xdnd)
-     free(_xdnd);
-   _xdnd = NULL;
+   if (_source)
+     free(_source);
+   _source = NULL;
+
+   if (_target)
+     free(_target);
+   _target = NULL;
+
    _ecore_x_dnd_init_count = 0;
 }
 
@@ -152,10 +162,16 @@ ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, int on)
    free(newset);
 }
 
-Ecore_X_DND_Protocol *
-_ecore_x_dnd_protocol_get(void)
+Ecore_X_DND_Source *
+_ecore_x_dnd_source_get(void)
 {
-   return _xdnd;
+   return _source;
+}
+
+Ecore_X_DND_Target *
+_ecore_x_dnd_target_get(void)
+{
+   return _target;
 }
 
 int
@@ -169,13 +185,14 @@ ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size)
    if (!ecore_x_selection_xdnd_set(source, data, size))
      return 0;
 
-   _xdnd->source = source;
-   _xdnd->state = ECORE_X_DND_DRAGGING;
-   _xdnd->time = _ecore_x_event_last_time;
+   _source->win = source;
+   printf("source: 0x%x\n", source);
+   _source->state = ECORE_X_DND_SOURCE_DRAGGING;
+   _source->time = _ecore_x_event_last_time;
 
    /* Default Accepted Action: ask */
-   _xdnd->action = ECORE_X_ATOM_XDND_ACTION_ASK;
-   _xdnd->accepted_action = None;
+   _source->action = ECORE_X_ATOM_XDND_ACTION_ASK;
+   _source->accepted_action = None;
    return 1;
 }
 
@@ -184,25 +201,36 @@ ecore_x_dnd_drop(void)
 {
    XEvent xev;
 
-   xev.xany.type = ClientMessage;
-   xev.xany.display = _ecore_x_disp;
-   xev.xclient.format = 32;
-   xev.xclient.window = _xdnd->dest;
-
-   if (_xdnd->will_accept)
+   if (_source->dest)
      {
-	xev.xclient.message_type = ECORE_X_ATOM_XDND_DROP;
-	xev.xclient.data.l[0] = _xdnd->source;
-	xev.xclient.data.l[1] = 0;
-	xev.xclient.data.l[2] = _xdnd->time;
-	XSendEvent(_ecore_x_disp, _xdnd->dest, False, 0, &xev);
+	xev.xany.type = ClientMessage;
+	xev.xany.display = _ecore_x_disp;
+	xev.xclient.format = 32;
+	xev.xclient.window = _source->dest;
+
+	if (_source->will_accept)
+	  {
+	     xev.xclient.message_type = ECORE_X_ATOM_XDND_DROP;
+	     xev.xclient.data.l[0] = _source->win;
+	     xev.xclient.data.l[1] = 0;
+	     xev.xclient.data.l[2] = _source->time;
+	     XSendEvent(_ecore_x_disp, _source->dest, False, 0, &xev);
+	     _source->state = ECORE_X_DND_SOURCE_DROPPED;
+	  }
+	else
+	  {
+	     xev.xclient.message_type = ECORE_X_ATOM_XDND_LEAVE;
+	     xev.xclient.data.l[0] = _source->win;
+	     xev.xclient.data.l[1] = 0;
+	     XSendEvent(_ecore_x_disp, _source->dest, False, 0, &xev);
+	     _source->state = ECORE_X_DND_SOURCE_IDLE;
+	  }
      }
    else
      {
-	xev.xclient.message_type = ECORE_X_ATOM_XDND_LEAVE;
-	xev.xclient.data.l[0] = _xdnd->source;
-	xev.xclient.data.l[1] = 0;
-	XSendEvent(_ecore_x_disp, _xdnd->dest, False, 0, &xev);
+	/* Dropping on nothing */
+	ecore_x_selection_xdnd_clear();
+	_source->state = ECORE_X_DND_SOURCE_IDLE;
      }
 }
 
@@ -211,26 +239,20 @@ ecore_x_dnd_send_status(int will_accept, int suppress, Ecore_X_Rectangle rectang
 {
    XEvent xev;
 
-   if (_xdnd->state == ECORE_X_DND_IDLE ||
-       _xdnd->state == ECORE_X_DND_FINISHED)
+   if (_target->state == ECORE_X_DND_TARGET_IDLE)
      return;
 
    memset(&xev, 0, sizeof(XEvent));
 
-   _xdnd->rectangle.x = rectangle.x;
-   _xdnd->rectangle.y = rectangle.y;
-   _xdnd->rectangle.width = rectangle.width;
-   _xdnd->rectangle.height = rectangle.height;
-   _xdnd->will_accept = will_accept;
-   _xdnd->suppress = suppress;
+   _target->will_accept = will_accept;
 
    xev.xclient.type = ClientMessage;
    xev.xclient.display = _ecore_x_disp;
    xev.xclient.message_type = ECORE_X_ATOM_XDND_STATUS;
    xev.xclient.format = 32;
-   xev.xclient.window = _xdnd->source;
+   xev.xclient.window = _target->source;
 
-   xev.xclient.data.l[0] = _xdnd->dest;
+   xev.xclient.data.l[0] = _target->win;
    xev.xclient.data.l[1] = 0;
    if (will_accept)
      xev.xclient.data.l[1] |= 0x1UL;
@@ -248,15 +270,15 @@ ecore_x_dnd_send_status(int will_accept, int suppress, Ecore_X_Rectangle rectang
    if (will_accept)
      {
 	xev.xclient.data.l[4] = action;
-	_xdnd->accepted_action = action;
+	_target->accepted_action = action;
      }
    else
      {
 	xev.xclient.data.l[4] = None;
-	_xdnd->accepted_action = action;
+	_target->accepted_action = action;
      }
 
-   XSendEvent(_ecore_x_disp, _xdnd->source, False, 0, &xev);
+   XSendEvent(_ecore_x_disp, _target->source, False, 0, &xev);
 }
 
 void
@@ -264,21 +286,26 @@ ecore_x_dnd_send_finished(void)
 {
    XEvent   xev;
 
+   if (_target->state == ECORE_X_DND_TARGET_IDLE)
+     return;
+
    xev.xany.type = ClientMessage;
    xev.xany.display = _ecore_x_disp;
    xev.xclient.message_type = ECORE_X_ATOM_XDND_FINISHED;
    xev.xclient.format = 32;
-   xev.xclient.window = _xdnd->source;
+   xev.xclient.window = _target->source;
 
-   xev.xclient.data.l[0] = _xdnd->dest;
+   xev.xclient.data.l[0] = _target->win;
    xev.xclient.data.l[1] = 0;
    xev.xclient.data.l[2] = 0;
-   if (_xdnd->will_accept)
+   if (_target->will_accept)
      {
 	xev.xclient.data.l[1] |= 0x1UL;
-	xev.xclient.data.l[2] = _xdnd->accepted_action;
+	xev.xclient.data.l[2] = _target->accepted_action;
      }
-   XSendEvent(_ecore_x_disp, _xdnd->source, False, 0, &xev);
+   XSendEvent(_ecore_x_disp, _target->source, False, 0, &xev);
+
+   _target->state = ECORE_X_DND_TARGET_IDLE;
 }
 
 void
@@ -286,6 +313,9 @@ _ecore_x_dnd_drag(int x, int y)
 {
    XEvent         xev;
    Ecore_X_Window win;
+
+   if (_source->state != ECORE_X_DND_SOURCE_DRAGGING)
+     return;
 
    /* Preinitialize XEvent struct */
    memset(&xev, 0, sizeof(XEvent));
@@ -299,40 +329,44 @@ _ecore_x_dnd_drag(int x, int y)
      win = ecore_x_window_parent_get(win);
 
    /* Send XdndLeave to current destination window if we have left it */
-   if ((_xdnd->dest) && (win != _xdnd->dest))
+   if ((_source->dest) && (win != _source->dest))
      {
-	xev.xclient.window = _xdnd->dest;
+	printf("source: 0x%x, dest: 0x%x\n", _source->win, _source->dest);
+	xev.xclient.window = _source->dest;
 	xev.xclient.message_type = ECORE_X_ATOM_XDND_LEAVE;
-	xev.xclient.data.l[0] = _xdnd->source;
+	xev.xclient.data.l[0] = _source->win;
 	xev.xclient.data.l[1] = 0;
 
-	XSendEvent(_ecore_x_disp, _xdnd->dest, False, 0, &xev);
+	XSendEvent(_ecore_x_disp, _source->dest, False, 0, &xev);
+	_source->suppress = 0;
      }
 
    if (win)
      {
-	_xdnd->version = MIN(ECORE_X_DND_VERSION,
+	int x1, x2, y1, y2;
+
+	_source->version = MIN(ECORE_X_DND_VERSION,
 			     ecore_x_dnd_version_get(win));
-	if (win != _xdnd->dest)
+	if (win != _source->dest)
 	  {
 	     int i, num;
 	     unsigned char *data;
 	     Ecore_X_Atom *types;
 
-	     ecore_x_window_prop_property_get(_xdnd->source, ECORE_X_ATOM_XDND_TYPE_LIST,
+	     ecore_x_window_prop_property_get(_source->win, ECORE_X_ATOM_XDND_TYPE_LIST,
 					      XA_ATOM, 32, &data, &num);
 	     types = (Ecore_X_Atom *)data;
 
 	     /* Entered new window, send XdndEnter */
 	     xev.xclient.window = win;
 	     xev.xclient.message_type = ECORE_X_ATOM_XDND_ENTER;
-	     xev.xclient.data.l[0] = _xdnd->source;
+	     xev.xclient.data.l[0] = _source->win;
 	     xev.xclient.data.l[1] = 0;
 	     if (num > 3)
 	       xev.xclient.data.l[1] |= 0x1UL;
 	     else
 	       xev.xclient.data.l[1] &= 0xfffffffeUL;
-	     xev.xclient.data.l[1] |= ((unsigned long) _xdnd->version) << 24;
+	     xev.xclient.data.l[1] |= ((unsigned long) _source->version) << 24;
 
 	     for (i = 2; i < 5; i++)
 	       xev.xclient.data.l[i] = 0;
@@ -340,49 +374,33 @@ _ecore_x_dnd_drag(int x, int y)
 	       xev.xclient.data.l[i + 2] = types[i];
 	     XFree(data);
 	     XSendEvent(_ecore_x_disp, win, False, 0, &xev);
-	     _xdnd->await_status = 0;
+	     _source->await_status = 0;
 	  }
 
-	/* FIXME: Handle box information */
-	/*if (!_xdnd->await_status)
-	  {*/
-	xev.xclient.window = win;
-	xev.xclient.message_type = ECORE_X_ATOM_XDND_POSITION;
-	xev.xclient.data.l[0] = _xdnd->source;
-	xev.xclient.data.l[1] = 0; /* Reserved */
-	xev.xclient.data.l[2] = ((x << 16) & 0xffff0000) | (y & 0xffff);
-	xev.xclient.data.l[3] = _xdnd->time; /* Version 1 */
-	xev.xclient.data.l[4] = _xdnd->action; /* Version 2, Needs to be pre-set */
-	XSendEvent(_ecore_x_disp, win, False, 0, &xev);
-	_xdnd->await_status = 1;
-	/*}*/
-     }
+	/* Determine if we're still in the rectangle from the last status */
+	x1 = _source->rectangle.x;
+	x2 = _source->rectangle.x + _source->rectangle.width;
+	y1 = _source->rectangle.y;
+	y2 = _source->rectangle.y + _source->rectangle.height;
 
-   if (_xdnd->state == ECORE_X_DND_DROPPED)
-     {
-	if (win)
+	if (!(_source->await_status)
+	    || !(_source->suppress)
+	    || ((x < x1) || (x > x2)
+		|| (y < y1) || (y > y2)))
 	  {
-	     if (_xdnd->will_accept)
-	       {
-		  xev.xclient.window = win;
-		  xev.xclient.message_type = ECORE_X_ATOM_XDND_DROP;
-		  xev.xclient.data.l[0] = _xdnd->source;
-		  xev.xclient.data.l[1] = 0;
-		  xev.xclient.data.l[2] = _xdnd->time;
-		  XSendEvent(_ecore_x_disp, win, False, 0, &xev);
-	       }
-	     else
-	       {
-		  xev.xclient.window = win;
-		  xev.xclient.message_type = ECORE_X_ATOM_XDND_LEAVE;
-		  xev.xclient.data.l[0] = _xdnd->source;
-		  xev.xclient.data.l[1] = 0;
-		  XSendEvent(_ecore_x_disp, win, False, 0, &xev);
-	       }
-	  }
+	     xev.xclient.window = win;
+	     xev.xclient.message_type = ECORE_X_ATOM_XDND_POSITION;
+	     xev.xclient.data.l[0] = _source->win;
+	     xev.xclient.data.l[1] = 0; /* Reserved */
+	     xev.xclient.data.l[2] = ((x << 16) & 0xffff0000) | (y & 0xffff);
+	     xev.xclient.data.l[3] = _source->time; /* Version 1 */
+	     xev.xclient.data.l[4] = _source->action; /* Version 2, Needs to be pre-set */
+	     XSendEvent(_ecore_x_disp, win, False, 0, &xev);
 
-	_xdnd->will_accept = 0;
+	     _source->await_status = 1;
+	  }
      }
-   _xdnd->dest = win;
+
+   _source->dest = win;
 }
 

@@ -68,19 +68,16 @@ struct _Ecore_X_Selection_Converter
    struct _Ecore_X_Selection_Converter *next;
 };
 
-typedef struct _Ecore_X_DND_Protocol 
+typedef struct _Ecore_X_DND_Source 
 {
    int version;
-   Window source, dest;
+   Window win, dest;
    
    enum {
-      ECORE_X_DND_IDLE,
-      ECORE_X_DND_DRAGGING,
-      ECORE_X_DND_DROPPED,
-      ECORE_X_DND_ENTERED,
-      ECORE_X_DND_TARGET_ENTERED,
-      ECORE_X_DND_TARGET_CONVERTING,
-      ECORE_X_DND_FINISHED
+      ECORE_X_DND_SOURCE_IDLE,
+      ECORE_X_DND_SOURCE_DRAGGING,
+      ECORE_X_DND_SOURCE_DROPPED,
+      ECORE_X_DND_SOURCE_CONVERTING
    } state;
 
    struct {
@@ -88,9 +85,11 @@ typedef struct _Ecore_X_DND_Protocol
       unsigned short width, height;
    } rectangle;
 
+   /*
    struct {
       int x, y;
    } pos;
+   */
    
    Time time;
 
@@ -101,13 +100,55 @@ typedef struct _Ecore_X_DND_Protocol
 
    int await_status;
    
+   /*
    struct {
       Ecore_Event_Handler *mouse_move;
       Ecore_Event_Handler *mouse_up;
       Ecore_Event_Handler *mouse_in;
       Ecore_Event_Handler *mouse_out;
    } handlers;
-} Ecore_X_DND_Protocol;
+   */
+} Ecore_X_DND_Source;
+
+typedef struct _Ecore_X_DND_Target 
+{
+   int version;
+   Window win, source;
+   
+   enum {
+      ECORE_X_DND_TARGET_IDLE,
+      ECORE_X_DND_TARGET_ENTERED
+   } state;
+
+   /*
+   struct {
+      short x, y;
+      unsigned short width, height;
+   } rectangle;
+   */
+
+   struct {
+      int x, y;
+   } pos;
+   
+   Time time;
+
+   Ecore_X_Atom action, accepted_action;
+   
+   int will_accept;
+   /*
+   int suppress;
+
+   int await_status;
+   
+   struct {
+      Ecore_Event_Handler *mouse_move;
+      Ecore_Event_Handler *mouse_up;
+      Ecore_Event_Handler *mouse_in;
+      Ecore_Event_Handler *mouse_out;
+   } handlers;
+   */
+} Ecore_X_DND_Target;
 
 extern Display *_ecore_x_disp;
 extern double   _ecore_x_double_click_time;
@@ -162,8 +203,7 @@ void _ecore_x_event_handle_shape_change(XEvent *xevent);
 void _ecore_x_selection_data_init(void);
 void _ecore_x_selection_shutdown(void);
 Atom _ecore_x_selection_target_atom_get(char *target);
-char * 
-     _ecore_x_selection_target_get(Atom target);
+char *_ecore_x_selection_target_get(Atom target);
 void _ecore_x_selection_request_data_set(Ecore_X_Selection_Data data);
 Ecore_X_Selection_Data * 
      _ecore_x_selection_get(Atom selection);
@@ -171,7 +211,8 @@ int  _ecore_x_selection_set(Window w, unsigned char *data, int len, Atom selecti
 int  _ecore_x_selection_convert(Atom selection, Atom target, void **data_ret);
 
 void _ecore_x_dnd_init(void);
-Ecore_X_DND_Protocol * _ecore_x_dnd_protocol_get(void);
+Ecore_X_DND_Source *_ecore_x_dnd_source_get(void);
+Ecore_X_DND_Target *_ecore_x_dnd_target_get(void);
 void _ecore_x_dnd_drag(int x, int y);
 void _ecore_x_dnd_shutdown(void);
 
