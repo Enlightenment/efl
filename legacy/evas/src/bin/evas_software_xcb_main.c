@@ -73,9 +73,9 @@ main(int argc, char **argv)
    screen = XCBConnSetupSuccessRepRootsIter (XCBGetSetup(conn)).data;
 
    mask =
-     CWBackingStore | CWColormap |
-     CWBackPixmap   | CWBorderPixel |
-     CWBitGravity   | CWEventMask;
+     XCBCWBackingStore | XCBCWColormap |
+     XCBCWBackPixmap   | XCBCWBorderPixel |
+     XCBCWBitGravity   | XCBCWEventMask;
    
    value[0] = None;
    value[1] = 0;
