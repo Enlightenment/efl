@@ -411,7 +411,7 @@ typedef struct __s_stringpair
    int                 sc_eofsrc(void *handle);
 
 /* output to intermediate (.ASM) file */
-   void               *sc_openasm(char *filename);	/* read/write */
+   void               *sc_openasm(int fd);	/* read/write */
    void                sc_closeasm(void *handle, int deletefile);
    void                sc_resetasm(void *handle);
    int                 sc_writeasm(void *handle, char *str);
