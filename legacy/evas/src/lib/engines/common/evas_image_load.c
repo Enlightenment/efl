@@ -10,6 +10,7 @@
 #endif
 
 #ifdef BUILD_LOADER_JPEG
+#include <stdio.h>
 #include <jpeglib.h>
 #include <setjmp.h>
 #endif
