@@ -1004,7 +1004,8 @@ evas_render_updates(Evas e)
 					   void *fn;
 					   
 					   oo = o;
-					   fn = func_text_font_new(e->current.display, oo->current.font, oo->current.size);
+					   fn = func_text_font_new(e->current.display, oo->current.font, 
+								   (oo->current.size * (double)e->current.drawable_width) / e->current.viewport.w);
 					   if (fn)
 					     {
 						func_text_draw(fn, 
@@ -1013,8 +1014,12 @@ evas_render_updates(Evas e)
 							       e->current.drawable,
 							       e->current.drawable_width,
 							       e->current.drawable_height,
-							       o->current.x,
-							       o->current.y,
+							       (o->current.x * 
+								(double)e->current.drawable_width) /
+								e->current.viewport.w,
+							       (o->current.y * 
+								(double)e->current.drawable_height) /
+								e->current.viewport.h,
 							       oo->current.text,
 							       oo->current.r,
 							       oo->current.g,
@@ -1035,10 +1040,18 @@ evas_render_updates(Evas e)
 								  e->current.drawable,
 								  e->current.drawable_width,
 								  e->current.drawable_height,
-								  o->current.x,
-								  o->current.y,
-								  o->current.w,
-								  o->current.h,
+								  (o->current.x * 
+								   (double)e->current.drawable_width) /
+								  e->current.viewport.w,
+								  (o->current.y * 
+								   (double)e->current.drawable_height) /
+								  e->current.viewport.h,
+								  (o->current.w * 
+								   (double)e->current.drawable_width) /
+								  e->current.viewport.w,
+								  (o->current.h * 
+								   (double)e->current.drawable_height) /
+								  e->current.viewport.h,
 								  oo->current.r,
 								  oo->current.g,
 								  oo->current.b,
@@ -1055,10 +1068,18 @@ evas_render_updates(Evas e)
 							  e->current.drawable,
 							  e->current.drawable_width,
 							  e->current.drawable_height,
-							  oo->current.x1,
-							  oo->current.y1,
-							  oo->current.x2,
-							  oo->current.y2,
+							  (oo->current.x1 * 
+							   (double)e->current.drawable_width) /
+							  e->current.viewport.w,
+							  (oo->current.y1 * 
+							   (double)e->current.drawable_height) /
+							  e->current.viewport.h,
+							  (oo->current.x2 * 
+							   (double)e->current.drawable_width) /
+							  e->current.viewport.w,
+							  (oo->current.y2 * 
+							   (double)e->current.drawable_height) /
+							  e->current.viewport.h,
 							  oo->current.r,
 							  oo->current.g,
 							  oo->current.b,
@@ -1077,10 +1098,18 @@ evas_render_updates(Evas e)
 								 e->current.drawable,
 								 e->current.drawable_width,
 								 e->current.drawable_height,
-								 o->current.x,
-								 o->current.y,
-								 o->current.w,
-								 o->current.h,
+								 (o->current.x * 
+								  (double)e->current.drawable_width) /
+								 e->current.viewport.w,
+								 (o->current.y * 
+								  (double)e->current.drawable_height) /
+								 e->current.viewport.h,
+								 (o->current.w * 
+								  (double)e->current.drawable_width) /
+								  e->current.viewport.w,
+								 (o->current.h * 
+								  (double)e->current.drawable_height) /
+								 e->current.viewport.h,
 								 oo->current.angle);
 					}
 				      break;
@@ -1091,16 +1120,38 @@ evas_render_updates(Evas e)
 					   oo = o;
 					   
 					   if (oo->current.points)
-					      func_poly_draw(e->current.display,
-							     e->current.image,
-							     e->current.drawable,
-							     e->current.drawable_width,
-							     e->current.drawable_height,
-							     oo->current.points,
-							     oo->current.r,
-							     oo->current.g,
-							     oo->current.b,
-							     oo->current.a);
+					     {
+						Evas_List points = NULL, pl;
+						
+						for (pl = oo->current.points; pl; pl = pl->next)
+						  {
+						     Evas_Point p1, p2;
+						     
+						     p1 = pl->data;
+						     p2 = malloc(sizeof(struct _Evas_Point));
+						     
+						     p2->x = (p1->x * 
+							      (double)e->current.drawable_width) /
+						       e->current.viewport.w,
+						     p2->y = (p1->y * 
+							      (double)e->current.drawable_height) /
+						       e->current.viewport.h,
+						     points = evas_list_append(points, p2);
+						  }
+						func_poly_draw(e->current.display,
+							       e->current.image,
+							       e->current.drawable,
+							       e->current.drawable_width,
+							       e->current.drawable_height,
+							       points,
+							       oo->current.r,
+							       oo->current.g,
+							       oo->current.b,
+							       oo->current.a);
+						for (pl = points; pl; pl = pl->next)
+						  free(pl->data);
+						evas_list_free(points);
+					     }
 					}
 				      break;
 				   default:

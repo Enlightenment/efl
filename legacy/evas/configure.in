@@ -1,6 +1,6 @@
 AC_INIT(src/Evas.h)
 AM_CONFIG_HEADER(config.h)
-AM_INIT_AUTOMAKE(evas, 0.0.4)
+AM_INIT_AUTOMAKE(evas, 0.0.5)
 AC_C_BIGENDIAN
 AC_PROG_CC
 AM_PROG_CC_STDC
@@ -183,7 +183,9 @@ if test "x$have_gl" = "xyes"; then
 else
   echo "WARNING:......."
   echo "no OpenGL libraries /  headers found. This means no GL support will be"
-  echo "built into Evas. This means much slower rendering perfromance."
+  echo "built into Evas. Ifapplications request 3D Hardware rendering from"
+  echo "evas, they will be forcibly moved back to using software alpha"
+  ehco "rendering."
   echo "Please read the config.log file for more information as to why this library"
   echo "was not found."
 fi

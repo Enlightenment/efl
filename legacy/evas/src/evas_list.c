@@ -15,14 +15,31 @@ evas_list_append(Evas_List list, void *data)
    new_l->next = NULL;
    new_l->prev = NULL;
    new_l->data = data;
-   if (!list) return new_l;
-   for (l = list; l; l = l->next)
+   if (!list) 
      {
-	if (!l->next)
+	new_l->last = new_l;
+	return new_l;
+     }
+   if (list->last)
+     {
+	l = list->last;
+	l->next = new_l;
+	new_l->prev = l;
+	list->last = new_l;
+	return list;	
+     }
+   else
+
+     {
+	for (l = list; l; l = l->next)
 	  {
-	     l->next = new_l;
-	     new_l->prev = l;
-	     return list;
+	     if (!l->next)
+	       {
+		  l->next = new_l;
+		  new_l->prev = l;
+		  list->last = new_l;
+		  return list;
+	       }
 	  }
      }
    return list;
@@ -37,9 +54,15 @@ evas_list_prepend(Evas_List list, void *data)
    new_l->next = NULL;
    new_l->prev = NULL;
    new_l->data = data;
-   if (!list) return new_l;
+   if (!list) 
+     {
+	new_l->last = new_l;	
+	return new_l;
+     }
    new_l->next = list;
    list->prev = new_l;
+   new_l->last = list->last;
+   list->last = NULL;
    return new_l;
 }
 
@@ -65,6 +88,8 @@ evas_list_append_relative(Evas_List list, void *data, void *relative)
 	       }
 	     l->next = new_l;
 	     new_l->prev = l;
+	     if (!new_l->next)
+	       list->last = new_l;
 	     return list;
 	  }
      }
@@ -92,9 +117,22 @@ evas_list_prepend_relative(Evas_List list, void *data, void *relative)
 		l->prev->next = new_l;
 	     l->prev = new_l;
 	     if (new_l->prev)
-		return list;
+	       {
+		  if (!new_l->next)
+		    list->last = new_l;
+		  return list;
+	       }
 	     else
-		return new_l;
+	       {
+		  if (!new_l->next)
+		    new_l->last = new_l;
+		  else
+		    {
+		       new_l->last = list->last;
+		       list->last = NULL;
+		    }
+		  return new_l;
+	       }
 	  }
      }
    return evas_list_prepend(list, data);
@@ -117,12 +155,43 @@ evas_list_remove(Evas_List list, void *data)
 		  return_l = list;
 	       }
 	     else
-		return_l = l->next;
+	       {
+		  return_l = l->next;
+		  if (return_l)
+		    return_l->last = list->last;
+	       }
+	     if (l == list->last)
+	       list->last = l->prev;
 	     free(l);
 	     return return_l;
 	  }
      }
    return list;
+}
+
+Evas_List
+evas_list_remove_list(Evas_List list, Evas_List remove_list)
+{
+   Evas_List return_l;
+   
+   if (!remove_list) return list;
+   if (remove_list->next)
+     remove_list->next->prev = remove_list->prev;
+   if (remove_list->prev)
+     {
+	remove_list->prev->next = remove_list->next;
+	return_l = list;
+     }
+   else
+     {
+	return_l = remove_list->next;
+	if (return_l)
+	  return_l->last = list->last;
+     }
+   if (remove_list == list->last)
+     list->last = remove_list->prev;
+   free(remove_list);
+   return return_l;
 }
 
 void *

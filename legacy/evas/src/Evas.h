@@ -17,6 +17,8 @@ struct _Evas_List
 {
    Evas_List  prev, next;
    void      *data;
+   /* private members - DONT TOUCH */
+   Evas_List  last;
 };
 
 /* enums */
@@ -235,6 +237,7 @@ Evas_List evas_list_prepend(Evas_List list, void *data);
 Evas_List evas_list_append_relative(Evas_List list, void *data, void *relative);
 Evas_List evas_list_prepend_relative(Evas_List list, void *data, void *relative);
 Evas_List evas_list_remove(Evas_List list, void *data);
+Evas_List evas_list_remove_list(Evas_List list, Evas_List remove_list);
 void * evas_list_find(Evas_List list, void *data);
 Evas_List evas_list_free(Evas_List list);
 	
