@@ -491,6 +491,17 @@ ecore_x_window_border_width_get(Ecore_X_Window win)
 }
 
 /**
+ * Sets the width of the border of the given window.
+ * @param   win The given window.
+ * @ingroup Ecore_X_Window_Geometry_Group
+ */
+void
+ecore_x_window_border_width_set(Ecore_X_Window win, int width)
+{
+   XSetWindowBorderWidth (_ecore_x_disp, win, width);
+}
+
+/**
  * Retrieves the depth of the given window.
  * @param  win The given window.
  * @return Depth of the window.
