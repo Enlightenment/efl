@@ -524,7 +524,7 @@ struct _Edje_Text_Style
    int num;
    struct {
       unsigned char color; /* 0 = color, 1, 2 = color2, color3 */
-      char          x, y; /* offset */
+      signed   char x, y; /* offset */
       unsigned char alpha;
    } members[32];
 };
