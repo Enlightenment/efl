@@ -11,8 +11,8 @@ Source: ftp://ftp.enlightenment.org/pub/evas/evas-%{version}_pre13.tar.gz
 Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
-#BuildSuggests: xorg-x11-devel
-BuildRequires: libpng-devel eet-devel edb-devel XFree86-devel freetype2-devel libjpeg-devel
+#BuildSuggests: xorg-x11-devel freetype2-devel
+BuildRequires: libpng-devel eet-devel edb-devel XFree86-devel freetype-devel libjpeg-devel
 Provides: evas evas_software_x11 evas_loader_png evas_loader_jpeg evas_loader_eet evas_loader_edb
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
