@@ -211,17 +211,29 @@ _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, double *x, double *y)
 void
 _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, double x, double y)
 {
-   if ((ep->part->dragable.x) || (ep->part->dragable.y))
+   double diff;
+
+   /* check whether this part is dragable at all */
+   if (!ep->part->dragable.x && !ep->part->dragable.y) return;
+
+   /* instead of checking for equality, we really should check that
+    * the difference is greater than foo, but I have no idea what
+    * value we would set foo to, because it would depend on the
+    * size of the dragable...
+    */
+   if (ep->drag.x != x)
      {
 	ep->drag.x = x;
-	ep->drag.y = y;
+	ed->dirty = 1;
      }
 
-   /* FIXME: is this right? shouldn't we only request a recalc if we
-    *        actually changed the values?
-    */
-   ed->dirty = 1;
-   _edje_recalc(ed);   
+   if (ep->drag.y != y)
+     {
+	ep->drag.y = y;
+	ed->dirty = 1;
+     }
+
+   _edje_recalc(ed); /* won't do anything if dirty flag isn't set */
 }
 
 static void
