@@ -83,7 +83,7 @@ evas_render(Evas e)
    void (*func_draw_add_rect) (Display *disp, Imlib_Image dstim, Window win, int x, int y, int w, int h);
    void * (*func_image_new_from_file) (Display *disp, char *file);   
    void (*func_image_set_borders) (void *im, int left, int right, int top, int bottom);
-   void (*func_image_draw) (void *im, Display *disp, Imlib_Image dstim, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h);   
+   void (*func_image_draw) (void *im, Display *disp, Imlib_Image dstim, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int cr, int cg, int cb, int ca);
    void (*func_image_free) (void *im);   
    void (*func_flush_draw) (Display *disp, Imlib_Image dstim, Window w);
    void (*func_init) (Display *disp, int screen);
@@ -226,7 +226,11 @@ evas_render(Evas e)
 				     (oo->current.fill.x != oo->previous.fill.x) ||
 				     (oo->current.fill.y != oo->previous.fill.y) ||
 				     (oo->current.fill.w != oo->previous.fill.w) ||
-				     (oo->current.fill.h != oo->previous.fill.h)
+				     (oo->current.fill.h != oo->previous.fill.h) ||
+				     (oo->current.color.r != oo->previous.color.r) ||
+				     (oo->current.color.g != oo->previous.color.g) ||
+				     (oo->current.color.b != oo->previous.color.b) ||
+				     (oo->current.color.a != oo->previous.color.a)
 				     )
 				    real_change = 1;
 				 oo->current.new_data = 0;
@@ -515,7 +519,11 @@ evas_render(Evas e)
 									  pointsx[xx].in1, pointsy[yy].in1, 
 									  pointsx[xx].in2, pointsy[yy].in2, 
 									  pointsx[xx].out1, pointsy[yy].out1, 
-									  pointsx[xx].out2, pointsy[yy].out2);
+									  pointsx[xx].out2, pointsy[yy].out2,
+									  oo->current.color.r,
+									  oo->current.color.g,
+									  oo->current.color.b,
+									  oo->current.color.a);
 						       }
 						  }
 						free(pointsx);

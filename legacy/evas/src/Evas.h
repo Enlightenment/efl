@@ -182,6 +182,9 @@ struct _Evas_Object_Image
       struct {
 	 int l, r, t, b;
       } border;
+      struct {
+	 int r, g, b, a;
+      } color;
    } current, previous;
 };
 
@@ -259,7 +262,7 @@ void evas_del_object(Evas e, Evas_Object o);
 
 /* adding objects */
 Evas_Object evas_add_image_from_file(Evas e, char *file);
-Evas_Object evas_add_image_from_data(Evas e, void *data, Evas_Image_Format format, int w, int h);
+/* ** ** not implimented yet ** ** */Evas_Object evas_add_image_from_data(Evas e, void *data, Evas_Image_Format format, int w, int h);
 Evas_Object evas_add_text(Evas e, char *font, int size, char *text);
 Evas_Object evas_add_rectangle(Evas e);
 Evas_Object evas_add_line(Evas e);
@@ -267,7 +270,7 @@ Evas_Object evas_add_gradient_box(Evas e);
 
 /* set object settings */
 void evas_set_image_file(Evas e, Evas_Object o, char *file);
-void evas_set_image_data(Evas e, Evas_Object o, void *data, Evas_Image_Format format, int w, int h);
+/* ** ** not implimented yet ** ** */void evas_set_image_data(Evas e, Evas_Object o, void *data, Evas_Image_Format format, int w, int h);
 void evas_set_image_fill(Evas e, Evas_Object o, double x, double y, double w, double h);
 void evas_set_image_border(Evas e, Evas_Object o, int l, int r, int t, int b);
 void evas_set_color(Evas e, Evas_Object o, int r, int g, int b, int a);
@@ -293,8 +296,8 @@ void evas_font_del_path(Evas e, char *path);
    
 /* layer stacking for object */
 void evas_set_layer(Evas e, Evas_Object o, int l);
-void evas_set_layer_store(Evas e, int l, int store);
-   
+/* ** ** not implimented yet ** ** */void evas_set_layer_store(Evas e, int l, int store);
+
 /* gradient creating / deletion / modification */
 Evas_Gradient evas_gradient_new(void);
 void evas_gradient_free(Evas_Gradient grad);
@@ -304,9 +307,9 @@ void evas_gradient_add_color(Evas_Gradient grad, int r, int g, int b, int a, int
 void evas_raise(Evas e, Evas_Object o);
 void evas_lower(Evas e, Evas_Object o);
 void evas_stack_above(Evas e, Evas_Object o, Evas_Object above);
-void evas_stack_below(Evas e, Evas_Object o, Evas_Object above);
+void evas_stack_below(Evas e, Evas_Object o, Evas_Object below);
 
-/* object geoemtry */
+/* object geometry */
 void evas_move(Evas e, Evas_Object o, double x, double y);
 void evas_resize(Evas e, Evas_Object o, double w, double h);
 void evas_get_geometry(Evas e, Evas_Object o, double *x, double *y, double *w, double *h);

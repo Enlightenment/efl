@@ -61,13 +61,34 @@ void
 __evas_imlib_image_draw(Evas_Imlib_Image *im, 
 			Display *disp, Imlib_Image dstim, Window w, int win_w, int win_h,
 			int src_x, int src_y, int src_w, int src_h,
-			int dst_x, int dst_y, int dst_w, int dst_h)
+			int dst_x, int dst_y, int dst_w, int dst_h,
+			int cr, int cg, int cb, int ca)
 {
    Evas_List l;
+   Imlib_Color_Modifier cm = NULL;
+
+   if (ca == 0) return;
+   if ((cr != 255) || (cg != 255) || (cb != 255) || (ca != 255))
+     {
+	DATA8 r[256], g[256], b[256], a[256];
+	int i;
+	
+	cm = imlib_create_color_modifier();
+	imlib_context_set_color_modifier(cm);
+	for (i = 0; i < 256; i++)
+	  {
+	     r[i] = (i * cr) / 255;
+	     g[i] = (i * cg) / 255;
+	     b[i] = (i * cb) / 255;
+	     a[i] = (i * ca) / 255;
+	  }
+	imlib_set_color_modifier_tables(r, g, b, a);
+     }
+   else
+      imlib_context_set_color_modifier(NULL);
    
    imlib_context_set_angle(0.0);
    imlib_context_set_operation(IMLIB_OP_COPY);
-   imlib_context_set_color_modifier(NULL);
    imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
    imlib_context_set_anti_alias(__evas_anti_alias);
    imlib_context_set_blend(1);
@@ -101,6 +122,8 @@ __evas_imlib_image_draw(Evas_Imlib_Image *im,
 	       }
 	  }
      }
+   if (cm)
+      imlib_context_set_color_modifier(NULL);
 }
 
 int

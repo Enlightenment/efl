@@ -151,7 +151,7 @@ int            __evas_gl_image_get_width(Evas_GL_Image *im);
 int            __evas_gl_image_get_height(Evas_GL_Image *im);
 void           __evas_gl_image_set_borders(Evas_GL_Image *im, int left, int right, int top, int bottom);
 void           __evas_gl_image_set_smooth_scaling(int on);
-void           __evas_gl_image_draw(Evas_GL_Image *im, Display *disp, Imlib_Image dstim, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h);
+void           __evas_gl_image_draw(Evas_GL_Image *im, Display *disp, Imlib_Image dstim, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int cr, int cg, int cb, int ca);
 
 /********/
 /* text */

@@ -398,6 +398,8 @@ evas_resize(Evas e, Evas_Object o, double w, double h)
 {
    int event_update = 0;
    
+   if ((o->type == OBJECT_LINE)) return;
+   if ((o->type == OBJECT_TEXT)) return;
    if ((o->current.visible) && 
        (_evas_point_in_object(e, o, e->mouse.x, e->mouse.y)))
       event_update = 1;

@@ -66,6 +66,10 @@ evas_add_image_from_file(Evas e, char *file)
    oo->current.fill.y = 0;
    oo->current.fill.w = (double)oo->current.image.w;
    oo->current.fill.h = (double)oo->current.image.h;
+   oo->current.color.r = 255;
+   oo->current.color.g = 255;
+   oo->current.color.b = 255;
+   oo->current.color.a = 255;
    o->current.x = 0;
    o->current.y = 0;
    o->current.w = (double)oo->current.image.w;

@@ -453,11 +453,13 @@ void
 __evas_gl_image_draw(Evas_GL_Image *im, 
 		     Display *disp, Imlib_Image dstim, Window w, int win_w, int win_h,
 		     int src_x, int src_y, int src_w, int src_h,
-		     int dst_x, int dst_y, int dst_w, int dst_h)
+		     int dst_x, int dst_y, int dst_w, int dst_h,
+		     int cr, int cg, int cb, int ca)
 {
    int x, y, i;   
    double dx, dy, dw, dh;
 
+   if (ca == 0) return;
    if ((src_w <= 0) || (src_h <= 0) || (dst_w <= 0) || (dst_h <= 0)) return;
    if (im->state != EVAS_STATE_TEXTURE)
       __evas_gl_image_move_state_data_to_texture(im);
@@ -504,8 +506,11 @@ __evas_gl_image_draw(Evas_GL_Image *im,
    im->buffer.dest_w = win_w;
    im->buffer.dest_h = win_h;
 
+   glColor4d(((double)cr) / 255.0,
+	     ((double)cg) / 255.0,
+	     ((double)cb) / 255.0,
+	     ((double)ca) / 255.0);
    /* project src and dst rects to overall dest rect */
-   glColor4f(1.0, 1.0, 1.0, 1.0);
    if ((im->direct) || 
        ((im->bl == 0) && (im->br == 0) && (im->bt == 0) && (im->bb == 0)))
      {
@@ -563,33 +568,33 @@ __evas_gl_image_draw(Evas_GL_Image *im,
 	  }
 	__evas_gl_image_draw(im, disp, dstim, w, win_w, win_h,
 			     0, 0, bl, bt,
-			     dx, dy, bl, bt);
+			     dx, dy, bl, bt, cr, cg, cb, ca);
 	__evas_gl_image_draw(im, disp, dstim, w, win_w, win_h,
 			     bl, 0, im->w - bl - br, bt,
-			     dx + bl, dy, dw - bl - br, bt);
+			     dx + bl, dy, dw - bl - br, bt, cr, cg, cb, ca);
 	__evas_gl_image_draw(im, disp, dstim, w, win_w, win_h,
 			     im->w - br, 0, br, bt,
-			     dx + dw - br, dy, br, bt);
+			     dx + dw - br, dy, br, bt, cr, cg, cb, ca);
 
 	__evas_gl_image_draw(im, disp, dstim, w, win_w, win_h,
 			     0, bt, bl, im->h - bt - bb,
-			     dx, dy + bt, bl, dh - bt - bb);
+			     dx, dy + bt, bl, dh - bt - bb, cr, cg, cb, ca);
 	__evas_gl_image_draw(im, disp, dstim, w, win_w, win_h,
 			     bl, bt, im->w - bl - br, im->h - bt - bb,
-			     dx + bl, dy + bt, dw - bl - br, dh - bt - bb);
+			     dx + bl, dy + bt, dw - bl - br, dh - bt - bb, cr, cg, cb, ca);
 	__evas_gl_image_draw(im, disp, dstim, w, win_w, win_h,
 			     im->w - br, bt, br, im->h - bt - bb,
-			     dx + dw - br, dy + bt, br, dh - bt - bb);
+			     dx + dw - br, dy + bt, br, dh - bt - bb, cr, cg, cb, ca);
 	
 	__evas_gl_image_draw(im, disp, dstim, w, win_w, win_h,
 			     0, im->h - bb, bl, bb,
-			     dx, dy + dh - bb, bl, bb);
+			     dx, dy + dh - bb, bl, bb, cr, cg, cb, ca);
 	__evas_gl_image_draw(im, disp, dstim, w, win_w, win_h,
 			     bl, im->h - bb, im->w - bl - br, bb,
-			     dx + bl, dy + dh - bb, dw - bl - br, bb);
+			     dx + bl, dy + dh - bb, dw - bl - br, bb, cr, cg, cb, ca);
 	__evas_gl_image_draw(im, disp, dstim, w, win_w, win_h,
 			     im->w - br, im->h - bb, br, bb,
-			     dx + dw - br, dy + dh - bb, br, bb);
+			     dx + dw - br, dy + dh - bb, br, bb, cr, cg, cb, ca);
 	im->direct = 0;
      }
 }

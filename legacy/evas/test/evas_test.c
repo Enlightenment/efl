@@ -163,7 +163,7 @@ main(int argc, char **argv)
    h /= 2;
    evas_show(e, o[1]);
    
-   for (i = 2 ; i < 10; i++)
+   for (i = 2 ; i < 120; i++)
      {
 	o[i] = evas_add_image_from_file(e, "img/mush.png");
 	evas_show(e, o[i]);
@@ -174,7 +174,6 @@ main(int argc, char **argv)
 	evas_callback_add(e, o[i], CALLBACK_MOUSE_IN, mouse_in, NULL);
 	evas_callback_add(e, o[i], CALLBACK_MOUSE_OUT, mouse_out, NULL);
      }
-/*   
    for (i = 120; i < 128; i++)
      {
 	o[i] = evas_add_text(e, "notepad", 16, imgs[i & 0x7]);
@@ -187,7 +186,6 @@ main(int argc, char **argv)
 	evas_callback_add(e, o[i], CALLBACK_MOUSE_IN, mouse_in, NULL);
 	evas_callback_add(e, o[i], CALLBACK_MOUSE_OUT, mouse_out, NULL);
      }
- */
    o_rect = evas_add_rectangle(e);
    evas_show(e, o_rect);
    evas_move(e, o_rect, 100, 100);
@@ -305,7 +303,7 @@ main(int argc, char **argv)
 	       }
 	  }
 /*	while (XPending(d));*/
-	for (i = 2; i < 10; i++)
+	for (i = 2; i < 128; i++)
 	  {
 	     int j, k;
 	     double ww, hh;
@@ -323,6 +321,8 @@ main(int argc, char **argv)
 		  hh = ww;
 		  evas_resize(e, o[i], ww, hh);
 		  evas_set_image_fill(e, o[i], 0, 0, ww, hh);
+		  evas_set_color(e, o[i], 255, 255, 255, 
+				 (((1.0 + cos((double)(a + j) * 2 * 3 * 3.141592654 / 1000)) / 2) * 255));
 	       }
 	  }
 	evas_set_angle(e, o_grad, (double)a * 360 / 1000);

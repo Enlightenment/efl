@@ -44,6 +44,19 @@ evas_set_color(Evas e, Evas_Object o, int r, int g, int b, int a)
 {
    switch (o->type)
      {
+     case OBJECT_IMAGE:
+	  {
+	     Evas_Object_Image oo;
+	     
+	     oo = (Evas_Object_Image)o;
+	     oo->current.color.r = r;
+	     oo->current.color.g = g;
+	     oo->current.color.b = b;
+	     oo->current.color.a = a;
+	  }
+	o->changed = 1;
+	e->changed = 1;
+	break;
      case OBJECT_TEXT:
 	  {
 	     Evas_Object_Text oo;
@@ -294,6 +307,7 @@ evas_flush_image_cache(Evas e)
 void
 evas_font_add_path(Evas e, char *path)
 {
+   evas_font_del_path(e, path);
    switch (e->current.render_method)
      {
      case RENDER_METHOD_ALPHA_SOFTWARE:
