@@ -603,11 +603,16 @@ compile(void)
 {
    int fd;
    off_t size;
-   char *data;
+   char *data, *p;
    char buf[4096];
+   char inc[4096];
    static char tmpn[4096];
    
    strcpy(tmpn, "/tmp/edje_cc.edc-tmp-XXXXXX");
+   strncpy(inc, file_in, 4000); inc[4001] = 0;
+   p = strrchr(inc, '/');
+   if (!p) strcpy(inc, "./");
+   else *p = 0;
    fd = mkstemp(tmpn);
    if (fd >= 0)
      {
@@ -637,11 +642,11 @@ compile(void)
 		  strcat(def, " ");
 	       }
 	  }
-	snprintf(buf, sizeof(buf), "cat %s | /usr/bin/cpp %s -E -o %s", file_in, def, tmpn);
+	snprintf(buf, sizeof(buf), "cat %s | /usr/bin/cpp -I%s %s -E -o %s", inc, file_in, def, tmpn);
 	ret = system(buf);
 	if (ret < 0)
 	  {
-	     snprintf(buf, sizeof(buf), "/usr/bin/gcc %s -E -o %s %s", def, tmpn, file_in);
+	     snprintf(buf, sizeof(buf), "/usr/bin/gcc -I%s %s -E -o %s %s", inc, def, tmpn, file_in);
 	     ret = system(buf);
 	  }
 	if (ret >= 0) file_in = tmpn;
