@@ -1,8 +1,12 @@
 #include "Ecore_Config.h"
+#include "Ecore.h"
 
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+#include <sys/types.h>
+#include <sys/stat.h>
 
 char               *__ecore_config_app_description;
 
@@ -286,6 +290,124 @@ ecore_config_evas_font_path_apply(Evas * evas)
    free(font_path);
 
    return ECORE_CONFIG_ERR_SUCC;
+}
+
+static char        *
+ecore_config_theme_default_path_get(void)
+{
+   char               *path, *home;
+   int                 len;
+
+   home = getenv("HOME");
+   len = strlen("/usr/local/share/") + strlen(__ecore_config_app_name) +
+            strlen("/themes/") + 1;
+   if (home)
+      len += strlen(home) + strlen("/.e/apps/") +
+		strlen(__ecore_config_app_name) +
+		strlen("/themes/|"); /* no \0, as that is above */
+
+   if (!(path = malloc(len)))
+      return NULL;
+
+   *path = '\0';
+   if (home)
+     {
+        strcat(path, home);
+        strcat(path, "/.e/apps/");
+        strcat(path, __ecore_config_app_name);
+        strcat(path, "/themes/|");
+     }
+   strcat(path, "/usr/local/share/");
+   strcat(path, __ecore_config_app_name);
+   strcat(path, "/themes/");
+
+   return path;
+}
+
+/**
+ * Returns the search path used to find themes. This is specified by a user in the
+ * property "/e/themes/search_path". If the property is not set the path defaults to
+ * "/usr/local/share/<app_name>/themes/|~/.e/apps/<app_name>/themes".
+ * Note: This should be called after ecore_config_load() to allow a users overriding
+ * search path to be read.
+ * @return The search path, or NULL if there is no memory left.
+ */
+char               *
+ecore_config_theme_search_path_get(void)
+{
+   char               *search_path;
+   search_path = ecore_config_string_get("/e/themes/search_path");
+
+   if (!search_path)
+     {
+        search_path = ecore_config_theme_default_path_get();
+        ecore_config_string_default("/e/themes/search_path", search_path);
+     }
+   return search_path;
+}
+
+/**
+ * Get a theme files full path, as it is found according to the search path.
+ * The theme searched for is @name (e.g. "winter").
+ * The search path is defined by ecore_config_theme_search_path_get().
+ * @param  name The theme name to search for.
+ * @return A full path to the theme on sucess, or NULL on failure (no key specified or
+ *         no theme matching that name could be found).
+ */
+char               *
+ecore_config_theme_with_path_from_name_get(char *name)
+{
+   char               *search_path, *search_path_tmp, *ptr, *end, *file;
+   struct stat         st;
+
+   if (!name)
+      return NULL; /* no theme specified (nor a default) */
+
+   search_path = ecore_config_theme_search_path_get();
+   ptr = search_path;
+   end = search_path + strlen(search_path);
+   search_path_tmp = search_path;
+   while (ptr && ptr < end)
+     {
+        while (*ptr != '|' && ptr < end)
+           ptr++;
+        if (ptr < end)
+           *ptr = '\0';
+
+        file = malloc(strlen(search_path_tmp) + strlen(name) + 6);
+           /* 6 = / + .eet + \0 */
+        strcpy(file, search_path_tmp);
+        strcat(file, "/");
+        strcat(file, name);
+        strcat(file, ".eet");
+        if (stat(file, &st) == 0)
+          {
+              free(search_path);
+              return file;
+          }
+        free(file);
+        ptr++;
+        search_path_tmp = ptr;
+     }
+
+   free(search_path);
+
+   return NULL; /* we could not find the theme with that name in search path */
+}
+
+/**
+ * Get a theme files full path, as it is found according to the search path.
+ * The theme searched for is stored in the property @key.
+ * The search path is defined by ecore_config_theme_search_path_get().
+ * @param  key The property containing the theme name to search for.
+ * @return A full path to the theme on sucess, or NULL on failure (no key specified or
+ *         no theme matching that name could be found).
+ */
+char               *
+ecore_config_theme_with_path_get(const char *key)
+{
+   return
+      ecore_config_theme_with_path_from_name_get(ecore_config_theme_get(key));
 }
 
 static char        *_ecore_config_short_types[] =
