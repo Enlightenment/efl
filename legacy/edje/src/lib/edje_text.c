@@ -295,7 +295,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    Evas_Coord  tw, th;
    Evas_Coord  ox, oy, sw, sh;
    char    *buf = NULL;
-   char     buf2[4096];
+   char     font_buf[4096];
    int      inlined_font = 0;
    
 
@@ -331,9 +331,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	     
 	     if ((fnt->entry) && (!strcmp(fnt->entry, font)))
 	       {
-		  strcpy(buf2, "fonts/");
-		  strcat(buf2, font);
-		  font = buf2;
+		  snprintf(font_buf, sizeof(font_buf), "fonts/%s", font);
+		  font = font_buf;
 		  inlined_font = 1;
 		  break;
 	       }
