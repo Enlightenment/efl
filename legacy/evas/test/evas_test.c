@@ -27,7 +27,7 @@ main(int argc, char **argv)
    vis = __evas_gl_get_visual(d, DefaultScreen(d));
    cmap = __evas_gl_get_colormap(d, DefaultScreen(d));
    
-   win_w = 640; win_h = 480;
+   win_w = 1280; win_h = 1024;
      {
 	XSetWindowAttributes att;
 	
