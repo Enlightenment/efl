@@ -5,7 +5,7 @@
 dnl AM_PATH_ECORE([MINIMUM-VERSION, [ACTION-IF-FOUND [, ACTION-IF-NOT-FOUND [, MODULES]]]])
 dnl Test for Ecore, and define ECORE_CFLAGS and ECORE_LIBS
 dnl
-AC_DEFUN(AM_PATH_ECORE,
+AC_DEFUN([AM_PATH_ECORE],
 [dnl 
 dnl Get the cflags and libraries from the ecore-config script
 dnl
