@@ -65,6 +65,8 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_bindir}/edje
 %{_bindir}/edje_cc
 %{_bindir}/edje_ls
+%{_bindir}/edje_decc
+%{_bindir}/edje_recc
 %{_datadir}/edje
 
 %files devel
