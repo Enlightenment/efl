@@ -440,7 +440,24 @@ data_write(void)
 				 fprintf(f, " \n");
 				 ln++;
 			      }
-			    fprintf(f, "%s\n", cd->shared);
+			      {
+				 char *sp;
+				 int hash = 0;
+				 int newlined = 0;
+				 
+				 for (sp = cd->shared; *sp; sp++)
+				   {
+				      if ((sp[0] == '#') && (newlined))
+					{
+					   hash = 1;
+					}
+				      newlined = 0;
+				      if (sp[0] == '\n') newlined = 1;
+				      if (!hash) fputc(sp[0], f);
+				      else if (sp[0] == '\n') hash = 0;
+				   }
+				 fputc('\n', f);
+			      }
 			    ln += cd->l2 - cd->l1 + 1;
 			 }
 		       for (ll = cd->programs; ll; ll = ll->next)
@@ -458,7 +475,23 @@ data_write(void)
 				 /* FIXME: this prototype needs to be */
 				 /* formalised and set in stone */
 				 fprintf(f, "public _p%i(sig[], src[]) {", cp->id);
-				 fprintf(f, "%s", cp->script);
+				   {
+				      char *sp;
+				      int hash = 0;
+				      int newlined = 0;
+				      
+				      for (sp = cp->script; *sp; sp++)
+					{
+					   if ((sp[0] == '#') && (newlined))
+					     {
+						hash = 1;
+					     }
+					   newlined = 0;
+					   if (sp[0] == '\n') newlined = 1;
+					   if (!hash) fputc(sp[0], f);
+					   else if (sp[0] == '\n') hash = 0;
+					}
+				   }
 				 fprintf(f, "}");
 				 ln += cp->l2 - cp->l1 + 1;
 			      }
