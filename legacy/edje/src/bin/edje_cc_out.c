@@ -90,6 +90,8 @@ data_write(void)
    int bytes;
    int input_bytes;
    int total_bytes;
+   int src_bytes;
+   int fmap_bytes;
    int input_raw_bytes;
    int image_num;
    int font_num;
@@ -99,6 +101,8 @@ data_write(void)
    bytes = 0;
    input_bytes = 0;
    total_bytes = 0;
+   src_bytes = 0;
+   fmap_bytes = 0;
    input_raw_bytes = 0;
    image_num = 0;
    font_num = 0;
@@ -549,6 +553,10 @@ data_write(void)
 	       }
 	  }
      }
+   src_bytes = source_append(ef);
+   total_bytes += src_bytes;
+   fmap_bytes = source_fontmap_save(ef, fonts);
+   total_bytes += fmap_bytes;
    eet_close(ef);
    if (verbose)
      {
@@ -562,6 +570,8 @@ data_write(void)
 	       "  Wrote %i collections\n"
 	       "  Wrote %i images\n"
 	       "  Wrote %i fonts\n"
+	       "  Wrote %i bytes (%iKb) of original source data\n"
+	       "  Wrote %i bytes (%iKb) of original source font map\n"
 	       "Conservative compression summary:\n"
 	       "  Wrote total %i bytes (%iKb) from %i (%iKb) input data\n"
 	       "  Output file is %3.1f%% the size of the input data\n"
@@ -574,6 +584,8 @@ data_write(void)
 	       collection_num,
 	       image_num,
 	       font_num,
+	       src_bytes, (src_bytes + 512) / 1024,
+	       fmap_bytes, (fmap_bytes + 512) / 1024,
 	       total_bytes, (total_bytes + 512) / 1024,
 	       input_bytes, (input_bytes + 512) / 1024,
 	       (100.0 * (double)total_bytes) / (double)input_bytes,

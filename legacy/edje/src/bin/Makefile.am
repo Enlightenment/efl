@@ -12,10 +12,12 @@ INCLUDES = \
 bin_PROGRAMS = \
 edje \
 edje_ls \
-@EDJE_CC_PRG@
+@EDJE_CC_PRG@ \
+@EDJE_DECC_PRG@
 
 EXTRA_PROGRAMS = \
-edje_cc
+edje_cc \
+edje_decc
 
 edje_SOURCES = \
 edje_main.c \
@@ -38,7 +40,8 @@ edje_cc.h \
 edje_cc_out.c \
 edje_cc_parse.c \
 edje_cc_mem.c \
-edje_cc_handlers.c
+edje_cc_handlers.c \
+edje_cc_sources.c
 
 edje_cc_LDADD = \
 $(top_builddir)/src/lib/libedje.la \
@@ -49,6 +52,24 @@ edje_cc_CPPFLAGS = @edje_def@
 edje_cc_LDFLAGS =
 
 edje_cc_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
+
+
+edje_decc_SOURCES = \
+edje_decc.c \
+edje_decc.h \
+edje_cc_mem.c \
+edje_cc_sources.c
+
+edje_decc_LDADD = \
+$(top_builddir)/src/lib/libedje.la \
+@imlib2_libs@
+
+edje_decc_CPPFLAGS = @edje_def@
+
+edje_decc_LDFLAGS =
+
+edje_decc_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
+
 
 
 edje_ls_SOURCES = \

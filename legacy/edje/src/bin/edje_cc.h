@@ -25,9 +25,12 @@
 /* types */
 typedef struct _New_Object_Handler    New_Object_Handler;
 typedef struct _New_Statement_Handler New_Statement_Handler;
+typedef struct _Font_List             Font_List;
 typedef struct _Font                  Font;
 typedef struct _Code                  Code;
 typedef struct _Code_Program          Code_Program;
+typedef struct _SrcFile               SrcFile;
+typedef struct _SrcFile_List          SrcFile_List;
 
 struct _New_Object_Handler
 {
@@ -39,6 +42,11 @@ struct _New_Statement_Handler
 {
    char *type;
    void (*func)(void);
+};
+
+struct _Font_List
+{
+   Evas_List *list;
 };
 
 struct _Font
@@ -59,6 +67,17 @@ struct _Code_Program
    int        l1, l2;
    int        id;
    char      *script;
+};
+
+struct _SrcFile
+{
+   char *name;
+   char *file;
+};
+
+struct _SrcFile_List
+{
+   Evas_List *list;
 };
 
 /* global fn calls */
@@ -91,6 +110,13 @@ double  parse_float_range(int n, double f, double t);
 int     object_handler_num(void);
 int     statement_handler_num(void);
 
+void    source_edd(void);
+void    source_fetch(void);
+int     source_append(Eet_File *ef);
+SrcFile_List *source_load(Eet_File *ef);
+int     source_fontmap_save(Eet_File *ef, Evas_List *fonts);
+Font_List *source_fontmap_load(Eet_File *ef);
+    
 void   *mem_alloc(size_t size);
 char   *mem_strdup(const char *s);
 #define SZ sizeof
