@@ -4,7 +4,7 @@ A graphical layout and animation library for animated resizable, compressed and
 scalable themes.
 
 It's current under development and isn't complete. See src/lib/edje_private.h
-for a list of FIXME's to do.
+for a list of FIXME's to do. Hopefully it will be complete in a few weeks.
 
 Quick start-up guide:
 
