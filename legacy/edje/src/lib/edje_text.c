@@ -235,8 +235,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    char   *text;
    char   *font;
    int     size;
-   double  tw, th;
-   double  ox, oy, sw, sh;
+   Evas_Coord  tw, th;
+   Evas_Coord  ox, oy, sw, sh;
    char    *buf = NULL;
 
    text = chosen_desc->text.text;
@@ -319,12 +319,10 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	if (th < sh)
 	  {
 	     int dif;
-	     double change;
 	     
 	     dif = (th - sh) / 4;
 	     if (dif < 1) dif = 1;
-	     change = 0;
-	     while ((th < sh) && (sw > 0.0))
+	     while ((th < sh) && (sw > 0))
 	       {
 		  size += dif;
 		  evas_object_text_font_set(ep->object, font, size);
@@ -351,7 +349,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    if (size < 1) size = 1;
    if (!chosen_desc->text.fit_x)
      {
-	double p;
+	Evas_Coord p;
 	int    c1, c2;
 	int    loop;
 	int    orig_len;

@@ -12,7 +12,7 @@ struct _Demo_Edje
    Evas_Object *title;
    Evas_Object *title_clip;
    Evas_Object *image;
-   double       minw, minh;
+   Evas_Coord       minw, minh;
    int          hdir;
    int          vdir;
    char         down_top : 1;
@@ -25,7 +25,7 @@ struct _Collection
 {
    char         header : 1;
    char         clicked : 1;
-   double       maxw;
+   Evas_Coord       maxw;
    char        *file;
    char        *part;
    Evas_Object *text;
@@ -42,7 +42,7 @@ static void main_pre_rend(Ecore_Evas *ee);
 static void main_post_rend(Ecore_Evas *ee);
 
 void        bg_setup(void);
-void        bg_resize(double w, double h);
+void        bg_resize(Evas_Coord w, Evas_Coord h);
 static void bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_info);
 
 void        test_list_move(Collection *co_head);
@@ -134,7 +134,7 @@ main_stop(void)
 static void
 main_resize(Ecore_Evas *ee)
 {
-   double w, h;
+   Evas_Coord w, h;
    
    evas_output_viewport_get(evas, NULL, NULL, &w, &h);
    bg_resize(w, h);
@@ -197,7 +197,7 @@ bg_setup(void)
 }
 
 void
-bg_resize(double w, double h)
+bg_resize(Evas_Coord w, Evas_Coord h)
 {
    evas_object_resize(o_bg, w, h);
    evas_object_resize(o_shadow, w, h);
@@ -294,7 +294,7 @@ top_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    ev = event_info;
    if (de->down_top)
      {
-	double x, y;
+	Evas_Coord x, y;
 	
 	evas_object_geometry_get(de->left, &x, &y, NULL, NULL);
 	evas_object_move(de->left, 
@@ -336,7 +336,7 @@ bottom_down_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Demo_Edje *de;
    Evas_Event_Mouse_Down *ev;
-   double x, y, w, h;
+   Evas_Coord x, y, w, h;
    int hdir, vdir;
    
    de = data;
@@ -374,8 +374,8 @@ bottom_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
    ev = event_info;
    if (de->down_bottom)
      {
-	double x, y, w, h, tw, th;
-	double minw, minh;
+	Evas_Coord x, y, w, h, tw, th;
+	Evas_Coord minw, minh;
 	int hdir, vdir;
 	
 	evas_object_geometry_get(de->edje, &x, &y, &w, &h);
@@ -467,7 +467,7 @@ static void
 list_head_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 {
    Collection *co;
-   double x, y;
+   Evas_Coord x, y;
    Evas_Event_Mouse_Move *ev;
    
    co = data;
@@ -486,7 +486,7 @@ cb (void *data, Evas_Object *o, const char *sig, const char *src)
    printf("CALLBACK for %p %p \"%s\" \"%s\"\n", data, o, sig, src);
    if (!strcmp(sig, "drag"))
      {
-	double x, y;
+	Evas_Coord x, y;
 	
 	edje_object_part_drag_value_get(o, src, &x, &y);
 	printf("Drag %3.3f %3.3f\n", x, y);
@@ -497,13 +497,13 @@ void
 test_list_move(Collection *co_head)
 {
    Evas_List *l;
-   double x, y;
+   Evas_Coord x, y;
    
    evas_object_geometry_get(co_head->bg, &x, &y, NULL, NULL);
    for (l = co_head->entries; l; l = l->next)
      {
 	Collection *co;
-	double w, h;
+	Evas_Coord w, h;
 	
 	co = l->data;
 	evas_object_geometry_get(co->text, NULL, NULL, &w, &h);
@@ -521,7 +521,7 @@ void
 test_list(char *file)
 {
    Evas_List *entries;
-   double maxw = 128;
+   Evas_Coord maxw = 128;
    Collection *co_head;
    Evas_List *collections = NULL;
 
@@ -531,7 +531,7 @@ test_list(char *file)
      {
 	Collection *co;
 	Evas_Object *o;
-	double w, h;
+	Evas_Coord w, h;
 	char buf[1024];
 	
 	co = calloc(1, sizeof(Collection));
@@ -564,14 +564,14 @@ test_list(char *file)
    if (entries)
      {
 	Evas_List *l;
-	double x = 0, y = 0;
+	Evas_Coord x = 0, y = 0;
 	
 	for (l = entries; l; l = l->next)
 	  {
 	     char *name;
 	     Collection *co;
 	     Evas_Object *o;
-	     double w, h;
+	     Evas_Coord w, h;
 	     
 	     name = l->data;
 	     co = calloc(1, sizeof(Collection));
@@ -608,8 +608,8 @@ test_list(char *file)
 void
 test_resize(Demo_Edje *de)
 {
-   double x, y, w, h, tw, th;
-   double minw, minh;
+   Evas_Coord x, y, w, h, tw, th;
+   Evas_Coord minw, minh;
    
    evas_object_geometry_get(de->edje, &x, &y, &w, &h);
    x -= 10;
@@ -643,8 +643,8 @@ test_setup(char *file, char *name)
    Evas_Object *o;
    Demo_Edje *de;
    char buf[1024];
-   double tw, th, w, h;
-   double xx, yy, ww, hh;
+   Evas_Coord tw, th, w, h;
+   Evas_Coord xx, yy, ww, hh;
    
    xx = 10;
    yy = 10;

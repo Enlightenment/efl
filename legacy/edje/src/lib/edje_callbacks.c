@@ -141,7 +141,7 @@ _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    if (!rp) return;
    if (rp->still_in)
      {
-	double x, y, w, h;
+	Evas_Coord x, y, w, h;
 	
 	evas_object_geometry_get(obj, &x, &y, &w, &h);
 	if ((ev->cur.canvas.x < x) || (ev->cur.canvas.y < y) || 
@@ -150,7 +150,7 @@ _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
      }
    else
      {
-	double x, y, w, h;
+	Evas_Coord x, y, w, h;
 	
 	evas_object_geometry_get(obj, &x, &y, &w, &h);
 	if ((ev->cur.canvas.x >= x) && (ev->cur.canvas.y >= y) && 

@@ -599,7 +599,12 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
    double pos = 0.0;
    
    if (ep->calculated) return;
-   if (ep->calculating) return;
+   if (ep->calculating)
+     {
+	printf("EDJE ERROR: circular dependancy when calculating part \"%s\"\n",
+	       ep->part->name);
+	return;
+     }
    ep->calculating = 1;
    if (ep->param1.rel1_to_x)  _edje_part_recalc(ed, ep->param1.rel1_to_x);
    if (ep->param1.rel1_to_y)  _edje_part_recalc(ed, ep->param1.rel1_to_y);

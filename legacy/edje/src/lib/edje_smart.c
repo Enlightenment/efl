@@ -8,8 +8,8 @@ static void _edje_smart_raise(Evas_Object * obj);
 static void _edje_smart_lower(Evas_Object * obj);
 static void _edje_smart_stack_above(Evas_Object * obj, Evas_Object * above);
 static void _edje_smart_stack_below(Evas_Object * obj, Evas_Object * below);
-static void _edje_smart_move(Evas_Object * obj, double x, double y);
-static void _edje_smart_resize(Evas_Object * obj, double w, double h);
+static void _edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y);
+static void _edje_smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h);
 static void _edje_smart_show(Evas_Object * obj);
 static void _edje_smart_hide(Evas_Object * obj);
 static void _edje_smart_color_set(Evas_Object * obj, int r, int g, int b, int a);
@@ -237,11 +237,11 @@ _edje_smart_stack_below(Evas_Object * obj, Evas_Object * below)
 }
 
 static void 
-_edje_smart_move(Evas_Object * obj, double x, double y)
+_edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
 {
    Edje *ed;
    Evas_List *l;
-   double xx, yy;
+   Evas_Coord xx, yy;
    
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
@@ -253,7 +253,7 @@ _edje_smart_move(Evas_Object * obj, double x, double y)
    for (l = ed->parts; l; l = l->next)
      {
 	Edje_Real_Part *ep;
-	double ox, oy;
+	Evas_Coord ox, oy;
 	
 	ep = l->data;
 	evas_object_geometry_get(ep->object, &ox, &oy, NULL, NULL);
@@ -270,7 +270,7 @@ _edje_smart_move(Evas_Object * obj, double x, double y)
 	     for (el = ep->extra_objects; el; el = el->next)
 	       {
 		  Evas_Object *o;
-		  double oox, ooy;
+		  Evas_Coord oox, ooy;
 		  
 		  o = el->data;
 		  evas_object_geometry_get(o, &oox, &ooy, NULL, NULL);
@@ -282,7 +282,7 @@ _edje_smart_move(Evas_Object * obj, double x, double y)
 }
 
 static void 
-_edje_smart_resize(Evas_Object * obj, double w, double h)
+_edje_smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h)
 {
    Edje *ed;
 

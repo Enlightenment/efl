@@ -130,7 +130,7 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
 }
 
 void
-edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char *font, double size)
+edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char *font, Evas_Font_Size size)
 {
    Edje *ed;
    Evas_List *l;
@@ -189,7 +189,7 @@ edje_object_part_exists(Evas_Object *obj, const char *part)
 }
 
 void
-edje_object_part_geometry_get(Evas_Object *obj, const char *part, double *x, double *y, double *w, double *h )
+edje_object_part_geometry_get(Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h )
 {
    Evas_List *l;
    Edje *ed;
@@ -295,7 +295,7 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
    rp->swallow_params.max.h = -1;
    if ((type) && (!strcmp(type, "edje")))
      {
-	double w, h;
+	Evas_Coord w, h;
 	
 	edje_object_size_min_get(obj_swallow, &w, &h);
 	rp->swallow_params.min.w = w;
@@ -308,7 +308,7 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
 		       (!strcmp(type, "polygon")) ||
 		       (!strcmp(type, "line"))))
      {
-	double w, h;
+	Evas_Coord w, h;
 	
 	evas_object_geometry_get(obj_swallow, NULL, NULL, &w, &h);
 	rp->swallow_params.min.w = w;
@@ -333,7 +333,7 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
 }
 
 void
-edje_extern_object_min_size_set(Evas_Object *obj, double minw, double minh)
+edje_extern_object_min_size_set(Evas_Object *obj, Evas_Coord minw, Evas_Coord minh)
 {
    int mw, mh;
    
@@ -352,7 +352,7 @@ edje_extern_object_min_size_set(Evas_Object *obj, double minw, double minh)
 }
 
 void
-edje_extern_object_max_size_set(Evas_Object *obj, double maxw, double maxh)
+edje_extern_object_max_size_set(Evas_Object *obj, Evas_Coord maxw, Evas_Coord maxh)
 {
    int mw, mh;
    
@@ -411,7 +411,7 @@ edje_object_part_swallow_get(Evas_Object *obj, const char *part)
 }
 
 void
-edje_object_size_min_get(Evas_Object *obj, double *minw, double *minh)
+edje_object_size_min_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 {
    Edje *ed;
    
@@ -427,7 +427,7 @@ edje_object_size_min_get(Evas_Object *obj, double *minw, double *minh)
 }
 
 void
-edje_object_size_max_get(Evas_Object *obj, double *maxw, double *maxh)
+edje_object_size_max_get(Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh)
 {
    Edje *ed;
    
@@ -457,10 +457,10 @@ edje_object_size_max_get(Evas_Object *obj, double *maxw, double *maxh)
 }
 
 void
-edje_object_size_min_calc(Evas_Object *obj, double *minw, double *minh)
+edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 {
    Edje *ed;
-   double pw, ph;   
+   Evas_Coord pw, ph;   
    int maxw, maxh;
    int ok;
    
