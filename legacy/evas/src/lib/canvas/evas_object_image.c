@@ -998,6 +998,7 @@ evas_object_image_figure_x_fill(Evas_Object *obj, Evas_Coord start, Evas_Coord s
 
    w = ((size * obj->layer->evas->output.w) / 
 	(Evas_Coord)obj->layer->evas->viewport.w);
+   if (size <= 0) size = 1;
    if (start > 0)
      {
 	while (start - size > 0) start -= size;
@@ -1019,6 +1020,7 @@ evas_object_image_figure_y_fill(Evas_Object *obj, Evas_Coord start, Evas_Coord s
 
    h = ((size * obj->layer->evas->output.h) / 
 	(Evas_Coord)obj->layer->evas->viewport.h);
+   if (size <= 0) size = 1;
    if (start > 0)
      {
 	while (start - size > 0) start -= size;

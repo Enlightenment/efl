@@ -59,7 +59,7 @@ typedef struct _Evas_Intercept_Func_Int     Evas_Intercept_Func_Int;
 typedef struct _Evas_Key_Grab               Evas_Key_Grab;
 typedef struct _Evas_Callbacks              Evas_Callbacks;
 typedef struct _Evas_Smart_Class            Evas_Smart_Class;
-#if 1 /* able to change co-ordinate systems to remove all fp ops */
+#if 0 /* able to change co-ordinate systems to remove all fp ops */
 typedef double                              Evas_Coord;
 typedef double                              Evas_Font_Size;
 typedef double                              Evas_Angle;

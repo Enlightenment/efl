@@ -38,7 +38,7 @@ typedef struct _Evas_Lock Evas_Lock; /**< An Evas Lock */
 typedef struct _Evas_Smart Evas_Smart; /**< An Evas Smart Object handle */
 typedef unsigned long long Evas_Modifier_Mask; /**< An Evas modifier mask type */
 
-#if 1 /* able to change co-ordinate systems to remove all fp ops */
+#if 0 /* able to change co-ordinate systems to remove all fp ops */
 typedef double Evas_Coord; /**< A unit in canvas space. Normally a double, but may vary on platforms */
 typedef double Evas_Font_Size; /**< Units to descript font sizes. Normally a double, but may vary on platforms */
 typedef double Evas_Angle; /**< A unit to measure angles (in degrees). Normally a double, but may vary on platforms */
