@@ -316,7 +316,11 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
    sprintf(buf, "%llx", timestamp);
    l3 = strlen(buf);
    str = malloc(l1 + 3 + l2 + 3 + l3 +1);
-   if (!str) return NULL;
+   if (!str)
+     {
+	if (real_filename) free(real_filename);
+	return NULL;
+     }
    str[0] = 0;
    if (filename) strcpy(str, filename);
    strcat(str, "/:/");
@@ -325,7 +329,11 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
    strcat(str, buf);   
    im = evas_hash_find(images, str);
    free(str);
-   if (im) return im;
+   if (im)
+     {
+	if (real_filename) free(real_filename);
+	return im;
+     }
    
    for (l = cache; l; l = l->next)
      {
@@ -354,8 +362,13 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
 	  ok++;
 	if (im->timestamp == timestamp)
 	  ok++;	
-	if (ok >= 3) return im;
+	if (ok >= 3)
+	  {
+	     if (real_filename) free(real_filename);
+	     return im;
+	  }
      }
+   if (real_filename) free(real_filename);
    return NULL;
 }
 
