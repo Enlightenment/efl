@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include "Edje.h"
 #include "edje_private.h"
 
@@ -235,8 +239,8 @@ _edje_text_part_on_del(Edje *ed, Edje_Part *pt)
    if ((pt->default_desc) && (pt->default_desc->text.text_class))
      {
         _edje_text_class_member_del(ed, pt->default_desc->text.text_class);
-	free(pt->default_desc->text.text_class);
-	pt->default_desc->text.text_class = NULL;
+		free(pt->default_desc->text.text_class);
+		pt->default_desc->text.text_class = NULL;
      }
 
    if (pt->default_desc && pt->default_desc->color_class)
@@ -265,7 +269,6 @@ _edje_text_part_on_del(Edje *ed, Edje_Part *pt)
 		  desc->color_class = NULL;
 	   }
      }
-   return;
 }
 
 void
@@ -279,7 +282,6 @@ _edje_text_real_part_on_del(Edje *ed, Edje_Real_Part *ep)
 	ep->extra_objects = evas_list_remove(ep->extra_objects, o);
 	evas_object_del(o);
      }
-   return;
 }
 
 void
