@@ -1239,13 +1239,23 @@ _edje_embryo_test_run(Edje *ed, char *fname, char *sig, char *src)
    if (fn != EMBRYO_FUNCTION_NONE)
      {
 	void *pdata;
+	int err;
 	
 	printf("EDJE DEBUG: About to run script from program.\n");
 	embryo_parameter_string_push(ed->collection->script, sig);
 	embryo_parameter_string_push(ed->collection->script, src);
 	pdata = embryo_program_data_get(ed->collection->script);
 	embryo_program_data_set(ed->collection->script, ed);
-	embryo_program_run(ed->collection->script, fn);
+	err = embryo_program_run(ed->collection->script, fn);
+	
+	if (err != EMBRYO_ERROR_NONE)
+	  {
+	     printf("EDJE: ERROR with embryo script.\n"
+		    "FUNCTION: %s\n"
+		    "ERROR:    %s\n",
+		    fname,
+		    embryo_error_string_get(err));
+	  }
 	embryo_program_data_set(ed->collection->script, pdata);
 	printf("EDJE DEBUG: Done.\n");
      }

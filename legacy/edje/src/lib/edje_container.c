@@ -2,6 +2,172 @@
 #include "edje_private.h"
 #include "edje_container.h"
 
+static void
+_edje_container_relayout(Smart_Data *sd)
+{
+   Evas_List *l;
+   Evas_Coord x, y, w, h, sw, sh;
+   
+   if (sd->freeze > 0) return;
+   if (!sd->need_layout) return;
+   
+   if (sd->w < sd->min_w) sw = sd->min_w;
+   else if (sd->w > sd->max_w) sw = sd->max_w;
+   else sw = sd->w;
+   
+   y = 0;
+   x = 0;
+   w = 0;
+   h = 0;
+   
+   for (l = sd->children; l; l = l->next)
+     {
+	Edje_Item *ei;
+	
+	ei = l->data;
+	if (sd->homogenous) h = sd->min_row_h;
+	
+	ei->y = y;
+	ei->h = h;
+//	ei->w = w;
+//	ei->h = h;
+     }
+   
+   sd->need_layout = 0;
+}
+
+static void
+_edje_container_recalc(Smart_Data *sd)
+{
+   Evas_List *l;
+   int any_max_h = 0, any_max_w = 0;
+   int i;
+   
+   if (sd->freeze > 0) return;
+   if (!sd->changed) return;
+   
+   sd->min_h = 0;
+   sd->max_h = -1;
+   sd->min_w = 0;
+   sd->max_w = -1;
+   sd->min_row_h = 0;
+   sd->max_row_h = -1;
+   sd->contents_h = 0;
+   sd->contents_w = 0;
+   
+   for (i = 0; i < sd->cols; i++)
+     {
+	sd->min_w += sd->colinfo[i].minw;
+	if (sd->colinfo[i].maxw >= 0)
+	  {
+	     if (sd->max_w >= 0)
+	       sd->max_w += sd->colinfo[i].maxw;
+	     else
+	       sd->max_w = sd->colinfo[i].maxw;
+	  }
+	else
+	  any_max_w = 1;
+     }
+   if (any_max_w) sd->max_w = -1;
+   
+   if (sd->w < sd->min_w)
+     sd->contents_w = sd->min_w;
+   else if ((sd->max_w >= 0) && (sd->w < sd->max_w))
+     sd->w = sd->max_w;
+   
+   for (l = sd->children; l; l = l->next)
+     {
+	Edje_Item *ei;
+	
+	ei = l->data;
+	if (ei->minh > sd->min_row_h)
+	  sd->min_row_h = ei->minh;
+	if (sd->max_row_h >= 0)
+	  {
+	     if (ei->maxh >= 0)
+	       {
+		  if (sd->max_row_h > ei->maxh)
+		    sd->max_row_h = ei->maxh;
+	       }
+	     else
+	       any_max_h = 1;
+	  }
+	sd->min_h += ei->minh;
+	if (ei->maxh >= 0)
+	  {
+	     if (sd->max_h >= 0)
+	       sd->max_h += ei->maxh;
+	     else
+	       sd->max_h = ei->maxh;
+	  }
+	else
+	  any_max_h = 1;
+     }
+   if (any_max_h)
+     {
+	sd->max_h = -1;
+	sd->max_row_h = -1;
+     }
+   if (sd->homogenous)
+     {
+	sd->min_h = evas_list_count(sd->children) * sd->min_row_h;
+     }
+   
+   sd->changed = 0;
+   sd->change_child = 0;
+   sd->change_child_list = 0;
+   sd->change_cols = 0;
+   
+   sd->need_layout = 1;
+   _edje_container_relayout(sd);
+}
+
+static void
+_edje_item_recalc(Edje_Item *ei)
+{
+   int i;
+   
+   if (ei->freeze > 0) return;
+   if (!ei->recalc) return;
+   if (!ei->sd) return;
+
+   ei->minh = 0;
+   ei->maxh = -1;
+   for (i = 0; i < ((Smart_Data *)(ei->sd))->cols; i++)
+     {
+	if (ei->cells[i].minh > ei->minh) ei->minh = ei->cells[i].minh;
+	if (ei->cells[i].maxh >= 0)
+	  {
+	     if (ei->maxh >= 0)
+	       {
+		  if (ei->cells[i].maxh < ei->maxh)
+		    ei->maxh = ei->cells[i].maxh;
+	       }
+	     else
+	       ei->maxh = ei->cells[i].maxh;
+	  }
+	if (((Smart_Data *)(ei->sd))->colinfo[i].minw < ei->cells[i].minw)
+	  ((Smart_Data *)(ei->sd))->colinfo[i].minw = ei->cells[i].minw;
+	if (((Smart_Data *)(ei->sd))->colinfo[i].maxw >= 0)
+	  {
+	     if (ei->cells[i].maxw >= 0)
+	       {
+		  if (((Smart_Data *)(ei->sd))->colinfo[i].maxw > ei->cells[i].maxw)
+		    ((Smart_Data *)(ei->sd))->colinfo[i].maxw = ei->cells[i].maxw;
+	       }
+	  }
+	else
+	  ((Smart_Data *)(ei->sd))->colinfo[i].maxw = ei->cells[i].maxw;
+     }
+   
+   ei->recalc = 0;
+   
+   _edje_container_recalc(ei->sd);
+}
+
+
+/*****************************/
+
 Edje_Item *
 edje_item_add(Edje_Item_Class *cl, void *data)
 {
@@ -18,9 +184,23 @@ edje_item_add(Edje_Item_Class *cl, void *data)
 void
 edje_item_del(Edje_Item *ei)
 {
+   Smart_Data *sd;
+   
+   sd = ei->sd;
    if (ei->object) evas_object_del(ei->object);
    if (ei->overlay_object) evas_object_del(ei->overlay_object);
    free(ei);
+   if (!sd) return;
+   sd->changed = 1;
+   sd->change_child_list = 1;
+   _edje_container_recalc(sd);
+}
+
+Evas_Object *
+edje_item_container_get(Edje_Item *ei)
+{
+   if (!ei->sd) return NULL;
+   return ((Smart_Data *)(ei->sd))->smart_obj;
 }
 
 /* an arbitary data pointer to use to track other data */
@@ -127,10 +307,7 @@ edje_item_thaw(Edje_Item *ei)
    ei->freeze--;
    if (ei->freeze > 0) return ei->freeze;
    if (!ei->sd) return ei->freeze;
-   if (ei->recalc)
-     {
-	/* FIXME: recalc item */
-     }
+   if (ei->recalc) _edje_item_recalc(ei);
    return ei->freeze;
 }
 
@@ -148,13 +325,17 @@ edje_item_column_size_set(Edje_Item *ei, int col, Evas_Coord minw, Evas_Coord ma
        (ei->cells[col].minh == minh) &&
        (ei->cells[col].maxw == maxw) &&
        (ei->cells[col].maxh == maxh)) return;
-   ei->cells[col].minw = minw;
    ei->cells[col].minh = minh;
-   ei->cells[col].maxw = maxw;
    ei->cells[col].maxh = maxh;
+   ei->cells[col].minw = minw;
+   ei->cells[col].maxw = maxw;
    ei->recalc = 1;
-   if (ei->freeze > 0) return;
-   /* FIXME: recalc item */
+   if (ei->sd)
+     {
+	((Smart_Data *)(ei->sd))->changed = 1;
+	((Smart_Data *)(ei->sd))->change_child = 1;
+     }
+   _edje_item_recalc(ei);
 }
 
 void
@@ -178,77 +359,85 @@ void
 edje_item_select(Edje_Item *ei)
 {
    ei->selected = 1;
+   /* FIXME: trigger item to change visually */
 }
 
 void
 edje_item_unselect(Edje_Item *ei)
 {
    ei->selected = 0;
+   /* FIXME: trigger item to change visually */
 }
 
 /* focus stuff - only 1 can be focuesd */
 void
 edje_item_focus(Edje_Item *ei)
 {
-   ei->focused = 1;
+//   ei->focused = 1;
 }
 
 void
 edje_item_unfocus(Edje_Item *ei)
 {
-   ei->focused = 0;
+//   ei->focused = 0;
 }
 
 /* disable/enable stuff - stops focus and selection working on these items */
 void
 edje_item_enable(Edje_Item *ei)
 {
-   ei->disabled = 0;
+//   ei->disabled = 0;
 }
 
 void
 edje_item_disable(Edje_Item *ei)
 {
-   ei->disabled = 1;
+//   ei->disabled = 1;
 }
 
 /* item utils */
-Edje_Item *
-edje_item_next_get(Edje_Item *ei)
-{
-}
-
-Edje_Item *
-edje_item_prev_get(Edje_Item *ei)
-{
-}
-
 int
 edje_item_selected_get(Edje_Item *ei)
 {
+   return ei->selected;
 }
 
 int
 edje_item_focused_get(Edje_Item *ei)
 {
+   return ei->focused;
 }
 
 int
 edje_item_disabled_get(Edje_Item *ei)
 {
-}
-
-double
-edje_item_position_get(Edje_Item *ei)
-{
-}
-
-void
-edje_item_offset_set(Edje_Item *ei, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
-{
+   return ei->disabled;
 }
 
 /***** container calls *****/
+
+int
+edje_container_freeze(Evas_Object *obj)
+{
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return 0;
+   sd->freeze++;
+   return sd->freeze;
+}
+
+int
+edje_container_thaw(Evas_Object *obj)
+{
+   Smart_Data *sd;
+   
+   sd = evas_object_smart_data_get(obj);
+   if (!sd) return 0;
+   sd->freeze--;
+   if (sd->freeze <= 0) _edje_container_recalc(sd);
+   return sd->freeze;
+}
 
 void
 edje_container_item_append(Evas_Object *obj, Edje_Item *ei)
@@ -257,6 +446,11 @@ edje_container_item_append(Evas_Object *obj, Edje_Item *ei)
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   sd->children = evas_list_append(sd->children, ei);
+   sd->changed = 1;
+   sd->change_child_list = 1;
+   sd->rows = evas_list_count(sd->children);
+   _edje_container_recalc(sd);
 }
 
 void
@@ -266,6 +460,11 @@ edje_container_item_prepend(Evas_Object *obj, Edje_Item *ei)
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   sd->children = evas_list_prepend(sd->children, ei);
+   sd->changed = 1;
+   sd->change_child_list = 1;
+   sd->rows = evas_list_count(sd->children);
+   _edje_container_recalc(sd);
 }
 
 void
@@ -275,6 +474,11 @@ edje_container_item_append_relative(Evas_Object *obj, Edje_Item *ei, Edje_Item *
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   sd->children = evas_list_append_relative(sd->children, ei, rel);
+   sd->changed = 1;
+   sd->change_child_list = 1;
+   sd->rows = evas_list_count(sd->children);
+   _edje_container_recalc(sd);
 }
 
 void
@@ -284,15 +488,30 @@ edje_container_item_prepend_relative(Evas_Object *obj, Edje_Item *ei, Edje_Item 
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   sd->children = evas_list_prepend_relative(sd->children, ei, rel);
+   sd->changed = 1;
+   sd->change_child_list = 1;
+   sd->rows = evas_list_count(sd->children);
+   _edje_container_recalc(sd);
 }
 
 void
 edje_container_item_insert(Evas_Object *obj, Edje_Item *ei, int n)
 {
    Smart_Data *sd;
+   void *rel;
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   rel = evas_list_nth(sd->children, n);
+   if (!rel)
+     sd->children = evas_list_append(sd->children, ei);
+   else
+     sd->children = evas_list_append_relative(sd->children, ei, rel);
+   sd->changed = 1;
+   sd->change_child_list = 1;
+   sd->rows = evas_list_count(sd->children);
+   _edje_container_recalc(sd);
 }
 
 void
@@ -302,6 +521,11 @@ edje_container_item_remove(Evas_Object *obj, Edje_Item *ei)
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   sd->children = evas_list_remove(sd->children, ei);
+   sd->changed = 1;
+   sd->change_child_list = 1;
+   sd->rows = evas_list_count(sd->children);
+   _edje_container_recalc(sd);
 }
 
 void
@@ -311,6 +535,22 @@ edje_container_columns_set(Evas_Object *obj, int cols)
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   if (sd->cols == cols) return;
+   sd->colinfo = realloc(sd->colinfo, cols * sizeof(Smart_Data_Colinfo));
+   if (cols > sd->cols)
+     {
+	int i;
+	
+	for (i = sd->cols; i < cols; i++)
+	  {
+	     sd->colinfo[i].minw = 0;
+	     sd->colinfo[i].maxw = -1;
+	  }
+     }
+   sd->cols = cols;
+   sd->changed = 1;
+   sd->change_cols = 1;
+   _edje_container_recalc(sd);
 }
 
 int
@@ -319,7 +559,8 @@ edje_container_columns_get(Evas_Object *obj)
    Smart_Data *sd;
    
    sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
+   if (!sd) return 0;
+   return sd->cols;
 }
 
 void
@@ -329,15 +570,37 @@ edje_container_min_size_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   if (sd->changed)
+     {
+	int freeze;
+	
+	freeze = sd->freeze;
+	sd->freeze = 0;
+	_edje_container_recalc(sd);
+	sd->freeze = freeze;
+     }
+   if (minw) *minw = sd->min_w;
+   if (minh) *minh = sd->min_h;
 }
 
 void
-edje_container_max_size_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
+edje_container_max_size_get(Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh)
 {
    Smart_Data *sd;
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   if (sd->changed)
+     {
+	int freeze;
+	
+	freeze = sd->freeze;
+	sd->freeze = 0;
+	_edje_container_recalc(sd);
+	sd->freeze = freeze;
+     }
+   if (maxw) *maxw = sd->max_w;
+   if (maxh) *maxh = sd->max_h;
 }
 
 void
@@ -347,6 +610,11 @@ edje_containter_align_set(Evas_Object *obj, double halign, double valign)
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   if ((sd->align_x == halign) && (sd->align_y == valign)) return;
+   sd->align_x = halign;
+   sd->align_y = valign;
+   sd->need_layout = 1;
+   _edje_container_relayout(sd);
 }
 
 void
@@ -356,6 +624,8 @@ edje_container_align_get(Evas_Object *obj, double *halign, double *valign)
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   if (halign) *halign = sd->align_x;
+   if (valign) *valign = sd->align_y;
 }
 
 int
@@ -364,7 +634,8 @@ edje_container_count_get(Evas_Object *obj)
    Smart_Data *sd;
    
    sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
+   if (!sd) return 0;
+   return evas_list_count(sd->children);
 }
 
 Edje_Item *
@@ -373,7 +644,9 @@ edje_container_item_first_get(Evas_Object *obj)
    Smart_Data *sd;
    
    sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
+   if (!sd) return NULL;
+   if (!sd->children) return NULL;
+   return sd->children->data;
 }
 
 Edje_Item *
@@ -382,7 +655,9 @@ edje_container_item_last_get(Evas_Object *obj)
    Smart_Data *sd;
    
    sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
+   if (!sd) return NULL;
+   if (!sd->children) return NULL;
+   return evas_list_last(sd->children)->data;
 }
 
 Edje_Item *
@@ -391,7 +666,8 @@ edje_container_item_nth_get(Evas_Object *obj, int n)
    Smart_Data *sd;
    
    sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
+   if (!sd) return NULL;
+   return evas_list_nth(sd->children, n);
 }
 
 void
@@ -401,6 +677,12 @@ edje_container_homogenous_size_set(Evas_Object *obj, int homog)
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   if (((homog) && (sd->homogenous)) ||
+       ((!homog) && (!sd->homogenous))) return;
+   sd->homogenous = homog;
+   sd->changed = 1;
+   sd->change_child = 1;
+   _edje_container_recalc(sd);
 }
 
 int
@@ -409,25 +691,8 @@ edje_container_homogenous_size_get(Evas_Object *obj)
    Smart_Data *sd;
    
    sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
-}
-
-void
-edje_container_orientation_set(Evas_Object *obj, int orient)
-{
-   Smart_Data *sd;
-   
-   sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
-}
-
-int
-edje_container_orientation_get(Evas_Object *obj)
-{
-   Smart_Data *sd;
-   
-   sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
+   if (!sd) return 0;
+   return sd->homogenous;
 }
 
 void
@@ -437,6 +702,11 @@ edje_container_scroll_set(Evas_Object *obj, double pos, double shift)
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   if ((sd->scroll_y == pos) && (sd->scroll_x == shift)) return;
+   sd->scroll_y = pos;
+   sd->scroll_x = shift;
+   sd->need_layout = 1;
+   _edje_container_relayout(sd);
 }
 
 void
@@ -446,6 +716,8 @@ edje_container_scroll_get(Evas_Object *obj, double *pos, double *shift)
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   if (pos) *pos = sd->scroll_y;
+   if (shift) *shift = sd->scroll_x;
 }
 
 static void _smart_init(void);
@@ -517,6 +789,7 @@ _smart_del(Evas_Object *obj)
    
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   if (sd->colinfo) free(sd->colinfo);
 //   evas_object_del(sd->obj);
    free(sd);
 }

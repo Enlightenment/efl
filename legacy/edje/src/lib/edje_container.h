@@ -28,59 +28,42 @@
 
 #define E_OBJ_NAME "edje_container_object"
 
-typedef struct _Smart_Data   Smart_Data;
+typedef struct _Smart_Data         Smart_Data;
+typedef struct _Smart_Data_Colinfo Smart_Data_Colinfo;
 
 struct _Smart_Data
 {
    Evas_Coord     x, y, w, h;
    Evas_List     *children;
-   struct {
-      Evas_Coord  w, h;
-   } min, max;
    Evas_Object   *smart_obj;
    int            cols, rows;
+
+   Evas_Coord     contents_w, contents_h;
+   Evas_Coord     min_row_h, max_row_h;
+   Evas_Coord     min_w, max_w, min_h, max_h;
+   
+   Smart_Data_Colinfo *colinfo;
+   
+   int            freeze;
+   
+   double         scroll_x, scroll_y;
+   double         align_x, align_y;
+   
+   unsigned char  changed : 1;
+   unsigned char  change_child : 1;
+   unsigned char  change_child_list : 1;
+   unsigned char  change_cols : 1;
+   unsigned char  change_scroll : 1;
+   
+   unsigned char  need_layout : 1;
+
+   unsigned char  homogenous : 1;
 };
 
-#define EDJE_LAYOUT_NONE  0
-
-/* the following are "linear" layout systems */
-
-/* H & V LIST pack all items at their minimum size - no expanding in the lists
- * direction (lets say height), BUT all items are expanded to fill the "width"
- * of the list. if an item is too small to fit the width, the list object will
- * call a "min_size_change" callback indicating to the parent/swallower that
- * the parent should revise its use/view of this object. this is intended for
- * large lists of items - like a list of files, or titles etc.  this allows
- * for each item to have multiple columns. each column may be any size, with
- * the minimu size being the sum of all minimum column widths. as more items
- * are added column widths may be adjusted and all items told of this
- * adjustment
- */
-#define EDJE_LAYOUT_VLIST 1
-#define EDJE_LAYOUT_HLIST 2
-/* H & V BOX pack items and may or may not expand an item in any direction and
- * may align an item smaller than its allocated space in a certain way. they
- * dont know about columns etc. like lists.
- */
-#define EDJE_LAYOUT_VBOX  3
-#define EDJE_LAYOUT_HBOX  4
-/* H & V flow are like "file manager" views you see in explorer etc. wehere
- * items "line wrap" as they go along horizontally (or vertizally) as needed
- */
-#define EDJE_LAYOUT_VFLOW 5
-#define EDJE_LAYOUT_HFLOW 6
-
-/* the following are "2 dimensional" layout systems */
-
-/* tables are full 2-dimensional layouts which dont really have append and
- * prepend semantics... this will need working on later for 2d layouts. dont
- * worry about these yet - but keep this as a marker for things to do later
- */
-#define EDJE_LAYOUT_TABLE 7
-/* count
- */
-#define EDJE_LAYOUT_COUNT 8
-
+struct _Smart_Data_Colinfo
+{
+   Evas_Coord minw, maxw;
+};
 
 /* All items are virtual constructs that provide Evas_Objects at some point.
  * Edje may move, resize, show, hide, clip, unclip, raise, lower etc. this
@@ -119,11 +102,14 @@ struct _Edje_Item
    Evas_Object     *overlay_object;
    int              freeze;
    Evas_Coord       y, h;
+
+   Evas_Coord       minh, maxh;
    
    int              cells_num;
    Edje_Item_Cell  *cells;
    
    unsigned char    accessible : 1;
+   
    unsigned char    recalc : 1;
    unsigned char    selected : 1;
    unsigned char    disabled : 1;
