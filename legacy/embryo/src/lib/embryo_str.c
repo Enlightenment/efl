@@ -24,7 +24,7 @@ _embryo_str_atoi(Embryo_Program *ep, Embryo_Cell *params)
    char *s1;
    
    /* params[1] = str */
-   if (params[0] != (2 * sizeof(Embryo_Cell))) return 0;
+   if (params[0] != (1 * sizeof(Embryo_Cell))) return 0;
    STRGET(ep, s1, params[1]);
    if (!s1) return 0;
    return (Embryo_Cell)atoi(s1);

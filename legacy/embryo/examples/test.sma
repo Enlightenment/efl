@@ -106,6 +106,8 @@ main()
    native_rec(1, "Smelly", 77);
    printf("native_rec() done\n");
    
+   printf("atoi(\"7\") = %i\n", atoi("7"));
+   
    return 7;
 }
 
