@@ -43,7 +43,7 @@ ECORE_TXT_LIB =
 endif
 
 if BUILD_ECORE_CONFIG
-ECORE_CONFIG_LIB = $(top_builddir)/src/lib/ecore_config/libecore_config.la -ldl
+ECORE_CONFIG_LIB = $(top_builddir)/src/lib/ecore_config/libecore_config.la
 else
 ECORE_CONFIG_LIB =
 endif
@@ -56,7 +56,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore_job \
 -I$(top_srcdir)/src/lib/ecore_con \
 -I$(top_srcdir)/src/lib/ecore_ipc \
--I$(top_srcdir)/src/lib/ecore_txt \
+-I$(top_srcdir)/src/lib/ecore_txt @iconv_cflags@ \
 -I$(top_srcdir)/src/lib/ecore_config \
 @evas_cflags@ \
 @x_cflags@
@@ -84,7 +84,7 @@ $(ECORE_EVAS_LIB) \
 $(ECORE_CON_LIB) \
 $(ECORE_IPC_LIB) \
 $(ECORE_TXT_LIB) \
--lm
+-lm @iconv_libs@
 
 ecore_test_LDFLAGS =
 
@@ -118,7 +118,7 @@ $(ECORE_EVAS_LIB) \
 $(ECORE_CON_LIB) \
 $(ECORE_IPC_LIB) \
 $(ECORE_TXT_LIB) \
--lm
+-lm @iconv_libs@
 
 ecore_evas_test_LDFLAGS =
 
@@ -145,7 +145,7 @@ exsh_LDADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(ECORE_IPC_LIB) \
 $(ECORE_CONFIG_LIB) \
-@edb_libs@
+@edb_libs@ -ldl
 
 exsh_LDFLAGS =
 
