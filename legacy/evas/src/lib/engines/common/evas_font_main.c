@@ -230,7 +230,7 @@ evas_common_font_utf8_get_prev(unsigned char *buf, int *iindex)
 	r <<= 6;
 	r |= (d4 & 0x3f);	
      }
-#if 0
+#if 1
    index = istart - 1;
    d = buf[index];
    if (!(d & 0x80))

@@ -540,7 +540,7 @@ evas_object_textblock_layout(Evas_Object *obj)
 	  {
 	     int inset = 0, hadvance = 0, vadvance = 0;
 	     int ascent = 0, descent = 0, tw = 0, th = 0;
-	     int chrpos = -1, x, y, cx, cy, cw, ch;
+	     int chrpos = -1, nchrpos = -1, x, y, cx, cy, cw, ch;
 	     void *font = NULL;
 	     char *text;
 	     int adj, lastnode;
@@ -606,25 +606,37 @@ evas_object_textblock_layout(Evas_Object *obj)
 	     /* text doesnt fit */
 	     else
 	       {
+		  nchrpos = chrpos;
 		  /* handle word wrap */
 		  if (layout.word_wrap)
 		    {
 		       int ppos, pos, chr;
 		       
-		       pos = evas_string_char_prev_get(text, chrpos, &chr);
-		       if (!evas_object_textblock_char_is_white(chr))
+		       pos = chrpos;
+		       chr = evas_common_font_utf8_get_prev(text, &pos);
+		       ppos = pos = chrpos;
+		       while ((!evas_object_textblock_char_is_white(chr))
+			      &&
+			      (pos >= 0) && 
+			      (chr > 0))
 			 {
-			    ppos = pos = chrpos;
-			    while ((!evas_object_textblock_char_is_white(chr))
-				   &&
-				   (pos >= 0))
-			      {
-				 ppos = pos;
-				 pos = evas_string_char_prev_get(text, pos, &chr);
-			      }
-			    if (ppos < 0) ppos = 0;
-			    chrpos = ppos;
+			    ppos = pos;
+			    chr = evas_common_font_utf8_get_prev(text, &pos);
 			 }
+		       chr = evas_common_font_utf8_get_next(text, &ppos);
+		       if (ppos < 0) ppos = 0;
+		       chrpos = ppos;
+		       while ((evas_object_textblock_char_is_white(chr))
+			      &&
+			      (pos >= 0) && 
+			      (chr > 0))
+			 {
+			    ppos = pos;
+			    chr = evas_common_font_utf8_get_prev(text, &pos);
+			 }
+		       chr = evas_common_font_utf8_get_next(text, &ppos);
+		       if (ppos < 0) ppos = 0;
+		       nchrpos = ppos;
 		    }
 		  /* if the first char in the line can't fit!!! */
 		  if ((chrpos == 0) && (lnode == line_start))
@@ -641,9 +653,9 @@ evas_object_textblock_layout(Evas_Object *obj)
 		       char *text1, *text2;
 		       
 		       /* byte chrpos is over... so cut there */
-		       text1 = malloc(chrpos + 1);
-		       strncpy(text1, text, chrpos);
-		       text1[chrpos] = 0;
+		       text1 = malloc(nchrpos + 1);
+		       strncpy(text1, text, nchrpos);
+		       text1[nchrpos] = 0;
 		       text2 = strdup(text + chrpos);
 		       lnode->text = text1;
 		       free(text);
