@@ -9,7 +9,7 @@ INCLUDES = \
 -I$(top_builddir)/src/lib/ecore_job \
 @x_cflags@
 
-libecore_x_la_LDFLAGS = $(LDFLAGS) -version-info 1:0:0 \
+libecore_x_la_LDFLAGS = -version-info 1:0:0 \
 -L$(top_builddir)/src/lib/ecore/.libs \
 -L$(top_builddir)/src/lib/ecore_txt/.libs \
 -L$(top_builddir)/src/lib/ecore_job/.libs

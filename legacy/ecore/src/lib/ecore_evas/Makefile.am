@@ -29,7 +29,7 @@ $(ECORE_X_INC) \
 $(ECORE_FB_INC) \
 @evas_cflags@ 
 
-libecore_evas_la_LDFLAGS = $(LDFLAGS) -version-info 1:0:0 \
+libecore_evas_la_LDFLAGS = -version-info 1:0:0 \
 $(ECORE_X_LDF) \
 $(ECORE_FB_LDF) \
 -L$(top_builddir)/src/lib/ecore/.libs

@@ -869,6 +869,47 @@ void             ecore_x_gc_del(Ecore_X_GC gc);
 int              ecore_x_client_message32_send(Ecore_X_Window win, Ecore_X_Atom type, long d0, long d1, long d2, long d3, long d4);
 int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom type, const void *data, int len);
 
+#if 0 /* ??? */
+   void                ecore_x_netwm_init(void);
+#endif
+   void                ecore_x_netwm_desk_count_set(Ecore_X_Window root, int n_desks);
+   void                ecore_x_netwm_desk_roots_set(Ecore_X_Window root, int n_desks, Ecore_X_Window * vroots);
+   void                ecore_x_netwm_desk_names_set(Ecore_X_Window root, int n_desks, const char **names);
+   void                ecore_x_netwm_desk_size_set(Ecore_X_Window root, int width, int height);
+   void                ecore_x_netwm_desk_workareas_set(Ecore_X_Window root, int n_desks, int *areas);
+   void                ecore_x_netwm_desk_current_set(Ecore_X_Window root, int desk);
+   void                ecore_x_netwm_desk_viewports_set(Ecore_X_Window root, int n_desks, int *origins);
+   void                ecore_x_netwm_showing_desktop_set(Ecore_X_Window root, int on);
+   void                ecore_x_netwm_client_list_set(Ecore_X_Window root, int n_clients, Ecore_X_Window * p_clients);
+   void                ecore_x_netwm_client_list_stacking_set(Ecore_X_Window root, int n_clients, Ecore_X_Window * p_clients);
+   void                ecore_x_netwm_client_active_set(Ecore_X_Window root, Ecore_X_Window win);
+   
+   /* FIXME: these funcs need categorising */
+   void            ecore_x_drawable_geometry_get(Ecore_X_Drawable d, int *x, int *y, int *w, int *h);
+   int             ecore_x_drawable_border_width_get(Ecore_X_Drawable d);
+   int             ecore_x_drawable_depth_get(Ecore_X_Drawable d);
+   Ecore_X_Window *ecore_x_window_root_list(int *num_ret);
+   int             ecore_x_window_manage(Ecore_X_Window win);
+   void            ecore_x_window_container_manage(Ecore_X_Window win);
+   void            ecore_x_window_client_manage(Ecore_X_Window win);
+   void            ecore_x_window_sniff(Ecore_X_Window win);
+   void            ecore_x_window_client_sniff(Ecore_X_Window win);
+   Ecore_X_Atom    ecore_x_atom_get(char *name);
+
+   typedef enum _Ecore_X_Gravity {
+      ECORE_X_GRAVITY_FORGET = 0,
+	ECORE_X_GRAVITY_UNMAP = 0,
+	ECORE_X_GRAVITY_NW = 1,
+	ECORE_X_GRAVITY_N = 2,
+	ECORE_X_GRAVITY_NE = 3,
+	ECORE_X_GRAVITY_W = 4,
+	ECORE_X_GRAVITY_CENTER = 5,
+	ECORE_X_GRAVITY_E = 6,
+	ECORE_X_GRAVITY_SW = 7,
+	ECORE_X_GRAVITY_S = 8,
+	ECORE_X_GRAVITY_SE = 9,
+	ECORE_X_GRAVITY_STATIC = 10
+   } Ecore_X_Gravity;
    void
      ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state);
    void
@@ -898,7 +939,28 @@ int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_Atom t
 			     Ecore_X_Window *icon_window,
 			     Ecore_X_Window *window_group,
 			     int *is_urgent);
-
+   void
+     ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
+				      int request_pos,
+				      Ecore_X_Gravity gravity,
+				      int min_w, int min_h,
+				      int max_w, int max_h,
+				      int base_w, int base_h,
+				      int step_x, int step_y,
+				      double min_aspect,
+				      double max_aspect);
+       
+   int
+     ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
+				      int *request_pos,
+				      Ecore_X_Gravity *gravity,
+				      int *min_w, int *min_h,
+				      int *max_w, int *max_h,
+				      int *base_w, int *base_h,
+				      int *step_x, int *step_y,
+				      double *min_aspect,
+				      double *max_aspect);
+       
    void                ecore_x_netwm_init(void);
    void                ecore_x_netwm_wm_identify(Ecore_X_Window root, Ecore_X_Window check, const char *wm_name);
    void                ecore_x_netwm_desk_count_set(Ecore_X_Window root, int n_desks);

@@ -182,79 +182,145 @@ ecore_x_icccm_hints_get(Ecore_X_Window win,
    return 0;
 }
 
-/* FIXME: working here */
+void
+ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
+                                 int request_pos,
+				 Ecore_X_Gravity gravity,
+				 int min_w, int min_h,
+				 int max_w, int max_h,
+				 int base_w, int base_h,
+				 int step_x, int step_y,
+				 double min_aspect,
+				 double max_aspect)
+{
+   /* FIXME: working here */
+   XSizeHints hint;
+   
+   hint.flags = 0;
+   if (request_pos)
+     {
+	hint.flags |= USPosition;
+     }
+   if (gravity != ECORE_X_GRAVITY_NW)
+     {
+	hint.flags |= PWinGravity;
+	hint.win_gravity = gravity;
+     }
+   if ((min_w > 0) || (min_h > 0))
+     {
+	hint.flags |= PMinSize;
+	hint.min_width = min_w;
+	hint.min_height = min_h;
+     }
+   if ((max_w > 0) || (max_h > 0))
+     {
+	hint.flags |= PMaxSize;
+	hint.max_width = max_w;
+	hint.max_height = max_h;
+     }
+   if ((base_w > 0) || (base_h > 0))
+     {
+	hint.flags |= PBaseSize;
+	hint.base_width = base_w;
+	hint.base_height = base_h;
+     }
+   if ((step_x > 1) || (step_y > 1))
+     {
+	hint.flags |= PResizeInc;
+	hint.width_inc = step_x;
+	hint.height_inc = step_y;
+     }
+   if ((min_aspect > 0.0) || (max_aspect > 0.0))
+     {
+	hint.flags |= PAspect;
+	hint.min_aspect.x = min_aspect * 10000;
+	hint.min_aspect.x = 10000;
+	hint.max_aspect.x = max_aspect * 10000;
+	hint.max_aspect.x = 10000;
+     }
+   XSetWMNormalHints(_ecore_x_disp, win, &hint);
+}
+
 int
-ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win)
+ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
+				 int *request_pos,
+				 Ecore_X_Gravity *gravity,
+				 int *min_w, int *min_h,
+				 int *max_w, int *max_h,
+				 int *base_w, int *base_h,
+				 int *step_x, int *step_y,
+				 double *min_aspect,
+				 double *max_aspect)
 {
    XSizeHints          hint;
    long                mask;
    
+   int minw = 0, minh = 0;
+   int maxw = 32767, maxh = 32767;
+   int basew = 0, baseh = 0;
+   int stepx = 1, stepy = 1;
+   double mina = 0.0, maxa = 0.0;
+   
    if (!XGetWMNormalHints(_ecore_x_disp, win, &hint, &mask)) return 0;
    if ((hint.flags & USPosition) || ((hint.flags & PPosition)))
      {
-	int                 x, y, w, h;
-	
-//	D("%li %li\n", hint.flags & USPosition, hint.flags & PPosition);
-//	b->client.pos.requested = 1;
-//	b->client.pos.gravity = NorthWestGravity;
-//	if (hint.flags & PWinGravity)
-//	  b->client.pos.gravity = hint.win_gravity;
-//	x = y = w = h = 0;
-//	ecore_window_get_geometry(win, &x, &y, &w, &h);
-//	b->client.pos.x = x;
-//	b->client.pos.y = y;
+	if (*request_pos) *request_pos = 1;
      }
    else
      {
-//	b->client.pos.requested = 0;
+	if (*request_pos) *request_pos = 0;
+     }
+   if (hint.flags & PWinGravity)
+     {
+	if (*gravity) *gravity = hint.win_gravity;
+     }
+   else
+     {
+	if (*gravity) *gravity = ECORE_X_GRAVITY_NW;
      }
    if (hint.flags & PMinSize)
      {
-//	min_w = hint.min_width;
-//	min_h = hint.min_height;
+	minw = hint.min_width;
+	minh = hint.min_height;
      }
    if (hint.flags & PMaxSize)
      {
-//	max_w = hint.max_width;
-//	max_h = hint.max_height;
-//	if (max_w < min_w)
-//	  max_w = min_w;
-//	if (max_h < min_h)
-//	  max_h = min_h;
-     }
-   if (hint.flags & PResizeInc)
-     {
-//	step_w = hint.width_inc;
-//	step_h = hint.height_inc;
-//	if (step_w < 1)
-//	  step_w = 1;
-//	if (step_h < 1)
-//	  step_h = 1;
+	maxw = hint.max_width;
+	maxh = hint.max_height;
+	if (maxw < minw) maxw = minw;
+	if (maxh < minh) maxh = minh;
      }
    if (hint.flags & PBaseSize)
      {
-//	base_w = hint.base_width;
-//	base_h = hint.base_height;
-//	if (base_w > max_w)
-//	  max_w = base_w;
-//	if (base_h > max_h)
-//	  max_h = base_h;
+	basew = hint.base_width;
+	baseh = hint.base_height;
+	if (basew > minw) minw = basew;
+	if (baseh > minh) minh = baseh;
      }
-   else
+   if (hint.flags & PResizeInc)
      {
-//	base_w = min_w;
-//	base_h = min_h;
+	stepx = hint.width_inc;
+	stepy = hint.height_inc;
+	if (stepx < 1) stepx = 1;
+	if (stepy < 1) stepy = 1;
      }
    if (hint.flags & PAspect)
      {
-//	if (hint.min_aspect.y > 0)
-//	  aspect_min =
-//	  ((double)hint.min_aspect.x) / ((double)hint.min_aspect.y);
-//	if (hint.max_aspect.y > 0)
-//	  aspect_max =
-//	  ((double)hint.max_aspect.x) / ((double)hint.max_aspect.y);
+	if (hint.min_aspect.y > 0)
+	  mina = ((double)hint.min_aspect.x) / ((double)hint.min_aspect.y);
+	if (hint.max_aspect.y > 0)
+	  maxa = ((double)hint.max_aspect.x) / ((double)hint.max_aspect.y);
      }
-   
+   if (min_w) *min_w = minw;
+   if (min_h) *min_h = minh;
+   if (max_w) *max_w = maxw;
+   if (max_h) *max_h = maxh;
+   if (base_w) *base_w = basew;
+   if (base_h) *base_h = baseh;
+   if (step_x) *step_x = stepx;
+   if (step_y) *step_y = stepy;
+   if (min_aspect) *min_aspect = mina;
+   if (max_aspect) *max_aspect = maxa;
    return 1;
 }
 
@@ -272,7 +338,7 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win)
 /* get/set transient for */
 /* send iconify request */
 
-/* FIXME: there are older E hints, gnome hitns and mwm hints and new netwm */
+/* FIXME: there are older E hints, gnome hints and mwm hints and new netwm */
 /*        hints. each should go in their own file/section so we know which */
-/*        is which. also older kde hints too. we shoudl try support as much */
+/*        is which. also older kde hints too. we should try support as much */
 /*        as makese sense to support */

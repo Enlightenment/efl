@@ -4,7 +4,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore
 
-libecore_fb_la_LDFLAGS = $(LDFLAGS) -version-info 1:0:0 \
+libecore_fb_la_LDFLAGS = -version-info 1:0:0 \
 -L$(top_builddir)/src/lib/ecore/.libs
 
 if BUILD_ECORE_FB

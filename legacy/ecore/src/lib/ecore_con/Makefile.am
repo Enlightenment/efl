@@ -7,7 +7,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore_con \
 @SSL_CFLAGS@
 
-libecore_con_la_LDFLAGS = $(LDFLAGS) -version-info 1:0:0 \
+libecore_con_la_LDFLAGS = -version-info 1:0:0 \
 -L$(top_builddir)/src/lib/ecore/.libs
 
 if BUILD_ECORE_CON

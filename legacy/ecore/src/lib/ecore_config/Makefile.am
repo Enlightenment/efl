@@ -11,10 +11,10 @@ INCLUDES = \
 
 CLEANFILES = $(DB)
 
-libecore_config_la_LDFLAGS = $(LDFLAGS) -version-info 1:0:0 \
+libecore_config_la_LDFLAGS = -version-info 1:0:0 \
 -L$(top_builddir)/src/lib/ecore/.libs
 
-ecore_config_ipc_ecore_la_LDFLAGS = $(LDFLAGS) -no-undefined -module \
+ecore_config_ipc_ecore_la_LDFLAGS = -no-undefined -module \
 -avoid-version -rdynamic -shared
 
 if BUILD_ECORE_CONFIG
