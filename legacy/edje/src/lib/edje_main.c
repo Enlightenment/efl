@@ -23,8 +23,8 @@ _edje_add(Evas_Object *obj)
    ed->clipper = evas_object_rectangle_add(ed->evas);
    evas_object_smart_member_add(ed->clipper, obj);
    evas_object_color_set(ed->clipper, 255, 255, 255, 255);
-   evas_object_move(ed->clipper, 0, 0);
-   evas_object_resize(ed->clipper, 0, 0);
+   evas_object_move(ed->clipper, -1e+8, -1e+8);
+   evas_object_resize(ed->clipper, 2e+8, 2e+8);
    evas_object_pass_events_set(ed->clipper, 1);
    ed->have_objects = 1;
    ed->references = 1;

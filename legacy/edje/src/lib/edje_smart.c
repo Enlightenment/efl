@@ -249,7 +249,7 @@ _edje_smart_move(Evas_Object * obj, double x, double y)
    if ((ed->x == x) && (ed->y == y)) return;
    ed->x = x;
    ed->y = y;
-   evas_object_move(ed->clipper, ed->x, ed->y);
+//   evas_object_move(ed->clipper, ed->x, ed->y);
    
    for (l = ed->parts; l; l = l->next)
      {
@@ -292,7 +292,7 @@ _edje_smart_resize(Evas_Object * obj, double w, double h)
    if ((w == ed->w) && (h == ed->h)) return;
    ed->w = w;
    ed->h = h;
-   evas_object_resize(ed->clipper, ed->w, ed->h);
+//   evas_object_resize(ed->clipper, ed->w, ed->h);
    ed->dirty = 1;
    _edje_recalc(ed);
    _edje_emit(ed, "resize", "");
