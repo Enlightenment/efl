@@ -1514,7 +1514,8 @@ __evas_gl_image_draw(Evas_GL_Image *im,
    glw = __evas_gl_window_current(disp, w, win_w, win_h);
    if (!glw) return;
    __evas_gl_window_texture(glw, 1);
-   __evas_gl_window_blend(glw, im->has_alpha);
+   if (ca == 255) __evas_gl_window_blend(glw, im->has_alpha);
+   else __evas_gl_window_blend(glw, 1);
    __evas_gl_window_write_buf(glw, GL_BACK);
    __evas_gl_window_read_buf(glw, GL_BACK);
    __evas_gl_window_color(glw, cr, cg, cb, ca);
