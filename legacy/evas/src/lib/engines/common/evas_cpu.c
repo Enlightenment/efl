@@ -22,12 +22,6 @@ evas_common_cpu_catch_ill(int sig)
 }
 #endif
 
-#if ( \
-	 defined __i386__ || \
-	 defined __386__ || \
-	 defined __X86__ || \
-	 defined _M_IX86 || \
-	 defined i386)
 void
 evas_common_cpu_mmx_test(void)
 {
@@ -57,26 +51,25 @@ evas_common_cpu_sse_test(void)
    prefetch(blah + 1200);
 #endif     
 }
-#endif /* __i386__ */
 
-#ifdef __POWERPC__
-#ifdef __VEC__
 void
 evas_common_cpu_altivec_test(void)
 {
+#ifdef __POWERPC__
+#ifdef __VEC__
    vector unsigned int zero;
    
    zero = vec_splat_u32(0);
-}
 #endif /* __VEC__ */
 #endif /* __POWERPC__ */
+}
 
-#ifdef __SPARC__
 void
 evas_common_cpu_vis_test(void)
 {
-}
+#ifdef __SPARC__
 #endif /* __SPARC__ */
+}
 
 int
 evas_common_cpu_feature_test(void (*feature)(void))
@@ -109,12 +102,6 @@ evas_common_cpu_init(void)
 
    if (called) return;
    called = 1;
-#if ( \
-	 defined __i386__ || \
-	 defined __386__ || \
-	 defined __X86__ || \
-	 defined _M_IX86 || \
-	 defined i386)
 #ifdef BUILD_MMX
    cpu_feature_mask |= CPU_FEATURE_MMX * 
      evas_common_cpu_feature_test(evas_common_cpu_mmx_test);
@@ -128,7 +115,6 @@ evas_common_cpu_init(void)
    evas_common_cpu_end_opt();
 #endif /* BUILD_SSE */
 #endif /* BUILD_MMX */
-#endif /* __i386__ */
 #ifdef __POWERPC__
 #ifdef __VEC__
    cpu_feature_mask |= CPU_FEATURE_ALTIVEC *

@@ -7,20 +7,6 @@
 
 #include "evas_options.h"
 
-#if ( \
-         defined __i386__ || \
-         defined __386__ || \
-         defined __X86__ || \
-         defined _M_IX86 || \
-         defined i386)
-#else
-# undef BUILD_MMX
-# undef BUILD_SSE
-# ifndef BUILD_C
-#  define BUILD_C
-# endif
-#endif
-
 /*****************************************************************************/
 
 /* use exact rects for updates not tiles */
