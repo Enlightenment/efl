@@ -32,6 +32,8 @@ evas_object_polygon.c \
 evas_object_rectangle.c \
 evas_object_smart.c \
 evas_object_text.c \
+evas_object_textblock.c \
+evas_font_dir.c \
 evas_rectangle.c \
 evas_render.c \
 evas_smart.c \

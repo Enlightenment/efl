@@ -50,6 +50,9 @@ typedef struct _Evas_Rectangle              Evas_Rectangle;
 typedef struct _Evas                        Evas;
 typedef struct _Evas_Layer                  Evas_Layer;
 typedef struct _Evas_Object                 Evas_Object;
+typedef struct _Evas_Font_Dir               Evas_Font_Dir;
+typedef struct _Evas_Font                   Evas_Font;
+typedef struct _Evas_Font_Alias             Evas_Font_Alias;
 typedef struct _Evas_Data_Node              Evas_Data_Node;
 typedef struct _Evas_Func_Node              Evas_Func_Node;
 typedef struct _Evas_Func                   Evas_Func;
@@ -92,6 +95,7 @@ typedef char                                Evas_Bool;
 #define MAGIC_OBJ_IMAGE     0x71777775
 #define MAGIC_OBJ_TEXT      0x71777776
 #define MAGIC_OBJ_SMART     0x71777777
+#define MAGIC_OBJ_TEXTBLOCK 0x71777778
 #define MAGIC_SMART         0x72777770
 
 #ifdef MAGIC_DEBUG
@@ -448,6 +452,34 @@ struct _Evas_Data_Node
    void *data;
 };
 
+struct _Evas_Font_Dir
+{
+   Evas_Hash *lookup;
+   Evas_List *fonts;
+   Evas_List *aliases;
+   DATA64     dir_mod_time;
+   DATA64     fonts_dir_mod_time;
+   DATA64     fonts_alias_mod_time;
+};
+
+struct _Evas_Font
+{
+   char     type;
+   struct {
+      char *prop[14];
+   } x;
+   struct {
+      char *name;
+   } simple;
+   char    *path;
+};
+
+struct _Evas_Font_Alias
+{
+   char      *alias;
+   Evas_Font *fn;
+};
+
 struct _Evas_Object_Func
 {
    void (*free) (Evas_Object *obj);
@@ -628,7 +660,9 @@ int evas_object_intercept_call_stack_below(Evas_Object *obj, Evas_Object *below)
 int evas_object_intercept_call_layer_set(Evas_Object *obj, int l);
 void evas_object_grabs_cleanup(Evas_Object *obj);
 void evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
-   
+void evas_font_dir_cache_free(void);
+char *object_text_font_cache_find(char *dir, char *font);
+
 extern int _evas_alloc_error;
 
 typedef struct _Evas_Imaging_Image Evas_Imaging_Image;
