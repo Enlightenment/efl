@@ -4,6 +4,8 @@
 #include "evas_mmx.h"
 #endif
 
+#define CONDITIONAL_BLEND 1
+
 extern DATA8        _evas_pow_lut[256][256];
 extern const DATA16 _evas_const_c1[4];
 
@@ -21,7 +23,28 @@ evas_common_blend_pixels_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int len)
      {
 	DATA32 tmp;
 
-	if (A_VAL(src_ptr)) /* hmmm - do we need this? */
+#ifdef CONDITIONAL_BLEND
+	switch (A_VAL(src_ptr))
+	  {
+	   case 0:
+	     break;
+	   case 255:
+	     *dst_ptr = *src_ptr;
+	     break;
+	   default:
+	     BLEND_COLOR(A_VAL(src_ptr), R_VAL(dst_ptr), 
+			 R_VAL(src_ptr), R_VAL(dst_ptr), 
+			 tmp);
+	     BLEND_COLOR(A_VAL(src_ptr), G_VAL(dst_ptr), 
+			 G_VAL(src_ptr), G_VAL(dst_ptr), 
+			 tmp);
+	     BLEND_COLOR(A_VAL(src_ptr), B_VAL(dst_ptr), 
+			 B_VAL(src_ptr), B_VAL(dst_ptr), 
+			 tmp);
+	     break;
+	  }
+#else
+	if (A_VAL(src_ptr))
 	  {
 	     BLEND_COLOR(A_VAL(src_ptr), R_VAL(dst_ptr), 
 			 R_VAL(src_ptr), R_VAL(dst_ptr), 
@@ -33,6 +56,7 @@ evas_common_blend_pixels_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int len)
 			 B_VAL(src_ptr), B_VAL(dst_ptr), 
 			 tmp);
 	  }
+#endif	       
 	src_ptr++;
 	dst_ptr++;
      }
@@ -54,29 +78,38 @@ evas_common_blend_pixels_rgba_to_rgb_mmx(DATA32 *src, DATA32 *dst, int len)
    
    while (dst_ptr < dst_end_ptr)
      {
-	movd_m2r(src_ptr[0], mm1);
-	movd_m2r(dst_ptr[0], mm2);
-	
-	movq_r2r(mm1, mm3);
-	punpcklbw_r2r(mm3, mm3);
-	punpckhwd_r2r(mm3, mm3);
-	punpckhdq_r2r(mm3, mm3);	
-	psrlw_i2r(1, mm3);
-	
-	psrlq_i2r(16, mm3);
-	
-	punpcklbw_r2r(mm4, mm1);
-	punpcklbw_r2r(mm4, mm2);
-	
-	psubw_r2r(mm2, mm1);
-	psllw_i2r(1, mm1);
-	paddw_r2r(mm5, mm1);
-	pmulhw_r2r(mm3, mm1);
-	paddw_r2r(mm1, mm2);
-	
-	packuswb_r2r(mm4, mm2);
-	movd_r2m(mm2, dst_ptr[0]);
-	
+	switch (A_VAL(src_ptr))
+	  {
+	   case 0:
+	     break;
+	   case 255:
+	     *dst_ptr = *src_ptr;
+	     break;
+	   default:
+	     movd_m2r(src_ptr[0], mm1);
+	     movd_m2r(dst_ptr[0], mm2);
+	     
+	     movq_r2r(mm1, mm3);
+	     punpcklbw_r2r(mm3, mm3);
+	     punpckhwd_r2r(mm3, mm3);
+	     punpckhdq_r2r(mm3, mm3);	
+	     psrlw_i2r(1, mm3);
+	     
+	     psrlq_i2r(16, mm3);
+	     
+	     punpcklbw_r2r(mm4, mm1);
+	     punpcklbw_r2r(mm4, mm2);
+	     
+	     psubw_r2r(mm2, mm1);
+	     psllw_i2r(1, mm1);
+	     paddw_r2r(mm5, mm1);
+	     pmulhw_r2r(mm3, mm1);
+	     paddw_r2r(mm1, mm2);
+	     
+	     packuswb_r2r(mm4, mm2);
+	     movd_r2m(mm2, dst_ptr[0]);
+	     break;
+	  }
 	src_ptr++;
 	dst_ptr++;
      }
@@ -97,8 +130,14 @@ evas_common_blend_pixels_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len)
 	DATA32 tmp;
 	DATA8  a;
 	
-	if (A_VAL(src_ptr)) /* hmmm - do we need this? */
+	switch (A_VAL(src_ptr))
 	  {
+	   case 0:
+	     break;
+	   case 255:
+	     *dst_ptr = *src_ptr;
+	     break;
+	   default:
 	     a = _evas_pow_lut[A_VAL(src_ptr)][A_VAL(dst_ptr)];
 	     
 	     BLEND_COLOR(a, R_VAL(dst_ptr), 
@@ -110,9 +149,8 @@ evas_common_blend_pixels_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len)
 	     BLEND_COLOR(a, B_VAL(dst_ptr), 
 			 B_VAL(src_ptr), B_VAL(dst_ptr), 
 			 tmp);	
-/* FIXME: Maybe this is faster and equivalent: ??? */	     
-/*	     BLEND_COLOR(A_VAL(src),A_VAL(dst),255,A_VAL(dst),tmp) */
-	     A_VAL(dst_ptr) = A_VAL(dst_ptr) + ((A_VAL(src_ptr) * (255 - A_VAL(dst_ptr))) / 255);
+	     BLEND_COLOR(A_VAL(src),A_VAL(dst),255,A_VAL(dst),tmp);
+/*	     A_VAL(dst_ptr) = A_VAL(dst_ptr) + ((A_VAL(src_ptr) * (255 - A_VAL(dst_ptr))) / 255);*/
 	  }
 	src_ptr++;
 	dst_ptr++;

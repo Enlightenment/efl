@@ -27,8 +27,14 @@ evas_common_blend_pixels_mul_color_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int l
 	     DATA8  a;
 	     
 	     a = (A_VAL(src_ptr) * (A_VAL(&mul_color) + 1)) >> 8;
-	     if (a) /* hmmm - do we need this? */	       
+	     switch (a)
 	       {
+		case 0:
+		  break;
+		case 255:
+		  *dst_ptr = *src_ptr;
+		  break;
+		default:
 		  BLEND_COLOR(a, R_VAL(dst_ptr), 
 			      R_VAL(src_ptr), R_VAL(dst_ptr), 
 			      tmp);
@@ -38,6 +44,7 @@ evas_common_blend_pixels_mul_color_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int l
 		  BLEND_COLOR(a, B_VAL(dst_ptr), 
 			      B_VAL(src_ptr), B_VAL(dst_ptr), 
 			      tmp);
+		  break;
 	       }
 	     src_ptr++;
 	     dst_ptr++;
@@ -51,8 +58,16 @@ evas_common_blend_pixels_mul_color_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int l
 	     DATA8  a;
 	     
 	     a = (A_VAL(src_ptr) * (A_VAL(&mul_color) + 1)) >> 8;
-	     if (a) /* hmmm - do we need this? */	       
+	     switch (a)
 	       {
+		case 0:
+		  break;
+		case 255:
+		  R_VAL(dst_ptr) = ((R_VAL(src_ptr) * (R_VAL(&mul_color) + 1)) >> 8);
+		  G_VAL(dst_ptr) = ((G_VAL(src_ptr) * (G_VAL(&mul_color) + 1)) >> 8);
+		  B_VAL(dst_ptr) = ((B_VAL(src_ptr) * (B_VAL(&mul_color) + 1)) >> 8);
+		  break;
+		default:
 		  BLEND_COLOR(a, R_VAL(dst_ptr), 
 			      ((R_VAL(src_ptr) * (R_VAL(&mul_color) + 1)) >> 8), R_VAL(dst_ptr), 
 			      tmp);
@@ -62,6 +77,7 @@ evas_common_blend_pixels_mul_color_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int l
 		  BLEND_COLOR(a, B_VAL(dst_ptr), 
 			      ((B_VAL(src_ptr) * (B_VAL(&mul_color) + 1)) >> 8), B_VAL(dst_ptr), 
 			      tmp);
+		  break;
 	       }
 	     src_ptr++;
 	     dst_ptr++;
@@ -91,41 +107,64 @@ evas_common_blend_pixels_mul_color_rgba_to_rgb_mmx(DATA32 *src, DATA32 *dst, int
    
    while (dst_ptr < dst_end_ptr)
      {
-	movd_m2r(src_ptr[0], mm1);
+	DATA8 a;
+	
+	a = (A_VAL(src_ptr) * (A_VAL(&mul_color) + 1)) >> 8;
+	switch (a)
+	  {
+	   case 0:
+	     break;
+	   case 255:
+	     movd_m2r(src_ptr[0], mm1);
 
-	/* this could be more optimial.. but it beats the c code by almost */
-	/* double */
-	pxor_r2r(mm7, mm7);
-	punpcklbw_r2r(mm1, mm7);
-	psrlw_i2r(8, mm7);
-	pmullw_r2r(mm6, mm7);
-	psrlw_i2r(8, mm7);
-	packuswb_r2r(mm7, mm7);
-	movq_r2r(mm7, mm1);
-	/* and back to our normal programming... */
-	movd_m2r(dst_ptr[0], mm2);
-	
-	movq_r2r(mm1, mm3);
-	
-	punpcklbw_r2r(mm3, mm3);
-	punpckhwd_r2r(mm3, mm3);
-	punpckhdq_r2r(mm3, mm3);	
-	psrlw_i2r(1, mm3);
-	
-	psrlq_i2r(16, mm3);
-	
-	punpcklbw_r2r(mm4, mm1);
-	punpcklbw_r2r(mm4, mm2);
-	
-	psubw_r2r(mm2, mm1);
-	psllw_i2r(1, mm1);
-	paddw_r2r(mm5, mm1);
-	pmulhw_r2r(mm3, mm1);
-	paddw_r2r(mm1, mm2);
-	
-	packuswb_r2r(mm4, mm2);
-	movd_r2m(mm2, dst_ptr[0]);
-	
+	     /* this could be more optimial.. but it beats the c code by almost */
+	     /* double */
+	     pxor_r2r(mm7, mm7);
+	     punpcklbw_r2r(mm1, mm7);
+	     psrlw_i2r(8, mm7);
+	     pmullw_r2r(mm6, mm7);
+	     psrlw_i2r(8, mm7);
+	     packuswb_r2r(mm7, mm7);
+	     movq_r2r(mm7, mm1);
+	     movd_r2m(mm1, dst_ptr[0]);
+	     break;
+	   default:
+	     movd_m2r(src_ptr[0], mm1);
+
+	     /* this could be more optimial.. but it beats the c code by almost */
+	     /* double */
+	     pxor_r2r(mm7, mm7);
+	     punpcklbw_r2r(mm1, mm7);
+	     psrlw_i2r(8, mm7);
+	     pmullw_r2r(mm6, mm7);
+	     psrlw_i2r(8, mm7);
+	     packuswb_r2r(mm7, mm7);
+	     movq_r2r(mm7, mm1);
+	     /* and back to our normal programming... */
+	     movd_m2r(dst_ptr[0], mm2);
+	     
+	     movq_r2r(mm1, mm3);
+	     
+	     punpcklbw_r2r(mm3, mm3);
+	     punpckhwd_r2r(mm3, mm3);
+	     punpckhdq_r2r(mm3, mm3);	
+	     psrlw_i2r(1, mm3);
+	     
+	     psrlq_i2r(16, mm3);
+	     
+	     punpcklbw_r2r(mm4, mm1);
+	     punpcklbw_r2r(mm4, mm2);
+	     
+	     psubw_r2r(mm2, mm1);
+	     psllw_i2r(1, mm1);
+	     paddw_r2r(mm5, mm1);
+	     pmulhw_r2r(mm3, mm1);
+	     paddw_r2r(mm1, mm2);
+	     
+	     packuswb_r2r(mm4, mm2);
+	     movd_r2m(mm2, dst_ptr[0]);
+	     break;
+	  }
 	src_ptr++;
 	dst_ptr++;
      }
@@ -153,8 +192,14 @@ evas_common_blend_pixels_mul_color_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int 
 	     DATA8  a, aa;
 	     
 	     aa = (A_VAL(src_ptr) * (A_VAL(&mul_color) + 1)) >> 8;
-	     if (aa) /* hmmm - do we need this? */
+	     switch (aa)
 	       {
+		case 0:
+		  break;
+		case 255:
+		  *dst_ptr = *src_ptr;
+		  break;
+		default:
 		  a = _evas_pow_lut[aa][A_VAL(dst_ptr)];
 		  
 		  BLEND_COLOR(a, R_VAL(dst_ptr), 
@@ -166,11 +211,13 @@ evas_common_blend_pixels_mul_color_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int 
 		  BLEND_COLOR(a, B_VAL(dst_ptr), 
 			      B_VAL(src_ptr), B_VAL(dst_ptr), 
 			      tmp);
-		  A_VAL(dst_ptr) = A_VAL(dst_ptr) + ((aa * (255 - A_VAL(dst_ptr))) / 255);
+		  BLEND_COLOR(A_VAL(src),A_VAL(dst),255,A_VAL(dst),tmp);
+/*		  A_VAL(dst_ptr) = A_VAL(dst_ptr) + ((aa * (255 - A_VAL(dst_ptr))) / 255);*/
+		  break;
 	       }
 	     src_ptr++;
 	     dst_ptr++;
-	       }
+	  }
      }
    else
      {
@@ -180,8 +227,17 @@ evas_common_blend_pixels_mul_color_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int 
 	     DATA8  a, aa;
 	     
 	     aa = (A_VAL(src_ptr) * (A_VAL(&mul_color) + 1)) >> 8;
-	     if (aa) /* hmmm - do we need this? */
+	     switch (aa)
 	       {
+		case 0:
+		  break;
+		case 255:
+		  R_VAL(dst_ptr) = ((R_VAL(src_ptr) * (R_VAL(&mul_color) + 1)) >> 8);
+		  G_VAL(dst_ptr) = ((G_VAL(src_ptr) * (G_VAL(&mul_color) + 1)) >> 8);
+		  B_VAL(dst_ptr) = ((B_VAL(src_ptr) * (B_VAL(&mul_color) + 1)) >> 8);
+		  A_VAL(dst_ptr) = 255;
+		  break;
+		default:
 		  a = _evas_pow_lut[aa][A_VAL(dst_ptr)];
 		  
 		  BLEND_COLOR(a, R_VAL(dst_ptr), 
@@ -193,7 +249,9 @@ evas_common_blend_pixels_mul_color_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int 
 		  BLEND_COLOR(a, B_VAL(dst_ptr), 
 			      ((B_VAL(src_ptr) * (B_VAL(&mul_color) + 1)) >> 8), B_VAL(dst_ptr), 
 			      tmp);
-		  A_VAL(dst_ptr) = A_VAL(dst_ptr) + ((aa * (255 - A_VAL(dst_ptr))) / 255);
+		  BLEND_COLOR(A_VAL(src),A_VAL(dst),255,A_VAL(dst),tmp);
+/*		  A_VAL(dst_ptr) = A_VAL(dst_ptr) + ((aa * (255 - A_VAL(dst_ptr))) / 255);*/
+		  break;
 	       }
 	     src_ptr++;
 	     dst_ptr++;

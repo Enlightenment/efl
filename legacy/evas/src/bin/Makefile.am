@@ -27,6 +27,7 @@ SUBDIRS = evas_software_win32
 
 evas_software_x11_test_SOURCES = evas_test_main.h evas_test_main.c evas_software_x11_main.c
 evas_software_x11_test_LDADD = $(top_builddir)/src/lib/libevas.la -lm @x_libs@
+#evas_software_x11_test_LDFLAGS = $(LDFLAGS) -static
 evas_software_x11_test_LDFLAGS = $(LDFLAGS)
 evas_software_x11_test_CFLAGS = $(CFLAGS) @x_cflags@
 evas_software_x11_test_DEPENDENCIES = $(top_builddir)/src/lib/libevas.la

@@ -22,8 +22,14 @@ evas_common_blend_pixels_cmod_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int len, D
 	DATA8  a;
 	
 	a = amod[A_VAL(src_ptr)];
-	if (a) /* hmmm - do we need this? */
+	switch (a)
 	  {
+	   case 0:
+	     break;
+	   case 255:
+	     *dst_ptr = *src_ptr;
+	     break;
+	   default:
 	     BLEND_COLOR(a, R_VAL(dst_ptr), 
 			 rmod[R_VAL(src_ptr)], R_VAL(dst_ptr), 
 			 tmp);
@@ -33,6 +39,7 @@ evas_common_blend_pixels_cmod_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int len, D
 	     BLEND_COLOR(a, B_VAL(dst_ptr), 
 			 bmod[B_VAL(src_ptr)], B_VAL(dst_ptr), 
 			 tmp);
+	     break;
 	  }
 	src_ptr++;
 	dst_ptr++;
@@ -56,8 +63,14 @@ evas_common_blend_pixels_cmod_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len, 
 	DATA8  a;
 	
 	a = _evas_pow_lut[amod[A_VAL(src_ptr)]][A_VAL(dst_ptr)];
-	if (a) /* hmmm - do we need this? */
+	switch (a)
 	  {
+	   case 0:
+	     break;
+	   case 255:
+	     *dst_ptr = *src_ptr;
+	     break;
+	   default:
 	     BLEND_COLOR(a, R_VAL(dst_ptr), 
 			 rmod[R_VAL(src_ptr)], R_VAL(dst_ptr), 
 			 tmp);
@@ -67,7 +80,9 @@ evas_common_blend_pixels_cmod_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len, 
 	     BLEND_COLOR(a, B_VAL(dst_ptr), 
 			 bmod[B_VAL(src_ptr)], B_VAL(dst_ptr), 
 			 tmp);	
-	     A_VAL(dst_ptr) = A_VAL(dst_ptr) + ((amod[A_VAL(src_ptr)] * (255 - A_VAL(dst_ptr))) / 255);
+	     BLEND_COLOR(A_VAL(src),A_VAL(dst),255,A_VAL(dst),tmp);
+/*	     A_VAL(dst_ptr) = A_VAL(dst_ptr) + ((amod[A_VAL(src_ptr)] * (255 - A_VAL(dst_ptr))) / 255);*/
+	     break;
 	  }
 	src_ptr++;
 	dst_ptr++;
