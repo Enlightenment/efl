@@ -114,8 +114,6 @@ rm -rf $RPM_BUILD_ROOT
 %doc COPYING
 %doc README
 %doc evas_docs.tar.gz
-%{prefix}/share/aclocal/evas.m4
-%{prefix}/share/doc/evas*
 
 %changelog
 * Sat Jun 23 2001 The Rasterman <raster@rasterman.com>
