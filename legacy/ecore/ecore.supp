@@ -1,0 +1,11 @@
+# $Id$
+# valgrind suppression file for Ecore
+#
+{
+   BogusLeakError
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/X11R6/lib/libX11.so.6.2
+   fun:_XmbTextPropertyToTextList
+   fun:XmbTextPropertyToTextList
+}
