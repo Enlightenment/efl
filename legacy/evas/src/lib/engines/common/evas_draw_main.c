@@ -569,19 +569,12 @@ evas_common_draw_func_blend_color_get(DATA32 src, RGBA_Image *dst, int pixels)
 	  }
 	else
 	  {
-#ifdef BUILD_ALTIVEC
-	     if (evas_common_cpu_has_feature(CPU_FEATURE_ALTIVEC))
-	       return evas_common_blend_color_rgba_to_rgb_altivec;
-#endif
 #ifdef BUILD_MMX
 	     if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
 	       return evas_common_blend_color_rgba_to_rgb_mmx;
 #endif	     
 #ifdef BUILD_C	       
 # ifdef BUILD_MMX
-	     else
-# endif
-# ifdef BUILD_ALTIVEC
 	     else
 # endif
 	       return evas_common_blend_color_rgba_to_rgb_c;
@@ -599,10 +592,6 @@ evas_common_draw_func_blend_color_get(DATA32 src, RGBA_Image *dst, int pixels)
 #ifdef  BUILD_SSE	     
 	     if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 256 * 256))
 	       return evas_common_copy_color_rgba_to_rgba_sse;
-#endif
-#ifdef  BUILD_ALTIVEC
-	     if (evas_common_cpu_has_feature(CPU_FEATURE_ALTIVEC))
-	       return evas_common_copy_color_rgba_to_rgba_altivec;
 #endif
 #ifdef BUILD_MMX
 # ifdef BUILD_SSE	     
@@ -713,15 +702,8 @@ evas_common_draw_func_blend_alpha_get(RGBA_Image *dst)
 	if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
 	  return evas_common_blend_alpha_color_rgba_to_rgb_mmx;
 #endif
-#ifdef BUILD_ALTIVEC
-	if (evas_common_cpu_has_feature(CPU_FEATURE_ALTIVEC))
-	  return evas_common_blend_alpha_color_rgba_to_rgb_altivec;
-#endif
 #ifdef BUILD_C
 # ifdef BUILD_MMX
-	else
-# endif
-# ifdef BUILD_ALTIVEC
 	else
 # endif
 	  return evas_common_blend_alpha_color_rgba_to_rgb_c;
