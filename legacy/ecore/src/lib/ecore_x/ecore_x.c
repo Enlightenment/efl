@@ -211,7 +211,7 @@ int ECORE_X_LOCK_NUM = 0;
 int ECORE_X_LOCK_CAPS = 0;
 
 /**
- * @defgroup Ecore_X_Init_Group Ecore X Library Init and Shutdown Functions
+ * @defgroup Ecore_X_Init_Group X Library Init and Shutdown Functions
  *
  * Functions that start and shut down the Ecore X Library.
  */
@@ -537,7 +537,7 @@ ecore_x_disconnect(void)
 }
 
 /**
- * @defgroup Ecore_X_Display_Attr_Group Ecore X Display Attributes
+ * @defgroup Ecore_X_Display_Attr_Group X Display Attributes
  *
  * Functions that set and retrieve X display attributes.
  */
@@ -596,7 +596,7 @@ ecore_x_double_click_time_get(void)
 }
 
 /**
- * @defgroup Ecore_X_Flush_Group Ecore X Synchronization Functions
+ * @defgroup Ecore_X_Flush_Group X Synchronization Functions
  *
  * Functions that ensure that all commands that have been issued by the
  * Ecore X library have been sent to the server.

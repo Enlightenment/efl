@@ -6,9 +6,18 @@
  * @brief The file that provides the program utility, main loop and timer
  *        functions.
  *
- * The following groups of functions are included with this file:
- * @li @ref Ecore_Exe_Basic_Group
- * @li @ref Ecore_Exe_Signal_Group
+ * This header provides the Ecore event handling loop.  For more
+ * details, see @ref Ecore_Main_Loop_Group.
+ *
+ * For the main loop to be of any use, you need to be able to add events
+ * and event handlers.
+ *
+ * There is also provision for callbacks for when the loop enters or
+ * exits an idle state. See @ref Idle_Group for more information.
+ *
+ * Functions are also provided for spawning child processes using fork.
+ * See @ref Ecore_Exe_Basic_Group and @ref Ecore_Exe_Signal_Group for
+ * more details.
  */
 
 #include <sys/types.h>

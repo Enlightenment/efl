@@ -47,9 +47,17 @@ static int init_count = 0;
 #define LENGTH_OF_SOCKADDR_UN(s) (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
 
 /**
+ * @defgroup Ecore_Con_Lib_Group Ecore Connection Library Functions
+ *
+ * Utility functions that set up and shut down the Ecore Connection
+ * library.
+ */
+
+/**
  * Initialises the Ecore_Con library.
- * @return Number of times the library has been initialised without being
- *         shut down.
+ * @return  Number of times the library has been initialised without being
+ *          shut down.
+ * @ingroup Ecore_Con_Lib_Group
  */
 int
 ecore_con_init(void)
@@ -74,8 +82,9 @@ ecore_con_init(void)
 
 /**
  * Shuts down the Ecore_Con library.
- * @return Number of times the library has been initialised without being
- *         shut down.
+ * @return  Number of times the library has been initialised without being
+ *          shut down.
+ * @ingroup Ecore_Con_Lib_Group
  */
 int
 ecore_con_shutdown(void)
@@ -88,6 +97,12 @@ ecore_con_shutdown(void)
      }
    return 0;
 }
+
+/**
+ * @defgroup Ecore_Con_Server_Group Ecore Connection Server Functions
+ *
+ * Functions that operate on Ecore server objects.
+ */
 
 /**
  * Creates a server to listen for connections.
@@ -113,6 +128,7 @@ ecore_con_shutdown(void)
  * @param  data       Data to associate with the created Ecore_Con_Server
  *                    object.
  * @return A new Ecore_Con_Server.
+ * @ingroup Ecore_Con_Server_Group
  */
 Ecore_Con_Server *
 ecore_con_server_add(Ecore_Con_Type compl_type,
@@ -331,6 +347,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
  * @param  data       Data to associate with the created Ecore_Con_Server
  *                    object.
  * @return A new Ecore_Con_Server.
+ * @ingroup Ecore_Con_Server_Group
  */
 Ecore_Con_Server *
 ecore_con_server_connect(Ecore_Con_Type compl_type,
@@ -478,8 +495,9 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 
 /**
  * Closes the connection and frees the given server.
- * @param  svr The given server.
- * @return Data associated with the server when it was created.
+ * @param   svr The given server.
+ * @return  Data associated with the server when it was created.
+ * @ingroup Ecore_Con_Server_Group
  */
 void *
 ecore_con_server_del(Ecore_Con_Server *svr)
@@ -499,8 +517,9 @@ ecore_con_server_del(Ecore_Con_Server *svr)
 
 /**
  * Retrieves the data associated with the given server.
- * @param  svr The given server.
- * @return The associated data.
+ * @param   svr The given server.
+ * @return  The associated data.
+ * @ingroup Ecore_Con_Server_Group
  */
 void *
 ecore_con_server_data_get(Ecore_Con_Server *svr)
@@ -517,8 +536,9 @@ ecore_con_server_data_get(Ecore_Con_Server *svr)
 /**
  * Retrieves whether the given server is currently connected.
  * @todo Check that this function does what the documenter believes it does.
- * @param  svr The given server.
- * @return @c 1 if the server is connected.  @c 0 otherwise.
+ * @param   svr The given server.
+ * @return  @c 1 if the server is connected.  @c 0 otherwise.
+ * @ingroup Ecore_Con_Server_Group
  */
 int
 ecore_con_server_connected_get(Ecore_Con_Server *svr)
@@ -535,11 +555,12 @@ ecore_con_server_connected_get(Ecore_Con_Server *svr)
 
 /**
  * Sends the given data to the given server.
- * @param  svr  The given server.
- * @param  data The given data.
- * @param  size Length of the data, in bytes, to send.
- * @return The number of bytes sent.  @c 0 will be returned if there is an
- *         error.
+ * @param   svr  The given server.
+ * @param   data The given data.
+ * @param   size Length of the data, in bytes, to send.
+ * @return  The number of bytes sent.  @c 0 will be returned if there is an
+ *          error.
+ * @ingroup Ecore_Con_Server_Group
  */
 int
 ecore_con_server_send(Ecore_Con_Server *svr, void *data, int size)
@@ -573,14 +594,21 @@ ecore_con_server_send(Ecore_Con_Server *svr, void *data, int size)
      }
    return size;
 }
-  
+
+/**
+ * @defgroup Ecore_Con_Client_Group Ecore Connection Client Functions
+ *
+ * Functions that operate on Ecore connection client objects.
+ */
+
 /**
  * Sends the given data to the given client.
- * @param  cl   The given client.
- * @param  data The given data.
- * @param  size Length of the data, in bytes, to send.
- * @return The number of bytes sent.  @c 0 will be returned if there is an
- *         error.
+ * @param   cl   The given client.
+ * @param   data The given data.
+ * @param   size Length of the data, in bytes, to send.
+ * @return  The number of bytes sent.  @c 0 will be returned if there is an
+ *          error.
+ * @ingroup Ecore_Con_Client_Group
  */
 int
 ecore_con_client_send(Ecore_Con_Client *cl, void *data, int size)
@@ -618,8 +646,9 @@ ecore_con_client_send(Ecore_Con_Client *cl, void *data, int size)
 /**
  * Retrieves the server representing the socket the client has
  * connected to.
- * @param  cl The given client.  
- * @return The server that the client connected to.
+ * @param   cl The given client.  
+ * @return  The server that the client connected to.
+ * @ingroup Ecore_Con_Client_Group
  */
 Ecore_Con_Server *
 ecore_con_client_server_get(Ecore_Con_Client *cl)
@@ -635,8 +664,9 @@ ecore_con_client_server_get(Ecore_Con_Client *cl)
 
 /**
  * Closes the connection and frees memory allocated to the given client.
- * @param  cl The given client.
- * @return Data associated with the client.
+ * @param   cl The given client.
+ * @return  Data associated with the client.
+ * @ingroup Ecore_Con_Client_Group
  */
 void *
 ecore_con_client_del(Ecore_Con_Client *cl)
@@ -656,8 +686,9 @@ ecore_con_client_del(Ecore_Con_Client *cl)
 
 /**
  * Sets the data associated with the given client to @p data.
- * @param cl   The given client.
- * @param data What to set the data to.
+ * @param   cl   The given client.
+ * @param   data What to set the data to.
+ * @ingroup Ecore_Con_Client_Group
  */
 void
 ecore_con_client_data_set(Ecore_Con_Client *cl, const void *data)
@@ -673,8 +704,9 @@ ecore_con_client_data_set(Ecore_Con_Client *cl, const void *data)
 
 /**
  * Retrieves the data associated with the given client.
- * @param  cl The given client.
- * @return The data associated with @p cl.
+ * @param   cl The given client.
+ * @return  The data associated with @p cl.
+ * @ingroup Ecore_Con_Client_Group
  */
 void *
 ecore_con_client_data_get(Ecore_Con_Client *cl)

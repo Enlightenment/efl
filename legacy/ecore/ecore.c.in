@@ -25,10 +25,16 @@ These routines are used for Ecore Library interaction
 
 Ecore is a library of convenience functions.
 
-Currently, Ecore provides the following modules:
-@li @ref Ecore_Main_Loop_Page
-@li @ref Ecore_Config_Page
-@li @ref X_Window_System_Page
+The Ecore library provides the following modules:
+@li @link Ecore.h        Ecore - Main Loop Functions. @endlink
+@li @link Ecore_Con.h    Ecore_Con - Connection functions. @endlink
+@li @link Ecore_Config.h Ecore_Config - Configuration functions. @endlink
+@li @link Ecore_Evas.h   Ecore_Evas - Evas convenience functions. @endlink
+@li @link Ecore_Fb.h     Ecore_FB - Frame buffer convenience functions. @endlink
+@li @link Ecore_Ipc.h    Ecore_IPC - Inter Process Communication functions. @endlink
+@li @link Ecore_Job.h    Ecore_Job - Job functions, to be used in the Ecore main loop. @endlink
+@li @link Ecore_Txt.h    Ecore_Txt - Text encoding conversion. @endlink
+@li @link Ecore_X.h      Ecore_X - X Windows System wrapper. @endlink
 
 @section compiling How to compile using Ecore?
 
@@ -64,7 +70,7 @@ make CFLAGS="-O9 -mpentiumpro -march=pentiumpro -mcpu=pentiumpro"
 
 */
 
-/**
+/*
 @page Ecore_Main_Loop_Page The Ecore Main Loop
 
 @section intro What is Ecore?
@@ -189,33 +195,6 @@ follows the same principles as shown in this example.
 */
 
 /**
-@page Ecore_Con_Page The Ecore Connection Library
-
-The Ecore Connection Library ( @c Ecore_Con ) provides simple mechanisms
-for communications between programs using reliable sockets.  It saves
-the programmer from having to worry about file descripters and waiting
-for incoming connections.
-
-There are two main objects in the @c Ecore_Con library: the @c
-Ecore_Con_Server and the @c Ecore_Con_Client.
-
-The @c Ecore_Con_Server represents a server to connect to.  It is
-represents a server that can be connected to.  It is used regardless
-of whether the program is acting as a server or client itself.
-
-To create a listening server, call @c ecore_con_server_add().
-
-To connect to a server, call @c ecore_Con_server_connect().  Data can
-then be sent to the server using the @c ecore_con_server_send().
-
-Whenever a client connection is made to an @c Ecore_Con_Server, a
-@c ECORE_CON_CLIENT_ADD event is emitted.  Any event callbacks that are
-called receive a @c Ecore_Con_Client object, which represents a
-connection that that particular client.
-
- */
-
-/**
 @page Ecore_Config_Page The Enlightened Property Library
 
 The Enlightened Property Library (Ecore_Config) is an adbstraction
@@ -289,12 +268,6 @@ that are used.
 */
 
 // GROUP DEFINITIONS
-
-/**
-@defgroup Ecore_Main_Loop_Group Main Loop Functions
-
-Functions used to control the main loop.
-*/
 
 /**
 @defgroup Ecore_Timer_Group Ecore Timer

@@ -31,11 +31,29 @@ static double            t1 = 0.0;
 static double            t2 = 0.0;
 
 /**
- * Run 1 iteration of the main loop and process everything on the queue.
- * @ingroup Ecore_Main_Loop_Group
+ * @defgroup Ecore_Main_Loop_Group Main Loop Functions
+ *
+ * These functions control the Ecore event handling loop.  This loop is
+ * designed to work on embedded systems all the way to large and
+ * powerful mutli-cpu workstations.
+ *
+ * It serialises all system signals and events into a single event
+ * queue, that can be easily processed without needing to worry about
+ * concurrency.  A properly written, event-driven program using this
+ * kind of programming does not need threads.  It makes the program very
+ * robust and easy to follow.
  * 
- * This function Processes 1 iteration of the main loop, handling anything on
- * the queue. See ecore_main_loop_begin() for more information.
+ * Here is an example of simple program and its basic event loop flow:
+ * @image html prog_flow.png
+ *
+ * For examples of setting up and using a main loop, see
+ * @ref event_handler_example.c and @ref timer_example.c.
+ */
+
+/**
+ * Runs a single iteration of the main loop to process everything on the
+ * queue.
+ * @ingroup Ecore_Main_Loop_Group
  */
 void
 ecore_main_loop_iterate(void)
@@ -44,13 +62,11 @@ ecore_main_loop_iterate(void)
 }
 
 /**
- * Run the application main loop.
+ * Runs the application main loop.
+ *
+ * This function will not return until @ref ecore_main_loop_quit is called.
+ *
  * @ingroup Ecore_Main_Loop_Group
- * 
- * This function does not return until ecore_main_loop_quit() is called. It
- * will keep looping internally and call all callbacks set up to handle timers,
- * idle state and events Ecore recieves from X, fd's, IPC, signals etc. and
- * anything else that has registered a handler with ecore itself.
  */
 void
 ecore_main_loop_begin(void)
@@ -62,18 +78,21 @@ ecore_main_loop_begin(void)
 }
 
 /**
- * Quit the main loop after it is done processing.
+ * Quits the main loop once all the events currently on the queue have
+ * been processed.
  * @ingroup Ecore_Main_Loop_Group
- * 
- * This function will flag a quit of the main loop once the current loop has
- * finished processing all events. It will not quit instantly, so expect more
- * callbacks to be called after this command has been issued.
  */
 void
 ecore_main_loop_quit(void)
 {
    do_quit = 1;
 }
+
+/**
+ * @defgroup Ecore_FD_Handler_Group File Event Handling Functions
+ *
+ * To be written.
+ */
 
 /**
  * Add a handler for read/write notification of a file descriptor.
@@ -155,11 +174,10 @@ ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
 }
 
 /**
- * Return the file descriptor that the handler is handling
- * @param fd_handler The fd handler to query
- * @return The fd the handler is watching
- * 
- * This returns the fd the @p fd_handler is monitoring.
+ * Returns the file descriptor that the given handler is handling.
+ * @param   fd_handler The given FD handler.
+ * @return  The file descriptor the handler is watching
+ * @ingroup Ecore_FD_Handler_Group
  */
 int
 ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler)

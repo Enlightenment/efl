@@ -7,7 +7,14 @@
 
 /**
  * @file
- * @brief Ecore functions for dealing with the X Windows system
+ * @brief Ecore functions for dealing with the X Windows System
+ *
+ * Ecore_X provides a wrapper and convenience functions for using the
+ * X Windows System.  Function groups for this part of the library 
+ * include the following:
+ * @li @ref Ecore_X_Init_Group
+ * @li @ref Ecore_X_Display_Attr_Group
+ * @li @ref Ecore_X_Flush_Group
  */
 
 typedef unsigned int Ecore_X_ID;
