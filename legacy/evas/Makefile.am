@@ -13,7 +13,7 @@ SUBDIRS		     = src test doc debian
 
 bin_SCRIPTS = evas-config
 
-EXTRA_DIST = README AUTHORS COPYING evas.spec evas.m4
+EXTRA_DIST = README AUTHORS COPYING evas.spec evas.m4 FAQ-EVAS
 
 m4datadir = $(datadir)/aclocal
 m4data_DATA = evas.m4

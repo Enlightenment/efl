@@ -1,0 +1,42 @@
+Q: Why is EVAS faster with software acceleration than than when I run it
+   with hardware acceleration switched on?
+
+A: When run with hardware acceleration EVAS uses the GL libraries on your
+   system; this means that if you have Mesa installed then EVAS will use
+   the Mesa GL liberties. Mesa however only provides software acceleration
+   and therefore will run slow compared to EVASs in-built software mode. If
+   you have a video card that supports hardware acceleration then you should
+   attempt to get the manufacturers own GL drivers for your computer and
+   install them making sure that none of the Mesa libraries are left behind
+   and that where needed sym-links are made to the real drivers.
+
+Q: Why is 'program x' which uses EVAS so slow?
+
+A: See last question. The chance is that the program is trying to use
+   hardware acceleration by default and that you have Mesa GL libraries
+   installed on your system. If you don't have acceleration on your video
+   card then you should search for a way to switch to software acceleration
+   in the program.
+
+Q: Is there a packaged version of SGI's GLU Implementation for my computer
+   anywhere?
+
+A: At present SGI's GLU Implementation is available only in the form of a
+   Redhat package from http://www.mesa3d.org/download.html You should
+   download this package and convert it to whatever distribution you are
+   on using "alien".
+
+Q: Why is my CPU usage at 100% when I use a program running EVAS?
+
+A: When used in software mode, EVAS will use a lot of CPU. In hardware
+   mode however it depends on your OpenGL drivers. What a lot of drivers
+   do is limit buffer buffer swaps to vertical blanking gaps only. This
+   means that the buffers wont be swapped until the vertical blanking gap
+   is reached, however since there is no method of using interrupts under
+   Linux/X the GL drivers have to poll in a tight loop waiting for the gap.
+   Also if the GL libs are accessing the GFX hardware directory then if the
+   hardware is busy then the app will sit and poll registers until the
+   hardware is ready. It's basically down to your OpenGL drivers. It's worth
+   noting as well that your CPU will be high whenever you run evas_test as
+   it is pushing your system to try and achieve the highest frame rate it
+   can, a situation that most software using EVAS will never be in.
