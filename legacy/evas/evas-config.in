@@ -1,7 +1,5 @@
 #!/bin/sh
 
-etxra_libs="@x_cflags@ @x_includes@ @gl_includes@"
-
 prefix=@prefix@
 exec_prefix=@exec_prefix@
 exec_prefix_set=no
@@ -44,11 +42,11 @@ while test $# -gt 0; do
       if test @includedir@ != /usr/include ; then
         includes=-I@includedir@
       fi
-      echo $includes @X_CFLAGS@ @imlib2_includes@
+      echo $includes @x_cflags@ @x_includes@ @gl_includes@ @imlib2_includes@
       ;;
     --libs)
       libdirs=-L@libdir@
-      echo $libdirs -levas $extra_libs @LDFLAGS@ @X_LIBS@ @X_PRE_LIBS@ @X_EXTRA_LIBS@ @imlib2_libs@
+      echo $libdirs -levas @LDFLAGS@ @X_LIBS@ @X_PRE_LIBS@ @X_EXTRA_LIBS@ @imlib2_libs@
       ;;
     *)
       echo "${usage}" 1>&2
