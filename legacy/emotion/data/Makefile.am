@@ -2,8 +2,7 @@ EDJE_CC = edje_cc $(EDJE_FLAGS)
 EDJE_FLAGS = -v
 
 filesdir = $(datadir)/emotion/data
-files_DATA = \
-theme.eet \
+files_DATA = theme.eet
 
 EXTRA_DIST = \
 bpause.png \
