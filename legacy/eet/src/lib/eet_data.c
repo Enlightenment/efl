@@ -959,9 +959,10 @@ eet_data_put_string(void *src, int *size_ret)
 {
    char *s, *d;
    int len;
+   const char *empty_s = "";
    
-   if (!src) src = "";
    s = (char *)(*((char **)src));
+   if (!s) s = (char *)empty_s;
    len = strlen(s);
    d = malloc(len + 1);
    if (!d) return NULL;
