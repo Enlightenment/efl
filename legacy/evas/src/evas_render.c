@@ -390,6 +390,9 @@ evas_render_updates(Evas e)
 			(o->clip.changed)))
 		      )
 		    {
+		       Evas_Object_Rectangle oo;
+		       
+		       oo = o;
 		       if (((o->current.visible != o->previous.visible) ||
 			    ((o->current.visible) &&
 			     (o->current.zoomscale != o->previous.zoomscale) ||
@@ -399,9 +402,6 @@ evas_render_updates(Evas e)
 		       if ((!prop_change) &&
 			   (o->type == OBJECT_RECTANGLE))
 			 {
-			    Evas_Object_Rectangle oo;
-			    
-			    oo = o;
 			    if ((oo->current.r != oo->previous.r) ||
 				(oo->current.g != oo->previous.g) ||
 				(oo->current.b != oo->previous.b) ||
@@ -409,8 +409,22 @@ evas_render_updates(Evas e)
 				)
 			       prop_change = 1;
 			 }
-		       real_change = 1;
-		       clip_change = o->clip.changed;
+		       if ((o->type == OBJECT_RECTANGLE) &&
+			   (oo->current.r == oo->previous.r) &&
+			   (oo->current.g == oo->previous.g) &&
+			   (oo->current.b == oo->previous.b) &&
+			   (oo->current.a == oo->previous.a) &&
+			   (oo->current.a == 0)
+			   )
+			 {
+			    real_change = 0;
+			    prop_change = 0;
+			 }
+		       else
+			 {
+			    real_change = 1;
+			    clip_change = o->clip.changed;
+			 }
 		    }		  
 		  
 		  o->current.stacking = 0;
@@ -440,7 +454,20 @@ evas_render_updates(Evas e)
 				     (oo->current.color.b != oo->previous.color.b) ||
 				     (oo->current.color.a != oo->previous.color.a)
 				     )
-				    real_change = 1;
+				   {
+				      if ((oo->current.color.r == oo->previous.color.r) &&
+					  (oo->current.color.g == oo->previous.color.g) &&
+					  (oo->current.color.b == oo->previous.color.b) &&
+					  (oo->current.color.a == oo->previous.color.a) &&
+					  (oo->current.color.a == 0)
+					  )
+					{
+					   real_change = 0;
+					   prop_change = 0;
+					}
+				      else
+					real_change = 1;
+				   }
 				 oo->current.new_data = 0;
 				 oo->previous = oo->current;
 			      }
@@ -458,7 +485,20 @@ evas_render_updates(Evas e)
 				     (oo->current.b != oo->previous.b) ||
 				     (oo->current.a != oo->previous.a)
 				     )
-				    real_change = 1;
+				   {
+				      if ((oo->current.r == oo->previous.r) &&
+					  (oo->current.g == oo->previous.g) &&
+					  (oo->current.b == oo->previous.b) &&
+					  (oo->current.a == oo->previous.a) &&
+					  (oo->current.a == 0)
+					  )
+					{
+					   real_change = 0;
+					   prop_change = 0;
+					}
+				      else
+					real_change = 1;
+				   }
 				 oo->previous = oo->current;
 			      }
 			    break;
@@ -473,8 +513,21 @@ evas_render_updates(Evas e)
 				     (oo->current.a != oo->previous.a)
 				     )
 				   {
-				      real_change = 1;
-				      prop_change = 1;
+				      if ((oo->current.r == oo->previous.r) &&
+					  (oo->current.g == oo->previous.g) &&
+					  (oo->current.b == oo->previous.b) &&
+					  (oo->current.a == oo->previous.a) &&
+					  (oo->current.a == 0)
+					  )
+					{
+					   real_change = 0;
+					   prop_change = 0;
+					}
+				      else
+					{
+					   real_change = 1;
+					   prop_change = 1;
+					}
 				   }
 				 oo->previous = oo->current;
 			      }
@@ -493,7 +546,20 @@ evas_render_updates(Evas e)
 				     (oo->current.b != oo->previous.b) ||
 				     (oo->current.a != oo->previous.a)
 				     )
-				    real_change = 1;
+				   {
+				      if ((oo->current.r == oo->previous.r) &&
+					  (oo->current.g == oo->previous.g) &&
+					  (oo->current.b == oo->previous.b) &&
+					  (oo->current.a == oo->previous.a) &&
+					  (oo->current.a == 0)
+					  )
+					{
+					   real_change = 0;
+					   prop_change = 0;
+					}
+				      else
+					real_change = 1;
+				   }
 				 oo->previous = oo->current;
 			      }
 			    break;
@@ -519,7 +585,20 @@ evas_render_updates(Evas e)
 				     (oo->current.g != oo->previous.g) ||
 				     (oo->current.b != oo->previous.b) ||
 				     (oo->current.a != oo->previous.a))
-				    real_change = 1;
+				   {
+				      if ((oo->current.r == oo->previous.r) &&
+					  (oo->current.g == oo->previous.g) &&
+					  (oo->current.b == oo->previous.b) &&
+					  (oo->current.a == oo->previous.a) &&
+					  (oo->current.a == 0)
+					  )
+					{
+					   real_change = 0;
+					   prop_change = 0;
+					}
+				      else
+					real_change = 1;
+				   }
 				 oo->previous = oo->current;
 			      }
 			    break;
