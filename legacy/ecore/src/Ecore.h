@@ -16,6 +16,9 @@
 #include <X11/keysymdef.h>
 #include <X11/extensions/XShm.h>
 #include <X11/extensions/shape.h>
+#ifdef WITH_DMALLOC
+#include <dmalloc.h>
+#endif
 
 #define XEV_NONE              NoEventMask
 #define XEV_KEY               KeyPressMask | KeyReleaseMask

@@ -2588,7 +2588,7 @@ e_window_send_event_move_resize(Window win, int x, int y, int w, int h)
    ev.xconfigure.width = w;
    ev.xconfigure.height = h;
    ev.xconfigure.border_width = 0;
-   ev.xconfigure.above = 0;
+   ev.xconfigure.above = win;
    ev.xconfigure.override_redirect = False;
    XSendEvent(disp, win, False, StructureNotifyMask, &ev);
 }
