@@ -48,8 +48,8 @@ collections
 //		       align, 0.5 0.5;
 //		       min, 0 0;
 //		       max, 0 0;
-//		       step 1 1;
-//		       aspect 0.0 999999.0;
+//		       step, 1 1;
+//		       aspect, 0.0 999999.0;
 		       rel1
 			 {
 			    relative, 0.0  0.0;
@@ -85,10 +85,10 @@ collections
 //			      }
 //			 }
 // only useful if its a rect or text object		       
-//		       color  255, 255, 255, 255;
+//		       color,  255 255 255 255;
 // only useful if its a text object	       
-//		       color2 255, 255, 255, 255;
-//		       color3 255, 255, 255, 255;
+//		       color2, 255 255 255 255;
+//		       color3, 255 255 255 255;
 //		       text
 //			 {
 //			    text,   "test text";
@@ -96,7 +96,7 @@ collections
 //			    size,   12;
 //			    fit,    0 0;
 //			    min,    1 1;
-//			    align   0.5 0.5;
+//			    align,  0.5 0.5;
 //			 }
 		    }
 	       }
