@@ -73,6 +73,7 @@ default:
 void
 evas_render(Evas e)
 {
+   Imlib_Updates up;
    Evas_List delete_objects;
    Evas_List l, ll;
    void (*func_draw_add_rect) (Display *disp, Window win, int x, int y, int w, int h);
@@ -254,124 +255,117 @@ evas_render(Evas e)
 	evas_list_free(delete_objects);
      }
    
+   func_init(e->current.display, e->current.screen);
+   if (e->updates)
      {
-	Imlib_Updates up;
-	
-	func_init(e->current.display, e->current.screen);
-	if (e->updates)
+	up = imlib_updates_merge_for_rendering(e->updates, 
+					       e->current.drawable_width,
+					       e->current.drawable_height);
+	e->updates = NULL;
+	if (up)
 	  {
-	     up = imlib_updates_merge_for_rendering(e->updates, 
-						    e->current.drawable_width,
-						    e->current.drawable_height);
-	     e->updates = NULL;
-	     if (up)
+	     Imlib_Updates u;
+	     
+	     u = up;
+	     while (u)
 	       {
-		  Imlib_Updates u;
+		  int x, y, w, h;
 		  
-		  u = up;
-		  while (u)
+		  imlib_updates_get_coordinates(u, &x, &y, &w, &h);
+		  func_draw_add_rect(e->current.display, 
+				     e->current.drawable,
+				     x, y, w, h);
+		  u = imlib_updates_get_next(u);
+	       }
+	     imlib_updates_free(up);
+	     /* draw all objects now */
+	     for (l = e->layers; l; l = l->next)
+	       {
+		  Evas_Layer layer;
+		  
+		  layer = l->data;
+		  for (ll = layer->objects; ll; ll = ll->next)
 		    {
-		       int x, y, w, h;
+		       Evas_Object_Any o;
 		       
-		       imlib_updates_get_coordinates(u, &x, &y, &w, &h);
-		       func_draw_add_rect(e->current.display, 
-					  e->current.drawable,
-					  x, y, w, h);
-		       u = imlib_updates_get_next(u);
-		    }
-		  imlib_updates_free(up);
-		  /* draw all objects now */
-		  for (l = e->layers; l; l = l->next)
-		    {
-		       Evas_Layer layer;
-		       
-		       layer = l->data;
-		       for (ll = layer->objects; ll; ll = ll->next)
+		       o = ll->data;
+		       if (o->current.visible)
 			 {
-			    Evas_Object_Any o;
+			    int x, y, w, h;
 			    
-			    o = ll->data;
-			    if (o->current.visible)
+			    _evas_object_get_current_translated_coords(e, o, 
+								       &x, &y, 
+								       &w, &h);
+			    if (RECTS_INTERSECT(0, 0, 
+						e->current.drawable_width,
+						e->current.drawable_height,
+						x, y, w, h))
 			      {
-				 int x, y, w, h;
-				 
-				 _evas_object_get_current_translated_coords(e, o, 
-									    &x, &y, 
-									    &w, &h);
-				 if (RECTS_INTERSECT(0, 0, 
-						     e->current.drawable_width,
-						     e->current.drawable_height,
-						     x, y, w, h))
+				 switch (o->type)
 				   {
-				      switch (o->type)
+				   case OBJECT_IMAGE:
 					{
-					case OBJECT_IMAGE:
+					   Evas_Object_Image oo;
+					   void *im;
+					   
+					   oo = o;
+					   im = func_image_new_from_file(e->current.display, oo->current.file);
+					   if (im)
 					     {
-						Evas_Object_Image oo;
-						
-						oo = o;
-						  {
-						     void *im;
-						     
-						     im = func_image_new_from_file(e->current.display, oo->current.file);
-						     if (im)
-						       {
-							  func_image_draw(im, 
-									  e->current.display,
-									  e->current.drawable,
-									  e->current.drawable_width,
-									  e->current.drawable_height,
-									  0, 0, 
-									  func_image_get_width(im),
-									  func_image_get_height(im),
-									  x, y, w, h);
-							  func_image_free(im);
-						       }
-						  }
+						func_image_draw(im, 
+								e->current.display,
+								e->current.drawable,
+								e->current.drawable_width,
+								e->current.drawable_height,
+								0, 0, 
+								func_image_get_width(im),
+								func_image_get_height(im),
+								x, y, w, h);
+						func_image_free(im);
 					     }
-					   break;
-					case OBJECT_TEXT:
-					     {
-						Evas_Object_Text oo;
-						
-						oo = o;
-					     }
-					   break;
-					case OBJECT_RECTANGLE:
-					     {
-						Evas_Object_Rectangle oo;
-						
-						oo = o;
-					     }
-					   break;
-					case OBJECT_LINE:
-					     {
-						Evas_Object_Line oo;
-						
-						oo = o;
-					     }
-					   break;
-					case OBJECT_GRADIENT_BOX:
-					     {
-						Evas_Object_Gradient_Box oo;
-						
-						oo = o;
-					     }
-					   break;
-					case OBJECT_BITS:
-					     {
-						Evas_Object_Bits oo;
-						
-						oo = o;
-					     }
-					   break;
 					}
+				      break;
+				   case OBJECT_TEXT:
+					{
+					   Evas_Object_Text oo;
+					   
+					   oo = o;
+					}
+				      break;
+				   case OBJECT_RECTANGLE:
+					{
+					   Evas_Object_Rectangle oo;
+					   
+					   oo = o;
+					}
+				      break;
+				   case OBJECT_LINE:
+					{
+					   Evas_Object_Line oo;
+					   
+					   oo = o;
+					}
+				      break;
+				   case OBJECT_GRADIENT_BOX:
+					{
+					   Evas_Object_Gradient_Box oo;
+					   
+					   oo = o;
+					}
+				      break;
+				   case OBJECT_BITS:
+					{
+					   Evas_Object_Bits oo;
+					   
+					   oo = o;
+					}
+				      break;
 				   }
 			      }
 			 }
 		    }
-		  func_flush_draw(e->current.display, e->current.drawable);
 	       }
+	     func_flush_draw(e->current.display, e->current.drawable);
 	  }
      }
    e->previous = e->current;
