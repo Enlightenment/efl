@@ -1,7 +1,8 @@
 ## Process this file with automake to produce Makefile.in
 
 INCLUDES = \
--I$(top_srcdir)/src/lib/ecore
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore
 
 libecore_fb_la_LDFLAGS = -version-info 1:0:0 \
 -L$(top_builddir)/src/lib/ecore/.libs

@@ -4,6 +4,9 @@ INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_txt \
 -I$(top_srcdir)/src/lib/ecore_job \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_txt \
+-I$(top_builddir)/src/lib/ecore_job \
 @x_cflags@
 
 libecore_x_la_LDFLAGS = -version-info 1:0:0 \

@@ -2,6 +2,7 @@
 
 INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore \
 @iconv_cflags@
 
 libecore_txt_la_LDFLAGS = -version-info 1:0:0 \

@@ -58,6 +58,15 @@ INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore_ipc \
 -I$(top_srcdir)/src/lib/ecore_txt @iconv_cflags@ \
 -I$(top_srcdir)/src/lib/ecore_config \
+-I$(top_builddir)/src/lib/ecore \
+-I$(top_builddir)/src/lib/ecore_evas \
+-I$(top_builddir)/src/lib/ecore_x \
+-I$(top_builddir)/src/lib/ecore_fb \
+-I$(top_builddir)/src/lib/ecore_job \
+-I$(top_builddir)/src/lib/ecore_con \
+-I$(top_builddir)/src/lib/ecore_ipc \
+-I$(top_builddir)/src/lib/ecore_txt @iconv_cflags@ \
+-I$(top_builddir)/src/lib/ecore_config \
 @evas_cflags@ \
 @x_cflags@ \
 @eet_cflags@
