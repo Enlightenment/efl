@@ -3859,9 +3859,15 @@ doswitch(void)
     * occur; there really shouldn't be duplicate cases, but the compiler
     * may not crash or drop into an assertion for a user error). */
    for (cse = caselist.next; cse != NULL && cse->next != NULL; cse = cse->next)
+     ; /* empty. no idea whether this is correct, but we MUST NOT do
+        * the setlabel(lbl_table) call in the loop body. doing so breaks
+        * switch statements that only have one case statement following.
+        */
 #endif
-      /* generate the table here, before lbl_exit (general jump target) */
-      setlabel(lbl_table);
+
+   /* generate the table here, before lbl_exit (general jump target) */
+   setlabel(lbl_table);
+
    if (swdefault == FALSE)
      {
 	/* store lbl_exit as the "none-matched" label in the switch table */
