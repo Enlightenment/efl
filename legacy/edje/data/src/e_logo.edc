@@ -157,7 +157,7 @@ collections {
 	      new buf[100];
 	      
 	      snprintf(buf, 100, "val = %i, pos = %f", val, pos);
-              set_drag(PART:"dragable", pos, pos);
+              set_drag(PART:"dragable", sin(3.14*pos), cos(1.57*pos));
 	      emit("PR AAAAAAAAANIM", buf);
 	   }
       }
@@ -539,14 +539,14 @@ collections {
 	 }
 	 program {
 	    name:       "logo_click_d1";
-	    signal:     "mouse,down,1";
+	    signal:     "mouse,down,1*";
 	    source:     "logo";
 	    action:     DRAG_VAL_STEP 1.0 1.0;
 	    target:     "dragable";
 	 }
 	 program {
 	    name:       "logo_click_d2";
-	    signal:     "mouse,down,3";
+	    signal:     "mouse,down,3*";
 	    source:     "logo";
 	    action:     DRAG_VAL_STEP -1.0 -1.0;
 	    target:     "dragable";
