@@ -199,13 +199,78 @@ void ecore_hash_destroy(Ecore_Hash *hash)
  */
 
 /**
+ * Move the current index to the beginning of the given hash for sequential
+ * processing
+ * @param   hash          The given hash
+ * @return  the topmost node on success, NULL otherwise
+ * @ingroup Ecore_Data_Hash_ADT_Traverse_Group
+ */
+Ecore_Hash_Node *ecore_hash_goto_first(Ecore_Hash *hash)
+{
+	CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
+
+	hash->index = 0;
+
+	ECORE_READ_LOCK(hash);
+
+	if( hash->buckets[hash->index] )
+		hash->current = ecore_list_goto_first( hash->buckets[hash->index] )
+
+	ECORE_READ_UNLOCK(hash);
+
+	return hash->current;
+}
+
+/**
+ * Return the current node and move to the next node of the given hash
+ * @param   hash          The given hash
+ * @return  the current node on success, NULL if end reached
+ * @ingroup Ecore_Data_Hash_ADT_Traverse_Group
+ */
+Ecore_Hash_Node *ecore_hash_next(Ecore_Hash *hash)
+{
+	Ecore_Hash_Node *node;
+
+	CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
+
+	ECORE_READ_LOCK(hash);
+
+	node = hash->current;
+
+	if( hash->index < ecore_prime_table[hash->size] &&
+			hash->buckets[hash->index] ) {
+		if( hash->current )
+			ecore_list_goto( hash->buckets[hash->index], hash->current );
+		else
+			ecore_list_goto_first( hash->buckets[hash->index] );
+		ecore_list_next( hash->buckets[hash->index] );
+		hash->current = ecore_list_current( hash->buckets[hash->index] );
+		if( !hash->current ) {
+			hash->index++;
+
+			ECORE_READ_UNLOCK(hash);
+			ecore_hash_next(hash);
+			ECORE_READ_LOCK(hash);
+		}
+	} else {
+		hash->current = NULL;
+	}
+
+	ECORE_READ_UNLOCK(hash);
+
+	return node;
+}
+
+/**
  * Runs the @p for_each_func function on each entry in the given hash.
  * @param   hash          The given hash.
  * @param   for_each_func The function that each entry is passed to.
+ * @param		user_data			a pointer passed to calls of for_each_func
  * @return  TRUE on success, FALSE otherwise.
  * @ingroup Ecore_Data_Hash_ADT_Traverse_Group
  */
-int ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func)
+int ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func,
+														 void *user_data)
 {
 	int i = 0;
 
@@ -220,7 +285,7 @@ int ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func)
 
 			ecore_list_goto_first(hash->buckets[i]);
 			while ((node = ecore_list_next(hash->buckets[i]))) {
-				for_each_func(node);
+				for_each_func(node, user_data);
 			}
 		}
 		i++;
@@ -229,6 +294,40 @@ int ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func)
 	ECORE_READ_UNLOCK(hash);
 
 	return TRUE;
+}
+
+/**
+ * Retrieves an ecore_list of all keys in the given hash.
+ * @param   hash          The given hash.
+ * @return  new ecore_list on success, NULL otherwise
+ * @ingroup Ecore_Data_Hash_ADT_Traverse_Group
+ */
+Ecore_List *ecore_hash_keys(Ecore_Hash *hash)
+{
+	int i = 0;
+	Ecore_List *keys;
+
+	CHECK_PARAM_POINTER_RETURN("hash", hash, NULL);
+
+	ECORE_READ_LOCK(hash);
+
+	keys = ecore_list_new();
+
+	while (i < ecore_prime_table[hash->size]) {
+		if (hash->buckets[i]) {
+			Ecore_Hash_Node *node;
+
+			ecore_list_goto_first(hash->buckets[i]);
+			while ((node = ecore_list_next(hash->buckets[i]))) {
+				ecore_list_append(keys, node->key);
+			}
+		}
+		i++;
+	}
+
+	ECORE_READ_UNLOCK(hash);
+
+	return keys;
 }
 
 /**

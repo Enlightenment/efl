@@ -65,7 +65,7 @@ ecore_path_group_del(int group_id)
 
 	if (group->paths) {
 		ecore_list_for_each(group->paths,
-				  ECORE_FOR_EACH(free));
+				  ECORE_FOR_EACH(free), NULL);
 		ecore_list_destroy(group->paths);
 	}
 

@@ -16,7 +16,7 @@ extern "C" {
    
    extern const unsigned int ecore_prime_table[];
    
-   typedef void (*Ecore_For_Each) (void *value);
+   typedef void (*Ecore_For_Each) (void *value, void *user_data);
 # define ECORE_FOR_EACH(function) ((Ecore_For_Each)function)
    
    typedef void (*Ecore_Free_Cb) (void *data);
@@ -163,7 +163,8 @@ extern "C" {
    int ecore_list_nodes(Ecore_List * list);
    
    /* Traversing the list */
-   int ecore_list_for_each(Ecore_List *list, Ecore_For_Each function);
+   int ecore_list_for_each(Ecore_List *list, Ecore_For_Each function,
+                           void *user_data);
    inline void *ecore_list_goto_first(Ecore_List * list);
    inline void *ecore_list_goto_last(Ecore_List * list);
    inline void *ecore_list_goto_index(Ecore_List * list, int index);
@@ -221,8 +222,8 @@ extern "C" {
    void *ecore_dlist_remove_last(Ecore_DList * _e_dlist);
    
    /* Traversing the list */
-# define ecore_dlist_for_each(list, function) \
-   ecore_list_for_each(ECORE_LIST(list), function)
+# define ecore_dlist_for_each(list, function, user_data) \
+   ecore_list_for_each(ECORE_LIST(list), function, user_data)
    inline void *ecore_dlist_goto_first(Ecore_DList * _e_dlist);
    inline void *ecore_dlist_goto_last(Ecore_DList * _e_dlist);
    inline void *ecore_dlist_goto_index(Ecore_DList * _e_dlist, int index);
@@ -274,6 +275,9 @@ extern "C" {
       int size;		/* An index into the table of primes to
 			 determine size */
       int nodes;		/* The number of nodes currently in the hash */
+
+			int index;    /* The current index into the bucket table */
+			Ecore_Hash_Node *current; /* the current node in the current bucket */
       
       Ecore_Compare_Cb compare;	/* The function used to compare node values */
       Ecore_Hash_Cb hash_func;	/* The function used to compare node values */
@@ -292,7 +296,12 @@ extern "C" {
    int ecore_hash_set_free_key(Ecore_Hash *hash, Ecore_Free_Cb function);
    int ecore_hash_set_free_value(Ecore_Hash *hash, Ecore_Free_Cb function);
    void ecore_hash_destroy(Ecore_Hash *hash);
-   int ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func);
+
+   Ecore_Hash_Node *ecore_hash_goto_first(Ecore_Hash *hash);
+   Ecore_Hash_Node *ecore_hash_next(Ecore_Hash *hash);
+   int ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func,
+                                void *user_data);
+   Ecore_List *ecore_hash_keys(Ecore_Hash *hash);
    
    /* Retrieve and store data into the hash */
    void *ecore_hash_get(Ecore_Hash *hash, void *key);
@@ -528,10 +537,12 @@ extern "C" {
    
    /* For each node in the tree perform the for_each_func function */
    /* For this one pass in the node */
-   int ecore_tree_for_each_node(Ecore_Tree * tree, Ecore_For_Each for_each_func);
+   int ecore_tree_for_each_node(Ecore_Tree * tree, Ecore_For_Each for_each_func,
+				      void *user_data);
    /* And here pass in the node's value */
    int ecore_tree_for_each_node_value(Ecore_Tree * tree,
-				      Ecore_For_Each for_each_func);
+				      Ecore_For_Each for_each_func,
+				      void *user_data);
    
    /* Some basic node functions */
    /* Initialize a node */

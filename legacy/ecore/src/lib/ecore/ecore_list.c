@@ -22,7 +22,8 @@ static void *_ecore_list_goto(Ecore_List * list, void *data);
 static void *_ecore_list_goto_index(Ecore_List *list, int index);
 
 /* Iterative function */
-static int _ecore_list_for_each(Ecore_List *list, Ecore_For_Each function);
+static int _ecore_list_for_each(Ecore_List *list, Ecore_For_Each function,
+                                void *user_data);
 
 /* Private double linked list functions */
 static void *_ecore_dlist_previous(Ecore_DList * list);
@@ -916,19 +917,21 @@ int ecore_list_clear(Ecore_List * list)
  * @return  Returns @c TRUE on success, @c FALSE on failure.
  * @ingroup Ecore_Data_List_Traverse_Group
  */
-int ecore_list_for_each(Ecore_List *list, Ecore_For_Each function)
+int ecore_list_for_each(Ecore_List *list, Ecore_For_Each function,
+                        void *user_data)
 {
 	int ret;
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	ret = _ecore_list_for_each(list, function);
+	ret = _ecore_list_for_each(list, function, user_data);
 
 	return ret;
 }
 
 /* The real meat of executing the function for each data node */
-static int _ecore_list_for_each(Ecore_List *list, Ecore_For_Each function)
+static int _ecore_list_for_each(Ecore_List *list, Ecore_For_Each function,
+                                void *user_data)
 {
 	void *value;
 
@@ -937,7 +940,7 @@ static int _ecore_list_for_each(Ecore_List *list, Ecore_For_Each function)
 
 	_ecore_list_goto_first(list);
 	while ((value = _ecore_list_next(list)) != NULL)
-		function(value);
+		function(value, user_data);
 
 	return TRUE;
 }

@@ -15,9 +15,10 @@ int tree_node_rotate_right(Ecore_Tree * tree, Ecore_Tree_Node * top_node);
 int tree_node_rotate_left(Ecore_Tree * tree, Ecore_Tree_Node * top_node);
 
 /* Fucntions for executing a specified function on each node of a tree */
-int tree_for_each_node(Ecore_Tree_Node * node, Ecore_For_Each for_each_func);
+int tree_for_each_node(Ecore_Tree_Node * node, Ecore_For_Each for_each_func,
+			     void *user_data);
 int tree_for_each_node_value(Ecore_Tree_Node * node,
-			     Ecore_For_Each for_each_func);
+			     Ecore_For_Each for_each_func, void *user_data);
 
 /**
  * @brief Allocate a new tree structure.
@@ -572,10 +573,11 @@ int ecore_tree_is_empty(Ecore_Tree * tree)
  * @brief Execute function for each value in the tree
  * @param tree: the tree to traverse
  * @param for_each_func: the function to execute for each value in the tree
+ * @param user_data: data passed to each for_each_func call
  * @return Returns TRUE on success, FALSE on failure.
  */
 int ecore_tree_for_each_node_value(Ecore_Tree * tree,
-				 Ecore_For_Each for_each_func)
+				 Ecore_For_Each for_each_func, void *user_data)
 {
 	CHECK_PARAM_POINTER_RETURN("tree", tree, FALSE);
 	CHECK_PARAM_POINTER_RETURN("for_each_func", for_each_func, FALSE);
@@ -583,17 +585,18 @@ int ecore_tree_for_each_node_value(Ecore_Tree * tree,
 	if (!tree->tree)
 		return FALSE;
 
-	return tree_for_each_node_value(tree->tree, for_each_func);
+	return tree_for_each_node_value(tree->tree, for_each_func, user_data);
 }
 
 /**
  * @brief Execute the function for each node in the tree
  * @param tree: the tree to traverse
  * @param for_each_func: the function to execute for each node
- *
+ * @param user_data: data passed to each for_each_func call
  * @return Returns TRUE on success, FALSE on failure.
  */
-int ecore_tree_for_each_node(Ecore_Tree * tree, Ecore_For_Each for_each_func)
+int ecore_tree_for_each_node(Ecore_Tree * tree, Ecore_For_Each for_each_func,
+				 void *user_data)
 {
 	CHECK_PARAM_POINTER_RETURN("tree", tree, FALSE);
 	CHECK_PARAM_POINTER_RETURN("for_each_func", for_each_func, FALSE);
@@ -601,7 +604,7 @@ int ecore_tree_for_each_node(Ecore_Tree * tree, Ecore_For_Each for_each_func)
 	if (!tree->tree)
 		return FALSE;
 
-	return tree_for_each_node(tree->tree, for_each_func);
+	return tree_for_each_node(tree->tree, for_each_func, user_data);
 }
 
 /* Find the parent for the key */
@@ -770,19 +773,21 @@ int tree_node_rotate_left(Ecore_Tree * tree, Ecore_Tree_Node * top_node)
  * @brief Execute a function for each node below this point in the tree.
  * @param node: the highest node in the tree the function will be executed for
  * @param for_each_func: the function to pass the nodes as data into
+ * @param user_data: data passed to each for_each_func call
  * @return Returns FALSE if an error condition occurs, otherwise TRUE
  */
-int tree_for_each_node(Ecore_Tree_Node * node, Ecore_For_Each for_each_func)
+int tree_for_each_node(Ecore_Tree_Node * node, Ecore_For_Each for_each_func,
+			     void *user_data)
 {
 	CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
 
 	if (node->right_child)
-		tree_for_each_node(node->right_child, for_each_func);
+		tree_for_each_node(node->right_child, for_each_func, user_data);
 
 	if (node->left_child)
-		tree_for_each_node(node->left_child, for_each_func);
+		tree_for_each_node(node->left_child, for_each_func, user_data);
 
-	for_each_func(node);
+	for_each_func(node, user_data);
 
 	return TRUE;
 }
@@ -795,17 +800,17 @@ int tree_for_each_node(Ecore_Tree_Node * node, Ecore_For_Each for_each_func)
  * @return Returns FALSE if an error condition occurs, otherwise TRUE
  */
 int tree_for_each_node_value(Ecore_Tree_Node * node,
-			     Ecore_For_Each for_each_func)
+			     Ecore_For_Each for_each_func, void *user_data)
 {
 	CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
 
 	if (node->right_child)
-		tree_for_each_node_value(node->right_child, for_each_func);
+		tree_for_each_node_value(node->right_child, for_each_func, user_data);
 
 	if (node->left_child)
-		tree_for_each_node_value(node->left_child, for_each_func);
+		tree_for_each_node_value(node->left_child, for_each_func, user_data);
 
-	for_each_func(node->value);
+	for_each_func(node->value, user_data);
 
 	return TRUE;
 }
