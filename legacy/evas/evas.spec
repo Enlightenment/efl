@@ -36,7 +36,7 @@ Headers, static libraries, test programs and documentation for Evas.
 %setup -q -n %{name}-%{version}_pre13
 
 %build
-%{configure} --prefix=%{_prefix} --x-libraries=%{_prefix}/X11R6/%{_lib}
+%{configure} --prefix=%{_prefix} --x-libraries=%{_prefix}/X11R6/%{_lib} $RPM_CONFIGURE_OPTS
 %{__make} %{?_smp_mflags} %{?mflags}
 test -x `which doxygen` && /bin/sh gendoc || :
 
