@@ -294,7 +294,7 @@ ecore_config_evas_font_path_apply(Evas * evas)
    return ECORE_CONFIG_ERR_SUCC;
 }
 
-static char        *
+char               *
 ecore_config_theme_default_path_get(void)
 {
    char               *path, *home;
@@ -340,6 +340,7 @@ ecore_config_theme_search_path_get(void)
    char               *search_path;
    search_path = ecore_config_string_get("/e/themes/search_path");
 
+   /* this should no longer be the case, as it is defaulted in init */
    if (!search_path)
      {
         search_path = ecore_config_theme_default_path_get();

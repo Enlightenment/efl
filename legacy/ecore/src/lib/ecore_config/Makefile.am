@@ -18,6 +18,7 @@ if BUILD_ECORE_CONFIG
 DB = system.db
 $(DB): Makefile
 	edb_ed $(top_builddir)/src/lib/ecore_config/$(DB) add /e/theme/name str "winter"
+	edb_ed $(top_builddir)/src/lib/ecore_config/$(DB) add /e/font/path str "$(pkgdatadir)/data/fonts"
 	edb_ed $(top_builddir)/src/lib/ecore_config/$(DB) add /apps/web/browser str `which firefox 2>/dev/null || which phoenix 2>/dev/null || which mozilla 2>/dev/null || which opera 2>/dev/null || which konqueror 2>/dev/null || which epiphany 2>/dev/null`
 	edb_ed $(top_builddir)/src/lib/ecore_config/$(DB) add /apps/web/email str `which thunderbird 2>/dev/null || which mozilla 2>/dev/null || which kmail 2>/dev/null || which sylpheed 2>/dev/null || which evolution 2>/dev/null`
 

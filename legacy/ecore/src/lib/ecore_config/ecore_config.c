@@ -1269,6 +1269,9 @@ ecore_config_init(char *name)
    __ecore_config_bundle_local =
       ecore_config_bundle_new(__ecore_config_server_local, "config");
 
+   ecore_config_string_default("/e/themes/search_path", 
+			       ecore_config_theme_default_path_get());
+
    if ((p = getenv("HOME")))
      {				/* debug-only ### FIXME */
 	if ((buf = malloc(PATH_MAX * sizeof(char))))
