@@ -217,7 +217,7 @@ eet_flush(Eet_File *ef)
      return;
    if (!ef->header) return;
    if (!ef->header->directory) return;
-   if (ef->mode != EET_FILE_MODE_WRITE) return;
+   if ((ef->mode != EET_FILE_MODE_WRITE) && (ef->mode != EET_FILE_MODE_RW)) return;
    if (!ef->writes_pending) return;
 
    /* calculate total size in bytes of directory block */
@@ -352,7 +352,7 @@ eet_open(char *file, Eet_File_Mode mode)
    ef->mode = mode;
 
    /* try open the file based on mode */
-   if (ef->mode == EET_FILE_MODE_READ)
+   if ((ef->mode == EET_FILE_MODE_READ) || (ef->mode == EET_FILE_MODE_RW))
      ef->fp = fopen(ef->path, "r");
    else if (ef->mode == EET_FILE_MODE_WRITE)
      {
@@ -373,8 +373,8 @@ eet_open(char *file, Eet_File_Mode mode)
 	return NULL;
      }
    
-   /* if we opened for read */
-   if (mode == EET_FILE_MODE_READ)
+   /* if we opened for read or read-write */
+   if ((mode == EET_FILE_MODE_READ) || (mode == EET_FILE_MODE_RW))
      {
 	unsigned char buf[12];
 	unsigned char *dyn_buf, *p;
@@ -472,6 +472,7 @@ eet_open(char *file, Eet_File_Mode mode)
 	     int hash;
 	     Eet_File_Node *node;
 	     int node_size;
+	     void *data = NULL;
 	     
 	     /* out directory block is inconsistent - we have oveerun our */
 	     /* dynamic block buffer before we finished scanning dir entries */	     
@@ -551,8 +552,37 @@ eet_open(char *file, Eet_File_Mode mode)
 	     ef->header->directory->hash[hash].node[node_size].compression = flags;
 	     ef->header->directory->hash[hash].node[node_size].size = size;
 	     ef->header->directory->hash[hash].node[node_size].data_size = data_size;
-	     /* currently we have no data loaded */
-	     ef->header->directory->hash[hash].node[node_size].data = NULL;
+
+	     /* read-only mode, so currently we have no data loaded */
+	     if (mode == EET_FILE_MODE_READ)
+	       {
+		  ef->header->directory->hash[hash].node[node_size].data = NULL;
+	       }
+	     /* read-write mode - read everything into ram */
+	     else
+	       {
+		  data = malloc(size);
+		  if (data)
+		    {
+		       if (fseek(ef->fp, ef->header->directory->hash[hash].node[node_size].offset, SEEK_SET) < 0)
+			 {
+			    free(data);
+			    data = NULL;
+			    /* XXX die gracefully somehow */
+			    break;
+			 }
+		       if (fread(data, size, 1, ef->fp) != 1)
+			 {
+			    free(data);
+			    data = NULL;
+			    /* XXX die gracefully somehow */
+			    break;
+			 }
+		    }
+		  
+                  ef->header->directory->hash[hash].node[node_size].data = data;
+	       }
+
 	     /* increment number of nodes */
 	     ef->header->directory->hash[hash].size++;
 	     /* advance */
@@ -561,10 +591,19 @@ eet_open(char *file, Eet_File_Mode mode)
 	/* done - free dynamic buffer */
 	free(dyn_buf);
      }
+
+   /* we need to delete the original file in read-write mode and re-open for writing */
+   if (ef->mode == EET_FILE_MODE_RW)
+     {
+	fclose(ef->fp);
+	unlink(ef->real_path);
+	ef->fp = fopen(ef->path, "w");
+     }
+
    /* add to cache */
    if (ef->mode == EET_FILE_MODE_READ)
      eet_cache_add(ef, &eet_readers, &eet_readers_num);
-   else if (ef->mode == EET_FILE_MODE_WRITE)
+   else if ((ef->mode == EET_FILE_MODE_WRITE) || (ef->mode == EET_FILE_MODE_RW))
      eet_cache_add(ef, &eet_writers, &eet_writers_num);
    return ef;
 }
@@ -766,11 +805,14 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
    Eet_File_Node *node;
    char *name2;
    void *data2;
+   int exists_already = 0;
    
    /* check to see its' an eet file pointer */   
    if ((!ef) || (ef->magic != EET_MAGIC_FILE)
        || (!name) || (!data) || (size <= 0) || 
-       (ef->mode != EET_FILE_MODE_WRITE))
+       ((ef->mode != EET_FILE_MODE_WRITE) &&
+        (ef->mode != EET_FILE_MODE_RW)))
+	
      return 0;
 
    if (!ef->header)
@@ -837,26 +879,48 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
      }
    if (!compress)
      memcpy(data2, data, size);
-   /* increase hash bucket size */
-   node = realloc(ef->header->directory->hash[hash].node, 
-		  (node_size  + 1) * sizeof(Eet_File_Node));
-   if (!node) 
+
+   /* Does this node already exist? */
+   if (ef->mode = EET_FILE_MODE_RW)
      {
-	free(name2);
-	free(data2);
-	return 0;
+	int i;
+	for (i = 0; i < node_size; i++)
+	  {
+	     /* if it matches */
+	     if (eet_string_match(ef->header->directory->hash[hash].node[i].name, name))
+	       {
+		  free(ef->header->directory->hash[hash].node[i].data);
+		  ef->header->directory->hash[hash].node[i].compression = compress;
+		  ef->header->directory->hash[hash].node[i].size = data_size;
+		  ef->header->directory->hash[hash].node[i].data_size = size;
+		  ef->header->directory->hash[hash].node[i].data = data2;
+		  exists_already = 1;
+	       }
+	  }
      }
-   /* resized node list set up */
-   ef->header->directory->hash[hash].node = node;
-   /* new node at end */
-   ef->header->directory->hash[hash].node[node_size].name = name2;
-   ef->header->directory->hash[hash].node[node_size].offset = 0;
-   ef->header->directory->hash[hash].node[node_size].compression = compress;
-   ef->header->directory->hash[hash].node[node_size].size = data_size;
-   ef->header->directory->hash[hash].node[node_size].data_size = size;
-   ef->header->directory->hash[hash].node[node_size].data = data2;
-   ef->header->directory->hash[hash].size++;
-   
+   if (!exists_already)
+     {
+	/* increase hash bucket size */
+	node = realloc(ef->header->directory->hash[hash].node, 
+		       (node_size  + 1) * sizeof(Eet_File_Node));
+	if (!node) 
+	  {
+	     free(name2);
+	     free(data2);
+	     return 0;
+	  }
+	/* resized node list set up */
+	ef->header->directory->hash[hash].node = node;
+	/* new node at end */
+	ef->header->directory->hash[hash].node[node_size].name = name2;
+	ef->header->directory->hash[hash].node[node_size].offset = 0;
+	ef->header->directory->hash[hash].node[node_size].compression = compress;
+	ef->header->directory->hash[hash].node[node_size].size = data_size;
+	ef->header->directory->hash[hash].node[node_size].data_size = size;
+	ef->header->directory->hash[hash].node[node_size].data = data2;
+	ef->header->directory->hash[hash].size++;
+     }
+
    /* flags that writes are pending */
    ef->writes_pending = 1;
    /* update access time */

@@ -33,7 +33,8 @@ extern "C" {
    enum _Eet_File_Mode
      {
 	EET_FILE_MODE_READ,
-	EET_FILE_MODE_WRITE
+	EET_FILE_MODE_WRITE,
+	EET_FILE_MODE_RW
      };
    
    typedef enum _Eet_File_Mode             Eet_File_Mode;
