@@ -11,6 +11,8 @@
 #include <fnmatch.h>
 
 /* FIXME:
+ * add a smooth scale option to fill params
+ * make signals names etc. consistent (ie "program,start" not "action,start")
  * reference count programs since the tmp lists can be screwed if a program is ended by another
  * need "random" signals and events for hooking to, and "random" durations
  * free stuff - no more leaks
@@ -42,6 +44,7 @@
  * audit edje for corrupt/bad input files
  * ? somehow handle double click?
  * ? add numeric params to conditions for progs (ranges etc.)
+ * ? containering for multiple children? (hbox, vbox, table, wrapping list)
 */
 
   

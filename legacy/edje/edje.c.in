@@ -13,9 +13,18 @@ These routines are used for Edje.
 @author Carsten Haitzler <raster@rasterman.com>
 @date 2000-2002
 
+
+
+
+
+
+
+
+
+
 @section intro What is Edje?
 
-A Graphical Design & Layout Library.
+Edje is a complex graphical design & layout library.
 
 It's purpose is to be a sequel to "Ebits" which to date has serviced the
 needs of Enlightenment development for version 0.17. The original design
@@ -24,11 +33,11 @@ resulting use of them, thus Edje was born.
 
 Edje is a more complex layout engine compared to Ebits. It doesn't pretend to
 do containering and regular layout like a widget set. It still inherits the
-more simplistic layour ideas behind Ebits, but it now does them a lot more
+more simplistic layout ideas behind Ebits, but it now does them a lot more
 cleanly, allowing for easy expansion, and the ability to cover much more
 ground than Ebits ever could. For the purposes of Enlightenment 0.17, Edje
-should server all the purposes of creating visual elements (borders of
-windows, scrollbars, etc.) and allow the deswigner the ability to animate,
+should serve all the purposes of creating visual elements (borders of
+windows, scrollbars, etc.) and allow the designer the ability to animate,
 layout and control the look and feel of any program using Edje as its basic
 GUI constructor. This library allows for multiple collections of Layouts in
 one file, sharing the same image database and thus allowing a whole theme to
@@ -41,11 +50,11 @@ the part collection entry ID in the file (thus allowing for multiple logical
 names to point to the same part collection, allowing for the sharing of data
 betwene display elements). Each part collection consists of a list of visual
 parts, as well as a list of programs. A program is a conditionally run
-program that if a particula event occurs (a button is pressed, a mouse enters
+program that if a particular event occurs (a button is pressed, a mouse enters
 or leaves a part) will trigger an action that may affect other parts. In this
-was a part collection can be "programmed" via its file as to hilight buttons
+way a part collection can be "programmed" via its file as to hilight buttons
 when the mouse passes over them or show hidden parts when a button is clicked
-somewhere etc. The actions perfromed in changing from one state to another ar
+somewhere etc. The actions performed in changing from one state to another ar
 also allowed to transition over a period of time, allowing animation.
 
 This separation and simplistic event driven style of programming can produce
@@ -54,6 +63,182 @@ more complex is likely the domain of an application or widget set that may
 use Edje as a conveneient way of being able to configure parts of the display.
 
 
+
+
+
+
+
+
+
+
+@section requirements What does Edje require?
+
+Edje requires fairly little on your system. to use the edje runtime library
+you need:
+
+  - Evas (library)
+  - Ecore (library)
+  - Eet (library)
+
+To fully build Edje and run the edje builder (edje_cc) you also need:
+
+  - Imlib2 (library)
+
+Evas needs to be build with the PNG and EET image loades enabled at a
+minimum. Edje uses X for the test program, so you will need the SOFTWARE_X11
+engine built into Evas as well. A suggested configure list is below in the
+"cheat sheet" for Evas.
+
+Ecore needs the ECORE, ECORE_EVAS and ECORE_X modules built at a minimum.
+It's suggested to build all the Ecore modules, but the ECORE_FB modules is
+definitely optional.
+
+Eet has no options so just build and install it.
+
+Imlib2 has options, but it will probably select the right ones when you build
+and install it. You really want as many image loaders enabled as you can
+manage. It's suggested at a minumum to have the PNG and JPEG loaders, but
+include whatever loaders correspond to the image formats you want supported
+for loading up and including into an Edje compiled file.
+
+It is suggested right now that you get the latest CVS versions of the
+required libraries. You also need to build them in the right order and make
+sure the right options are enabled in the requiremed libraries. Here is a
+quick "cheat sheet" on how to get started.
+
+@verbatim
+1. You need Eet from the HEAD cvs branch (must be up-to-date)
+
+  cvs co e17/libs/eet
+  cd e17/libs/eet
+  ./autogen.sh
+  ./configure
+  make
+  sudo make install
+  cd
+
+2. You need Evas from the HEAD branch built with eet loader support.
+
+  cvs co e17/libs/evas
+  cd e17/libs/evas
+  ./autogen.sh
+  ./configure \
+  --enable-software-x11 \
+  --enable-image-loader-png \
+  --enable-image-loader-jpeg \
+  --enable-image-loader-eet \
+  --enable-cpu-c \
+  --enable-cpu-mmx \
+  --enable-cpu-p2-only \
+  --enable-scale-smooth \
+  --enable-scale-sample \
+  --enable-convert-8-rgb-332 \
+  --enable-convert-8-rgb-666 \
+  --enable-convert-8-rgb-232 \
+  --enable-convert-8-rgb-222 \
+  --enable-convert-8-rgb-221 \
+  --enable-convert-8-rgb-121 \
+  --enable-convert-8-rgb-111 \
+  --enable-convert-16-rgb-565 \
+  --enable-convert-16-rgb-555 \
+  --enable-convert-16-rgb-rot-0 \
+  --enable-convert-16-rgb-rot-90 \
+  --enable-convert-16-rgb-rot-270 \
+  --enable-convert-32-rgb-8888 \
+  --enable-convert-32-rgbx-8888 \
+  --enable-convert-32-bgr-8888 \
+  --enable-convert-32-bgrx-8888 \
+  --enable-convert-32-rgb-rot-0 \
+  --enable-convert-32-rgb-rot-90 \
+  --enable-convert-32-rgb-rot-270
+  make
+  sudo make install
+  cd
+  
+3. You need Ecore from the SPLIT cvs branch
+
+  cvs co -r SPLIT e17/libs/ecore
+  cd e17/libs/ecore
+  ./autogen.sh
+  ./configure \
+  --enable-ecore-x \
+  --enable-ecore-evas \
+  --enable-ecore-job \
+  --enable-ecore-con \
+  --enable-ecore-ipc
+  make
+  sudo make install
+  cd
+
+4. You need Imlib2 installed. any release from 1.0.0 and up will do.
+
+@endverbatim
+
+
+
+
+
+
+
+
+
+@section compiling How to compile and test Edje
+
+Now you need to compile and install edje.
+
+@verbatim
+  ./configure
+  make
+  sudo make install
+@endverbatim
+
+You now have it installed and ready to go, but you are missing data files. In
+data/ there are data sets for you to look at as examples. To try one out do:
+
+@verbatim
+   cd data
+   ./e_logo.sh
+   
+   edje ./e_logo.eet test   
+@endverbatim
+
+The edje test program/viewer is able to view multiple edje data sets. The
+following will view 3 of them at once in the one window (which you can resize
+to give you more space to move and resize the edje data sets around):
+
+@verbatim
+  edje ./e_logo.eet test ./e_logo.eet test ./e_logo.eet test  
+@endverbatim
+
+
+
+
+
+
+
+
+
+
+
+@section details So how does this all work?
+
+Edje inernally holds a geometry state machine and state graph of what is
+visible, not, where, at what size, with what colours etc. This is described
+to Edje from an Edje .eet file containing this information. These files can
+be produced by using edje_cc to take a text file (a .edc file) and "compile"
+an aoutput .eet file that contains this information, images and any other
+data needed.
+
+
+
+
+
+
+
+
+
+
+@todo See src/lib/edje_private.h for a list of FIXME's
 @todo Complete documentation of API
 
 */
