@@ -350,6 +350,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 
    if (!file) return NULL;
 
+//   printf("open %s\n", file);
 #ifdef HAVE_REALPATH
    /* in case this is a symlink... find out where it REALLY points */
    if (!realpath(file, buf)) 
@@ -738,6 +739,7 @@ eet_read(Eet_File *ef, char *name, int *size_ret)
    if (!ef->header->directory) return NULL;
    /* get hash bucket this should be in */
    hash = eet_hash_gen(name, ef->header->directory->size);
+//   printf("read %s\n", name);
    /* hunt hash bucket */
    num = ef->header->directory->hash[hash].size;
    for (i = 0; i < num; i++)
