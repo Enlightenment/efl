@@ -24,10 +24,21 @@
 
 #include "Evas.h"
 
-void
+static int initcount = 0;
+
+int
+evas_init(void)
+{
+   return ++initcount;
+}
+
+int
 evas_shutdown(void)
 {
-   evas_font_dir_cache_free();
+   if (--initcount == 0)
+      evas_font_dir_cache_free();
+
+   return initcount;
 }
 
 /**
