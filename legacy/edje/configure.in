@@ -19,6 +19,8 @@ AM_ENABLE_SHARED
 AM_PROG_LIBTOOL
 AC_FUNC_ALLOCA
 
+AC_CHECK_FUNCS(realpath)
+
 AC_CHECK_HEADERS(fnmatch.h,, AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file]))
 
 AC_CHECK_FUNCS(fnmatch, res=yes, res=no)

@@ -1,5 +1,6 @@
 #include "edje_main.h"
 
+#ifndef WIN32
 typedef struct _Demo_Edje Demo_Edje;
 
 struct _Demo_Edje
@@ -863,4 +864,11 @@ main(int argc, char **argv)
    
    return 0;
 }
+#else
+int main ()
+{
+   fprintf(stderr, "no workie on win32 yet\n");
 
+   return 0;
+}
+#endif

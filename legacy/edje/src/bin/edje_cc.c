@@ -136,7 +136,11 @@ main(int argc, char **argv)
      }
 
    /* check whether file_in exists */
+#ifdef HAVE_REALPATH
    if (!realpath(file_in, rpath) || stat(rpath, &st) || !S_ISREG(st.st_mode))
+#else
+   if (stat(file_in, &st) || !S_ISREG(st.st_mode))
+#endif
      {
 	fprintf(stderr, "%s: Error: file not found: %s.\n", progname, file_in);
 	main_help();
@@ -164,7 +168,11 @@ main(int argc, char **argv)
 	exit(-1);
      }
 
+#ifdef HAVE_REALPATH
    if (realpath(file_out, rpath2) && !strcmp (rpath, rpath2))
+#else
+   if (!strcmp (file_in, file_out))
+#endif
      {
 	fprintf(stderr, "%s: Error: input file equals output file.\n", progname);
 	main_help();

@@ -571,18 +571,16 @@ compile(void)
 	
    size = lseek(fd, 0, SEEK_END);
    lseek(fd, 0, SEEK_SET);
-   data = mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0);
-   if (data)
-     {
+   data = malloc(size);
+   if (data && read(fd, data, size) == size)
 	parse(data, size);
-	munmap(data, size);
-     }
    else
      {
-	fprintf(stderr, "%s: Error. cannot mmap file \"%s\" for input. %s\n",
+	fprintf(stderr, "%s: Error. cannot read file \"%s\". %s\n",
 		progname, file_in, strerror(errno));
 	exit(-1);
      }
+   free(data);
    close(fd);
 }
 
