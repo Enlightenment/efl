@@ -648,6 +648,7 @@ _edje_part_recalc_single(Edje *ed,
 	     else if (ep->part->dragable.count_x > 0)
 	       {
 		  step = (confine_to->w - params->w) / ep->part->dragable.count_x;
+		  if (step < 1) step = 1;
 		  params->x = confine_to->x +
 		    ((offset / step) * step);	       
 	       }
@@ -669,6 +670,7 @@ _edje_part_recalc_single(Edje *ed,
 	     else if (ep->part->dragable.count_y > 0)
 	       {
 		  step = (confine_to->h - params->h) / ep->part->dragable.count_y;
+		  if (step < 1) step = 1;
 		  params->y = confine_to->y +
 		    ((offset / step) * step);	       
 	       }
