@@ -2807,10 +2807,7 @@ e_button_grab(Window win, int button, int events, Ev_Key_Modifiers mod, int any_
    unsigned int m;
    unsigned int locks[8];
    int i;
-   E_XID *xid = NULL;
    
-   xid = e_validate_xid(win);
-   if (!xid) return;
    b = button;
    if (b == 0) b = AnyButton;
    m = 0;
@@ -2843,11 +2840,7 @@ e_button_ungrab(Window win, int button, Ev_Key_Modifiers mod, int any_mod)
    unsigned int m;
    unsigned int locks[8];
    int i;
-   E_XID *xid = NULL;
    
-   xid = e_validate_xid(win);
-   if (!xid) return;
-   xid->grab_button_auto_replay = 0;
    b = button;
    if (b == 0) b = AnyButton;
    m = 0;
