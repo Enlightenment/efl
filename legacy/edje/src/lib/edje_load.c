@@ -107,7 +107,8 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	     if (!rp) return 0;
 	     rp->part = ep;
 	     ed->parts = evas_list_append(ed->parts, rp);
-	     rp->param1.description =  ep->default_desc;
+	     rp->param1.description = ep->default_desc;
+	     rp->chosen_description = rp->param1.description;
 	     if (!rp->param1.description)
 	       {
 		  printf("EDJE ERROR: no default part description!\n");
@@ -214,6 +215,16 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 		  rp->swallow_params.min.w = 0;
 		  rp->swallow_params.max.w = -1;
 		  rp->swallow_params.max.h = -1;
+		  
+		  if (ed->file->feature_ver < 1)
+		    {
+		       rp->param1.description->text.id_source = -1;
+		       rp->param1.description->text.id_text_source = -1;
+		    }
+		  if (rp->param1.description->text.id_source >= 0)
+		    rp->text.source = evas_list_nth(ed->parts, rp->param1.description->text.id_source);
+		  if (rp->param1.description->text.id_text_source >= 0)
+		    rp->text.text_source = evas_list_nth(ed->parts, rp->param1.description->text.id_text_source);
 	       }
 	  }
 	n = evas_list_count(ed->collection->programs);

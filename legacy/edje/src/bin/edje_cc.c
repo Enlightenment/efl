@@ -153,6 +153,11 @@ main(int argc, char **argv)
 
    edje_file = mem_alloc(SZ(Edje_File));
    edje_file->version = EDJE_FILE_VERSION;
+   edje_file->feature_ver = 1; /* increment this every time we add a field
+				* or feature to the edje file format that
+				* does not load nicely as a NULL or 0 value
+				* and needs a special fallback initialization
+				*/
    
    source_edd();
    source_fetch();

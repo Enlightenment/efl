@@ -69,6 +69,8 @@ static void st_collections_group_parts_part_description_text_size(void);
 static void st_collections_group_parts_part_description_text_fit(void);
 static void st_collections_group_parts_part_description_text_min(void);
 static void st_collections_group_parts_part_description_text_align(void);
+static void st_collections_group_parts_part_description_text_source(void);
+static void st_collections_group_parts_part_description_text_text_source(void);
 
 static void ob_collections_group_programs_program(void);
 static void st_collections_group_programs_program_name(void);
@@ -157,6 +159,8 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.text.fit", st_collections_group_parts_part_description_text_fit},
      {"collections.group.parts.part.description.text.min", st_collections_group_parts_part_description_text_min},
      {"collections.group.parts.part.description.text.align", st_collections_group_parts_part_description_text_align},
+     {"collections.group.parts.part.description.text.source", st_collections_group_parts_part_description_text_source},
+     {"collections.group.parts.part.description.text.text_source", st_collections_group_parts_part_description_text_text_source},
      {"collections.group.parts.part.description.text.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.text.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.images.image", st_images_image}, /* dup */
@@ -735,6 +739,8 @@ ob_collections_group_parts_part_description(void)
    ed->color3.a = 128;
    ed->text.align.x = 0.5;
    ed->text.align.y = 0.5;
+   ed->text.id_source = -1;
+   ed->text.id_text_source = -1;
 }
 
 static void
@@ -1360,6 +1366,46 @@ st_collections_group_parts_part_description_text_align(void)
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
    ed->text.align.x = parse_float_range(0, 0.0, 1.0);
    ed->text.align.y = parse_float_range(1, 0.0, 1.0);
+}
+
+static void
+st_collections_group_parts_part_description_text_source(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+     {
+	char *name;
+	
+	name = parse_str(0);
+	data_queue_part_lookup(pc, name, &(ed->text.id_source));
+	free(name);
+     }
+}
+
+static void
+st_collections_group_parts_part_description_text_text_source(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+     {
+	char *name;
+	
+	name = parse_str(0);
+	data_queue_part_lookup(pc, name, &(ed->text.id_text_source));
+	free(name);
+     }
 }
 
 static void

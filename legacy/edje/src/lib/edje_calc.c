@@ -1,8 +1,13 @@
 #include "Edje.h"
 #include "edje_private.h"
 
-static void _edje_part_recalc_single(Edje *ed, Edje_Real_Part *ep, Edje_Part_Description *desc, Edje_Part_Description *chosen_desc, Edje_Real_Part *rel1_to_x, Edje_Real_Part *rel1_to_y, Edje_Real_Part *rel2_to_x, Edje_Real_Part *rel2_to_y, Edje_Real_Part *confine_to, Edje_Calc_Params *params);
-static void _edje_part_recalc(Edje *ed, Edje_Real_Part *ep);
+#define FLAG_NONE 0
+#define FLAG_X    0x01
+#define FLAG_Y    0x02
+#define FLAG_XY   (FLAG_X | FLAG_Y)
+
+static void _edje_part_recalc_single(Edje *ed, Edje_Real_Part *ep, Edje_Part_Description *desc, Edje_Part_Description *chosen_desc, Edje_Real_Part *rel1_to_x, Edje_Real_Part *rel1_to_y, Edje_Real_Part *rel2_to_x, Edje_Real_Part *rel2_to_y, Edje_Real_Part *confine_to, Edje_Calc_Params *params, int flags);
+static void _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags);
 
 void
 _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos)
@@ -173,7 +178,12 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1,
 	if (ep->param2.description->rel2.id_y >= 0)
 	  ep->param2.rel2_to_y = ed->table_parts[ep->param2.description->rel2.id_y % ed->table_parts_size];
      }
-   
+   if (ep->description_pos == 0.0)
+     ep->chosen_description = ep->param1.description;
+   else
+     ep->chosen_description = ep->param2.description;
+   if (!ep->chosen_description)
+     ep->chosen_description = ep->param2.description;
    ed->dirty = 1;
 }
 
@@ -182,29 +192,29 @@ _edje_recalc(Edje *ed)
 {
    Evas_List *l;
    
-//   printf("ed->freeze = %i\n", ed->freeze);
-//   printf("ed->calc_only = %i\n", ed->calc_only);
    if (!ed->dirty) return;
    if (ed->freeze)
      {
 	ed->recalc = 1;
 	if (!ed->calc_only) return;
      }
-//   printf("recalcies\n");
    for (l = ed->parts; l; l = l->next)
      {
 	Edje_Real_Part *ep;
 	
 	ep = l->data;
-	ep->calculated = 0;
-	ep->calculating = 0;
+	ep->calculated = FLAG_NONE;
+	ep->calculating = FLAG_NONE;
      }
+//   printf("----\n");
    for (l = ed->parts; l; l = l->next)
      {
 	Edje_Real_Part *ep;
 	
 	ep = l->data;
-	if (!ep->calculated) _edje_part_recalc(ed, ep);
+	if (ep->calculated != FLAG_XY)
+	  _edje_part_recalc(ed, ep, (~ep->calculated) & FLAG_XY);
+//	printf("%x\n", ep->calculated);
      }
    ed->dirty = 0;
    if (!ed->calc_only) ed->recalc = 0;
@@ -284,104 +294,61 @@ _edje_part_recalc_single(Edje *ed,
 			 Edje_Real_Part *rel2_to_x, 
 			 Edje_Real_Part *rel2_to_y, 
 			 Edje_Real_Part *confine_to,
-			 Edje_Calc_Params *params)
+			 Edje_Calc_Params *params,
+			 int flags)
 {
    int minw, minh, maxw, maxh;
 
+   flags = FLAG_XY;
    /* relative coords of top left & bottom right */
-   if (rel1_to_x)
-     params->x = desc->rel1.offset_x +
-     rel1_to_x->x + (desc->rel1.relative_x * rel1_to_x->w);
-   else
-     params->x = desc->rel1.offset_x +
-     (desc->rel1.relative_x * ed->w);
-   if (rel1_to_y)
-     params->y = desc->rel1.offset_y +
-     rel1_to_y->y + (desc->rel1.relative_y * rel1_to_y->h);
-   else
-     params->y = desc->rel1.offset_y +
-     (desc->rel1.relative_y * ed->h);
-   if (rel2_to_x)
-     params->w = desc->rel2.offset_x +
-     rel2_to_x->x + (desc->rel2.relative_x * rel2_to_x->w) -
-     params->x + 1;
-   else
-     params->w = desc->rel2.offset_x +
-     (desc->rel2.relative_x * ed->w) -
-     params->x + 1;
-   if (rel2_to_y)
-     params->h = desc->rel2.offset_y +
-     rel2_to_y->y + (desc->rel2.relative_y * rel2_to_y->h) -
-     params->y + 1;
-   else
-     params->h = desc->rel2.offset_y +
-     (desc->rel2.relative_y * ed->h) -
-     params->y + 1;
+   if (flags & FLAG_X)
+     {
+	if (rel1_to_x)
+	  params->x = desc->rel1.offset_x +
+	  rel1_to_x->x + (desc->rel1.relative_x * rel1_to_x->w);
+	else
+	  params->x = desc->rel1.offset_x +
+	  (desc->rel1.relative_x * ed->w);
+	if (rel2_to_x)
+	  params->w = desc->rel2.offset_x +
+	  rel2_to_x->x + (desc->rel2.relative_x * rel2_to_x->w) -
+	  params->x + 1;
+	else
+	  params->w = desc->rel2.offset_x +
+	  (desc->rel2.relative_x * ed->w) -
+	  params->x + 1;
+     }
+   if (flags & FLAG_Y)
+     {
+	if (rel1_to_y)
+	  params->y = desc->rel1.offset_y +
+	  rel1_to_y->y + (desc->rel1.relative_y * rel1_to_y->h);
+	else
+	  params->y = desc->rel1.offset_y +
+	  (desc->rel1.relative_y * ed->h);
+	if (rel2_to_y)
+	  params->h = desc->rel2.offset_y +
+	  rel2_to_y->y + (desc->rel2.relative_y * rel2_to_y->h) -
+	  params->y + 1;
+	else
+	  params->h = desc->rel2.offset_y +
+	  (desc->rel2.relative_y * ed->h) -
+	  params->y + 1;
+     }
    
    /* aspect */
-#if 0   
-   if (params->h > 0)
-     {
-	double aspect;
-	double new_w, new_h;
-   
-	new_h = params->h;
-	new_w = params->w;
-	aspect = (double)params->w / (double)params->h;
-	/* adjust for max aspect (width / height) */
-	if ((desc->aspect.max > 0.0) && (aspect > desc->aspect.max))
-	  {
-	     new_h = (params->w / desc->aspect.max);
-	     new_w = (params->h * desc->aspect.max);
-	  }
-	/* adjust for min aspect (width / height) */
-	if ((desc->aspect.min > 0.0) && (aspect < desc->aspect.min))
-	  {
-	     new_h = (params->w / desc->aspect.min);
-	     new_w = (params->h * desc->aspect.min);
-	  }
-	/* do real adjustment */
-	if ((params->h - new_h) > (params->w - new_w))
-	  {
-	     if (params->h < new_h)
-	       {
-		  params->y = params->y +
-		    ((params->h - new_h) * (1.0 - desc->align.y));
-		  params->h = new_h;
-	       }
-	     else if (params->h > new_h)
-	       {
-		  params->y = params->y +
-		    ((params->h - new_h) * desc->align.y);
-		  params->h = new_h;
-	       }
-	  }
-	else
-	  {
-	     if (params->w < new_w)
-	       {
-		  params->x = params->x +
-		    ((params->w - new_w) * (1.0 - desc->align.x));
-		  params->w = new_w;
-	       }
-	     else if (params->w > new_w)
-	       {
-		  params->x = params->x +
-		    ((params->w - new_w) * desc->align.x);
-		  params->w = new_w;
-	       }
-	  }
-     }
-#else
-   if (params->h > 0)
+   if ((params->h > 0) && 
+       (((flags | ep->calculated) & FLAG_XY) == FLAG_XY))
      {
 	double aspect;
 	double new_w, new_h, want_x, want_y, want_w, want_h;
    
 	want_x = params->x;
+	want_w = new_w = params->w;
+	
 	want_y = params->y;
 	want_h = new_h = params->h;
-	want_w = new_w = params->w;
+	
 	aspect = (double)params->w / (double)params->h;
 	if (desc->aspect.prefer == EDJE_ASPECT_PREFER_NONE) /* keep both dimensions in check */
 	  {
@@ -465,41 +432,52 @@ _edje_part_recalc_single(Edje *ed,
 	params->x = want_x + ((want_w - params->w) * desc->align.x);
 	params->y = want_y + ((want_h - params->h) * desc->align.y);
      }
-#endif
    
    /* size step */
-   if (desc->step.x > 0)
+   if (flags & FLAG_X)
      {
-	int steps;
-	int new_w;
-	
-	steps = params->w / desc->step.x;
-	new_w = desc->step.x * steps;
-	if (params->w > new_w)
+	if (desc->step.x > 0)
 	  {
-	     params->x = params->x +
-	       ((params->w - new_w) * desc->align.x);
-	     params->w = new_w;
-	  }	
+	     int steps;
+	     int new_w;
+	     
+	     steps = params->w / desc->step.x;
+	     new_w = desc->step.x * steps;
+	     if (params->w > new_w)
+	       {
+		  params->x = params->x +
+		    ((params->w - new_w) * desc->align.x);
+		  params->w = new_w;
+	       }
+	  }
      }
-   if (desc->step.y > 0)
+   if (flags & FLAG_Y)
      {
-	int steps;
-	int new_h;
-	
-	steps = params->h / desc->step.y;
-	new_h = desc->step.y * steps;
-	if (params->h > new_h)
+	if (desc->step.y > 0)
 	  {
-	     params->y = params->y +
-	       ((params->h - new_h) * desc->align.y);
-	     params->h = new_h;
-	  }	
+	     int steps;
+	     int new_h;
+	     
+	     steps = params->h / desc->step.y;
+	     new_h = desc->step.y * steps;
+	     if (params->h > new_h)
+	       {
+		  params->y = params->y +
+		    ((params->h - new_h) * desc->align.y);
+		  params->h = new_h;
+	       }
+	  }
      }
-   minw = desc->min.w;
-   minh = desc->min.h;
-   if (ep->swallow_params.min.w > desc->min.w) minw = ep->swallow_params.min.w;
-   if (ep->swallow_params.min.h > desc->min.h) minh = ep->swallow_params.min.h;
+   if (flags & FLAG_X)
+     {
+	minw = desc->min.w;
+	if (ep->swallow_params.min.w > desc->min.w) minw = ep->swallow_params.min.w;
+     }
+   if (flags & FLAG_Y)
+     {
+	minh = desc->min.h;
+	if (ep->swallow_params.min.h > desc->min.h) minh = ep->swallow_params.min.h;
+     }
    /* if we have text that wants to make the min size the text size... */
    if ((chosen_desc) && (ep->part->type == EDJE_PART_TYPE_TEXT))
      {
@@ -510,27 +488,79 @@ _edje_part_recalc_single(Edje *ed,
 	char       buf[4096];
 	int        inlined_font = 0;
 	
-	text = chosen_desc->text.text;
-	font = chosen_desc->text.font;
-	size = chosen_desc->text.size;
+	if (chosen_desc->text.id_source >= 0)
+	  ep->text.source = ed->table_parts[chosen_desc->text.id_source % ed->table_parts_size];
+	else
+	  ep->text.source = NULL;
 	
-	if ((chosen_desc->text.text_class) && 
-	    (strlen(chosen_desc->text.text_class) > 0))
+	if (chosen_desc->text.id_text_source >= 0)
+	  ep->text.text_source = ed->table_parts[chosen_desc->text.id_text_source % ed->table_parts_size];
+	else
+	  ep->text.text_source = NULL;
+	
+	if (ep->text.text_source)
+	  text = ep->text.text_source->chosen_description->text.text;
+	else
+	  text = chosen_desc->text.text;
+	if (ep->text.source)
 	  {
-	     Edje_Text_Class *tc;
-	     
-	     tc = _edje_text_class_find(ed, chosen_desc->text.text_class);
-	     if (tc)
+	     font = ep->text.text_source->chosen_description->text.font;
+	     size = ep->text.text_source->chosen_description->text.size;
+	  }
+	else
+	  {
+	     font = chosen_desc->text.font;
+	     size = chosen_desc->text.size;
+	  }
+	if (ep->text.source)
+	  {
+	     if ((ep->text.source->chosen_description->text.text_class) && 
+		 (strlen(ep->text.source->chosen_description->text.text_class) > 0))
 	       {
-		  if (tc->font) font = tc->font;
-		  if (tc->size > 0) size = tc->size;
+		  Edje_Text_Class *tc;
+		  
+		  tc = _edje_text_class_find(ed, ep->text.source->chosen_description->text.text_class);
+		  if (tc)
+		    {
+		       if (tc->font) font = tc->font;
+		       if (tc->size > 0) size = tc->size;
+		    }
+	       }
+	  }
+	else
+	  {
+	     if ((chosen_desc->text.text_class) && 
+		 (strlen(chosen_desc->text.text_class) > 0))
+	       {
+		  Edje_Text_Class *tc;
+		  
+		  tc = _edje_text_class_find(ed, chosen_desc->text.text_class);
+		  if (tc)
+		    {
+		       if (tc->font) font = tc->font;
+		       if (tc->size > 0) size = tc->size;
+		    }
 	       }
 	  }
 	
-	if (ep->text.text) text = ep->text.text;
-	if (ep->text.font) font = ep->text.font;
-	if (ep->text.size > 0) size = ep->text.size;
-
+	if (ep->text.text_source)
+	  {
+	     if (ep->text.text_source->text.text) text = ep->text.text_source->text.text;
+	  }
+	else
+	  {
+	     if (ep->text.text) text = ep->text.text;
+	  }
+	if (ep->text.source)
+	  {
+	     if (ep->text.source->text.font) font = ep->text.source->text.font;
+	     if (ep->text.source->text.size > 0) size = ep->text.source->text.size;
+	  }
+	else
+	  {
+	     if (ep->text.font) font = ep->text.font;
+	     if (ep->text.size > 0) size = ep->text.size;
+	  }
         /* check if the font is embedded in the .eet */
         /* FIXME: we should cache this result */
         if (ed->file->font_dir)
@@ -583,47 +613,65 @@ _edje_part_recalc_single(Edje *ed,
    params->req.w = params->w;
    params->req.h = params->h;
    /* adjust for min size */
-   if (minw >= 0)
+   if (flags & FLAG_X)
      {
-	if (params->w < minw)
+	if (minw >= 0)
 	  {
-	     params->x = params->x + 
-	       ((params->w - minw) * (1.0 - desc->align.x));
-	     params->w = minw;
+	     if (params->w < minw)
+	       {
+		  params->x = params->x + 
+		    ((params->w - minw) * (1.0 - desc->align.x));
+		  params->w = minw;
+	       }
 	  }
      }
-   if (minh >= 0)
+   if (flags & FLAG_Y)
      {
-	if (params->h < minh)
+	if (minh >= 0)
 	  {
-	     params->y = params->y + 
-	       ((params->h - minh) * (1.0 - desc->align.y));
-	     params->h = minh;
+	     if (params->h < minh)
+	       {
+		  params->y = params->y + 
+		    ((params->h - minh) * (1.0 - desc->align.y));
+		  params->h = minh;
+	       }
 	  }
      }
-   maxw = desc->max.w;
-   maxh = desc->max.h;
-   if ((ep->swallow_params.max.w >= 0) &&
-       (ep->swallow_params.max.w < maxw)) maxw = ep->swallow_params.max.w;
-   if ((ep->swallow_params.max.h >= 0) &&
-       (ep->swallow_params.max.h < maxh)) maxh = ep->swallow_params.max.h;
+   if (flags & FLAG_X)
+     {
+	maxw = desc->max.w;
+	if ((ep->swallow_params.max.w >= 0) &&
+	    (ep->swallow_params.max.w < maxw)) maxw = ep->swallow_params.max.w;
+     }
+   if (flags & FLAG_Y)
+     {
+	maxh = desc->max.h;
+	if ((ep->swallow_params.max.h >= 0) &&
+	    (ep->swallow_params.max.h < maxh)) maxh = ep->swallow_params.max.h;
+     }
    /* adjust for max size */
-   if (maxw >= 0)
+   if (flags & FLAG_X)
      {
-	if (params->w > maxw)
+	if (maxw >= 0)
 	  {
-	     params->x = params->x + 
-	       ((params->w - maxw) * desc->align.x);
-	     params->w = maxw;
+	     if (params->w > maxw)
+	       {
+		  params->x = params->x + 
+		    ((params->w - maxw) * desc->align.x);
+		  params->w = maxw;
+	       }
 	  }
      }
-   if (maxh >= 0)
+   if (flags & FLAG_Y)
      {
-	if (params->h > maxh)
+	if (maxh >= 0)
 	  {
-	     params->y = params->y + 
-	       ((params->h - maxh) * desc->align.y);
-	     params->h = maxh;
+	     if (params->h > maxh)
+	       {
+		  params->y = params->y + 
+		    ((params->h - maxh) * desc->align.y);
+		  params->h = maxh;
+	       }
 	  }
      }
    /* confine */
@@ -634,76 +682,100 @@ _edje_part_recalc_single(Edje *ed,
 	double v;
 	
 	/* complex dragable params */
-	v = ep->drag.size.x * confine_to->w;
-	if ((((minw > 0) && (v > minw)) || (minw <= 0)) &&
-	    (((maxw >= 0) && (v < maxw)) || (maxw < 0))) params->w = v;
-	offset = (ep->drag.x * (confine_to->w - params->w)) +
-	  ep->drag.tmp.x;
-	if (ep->part->dragable.step_x > 0)
+	if (flags & FLAG_X)
 	  {
-	     params->x = confine_to->x + 
-	       ((offset / ep->part->dragable.step_x) * ep->part->dragable.step_x);
+	     v = ep->drag.size.x * confine_to->w;
+	     if ((((minw > 0) && (v > minw)) || (minw <= 0)) &&
+		 (((maxw >= 0) && (v < maxw)) || (maxw < 0))) params->w = v;
+	     offset = (ep->drag.x * (confine_to->w - params->w)) +
+	       ep->drag.tmp.x;
+	     if (ep->part->dragable.step_x > 0)
+	       {
+		  params->x = confine_to->x + 
+		    ((offset / ep->part->dragable.step_x) * ep->part->dragable.step_x);
+	       }
+	     else if (ep->part->dragable.count_x > 0)
+	       {
+		  step = (confine_to->w - params->w) / ep->part->dragable.count_x;
+		  params->x = confine_to->x +
+		    ((offset / step) * step);	       
+	       }
+	     params->req_drag.x = params->x;
+	     params->req_drag.w = params->w;
 	  }
-	else if (ep->part->dragable.count_x > 0)
+	if (flags & FLAG_Y)
 	  {
-	     step = (confine_to->w - params->w) / ep->part->dragable.count_x;
-	     params->x = confine_to->x +
-	       ((offset / step) * step);	       
+	     v = ep->drag.size.y * confine_to->h;
+	     if ((((minh > 0) && (v > minh)) || (minh <= 0)) &&
+		 (((maxh >= 0) && (v < maxh)) || (maxh < 0))) params->h = v;
+	     offset = (ep->drag.y * (confine_to->h - params->h)) +
+	       ep->drag.tmp.y;
+	     if (ep->part->dragable.step_y > 0)
+	       {
+		  params->y = confine_to->y + 
+		    ((offset / ep->part->dragable.step_y) * ep->part->dragable.step_y);
+	       }
+	     else if (ep->part->dragable.count_y > 0)
+	       {
+		  step = (confine_to->h - params->h) / ep->part->dragable.count_y;
+		  params->y = confine_to->y +
+		    ((offset / step) * step);	       
+	       }
+	     params->req_drag.y = params->y;
+	     params->req_drag.h = params->h;
 	  }
-	v = ep->drag.size.y * confine_to->h;
-	if ((((minh > 0) && (v > minh)) || (minh <= 0)) &&
-	    (((maxh >= 0) && (v < maxh)) || (maxh < 0))) params->h = v;
-	offset = (ep->drag.y * (confine_to->h - params->h)) +
-	  ep->drag.tmp.y;
-	if (ep->part->dragable.step_y > 0)
-	  {
-	     params->y = confine_to->y + 
-	       ((offset / ep->part->dragable.step_y) * ep->part->dragable.step_y);
-	  }
-	else if (ep->part->dragable.count_y > 0)
-	  {
-	     step = (confine_to->h - params->h) / ep->part->dragable.count_y;
-	     params->y = confine_to->y +
-	       ((offset / step) * step);	       
-	  }
-	params->req_drag.x = params->x;
-	params->req_drag.y = params->y;
-	params->req_drag.w = params->w;
-	params->req_drag.h = params->h;
 	/* limit to confine */
-	if (params->x < confine_to->x)
+	if (flags & FLAG_X)
 	  {
-	     params->x = confine_to->x;
+	     if (params->x < confine_to->x)
+	       {
+		  params->x = confine_to->x;
+	       }
+	     if ((params->x + params->w) > (confine_to->x + confine_to->w))
+	       {
+		  params->x = confine_to->x + (confine_to->w - params->w);
+	       }
 	  }
-	if ((params->x + params->w) > (confine_to->x + confine_to->w))
+	if (flags & FLAG_Y)
 	  {
-	     params->x = confine_to->x + (confine_to->w - params->w);
-	  }
-	if (params->y < confine_to->y)
-	  {
-	     params->y = confine_to->y;
-	  }
-	if ((params->y + params->h) > (confine_to->y + confine_to->h))
-	  {
-	     params->y = confine_to->y + (confine_to->h - params->h);
+	     if (params->y < confine_to->y)
+	       {
+		  params->y = confine_to->y;
+	       }
+	     if ((params->y + params->h) > (confine_to->y + confine_to->h))
+	       {
+		  params->y = confine_to->y + (confine_to->h - params->h);
+	       }
 	  }
      }
    else
      {
 	/* simple dragable params */
-	params->x += ep->drag.x + ep->drag.tmp.x;
-	params->y += ep->drag.y + ep->drag.tmp.y;
-	params->req_drag.x = params->x;
-	params->req_drag.y = params->y;
-	params->req_drag.w = params->w;
-	params->req_drag.h = params->h;
+	if (flags & FLAG_X)
+	  {
+	     params->x += ep->drag.x + ep->drag.tmp.x;
+	     params->req_drag.x = params->x;
+	     params->req_drag.w = params->w;
+	  }
+	if (flags & FLAG_Y)
+	  {
+	     params->y += ep->drag.y + ep->drag.tmp.y;
+	     params->req_drag.y = params->y;
+	     params->req_drag.h = params->h;
+	  }
      }
    /* fill */
    params->smooth = desc->fill.smooth;
-   params->fill.x = desc->fill.pos_abs_x + (params->w * desc->fill.pos_rel_x);
-   params->fill.y = desc->fill.pos_abs_y + (params->h * desc->fill.pos_rel_y);
-   params->fill.w = desc->fill.abs_x + (params->w * desc->fill.rel_x);
-   params->fill.h = desc->fill.abs_y + (params->h * desc->fill.rel_y);
+   if (flags & FLAG_X)
+     {
+	params->fill.x = desc->fill.pos_abs_x + (params->w * desc->fill.pos_rel_x);
+	params->fill.w = desc->fill.abs_x + (params->w * desc->fill.rel_x);
+     }
+   if (flags & FLAG_Y)
+     {
+	params->fill.y = desc->fill.pos_abs_y + (params->h * desc->fill.pos_rel_y);
+	params->fill.h = desc->fill.abs_y + (params->h * desc->fill.rel_y);
+     }
    /* colors */
    params->color.r = desc->color.r;
    params->color.g = desc->color.g;
@@ -720,63 +792,98 @@ _edje_part_recalc_single(Edje *ed,
    /* visible */
    params->visible = desc->visible;
    /* border */
-   params->border.l = desc->border.l;
-   params->border.r = desc->border.r;
-   params->border.t = desc->border.t;
-   params->border.b = desc->border.b;
+   if (flags & FLAG_X)
+     {
+	params->border.l = desc->border.l;
+	params->border.r = desc->border.r;
+     }
+   if (flags & FLAG_Y)
+     {
+	params->border.t = desc->border.t;
+	params->border.b = desc->border.b;
+     }
    /* text.align */
-   params->text.align.x = desc->text.align.x;
-   params->text.align.y = desc->text.align.y;
+   if (flags & FLAG_X)
+     {
+	params->text.align.x = desc->text.align.x;
+     }
+   if (flags & FLAG_Y)
+     {
+	params->text.align.y = desc->text.align.y;
+     }
 }
 
 static void
-_edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
+_edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 {
    Edje_Calc_Params p1, p2, p3;
    Edje_Part_Description *chosen_desc;
    double pos = 0.0;
 
-//   printf("^^^^calc: %s\n", ep->part->name);
-   if (ep->calculated) return;
-   if (ep->calculating)
+   if ((ep->calculated & FLAG_XY) == FLAG_XY)
      {
-	printf("EDJE ERROR: circular dependancy when calculating part \"%s\"\n",
-	       ep->part->name);
 	return;
      }
-   ep->calculating = 1;
-   if (ep->param1.rel1_to_x)  _edje_part_recalc(ed, ep->param1.rel1_to_x);
-   if (ep->param1.rel1_to_y)  _edje_part_recalc(ed, ep->param1.rel1_to_y);
-   if (ep->param1.rel2_to_x)  _edje_part_recalc(ed, ep->param1.rel2_to_x);
-   if (ep->param1.rel2_to_y)  _edje_part_recalc(ed, ep->param1.rel2_to_y);
-   if (ep->confine_to)        _edje_part_recalc(ed, ep->confine_to);
-   if (ep->param2.rel1_to_x)  _edje_part_recalc(ed, ep->param2.rel1_to_x);
-   if (ep->param2.rel1_to_y)  _edje_part_recalc(ed, ep->param2.rel1_to_y);
-   if (ep->param2.rel2_to_x)  _edje_part_recalc(ed, ep->param2.rel2_to_x);
-   if (ep->param2.rel2_to_y)  _edje_part_recalc(ed, ep->param2.rel2_to_y);
-   
-//   printf("CALC\n");
+   if (ep->calculating & flags)
+     {
+#if 1
+	char *axes = "NONE", *faxes = "NONE";
+	
+	if ((ep->calculating & FLAG_X) && 
+	    (ep->calculating & FLAG_Y))
+	  axes = "XY";
+	else if ((ep->calculating & FLAG_X))
+	  axes = "X";
+	else if ((ep->calculating & FLAG_Y))
+	  axes = "Y";
+	
+	if ((flags & FLAG_X) && 
+	    (flags & FLAG_Y))
+	  faxes = "XY";
+	else if ((flags & FLAG_X))
+	  faxes = "X";
+	else if ((flags & FLAG_Y))
+	  faxes = "Y";
+	printf("EDJE ERROR: Circular dependency when calculating part \"%s\"\n"
+	       "            Already calculating %s [%02x] axes\n"
+	       "            Need to calculate %s [%02x] axes\n",
+	       ep->part->name,
+	       axes, ep->calculating, 
+	       faxes, flags);
+#endif	
+	return;
+     }
+   if (flags & FLAG_X)
+     {
+	ep->calculating |= flags & FLAG_X;
+	if (ep->param1.rel1_to_x)  _edje_part_recalc(ed, ep->param1.rel1_to_x, FLAG_X);
+	if (ep->param1.rel2_to_x)  _edje_part_recalc(ed, ep->param1.rel2_to_x, FLAG_X);
+	if (ep->param2.rel1_to_x)  _edje_part_recalc(ed, ep->param2.rel1_to_x, FLAG_X);
+	if (ep->param2.rel2_to_x)  _edje_part_recalc(ed, ep->param2.rel2_to_x, FLAG_X);
+     }
+   if (flags & FLAG_Y)
+     {
+	ep->calculating |= flags & FLAG_Y;
+	if (ep->param1.rel1_to_y)  _edje_part_recalc(ed, ep->param1.rel1_to_y, FLAG_Y);
+	if (ep->param1.rel2_to_y)  _edje_part_recalc(ed, ep->param1.rel2_to_y, FLAG_Y);
+	if (ep->param2.rel1_to_y)  _edje_part_recalc(ed, ep->param2.rel1_to_y, FLAG_Y);
+	if (ep->param2.rel2_to_y)  _edje_part_recalc(ed, ep->param2.rel2_to_y, FLAG_Y);
+     }
+   if (ep->confine_to)        _edje_part_recalc(ed, ep->confine_to, flags);
    
    /* actually calculate now */
-   if (ep->description_pos == 0.0)
-     chosen_desc = ep->param1.description;
-   else
-     chosen_desc = ep->param2.description;
-   if (!chosen_desc) chosen_desc = ep->param2.description;
+   chosen_desc = ep->chosen_description;
    if (!chosen_desc)
      {
-	ep->calculating = 0;
-	ep->calculated = 1;
+	ep->calculating = FLAG_NONE;
+	ep->calculated |= flags;
 	return;
      }
-//   printf("CALC2\n");
-   
-   ep->chosen_description = chosen_desc;
    if (ep->param1.description)
-     _edje_part_recalc_single(ed, ep, ep->param1.description, chosen_desc, ep->param1.rel1_to_x, ep->param1.rel1_to_y, ep->param1.rel2_to_x, ep->param1.rel2_to_y, ep->confine_to, &p1);
+     _edje_part_recalc_single(ed, ep, ep->param1.description, chosen_desc, ep->param1.rel1_to_x, ep->param1.rel1_to_y, ep->param1.rel2_to_x, ep->param1.rel2_to_y, ep->confine_to, &p1, flags);
    if (ep->param2.description)
      {
-	_edje_part_recalc_single(ed, ep, ep->param2.description, chosen_desc, ep->param2.rel1_to_x, ep->param2.rel1_to_y, ep->param2.rel2_to_x, ep->param2.rel2_to_y, ep->confine_to, &p2);
+	_edje_part_recalc_single(ed, ep, ep->param2.description, chosen_desc, ep->param2.rel1_to_x, ep->param2.rel1_to_y, ep->param2.rel2_to_x, ep->param2.rel2_to_y, ep->confine_to, &p2, flags);
 
 	pos = ep->description_pos;
 	
@@ -802,7 +909,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
 	  p3.smooth = p1.smooth;
 	else
 	  p3.smooth = p2.smooth;
-	
+
+	/* FIXME: do x and y separately base on flag */
 	p3.x = (p1.x * (1.0 - pos)) + (p2.x * (pos));
 	p3.y = (p1.y * (1.0 - pos)) + (p2.y * (pos));
 	p3.w = (p1.w * (1.0 - pos)) + (p2.w * (pos));
@@ -894,7 +1002,6 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
      }
    if (!ed->calc_only)
      {
-//	printf("APPL\n");
 	if (ep->part->type == EDJE_PART_TYPE_RECTANGLE)
 	  {
 	     evas_object_move(ep->object, ed->x + p3.x, ed->y + p3.y);
@@ -964,6 +1071,6 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
    ep->w = p3.w;
    ep->h = p3.h;
    
-   ep->calculated = 1;
-   ep->calculating = 0;
+   ep->calculated |= flags;
+   ep->calculating = FLAG_NONE;
 }

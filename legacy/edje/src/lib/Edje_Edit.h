@@ -154,6 +154,7 @@ struct _Edje_File
    Evas_Hash                      *collection_hash;
    int                             references;
    int                             version;
+   int                             feature_ver;
 };
 
 /*----------*/
@@ -382,6 +383,9 @@ struct _Edje_Part_Description
       struct {
 	 double      x, y; /* text alignment within bounds */
       } align;
+      
+      int            id_source; /* -1 if none */
+      int            id_text_source; /* -1 if none */
    } text;
 };
 
@@ -487,10 +491,10 @@ struct _Edje_Real_Part
 	 int                 w, h;
       } min, max;
    } swallow_params;
-   unsigned char             calculated : 1;
-   unsigned char             calculating : 1;
-   unsigned char             still_in   : 1;
+   unsigned char             calculated;
+   unsigned char             calculating;
    int                       clicked_button;
+   unsigned char             still_in   : 1;
    Edje_Part                *part;
    struct {
       struct {
@@ -517,6 +521,8 @@ struct _Edje_Real_Part
 	 char               *out_str;
 	 int                 out_size;
       } cache;
+      Edje_Real_Part        *source;
+      Edje_Real_Part        *text_source;
    } text;
    double                    description_pos;
    Edje_Part_Description    *chosen_description;
