@@ -432,7 +432,8 @@ embryo_program_function_find(Embryo_Program *ep, char *name)
 	if (_embryo_func_get(ep, mid, pname) == EMBRYO_ERROR_NONE)
 	  result = strcmp(pname, name);
 	else
-	  result = -1;
+	  return EMBRYO_FUNCTION_NONE;
+/*	  result = -1;*/
 	if (result > 0) last = mid - 1;
 	else if (result < 0) first = mid + 1;
 	else return mid;
@@ -460,10 +461,11 @@ embryo_program_variable_find(Embryo_Program *ep, char *name)
 	if (_embryo_var_get(ep, mid, pname, &paddr) == EMBRYO_ERROR_NONE)
 	  result = strcmp(pname, name);
 	else
-	  result = -1;
+	  return EMBRYO_CELL_NONE;
+/*	  result = -1;*/
 	if (result > 0) last = mid - 1;
 	else if (result < 0) first = mid + 1;
-	return paddr;
+	else return paddr;
      }
    return EMBRYO_CELL_NONE;
 }
