@@ -43,18 +43,25 @@ args_example_SOURCES          = args_example.c
 
 if BUILD_ECORE_CON
 con_server_example_SOURCES    = con_server_example.c
-con_server_example_LDADD        = $(top_builddir)/src/lib/ecore_con/libecore_con.la
+con_server_example_LDADD      = $(top_builddir)/src/lib/ecore/libecore.la \
+                                $(top_builddir)/src/lib/ecore_con/libecore_con.la
 
 con_client_example_SOURCES    = con_client_example.c
-con_client_example_LDADD        = $(top_builddir)/src/lib/ecore_con/libecore_con.la
+con_client_example_LDADD      = $(top_builddir)/src/lib/ecore/libecore.la \
+                                $(top_builddir)/src/lib/ecore_con/libecore_con.la
 endif
 
 if BUILD_ECORE_CONFIG
 config_basic_example_SOURCES  = config_basic_example.c
-config_basic_example_LDADD    = $(top_builddir)/src/lib/ecore_config/libecore_config.la
+config_basic_example_LDADD    = $(top_builddir)/src/lib/ecore/libecore.la \
+                                $(top_builddir)/src/lib/ecore_config/libecore_config.la
 endif
 
 if BUILD_ECORE_X
 x_window_example_SOURCES      = x_window_example.c
-x_window_example_LDADD        = $(top_builddir)/src/lib/ecore_x/libecore_x.la
+x_window_example_LDADD        = $(top_builddir)/src/lib/ecore/libecore.la \
+                                $(top_builddir)/src/lib/ecore_txt/libecore_txt.la \
+                                $(top_builddir)/src/lib/ecore_job/libecore_job.la \
+                                $(top_builddir)/src/lib/ecore_x/libecore_x.la
+				
 endif
