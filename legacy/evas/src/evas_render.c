@@ -903,7 +903,9 @@ evas_render_updates(Evas e)
 					   if (o->renderer_data.method[e->current.render_method])
 					     im = (void *)o->renderer_data.method[e->current.render_method];
 					   else
-					     o->renderer_data.method[e->current.render_method] = im = func_image_new_from_file(e->current.display, oo->current.file);
+					     o->renderer_data.method[e->current.render_method] = 
+					     im = 
+					     func_image_new_from_file(e->current.display, oo->current.file);
 					   if (im)
 					     {
 						int visx, visy, visw, vish;
@@ -922,15 +924,19 @@ evas_render_updates(Evas e)
 						     visx = 0;
 						     visw += x;
 						  }
-						if ((visx + visw) > e->current.drawable_width) visw = e->current.drawable_width - visx;
-						tilex = (-oo->current.fill.x * (double)e->current.drawable_width) / e->current.viewport.w;
-						tilew = (oo->current.fill.w * (double)e->current.drawable_width) / e->current.viewport.w;
+						if ((visx + visw) > e->current.drawable_width) 
+						  visw = e->current.drawable_width - visx;
+						tilex = ((-oo->current.fill.x * (double)e->current.drawable_width) / 
+							 e->current.viewport.w);
+						tilew = ((oo->current.fill.w * (double)e->current.drawable_width) / 
+							 e->current.viewport.w);
 						if (tilew < 1) tilew = 1;
 						tilex = (((tilex - (x - visx)) % tilew) + tilew) % tilew;
 						if (tilex == 0) ww = 1 + (visw - 1) / tilew;
 						else ww = 1 + ((visw + tilex) / tilew);
 						
 						pointsx = malloc(ww * sizeof(struct _points));
+						printf("r\n");
 						for (xx = 0; xx < ww; xx++)
 						  {
 						     if (xx == 0)
@@ -939,14 +945,20 @@ evas_render_updates(Evas e)
 							    {
 							       pointsx[xx].out1 = visx + 0;
 							       pointsx[xx].out2 = visw;
-							       pointsx[xx].in1 = (int)(((double)tilex * (double)oo->current.image.w * e->current.viewport.w) / ((double)e->current.drawable_width * (double)tilew));
-							       pointsx[xx].in2 = (int)(((double)func_image_get_width(im) * (double)visw) / (double)tilew);
+							       pointsx[xx].in1 = (int)(((double)tilex * 
+											(double)oo->current.image.w) /
+										       (double)tilew);
+							       pointsx[xx].in2 = (int)(((double)func_image_get_width(im) * 
+											(double)visw) / 
+										       (double)tilew);
 							    }
 							  else  /* | *  |   |   | */
 							    {
 							       pointsx[xx].out1 = visx + 0;
 							       pointsx[xx].out2 = tilew - tilex;
-							       pointsx[xx].in1 = (int)(((double)tilex * (double)oo->current.image.w * e->current.viewport.w) / ((double)e->current.drawable_width * (double)tilew));
+							       pointsx[xx].in1 = (int)(((double)tilex * 
+											(double)oo->current.image.w) /
+										       (double)tilew);
 							       pointsx[xx].in2 = func_image_get_width(im) - pointsx[xx].in1;
 							    }
 						       }
@@ -957,7 +969,9 @@ evas_render_updates(Evas e)
 							       pointsx[xx].out1 = visx + (xx * tilew) - tilex;
 							       pointsx[xx].out2 = visw - (pointsx[xx].out1 - visx);
 							       pointsx[xx].in1 = 0;
-							       pointsx[xx].in2 = (int)(((double)pointsx[xx].out2 * (double)oo->current.image.w * e->current.viewport.w) / ((double)e->current.drawable_width * (double)tilew));
+							       pointsx[xx].in2 = (int)(((double)pointsx[xx].out2 * 
+											(double)oo->current.image.w) /
+											(double)tilew);
 							    }
 							  else /* |   | * |   | */
 							    {
@@ -993,14 +1007,20 @@ evas_render_updates(Evas e)
 							    {
 							       pointsy[yy].out1 = visy + 0;
 							       pointsy[yy].out2 = vish;
-							       pointsy[yy].in1 = (int)(((double)tiley * (double)oo->current.image.h * e->current.viewport.h) / ((double)e->current.drawable_height * (double)tileh));
-							       pointsy[yy].in2 = (int)(((double)func_image_get_height(im)  * (double)vish) / (double)tileh);
+							       pointsy[yy].in1 = (int)(((double)tiley * 
+											(double)oo->current.image.h) /
+										       (double)tileh);
+							       pointsy[yy].in2 = (int)(((double)func_image_get_height(im)  * 
+											(double)vish) / 
+										       (double)tileh);
 							    }
 							  else  /* | *  |   |   | */
 							    {
 							       pointsy[yy].out1 = visy + 0;
 							       pointsy[yy].out2 = tileh - tiley;
-							       pointsy[yy].in1 = (int)(((double)tiley * (double)oo->current.image.h * e->current.viewport.h) / ((double)e->current.drawable_height * (double)tileh));
+							       pointsy[yy].in1 = (int)(((double)tiley * 
+											(double)oo->current.image.h) /
+										       (double)tileh);
 							       pointsy[yy].in2 = func_image_get_height(im) - pointsy[yy].in1;
 							    }
 						       }
@@ -1011,7 +1031,9 @@ evas_render_updates(Evas e)
 							       pointsy[yy].out1 = visy + (yy * tileh) - tiley;
 							       pointsy[yy].out2 = vish - (pointsy[yy].out1 - visy);
 							       pointsy[yy].in1 = 0;
-							       pointsy[yy].in2 = (int)(((double)pointsy[yy].out2 * (double)oo->current.image.h * e->current.viewport.h) / ((double)e->current.drawable_height * (double)tileh));
+							       pointsy[yy].in2 = (int)(((double)pointsy[yy].out2 * 
+											(double)oo->current.image.h) /
+											(double)tileh);
 							    }
 							  else /* |   | * |   | */
 							    {
@@ -1387,6 +1409,7 @@ evas_set_output_size(Evas e, int w, int h)
    if (!e) return;
    if (w < 1) w = 1;
    if (h < 1) h = 1;
+   if ((e->current.drawable_width == w) && (e->current.drawable_height == h)) return;
    e->current.drawable_width = w;
    e->current.drawable_height = h;
    e->changed = 1;
@@ -1398,6 +1421,8 @@ evas_set_output_viewport(Evas e, double x, double y, double w, double h)
    if (!e) return;
    if (w < 1) w = 1;
    if (h < 1) h = 1;
+   if ((e->current.viewport.x == x) && (e->current.viewport.y == y) &&
+       (e->current.viewport.w == w) && (e->current.viewport.w == h)) return;
    e->current.viewport.x = x;
    e->current.viewport.y = y;
    e->current.viewport.w = w;
