@@ -577,8 +577,10 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
 	_edje_emit(ed, "program,stop", pr->name);
 	if (_edje_block_break(ed)) goto break_prog;
      }
-   if (!((pr->action == EDJE_ACTION_TYPE_STATE_SET) &&
-	 (pr->tween.time > 0.0) && (!ed->no_anim)))
+   if (!((pr->action == EDJE_ACTION_TYPE_STATE_SET) 
+	 /* hmm this fucks somethgin up. must look into it later */
+	 /* && (pr->tween.time > 0.0) && (!ed->no_anim))) */
+	 ))
      {
 	if (pr->after >= 0)
 	  {

@@ -616,7 +616,9 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
      chosen_desc = ep->param1.description;
    else
      chosen_desc = ep->param2.description;
-      
+   if (!chosen_desc) chosen_desc = ep->param2.description;
+   if (!chosen_desc) return;
+   
    ep->chosen_description = chosen_desc;
    if (ep->param1.description)
      _edje_part_recalc_single(ed, ep, ep->param1.description, chosen_desc, ep->param1.rel1_to_x, ep->param1.rel1_to_y, ep->param1.rel2_to_x, ep->param1.rel2_to_y, ep->confine_to, &p1);
