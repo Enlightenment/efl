@@ -200,6 +200,7 @@ ecore_event_key_down_free(void *event)
 
   e = (Ecore_Event_Key_Down *) event;
   IF_FREE(e->key);
+  IF_FREE(e->symbol);
   IF_FREE(e->compose);
   FREE(e);
 }
@@ -211,6 +212,7 @@ ecore_event_key_up_free(void *event)
 
   e = (Ecore_Event_Key_Up *) event;
   IF_FREE(e->key);
+  IF_FREE(e->symbol);
   IF_FREE(e->compose);
   FREE(e);
 }
@@ -304,11 +306,12 @@ ecore_event_x_handle_keypress(XEvent * xevent)
     val = XLookupString((XKeyEvent *) xevent, buf, sizeof(buf), &sym, &stat);
     if (val > 0)
       {
-	buf[val] = 0;
-	e->compose = strdup(buf);
+        buf[val] = 0;
+        e->compose = strdup(buf);
       }
     else
       e->compose = NULL;
+    e->symbol = ecore_key_get_string_from_keysym(sym);
   }
   ecore_add_event(ECORE_EVENT_KEY_DOWN, e, ecore_event_key_down_free);
 }
@@ -342,11 +345,12 @@ ecore_event_x_handle_keyrelease(XEvent * xevent)
     val = XLookupString((XKeyEvent *) xevent, buf, sizeof(buf), &sym, &stat);
     if (val > 0)
       {
-	buf[val] = 0;
-	e->compose = strdup(buf);
+        buf[val] = 0;
+        e->compose = strdup(buf);
       }
     else
       e->compose = NULL;
+    e->symbol = ecore_key_get_string_from_keysym(sym);
   }
   ecore_add_event(ECORE_EVENT_KEY_UP, e, ecore_event_key_up_free);
 }

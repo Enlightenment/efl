@@ -221,6 +221,7 @@ extern              "C"
     Window              win, root;
     Ecore_Event_Key_Modifiers mods;
     char               *key;
+    char               *symbol;
     char               *compose;
     Time                time;
   } Ecore_Event_Key_Down;
@@ -230,6 +231,7 @@ extern              "C"
     Window              win, root;
     Ecore_Event_Key_Modifiers mods;
     char               *key;
+    char               *symbol;
     char               *compose;
     Time                time;
   } Ecore_Event_Key_Up;
@@ -710,6 +712,7 @@ extern              "C"
 
   KeySym              ecore_key_get_keysym_from_keycode(KeyCode keycode);
   char               *ecore_key_get_string_from_keycode(KeyCode keycode);
+  char		     *ecore_key_get_string_from_keysym(KeySym keysym);
   void                ecore_key_grab(char *key, Ecore_Event_Key_Modifiers mods,
 				     int anymod, int sync);
   void                ecore_key_ungrab(char *key,
