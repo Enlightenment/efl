@@ -233,10 +233,14 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 	       }
 	  }
 	_edje_recalc(runp->edje);
-	_edje_anim_count--;
-	runp->edje->actions = evas_list_remove(runp->edje->actions, runp);
-	if (!runp->edje->actions)
-	  _edje_animators = evas_list_remove(_edje_animators, runp->edje);
+	runp->delete_me = 1;
+	if (!runp->edje->walking_actions)
+	  {
+	     _edje_anim_count--;
+	     runp->edje->actions = evas_list_remove(runp->edje->actions, runp);
+	     if (!runp->edje->actions)
+	       _edje_animators = evas_list_remove(_edje_animators, runp->edje);
+	  }
 	_edje_emit(runp->edje, "program,stop", runp->program->name);
 	if (runp->program->after >= 0)
 	  {
@@ -248,7 +252,7 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 	  }
 	_edje_thaw(runp->edje);
 	_edje_unref(runp->edje);
-	free(runp);
+	if (!runp->edje->walking_actions) free(runp);
 	return  0;
      }
    _edje_recalc(runp->edje);
@@ -284,14 +288,18 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
 	  }
      }
    _edje_recalc(runp->edje);
-   _edje_anim_count--;
-   runp->edje->actions = evas_list_remove(runp->edje->actions, runp);
-   if (!runp->edje->actions)
-     _edje_animators = evas_list_remove(_edje_animators, runp->edje);
+   runp->delete_me = 1;
+   if (!runp->edje->walking_actions)
+     {
+	_edje_anim_count--;
+	runp->edje->actions = evas_list_remove(runp->edje->actions, runp);
+	if (!runp->edje->actions)
+	  _edje_animators = evas_list_remove(_edje_animators, runp->edje);
+     }
    _edje_emit(runp->edje, "program,stop", runp->program->name);
    _edje_thaw(runp->edje);
    _edje_unref(runp->edje);   
-   free(runp);
+   if (!runp->edje->walking_actions) free(runp);
 }
    
 void

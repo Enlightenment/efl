@@ -166,6 +166,7 @@ _edje_timer_cb(void *data)
 	animl = evas_list_remove(animl, animl->data);
 	if (!ed->paused)
 	  {
+	     ed->walking_actions = 1;
 	     for (l = ed->actions; l; l = l->next)
 	       newl = evas_list_append(newl, l->data);
 	     while (newl)
@@ -174,8 +175,29 @@ _edje_timer_cb(void *data)
 		  
 		  runp = newl->data;
 		  newl = evas_list_remove(newl, newl->data);
-		  _edje_program_run_iterate(runp, t);
+		  if (!runp->delete_me)
+		    _edje_program_run_iterate(runp, t);
 	       }
+	     for (l = ed->actions; l; l = l->next)
+	       newl = evas_list_append(newl, l->data);
+	     while (newl)
+	       {
+		  Edje_Running_Program *runp;
+		  
+		  runp = newl->data;
+		  newl = evas_list_remove(newl, newl->data);
+		  if (runp->delete_me)
+		    {
+		       _edje_anim_count--;		       
+		       runp->edje->actions = 
+			 evas_list_remove(runp->edje->actions, runp);
+		       if (!runp->edje->actions)
+			 _edje_animators = 
+			 evas_list_remove(_edje_animators, runp->edje);
+		       free(runp);
+		    }
+	       }
+	     ed->walking_actions = 0;
 	  }
 	_edje_thaw(ed);
 	_edje_unref(ed);

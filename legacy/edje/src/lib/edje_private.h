@@ -372,6 +372,7 @@ struct _Edje
    unsigned short        paused : 1;
    unsigned short        no_anim : 1;
    unsigned short        calc_only : 1;
+   unsigned short        walking_actions : 1;
    double                paused_at;
    Evas                 *evas; /* the evas this edje belongs to */
    Evas_Object          *obj; /* the smart object */
@@ -444,6 +445,7 @@ struct _Edje_Running_Program
    Edje           *edje;
    Edje_Program   *program;
    double          start_time;
+   char            delete_me : 1;
 };
 
 struct _Edje_Signal_Callback
