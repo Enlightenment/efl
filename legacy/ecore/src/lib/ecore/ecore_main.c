@@ -91,38 +91,29 @@ ecore_main_loop_quit(void)
 /**
  * @defgroup Ecore_FD_Handler_Group File Event Handling Functions
  *
- * To be written.
+ * Functions that deal with file descriptor handlers.
  */
 
 /**
- * Add a handler for read/write notification of a file descriptor.
- * @param fd The file descriptor to watch
- * @param flags To watch it for read and/or write ability
- * @param func The function to call when the file descriptor becomes active
- * @param data The data to pass to the @p func call
- * @param buf_func The function to call to check if any data has been buffered and already read from the fd.
- * @param buf_data The data to pass to the @p buf_func call
- * @return A fd handler handle
- * 
- * This adds a fd handler, calling @p func whenever the fd is active for
- * read or write (or both) depending what flags were set as @p flags. On
- * failure NULL is returned. The @p func call will the triggered during
- * execution of ecore_main_loop_begin() when a file descriptor (fd) is
- * available for reading or writing (or both). The #p buf_func call is called
- * during event loop handling to check if data that has already been read from
- * the file descriptor is in a buffer and is available to read. This function
- * is optional and can be NULL. If it is called it will be passed @p buf_data
- * as the data parameter.
- * 
- * Example:
- * 
- * @code
- * int fd;
- * Ecore_Fd_Handler *fdh;
- * 
- * fd = open("/tmp/fifo", O_RDONLY);
- * fdh = ecore_main_fd_handler_add(fd, ECORE_FD_READ, func_read_fifo, NULL);
- * @endcode
+ * Adds a callback for activity on the given file descriptor.
+ *
+ * @p func will be called during the execution of @ref ecore_main_loop_begin
+ * when the file descriptor is available for reading, or writing, or both.
+ * @p buf_func is called during event loop handling to check if data that has
+ * been read from the file descriptor is in a buffer and is available to
+ * read.
+ *
+ * @param   fd       The file descriptor to watch.
+ * @param   flags    To watch it for read (@c ECORE_FD_READ) and/or
+ *                   (@c ECORE_FD_WRITE) write ability.  @c ECORE_FD_ERROR
+ *                   
+ * @param   func     The callback function.
+ * @param   data     The data to pass to the callback.
+ * @param   buf_func The function to call to check if any data has been
+ *                   buffered and already read from the fd.  Can be @c NULL.
+ * @param   buf_data The data to pass to the @p buf_func function.
+ * @return  A fd handler handle if successful.  @c NULL otherwise.
+ * @ingroup Ecore_FD_Handler_Group
  */
 Ecore_Fd_Handler *
 ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, int (*func) (void *data, Ecore_Fd_Handler *fd_handler), const void *data, int (*buf_func) (void *buf_data, Ecore_Fd_Handler *fd_handler), const void *buf_data)
@@ -150,14 +141,11 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, int (*func) (voi
 }
 
 /**
- * Delete a handler for file descriptors.
- * 
- * @param fd_handler The handler to delete
- * @return The data pointer set for the fd_handler
- * 
- * This deletes a file descriptore (fd) handler and on success returns the data
- * pointer that was being passed to it, set by ecore_main_fd_handler_add().
- * NUll is returned on failure.
+ * Deletes the given FD handler.
+ * @param   fd_handler The given FD handler.
+ * @return  The data pointer set using @ref ecore_main_fd_handler_add,
+ *          for @p fd_handler on success.  @c NULL otherwise.
+ * @ingroup Ecore_FD_Handler_Group
  */
 void *
 ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
@@ -174,9 +162,9 @@ ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
 }
 
 /**
- * Returns the file descriptor that the given handler is handling.
+ * Retrieves the file descriptor that the given handler is handling.
  * @param   fd_handler The given FD handler.
- * @return  The file descriptor the handler is watching
+ * @return  The file descriptor the handler is watching.
  * @ingroup Ecore_FD_Handler_Group
  */
 int
@@ -192,16 +180,13 @@ ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler)
 }
 
 /**
- * Return if read or write is active on the fd
- * @param fd_handler The handler to query
- * @param flags The flags to query
- * @return The active state of read or write on the fd, or both
- * 
- * Return if the fd the handler is watching is active for read, write or both.
- * The @p flags parameter determines what youw ant to query, and 1 is returned
- * if the hanldere reports an active state for any of the values in
- * @p flags since this is the same bitmask the handler was set up with. 0 is
- * returned if the fd is not active for the @p flags passed in.
+ * Return if read, write or error, or a combination thereof, is active on the
+ * file descriptor of the given FD handler.
+ * @param   fd_handler The given FD handler.
+ * @param   flags      The flags, @c ECORE_FD_READ, @c ECORE_FD_WRITE or
+ *                     @c ECORE_FD_ERROR to query.
+ * @return  @c 1 if any of the given flags are active. @c 0 otherwise.
+ * @ingroup Ecore_FD_Handler_Group
  */
 int
 ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags)
@@ -222,11 +207,10 @@ ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_
 }
 
 /**
- * Set what active stream the fd should be monitoring
- * @param fd_handler The handler to modify
- * @param flags The flags to be watching
- * 
- * This function changes if an fd shoudl be watched for read, write or both.
+ * Set what active streams the given FD handler should be monitoring.
+ * @param   fd_handler The given FD handler.
+ * @param   flags      The flags to be watching.
+ * @ingroup Ecore_FD_Handler_Group
  */
 void
 ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags)

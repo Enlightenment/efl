@@ -10,7 +10,8 @@
  * details, see @ref Ecore_Main_Loop_Group.
  *
  * For the main loop to be of any use, you need to be able to add events
- * and event handlers.
+ * and event handlers.  Events for file descriptor events are covered in
+ * @ref Ecore_FD_Handler_Group.
  *
  * There is also provision for callbacks for when the loop enters or
  * exits an idle state. See @ref Idle_Group for more information.
