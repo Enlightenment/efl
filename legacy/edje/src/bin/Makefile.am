@@ -9,6 +9,9 @@ INCLUDES = \
 @ecore_cflags@ \
 @imlib2_cflags@
 
+bin_SCRIPTS = \
+edje_recc
+
 bin_PROGRAMS = \
 edje \
 edje_ls \

@@ -1,0 +1,23 @@
+#!/bin/sh
+
+set -e
+
+if [ $# -ne 1 ]; then
+  echo "Usage: edje_recc input_file.eet"
+  exit -1
+fi
+
+IN=$1
+F=`basename $IN`
+B=`basename $F .eet`
+T="./...edje_tmp"
+rm -f $T
+mkdir -p $T
+cp $IN $T
+cd $T
+edje_decc $F
+cd $B
+./build.sh
+cd ../..
+mv $T/$B/$F $IN
+rm -rf $T
