@@ -419,7 +419,9 @@ _ecore_x_event_handle_button_release(XEvent *xevent)
 void
 _ecore_x_event_handle_motion_notify(XEvent *xevent)
 {
-   Ecore_X_Event_Mouse_Move *e;
+   Ecore_X_Event_Mouse_Move     *e;
+   int                          x1, x2, y1, y2;
+   Ecore_X_DND_Protocol         *_xdnd;
 
    e = calloc(1, sizeof(Ecore_X_Event_Mouse_Move));
    if (!e) return;
@@ -436,6 +438,23 @@ _ecore_x_event_handle_motion_notify(XEvent *xevent)
    _ecore_x_event_last_win = e->win;
    _ecore_x_event_last_root_x = e->root.x;
    _ecore_x_event_last_root_y = e->root.y;
+
+   /* Xdnd handling */
+   _xdnd = _ecore_x_dnd_protocol_get();
+   if (_xdnd->state == ECORE_X_DND_DRAGGING)
+   {
+      /* Determine if we're still in the rectangle from the last status */
+      x1 = _xdnd->rectangle.x;
+      x2 = _xdnd->rectangle.x + _xdnd->rectangle.width;
+      y1 = _xdnd->rectangle.y;
+      y2 = _xdnd->rectangle.y + _xdnd->rectangle.height;
+      if (e->win != _xdnd->dest || e->root.x < x1 || e->root.x > x2
+          || e->root.y < y1 || e->root.y > y2)
+      {
+         _ecore_x_dnd_drag(e->root.x, e->root.y);
+      }
+   }
+   
    ecore_event_add(ECORE_X_EVENT_MOUSE_MOVE, e, NULL, NULL);
 }
 

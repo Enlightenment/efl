@@ -197,8 +197,8 @@ _ecore_x_dnd_drag(int x, int y)
       }
 
       /* FIXME: Handle box information */
-      if (!_xdnd->await_status)
-      {
+      /*if (!_xdnd->await_status)
+      {*/
          xev.xclient.window = win;
          xev.xclient.message_type = _ecore_x_atom_xdnd_position;
          xev.xclient.data.l[0] = _xdnd->source;
@@ -208,7 +208,7 @@ _ecore_x_dnd_drag(int x, int y)
          xev.xclient.data.l[4] = _xdnd->action; /* Version 2, Needs to be pre-set */
          XSendEvent(_ecore_x_disp, win, False, 0, &xev);
          _xdnd->await_status = 1;
-      }
+      /*}*/
    }
 
    if (_xdnd->state == ECORE_X_DND_DROPPED)
