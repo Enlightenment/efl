@@ -74,6 +74,7 @@ extern "C" {
    typedef void Ecore_Event_Handler; /**< A handle for an event handler */
    typedef void Ecore_Event_Filter; /**< A handle for an event filter */
    typedef void Ecore_Event; /**< A handle for an event */
+   typedef void Ecore_Animator; /**< A handle for animators */
 #endif
    typedef struct _Ecore_Event_Exe_Exit     Ecore_Event_Exe_Exit; /**< Spawned Exe exit event */
    typedef struct _Ecore_Event_Signal_User  Ecore_Event_Signal_User; /**< User signal event */
@@ -180,6 +181,11 @@ extern "C" {
        
    Ecore_Timer *ecore_timer_add(double in, int (*func) (void *data), const void *data);
    void        *ecore_timer_del(Ecore_Timer *timer);
+   
+   Ecore_Animator *ecore_animator_add(int (*func) (void *data), const void *data);
+   void           *ecore_animator_del(Ecore_Animator *animator);
+   void            ecore_animator_frametime_set(double frametime);
+   double          ecore_animator_frametime_get(void);
        
 #ifdef __cplusplus
 }

@@ -10,6 +10,7 @@ Ecore_Data.h
 libecore_la_SOURCES = \
 ecore.c \
 ecore_app.c \
+ecore_anim.c \
 ecore_events.c \
 ecore_exe.c \
 ecore_hash.c \

@@ -1,8 +1,6 @@
 #include "ecore_private.h"
 #include "Ecore.h"
 
-/* FIXME: write code for timers... */
-
 static void _ecore_timer_set(Ecore_Timer *timer, double at, double in, int (*func) (void *data), void *data);
 
 static int          timers_added = 0;
@@ -49,7 +47,7 @@ ecore_timer_add(double in, int (*func) (void *data), const void *data)
 
 /**
  * Delete the specified timer from the timer list.
- * @param timer
+ * @param timer The timer to delete
  * @return The data pointer set for the timer
  * @ingroup Ecore_Timer_Group
  * 

@@ -22,6 +22,7 @@
 #define ECORE_MAGIC_EVENT_HANDLER   0xf79317f0
 #define ECORE_MAGIC_EVENT_FILTER    0xf78218ff
 #define ECORE_MAGIC_EVENT           0xf77119fe
+#define ECORE_MAGIC_ANIMATOR        0xf7643ea5
 
 #define ECORE_MAGIC                 Ecore_Magic  __magic
 
@@ -57,6 +58,7 @@ typedef struct _Ecore_Fd_Handler    Ecore_Fd_Handler;
 typedef struct _Ecore_Event_Handler Ecore_Event_Handler;
 typedef struct _Ecore_Event_Filter  Ecore_Event_Filter;
 typedef struct _Ecore_Event         Ecore_Event;
+typedef struct _Ecore_Animator      Ecore_Animator;
 
 struct _Ecore_Exe
 {
@@ -154,6 +156,15 @@ struct _Ecore_Event
    void        *data;
 };
 
+struct _Ecore_Animator
+{
+   Ecore_Oldlist   __list_data;
+   ECORE_MAGIC;
+   signed char  delete_me : 1;
+   int        (*func) (void *data);
+   void        *data;
+};
+
 #endif
 
 void          _ecore_magic_fail(void *d, Ecore_Magic m, Ecore_Magic req_m, const char *fname);
@@ -200,6 +211,9 @@ void          _ecore_signal_call(void);
 void          _ecore_exe_shutdown(void);
 Ecore_Exe    *_ecore_exe_find(pid_t pid);
 void         *_ecore_exe_free(Ecore_Exe *exe);
+
+void          _ecore_animator_shutdown(void);
+    
 
 void         *_ecore_list_append           (void *in_list, void *in_item);
 void         *_ecore_list_prepend          (void *in_list, void *in_item);

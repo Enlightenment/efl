@@ -58,6 +58,7 @@ ecore_shutdown(void)
       return _ecore_init_count;
 
    if (_ecore_fps_debug) _ecore_fps_debug_shutdown();
+   _ecore_animator_shutdown();
    _ecore_exe_shutdown();
    _ecore_idle_enterer_shutdown();
    _ecore_idle_exiter_shutdown();
