@@ -22,7 +22,6 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
    if (ed->part) free(ed->part);
    ed->part = strdup(part);
    _edje_file_add(ed);
-   printf("LOAD: %p\n", ed->collection);
    if (ed->collection)
      {
 	Evas_List *l;
@@ -35,7 +34,6 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	     
 	     ep = l->data;
 	     rp = calloc(1, sizeof(Edje_Real_Part));
-	     printf("LOAD: NEW PART = %p\n", rp);
 	     if (!rp) return;
 	     rp->part = ep;
 	     ed->parts = evas_list_append(ed->parts, rp);
