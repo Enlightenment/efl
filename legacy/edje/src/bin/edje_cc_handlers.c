@@ -849,7 +849,6 @@ st_collections_group_parts_part_description_inherit(void)
 	
 	iid = l->data;
 	iid_new = mem_alloc(SZ(Edje_Part_Image_Id));
-	ed->image.tween_list = evas_list_append(ed->image.tween_list, iid_new);
 	data_queue_image_slave_lookup(&(iid->id), &(iid_new->id));
 	ed->image.tween_list = evas_list_append(ed->image.tween_list, iid_new);
      }
