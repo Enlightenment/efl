@@ -102,7 +102,7 @@ evas_common_font_utf8_get_next(unsigned char *buf, int *iindex)
     * 
     * Returns 0 to indicate an error (e.g. invalid UTF8)
     */   
-   int index = *iindex, r;
+   int index = *iindex, r, istart = *iindex;
    unsigned char d = buf[index++], d2, d3, d4;
    
    if (!d)
@@ -148,7 +148,27 @@ evas_common_font_utf8_get_next(unsigned char *buf, int *iindex)
 	r <<= 6;
 	r |= (d4 & 0x3f);	
      }
+#if 0
+   index = istart - 1;
+   d = buf[index];
+   if (!(d & 0x80))
+     *iindex = index;
+   else
+     {
+	while (index > 0)
+	  {
+	     index--;
+	     d = buf[index];
+	     if ((d & 0xc0) != 0x80)
+	       {
+		  *iindex = index;
+		  return r;
+	       }
+	  }
+     }
+#else   
    *iindex = index;
+#endif   
    return r;
 }
 
@@ -210,6 +230,7 @@ evas_common_font_utf8_get_prev(unsigned char *buf, int *iindex)
 	r <<= 6;
 	r |= (d4 & 0x3f);	
      }
+#if 0
    index = istart - 1;
    d = buf[index];
    if (!(d & 0x80))
@@ -227,5 +248,8 @@ evas_common_font_utf8_get_prev(unsigned char *buf, int *iindex)
 	       }
 	  }
      }
+#else
+   *iindex = index;
+#endif   
    return r;
 }
