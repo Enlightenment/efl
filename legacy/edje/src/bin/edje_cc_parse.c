@@ -386,15 +386,15 @@ compile(void)
    if (fd >= 0)
      {
 	int ret;
-	
+        
 	clean_file = tmpn;
 	close(fd);
 	atexit(clean_tmp_file);
-	snprintf(buf, sizeof(buf), "cpp %s -o %s", file_in, tmpn);
+	snprintf(buf, sizeof(buf), "cpp -E -o %s %s", tmpn, file_in);
 	ret = system(buf);
 	if (ret < 0)
 	  {
-	     snprintf(buf, sizeof(buf), "gcc -E %s -o %s", file_in, tmpn);
+	     snprintf(buf, sizeof(buf), "gcc -E -o %s %s", tmpn, file_in);
 	     ret = system(buf);
 	  }
 	if (ret >= 0) file_in = tmpn;
