@@ -126,6 +126,7 @@ main_start(int argc, char **argv)
 static void
 main_stop(void)
 {
+   edje_shutdown();
    ecore_evas_shutdown();
    ecore_shutdown();
 }
