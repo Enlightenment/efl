@@ -4,6 +4,13 @@
 /* 
  * ALREADY EXPORTED BY EMBRYO:
  * 
+ * enum Float_Round_Method {
+ *    ROUND, FLOOR, CEIL, TOZERO
+ * };
+ * enum Float_Angle_Mode {
+ *    RADIAN, DEGREES, GRADES
+ * };
+ * 
  * Float:atof(string[]);
  * Float:fract(Float:value);
  *       round(Float:value, Float_Round_Method:method=ROUND);
@@ -31,6 +38,10 @@
  *       strchr(str[], ch[]);
  *       strrchr(str[], ch[]);
  *       rand();
+ * Float:randf();
+ * Float:seconds();
+ *       date(&year, &month, &day, &yearday, &weekday, &hr, &min, &Float:sec);
+ * 
  */
 
 #define CHKPARAM(n) if (params[0] != (sizeof(Embryo_Cell) * (n))) return 0;
@@ -60,6 +71,19 @@ static void _edje_embryo_globals_init(Edje *ed);
  * 
  * implemented so far as examples:
  * 
+ * get_int(id)
+ * set_int(id, v)
+ * Float:get_float (id)
+ * set_float(id, Float:v)
+ * get_strlen(id)
+ * get_str(id, dst[], maxlen)
+ * set_str(id, str[])
+ * ** lists/arrays for stored variables
+ * ** dynamic allocation (just use cell as index to dynamic block)
+ * timer(Float:in, fname[], val);
+ * cancel_timer(id)
+ * anim(Float:len, fname[], val)
+ * cancel_anim(id)
  * emit(sig[], src[])
  * set_state(part_id, state[], Float:state_val)
  * set_tween_state(part_id, Float:tween, state1[], Float:state1_val, state2[], Float:state2_val)
@@ -87,6 +111,8 @@ static void _edje_embryo_globals_init(Edje *ed);
  *
  * still need to implement this:
  *
+ * ** part_id and program_id need to be able to be "found" from strings
+ * 
  * get_drag_count(part_id, &Float:dx, &Float:&dy)
  * set_drag_count(part_id, Float:dx, Float:dy)
  * set_drag_confine(part_id, confine_part_id)
@@ -102,7 +128,6 @@ static void _edje_embryo_globals_init(Edje *ed);
  * set_clip(part_id, clip_part_id)
  * get_clip(part_id)
  */
-
 /* MODIFY STATE VALUES
  * 
  * set_state_val(part_id, state[], Float:state_val, Param:param, ...)
@@ -601,9 +626,9 @@ _edje_embryo_fn_set_drag(Embryo_Program *ep, Embryo_Cell *params)
    return(0);
 }
 
-/* text_set(part_id, str[]) */
+/* set_text(part_id, str[]) */
 static Embryo_Cell
-_edje_embryo_fn_text_set(Embryo_Program *ep, Embryo_Cell *params)
+_edje_embryo_fn_set_text(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed;
    int part_id = 0;
@@ -622,9 +647,9 @@ _edje_embryo_fn_text_set(Embryo_Program *ep, Embryo_Cell *params)
    return(0);
 }
 
-/* text_get(part_id, dst[], maxlen) */
+/* get_text(part_id, dst[], maxlen) */
 static Embryo_Cell
-_edje_embryo_fn_text_get(Embryo_Program *ep, Embryo_Cell *params)
+_edje_embryo_fn_get_text(Embryo_Program *ep, Embryo_Cell *params)
 {
    Edje *ed;
    int part_id = 0;
@@ -881,8 +906,8 @@ _edje_embryo_script_init(Edje *ed)
    embryo_program_native_call_add(ep, "get_drag_dir", _edje_embryo_fn_get_drag_dir);
    embryo_program_native_call_add(ep, "get_drag", _edje_embryo_fn_get_drag);
    embryo_program_native_call_add(ep, "set_drag", _edje_embryo_fn_set_drag);
-   embryo_program_native_call_add(ep, "set_text", _edje_embryo_fn_text_set);
-   embryo_program_native_call_add(ep, "get_text", _edje_embryo_fn_text_get);
+   embryo_program_native_call_add(ep, "set_text", _edje_embryo_fn_set_text);
+   embryo_program_native_call_add(ep, "get_text", _edje_embryo_fn_get_text);
    embryo_program_native_call_add(ep, "get_min_size", _edje_embryo_fn_get_min_size);
    embryo_program_native_call_add(ep, "get_max_size", _edje_embryo_fn_get_max_size);
    embryo_program_native_call_add(ep, "get_color_class", _edje_embryo_fn_get_color_class);

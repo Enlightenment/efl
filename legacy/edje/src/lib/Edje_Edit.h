@@ -127,6 +127,8 @@ Edje_Edit_Image *edje_edit_iamge_get_by_id(int id);
 #define EDJE_VAR_INT    1
 #define EDJE_VAR_FLOAT  2
 #define EDJE_VAR_STRING 3
+#define EDJE_VAR_LIST   4
+#define EDJE_VAR_HASH   5
 
 #define EDJE_ASPECT_PREFER_NONE       0
 #define EDJE_ASPECT_PREFER_VERTICAL   1
@@ -387,6 +389,8 @@ typedef struct _Edje_Var Edje_Var;
 typedef struct _Edje_Var_Int Edje_Var_Int;
 typedef struct _Edje_Var_Float Edje_Var_Float;
 typedef struct _Edje_Var_String Edje_Var_String;
+typedef struct _Edje_Var_List Edje_Var_List;
+typedef struct _Edje_Var_Hash Edje_Var_Hash;
 typedef struct _Edje_Var_Animator Edje_Var_Animator;
 typedef struct _Edje_Var_Timer Edje_Var_Timer;
 typedef struct _Edje_Var_Pool Edje_Var_Pool;
@@ -438,6 +442,11 @@ struct _Edje
    Edje_Real_Part      **table_parts;
    int                   table_programs_size;
    Edje_Program        **table_programs;
+
+   struct {
+      void (*func) (void *data, Evas_Object *obj, const char *part);
+      void *data;
+   } text_change;
 };
 
 struct _Edje_Real_Part
@@ -608,6 +617,16 @@ struct _Edje_Var_String
    char    *v;
 };
 
+struct _Edje_Var_List
+{
+   Evas_List *v;
+};
+
+struct _Edje_Var_Hash
+{
+   Evas_Hash *v;
+};
+
 struct _Edje_Var_Timer
 {
    Edje           *edje;
@@ -644,6 +663,8 @@ struct _Edje_Var
       Edje_Var_Int    i;
       Edje_Var_Float  f;
       Edje_Var_String s;
+      Edje_Var_List   l;
+      Edje_Var_Hash   h;
    } data;
 };
 

@@ -355,6 +355,18 @@ edje_object_part_geometry_get(Evas_Object *obj, const char *part, Evas_Coord *x,
 }
 
 void
+edje_object_text_change_cb_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, const char *part), void *data)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);   
+   if (!ed) return;
+   ed->text_change.func = func;
+   ed->text_change.data = data;
+}
+
+void
 edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
 {
    Edje *ed;
@@ -374,6 +386,7 @@ edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
    rp->text.text = strdup(text);
    ed->dirty = 1;
    _edje_recalc(ed);
+   if (ed->text_change.func) ed->text_change.func(ed->text_change.data, obj, part);
 }
 
 const char *
@@ -387,7 +400,7 @@ edje_object_part_text_get(Evas_Object *obj, const char *part)
    rp = _edje_real_part_get(ed, (char *)part);
    if (!rp) return NULL;
    if (rp->part->type == EDJE_PART_TYPE_TEXT)
-     return evas_object_text_text_get(rp->object);
+     return rp->text.text;
    return NULL;
 }
 

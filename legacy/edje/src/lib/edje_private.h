@@ -64,9 +64,17 @@ void          _edje_embryo_script_init      (Edje *ed);
 void          _edje_embryo_script_shutdown  (Edje *ed);
 void          _edje_embryo_script_reset     (Edje *ed);
 void          _edje_embryo_test_run         (Edje *ed, char *fname, char *sig, char *src);
+Edje_Var     *_edje_var_new                 (void);
+void          _edje_var_free                (Edje_Var *var);
 void          _edje_var_init                (Edje *ed);
 void          _edje_var_shutdown            (Edje *ed);
 int           _edje_var_string_id_get       (Edje *ed, char *string);
+int           _edje_var_var_int_get         (Edje *ed, Edje_Var *var);
+void          _edje_var_var_int_set         (Edje *ed, Edje_Var *var, int v);
+double        _edje_var_var_float_get       (Edje *ed, Edje_Var *var);
+void          _edje_var_var_float_set       (Edje *ed, Edje_Var *var, double v);
+const char   *_edje_var_var_str_get         (Edje *ed, Edje_Var *var);
+void          _edje_var_var_str_set         (Edje *ed, Edje_Var *var, char *str);
 int           _edje_var_int_get             (Edje *ed, int id);
 void          _edje_var_int_set             (Edje *ed, int id, int v);
 double        _edje_var_float_get           (Edje *ed, int id);
@@ -74,6 +82,33 @@ void          _edje_var_float_set           (Edje *ed, int id, double v);
 const char   *_edje_var_str_get             (Edje *ed, int id);
 void          _edje_var_str_set             (Edje *ed, int id, char *str);
 
+void          _edje_var_list_var_append(Edje *ed, int id, Edje_Var *var);
+void          _edje_var_list_var_prepend(Edje *ed, int id, Edje_Var *var);
+void          _edje_var_list_var_append_relative(Edje *ed, int id, Edje_Var *var, Edje_Var *relative);
+void          _edje_var_list_var_prepend_relative(Edje *ed, int id, Edje_Var *var, Edje_Var *relative);
+Edje_Var     *_edje_var_list_nth(Edje *ed, int id, int n);
+
+int           _edje_var_list_count_get(Edje *ed, int id);
+void          _edje_var_list_remove_nth(Edje *ed, int id, int n);
+
+int           _edje_var_list_nth_int_get(Edje *ed, int id, int n);
+void          _edje_var_list_nth_int_set(Edje *ed, int id, int n, int v);
+void          _edje_var_list_int_append(Edje *ed, int id, int v);
+void          _edje_var_list_int_prepend(Edje *ed, int id, int v);
+void          _edje_var_list_int_insert(Edje *ed, int id, int n, int v);
+
+double        _edje_var_list_nth_float_get(Edje *ed, int id, int n);
+void          _edje_var_list_nth_float_set(Edje *ed, int id, int n, double v);
+void          _edje_var_list_float_append(Edje *ed, int id, double v);
+void          _edje_var_list_float_prepend(Edje *ed, int id, double v);
+void          _edje_var_list_float_insert(Edje *ed, int id, int n, double v);
+
+char         *_edje_var_list_nth_str_get(Edje *ed, int id, int n);
+void          _edje_var_list_nth_str_set(Edje *ed, int id, int n, char *v);
+void          _edje_var_list_str_append(Edje *ed, int id, char *v);
+void          _edje_var_list_str_prepend(Edje *ed, int id, char *v);
+void          _edje_var_list_str_insert(Edje *ed, int id, int n, char *v);
+    
 int           _edje_var_timer_add           (Edje *ed, double in, char *fname, int val);
 void          _edje_var_timer_del           (Edje *ed, int id);
 
@@ -81,4 +116,5 @@ int           _edje_var_anim_add            (Edje *ed, double len, char *fname, 
 void          _edje_var_anim_del            (Edje *ed, int id);
 void          _edje_var_anim_frametime_reset(void);
     
+
 #endif
