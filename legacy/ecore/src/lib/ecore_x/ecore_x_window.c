@@ -487,6 +487,10 @@ ecore_x_window_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h)
 int
 ecore_x_window_border_width_get(Ecore_X_Window win)
 {
+   /* doesn't make sense to call this on a root window */
+   if (!win)
+      return 0;
+
    return ecore_x_drawable_border_width_get(win);
 }
 
@@ -498,6 +502,10 @@ ecore_x_window_border_width_get(Ecore_X_Window win)
 void
 ecore_x_window_border_width_set(Ecore_X_Window win, int width)
 {
+   /* doesn't make sense to call this on a root window */
+   if (!win)
+      return;
+
    XSetWindowBorderWidth (_ecore_x_disp, win, width);
 }
 
