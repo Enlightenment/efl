@@ -78,7 +78,7 @@ Visual             *evas_get_visual(Evas e);
 Colormap            evas_get_colormap(Evas e);
 int                 evas_get_colors(Evas e);
 Imlib_Image         evas_get_image(Evas e);
-Evas_Render_Method  evas_get_render_method(Evas e);
+Evas_Render_Method  evas_get_output_method(Evas e);
 Evas                evas_new(void);
 void                evas_free(Evas e);
 
