@@ -91,6 +91,7 @@ evas_render_updates(Evas *e)
    MAGIC_CHECK_END();
    if (!e->changed) return NULL;
    
+/*   printf("REND\n");*/
    /* phase 1. add extra updates for changed objects */
    for (l = (Evas_Object_List *)e->layers; l; l = l->next)
      {
@@ -110,24 +111,38 @@ evas_render_updates(Evas *e)
 	     /* something changed... maybe... */
 	     if (obj->changed)
 	       {
+/*		  printf("change...\n");*/
 		  if ((obj->restack) && 
 		      (!obj->clip.clipees) &&
-		      evas_object_is_active(obj))		      
+		      (!obj->smart.smart) &&
+		      evas_object_is_active(obj))
 		    restack_objects = evas_list_append(restack_objects, obj);
 		  else
 		    obj->func->render_pre(obj);
 	       }
-	     /* nothng changed at all */
+	     /* nothing changed at all */
 	     else
-	       {
+	       {		  
 		  if (evas_object_is_opaque(obj) &&
 		      evas_object_is_visible(obj) &&
+		      (!obj->smart.smart) &&
 		      (!obj->clip.clipees))
+		      {
+/*			 
+			 printf("NOchange %s %i %i %ix%i\n",
+				obj->type,
+				obj->cur.cache.clip.x, 
+				obj->cur.cache.clip.y, 
+				obj->cur.cache.clip.w, 
+				obj->cur.cache.clip.h);
+ */
 		    e->engine.func->output_redraws_rect_del(e->engine.data.output,
 							    obj->cur.cache.clip.x, 
 							    obj->cur.cache.clip.y, 
 							    obj->cur.cache.clip.w, 
 							    obj->cur.cache.clip.h);
+
+		      }
 	       }
 	  }
      }
@@ -191,8 +206,13 @@ evas_render_updates(Evas *e)
 	Evas_Object *obj;
 	
 	obj = (Evas_Object *)(ll->data);
-	if (evas_object_is_opaque(obj) && evas_object_is_visible(obj) &&
-	    (!obj->clip.clipees) && (obj->cur.color.a >= 255))
+	if (evas_object_is_opaque(obj) && 
+	    evas_object_is_visible(obj) &&
+	    (!obj->clip.clipees) && 
+	    (obj->cur.visible) &&
+	    (!obj->delete_me) &&
+	    (obj->cur.cache.clip.visible) &&
+	    (!obj->smart.smart))
 	  obscuring_objects = evas_list_append(obscuring_objects, obj);
      }
    /* save this list */
@@ -224,18 +244,21 @@ evas_render_updates(Evas *e)
 	     if (evas_object_is_in_output_rect(obj, ux, uy, uw, uh))
 	       obscuring_objects = evas_list_append(obscuring_objects, obj);
 	  }
+/*	printf("Render area...\n");*/
 	/* render all object that intersect with rect */
 	for (ll = active_objects; ll; ll = ll->next)
 	  {
 	     Evas_Object *obj;
 	     Evas_List *l3;
 	     obj = (Evas_Object *)(ll->data);
+	     
 	     /* if its in our outpout rect and it doesnt clip anything */
 	     if (evas_object_is_in_output_rect(obj, ux, uy, uw, uh) &&
 		 (!obj->clip.clipees) &&
 		 (obj->cur.visible) &&
 		 (!obj->delete_me) &&
 		 (obj->cur.cache.clip.visible) &&
+		 (!obj->smart.smart) &&
 		 (obj->cur.color.a > 0))
 	       {
 		  int x, y, w, h;
@@ -259,6 +282,14 @@ evas_render_updates(Evas *e)
 			    Evas_Object *obj2;
 			    
 			    obj2 = (Evas_Object *)l3->data;
+/*			    
+			    printf("CUTOUT %p %s, %i %i %ix%i\n",
+				   obj2, obj2->type,
+				   obj2->cur.cache.clip.x,
+				   obj2->cur.cache.clip.y,
+				   obj2->cur.cache.clip.w,
+				   obj2->cur.cache.clip.h);
+ */
 			    e->engine.func->context_cutout_add(e->engine.data.output,
 							       e->engine.data.context,
 							       obj2->cur.cache.clip.x + off_x,
