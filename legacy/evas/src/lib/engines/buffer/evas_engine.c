@@ -411,6 +411,9 @@ evas_engine_buffer_output_redraws_next_update_get(void *data, int *x, int *y, in
 	re->end = 1;
      }
    
+   if ((ux + uw) > re->ob->w) uw = re->ob->w - ux;
+   if ((uy + uh) > re->ob->h) uh = re->ob->h - uy;
+   if ((uw <= 0) || (uh <= 0)) return NULL;
    surface = evas_buffer_outbuf_buf_new_region_for_update(re->ob, 
 							  ux, uy, uw, uh, 
 							  cx, cy, cw, ch);
