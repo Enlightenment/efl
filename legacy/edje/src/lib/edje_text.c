@@ -286,16 +286,18 @@ _edje_text_real_part_on_del(Edje *ed, Edje_Real_Part *ep)
      }
 }
 
-void
+static char *
 _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
                  Edje_Calc_Params *params,
                  char *text, char *font, int size,
-                 Evas_Coord sw)
+                 Evas_Coord sw, int *free_text)
 {
    Evas_Coord tw = 0, th = 0, p;
    char *buf;
    int c1 = -1, c2 = -1, loop = 0, extra;
    size_t orig_len;
+
+   *free_text = 0;
 
    evas_object_text_font_set(ep->object, font, size);
    evas_object_text_text_set(ep->object, text);
@@ -322,17 +324,19 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
 	  }
      }
 
-   extra = 1 + 3 + 3; /* terminator, leading and trailing ellipsis */
+   if (!((c1 >= 0 || c2 >= 0) && (tw > sw)))
+     return text;
 
    orig_len = strlen(text);
 
    /* don't overflow orig_len by adding extra
     * FIXME: we might want to set a max string length somewhere...
     */
+   extra = 1 + 3 + 3; /* terminator, leading and trailing ellipsis */
    orig_len = MIN(orig_len, SIZE_MAX - extra);
 
    if (!(buf = malloc(orig_len + extra)))
-     return;
+     return text;
 
    while (((c1 >= 0) || (c2 >= 0)) && (tw > sw))
      {
@@ -422,7 +426,10 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
 	evas_object_text_text_set(ep->object, buf);
 	evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
      }
-   if (loop > 0) text = buf;
+
+   *free_text = 1;
+
+   return buf;
 }
 
 void
@@ -435,9 +442,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    int     size;
    Evas_Coord  tw, th;
    Evas_Coord  ox, oy, sw, sh;
-   char    *buf = NULL;
    char     font_buf[4096];
-   int      inlined_font = 0;
+   int      inlined_font = 0, free_text = 0;
    
 
    text = chosen_desc->text.text;
@@ -600,7 +606,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
 	else evas_object_text_font_source_set(ep->object, NULL);
 
-	_edje_text_fit_x(ed, ep, params, text, font, size, sw);
+	text = _edje_text_fit_x(ed, ep, params, text, font, size, sw,
+	                        &free_text);
      }
 
    if (ep->text.cache.out_str) free(ep->text.cache.out_str);
@@ -670,5 +677,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	     else evas_object_hide(o);
 	  }
      }
-   if (buf) free(buf);
+
+   if (free_text)
+     free(text);
 }
