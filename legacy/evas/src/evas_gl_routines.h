@@ -22,10 +22,12 @@
 
 #include "Evas.h"
 
-typedef struct _evas_gl_image       Evas_GL_Image;
-typedef struct _evas_gl_font        Evas_GL_Font;
-typedef struct _evas_gl_glyph_info  Evas_GL_Glyph_Info;
-typedef enum   _evas_gl_image_state Evas_GL_Image_State;
+typedef struct _evas_gl_image          Evas_GL_Image;
+typedef struct _evas_gl_font           Evas_GL_Font;
+typedef struct _evas_gl_glyph_info     Evas_GL_Glyph_Info;
+typedef struct _evas_gl_gradient       Evas_GL_Graident;
+typedef struct _evas_gl_gradient_color Evas_GL_Graident_Color;
+typedef enum   _evas_gl_image_state    Evas_GL_Image_State;
 
 enum _evas_gl_image_state
 {
@@ -103,6 +105,29 @@ struct _evas_gl_glyph_info
    double x1, y1, x2, y2;
 };
 
+struct _evas_gl_gradient_color
+{
+   int r, g, b, a;
+   int dist;
+};
+
+struct _evas_gl_gradient
+{
+   Evas_List   colors;
+   GLXContext  context;
+   int         max_texture_size;
+   int         texture_w, texture_h;
+   GLuint      texture;
+   struct
+     {
+	Display *display;
+	XVisualInfo *visual_info;
+	Colormap colormap;
+	Window window, dest;
+	int dest_w, dest_h;
+     } buffer;
+};
+
 /***************/
 /* image stuff */
 /***************/
@@ -142,6 +167,10 @@ void           __evas_gl_line_draw(Display *disp, Window win, int win_w, int win
 /*************/
 /* gradients */
 /*************/
+Evas_GL_Graident *__evas_gl_gradient_new(Display *disp);
+void              __evas_gl_gradient_free(Evas_GL_Graident *gr);
+void              __evas_gl_gradient_color_add(Evas_GL_Graident *gr, int r, int g, int b, int a, int dist);
+void              __evas_gl_gradient_draw(Evas_GL_Graident *gr, Display *disp, Window win, int win_w, int win_h, int x, int y, int w, int h, double angle);
 
 /***********/
 /* drawing */

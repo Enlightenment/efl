@@ -22,20 +22,18 @@ static Evas_GL_Image *__evas_gl_image_create_from_file(Display *disp, char *file
 static void           __evas_gl_image_destroy(Evas_GL_Image *im);
 static void           __evas_gl_image_cache_flush(Display *disp);
 
-static void __evas_gl_text_font_render_textures(Evas_GL_Font *f);
+static void           __evas_gl_text_font_render_textures(Evas_GL_Font *f);
 static TT_Raster_Map *__evas_gl_text_font_raster_new(int width, int height);
-static void __evas_gl_text_font_raster_free(TT_Raster_Map * rmap);
-static void __evas_gl_text_font_path_add(const char *path);
-static void __evas_gl_text_font_path_del(const char *path);
-static char **__evas_gl_text_font_path_list(int *num_ret);
-static int __evas_gl_is_file(char *file);
-static Evas_GL_Font *__evas_gl_text_font_load(char *font, int size);
-static void __evas_gl_text_calc_size(Evas_GL_Font *f, int *width, int *height, char *text);
-static void __evas_gl_text_font_destroy(Evas_GL_Font *font);
-static void __evas_gl_text_paste(Evas_GL_Font *f, char *text,
-				 Display *disp, Window w, int win_w, int win_h,
-				 int x, int y, int r, int g, int b, int a);
-static void __evas_gl_text_cache_flush(void);
+static void           __evas_gl_text_font_raster_free(TT_Raster_Map * rmap);
+static void           __evas_gl_text_font_path_add(const char *path);
+static void           __evas_gl_text_font_path_del(const char *path);
+static char         **__evas_gl_text_font_path_list(int *num_ret);
+static int            __evas_gl_is_file(char *file);
+static Evas_GL_Font  *__evas_gl_text_font_load(char *font, int size);
+static void           __evas_gl_text_calc_size(Evas_GL_Font *f, int *width, int *height, char *text);
+static void           __evas_gl_text_font_destroy(Evas_GL_Font *font);
+static void           __evas_gl_text_paste(Evas_GL_Font *f, char *text, Display *disp, Window w, int win_w, int win_h, int x, int y, int r, int g, int b, int a);
+static void           __evas_gl_text_cache_flush(void);
 
 
 static XVisualInfo *__evas_vi               = NULL;
@@ -1500,6 +1498,308 @@ void              __evas_gl_line_draw(Display *disp, Window win,
 }
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*****************************************************************************/
+/* gradient internals ********************************************************/
+/*****************************************************************************/
+
+static void
+__evas_gl_gradient_free_texture(Evas_GL_Graident *gr)
+{
+   if (gr->texture_w > 0)
+      glDeleteTextures(1, &(gr->texture));
+   gr->texture_w = 0;
+}
+
+static void
+__evas_gl_gradient_gen_texture(Evas_GL_Graident *gr)
+{
+   Evas_List p;
+   unsigned char *map;
+   unsigned int *pmap;
+   int i, ll, v1, v2, j, inc, r, g, b, a, rr, gg, bb, aa, v, vv, l;
+
+   if (!gr->colors) return;
+   if (!gr->colors->next) return;
+   ll = 1;
+   for (p = gr->colors; p; p = p->next)
+     {
+	Evas_GL_Graident_Color *cl;
+	
+	cl = p->data;
+	ll += cl->dist;
+     }
+   pmap = malloc(ll * 4);
+   map = malloc(gr->max_texture_size * 4);
+   i = 0;
+   for (p = gr->colors; p; p = p->next)
+     {
+        Evas_GL_Graident_Color *cl, *cl2;
+	
+	cl = p->data;
+	if (p->next)
+	   cl2 = p->next->data;
+	if (p->next)
+	  {
+	     for (j = 0; j < cl2->dist; j++)
+	       {
+		  v1 = (j << 16) / cl2->dist;
+		  v2 = 65536 - v1;
+		  r = ((cl->r * v2) + (cl2->r * v1)) >> 16;
+		  g = ((cl->g * v2) + (cl2->g * v1)) >> 16;
+		  b = ((cl->b * v2) + (cl2->b * v1)) >> 16;
+		  a = ((cl->a * v2) + (cl2->a * v1)) >> 16;
+		  pmap[i++] = (a << 24) | (r << 16) | (g << 8) | b;
+	       }
+	  }
+	else
+	  {
+	     r = cl->r;
+	     g = cl->g;
+	     b = cl->b;
+	     a = cl->a;
+	     pmap[i++] = (a << 24) | (r << 16) | (g << 8) | b;
+	  }
+     }
+   inc = ((ll - 1) << 16) / (gr->max_texture_size);
+   l = 0;
+   j = 0;
+   if (ll > gr->max_texture_size)
+     {
+	for (i = 0; i < gr->max_texture_size; i++)
+	  {
+	     v = pmap[l >> 16];
+	     if ((l >> 16) < ll)
+		vv = pmap[(l >> 16) + 1];
+	     else
+		vv = pmap[(l >> 16)];
+	     v1 = l - ((l >> 16) << 16);
+	     v2 = 65536 - v1;
+	     b = ((v)      ) & 0xff;
+	     g = ((v) >> 8 ) & 0xff;
+	     r = ((v) >> 16) & 0xff;
+	     a = ((v) >> 24) & 0xff;
+	     bb = ((vv)      ) & 0xff;
+	     gg = ((vv) >> 8 ) & 0xff;
+	     rr = ((vv) >> 16) & 0xff;
+	     aa = ((vv) >> 24) & 0xff;
+	     r = ((r * v2) + (rr * v1)) >> 16;
+	     g = ((g * v2) + (gg * v1)) >> 16;
+	     b = ((b * v2) + (bb * v1)) >> 16;
+	     a = ((a * v2) + (aa * v1)) >> 16;
+	     map[j++] = r;
+	     map[j++] = g;
+	     map[j++] = b;
+	     map[j++] = a;
+	     l += inc;
+	  }
+     }
+   else
+     {
+	for (i = 0; i < ll; i++)
+	  {	
+	     v = pmap[i];
+             b = ((v)      ) & 0xff;
+	     g = ((v) >> 8 ) & 0xff;
+	     r = ((v) >> 16) & 0xff;
+	     a = ((v) >> 24) & 0xff;
+             map[j++] = r;
+	     map[j++] = g;
+	     map[j++] = b;
+	     map[j++] = a;
+	  }
+     }
+   if (!__evas_context_window)
+     {
+	XSetWindowAttributes att;
+	att.colormap = gr->buffer.colormap;
+	att.border_pixel = 0;
+	att.event_mask = 0;
+	__evas_context_window = XCreateWindow(gr->buffer.display,
+					      RootWindow(gr->buffer.display, DefaultScreen(gr->buffer.display)),
+					      0, 0, 32, 32, 0, 
+					      gr->buffer.visual_info->depth,
+					      InputOutput, 
+					      gr->buffer.visual_info->visual,
+					      CWColormap | CWBorderPixel | CWEventMask,
+					      &att);
+	gr->buffer.window = __evas_context_window;
+	glXMakeCurrent(gr->buffer.display, gr->buffer.window, gr->context);
+	__evas_current_disp = gr->buffer.display;
+	__evas_current_win = gr->buffer.window;
+     }
+   else
+     {
+	gr->buffer.window = __evas_context_window;
+	glXMakeCurrent(gr->buffer.display, gr->buffer.window, gr->context);
+	__evas_current_disp = gr->buffer.display;
+	__evas_current_win = gr->buffer.window;
+     }
+   /* the texture */
+   /***************************************/
+   /*c1....c2.......c3......c4.....c5...c6*/
+   /***************************************/
+   glGenTextures(1, &(gr->texture));
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+   glEnable(GL_TEXTURE_2D);
+   glBindTexture(GL_TEXTURE_2D, gr->texture);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, gr->max_texture_size, 1, 0,
+		GL_RGBA, GL_UNSIGNED_BYTE, map);
+   gr->texture_w = ll;
+   gr->texture_h = 1;
+   free(pmap);
+   free(map);
+}
+
+/*****************************************************************************/
+/* gradient externals ********************************************************/
+/*****************************************************************************/
+
+Evas_GL_Graident *
+__evas_gl_gradient_new(Display *disp)
+{
+   Evas_GL_Graident *gr;
+   
+   gr = malloc(sizeof(Evas_GL_Graident));
+   gr->colors = NULL;
+   gr->context = __evas_gl_cx;
+   gr->max_texture_size = 256;
+   gr->texture_w = 0;
+   gr->texture_h = 0;
+   gr->texture = 0;
+   gr->buffer.display = disp;
+   gr->buffer.colormap = __evas_gl_get_colormap(disp, 0);
+   gr->buffer.visual_info = __evas_vi;
+   gr->buffer.window = 0;
+   gr->buffer.dest = 0;
+   gr->buffer.dest_w = 0;
+   gr->buffer.dest_h = 0;
+   gr->buffer.display = disp;
+   return gr;
+}
+
+void
+__evas_gl_gradient_free(Evas_GL_Graident *gr)
+{
+   Evas_List l;
+   
+   __evas_gl_gradient_free_texture(gr);
+   for (l = gr->colors; l; l = l->next)
+      free(l->data);
+   evas_list_free(gr->colors);
+}
+
+void
+__evas_gl_gradient_color_add(Evas_GL_Graident *gr, int r, int g, int b, 
+			     int a, int dist)
+{
+   Evas_GL_Graident_Color *cl;
+   
+   cl = malloc(sizeof(Evas_GL_Graident_Color));
+   cl->r = r;
+   cl->g = g;
+   cl->b = b;
+   cl->a = a;
+   if (gr->colors) cl->dist = dist;
+   else cl->dist = 0;
+   gr->colors = evas_list_append(gr->colors, cl);
+   __evas_gl_gradient_free_texture(gr);
+}
+
+void
+__evas_gl_gradient_draw(Evas_GL_Graident *gr, 
+			Display *disp, Window win, int win_w, int win_h,
+			int x, int y, int w, int h, double angle)
+{
+   int i;
+   static int dest_w = 0, dest_h = 0;
+   double max, t[8];
+   
+
+   if (gr->texture_w == 0)
+      __evas_gl_gradient_gen_texture(gr);
+   if ((__evas_current_win != win) || (__evas_current_disp != disp))
+     {
+	glXMakeCurrent(disp, win, __evas_gl_cx);
+	__evas_current_disp = disp;
+	__evas_current_win = win;
+     }
+   glColor4f(1.0, 1.0, 1.0, 1.0);
+   if ((win_w != dest_w) || (win_h != dest_h))
+     {
+	glViewport(0, 0, win_w, win_h);
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	glOrtho(0, win_w, 0, win_h, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
+	glScalef(1, -1, 1);
+	glTranslatef(0, -win_h, 0);
+	dest_w = win_w;
+	dest_h = win_h;
+     }
+   glEnable(GL_BLEND);
+   glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+   glEnable(GL_DITHER);
+   glEnable(GL_TEXTURE_2D);
+   glShadeModel(GL_FLAT);
+   glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
+   glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_FASTEST);
+   glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+   glBindTexture(GL_TEXTURE_2D, gr->texture);   
+   
+   t[0] = cos(((-angle + 45 + 90) * 2 * 3.141592654) / 360);
+   t[1] = sin(((-angle + 45 + 90) * 2 * 3.141592654) / 360);
+   
+   t[2] = cos(((-angle + 45 + 180) * 2 * 3.141592654) / 360);
+   t[3] = sin(((-angle + 45 + 180) * 2 * 3.141592654) / 360);
+   
+   t[4] = cos(((-angle + 45 + 270) * 2 * 3.141592654) / 360);
+   t[5] = sin(((-angle + 45 + 270) * 2 * 3.141592654) / 360);
+   
+   t[6] = cos(((-angle + 45 + 0) * 2 * 3.141592654) / 360);
+   t[7] = sin(((-angle + 45 + 0) * 2 * 3.141592654) / 360);
+   max = 0;
+   for (i = 0; i < 8; i++)
+     {
+	if ((t[i] < 0) && (-t[i] > max)) max = -t[i];
+	else if ((t[i] > max)) max = t[i];
+     }
+   if (max > 0)
+     {
+	for (i = 0; i < 8; i++) t[i] *= 1 / max;
+     }
+   for (i = 0; i < 8; i+=2)
+     {
+	t[i] = (((0.5) + (t[i] / 2)) * (double)gr->texture_w) / (double)gr->max_texture_size;
+	t[i + 1] = ((0.5) - (t[i + 1] / 2));
+     }
+   
+   glBegin(GL_QUADS);
+   glTexCoord2d(t[0],  t[1]); glVertex2i(x, y);
+   glTexCoord2d(t[2],  t[3]); glVertex2i(x + w, y);
+   glTexCoord2d(t[4],  t[5]); glVertex2i(x + w, y + h);
+   glTexCoord2d(t[6],  t[7]); glVertex2i(x, y + h);
+   glEnd();
+}
 
 
 

@@ -56,6 +56,7 @@ main(int argc, char **argv)
 	double t1, t2;
 	Evas_GL_Image *i[4], *bg, *l;
 	Evas_GL_Font *fn[4];
+	Evas_GL_Graident *gr;
 	
 	bg = __evas_gl_image_new_from_file(d, "img/sky001.png");
 	i[0] = __evas_gl_image_new_from_file(d, "img/fog1001.png");
@@ -68,6 +69,11 @@ main(int argc, char **argv)
 	fn[1] = __evas_gl_text_font_new(d, "grunge", 16);
 	fn[2] = __evas_gl_text_font_new(d, "morpheus", 24);
 	fn[3] = __evas_gl_text_font_new(d, "notepad", 24);
+	gr = __evas_gl_gradient_new(d);
+	__evas_gl_gradient_color_add(gr, 255, 255, 255, 255, 4);
+	__evas_gl_gradient_color_add(gr, 255, 255, 0, 200, 4);
+	__evas_gl_gradient_color_add(gr, 255, 0, 0, 100, 4);
+	__evas_gl_gradient_color_add(gr, 0, 0, 0, 0, 4);
 	if (!bg)
 	  {
 	     printf("cannot find images!\n");
@@ -141,6 +147,10 @@ main(int argc, char **argv)
 	     __evas_gl_line_draw(d, win, win_w, win_h,
 				 10, 20, 10, 200,
 				 255, 255, 0, 100);
+	     __evas_gl_gradient_draw(gr, 
+				     d, win, win_w, win_h,
+				     300, 100, 200, 200, 
+				     ((double)a * 360) / (double)win_w);
 	     __evas_gl_flush_draw(d, win);
 	     a++;
 	     if (a == (win_w * 4)) 
