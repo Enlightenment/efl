@@ -469,6 +469,7 @@ st_collections_group_parts_part_type(void)
 			 "RECT", EDJE_PART_TYPE_RECTANGLE,
 			 "TEXT", EDJE_PART_TYPE_TEXT,
 			 "IMAGE", EDJE_PART_TYPE_IMAGE,
+			 "SWALLOW", EDJE_PART_TYPE_SWALLOW,
 			 NULL);
 }
 
