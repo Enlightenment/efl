@@ -249,6 +249,14 @@ extern              "C"
    EAPI char               *ecore_config_theme_with_path_get(const char *key);
    EAPI void                ecore_config_args_display(void);
    EAPI int                 ecore_config_args_parse(void);
+   EAPI void                ecore_config_args_callback_str_add(char short_opt,
+   				char *long_opt, char *desc,
+				void (*func)(char *val, void *data),
+				void *data);
+   EAPI void                ecore_config_args_callback_noarg_add(char short_opt,
+				char *long_opt, char *desc,
+				void (*func)(char *val, void *data),
+				void *data);
    EAPI void                ecore_config_app_describe(char *description);
 
    EAPI int                 ecore_config_create(const char *key, void *val,

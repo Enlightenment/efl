@@ -10,7 +10,20 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+typedef struct __Ecore_Config_Arg_Callback _Ecore_Config_Arg_Callback;
+struct __Ecore_Config_Arg_Callback
+{
+   char		  short_opt;
+   char		 *long_opt;
+   char		 *description;
+   void		 *data;
+   void		(*func)(char *val, void *data);
+   Ecore_Config_Type type;
+   _Ecore_Config_Arg_Callback *next;
+};
+
 char               *__ecore_config_app_description;
+_Ecore_Config_Arg_Callback *_ecore_config_arg_callbacks;
 
 extern int          ecore_config_bound(Ecore_Config_Prop * e);
 extern char        *ecore_config_rgb_to_argb(char *rgb);
@@ -524,7 +537,7 @@ ecore_config_theme_with_path_get(const char *key)
 }
 
 static char        *_ecore_config_short_types[] =
-   { "<nil> ", "<int> ", "<flt> ", "<str> ", "<rgb> ", "<str> ", "<bool>" };
+   { "      ", "<int> ", "<flt> ", "<str> ", "<rgb> ", "<str> ", "<bool>" };
 
 /**
  * Prints the property list of the local configuration bundle to output.
@@ -533,6 +546,7 @@ void
 ecore_config_args_display(void)
 {
    Ecore_Config_Prop  *props;
+   _Ecore_Config_Arg_Callback *callbacks;
 
    if (__ecore_config_app_description)
       printf("%s\n\n", __ecore_config_app_description);
@@ -554,10 +568,23 @@ ecore_config_args_display(void)
 	       props->short_opt ? ',' : ' ',
 	       props->long_opt ? props->long_opt : props->key,
 	       _ecore_config_short_types[props->type],
-	       props->description ? props->
-	       description : "(no description available)");
+	       props->description ? props->description :
+	       "(no description available)");
 
 	props = props->next;
+     }
+   callbacks = _ecore_config_arg_callbacks;
+   while (callbacks)
+     {
+        printf(" %c%c%c --%s\t%s %s\n", callbacks->short_opt ? '-' : ' ',
+	       callbacks->short_opt ? callbacks->short_opt : ' ',
+	       callbacks->short_opt ? ',' : ' ',
+	       callbacks->long_opt ? callbacks->long_opt : "",
+               _ecore_config_short_types[callbacks->type],
+	       callbacks->description ? callbacks->description :
+	       "(no description available)");
+
+	callbacks = callbacks->next;
      }
 }
 
@@ -581,6 +608,40 @@ ecore_config_parse_set(Ecore_Config_Prop * prop, char *arg, char *opt,
    return ECORE_CONFIG_PARSE_CONTINUE;
 }
 
+static void
+ecore_config_args_callback_add(char short_opt, char *long_opt, char *desc,
+			       void (*func)(char *val, void *data),
+			       void *data, Ecore_Config_Type type) {
+   _Ecore_Config_Arg_Callback *new_cb;
+
+   new_cb = malloc(sizeof(_Ecore_Config_Arg_Callback));
+   new_cb->short_opt = short_opt;
+   if (long_opt)
+      new_cb->long_opt = strdup(long_opt);
+   if (desc)
+      new_cb->description = strdup(desc);
+   new_cb->data = data;
+   new_cb->func = func;
+   new_cb->type = type;
+
+   new_cb->next = _ecore_config_arg_callbacks;
+   _ecore_config_arg_callbacks = new_cb;
+}
+
+void
+ecore_config_args_callback_str_add(char short_opt, char *long_opt, char *desc,
+			           void (*func)(char *val, void *data),
+			           void *data) {
+   ecore_config_args_callback_add(short_opt, long_opt, desc, func, data, PT_STR);
+}
+
+void
+ecore_config_args_callback_noarg_add(char short_opt, char *long_opt, char *desc,
+			             void (*func)(char *val, void *data),
+			             void *data) {
+   ecore_config_args_callback_add(short_opt, long_opt, desc, func, data, PT_NIL);
+}
+
 /**
  * Parse the arguments set by @ref ecore_app_args_set and set properties
  * accordingly.
@@ -599,6 +660,7 @@ ecore_config_args_parse(void)
    char               *arg;
    char               *long_opt, short_opt;
    Ecore_Config_Prop  *prop;
+   _Ecore_Config_Arg_Callback *callback;
 
    ecore_app_args_get(&argc, &argv);
    nextarg = 1;
@@ -646,6 +708,33 @@ ecore_config_args_parse(void)
 	       }
 	     if (!found)
 	       {
+		  callback = _ecore_config_arg_callbacks;
+		  while (callback)
+		    {
+		       if ((callback->long_opt && 
+			    !strcmp(long_opt, callback->long_opt)))
+			 {
+			    found = 1;
+			    if (callback->type == PT_NIL)
+			      {
+				 callback->func(NULL, callback->data);
+			      }
+			    else 
+			      {
+				 if (!argv[++nextarg])
+				   {
+				      printf("Missing expected argument for option --%s\n", long_opt);
+				      return ECORE_CONFIG_PARSE_EXIT;
+				   }
+				   callback->func(argv[nextarg], callback->data);
+			      }
+			    break;
+			 }
+		       callback = callback->next;
+		    }
+	       }
+	     if (!found)
+	       {
 		  printf("Unrecognised option \"%s\"\n", long_opt);
 		  printf("Try using -h or --help for more information.\n\n");
 		  return ECORE_CONFIG_PARSE_EXIT;
@@ -681,6 +770,32 @@ ecore_config_args_parse(void)
 			    prop = prop->next;
 			 }
 
+		       if (!found)
+			 {
+		 	    callback = _ecore_config_arg_callbacks;
+			    while (callback)
+			      {
+				 if (short_opt == callback->short_opt)
+				   {
+				      found = 1;
+				      if (callback->type == PT_NIL)
+					{
+					   callback->func(NULL, callback->data);
+					}
+				      else
+					{
+					   if (!argv[++nextarg])
+					     {
+						printf("Missing expected argument for option -%c\n", short_opt);
+						return ECORE_CONFIG_PARSE_EXIT;
+					     }
+					   callback->func(argv[nextarg], callback->data);
+					}
+				      break;
+				   }
+				 callback = callback->next;
+			      }
+			 }
 		       if (!found)
 			 {
 			    printf("Unrecognised option '%c'\n", short_opt);
