@@ -839,6 +839,7 @@ ecore_x_window_prop_borderless_get(Ecore_X_Window win)
 {
    unsigned char *data;
    int num;
+   int borderless = 0;
 
    ecore_x_window_prop_property_get(win,
                                     _ecore_x_atom_motif_wm_hints,
@@ -848,7 +849,12 @@ ecore_x_window_prop_borderless_get(Ecore_X_Window win)
    /* check for valid data. only read the borderless flag if the
     * decorations data has been set.
     */
-   return (data && num > 2 && data[0] & 2) ? !data[2] : 0;
+   if (data)
+     {
+	borderless = ((num > 2) && (data[0] & 2)) ? !data[2] : 0;
+	free(data);
+     }
+   return borderless;
 }
 
 /**
