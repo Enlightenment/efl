@@ -96,7 +96,7 @@ int ex_ipc_server_dis(void *data,int type,void *event) {
 
 
 int ex_ipc_server_sent(void *data,int type,void *event) {
-  Ewl_Widget *text, *type_text;
+  Ewl_Widget *row, *cell[2], *text[2];
   char *label, *type, *start, *end;
   Ecore_Ipc_Event_Server_Data *e;
   
@@ -106,6 +106,25 @@ int ex_ipc_server_sent(void *data,int type,void *event) {
   if(e->data&&(e->size>0)) {
     printf("%s\n",(char *)e->data);
 
+    row = ewl_grid_new(2, 1);
+    cell[0] = ewl_cell_new();
+    cell[1] = ewl_cell_new();
+    text[0] = ewl_text_new("Property");
+    text[1] = ewl_text_new("type");
+    
+    ewl_container_append_child(EWL_CONTAINER(cell[0]), text[0]);
+    ewl_container_append_child(EWL_CONTAINER(cell[1]), text[1]);
+    ewl_grid_add(EWL_GRID(row), cell[0], 1, 1, 1, 1);
+    ewl_grid_add(EWL_GRID(row), cell[1], 2, 2, 1, 1);
+
+    ewl_widget_show(cell[0]);
+    ewl_widget_show(cell[1]);
+    ewl_widget_show(text[0]);
+    ewl_widget_show(text[1]);
+
+    ewl_container_append_child(EWL_CONTAINER(main_box), row);
+    ewl_widget_show(row);
+    
     start = (char *)e->data;
     end = ((char *)e->data) + strlen((char *)e->data);
     
@@ -129,15 +148,32 @@ int ex_ipc_server_sent(void *data,int type,void *event) {
       }
 
       if (*label && *type) {
-        printf("button %s, %s\n", label, type);
+        row = ewl_grid_new(2, 1);
+        cell[0] = ewl_cell_new();
+        cell[1] = ewl_cell_new();
+        text[0] = ewl_text_new(label);
 
-        text = ewl_text_new(label);
-        type_text = ewl_text_new(type);
-        ewl_widget_show(text);
-        ewl_widget_show(type_text);
+        if (!strcmp(type, "string"))
+          text[1] = ewl_entry_new("<a string>");
+        else if (!strcmp(type, "integer")) 
+          text[1] = ewl_spinner_new();
+        else 
+          text[1] = ewl_text_new(type);
+        ewl_object_set_minimum_h(EWL_OBJECT(text[1]), 12);
+
+        ewl_container_append_child(EWL_CONTAINER(cell[0]), text[0]);
+        ewl_container_append_child(EWL_CONTAINER(cell[1]), text[1]);
+        ewl_grid_add(EWL_GRID(row), cell[0], 1, 1, 1, 1);
+        ewl_grid_add(EWL_GRID(row), cell[1], 2, 2, 1, 1);
+             
+        ewl_widget_show(cell[0]);
+        ewl_widget_show(cell[1]);
+        ewl_widget_show(text[0]);
+        ewl_widget_show(text[1]);
         
-        ewl_container_append_child(EWL_CONTAINER(main_box), text);
-        ewl_container_append_child(EWL_CONTAINER(main_box), type_text);
+        ewl_container_append_child(EWL_CONTAINER(main_box), row);
+        ewl_widget_show(row);
+        ewl_object_set_minimum_h(EWL_OBJECT(row), 20);
       }
 
       start++;
@@ -347,7 +383,7 @@ int main(int argc,char **argv) {
 
   main_win = ewl_window_new();
   ewl_window_set_title(EWL_WINDOW(main_win), "Examine Configuration Client");
-  ewl_object_set_minimum_size(EWL_OBJECT(main_win), 100, 200);
+  ewl_object_set_minimum_size(EWL_OBJECT(main_win), 200, 100);
   ewl_callback_append(main_win, EWL_CALLBACK_DELETE_WINDOW, __destroy_main_window, NULL);
 
   main_box = ewl_vbox_new();
