@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=3:noexpandtab
+ */
+
 #include "edje_cc.h"
 
 static void main_help(void);
@@ -45,6 +49,8 @@ int
 main(int argc, char **argv)
 {
    int i;
+   struct stat st;
+   char rpath[PATH_MAX], rpath2[PATH_MAX];
 
    setlocale(LC_NUMERIC, "C");
    
@@ -128,6 +134,15 @@ main(int argc, char **argv)
 	main_help();
 	exit(-1);
      }
+
+   /* check whether file_in exists */
+   if (!realpath(file_in, rpath) || stat(rpath, &st) || !S_ISREG(st.st_mode))
+     {
+	fprintf(stderr, "%s: Error: file not found: %s.\n", progname, file_in);
+	main_help();
+	exit(-1);
+     }
+
    if (!file_out)
       {
          char *suffix;
@@ -145,6 +160,13 @@ main(int argc, char **argv)
    if (!file_out)
      {
 	fprintf(stderr, "%s: Error: no output file specified.\n", progname);
+	main_help();
+	exit(-1);
+     }
+
+   if (realpath(file_out, rpath2) && !strcmp (rpath, rpath2))
+     {
+	fprintf(stderr, "%s: Error: input file equals output file.\n", progname);
 	main_help();
 	exit(-1);
      }
