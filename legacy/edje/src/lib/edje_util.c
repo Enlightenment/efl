@@ -279,7 +279,7 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
    if (!obj_swallow) return;
    rp->swallowed_object = obj_swallow;
    evas_object_smart_member_add(rp->swallowed_object, ed->obj);
-   if (rp->clip_to) evas_object_clip_set(rp->object, rp->clip_to->object);
+   if (rp->clip_to) evas_object_clip_set(rp->swallowed_object, rp->clip_to->object);
    else evas_object_clip_set(rp->swallowed_object, ed->clipper);
    if (evas_object_layer_get(rp->swallowed_object) != ed->layer)
      evas_object_layer_set(rp->swallowed_object, ed->layer);
@@ -562,7 +562,128 @@ edje_object_part_state_get(Evas_Object *obj, const char *part, double *val_ret)
    return "";
 }
 
+int
+edje_object_part_drag_dir_get(Evas_Object *obj, const char *part)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+   int v;
+   
+   ed = _edje_fetch(obj);   
+   if ((!ed) || (!part))
+     {
+	return EDJE_DRAG_DIR_NONE;
+     }
+   rp = _edje_real_part_get(ed, (char *)part);
+   if (!rp)
+     {
+	return EDJE_DRAG_DIR_NONE;
+     }
+   if ((rp->part->dragable.x) && (rp->part->dragable.y)) return EDJE_DRAG_DIR_XY;
+   else if (rp->part->dragable.x) return EDJE_DRAG_DIR_X;
+   else if (rp->part->dragable.y) return EDJE_DRAG_DIR_Y;
+   return EDJE_DRAG_DIR_NONE;
+}
 
+void
+edje_object_part_drag_value_set(Evas_Object *obj, const char *part, double dx, double dy)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);   
+   if ((!ed) || (!part))
+     {
+	return;
+     }
+   rp = _edje_real_part_get(ed, (char *)part);
+   if (!rp)
+     {
+	return;
+     }
+   if (rp->drag.down.count > 0) return;
+   if (dx < 0.0) dx = 0.0;
+   else if (dx > 1.0) dx = 1.0;
+   if (dy < 0.0) dy = 0.0;
+   else if (dy > 1.0) dy = 1.0;
+   rp->drag.val.x = dx;
+   rp->drag.val.y = dy;
+   _edje_dragable_pos_set(ed, rp, dx, dy);
+}
+
+void
+edje_object_part_drag_value_get(Evas_Object *obj, const char *part, double *dx, double *dy)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);   
+   if ((!ed) || (!part))
+     {
+	if (dx) *dx = 0;
+	if (dy) *dy = 0;
+	return;
+     }
+   rp = _edje_real_part_get(ed, (char *)part);
+   if (!rp)
+     {
+	if (dx) *dx = 0;
+	if (dy) *dy = 0;
+	return;
+     }
+   if (dx) *dx = rp->drag.val.x;
+   if (dy) *dy = rp->drag.val.y;
+}
+
+void
+edje_object_part_drag_size_set(Evas_Object *obj, const char *part, double dw, double dh)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);   
+   if ((!ed) || (!part))
+     {
+	return;
+     }
+   rp = _edje_real_part_get(ed, (char *)part);
+   if (!rp)
+     {
+	return;
+     }
+   if (dw < 0.0) dw = 0.0;
+   else if (dw > 1.0) dw = 1.0;
+   if (dh < 0.0) dh = 0.0;
+   else if (dh > 1.0) dh = 1.0;
+   rp->drag.size.x = dw;
+   rp->drag.size.y = dh;
+   ed->dirty = 1;
+   _edje_recalc(ed);
+}
+
+void
+edje_object_part_drag_size_get(Evas_Object *obj, const char *part, double *dw, double *dh)
+{
+   Edje *ed;
+   Edje_Real_Part *rp;
+
+   ed = _edje_fetch(obj);   
+   if ((!ed) || (!part))
+     {
+	if (dw) *dw = 0;
+	if (dh) *dh = 0;
+	return;
+     }
+   rp = _edje_real_part_get(ed, (char *)part);
+   if (!rp)
+     {
+	if (dw) *dw = 0;
+	if (dh) *dh = 0;
+	return;
+     }   
+   if (dw) *dw = rp->drag.size.x;
+   if (dh) *dh = rp->drag.size.y;
+}
 
 Edje_Real_Part *
 _edje_real_part_get(Edje *ed, char *part)

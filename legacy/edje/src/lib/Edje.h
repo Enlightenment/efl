@@ -3,6 +3,11 @@
 
 #include <Evas.h>
 
+#define EDJE_DRAG_DIR_NONE 0
+#define EDJE_DRAG_DIR_X    1
+#define EDJE_DRAG_DIR_Y    2
+#define EDJE_DRAG_DIR_XY   3
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -46,6 +51,11 @@ extern "C" {
    void         edje_object_part_unswallow      (Evas_Object *o, Evas_Object *o_swallow);
    Evas_Object *edje_object_part_swallow_get    (Evas_Object *o, const char *part);
    const char  *edje_object_part_state_get      (Evas_Object *o, const char *part, double *val_ret);
+   int          edje_object_part_drag_dir_get   (Evas_Object *o, const char *part);
+   void         edje_object_part_drag_value_set (Evas_Object *o, const char *part, double dx, double dy);
+   void         edje_object_part_drag_value_get (Evas_Object *o, const char *part, double *dx, double *dy);
+   void         edje_object_part_drag_size_set  (Evas_Object *o, const char *part, double dw, double dh);
+   void         edje_object_part_drag_size_get  (Evas_Object *o, const char *part, double *dw, double *dh);
        
 #ifdef __cplusplus
 }

@@ -1,6 +1,8 @@
 #include "Edje.h"
 #include "edje_private.h"
 
+static void _edje_emit_cb(Edje *ed, char *sig, char *src);
+
 static double       _edje_frametime = 1.0 / 60.0;
 
 int          _edje_anim_count = 0;
@@ -583,43 +585,8 @@ _edje_emit(Edje *ed, char *sig, char *src)
 			 evas_hash_add(ec->prog_cache.matches, tmps, matches);
 		    }
 	       }
+	     _edje_emit_cb(ed, ee->signal, ee->source);
 	     if (tmps) free(tmps);
-	     ed->walking_callbacks = 1;
-	     for (l = ed->callbacks; l; l = l->next)
-	       {
-		  Edje_Signal_Callback *escb;
-		  
-		  escb = l->data;
-		  if ((!escb->just_added) &&
-		      (!escb->delete_me) &&
-		      (_edje_glob_match(ee->signal, escb->signal)) &&
-		      (_edje_glob_match(ee->source, escb->source)))
-		    escb->func(escb->data, ed->obj, ee->signal, ee->source);
-	       }
-	     ed->walking_callbacks = 0;
-	     if ((ed->delete_callbacks) || (ed->just_added_callbacks))
-	       {
-		  ed->delete_callbacks = 0;
-		  ed->just_added_callbacks = 0;
-		  for (l = ed->callbacks; l;)
-		    {
-		       Edje_Signal_Callback *escb;
-		       Evas_List *next_l;
-		       
-		       escb = l->data;		       
-		       next_l = l->next;
-		       if (escb->just_added)
-			 escb->just_added = 0;
-		       if (escb->delete_me)
-			 {
-			    ed->callbacks = evas_list_remove_list(ed->callbacks, l);
-			    free(escb->signal);
-			    free(escb->source);
-			    free(escb);
-			 }
-		       l = next_l;
-		    }
-	       }
 	  }
 	free(ee->signal);
 	free(ee->source);
@@ -629,4 +596,47 @@ _edje_emit(Edje *ed, char *sig, char *src)
    _edje_unref(ed);
    recursions--;
    if (recursions == 0) recursion_limit = 0;
+}
+
+static void
+_edje_emit_cb(Edje *ed, char *sig, char *src)
+{
+   Evas_List *l;
+   
+   ed->walking_callbacks = 1;
+   for (l = ed->callbacks; l; l = l->next)
+     {
+	Edje_Signal_Callback *escb;
+	
+	escb = l->data;
+	if ((!escb->just_added) &&
+	    (!escb->delete_me) &&
+	    (_edje_glob_match(sig, escb->signal)) &&
+	    (_edje_glob_match(src, escb->source)))
+	  escb->func(escb->data, ed->obj, sig, src);
+     }
+   ed->walking_callbacks = 0;
+   if ((ed->delete_callbacks) || (ed->just_added_callbacks))
+     {
+	ed->delete_callbacks = 0;
+	ed->just_added_callbacks = 0;
+	for (l = ed->callbacks; l;)
+	  {
+	     Edje_Signal_Callback *escb;
+	     Evas_List *next_l;
+	     
+	     escb = l->data;		       
+	     next_l = l->next;
+	     if (escb->just_added)
+	       escb->just_added = 0;
+	     if (escb->delete_me)
+	       {
+		  ed->callbacks = evas_list_remove_list(ed->callbacks, l);
+		  free(escb->signal);
+		  free(escb->source);
+		  free(escb);
+	       }
+	     l = next_l;
+	  }
+     }
 }

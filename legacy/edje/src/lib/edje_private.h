@@ -17,13 +17,9 @@
 
 /* FIXME:
  * 
- * dragables have to work
- * dragable need a way of their sizing being set relative to confine
- * drag start/top signals etc.
- * drag needs to have signals with relative pos as arg.
- * drag vals should be 0.0 -> 1.0 if drag is confined. "rest" pos = 0.0.
- * query dragable for its relative pos value
- * dragable needs to be able to affext rel/abs values of other parts
+ * dragable needs to be able to affect rel/abs values of other parts
+ * dragable relative value needs to be able to be applied to other part vals.
+ * dragable relative value needs to be able to be set or ++/-- by actions
  * 
  * more example edje files
  * 
@@ -409,11 +405,23 @@ struct _Edje_Real_Part
       } min, max;
    } swallow_params;
    unsigned char             calculated : 1;
+   unsigned char             calculating : 1;
    unsigned char             still_in   : 1;
    int                       clicked_button;
    Edje_Part                *part;
    struct {
-      int x, y;
+      struct {
+	 unsigned count;
+	 int  x, y;
+      } down;
+      struct {
+	 int  x, y;
+      } tmp;
+      double x, y;
+      char need_reset : 1;
+      struct {
+	 double x, y;
+      } val, size;
    } drag;
    struct {
       char                  *text;
@@ -435,9 +443,9 @@ struct _Edje_Real_Part
       Edje_Real_Part        *rel1_to_y;
       Edje_Real_Part        *rel2_to_x;
       Edje_Real_Part        *rel2_to_y;
-      Edje_Real_Part        *confine_to;
    } param1, param2;
 
+   Edje_Real_Part           *confine_to;
    Edje_Real_Part           *clip_to;
    
    Edje_Running_Program     *program;
@@ -467,6 +475,9 @@ struct _Edje_Calc_Params
    struct {
       double        x, y, w, h;
    } req;
+   struct {
+      double        x, y, w, h;
+   } req_drag;
    char             visible : 1; 
    char             smooth : 1;
    struct {
@@ -527,7 +538,9 @@ struct _Ejde_Text_Class
 void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos);
 void  _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1, char *d2, double v2);
 void  _edje_recalc(Edje *ed);
-
+int   _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, double *x, double *y);
+void  _edje_dragable_pos_set(Edje *ed, Edje_Real_Part *ep, double x, double y);
+    
 void  _edje_mouse_in_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
 void  _edje_mouse_out_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);
 void  _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info);

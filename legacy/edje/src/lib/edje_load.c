@@ -159,6 +159,8 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 		       evas_object_clip_set(rp->object, rp->clip_to->object);
 		    }
 	       }
+	     if (rp->part->dragable.confine_id >= 0)
+	       rp->confine_to = evas_list_nth(ed->parts, rp->part->dragable.confine_id);
 	  }
 	ed->dirty = 1;
 	_edje_freeze(ed);
