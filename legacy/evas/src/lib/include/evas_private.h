@@ -329,7 +329,7 @@ struct _Evas_Object
    
    struct {
       int               deletions_waiting : 1;
-      int               walking_list : 1;
+      int               walking_list;
       Evas_Object_List *in;
       Evas_Object_List *out;
       Evas_Object_List *down;
