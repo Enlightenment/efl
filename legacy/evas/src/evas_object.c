@@ -206,10 +206,13 @@ evas_move(Evas e, Evas_Object o, double x, double y)
 void
 evas_resize(Evas e, Evas_Object o, double w, double h)
 {
-   o->current.w = w;
-   o->current.h = h;
-   o->changed = 1;
-   e->changed = 1;
+   if (o->type != OBJECT_TEXT)
+     {
+	o->current.w = w;
+	o->current.h = h;
+	o->changed = 1;
+	e->changed = 1;
+     }
 }
 
 void

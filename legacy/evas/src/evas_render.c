@@ -85,6 +85,9 @@ evas_render(Evas e)
    void (*func_init) (Display *disp, Window w);
    int (*func_image_get_width) (void *im);
    int (*func_image_get_height) (void *im);
+   void * (*func_text_font_new) (Display *disp, char *font, int size);
+   void (*func_text_font_free) (Evas_GL_Font *fn);
+   void (*func_text_draw) (Evas_GL_Font *fn, Display *disp, Window win, int win_w, int win_h, int x, int y, char *text, int r, int g, int b, int a);
    
    if ((!e->changed) || 
        (!e->current.display) || 
@@ -106,6 +109,9 @@ evas_render(Evas e)
 	func_init                = __evas_imlib_init;
 	func_image_get_width     = __evas_imlib_image_get_width;
 	func_image_get_height    = __evas_imlib_image_get_height;
+	func_text_font_new       = __evas_imlib_text_font_new;
+	func_text_font_free      = __evas_imlib_text_font_free;
+	func_text_draw           = __evas_imlib_text_draw;
 	break;
      case RENDER_METHOD_BASIC_HARDWARE:
 	break;
@@ -118,6 +124,9 @@ evas_render(Evas e)
 	func_init                = __evas_gl_init;
 	func_image_get_width     = __evas_gl_image_get_width;
 	func_image_get_height    = __evas_gl_image_get_height;
+	func_text_font_new       = __evas_gl_text_font_new;
+	func_text_font_free      = __evas_gl_text_font_free;
+	func_text_draw           = __evas_gl_text_draw;
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
 	break;
@@ -190,7 +199,14 @@ evas_render(Evas e)
 				 Evas_Object_Text oo;
 				 
 				 oo = o;
-				 if (1)
+				 if (((oo->current.text) && (!oo->previous.text)) ||
+				     ((oo->current.font) && (!oo->previous.font)) ||
+				     (oo->current.size != oo->previous.size) ||
+				     (oo->current.r != oo->previous.r) ||
+				     (oo->current.g != oo->previous.g) ||
+				     (oo->current.b != oo->previous.b) ||
+				     (oo->current.a != oo->previous.a)
+				     )
 				    real_change = 1;
 				 oo->previous = oo->current;
 			      }
@@ -451,8 +467,26 @@ evas_render(Evas e)
 				   case OBJECT_TEXT:
 					{
 					   Evas_Object_Text oo;
+					   void *fn;
 					   
 					   oo = o;
+					   fn = func_text_font_new(e->current.display, oo->current.font, oo->current.size);
+					   if (fn)
+					     {
+						func_text_draw(fn, 
+							       e->current.display,
+							       e->current.drawable,
+							       e->current.drawable_width,
+							       e->current.drawable_height,
+							       o->current.x,
+							       o->current.y,
+							       oo->current.text,
+							       oo->current.r,
+							       oo->current.g,
+							       oo->current.b,
+							       oo->current.a);
+						func_text_font_free(fn);
+					     }
 					}
 				      break;
 				   case OBJECT_RECTANGLE:
@@ -609,7 +643,7 @@ evas_set_scale_smoothness(Evas e, int smooth)
      case RENDER_METHOD_ALPHA_HARDWARE:
 	break;
      default:
-	return 0;
+	return;
 	break;
      }
 }

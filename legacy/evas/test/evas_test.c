@@ -1,5 +1,7 @@
 #include <Evas.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include <math.h>
 
 int
@@ -63,6 +65,7 @@ main(int argc, char **argv)
 	XMapWindow(d, win);
 	XSync(d, False);
      }
+   evas_font_add_path(e, "./fnt");
    evas_set_output(e, d, win, vis, cmap);
    evas_set_output_size(e, win_w, win_h);
    evas_set_output_viewport(e, 0, 0, win_w, win_h);
@@ -75,10 +78,18 @@ main(int argc, char **argv)
    h /= 2;
    evas_show(e, o[1]);
    
-   for (i = 2 ; i < 128; i++)
+   for (i = 2 ; i < 100; i++)
      {
 	o[i] = evas_add_image_from_file(e, "img/mush.png");
 	evas_show(e, o[i]);
+	evas_set_layer(e, o[i], 100);
+     }
+   for (i = 100; i < 128; i++)
+     {
+	o[i] = evas_add_text(e, "notepad", 20, imgs[i & 0x7]);
+	evas_set_color(e, o[i], rand()&0xff,  rand()&0xff,  rand()&0xff, 255);
+	evas_show(e, o[i]);
+	evas_set_layer(e, o[i], 100);
      }
    
    evas_raise(e, o[1]);
@@ -107,6 +118,7 @@ main(int argc, char **argv)
 		       mouse_x = ev.xbutton.x;
 		       mouse_y = ev.xbutton.y;
 		       evas_move(e, o[1], mouse_x - w, mouse_y - h);
+		       evas_set_layer(e, o[1], 200);
 		    }
 		  break;
 	       case ButtonRelease:
@@ -118,6 +130,7 @@ main(int argc, char **argv)
 		       mouse_x = ev.xbutton.x;
 		       mouse_y = ev.xbutton.y;
 		       evas_move(e, o[1], mouse_x - w, mouse_y - h);
+		       evas_set_layer(e, o[1], 1);
 		    }
 		  break;
 	       case MotionNotify:
@@ -148,7 +161,8 @@ main(int argc, char **argv)
 	     k = (i * -60) - (i * 2);
 	     x = (win_w + (cos((double)(a + j) * 2 * 3.141592654 / 1000) * (win_h - 100))) / 2;
 	     y = (win_h + (sin((double)(a + k) * 2 * 3.141592654 / 1000) * (win_h - 100))) / 2;
-	     evas_set_image_file(e, o[i], imgs[(i) & 0x7]);
+	     if (i < 100)
+		evas_set_image_file(e, o[i], imgs[(i) & 0x7]);
 	     evas_move(e, o[i], x, y);
 	  }
 	evas_render(e);

@@ -769,7 +769,7 @@ __evas_gl_text_paste(Evas_GL_Font *f, char *text,
    TT_Glyph_Metrics    metrics;
    float               rr, gg, bb, aa;
    GLuint              last_tex;
-   
+
    j = text[0];
    TT_Get_Glyph_Metrics(f->glyphs[j], &metrics);
    x_offset = (-metrics.bearingX) / 64;

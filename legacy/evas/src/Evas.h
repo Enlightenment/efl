@@ -165,6 +165,11 @@ struct _Evas_Object_Text
    struct _Evas_Object_Any object;
    struct  {
       char *text;
+      char *font;
+      int   size;
+      struct {
+	 int w, h;
+      } string;
       int r, g, b, a;
    } current, previous;
 };
@@ -236,10 +241,20 @@ void evas_set_image_file(Evas e, Evas_Object o, char *file);
 void evas_set_image_data(Evas e, Evas_Object o, void *data, Evas_Image_Format format, int w, int h);
 void evas_set_image_fill(Evas e, Evas_Object o, double x, double y, double w, double h);
 void evas_set_color(Evas e, Evas_Object o, int r, int g, int b, int a);
+void evas_set_text(Evas e, Evas_Object o, char *text);
+void evas_set_font(Evas e, Evas_Object o, char *font, int size);
 void evas_set_gradient(Evas e, Evas_Object o, Evas_Gradient grad);
 void evas_set_angle(Evas e, Evas_Object o, double angle);
 void evas_set_zoom_scale(Evas e, Evas_Object o, int scale);
 void evas_set_line_xy(Evas e, Evas_Object o, double x1, double y1, double x2, double y2);
+void evas_set_font_cache(Evas e, int size);
+int  evas_get_font_cache(Evas e);
+void evas_flush_font_cache(Evas e);
+void evas_set_image_cache(Evas e, int size);
+int evas_get_image_cache(Evas e);
+void evas_flush_image_cache(Evas e);
+void evas_font_add_path(Evas e, char *path);
+void evas_font_del_path(Evas e, char *path);
    
 /* layer stacking for object */
 void evas_set_layer(Evas e, Evas_Object o, int l);
