@@ -27,7 +27,7 @@ From VA Linux Systems<br>
 <blockquote>
 <p>
 Evas is a canvas library, designed to work with the X Window System. It is
-designed to be able to take advantage of any graphics hardwre or CPU
+designed to be able to take advantage of any graphics hardware or CPU
 processing power you may have, or to adjust for the lack of it. It has a
 simplistic API to access the features of a canvas to aid in making
 development using Evas easy.
@@ -36,16 +36,16 @@ First it is necessary to explain what a canvas is and how in principle it
 works. For those used to doing the drawing themselves, it is a new way of
 looking at the problem of drawing displays that contain lots of information
 an application may have to keep track of. This may be in the form of
-primities (lines, circles, rectangles, polygons and text) or may be a
+primitives (lines, circles, rectangles, polygons and text) or may be a
 mixture of these and more complex objects such as gradients, images etc. An
 application normally needs to hold all this data and when required, redraw
-the data do a window or pixmap if the data changes, or the window contents
+the data to a window or pixmap if the data changes, or the window contents
 become damaged and need a redraw to restore them. To do this optimally the
 application would also need to figure out what exactly changed, which parts
 of the window or pixmap this data mapped to and then order the drawing so
 all objects are drawn in the right order, and only the part of the window
 that needs redrawing is drawn to to save excess processing. For a large
-range of objects and data this become a fairly involved problem all on it's
+range of objects and data this becomes a fairly involved problem all on it's
 own. Thus came the evolution of the canvas.
 <p>
 Some of the better known canvas systems around are the Tk Canvas and the
@@ -57,11 +57,11 @@ This means moving, resizing and changing object properties is a very fast
 and inexpensive operation since only attribute values change, rather than
 any drawing being done, unlike when you move and resize windows in X11 which
 happens instantly, not later. This means higher efficiency for the
-application's rendering, as long ad evas render calls are only called when
+application's rendering, as long as evas render calls are only called when
 the application has hit an idle state (nothing left in it's queue of things
 to do for the moment). This also means object maintinence is now left up to
 the canvas - the application only needs to keep a handle to that object
-aroun so it can be uniquely identified.
+around so it can be uniquely identified.
 <p>
 The best way to use Evas is as follows (simplistic pseudo-code):
 <p>
@@ -80,7 +80,7 @@ Infinite loop ...
 ... continue program infinite loop
 </pre></font></blockquote>
 <p>
-In a naievely written program an event loop may have many re-renderings and
+In a naively written program an event loop may have many re-renderings and
 re-drawings going on as things are modified, otherwise the application needs
 to retain state like evas does and then handle draws in idle time too, which
 means applications need to do the work Evas does themselves, as well as the
@@ -88,14 +88,14 @@ optimizations already in place in Evas.
 <p>
 The major advantages arise out of the fact that Evas does not only handle
 the logic of such object management and rendering for you, and optimize it,
-it also provides and abstraction layer that allows evas to render not just
-solid objects, but temi-transparent objects and images that can be
+it also provides an abstraction layer that allows evas to render not just
+solid objects, but semi-transparent objects and images that can be
 alpha-blended, anti-aliased text and much more. It not only does these and
 does them fast (using Imlib2 as the core rendering engine to do this), but
 is able to instantly take advantage of hardware acceleration (for example
 OpenGL) quietly for you to blend and scale images, speeding up rendering
 many times over, without you having to know a single line of OpenGL. Evas's
-Software rotuines alone are many many many times faster than Mesa's software
+Software routines alone are many many many times faster than Mesa's software
 OpenGL rendering, as Imlib2's code is purpose written for 2D operations with
 Assembly optimizations for the core routines.
 <p>
@@ -105,8 +105,8 @@ Assembly optimizations for the core routines.
 <p>
 <blockquote>
 <p>
-Let's demonstratehow Evas optmizes updates when you manipulate objects.
-Let's take an example Evas for deomnstration purposes that has several
+Let's demonstrate how Evas optimizes updates when you manipulate objects.
+Let's take an example Evas for demonstration purposes that has several
 objects in it.
 <p>
 <img src=eg1.gif width=512 height=384>
@@ -138,14 +138,14 @@ now need to render
 When we call <b>evas_render()</b> Evas goes through the object list looking
 at objects marked with possible updates. If they do it inspects their state
 the last time it rendered them and now - if the states do not match, Evas adds
-a rectangle to it's list of rectangles in the Evas to be updated. Inthe case
+a rectangle to it's list of rectangles in the Evas to be updated. In the case
 of a move or resize, a rectangle for the previous and current locations for
 that object are added as above.
 <p>
 <img src=eg8.gif width=512 height=384>
 <p>
 Now our 2 rectangles have been inserted Evas will want to keep updates
-within a tile'd grid of 32x32 pixel blocks. The 32x32 mesh is shown above.
+within a tiled grid of 32x32 pixel blocks. The 32x32 mesh is shown above.
 Notice the update rectangles do not align perfectly with the grid.
 <p>
 <img src=eg9.gif width=512 height=384>
@@ -157,8 +157,8 @@ align to the grid.
 <p>
 <img src=eg5.gif width=512 height=384>
 <p>
-Above you can see how the updatr rectangles do not overlap eachother but are
-a superset of the update regions. Evas has alreayd now optmized drawing to
+Above you can see how the updated rectangles do not overlap each other but are
+a superset of the update regions. Evas has already now optimized drawing to
 only re-render these rectangles.
 <p>
 <img src=eg6.gif width=512 height=384>
@@ -174,7 +174,7 @@ And now we have the result. A newly rendered Evas that only rendered what
 changed and shows the state of the Evas as it currently stands. As you can
 imagine if lots of objects overlap, small and large, and are changing every
 now and again, Evas can do a pretty good job of keeping re-draws down to a
-minimum sane number. Rendering shoudl only be called once you have made your
+minimum sane number. Rendering should only be called once you have made your
 changes and want to see them appear in the Evas. This will ensure you do not
 render more often than you need to.
 <p>
@@ -185,9 +185,9 @@ render more often than you need to.
 <blockquote>
 <p>
 Before you embark on any programming using Evas, it is highly recommended
-that you read this API refernce to become familiar with the interface
+that you read this API reference to become familiar with the interface
 provided to Evas before first using it. The documentation for each function
-call in Evas not only documents it but also gives insight into sibtle side
+call in Evas not only documents it but also gives insight into subtle side
 effects it may have, and other aspects of its use that are not necessarily
 completely part of that call's specific use.
 <p>
@@ -213,8 +213,8 @@ Evas_Render_Method
 This is the basic type of an Evas itself. When you create a new evas this
 type will be returned (not a pointer to it - the Evas type itself.  It is
 intended to be completely opaque to the application and may change its nature
-over time - it may be a void pointer now and tomorrow a hashe'd ID or
-anything else). All functions dealing with Evas's and their contents will
+over time - it may be a void pointer now and tomorrow a hashed ID or
+anything else). All functions dealing with Evases and their contents will
 require you use this handle to denote what Evas you are talking about.
 <p>
 <font color=#442244>Evas_Gradient</font>:
@@ -239,17 +239,17 @@ This is the fundamental building block that makes the contents of an Evas
 have meaning. Without any objects in an Evas it will not draw anything, or
 draw usless garbage where no objects exist. Whenever you create an object
 you will get this type of handle back. If you wish to modify an object's
-geoemtry, show, hide, change its properties or delete it you will need to
+geometry, show, hide, change its properties or delete it you will need to
 use this as the handle to addess it by.
 <p>
 <font color=#442244>Evas_List</font>:
 <p>
 This is the only non-opaque data type. It is for conevenience of Evas, and
-for the application to use to. This type is a doubly-linked list of data.
+for the application to use too. This type is a doubly-linked list of data.
 You may traverse the list using loops and using the next and prev members of
 this structure. Do not modify these though as this could mean memory leaks
 and losing parts of the list. If prev is NULL, you are at the start of the
-list and if next is NULL you are at the end. The data member poitns to
+list and if next is NULL you are at the end. The data member points to
 whatever data was inserted at that place in the list. You may read this and
 cast it to whatever makes sense in the situation. If Evas returns an
 Evas_List of things the data member will be of the type specified by the
@@ -287,10 +287,10 @@ display is almost compleyely bound by CPU speed, and toa slightly lesser
 extent memory bandwidth and graphics bus bandwidth. Not much else really
 affects the speed (graphics card included).
 <p>
-<b>RENDER_METHOD_BASIC_HARDWARE</b> when used, used basic X primities to do
+<b>RENDER_METHOD_BASIC_HARDWARE</b> when used, use basic X primities to do
 rendering. This means lines, rectangles, pixmaps etc. It is necessary to
 create some of the building blocks of these primitives via Imlib2 when they
-are first needed, but therafter the windowing system, X, is responsible for
+are first needed, but thereafter the windowing system, X, is responsible for
 pasting pixmaps, drawing rectangles, lines etc. The speed of this may vary
 depending how much new data needs to be generated as pixmaps, how much can
 be recycled, the speed of your CPU, the amount of hardware acceleration your
@@ -313,7 +313,7 @@ easy 10-100 fold speedup of rendering. This will depend on the combination
 of X Server and graphics hardware. If you only have software OpenGL
 available be prepared for a shock. Unlike what may almost be logical,
 software OpenGL is not like Imlib2 software rendering. It is many many many
-tmes slower. Imlib2 software rendering should easily be 50-100 times faster.
+times slower. Imlib2 software rendering should easily be 50-100 times faster.
 If you are experiencing massively slow displays in Evas when using this
 rendering mode, it is because your OpenGL support is software only. If when
 Evas was compiled, it could not find OpenGL on the system it was building
@@ -458,7 +458,7 @@ a window for you for this Evas it will be destroyed at this time.
 void evas_update_rect(Evas e, int x, int y, int w, int h);
 </font></pre>
 <p>
-Call this function for the Evas <em>e</em> when the rectangle <em>x
+Call this function for the Evas <em>e</em> when the rectangle <em>x</em>
 <p>
 <pre><font face=fixed color=#442244><pre>
 void evas_render(Evas e);
