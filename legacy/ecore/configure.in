@@ -189,10 +189,12 @@ if test "x$have_ecore_txt" = "xyes"; then
     have_ecore_x="yes"
   ]
   )
+else
+  AC_MSG_NOTICE(ecore_txt not enabled, so ecore_x will not be enabled)
 fi
 
 if test "x$have_ecore_x" = "xyes"; then
-  AM_CONDITIONAL(BUILD_ECORE_X, test "$enableval" = "yes")
+  AM_CONDITIONAL(BUILD_ECORE_X, true)
   AC_DEFINE(BUILD_ECORE_X)
   x_dir="/usr/X11R6";
   x_includes="";
@@ -298,7 +300,6 @@ AC_ARG_WITH(evas-config,
 EVAS_CONFIG=$PROG_CONFIG
 
 AC_MSG_CHECKING(whether ecore_evas module is to be built)
-
 AC_ARG_ENABLE(ecore-evas, 
 [  --enable-ecore-evas             enable the ecore_evas module], [
   if [ test "$enableval" = "yes" ]; then  
@@ -418,7 +419,7 @@ AC_ARG_ENABLE(ecore-con,
 )
 
 if test "x$have_ecore_con" = "xyes"; then
-  AM_CONDITIONAL(BUILD_ECORE_CON, test "$enableval" = "yes")
+  AM_CONDITIONAL(BUILD_ECORE_CON, true)
   AC_DEFINE(BUILD_ECORE_CON)
   ecore_con_libs="-lecore_con"
 else
@@ -428,25 +429,28 @@ fi
 AC_SUBST(ecore_con_cflags)
 AC_SUBST(ecore_con_libs)
 
-AC_MSG_CHECKING(whether ecore_ipc module is to be built)
-
 have_ecore_ipc="";
 ecore_ipc_cflags="";
 ecore_ipc_libs="";
 
-AC_ARG_ENABLE(ecore-ipc, 
-[  --enable-ecore-ipc              enable the ecore_ipc module], [
-  if [ test "$enableval" = "yes" ]; then  
+if test "x$have_ecore_con" = "xyes"; then
+AC_MSG_CHECKING(whether ecore_ipc module is to be built)
+  AC_ARG_ENABLE(ecore-ipc, 
+  [  --enable-ecore-ipc              enable the ecore_ipc module], [
+    if [ test "$enableval" = "yes" ]; then  
+      AC_MSG_RESULT(yes)
+      have_ecore_ipc="yes"
+    else
+      AC_MSG_RESULT(no)
+    fi
+  ], [
     AC_MSG_RESULT(yes)
     have_ecore_ipc="yes"
-  else
-    AC_MSG_RESULT(no)
-  fi
-], [
-  AC_MSG_RESULT(yes)
-  have_ecore_ipc="yes"
-]
-)
+  ]
+  )
+else
+  AC_MSG_NOTICE(ecore_con not enabled, so ecore_ipc will not be enabled)
+fi
 
 if test "x$have_ecore_ipc" = "xyes"; then
   AM_CONDITIONAL(BUILD_ECORE_IPC, true)
