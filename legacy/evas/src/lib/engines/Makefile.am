@@ -9,4 +9,6 @@ software_win32_gdi \
 software_qtopia \
 directfb \
 gl_common \
-gl_x11
+gl_x11 \
+cairo_common \
+cairo_x11

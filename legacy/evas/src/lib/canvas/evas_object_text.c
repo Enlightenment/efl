@@ -124,11 +124,11 @@ object_text_font_cache_dir_update(char *dir, Evas_Font_Dir *fd)
      {
 	mt = evas_file_modified_time(dir);
 	if (mt != fd->dir_mod_time)
-    {
-	  object_text_font_cache_dir_del(dir, fd);
-      font_dirs = evas_hash_del(font_dirs, dir, fd);
-	}
-    else
+	  {
+	     object_text_font_cache_dir_del(dir, fd);
+	     font_dirs = evas_hash_del(font_dirs, dir, fd);
+	  }
+	else
 	  {
 	     tmp = evas_file_path_join(dir, "fonts.dir");
 	     if (tmp)
@@ -136,11 +136,11 @@ object_text_font_cache_dir_update(char *dir, Evas_Font_Dir *fd)
 		  mt = evas_file_modified_time(tmp);
 		  free(tmp);
 		  if (mt != fd->fonts_dir_mod_time)
-          {
-		    object_text_font_cache_dir_del(dir, fd);
-            font_dirs = evas_hash_del(font_dirs, dir, fd);
-		  }
-          else
+		    {
+		       object_text_font_cache_dir_del(dir, fd);
+		       font_dirs = evas_hash_del(font_dirs, dir, fd);
+		    }
+		  else
 		    {
 		       tmp = evas_file_path_join(dir, "fonts.alias");
 		       if (tmp)
@@ -149,11 +149,11 @@ object_text_font_cache_dir_update(char *dir, Evas_Font_Dir *fd)
 			    free(tmp);
 			 }
 		       if (mt != fd->fonts_alias_mod_time)
-               {
-			     object_text_font_cache_dir_del(dir, fd);
-                 font_dirs = evas_hash_del(font_dirs, dir, fd);
-			   }
-               else
+			 {
+			    object_text_font_cache_dir_del(dir, fd);
+			    font_dirs = evas_hash_del(font_dirs, dir, fd);
+			 }
+		       else
 			 return fd;
 		    }
 	       }

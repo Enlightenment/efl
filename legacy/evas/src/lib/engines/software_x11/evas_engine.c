@@ -558,6 +558,9 @@ evas_engine_software_x11_rectangle_draw(void *data, void *context, void *surface
    Render_Engine *re;
    
    re = (Render_Engine *)data;
+#ifdef IMGONLY   
+   return;
+#endif   
    evas_common_rectangle_draw(surface, context, x, y, w, h);
    evas_common_cpu_end_opt();
 }
@@ -568,6 +571,9 @@ evas_engine_software_x11_line_draw(void *data, void *context, void *surface, int
    Render_Engine *re;
    
    re = (Render_Engine *)data;
+#ifdef IMGONLY   
+   return;
+#endif   
    evas_common_line_draw(surface, context, x1, y1, x2, y2);
    evas_common_cpu_end_opt();
 }
@@ -598,6 +604,9 @@ evas_engine_software_x11_polygon_draw(void *data, void *context, void *surface, 
    Render_Engine *re;
    
    re = (Render_Engine *)data;
+#ifdef IMGONLY   
+   return;
+#endif   
    evas_common_polygon_draw(surface, context, polygon);
    evas_common_cpu_end_opt();
 }
@@ -632,6 +641,9 @@ evas_engine_software_x11_gradient_draw(void *data, void *context, void *surface,
    Render_Engine *re;
    
    re = (Render_Engine *)data;
+#ifdef IMGONLY   
+   return;
+#endif   
    evas_common_gradient_draw(surface, context, x, y, w, h, gradient, angle);
    evas_common_cpu_end_opt();
 }
@@ -1031,6 +1043,9 @@ evas_engine_software_x11_font_draw(void *data, void *context, void *surface, voi
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+#ifdef IMGONLY   
+   return;
+#endif   
    if ((w == ow) && (h == oh))
      evas_common_font_draw(surface, context, font, x, y, text);
    else

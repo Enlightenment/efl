@@ -21,6 +21,9 @@
 #ifdef BUILD_ENGINE_GL_X11
 #include "evas_engine_api_gl_x11.h"
 #endif
+#ifdef BUILD_ENGINE_CAIRO_X11
+#include "evas_engine_api_cairo_x11.h"
+#endif
 
 #include "Evas.h"
 
@@ -222,6 +225,11 @@ evas_output_method_set(Evas *e, int render_method)
 #ifdef BUILD_ENGINE_GL_X11
    if (e->output.render_method == RENDER_METHOD_GL_X11)
      e->engine.func = &evas_engine_gl_x11_func;
+   else
+#endif   
+#ifdef BUILD_ENGINE_CAIRO_X11
+   if (e->output.render_method == RENDER_METHOD_CAIRO_X11)
+     e->engine.func = &evas_engine_cairo_x11_func;
    else
 #endif   
 #ifdef BUILD_ENGINE_DIRECTFB
@@ -662,6 +670,9 @@ evas_render_method_lookup(const char *name)
 #ifdef BUILD_ENGINE_GL_X11   
    if (!strcmp(name, "gl_x11")) return RENDER_METHOD_GL_X11;
 #endif
+#ifdef BUILD_ENGINE_CAIRO_X11   
+   if (!strcmp(name, "cairo_x11")) return RENDER_METHOD_CAIRO_X11;
+#endif
 #ifdef BUILD_ENGINE_DIRECTFB   
    if (!strcmp(name, "directfb")) return RENDER_METHOD_DIRECTFB;
 #endif
@@ -725,6 +736,9 @@ evas_render_method_list(void)
 #endif   
 #ifdef BUILD_ENGINE_GL_X11
    methods = evas_list_append(methods, strdup("gl_x11"));
+#endif   
+#ifdef BUILD_ENGINE_CAIRO_X11
+   methods = evas_list_append(methods, strdup("cairo_x11"));
 #endif   
 #ifdef BUILD_ENGINE_DIRECTFB
    methods = evas_list_append(methods, strdup("directfb"));
