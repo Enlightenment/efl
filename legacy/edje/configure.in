@@ -215,17 +215,32 @@ ecore_libs=`$ECORE_CONFIG --libs`
 AC_SUBST(ecore_cflags)
 AC_SUBST(ecore_libs)
 
+AC_MSG_CHECKING([for location of Vim data files])
 install_vim="yes";
-if test -d "${prefix}/share/vim"; then
-   vimdir="${prefix}/share/vim"
-elif test -d "/usr/share/vim"; then
-   vimdir="/usr/share/vim"
-elif test -d "/usr/local/share/vim"; then
-   vimdir="/usr/local/share/vim"
-elif test -d "/opt/share/vim"; then
-   vimdir="/opt/share/vim"
+AC_ARG_WITH(vim,
+    [  --with-vim=DIR          Location of Vim data files (PREFIX/share/vim)],
+    [if test -d "${withval}"; then
+       vimdir="${withval}"
+    fi])
+
+if test "x${vimdir}" = "x" ; then
+   if test -d "${prefix}/share/vim"; then
+      vimdir="${prefix}/share/vim"
+   elif test -d "/usr/share/vim"; then
+      vimdir="/usr/share/vim"
+   elif test -d "/usr/local/share/vim"; then
+      vimdir="/usr/local/share/vim"
+   elif test -d "/opt/share/vim"; then
+      vimdir="/opt/share/vim"
+   else
+      install_vim="no"
+   fi
+fi
+
+if test "${install_vim}" = "yes"; then
+   AC_MSG_RESULT([$vimdir])
 else
-   install_vim="no"
+   AC_MSG_RESULT([Not found, EDC syntax file will not be installed])
 fi
 
 AC_SUBST(vimdir)
