@@ -288,6 +288,10 @@ void evas_hide(Evas e, Evas_Object o);
 /* image query ops */
 void evas_get_image_size(Evas e, Evas_Object o, int *w, int *h);
 
+/* data attachment ops */
+void evas_stick_data(Evas e, Evas_Object o, char *key, void *data);
+void *evas_fetch_data(Evas e, Evas_Object o, char *key);  
+   
 /* events */
 void evas_event_button_down(Evas e, int x, int y, int b);
 void evas_event_button_up(Evas e, int x, int y, int b);
@@ -296,7 +300,7 @@ void evas_event_enter(Evas e);
 void evas_event_leave(Evas e);
 
 /* callbacks */
-void evas_callback_add(Evas e, Evas_Object o, Evas_Callback_Type callback, void (*func) (void *_data, Evas _e, char *_class, Evas_Object _o, int _b, int _x, int _y), void *data);
+void evas_callback_add(Evas e, Evas_Object o, Evas_Callback_Type callback, void (*func) (void *_data, Evas _e, Evas_Object _o, int _b, int _x, int _y), void *data);
 void evas_callback_del(Evas e, Evas_Object o, Evas_Callback_Type callback);
 
 /* list ops */

@@ -420,3 +420,15 @@ evas_font_del_path(Evas e, char *path)
      }
 }
 
+void
+evas_stick_data(Evas e, Evas_Object o, char *key, void *data)
+{
+   /* FIXME: impliment */
+}
+
+void *
+evas_fetch_data(Evas e, Evas_Object o, char *key)
+{
+   /* FIXME: impliment */
+}
+
