@@ -35,7 +35,7 @@
 
 /* debug */
 #define DEBUG 1
-#define ECORE_CONFIG_DEBUG
+#undef ECORE_CONFIG_DEBUG
 
 #ifdef ECORE_CONFIG_DEBUG
 #  define D(fmt,args...) do { if(DEBUG>=0) fprintf(stderr,fmt,## args); } while(0);
