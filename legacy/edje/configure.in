@@ -74,6 +74,11 @@ my_libs=`eet-config --libs`" "`evas-config --libs`" "`ecore-config --libs`
 AC_SUBST(my_includes)
 AC_SUBST(my_libs)
 
+imlib2_includes=`imlib2-config --cflags`
+imlib2_libs=`imlib2-config --libs`
+AC_SUBST(imlib2_includes)
+AC_SUBST(imlib2_libs)
+
 AC_OUTPUT([
 Makefile
 src/Makefile

@@ -1,4 +1,8 @@
 #include "edje.h"
+/* Imlib2 stuff for loading up input images */
+#define X_DISPLAY_MISSING
+#include <Imlib2.h>
+/* done Imlib2 stuff */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -211,10 +215,48 @@ data_write(void)
 	img = l->data;	
 	if (img->source_type != EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
 	  {
-	     if (img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT)
-	       printf("FIXME: should inline image %s lossless, compression: %i\n", img->entry, img->source_param);
+	     Imlib_Image im;
+	     Evas_List *l;
+
+	     im = NULL;
+	     for (l = img_dirs; l; l = l->next)
+	       {
+		  char buf[4096];
+		  
+		  snprintf(buf, sizeof(buf), "%s/%s", l->data, img->entry);
+		  im = imlib_load_image(buf);
+		  if (im) break;
+	       }
+	     if (!im) im = imlib_load_image(img->entry);
+	     if (im)
+	       {
+		  DATA32 *im_data;
+		  int im_w, im_h;
+		  int im_alpha;
+		  char buf[256];
+		  
+		  imlib_context_set_image(im);
+		  im_w = imlib_image_get_width();
+		  im_h = imlib_image_get_height();
+		  im_alpha = imlib_image_has_alpha();
+		  im_data = imlib_image_get_data_for_reading_only();
+		  snprintf(buf, sizeof(buf), "/images/%i", img->id);
+		  if (img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT)
+		    eet_data_image_write(ef, buf, 
+					 im_data, im_w, im_h, im_alpha, 
+					 img->source_param, 0, 0);
+		  else
+		    eet_data_image_write(ef, buf, 
+					 im_data, im_w, im_h, im_alpha, 
+					 0, img->source_param, 1);
+		  imlib_image_put_back_data(im_data);
+		  imlib_free_image();
+	       }
 	     else
-	       printf("FIXME: should inline image %s lossy, quality: %i%%\n", img->entry, img->source_param);
+	       {
+		  fprintf(stderr, "%s: Warning. unable to open image %s for inclusion in output\n",
+			  progname, img->entry);			  
+	       }
 	  }
      }
    eet_close(ef);
@@ -469,17 +511,28 @@ parse(char *data, off_t size)
 	       }
 	     else if (!strcmp(token, ";"))
 	       {
-		  
-		  do_params = 0;
-		  new_statement();
-		  /* clear out params */
-		  while (params)
+		  if (do_params)
 		    {
-		       free(params->data);
-		       params = evas_list_remove(params, params->data);
+		       do_params = 0;
+		       new_statement();
+		       /* clear out params */
+		       while (params)
+			 {
+			    free(params->data);
+			    params = evas_list_remove(params, params->data);
+			 }
+		       /* remove top from stack */
+		       stack_chop_top();
 		    }
-		  /* remove top from stack */
-		  stack_chop_top();
+	       }
+	     else if (!strcmp(token, "{"))
+	       {
+		  if (do_params)
+		    {
+		       fprintf(stderr, "%s: Error. parse error %s:%i. { marker before ; marker\n",
+			       progname, file_in, line);
+		       exit(-1);		       
+		    }
 	       }
 	     free(token);
 	  }
