@@ -1,6 +1,7 @@
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
+#include "Ecore_Txt.h"
 
 static void _ecore_x_event_free_window_prop_name_class_change(void *data, void *ev);
 static void _ecore_x_event_free_window_prop_title_change(void *data, void *ev);

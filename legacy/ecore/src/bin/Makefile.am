@@ -36,6 +36,12 @@ else
 ECORE_IPC_LIB =
 endif
 
+if BUILD_ECORE_TXT
+ECORE_TXT_LIB = $(top_builddir)/src/lib/ecore_txt/libecore_txt.la
+else
+ECORE_TXT_LIB =
+endif
+
 INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_evas \
@@ -44,6 +50,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore_job \
 -I$(top_srcdir)/src/lib/ecore_con \
 -I$(top_srcdir)/src/lib/ecore_ipc \
+-I$(top_srcdir)/src/lib/ecore_txt \
 @evas_cflags@ \
 @x_cflags@
 
@@ -62,6 +69,7 @@ $(ECORE_X_LIB) \
 $(ECORE_EVAS_LIB) \
 $(ECORE_CON_LIB) \
 $(ECORE_IPC_LIB) \
+$(ECORE_TXT_LIB) \
 -lm
 
 ecore_test_LDFLAGS =
@@ -77,7 +85,8 @@ $(ECORE_FB_LIB) \
 $(ECORE_X_LIB) \
 $(ECORE_EVAS_LIB) \
 $(ECORE_CON_LIB) \
-$(ECORE_IPC_LIB)
+$(ECORE_IPC_LIB) \
+$(ECORE_TXT_LIB)
 
 ecore_evas_test_SOURCES = \
 ecore_evas_test.c \
@@ -94,6 +103,7 @@ $(ECORE_X_LIB) \
 $(ECORE_EVAS_LIB) \
 $(ECORE_CON_LIB) \
 $(ECORE_IPC_LIB) \
+$(ECORE_TXT_LIB) \
 -lm
 
 ecore_evas_test_LDFLAGS =
@@ -109,4 +119,5 @@ $(ECORE_FB_LIB) \
 $(ECORE_X_LIB) \
 $(ECORE_EVAS_LIB) \
 $(ECORE_CON_LIB) \
-$(ECORE_IPC_LIB)
+$(ECORE_IPC_LIB) \
+$(ECORE_TXT_LIB)
