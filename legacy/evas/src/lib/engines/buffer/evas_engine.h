@@ -8,8 +8,10 @@ typedef enum   _Outbuf_Depth          Outbuf_Depth;
 enum _Outbuf_Depth
 {
    OUTBUF_DEPTH_NONE,
-     OUTBUF_DEPTH_RGB_24BPP_888_888,
      OUTBUF_DEPTH_RGB_32BPP_888_8888,
+     OUTBUF_DEPTH_BGR_32BPP_888_8888,
+     OUTBUF_DEPTH_RGB_24BPP_888_888,
+     OUTBUF_DEPTH_BGR_24BPP_888_888,
      OUTBUF_DEPTH_LAST
 };
 

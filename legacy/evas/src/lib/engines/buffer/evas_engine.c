@@ -251,11 +251,15 @@ evas_engine_buffer_output_setup(int   w,
 	Outbuf_Depth dep;
 	DATA32 color_key;
 	
-	dep = OUTBUF_DEPTH_RGB_24BPP_888_888;
-	if (depth_type == EVAS_ENGINE_BUFFER_DEPTH_RGBA32)
+	dep = OUTBUF_DEPTH_BGR_24BPP_888_888;
+	if      (depth_type == EVAS_ENGINE_BUFFER_DEPTH_ARGB32)
 	  dep = OUTBUF_DEPTH_RGB_32BPP_888_8888;
+	else if (depth_type == EVAS_ENGINE_BUFFER_DEPTH_BGRA32)
+	  dep = OUTBUF_DEPTH_BGR_32BPP_888_8888;
 	else if (depth_type == EVAS_ENGINE_BUFFER_DEPTH_RGB24)
 	  dep = OUTBUF_DEPTH_RGB_24BPP_888_888;
+	else if (depth_type == EVAS_ENGINE_BUFFER_DEPTH_BGR24)
+	  dep = OUTBUF_DEPTH_BGR_24BPP_888_888;
 	R_VAL(&color_key) = color_key_r;
 	G_VAL(&color_key) = color_key_g;
 	B_VAL(&color_key) = color_key_b;

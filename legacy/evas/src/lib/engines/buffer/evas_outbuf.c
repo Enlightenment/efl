@@ -115,7 +115,63 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 	       }
 	  }
 	break;
+      case OUTBUF_DEPTH_BGR_24BPP_888_888:
+	/* copy & pack into 24bpp - if colorkey is enabled... etc. */
+	  {
+	     DATA8 thresh;
+	     int xx, yy;
+	     DATA32 colorkey;
+	     DATA32 *src;
+	     DATA8 *dst;
+	     
+	     colorkey = buf->color_key;
+	     thresh = buf->alpha_level;
+	     if (buf->use_color_key)
+	       {
+		  for (yy = 0; yy < h; yy++)
+		    {
+		       dst = buf->dest + ((y + yy) * buf->dest_row_bytes);
+		       src = update->image->data + (yy * update->image->w);
+		       for (xx = 0; xx < w; xx++)
+			 {
+			    if (A_VAL(src) > thresh)
+			      {
+				 *dst++ = B_VAL(src);
+				 *dst++ = G_VAL(src);
+				 *dst++ = R_VAL(src);
+			      }
+			    else
+			      {
+				 *dst++ = B_VAL(&colorkey);
+				 *dst++ = G_VAL(&colorkey);
+				 *dst++ = R_VAL(&colorkey);
+			      }
+			    src++;
+			 }
+		    }
+	       }
+	     else
+	       {
+		  for (yy = 0; yy < h; yy++)
+		    {
+		       dst = buf->dest + ((y + yy) * buf->dest_row_bytes);
+		       src = update->image->data + (yy * update->image->w);
+		       for (xx = 0; xx < w; xx++)
+			 {
+			    *dst++ = B_VAL(src);
+			    *dst++ = G_VAL(src);
+			    *dst++ = R_VAL(src);
+			    src++;
+			 }
+		    }
+	       }
+	  }
+	break;
       case OUTBUF_DEPTH_RGB_32BPP_888_8888:
+	/* simple memcpy */
+	/* FIXME: write this */
+	break;
+      case OUTBUF_DEPTH_BGR_32BPP_888_8888:
 	/* simple memcpy */
 	/* FIXME: write this */
 	break;
