@@ -820,6 +820,7 @@ void             ecore_x_window_prop_base_size_set(Ecore_X_Window win, int w, in
 void             ecore_x_window_prop_step_size_set(Ecore_X_Window win, int x, int y);
 void             ecore_x_window_prop_xy_set(Ecore_X_Window win, int x, int y);
 void             ecore_x_window_prop_borderless_set(Ecore_X_Window win, int borderless);
+int              ecore_x_window_prop_borderless_get(Ecore_X_Window win);
 int              ecore_x_window_prop_layer_set(Ecore_X_Window win, int layer);
 void             ecore_x_window_prop_withdrawn_set(Ecore_X_Window win, int withdrawn);
 void             ecore_x_window_prop_desktop_request(Ecore_X_Window win, long desktop);

@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=3:noexpandtab
+ */
+
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
@@ -782,6 +786,28 @@ ecore_x_window_prop_borderless_set(Ecore_X_Window win, int borderless)
 					 _ecore_x_atom_motif_wm_hints,
 					 _ecore_x_atom_motif_wm_hints,
 					 32, (void *)data, 5);
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+int
+ecore_x_window_prop_borderless_get(Ecore_X_Window win)
+{
+   unsigned char *data;
+   int num;
+
+   ecore_x_window_prop_property_get(win,
+                                    _ecore_x_atom_motif_wm_hints,
+                                    _ecore_x_atom_motif_wm_hints,
+                                    32, &data, &num);
+
+   /* check for valid data. only read the borderless flag if the
+    * decorations data has been set.
+    */
+   return (data && num > 2 && data[0] & 2) ? !data[2] : 0;
 }
 
 /**
