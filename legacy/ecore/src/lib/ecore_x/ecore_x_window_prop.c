@@ -70,7 +70,7 @@ ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecor
    for (i = 0; i < num_ret; i++)
       switch (size) {
          case 8:
-            *data[i] = prop_ret[i];
+            (*data)[i] = prop_ret[i];
             break;
 		 case 16:
 			((uint16_t *) *data)[i] = ((uint16_t *) prop_ret)[i];
