@@ -1,6 +1,6 @@
 #include "edje_thumb.h"
 
-static void save_pixels(int *pixels, int w, int h, char *out);
+static void save_pixels(const int *pixels, int w, int h, char *out);
 static void args_parse(void);
 static void help_show(void);
 static int signal_exit(void *data, int ev_type, void *ev);
@@ -58,7 +58,7 @@ main(int argc, char **argv)
      }
    else
      {
-	int *pixels;
+	const int *pixels;
 
 	pixels = ecore_evas_buffer_pixels_get(ee);
 	save_pixels(pixels, w, h, outfile);
@@ -73,11 +73,11 @@ main(int argc, char **argv)
 }
 
 static void
-save_pixels(int *pixels, int w, int h, char *out)
+save_pixels(const int *pixels, int w, int h, char *out)
 {
    Imlib_Image im;
    
-   im = imlib_create_image_using_data(w, h, pixels);
+   im = imlib_create_image_using_data(w, h, (DATA32 *) pixels);
    imlib_context_set_image(im);
    imlib_image_set_irrelevant_alpha(0);
    imlib_image_set_has_alpha(1);
@@ -202,7 +202,7 @@ static int
 frame_grab(void *data)
 {
    char buf[4096];
-   int *pixels;
+   const int *pixels;
    
    pixels = ecore_evas_buffer_pixels_get(ee);
    snprintf(buf, sizeof(buf), outfile, frnum);
