@@ -565,7 +565,7 @@ evas_event_feed_key_down_data(Evas *e, const char *keyname, const void *data)
 			    if (g->delete_me)
 			      {
 				 evas_key_grab_free(g->object, g->keyname, g->modifiers, g->not_modifiers);
-				 continue;
+				 break;
 			      }
 			 }
 		    }
@@ -645,7 +645,7 @@ evas_event_feed_key_up_data(Evas *e, const char *keyname, const void *data)
 			    if (g->delete_me)
 			      {
 				 evas_key_grab_free(g->object, g->keyname, g->modifiers, g->not_modifiers);
-				 continue;
+				 break;
 			      }
 			 }
 		    }
