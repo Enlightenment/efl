@@ -376,6 +376,33 @@ evas_render_updates(Evas e)
 	     
 	     if (o->delete_me) 
 		delete_objects = evas_list_append(delete_objects, o);
+	     if ((o->type == OBJECT_IMAGE) ||
+		 (o->type == OBJECT_TEXT))
+	       {
+		  if ((!(RECTS_INTERSECT(o->current.x, o->current.y, 
+				       o->current.w, o->current.h,
+				       e->current.viewport.x, e->current.viewport.y,
+				       e->current.viewport.w, e->current.viewport.h)))
+		      || (!o->current.visible))
+		    {
+		       if (o->type == OBJECT_IMAGE)
+			 {
+			    if (o->renderer_data.method[e->current.render_method])
+			      {
+				 func_image_free((void *)o->renderer_data.method[e->current.render_method]);
+				 o->renderer_data.method[e->current.render_method] = NULL;
+			      }
+			 }
+		       else if (o->type == OBJECT_TEXT)
+			 {
+			    if (o->renderer_data.method[e->current.render_method])
+			      {
+				 func_text_font_free((void *)o->renderer_data.method[e->current.render_method]);
+				 o->renderer_data.method[e->current.render_method] = NULL;
+			      }
+			 }
+		    }
+	       }
 	     if (o->changed)
 	       {
 		  o->changed = 0;
@@ -848,7 +875,10 @@ evas_render_updates(Evas e)
 					   void *im;
 					   
 					   oo = o;
-					   im = func_image_new_from_file(e->current.display, oo->current.file);
+					   if (o->renderer_data.method[e->current.render_method])
+					     im = (void *)o->renderer_data.method[e->current.render_method];
+					   else
+					     o->renderer_data.method[e->current.render_method] = im = func_image_new_from_file(e->current.display, oo->current.file);
 					   if (im)
 					     {
 						int visx, visy, visw, vish;
@@ -994,7 +1024,7 @@ evas_render_updates(Evas e)
 						  }
 						free(pointsx);
 						free(pointsy);
-						func_image_free(im);
+/*						func_image_free(im);*/
 					     }
 					}
 				      break;
@@ -1004,8 +1034,11 @@ evas_render_updates(Evas e)
 					   void *fn;
 					   
 					   oo = o;
-					   fn = func_text_font_new(e->current.display, oo->current.font, 
-								   (oo->current.size * (double)e->current.drawable_width) / e->current.viewport.w);
+					   if (o->renderer_data.method[e->current.render_method])
+					     fn = (void *)o->renderer_data.method[e->current.render_method];
+					   else
+					     o->renderer_data.method[e->current.render_method] = fn = func_text_font_new(e->current.display, oo->current.font, 
+															 (oo->current.size * (double)e->current.drawable_width) / e->current.viewport.w);
 					   if (fn)
 					     {
 						func_text_draw(fn, 
@@ -1025,7 +1058,7 @@ evas_render_updates(Evas e)
 							       oo->current.g,
 							       oo->current.b,
 							       oo->current.a);
-						func_text_font_free(fn);
+/*						func_text_font_free(fn);*/
 					     }
 					}
 				      break;

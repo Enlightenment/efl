@@ -27,14 +27,24 @@ _evas_free_text_renderer_data(Evas e, Evas_Object o)
    switch (e->current.render_method)
      {
      case RENDER_METHOD_ALPHA_SOFTWARE:
+	if (o->renderer_data.method[e->current.render_method])
+	  __evas_imlib_text_font_free((void *)o->renderer_data.method[e->current.render_method]);
 	break;
      case RENDER_METHOD_BASIC_HARDWARE:
+	if (o->renderer_data.method[e->current.render_method])
+	  __evas_x11_text_font_free((void *)o->renderer_data.method[e->current.render_method]);
 	break;
      case RENDER_METHOD_3D_HARDWARE:
+	if (o->renderer_data.method[e->current.render_method])
+	  __evas_gl_text_font_free((void *)o->renderer_data.method[e->current.render_method]);
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	if (o->renderer_data.method[e->current.render_method])
+	  __evas_render_text_font_free((void *)o->renderer_data.method[e->current.render_method]);
 	break;
      case RENDER_METHOD_IMAGE:
+	if (o->renderer_data.method[e->current.render_method])
+	  __evas_image_text_font_free((void *)o->renderer_data.method[e->current.render_method]);
 	break;
      default:
 	break;

@@ -196,8 +196,8 @@ main(int argc, char **argv)
    evas_set_output_size(e, win_w, win_h);
    evas_set_output_viewport(e, 0, 0, win_w, win_h);
 
-   evas_set_font_cache(e, 1 * 1024 * 1024);
-   evas_set_image_cache(e, 8 * 1024 * 1024);   
+   evas_set_font_cache(e, 512 * 1024);
+   evas_set_image_cache(e, 1 * 1024 * 1024);   
    
    o[0] = evas_add_image_from_file(e, IMGDIR"sky001.png");
    evas_show(e, o[0]);
