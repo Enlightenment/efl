@@ -42,13 +42,12 @@
  * "drag"
  * "drag.stop"
  */
+
 typedef struct _Edje_File                            Edje_File;
 typedef struct _Edje_Image_Directory                 Edje_Image_Directory;
 typedef struct _Edje_Image_Directory_Entry           Edje_Image_Directory_Entry;
 typedef struct _Edje_Program                         Edje_Program;
-typedef struct _Edje_Action_Directory                Edje_Action_Directory;
-typedef struct _Edje_Action                          Edje_Action;
-typedef struct _Edje_Action_Target                   Edje_Action_Target;
+typedef struct _Edje_Program_Target                  Edje_Program_Target;
 typedef struct _Edje_Part_Collection_Directory       Edje_Part_Collection_Directory;
 typedef struct _Edje_Part_Collection_Directory_Entry Edje_Part_Collection_Directory_Entry;
 typedef struct _Edje_Part_Collection                 Edje_Part_Collection;
@@ -56,23 +55,17 @@ typedef struct _Edje_Part                            Edje_Part;
 typedef struct _Edje_Part_Image_Id                   Edje_Part_Image_Id;
 typedef struct _Edje_Part_Description                Edje_Part_Description;
 
-#define EDJE_PART_TYPE_NONE      0
-#define EDJE_PART_TYPE_RECTANGLE 1
-#define EDJE_PART_TYPE_TEXT      2
-#define EDJE_PART_TYPE_IMAGE     3
-#define EDJE_PART_TYPE_LAST      4
-
-#define EDJE_ACTION_TYPE_NONE        0
-#define EDJE_ACTION_TYPE_STATE_SET   1
-#define EDJE_ACTION_TYPE_ACTION_STOP 2
-#define EDJE_ACTION_TYPE_DRAG_SET    3
-#define EDJE_ACTION_TYPE_LAST        4
-
 #define EDJE_IMAGE_SOURCE_TYPE_NONE           0
 #define EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT 1
 #define EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY   2
 #define EDJE_IMAGE_SOURCE_TYPE_EXTERNAL       3
 #define EDJE_IMAGE_SOURCE_TYPE_LAST           4
+
+#define EDJE_PART_TYPE_NONE      0
+#define EDJE_PART_TYPE_RECTANGLE 1
+#define EDJE_PART_TYPE_TEXT      2
+#define EDJE_PART_TYPE_IMAGE     3
+#define EDJE_PART_TYPE_LAST      4
 
 #define EDJE_TEXT_EFFECT_NONE           0
 #define EDJE_TEXT_EFFECT_PLAIN          1
@@ -80,6 +73,11 @@ typedef struct _Edje_Part_Description                Edje_Part_Description;
 #define EDJE_TEXT_EFFECT_SHADOW         3
 #define EDJE_TEXT_EFFECT_OUTLINE_SHADOW 4
 #define EDJE_TEXT_EFFECT_LAST           5
+
+#define EDJE_ACTION_TYPE_NONE        0
+#define EDJE_ACTION_TYPE_STATE_SET   1
+#define EDJE_ACTION_TYPE_ACTION_STOP 2
+#define EDJE_ACTION_TYPE_LAST        4
 
 #define EDJE_TWEEN_MODE_NONE       0
 #define EDJE_TWEEN_MODE_LINEAR     1
@@ -122,33 +120,27 @@ struct _Edje_Image_Directory_Entry
 
 struct _Edje_Program /* a conditional program to be run */
 {
-   char *emission; /* if signal emission name matches the glob here... */
-   char *part; /* & if part that emitted the signal (name) matches this glob */
-   int   action_id; /* perform action number here */
-};
-
-/*----------*/
-
-struct _Edje_Action_Directory /* a list of possible actions to perform */
-{
-   Evas_List *actions; /* a list of Edje_Action */
-};
-
-struct _Edje_Action /* action to perfrom on parts within a part collection */
-{
+   int        id; /* id of program */   
+   char      *name; /* name of the action */
+   
+   char      *signal; /* if signal emission name matches the glob here... */
+   char      *source; /* if part that emitted this (name) matches this glob */
+   
    int        action; /* type - set state, stop action, set drag pos etc. */
-   double     tween_time; /* time to graduate between current and new state */
-   int        tween_mode; /* how to tween - linear, sinusoidal etc. */
-   char      *state; /* what state of alternates to apply */
-   double     drag_set_rel_x; /* x drag pos to set targets to, relative to container */
-   double     drag_set_rel_y; /* y drag pos to set targets to, relative to container */
-   int        drag_set_abs_offset_x;
-   int        drag_set_abs_offset_y;
+   char      *state; /* what state of alternates to apply, NULL = default */
+   double     value; /* value of state to apply (if multiple names match) */
+   
+   struct {
+      int     mode; /* how to tween - linear, sinusoidal etc. */
+      double  time; /* time to graduate between current and new state */
+   } tween;
+   
    Evas_List *targets; /* list of target parts to apply the state to */
-   int        end_action_id; /* id of action to run when this one finished */
+   
+   int        after; /* an action id to run at the end of this, for looping */
 };
 
-struct _Edje_Action_Target /* the target of an action */
+struct _Edje_Program_Target /* the target of an action */
 {
    int id; /* just the part id no, or action id no */
 };

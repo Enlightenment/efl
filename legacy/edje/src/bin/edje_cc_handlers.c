@@ -56,6 +56,13 @@ static void st_collections_group_parts_part_description_text_align(void);
 static void ob_collections_group_programs(void);
 
 static void ob_collections_group_programs_program(void);
+static void st_collections_group_programs_program_name(void);
+static void st_collections_group_programs_program_signal(void);
+static void st_collections_group_programs_program_source(void);
+static void st_collections_group_programs_program_action(void);
+static void st_collections_group_programs_program_transition(void);
+static void st_collections_group_programs_program_target(void);
+static void st_collections_group_programs_program_after(void);
 
 /*****/
 
@@ -99,7 +106,14 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.text.effect", st_collections_group_parts_part_description_text_effect},
      {"collections.group.parts.part.description.text.fit", st_collections_group_parts_part_description_text_fit},
      {"collections.group.parts.part.description.text.min", st_collections_group_parts_part_description_text_min},
-     {"collections.group.parts.part.description.text.align", st_collections_group_parts_part_description_text_align}
+     {"collections.group.parts.part.description.text.align", st_collections_group_parts_part_description_text_align},
+     {"collections.group.programs.program.name", st_collections_group_programs_program_name},
+     {"collections.group.programs.program.signal", st_collections_group_programs_program_signal},
+     {"collections.group.programs.program.source", st_collections_group_programs_program_source},
+     {"collections.group.programs.program.action", st_collections_group_programs_program_action},
+     {"collections.group.programs.program.transition", st_collections_group_programs_program_transition},
+     {"collections.group.programs.program.target", st_collections_group_programs_program_target},
+     {"collections.group.programs.program.after", st_collections_group_programs_program_after}
 };
 
 New_Object_Handler object_handlers[] =
@@ -158,7 +172,14 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.text.min", NULL},
      {"collections.group.parts.part.description.text.align", NULL},
      {"collections.group.programs", ob_collections_group_programs},
-     {"collections.group.programs.program", ob_collections_group_programs_program}
+     {"collections.group.programs.program", ob_collections_group_programs_program},
+     {"collections.group.programs.program.name", NULL},
+     {"collections.group.programs.program.signal", NULL},
+     {"collections.group.programs.program.source", NULL},
+     {"collections.group.programs.program.action", NULL},
+     {"collections.group.programs.program.transition", NULL},
+     {"collections.group.programs.program.target", NULL},
+     {"collections.group.programs.program.after", NULL}
 };
 
 /*****/
@@ -248,8 +269,8 @@ ob_collections_group(void)
    de->id = evas_list_count(edje_file->collection_dir->entries) - 1;
    
    pc = mem_alloc(SZ(Edje_Part_Collection));
-   edje_file->collection_loaded = evas_list_append(edje_file->collection_loaded, pc);
-   pc->id = evas_list_count(edje_file->collection_loaded) - 1;
+   edje_collections = evas_list_append(edje_collections, pc);
+   pc->id = evas_list_count(edje_collections) - 1;
 }
 
 static void
@@ -273,7 +294,7 @@ ob_collections_group_parts_part(void)
    Edje_Part *ep;
    
    ep = mem_alloc(SZ(Edje_Part));
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    pc->parts = evas_list_append(pc->parts, ep);
    ep->id = evas_list_count(pc->parts) - 1;
 }
@@ -284,7 +305,7 @@ st_collections_group_parts_part_name(void)
    Edje_Part_Collection *pc;
    Edje_Part *ep;
    
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ep->name = parse_str(0);
 }
@@ -295,7 +316,7 @@ st_collections_group_parts_part_type(void)
    Edje_Part_Collection *pc;
    Edje_Part *ep;
    
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ep->type = parse_enum(0, 
 			 "NONE", EDJE_PART_TYPE_NONE,
@@ -311,7 +332,7 @@ st_collections_group_parts_part_mouse_events(void)
    Edje_Part_Collection *pc;
    Edje_Part *ep;
    
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ep->mouse_events = parse_int_range(0, 0, 1);
 }
@@ -322,7 +343,7 @@ st_collections_group_parts_part_color_class(void)
    Edje_Part_Collection *pc;
    Edje_Part *ep;
    
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ep->color_class = parse_str(0);
 }
@@ -334,7 +355,7 @@ ob_collections_group_parts_part_description(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
    
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));   
    ed = mem_alloc(SZ(Edje_Part_Description));
    if (!ep->default_desc)
@@ -350,7 +371,7 @@ st_collections_group_parts_part_description_state(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
    
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));   
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -365,7 +386,7 @@ st_collections_group_parts_part_description_visible(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
    
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));   
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -379,7 +400,7 @@ st_collections_group_parts_part_description_dragable_x(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -395,7 +416,7 @@ st_collections_group_parts_part_description_dragable_y(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -411,7 +432,7 @@ st_collections_group_parts_part_description_dragable_confine(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -431,7 +452,7 @@ st_collections_group_parts_part_description_align(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -446,7 +467,7 @@ st_collections_group_parts_part_description_min(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -461,7 +482,7 @@ st_collections_group_parts_part_description_max(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -476,7 +497,7 @@ st_collections_group_parts_part_description_step(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -491,7 +512,7 @@ st_collections_group_parts_part_description_aspect(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -506,7 +527,7 @@ st_collections_group_parts_part_description_rel1_relative(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -521,7 +542,7 @@ st_collections_group_parts_part_description_rel1_offset(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -536,7 +557,7 @@ st_collections_group_parts_part_description_rel1_to(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -556,7 +577,7 @@ st_collections_group_parts_part_description_rel2_relative(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -571,7 +592,7 @@ st_collections_group_parts_part_description_rel2_offset(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -586,7 +607,7 @@ st_collections_group_parts_part_description_rel2_to(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -606,7 +627,7 @@ st_collections_group_parts_part_description_image_normal(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -626,7 +647,7 @@ st_collections_group_parts_part_description_image_tween(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -649,7 +670,7 @@ st_collections_group_parts_part_description_border(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -666,7 +687,7 @@ st_collections_group_parts_part_description_fill_origin_relative(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -681,7 +702,7 @@ st_collections_group_parts_part_description_fill_origin_offset(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -696,7 +717,7 @@ st_collections_group_parts_part_description_fill_size_relative(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -711,7 +732,7 @@ st_collections_group_parts_part_description_fill_size_offset(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -726,7 +747,7 @@ st_collections_group_parts_part_description_color(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -743,7 +764,7 @@ st_collections_group_parts_part_description_color2(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -760,7 +781,7 @@ st_collections_group_parts_part_description_color3(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -777,7 +798,7 @@ st_collections_group_parts_part_description_text_text(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -791,7 +812,7 @@ st_collections_group_parts_part_description_text_font(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -805,7 +826,7 @@ st_collections_group_parts_part_description_text_size(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -819,7 +840,7 @@ st_collections_group_parts_part_description_text_effect(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -839,7 +860,7 @@ st_collections_group_parts_part_description_text_fit(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -854,7 +875,7 @@ st_collections_group_parts_part_description_text_min(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -869,7 +890,7 @@ st_collections_group_parts_part_description_text_align(void)
    Edje_Part *ep;
    Edje_Part_Description *ed;
 
-   pc = evas_list_data(evas_list_last(edje_file->collection_loaded));
+   pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
@@ -886,4 +907,124 @@ ob_collections_group_programs(void)
 static void
 ob_collections_group_programs_program(void)
 {
+   Edje_Part_Collection *pc;
+   Edje_Program *ep;
+   
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = mem_alloc(SZ(Edje_Program));
+   pc->programs = evas_list_append(pc->programs, ep);
+   ep->id = evas_list_count(pc->programs) - 1;
+}
+
+static void
+st_collections_group_programs_program_name(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Program *ep;
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->programs));
+   ep->name = parse_str(0);
+}
+
+static void
+st_collections_group_programs_program_signal(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Program *ep;
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->programs));
+   ep->signal = parse_str(0);
+}
+
+static void
+st_collections_group_programs_program_source(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Program *ep;
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->programs));
+   ep->source = parse_str(0);
+}
+
+static void
+st_collections_group_programs_program_action(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Program *ep;
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->programs));
+   ep->action = parse_enum(0,
+			   "STATE_SET", EDJE_ACTION_TYPE_STATE_SET,
+			   "ACTION_STOP", EDJE_ACTION_TYPE_ACTION_STOP,
+			   NULL);
+   ep->state = parse_str(1);
+   ep->value = parse_float_range(2, 0.0, 1.0);
+}
+
+static void
+st_collections_group_programs_program_transition(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Program *ep;
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->programs));
+   ep->tween.mode = parse_enum(0,
+			       "LINEAR", EDJE_TWEEN_MODE_LINEAR,
+			       "SINUSOIDAL", EDJE_TWEEN_MODE_SINUSOIDAL,
+			       "ACCELERATE", EDJE_TWEEN_MODE_ACCELERATE,
+			       "DECELERATE", EDJE_TWEEN_MODE_DECELERATE,
+			       NULL);
+   ep->tween.time = parse_float_range(1, 0.0, 999999999.0);
+}
+
+static void
+st_collections_group_programs_program_target(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Program *ep;
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->programs));
+     {
+	Edje_Program_Target *et;
+	char *name;
+	
+	et = mem_alloc(SZ(Edje_Program_Target));
+	ep->targets = evas_list_append(ep->targets, et);
+	
+	name = parse_str(0);
+	if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
+	  data_queue_part_lookup(pc, name, &(et->id));
+	else if (ep->action == EDJE_ACTION_TYPE_ACTION_STOP)
+	  data_queue_program_lookup(pc, name, &(et->id));
+	else
+	  {
+	     /* FIXME: not type specified. guess */
+	     data_queue_part_lookup(pc, name, &(et->id));
+	     data_queue_program_lookup(pc, name, &(et->id));
+	  }
+	free(name);
+     }
+}
+
+static void
+st_collections_group_programs_program_after(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Program *ep;
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->programs));
+     {
+	char *name;
+	
+	name = parse_str(0);
+	data_queue_program_lookup(pc, name, &(ep->after));
+	free(name);
+     }
 }

@@ -245,7 +245,12 @@ parse(char *data, off_t size)
    char *p, *end, *token;
    int delim = 0;
    int do_params = 0;
-   
+
+   if (verbose)
+     {
+	printf("%s: Parsing input file\n",
+	       progname);
+     }
    p = data;
    end = data + size;
    line = 1;
@@ -303,6 +308,11 @@ parse(char *data, off_t size)
 	       }
 	  }
      }
+   if (verbose)
+     {
+	printf("%s: Parsing done\n",
+	       progname);
+     }
 }
 
 void
@@ -315,9 +325,14 @@ compile(void)
    fd = open(file_in, O_RDONLY);
    if (fd < 0)
      {
-	fprintf(stderr, "%s: Error. cannot open file %s for input. %s\n",
+	fprintf(stderr, "%s: Error. cannot open file \"%s\" for input. %s\n",
 		progname, file_in, strerror(errno));
 	exit(-1);
+     }
+   if (verbose)
+     {
+	printf("%s: Opening \"%s\" for input\n",
+	       progname, file_in);
      }
 	
    size = lseek(fd, 0, SEEK_END);
@@ -330,7 +345,7 @@ compile(void)
      }
    else
      {
-	fprintf(stderr, "%s: Error. cannot mmap file %s for input. %s\n",
+	fprintf(stderr, "%s: Error. cannot mmap file \"%s\" for input. %s\n",
 		progname, file_in, strerror(errno));
 	exit(-1);
      }

@@ -16,6 +16,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <stdarg.h>
+#include <locale.h>
 
 /* types */
 typedef struct _New_Object_Handler    New_Object_Handler;
@@ -37,6 +38,7 @@ struct _New_Statement_Handler
 void    data_setup(void);
 void    data_write(void);
 void    data_queue_part_lookup(Edje_Part_Collection *pc, char *name, int *dest);
+void    data_queue_program_lookup(Edje_Part_Collection *pc, char *name, int *dest);
 void    data_queue_image_lookup(char *name, int *dest);
 void    data_process_lookups(void);
     
@@ -61,10 +63,12 @@ extern Evas_List             *img_dirs;
 extern char                  *file_in;
 extern char                  *file_out;
 extern char                  *progname;
+extern int                    verbose;
 extern int                    line;
 extern Evas_List             *stack;
 extern Evas_List             *params;
 extern Edje_File             *edje_file;
+extern Evas_List             *edje_collections;
 extern New_Object_Handler     object_handlers[];
 extern New_Statement_Handler  statement_handlers[];
 

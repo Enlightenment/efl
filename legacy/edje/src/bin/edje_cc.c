@@ -6,6 +6,7 @@ Evas_List *img_dirs = NULL;
 char      *file_in = NULL;
 char      *file_out = NULL;
 char      *progname = NULL;
+int        verbose = 0;
 
 static void
 main_help(void)
@@ -17,6 +18,7 @@ main_help(void)
       "Where OPTIONS is one or more of:\n"
       "\n"
       "-id image/directory      Add a directory to look in for relative path images\n"
+      "-v                       Verbose output\n"
       ,progname);
 }
 
@@ -25,6 +27,8 @@ main(int argc, char **argv)
 {
    int i;
 
+   setlocale(LC_NUMERIC, "C");
+   
    progname = argv[0];
    for (i = 1; i < argc; i++)
      {
@@ -32,6 +36,10 @@ main(int argc, char **argv)
 	  {
 	     main_help();
 	     exit(0);
+	  }
+	else if (!strcmp(argv[i], "-v"))
+	  {
+	     verbose = 1;
 	  }
 	else if ((!strcmp(argv[i], "-id")) && (i < (argc - 1)))
 	  {
