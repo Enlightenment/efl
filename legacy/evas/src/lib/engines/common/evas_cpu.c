@@ -4,9 +4,101 @@
 #include "evas_mmx.h"
 #endif
 
+static jmp_buf detect_buf;
+static int cpu_feature_mask = 0;
+
+void
+evas_common_cpu_catch_ill(void)
+{
+   longjmp(detect_buf, 1);
+}
+
+#ifdef __i386__
+void
+evas_common_cpu_mmx_test(void)
+{
+   pxor_r2r(mm4, mm4);
+   evas_common_cpu_end_opt();
+}
+
+void
+evas_common_cpu_sse_test(void)
+{
+}
+#endif /* __i386__ */
+
+#ifdef __POWERPC__
+#ifdef __VEC__
+void
+evas_common_cpu_altivec_test(void)
+{
+   vector unsigned int zero;
+   zero = vec_splat_u32(0);
+}
+#endif /* __VEC__ */
+#endif /* __POWERPC__ */
+
+#ifdef __SPARC__
+void
+evas_common_cpu_vis_test(void)
+{
+}
+#endif /* __SPARC__ */
+
+int
+evas_common_cpu_feature_test(void (*feature)(void))
+{
+   int enabled = 1;
+   struct sigaction act, oact;
+
+   sigaction(SIGILL, &act, &oact);
+   if (setjmp(detect_buf))
+      enabled = 0;
+   else
+      feature();
+   sigaction(SIGILL, &oact, NULL);
+
+   return enabled;
+}
+
 void
 evas_common_cpu_init(void)
 {
+   int enabled;
+
+#ifdef __i386__
+
+   if (evas_common_cpu_feature_test(evas_common_cpu_mmx_test))
+      cpu_feature_mask |= CPU_FEATURE_MMX;
+
+   if (evas_common_cpu_feature_test(evas_common_cpu_sse_test))
+      cpu_feature_mask |= CPU_FEATURE_SSE;
+
+#endif /* __i386__ */
+
+#ifdef __POWERPC__
+#ifdef __VEC__
+
+   if (evas_common_cpu_feature_test(evas_common_cpu_altivec_test))
+      cpu_feature_mask |= CPU_FEATURE_ALTIVEC;
+
+#endif /* __VEC__ */
+#endif /* __POWERPC__ */
+
+#ifdef __SPARC__
+
+   if (evas_common_cpu_feature_test(evas_common_cpu_vis_test))
+      cpu_feature_mask |= CPU_FEATURE_VIS;
+
+#endif /* __SPARC__ */
+
+   printf("Cpu mask set to %08x\n", cpu_feature_mask);
+}
+
+inline int
+evas_common_cpu_has_feature(unsigned int feature)
+{
+	return (cpu_feature_mask & feature);
 }
 
 int

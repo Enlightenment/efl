@@ -110,6 +110,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
+#include <setjmp.h>
 
 #ifdef _WIN32_WCE
 #include <windows.h>
@@ -192,6 +194,16 @@ typedef enum _Convert_Pal_Mode
    PAL_MODE_RGB332,
    PAL_MODE_LAST
 } Convert_Pal_Mode;
+
+typedef enum _CPU_Features
+{
+   CPU_FEATURE_C       = 0,
+   CPU_FEATURE_MMX     = (1 << 0),
+   CPU_FEATURE_SSE     = (1 << 1),
+   CPU_FEATURE_ALTIVEC = (1 << 2),
+   CPU_FEATURE_VIS     = (1 << 3),
+   CPU_FEATURE_VIS2    = (1 << 4)
+} CPU_Features;
 
 /*****************************************************************************/
 
