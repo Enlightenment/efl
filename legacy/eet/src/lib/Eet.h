@@ -350,7 +350,7 @@ extern "C" {
     * 
     * @code
     * #include <Eet.h>
-    * include <Evas.h>
+    * #include <Evas.h>
     * 
     * typedef struct _blah2
     * {
