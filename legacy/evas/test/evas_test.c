@@ -57,7 +57,7 @@ static TextBlock texts[] =
      { 18.0, 20.0, 22.0, 24.0, "What are the 7 wonders of the world?"},
      { 22.0, 24.0, 26.0, 28.0, "What is the 8th wonder?"},
      { 26.0, 28.0, 34.0, 36.0, "It is ..."},
-     { 40.0, 44.0, 48.0, 50.0, "Evas"}
+     { 40.0, 44.0, 48.0, 50.0, "EVAS"}
 };
 
 /* functions */
@@ -177,7 +177,7 @@ setup_controls(void)
    evas_show(e, o);
    o_box3 = o;
    
-   o = evas_add_text(e, "notepad", 16, "Software");
+   o = evas_add_text(e, "andover", 28, "Software");
    evas_set_color(e, o, 0,  0,  0, 160);
    evas_move(e, o, 8, 44);
    evas_show(e, o);
@@ -191,7 +191,7 @@ setup_controls(void)
    evas_resize(e, o_box1, 114, ascent - descent + 4);
    evas_set_image_fill(e, o_box1, 0, 0, 114, ascent - descent + 4);
 
-   o = evas_add_text(e, "notepad", 16, "Hardware");
+   o = evas_add_text(e, "andover", 28, "Hardware");
    evas_set_color(e, o, 0,  0,  0, 160);
    evas_move(e, o, 8, 44 + 8 + (ascent - descent));
    evas_show(e, o);
@@ -205,7 +205,7 @@ setup_controls(void)
    evas_resize(e, o_box2, 114, ascent - descent + 4);
    evas_set_image_fill(e, o_box2, 0, 0, 114, ascent - descent + 4);
 
-   o = evas_add_text(e, "notepad", 16, "Basic X11");
+   o = evas_add_text(e, "andover", 28, "Basic X11");
    evas_set_color(e, o, 0,  0,  0, 160);
    evas_move(e, o, 8, 44 + 16 + ((ascent - descent) * 2));
    evas_show(e, o);
@@ -339,8 +339,8 @@ text(double val)
      {
 	if (!texts[i].o_text)
 	  {
-	     texts[i].o_text = evas_add_text(evas_view, "notepad", 32, texts[i].text);
-	     texts[i].o_shadow = evas_add_text(evas_view, "notepad", 32, texts[i].text);
+	     texts[i].o_text = evas_add_text(evas_view, "andover", 48, texts[i].text);
+	     texts[i].o_shadow = evas_add_text(evas_view, "andover", 48, texts[i].text);
 	     evas_set_color(evas_view, texts[i].o_text, 255, 255, 255, 255);
 	     evas_set_layer(evas_view, texts[i].o_text, 101);
 	     evas_set_color(evas_view, texts[i].o_shadow, 0, 0, 0, 128);
@@ -348,7 +348,7 @@ text(double val)
 	  }
 	if ((val >= texts[i].time1) && (val <= texts[i].time4))
 	  {
-	     double tw, th, dx, dy;
+	     double tw, th, dx, dy, x, y;
 	     double alpha, a1;
 	     
 	     alpha = 255;
@@ -364,12 +364,12 @@ text(double val)
 	     dx = (a1 * a1 * a1 * a1) * 500 * sin(val * 2.3);
 	     dy = (a1 * a1 * a1 * a1) * 600 * cos(val * 3.7);
 	     evas_get_geometry(evas_view, texts[i].o_text, NULL, NULL, &tw, &th);
-	     evas_move(evas_view, texts[i].o_text, 
-		       ((1024 - 128 - tw) / 2) + dx,
-		       ((768 - th) / 2) + dy);
+	     x = ((1024 - 128 - tw) / 2) + dx;
+	     y = ((768 - th) / 2) + dy;
+	     evas_move(evas_view, texts[i].o_text, x, y);
 	     evas_move(evas_view, texts[i].o_shadow, 
-		       ((1024 - 128 - tw) / 2) + 4 + dx,
-		       ((768 - th) / 2) + 4 + dy);
+		       x - ((mouse_x - x) / 16),
+		       y - ((mouse_y - y) / 16));
 	     evas_set_color(evas_view, texts[i].o_text, 255, 255, 255, 255 * alpha);
 	     evas_set_color(evas_view, texts[i].o_shadow, 0, 0, 0, 255 * alpha / 2);
 	     evas_show(evas_view, texts[i].o_text);
