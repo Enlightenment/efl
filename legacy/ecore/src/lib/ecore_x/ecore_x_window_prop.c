@@ -1094,8 +1094,10 @@ ecore_x_window_prop_window_type_normal_set(Ecore_X_Window win)
 void ecore_x_window_prop_window_opacity_set(Ecore_X_Window win, int opacity)
 {
    unsigned long o_val;
+   double tmp;
 
-   o_val = (unsigned long) opacity / 100UL * 0xffffffff;
+   tmp = (double) opacity/100. * 4294967295.;
+   o_val = (unsigned long) tmp;
    ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_window_opacity,
                                     XA_CARDINAL, 32, &o_val, 1);
 }
@@ -1110,7 +1112,7 @@ void ecore_x_window_prop_window_opacity_set(Ecore_X_Window win, int opacity)
 int ecore_x_window_prop_window_opacity_get(Ecore_X_Window win)
 {
    unsigned char  *data = NULL;
-   unsigned long  tmp;
+   unsigned long  lval;
    int            ret_val = -1;
    int            num;
 
@@ -1119,8 +1121,8 @@ int ecore_x_window_prop_window_opacity_get(Ecore_X_Window win)
    {
       if (data && num)
       {
-         tmp = *(unsigned long *) data;
-         ret_val = (int) (tmp / 0xffffffff * 100UL);
+         lval = *(unsigned long *) data;
+         ret_val = (int) ((double) lval / 4294967295. * 100.);
       }
    }
    
