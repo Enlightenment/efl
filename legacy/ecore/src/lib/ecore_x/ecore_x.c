@@ -788,11 +788,72 @@ ecore_x_window_root_list(int *num_ret)
    
    if (!num_ret) return NULL;
    *num_ret = 0;
+#ifdef ECORE_XPRINT
+     {
+	Screen **ps = NULL;
+	int psnum = 0;
+	
+	num = ScreenCount(_ecore_x_disp);
+	ps = XpQueryScreens(_ecore_x_disp, &psnum);
+	if (ps)
+	  {
+	     int overlap, j;
+	     
+	     overlap = 0;
+	     for (i = 0; i < num; i++)
+	       {
+		  for (j = 0; j < psnum; j++)
+		    {
+		       if (ScreenOfDisplay(_ecore_x_disp, i) == ps[j])
+			 overlap++;
+		    }
+	       }
+	     roots = malloc((num - overlap) * sizeof(Window));
+	     if (roots)
+	       {
+		  int k;
+		  
+		  k = 0;
+		  for (i = 0; i < num; i++)
+		    {
+		       int is_print;
+		       
+		       is_print = 0;
+		       for (j = 0; j < psnum; j++)
+			 {
+			    if (ScreenOfDisplay(_ecore_x_disp, i) == ps[j])
+			      {
+				 is_print = 1;
+				 break;
+			      }
+			 }
+		       if (!is_print)
+			 {
+			    roots[k] = RootWindow(_ecore_x_disp, i);
+			    k++;
+			 }
+		    }
+		  *num_ret = k;
+	       }
+	     XFree(ps);
+	  }
+	else
+	  {
+	     roots = malloc(num * sizeof(Window));
+	     if (!roots) return NULL;
+	     *num_ret = num;
+	     for (i = 0; i < num; i++)
+	       roots[i] = RootWindow(_ecore_x_disp, i);
+	  }
+     }
+#else   
    num = ScreenCount(_ecore_x_disp);
    roots = malloc(num * sizeof(Window));
    if (!roots) return NULL;
    *num_ret = num;
-   for (i = 0; i < num; i++) roots[i] = RootWindow(_ecore_x_disp, i);
+   for (i = 0; i < num; i++)
+     roots[i] = RootWindow(_ecore_x_disp, i);
+#endif   
    return roots;
 }
 

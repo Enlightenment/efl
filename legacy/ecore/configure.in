@@ -295,6 +295,38 @@ CFLAGS=$PCFLAGS
 AC_SUBST(Xcursor_cflags)
 AC_SUBST(Xcursor_libs)
 
+Xprint_libs=""
+Xprint_cflags=""
+use_Xprint="no"
+PCFLAGS=$CFLAGS
+CFLAGS=$x_cflags" "$x_includes
+AC_CHECK_HEADER(X11/extensions/Print.h, [
+    AC_CHECK_LIB(Xp, XpQueryScreens, [
+        AC_DEFINE(ECORE_XPRINT, 1, [Build support for Xprint])
+        Xprint_cflags=""
+        Xprint_libs="-lXp"
+        use_Xprint="yes"
+      ], [
+        Xprint_cflags=""
+        Xprint_libs=""
+        use_Xprint="no"
+      ], [
+        $x_libs $x_ldflags
+      ]
+    )
+  ], [
+    Xprint_cflags=""
+    Xprint_libs=""
+    use_Xprint="no"
+  ], [
+    #include <X11/Xlib.h>
+  ]
+)
+CFLAGS=$PCFLAGS
+
+AC_SUBST(Xprint_cflags)
+AC_SUBST(Xprint_libs)
+
 Xinerama_libs=""
 Xinerama_cflags=""
 use_Xinerama="no"
@@ -844,7 +876,7 @@ echo
 echo "  Ecore_Job...............: $have_ecore_job"
 echo "  Ecore_Con...............: $have_ecore_con (OpenSSL: $use_openssl)"
 echo "  Ecore_Txt...............: $have_ecore_txt"
-echo "  Ecore_X.................: $have_ecore_x (Xcursor: $use_Xcursor) (Xinerama: $use_Xinerama)"
+echo "  Ecore_X.................: $have_ecore_x (Xcursor: $use_Xcursor) (Xprint: $use_Xprint) (Xinerama: $use_Xinerama)"
 echo "  Ecore_FB................: $have_ecore_fb"
 echo "  Ecore_Evas..............: $have_ecore_evas"
 echo "  Ecore_Evas GL Support...: $have_ecore_evas_gl"
