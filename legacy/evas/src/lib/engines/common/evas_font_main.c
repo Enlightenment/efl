@@ -83,13 +83,13 @@ evas_common_font_max_descent_get(RGBA_Font *fn)
 int
 evas_common_font_get_line_advance(RGBA_Font *fn)
 {
-   int val;
+   int val, dv;
    int ret;
    
    evas_common_font_size_use(fn);
-   val = (int)fn->src->ft.face->height;
-   fn->src->ft.face->units_per_EM = 2048; /* nasy hack - need to have correct val */
-   ret = (val * fn->src->ft.face->size->metrics.y_scale) / (fn->src->ft.face->units_per_EM * fn->src->ft.face->units_per_EM);
+   val = (int)fn->src->ft.face->size->metrics.height;
+   dv = (fn->src->ft.orig_upem * 2048) / fn->src->ft.face->units_per_EM;   
+   ret = (val * fn->src->ft.face->size->metrics.y_scale) / (dv * dv);
    return ret;
 }
 
