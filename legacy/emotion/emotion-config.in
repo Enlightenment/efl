@@ -46,7 +46,7 @@ while test $# -gt 0; do
       ;;
     --libs)
       libdirs=-L@libdir@
-      echo $libdirs -lemotion @my_libs@ -ldl
+      echo $libdirs -lemotion @my_libs@ @dlopen_libs@
       ;;
     *)
       echo "${usage}" 1>&2
