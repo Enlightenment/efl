@@ -1069,6 +1069,7 @@ evas_object_image_load(Evas_Object *obj)
    Evas_Object_Image *o;
    
    o = (Evas_Object_Image *)(obj->object_data);
+   if (o->engine_data) return;
    
    o->engine_data = obj->layer->evas->engine.func->image_load(obj->layer->evas->engine.data.output,
 							      o->cur.file,
