@@ -61,7 +61,7 @@ typedef enum Ecore_Config_Flag {
 
 
 
-typedef int (*Ecore_Config_Listener)(const char *key,const Ecore_Config_Type type,const int tag,void *data,void *bundle);
+typedef int (*Ecore_Config_Listener)(const char *key,const Ecore_Config_Type type,const int tag,void *data);
 
 
 typedef struct Ecore_Config_Listener_List {
@@ -116,7 +116,7 @@ extern Ecore_Config_Server *__ecore_config_server_local;
 extern Ecore_Config_Bundle *__ecore_config_bundle_local;
 extern char                *__ecore_config_app_name;
 
-Ecore_Config_Prop   *ecore_config_get(Ecore_Config_Bundle *t,const char *key);
+Ecore_Config_Prop   *ecore_config_get(const char *key);
 const char    *ecore_config_get_type(const Ecore_Config_Prop *e);
 void          *ecore_config_get_data(const char *key);
 char          *ecore_config_get_string(const char *key);
@@ -126,7 +126,8 @@ float          ecore_config_get_float(const char *key);
 char          *ecore_config_get_theme(const char *key);
 char          *ecore_config_get_as_string(const char *key);
 void           ecore_config_describe(const char *key, char *desc);
-int            ecore_config_set(Ecore_Config_Bundle *t,const char *key,char *val);
+int            ecore_config_set(const char *key,char *val);
+int            ecore_config_set_typed(const char *key,void *val,int type);
 int            ecore_config_set_string(const char *key,char *val);
 int            ecore_config_set_int(const char *key,int val);
 int            ecore_config_set_rgb(const char *key,char *val);

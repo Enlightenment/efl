@@ -59,8 +59,11 @@ Ecore_Config_Prop *ecore_config_dst(Ecore_Config_Prop *e) {
 
   return NULL; }
 
-Ecore_Config_Prop *ecore_config_get(Ecore_Config_Bundle *t, const char *key) {
+Ecore_Config_Prop *ecore_config_get(const char *key) {
+  Ecore_Config_Bundle *t;
   Ecore_Config_Prop *e;
+
+  t = __ecore_config_bundle_local;
   if(!t||!key)
     return NULL;
   e=t->data;
@@ -81,31 +84,31 @@ const char *ecore_config_get_type(const Ecore_Config_Prop *e) {
 
 void *ecore_config_get_data(const char *key) {
   Ecore_Config_Prop *e;
-  e=ecore_config_get(__ecore_config_bundle_local,key);
+  e=ecore_config_get(key);
   return (e?((e->type==PT_STR)?((void *)&e->ptr):((void *)&e->val))
            :NULL); }
 
 
 char *ecore_config_get_string(const char *key) {
   Ecore_Config_Prop *e;
-  e=ecore_config_get(__ecore_config_bundle_local,key);
+  e=ecore_config_get(key);
   return (e&&(e->type==PT_STR))?e->ptr:NULL; }
 
 
 long ecore_config_get_int(const char *key) {
   Ecore_Config_Prop *e;
-  e=ecore_config_get(__ecore_config_bundle_local,key);
+  e=ecore_config_get(key);
   return (e&&((e->type==PT_INT)||(e->type==PT_RGB)))?e->val:0L; }
 
 
 float ecore_config_get_float(const char *key) {
   Ecore_Config_Prop *e;
-  e=ecore_config_get(__ecore_config_bundle_local,key);
+  e=ecore_config_get(key);
   return (e&&(e->type==PT_FLT))?((float)e->val/ECORE_CONFIG_FLOAT_PRECISION):0.0; }
 
 int ecore_config_get_rgb(const char *key,int *r, int *g, int *b) {
   Ecore_Config_Prop *e;
-  e=ecore_config_get(__ecore_config_bundle_local,key);
+  e=ecore_config_get(key);
 
   if(e&&((e->type==PT_RGB))) {
     *r=(e->val>>16)&0xff;
@@ -122,17 +125,15 @@ char *ecore_config_get_rgbstr(const char *key) {
 
 char *ecore_config_get_theme(const char *key) {
   Ecore_Config_Prop *e;
-  e=ecore_config_get(__ecore_config_bundle_local,key);
+  e=ecore_config_get(key);
   return (e&&(e->type==PT_THM))?e->ptr:NULL; }
       
   
 char *ecore_config_get_as_string(const char *key) {
-  Ecore_Config_Bundle *t;
   Ecore_Config_Prop   *e;
   char          *r;
   r=NULL;
-  t = __ecore_config_bundle_local;
-  if(!(e=ecore_config_get(t,key)))
+  if(!(e=ecore_config_get(key)))
     E(0,"no such property, \"%s\"...\n",key);
   else {
     const char *type=ecore_config_get_type(e);
@@ -193,7 +194,7 @@ int ecore_config_guess_type(const char *key,char *val) {
   long v;
   l=NULL;
 
-  if ((p=ecore_config_get(__ecore_config_bundle_local, key)) && p->type!=PT_NIL)
+  if ((p=ecore_config_get(key)) && p->type!=PT_NIL)
     return p->type;
   
   if(!val)
@@ -262,9 +263,11 @@ static int ecore_config_val_typed(Ecore_Config_Prop *e,void *val,int type) {
   return ECORE_CONFIG_ERR_IGNORED;
 }
 
-static int ecore_config_add_typed(Ecore_Config_Bundle *t, const char *key, void* val, int type) {
+static int ecore_config_add_typed(const char *key, void* val, int type) {
   Ecore_Config_Prop *e;
+  Ecore_Config_Bundle *t;
 
+  t=__ecore_config_bundle_local;
   if (!key)
     return ECORE_CONFIG_ERR_NODATA;
 
@@ -293,39 +296,39 @@ static int ecore_config_add_typed(Ecore_Config_Bundle *t, const char *key, void*
   return ECORE_CONFIG_ERR_OOM; }
                                          
 
-static int ecore_config_add(Ecore_Config_Bundle *t,const char *key,char *val) {
+static int ecore_config_add(const char *key,char *val) {
   int type;
   type=ecore_config_guess_type(key, val);
-  return ecore_config_add_typed(t,key,val,type); }
+  return ecore_config_add_typed(key,val,type); }
 
 void ecore_config_describe(const char *key, char *desc) {
   Ecore_Config_Prop *e;
-  if ((e=ecore_config_get(__ecore_config_bundle_local, key)))
+  if ((e=ecore_config_get(key)))
     e->description = strdup(desc);
 }
 
 
-int ecore_config_set_typed(Ecore_Config_Bundle *t,const char *key,void *val,int type) {
+int ecore_config_set_typed(const char *key,void *val,int type) {
   Ecore_Config_Prop *e;
   Ecore_Config_Listener_List *l;
   int ret;
 
   if (!key)
     return ECORE_CONFIG_ERR_NODATA;
-  if (!t) { /* global prop */
-    e=ecore_config_get(__ecore_config_bundle_local,key);
+/*  if (!t) { * global prop *
+    e=ecore_config_get(key);
     if (e)
       for(l=e->listeners;l;l=l->next)
         l->listener(e->key,e->type,l->tag,l->data,t);
     return ECORE_CONFIG_ERR_SUCC;
   }
-
-  if (!(e=ecore_config_get(t,key)))
-    return ecore_config_add_typed(t,key,val,type);
+*/
+  if (!(e=ecore_config_get(key)))
+    return ecore_config_add_typed(key,val,type);
 
   if ((ret=ecore_config_val_typed(e,val,type))==ECORE_CONFIG_ERR_SUCC) {
     for(l=e->listeners;l;l=l->next)
-      l->listener(e->key,e->type,l->tag,l->data,t);
+      l->listener(e->key,e->type,l->tag,l->data);
     }
   else {
     E(0,"ecore_config_set_typed(\"%s\"): ecore_config_val_typed() failed: %d\n",key,ret);
@@ -334,49 +337,47 @@ int ecore_config_set_typed(Ecore_Config_Bundle *t,const char *key,void *val,int 
   return ret;
   }
 
-int ecore_config_set(Ecore_Config_Bundle *t,const char *key,char *val) {
+int ecore_config_set(const char *key,char *val) {
   int type;
   int tmpi;
   float tmpf;
   type=ecore_config_guess_type(key, val);
   if (type == PT_INT) {
     tmpi = atoi(val);
-    return ecore_config_set_typed(t,key,(void*) &tmpi,type);
+    return ecore_config_set_typed(key,(void*) &tmpi,type);
   } else if  (type == PT_FLT) {
     tmpf = atof(val);
-    return ecore_config_set_typed(t,key,(void*) &tmpf,type);
+    return ecore_config_set_typed(key,(void*) &tmpf,type);
   } else
-    return ecore_config_set_typed(t,key,(void*) val,type); }
+    return ecore_config_set_typed(key,(void*) val,type); }
 
 int ecore_config_set_as_string(const char *key,char *val) {
-  return ecore_config_set(__ecore_config_bundle_local,key,val); }
+  return ecore_config_set(key,val); }
 
 int ecore_config_set_int(const char *key, int val) {
-  return ecore_config_set_typed(__ecore_config_bundle_local,key,(void *)&val,PT_INT); }
+  return ecore_config_set_typed(key,(void *)&val,PT_INT); }
 
 int ecore_config_set_string(const char *key, char* val) {
-  return ecore_config_set_typed(__ecore_config_bundle_local,key,(void *)val,PT_STR); }
+  return ecore_config_set_typed(key,(void *)val,PT_STR); }
 
 int ecore_config_set_float(const char *key, float val) {
-  return ecore_config_set_typed(__ecore_config_bundle_local,key,(void *)&val,PT_FLT); }
+  return ecore_config_set_typed(key,(void *)&val,PT_FLT); }
 
 int ecore_config_set_rgb(const char *key, char* val) {
-  return ecore_config_set_typed(__ecore_config_bundle_local,key,(void *)val,PT_RGB); }
+  return ecore_config_set_typed(key,(void *)val,PT_RGB); }
 
 int ecore_config_set_theme(const char *key, char* val) {
-  return ecore_config_set_typed(__ecore_config_bundle_local,key,(void *)val,PT_THM); }
+  return ecore_config_set_typed(key,(void *)val,PT_THM); }
 
 int ecore_config_set_theme_preview_group(const char *key, char *group) {
   int            ret;
   Ecore_Config_Prop *e;
-  Ecore_Config_Bundle *t;
   
   ret=ECORE_CONFIG_ERR_SUCC;
-  t=__ecore_config_bundle_local;
-  if(!(e=ecore_config_get(t,key))) {  /* prop doesn't exist yet */
-    if((ret=ecore_config_add_typed(t,key,"",PT_THM))!=ECORE_CONFIG_ERR_SUCC)  /* try to add it */
+  if(!(e=ecore_config_get(key))) {  /* prop doesn't exist yet */
+    if((ret=ecore_config_add_typed(key,"",PT_THM))!=ECORE_CONFIG_ERR_SUCC)  /* try to add it */
       return ret;                                  /* ...failed */
-    if(!(e=ecore_config_get(t,key)))                  /* get handle */
+    if(!(e=ecore_config_get(key)))                  /* get handle */
       return ECORE_CONFIG_ERR_FAIL;
     }
   if (e->data) free(e->data);
@@ -385,15 +386,15 @@ int ecore_config_set_theme_preview_group(const char *key, char *group) {
 
   return ret; }
 
-static int ecore_config_default_typed(Ecore_Config_Bundle *t,const char *key,void *val,int type) {
+static int ecore_config_default_typed(const char *key,void *val,int type) {
   int            ret;
   Ecore_Config_Prop *e;
   ret=ECORE_CONFIG_ERR_SUCC;
 
-  if(!(e=ecore_config_get(t,key))) {                  /* prop doesn't exist yet */
-    if((ret=ecore_config_add_typed(t,key,val,type))!=ECORE_CONFIG_ERR_SUCC)  /* try to add it */
+  if(!(e=ecore_config_get(key))) {                  /* prop doesn't exist yet */
+    if((ret=ecore_config_add_typed(key,val,type))!=ECORE_CONFIG_ERR_SUCC)  /* try to add it */
       return ret;                                  /* ...failed */
-    if(!(e=ecore_config_get(t,key)))                  /* get handle */
+    if(!(e=ecore_config_get(key)))                  /* get handle */
       return ECORE_CONFIG_ERR_FAIL;
     e->flags=e->flags&~PF_MODIFIED; }
 
@@ -401,13 +402,11 @@ static int ecore_config_default_typed(Ecore_Config_Bundle *t,const char *key,voi
 
 int ecore_config_default(const char *key,char *val,float lo,float hi,float step) {
   int ret, type;
-  Ecore_Config_Bundle *t;
   Ecore_Config_Prop *e;
-  t = __ecore_config_bundle_local;
           
   type=ecore_config_guess_type(key, val);
-  ret=ecore_config_default_typed(t, key, val, type);
-  e=ecore_config_get(t,key);
+  ret=ecore_config_default_typed(key, val, type);
+  e=ecore_config_get(key);
   if (e) {
     if (type==PT_INT) {
       e->step=step;
@@ -428,17 +427,15 @@ int ecore_config_default(const char *key,char *val,float lo,float hi,float step)
 }
     
 int ecore_config_default_int(const char *key,int val) {
-  return  ecore_config_default_typed(__ecore_config_bundle_local, key, (void *) &val, PT_INT);
+  return  ecore_config_default_typed(key, (void *) &val, PT_INT);
 }
 
 int ecore_config_default_int_bound(const char *key,int val,int low,int high,int step) {
-  Ecore_Config_Bundle *t;
   Ecore_Config_Prop *e;
   int                ret;
-  t = __ecore_config_bundle_local;
   
-  ret=ecore_config_default_typed(t, key, (void *) &val, PT_INT);
-  e=ecore_config_get(t,key);
+  ret=ecore_config_default_typed(key, (void *) &val, PT_INT);
+  e=ecore_config_get(key);
   if (e) {
     e->step=step;
     e->flags|=PF_BOUNDS;
@@ -451,19 +448,19 @@ int ecore_config_default_int_bound(const char *key,int val,int low,int high,int 
 }
 
 int ecore_config_default_string(const char *key,char *val) {
-  return ecore_config_default_typed(__ecore_config_bundle_local, key, (void *) val, PT_STR);
+  return ecore_config_default_typed(key, (void *) val, PT_STR);
 }
 
 int ecore_config_default_float(const char *key,float val){
-  return ecore_config_default_typed(__ecore_config_bundle_local, key, (void *) &val, PT_FLT);
+  return ecore_config_default_typed(key, (void *) &val, PT_FLT);
 }
    
 int ecore_config_default_float_bound(const char *key,float val,float low,float high,float step) {
   Ecore_Config_Prop *e;
   int                ret;
       
-  ret=ecore_config_default_typed(__ecore_config_bundle_local, key, (void *) &val, PT_FLT);
-  e=ecore_config_get(__ecore_config_bundle_local,key);
+  ret=ecore_config_default_typed(key, (void *) &val, PT_FLT);
+  e=ecore_config_get(key);
   if (e) {                  
     e->step=(int)(step*ECORE_CONFIG_FLOAT_PRECISION);
     e->flags|=PF_BOUNDS;
@@ -476,30 +473,28 @@ int ecore_config_default_float_bound(const char *key,float val,float low,float h
 }
 
 int ecore_config_default_rgb(const char *key,char *val) {
-  return ecore_config_default_typed(__ecore_config_bundle_local, key, (void *) val, PT_RGB);
+  return ecore_config_default_typed(key, (void *) val, PT_RGB);
 }
 
 int ecore_config_default_theme(const char *key,char *val) {
-  return ecore_config_default_typed(__ecore_config_bundle_local, key, (void *) val, PT_THM);
+  return ecore_config_default_typed(key, (void *) val, PT_THM);
 }
 
 
 int ecore_config_listen(const char *name,const char *key,
                         Ecore_Config_Listener listener,int tag,void *data) {
-  Ecore_Config_Bundle        *t;
   Ecore_Config_Prop          *e;
   Ecore_Config_Listener_List *l;
-  t = __ecore_config_bundle_local;
 
-  if(!t||!key)
+  if(!key)
     return ECORE_CONFIG_ERR_NODATA;
 
-  if(!(e=ecore_config_get(t,key))) {
-    int ret=ecore_config_add(t,key,"");
+  if(!(e=ecore_config_get(key))) {
+    int ret=ecore_config_add(key,"");
     if(ret!=ECORE_CONFIG_ERR_SUCC) {
       E(0,"ecore_config_listen: ecore_config_add(\"%s\") failed: %d\n",key,ret);
       return ret; }
-    if(!(e=ecore_config_get(t,key))) {
+    if(!(e=ecore_config_get(key))) {
       E(0,"ecore_config_listen: list of properties corrupted!?\n");
       return ECORE_CONFIG_ERR_FAIL; }}
 
@@ -524,7 +519,7 @@ int ecore_config_listen(const char *name,const char *key,
   e->listeners=l;
 
   if(e->type!=PT_NIL)     /* call right on creation if prop exists and has val */
-    listener(key,e->type,tag,data,t);
+    listener(key,e->type,tag,data);
 
   return ECORE_CONFIG_ERR_SUCC; }
 
@@ -535,10 +530,10 @@ int ecore_config_deaf(const char *name,const char *key,
   int                   ret;
   ret=ECORE_CONFIG_ERR_NOTFOUND;
 
-  if(!__ecore_config_bundle_local||!key)
+  if(!key)
     return ECORE_CONFIG_ERR_NODATA;
 
-  if(!(e=ecore_config_get(__ecore_config_bundle_local,key)))
+  if(!(e=ecore_config_get(key)))
     return ECORE_CONFIG_ERR_NOTFOUND;
 
   for(p=NULL,l=e->listeners;l;p=l,l=l->next) {

@@ -97,7 +97,7 @@ char *_ecore_config_ipc_prop_desc(Ecore_Config_Server *srv, const long serial,co
   Ecore_Config_Bundle *theme;
   Ecore_Config_Prop   *e;
   theme=ecore_config_bundle_get_by_serial(srv, serial);
-  e=ecore_config_get(theme,key);
+  e=ecore_config_get(key);
 
   if(e) {
     estring *s=estring_new(512);
@@ -128,7 +128,7 @@ int _ecore_config_ipc_prop_set(Ecore_Config_Server *srv, const long serial,const
   int ret;
   Ecore_Config_Bundle *theme;
   theme=ecore_config_bundle_get_by_serial(srv, serial);
-  ret=ecore_config_set(theme,key,(char *)val);
+  ret=ecore_config_set(key,(char *)val);
   E(1,"ipc.prop.set(%s->%s,\"%s\") => %d\n",theme?theme->identifier:"",key,val,ret);
   return ret;
 #else
