@@ -19,7 +19,7 @@ Packager: Term <kempler@utdallas.edu>
 Vendor: The Enlightenment Development Team <e-develop@enlightenment.org>
 Source: ftp://ftp.enlightenment.org/enlightenment/%{name}-%{ver}.tar.gz
 BuildRoot: /var/tmp/%{name}-root
-Requires: imlib2 >= 0.0.5
+Requires: imlib2 >= 1.0.0
 
 #Patch1: evas_test-fix.patch
 
