@@ -81,6 +81,10 @@ ecore_x_dnd_begin (Ecore_X_Window source, unsigned char *data, int size)
    _xdnd->state = ECORE_X_DND_DRAGGING;
    _xdnd->time = _ecore_x_event_last_time;
 
+   /* Default Accepted Action: ask */
+   _xdnd->action = _ecore_x_atom_xdnd_action_ask;
+   _xdnd->accepted_action = None;
+
    /* TODO: Set supported data types in API */
    _type_text_plain = ecore_x_atom_get("text/plain");
    _xdnd->num_types = 1;

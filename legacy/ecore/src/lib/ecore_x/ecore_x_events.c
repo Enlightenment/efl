@@ -18,7 +18,11 @@ static void _ecore_x_event_free_generic(void *data, void *ev);
 void
 ecore_x_event_mask_set(Ecore_X_Window w, long mask)
 {
-   XSelectInput(_ecore_x_disp, w, mask);
+   XWindowAttributes attr;
+
+   memset(&attr, 0, sizeof(XWindowAttributes));
+   XGetWindowAttributes(_ecore_x_disp, w, &attr);
+   XSelectInput(_ecore_x_disp, w, mask | attr.your_event_mask);
 }
 
 static void

@@ -248,9 +248,11 @@ void _ecore_x_event_handle_shape_change(XEvent *xevent);
 void _ecore_x_selection_data_init(void);
 void _ecore_x_selection_shutdown(void);
 Atom _ecore_x_selection_target_atom_get(char *target);
-char * _ecore_x_selection_target_get(Atom target);
+char * 
+     _ecore_x_selection_target_get(Atom target);
 void _ecore_x_selection_request_data_set(Ecore_X_Selection_Data data);
-Ecore_X_Selection_Data * _ecore_x_selection_get(Atom selection);
+Ecore_X_Selection_Data * 
+     _ecore_x_selection_get(Atom selection);
 int  _ecore_x_selection_set(Window w, unsigned char *data, int len, Atom selection);
 int  _ecore_x_selection_convert(Atom selection, Atom target, void **data_ret);
 
