@@ -287,6 +287,7 @@ _ecore_signal_call(void)
          Ecore_Event_Signal_Realtime *e;
 
          if ((e = _ecore_event_signal_realtime_new())) {
+            e->num = i;
             e->data = sigrt_info[i];
             _ecore_event_add(ECORE_EVENT_SIGNAL_REALTIME, e,
                              _ecore_event_signal_realtime_free, NULL);
