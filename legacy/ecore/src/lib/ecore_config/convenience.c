@@ -1,6 +1,8 @@
 #include "Ecore_Config.h"
 #include "Ecore.h"
 
+#include "config.h"
+
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -299,7 +301,7 @@ ecore_config_theme_default_path_get(void)
    int                 len;
 
    home = getenv("HOME");
-   len = strlen("/usr/local/share/") + strlen(__ecore_config_app_name) +
+   len = strlen(PACKAGE_DATA_DIR "/../") + strlen(__ecore_config_app_name) +
             strlen("/themes/") + 1;
    if (home)
       len += strlen(home) + strlen("/.e/apps/") +
@@ -317,7 +319,7 @@ ecore_config_theme_default_path_get(void)
         strcat(path, __ecore_config_app_name);
         strcat(path, "/themes/|");
      }
-   strcat(path, "/usr/local/share/");
+   strcat(path, PACKAGE_DATA_DIR "/../");
    strcat(path, __ecore_config_app_name);
    strcat(path, "/themes/");
 
