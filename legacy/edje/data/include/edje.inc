@@ -65,3 +65,21 @@ native       emit           (sig[], src[]);
 native       set_state      (part_id, state[], Float:state_val);
 native       set_tween_state(part_id, Float:tween, state1[], Float:state1_val, state2[], Float:state2_val);
 native       run_program    (program_id);
+
+native       stop_program   (program_id);
+native       stop_programs_on(program_id);
+
+native       set_drag(part_id, Float:dx, Float:dy);
+native       get_drag(part_id, &Float:dx, &Float:dy);
+native       set_drag_step(part_id, Float:dx, Float:dy);
+native       get_drag_step(part_id, &Float:dx, &Float:dy);
+native       set_drag_page(part_id, Float:dx, Float:dy);
+native       get_drag_page(part_id, &Float:dx, &Float:dy);
+
+native       text_set(part_id, text[]);
+
+native       set_min_size(part_id, float:w, float:h);
+native       get_min_size(part_id, &float:w, &float:h);
+native       set_max_size(part_id, float:w, float:h);
+native       get_max_size(part_id, &float:w, &float:h);
+native       get_size(part_id, &float:w, &float:h);

@@ -157,6 +157,7 @@ collections {
 	      new buf[100];
 	      
 	      snprintf(buf, 100, "val = %i, pos = %f", val, pos);
+              set_drag(PART:"dragable", pos, pos);
 	      emit("PR AAAAAAAAANIM", buf);
 	   }
       }
