@@ -626,6 +626,12 @@ embryo_data_heap_pop(Embryo_Program *ep, Embryo_Cell down_to)
 }
 
 int
+embryo_program_recursion_get(Embryo_Program *ep)
+{
+   return ep->run_count;
+}
+
+int
 embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 {
    Embryo_Header    *hdr;
@@ -1511,7 +1517,6 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
      }
    ep->run_count--;
    
-   //
    ep->hea = hea_start;
    
    return EMBRYO_PROGRAM_OK;

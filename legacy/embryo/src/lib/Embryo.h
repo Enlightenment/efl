@@ -80,6 +80,7 @@ extern "C" {
    Embryo_Cell     *embryo_data_address_get(Embryo_Program *ep, Embryo_Cell addr);
    Embryo_Cell      embryo_data_heap_push(Embryo_Program *ep, int cells);
    void             embryo_data_heap_pop(Embryo_Program *ep, Embryo_Cell down_to);
+   int              embryo_program_recursion_get(Embryo_Program *ep);
    int              embryo_program_run(Embryo_Program *ep, Embryo_Function func);
    Embryo_Cell      embryo_program_return_value_get(Embryo_Program *ep);
    int              embryo_parameter_cell_push(Embryo_Program *ep, Embryo_Cell cell);
