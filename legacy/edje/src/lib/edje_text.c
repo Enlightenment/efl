@@ -5,6 +5,8 @@
 #include "Edje.h"
 #include "edje_private.h"
 
+#include <stdint.h>
+
 Edje_Text_Style _edje_text_styles[EDJE_TEXT_EFFECT_LAST];
 
 void
@@ -285,6 +287,145 @@ _edje_text_real_part_on_del(Edje *ed, Edje_Real_Part *ep)
 }
 
 void
+_edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
+                 Edje_Calc_Params *params,
+                 char *text, char *font, int size,
+                 Evas_Coord sw)
+{
+   Evas_Coord tw = 0, th = 0, p;
+   char *buf;
+   int c1 = -1, c2 = -1, loop = 0, extra;
+   size_t orig_len;
+
+   evas_object_text_font_set(ep->object, font, size);
+   evas_object_text_text_set(ep->object, text);
+
+   evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
+
+   p = ((sw - tw) * params->text.align.x);
+
+   /* chop chop */
+   if (tw > sw)
+     {
+	if (params->text.align.x != 0.0)
+	  c1 = evas_object_text_char_coords_get(ep->object,
+		-p, th / 2,
+		NULL, NULL, NULL, NULL);
+	if (params->text.align.x != 1.0)
+	  c2 = evas_object_text_char_coords_get(ep->object,
+		-p + sw, th / 2,
+		NULL, NULL, NULL, NULL);
+	if ((c1 < 0) && (c2 < 0))
+	  {
+	     c1 = 0;
+	     c2 = 0;
+	  }
+     }
+
+   extra = 1 + 3 + 3; /* terminator, leading and trailing ellipsis */
+
+   orig_len = strlen(text);
+
+   /* don't overflow orig_len by adding extra
+    * FIXME: we might want to set a max string length somewhere...
+    */
+   orig_len = MIN(orig_len, SIZE_MAX - extra);
+
+   if (!(buf = malloc(orig_len + extra)))
+     return;
+
+   while (((c1 >= 0) || (c2 >= 0)) && (tw > sw))
+     {
+	loop++;
+	if (sw <= 0.0)
+	  {
+	     buf[0] = 0;
+	     break;
+	  }
+	if ((c1 >= 0) && (c2 >= 0))
+	  {
+	     if ((loop & 0x1))
+	       {
+		  if (c1 >= 0)
+		    c1 = evas_string_char_next_get(text, c1, NULL);
+	       }
+	     else
+	       {
+		  if (c2 >= 0)
+		    {
+		       c2 = evas_string_char_prev_get(text, c2, NULL);
+		       if (c2 < 0)
+			 {
+			    buf[0] = 0;
+			    break;
+			 }
+		    }
+	       }
+	  }
+	else
+	  {
+	     if (c1 >= 0)
+	       c1 = evas_string_char_next_get(text, c1, NULL);
+	     else if (c2 >= 0)
+	       {
+		  c2 = evas_string_char_prev_get(text, c2, NULL);
+		  if (c2 < 0)
+		    {
+		       buf[0] = 0;
+		       break;
+		    }
+	       }
+	  }
+	if ((c1 >= 0) && (c2 >= 0))
+	  {
+	     if (c1 >= c2)
+	       {
+		  buf[0] = 0;
+		  break;
+	       }
+	  }
+	else
+	  {
+	     if (c1 >= orig_len)
+	       {
+		  buf[0] = 0;
+		  break;
+	       }
+	     else if (c2 == 0)
+	       {
+		  buf[0] = 0;
+		  break;
+	       }
+	  }
+	buf[0] = 0;
+	if (c1 >= 0)
+	  {
+	     strcpy(buf, "...");
+	     if (c2 >= 0)
+	       {
+		  strncat(buf, text + c1, c2 - c1);
+		  strcat(buf, "...");
+	       }
+	     else
+	       strcat(buf, text + c1);
+	  }
+	else
+	  {
+	     if (c2 >= 0)
+	       {
+		  strncpy(buf, text, c2);
+		  buf[c2] = 0;
+		  strcat(buf, "...");
+	       }
+	     else strcpy(buf, text);
+	  }
+	evas_object_text_text_set(ep->object, buf);
+	evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
+     }
+   if (loop > 0) text = buf;
+}
+
+void
 _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 			Edje_Calc_Params *params,
 			Edje_Part_Description *chosen_desc)
@@ -453,132 +594,15 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	  }
      }
    if (size < 1) size = 1;
+
    if (!chosen_desc->text.fit_x)
      {
-	Evas_Coord p;
-	int    c1, c2;
-	int    loop;
-	int    orig_len;
-	
-        if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
+	if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);
 	else evas_object_text_font_source_set(ep->object, NULL);
-	
-	evas_object_text_font_set(ep->object, font, size);
-	evas_object_text_text_set(ep->object, text);
-	evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
-	p = ((sw - tw) * params->text.align.x);
-	c1 = -1;
-	c2 = -1;
-	/* chop chop */
-	if (tw > sw)
-	  {
-	     if (params->text.align.x != 0.0)
-	       c1 = evas_object_text_char_coords_get(ep->object,
-						     -p, th / 2,
-						     NULL, NULL, NULL, NULL);
-	     if (params->text.align.x != 1.0)
-	       c2 = evas_object_text_char_coords_get(ep->object,
-						     -p + sw, th / 2,
-						     NULL, NULL, NULL, NULL);
-	     if ((c1 < 0) && (c2 < 0))
-	       {
-		  c1 = 0;
-		  c2 = 0;
-	       }
-	  }
-	loop = 0;
-	buf = malloc(strlen(text) + 1 + 3 + 3);
-	orig_len = strlen(text);
-	while (((c1 >= 0) || (c2 >= 0)) && (tw > sw))
-	  {
-	     loop++;
-	     if (sw <= 0.0)
-	       {
-		  buf[0] = 0;
-		  break;
-	       }
-	     if ((c1 >= 0) && (c2 >= 0))
-	       {
-		  if ((loop & 0x1))
-		    {
-		       if (c1 >= 0)
-			 c1 = evas_string_char_next_get(text, c1, NULL);
-		    }
-		  else
-		    {
-		       if (c2 >= 0)
-			 {
-			    c2 = evas_string_char_prev_get(text, c2, NULL);
-			    if (c2 < 0)
-			      {
-				 buf[0] = 0;
-				 break;
-			      }
-			 }
-		    }
-	       }
-	     else
-	       {
-		  if (c1 >= 0)
-		    c1 = evas_string_char_next_get(text, c1, NULL);
-		  else if (c2 >= 0)
-		    {
-		       c2 = evas_string_char_prev_get(text, c2, NULL);
-		       if (c2 < 0)
-			 {
-			    buf[0] = 0;
-			    break;
-			 }
-		    }
-	       }
-	     if ((c1 >= 0) && (c2 >= 0))
-	       {
-		  if (c1 >= c2)
-		    {
-		       buf[0] = 0;
-		       break;
-		    }
-	       }
-	     else
-	       {
-		  if (c1 >= orig_len)
-		    {
-		       buf[0] = 0;
-		       break;
-		    }
-		  else if (c2 == 0)
-		    {
-		       buf[0] = 0;
-		       break;
-		    }
-	       }
-	     buf[0] = 0;
-	     if (c1 >= 0)
-	       {
-		  strcpy(buf, "...");
-		  if (c2 >= 0)
-		    {
-		       strncat(buf, text + c1, c2 - c1);
-		       strcat(buf, "...");
-		    }
-		  else
-		    strcat(buf, text + c1);
-	       }
-	     else
-	       {
-		  if (c2 >= 0)
-		    {
-		       strncpy(buf, text, c2);
-		       buf[c2] = 0;
-		       strcat(buf, "...");
-		    }
-		  else strcpy(buf, text);
-	       }
-	     evas_object_text_text_set(ep->object, buf);
-	     evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
-	  }
-	if (loop > 0) text = buf;
+
+	_edje_text_fit_x(ed, ep, params, text, font, size, sw);
      }
+
    if (ep->text.cache.out_str) free(ep->text.cache.out_str);
    ep->text.cache.out_str = strdup(text);
    ep->text.cache.in_w = sw;
