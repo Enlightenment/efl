@@ -59,6 +59,7 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
 	     BLEND_COLOR(A_VAL(&(col)), A_VAL(ptr), 
 			 255, A_VAL(ptr), 
 			 __blend_tmp);                 
+	     BLEND_ALPHA_SETUP(__blend_a, __blend_tmp);
 	     BLEND_COLOR(__blend_a, R_VAL(ptr), 
 			 R_VAL(&(col)), R_VAL(ptr), 
 			 __blend_tmp);                 
@@ -74,6 +75,7 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
 	     DATA32 __blend_tmp;                       
 	     
 	     ptr = dst->image->data + (y1 * dst->image->w) + x1;
+	     BLEND_ALPHA_SETUP(A_VAL(&(col)), __blend_tmp);
 	     BLEND_COLOR(A_VAL(&(col)), R_VAL(ptr), 
 			 R_VAL(&(col)), R_VAL(ptr), 
 			 __blend_tmp);                 
@@ -152,6 +154,7 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
 			    BLEND_COLOR(A_VAL(&(col)), A_VAL(ptr), 
 					255, A_VAL(ptr), 
 					__blend_tmp);                 
+			    BLEND_ALPHA_SETUP(__blend_a, __blend_tmp);
 			    BLEND_COLOR(__blend_a, R_VAL(ptr), 
 					R_VAL(&(col)), R_VAL(ptr), 
 					__blend_tmp);                 
@@ -191,6 +194,7 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
 			    BLEND_COLOR(A_VAL(&(col)), A_VAL(ptr), 
 					255, A_VAL(ptr), 
 					__blend_tmp);                 
+			    BLEND_ALPHA_SETUP(__blend_a, __blend_tmp);
 			    BLEND_COLOR(__blend_a, R_VAL(ptr), 
 					R_VAL(&(col)), R_VAL(ptr), 
 					__blend_tmp);
@@ -227,6 +231,7 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
 			 {                                            
 			    DATA32 __blend_tmp;                       
 			    
+			    BLEND_ALPHA_SETUP(A_VAL(&(col)), __blend_tmp);
 			    BLEND_COLOR(A_VAL(&(col)), R_VAL(ptr), 
 					R_VAL(&(col)), R_VAL(ptr), 
 					__blend_tmp);                 
@@ -260,6 +265,7 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
 			 {                                            
 			    DATA32 __blend_tmp;                       
 			    
+			    BLEND_ALPHA_SETUP(A_VAL(&(col)), __blend_tmp);
 			    BLEND_COLOR(A_VAL(&(col)), R_VAL(ptr), 
 					R_VAL(&(col)), R_VAL(ptr), 
 					__blend_tmp);                 

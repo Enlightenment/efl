@@ -35,6 +35,7 @@ evas_common_blend_pixels_mul_color_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int l
 		  *dst_ptr = *src_ptr;
 		  break;
 		default:
+		  BLEND_ALPHA_SETUP(a, tmp);
 		  BLEND_COLOR(a, R_VAL(dst_ptr), 
 			      R_VAL(src_ptr), R_VAL(dst_ptr), 
 			      tmp);
@@ -68,6 +69,7 @@ evas_common_blend_pixels_mul_color_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int l
 		  B_VAL(dst_ptr) = ((B_VAL(src_ptr) * (B_VAL(&mul_color) + 1)) >> 8);
 		  break;
 		default:
+		  BLEND_ALPHA_SETUP(a, tmp);
 		  BLEND_COLOR(a, R_VAL(dst_ptr), 
 			      ((R_VAL(src_ptr) * (R_VAL(&mul_color) + 1)) >> 8), R_VAL(dst_ptr), 
 			      tmp);
@@ -150,7 +152,7 @@ evas_common_blend_pixels_mul_color_rgba_to_rgb_mmx(DATA32 *src, DATA32 *dst, int
 	     punpckhdq_r2r(mm3, mm3);	
 	     psrlw_i2r(1, mm3);
 	     
-	     psrlq_i2r(16, mm3);
+//	     psrlq_i2r(16, mm3);
 	     
 	     punpcklbw_r2r(mm4, mm1);
 	     punpcklbw_r2r(mm4, mm2);
@@ -205,6 +207,7 @@ evas_common_blend_pixels_mul_color_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int 
 		  BLEND_COLOR(aa, A_VAL(dst_ptr),
 				255, A_VAL(dst_ptr),
 				tmp);
+		  BLEND_ALPHA_SETUP(a, tmp);
 		  BLEND_COLOR(a, R_VAL(dst_ptr), 
 			      R_VAL(src_ptr), R_VAL(dst_ptr), 
 			      tmp);
@@ -244,6 +247,7 @@ evas_common_blend_pixels_mul_color_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int 
 		  BLEND_COLOR(aa, A_VAL(dst_ptr),
 				255, A_VAL(dst_ptr),
 				tmp);
+		  BLEND_ALPHA_SETUP(a, tmp);
 		  BLEND_COLOR(a, R_VAL(dst_ptr), 
 			      ((R_VAL(src_ptr) * (R_VAL(&mul_color) + 1)) >> 8), R_VAL(dst_ptr), 
 			      tmp);

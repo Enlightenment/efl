@@ -34,6 +34,7 @@ evas_common_blend_alpha_color_rgba_to_rgb_c (DATA8 *src, DATA32 *dst, int len, D
 	     *dst_ptr = col;
 	     break;
 	   default:
+	     BLEND_ALPHA_SETUP(aa, tmp);
 	     BLEND_COLOR(aa, R_VAL(dst_ptr), 
 			 R_VAL(&col), R_VAL(dst_ptr), 
 			 tmp);
@@ -111,7 +112,7 @@ evas_common_blend_alpha_color_rgba_to_rgb_mmx (DATA8 *src, DATA32 *dst, int len,
 	     punpckhdq_r2r(mm3, mm3);	
 	     psrlw_i2r(1, mm3);
 	     
-	     psrlq_i2r(16, mm3);
+//	     psrlq_i2r(16, mm3);
 	     
 	     punpcklbw_r2r(mm4, mm1);
 	     punpcklbw_r2r(mm4, mm2);
@@ -162,6 +163,7 @@ evas_common_blend_alpha_color_rgba_to_rgba_c (DATA8 *src, DATA32 *dst, int len, 
 	     BLEND_COLOR(aa, A_VAL(dst_ptr), 
 		       255, A_VAL(dst_ptr), 
 		       tmp);
+	     BLEND_ALPHA_SETUP(a, tmp);
 	     BLEND_COLOR(a, R_VAL(dst_ptr), 
 			 R_VAL(&col), R_VAL(dst_ptr), 
 			 tmp);

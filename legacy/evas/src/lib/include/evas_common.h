@@ -541,11 +541,34 @@ x++;
 #define GB_VAL(p) ((DATA16 *)(p)[1])
 #endif
 
+/* thanks to some chats with Mirek Fidler... the new blender code for C
+ * blender fallbacks is faster. benchmarks (for the blending code only):
+ * 
+ * OLD BLENDER:
+ * MMX: 0.606
+ * C:   1.026
+ * 
+ * NEW BLENDER:
+ * C:   0.716
+ */
+
+#if 0 /* old blender */
+#define BLEND_ALPHA_SETUP(a, tmp)
 #define BLEND_COLOR(a, nc, c, cc, tmp)                \
 {                                                     \
   (tmp) = ((c) - (cc)) * (a);                         \
   (nc) = (cc) + (((tmp) + ((tmp) >> 8) + 0x80) >> 8); \
 }
+#else /* new blender - faster! */
+#define BLEND_ALPHA_SETUP(a, tmp) \
+{ \
+   (tmp) = ((a) + ((a) >> 7)); \
+}
+#define BLEND_COLOR(a, nc, c, cc, tmp)                \
+{ \
+   (nc) = ((((tmp) * ((c) - (cc))) >> 8) + (cc)); \
+}
+#endif
 
 #define PIXEL_SOLID_ALPHA 0xff000000
 

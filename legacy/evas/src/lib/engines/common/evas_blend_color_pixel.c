@@ -20,6 +20,7 @@ evas_common_blend_color_rgba_to_rgb_c(DATA32 src, DATA32 *dst, int len)
      {
 	DATA32 tmp;
 	
+	BLEND_ALPHA_SETUP(A_VAL(&src), tmp);
 	BLEND_COLOR(A_VAL(&src), R_VAL(dst_ptr), 
 		    R_VAL(&src), R_VAL(dst_ptr), 
 		    tmp);
@@ -54,7 +55,7 @@ evas_common_blend_color_rgba_to_rgb_mmx(DATA32 src, DATA32 *dst, int len)
    punpckhdq_r2r(mm3, mm3);	
    psrlw_i2r(1, mm3);
 	
-   psrlq_i2r(16, mm3);
+//   psrlq_i2r(16, mm3);
 	
    while (dst_ptr < dst_end_ptr)
      {
@@ -99,6 +100,7 @@ evas_common_blend_color_rgba_to_rgba_c(DATA32 src, DATA32 *dst, int len)
 	BLEND_COLOR(A_VAL(&src), A_VAL(dst_ptr), 
 		    255, A_VAL(dst_ptr), 
 		    tmp);
+	BLEND_ALPHA_SETUP(a, tmp);
 	BLEND_COLOR(a, R_VAL(dst_ptr), 
 		    R_VAL(&src), R_VAL(dst_ptr), 
 		    tmp);

@@ -12,6 +12,7 @@
 	BLEND_COLOR(A_VAL(src), A_VAL(dst), \
 		    255, A_VAL(dst), \
 		    __tmp); \
+	BLEND_ALPHA_SETUP(__a, __tmp); \
 	BLEND_COLOR(__a, R_VAL(dst), \
 		    R_VAL(src), R_VAL(dst), \
 		    __tmp); \
@@ -30,6 +31,7 @@
 \
    if (A_VAL(src)) /* hmmm - do we need this? */ \
      { \
+	BLEND_ALPHA_SETUP(A_VAL(src), __tmp); \
 	BLEND_COLOR(A_VAL(src), R_VAL(dst), \
 		    R_VAL(src), R_VAL(dst), \
 		    __tmp); \

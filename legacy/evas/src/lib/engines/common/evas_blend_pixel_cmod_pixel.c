@@ -33,6 +33,7 @@ evas_common_blend_pixels_cmod_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int len, D
 	     B_VAL(dst_ptr) = bmod[B_VAL(src_ptr)];
 	     break;
 	   default:
+	     BLEND_ALPHA_SETUP(a, tmp);
 	     BLEND_COLOR(a, R_VAL(dst_ptr), 
 			 rmod[R_VAL(src_ptr)], R_VAL(dst_ptr), 
 			 tmp);
@@ -80,6 +81,7 @@ evas_common_blend_pixels_cmod_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len, 
 	     a = _evas_pow_lut[(aa << 8) | A_VAL(dst_ptr)];
 	     BLEND_COLOR(aa,A_VAL(dst_ptr),
 		       255,A_VAL(dst_ptr),tmp);
+	     BLEND_ALPHA_SETUP(a, tmp);
 	     BLEND_COLOR(a, R_VAL(dst_ptr), 
 			 rmod[R_VAL(src_ptr)], R_VAL(dst_ptr), 
 			 tmp);

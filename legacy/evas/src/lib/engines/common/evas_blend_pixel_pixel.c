@@ -34,6 +34,7 @@ evas_common_blend_pixels_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int len)
 	     *dst_ptr = *src_ptr;
 	     break;
 	   default:
+	     BLEND_ALPHA_SETUP(a, tmp);
 	     BLEND_COLOR(a, R_VAL(dst_ptr), 
 			 R_VAL(src_ptr), R_VAL(dst_ptr), 
 			 tmp);
@@ -74,28 +75,28 @@ evas_common_blend_pixels_rgba_to_rgb_mmx(DATA32 *src, DATA32 *dst, int len)
 	     *dst_ptr = *src_ptr;
 	     break;
 	   default:
-	     movd_m2r(src_ptr[0], mm1);
-	     movd_m2r(dst_ptr[0], mm2);
+	     movd_m2r(src_ptr[0], mm1); // mm1 = [  ][  ][AR][GB] (SRC)
+	     movd_m2r(dst_ptr[0], mm2); // mm2 = [  ][  ][ar][gb] (DST)
 	     
-	     movq_r2r(mm1, mm3);
-	     punpcklbw_r2r(mm3, mm3);
-	     punpckhwd_r2r(mm3, mm3);
-	     punpckhdq_r2r(mm3, mm3);	
-	     psrlw_i2r(1, mm3);
+	     movq_r2r(mm1, mm3);        // mm3 = [  ][  ][AR][GB]
+	     punpcklbw_r2r(mm3, mm3);   // mm3 = [AA][RR][GG][BB]
+	     punpckhwd_r2r(mm3, mm3);   // mm3 = [AA][AA][RR][RR]
+	     punpckhdq_r2r(mm3, mm3);	// mm3 = [AA][AA][AA][AA]
+	     psrlw_i2r(1, mm3);         // mm3 = [AA/2][AA/2][AA/2][AA/2]
 	     
-	     psrlq_i2r(16, mm3);
+//	     psrlq_i2r(16, mm3);        // mm3 = [00][AA/2][AA/2][AA/2]
 	     
-	     punpcklbw_r2r(mm4, mm1);
-	     punpcklbw_r2r(mm4, mm2);
+	     punpcklbw_r2r(mm4, mm1);   // mm1 = [0A][0R][0G][0B]
+	     punpcklbw_r2r(mm4, mm2);   // mm2 = [0a][0r][0g][0b]
 	     
-	     psubw_r2r(mm2, mm1);
-	     psllw_i2r(1, mm1);
-	     paddw_r2r(mm5, mm1);
-	     pmulhw_r2r(mm3, mm1);
-	     paddw_r2r(mm1, mm2);
-	     
-	     packuswb_r2r(mm4, mm2);
-	     movd_r2m(mm2, dst_ptr[0]);
+	     psubw_r2r(mm2, mm1);       // mm1 = [A-a][R-r][G-g][B-b]
+	     psllw_i2r(1, mm1);         // mm1 = [A*2][R*2][G*2][B*2]
+	     paddw_r2r(mm5, mm1);       // mm1 = [A+1][R+1][G+1][B+1]
+	     pmulhw_r2r(mm3, mm1);      // mm1 = [A*0][(R*AA)>>16][(G*AA)>>16][(B*AA)>>16]
+	     paddw_r2r(mm1, mm2);       // mm2 = [0a][R-r][G-g][B-b]
+
+	     packuswb_r2r(mm4, mm2);    // mm2 = [  ][  ][AR][GB]
+	     movd_r2m(mm2, dst_ptr[0]); // DST = mm2
 	     break;
 	  }
 	src_ptr++;
@@ -132,6 +133,7 @@ evas_common_blend_pixels_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len)
 	     BLEND_COLOR(aa, A_VAL(dst_ptr), 
 			 255, A_VAL(dst_ptr), 
 			 tmp);
+	     BLEND_ALPHA_SETUP(a, tmp);
 	     BLEND_COLOR(a, R_VAL(dst_ptr), 
 			 R_VAL(src_ptr), R_VAL(dst_ptr), 
 			 tmp);
