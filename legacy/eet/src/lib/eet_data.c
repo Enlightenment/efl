@@ -471,12 +471,15 @@ eet_data_image_lossless_convert(int *size, void *data, int w, int h, int alpha)
 	
 	d = malloc((w * h * 4) + (8 * 4));
 	if (!d) return NULL;
+
 	header = (int *)d;
+	memset(d, 0, 32);
+
 	header[0] = 0xac1dfeed;
 	header[1] = w;
 	header[2] = h;
 	header[3] = alpha;
-	header[4] = 0;
+
 	memcpy(d + 32, data, w * h * 4);
 	
 	if (words_bigendian)
@@ -519,6 +522,8 @@ eet_data_image_lossless_compressed_convert(int *size, void *data, int w, int h, 
 	     return NULL;
 	  }
 	header = (int *)d;
+	memset(d, 0, 32);
+
 	header[0] = 0xac1dfeed;
 	header[1] = w;
 	header[2] = h;
@@ -1251,7 +1256,6 @@ eet_data_image_read(Eet_File *ef, char *name,
    void *data;
    int size;
    unsigned int *d = NULL;
-   int header[8];
  
    data = eet_read(ef, name, &size);
    if (!data) return NULL;
