@@ -445,6 +445,8 @@ animate(double val)
      }
    else
      {
+	evas_set_color(evas_view, o_logo_impress, 255, 255, 255,
+		       128);
      }
    if (val < 30)
      {
