@@ -384,7 +384,7 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (
 }
 
 /**
- * Add a callback function to an object
+ * Delete a callback function from an object
  * @param obj Object to remove a callback from
  * @param type The type of event that was triggering the callback
  * @param func The function that was to be called when the event was triggered
