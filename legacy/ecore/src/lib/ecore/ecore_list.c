@@ -1063,8 +1063,16 @@ int ecore_list_node_destroy(Ecore_List_Node * node, Ecore_Free_Cb free_func)
 }
 
 /**
- * @brief Create and initialize a new list.
- * @return Returns a new initialized list on success, NULL on failure.
+ * @defgroup Ecore_Data_DList_Creation_Group Doubly Linked List Creation/Destruction Functions
+ *
+ * Functions used to create, initialize and destroy @c Ecore_DLists.
+ */
+
+/**
+ * Creates and initialises a new doubly linked list.
+ * @return  A new initialised doubly linked list on success, @c NULL
+ *          on failure.
+ * @ingroup Ecore_Data_DList_Creation_Group
  */
 Ecore_DList *ecore_dlist_new()
 {
@@ -1083,9 +1091,10 @@ Ecore_DList *ecore_dlist_new()
 }
 
 /**
- * @brief Initialize a list to some sane starting values.
- * @param list: the list to initialize
- * @return Returns FALSE if an error occurs, TRUE if successful
+ * Initialises a list to some sane starting values.
+ * @param   list The doubly linked list to initialise.
+ * @return  @c TRUE if successful, @c FALSE if an error occurs.
+ * @ingroup Ecore_Data_DList_Creation_Group
  */
 int ecore_dlist_init(Ecore_DList *list)
 {
@@ -1099,10 +1108,9 @@ int ecore_dlist_init(Ecore_DList *list)
 }
 
 /**
- * @brief Free a list and all of it's nodes.
- * @param list: the list to be freed
- *
- * @return Returns no value
+ * Frees a doubly linked list and all of its nodes.
+ * @param   list The doubly linked list to be freed.
+ * @ingroup Ecore_Data_DList_Creation_Group
  */
 void ecore_dlist_destroy(Ecore_DList * list)
 {
@@ -1124,10 +1132,12 @@ void ecore_dlist_destroy(Ecore_DList * list)
 }
 
 /**
- * @brief Set the function for freeing data
- * @param list: the list that will use this function when nodes are destroyed.
- * @param free_func: the function that will free the key data
- * @return Returns TRUE on success, FALSE on failure.
+ * Sets the function used for freeing data stored in a doubly linked list.
+ * @param   list      The doubly linked list that will use this function when
+ *                    nodes are destroyed.
+ * @param   free_func The function that will free the key data
+ * @return  @c TRUE on success, @c FALSE on failure.
+ * @ingroup Ecore_Data_DList_Creation_Group
  */
 int ecore_dlist_set_free_cb(Ecore_DList * list, Ecore_Free_Cb free_func)
 {
@@ -1137,10 +1147,9 @@ int ecore_dlist_set_free_cb(Ecore_DList * list, Ecore_Free_Cb free_func)
 }
 
 /**
- * @brief Checks the list for any nodes.
- * @param list: the list to check for nodes
- *
- * @return Returns TRUE if no nodes in list, FALSE if the list contains nodes
+ * Returns whether there is anything in the given doubly linked list.
+ * @param  list The given doubly linked list.
+ * @return @c TRUE if there are nodes, @c FALSE otherwise.
  */
 int ecore_dlist_is_empty(Ecore_DList * list)
 {
@@ -1150,9 +1159,9 @@ int ecore_dlist_is_empty(Ecore_DList * list)
 }
 
 /**
- * @brief Returns the number of the current node
- * @param list: the list to return the number of the current node
- * @return Returns the number of the current node in the list.
+ * Retrieves the index of the current node of the given doubly linked list.
+ * @param  list The given doubly linked list.
+ * @return The index of the current node.
  */
 inline int ecore_dlist_index(Ecore_DList * list)
 {
@@ -1162,10 +1171,17 @@ inline int ecore_dlist_index(Ecore_DList * list)
 }
 
 /**
- * Append data to the list.
- * @param list The list to append @a data
- * @param data The data to append to @a list
- * @return FALSE if an error occurs, TRUE if appended successfully
+ * @defgroup Ecore_Data_DList_Add_Item_Group Doubly Linked List Adding Functions
+ *
+ * Functions that are used to add nodes to an Ecore_DList.
+ */
+
+/**
+ * Appends data to the given doubly linked list.
+ * @param   list The given doubly linked list.
+ * @param   data The data to append.
+ * @return  @c TRUE if the data is successfully appended, @c FALSE otherwise.
+ * @ingroup Ecore_Data_DList_Add_Item_Group
  */
 int ecore_dlist_append(Ecore_DList * list, void *data)
 {
@@ -1192,10 +1208,11 @@ int ecore_dlist_append(Ecore_DList * list, void *data)
 }
 
 /**
- * Prepend data to the beginning of the list
- * @param  list The list to prepend @a data
- * @param  data The data to prepend to @a list
- * @return FALSE if an error occurs, TRUE if prepended successfully
+ * Adds data to the very beginning of the given doubly linked list.
+ * @param   list The given doubly linked list.
+ * @param   data The data to prepend.
+ * @return  @c TRUE if the data is successfully prepended, @c FALSE otherwise.
+ * @ingroup Ecore_Data_DList_Add_Item_Group
  */
 int ecore_dlist_prepend(Ecore_DList * list, void *data)
 {
@@ -1221,10 +1238,11 @@ int ecore_dlist_prepend(Ecore_DList * list, void *data)
 }
 
 /**
- * Insert data at the current point in the list.
- * @param  list The list to hold the inserted @a data.
- * @param  data The data to insert into @a list.
- * @return Returns FALSE on an error, TRUE on success
+ * Inserts data at the current point in the given doubly linked list.
+ * @param   list The given doubly linked list.
+ * @param   data The data to be inserted.
+ * @return  @c TRUE on success, @c FALSE otherwise.
+ * @ingroup Ecore_Data_DList_Add_Item_Group
  */
 int ecore_dlist_insert(Ecore_DList * list, void *data)
 {
@@ -1264,9 +1282,16 @@ int ecore_dlist_insert(Ecore_DList * list, void *data)
 }
 
 /**
- * @brief Remove the current item from the list.
- * @param list: the list to remove the current item
- * @return Returns a pointer to the removed data on success, NULL on failure.
+ * @defgroup Ecore_Data_DList_Remove_Item_Group Doubly Linked List Removing Functions
+ * 
+ * Functions that remove nodes from an @c Ecore_DList.
+ */
+
+/**
+ * Removes the current item from the given doubly linked list.
+ * @param   list The given doubly linked list.
+ * @return  A pointer to the removed data on success, @c NULL otherwise.
+ * @ingroup Ecore_Data_DList_Remove_Item_Group
  */
 void *ecore_dlist_remove(Ecore_DList * list)
 {
@@ -1291,9 +1316,10 @@ void *ecore_dlist_remove(Ecore_DList * list)
 }
 
 /**
- * @brief Remove the first item from the list.
- * @param list: the list to remove the current item
- * @return Returns a pointer to the removed data on success, NULL on failure.
+ * Removes the first item from the given doubly linked list.
+ * @param   list The given doubly linked list.
+ * @return  A pointer to the removed data on success, @c NULL on failure.
+ * @ingroup Ecore_Data_DList_Remove_Item_Group
  */
 void *ecore_dlist_remove_first(Ecore_DList * list)
 {
@@ -1309,10 +1335,11 @@ void *ecore_dlist_remove_first(Ecore_DList * list)
 }
 
 /**
- * @brief Remove and free the data at the current position
- * @param list: the list to remove the data from
- *
- * @return Returns TRUE on success, FALSE on error
+ * Removes and frees the data at the current position in the given doubly
+ * linked list.
+ * @param   list The given doubly linked list.
+ * @return  @c TRUE on success, @c FALSE otherwise.
+ * @ingroup Ecore_Data_DList_Remove_Item_Group
  */
 int ecore_dlist_remove_destroy(Ecore_DList *list)
 {
@@ -1336,9 +1363,10 @@ static void *_ecore_dlist_remove_first(Ecore_DList *list)
 }
 
 /**
- * @brief Remove the last item from the list
- * @param list: the list to remove the last node from
- * @return Returns a pointer to the removed data on success, NULL on failure.
+ * Removes the last item from the given doubly linked list.
+ * @param   list The given doubly linked list.
+ * @return  A pointer to the removed data on success, @c NULL otherwise.
+ * @ingroup Ecore_Data_DList_Remove_Item_Group
  */
 void *ecore_dlist_remove_last(Ecore_DList * list)
 {
@@ -1354,10 +1382,10 @@ void *ecore_dlist_remove_last(Ecore_DList * list)
 }
 
 /**
- * @brief Move the current item to the index number
- * @param list: the list to move the current item
- * @param index: the position to move the current item
- * @return Returns node at specified index on success, NULL on error
+ * Moves the current item to the index number in the given doubly linked list.
+ * @param  list  The given doubly linked list.
+ * @param  index The position to move the current item
+ * @return The node at specified index on success, @c NULL on error.
  */
 void *ecore_dlist_goto_index(Ecore_DList * list, int index)
 {

@@ -327,7 +327,7 @@ state.
 /**
 @defgroup Ecore_Data_List_Creation_Group List Creation/Destruction Functions
 
-Functions that create, initialize and destory Ecore_Lists.
+Functions that create, initialize and destroy Ecore_Lists.
 */
 
 /**

@@ -325,7 +325,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
  *                    It is used to generate the socket name when the socket
  *                    is a Unix socket.  It is used as the hostname when
  *                    connecting with a TCP socket.
- * @param  port       Number to identify socket to connect to.  Used when
+ * @param  port       Number to identify the socket to connect to.  Used when
  *                    generating the socket name for a Unix socket, or as the
  *                    TCP port when connecting to a TCP socket.
  * @param  data       Data to associate with the created Ecore_Con_Server
