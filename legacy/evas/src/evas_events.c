@@ -11,7 +11,7 @@ _evas_highest_object_at_point(Evas e, int x, int y)
    double cx, cy;
    
    cx = evas_screen_x_to_world(e, x);
-   cy = evas_screen_x_to_world(e, y);
+   cy = evas_screen_y_to_world(e, y);
    return evas_object_at_position(e, cx, cy);
 }
 
@@ -21,7 +21,7 @@ _evas_objects_at_point(Evas e, int x, int y)
    double cx, cy;
    
    cx = evas_screen_x_to_world(e, x);
-   cy = evas_screen_x_to_world(e, y);
+   cy = evas_screen_y_to_world(e, y);
    return evas_objects_at_position(e, cx, cy);
 }	 
 

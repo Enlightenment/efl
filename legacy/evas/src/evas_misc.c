@@ -633,14 +633,18 @@ double
 evas_screen_x_to_world(Evas e, int x)
 {
    if (!e) return 0;
-   return (double)((double)x * (e->current.viewport.w / (double)e->current.drawable_width));
-   + e->current.viewport.x;
+   return (double)((double)x * 
+		   (e->current.viewport.w / 
+		    (double)e->current.drawable_width))
+     + e->current.viewport.x;
 }
 
 double
 evas_screen_y_to_world(Evas e, int y)
 {
    if (!e) return 0;
-   return (double)((double)y * (e->current.viewport.h / (double)e->current.drawable_height));
-   + e->current.viewport.y;
+   return (double)((double)y * 
+		   (e->current.viewport.h / 
+		    (double)e->current.drawable_height))
+     + e->current.viewport.y;
 }
