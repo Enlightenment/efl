@@ -1080,3 +1080,50 @@ ecore_x_window_prop_window_type_normal_set(Ecore_X_Window win)
    ecore_x_window_prop_window_type_set(win, _ecore_x_atom_net_wm_window_type_normal);
 }
 
+/**
+ * Set the requested opacity of the window
+ * @param win The window whose opacity will be set
+ * @param opacity The opacity value to be applied to the window
+ * 
+ * This only has an effect if the Composite extension is present and
+ * a compositing manager is running. This hint is still pending approval
+ * as part of the EWMH specification. The value supplied should be an
+ * integer between 0 and 100, with 100 representing full opacity.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+void ecore_x_window_prop_window_opacity_set(Ecore_X_Window win, int opacity)
+{
+   unsigned long o_val;
+
+   o_val = (unsigned long) opacity / 100UL * 0xffffffff;
+   ecore_x_window_prop_property_set(win, _ecore_x_atom_net_wm_window_opacity,
+                                    XA_CARDINAL, 32, &o_val, 1);
+}
+
+/**
+ * Get the current opacity value of the window
+ * @param win The window whose opacity is being requested
+ * @return An int between 0 and 100 representing the window's opacity value,
+ * or -1 if the property is not found.
+ * <hr><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+ */
+int ecore_x_window_prop_window_opacity_get(Ecore_X_Window win)
+{
+   unsigned char  *data = NULL;
+   unsigned long  tmp;
+   int            ret_val = -1;
+   int            num;
+
+   if(ecore_x_window_prop_property_get(win, _ecore_x_atom_net_wm_window_opacity,
+                                       XA_CARDINAL, 32, &data, &num))
+   {
+      if (data && num)
+      {
+         tmp = *(unsigned long *) data;
+         ret_val = (int) (tmp / 0xffffffff * 100UL);
+      }
+   }
+   
+   return ret_val;
+}
+

@@ -34,6 +34,16 @@ struct _Ecore_X_Reply
    void *data;
 };
 
+typedef struct _Ecore_X_Selection_Data Ecore_X_Selection_Data;
+
+struct _Ecore_X_Selection_Data
+{
+   Window            win;
+   Atom              selection;
+   char              *data;
+   int               length;
+};
+
 typedef enum _Ecore_X_WM_Protocol {
 	/**
 	 * If enabled the window manager will be asked to send a
@@ -95,6 +105,8 @@ extern Atom     _ecore_x_atom_net_wm_window_type_utility;
 extern Atom     _ecore_x_atom_net_wm_window_type_splash;
 extern Atom     _ecore_x_atom_net_wm_window_type_dialog;
 extern Atom     _ecore_x_atom_net_wm_window_type_normal;
+
+extern Atom     _ecore_x_atom_net_wm_window_opacity;
 
 extern Atom     _ecore_x_atom_net_wm_state_modal;
 extern Atom     _ecore_x_atom_net_wm_state_sticky;

@@ -100,6 +100,8 @@ Atom     _ecore_x_atom_net_wm_state_fullscreen = 0;
 Atom     _ecore_x_atom_net_wm_state_above = 0;
 Atom     _ecore_x_atom_net_wm_state_below = 0;
 
+Atom     _ecore_x_atom_net_wm_window_opacity = 0;
+
 Atom     _ecore_x_atom_file_name = 0;
 Atom     _ecore_x_atom_string = 0;
 Atom     _ecore_x_atom_text = 0;
@@ -353,6 +355,7 @@ ecore_x_init(const char *name)
    _ecore_x_atom_net_wm_state_fullscreen     = XInternAtom(_ecore_x_disp, "_NET_WM_STATE_FULLSCREEN", False);
    _ecore_x_atom_net_wm_state_above          = XInternAtom(_ecore_x_disp, "_NET_WM_STATE_ABOVE", False);
    _ecore_x_atom_net_wm_state_below          = XInternAtom(_ecore_x_disp, "_NET_WM_STATE_BELOW", False);
+   _ecore_x_atom_net_wm_window_opacity       = XInternAtom(_ecore_x_disp, "_NET_WM_WINDOW_OPACITY", False);
 
    _ecore_x_atom_utf8_string = XInternAtom(_ecore_x_disp, "UTF8_STRING", False);
    _ecore_x_atom_file_name          = XInternAtom(_ecore_x_disp, "FILE_NAME", False);

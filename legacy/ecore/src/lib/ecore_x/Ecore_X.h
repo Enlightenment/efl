@@ -640,10 +640,11 @@ void             ecore_x_window_prop_window_type_utility_set(Ecore_X_Window win)
 void             ecore_x_window_prop_window_type_splash_set(Ecore_X_Window win);
 void             ecore_x_window_prop_window_type_dialog_set(Ecore_X_Window win);
 void             ecore_x_window_prop_window_type_normal_set(Ecore_X_Window win);
+void             ecore_x_window_prop_window_opacity_set(Ecore_X_Window win, int opacity);
+int              ecore_x_window_prop_window_opacity_get(Ecore_X_Window win);
 void             ecore_x_window_prop_state_set(Ecore_X_Window win, Ecore_X_Window_State s);
 int              ecore_x_window_prop_state_isset(Ecore_X_Window win, Ecore_X_Window_State s);
 void             ecore_x_window_prop_state_unset(Ecore_X_Window win, Ecore_X_Window_State s);
-
 void             ecore_x_window_shape_mask_set(Ecore_X_Window win, Ecore_X_Pixmap mask);
        
 Ecore_X_Pixmap   ecore_x_pixmap_new(Ecore_X_Window win, int w, int h, int dep);
