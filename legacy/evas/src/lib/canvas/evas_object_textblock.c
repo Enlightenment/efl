@@ -1051,7 +1051,10 @@ evas_object_textblock_clear(Evas_Object *obj)
    evas_object_textblock_layout_clean(obj);
    o->len = 0;
    o->pos = 0;
+   o->lines = 0;
    o->changed = 1;
+   o->native.dirty = 1;
+   o->format.dirty = 1;
    evas_object_change(obj);
 }
 
@@ -1076,7 +1079,9 @@ void
 evas_object_textblock_cursor_pos_next(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
-   
+   Node *node;
+   int ps = 0;
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -1084,13 +1089,31 @@ evas_object_textblock_cursor_pos_next(Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
    return;
    MAGIC_CHECK_END();
-   /* FIXME: DO */
+   node = evas_object_textblock_node_pos_get(obj, o->pos, &ps);
+   if (node)
+     {
+	int chr;
+	int npos;
+	
+	npos = o->pos - ps;
+	chr = evas_common_font_utf8_get_next(node->text, &npos);
+	if ((!chr) || (npos >= node->text_len))
+	  {
+	     npos = ps + node->text_len;
+	     if (node)
+	       o->pos = npos;
+	  }
+	else
+	  o->pos = npos + ps;
+     }
 }
 
 void
 evas_object_textblock_cursor_pos_prev(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
+   Node *node;
+   int ps = 0;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
@@ -1099,7 +1122,47 @@ evas_object_textblock_cursor_pos_prev(Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
    return;
    MAGIC_CHECK_END();
-   /* FIXME: DO */
+   if (o->pos == o->len)
+     {
+	if (o->nodes)
+	  {
+	     node = (Node *)(((Evas_Object_List *)o->nodes)->last);
+	     while ((node) && (!node->text))
+	       node = (Node *)(((Evas_Object_List *)node)->prev);
+	     if (node)
+	       {
+		  int npos;
+		  
+		  npos = evas_common_font_utf8_get_last(node->text, node->text_len);
+		  o->pos = o->pos - node->text_len + npos;
+	       }
+	  }
+	return;
+     }
+   node = evas_object_textblock_node_pos_get(obj, o->pos, &ps);
+   if (node)
+     {
+	int chr;
+	int npos;
+	
+	npos = o->pos - ps;
+	if (o->pos > ps)
+	  {
+	     chr = evas_common_font_utf8_get_prev(node->text, &npos);
+	     o->pos = npos + ps;
+	  }
+	else
+	  {
+	     node = (Node *)(((Evas_Object_List *)node)->prev);
+	     while ((node) && (!node->text))
+	       node = (Node *)(((Evas_Object_List *)node)->prev);
+	     if (node)
+	       {
+		  npos = evas_common_font_utf8_get_last(node->text, node->text_len);
+		  o->pos = o->pos - node->text_len + npos;
+	       }
+	  }
+     }
 }
 
 int
@@ -1315,17 +1378,20 @@ evas_object_textblock_char_pos_get(Evas_Object *obj, int pos, Evas_Coord *cx, Ev
      {
 	int ret, x = 0, y = 0, w = 0, h = 0;
 	
-	ret = ENFN->font_char_coords_get(ENDT, lnode->layout.font.font,
-					 lnode->text,
-					 pos - lnode->text_pos,
-					 &x, &y, &w, &h);
-	y = lnode->layout.line.y;
-        x += lnode->layout.line.x;
-	h = lnode->layout.line.mascent + lnode->layout.line.mdescent;
-	if (cx) *cx = x;
-        if (cy) *cy = y;
-        if (cw) *cw = w;
-        if (ch) *ch = h;
+	if (lnode->layout.font.font)
+	  {
+	     ret = ENFN->font_char_coords_get(ENDT, lnode->layout.font.font,
+					      lnode->text,
+					      pos - lnode->text_pos,
+					      &x, &y, &w, &h);
+	     y = lnode->layout.line.y;
+	     x += lnode->layout.line.x;
+	     h = lnode->layout.line.mascent + lnode->layout.line.mdescent;
+	     if (cx) *cx = x;
+	     if (cy) *cy = y;
+	     if (cw) *cw = w;
+	     if (ch) *ch = h;
+	  }
      }
 }
 
@@ -1361,42 +1427,46 @@ evas_object_textblock_char_coords_get(Evas_Object *obj, Evas_Coord x, Evas_Coord
 	  {
 	     int ret, rx = 0, ry = 0, rw = 0, rh = 0;
 	     
-	     ret = ENFN->font_char_at_coords_get(ENDT, lnode->layout.font.font,
-						 lnode->text,
-						 x - lnode->layout.line.x,
-						 0,
-						 &rx, &ry, &rw, &rh);
-	     if (ret < 0)
+	     if (lnode->layout.font.font)
 	       {
-		  if ((x - lnode->layout.line.x) <
-		      (lnode->layout.line.advance / 2))
+		  ret = ENFN->font_char_at_coords_get(ENDT, lnode->layout.font.font,
+						      lnode->text,
+						      x - lnode->layout.line.x,
+						      0,
+						      &rx, &ry, &rw, &rh);
+		  if (ret < 0)
 		    {
-		       ret = ENFN->font_char_coords_get(ENDT, lnode->layout.font.font,
-							lnode->text,
-							0,
-							&rx, &ry, &rw, &rh);
-		       ret = 0;
+		       if ((x - lnode->layout.line.x) <
+			   (lnode->layout.line.advance / 2))
+			 {
+			    ret = ENFN->font_char_coords_get(ENDT, lnode->layout.font.font,
+							     lnode->text,
+							     0,
+							     &rx, &ry, &rw, &rh);
+			    ret = 0;
+			 }
+		       else
+			 {
+			    int pos;
+			    
+			    pos = evas_common_font_utf8_get_last(lnode->text, lnode->text_len);
+			    ret = ENFN->font_char_coords_get(ENDT, lnode->layout.font.font,
+							     lnode->text,
+							     pos,
+							     &rx, &ry, &rw, &rh);
+			    ret = pos;
+			 }
 		    }
-		  else
-		    {
-		       int pos;
-		       
-		       pos = evas_common_font_utf8_get_last(lnode->text, lnode->text_len);
-		       ret = ENFN->font_char_coords_get(ENDT, lnode->layout.font.font,
-							lnode->text,
-							pos,
-							&rx, &ry, &rw, &rh);
-		       ret = pos;
-		    }
+		  ry = lnode->layout.line.y;
+		  rx += lnode->layout.line.x;
+		  rh = lnode->layout.line.mascent + lnode->layout.line.mdescent;
+		  if (cx) *cx = rx;
+		  if (cy) *cy = ry;
+		  if (cw) *cw = rw;
+		  if (ch) *ch = rh;
+		  return ret + lnode->text_pos;
 	       }
-	     ry = lnode->layout.line.y;
-	     rx += lnode->layout.line.x;
-	     rh = lnode->layout.line.mascent + lnode->layout.line.mdescent;
-	     if (cx) *cx = rx;
-	     if (cy) *cy = ry;
-	     if (cw) *cw = rw;
-	     if (ch) *ch = rh;
-	     return ret + lnode->text_pos;
+	     return -1;
 	  }
      }
    return -1;
@@ -1815,7 +1885,7 @@ evas_object_textblock_format_direction_set(Evas_Object *obj, Evas_Format_Directi
    return;
    MAGIC_CHECK_END();
    if (o->format_dir == dir) return;
-   /* FIXME: DO */
+   /* FIXME: DOES NOTHING YET - FUTURE FEATRUE */
    o->native.dirty = 1;
    o->format.dirty = 1;
    o->changed = 1;
