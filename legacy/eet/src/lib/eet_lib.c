@@ -926,6 +926,7 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
 		  ef->header->directory->hash[hash].node[i].data_size = size;
 		  ef->header->directory->hash[hash].node[i].data = data2;
 		  exists_already = 1;
+		  free(name2);
 		  break;
 	       }
 	  }
