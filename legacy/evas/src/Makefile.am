@@ -20,7 +20,7 @@ CFLAGS_TTF    = @ttf_includes@
 CFLAGS_EXTRA  = -I$(includedir) -I$(top_srcdir) -I/usr/local/include
 
 LIBS_ALL      = $(LIBS_X) $(LIBS_IMLIB2) $(LIBS_GL) $(LIBS_TTF) $(LIBS_EXTRA)
-CFLGAS_ALL    = $(CFLAGS_X) $(CFLAGS_IMLIB2) $(CFLAGS_GL) $(CFLAGS_TTF) $(CFLAGS_EXTRA)
+CFLAGS_ALL    = $(CFLAGS_X) $(CFLAGS_IMLIB2) $(CFLAGS_GL) $(CFLAGS_TTF) $(CFLAGS_EXTRA)
 
 INCLUDES	     = $(CFLAGS_ALL) \
 		       -DLIBDIR=\"$(libdir)\" \
