@@ -5,7 +5,6 @@ INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore_ipc \
 -I$(top_srcdir)/ @evas_cflags@ @edb_cflags@
 
-DB = system.db
 CLEANFILES = $(DB)
 
 libecore_config_la_LDFLAGS = -version-info 1:0:0 \
@@ -15,6 +14,12 @@ ecore_config_ipc_ecore_la_LDFLAGS          = -no-undefined -module \
 -avoid-version -rdynamic -shared
 
 if BUILD_ECORE_CONFIG
+
+DB = system.db
+$(DB): Makefile
+	edb_ed $(top_builddir)/src/lib/ecore_config/$(DB) add /e/theme/name str "winter"
+	edb_ed $(top_builddir)/src/lib/ecore_config/$(DB) add /apps/web/browser str `which firefox 2>/dev/null || which phoenix 2>/dev/null || which mozilla 2>/dev/null || which opera 2>/dev/null || which konqueror 2>/dev/null || which epiphany 2>/dev/null`
+	edb_ed $(top_builddir)/src/lib/ecore_config/$(DB) add /apps/web/email str `which thunderbird 2>/dev/null || which mozilla 2>/dev/null || which kmail 2>/dev/null || which sylpheed 2>/dev/null || which evolution 2>/dev/null`
 
 lib_LTLIBRARIES = libecore_config.la ecore_config_ipc_ecore.la
 include_HEADERS = \
@@ -53,9 +58,6 @@ libecore_config.la \
 @edb_libs@ \
 @evas_libs@
 
-$(DB):
-	sh $(top_srcdir)/src/lib/ecore_config/build_$(DB).sh
-
 endif
 
 EXTRA_DIST = \
@@ -66,6 +68,5 @@ ipc_ecore.c \
 ipc.h \
 util.c \
 util.h \
-edb.c \
-build_system.db.sh
+edb.c
 
