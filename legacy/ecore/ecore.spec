@@ -1,6 +1,6 @@
 # this is NOT relocatable, unless you alter the patch!
 %define	name	ecore
-%define	ver	1.0.0_pre6
+%define	ver	1.0.0_pre7
 %define	rel	1
 %define prefix  /usr
 
