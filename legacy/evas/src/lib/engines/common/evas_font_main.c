@@ -102,7 +102,7 @@ evas_common_font_utf8_get_next(unsigned char *buf, int *iindex)
     * 
     * Returns 0 to indicate an error (e.g. invalid UTF8)
     */   
-   int index = *iindex, r, istart = *iindex;
+   int index = *iindex, r;
    unsigned char d, d2, d3, d4;
    
    d = buf[index++];

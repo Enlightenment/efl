@@ -317,6 +317,8 @@ evas_object_textblock_layout_format_apply(Layout *layout, Layout_Command *comman
 	if (data[0] == '#')
 	  {
 	     int r, g, b, a;
+
+	     r = g = b = a = 0;
 	     
 	     if (strlen(data) == 7) /* #RRGGBB */
 	       {
@@ -708,7 +710,7 @@ evas_object_textblock_format_parse(const char *format)
    int inquote = 0, inescape = 0;
    Evas_List *params = NULL;
    
-   if (!format) return;
+   if (!format) return NULL;
    p = format - 1;
    do
      {
@@ -1240,12 +1242,12 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 	  }
 	else if (node->text)
 	  {
-	     int inset = 0, hadvance = 0, vadvance = 0;
+	     int inset = 0, hadvance = 0;
 	     int ascent = 0, descent = 0, tw = 0, th = 0;
-	     int chrpos = -1, nchrpos = -1, x, y, cx, cy, cw, ch;
+	     int chrpos = -1, nchrpos = -1, cx, cy, cw, ch;
 	     void *font = NULL;
 	     char *text;
-	     int adj, lastnode;
+	     int adj;
 	     int srcpos = 0;
 
 	     text = strdup(node->text);
@@ -1523,7 +1525,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 	       }
 	  }
      }
-   breakout:
+   /*breakout:*/
    evas_object_textblock_layout_clear(obj, &layout);
    *line_count = last_line + 1;
    fw += pad_r;
@@ -1576,7 +1578,6 @@ static void
 evas_object_textblock_native_calc(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
-   Layout layout;
    int fw = 0, fh = 0, lines = 0;
    Layout_Node *lnodes;
    
@@ -1644,6 +1645,8 @@ evas_object_textblock_layout_node_pos_get(Evas_Object *obj, int pos, int *pstart
    return NULL;
 }
 
+/* unused */
+#if 0
 static Layout_Node *
 evas_object_textblock_layout_node_line_get(Evas_Object *obj, int line)
 {
@@ -1667,6 +1670,7 @@ evas_object_textblock_layout_node_line_get(Evas_Object *obj, int line)
      }
    return NULL;
 }
+#endif
 
 /* private methods for textblock objects */
 static void evas_object_textblock_init(Evas_Object *obj);
@@ -2083,7 +2087,6 @@ evas_object_textblock_char_coords_get(Evas_Object *obj, Evas_Coord x, Evas_Coord
 {
    Evas_Object_Textblock *o;
    Layout_Node *lnode;
-   int ps;
    Evas_Object_List *l;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -2853,7 +2856,7 @@ evas_object_textblock_current_format_get(Evas_Object *obj)
 #define CHECK_COL(str, col) \
 	if (lnode->layout.col.a > 0) \
 	  { \
-	     snprintf(tbuf, sizeof(tbuf), "#02x02x02x02x", lnode->layout.col.r, lnode->layout.col.g, lnode->layout.col.b, lnode->layout.col.a); \
+	     snprintf(tbuf, sizeof(tbuf), "#%02x%02x%02x%02x", lnode->layout.col.r, lnode->layout.col.g, lnode->layout.col.b, lnode->layout.col.a); \
 	     sz += strlen(str"=") + strlen(tbuf) + 1; \
 	  }
 	/* FIXME: we dont handle any strings with a space in them */
@@ -2898,7 +2901,7 @@ evas_object_textblock_current_format_get(Evas_Object *obj)
 	  { \
              if (buf[0] != 0) strcat(buf, " "); \
 	     strcat(buf, str"="); \
-	     snprintf(tbuf, sizeof(tbuf), "#02x02x02x02x", lnode->layout.col.r, lnode->layout.col.g, lnode->layout.col.b, lnode->layout.col.a); \
+	     snprintf(tbuf, sizeof(tbuf), "#%02x%02x%02x%02x", lnode->layout.col.r, lnode->layout.col.g, lnode->layout.col.b, lnode->layout.col.a); \
 	     strcat(buf, tbuf); \
 	  }
 	
@@ -3109,7 +3112,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 {
    Evas_Object_Textblock *o;
    Evas_Object_List *l;
-   int pbackx;
+   int pbackx = 0;
    int i, j;
    const char vals[5][5] =
      {

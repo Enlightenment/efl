@@ -4,7 +4,7 @@ FILES = Vera.ttf VeraBI.ttf VeraBd.ttf VeraIt.ttf VeraMoBI.ttf VeraMoBd.ttf \
         panel_shadow.png panel_top.png \
         t1.png t2.png test_pattern.png
 
-miscdir = $(pkgdatadir)/data
+miscdir = $(pkgdatadir)
 misc_DATA = $(FILES)
 
 EXTRA_DIST = $(FILES)

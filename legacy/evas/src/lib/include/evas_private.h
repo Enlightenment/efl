@@ -2,7 +2,9 @@
 #define EVAS_PRIVATE_H
 #endif
 
+#ifndef _GNU_SOURCE
 #define _GNU_SOURCE
+#endif
 
 /* complain when peole pass in wrong object types etc. */
 #define MAGIC_DEBUG

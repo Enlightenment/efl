@@ -110,7 +110,7 @@ int main( int argc, char *argv[] )
           desc.flags = DFDESC_HEIGHT;
           desc.height = layer_config.width/50;
 
-          DFBCHECK(dfb->CreateFont( dfb, PACKAGE_DATA_DIR"/data/grunge.ttf", &desc, &font ));
+          DFBCHECK(dfb->CreateFont( dfb, PACKAGE_DATA_DIR"/grunge.ttf", &desc, &font ));
           font->GetHeight( font, &fontheight );
      }
 
@@ -118,7 +118,7 @@ int main( int argc, char *argv[] )
           DFBSurfaceDescription desc;
 
           DFBCHECK(dfb->CreateImageProvider( dfb,
-                                             PACKAGE_DATA_DIR"/data/bg.png",
+                                             PACKAGE_DATA_DIR"/bg.png",
                                              &provider ));
 
           desc.flags = DSDESC_WIDTH | DSDESC_HEIGHT;

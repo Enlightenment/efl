@@ -10,13 +10,13 @@
 
 #ifndef _WIN32_WCE
 
-# define IM PACKAGE_DATA_DIR"/data/"
-# define FN PACKAGE_DATA_DIR"/data/"
+# define IM PACKAGE_DATA_DIR"/"
+# define FN PACKAGE_DATA_DIR"/"
 
 #else
 
-# define IM PACKAGE_DATA_DIR"\\data\\"
-# define FN PACKAGE_DATA_DIR"\\data\\"
+# define IM PACKAGE_DATA_DIR"\\"
+# define FN PACKAGE_DATA_DIR"\\"
 wchar_t buf[1024];
 
 #endif
