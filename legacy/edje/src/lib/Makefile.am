@@ -16,12 +16,10 @@ INCLUDES	     = \
 @edje_def@
 
 lib_LTLIBRARIES      = \
-libedje.la \
-libedje_edit.la
+libedje.la 
 
 include_HEADERS      =  \
-Edje.h \
-Edje_Edit.h
+Edje.h 
 
 libedje_la_SOURCES  = \
 edje_calc.c \
@@ -46,8 +44,3 @@ libedje_la_CPPFLAGS     =
 libedje_la_DEPENDENCIES = $(top_builddir)/config.h
 libedje_la_LDFLAGS      = $(LDFLAGS) -version-info 5:0:5
 
-libedje_edit_la_SOURCES  = edje_edit.c
-
-libedje_edit_la_LIBADD       = -lm @EVAS_LIBS@ @ECORE_LIBS@ @EET_LIBS@ @EMBRYO_LIBS@ $(top_builddir)/src/lib/libedje.la
-libedje_edit_la_DEPENDENCIES = $(top_builddir)/config.h libedje.la
-libedje_edit_la_LDFLAGS      = $(LDFLAGS) -version-info 5:0:5
