@@ -123,10 +123,10 @@ next_token(char *p, char *end, char **new_p, int *delim)
 		       if (!isspace(*p))
 			 {
 			    if (*p == '"')
-			 {
-			    in_quote = 1;
-			    had_quote = 1;
-			 }
+			      {
+				 in_quote = 1;
+				 had_quote = 1;
+			      }
 			    in_tok = 1;
 			    tok_start = p;
 			    if (isdelim(*p)) *delim = 1;
@@ -138,10 +138,10 @@ next_token(char *p, char *end, char **new_p, int *delim)
 		  if (in_quote)
 		    {
 		       if (((*p) == '"') && (*(p - 1) != '\\'))
-		    {
-		       in_quote = 0;
-		       had_quote = 1;
-		    }
+			 {
+			    in_quote = 0;
+			    had_quote = 1;
+			 }
 		    }
 		  else
 		    {
@@ -193,7 +193,8 @@ next_token(char *p, char *end, char **new_p, int *delim)
 	       strcpy(p, p + 1);
 	     else if ((*p == '\\') && (*(p + 1) == '\\'))
 	       strcpy(p, p + 1);
-	     p++;
+	     else
+	       p++;
 	  }
      }
    return tok;

@@ -340,8 +340,8 @@ collections {
 	 }
 	 program {
 	    name,       "logo_animate";
-	    signal,     "load";
-	    source,     "test";
+	    signal,     "show";
+	    source,     "";
 	    action,     STATE_SET "default" 0.0;
 	    transition, LINEAR, 4.0;
 	    target,     "logo_anim";

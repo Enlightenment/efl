@@ -292,6 +292,8 @@ struct _Edje_Part_Description
 typedef struct _Edje Edje;
 typedef struct _Edje_Real_Part Edje_Real_Part;
 typedef struct _Edje_Running_Program Edje_Running_Program;
+typedef struct _Edje_Calc_Params Edje_Calc_Params;
+typedef struct _Edje_Emission Edje_Emission;
 
 struct _Edje
 {
@@ -340,8 +342,6 @@ struct _Edje_Running_Program
    double          start_time;
 };
 
-typedef struct _Edje_Calc_Params Edje_Calc_Params;
-
 struct _Edje_Calc_Params
 {
    double           x, y, w, h;
@@ -355,6 +355,12 @@ struct _Edje_Calc_Params
    struct {   
       int           l, r, t, b;
    } border;
+};
+
+struct _Edje_Emission
+{
+   char *signal;
+   char *source;
 };
 
 extern Eet_Data_Descriptor *_edje_edd_edje_file;

@@ -58,6 +58,8 @@ static int          _edje_anim_count = 0;
 static double       _edje_frametime = 1.0 / 60.0;
 static Ecore_Timer *_edje_timer = NULL;
 static Evas_List   *_edje_animators = NULL;
+static Evas_Hash   *_edje_file_hash = NULL;
+
 
 static Evas_Smart *_edje_smart = NULL;
 
@@ -198,7 +200,7 @@ edje_file_set(Evas_Object *obj, const char *file, const char *part)
 	  }
 	ed->dirty = 1;
 	_edje_recalc(ed);
-	_edje_emit(ed, "load", ed->part);
+	_edje_emit(ed, "load", "");
      }
 }
 
@@ -244,8 +246,6 @@ _edje_del(Edje *ed)
    evas_object_del(ed->clipper);
    free(ed);
 }
-
-static Evas_Hash *_edje_file_hash = NULL;
 
 void
 _edje_file_add(Edje *ed)
@@ -619,16 +619,38 @@ static void
 _edje_emit(Edje *ed, char *sig, char *src)
 {
    Evas_List *l;
-   
-   printf("EMIT %s %s\n", sig, src);
-   for (l = ed->collection->programs; l; l = l->next)
+   static Evas_List *emissions = NULL;
+   Edje_Emission *ee;
+
+   printf("EMIT \"%s\" \"%s\"\n", sig, src);
+   ee = calloc(1, sizeof(Edje_Emission));
+   if (!ee) return;
+   ee->signal = strdup(sig);
+   ee->source = strdup(src);
+   if (emissions)
      {
-	Edje_Program *pr;
-	
-	pr = l->data;
-	if ((_edje_glob_match(sig, pr->signal)) &&
-	    (_edje_glob_match(src, pr->source)))
-	  _edje_program_run(ed, pr);
+	emissions = evas_list_append(emissions, ee);
+	return;
+     }
+   else
+     emissions = evas_list_append(emissions, ee);
+   while (emissions)
+     {
+	ee = emissions->data;
+	printf("  emission \"%s\" \"%s\"\n", ee->signal, ee->source);
+	emissions = evas_list_remove(emissions, ee);
+	for (l = ed->collection->programs; l; l = l->next)
+	  {
+	     Edje_Program *pr;
+	     
+	     pr = l->data;
+	     if ((_edje_glob_match(ee->signal, pr->signal)) &&
+		 (_edje_glob_match(ee->source, pr->source)))
+	       _edje_program_run(ed, pr);
+	  }
+	free(ee->signal);
+	free(ee->source);
+	free(ee);
      }
 }
 
@@ -1468,7 +1490,8 @@ _edje_smart_layer_set(Evas_Object * obj, int layer)
 {
    Edje *ed;
    Evas_List *l;
-
+   char buf[256];
+   
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
    if (ed->layer == layer) return;
@@ -1480,6 +1503,8 @@ _edje_smart_layer_set(Evas_Object * obj, int layer)
 	ep = l->data;
 	evas_object_layer_set(ep->object, ed->layer);
      }
+   snprintf(buf, sizeof(buf), "layer,set,%i", layer);
+   _edje_emit(ed, buf, "");
 }
 
 static void
@@ -1497,6 +1522,7 @@ _edje_smart_raise(Evas_Object * obj)
 	ep = l->data;
 	evas_object_raise(ep->object);
      }
+   _edje_emit(ed, "raise", "");
 }
 
 static void
@@ -1514,6 +1540,7 @@ _edje_smart_lower(Evas_Object * obj)
 	ep = l->data;
 	evas_object_lower(ep->object);
      }
+   _edje_emit(ed, "lower", "");
 }
 
 static void 
@@ -1531,6 +1558,7 @@ _edje_smart_stack_above(Evas_Object * obj, Evas_Object * above)
 	ep = l->data;
 	evas_object_stack_above(ep->object, above);
      }
+   _edje_emit(ed, "stack_above", "");
 }
 
 static void
@@ -1548,6 +1576,7 @@ _edje_smart_stack_below(Evas_Object * obj, Evas_Object * below)
 	ep = l->data;
 	evas_object_stack_below(ep->object, below);
      }
+   _edje_emit(ed, "stack_below", "");
 }
 
 static void 
@@ -1555,12 +1584,13 @@ _edje_smart_move(Evas_Object * obj, double x, double y)
 {
    Edje *ed;
    Evas_List *l;
+   double xx, yy;
    
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
+   if ((ed->x == x) && (ed->y == y)) return;
    ed->x = x;
    ed->y = y;
-
    evas_object_move(ed->clipper, ed->x, ed->y);
    
    for (l = ed->parts; l; l = l->next)
@@ -1570,6 +1600,7 @@ _edje_smart_move(Evas_Object * obj, double x, double y)
 	ep = l->data;
 	evas_object_move(ep->object, ed->x + ep->x, ed->y + ep->y);
      }
+   _edje_emit(ed, "move", "");
 }
 
 static void 
@@ -1588,6 +1619,7 @@ _edje_smart_resize(Evas_Object * obj, double w, double h)
    evas_object_resize(ed->clipper, ed->w, ed->h);
    ed->dirty = 1;
    _edje_recalc(ed);
+   _edje_emit(ed, "resize", "");
 }
 
 static void 
@@ -1598,6 +1630,7 @@ _edje_smart_show(Evas_Object * obj)
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
    evas_object_show(ed->clipper);
+   _edje_emit(ed, "show", "");
 }
 
 static void 
@@ -1608,6 +1641,7 @@ _edje_smart_hide(Evas_Object * obj)
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
    evas_object_hide(ed->clipper);
+   _edje_emit(ed, "hide", "");
 }
 
 static void 
@@ -1618,6 +1652,7 @@ _edje_smart_color_set(Evas_Object * obj, int r, int g, int b, int a)
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
    evas_object_color_set(ed->clipper, r, g, b, a);
+   _edje_emit(ed, "color_set", "");
 }
 
 static void 
@@ -1627,7 +1662,9 @@ _edje_smart_clip_set(Evas_Object * obj, Evas_Object * clip)
 
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
+   if (evas_object_clip_get(obj) == clip) return;
    evas_object_clip_set(ed->clipper, clip);
+   _edje_emit(ed, "clip_set", "");
 }
 
 static void 
@@ -1637,5 +1674,7 @@ _edje_smart_clip_unset(Evas_Object * obj)
 
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
+   if (!evas_object_clip_get(obj)) return;
    evas_object_clip_unset(ed->clipper);
+   _edje_emit(ed, "clip_unset", "");
 }
