@@ -16,6 +16,6 @@ libemotion_la_SOURCES  = \
 emotion_smart.c \
 emotion_private.h
 
-libemotion_la_LIBADD       = $(LDFLAGS) @my_libs@ -ldl
+libemotion_la_LIBADD       = $(LDFLAGS) @my_libs@ @dlopen_libs@
 libemotion_la_DEPENDENCIES = $(top_builddir)/config.h
 libemotion_la_LDFLAGS      = -version-info 0:1:0

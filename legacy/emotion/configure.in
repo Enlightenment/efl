@@ -161,6 +161,9 @@ AC_SUBST(xine_cflags)
 AC_SUBST(xine_libs)
 AC_SUBST(xine_plugins)
 
+AC_CHECK_LIB(dl, dlopen, dlopen_libs=-ldl)
+AC_SUBST(dlopen_libs)
+
 AC_OUTPUT([
 Makefile
 src/Makefile
