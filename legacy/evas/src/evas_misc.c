@@ -113,8 +113,14 @@ evas_new(void)
    e->current.viewport.y = 0.0;
    e->current.viewport.w = 1.0;
    e->current.viewport.h = 1.0;
+   e->previous.viewport.x = 0.0;
+   e->previous.viewport.y = 0.0;
+   e->previous.viewport.w = 1.0;
+   e->previous.viewport.h = 1.0;
    e->current.drawable_width = 1;
    e->current.drawable_height = 1;
+   e->previous.drawable_width = 1;
+   e->previous.drawable_height = 1;
    e->current.render_method = RENDER_METHOD_ALPHA_SOFTWARE;
    e->current.colors = 216;
    return e;
