@@ -13,6 +13,7 @@ typedef int                                Evas_Callback_Type;
 typedef int                                Evas_Image_Format;
 typedef int                                Evas_Blend_Mode;
 typedef int                                Evas_Render_Method;
+typedef struct _Evas_Render_Data *         Evas_Render_Data;
 typedef struct _Evas_List *                Evas_List;
 typedef struct _Evas_Layer *               Evas_Layer;
 typedef struct _Evas_Color_Point *         Evas_Color_Point;
@@ -30,6 +31,7 @@ typedef struct _Evas_Object_Evas *         Evas_Object_Evas;
 #define RENDER_METHOD_BASIC_HARDWARE    1
 #define RENDER_METHOD_3D_HARDWARE       2
 #define RENDER_METHOD_ALPHA_HARDWARE    3
+#define RENDER_METHOD_COUNT             4
 
 #define CALLBACK_MOUSE_IN   0
 #define CALLBACK_MOUSE_OUT  1
@@ -72,15 +74,20 @@ struct _Evas
       
       Evas_Render_Method render_method;
       
-      void      *renderer_data;
+      Evas_Render_Data renderer_data;
       
    } current, previous;
 
-   void (*object_render_data_free) (Evas _e, Evas_Object _o);
-   void (*evas_render_data_free) (Evas _e);
+   void (*object_renderer_data_free) (Evas _e, Evas_Object _o);
+   void (*evas_renderer_data_free) (Evas _e);
    
    Evas_List     layers;
    Evas_List     updates;
+};
+
+struct _Evas_Render_Data
+{
+   void *method[RENDER_METHOD_COUNT];
 };
 
 struct _Evas_Color_Point
@@ -114,7 +121,7 @@ struct _Evas_Layer
       int        store;
    } current, previous;
    
-   void      *renderer_data;
+   Evas_Render_Data renderer_data;
 };
 
 struct _Evas_Callback

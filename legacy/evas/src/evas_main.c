@@ -4,6 +4,8 @@
 #include <unistd.h>
 #include <string.h>
 
+#if 0
+
 /* create and destroy */
 Evas
 evas_new(void)
@@ -116,8 +118,9 @@ evas_del_object(Evas e, Evas_Object o)
 	if (layer->layer == o->current.layer)
 	  {
 	     layer->objects = evas_list_remove(layer->objects, o);
+	     e->object_renderer_data_free(e, o);
 	     o->object_free(o);
-	     e->object_render_data_free(e, o);
+	     return;
 	  }
      }
 }
@@ -505,3 +508,4 @@ evas_list_free(Evas_List list)
    return NULL;
 }
 
+#endif 
