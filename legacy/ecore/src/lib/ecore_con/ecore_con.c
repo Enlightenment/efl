@@ -273,7 +273,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 			 const void *data)
 {
    Ecore_Con_Server   *svr;
-   Ecore_Con_Type      type = compl_type & ~ECORE_CON_USE_SSL;
+   Ecore_Con_Type      type = compl_type;
    struct sockaddr_un  socket_unix;
    struct sockaddr_in  socket_addr;
    int                 curstate = 0;
@@ -286,7 +286,12 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    /* remote system socket: TCP/IP: [name]:[port] */
    svr = calloc(1, sizeof(Ecore_Con_Server));
    if (!svr) return NULL;
-   
+
+#if USE_OPENSSL
+   /* unset the SSL flag for the following checks */
+   type &= ~ECORE_CON_USE_SSL;
+#endif
+
    if ((type == ECORE_CON_LOCAL_USER) ||
        (type == ECORE_CON_LOCAL_SYSTEM))
      {
