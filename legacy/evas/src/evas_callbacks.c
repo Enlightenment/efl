@@ -12,6 +12,7 @@ _evas_callback_call(Evas e, Evas_Object o, Evas_Callback_Type callback,
    Evas_List l;
    static in_cb = 0;
    
+   if(!o) return;
    if (in_cb) return;
    in_cb = 1;
    if (o->callbacks)
