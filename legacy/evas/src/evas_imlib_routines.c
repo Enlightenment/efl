@@ -1,14 +1,8 @@
-
-
-
 #include "evas_imlib_routines.h"
 
 static void __evas_imlib_image_cache_flush(Display *disp);
-static void __evas_imlib_image_cache_clean(void);
 static Evas_Imlib_Image *__evas_imlib_image_cache_find(char *file);
 static int  __evas_anti_alias = 1;
-static int  __evas_image_cache = 8 * 1024 * 1024;
-static int  __evas_image_cache_used = 0;
 static Evas_List drawable_list = NULL;
 
 static Evas_List images = NULL;
@@ -31,76 +25,11 @@ static int       __evas_clip_a          = 0;
 static void
 __evas_imlib_image_cache_flush(Display *disp)
 {
-   __evas_imlib_image_cache_empty(disp);
-}
-
-static void
-__evas_imlib_image_cache_clean(void)
-{
-   while (__evas_image_cache_used > __evas_image_cache)
-     {
-	Evas_Imlib_Image *last;
-	Evas_List l;
-	
-	for (l = images; l; l = l->next)
-	  {
-	     Evas_Imlib_Image *im;
-	     
-	     im = l->data;
-	     if (im->references == 0)
-	       last = l->data;
-	  }
-	images = evas_list_remove(images, last);
-	imlib_context_set_image(last->image);
-	__evas_image_cache_used -= 
-	  imlib_image_get_width() * 
-	  imlib_image_get_height() * 4;	
-	imlib_free_image();
-	if (last->scaled.image)
-	  {
-	     imlib_context_set_image(last->scaled.image);
-	     __evas_image_cache_used -= 
-	       imlib_image_get_width() * 
-	       imlib_image_get_height() * 4;	
-	     imlib_free_image_and_decache();
-	  }
-	free(last->file);
-	free(last);
-     }
-}
-
-static Evas_Imlib_Image *
-__evas_imlib_image_cache_find(char *file)
-{
-   Evas_Imlib_Image *im;
-   Evas_List l;
+   int size;
    
-   for (l = images; l; l = l->next)
-     {
-	im = l->data;
-	if (!strcmp(im->file, file))
-	  {
-	     im->references++;
-	     images = evas_list_remove(images, im);
-	     images = evas_list_prepend(images, im);
-	     imlib_context_set_image(im->image);
-	     if (im->references == 1)
-	       {
-		  __evas_image_cache_used -=
-		    imlib_image_get_width() *
-		    imlib_image_get_height() * 4;
-		  if (im->scaled.image)
-		    {
-		       imlib_context_set_image(im->scaled.image);
-		       __evas_image_cache_used -= 
-			 imlib_image_get_width() * 
-			 imlib_image_get_height() * 4;	
-		    }
-	       }
-	     return im;
-	  }
-     }
-   return NULL;
+   size = imlib_get_cache_size();
+   imlib_set_cache_size(0);
+   imlib_set_cache_size(size);
 }
 
 /*****************************************************************************/
@@ -125,7 +54,7 @@ __evas_imlib_image_new_from_file(Display *disp, char *file)
    im->scaled.image = NULL;
    im->scaled.usage = 0;
    im->references = 1;
-   images = evas_list_prepend(images, im);   
+/*   images = evas_list_prepend(images, im); */
    return im;
 }
 
@@ -135,18 +64,16 @@ __evas_imlib_image_free(Evas_Imlib_Image *im)
    im->references--;
    if (im->references == 0)
      {
+/*        images = evas_list_remove(images, im);*/
 	imlib_context_set_image(im->image);
-	__evas_image_cache_used += 
-	  imlib_image_get_width() * 
-	  imlib_image_get_height() * 4;
+	imlib_free_image();
 	if (im->scaled.image)
 	  {
 	     imlib_context_set_image(im->scaled.image);
-	     __evas_image_cache_used +=
-	       imlib_image_get_width() * 
-	       imlib_image_get_height() * 4;	
+	     imlib_free_image_and_decache();
 	  }
-	__evas_imlib_image_cache_clean();
+	free(im->file);
+	free(im);
      }
 }
 
@@ -154,24 +81,22 @@ void
 __evas_imlib_image_cache_empty(Display *disp)
 {
    int size;
-   
-   size = __evas_image_cache;
-   __evas_image_cache = 0;
-   __evas_imlib_image_cache_clean();
-   __evas_image_cache = size;
+
+   size = imlib_get_cache_size();
+   imlib_set_cache_size(0);
+   imlib_set_cache_size(size);
 }
 
 void
 __evas_imlib_image_cache_set_size(Display *disp, int size)
 {
-   __evas_image_cache = size;
-   __evas_imlib_image_cache_clean();
+   imlib_set_cache_size(size);
 }
 
 int
 __evas_imlib_image_cache_get_size(Display *disp)
 {
-   return __evas_image_cache;
+   return imlib_get_cache_size();
 }
 
 void
