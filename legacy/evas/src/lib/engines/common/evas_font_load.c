@@ -175,9 +175,11 @@ evas_common_font_size_use(RGBA_Font *fn)
 	RGBA_Font_Int *fi;
 	
 	fi = l->data;
-	if (fi->src->current_size == fi->size) return;
-	FT_Activate_Size(fi->ft.size);
-	fi->src->current_size = fi->size;
+	if (fi->src->current_size != fi->size)
+	  {
+	     FT_Activate_Size(fi->ft.size);
+	     fi->src->current_size = fi->size;
+	  }
      }
 }
 
