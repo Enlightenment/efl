@@ -1143,7 +1143,7 @@ ecore_event_x_handle_client_message(XEvent * xevent)
       e->w = (xevent->xclient.data.l[3] >> 16) & 0xffff;
       e->h = xevent->xclient.data.l[3] & 0xffff;
 
-      e->copy = e->link = e->move = e->private = 0;
+      e->copy = e->link = e->move = e->e_private = 0;
       if( xevent->xclient.data.l[4] == atom_xdndactioncopy )
 	e->copy = 1;
       else if( xevent->xclient.data.l[4] == atom_xdndactionlink )
@@ -1151,7 +1151,7 @@ ecore_event_x_handle_client_message(XEvent * xevent)
       else if( xevent->xclient.data.l[4] == atom_xdndactionmove )
 	e->move = 1;
       else if( xevent->xclient.data.l[4] == atom_xdndactionprivate )
-	e->private = 1;
+	e->e_private = 1;
 
       if (xevent->xclient.data.l[1] & 0x1)
 	e->ok = 1;

@@ -457,7 +457,7 @@ extern              "C"
   {
     Window              win, root, source_win;
     int                 x, y, w, h;
-    int                 copy, link, move, private;
+    int                 copy, link, move, e_private;
     int                 all_position_msgs;
     int                 ok;
   } Ecore_Event_Dnd_Drop_Status;
