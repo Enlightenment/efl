@@ -49,6 +49,7 @@ Atom     _ecore_x_atom_selection_prop_clipboard = 0;
  */
 Atom     _ecore_x_atom_net_supported = 0;
 Atom     _ecore_x_atom_net_client_list = 0;
+Atom     _ecore_x_atom_net_client_list_stacking = 0;
 Atom     _ecore_x_atom_net_number_of_desktops = 0;
 Atom     _ecore_x_atom_net_desktop_geometry = 0;
 Atom     _ecore_x_atom_net_desktop_viewport = 0;
@@ -60,6 +61,12 @@ Atom     _ecore_x_atom_net_supporting_wm_check = 0;
 Atom     _ecore_x_atom_net_virtual_roots = 0;
 Atom     _ecore_x_atom_net_desktop_layout = 0;
 Atom     _ecore_x_atom_net_showing_desktop = 0;
+
+/*
+ * Client message types.
+ */
+Atom     _ecore_x_atom_net_close_window = 0;
+Atom     _ecore_x_atom_net_wm_moveresize = 0;
 
 /*
  * Application window specific NetWM hints.
@@ -323,8 +330,25 @@ ecore_x_init(const char *name)
    _ecore_x_atom_selection_prop_primary   = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_PRIMARY", False);
    _ecore_x_atom_selection_prop_secondary = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_SECONDARY", False);
    _ecore_x_atom_selection_prop_clipboard = XInternAtom(_ecore_x_disp, "_ECORE_SELECTION_CLIPBOARD", False);
-   
+
+   _ecore_x_atom_net_supported            = XInternAtom(_ecore_x_disp, "_NET_SUPPORTED", False);
+   _ecore_x_atom_net_supporting_wm_check  = XInternAtom(_ecore_x_disp, "_NET_SUPPORTING_WM_CHECK", False);
+
+   _ecore_x_atom_net_number_of_desktops   = XInternAtom(_ecore_x_disp, "_NET_NUMBER_OF_DESKTOPS", False);
+   _ecore_x_atom_net_desktop_geometry     = XInternAtom(_ecore_x_disp, "_NET_DESKTOP_GEOMETRY", False);
+   _ecore_x_atom_net_desktop_names        = XInternAtom(_ecore_x_disp, "_NET_DESKTOP_NAMES", False);
    _ecore_x_atom_net_current_desktop      = XInternAtom(_ecore_x_disp, "_NET_CURRENT_DESKTOP", False);
+   _ecore_x_atom_net_desktop_viewport     = XInternAtom(_ecore_x_disp, "_NET_DESKTOP_VIEWPORT", False);
+   _ecore_x_atom_net_workarea             = XInternAtom(_ecore_x_disp, "_NET_WORKAREA", False);
+   _ecore_x_atom_net_virtual_roots        = XInternAtom(_ecore_x_disp, "_NET_VIRTUAL_ROOTS", False);
+
+   _ecore_x_atom_net_client_list          = XInternAtom(_ecore_x_disp, "_NET_CLIENT_LIST", False);
+   _ecore_x_atom_net_client_list_stacking = XInternAtom(_ecore_x_disp, "_NET_CLIENT_LIST_STACKING", False);
+   _ecore_x_atom_net_active_window        = XInternAtom(_ecore_x_disp, "_NET_ACTIVE_WINDOW", False);
+
+   _ecore_x_atom_net_close_window         = XInternAtom(_ecore_x_disp, "_NET_CLOSE_WINDOW", False);
+   _ecore_x_atom_net_wm_moveresize        = XInternAtom(_ecore_x_disp, "_NET_WM_MOVERESIZE", False);
+
    _ecore_x_atom_net_wm_name              = XInternAtom(_ecore_x_disp, "_NET_WM_NAME", False);
    _ecore_x_atom_net_wm_visible_name      = XInternAtom(_ecore_x_disp, "_NET_WM_VISIBLE_NAME", False);
    _ecore_x_atom_net_wm_icon_name         = XInternAtom(_ecore_x_disp, "_NET_WM_ICON_NAME", False);
