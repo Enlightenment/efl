@@ -854,25 +854,36 @@ Evas_List *
 evas_list_sort(Evas_List *list, int size, int (*func)(void *, void *))
 {
     Evas_List *l = NULL, *ll = NULL;
-    int range = (size / 2);
+    int mid;
 
-    if(range > 0)
-    {
-	/* bleh evas list splicing */
-	ll = evas_list_nth_list(list, range);
-	if(ll->prev)
-	{
-	    list->last = ll->prev;
-	    list->count = range;
-	}
-	ll->prev->next = NULL;
-	ll->count = size - range;
+    if (!list || !func)
+      return NULL;
 
-	/* merge sort */
-	l = evas_list_sort(list, range, func);
-	ll = evas_list_sort(ll, size - range, func);
-	list = evas_list_combine(l, ll, func);
-    }
+    /* if the caller specified an invalid size, sort the whole list */
+    if (size <= 0 || size > list->count)
+      size = list->count;
+
+    mid = size / 2;
+    if (mid < 1)
+      return list;
+
+    /* bleh evas list splicing */
+    ll = evas_list_nth_list(list, mid);
+    if (ll->prev)
+      {
+	 list->last = ll->prev;
+	 list->count = mid;
+	 ll->prev->next = NULL;
+	 ll->prev = NULL;
+      }
+
+    ll->count = size - mid;
+
+    /* merge sort */
+    l = evas_list_sort(list, mid, func);
+    ll = evas_list_sort(ll, size - mid, func);
+    list = evas_list_combine(l, ll, func);
+
     return(list);
 }
 /**
