@@ -2341,13 +2341,13 @@ ecore_window_get_command(Window win)
 
 	  s = NULL;
 	  size = strlen(cargv[0]);
-	  REALLOC(s, char, size + 1);
+	  REALLOC(s, char *, size + 1);
 
 	  strcpy(s, cargv[0]);
 	  for (i = 1; i < cargc; i++)
 	    {
 	      size += strlen(cargv[i]);
-	      REALLOC(s, char, size + 2);
+	      REALLOC(s, char *, size + 2);
 
 	      strcat(s, " ");
 	      strcat(s, cargv[i]);
