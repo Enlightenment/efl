@@ -824,9 +824,9 @@ ecore_x_window_prop_borderless_set(Ecore_X_Window win, int borderless)
    data[2] = !borderless;
    
    ecore_x_window_prop_property_set(win, 
-					 _ecore_x_atom_motif_wm_hints,
-					 _ecore_x_atom_motif_wm_hints,
-					 32, (void *)data, 5);
+				    _ecore_x_atom_motif_wm_hints,
+				    _ecore_x_atom_motif_wm_hints,
+				    32, (void *)data, 5);
 }
 
 /**

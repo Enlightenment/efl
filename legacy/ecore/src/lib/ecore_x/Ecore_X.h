@@ -995,6 +995,44 @@ EAPI int              ecore_x_client_message8_send(Ecore_X_Window win, Ecore_X_A
      ecore_x_icccm_title_set(Ecore_X_Window win, const char *t);
    EAPI char *
      ecore_x_icccm_title_get(Ecore_X_Window win);
+   
+   typedef enum _Ecore_X_MWM_Hint_Func
+     {
+	ECORE_X_MWM_HINT_FUNC_ALL = (1 << 0),
+	ECORE_X_MWM_HINT_FUNC_RESIZE = (1 << 1),
+	ECORE_X_MWM_HINT_FUNC_MOVE = (1 << 2),
+	ECORE_X_MWM_HINT_FUNC_MINIMIZE = (1 << 3),
+	ECORE_X_MWM_HINT_FUNC_MAXIMIZE = (1 << 4),
+	ECORE_X_MWM_HINT_FUNC_CLOSE = (1 << 5)
+     }
+   Ecore_X_MWM_Hint_Func;
+   
+   typedef enum _Ecore_X_MWM_Hint_Decor
+     {
+	ECORE_X_MWM_HINT_DECOR_ALL = (1 << 0),
+	ECORE_X_MWM_HINT_DECOR_BORDER = (1 << 1),
+	ECORE_X_MWM_HINT_DECOR_RESIZEH = (1 << 2),
+	ECORE_X_MWM_HINT_DECOR_TITLE = (1 << 3),
+	ECORE_X_MWM_HINT_DECOR_MENU = (1 << 4),
+	ECORE_X_MWM_HINT_DECOR_MINIMIZE = (1 << 5),
+	ECORE_X_MWM_HINT_DECOR_MAXIMIZE = (1 << 6)
+     }
+   Ecore_X_MWM_Hint_Decor;
+   
+   typedef enum _Ecore_X_MWM_Hint_Input
+     {
+	ECORE_X_MWM_HINT_INPUT_MODELESS = 0,
+	ECORE_X_MWM_HINT_INPUT_PRIMARY_APPLICATION_MODAL = 1,
+	ECORE_X_MWM_HINT_INPUT_SYSTEM_MODAL = 2,
+	ECORE_X_MWM_HINT_INPUT_FULL_APPLICATION_MODAL = 3,
+     }
+   Ecore_X_MWM_Hint_Input;
+   
+   EAPI int
+     ecore_x_mwm_hints_get(Ecore_X_Window win,
+			   Ecore_X_MWM_Hint_Func *fhint,
+			   Ecore_X_MWM_Hint_Decor *dhint,
+			   Ecore_X_MWM_Hint_Input *ihint);
        
    EAPI void                ecore_x_netwm_init(void);
    EAPI void                ecore_x_netwm_wm_identify(Ecore_X_Window root, Ecore_X_Window check, const char *wm_name);
