@@ -77,8 +77,11 @@ evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, int *data)
    im->im->image->h = h;
    im->im->image->data = data;
    im->im->image->no_free = 1;
+   im->gc = gc;
+/*   
    im->cached = 1;
    gc->images = evas_list_prepend(gc->images, im);
+ */
    return im;
 }
 
@@ -97,6 +100,7 @@ evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc, int w, int h, int
      }
    if (data)
      memcpy(im->im->image->data, data, w * h * sizeof(DATA32));
+   im->gc = gc;
    return im;
 }
 
