@@ -744,7 +744,14 @@ _edje_embryo_test_run(Edje *ed, char *fname, char *sig, char *src)
 	printf("EDJE DEBUG: About to run script from progrqm.\n");
 	embryo_parameter_string_push(ed->collection->script, sig);
 	embryo_parameter_string_push(ed->collection->script, src);
-	embryo_program_run(ed->collection->script, fn);
+	  {
+	     void *pdata;
+	     
+	     pdata = embryo_program_data_get(ed->collection->script);
+	     embryo_program_data_set(ed->collection->script, ed);
+	     embryo_program_run(ed->collection->script, fn);
+	     embryo_program_data_set(ed->collection->script, pdata);
+	  }
 	printf("EDJE DEBUG: Done.\n");
      }
 }

@@ -22,7 +22,14 @@ _edje_var_timer_cb(void *data)
    ed->var_pool->timers = evas_list_remove(ed->var_pool->timers, et);
    fn = et->func;
    free(et);
-   embryo_program_run(ed->collection->script, fn);
+     {
+	void *pdata;
+	
+	pdata = embryo_program_data_get(ed->collection->script);
+	embryo_program_data_set(ed->collection->script, ed);	
+	embryo_program_run(ed->collection->script, fn);
+	embryo_program_data_set(ed->collection->script, pdata);
+     }
    return 0;
 }
 
@@ -69,7 +76,14 @@ _edje_var_anim_cb(void *data)
 		       embryo_parameter_cell_push(ed->collection->script, (Embryo_Cell)ea->val);
 		       embryo_parameter_cell_push(ed->collection->script, EMBRYO_FLOAT_TO_CELL(v));
 		       fn = ea->func;
-		       embryo_program_run(ed->collection->script, fn);
+			 {
+			    void *pdata;
+			    
+			    pdata = embryo_program_data_get(ed->collection->script);
+			    embryo_program_data_set(ed->collection->script, ed);	
+			    embryo_program_run(ed->collection->script, fn);
+			    embryo_program_data_set(ed->collection->script, pdata);
+			 }
 		       if (v == 1.0) ea->delete_me = 1;
 		    }
 	       }
