@@ -42,6 +42,7 @@ evas_engine_directfb_image_load(void *data, char *file, char *key, int *error)
    re = (Render_Engine *) data;
    *error = 0;
 
+   if (!file) return NULL;
    mod_time = evas_file_modified_time(file);
    im = _dfb_image_find(file, key, mod_time);
    if (im)

@@ -255,6 +255,8 @@ evas_engine_info_get(Evas *e)
    return NULL;
    MAGIC_CHECK_END();
    
+   if (!e->engine.info) return NULL;
+   
    info = e->engine.info;
    e->engine.info_magic = info->magic;
    
