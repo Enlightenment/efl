@@ -665,16 +665,24 @@ evas_object_hide(Evas_Object *obj)
 	       evas_event_feed_mouse_move(obj->layer->evas, 
 					  obj->layer->evas->pointer.x, 
 					  obj->layer->evas->pointer.y);
-/*   if ((obj->mouse_in) || (obj->mouse_grabbed)) */
+	     if (obj->mouse_grabbed > 0)
 	       {
-		  obj->mouse_in = 0;
+		  if (obj->layer->evas->pointer.mouse_grabbed > 0)
+		    obj->layer->evas->pointer.mouse_grabbed -= obj->mouse_grabbed;
+	       }
+	       {
 		  obj->mouse_grabbed = 0;
 		  obj->layer->evas->pointer.object.in = evas_list_remove(obj->layer->evas->pointer.object.in, obj);
-		  if (obj->layer->evas->events_frozen > 0) return;	
+		  if (obj->layer->evas->events_frozen > 0)
+		    {
+		       obj->mouse_in = 0;
+		       return;
+		    }
 		  if (obj->mouse_in)
 		    {
 		       Evas_Event_Mouse_Out ev;
 		       
+		       obj->mouse_in = 0;
 		       ev.buttons = obj->layer->evas->pointer.button;
 		       ev.output.x = obj->layer->evas->pointer.x;
 		       ev.output.y = obj->layer->evas->pointer.y;
