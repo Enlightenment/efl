@@ -34,10 +34,6 @@ typedef void         Ecore_X_Display;
 extern "C" {
 #endif
    
-#ifndef _ECORE_X_PRIVATE_H
-typedef void Ecore_X_Reply;   
-#endif
-
 typedef struct _Ecore_X_Rectangle {
    int x, y;
    unsigned int width, height;
@@ -890,9 +886,7 @@ void             ecore_x_icccm_send_take_focus(Ecore_X_Window win);
    void            ecore_x_window_client_sniff(Ecore_X_Window win);
    Ecore_X_Atom    ecore_x_atom_get(char *name);
 
-   void            ecore_x_reply_del(Ecore_X_Reply *reply);
-       
-   typedef struct _Ecore_X_Reply_Window_Attributes
+   typedef struct _Ecore_X_Window_Attributes
      {
 	Ecore_X_Window     root;
 	int                x, y, w, h;
@@ -917,11 +911,10 @@ void             ecore_x_icccm_send_take_focus(Ecore_X_Window win);
 	 * Visual *visual;
 	 */
      }
-   Ecore_X_Reply_Window_Attributes;
-   Ecore_X_Reply *
-     ecore_x_window_attributes_fetch(Ecore_X_Window win,
-				     void (*func) (void *data, Ecore_X_Reply *reply, void *reply_data),
-				     void *data);
+   Ecore_X_Window_Attributes;
+   
+   int
+     ecore_x_window_attributes_get(Ecore_X_Window win, Ecore_X_Window_Attributes *att_ret);
        
    Ecore_X_Cursor
      ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int hot_y);

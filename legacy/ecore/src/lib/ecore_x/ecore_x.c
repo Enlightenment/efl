@@ -990,81 +990,39 @@ ecore_x_atom_get(char *name)
    return XInternAtom(_ecore_x_disp, name, False);
 }
 
-void
-ecore_x_reply_del(Ecore_X_Reply *reply)
+
+
+
+
+
+int
+ecore_x_window_attributes_get(Ecore_X_Window win, Ecore_X_Window_Attributes *att_ret)
 {
-   ecore_job_del(reply->job);
-   reply->reply_data_free(reply->reply_data);
-   free(reply);
+   XWindowAttributes att;
+   
+   if (!XGetWindowAttributes(_ecore_x_disp, win, &att)) return 0;
+   memset(att_ret, 0, sizeof(Ecore_X_Window_Attributes));
+   att_ret->root = att.root;
+   att_ret->x = att.x;
+   att_ret->y = att.y;
+   att_ret->w = att.width;
+   att_ret->h = att.height;
+   att_ret->border = att.border_width;
+   att_ret->depth = att.depth;
+   if (att.map_state != IsUnmapped) att_ret->visible = 1;
+   if (att.map_state == IsViewable) att_ret->viewable = 1;
+   if (att.override_redirect) att_ret->override = 1;
+   if (att.class == InputOnly) att_ret->input_only = 1;
+   if (att.save_under) att_ret->save_under = 1;
+   att_ret->event_mask.mine = att.your_event_mask;
+   att_ret->event_mask.all = att.your_event_mask;
+   att_ret->event_mask.no_propagate = att.do_not_propagate_mask;
+   return 1;
 }
 
-static void _ecore_x_reply_call(void *data);
-static void
-_ecore_x_reply_call(void *data)
-{
-   Ecore_X_Reply *reply;
-   
-   reply = data;
-   reply->func(reply->data, reply, reply->reply_data);
-   reply->reply_data_free(reply->reply_data);
-   free(reply);
-}
 
-Ecore_X_Reply *
-ecore_x_window_attributes_fetch(Ecore_X_Window win,
-				void (*func) (void *data, Ecore_X_Reply *reply, void *reply_data),
-				void *data)
-{
-   Ecore_X_Reply *reply;
-   Ecore_X_Reply_Window_Attributes *reply_data;
-   
-   reply = calloc(1, sizeof(Ecore_X_Reply));
-   if (!reply) return NULL;
-   reply_data = calloc(1, sizeof(Ecore_X_Reply_Window_Attributes));
-   if (!reply_data)
-     {
-	free(reply);
-	return NULL;
-     }
-   reply->reply_data = reply_data;
-   reply->reply_data_free = free;
-   reply->func = func;
-   reply->data = data;
-   
-     {
-	XWindowAttributes att;
-	
-	if (!XGetWindowAttributes(_ecore_x_disp, win, &att))
-	  {
-	     reply->reply_data_free(reply->reply_data);
-	     free(reply);
-	     return NULL;
-	  }
-	reply_data->root = att.root;
-	reply_data->x = att.x;
-	reply_data->y = att.y;
-	reply_data->w = att.width;
-	reply_data->h = att.height;
-	reply_data->border = att.border_width;
-	reply_data->depth = att.depth;
-	if (att.map_state != IsUnmapped) reply_data->visible = 1;
-	if (att.map_state == IsViewable) reply_data->viewable = 1;
-	if (att.override_redirect) reply_data->override = 1;
-	if (att.class == InputOnly) reply_data->input_only = 1;
-	if (att.save_under) reply_data->save_under = 1;
-	reply_data->event_mask.mine = att.your_event_mask;
-	reply_data->event_mask.all = att.your_event_mask;
-	reply_data->event_mask.no_propagate = att.do_not_propagate_mask;
-     }
-   reply->job = ecore_job_add(_ecore_x_reply_call, reply);
-   if (!reply->job)
-     {
-	reply->reply_data_free(reply->reply_data);
-	free(reply);
-	return NULL;
-     }
-   return reply;
-}
+
+
 
 Ecore_X_Cursor
 ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int hot_y)
