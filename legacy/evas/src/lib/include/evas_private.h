@@ -33,7 +33,7 @@ typedef enum _Evas_Callback_Type
      EVAS_CALLBACK_RESTACK
 } Evas_Callback_Type;
 
-typedef struct _Evas_Rectangle Evas_Rectangle;
+typedef struct _Evas_Rectangle      Evas_Rectangle;
 
 typedef struct _Evas                Evas;
 typedef struct _Evas_Layer          Evas_Layer;

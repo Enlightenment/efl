@@ -157,7 +157,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *text, int pos, int
 	chr_y = (pen_y >> 8) + fg->glyph_out->top;
 	chr_w = fg->glyph_out->bitmap.width;
 	
-	if (gl == pos)
+	if (chr == pos)
 	  {
 	     if (cx) *cx = chr_x;
 	     if (cy) *cy = - evas_common_font_max_ascent_get(fn);

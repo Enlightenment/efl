@@ -203,7 +203,6 @@ evas_object_text_font_set(Evas_Object *obj, char *font, double size)
 		  free(font_tmp);
 	       }
 	  }
-	//_WIN32_WCE
 	done: ;
      } 
    if (o->cur.font) free(o->cur.font);
@@ -487,6 +486,7 @@ evas_object_text_char_pos_get(Evas_Object *obj, int pos, double *cx, double *cy,
 							     pos, 
 							     &x, &y, 
 							     &w, &h);
+   y += o->max_ascent;
    if (cx) *cx = x;
    if (cy) *cy = y;
    if (cw) *cw = w;
@@ -510,9 +510,10 @@ evas_object_text_char_coords_get(Evas_Object *obj, double x, double y, double *c
    ret = obj->layer->evas->engine.func->font_char_at_coords_get(obj->layer->evas->engine.data.output,
 								o->engine_data,
 								o->cur.text,
-								x, y, 
+								x, y - o->max_ascent, 
 								&rx, &ry, 
 								&rw, &rh);
+   ry += o->max_ascent;
    if (cx) *cx = rx;
    if (cy) *cy = ry;
    if (cw) *cw = rw;

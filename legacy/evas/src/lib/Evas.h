@@ -320,8 +320,6 @@ extern "C" {
    double            evas_object_text_horiz_advance_get(Evas_Object *obj);
    double            evas_object_text_vert_advance_get (Evas_Object *obj);
    double            evas_object_text_inset_get        (Evas_Object *obj);
-   double            evas_object_text_horiz_advance_get(Evas_Object *obj);
-   double            evas_object_text_vert_advance_get (Evas_Object *obj);
    int               evas_object_text_char_pos_get     (Evas_Object *obj, int pos, double *cx, double *cy, double *cw, double *ch);
    int               evas_object_text_char_coords_get  (Evas_Object *obj, double x, double y, double *cx, double *cy, double *cw, double *ch);
 
