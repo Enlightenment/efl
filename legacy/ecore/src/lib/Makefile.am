@@ -2,9 +2,10 @@
 SUBDIRS = \
 ecore \
 ecore_job \
-ecore_x \
+ecore_txt \
 ecore_fb \
-ecore_evas \
 ecore_con \
+ecore_x \
 ecore_ipc \
-ecore_txt
+ecore_evas \
+
