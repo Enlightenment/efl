@@ -47,8 +47,9 @@ static void bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_inf
 
 void        test_list_move(Collection *co_head);
 void        test_list(char *file);
+
+void        test_resize(Demo_Edje *de);
 void        test_setup(char *file, char *name);
-void        test_reize(double w, double h);
 
 static Evas_List   *edjes = NULL;
 static Evas_Object *o_bg = NULL;
@@ -101,7 +102,6 @@ main_resize(Ecore_Evas *ee)
    
    evas_output_viewport_get(evas, NULL, NULL, &w, &h);
    bg_resize(w, h);
-   test_reize(w, h);
 }
 
 static int
@@ -381,23 +381,9 @@ bottom_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 		  h = minh;
 	       }
 	  }
-	evas_object_move(de->left, x, y + 20);
-	evas_object_resize(de->left, 10, h - 30);
-	evas_object_move(de->right, x + w - 10, y + 20);
-	evas_object_resize(de->right, 10, h - 30);
-	evas_object_move(de->top, x, y);
-	evas_object_resize(de->top, w, 20);
-	evas_object_move(de->bottom, x, y + (h - 10));
-	evas_object_resize(de->bottom, w, 10);
-	evas_object_move(de->title_clip, x + 20, y);
-	evas_object_resize(de->title_clip, w - 40, 20);
-	evas_object_geometry_get(de->title, NULL, NULL, &tw, &th);
-	evas_object_move(de->title, x + ((w - tw) / 2), y + 4 + ((16 - th) / 2));
-	evas_object_move(de->image, x, y);
-	evas_object_resize(de->image, w, h);
-	evas_object_image_fill_set(de->image, 0, 0, w, h);
 	evas_object_move(de->edje, x + 10, y + 20);
 	evas_object_resize(de->edje, w - 20, h - 30);
+	test_resize(de);
      }
 }
 
@@ -576,6 +562,38 @@ test_list(char *file)
 }
 
 void
+test_resize(Demo_Edje *de)
+{
+   double x, y, w, h, tw, th;
+   double minw, minh;
+   
+   evas_object_geometry_get(de->edje, &x, &y, &w, &h);
+   x -= 10;
+   y -= 20;
+   w += 20;
+   h += 30;
+   minw = 20 + de->minw;
+   minh = 30 + de->minh;
+   evas_object_move(de->left, x, y + 20);
+   evas_object_resize(de->left, 10, h - 30);
+   evas_object_move(de->right, x + w - 10, y + 20);
+   evas_object_resize(de->right, 10, h - 30);
+   evas_object_move(de->top, x, y);
+   evas_object_resize(de->top, w, 20);
+   evas_object_move(de->bottom, x, y + (h - 10));
+   evas_object_resize(de->bottom, w, 10);
+   evas_object_move(de->title_clip, x + 20, y);
+   evas_object_resize(de->title_clip, w - 40, 20);
+   evas_object_geometry_get(de->title, NULL, NULL, &tw, &th);
+   evas_object_move(de->title, x + ((w - tw) / 2), y + 4 + ((16 - th) / 2));
+   evas_object_move(de->image, x, y);
+   evas_object_resize(de->image, w, h);
+   evas_object_image_fill_set(de->image, 0, 0, w, h);
+   evas_object_move(de->edje, x + 10, y + 20);
+   evas_object_resize(de->edje, w - 20, h - 30);
+}
+
+void
 test_setup(char *file, char *name)
 {
    Evas_Object *o;
@@ -672,6 +690,7 @@ test_setup(char *file, char *name)
    evas_object_resize(o, w, h);
    de->edje = o;
 
+   test_resize(de);
 //   printf("%s\n", edje_object_data_get(o, "My Data"));
 //   printf("%s\n", edje_object_data_get(o, "The Key"));
    
@@ -682,13 +701,6 @@ test_setup(char *file, char *name)
    edje_object_part_swallow(de->edje, "swallow", o);
    evas_object_show(o);
  */
-}
-
-void
-test_reize(double w, double h)
-{
-//   evas_object_move(o_edje, 10, 10);   
-//   evas_object_resize(o_edje, w - 20, h - 20);
 }
 
 int
