@@ -1,0 +1,8 @@
+# $Id$
+# valgrind suppression file for Edje.
+#
+{
+   BogusWarning
+   Memcheck:Cond
+   fun:_edje_part_recalc
+}
