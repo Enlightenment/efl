@@ -1,11 +1,6 @@
 #include "edje_cc.h"
 
-static void ob_images(void);
-
-static void ob_images_image(void);
 static void st_images_image(void);
-
-static void ob_fonts(void);
 
 static void st_fonts_font(void);
 
@@ -71,8 +66,6 @@ static void st_collections_group_parts_part_description_text_fit(void);
 static void st_collections_group_parts_part_description_text_min(void);
 static void st_collections_group_parts_part_description_text_align(void);
 
-static void ob_collections_group_programs(void);
-
 static void ob_collections_group_programs_program(void);
 static void st_collections_group_programs_program_name(void);
 static void st_collections_group_programs_program_signal(void);
@@ -92,10 +85,22 @@ New_Statement_Handler statement_handlers[] =
      {"images.image", st_images_image},
      {"fonts.font", st_fonts_font},
      {"data.item", st_data_item},
+     {"collections.image", st_images_image}, /* dup */
+     {"collections.images.image", st_images_image}, /* dup */
+     {"collections.font", st_fonts_font}, /* dup */
+     {"collections.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.name", st_collections_group_name},
      {"collections.group.min", st_collections_group_min},
      {"collections.group.max", st_collections_group_max},
      {"collections.group.data.item", st_collections_group_data_item},
+     {"collections.group.image", st_images_image}, /* dup */
+     {"collections.group.images.image", st_images_image}, /* dup */
+     {"collections.group.font", st_fonts_font}, /* dup */
+     {"collections.group.fonts.font", st_fonts_font}, /* dup */
+     {"collections.group.parts.image", st_images_image}, /* dup */
+     {"collections.group.parts.images.image", st_images_image}, /* dup */
+     {"collections.group.parts.font", st_fonts_font}, /* dup */
+     {"collections.group.parts.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.name", st_collections_group_parts_part_name},
      {"collections.group.parts.part.type", st_collections_group_parts_part_type},
      {"collections.group.parts.part.effect", st_collections_group_parts_part_effect},
@@ -105,6 +110,10 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.dragable.x", st_collections_group_parts_part_dragable_x},
      {"collections.group.parts.part.dragable.y", st_collections_group_parts_part_dragable_y},
      {"collections.group.parts.part.dragable.confine", st_collections_group_parts_part_dragable_confine},
+     {"collections.group.parts.part.image", st_images_image}, /* dup */
+     {"collections.group.parts.part.images.image", st_images_image}, /* dup */
+     {"collections.group.parts.part.font", st_fonts_font}, /* dup */
+     {"collections.group.parts.part.fonts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.state", st_collections_group_parts_part_description_state},
      {"collections.group.parts.part.description.visible", st_collections_group_parts_part_description_visible},
      {"collections.group.parts.part.description.align", st_collections_group_parts_part_description_align},
@@ -125,6 +134,8 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.rel2.to_y", st_collections_group_parts_part_description_rel2_to_y},
      {"collections.group.parts.part.description.image.normal", st_collections_group_parts_part_description_image_normal},
      {"collections.group.parts.part.description.image.tween", st_collections_group_parts_part_description_image_tween},
+     {"collections.group.parts.part.description.image.image", st_images_image}, /* dup */
+     {"collections.group.parts.part.description.image.images.image", st_images_image}, /* dup */
      {"collections.group.parts.part.description.border", st_collections_group_parts_part_description_border},
      {"collections.group.parts.part.description.fill.smooth", st_collections_group_parts_part_description_fill_smooth},
      {"collections.group.parts.part.description.fill.origin.relative", st_collections_group_parts_part_description_fill_origin_relative},
@@ -142,6 +153,79 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.text.fit", st_collections_group_parts_part_description_text_fit},
      {"collections.group.parts.part.description.text.min", st_collections_group_parts_part_description_text_min},
      {"collections.group.parts.part.description.text.align", st_collections_group_parts_part_description_text_align},
+     {"collections.group.parts.part.description.text.font", st_fonts_font}, /* dup */
+     {"collections.group.parts.part.description.text.fonts.font", st_fonts_font}, /* dup */
+     {"collections.group.parts.part.description.images.image", st_images_image}, /* dup */
+     {"collections.group.parts.part.description.font", st_fonts_font}, /* dup */
+     {"collections.group.parts.part.description.fonts.font", st_fonts_font}, /* dup */
+     {"collections.group.parts.part.description.programs.image", st_images_image}, /* dup */
+     {"collections.group.parts.part.description.programs.images.image", st_images_image}, /* dup */
+     {"collections.group.parts.part.description.programs.font", st_fonts_font}, /* dup */
+     {"collections.group.parts.part.description.programs.fonts.font", st_fonts_font}, /* dup */
+     {"collections.group.parts.part.description.programs.program.name", st_collections_group_programs_program_name}, /* dup */
+     {"collections.group.parts.part.description.programs.program.signal", st_collections_group_programs_program_signal}, /* dup */
+     {"collections.group.parts.part.description.programs.program.source", st_collections_group_programs_program_source}, /* dup */
+     {"collections.group.parts.part.description.programs.program.in", st_collections_group_programs_program_in}, /* dup */
+     {"collections.group.parts.part.description.programs.program.action", st_collections_group_programs_program_action}, /* dup */
+     {"collections.group.parts.part.description.programs.program.transition", st_collections_group_programs_program_transition}, /* dup */
+     {"collections.group.parts.part.description.programs.program.target", st_collections_group_programs_program_target}, /* dup */
+     {"collections.group.parts.part.description.programs.program.after", st_collections_group_programs_program_after}, /* dup */
+     {"collections.group.parts.part.description.program.name", st_collections_group_programs_program_name}, /* dup */
+     {"collections.group.parts.part.description.program.signal", st_collections_group_programs_program_signal}, /* dup */
+     {"collections.group.parts.part.description.program.source", st_collections_group_programs_program_source}, /* dup */
+     {"collections.group.parts.part.description.program.in", st_collections_group_programs_program_in}, /* dup */
+     {"collections.group.parts.part.description.program.action", st_collections_group_programs_program_action}, /* dup */
+     {"collections.group.parts.part.description.program.transition", st_collections_group_programs_program_transition}, /* dup */
+     {"collections.group.parts.part.description.program.target", st_collections_group_programs_program_target}, /* dup */
+     {"collections.group.parts.part.description.program.after", st_collections_group_programs_program_after}, /* dup */
+     {"collections.group.parts.part.programs.image", st_images_image}, /* dup */
+     {"collections.group.parts.part.programs.images.image", st_images_image}, /* dup */
+     {"collections.group.parts.part.programs.font", st_fonts_font}, /* dup */
+     {"collections.group.parts.part.programs.fonts.font", st_fonts_font}, /* dup */
+     {"collections.group.parts.part.programs.program.name", st_collections_group_programs_program_name}, /* dup */
+     {"collections.group.parts.part.programs.program.signal", st_collections_group_programs_program_signal}, /* dup */
+     {"collections.group.parts.part.programs.program.source", st_collections_group_programs_program_source}, /* dup */
+     {"collections.group.parts.part.programs.program.in", st_collections_group_programs_program_in}, /* dup */
+     {"collections.group.parts.part.programs.program.action", st_collections_group_programs_program_action}, /* dup */
+     {"collections.group.parts.part.programs.program.transition", st_collections_group_programs_program_transition}, /* dup */
+     {"collections.group.parts.part.programs.program.target", st_collections_group_programs_program_target}, /* dup */
+     {"collections.group.parts.part.programs.program.after", st_collections_group_programs_program_after}, /* dup */
+     {"collections.group.parts.part.program.name", st_collections_group_programs_program_name}, /* dup */
+     {"collections.group.parts.part.program.signal", st_collections_group_programs_program_signal}, /* dup */
+     {"collections.group.parts.part.program.source", st_collections_group_programs_program_source}, /* dup */
+     {"collections.group.parts.part.program.in", st_collections_group_programs_program_in}, /* dup */
+     {"collections.group.parts.part.program.action", st_collections_group_programs_program_action}, /* dup */
+     {"collections.group.parts.part.program.transition", st_collections_group_programs_program_transition}, /* dup */
+     {"collections.group.parts.part.program.target", st_collections_group_programs_program_target}, /* dup */
+     {"collections.group.parts.part.program.after", st_collections_group_programs_program_after}, /* dup */
+     {"collections.group.parts.programs.image", st_images_image}, /* dup */
+     {"collections.group.parts.programs.images.image", st_images_image}, /* dup */
+     {"collections.group.parts.programs.font", st_fonts_font}, /* dup */
+     {"collections.group.parts.programs.fonts.font", st_fonts_font}, /* dup */
+     {"collections.group.parts.programs.program.name", st_collections_group_programs_program_name}, /* dup */
+     {"collections.group.parts.programs.program.signal", st_collections_group_programs_program_signal}, /* dup */
+     {"collections.group.parts.programs.program.source", st_collections_group_programs_program_source}, /* dup */
+     {"collections.group.parts.programs.program.in", st_collections_group_programs_program_in}, /* dup */
+     {"collections.group.parts.programs.program.action", st_collections_group_programs_program_action}, /* dup */
+     {"collections.group.parts.programs.program.transition", st_collections_group_programs_program_transition}, /* dup */
+     {"collections.group.parts.programs.program.target", st_collections_group_programs_program_target}, /* dup */
+     {"collections.group.parts.programs.program.after", st_collections_group_programs_program_after},
+     {"collections.group.parts.program.name", st_collections_group_programs_program_name}, /* dup */
+     {"collections.group.parts.program.signal", st_collections_group_programs_program_signal}, /* dup */
+     {"collections.group.parts.program.source", st_collections_group_programs_program_source}, /* dup */
+     {"collections.group.parts.program.in", st_collections_group_programs_program_in}, /* dup */
+     {"collections.group.parts.program.action", st_collections_group_programs_program_action}, /* dup */
+     {"collections.group.parts.program.transition", st_collections_group_programs_program_transition}, /* dup */
+     {"collections.group.parts.program.target", st_collections_group_programs_program_target}, /* dup */
+     {"collections.group.parts.program.after", st_collections_group_programs_program_after}, /* dup */
+     {"collections.group.program.name", st_collections_group_programs_program_name}, /* dup */
+     {"collections.group.program.signal", st_collections_group_programs_program_signal}, /* dup */
+     {"collections.group.program.source", st_collections_group_programs_program_source}, /* dup */
+     {"collections.group.program.in", st_collections_group_programs_program_in}, /* dup */
+     {"collections.group.program.action", st_collections_group_programs_program_action}, /* dup */
+     {"collections.group.program.transition", st_collections_group_programs_program_transition}, /* dup */
+     {"collections.group.program.target", st_collections_group_programs_program_target}, /* dup */
+     {"collections.group.program.after", st_collections_group_programs_program_after}, /* dup */
      {"collections.group.programs.program.name", st_collections_group_programs_program_name},
      {"collections.group.programs.program.signal", st_collections_group_programs_program_signal},
      {"collections.group.programs.program.source", st_collections_group_programs_program_source},
@@ -149,93 +233,77 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.programs.program.action", st_collections_group_programs_program_action},
      {"collections.group.programs.program.transition", st_collections_group_programs_program_transition},
      {"collections.group.programs.program.target", st_collections_group_programs_program_target},
-     {"collections.group.programs.program.after", st_collections_group_programs_program_after}
+     {"collections.group.programs.program.after", st_collections_group_programs_program_after},
+     {"collections.group.programs.image", st_images_image}, /* dup */
+     {"collections.group.programs.images.image", st_images_image}, /* dup */
+     {"collections.group.programs.font", st_fonts_font}, /* dup */
+     {"collections.group.programs.fonts.font", st_fonts_font} /* dup */
 };
 
 New_Object_Handler object_handlers[] =
 {
-     {"images", ob_images},
-     {"images.image", ob_images_image},
-     {"fonts", ob_fonts},
-     {"fonts.font", NULL},
+     {"images", NULL},
+     {"fonts", NULL},
      {"data", NULL},
-     {"data.item", NULL},
      {"collections", ob_collections},
+     {"collections.images", NULL}, /* dup */
+     {"collections.fonts", NULL}, /* dup */
      {"collections.group", ob_collections_group},
-     {"collections.group.name", NULL},
-     {"collections.group.min", NULL},
-     {"collections.group.max", NULL},
      {"collections.group.data", NULL},
-     {"collections.group.data.item", NULL},
      {"collections.group.script", ob_collections_group_script},
+     {"collections.group.images", NULL}, /* dup */
+     {"collections.group.fonts", NULL}, /* dup */
      {"collections.group.parts", NULL},
+     {"collections.group.parts.images", NULL}, /* dup */
+     {"collections.group.parts.fonts", NULL}, /* dup */
      {"collections.group.parts.part", ob_collections_group_parts_part},
-     {"collections.group.parts.part.name", NULL},
-     {"collections.group.parts.part.type", NULL},
-     {"collections.group.parts.part.effect", NULL},
-     {"collections.group.parts.part.mouse_events", NULL},
-     {"collections.group.parts.part.repeat_events", NULL},
-     {"collections.group.parts.part.clip_to", NULL},
      {"collections.group.parts.part.dragable", NULL},
-     {"collections.group.parts.part.dragable.x", NULL},
-     {"collections.group.parts.part.dragable.y", NULL},
-     {"collections.group.parts.part.dragable.confine", NULL},
+     {"collections.group.parts.part.images", NULL}, /* dup */
+     {"collections.group.parts.part.fonts", NULL}, /* dup */
      {"collections.group.parts.part.description", ob_collections_group_parts_part_description},
-     {"collections.group.parts.part.description.state", NULL},
-     {"collections.group.parts.part.description.visible", NULL},
-     {"collections.group.parts.part.description.align", NULL},
-     {"collections.group.parts.part.description.min", NULL},
-     {"collections.group.parts.part.description.max", NULL},
-     {"collections.group.parts.part.description.step", NULL},
-     {"collections.group.parts.part.description.aspect", NULL},
-     {"collections.group.parts.part.description.aspect_preference", NULL},
      {"collections.group.parts.part.description.rel1", NULL},
-     {"collections.group.parts.part.description.rel1.relative", NULL},
-     {"collections.group.parts.part.description.rel1.offset", NULL},
-     {"collections.group.parts.part.description.rel1.to", NULL},
-     {"collections.group.parts.part.description.rel1.to_x", NULL},
-     {"collections.group.parts.part.description.rel1.to_y", NULL},
      {"collections.group.parts.part.description.rel2", NULL},
-     {"collections.group.parts.part.description.rel2.relative", NULL},
-     {"collections.group.parts.part.description.rel2.offset", NULL},
-     {"collections.group.parts.part.description.rel2.to", NULL},
-     {"collections.group.parts.part.description.rel2.to_x", NULL},
-     {"collections.group.parts.part.description.rel2.to_y", NULL},
-     {"collections.group.parts.part.description.image", NULL},
-     {"collections.group.parts.part.description.image.normal", NULL},
-     {"collections.group.parts.part.description.image.tween", NULL},
-     {"collections.group.parts.part.description.border", NULL},
+     {"collections.group.parts.part.description.image", NULL}, /* dup */
+     {"collections.group.parts.part.description.image.images", NULL}, /* dup */
      {"collections.group.parts.part.description.fill", NULL},
-     {"collections.group.parts.part.description.fill.smooth", NULL},
      {"collections.group.parts.part.description.fill.origin", NULL},
-     {"collections.group.parts.part.description.fill.origin.relative", NULL},
-     {"collections.group.parts.part.description.fill.origin.offset", NULL},
      {"collections.group.parts.part.description.fill.size", NULL},
-     {"collections.group.parts.part.description.fill.size.relative", NULL},
-     {"collections.group.parts.part.description.fill.size.offset", NULL},
-     {"collections.group.parts.part.description.color_class", NULL},
-     {"collections.group.parts.part.description.color", NULL},
-     {"collections.group.parts.part.description.color2", NULL},
-     {"collections.group.parts.part.description.color3", NULL},
      {"collections.group.parts.part.description.text", NULL},
-     {"collections.group.parts.part.description.text.text", NULL},
-     {"collections.group.parts.part.description.text.text_class", NULL},
-     {"collections.group.parts.part.description.text.font", NULL},
-     {"collections.group.parts.part.description.text.size", NULL},
-     {"collections.group.parts.part.description.text.fit", NULL},
-     {"collections.group.parts.part.description.text.min", NULL},
-     {"collections.group.parts.part.description.text.align", NULL},
-     {"collections.group.programs", ob_collections_group_programs},
+     {"collections.group.parts.part.description.text.fonts", NULL}, /* dup */
+     {"collections.group.parts.part.description.images", NULL}, /* dup */
+     {"collections.group.parts.part.description.fonts", NULL}, /* dup */
+     {"collections.group.parts.part.description.program", ob_collections_group_programs_program}, /* dup */
+     {"collections.group.parts.part.description.program.script", ob_collections_group_programs_program_script}, /* dup */
+     {"collections.group.parts.part.description.programs", NULL}, /* dup */
+     {"collections.group.parts.part.description.programs.images", NULL}, /* dup */
+     {"collections.group.parts.part.description.programs.fonts", NULL}, /* dup */
+     {"collections.group.parts.part.description.programs.program", ob_collections_group_programs_program}, /* dup */
+     {"collections.group.parts.part.description.programs.program.script", ob_collections_group_programs_program_script}, /* dup */
+     {"collections.group.parts.part.description.script", ob_collections_group_script}, /* dup */
+     {"collections.group.parts.part.program", ob_collections_group_programs_program}, /* dup */
+     {"collections.group.parts.part.program.script", ob_collections_group_programs_program_script}, /* dup */
+     {"collections.group.parts.part.programs", NULL}, /* dup */
+     {"collections.group.parts.part.programs.images", NULL}, /* dup */
+     {"collections.group.parts.part.programs.fonts", NULL}, /* dup */
+     {"collections.group.parts.part.programs.program", ob_collections_group_programs_program}, /* dup */
+     {"collections.group.parts.part.programs.program.script", ob_collections_group_programs_program_script}, /* dup */
+     {"collections.group.parts.part.script", ob_collections_group_script}, /* dup */
+     {"collections.group.parts.program", ob_collections_group_programs_program}, /* dup */
+     {"collections.group.parts.program.script", ob_collections_group_programs_program_script}, /* dup */
+     {"collections.group.parts.programs", NULL}, /* dup */
+     {"collections.group.parts.programs.images", NULL}, /* dup */
+     {"collections.group.parts.programs.fonts", NULL}, /* dup */
+     {"collections.group.parts.programs.program", ob_collections_group_programs_program}, /* dup */
+     {"collections.group.parts.programs.program.script", ob_collections_group_programs_program_script}, /* dup */
+     {"collections.group.parts.script", ob_collections_group_script}, /* dup */
+     {"collections.group.program", ob_collections_group_programs_program}, /* dup */
+     {"collections.group.program.script", ob_collections_group_programs_program_script}, /* dup */
+     {"collections.group.programs", NULL},
+     {"collections.group.programs.images", NULL}, /* dup */
+     {"collections.group.programs.fonts", NULL}, /* dup */
      {"collections.group.programs.program", ob_collections_group_programs_program},
-     {"collections.group.programs.program.name", NULL},
-     {"collections.group.programs.program.signal", NULL},
-     {"collections.group.programs.program.source", NULL},
-     {"collections.group.programs.program.in", NULL},
-     {"collections.group.programs.program.action", NULL},
-     {"collections.group.programs.program.transition", NULL},
-     {"collections.group.programs.program.target", NULL},
-     {"collections.group.programs.program.after", NULL},
-     {"collections.group.programs.program.script", ob_collections_group_programs_program_script}
+     {"collections.group.programs.program.script", ob_collections_group_programs_program_script},
+     {"collections.group.programs.script", ob_collections_group_script} /* dup */
 };
 
 /*****/
@@ -255,30 +323,32 @@ statement_handler_num(void)
 /*****/
 
 static void
-ob_images(void)
-{
-   if (!edje_file->image_dir)
-     edje_file->image_dir = mem_alloc(SZ(Edje_Image_Directory));
-}
-
-static void
-ob_images_image(void)
-{
-   Edje_Image_Directory_Entry *img;
-   
-   img = mem_alloc(SZ(Edje_Image_Directory_Entry));
-   edje_file->image_dir->entries = evas_list_append(edje_file->image_dir->entries, img);
-   img->id = evas_list_count(edje_file->image_dir->entries) - 1;
-}
-
-static void
 st_images_image(void)
 {
    Edje_Image_Directory_Entry *img;
    int v;
    
-   img = evas_list_data(evas_list_last(edje_file->image_dir->entries));
+   if (!edje_file->image_dir)
+     edje_file->image_dir = mem_alloc(SZ(Edje_Image_Directory));
+   img = mem_alloc(SZ(Edje_Image_Directory_Entry));
    img->entry = parse_str(0);
+     {
+	Evas_List *l;
+	
+	for (l = edje_file->image_dir->entries; l; l = l->next)
+	  {
+	     Edje_Image_Directory_Entry *limg;
+	     
+	     limg = l->data;
+	     if (!strcmp(limg->entry, img->entry))
+	       {
+		  free(img->entry);
+		  free(img);
+		  return;
+	       }
+	  }
+     }
+   img->id = evas_list_count(edje_file->image_dir->entries) - 1;
    v = parse_enum(1,
 		  "RAW", 0,
 		  "COMP", 1,
@@ -305,15 +375,9 @@ st_images_image(void)
 	img->source_type = EDJE_IMAGE_SOURCE_TYPE_EXTERNAL;
 	img->source_param = 0;
      }
+   edje_file->image_dir->entries = evas_list_append(edje_file->image_dir->entries, img);
    if (img->source_type != EDJE_IMAGE_SOURCE_TYPE_INLINE_LOSSY) return;
    img->source_param = parse_int_range(2, 0, 100);
-}
-
-static void
-ob_fonts(void)
-{
-   if (!edje_file->font_dir)
-     edje_file->font_dir = mem_alloc(SZ(Edje_Font_Directory));
 }
 
 static void
@@ -322,19 +386,37 @@ st_fonts_font(void)
    Font *fn;
    Edje_Font_Directory_Entry *fnt;
    
+   if (!edje_file->font_dir)
+     edje_file->font_dir = mem_alloc(SZ(Edje_Font_Directory));
+   
    fn = mem_alloc(SZ(Font));
    fn->file = parse_str(0);
    fn->name = parse_str(1);
+     {
+	Evas_List *l;
+	
+	for (l = fonts; l; l = l->next)
+	  {
+	     Font *lfn;
+	     
+	     lfn = l->data;
+	     if (!strcmp(lfn->name, fn->name))
+	       {
+		  free(fn->file);
+		  free(fn->name);
+		  free(fn);
+		  return;
+	       }
+	  }
+     }
    fonts = evas_list_append(fonts, fn);
   
    if (edje_file->font_dir)
      {
 	fnt = mem_alloc(SZ(Edje_Font_Directory_Entry));
-	edje_file->font_dir->entries = evas_list_append(edje_file->font_dir->entries, fnt);
 	fnt->entry = mem_strdup(fn->name);
+	edje_file->font_dir->entries = evas_list_append(edje_file->font_dir->entries, fnt);
      }
-   else
-     fprintf(stderr, "%s: Error. parse error %s:%i. Trying to a font outside of a fonts block?\n", progname, file_in, line);
 }
 
 static void
@@ -1259,12 +1341,6 @@ st_collections_group_parts_part_description_text_align(void)
    ed->text.align.y = parse_float_range(1, 0.0, 1.0);
 }
 
-
-static void
-ob_collections_group_programs(void)
-{
-}
-
 static void
 ob_collections_group_programs_program(void)
 {
@@ -1288,6 +1364,22 @@ st_collections_group_programs_program_name(void)
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->programs));
    ep->name = parse_str(0);
+     {
+	Evas_List *l;
+	
+	for (l = pc->programs; l; l = l->next)
+	  {
+	     Edje_Program *lep;
+	     
+	     lep = l->data;
+	     if ((lep != ep) && (!strcmp(lep->name, ep->name)))
+	       {
+		  fprintf(stderr, "%s: Error. parse error %s:%i. There is already a program of the name %s\n",
+			  progname, file_in, line, ep->name);
+		  exit(-1);
+	       }
+	  }
+     }
 }
 
 static void

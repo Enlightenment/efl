@@ -696,7 +696,7 @@ data_process_lookups(void)
 	  }
 	if (!l)
 	  {
-	     fprintf(stderr, "%s: Error. unable find part name %s\n",
+	     fprintf(stderr, "%s: Error. unable to find part name %s\n",
 		     progname, pl->name);
 	     exit(-1);
 	  }
@@ -724,7 +724,7 @@ data_process_lookups(void)
 	  }
 	if (!l)
 	  {
-	     fprintf(stderr, "%s: Error. unable find program name %s\n",
+	     fprintf(stderr, "%s: Error. unable to find program name %s\n",
 		     progname, pl->name);
 	     exit(-1);
 	  }
@@ -740,25 +740,25 @@ data_process_lookups(void)
 	il = image_lookups->data;
 	
 	if (!edje_file->image_dir)
-	   l = NULL;
+	  l = NULL;
 	else
-	{
-	   for (l = edje_file->image_dir->entries; l; l = l->next)
-	   {
-	      Edje_Image_Directory_Entry *de;
-
-	      de = l->data;
-	      if ((de->entry) && (!strcmp(de->entry, il->name)))
-	      {
-		 *(il->dest) = de->id;
-		 break;
-	      }
-	   }
-	}
-
+	  {
+	     for (l = edje_file->image_dir->entries; l; l = l->next)
+	       {
+		  Edje_Image_Directory_Entry *de;
+		  
+		  de = l->data;
+		  if ((de->entry) && (!strcmp(de->entry, il->name)))
+		    {
+		       *(il->dest) = de->id;
+		       break;
+		    }
+	       }
+	  }
+	
 	if (!l)
 	  {
-	     fprintf(stderr, "%s: Error. unable find image name %s\n",
+	     fprintf(stderr, "%s: Error. unable to find image name %s\n",
 		     progname, il->name);
 	     exit(-1);
 	  }

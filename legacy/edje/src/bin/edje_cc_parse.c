@@ -64,6 +64,16 @@ new_object(void)
      }
    if (!handled)
      {
+	for (i = 0; i < statement_handler_num(); i++)
+	  {
+	     if (!strcmp(statement_handlers[i].type, id))
+	       {
+		  return;
+	       }
+	  }
+     }
+   if (!handled)
+     {
 	fprintf(stderr, "%s: Error. %s:%i unhandled keyword %s\n",
 		progname, file_in, line,
 		(char *)evas_list_data(evas_list_last(stack)));
