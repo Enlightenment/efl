@@ -284,6 +284,7 @@ struct _Evas
    Evas_Hash        *name_hash;
    
    char              changed : 1;
+   char              walking_layers : 1;
    
    int               events_frozen;
    
@@ -320,6 +321,7 @@ struct _Evas_Layer
    Evas             *evas;
 
    void             *engine_data;
+   char              delete_me : 1;
 };
 
 struct _Evas_Object

@@ -77,17 +77,32 @@ evas_free(Evas *e)
 {
    Evas_Object_List *l;
    int i;
+   int del = 1;
    
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
 
-   for (l = (Evas_Object_List *)(e->layers); l; l = l->next)
+   while (del != 0)
      {
-	Evas_Layer *lay;
+	del = 0;
+	for (l = (Evas_Object_List *)(e->layers); l; l = l->next)
+	  {
+	     Evas_Layer *lay;
+	     Evas_Object_List *ll;	     
+	     
+	     lay = (Evas_Layer *)l;
+	     evas_layer_pre_free(lay);
+	     for (ll = (Evas_Object_List *)lay->objects; ll; ll = ll->next)
+	       {
+		  Evas_Object *o;
+		  
+		  o = (Evas_Object *)ll;
+		  if (!o->delete_me)
+		    del += o->delete_me;
+	       }
+	  }
 	
-	lay = (Evas_Layer *)l;
-	evas_layer_pre_free(lay);
      }
    while (e->layers)
      {
