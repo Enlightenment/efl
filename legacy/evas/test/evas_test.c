@@ -23,8 +23,11 @@ o_logo, o_logo_shadow, o_logo_impress,
 o_software, o_hardware, o_x11, 
 o_box1, o_box2, o_box3, 
 o_brush, o_paint,
-o_bubble1, o_shadow1, o_bubble2, o_shadow2, o_bubble3, o_shadow3;
+o_bubble1, o_shadow1, o_bubble2, o_shadow2, o_bubble3, o_shadow3,
+o_fps;
 int         mouse_x, mouse_y;
+int         framecount = -1;
+double      last_time = 0;
 
 /* prototypes  */
 double get_time       (void);
@@ -259,6 +262,13 @@ setup_view(Evas_Render_Method method)
    evas_view = e;
    
    e = evas_view;
+   
+   o = evas_add_text(e, "andover", 20, "FPS:");
+   evas_set_color(e, o, 255,  255,  255, 100);
+   evas_move(e, o, 0, 0);
+   evas_show(e, o);
+   o_fps = o;
+   
    o = evas_add_image_from_file(e, IMGDIR"evas_test_view_bg.png");
    evas_move(e, o, 0, 0);
    evas_resize(e, o, 1024 - 128, 768);
@@ -400,6 +410,18 @@ animate(double val)
    int w, h;
    Evas_Object o;
    
+   framecount++;
+   if ((val - last_time) >= 2.0)
+     {
+	double fps;
+	char buf[256];
+	
+	fps = (double)framecount / (val - last_time);
+	sprintf(buf, "FPS: %3.2f", fps);
+	evas_set_text(evas_view, o_fps, buf);
+	framecount = -1;
+	last_time = val;
+     }
    o = evas_object_get_named(evas_view, "pointer");
    if (o) 
      {
