@@ -19,6 +19,20 @@ AM_ENABLE_SHARED
 AM_PROG_LIBTOOL
 AC_FUNC_ALLOCA
 
+AC_CHECK_HEADERS(fnmatch.h,, AC_MSG_ERROR([Cannot find fnmatch.h. Make sure your CFLAGS environment variable contains include lines for the location of this file]))
+
+AC_CHECK_FUNCS(fnmatch, res=yes, res=no)
+if test "x$res" = "xno"; then
+	AC_CHECK_LIB(fnmatch, fnmatch, res=yes, res=no)
+	if test "x$res" = "xno"; then
+		AC_MSG_ERROR([Cannot find fnmatch() in neither libc nor libfnmatch])
+	else
+		fnmatch_libs="-lfnmatch"
+	fi
+fi
+
+AC_SUBST(fnmatch_libs)
+
 if test "x${exec_prefix}" = "xNONE"; then
   if test "x${prefix}" = "xNONE"; then
     bindir="${ac_default_prefix}/bin";
