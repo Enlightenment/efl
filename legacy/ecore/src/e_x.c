@@ -2640,3 +2640,48 @@ e_window_get_wm_size_hints(Window win, XSizeHints *hints, int *mask)
    *mask = (int)sup_ret;
    return ok;
 }
+
+int
+e_window_is_visible(Window win)
+{
+   XWindowAttributes   att;
+
+   if (win == 0)
+      win = default_root;
+   if (XGetWindowAttributes(disp, win, &att) == True)
+     {
+	if (att.map_state == IsUnmapped) return 0;
+	return 1;
+     }
+   return 0;
+}
+
+int
+e_window_is_normal(Window win)
+{
+   XWindowAttributes   att;
+   
+   if (win == 0)
+      win = default_root;
+   if (XGetWindowAttributes(disp, win, &att) == True)
+     {
+	if ((att.override_redirect) || (att.class ==  InputOnly)) return 0;
+	return 1;
+     }
+   return 0;
+}
+
+int
+e_window_is_manageable(Window win)
+{
+   XWindowAttributes   att;
+
+   if (win == 0)
+      win = default_root;
+   if (XGetWindowAttributes(disp, win, &att) == True)
+     {
+	if ((att.map_state == IsUnmapped) || (att.override_redirect) || (att.class ==  InputOnly)) return 0;
+	return 1;
+     }
+   return 0;
+}

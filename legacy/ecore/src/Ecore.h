@@ -247,6 +247,9 @@ void                e_window_del_from_save_set(Window win);
 void                e_window_kill_client(Window win);
 void                e_window_set_border_width(Window win, int bw);
 int                 e_window_get_wm_size_hints(Window win, XSizeHints *hints, int *mask);
+int                 e_window_is_visible(Window win);
+int                 e_window_is_normal(Window win);
+int                 e_window_is_manageable(Window win);
 
 typedef struct _eev Eevent;
 typedef struct _ev_fd_handler Ev_Fd_Handler;
