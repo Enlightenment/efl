@@ -33,6 +33,9 @@ evas_free(Evas e)
 	Evas_Layer layer;
 	
 	layer = l->data;
+	/* FIXME: odd? can someine investigate? i'm stumped on this one */
+	/* this is odd - compile evas with -O0 no segv - otherwise a */
+	/* segv ....... ???? */
 	_evas_layer_free(layer);
      }
    if (e->layers) evas_list_free(e->layers);

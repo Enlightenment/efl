@@ -275,6 +275,11 @@ main(int argc, char **argv)
 		       
 		       down = 0;
 		       button = ev.xbutton.button;
+		       if (button == 3)
+			 {
+			    evas_free(e);
+			    exit(0);
+			 }
 		       mouse_x = ev.xbutton.x;
 		       mouse_y = ev.xbutton.y;
 		       evas_event_button_up(e, mouse_x, mouse_y, button);
