@@ -31,11 +31,13 @@ struct _Eet_File
    
    Eet_File_Header *header;
 };
+
 struct _Eet_File_Header
 {
    int                 magic;
    Eet_File_Directory *directory;
 };
+
 struct _Eet_File_Node
 {
    char *name;
@@ -45,11 +47,13 @@ struct _Eet_File_Node
    int   data_size;
    void *data;
 };
+
 struct _Eet_File_Directory
 {
    int                       size;
    Eet_File_Directory_Hash  *hash;
 };
+
 struct _Eet_File_Directory_Hash
 {
    int            size;
@@ -116,6 +120,11 @@ eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num)
    new_cache = *cache;
    new_cache_num++;
    new_cache = realloc(new_cache, new_cache_num * sizeof(Eet_File *));
+   if (!new_cache)
+     {
+	fprintf(stderr, "BAD ERROR! Eet realloc of cache list failed. Abort\n");
+	abort();
+     }
    if (!new_cache) return;
    new_cache[new_cache_num - 1] = ef;
    *cache = new_cache;
@@ -132,17 +141,28 @@ eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num)
 
    new_cache_num = *cache_num;
    new_cache = *cache;
-   if (new_cache_num <= 0) return;
+   if (new_cache_num <= 0)
+     {
+	return;
+     }
    for (i = 0; i < new_cache_num; i++)
      {
 	if (new_cache[i] == ef) break;
      }
-   if (i >= new_cache_num) return;
+   if (i >= new_cache_num)
+     {
+	return;
+     }
    new_cache_num--;
    for (j = i; j < new_cache_num; j++) new_cache[j] = new_cache[j + 1];   
    if (new_cache_num > 0)
      {
         new_cache = realloc(new_cache, new_cache_num * sizeof(Eet_File *));
+	if (!new_cache)
+	  {
+	     fprintf(stderr, "BAD ERROR! Eet realloc of cache list failed. abort\m");
+	     abort();
+	  }
      }
    else
      {
@@ -150,7 +170,6 @@ eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num)
 	new_cache = NULL;
      }
    *cache_num = new_cache_num;   
-   if ((new_cache_num > 0) && (!new_cache)) return;
    *cache = new_cache;
 }
 
@@ -330,7 +349,7 @@ eet_open(char *file, Eet_File_Mode mode)
    ef = NULL;
    if (mode == EET_FILE_MODE_READ)
      ef = eet_cache_find(buf, eet_readers, eet_readers_num);
-   else if (mode == EET_FILE_MODE_WRITE)
+   else if ((mode == EET_FILE_MODE_WRITE) || (mode == EET_FILE_MODE_RW))
      ef = eet_cache_find(buf, eet_writers, eet_writers_num);
    /* we found one */
    if (ef)
@@ -621,7 +640,7 @@ eet_close(Eet_File *ef)
    /* remove from cache */
    if (ef->mode == EET_FILE_MODE_READ)
      eet_cache_del(ef, &eet_readers, &eet_readers_num);
-   else if (ef->mode == EET_FILE_MODE_WRITE)
+   else if ((ef->mode == EET_FILE_MODE_WRITE) || (ef->mode == EET_FILE_MODE_RW))
      eet_cache_del(ef, &eet_writers, &eet_writers_num);
    /* flush any writes */
    eet_flush(ef);
