@@ -133,7 +133,7 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 	runp->edje->actions = evas_list_remove(runp->edje->actions, runp);
 	if (!runp->edje->actions)
 	  _edje_animators = evas_list_remove(_edje_animators, runp->edje);
-	_edje_emit(runp->edje, "anim,stop", runp->program->name);
+	_edje_emit(runp->edje, "program,stop", runp->program->name);
 	if (runp->program->after >= 0)
 	  {
 	     Edje_Program *pr;
@@ -181,7 +181,7 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
    runp->edje->actions = evas_list_remove(runp->edje->actions, runp);
    if (!runp->edje->actions)
      _edje_animators = evas_list_remove(_edje_animators, runp->edje);
-   _edje_emit(runp->edje, "anim,stop", runp->program->name);
+   _edje_emit(runp->edje, "program,stop", runp->program->name);
    _edje_thaw(runp->edje);
    free(runp);
 }
@@ -192,7 +192,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr)
    Evas_List *l;
 
    _edje_freeze(ed);
-   _edje_emit(ed, "anim,start", pr->name);
+   _edje_emit(ed, "program,start", pr->name);
    if (pr->action == EDJE_ACTION_TYPE_STATE_SET)
      {
 	if (pr->tween.time > 0.0)
