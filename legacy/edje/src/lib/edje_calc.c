@@ -465,7 +465,7 @@ _edje_part_recalc_single(Edje *ed,
 	if (ep->text.source)
 	  {
 	     if ((ep->text.source->chosen_description->text.text_class) && 
-		 (strlen(ep->text.source->chosen_description->text.text_class) > 0))
+		 (*ep->text.source->chosen_description->text.text_class))
 	       {
 		  Edje_Text_Class *tc;
 		  
@@ -479,8 +479,7 @@ _edje_part_recalc_single(Edje *ed,
 	  }
 	else
 	  {
-	     if ((chosen_desc->text.text_class) && 
-		 (strlen(chosen_desc->text.text_class) > 0))
+	     if ((chosen_desc->text.text_class) && (*chosen_desc->text.text_class))
 	       {
 		  Edje_Text_Class *tc;
 		  
@@ -759,7 +758,7 @@ _edje_part_recalc_single(Edje *ed,
    params->color3.b = desc->color3.b;
    params->color3.a = desc->color3.a;
 
-   if ((desc->color_class) && (strlen(desc->color_class) > 0))
+   if ((desc->color_class) && (*desc->color_class))
      {
 	Edje_Color_Class *cc;
 	
