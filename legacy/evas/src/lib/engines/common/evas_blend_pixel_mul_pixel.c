@@ -202,21 +202,21 @@ evas_common_blend_pixels_mul_color_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int 
 		  *dst_ptr = *src_ptr;
 		  break;
 		default:
+		  BLEND_ADST_ALPHA_SETUP(aa, tmp);
 		  a = _evas_pow_lut[(aa << 8) | A_VAL(dst_ptr)];
-		  
-		  BLEND_COLOR(aa, A_VAL(dst_ptr),
-				255, A_VAL(dst_ptr),
-				tmp);
-		  BLEND_ALPHA_SETUP(a, tmp);
-		  BLEND_COLOR(a, R_VAL(dst_ptr), 
-			      R_VAL(src_ptr), R_VAL(dst_ptr), 
-			      tmp);
-		  BLEND_COLOR(a, G_VAL(dst_ptr), 
-			      G_VAL(src_ptr), G_VAL(dst_ptr), 
-			      tmp);
-		  BLEND_COLOR(a, B_VAL(dst_ptr), 
-			      B_VAL(src_ptr), B_VAL(dst_ptr), 
-			      tmp);
+		  BLEND_ADST_COLOR(aa, A_VAL(dst_ptr), 
+				   255, A_VAL(dst_ptr), 
+				   tmp);
+		  BLEND_ADST_ALPHA_SETUP(a, tmp);
+		  BLEND_ADST_COLOR(a, R_VAL(dst_ptr), 
+				   R_VAL(src_ptr), R_VAL(dst_ptr), 
+				   tmp);
+		  BLEND_ADST_COLOR(a, G_VAL(dst_ptr), 
+				   G_VAL(src_ptr), G_VAL(dst_ptr), 
+				   tmp);
+		  BLEND_ADST_COLOR(a, B_VAL(dst_ptr), 
+				   B_VAL(src_ptr), B_VAL(dst_ptr), 
+				   tmp);
 		  break;
 	       }
 	     src_ptr++;
@@ -242,21 +242,21 @@ evas_common_blend_pixels_mul_color_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int 
 		  B_VAL(dst_ptr) = ((B_VAL(src_ptr) * (B_VAL(&mul_color) + 1)) >> 8);
 		  break;
 		default:
+		  BLEND_ADST_ALPHA_SETUP(aa, tmp);
 		  a = _evas_pow_lut[(aa << 8) | A_VAL(dst_ptr)];
-		  
-		  BLEND_COLOR(aa, A_VAL(dst_ptr),
-				255, A_VAL(dst_ptr),
-				tmp);
-		  BLEND_ALPHA_SETUP(a, tmp);
-		  BLEND_COLOR(a, R_VAL(dst_ptr), 
-			      ((R_VAL(src_ptr) * (R_VAL(&mul_color) + 1)) >> 8), R_VAL(dst_ptr), 
-			      tmp);
-		  BLEND_COLOR(a, G_VAL(dst_ptr), 
-			      ((G_VAL(src_ptr) * (G_VAL(&mul_color) + 1)) >> 8), G_VAL(dst_ptr), 
-			      tmp);
-		  BLEND_COLOR(a, B_VAL(dst_ptr), 
-			      ((B_VAL(src_ptr) * (B_VAL(&mul_color) + 1)) >> 8), B_VAL(dst_ptr), 
-			      tmp);
+		  BLEND_ADST_COLOR(aa, A_VAL(dst_ptr), 
+				   255, A_VAL(dst_ptr), 
+				   tmp);
+		  BLEND_ADST_ALPHA_SETUP(a, tmp);
+		  BLEND_ADST_COLOR(a, R_VAL(dst_ptr), 
+				   ((R_VAL(src_ptr) * (R_VAL(&mul_color) + 1)) >> 8), R_VAL(dst_ptr), 
+				   tmp);
+		  BLEND_ADST_COLOR(a, G_VAL(dst_ptr), 
+				   ((G_VAL(src_ptr) * (G_VAL(&mul_color) + 1)) >> 8), G_VAL(dst_ptr), 
+				   tmp);
+		  BLEND_ADST_COLOR(a, B_VAL(dst_ptr), 
+				   ((B_VAL(src_ptr) * (B_VAL(&mul_color) + 1)) >> 8), B_VAL(dst_ptr), 
+				   tmp);
 		  break;
 	       }
 	     src_ptr++;

@@ -576,14 +576,15 @@ x++;
  * C:   0.716
  */
 
-#if 0 /* old blender */
-#define BLEND_ALPHA_SETUP(a, tmp)
-#define BLEND_COLOR(a, nc, c, cc, tmp)                \
+/*
+#define BLEND_ADST_ALPHA_SETUP(a, tmp)
+#define BLEND_ADST_COLOR(a, nc, c, cc, tmp)           \
 {                                                     \
   (tmp) = ((c) - (cc)) * (a);                         \
   (nc) = (cc) + (((tmp) + ((tmp) >> 8) + 0x80) >> 8); \
 }
-#else /* new blender - faster! */
+*/
+
 #define BLEND_ALPHA_SETUP(a, tmp) \
 { \
    (tmp) = ((a) + ((a) >> 7)); \
@@ -592,7 +593,10 @@ x++;
 { \
    (nc) = ((((tmp) * ((c) - (cc))) >> 8) + (cc)); \
 }
-#endif
+
+#define BLEND_ADST_ALPHA_SETUP BLEND_ALPHA_SETUP
+#define BLEND_ADST_COLOR BLEND_COLOR
+
 
 #define PIXEL_SOLID_ALPHA 0xff000000
 
