@@ -15,6 +15,7 @@
  * * strikethrough support
  * * solid bg behind text
  * * if a word (or char) doesnt fit at all do something sensible
+ * * layout nodes need to be able to  give their source node and offset
  * * styles (outline, glow, etxra glow, shadow, soft shadow, etc.)
  * * anchors (to query text extents)
  * * query text pos given object-relative co-ords
@@ -29,14 +30,17 @@
  * * api to query formatted extents as well as the native extents
  * 
  * tough ones:
+ * * overflow objects (overflow from this textblock can go into another)
+ * * on change figure out what node the change is in and figure out what line (nodes) it affects and only modify those nodes on that line or maybe others until changes dont happen further down
+ * * obstacle objects to wrap around
  * * kerning control
  * * fully justified text (space chars evenly to fit the line)
- * * overflow objects (overflow from this textblock can go into another)
- * * obstacle objects to wrap around
- * * on change figure out what node the change is in and figure out what line (nodes) it affects and only modify those nodes on that line or maybe others until changes dont happen further down
- * * right to left text
  * 
  * really tough ones:
+ * * fix core text code to properly handle unicode codeponts - handle ALL unicode domains properly.
+ * * right to left text
+ * 
+ * insanely tough ones:
  * * for ultra-huge documents determine paging sections of the text in/out and being able to provide callbacks form the user api that can provide the text
  * 
  */
