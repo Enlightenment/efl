@@ -228,6 +228,7 @@ void                e_draw_rectangle(Drawable d, GC gc, int x, int y, int w,
 void                e_draw_line(Drawable d, GC gc, int x1, int y1, int x2,
 
 				int y2);
+void                e_draw_point(Drawable d, GC gc, int x, int y);
 void                e_window_hint_set_layer(Window win, int layer);
 void                e_window_hint_set_sticky(Window win, int sticky);
 void                e_window_hint_set_borderless(Window win);
@@ -290,6 +291,9 @@ Window              e_selection_request(void);
 Window              e_selection_set(char *string);
 
 void                e_set_blank_pointer(Window w);
+Cursor              e_cursor_new(Pixmap pmap, Pixmap mask, int x, int y, int fr, int fg, int fb, int br, int bg, int bb);
+void                e_cursor_free(Cursor c);
+void                e_cursor_set(Window win, Cursor c);
    
 typedef struct _eev Eevent;
 typedef struct _ev_fd_handler Ev_Fd_Handler;

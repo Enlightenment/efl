@@ -1,7 +1,6 @@
 dnl Process this file with autoconf to produce a configure script.
 
-AC_INIT
-AC_CONFIG_SRCDIR([configure.in])
+AC_INIT(configure.in)
 AM_INIT_AUTOMAKE(ecore, 0.0.2)
 AM_CONFIG_HEADER(config.h)
 
@@ -79,14 +78,12 @@ AC_SUBST(x_includes)
 AC_SUBST(x_ldflags)
 AC_SUBST(x_libs)
 
-AC_CONFIG_FILES([
+AC_OUTPUT([
 Makefile
 ecore-config
 src/Makefile
 debian/Makefile
-])
-AC_CONFIG_COMMANDS([default],[[
+], [
 chmod +x ecore-config
-
-]],[[]])
-AC_OUTPUT
+]
+)

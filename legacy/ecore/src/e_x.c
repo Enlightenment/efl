@@ -2365,6 +2365,12 @@ e_draw_line(Drawable d, GC gc, int x1, int y1, int x2, int y2)
 }
 
 void
+e_draw_point(Drawable d, GC gc, int x, int y)
+{
+   XDrawPoint(disp, d, gc, x, y);
+}
+
+void
 e_window_hint_set_layer(Window win, int layer)
 {
    static Atom         atom_win_layer = 0;
@@ -3082,6 +3088,8 @@ e_set_blank_pointer(Window w)
    GC gc;
    XGCValues gcv;
    
+   if (w == 0)
+     w = default_root;
    p = XCreatePixmap(disp, w, 1, 1, 1);
    m = XCreatePixmap(disp, w, 1, 1, 1);
    gc = XCreateGC(disp, m, 0, &gcv);
@@ -3093,4 +3101,36 @@ e_set_blank_pointer(Window w)
    XFreeCursor(disp, c);
    XFreePixmap(disp, p);
    XFreePixmap(disp, m);
+}
+
+Cursor
+e_cursor_new(Pixmap pmap, Pixmap mask, int x, int y, int fr, int fg, int fb, int br, int bg, int bb)
+{
+   XColor cl1, cl2;
+   
+   cl1.pixel = 0;
+   cl1.red   = fr << 8 | fr;
+   cl1.green = fg << 8 | fg;
+   cl1.blue  = fb << 8 | fb;
+   cl1.flags = DoRed|DoGreen|DoBlue;
+   cl2.pixel = 0;
+   cl2.red   = br << 8 | br;
+   cl2.green = bg << 8 | bg;
+   cl2.blue  = bb << 8 | bb;
+   cl2.flags = DoRed|DoGreen|DoBlue;
+   return XCreatePixmapCursor(disp, pmap, mask, &cl1, &cl2, x, y);   
+}
+
+void
+e_cursor_free(Cursor c)
+{
+   XFreeCursor(disp, c);
+}
+
+void
+e_cursor_set(Window win, Cursor c)
+{
+   if (win == 0)
+     win = default_root;
+   XDefineCursor(disp, win, c);
 }
