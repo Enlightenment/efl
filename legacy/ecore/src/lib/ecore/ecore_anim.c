@@ -125,7 +125,7 @@ static int
 _ecore_animator(void *data)
 {
    Ecore_Oldlist *l;
-   
+
    for (l = (Ecore_Oldlist *)animators; l;)
      {
 	Ecore_Animator *animator;
@@ -135,7 +135,10 @@ _ecore_animator(void *data)
 	if (!animator->delete_me)
 	  {
 	     if (!animator->func(animator->data))
-	       animator->delete_me = 1;
+	       {
+		  animator->delete_me = 1;
+		  animators_delete_me = 1;
+	       }
 	  }
      }
    if (animators_delete_me)
