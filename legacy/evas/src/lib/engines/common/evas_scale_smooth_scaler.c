@@ -402,6 +402,9 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
 		       DATA8 p1r, p1g, p1b, p1a;
 		       DATA8 p2r, p2g, p2b, p2a;
 		       DATA32 *lptr1, *lptr2;
+
+		       p1r = p1g = p1b = p1a = 0;
+		       p2r = p2g = p2b = p2a = 0;
 		       
 		       lptr1 = row_ptr[y];
 		       if ((lptr1 + src_w) >= 
@@ -491,6 +494,9 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
 		       DATA8 p1r, p1g, p1b;
 		       DATA8 p2r, p2g, p2b;
 		       DATA32 *lptr1, *lptr2;
+
+		       p1r = p1g = p1b = 0;
+		       p2r = p2g = p2b = 0;
 		       
 		       lptr1 = row_ptr[y];
 		       if ((lptr1 + src_w) >= 

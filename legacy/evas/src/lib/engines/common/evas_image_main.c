@@ -1,6 +1,10 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
+#ifdef BUILD_LOADER_EET
+#include <Eet.h>
+#endif
+
 static Evas_Hash        * images = NULL;
 static Evas_Object_List * cache = NULL;
 static int                cache_size = 0;
