@@ -515,20 +515,23 @@ evas_object_textblock_layout(Evas_Object *obj)
      {
 	Layout_Node *lnode;
 	Node *node;
-	int newline;
 	
+	/* FIXME: if we overflow then this would be punted to an overflow */
+	/* object instead */
+	if (layout.line.y >= h) return;
 	node = (Node *)l;
 //	printf("NODE: FMT:\"%s\" TXT:\"%s\"\n", node->format, node->text);
-	newline = 0;
 	if (node->format)
 	  {
 	     /* first handle newline, tab etc. etc */
 	     if (!strcmp(node->format, "\n"))
 	       {
 		  layout.line.x = 0;
+		  if ((layout.line.y + lnode->layout.line.mascent + lnode->layout.line.mdescent) > h)
+		    {
+		       /* FIXME: this node would overflow to the next textblock */
+		    }
 		  layout.line.y += lnode->layout.line.mascent + lnode->layout.line.mdescent;
-		  layout.line.mascent = 0;
-		  layout.line.mdescent = 0;
 	       }
 	     else
 	       evas_object_textblock_layout_format_modify(&layout, node->format);
@@ -548,6 +551,16 @@ evas_object_textblock_layout(Evas_Object *obj)
 	     evas_object_textblock_layout_copy(&layout, &(lnode->layout));
 	     if (lnode->layout.font.name)
 	       font = evas_font_load(obj->layer->evas, lnode->layout.font.name, lnode->layout.font.source, lnode->layout.font.size);
+	     /* if this is at the start of the line... */
+	     if (layout.line.x == 0)
+	       {
+		  if (font) inset = ENFN->font_inset_get(ENDT, font, text);
+		  layout.line.inset = inset;
+		  layout.line.x = -inset;
+		  layout.line.mascent = 0;
+		  layout.line.mdescent = 0;
+		  line_start = lnode;
+	       }
 	     lnode->layout.font.font = font;
 	     if (font) ascent = ENFN->font_max_ascent_get(ENDT, font);
 	     if (font) descent = ENFN->font_max_descent_get(ENDT, font);
@@ -557,14 +570,6 @@ evas_object_textblock_layout(Evas_Object *obj)
 	     layout.line.descent = descent;
 	     if (layout.line.mascent < ascent) layout.line.mascent = ascent;
 	     if (layout.line.mdescent < descent) layout.line.mdescent = descent;
-	     /* if this is at the start of the line... */
-	     if (layout.line.x == 0)
-	       {
-		  if (font) inset = ENFN->font_inset_get(ENDT, font, text);
-		  layout.line.inset = inset;
-		  layout.line.x = -inset;
-		  line_start = lnode;
-	       }
 	     if (font) chrpos = ENFN->font_char_at_coords_get(ENDT, font, text, 
 							      w - layout.line.x, 0, 
 							      &cx, &cy, &cw, &ch);
@@ -656,9 +661,11 @@ evas_object_textblock_layout(Evas_Object *obj)
 			 }
 		       layout.line.inset = 0;
 		       layout.line.x = 0;
+		       if ((layout.line.y + lnode->layout.line.mascent + lnode->layout.line.mdescent) > h)
+			 {
+			    /* FIXME: this node would overflow to the next textblock */
+			 }
 		       layout.line.y += lnode->layout.line.mascent + lnode->layout.line.mdescent;
-		       layout.line.mascent = 0;
-		       layout.line.mdescent = 0;
 		       text = text2;
 		       /* still more text to go */
 		       goto new_node;
