@@ -573,7 +573,6 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
    Evas_Object_Image *o;
    void *p_data;
    
-   if (!data) return;
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -582,16 +581,28 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
    return;
    MAGIC_CHECK_END();
    p_data = o->engine_data;
-   if (o->engine_data)
-     o->engine_data = obj->layer->evas->engine.func->image_data_put(obj->layer->evas->engine.data.output,
-								    o->engine_data, 
-								    data);
-   else
-     o->engine_data = obj->layer->evas->engine.func->image_new_from_data(obj->layer->evas->engine.data.output,
-									 o->cur.image.w,
-									 o->cur.image.h,
+   if (data)
+     {
+	if (o->engine_data)
+	  o->engine_data = obj->layer->evas->engine.func->image_data_put(obj->layer->evas->engine.data.output,
+									 o->engine_data, 
 									 data);
-     
+	else
+	  o->engine_data = obj->layer->evas->engine.func->image_new_from_data(obj->layer->evas->engine.data.output,
+									      o->cur.image.w,
+									      o->cur.image.h,
+									      data);
+     }
+   else
+     {
+	if (o->engine_data)
+	  obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output,
+						    o->engine_data);
+	o->load_error = EVAS_LOAD_ERROR_NONE;
+	o->cur.image.w = 0;
+	o->cur.image.h = 0;
+	o->engine_data = NULL;
+     }
    if (o->engine_data)
      o->engine_data = obj->layer->evas->engine.func->image_alpha_set(obj->layer->evas->engine.data.output,
 								     o->engine_data,
