@@ -98,6 +98,7 @@ libevas_la_LIBADD       = $(LDFLAGS) \
 			  data/libevas_data.la \
 			  file/libevas_file.la \
 			  imaging/libevas_imaging.la \
+			  -lm \
 			  engines/common/libevas_engine_common.la \
 			  @freetype_libs@ \
 			  @png_libs@ @jpeg_libs@ @eet_libs@ @edb_libs@ \
