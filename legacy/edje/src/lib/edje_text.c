@@ -384,6 +384,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	     while ((th < sh) && (sw > 0))
 	       {
 		  size += dif;
+		  if (size <= 0) break;
 		  evas_object_text_font_set(ep->object, font, size);
 		  evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
 		  if ((size > 0) && (th == 0)) break;
@@ -399,6 +400,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	     while ((th > sh) && (sw >= 0.0))
 	       {
 		  size -= dif;
+		  if (size <= 0) break;
 		  evas_object_text_font_set(ep->object, font, size);
 		  evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
 		  if ((size > 0) && (th == 0)) break;
