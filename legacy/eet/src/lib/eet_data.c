@@ -169,7 +169,7 @@ static int words_bigendian = -1;
 
 /*---*/
 
-#define SWAP64(x) (unsigned long long)(x) = \
+#define SWAP64(x) (x) = \
    ((((unsigned long long)(x) & 0x00000000000000ff ) << 56) |\
        (((unsigned long long)(x) & 0x000000000000ff00 ) << 40) |\
        (((unsigned long long)(x) & 0x0000000000ff0000 ) << 24) |\
@@ -178,12 +178,12 @@ static int words_bigendian = -1;
        (((unsigned long long)(x) & 0x0000ff0000000000 ) >> 24) |\
        (((unsigned long long)(x) & 0x00ff000000000000 ) >> 40) |\
        (((unsigned long long)(x) & 0xff00000000000000 ) >> 56))
-#define SWAP32(x) (int)(x) = \
+#define SWAP32(x) (x) = \
    ((((int)(x) & 0x000000ff ) << 24) |\
        (((int)(x) & 0x0000ff00 ) << 8) |\
        (((int)(x) & 0x00ff0000 ) >> 8) |\
        (((int)(x) & 0xff000000 ) >> 24))
-#define SWAP16(x) (short)(x) = \
+#define SWAP16(x) (x) = \
    ((((short)(x) & 0x00ff ) << 8) |\
        (((short)(x) & 0xff00 ) >> 8))
 
@@ -880,7 +880,7 @@ eet_data_get_char(void *src, void *src_end, void *dst)
 {
    char *s, *d;
    
-   if ((src + sizeof(char)) > src_end) return -1;
+   if (((char *)src + sizeof(char)) > (char *)src_end) return -1;
    s = (char *)src;
    d = (char *)dst;
    *d = *s;
@@ -908,7 +908,7 @@ eet_data_get_short(void *src, void *src_end, void *dst)
 {
    short *d;
    
-   if ((src + sizeof(short)) > src_end) return -1;
+   if (((char *)src + sizeof(short)) > (char *)src_end) return -1;
    memcpy(dst, src, sizeof(short));
    d = (short *)dst;
    CONV16(*d);
@@ -935,7 +935,7 @@ eet_data_get_int(void *src, void *src_end, void *dst)
 {
    int *d;
    
-   if ((src + sizeof(int)) > src_end) return -1;
+   if (((char *)src + sizeof(int)) > (char *)src_end) return -1;
    memcpy(dst, src, sizeof(int));
    d = (int *)dst;
    CONV32(*d);
@@ -962,7 +962,7 @@ eet_data_get_long_long(void *src, void *src_end, void *dst)
 {
    unsigned long long *d;
    
-   if ((src + sizeof(unsigned long long)) > src_end) return -1;
+   if (((char *)src + sizeof(unsigned long long)) > (char *)src_end) return -1;
    memcpy(dst, src, sizeof(unsigned long long));
    d = (unsigned long long *)dst;
    CONV64(*d);
@@ -1174,7 +1174,7 @@ eet_data_chunk_get(void *src, int size)
 	free(chnk);
 	return NULL;	
      }
-   chnk->data = src + 4 + ret1 + ret2;
+   chnk->data = (char *)src + 4 + ret1 + ret2;
    chnk->size -= ret2;
    return chnk;
 }
