@@ -2,15 +2,5 @@
 .libs
 Makefile
 Makefile.in
-ecore.lo
-ecore_app.lo
-ecore_events.lo
-ecore_exe.lo
-ecore_idle_enterer.lo
-ecore_idler.lo
-ecore_list.lo
-ecore_main.lo
-ecore_signal.lo
-ecore_time.lo
-ecore_timer.lo
+*.lo
 libecore.la
