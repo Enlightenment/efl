@@ -202,6 +202,39 @@ extern "C" {
 /***************************************************************************/
 
    /**
+    * Read just the header data for an image and dont decode the pixels.
+    * @param ef A valid eet file handle opened for reading.
+    * @param name Name of the entry. eg: "/base/file_i_want".
+    * @param w A pointer to the int to hold the width in pixels.
+    * @param h A pointer to the int to hold the height in pixels.
+    * @param alpha A pointer to the int to hold the alpha flag.
+    * @param compress A pointer to the int to hold the compression amount.
+    * @param quality A pointer to the int to hold the quality amount.
+    * @param lossy A pointer to the int to hold the lossiness flag.
+    * @return 1 on successfull decode, 0 otherwise
+    * 
+    * This function reads an image from an eet file stored under the named
+    * key in the eet file and return a pointer to the decompressed pixel data.
+    * 
+    * The other parameters of the image (width, height etc.) are placed into
+    * the values pointed to (they must be supplied). The pixel data is a linear
+    * array of pixels starting from the top-left of the image scanning row by 
+    * row from left to right. Each pile is a 32bit value, with the high byte
+    * being the alpha channel, the next being red, then green, and the low byte
+    * being blue. The width and height are measured in pixels and will be
+    * greater than 0 when returned. The alpha flag is either 0 or 1. 0 denotes
+    * that the alpha channel is not used. 1 denotes that it is significant.
+    * Compress is filled with the compression value/amount the image was
+    * stored with. The quality value is filled with the quality encoding of
+    * the image file (0 - 100). The lossy flags is either 0 or 1 as to if
+    * the image was encoded lossily or not.
+    * 
+    * On success the function returns 1 indicating the header was read and
+    * decoded properly, or 0 on failure.
+    */
+   int       eet_data_image_header_read(Eet_File *ef, char *name, int *w, int *h, int *alpha, int *compress, int *quality, int *lossy);
+   
+   /**
     * Read image data from the named key in the eet file.
     * @param ef A valid eet file handle opened for reading.
     * @param name Name of the entry. eg: "/base/file_i_want".
@@ -269,6 +302,39 @@ extern "C" {
    int       eet_data_image_write(Eet_File *ef, char *name, void *data, int w, int h, int alpha, int compress, int quality, int lossy);
    
    /**
+    * Decode Image data header only to get information.
+    * @param data The encoded pixel data.
+    * @param size The size, in bytes, of the encoded pixel data.
+    * @param w A pointer to the int to hold the width in pixels.
+    * @param h A pointer to the int to hold the height in pixels.
+    * @param alpha A pointer to the int to hold the alpha flag.
+    * @param compress A pointer to the int to hold the compression amount.
+    * @param quality A pointer to the int to hold the quality amount.
+    * @param lossy A pointer to the int to hold the lossiness flag.
+    * @return 1 on success, 0 on failure.
+    * 
+    * This function takes encoded pixel data and decodes it into raw RGBA
+    * pixels on success.
+    * 
+    * The other parameters of the image (width, height etc.) are placed into
+    * the values pointed to (they must be supplied). The pixel data is a linear
+    * array of pixels starting from the top-left of the image scanning row by 
+    * row from left to right. Each pixel is a 32bit value, with the high byte
+    * being the alpha channel, the next being red, then green, and the low byte
+    * being blue. The width and height are measured in pixels and will be
+    * greater than 0 when returned. The alpha flag is either 0 or 1. 0 denotes
+    * that the alpha channel is not used. 1 denotes that it is significant.
+    * Compress is filled with the compression value/amount the image was
+    * stored with. The quality value is filled with the quality encoding of
+    * the image file (0 - 100). The lossy flags is either 0 or 1 as to if
+    * the image was encoded lossily or not.
+    * 
+    * On success the function returns 1 indicating the header was read and
+    * decoded properly, or 0 on failure.
+    */
+   int       eet_data_image_header_decode(void *data, int size, int *w, int *h, int *alpha, int *compress, int *quality, int *lossy);
+
+   /**
     * Decode Image data into pixel data.
     * @param data The encoded pixel data.
     * @param size The size, in bytes, of the encoded pixel data.
@@ -302,6 +368,7 @@ extern "C" {
     * values may not contain any sensible data.
     */
    void     *eet_data_image_decode(void *data, int size, int *w, int *h, int *alpha, int *compress, int *quality, int *lossy);
+
    /**
     * Encode image data for storage or transmission.
     * @param data A pointer to the image pixel data.

@@ -112,6 +112,7 @@ static void _JPEGFatalErrorHandler(j_common_ptr cinfo);
 static void _JPEGErrorHandler(j_common_ptr cinfo);
 static void _JPEGErrorHandler2(j_common_ptr cinfo, int msg_level);
 
+static int   eet_data_image_jpeg_header_decode(void *data, int size, int *w, int *h);
 static void *eet_data_image_jpeg_rgb_decode(void *data, int size, int *w, int *h);
 static void *eet_data_image_jpeg_alpha_decode(void *data, int size, unsigned int *d, int *w, int *h);
 static void *eet_data_image_lossless_convert(int *size, void *data, int w, int h, int alpha);
@@ -168,23 +169,23 @@ static int words_bigendian = -1;
 
 /*---*/
 
-#define SWAP64(x) (x) = \
-   ((((x) & 0x00000000000000ff ) << 56) |\
-       (((x) & 0x000000000000ff00 ) << 40) |\
-       (((x) & 0x0000000000ff0000 ) << 24) |\
-       (((x) & 0x00000000ff000000 ) << 8) |\
-       (((x) & 0x000000ff00000000 ) >> 8) |\
-       (((x) & 0x0000ff0000000000 ) >> 24) |\
-       (((x) & 0x00ff000000000000 ) >> 40) |\
-       (((x) & 0xff00000000000000 ) >> 56))
-#define SWAP32(x) (x) = \
-   ((((x) & 0x000000ff ) << 24) |\
-       (((x) & 0x0000ff00 ) << 8) |\
-       (((x) & 0x00ff0000 ) >> 8) |\
-       (((x) & 0xff000000 ) >> 24))
-#define SWAP16(x) (x) = \
-   ((((x) & 0x00ff ) << 8) |\
-       (((x) & 0xff00 ) >> 8))
+#define SWAP64(x) (unsigned long long)(x) = \
+   ((((unsigned long long)(x) & 0x00000000000000ff ) << 56) |\
+       (((unsigned long long)(x) & 0x000000000000ff00 ) << 40) |\
+       (((unsigned long long)(x) & 0x0000000000ff0000 ) << 24) |\
+       (((unsigned long long)(x) & 0x00000000ff000000 ) << 8) |\
+       (((unsigned long long)(x) & 0x000000ff00000000 ) >> 8) |\
+       (((unsigned long long)(x) & 0x0000ff0000000000 ) >> 24) |\
+       (((unsigned long long)(x) & 0x00ff000000000000 ) >> 40) |\
+       (((unsigned long long)(x) & 0xff00000000000000 ) >> 56))
+#define SWAP32(x) (int)(x) = \
+   ((((int)(x) & 0x000000ff ) << 24) |\
+       (((int)(x) & 0x0000ff00 ) << 8) |\
+       (((int)(x) & 0x00ff0000 ) >> 8) |\
+       (((int)(x) & 0xff000000 ) >> 24))
+#define SWAP16(x) (short)(x) = \
+   ((((short)(x) & 0x00ff ) << 8) |\
+       (((short)(x) & 0xff00 ) >> 8))
 
 #define CONV8(x)
 #define CONV16(x) {if (words_bigendian) SWAP16(x);}
@@ -227,13 +228,48 @@ _JPEGErrorHandler2(j_common_ptr cinfo, int msg_level)
    msg_level = 0;
 }
 
+static int
+eet_data_image_jpeg_header_decode(void *data, int size, int *w, int *h)
+{
+   struct jpeg_decompress_struct cinfo;
+   struct _JPEG_error_mgr jerr;
+   FILE *f;
+   
+   f = _eet_memfile_read_open(data, (size_t)size);
+   if (!f) return 0;
+   cinfo.err = jpeg_std_error(&(jerr.pub));
+   jerr.pub.error_exit = _JPEGFatalErrorHandler;
+   jerr.pub.emit_message = _JPEGErrorHandler2;
+   jerr.pub.output_message = _JPEGErrorHandler;
+   if (setjmp(jerr.setjmp_buffer))
+     {
+	jpeg_destroy_decompress(&cinfo);
+	_eet_memfile_read_close(f);
+	return 0;
+     }
+   jpeg_create_decompress(&cinfo);
+   jpeg_stdio_src(&cinfo, f);
+   jpeg_read_header(&cinfo, TRUE);
+   cinfo.do_fancy_upsampling = FALSE;
+   cinfo.do_block_smoothing = FALSE;
+   jpeg_start_decompress(&cinfo);
+   
+   /* head decoding */
+   *w = cinfo.output_width;
+   *h = cinfo.output_height;
+   /* end head decoding */
+   jpeg_destroy_decompress(&cinfo);
+   _eet_memfile_read_close(f);
+   return 1;
+}
+
 static void *
 eet_data_image_jpeg_rgb_decode(void *data, int size, int *w, int *h)
 {
    unsigned int *d;
    struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
-   unsigned char *ptr, *line[16], *tdata;
+   unsigned char *ptr, *line[16], *tdata = NULL;
    unsigned int *ptr2;
    int x, y, l, i, scans, count, prevy;
    FILE *f;
@@ -246,6 +282,7 @@ eet_data_image_jpeg_rgb_decode(void *data, int size, int *w, int *h)
    jerr.pub.output_message = _JPEGErrorHandler;
    if (setjmp(jerr.setjmp_buffer))
      {
+	if (tdata) free(tdata);
 	jpeg_destroy_decompress(&cinfo);
 	_eet_memfile_read_close(f);
 	return NULL;
@@ -343,7 +380,7 @@ eet_data_image_jpeg_alpha_decode(void *data, int size, unsigned int *d, int *w, 
 {
    struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
-   unsigned char *ptr, *line[16], *tdata;
+   unsigned char *ptr, *line[16], *tdata = NULL;
    unsigned int *ptr2;
    int x, y, l, i, scans, count, prevy;
    FILE *f;
@@ -356,6 +393,7 @@ eet_data_image_jpeg_alpha_decode(void *data, int size, unsigned int *d, int *w, 
    jerr.pub.output_message = _JPEGErrorHandler;
    if (setjmp(jerr.setjmp_buffer))
      {
+	if (tdata) free(tdata);
 	jpeg_destroy_decompress(&cinfo);
 	_eet_memfile_read_close(f);
 	return NULL;
@@ -922,26 +960,26 @@ eet_data_put_int(void *src, int *size_ret)
 static int
 eet_data_get_long_long(void *src, void *src_end, void *dst)
 {
-   long long *d;
+   unsigned long long *d;
    
-   if ((src + sizeof(long long)) > src_end) return -1;
-   memcpy(dst, src, sizeof(long long));
-   d = (long long *)dst;
+   if ((src + sizeof(unsigned long long)) > src_end) return -1;
+   memcpy(dst, src, sizeof(unsigned long long));
+   d = (unsigned long long *)dst;
    CONV64(*d);
-   return sizeof(long long);
+   return sizeof(unsigned long long);
 }
 
 static void *
 eet_data_put_long_long(void *src, int *size_ret)
 {
-   long long *s, *d;
+   unsigned long long *s, *d;
    
-   d = (long long *)malloc(sizeof(long long));
+   d = (unsigned long long *)malloc(sizeof(unsigned long long));
    if (!d) return NULL;
-   s = (long long *)src;
+   s = (unsigned long long *)src;
    *d = *s;
    CONV64(*d);
-   *size_ret = sizeof(long long);
+   *size_ret = sizeof(unsigned long long);
    return d;
 }
 
@@ -1264,6 +1302,22 @@ eet_data_image_read(Eet_File *ef, char *name,
    return d;
 }
 
+int
+eet_data_image_header_read(Eet_File *ef, char *name,
+			   int *w, int *h, int *alpha,
+			   int *compress, int *quality, int *lossy)
+{
+   void *data;
+   int size;
+   int d;
+ 
+   data = eet_read(ef, name, &size);
+   if (!data) return 0;
+   d = eet_data_image_header_decode(data, size, w, h, alpha, compress, quality, lossy);
+   free(data);
+   return d;
+}
+
 void *
 eet_data_image_encode(void *data, int *size_ret, int w, int h, int alpha, int compress, int quality, int lossy)
 {
@@ -1286,6 +1340,91 @@ eet_data_image_encode(void *data, int *size_ret, int w, int h, int alpha, int co
      }
    if (size_ret) *size_ret = size;
    return d;
+}
+
+int
+eet_data_image_header_decode(void *data, int size, int *w, int *h, int *alpha, int *compress, int *quality, int *lossy)
+{
+   int header[8];
+   
+   if (words_bigendian == -1)
+     {
+	unsigned long int v;
+
+	v = htonl(0x12345678);
+	if (v == 0x12345678) words_bigendian = 1;
+	else words_bigendian = 0;
+     }
+   
+   if (size < 32) return 0;
+
+   memcpy(header, data, 32);
+   if (words_bigendian)
+     {
+	int i;
+	
+	for (i = 0; i < 8; i++) SWAP32(header[i]);	     
+     }
+   if (header[0] == 0xac1dfeed)
+     {
+	int iw, ih, al, cp;
+	unsigned int *body;
+	
+	iw = header[1];
+	ih = header[2];
+	al = header[3];
+	cp = header[4];
+	if ((iw > 8192) || (ih > 8192)) return 0;
+	if ((cp == 0) && (size < ((iw * ih * 4) + 32))) return 0;
+	if (w) *w = iw;
+	if (h) *h = ih;
+	if (alpha) *alpha = al;
+	if (compress) *compress = cp;
+	if (lossy) *lossy = 0;
+	if (quality) *quality = 100;
+	return 1;
+     }
+   else if (header[0] == 0xbeeff00d)
+     {
+	int iw = 0, ih = 0;
+	int sz1, sz2;
+	unsigned char *dt;
+	int ok;
+	
+	sz1 = header[1];
+	sz2 = header[2];
+	dt = data;
+	dt += 12;
+	ok = eet_data_image_jpeg_header_decode(dt, sz1, &iw, &ih);
+	if (ok)
+	  {
+	     if (w) *w = iw;
+	     if (h) *h = ih;
+	     if (alpha) *alpha = 1;
+	     if (compress) *compress = 0;
+	     if (lossy) *lossy = 1;
+	     if (quality) *quality = 75;
+	     return 1;
+	  }
+     }
+   else
+     {
+	int iw = 0, ih = 0;
+	int ok;
+	
+	ok = eet_data_image_jpeg_header_decode(data, size, &iw, &ih);
+	if (ok)
+	  {
+	     if (w) *w = iw;
+	     if (h) *h = ih;
+	     if (alpha) *alpha = 0;
+	     if (compress) *compress = 0;
+	     if (lossy) *lossy = 1;
+	     if (quality) *quality = 75;
+	     return 1;
+	  }
+     }
+   return 0;
 }
 
 void *
