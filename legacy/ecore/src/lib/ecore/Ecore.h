@@ -13,6 +13,8 @@
  * and event handlers.  Events for file descriptor events are covered in
  * @ref Ecore_FD_Handler_Group.
  *
+ * Time functions are covered in @ref Ecore_Time_Group.
+ *
  * There is also provision for callbacks for when the loop enters or
  * exits an idle state. See @ref Idle_Group for more information.
  *

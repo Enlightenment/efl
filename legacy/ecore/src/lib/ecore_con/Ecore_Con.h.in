@@ -4,6 +4,33 @@
 /**
  * @file Ecore_Con.h
  * @brief Sockets functions.
+ *
+ * The Ecore Connection Library ( @c Ecore_Con ) provides simple mechanisms
+ * for communications between programs using reliable sockets.  It saves
+ * the programmer from having to worry about file descripters and waiting
+ * for incoming connections.
+ *
+ * There are two main objects in the @c Ecore_Con library: the @c
+ * Ecore_Con_Server and the @c Ecore_Con_Client.
+ *
+ * The @c Ecore_Con_Server represents a server to connect to.  It is
+ * represents a server that can be connected to.  It is used regardless
+ * of whether the program is acting as a server or client itself.
+ *
+ * To create a listening server, call @c ecore_con_server_add().
+ *
+ * To connect to a server, call @c ecore_Con_server_connect().  Data can
+ * then be sent to the server using the @c ecore_con_server_send().
+ * 
+ * Whenever a client connection is made to an @c Ecore_Con_Server, a
+ * @c ECORE_CON_CLIENT_ADD event is emitted.  Any event callbacks that are
+ * called receive a @c Ecore_Con_Client object, which represents a
+ * connection that that particular client.
+ *
+ * Functions are described in the following groupings:
+ * @li @ref Ecore_Con_Lib_Group
+ * @li @ref Ecore_Con_Server_Group
+ * @li @ref Ecore_Con_Client_Group
  */
 
 #define HAVE_ECORE_CON_OPENSSL @USE_OPENSSL@

@@ -8,26 +8,20 @@ static int          timers_delete_me = 0;
 static Ecore_Timer *timers = NULL;
 
 /**
- * Add a timer to tick off in a specified time during main loop execution.
- * @param in The number of seconds in which to expire the timer
- * @param func The function to call when it expires
- * @param data The data to pass to the function
- * @return A handle to the new timer
- * @ingroup Ecore_Timer_Group
- * 
- * This function adds a timer and returns its handle on success and NULL on
- * failure. The function @p func will be called in @p in seconds from the
- * time this function call was made. The function @p func is passed the
- * @p data pointer as its parameter.
- * 
- * When the timer @p func is called, it must return a value of either 1 or 0. 
- * If it returns 1, it will be re-scheduled to repeat in the same interval
- * after this timer was triggered (ie if this timer was triggered with an
- * @p in value of 1.0 then the next timer will be triggered at the time this
- * timer was called plus 1.0).
- * 
- * For more information, see the @link timer_example.c ecore_timer @endlink
- * example.
+ * @defgroup Ecore_Time_Group Ecore Time Functions
+ *
+ * Functions that deal with time.  These functions include those that simply
+ * retrieve it in a given format, and those that create events based on it.
+ */
+
+/**
+ * Creates a timer to call the given function in the given period of time.
+ * @param   in   The interval in seconds.
+ * @param   func The given function.  If @p func returns 1, the timer is
+ *               rescheduled for the next interval @p in.
+ * @param   data Data to pass to @p func when it is called.
+ * @return  A timer object on success.  @c NULL on failure.
+ * @ingroup Ecore_Time_Group
  */
 Ecore_Timer *
 ecore_timer_add(double in, int (*func) (void *data), const void *data)
@@ -47,15 +41,10 @@ ecore_timer_add(double in, int (*func) (void *data), const void *data)
 
 /**
  * Delete the specified timer from the timer list.
- * @param timer The timer to delete
- * @return The data pointer set for the timer
- * @ingroup Ecore_Timer_Group
- * 
- * Delete the specified @p timer from the set of timers that are executed
- * during main loop execution. This function returns the data parameter that
- * was being passed to the callback on success, or NULL on failure. After this
- * call returns the specified timer object @p timer is invalid and should not
- * be used again. It will not get called again after deletion.
+ * @param   timer The timer to delete.
+ * @return  The data pointer set for the timer when @ref ecore_timer_add was
+ *          called.  @c NULL is returned if the function is unsuccessful.
+ * @ingroup Ecore_Time_Group
  */
 void *
 ecore_timer_del(Ecore_Timer *timer)

@@ -4,12 +4,9 @@
 #include <sys/time.h>
 
 /**
- * Get the current system time as a floating point value in seconds.
- * @return The current time (since the epoch start) in seconds
- * 
- * This function returns the current system time in seconds from 12:00am 
- * 1st Janruary 1970. The time is returned as a double precision floating point
- * value to allow for fractions of a second to be determined.
+ * Retrieves the current system time as a floating point value in seconds.
+ * @return  The number of seconds since 12.00AM 1st January 1970.
+ * @ingroup Ecore_Time_Group
  */
 double
 ecore_time_get(void)
