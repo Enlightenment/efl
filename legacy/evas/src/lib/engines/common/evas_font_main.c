@@ -3,7 +3,7 @@
 FT_Library      ft_lib;
 
 void
-font_init(void)
+evas_common_font_init(void)
 {
    static int initialised = 0;
    int error;
@@ -15,7 +15,7 @@ font_init(void)
 }
 
 int
-font_ascent_get(RGBA_Font *fn)
+evas_common_font_ascent_get(RGBA_Font *fn)
 {
    int val;
    int ret;
@@ -27,7 +27,7 @@ font_ascent_get(RGBA_Font *fn)
 }
 
 int
-font_descent_get(RGBA_Font *fn)
+evas_common_font_descent_get(RGBA_Font *fn)
 {
    int val;
    int ret;
@@ -39,7 +39,7 @@ font_descent_get(RGBA_Font *fn)
 }
 
 int
-font_max_ascent_get(RGBA_Font *fn)
+evas_common_font_max_ascent_get(RGBA_Font *fn)
 {
    int val;
    int ret;
@@ -51,7 +51,7 @@ font_max_ascent_get(RGBA_Font *fn)
 }
 
 int
-font_max_descent_get(RGBA_Font *fn)
+evas_common_font_max_descent_get(RGBA_Font *fn)
 {
    int val;
    int ret;
@@ -63,7 +63,7 @@ font_max_descent_get(RGBA_Font *fn)
 }
 
 int
-font_get_line_advance(RGBA_Font *fn)
+evas_common_font_get_line_advance(RGBA_Font *fn)
 {
    int val;
    int ret;
@@ -75,7 +75,7 @@ font_get_line_advance(RGBA_Font *fn)
 }
 
 int
-font_utf8_get_next(unsigned char *buf, int *iindex)
+evas_common_font_utf8_get_next(unsigned char *buf, int *iindex)
 {
    /* Reads UTF8 bytes from @buf, starting at *@index and returns
     * the code point of the next valid code point. @index is

@@ -7,18 +7,18 @@
 #include <sys/utsname.h>
 
 void
-outbuf_software_qtopia_init(void)
+evas_qtopia_outbuf_software_qtopia_init(void)
 {
 }
 
 void
-outbuf_software_qtopia_free(Outbuf *buf)
+evas_qtopia_outbuf_software_qtopia_free(Outbuf *buf)
 {
    free(buf);
 }
 
 Outbuf *
-outbuf_software_qtopia_setup_q(int w, int h, int rot, Outbuf_Depth depth, QWidget *target)
+evas_qtopia_outbuf_software_qtopia_setup_q(int w, int h, int rot, Outbuf_Depth depth, QWidget *target)
 {
    Outbuf *buf;
    
@@ -49,33 +49,33 @@ outbuf_software_qtopia_setup_q(int w, int h, int rot, Outbuf_Depth depth, QWidge
 }
 
 void
-outbuf_software_qtopia_blit(Outbuf *buf, int src_x, int src_y, int w, int h, int dst_x, int dst_y)
+evas_qtopia_outbuf_software_qtopia_blit(Outbuf *buf, int src_x, int src_y, int w, int h, int dst_x, int dst_y)
 {
 }
 
 void
-outbuf_software_qtopia_update(Outbuf *buf, int x, int y, int w, int h)
+evas_qtopia_outbuf_software_qtopia_update(Outbuf *buf, int x, int y, int w, int h)
 {
 }
 
 RGBA_Image *
-outbuf_software_qtopia_new_region_for_update(Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch)
+evas_qtopia_outbuf_software_qtopia_new_region_for_update(Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch)
 {
    RGBA_Image *im;
    
    *cx = 0; *cy = 0; *cw = w; *ch = h;
-   im = image_create(w, h);
+   im = evas_common_image_create(w, h);
    return im;
 }
 
 void
-outbuf_software_qtopia_free_region_for_update(Outbuf *buf, RGBA_Image *update)
+evas_qtopia_outbuf_software_qtopia_free_region_for_update(Outbuf *buf, RGBA_Image *update)
 {
-   image_free(update);
+   evas_common_image_free(update);
 }
 
 void
-outbuf_software_qtopia_push_updated_region(Outbuf *buf, RGBA_Image *update, int x, int y, int w, int h)
+evas_qtopia_outbuf_software_qtopia_push_updated_region(Outbuf *buf, RGBA_Image *update, int x, int y, int w, int h)
 {
    Gfx_Func_Convert conv_func;
    DATA8 *data;
@@ -122,7 +122,7 @@ outbuf_software_qtopia_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 		    ((d->location.y * d->fb.width * fb_bytes) + 
 		     (d->location.x * fb_bytes));
 		  data = fb_mem + (fb_bytes * (x + (y * d->fb.width)));
-		  conv_func = convert_func_get(data, w, h, d->fb.bpp,
+		  conv_func = evas_common_convert_func_get(data, w, h, d->fb.bpp,
 					       d->fb.mask.r, d->fb.mask.g, d->fb.mask.b,
 					       PAL_MODE_NONE, buf->rot);
 	       }
@@ -133,7 +133,7 @@ outbuf_software_qtopia_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 		     ((d->location.x * d->fb.width) +
 		      (d->fb.width - d->location.y - d->location.h)));
 		  data = fb_mem + (fb_bytes * (buf->h - y - h + (x * d->fb.width)));
-		  conv_func = convert_func_get(data, h, w, d->fb.bpp,
+		  conv_func = evas_common_convert_func_get(data, h, w, d->fb.bpp,
 					       d->fb.mask.r, d->fb.mask.g, d->fb.mask.b,
 					       PAL_MODE_NONE, buf->rot);
 	       }
@@ -144,7 +144,7 @@ outbuf_software_qtopia_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 		    ((d->location.y * d->fb.width * fb_bytes) + 
 		     (d->location.x * fb_bytes));
 		  data = fb_mem + (fb_bytes * (y + ((buf->w - x - w) * d->fb.width)));
-		  conv_func = convert_func_get(data, h, w, d->fb.bpp,
+		  conv_func = evas_common_convert_func_get(data, h, w, d->fb.bpp,
 					       d->fb.mask.r, d->fb.mask.g, d->fb.mask.b,
 					       PAL_MODE_NONE, buf->rot);
 	       }
@@ -192,7 +192,7 @@ outbuf_software_qtopia_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 }
 
 void
-outbuf_software_qtopia_reconfigure(Outbuf *buf, int w, int h, int rot, Outbuf_Depth depth)
+evas_qtopia_outbuf_software_qtopia_reconfigure(Outbuf *buf, int w, int h, int rot, Outbuf_Depth depth)
 {
    if ((w == buf->w) && (h == buf->h) && 
        (rot == buf->rot) && (depth == buf->depth))
@@ -203,36 +203,36 @@ outbuf_software_qtopia_reconfigure(Outbuf *buf, int w, int h, int rot, Outbuf_De
 }
 
 int
-outbuf_software_qtopia_get_width(Outbuf *buf)
+evas_qtopia_outbuf_software_qtopia_get_width(Outbuf *buf)
 {
    return buf->w;
 }
 
 int
-outbuf_software_qtopia_get_height(Outbuf *buf)
+evas_qtopia_outbuf_software_qtopia_get_height(Outbuf *buf)
 {
    return buf->h;
 }
 
 Outbuf_Depth
-outbuf_software_qtopia_get_depth(Outbuf *buf)
+evas_qtopia_outbuf_software_qtopia_get_depth(Outbuf *buf)
 {
    return buf->depth;
 }
 
 int
-outbuf_software_qtopia_get_rot(Outbuf *buf)
+evas_qtopia_outbuf_software_qtopia_get_rot(Outbuf *buf)
 {
    return buf->rot;
 }
 
 int
-outbuf_software_qtopia_get_have_backbuf(Outbuf *buf)
+evas_qtopia_outbuf_software_qtopia_get_have_backbuf(Outbuf *buf)
 {
    return 0;
 }
 
 void
-outbuf_software_qtopia_set_have_backbuf(Outbuf *buf, int have_backbuf)
+evas_qtopia_outbuf_software_qtopia_set_have_backbuf(Outbuf *buf, int have_backbuf)
 {
 }

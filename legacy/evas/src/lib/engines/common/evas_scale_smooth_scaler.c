@@ -223,7 +223,7 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
 	  {
 	     Gfx_Func_Blend_Src_Cmod_Dst func;
 	     
-	     func = draw_func_blend_cmod_get(src, dst, dst_clip_w);
+	     func = evas_common_draw_func_blend_cmod_get(src, dst, dst_clip_w);
 	     for (y = 0; y < dst_clip_h; y++)
 	       {
 		  func(ptr, dst_ptr, dst_clip_w, dc->mod.r, dc->mod.g, dc->mod.b, dc->mod.a);
@@ -235,7 +235,7 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
 	  {
 	     Gfx_Func_Blend_Src_Mul_Dst func;
 	     
-	     func = draw_func_blend_mul_get(src, dc->mul.col, dst, dst_clip_w);
+	     func = evas_common_draw_func_blend_mul_get(src, dc->mul.col, dst, dst_clip_w);
 	     for (y = 0; y < dst_clip_h; y++)
 	       {
 		  func(ptr, dst_ptr, dst_clip_w, dc->mul.col);
@@ -247,7 +247,7 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
 	  {
 	     Gfx_Func_Blend_Src_Dst func;
 	     
-	     func = draw_func_blend_get(src, dst, dst_clip_w);
+	     func = evas_common_draw_func_blend_get(src, dst, dst_clip_w);
 	     for (y = 0; y < dst_clip_h; y++)
 	       {
 		  func(ptr, dst_ptr, dst_clip_w);
@@ -266,9 +266,9 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
 	buf = malloc(dst_clip_w * sizeof(DATA32));
 	if (!buf) goto no_buf;
 	
-	func      = draw_func_blend_get      (src, dst, dst_clip_w);
-	func_cmod = draw_func_blend_cmod_get (src, dst, dst_clip_w);
-	func_mul  = draw_func_blend_mul_get  (src, dc->mul.col, dst, dst_clip_w);
+	func      = evas_common_draw_func_blend_get      (src, dst, dst_clip_w);
+	func_cmod = evas_common_draw_func_blend_cmod_get (src, dst, dst_clip_w);
+	func_mul  = evas_common_draw_func_blend_mul_get  (src, dc->mul.col, dst, dst_clip_w);
 	
 	/* scaling up only - dont need anything except original */
 	if ((dst_region_w >= src_region_w) && (dst_region_h >= src_region_h))
@@ -607,9 +607,9 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
 	     
 	     /* no mipmaps at all- need to populate mipmap table */
 	     if (src->mipmaps.num == 0)
-	       scale_rgba_gen_mipmap_table(src);
+	       evas_common_scale_rgba_gen_mipmap_table(src);
 	     /* caclulate mix level between mipmaps */
-	     mix = scale_rgba_get_mipmap_surfaces(src, 
+	     mix = evas_common_scale_rgba_get_mipmap_surfaces(src, 
 						  src_region_w, src_region_h, 
 						  dst_region_w, dst_region_h, 
 						  &srf1, &srf2);
@@ -1409,10 +1409,10 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
 	     /* no mipmaps at all- need to populate mipmap table */
 	     if (src->mipmaps.num == 0)
 	       {
-		  scale_rgba_gen_mipmap_table(src);
+		  evas_common_scale_rgba_gen_mipmap_table(src);
 	       }
 	     /* caclulate mix level between mipmaps */
-	     srf = scale_rgba_get_mipmap_surface(src, 
+	     srf = evas_common_scale_rgba_get_mipmap_surface(src, 
 						 src_region_w, src_region_h, 
 						 dst_region_w, dst_region_h);
 	     /* get mipmap level */

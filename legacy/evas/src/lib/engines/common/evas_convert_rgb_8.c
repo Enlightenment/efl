@@ -8,7 +8,7 @@ extern const DATA8 _dither_128128[128][128];
 #endif
 
 #ifdef BUILD_CONVERT_8_RGB_332
-void convert_rgba_to_8bpp_rgb_332_dith     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+void evas_common_convert_rgba_to_8bpp_rgb_332_dith     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
    DATA8 *dst_ptr;
@@ -38,7 +38,7 @@ void convert_rgba_to_8bpp_rgb_332_dith     (DATA32 *src, DATA8 *dst, int src_jum
 static DATA8 p_to_6[256];
 static DATA8 p_to_6_err[256];
 
-void convert_rgba_to_8bpp_rgb_666_dith     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+void evas_common_convert_rgba_to_8bpp_rgb_666_dith     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
    DATA8 *dst_ptr;
@@ -75,7 +75,7 @@ void convert_rgba_to_8bpp_rgb_666_dith     (DATA32 *src, DATA8 *dst, int src_jum
 }
 #endif
 #ifdef BUILD_CONVERT_8_RGB_232
-void convert_rgba_to_8bpp_rgb_232_dith     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+void evas_common_convert_rgba_to_8bpp_rgb_232_dith     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
    DATA8 *dst_ptr;
@@ -102,7 +102,7 @@ void convert_rgba_to_8bpp_rgb_232_dith     (DATA32 *src, DATA8 *dst, int src_jum
 }
 #endif
 #ifdef BUILD_CONVERT_8_RGB_222
-void convert_rgba_to_8bpp_rgb_222_dith     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+void evas_common_convert_rgba_to_8bpp_rgb_222_dith     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
    DATA8 *dst_ptr;
@@ -128,7 +128,7 @@ void convert_rgba_to_8bpp_rgb_222_dith     (DATA32 *src, DATA8 *dst, int src_jum
 }
 #endif
 #ifdef BUILD_CONVERT_8_RGB_221
-void convert_rgba_to_8bpp_rgb_221_dith     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+void evas_common_convert_rgba_to_8bpp_rgb_221_dith     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
    DATA8 *dst_ptr;
@@ -155,7 +155,7 @@ void convert_rgba_to_8bpp_rgb_221_dith     (DATA32 *src, DATA8 *dst, int src_jum
 }
 #endif
 #ifdef BUILD_CONVERT_8_RGB_121
-void convert_rgba_to_8bpp_rgb_121_dith     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+void evas_common_convert_rgba_to_8bpp_rgb_121_dith     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
    DATA8 *dst_ptr;
@@ -182,7 +182,7 @@ void convert_rgba_to_8bpp_rgb_121_dith     (DATA32 *src, DATA8 *dst, int src_jum
 }
 #endif
 #ifdef BUILD_CONVERT_8_RGB_111
-void convert_rgba_to_8bpp_rgb_111_dith     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+void evas_common_convert_rgba_to_8bpp_rgb_111_dith     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
    DATA8 *dst_ptr;

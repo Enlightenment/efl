@@ -5,12 +5,12 @@
 #endif
 
 void
-cpu_init(void)
+evas_common_cpu_init(void)
 {
 }
 
 int
-cpu_have_cpuid(void)
+evas_common_cpu_have_cpuid(void)
 {
 #ifdef BUILD_MMX
    unsigned int have_cpu_id;
@@ -24,7 +24,7 @@ cpu_have_cpuid(void)
 }
 
 void
-cpu_can_do(int *mmx, int *sse, int *sse2)
+evas_common_cpu_can_do(int *mmx, int *sse, int *sse2)
 {
 #ifdef BUILD_MMX
 #ifndef HARD_CODED_P3
@@ -62,7 +62,7 @@ cpu_can_do(int *mmx, int *sse, int *sse2)
      }
    
 #   ifdef BUILD_MMX
-   have_cpu_id = cpu_have_cpuid();
+   have_cpu_id = evas_common_cpu_have_cpuid();
    if (have_cpu_id)
      {
 	unsigned int cpu_id;
@@ -85,13 +85,13 @@ cpu_can_do(int *mmx, int *sse, int *sse2)
 
 #ifdef BUILD_MMX
 void
-cpu_end_opt(void)
+evas_common_cpu_end_opt(void)
 {
    emms();
 }
 #else
 void
-cpu_end_opt(void)
+evas_common_cpu_end_opt(void)
 {
 }
 #endif

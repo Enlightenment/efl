@@ -14,13 +14,13 @@ static int font_flush_free_glyph_cb(Evas_Hash *hash, const char *key, void *data
 /* face (if applicable) */
 
 RGBA_Font *
-font_load(const char *name, int size)
+evas_common_font_load(const char *name, int size)
 {
    int error;
    RGBA_Font *fn;
    char *file;
 
-   fn = font_find(name, size);
+   fn = evas_common_font_find(name, size);
    if (fn) return fn;
    
    fn = malloc(sizeof(RGBA_Font));   
@@ -116,13 +116,13 @@ font_load(const char *name, int size)
 }
 
 void
-font_free(RGBA_Font *fn)
+evas_common_font_free(RGBA_Font *fn)
 {
    fn->references--;
    if (fn->references == 0)
      {
-	font_modify_cache_by(fn, 1);
-	font_flush();
+	evas_common_font_modify_cache_by(fn, 1);
+	evas_common_font_flush();
      }
 }
 
@@ -143,7 +143,7 @@ font_modify_cache_cb(Evas_Hash *hash, const char *key, void *data, void *fdata)
 }
 
 void
-font_modify_cache_by(RGBA_Font *fn, int dir)
+evas_common_font_modify_cache_by(RGBA_Font *fn, int dir)
 {
    int sz_name = 0, sz_file = 0, sz_hash = 0;
    
@@ -156,23 +156,23 @@ font_modify_cache_by(RGBA_Font *fn, int dir)
 }
 
 int
-font_cache_get(void)
+evas_common_font_cache_get(void)
 {
    return font_cache;
 }
 
 void
-font_cache_set(int size)
+evas_common_font_cache_set(int size)
 {
    font_cache = size;
-   font_flush();
+   evas_common_font_flush();
 }
 
 void
-font_flush(void)
+evas_common_font_flush(void)
 {
    if (font_cache_usage < font_cache) return;
-   while (font_cache_usage > font_cache) font_flush_last();
+   while (font_cache_usage > font_cache) evas_common_font_flush_last();
 }
 
 static int
@@ -190,7 +190,7 @@ font_flush_free_glyph_cb(Evas_Hash *hash, const char *key, void *data, void *fda
 }
 
 void
-font_flush_last(void)
+evas_common_font_flush_last(void)
 {
    Evas_Object_List *l;
    RGBA_Font *fn = NULL;
@@ -205,7 +205,7 @@ font_flush_last(void)
    if (!fn) return;
    
    fonts = evas_object_list_remove(fonts, fn);
-   font_modify_cache_by(fn, -1);
+   evas_common_font_modify_cache_by(fn, -1);
 
    evas_hash_foreach(fn->glyphs, font_flush_free_glyph_cb, NULL);
    evas_hash_free(fn->glyphs);
@@ -217,7 +217,7 @@ font_flush_last(void)
 }
 
 RGBA_Font *
-font_find(const char *name, int size)
+evas_common_font_find(const char *name, int size)
 {
    Evas_Object_List *l;
    
@@ -228,7 +228,7 @@ font_find(const char *name, int size)
 	fn = (RGBA_Font *)l;
 	if ((fn->size == size) && (!strcmp(name, fn->name)))
 	  {
-	     if (fn->references == 0) font_modify_cache_by(fn, -1);
+	     if (fn->references == 0) evas_common_font_modify_cache_by(fn, -1);
 	     fn->references++;
 	     fonts = evas_object_list_remove(fonts, fn);
 	     fonts = evas_object_list_prepend(fonts, fn);

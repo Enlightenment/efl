@@ -3,7 +3,7 @@
 extern FT_Library ft_lib;
 
 RGBA_Font_Glyph *
-font_cache_glyph_get(RGBA_Font *fn, FT_UInt index)
+evas_common_font_cache_glyph_get(RGBA_Font *fn, FT_UInt index)
 {
    RGBA_Font_Glyph *fg;
    char key[6];   
@@ -49,7 +49,7 @@ font_cache_glyph_get(RGBA_Font *fn, FT_UInt index)
 }
 
 void
-font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const char *text)
+evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const char *text)
 {
    int use_kerning;
    int pen_x, pen_y;
@@ -93,7 +93,7 @@ font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, c
    pen_y = y << 8;
    use_kerning = FT_HAS_KERNING(fn->ft.face);
    prev_index = 0;
-   func = draw_func_blend_alpha_get(dst);
+   func = evas_common_draw_func_blend_alpha_get(dst);
    for (chr = 0; text[chr];)
      {
 	FT_UInt index;
@@ -101,7 +101,7 @@ font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, c
 	int chr_x, chr_y;
 	int gl;
 	
-	gl = font_utf8_get_next((unsigned char *)text, &chr);
+	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (gl == 0) break;
 	index = FT_Get_Char_Index(fn->ft.face, gl);
 	if ((use_kerning) && (prev_index) && (index))
@@ -112,7 +112,7 @@ font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, c
 			    ft_kerning_default, &delta);
 	     pen_x += delta.x << 2;
 	  }
-	fg = font_cache_glyph_get(fn, index);
+	fg = evas_common_font_cache_glyph_get(fn, index);
 	if (!fg) continue;
 
 	chr_x = (pen_x + (fg->glyph_out->left << 8)) >> 8;

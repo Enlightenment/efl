@@ -8,7 +8,7 @@ extern DATA8        pow_lut[256][256];
 extern const DATA16 const_c1[4];
 
 void
-blend_pixels_cmod_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod)
+evas_common_blend_pixels_cmod_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr;
    
@@ -42,7 +42,7 @@ blend_pixels_cmod_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, 
 /****************************************************************************/
 
 void
-blend_pixels_cmod_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod)
+evas_common_blend_pixels_cmod_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr;
    
@@ -77,7 +77,7 @@ blend_pixels_cmod_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len, DATA8 *rmod,
 /****************************************************************************/
 
 void
-copy_pixels_cmod_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod)
+evas_common_copy_pixels_cmod_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr;
    
@@ -99,7 +99,7 @@ copy_pixels_cmod_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, 
 /****************************************************************************/
 
 void
-copy_pixels_cmod_rgb_to_rgba_c(DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod)
+evas_common_copy_pixels_cmod_rgb_to_rgba_c(DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr;
    

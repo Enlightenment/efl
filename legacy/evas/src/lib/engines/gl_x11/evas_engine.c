@@ -212,19 +212,19 @@ evas_engine_gl_x11_output_setup(int w, int h, int rot, Display *disp, Drawable d
    
    re = calloc(1, sizeof(Render_Engine));
    /* if we haven't initialized - init (automatic abort if already done) */
-   cpu_init();
+   evas_common_cpu_init();
    
-   blend_init();
-   image_init();
-   convert_init();
-   scale_init();
-   rectangle_init();
-   gradient_init();
-   polygon_init();
-   line_init();
-   font_init();
-   draw_init();
-   tilebuf_init();
+   evas_common_blend_init();
+   evas_common_image_init();
+   evas_common_convert_init();
+   evas_common_scale_init();
+   evas_common_rectangle_init();
+   evas_common_gradient_init();
+   evas_common_polygon_init();
+   evas_common_line_init();
+   evas_common_font_init();
+   evas_common_draw_init();
+   evas_common_tilebuf_init();
    
    evas_gl_x11_init();
    

@@ -1,6 +1,6 @@
 #include "evas_common.h"
 
 void
-scale_init(void)
+evas_common_scale_init(void)
 {
 }

@@ -560,268 +560,268 @@ void *evas_object_list_remove           (void *in_list, void *in_item);
 void *evas_object_list_find             (void *in_list, void *in_item);
     
 /****/
-void cpu_init                               (void);
+void evas_common_cpu_init                               (void);
 
-int  cpu_have_cpuid                         (void);
-void cpu_can_do                             (int *mmx, int *sse, int *sse2);
-void cpu_end_opt                            (void);
+int  evas_common_cpu_have_cpuid                         (void);
+void evas_common_cpu_can_do                             (int *mmx, int *sse, int *sse2);
+void evas_common_cpu_end_opt                            (void);
     
 /****/
-void blend_init                             (void);
+void evas_common_blend_init                             (void);
 
-void blend_pixels_rgba_to_rgb_c             (DATA32 *src, DATA32 *dst, int len);
-void blend_pixels_rgba_to_rgb_mmx           (DATA32 *src, DATA32 *dst, int len);
-void blend_pixels_rgba_to_rgba_c            (DATA32 *src, DATA32 *dst, int len);
+void evas_common_blend_pixels_rgba_to_rgb_c             (DATA32 *src, DATA32 *dst, int len);
+void evas_common_blend_pixels_rgba_to_rgb_mmx           (DATA32 *src, DATA32 *dst, int len);
+void evas_common_blend_pixels_rgba_to_rgba_c            (DATA32 *src, DATA32 *dst, int len);
 
-void copy_pixels_rgba_to_rgba_c             (DATA32 *src, DATA32 *dst, int len);
-void copy_pixels_rgba_to_rgba_mmx           (DATA32 *src, DATA32 *dst, int len);
-void copy_pixels_rgba_to_rgba_sse/*NB*/     (DATA32 *src, DATA32 *dst, int len);
-void copy_pixels_rgb_to_rgba_c              (DATA32 *src, DATA32 *dst, int len);
+void evas_common_copy_pixels_rgba_to_rgba_c             (DATA32 *src, DATA32 *dst, int len);
+void evas_common_copy_pixels_rgba_to_rgba_mmx           (DATA32 *src, DATA32 *dst, int len);
+void evas_common_copy_pixels_rgba_to_rgba_sse/*NB*/     (DATA32 *src, DATA32 *dst, int len);
+void evas_common_copy_pixels_rgb_to_rgba_c              (DATA32 *src, DATA32 *dst, int len);
 
-void copy_pixels_rev_rgba_to_rgba_c         (DATA32 *src, DATA32 *dst, int len);
-void copy_pixels_rev_rgba_to_rgba_mmx       (DATA32 *src, DATA32 *dst, int len);
-void copy_pixels_rev_rgba_to_rgba_sse/*NB*/ (DATA32 *src, DATA32 *dst, int len);
-void copy_pixels_rev_rgb_to_rgba_c          (DATA32 *src, DATA32 *dst, int len);
+void evas_common_copy_pixels_rev_rgba_to_rgba_c         (DATA32 *src, DATA32 *dst, int len);
+void evas_common_copy_pixels_rev_rgba_to_rgba_mmx       (DATA32 *src, DATA32 *dst, int len);
+void evas_common_copy_pixels_rev_rgba_to_rgba_sse/*NB*/ (DATA32 *src, DATA32 *dst, int len);
+void evas_common_copy_pixels_rev_rgb_to_rgba_c          (DATA32 *src, DATA32 *dst, int len);
 
-void blend_color_rgba_to_rgb_c              (DATA32 src, DATA32 *dst, int len);
-void blend_color_rgba_to_rgb_mmx            (DATA32 src, DATA32 *dst, int len);
-void blend_color_rgba_to_rgba_c             (DATA32 src, DATA32 *dst, int len);
+void evas_common_blend_color_rgba_to_rgb_c              (DATA32 src, DATA32 *dst, int len);
+void evas_common_blend_color_rgba_to_rgb_mmx            (DATA32 src, DATA32 *dst, int len);
+void evas_common_blend_color_rgba_to_rgba_c             (DATA32 src, DATA32 *dst, int len);
 
-void copy_color_rgba_to_rgba_c              (DATA32 src, DATA32 *dst, int len);
-void copy_color_rgba_to_rgba_mmx            (DATA32 src, DATA32 *dst, int len);
-void copy_color_rgba_to_rgba_sse/*NB*/      (DATA32 src, DATA32 *dst, int len);
-void copy_color_rgb_to_rgba_c               (DATA32 src, DATA32 *dst, int len);
+void evas_common_copy_color_rgba_to_rgba_c              (DATA32 src, DATA32 *dst, int len);
+void evas_common_copy_color_rgba_to_rgba_mmx            (DATA32 src, DATA32 *dst, int len);
+void evas_common_copy_color_rgba_to_rgba_sse/*NB*/      (DATA32 src, DATA32 *dst, int len);
+void evas_common_copy_color_rgb_to_rgba_c               (DATA32 src, DATA32 *dst, int len);
 
-void blend_pixels_cmod_rgba_to_rgb_c        (DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod);
-void blend_pixels_cmod_rgba_to_rgba_c       (DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod);
+void evas_common_blend_pixels_cmod_rgba_to_rgb_c        (DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod);
+void evas_common_blend_pixels_cmod_rgba_to_rgba_c       (DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod);
 
-void copy_pixels_cmod_rgba_to_rgba_c        (DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod);
-void copy_pixels_cmod_rgb_to_rgba_c         (DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod);
+void evas_common_copy_pixels_cmod_rgba_to_rgba_c        (DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod);
+void evas_common_copy_pixels_cmod_rgb_to_rgba_c         (DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod);
 
-void blend_pixels_mul_color_rgba_to_rgb_c   (DATA32 *src, DATA32 *dst, int len, DATA32 mul_color);
-void blend_pixels_mul_color_rgba_to_rgb_mmx (DATA32 *src, DATA32 *dst, int len, DATA32 mul_color);
-void blend_pixels_mul_color_rgba_to_rgba_c  (DATA32 *src, DATA32 *dst, int len, DATA32 mul_color);
+void evas_common_blend_pixels_mul_color_rgba_to_rgb_c   (DATA32 *src, DATA32 *dst, int len, DATA32 mul_color);
+void evas_common_blend_pixels_mul_color_rgba_to_rgb_mmx (DATA32 *src, DATA32 *dst, int len, DATA32 mul_color);
+void evas_common_blend_pixels_mul_color_rgba_to_rgba_c  (DATA32 *src, DATA32 *dst, int len, DATA32 mul_color);
 
-void blend_alpha_color_rgba_to_rgb_c        (DATA8 *src, DATA32 *dst, int len, DATA32 col);
-void blend_alpha_color_rgba_to_rgb_mmx      (DATA8 *src, DATA32 *dst, int len, DATA32 col);
-void blend_alpha_color_rgba_to_rgba_c       (DATA8 *src, DATA32 *dst, int len, DATA32 col);
-
-/****/
-void             convert_init               (void);
-Gfx_Func_Convert convert_func_get           (DATA8 *dest, int w, int h, int depth, DATA32 rmask, DATA32 gmask, DATA32 bmask, Convert_Pal_Mode pal_mode, int rotation);
-
-void convert_rgba2_to_16bpp_rgb_565_dith            (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_16bpp_rgb_565_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba2_to_16bpp_rgb_444_dith            (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_16bpp_rgb_444_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba2_to_16bpp_rgb_454645_dith         (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_16bpp_rgb_454645_dith          (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba2_to_16bpp_rgb_555_dith            (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_16bpp_rgb_555_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-
-void convert_rgba2_to_16bpp_rgb_565_dith_rot_270    (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_16bpp_rgb_565_dith_rot_270     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba2_to_16bpp_rgb_444_dith_rot_270    (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_16bpp_rgb_444_dith_rot_270     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba2_to_16bpp_rgb_454645_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_16bpp_rgb_454645_dith_rot_270  (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba2_to_16bpp_rgb_555_dith_rot_270    (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_16bpp_rgb_555_dith_rot_270     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-
-void convert_rgba2_to_16bpp_rgb_565_dith_rot_90     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_16bpp_rgb_565_dith_rot_90      (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba2_to_16bpp_rgb_444_dith_rot_90     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_16bpp_rgb_444_dith_rot_90      (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba2_to_16bpp_rgb_454645_dith_rot_90  (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_16bpp_rgb_454645_dith_rot_90   (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba2_to_16bpp_rgb_555_dith_rot_90     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_16bpp_rgb_555_dith_rot_90      (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-
-void convert_rgba_to_24bpp_rgb_888                 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_24bpp_bgr_888                 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-
-void convert_rgba_to_32bpp_rgb_8888                (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_32bpp_rgb_8888_rot_270        (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_32bpp_rgb_8888_rot_90         (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_32bpp_rgbx_8888               (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_32bpp_rgbx_8888_rot_270       (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_32bpp_rgbx_8888_rot_90        (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_32bpp_bgr_8888                (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_32bpp_bgr_8888_rot_270        (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_32bpp_bgr_8888_rot_90         (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_32bpp_bgrx_8888               (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_32bpp_bgrx_8888_rot_270       (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_32bpp_bgrx_8888_rot_90        (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-
-void convert_rgba_to_8bpp_rgb_332_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_8bpp_rgb_666_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_8bpp_rgb_232_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_8bpp_rgb_222_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_8bpp_rgb_221_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_8bpp_rgb_121_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_8bpp_rgb_111_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_8bpp_gry_256_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_8bpp_gry_64_dith              (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_8bpp_gry_16_dith              (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_8bpp_gry_4_dith               (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_8bpp_gry_1_dith               (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-
-void convert_rgba_to_4bpp_gry_4_dith               (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-void convert_rgba_to_4bpp_gry_1_dith               (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
-
-void convert_rgba_to_1bpp_gry_1_dith               (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_blend_alpha_color_rgba_to_rgb_c        (DATA8 *src, DATA32 *dst, int len, DATA32 col);
+void evas_common_blend_alpha_color_rgba_to_rgb_mmx      (DATA8 *src, DATA32 *dst, int len, DATA32 col);
+void evas_common_blend_alpha_color_rgba_to_rgba_c       (DATA8 *src, DATA32 *dst, int len, DATA32 col);
 
 /****/
-void scale_init                            (void);
+void             evas_common_convert_init               (void);
+Gfx_Func_Convert evas_common_convert_func_get           (DATA8 *dest, int w, int h, int depth, DATA32 rmask, DATA32 gmask, DATA32 bmask, Convert_Pal_Mode pal_mode, int rotation);
 
-void scale_rgba_mipmap_down_2x2_c          (DATA32 *src, DATA32 *dst, int src_w, int src_h);
-void scale_rgba_mipmap_down_2x1_c          (DATA32 *src, DATA32 *dst, int src_w, int src_h);
-void scale_rgba_mipmap_down_1x2_c          (DATA32 *src, DATA32 *dst, int src_w, int src_h);
-void scale_rgb_mipmap_down_2x2_c           (DATA32 *src, DATA32 *dst, int src_w, int src_h);
-void scale_rgb_mipmap_down_2x1_c           (DATA32 *src, DATA32 *dst, int src_w, int src_h);
-void scale_rgb_mipmap_down_1x2_c           (DATA32 *src, DATA32 *dst, int src_w, int src_h);
+void evas_common_convert_rgba2_to_16bpp_rgb_565_dith            (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_16bpp_rgb_565_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba2_to_16bpp_rgb_444_dith            (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_16bpp_rgb_444_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba2_to_16bpp_rgb_454645_dith         (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_16bpp_rgb_454645_dith          (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba2_to_16bpp_rgb_555_dith            (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_16bpp_rgb_555_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
 
-void scale_rgba_mipmap_down_2x2_mmx        (DATA32 *src, DATA32 *dst, int src_w, int src_h);
-void scale_rgba_mipmap_down_2x1_mmx        (DATA32 *src, DATA32 *dst, int src_w, int src_h);
-void scale_rgba_mipmap_down_1x2_mmx        (DATA32 *src, DATA32 *dst, int src_w, int src_h);
+void evas_common_convert_rgba2_to_16bpp_rgb_565_dith_rot_270    (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_16bpp_rgb_565_dith_rot_270     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba2_to_16bpp_rgb_444_dith_rot_270    (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_16bpp_rgb_444_dith_rot_270     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_270  (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba2_to_16bpp_rgb_555_dith_rot_270    (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_16bpp_rgb_555_dith_rot_270     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
 
-void scale_rgba_gen_mipmap_table            (RGBA_Image *src);
-void scale_rgba_gen_mipmap_level            (RGBA_Image *src, int l);
-int  scale_rgba_get_mipmap_surfaces         (RGBA_Image *src, int src_region_w, int src_region_h, int dst_region_w, int dst_region_h, RGBA_Surface **srf1, RGBA_Surface **srf2);
-RGBA_Surface *scale_rgba_get_mipmap_surface (RGBA_Image *src, int src_region_w, int src_region_h, int dst_region_w, int dst_region_h);
+void evas_common_convert_rgba2_to_16bpp_rgb_565_dith_rot_90     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_16bpp_rgb_565_dith_rot_90      (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba2_to_16bpp_rgb_444_dith_rot_90     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_16bpp_rgb_444_dith_rot_90      (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba2_to_16bpp_rgb_454645_dith_rot_90  (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_16bpp_rgb_454645_dith_rot_90   (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba2_to_16bpp_rgb_555_dith_rot_90     (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_16bpp_rgb_555_dith_rot_90      (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+
+void evas_common_convert_rgba_to_24bpp_rgb_888                 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_24bpp_bgr_888                 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+
+void evas_common_convert_rgba_to_32bpp_rgb_8888                (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_32bpp_rgb_8888_rot_270        (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_32bpp_rgb_8888_rot_90         (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_32bpp_rgbx_8888               (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_32bpp_rgbx_8888_rot_270       (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_32bpp_rgbx_8888_rot_90        (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_32bpp_bgr_8888                (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_32bpp_bgr_8888_rot_270        (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_32bpp_bgr_8888_rot_90         (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_32bpp_bgrx_8888               (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_32bpp_bgrx_8888_rot_270       (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_32bpp_bgrx_8888_rot_90        (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+
+void evas_common_convert_rgba_to_8bpp_rgb_332_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_8bpp_rgb_666_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_8bpp_rgb_232_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_8bpp_rgb_222_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_8bpp_rgb_221_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_8bpp_rgb_121_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_8bpp_rgb_111_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_8bpp_gry_256_dith             (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_8bpp_gry_64_dith              (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_8bpp_gry_16_dith              (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_8bpp_gry_4_dith               (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_8bpp_gry_1_dith               (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+
+void evas_common_convert_rgba_to_4bpp_gry_4_dith               (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+void evas_common_convert_rgba_to_4bpp_gry_1_dith               (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+
+void evas_common_convert_rgba_to_1bpp_gry_1_dith               (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+
+/****/
+void evas_common_scale_init                            (void);
+
+void evas_common_scale_rgba_mipmap_down_2x2_c          (DATA32 *src, DATA32 *dst, int src_w, int src_h);
+void evas_common_scale_rgba_mipmap_down_2x1_c          (DATA32 *src, DATA32 *dst, int src_w, int src_h);
+void evas_common_scale_rgba_mipmap_down_1x2_c          (DATA32 *src, DATA32 *dst, int src_w, int src_h);
+void evas_common_scale_rgb_mipmap_down_2x2_c           (DATA32 *src, DATA32 *dst, int src_w, int src_h);
+void evas_common_scale_rgb_mipmap_down_2x1_c           (DATA32 *src, DATA32 *dst, int src_w, int src_h);
+void evas_common_scale_rgb_mipmap_down_1x2_c           (DATA32 *src, DATA32 *dst, int src_w, int src_h);
+
+void evas_common_scale_rgba_mipmap_down_2x2_mmx        (DATA32 *src, DATA32 *dst, int src_w, int src_h);
+void evas_common_scale_rgba_mipmap_down_2x1_mmx        (DATA32 *src, DATA32 *dst, int src_w, int src_h);
+void evas_common_scale_rgba_mipmap_down_1x2_mmx        (DATA32 *src, DATA32 *dst, int src_w, int src_h);
+
+void evas_common_scale_rgba_gen_mipmap_table            (RGBA_Image *src);
+void evas_common_scale_rgba_gen_mipmap_level            (RGBA_Image *src, int l);
+int  evas_common_scale_rgba_get_mipmap_surfaces         (RGBA_Image *src, int src_region_w, int src_region_h, int dst_region_w, int dst_region_h, RGBA_Surface **srf1, RGBA_Surface **srf2);
+RGBA_Surface *evas_common_scale_rgba_get_mipmap_surface (RGBA_Image *src, int src_region_w, int src_region_h, int dst_region_w, int dst_region_h);
   
-void scale_rgba_in_to_out_clip_smooth_mmx  (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
-void scale_rgba_in_to_out_clip_smooth_c    (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
+void evas_common_scale_rgba_in_to_out_clip_smooth_mmx  (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
+void evas_common_scale_rgba_in_to_out_clip_smooth_c    (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
 
-void scale_rgba_in_to_out_clip_smooth      (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
-void scale_rgba_in_to_out_clip_sample      (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
+void evas_common_scale_rgba_in_to_out_clip_smooth      (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
+void evas_common_scale_rgba_in_to_out_clip_sample      (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
 
 /****/
-void          image_init              (void);
+void          evas_common_image_init              (void);
 
-RGBA_Surface *image_surface_new       (void);
-void          image_surface_free      (RGBA_Surface *is);
-void          image_surface_alloc     (RGBA_Surface *is);
-void          image_surface_dealloc   (RGBA_Surface *is);
+RGBA_Surface *evas_common_image_surface_new       (void);
+void          evas_common_image_surface_free      (RGBA_Surface *is);
+void          evas_common_image_surface_alloc     (RGBA_Surface *is);
+void          evas_common_image_surface_dealloc   (RGBA_Surface *is);
     
-RGBA_Image   *image_create            (int w, int h);
-RGBA_Image   *image_new               (void);
-void          image_free              (RGBA_Image *im);
-void          image_ref               (RGBA_Image *im);
-void          image_unref             (RGBA_Image *im);
-void          image_cache             (RGBA_Image *im);
-void          image_uncache           (RGBA_Image *im);
-void          image_flush_cache       (void);
-void          image_set_cache         (int size);
-int           image_get_cache         (void);    
-void          image_store             (RGBA_Image *im);
-void          image_unstore           (RGBA_Image *im);
-RGBA_Image   *image_find              (const char *filename, const char *key, DATA64 timestamp);
-int           image_ram_usage         (RGBA_Image *im);
-void          image_dirty             (RGBA_Image *im);
+RGBA_Image   *evas_common_image_create            (int w, int h);
+RGBA_Image   *evas_common_image_new               (void);
+void          evas_common_image_free              (RGBA_Image *im);
+void          evas_common_image_ref               (RGBA_Image *im);
+void          evas_common_image_unref             (RGBA_Image *im);
+void          evas_common_image_cache             (RGBA_Image *im);
+void          evas_common_image_uncache           (RGBA_Image *im);
+void          evas_common_image_flush_cache       (void);
+void          evas_common_image_set_cache         (int size);
+int           evas_common_image_get_cache         (void);    
+void          evas_common_image_store             (RGBA_Image *im);
+void          evas_common_image_unstore           (RGBA_Image *im);
+RGBA_Image   *evas_common_image_find              (const char *filename, const char *key, DATA64 timestamp);
+int           evas_common_image_ram_usage         (RGBA_Image *im);
+void          evas_common_image_dirty             (RGBA_Image *im);
 
-RGBA_Image         *load_image_from_file     (const char *file, const char *key);
-void                load_image_data_from_file(RGBA_Image *im);
-
-/****/
-void           rectangle_init          (void);
-
-void           rectangle_draw          (RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h);
+RGBA_Image         *evas_common_load_image_from_file     (const char *file, const char *key);
+void                evas_common_load_image_data_from_file(RGBA_Image *im);
 
 /****/
-void           gradient_init           (void);
+void           evas_common_rectangle_init          (void);
 
-RGBA_Gradient *gradient_new            (void);
-void           gradient_free           (RGBA_Gradient *gr);
-void           gradient_colors_clear   (RGBA_Gradient *gr);
-void           gradient_color_add      (RGBA_Gradient *gr, int r, int g, int b, int a, int dist);
-void           gradient_draw           (RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h, RGBA_Gradient *gr, double angle);
-DATA32        *gradient_map            (RGBA_Gradient *gr, RGBA_Draw_Context *dc, int len);
+void           evas_common_rectangle_draw          (RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h);
 
 /****/
-void          line_init               (void);
+void           evas_common_gradient_init           (void);
 
-void          line_draw               (RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2);
-
-/****/
-void                polygon_init         (void);
-
-RGBA_Polygon_Point *polygon_point_add    (RGBA_Polygon_Point *points, int x, int y);
-RGBA_Polygon_Point *polygon_points_clear (RGBA_Polygon_Point *points);
-void                polygon_draw         (RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points);
+RGBA_Gradient *evas_common_gradient_new            (void);
+void           evas_common_gradient_free           (RGBA_Gradient *gr);
+void           evas_common_gradient_colors_clear   (RGBA_Gradient *gr);
+void           evas_common_gradient_color_add      (RGBA_Gradient *gr, int r, int g, int b, int a, int dist);
+void           evas_common_gradient_draw           (RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h, RGBA_Gradient *gr, double angle);
+DATA32        *evas_common_gradient_map            (RGBA_Gradient *gr, RGBA_Draw_Context *dc, int len);
 
 /****/
-void          blit_init               (void);
+void          evas_common_line_init               (void);
 
-void          blit_rectangle          (RGBA_Image *src, RGBA_Image *dst, int src_x, int src_y, int w, int h, int dst_x, int dst_y);
+void          evas_common_line_draw               (RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2);
+
+/****/
+void                evas_common_polygon_init         (void);
+
+RGBA_Polygon_Point *evas_common_polygon_point_add    (RGBA_Polygon_Point *points, int x, int y);
+RGBA_Polygon_Point *evas_common_polygon_points_clear (RGBA_Polygon_Point *points);
+void                evas_common_polygon_draw         (RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points);
+
+/****/
+void          evas_common_blit_init               (void);
+
+void          evas_common_blit_rectangle          (RGBA_Image *src, RGBA_Image *dst, int src_x, int src_y, int w, int h, int dst_x, int dst_y);
 
 /****/
 
 /****/
-void             font_init              (void);
+void             evas_common_font_init              (void);
 
-RGBA_Font       *font_load              (const char *name, int size);
-void             font_free              (RGBA_Font *fn);
-void             font_modify_cache_by   (RGBA_Font *fn, int dir);
-int              font_cache_get         (void);
-void             font_cache_set         (int size);
-void             font_flush             (void);
-void             font_flush_last        (void);
-RGBA_Font       *font_find              (const char *name, int size);
-void             font_draw              (RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const char *text);
-RGBA_Font_Glyph *font_cache_glyph_get   (RGBA_Font *fn, FT_UInt index);
-int              font_ascent_get        (RGBA_Font *fn);
-int              font_descent_get       (RGBA_Font *fn);
-int              font_max_ascent_get    (RGBA_Font *fn);
-int              font_max_descent_get   (RGBA_Font *fn);
-int              font_get_line_advance  (RGBA_Font *fn);
-void             font_query_size        (RGBA_Font *fn, const char *text, int *w, int *h);
-int              font_query_inset       (RGBA_Font *fn, const char *text);
-void             font_query_advance     (RGBA_Font *fn, const char *text, int *h_adv, int *v_adv);
-int              font_query_char_coords (RGBA_Font *fn, const char *text, int pos, int *cx, int *cy, int *cw, int *ch);
-int              font_query_text_at_pos (RGBA_Font *fn, const char *text, int x, int y, int *cx, int *cy, int *cw, int *ch);
-int              font_utf8_get_next     (unsigned char *buf, int *iindex);
-    
-/****/
-void         tilebuf_init               (void);
-
-Tilebuf      *tilebuf_new               (int w, int h);
-void          tilebuf_free              (Tilebuf *tb);
-void          tilebuf_set_tile_size     (Tilebuf *tb, int tw, int th);
-void          tilebuf_get_tile_size     (Tilebuf *tb, int *tw, int *th);
-int           tilebuf_add_redraw        (Tilebuf *tb, int x, int y, int w, int h);
-int           tilebuf_del_redraw        (Tilebuf *tb, int x, int y, int w, int h);
-int           tilebuf_add_motion_vector (Tilebuf *tb, int x, int y, int w, int h, int dx, int dy, int alpha);
-void          tilebuf_clear             (Tilebuf *tb);
-Tilebuf_Rect *tilebuf_get_render_rects  (Tilebuf *tb);
-void          tilebuf_free_render_rects (Tilebuf_Rect *rects);
+RGBA_Font       *evas_common_font_load              (const char *name, int size);
+void             evas_common_font_free              (RGBA_Font *fn);
+void             evas_common_font_modify_cache_by   (RGBA_Font *fn, int dir);
+int              evas_common_font_cache_get         (void);
+void             evas_common_font_cache_set         (int size);
+void             evas_common_font_flush             (void);
+void             evas_common_font_flush_last        (void);
+RGBA_Font       *evas_common_font_find              (const char *name, int size);
+void             evas_common_font_draw              (RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int x, int y, const char *text);
+RGBA_Font_Glyph *evas_common_font_cache_glyph_get   (RGBA_Font *fn, FT_UInt index);
+int              evas_common_font_ascent_get        (RGBA_Font *fn);
+int              evas_common_font_descent_get       (RGBA_Font *fn);
+int              evas_common_font_max_ascent_get    (RGBA_Font *fn);
+int              evas_common_font_max_descent_get   (RGBA_Font *fn);
+int              evas_common_font_get_line_advance  (RGBA_Font *fn);
+void             evas_common_font_query_size        (RGBA_Font *fn, const char *text, int *w, int *h);
+int              evas_common_font_query_inset       (RGBA_Font *fn, const char *text);
+void             evas_common_font_query_advance     (RGBA_Font *fn, const char *text, int *h_adv, int *v_adv);
+int              evas_common_font_query_char_coords (RGBA_Font *fn, const char *text, int pos, int *cx, int *cy, int *cw, int *ch);
+int              evas_common_font_query_text_at_pos (RGBA_Font *fn, const char *text, int x, int y, int *cx, int *cy, int *cw, int *ch);
+int              evas_common_font_utf8_get_next     (unsigned char *buf, int *iindex);
     
 /****/
-void               draw_init                      (void);
+void         evas_common_tilebuf_init               (void);
 
-RGBA_Draw_Context *draw_context_new               (void);
-void               draw_context_free              (RGBA_Draw_Context *dc);
-void               draw_context_clip_clip         (RGBA_Draw_Context *dc, int x, int y, int w, int h);
-void               draw_context_set_clip          (RGBA_Draw_Context *dc, int x, int y, int w, int h);
-void               draw_context_unset_clip        (RGBA_Draw_Context *dc);
-void               draw_context_set_color         (RGBA_Draw_Context *dc, int r, int g, int b, int a);
-void               draw_context_set_multiplier    (RGBA_Draw_Context *dc, int r, int g, int b, int a);
-void               draw_context_unset_multiplier  (RGBA_Draw_Context *dc);
-void               draw_context_set_modifiers     (RGBA_Draw_Context *dc, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod);
-void               draw_context_ununset_modifiers (RGBA_Draw_Context *dc);
-void               draw_context_add_cutout        (RGBA_Draw_Context *dc, int x, int y, int w, int h);
-void               draw_context_clear_cutouts     (RGBA_Draw_Context *dc);
-Cutout_Rect       *draw_context_apply_cutouts     (RGBA_Draw_Context *dc);
-void               draw_context_apply_free_cutouts(Cutout_Rect *rects);
-Cutout_Rect       *draw_context_cutouts_split     (Cutout_Rect *in, Cutout_Rect *split);
-Cutout_Rect       *draw_context_cutout_split      (Cutout_Rect *in, Cutout_Rect *split);
+Tilebuf      *evas_common_tilebuf_new               (int w, int h);
+void          evas_common_tilebuf_free              (Tilebuf *tb);
+void          evas_common_tilebuf_set_tile_size     (Tilebuf *tb, int tw, int th);
+void          evas_common_tilebuf_get_tile_size     (Tilebuf *tb, int *tw, int *th);
+int           evas_common_tilebuf_add_redraw        (Tilebuf *tb, int x, int y, int w, int h);
+int           evas_common_tilebuf_del_redraw        (Tilebuf *tb, int x, int y, int w, int h);
+int           evas_common_tilebuf_add_motion_vector (Tilebuf *tb, int x, int y, int w, int h, int dx, int dy, int alpha);
+void          evas_common_tilebuf_clear             (Tilebuf *tb);
+Tilebuf_Rect *evas_common_tilebuf_get_render_rects  (Tilebuf *tb);
+void          evas_common_tilebuf_free_render_rects (Tilebuf_Rect *rects);
     
-Gfx_Func_Blend_Src_Dst           draw_func_blend_get       (RGBA_Image *src, RGBA_Image *dst, int pixels);
-Gfx_Func_Blend_Color_Dst         draw_func_blend_color_get (DATA32 src, RGBA_Image *dst, int pixels);
-Gfx_Func_Blend_Src_Cmod_Dst      draw_func_blend_cmod_get  (RGBA_Image *src, RGBA_Image *dst, int pixels);
-Gfx_Func_Blend_Src_Mul_Dst       draw_func_blend_mul_get   (RGBA_Image *src, DATA32 col, RGBA_Image *dst, int pixels);
-Gfx_Func_Blend_Src_Alpha_Mul_Dst draw_func_blend_alpha_get (RGBA_Image *dst);
-Gfx_Func_Blend_Src_Dst           draw_func_copy_get        (int pixels, int reverse);
+/****/
+void               evas_common_draw_init                      (void);
+
+RGBA_Draw_Context *evas_common_draw_context_new               (void);
+void               evas_common_draw_context_free              (RGBA_Draw_Context *dc);
+void               evas_common_draw_context_clip_clip         (RGBA_Draw_Context *dc, int x, int y, int w, int h);
+void               evas_common_draw_context_set_clip          (RGBA_Draw_Context *dc, int x, int y, int w, int h);
+void               evas_common_draw_context_unset_clip        (RGBA_Draw_Context *dc);
+void               evas_common_draw_context_set_color         (RGBA_Draw_Context *dc, int r, int g, int b, int a);
+void               evas_common_draw_context_set_multiplier    (RGBA_Draw_Context *dc, int r, int g, int b, int a);
+void               evas_common_draw_context_unset_multiplier  (RGBA_Draw_Context *dc);
+void               evas_common_draw_context_set_modifiers     (RGBA_Draw_Context *dc, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod);
+void               evas_common_draw_context_ununset_modifiers (RGBA_Draw_Context *dc);
+void               evas_common_draw_context_add_cutout        (RGBA_Draw_Context *dc, int x, int y, int w, int h);
+void               evas_common_draw_context_clear_cutouts     (RGBA_Draw_Context *dc);
+Cutout_Rect       *evas_common_draw_context_apply_cutouts     (RGBA_Draw_Context *dc);
+void               evas_common_draw_context_apply_free_cutouts(Cutout_Rect *rects);
+Cutout_Rect       *evas_common_draw_context_cutouts_split     (Cutout_Rect *in, Cutout_Rect *split);
+Cutout_Rect       *evas_common_draw_context_cutout_split      (Cutout_Rect *in, Cutout_Rect *split);
+    
+Gfx_Func_Blend_Src_Dst           evas_common_draw_func_blend_get       (RGBA_Image *src, RGBA_Image *dst, int pixels);
+Gfx_Func_Blend_Color_Dst         evas_common_draw_func_blend_color_get (DATA32 src, RGBA_Image *dst, int pixels);
+Gfx_Func_Blend_Src_Cmod_Dst      evas_common_draw_func_blend_cmod_get  (RGBA_Image *src, RGBA_Image *dst, int pixels);
+Gfx_Func_Blend_Src_Mul_Dst       evas_common_draw_func_blend_mul_get   (RGBA_Image *src, DATA32 col, RGBA_Image *dst, int pixels);
+Gfx_Func_Blend_Src_Alpha_Mul_Dst evas_common_draw_func_blend_alpha_get (RGBA_Image *dst);
+Gfx_Func_Blend_Src_Dst           evas_common_draw_func_copy_get        (int pixels, int reverse);
 
 /*****************************************************************************/
 

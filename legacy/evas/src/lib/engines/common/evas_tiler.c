@@ -8,12 +8,12 @@ static int  tilebuf_intersect(int tsize, int tlen, int tnum, int x, int w, int *
 static void tilebuf_setup(Tilebuf *tb);
 
 void
-tilebuf_init(void)
+evas_common_tilebuf_init(void)
 {
 }
 
 Tilebuf *
-tilebuf_new(int w, int h)
+evas_common_tilebuf_new(int w, int h)
 {
    Tilebuf *tb;
    
@@ -29,14 +29,14 @@ tilebuf_new(int w, int h)
 }
 
 void
-tilebuf_free(Tilebuf *tb)
+evas_common_tilebuf_free(Tilebuf *tb)
 {
    if (tb->tiles.tiles) free(tb->tiles.tiles);
    free(tb);
 }
 
 void
-tilebuf_set_tile_size(Tilebuf *tb, int tw, int th)
+evas_common_tilebuf_set_tile_size(Tilebuf *tb, int tw, int th)
 {
    tb->tile_size.w = tw;
    tb->tile_size.h = th;   
@@ -44,7 +44,7 @@ tilebuf_set_tile_size(Tilebuf *tb, int tw, int th)
 }
 
 void
-tilebuf_get_tile_size(Tilebuf *tb, int *tw, int *th)
+evas_common_tilebuf_get_tile_size(Tilebuf *tb, int *tw, int *th)
 {
    if (tw) *tw = tb->tile_size.w;
    if (th) *th = tb->tile_size.h;
@@ -124,7 +124,7 @@ tilebuf_get_tile_size(Tilebuf *tb, int *tw, int *th)
  */
 
 int
-tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)
+evas_common_tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)
 {
    int tx1, tx2, ty1, ty2, tfx1, tfx2, tfy1, tfy2, xx, yy;
    int num;
@@ -151,7 +151,7 @@ tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)
 }
 
 int
-tilebuf_del_redraw(Tilebuf *tb, int x, int y, int w, int h)
+evas_common_tilebuf_del_redraw(Tilebuf *tb, int x, int y, int w, int h)
 {
    int tx1, tx2, ty1, ty2, tfx1, tfx2, tfy1, tfy2, xx, yy;
    int num;
@@ -182,28 +182,28 @@ tilebuf_del_redraw(Tilebuf *tb, int x, int y, int w, int h)
 }
 
 int
-tilebuf_add_motion_vector(Tilebuf *tb, int x, int y, int w, int h, int dx, int dy, int alpha)
+evas_common_tilebuf_add_motion_vector(Tilebuf *tb, int x, int y, int w, int h, int dx, int dy, int alpha)
 {
    /* FIXME: need to actually impliment motion vectors. for now it just */
    /*        implements redraws */   
    int num;
    
-   num = tilebuf_add_redraw(tb, x, y, w, h);
-   num += tilebuf_add_redraw(tb, x + dx, y + dy, w, h);
+   num = evas_common_tilebuf_add_redraw(tb, x, y, w, h);
+   num += evas_common_tilebuf_add_redraw(tb, x + dx, y + dy, w, h);
    return num;
    /* FIXME: unused */
    alpha = 0;
 }
 
 void
-tilebuf_clear(Tilebuf *tb)
+evas_common_tilebuf_clear(Tilebuf *tb)
 {
    if (!tb->tiles.tiles) return;
    memset(tb->tiles.tiles, 0, tb->tiles.w * tb->tiles.h * sizeof(Tilebuf_Tile));
 }
 
 Tilebuf_Rect *
-tilebuf_get_render_rects(Tilebuf *tb)
+evas_common_tilebuf_get_render_rects(Tilebuf *tb)
 {
    Tilebuf_Rect *rects = NULL;
    int x, y;
@@ -272,7 +272,7 @@ tilebuf_get_render_rects(Tilebuf *tb)
 }
 
 void
-tilebuf_free_render_rects(Tilebuf_Rect *rects)
+evas_common_tilebuf_free_render_rects(Tilebuf_Rect *rects)
 {
    while (rects)
      {

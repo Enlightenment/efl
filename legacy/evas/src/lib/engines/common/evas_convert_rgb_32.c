@@ -3,7 +3,7 @@
 #ifdef BUILD_CONVERT_32_RGB_8888
 #ifdef BUILD_CONVERT_32_RGB_ROT0
 void
-convert_rgba_to_32bpp_rgb_8888 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_32bpp_rgb_8888 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
    DATA32 *dst_ptr;
@@ -13,7 +13,7 @@ convert_rgba_to_32bpp_rgb_8888 (DATA32 *src, DATA8 *dst, int src_jump, int dst_j
    dst_ptr = (DATA32 *)dst;
    src_ptr = src;
    
-   func = draw_func_copy_get(w, 0);
+   func = evas_common_draw_func_copy_get(w, 0);
    
    for (y = 0; y < h; y++)
      {
@@ -32,7 +32,7 @@ convert_rgba_to_32bpp_rgb_8888 (DATA32 *src, DATA8 *dst, int src_jump, int dst_j
 #ifdef BUILD_CONVERT_32_RGB_8888
 #ifdef BUILD_CONVERT_32_RGB_ROT270
 void
-convert_rgba_to_32bpp_rgb_8888_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_32bpp_rgb_8888_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
    DATA32 *dst_ptr;
@@ -56,7 +56,7 @@ convert_rgba_to_32bpp_rgb_8888_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, i
 #ifdef BUILD_CONVERT_32_RGB_8888
 #ifdef BUILD_CONVERT_32_RGB_ROT90
 void
-convert_rgba_to_32bpp_rgb_8888_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_32bpp_rgb_8888_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
    DATA32 *dst_ptr;
@@ -80,7 +80,7 @@ convert_rgba_to_32bpp_rgb_8888_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, in
 #ifdef BUILD_CONVERT_32_RGBX_8888
 #ifdef BUILD_CONVERT_32_RGB_ROT0
 void
-convert_rgba_to_32bpp_rgbx_8888 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_32bpp_rgbx_8888 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
    DATA32 *dst_ptr;
@@ -104,7 +104,7 @@ convert_rgba_to_32bpp_rgbx_8888 (DATA32 *src, DATA8 *dst, int src_jump, int dst_
 #ifdef BUILD_CONVERT_32_RGBX_8888
 #ifdef BUILD_CONVERT_32_RGB_ROT270
 void
-convert_rgba_to_32bpp_rgbx_8888_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_32bpp_rgbx_8888_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
    DATA32 *dst_ptr;
@@ -128,7 +128,7 @@ convert_rgba_to_32bpp_rgbx_8888_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, 
 #ifdef BUILD_CONVERT_32_RGBX_8888
 #ifdef BUILD_CONVERT_32_RGB_ROT90
 void
-convert_rgba_to_32bpp_rgbx_8888_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_32bpp_rgbx_8888_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
    DATA32 *dst_ptr;
@@ -152,7 +152,7 @@ convert_rgba_to_32bpp_rgbx_8888_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, i
 #ifdef BUILD_CONVERT_32_BGR_8888
 #ifdef BUILD_CONVERT_32_RGB_ROT0
 void
-convert_rgba_to_32bpp_bgr_8888 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_32bpp_bgr_8888 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
    DATA32 *dst_ptr;
@@ -176,7 +176,7 @@ convert_rgba_to_32bpp_bgr_8888 (DATA32 *src, DATA8 *dst, int src_jump, int dst_j
 #ifdef BUILD_CONVERT_32_BGR_8888
 #ifdef BUILD_CONVERT_32_RGB_ROT270
 void
-convert_rgba_to_32bpp_bgr_8888_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_32bpp_bgr_8888_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
    DATA32 *dst_ptr;
@@ -200,7 +200,7 @@ convert_rgba_to_32bpp_bgr_8888_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, i
 #ifdef BUILD_CONVERT_32_BGR_8888
 #ifdef BUILD_CONVERT_32_RGB_ROT90
 void
-convert_rgba_to_32bpp_bgr_8888_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_32bpp_bgr_8888_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
    DATA32 *dst_ptr;
@@ -224,7 +224,7 @@ convert_rgba_to_32bpp_bgr_8888_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, in
 #ifdef BUILD_CONVERT_32_BGRX_8888
 #ifdef BUILD_CONVERT_32_RGB_ROT0
 void
-convert_rgba_to_32bpp_bgrx_8888 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_32bpp_bgrx_8888 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
    DATA32 *dst_ptr;
@@ -248,7 +248,7 @@ convert_rgba_to_32bpp_bgrx_8888 (DATA32 *src, DATA8 *dst, int src_jump, int dst_
 #ifdef BUILD_CONVERT_32_BGRX_8888
 #ifdef BUILD_CONVERT_32_RGB_ROT270
 void
-convert_rgba_to_32bpp_bgrx_8888_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_32bpp_bgrx_8888_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
    DATA32 *dst_ptr;
@@ -272,7 +272,7 @@ convert_rgba_to_32bpp_bgrx_8888_rot_270 (DATA32 *src, DATA8 *dst, int src_jump, 
 #ifdef BUILD_CONVERT_32_BGRX_8888
 #ifdef BUILD_CONVERT_32_RGB_ROT90
 void
-convert_rgba_to_32bpp_bgrx_8888_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
+evas_common_convert_rgba_to_32bpp_bgrx_8888_rot_90 (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal)
 {
    DATA32 *src_ptr;
    DATA32 *dst_ptr;

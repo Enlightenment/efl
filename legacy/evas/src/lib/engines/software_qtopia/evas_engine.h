@@ -75,23 +75,23 @@ extern "C" {
 /****/
 void             x_software_qtopia_init                    (void);
     
-void         outbuf_software_qtopia_init                   (void);
-void         outbuf_software_qtopia_free                   (Outbuf *buf);
+void         evas_qtopia_outbuf_software_qtopia_init                   (void);
+void         evas_qtopia_outbuf_software_qtopia_free                   (Outbuf *buf);
 
-Outbuf      *outbuf_software_qtopia_setup_q                (int w, int h, int rot, Outbuf_Depth depth, void *target);
+Outbuf      *evas_qtopia_outbuf_software_qtopia_setup_q                (int w, int h, int rot, Outbuf_Depth depth, void *target);
 
-void         outbuf_software_qtopia_blit                   (Outbuf *buf, int src_x, int src_y, int w, int h, int dst_x, int dst_y);
-void         outbuf_software_qtopia_update                 (Outbuf *buf, int x, int y, int w, int h);
-RGBA_Image  *outbuf_software_qtopia_new_region_for_update  (Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
-void         outbuf_software_qtopia_free_region_for_update (Outbuf *buf, RGBA_Image *update);
-void         outbuf_software_qtopia_push_updated_region    (Outbuf *buf, RGBA_Image *update, int x, int y, int w, int h);
-void         outbuf_software_qtopia_reconfigure            (Outbuf *buf, int w, int h, int rot, Outbuf_Depth depth);
-int          outbuf_software_qtopia_get_width              (Outbuf *buf);
-int          outbuf_software_qtopia_get_height             (Outbuf *buf);
-Outbuf_Depth outbuf_software_qtopia_get_depth              (Outbuf *buf);
-int          outbuf_software_qtopia_get_rot                (Outbuf *buf);
-int          outbuf_software_qtopia_get_have_backbuf       (Outbuf *buf);
-void         outbuf_software_qtopia_set_have_backbuf       (Outbuf *buf, int have_backbuf);
+void         evas_qtopia_outbuf_software_qtopia_blit                   (Outbuf *buf, int src_x, int src_y, int w, int h, int dst_x, int dst_y);
+void         evas_qtopia_outbuf_software_qtopia_update                 (Outbuf *buf, int x, int y, int w, int h);
+RGBA_Image  *evas_qtopia_outbuf_software_qtopia_new_region_for_update  (Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch);
+void         evas_qtopia_outbuf_software_qtopia_free_region_for_update (Outbuf *buf, RGBA_Image *update);
+void         evas_qtopia_outbuf_software_qtopia_push_updated_region    (Outbuf *buf, RGBA_Image *update, int x, int y, int w, int h);
+void         evas_qtopia_outbuf_software_qtopia_reconfigure            (Outbuf *buf, int w, int h, int rot, Outbuf_Depth depth);
+int          evas_qtopia_outbuf_software_qtopia_get_width              (Outbuf *buf);
+int          evas_qtopia_outbuf_software_qtopia_get_height             (Outbuf *buf);
+Outbuf_Depth evas_qtopia_outbuf_software_qtopia_get_depth              (Outbuf *buf);
+int          evas_qtopia_outbuf_software_qtopia_get_rot                (Outbuf *buf);
+int          evas_qtopia_outbuf_software_qtopia_get_have_backbuf       (Outbuf *buf);
+void         evas_qtopia_outbuf_software_qtopia_set_have_backbuf       (Outbuf *buf, int have_backbuf);
 
 QT_Direct   *evas_qt_main_direct_start                     (void *target);
 void         evas_qt_main_direct_stop                      (QT_Direct *d);

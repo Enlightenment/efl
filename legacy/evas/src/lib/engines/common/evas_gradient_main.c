@@ -2,12 +2,12 @@
 #include <math.h>
 
 void
-gradient_init(void)
+evas_common_gradient_init(void)
 {
 }
 
 RGBA_Gradient *
-gradient_new(void)
+evas_common_gradient_new(void)
 {
    RGBA_Gradient *gr;
    
@@ -16,14 +16,14 @@ gradient_new(void)
 }
 
 void
-gradient_free(RGBA_Gradient *gr)
+evas_common_gradient_free(RGBA_Gradient *gr)
 {
-   gradient_colors_clear(gr);
+   evas_common_gradient_colors_clear(gr);
    free(gr);
 }
 
 void
-gradient_colors_clear(RGBA_Gradient *gr)
+evas_common_gradient_colors_clear(RGBA_Gradient *gr)
 {
    if (gr->colors)
      {
@@ -40,7 +40,7 @@ gradient_colors_clear(RGBA_Gradient *gr)
 }
 
 void
-gradient_color_add(RGBA_Gradient *gr, int r, int g, int b, int a, int dist)
+evas_common_gradient_color_add(RGBA_Gradient *gr, int r, int g, int b, int a, int dist)
 {
    RGBA_Gradient_Color *gc;
    
@@ -54,7 +54,7 @@ gradient_color_add(RGBA_Gradient *gr, int r, int g, int b, int a, int dist)
 }
 
 void
-gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h, RGBA_Gradient *gr, double angle)
+evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h, RGBA_Gradient *gr, double angle)
 {
    Gfx_Func_Blend_Src_Dst func;
    int yy, xx, i, len;
@@ -120,14 +120,14 @@ gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h
    if (o_w > o_h) len = o_w * 16;
    else           len = o_h * 16;
 
-   map = gradient_map(gr, dc, len);
+   map = evas_common_gradient_map(gr, dc, len);
    if (!map) 
      {
 	free(hlut);
 	free(vlut);
 	return;
      }
-   tmp = image_create(w, 1);
+   tmp = evas_common_image_create(w, 1);
    if (!tmp)
      {
 	free(hlut);
@@ -137,7 +137,7 @@ gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h
      }
    tmp->flags |= RGBA_IMAGE_HAS_ALPHA;
 
-   cpu_end_opt();
+   evas_common_cpu_end_opt();
    xx = (int)(32 * sin(((angle + 180) * 2 * 3.141592654) / 360));
    yy = -(int)(32 * cos(((angle + 180) * 2 * 3.141592654) / 360));
    divw = ((o_w - 1) << 5);
@@ -163,7 +163,7 @@ gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h
      }
 
    buf = tmp->image->data;
-   func = draw_func_blend_get(tmp, dst, w);
+   func = evas_common_draw_func_blend_get(tmp, dst, w);
    ptr = dst->image->data + (y * dst->image->w) + x;
    for (yy = 0; yy < h; yy++)
      {
@@ -182,11 +182,11 @@ gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h
    free(hlut);
    free(vlut);
    free(map);
-   image_free(tmp);
+   evas_common_image_free(tmp);
 }
 
 DATA32 *
-gradient_map(RGBA_Gradient *gr, RGBA_Draw_Context *dc, int len)
+evas_common_gradient_map(RGBA_Gradient *gr, RGBA_Draw_Context *dc, int len)
 {
    DATA32 *map, *pmap, v, vv;
    Evas_Object_List *l;

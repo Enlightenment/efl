@@ -25,12 +25,12 @@ struct _RGBA_Vertex
 };
 
 void
-polygon_init(void)
+evas_common_polygon_init(void)
 {
 }
 
 RGBA_Polygon_Point *
-polygon_point_add(RGBA_Polygon_Point *points, int x, int y)
+evas_common_polygon_point_add(RGBA_Polygon_Point *points, int x, int y)
 {
    RGBA_Polygon_Point *pt;
    
@@ -43,7 +43,7 @@ polygon_point_add(RGBA_Polygon_Point *points, int x, int y)
 }
 
 RGBA_Polygon_Point *
-polygon_points_clear(RGBA_Polygon_Point *points)
+evas_common_polygon_points_clear(RGBA_Polygon_Point *points)
 {
    if (points)
      {
@@ -82,7 +82,7 @@ polygon_edge_sorter(const void *a, const void *b)
 }
 
 void
-polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points)
+evas_common_polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points)
 {
    Gfx_Func_Blend_Color_Dst func;
    RGBA_Polygon_Point *pt;
@@ -123,7 +123,7 @@ polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points)
      }
    if ((ext_w <= 0) || (ext_h <= 0)) return;
    
-   cpu_end_opt();
+   evas_common_cpu_end_opt();
 
    n = 0; for (l = (Evas_Object_List *)points; l; l = l->next) n++;
    if (n < 3) return;
@@ -231,7 +231,7 @@ polygon_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Polygon_Point *points)
    free(point);
    free(sorted_index);
 
-   func = draw_func_blend_color_get(dc->col.col, dst, 0);   
+   func = evas_common_draw_func_blend_color_get(dc->col.col, dst, 0);   
    if (spans)
      {
 	for (l = spans; l; l = l->next)

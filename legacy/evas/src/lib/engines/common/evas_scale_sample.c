@@ -5,14 +5,14 @@ void scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 #ifndef BUILD_SCALE_SMOOTH
 #ifdef BUILD_SCALE_SAMPLE
 void
-scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst, 
+evas_common_scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst, 
 				 RGBA_Draw_Context *dc,
 				 int src_region_x, int src_region_y, 
 				 int src_region_w, int src_region_h, 
 				 int dst_region_x, int dst_region_y, 
 				 int dst_region_w, int dst_region_h)
 {
-   scale_rgba_in_to_out_clip_sample(src, dst, dc, 
+   evas_common_scale_rgba_in_to_out_clip_sample(src, dst, dc, 
 				    src_region_x, src_region_y,
 				    src_region_w, src_region_h,
 				    dst_region_x, dst_region_y,
@@ -23,7 +23,7 @@ scale_rgba_in_to_out_clip_smooth(RGBA_Image *src, RGBA_Image *dst,
 
 #ifdef BUILD_SCALE_SAMPLE
 void
-scale_rgba_in_to_out_clip_sample(RGBA_Image *src, RGBA_Image *dst, 
+evas_common_scale_rgba_in_to_out_clip_sample(RGBA_Image *src, RGBA_Image *dst, 
 				 RGBA_Draw_Context *dc,
 				 int src_region_x, int src_region_y, 
 				 int src_region_w, int src_region_h, 
@@ -50,19 +50,19 @@ scale_rgba_in_to_out_clip_sample(RGBA_Image *src, RGBA_Image *dst,
      }
    /* save out clip info */
    c = dc->clip.use; cx = dc->clip.x; cy = dc->clip.y; cw = dc->clip.w; ch = dc->clip.h;
-   draw_context_clip_clip(dc, 0, 0, dst->image->w, dst->image->h);
-   draw_context_clip_clip(dc, dst_region_x, dst_region_y, dst_region_w, dst_region_h);
+   evas_common_draw_context_clip_clip(dc, 0, 0, dst->image->w, dst->image->h);
+   evas_common_draw_context_clip_clip(dc, dst_region_x, dst_region_y, dst_region_w, dst_region_h);
    /* our clip is 0 size.. abort */
    if ((dc->clip.w <= 0) || (dc->clip.h <= 0))
      {
 	dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
 	return;
      }
-   rects = draw_context_apply_cutouts(dc);
+   rects = evas_common_draw_context_apply_cutouts(dc);
    for (l = (Evas_Object_List *)rects; l; l = l->next)
      {
 	r = (Cutout_Rect *)l;
-	draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
+	evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
 	scale_rgba_in_to_out_clip_sample_internal(src, dst, dc, 
 						  src_region_x, src_region_y, 
 						  src_region_w, src_region_h,
@@ -70,7 +70,7 @@ scale_rgba_in_to_out_clip_sample(RGBA_Image *src, RGBA_Image *dst,
 						  dst_region_w, dst_region_h);
 	
      }
-   draw_context_apply_free_cutouts(rects);
+   evas_common_draw_context_apply_free_cutouts(rects);
    /* restore clip info */
    dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
 }
@@ -238,7 +238,7 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
      {
 	Gfx_Func_Blend_Src_Cmod_Dst func;
 	
-	func = draw_func_blend_cmod_get(src, dst, dst_clip_w);
+	func = evas_common_draw_func_blend_cmod_get(src, dst, dst_clip_w);
 	/* if 1:1 scale */
 	
 	if ((dst_region_w == src_region_w) && 
@@ -287,7 +287,7 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
      {
 	Gfx_Func_Blend_Src_Mul_Dst func;
 	
-	func = draw_func_blend_mul_get(src, dc->mul.col, dst, dst_clip_w);
+	func = evas_common_draw_func_blend_mul_get(src, dc->mul.col, dst, dst_clip_w);
 	/* if 1:1 scale */
 	if ((dst_region_w == src_region_w) && 
 	    (dst_region_h == src_region_h))
@@ -335,7 +335,7 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
      {
 	Gfx_Func_Blend_Src_Dst func;
 	
-	func = draw_func_blend_get(src, dst, dst_clip_w);
+	func = evas_common_draw_func_blend_get(src, dst, dst_clip_w);
 	/* if 1:1 scale */
 	if ((dst_region_w == src_region_w) && 
 	    (dst_region_h == src_region_h))
@@ -392,14 +392,14 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 #else
 #ifdef BUILD_SCALE_SMOOTH
 void
-scale_rgba_in_to_out_clip_sample(RGBA_Image *src, RGBA_Image *dst, 
+evas_common_scale_rgba_in_to_out_clip_sample(RGBA_Image *src, RGBA_Image *dst, 
 				 RGBA_Draw_Context *dc,
 				 int src_region_x, int src_region_y, 
 				 int src_region_w, int src_region_h, 
 				 int dst_region_x, int dst_region_y, 
 				 int dst_region_w, int dst_region_h)
 {
-   scale_rgba_in_to_out_clip_smooth(src, dst, dc, 
+   evas_common_scale_rgba_in_to_out_clip_smooth(src, dst, dc, 
 				    src_region_x, src_region_y,
 				    src_region_w, src_region_h,
 				    dst_region_x, dst_region_y,

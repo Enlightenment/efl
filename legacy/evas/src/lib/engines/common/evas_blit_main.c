@@ -1,12 +1,12 @@
 #include "evas_common.h"
 
 void
-blit_init(void)
+evas_common_blit_init(void)
 {
 }
 
 void
-blit_rectangle(RGBA_Image *src, RGBA_Image *dst, int src_x, int src_y, int w, int h, int dst_x, int dst_y)
+evas_common_blit_rectangle(RGBA_Image *src, RGBA_Image *dst, int src_x, int src_y, int w, int h, int dst_x, int dst_y)
 {
    int y;
    Gfx_Func_Blend_Src_Dst func;
@@ -62,7 +62,7 @@ blit_rectangle(RGBA_Image *src, RGBA_Image *dst, int src_x, int src_y, int w, in
 	/* src after dst - go forward */
 	if (((src_y * src->image->w) + src_x) > ((dst_y * dst->image->w) + dst_x))
 	  {
-	     func = draw_func_copy_get(w, 0);
+	     func = evas_common_draw_func_copy_get(w, 0);
 	     for (y = 0; y < h; y++)
 	       {
 		  src_ptr = src->image->data + ((y + src_y) * src->image->w) + src_x;
@@ -73,7 +73,7 @@ blit_rectangle(RGBA_Image *src, RGBA_Image *dst, int src_x, int src_y, int w, in
 	/* reverse */
 	else
 	  {
-	     func = draw_func_copy_get(w, 1);
+	     func = evas_common_draw_func_copy_get(w, 1);
 	     for (y = h - 1; y >= 0; y--)
 	       {
 		  src_ptr = src->image->data + ((y + src_y) * src->image->w) + src_x;
@@ -84,7 +84,7 @@ blit_rectangle(RGBA_Image *src, RGBA_Image *dst, int src_x, int src_y, int w, in
      }
    else
      {
-	func = draw_func_copy_get(w, 0);   
+	func = evas_common_draw_func_copy_get(w, 0);   
 	for (y = 0; y < h; y++)
 	  {
 	     src_ptr = src->image->data + ((y + src_y) * src->image->w) + src_x;

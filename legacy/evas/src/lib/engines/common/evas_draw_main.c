@@ -1,12 +1,12 @@
 #include "evas_common.h"
 
 void
-draw_init(void)
+evas_common_draw_init(void)
 {
 }
 
 RGBA_Draw_Context *
-draw_context_new(void)
+evas_common_draw_context_new(void)
 {
    RGBA_Draw_Context *dc;
 
@@ -15,13 +15,13 @@ draw_context_new(void)
 }
 
 void
-draw_context_free(RGBA_Draw_Context *dc)
+evas_common_draw_context_free(RGBA_Draw_Context *dc)
 {
    free(dc);
 }
 
 void
-draw_context_clip_clip(RGBA_Draw_Context *dc, int x, int y, int w, int h)
+evas_common_draw_context_clip_clip(RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
    if (dc->clip.use)
      {
@@ -29,11 +29,11 @@ draw_context_clip_clip(RGBA_Draw_Context *dc, int x, int y, int w, int h)
 			   x, y, w, h);
      }
    else
-     draw_context_set_clip(dc, x, y, w, h);
+     evas_common_draw_context_set_clip(dc, x, y, w, h);
 }
 
 void
-draw_context_set_clip(RGBA_Draw_Context *dc, int x, int y, int w, int h)
+evas_common_draw_context_set_clip(RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
    dc->clip.use = 1;
    dc->clip.x = x;
@@ -43,13 +43,13 @@ draw_context_set_clip(RGBA_Draw_Context *dc, int x, int y, int w, int h)
 }
 
 void
-draw_context_unset_clip(RGBA_Draw_Context *dc)
+evas_common_draw_context_unset_clip(RGBA_Draw_Context *dc)
 {
    dc->clip.use = 0;
 }
 
 void
-draw_context_set_color(RGBA_Draw_Context *dc, int r, int g, int b, int a)
+evas_common_draw_context_set_color(RGBA_Draw_Context *dc, int r, int g, int b, int a)
 {
    R_VAL(&(dc->col.col)) = (DATA8)r;
    G_VAL(&(dc->col.col)) = (DATA8)g;
@@ -58,7 +58,7 @@ draw_context_set_color(RGBA_Draw_Context *dc, int r, int g, int b, int a)
 }
 
 void
-draw_context_set_multiplier(RGBA_Draw_Context *dc, int r, int g, int b, int a)
+evas_common_draw_context_set_multiplier(RGBA_Draw_Context *dc, int r, int g, int b, int a)
 {
    dc->mul.use = 1;
    dc->mod.use = 0;
@@ -69,13 +69,13 @@ draw_context_set_multiplier(RGBA_Draw_Context *dc, int r, int g, int b, int a)
 }
 
 void
-draw_context_unset_multiplier(RGBA_Draw_Context *dc)
+evas_common_draw_context_unset_multiplier(RGBA_Draw_Context *dc)
 {
    dc->mul.use = 0;
 }
 
 void
-draw_context_set_modifiers(RGBA_Draw_Context *dc, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod)
+evas_common_draw_context_set_modifiers(RGBA_Draw_Context *dc, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod)
 {
    int i;
    
@@ -104,13 +104,13 @@ draw_context_set_modifiers(RGBA_Draw_Context *dc, DATA8 *rmod, DATA8 *gmod, DATA
 }
 
 void
-draw_context_ununset_modifiers(RGBA_Draw_Context *dc)
+evas_common_draw_context_ununset_modifiers(RGBA_Draw_Context *dc)
 {
    dc->mod.use = 0;
 }
 
 void
-draw_context_add_cutout(RGBA_Draw_Context *dc, int x, int y, int w, int h)
+evas_common_draw_context_add_cutout(RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
    Cutout_Rect *r;
    
@@ -123,14 +123,14 @@ draw_context_add_cutout(RGBA_Draw_Context *dc, int x, int y, int w, int h)
 }
 
 void
-draw_context_clear_cutouts(RGBA_Draw_Context *dc)
+evas_common_draw_context_clear_cutouts(RGBA_Draw_Context *dc)
 {
-   draw_context_apply_free_cutouts(dc->cutout.rects);
+   evas_common_draw_context_apply_free_cutouts(dc->cutout.rects);
    dc->cutout.rects = NULL;
 }
 
 Cutout_Rect *
-draw_context_apply_cutouts(RGBA_Draw_Context *dc)
+evas_common_draw_context_apply_cutouts(RGBA_Draw_Context *dc)
 {
    Cutout_Rect *r, *rects;
    Evas_Object_List *l;
@@ -146,13 +146,13 @@ draw_context_apply_cutouts(RGBA_Draw_Context *dc)
    for (l = (Evas_Object_List *)dc->cutout.rects; l; l = l->next)
      {
 	r = (Cutout_Rect *)l;
-	rects = draw_context_cutouts_split(rects, r);
+	rects = evas_common_draw_context_cutouts_split(rects, r);
      }
    return rects;
 }
 
 void
-draw_context_apply_free_cutouts(Cutout_Rect *rects)
+evas_common_draw_context_apply_free_cutouts(Cutout_Rect *rects)
 {
    while (rects)
      {
@@ -165,7 +165,7 @@ draw_context_apply_free_cutouts(Cutout_Rect *rects)
 }
 
 Cutout_Rect *
-draw_context_cutouts_split(Cutout_Rect *in, Cutout_Rect *split)
+evas_common_draw_context_cutouts_split(Cutout_Rect *in, Cutout_Rect *split)
 {
    /* multiple rect in, multiple out */
    Cutout_Rect *out;
@@ -177,7 +177,7 @@ draw_context_cutouts_split(Cutout_Rect *in, Cutout_Rect *split)
 	Cutout_Rect *r;
 
 	r = (Cutout_Rect *)l;
-	r = draw_context_cutout_split(r, split);
+	r = evas_common_draw_context_cutout_split(r, split);
 	while (r)
 	  {
 	     Cutout_Rect *r2;
@@ -187,12 +187,12 @@ draw_context_cutouts_split(Cutout_Rect *in, Cutout_Rect *split)
 	     out = evas_object_list_append(out, r2);
 	  }
      }
-   draw_context_apply_free_cutouts(in);
+   evas_common_draw_context_apply_free_cutouts(in);
    return out;
 }
 
 Cutout_Rect *
-draw_context_cutout_split(Cutout_Rect *in, Cutout_Rect *split)
+evas_common_draw_context_cutout_split(Cutout_Rect *in, Cutout_Rect *split)
 {
    /* 1 input rect, multiple out */
    Cutout_Rect *out;
@@ -484,18 +484,18 @@ draw_context_cutout_split(Cutout_Rect *in, Cutout_Rect *split)
 }
 
 Gfx_Func_Blend_Src_Dst
-draw_func_blend_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
+evas_common_draw_func_blend_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
 {
 #ifdef BUILD_MMX
    int mmx, sse, sse2;
    
-   cpu_can_do(&mmx, &sse, &sse2);
+   evas_common_cpu_can_do(&mmx, &sse, &sse2);
 #endif   
    if (src->flags & RGBA_IMAGE_HAS_ALPHA)
      {
 	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
 	  {
-	     return blend_pixels_rgba_to_rgba_c;
+	     return evas_common_blend_pixels_rgba_to_rgba_c;
 	  }
 	else
 	  {
@@ -503,13 +503,13 @@ draw_func_blend_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
 # ifdef BUILD_C
 	     if (mmx)
 # endif	       
-	       return blend_pixels_rgba_to_rgb_mmx;
+	       return evas_common_blend_pixels_rgba_to_rgb_mmx;
 # ifdef BUILD_C
 	     else
 # endif	       
 #endif
 #ifdef BUILD_C
-	       return blend_pixels_rgba_to_rgb_c;
+	       return evas_common_blend_pixels_rgba_to_rgb_c;
 #endif	     
 	  }
      }
@@ -517,13 +517,13 @@ draw_func_blend_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
      {
 	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
 	  {
-	     return copy_pixels_rgb_to_rgba_c;
+	     return evas_common_copy_pixels_rgb_to_rgba_c;
 	  }
 	else
 	  {
 #ifdef BUILD_SSE	     
 	     if ((sse) && (pixels > 256 * 256))
-	       return copy_pixels_rgba_to_rgba_sse;
+	       return evas_common_copy_pixels_rgba_to_rgba_sse;
 # ifdef BUILD_MMX	     
 	     else
 # endif	       
@@ -532,45 +532,45 @@ draw_func_blend_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
 # ifdef BUILD_C
 	       if (mmx)
 # endif	       
-		 return copy_pixels_rgba_to_rgba_mmx;
+		 return evas_common_copy_pixels_rgba_to_rgba_mmx;
 # ifdef BUILD_C
 	     else
 # endif	       
 #endif
 #ifdef BUILD_C
-	       return copy_pixels_rgba_to_rgba_c;
+	       return evas_common_copy_pixels_rgba_to_rgba_c;
 #endif	     
 	  }
      }
-   return blend_pixels_rgba_to_rgba_c;
+   return evas_common_blend_pixels_rgba_to_rgba_c;
    pixels = 0;
 }
 
 Gfx_Func_Blend_Color_Dst
-draw_func_blend_color_get(DATA32 src, RGBA_Image *dst, int pixels)
+evas_common_draw_func_blend_color_get(DATA32 src, RGBA_Image *dst, int pixels)
 {
 #ifdef BUILD_MMX
    int mmx, sse, sse2;
    
-   cpu_can_do(&mmx, &sse, &sse2);
+   evas_common_cpu_can_do(&mmx, &sse, &sse2);
 #endif   
    if (A_VAL(&src) != 0xff)
      {
 	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
 	  {
-	     return blend_color_rgba_to_rgba_c;
+	     return evas_common_blend_color_rgba_to_rgba_c;
 	  }
 	else
 	  {
 #ifdef BUILD_MMX
 	     if (mmx)
-	       return blend_color_rgba_to_rgb_mmx;
+	       return evas_common_blend_color_rgba_to_rgb_mmx;
 #endif	     
 #ifdef BUILD_C	       
 # ifdef BUILD_MMX
 	     else
 # endif
-	       return blend_color_rgba_to_rgb_c;
+	       return evas_common_blend_color_rgba_to_rgb_c;
 #endif	     
 	  }
      }
@@ -578,92 +578,92 @@ draw_func_blend_color_get(DATA32 src, RGBA_Image *dst, int pixels)
      {
 	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
 	  {
-	     return copy_color_rgb_to_rgba_c;
+	     return evas_common_copy_color_rgb_to_rgba_c;
 	  }
 	else
 	  {
 #ifdef  BUILD_SSE	     
 	     if ((sse) && (pixels > 256 * 256))
-	       return copy_color_rgba_to_rgba_sse;
+	       return evas_common_copy_color_rgba_to_rgba_sse;
 #endif
 #ifdef BUILD_MMX
 # ifdef BUILD_SSE	     
 	     else
 # endif	       
 	       if (mmx)
-		 return copy_color_rgba_to_rgba_mmx;
+		 return evas_common_copy_color_rgba_to_rgba_mmx;
 #endif
 #ifdef BUILD_C
 # ifdef BUILD_MMX	     
 	     else
 # endif	       
-	       return copy_color_rgba_to_rgba_c;
+	       return evas_common_copy_color_rgba_to_rgba_c;
 #endif	     
 	  }
      }
-   return blend_color_rgba_to_rgba_c;
+   return evas_common_blend_color_rgba_to_rgba_c;
    pixels = 0;
 }
 
 Gfx_Func_Blend_Src_Cmod_Dst
-draw_func_blend_cmod_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
+evas_common_draw_func_blend_cmod_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
 {
 #ifdef BUILD_MMX
    int mmx, sse, sse2;
    
-   cpu_can_do(&mmx, &sse, &sse2);
+   evas_common_cpu_can_do(&mmx, &sse, &sse2);
 #endif   
    if (src->flags & RGBA_IMAGE_HAS_ALPHA)
      {
 	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
 	  {
-	     return blend_pixels_cmod_rgba_to_rgba_c;
+	     return evas_common_blend_pixels_cmod_rgba_to_rgba_c;
 	  }
 	else
 	  {
-	     return blend_pixels_cmod_rgba_to_rgb_c;
+	     return evas_common_blend_pixels_cmod_rgba_to_rgb_c;
 	  }
      }
    else
      {
 	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
 	  {
-	     return copy_pixels_cmod_rgb_to_rgba_c;
+	     return evas_common_copy_pixels_cmod_rgb_to_rgba_c;
 	  }
 	else
 	  {
-	     return copy_pixels_cmod_rgba_to_rgba_c;
+	     return evas_common_copy_pixels_cmod_rgba_to_rgba_c;
 	  }
      }
-   return blend_pixels_cmod_rgba_to_rgba_c;
+   return evas_common_blend_pixels_cmod_rgba_to_rgba_c;
    pixels = 0;
 }
 
 Gfx_Func_Blend_Src_Mul_Dst
-draw_func_blend_mul_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, int pixels)
+evas_common_draw_func_blend_mul_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, int pixels)
 {
 #ifdef BUILD_MMX
    int mmx, sse, sse2;
    
-   cpu_can_do(&mmx, &sse, &sse2);
+   evas_common_cpu_can_do(&mmx, &sse, &sse2);
 #endif   
    if (src->flags & RGBA_IMAGE_HAS_ALPHA)
      {
 	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
 	  {
-	     return blend_pixels_mul_color_rgba_to_rgba_c;
+	     return evas_common_blend_pixels_mul_color_rgba_to_rgba_c;
 	  }
 	else
 	  {
 #ifdef BUILD_MMX	     
 	     if (mmx)
-	       return blend_pixels_mul_color_rgba_to_rgb_mmx;
+	       return evas_common_blend_pixels_mul_color_rgba_to_rgb_mmx;
 #endif
 #ifdef BUILD_C
 # ifdef BUILD_MMX	     
 	     else
 # endif	       
-	       return blend_pixels_mul_color_rgba_to_rgb_c;
+	       return evas_common_blend_pixels_mul_color_rgba_to_rgb_c;
 #endif	     
 	  }
      }
@@ -671,109 +671,109 @@ draw_func_blend_mul_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, int pixels
      {
 	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
 	  {
-	     return blend_pixels_mul_color_rgba_to_rgba_c;
+	     return evas_common_blend_pixels_mul_color_rgba_to_rgba_c;
 	  }
 	else
 	  {
 #ifdef BUILD_MMX	     
 	     if (mmx)
-	       return blend_pixels_mul_color_rgba_to_rgb_mmx;
+	       return evas_common_blend_pixels_mul_color_rgba_to_rgb_mmx;
 #endif
 #ifdef BUILD_C
 # ifdef BUILD_MMX	     
 	     else
 # endif	       
-	       return blend_pixels_mul_color_rgba_to_rgb_c;
+	       return evas_common_blend_pixels_mul_color_rgba_to_rgb_c;
 #endif	     
 	  }
      }
-   return blend_pixels_mul_color_rgba_to_rgba_c;
+   return evas_common_blend_pixels_mul_color_rgba_to_rgba_c;
    col = 0;
    pixels = 0;
 }
 
 Gfx_Func_Blend_Src_Alpha_Mul_Dst
-draw_func_blend_alpha_get(RGBA_Image *dst)
+evas_common_draw_func_blend_alpha_get(RGBA_Image *dst)
 {
 #ifdef BUILD_MMX
    int mmx, sse, sse2;
    
-   cpu_can_do(&mmx, &sse, &sse2);
+   evas_common_cpu_can_do(&mmx, &sse, &sse2);
 #endif   
    if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
      {
-	return blend_alpha_color_rgba_to_rgba_c;
+	return evas_common_blend_alpha_color_rgba_to_rgba_c;
      }
    else
      {
 #ifdef BUILD_MMX	     
 	if (mmx)
-	  return blend_alpha_color_rgba_to_rgb_mmx;
+	  return evas_common_blend_alpha_color_rgba_to_rgb_mmx;
 #endif
 #ifdef BUILD_C
 # ifdef BUILD_MMX	     
 	else
 # endif	       
-	  return blend_alpha_color_rgba_to_rgb_c;
+	  return evas_common_blend_alpha_color_rgba_to_rgb_c;
 #endif	     
      }
 #ifdef BUILD_C
-   return blend_alpha_color_rgba_to_rgba_c;
+   return evas_common_blend_alpha_color_rgba_to_rgba_c;
 #else
    return NULL;
 #endif   
 }
 
 Gfx_Func_Blend_Src_Dst
-draw_func_copy_get(int pixels, int reverse)
+evas_common_draw_func_copy_get(int pixels, int reverse)
 {
 #ifdef BUILD_MMX
    int mmx, sse, sse2;
    
-   cpu_can_do(&mmx, &sse, &sse2);
+   evas_common_cpu_can_do(&mmx, &sse, &sse2);
 #endif   
    if (reverse)
      {
 #ifdef  BUILD_SSE	     
 	if ((sse) && (pixels > 256 * 256))
-	  return copy_pixels_rev_rgba_to_rgba_sse;
+	  return evas_common_copy_pixels_rev_rgba_to_rgba_sse;
 #endif
 #ifdef BUILD_MMX
 # ifdef BUILD_SSE	     
 	else
 # endif	       
 	  if (mmx)
-	    return copy_pixels_rev_rgba_to_rgba_mmx;
+	    return evas_common_copy_pixels_rev_rgba_to_rgba_mmx;
 #endif
 #ifdef BUILD_C
 # ifdef BUILD_MMX	     
 	else
 # endif	       
-	  return copy_pixels_rev_rgba_to_rgba_c;
+	  return evas_common_copy_pixels_rev_rgba_to_rgba_c;
 #endif	       
      }
    else
      {
 #ifdef  BUILD_SSE	     
 	if ((sse) && (pixels > 256 * 256))
-	  return copy_pixels_rgba_to_rgba_sse;
+	  return evas_common_copy_pixels_rgba_to_rgba_sse;
 #endif
 #ifdef BUILD_MMX
 # ifdef BUILD_SSE	     
 	else
 # endif	       
 	  if (mmx)
-	    return copy_pixels_rgba_to_rgba_mmx;
+	    return evas_common_copy_pixels_rgba_to_rgba_mmx;
 #endif
 #ifdef BUILD_C
 # ifdef BUILD_MMX	     
 	else
 # endif	       
-	  return copy_pixels_rgba_to_rgba_c;
+	  return evas_common_copy_pixels_rgba_to_rgba_c;
 #endif	       
      }
 #ifdef BUILD_C
-   return copy_pixels_rgba_to_rgba_c;
+   return evas_common_copy_pixels_rgba_to_rgba_c;
 #else
    return NULL;
 #endif

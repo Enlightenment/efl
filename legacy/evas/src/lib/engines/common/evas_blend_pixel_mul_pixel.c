@@ -9,7 +9,7 @@ extern const DATA16 const_c1[4];
 
 #ifdef BUILD_C
 void
-blend_pixels_mul_color_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int len, DATA32 mul_color)
+evas_common_blend_pixels_mul_color_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int len, DATA32 mul_color)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr;
    
@@ -72,7 +72,7 @@ blend_pixels_mul_color_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int len, DATA32 m
 
 #ifdef BUILD_MMX
 void
-blend_pixels_mul_color_rgba_to_rgb_mmx(DATA32 *src, DATA32 *dst, int len, DATA32 mul_color)
+evas_common_blend_pixels_mul_color_rgba_to_rgb_mmx(DATA32 *src, DATA32 *dst, int len, DATA32 mul_color)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr;
    
@@ -135,7 +135,7 @@ blend_pixels_mul_color_rgba_to_rgb_mmx(DATA32 *src, DATA32 *dst, int len, DATA32
 /****************************************************************************/
 
 void
-blend_pixels_mul_color_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len, DATA32 mul_color)
+evas_common_blend_pixels_mul_color_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len, DATA32 mul_color)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr;
    

@@ -62,8 +62,8 @@ evas_engine_directfb_image_load(void *data, char *file, char *key, int *error)
    provider->RenderTo(provider, image, NULL);
    provider->Release(provider);
 
-   im = image_new();
-   im->image = image_surface_new();
+   im = evas_common_image_new();
+   im->image = evas_common_image_surface_new();
    if (!im->image)
      {
 	_dfb_image_free(im);
@@ -167,7 +167,7 @@ evas_engine_directfb_image_size_set(void *data, void *image, int w, int h)
 	new_surf = (IDirectFBSurface *) im->image->data;
 	new_surf->StretchBlit(new_surf, old_surf, NULL, &outrect);
      }
-   cpu_end_opt;
+   evas_common_cpu_end_opt;
    _dfb_image_unref(im_old);
 
    return im;
@@ -461,7 +461,7 @@ evas_engine_directfb_image_draw(void *data, void *context, void *surface,
       re->backbuf->StretchBlit(re->backbuf, img, &inrect, &outrect);
    }
 
-   cpu_end_opt();
+   evas_common_cpu_end_opt();
 }
 
 void
@@ -542,9 +542,9 @@ _dfb_image_create(Render_Engine *re, int w, int h)
    DFBSurfaceDescription dsc;
    IDirectFBSurface   *surf;
   
-   im = image_new();
+   im = evas_common_image_new();
    if (!im) return NULL;
-   im->image = image_surface_new();
+   im->image = evas_common_image_surface_new();
    if (!im->image) 
      {
 	_dfb_image_free(im);
@@ -643,7 +643,7 @@ _dfb_image_cache(RGBA_Image *im)
    if (im->flags & RGBA_IMAGE_INDEXED) return;
    im->flags |= RGBA_IMAGE_INDEXED;
    cache = evas_object_list_prepend(cache, im);
-   ram = image_ram_usage(im);
+   ram = evas_common_image_ram_usage(im);
    cache_usage += ram;
    _dfb_image_flush_cache();
 }
@@ -656,7 +656,7 @@ _dfb_image_uncache(RGBA_Image *im)
    if (!(im->flags & RGBA_IMAGE_INDEXED)) return;
    im->flags &= ~RGBA_IMAGE_INDEXED;
    cache = evas_object_list_remove(cache, im);
-   ram = image_ram_usage(im);
+   ram = evas_common_image_ram_usage(im);
    cache_usage -= ram;
 }
 

@@ -9,7 +9,7 @@ extern const DATA16 const_c1[4];
 
 #ifdef BUILD_C
 void
-blend_alpha_color_rgba_to_rgb_c (DATA8 *src, DATA32 *dst, int len, DATA32 col)
+evas_common_blend_alpha_color_rgba_to_rgb_c (DATA8 *src, DATA32 *dst, int len, DATA32 col)
 {
    DATA8 *src_ptr;
    DATA32 *dst_ptr, *dst_end_ptr;
@@ -41,7 +41,7 @@ blend_alpha_color_rgba_to_rgb_c (DATA8 *src, DATA32 *dst, int len, DATA32 col)
 
 #ifdef BUILD_MMX
 void
-blend_alpha_color_rgba_to_rgb_mmx (DATA8 *src, DATA32 *dst, int len, DATA32 col)
+evas_common_blend_alpha_color_rgba_to_rgb_mmx (DATA8 *src, DATA32 *dst, int len, DATA32 col)
 {
    DATA8 *src_ptr;
    DATA32 *dst_ptr, *dst_end_ptr;
@@ -108,7 +108,7 @@ blend_alpha_color_rgba_to_rgb_mmx (DATA8 *src, DATA32 *dst, int len, DATA32 col)
 #endif
 
 void
-blend_alpha_color_rgba_to_rgba_c (DATA8 *src, DATA32 *dst, int len, DATA32 col)
+evas_common_blend_alpha_color_rgba_to_rgba_c (DATA8 *src, DATA32 *dst, int len, DATA32 col)
 {
    DATA8 *src_ptr;
    DATA32 *dst_ptr, *dst_end_ptr;

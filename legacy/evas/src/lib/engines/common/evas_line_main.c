@@ -3,7 +3,7 @@
 extern DATA8        pow_lut[256][256];
 
 void
-line_init(void)
+evas_common_line_init(void)
 {
 }
 
@@ -11,7 +11,7 @@ line_init(void)
 #define SGN(_x) (((_x) < 0) ? -1 : 1)
 
 void
-line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2)
+evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2)
 {
    int dx, dy, ddx, ddy, ax, ay, sx, sy, x, y, d;
    DATA32 *im;

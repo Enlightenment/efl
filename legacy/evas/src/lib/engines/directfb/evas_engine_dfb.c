@@ -140,22 +140,22 @@ evas_engine_directfb_output_setup(int w, int h, IDirectFB * dfb,
 
    re = calloc(1, sizeof(Render_Engine));
    /* if we haven't initialized - init (automatic abort if already done) */
-   cpu_init();
-   blend_init();
-   image_init();
-   convert_init();
-   scale_init();
-   rectangle_init();
-   gradient_init();
-   polygon_init();
-   line_init();
-   font_init();
-   draw_init();
-   tilebuf_init();
+   evas_common_cpu_init();
+   evas_common_blend_init();
+   evas_common_image_init();
+   evas_common_convert_init();
+   evas_common_scale_init();
+   evas_common_rectangle_init();
+   evas_common_gradient_init();
+   evas_common_polygon_init();
+   evas_common_line_init();
+   evas_common_font_init();
+   evas_common_draw_init();
+   evas_common_tilebuf_init();
 
-   re->tb = tilebuf_new(w, h);
+   re->tb = evas_common_tilebuf_new(w, h);
    /* in preliminary tests 16x16 gave highest framerates */
-   tilebuf_set_tile_size(re->tb, 16, 16);
+   evas_common_tilebuf_set_tile_size(re->tb, 16, 16);
    re->dfb = dfb;
    re->surface = surf;
 
@@ -174,12 +174,12 @@ evas_engine_directfb_output_setup(int w, int h, IDirectFB * dfb,
    /* We create a "fake" RGBA_Image which points the to DFB surface. Each access 
     * to that surface is wrapped in Lock / Unlock calls whenever the data is
     * manipulated directly. */
-   im = image_new();
+   im = evas_common_image_new();
    if (!im) return;
-   im->image = image_surface_new();
+   im->image = evas_common_image_surface_new();
    if (!im->image) 
    {
-      image_free(im);
+      evas_common_image_free(im);
       return;
    }
    im->image->w = w;
@@ -197,11 +197,11 @@ evas_engine_directfb_output_free(void *data)
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   tilebuf_free(re->tb);
+   evas_common_tilebuf_free(re->tb);
    if (re->rects)
-      tilebuf_free_render_rects(re->rects);
+      evas_common_tilebuf_free_render_rects(re->rects);
    re->backbuf->Release(re->backbuf);
-   image_free(re->rgba_image);
+   evas_common_image_free(re->rgba_image);
    free(re);
 }
 
@@ -214,10 +214,10 @@ evas_engine_directfb_output_resize(void *data, int w, int h)
 
    re = (Render_Engine *) data;
    if (w == re->tb->outbuf_w && h == re->tb->outbuf_h) return;
-   tilebuf_free(re->tb);
-   re->tb = tilebuf_new(w, h);
+   evas_common_tilebuf_free(re->tb);
+   re->tb = evas_common_tilebuf_new(w, h);
    if (re->tb)
-      tilebuf_set_tile_size(re->tb, 16, 16);
+      evas_common_tilebuf_set_tile_size(re->tb, 16, 16);
 
    memset(&dsc, 0, sizeof(DFBSurfaceDescription));
    dsc.flags = DSDESC_WIDTH | DSDESC_HEIGHT | DSDESC_PIXELFORMAT;
@@ -242,7 +242,7 @@ evas_engine_directfb_output_tile_size_set(void *data, int w, int h)
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   tilebuf_set_tile_size(re->tb, w, h);
+   evas_common_tilebuf_set_tile_size(re->tb, w, h);
 }
 
 void
@@ -252,7 +252,7 @@ evas_engine_directfb_output_redraws_rect_add(void *data, int x, int y, int w,
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   tilebuf_add_redraw(re->tb, x, y, w, h);
+   evas_common_tilebuf_add_redraw(re->tb, x, y, w, h);
 }
 
 void
@@ -262,7 +262,7 @@ evas_engine_directfb_output_redraws_rect_del(void *data, int x, int y, int w,
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   tilebuf_del_redraw(re->tb, x, y, w, h);
+   evas_common_tilebuf_del_redraw(re->tb, x, y, w, h);
 }
 
 void
@@ -271,7 +271,7 @@ evas_engine_directfb_output_redraws_clear(void *data)
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   tilebuf_clear(re->tb);
+   evas_common_tilebuf_clear(re->tb);
 }
 
 void        *
@@ -294,7 +294,7 @@ evas_engine_directfb_output_redraws_next_update_get(void *data, int *x, int *y,
      }
    if (!re->rects)
      {
-	re->rects = tilebuf_get_render_rects(re->tb);
+	re->rects = evas_common_tilebuf_get_render_rects(re->tb);
 	re->cur_rect = (Evas_Object_List *) re->rects;
      }
    if (!re->cur_rect)
@@ -307,7 +307,7 @@ evas_engine_directfb_output_redraws_next_update_get(void *data, int *x, int *y,
    re->cur_rect = re->cur_rect->next;
    if (!re->cur_rect)
      {
-	tilebuf_free_render_rects(re->rects);
+	evas_common_tilebuf_free_render_rects(re->rects);
 	re->rects = NULL;
 	re->end = 1;
      }
@@ -333,7 +333,7 @@ evas_engine_directfb_output_redraws_next_update_push(void *data, void *surface,
    rect.h = h;
    re = (Render_Engine *) data;
    re->surface->Blit(re->surface, re->backbuf, &rect, x, y);
-   cpu_end_opt();
+   evas_common_cpu_end_opt();
 }
 
 void
@@ -350,7 +350,7 @@ evas_engine_directfb_context_new(void *data)
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   return draw_context_new();
+   return evas_common_draw_context_new();
 }
 
 void
@@ -359,7 +359,7 @@ evas_engine_directfb_context_free(void *data, void *context)
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   draw_context_free(context);
+   evas_common_draw_context_free(context);
 }
 
 void
@@ -369,7 +369,7 @@ evas_engine_directfb_context_clip_set(void *data, void *context, int x, int y,
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   draw_context_set_clip(context, x, y, w, h);
+   evas_common_draw_context_set_clip(context, x, y, w, h);
 }
 
 void
@@ -379,7 +379,7 @@ evas_engine_directfb_context_clip_clip(void *data, void *context, int x, int y,
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   draw_context_clip_clip(context, x, y, w, h);
+   evas_common_draw_context_clip_clip(context, x, y, w, h);
 }
 
 void
@@ -388,7 +388,7 @@ evas_engine_directfb_context_clip_unset(void *data, void *context)
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   draw_context_unset_clip(context);
+   evas_common_draw_context_unset_clip(context);
 }
 
 int
@@ -413,7 +413,7 @@ evas_engine_directfb_context_color_set(void *data, void *context, int r, int g,
    RGBA_Draw_Context  *dc = (RGBA_Draw_Context *) context;
 
    re = (Render_Engine *) data;
-   draw_context_set_color(dc, r, g, b, a);
+   evas_common_draw_context_set_color(dc, r, g, b, a);
 }
 
 int
@@ -440,7 +440,7 @@ evas_engine_directfb_context_multiplier_set(void *data, void *context, int r,
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   draw_context_set_multiplier(context, r, g, b, a);
+   evas_common_draw_context_set_multiplier(context, r, g, b, a);
 }
 
 void
@@ -449,7 +449,7 @@ evas_engine_directfb_context_multiplier_unset(void *data, void *context)
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   draw_context_unset_multiplier(context);
+   evas_common_draw_context_unset_multiplier(context);
 }
 
 int
@@ -477,7 +477,7 @@ evas_engine_directfb_context_cutout_add(void *data, void *context, int x, int y,
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   draw_context_add_cutout(context, x, y, w, h);
+   evas_common_draw_context_add_cutout(context, x, y, w, h);
 }
 
 void
@@ -486,7 +486,7 @@ evas_engine_directfb_context_cutout_clear(void *data, void *context)
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   draw_context_clear_cutouts(context);
+   evas_common_draw_context_clear_cutouts(context);
 }
 
 /* 
@@ -520,8 +520,8 @@ evas_engine_directfb_draw_rectangle(void *data, void *context, void *surface,
    cy = dc->clip.y;
    cw = dc->clip.w;
    ch = dc->clip.h;
-   draw_context_clip_clip(dc, 0, 0, re->tb->outbuf_w, re->tb->outbuf_h);
-   draw_context_clip_clip(dc, x, y, w, h);
+   evas_common_draw_context_clip_clip(dc, 0, 0, re->tb->outbuf_w, re->tb->outbuf_h);
+   evas_common_draw_context_clip_clip(dc, x, y, w, h);
    /* our clip is 0 size.. abort */
    if ((dc->clip.w <= 0) || (dc->clip.h <= 0))
      {
@@ -532,14 +532,14 @@ evas_engine_directfb_draw_rectangle(void *data, void *context, void *surface,
 	dc->clip.h = ch;
 	return;
      }
-   rects = draw_context_apply_cutouts(dc);
+   rects = evas_common_draw_context_apply_cutouts(dc);
    for (l = (Evas_Object_List *) rects; l; l = l->next)
      {
 	r = (Cutout_Rect *) l;
-	draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
+	evas_common_draw_context_set_clip(dc, r->x, r->y, r->w, r->h);
 	rectangle_draw_internal(data, dc, x, y, w, h);
      }
-   draw_context_apply_free_cutouts(rects);
+   evas_common_draw_context_apply_free_cutouts(rects);
    /* restore clip info */
    dc->clip.use = c;
    dc->clip.x = cx;
@@ -602,7 +602,7 @@ rectangle_draw_internal(void *data, void *context, int x, int y, int w, int h)
    evas_engine_directfb_context_color_get(data, context, &r, &g, &b, &a);
    re->backbuf->SetColor(re->backbuf, r, g, b, a);
    re->backbuf->FillRectangle(re->backbuf, x, y, w, h);
-   cpu_end_opt();
+   evas_common_cpu_end_opt();
 }
 
 /* 
@@ -638,7 +638,7 @@ evas_engine_directfb_polygon_point_add(void *data, void *context, void *polygon,
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   return polygon_point_add(polygon, x, y);
+   return evas_common_polygon_point_add(polygon, x, y);
    context = NULL;
 }
 
@@ -648,7 +648,7 @@ evas_engine_directfb_polygon_points_clear(void *data, void *context, void *polyg
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   return polygon_points_clear(polygon);
+   return evas_common_polygon_points_clear(polygon);
    context = NULL;
 }
 
@@ -667,10 +667,10 @@ evas_engine_directfb_polygon_draw(void *data, void *context, void *surface, void
    surf = (IDirectFBSurface *)im->image->data;
    surf->Lock(surf, DSLF_WRITE, &p, & pitch);
    im->image->data = p;
-   polygon_draw(im, context, polygon);
+   evas_common_polygon_draw(im, context, polygon);
    surf->Unlock(surf);
    im->image->data = (void *)surf;
-   cpu_end_opt();
+   evas_common_cpu_end_opt();
 }
 
 
@@ -687,8 +687,8 @@ evas_engine_directfb_gradient_color_add(void *data, void *context, void *gradien
    
    re = (Render_Engine *)data;
    if (!gradient)
-     gradient = gradient_new();
-   gradient_color_add(gradient, r, g, b, a, distance);
+     gradient = evas_common_gradient_new();
+   evas_common_gradient_color_add(gradient, r, g, b, a, distance);
    return gradient;
    context = NULL;
 }
@@ -699,7 +699,7 @@ evas_engine_directfb_gradient_colors_clear(void *data, void *context, void *grad
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   if (gradient) gradient_free(gradient);
+   if (gradient) evas_common_gradient_free(gradient);
    return NULL;
    context = NULL;
 }
@@ -718,10 +718,10 @@ evas_engine_directfb_gradient_draw(void *data, void *context, void *surface, voi
    surf = (IDirectFBSurface *)im->image->data;
    surf->Lock(surf, DSLF_WRITE, &p, & pitch);
    im->image->data = p;
-   gradient_draw(im, context, x, y, w, h, gradient, angle);
+   evas_common_gradient_draw(im, context, x, y, w, h, gradient, angle);
    surf->Unlock(surf);
    im->image->data = (void *)surf;
-   cpu_end_opt();
+   evas_common_cpu_end_opt();
 }
 
 
@@ -739,7 +739,7 @@ evas_engine_directfb_font_load(void *data, char *name, int size)
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   return font_load(name, size);
+   return evas_common_font_load(name, size);
 }
 
 void
@@ -748,7 +748,7 @@ evas_engine_directfb_font_free(void *data, void *font)
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   font_free(font);
+   evas_common_font_free(font);
 }
 
 int
@@ -757,7 +757,7 @@ evas_engine_directfb_font_ascent_get(void *data, void *font)
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   return font_ascent_get(font);
+   return evas_common_font_ascent_get(font);
 }
 
 int
@@ -766,7 +766,7 @@ evas_engine_directfb_font_descent_get(void *data, void *font)
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   return font_descent_get(font);
+   return evas_common_font_descent_get(font);
 }
 
 int
@@ -775,7 +775,7 @@ evas_engine_directfb_font_max_ascent_get(void *data, void *font)
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   return font_max_ascent_get(font);
+   return evas_common_font_max_ascent_get(font);
 }
 
 int
@@ -784,7 +784,7 @@ evas_engine_directfb_font_max_descent_get(void *data, void *font)
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   return font_max_descent_get(font);
+   return evas_common_font_max_descent_get(font);
 }
 
 void
@@ -794,7 +794,7 @@ evas_engine_directfb_font_string_size_get(void *data, void *font, char *text,
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   font_query_size(font, text, w, h);
+   evas_common_font_query_size(font, text, w, h);
 }
 
 int
@@ -803,7 +803,7 @@ evas_engine_directfb_font_inset_get(void *data, void *font, char *text)
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   return font_query_inset(font, text);
+   return evas_common_font_query_inset(font, text);
 }
 
 int
@@ -813,7 +813,7 @@ evas_engine_directfb_font_h_advance_get(void *data, void *font, char *text)
    int                 h, v;
 
    re = (Render_Engine *) data;
-   font_query_advance(font, text, &h, &v);
+   evas_common_font_query_advance(font, text, &h, &v);
    return h;
 }
 
@@ -824,7 +824,7 @@ evas_engine_directfb_font_v_advance_get(void *data, void *font, char *text)
    int                 h, v;
 
    re = (Render_Engine *) data;
-   font_query_advance(font, text, &h, &v);
+   evas_common_font_query_advance(font, text, &h, &v);
    return v;
 }
 
@@ -836,7 +836,7 @@ evas_engine_directfb_font_char_coords_get(void *data, void *font, char *text,
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   return font_query_char_coords(font, text, pos, cx, cy, cw, ch);
+   return evas_common_font_query_char_coords(font, text, pos, cx, cy, cw, ch);
 }
 
 int
@@ -847,7 +847,7 @@ evas_engine_directfb_font_char_at_coords_get(void *data, void *font, char *text,
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   return font_query_text_at_pos(font, text, x, y, cx, cy, cw, ch);
+   return evas_common_font_query_text_at_pos(font, text, x, y, cx, cy, cw, ch);
 }
 
 void
@@ -867,20 +867,20 @@ evas_engine_directfb_font_draw(void *data, void *context, void *surface,
    surf->Lock(surf, DSLF_WRITE, &p, &pitch);
    im->image->data = p;
    if ((w == ow) && (h == oh))
-      font_draw(im, context, font, x, y, text);
+      evas_common_font_draw(im, context, font, x, y, text);
    else
      {
 	/* create output surface size ow x oh and scale to w x h */
 	RGBA_Draw_Context *dc, *dc_in;
 
 	dc_in = context;
-	dc = draw_context_new();
+	dc = evas_common_draw_context_new();
 	if (dc)
 	  {
 	     RGBA_Image *im;
 	     
 	     dc->col.col = dc_in->col.col;
-	     im = image_create(ow, oh);
+	     im = evas_common_image_create(ow, oh);
 	     if (im)
 	       {
 		  int max_ascent;
@@ -890,23 +890,23 @@ evas_engine_directfb_font_draw(void *data, void *context, void *surface,
 		  j = ow * oh;
 		  for (i = 0; i < j; i++) im->image->data[i] = (dc->col.col & 0xffffff);
 		  
-		  max_ascent = font_max_ascent_get(font);
+		  max_ascent = evas_common_font_max_ascent_get(font);
 		  
-		  font_draw(im, dc, font, 0, max_ascent, text);
-		  cpu_end_opt();
-		  scale_rgba_in_to_out_clip_smooth(im, surface, context, 
+		  evas_common_font_draw(im, dc, font, 0, max_ascent, text);
+		  evas_common_cpu_end_opt();
+		  evas_common_scale_rgba_in_to_out_clip_smooth(im, surface, context, 
 						   0, 0, ow, oh, 
 						   x, y - ((max_ascent * h) / oh), 
 						   w, h);
-		  image_free(im);
+		  evas_common_image_free(im);
 	       }
-	     draw_context_free(dc);
+	     evas_common_draw_context_free(dc);
 	  }
      }
       
    surf->Unlock(surf);
    im->image->data = (void *)surf;
-   cpu_end_opt();
+   evas_common_cpu_end_opt();
 }
 
 void
@@ -915,7 +915,7 @@ evas_engine_directfb_font_cache_flush(void *data)
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   font_flush();
+   evas_common_font_flush();
 }
 
 void
@@ -924,7 +924,7 @@ evas_engine_directfb_font_cache_set(void *data, int bytes)
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   font_cache_set(bytes);
+   evas_common_font_cache_set(bytes);
 }
 
 int
@@ -933,6 +933,6 @@ evas_engine_directfb_font_cache_get(void *data)
    Render_Engine      *re;
 
    re = (Render_Engine *) data;
-   return font_cache_get();
+   return evas_common_font_cache_get();
 }
 

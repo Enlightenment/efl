@@ -4,22 +4,22 @@
 #include <sys/utsname.h>
 
 void
-outbuf_fb_init(void)
+evas_fb_outbuf_fb_init(void)
 {
 }
 
 void
-outbuf_fb_free(Outbuf *buf)
+evas_fb_outbuf_fb_free(Outbuf *buf)
 {
    /* FIXME: impliment */
    printf("destroying fb info.. not implemented!!!! WARNING. LEAK!\n");
    if (buf->priv.back_buf) 
-     image_free(buf->priv.back_buf);
+     evas_common_image_free(buf->priv.back_buf);
    free(buf);
 }
 
 Outbuf *
-outbuf_fb_setup_fb(int w, int h, int rot, Outbuf_Depth depth, int vt_no, int dev_no, int refresh)
+evas_fb_outbuf_fb_setup_fb(int w, int h, int rot, Outbuf_Depth depth, int vt_no, int dev_no, int refresh)
 {
    /* create outbuf struct */
    /* setup window and/or fb */
@@ -89,7 +89,7 @@ outbuf_fb_setup_fb(int w, int h, int rot, Outbuf_Depth depth, int vt_no, int dev
 	
 	conv_func = NULL;	
 	if (buf->rot == 0)
-	  conv_func = convert_func_get(0, buf->w, buf->h, 
+	  conv_func = evas_common_convert_func_get(0, buf->w, buf->h, 
 				       buf->priv.fb.fb->fb_var.bits_per_pixel,
 				       buf->priv.mask.r, 
 				       buf->priv.mask.g, 
@@ -97,7 +97,7 @@ outbuf_fb_setup_fb(int w, int h, int rot, Outbuf_Depth depth, int vt_no, int dev
 				       PAL_MODE_NONE, 
 				       buf->rot);
 	else if (buf->rot == 270)
-	  conv_func = convert_func_get(0, buf->h, buf->w, 
+	  conv_func = evas_common_convert_func_get(0, buf->h, buf->w, 
 				       buf->priv.fb.fb->fb_var.bits_per_pixel,
 				       buf->priv.mask.r, 
 				       buf->priv.mask.g, 
@@ -105,7 +105,7 @@ outbuf_fb_setup_fb(int w, int h, int rot, Outbuf_Depth depth, int vt_no, int dev
 				       PAL_MODE_NONE, 
 				       buf->rot);	       
 	else if (buf->rot == 90)
-	  conv_func = convert_func_get(0, buf->h, buf->w, 
+	  conv_func = evas_common_convert_func_get(0, buf->h, buf->w, 
 				       buf->priv.fb.fb->fb_var.bits_per_pixel,
 				       buf->priv.mask.r, 
 				       buf->priv.mask.g, 
@@ -119,19 +119,19 @@ outbuf_fb_setup_fb(int w, int h, int rot, Outbuf_Depth depth, int vt_no, int dev
 	  }
      }
    if (buf->priv.fb.fb->fb_var.bits_per_pixel < 24)
-     buf->priv.back_buf = image_create(buf->w, buf->h);
+     buf->priv.back_buf = evas_common_image_create(buf->w, buf->h);
    
    return buf;
 }
 
 void
-outbuf_fb_blit(Outbuf *buf, int src_x, int src_y, int w, int h, int dst_x, int dst_y)
+evas_fb_outbuf_fb_blit(Outbuf *buf, int src_x, int src_y, int w, int h, int dst_x, int dst_y)
 {
    if (buf->priv.back_buf)
      {
-	blit_rectangle(buf->priv.back_buf, buf->priv.back_buf, 
+	evas_common_blit_rectangle(buf->priv.back_buf, buf->priv.back_buf, 
 		       src_x, src_y, w, h, dst_x, dst_y);
-	outbuf_fb_update(buf, dst_x, dst_y, w, h);
+	evas_fb_outbuf_fb_update(buf, dst_x, dst_y, w, h);
      }
    else
      {
@@ -143,7 +143,7 @@ outbuf_fb_blit(Outbuf *buf, int src_x, int src_y, int w, int h, int dst_x, int d
 }
 
 void
-outbuf_fb_update(Outbuf *buf, int x, int y, int w, int h)
+evas_fb_outbuf_fb_update(Outbuf *buf, int x, int y, int w, int h)
 {
    if (!(buf->priv.back_buf)) return;
    if (buf->priv.fb.fb)
@@ -158,7 +158,7 @@ outbuf_fb_update(Outbuf *buf, int x, int y, int w, int h)
 	     data = (DATA8 *)buf->priv.fb.fb->mem + buf->priv.fb.fb->mem_offset + 
 	       buf->priv.fb.fb->bpp * 
 	       (x + (y * buf->priv.fb.fb->width));
-	     conv_func = convert_func_get(data, w, h, buf->priv.fb.fb->fb_var.bits_per_pixel,
+	     conv_func = evas_common_convert_func_get(data, w, h, buf->priv.fb.fb->fb_var.bits_per_pixel,
 					  buf->priv.mask.r, buf->priv.mask.g,
 					  buf->priv.mask.b, PAL_MODE_NONE,
 					  buf->rot);
@@ -168,7 +168,7 @@ outbuf_fb_update(Outbuf *buf, int x, int y, int w, int h)
 	     data = (DATA8 *)buf->priv.fb.fb->mem + buf->priv.fb.fb->mem_offset + 
 	       buf->priv.fb.fb->bpp * 
 	       (buf->h - y - h + (x * buf->priv.fb.fb->width));
-	     conv_func = convert_func_get(data, h, w, buf->priv.fb.fb->fb_var.bits_per_pixel,
+	     conv_func = evas_common_convert_func_get(data, h, w, buf->priv.fb.fb->fb_var.bits_per_pixel,
 					  buf->priv.mask.r, buf->priv.mask.g,
 					  buf->priv.mask.b, PAL_MODE_NONE,
 					  buf->rot);
@@ -178,7 +178,7 @@ outbuf_fb_update(Outbuf *buf, int x, int y, int w, int h)
 	     data = (DATA8 *)buf->priv.fb.fb->mem + buf->priv.fb.fb->mem_offset + 
 	       buf->priv.fb.fb->bpp * 
 	       (y + ((buf->w - x - w) * buf->priv.fb.fb->width));
-	     conv_func = convert_func_get(data, h, w, buf->priv.fb.fb->fb_var.bits_per_pixel,
+	     conv_func = evas_common_convert_func_get(data, h, w, buf->priv.fb.fb->fb_var.bits_per_pixel,
 					  buf->priv.mask.r, buf->priv.mask.g,
 					  buf->priv.mask.b, PAL_MODE_NONE,
 					  buf->rot);
@@ -217,7 +217,7 @@ outbuf_fb_update(Outbuf *buf, int x, int y, int w, int h)
 }
 
 RGBA_Image *
-outbuf_fb_new_region_for_update(Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch)
+evas_fb_outbuf_fb_new_region_for_update(Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch)
 {
    if (buf->priv.back_buf)
      {
@@ -229,28 +229,28 @@ outbuf_fb_new_region_for_update(Outbuf *buf, int x, int y, int w, int h, int *cx
 	RGBA_Image *im;
 	
 	*cx = 0; *cy = 0; *cw = w; *ch = h;
-	im = image_create(w, h);
+	im = evas_common_image_create(w, h);
 	return im;
      }
    return NULL;
 }
 
 void
-outbuf_fb_free_region_for_update(Outbuf *buf, RGBA_Image *update)
+evas_fb_outbuf_fb_free_region_for_update(Outbuf *buf, RGBA_Image *update)
 {
-   if (update != buf->priv.back_buf) image_free(update);
+   if (update != buf->priv.back_buf) evas_common_image_free(update);
 }
 
 void
-outbuf_fb_push_updated_region(Outbuf *buf, RGBA_Image *update, int x, int y, int w, int h)
+evas_fb_outbuf_fb_push_updated_region(Outbuf *buf, RGBA_Image *update, int x, int y, int w, int h)
 {
    if (!buf->priv.fb.fb) return;
    if (buf->priv.back_buf)
      {
 	if (update != buf->priv.back_buf)
-	  blit_rectangle(update, buf->priv.back_buf,
+	  evas_common_blit_rectangle(update, buf->priv.back_buf,
 			 0, 0, w, h, x, y);
-	outbuf_fb_update(buf, x, y, w, h);
+	evas_fb_outbuf_fb_update(buf, x, y, w, h);
      }
    else
      {
@@ -265,7 +265,7 @@ outbuf_fb_push_updated_region(Outbuf *buf, RGBA_Image *update, int x, int y, int
 	       buf->priv.fb.fb->mem_offset + 
 	       buf->priv.fb.fb->bpp * 
 	       (x + (y * buf->priv.fb.fb->width));
-	     conv_func = convert_func_get(data, w, h, 
+	     conv_func = evas_common_convert_func_get(data, w, h, 
 					  buf->priv.fb.fb->fb_var.bits_per_pixel,
 					  buf->priv.mask.r, buf->priv.mask.g,
 					  buf->priv.mask.b, PAL_MODE_NONE,
@@ -277,7 +277,7 @@ outbuf_fb_push_updated_region(Outbuf *buf, RGBA_Image *update, int x, int y, int
 	       buf->priv.fb.fb->mem_offset + 
 	       buf->priv.fb.fb->bpp * 
 	       (buf->h - y - h + (x * buf->priv.fb.fb->width));
-	     conv_func = convert_func_get(data, h, w, 
+	     conv_func = evas_common_convert_func_get(data, h, w, 
 					  buf->priv.fb.fb->fb_var.bits_per_pixel,
 					  buf->priv.mask.r, buf->priv.mask.g,
 					  buf->priv.mask.b, PAL_MODE_NONE,
@@ -289,7 +289,7 @@ outbuf_fb_push_updated_region(Outbuf *buf, RGBA_Image *update, int x, int y, int
 	       buf->priv.fb.fb->mem_offset + 
 	       buf->priv.fb.fb->bpp * 
 	       (y + ((buf->w - x - w) * buf->priv.fb.fb->width));
-	     conv_func = convert_func_get(data, h, w, 
+	     conv_func = evas_common_convert_func_get(data, h, w, 
 					  buf->priv.fb.fb->fb_var.bits_per_pixel,
 					  buf->priv.mask.r, buf->priv.mask.g,
 					  buf->priv.mask.b, PAL_MODE_NONE,
@@ -329,14 +329,14 @@ outbuf_fb_push_updated_region(Outbuf *buf, RGBA_Image *update, int x, int y, int
 }
 
 void
-outbuf_fb_reconfigure(Outbuf *buf, int w, int h, int rot, Outbuf_Depth depth)
+evas_fb_outbuf_fb_reconfigure(Outbuf *buf, int w, int h, int rot, Outbuf_Depth depth)
 {
    if ((w == buf->w) && (h == buf->h) && 
        (rot == buf->rot) && (depth == buf->depth))
      return;
    if (buf->priv.back_buf)
      {
-	image_free(buf->priv.back_buf);
+	evas_common_image_free(buf->priv.back_buf);
 	buf->priv.back_buf = NULL;
      }
    if (buf->priv.fb.fb)
@@ -349,43 +349,43 @@ outbuf_fb_reconfigure(Outbuf *buf, int w, int h, int rot, Outbuf_Depth depth)
 }
 
 int
-outbuf_fb_get_width(Outbuf *buf)
+evas_fb_outbuf_fb_get_width(Outbuf *buf)
 {
    return buf->w;
 }
 
 int
-outbuf_fb_get_height(Outbuf *buf)
+evas_fb_outbuf_fb_get_height(Outbuf *buf)
 {
    return buf->h;
 }
 
 Outbuf_Depth
-outbuf_fb_get_depth(Outbuf *buf)
+evas_fb_outbuf_fb_get_depth(Outbuf *buf)
 {
    return buf->depth;
 }
 
 int
-outbuf_fb_get_rot(Outbuf *buf)
+evas_fb_outbuf_fb_get_rot(Outbuf *buf)
 {
    return buf->rot;
 }
 
 int
-outbuf_fb_get_have_backbuf(Outbuf *buf)
+evas_fb_outbuf_fb_get_have_backbuf(Outbuf *buf)
 {
    if (buf->priv.back_buf) return 1;
    return 0;
 }
 
 void
-outbuf_fb_set_have_backbuf(Outbuf *buf, int have_backbuf)
+evas_fb_outbuf_fb_set_have_backbuf(Outbuf *buf, int have_backbuf)
 {
    if (buf->priv.back_buf)
      {
 	if (have_backbuf) return;
-	image_free(buf->priv.back_buf);
+	evas_common_image_free(buf->priv.back_buf);
 	buf->priv.back_buf = NULL;	
      }
    else
@@ -395,7 +395,7 @@ outbuf_fb_set_have_backbuf(Outbuf *buf, int have_backbuf)
 	  {
 	     if (buf->priv.fb.fb->fb_var.bits_per_pixel  < 24)
 	       {
-		  buf->priv.back_buf = image_create(buf->w, buf->h);
+		  buf->priv.back_buf = evas_common_image_create(buf->w, buf->h);
 	       }
 	  }
      }

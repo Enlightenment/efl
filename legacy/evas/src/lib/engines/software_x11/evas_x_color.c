@@ -262,7 +262,7 @@ x_software_x11_color_init(void)
 }
 
 Convert_Pal *
-x_software_x11_color_allocate(Display *disp, Colormap cmap, Visual *vis, Convert_Pal_Mode colors)
+evas_software_x11_x_software_x11_color_allocate(Display *disp, Colormap cmap, Visual *vis, Convert_Pal_Mode colors)
 {
    Convert_Pal_Priv *palpriv;
    Convert_Pal      *pal;
@@ -316,7 +316,7 @@ x_software_x11_color_allocate(Display *disp, Colormap cmap, Visual *vis, Convert
 }
 
 void
-x_software_x11_color_deallocate(Display *disp, Colormap cmap, Visual *vis, 
+evas_software_x11_x_software_x11_color_deallocate(Display *disp, Colormap cmap, Visual *vis, 
 				Convert_Pal *pal)
 {
    unsigned long pixels[256];

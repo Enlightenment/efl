@@ -5,6 +5,6 @@
 #include <X11/Xutil.h>
 
 void
-x_software_x11_init(void)
+evas_software_x11_x_software_x11_init(void)
 {
 }

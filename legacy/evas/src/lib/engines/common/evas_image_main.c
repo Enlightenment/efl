@@ -16,7 +16,7 @@ image_debug_hash_cb(Evas_Hash *hash, const char *key, void *data, void *fdata)
 	  im->references, 
 	  im->image->w, im->image->h,
 	  im->image->w * im->image->h * 4,
-	  image_ram_usage(im),
+	  evas_common_image_ram_usage(im),
 	  im->flags & RGBA_IMAGE_IS_DIRTY,
 	  im->flags & RGBA_IMAGE_INDEXED,
 	  im->info.format, 
@@ -42,7 +42,7 @@ image_debug(void)
 	       im->references, 
 	       im->image->w, im->image->h,
 	       im->image->w * im->image->h * 4,
-	       image_ram_usage(im),
+	       evas_common_image_ram_usage(im),
 	       im->flags & RGBA_IMAGE_IS_DIRTY,
 	       im->flags & RGBA_IMAGE_INDEXED,
 	       im->info.format, 
@@ -52,12 +52,12 @@ image_debug(void)
 #endif
 
 void
-image_init(void)
+evas_common_image_init(void)
 {
 }
 
 RGBA_Surface *
-image_surface_new(void)
+evas_common_image_surface_new(void)
 {
    RGBA_Surface *is;
    
@@ -66,20 +66,20 @@ image_surface_new(void)
 }
 
 void
-image_surface_free(RGBA_Surface *is)
+evas_common_image_surface_free(RGBA_Surface *is)
 {
-   image_surface_dealloc(is);
+   evas_common_image_surface_dealloc(is);
    free(is);
 }
 
 void
-image_surface_alloc(RGBA_Surface *is)
+evas_common_image_surface_alloc(RGBA_Surface *is)
 {
    is->data = malloc(is->w * is->h * sizeof(DATA32));
 }
 
 void
-image_surface_dealloc(RGBA_Surface *is)
+evas_common_image_surface_dealloc(RGBA_Surface *is)
 {
    if ((is->data) && (!is->no_free))
      {
@@ -89,24 +89,24 @@ image_surface_dealloc(RGBA_Surface *is)
 }
 
 RGBA_Image *
-image_create(int w, int h)
+evas_common_image_create(int w, int h)
 {
    RGBA_Image *im;
    
-   im = image_new();
+   im = evas_common_image_new();
    if (!im) return NULL;
-   im->image = image_surface_new();
+   im->image = evas_common_image_surface_new();
    if (!im->image) 
      {
-	image_free(im);
+	evas_common_image_free(im);
 	return NULL;
      }
    im->image->w = w;
    im->image->h = h;
-   image_surface_alloc(im->image);
+   evas_common_image_surface_alloc(im->image);
    if (!im->image->data)
      {
-	image_free(im);
+	evas_common_image_free(im);
 	return NULL;	
      }
    im->flags = RGBA_IMAGE_IS_DIRTY;
@@ -115,7 +115,7 @@ image_create(int w, int h)
 }
 
 RGBA_Image *
-image_new(void)
+evas_common_image_new(void)
 {
    RGBA_Image *im;
    
@@ -126,15 +126,15 @@ image_new(void)
 }
 
 void
-image_free(RGBA_Image *im)
+evas_common_image_free(RGBA_Image *im)
 {
    int i;
    
-   if (im->image) image_surface_free(im->image);
+   if (im->image) evas_common_image_surface_free(im->image);
    for (i = 0; i < im->mipmaps.num; i++)
      {
 	if (im->mipmaps.levels[i])
-	  image_surface_free(im->mipmaps.levels[i]);
+	  evas_common_image_surface_free(im->mipmaps.levels[i]);
      }
    if (im->mipmaps.levels) free(im->mipmaps.levels);
    if (im->info.file) free(im->info.file);
@@ -144,63 +144,63 @@ image_free(RGBA_Image *im)
 }
 
 void
-image_ref(RGBA_Image *im)
+evas_common_image_ref(RGBA_Image *im)
 {
    im->references++;
    if (im->references == 1) /* we were in cache - take us out */
      {
-	image_uncache(im);
-	image_store(im);
+	evas_common_image_uncache(im);
+	evas_common_image_store(im);
      }
 }
 
 void
-image_unref(RGBA_Image *im)
+evas_common_image_unref(RGBA_Image *im)
 {
    im->references--;
    if (im->references <= 0) /* we were are now in cache - put us in */
      {
-	image_unstore(im);
+	evas_common_image_unstore(im);
 	if ((cache_size > 0) && 
 	    (!(im->flags & RGBA_IMAGE_IS_DIRTY)))
 	  {
-	     image_cache(im);
-	     image_flush_cache();
+	     evas_common_image_cache(im);
+	     evas_common_image_flush_cache();
 	  }
 	else
 	  {
-	     image_free(im);
+	     evas_common_image_free(im);
 	  }
      }
 }
 
 void
-image_cache(RGBA_Image *im)
+evas_common_image_cache(RGBA_Image *im)
 {
    int ram;
 
    if (im->flags & RGBA_IMAGE_INDEXED) return;
    im->flags |= RGBA_IMAGE_INDEXED;
    cache = evas_object_list_prepend(cache, im);
-   ram = image_ram_usage(im);
+   ram = evas_common_image_ram_usage(im);
    cache_usage += ram;
-   image_flush_cache();
+   evas_common_image_flush_cache();
 }
 
 void
-image_uncache(RGBA_Image *im)
+evas_common_image_uncache(RGBA_Image *im)
 {
    int ram;
 
    if (!(im->flags & RGBA_IMAGE_INDEXED)) return;
    im->flags &= ~RGBA_IMAGE_INDEXED;
    cache = evas_object_list_remove(cache, im);
-   ram = image_ram_usage(im);
+   ram = evas_common_image_ram_usage(im);
    cache_usage -= ram;
 }
 
 void
-image_flush_cache(void)
+evas_common_image_flush_cache(void)
 {
    Evas_Object_List *l, *l_next;
    
@@ -213,28 +213,28 @@ image_flush_cache(void)
 	
 	l_next = l->prev;
 	im = (RGBA_Image *)l;
-	image_uncache(im);
-	image_free(im);
+	evas_common_image_uncache(im);
+	evas_common_image_free(im);
 	if (cache_usage <= cache_size) return;
 	l = l_next;
      }   
 }
 
 void
-image_set_cache(int size)
+evas_common_image_set_cache(int size)
 {
    cache_size = size;
-   image_flush_cache();
+   evas_common_image_flush_cache();
 }
 
 int
-image_get_cache(void)
+evas_common_image_get_cache(void)
 {
    return cache_size;
 }
 
 void
-image_store(RGBA_Image *im)
+evas_common_image_store(RGBA_Image *im)
 {
    char *key;
    int l1, l2, l3;
@@ -263,7 +263,7 @@ image_store(RGBA_Image *im)
 }
 
 void
-image_unstore(RGBA_Image *im)
+evas_common_image_unstore(RGBA_Image *im)
 {
    char *key;
    int l1, l2, l3;
@@ -292,7 +292,7 @@ image_unstore(RGBA_Image *im)
 
 
 RGBA_Image *
-image_find(const char *filename, const char *key, DATA64 timestamp)
+evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
 {
    Evas_Object_List *l;
    RGBA_Image *im;
@@ -343,7 +343,7 @@ image_find(const char *filename, const char *key, DATA64 timestamp)
 }
 
 int
-image_ram_usage(RGBA_Image *im)
+evas_common_image_ram_usage(RGBA_Image *im)
 {
    int ram = 0;
    int i;
@@ -364,13 +364,13 @@ image_ram_usage(RGBA_Image *im)
 }
 
 void
-image_dirty(RGBA_Image *im)
+evas_common_image_dirty(RGBA_Image *im)
 {
    int i;
    
-   image_unstore(im);
+   evas_common_image_unstore(im);
    im->flags |= RGBA_IMAGE_IS_DIRTY;
    for (i = 0; i < im->mipmaps.num; i++)
-     image_surface_dealloc(im->mipmaps.levels[i]);
+     evas_common_image_surface_dealloc(im->mipmaps.levels[i]);
 }
 

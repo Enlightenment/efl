@@ -9,7 +9,7 @@ extern const DATA16 const_c1[4];
 
 #ifdef BUILD_C
 void
-blend_pixels_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int len)
+evas_common_blend_pixels_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int len)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr;
    
@@ -41,7 +41,7 @@ blend_pixels_rgba_to_rgb_c(DATA32 *src, DATA32 *dst, int len)
 
 #ifdef BUILD_MMX
 void
-blend_pixels_rgba_to_rgb_mmx(DATA32 *src, DATA32 *dst, int len)
+evas_common_blend_pixels_rgba_to_rgb_mmx(DATA32 *src, DATA32 *dst, int len)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr;
    
@@ -84,7 +84,7 @@ blend_pixels_rgba_to_rgb_mmx(DATA32 *src, DATA32 *dst, int len)
 #endif
 
 void
-blend_pixels_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len)
+evas_common_blend_pixels_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr;
    
@@ -121,7 +121,7 @@ blend_pixels_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len)
 
 #ifdef BUILD_C
 void
-copy_pixels_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len)
+evas_common_copy_pixels_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr;
    
@@ -140,7 +140,7 @@ copy_pixels_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len)
 
 #ifdef BUILD_MMX
 void
-copy_pixels_rgba_to_rgba_mmx(DATA32 *src, DATA32 *dst, int len)
+evas_common_copy_pixels_rgba_to_rgba_mmx(DATA32 *src, DATA32 *dst, int len)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr, *dst_end_ptr_pre;
    
@@ -166,7 +166,7 @@ copy_pixels_rgba_to_rgba_mmx(DATA32 *src, DATA32 *dst, int len)
 
 #ifdef BUILD_SSE
 void
-copy_pixels_rgba_to_rgba_sse(DATA32 *src, DATA32 *dst, int len)
+evas_common_copy_pixels_rgba_to_rgba_sse(DATA32 *src, DATA32 *dst, int len)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr, *dst_end_ptr_pre;
    
@@ -193,7 +193,7 @@ copy_pixels_rgba_to_rgba_sse(DATA32 *src, DATA32 *dst, int len)
 #endif
 
 void
-copy_pixels_rgb_to_rgba_c(DATA32 *src, DATA32 *dst, int len)
+evas_common_copy_pixels_rgb_to_rgba_c(DATA32 *src, DATA32 *dst, int len)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr;
    
@@ -213,7 +213,7 @@ copy_pixels_rgb_to_rgba_c(DATA32 *src, DATA32 *dst, int len)
 
 #ifdef BUILD_C
 void
-copy_pixels_rev_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len)
+evas_common_copy_pixels_rev_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr;
    
@@ -232,7 +232,7 @@ copy_pixels_rev_rgba_to_rgba_c(DATA32 *src, DATA32 *dst, int len)
 
 #ifdef BUILD_MMX
 void
-copy_pixels_rev_rgba_to_rgba_mmx(DATA32 *src, DATA32 *dst, int len)
+evas_common_copy_pixels_rev_rgba_to_rgba_mmx(DATA32 *src, DATA32 *dst, int len)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr, *dst_end_ptr_pre;
    
@@ -274,7 +274,7 @@ copy_pixels_rev_rgba_to_rgba_mmx(DATA32 *src, DATA32 *dst, int len)
 
 #ifdef BUILD_SSE
 void
-copy_pixels_rev_rgba_to_rgba_sse(DATA32 *src, DATA32 *dst, int len)
+evas_common_copy_pixels_rev_rgba_to_rgba_sse(DATA32 *src, DATA32 *dst, int len)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr, *dst_end_ptr_pre;
    
@@ -317,7 +317,7 @@ copy_pixels_rev_rgba_to_rgba_sse(DATA32 *src, DATA32 *dst, int len)
 #endif
 
 void
-copy_pixels_rev_rgb_to_rgba_c(DATA32 *src, DATA32 *dst, int len)
+evas_common_copy_pixels_rev_rgb_to_rgba_c(DATA32 *src, DATA32 *dst, int len)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr;
    

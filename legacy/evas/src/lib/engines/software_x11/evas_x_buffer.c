@@ -18,7 +18,7 @@ struct _X_Output_Buffer
 static int _x_err = 0;
 
 void
-x_software_x11_write_mask_line(X_Output_Buffer *xob, DATA32 *src, int w, int y)
+evas_software_x11_x_software_x11_write_mask_line(X_Output_Buffer *xob, DATA32 *src, int w, int y)
 {
    int x;
    
@@ -29,19 +29,19 @@ x_software_x11_write_mask_line(X_Output_Buffer *xob, DATA32 *src, int w, int y)
 }
 
 int
-x_software_x11_can_do_shm(Display *d)
+evas_software_x11_x_software_x11_can_do_shm(Display *d)
 {
    if (XShmQueryExtension(d))
      {
 	X_Output_Buffer *xob;
 	
-	xob = x_software_x11_output_buffer_new(d, 
+	xob = evas_software_x11_x_software_x11_output_buffer_new(d, 
 				  DefaultVisual(d, DefaultScreen(d)),
 				  DefaultDepth(d, DefaultScreen(d)),
 				  16, 16, 2, NULL);
 	if (!xob)
 	  return 0;
-	x_software_x11_output_buffer_free(xob);
+	evas_software_x11_x_software_x11_output_buffer_free(xob);
 	return 1;
      }
    return 0;
@@ -57,7 +57,7 @@ x_software_x11_output_tmp_x_err(Display * d, XErrorEvent * ev)
 }
 
 X_Output_Buffer *
-x_software_x11_output_buffer_new(Display *d, Visual *v, int depth, int w, int h, int try_shm, void *data)
+evas_software_x11_x_software_x11_output_buffer_new(Display *d, Visual *v, int depth, int w, int h, int try_shm, void *data)
 {
    X_Output_Buffer *xob;
 
@@ -137,7 +137,7 @@ x_software_x11_output_buffer_new(Display *d, Visual *v, int depth, int w, int h,
 }
 
 void
-x_software_x11_output_buffer_free(X_Output_Buffer *xob)
+evas_software_x11_x_software_x11_output_buffer_free(X_Output_Buffer *xob)
 {
    if (xob->shm_info)
      {
@@ -157,7 +157,7 @@ x_software_x11_output_buffer_free(X_Output_Buffer *xob)
 }
 
 void
-x_software_x11_output_buffer_paste(X_Output_Buffer *xob, Drawable d, GC gc, int x, int y)
+evas_software_x11_x_software_x11_output_buffer_paste(X_Output_Buffer *xob, Drawable d, GC gc, int x, int y)
 {
    if (xob->shm_info)
      {
@@ -171,20 +171,20 @@ x_software_x11_output_buffer_paste(X_Output_Buffer *xob, Drawable d, GC gc, int 
 }
 
 DATA8 *
-x_software_x11_output_buffer_data(X_Output_Buffer *xob, int *bytes_per_line_ret)
+evas_software_x11_x_software_x11_output_buffer_data(X_Output_Buffer *xob, int *bytes_per_line_ret)
 {
    if (bytes_per_line_ret) *bytes_per_line_ret = xob->xim->bytes_per_line;
    return xob->xim->data;
 }
 
 int
-x_software_x11_output_buffer_depth(X_Output_Buffer *xob)
+evas_software_x11_x_software_x11_output_buffer_depth(X_Output_Buffer *xob)
 {
    return xob->xim->bits_per_pixel;
 }
 
 int
-x_software_x11_output_buffer_byte_order(X_Output_Buffer *xob)
+evas_software_x11_x_software_x11_output_buffer_byte_order(X_Output_Buffer *xob)
 {
    return xob->xim->byte_order;
 }

@@ -212,39 +212,39 @@ evas_engine_software_qtopia_output_setup(int w, int h, int rot, QWidget *target)
    
    re = calloc(1, sizeof(Render_Engine));
    /* if we haven't initialized - init (automatic abort if already done) */
-   cpu_init();
+   evas_common_cpu_init();
    
-   blend_init();
-   image_init();
-   convert_init();
-   scale_init();
-   rectangle_init();
-   gradient_init();
-   polygon_init();
-   line_init();
-   font_init();
-   draw_init();
-   tilebuf_init();
+   evas_common_blend_init();
+   evas_common_image_init();
+   evas_common_convert_init();
+   evas_common_scale_init();
+   evas_common_rectangle_init();
+   evas_common_gradient_init();
+   evas_common_polygon_init();
+   evas_common_line_init();
+   evas_common_font_init();
+   evas_common_draw_init();
+   evas_common_tilebuf_init();
    
-   outbuf_software_qtopia_init();   
+   evas_qtopia_outbuf_software_qtopia_init();   
    
    /* get any stored performance metrics from device (xserver) */
-   re->ob = outbuf_software_qtopia_setup_q(w, h, rot, OUTBUF_DEPTH_INHERIT, target);
+   re->ob = evas_qtopia_outbuf_software_qtopia_setup_q(w, h, rot, OUTBUF_DEPTH_INHERIT, target);
    if (!re->ob)
      {
 	free(re);
 	return NULL;
      }
-   outbuf_software_qtopia_set_have_backbuf(re->ob, 0);
-   re->tb = tilebuf_new(w, h);
+   evas_qtopia_outbuf_software_qtopia_set_have_backbuf(re->ob, 0);
+   re->tb = evas_common_tilebuf_new(w, h);
    if (!re->tb)
      {
-	outbuf_software_qtopia_free(re->ob);
+	evas_qtopia_outbuf_software_qtopia_free(re->ob);
 	free(re);
 	return NULL;
      }
    /* in preliminary tests 16x16 gave highest framerates */
-   tilebuf_set_tile_size(re->tb, 16, 16); 
+   evas_common_tilebuf_set_tile_size(re->tb, 16, 16); 
    return re;
 }
 
@@ -254,9 +254,9 @@ evas_engine_software_qtopia_output_free(void *data)
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   outbuf_software_qtopia_free(re->ob);
-   tilebuf_free(re->tb);
-   if (re->rects) tilebuf_free_render_rects(re->rects);
+   evas_qtopia_outbuf_software_qtopia_free(re->ob);
+   evas_common_tilebuf_free(re->tb);
+   if (re->rects) evas_common_tilebuf_free_render_rects(re->rects);
    free(re);
 }
 
@@ -266,14 +266,14 @@ evas_engine_software_qtopia_output_resize(void *data, int w, int h)
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   outbuf_software_qtopia_reconfigure(re->ob, w, h, 
-				      outbuf_software_qtopia_get_rot(re->ob),
+   evas_qtopia_outbuf_software_qtopia_reconfigure(re->ob, w, h, 
+				      evas_qtopia_outbuf_software_qtopia_get_rot(re->ob),
 				      OUTBUF_DEPTH_INHERIT);
-   outbuf_software_qtopia_set_have_backbuf(re->ob, 0);
-   tilebuf_free(re->tb);
-   re->tb = tilebuf_new(w, h);
+   evas_qtopia_outbuf_software_qtopia_set_have_backbuf(re->ob, 0);
+   evas_common_tilebuf_free(re->tb);
+   re->tb = evas_common_tilebuf_new(w, h);
    if (re->tb)
-     tilebuf_set_tile_size(re->tb, 16, 16); 
+     evas_common_tilebuf_set_tile_size(re->tb, 16, 16); 
 }
 
 static void
@@ -282,7 +282,7 @@ evas_engine_software_qtopia_output_tile_size_set(void *data, int w, int h)
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   tilebuf_set_tile_size(re->tb, w, h);   
+   evas_common_tilebuf_set_tile_size(re->tb, w, h);   
 }
 
 static void
@@ -291,7 +291,7 @@ evas_engine_software_qtopia_output_redraws_rect_add(void *data, int x, int y, in
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   tilebuf_add_redraw(re->tb, x, y, w, h);
+   evas_common_tilebuf_add_redraw(re->tb, x, y, w, h);
 }
 
 static void
@@ -300,7 +300,7 @@ evas_engine_software_qtopia_output_redraws_rect_del(void *data, int x, int y, in
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   tilebuf_del_redraw(re->tb, x, y, w, h);
+   evas_common_tilebuf_del_redraw(re->tb, x, y, w, h);
 }
 
 static void
@@ -309,7 +309,7 @@ evas_engine_software_qtopia_output_redraws_clear(void *data)
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   tilebuf_clear(re->tb);
+   evas_common_tilebuf_clear(re->tb);
 }
 
 static void *
@@ -328,7 +328,7 @@ evas_engine_software_qtopia_output_redraws_next_update_get(void *data, int *x, i
      }
    if (!re->rects) 
      {
-	re->rects = tilebuf_get_render_rects(re->tb);
+	re->rects = evas_common_tilebuf_get_render_rects(re->tb);
 	re->cur_rect = (Evas_Object_List *)re->rects;
      }
    if (!re->cur_rect) return NULL;
@@ -337,12 +337,12 @@ evas_engine_software_qtopia_output_redraws_next_update_get(void *data, int *x, i
    re->cur_rect = re->cur_rect->next;
    if (!re->cur_rect) 
      {
-	tilebuf_free_render_rects(re->rects);
+	evas_common_tilebuf_free_render_rects(re->rects);
 	re->rects = NULL;
 	re->end = 1;
      }
    
-   surface = outbuf_software_qtopia_new_region_for_update(re->ob, 
+   surface = evas_qtopia_outbuf_software_qtopia_new_region_for_update(re->ob, 
 							  ux, uy, uw, uh, 
 							  cx, cy, cw, ch);
    *x = ux; *y = uy; *w = uw; *h = uh;
@@ -356,9 +356,9 @@ evas_engine_software_qtopia_output_redraws_next_update_push(void *data, void *su
    Evas_Engine_Info_Software_Qtopia *info;
    
    re = (Render_Engine *)data;
-   outbuf_software_qtopia_push_updated_region(re->ob, surface, x, y, w, h);
-   outbuf_software_qtopia_free_region_for_update(re->ob, surface);
-   cpu_end_opt();
+   evas_qtopia_outbuf_software_qtopia_push_updated_region(re->ob, surface, x, y, w, h);
+   evas_qtopia_outbuf_software_qtopia_free_region_for_update(re->ob, surface);
+   evas_common_cpu_end_opt();
 }
 
 static void
@@ -375,7 +375,7 @@ evas_engine_software_qtopia_context_new(void *data)
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   return draw_context_new();
+   return evas_common_draw_context_new();
 }
 
 static void
@@ -384,7 +384,7 @@ evas_engine_software_qtopia_context_free(void *data, void *context)
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   draw_context_free(context);
+   evas_common_draw_context_free(context);
 }
 
 static void
@@ -393,7 +393,7 @@ evas_engine_software_qtopia_context_clip_set(void *data, void *context, int x, i
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   draw_context_set_clip(context, x, y, w, h);
+   evas_common_draw_context_set_clip(context, x, y, w, h);
 }
 
 static void
@@ -402,7 +402,7 @@ evas_engine_software_qtopia_context_clip_clip(void *data, void *context, int x, 
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   draw_context_clip_clip(context, x, y, w, h);
+   evas_common_draw_context_clip_clip(context, x, y, w, h);
 }
 
 static void
@@ -411,7 +411,7 @@ evas_engine_software_qtopia_context_clip_unset(void *data, void *context)
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   draw_context_unset_clip(context);
+   evas_common_draw_context_unset_clip(context);
 }
 
 static int
@@ -433,7 +433,7 @@ evas_engine_software_qtopia_context_color_set(void *data, void *context, int r, 
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   draw_context_set_color(context, r, g, b, a);
+   evas_common_draw_context_set_color(context, r, g, b, a);
 }
 
 static int
@@ -455,7 +455,7 @@ evas_engine_software_qtopia_context_multiplier_set(void *data, void *context, in
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   draw_context_set_multiplier(context, r, g, b, a);
+   evas_common_draw_context_set_multiplier(context, r, g, b, a);
 }
 
 static void
@@ -464,7 +464,7 @@ evas_engine_software_qtopia_context_multiplier_unset(void *data, void *context)
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   draw_context_unset_multiplier(context);
+   evas_common_draw_context_unset_multiplier(context);
 }
 
 static int
@@ -486,7 +486,7 @@ evas_engine_software_qtopia_context_cutout_add(void *data, void *context, int x,
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   draw_context_add_cutout(context, x, y, w, h);
+   evas_common_draw_context_add_cutout(context, x, y, w, h);
 }
 
 static void
@@ -495,7 +495,7 @@ evas_engine_software_qtopia_context_cutout_clear(void *data, void *context)
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   draw_context_clear_cutouts(context);
+   evas_common_draw_context_clear_cutouts(context);
 }
 
 
@@ -509,8 +509,8 @@ evas_engine_software_qtopia_rectangle_draw(void *data, void *context, void *surf
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   rectangle_draw(surface, context, x, y, w, h);
-   cpu_end_opt();
+   evas_common_rectangle_draw(surface, context, x, y, w, h);
+   evas_common_cpu_end_opt();
 }
 
 static void
@@ -519,8 +519,8 @@ evas_engine_software_qtopia_line_draw(void *data, void *context, void *surface, 
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   line_draw(surface, context, x1, y1, x2, y2);
-   cpu_end_opt();
+   evas_common_line_draw(surface, context, x1, y1, x2, y2);
+   evas_common_cpu_end_opt();
 }
 
 static void *
@@ -529,7 +529,7 @@ evas_engine_software_qtopia_polygon_point_add(void *data, void *context, void *p
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   return polygon_point_add(polygon, x, y);
+   return evas_common_polygon_point_add(polygon, x, y);
    context = NULL;
 }
 
@@ -539,7 +539,7 @@ evas_engine_software_qtopia_polygon_points_clear(void *data, void *context, void
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   return polygon_points_clear(polygon);
+   return evas_common_polygon_points_clear(polygon);
    context = NULL;
 }
 
@@ -549,8 +549,8 @@ evas_engine_software_qtopia_polygon_draw(void *data, void *context, void *surfac
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   polygon_draw(surface, context, polygon);
-   cpu_end_opt();
+   evas_common_polygon_draw(surface, context, polygon);
+   evas_common_cpu_end_opt();
 }
 
 static void *
@@ -560,8 +560,8 @@ evas_engine_software_qtopia_gradient_color_add(void *data, void *context, void *
    
    re = (Render_Engine *)data;
    if (!gradient)
-     gradient = gradient_new();
-   gradient_color_add(gradient, r, g, b, a, distance);
+     gradient = evas_common_gradient_new();
+   evas_common_gradient_color_add(gradient, r, g, b, a, distance);
    return gradient;
    context = NULL;
 }
@@ -572,7 +572,7 @@ evas_engine_software_qtopia_gradient_colors_clear(void *data, void *context, voi
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   if (gradient) gradient_free(gradient);
+   if (gradient) evas_common_gradient_free(gradient);
    return NULL;
    context = NULL;
 }
@@ -583,8 +583,8 @@ evas_engine_software_qtopia_gradient_draw(void *data, void *context, void *surfa
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   gradient_draw(surface, context, x, y, w, h, gradient, angle);
-   cpu_end_opt();
+   evas_common_gradient_draw(surface, context, x, y, w, h, gradient, angle);
+   evas_common_cpu_end_opt();
 }
 
 static void *
@@ -594,7 +594,7 @@ evas_engine_software_qtopia_image_load(void *data, char *file, char *key, int *e
 
    re = (Render_Engine *)data;
    *error = 0;
-   return load_image_from_file(file, key);
+   return evas_common_load_image_from_file(file, key);
 }
 
 static void *
@@ -604,11 +604,11 @@ evas_engine_software_qtopia_image_new_from_data(void *data, int w, int h, DATA32
    RGBA_Image *im;
    
    re = (Render_Engine *)data;
-   im = image_new();
-   im->image = image_surface_new();
+   im = evas_common_image_new();
+   im->image = evas_common_image_surface_new();
    if (!im->image)
      {
-	image_free(im);
+	evas_common_image_free(im);
 	return NULL;
      }
    im->image->w = w;
@@ -625,7 +625,7 @@ evas_engine_software_qtopia_image_new_from_copied_data(void *data, int w, int h,
    RGBA_Image *im;
    
    re = (Render_Engine *)data;
-   im = image_create(w, h);
+   im = evas_common_image_create(w, h);
    if (!im) return NULL;
    if (image_data)
      memcpy(im->image->data, image_data, w * h * sizeof(DATA32));
@@ -638,7 +638,7 @@ evas_engine_software_qtopia_image_free(void *data, void *image)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   image_unref(image);
+   evas_common_image_unref(image);
 }
 
 static void
@@ -661,17 +661,17 @@ evas_engine_software_qtopia_image_size_set(void *data, void *image, int w, int h
    
    re = (Render_Engine *)data;
    im_old = image;
-   im = image_create(w, h);
+   im = evas_common_image_create(w, h);
    if (!im) return im_old;
    if (im_old)
      {
-	load_image_data_from_file(im_old);
+	evas_common_load_image_data_from_file(im_old);
 	if (im_old->image->data)
 	  {
-	     blit_rectangle(im_old, im, 0, 0, w, h, 0, 0);
-	     cpu_end_opt();
+	     evas_common_blit_rectangle(im_old, im, 0, 0, w, h, 0, 0);
+	     evas_common_cpu_end_opt();
 	  }
-	image_unref(im_old);
+	evas_common_image_unref(im_old);
      }
    return im;
 }
@@ -682,7 +682,7 @@ evas_engine_software_qtopia_image_dirty_region(void *data, void *image, int x, i
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   image_dirty(image);
+   evas_common_image_dirty(image);
    return image;
    x = 0;
    y = 0;
@@ -698,22 +698,22 @@ evas_engine_software_qtopia_image_data_get(void *data, void *image, int to_write
    
    re = (Render_Engine *)data;
    im = image;
-   load_image_data_from_file(im);
+   evas_common_load_image_data_from_file(im);
    if (to_write)
      {
 	if (im->references > 1)
 	  {
 	     RGBA_Image *im_new;
 	     
-	     im_new = image_create(im->image->w, im->image->h);
+	     im_new = evas_common_image_create(im->image->w, im->image->h);
 	     if (!im_new) return im;
-	     blit_rectangle(im, im_new, 0, 0, im->image->w, im->image->h, 0, 0);
-	     cpu_end_opt();
-	     image_unref(im);
+	     evas_common_blit_rectangle(im, im_new, 0, 0, im->image->w, im->image->h, 0, 0);
+	     evas_common_cpu_end_opt();
+	     evas_common_image_unref(im);
 	     im = im_new;
 	  }
 	else
-	  image_dirty(im);
+	  evas_common_image_dirty(im);
      }
    *image_data = im->image->data;
    return im;
@@ -733,10 +733,10 @@ evas_engine_software_qtopia_image_data_put(void *data, void *image, DATA32 *imag
 	
 	w = im->image->w;
 	h = im->image->h;
-	image_unref(im);
+	evas_common_image_unref(im);
 	return evas_engine_software_qtopia_image_new_from_data(data, w, h, image_data);
      }
-   image_dirty(im);
+   evas_common_image_dirty(im);
    return im;
 }
 
@@ -752,16 +752,16 @@ evas_engine_software_qtopia_image_alpha_set(void *data, void *image, int has_alp
      {
 	RGBA_Image *im_new;
 	
-	im_new = image_create(im->image->w, im->image->h);
+	im_new = evas_common_image_create(im->image->w, im->image->h);
 	if (!im_new) return im;
-	load_image_data_from_file(im);
-	blit_rectangle(im, im_new, 0, 0, im->image->w, im->image->h, 0, 0);
-	cpu_end_opt();
-	image_unref(im);
+	evas_common_load_image_data_from_file(im);
+	evas_common_blit_rectangle(im, im_new, 0, 0, im->image->w, im->image->h, 0, 0);
+	evas_common_cpu_end_opt();
+	evas_common_image_unref(im);
 	im = im_new;
      }
    else
-     image_dirty(im);
+     evas_common_image_dirty(im);
    if (has_alpha)
      im->flags |= RGBA_IMAGE_HAS_ALPHA;
    else
@@ -788,16 +788,16 @@ evas_engine_software_qtopia_image_draw(void *data, void *context, void *surface,
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   load_image_data_from_file(image);
+   evas_common_load_image_data_from_file(image);
    if (smooth)
-     scale_rgba_in_to_out_clip_smooth(image, surface, context, 
+     evas_common_scale_rgba_in_to_out_clip_smooth(image, surface, context, 
 				      src_x, src_y, src_w, src_h, 
 				      dst_x, dst_y, dst_w, dst_h);
    else
-     scale_rgba_in_to_out_clip_sample(image, surface, context, 
+     evas_common_scale_rgba_in_to_out_clip_sample(image, surface, context, 
 				      src_x, src_y, src_w, src_h, 
 				      dst_x, dst_y, dst_w, dst_h);     
-   cpu_end_opt();
+   evas_common_cpu_end_opt();
 }
 
 static char *
@@ -831,9 +831,9 @@ evas_engine_software_qtopia_image_cache_flush(void *data)
    int tmp_size;
    
    re = (Render_Engine *)data;
-   tmp_size = image_get_cache();
-   image_set_cache(0);
-   image_set_cache(tmp_size);
+   tmp_size = evas_common_image_get_cache();
+   evas_common_image_set_cache(0);
+   evas_common_image_set_cache(tmp_size);
 }
 
 static void
@@ -842,7 +842,7 @@ evas_engine_software_qtopia_image_cache_set(void *data, int bytes)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   image_set_cache(bytes);
+   evas_common_image_set_cache(bytes);
 }
 
 static int
@@ -851,7 +851,7 @@ evas_engine_software_qtopia_image_cache_get(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   return image_get_cache();
+   return evas_common_image_get_cache();
 }
 
 static void *
@@ -860,7 +860,7 @@ evas_engine_software_qtopia_font_load(void *data, char *name, int size)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   return font_load(name, size);
+   return evas_common_font_load(name, size);
 }
 
 static void
@@ -869,7 +869,7 @@ evas_engine_software_qtopia_font_free(void *data, void *font)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   font_free(font);
+   evas_common_font_free(font);
 }
 
 static int
@@ -878,7 +878,7 @@ evas_engine_software_qtopia_font_ascent_get(void *data, void *font)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   return font_ascent_get(font);
+   return evas_common_font_ascent_get(font);
 }
 
 static int 
@@ -887,7 +887,7 @@ evas_engine_software_qtopia_font_descent_get(void *data, void *font)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   return font_descent_get(font);
+   return evas_common_font_descent_get(font);
 }
 
 static int
@@ -896,7 +896,7 @@ evas_engine_software_qtopia_font_max_ascent_get(void *data, void *font)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   return font_max_ascent_get(font);
+   return evas_common_font_max_ascent_get(font);
 }
 
 static int
@@ -905,7 +905,7 @@ evas_engine_software_qtopia_font_max_descent_get(void *data, void *font)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   return font_max_descent_get(font);
+   return evas_common_font_max_descent_get(font);
 }
 
 static void
@@ -914,7 +914,7 @@ evas_engine_software_qtopia_font_string_size_get(void *data, void *font, char *t
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   font_query_size(font, text, w, h);
+   evas_common_font_query_size(font, text, w, h);
 }
 
 static int
@@ -923,7 +923,7 @@ evas_engine_software_qtopia_font_inset_get(void *data, void *font, char *text)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   return font_query_inset(font, text);
+   return evas_common_font_query_inset(font, text);
 }
 
 static int
@@ -933,7 +933,7 @@ evas_engine_software_qtopia_font_h_advance_get(void *data, void *font, char *tex
    int h, v;
    
    re = (Render_Engine *)data;
-   font_query_advance(font, text, &h, &v);
+   evas_common_font_query_advance(font, text, &h, &v);
    return h;
 }
 
@@ -944,7 +944,7 @@ evas_engine_software_qtopia_font_v_advance_get(void *data, void *font, char *tex
    int h, v;
 
    re = (Render_Engine *)data;
-   font_query_advance(font, text, &h, &v);
+   evas_common_font_query_advance(font, text, &h, &v);
    return v;
 }
 
@@ -954,7 +954,7 @@ evas_engine_software_qtopia_font_char_coords_get(void *data, void *font, char *t
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   return font_query_char_coords(font, text, pos, cx, cy, cw, ch);
+   return evas_common_font_query_char_coords(font, text, pos, cx, cy, cw, ch);
 }
 
 static int
@@ -963,7 +963,7 @@ evas_engine_software_qtopia_font_char_at_coords_get(void *data, void *font, char
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   return font_query_text_at_pos(font, text, x, y, cx, cy, cw, ch);
+   return evas_common_font_query_text_at_pos(font, text, x, y, cx, cy, cw, ch);
 }
 
 static void
@@ -973,20 +973,20 @@ evas_engine_software_qtopia_font_draw(void *data, void *context, void *surface, 
 
    re = (Render_Engine *)data;
    if ((w == ow) && (h == oh))
-     font_draw(surface, context, font, x, y, text);
+     evas_common_font_draw(surface, context, font, x, y, text);
    else
      {
 	/* create output surface size ow x oh and scale to w x h */
 	RGBA_Draw_Context *dc, *dc_in;
 
 	dc_in = context;
-	dc = draw_context_new();
+	dc = evas_common_draw_context_new();
 	if (dc)
 	  {
 	     RGBA_Image *im;
 	     
 	     dc->col.col = dc_in->col.col;
-	     im = image_create(ow, oh);
+	     im = evas_common_image_create(ow, oh);
 	     if (im)
 	       {
 		  int max_ascent;
@@ -996,20 +996,20 @@ evas_engine_software_qtopia_font_draw(void *data, void *context, void *surface, 
 		  j = ow * oh;
 		  for (i = 0; i < j; i++) im->image->data[i] = (dc->col.col & 0xffffff);
 		  
-		  max_ascent = font_max_ascent_get(font);
+		  max_ascent = evas_common_font_max_ascent_get(font);
 		  
-		  font_draw(im, dc, font, 0, max_ascent, text);
-		  cpu_end_opt();
-		  scale_rgba_in_to_out_clip_smooth(im, surface, context, 
+		  evas_common_font_draw(im, dc, font, 0, max_ascent, text);
+		  evas_common_cpu_end_opt();
+		  evas_common_scale_rgba_in_to_out_clip_smooth(im, surface, context, 
 						   0, 0, ow, oh, 
 						   x, y - ((max_ascent * h) / oh), 
 						   w, h);
-		  image_free(im);
+		  evas_common_image_free(im);
 	       }
-	     draw_context_free(dc);
+	     evas_common_draw_context_free(dc);
 	  }
      }
-   cpu_end_opt();
+   evas_common_cpu_end_opt();
 }
 
 static void
@@ -1018,7 +1018,7 @@ evas_engine_software_qtopia_font_cache_flush(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   font_flush();
+   evas_common_font_flush();
 }
 
 static void
@@ -1027,7 +1027,7 @@ evas_engine_software_qtopia_font_cache_set(void *data, int bytes)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   font_cache_set(bytes);
+   evas_common_font_cache_set(bytes);
 }
 
 static int
@@ -1036,5 +1036,5 @@ evas_engine_software_qtopia_font_cache_get(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   return font_cache_get();
+   return evas_common_font_cache_get();
 }

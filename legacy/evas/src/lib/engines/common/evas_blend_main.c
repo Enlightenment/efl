@@ -10,7 +10,7 @@ DATA8        pow_lut[256][256];
 const DATA16 const_c1[4]       = {1, 1, 1, 1};
 
 void
-blend_init(void)
+evas_common_blend_init(void)
 {
    static int initialised = 0;
    static int mmx = 0;
@@ -20,7 +20,7 @@ blend_init(void)
    if (initialised) return;
    initialised = 1;
    
-   cpu_can_do(&mmx, &sse, &sse2);
+   evas_common_cpu_can_do(&mmx, &sse, &sse2);
    
    blend_init_pow_lut();   
 }

@@ -83,7 +83,7 @@ load_image_file_head_png(RGBA_Image *im, const char *file, const char *key)
 		(png_uint_32 *) (&h32), &bit_depth, &color_type,
 		&interlace_type, NULL, NULL);
    if (!im->image)
-     im->image = image_surface_new();
+     im->image = evas_common_image_surface_new();
    if (!im->image)
      {
 	png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
@@ -188,10 +188,10 @@ load_image_file_data_png(RGBA_Image *im, const char *file, const char *key)
    /* pack all pixels to byte boundaires */
    png_set_packing(png_ptr);
    if (png_get_valid(png_ptr, info_ptr, PNG_INFO_tRNS)) png_set_expand(png_ptr);
-   image_surface_alloc(im->image);
+   evas_common_image_surface_alloc(im->image);
    if (!im->image->data)
      {
-	image_surface_free(im->image);
+	evas_common_image_surface_free(im->image);
 	png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
 	fclose(f);
 	return -1;
@@ -200,7 +200,7 @@ load_image_file_data_png(RGBA_Image *im, const char *file, const char *key)
    
    if (!lines)
      {
-	image_surface_free(im->image);   
+	evas_common_image_surface_free(im->image);   
 	png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
 	fclose(f);
 	return -1;
@@ -295,7 +295,7 @@ load_image_file_head_jpeg_internal(RGBA_Image *im, FILE *f)
    
 /* head decoding */
    if (!im->image)
-     im->image = image_surface_new();
+     im->image = evas_common_image_surface_new();
    if (!im->image)
      {
 	jpeg_destroy_decompress(&cinfo);
@@ -353,7 +353,7 @@ load_image_file_data_jpeg_internal(RGBA_Image *im, FILE *f)
 	jpeg_destroy_decompress(&cinfo);
 	return -1;
      }
-   image_surface_alloc(im->image);
+   evas_common_image_surface_alloc(im->image);
    if (!im->image->data)
      {
 	free(data);
@@ -667,7 +667,7 @@ load_image_file_head_eet(RGBA_Image *im, const char *file, const char *key)
      }
    if (alpha) im->flags |= RGBA_IMAGE_HAS_ALPHA;
    if (!im->image)
-     im->image = image_surface_new();
+     im->image = evas_common_image_surface_new();
    if (!im->image)
      {
 	free(ret);
@@ -798,7 +798,7 @@ load_image_file_data_eet(RGBA_Image *im, const char *file, const char *key)
      }
    if (alpha) im->flags |= RGBA_IMAGE_HAS_ALPHA;
    if (!im->image)
-     im->image = image_surface_new();
+     im->image = evas_common_image_surface_new();
    if (!im->image)
      {
 	free(ret);
@@ -808,7 +808,7 @@ load_image_file_data_eet(RGBA_Image *im, const char *file, const char *key)
    im->image->w = w;
    im->image->h = h;
    body = &(ret[8]);
-   image_surface_alloc(im->image);
+   evas_common_image_surface_alloc(im->image);
    if (!im->image->data)
      {
 	free(ret);
@@ -907,7 +907,7 @@ load_image_file_head_edb(RGBA_Image *im, const char *file, const char *key)
      }
    if (alpha) im->flags |= RGBA_IMAGE_HAS_ALPHA;
    if (!im->image)
-     im->image = image_surface_new();
+     im->image = evas_common_image_surface_new();
    if (!im->image)
      {
 	free(ret);
@@ -978,7 +978,7 @@ load_image_file_data_edb(RGBA_Image *im, const char *file, const char *key)
      }
    if (alpha) im->flags |= RGBA_IMAGE_HAS_ALPHA;
    if (!im->image)
-     im->image = image_surface_new();
+     im->image = evas_common_image_surface_new();
    if (!im->image)
      {
 	free(ret);
@@ -988,7 +988,7 @@ load_image_file_data_edb(RGBA_Image *im, const char *file, const char *key)
    im->image->w = w;
    im->image->h = h;
    body = &(ret[8]);
-   image_surface_alloc(im->image);
+   evas_common_image_surface_alloc(im->image);
    if (!im->image->data)
      {
 	free(ret);
@@ -1046,20 +1046,20 @@ load_image_file_data_template(RGBA_Image *im, const char *file, const char *key)
 #endif
 
 RGBA_Image *
-load_image_from_file(const char *file, const char *key)
+evas_common_load_image_from_file(const char *file, const char *key)
 {
    RGBA_Image *im;
    int ok;
    DATA64 mod_time;
    
    mod_time = evas_file_modified_time(file);
-   im = image_find(file, key, mod_time);
+   im = evas_common_image_find(file, key, mod_time);
    if (im)
      {
-	image_ref(im);
+	evas_common_image_ref(im);
 	return im;
      }
-   im = image_new();
+   im = evas_common_image_new();
    if (!im) return NULL;
    ok = -1;
 #ifdef BUILD_LOADER_PNG
@@ -1092,7 +1092,7 @@ load_image_from_file(const char *file, const char *key)
 #endif
    if (ok == -1)
      {
-	image_free(im);
+	evas_common_image_free(im);
 	return NULL;
      }
    im->timestamp = mod_time;
@@ -1100,12 +1100,12 @@ load_image_from_file(const char *file, const char *key)
      im->info.file = strdup(file);
    if (key)
      im->info.key = strdup(key);
-   image_ref(im);
+   evas_common_image_ref(im);
    return im;
 }
 
 void
-load_image_data_from_file(RGBA_Image *im)
+evas_common_load_image_data_from_file(RGBA_Image *im)
 {
    int ok;
    
@@ -1129,7 +1129,7 @@ load_image_data_from_file(RGBA_Image *im)
 #endif
    if (ok == -1)
      {
-	image_surface_alloc(im->image);
+	evas_common_image_surface_alloc(im->image);
 	if (!im->image->data)
 	  {
 	     const DATA32 pixel = 0xffffffff;
