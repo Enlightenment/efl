@@ -2,7 +2,7 @@ EDJE_CC = edje_cc
 EDJE_FLAGS = -v -id $(top_srcdir)/data -fd $(top_srcdir)/data
 
 filesdir = $(datadir)/emotion/data
-files_DATA = theme.eet
+files_DATA = theme.edj
 
 EXTRA_DIST = \
 bpause.png \
@@ -30,11 +30,11 @@ whb.png \
 window_inner_shadow.png \
 theme.edc
 
-theme.eet: Makefile
+theme.edj: Makefile
 	$(EDJE_CC) $(EDJE_FLAGS) \
 	$(top_srcdir)/data/theme.edc \
-	$(top_builddir)/data/theme.eet
+	$(top_builddir)/data/theme.edj
 
 clean-local:
-	rm -f *.eet
+	rm -f *.edj
 	

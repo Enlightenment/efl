@@ -161,7 +161,7 @@ bg_setup(void)
    Evas_Object *o;
 
    o = edje_object_add(evas);
-   edje_object_file_set(o, PACKAGE_DATA_DIR"/data/theme.eet", "background");
+   edje_object_file_set(o, PACKAGE_DATA_DIR"/data/theme.edj", "background");
    evas_object_move(o, 0, 0);
    evas_object_resize(o, startw, starth);
    evas_object_layer_set(o, -999);
@@ -739,7 +739,7 @@ init_video_object(char *file)
    
    oe = edje_object_add(evas);
    evas_object_data_set(oe, "frame_data", fd);
-   edje_object_file_set(oe, PACKAGE_DATA_DIR"/data/theme.eet", "video_controller");
+   edje_object_file_set(oe, PACKAGE_DATA_DIR"/data/theme.edj", "video_controller");
    edje_extern_object_min_size_set(o, w, h);
    edje_object_part_swallow(oe, "video_swallow", o);
    edje_object_size_min_calc(oe, &w, &h);
