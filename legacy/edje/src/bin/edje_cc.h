@@ -64,6 +64,8 @@ void    data_queue_part_lookup(Edje_Part_Collection *pc, char *name, int *dest);
 void    data_queue_program_lookup(Edje_Part_Collection *pc, char *name, int *dest);
 void    data_queue_image_lookup(char *name, int *dest);
 void    data_process_lookups(void);
+void    data_process_scripts(void);
+void    data_process_script_lookups(void);
     
 
 int     is_verbatim(void);

@@ -32,6 +32,9 @@ struct _Code_Lookup
    int   val;
 };
 
+static void data_queue_image_pc_lookup(Edje_Part_Collection *pc, char *name, int *dest);
+static void data_process_string(Edje_Part_Collection *pc, char *prefix, char *s, void (*func)(Edje_Part_Collection *pc, char *name, int *val));
+
 Edje_File *edje_file = NULL;
 Evas_List *edje_collections = NULL;
 Evas_List *fonts = NULL;
@@ -760,7 +763,7 @@ data_process_string(Edje_Part_Collection *pc, char *prefix, char *s, void (*func
      }
 }
 
-void
+static void
 data_queue_image_pc_lookup(Edje_Part_Collection *pc, char *name, int *dest)
 {
    data_queue_image_lookup(name, dest);
