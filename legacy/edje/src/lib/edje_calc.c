@@ -47,9 +47,10 @@ _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos)
 }
 
 Edje_Part_Description *
-_edje_part_description_find(Edje *ed, Edje_Part *ep, char *name,
+_edje_part_description_find(Edje *ed, Edje_Real_Part *rp, char *name,
                             double val)
 {
+   Edje_Part *ep = rp->part;
    Edje_Part_Description *ret = NULL;
    Evas_List *l;
    double min_dst = 999.0;
@@ -89,11 +90,11 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1,
    if (!d1) d1 = "default";
    if (!d2) d2 = "default";
 
-   ep->param1.description = _edje_part_description_find(ed, ep->part, d1, v1);
+   ep->param1.description = _edje_part_description_find(ed, ep, d1, v1);
    if (!ep->param1.description)
      ep->param1.description = ep->part->default_desc;
 
-   ep->param2.description = _edje_part_description_find(ed, ep->part, d2, v2);
+   ep->param2.description = _edje_part_description_find(ed, ep, d2, v2);
 
    ep->param1.rel1_to_x = NULL;
    ep->param1.rel1_to_y = NULL;

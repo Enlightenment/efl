@@ -691,6 +691,7 @@ struct _Edje_Var
 };
 
 void  _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, double pos);
+Edje_Part_Description *_edje_part_description_find(Edje *ed, Edje_Real_Part *rp, char *name, double val);
 void  _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1, char *d2, double v2);
 void  _edje_recalc(Edje *ed);
 int   _edje_part_dragable_calc(Edje *ed, Edje_Real_Part *ep, double *x, double *y);
