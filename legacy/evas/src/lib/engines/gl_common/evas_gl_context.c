@@ -15,7 +15,7 @@ Evas_GL_Context *
 evas_gl_common_context_new(void)
 {
    Evas_GL_Context *gc;
-   
+
    if (_evas_gl_common_context)
      {
 	_evas_gl_common_context->references++;
@@ -39,6 +39,7 @@ evas_gl_common_context_new(void)
    gc->change.clip    = 1;
    gc->change.buf     = 1;
    gc->change.other   = 1;
+   _evas_gl_common_context = gc;
    return gc;
 }
 
