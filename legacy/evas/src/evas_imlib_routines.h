@@ -47,6 +47,7 @@ int               __evas_imlib_image_cache_get_size(Display *disp);
 int               __evas_imlib_image_get_width(Evas_Imlib_Image *im);
 int               __evas_imlib_image_get_height(Evas_Imlib_Image *im);
 void              __evas_imlib_image_set_borders(Evas_Imlib_Image *im, int left, int right, int top, int bottom);
+void              __evas_imlib_image_set_smooth_scaling(int on);
 void              __evas_imlib_image_draw(Evas_Imlib_Image *im, Display *disp, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h);
 
 /********/
@@ -60,8 +61,10 @@ char            **__evas_imlib_text_font_list_paths(int *count);
 void              __evas_imlib_text_cache_empty(Display *disp);
 void              __evas_imlib_text_cache_set_size(Display *disp, int size);
 int               __evas_imlib_text_cache_get_size(Display *disp);
-void              __evas_imlib_text_draw(Evas_Imlib_Font *fn, Display *disp, Window win, int win_w, int win_h, int x, int y, char *text, int r, int g, int b, int a);
 void              __evas_imlib_text_get_size(Evas_Imlib_Font *fn, char *text, int *w, int *h);
+int               __evas_imlib_text_get_character_at_pos(Evas_Imlib_Font *fn, char *text, int x, int y, int *cx, int *cy, int *cw, int *ch);
+void              __evas_imlib_text_get_character_number(Evas_Imlib_Font *fn, char *text, int num, int *cx, int *cy, int *cw, int *ch);
+void              __evas_imlib_text_draw(Evas_Imlib_Font *fn, Display *disp, Window win, int win_w, int win_h, int x, int y, char *text, int r, int g, int b, int a);
 
 /**************/
 /* rectangles */

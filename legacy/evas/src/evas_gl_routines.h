@@ -9,6 +9,7 @@
 
 #include <GL/gl.h>
 #include <GL/glx.h>
+#include <GL/glu.h>
 
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
@@ -138,10 +139,11 @@ void           __evas_gl_image_free(Evas_GL_Image *im);
 void           __evas_gl_image_cache_empty(Display *disp);
 void           __evas_gl_image_cache_set_size(Display *disp, int size);
 int            __evas_gl_image_cache_get_size(Display *disp);
-void           __evas_gl_image_draw(Evas_GL_Image *im, Display *disp, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h);
 int            __evas_gl_image_get_width(Evas_GL_Image *im);
 int            __evas_gl_image_get_height(Evas_GL_Image *im);
 void           __evas_gl_image_set_borders(Evas_GL_Image *im, int left, int right, int top, int bottom);
+void           __evas_gl_image_set_smooth_scaling(int on);
+void           __evas_gl_image_draw(Evas_GL_Image *im, Display *disp, Window w, int win_w, int win_h, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h);
 
 /********/
 /* text */
@@ -154,8 +156,10 @@ char         **__evas_gl_text_font_list_paths(int *count);
 void           __evas_gl_text_cache_empty(Display *disp);
 void           __evas_gl_text_cache_set_size(Display *disp, int size);
 int            __evas_gl_text_cache_get_size(Display *disp);
-void           __evas_gl_text_draw(Evas_GL_Font *fn, Display *disp, Window win, int win_w, int win_h, int x, int y, char *text, int r, int g, int b, int a);
 void           __evas_gl_text_get_size(Evas_GL_Font *fn, char *text, int *w, int *h);
+int            __evas_gl_text_get_character_at_pos(Evas_GL_Font *fn, char *text, int x, int y, int *cx, int *cy, int *cw, int *ch);
+void           __evas_gl_text_get_character_number(Evas_GL_Font *fn, char *text, int num, int *cx, int *cy, int *cw, int *ch);
+void           __evas_gl_text_draw(Evas_GL_Font *fn, Display *disp, Window win, int win_w, int win_h, int x, int y, char *text, int r, int g, int b, int a);
 
 /**************/
 /* rectangles */

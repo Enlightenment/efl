@@ -134,6 +134,11 @@ __evas_imlib_image_set_borders(Evas_Imlib_Image *im, int left, int right,
    imlib_image_set_border(&bd);
 }
 
+void
+__evas_imlib_image_set_smooth_scaling(int on)
+{
+   imlib_context_set_anti_alias((char)on);
+}
 
 
 
@@ -284,6 +289,23 @@ __evas_imlib_text_get_size(Evas_Imlib_Font *fn, char *text, int *w, int *h)
    imlib_get_text_size(text, w, h);
 }
 
+int
+__evas_imlib_text_get_character_at_pos(Evas_Imlib_Font *fn, char *text, 
+				       int x, int y, 
+				       int *cx, int *cy, int *cw, int *ch)
+{
+   imlib_context_set_font((Imlib_Font)fn);
+   return imlib_text_get_index_and_location(text, x, y, cx, cy, cw, ch);
+}
+
+void
+__evas_imlib_text_get_character_number(Evas_Imlib_Font *fn, char *text, 
+				       int num, 
+				       int *cx, int *cy, int *cw, int *ch)
+{
+   imlib_context_set_font((Imlib_Font)fn);
+   imlib_text_get_location_at_index(text, num, cx, cy, cw, ch);
+}
 
 
 

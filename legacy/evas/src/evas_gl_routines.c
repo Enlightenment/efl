@@ -53,6 +53,8 @@ static char        __evas_have_engine = 0;
 static int         __evas_font_cache_max = 512 * 1024;
 static int         __evas_font_cache_used = 0;
 
+static int         __evas_anti_alias = 1;
+
 const int          __evas_rend_lut[9] = { 0, 64, 128, 192, 255, 255, 255, 255, 255};
 
 #define TT_VALID( handle )  ( ( handle ).z != NULL )
@@ -96,8 +98,16 @@ __evas_gl_image_copy_image_rect_to_texture(Evas_GL_Image *im, int x, int y,
    glBindTexture(GL_TEXTURE_2D, texture);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+   if (__evas_anti_alias)
+     {
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+     }
+   else
+     {
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+     }
    
    data = malloc(tw * th * 4);
    for (ty = 0; ty < h; ty++)
@@ -128,8 +138,12 @@ __evas_gl_image_copy_image_rect_to_texture(Evas_GL_Image *im, int x, int y,
 	if (tx < tw)
 	   *p2 = p2[-1];
      }
-   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, tw, th, 0,
-		GL_RGBA, GL_UNSIGNED_BYTE, data);
+   if (__evas_anti_alias)
+      gluBuild2DMipmaps(GL_TEXTURE_2D, GL_RGBA8, tw, th, GL_RGBA, 
+			GL_UNSIGNED_BYTE, data);
+   else
+      glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, tw, th, 0,
+		   GL_RGBA, GL_UNSIGNED_BYTE, data);
    free(data);
 }
 
@@ -647,6 +661,11 @@ __evas_gl_image_set_borders(Evas_GL_Image *im, int left, int right,
      }
 }
 
+void
+__evas_gl_image_set_smooth_scaling(int on)
+{
+   __evas_anti_alias = on;
+}
 
 
 
@@ -1413,6 +1432,92 @@ __evas_gl_text_get_size(Evas_GL_Font *fn, char *text, int *w, int *h)
    __evas_gl_text_calc_size(fn, w, h, text);
 }
 
+int
+__evas_gl_text_get_character_at_pos(Evas_GL_Font *fn, char *text, int x, int y, int *cx, int *cy, int *cw, int *ch)
+{
+   int                 i, px, ppx;
+   TT_Glyph_Metrics    gmetrics;
+   
+   if ((y < 0) || (y > (fn->ascent + fn->descent)))
+      return -1;
+   if (cy)
+      *cy = 0;
+   if (ch)
+      *ch = fn->ascent + fn->descent;
+   ppx = 0;
+   px = 0;
+   for (i = 0; text[i]; i++)
+     {
+	unsigned char       j;
+	
+	j = text[i];
+	if (!TT_VALID(fn->glyphs[j]))
+	   continue;
+	TT_Get_Glyph_Metrics(fn->glyphs[j], &gmetrics);
+	ppx = px;
+	if (i == 0)
+	   px += ((-gmetrics.bearingX) / 64);
+	if (text[i + 1] == 0)
+	   px += (gmetrics.bbox.xMax / 64);
+	else
+	   px += gmetrics.advance / 64;
+	if ((x >= ppx) && (x < px))
+	  {
+	     if (cx)
+		*cx = ppx;
+	     if (cw)
+		*cw = px - ppx;
+	     return i;
+	  }
+     }
+   *cw = 0;
+   *ch = 0;
+   *cx = 0;
+   *cy = 0;
+   return -1;
+}
+
+void
+__evas_gl_text_get_character_pos(Evas_GL_Font *fn, char *text, int num, int *cx, int *cy, int *cw, int *ch)
+{
+   int                 i, px, ppx;
+   TT_Glyph_Metrics    gmetrics;
+   
+   if (cy)
+      *cy = 0;
+   if (ch)
+      *ch = fn->ascent + fn->descent;
+   ppx = 0;
+   px = 0;
+   for (i = 0; text[i]; i++)
+     {
+	unsigned char       j;
+	
+	j = text[i];
+	if (!TT_VALID(fn->glyphs[j]))
+	   continue;
+	TT_Get_Glyph_Metrics(fn->glyphs[j], &gmetrics);
+	ppx = px;
+	if (i == 0)
+	   px += ((-gmetrics.bearingX) / 64);
+	if (text[i + 1] == 0)
+	   px += (gmetrics.bbox.xMax / 64);
+	else
+	   px += gmetrics.advance / 64;
+	if (i == num)
+	  {
+	     if (cx)
+		*cx = ppx;
+	     if (cw)
+		*cw = px - ppx;
+	     return;
+	  }
+     }
+   *cw = 0;
+   *ch = 0;
+   *cx = 0;
+   *cy = 0;
+}
 
 
 
