@@ -36,7 +36,7 @@
  *
  * To create a listening server, call @c ecore_con_server_add().
  *
- * To connect to a server, call @c ecore_Con_server_connect().  Data can
+ * To connect to a server, call @c ecore_con_server_connect().  Data can
  * then be sent to the server using the @c ecore_con_server_send().
  * 
  * Whenever a client connection is made to an @c Ecore_Con_Server, a
