@@ -11,7 +11,7 @@ static void
 main_help(void)
 {
    printf("Usage: "
-      "%s [OPTIONS] input_file.eet ...\n"
+      "%s [OPTIONS] input_file.edj ...\n"
       "\t-o outfile.txt    Output the listing of the collections to a file\n"
       , progname);
 }

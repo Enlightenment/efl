@@ -4,7 +4,7 @@ set -e
 
 usage () {
   echo "Usage:"
-  echo "        edje_recc [OPTIONS] input_file.eet"
+  echo "        edje_recc [OPTIONS] input_file.edj"
   echo ""
   echo "Where OPTIONS is one or more of:"
   echo ""
@@ -37,7 +37,7 @@ if [ $# -ge 1 ]; then
         usage
       ;;
       
-      *.eet)
+      *.edj)
         IN=$I
       ;;
       
@@ -49,13 +49,13 @@ if [ $# -ge 1 ]; then
 fi
 
 if [ -z "$IN" ]; then
-  echo "ERROR: NO input file.eet provided!"
+  echo "ERROR: NO input file.edj provided!"
   echo ""
   usage;
 fi
 
 F=`basename $IN`
-B=`basename $F .eet`
+B=`basename $F .edj`
 T="./...edje_tmp"
 rm -rf $T
 mkdir -p $T

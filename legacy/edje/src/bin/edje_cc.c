@@ -28,7 +28,7 @@ main_help(void)
 {
    printf
      ("Usage:\n"
-      "\t%s [OPTIONS] input_file.edc [output_file.eet]\n"
+      "\t%s [OPTIONS] input_file.edc [output_file.edj]\n"
       "\n"
       "Where OPTIONS is one or more of:\n"
       "\n"
@@ -168,7 +168,7 @@ main(int argc, char **argv)
                if (file_out)
                   {
                      suffix = strstr(file_out,".edc");
-                     strcpy(suffix,".eet");
+                     strcpy(suffix,".edj");
                   }
             }
       }

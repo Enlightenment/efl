@@ -15,14 +15,14 @@ static int  _edje_collection_free_prog_cache_matches_free_cb(Evas_Hash *hash, co
 /************************** API Routines **************************/
 
 /* FIXDOC: Verify/expand doc */
-/** Sets the .eet file to be used
+/** Sets the EET file to be used
  * @param obj A valid Evas_Object handle
- * @param file The path to the .eet file
- * @param part The group name in the eet
+ * @param file The path to the EET file
+ * @param part The group name in the Edje
  * @return 0 on Error\n
  * 1 on Success and sets EDJE_LOAD_ERROR_NONE
  *
- * This loads the .eet file and sets up the Edje.
+ * This loads the EET file and sets up the Edje.
  */
 int
 edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
@@ -285,12 +285,12 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 }
 
 /* FIXDOC: Verify/expand doc. */
-/** Get the .eet location and group for the Evas Object. ?! Assuming eet file
+/** Get the EET location and group for the Evas Object. ?! Assuming eet file
  * @param obj A valid Evas_Object handle
- * @param file The .eet file location pointer
- * @param part The eet part pointer
+ * @param file The EET file location pointer
+ * @param part The EET part pointer
  *
- * This gets the .eet file location and group for the given Evas_Object.
+ * This gets the EET file location and group for the given Evas_Object.
  */
 void
 edje_object_file_get(Evas_Object *obj, const char **file, const char **part)

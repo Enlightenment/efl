@@ -55,22 +55,22 @@ Quick start-up guide:
    make
    sudo make install
 
-You now want to go test it out. first you'll need to make an edje .eet file.
+You now want to go test it out. first you'll need to make an edje EET file.
    
    cd data
    ./e_logo.sh
    
 Now you can view the edje you just built:
    
-   edje ./e_logo.eet
+   edje ./e_logo.edj
    
 You can view multilpe files at once with the edje test program:
    
-   edje ./e_logo.eet ./e_logo.eet ./e_logo.eet
+   edje ./e_logo.edj ./e_logo.edj ./e_logo.edj
    
 to view the same one 3 times.
    
-You can read the source fuile that builds the edje .eet file by looking at:
+You can read the source fuile that builds the edje EET file by looking at:
 
    data/src/e_logo.edc
 

@@ -31,7 +31,7 @@ main_help(void)
 {
    printf
      ("Usage:\n"
-      "\t%s input_file.eet \n"
+      "\t%s input_file.edj \n"
       "\n"
       ,progname);
 }
@@ -282,7 +282,7 @@ output(void)
 	  }
 	f = fopen(out, "w");
 	fprintf(f, "#!/bin/sh\n");
-	fprintf(f, "%s $@ --image_dir . --font_dir . %s -o %s.eet\n", edje_file->compiler, sf->name, outdir);
+	fprintf(f, "%s $@ --image_dir . --font_dir . %s -o %s.edj\n", edje_file->compiler, sf->name, outdir);
 	fclose(f);
 
 #ifndef WIN32
