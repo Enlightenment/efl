@@ -29,8 +29,6 @@ edje_main.h
 edje_LDADD = \
 $(top_builddir)/src/lib/libedje.la
 
-edje_CPPFLAGS = @edje_def@
-
 edje_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 
 
@@ -47,8 +45,6 @@ edje_cc_LDADD = \
 $(top_builddir)/src/lib/libedje.la \
 @IMLIB2_LIBS@
 
-edje_cc_CPPFLAGS = @edje_def@
-
 edje_cc_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 
 
@@ -62,8 +58,6 @@ edje_decc_LDADD = \
 $(top_builddir)/src/lib/libedje.la \
 @IMLIB2_LIBS@
 
-edje_decc_CPPFLAGS = @edje_def@
-
 edje_decc_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 
 
@@ -73,8 +67,6 @@ edje_ls.c
 
 edje_ls_LDADD = \
 $(top_builddir)/src/lib/libedje.la
-
-edje_ls_CPPFLAGS = @edje_def@
 
 edje_ls_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 

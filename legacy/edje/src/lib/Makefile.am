@@ -12,8 +12,7 @@ INCLUDES	     = \
 @EET_CFLAGS@ \
 @EMBRYO_CFLAGS@ \
 @EVAS_CFLAGS@ \
-@ECORE_CFLAGS@ \
-@edje_def@
+@ECORE_CFLAGS@
 
 lib_LTLIBRARIES      = \
 libedje.la 

@@ -45,7 +45,7 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    ed = data;
    rp = evas_object_data_get(obj, "real_part");
    if (!rp) return;
-#ifndef EDJE_FB_ONLY
+#ifdef HAVE_ECORE_X_H
    if (ecore_event_current_type_get() == ECORE_X_EVENT_MOUSE_BUTTON_DOWN)
      {
 	Ecore_X_Event_Mouse_Button_Down *evx;

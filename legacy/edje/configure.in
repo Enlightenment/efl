@@ -100,21 +100,6 @@ dnl Set PACKAGE_SOURCE_DIR in config.h.
 packagesrcdir=`cd $srcdir && pwd`
 AC_DEFINE_UNQUOTED(PACKAGE_SOURCE_DIR, "${packagesrcdir}", [Source code directory])
 
-AC_MSG_CHECKING(whether to build only fb support)
-have_fb_only="no"
-AC_ARG_ENABLE(fb-only, [  --enable-fb-only        enable building of fb support only ], [
-     if [ test "$enableval" = "yes" ]; then
-       AC_MSG_RESULT(yes)
-       have_fb_only="yes"
-     else
-       AC_MSG_RESULT(no)
-       have_fb_only="no"
-     fi
-   ], [
-      AC_MSG_RESULT($have_fb_only)
-   ]
-)
-
 AC_MSG_CHECKING(whether to build edje_cc)
 have_edje_cc="yes"
 AC_ARG_ENABLE(edje-cc, [  --disable-edje-cc       disable building of edje_cc ], [
@@ -129,12 +114,6 @@ AC_ARG_ENABLE(edje-cc, [  --disable-edje-cc       disable building of edje_cc ],
       AC_MSG_RESULT($have_edje_cc)
    ]
 )
-
-edje_def=""
-if test "x$have_fb_only" = "xyes"; then
-  edje_def="-DEDJE_FB_ONLY"
-fi
-AC_SUBST(edje_def)
 
 AC_ARG_WITH(eet,
         [  --with-eet=DIR               use eet in <DIR>],
@@ -185,6 +164,9 @@ AC_ARG_WITH(ecore,
 
 AC_PATH_GENERIC(ecore, , ,
     AC_MSG_ERROR(Cannot find ecore: Is ecore-config in path?))
+
+AC_CHECK_HEADERS(Ecore_X.h)
+AC_CHECK_HEADERS(Ecore_Fb.h)
 
 AC_MSG_CHECKING([for location of Vim data files])
 install_vim="yes";

@@ -1,14 +1,14 @@
 #ifndef _EDJE_PRIVATE_H
 #define _EDJE_PRIVATE_H
 
-#include "config.h"
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif
 
 #include <Evas.h>
 #include <Ecore.h>
-#ifndef EDJE_FB_ONLY
+#ifdef HAVE_ECORE_X_H
 #include <Ecore_X.h>
-#else
-#include <Ecore_Fb.h>
 #endif
 #include <Eet.h>
 #include <Embryo.h>
