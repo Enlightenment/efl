@@ -803,6 +803,7 @@ void          evas_common_blit_rectangle          (RGBA_Image *src, RGBA_Image *
 
 /****/
 void             evas_common_font_init              (void);
+void             evas_common_font_shutdown          (void);
 
 RGBA_Font       *evas_common_font_load              (const char *name, int size);
 void             evas_common_font_free              (RGBA_Font *fn);

@@ -208,6 +208,8 @@ evas_engine_directfb_output_free(void *data)
    re->backbuf->Release(re->backbuf);
    evas_common_image_free(re->rgba_image);
    free(re);
+
+   evas_common_font_shutdown();
 }
 
 void

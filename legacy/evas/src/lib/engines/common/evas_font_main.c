@@ -1,17 +1,29 @@
 #include "evas_common.h"
 
 FT_Library      ft_lib;
+static int      initialised = 0;
 
 void
 evas_common_font_init(void)
 {
-   static int initialised = 0;
    int error;
 
    if (initialised) return;
    error = FT_Init_FreeType(&ft_lib);
    if (error) return;
    initialised = 1;
+}
+
+void
+evas_common_font_shutdown(void)
+{
+   int error;
+
+   if (!initialised) return;
+
+   error = FT_Done_FreeType(ft_lib);
+   if (error) return;
+   initialised = 0;
 }
 
 int

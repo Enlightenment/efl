@@ -257,6 +257,8 @@ evas_engine_gl_x11_output_free(void *data)
    
    re = (Render_Engine *)data;
    free(re);
+
+   evas_common_font_shutdown();
 }
 
 static void

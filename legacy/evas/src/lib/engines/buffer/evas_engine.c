@@ -296,6 +296,8 @@ evas_engine_buffer_output_free(void *data)
    evas_common_tilebuf_free(re->tb);
    if (re->rects) evas_common_tilebuf_free_render_rects(re->rects);
    free(re);
+
+   evas_common_font_shutdown();
 }
 
 static void
