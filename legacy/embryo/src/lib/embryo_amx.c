@@ -153,6 +153,7 @@ _embryo_program_init(Embryo_Program *ep, void *code)
    if (hdr->stp <= 0) return 0;
    if ((hdr->flags & EMBRYO_FLAG_COMPACT)) return 0;
    
+#ifdef WORDS_BIGENDIAN
    /* also align all addresses in the public function, public variable and */
    /* public tag tables */
    fs = GETENTRY(hdr, publics, 0);
@@ -178,8 +179,19 @@ _embryo_program_init(Embryo_Program *ep, void *code)
 	embryo_swap_32(&(fs->address));
 	fs = (Embryo_Func_Stub *)((unsigned char *)fs + hdr->defsize);
      }
+#endif   
    ep->flags = EMBRYO_FLAG_RELOC;
-   
+
+#ifdef WORDS_BIGENDIAN
+     {
+	Embryo_Cell cip, code_size;
+	Embryo_Cell *code;
+	
+	code_size = hdr->dat - hdr->cod;
+	code = ep->code + (int)hdr->code;
+	for (cip = 0; cip < code_size; ) embryo_swap_32(&(code[cip]));
+     }
+#endif  
    /* init native api for handling floating point - default in embryo */
    _embryo_fp_init(ep);
    return 1;
@@ -620,7 +632,7 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
    Embryo_Cell      reset_stk, reset_hea, *cip;
    Embryo_UCell     codesize;
    int              i;
-   Embryo_Opcode    op;
+   unsigned int     op;
    Embryo_Cell      offs;
    int              num;
 
