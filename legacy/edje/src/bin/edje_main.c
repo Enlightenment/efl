@@ -74,7 +74,6 @@ main_start(int argc, char **argv)
    ecore_app_args_set(argc, (const char **)argv);
    ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, main_signal_exit, NULL);
    if (!ecore_evas_init()) return -1;
-#ifdef HAVE_ECORE_X_H
      {
         int i;
 
@@ -111,24 +110,13 @@ main_start(int argc, char **argv)
                }
           }
      }
-#if HAVE_ECORE_EVAS_X
    if (mode == 0)
      ecore_evas = ecore_evas_software_x11_new(NULL, 0,  0, 0, startw, starth);
-#endif   
-#if HAVE_ECORE_EVAS_GL
-   if (mode == 1)
+   if ((!ecore_evas) || (mode == 1))
      ecore_evas = ecore_evas_gl_x11_new(NULL, 0, 0, 0, startw, starth);
-#endif
-#if HAVE_ECORE_EVAS_FB
-   if (mode == 2)
+   if ((!ecore_evas) || (mode == 2))
      ecore_evas = ecore_evas_fb_new(NULL, 270,  startw, starth);
-#endif
    
-#else
-#if HAVE_ECORE_EVAS_FB
-   ecore_evas = ecore_evas_fb_new(NULL, 270,  startw, starth);
-#endif   
-#endif
    if (!ecore_evas) return -1;
    ecore_evas_callback_delete_request_set(ecore_evas, main_delete_request);
    ecore_evas_callback_resize_set(ecore_evas, main_resize);
