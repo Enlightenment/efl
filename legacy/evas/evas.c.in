@@ -244,6 +244,7 @@ make install
 
 
 @todo (1.0) Document API
+@todo (1.0) Evas needs to check delete_me member for all object functions
 @todo (1.0) Evas engine that renders to Evas_Objects
 @todo (1.0) OpenGL engine needs to use texture meshes
 @todo (1.0) OpenGL engine needs texture cache and size setting

@@ -118,6 +118,7 @@ evas_debug_input_null(void)
    if (_evas_debug_show)
      fprintf(stderr, 
 	     "  Input object pointer is NULL!\n");
+   if (_evas_debug_abort) abort();
 }
 
 void
@@ -132,6 +133,7 @@ evas_debug_magic_null(void)
    if (_evas_debug_show)
      fprintf(stderr, 
 	     "  Input object is zero'ed out (maybe a freed object or zero-filled RAM)!\n");
+   if (_evas_debug_abort) abort();
 }
 
 void

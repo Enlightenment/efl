@@ -407,6 +407,7 @@ evas_object_del(Evas_Object *obj)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   if (obj->delete_me) return;
    if (!obj->layer)
      {
 	evas_object_free(obj, 1);
@@ -423,10 +424,10 @@ evas_object_del(Evas_Object *obj)
    evas_object_hide(obj);   
    while (obj->clip.clipees) evas_object_clip_unset(obj->clip.clipees->data);
    if (obj->cur.clipper) evas_object_clip_unset(obj);
-   evas_object_change(obj);
-   obj->delete_me = 1;
    if (obj->smart.smart) evas_object_smart_del(obj);
    evas_object_smart_cleanup(obj);
+   obj->delete_me = 1;
+   evas_object_change(obj);
 }
 
 /**
@@ -443,6 +444,7 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   if (obj->delete_me) return;
    if (evas_object_intercept_call_move(obj, x, y)) return;
    if (obj->smart.smart)
      {
@@ -494,6 +496,7 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   if (obj->delete_me) return;
    if (w < 0.0) w = 0.0; if (h < 0.0) h = 0.0;
    if (evas_object_intercept_call_resize(obj, w, h)) return;
    if (obj->smart.smart)
@@ -544,6 +547,11 @@ evas_object_geometry_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Co
    if (x) *x = 0; if (y) *y = 0; if (w) *w = 0; if (h) *h = 0;
    return;
    MAGIC_CHECK_END();
+   if (obj->delete_me)
+     {
+	if (x) *x = 0; if (y) *y = 0; if (w) *w = 0; if (h) *h = 0;
+	return;
+     }
    if (x) *x = obj->cur.geometry.x;
    if (y) *y = obj->cur.geometry.y;
    if (w) *w = obj->cur.geometry.w;
@@ -562,6 +570,7 @@ evas_object_show(Evas_Object *obj)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   if (obj->delete_me) return;
    if (evas_object_intercept_call_show(obj)) return;
    if (obj->smart.smart)
      {
@@ -603,6 +612,7 @@ evas_object_hide(Evas_Object *obj)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   if (obj->delete_me) return;
    if (evas_object_intercept_call_hide(obj)) return;
    if (obj->smart.smart)
      {
@@ -665,6 +675,7 @@ evas_object_visible_get(Evas_Object *obj)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
+   if (obj->delete_me) return 0;
    return obj->cur.visible;
 }
 
@@ -680,6 +691,7 @@ evas_object_color_set(Evas_Object *obj, int r, int g, int b, int a)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
+   if (obj->delete_me) return;
    if (r > 255) r = 255; if (r < 0) r = 0;
    if (g > 255) g = 255; if (g < 0) g = 0;
    if (b > 255) b = 255; if (b < 0) b = 0;
@@ -714,6 +726,11 @@ evas_object_color_get(Evas_Object *obj, int *r, int *g, int *b, int *a)
    if (r) *r = 0; if (g) *g = 0; if (b) *b = 0; if (a) *a = 0;
    return;
    MAGIC_CHECK_END();
+   if (obj->delete_me)
+     {
+	if (r) *r = 0; if (g) *g = 0; if (b) *b = 0; if (a) *a = 0;
+	return;
+     }
    if (r) *r = obj->cur.color.r;
    if (g) *g = obj->cur.color.g;
    if (b) *b = obj->cur.color.b;
@@ -732,6 +749,7 @@ evas_object_evas_get(Evas_Object *obj)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
+   if (obj->delete_me) return 0;
    return obj->layer->evas;
 }
 
@@ -763,6 +781,7 @@ evas_object_top_at_xy_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include
 	     Evas_Object *obj;
 	     
 	     obj = (Evas_Object *)l2;
+	     if (obj->delete_me) continue;
 	     if ((!include_pass_events_objects) && (obj->pass_events)) continue;
 	     if ((!include_hidden_objects) && (!obj->cur.visible)) continue;
 	     evas_object_clip_recalc(obj);
@@ -818,6 +837,7 @@ evas_object_top_in_rectangle_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord
 	     Evas_Object *obj;
 	     
 	     obj = (Evas_Object *)l2;
+	     if (obj->delete_me) continue;
 	     if ((!include_pass_events_objects) && (obj->pass_events)) continue;
 	     if ((!include_hidden_objects) && (!obj->cur.visible)) continue;
 	     evas_object_clip_recalc(obj);
@@ -858,6 +878,7 @@ evas_objects_at_xy_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pa
 	     Evas_Object *obj;
 	     
 	     obj = (Evas_Object *)l2;
+	     if (obj->delete_me) continue;
 	     if ((!include_pass_events_objects) && (obj->pass_events)) continue;
 	     if ((!include_hidden_objects) && (!obj->cur.visible)) continue;
 	     evas_object_clip_recalc(obj);
@@ -902,6 +923,7 @@ evas_objects_in_rectangle_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w,
 	     Evas_Object *obj;
 	     
 	     obj = (Evas_Object *)l2;
+	     if (obj->delete_me) continue;
 	     if ((!include_pass_events_objects) && (obj->pass_events)) continue;
 	     if ((!include_hidden_objects) && (!obj->cur.visible)) continue;
 	     evas_object_clip_recalc(obj);
@@ -925,5 +947,6 @@ evas_object_type_get(Evas_Object *obj)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
+   if (obj->delete_me) return "";
    return obj->type;
 }
