@@ -74,6 +74,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %attr(755,root,root) %{prefix}/bin/emotion-config
+%attr(755,root,root) %{prefix}/lib/pkgconfig/emotion.pc
 %attr(755,root,root) %{prefix}/lib/libemotion.so
 %attr(755,root,root) %{prefix}/lib/libemotion.la
 %attr(755,root,root) %{prefix}/lib/emotion/emotion_decoder_xine.la
