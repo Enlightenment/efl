@@ -373,7 +373,7 @@ evas_engine_gl_x11_output_flush(void *data)
 			    re->win->draw.y2 - re->win->draw.y1 + 1);
  */
    glXSwapBuffers(re->win->disp, re->win->win);   
-   glFlush();
+//   glFlush();
 //   glXWaitGL();
 //   XSync(re->win->disp, False);
 //   printf("SYNC! %i\n", fr++);
@@ -957,27 +957,31 @@ evas_engine_gl_x11_font_draw(void *data, void *context, void *surface, void *fon
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   /* text renderign takes benchmark from 40 to 27 on gf4-ti4400 */
      {
-	RGBA_Image *im;
+	static RGBA_Image *im = NULL;
 	
-	im = evas_common_image_new();
-	im->image = evas_common_image_surface_new();
+	if (!im)
+	  {
+	     im = evas_common_image_new();
+	     im->image = evas_common_image_surface_new();
+	     im->image->no_free = 1;
+	  }
 	im->image->w = re->win->w;
 	im->image->h = re->win->h;
 	im->image->data = NULL;
-	im->image->no_free = 1;
 	evas_common_draw_context_font_ext_set(context,
 					      re->win->gl_context,
 					      evas_gl_font_texture_new,
 					      evas_gl_font_texture_free,
 					      evas_gl_font_texture_draw);
+	/* 40 */
 	evas_common_font_draw(im, context, font, x, y, text);
 	evas_common_draw_context_font_ext_set(context, 
 					      NULL,
 					      NULL, 
 					      NULL,
 					      NULL);
-	evas_common_image_free(im);
      }
 }
 

@@ -183,6 +183,7 @@ evas_gl_common_context_font_texture_set(Evas_GL_Context *gc, Evas_GL_Font_Textur
 	gc->font_texture_not_power_of_two = ft->pool->not_power_of_two;
 	gc->change.texture = 1;
      }
+   if (!gc->change.texture) return;
    if (_evas_gl_common_context == gc) _evas_gl_common_texture_set(gc);
 }
 
@@ -282,7 +283,7 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
      {
 	if (gc->font_texture_not_power_of_two)
 	  {
-	     glEnable(GL_TEXTURE_2D);
+//	     glEnable(GL_TEXTURE_2D);
 	     glEnable(GL_TEXTURE_RECTANGLE_NV);
 	     glBindTexture(GL_TEXTURE_RECTANGLE_NV, gc->font_texture);
 	  }
@@ -298,14 +299,14 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
      {
 	if (gc->texture->not_power_of_two)
 	  {
-	     glEnable(GL_TEXTURE_2D);
+//	     glEnable(GL_TEXTURE_2D);
 	     glEnable(GL_TEXTURE_RECTANGLE_NV);
 	     glBindTexture(GL_TEXTURE_RECTANGLE_NV, gc->texture->texture);
 	  }
 	else
 	  {
 	     if (gc->ext.nv_texture_rectangle) glDisable(GL_TEXTURE_RECTANGLE_NV);
-	     glEnable(GL_TEXTURE_2D);
+//	     glEnable(GL_TEXTURE_2D);
 	     glBindTexture(GL_TEXTURE_2D, gc->texture->texture);
 	  }
 	if (gc->texture->not_power_of_two)
@@ -319,18 +320,34 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
 	  {
 	     if (gc->texture->changed)
 	       {
-		  if (gc->texture->smooth)
+		  if (gc->texture->not_power_of_two)
 		    {
-		       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		       if (gc->texture->have_mipmaps)
-			 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+		       if (gc->texture->smooth)
+			 {
+			    glTexParameteri(GL_TEXTURE_RECTANGLE_NV, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			    glTexParameteri(GL_TEXTURE_RECTANGLE_NV, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			 }
 		       else
-			 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			 {
+			    glTexParameteri(GL_TEXTURE_RECTANGLE_NV, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			    glTexParameteri(GL_TEXTURE_RECTANGLE_NV, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			 }
 		    }
 		  else
 		    {
-		       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		       glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		       if (gc->texture->smooth)
+			 {
+			    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			    if (gc->texture->have_mipmaps)
+			      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+			    else
+			      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+			 }
+		       else
+			 {
+			    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+			    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+			 }
 		    }
 		  gc->texture->changed = 0;
 	       }

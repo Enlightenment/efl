@@ -59,7 +59,8 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
    int ext_x, ext_y, ext_w, ext_h;
    DATA32 *im;
    int im_w, im_h;
-
+   int c;
+   
    im = dst->image->data;
    im_w = dst->image->w;
    im_h = dst->image->h;
@@ -94,7 +95,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
    use_kerning = FT_HAS_KERNING(fn->ft.face);
    prev_index = 0;
    func = evas_common_draw_func_blend_alpha_get(dst);
-   for (chr = 0; text[chr];)
+   for (c = 0, chr = 0; text[chr];)
      {
 	FT_UInt index;
 	RGBA_Font_Glyph *fg;
@@ -144,7 +145,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 			 {
 			    /* ext glyph draw */
 			    dc->font_ext.func.gl_draw(dc->font_ext.data, 
-						      NULL,
+						      (void *)c,
 						      dc, fg, 
 						      chr_x, 
 						      y - (chr_y - y)
@@ -183,6 +184,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 				   }
 			      }
 			 }
+		       c++;
 		    }
 	       }
 	  }

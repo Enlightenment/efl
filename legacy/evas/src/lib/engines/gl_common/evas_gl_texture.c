@@ -22,13 +22,23 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
 	tex->tw = im->image->w;
 	tex->th = im->image->h;
 	tex->references = 0;
-	tex->smooth = 0;
+	tex->smooth = smooth;
 	tex->changed = 1;
 	
-	glEnable(GL_TEXTURE_2D);
+//	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_TEXTURE_RECTANGLE_NV);
 	glGenTextures(1, &(tex->texture));
 	glBindTexture(GL_TEXTURE_RECTANGLE_NV, tex->texture);
+	if (smooth)
+	  {
+	     glTexParameteri(GL_TEXTURE_RECTANGLE_NV, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	     glTexParameteri(GL_TEXTURE_RECTANGLE_NV, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	  }
+	else
+	  {
+	     glTexParameteri(GL_TEXTURE_RECTANGLE_NV, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	     glTexParameteri(GL_TEXTURE_RECTANGLE_NV, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	  }
 	
 	if (gc->texture) gc->texture->references--;
 	gc->texture = tex;
@@ -140,7 +150,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
      {
 	void *tmp = NULL, *data;
 	
-	glEnable(GL_TEXTURE_2D);
+//	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_TEXTURE_RECTANGLE_NV);
 	glBindTexture(GL_TEXTURE_RECTANGLE_NV, tex->texture);
 
@@ -188,7 +198,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
    tex->changed = 1;
    tex->have_mipmaps = 0;
    if (tex->gc->ext.nv_texture_rectangle) glDisable(GL_TEXTURE_RECTANGLE_NV);   
-   glEnable(GL_TEXTURE_2D);
+//   glEnable(GL_TEXTURE_2D);
    if (tex->not_power_of_two)
      {
 	glEnable(GL_TEXTURE_RECTANGLE_NV);
@@ -197,6 +207,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
    else
      {
 	glDisable(GL_TEXTURE_RECTANGLE_NV);
+	glEnable(GL_TEXTURE_2D);//
 	target = GL_TEXTURE_2D;
      }
      
@@ -221,6 +232,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+   tex->smooth = 0;
    
    im_data = im->image->data;
    im_w = im->image->w;
@@ -311,7 +323,6 @@ evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int s
    else texfmt = GL_RGB8;
    pixfmt = NATIVE_PIX_FORMAT;
    
-   printf("building mipmaps... [%i x %i]\n", tw, th);
    if (tex->gc->ext.nv_texture_rectangle) glDisable(GL_TEXTURE_RECTANGLE_NV);
    glEnable(GL_TEXTURE_2D);
    glBindTexture(GL_TEXTURE_2D, tex->texture);

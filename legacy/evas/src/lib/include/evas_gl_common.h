@@ -131,6 +131,7 @@ struct _Evas_GL_Font_Texture
 {
    Evas_GL_Context                      *gc;
    int                                   x, y, w, h;
+   double                                tx1, ty1, tx2, ty2;
    int                                   aw, ah;
    GLuint                                texture;   
    Evas_GL_Font_Texture_Pool            *pool;

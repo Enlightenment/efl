@@ -91,6 +91,20 @@ evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
    gc->font_texture = ft->texture;
    gc->font_texture_not_power_of_two = ft->pool->not_power_of_two;
    gc->change.texture = 1;
+   if (ft->pool->not_power_of_two)
+     {
+	ft->tx1 = ft->x;
+	ft->ty1 = ft->y;
+	ft->tx2 = ft->x + ft->w;
+	ft->ty2 = ft->y + ft->h;
+     }
+   else
+     {
+	ft->tx1 = (double)(ft->x        ) / (double)(ft->pool->w);
+	ft->ty1 = (double)(ft->y        ) / (double)(ft->pool->h);
+	ft->tx2 = (double)(ft->x + ft->w) / (double)(ft->pool->w);
+	ft->ty2 = (double)(ft->y + ft->h) / (double)(ft->pool->h);
+     }
    
    return ft;
 }
@@ -110,51 +124,41 @@ evas_gl_font_texture_free(Evas_GL_Font_Texture *ft)
 void
 evas_gl_font_texture_draw(Evas_GL_Context *gc, void *surface, RGBA_Draw_Context *dc, RGBA_Font_Glyph *fg, int x, int y)
 {
-   int r, g, b, a;
    Evas_GL_Font_Texture *ft;
-   
+
+   /* 35 */
    ft = fg->ext_dat;
    if (!ft) return;
-   a = (dc->col.col >> 24) & 0xff;
-   r = (dc->col.col >> 16) & 0xff;
-   g = (dc->col.col >> 8 ) & 0xff;
-   b = (dc->col.col      ) & 0xff;
-   evas_gl_common_context_color_set(gc, r, g, b, a);
-   if (dc->clip.use)
-     evas_gl_common_context_clip_set(gc, 1,
-				     dc->clip.x, dc->clip.y,
-				     dc->clip.w, dc->clip.h);
-   else
-     evas_gl_common_context_clip_set(gc, 0,
-				     0, 0, 0, 0);
-   evas_gl_common_context_font_texture_set(gc, ft);
-   evas_gl_common_context_blend_set(gc, 1);
-   evas_gl_common_context_read_buf_set(gc, GL_BACK);
-   evas_gl_common_context_write_buf_set(gc, GL_BACK);
+   if (surface == 0)
      {
-	double tx1, ty1, tx2, ty2;
+	int r, g, b, a;
 	
-	if (ft->pool->not_power_of_two)
-	  {
-	     tx1 = ft->x;
-	     ty1 = ft->y;
-	     tx2 = ft->x + ft->w;
-	     ty2 = ft->y + ft->h;
-	  }
+	a = (dc->col.col >> 24) & 0xff;
+	r = (dc->col.col >> 16) & 0xff;
+	g = (dc->col.col >> 8 ) & 0xff;
+	b = (dc->col.col      ) & 0xff;
+	evas_gl_common_context_color_set(gc, r, g, b, a);
+	if (dc->clip.use)
+	  evas_gl_common_context_clip_set(gc, 1,
+					  dc->clip.x, dc->clip.y,
+					  dc->clip.w, dc->clip.h);
 	else
-	  {
-	     tx1 = (double)(ft->x        ) / (double)(ft->pool->w);
-	     ty1 = (double)(ft->y        ) / (double)(ft->pool->h);
-	     tx2 = (double)(ft->x + ft->w) / (double)(ft->pool->w);
-	     ty2 = (double)(ft->y + ft->h) / (double)(ft->pool->h);
-	  }
-	glBegin(GL_QUADS);
-	glTexCoord2d(tx1, ty1); glVertex2i(x        , y        );
-	glTexCoord2d(tx2, ty1); glVertex2i(x + ft->w, y        );
-	glTexCoord2d(tx2, ty2); glVertex2i(x + ft->w, y + ft->h);
-	glTexCoord2d(tx1, ty2); glVertex2i(x        , y + ft->h);
-	glEnd();	
+	  evas_gl_common_context_clip_set(gc, 0,
+					  0, 0, 0, 0);
+	evas_gl_common_context_blend_set(gc, 1);
+	evas_gl_common_context_read_buf_set(gc, GL_BACK);
+	evas_gl_common_context_write_buf_set(gc, GL_BACK);
      }
+   /* 32 */
+   evas_gl_common_context_font_texture_set(gc, ft);
+   /* 32 */
+   glBegin(GL_QUADS);
+   glTexCoord2d(ft->tx1, ft->ty1); glVertex2i(x        , y        );
+   glTexCoord2d(ft->tx2, ft->ty1); glVertex2i(x + ft->w, y        );
+   glTexCoord2d(ft->tx2, ft->ty2); glVertex2i(x + ft->w, y + ft->h);
+   glTexCoord2d(ft->tx1, ft->ty2); glVertex2i(x        , y + ft->h);
+   glEnd();
+   /* 28 */
 }
 
 static Evas_GL_Font_Texture_Pool_Allocation *
@@ -220,7 +224,7 @@ _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
    /* we dont want this mipmapped if sgis_generate_mipmap will mipmap it */
    if (gc->ext.sgis_generate_mipmap)
      glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_FALSE);
-   glEnable(GL_TEXTURE_2D);
+//   glEnable(GL_TEXTURE_2D);
    if (fp->not_power_of_two)
      {
 	glEnable(GL_TEXTURE_RECTANGLE_NV);
@@ -228,17 +232,18 @@ _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
 	/* FIXME check gl error */
 	
 	glBindTexture(GL_TEXTURE_RECTANGLE_NV, fp->texture);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_RECTANGLE_NV, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_RECTANGLE_NV, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_RECTANGLE_NV, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_RECTANGLE_NV, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, 
-		     GL_ALPHA8, fp->w, fp->h, 0,
+		     GL_ALPHA4, fp->w, fp->h, 0,
 		     GL_ALPHA, GL_UNSIGNED_BYTE, NULL);
 	/* FIXME check gl error */
      }
    else
      {
+	glEnable(GL_TEXTURE_2D);
 	glGenTextures(1, &(fp->texture));
 	/* FIXME check gl error */
 	
@@ -248,7 +253,7 @@ _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	glTexImage2D(GL_TEXTURE_2D, 0, 
-		     GL_ALPHA8, fp->w, fp->h, 0,
+		     GL_ALPHA4, fp->w, fp->h, 0,
 		     GL_ALPHA, GL_UNSIGNED_BYTE, NULL);
 	/* FIXME check gl error */
      }
