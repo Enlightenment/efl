@@ -19,10 +19,24 @@ void
 ecore_x_event_mask_set(Ecore_X_Window w, long mask)
 {
    XWindowAttributes attr;
+   XSetWindowAttributes s_attr;
 
    memset(&attr, 0, sizeof(XWindowAttributes));
    XGetWindowAttributes(_ecore_x_disp, w, &attr);
-   XSelectInput(_ecore_x_disp, w, mask | attr.your_event_mask);
+   s_attr.event_mask = mask | attr.your_event_mask;
+   XChangeWindowAttributes(_ecore_x_disp, w, CWEventMask, &s_attr);
+}
+
+void
+ecore_x_event_mask_unset(Ecore_X_Window w, long mask)
+{
+   XWindowAttributes attr;
+   XSetWindowAttributes s_attr;
+
+   memset(&attr, 0, sizeof(XWindowAttributes));
+   XGetWindowAttributes(_ecore_x_disp, w, &attr);
+   s_attr.event_mask = attr.your_event_mask & ~mask;
+   XChangeWindowAttributes(_ecore_x_disp, w, CWEventMask, &s_attr);
 }
 
 static void
