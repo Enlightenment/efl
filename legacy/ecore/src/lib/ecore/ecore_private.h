@@ -65,8 +65,8 @@ struct _Ecore_Timer
    ECORE_MAGIC;
    double       in;
    double       at;
-   char         delete_me : 1;
-   char         just_added : 1;
+   signed char  delete_me : 1;
+   signed char  just_added : 1;
    int        (*func) (void *data);
    void        *data;
 };
