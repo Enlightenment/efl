@@ -927,17 +927,19 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
       if (_ecore_x_selection_convert(xnotify.selection, xnotify.target,
                &data) == -1)
       {
-         data = malloc(sd->length);
-         memcpy(data, sd->data, sd->length);
+         /* Refuse selection, conversion to requested target failed */
+         xnotify.property = None;
       }
-      
-      /* FIXME: This does not properly handle large data transfers */
-      ecore_x_window_prop_property_set(xevent->xselectionrequest.requestor,
-            xevent->xselectionrequest.property,
-            xevent->xselectionrequest.target,
-            8, data, sd->length);
-      xnotify.property = xevent->xselectionrequest.property;
-      free(data);
+      else
+      {
+         /* FIXME: This does not properly handle large data transfers */
+         ecore_x_window_prop_property_set(xevent->xselectionrequest.requestor,
+               xevent->xselectionrequest.property,
+               xevent->xselectionrequest.target,
+               8, data, sd->length);
+         xnotify.property = xevent->xselectionrequest.property;
+         free(data);
+      }
    }
    else
    {
