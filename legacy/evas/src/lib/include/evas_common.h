@@ -532,19 +532,26 @@ Evas_List *evas_list_prepend_relative   (Evas_List *list, void *data, void *rela
 Evas_List *evas_list_remove             (Evas_List *list, void *data);
 Evas_List *evas_list_remove_list        (Evas_List *list, Evas_List *remove_list);
 void      *evas_list_find               (Evas_List *list, void *data);
+Evas_List *evas_list_find_list          (Evas_List *list, void *data);
 Evas_List *evas_list_free               (Evas_List *list);
 Evas_List *evas_list_last               (Evas_List *list);
+Evas_List *evas_list_next               (Evas_List *list);
+Evas_List *evas_list_prev               (Evas_List *list);
+void      *evas_list_data               (Evas_List *list);
 int        evas_list_count              (Evas_List *list);
 void      *evas_list_nth                (Evas_List *list, int n);
+Evas_List *evas_list_nth_list           (Evas_List *list, int n);
 Evas_List *evas_list_reverse            (Evas_List *list);
-
+int        evas_list_alloc_error        (void);
+   
 Evas_Hash *evas_hash_add                (Evas_Hash *hash, const char *key, void *data);
 Evas_Hash *evas_hash_del                (Evas_Hash *hash, const char *key, void *data);
 void      *evas_hash_find               (Evas_Hash *hash, const char *key);
 int        evas_hash_size               (Evas_Hash *hash);
 void       evas_hash_free               (Evas_Hash *hash);
 void       evas_hash_foreach            (Evas_Hash *hash, int (*func) (Evas_Hash *hash, const char *key, void *data, void *fdata), void *fdata);
-
+int        evas_hash_alloc_error        (void);
+   
 void *evas_object_list_append           (void *in_list, void *in_item);
 void *evas_object_list_prepend          (void *in_list, void *in_item);
 void *evas_object_list_append_relative  (void *in_list, void *in_item, void *in_relative);

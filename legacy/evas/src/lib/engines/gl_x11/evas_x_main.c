@@ -5,6 +5,6 @@
 #include <X11/Xutil.h>
 
 void
-x_gl_x11_init(void)
+evas_gl_x11_init(void)
 {
 }

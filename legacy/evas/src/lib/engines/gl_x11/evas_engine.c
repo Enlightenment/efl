@@ -226,7 +226,7 @@ evas_engine_gl_x11_output_setup(int w, int h, int rot, Display *disp, Drawable d
    draw_init();
    tilebuf_init();
    
-   x_gl_x11_init();
+   evas_gl_x11_init();
    
    return re;
 }

@@ -20,6 +20,7 @@ evas_hash_gen(const char *key)
    return (int)hash_num;
 }
 
+/* FIXME: document this file next */
 Evas_Hash *
 evas_hash_add(Evas_Hash *hash, const char *key, void *data)
 {
@@ -51,7 +52,7 @@ evas_hash_add(Evas_Hash *hash, const char *key, void *data)
         el->key = strdup(key);
 	if (!el->key)
 	  {
-	     free(key);
+	     free(el);
 	     _evas_hash_alloc_error = 1;
 	     return hash;
 	  }
@@ -67,8 +68,8 @@ evas_hash_add(Evas_Hash *hash, const char *key, void *data)
    if (evas_list_alloc_error())
      {
 	_evas_hash_alloc_error = 1;
-	free(el->key);
-	free(key);
+	if (el->key) free(el->key);
+	free(el);
 	return hash;
      }
    hash->population++;
@@ -123,6 +124,7 @@ evas_hash_find(Evas_Hash *hash, const char *key)
 	  {
 	     if (l != hash->buckets[hash_num])
 	       {
+		  /* FIXME: move to front of list without alloc */
 		  hash->buckets[hash_num] = evas_object_list_remove(hash->buckets[hash_num], el);
 		  hash->buckets[hash_num] = evas_object_list_prepend(hash->buckets[hash_num], el);
 		  if (evas_list_alloc_error())
@@ -183,7 +185,7 @@ evas_hash_foreach(Evas_Hash *hash, int (*func) (Evas_Hash *hash, const char *key
 	     
 	     next_l = l->next;
 	     el = (Evas_Hash_El *)l;
-	     func(hash, el->key, el->data, fdata);
+	     if (!func(hash, el->key, el->data, fdata)) return;
 	     l = next_l;
 	  }
      }
