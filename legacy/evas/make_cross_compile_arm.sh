@@ -2,17 +2,48 @@
 
 make clean distclean
 ./configure \
---enable-fb \
---enable-image-loader-png \
---enable-image-loader-jpeg \
---enable-image-loader-eet \
---enable-cpu-c \
---enable-scale-smooth \
---enable-scale-sample \
---enable-convert-16-rgb-ipq \
---enable-convert-16-rgb-rot-270
-
-#--enable-small-dither-mask \
+--disable-software-x11 \
+--disable-directfb \
+ --enable-fb \
+--disable-buffer \
+--disable-software-qtopia \
+--disable-gl-x11 \
+ --enable-image-loader-png \
+ --enable-image-loader-jpeg \
+ --enable-image-loader-eet \
+--disable-image-loader-edb \
+ --enable-font-loader-eet \
+--disable-cpu-mmx \
+--disable-cpu-sse \
+--disable-cpu-altivec \
+ --enable-cpu-c \
+ --enable-scale-sample \
+ --enable-scale-smooth \
+ --enable-convert-yuv \
+--disable-small-dither-mask \
+--disable-convert-8-rgb-332 \
+--disable-convert-8-rgb-666 \
+--disable-convert-8-rgb-232 \
+--disable-convert-8-rgb-222 \
+--disable-convert-8-rgb-221 \
+--disable-convert-8-rgb-121 \
+--disable-convert-8-rgb-111 \
+--disable-convert-16-rgb-565 \
+--disable-convert-16-rgb-555 \
+--disable-convert-16-rgb-444 \
+ --enable-convert-16-rgb-ipq \
+--disable-convert-16-rgb-rot-0 \
+ --enable-convert-16-rgb-rot-270 \
+--disable-convert-16-rgb-rot-90 \
+--disable-convert-24-rgb-888 \
+--disable-convert-24-bgr-888 \
+--disable-convert-32-rgb-8888 \
+--disable-convert-32-rgbx-8888 \
+--disable-convert-32-bgr-8888 \
+--disable-convert-32-bgrx-8888 \
+--disable-convert-32-rgb-rot-0 \
+--disable-convert-32-rgb-rot-270 \
+--disable-convert-32-rgb-rot-90
 
 CC="/skiff/local/bin/arm-linux-gcc"
 ST="/skiff/local/bin/arm-linux-strip"
