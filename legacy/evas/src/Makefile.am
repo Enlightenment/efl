@@ -52,6 +52,8 @@ evas_x11_routines.c \
 evas_image_routines.h \
 evas_imlib_routines.h \
 evas_x11_routines.h \
+evas_render_routines.c \
+evas_render_routines.h \
 Evas.h \
 Evas_private.h
 

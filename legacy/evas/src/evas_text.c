@@ -8,6 +8,7 @@
 #include "evas_imlib_routines.h"
 #include "evas_image_routines.h"
 #include "evas_x11_routines.h"
+#include "evas_render_routines.h"
 
 static void
 _evas_free_text(Evas_Object o)
@@ -111,6 +112,20 @@ evas_add_text(Evas e, char *font, int size, char *text)
 	       }
 	     break;
 	  case RENDER_METHOD_ALPHA_HARDWARE:
+	       {
+		  Evas_Render_Font *fn;
+		  
+		  fn = __evas_render_text_font_new (e->current.display, 
+						oo->current.font, 
+						oo->current.size);
+		  if (fn)
+		    {
+		       __evas_render_text_get_size(fn, oo->current.text, 
+					       &oo->current.string.w, 
+					       &oo->current.string.h);
+		       __evas_render_text_font_free(fn);
+		    }
+	       }
 	     break;
 	  case RENDER_METHOD_IMAGE:
 	       {
@@ -259,6 +274,22 @@ evas_text_at_position(Evas e, Evas_Object o, double x, double y,
 	  }
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	  {
+	     int ret;
+	     Evas_Render_Font *fn;
+	     
+	     fn = __evas_render_text_font_new(e->current.display, oo->current.font, oo->current.size);
+	     if (fn)
+	       {
+		  ret =  __evas_render_text_get_character_at_pos(fn, oo->current.text,
+							     (int)(x - o->current.x),
+							     (int)(y - o->current.y),
+							     char_x, char_y, 
+							     char_w, char_h);
+		  __evas_gl_text_font_free(fn);
+		  return ret;
+	       }
+	  }
 	break;
      case RENDER_METHOD_IMAGE:
 	  {
@@ -342,6 +373,19 @@ evas_text_at(Evas e, Evas_Object o, int index,
 	  }
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	  {
+	     Evas_Render_Font *fn;
+	     
+	     fn = __evas_render_text_font_new(e->current.display, oo->current.font, oo->current.size);
+	     if (fn)
+	       {
+		  __evas_render_text_get_character_number(fn, oo->current.text,
+						      index,
+						      char_x, char_y, 
+						      char_w, char_h);
+		  __evas_render_text_font_free(fn);
+	       }
+	  }
 	break;
      case RENDER_METHOD_IMAGE:
 	  {
@@ -417,6 +461,17 @@ evas_text_get_ascent_descent(Evas e, Evas_Object o,
 	  }
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	  {
+	     Evas_Render_Font *fn;
+	     
+	     fn = __evas_render_text_font_new(e->current.display, oo->current.font, oo->current.size);
+	     if (fn)
+	       {
+		  a = __evas_render_text_font_get_ascent(fn);
+		  d = __evas_render_text_font_get_descent(fn);
+		  __evas_render_text_font_free(fn);
+	       }
+	  }
 	break;
      case RENDER_METHOD_IMAGE:
 	  {
@@ -492,6 +547,17 @@ evas_text_get_max_ascent_descent(Evas e, Evas_Object o,
 	  }
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	  {
+	     Evas_Render_Font *fn;
+	     
+	     fn = __evas_render_text_font_new(e->current.display, oo->current.font, oo->current.size);
+	     if (fn)
+	       {
+		  a = __evas_render_text_font_get_max_ascent(fn);
+		  d = __evas_render_text_font_get_max_descent(fn);
+		  __evas_render_text_font_free(fn);
+	       }
+	  }
 	break;
      case RENDER_METHOD_IMAGE:
 	  {
@@ -564,6 +630,16 @@ evas_text_get_advance(Evas e, Evas_Object o,
 	  }
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	  {
+	     Evas_Render_Font *fn;
+	     
+	     fn = __evas_render_text_font_new(e->current.display, oo->current.font, oo->current.size);
+	     if (fn)
+	       {
+		  __evas_render_text_font_get_advances(fn, oo->current.text, &a, &d);
+		  __evas_render_text_font_free(fn);
+	       }
+	  }
 	break;
      case RENDER_METHOD_IMAGE:
 	  {
@@ -636,6 +712,17 @@ evas_text_get_inset(Evas e, Evas_Object o)
 	  }
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	  {
+	     Evas_Render_Font *fn;
+	     
+	     fn = __evas_render_text_font_new(e->current.display, oo->current.font, oo->current.size);
+	     if (fn)
+	       {
+		  inset = __evas_render_text_font_get_first_inset(fn, oo->current.text);
+		  __evas_render_text_font_free(fn);
+		  return (double)inset;
+	       }
+	  }
 	break;
      case RENDER_METHOD_IMAGE:
 	  {
@@ -736,6 +823,23 @@ evas_set_text(Evas e, Evas_Object o, char *text)
 			 }
 		       break;
 		    case RENDER_METHOD_ALPHA_HARDWARE:
+			 {
+			    Evas_Render_Font *fn;
+			    
+			    fn = __evas_render_text_font_new (e->current.display,
+							  oo->current.font,
+							  oo->current.size);
+			    if (fn)
+			      {
+				 __evas_render_text_get_size(fn, oo->current.text,
+							 &oo->current.string.w,
+							 &oo->current.string.h);
+				 evas_resize(e, o, 
+					     (double)oo->current.string.w,
+					     (double)oo->current.string.h);
+				 __evas_render_text_font_free(fn);
+			      }
+			 }
 		       break;
 		    case RENDER_METHOD_IMAGE:
 			 {
@@ -852,6 +956,23 @@ evas_set_font(Evas e, Evas_Object o, char *font, int size)
 			 }
 		       break;
 		    case RENDER_METHOD_ALPHA_HARDWARE:
+			 {
+			    Evas_Render_Font *fn;
+			    
+			    fn = __evas_render_text_font_new (e->current.display,
+							  oo->current.font,
+							  oo->current.size);
+			    if (fn)
+			      {
+				 __evas_render_text_get_size(fn, oo->current.text,
+							 &oo->current.string.w,
+							 &oo->current.string.h);
+				 evas_resize(e, o, 
+					     (double)oo->current.string.w,
+					     (double)oo->current.string.h);
+				 __evas_render_text_font_free(fn);
+			      }
+			 }
 		       break;
 		    case RENDER_METHOD_IMAGE:
 			 {

@@ -8,6 +8,7 @@
 #include "evas_imlib_routines.h"
 #include "evas_image_routines.h"
 #include "evas_x11_routines.h"
+#include "evas_render_routines.h"
 
 #ifndef SPANS_COMMON
 #define SPANS_COMMON(x1, w1, x2, w2) \
@@ -243,6 +244,22 @@ evas_render(Evas e)
 	func_poly_draw           = __evas_gl_poly_draw;
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	func_draw_add_rect       = __evas_render_draw_add_rect;
+	func_image_new_from_file = __evas_render_image_new_from_file;
+	func_image_set_borders   = __evas_render_image_set_borders;
+	func_image_draw          = __evas_render_image_draw;
+	func_image_free          = __evas_render_image_free;
+	func_flush_draw          = __evas_render_flush_draw;
+	func_init                = __evas_render_init;
+	func_image_get_width     = __evas_render_image_get_width;
+	func_image_get_height    = __evas_render_image_get_height;
+	func_text_font_new       = __evas_render_text_font_new;
+	func_text_font_free      = __evas_render_text_font_free;
+	func_text_draw           = __evas_render_text_draw;
+	func_rectangle_draw      = __evas_render_rectangle_draw;
+	func_line_draw           = __evas_render_line_draw;
+	func_gradient_draw       = __evas_render_gradient_draw;
+	func_poly_draw           = __evas_render_poly_draw;
 	break;
      case RENDER_METHOD_IMAGE:
 	func_draw_add_rect       = __evas_image_draw_add_rect;
@@ -800,6 +817,13 @@ evas_get_optimal_visual(Evas e, Display *disp)
 	  }
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	if (__evas_render_capable(disp))
+	   return __evas_render_get_visual(disp, e->current.screen);
+	else
+	  {
+	     e->current.render_method = RENDER_METHOD_ALPHA_SOFTWARE;
+	     return evas_get_optimal_visual(e, disp);
+	  }
 	break;
      case RENDER_METHOD_IMAGE:
 	if (__evas_image_capable(disp))
@@ -846,6 +870,13 @@ evas_get_optimal_colormap(Evas e, Display *disp)
 	  }
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	if (__evas_render_capable(disp))
+	   return __evas_render_get_colormap(disp, e->current.screen);
+	else
+	  {
+	     e->current.render_method = RENDER_METHOD_ALPHA_SOFTWARE;
+	     return evas_get_optimal_colormap(e, disp);
+	  }
 	break;
      case RENDER_METHOD_IMAGE:
 	if (__evas_image_capable(disp))
@@ -966,6 +997,7 @@ evas_set_scale_smoothness(Evas e, int smooth)
 	__evas_gl_image_set_smooth_scaling(smooth);
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	__evas_render_image_set_smooth_scaling(smooth);
 	break;
      case RENDER_METHOD_IMAGE:
 	__evas_image_image_set_smooth_scaling(smooth);

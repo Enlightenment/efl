@@ -8,6 +8,7 @@
 #include "evas_imlib_routines.h"
 #include "evas_image_routines.h"
 #include "evas_x11_routines.h"
+#include "evas_render_routines.h"
 
 void _evas_layer_free(Evas e, Evas_Layer layer);
 
@@ -328,6 +329,7 @@ evas_set_font_cache(Evas e, int size)
 	__evas_gl_text_cache_set_size(e->current.display, size);
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	__evas_render_text_cache_set_size(e->current.display, size);
 	break;
      case RENDER_METHOD_IMAGE:
 	__evas_image_text_cache_set_size(e->current.display, size);
@@ -354,6 +356,7 @@ evas_get_font_cache(Evas e)
 	return __evas_gl_text_cache_get_size(e->current.display);
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	return __evas_render_text_cache_get_size(e->current.display);
 	break;
      case RENDER_METHOD_IMAGE:
 	return __evas_image_text_cache_get_size(e->current.display);
@@ -381,6 +384,7 @@ evas_flush_font_cache(Evas e)
 	__evas_gl_text_cache_empty(e->current.display);
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	__evas_render_text_cache_empty(e->current.display);
 	break;
      case RENDER_METHOD_IMAGE:
 	__evas_image_text_cache_empty(e->current.display);
@@ -407,6 +411,7 @@ evas_set_image_cache(Evas e, int size)
 	__evas_gl_image_cache_set_size(e->current.display, size);
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	__evas_render_image_cache_set_size(e->current.display, size);
 	break;
      case RENDER_METHOD_IMAGE:
 	__evas_image_image_cache_set_size(e->current.display, size);
@@ -433,6 +438,7 @@ evas_get_image_cache(Evas e)
 	return __evas_gl_image_cache_get_size(e->current.display);
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	return __evas_render_image_cache_get_size(e->current.display);
 	break;
      case RENDER_METHOD_IMAGE:
 	return __evas_image_image_cache_get_size(e->current.display);
@@ -460,6 +466,7 @@ evas_flush_image_cache(Evas e)
 	__evas_gl_image_cache_empty(e->current.display);
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	__evas_render_image_cache_empty(e->current.display);
 	break;
      case RENDER_METHOD_IMAGE:
 	__evas_image_image_cache_empty(e->current.display);
@@ -488,6 +495,7 @@ evas_font_add_path(Evas e, char *path)
 	__evas_gl_text_font_add_path(path);
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	__evas_render_text_font_add_path(path);
 	break;
      case RENDER_METHOD_IMAGE:
 	__evas_image_text_font_add_path(path);
@@ -515,6 +523,7 @@ evas_font_del_path(Evas e, char *path)
 	__evas_gl_text_font_del_path(path);
 	break;
      case RENDER_METHOD_ALPHA_HARDWARE:
+	__evas_render_text_font_del_path(path);
 	break;
      case RENDER_METHOD_IMAGE:
 	__evas_image_text_font_del_path(path);
