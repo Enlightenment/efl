@@ -355,6 +355,20 @@ e_window_input_new(Window parent, int x, int y, int w, int h)
 }
 
 void
+e_window_set_events_propagate(Window win, int propagate)
+{
+   XSetWindowAttributes attr;
+   
+   if (!win)
+     win = default_root;
+   if (!propagate)
+     attr.do_not_propagate_mask = True;
+   else
+     attr.do_not_propagate_mask = False;
+   XChangeWindowAttributes(disp, win, CWDontPropagate, &attr);
+}
+
+void
 e_window_show(Window win)
 {
    E_XID              *xid = NULL;
@@ -782,7 +796,11 @@ e_key_get_keysym_from_keycode(KeyCode keycode)
 char               *
 e_key_get_string_from_keycode(KeyCode keycode)
 {
-   return strdup(XKeysymToString(e_key_get_keysym_from_keycode(keycode)));
+   char *str;
+   
+   str = XKeysymToString(e_key_get_keysym_from_keycode(keycode));
+   if (!str) return strdup("");
+   return strdup(str);
 }
 
 void
@@ -2798,6 +2816,8 @@ e_window_stack_above(Window win, Window above)
 {
    XWindowChanges xwc;
    
+   if (win == 0)
+     win = default_root;
    xwc.sibling = above;
    xwc.stack_mode = Above;
    XConfigureWindow(disp, win, CWSibling | CWStackMode, &xwc);
@@ -2808,7 +2828,65 @@ e_window_stack_below(Window win, Window below)
 {
    XWindowChanges xwc;
    
+   if (win == 0)
+     win = default_root;
    xwc.sibling = below;
    xwc.stack_mode = Below;
    XConfigureWindow(disp, win, CWSibling | CWStackMode, &xwc);
+}
+
+char *
+e_window_get_title(Window win)
+{
+   XTextProperty       xtp;
+   
+   if (win == 0)
+     win = default_root;
+   if (XGetWMName(disp, win, &xtp))
+     {
+	int                 items;
+	char              **list;
+	Status              s;
+	char               *title = NULL;
+	
+	if (xtp.format == 8)
+	  {
+	     s = XmbTextPropertyToTextList(disp, &xtp, &list, &items);
+	     if ((s == Success) && (items > 0))
+	       {
+		  title = strdup(*list);
+		  XFreeStringList(list);
+	       }
+	     else title = strdup((char *)xtp.value);
+	  }
+	else title = strdup((char *)xtp.value);
+	XFree(xtp.value);
+	return title;
+     }
+   return NULL;
+}
+
+static Window keyboard_grab_win = 0;
+
+void
+e_keyboard_grab(Window win)
+{
+   int status;
+   
+   if (keyboard_grab_win) return;
+   if (win == 0)
+     win = default_root;
+   keyboard_grab_win = win;
+   status = XGrabKeyboard(disp, win, False, GrabModeAsync, GrabModeAsync, CurrentTime);
+   if ((status == AlreadyGrabbed) || (status == GrabNotViewable) ||
+       (status == GrabFrozen) || (status == GrabInvalidTime))
+       keyboard_grab_win = 0;
+}
+
+void
+e_keyboard_ungrab(void)
+{
+   if (!keyboard_grab_win) return;
+   keyboard_grab_win = 0;
+   XUngrabKeyboard(disp, CurrentTime);
 }

@@ -79,11 +79,10 @@ void                e_sync(void);
 void                e_flush(void);
 Window              e_window_new(Window parent, int x, int y, int w, int h);
 Window              e_window_override_new(Window parent, int x, int y, int w,
-
 					  int h);
 Window              e_window_input_new(Window parent, int x, int y, int w,
-
 				       int h);
+void                e_window_set_events_propagate(Window win, int propagate);
 void                e_window_show(Window win);
 void                e_window_hide(Window win);
 Pixmap              e_pixmap_new(Window win, int w, int h, int dep);
@@ -268,7 +267,10 @@ int                 e_window_is_manageable(Window win);
 void                e_windows_restack(Window *wins, int num);
 void                e_window_stack_above(Window win, Window above);
 void                e_window_stack_below(Window win, Window below);
-
+char               *e_window_get_title(Window win);
+void                e_keyboard_grab(Window win);
+void                e_keyboard_ungrab(void);
+    
 typedef struct _eev Eevent;
 typedef struct _ev_fd_handler Ev_Fd_Handler;
 typedef struct _ev_pid_handler Ev_Pid_Handler;
