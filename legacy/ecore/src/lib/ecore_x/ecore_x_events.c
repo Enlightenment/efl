@@ -1176,7 +1176,7 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
       if (!e) return;
       e->win = _xdnd->dest;
       e->source = _xdnd->source;
-      ecore_event_add(ECORE_X_EVENT_XDND_ENTER, e, NULL, NULL);
+      ecore_event_add(ECORE_X_EVENT_XDND_LEAVE, e, NULL, NULL);
    }
    else if (xevent->xclient.message_type == _ecore_x_atom_xdnd_drop)
    {
