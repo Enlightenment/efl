@@ -345,9 +345,10 @@ void *ecore_hash_remove(Ecore_Hash *hash, void *key)
 
 		if (node) {
 			ecore_list_remove(list);
-
 			ret = node->value;
-			FREE(node);
+			node->value = NULL;
+			_ecore_hash_node_destroy(node, hash->free_key,
+						 hash->free_value);
 		}
 	}
 
