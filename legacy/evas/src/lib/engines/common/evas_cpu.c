@@ -4,7 +4,9 @@
 #include "evas_mmx.h"
 #endif
 
-static jmp_buf detect_buf;
+#include <setjmp.h>
+
+static sigjmp_buf detect_buf;
 static int cpu_feature_mask = 0;
 
 static void evas_common_cpu_catch_ill(int sig);
@@ -12,7 +14,7 @@ static void evas_common_cpu_catch_ill(int sig);
 static void
 evas_common_cpu_catch_ill(int sig)
 {
-   longjmp(detect_buf, 1);
+   siglongjmp(detect_buf, 1);
 }
 
 #if ( \
@@ -81,7 +83,7 @@ evas_common_cpu_feature_test(void (*feature)(void))
    act.sa_flags = SA_RESTART;
    sigemptyset(&act.sa_mask);
    sigaction(SIGILL, &act, &oact);
-   if (setjmp(detect_buf))
+   if (sigsetjmp(detect_buf, 1))
      {
 	sigaction(SIGILL, &oact, NULL);
 	return 0;
