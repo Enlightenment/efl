@@ -900,7 +900,7 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
      memcpy(data2, data, size);
 
    /* Does this node already exist? */
-   if (ef->mode = EET_FILE_MODE_RW)
+   if (ef->mode == EET_FILE_MODE_RW)
      {
 	int i;
 	for (i = 0; i < node_size; i++)
