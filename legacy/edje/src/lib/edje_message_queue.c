@@ -61,16 +61,16 @@ edje_object_message_signal_process(Evas_Object *obj)
 	tmp_msgq = tmpq;
 	tmpq = NULL;
      }
-
-	while (tmp_msgq)
-	  {
-	     Edje_Message *em;
-	     
-	     em = tmp_msgq->data;
-	     tmp_msgq = evas_list_remove_list(tmp_msgq, tmp_msgq);
-	     _edje_message_process(em);
-	     _edje_message_free(em);
-	  }
+   
+   while (tmp_msgq)
+     {
+	Edje_Message *em;
+	
+	em = tmp_msgq->data;
+	tmp_msgq = evas_list_remove_list(tmp_msgq, tmp_msgq);
+	_edje_message_process(em);
+	_edje_message_free(em);
+     }
 }
 
 void

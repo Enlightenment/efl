@@ -1331,18 +1331,40 @@ _edje_embryo_test_run(Edje *ed, char *fname, char *sig, char *src)
    if (fn != EMBRYO_FUNCTION_NONE)
      {
 	void *pdata;
+	int ret;
 	
 	embryo_parameter_string_push(ed->collection->script, sig);
 	embryo_parameter_string_push(ed->collection->script, src);
 	pdata = embryo_program_data_get(ed->collection->script);
 	embryo_program_data_set(ed->collection->script, ed);
-	if (!embryo_program_run(ed->collection->script, fn))
+	/* 5 million instructions is an arbitary number. on my p4-2.6 here */
+	/* IF embryo is ONLY runing embryo stuff and NO native calls thats */
+	/* about 0.016 seconds, and longer on slower cpu's. if a simple */
+	/* embryo scritp snippet hasn't managed to do its work in 5 MILLION */
+	/* embryo virtual machine instructions - something is wrong, or */
+	/* embryo is simply being mis-used. Embryo is meant to be minimal */
+	/* logic enhancment - not entire applications. this cycle count */
+	/* does NOT include time spent in native function calls, that the */
+	/* scritp may call to do the REAL work, so in terms of time this */
+	/* will likely end up being much longer than 0.016 seconds - more */
+	/* like 0.03 - 0.05 seconds or even more */
+	embryo_program_max_cycle_run_set(ed->collection->script, 5000000);
+	ret = embryo_program_run(ed->collection->script, fn);
+	if (ret == EMBRYO_PROGRAM_FAIL)
 	  {
 	     printf("EDJE:        ERROR with embryo script.\n"
 		    "ENTRY POINT: %s\n"
 		    "ERROR:       %s\n",
 		    fname,
 		    embryo_error_string_get(embryo_program_error_get(ed->collection->script)));
+	  }
+	else if (ret == EMBRYO_PROGRAM_TOOLONG)
+	  {
+	     printf("EDJE:        ERROR with embryo script.\n"
+		    "ENTRY POINT: %s\n"
+		    "ERROR:       Script exceeded maximum allowed cycle count of %i\n",
+		    fname,
+		    embryo_program_max_cycle_run_get(ed->collection->script));
 	  }
 	embryo_program_data_set(ed->collection->script, pdata);
      }
