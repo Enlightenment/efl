@@ -116,7 +116,7 @@ fn_rect(double v, double val, int no)
 	init = 1;
 	for (i = 0; i < 8; i++)
 	  {
-	     coords[(i * 4) + 0] = ((1024 - 128) / 2) + ((rand() % 500) - 250) - 165;
+	     coords[(i * 4) + 0] = ((1024 - 128) / 2) + ((rand() % 500) - 250);
 	     coords[(i * 4) + 1] = ((768) / 2) + ((rand() % 200) - 0);
 	     coords[(i * 4) + 2] = 30 + (rand() % 300);
 	     coords[(i * 4) + 3] = 20 + (rand() % 180);
@@ -305,16 +305,214 @@ fn_poly(double v, double val, int no)
 static void
 fn_text(double v, double val, int no)
 {
+   static Evas_Object o_fn_strings[8] = 
+     {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+   static int colors[] = 
+     {
+	255, 255, 255, 200,
+	0, 0, 0, 160,
+	200, 30, 30, 200,
+	40, 160, 240, 220,
+	30, 50, 200, 255,
+	50, 220, 60, 160,
+	220, 110, 30, 240,
+	200, 60, 220, 180
+     };
+   static char  *strings[] =
+     {
+	"Anti Aliased Text",
+	"In any color you want",
+	"With alpha blending too",
+	"What more could you ask for?",
+	"Evas",
+	"Rancid cheese",
+	"Enlightenment",
+	"Linux"
+     };
+   static char  *fonts[] =
+     {
+	"notepad",
+	"grunge",
+	"morpheus",
+	"cinema",
+	"andover",
+	"grunge",
+	"morpheus",
+	"notepad"
+     };
+   static int sizes[] =
+     {
+	16,
+	28,
+	34,
+	24,
+	48,
+	8,
+	20,
+	34
+     };
+   static double coords[] =
+     {
+	200, 300,
+	350, 340,
+	320, 500,
+	120, 400,
+	500, 450,
+	600, 600,
+	300, 550,
+	330, 447
+     };
+   static double last_val = 0;
+   int i;
+   
+   if (no)
+     {
+	if (last_val != val)
+	  {
+	     for (i = 0; i < 8; i++)
+	       {
+		  if (o_fn_strings[i])
+		     evas_del_object(evas_view, o_fn_strings[i]);
+		  o_fn_strings[i] = NULL;
+	       }
+	  }
+	return;
+     }
+   for (i = 0; i < 8; i++)
+     {
+	double alpha;
+	
+	if (v < 1)
+	   alpha = v;
+	else if (v < 2)
+	   alpha = 1;
+	else alpha = (3 - v);
+	if (!o_fn_strings[i]) 
+	  {
+	     o_fn_strings[i] = evas_add_text(evas_view, fonts[i], sizes[i], strings[i]);
+	     evas_set_layer(evas_view, o_fn_strings[i], 99);
+	  }
+	evas_set_color(evas_view, o_fn_strings[i],
+		       colors[(i * 4) + 0],
+		       colors[(i * 4) + 1],
+		       colors[(i * 4) + 2],
+		       (double)colors[(i * 4) + 3] * alpha);
+	evas_move(evas_view, o_fn_strings[i], 
+		  coords[(i * 2) + 0] + (50 * cos((val * 2.7) + 3.4 + i)), 
+		  coords[(i * 2) + 1] + (20 * sin((val * 3.6) + 1.2 + i))); 
+	evas_show(evas_view, o_fn_strings[i]);
+     }
+   last_val = val;
 }
 
 static void
 fn_grad(double v, double val, int no)
 {
+   static Evas_Object o_fn_grads[8] = 
+     {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+   static double last_val = 0;
+   static double coords[8 * 4];
+   static int    colors[8 * 4 * 4];
+   static int init = 0;
+   int i;
+   
+   if (no)
+     {
+	if (last_val != val)
+	  {
+	     for (i = 0; i < 8; i++)
+	       {
+		  if (o_fn_grads[i])
+		     evas_del_object(evas_view, o_fn_grads[i]);
+		  o_fn_grads[i] = NULL;
+	       }
+	  }
+	return;
+     }
+   if (!init)
+     {
+	init = 1;
+	
+	for (i = 0; i < 8; i++)
+	  {
+	     int j;
+	     
+	     coords[(i * 4) + 0] = ((1024 - 128) / 2) + ((rand() % 500) - 250);
+	     coords[(i * 4) + 1] = ((768) / 2) + ((rand() % 200) - 0);
+	     coords[(i * 4) + 2] = 30 + (rand() % 300);
+	     coords[(i * 4) + 3] = 20 + (rand() % 180);
+	     for (j = 0; j < 4; j++)
+	       {
+		  colors[(i * 4 * 4) + (j * 4) + 0] = rand() & 0xff;
+		  colors[(i * 4 * 4) + (j * 4) + 1] = rand() & 0xff;
+		  colors[(i * 4 * 4) + (j * 4) + 2] = rand() & 0xff;
+		  colors[(i * 4 * 4) + (j * 4) + 3] = ((rand() & 0xff) * (3 - j)) / 3;
+	       }
+	  }
+     }
+   for (i = 0; i < 8; i++)
+     {
+	double alpha;
+	
+	if (v < 1)
+	   alpha = v;
+	else if (v < 2)
+	   alpha = 1;
+	else alpha = (3 - v);
+	if (!o_fn_grads[i]) 
+	   {
+	      o_fn_grads[i] = evas_add_gradient_box(evas_view);
+	      evas_set_layer(evas_view, o_fn_grads[i], 99);
+	   }
+	  {
+	     Evas_Gradient grad;
+	     int j;
+	     
+	     grad = evas_gradient_new();
+	     for (j = 0; j < 4; j++)
+		evas_gradient_add_color(grad, 
+					colors[(i * 4 * 4) + (j * 4) + 0],
+					colors[(i * 4 * 4) + (j * 4) + 1],
+					colors[(i * 4 * 4) + (j * 4) + 2],
+					(double)colors[(i * 4 * 4) + (j * 4) + 3] * alpha,
+					8);
+	     evas_set_gradient(evas_view, o_fn_grads[i], grad);
+	     evas_gradient_free(grad);
+	  }
+	evas_move(evas_view, o_fn_grads[i], 
+		  coords[(i * 4) + 0] + (50 * cos((val * 2.7) + 3.4 + i)), 
+		  coords[(i * 4) + 1] + (20 * sin((val * 3.6) + 1.2 + i))); 
+	evas_resize(evas_view, o_fn_grads[i], 
+		    coords[(i * 4) + 2], coords[(i * 4) + 3]); 
+	evas_set_angle(evas_view, o_fn_grads[i], (val + (double)i) * 60);
+	evas_show(evas_view, o_fn_grads[i]);
+     }
+   last_val = val;
 }
 
 static void
 fn_image(double v, double val, int no)
 {
+   static Evas_Object o_fn_images[8] = 
+     {NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL};
+   static double last_val = 0;
+   static int init = 0;
+   int i;
+   
+   if (no)
+     {
+	if (last_val != val)
+	  {
+	     for (i = 0; i < 8; i++)
+	       {
+		  if (o_fn_images[i])
+		     evas_del_object(evas_view, o_fn_images[i]);
+		  o_fn_images[i] = NULL;
+	       }
+	  }
+	return;
+     }
+   last_val = val;
 }
 
 
@@ -387,7 +585,12 @@ static ImageBlock images[] =
      { 34.0, 2.0, 4.0, 6.0,  150, 400, IMGDIR"evas_test_wonder_6.png", NULL},
      { 38.0, 2.0, 4.0, 6.0,  600,  25, IMGDIR"evas_test_wonder_7.png", NULL},
      { 60.0, 2.0, 8.0, 12.0, 400, 100, IMGDIR"evas_test_cheese.png", NULL},
-     { 100.0, 2.0, 4.0, 6.0, 300,  50, IMGDIR"evas_test_canvas.png", NULL}
+     { 100.0, 2.0, 4.0, 6.0, 300,  50, IMGDIR"evas_test_canvas.png", NULL},
+     { 104.0, 2.0, 4.0, 6.0, 500, 420, IMGDIR"evas_test_anti_alias.png", NULL},
+     { 108.0, 2.0, 4.0, 6.0, 200, 220, IMGDIR"evas_test_alpha1.png", NULL},
+     { 109.0, 2.0, 4.0, 6.0, 200, 220, IMGDIR"evas_test_alpha2.png", NULL},
+     { 112.0, 2.0, 4.0, 6.0, 300, 100, IMGDIR"evas_test_mmx.png", NULL},
+     { 116.0, 2.0, 4.0, 6.0, 400, 200, IMGDIR"evas_test_hardware.png", NULL}
 };
 
 /* functions */
@@ -407,12 +610,14 @@ obscure(Evas e)
    Window win, root, parent, *children, www, prev_win;
    int x, y, w, h, wx, wy, ww, wh;
    unsigned int i, j, num, dummy;
-   
+
+   return;
    evas_clear_obscured_rects(e);
    win = evas_get_window(e);
    disp	= evas_get_display(e);
    evas_get_drawable_size(e, &ww, &wh);
    children = NULL;
+   XGrabServer(disp);
    XQueryTree(disp, win, &root, &parent, &children, &num);
    XTranslateCoordinates(disp, win, root, 0, 0, &wx, &wy, &www);
    do 
@@ -475,6 +680,8 @@ obscure(Evas e)
 	XQueryTree(disp, win, &root, &parent, &children, &num);
      }
    while (1);
+   XUngrabServer(disp);
+   XSync(disp, False);
 }
 
 void
@@ -644,9 +851,11 @@ setup_view(Evas_Render_Method method)
    e = evas_new_all(display, win_base, 128, 0, 1024 - 128, 768,
 			    method, 216, 1 * 1024 * 1024, 8 * 1024 * 1024,
 			    FNTDIR);
+/*   
    if (method == RENDER_METHOD_BASIC_HARDWARE)
       evas_set_scale_smoothness(e, 0);
    else
+ */
       evas_set_scale_smoothness(e, 1);
    win_view = evas_get_window(e);   
    XSelectInput(display, win_view, ButtonPressMask | 
@@ -1152,6 +1361,7 @@ handle_events(void)
 			    evas_update_rect(e, ev.xexpose.x, ev.xexpose.y, ev.xexpose.width, ev.xexpose.height);
 			    break;
 			 case VisibilityNotify:
+/*			    
 			    if (ev.xvisibility.state == VisibilityUnobscured)
 			      {
 				 evas_clear_obscured_rects(e);
@@ -1168,6 +1378,7 @@ handle_events(void)
 			      {
 				 obscure(e);
 			      }
+ */ 
 			    break;
 			 case EnterNotify:
 			    if (e == evas_view)
