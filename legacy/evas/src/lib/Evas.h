@@ -445,8 +445,8 @@ extern "C" {
    EAPI int                    evas_object_textblock_lines_get            (Evas_Object *obj);
    EAPI int                    evas_object_textblock_line_start_pos_get   (Evas_Object *obj);
    EAPI int                    evas_object_textblock_line_end_pos_get     (Evas_Object *obj);
-   EAPI void                   evas_object_textblock_line_get             (Evas_Object *obj, int line, Evas_Coord *lx, Evas_Coord *ly, Evas_Coord *lw, Evas_Coord *lh);
-   EAPI void                   evas_object_textblock_char_pos_get         (Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
+   EAPI Evas_Bool              evas_object_textblock_line_get             (Evas_Object *obj, int line, Evas_Coord *lx, Evas_Coord *ly, Evas_Coord *lw, Evas_Coord *lh);
+   EAPI Evas_Bool              evas_object_textblock_char_pos_get         (Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
    EAPI int                    evas_object_textblock_char_coords_get      (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
    EAPI void                   evas_object_textblock_text_insert          (Evas_Object *obj, const char *text);
    EAPI char                  *evas_object_textblock_text_get             (Evas_Object *obj, int len);

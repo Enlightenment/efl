@@ -10,9 +10,8 @@
  * 
  * things to add:
  * 
- * * expedite seems to show a segv while deleting chars... valgrind this sucker
- * * height increased by 3 (or 1) even if no underline on last line - fix
  * * finish off current api where it is unfinished
+ * * height increased by 3 (or 1) even if no underline on last line - fix
  * * get native extents
  * * styles (outline, glow, etxra glow, shadow, soft shadow, etc.)
  * * if a word (or char) doesnt fit at all do something sensible
@@ -645,6 +644,7 @@ evas_object_textblock_layout(Evas_Object *obj)
 	/*
 	if (layout.line.y >= h) goto breakout;
 	 */
+	lnode = NULL;
 	node = (Node *)l;
 //	printf("NODE: FMT:\"%s\" TXT:\"%s\"\n", node->format, node->text);
 	if (node->format)
@@ -1298,7 +1298,7 @@ evas_object_textblock_line_end_pos_get(Evas_Object *obj)
    return -1;
 }
 
-void
+Evas_Bool
 evas_object_textblock_line_get(Evas_Object *obj, int line, Evas_Coord *lx, Evas_Coord *ly, Evas_Coord *lw, Evas_Coord *lh)
 {
    Evas_Object_Textblock *o;
@@ -1306,11 +1306,11 @@ evas_object_textblock_line_get(Evas_Object *obj, int line, Evas_Coord *lx, Evas_
    int ps;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return;
+   return 0;
    MAGIC_CHECK_END();
    o = (Evas_Object_Textblock *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
-   return;
+   return 0;
    MAGIC_CHECK_END();
    if (o->format.dirty)
      evas_object_textblock_format_calc(obj);
@@ -1338,11 +1338,13 @@ evas_object_textblock_line_get(Evas_Object *obj, int line, Evas_Coord *lx, Evas_
 	     if (ly) *ly = lnode_start->layout.line.y;
 	     if (lw) *lw = lnode_end->layout.line.x - lnode_start->layout.line.x + lnode_end->layout.line.advance;
 	     if (lh) *lh = lnode_start->layout.line.mascent + lnode_start->layout.line.mdescent;
+	     return 1;
 	  }
      }
+   return 0;
 }
 
-void
+Evas_Bool
 evas_object_textblock_char_pos_get(Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Evas_Object_Textblock *o;
@@ -1350,11 +1352,11 @@ evas_object_textblock_char_pos_get(Evas_Object *obj, int pos, Evas_Coord *cx, Ev
    int ps;
    
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
-   return;
+   return 0;
    MAGIC_CHECK_END();
    o = (Evas_Object_Textblock *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Textblock, MAGIC_OBJ_TEXTBLOCK);
-   return;
+   return 0;
    MAGIC_CHECK_END();
    if (o->format.dirty)
      evas_object_textblock_format_calc(obj);
@@ -1376,8 +1378,10 @@ evas_object_textblock_char_pos_get(Evas_Object *obj, int pos, Evas_Coord *cx, Ev
 	     if (cy) *cy = y;
 	     if (cw) *cw = w;
 	     if (ch) *ch = h;
+	     return ret;
 	  }
      }
+   return 0;
 }
 
 int
@@ -1480,6 +1484,7 @@ evas_object_textblock_text_insert(Evas_Object *obj, const char *text)
 	     node->text_len = strlen(node->text);
 	     o->pos = node->text_len;
 	     o->len = node->text_len;
+	     o->nodes = evas_object_list_append(o->nodes, node);
 	  }
 	else
 	  {
@@ -1487,15 +1492,27 @@ evas_object_textblock_text_insert(Evas_Object *obj, const char *text)
 	     char *ntext;
 	     
 	     node = (Node *)(((Evas_Object_List *)(o->nodes))->last);
-	     len = strlen(text);
-	     ntext = malloc(node->text_len + len + 1);
-	     if (node->text) strcpy(ntext, node->text);
-	     strcpy(ntext + node->text_len, text);
-	     if (node->text) free(node->text);
-	     node->text = ntext;
-	     node->text_len += len;
-	     o->pos += len;
-	     o->len += len;
+	     if (node->text)
+	       {
+		  len = strlen(text);
+		  ntext = malloc(node->text_len + len + 1);
+		  if (node->text) strcpy(ntext, node->text);
+		  strcpy(ntext + node->text_len, text);
+		  if (node->text) free(node->text);
+		  node->text = ntext;
+		  node->text_len += len;
+		  o->pos += len;
+		  o->len += len;
+	       }
+	     else
+	       {
+		  node = calloc(1, sizeof(Node));
+		  node->text = strdup(text);
+		  node->text_len = strlen(node->text);
+		  o->pos += node->text_len;
+		  o->len += node->text_len;
+		  o->nodes = evas_object_list_append(o->nodes, node);
+	       }
 	  }
      }
    else
@@ -1638,7 +1655,6 @@ evas_object_textblock_text_del(Evas_Object *obj, int len)
 	remaining = my_len;
 	if (remaining <= (node->text_len - (o->pos - ps)))
 	  {
-	     printf("CASE 1\n");
 	     tmp = node->text;
 	     node->text = malloc(sizeof(char) * (node->text_len - my_len + 1));
 
@@ -1670,7 +1686,6 @@ evas_object_textblock_text_del(Evas_Object *obj, int len)
 	     Evas_List *freenodes = NULL;
 	     Node *node_start = NULL, *node_end = NULL;
 	     
-	     printf("CASE 2\n");
 	     node_start = node_end = node;
 	     tmp = node->text;
 	     node->text = malloc(sizeof(char) * (o->pos - ps + 1));
@@ -1753,9 +1768,11 @@ evas_object_textblock_format_insert(Evas_Object *obj, const char *format)
    /* at the end - just append */
    if (!node)
      {
+	printf("FORMAT INSERT: no node to insert at\n");
 	nformat = evas_object_textblock_format_merge(NULL, (char *)format);
 	if (nformat)
 	  {
+	     printf("end..\n");
 	     node = calloc(1, sizeof(Node));
 	     node->format = nformat;
 	     o->nodes = evas_object_list_append(o->nodes, node);
@@ -1763,22 +1780,52 @@ evas_object_textblock_format_insert(Evas_Object *obj, const char *format)
      }
    else
      {
-	char *ntext1, *ntext2;
-	
-	ntext1 = malloc(o->pos - ps + 1);
-	ntext2 = malloc(node->text_len - (o->pos - ps) + 1);
-	strncpy(ntext1, node->text, o->pos - ps);
-	ntext1[o->pos - ps] = 0;
-	strcpy(ntext2, node->text + o->pos - ps);
-	free(node->text);
-	node->text = ntext1;
-	node->text_len = o->pos - ps;
+	printf("FORMAT INSERT: \"%s\"\n", node->text);
 	nformat = evas_object_textblock_format_merge(NULL, (char *)format);
 	if (nformat)
 	  {
-	     node = calloc(1, sizeof(Node));
-	     node->format = nformat;
-	     o->nodes = evas_object_list_append(o->nodes, node);
+	     char *ntext1 = NULL, *ntext2 = NULL;
+	     int len2;
+	     Node *node_rel;
+	     
+	     len2 = node->text_len - (o->pos - ps);
+	     if (o->pos - ps > 0)
+	       {
+		  ntext1 = malloc(o->pos - ps + 1);
+		  strncpy(ntext1, node->text, o->pos - ps);
+		  ntext1[o->pos - ps] = 0;
+	       }
+	     if (len2 > 0)
+	       {
+		  ntext2 = malloc(len2 + 1);
+		  strcpy(ntext2, node->text + o->pos - ps);
+	       }
+	     if (ntext1)
+	       {
+		  free(node->text);
+		  node->text = ntext1;
+		  node->text_len = o->pos - ps;
+		  
+		  node_rel = node;
+		  node = calloc(1, sizeof(Node));
+		  node->format = nformat;
+		  o->nodes = evas_object_list_append_relative(o->nodes, node, node_rel);
+	       }
+	     else
+	       {
+		  free(node->text);
+		  node->text = NULL;
+		  node->text_len = 0;
+		  node->format = nformat;
+	       }
+	     if (ntext2)
+	       {
+		  node_rel = node;
+		  node = calloc(1, sizeof(Node));
+		  node->text = ntext2;
+		  node->text_len = len2;
+		  o->nodes = evas_object_list_append_relative(o->nodes, node, node_rel);
+	       }
 	  }
      }
    o->native.dirty = 1;
