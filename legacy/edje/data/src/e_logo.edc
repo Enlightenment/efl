@@ -147,16 +147,58 @@ collections {
 	 public global_float;
 	 public global_str;
 	 
+	 public global_click_count;
+	 
 	 public timer_cb(val)
 	   {
 	      emit("PROGRAAAAAAAM", "TIMER@!@!@!@!@!@!@!");
 	   }
-         public anim_cb(val, Float: pos)
+       public anim_cb(val, Float: pos)
 	   {
 	      new buf[100];
 	      
 	      snprintf(buf, 100, "val = %i, pos = %f", val, pos);
 	      emit("PR AAAAAAAAANIM", buf);
+	   }
+	 
+       public message(Msg_Type:type, id, ...)
+	   {
+	      emit("MSG", "PROCESS");
+	      if (type == MSG_NONE)
+		{
+		   new buf[100];
+		   
+		   snprintf(buf, sizeof(buf), "ID: %i", id);
+		   emit("MESSAGE_NONE", buf);
+		}
+	      else if (type == MSG_STRING)
+		{
+		   new str[100];
+		   new buf[100];
+		   
+		   snprintf(buf, sizeof(buf), "MESSAGE STRING ID: %i", id);
+		   for (new j = 0; j < (sizeof(str) - 1); j++)
+		     {
+			str[j] = getarg(2, j);
+			if (str[j] == 0) break;
+		     }
+		   emit(buf, str);
+		}
+	      else if (type == MSG_INT_SET)
+		{
+		   new buf[100];
+		   
+		   snprintf(buf, sizeof(buf), "MESSAGE INT SET ID: %i", id);
+		   for (new i = 2; i < numargs(); i++)
+		     {
+			new val;
+			new str[100];
+			
+			val = getarg(i);
+			snprintf(str, sizeof(str), "V %i", val);
+			emit(buf, str);
+		     }
+		}
 	   }
       }
       parts {
@@ -632,6 +674,20 @@ collections {
 	 }
 	 program {
 	    name:       "logo_click_d2";
+	    signal:     "mouse,down,2";
+	    source:     "logo";
+	    script {
+	       new i = get_int(global_click_count);
+	       set_int(global_click_count, i + 1);
+	       
+	       if (i < 5)
+		 send_message(MSG_NONE, 777);
+	       else if (i < 10)
+		 send_message(MSG_STRING, 123, "blah blah panties");
+	    }
+	 }
+	 program {
+	    name:       "logo_click_d3";
 	    signal:     "mouse,down,3";
 	    source:     "logo";
 	    action:     DRAG_VAL_STEP -1.0 -1.0;

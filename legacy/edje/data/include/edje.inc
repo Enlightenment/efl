@@ -96,3 +96,5 @@ enum Msg_Type
      MSG_STRING_INT_SET = 10,
      MSG_INT_FLOAT_SET = 11
 };
+
+native send_message(Msg_Type:type, id, ...);

@@ -40,7 +40,20 @@
  * ? all unsafe calls that may result in callbacks must be marked and dealt with
  */
 
-typedef struct _Edje_Message Edje_Message;
+typedef enum _Edje_Queue
+{
+   EDJE_QUEUE_APP,
+     EDJE_QUEUE_SCRIPT
+} Edje_Queue;
+
+typedef struct _Edje_Message_Signal Edje_Message_Signal;
+typedef struct _Edje_Message        Edje_Message;
+
+struct _Edje_Message_Signal
+{
+   char *sig;
+   char *src;
+};
 
 struct _Edje_Message
 {
@@ -126,14 +139,15 @@ int           _edje_var_anim_add            (Edje *ed, double len, char *fname, 
 void          _edje_var_anim_del            (Edje *ed, int id);
 void          _edje_var_anim_frametime_reset(void);
     
-void _edje_message_init(void);
-void _edje_message_shutdown(void);
-Edje_Message *_edje_message_new(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id);
-void _edje_message_free(Edje_Message *em);
-void _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, void *emsg);
-void _edje_message_process(Edje_Message *em);
-void _edje_message_queue_process(void);
-void _edje_message_queue_clear(void);
-void _edje_message_del(Edje *ed);
+void          _edje_message_init            (void);
+void          _edje_message_shutdown        (void);
+void          _edje_message_cb_set          (Edje *ed, void (*func) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg), void *data);
+Edje_Message *_edje_message_new             (Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id);
+void          _edje_message_free            (Edje_Message *em);
+void          _edje_message_send            (Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, void *emsg);
+void          _edje_message_process         (Edje_Message *em);
+void          _edje_message_queue_process   (void);
+void          _edje_message_queue_clear     (void);
+void          _edje_message_del             (Edje *ed);
     
 #endif

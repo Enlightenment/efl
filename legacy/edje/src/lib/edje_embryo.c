@@ -78,28 +78,6 @@ static void _edje_embryo_globals_init(Edje *ed);
  * get_strlen(id)
  * get_str(id, dst[], maxlen)
  * set_str(id, str[])
- * ######## lists/arrays for stored variables (to be implemented)
- * # count(id)
- * # remove(id, n)
- * #
- * # append_int(id, v)
- * # prepend_int(id, v)
- * # insert_int(id, v, n)
- * # replace_int(id, v, n)
- * # fetch_int(id, n)
- * #
- * # append_float(id, Float:v)
- * # prepend_float(id, Float:v)
- * # insert_float(id, Float:v, n)
- * # replace_float(id, Float:v, n)
- * # Float:fetch_float(id, n)
- * #
- * # append_str(id, str[])
- * # prepend_str(id, str[])
- * # insert_str(id, str[], n)
- * # replace_str(id, str[], n)
- * # fetch_str(id, n, dst[], maxlen)
- * #
  * timer(Float:in, fname[], val)
  * cancel_timer(id)
  * anim(Float:len, fname[], val)
@@ -132,10 +110,32 @@ static void _edje_embryo_globals_init(Edje *ed);
  * still need to implement this:
  *
  * ##### post messages to the app via _edje_message_send();
- * # message(id, type, ...);
+ * # send_message(id, type, ...);
  * #
  * ##### what about posting messages to OTHER edje objects (swallowed?)
  * # ????
+ * ######## lists/arrays for stored variables (to be implemented)
+ * # count(id)
+ * # remove(id, n)
+ * #
+ * # append_int(id, v)
+ * # prepend_int(id, v)
+ * # insert_int(id, v, n)
+ * # replace_int(id, v, n)
+ * # fetch_int(id, n)
+ * #
+ * # append_float(id, Float:v)
+ * # prepend_float(id, Float:v)
+ * # insert_float(id, Float:v, n)
+ * # replace_float(id, Float:v, n)
+ * # Float:fetch_float(id, n)
+ * #
+ * # append_str(id, str[])
+ * # prepend_str(id, str[])
+ * # insert_str(id, str[], n)
+ * # replace_str(id, str[], n)
+ * # fetch_str(id, n, dst[], maxlen)
+ * #
  * 
  * ** part_id and program_id need to be able to be "found" from strings
  * 
@@ -687,7 +687,7 @@ _edje_embryo_fn_get_text(Embryo_Program *ep, Embryo_Cell *params)
    part_id = params[1];
    if (part_id < 0) return 0;
    rp = ed->table_parts[part_id % ed->table_parts_size];
-   s = edje_object_part_text_get(ed->obj, rp->part->name);
+   s = (char *)edje_object_part_text_get(ed->obj, rp->part->name);
    if (s)
      {
 	if (strlen(s) < params[3])
@@ -900,6 +900,223 @@ _edje_embryo_fn_set_drag_page(Embryo_Program *ep, Embryo_Cell *params)
    return(0);
 }
 
+/* send_message(id, Msg_Type:type, ...); */
+static Embryo_Cell
+_edje_embryo_fn_send_message(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   Edje_Message_Type type;
+   int id, i, n;
+   
+   if (params[0] < (sizeof(Embryo_Cell) * (2))) return 0;
+   ed = embryo_program_data_get(ep);
+   type = params[1];
+   id = params[2];
+   switch (type)
+     {
+      case EDJE_MESSAGE_NONE:
+	_edje_message_send(ed, EDJE_QUEUE_APP, type, id, NULL);
+	break;
+      case EDJE_MESSAGE_SIGNAL:
+	break;
+      case EDJE_MESSAGE_STRING:
+	  {
+	     Embryo_Cell *cptr;
+	     
+	     cptr = embryo_data_address_get(ep, params[3]);
+	     if (cptr)
+	       {
+		  Edje_Message_String *emsg;
+		  int l;
+		  char *s;
+		  
+		  l = embryo_data_string_length_get(ep, cptr);
+		  s = alloca(l + 1);
+		  embryo_data_string_get(ep, cptr, s);
+		  emsg = alloca(sizeof(Edje_Message_String));
+		  emsg->str = s;
+		  _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
+	       }
+	  }
+	break;
+      case EDJE_MESSAGE_INT:
+	  {
+	     Edje_Message_Int *emsg;
+	     
+	     emsg = alloca(sizeof(Edje_Message_Int));
+	     emsg->val = (int)params[3];
+	     _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
+	  }
+	break;
+      case EDJE_MESSAGE_FLOAT:
+	  {
+	     Edje_Message_Int *emsg;
+	     float f;
+	     
+	     emsg = alloca(sizeof(Edje_Message_Int));
+	     f = EMBRYO_CELL_TO_FLOAT(params[3]);
+	     emsg->val = (double)f;
+	     _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
+	  }
+	break;
+      case EDJE_MESSAGE_STRING_SET:
+	  {
+	     Edje_Message_String_Set *emsg;
+	     
+	     n = (params[0] / sizeof(Embryo_Cell));
+	     emsg = alloca(sizeof(Edje_Message_String_Set) + ((n - 3 - 1) * sizeof(char *)));
+	     emsg->count = n - 3;
+	     for (i = 3; i < n; i++)
+	       {
+		  Embryo_Cell *cptr;
+		  
+		  cptr = embryo_data_address_get(ep, params[i]);
+		  if (cptr)
+		    {
+		       int l;
+		       char *s;
+		       
+		       l = embryo_data_string_length_get(ep, cptr);
+		       s = alloca(l + 1);
+		       embryo_data_string_get(ep, cptr, s);
+		       emsg->str[i - 3] = s;
+		    }
+	       }
+	     _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
+	  }
+	break;
+      case EDJE_MESSAGE_INT_SET:
+	  {
+	     Edje_Message_Int_Set *emsg;
+	     
+	     n = (params[0] / sizeof(Embryo_Cell));
+	     emsg = alloca(sizeof(Edje_Message_Int_Set) + ((n - 3 - 1) * sizeof(int)));
+	     emsg->count = n - 3;
+	     for (i = 3; i < n; i++)
+	       emsg->val[i - 3] = (int)params[i];
+	     _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
+	  }
+	break;
+      case EDJE_MESSAGE_FLOAT_SET:
+	  {
+	     Edje_Message_Float_Set *emsg;
+	     
+	     n = (params[0] / sizeof(Embryo_Cell));
+	     emsg = alloca(sizeof(Edje_Message_Float_Set) + ((n - 3 - 1) * sizeof(double)));
+	     emsg->count = n - 3;
+	     for (i = 3; i < n; i++)
+	       {
+		  float f;
+		  
+		  f = EMBRYO_CELL_TO_FLOAT(params[i]);
+		  emsg->val[i - 3] = (double)f;
+	       }
+	     _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
+	  }
+	break;
+      case EDJE_MESSAGE_STRING_INT:
+	  {
+	     Edje_Message_String_Int *emsg;
+	     Embryo_Cell *cptr;
+	     
+	     cptr = embryo_data_address_get(ep, params[3]);
+	     if (cptr)
+	       {
+		  int l;
+		  char *s;
+		  
+		  l = embryo_data_string_length_get(ep, cptr);
+		  s = alloca(l + 1);
+		  embryo_data_string_get(ep, cptr, s);
+		  emsg = alloca(sizeof(Edje_Message_String_Int));
+		  emsg->str = s;
+		  emsg->val = (int)params[4];
+		  _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
+	       }
+	  }
+	break;
+      case EDJE_MESSAGE_STRING_FLOAT:
+	  {
+	     Edje_Message_String_Float *emsg;
+	     Embryo_Cell *cptr;
+	     
+	     cptr = embryo_data_address_get(ep, params[3]);
+	     if (cptr)
+	       {
+		  int l;
+		  char *s;
+		  float f;
+		  
+		  l = embryo_data_string_length_get(ep, cptr);
+		  s = alloca(l + 1);
+		  embryo_data_string_get(ep, cptr, s);
+		  emsg = alloca(sizeof(Edje_Message_String_Float));
+		  emsg->str = s;
+		  f = EMBRYO_CELL_TO_FLOAT(params[4]);
+		  emsg->val = (double)f;
+		  _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
+	       }
+	  }
+	break;
+      case EDJE_MESSAGE_STRING_INT_SET:
+	  {
+	     Edje_Message_String_Int_Set *emsg;
+	     Embryo_Cell *cptr;
+	     
+	     cptr = embryo_data_address_get(ep, params[3]);
+	     if (cptr)
+	       {
+		  int l;
+		  char *s;
+		  
+		  l = embryo_data_string_length_get(ep, cptr);
+		  s = alloca(l + 1);
+		  embryo_data_string_get(ep, cptr, s);
+		  n = (params[0] / sizeof(Embryo_Cell));
+		  emsg = alloca(sizeof(Edje_Message_String_Int_Set) + ((n - 4 - 1) * sizeof(int)));
+		  emsg->str = s;
+		  emsg->count = n - 4;
+		  for (i = 4; i < n; i++)
+		    emsg->val[i - 4] = (int)params[i];
+		  _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
+	       }
+	  }
+	break;
+      case EDJE_MESSAGE_STRING_FLOAT_SET:
+	  {
+	     Edje_Message_String_Float_Set *emsg;
+	     Embryo_Cell *cptr;
+	     
+	     cptr = embryo_data_address_get(ep, params[3]);
+	     if (cptr)
+	       {
+		  int l;
+		  char *s;
+		  
+		  l = embryo_data_string_length_get(ep, cptr);
+		  s = alloca(l + 1);
+		  embryo_data_string_get(ep, cptr, s);
+		  n = (params[0] / sizeof(Embryo_Cell));
+		  emsg = alloca(sizeof(Edje_Message_String_Float_Set) + ((n - 4 - 1) * sizeof(double)));
+		  emsg->str = s;
+		  emsg->count = n - 4;
+		  for (i = 4; i < n; i++)
+		    {
+		       float f;
+		       
+		       f = EMBRYO_CELL_TO_FLOAT(params[i]);
+		       emsg->val[i - 4] = (double)f;
+		    }
+		  _edje_message_send(ed, EDJE_QUEUE_APP, type, id, emsg);
+	       }
+	  }
+	break;
+      default:
+	break;
+     }
+   return(0);
+}
+
 void
 _edje_embryo_script_init(Edje *ed)
 {
@@ -949,6 +1166,8 @@ _edje_embryo_script_init(Edje *ed)
    embryo_program_native_call_add(ep, "stop_programs_on", _edje_embryo_fn_stop_programs_on);
    embryo_program_native_call_add(ep, "set_min_size", _edje_embryo_fn_set_min_size);
    embryo_program_native_call_add(ep, "set_max_size", _edje_embryo_fn_set_max_size);
+   
+   embryo_program_native_call_add(ep, "send_message", _edje_embryo_fn_send_message);
    
    embryo_program_vm_push(ep); /* neew a new vm to run in */
    _edje_embryo_globals_init(ed);

@@ -643,6 +643,21 @@ test_resize(Demo_Edje *de)
    evas_object_resize(de->edje, w - 20, h - 30);
 }
 
+static void
+message_cb(void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg)
+{
+   printf("MESSAGE for %p from script type %i id %i\n", obj, type, id);
+   if (type == EDJE_MESSAGE_STRING)
+     {
+	Edje_Message_String *emsg;
+	
+	emsg = (Edje_Message_String *)msg;
+	printf("STWING: \"%s\"\n", emsg->str);
+     }
+   printf("Send msg to script...\n");
+   edje_object_message_send(obj, EDJE_MESSAGE_NONE, 12345, NULL);
+}
+
 void
 test_setup(char *file, char *name)
 {
@@ -733,14 +748,15 @@ test_setup(char *file, char *name)
    de->title = o;
    
    o = edje_object_add(evas);
+   edje_object_message_handler_set(o, message_cb, NULL);
 //   edje_object_signal_callback_add(o, "do_it", "the_source", cb, NULL);
 //   edje_object_signal_callback_add(o, "mouse,*", "logo", cb, NULL);
    edje_object_signal_callback_add(o, "*", "*", cb, NULL);
    edje_object_file_set(o, file, name);
    edje_object_part_drag_size_set(o, "dragable", 0.01, 0.5);
 //   edje_object_part_drag_value_set(o, "dragable", 0.5, 0.5);
-edje_object_part_drag_step_set(o, "dragable", 0.1, 0.1);
-edje_object_part_drag_page_set(o, "dragable", 0.2, 0.2);
+   edje_object_part_drag_step_set(o, "dragable", 0.1, 0.1);
+   edje_object_part_drag_page_set(o, "dragable", 0.2, 0.2);
    evas_object_move(o, xx + 10, yy + 20);
    evas_object_show(o);
    edje_object_size_min_get(o, &(de->minw), &(de->minh));

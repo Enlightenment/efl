@@ -1,18 +1,25 @@
 #include "Edje.h"
 #include "edje_private.h"
 
-/* NB: global message que to be processed on idle enterer */
+void
+edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void *msg)
+{
+   Edje *ed;
+   
+   ed = _edje_fetch(obj);
+   if (!ed) return;
+   _edje_message_send(ed, EDJE_QUEUE_SCRIPT, type, id, msg);
+}
 
-/* NB: on deletion of an edje, remvoe all pending msg que items for it */
-
-/* NB: each edje needs a messagequeue cointer to knwo how many messages on the
- * queue for that edje */
-
-/* NB: need to temporarly remove queue so messages added while processing the
- * the queue so messages added as a result of processing dont loop. if the
- * queue is not empty after processing scheduly 0.0 timeout to induce a
- * new processing of the queue
- */
+void
+edje_object_message_handler_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg), void *data)
+{
+   Edje *ed;
+   
+   ed = _edje_fetch(obj);
+   if (!ed) return;
+   _edje_message_cb_set(ed, func, data);
+}
 
 static Evas_List *msgq = NULL;
 static Evas_List *tmp_msgq = NULL;
@@ -21,7 +28,6 @@ static Ecore_Idle_Enterer *idler = NULL;
 static int
 _edje_dummy_timer(void *data)
 {
-   printf("DUMMY\n");
    return 0;
 }
 
@@ -46,6 +52,13 @@ _edje_message_shutdown(void)
    idler = NULL;
 }
 
+void
+_edje_message_cb_set(Edje *ed, void (*func) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg), void *data)
+{
+   ed->message.func = func;
+   ed->message.data = data;
+}
+
 Edje_Message *
 _edje_message_new(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id)
 {
@@ -57,7 +70,7 @@ _edje_message_new(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id)
    em->queue = queue;
    em->type = type;
    em->id = id;
-   em->edje->message_num++;
+   em->edje->message.num++;
    return em;
 }
 
@@ -79,6 +92,7 @@ _edje_message_free(Edje_Message *em)
 		  free(emsg->str);
 		  free(emsg);
 	       }
+	     break;
 	   case EDJE_MESSAGE_INT:
 	       {
 		  Edje_Message_Int *emsg;
@@ -86,6 +100,7 @@ _edje_message_free(Edje_Message *em)
 		  emsg = (Edje_Message_Int *)em->msg;
 		  free(emsg);
 	       }
+	     break;
 	   case EDJE_MESSAGE_FLOAT:
 	       {
 		  Edje_Message_Float *emsg;
@@ -93,6 +108,7 @@ _edje_message_free(Edje_Message *em)
 		  emsg = (Edje_Message_Float *)em->msg;
 		  free(emsg);
 	       }
+	     break;
 	   case EDJE_MESSAGE_INT_SET:
 	       {
 		  Edje_Message_Int_Set *emsg;
@@ -117,6 +133,7 @@ _edje_message_free(Edje_Message *em)
 		  free(emsg->str);
 		  free(emsg);
 	       }
+	     break;
 	   case EDJE_MESSAGE_STRING_INT:
 	       {
 		  Edje_Message_String_Int *emsg;
@@ -125,6 +142,7 @@ _edje_message_free(Edje_Message *em)
 		  free(emsg->str);
 		  free(emsg);
 	       }
+	     break;
 	   case EDJE_MESSAGE_STRING_FLOAT_SET:
 	       {
 		  Edje_Message_String_Float_Set *emsg;
@@ -133,6 +151,7 @@ _edje_message_free(Edje_Message *em)
 		  free(emsg->str);
 		  free(emsg);
 	       }
+	     break;
 	   case EDJE_MESSAGE_STRING_INT_SET:
 	       {
 		  Edje_Message_String_Int_Set *emsg;
@@ -141,6 +160,7 @@ _edje_message_free(Edje_Message *em)
 		  free(emsg->str);
 		  free(emsg);
 	       }
+	     break;
 	   case EDJE_MESSAGE_SIGNAL:
 	       {
 		  Edje_Message_Signal *emsg;
@@ -166,7 +186,7 @@ _edje_message_free(Edje_Message *em)
 	     break;
 	  }
      }
-   em->edje->message_num--;
+   em->edje->message.num--;
    free(em);
 }
 
@@ -320,111 +340,124 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
 void
 _edje_message_process(Edje_Message *em)
 {
+   Embryo_Function fn;
+   void *pdata;
+   int i;
+   
+   /* signals are only handled one way */
+   if (em->type == EDJE_MESSAGE_SIGNAL)
+     {
+	_edje_emit_handle(em->edje, 
+			  ((Edje_Message_Signal *)em->msg)->sig, 
+			  ((Edje_Message_Signal *)em->msg)->src);
+	return;
+     }
+   /* if this has been queued up for the app then just call the callback */
+   if (em->queue == EDJE_QUEUE_APP)
+     {
+	if (em->edje->message.func)
+	  em->edje->message.func(em->edje->message.data, em->edje->obj,
+				 em->type, em->id, em->msg);
+	return;
+     }
+   /* now this message is destined for the script message handler fn */
+   if (!((em->edje->collection) && (em->edje->collection->script))) return;
+   fn = embryo_program_function_find(em->edje->collection->script, "message");
+   if (fn == EMBRYO_FUNCTION_NONE) return;
+   /* reset the engine */
+   _edje_embryo_script_reset(em->edje);
+   /* these params ALWAYS go on */
+   /* first param is the message type - always */
+   embryo_parameter_cell_push(em->edje->collection->script,
+			      (Embryo_Cell)em->type);
+   /* 2nd param is the integer of the event id - always there */
+   embryo_parameter_cell_push(em->edje->collection->script, 
+			      (Embryo_Cell)em->id);
+   /* the rest is varags of whatever is in the msg */
    switch (em->type)
      {
       case EDJE_MESSAGE_NONE:
-	switch (em->queue)
-	  {
-	   case EDJE_QUEUE_APP:
-	     /* simply call app callback */
-	     break;
-	   case EDJE_QUEUE_SCRIPT:
-	     if ((em->edje->collection) && (em->edje->collection->script))
-	       {
-		  Embryo_Function fn;
-		  
-		  _edje_embryo_script_reset(em->edje);
-		  fn = embryo_program_function_find(em->edje->collection->script, "message");
-		  if (fn != EMBRYO_FUNCTION_NONE)
-		    {
-		       void *pdata;
-		       Embryo_Cell cell;
-		       
-		       /* first param is the message type - always */
-		       cell = em->type;
-		       embryo_parameter_cell_push(em->edje->collection->script, cell);
-		       /* 2nd param is the integer of the event id - always there */
-		       cell = em->id;
-		       embryo_parameter_cell_push(em->edje->collection->script, cell);
-		       pdata = embryo_program_data_get(em->edje->collection->script);
-		       embryo_program_data_set(em->edje->collection->script, em->edje);
-		       embryo_program_run(em->edje->collection->script, fn);
-		       embryo_program_data_set(em->edje->collection->script, pdata);
-		    }
-	       }
-	     break;
-	   default:
-	     break;
-	  }
-	break;
-      case EDJE_MESSAGE_SIGNAL:
-	  {
-	     char *str1;
-	     char *str2;
-	     
-	     memcpy(&str1, em->msg, sizeof(char *));
-	     memcpy(&str2, em->msg + sizeof(char *), sizeof(char *));
-	     _edje_emit_handle(em->edje, str1, str2);
-	  }
 	break;
       case EDJE_MESSAGE_STRING:
-	switch (em->queue)
-	  {
-	   case EDJE_QUEUE_APP:
-	     /* simply call app callback */
-	     break;
-	   case EDJE_QUEUE_SCRIPT:
-	     if ((em->edje->collection) && (em->edje->collection->script))
-	       {
-		  Embryo_Function fn;
-		  
-		  _edje_embryo_script_reset(em->edje);
-		  fn = embryo_program_function_find(em->edje->collection->script, "message");
-		  if (fn != EMBRYO_FUNCTION_NONE)
-		    {
-		       void *pdata;
-		       Embryo_Cell cell;
-		       
-		       /* first param is the message type - always */
-		       cell = em->type;
-		       embryo_parameter_cell_push(em->edje->collection->script, cell);
-		       /* 2nd param is the integer of the event id - always there */
-		       cell = em->id;
-		       embryo_parameter_cell_push(em->edje->collection->script, cell);
-		       /* 3rd param is the string */
-		       embryo_parameter_string_push(em->edje->collection->script, em->msg);
-		       pdata = embryo_program_data_get(em->edje->collection->script);
-		       embryo_program_data_set(em->edje->collection->script, em->edje);
-		       embryo_program_run(em->edje->collection->script, fn);
-		       embryo_program_data_set(em->edje->collection->script, pdata);
-		    }
-	       }
-	     break;
-	   default:
-	     break;
-	  }
+	embryo_parameter_string_push(em->edje->collection->script, 
+				     ((Edje_Message_String *)em->msg)->str);
 	break;
       case EDJE_MESSAGE_INT:
+	embryo_parameter_cell_push(em->edje->collection->script, 
+				   (Embryo_Cell)((Edje_Message_Int *)em->msg)->val);
 	break;
       case EDJE_MESSAGE_FLOAT:
+	  {
+	     float v;
+	     
+	     v = (Embryo_Cell)((Edje_Message_Float *)em->msg)->val;
+	     embryo_parameter_cell_push(em->edje->collection->script, 
+					(Embryo_Cell)EMBRYO_FLOAT_TO_CELL(v));
+	  }
 	break;
       case EDJE_MESSAGE_STRING_SET:
+	for (i = 0; i < ((Edje_Message_String_Set *)em->msg)->count; i++)
+	  embryo_parameter_string_push(em->edje->collection->script, 
+				       ((Edje_Message_String_Set *)em->msg)->str[i]);
 	break;
       case EDJE_MESSAGE_INT_SET:
+	for (i = 0; i < ((Edje_Message_Int_Set *)em->msg)->count; i++)
+	  embryo_parameter_cell_push(em->edje->collection->script, 
+				     (Embryo_Cell)((Edje_Message_Int_Set *)em->msg)->val[i]);
 	break;
       case EDJE_MESSAGE_FLOAT_SET:
+	for (i = 0; i < ((Edje_Message_Float_Set *)em->msg)->count; i++)
+	  {
+	     float v;
+	     
+	     v = ((Edje_Message_Float_Set *)em->msg)->val[i];
+	     embryo_parameter_cell_push(em->edje->collection->script, 
+					(Embryo_Cell)EMBRYO_FLOAT_TO_CELL(v));
+	  }
 	break;
       case EDJE_MESSAGE_STRING_INT:
+	embryo_parameter_string_push(em->edje->collection->script, 
+				     ((Edje_Message_String_Int *)em->msg)->str);
+	embryo_parameter_cell_push(em->edje->collection->script, 
+				   (Embryo_Cell)((Edje_Message_String_Int *)em->msg)->val);
 	break;
       case EDJE_MESSAGE_STRING_FLOAT:
+	embryo_parameter_string_push(em->edje->collection->script, 
+				     ((Edje_Message_String_Float *)em->msg)->str);
+	  {
+	     float v;
+	     
+	     v = (Embryo_Cell)((Edje_Message_String_Float *)em->msg)->val;
+	     embryo_parameter_cell_push(em->edje->collection->script, 
+					(Embryo_Cell)EMBRYO_FLOAT_TO_CELL(v));
+	  }
 	break;
       case EDJE_MESSAGE_STRING_INT_SET:
+	embryo_parameter_string_push(em->edje->collection->script, 
+				     ((Edje_Message_String_Int_Set *)em->msg)->str);
+	for (i = 0; i < ((Edje_Message_String_Int_Set *)em->msg)->count; i++)
+	  embryo_parameter_cell_push(em->edje->collection->script, 
+				     (Embryo_Cell)((Edje_Message_String_Int_Set *)em->msg)->val[i]);
 	break;
       case EDJE_MESSAGE_STRING_FLOAT_SET:
+	embryo_parameter_string_push(em->edje->collection->script, 
+				     ((Edje_Message_String_Float_Set *)em->msg)->str);
+	for (i = 0; i < ((Edje_Message_String_Float_Set *)em->msg)->count; i++)
+	  {
+	     float v;
+	     
+	     v = ((Edje_Message_String_Float_Set *)em->msg)->val[i];
+	     embryo_parameter_cell_push(em->edje->collection->script, 
+					(Embryo_Cell)EMBRYO_FLOAT_TO_CELL(v));
+	  }
 	break;
       default:
 	break;
      }
+   pdata = embryo_program_data_get(em->edje->collection->script);
+   embryo_program_data_set(em->edje->collection->script, em->edje);
+   embryo_program_run(em->edje->collection->script, fn);
+   embryo_program_data_set(em->edje->collection->script, pdata);
 }
 
 void
@@ -477,7 +510,7 @@ _edje_message_del(Edje *ed)
 {
    Evas_List *l;
 
-   if (ed->message_num <= 0) return;
+   if (ed->message.num <= 0) return;
    /* delete any messages on the main queue for this edje object */
    for (l = msgq; ; )
      {
@@ -492,7 +525,7 @@ _edje_message_del(Edje *ed)
 	     msgq = evas_list_remove_list(msgq, lp);
 	     _edje_message_free(em);
 	  }
-	if (ed->message_num <= 0) return;
+	if (ed->message.num <= 0) return;
      }
    /* delete any on the processing queue */
    for (l = tmp_msgq; ; )
@@ -508,6 +541,6 @@ _edje_message_del(Edje *ed)
 	     msgq = evas_list_remove_list(msgq, lp);
 	     _edje_message_free(em);
 	  }
-	if (ed->message_num <= 0) return;
+	if (ed->message.num <= 0) return;
      }
 }

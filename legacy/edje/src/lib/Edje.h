@@ -4,18 +4,11 @@
 #include <Evas.h>
 
 /* FIXDOC: Define these? */
-
-typedef enum _Edje_Queue
-{
-   EDJE_QUEUE_APP,
-     EDJE_QUEUE_SCRIPT
-} Edje_Queue;
-
 typedef enum _Edje_Message_Type
 {
    EDJE_MESSAGE_NONE = 0,
      
-     EDJE_MESSAGE_SIGNAL = 1,
+     EDJE_MESSAGE_SIGNAL = 1, /* DONT USE THIS */
      
      EDJE_MESSAGE_STRING = 2,
      EDJE_MESSAGE_INT = 3,
@@ -32,7 +25,6 @@ typedef enum _Edje_Message_Type
      EDJE_MESSAGE_STRING_FLOAT_SET = 11
 } Edje_Message_Type;
 
-typedef struct _Edje_Message_Signal           Edje_Message_Signal;
 typedef struct _Edje_Message_String           Edje_Message_String;
 typedef struct _Edje_Message_Int              Edje_Message_Int;
 typedef struct _Edje_Message_Float            Edje_Message_Float;
@@ -43,12 +35,6 @@ typedef struct _Edje_Message_String_Int       Edje_Message_String_Int;
 typedef struct _Edje_Message_String_Float     Edje_Message_String_Float;
 typedef struct _Edje_Message_String_Int_Set   Edje_Message_String_Int_Set;
 typedef struct _Edje_Message_String_Float_Set Edje_Message_String_Float_Set;
-
-struct _Edje_Message_Signal
-{
-   char *sig;
-   char *src;
-};
 
 struct _Edje_Message_String
 {
@@ -133,9 +119,6 @@ enum
 extern "C" {
 #endif
    
-  /* Documentation is within .c files */
-  /* Doc issues marked with FIXDOC: */
-  
   /* edje_main.c */
    int          edje_init                       (void);
    int          edje_shutdown                   (void);
@@ -189,8 +172,8 @@ extern "C" {
   void         edje_object_size_min_calc       (Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh);
   int          edje_object_part_exists         (Evas_Object *obj, const char *part);
   void         edje_object_part_geometry_get   (Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
-  void         edje_object_text_change_cb_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, const char *part), void *data);
-   void         edje_object_part_text_set       (Evas_Object *obj, const char *part, const char *text);
+  void         edje_object_text_change_cb_set  (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, const char *part), void *data);
+  void         edje_object_part_text_set       (Evas_Object *obj, const char *part, const char *text);
   const char  *edje_object_part_text_get       (Evas_Object *obj, const char *part);
   void         edje_object_part_swallow        (Evas_Object *obj, const char *part, Evas_Object *obj_swallow);
   void         edje_object_part_unswallow      (Evas_Object *obj, Evas_Object *obj_swallow);
@@ -208,15 +191,10 @@ extern "C" {
   void         edje_object_part_drag_step      (Evas_Object *obj, const char *part, double dx, double dy);
   void         edje_object_part_drag_page      (Evas_Object *obj, const char *part, double dx, double dy);
 
-  /* edje_misc.c */
-  int          edje_object_variable_id_get     (Evas_Object *obj, char *name);
-  int          edje_object_variable_int_get    (Evas_Object *obj, int id);
-  void         edje_object_variable_int_set    (Evas_Object *obj, int id, int val);
-  double       edje_object_variable_float_get  (Evas_Object *obj, int id);
-  void         edje_object_variable_float_set  (Evas_Object *obj, int id, double val);
-  char        *edje_object_variable_str_get    (Evas_Object *obj, int id);
-  void         edje_object_variable_str_set    (Evas_Object *obj, int id, char *str);
-       
+  /* edje_message_queue.c */
+  void         edje_object_message_send        (Evas_Object *obj, Edje_Message_Type type, int id, void *msg);
+  void         edje_object_message_handler_set (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg), void *data);
+     
 #ifdef __cplusplus
 }
 #endif
