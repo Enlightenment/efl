@@ -979,13 +979,20 @@ _em_seek(void *par)
 	  {
 	     again:
 	     ppos = ev->seek_to_pos;
-	     xine_play(ev->stream, 0, ppos * 1000);
+	     if (ppos > ev->len) ppos = ev->len;
+	     if (ev->no_time)
+	       xine_play(ev->stream, ppos * 65535, 0);
+	     else
+	       xine_play(ev->stream, 0, ppos * 1000);
 	     ev->seek_to = 0;
 	     if (ev->delete_me) return NULL;
 	  }
 	if (!ev->play)
-	  xine_set_param(ev->stream, XINE_PARAM_SPEED, XINE_SPEED_PAUSE);
+	  {
+	     xine_set_param(ev->stream, XINE_PARAM_SPEED, XINE_SPEED_PAUSE);
+	  }
 	if (ev->delete_me) return NULL;
+	usleep(1000000 / 10);
 	if (ppos != ev->seek_to_pos)
 	  goto again;
     }
@@ -1227,9 +1234,18 @@ _em_get_pos_len_th(void *par)
 				     &pos_time,
 				     &length_time))
 	       {
-		  
-		  ev->pos = (double)pos_time / 1000.0;
-		  ev->len = (double)length_time / 1000.0;
+		  if (length_time == 0)
+		    {
+		       ev->pos = (double)pos_stream / 65535;
+		       ev->len = 1.0;
+		       ev->no_time = 1;
+		    }
+		  else
+		    {
+		       ev->pos = (double)pos_time / 1000.0;
+		       ev->len = (double)length_time / 1000.0;
+		       ev->no_time = 0;
+		    }
 	       }
 	     if (ev->delete_me)
 	       {
@@ -1238,7 +1254,7 @@ _em_get_pos_len_th(void *par)
 	       }
 	     ev->get_poslen = 0;
 //	     printf("get pos %3.3f\n", ev->pos);
-	     usleep(1000000 / 10);
+	     usleep(1000000 / 15);
 	  }
      }
    return NULL;

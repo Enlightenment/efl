@@ -17,8 +17,8 @@ struct _Emotion_Xine_Video
    xine_stream_t            *stream;
    xine_event_queue_t       *queue;
    int                       fd;
-   double                    len;
-   double                    pos;
+   volatile double           len;
+   volatile double           pos;
    double                    fps;
    double                    ratio;
    int                       w, h;
@@ -40,6 +40,7 @@ struct _Emotion_Xine_Video
    unsigned char             audio_mute : 1;
    unsigned char             spu_mute : 1;
    volatile unsigned char    delete_me : 1;
+   volatile unsigned char    no_time : 1;
    
    pthread_t                 seek_th;
    pthread_t                 get_pos_len_th;
