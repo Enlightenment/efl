@@ -15,6 +15,8 @@
 #include "Evas_private.h"
 #include "Evas.h"
 
+#include <X11/Xlib.h>
+#include <X11/extensions/Xrender.h>
 #include <Imlib2.h>
 
 #ifdef HAVE_RENDER
@@ -28,9 +30,24 @@
 ((SPANS_COMMON((x), (w), (xx), (ww))) && (SPANS_COMMON((y), (h), (yy), (hh))))
 #endif
 
-typedef void Evas_Render_Image;
+typedef struct _evas_render_image Evas_Render_Image;
 typedef void Evas_Render_Font;
 typedef void Evas_Render_Graident;
+
+struct _evas_render_image
+{
+   char    *file;
+   int      references;
+   int      w, h;
+   Display *disp;
+   Picture  pic;
+   Pixmap   pmap;
+   int      has_alpha;
+   struct 
+     {
+	int l, r, t, b;
+     }      border;
+};
 
 typedef struct _evas_render_drawable Evas_Render_Drawable;
 typedef struct _evas_render_update Evas_Render_Update;
@@ -44,6 +61,8 @@ struct _evas_render_drawable
 
 struct _evas_render_update
 {
+   Picture pic;
+   Pixmap pmap;
    int x, y, w, h;
 };
 

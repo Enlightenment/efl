@@ -27,13 +27,49 @@ __evas_render_image_cache_flush(Display *disp)
 
 Evas_Render_Image *
 __evas_render_image_new_from_file(Display *disp, char *file)
-{	
-   return NULL;
+{
+   Evas_Render_Image *im;
+   Imlib_Image i;
+   XRenderPictFormat fmt, *format, *format_color;
+   Visual *visual;
+   int screen;
+
+   /* need to look for image i local cache */
+   /* not found - load */
+   i = imlib_load_image(file);
+   if (!i) return NULL;
+   imlib_context_set_image(i);
+   im = malloc(sizeof(Evas_Render_Image));
+   memset(im, 0, sizeof(Evas_Render_Image));
+   /* this stuff needs to become a context lookup for the display pointer */
+   visual = DefaultVisual (disp, screen);
+   format = XRenderFindVisualFormat (disp, visual);
+   fmt.depth = 32;
+   fmt.type = PictTypeDirect;
+   format_color = XRenderFindFormat(disp, PictFormatType | PictFormatDepth, &fmt, 0);
+   
+   im->file = strdup(file);
+   im->references = 1;
+   im->disp = disp;
+   im->has_alpha = imlib_image_has_alpha();
+   im->w = imlib_image_get_width();
+   im->h = imlib_image_get_height();
+   im->pmap = XCreatePixmap (disp, RootWindow (disp, screen), im->w, im->h, fmt.depth);
+   im->pic = XRenderCreatePicture (disp, im->pmap, &fmt, 0, 0);
+   
+   /* need to xshmputimage to the pixmap */
+   /* need to add to local cache list */
+   return im;
 }
 
 void
 __evas_render_image_free(Evas_Render_Image *im)
 {
+   im->references--;
+   if (im->references <= 0)
+     {
+	/* need to flush cache */
+     }
 }
 
 void
