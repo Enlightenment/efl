@@ -17,11 +17,21 @@ include_HEADERS      = \
 Evas.h
 
 libevas_la_SOURCES   = \
-evas_bits.c evas_callbacks.c evas_events.c evas_gradient.c evas_image.c \
-evas_line.c evas_list.c evas_main.c evas_misc.c evas_object.c \
-evas_rectangle.c evas_render.c evas_text.c \
+evas_bits.c \
+evas_callbacks.c \
+evas_events.c \
+evas_gradient.c \
+evas_image.c \
+evas_line.c \
+evas_list.c \
+evas_main.c \
+evas_misc.c \
+evas_object.c \
+evas_rectangle.c \
+evas_render.c \
+evas_text.c \
 Evas.h
 
-libevas_la_LIBADD       = -lX11 -lXext -lttf -ldl -lm -lImlib2 $(LDFLAGS)
+libevas_la_LIBADD       = -lX11 -lXext -lttf -ldl -lm -lImlib2 -ldb $(LDFLAGS)
 libevas_la_DEPENDENCIES = $(top_builddir)/config.h
 libevas_la_LDFLAGS      = -version-info 0:1:0
