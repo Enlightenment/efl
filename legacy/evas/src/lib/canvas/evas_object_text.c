@@ -652,11 +652,13 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
 	  }
 #endif
      } 
-   if (o->cur.font) free(o->cur.font);
-   if (font) o->cur.font = strdup(font);
-   else o->cur.font = NULL;
-   if (!same_font) o->prev.font = NULL;
-
+   if (!same_font) 
+     {
+	if (o->cur.font) free(o->cur.font);
+	if (font) o->cur.font = strdup(font);
+	else o->cur.font = NULL;
+	o->prev.font = NULL;
+     }
    o->cur.size = size;
    if ((o->engine_data) && (o->cur.text))
      {
