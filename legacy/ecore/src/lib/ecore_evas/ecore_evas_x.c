@@ -1308,3 +1308,18 @@ ecore_evas_software_x11_window_get(Ecore_Evas *ee)
    return 0;
 #endif
 }
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+Ecore_X_Window
+ecore_evas_gl_x11_window_get(Ecore_Evas *ee)
+{
+#ifdef BUILD_ECORE_X
+   return ee->engine.x.win_container;
+#else   
+   return 0;
+#endif
+}
