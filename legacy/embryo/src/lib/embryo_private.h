@@ -163,17 +163,17 @@ enum _Embryo_Opcode
 (Embryo_Func_Stub *)((unsigned char*)(hdr) + \
 (int)(hdr)->table + index * (hdr)->defsize)
 #ifdef WORDS_BIGENDIAN
-# define GETENTRYNAME(hdr, entry) \
-(((hdr)->defsize == 2 * sizeof(unsigned int)) \
-? (char *)((unsigned char*)(hdr) + *((unsigned int *)(entry) + 1)) \
-: (entry)->name)
-#else
-static int __inline __entryswap32(int v) \
+static int __inline __entryswap32(int v)
 {int vv; vv = v; embryo_swap_32((unsigned int *)&vv); return vv;}
 # define GETENTRYNAME(hdr, entry) \
 (((hdr)->defsize == 2 * sizeof(unsigned int)) \
 ? (char *)((unsigned char*)(hdr) + \
 __entryswap32(*((unsigned int *)(entry) + 1))) \
+: (entry)->name)
+#else
+# define GETENTRYNAME(hdr, entry) \
+(((hdr)->defsize == 2 * sizeof(unsigned int)) \
+? (char *)((unsigned char*)(hdr) + *((unsigned int *)(entry) + 1)) \
 : (entry)->name)
 #endif
 

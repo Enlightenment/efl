@@ -145,7 +145,9 @@ _embryo_program_init(Embryo_Program *ep, void *code)
 	unsigned short *len;
 	
 	len = (unsigned short*)((unsigned char*)ep->code + hdr->nametable);
+#ifdef WORDS_BIGENDIAN
 	embryo_swap_16((unsigned short *)len);
+#endif	
 	if (*len > sNAMEMAX) return 0;
      }
    if (hdr->stp <= 0) return 0;
