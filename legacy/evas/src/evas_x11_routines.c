@@ -146,8 +146,9 @@ __evas_x11_image_draw(Evas_X11_Image *im,
 		       hh = (ih * dst_h) / src_h;
 		       xx = (src_x * src_w) / dst_w;
 		       yy = (src_y * src_h) / dst_h;
-		       imlib_render_pixmaps_for_whole_image_at_size(&pmap, &mask,
-								    ww, hh);
+		       if (!pmap)
+			  imlib_render_pixmaps_for_whole_image_at_size(&pmap, &mask,
+								       ww, hh);
 		       if (mask)
 			 {
 			    XSetClipMask(disp, dr->gc, mask);
@@ -427,16 +428,16 @@ void              __evas_x11_rectangle_draw(Display *disp, Imlib_Image dstim, Wi
 			    pixel = (a << 24) | (r << 16) | (g << 8) | b;
 			    im = imlib_create_image_using_data(1, 1, &pixel);
 			    imlib_context_set_image(im);
-			    if (a < 255)
-			       imlib_image_set_has_alpha(1);
-			    imlib_render_pixmaps_for_whole_image_at_size(&pmap, &mask,
-									 32, 32);
+			    if (a < 255) imlib_image_set_has_alpha(1);
+			    if (!pmap)
+			       imlib_render_pixmaps_for_whole_image_at_size(&pmap, &mask,
+									    32, 32);
 			 }
 		       if (a < 255)
 			 {
 			    if (mask)
 			      {
-				 int xx, yy, ww, hh, x1, y1;
+				 int xx, yy, ww, hh, x1, y1, xs, ys;
 				 GC gc;
 				 XGCValues gcv;
 				 
@@ -447,9 +448,23 @@ void              __evas_x11_rectangle_draw(Display *disp, Imlib_Image dstim, Wi
 				 CLIP(xx, yy, ww, hh, 0, 0, up->w, up->h);
 				 s_mask = XCreatePixmap(disp, win, ww, hh, 1);
 				 gc = XCreateGC(disp, s_mask, 0, &gcv);
-				 for (y1 = 0; y1 < hh; y1 += 32)
+				 xs = (x - up->x) % 32;
+				 if (xs > 0) xs = 0;
+				 else
 				   {
-				      for (x1 = 0; x1 < ww; x1 += 32)
+				      while (xs < 0) xs += 32;
+				      xs -= 32;
+				   }
+				 ys = (y - up->y) % 32;
+				 if (ys > 0) ys = 0;
+				 else
+				   {
+				      while (ys < 0) ys += 32;
+				      ys -= 32;
+				   }
+				 for (y1 = ys; y1 < hh; y1 += 32)
+				   {
+				      for (x1 = xs; x1 < ww; x1 += 32)
 					 XCopyArea(disp, mask, s_mask, gc,
 						   0, 0, 32, 32,
 						   x1, y1);
@@ -476,13 +491,14 @@ void              __evas_x11_rectangle_draw(Display *disp, Imlib_Image dstim, Wi
 			 }
 		       XFillRectangle(disp, up->p, dr->gc, x - up->x, y - up->y, w, h);
 		       if (s_mask) XFreePixmap(disp, s_mask);
+		       s_mask = 0;
 		    }
 	       }
 	  }
      }
+   if (pmap) imlib_free_pixmap_and_mask(pmap);	
    if (im) 
      {
-	if (pmap) imlib_free_pixmap_and_mask(pmap);	
 	imlib_context_set_image(im);
 	imlib_free_image();
      }
@@ -518,7 +534,7 @@ void              __evas_x11_line_draw(Display *disp, Imlib_Image dstim, Window 
    DATA32 pixel;
    Imlib_Image im = NULL;
    Pixmap pmap = 0, mask = 0, s_mask = 0;
-   
+
    imlib_context_set_color(r, g, b, a);
    imlib_context_set_display(disp);
    imlib_context_set_visual(__evas_visual);
@@ -570,14 +586,15 @@ void              __evas_x11_line_draw(Display *disp, Imlib_Image dstim, Window 
 			    imlib_context_set_image(im);
 			    if (a < 255)
 			       imlib_image_set_has_alpha(1);
-			    imlib_render_pixmaps_for_whole_image_at_size(&pmap, &mask,
-									 32, 32);
+			    if (!pmap)
+			       imlib_render_pixmaps_for_whole_image_at_size(&pmap, &mask,
+									    32, 32);
 			 }
 		       if (a < 255)
 			 {
 			    if (mask)
 			      {
-				 int xx, yy, ww, hh, x1, y1;
+				 int xx, yy, ww, hh, x1, y1, xs, ys;
 				 GC gc;
 				 XGCValues gcv;
 				 
@@ -588,9 +605,23 @@ void              __evas_x11_line_draw(Display *disp, Imlib_Image dstim, Window 
 				 CLIP(xx, yy, ww, hh, 0, 0, up->w, up->h);
 				 s_mask = XCreatePixmap(disp, win, ww, hh, 1);
 				 gc = XCreateGC(disp, s_mask, 0, &gcv);
-				 for (y1 = 0; y1 < hh; y1 += 32)
+				 xs = (x - up->x) % 32;
+				 if (xs > 0) xs = 0;
+				 else
 				   {
-				      for (x1 = 0; x1 < ww; x1 += 32)
+				      while (xs < 0) xs += 32;
+				      xs -= 32;
+				   }
+				 ys = (y - up->y) % 32;
+				 if (ys > 0) ys = 0;
+				 else
+				   {
+				      while (ys < 0) ys += 32;
+				      ys -= 32;
+				   }
+				 for (y1 = ys; y1 < hh; y1 += 32)
+				   {
+				      for (x1 = xs; x1 < ww; x1 += 32)
 					 XCopyArea(disp, mask, s_mask, gc,
 						   0, 0, 32, 32,
 						   x1, y1);
@@ -617,13 +648,14 @@ void              __evas_x11_line_draw(Display *disp, Imlib_Image dstim, Window 
 			 }
 		       XDrawLine(disp, up->p, dr->gc, x1 - up->x, y1 - up->y, x2 - up->x, y2 - up->y);
 		       if (s_mask) XFreePixmap(disp, s_mask);
+		       s_mask = 0;
 		    }
 	       }
 	  }
      }
+   if (pmap) imlib_free_pixmap_and_mask(pmap);	
    if (im) 
      {
-	if (pmap) imlib_free_pixmap_and_mask(pmap);	
 	imlib_context_set_image(im);
 	imlib_free_image();
      }
@@ -676,13 +708,19 @@ __evas_x11_gradient_draw(Evas_X11_Graident *gr, Display *disp, Imlib_Image dstim
 {
    Evas_List l;
    
-   imlib_context_set_angle(angle);
+   imlib_context_set_display(disp);
+   imlib_context_set_visual(__evas_visual);
+   imlib_context_set_colormap(__evas_cmap);
+   imlib_context_set_drawable(win);
+   imlib_context_set_dither_mask(1);
+   imlib_context_set_anti_alias(0);
+   imlib_context_set_dither(1);
+   imlib_context_set_blend(0);
+   imlib_context_set_angle(0.0);
    imlib_context_set_operation(IMLIB_OP_COPY);
-   imlib_context_set_color_modifier(NULL);
    imlib_context_set_direction(IMLIB_TEXT_TO_RIGHT);
+   imlib_context_set_color_modifier(NULL);
    imlib_context_set_color_range((Imlib_Color_Range)gr);
-   imlib_context_set_anti_alias(1);
-   imlib_context_set_blend(1);
    for(l = drawable_list; l; l = l->next)
      {
 	Evas_X11_Drawable *dr;
@@ -703,12 +741,56 @@ __evas_x11_gradient_draw(Evas_X11_Graident *gr, Display *disp, Imlib_Image dstim
 		  if (RECTS_INTERSECT(up->x, up->y, up->w, up->h,
 				      x, y, w, h))
 		    {
-/*		       
-		       if (!up->image)
-			  up->image = imlib_create_image(up->w, up->h);
-		       imlib_context_set_image(up->image);
-		       imlib_image_fill_color_range_rectangle(x - up->x, y - up->y, w, h, angle);
-*/
+		       int xx, yy, ww, hh;
+		       Imlib_Image im = NULL;
+		       Pixmap pmap = 0, mask = 0;
+		       
+		       xx = x - up->x;
+		       yy = y - up->y;
+		       ww = w;
+		       hh = h;
+		       CLIP(xx, yy, ww, hh, 0, 0, up->w, up->h);
+		       if (!up->p)
+			  up->p = XCreatePixmap(disp, win, up->w, up->h, dr->depth);
+		       im = imlib_create_image(ww, hh);
+		       if (im)
+			 {
+			    DATA32 *data;
+			    
+			    imlib_context_set_image(im);
+			    data = imlib_image_get_data();
+			    memset(data, 0, ww * hh * sizeof(DATA32));
+			    imlib_image_put_back_data(data);
+			    imlib_image_set_has_alpha(1);
+			    imlib_image_fill_color_range_rectangle(x - xx - up->x, y - yy - up->y, w, h, angle);
+			    pmap = XCreatePixmap(disp, win, ww, hh, dr->depth);
+			    mask = XCreatePixmap(disp, win, ww, hh, 1);
+			    imlib_context_set_drawable(pmap);
+			    imlib_context_set_mask(mask);
+			    imlib_render_image_on_drawable(0, 0);
+			    imlib_context_set_mask(0);
+			 }
+		       if (mask)
+			 {
+			    XSetClipMask(disp, dr->gc, mask);
+			    XSetClipOrigin(disp, dr->gc, xx, yy);
+			 }
+		       else
+			 {
+			    XSetClipMask(disp, dr->gc, None);
+			 }
+		       if (pmap)
+			  XCopyArea(disp, pmap, up->p, dr->gc, 
+				    0, 0, 
+				    ww, hh, 
+				    xx, yy);
+		       if (pmap) XFreePixmap(disp, pmap);
+		       if (mask) XFreePixmap(disp, mask);
+		       if (im) 
+			 {
+			    imlib_context_set_image(im);
+			    imlib_free_image();
+			 }
 		    }
 	       }
 	  }

@@ -324,7 +324,7 @@ main(int argc, char **argv)
 		  hh = ww;
 		  evas_resize(e, o[i], ww, hh);
 		  evas_set_image_fill(e, o[i], 0, 0, ww, hh);
-/*		  		  
+/*		  
 		  evas_set_color(e, o[i], 255, 255, 255, 
 				 (((1.0 + cos((double)(a + j) * 2 * 3 * 3.141592654 / 1000)) / 2) * 255));
 */
