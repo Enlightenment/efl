@@ -1,6 +1,41 @@
 #include "Edje.h"
 #include "edje_private.h"
 
+void
+edje_part_geometry_get(Evas_Object *o, char *part, double *x, double *y, double *w, double *h )
+{
+   Evas_List *l;
+   Edje *ed;
+
+   ed = _edje_fetch(o);   
+   if ((!ed) || (!part))
+     {
+	if (x) *x = 0;
+	if (y) *y = 0;
+	if (w) *w = 0;
+	if (h) *h = 0;
+	return;
+     }
+   for (l = ed->parts; l; l = l->next)
+     {
+	Edje_Real_Part *rp;
+	
+	rp = l->data;	
+	if ((!strcmp(rp->part->name, part)) && (rp->calculated))
+	  {
+	     if (x) *x = rp->x;
+	     if (y) *y = rp->y;
+	     if (w) *w = rp->w;
+	     if (h) *h = rp->h;
+	     return;
+	  }
+     }
+   if (x) *x = 0;
+   if (y) *y = 0;
+   if (w) *w = 0;
+   if (h) *h = 0;
+}
+
 Edje *
 _edje_fetch(Evas_Object *obj)
 {
@@ -35,29 +70,4 @@ _edje_thaw(Edje *ed)
    if ((ed->freeze <= 0) && (ed->recalc))
      _edje_recalc(ed);
    return ed->freeze;
-}
-
-void
-edje_part_geometry_get(Evas_Object *o, char *part, int *x, int *y, int *w, int *h )
-{
-  Evas_List *l;
-  Edje *ed;
-
-  ed = _edje_fetch(o);
-
-  for (l = ed->parts; l; l = l->next)
-  {
-    Edje_Real_Part *rp;
-    rp = l->data;
-
-    if (!strcmp(rp->part->name, part) && rp->calculated)
-    {
-      if (x) *x = rp->x; 
-      if (y) *y = rp->y; 
-      if (w) *w = rp->w; 
-      if (h) *h = rp->h; 
-
-      return;
-    }
-  }
 }
