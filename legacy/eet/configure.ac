@@ -70,6 +70,12 @@ packagesrcdir=`cd $srcdir && pwd`
 AC_DEFINE_UNQUOTED(PACKAGE_SOURCE_DIR, "${packagesrcdir}")
 
 AC_OUTPUT([
-Makefile src/Makefile src/lib/Makefile src/bin/Makefile
+Makefile
+src/Makefile
+src/lib/Makefile
+src/bin/Makefile
+eet-config
+],[
+chmod +x eet-config
+touch eet_docs.tar.gz
 ])
-
