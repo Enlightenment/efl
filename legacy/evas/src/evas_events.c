@@ -186,6 +186,14 @@ evas_event_leave(Evas e)
 {
    if (!e) return;
    e->mouse.in = 0;
+   if ((e->mouse.object) && (!e->mouse.button_object))
+     {
+	_evas_callback_call(e, e->mouse.object, CALLBACK_MOUSE_MOVE, 
+			    e->mouse.buttons, e->mouse.x, e->mouse.y);
+	_evas_callback_call(e, e->mouse.object, CALLBACK_MOUSE_OUT, 
+			    e->mouse.buttons, e->mouse.x, e->mouse.y);
+	e->mouse.object = NULL;
+     }
 }
 
 Evas_Object
