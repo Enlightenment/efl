@@ -3,7 +3,11 @@
 
 #include <Evas.h>
 #include <Ecore.h>
+#ifndef EDJE_FB_ONLY
 #include <Ecore_X.h>
+#else
+#include <Ecore_Fb.h>
+#endif
 #include <Ecore_Evas.h>
 /* ... only for testing */
 #include <Eet.h>

@@ -25,7 +25,12 @@ extern "C" {
    void         edje_object_part_geometry_get   (Evas_Object *o, const char *part, double *x, double *y, double *w, double *h);
    void         edje_object_part_text_set       (Evas_Object *o, const char *part, const char *text);
    const char  *edje_object_part_text_get       (Evas_Object *o, const char *part);
-       
+
+#if 0
+   void         edje_object_color_class_set     (Evas_Object *o, const char *color_class, int r, int g, int b, int a);
+   void         edje_object_text_class_set      (Evas_Object *o, const char *text_class, const char *font, double size);
+#endif
+   
 #ifdef __cplusplus
 }
 #endif

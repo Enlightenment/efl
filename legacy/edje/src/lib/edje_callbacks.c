@@ -41,6 +41,7 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    ed = data;
    rp = evas_object_data_get(obj, "real_part");
    if (!rp) return;
+#ifndef EDJE_FB_ONLY
    if (ecore_event_current_type_get() == ECORE_X_EVENT_MOUSE_BUTTON_DOWN)
      {
 	Ecore_X_Event_Mouse_Button_Down *evx;
@@ -59,6 +60,7 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	  snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
      }
    else
+#endif     
      snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
    if (rp->clicked_button == 0)
      {

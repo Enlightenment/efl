@@ -5,7 +5,11 @@
 
 #include <Evas.h>
 #include <Ecore.h>
+#ifndef EDJE_FB_ONLY
 #include <Ecore_X.h>
+#else
+#include <Ecore_Fb.h>
+#endif
 #include <Eet.h>
 
 #include <math.h>
@@ -33,8 +37,10 @@
  * 
  * externally sourced images need to be supported in edje_cc and edje
  * 
- * need to detect relative part loops
+ * need to detect rel1_to part loops
+ * need to detect rel2_to part loops
  * need to detect clip_to part loops
+ * need to detect confine_to part loops
  * 
  * edje_cc should be able to force lossy, lossless, min and max quality and compression of encoded images
  * edje_cc needs to prune out unused images

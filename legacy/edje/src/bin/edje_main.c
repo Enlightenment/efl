@@ -46,24 +46,11 @@ main_start(int argc, char **argv)
    ecore_app_args_set(argc, (const char **)argv);
    ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, main_signal_exit, NULL);
    if (!ecore_evas_init()) return -1;
-#if 0   
-   if ((argc > 1) && (!strcmp(argv[1], "-fb")))
-     ecore_evas = ecore_evas_fb_new(NULL, 0,  240, 320);
-   else if ((argc > 1) && (!strcmp(argv[1], "-x")))
-     ecore_evas = ecore_evas_software_x11_new(NULL, 0,  0, 0, 240, 320);
-   else if ((argc > 1) && (!strcmp(argv[1], "-h")))
-     {
-	printf("%s -x         Run in X (default)\n"
-	       "%s -fb        Run in the Framebuffer\n"
-	       "%s -h         Display this help\n",
-	       argv[0], argv[0], argv[0]);
-	ecore_evas_shutdown();
-	ecore_shutdown();
-	return 0;
-     }
-   else
-#endif     
-     ecore_evas = ecore_evas_software_x11_new(NULL, 0,  0, 0, 240, 320);
+#ifndef EDJE_FB_ONLY  
+   ecore_evas = ecore_evas_software_x11_new(NULL, 0,  0, 0, 240, 320);
+#else
+   ecore_evas = ecore_evas_fb_new(NULL, 0,  240, 320);
+#endif   
    if (!ecore_evas) return -1;
    ecore_evas_callback_delete_request_set(ecore_evas, main_delete_request);
    ecore_evas_callback_resize_set(ecore_evas, main_resize);
