@@ -5,3 +5,4 @@ Makefile.in
 .deps
 libevas.la
 evas_main.lo
+*.lo
