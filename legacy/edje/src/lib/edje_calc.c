@@ -316,6 +316,7 @@ _edje_part_recalc_single(Edje *ed,
      params->y + 1;
    
    /* aspect */
+#if 0   
    if (params->h > 0)
      {
 	double aspect;
@@ -368,7 +369,122 @@ _edje_part_recalc_single(Edje *ed,
 	       }
 	  }
      }
-
+#else
+   if (params->h > 0)
+     {
+	double aspect;
+	double new_w, new_h;
+   
+	new_h = params->h;
+	new_w = params->w;
+	aspect = (double)params->w / (double)params->h;
+	if (desc->aspect.prefer == EDJE_ASPECT_PREFER_NONE) /* keep both dimensions in check */
+	  {
+	     /* adjust for max aspect (width / height) */
+	     if ((desc->aspect.max > 0.0) && (aspect > desc->aspect.max))
+	       {
+		  new_h = (params->w / desc->aspect.max);
+		  new_w = (params->h * desc->aspect.max);
+	       }
+	     printf("[a] %s [%3.3f -> %3.3f] (%ix%i) -> (%3.3fx%3.3f)\n", 
+		    ep->part->name, 
+		    desc->aspect.min, desc->aspect.max,
+		    params->w, params->h,
+		    new_w, new_h);
+	     /* adjust for min aspect (width / height) */
+	     if ((desc->aspect.min > 0.0) && (aspect < desc->aspect.min))
+	       {
+		  new_h = (params->w / desc->aspect.min);
+		  new_w = (params->h * desc->aspect.min);
+	       }
+	     printf("  [b] %s [%3.3f -> %3.3f] (%ix%i) -> (%3.3fx%3.3f)\n", 
+		    ep->part->name, 
+		    desc->aspect.min, desc->aspect.max,
+		    params->w, params->h,
+		    new_w, new_h);
+	  } /* prefer vertical size as determiner */
+	else if (desc->aspect.prefer == EDJE_ASPECT_PREFER_VERTICAL) /* keep both dimensions in check */
+	  {
+	     /* adjust for max aspect (width / height) */
+	     if ((desc->aspect.max > 0.0) && (aspect > desc->aspect.max))
+	       {
+		  new_w = (params->h * desc->aspect.max);
+	       }
+	     printf("[a] %s [%3.3f -> %3.3f] (%ix%i) -> (%3.3fx%3.3f)\n", 
+		    ep->part->name, 
+		    desc->aspect.min, desc->aspect.max,
+		    params->w, params->h,
+		    new_w, new_h);
+	     /* adjust for min aspect (width / height) */
+	     if ((desc->aspect.min > 0.0) && (aspect < desc->aspect.min))
+	       {
+		  new_w = (params->h * desc->aspect.min);
+	       }
+	     printf("  [b] %s [%3.3f -> %3.3f] (%ix%i) -> (%3.3fx%3.3f)\n", 
+		    ep->part->name, 
+		    desc->aspect.min, desc->aspect.max,
+		    params->w, params->h,
+		    new_w, new_h);
+	  } /* prefer horizontal size as determiner */
+	else if (desc->aspect.prefer == EDJE_ASPECT_PREFER_HORIZONTAL) /* keep both dimensions in check */
+	  {
+	     /* adjust for max aspect (width / height) */
+	     if ((desc->aspect.max > 0.0) && (aspect > desc->aspect.max))
+	       {
+		  new_h = (params->w / desc->aspect.max);
+	       }
+	     printf("[a] %s [%3.3f -> %3.3f] (%ix%i) -> (%3.3fx%3.3f)\n", 
+		    ep->part->name, 
+		    desc->aspect.min, desc->aspect.max,
+		    params->w, params->h,
+		    new_w, new_h);
+	     /* adjust for min aspect (width / height) */
+	     if ((desc->aspect.min > 0.0) && (aspect < desc->aspect.min))
+	       {
+		  new_h = (params->w / desc->aspect.min);
+	       }
+	     printf("  [b] %s [%3.3f -> %3.3f] (%ix%i) -> (%3.3fx%3.3f)\n", 
+		    ep->part->name, 
+		    desc->aspect.min, desc->aspect.max,
+		    params->w, params->h,
+		    new_w, new_h);
+	  }
+	/* do real adjustment */
+	if ((params->h - new_h) > (params->w - new_w))
+	  {
+	     if (params->h < new_h)
+	       {
+		  params->y = params->y +
+		    ((params->h - new_h) * (1.0 - desc->align.y));
+		  params->h = new_h;
+	       }
+	     else if (params->h > new_h)
+	       {
+		  params->y = params->y +
+		    ((params->h - new_h) * desc->align.y);
+		  params->h = new_h;
+	       }
+	     params->w = new_w;
+	  }
+	else
+	  {
+	     if (params->w < new_w)
+	       {
+		  params->x = params->x +
+		    ((params->w - new_w) * (1.0 - desc->align.x));
+		  params->w = new_w;
+	       }
+	     else if (params->w > new_w)
+	       {
+		  params->x = params->x +
+		    ((params->w - new_w) * desc->align.x);
+		  params->w = new_w;
+	       }
+	     params->h = new_h;
+	  }
+     }
+#endif
+   
    /* size step */
    if (desc->step.x > 0)
      {

@@ -38,6 +38,7 @@ static void st_collections_group_parts_part_description_min(void);
 static void st_collections_group_parts_part_description_max(void);
 static void st_collections_group_parts_part_description_step(void);
 static void st_collections_group_parts_part_description_aspect(void);
+static void st_collections_group_parts_part_description_aspect_preference(void);
 static void st_collections_group_parts_part_description_rel1_relative(void);
 static void st_collections_group_parts_part_description_rel1_offset(void);
 static void st_collections_group_parts_part_description_rel1_to(void);
@@ -109,6 +110,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.max", st_collections_group_parts_part_description_max},
      {"collections.group.parts.part.description.step", st_collections_group_parts_part_description_step},
      {"collections.group.parts.part.description.aspect", st_collections_group_parts_part_description_aspect},
+     {"collections.group.parts.part.description.aspect_preference", st_collections_group_parts_part_description_aspect_preference},
      {"collections.group.parts.part.description.rel1.relative", st_collections_group_parts_part_description_rel1_relative},
      {"collections.group.parts.part.description.rel1.offset", st_collections_group_parts_part_description_rel1_offset},
      {"collections.group.parts.part.description.rel1.to", st_collections_group_parts_part_description_rel1_to},
@@ -184,6 +186,7 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.max", NULL},
      {"collections.group.parts.part.description.step", NULL},
      {"collections.group.parts.part.description.aspect", NULL},
+     {"collections.group.parts.part.description.aspect_preference", NULL},
      {"collections.group.parts.part.description.rel1", NULL},
      {"collections.group.parts.part.description.rel1.relative", NULL},
      {"collections.group.parts.part.description.rel1.offset", NULL},
@@ -713,6 +716,24 @@ st_collections_group_parts_part_description_aspect(void)
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
    ed->aspect.min = parse_float_range(0, 0.0, 999999999.0);
    ed->aspect.max = parse_float_range(1, 0.0, 999999999.0);
+}
+
+static void
+st_collections_group_parts_part_description_aspect_preference(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->aspect.prefer =  parse_enum(0, 
+				   "NONE", EDJE_ASPECT_PREFER_NONE,
+				   "VERTICAL", EDJE_ASPECT_PREFER_VERTICAL,
+				   "HORIZONTAL", EDJE_ASPECT_PREFER_HORIZONTAL,
+				   NULL);
 }
 
 static void
