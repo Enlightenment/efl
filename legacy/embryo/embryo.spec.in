@@ -1,16 +1,16 @@
 %define _missing_doc_files_terminate_build 0
 
-Summary: embryo
-Name: embryo
-Version: 0.9.1
-Release: 1.%(date '+%Y%m%d')
+Summary: A small virtual machine engine (in a library) and bytecode compiler
+Name: @PACKAGE@
+Version: @VERSION@
+Release: 1
 License: BSD
 Group: System Environment/Libraries
-URL: http://www.enlightenment.org/
-Source: ftp://ftp.enlightenment.org/pub/embryo/%{name}-%{version}.tar.gz
+Source: %{name}-%{version}.tar.gz
 Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.org>}
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
+URL: http://www.enlightenment.org/
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
@@ -30,11 +30,15 @@ Headers, static libraries, test programs and documentation for Embryo
 
 %build
 %{configure} --prefix=%{_prefix}
+### use this if you have build problems
+#./configure --prefix=%{_prefix}
 %{__make} %{?_smp_mflags} %{?mflags}
 
 %install
 %{__make} %{?mflags_install} DESTDIR=$RPM_BUILD_ROOT install
-test -x `which doxygen` && sh gendoc || :
+
+%clean
+test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 
 %post
 /sbin/ldconfig
@@ -42,26 +46,22 @@ test -x `which doxygen` && sh gendoc || :
 %postun
 /sbin/ldconfig
 
-%clean
-test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
-
 %files
 %defattr(-, root, root)
 %doc AUTHORS COPYING* README
-%{_libdir}/libembryo.so.*
-%{_libdir}/libembryo.la
+%{_libdir}/*.so.*
+%{_libdir}/*.la
 %attr(755,root,root) %{_bindir}/embryo_cc
 %attr(755,root,root) %{_bindir}/embryo
 
 %files devel
 %defattr(-, root, root)
-%doc doc/html
-%{_libdir}/libembryo.so
-%{_libdir}/libembryo.a
+%{_libdir}/*.so
+%{_libdir}/*.a
 %{_bindir}/embryo-config
 %{_datadir}/embryo/examples
 %{_datadir}/embryo/include
-%{_libdir}/pkgconfig/embryo.pc
-%{_includedir}/Embryo*
+%{_libdir}/pkgconfig/*
+%{_includedir}/*.h
 
 %changelog

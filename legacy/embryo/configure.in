@@ -114,7 +114,13 @@ src/Makefile
 src/lib/Makefile
 src/bin/Makefile
 embryo-config
+README
+embryo.spec
+embryo.oe
+embryo-native.oe
+embryo.bb
+embryoXnative.bb
+debian/changelog
 ],[
 chmod +x embryo-config
-touch embryo_docs.tar.gz
 ])

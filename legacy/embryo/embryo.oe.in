@@ -5,7 +5,7 @@ MAINTAINER = "Carsten Haitzler (Rasterman) <raster@rasterman.com>"
 SECTION = "e/libs"
 PRIORITY = "optional"
 DEPENDS = ""
-PV = "0.9.1"
+PV = "@VERSION@"
 PR = "1"
 
 do_prepsources () {

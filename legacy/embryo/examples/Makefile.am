@@ -1,3 +1,5 @@
+MAINTAINERCLEANFILES = Makefile.in
+
 filesdir = $(datadir)/embryo/examples
 files_DATA = \
 test.inc \

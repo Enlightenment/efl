@@ -1,3 +1,5 @@
+MAINTAINERCLEANFILES = Makefile.in
+
 filesdir = $(datadir)/embryo/include
 files_DATA = \
 default.inc

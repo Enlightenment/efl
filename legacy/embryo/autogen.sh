@@ -3,6 +3,8 @@
 rm -rf autom4te.cache
 rm -f aclocal.m4
 
+touch README
+
 echo "Running aclocal..."; aclocal $ACLOCAL_FLAGS -I m4 \
 && echo "Running autoheader..."; autoheader \
 && echo "Running autoconf..."; autoconf \
