@@ -2,9 +2,12 @@
 
 #define TILE(tb, x, y) ((tb)->tiles.tiles[((y) * (tb)->tiles.w) + (x)])
 
+#ifdef RECTUPDATE
+#else
 static int  tilebuf_x_intersect(Tilebuf *tb, int x, int w, int *x1, int *x2, int *x1_fill, int *x2_fill);
 static int  tilebuf_y_intersect(Tilebuf *tb, int y, int h, int *y1, int *y2, int *y1_fill, int *y2_fill);
 static int  tilebuf_intersect(int tsize, int tlen, int tnum, int x, int w, int *x1, int *x2, int *x1_fill, int *x2_fill);
+#endif
 static void tilebuf_setup(Tilebuf *tb);
 
 void
@@ -31,7 +34,11 @@ evas_common_tilebuf_new(int w, int h)
 void
 evas_common_tilebuf_free(Tilebuf *tb)
 {
+#ifdef RECTUPDATE
+   evas_common_regionbuf_free(tb->rb);
+#else   
    if (tb->tiles.tiles) free(tb->tiles.tiles);
+#endif   
    free(tb);
 }
 
@@ -126,6 +133,13 @@ evas_common_tilebuf_get_tile_size(Tilebuf *tb, int *tw, int *th)
 int
 evas_common_tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)
 {
+#ifdef RECTUPDATE
+   int i;
+   
+   for (i = 0; i < h; i++)
+     evas_common_regionbuf_span_add(tb->rb, x, x + w - 1, y + i);
+   return 1;
+#else   
    int tx1, tx2, ty1, ty2, tfx1, tfx2, tfy1, tfy2, xx, yy;
    int num;
    
@@ -148,11 +162,18 @@ evas_common_tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)
 	  }
      }
    return num;
+#endif   
 }
 
 int
 evas_common_tilebuf_del_redraw(Tilebuf *tb, int x, int y, int w, int h)
 {
+#ifdef RECTUPDATE
+   int i;
+   
+   for (i = 0; i < h; i++)
+     evas_common_regionbuf_span_del(tb->rb, x, x + w - 1, y + i);
+#else   
    int tx1, tx2, ty1, ty2, tfx1, tfx2, tfy1, tfy2, xx, yy;
    int num;
    
@@ -179,6 +200,7 @@ evas_common_tilebuf_del_redraw(Tilebuf *tb, int x, int y, int w, int h)
 	  }
      }
    return num;
+#endif   
 }
 
 int
@@ -198,13 +220,20 @@ evas_common_tilebuf_add_motion_vector(Tilebuf *tb, int x, int y, int w, int h, i
 void
 evas_common_tilebuf_clear(Tilebuf *tb)
 {
+#ifdef RECTUPDATE
+   evas_common_regionbuf_clear(tb->rb);
+#else   
    if (!tb->tiles.tiles) return;
    memset(tb->tiles.tiles, 0, tb->tiles.w * tb->tiles.h * sizeof(Tilebuf_Tile));
+#endif   
 }
 
 Tilebuf_Rect *
 evas_common_tilebuf_get_render_rects(Tilebuf *tb)
 {
+#ifdef RECTUPDATE
+   return evas_common_regionbuf_rects_get(tb->rb);
+#else   
    Tilebuf_Rect *rects = NULL;
    int x, y;
    
@@ -269,6 +298,7 @@ evas_common_tilebuf_get_render_rects(Tilebuf *tb)
 	  }
      }
    return rects;
+#endif   
 }
 
 void
@@ -295,6 +325,9 @@ evas_common_tilebuf_free_render_rects(Tilebuf_Rect *rects)
 static void
 tilebuf_setup(Tilebuf *tb)
 {
+#ifdef RECTUPDATE
+   tb->rb = evas_common_regionbuf_new(tb->outbuf_w, tb->outbuf_h);
+#else   
    if (tb->tiles.tiles) free(tb->tiles.tiles);
    tb->tiles.tiles = NULL;
  
@@ -310,8 +343,11 @@ tilebuf_setup(Tilebuf *tb)
 	return;
      }
    memset(tb->tiles.tiles, 0, tb->tiles.w * tb->tiles.h * sizeof(Tilebuf_Tile));
+#endif   
 }
 
+#ifdef RECTUPDATE
+#else
 static int
 tilebuf_x_intersect(Tilebuf *tb, int x, int w, int *x1, int *x2, int *x1_fill, int *x2_fill)
 {
@@ -359,3 +395,4 @@ tilebuf_intersect(int tsize, int tlen, int tnum, int x, int w, int *x1, int *x2,
    return 1;
    tnum = 0;
 }
+#endif

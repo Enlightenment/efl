@@ -15,7 +15,6 @@
  * * strikethrough support
  * * solid bg behind text
  * * if a word (or char) doesnt fit at all do something sensible
- * * layout nodes need to be able to  give their source node and offset
  * * styles (outline, glow, etxra glow, shadow, soft shadow, etc.)
  * * anchors (to query text extents)
  * * query text pos given object-relative co-ords
@@ -69,9 +68,20 @@ struct _Layout
    } font;
    struct {
       unsigned char     r, g, b, a;
-   } color, underline_color, outline_color, shadow_color;
+   } color, 
+     underline_color, 
+     double_underline_color, 
+     outline_color, 
+     shadow_color, 
+     glow_color, 
+     outer_glow_color, 
+     backing_color,
+     strikethrough_color
+     ;
    struct {
-      int               inset, x, y, ascent, descent, mascent, mdescent;
+      int               inset, x, y, 
+	                ascent, descent, 
+	                mascent, mdescent;
    } line;
    double               align, valign;
    unsigned char        word_wrap : 1;
@@ -96,6 +106,10 @@ struct _Layout_Node
    Layout layout;
    char *text; /* text data until the next node */
    int w, h;
+   Node *source_node;
+   int source_pos;
+   unsigned char line_start : 1;
+   unsigned char line_end : 1;
 };
 
 struct _Evas_Object_Textblock
@@ -130,18 +144,13 @@ evas_object_textblock_layout_init(Layout *layout)
    layout->color.g = 255;
    layout->color.b = 255;
    layout->color.a = 255;
-   layout->underline_color.r = 255;
-   layout->underline_color.g = 255;
-   layout->underline_color.b = 255;
-   layout->underline_color.a = 255;
-   layout->outline_color.r = 255;
-   layout->outline_color.g = 255;
-   layout->outline_color.b = 255;
-   layout->outline_color.a = 255;
-   layout->shadow_color.r = 255;
-   layout->shadow_color.g = 255;
-   layout->shadow_color.b = 255;
-   layout->shadow_color.a = 255;
+   layout->underline_color = layout->color;
+   layout->double_underline_color = layout->color;
+   layout->outline_color = layout->color;
+   layout->shadow_color = layout->color;
+   layout->glow_color = layout->color;
+   layout->outer_glow_color = layout->color;
+   layout->strikethrough_color = layout->color;
    layout->line.inset = 0;
    layout->line.x = 0;
    layout->line.y = 0;
@@ -520,9 +529,11 @@ evas_object_textblock_layout(Evas_Object *obj)
 	Layout_Node *lnode;
 	Node *node;
 	
-	/* FIXME: if we overflow then this would be punted to an overflow */
-	/* object instead */
+	/* FIXME: we cant do this - we need to be able to qury text
+	 * overflow amounts */
+	/*
 	if (layout.line.y >= h) goto breakout;
+	 */
 	node = (Node *)l;
 //	printf("NODE: FMT:\"%s\" TXT:\"%s\"\n", node->format, node->text);
 	if (node->format)
@@ -530,12 +541,14 @@ evas_object_textblock_layout(Evas_Object *obj)
 	     /* first handle newline, tab etc. etc */
 	     if (!strcmp(node->format, "\n"))
 	       {
+		  if (lnode)
+		    lnode->line_end = 1;
 		  layout.line.x = 0;
-		  if ((layout.line.y + lnode->layout.line.mascent + lnode->layout.line.mdescent) > h)
+		  if ((layout.line.y + layout.line.mascent + layout.line.mdescent) > h)
 		    {
 		       /* FIXME: this node would overflow to the next textblock */
 		    }
-		  layout.line.y += lnode->layout.line.mascent + lnode->layout.line.mdescent;
+		  layout.line.y += layout.line.mascent + layout.line.mdescent;
 	       }
 	     else
 	       evas_object_textblock_layout_format_modify(&layout, node->format);
@@ -548,15 +561,22 @@ evas_object_textblock_layout(Evas_Object *obj)
 	     void *font = NULL;
 	     char *text;
 	     int adj, lastnode;
+	     int srcpos = 0;
 
 	     text = strdup(node->text);
 	     new_node:
+	     /* FIXME: we cant do this - we need to be able to qury text
+	      * overflow amounts */
+	     /*
 	     if (layout.line.y >= h)
 	       {
 		  free(text);
 		  goto breakout;
 	       }
+	      */
 	     lnode = calloc(1, sizeof(Layout_Node));
+	     lnode->source_node = node;
+	     lnode->source_pos = srcpos;
 	     evas_object_textblock_layout_copy(&layout, &(lnode->layout));
 	     if (lnode->layout.font.name)
 	       font = evas_font_load(obj->layer->evas, lnode->layout.font.name, lnode->layout.font.source, lnode->layout.font.size);
@@ -569,6 +589,7 @@ evas_object_textblock_layout(Evas_Object *obj)
 		  layout.line.mascent = 0;
 		  layout.line.mdescent = 0;
 		  line_start = lnode;
+		  lnode->line_start = 1;
 	       }
 	     lnode->layout.font.font = font;
 	     if (font) ascent = ENFN->font_max_ascent_get(ENDT, font);
@@ -663,6 +684,7 @@ evas_object_textblock_layout(Evas_Object *obj)
 		       text2 = strdup(text + chrpos);
 		       lnode->text = text1;
 		       free(text);
+		       srcpos += chrpos;
 		       text = text1;
 		       if (font) ENFN->font_string_size_get(ENDT, font, text, &tw, &th);
 		       lnode->w = tw;
@@ -680,9 +702,10 @@ evas_object_textblock_layout(Evas_Object *obj)
 			    lnode2->layout.line.mdescent = layout.line.mdescent;
 			    if (ll == (Evas_Object_List *)line_start) break;
 			 }
+		       lnode->line_end = 1;
 		       layout.line.inset = 0;
 		       layout.line.x = 0;
-		       if ((layout.line.y + lnode->layout.line.mascent + lnode->layout.line.mdescent) > h)
+		       if ((layout.line.y + layout.line.mascent + layout.line.mdescent) > h)
 			 {
 			    /* FIXME: this node would overflow to the next textblock */
 			 }

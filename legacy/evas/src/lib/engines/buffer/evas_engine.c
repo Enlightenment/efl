@@ -284,7 +284,7 @@ evas_engine_buffer_output_setup(int   w,
      }
    re->tb = evas_common_tilebuf_new(w, h);
    /* in preliminary tests 16x16 gave highest framerates */
-   evas_common_tilebuf_set_tile_size(re->tb, 16, 16); 
+   evas_common_tilebuf_set_tile_size(re->tb, 16, 16);
    return re;
 }
 

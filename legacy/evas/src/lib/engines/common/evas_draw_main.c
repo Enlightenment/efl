@@ -496,6 +496,47 @@ evas_common_draw_context_cutout_split(Cutout_Rect *in, Cutout_Rect *split)
 	return out;
      }
    return NULL;
+#undef INX1
+#undef INX2
+#undef SPX1
+#undef SPX2
+#undef INY1
+#undef INY2
+#undef SPY1
+#undef SPY2
+#undef X1_IN
+#undef X2_IN
+#undef Y1_IN
+#undef Y2_IN
+#undef R_NEW
+}
+
+Cutout_Rect *
+evas_common_draw_context_cutout_merge(Cutout_Rect *in, Cutout_Rect *merge)
+{
+   /* 1 input rect, multiple out */
+   Cutout_Rect *out;
+   Cutout_Rect *r;
+   Evas_Object_List *l;
+
+   for (l = (Evas_Object_List *)in; l; l = l->next)
+     {
+	r = (Cutout_Rect *)l;
+
+	merge = evas_common_draw_context_cutouts_split(merge, r);
+	if (!merge) return in;
+     }
+   r = merge;
+   out = in;
+   while (r)
+     {
+	Cutout_Rect *r2;
+	
+	r2 = r;
+	r = evas_object_list_remove(r, r);
+	out = evas_object_list_append(out, r2);
+     }
+   return out;
 }
 
 Gfx_Func_Blend_Src_Dst

@@ -23,6 +23,9 @@
 
 /*****************************************************************************/
 
+/* use exact rects for updates not tiles */
+/* #define RECTUPDATE */
+
 #undef MIN
 #define MIN(_x, _y) \
 (((_x) < (_y)) ? (_x) : (_y))
@@ -176,6 +179,9 @@ typedef struct _Convert_Pal           Convert_Pal;
 typedef struct _Tilebuf               Tilebuf;
 typedef struct _Tilebuf_Tile          Tilebuf_Tile;
 typedef struct _Tilebuf_Rect          Tilebuf_Rect;
+
+typedef struct _Regionbuf             Regionbuf;
+typedef struct _Regionspan            Regionspan;
 
 typedef void (*Gfx_Func_Blend_Src_Dst) (DATA32 *src, DATA32 *dst, int len);
 typedef void (*Gfx_Func_Blend_Color_Dst) (DATA32 src, DATA32 *dst, int len);
@@ -385,11 +391,15 @@ struct _Tilebuf
    struct {
       int           w, h;
    } tile_size;
-   
+
+#ifdef RECTUPDATE
+   Regionbuf *rb;
+#else
    struct {
       int           w, h;
       Tilebuf_Tile *tiles;
    } tiles;
+#endif
 };
 
 struct _Tilebuf_Tile
@@ -411,6 +421,18 @@ struct _Tilebuf_Rect
 {
    Evas_Object_List  _list_data;
    int               x, y, w, h;
+};
+
+struct _Regionbuf
+{
+   int w, h;
+   Regionspan **spans;
+};
+
+struct _Regionspan
+{
+   Evas_Object_List  _list_data;
+   int x1, x2;
 };
 
 struct _Cutout_Rect
@@ -890,7 +912,15 @@ int           evas_common_tilebuf_add_motion_vector (Tilebuf *tb, int x, int y, 
 void          evas_common_tilebuf_clear             (Tilebuf *tb);
 Tilebuf_Rect *evas_common_tilebuf_get_render_rects  (Tilebuf *tb);
 void          evas_common_tilebuf_free_render_rects (Tilebuf_Rect *rects);
-    
+
+
+Regionbuf    *evas_common_regionbuf_new       (int w, int h);
+void          evas_common_regionbuf_free      (Regionbuf *rb);
+void          evas_common_regionbuf_clear     (Regionbuf *rb);
+void          evas_common_regionbuf_span_add  (Regionbuf *rb, int x1, int x2, int y);
+void          evas_common_regionbuf_span_del  (Regionbuf *rb, int x1, int x2, int y);
+Tilebuf_Rect *evas_common_regionbuf_rects_get (Regionbuf *rb);
+   
 /****/
 void               evas_common_draw_init                      (void);
 
@@ -915,7 +945,7 @@ Cutout_Rect       *evas_common_draw_context_apply_cutouts     (RGBA_Draw_Context
 void               evas_common_draw_context_apply_free_cutouts(Cutout_Rect *rects);
 Cutout_Rect       *evas_common_draw_context_cutouts_split     (Cutout_Rect *in, Cutout_Rect *split);
 Cutout_Rect       *evas_common_draw_context_cutout_split      (Cutout_Rect *in, Cutout_Rect *split);
-    
+Cutout_Rect       *evas_common_draw_context_cutout_merge      (Cutout_Rect *in, Cutout_Rect *merge);
 Gfx_Func_Blend_Src_Dst           evas_common_draw_func_blend_get       (RGBA_Image *src, RGBA_Image *dst, int pixels);
 Gfx_Func_Blend_Color_Dst         evas_common_draw_func_blend_color_get (DATA32 src, RGBA_Image *dst, int pixels);
 Gfx_Func_Blend_Src_Cmod_Dst      evas_common_draw_func_blend_cmod_get  (RGBA_Image *src, RGBA_Image *dst, int pixels);

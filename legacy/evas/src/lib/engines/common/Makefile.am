@@ -46,6 +46,7 @@ evas_scale_main.c \
 evas_scale_sample.c \
 evas_scale_smooth.c \
 evas_tiler.c \
+evas_regionbuf.c \
 evas_blend_ops.h
 
 EXTRA_DIST = \
