@@ -540,3 +540,15 @@ _ecore_event_signal_power_free(void *data, void *ev)
    e = ev;
    free(e);
 }
+
+void *
+_ecore_event_signal_realtime_new(void)
+{
+   return calloc(1, sizeof(Ecore_Event_Signal_Realtime));
+}
+
+void
+_ecore_event_signal_realtime_free(void *data, void *ev)
+{
+   free(ev);
+}

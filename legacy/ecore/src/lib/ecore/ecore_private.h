@@ -192,6 +192,8 @@ void         *_ecore_event_signal_exit_new(void);
 void          _ecore_event_signal_exit_free(void *data, void *ev);
 void         *_ecore_event_signal_power_new(void);
 void          _ecore_event_signal_power_free(void *data, void *ev);
+void         * _ecore_event_signal_realtime_new(void);
+void          _ecore_event_signal_realtime_free(void *data, void *ev);
 
 void          _ecore_main_shutdown(void);
     

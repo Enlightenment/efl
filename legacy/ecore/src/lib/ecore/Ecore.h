@@ -12,6 +12,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <limits.h>
+#include <signal.h>
 
 #include <Ecore_Data.h>
 
@@ -45,7 +46,8 @@ extern "C" {
 #define ECORE_EVENT_SIGNAL_HUP   3 /**< Hup signal event */
 #define ECORE_EVENT_SIGNAL_EXIT  4 /**< Exit signal event */
 #define ECORE_EVENT_SIGNAL_POWER 5 /**< Power signal event */
-#define ECORE_EVENT_COUNT        6
+#define ECORE_EVENT_SIGNAL_REALTIME 6 /**< Realtime signal event */
+#define ECORE_EVENT_COUNT        7
    
 #ifndef _ECORE_PRIVATE_H   
    enum _Ecore_Fd_Handler_Flags
@@ -71,6 +73,7 @@ extern "C" {
    typedef struct _Ecore_Event_Signal_Hup   Ecore_Event_Signal_Hup; /**< Hup signal event */
    typedef struct _Ecore_Event_Signal_Exit  Ecore_Event_Signal_Exit; /**< Exit signal event */
    typedef struct _Ecore_Event_Signal_Power Ecore_Event_Signal_Power; /**< Power signal event */
+   typedef struct _Ecore_Event_Signal_Realtime Ecore_Event_Signal_Realtime; /**< Realtime signal event */
 
    struct _Ecore_Event_Exe_Exit /** Process exit event */
      {
@@ -81,17 +84,20 @@ extern "C" {
 	char       exited    : 1; /** < set to 1 if the process exited of its own accord */
 	char       signalled : 1; /** < set to 1 id the process exited due to uncaught signal */
 	void      *ext_data; /**< Extension data - not used */
+    siginfo_t  data; /**< Signal info */
      };
 
    struct _Ecore_Event_Signal_User /** User signal event */
      {
 	int   number; /**< The signal number. Either 1 or 2 */
 	void *ext_data; /**< Extension data - not used */
+    siginfo_t data; /**< Signal info */
      };
    
    struct _Ecore_Event_Signal_Hup /** Hup signal event */
      {
 	void *ext_data; /**< Extension data - not used */
+    siginfo_t data; /**< Signal info */
      };
    
    struct _Ecore_Event_Signal_Exit /** Exit request event */
@@ -100,11 +106,19 @@ extern "C" {
 	int   quit      : 1; /**< set if the exit request was a quit signal */
 	int   terminate : 1; /**< Set if the exit request was a terminate singal */
 	void *ext_data;	/**< Extension data - not used */
+    siginfo_t data; /**< Signal info */
      };
 
    struct _Ecore_Event_Signal_Power /** Power event */
      {
-	void *ext_data; /**< Extension data - not used */
+	void *ext_data;	/**< Extension data - not used */
+	siginfo_t data; /**< Signal info */
+     };
+
+   struct _Ecore_Event_Signal_Realtime /** Realtime event */
+     {
+    int num; /**< The realtime signal's number */
+    siginfo_t data; /**< Signal info */
      };
 
    int  ecore_init(void);
