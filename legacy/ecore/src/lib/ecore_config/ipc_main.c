@@ -71,6 +71,11 @@ char *_ecore_config_ipc_prop_list(Ecore_Config_Server *srv, const long serial) {
   s=estring_new(8192);
   f=0;
   while(e) {
+    /* ignore system properties in listings, unless they have been overridden */
+    if (e->flags&PF_SYSTEM && !(e->flags&PF_MODIFIED)) {
+      e=e->next;
+      continue;
+    }
     estring_appendf(s,"%s%s: %s",f?"\n":"",e->key,ecore_config_get_type(e));
     if(e->flags&PF_BOUNDS) {
       if (e->type==PT_FLT)

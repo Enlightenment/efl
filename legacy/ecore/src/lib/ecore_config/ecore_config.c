@@ -611,7 +611,7 @@ int ecore_config_init(char *name) {
         /* unmark it modified - modification will mean it has been overridden */
         sys->flags&=~PF_MODIFIED;
         /* mark as system so that examine can hide them */
-        sys->flags&=PF_SYSTEM;
+        sys->flags|=PF_SYSTEM;
         sys=sys->next;
       }
     }
