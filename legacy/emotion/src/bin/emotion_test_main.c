@@ -85,15 +85,15 @@ main_start(int argc, char **argv)
                }
           }
      }
-#ifdef HAVE_ECORE_EVAS_FB   
+#if HAVE_ECORE_EVAS_X
    if (mode == 0)
      ecore_evas = ecore_evas_software_x11_new(NULL, 0,  0, 0, startw, starth);
 #endif   
-#ifdef HAVE_ECORE_EVAS_GL
+#if HAVE_ECORE_EVAS_GL
    if (mode == 1)
      ecore_evas = ecore_evas_gl_x11_new(NULL, 0, 0, 0, startw, starth);
 #endif
-#ifdef HAVE_ECORE_EVAS_X   
+#if HAVE_ECORE_EVAS_FB
    if (mode == 2)
      ecore_evas = ecore_evas_fb_new(NULL, 0, startw, starth);
 #endif
