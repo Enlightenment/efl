@@ -57,6 +57,13 @@ static Evas_Object_Func object_func =
 
 /* the actual api call to add a rect */
 /* it has no other api calls as all properties are standard */
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_Object *
 evas_object_text_add(Evas *e)
 {
@@ -71,6 +78,12 @@ evas_object_text_add(Evas *e)
    return obj;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_text_font_set(Evas_Object *obj, const char *font, double size)
 {
@@ -267,6 +280,12 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, double size)
    evas_object_inform_call_resize(obj);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_text_font_get(Evas_Object *obj, char **font, double *size)
 {
@@ -287,6 +306,12 @@ evas_object_text_font_get(Evas_Object *obj, char **font, double *size)
    *size = o->cur.size;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_text_text_set(Evas_Object *obj, const char *text)
 {
@@ -341,6 +366,12 @@ evas_object_text_text_set(Evas_Object *obj, const char *text)
    evas_object_inform_call_resize(obj);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 const char *
 evas_object_text_text_get(Evas_Object *obj)
 {
@@ -356,6 +387,12 @@ evas_object_text_text_get(Evas_Object *obj)
    return o->cur.text;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 double
 evas_object_text_ascent_get(Evas_Object *obj)
 {
@@ -371,6 +408,12 @@ evas_object_text_ascent_get(Evas_Object *obj)
    return o->ascent;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 double
 evas_object_text_descent_get(Evas_Object *obj)
 {
@@ -386,6 +429,12 @@ evas_object_text_descent_get(Evas_Object *obj)
    return o->descent;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 double
 evas_object_text_max_ascent_get(Evas_Object *obj)
 {
@@ -401,6 +450,12 @@ evas_object_text_max_ascent_get(Evas_Object *obj)
    return o->max_ascent;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 double
 evas_object_text_max_descent_get(Evas_Object *obj)
 {
@@ -416,6 +471,12 @@ evas_object_text_max_descent_get(Evas_Object *obj)
    return o->max_descent;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 double
 evas_object_text_inset_get(Evas_Object *obj)
 {
@@ -433,6 +494,12 @@ evas_object_text_inset_get(Evas_Object *obj)
 							o->cur.text);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 double
 evas_object_text_horiz_advance_get(Evas_Object *obj)
 {
@@ -450,6 +517,12 @@ evas_object_text_horiz_advance_get(Evas_Object *obj)
 							    o->cur.text);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 double
 evas_object_text_vert_advance_get(Evas_Object *obj)
 {
@@ -467,6 +540,12 @@ evas_object_text_vert_advance_get(Evas_Object *obj)
 							    o->cur.text);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 int
 evas_object_text_char_pos_get(Evas_Object *obj, int pos, double *cx, double *cy, double *cw, double *ch)
 {
@@ -494,6 +573,12 @@ evas_object_text_char_pos_get(Evas_Object *obj, int pos, double *cx, double *cy,
    return ret;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 int
 evas_object_text_char_coords_get(Evas_Object *obj, double x, double y, double *cx, double *cy, double *cw, double *ch)
 {
@@ -524,6 +609,12 @@ evas_object_text_char_coords_get(Evas_Object *obj, double x, double y, double *c
 
 
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_font_path_clear(Evas *e)
 {
@@ -537,6 +628,12 @@ evas_font_path_clear(Evas *e)
      }
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_font_path_append(Evas *e, const char *path)
 {
@@ -547,6 +644,12 @@ evas_font_path_append(Evas *e, const char *path)
    e->font_path = evas_list_append(e->font_path, strdup(path));
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_font_path_prepend(Evas *e, const char *path)
 {
@@ -557,6 +660,12 @@ evas_font_path_prepend(Evas *e, const char *path)
    e->font_path = evas_list_prepend(e->font_path, strdup(path));
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 const Evas_List *
 evas_font_path_list(Evas *e)
 {
@@ -570,6 +679,12 @@ evas_font_path_list(Evas *e)
 
 
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_font_cache_flush(Evas *e)
 {
@@ -580,6 +695,12 @@ evas_font_cache_flush(Evas *e)
    e->engine.func->font_cache_flush(e->engine.data.output);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_font_cache_set(Evas *e, int size)
 {
@@ -591,6 +712,12 @@ evas_font_cache_set(Evas *e, int size)
    e->engine.func->font_cache_set(e->engine.data.output, size);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 int
 evas_font_cache_get(Evas *e)
 {

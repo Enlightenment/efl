@@ -35,6 +35,12 @@ evas_key_lock_number(Evas_Lock *l, const char *keyname)
 
 /* public calls */
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_Modifier *
 evas_key_modifier_get(Evas *e)
 {
@@ -44,6 +50,12 @@ evas_key_modifier_get(Evas *e)
    return &(e->modifiers);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_Lock *
 evas_key_lock_get(Evas *e)
 {
@@ -53,6 +65,12 @@ evas_key_lock_get(Evas *e)
    return &(e->locks);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 int
 evas_key_modifier_is_set_get(Evas_Modifier *m, const char *keyname)
 {
@@ -67,6 +85,12 @@ evas_key_modifier_is_set_get(Evas_Modifier *m, const char *keyname)
    return 0;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 int
 evas_key_lock_is_set_get(Evas_Lock *l, const char *keyname)
 {
@@ -81,6 +105,12 @@ evas_key_lock_is_set_get(Evas_Lock *l, const char *keyname)
    return 0;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_key_modifier_add(Evas *e, const char *keyname)
 {
@@ -96,6 +126,12 @@ evas_key_modifier_add(Evas *e, const char *keyname)
    e->modifiers.mask = 0;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_key_modifier_del(Evas *e, const char *keyname)
 {
@@ -121,6 +157,12 @@ evas_key_modifier_del(Evas *e, const char *keyname)
      }
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_key_lock_add(Evas *e, const char *keyname)
 {
@@ -136,6 +178,12 @@ evas_key_lock_add(Evas *e, const char *keyname)
    e->locks.mask = 0;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_key_lock_del(Evas *e, const char *keyname)
 {
@@ -162,6 +210,12 @@ evas_key_lock_del(Evas *e, const char *keyname)
      }
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_key_modifier_on(Evas *e, const char *keyname)
 {
@@ -176,6 +230,12 @@ evas_key_modifier_on(Evas *e, const char *keyname)
    e->modifiers.mask |= num;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_key_modifier_off(Evas *e, const char *keyname)
 {
@@ -190,6 +250,12 @@ evas_key_modifier_off(Evas *e, const char *keyname)
    e->modifiers.mask &= ~num;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_key_lock_on(Evas *e, const char *keyname)
 {
@@ -204,6 +270,12 @@ evas_key_lock_on(Evas *e, const char *keyname)
    e->locks.mask |= num;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_key_lock_off(Evas *e, const char *keyname)
 {
@@ -220,6 +292,12 @@ evas_key_lock_off(Evas *e, const char *keyname)
 
 /* errr need to add key grabbing/ungrabbing calls - missing modifier stuff. */
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_Modifier_Mask
 evas_key_modifier_mask_get(Evas *e, const char *keyname)
 {

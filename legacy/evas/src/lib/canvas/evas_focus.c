@@ -8,6 +8,12 @@
 
 /* public calls */
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_focus_set(Evas_Object *obj, int focus)
 {
@@ -33,6 +39,12 @@ evas_object_focus_set(Evas_Object *obj, int focus)
      }
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 int
 evas_object_focus_get(Evas_Object *obj)
 {
@@ -42,6 +54,12 @@ evas_object_focus_get(Evas_Object *obj)
    return obj->focused;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_Object *
 evas_focus_get(Evas *e)
 {

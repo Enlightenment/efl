@@ -85,7 +85,7 @@ evas_object_clippers_was_visible(Evas_Object *obj)
 /* public functions */
 
 /**
- * Clip one object to another
+ * Clip one object to another.
  * @param obj The object to be clipped
  * @param clip The object to clip @p obj by
  * 
@@ -149,6 +149,12 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
      }
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_Object *
 evas_object_clip_get(Evas_Object *obj)
 {
@@ -158,6 +164,12 @@ evas_object_clip_get(Evas_Object *obj)
    return obj->cur.clipper;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_clip_unset(Evas_Object *obj)
 {
@@ -186,6 +198,12 @@ evas_object_clip_unset(Evas_Object *obj)
      }
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 const Evas_List *
 evas_object_clipees_get(Evas_Object *obj)
 {

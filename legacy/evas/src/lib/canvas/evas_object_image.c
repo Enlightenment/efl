@@ -74,6 +74,12 @@ static Evas_Object_Func object_func =
 };
 
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_Object *
 evas_object_image_add(Evas *e)
 {
@@ -88,6 +94,12 @@ evas_object_image_add(Evas *e)
    return obj;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
 {
@@ -145,6 +157,12 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
    evas_object_change(obj);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_image_file_get(Evas_Object *obj, char **file, char **key)
 {
@@ -165,6 +183,12 @@ evas_object_image_file_get(Evas_Object *obj, char **file, char **key)
    if (key) *key = o->cur.key;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_image_border_set(Evas_Object *obj, int l, int r, int t, int b)
 {
@@ -193,6 +217,12 @@ evas_object_image_border_set(Evas_Object *obj, int l, int r, int t, int b)
    evas_object_change(obj);   
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_image_border_get(Evas_Object *obj, int *l, int *r, int *t, int *b)
 {
@@ -219,6 +249,12 @@ evas_object_image_border_get(Evas_Object *obj, int *l, int *r, int *t, int *b)
    if (b) *b = o->cur.border.b;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_image_fill_set(Evas_Object *obj, double x, double y, double w, double h)
 {
@@ -247,6 +283,12 @@ evas_object_image_fill_set(Evas_Object *obj, double x, double y, double w, doubl
    evas_object_change(obj);   
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_image_fill_get(Evas_Object *obj, double *x, double *y, double *w, double *h)
 {
@@ -273,6 +315,12 @@ evas_object_image_fill_get(Evas_Object *obj, double *x, double *y, double *w, do
    if (h) *h = o->cur.fill.h;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_image_size_set(Evas_Object *obj, int w, int h)
 {
@@ -309,6 +357,12 @@ evas_object_image_size_set(Evas_Object *obj, int w, int h)
    evas_object_change(obj);   
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_image_size_get(Evas_Object *obj, int *w, int *h)
 {
@@ -329,6 +383,12 @@ evas_object_image_size_get(Evas_Object *obj, int *w, int *h)
    if (h) *h = o->cur.image.h;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 int
 evas_object_image_load_error_get(Evas_Object *obj)
 {
@@ -344,6 +404,12 @@ evas_object_image_load_error_get(Evas_Object *obj)
    return o->load_error;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_image_data_set(Evas_Object *obj, int *data)
 {
@@ -375,6 +441,12 @@ evas_object_image_data_set(Evas_Object *obj, int *data)
    evas_object_change(obj);   
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 int *
 evas_object_image_data_get(Evas_Object *obj, int for_writing)
 {
@@ -399,6 +471,12 @@ evas_object_image_data_get(Evas_Object *obj, int for_writing)
    return data;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_image_data_copy_set(Evas_Object *obj, int *data)
 {
@@ -428,6 +506,12 @@ evas_object_image_data_copy_set(Evas_Object *obj, int *data)
    EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_image_data_update_add(Evas_Object *obj, int x, int y, int w, int h)
 {
@@ -449,6 +533,12 @@ evas_object_image_data_update_add(Evas_Object *obj, int x, int y, int w, int h)
    evas_object_change(obj);   
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_image_alpha_set(Evas_Object *obj, int has_alpha)
 {
@@ -473,6 +563,12 @@ evas_object_image_alpha_set(Evas_Object *obj, int has_alpha)
    EVAS_OBJECT_IMAGE_FREE_FILE_AND_KEY(o);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 int
 evas_object_image_alpha_get(Evas_Object *obj)
 {
@@ -488,6 +584,12 @@ evas_object_image_alpha_get(Evas_Object *obj)
    return o->cur.has_alpha;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_image_smooth_scale_set(Evas_Object *obj, int smooth_scale)
 {
@@ -507,6 +609,12 @@ evas_object_image_smooth_scale_set(Evas_Object *obj, int smooth_scale)
    evas_object_image_data_update_add(obj, 0, 0, o->cur.image.w, o->cur.image.h);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 int
 evas_object_image_smooth_scale_get(Evas_Object *obj)
 {
@@ -522,6 +630,12 @@ evas_object_image_smooth_scale_get(Evas_Object *obj)
    return o->cur.smooth_scale;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_image_reload(Evas_Object *obj)
 {
@@ -543,6 +657,12 @@ evas_object_image_reload(Evas_Object *obj)
     
 
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_image_cache_flush(Evas *e)
 {
@@ -553,6 +673,12 @@ evas_image_cache_flush(Evas *e)
    e->engine.func->image_cache_flush(e->engine.data.output);   
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_image_cache_reload(Evas *e)
 {
@@ -607,6 +733,12 @@ evas_image_cache_reload(Evas *e)
    evas_image_cache_flush(e);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_image_cache_set(Evas *e, int size)
 {
@@ -618,6 +750,12 @@ evas_image_cache_set(Evas *e, int size)
    e->engine.func->image_cache_set(e->engine.data.output, size);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 int
 evas_image_cache_get(Evas *e)
 {

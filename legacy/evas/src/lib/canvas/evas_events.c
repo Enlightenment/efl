@@ -52,6 +52,12 @@ evas_event_list_copy(Evas_List *list)
 }
 /* public functions */
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_event_freeze(Evas *e)
 {
@@ -61,6 +67,12 @@ evas_event_freeze(Evas *e)
    e->events_frozen++;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_event_thaw(Evas *e)
 {
@@ -70,6 +82,12 @@ evas_event_thaw(Evas *e)
    e->events_frozen--;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 int
 evas_event_freeze_get(Evas *e)
 {
@@ -79,6 +97,12 @@ evas_event_freeze_get(Evas *e)
    return e->events_frozen;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_event_feed_mouse_down_data(Evas *e, int b, const void *data)
 {
@@ -117,6 +141,12 @@ evas_event_feed_mouse_down_data(Evas *e, int b, const void *data)
    if (copy) copy = evas_list_free(copy);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_event_feed_mouse_up_data(Evas *e, int b, const void *data)
 {
@@ -217,6 +247,12 @@ evas_event_feed_mouse_up_data(Evas *e, int b, const void *data)
      }
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
 {
@@ -400,6 +436,12 @@ evas_event_feed_mouse_move_data(Evas *e, int x, int y, const void *data)
      }
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_event_feed_mouse_in_data(Evas *e, const void *data)
 {
@@ -409,6 +451,12 @@ evas_event_feed_mouse_in_data(Evas *e, const void *data)
    e->pointer.inside = 1;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_event_feed_mouse_out_data(Evas *e, const void *data)
 {
@@ -418,6 +466,12 @@ evas_event_feed_mouse_out_data(Evas *e, const void *data)
    e->pointer.inside = 0;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_event_feed_key_down_data(Evas *e, const char *keyname, const void *data)
 {
@@ -462,6 +516,12 @@ evas_event_feed_key_down_data(Evas *e, const char *keyname, const void *data)
      }
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_event_feed_key_up_data(Evas *e, const char *keyname, const void *data)
 {
@@ -506,49 +566,96 @@ evas_event_feed_key_up_data(Evas *e, const char *keyname, const void *data)
      }
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_event_feed_mouse_down(Evas *e, int b)
 {
    evas_event_feed_mouse_down_data(e, b, NULL);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_event_feed_mouse_up(Evas *e, int b)
 {
    evas_event_feed_mouse_up_data(e, b, NULL);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_event_feed_mouse_move(Evas *e, int x, int y)
 {
    evas_event_feed_mouse_move_data(e, x, y, NULL);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_event_feed_mouse_in(Evas *e)
 {
    evas_event_feed_mouse_in_data(e, NULL);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_event_feed_mouse_out(Evas *e)
 {
    evas_event_feed_mouse_out_data(e, NULL);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_event_feed_key_down(Evas *e, const char *keyname)
 {
    evas_event_feed_key_down_data(e, keyname, NULL);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_event_feed_key_up(Evas *e, const char *keyname)
 {
    evas_event_feed_key_up_data(e, keyname, NULL);
 }
 
-
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_pass_events_set(Evas_Object *obj, int pass)
 {
@@ -564,6 +671,12 @@ evas_object_pass_events_set(Evas_Object *obj, int pass)
 				obj->layer->evas->pointer.y);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 int
 evas_object_pass_events_get(Evas_Object *obj)
 {
@@ -573,6 +686,12 @@ evas_object_pass_events_get(Evas_Object *obj)
    return obj->pass_events;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_repeat_events_set(Evas_Object *obj, int repeat)
 {
@@ -588,6 +707,12 @@ evas_object_repeat_events_set(Evas_Object *obj, int repeat)
 				obj->layer->evas->pointer.y);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 int
 evas_object_repeat_events_get(Evas_Object *obj)
 {

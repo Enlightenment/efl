@@ -118,6 +118,12 @@ evas_layer_del(Evas_Layer *lay)
 
 /* public functions */
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_layer_set(Evas_Object *obj, int l)
 {
@@ -160,6 +166,12 @@ evas_object_layer_set(Evas_Object *obj, int l)
    evas_object_inform_call_restack(obj);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 int
 evas_object_layer_get(Evas_Object *obj)
 {

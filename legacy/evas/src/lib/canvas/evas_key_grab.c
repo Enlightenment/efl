@@ -124,6 +124,12 @@ evas_object_grabs_cleanup(Evas_Object *obj)
 
 /* public calls */
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 int
 evas_object_key_grab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, int exclusive)
 {
@@ -144,6 +150,12 @@ evas_object_key_grab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask m
    return 1;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_key_ungrab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
 {

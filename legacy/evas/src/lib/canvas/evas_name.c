@@ -2,6 +2,12 @@
 #include "evas_private.h"
 #include "Evas.h"
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_name_set(Evas_Object *obj, const char *name)
 {
@@ -21,6 +27,12 @@ evas_object_name_set(Evas_Object *obj, const char *name)
      }
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 const char *
 evas_object_name_get(Evas_Object *obj)
 {
@@ -30,6 +42,12 @@ evas_object_name_get(Evas_Object *obj)
    return obj->name;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_Object *
 evas_object_name_find(Evas *e, const char *name)
 {

@@ -54,6 +54,13 @@ static Evas_Object_Func object_func =
 
 /* the actual api call to add a rect */
 /* it has no other api calls as all properties are standard */
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_Object *
 evas_object_gradient_add(Evas *e)
 {
@@ -68,6 +75,12 @@ evas_object_gradient_add(Evas *e)
    return obj;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_gradient_color_add(Evas_Object *obj, int r, int g, int b, int a, int distance)
 {
@@ -90,6 +103,12 @@ evas_object_gradient_color_add(Evas_Object *obj, int r, int g, int b, int a, int
    evas_object_change(obj);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_gradient_colors_clear(Evas_Object *obj)
 {
@@ -110,6 +129,12 @@ evas_object_gradient_colors_clear(Evas_Object *obj)
    evas_object_change(obj);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_gradient_angle_set(Evas_Object *obj, double angle)
 {
@@ -128,6 +153,12 @@ evas_object_gradient_angle_set(Evas_Object *obj, double angle)
    evas_object_change(obj);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 double
 evas_object_gradient_angle_get(Evas_Object *obj)
 {

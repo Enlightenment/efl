@@ -57,6 +57,13 @@ static Evas_Object_Func object_func =
 
 /* the actual api call to add a rect */
 /* it has no other api calls as all properties are standard */
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_Object *
 evas_object_polygon_add(Evas *e)
 {
@@ -71,6 +78,12 @@ evas_object_polygon_add(Evas *e)
    return obj;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_polygon_point_add(Evas_Object *obj, double x, double y)
 {
@@ -133,6 +146,12 @@ evas_object_polygon_point_add(Evas_Object *obj, double x, double y)
    evas_object_inform_call_resize(obj);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_polygon_points_clear(Evas_Object *obj)
 {

@@ -48,6 +48,12 @@ static Evas_Object_Func object_func =
 };
 
 /* public funcs */
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_smart_data_set(Evas_Object *obj, void *data)
 {
@@ -63,6 +69,12 @@ evas_object_smart_data_set(Evas_Object *obj, void *data)
    obj->smart.data = data;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void *
 evas_object_smart_data_get(Evas_Object *obj)
 {
@@ -78,6 +90,12 @@ evas_object_smart_data_get(Evas_Object *obj)
    return obj->smart.data;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_Smart *
 evas_object_smart_smart_get(Evas_Object *obj)
 {
@@ -93,6 +111,12 @@ evas_object_smart_smart_get(Evas_Object *obj)
    return obj->smart.smart;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
 {
@@ -115,6 +139,12 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
    smart_obj->smart.contained = evas_list_append(smart_obj->smart.contained, obj);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_smart_member_del(Evas_Object *obj)
 {
@@ -128,6 +158,12 @@ evas_object_smart_member_del(Evas_Object *obj)
    obj->smart.parent = NULL;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_Object *
 evas_object_smart_add(Evas *e, Evas_Smart *s)
 {
@@ -154,6 +190,12 @@ evas_object_smart_add(Evas *e, Evas_Smart *s)
    return obj;   
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_smart_callback_add(Evas_Object *obj, const char *event, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
@@ -176,6 +218,12 @@ evas_object_smart_callback_add(Evas_Object *obj, const char *event, void (*func)
    obj->smart.callbacks = evas_list_prepend(obj->smart.callbacks, cb);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void *
 evas_object_smart_callback_del(Evas_Object *obj, const char *event, void (*func) (void *data, Evas_Object *obj, void *event_info))
 {
@@ -209,6 +257,12 @@ evas_object_smart_callback_del(Evas_Object *obj, const char *event, void (*func)
    return NULL;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_smart_callback_call(Evas_Object *obj, const char *event, void *event_info)
 {

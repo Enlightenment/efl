@@ -2,6 +2,12 @@
 #include "evas_private.h"
 #include "Evas.h"
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_damage_rectangle_add(Evas *e, int x, int y, int w, int h)
 {
@@ -17,6 +23,12 @@ evas_damage_rectangle_add(Evas *e, int x, int y, int w, int h)
    e->changed = 1;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_obscured_rectangle_add(Evas *e, int x, int y, int w, int h)
 {
@@ -31,6 +43,12 @@ evas_obscured_rectangle_add(Evas *e, int x, int y, int w, int h)
    e->obscures = evas_list_append(e->obscures, r);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_obscured_clear(Evas *e)
 {
@@ -47,6 +65,12 @@ evas_obscured_clear(Evas *e)
      }
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_List *
 evas_render_updates(Evas *e)
 {
@@ -302,6 +326,12 @@ evas_render_updates(Evas *e)
    return updates;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_render_updates_free(Evas_List *updates)
 {
@@ -312,6 +342,12 @@ evas_render_updates_free(Evas_List *updates)
      }
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_render(Evas *e)
 {

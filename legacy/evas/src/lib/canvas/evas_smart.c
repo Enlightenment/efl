@@ -3,6 +3,13 @@
 #include "Evas.h"
 
 /* all public */
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_Smart *
 evas_smart_new(const char *name,
 	       void      (*func_add) (Evas_Object *o),
@@ -56,6 +63,12 @@ evas_smart_new(const char *name,
    return s;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_smart_free(Evas_Smart *s)
 {   
@@ -68,6 +81,12 @@ evas_smart_free(Evas_Smart *s)
    free(s);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void *
 evas_smart_data_get(Evas_Smart *s)
 {

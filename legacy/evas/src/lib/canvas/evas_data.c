@@ -2,6 +2,12 @@
 #include "evas_private.h"
 #include "Evas.h"
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_data_set(Evas_Object *obj, const char *key, const void *data)
 {
@@ -20,6 +26,12 @@ evas_object_data_set(Evas_Object *obj, const char *key, const void *data)
    obj->data.elements = evas_list_prepend(obj->data.elements, node);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void *
 evas_object_data_get(Evas_Object *obj, const char *key)
 {
@@ -45,6 +57,12 @@ evas_object_data_get(Evas_Object *obj, const char *key)
    return NULL;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void *
 evas_object_data_del(Evas_Object *obj, const char *key)
 {

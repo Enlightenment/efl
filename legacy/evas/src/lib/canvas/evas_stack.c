@@ -41,6 +41,12 @@ evas_object_below_get_internal(Evas_Object *obj)
    return NULL;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_raise(Evas_Object *obj)
 {
@@ -78,6 +84,12 @@ evas_object_raise(Evas_Object *obj)
    evas_object_inform_call_restack(obj);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_lower(Evas_Object *obj)
 {
@@ -115,6 +127,12 @@ evas_object_lower(Evas_Object *obj)
    evas_object_inform_call_restack(obj);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
 {
@@ -160,6 +178,12 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
    evas_object_inform_call_restack(obj);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
 {
@@ -205,6 +229,12 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
    evas_object_inform_call_restack(obj);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_Object *
 evas_object_above_get(Evas_Object *obj)
 {
@@ -219,6 +249,12 @@ evas_object_above_get(Evas_Object *obj)
    return obj2;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_Object *
 evas_object_below_get(Evas_Object *obj)
 {
@@ -233,6 +269,12 @@ evas_object_below_get(Evas_Object *obj)
    return obj2;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_Object *
 evas_object_bottom_get(Evas *e)
 {
@@ -248,6 +290,12 @@ evas_object_bottom_get(Evas *e)
    return obj2;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_Object *
 evas_object_top_get(Evas *e)
 {

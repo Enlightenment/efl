@@ -60,6 +60,13 @@ static Evas_Object_Func object_func =
 
 /* the actual api call to add a rect */
 /* it has no other api calls as all properties are standard */
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_Object *
 evas_object_line_add(Evas *e)
 {
@@ -74,6 +81,12 @@ evas_object_line_add(Evas *e)
    return obj;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_line_xy_set(Evas_Object *obj, double x1, double y1, double x2, double y2)
 {
@@ -135,6 +148,12 @@ evas_object_line_xy_set(Evas_Object *obj, double x1, double y1, double x2, doubl
    evas_object_inform_call_resize(obj);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_line_xy_get(Evas_Object *obj, double *x1, double *y1, double *x2, double *y2)
 {

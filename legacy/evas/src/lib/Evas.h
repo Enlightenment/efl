@@ -22,22 +22,12 @@ enum _Evas_Callback_Type
    EVAS_CALLBACK_RESIZE, /**< Resize Event */
    EVAS_CALLBACK_RESTACK /**< Restack Event */
 };
+typedef enum _Evas_Callback_Type Evas_Callback_Type; /**< The type of event to trigger the callback */
 
-/**
- * The type of event to trigger the callback
- */
-typedef enum _Evas_Callback_Type Evas_Callback_Type;  
+typedef struct _Evas_List             Evas_List; /**< A generic linked list node handle */
+typedef struct _Evas_Rectangle        Evas_Rectangle; /**< A generic rectangle handle */
 
-/**
- * A generic linked list node handle
- */
-typedef struct _Evas_List             Evas_List;
-/**
- * A generic rectangle handle
- */
-typedef struct _Evas_Rectangle        Evas_Rectangle;
-
-struct _Evas_List
+struct _Evas_List /** A linked list node */
 {
    void      *data; /**< Pointer to list element payload */
    Evas_List *next; /**< Next member in the list */
@@ -47,67 +37,55 @@ struct _Evas_List
    int        count; /**< Private member. Don't use this */
 };
 
-struct _Evas_Rectangle
+struct _Evas_Rectangle /** A rectangle */
 {
-   int x, y, w, h; /**< the co-ordinates of the rectangle, starting top-left and width and height */
+   int x; /**< top-left x co-ordinate of rectangle */
+   int y; /**< top-left y co-ordinate of rectangle */
+   int w; /**< width of rectangle */
+   int h; /**< height of rectangle */
 };
 
-/** A Hash table handle */
-typedef void Evas_Hash;
-/** An Evas canvas handle */
-typedef void Evas;
-/** An Evas Object handle */
-typedef void Evas_Object;
-/** An Evas Performance handle */
-typedef void Evas_Performance;
-/** An Evas Modifier */
-typedef void Evas_Modifier;
-/** An Evas Lock */
-typedef void Evas_Lock;
-/** An Evas Smart Object handle */
-typedef void Evas_Smart;
-/** An Evas modifier mask type */
-typedef unsigned long long Evas_Modifier_Mask;
+typedef void Evas_Hash; /**< A Hash table handle */
+typedef void Evas; /**< An Evas canvas handle */
+typedef void Evas_Object; /**< An Evas Object handle */
+typedef void Evas_Performance; /**< An Evas Performance handle */
+typedef void Evas_Modifier; /**< An Evas Modifier */
+typedef void Evas_Lock; /**< An Evas Lock */
+typedef void Evas_Smart; /**< An Evas Smart Object handle */
+typedef unsigned long long Evas_Modifier_Mask; /**< An Evas modifier mask type */
 #endif
 #endif
 
-/** A generic Evas Engine information structure */
-typedef struct _Evas_Engine_Info      Evas_Engine_Info;
-/** Event structure for #EVAS_CALLBACK_MOUSE_DOWN event callbacks */
-typedef struct _Evas_Event_Mouse_Down Evas_Event_Mouse_Down;
-/** Event structure for #EVAS_CALLBACK_MOUSE_UP event callbacks */
-typedef struct _Evas_Event_Mouse_Up   Evas_Event_Mouse_Up;
-/** Event structure for #EVAS_CALLBACK_MOUSE_IN event callbacks */
-typedef struct _Evas_Event_Mouse_In   Evas_Event_Mouse_In;
-/** Event structure for #EVAS_CALLBACK_MOUSE_OUT event callbacks */
-typedef struct _Evas_Event_Mouse_Out  Evas_Event_Mouse_Out;
-/** Event structure for #EVAS_CALLBACK_MOUSE_MOVE event callbacks */
-typedef struct _Evas_Event_Mouse_Move Evas_Event_Mouse_Move;
-/** Event structure for #EVAS_CALLBACK_KEY_DOWN event callbacks */
-typedef struct _Evas_Event_Key_Down   Evas_Event_Key_Down;
-/** Event structure for #EVAS_CALLBACK_KEY_UP event callbacks */
-typedef struct _Evas_Event_Key_Up     Evas_Event_Key_Up;
 
-#define EVAS_LOAD_ERROR_NONE                       0
-#define EVAS_LOAD_ERROR_GENERIC                    1
-#define EVAS_LOAD_ERROR_DOES_NOT_EXIST             2
-#define EVAS_LOAD_ERROR_PERMISSION_DENIED          3
-#define EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED 4
-#define EVAS_LOAD_ERROR_CORRUPT_FILE               5
-#define EVAS_LOAD_ERROR_UNKNOWN_FORMAT             6
+typedef struct _Evas_Engine_Info      Evas_Engine_Info; /**< A generic Evas Engine information structure */
+typedef struct _Evas_Event_Mouse_Down Evas_Event_Mouse_Down; /**< Event structure for #EVAS_CALLBACK_MOUSE_DOWN event callbacks */
+typedef struct _Evas_Event_Mouse_Up   Evas_Event_Mouse_Up; /**< Event structure for #EVAS_CALLBACK_MOUSE_UP event callbacks */
+typedef struct _Evas_Event_Mouse_In   Evas_Event_Mouse_In; /**< Event structure for #EVAS_CALLBACK_MOUSE_IN event callbacks */
+typedef struct _Evas_Event_Mouse_Out  Evas_Event_Mouse_Out; /**< Event structure for #EVAS_CALLBACK_MOUSE_OUT event callbacks */
+typedef struct _Evas_Event_Mouse_Move Evas_Event_Mouse_Move; /**< Event structure for #EVAS_CALLBACK_MOUSE_MOVE event callbacks */
+typedef struct _Evas_Event_Key_Down   Evas_Event_Key_Down; /**< Event structure for #EVAS_CALLBACK_KEY_DOWN event callbacks */
+typedef struct _Evas_Event_Key_Up     Evas_Event_Key_Up; /**< Event structure for #EVAS_CALLBACK_KEY_UP event callbacks */
 
-#define EVAS_ALLOC_ERROR_NONE                      0
-#define EVAS_ALLOC_ERROR_FATAL                     1
-#define EVAS_ALLOC_ERROR_RECOVERED                 2
+#define EVAS_LOAD_ERROR_NONE                       0 /**< No error on load */
+#define EVAS_LOAD_ERROR_GENERIC                    1 /**< A non-specific error occured */
+#define EVAS_LOAD_ERROR_DOES_NOT_EXIST             2 /**< File (or file path) does not exist */
+#define EVAS_LOAD_ERROR_PERMISSION_DENIED          3 /**< Permission deinied to an existing file (or path) */
+#define EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED 4 /**< Allocation of resources failure prevented load */
+#define EVAS_LOAD_ERROR_CORRUPT_FILE               5 /**< File corrupt (but was detected as a known format) */
+#define EVAS_LOAD_ERROR_UNKNOWN_FORMAT             6 /**< File is not a known format */
 
-struct _Evas_Engine_Info
+#define EVAS_ALLOC_ERROR_NONE                      0 /**< No allocation error */
+#define EVAS_ALLOC_ERROR_FATAL                     1 /**< Allocation failed despite attempts to free up memory */
+#define EVAS_ALLOC_ERROR_RECOVERED                 2 /**< Allocation succeeded, but extra memory had to be found by freeing up speculative resources */
+
+struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
 {
-   int magic;
+   int magic; /**< Magic number */
 };
 
-struct _Evas_Event_Mouse_Down
+struct _Evas_Event_Mouse_Down /** Mouse button press event */
 {
-   int button;
+   int button; /**< Mouse button number that went down (1 - 32) */
    struct {
       int x, y;
    } output;
@@ -119,9 +97,9 @@ struct _Evas_Event_Mouse_Down
    Evas_Lock     *locks;
 };
 
-struct _Evas_Event_Mouse_Up
+struct _Evas_Event_Mouse_Up /** Mouse butotn relase event */
 {
-   int button;
+   int button; /**< Mouse button number that was raised (1 - 32) */
    struct {
       int x, y;
    } output;
@@ -133,9 +111,9 @@ struct _Evas_Event_Mouse_Up
    Evas_Lock     *locks;
 };
 
-struct _Evas_Event_Mouse_In
+struct _Evas_Event_Mouse_In /** Mouse enter event */
 {
-   int buttons;
+   int buttons; /**< Button pressed mask, Bits set to 1 are buttons currently pressed (bit 0 = mouse button 1, bit 1 = mouse button 2 etc.) */
    struct {
       int x, y;
    } output;
@@ -147,9 +125,9 @@ struct _Evas_Event_Mouse_In
    Evas_Lock     *locks;
 };
 
-struct _Evas_Event_Mouse_Out
+struct _Evas_Event_Mouse_Out /** Mouse leave event */
 {
-   int buttons;
+   int buttons; /**< Button pressed mask, Bits set to 1 are buttons currently pressed (bit 0 = mouse button 1, bit 1 = mouse button 2 etc.) */
    struct {
       int x, y;
    } output;
@@ -161,9 +139,9 @@ struct _Evas_Event_Mouse_Out
    Evas_Lock     *locks;
 };
 
-struct _Evas_Event_Mouse_Move
+struct _Evas_Event_Mouse_Move /** Mouse button down event */
 {
-   int buttons;
+   int buttons; /**< Button pressed mask, Bits set to 1 are buttons currently pressed (bit 0 = mouse button 1, bit 1 = mouse button 2 etc.) */
    struct {
       struct {
 	 int x, y;
@@ -177,17 +155,17 @@ struct _Evas_Event_Mouse_Move
    Evas_Lock     *locks;
 };
 
-struct _Evas_Event_Key_Down
+struct _Evas_Event_Key_Down /** Key press event */
 {
-   char          *keyname;
+   char          *keyname; /**< The string name of the key pressed */
    void          *data;
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
 };
 
-struct _Evas_Event_Key_Up
+struct _Evas_Event_Key_Up /** Key release event */
 {
-   char          *keyname;
+   char          *keyname; /**< The string name of the key released */
    void          *data;
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;

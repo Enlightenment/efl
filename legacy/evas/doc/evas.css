@@ -1,17 +1,31 @@
 td.md { 
- border: thin solid #000000;
  background-color: #ffffff;
+ font-family: monospace;
  text-align: left;
  vertical-align: center;
- font-size: 12;
- padding-right  : 4px; 
- padding-top    : 4px; 
- padding-left   : 4px; 
- padding-bottom : 4px; 
- margin-left    : 4px; 
- margin-right   : 4px; 
- margin-top     : 4px; 
- margin-bottom  : 4px  
+ font-size: 10;
+ padding-right  : 1px; 
+ padding-top    : 1px; 
+ padding-left   : 1px; 
+ padding-bottom : 1px; 
+ margin-left    : 1px; 
+ margin-right   : 1px; 
+ margin-top     : 1px; 
+ margin-bottom  : 1px  
+}
+td.mdname { 
+ font-family: monospace;
+ text-align: left;
+ vertical-align: center;
+ font-size: 10;
+ padding-right  : 1px; 
+ padding-top    : 1px; 
+ padding-left   : 1px; 
+ padding-bottom : 1px; 
+ margin-left    : 1px; 
+ margin-right   : 1px; 
+ margin-top     : 1px; 
+ margin-bottom  : 1px  
 }
 h1
 {
@@ -85,7 +99,7 @@ a.qindex:hover
 p
 {
  color: #000000;
- font-family: helvetica;
+ font-family: sans-serif;
  font-size: 10;
 }
 body { 
@@ -94,7 +108,7 @@ body {
  background-position: left top;
  background-color: #dddddd;
  color: #000000;
- font-family: helvetica;
+ font-family: sans-serif;
  padding: 8px;
  margin: 0;
 }
@@ -131,9 +145,10 @@ dl
 }
 em
 {
-  color: #000000;
-  font-family: arial,helvetica;
+  color: #334466;
+  font-family: courier;
   font-size: 10;
+  font-style: normal;
 }
 
 div.nav

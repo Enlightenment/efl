@@ -398,6 +398,12 @@ evas_object_was_opaque(Evas_Object *obj)
 
 /* routines apps will call */
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_del(Evas_Object *obj)
 {
@@ -425,6 +431,12 @@ evas_object_del(Evas_Object *obj)
    evas_object_smart_cleanup(obj);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_move(Evas_Object *obj, double x, double y)
 {
@@ -466,6 +478,12 @@ evas_object_move(Evas_Object *obj, double x, double y)
    evas_object_inform_call_move(obj);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_resize(Evas_Object *obj, double w, double h)
 {
@@ -507,6 +525,12 @@ evas_object_resize(Evas_Object *obj, double w, double h)
      }
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_geometry_get(Evas_Object *obj, double *x, double *y, double *w, double *h)
 {
@@ -520,6 +544,12 @@ evas_object_geometry_get(Evas_Object *obj, double *x, double *y, double *w, doub
    if (h) *h = obj->cur.geometry.h;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_show(Evas_Object *obj)
 {
@@ -552,6 +582,12 @@ evas_object_show(Evas_Object *obj)
    evas_object_inform_call_show(obj);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_hide(Evas_Object *obj)
 {
@@ -605,6 +641,12 @@ evas_object_hide(Evas_Object *obj)
    evas_object_inform_call_hide(obj);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 int
 evas_object_visible_get(Evas_Object *obj)
 {
@@ -614,6 +656,12 @@ evas_object_visible_get(Evas_Object *obj)
    return obj->cur.visible;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_color_set(Evas_Object *obj, int r, int g, int b, int a)
 {
@@ -641,6 +689,12 @@ evas_object_color_set(Evas_Object *obj, int r, int g, int b, int a)
    evas_object_change(obj);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 void
 evas_object_color_get(Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
@@ -654,6 +708,12 @@ evas_object_color_get(Evas_Object *obj, int *r, int *g, int *b, int *a)
    if (a) *a = obj->cur.color.a;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas *
 evas_object_evas_get(Evas_Object *obj)
 {
@@ -663,6 +723,12 @@ evas_object_evas_get(Evas_Object *obj)
    return obj->layer->evas;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_Object *
 evas_object_top_at_xy_get(Evas *e, double x, double y, int include_pass_events_objects, int include_hidden_objects)
 {
@@ -696,12 +762,24 @@ evas_object_top_at_xy_get(Evas *e, double x, double y, int include_pass_events_o
    return NULL;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_Object *
 evas_object_top_at_pointer_get(Evas *e)
 {
    return evas_object_top_at_xy_get(e, e->pointer.canvas_x, e->pointer.canvas_y, 0, 0);
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_Object *
 evas_object_top_in_rectangle_get(Evas *e, double x, double y, double w, double h, int include_pass_events_objects, int include_hidden_objects)
 {
@@ -739,6 +817,12 @@ evas_object_top_in_rectangle_get(Evas *e, double x, double y, double w, double h
    return NULL;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_List *
 evas_objects_at_xy_get(Evas *e, double x, double y, int include_pass_events_objects, int include_hidden_objects)
 {
@@ -773,6 +857,12 @@ evas_objects_at_xy_get(Evas *e, double x, double y, int include_pass_events_obje
    return in;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 Evas_List *
 evas_objects_in_rectangle_get(Evas *e, double x, double y, double w, double h, int include_pass_events_objects, int include_hidden_objects)
 {
@@ -811,6 +901,12 @@ evas_objects_in_rectangle_get(Evas *e, double x, double y, double w, double h, i
    return in;
 }
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ * 
+ */
 const char *
 evas_object_type_get(Evas_Object *obj)
 {
