@@ -84,6 +84,7 @@
  * set_drag_step(part_id, Float:dx, Float:dy)
  * get_drag_page(part_id, &Float:dx, &Float:&dy)
  * set_drag_page(part_id, Float:dx, Float:dy)
+ * get_geometry(part_id, &Float:x, &Float:y, &Float:w, &Float:h)
  * get_mouse(&x, &y)
  * stop_program(program_id)
  * stop_programs_on(part_id)
@@ -121,7 +122,6 @@
  * get_drag_count(part_id, &Float:dx, &Float:&dy)
  * set_drag_count(part_id, Float:dx, Float:dy)
  * set_drag_confine(part_id, confine_part_id)
- * get_size(&w, &h)
  * resize_request(w, h)
  * get_mouse_buttons()
  * //set_type(part_id, Type:type)
@@ -885,6 +885,29 @@ _edje_embryo_fn_get_drag_page(Embryo_Program *ep, Embryo_Cell *params)
    return 0;
 }
 
+/* get_geometry(pard_id, &Float:x, &Float:y, &Float:w, &Float:h) */
+static Embryo_Cell
+_edje_embryo_fn_get_geometry(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   int part_id = 0;
+   Edje_Real_Part *rp;
+   Evas_Coord x = 0.0, y = 0.0, w = 0.0, h = 0.0;
+
+   CHKPARAM(5);
+   ed = embryo_program_data_get(ep);
+   part_id = params[1];
+   if (part_id < 0) return 0;
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   edje_object_part_geometry_get(ed->obj, rp->part->name, &x, &y, &w, &h);
+   SETINT(x, params[2]);
+   SETINT(y, params[3]);
+   SETINT(w, params[4]);
+   SETINT(h, params[5]);
+
+   return 0;
+}
+
 /* set_drag_page(part_id, Float:dx, Float:dy) */
 static Embryo_Cell
 _edje_embryo_fn_set_drag_page(Embryo_Program *ep, Embryo_Cell *params)
@@ -1172,6 +1195,7 @@ _edje_embryo_script_init(Edje *ed)
    embryo_program_native_call_add(ep, "set_max_size", _edje_embryo_fn_set_max_size);
    
    embryo_program_native_call_add(ep, "send_message", _edje_embryo_fn_send_message);
+   embryo_program_native_call_add(ep, "get_geometry", _edje_embryo_fn_get_geometry);
    
    embryo_program_vm_push(ep); /* neew a new vm to run in */
    _edje_embryo_globals_init(ed);
