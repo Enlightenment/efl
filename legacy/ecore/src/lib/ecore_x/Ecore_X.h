@@ -607,9 +607,12 @@ void             ecore_x_selection_secondary_request_data_get(void **buf, int *l
 void             ecore_x_selection_clipboard_request_data_get(void **buf, int *len);
 Ecore_X_Selection_Target
                  ecore_x_selection_target_get(Ecore_X_Atom target);
-char *           ecore_x_selection_convert_to_string(char *data);
-char *           ecore_x_selection_convert_to_utf8_string(char *data);
+void             ecore_x_selection_converter_add(char *target, int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret));
+void             ecore_x_selection_converter_atom_add(Ecore_X_Atom target, int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret));
+void             ecore_x_selection_converter_del(char *target);
+void             ecore_x_selection_converter_atom_del(Ecore_X_Atom target);
 
+                 
 Ecore_X_Window   ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h);
 Ecore_X_Window   ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h);
 Ecore_X_Window   ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h);

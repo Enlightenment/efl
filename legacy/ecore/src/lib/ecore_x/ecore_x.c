@@ -107,6 +107,7 @@ Atom     _ecore_x_atom_file_name = 0;
 Atom     _ecore_x_atom_string = 0;
 Atom     _ecore_x_atom_text = 0;
 Atom     _ecore_x_atom_utf8_string = 0;
+Atom     _ecore_x_atom_compound_text = 0;
 
 Atom     _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM] = {0};
 
@@ -361,7 +362,8 @@ ecore_x_init(const char *name)
    _ecore_x_atom_net_wm_state_below          = XInternAtom(_ecore_x_disp, "_NET_WM_STATE_BELOW", False);
    _ecore_x_atom_net_wm_window_opacity       = XInternAtom(_ecore_x_disp, "_NET_WM_WINDOW_OPACITY", False);
 
-   _ecore_x_atom_utf8_string = XInternAtom(_ecore_x_disp, "UTF8_STRING", False);
+   _ecore_x_atom_compound_text      = XInternAtom(_ecore_x_disp, "COMPOUND_TEXT", False);
+   _ecore_x_atom_utf8_string        = XInternAtom(_ecore_x_disp, "UTF8_STRING", False);
    _ecore_x_atom_file_name          = XInternAtom(_ecore_x_disp, "FILE_NAME", False);
    _ecore_x_atom_string             = XInternAtom(_ecore_x_disp, "STRING", False);
    _ecore_x_atom_text               = XInternAtom(_ecore_x_disp, "TEXT", False);

@@ -916,12 +916,12 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
    {
       /* TODO: Use predefined/user-definable callback functions
        * to convert selections */
-      if (xnotify.target == _ecore_x_atom_string)
-         data = ecore_x_selection_convert_to_string(sd->data);
-      else if (xnotify.target == _ecore_x_atom_utf8_string)
-         data = ecore_x_selection_convert_to_utf8_string(sd->data);
-      else
-         data = sd->data;
+      if (_ecore_x_selection_convert(xnotify.selection, xnotify.target,
+               &data) == -1)
+      {
+         data = malloc(sd->length);
+         memcpy(data, sd->data, sd->length);
+      }
       
       /* FIXME: This does not properly handle large data transfers */
       ecore_x_window_prop_property_set(xevent->xselectionrequest.requestor,
@@ -929,6 +929,7 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
             xevent->xselectionrequest.target,
             8, data, sd->length);
       xnotify.property = xevent->xselectionrequest.property;
+      free(data);
    }
    else
    {

@@ -138,6 +138,7 @@ extern Atom     _ecore_x_atom_utf8_string;
 extern Atom     _ecore_x_atom_file_name;
 extern Atom     _ecore_x_atom_string;
 extern Atom     _ecore_x_atom_text;
+extern Atom     _ecore_x_atom_compound_text;
 
 extern Atom     _ecore_x_atom_selection_primary;
 extern Atom     _ecore_x_atom_selection_secondary;
