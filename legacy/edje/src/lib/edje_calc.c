@@ -1,7 +1,7 @@
 #include "Edje.h"
 #include "edje_private.h"
 
-static void _edje_part_recalc_single(Edje *ed, Edje_Real_Part *ep, Edje_Part_Description *desc, Edje_Part_Description *chosen_desc, Edje_Real_Part *rel1_to, Edje_Real_Part *rel2_to, Edje_Real_Part *confine_to, Edje_Calc_Params *params);
+static void _edje_part_recalc_single(Edje *ed, Edje_Real_Part *ep, Edje_Part_Description *desc, Edje_Part_Description *chosen_desc, Edje_Real_Part *rel1_to_x, Edje_Real_Part *rel1_to_y, Edje_Real_Part *rel2_to_x, Edje_Real_Part *rel2_to_y, Edje_Real_Part *confine_to, Edje_Calc_Params *params);
 static void _edje_part_recalc(Edje *ed, Edje_Real_Part *ep);
 
 void
@@ -87,14 +87,20 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1,
 	  }
 	ep->param1.description = desc_found;
      }
-   ep->param1.rel1_to = NULL;
-   ep->param1.rel2_to = NULL;
+   ep->param1.rel1_to_x = NULL;
+   ep->param1.rel1_to_y = NULL;
+   ep->param1.rel2_to_x = NULL;
+   ep->param1.rel2_to_y = NULL;
    if (ep->param1.description)
      {
-	if (ep->param1.description->rel1.id >= 0)
-	  ep->param1.rel1_to = evas_list_nth(ed->parts, ep->param1.description->rel1.id);
-	if (ep->param1.description->rel2.id >= 0)
-	  ep->param1.rel2_to = evas_list_nth(ed->parts, ep->param1.description->rel2.id);
+	if (ep->param1.description->rel1.id_x >= 0)
+	  ep->param1.rel1_to_x = evas_list_nth(ed->parts, ep->param1.description->rel1.id_x);
+	if (ep->param1.description->rel1.id_y >= 0)
+	  ep->param1.rel1_to_y = evas_list_nth(ed->parts, ep->param1.description->rel1.id_y);
+	if (ep->param1.description->rel2.id_x >= 0)
+	  ep->param1.rel2_to_x = evas_list_nth(ed->parts, ep->param1.description->rel2.id_x);
+	if (ep->param1.description->rel2.id_y >= 0)
+	  ep->param1.rel2_to_y = evas_list_nth(ed->parts, ep->param1.description->rel2.id_y);
      }
    
    if (!strcmp(d2, "default") && (v2 == 0.0))
@@ -140,23 +146,35 @@ _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1, double v1,
      }
    if (!ep->param1.description)
      ep->param1.description = ep->part->default_desc;
-   ep->param1.rel1_to = NULL;
-   ep->param1.rel2_to = NULL;
+   ep->param1.rel1_to_x = NULL;
+   ep->param1.rel1_to_y = NULL;
+   ep->param1.rel2_to_x = NULL;
+   ep->param1.rel2_to_y = NULL;
    if (ep->param1.description)
      {
-	if (ep->param1.description->rel1.id >= 0)
-	  ep->param1.rel1_to = evas_list_nth(ed->parts, ep->param1.description->rel1.id);
-	if (ep->param1.description->rel2.id >= 0)
-	  ep->param1.rel2_to = evas_list_nth(ed->parts, ep->param1.description->rel2.id);
+	if (ep->param1.description->rel1.id_x >= 0)
+	  ep->param1.rel1_to_x = evas_list_nth(ed->parts, ep->param1.description->rel1.id_x);
+	if (ep->param1.description->rel1.id_y >= 0)
+	  ep->param1.rel1_to_y = evas_list_nth(ed->parts, ep->param1.description->rel1.id_y);
+	if (ep->param1.description->rel2.id_x >= 0)
+	  ep->param1.rel2_to_x = evas_list_nth(ed->parts, ep->param1.description->rel2.id_x);
+	if (ep->param1.description->rel2.id_y >= 0)
+	  ep->param1.rel2_to_y = evas_list_nth(ed->parts, ep->param1.description->rel2.id_y);
      }
-   ep->param2.rel1_to = NULL;
-   ep->param2.rel2_to = NULL;
+   ep->param2.rel1_to_x = NULL;
+   ep->param2.rel1_to_y = NULL;
+   ep->param2.rel2_to_x = NULL;
+   ep->param2.rel2_to_y = NULL;
    if (ep->param2.description)
      {
-	if (ep->param2.description->rel1.id >= 0)
-	  ep->param2.rel1_to = evas_list_nth(ed->parts, ep->param2.description->rel1.id);
-	if (ep->param2.description->rel2.id >= 0)
-	  ep->param2.rel2_to = evas_list_nth(ed->parts, ep->param2.description->rel2.id);
+	if (ep->param2.description->rel1.id_x >= 0)
+	  ep->param2.rel1_to_x = evas_list_nth(ed->parts, ep->param2.description->rel1.id_x);
+	if (ep->param2.description->rel1.id_y >= 0)
+	  ep->param2.rel1_to_y = evas_list_nth(ed->parts, ep->param2.description->rel1.id_y);
+	if (ep->param2.description->rel2.id_x >= 0)
+	  ep->param2.rel2_to_x = evas_list_nth(ed->parts, ep->param2.description->rel2.id_x);
+	if (ep->param2.description->rel2.id_y >= 0)
+	  ep->param2.rel2_to_y = evas_list_nth(ed->parts, ep->param2.description->rel2.id_y);
      }
    
    ed->dirty = 1;
@@ -196,46 +214,44 @@ _edje_part_recalc_single(Edje *ed,
 			 Edje_Real_Part *ep, 
 			 Edje_Part_Description *desc, 
 			 Edje_Part_Description *chosen_desc,
-			 Edje_Real_Part *rel1_to, 
-			 Edje_Real_Part *rel2_to, 
+			 Edje_Real_Part *rel1_to_x, 
+			 Edje_Real_Part *rel1_to_y, 
+			 Edje_Real_Part *rel2_to_x, 
+			 Edje_Real_Part *rel2_to_y, 
 			 Edje_Real_Part *confine_to,
 			 Edje_Calc_Params *params)
 {
    int minw, minh, maxw, maxh;
 
    /* relative coords of top left & bottom right */
-   if (rel1_to)
-     {
-	params->x = desc->rel1.offset_x +
-	  rel1_to->x + (desc->rel1.relative_x * rel1_to->w);
-	params->y = desc->rel1.offset_y +
-	  rel1_to->y + (desc->rel1.relative_y * rel1_to->h);
-     }
+   if (rel1_to_x)
+     params->x = desc->rel1.offset_x +
+     rel1_to_x->x + (desc->rel1.relative_x * rel1_to_x->w);
    else
-     {
-	params->x = desc->rel1.offset_x +
-	  (desc->rel1.relative_x * ed->w);
-	params->y = desc->rel1.offset_y +
-	  (desc->rel1.relative_y * ed->h);
-     }
-   if (rel2_to)
-     {
-	params->w = desc->rel2.offset_x +
-	  rel2_to->x + (desc->rel2.relative_x * rel2_to->w) -
-	  params->x;
-	params->h = desc->rel2.offset_y +
-	  rel2_to->y + (desc->rel2.relative_y * rel2_to->h) -
-	  params->y;
-     }
+     params->x = desc->rel1.offset_x +
+     (desc->rel1.relative_x * ed->w);
+   if (rel1_to_y)
+     params->y = desc->rel1.offset_y +
+     rel1_to_y->y + (desc->rel1.relative_y * rel1_to_y->h);
    else
-     {
-	params->w = (double)desc->rel2.offset_x +
-	  (desc->rel2.relative_x * (double)ed->w) -
-	  params->x + 1;
-	params->h = (double)desc->rel2.offset_y +
-	  (desc->rel2.relative_y * (double)ed->h) -
-	  params->y + 1;
-     }   
+     params->y = desc->rel1.offset_y +
+     (desc->rel1.relative_y * ed->h);
+   if (rel2_to_x)
+     params->w = desc->rel2.offset_x +
+     rel2_to_x->x + (desc->rel2.relative_x * rel2_to_x->w) -
+     params->x;
+   else
+     params->w = (double)desc->rel2.offset_x +
+     (desc->rel2.relative_x * (double)ed->w) -
+     params->x + 1;
+   if (rel2_to_y)
+     params->h = desc->rel2.offset_y +
+     rel2_to_y->y + (desc->rel2.relative_y * rel2_to_y->h) -
+     params->y;
+   else
+     params->h = (double)desc->rel2.offset_y +
+     (desc->rel2.relative_y * (double)ed->h) -
+     params->y + 1;
 
    /* aspect */
    if (params->h > 0)
@@ -503,11 +519,15 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
    double pos = 0.0;
    
    if (ep->calculated) return;
-   if (ep->param1.rel1_to)    _edje_part_recalc(ed, ep->param1.rel1_to);
-   if (ep->param1.rel2_to)    _edje_part_recalc(ed, ep->param1.rel2_to);
+   if (ep->param1.rel1_to_x)  _edje_part_recalc(ed, ep->param1.rel1_to_x);
+   if (ep->param1.rel1_to_y)  _edje_part_recalc(ed, ep->param1.rel1_to_y);
+   if (ep->param1.rel2_to_x)  _edje_part_recalc(ed, ep->param1.rel2_to_x);
+   if (ep->param1.rel2_to_y)  _edje_part_recalc(ed, ep->param1.rel2_to_y);
    if (ep->param1.confine_to) _edje_part_recalc(ed, ep->param1.confine_to);
-   if (ep->param2.rel1_to)    _edje_part_recalc(ed, ep->param2.rel1_to);
-   if (ep->param2.rel2_to)    _edje_part_recalc(ed, ep->param2.rel2_to);
+   if (ep->param2.rel1_to_x)  _edje_part_recalc(ed, ep->param2.rel1_to_x);
+   if (ep->param2.rel1_to_y)  _edje_part_recalc(ed, ep->param2.rel1_to_y);
+   if (ep->param2.rel2_to_x)  _edje_part_recalc(ed, ep->param2.rel2_to_x);
+   if (ep->param2.rel2_to_y)  _edje_part_recalc(ed, ep->param2.rel2_to_y);
    if (ep->param2.confine_to) _edje_part_recalc(ed, ep->param2.confine_to);
    
    /* actually calculate now */
@@ -518,10 +538,10 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep)
    
    ep->chosen_description = chosen_desc;
    if (ep->param1.description)
-     _edje_part_recalc_single(ed, ep, ep->param1.description, chosen_desc, ep->param1.rel1_to, ep->param1.rel2_to, ep->param1.confine_to, &p1);
+     _edje_part_recalc_single(ed, ep, ep->param1.description, chosen_desc, ep->param1.rel1_to_x, ep->param1.rel1_to_y, ep->param1.rel2_to_x, ep->param1.rel2_to_y, ep->param1.confine_to, &p1);
    if (ep->param2.description)
      {
-	_edje_part_recalc_single(ed, ep, ep->param2.description, chosen_desc, ep->param2.rel1_to, ep->param2.rel2_to, ep->param2.confine_to, &p2);
+	_edje_part_recalc_single(ed, ep, ep->param2.description, chosen_desc, ep->param2.rel1_to_x, ep->param2.rel1_to_y, ep->param2.rel2_to_x, ep->param2.rel2_to_y, ep->param2.confine_to, &p2);
 
 	pos = ep->description_pos;
 	

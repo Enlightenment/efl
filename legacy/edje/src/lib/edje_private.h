@@ -289,7 +289,8 @@ struct _Edje_Part_Description
       double         relative_y;
       int            offset_x;
       int            offset_y;
-      int            id; /* -1 = whole part collection, or part ID */
+      int            id_x; /* -1 = whole part collection, or part ID */
+      int            id_y; /* -1 = whole part collection, or part ID */
    } rel1, rel2;
 
    struct {
@@ -430,8 +431,10 @@ struct _Edje_Real_Part
    Edje_Part_Description    *chosen_description;
    struct {
       Edje_Part_Description *description;
-      Edje_Real_Part        *rel1_to;
-      Edje_Real_Part        *rel2_to;
+      Edje_Real_Part        *rel1_to_x;
+      Edje_Real_Part        *rel1_to_y;
+      Edje_Real_Part        *rel2_to_x;
+      Edje_Real_Part        *rel2_to_y;
       Edje_Real_Part        *confine_to;
    } param1, param2;
 

@@ -141,10 +141,14 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	     Edje_Real_Part *rp;
 	     
 	     rp = l->data;
-	     if (rp->param1.description->rel1.id >= 0)
-	       rp->param1.rel1_to = evas_list_nth(ed->parts, rp->param1.description->rel1.id);
-	     if (rp->param1.description->rel2.id >= 0)
-	       rp->param1.rel2_to = evas_list_nth(ed->parts, rp->param1.description->rel2.id);
+	     if (rp->param1.description->rel1.id_x >= 0)
+	       rp->param1.rel1_to_x = evas_list_nth(ed->parts, rp->param1.description->rel1.id_x);
+	     if (rp->param1.description->rel1.id_y >= 0)
+	       rp->param1.rel1_to_y = evas_list_nth(ed->parts, rp->param1.description->rel1.id_y);
+	     if (rp->param1.description->rel2.id_x >= 0)
+	       rp->param1.rel2_to_x = evas_list_nth(ed->parts, rp->param1.description->rel2.id_x);
+	     if (rp->param1.description->rel2.id_y >= 0)
+	       rp->param1.rel2_to_y = evas_list_nth(ed->parts, rp->param1.description->rel2.id_y);
 	     _edje_text_part_on_add_clippers(ed, rp);
 	     if (rp->part->clip_to_id >= 0)
 	       {

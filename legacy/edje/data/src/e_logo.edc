@@ -393,6 +393,32 @@ collections {
 	       }
 	    }
 	 }
+	 part {
+	    name,          "dragable";
+	    mouse_events,  1;
+	    dragable {
+	       // drag in: DIR, ON/OFF STEPPING COUNT;
+	       x,       1 1 0;
+	       y,       1 1 0;
+	       confine, "background";
+	    }
+	    description {
+	       state,    "default" 0.0;
+	       min,      36 36;
+	       rel1 {
+		  relative, 0.5  0.5;
+		  offset,   0    0;
+	       }
+	       rel2 {
+		  relative, 0.5  0.5;
+		  offset,   0    0;
+	       }
+	       image {
+		  normal, "bg.png";
+	       }
+	       border, 12 12 12 12;
+	    }
+	 }
       }
       programs {
 	 program {
