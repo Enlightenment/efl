@@ -205,8 +205,19 @@ depak_file(Eet_File *ef, char *file)
      {
 	FILE *f;
 	char buf[PATH_MAX];
+	int len;
 	
-	strcpy(buf, file);
+	strncpy(buf, file, sizeof(buf) - 1);
+	buf[sizeof(buf) - 1] = 0;
+	if (buf[0] == '/') return;
+	if (!strcmp(buf, "..")) return;
+	if (!strncmp(buf, "../", 3)) return;
+	if (strstr(buf, "/../")) return;
+	len = strlen(buf);
+	if (len >= 3)
+	  {
+	     if (!strcmp(&(buf[len - 3]), "/..")) return;
+	  }
 	last = strrchr(buf, '/');
 	if (last) 
 	  {
