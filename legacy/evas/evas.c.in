@@ -466,6 +466,7 @@ make CFLAGS="-O9 -I/opt/Embedix/tools/arm-linux/include"
 
 
 @todo (1.0) Document API
+@todo (1.0) Move callback processing to a queue and do it asynchronously
 @todo (1.0) Add button grabbing
 @todo (1.0) Add generic object method call system
 @todo (1.0) Add callbacks set for smart object parents to be set on all child smart objects too.
