@@ -21,6 +21,7 @@ evas_common_font_source_memory_load(const char *name, const void *data, int data
    fs->name = strdup(name);
    fs->file = NULL;
    fs->data = malloc(data_size);
+   fs->current_size = 0;
    if (!fs->data)
      {
 	if (fs->name) free(fs->name);
@@ -54,6 +55,9 @@ evas_common_font_source_load(const char *name)
    if (!fs) return NULL;
    fs->name = strdup(name);
    fs->file = strdup(name);
+   fs->data = NULL;
+   fs->data_size = 0;
+   fs->current_size = 0;
    error = FT_New_Face(evas_ft_lib, fs->file, 0, &(fs->ft.face));
    if (error)
      {
