@@ -137,8 +137,9 @@ evas_event_feed_mouse_down_data(Evas *e, int b, const void *data)
 	ev.canvas.y = e->pointer.canvas_y;
 	ev.data = (void *)data;
 	ev.modifiers = &(e->modifiers);
-	ev.locks = &(e->locks);	
-	evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_DOWN, &ev);
+	ev.locks = &(e->locks);
+	if (!e->events_frozen)
+	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_DOWN, &ev);
      }
    if (copy) copy = evas_list_free(copy);
 }
@@ -170,7 +171,7 @@ evas_event_feed_mouse_wheel_data(Evas *e, int direction, int z, const void *data
       ev.data = (void *) data;
       ev.modifiers = &(e->modifiers);
       ev.locks = &(e->locks);	
-      
+      if (!e->events_frozen)   
 	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_WHEEL, &ev);
    }
 
