@@ -1,32 +1,46 @@
 #!/usr/bin/make -f
-# Sample debian/rules that uses debhelper. 
-# GNU copyright 1997 by Joey Hess.
-#
-# This version is for a hypothetical package that builds an
-# architecture-dependant package, as well as an architecture-independent
-# package.
+# Sample debian/rules that uses debhelper.
+# GNU copyright 1997 to 1999 by Joey Hess.
 
-# Uncomment this to turn on verbose mode. 
+# Uncomment this to turn on verbose mode.
 #export DH_VERBOSE=1
 
+
 # This is the debhelper compatability version to use.
-export DH_COMPAT=2
+export DH_COMPAT=4
 
-# This has to be exported to make some magic below work.
-export DH_OPTIONS
 
-INSTALL=/usr/bin/install
-package=libecore0
+CFLAGS ?= -Wall -g
+
+ifneq (,$(findstring noopt,$(DEB_BUILD_OPTIONS)))
+	CFLAGS += -O0
+else
+	CFLAGS += -O2
+endif
+ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+	INSTALL_PROGRAM += -s
+endif
+
+# These are used for cross-compiling and for saving the configure script
+# from having to guess our platform (since we know it already)
+DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+
+INSTALL=/usr/bin/install -p
+CONFIGUREOPTS = --prefix=/usr --enable-ecore-x --enable-ecore-job --enable-ecore-evas --enable-ecore-con --enable-ecore-ipc --build=$(DEB_BUILD_GNU_TYPE) --host=$(DEB_HOST_GNU_TYPE)
+package=libecore1
 
 configure: configure-stamp
 configure-stamp:
-	./autogen.sh --prefix=/usr || ./configure --prefix=/usr
+	dh_testdir
+
+	test -x autogen.sh && ./autogen.sh $(CONFIGUREOPTS) || ./configure $(CONFIGUREOPTS)
+
 	touch configure-stamp
 
 build: configure build-stamp
 build-stamp:
 	dh_testdir
-
 
 	$(MAKE) 
 
@@ -41,32 +55,25 @@ clean:
 
 	dh_clean
 
-install: DH_OPTIONS=
 install: build 
 	dh_testdir
 	dh_testroot
 	dh_clean -k
 	dh_installdirs
 
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/$(package)/
-	
-	$(INSTALL) -d debian/$(package)-dev/usr/lib
-	mv debian/$(package)/usr/include debian/$(package)/usr/bin \
-	   debian/$(package)-dev/usr
-	mv debian/$(package)/usr/lib/*.so debian/$(package)/usr/lib/*.la \
-	   debian/$(package)/usr/lib/*.a debian/$(package)-dev/usr/lib/
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/tmp/
 
-binary-indep:
+# Build architecture-independent files here.
+binary-indep: build install
+# We have nothing to do by default.
 
 # Build architecture-dependent files here.
-# Pass -a to all debhelper commands in this target to reduce clutter.
-binary-arch: DH_OPTIONS=-a
 binary-arch: build install
-	# Need this version of debhelper for DH_OPTIONS to work.
 	dh_testdir
 	dh_testroot
 	dh_installdocs AUTHORS README
 	dh_installchangelogs
+	dh_movefiles
 	dh_strip
 	dh_compress
 	dh_fixperms
@@ -78,5 +85,4 @@ binary-arch: build install
 	dh_builddeb
 
 binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install
-
+.PHONY: build clean binary-indep binary-arch binary install configure

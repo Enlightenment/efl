@@ -1,9 +1,9 @@
 Source: ecore
 Section: libs
 Priority: optional
-Maintainer: Laurence J. Lane <ljlane@debian.org>
-Build-Depends: debhelper (>= 3.0)
-Standards-Version: 3.2.1.0
+Maintainer: Sytse Wielinga <s.b.wielinga@student.utwente.nl>
+Build-Depends: debhelper (>> 3.0.0)
+Standards-Version: 3.6.1.0
 
 Package: libecore0
 Architecture: any
