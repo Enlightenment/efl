@@ -274,10 +274,10 @@ _ecore_main_select(double timeout)
 	     FD_SET(fdh->fd, &wfds);
 	     if (fdh->fd > max_fd) max_fd = fdh->fd;
 	  }
-    if (fdh->flags & ECORE_FD_ERROR)
+	if (fdh->flags & ECORE_FD_ERROR)
 	  {
-         FD_SET(fdh->fd, &exfds);
-         if (fdh->fd > max_fd) max_fd = fdh->fd;
+	     FD_SET(fdh->fd, &exfds);
+	     if (fdh->fd > max_fd) max_fd = fdh->fd;
 	  }
      }
    if (_ecore_signal_count_get()) return -1;
@@ -343,7 +343,9 @@ _ecore_main_fd_handlers_call(void)
 	fdh = (Ecore_Fd_Handler *)l;
 	if (!fdh->delete_me)
 	  {
-	     if ((fdh->read_active) || (fdh->write_active) || (fdh->error_active))
+	     if ((fdh->read_active) || 
+		 (fdh->write_active) || 
+		 (fdh->error_active))
 	       {
 		  if (!fdh->func(fdh->data, fdh))
 		    {
