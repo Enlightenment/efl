@@ -83,6 +83,8 @@ char *_ecore_config_ipc_prop_list(Ecore_Config_Server *srv, const long serial) {
       else
         estring_appendf(s,", range %d..%d",e->lo,e->hi);
       }
+    if(e->type==PT_THM)
+      estring_appendf(s,", group %s",e->data?e->data:"Main");
     f=1;
     e=e->next; }
 

@@ -82,6 +82,7 @@ typedef struct Ecore_Config_Prop {
   long                   val,lo,hi,step;
   Ecore_Config_Flag      flags;
   Ecore_Config_Listener_List  *listeners;
+  void                  *data;
   struct Ecore_Config_Prop    *next; /**< pointer to the next property in the list */
   } Ecore_Config_Prop;
 
@@ -133,6 +134,7 @@ int            ecore_config_set_rgb(const char *key,char *val);
 char          *ecore_config_get_rgbstr(const char *key);
 int            ecore_config_set_float(const char *key,float val);
 int            ecore_config_set_theme(const char *key,char *val);
+int            ecore_config_set_theme_preview_group(const char *key, char *group);
 int            ecore_config_set_as_string(const char *key,char *val);
 
 int            ecore_config_default(const char *key,char *val,float lo,float hi,float step);

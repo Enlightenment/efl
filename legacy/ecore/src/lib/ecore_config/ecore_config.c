@@ -366,6 +366,25 @@ int ecore_config_set_rgb(const char *key, char* val) {
 int ecore_config_set_theme(const char *key, char* val) {
   return ecore_config_set_typed(__ecore_config_bundle_local,key,(void *)val,PT_THM); }
 
+int ecore_config_set_theme_preview_group(const char *key, char *group) {
+  int            ret;
+  Ecore_Config_Prop *e;
+  Ecore_Config_Bundle *t;
+  
+  ret=ECORE_CONFIG_ERR_SUCC;
+  t=__ecore_config_bundle_local;
+  if(!(e=ecore_config_get(t,key))) {  /* prop doesn't exist yet */
+    if((ret=ecore_config_add_typed(t,key,"",PT_THM))!=ECORE_CONFIG_ERR_SUCC)  /* try to add it */
+      return ret;                                  /* ...failed */
+    if(!(e=ecore_config_get(t,key)))                  /* get handle */
+      return ECORE_CONFIG_ERR_FAIL;
+    }
+  if (e->data) free(e->data);
+  printf("Set group of %s on key %s\n", group, key);
+  e->data=strdup(group);
+
+  return ret; }
+
 static int ecore_config_default_typed(Ecore_Config_Bundle *t,const char *key,void *val,int type) {
   int            ret;
   Ecore_Config_Prop *e;
