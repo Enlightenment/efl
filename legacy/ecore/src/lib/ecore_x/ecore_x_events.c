@@ -263,14 +263,15 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
          if (!e)
             return;
          
-	e->direction = 0;
-	e->z = 0;
-	if      (xevent->xbutton.button == 4) e->z = -1;
-	else if (xevent->xbutton.button == 5) e->z = 1;
-	e->x = xevent->xbutton.x;
-	e->y = xevent->xbutton.y;
-	e->root.x = xevent->xbutton.x_root;
-	e->root.y = xevent->xbutton.y_root;
+         e->modifiers = 0;
+         e->direction = 0;
+         e->z = 0;
+         if      (xevent->xbutton.button == 4) e->z = -1;
+         else if (xevent->xbutton.button == 5) e->z = 1;
+         e->x = xevent->xbutton.x;
+         e->y = xevent->xbutton.y;
+         e->root.x = xevent->xbutton.x_root;
+         e->root.y = xevent->xbutton.y_root;
 
          if (xevent->xbutton.subwindow)
             e->win = xevent->xbutton.subwindow;
