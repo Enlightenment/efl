@@ -76,7 +76,7 @@ evas_common_image_surface_free(RGBA_Surface *is)
 void
 evas_common_image_surface_alloc(RGBA_Surface *is)
 {
-   is->data = malloc(is->w * is->h * sizeof(DATA32));
+   is->data = calloc(1, is->w * is->h * sizeof(DATA32));
 }
 
 void
