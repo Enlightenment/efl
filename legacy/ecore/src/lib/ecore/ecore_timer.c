@@ -6,6 +6,7 @@ static void _ecore_timer_set(Ecore_Timer *timer, double at, double in, int (*fun
 static int          timers_added = 0;
 static int          timers_delete_me = 0;
 static Ecore_Timer *timers = NULL;
+static double       last_check = 0.0;
 
 /**
  * @defgroup Ecore_Time_Group Ecore Time Functions
@@ -155,6 +156,16 @@ _ecore_timer_call(double when)
    Ecore_Timer *timer;
    
    if (!timers) return 0;
+   if (last_check > when)
+     {
+	/* User set time backwards */
+	for (l = (Ecore_Oldlist *)timers; l; l = l->next)
+	  {
+	     timer = (Ecore_Timer *)l;
+	     timer->at -= (last_check - when);
+	  }
+     }
+   last_check = when;
    for (l = (Ecore_Oldlist *)timers; l; l = l->next)
      {
 	timer = (Ecore_Timer *)l;
@@ -165,7 +176,16 @@ _ecore_timer_call(double when)
 	     timers = _ecore_list_remove(timers, timer);
 	     _ecore_timer_call(when);
 	     if ((!timer->delete_me) && (timer->func(timer->data)))
-	       _ecore_timer_set(timer, timer->at + timer->in, timer->in, timer->func, timer->data);
+	       {
+		  /* if the timer would have gone off more than 30 seconds ago,
+		   * assume that the system hung and set the timer to go off
+		   * timer->in from now.
+		   */
+		  if ((timer->at + timer->in) < (when - 30.0))
+		    _ecore_timer_set(timer, when + timer->in, timer->in, timer->func, timer->data);
+		  else
+		    _ecore_timer_set(timer, timer->at + timer->in, timer->in, timer->func, timer->data);
+	       }
 	     else
 	       free(timer);
 	     return 1;
