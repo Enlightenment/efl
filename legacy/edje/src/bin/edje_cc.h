@@ -112,6 +112,7 @@ int     parse_int_range(int n, int f, int t);
 int     parse_bool(int n);
 double  parse_float(int n);
 double  parse_float_range(int n, double f, double t);
+void    check_arg_count(int n);
 
 int     object_handler_num(void);
 int     statement_handler_num(void);

@@ -796,6 +796,19 @@ parse_float_range(int n, double f, double t)
    return i;
 }
 
+void
+check_arg_count(int required_args)
+{
+   int num_args = evas_list_count (params);
+
+   if (num_args != required_args)
+     {
+	fprintf(stderr, "%s: Error. %s:%i got %i arguments, but expected %i\n",
+	      progname, file_in, line, num_args, required_args);
+	exit(-1);
+     }
+}
+
 /* simple expression parsing stuff */
 
 /*
