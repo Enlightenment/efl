@@ -180,16 +180,23 @@ ecore_x_window_defaults_set(Ecore_X_Window win)
 {
    long pid;
    char buf[MAXHOSTNAMELEN];
+   char *hostname[1];
    int argc;
    char **argv;
+   XTextProperty xprop;
 
    /*
     * Set WM_CLIENT_MACHINE.
     */
    gethostname(buf, MAXHOSTNAMELEN);
    buf[MAXHOSTNAMELEN - 1] = '\0';
-   ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_client_machine,
-				  (char *)buf);
+   hostname[0] = buf;
+   /* The ecore function uses UTF8 which Xlib may not like (especially
+    * with older clients) */
+   /* ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_client_machine,
+				  (char *)buf); */
+   if (XStringListToTextProperty(hostname, 1, &xprop))
+      XSetWMClientMachine(_ecore_x_disp, win, &xprop);
 
    /*
     * Set _NET_WM_PID

@@ -202,7 +202,16 @@ ecore_x_window_prop_string_get(Ecore_X_Window win, Ecore_X_Atom type)
 void
 ecore_x_window_prop_title_set(Ecore_X_Window win, const char *t)
 {
-   ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_name, (char *)t);
+   char *list[1];
+   XTextProperty xprop;
+   
+   list[0] = (char *) t;
+   
+   /* Xlib may not like the UTF8 String */
+   /* ecore_x_window_prop_string_set(win, _ecore_x_atom_wm_name, (char *)t); */
+   if (XStringListToTextProperty(list, 1, &xprop))
+      XSetWMName(_ecore_x_disp, win, &xprop);
+            
    ecore_x_window_prop_string_set(win, _ecore_x_atom_net_wm_name, (char *)t);
 }
 
