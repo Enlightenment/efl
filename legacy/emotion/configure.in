@@ -180,7 +180,7 @@ xine_libs=`$XINE_CONFIG --libs`
 
 
 V=`$ECORE_CONFIG --version`
-if [ -z "$V" ]; then
+if test -z "$V"; then
   echo "Error. Ecore is not installed or $ECORE_CONFIG cannot be found. Abort."
   exit -1
 fi
@@ -193,7 +193,7 @@ if test $VV -lt $VVM; then
 fi
 
 V=`$EVAS_CONFIG --version`
-if [ -z "$V" ]; then
+if test -z "$V"; then
   echo "Error. Evas is not installed or $EVAS_CONFIG cannot be found. Abort."
   exit -1
 fi
@@ -206,7 +206,7 @@ if test $VV -lt $VVM; then
 fi
 
 V=`$EDJE_CONFIG --version`
-if [ -z "$V" ]; then
+if test -z "$V"; then
   echo "Error. Edje is not installed or $EDJE_CONFIG cannot be found. Abort."
   exit -1
 fi
@@ -219,7 +219,7 @@ if test $VV -lt $VVM; then
 fi
 
 V=`$XINE_CONFIG --version`
-if [ -z "$V" ]; then
+if test -z "$V"; then
   echo "Error. Xine is not installed or $XINE_CONFIG cannot be found. Abort."
   exit -1
 fi
