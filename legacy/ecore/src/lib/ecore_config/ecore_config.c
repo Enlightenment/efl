@@ -14,10 +14,11 @@
 #include <unistd.h>
 #include <util.h>
 
+int                  DEBUG = 0;
 Ecore_Config_Server *__ecore_config_server_global = NULL;
 Ecore_Config_Server *__ecore_config_server_local = NULL;
 Ecore_Config_Bundle *__ecore_config_bundle_local = NULL;
-char               *__ecore_config_app_name = NULL;
+char                *__ecore_config_app_name = NULL;
 
 Ecore_Config_Server *_ecore_config_ipc_init(char *name);
 int                 _ecore_config_ipc_exit(void);
