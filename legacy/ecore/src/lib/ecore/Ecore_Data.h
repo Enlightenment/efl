@@ -1,6 +1,11 @@
 #ifndef _ECORE_DATA_H
 # define _ECORE_DATA_H
 
+/**
+ * @file Ecore_Data.h
+ * @brief Contains threading, list, hash, debugging and tree functions.
+ */
+
 # ifdef __cplusplus
 extern "C" {
 # endif

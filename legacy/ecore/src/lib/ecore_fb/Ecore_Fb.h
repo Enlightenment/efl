@@ -1,6 +1,11 @@
 #ifndef _ECORE_FB_H
 #define _ECORE_FB_H
 
+/**
+ * @file
+ * @brief Ecore frame buffer system functions.
+ */
+
 /* FIXME:
  * maybe a new module?
  * - code to get battery info

@@ -1,6 +1,11 @@
 #ifndef _ECORE_X_H
 #define _ECORE_X_H
 
+/**
+ * @file
+ * @brief Ecore functions for dealing with the X Windows system
+ */
+
 typedef unsigned int Ecore_X_ID;
 #ifndef _ECORE_X_WINDOW_PREDEF
 typedef Ecore_X_ID   Ecore_X_Window;

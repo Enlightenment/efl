@@ -4,11 +4,10 @@ static void _ecore_sheap_heapify(Ecore_Sheap *heap, int i);
 static void _ecore_sheap_update_data(Ecore_Sheap *heap);
 
 /**
- * ecore_sheap_new - allocate and initialize a new binary heap
- * @compare: the function for comparing keys, NULL for direct comparison
- * @size: the number of elements to allow in the heap
- *
- * Returns a pointer to the newly allocated binary heap on success, NULL on
+ * Allocate and initialize a new binary heap
+ * @param compare The function for comparing keys, NULL for direct comparison
+ * @param size    The number of elements to allow in the heap
+ * @return A pointer to the newly allocated binary heap on success, NULL on
  * failure.
  */
 Ecore_Sheap *ecore_sheap_new(Ecore_Compare_Cb compare, int size)
@@ -29,12 +28,11 @@ Ecore_Sheap *ecore_sheap_new(Ecore_Compare_Cb compare, int size)
 }
 
 /**
- * ecore_sheap_init - initialize a binary heap to default values
- * @heap: the heap to initialize
- * @compare: the function for comparing keys, NULL for direct comparison
- * @size: the number of elements to allow in the heap
- *
- * Returns TRUE on success, FALSE on failure
+ * Initialize a binary heap to default values
+ * @param heap    The heap to initialize
+ * @param compare The function for comparing keys, NULL for direct comparison
+ * @param size    The number of elements to allow in the heap
+ * @return        TRUE on success, FALSE on failure
  */
 int ecore_sheap_init(Ecore_Sheap *heap, Ecore_Compare_Cb compare, int size)
 {
@@ -56,11 +54,12 @@ int ecore_sheap_init(Ecore_Sheap *heap, Ecore_Compare_Cb compare, int size)
 }
 
 /**
- * ecore_sheap_destroy - free up the memory used by the heap
- * @heap: the heap to be freed
+ * Free up the memory used by the heap
+ * @param  heap The heap to be freed
+ * @return No value.
  *
- * Returns no value. Free's the memory used by @heap, calls the destroy
- * function on each data item if necessary.
+ * Frees the memory used by @heap, calls the destroy function on each data
+ * item if necessary.
  */
 void ecore_sheap_destroy(Ecore_Sheap *heap)
 {
@@ -75,12 +74,11 @@ void ecore_sheap_destroy(Ecore_Sheap *heap)
 }
 
 /**
- * ecore_sheap_insert - insert new data into the heap
- * @heap: the heap to insert @data
- * @data: the data to add to @heap
- *
- * Returns TRUE on success, NULL on failure. Increases the size of the heap if
- * it becomes larger than available space.
+ * Insert new data into the heap
+ * @param  heap The heap to insert @data
+ * @param  data The data to add to @heap
+ * @return TRUE on success, NULL on failure. Increases the size of the heap if
+ *         it becomes larger than available space.
  */
 int ecore_sheap_insert(Ecore_Sheap *heap, void *data)
 {
@@ -164,11 +162,11 @@ int ecore_sheap_insert(Ecore_Sheap *heap, void *data)
 }
 
 /**
- * ecore_sheap_extract - extract the item at the top of the heap
- * @heap: the heap to remove the top item
- *
- * Returns the top item of the heap on success, NULL on failure. The extract
- * function maintains the heap properties after the extract.
+ * Extract the item at the top of the heap
+ * @param  heap The heap to remove the top item
+ * @return The top item of the heap on success, NULL on failure.
+ * @note   The extract function maintains the heap properties after the
+ *         extract.
  */
 void *ecore_sheap_extract(Ecore_Sheap *heap)
 {
@@ -189,11 +187,10 @@ void *ecore_sheap_extract(Ecore_Sheap *heap)
 }
 
 /**
- * ecore_sheap_extreme - examine the item at the top of the heap
- * @heap: the heap to examine the top item
- *
- * Returns the top item of the heap on success, NULL on failure. The function
- * does not alter the heap.
+ * Examine the item at the top of the heap
+ * @param  heap The heap to examine the top item
+ * @return The top item of the heap on success, NULL on failure.
+ * @note   The function does not alter the heap.
  */
 void *ecore_sheap_extreme(Ecore_Sheap *heap)
 {
@@ -204,14 +201,13 @@ void *ecore_sheap_extreme(Ecore_Sheap *heap)
 }
 
 /**
- * ecore_sheap_change - change the value of the specified item in the heap
- * @heap: the heap to search for the item to change
- * @item: the item in the heap to change
- * @newval: the new value assigned to the item in the heap
- *
- * Returns TRUE on success, FALSE on failure. The heap does not free the old
- * data since it must be passed in, so the caller can perform the free if
- * desired.
+ * Change the value of the specified item in the heap
+ * @param heap   The heap to search for the item to change
+ * @param item   The item in the heap to change
+ * @param newval The new value assigned to the item in the heap
+ * @return       TRUE on success, FALSE on failure.
+ * @note         The heap does not free the old data since it must be passed
+ *               in, so the caller can perform the free if desired.
  */
 int ecore_sheap_change(Ecore_Sheap *heap, void *item, void *newval)
 {
@@ -235,12 +231,13 @@ int ecore_sheap_change(Ecore_Sheap *heap, void *item, void *newval)
 }
 
 /**
- * ecore_sheap_set_compare - change the comparison function for the heap
- * @heap: the heap to change comparison function
- * @compare: the new function for comparing nodes
- *
- * Returns TRUE on success, FALSE on failure. The comparison function is
- * changed to @compare and the heap is heapified by the new comparison.
+ * Change the comparison function for the heap
+ * @param  heap    The heap to change comparison function
+ * @param  compare The new function for comparing nodes
+ * @return TRUE on success, FALSE on failure.
+ * 
+ * The comparison function is changed to @compare and the heap is heapified
+ * by the new comparison.
  */
 int ecore_sheap_set_compare(Ecore_Sheap *heap, Ecore_Compare_Cb compare)
 {
@@ -257,12 +254,13 @@ int ecore_sheap_set_compare(Ecore_Sheap *heap, Ecore_Compare_Cb compare)
 }
 
 /**
- * ecore_sheap_set_order - change the order of the heap
- * @heap: the heap to change the order
- * @order: the new order of the heap
- *
- * Returns no value. Changes the heap order of @heap and re-heapifies the data
- * to this new order. The default order is a min heap.
+ * Change the order of the heap
+ * @param  heap  The heap to change the order
+ * @param  order The new order of the heap
+ * @return No value.
+ * 
+ * Changes the heap order of @heap and re-heapifies the data to this new
+ * order. The default order is a min heap.
  */
 void ecore_sheap_set_order(Ecore_Sheap *heap, char order)
 {
@@ -274,11 +272,12 @@ void ecore_sheap_set_order(Ecore_Sheap *heap, char order)
 }
 
 /**
- * ecore_sheap_sort - sort the data in the heap
- * @heap: the heap to be sorted
+ * Sort the data in the heap
+ * @param  heap The heap to be sorted
+ * @return No value.
  *
- * Returns no value. Sorts the data in the heap into the order that is used
- * for the heap's data.
+ * Sorts the data in the heap into the order that is used for the heap's
+ * data.
  */
 void ecore_sheap_sort(Ecore_Sheap *heap)
 {
@@ -306,12 +305,12 @@ void ecore_sheap_sort(Ecore_Sheap *heap)
 }
 
 /*
- * ecore_sheap_item - access the item at the ith position in the heap
- * @heap: the heap to access the internal data
- * @i: the index of the data within the heap
- *
- * Returns the data located at the ith position within @heap on success, NULL
- * on failure. The data is guaranteed to be in sorted order.
+ * Access the item at the ith position in the heap
+ * @param  heap The heap to access the internal data
+ * @param  i    The index of the data within the heap
+ * @return The data located at the ith position within @heap on success,
+ *         NULL on failure.
+ * @note   The data is guaranteed to be in sorted order.
  */
 inline void *ecore_sheap_item(Ecore_Sheap *heap, int i)
 {
@@ -328,11 +327,10 @@ inline void *ecore_sheap_item(Ecore_Sheap *heap, int i)
 }
 
 /*
- * _ecore_sheap_heapify - regain the heap properties starting at position i
- * @heap: the heap to regain heap properties
- * @i: the position to start heapifying
- *
- * Returns no value.
+ * Regain the heap properties starting at position i
+ * @param  heap The heap to regain heap properties
+ * @param  i    The position to start heapifying
+ * @return No value.
  */
 static void _ecore_sheap_heapify(Ecore_Sheap *heap, int i)
 {

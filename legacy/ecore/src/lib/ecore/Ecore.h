@@ -1,6 +1,13 @@
 #ifndef _ECORE_H
 #define _ECORE_H
 
+/**
+ * @file Ecore.h
+ * @brief The file that provides the program utility, main loop and timer
+ *        functions.
+ *
+ */
+
 #include <sys/types.h>
 #include <unistd.h>
 #include <stdio.h>

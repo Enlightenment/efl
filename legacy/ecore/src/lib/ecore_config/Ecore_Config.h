@@ -2,25 +2,16 @@
 # define _ECORE_CONFIG_H
 
 /**
- * @file Ecore_Config.h
- * @brief The file that any project using ecore_config will want to include.
- *
- * This file provies all headers and structs for use with Ecore_Config.
- * Using individual header files should not be necessary.
- */
-
-/**
- * @mainpage Enlightened Configuration Library Documentation
- *
- * @image html ecore_config_mini.png
- *
- * @section intro Introduction
+ * @file 
+ * @brief Provides the Enlightened Property Library.
  *
  * The Enlightened Property Library (Ecore_Config) is an adbstraction from the 
  * complexities of writing your own configuration. It provides many features
  * using the Enlightenment 17 development libraries.
+ *
+ * This file provies all headers and structs for use with Ecore_Config.
+ * Using individual header files should not be necessary.
  */
-
 
 # define DIR_DELIMITER      '/'
 # define ECORE_CONFIG_FLOAT_PRECISION 1000

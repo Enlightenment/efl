@@ -1,6 +1,11 @@
 #ifndef _ECORE_JOB_H
 #define _ECORE_JOB_H
 
+/**
+ * @file
+ * @brief Functions for dealing with Ecore jobs.
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif

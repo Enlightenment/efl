@@ -3,10 +3,9 @@
 static Ecore_Hash *ecore_strings = NULL;
 
 /**
- * ecore_stringinstance - retrieve an instance of a string for use in an ecore
- * @string: the string to retrieve an instance
- *
- * Returns a pointer to a the string on success, NULL on failure.
+ * Retrieve an instance of a string for use in an ecore
+ * @param  string The string to retrieve an instance
+ * @return A pointer to a the string on success, NULL on failure.
  */
 char *ecore_string_instance(char *string)
 {
@@ -45,11 +44,12 @@ char *ecore_string_instance(char *string)
 }
 
 /**
- * ecore_string_release - release an instance of a string
- * @string: the string to release an instance
+ * Release an instance of a string
+ * @param string The string to release an instance
+ * @return No value.
  *
- * Returns no value. Marks the string as losing an instance, will free the
- * string if no other instances are present.
+ * Marks the string as losing an instance, will free the string if no other
+ * instances are present.
  */
 void ecore_string_release(char *string)
 {

@@ -3,11 +3,10 @@
 static Ecore_List *loaded_plugins = NULL;
 
 /**
- * ecore_plugin_load - load the specified plugin from the specified path group
- * @group_id: the path group to search for the plugin to load
- * @plugin_name: the name of the plugin to load
- *
- * Returns a pointer to the newly loaded plugin on success, NULL on failure.
+ * Load the specified plugin from the specified path group
+ * @param group_id    The path group to search for the plugin to load
+ * @param plugin_name The name of the plugin to load
+ * @return A pointer to the newly loaded plugin on success, NULL on failure.
  */
 Ecore_Plugin *
 ecore_plugin_load(int group_id, char *plugin_name)
@@ -53,10 +52,9 @@ ecore_plugin_load(int group_id, char *plugin_name)
 }
 
 /**
- * ecore_plugin_unload - unload the specified plugin
- * @plugin: the plugin to unload from memory
- *
- * Returns no value.
+ * Unload the specified plugin
+ * @param plugin The plugin to unload from memory
+ * @return Returns no value.
  */
 void
 ecore_plugin_unload(Ecore_Plugin * plugin)

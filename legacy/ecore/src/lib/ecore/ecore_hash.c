@@ -142,8 +142,7 @@ int ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
 /**
  * @brief Free the hash table and the data contained inside it
  * @param hash: the hash table to destroy
- *
- * @brief Returns TRUE on success, FALSE on error
+ * @return Returns TRUE on success, FALSE on error
  */
 void ecore_hash_destroy(Ecore_Hash *hash)
 {

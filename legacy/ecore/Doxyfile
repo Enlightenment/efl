@@ -1,7 +1,7 @@
 PROJECT_NAME           = Ecore
 PROJECT_NUMBER         =
 OUTPUT_DIRECTORY       = doc
-INPUT                  = ecore.c
+INPUT                  = ecore.c.in ./src/lib
 IMAGE_PATH             = doc/img
 OUTPUT_LANGUAGE        = English
 GENERATE_HTML          = YES
@@ -63,7 +63,7 @@ WARN_IF_UNDOCUMENTED   = YES
 WARN_FORMAT            = "$file:$line: $text"
 WARN_LOGFILE           = 
 FILE_PATTERNS          =
-RECURSIVE              = NO
+RECURSIVE              = YES 
 EXCLUDE                = 
 EXCLUDE_SYMLINKS       = NO
 EXCLUDE_PATTERNS       = 

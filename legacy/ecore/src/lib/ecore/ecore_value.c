@@ -43,10 +43,9 @@ inline void ecore_print_warning(char *function, char *sparam)
 }
 
 /**
- * ecore_direct_hash - just casts the key to an unsigned int
- * @key: the key to return compute a hash value
- *
- * Returns the key cast to an unsigned int.
+ * Just casts the key to an unsigned int
+ * @param  key The key to return compute a hash value
+ * @return The key cast to an unsigned int.
  */
 unsigned int ecore_direct_hash(void *key)
 {
@@ -54,10 +53,9 @@ unsigned int ecore_direct_hash(void *key)
 }
 
 /**
- * ecore_str_hash - compute the hash value of a string
- * @key: a pointer to the string to compute a hash value
- *
- * Returns a computed hash value for @key.
+ * Compute the hash value of a string
+ * @param  key A pointer to the string to compute a hash value
+ * @return A computed hash value for @key.
  */
 unsigned int ecore_str_hash(void *key)
 {
@@ -77,11 +75,10 @@ unsigned int ecore_str_hash(void *key)
 }
 
 /**
- * ecore_direct_compare - perform a direct comparison of two keys values
- * @key1: the first key to compare
- * @key2: the second key to compare
- *
- * Return a strcmp style value to indicate the larger key
+ * Perform a direct comparison of two keys' values
+ * @param  key1 The first key to compare
+ * @param  key2 The second key to compare
+ * @return A strcmp style value to indicate the larger key
  */
 int ecore_direct_compare(void *key1, void *key2)
 {
@@ -100,11 +97,10 @@ int ecore_direct_compare(void *key1, void *key2)
 }
 
 /**
- * ecore_direct_compare - perform a string comparison of two keys values
- * @key1: the first key to compare
- * @key2: the second key to compare
- *
- * Return a strcmp style value to indicate the larger key
+ * Perform a string comparison of two keys values
+ * @param  key1 The first key to compare
+ * @param  key2 The second key to compare
+ * @return A strcmp style value to indicate the larger key
  */
 int ecore_str_compare(void *key1, void *key2)
 {

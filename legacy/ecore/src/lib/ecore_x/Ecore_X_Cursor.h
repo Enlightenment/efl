@@ -1,6 +1,11 @@
 #ifndef _ECORE_X_CURSOR_H
 #define _ECORE_X_CURSOR_H
 
+/**
+ * @file
+ * @brief Defines the various cursor types for the X Windows system.
+ */
+
 #define ECORE_X_CURSOR_X 0
 #define ECORE_X_CURSOR_ARROW 2
 #define ECORE_X_CURSOR_BASED_ARROW_DOWN 4

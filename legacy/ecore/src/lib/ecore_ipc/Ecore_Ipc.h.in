@@ -1,6 +1,11 @@
 #ifndef _ECORE_IPC_H
 #define _ECORE_IPC_H
 
+/**
+ * @file Ecore_Ipc.h
+ * @brief Ecore inter-process communication functions.
+ */
+
 #define HAVE_ECORE_IPC_OPENSSL @USE_OPENSSL@
 
 #if HAVE_ECORE_IPC_OPENSSL
