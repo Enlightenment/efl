@@ -9,6 +9,13 @@
 # ifdef __cplusplus
 extern "C" {
 # endif
+
+#ifdef __sgi
+#define __FUNCTION__ "unknown"
+#ifndef __cplusplus
+#define inline
+#endif
+#endif
    
 # define PRIME_TABLE_MAX 21
 # define PRIME_MIN 17
@@ -102,7 +109,7 @@ extern "C" {
    
 # else /* No pthreads available */
    
-#  define ECORE_DECLARE_LOCKS struct { } locks
+#  define ECORE_DECLARE_LOCKS 
 #  define ECORE_INIT_LOCKS(structure)
 #  define ECORE_READ_LOCK(structure)
 #  define ECORE_READ_UNLOCK(structure)
@@ -325,10 +332,17 @@ extern "C" {
     * of the message and checks that it is to be printed at the current debugging
     * level */
 # ifndef DPRINTF
-#  define DPRINTF(debug, format, args...) \
+#  ifdef __sgi
+#   define DPRINTF(debug, format, args) \
      if (debug >= DEBUG_LEVEL) \
 	 fprintf(stderr, format, args);
+#  else   
+#   define DPRINTF(debug, format, args...) \
+     if (debug >= DEBUG_LEVEL) \
+	 fprintf(stderr, format, args);
+#  endif   
 # endif
+
    
    /* convenience macros for checking pointer parameters for non-NULL */
 # ifndef CHECK_PARAM_POINTER_RETURN

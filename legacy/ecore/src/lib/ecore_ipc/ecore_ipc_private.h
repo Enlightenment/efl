@@ -12,6 +12,10 @@ typedef struct _Ecore_Ipc_Client Ecore_Ipc_Client;
 typedef struct _Ecore_Ipc_Server Ecore_Ipc_Server;
 typedef struct _Ecore_Ipc_Msg_Head Ecore_Ipc_Msg_Head;
 
+
+#ifdef __sgi
+#pragma pack 4
+#endif
 struct _Ecore_Ipc_Msg_Head
 {
       int head;
@@ -21,7 +25,14 @@ struct _Ecore_Ipc_Msg_Head
       int ref_to;
       int response;
       int size;
-} __attribute__ ((packed));
+} 
+#ifdef _GNU_C_
+__attribute__ ((packed));
+#endif
+;
+#ifdef __sgi
+#pragma pack 0
+#endif
 
 struct _Ecore_Ipc_Client
 {

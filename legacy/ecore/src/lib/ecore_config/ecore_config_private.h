@@ -3,8 +3,13 @@
 
 /* debug */
 extern int               DEBUG;
+#ifdef __sgi
+# define D
+# define E
+#else
 # define D(fmt,args...) do { if(DEBUG>=0) fprintf(stderr,fmt,## args); } while(0);
 # define E(lvl,args...) do { if(DEBUG>=(lvl)) fprintf(stderr,## args); } while(0)
+#endif
 
 typedef struct _Ecore_Config_DB_File Ecore_Config_DB_File;
 
