@@ -82,7 +82,7 @@ main(int argc, char **argv)
    Evas_Object o[128], o_rect, o_line, o_grad, o_fps, o_text, o_poly;
    Evas_Gradient grad;
    int down;
-   double t1, t2;
+   double t0, t1, t2;
    char *save_file = NULL;
    char *imgs[8] =
      {
@@ -324,7 +324,7 @@ main(int argc, char **argv)
    evas_set_image_fill(e, o[0], 0, 0, win_w, win_h);
    a = 0;
    down = 0;
-   t1 = get_time();
+   t0 = t1 = get_time();
    m = 0;
    for (;;)
      {
@@ -356,6 +356,8 @@ main(int argc, char **argv)
 		       button = ev.xbutton.button;
 		       if (button == 3)
 			 {
+			    t2 = get_time() - t0;
+			    printf("Avg FPS: %3.3f\n", a / t2);
 			    evas_free(e);
 			    exit(0);
 			 }
@@ -430,9 +432,5 @@ main(int argc, char **argv)
 	     evas_get_geometry(e, o_fps, NULL, NULL, &gw, &gh);
 	     evas_move(e, o_fps, win_w - gw, win_h - gh);
 	  }
-	if (a >= 1000) 
-	   {
-	      a = 0;
-	   }
      }
 }

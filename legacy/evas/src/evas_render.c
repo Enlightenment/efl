@@ -1,4 +1,3 @@
-
 #include "Evas_private.h"
 #include "Evas.h"
 #include <stdio.h>
@@ -18,59 +17,38 @@
 ((SPANS_COMMON((x), (w), (xx), (ww))) && (SPANS_COMMON((y), (h), (yy), (hh))))
 #endif
 
-void _evas_get_current_clipped_geometry(Evas e, Evas_Object o, double *x, double *y, double *w, double *h);
-void _evas_get_previous_clipped_geometry(Evas e, Evas_Object o, double *x, double *y, double *w, double *h);
-
 void
 _evas_object_get_current_translated_coords(Evas e, Evas_Object o, 
 					   int *x, int *y, int *w, int *h, int clip)
 {
-   double ox, oy, ow, oh;
+   double ox, oy, ow, oh, mx, my;
    
    ox = o->current.x; oy = o->current.y;
    ow = o->current.w; oh = o->current.h;
-   if (clip)
-     _evas_get_current_clipped_geometry(e, o, &ox, &oy, &ow, &oh);
-   *x = (int)
-      (((ox - e->current.viewport.x) * 
-	(double)e->current.drawable_width) / 
-       e->current.viewport.w);
-   *y = (int)
-      (((oy - e->current.viewport.y) * 
-	(double)e->current.drawable_height) / 
-       e->current.viewport.h);
-   *w = (int)
-      ((ow * (double)e->current.drawable_width) /
-       e->current.viewport.w);
-   *h = (int)
-      ((oh * (double)e->current.drawable_height) /
-       e->current.viewport.h);
+   if (clip) _evas_get_current_clipped_geometry(e, o, &ox, &oy, &ow, &oh);
+   mx = e->current.val_cache.mult_x;
+   my = e->current.val_cache.mult_y;
+   *x = (int)((ox - e->current.viewport.x) * mx);
+   *y = (int)((oy - e->current.viewport.y) * my);
+   *w = (int)(ow * mx);
+   *h = (int)(oh * my);
 }
 
 void
 _evas_object_get_previous_translated_coords(Evas e, Evas_Object o, 
 					   int *x, int *y, int *w, int *h, int clip)
 {
-   double ox, oy, ow, oh;
+   double ox, oy, ow, oh, mx, my;
    
    ox = o->previous.x; oy = o->previous.y;
    ow = o->previous.w; oh = o->previous.h;
-   if (clip)
-     _evas_get_previous_clipped_geometry(e, o, &ox, &oy, &ow, &oh);
-   *x = (int)
-      (((ox - e->previous.viewport.x) * 
-	(double)e->previous.drawable_width) / 
-       e->previous.viewport.w);
-   *y = (int)
-      (((oy - e->previous.viewport.y) * 
-	(double)e->previous.drawable_height) / 
-       e->previous.viewport.h);
-   *w = (int)
-      ((ow * (double)e->previous.drawable_width) /
-       e->previous.viewport.w);
-   *h = (int)
-      ((oh * (double)e->previous.drawable_height) /
-       e->previous.viewport.h);
+   if (clip) _evas_get_previous_clipped_geometry(e, o, &ox, &oy, &ow, &oh);
+   mx = e->current.val_cache.mult_x;
+   my = e->current.val_cache.mult_y;
+   *x = (int)((ox - e->previous.viewport.x) * mx);
+   *y = (int)((oy - e->previous.viewport.y) * my);
+   *w = (int)(ow * mx);
+   *h = (int)(oh * my);
 }
 
 void
@@ -1426,6 +1404,8 @@ evas_set_output_size(Evas e, int w, int h)
    if ((e->current.drawable_width == w) && (e->current.drawable_height == h)) return;
    e->current.drawable_width = w;
    e->current.drawable_height = h;
+   e->current.val_cache.mult_x = (double)e->current.drawable_width / e->current.viewport.w;
+   e->current.val_cache.mult_y = (double)e->current.drawable_height / e->current.viewport.h;
    e->changed = 1;
 }
 
@@ -1441,6 +1421,8 @@ evas_set_output_viewport(Evas e, double x, double y, double w, double h)
    e->current.viewport.y = y;
    e->current.viewport.w = w;
    e->current.viewport.h = h;
+   e->current.val_cache.mult_x = (double)e->current.drawable_width / e->current.viewport.w;
+   e->current.val_cache.mult_y = (double)e->current.drawable_height / e->current.viewport.h;
    e->changed = 1;
 }
 

@@ -152,7 +152,7 @@ __evas_image_image_draw(Evas_Image_Image *im,
 			      }
 			 }
 		       imlib_context_set_image(up->image);
-		       imlib_blend_image_onto_image(im, 0,
+		       imlib_blend_image_onto_image(im, 1,
 						    src_x, src_y, src_w, src_h,
 						    dst_x - up->x, dst_y - up->y, dst_w, dst_h);
 		    }
@@ -928,6 +928,9 @@ __evas_image_flush_draw(Display *disp, Imlib_Image dstim, Window win)
    Evas_List l;
    
    imlib_context_set_blend(1);
+   imlib_context_set_color_modifier(NULL);
+   imlib_context_set_cliprect(0, 0, 0, 0);
+   imlib_context_set_angle(0);
    
    for(l = drawable_list; l; l = l->next)
      {

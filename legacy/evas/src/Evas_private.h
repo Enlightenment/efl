@@ -91,6 +91,10 @@ struct _Evas
 	 double     x, y, w, h;
       } viewport;
       
+      struct {
+	 double     mult_x, mult_y;
+      } val_cache;
+      
       Evas_Render_Method render_method;
       
       Evas_Render_Data renderer_data;
@@ -263,6 +267,40 @@ struct _Evas_Object_Poly
       Evas_List points;
    } current, previous;
 };
+
+static void
+_evas_get_current_clipped_geometry(Evas e, Evas_Object o, double *x, double *y, double *w, double *h)
+{
+   if (!o->current.visible)
+     {
+	*x = 0.0;
+	*y = 0.0;
+	*w = 0.0;
+	*h = 0.0;
+	return;
+     }
+   if (o->clip.object)
+     _evas_get_current_clipped_geometry(e, o->clip.object, x, y, w, h);
+   CLIP_TO(*x, *y, *w, *h, 
+	   o->current.x, o->current.y, o->current.w, o->current.h);
+}
+
+static void
+_evas_get_previous_clipped_geometry(Evas e, Evas_Object o, double *x, double *y, double *w, double *h)
+{
+   if (!o->previous.visible)
+     {
+	*x = 0.0;
+	*y = 0.0;
+	*w = 0.0;
+	*h = 0.0;
+	return;
+     }
+   if (o->clip.object)
+     _evas_get_current_clipped_geometry(e, o->clip.object, x, y, w, h);
+   CLIP_TO(*x, *y, *w, *h, 
+	   o->previous.x, o->previous.y, o->previous.w, o->previous.h);
+}
 
 #endif
 

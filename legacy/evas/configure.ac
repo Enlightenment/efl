@@ -1,11 +1,10 @@
 # SETUP
-AC_INIT
-AC_CONFIG_SRCDIR([src/Evas.h])
+AC_INIT(src/Evas.h)
 AM_CONFIG_HEADER(config.h)
 AM_INIT_AUTOMAKE(evas, 0.6.0)
 
 IMLIB2_CONFIG_IN_PATH=xyes
-AC_CHECK_PROG([IMLIB2_CONFIG_IN_PATH],[imlib2-config],[xyes],[xno])
+AC_PROGRAM_CHECK(IMLIB2_CONFIG_IN_PATH, imlib2-config, xyes, xno)
 if test $IMLIB2_CONFIG_IN_PATH = xno; then
   echo "ERROR:"
   echo "The imlib2-config development script was not found in your execute"
@@ -275,7 +274,7 @@ AC_SUBST(imlib2_libs)
 AC_SUBST(ttf_includes)
 AC_SUBST(ttf_libs)
 
-AC_CONFIG_FILES([
+AC_OUTPUT([
 Makefile
 src/Makefile
 test/Makefile
@@ -284,8 +283,6 @@ test/fnt/Makefile
 evas-config
 doc/Makefile
 debian/Makefile
-])
-AC_CONFIG_COMMANDS([default],[[
+], [
 chmod +x evas-config
-]],[[]])
-AC_OUTPUT
+])

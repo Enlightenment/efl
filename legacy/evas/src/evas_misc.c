@@ -123,6 +123,8 @@ evas_new(void)
    e->previous.drawable_height = 1;
    e->current.render_method = RENDER_METHOD_ALPHA_SOFTWARE;
    e->current.colors = 216;
+   e->current.val_cache.mult_x = (double)e->current.drawable_width / e->current.viewport.w;
+   e->current.val_cache.mult_y = (double)e->current.drawable_height / e->current.viewport.h;
    return e;
 }
 
@@ -618,25 +620,21 @@ int
 evas_world_x_to_screen(Evas e, double x)
 {
    if (!e) return 0;
-   return (int)((x - e->current.viewport.x) *
-		((double)e->current.drawable_width / e->current.viewport.w));
+   return (int)((x - e->current.viewport.x) * e->current.val_cache.mult_x);
 }
 
 int
 evas_world_y_to_screen(Evas e, double y)
 {
    if (!e) return 0;
-   return (int)((y - e->current.viewport.y) *
-		((double)e->current.drawable_height / e->current.viewport.h));
+   return (int)((y - e->current.viewport.y) * e->current.val_cache.mult_y);
 }
 
 double
 evas_screen_x_to_world(Evas e, int x)
 {
    if (!e) return 0;
-   return (double)((double)x * 
-		   (e->current.viewport.w / 
-		    (double)e->current.drawable_width))
+   return (double)((double)x * e->current.val_cache.mult_x)
      + e->current.viewport.x;
 }
 
@@ -644,8 +642,6 @@ double
 evas_screen_y_to_world(Evas e, int y)
 {
    if (!e) return 0;
-   return (double)((double)y * 
-		   (e->current.viewport.h / 
-		    (double)e->current.drawable_height))
+   return (double)((double)y * e->current.val_cache.mult_y)
      + e->current.viewport.y;
 }
