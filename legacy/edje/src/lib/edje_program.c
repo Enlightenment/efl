@@ -263,7 +263,11 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 	       _edje_animators = evas_list_remove(_edje_animators, ed);
 	  }
 	_edje_emit(ed, "program,stop", runp->program->name);
-	if (_edje_block_break(ed)) goto break_prog;
+	if (_edje_block_break(ed))
+	  {
+	     if (!ed->walking_actions) free(runp);
+	     goto break_prog;
+	  }
 	if (runp->program->after >= 0)
 	  {
 	     Edje_Program *pr;
@@ -271,7 +275,11 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 	     pr = evas_list_nth(ed->collection->programs, 
 				runp->program->after);
 	     if (pr) _edje_program_run(ed, pr, 0);
-	     if (_edje_block_break(ed)) goto break_prog;
+	     if (_edje_block_break(ed))
+	       {
+		  if (!ed->walking_actions) free(runp);
+		  goto break_prog;
+	       }
 	  }
 	_edje_thaw(ed);
 	_edje_unref(ed);
