@@ -131,6 +131,12 @@ AC_ARG_WITH(ecore-config, [  --with-ecore-config=ECORE_CONFIG  use ecore-config 
 ecore_cflags=`$ECORE_CONFIG --cflags`
 ecore_libs=`$ECORE_CONFIG --libs`
 
+CP=$CFLAGS
+CFLAGS=$ecore_cflags
+AC_CHECK_HEADER(Ecore_X.h, AC_DEFINE(HAVE_ECORE_X, 1, [Ecore_X.h exists]))
+AC_CHECK_HEADER(Ecore_Fb.h, AC_DEFINE(HAVE_ECORE_FB, 1, [Ecore_Fb.h exists]))
+CFLAGS=$CP
+
 AC_ARG_WITH(eet-config, [  --with-eet-config=EET_CONFIG      use eet-config specified ],
 [ EET_CONFIG=$withval;
   echo "using "$EET_CONFIG" for eet-config"; ],

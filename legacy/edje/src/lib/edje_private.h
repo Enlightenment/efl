@@ -7,8 +7,11 @@
 
 #include <Evas.h>
 #include <Ecore.h>
-#ifdef HAVE_ECORE_X_H
+#ifdef HAVE_ECORE_X
 #include <Ecore_X.h>
+#endif
+#ifdef HAVE_ECORE_FB
+#include <Ecore_Fb.h>
 #endif
 #include <Eet.h>
 #include <Embryo.h>

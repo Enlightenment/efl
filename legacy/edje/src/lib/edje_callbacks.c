@@ -45,7 +45,7 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    ed = data;
    rp = evas_object_data_get(obj, "real_part");
    if (!rp) return;
-#ifdef _ECORE_X_H
+#ifdef HAVE_ECORE_X
    if (ecore_event_current_type_get() == ECORE_X_EVENT_MOUSE_BUTTON_DOWN)
      {
 	Ecore_X_Event_Mouse_Button_Down *evx;
@@ -64,9 +64,31 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	  snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
      }
    else
+#endif
+#ifdef HAVE_ECORE_FB
+     if (ecore_event_current_type_get() == ECORE_FB_EVENT_MOUSE_BUTTON_DOWN)
+       {
+	  Ecore_Fb_Event_Mouse_Button_Down *evfb;
+	  
+	  evfb = ecore_event_current_event_get();
+	  if (evfb)
+	    {
+	       if (evfb->triple_click)
+		 snprintf(buf, sizeof(buf), "mouse,down,%i,triple", ev->button);
+	       else if (evfb->double_click)
+		 snprintf(buf, sizeof(buf), "mouse,down,%i,double", ev->button);
+	       else
+		 snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
+	    }
+	  else
+	    snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
+       }
+   else
 #endif     
      snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
    _edje_ref(ed);
+   _edje_freeze(ed);
+   _edje_emit(ed, buf, rp->part->name);
    if ((rp->part->dragable.x) || (rp->part->dragable.y))
      {
 	if (rp->drag.down.count == 0)
@@ -84,8 +106,6 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	rp->clicked_button = ev->button;
 	rp->still_in = 1;
      }
-   _edje_freeze(ed);
-   _edje_emit(ed, buf, rp->part->name);
    _edje_recalc(ed);
    _edje_thaw(ed);   
    _edje_unref(ed);
