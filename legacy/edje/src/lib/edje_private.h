@@ -17,6 +17,8 @@
 
 /* FIXME:
  * 
+ * dont segv if given the wrong collection name
+ * 
  * dragables have to work
  * drag start/top signals etc.
  * drag needs to have signals with relative pos as arg.
@@ -33,11 +35,39 @@
  * need to detect clip_to part loops
  * need to detect confine_to part loops
  * 
+ * ? programs need to be able to set/get/add/sub and compare variables
+ *   ie: 
+ *     action, INT "active_state" = INT 1;
+ *     ...
+ *     action, INT "hidden" = INT 10;
+ *     ...
+ *     action, STR "my_string" = STR "some content here";
+ *     ...
+ *     action, INT "count" += INT 10;
+ *     ...
+ *     action, INT "count" -= INT 10;
+ *     action, INT "count" += MOUSE_X "this_part";
+ *     ...
+ *     action, INT "count" *= INT "another_variable";
+ *     action, INT "count" -= INT 10;
+ *     action, INT "count" /= INT 2;
+ *     ...
+ * 
+ *     if,  INT "active_state" == 1;
+ *     ...
+ *     if,  MOUSE_X     "" > 1;
+ *     or,  MOUSE_X     "this_part" > 50;
+ *     or,  MOUSE_X_REL "this_part" <= 0.5;
+ *     ...
+ *     if,  INT "active_state" != 0;
+ *     and, INT "hidden" < 10;
+ *     or,  STR "my_string" == "smelly";
+ *     ...
+ * 
  * ? programs need to be able to "toggle" part states given a list of states
- * ? programs could be extended further
  * ? reduce linked list walking and list_nth calls
  * ? add containering (hbox, vbox, table, wrapping multi-line hbox & vbox)
- * ? text entry widget (single line)
+ * ? text entry widget (single line only)
  * ? add numeric params to conditions for progs (ranges etc.)
  * ? key/value pair config values per colelction and per edje file
  */

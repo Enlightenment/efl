@@ -353,6 +353,37 @@ compile(void)
    close(fd);
 }
 
+int
+is_param(int n)
+{
+   char *str;
+   
+   str = evas_list_nth(params, n);
+   if (str) return 1;
+   return 0;
+}
+
+int
+is_num(int n)
+{
+   char *str;
+   long int ret;
+   char *end;
+   
+   str = evas_list_nth(params, n);
+   if (!str)
+     {
+	fprintf(stderr, "%s: Error. %s:%i no parameter supplied as argument %i\n",
+		progname, file_in, line, n + 1);
+	exit(-1);	
+     }
+   if (str[0] == 0) return 0;
+   end = str;
+   ret = strtol(str, &end, 0);
+   if ((end != str) && (end[0] == 0)) return 1;
+   return 0;
+}
+
 char *
 parse_str(int n)
 {

@@ -275,6 +275,18 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
 	rp->swallow_params.max.w = w;
 	rp->swallow_params.max.h = h;
      }
+   else if ((type) && ((!strcmp(type, "text")) ||
+		       (!strcmp(type, "polygon")) ||
+		       (!strcmp(type, "line"))))
+     {
+	double w, h;
+	
+	evas_object_geometry_get(obj_swallow, NULL, NULL, &w, &h);
+	rp->swallow_params.min.w = w;
+	rp->swallow_params.min.h = h;
+	rp->swallow_params.max.w = w;
+	rp->swallow_params.max.h = h;
+     }
    else
      {
 	rp->swallow_params.min.w = 
