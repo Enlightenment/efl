@@ -1013,6 +1013,8 @@ embryo_program_recursion_get(Embryo_Program *ep)
  * @return  @c EMBRYO_PROGRAM_OK on success.  @c EMBRYO_PROGRAM_SLEEP if the
  *          program is halted by the Small @c sleep call.
  *          @c EMBRYO_PROGRAM_FAIL if there is an error.
+ *          @c EMBRYO_PROGRAM_TOOLONG if the program executes for longer than
+ *          it is allowed to in abstract machine instruction count.
  * @ingroup Embryo_Run_Group
  */
 int
@@ -1028,6 +1030,8 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
    unsigned char    op;
    Embryo_Cell      offs;
    int              num;
+   int              max_run_cycles;
+   int              cycle_count;
 #ifdef EMBRYO_EXEC_JUMPTABLE
    /* we limit the jumptable to 256 elements. why? above we forced "op" to be
     * a unsigned char - that means 256 max values. we limit opcode overflow
@@ -1346,10 +1350,19 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 
    /* track recursion depth */
    ep->run_count++;
-   
+
+   max_run_cycles = ep->max_run_cycles;
    /* start running */
-   for (;;)
+   for (cycle_count = 0;;)
      {
+	if (max_run_cycles > 0)
+	  {
+	     if (cycle_count >= max_run_cycles)
+	       {
+		  TOOLONG(ep);
+	       }
+	     cycle_count++;
+	  }
 	op = (Embryo_Opcode)*cip++;
 	SWITCH(op);
 	CASE(EMBRYO_OP_LOAD_PRI);
@@ -2106,10 +2119,9 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 #endif		
 	SWITCHEND;
      }
+   ep->max_run_cycles = max_run_cycles;
    ep->run_count--;
-   
    ep->hea = hea_start;
-   
    return EMBRYO_PROGRAM_OK;
 }
 
@@ -2126,6 +2138,81 @@ embryo_program_return_value_get(Embryo_Program *ep)
 {
    if (!ep) return 0;
    return ep->retval;
+}
+
+/**
+ * Sets the maximum number of abstract machine cycles any given program run
+ * can execute before being put to sleep and returning.
+ * 
+ * @param   ep The given program.
+ * @param   max The number of machine cycles as a limit.
+ * 
+ * This sets the maximum number of abstract machine (virtual machine)
+ * instructions that a single run of an embryo function (even if its main)
+ * can use before embryo embryo_program_run() reutrns with the value
+ * EMBRYO_PROGRAM_TOOLONG. If the function fully executes within this number
+ * of cycles, embryo_program_run() will return as normal with either 
+ * EMBRYO_PROGRAM_OK, EMBRYO_PROGRAM_FAIL or EMBRYO_PROGRAM_SLEEP. If the
+ * run exceeds this instruction count, then EMBRYO_PROGRAM_TOOLONG will be
+ * returned indicating the program exceeded its run count. If the app wishes
+ * to continue running this anyway - it is free to process its own events or
+ * whatever it wants and continue the function by calling 
+ * embryo_program_run(program, EMBRYO_FUNCTION_CONT); which will start the
+ * run again until the instruction count is reached. This can keep being done
+ * to allow the calling program to still be able to control things outside the
+ * embryo function being called. If the maximum run cycle count is 0 then the
+ * program is allowed to run forever only returning when it is done.
+ * 
+ * It is important to note that abstract machine cycles are NOT the same as
+ * the host machine cpu cycles. They are not fixed in runtime per cycle, so
+ * this is more of a helper tool than a way to HARD-FORCE a script to only
+ * run for a specific period of time. If the cycle count is set to something
+ * low like 5000 or 1000, then every 1000 (or 5000) cycles control will be
+ * returned to the calling process where it can check a timer to see if a
+ * physical runtime limit has been elapsed and then abort runing further
+ * assuming a "runaway script" or keep continuing the script run. This
+ * limits resolution to only that many cycles which do not take a determined
+ * amount of time to execute, as this varies from cpu to cpu and also depends
+ * on how loaded the system is. Making the max cycle run too low will
+ * impact performance requiring the abstract machine to do setup and teardown
+ * cycles too often comapred to cycles actually executed.
+ * 
+ * Also note it does NOT include nested abstract machines. IF this abstract
+ * machine run calls embryo script that calls a native function that in turn
+ * calls more embryo script, then the 2nd (and so on) levels are not included
+ * in this run count. They can set their own max instruction count values
+ * separately.
+ * 
+ * The default max cycle run value is 0 in any program until set with this
+ * function.
+ * 
+ * @ingroup Embryo_Run_Group
+ */
+void
+embryo_program_max_cycle_run_set(Embryo_Program *ep, int max)
+{
+   if (!ep) return;
+   if (max < 0) max = 0;
+   ep->max_run_cycles = max;
+}
+
+/**
+ * Retreives the maximum number of abstract machine cycles a program is allowed
+ * to run.
+ * @param   ep The given program.
+ * @return  The number of cycles a run cycle is allowed to run for this 
+ *          program.
+ * 
+ * This returns the value set by embryo_program_max_cycle_run_set(). See
+ * embryo_program_max_cycle_run_set() for more information.
+ * 
+ * @ingroup Embryo_Run_Group
+ */
+int
+embryo_program_max_cycle_run_get(Embryo_Program *ep)
+{
+   if (!ep) return 0;
+   return ep->max_run_cycles;
 }
 
 /**

@@ -209,6 +209,7 @@ main(int argc,char *argv[])
    int r = EMBRYO_PROGRAM_OK;
    int err;
    int args = 0;
+   int instruct = 0;
    char *file = NULL;
    char *func = NULL;
 
@@ -273,23 +274,36 @@ main(int argc,char *argv[])
 	  }
      }
    r = EMBRYO_PROGRAM_OK;
+   fn = EMBRYO_FUNCTION_MAIN;
    if (func)
      {
 	fn = embryo_program_function_find(ep, func);
-	if (fn != EMBRYO_FUNCTION_NONE)
-	  {
-	     while ((r = embryo_program_run(ep, fn)) == EMBRYO_PROGRAM_SLEEP);
-	  }
-	else
+	if (fn == EMBRYO_FUNCTION_NONE)
 	  {
 	     printf("Unable to find public function %s()\n"
 		    "Executing main() instead\n", func);
-	     while ((r = embryo_program_run(ep, EMBRYO_FUNCTION_MAIN)) == EMBRYO_PROGRAM_SLEEP);
+	     fn = EMBRYO_FUNCTION_MAIN;
 	  }
      }
-   else
+   embryo_program_max_cycle_run_set(ep, 100000000);
+   for (;;)
      {
-	while ((r = embryo_program_run(ep, EMBRYO_FUNCTION_MAIN)) == EMBRYO_PROGRAM_SLEEP);
+	r = embryo_program_run(ep, fn);
+	if (r == EMBRYO_PROGRAM_SLEEP)
+	  {
+	     fn = EMBRYO_FUNCTION_CONT;
+	     printf("SLEEP INSTRUCTION!\n");
+	     continue;
+	  }
+	else if (r == EMBRYO_PROGRAM_TOOLONG)
+	  {
+	     fn = EMBRYO_FUNCTION_CONT;
+	     instruct++;
+	     printf("Executed %i00 million instructions!\n", instruct);
+	     continue;
+	  }
+	else
+	  break;
      }
    embryo_program_vm_pop(ep);
    if (r == EMBRYO_PROGRAM_FAIL)

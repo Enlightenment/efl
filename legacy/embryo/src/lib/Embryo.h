@@ -43,10 +43,11 @@ extern "C" {
   /** An invalid cell reference */
 #define EMBRYO_CELL_NONE     0x7fffffff 
    /* program run return values */
-#define EMBRYO_PROGRAM_OK    1
-#define EMBRYO_PROGRAM_SLEEP 2
-#define EMBRYO_PROGRAM_BUSY  3
-#define EMBRYO_PROGRAM_FAIL  0
+#define EMBRYO_PROGRAM_OK      1
+#define EMBRYO_PROGRAM_SLEEP   2
+#define EMBRYO_PROGRAM_BUSY    3
+#define EMBRYO_PROGRAM_TOOLONG 4
+#define EMBRYO_PROGRAM_FAIL    0
 
    typedef unsigned int                Embryo_UCell;
    typedef int                         Embryo_Cell;
@@ -94,6 +95,8 @@ extern "C" {
    int              embryo_program_recursion_get(Embryo_Program *ep);
    int              embryo_program_run(Embryo_Program *ep, Embryo_Function func);
    Embryo_Cell      embryo_program_return_value_get(Embryo_Program *ep);
+   void             embryo_program_max_cycle_run_set(Embryo_Program *ep, int max);
+   int              embryo_program_max_cycle_run_get(Embryo_Program *ep);
    int              embryo_parameter_cell_push(Embryo_Program *ep, Embryo_Cell cell);
    int              embryo_parameter_string_push(Embryo_Program *ep, char *str);
    int              embryo_parameter_cell_array_push(Embryo_Program *ep, Embryo_Cell *cells, int num);
