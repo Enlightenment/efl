@@ -68,6 +68,10 @@ struct _e_xid
    int                 bw;
 };
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 void                e_del_child(Window win, Window child);
 void                e_add_child(Window win, Window child);
 void                e_raise_child(Window win, Window child);
@@ -204,7 +208,7 @@ void                e_dnd_send_data(Window win, Window source_win, void *data,
 void                e_window_set_title(Window win, char *title);
 void                e_window_set_name_class(Window win, char *name,
 
-					    char *class);
+					    char *);
 void                e_window_set_min_size(Window win, int w, int h);
 void                e_window_set_max_size(Window win, int w, int h);
 void                e_window_set_xy_hints(Window win, int x, int y);
@@ -769,5 +773,9 @@ if (_pp) _pp->next = _p->next; else (base) = _p->next;
 return; } _pp = _p; _p = _p->next; }
 
 double              e_get_time(void);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif
