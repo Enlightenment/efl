@@ -390,6 +390,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr, int force)
 		       _edje_part_pos_set(ed, rp, pr->tween.mode, 0.0);
 		    }
 	       }
+	     _edje_emit(ed, "program,stop", pr->name);
 	     _edje_recalc(ed);
 	  }
      }
@@ -442,7 +443,7 @@ _edje_emit(Edje *ed, char *sig, char *src)
    recursions++;
    _edje_ref(ed);
    _edje_freeze(ed);
-//   printf("EMIT \"%s\" \"%s\"\n", sig, src);
+   printf("EMIT \"%s\" \"%s\"\n", sig, src);
    ee = calloc(1, sizeof(Edje_Emission));
    if (!ee)
      {

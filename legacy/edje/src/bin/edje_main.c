@@ -102,13 +102,13 @@ main_delete_request(Ecore_Evas *ee)
 static void
 main_pre_rend(Ecore_Evas *ee)
 {
-   edje_thaw();
+//   edje_thaw();
 }
 
 static void
 main_post_rend(Ecore_Evas *ee)
 {
-   edje_freeze();   
+//   edje_freeze();   
 }
 
 void
