@@ -1482,6 +1482,7 @@ _edje_thaw(Edje *ed)
 int
 _edje_block(Edje *ed)
 {
+   _edje_ref(ed);
    ed->block++;
    return ed->block;
 }
@@ -1489,12 +1490,17 @@ _edje_block(Edje *ed)
 int
 _edje_unblock(Edje *ed)
 {
+   int ret = 0;
+   if (!ed) return;
+
    ed->block--;
    if (ed->block == 0)
      {
 	ed->block_break = 0;
      }
-   return ed->block;
+   ret = ed->block;
+   _edje_unref(ed);
+   return ret;
 }
 
 int
