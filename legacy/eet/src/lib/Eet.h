@@ -328,8 +328,10 @@ extern "C" {
     * @param func_list_next The function to get the next list node.
     * @param func_list_append The function to append a member to a list.
     * @param func_list_data The function to get the data from a list node.
+    * @param func_list_free The function to free an entire linked list.
     * @param func_hash_foreach The function to iterate through all hash table entries.
     * @param func_hash_add The function to add a member to a hash table.
+    * @param func_hash_free The function to free an entire hash table.
     * @return A new empty data descriptor.
     * 
     * This function creates a new data descriptore and returns a handle to the
@@ -529,7 +531,7 @@ extern "C" {
     * likes. Eet can handle members being added or deleted from the data in
     * storage and safely zero-fills unfilled members if they were not found
     * in the data. It checks sizes and headers whenever it reads data, allowing
-    * the programmer ot not worry about corrupt data.
+    * the programmer to not worry about corrupt data.
     * 
     * Once a data structure has been described by the programmer with the
     * fields they wish to save or load, storing or retrieving a data structure
@@ -555,25 +557,75 @@ extern "C" {
    int   eet_data_write(Eet_File *ef, Eet_Data_Descriptor *edd, char *name, void *data, int compress);
    
    /**
-    * To be documented.
-    *
-    * FIXME: To be fixed.
+    * Decode a data structure from an arbitary location in memory.
+    * @param edd The data  descriptor to use when decoding.
+    * @param data_in The pointer to the data to decode into a struct.
+    * @param size_in The size of the data pointed to in bytes.
+    * @return NULL on failure, or a valid decoded struct pointer on success.
+    * 
+    * This function will decode a data structure that has been encoded using
+    * eet_data_descriptor_encode(), and return a data structure with all its
+    * elements filled out, if successful, or NULL on failure.
+    * 
+    * The data to be decoded is stored at the memory pointed to by @p data_in,
+    * and is described by the descriptor pointed to by @p edd. The data size is
+    * passed in as the value to @p size_in, ande must be greater than 0 to
+    * succeed.
+    * 
+    * This function is useful for decoding data structures delivered to the
+    * application by means other than an eet file, such as an IPC or socket
+    * connection, raw files, shared memory etc.
+    * 
+    * Please see eet_data_read() for more information.
     * 
     */   
    void *eet_data_descriptor_decode(Eet_Data_Descriptor *edd, void *data_in, int size_in);
    
    /**
-    * To be documented.
+    * Encode a dsata struct to memory and return that encoded data.
+    * @param edd The data  descriptor to use when encoding.
+    * @param data_in The pointer to the struct to encode into data.
+    * @param size_ret A pointer to the an int to be filled with the decoded size.
+    * @return NULL on failure, or a valid encoded data chunk on success.
     *
-    * FIXME: To be fixed.
+    * This function takes a data structutre in memory and encodes it into a
+    * serialised chunk of data that can be decoded again by 
+    * eet_data_descriptor_decode(). This is useful for being able to transmit
+    * data structures across sockets, pipes, IPC or shared file mechanisms,
+    * without having to worry about memory space, machine type, endianess etc.
+    * 
+    * The parameter @p edd must point to a valid data descriptor, and
+    * @p data_in must point to the right data structure to encode. If not, the
+    * encoding may fail.
+    * 
+    * On success a non NULL valid pointer is returned and what @p size_ret
+    * points to is set to the size of this decoded data, in bytes. When the
+    * encoded data is no longer needed, call free() on it. On failure NULL is
+    * returned and what @p size_ret points to is set to 0.
+    * 
+    * Please see eet_data_write() for more information.
     * 
     */
    void *eet_data_descriptor_encode(Eet_Data_Descriptor *edd, void *data_in, int *size_ret);
 
    /**
-    * To be documented.
-    *
-    * FIXME: To be fixed.
+    * Add a basic data element to a data descriptor.
+    * @param edd The data descriptor to add the type to.
+    * @param struct_type The type of the struct.
+    * @param name The string name to use to encode/decode this member.
+    * @param member The struct member itself to be encoded.
+    * @param type The type of the member to encode.
+    * 
+    * This macro is a convenience macro provided to add a member to the data
+    * descriptor @p edd. The type of the structure is provided as the
+    * @p struct_type parameter (for example: struct my_struct). The @p name
+    * parameter defines a string that will be used to uniquely name that
+    * member of the struct (it is suggested to use the struct member itself).
+    * The @p member parameter is the actual struct member itself (for
+    * example: values), and @p type is the basic data type of the member which
+    * must be one of: EET_T_CHAR, EET_T_SHORT, EET_T_INT, EET_T_LONG_LONG,
+    * EET_T_FLOAT, EET_T_DOUBLE, EET_T_UCHAR, EET_T_USHORT, EET_T_UINT,
+    * EET_T_ULONG_LONG or EET_T_STRING.
     * 
     */
 #define EET_DATA_DESCRIPTOR_ADD_BASIC(edd, struct_type, name, member, type) \
@@ -586,9 +638,18 @@ extern "C" {
      }
    
    /**
-    * To be documented.
-    *
-    * FIXME: To be fixed.
+    * Add a sub-element type to a data descriptor
+    * @param edd The data descriptor to add the type to.
+    * @param struct_type The type of the struct.
+    * @param name The string name to use to encode/decode this member.
+    * @param member The struct member itself to be encoded.
+    * @param subtype The type of sub-type struct to add.
+    * 
+    * This macro lets you easily add a sub-type (a struct that's pointed to
+    * by this one). All the parameters are the same as for 
+    * EET_DATA_DESCRIPTOR_ADD_BASIC(), with the @p subtype being the exception.
+    * This must be the data descriptor of the struct that is pointed to by
+    * this element.
     * 
     */
 #define EET_DATA_DESCRIPTOR_ADD_SUB(edd, struct_type, name, member, subtype) \
@@ -601,9 +662,17 @@ extern "C" {
      }
    
    /**
-    * To be documented.
-    *
-    * FIXME: To be fixed.
+    * Add a linked list type to a data descriptor
+    * @param edd The data descriptor to add the type to.
+    * @param struct_type The type of the struct.
+    * @param name The string name to use to encode/decode this member.
+    * @param member The struct member itself to be encoded.
+    * @param subtype The type of linked list member to add.
+    * 
+    * This macro lets you easily add a linked list of other data types. All the 
+    * parameters are the same as for EET_DATA_DESCRIPTOR_ADD_BASIC(), with the 
+    * @p subtype being the exception. This must be the data descriptor of the
+    * element that is in each member of the linked list to be stored.
     * 
     */
 #define EET_DATA_DESCRIPTOR_ADD_LIST(edd, struct_type, name, member, subtype) \
