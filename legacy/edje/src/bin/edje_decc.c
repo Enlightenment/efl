@@ -97,7 +97,6 @@ output(void)
    Evas_List *l;
    Eet_File *ef;
    char *outdir, *p;
-   int i;
    
    p = strrchr(file_in, '/');
    if (p)
