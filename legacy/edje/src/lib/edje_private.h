@@ -305,6 +305,7 @@ struct _Edje
    int                   layer;
    double                x, y, w, h;
    unsigned char         dirty : 1;
+   unsigned char         recalc : 1;
    Evas                 *evas; /* the evas this edje belongs to */
    Evas_Object          *obj; /* the smart object */
    Evas_Object          *clipper; /* a big rect to clip this edje to */
@@ -313,6 +314,7 @@ struct _Edje
    Evas_List            *parts; /* private list of parts */
    Evas_List            *actions; /* currently running actions */   
    Evas_List            *callbacks;
+   int                   freeze;
 };
 
 struct _Edje_Real_Part

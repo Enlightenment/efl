@@ -39,6 +39,8 @@ static void _edje_part_description_apply(Edje *ed, Edje_Real_Part *ep, char  *d1
 static void _edje_part_recalc_single(Edje *ed, Edje_Real_Part *ep, Edje_Part_Description *desc, Edje_Part_Description *chosen_desc, Edje_Real_Part *rel1_to, Edje_Real_Part *rel2_to, Edje_Real_Part *confine_to, Edje_Calc_Params *params);
 static void _edje_part_recalc(Edje *ed, Edje_Real_Part *ep);
 static void _edje_recalc(Edje *ed);
+static int  _edje_freeze(Edje *ed);
+static int  _edje_thaw(Edje *ed);
 static void _edje_edd_setup(void);
 
 static void _edje_smart_add(Evas_Object * obj);
@@ -213,8 +215,10 @@ edje_file_set(Evas_Object *obj, const char *file, const char *part)
 	       rp->param1.rel2_to = evas_list_nth(ed->parts, rp->param1.description->rel2.id);
 	  }
 	ed->dirty = 1;
+	_edje_freeze(ed);
 	_edje_recalc(ed);
 	_edje_emit(ed, "load", "");
+	_edje_thaw(ed);
      }
 }
 
@@ -526,7 +530,6 @@ _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    ed = data;
    rp = evas_object_data_get(obj, "real_part");
    if (!rp) return;
-   _edje_emit(ed, "mouse,move", rp->part->name);
    if (rp->still_in)
      {
 	double x, y, w, h;
@@ -536,6 +539,7 @@ _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
 	    (ev->cur.canvas.x >= (x + w)) || (ev->cur.canvas.y >= (y + h)))
 	  rp->still_in = 0;
      }
+   _edje_emit(ed, "mouse,move", rp->part->name);
 }
 
 static void
@@ -570,6 +574,7 @@ _edje_timer_cb(void *data)
 	Evas_List *newl = NULL;
 	
 	ed = animl->data;
+	_edje_freeze(ed);
 	animl = evas_list_remove(animl, animl->data);
 	for (l = ed->actions; l; l = l->next)
 	  newl = evas_list_append(newl, l->data);
@@ -581,6 +586,7 @@ _edje_timer_cb(void *data)
 	     newl = evas_list_remove(newl, newl->data);
 	     _edje_program_run_iterate(runp, t);
 	  }
+	_edje_thaw(ed);
      }
    if (_edje_anim_count > 0) return 1;
    _edje_timer = NULL;
@@ -592,7 +598,8 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 {
    double t, total;
    Evas_List *l;
-   
+
+   _edje_freeze(runp->edje);
    t = tim - runp->start_time;
    total = runp->program->tween.time;
    t /= total;
@@ -642,10 +649,12 @@ _edje_program_run_iterate(Edje_Running_Program *runp, double tim)
 				runp->program->after);
 	     if (pr) _edje_program_run(runp->edje, pr);
 	  }
+	_edje_thaw(runp->edje);
 	free(runp);
 	return  0;
      }
    _edje_recalc(runp->edje);
+   _edje_thaw(runp->edje);
    return 1;
 }
 
@@ -654,6 +663,7 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
 {
    Evas_List *l;
 
+   _edje_freeze(runp->edje);
    for (l = runp->program->targets; l; l = l->next)
      {
 	Edje_Real_Part *rp;
@@ -679,6 +689,7 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
    if (!runp->edje->actions)
      _edje_animators = evas_list_remove(_edje_animators, runp->edje);
    _edje_emit(runp->edje, "anim,stop", runp->program->name);
+   _edje_thaw(runp->edje);
    free(runp);
 }
    
@@ -687,6 +698,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr)
 {
    Evas_List *l;
 
+   _edje_freeze(ed);
    _edje_emit(ed, "anim,start", pr->name);
    if (pr->action == EDJE_ACTION_TYPE_STATE_SET)
      {
@@ -775,6 +787,7 @@ _edje_program_run(Edje *ed, Edje_Program *pr)
      {
 	_edje_emit(ed, pr->state, pr->state2);
      }
+   _edje_thaw(ed);
 }
 
 static void
@@ -784,6 +797,7 @@ _edje_emit(Edje *ed, char *sig, char *src)
    static Evas_List *emissions = NULL;
    Edje_Emission *ee;
 
+   _edje_freeze(ed);
    printf("EMIT \"%s\" \"%s\"\n", sig, src);
    ee = calloc(1, sizeof(Edje_Emission));
    if (!ee) return;
@@ -792,6 +806,7 @@ _edje_emit(Edje *ed, char *sig, char *src)
    if (emissions)
      {
 	emissions = evas_list_append(emissions, ee);
+	_edje_thaw(ed);
 	return;
      }
    else
@@ -822,6 +837,7 @@ _edje_emit(Edje *ed, char *sig, char *src)
 	free(ee->source);
 	free(ee);
      }
+   _edje_thaw(ed);
 }
 
 static int
@@ -1423,6 +1439,11 @@ _edje_recalc(Edje *ed)
    Evas_List *l;
    
    if (!ed->dirty) return;
+   if (ed->freeze)
+     {
+	ed->recalc = 1;
+	return;
+     }
    for (l = ed->parts; l; l = l->next)
      {
 	Edje_Real_Part *ep;
@@ -1438,6 +1459,23 @@ _edje_recalc(Edje *ed)
 	if (!ep->calculated) _edje_part_recalc(ed, ep);
      }
    ed->dirty = 0;
+   ed->recalc = 0;
+}
+
+static int
+_edje_freeze(Edje *ed)
+{
+   ed->freeze++;
+   return ed->freeze;
+}
+
+static int
+_edje_thaw(Edje *ed)
+{
+   ed->freeze--;
+   if ((ed->freeze <= 0) && (ed->recalc))
+     _edje_recalc(ed);
+   return ed->freeze;
 }
 
 static void
