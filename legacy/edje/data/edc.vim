@@ -30,7 +30,7 @@ syn keyword	cLabel		text
 syn keyword	cConditional	if else switch
 syn keyword	cRepeat		while for do
 syn keyword	cConstant 	COMP RAW LOSSY 
-syn keyword	cConstant 	TEXT IMAGE RECT 
+syn keyword	cConstant 	TEXT IMAGE RECT SWALLOW
 syn keyword	cConstant 	NONE PLAIN OUTLINE SOFT_OUTLINE SHADOW
 syn keyword	cConstant 	SOFT_SHADOW OUTLINE_SHADOW OUTLINE_SOFT_SHADOW
 syn keyword	cConstant 	STATE_SET ACTION_STOP SIGNAL_EMIT
