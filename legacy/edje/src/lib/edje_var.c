@@ -929,10 +929,9 @@ _edje_var_timer_add(Edje *ed, double in, char *fname, int val)
    if (!ed->var_pool) return 0;
    fn = embryo_program_function_find(ed->collection->script, fname);
    if (fn == EMBRYO_FUNCTION_NONE) return 0;
-   ed->var_pool->id_count++;
    et = calloc(1, sizeof(Edje_Var_Timer));
    if (!et) return 0;
-   et->id = ed->var_pool->id_count;
+   et->id = ++ed->var_pool->id_count;
    et->edje = ed;
    et->func = fn;
    et->val = val;
@@ -977,12 +976,11 @@ _edje_var_anim_add(Edje *ed, double len, char *fname, int val)
    if (len <= 0.0) return 0;
    fn = embryo_program_function_find(ed->collection->script, fname);
    if (fn == EMBRYO_FUNCTION_NONE) return 0;
-   ed->var_pool->id_count++;
    ea = calloc(1, sizeof(Edje_Var_Animator));
    if (!ea) return 0;
    ea->start = ecore_time_get();
    ea->len = len;
-   ea->id = ed->var_pool->id_count;
+   ea->id = ++ed->var_pool->id_count;
    ea->edje = ed;
    ea->func = fn;
    ea->val = val;
