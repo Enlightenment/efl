@@ -31,7 +31,7 @@ evas_free(Evas e)
    
    for (l = e->layers; l; l = l->next)
      {
-	/* free layer */
+	/* FIXME: free layer */
      }
    if (e->layers) evas_list_free(e->layers);
    free(e);
@@ -41,6 +41,14 @@ evas_free(Evas e)
 void
 evas_update_rect(Evas e, int x, int y, int w, int h)
 {
+   Evas_Rectangle r;
+   
+   r = malloc(sizeof(struct _Evas_Rectangle));
+   r->x = x;
+   r->y = y;
+   r->w = w;
+   r->h = h;
+   e->updates = evas_list_prepend(e->updates, r);
 }
 
 /* drawing */
@@ -51,12 +59,12 @@ evas_render(Evas e)
 
 /* query for settings to use */
 Visual *
-evas_get_optimal_visual(Display *disp)
+evas_get_optimal_visual(Evas e, Display *disp)
 {
 }
 
 Colormap
-evas_get_optimal_colormap(Display *disp)
+evas_get_optimal_colormap(Evas e, Display *disp)
 {
 }
 
@@ -64,22 +72,54 @@ evas_get_optimal_colormap(Display *disp)
 void
 evas_set_output(Evas e, Display *disp, Drawable d, Visual *v, Colormap c)
 {
+   e->current.display = disp;
+   e->current.drawable = d;
+   e->current.visual = v;
+   e->current.colormap = c;
 }
 
 void
 evas_set_output_rect(Evas e, int x, int y, int w, int h)
 {
+   e->current.output.x = x;
+   e->current.output.y = y;
+   e->current.output.w = w;
+   e->current.output.h = h;
 }
 
 void
-evas_set_viewport(Evas e, double x, double y, double w, double h)
+evas_set_output_viewport(Evas e, double x, double y, double w, double h)
 {
+   e->current.viewport.x = x;
+   e->current.viewport.y = y;
+   e->current.viewport.w = w;
+   e->current.viewport.h = h;
+}
+
+void
+evas_set_output_method(Evas e, Evas_Render_Method method)
+{
+   e->current.render_method = method;
 }
 
 /* deleting objects */
 void
 evas_del_object(Evas e, Evas_Object o)
 {
+   Evas_List l;
+   
+   for (l = e->layers; l; l = l->next)
+     {
+	Evas_Layer layer;
+	
+	layer = l->data;
+	if (layer->layer == o->current.layer)
+	  {
+	     layer->objects = evas_list_remove(layer->objects, o);
+	     o->object_free(o);
+	     e->object_render_data_free(e, o);
+	  }
+     }
 }
 
 /* adding objects */
@@ -99,12 +139,12 @@ evas_add_text(Evas e, char *font, int size, char *text)
 }
 
 Evas_Object
-evas_add_rectangle(Evas e, int r, Evas_Group g, int b)
+evas_add_rectangle(Evas e, int r, int g, int b, int a)
 {
 }
 
 Evas_Object
-evas_add_line(Evas e, int r, Evas_Group g, int b, int a)
+evas_add_line(Evas e, int r, int g, int b, int a)
 {
 }
 
@@ -130,6 +170,16 @@ evas_set_image_file(Evas e, Evas_Object o, char *file)
 }
 
 void
+evas_set_image_data(Evas e, Evas_Object o, void *data, Evas_Image_Format format, int w, int h)
+{
+}
+
+void
+evas_set_image_scale_smoothness(Evas e, Evas_Object o, int smooth)
+{
+}
+
+void
 evas_set_image_fill(Evas e, Evas_Object o, double x, double y, double w, double h)
 {
 }
@@ -140,7 +190,7 @@ evas_set_bits_file(Evas e, Evas_Object o, char *file)
 }
 
 void
-evas_set_color(Evas e, Evas_Object o, int r, Evas_Group g, int b, int a)
+evas_set_color(Evas e, Evas_Object o, int r, int g, int b, int a)
 {
 }
 
@@ -241,32 +291,6 @@ evas_show(Evas e, Evas_Object o)
 
 void
 evas_hide(Evas e, Evas_Object o)
-{
-}
-
-/* group operations */
-Evas_Group
-evas_add_group(Evas e)
-{
-}
-
-void
-evas_add_to_group(Evas e, Evas_Object o, Evas_Group g)
-{
-}
-
-void
-evas_disband_group(Evas e, Evas_Group g)
-{
-}
-
-void
-evas_free_group(Evas e, Evas_Group g)
-{
-}
-
-void
-evas_del_from_group(Evas e, Evas_Object o, Evas_Group g)
 {
 }
 

@@ -12,10 +12,12 @@ typedef void *                             Evas_Group;
 typedef int                                Evas_Callback_Type;
 typedef int                                Evas_Image_Format;
 typedef int                                Evas_Blend_Mode;
+typedef int                                Evas_Render_Method;
 typedef struct _Evas_List *                Evas_List;
 typedef struct _Evas_Layer *               Evas_Layer;
 typedef struct _Evas_Color_Point *         Evas_Color_Point;
 typedef struct _Evas_Callback *            Evas_Callback;
+typedef struct _Evas_Rectangle *           Evas_Rectangle;
 typedef struct _Evas_Object_Image *        Evas_Object_Image;
 typedef struct _Evas_Object_Text *         Evas_Object_Text;
 typedef struct _Evas_Object_Rectangle *    Evas_Object_Rectangle;
@@ -24,9 +26,10 @@ typedef struct _Evas_Object_Gradient_Box * Evas_Object_Gradient_Box;
 typedef struct _Evas_Object_Bits *         Evas_Object_Bits;
 typedef struct _Evas_Object_Evas *         Evas_Object_Evas;
 
-#define RENDER_METHOD_ALPHA_SOFTWARE 0
-#define RENDER_METHOD_BASIC_HARDWARE 1
-#define RENDER_METHOD_ALPHA_HARDWARE 2
+#define RENDER_METHOD_ALPHA_SOFTWARE    0
+#define RENDER_METHOD_BASIC_HARDWARE    1
+#define RENDER_METHOD_3D_HARDWARE       2
+#define RENDER_METHOD_ALPHA_HARDWARE    3
 
 #define CALLBACK_MOUSE_IN   0
 #define CALLBACK_MOUSE_OUT  1
@@ -46,6 +49,11 @@ typedef struct _Evas_Object_Evas *         Evas_Object_Evas;
 #define OBJECT_BITS         5
 #define OBJECT_EVAS         6
 
+#define BLEND_ONTOP    0
+#define BLEND_ADD      1
+#define BLEND_SUBTRACT 2
+#define BLEND_RESHADE  3
+
 struct _Evas
 {
    struct  {
@@ -62,11 +70,14 @@ struct _Evas
 	 double     x, y, w, h;
       } viewport;
       
-      int           render_method;
+      Evas_Render_Method render_method;
       
       void      *renderer_data;
       
    } current, previous;
+
+   void (*object_render_data_free) (Evas _e, Evas_Object _o);
+   void (*evas_render_data_free) (Evas _e);
    
    Evas_List     layers;
    Evas_List     updates;
@@ -89,11 +100,15 @@ struct _Evas_List
    void      *data;
 };
 
+struct _Evas_Rectangle
+{
+   int x, y, w, h;
+};
+
 struct _Evas_Layer
 {
    int        layer;
    Evas_List  objects;
-   Evas_List  groups;
    
    struct  {
       int        store;
@@ -116,9 +131,11 @@ struct _Evas_Object_Any
       double     x, y, w, h;
       Evas_Blend_Mode mode;
       int        zoomscale;
+      int        layer;
    } current, previous;
+
+   void (*object_free) (Evas_Object _o);
    
-   Evas_List  groups;
    Evas_List  callbacks;
    
    void      *renderer_data;
@@ -131,6 +148,7 @@ struct _Evas_Object_Image
    struct  {
       char *file;
       double angle;
+      int new_data;
       struct _fill {
 	 double x, y, w, h;
       } fill;
@@ -204,14 +222,15 @@ void evas_update_rect(Evas e, int x, int y, int w, int h);
 void evas_render(Evas e);
 
 /* query for settings to use */
-Visual *evas_get_optimal_visual(Display *disp);
-Colormap evas_get_optimal_colormap(Display *disp);
+Visual *evas_get_optimal_visual(Evas e, Display *disp);
+Colormap evas_get_optimal_colormap(Evas e, Display *disp);
 
 /* the output settings */
 void evas_set_output(Evas e, Display *disp, Drawable d, Visual *v, Colormap c);
 void evas_set_output_rect(Evas e, int x, int y, int w, int h);
-void evas_set_viewport(Evas e, double x, double y, double w, double h);
-
+void evas_set_output_viewport(Evas e, double x, double y, double w, double h);
+void evas_set_output_method(Evas e, Evas_Render_Method method);
+	 
 /* deleting objects */
 void evas_del_object(Evas e, Evas_Object o);
 
@@ -219,17 +238,19 @@ void evas_del_object(Evas e, Evas_Object o);
 Evas_Object evas_add_image_from_file(Evas e, char *file);
 Evas_Object evas_add_image_from_data(Evas e, void *data, Evas_Image_Format format, int w, int h);
 Evas_Object evas_add_text(Evas e, char *font, int size, char *text);
-Evas_Object evas_add_rectangle(Evas e, int r, Evas_Group g, int b);
-Evas_Object evas_add_line(Evas e, int r, Evas_Group g, int b, int a);
+Evas_Object evas_add_rectangle(Evas e, int r, int g, int b, int a);
+Evas_Object evas_add_line(Evas e, int r, int g, int b, int a);
 Evas_Object evas_add_gradient_box(Evas e);
 Evas_Object evas_add_bits(Evas e, char *file);
 Evas_Object evas_add_evas(Evas e, Evas evas);
 
 /* set object settings */
 void evas_set_image_file(Evas e, Evas_Object o, char *file);
+void evas_set_image_data(Evas e, Evas_Object o, void *data, Evas_Image_Format format, int w, int h);
+void evas_set_image_scale_smoothness(Evas e, Evas_Object o, int smooth);
 void evas_set_image_fill(Evas e, Evas_Object o, double x, double y, double w, double h);
 void evas_set_bits_file(Evas e, Evas_Object o, char *file);
-void evas_set_color(Evas e, Evas_Object o, int r, Evas_Group g, int b, int a);
+void evas_set_color(Evas e, Evas_Object o, int r, int g, int b, int a);
 void evas_set_gradient(Evas e, Evas_Object o, Evas_Gradient grad);
 void evas_set_angle(Evas e, Evas_Object o, double angle);
 void evas_set_blend_mode(Evas e, Evas_Blend_Mode mode);
@@ -259,13 +280,6 @@ void evas_get_geometry(Evas e, Evas_Object o, double *x, double *y, double *w, d
 /* object visibility */
 void evas_show(Evas e, Evas_Object o);
 void evas_hide(Evas e, Evas_Object o);
-
-/* group operations */
-Evas_Group evas_add_group(Evas e);
-void evas_add_to_group(Evas e, Evas_Object o, Evas_Group g);
-void evas_disband_group(Evas e, Evas_Group g);
-void evas_free_group(Evas e, Evas_Group g);
-void evas_del_from_group(Evas e, Evas_Object o, Evas_Group g);
 
 /* evas bits ops */
 void evas_bits_get_padding(Evas e, Evas_Object o, double *l, double *r, double *t, double *b);
