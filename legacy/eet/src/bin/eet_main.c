@@ -56,24 +56,30 @@ encdectest(void)
 				  evas_list_next, 
 				  evas_list_append, 
 				  evas_list_data, 
-				  evas_hash_foreach, 
-				  evas_hash_add);
+				  evas_list_free,
+				  evas_hash_foreach,
+				  evas_hash_add,
+				  evas_hash_free);
    EET_DATA_DESCRIPTOR_ADD_BASIC(edd3, Blah3, "string3", string, EET_T_STRING);
    
    edd2 = eet_data_descriptor_new("blah2", sizeof(Blah2),
 				  evas_list_next, 
 				  evas_list_append, 
 				  evas_list_data, 
-				  evas_hash_foreach, 
-				  evas_hash_add);
+				  evas_list_free,
+				  evas_hash_foreach,
+				  evas_hash_add,
+				  evas_hash_free);
    EET_DATA_DESCRIPTOR_ADD_BASIC(edd2, Blah2, "string2", string, EET_T_STRING);
    
    edd = eet_data_descriptor_new("blah", sizeof(Blah),
 				  evas_list_next, 
 				  evas_list_append, 
 				  evas_list_data, 
-				  evas_hash_foreach, 
-				  evas_hash_add);
+				  evas_list_free,
+				  evas_hash_foreach,
+				  evas_hash_add,
+				  evas_hash_free);
    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "character", character, EET_T_CHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "sixteen", sixteen, EET_T_SHORT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(edd, Blah, "integer", integer, EET_T_INT);

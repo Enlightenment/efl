@@ -78,8 +78,10 @@ struct _Eet_Data_Descriptor
       void *(*list_next) (void *l);
       void *(*list_append) (void *l, void *d);
       void *(*list_data) (void *l);
+      void *(*list_free) (void *l);
       void  (*hash_foreach) (void *h, int (*func) (void *h, const char *k, void *dt, void *fdt), void *fdt);
       void *(*hash_add) (void *h, const char *k, void *d);
+      void  (*hash_free) (void *h);
    } func;
    struct {
       int               num;
@@ -1274,7 +1276,7 @@ eet_data_image_read(Eet_File *ef, char *name,
    int size;
    unsigned int *d = NULL;
    int header[8];
-   
+ 
    data = eet_read(ef, name, &size);
    if (!data) return NULL;
    d = eet_data_image_decode(data, size, w, h, alpha, compress, quality, lossy);
@@ -1428,8 +1430,10 @@ eet_data_descriptor_new(char *name,
 			void *(*func_list_next) (void *l),
 			void *(*func_list_append) (void *l, void *d),
 			void *(*func_list_data) (void *l),
+			void *(*func_list_free) (void *l),
 			void  (*func_hash_foreach) (void *h, int (*func) (void *h, const char *k, void *dt, void *fdt), void *fdt),
-			void *(*func_hash_add) (void *h, const char *k, void *d))
+			void *(*func_hash_add) (void *h, const char *k, void *d),
+			void  (*func_hash_free) (void *h))
 {
    Eet_Data_Descriptor *edd;
 
@@ -1440,8 +1444,10 @@ eet_data_descriptor_new(char *name,
    edd->func.list_next = func_list_next;
    edd->func.list_append = func_list_append;
    edd->func.list_data = func_list_data;
+   edd->func.list_free = func_list_free;
    edd->func.hash_foreach = func_hash_foreach;
    edd->func.hash_add = func_hash_add;
+   edd->func.hash_free = func_hash_free;
    return edd;
 }
 
@@ -1512,6 +1518,82 @@ eet_data_write(Eet_File *ef, Eet_Data_Descriptor *edd, char *name, void *data, i
    return val;
 }
 
+static int    freelist_len = 0;
+static int    freelist_num = 0;
+static void **freelist = NULL;
+
+static void
+_eet_freelist_add(void *data)
+{
+   freelist_num++;
+   if (freelist_num > freelist_len)
+     {
+	freelist_len += 16;
+	freelist = realloc(freelist, freelist_len * sizeof(void *));
+     }
+   freelist[freelist_num - 1] = data;
+}
+
+static void
+_eet_freelist_reset(void)
+{
+   freelist_len = 0;
+   freelist_num = 0;
+   if (freelist) free(freelist);
+   freelist = NULL;
+}
+
+static void
+_eet_freelist_free(void)
+{
+   int i;
+   
+   for (i = 0; i < freelist_num; i++)
+     free(freelist[i]);
+   _eet_freelist_reset();
+}
+
+static int     freelist_list_len = 0;
+static int     freelist_list_num = 0;
+static void ***freelist_list = NULL;
+
+static void
+_eet_freelist_list_add(void **data)
+{
+   int i;
+   
+   for (i = 0; i < freelist_list_num; i++)
+     {
+	if (freelist_list[i] == data) return;
+     }
+   freelist_list_num++;
+   if (freelist_list_num > freelist_list_len)
+     {
+	freelist_list_len += 16;
+	freelist_list = realloc(freelist_list, freelist_list_len * sizeof(void *));
+     }
+   freelist_list[freelist_list_num - 1] = data;
+}
+
+static void
+_eet_freelist_list_reset(void)
+{
+   freelist_list_len = 0;
+   freelist_list_num = 0;
+   if (freelist_list) free(freelist_list);
+   freelist_list = NULL;
+}
+
+static void
+_eet_freelist_list_free(Eet_Data_Descriptor *edd)
+{
+   int i;
+   
+   for (i = 0; i < freelist_list_num; i++)
+     edd->func.list_free(*(freelist_list[i]));
+   _eet_freelist_list_reset();
+}
+
 void *
 eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 			   void *data_in,
@@ -1533,16 +1615,19 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
    
    data = calloc(1, edd->size);
    if (!data) return NULL;
+   _eet_freelist_add(data);
    chnk = eet_data_chunk_get(data_in, size_in);
    if (!chnk)
      {
-	free(data);
+	_eet_freelist_free();
+	_eet_freelist_list_free(edd);
 	return NULL;
      }
    if (strcmp(chnk->name, edd->name))
      {
 	eet_data_chunk_free(chnk);
-	free(data);
+	_eet_freelist_free();
+	_eet_freelist_list_free(edd);
 	return NULL;
      }
    p = chnk->data;
@@ -1556,8 +1641,8 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 	echnk = eet_data_chunk_get(p, size);
 	if (!echnk)
 	  {
-	     /* FIXME: partially built data struct - leak!!!! */
-	     free(data);
+	     _eet_freelist_free();
+	     _eet_freelist_list_free(edd);
 	     eet_data_chunk_free(chnk);
 	     return NULL;
 	  }
@@ -1588,6 +1673,13 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 			    data_ret = eet_data_descriptor_decode(ede->subtype,
 								  echnk->data,
 								  echnk->size);
+			    if (!data_ret)
+			      {
+				 _eet_freelist_free();
+				 _eet_freelist_list_free(edd);
+				 eet_data_chunk_free(chnk);
+				 return NULL;
+			      }
 			    ptr = (void **)(((char *)data) + ede->offset);
 			    *ptr = (void *)data_ret;
 			 }
@@ -1618,15 +1710,25 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 				      data_ret = calloc(1, eet_coder[ede->type].size);
 				      if (data_ret)
 					{
+					   _eet_freelist_add(data_ret);
 					   ret = eet_data_get_type(ede->type,
 								   echnk->data,
 								   ((char *)echnk->data) + echnk->size,
 								   data_ret);
 					   if (ret <= 0)
 					     {
-						free(data_ret);
-						data_ret = NULL;
+						_eet_freelist_free();
+						_eet_freelist_list_free(edd);
+						eet_data_chunk_free(chnk);
+						return NULL;
 					     }
+					}
+				      else
+					{
+					   _eet_freelist_free();
+					   _eet_freelist_list_free(edd);
+					   eet_data_chunk_free(chnk);
+					   return NULL;
 					}
 				   }
 				 else if (ede->subtype)
@@ -1639,6 +1741,14 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 				   {
 				      list = edd->func.list_append(list, data_ret);
 				      *ptr = list;
+				      _eet_freelist_list_add(ptr);
+				   }
+				 else
+				   {
+				      _eet_freelist_free();
+				      _eet_freelist_list_free(edd);
+				      eet_data_chunk_free(chnk);
+				      return NULL;
 				   }
 			      }
 			    break;
@@ -1658,6 +1768,8 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 	eet_data_chunk_free(echnk);
      }
    eet_data_chunk_free(chnk);
+   _eet_freelist_reset();
+   _eet_freelist_list_reset();
    return data;
 }
 
