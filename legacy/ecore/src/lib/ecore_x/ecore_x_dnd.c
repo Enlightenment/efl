@@ -241,6 +241,7 @@ _ecore_x_dnd_drag(int x, int y)
    _xdnd->dest = win;
 }
 
+#if 0 /* Unused? */
 void 
 _ecore_x_dnd_send_finished(void)
 {
@@ -263,4 +264,4 @@ _ecore_x_dnd_own_selection(void)
    return (!XSetSelectionOwner(_ecore_x_disp, _ecore_x_atom_selection_xdnd,
                                _xdnd->source, CurrentTime));
 }
-
+#endif

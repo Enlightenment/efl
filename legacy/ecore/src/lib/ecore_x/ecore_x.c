@@ -888,7 +888,7 @@ ecore_x_window_client_sniff(Ecore_X_Window win)
  * @return Associated atom value.
  */
 Ecore_X_Atom    
-ecore_x_atom_get(char *name)
+ecore_x_atom_get(const char *name)
 {
    if (!_ecore_x_disp) return 0;
    return XInternAtom(_ecore_x_disp, name, False);

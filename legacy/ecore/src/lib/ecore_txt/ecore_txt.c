@@ -14,7 +14,7 @@
  * FIXME: Finish this.
  */
 char *
-ecore_txt_convert(char *enc_from, char *enc_to, char *text)
+ecore_txt_convert(const char *enc_from, const char *enc_to, const char *text)
 {
    iconv_t ic;
    char *new_txt, *inp, *outp;

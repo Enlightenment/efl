@@ -27,7 +27,7 @@
 extern "C" {
 #endif
 
-EAPI char *ecore_txt_convert(char *enc_from, char *enc_to, char *text);
+EAPI char *ecore_txt_convert(const char *enc_from, const char *enc_to, const char *text);
 
 #ifdef __cplusplus
 }

@@ -143,7 +143,7 @@ extern "C" {
    
    
    /* Creating and initializing new list structures */
-   Ecore_List *ecore_list_new();
+   Ecore_List *ecore_list_new(void);
    int ecore_list_init(Ecore_List *list);
    
    /* Adding items to the list */
@@ -181,7 +181,7 @@ extern "C" {
    void ecore_list_destroy(Ecore_List *list);
    
    /* Creating and initializing list nodes */
-   Ecore_List_Node *ecore_list_node_new();
+   Ecore_List_Node *ecore_list_node_new(void);
    int ecore_list_node_init(Ecore_List_Node *newNode);
    
    /* Destroying nodes */
@@ -201,7 +201,7 @@ extern "C" {
    };
    
    /* Creating and initializing new list structures */
-   Ecore_DList *ecore_dlist_new();
+   Ecore_DList *ecore_dlist_new(void);
    int ecore_dlist_init(Ecore_DList *list);
    void ecore_dlist_destroy(Ecore_DList *list);
    
@@ -239,7 +239,7 @@ extern "C" {
    int ecore_dlist_clear(Ecore_DList * _e_dlist);
    
    /* Creating and initializing list nodes */
-   Ecore_DList_Node *ecore_dlist_node_new();
+   Ecore_DList_Node *ecore_dlist_node_new(void);
    
    /* Destroying nodes */
    int ecore_dlist_node_destroy(Ecore_DList_Node * node, Ecore_Free_Cb free_func);
@@ -537,7 +537,7 @@ extern "C" {
    /* Initialize a node */
    int ecore_tree_node_init(Ecore_Tree_Node * new_node);
    /* Allocate and initialize a new node */
-   Ecore_Tree_Node *ecore_tree_node_new();
+   Ecore_Tree_Node *ecore_tree_node_new(void);
    /* Free the desired node */
    int ecore_tree_node_destroy(Ecore_Tree_Node * node, Ecore_Free_Cb free_data);
    

@@ -6,12 +6,14 @@
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
 
+#if 0
 static void _ecore_x_event_free_window_prop_name_class_change(void *data, void *ev);
 static void _ecore_x_event_free_window_prop_title_change(void *data, void *ev);
 static void _ecore_x_event_free_window_prop_visible_title_change(void *data, void *ev);
 static void _ecore_x_event_free_window_prop_icon_name_change(void *data, void *ev);
 static void _ecore_x_event_free_window_prop_visible_icon_name_change(void *data, void *ev);
 static void _ecore_x_event_free_window_prop_client_machine_change(void *data, void *ev);
+#endif
 static void _ecore_x_event_free_key_down(void *data, void *ev);
 static void _ecore_x_event_free_key_up(void *data, void *ev);
 
@@ -45,6 +47,7 @@ ecore_x_event_mask_unset(Ecore_X_Window w, Ecore_X_Event_Mask mask)
    XChangeWindowAttributes(_ecore_x_disp, w, CWEventMask, &s_attr);
 }
 
+#if 0
 static void
 _ecore_x_event_free_window_prop_name_class_change(void *data, void *ev)
 {
@@ -105,6 +108,7 @@ _ecore_x_event_free_window_prop_client_machine_change(void *data, void *ev)
    if (e->name) free(e->name);
    free(e);
 }
+#endif
 
 static void
 _ecore_x_event_free_key_down(void *data, void *ev)
