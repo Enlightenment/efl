@@ -60,6 +60,8 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/libecore*.so.*
 %{_libdir}/libecore*.la
 %{_libdir}/ecore_config_ipc_*.so
+%{_libdir}/ecore_config_ipc_*.a
+%{_libdir}/ecore_config_ipc_*.la
 %{_bindir}/ecore_*
 %{_datadir}/ecore
 

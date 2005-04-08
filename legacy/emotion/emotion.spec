@@ -2,8 +2,8 @@
 
 Summary: emotion
 Name: emotion
-Version: 0.0.1
-Release: 1.%(date '+%Y%m%d')
+Version: 0.0.1.002
+Release: 1
 License: BSD
 Group: System Environment/Libraries
 URL: http://www.enlightenment.org/
