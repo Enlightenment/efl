@@ -2,8 +2,8 @@
 
 Summary: Complex Graphical Design/Layout Engine
 Name: edje
-Version: 0.5.0
-Release: 1.%(date '+%Y%m%d')
+Version: 0.5.0.004
+Release: 1
 License: BSD
 Group: System Environment/Libraries
 URL: http://www.enlightenment.org/
