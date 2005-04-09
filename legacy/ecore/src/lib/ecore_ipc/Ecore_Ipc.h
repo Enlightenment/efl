@@ -26,11 +26,186 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-   
+ 
 #ifndef _ECORE_IPC_PRIVATE_H
    typedef void Ecore_Ipc_Server; /**< An IPC connection handle */
    typedef void Ecore_Ipc_Client; /**< An IPC connection handle */
 #endif
+
+/**
+ * Macros used for generic data packing
+ */
+#ifdef WORDS_BIGENDIAN
+#define ECORE_IPC_SWAP2NET64(x) _ecore_ipc_swap_64(x)
+#define ECORE_IPC_SWAP2CPU64(x) _ecore_ipc_swap_64(x)
+#define ECORE_IPC_SWAP2NET32(x) _ecore_ipc_swap_32(x)
+#define ECORE_IPC_SWAP2CPU32(x) _ecore_ipc_swap_32(x)
+#define ECORE_IPC_SWAP2NET16(x) _ecore_ipc_swap_16(x)
+#define ECORE_IPC_SWAP2CPU16(x) _ecore_ipc_swap_16(x)
+#define ECORE_IPC_SWAP2NET8(x) (x)
+#define ECORE_IPC_SWAP2CPU8(x) (x)
+#else
+#define ECORE_IPC_SWAP2NET64(x) (x)
+#define ECORE_IPC_SWAP2CPU64(x) (x)
+#define ECORE_IPC_SWAP2NET32(x) (x)
+#define ECORE_IPC_SWAP2CPU32(x) (x)
+#define ECORE_IPC_SWAP2NET16(x) (x)
+#define ECORE_IPC_SWAP2CPU16(x) (x)
+#define ECORE_IPC_SWAP2NET8(x) (x)
+#define ECORE_IPC_SWAP2CPU8(x) (x)
+#endif
+
+/* 1, 2, 4 and 8 byte datatypes */
+/* unpacking */
+#define ECORE_IPC_GET64(v)\
+			{ \
+			    p->v = ECORE_IPC_SWAP2CPU64(*(long long *)(ptr)); \
+			    ptr += 8; \
+			}
+#define ECORE_IPC_GET32(v)\
+			{ \
+			    p->v = ECORE_IPC_SWAP2CPU32(*(int *)(ptr)); \
+			    ptr += 4; \
+			}
+#define ECORE_IPC_GET16(v)\
+			{ \
+			    p->v = ECORE_IPC_SWAP2CPU16(*(short *)(ptr)); \
+			    ptr += 2; \
+			}
+#define ECORE_IPC_GET8(v) \
+			{ \
+			    p->v = ECORE_IPC_SWAP2CPU8(*(char *)(ptr)); \
+			    ptr += 1; \
+			}
+/* packing */
+#define ECORE_IPC_PUT64(v)\
+			{ \
+			    *(long long *)(ptr) = ECORE_IPC_SWAP2NET64(p->v); \
+			    ptr += 8; \
+			}
+#define ECORE_IPC_PUT32(v)\
+			{ \
+			    *(int *)(ptr) = ECORE_IPC_SWAP2NET32(p->v); \
+			    ptr += 4; \
+			}
+#define ECORE_IPC_PUT16(v)\
+			{ \
+			    *(short *)(ptr) = ECORE_IPC_SWAP2NET16(p->v); \
+			    ptr += 2; \
+			}
+#define ECORE_IPC_PUT8(v) \
+			{ \
+			    *(char *)(ptr) = ECORE_IPC_SWAP2NET8(p->v); \
+			    ptr += 1; \
+			}
+/* padding data */
+#define ECORE_IPC_PAD8()   ptr += 1
+#define ECORE_IPC_PAD16()  ptr += 2
+#define ECORE_IPC_PAD32()  ptr += 4
+#define ECORE_IPC_PAD64()  ptr += 8
+
+/* counting data when encoding lists */
+#define ECORE_IPC_CNT8()    len += 1
+#define ECORE_IPC_CNT16()   len += 2
+#define ECORE_IPC_CNT32()   len += 4
+#define ECORE_IPC_CNT64()   len += 8
+
+/* strings */
+#define ECORE_IPC_CHEKS() if (*((unsigned char *)d + s - 1) != 0) return 0;
+#define ECORE_IPC_GETS(v) \
+			{ \
+			    if (ptr < ((unsigned char *)d + s)) \
+				{ \
+				    p->v = ptr; \
+				    ptr += strlen(p->v) + 1; \
+				} \
+			} 
+#define ECORE_IPC_PUTS(v, l)\
+			{ \
+			    strcpy(ptr, p->v); \
+			    ptr += l + 1; \
+			}
+
+/* handy to calculate what sized block we need to alloc */
+#define ECORE_IPC_SLEN(l, v) ((l = strlen(p->v)) + 1)
+#define ECORE_IPC_CNTS(v)   len += strlen(p->v) + 1
+
+/* saves typing function headers */
+#define ECORE_IPC_DEC_STRUCT_PROTO(x) static int x(void *d, int s, void *pp)
+#define ECORE_IPC_ENC_STRUCT_PROTO(x) static void *x(void *pp, int *s)
+#define ECORE_IPC_DEC_EVAS_LIST_PROTO(x) static Evas_List *x(void *d, int s)
+#define ECORE_IPC_ENC_EVAS_LIST_PROTO(x) static void *x(Evas_List *lp, int *s)
+
+/* decoder setup - saves typing. requires data packet of exact size, or fail */
+#define ECORE_IPC_DEC_STRUCT_HEAD_EXACT(typ, x) \
+	     typ *p; \
+	     unsigned char *ptr; \
+             p = (typ *)pp; \
+             if (!d) return 0; \
+             if (s != (x)) return 0; \
+	     ptr = d;
+/* decoder setup - saves typing. requires data packet of a minimum size */
+#define ECORE_IPC_DEC_STRUCT_HEAD_MIN(typ, x) \
+	     typ *p; \
+	     unsigned char *ptr; \
+             p = (typ *)pp; \
+             if (!d) return 0; \
+             if (s < (x)) return 0; \
+	     ptr = d;
+/* footer for the hell of it */
+#define ECORE_IPC_DEC_STRUCT_FOOT() return 1
+/* header for encoder - gives native strct type and size of flattened packet */
+#define ECORE_IPC_ENC_STRUCT_HEAD(typ, sz) \
+             typ *p; \
+             unsigned char *d, *ptr; \
+             int len; \
+             p = (typ *)pp; \
+             *s = 0; \
+             len = sz; \
+             d = malloc(len); \
+             if (!d) return NULL; \
+             *s = len; \
+             ptr = d;
+/* footer for the hell of it */
+#define ECORE_IPC_ENC_STRUCT_FOOT() return d
+
+#define ECORE_IPC_DEC_EVAS_LIST_HEAD(typ) \
+    unsigned char *ptr; \
+    Evas_List *l; \
+    typ *p; \
+    l = NULL; \
+    ptr = d; \
+    while(ptr < (unsigned char *)(d + s)) \
+        { \
+            p = malloc(sizeof(typ));
+
+#define ECORE_IPC_DEC_EVAS_LIST_FOOT() \
+	    l = evas_list_append(l, p); \
+        } \
+    return l
+#define ECORE_IPC_ENC_EVAS_LIST_HEAD_START(typ) \
+    Evas_List *l; \
+    typ *p; \
+    unsigned char *d, *ptr; \
+    int len; \
+    *s = 0; \
+    len = 0; \
+    for (l = lp; l; l = l->next) \
+      { \
+         p = l->data;
+#define ECORE_IPC_ENC_EVAS_LIST_HEAD_FINISH() \
+      } \
+    d = malloc(len); \
+    if(!d) return NULL; \
+    *s = len; \
+    ptr = d; \
+    for (l = lp; l; l = l->next) \
+      { \
+         p = l->data;
+
+#define ECORE_IPC_ENC_EVAS_LIST_FOOT() \
+      } \
+   return d
 
    typedef enum _Ecore_Ipc_Type
      {

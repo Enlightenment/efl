@@ -28,6 +28,41 @@
 #define DLT_R1     14
 #define DLT_R2     15
 
+/* byte swappers - for dealing with big vs little endian machines */
+static unsigned short
+_ecore_ipc_swap_16(unsigned short v)
+{
+   unsigned char *s, t;
+   
+   s = (unsigned char *)(&v);
+   t = s[0]; s[0] = s[1]; s[1] = t;
+   return v;
+}
+
+static unsigned int
+_ecore_ipc_swap_32(unsigned int v)
+{
+   unsigned char *s, t;
+   
+   s = (unsigned char *)(&v);
+   t = s[0]; s[0] = s[3]; s[3] = t;
+   t = s[1]; s[1] = s[2]; s[2] = t;
+   return v;
+}
+
+static unsigned long long
+_ecore_ipc_swap_64(unsigned long long v)
+{
+   unsigned char *s, t;
+   
+   s = (unsigned char *)(&v);
+   t = s[0]; s[0] = s[7]; s[7] = t;
+   t = s[1]; s[1] = s[6]; s[6] = t;
+   t = s[2]; s[2] = s[5]; s[5] = t;
+   t = s[3]; s[3] = s[4]; s[4] = t;
+   return v;
+}
+
 static int _ecore_ipc_dlt_int(int out, int prev, int *mode);
 static int _ecore_ipc_ddlt_int(int in, int prev, int mode);
 
