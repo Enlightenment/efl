@@ -1,6 +1,6 @@
 #include "evas_common.h"
 
-#ifdef BUILD_MMX
+#if defined BUILD_MMX || defined BUILD_SSE
 #include "evas_mmx.h"
 #endif
 

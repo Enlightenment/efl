@@ -528,6 +528,46 @@ typedef	union {
 #define CPUID_SSE  (1 << 25) /* flags: xmm */
 #define CPUID_SSE2 (1 << 26) /* flags: ? */
 
+#ifdef __amd64
+#define have_cpuid(cpuid_ret) \
+	 __asm__ __volatile__ ( \
+				  ".align 32               \n" \
+				  "  pushq %%rbx           \n" \
+				  "  pushfq                \n" \
+				  "  popq %%rax            \n" \
+				  "  movq %%rax, %%rbx     \n" \
+				  "  xorq $0x200000, %%rax \n" \
+				  "  pushq %%rax           \n" \
+				  "  popfq                 \n" \
+				  "  pushfq                \n" \
+				  "  popq %%rax            \n" \
+				  "  cmpq %%rax, %%rbx     \n" \
+				  "  je 1f                 \n" \
+				  "  movl $1, %0           \n" \
+				  "  jmp 2f                \n" \
+				  "1:                      \n" \
+				  "  movl $0, %0           \n" \
+				  "2:                      \n" \
+				  "  popq %%rbx            \n" \
+				  : "=m" (cpuid_ret)           \
+				  );
+
+#define get_cpuid(cpuid_ret) \
+	 __asm__ __volatile__ ( \
+				  ".align 32               \n" \
+				  "  pushq %%rax           \n" \
+				  "  movl $1, %%eax        \n" \
+				  "  cpuid                 \n" \
+				  "  test $0x00800000, %%edx\n" \
+				  "1:                      \n" \
+				  "  movl %%edx, %0        \n" \
+				  "  jmp 2f                \n" \
+				  "2:                      \n" \
+				  "  movl $0, %0           \n" \
+				  "  popq %%rax            \n" \
+				  : "=m" (cpuid_ret)           \
+				  );
+#else
 #define have_cpuid(cpuid_ret) \
 	 __asm__ __volatile__ ( \
 				  ".align 32               \n" \
@@ -566,6 +606,8 @@ typedef	union {
 				  "  popl %%eax            \n" \
 				  : "=m" (cpuid_ret)           \
 				  );
+#endif
+
 /* P3 instructions - need to figure how to detect? */
 #define prefetch(var) \
 	__asm__ __volatile__ ( \

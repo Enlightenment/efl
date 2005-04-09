@@ -17,7 +17,7 @@ evas_object_list_append(void *in_list, void *in_item)
 	return new_l;
      }
    if (list->last) l = list->last;
-   else for (l = list; l; l = l->next);
+   else for (l = list; (l) && (l->next); l = l->next);
    l->next = new_l;
    new_l->prev = l;
    list->last = new_l;
