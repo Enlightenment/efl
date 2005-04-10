@@ -47,12 +47,12 @@ struct _Ecore_X_Reply
    void *data;
 };
 
-typedef struct _Ecore_X_Selection_Data Ecore_X_Selection_Data;
+typedef struct _Ecore_X_Selection_Intern Ecore_X_Selection_Intern;
 
-struct _Ecore_X_Selection_Data
+struct _Ecore_X_Selection_Intern
 {
-   Window            win;
-   Atom              selection;
+   Ecore_X_Window    win;
+   Ecore_X_Atom      selection;
    unsigned char     *data;
    int               length;
    Time              time;
@@ -62,10 +62,19 @@ typedef struct _Ecore_X_Selection_Converter Ecore_X_Selection_Converter;
 
 struct _Ecore_X_Selection_Converter
 {
-   Atom     target;
-   int      (*convert)(char *target, void *data, int size, 
-                    void **data_ret, int *size_ret);
-   struct _Ecore_X_Selection_Converter *next;
+   Ecore_X_Atom target;
+   int (*convert)(char *target, void *data, int size, 
+                  void **data_ret, int *size_ret);
+   Ecore_X_Selection_Converter *next;
+};
+
+typedef struct _Ecore_X_Selection_Parser Ecore_X_Selection_Parser;
+
+struct _Ecore_X_Selection_Parser
+{
+   char     *target;
+   void *(*parse)(const char *target, unsigned char *data, int size);
+   Ecore_X_Selection_Parser *next;
 };
 
 typedef struct _Ecore_X_DND_Source 
@@ -166,15 +175,16 @@ void _ecore_x_event_handle_client_message(XEvent *xevent);
 void _ecore_x_event_handle_mapping_notify(XEvent *xevent);
 void _ecore_x_event_handle_shape_change(XEvent *xevent);
 
-void _ecore_x_selection_data_init(void);
-void _ecore_x_selection_shutdown(void);
-Atom _ecore_x_selection_target_atom_get(char *target);
-char *_ecore_x_selection_target_get(Atom target);
-void _ecore_x_selection_request_data_set(Ecore_X_Selection_Data data);
-Ecore_X_Selection_Data * 
-     _ecore_x_selection_get(Atom selection);
-int  _ecore_x_selection_set(Window w, unsigned char *data, int len, Atom selection);
-int  _ecore_x_selection_convert(Atom selection, Atom target, void **data_ret);
+void  _ecore_x_selection_data_init(void);
+void  _ecore_x_selection_shutdown(void);
+Ecore_X_Atom
+      _ecore_x_selection_target_atom_get(const char *target);
+char *_ecore_x_selection_target_get(Ecore_X_Atom target);
+Ecore_X_Selection_Intern * 
+      _ecore_x_selection_get(Ecore_X_Atom selection);
+int   _ecore_x_selection_set(Window w, unsigned char *data, int len, Ecore_X_Atom selection);
+int   _ecore_x_selection_convert(Ecore_X_Atom selection, Ecore_X_Atom target, void **data_ret);
+void *_ecore_x_selection_parse(const char *target, unsigned char *data, int size);
 
 void _ecore_x_dnd_init(void);
 Ecore_X_DND_Source *_ecore_x_dnd_source_get(void);

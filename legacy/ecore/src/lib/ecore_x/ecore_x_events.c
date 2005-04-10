@@ -152,22 +152,12 @@ static void
 _ecore_x_event_free_selection_notify(void *data __UNUSED__, void *ev)
 {
    Ecore_X_Event_Selection_Notify *e;
-   int i;
+   Ecore_X_Selection_Data *sel;
 
    e = ev;
-   switch (e->content)
-     {
-      case ECORE_X_SELECTION_NONE:
-	 break;
-      case ECORE_X_SELECTION_FILES:
-	 for (i = 0; i < e->num_files; i++)
-	   free(e->files[i]);
-	 free(e->files);
-	 break;
-      case ECORE_X_SELECTION_TEXT:
-	 free(e->text);
-	 break;
-     }
+   sel = e->data;
+   if (sel->free)
+     sel->free(sel);
    free(e->target);
    free(e);
 }
@@ -989,9 +979,9 @@ _ecore_x_event_handle_property_notify(XEvent *xevent)
 void
 _ecore_x_event_handle_selection_clear(XEvent *xevent)
 {
-   Ecore_X_Selection_Data *d;
+   Ecore_X_Selection_Intern *d;
    Ecore_X_Event_Selection_Clear *e;
-   Atom sel;
+   Ecore_X_Atom sel;
 
    if (!(d = _ecore_x_selection_get(xevent->xselectionclear.selection)))
      return;
@@ -1019,7 +1009,7 @@ _ecore_x_event_handle_selection_clear(XEvent *xevent)
 void
 _ecore_x_event_handle_selection_request(XEvent *xevent)
 {
-   Ecore_X_Selection_Data           *sd;
+   Ecore_X_Selection_Intern         *sd;
    XSelectionEvent                  xnotify;
    XEvent                           xev;
    void                             *data;
@@ -1067,96 +1057,37 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
 {
    Ecore_X_Event_Selection_Notify   *e;
    unsigned char                    *data = NULL;
-   Atom                             selection;
+   Ecore_X_Atom                     selection;
    int                              num_ret;
-   Ecore_X_Selection_Data           sel_data;
+
+   selection = xevent->xselection.selection;
+
+   if (xevent->xselection.target == ECORE_X_ATOM_SELECTION_TARGETS)
+     {
+	if (!ecore_x_window_prop_property_get(xevent->xselection.requestor,
+					      xevent->xselection.property,
+					      XA_ATOM, 32, &data, &num_ret))
+	  return;
+     }
+   else
+     {
+	if (!ecore_x_window_prop_property_get(xevent->xselection.requestor,
+					      xevent->xselection.property,
+					      AnyPropertyType, 8, &data, &num_ret))
+	  return;
+     }
 
    e = calloc(1, sizeof(Ecore_X_Event_Selection_Notify));
    e->win = xevent->xselection.requestor;
    e->time = xevent->xselection.time;
    e->target = _ecore_x_selection_target_get(xevent->xselection.target);
-   selection = xevent->xselection.selection;
-
-   if (!ecore_x_window_prop_property_get(e->win, xevent->xselection.property,
-					 AnyPropertyType, 8, &data, &num_ret))
-     {
-	free(e);
-	return;
-     }
-
-   sel_data.win = e->win;
-   sel_data.selection = selection;
-   sel_data.data = data;
-   sel_data.length = num_ret;
-   _ecore_x_selection_request_data_set(sel_data);
 
    if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
      e->selection = ECORE_X_SELECTION_PRIMARY;
    else if (selection == ECORE_X_ATOM_SELECTION_SECONDARY)
      e->selection = ECORE_X_SELECTION_SECONDARY;
    else if (selection == ECORE_X_ATOM_SELECTION_XDND)
-     {
-	e->selection = ECORE_X_SELECTION_XDND;
-	if (!strcmp(e->target, "text/uri-list"))
-	  {
-	     int i, is;
-	     char *tmp;
-
-	     e->content = ECORE_X_SELECTION_FILES;
-
-	     tmp = malloc(num_ret * sizeof(char));
-	     i = 0;
-	     is = 0;
-	     e->files = NULL;
-	     while ((is < num_ret) && (data[is]))
-	       {
-		  if ((i == 0) && (data[is] == '#'))
-		    {
-		       for (; ((data[is]) && (data[is] != '\n')); is++);
-		    }
-		  else
-		    {
-		       if ((data[is] != '\r')
-			   && (data[is] != '\n'))
-			 {
-			    tmp[i++] = data[is++];
-			 }
-		       else
-			 {
-			    while ((data[is] == '\r')
-				   || (data[is] == '\n'))
-			      is++;
-			    tmp[i] = 0;
-			    e->num_files++;
-			    e->files = realloc(e->files, e->num_files * sizeof(char *));
-			    e->files[e->num_files - 1] = strdup(tmp);
-			    tmp[0] = 0;
-			    i = 0;
-			 }
-		    }
-	       }
-	     if (i > 0)
-	       {
-		  tmp[i] = 0;
-		  e->num_files++;
-		  e->files = realloc(e->files, e->num_files * sizeof(char *));
-		  e->files[e->num_files - 1] = strdup(tmp);
-	       }
-	     free(tmp);
-	  }
-	else if (!strcmp(e->target, "_NETSCAPE_URL"))
-	  {
-	     e->content = ECORE_X_SELECTION_FILES;
-	     e->num_files = 1;
-	     e->files = malloc(sizeof(char *));
-	     e->files[0] = data;
-	  }
-	else if (!strcmp(e->target, "text/plain"))
-	  {
-	     e->content = ECORE_X_SELECTION_TEXT;
-	     e->text = data;
-	  }
-     }
+     e->selection = ECORE_X_SELECTION_XDND;
    else if (selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
      e->selection = ECORE_X_SELECTION_CLIPBOARD;
    else
@@ -1164,6 +1095,7 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
 	free(e);
 	return;
      }
+   e->data = _ecore_x_selection_parse(e->target, data, num_ret);
 
    ecore_event_add(ECORE_X_EVENT_SELECTION_NOTIFY, e, _ecore_x_event_free_selection_notify, NULL);
 }

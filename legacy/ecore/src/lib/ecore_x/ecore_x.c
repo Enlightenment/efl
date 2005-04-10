@@ -45,6 +45,7 @@ Ecore_X_Atom     ECORE_X_ATOM_WIN_LAYER = 0;
 /*
  * Other hints.
  */
+Ecore_X_Atom     ECORE_X_ATOM_SELECTION_TARGETS;
 Ecore_X_Atom     ECORE_X_ATOM_SELECTION_PRIMARY = 0;
 Ecore_X_Atom     ECORE_X_ATOM_SELECTION_SECONDARY = 0;
 Ecore_X_Atom     ECORE_X_ATOM_SELECTION_CLIPBOARD = 0;
@@ -329,6 +330,7 @@ ecore_x_init(const char *name)
    ecore_x_e_init();
    
    /* This is just to be anal about naming conventions */
+   ECORE_X_ATOM_SELECTION_TARGETS        = XInternAtom(_ecore_x_disp, "TARGETS", False);
    ECORE_X_ATOM_SELECTION_PRIMARY        = XA_PRIMARY;
    ECORE_X_ATOM_SELECTION_SECONDARY      = XA_SECONDARY;
    ECORE_X_ATOM_SELECTION_CLIPBOARD      = XInternAtom(_ecore_x_disp, "CLIPBOARD", False);

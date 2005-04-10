@@ -6,18 +6,26 @@
 #include "Ecore_X.h"
 #include "Ecore_X_Atoms.h"
 
-static Ecore_X_Selection_Data selections[4];
-static Ecore_X_Selection_Data request_data[4];
+static Ecore_X_Selection_Intern selections[4];
 static Ecore_X_Selection_Converter *converters = NULL;
+static Ecore_X_Selection_Parser *parsers = NULL;
 
 static int _ecore_x_selection_converter_text(char *target, void *data, int size, void **data_ret, int *size_ret);
+static int _ecore_x_selection_data_default_free(void *data);
+static void *_ecore_x_selection_parser_files(const char *target, unsigned char *data, int size);
+static int _ecore_x_selection_data_files_free(void *data);
+static void *_ecore_x_selection_parser_text(const char *target, unsigned char *data, int size);
+static int _ecore_x_selection_data_text_free(void *data);
+static void *_ecore_x_selection_parser_targets(const char *target, unsigned char *data, int size);
+static int _ecore_x_selection_data_targets_free(void *data);
+
+#define ECORE_X_SELECTION_DATA(x) ((Ecore_X_Selection_Data *)(x))
 
 void
 _ecore_x_selection_data_init(void)
 {
    /* Initialize global data */
    memset(selections, 0, sizeof(selections));
-   memset(request_data, 0, sizeof(request_data));
 
    /* Initialize converters */
    ecore_x_selection_converter_atom_add(ECORE_X_ATOM_TEXT, 
@@ -30,137 +38,54 @@ _ecore_x_selection_data_init(void)
 					_ecore_x_selection_converter_text);
    ecore_x_selection_converter_atom_add(ECORE_X_ATOM_STRING,
 					_ecore_x_selection_converter_text);
+
+   /* Initialize parsers */
+   ecore_x_selection_parser_add("text/plain",
+				_ecore_x_selection_parser_text);
+   ecore_x_selection_parser_add(ECORE_X_SELECTION_TARGET_UTF8_STRING,
+				_ecore_x_selection_parser_text);
+   ecore_x_selection_parser_add("text/uri-list",
+				_ecore_x_selection_parser_files);
+   ecore_x_selection_parser_add("_NETSCAPE_URL",
+				_ecore_x_selection_parser_files);
+   ecore_x_selection_parser_add(ECORE_X_SELECTION_TARGET_TARGETS,
+				_ecore_x_selection_parser_targets);
 }
 
 void
 _ecore_x_selection_shutdown(void)
 {
-   Ecore_X_Selection_Converter *cnv = converters, *tmp;
-
-   if (!converters)
-     return;
+   Ecore_X_Selection_Converter *cnv;
+   Ecore_X_Selection_Parser *prs;
 
    /* free the selection converters */
+   cnv = converters;
    while (cnv)
-     {	
+     {
+	Ecore_X_Selection_Converter *tmp;
+
 	tmp = cnv->next;
 	free(cnv);
 	cnv = tmp;
      }
-
    converters = NULL;
-}
 
-static void
-_ecore_x_selection_request_data_get(Ecore_X_Atom selection, void **buf, int *len)
-{
-   int i;
-   char *data;
-   if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
-     i = 0;
-   else if (selection == ECORE_X_ATOM_SELECTION_SECONDARY)
-     i = 1;
-   else if (selection == ECORE_X_ATOM_SELECTION_XDND)
-     i = 2;
-   else if (selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
-     i = 3;
-   else
-     return;
-
-   if (!request_data[i].data || !request_data[i].length)
+   /* free the selection parsers */
+   prs = parsers;
+   while (prs)
      {
-	*len = 0;
-	*buf = NULL;
-	return;
+	Ecore_X_Selection_Parser *tmp;
+
+	tmp = prs;
+	prs = prs->next;
+	free(tmp->target);
+	free(tmp);
      }
-
-   data = malloc(request_data[i].length);
-   memcpy(data, request_data[i].data, request_data[i].length);
-   *len = request_data[i].length;
-   *buf = data;
-   return;
+   parsers = NULL;
 }
 
-/**
- * Fetch the data returned by a PRIMARY selection request.
- * @param buf A pointer to hold the selection data
- * @param len The size of the data
- *
- * Get the converted data from a previous PRIMARY selection
- * request. The buffer must be freed when done with.
- */
-void
-ecore_x_selection_primary_request_data_get(void **buf, int *len)
-{
-   _ecore_x_selection_request_data_get(ECORE_X_ATOM_SELECTION_PRIMARY,
-                                       buf, len);
-}
-
-/**
- * Fetch the data returned by a SECONDARY selection request.
- * @param buf A pointer to hold the selection data
- * @param len The size of the data
- *
- * Get the converted data from a previous SECONDARY selection
- * request. The buffer must be freed when done with.
- */
-void
-ecore_x_selection_secondary_request_data_get(void **buf, int *len)
-{
-   _ecore_x_selection_request_data_get(ECORE_X_ATOM_SELECTION_SECONDARY,
-                                       buf, len);
-}
-
-/**
- * Fetch the data returned by a XDND selection request.
- * @param buf A pointer to hold the selection data
- * @param len The size of the data
- *
- * Get the converted data from a previous XDND selection
- * request. The buffer must be freed when done with.
- */
-void
-ecore_x_selection_xdnd_request_data_get(void **buf, int *len)
-{
-   _ecore_x_selection_request_data_get(ECORE_X_ATOM_SELECTION_XDND,
-                                       buf, len);
-}
-
-/**
- * Fetch the data returned by a CLIPBOARD selection request.
- * @param buf A pointer to hold the selection data
- * @param len The size of the data
- *
- * Get the converted data from a previous CLIPBOARD selection
- * request. The buffer must be freed when done with.
- */
-void
-ecore_x_selection_clipboard_request_data_get(void **buf, int *len)
-{
-   _ecore_x_selection_request_data_get(ECORE_X_ATOM_SELECTION_CLIPBOARD,
-                                       buf, len);
-}
-
-void 
-_ecore_x_selection_request_data_set(Ecore_X_Selection_Data data)
-{
-   int i;
-   if (data.selection == ECORE_X_ATOM_SELECTION_PRIMARY)
-     i = 0;
-   else if (data.selection == ECORE_X_ATOM_SELECTION_SECONDARY)
-     i = 1;
-   else if (data.selection == ECORE_X_ATOM_SELECTION_XDND)
-     i = 2;
-   else if (data.selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
-     i = 3;
-   else
-     return;
-
-   request_data[i] = data;
-}
-
-Ecore_X_Selection_Data *
-_ecore_x_selection_get(Atom selection)
+Ecore_X_Selection_Intern *
+_ecore_x_selection_get(Ecore_X_Atom selection)
 {
    if (selection == ECORE_X_ATOM_SELECTION_PRIMARY)
      return &selections[0];
@@ -175,7 +100,7 @@ _ecore_x_selection_get(Atom selection)
 }
 
 int 
-_ecore_x_selection_set(Window w, unsigned char *data, int size, Atom selection)
+_ecore_x_selection_set(Window w, unsigned char *data, int size, Ecore_X_Atom selection)
 {
    int in;
    unsigned char *buf = NULL;
@@ -190,8 +115,10 @@ _ecore_x_selection_set(Window w, unsigned char *data, int size, Atom selection)
      in = 1;
    else if (selection == ECORE_X_ATOM_SELECTION_XDND)
      in = 2;
-   else
+   else if (selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
      in = 3;
+   else
+     return 0;
 
    if (data)
      {
@@ -323,10 +250,10 @@ ecore_x_selection_clipboard_clear(void)
    return _ecore_x_selection_set(None, NULL, 0, ECORE_X_ATOM_SELECTION_CLIPBOARD);
 }
 
-Atom
-_ecore_x_selection_target_atom_get(char *target)
+Ecore_X_Atom
+_ecore_x_selection_target_atom_get(const char *target)
 {
-   Atom x_target;
+   Ecore_X_Atom x_target;
 
    if (!strcmp(target, ECORE_X_SELECTION_TARGET_TEXT))
      x_target = ECORE_X_ATOM_TEXT;
@@ -347,7 +274,7 @@ _ecore_x_selection_target_atom_get(char *target)
 }
 
 char *
-_ecore_x_selection_target_get(Atom target)
+_ecore_x_selection_target_get(Ecore_X_Atom target)
 {
    if (target == ECORE_X_ATOM_FILE_NAME)
      return strdup(ECORE_X_SELECTION_TARGET_FILENAME);
@@ -372,11 +299,13 @@ _ecore_x_selection_request(Ecore_X_Window w, Ecore_X_Atom selection, char *targe
      prop = ECORE_X_ATOM_SELECTION_PROP_PRIMARY;
    else if (selection == ECORE_X_ATOM_SELECTION_SECONDARY)
      prop = ECORE_X_ATOM_SELECTION_PROP_SECONDARY;
-   else
+   else if (selection == ECORE_X_ATOM_SELECTION_CLIPBOARD)
      prop = ECORE_X_ATOM_SELECTION_PROP_CLIPBOARD;
+   else
+     return;
 
    XConvertSelection(_ecore_x_disp, selection, target, prop,
-		     w, _ecore_x_event_last_time);
+		     w, CurrentTime);
 }
 
 void 
@@ -444,7 +373,6 @@ ecore_x_selection_converter_atom_add(Ecore_X_Atom target,
    cnv->convert = func;
 }
 
-
 void
 ecore_x_selection_converter_add(char *target, 
       int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret))
@@ -471,20 +399,11 @@ ecore_x_selection_converter_atom_del(Ecore_X_Atom target)
      {
 	if (cnv->target == target)
 	  {
-	     if ((target == ECORE_X_ATOM_TEXT) ||
-		 (target == ECORE_X_ATOM_COMPOUND_TEXT) ||
-		 (target == ECORE_X_ATOM_STRING))
-	       {
-		  cnv->convert = _ecore_x_selection_converter_text;
-	       }
+	     if (prev_cnv)
+	       prev_cnv->next = cnv->next;
 	     else
-	       {
-		  if (prev_cnv)
-		    prev_cnv->next = cnv->next;
-		  else
-		    converters = NULL; /* This was the only converter */
-		  free(cnv);
-	       }
+	       converters = cnv->next; /* This was the first converter */
+	     free(cnv);
 
 	     return;
 	  }
@@ -505,12 +424,11 @@ ecore_x_selection_converter_del(char *target)
    ecore_x_selection_converter_atom_del(x_target);
 }
 
-
 /* Locate and run conversion callback for specified selection target */
 int
-_ecore_x_selection_convert(Atom selection, Atom target, void **data_ret)
+_ecore_x_selection_convert(Ecore_X_Atom selection, Ecore_X_Atom target, void **data_ret)
 {
-   Ecore_X_Selection_Data *sel;
+   Ecore_X_Selection_Intern *sel;
    Ecore_X_Selection_Converter *cnv;
    void *data;
    int size;
@@ -572,6 +490,18 @@ _ecore_x_selection_converter_text(char *target, void *data, int size, void **dat
    if (!(mystr = strdup(data)))
      return 0;
 
+#ifdef X_HAVE_UTF8_STRING
+   if (Xutf8TextListToTextProperty(_ecore_x_disp, &mystr, 1, style, &text_prop) == Success)
+     {
+	int bufsize = strlen(text_prop.value) + 1;
+	*data_ret = malloc(bufsize);
+	memcpy(*data_ret, text_prop.value, bufsize);
+	*size_ret = bufsize;
+	XFree(text_prop.value);
+	free(mystr);
+	return 1;
+     }
+#else
    if (XmbTextListToTextProperty(_ecore_x_disp, &mystr, 1, style, &text_prop) == Success)
      {
 	int bufsize = strlen(text_prop.value) + 1;
@@ -582,6 +512,7 @@ _ecore_x_selection_converter_text(char *target, void *data, int size, void **dat
 	free(mystr);
 	return 1;
      }
+#endif
    else
      {
 	free(mystr);
@@ -589,4 +520,253 @@ _ecore_x_selection_converter_text(char *target, void *data, int size, void **dat
      }
 }
 
+void
+ecore_x_selection_parser_add(const char *target,
+      void *(*func)(const char *target, unsigned char *data, int size))
+{
+   Ecore_X_Selection_Parser *prs;
 
+   if (!target)
+     return;
+
+   prs = parsers;
+   if (parsers) 
+     {
+	while (prs->next)
+	  {
+	     if (!strcmp(prs->target, target))
+	       {
+		  prs->parse = func;
+		  return;
+	       }
+	     prs = prs->next;
+	  }
+
+	prs->next = calloc(1, sizeof(Ecore_X_Selection_Parser));
+	prs = prs->next;
+     }
+   else
+     {
+	parsers = calloc(1, sizeof(Ecore_X_Selection_Parser));
+	prs = parsers;
+     }
+   prs->target = strdup(target);
+   prs->parse = func;
+}
+
+void
+ecore_x_selection_parser_del(const char *target)
+{
+   Ecore_X_Selection_Parser *prs, *prev_prs;
+
+   if (!target)
+     return;
+
+   prev_prs = NULL;
+   prs = parsers;
+
+   while (prs)
+     {
+	if (!strcmp(prs->target, target))
+	  {
+	     if (prev_prs)
+	       prev_prs->next = prs->next;
+	     else
+	       parsers = prs->next; /* This was the first parser */
+	     free(prs->target);
+	     free(prs);
+
+	     return;
+	  }
+	prev_prs = prs;
+	prs = prs->next;
+     }
+}
+
+/* Locate and run conversion callback for specified selection target */
+void *
+_ecore_x_selection_parse(const char *target, unsigned char *data, int size)
+{
+   Ecore_X_Selection_Parser *prs;
+   Ecore_X_Selection_Data *sel;
+   
+   for (prs = parsers; prs; prs = prs->next)
+     {
+	if (!strcmp(prs->target, target))
+	  {
+	     sel = prs->parse(target, data, size);
+	     return sel;
+	  }
+     }
+
+   /* Default, just return the data */
+   sel = calloc(1, sizeof(Ecore_X_Selection_Data));
+   sel->free = _ecore_x_selection_data_default_free;
+   sel->length = size;
+   sel->data = data;
+   return sel;
+}
+
+static int
+_ecore_x_selection_data_default_free(void *data)
+{
+   Ecore_X_Selection_Data *sel;
+
+   sel = data;
+   free(sel->data);
+   free(sel);
+   return 1;
+}
+
+static void *
+_ecore_x_selection_parser_files(const char *target, unsigned char *data, int size)
+{
+   Ecore_X_Selection_Data_Files *sel;
+   int i, is;
+   char *tmp;
+
+   if (strcmp(target, "text/uri-list")
+       && strcmp(target, "_NETSCAPE_URL"))
+     return NULL;
+
+   sel = calloc(1, sizeof(Ecore_X_Selection_Data_Files));
+   ECORE_X_SELECTION_DATA(sel)->free = _ecore_x_selection_data_files_free;
+
+   if (data[size - 1])
+     {
+	/* Isn't nul terminated */
+	printf("BUG: isn't nul terminated!\n");
+	size++;
+	data = realloc(data, size);
+	data[size - 1] = 0;
+     }
+
+   tmp = malloc(size);
+   i = 0;
+   is = 0;
+   while ((is < size) && (data[is]))
+     {
+	if ((i == 0) && (data[is] == '#'))
+	  {
+	     for (; ((data[is]) && (data[is] != '\n')); is++);
+	  }
+	else
+	  {
+	     if ((data[is] != '\r')
+		   && (data[is] != '\n'))
+	       {
+		  tmp[i++] = data[is++];
+	       }
+	     else
+	       {
+		  while ((data[is] == '\r')
+			|| (data[is] == '\n'))
+		    is++;
+		  tmp[i] = 0;
+		  sel->num_files++;
+		  sel->files = realloc(sel->files, sel->num_files * sizeof(char *));
+		  sel->files[sel->num_files - 1] = strdup(tmp);
+		  tmp[0] = 0;
+		  i = 0;
+	       }
+	  }
+     }
+   if (i > 0)
+     {
+	tmp[i] = 0;
+	sel->num_files++;
+	sel->files = realloc(sel->files, sel->num_files * sizeof(char *));
+	sel->files[sel->num_files - 1] = strdup(tmp);
+     }
+   free(tmp);
+   free(data);
+
+   return ECORE_X_SELECTION_DATA(sel);
+}
+
+static int
+_ecore_x_selection_data_files_free(void *data)
+{
+   Ecore_X_Selection_Data_Files *sel;
+   int i;
+
+   sel = data;
+   if (sel->files)
+     {
+	for (i = 0; i < sel->num_files; i++)
+	  free(sel->files[i]);
+	free(sel->files);
+     }
+   free(sel);
+   return 0;
+}
+
+static void *
+_ecore_x_selection_parser_text(const char *target, unsigned char *data, int size)
+{
+   Ecore_X_Selection_Data_Text *sel;
+
+   sel = calloc(1, sizeof(Ecore_X_Selection_Data_Text));
+
+   if (data[size - 1])
+     {
+	/* Isn't nul terminated */
+	printf("BUG: isn't nul terminated!\n");
+	size++;
+	data = realloc(data, size);
+	data[size - 1] = 0;
+     }
+
+   sel->text = data;
+   ECORE_X_SELECTION_DATA(sel)->free = _ecore_x_selection_data_text_free;
+   return sel;
+}
+
+static int
+_ecore_x_selection_data_text_free(void *data)
+{
+   Ecore_X_Selection_Data_Text *sel;
+
+   sel = data;
+   free(sel->text);
+   free(sel);
+   return 1;
+}
+
+static void *
+_ecore_x_selection_parser_targets(const char *target, unsigned char *data, int size)
+{
+   Ecore_X_Selection_Data_Targets *sel;
+   unsigned long *targets;
+   int i;
+
+   sel = calloc(1, sizeof(Ecore_X_Selection_Data_Targets));
+   targets = (unsigned long *)data;
+
+   sel->num_targets = size - 2;
+   sel->targets = malloc((size - 2) * sizeof(char *));
+   for (i = 2; i < size; i++)
+     sel->targets[i - 2] = XGetAtomName(_ecore_x_disp, targets[i]);
+   free(data);
+
+   ECORE_X_SELECTION_DATA(sel)->free = _ecore_x_selection_data_targets_free;
+   return sel;
+}
+
+static int
+_ecore_x_selection_data_targets_free(void *data)
+{
+   Ecore_X_Selection_Data_Targets *sel;
+   int i;
+
+   sel = data;
+
+   if (sel->targets)
+     {
+	for (i = 0; i < sel->num_targets; i++)
+	  XFree(sel->targets[i]);
+	free(sel->targets);
+     }
+   free(sel);
+   return 1;
+}

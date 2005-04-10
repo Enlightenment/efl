@@ -565,7 +565,7 @@ ecore_x_icccm_protocol_set(Ecore_X_Window win,
 
    if (on)
      {
-	Atom               *new_protos = NULL;
+	Atom *new_protos = NULL;
 
 	if (already_set)
 	   goto leave;

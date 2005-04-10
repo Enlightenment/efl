@@ -860,7 +860,7 @@ ecore_x_netwm_window_state_set(Ecore_X_Window win, Ecore_X_Window_State state, i
 	     XFree(old_data);
 	     return;
 	  }
-	newset = calloc(num - 1, sizeof(Atom));
+	newset = calloc(num - 1, sizeof(Ecore_X_Atom));
 	if (!newset)
 	  {
 	     XFree(old_data);
@@ -1071,7 +1071,7 @@ ecore_x_netwm_allowed_action_set(Ecore_X_Window win, Ecore_X_Action action, int 
 	     XFree(old_data);
 	     return;
 	  }
-	newset = calloc(num - 1, sizeof(Atom));
+	newset = calloc(num - 1, sizeof(Ecore_X_Atom));
 	if (!newset)
 	  {
 	     XFree(old_data);

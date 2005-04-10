@@ -56,6 +56,7 @@ typedef struct _Ecore_X_Rectangle {
    unsigned int width, height;
 } Ecore_X_Rectangle;
 
+#define ECORE_X_SELECTION_TARGET_TARGETS "TARGETS"
 #define ECORE_X_SELECTION_TARGET_TEXT "TEXT"
 #define ECORE_X_SELECTION_TARGET_COMPOUND_TEXT "COMPOUND_TEXT"
 #define ECORE_X_SELECTION_TARGET_STRING "STRING"
@@ -170,6 +171,10 @@ typedef struct _Ecore_X_Event_Window_Mapping           Ecore_X_Event_Window_Mapp
 typedef struct _Ecore_X_Event_Selection_Clear          Ecore_X_Event_Selection_Clear;
 typedef struct _Ecore_X_Event_Selection_Request        Ecore_X_Event_Selection_Request;
 typedef struct _Ecore_X_Event_Selection_Notify         Ecore_X_Event_Selection_Notify;
+typedef struct _Ecore_X_Selection_Data                 Ecore_X_Selection_Data;
+typedef struct _Ecore_X_Selection_Data_Files           Ecore_X_Selection_Data_Files;
+typedef struct _Ecore_X_Selection_Data_Text            Ecore_X_Selection_Data_Text;
+typedef struct _Ecore_X_Selection_Data_Targets         Ecore_X_Selection_Data_Targets;
 typedef struct _Ecore_X_Event_Xdnd_Enter               Ecore_X_Event_Xdnd_Enter;
 typedef struct _Ecore_X_Event_Xdnd_Position            Ecore_X_Event_Xdnd_Position;
 typedef struct _Ecore_X_Event_Xdnd_Status              Ecore_X_Event_Xdnd_Status;
@@ -450,17 +455,42 @@ struct _Ecore_X_Event_Selection_Notify
    Ecore_X_Time               time;
    Ecore_X_Selection          selection;
    char                      *target;
-
+   void                      *data;
    enum {
-	ECORE_X_SELECTION_NONE,
-	ECORE_X_SELECTION_TEXT,
-	ECORE_X_SELECTION_FILES
+	ECORE_X_SELECTION_CONTENT_NONE,
+	ECORE_X_SELECTION_CONTENT_TEXT,
+	ECORE_X_SELECTION_CONTENT_FILES,
+	ECORE_X_SELECTION_CONTENT_TARGETS,
+	ECORE_X_SELECTION_CONTENT_CUSTOM
    } content;
+};
 
-   char *text;
+struct _Ecore_X_Selection_Data
+{
+   unsigned char    *data;
+   int               length;
 
-   char **files;
-   int   num_files;
+   int             (*free)(void *data);
+};
+
+struct _Ecore_X_Selection_Data_Files
+{
+   Ecore_X_Selection_Data data;
+   char     **files;
+   int        num_files;
+};
+
+struct _Ecore_X_Selection_Data_Text
+{
+   Ecore_X_Selection_Data data;
+   char     *text;
+};
+
+struct _Ecore_X_Selection_Data_Targets
+{
+   Ecore_X_Selection_Data data;
+   char     **targets;
+   int        num_targets;
 };
 
 struct _Ecore_X_Event_Xdnd_Enter
@@ -830,6 +860,8 @@ EAPI void             ecore_x_selection_converter_add(char *target, int (*func)(
 EAPI void             ecore_x_selection_converter_atom_add(Ecore_X_Atom target, int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret));
 EAPI void             ecore_x_selection_converter_del(char *target);
 EAPI void             ecore_x_selection_converter_atom_del(Ecore_X_Atom target);
+EAPI void             ecore_x_selection_parser_add(const char *target, void *(*func)(const char *target, unsigned char *data, int size));
+EAPI void             ecore_x_selection_parser_del(const char *target);
 
 EAPI void             ecore_x_dnd_aware_set(Ecore_X_Window win, int on);
 EAPI int              ecore_x_dnd_version_get(Ecore_X_Window win);

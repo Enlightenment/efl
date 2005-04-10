@@ -51,7 +51,7 @@ _ecore_x_dnd_shutdown(void)
 void
 ecore_x_dnd_aware_set(Ecore_X_Window win, int on)
 {
-   Atom prop_data = ECORE_X_DND_VERSION;
+   Ecore_X_Atom prop_data = ECORE_X_DND_VERSION;
 
    if (on)
      ecore_x_window_prop_property_set(win, ECORE_X_ATOM_XDND_AWARE,
@@ -144,7 +144,7 @@ ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, int on)
 	     XFree(old_data);
 	     return;
 	  }
-	newset = calloc(num - 1, sizeof(Atom));
+	newset = calloc(num - 1, sizeof(Ecore_X_Atom));
 	if (!newset)
 	  {
 	     XFree(old_data);
@@ -331,7 +331,6 @@ _ecore_x_dnd_drag(int x, int y)
    /* Send XdndLeave to current destination window if we have left it */
    if ((_source->dest) && (win != _source->dest))
      {
-	printf("source: 0x%x, dest: 0x%x\n", _source->win, _source->dest);
 	xev.xclient.window = _source->dest;
 	xev.xclient.message_type = ECORE_X_ATOM_XDND_LEAVE;
 	xev.xclient.data.l[0] = _source->win;
