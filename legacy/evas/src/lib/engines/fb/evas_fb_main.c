@@ -529,7 +529,7 @@ fb_postinit(FB_Mode *mode)
     }
   mode->mem_offset = (unsigned)(fb_fix.smem_start) & (~PAGE_MASK);
   mode->mem = (unsigned char *)mmap(NULL, fb_fix.smem_len + mode->mem_offset, 
-				 PROT_WRITE, MAP_SHARED, fb, 0);
+				 PROT_WRITE | PROT_READ, MAP_SHARED, fb, 0);
   if ((int)mode->mem == -1) 
     {
       perror("mmap");

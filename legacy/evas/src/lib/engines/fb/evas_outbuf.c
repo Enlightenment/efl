@@ -118,8 +118,8 @@ evas_fb_outbuf_fb_setup_fb(int w, int h, int rot, Outbuf_Depth depth, int vt_no,
 	     return NULL;
 	  }
      }
-   if (buf->priv.fb.fb->fb_var.bits_per_pixel < 24)
-     buf->priv.back_buf = evas_common_image_create(buf->w, buf->h);
+//   if (buf->priv.fb.fb->fb_var.bits_per_pixel < 24)
+//     buf->priv.back_buf = evas_common_image_create(buf->w, buf->h);
    
    return buf;
 }
