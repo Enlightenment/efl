@@ -48,7 +48,7 @@ ecore_init(void)
 	setlocale(LC_CTYPE, "");
 	if (strcmp(nl_langinfo(CODESET), "UTF-8"))
 	  {
-	     printf("WARNING: not a utf8 locale!\n");
+//	     printf("WARNING: not a utf8 locale!\n");
 	  }
 #ifndef WIN32
 	if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
