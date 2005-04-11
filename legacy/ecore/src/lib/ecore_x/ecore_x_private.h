@@ -80,7 +80,7 @@ struct _Ecore_X_Selection_Parser
 typedef struct _Ecore_X_DND_Source 
 {
    int version;
-   Window win, dest;
+   Ecore_X_Window win, dest;
    
    enum {
       ECORE_X_DND_SOURCE_IDLE,
@@ -107,7 +107,7 @@ typedef struct _Ecore_X_DND_Source
 typedef struct _Ecore_X_DND_Target 
 {
    int version;
-   Window win, source;
+   Ecore_X_Window win, source;
    
    enum {
       ECORE_X_DND_TARGET_IDLE,

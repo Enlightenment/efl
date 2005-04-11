@@ -1,6 +1,7 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
+#include "ecore_private.h"
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
@@ -702,7 +703,7 @@ _ecore_x_selection_data_files_free(void *data)
 }
 
 static void *
-_ecore_x_selection_parser_text(const char *target, unsigned char *data, int size)
+_ecore_x_selection_parser_text(const char *target __UNUSED__, unsigned char *data, int size)
 {
    Ecore_X_Selection_Data_Text *sel;
 
@@ -734,7 +735,7 @@ _ecore_x_selection_data_text_free(void *data)
 }
 
 static void *
-_ecore_x_selection_parser_targets(const char *target, unsigned char *data, int size)
+_ecore_x_selection_parser_targets(const char *target __UNUSED__, unsigned char *data, int size)
 {
    Ecore_X_Selection_Data_Targets *sel;
    unsigned long *targets;

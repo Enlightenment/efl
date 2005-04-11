@@ -1331,7 +1331,9 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	     /* Target successfully performed drop action */
 	     ecore_x_selection_xdnd_clear();
 	     source->state = ECORE_X_DND_SOURCE_IDLE;
-	  } else {
+	  }
+	else
+	  {
 	       completed = 0;
 	       source->state = ECORE_X_DND_SOURCE_CONVERTING;
 
