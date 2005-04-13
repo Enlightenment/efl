@@ -21,3 +21,127 @@ ecore_x_window_shape_mask_set(Ecore_X_Window win, Ecore_X_Pixmap mask)
 {
    XShapeCombineMask(_ecore_x_disp, win, ShapeBounding, 0, 0, mask, ShapeSet);
 }
+
+void
+ecore_x_window_shape_window_set(Ecore_X_Window win, Ecore_X_Window shape_win)
+{
+   XShapeCombineShape(_ecore_x_disp, win, ShapeBounding, 0, 0, shape_win, ShapeBounding, ShapeSet);
+}
+
+void
+ecore_x_window_shape_window_set_xy(Ecore_X_Window win, Ecore_X_Window shape_win, int x, int y)
+{
+   XShapeCombineShape(_ecore_x_disp, win, ShapeBounding, x, y, shape_win, ShapeBounding, ShapeSet);
+}
+
+void
+ecore_x_window_shape_rectangle_set(Ecore_X_Window win, int x, int y, int w, int h)
+{
+   XRectangle rect;
+   
+   rect.x = x;
+   rect.y = y;
+   rect.width = w;
+   rect.height = h;
+   XShapeCombineRectangles(_ecore_x_disp, win, ShapeBounding, 0, 0, &rect, 1, ShapeSet, Unsorted);
+}
+
+void
+ecore_x_window_shape_rectangles_set(Ecore_X_Window win, Ecore_X_Rectangle *rects, int num)
+{
+   XRectangle *rect = NULL;
+   int i;
+   
+   if (num > 0)
+     {
+	rect = alloca(sizeof(XRectangle) * num);
+	for (i = 0; i < num; i++)
+	  {
+	     rect[i].x = rects[i].x;
+	     rect[i].y = rects[i].y;
+	     rect[i].width = rects[i].width;
+	     rect[i].height = rects[i].height;
+	  }
+     }
+   XShapeCombineRectangles(_ecore_x_disp, win, ShapeBounding, 0, 0, rect, num, ShapeSet, Unsorted);
+}
+
+void
+ecore_x_window_shape_window_add(Ecore_X_Window win, Ecore_X_Window shape_win)
+{
+   XShapeCombineShape(_ecore_x_disp, win, ShapeBounding, 0, 0, shape_win, ShapeBounding, ShapeUnion);
+}
+
+void
+ecore_x_window_shape_window_add_xy(Ecore_X_Window win, Ecore_X_Window shape_win, int x, int y)
+{
+   XShapeCombineShape(_ecore_x_disp, win, ShapeBounding, x, y, shape_win, ShapeBounding, ShapeUnion);
+}
+
+void
+ecore_x_window_shape_rectangle_add(Ecore_X_Window win, int x, int y, int w, int h)
+{
+   XRectangle rect;
+   
+   rect.x = x;
+   rect.y = y;
+   rect.width = w;
+   rect.height = h;
+   XShapeCombineRectangles(_ecore_x_disp, win, ShapeBounding, 0, 0, &rect, 1, ShapeUnion, Unsorted);
+}
+
+void
+ecore_x_window_shape_rectangles_add(Ecore_X_Window win, Ecore_X_Rectangle *rects, int num)
+{
+   XRectangle *rect = NULL;
+   int i;
+   
+   if (num > 0)
+     {
+	rect = alloca(sizeof(XRectangle) * num);
+	for (i = 0; i < num; i++)
+	  {
+	     rect[i].x = rects[i].x;
+	     rect[i].y = rects[i].y;
+	     rect[i].width = rects[i].width;
+	     rect[i].height = rects[i].height;
+	  }
+     }
+   XShapeCombineRectangles(_ecore_x_disp, win, ShapeBounding, 0, 0, rect, num, ShapeUnion, Unsorted);
+}
+
+Ecore_X_Rectangle *
+ecore_x_window_shape_rectangles_get(Ecore_X_Window win, int *num_ret)
+{
+   XRectangle *rect;
+   Ecore_X_Rectangle *rects = NULL;
+   int i, num = 0, ord;
+   
+   rect = XShapeGetRectangles(_ecore_x_disp, win, ShapeBounding, &num, &ord);
+   if (rect)
+     {
+	rects = malloc(sizeof(Ecore_X_Rectangle) * num);
+	if (rects)
+	  {
+	     for (i = 0; i < num; i++)
+	       {
+		  rects[i].x = rect[i].x;
+		  rects[i].y = rect[i].y;
+		  rects[i].width = rect[i].width;
+		  rects[i].height = rect[i].height;
+	       }
+	  }
+	XFree(rect);
+     }
+   if (num_ret) *num_ret = num;
+   return rects;
+}
+
+void
+ecore_x_window_shape_events_select(Ecore_X_Window win, int on)
+{
+   if (on)
+     XShapeSelectInput(_ecore_x_disp, win, ShapeNotifyMask);
+   else
+     XShapeSelectInput(_ecore_x_disp, win, 0);
+}

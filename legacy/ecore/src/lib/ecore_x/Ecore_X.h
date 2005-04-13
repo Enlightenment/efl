@@ -977,8 +977,19 @@ EAPI int              ecore_x_window_prop_window_opacity_get(Ecore_X_Window win)
 EAPI void             ecore_x_window_prop_state_set(Ecore_X_Window win, Ecore_X_Window_State s);
 EAPI int              ecore_x_window_prop_state_isset(Ecore_X_Window win, Ecore_X_Window_State s);
 EAPI void             ecore_x_window_prop_state_unset(Ecore_X_Window win, Ecore_X_Window_State s);
-EAPI void             ecore_x_window_shape_mask_set(Ecore_X_Window win, Ecore_X_Pixmap mask);
-       
+
+EAPI void               ecore_x_window_shape_mask_set(Ecore_X_Window win, Ecore_X_Pixmap mask);
+EAPI void               ecore_x_window_shape_window_set(Ecore_X_Window win, Ecore_X_Window shape_win);
+EAPI void               ecore_x_window_shape_window_set_xy(Ecore_X_Window win, Ecore_X_Window shape_win, int x, int y);
+EAPI void               ecore_x_window_shape_rectangle_set(Ecore_X_Window win, int x, int y, int w, int h);
+EAPI void               ecore_x_window_shape_rectangles_set(Ecore_X_Window win, Ecore_X_Rectangle *rects, int num);
+EAPI void               ecore_x_window_shape_window_add(Ecore_X_Window win, Ecore_X_Window shape_win);
+EAPI void               ecore_x_window_shape_window_add_xy(Ecore_X_Window win, Ecore_X_Window shape_win, int x, int y);
+EAPI void               ecore_x_window_shape_rectangle_add(Ecore_X_Window win, int x, int y, int w, int h);
+EAPI void               ecore_x_window_shape_rectangles_add(Ecore_X_Window win, Ecore_X_Rectangle *rects, int num);
+EAPI Ecore_X_Rectangle *ecore_x_window_shape_rectangles_get(Ecore_X_Window win, int *num_ret);
+EAPI void               ecore_x_window_shape_events_select(Ecore_X_Window win, int on);
+   
 EAPI Ecore_X_Pixmap   ecore_x_pixmap_new(Ecore_X_Window win, int w, int h, int dep);
 EAPI void             ecore_x_pixmap_del(Ecore_X_Pixmap pmap);
 EAPI void             ecore_x_pixmap_paste(Ecore_X_Pixmap pmap, Ecore_X_Drawable dest, Ecore_X_GC gc, int sx, int sy, int w, int h, int dx, int dy);

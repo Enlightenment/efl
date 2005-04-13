@@ -332,9 +332,17 @@ bg_cb_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
    if (!strcmp(ev->keyname, "s"))
      {
 	if (!ecore_evas_shaped_get(ee))
-	  ecore_evas_shaped_set(ee, 1);
+	  {
+	     evas_object_hide(o_bg_rect);
+	     evas_object_hide(o_bg);
+	     ecore_evas_shaped_set(ee, 1);
+	  }
 	else
-	  ecore_evas_shaped_set(ee, 0);
+	  {
+	     evas_object_show(o_bg_rect);
+	     evas_object_show(o_bg);
+	     ecore_evas_shaped_set(ee, 0);
+	  }
      }
    if (!strcmp(ev->keyname, "Up"))
      {

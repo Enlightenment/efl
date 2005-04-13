@@ -1382,7 +1382,15 @@ _ecore_x_event_handle_mapping_notify(XEvent *xevent __UNUSED__)
 }
 
 void
-_ecore_x_event_handle_shape_change(XEvent *xevent __UNUSED__)
+_ecore_x_event_handle_shape_change(XEvent *xevent)
 {
-   /* FIXME: handle this event type */
+   XShapeEvent *shape_event;
+   Ecore_X_Event_Window_Shape *e;
+   
+   shape_event = (XShapeEvent *)xevent;
+   e = calloc(1, sizeof(Ecore_X_Event_Window_Shape));
+   if (!e) return;
+   e->win = shape_event->window;
+   e->time = shape_event->time;
+   ecore_event_add(ECORE_X_EVENT_WINDOW_SHAPE, e, NULL, NULL);
 }

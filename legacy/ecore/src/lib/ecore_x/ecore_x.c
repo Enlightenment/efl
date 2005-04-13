@@ -939,6 +939,7 @@ ecore_x_window_client_manage(Ecore_X_Window win)
 		VisibilityChangeMask |
 		StructureNotifyMask
 		);
+   XShapeSelectInput(_ecore_x_disp, win, ShapeNotifyMask);
 }
 
 void
@@ -959,6 +960,7 @@ ecore_x_window_client_sniff(Ecore_X_Window win)
 		ColormapChangeMask |
 		VisibilityChangeMask |
 		StructureNotifyMask);
+   XShapeSelectInput(_ecore_x_disp, win, ShapeNotifyMask);
 }
 
 /**
