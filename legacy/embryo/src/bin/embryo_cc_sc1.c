@@ -136,19 +136,6 @@ main(int argc, char *argv[], char *env[])
 }
 
 int
-sc_printf(const char *message, ...)
-{
-   int                 ret;
-   va_list             argptr;
-
-   va_start(argptr, message);
-   ret = vprintf(message, argptr);
-   va_end(argptr);
-
-   return ret;
-}
-
-int
 sc_error(int number, char *message, char *filename, int firstline,
 	 int lastline, va_list argptr)
 {
@@ -454,12 +441,12 @@ sc_compile(int argc, char *argv[])
 #endif
    if (errnum != 0)
      {
-	sc_printf("\n%d Error%s.\n", errnum, (errnum > 1) ? "s" : "");
+	printf("\n%d Error%s.\n", errnum, (errnum > 1) ? "s" : "");
 	retcode = 2;
      }
    else if (warnnum != 0)
      {
-	sc_printf("\n%d Warning%s.\n", warnnum, (warnnum > 1) ? "s" : "");
+	printf("\n%d Warning%s.\n", warnnum, (warnnum > 1) ? "s" : "");
 	retcode = 1;
      }
    else
@@ -702,8 +689,8 @@ setcaption(void)
 {
 /* shh be quiet!   */
 #if 0
-   sc_printf("Small compiler " VERSION_STR
-	     "\t\tCopyright (c) 1997-2003, ITB CompuPhase\n\n");
+   printf("Small compiler " VERSION_STR
+	  "\t\tCopyright (c) 1997-2003, ITB CompuPhase\n\n");
 #endif
 }
 
@@ -711,64 +698,64 @@ static void
 about(void)
 {
    setcaption();
-   sc_printf("Usage:   embryo_cc <filename> [options]\n\n");
-   sc_printf("Options:\n");
+   printf("Usage:   embryo_cc <filename> [options]\n\n");
+   printf("Options:\n");
 #if 0
-	sc_printf
+	printf
 	   ("         -A<num>  alignment in bytes of the data segment and the\
      stack\n");
 
-	sc_printf
+	printf
 	   ("         -a       output assembler code (skip code generation\
     pass)\n");
 
-	sc_printf
+	printf
 	   ("         -C[+/-]  compact encoding for output file (default=%c)\n",
 	    sc_compress ? '+' : '-');
-	sc_printf("         -c8      [default] a character is 8-bits\
+	printf("         -c8      [default] a character is 8-bits\
      (ASCII/ISO Latin-1)\n");
 
-	sc_printf("         -c16     a character is 16-bits (Unicode)\n");
+	printf("         -c16     a character is 16-bits (Unicode)\n");
 #if defined dos_setdrive
-	sc_printf("         -Dpath   active directory path\n");
+	printf("         -Dpath   active directory path\n");
 #endif
-	sc_printf
+	printf
 	   ("         -d0      no symbolic information, no run-time checks\n");
-	sc_printf("         -d1      [default] run-time checks, no symbolic\
+	printf("         -d1      [default] run-time checks, no symbolic\
      information\n");
-	sc_printf
+	printf
 	   ("         -d2      full debug information and dynamic checking\n");
-	sc_printf("         -d3      full debug information, dynamic checking,\
+	printf("         -d3      full debug information, dynamic checking,\
      no optimization\n");
 #endif
-	sc_printf("         -i <name> path for include files\n");
+	printf("         -i <name> path for include files\n");
 #if 0
-	sc_printf("         -l       create list file (preprocess only)\n");
+	printf("         -l       create list file (preprocess only)\n");
 #endif
-	sc_printf("         -o <name> set base name of output file\n");
+	printf("         -o <name> set base name of output file\n");
 #if 0
-	sc_printf
+	printf
 	   ("         -P[+/-]  strings are \"packed\" by default (default=%c)\n",
 	    sc_packstr ? '+' : '-');
-	sc_printf("         -p<name> set name of \"prefix\" file\n");
+	printf("         -p<name> set name of \"prefix\" file\n");
 	if (!waitkey())
 	   longjmp(errbuf, 3);
 #endif
-	sc_printf
+	printf
 	   ("         -S <num>  stack/heap size in cells (default=%d, min=65)\n",
 	    (int)sc_stksize);
 #if 0
-	sc_printf("         -s<num>  skip lines from the input file\n");
-	sc_printf
+	printf("         -s<num>  skip lines from the input file\n");
+	printf
 	   ("         -t<num>  TAB indent size (in character positions)\n");
-	sc_printf("         -\\       use '\\' for escape characters\n");
-	sc_printf("         -^       use '^' for escape characters\n");
-	sc_printf("         -;[+/-]  require a semicolon to end each statement\
+	printf("         -\\       use '\\' for escape characters\n");
+	printf("         -^       use '^' for escape characters\n");
+	printf("         -;[+/-]  require a semicolon to end each statement\
      (default=%c)\n", sc_needsemicolon ? '+' : '-');
 
-	sc_printf
+	printf
 	   ("         sym=val  define constant \"sym\" with value \"val\"\n");
-	sc_printf("         sym=     define constant \"sym\" with value 0\n");
+	printf("         sym=     define constant \"sym\" with value 0\n");
 #endif
 	longjmp(errbuf, 3);		/* user abort */
 }
