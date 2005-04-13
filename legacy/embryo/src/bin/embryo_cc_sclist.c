@@ -142,12 +142,6 @@ insert_alias(char *name, char *alias)
    return cur;
 }
 
-stringpair *
-find_alias(char *name)
-{
-   return find_stringpair(alias_tab.next, name, strlen(name));
-}
-
 int
 lookup_alias(char *target, char *name)
 {
