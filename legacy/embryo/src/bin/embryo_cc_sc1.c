@@ -2727,7 +2727,7 @@ doarg(char *name, int ident, int offset, int tags[], int numtags,
 
 		       tokeninfo(&val, &name);
 		       if ((arg->defvalue.size.symname =
-			    duplicatestring(name)) == NULL)
+			    strdup(name)) == NULL)
 			  error(103);	/* insufficient memory */
 		       arg->defvalue.size.level = 0;
 		       if (size_tag_token == uSIZEOF)

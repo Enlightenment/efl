@@ -28,19 +28,6 @@
 #include <string.h>
 #include "embryo_cc_sc.h"
 
-/* a "private" implementation of strdup(), so that porting
- * to other memory allocators becomes easier.
- * By Søren Hannibal.
- */
-char       *
-duplicatestring(const char *sourcestring)
-{
-   char               *result = malloc(strlen(sourcestring) + 1);
-
-   strcpy(result, sourcestring);
-   return result;
-}
-
 static stringpair  *
 insert_stringpair(stringpair * root, char *first, char *second, int matchlength)
 {
@@ -52,8 +39,8 @@ insert_stringpair(stringpair * root, char *first, char *second, int matchlength)
    /* create a new node, and check whether all is okay */
    if ((cur = (stringpair *) malloc(sizeof(stringpair))) == NULL)
       return NULL;
-   cur->first = duplicatestring(first);
-   cur->second = duplicatestring(second);
+   cur->first = strdup(first);
+   cur->second = strdup(second);
    cur->matchlength = matchlength;
    if (cur->first == NULL || cur->second == NULL)
      {
@@ -191,7 +178,7 @@ insert_path(char *path)
    assert(path != NULL);
    if ((cur = (stringlist *) malloc(sizeof(stringlist))) == NULL)
       error(103);		/* insufficient memory (fatal error) */
-   if ((cur->line = duplicatestring(path)) == NULL)
+   if ((cur->line = strdup(path)) == NULL)
       error(103);		/* insufficient memory (fatal error) */
    cur->next = includepaths.next;
    includepaths.next = cur;

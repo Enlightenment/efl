@@ -122,7 +122,7 @@ plungequalifiedfile(char *name)
    pushstk((stkitem) fcurrent);
    /* FIXME: 64bit unsafe */
    pushstk((stkitem) fline);
-   inpfname = duplicatestring(name);	/* set name of include file */
+   inpfname = strdup(name);	/* set name of include file */
    if (inpfname == NULL)
       error(103);		/* insufficient memory */
    inpf = fp;			/* set input file pointer to include file */
@@ -934,7 +934,7 @@ command(void)
 	     if (strlen(pathname) > 0)
 	       {
 		  free(inpfname);
-		  inpfname = duplicatestring(pathname);
+		  inpfname = strdup(pathname);
 		  if (inpfname == NULL)
 		     error(103);	/* insufficient memory */
 	       }		/* if */

@@ -586,7 +586,6 @@ int         phopt_init(void);
 int         phopt_cleanup(void);
 
 /* function prototypes in SCLIST.C */
-char       *duplicatestring(const char *sourcestring);
 stringpair *insert_alias(char *name, char *alias);
 stringpair *find_alias(char *name);
 int         lookup_alias(char *target, char *name);
