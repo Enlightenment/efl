@@ -14,10 +14,6 @@
 # define BYTE_ORDER LITTLE_ENDIAN
 #endif
 
-#define getch           getchar
-#define	stricmp(a,b)    strcasecmp(a,b)
-#define	strnicmp(a,b,c) strncasecmp(a,b,c)
-
 /* unix sep char- shoudl just assume this. */
 #define	DIRECTORY_SEP_CHAR      '/'
 #define	DIRECTORY_SEP_STR       "/"
