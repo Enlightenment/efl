@@ -42,9 +42,7 @@
 #include <stdlib.h>		/* for atoi() */
 #include <string.h>
 #include <ctype.h>
-#if defined FORTIFY
-#include "fortify.h"
-#endif
+
 #include "embryo_cc_sc.h"
 
 #if defined _MSC_VER

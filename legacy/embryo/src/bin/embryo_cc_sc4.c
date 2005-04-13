@@ -25,9 +25,7 @@
 #include <stdio.h>
 #include <stdlib.h>		/* for _MAX_PATH */
 #include <string.h>
-#if defined FORTIFY
-#include "fortify.h"
-#endif
+
 #include "embryo_cc_sc.h"
 
 /* When a subroutine returns to address 0, the AMX must halt. In earlier
