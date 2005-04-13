@@ -85,7 +85,7 @@ hex2long(char *s, char **n)
    return (ucell) result;
 }
 
-#if BYTE_ORDER==BIG_ENDIAN
+#ifdef WORDS_BIGENDIAN
 static short       *
 align16(short *v)
 {
@@ -759,7 +759,7 @@ assemble(FILE * fout, FILE * fin)
       hdr.flags |= AMX_FLAG_COMPACT;
    if (sc_debug == 0)
       hdr.flags |= AMX_FLAG_NOCHECKS;
-//  #if BYTE_ORDER==BIG_ENDIAN
+//  #ifdef WORDS_BIGENDIAN
 //    hdr.flags|=AMX_FLAG_BIGENDIAN;
 //  #endif
    defsize = hdr.defsize = sizeof(FUNCSTUB);
@@ -776,7 +776,7 @@ assemble(FILE * fout, FILE * fin)
    stp = hdr.stp = hdr.hea + sc_stksize * sizeof(cell);
    cip = hdr.cip = mainaddr;
    size = hdr.size = hdr.hea;	/* preset, this is incorrect in case of compressed output */
-#if BYTE_ORDER==BIG_ENDIAN
+#ifdef WORDS_BIGENDIAN
    align32(&hdr.size);
    align16(&hdr.magic);
    align16(&hdr.flags);
@@ -810,7 +810,7 @@ assemble(FILE * fout, FILE * fin)
 	     assert(sym->vclass == sGLOBAL);
 	     func.address = sym->addr;
 	     func.nameofs = nameofs;
-#if BYTE_ORDER==BIG_ENDIAN
+#ifdef WORDS_BIGENDIAN
 	     align32(&func.address);
 	     align32(&func.nameofs);
 #endif
@@ -866,7 +866,7 @@ assemble(FILE * fout, FILE * fin)
 	     assert(sym->vclass == sGLOBAL);
 	     func.address = 0;
 	     func.nameofs = nameofs;
-#if BYTE_ORDER==BIG_ENDIAN
+#ifdef WORDS_BIGENDIAN
 	     align32(&func.address);
 	     align32(&func.nameofs);
 #endif
@@ -890,7 +890,7 @@ assemble(FILE * fout, FILE * fin)
 	     assert(strlen(constptr->name) > 0);
 	     func.address = 0;
 	     func.nameofs = nameofs;
-#if BYTE_ORDER==BIG_ENDIAN
+#ifdef WORDS_BIGENDIAN
 	     align32(&func.address);
 	     align32(&func.nameofs);
 #endif
@@ -913,7 +913,7 @@ assemble(FILE * fout, FILE * fin)
 	     assert(sym->vclass == sGLOBAL);
 	     func.address = sym->addr;
 	     func.nameofs = nameofs;
-#if BYTE_ORDER==BIG_ENDIAN
+#ifdef WORDS_BIGENDIAN
 	     align32(&func.address);
 	     align32(&func.nameofs);
 #endif
@@ -936,7 +936,7 @@ assemble(FILE * fout, FILE * fin)
 	     assert(strlen(constptr->name) > 0);
 	     func.address = constptr->value & TAGMASK;
 	     func.nameofs = nameofs;
-#if BYTE_ORDER==BIG_ENDIAN
+#ifdef WORDS_BIGENDIAN
 	     align32(&func.address);
 	     align32(&func.nameofs);
 #endif
@@ -953,7 +953,7 @@ assemble(FILE * fout, FILE * fin)
    assert(nameofs == nametable + nametablesize);
    fseek(fout, nametable, SEEK_SET);
    count = sNAMEMAX;
-#if BYTE_ORDER==BIG_ENDIAN
+#ifdef WORDS_BIGENDIAN
    align16(&count);
 #endif
    sc_writebin(fout, &count, sizeof count);
@@ -1058,7 +1058,7 @@ assemble(FILE * fout, FILE * fin)
    if (sc_compress)
      {
 	hdr.size = sc_lengthbin(fout);
-#if BYTE_ORDER==BIG_ENDIAN
+#ifdef WORDS_BIGENDIAN
 	align32(&hdr.size);
 #endif
 	sc_resetbin(fout);	/* "size" is the very first field */
