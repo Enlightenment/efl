@@ -22,7 +22,6 @@
  */
 
 #include "embryo_cc_osdefs.h"
-#include "embryo_cc_sclinux.h"
 
 #ifndef EMBRYO_CC_AMX_H
 #define EMBRYO_CC_AMX_H

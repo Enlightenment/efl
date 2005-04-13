@@ -22,7 +22,6 @@ embryo_cc_sc5.c \
 embryo_cc_sc6.c \
 embryo_cc_sc7.c \
 embryo_cc_scexpand.c \
-embryo_cc_sclinux.h \
 embryo_cc_sclist.c \
 embryo_cc_scvars.c
 

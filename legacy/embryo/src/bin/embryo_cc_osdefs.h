@@ -6,8 +6,6 @@
 #ifndef EMBRYO_CC_OSDEFS_H
 # define EMBRYO_CC_OSDEFS_H
 
-#include "embryo_cc_sclinux.h"
-
 # ifdef HAVE_STDINT_H
 #  include <stdint.h>
 # endif
