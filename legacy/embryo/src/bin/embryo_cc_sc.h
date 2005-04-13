@@ -424,16 +424,6 @@ typedef struct __s_stringpair
    int                 sc_writebin(void *handle, void *buffer, int size);
    long                sc_lengthbin(void *handle);	/* return the length of the file */
 
-/* by default, functions and variables used in throughout the compiler
- * files are "external"
- */
-#if !defined SC_VDECL
-#define SC_VDECL  extern
-#endif
-#if !defined SC_VDEFINE
-#define SC_VDEFINE
-#endif
-
 /* function prototypes in SC1.C */
 symbol     *fetchfunc(char *name, int tag);
 char       *operator_symname(char *symname, char *opername, int tag1,
