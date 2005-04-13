@@ -116,7 +116,7 @@ nextop(int *opidx, int *list)
    return FALSE;		/* entire list scanned, nothing found */
 }
 
-SC_FUNC int
+int
 check_userop(void   (*oper) (void), int tag1, int tag2, int numparam,
 	     value * lval, int *resulttag)
 {
@@ -318,7 +318,7 @@ check_userop(void   (*oper) (void), int tag1, int tag2, int numparam,
    return TRUE;
 }
 
-SC_FUNC int
+int
 matchtag(int formaltag, int actualtag, int allowcoerce)
 {
    if (formaltag != actualtag)
@@ -752,7 +752,7 @@ calc(cell left, void (*oper) (), cell right, char *boolresult)
    return 0;
 }
 
-SC_FUNC int
+int
 expression(int *constant, cell * val, int *tag, int chkfuncresult)
 {
    value               lval = { 0 };
@@ -815,7 +815,7 @@ array_levelsize(symbol * sym, int level)
  *
  *  Global references: intest   (reffered to only)
  */
-SC_FUNC int
+int
 hier14(value * lval1)
 {
    int                 lvalue;

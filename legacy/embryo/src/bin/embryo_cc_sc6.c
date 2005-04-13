@@ -629,7 +629,7 @@ findopcode(char *instr, int maxlen)
    return 0;			/* not found, return special index */
 }
 
-SC_FUNC void
+void
 assemble(FILE * fout, FILE * fin)
 {
    typedef struct tagFUNCSTUB

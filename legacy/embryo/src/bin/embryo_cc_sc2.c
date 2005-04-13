@@ -58,7 +58,7 @@ static int          listline = -1;	/* "current line" for the list file */
  */
 static stkitem      stack[sSTKMAX];
 static int          stkidx;
-SC_FUNC void
+void
 pushstk(stkitem val)
 {
    if (stkidx >= sSTKMAX)
@@ -67,7 +67,7 @@ pushstk(stkitem val)
    stkidx += 1;
 }
 
-SC_FUNC stkitem
+stkitem
 popstk(void)
 {
    if (stkidx == 0)
@@ -76,7 +76,7 @@ popstk(void)
    return stack[stkidx];
 }
 
-SC_FUNC int
+int
 plungequalifiedfile(char *name)
 {
    static char        *extensions[] = { ".inc", ".sma", ".small" };
@@ -131,7 +131,7 @@ plungequalifiedfile(char *name)
    return TRUE;
 }
 
-SC_FUNC int
+int
 plungefile(char *name, int try_currentpath, int try_includepaths)
 {
    int                 result = FALSE;
@@ -1692,7 +1692,7 @@ substallpatterns(char *line, int buffersize)
  *                     pline    (altered)
  *                     freading (referred to only)
  */
-SC_FUNC void
+void
 preprocess(void)
 {
    int                 iscommand;
@@ -1836,7 +1836,7 @@ static cell         _lexval;
 static char         _lexstr[sLINEMAX + 1];
 static int          _lexnewline;
 
-SC_FUNC void
+void
 lexinit(void)
 {
    stkidx = 0;			/* index for pushstk() and popstk() */
@@ -1861,7 +1861,7 @@ char               *sc_tokens[] = {
    "-label-", "-string-"
 };
 
-SC_FUNC int
+int
 lex(cell * lexvalue, char **lexsym)
 {
    int                 i, toolong, newline, rawstring;
@@ -2055,7 +2055,7 @@ lex(cell * lexvalue, char **lexsym)
  *  to read and return the information from these variables, rather than
  *  to read in a new token from the input file.
  */
-SC_FUNC void
+void
 lexpush(void)
 {
    assert(_pushed == FALSE);
@@ -2068,7 +2068,7 @@ lexpush(void)
  *  symbol (a not continue with some old one). This is required upon return
  *  from Assembler mode.
  */
-SC_FUNC void
+void
 lexclr(int clreol)
 {
    _pushed = FALSE;
@@ -2084,7 +2084,7 @@ lexclr(int clreol)
  *  This routine is useful if only a simple check is needed. If the token
  *  differs from the one expected, it is pushed back.
  */
-SC_FUNC int
+int
 matchtoken(int token)
 {
    cell                val;
@@ -2116,7 +2116,7 @@ matchtoken(int token)
  *
  *  The token itself is the return value. Normally, this one is already known.
  */
-SC_FUNC int
+int
 tokeninfo(cell * val, char **str)
 {
    /* if the token was pushed back, tokeninfo() returns the token and
@@ -2135,7 +2135,7 @@ tokeninfo(cell * val, char **str)
  *
  *  Global references: _lextok;
  */
-SC_FUNC int
+int
 needtoken(int token)
 {
    char                s1[20], s2[20];
@@ -2207,7 +2207,7 @@ match(char *st, int end)
  *  Global references: litidx  (altered)
  *                     litq    (altered)
  */
-SC_FUNC void
+void
 stowlit(cell value)
 {
    if (litidx >= litmax)
@@ -2331,7 +2331,7 @@ alpha(char c)
  *
  *  Test if character "c" is alphanumeric ("a".."z", "0".."9", "_" or "@")
  */
-SC_FUNC int
+int
 alphanum(char c)
 {
    return (alpha(c) || isdigit(c));
@@ -2395,7 +2395,7 @@ free_symbol(symbol * sym)
    free(sym);
 }
 
-SC_FUNC void
+void
 delete_symbol(symbol * root, symbol * sym)
 {
    /* find the symbol and its predecessor
@@ -2414,7 +2414,7 @@ delete_symbol(symbol * root, symbol * sym)
    free_symbol(sym);
 }
 
-SC_FUNC void
+void
 delete_symbols(symbol * root, int level, int delete_labels,
 	       int delete_functions)
 {
@@ -2466,7 +2466,7 @@ delete_symbols(symbol * root, int level, int delete_labels,
  * comparison (which is costly). There is little interest in avoiding
  * clusters in similar names, which is why this function is plain simple.
  */
-SC_FUNC unsigned int
+unsigned int
 namehash(char *name)
 {
    unsigned char      *ptr = (unsigned char *)name;
@@ -2514,7 +2514,7 @@ find_symbol_child(symbol * root, symbol * sym)
  * bywhom will be the function that uses a variable or that calls
  * the function.
  */
-SC_FUNC int
+int
 refer_symbol(symbol * entry, symbol * bywhom)
 {
    int                 count;
@@ -2562,7 +2562,7 @@ refer_symbol(symbol * entry, symbol * bywhom)
    return TRUE;
 }
 
-SC_FUNC void
+void
 markusage(symbol * sym, int usage)
 {
    sym->usage |= (char)usage;
@@ -2586,7 +2586,7 @@ markusage(symbol * sym, int usage)
  *
  *  Returns a pointer to the global symbol (if found) or NULL (if not found)
  */
-SC_FUNC symbol     *
+symbol     *
 findglb(char *name)
 {
    return find_symbol(&glbtab, name, fcurrent);
@@ -2597,13 +2597,13 @@ findglb(char *name)
  *  Returns a pointer to the local symbol (if found) or NULL (if not found).
  *  See add_symbol() how the deepest nesting level is searched first.
  */
-SC_FUNC symbol     *
+symbol     *
 findloc(char *name)
 {
    return find_symbol(&loctab, name, -1);
 }
 
-SC_FUNC symbol     *
+symbol     *
 findconst(char *name)
 {
    symbol             *sym;
@@ -2617,7 +2617,7 @@ findconst(char *name)
    return sym;
 }
 
-SC_FUNC symbol     *
+symbol     *
 finddepend(symbol * parent)
 {
    symbol             *sym;
@@ -2633,7 +2633,7 @@ finddepend(symbol * parent)
  *  Adds a symbol to the symbol table (either global or local variables,
  *  or global and local constants).
  */
-SC_FUNC symbol     *
+symbol     *
 addsym(char *name, cell addr, int ident, int vclass, int tag, int usage)
 {
    symbol              entry, **refer;
@@ -2673,7 +2673,7 @@ addsym(char *name, cell addr, int ident, int vclass, int tag, int usage)
       return add_symbol(&loctab, &entry, FALSE);
 }
 
-SC_FUNC symbol     *
+symbol     *
 addvariable(char *name, cell addr, int ident, int vclass, int tag,
 	    int dim[], int numdim, int idxtag[])
 {
@@ -2711,7 +2711,7 @@ addvariable(char *name, cell addr, int ident, int vclass, int tag,
  *
  *  Return next available internal label number.
  */
-SC_FUNC int
+int
 getlabel(void)
 {
    return labnum++;
@@ -2722,7 +2722,7 @@ getlabel(void)
  *  Converts a number to a hexadecimal string and returns a pointer to that
  *  string.
  */
-SC_FUNC char       *
+char       *
 itoh(ucell val)
 {
    static char         itohstr[15];	/* hex number is 10 characters long at most */

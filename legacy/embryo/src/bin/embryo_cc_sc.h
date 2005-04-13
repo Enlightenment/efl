@@ -427,9 +427,6 @@ typedef struct __s_stringpair
 /* by default, functions and variables used in throughout the compiler
  * files are "external"
  */
-#if !defined SC_FUNC
-#define SC_FUNC
-#endif
 #if !defined SC_VDECL
 #define SC_VDECL  extern
 #endif

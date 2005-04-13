@@ -33,7 +33,7 @@
  * Today, the compiler simply generates a HALT instruction at address 0. So
  * a subroutine can savely return to 0, and then encounter a HALT.
  */
-SC_FUNC void
+void
 writeleader(void)
 {
    assert(code_idx == 0);
@@ -51,7 +51,7 @@ writeleader(void)
  *                     code_idx         (altered)
  *                     glb_declared     (altered)
  */
-SC_FUNC void
+void
 writetrailer(void)
 {
    assert(sc_dataalign % opcodes(1) == 0);	/* alignment must be a multiple of
@@ -94,7 +94,7 @@ writetrailer(void)
  *
  *  Global references: curseg
  */
-SC_FUNC void
+void
 begcseg(void)
 {
    if (curseg != sIN_CSEG)
@@ -111,7 +111,7 @@ begcseg(void)
  *
  *  Global references: curseg
  */
-SC_FUNC void
+void
 begdseg(void)
 {
    if (curseg != sIN_DSEG)
@@ -123,14 +123,14 @@ begdseg(void)
      }				/* if */
 }
 
-SC_FUNC void
+void
 setactivefile(int fnumber)
 {
    stgwrite("curfile ");
    outval(fnumber, TRUE);
 }
 
-SC_FUNC cell
+cell
 nameincells(char *name)
 {
    cell                clen =
@@ -138,7 +138,7 @@ nameincells(char *name)
    return clen;
 }
 
-SC_FUNC void
+void
 setfile(char *name, int fileno)
 {
    if ((sc_debug & sSYMBOLIC) != 0)
@@ -154,7 +154,7 @@ setfile(char *name, int fileno)
      }				/* if */
 }
 
-SC_FUNC void
+void
 setline(int line, int fileno)
 {
    if ((sc_debug & (sSYMBOLIC | sCHKBOUNDS)) != 0)
@@ -173,7 +173,7 @@ setline(int line, int fileno)
  *
  *  Post a code label (specified as a number), on a new line.
  */
-SC_FUNC void
+void
 setlabel(int number)
 {
    assert(number >= 0);
@@ -196,7 +196,7 @@ setlabel(int number)
  * function parameter. This allows several simple optimizations by the peephole
  * optimizer.
  */
-SC_FUNC void
+void
 endexpr(int fullexpr)
 {
    if (fullexpr)
@@ -209,7 +209,7 @@ endexpr(int fullexpr)
  *
  *  Global references: funcstatus  (referred to only)
  */
-SC_FUNC void
+void
 startfunc(char *fname)
 {
    stgwrite("\tproc");
@@ -221,7 +221,7 @@ startfunc(char *fname)
  *
  *  Declare a CODE ending point (function end)
  */
-SC_FUNC void
+void
 endfunc(void)
 {
    stgwrite("\n");		/* skip a line */
@@ -234,7 +234,7 @@ endfunc(void)
  *  be a power of 2, and this alignment must be done right after the frame
  *  is set up (before the first variable is declared)
  */
-SC_FUNC void
+void
 alignframe(int numbytes)
 {
 #if !defined NDEBUG
@@ -258,7 +258,7 @@ alignframe(int numbytes)
 
 /*  Define a variable or function
  */
-SC_FUNC void
+void
 defsymbol(char *name, int ident, int vclass, cell offset, int tag)
 {
    if ((sc_debug & sSYMBOLIC) != 0)
@@ -290,7 +290,7 @@ defsymbol(char *name, int ident, int vclass, cell offset, int tag)
      }				/* if */
 }
 
-SC_FUNC void
+void
 symbolrange(int level, cell size)
 {
    if ((sc_debug & sSYMBOLIC) != 0)
@@ -308,7 +308,7 @@ symbolrange(int level, cell size)
  *
  *  Generate code to get the value of a symbol into "primary".
  */
-SC_FUNC void
+void
 rvalue(value * lval)
 {
    symbol             *sym;
@@ -358,7 +358,7 @@ rvalue(value * lval)
  *  Get the address of a symbol into the primary register (used for arrays,
  *  and for passing arguments by reference).
  */
-SC_FUNC void
+void
 address(symbol * sym)
 {
    assert(sym != NULL);
@@ -389,7 +389,7 @@ address(symbol * sym)
  *  Saves the contents of "primary" into a memory cell, either directly
  *  or indirectly (at the address given in the alternate register).
  */
-SC_FUNC void
+void
 store(value * lval)
 {
    symbol             *sym;
@@ -434,7 +434,7 @@ store(value * lval)
 /* source must in PRI, destination address in ALT. The "size"
  * parameter is in bytes, not cells.
  */
-SC_FUNC void
+void
 memcopy(cell size)
 {
    stgwrite("\tmovs ");
@@ -446,7 +446,7 @@ memcopy(cell size)
 /* Address of the source must already have been loaded in PRI
  * "size" is the size in bytes (not cells).
  */
-SC_FUNC void
+void
 copyarray(symbol * sym, cell size)
 {
    assert(sym != NULL);
@@ -474,7 +474,7 @@ copyarray(symbol * sym, cell size)
    memcopy(size);
 }
 
-SC_FUNC void
+void
 fillarray(symbol * sym, cell size, cell value)
 {
    const1(value);		/* load value in PRI */
@@ -509,7 +509,7 @@ fillarray(symbol * sym, cell size, cell value)
 /*
  *  Instruction to get an immediate value into the primary register
  */
-SC_FUNC void
+void
 const1(cell val)
 {
    if (val == 0)
@@ -528,7 +528,7 @@ const1(cell val)
 /*
  *  Instruction to get an immediate value into the secondary register
  */
-SC_FUNC void
+void
 const2(cell val)
 {
    if (val == 0)
@@ -545,7 +545,7 @@ const2(cell val)
 }
 
 /* Copy value in secondary register to the primary register */
-SC_FUNC void
+void
 moveto1(void)
 {
    stgwrite("\tmove.pri\n");
@@ -555,7 +555,7 @@ moveto1(void)
 /*
  *  Push primary register onto the stack
  */
-SC_FUNC void
+void
 push1(void)
 {
    stgwrite("\tpush.pri\n");
@@ -565,7 +565,7 @@ push1(void)
 /*
  *  Push alternate register onto the stack
  */
-SC_FUNC void
+void
 push2(void)
 {
    stgwrite("\tpush.alt\n");
@@ -575,7 +575,7 @@ push2(void)
 /*
  *  Push a constant value onto the stack
  */
-SC_FUNC void
+void
 pushval(cell val)
 {
    stgwrite("\tpush.c ");
@@ -586,7 +586,7 @@ pushval(cell val)
 /*
  *  pop stack to the primary register
  */
-SC_FUNC void
+void
 pop1(void)
 {
    stgwrite("\tpop.pri\n");
@@ -596,7 +596,7 @@ pop1(void)
 /*
  *  pop stack to the secondary register
  */
-SC_FUNC void
+void
 pop2(void)
 {
    stgwrite("\tpop.alt\n");
@@ -606,7 +606,7 @@ pop2(void)
 /*
  *  swap the top-of-stack with the value in primary register
  */
-SC_FUNC void
+void
 swap1(void)
 {
    stgwrite("\tswap.pri\n");
@@ -622,7 +622,7 @@ swap1(void)
  * The case table is sorted on the comparison value. This allows more advanced
  * abstract machines to sift the case table with a binary search.
  */
-SC_FUNC void
+void
 ffswitch(int label)
 {
    stgwrite("\tswitch ");
@@ -630,7 +630,7 @@ ffswitch(int label)
    code_idx += opcodes(1) + opargs(1);
 }
 
-SC_FUNC void
+void
 ffcase(cell value, char *labelname, int newtable)
 {
    if (newtable)
@@ -649,7 +649,7 @@ ffcase(cell value, char *labelname, int newtable)
 /*
  *  Call specified function
  */
-SC_FUNC void
+void
 ffcall(symbol * sym, int numargs)
 {
    assert(sym != NULL);
@@ -680,14 +680,14 @@ ffcall(symbol * sym, int numargs)
  *
  *  Global references: funcstatus  (referred to only)
  */
-SC_FUNC void
+void
 ffret(void)
 {
    stgwrite("\tretn\n");
    code_idx += opcodes(1);
 }
 
-SC_FUNC void
+void
 ffabort(int reason)
 {
    stgwrite("\thalt ");
@@ -695,7 +695,7 @@ ffabort(int reason)
    code_idx += opcodes(1) + opargs(1);
 }
 
-SC_FUNC void
+void
 ffbounds(cell size)
 {
    if ((sc_debug & sCHKBOUNDS) != 0)
@@ -709,7 +709,7 @@ ffbounds(cell size)
 /*
  *  Jump to local label number (the number is converted to a name)
  */
-SC_FUNC void
+void
 jumplabel(int number)
 {
    stgwrite("\tjump ");
@@ -720,7 +720,7 @@ jumplabel(int number)
 /*
  *   Define storage (global and static variables)
  */
-SC_FUNC void
+void
 defstorage(void)
 {
    stgwrite("dump ");
@@ -730,7 +730,7 @@ defstorage(void)
  *  Inclrement/decrement stack pointer. Note that this routine does
  *  nothing if the delta is zero.
  */
-SC_FUNC void
+void
 modstk(int delta)
 {
    if (delta)
@@ -742,7 +742,7 @@ modstk(int delta)
 }
 
 /* set the stack to a hard offset from the frame */
-SC_FUNC void
+void
 setstk(cell value)
 {
    stgwrite("\tlctrl 5\n");	/* get FRM */
@@ -761,7 +761,7 @@ setstk(cell value)
    code_idx += opcodes(2) + opargs(2);
 }
 
-SC_FUNC void
+void
 modheap(int delta)
 {
    if (delta)
@@ -772,7 +772,7 @@ modheap(int delta)
      }				/* if */
 }
 
-SC_FUNC void
+void
 setheap_pri(void)
 {
    stgwrite("\theap ");		/* ALT = HEA++ */
@@ -782,7 +782,7 @@ setheap_pri(void)
    code_idx += opcodes(3) + opargs(1);
 }
 
-SC_FUNC void
+void
 setheap(cell value)
 {
    stgwrite("\tconst.pri ");	/* load default value in PRI */
@@ -795,7 +795,7 @@ setheap(cell value)
  *  Convert a cell number to a "byte" address; i.e. double or quadruple
  *  the primary register.
  */
-SC_FUNC void
+void
 cell2addr(void)
 {
 #if defined(BIT16)
@@ -809,7 +809,7 @@ cell2addr(void)
 /*
  *  Double or quadruple the alternate register.
  */
-SC_FUNC void
+void
 cell2addr_alt(void)
 {
 #if defined(BIT16)
@@ -825,7 +825,7 @@ cell2addr_alt(void)
  *  Or convert a number of packed characters to the number of cells (with
  *  truncation).
  */
-SC_FUNC void
+void
 addr2cell(void)
 {
 #if defined(BIT16)
@@ -839,7 +839,7 @@ addr2cell(void)
 /* Convert from character index to byte address. This routine does
  * nothing if a character has the size of a byte.
  */
-SC_FUNC void
+void
 char2addr(void)
 {
    if (charbits == 16)
@@ -857,7 +857,7 @@ char2addr(void)
  * that is, on Big Endian computers, ALIGN.pri/alt shuold do nothing
  * and on Little Endian computers they should toggle the address.
  */
-SC_FUNC void
+void
 charalign(void)
 {
    stgwrite("\talign.pri ");
@@ -868,7 +868,7 @@ charalign(void)
 /*
  *  Add a constant to the primary register.
  */
-SC_FUNC void
+void
 addconst(cell value)
 {
    if (value != 0)
@@ -882,7 +882,7 @@ addconst(cell value)
 /*
  *  signed multiply of primary and secundairy registers (result in primary)
  */
-SC_FUNC void
+void
 os_mult(void)
 {
    stgwrite("\tsmul\n");
@@ -893,7 +893,7 @@ os_mult(void)
  *  signed divide of alternate register by primary register (quotient in
  *  primary; remainder in alternate)
  */
-SC_FUNC void
+void
 os_div(void)
 {
    stgwrite("\tsdiv.alt\n");
@@ -903,7 +903,7 @@ os_div(void)
 /*
  *  modulus of (alternate % primary), result in primary (signed)
  */
-SC_FUNC void
+void
 os_mod(void)
 {
    stgwrite("\tsdiv.alt\n");
@@ -914,7 +914,7 @@ os_mod(void)
 /*
  *  Add primary and alternate registers (result in primary).
  */
-SC_FUNC void
+void
 ob_add(void)
 {
    stgwrite("\tadd\n");
@@ -924,7 +924,7 @@ ob_add(void)
 /*
  *  subtract primary register from alternate register (result in primary)
  */
-SC_FUNC void
+void
 ob_sub(void)
 {
    stgwrite("\tsub.alt\n");
@@ -937,7 +937,7 @@ ob_sub(void)
  *  There is no need for a "logical shift left" routine, since
  *  logical shift left is identical to arithmic shift left.
  */
-SC_FUNC void
+void
 ob_sal(void)
 {
    stgwrite("\txchg\n");
@@ -949,7 +949,7 @@ ob_sal(void)
  *  arithmic shift right alternate register the number of bits
  *  given in the primary register (result in primary).
  */
-SC_FUNC void
+void
 os_sar(void)
 {
    stgwrite("\txchg\n");
@@ -961,7 +961,7 @@ os_sar(void)
  *  logical (unsigned) shift right of the alternate register by the
  *  number of bits given in the primary register (result in primary).
  */
-SC_FUNC void
+void
 ou_sar(void)
 {
    stgwrite("\txchg\n");
@@ -972,7 +972,7 @@ ou_sar(void)
 /*
  *  inclusive "or" of primary and secondary registers (result in primary)
  */
-SC_FUNC void
+void
 ob_or(void)
 {
    stgwrite("\tor\n");
@@ -982,7 +982,7 @@ ob_or(void)
 /*
  *  "exclusive or" of primary and alternate registers (result in primary)
  */
-SC_FUNC void
+void
 ob_xor(void)
 {
    stgwrite("\txor\n");
@@ -992,7 +992,7 @@ ob_xor(void)
 /*
  *  "and" of primary and secundairy registers (result in primary)
  */
-SC_FUNC void
+void
 ob_and(void)
 {
    stgwrite("\tand\n");
@@ -1002,7 +1002,7 @@ ob_and(void)
 /*
  *  test ALT==PRI; result in primary register (1 or 0).
  */
-SC_FUNC void
+void
 ob_eq(void)
 {
    stgwrite("\teq\n");
@@ -1012,7 +1012,7 @@ ob_eq(void)
 /*
  *  test ALT!=PRI
  */
-SC_FUNC void
+void
 ob_ne(void)
 {
    stgwrite("\tneq\n");
@@ -1039,7 +1039,7 @@ ob_ne(void)
  * stack and moves the value of ALT into PRI. If there is a next comparison,
  * PRI can now serve as the "left" operand of the relational operator.
  */
-SC_FUNC void
+void
 relop_prefix(void)
 {
    stgwrite("\tpush.pri\n");
@@ -1047,7 +1047,7 @@ relop_prefix(void)
    code_idx += opcodes(2);
 }
 
-SC_FUNC void
+void
 relop_suffix(void)
 {
    stgwrite("\tswap.alt\n");
@@ -1059,7 +1059,7 @@ relop_suffix(void)
 /*
  *  test ALT<PRI (signed)
  */
-SC_FUNC void
+void
 os_lt(void)
 {
    stgwrite("\txchg\n");
@@ -1070,7 +1070,7 @@ os_lt(void)
 /*
  *  test ALT<=PRI (signed)
  */
-SC_FUNC void
+void
 os_le(void)
 {
    stgwrite("\txchg\n");
@@ -1081,7 +1081,7 @@ os_le(void)
 /*
  *  test ALT>PRI (signed)
  */
-SC_FUNC void
+void
 os_gt(void)
 {
    stgwrite("\txchg\n");
@@ -1092,7 +1092,7 @@ os_gt(void)
 /*
  *  test ALT>=PRI (signed)
  */
-SC_FUNC void
+void
 os_ge(void)
 {
    stgwrite("\txchg\n");
@@ -1103,7 +1103,7 @@ os_ge(void)
 /*
  *  logical negation of primary register
  */
-SC_FUNC void
+void
 lneg(void)
 {
    stgwrite("\tnot\n");
@@ -1113,7 +1113,7 @@ lneg(void)
 /*
  *  two's complement primary register
  */
-SC_FUNC void
+void
 neg(void)
 {
    stgwrite("\tneg\n");
@@ -1123,7 +1123,7 @@ neg(void)
 /*
  *  one's complement of primary register
  */
-SC_FUNC void
+void
 invert(void)
 {
    stgwrite("\tinvert\n");
@@ -1133,7 +1133,7 @@ invert(void)
 /*
  *  nop
  */
-SC_FUNC void
+void
 nooperation(void)
 {
    stgwrite("\tnop\n");
@@ -1142,7 +1142,7 @@ nooperation(void)
 
 /*  increment symbol
  */
-SC_FUNC void
+void
 inc(value * lval)
 {
    symbol             *sym;
@@ -1208,7 +1208,7 @@ inc(value * lval)
  *
  *  in case of an integer pointer, the symbol must be incremented by 2.
  */
-SC_FUNC void
+void
 dec(value * lval)
 {
    symbol             *sym;
@@ -1273,7 +1273,7 @@ dec(value * lval)
 /*
  *  Jumps to "label" if PRI != 0
  */
-SC_FUNC void
+void
 jmp_ne0(int number)
 {
    stgwrite("\tjnz ");
@@ -1284,7 +1284,7 @@ jmp_ne0(int number)
 /*
  *  Jumps to "label" if PRI == 0
  */
-SC_FUNC void
+void
 jmp_eq0(int number)
 {
    stgwrite("\tjzer ");
@@ -1293,7 +1293,7 @@ jmp_eq0(int number)
 }
 
 /* write a value in hexadecimal; optionally adds a newline */
-SC_FUNC void
+void
 outval(cell val, int newline)
 {
    stgwrite(itoh(val));

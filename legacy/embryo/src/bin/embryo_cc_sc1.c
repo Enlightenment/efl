@@ -1671,7 +1671,7 @@ decl_enum(int vclass)
  *  Finds a function in the global symbol table or creates a new entry.
  *  It does some basic processing and error checking.
  */
-SC_FUNC symbol     *
+symbol     *
 fetchfunc(char *name, int tag)
 {
    symbol             *sym;
@@ -1952,7 +1952,7 @@ tag2str(char *dest, int tag)
    return isdigit(dest[1]) ? &dest[1] : dest;
 }
 
-SC_FUNC char       *
+char       *
 operator_symname(char *symname, char *opername, int tag1, int tag2,
 		 int numtags, int resulttag)
 {
@@ -2002,7 +2002,7 @@ parse_funcname(char *fname, int *tag1, int *tag2, char *opname)
    return unary;
 }
 
-SC_FUNC char       *
+char       *
 funcdisplayname(char *dest, char *funcname)
 {
    int                 tags[2];
@@ -3028,7 +3028,7 @@ insert_constval(constvalue * prev, constvalue * next, char *name,
    return cur;
 }
 
-SC_FUNC constvalue *
+constvalue *
 append_constval(constvalue * table, char *name, cell val, short index)
 {
    constvalue         *cur, *prev;
@@ -3040,7 +3040,7 @@ append_constval(constvalue * table, char *name, cell val, short index)
    return insert_constval(prev, NULL, name, val, index);
 }
 
-SC_FUNC constvalue *
+constvalue *
 find_constval(constvalue * table, char *name, short index)
 {
    constvalue         *ptr = table->next;
@@ -3090,7 +3090,7 @@ delete_constval(constvalue * table, char *name)
 }
 #endif
 
-SC_FUNC void
+void
 delete_consttable(constvalue * table)
 {
    constvalue         *cur = table->next, *next;
@@ -3108,7 +3108,7 @@ delete_consttable(constvalue * table)
  *
  *  Adds a symbol to the #define symbol table.
  */
-SC_FUNC void
+void
 add_constant(char *name, cell val, int vclass, int tag)
 {
    symbol             *sym;
@@ -3366,7 +3366,7 @@ doexpr(int comma, int chkeffect, int allowarray, int mark_endexpr,
 
 /*  constexpr
  */
-SC_FUNC int
+int
 constexpr(cell * val, int *tag)
 {
    int                 constant, index;
@@ -3982,7 +3982,7 @@ docont(void)
    jumplabel(ptr[wqLOOP]);
 }
 
-SC_FUNC void
+void
 exporttag(int tag)
 {
    /* find the tag by value in the table, then set the top bit to mark it
