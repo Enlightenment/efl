@@ -183,42 +183,44 @@ ecore_file_readlink(const char *link)
    return strdup(buf);
 }
 
-Evas_List *
+Ecore_List *
 ecore_file_ls(const char *dir)
 {
    DIR                *dirp;
    struct dirent      *dp;
-   Evas_List          *list;
+   Ecore_DList        *list;
 
    dirp = opendir(dir);
    if (!dirp) return NULL;
-   list = NULL;
+   list = ecore_dlist_new();
    while ((dp = readdir(dirp)))
      {
 	if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
 	  {
-	     Evas_List *l;
-	     char      *f;
+	     char *file, *f;
 
 	     /* insertion sort */
-	     for (l = list; l; l = l->next)
+	     ecore_dlist_goto_first(list);
+	     while ((file = ecore_dlist_next(list)))
 	       {
-		  if (strcmp(l->data, dp->d_name) > 0)
+		  if (strcmp(file, dp->d_name) > 0)
 		    {
+		       ecore_dlist_previous(list);
 		       f = strdup(dp->d_name);
-		       list = evas_list_prepend_relative(list, f, l->data);
+		       ecore_dlist_insert(list, f);
 		       break;
 		    }
 	       }
 	     /* nowhwre to go? just append it */
-	     if (!l)
+	     if (!file)
 	       {
 		  f = strdup(dp->d_name);
-		  list = evas_list_append(list, f);
+		  ecore_dlist_append(list, f);
 	       }
 	  }
      }
    closedir(dirp);
 
-   return list;
+   ecore_dlist_goto_first(list);
+   return ECORE_LIST(list);
 }

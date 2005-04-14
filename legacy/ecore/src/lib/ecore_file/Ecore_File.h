@@ -43,7 +43,7 @@ EAPI char      *ecore_file_get_dir  (char *path);
 
 EAPI int        ecore_file_can_exec (const char *file);
 EAPI char      *ecore_file_readlink (const char *link);
-EAPI Evas_List *ecore_file_ls       (const char *dir);
+EAPI Ecore_List *ecore_file_ls       (const char *dir);
 
 typedef struct _Ecore_File_Monitor       Ecore_File_Monitor;
 typedef struct _Ecore_File_Monitor_Event Ecore_File_Monitor_Event;

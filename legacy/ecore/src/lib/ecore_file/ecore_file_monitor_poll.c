@@ -108,16 +108,15 @@ ecore_file_monitor_poll_add(const char *path,
 	if (ecore_file_is_dir(em->path))
 	  {
 	     /* Check for subdirs */
-	     Evas_List *files, *l;
+	     Ecore_List *files;
+	     char *file;
 
 	     files = ecore_file_ls(em->path);
-	     for (l = files; l; l = l->next)
+	     while ((file = ecore_list_next(files)))
 	       {
 		  Ecore_File *f;
-		  char *file;
 		  char buf[PATH_MAX];
 
-		  file = l->data;
 		  f = calloc(1, sizeof(Ecore_File));
 		  if (!f)
 		    {
@@ -131,7 +130,7 @@ ecore_file_monitor_poll_add(const char *path,
 		  f->is_dir = ecore_file_is_dir(buf);
 		  em->files = evas_list_append(em->files, f);
 	       }
-	     evas_list_free(files);
+	     ecore_list_destroy(files);
 	  }
      }
    else
@@ -285,18 +284,17 @@ _ecore_file_monitor_poll_check(Ecore_File_Monitor *em)
 	/* Check for new files */
 	if (ECORE_FILE_MONITOR_POLL(em)->mtime < mtime)
 	  {
-	     Evas_List *files;
+	     Ecore_List *files;
+	     char *file;
 
 	     /* Files have been added or removed */
 	     files = ecore_file_ls(em->path);
-	     for (l = files; l; l = l->next)
+	     while ((file = ecore_list_next(files)))
 	       {
 		  Ecore_File *f;
-		  char *file;
 		  char buf[PATH_MAX];
 		  Ecore_File_Event event;
 
-		  file = l->data;
 		  if (_ecore_file_monitor_poll_checking(em, file))
 		    {
 		       free(file);
@@ -321,6 +319,7 @@ _ecore_file_monitor_poll_check(Ecore_File_Monitor *em)
 		  em->func(em->data, em, event, buf);
 		  em->files = evas_list_append(em->files, f);
 	       }
+	     ecore_list_destroy(files);
 	     if (!ecore_file_is_dir(em->path))
 	       em->func(em->data, em, ECORE_FILE_EVENT_MODIFIED, em->path);
 	     _interval = ECORE_FILE_INTERVAL_MIN;
