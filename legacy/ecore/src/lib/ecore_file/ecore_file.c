@@ -188,11 +188,11 @@ ecore_file_ls(const char *dir)
 {
    DIR                *dirp;
    struct dirent      *dp;
-   Ecore_DList        *list;
+   Ecore_List        *list;
 
    dirp = opendir(dir);
    if (!dirp) return NULL;
-   list = ecore_dlist_new();
+   list = ecore_list_new();
    while ((dp = readdir(dirp)))
      {
 	if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
@@ -200,27 +200,27 @@ ecore_file_ls(const char *dir)
 	     char *file, *f;
 
 	     /* insertion sort */
-	     ecore_dlist_goto_first(list);
-	     while ((file = ecore_dlist_next(list)))
+	     ecore_list_goto_first(list);
+	     while ((file = ecore_list_current(list)))
 	       {
 		  if (strcmp(file, dp->d_name) > 0)
 		    {
-		       ecore_dlist_previous(list);
 		       f = strdup(dp->d_name);
-		       ecore_dlist_insert(list, f);
+		       ecore_list_insert(list, f);
 		       break;
 		    }
+		  ecore_list_next(list);
 	       }
 	     /* nowhwre to go? just append it */
 	     if (!file)
 	       {
 		  f = strdup(dp->d_name);
-		  ecore_dlist_append(list, f);
+		  ecore_list_append(list, f);
 	       }
 	  }
      }
    closedir(dirp);
 
-   ecore_dlist_goto_first(list);
-   return ECORE_LIST(list);
+   ecore_list_goto_first(list);
+   return list;
 }
