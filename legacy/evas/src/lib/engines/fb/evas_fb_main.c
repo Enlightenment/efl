@@ -224,9 +224,10 @@ fb_setmode(int width, int height, int depth, int refresh)
 	{
 	  if ((modes[i].width == width) && 
 	      (modes[i].height == height) &&
+	      (!depth || modes[i].fb_var.bits_per_pixel == depth) &&
 	      (modes[i].refresh == refresh))
 	    {
-	      modes[i].fb_var.bits_per_pixel = depth;
+	      if (depth) modes[i].fb_var.bits_per_pixel = depth;
 
 	      if (ioctl(fb, FBIOPUT_VSCREENINFO, &modes[i].fb_var) == -1)
 		perror("ioctl FBIOPUT_VSCREENINFO");
@@ -295,9 +296,10 @@ fb_changemode(FB_Mode *cur_mode, int width, int height, int depth, int refresh)
 	{
 	  if ((modes[i].width == width) &&
 	      (modes[i].height == height) &&
+	      (!depth || modes[i].fb_var.bits_per_pixel == depth) &&
 	      (modes[i].refresh == refresh))
 	    {
-	      modes[i].fb_var.bits_per_pixel = depth;
+	      if (depth) modes[i].fb_var.bits_per_pixel = depth;
 
 	      if (ioctl(fb, FBIOPUT_VSCREENINFO, &modes[i].fb_var) == -1)
 		perror("ioctl FBIOPUT_VSCREENINFO");
