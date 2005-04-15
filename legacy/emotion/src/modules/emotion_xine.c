@@ -78,7 +78,6 @@ em_init(Evas_Object *obj, void **emotion_video)
       return 0;
    }
    xine_init(ev->decoder);
-  	xine_init(ev->decoder);
    if (1)
      {
 	xine_cfg_entry_t cf;
