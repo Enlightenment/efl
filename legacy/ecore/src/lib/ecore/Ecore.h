@@ -54,6 +54,10 @@
 
 #include <Ecore_Data.h>
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef TRUE
 #define TRUE 1
 #endif
@@ -64,10 +68,6 @@
 
 #ifndef PATH_MAX
 #define PATH_MAX 4096
-#endif
-
-#ifdef __cplusplus
-extern "C" {
 #endif
 
 #ifndef MIN

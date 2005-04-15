@@ -4,6 +4,9 @@
 #include <stdio.h>
 #include <string.h>
 
+/* FIXME: ecore_file's internals shouldnt use evas imho */
+#include <Evas.h>
+
 #include "config.h"
 
 #include "Ecore.h"
