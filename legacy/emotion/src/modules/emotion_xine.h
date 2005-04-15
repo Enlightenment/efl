@@ -49,6 +49,7 @@ struct _Emotion_Xine_Video
    pthread_cond_t            get_pos_len_cond;
    pthread_mutex_t           seek_mutex;
    pthread_mutex_t           get_pos_len_mutex;
+   unsigned char             seek_thread_deleted : 1;
    unsigned char             get_pos_thread_deleted : 1;
 };
 
@@ -71,7 +72,7 @@ struct _Emotion_Xine_Event
    char *xine_event;
 };
 
-Emotion_Video_Module *module_open (void);
-void                  module_close(Emotion_Video_Module *module);
+unsigned char         module_open(Evas_Object *obj, Emotion_Video_Module **module, void **video);
+void                  module_close(Emotion_Video_Module *module, void *video);
 
 #endif

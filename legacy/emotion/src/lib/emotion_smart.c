@@ -88,8 +88,8 @@ static void _smart_clip_unset(Evas_Object * obj);
 /**********************************/
 static Evas_Smart  *smart = NULL;
 
-static Emotion_Video_Module *
-_emotion_module_open(const char *name)
+static unsigned char
+_emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **mod, void **video)
 {
    void *handle;
    char buf[4096];
@@ -98,34 +98,31 @@ _emotion_module_open(const char *name)
    handle = dlopen(buf, RTLD_NOW | RTLD_GLOBAL);
    if (handle)
      {
-	Emotion_Video_Module *(*func_module_open) (void);
+	unsigned char (*func_module_open)(Evas_Object *, Emotion_Video_Module **, void **);
 	
 	func_module_open = dlsym(handle, "module_open");
 	if (func_module_open)
 	  {
-	     Emotion_Video_Module *mod;
-	     
-	     mod = func_module_open();
-	     if (mod)
+	     if (func_module_open(obj, mod, video))
 	       {
-		  mod->handle = handle;
-		  return mod;
+		  (*mod)->handle = handle;
+		  return 1;
 	       }
 	  }
 	dlclose(handle);
      }
-   return NULL;
+   return 0;
 }
 
 static void
-_emotion_module_close(Emotion_Video_Module *mod)
+_emotion_module_close(Emotion_Video_Module *mod, void *video)
 {
    void *handle;
-   void (*module_close) (Emotion_Video_Module *module);
+   void (*module_close) (Emotion_Video_Module *module, void *);
    
    handle = mod->handle;
    module_close = dlsym(handle, "module_close");
-   if (module_close) module_close(mod);
+   if (module_close) module_close(mod, video);
    dlclose(handle);
 }
 
@@ -168,24 +165,23 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
 	int w, h;
 	
 	sd->file = strdup(file);
-	if ((sd->video) && (sd->module))
+	if (sd->module)
 	  {
 	     sd->module->file_close(sd->video);
-	     sd->video = NULL;
 	     evas_object_image_size_set(sd->obj, 0, 0);
 	  }
-	if (sd->module) _emotion_module_close(sd->module);
-	sd->module = _emotion_module_open("emotion_decoder_xine.so");
-	if (!sd->module) return;
-	sd->video = sd->module->file_open(sd->file, obj);
-	if (sd->video)
-	  {
-	     sd->module->size_get(sd->video, &w, &h);
-	     evas_object_image_size_set(sd->obj, w, h);
-	     sd->ratio = sd->module->ratio_get(sd->video);
-	     sd->pos = 0.0;
-	     if (sd->play) sd->module->play(sd->video, 0.0);
-	  }
+	if (!sd->module || !sd->video)
+   {
+      if (!_emotion_module_open("emotion_decoder_xine.so", obj, &sd->module, &sd->video))
+         return;
+   }
+   if (!sd->module->file_open(sd->file, obj, sd->video))
+      return;
+   sd->module->size_get(sd->video, &w, &h);
+   evas_object_image_size_set(sd->obj, w, h);
+   sd->ratio = sd->module->ratio_get(sd->video);
+   sd->pos = 0.0;
+   if (sd->play) sd->module->play(sd->video, 0.0);
      }
    else
      {
@@ -195,8 +191,6 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
 	     sd->video = NULL;
 	     evas_object_image_size_set(sd->obj, 0, 0);
 	  }
-	if (sd->module) _emotion_module_close(sd->module);
-	sd->module = NULL;
      }
 }
 
@@ -811,6 +805,12 @@ _emotion_decode_stop(Evas_Object *obj)
 }
 
 void
+_emotion_playback_finished(Evas_Object *obj)
+{
+   evas_object_smart_callback_call(obj, "playback_finished", NULL);
+}
+
+void
 _emotion_channels_change(Evas_Object *obj)
 {
    Smart_Data *sd;
@@ -1025,11 +1025,10 @@ static void
 _smart_del(Evas_Object * obj)
 {
    Smart_Data *sd;
-   
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
    if (sd->video) sd->module->file_close(sd->video);
-   if (sd->module) _emotion_module_close(sd->module);
+   if (sd->module) _emotion_module_close(sd->module, sd->video);
    evas_object_del(sd->obj);
    if (sd->file) free(sd->file);
    if (sd->job) ecore_job_del(sd->job);

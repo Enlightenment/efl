@@ -19,9 +19,9 @@ typedef struct _Emotion_Video_Module Emotion_Video_Module;
 
 struct _Emotion_Video_Module
 {
-   int          (*init) (void);
-   int          (*shutdown) (void);
-   void *       (*file_open) (const char *file, Evas_Object *obj);
+   unsigned char (*init) (Evas_Object *obj, void **video);
+   int          (*shutdown) (void *video);
+   unsigned char (*file_open) (const char *file, Evas_Object *obj, void *video);
    void         (*file_close) (void *ef);
    void         (*play) (void *ef, double pos);
    void         (*stop) (void *ef);
@@ -75,6 +75,7 @@ void  _emotion_frame_new(Evas_Object *obj);
 void  _emotion_video_pos_update(Evas_Object *obj, double pos, double len);
 void  _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio);
 void  _emotion_decode_stop(Evas_Object *obj);
+void  _emotion_playback_finished(Evas_Object *obj);
 void  _emotion_channels_change(Evas_Object *obj);
 void  _emotion_title_set(Evas_Object *obj, char *title);
 void  _emotion_progress_set(Evas_Object *obj, char *info, double stat);
