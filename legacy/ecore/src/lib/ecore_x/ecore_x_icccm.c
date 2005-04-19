@@ -351,7 +351,7 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
 
    int                 minw = 0, minh = 0;
    int                 maxw = 32767, maxh = 32767;
-   int                 basew = 0, baseh = 0;
+   int                 basew = -1, baseh = -1;
    int                 stepx = 1, stepy = 1;
    double              mina = 0.0, maxa = 0.0;
 
