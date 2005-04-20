@@ -2,8 +2,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore \
--I$(top_builddir)/src/lib/ecore \
-@evas_cflags@
+-I$(top_builddir)/src/lib/ecore
 
 libecore_file_la_LDFLAGS = -version-info 1:0:0 \
 -L$(top_builddir)/src/lib/ecore/.libs
@@ -23,8 +22,7 @@ ecore_file_monitor_poll.c
 
 libecore_file_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
-@fam_libs@ \
-@evas_libs@
+@fam_libs@
 
 endif
 

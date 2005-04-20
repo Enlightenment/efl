@@ -4,11 +4,9 @@
 #include <stdio.h>
 #include <string.h>
 
-/* FIXME: ecore_file's internals shouldnt use evas imho */
-#include <Evas.h>
-
 #include "config.h"
 
+#include "ecore_private.h"
 #include "Ecore.h"
 #include "Ecore_File.h"
 
@@ -19,6 +17,7 @@ int ecore_file_monitor_shutdown(void);
 
 struct _Ecore_File_Monitor
 {
+   Ecore_Oldlist __list_data;
    void (*func) (void *data,
 		 Ecore_File_Monitor *ecore_file_monitor,
 		 Ecore_File_Event event,
@@ -26,7 +25,7 @@ struct _Ecore_File_Monitor
 
    char               *path;
    void               *data;
-   Evas_List          *files;
+   Ecore_Oldlist      *files;
 };
 
 #ifdef HAVE_INOTIFY
