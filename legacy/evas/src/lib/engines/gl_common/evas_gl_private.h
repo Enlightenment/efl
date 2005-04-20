@@ -74,12 +74,17 @@ void glGetBufferPointervARB(GLenum target, GLenum pname, void **params);
 
    
 
-
 /* evas ARGB pixel config */
 #define NATIVE_PIX_FORMAT GL_BGRA
+
+/* Big endian systems require the texture know the byte order is reversed */
+#ifdef WORDS_BIGENDIAN
+#define NATIVE_PIX_UNIT   GL_UNSIGNED_INT_8_8_8_8_REV
+#else
 /* fast on vidia */
 /*#define NATIVE_PIX_UNIT   GL_UNSIGNED_INT_8_8_8_8_REV*/
 /* fast on ati compared to GL_UNSIGNED_INT_8_8_8_8_REV */
 #define NATIVE_PIX_UNIT   GL_UNSIGNED_BYTE
+#endif
 
 #endif
