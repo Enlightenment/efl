@@ -772,44 +772,51 @@ evas_list_reverse(Evas_List *list)
 static Evas_List *
 evas_list_combine(Evas_List *l, Evas_List *ll, int (*func)(void *, void*))
 {
-    Evas_List *result = NULL;
-    Evas_List *l_head = NULL, *ll_head = NULL;
-
-    l_head = l;
-    ll_head = ll;
-    while(l && ll)
-    {
-	switch(func(l->data, ll->data))
-	    {
-		case -1:
-		    result = evas_list_append(result, l->data);
-		    l = evas_list_next(l);
-		    break;
-		case 0:
-		    result = evas_list_append(result, l->data);
-		    l = evas_list_next(l);
-		    result = evas_list_append(result, ll->data);
-		    ll = evas_list_next(ll);
-		    break;
-		case 1:
-		    result = evas_list_append(result, ll->data);
-		    ll = evas_list_next(ll);
-		    break;
-	    }
-    }
-    while(l)
-    {
+   Evas_List *result = NULL;
+   Evas_List *l_head = NULL, *ll_head = NULL;
+   
+   l_head = l;
+   ll_head = ll;
+   while (l && ll)
+     {
+	int cmp;
+	
+	cmp = func(l->data, ll->data);
+	if (cmp < 0)
+	  {
+	     result = evas_list_append(result, l->data);
+	     l = evas_list_next(l);
+	  }
+	else if (cmp == 0)
+	  {
+	     result = evas_list_append(result, l->data);
+	     l = evas_list_next(l);
+	     result = evas_list_append(result, ll->data);
+	     ll = evas_list_next(ll);
+	  }
+	else if (cmp > 0)
+	  {
+	     result = evas_list_append(result, ll->data);
+	     ll = evas_list_next(ll);
+	  }
+	else
+	  {
+	     l = ll = NULL;
+	  }
+     }
+   while (l)
+     {
 	result = evas_list_append(result, l->data);
 	l = evas_list_next(l);
-    }
-    evas_list_free(l_head);
-    while(ll)
-    {
+     }
+   evas_list_free(l_head);
+   while (ll)
+     {
 	result = evas_list_append(result, ll->data);
 	ll = evas_list_next(ll);
-    }
-    evas_list_free(ll_head);
-    return(result);
+     }
+   evas_list_free(ll_head);
+   return (result);
 }
 
 /**
@@ -853,38 +860,38 @@ evas_list_combine(Evas_List *l, Evas_List *ll, int (*func)(void *, void*))
 Evas_List *
 evas_list_sort(Evas_List *list, int size, int (*func)(void *, void *))
 {
-    Evas_List *l = NULL, *ll = NULL;
-    int mid;
-
-    if (!list || !func)
-      return NULL;
-
-    /* if the caller specified an invalid size, sort the whole list */
-    if (size <= 0 || size > list->count)
-      size = list->count;
-
-    mid = size / 2;
-    if (mid < 1)
-      return list;
-
-    /* bleh evas list splicing */
-    ll = evas_list_nth_list(list, mid);
-    if (ll->prev)
-      {
-	 list->last = ll->prev;
-	 list->count = mid;
-	 ll->prev->next = NULL;
-	 ll->prev = NULL;
-      }
-
-    ll->count = size - mid;
-
-    /* merge sort */
-    l = evas_list_sort(list, mid, func);
-    ll = evas_list_sort(ll, size - mid, func);
-    list = evas_list_combine(l, ll, func);
-
-    return(list);
+   Evas_List *l = NULL, *ll = NULL;
+   int mid;
+   
+   if (!list || !func)
+     return NULL;
+   
+   /* if the caller specified an invalid size, sort the whole list */
+   if (size <= 0 || size > list->count)
+     size = list->count;
+   
+   mid = size / 2;
+   if (mid < 1)
+     return list;
+   
+   /* bleh evas list splicing */
+   ll = evas_list_nth_list(list, mid);
+   if (ll->prev)
+     {
+	list->last = ll->prev;
+	list->count = mid;
+	ll->prev->next = NULL;
+	ll->prev = NULL;
+     }
+   
+   ll->count = size - mid;
+   
+   /* merge sort */
+   l = evas_list_sort(list, mid, func);
+   ll = evas_list_sort(ll, size - mid, func);
+   list = evas_list_combine(l, ll, func);
+   
+   return(list);
 }
 /**
  * Return the memory allocation failure flag after any operation needin allocation
