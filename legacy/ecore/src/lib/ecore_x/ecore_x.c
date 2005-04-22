@@ -1,3 +1,6 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 #include "ecore_private.h"
 #include "Ecore.h"
 #include "ecore_x_private.h"
@@ -1271,6 +1274,12 @@ void
 ecore_x_pointer_ungrab(void)
 {
    XUngrabPointer(_ecore_x_disp, CurrentTime);
+}
+
+int
+ecore_x_pointer_warp(Ecore_X_Window win, int x, int y)
+{
+   return XWarpPointer(_ecore_x_disp, None, win, 0, 0, 0, 0, x, y);
 }
 
 int

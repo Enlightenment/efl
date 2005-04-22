@@ -1230,6 +1230,7 @@ EAPI Ecore_X_Cursor ecore_x_cursor_shape_get(int shape);
 EAPI int  ecore_x_pointer_grab(Ecore_X_Window win);
 EAPI int  ecore_x_pointer_confine_grab(Ecore_X_Window win);
 EAPI void ecore_x_pointer_ungrab(void);
+EAPI int  ecore_x_pointer_warp(Ecore_X_Window win, int x, int y);
 EAPI int  ecore_x_keyboard_grab(Ecore_X_Window win);
 EAPI void ecore_x_keyboard_ungrab(void);
 EAPI void ecore_x_grab(void);
