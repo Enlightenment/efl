@@ -91,6 +91,18 @@ ecore_x_window_shape_rectangle_add(Ecore_X_Window win, int x, int y, int w, int 
 }
 
 void
+ecore_x_window_shape_rectangle_clip(Ecore_X_Window win, int x, int y, int w, int h)
+{
+   XRectangle rect;
+   
+   rect.x = x;
+   rect.y = y;
+   rect.width = w;
+   rect.height = h;
+   XShapeCombineRectangles(_ecore_x_disp, win, ShapeBounding, 0, 0, &rect, 1, ShapeIntersect, Unsorted);
+}
+
+void
 ecore_x_window_shape_rectangles_add(Ecore_X_Window win, Ecore_X_Rectangle *rects, int num)
 {
    XRectangle *rect = NULL;
