@@ -265,6 +265,28 @@ emotion_object_seekable_get(Evas_Object *obj)
    return sd->module->seekable(sd->video);
 }
 
+Evas_Bool
+emotion_object_video_handled_get(Evas_Object *obj)
+{
+   Smart_Data *sd;
+   
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   if (!sd->module) return 0;
+   if (!sd->video) return 0;
+   return sd->module->video_handled(sd->video);
+}
+
+Evas_Bool
+emotion_object_audio_handled_get(Evas_Object *obj)
+{
+   Smart_Data *sd;
+   
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
+   if (!sd->module) return 0;
+   if (!sd->video) return 0;
+   return sd->module->audio_handled(sd->video);
+}
+
 double
 emotion_object_play_length_get(Evas_Object *obj)
 {
@@ -808,6 +830,11 @@ void
 _emotion_playback_finished(Evas_Object *obj)
 {
    evas_object_smart_callback_call(obj, "playback_finished", NULL);
+}
+
+void _emotion_audio_level_change(Evas_Object *obj)
+{
+   evas_object_smart_callback_call(obj, "audio_level_change", NULL);
 }
 
 void

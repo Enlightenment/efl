@@ -61,6 +61,8 @@ void         emotion_object_play_set              (Evas_Object *obj, Evas_Bool p
 Evas_Bool    emotion_object_play_get              (Evas_Object *obj);
 void         emotion_object_position_set          (Evas_Object *obj, double sec);
 double       emotion_object_position_get          (Evas_Object *obj);
+Evas_Bool    emotion_object_video_handled_get     (Evas_Object *obj);
+Evas_Bool    emotion_object_audio_handled_get     (Evas_Object *obj);
 Evas_Bool    emotion_object_seekable_get          (Evas_Object *obj);
 double       emotion_object_play_length_get       (Evas_Object *obj);
 void         emotion_object_size_get              (Evas_Object *obj, int *iw, int *ih);

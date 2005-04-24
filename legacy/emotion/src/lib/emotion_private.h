@@ -31,6 +31,8 @@ struct _Emotion_Video_Module
    double       (*fps_get) (void *ef);
    double       (*pos_get) (void *ef);
    double       (*ratio_get) (void *ef);
+   int          (*video_handled) (void *ef);
+   int          (*audio_handled) (void *ef);
    int          (*seekable) (void *ef);
    void         (*frame_done) (void *ef);
    void         (*yuv_size_get) (void *ef, int *w, int *h);
@@ -76,6 +78,7 @@ void  _emotion_video_pos_update(Evas_Object *obj, double pos, double len);
 void  _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio);
 void  _emotion_decode_stop(Evas_Object *obj);
 void  _emotion_playback_finished(Evas_Object *obj);
+void  _emotion_audio_level_change(Evas_Object *obj);
 void  _emotion_channels_change(Evas_Object *obj);
 void  _emotion_title_set(Evas_Object *obj, char *title);
 void  _emotion_progress_set(Evas_Object *obj, char *info, double stat);

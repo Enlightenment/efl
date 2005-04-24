@@ -227,8 +227,8 @@ em_init(Evas_Object *obj, void **emotion_video)
    ev->fd = ev->fd_write;
 
    ev->video = xine_open_video_driver(ev->decoder, "emotion", XINE_VISUAL_TYPE_NONE, ev);
-   ev->audio = xine_open_audio_driver(ev->decoder, "oss", ev); 
-//   ev->audio = xine_open_audio_driver(ev->decoder, "alsa", ev);
+//   ev->audio = xine_open_audio_driver(ev->decoder, "oss", ev); 
+   ev->audio = xine_open_audio_driver(ev->decoder, "alsa", ev);
 //   ev->audio = xine_open_audio_driver(ev->decoder, "arts", ev);
 //   ev->audio = xine_open_audio_driver(ev->decoder, "esd", ev);
    ev->stream = xine_stream_new(ev->decoder, ev->audio, ev->video);
@@ -494,6 +494,26 @@ em_ratio_get(void *ef)
    
    ev = (Emotion_Xine_Video *)ef;
    return ev->ratio;
+}
+
+static int
+em_video_handled(void *ef)
+{
+   Emotion_Xine_Video *ev;
+   
+   ev = (Emotion_Xine_Video *)ef;
+   return (xine_get_stream_info(ev->stream, XINE_STREAM_INFO_HAS_VIDEO) &&
+      xine_get_stream_info(ev->stream, XINE_STREAM_INFO_VIDEO_HANDLED));
+}
+
+static int
+em_audio_handled(void *ef)
+{
+   Emotion_Xine_Video *ev;
+   
+   ev = (Emotion_Xine_Video *)ef;
+   return (xine_get_stream_info(ev->stream, XINE_STREAM_INFO_HAS_AUDIO) &&
+      xine_get_stream_info(ev->stream, XINE_STREAM_INFO_AUDIO_HANDLED));
 }
 
 static int
@@ -1167,6 +1187,7 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 		       xine_audio_level_data_t *e;
 	     
 		       e = (xine_audio_level_data_t *)eev->xine_event;
+             _emotion_audio_level_change(ev->obj);
 		       printf("EV: Audio Level [FIXME: break this out to emotion api]\n");
 		       // e->left (0->100) 
 		       // e->right
@@ -1309,6 +1330,8 @@ static Emotion_Video_Module em_module =
      em_fps_get, /* fps_get */
      em_pos_get, /* pos_get */
      em_ratio_get, /* ratio_get */
+     em_video_handled, /* video_handled */
+     em_audio_handled, /* audio_handled */
      em_seekable, /* seekable */
      em_frame_done, /* frame_done */
      em_yuv_size_get, /* yuv_size_get */
