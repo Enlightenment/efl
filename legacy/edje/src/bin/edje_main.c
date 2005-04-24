@@ -220,6 +220,9 @@ bg_key_down(void *data, Evas * e, Evas_Object * obj, void *event_info)
    Evas_Event_Key_Down *ev;
    
    ev = (Evas_Event_Key_Down *)event_info;
+
+   if (!strcmp(ev->keyname, "q")) ecore_main_loop_quit ();
+
      {
 	Evas_List *l;
 	
