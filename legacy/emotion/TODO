@@ -1,0 +1,2 @@
+* Fix seek and get_pos threads delete bugs (infinite loop)
+* Add support of visualizations for audio files (Goom...)
