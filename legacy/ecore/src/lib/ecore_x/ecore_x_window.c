@@ -37,7 +37,7 @@ ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h)
    attr.border_pixel          = 0;
    attr.background_pixmap     = None;
    attr.save_under            = False;
-   attr.do_not_propagate_mask = True;
+   attr.do_not_propagate_mask = ~NoEventMask;
    attr.event_mask            = KeyPressMask |
                                 KeyReleaseMask |
                                 ButtonPressMask |
@@ -94,7 +94,7 @@ ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h)
    attr.border_pixel          = 0;
    attr.background_pixmap     = None;
    attr.save_under            = False;
-   attr.do_not_propagate_mask = True;
+   attr.do_not_propagate_mask = ~NoEventMask;
    attr.event_mask            = KeyPressMask |
                                 KeyReleaseMask |
                                 ButtonPressMask |
@@ -146,7 +146,7 @@ ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h)
    
    if (parent == 0) parent = DefaultRootWindow(_ecore_x_disp);
    attr.override_redirect     = True;
-   attr.do_not_propagate_mask = True;
+   attr.do_not_propagate_mask = ~NoEventMask;
    attr.event_mask            = KeyPressMask |
                                 KeyReleaseMask |
                                 ButtonPressMask |
