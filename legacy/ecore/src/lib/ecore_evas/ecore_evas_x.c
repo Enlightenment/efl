@@ -1028,13 +1028,13 @@ _ecore_evas_override_set(Ecore_Evas *ee, int on)
    if (((ee->prop.override) && (on)) ||
        ((!ee->prop.override) && (!on))) return;
    ecore_x_window_hide(ee->engine.x.win);
-   ecore_x_window_reparent(ee->engine.x.win, 0, 0, 0);	
+   ecore_x_window_reparent(ee->engine.x.win, ee->engine.x.win_root, 0, 0);
    ecore_x_window_del(ee->engine.x.win_container);
    if (on)
-     ee->engine.x.win_container = ecore_x_window_override_new(0, ee->x, ee->y, ee->w, ee->h);
+     ee->engine.x.win_container = ecore_x_window_override_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
    else
      {
-	ee->engine.x.win_container = ecore_x_window_new(0, ee->x, ee->y, ee->w, ee->h);
+	ee->engine.x.win_container = ecore_x_window_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
 	ecore_x_window_prop_title_set(ee->engine.x.win_container, ee->prop.title);
 	ecore_x_window_prop_name_class_set(ee->engine.x.win_container, ee->prop.name, ee->prop.clas);
 	if (ee->func.fn_delete_request)
@@ -1046,8 +1046,8 @@ _ecore_evas_override_set(Ecore_Evas *ee, int on)
 	ecore_x_window_prop_borderless_set(ee->engine.x.win_container, ee->prop.borderless);
 	ecore_x_window_prop_layer_set(ee->engine.x.win_container, ee->prop.layer);
 	ecore_x_window_prop_withdrawn_set(ee->engine.x.win_container, ee->prop.withdrawn);
-    ecore_x_window_prop_sticky_set(ee->engine.x.win_container,
-                                   ee->prop.sticky);
+	ecore_x_window_prop_sticky_set(ee->engine.x.win_container,
+				       ee->prop.sticky);
      }
    ecore_x_window_reparent(ee->engine.x.win, ee->engine.x.win_container, 0, 0);	
    ecore_x_window_show(ee->engine.x.win);
@@ -1067,7 +1067,7 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
 	
 	ecore_x_window_size_get(0, &rw, &rh);
 	ecore_x_window_move_resize(ee->engine.x.win, 0, 0, rw, rh);
-	ecore_x_window_reparent(ee->engine.x.win, 0, 0, 0);
+	ecore_x_window_reparent(ee->engine.x.win, ee->engine.x.win_root, 0, 0);
 	ecore_x_window_raise(ee->engine.x.win);
 	ecore_x_window_show(ee->engine.x.win);
 	ecore_x_window_focus(ee->engine.x.win);
@@ -1273,7 +1273,8 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
    evas_output_method_set(ee->evas, rmethod);
    evas_output_size_set(ee->evas, w, h);
    evas_output_viewport_set(ee->evas, 0, 0, w, h);
-   
+
+   ee->engine.x.win_root = parent;
    ee->engine.x.win_container = ecore_x_window_new(parent, x, y, w, h);
    ee->engine.x.win = ecore_x_window_override_new(ee->engine.x.win_container, 0, 0, w, h);
    
@@ -1442,6 +1443,7 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
    evas_output_size_set(ee->evas, w, h);
    evas_output_viewport_set(ee->evas, 0, 0, w, h);
    
+   ee->engine.x.win_root = parent;
    ee->engine.x.win_container = ecore_x_window_new(parent, x, y, w, h);
    einfo = (Evas_Engine_Info_GL_X11 *)evas_engine_info_get(ee->evas);
    if (einfo)

@@ -82,6 +82,7 @@ struct _Ecore_Evas_Engine
    
 #ifdef BUILD_ECORE_X
    struct {
+      Ecore_X_Window win_root;
       Ecore_X_Window win_container;
       Ecore_X_Window win;
       Ecore_X_Pixmap pmap;
