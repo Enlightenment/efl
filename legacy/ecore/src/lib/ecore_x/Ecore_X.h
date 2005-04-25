@@ -1242,7 +1242,11 @@ EAPI void ecore_x_window_button_grab(Ecore_X_Window win, int button,
 				     int mod, int any_mod);
 EAPI void ecore_x_window_button_ungrab(Ecore_X_Window win, int button,
 				       int mod, int any_mod);
-
+EAPI void ecore_x_window_key_grab(Ecore_X_Window win, char *key,
+				  int mod, int any_mod);
+EAPI void ecore_x_window_key_ungrab(Ecore_X_Window win, char *key,
+				    int mod, int any_mod);
+       
 EAPI void ecore_x_focus_reset(void);
 EAPI void ecore_x_events_allow_all(void);
 EAPI void ecore_x_pointer_last_xy_get(int *x, int *y);

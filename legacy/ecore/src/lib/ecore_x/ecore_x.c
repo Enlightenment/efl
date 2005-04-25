@@ -1395,6 +1395,70 @@ ecore_x_window_button_ungrab(Ecore_X_Window win, int button,
 				 _ecore_window_grabs_num * sizeof(Window));
 }
 
+int      _ecore_key_grabs_num = 0;
+Window  *_ecore_key_grabs = NULL;
+
+void
+ecore_x_window_key_grab(Ecore_X_Window win, char *key, 
+			int mod, int any_mod)
+{
+   KeyCode             keycode;
+   unsigned int        m;
+   unsigned int        locks[8];
+   int                 i;
+   
+   keycode  = XKeysymToKeycode(_ecore_x_disp, XStringToKeysym(key));
+   m = mod;
+   if (any_mod) m = AnyModifier;
+   locks[0] = 0;
+   locks[1] = ECORE_X_LOCK_CAPS;
+   locks[2] = ECORE_X_LOCK_NUM;
+   locks[3] = ECORE_X_LOCK_SCROLL;
+   locks[4] = ECORE_X_LOCK_CAPS   | ECORE_X_LOCK_NUM;
+   locks[5] = ECORE_X_LOCK_CAPS   | ECORE_X_LOCK_SCROLL;
+   locks[6] = ECORE_X_LOCK_NUM    | ECORE_X_LOCK_SCROLL;
+   locks[7] = ECORE_X_LOCK_CAPS   | ECORE_X_LOCK_NUM    | ECORE_X_LOCK_SCROLL;
+   for (i = 0; i < 8; i++)
+     XGrabKey(_ecore_x_disp, keycode, m | locks[i],
+	      win, False, GrabModeSync, GrabModeAsync);
+   _ecore_key_grabs_num++;
+   _ecore_key_grabs = realloc(_ecore_key_grabs,
+			      _ecore_key_grabs_num * sizeof(Window));
+   _ecore_key_grabs[_ecore_key_grabs_num - 1] = win;
+}
+
+void
+ecore_x_window_key_ungrab(Ecore_X_Window win, char *key,
+			  int mod, int any_mod)
+{
+   KeyCode             keycode;
+   unsigned int        m;
+   unsigned int        locks[8];
+   int                 i, shuffle = 0;
+
+   keycode  = XKeysymToKeycode(_ecore_x_disp, XStringToKeysym(key));
+   m = mod;
+   if (any_mod) m = AnyModifier;
+   locks[0] = 0;
+   locks[1] = ECORE_X_LOCK_CAPS;
+   locks[2] = ECORE_X_LOCK_NUM;
+   locks[3] = ECORE_X_LOCK_SCROLL;
+   locks[4] = ECORE_X_LOCK_CAPS   | ECORE_X_LOCK_NUM;
+   locks[5] = ECORE_X_LOCK_CAPS   | ECORE_X_LOCK_SCROLL;
+   locks[6] = ECORE_X_LOCK_NUM    | ECORE_X_LOCK_SCROLL;
+   locks[7] = ECORE_X_LOCK_CAPS   | ECORE_X_LOCK_NUM    | ECORE_X_LOCK_SCROLL;
+   for (i = 0; i < 8; i++)
+     XUngrabKey(_ecore_x_disp, keycode, m | locks[i], win);
+   for (i = 0; i < _ecore_key_grabs_num - 1; i++)
+     {
+	if (_ecore_key_grabs[i] == win) shuffle = 1;
+	if (shuffle) _ecore_key_grabs[i] = _ecore_key_grabs[i + 1];
+     }
+   _ecore_key_grabs_num--;
+   _ecore_key_grabs = realloc(_ecore_key_grabs, 
+				 _ecore_key_grabs_num * sizeof(Window));
+}
+
 /**
  * Send client message with given type and format 32.
  *
