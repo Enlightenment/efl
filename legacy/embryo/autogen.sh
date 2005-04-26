@@ -11,5 +11,6 @@ echo "Running aclocal..."; aclocal $ACLOCAL_FLAGS -I m4 \
 && echo "Running libtoolize..."; (libtoolize --automake || glibtoolize --automake) \
 && echo "Running automake..."; automake --add-missing --copy --gnu
 
-###  If you want this, uncomment it.
-./configure "$@"
+if [ -z "$NOCONFIGURE" ]; then
+	./configure "$@"
+fi
