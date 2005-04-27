@@ -19,7 +19,6 @@ static void _edje_file_cleanup(void);
 static Edje_Part_Collection *_edje_collection_find(Edje_File *edf, char *part);
 static void _edje_collection_cache_clean(Edje_File *edf);
 static void _edje_collection_cache_add(Edje_File *edf, Edje_Part_Collection *coll);
-static void _edje_collection_ref(Edje_File *edf, Edje_Part_Collection *coll);
 static void _edje_collection_unref(Edje_File *edf, Edje_Part_Collection *coll);
 static void _edje_collection_cleanup(Edje_File *edf);
 
@@ -648,12 +647,6 @@ _edje_collection_cache_add(Edje_File *edf, Edje_Part_Collection *coll)
    edf->collection_hash = evas_hash_del(edf->collection_hash, coll->part, coll);
    edf->collection_cache = evas_list_append(edf->collection_cache, coll);
    _edje_collection_cache_clean(edf);
-}
-
-static void
-_edje_collection_ref(Edje_File *edf, Edje_Part_Collection *coll)
-{
-   coll->references++;
 }
 
 static void
