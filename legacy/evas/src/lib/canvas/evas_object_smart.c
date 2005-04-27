@@ -336,6 +336,8 @@ evas_object_smart_cleanup(Evas_Object *obj)
    Evas_Smart *s;
    
    s = obj->smart.smart;
+   if (obj->smart.parent)
+     evas_object_smart_member_del(obj);
    while (obj->smart.contained)
      {
 	/* null out smart parent object - maybe a hole to creep through? */
