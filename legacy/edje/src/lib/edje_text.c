@@ -555,8 +555,6 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 
    if ((_edje_fontset_append) && (font))
      {
-	char *font2;
-	
 	font2 = malloc(strlen(font) + 1 + strlen(_edje_fontset_append) + 1);
 	if (font2)
 	  {

@@ -1065,6 +1065,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
 	evas_hash_free(ec->prog_cache.matches);
      }
 #endif   
+   if (ec->script) embryo_program_free(ec->script);
    free(ec);
 }
 
