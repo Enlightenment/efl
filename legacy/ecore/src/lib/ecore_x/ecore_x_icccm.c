@@ -355,8 +355,8 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
    int                 stepx = 1, stepy = 1;
    double              mina = 0.0, maxa = 0.0;
 
-   if (XGetWMNormalHints(_ecore_x_disp, win, &hint, &mask) < Success)
-      return 0;
+   if (!XGetWMNormalHints(_ecore_x_disp, win, &hint, &mask))
+     return 0;
    if ((hint.flags & USPosition) || ((hint.flags & PPosition)))
      {
 	if (request_pos)
