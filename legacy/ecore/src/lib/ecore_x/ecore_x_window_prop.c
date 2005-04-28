@@ -614,6 +614,7 @@ ecore_x_window_prop_protocol_list_get(Ecore_X_Window win, int *num_ret)
      {
 	Ecore_X_WM_Protocol j;
 	
+	prot_ret[i] = -1;
 	for (j = 0; j < ECORE_X_WM_PROTOCOL_NUM; j++)
 	  {
 	     if (_ecore_x_atoms_wm_protocols[j] == protos[i])

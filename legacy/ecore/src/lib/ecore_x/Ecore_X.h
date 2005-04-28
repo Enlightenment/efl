@@ -694,6 +694,18 @@ typedef enum _Ecore_X_WM_Protocol {
 	 */
 	ECORE_X_WM_PROTOCOL_TAKE_FOCUS,
 
+	/**
+	 * If enabled the window manager can ping the window to check
+	 * if it is alive.
+	 */
+	ECORE_X_NET_WM_PROTOCOL_PING,
+
+	/**
+	 * If enabled the window manager can sync updating with the
+	 * window (?)
+	 */
+	ECORE_X_NET_WM_PROTOCOL_SYNC_REQUEST,
+
 	/* Number of defined items */
 	ECORE_X_WM_PROTOCOL_NUM
 } Ecore_X_WM_Protocol;

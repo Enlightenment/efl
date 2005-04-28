@@ -368,6 +368,8 @@ ecore_x_init(const char *name)
 
    _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_DELETE_REQUEST] = ECORE_X_ATOM_WM_DELETE_WINDOW;
    _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_TAKE_FOCUS] = ECORE_X_ATOM_WM_TAKE_FOCUS;
+   _ecore_x_atoms_wm_protocols[ECORE_X_NET_WM_PROTOCOL_PING] = ECORE_X_ATOM_NET_WM_PING;
+   _ecore_x_atoms_wm_protocols[ECORE_X_NET_WM_PROTOCOL_SYNC_REQUEST] = ECORE_X_ATOM_NET_WM_SYNC_REQUEST;
 
    _ecore_x_selection_data_init();
    _ecore_x_dnd_init();
