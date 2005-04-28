@@ -58,6 +58,20 @@ ecore_file_mkdir(const char *dir)
 }
 
 int
+ecore_file_rmdir(const char *dir)
+{
+   if (rmdir(dir) < 0) return 0;
+   return 1;
+}
+
+int
+ecore_file_unlink(const char *file)
+{
+   if (unlink(file) < 0) return 0;
+   return 1;
+}
+
+int
 ecore_file_mkpath(const char *path)
 {
    char ss[PATH_MAX];
