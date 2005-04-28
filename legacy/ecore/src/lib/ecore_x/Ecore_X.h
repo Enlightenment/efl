@@ -65,8 +65,6 @@ typedef struct _Ecore_X_Rectangle {
 
 #define ECORE_X_DND_VERSION 5
 
-#define ECORE_X_CURRENT_TIME 0
-   
 extern EAPI Ecore_X_Atom ECORE_X_DND_ACTION_COPY;
 extern EAPI Ecore_X_Atom ECORE_X_DND_ACTION_MOVE;
 extern EAPI Ecore_X_Atom ECORE_X_DND_ACTION_LINK;
@@ -843,6 +841,8 @@ EAPI void             ecore_x_flush(void);
 EAPI void             ecore_x_sync(void);
 EAPI void             ecore_x_killall(Ecore_X_Window root);
 EAPI void             ecore_x_kill(Ecore_X_Window win);
+
+EAPI Ecore_X_Time     ecore_x_current_time_get(void);
        
 EAPI void             ecore_x_error_handler_set(void (*func) (void *data), const void *data);
 EAPI void             ecore_x_io_error_handler_set(void (*func) (void *data), const void *data);

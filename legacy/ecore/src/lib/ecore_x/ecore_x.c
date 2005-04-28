@@ -573,6 +573,15 @@ ecore_x_kill(Ecore_X_Window win)
    XKillClient(_ecore_x_disp, win);
 }
 
+/**
+ * Return the last event time
+ */
+Ecore_X_Time
+ecore_x_current_time_get(void)
+{
+   return _ecore_x_event_last_time;
+}
+
 static int
 _ecore_x_fd_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 {
