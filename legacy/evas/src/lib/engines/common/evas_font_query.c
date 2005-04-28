@@ -10,11 +10,13 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
    int chr;
    FT_UInt prev_index;
    RGBA_Font_Int *fi;
+   FT_Face pface = NULL;
    
    fi = fn->fonts->data;
    
    start_x = 0;
    end_x = 0;
+   
    pen_x = 0;
    pen_y = 0;
    evas_common_font_size_use(fn);
@@ -30,23 +32,30 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (gl == 0) break;
 	index = evas_common_font_glyph_search(fn, &fi, gl);
-	if ((use_kerning) && (prev_index) && (index))
+        /* hmmm kerning means i can't sanely do my own cached metric tables! */
+	/* grrr - this means font face sharing is kinda... not an option if */
+	/* you want performance */
+	if ((use_kerning) && (prev_index) && (index) &&
+	    (pface == fi->src->ft.face))
 	  {
 	     FT_Vector delta;
 	     
-	     FT_Get_Kerning(fi->src->ft.face, prev_index, index,
-			    ft_kerning_default, &delta);
-	     pen_x += delta.x << 2;
+	     if (FT_Get_Kerning(fi->src->ft.face, prev_index, index,
+				ft_kerning_default, &delta) == 0)
+	       pen_x += delta.x << 2;
 	  }
+	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	if (!fg) continue;
 
-	chr_x = (pen_x >> 8) + fg->glyph_out->left;
-	chr_y = (pen_y >> 8)  + fg->glyph_out->top;
+        chr_x = (pen_x + (fg->glyph_out->left << 8)) >> 8;
+	chr_y = (pen_y + (fg->glyph_out->top << 8)) >> 8;
 	chr_w = fg->glyph_out->bitmap.width;
 	
-	if (!prev_index) start_x = chr_x;
-	if ((chr_x + chr_w) > end_x) end_x = chr_x + chr_w;
+	if ((!prev_index) && (chr_x < 0))
+	  start_x = chr_x;
+	if ((chr_x + chr_w) > end_x)
+	  end_x = chr_x + chr_w;
 	
 	pen_x += fg->glyph->advance.x >> 8;
 	prev_index = index;
@@ -88,6 +97,7 @@ evas_common_font_query_advance(RGBA_Font *fn, const char *text, int *h_adv, int 
    int chr;
    FT_UInt prev_index;
    RGBA_Font_Int *fi;
+   FT_Face pface = NULL;
    
    fi = fn->fonts->data;
    
@@ -107,19 +117,24 @@ evas_common_font_query_advance(RGBA_Font *fn, const char *text, int *h_adv, int 
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (gl == 0) break;
 	index = evas_common_font_glyph_search(fn, &fi, gl);
-	if ((use_kerning) && (prev_index) && (index))
+        /* hmmm kerning means i can't sanely do my own cached metric tables! */
+	/* grrr - this means font face sharing is kinda... not an option if */
+	/* you want performance */
+	if ((use_kerning) && (prev_index) && (index) &&
+	    (pface == fi->src->ft.face))
 	  {
 	     FT_Vector delta;
 	     
-	     FT_Get_Kerning(fi->src->ft.face, prev_index, index,
-			    ft_kerning_default, &delta);
-	     pen_x += delta.x << 2;
+	     if (FT_Get_Kerning(fi->src->ft.face, prev_index, index,
+				ft_kerning_default, &delta) == 0)
+	       pen_x += delta.x << 2;
 	  }
+	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	if (!fg) continue;
 	
-	chr_x = (pen_x >> 8) + fg->glyph_out->left;
-	chr_y = (pen_y >> 8) + fg->glyph_out->top;
+        chr_x = (pen_x + (fg->glyph_out->left << 8)) >> 8;
+	chr_y = (pen_y + (fg->glyph_out->top << 8)) >> 8;
 	chr_w = fg->glyph_out->bitmap.width;
 	
 	pen_x += fg->glyph->advance.x >> 8;
@@ -140,6 +155,7 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *text, int pos, int
    int asc, desc;
    FT_UInt prev_index;
    RGBA_Font_Int *fi;
+   FT_Face pface = NULL;
    
    fi = fn->fonts->data;
    
@@ -165,19 +181,28 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *text, int pos, int
 	if (gl == 0) break;
 	index = evas_common_font_glyph_search(fn, &fi, gl);
 	kern = 0;
-	if ((use_kerning) && (prev_index) && (index))
+        /* hmmm kerning means i can't sanely do my own cached metric tables! */
+	/* grrr - this means font face sharing is kinda... not an option if */
+	/* you want performance */
+	if ((use_kerning) && (prev_index) && (index) &&
+	    (pface == fi->src->ft.face))
 	  {
-	     FT_Get_Kerning(fi->src->ft.face, prev_index, index,
-			    ft_kerning_default, &delta);
-	     kern = delta.x << 2;
-	     pen_x += kern;
+	     FT_Vector delta;
+	     
+	     if (FT_Get_Kerning(fi->src->ft.face, prev_index, index,
+				ft_kerning_default, &delta) == 0)
+	       {
+		  kern = delta.x << 2;
+		  pen_x += kern;
+	       }
 	  }
+	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	if (!fg) continue;
 	
 	if (kern < 0) kern = 0;	
-	chr_x = ((pen_x - kern) >> 8) + fg->glyph_out->left;
-	chr_y = (pen_y >> 8) + fg->glyph_out->top;
+        chr_x = ((pen_x - kern) + (fg->glyph_out->left << 8)) >> 8;
+	chr_y = (pen_y + (fg->glyph_out->top << 8)) >> 8;
 	chr_w = fg->glyph_out->bitmap.width + (kern >> 8);
 /*	if (text[chr]) */
 	  {
@@ -217,6 +242,7 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y
    int asc, desc;
    FT_UInt prev_index;
    RGBA_Font_Int *fi;
+   FT_Face pface = NULL;
    
    fi = fn->fonts->data;
    
@@ -242,19 +268,28 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y
 	if (gl == 0) break;
 	index = evas_common_font_glyph_search(fn, &fi, gl);
 	kern = 0;
-	if ((use_kerning) && (prev_index) && (index))
+        /* hmmm kerning means i can't sanely do my own cached metric tables! */
+	/* grrr - this means font face sharing is kinda... not an option if */
+	/* you want performance */
+	if ((use_kerning) && (prev_index) && (index) &&
+	    (pface == fi->src->ft.face))
 	  {
-	     FT_Get_Kerning(fi->src->ft.face, prev_index, index,
-			    ft_kerning_default, &delta);
-	     kern = delta.x << 2;
-	     pen_x += kern;
+	     FT_Vector delta;
+	     
+	     if (FT_Get_Kerning(fi->src->ft.face, prev_index, index,
+				ft_kerning_default, &delta) == 0)
+	       {
+		  kern = delta.x << 2;
+		  pen_x += kern;
+	       }
 	  }
+	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	if (!fg) continue;
 	
 	if (kern < 0) kern = 0;	
-	chr_x = ((pen_x - kern) >> 8) + fg->glyph_out->left;
-	chr_y = (pen_y >> 8) + fg->glyph_out->top;
+        chr_x = ((pen_x - kern) + (fg->glyph_out->left << 8)) >> 8;
+	chr_y = (pen_y + (fg->glyph_out->top << 8)) >> 8;
 	chr_w = fg->glyph_out->bitmap.width + (kern >> 8);
 /*	if (text[chr]) */
 	  {

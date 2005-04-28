@@ -80,7 +80,8 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
    int im_w, im_h;
    int c;
    RGBA_Font_Int *fi;
-
+   FT_Face pface = NULL;
+   
    fi = fn->fonts->data;
    
    im = dst->image->data;
@@ -131,14 +132,16 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	/* hmmm kerning means i can't sanely do my own cached metric tables! */
 	/* grrr - this means font face sharing is kinda... not an option if */
 	/* you want performance */
-	if ((use_kerning) && (prev_index) && (index))
+        if ((use_kerning) && (prev_index) && (index) &&
+	    (pface == fi->src->ft.face))
 	  {
 	     FT_Vector delta;
 	     
-	     FT_Get_Kerning(fi->src->ft.face, prev_index, index,
-			    ft_kerning_default, &delta);
-	     pen_x += delta.x << 2;
+	     if (FT_Get_Kerning(fi->src->ft.face, prev_index, index,
+				ft_kerning_default, &delta) == 0)
+	       pen_x += delta.x << 2;
 	  }
+	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	if (!fg) continue;
 	
