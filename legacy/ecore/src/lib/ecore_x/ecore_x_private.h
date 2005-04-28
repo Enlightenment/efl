@@ -186,10 +186,14 @@ int   _ecore_x_selection_set(Window w, unsigned char *data, int len, Ecore_X_Ato
 int   _ecore_x_selection_convert(Ecore_X_Atom selection, Ecore_X_Atom target, void **data_ret);
 void *_ecore_x_selection_parse(const char *target, unsigned char *data, int size);
 
+/* from dnd */
 void _ecore_x_dnd_init(void);
 Ecore_X_DND_Source *_ecore_x_dnd_source_get(void);
 Ecore_X_DND_Target *_ecore_x_dnd_target_get(void);
 void _ecore_x_dnd_drag(int x, int y);
 void _ecore_x_dnd_shutdown(void);
+
+/* from netwm */
+Ecore_X_Window_State _ecore_x_netwm_state_get(Ecore_X_Atom a);
 
 #endif

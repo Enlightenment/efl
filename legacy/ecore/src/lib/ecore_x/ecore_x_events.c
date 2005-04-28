@@ -1359,12 +1359,37 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
 	ecore_event_add(ECORE_X_EVENT_XDND_FINISHED, e, NULL, NULL);
      }
+   else if (xevent->xclient.message_type == ECORE_X_ATOM_NET_WM_STATE)
+     {
+	Ecore_X_Event_Window_State *e;
+
+	e = calloc(1, sizeof(Ecore_X_Event_Window_State));
+	if (!e) return;
+	e->win = xevent->xclient.window;
+	if (xevent->xclient.data.l[0] == 0)
+	  e->action = ECORE_X_WINDOW_STATE_ACTION_REMOVE;
+	else if (xevent->xclient.data.l[0] == 1)
+	  e->action = ECORE_X_WINDOW_STATE_ACTION_ADD;
+	else if (xevent->xclient.data.l[0] == 2)
+	  e->action = ECORE_X_WINDOW_STATE_ACTION_TOGGLE;
+	else
+	  {
+	     free(e);
+	     return;
+	  }
+	e->state[0] = _ecore_x_netwm_state_get(xevent->xclient.data.l[1]);
+	e->state[1] = _ecore_x_netwm_state_get(xevent->xclient.data.l[2]);
+	e->source = xevent->xclient.data.l[3];
+
+	ecore_event_add(ECORE_X_EVENT_WINDOW_STATE, e, NULL, NULL);
+     }
    else
      {
 	Ecore_X_Event_Client_Message *e;
 	int i;
 
-	e = (Ecore_X_Event_Client_Message *) calloc(1, sizeof(Ecore_X_Event_Client_Message));
+	e = calloc(1, sizeof(Ecore_X_Event_Client_Message));
+	if (!e) return;
 	e->win = xevent->xclient.window;
 	e->message_type = xevent->xclient.message_type;
 	e->format = xevent->xclient.format;

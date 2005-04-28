@@ -56,6 +56,58 @@ typedef struct _Ecore_X_Rectangle {
    unsigned int width, height;
 } Ecore_X_Rectangle;
 
+typedef enum _Ecore_X_Window_State {
+    /** The window is iconified. */
+    ECORE_X_WINDOW_STATE_ICONIFIED,
+
+    /** The window is a modal dialog box. */
+    ECORE_X_WINDOW_STATE_MODAL,
+
+    /** The window manager should keep the window's position fixed
+     * even if the virtual desktop scrolls. */
+    ECORE_X_WINDOW_STATE_STICKY,
+
+    /** The window has the maximum vertical size. */
+    ECORE_X_WINDOW_STATE_MAXIMIZED_VERT,
+
+    /** The window has the maximum horizontal size. */
+    ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ,
+
+    /** The window is shaded. */
+    ECORE_X_WINDOW_STATE_SHADED,
+
+    /** The window should not be included in the taskbar. */
+    ECORE_X_WINDOW_STATE_SKIP_TASKBAR,
+
+    /** The window should not be included in the pager. */
+    ECORE_X_WINDOW_STATE_SKIP_PAGER,
+
+    /** The window is invisible (i.e. minimized/iconified) */
+    ECORE_X_WINDOW_STATE_HIDDEN,
+
+    /** The window should fill the entire screen and have no
+     * window border/decorations */
+    ECORE_X_WINDOW_STATE_FULLSCREEN,
+
+    /* The following are not documented because they are not
+     * intended for use in applications. */
+    ECORE_X_WINDOW_STATE_ABOVE,
+    ECORE_X_WINDOW_STATE_BELOW,
+
+    /* FIXME: Documentation */
+    ECORE_X_WINDOW_STATE_DEMANDS_ATTENTION,
+
+    /* Unknown state */
+    ECORE_X_WINDOW_STATE_UNKNOWN
+
+} Ecore_X_Window_State;
+
+typedef enum _Ecore_X_Window_State_Action {
+     ECORE_X_WINDOW_STATE_ACTION_REMOVE,
+     ECORE_X_WINDOW_STATE_ACTION_ADD,
+     ECORE_X_WINDOW_STATE_ACTION_TOGGLE
+} Ecore_X_Window_State_Action;
+
 #define ECORE_X_SELECTION_TARGET_TARGETS "TARGETS"
 #define ECORE_X_SELECTION_TARGET_TEXT "TEXT"
 #define ECORE_X_SELECTION_TARGET_COMPOUND_TEXT "COMPOUND_TEXT"
@@ -179,6 +231,7 @@ typedef struct _Ecore_X_Event_Xdnd_Status              Ecore_X_Event_Xdnd_Status
 typedef struct _Ecore_X_Event_Xdnd_Leave               Ecore_X_Event_Xdnd_Leave;
 typedef struct _Ecore_X_Event_Xdnd_Drop                Ecore_X_Event_Xdnd_Drop;
 typedef struct _Ecore_X_Event_Xdnd_Finished            Ecore_X_Event_Xdnd_Finished;
+typedef struct _Ecore_X_Event_Window_State             Ecore_X_Event_Window_State;
 typedef struct _Ecore_X_Event_Client_Message           Ecore_X_Event_Client_Message;
 typedef struct _Ecore_X_Event_Window_Shape             Ecore_X_Event_Window_Shape;
 
@@ -537,6 +590,14 @@ struct _Ecore_X_Event_Xdnd_Finished
    Ecore_X_Atom         action;
 };
 
+struct _Ecore_X_Event_Window_State
+{
+   Ecore_X_Window              win;
+   Ecore_X_Window_State_Action action;
+   Ecore_X_Window_State        state[2];
+   int                         source;
+};
+
 struct _Ecore_X_Event_Client_Message
 {
    Ecore_X_Window       win;
@@ -650,6 +711,7 @@ extern EAPI int ECORE_X_EVENT_WINDOW_MAPPING;
 extern EAPI int ECORE_X_EVENT_SELECTION_CLEAR;
 extern EAPI int ECORE_X_EVENT_SELECTION_REQUEST;
 extern EAPI int ECORE_X_EVENT_SELECTION_NOTIFY;
+extern EAPI int ECORE_X_EVENT_WINDOW_STATE;
 extern EAPI int ECORE_X_EVENT_CLIENT_MESSAGE;
 extern EAPI int ECORE_X_EVENT_WINDOW_SHAPE;
 
@@ -739,49 +801,6 @@ typedef enum _Ecore_X_Window_State_Hint {
    /** The window wants to start in an iconified state */
    ECORE_X_WINDOW_STATE_HINT_ICONIC,
 } Ecore_X_Window_State_Hint;
-
-typedef enum _Ecore_X_Window_State {
-    /** The window is iconified. */
-    ECORE_X_WINDOW_STATE_ICONIFIED,
-
-    /** The window is a modal dialog box. */
-    ECORE_X_WINDOW_STATE_MODAL,
-
-    /** The window manager should keep the window's position fixed
-     * even if the virtual desktop scrolls. */
-    ECORE_X_WINDOW_STATE_STICKY,
-
-    /** The window has the maximum vertical size. */
-    ECORE_X_WINDOW_STATE_MAXIMIZED_VERT,
-
-    /** The window has the maximum horizontal size. */
-    ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ,
-
-    /** The window is shaded. */
-    ECORE_X_WINDOW_STATE_SHADED,
-
-    /** The window should not be included in the taskbar. */
-    ECORE_X_WINDOW_STATE_SKIP_TASKBAR,
-
-    /** The window should not be included in the pager. */
-    ECORE_X_WINDOW_STATE_SKIP_PAGER,
-
-    /** The window is invisible (i.e. minimized/iconified) */
-    ECORE_X_WINDOW_STATE_HIDDEN,
-
-    /** The window should fill the entire screen and have no
-     * window border/decorations */
-    ECORE_X_WINDOW_STATE_FULLSCREEN,
-
-    /* The following are not documented because they are not
-     * intended for use in applications. */
-    ECORE_X_WINDOW_STATE_ABOVE,
-    ECORE_X_WINDOW_STATE_BELOW,
-
-    /* FIXME: Documentation */
-    ECORE_X_WINDOW_STATE_DEMANDS_ATTENTION
-
-} Ecore_X_Window_State;
 
 typedef enum _Ecore_X_Window_Type {
     ECORE_X_WINDOW_TYPE_DESKTOP,

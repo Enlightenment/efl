@@ -113,6 +113,7 @@ int ECORE_X_EVENT_WINDOW_MAPPING = 0;
 int ECORE_X_EVENT_SELECTION_CLEAR = 0;
 int ECORE_X_EVENT_SELECTION_REQUEST = 0;
 int ECORE_X_EVENT_SELECTION_NOTIFY = 0;
+int ECORE_X_EVENT_WINDOW_STATE = 0;
 int ECORE_X_EVENT_CLIENT_MESSAGE = 0;
 int ECORE_X_EVENT_WINDOW_SHAPE = 0;
 
@@ -254,6 +255,7 @@ ecore_x_init(const char *name)
 	ECORE_X_EVENT_SELECTION_CLEAR          = ecore_event_type_new();
 	ECORE_X_EVENT_SELECTION_REQUEST        = ecore_event_type_new();
 	ECORE_X_EVENT_SELECTION_NOTIFY         = ecore_event_type_new();
+	ECORE_X_EVENT_WINDOW_STATE             = ecore_event_type_new();
 	ECORE_X_EVENT_CLIENT_MESSAGE           = ecore_event_type_new();
 	ECORE_X_EVENT_WINDOW_SHAPE             = ecore_event_type_new();
 	

@@ -765,6 +765,37 @@ ecore_x_netwm_user_time_get(Ecore_X_Window win, int *time)
    return ret == 1 ? 1 : 0;
 }
 
+Ecore_X_Window_State
+_ecore_x_netwm_state_get(Ecore_X_Atom a)
+{
+   if (a == ECORE_X_ATOM_NET_WM_STATE_MODAL)
+     return ECORE_X_WINDOW_STATE_MODAL;
+   else if (a == ECORE_X_ATOM_NET_WM_STATE_STICKY)
+     return ECORE_X_WINDOW_STATE_STICKY;
+   else if (a == ECORE_X_ATOM_NET_WM_STATE_MAXIMIZED_VERT)
+     return ECORE_X_WINDOW_STATE_MAXIMIZED_VERT;
+   else if (a == ECORE_X_ATOM_NET_WM_STATE_MAXIMIZED_HORZ)
+     return ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ;
+   else if (a == ECORE_X_ATOM_NET_WM_STATE_SHADED)
+     return ECORE_X_WINDOW_STATE_SHADED;
+   else if (a == ECORE_X_ATOM_NET_WM_STATE_SKIP_TASKBAR)
+     return ECORE_X_WINDOW_STATE_SKIP_TASKBAR;
+   else if (a == ECORE_X_ATOM_NET_WM_STATE_SKIP_PAGER)
+     return ECORE_X_WINDOW_STATE_SKIP_PAGER;
+   else if (a == ECORE_X_ATOM_NET_WM_STATE_HIDDEN)
+     return ECORE_X_WINDOW_STATE_HIDDEN;
+   else if (a == ECORE_X_ATOM_NET_WM_STATE_FULLSCREEN)
+     return ECORE_X_WINDOW_STATE_FULLSCREEN;
+   else if (a == ECORE_X_ATOM_NET_WM_STATE_ABOVE)
+     return ECORE_X_WINDOW_STATE_ABOVE;
+   else if (a == ECORE_X_ATOM_NET_WM_STATE_BELOW)
+     return ECORE_X_WINDOW_STATE_BELOW;
+   else if (a == ECORE_X_ATOM_NET_WM_STATE_DEMANDS_ATTENTION)
+     return ECORE_X_WINDOW_STATE_DEMANDS_ATTENTION;
+   else
+     return ECORE_X_WINDOW_STATE_UNKNOWN;
+}
+
 static Ecore_X_Atom
 _ecore_x_netwm_state_atom_get(Ecore_X_Window_State s)
 {
