@@ -36,6 +36,7 @@ enum Float_Angle_Mode
 native numargs();
 /* varags - get arg no "arg" */
 native getarg(arg, index=0);
+native getsarg(arg, buf[], buflen);
 native Float:getfarg(arg, index=0);
 /* varags - set arg no "arg" */
 native setarg(arg, index=0, value);
