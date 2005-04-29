@@ -697,6 +697,55 @@ AC_SUBST(ecore_ipc_cflags)
 AC_SUBST(ecore_ipc_libs)
 
 
+AC_MSG_CHECKING(whether ecore_dbus module is to be built)
+have_ecore_dbus="no";
+ecore_dbus_cflags="";
+ecore_dbus_libs="";
+dbus_dir="";
+dbus_includes="";
+dbus_cflags="";
+dbus_libs="";
+
+AC_ARG_ENABLE(ecore-con,
+[  --disable-ecore-dbus              disable the ecore_dbus module], [
+  if [ test "$enableval" = "yes" ]; then
+    AC_MSG_RESULT(yes)
+    have_ecore_dbus="yes"
+  else
+    AC_MSG_RESULT(no)
+  fi
+], [
+  AC_MSG_RESULT(yes)
+  have_ecore_dbus="yes"
+]
+)
+
+if test "x$have_ecore_dbus" = "xyes"; then
+  AM_CONDITIONAL(BUILD_ECORE_DBUS, true)
+  AC_DEFINE(BUILD_ECORE_DBUS, 1, [Build Ecore_DBus Module])
+  BUILD_ECORE_DBUS=1
+  #dbus_dir="/usr";
+  #dbus_includes="";
+  #dbus_cflags="-I"$dbus_dir"/include/dbus-1.0 -I"$dbus_dir"/lib/dbus-1.0/include"
+  #dbus_libs="-L"$dbus_dir"/lib"
+  #dbus_ldflags="-ldbus-1";
+  ecore_dbus_libs="-lecore_dbus";
+else
+  AM_CONDITIONAL(BUILD_ECORE_DBUS, false)
+  BUILD_ECORE_DBUS=0
+fi
+
+AC_SUBST(BUILD_ECORE_DBUS)
+
+AC_SUBST(dbus_cflags)
+AC_SUBST(dbus_includes)
+AC_SUBST(dbus_ldflags)
+AC_SUBST(dbus_libs)
+
+AC_SUBST(ecore_dbus_cflags)
+AC_SUBST(ecore_dbus_libs)
+
+
 AC_MSG_CHECKING(whether ecore_config module is to be built)
 
 have_ecore_config="no";
@@ -916,6 +965,7 @@ src/lib/ecore_ipc/Makefile
 src/lib/ecore_txt/Makefile
 src/lib/ecore_config/Makefile
 src/lib/ecore_file/Makefile
+src/lib/ecore_dbus/Makefile
 examples/Makefile
 ecore-config
 README
@@ -945,6 +995,7 @@ echo "  Ecore_Evas FB Support...: $have_ecore_evas_fb"
 echo "  Ecore_Buffer............: $have_ecore_evas_buffer"
 echo "  Ecore_Ipc...............: $have_ecore_ipc (OpenSSL: $use_openssl)"
 echo "  Ecore_Config............: $have_ecore_config"
+echo "  Ecore_DBUS..............: $have_ecore_dbus"
 #echo "  Ecore_File..............: $have_ecore_file (Inotify: $use_inotify) (FAM: $use_fam) (Poll: $use_poll)"
 echo "  Ecore_File..............: $have_ecore_file (Inotify: $use_inotify) (Poll: $use_poll)"
 echo

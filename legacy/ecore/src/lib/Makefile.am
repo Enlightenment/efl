@@ -9,4 +9,5 @@ ecore_x \
 ecore_ipc \
 ecore_evas \
 ecore_config \
-ecore_file
+ecore_file \
+ecore_dbus
