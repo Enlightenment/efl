@@ -86,7 +86,7 @@ _embryo_args_getsarg(Embryo_Program *ep, Embryo_Cell *params)
 	int offset = base_cell + (i * sizeof(Embryo_Cell));
 
 	s[i] = *(Embryo_Cell *)(data + offset);
-	if (!s[++i]) break;
+	if (!s[i++]) break;
      }
 
    s[i - 1] = 0;
