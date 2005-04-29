@@ -466,8 +466,7 @@ if test "x$have_ecore_evas" = "xyes"; then
   if [ test -z $EVAS_CONFIG ]; then
     echo $PROG " is not in your \$PATH. Please ensure it is.";
     echo "Read the manual page for you shell as to how to extend your path.";
-    echo "FATAL ERROR. ABORT.";
-    exit -1;
+    AC_MSG_ERROR(Cannot find $PROG)
   fi
   evas_cflags=`$EVAS_CONFIG --cflags`
   evas_libs=`$EVAS_CONFIG --libs`

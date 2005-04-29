@@ -185,54 +185,46 @@ xine_libs=`$XINE_CONFIG --libs`
 
 V=`$ECORE_CONFIG --version`
 if test -z "$V"; then
-  echo "Error. Ecore is not installed or $ECORE_CONFIG cannot be found. Abort."
-  exit -1
+  AC_MSG_ERROR(Ecore is not installed or $ECORE_CONFIG cannot be found.)
 fi
 VV=`vser $V`
 VM="0.9.9"
 VVM=`vser $VM`
 if test $VV -lt $VVM; then
-  echo "Error. Ecore is not at least "$VM". It is "$V". Abort."
-  exit -1
+  AC_MSG_ERROR(Ecore is not at least "$VM". It is "$V".)
 fi
 
 V=`$EVAS_CONFIG --version`
 if test -z "$V"; then
-  echo "Error. Evas is not installed or $EVAS_CONFIG cannot be found. Abort."
-  exit -1
+  AC_MSG_ERROR(Evas is not installed or $EVAS_CONFIG cannot be found.)
 fi
 VV=`vser $V`
 VM="0.9.9"
 VVM=`vser $VM`
 if test $VV -lt $VVM; then
-  echo "Error. Evas is not at least "$VM". It is "$V". Abort."
-  exit -1
+  AC_MSG_ERROR(Evas is not at least "$VM". It is "$V".)
 fi
 
 V=`$EDJE_CONFIG --version`
 if test -z "$V"; then
-  echo "Error. Edje is not installed or $EDJE_CONFIG cannot be found. Abort."
-  exit -1
+  AC_MSG_ERROR(Edje is not installed or $EDJE_CONFIG cannot be found.)
 fi
 VV=`vser $V`
 VM="0.5.0"
 VVM=`vser $VM`
 if test $VV -lt $VVM; then
-  echo "Error. Edje is not at least "$VM". It is "$V". Abort."
-  exit -1
+  AC_MSG_ERROR(Edje is not at least "$VM". It is "$V".)
 fi
 
 V=`$XINE_CONFIG --version`
 if test -z "$V"; then
-  echo "Error. Xine is not installed or $XINE_CONFIG cannot be found. Abort."
-  exit -1
+  AC_MSG_ERROR(Xine is not installed or $XINE_CONFIG cannot be found.)
 fi
 VV=`vser $V`
 VM="1.0.0"
 VVM=`vser $VM`
 if test $VV -lt $VVM; then
-  echo "Error. Xine is not at least "$VM". It is "$V". Abort."
-  exit -1
+  AC_MSG_ERROR(Xine is not at least "$VM". It is "$V".)
 fi
 
 my_cflags=`$EVAS_CONFIG --cflags`" "`$ECORE_CONFIG --cflags`
