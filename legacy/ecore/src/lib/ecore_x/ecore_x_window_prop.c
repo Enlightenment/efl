@@ -454,6 +454,7 @@ ecore_x_window_prop_name_class_set(Ecore_X_Window win, const char *n, const char
  * 
  * Get a windows name and class property. strings must be free'd when done 
  * with.
+ * DEPRECATED. Please use ecore_x_icccm_name_class_get() instead.
  */
 void
 ecore_x_window_prop_name_class_get(Ecore_X_Window win, char **n, char **c)

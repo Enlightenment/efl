@@ -1100,6 +1100,9 @@ EAPI int   ecore_x_icccm_protocol_isset(Ecore_X_Window win,
 EAPI void  ecore_x_icccm_name_class_set(Ecore_X_Window win,
 					const char *n,
 					const char *c);
+EAPI void  ecore_x_icccm_name_class_get(Ecore_X_Window win,
+					char **n,
+					char **c);
 EAPI char *ecore_x_icccm_client_machine_get(Ecore_X_Window win);
 EAPI void  ecore_x_icccm_command_set(Ecore_X_Window win, int argc, char **argv);
 EAPI void  ecore_x_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv);

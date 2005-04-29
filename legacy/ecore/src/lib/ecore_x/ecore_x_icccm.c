@@ -663,6 +663,36 @@ ecore_x_icccm_name_class_set(Ecore_X_Window win, const char *n, const char *c)
 }
 
 /**
+ * Get a window name & class.
+ * @param win The window
+ * @param n The name string
+ * @param c The class string
+ * 
+ * Get a window name * class
+ */
+void
+ecore_x_icccm_name_class_get(Ecore_X_Window win, char **n, char **c)
+{
+   XClassHint          xch;
+   
+   if (n) *n = NULL;
+   if (c) *c = NULL;
+   if (XGetClassHint(_ecore_x_disp, win, &xch))
+     {
+	if (n)
+	  {
+	     if (xch.res_name) *n = strdup(xch.res_name);
+	  }
+	if (c)
+	  {
+	     if (xch.res_class) *c = strdup(xch.res_class);
+	  }
+	XFree(xch.res_name);
+	XFree(xch.res_class);
+     }
+}
+
+/**
  * Get a window client machine string.
  * @param win The window
  * @return The windows client machine string
