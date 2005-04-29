@@ -121,7 +121,7 @@ _ecore_evas_event_key_down(void *data __UNUSED__, int type __UNUSED__, void *eve
    if (!ee) return 1; /* pass on event */
    _ecore_evas_modifier_locks_update(ee, e->modifiers);
    evas_event_feed_key_down(ee->evas, e->keyname, e->keysymbol, e->key_compose, NULL, NULL);
-   return 0; /* dont pass it on */
+   return 1;
 }
 
 static int
@@ -135,7 +135,7 @@ _ecore_evas_event_key_up(void *data __UNUSED__, int type __UNUSED__, void *event
    if (!ee) return 1; /* pass on event */
    _ecore_evas_modifier_locks_update(ee, e->modifiers);
    evas_event_feed_key_up(ee->evas, e->keyname, e->keysymbol, e->key_compose, NULL, NULL);
-   return 0; /* dont pass it on */
+   return 1;
 }
 
 static int
@@ -153,7 +153,7 @@ _ecore_evas_event_mouse_button_down(void *data __UNUSED__, int type __UNUSED__, 
    if (e->double_click) flags |= EVAS_BUTTON_DOUBLE_CLICK;
    if (e->triple_click) flags |= EVAS_BUTTON_TRIPLE_CLICK;
    evas_event_feed_mouse_down(ee->evas, e->button, flags, NULL);
-   return 0; /* dont pass it on */
+   return 1;
 }
 
 static int
@@ -168,7 +168,7 @@ _ecore_evas_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, vo
    _ecore_evas_modifier_locks_update(ee, e->modifiers);   
    _ecore_evas_mouse_move_process(ee, e->x, e->y);
    evas_event_feed_mouse_up(ee->evas, e->button, EVAS_BUTTON_NONE, NULL);
-   return 0; /* dont pass it on */
+   return 1;
 }
 
 static int
@@ -187,7 +187,7 @@ _ecore_evas_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *
    _ecore_evas_mouse_move_process(ee, e->x, e->y);
    evas_event_feed_mouse_wheel(ee->evas, e->direction, e->z, NULL);
 
-   return 0; /* don't pass it on */
+   return 1;
 }
 
 static int
@@ -201,7 +201,7 @@ _ecore_evas_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *e
    if (!ee) return 1; /* pass on event */
    _ecore_evas_modifier_locks_update(ee, e->modifiers);
    _ecore_evas_mouse_move_process(ee, e->x, e->y);
-   return 0; /* dont pass it on */
+   return 1;
 }
 
 static int
@@ -219,7 +219,7 @@ _ecore_evas_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *eve
    _ecore_evas_modifier_locks_update(ee, e->modifiers);
    evas_event_feed_mouse_in(ee->evas, NULL);
    _ecore_evas_mouse_move_process(ee, e->x, e->y);
-   return 0; /* dont pass it on */
+   return 1;
 }
 
 static int
@@ -238,7 +238,7 @@ _ecore_evas_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *ev
    evas_event_feed_mouse_out(ee->evas, NULL);
    if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
    if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
-   return 0; /* dont pass it on */
+   return 1;
 }
 
 static int
@@ -252,7 +252,7 @@ _ecore_evas_event_window_focus_in(void *data __UNUSED__, int type __UNUSED__, vo
    if (!ee) return 1; /* pass on event */
    ee->prop.focused = 1;
    if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
-   return 0; /* dont pass it on */
+   return 1;
 }
 
 static int
@@ -268,7 +268,7 @@ _ecore_evas_event_window_focus_out(void *data __UNUSED__, int type __UNUSED__, v
      ecore_x_window_focus(ee->engine.x.win);
    ee->prop.focused = 0;
    if (ee->func.fn_focus_out) ee->func.fn_focus_out(ee);
-   return 0; /* dont pass it on */
+   return 1;
 }
 
 static int
@@ -318,7 +318,7 @@ _ecore_evas_event_window_damage(void *data __UNUSED__, int type __UNUSED__, void
 				    ee->w - e->x - e->w, 
 				    e->h, e->w);
      }
-   return 0; /* dont pass it on */
+   return 1;
 }
 
 static int
@@ -332,7 +332,7 @@ _ecore_evas_event_window_destroy(void *data __UNUSED__, int type __UNUSED__, voi
    if (!ee) return 1; /* pass on event */
    if (ee->func.fn_destroy) ee->func.fn_destroy(ee);
    ecore_evas_free(ee);
-   return 0; /* dont pass it on */
+   return 1;
 }
 
 static int
@@ -393,7 +393,7 @@ _ecore_evas_event_window_configure(void *data __UNUSED__, int type __UNUSED__, v
 	  }
 	if (ee->func.fn_resize) ee->func.fn_resize(ee);	
      }
-   return 0; /* dont pass it on */
+   return 1;
 }
 
 static int
@@ -406,7 +406,7 @@ _ecore_evas_event_window_delete_request(void *data __UNUSED__, int type __UNUSED
    ee = _ecore_evas_x_match(e->win);
    if (!ee) return 1; /* pass on event */
    if (ee->func.fn_delete_request) ee->func.fn_delete_request(ee);
-   return 0; /* dont pass it on */
+   return 1;
 }
 
 static int
@@ -421,7 +421,7 @@ _ecore_evas_event_window_show(void *data __UNUSED__, int type __UNUSED__, void *
    if (ee->visible) return 0; /* dont pass it on */
    ee->visible = 1;
    if (ee->func.fn_show) ee->func.fn_show(ee);
-   return 0; /* dont pass it on */
+   return 1;
 }
 
 static int
@@ -436,7 +436,7 @@ _ecore_evas_event_window_hide(void *data __UNUSED__, int type __UNUSED__, void *
    if (!ee->visible) return 0; /* dont pass it on */
    ee->visible = 0;
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
-   return 0; /* dont pass it on */
+   return 1;
 }
 
 static int

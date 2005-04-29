@@ -1433,7 +1433,7 @@ ecore_x_window_key_grab(Ecore_X_Window win, char *key,
    locks[7] = ECORE_X_LOCK_CAPS   | ECORE_X_LOCK_NUM    | ECORE_X_LOCK_SCROLL;
    for (i = 0; i < 8; i++)
      XGrabKey(_ecore_x_disp, keycode, m | locks[i],
-	      win, False, GrabModeSync, GrabModeAsync);
+	      win, True, GrabModeSync, GrabModeAsync);
    _ecore_key_grabs_num++;
    _ecore_key_grabs = realloc(_ecore_key_grabs,
 			      _ecore_key_grabs_num * sizeof(Window));
