@@ -46,7 +46,7 @@ int ECORE_CON_EVENT_SERVER_DEL = 0;
 int ECORE_CON_EVENT_CLIENT_DATA = 0;
 int ECORE_CON_EVENT_SERVER_DATA = 0;
 
-static Ecore_Con_Server *servers = NULL;
+static Ecore_List *servers = NULL;
 static int init_count = 0;
 
 #define LENGTH_OF_SOCKADDR_UN(s) (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
@@ -82,6 +82,8 @@ ecore_con_init(void)
 	SSL_load_error_strings();
 #endif	
      }
+   if (!servers)
+      servers = ecore_list_new();
    return init_count;
 }
 
@@ -98,7 +100,10 @@ ecore_con_shutdown(void)
      {
 	init_count--;
 	if (init_count > 0) return init_count;
-	while (servers) _ecore_con_server_free(servers);
+	while (!ecore_list_is_empty(servers))
+	     _ecore_con_server_free(ecore_list_remove_first(servers));
+	ecore_list_destroy(servers);
+	servers = NULL;
      }
    return 0;
 }
@@ -309,7 +314,10 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
    svr->port = port;
    svr->data = (void *)data;
    svr->created = 1;
-   servers = _ecore_list_append(servers, svr);
+   svr->reject_excess_clients = 0;
+   svr->client_limit = -1;
+   svr->clients = ecore_list_new();
+   ecore_list_append(servers, svr);
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_CON_SERVER);   
    return svr;
    
@@ -481,7 +489,10 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    svr->port = port;
    svr->data = (void *)data;
    svr->created = 0;
-   servers = _ecore_list_append(servers, svr);
+   svr->reject_excess_clients = 0;
+   svr->client_limit = -1;
+   svr->clients = ecore_list_new();
+   ecore_list_append(servers, svr);
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_CON_SERVER);   
    return svr;
    
@@ -517,6 +528,7 @@ ecore_con_server_del(Ecore_Con_Server *svr)
      }   
    data = svr->data;
    _ecore_con_server_free(svr);
+   if (ecore_list_goto(servers, svr)) ecore_list_remove(servers);
    return data;
 }
 
@@ -598,6 +610,41 @@ ecore_con_server_send(Ecore_Con_Server *svr, void *data, int size)
 	memcpy(svr->write_buf, data, size);
      }
    return size;
+}
+
+/**
+ * Sets a limit on the number of clients that can be handled concurrently
+ * by the given server, and a policy on what to do if excess clients try to
+ * connect.
+ * Beware that if you set this once ecore is already running, you may
+ * already have pending CLIENT_ADD events in your event queue.  Those
+ * clients have already connected and will not be affected by this call.
+ * Only clients subsequently trying to connect will be affected.
+ * @param   svr           The given server.
+ * @param   client_limit  The maximum number of clients to handle
+ *                        concurrently.  -1 means unlimited (default).  0 
+ *                        effectively disables the server.
+ * @param   reject_excess_clients  Set to 1 to automatically disconnect
+ *                        excess clients as soon as they connect if you are
+ *                        already handling client_limit clients.  Set to 0
+ *                        (default) to just hold off on the "accept()"
+ *                        system call until the number of active clients
+ *                        drops. This causes the kernel to queue up to 4096
+ *                        connections (or your kernel's limit, whichever is
+ *                        lower).
+ * @ingroup Ecore_Con_Server_Group
+ */
+void
+ecore_con_server_client_limit_set(Ecore_Con_Server *svr, int client_limit, char reject_excess_clients)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
+     {
+	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER,
+			 "ecore_con_server_client_limit_set");
+	return;
+     }   
+   svr->client_limit = client_limit;
+   svr->reject_excess_clients = reject_excess_clients;
 }
 
 /**
@@ -686,6 +733,7 @@ ecore_con_client_del(Ecore_Con_Client *cl)
      }   
    data = cl->data;
    _ecore_con_client_free(cl);
+   if (ecore_list_goto(cl->server->clients, cl)) ecore_list_remove(cl->server->clients);
    return data;
 }
 
@@ -746,9 +794,9 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_NONE);   
    while ((svr->write_buf) && (!svr->dead)) _ecore_con_server_flush(svr);
    if (svr->write_buf) free(svr->write_buf);
-   servers = _ecore_list_remove(servers, svr);
-   while (svr->clients)
-     _ecore_con_client_free((Ecore_Con_Client *)svr->clients);
+   while (!ecore_list_is_empty(svr->clients))
+      _ecore_con_client_free(ecore_list_remove_first(svr->clients));
+   ecore_list_destroy(svr->clients);
    if ((svr->created) && (svr->path)) unlink(svr->path);
    if (svr->fd >= 0) close(svr->fd);
 #if USE_OPENSSL
@@ -771,7 +819,6 @@ _ecore_con_client_free(Ecore_Con_Client *cl)
    ECORE_MAGIC_SET(cl, ECORE_MAGIC_NONE);   
    while ((cl->buf) && (!cl->dead)) _ecore_con_client_flush(cl);
    if (cl->buf) free(cl->buf);
-   cl->server->clients = _ecore_list_remove(cl->server->clients, cl);
    if (cl->fd >= 0) close(cl->fd);
    if (cl->fd_handler) ecore_main_fd_handler_del(cl->fd_handler);
    free(cl);
@@ -787,13 +834,23 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
    
    svr = data;
    if (svr->dead) return 1;
+   if ((svr->client_limit >= 0) && (!svr->reject_excess_clients))
+     {
+	if (ecore_list_nodes(svr->clients) >= svr->client_limit) return 1;
+     }
    /* a new client */
    size_in = sizeof(struct sockaddr_in);
    new_fd = accept(svr->fd, (struct sockaddr *)&incoming, &size_in);
    if (new_fd >= 0)
      {
 	Ecore_Con_Client *cl;
-	
+
+	if ((svr->client_limit >= 0) && (svr->reject_excess_clients))
+	  {
+	     close(new_fd);
+	     return 1;
+	  }
+
 	cl = calloc(1, sizeof(Ecore_Con_Client));
 	if (!cl)
 	  {
@@ -809,7 +866,7 @@ _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler __UNUSED__)
 						   _ecore_con_svr_cl_handler, 
 						   cl, NULL, NULL);
 	ECORE_MAGIC_SET(cl, ECORE_MAGIC_CON_CLIENT);
-	svr->clients = _ecore_list_append(svr->clients, cl);
+	ecore_list_append(svr->clients, cl);
 	  {
 	     Ecore_Con_Event_Client_Add *e;
 	     

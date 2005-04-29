@@ -126,6 +126,7 @@ extern "C" {
    EAPI void             *ecore_con_server_data_get(Ecore_Con_Server *svr);
    EAPI int               ecore_con_server_connected_get(Ecore_Con_Server *svr);
    EAPI int               ecore_con_server_send(Ecore_Con_Server *svr, void *data, int size);
+   EAPI void              ecore_con_server_client_limit_set(Ecore_Con_Server *svr, int client_limit, char reject_excess_clients);
    
    EAPI int               ecore_con_client_send(Ecore_Con_Client *cl, void *data, int size);
    EAPI Ecore_Con_Server *ecore_con_client_server_get(Ecore_Con_Client *cl);
