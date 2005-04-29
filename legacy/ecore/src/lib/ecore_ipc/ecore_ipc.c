@@ -554,6 +554,40 @@ ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int 
    return ret;
 }
 
+/**
+ * Sets a limit on the number of clients that can be handled concurrently
+ * by the given server, and a policy on what to do if excess clients try to
+ * connect.
+ * Beware that if you set this once ecore is already running, you may
+ * already have pending CLIENT_ADD events in your event queue.  Those
+ * clients have already connected and will not be affected by this call.
+ * Only clients subsequently trying to connect will be affected.
+ * @param   svr           The given server.
+ * @param   client_limit  The maximum number of clients to handle
+ *                        concurrently.  -1 means unlimited (default).  0
+ *                        effectively disables the server.
+ * @param   reject_excess_clients  Set to 1 to automatically disconnect
+ *                        excess clients as soon as they connect if you are
+ *                        already handling client_limit clients.  Set to 0
+ *                        (default) to just hold off on the "accept()"
+ *                        system call until the number of active clients
+ *                        drops. This causes the kernel to queue up to 4096
+ *                        connections (or your kernel's limit, whichever is
+ *                        lower).
+ * @ingroup Ecore_Ipc_Server_Group
+ */
+void
+ecore_ipc_server_client_limit_set(Ecore_Ipc_Server *svr, int client_limit, char reject_excess_clients)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_IPC_SERVER))
+     {
+	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_IPC_SERVER,
+			 "ecore_ipc_server_client_limit_set");
+	return;
+     }
+   ecore_con_server_client_limit_set(svr->server, client_limit, reject_excess_clients);
+}
+
 #define CLENC(_member) \
    d = _ecore_ipc_dlt_int(msg._member, cl->prev.o._member, &md); \
    if (md >= DLT_SET) \
@@ -734,10 +768,10 @@ ecore_ipc_client_data_get(Ecore_Ipc_Client *cl)
 }
 
 /**
- *  * Returns if SSL support is available
- *  * @return  1 if SSL is available, 0 if it is not.
- *  * @ingroup Ecore_Con_Client_Group
- *  */
+ * Returns if SSL support is available
+ * @return  1 if SSL is available, 0 if it is not.
+ * @ingroup Ecore_Con_Client_Group
+ */
 int
 ecore_ipc_ssl_available_get(void)
 {
