@@ -672,7 +672,8 @@ data_write(void)
 				EMBRYO_PREFIX"/bin/embryo_cc -i %s -o %s %s", 
 				DAT"include", tmpo, tmpn);
 		       ret = system(buf);
-		       if (ret != 0)
+		       /* accept warnings in the embryo code */
+		       if (ret < 0 || ret > 1)
 			 {
 			    fprintf(stderr, "%s: Warning. Compiling script code not clean.\n",
 				    progname);	
