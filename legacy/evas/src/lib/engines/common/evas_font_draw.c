@@ -17,7 +17,9 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
    fg = evas_hash_find(fi->glyphs, key);
    if (fg) return fg;
    
-   error = FT_Load_Glyph(fi->src->ft.face, index, FT_LOAD_NO_BITMAP);
+//   error = FT_Load_Glyph(fi->src->ft.face, index, FT_LOAD_NO_BITMAP);
+   error = FT_Load_Glyph(fi->src->ft.face, index, 
+			 FT_LOAD_RENDER);
    if (error) return NULL;
    
    fg = malloc(sizeof(struct _RGBA_Font_Glyph));
