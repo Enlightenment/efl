@@ -1284,6 +1284,7 @@ EAPI void ecore_x_window_key_ungrab(Ecore_X_Window win, char *key,
 EAPI void ecore_x_focus_reset(void);
 EAPI void ecore_x_events_allow_all(void);
 EAPI void ecore_x_pointer_last_xy_get(int *x, int *y);
+EAPI void ecore_x_pointer_xy_get(Ecore_X_Window win, int *x, int *y);
        
 #ifdef __cplusplus
 }

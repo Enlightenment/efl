@@ -1551,6 +1551,18 @@ ecore_x_pointer_last_xy_get(int *x, int *y)
    if (x) *x = _ecore_x_event_last_root_x;
    if (y) *y = _ecore_x_event_last_root_y;
 }
+
+void
+ecore_x_pointer_xy_get(Ecore_X_Window win, int *x, int *y)
+{
+   Window rwin, cwin;
+   int rx, ry, wx, wy;
+   unsigned int mask;
+   
+   XQueryPointer(_ecore_x_disp, win, &rwin, &cwin, &rx, &ry, &wx, &wy, &mask);
+   if (x) *x = wx;
+   if (y) *y = wy;
+}
 /*****************************************************************************/
 /*****************************************************************************/
 /*****************************************************************************/
