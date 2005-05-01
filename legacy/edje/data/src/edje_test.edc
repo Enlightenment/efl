@@ -25,11 +25,7 @@ collections {
 	       new buf[100];
 	       
 	       snprintf(buf, sizeof(buf), "MESSAGE STRING ID: %i", id);
-	       for (new j = 0; j < (sizeof(str) - 1); j++)
-		 {
-		    str[j] = getarg(2, j);
-		    if (str[j] == 0) break;
-		 }
+		   getsarg(2, str, sizeof(str));
 	       emit(buf, str);
 	       send_message(type, id + 1000, "A Test Reply");
 	    }
@@ -65,11 +61,7 @@ collections {
 	       snprintf(buf, sizeof(buf), "MESSAGE STRING SET ID: %i", id);
                for (new i = 2; i < numargs(); i++)
 		 {
-		    for (new j = 0; j < (sizeof(str) - 1); j++)
-		      {
-			 str[j] = getarg(i, j);
-			 if (str[j] == 0) break;
-		      }
+		    getsarg(i, str, sizeof(str));
 		    emit(buf, str);
 		 }
 	       send_message(type, id + 1000, "Alpha", "Beta", "Gamma", "Delta");
@@ -113,11 +105,7 @@ collections {
 	       new val;
 	       
 	       snprintf(buf, sizeof(buf), "MESSAGE STRING INT ID: %i", id);
-	       for (new j = 0; j < (sizeof(str) - 1); j++)
-		 {
-		    str[j] = getarg(2, j);
-		    if (str[j] == 0) break;
-		 }
+		   getsarg(2, str, sizeof(str));
 	       emit(buf, str);
 	       val = getarg(3);
 	       snprintf(str, sizeof(str), "V = %i", val);
@@ -131,11 +119,7 @@ collections {
 	       new Float:val;
 	       
 	       snprintf(buf, sizeof(buf), "MESSAGE STRING INT ID: %i", id);
-	       for (new j = 0; j < (sizeof(str) - 1); j++)
-		 {
-		    str[j] = getarg(2, j);
-		    if (str[j] == 0) break;
-		 }
+		   getsarg(2, str, sizeof(str));
 	       emit(buf, str);
 	       val = getfarg(3);
 	       snprintf(str, sizeof(str), "V = %f", val);
@@ -149,11 +133,7 @@ collections {
 	       new val;
 	       
 	       snprintf(buf, sizeof(buf), "MESSAGE STRING INT SET ID: %i", id);
-	       for (new j = 0; j < (sizeof(str) - 1); j++)
-		 {
-		    str[j] = getarg(2, j);
-		    if (str[j] == 0) break;
-		 }
+		   getsarg(2, str, sizeof(str));
 	       emit(buf, str);
 	       for (new i = 3; i < numargs(); i++)
 		 {
@@ -170,11 +150,7 @@ collections {
 	       new Float:val;
 	       
 	       snprintf(buf, sizeof(buf), "MESSAGE STRING INT SET ID: %i", id);
-	       for (new j = 0; j < (sizeof(str) - 1); j++)
-		 {
-		    str[j] = getarg(2, j);
-		    if (str[j] == 0) break;
-		 }
+		   getsarg(2, str, sizeof(str));
 	       emit(buf, str);
 	       for (new i = 3; i < numargs(); i++)
 		 {

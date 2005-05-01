@@ -80,7 +80,7 @@ collections
 		       new buf[100];
 		       
 		       snprintf(buf, sizeof(buf), "MESSAGE STRING ID: %i", id);
-		       snprintf(str, 100, "%s", getarg(2));
+			   getsarg(2, str, 100);
 		       emit(buf, str);
 		    }
 		  else if (type == MSG_INT_SET)

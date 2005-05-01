@@ -131,11 +131,7 @@ vargs(a, b, ...)
 	printf("  GET ARG... %i\n", i);
 	if (i < 4)
 	  {
-	     for (new j = 0; j < (sizeof(str) - 1); j++)
-	       {
-		  str[j] = getarg(i, j);
-		  if (str[j] == 0) break;
-	       }
+	     getsarg(i, str, sizeof(str));
 	     printf("    ARG: %s [max %i]\n", str, sizeof(str));
 	  }
 	else if (i < 6)
