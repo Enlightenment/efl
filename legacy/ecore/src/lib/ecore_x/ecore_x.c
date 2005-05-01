@@ -1416,11 +1416,15 @@ ecore_x_window_key_grab(Ecore_X_Window win, char *key,
 			int mod, int any_mod)
 {
    KeyCode             keycode;
+   KeySym              keysym;
    unsigned int        m;
    unsigned int        locks[8];
    int                 i;
    
+   keysym = XStringToKeysym(key);
+   if (keysym == NoSymbol) return;
    keycode  = XKeysymToKeycode(_ecore_x_disp, XStringToKeysym(key));
+   if (keycode == 0) return;
    m = mod;
    if (any_mod) m = AnyModifier;
    locks[0] = 0;
@@ -1445,11 +1449,15 @@ ecore_x_window_key_ungrab(Ecore_X_Window win, char *key,
 			  int mod, int any_mod)
 {
    KeyCode             keycode;
+   KeySym              keysym;
    unsigned int        m;
    unsigned int        locks[8];
    int                 i, shuffle = 0;
 
+   keysym = XStringToKeysym(key);
+   if (keysym == NoSymbol) return;
    keycode  = XKeysymToKeycode(_ecore_x_disp, XStringToKeysym(key));
+   if (keycode == 0) return;
    m = mod;
    if (any_mod) m = AnyModifier;
    locks[0] = 0;
