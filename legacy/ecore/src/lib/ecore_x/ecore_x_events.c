@@ -1133,9 +1133,9 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
    /* checks here and generate synthetic events per special message known */
    /* otherwise generate generic client message event. this would handle*/
    /* netwm, ICCCM, gnomewm, old kde and mwm hint client message protocols */
-   if ((xevent->xclient.message_type == ECORE_X_ATOM_WM_PROTOCOLS) &&
-	 (xevent->xclient.format == 32) &&
-	 (xevent->xclient.data.l[0] == (long)ECORE_X_ATOM_WM_DELETE_WINDOW))
+   if ((xevent->xclient.message_type == ECORE_X_ATOM_WM_PROTOCOLS)
+       && (xevent->xclient.format == 32)
+       && (xevent->xclient.data.l[0] == (long)ECORE_X_ATOM_WM_DELETE_WINDOW))
      {
 	Ecore_X_Event_Window_Delete_Request *e;
 
@@ -1390,6 +1390,20 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	e->state[0] = _ecore_x_netwm_state_get(xevent->xclient.data.l[1]);
 	e->state[1] = _ecore_x_netwm_state_get(xevent->xclient.data.l[2]);
 	e->source = xevent->xclient.data.l[3];
+
+	ecore_event_add(ECORE_X_EVENT_WINDOW_STATE, e, NULL, NULL);
+     }
+   else if ((xevent->xclient.message_type == ECORE_X_ATOM_WM_CHANGE_STATE)
+	    && (xevent->xclient.format == 32)
+	    && (xevent->xclient.data.l[0] == IconicState))
+     {
+	Ecore_X_Event_Window_State *e;
+
+	e = calloc(1, sizeof(Ecore_X_Event_Window_State));
+	if (!e) return;
+	e->win = xevent->xclient.window;
+	e->action = ECORE_X_WINDOW_STATE_ACTION_ADD;
+	e->state[0] = ECORE_X_WINDOW_STATE_ICONIFIED;
 
 	ecore_event_add(ECORE_X_EVENT_WINDOW_STATE, e, NULL, NULL);
      }
