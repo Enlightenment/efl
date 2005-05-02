@@ -833,6 +833,16 @@ _ecore_x_event_handle_configure_request(XEvent *xevent)
    e->border = xevent->xconfigurerequest.border_width;
    e->value_mask = xevent->xconfigurerequest.value_mask;
    e->time = _ecore_x_event_last_time;
+   if (xevent->xconfigurerequest.detail == Above)
+     e->detail = ECORE_X_WINDOW_STACK_ABOVE;
+   else if (xevent->xconfigurerequest.detail == Below)
+     e->detail = ECORE_X_WINDOW_STACK_BELOW;
+   else if (xevent->xconfigurerequest.detail == TopIf)
+     e->detail = ECORE_X_WINDOW_STACK_TOP_IF;
+   else if (xevent->xconfigurerequest.detail == BottomIf)
+     e->detail = ECORE_X_WINDOW_STACK_BOTTOM_IF;
+   else if (xevent->xconfigurerequest.detail == Opposite)
+     e->detail = ECORE_X_WINDOW_STACK_OPPOSITE;
    ecore_event_add(ECORE_X_EVENT_WINDOW_CONFIGURE_REQUEST, e, NULL, NULL);
 }
 

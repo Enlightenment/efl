@@ -108,6 +108,14 @@ typedef enum _Ecore_X_Window_State_Action {
      ECORE_X_WINDOW_STATE_ACTION_TOGGLE
 } Ecore_X_Window_State_Action;
 
+typedef enum _Ecore_X_Window_Stack_Mode {
+   ECORE_X_WINDOW_STACK_ABOVE = 0,
+   ECORE_X_WINDOW_STACK_BELOW = 1,
+   ECORE_X_WINDOW_STACK_TOP_IF = 2,
+   ECORE_X_WINDOW_STACK_BOTTOM_IF = 3,
+   ECORE_X_WINDOW_STACK_OPPOSITE = 4
+} Ecore_X_Window_Stack_Mode;
+
 #define ECORE_X_SELECTION_TARGET_TARGETS "TARGETS"
 #define ECORE_X_SELECTION_TARGET_TEXT "TEXT"
 #define ECORE_X_SELECTION_TARGET_COMPOUND_TEXT "COMPOUND_TEXT"
@@ -442,7 +450,7 @@ struct _Ecore_X_Event_Window_Configure_Request
    Ecore_X_Window  abovewin;
    int     x, y, w, h;
    int     border;
-   int     detail;
+   Ecore_X_Window_Stack_Mode detail;
    unsigned long value_mask;
    Ecore_X_Time    time;
 };
@@ -835,14 +843,6 @@ typedef enum _Ecore_X_Window_Configure_Mask {
    ECORE_X_WINDOW_CONFIGURE_MASK_SIBLING        = (1 << 5),
    ECORE_X_WINDOW_CONFIGURE_MASK_STACK_MODE     = (1 << 6)
 } Ecore_X_Window_Configure_Mask;
-
-typedef enum _Ecore_X_Window_Stack_Mode {
-   ECORE_X_WINDOW_STACK_ABOVE = 0,
-   ECORE_X_WINDOW_STACK_BELOW = 1,
-   ECORE_X_WINDOW_STACK_TOP_IF = 2,
-   ECORE_X_WINDOW_STACK_BOTTOM_IF = 3,
-   ECORE_X_WINDOW_STACK_OPPOSITE = 4
-} Ecore_X_Window_Stack_Mode;
 
 /* Window layer constants */
 #define ECORE_X_WINDOW_LAYER_BELOW 2
