@@ -72,7 +72,7 @@ evas_key_lock_get(Evas *e)
  * 
  */
 Evas_Bool
-evas_key_modifier_is_set_get(Evas_Modifier *m, const char *keyname)
+evas_key_modifier_is_set(Evas_Modifier *m, const char *keyname)
 {
    Evas_Modifier_Mask num;
    int n;
@@ -94,7 +94,7 @@ evas_key_modifier_is_set_get(Evas_Modifier *m, const char *keyname)
  * 
  */
 Evas_Bool
-evas_key_lock_is_set_get(Evas_Lock *l, const char *keyname)
+evas_key_lock_is_set(Evas_Lock *l, const char *keyname)
 {
    Evas_Modifier_Mask num;
    int n;

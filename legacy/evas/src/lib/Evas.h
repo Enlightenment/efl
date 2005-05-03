@@ -549,9 +549,9 @@ extern "C" {
    EAPI Evas_Modifier    *evas_key_modifier_get             (Evas *e);
    EAPI Evas_Lock        *evas_key_lock_get                 (Evas *e);
 
-   EAPI Evas_Bool         evas_key_modifier_is_set_get      (Evas_Modifier *m, const char *keyname);
+   EAPI Evas_Bool         evas_key_modifier_is_set          (Evas_Modifier *m, const char *keyname);
 
-   EAPI Evas_Bool         evas_key_lock_is_set_get          (Evas_Lock *l, const char *keyname);
+   EAPI Evas_Bool         evas_key_lock_is_set              (Evas_Lock *l, const char *keyname);
    
    EAPI void              evas_key_modifier_add             (Evas *e, const char *keyname);
    EAPI void              evas_key_modifier_del             (Evas *e, const char *keyname);
