@@ -72,6 +72,33 @@ _ecore_evas_x_match(Ecore_X_Window win)
 }
 
 static void
+_ecore_evas_x_resize_shape(Ecore_Evas *ee)
+{
+   Evas_Engine_Info_Software_X11 *einfo;
+   
+   einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
+   if (einfo)
+     {
+	GC gc;
+	XGCValues gcv;
+	
+	if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+	ee->engine.x.mask = ecore_x_pixmap_new(ee->engine.x.win, ee->w, ee->h, 1);
+	gcv.foreground = 0;
+	gc = XCreateGC(ecore_x_display_get(), ee->engine.x.mask,
+		       GCForeground,
+		       &gcv);
+	XFillRectangle(ecore_x_display_get(), ee->engine.x.mask, gc,
+		       0, 0, ee->w, ee->h);
+	XFreeGC(ecore_x_display_get(), gc);
+	einfo->info.mask = ee->engine.x.mask;
+	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+	evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+     
+     }
+}
+
+static void
 _ecore_evas_modifier_locks_update(Ecore_Evas *ee, int modifiers)
 {
    if (modifiers & ECORE_X_MODIFIER_SHIFT)
@@ -379,8 +406,7 @@ _ecore_evas_event_window_configure(void *data __UNUSED__, int type __UNUSED__, v
 	  }
 	if (ee->shaped)
 	  {
-	     ecore_evas_shaped_set(ee, 0);
-	     ecore_evas_shaped_set(ee, 1);
+	     _ecore_evas_x_resize_shape(ee);
 	  }
 	if ((ee->expecting_resize.w > 0) &&
 	    (ee->expecting_resize.h > 0))
@@ -685,8 +711,7 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 	       }
 	     if (ee->shaped)
 	       {
-		  ecore_evas_shaped_set(ee, 0);
-		  ecore_evas_shaped_set(ee, 1);
+		  _ecore_evas_x_resize_shape(ee);
 	       }
 	  }
      }
@@ -720,8 +745,7 @@ _ecore_evas_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 	       }
 	     if (ee->shaped)
 	       {
-		  ecore_evas_shaped_set(ee, 0);
-		  ecore_evas_shaped_set(ee, 1);
+		  _ecore_evas_x_resize_shape(ee);
 	       }
 	  }
      }
@@ -809,7 +833,17 @@ _ecore_evas_shaped_set(Ecore_Evas *ee, int shaped)
      {
 	if (ee->shaped)
 	  {
+	     GC gc;
+	     XGCValues gcv;
+	     
 	     ee->engine.x.mask = ecore_x_pixmap_new(ee->engine.x.win, ee->w, ee->h, 1);
+	     gcv.foreground = 0;
+	     gc = XCreateGC(ecore_x_display_get(), ee->engine.x.mask, 
+			    GCForeground,
+			    &gcv);
+	     XFillRectangle(ecore_x_display_get(), ee->engine.x.mask, gc,
+			    0, 0, ee->w, ee->h);
+	     XFreeGC(ecore_x_display_get(), gc);
 	     einfo->info.mask = ee->engine.x.mask;
 	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 	     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
@@ -1113,8 +1147,7 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
      }
    if (ee->shaped)
      {
-	ecore_evas_shaped_set(ee, 0);
-	ecore_evas_shaped_set(ee, 1);
+	_ecore_evas_x_resize_shape(ee);
      }
    if ((ee->expecting_resize.w > 0) &&
        (ee->expecting_resize.h > 0))
