@@ -55,6 +55,7 @@ typedef enum _Emotion_Meta_Info Emotion_Meta_Info;
 
 /* api calls available */
 Evas_Object *emotion_object_add                   (Evas *evas);
+Evas_Bool    emotion_object_init                  (Evas_Object *obj);
 void         emotion_object_file_set              (Evas_Object *obj, const char *file);
 const char  *emotion_object_file_get              (Evas_Object *obj);
 void         emotion_object_play_set              (Evas_Object *obj, Evas_Bool play);

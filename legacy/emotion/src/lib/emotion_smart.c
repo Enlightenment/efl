@@ -136,14 +136,13 @@ emotion_object_add(Evas *evas)
    return evas_object_smart_add(evas, smart);   
 }
 
-void
-emotion_object_file_set(Evas_Object *obj, const char *file)
+Evas_Bool
+emotion_object_init(Evas_Object *obj)
 {
    Smart_Data *sd;
    
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
-   
-   if ((file) && (sd->file) && (!strcmp(file, sd->file))) return;
+
    if (sd->file) free(sd->file);
    sd->file = NULL;
    if (sd->title) free(sd->title);
@@ -160,21 +159,37 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
    sd->pos = 0;
    sd->seek_pos = 0;
    sd->len = 0;
+   
+	if (!sd->module || !sd->video)
+   {
+      if (!_emotion_module_open("emotion_decoder_xine.so", obj, &sd->module, &sd->video))
+         return 0;
+   }
+
+   return 1;
+}
+
+void
+emotion_object_file_set(Evas_Object *obj, const char *file)
+{
+   Smart_Data *sd;
+   
+   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   
+   if ((file) && (sd->file) && (!strcmp(file, sd->file))) return;
+
    if ((file) && (strlen(file) > 0))
      {
 	int w, h;
 	
+   if (!emotion_object_init(obj))
+      return;
 	sd->file = strdup(file);
 	if (sd->module)
 	  {
 	     sd->module->file_close(sd->video);
 	     evas_object_image_size_set(sd->obj, 0, 0);
 	  }
-	if (!sd->module || !sd->video)
-   {
-      if (!_emotion_module_open("emotion_decoder_xine.so", obj, &sd->module, &sd->video))
-         return;
-   }
    if (!sd->module->file_open(sd->file, obj, sd->video))
       return;
    sd->module->size_get(sd->video, &w, &h);
@@ -185,7 +200,7 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
      }
    else
      {
-	if (sd->video)
+	if (sd->video && sd->module)
 	  {
 	     sd->module->file_close(sd->video);
 	     sd->video = NULL;
