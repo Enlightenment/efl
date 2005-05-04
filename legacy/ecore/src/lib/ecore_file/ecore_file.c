@@ -75,25 +75,26 @@ int
 ecore_file_mkpath(const char *path)
 {
    char ss[PATH_MAX];
-   int  i, ii;
+   int  i;
 
    ss[0] = 0;
    i = 0;
-   ii = 0;
    while (path[i])
      {
-	if (ii == sizeof(ss) - 1) return 0;
-	ss[ii++] = path[i];
-	ss[ii] = 0;
+	if (i == sizeof(ss) - 1) return 0;
+	ss[i] = path[i];
+	ss[i + 1] = 0;
 	if (path[i] == '/')
 	  {
-	     if (!ecore_file_is_dir(ss)) ecore_file_mkdir(ss);
-	     else if (!ecore_file_is_dir(ss)) return 0;
+	     ss[i] = 0;
+	     if ((ecore_file_exists(ss)) && (!ecore_file_is_dir(ss))) return 0;
+	     else if (!ecore_file_exists(ss)) ecore_file_mkdir(ss);
+	     ss[i] = '/';
 	  }
 	i++;
      }
-   if (!ecore_file_is_dir(ss)) ecore_file_mkdir(ss);
-   else if (!ecore_file_is_dir(ss)) return 0;
+   if ((ecore_file_exists(ss)) && (!ecore_file_is_dir(ss))) return 0;
+   else if (!ecore_file_exists(ss)) ecore_file_mkdir(ss);
    return 1;
 }
 
