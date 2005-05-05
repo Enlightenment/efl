@@ -227,8 +227,9 @@ em_init(Evas_Object *obj, void **emotion_video)
    ev->fd = ev->fd_write;
 
    ev->video = xine_open_video_driver(ev->decoder, "emotion", XINE_VISUAL_TYPE_NONE, ev);
-//   ev->audio = xine_open_audio_driver(ev->decoder, "oss", ev); 
-   ev->audio = xine_open_audio_driver(ev->decoder, "alsa", ev);
+   ev->audio = xine_open_audio_driver(ev->decoder, "oss", ev); 
+// dont use alsa - alsa has oss emulation.   
+//   ev->audio = xine_open_audio_driver(ev->decoder, "alsa", ev);
 //   ev->audio = xine_open_audio_driver(ev->decoder, "arts", ev);
 //   ev->audio = xine_open_audio_driver(ev->decoder, "esd", ev);
    ev->stream = xine_stream_new(ev->decoder, ev->audio, ev->video);
