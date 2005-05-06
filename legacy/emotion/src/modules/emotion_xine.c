@@ -235,6 +235,17 @@ em_init(Evas_Object *obj, void **emotion_video)
    ev->stream = xine_stream_new(ev->decoder, ev->audio, ev->video);
    ev->queue = xine_event_new_queue(ev->stream);
    xine_event_create_listener_thread(ev->queue, _em_event, ev);
+
+   ev->delete_me = 0;
+   ev->get_pos_thread_deleted = 0;
+   ev->seek_thread_deleted = 0;
+   pthread_cond_init(&(ev->seek_cond), NULL);
+   pthread_cond_init(&(ev->get_pos_len_cond), NULL);
+   pthread_mutex_init(&(ev->seek_mutex), NULL);
+   pthread_mutex_init(&(ev->get_pos_len_mutex), NULL);
+   pthread_create(&ev->seek_th, NULL, _em_seek, ev);
+   pthread_create(&ev->get_pos_len_th, NULL, _em_get_pos_len_th, ev);
+
    *emotion_video = ev;
    
    return 1;
@@ -247,6 +258,23 @@ em_shutdown(void *video)
    
    ev = (Emotion_Xine_Video *)video;
    
+   ev->delete_me = 1;
+//   pthread_mutex_lock(&(ev->seek_mutex));
+   if (!ev->seek_thread_deleted)
+     {
+	printf("closing seek thread\n");
+	pthread_cond_broadcast(&(ev->seek_cond));
+	while (ev->seek_to);
+     }
+
+//   pthread_mutex_lock(&(ev->get_pos_len_mutex));
+   if (!ev->get_pos_thread_deleted)
+     {
+	printf("closing get_pos thread\n");
+	pthread_cond_broadcast(&(ev->get_pos_len_cond));
+	while (ev->get_poslen);
+     }
+
    printf("EX dispose\n");
    xine_dispose(ev->stream);
    printf("EX dispose evq\n");
@@ -311,16 +339,6 @@ em_file_open(const char *file, Evas_Object *obj, void *video)
    ev->get_poslen = 0;
    ev->seek_to = 0;
    
-   ev->delete_me = 0;
-   ev->get_pos_thread_deleted = 0;
-   ev->seek_thread_deleted = 0;
-   pthread_cond_init(&(ev->seek_cond), NULL);
-   pthread_cond_init(&(ev->get_pos_len_cond), NULL);
-   pthread_mutex_init(&(ev->seek_mutex), NULL);
-   pthread_mutex_init(&(ev->get_pos_len_mutex), NULL);
-   pthread_create(&ev->seek_th, NULL, _em_seek, ev);
-   pthread_create(&ev->get_pos_len_th, NULL, _em_get_pos_len_th, ev);
-   
 //   em_debug(ev);
    return 1;
 }
@@ -331,22 +349,6 @@ em_file_close(void *ef)
    Emotion_Xine_Video *ev;
    
    ev = (Emotion_Xine_Video *)ef;
-   ev->delete_me = 1;
-//   pthread_mutex_lock(&(ev->seek_mutex));
-   if (!ev->seek_thread_deleted)
-     {
-	printf("closing seek thread\n");
-	pthread_cond_broadcast(&(ev->seek_cond));
-	while (ev->seek_to);
-     }
-
-//   pthread_mutex_lock(&(ev->get_pos_len_mutex));
-   if (!ev->get_pos_thread_deleted)
-     {
-	printf("closing get_pos thread\n");
-	pthread_cond_broadcast(&(ev->get_pos_len_cond));
-	while (ev->get_poslen);
-     }
 
    printf("EX pause end...\n");
    if (!emotion_object_play_get(ev->obj))
