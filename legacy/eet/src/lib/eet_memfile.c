@@ -10,7 +10,12 @@ _eet_memfile_read_open(void *data, size_t size)
    FILE *f;
    
    f = tmpfile();
-   if (!f) return NULL;
+   if (!f)
+     {
+	printf("EET: Error opening tmp file (no fmemopen support fallback):\n");
+	perror("tmpfile()");
+	return NULL;
+     }
    fwrite(data, size, 1, f);
    rewind(f);
    return f;

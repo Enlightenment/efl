@@ -1013,6 +1013,23 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	       {
 		  snprintf(buf, sizeof(buf), "images/%i", image_id);
 		  evas_object_image_file_set(ep->object, ed->file->path, buf);
+		  if (evas_object_image_load_error_get(ep->object)  != EVAS_LOAD_ERROR_NONE)
+		    {
+		       printf("EDJE: Error loading image collection \"%s\" from file \"%s\"\n",
+			      buf, ed->file->path);
+		       if (evas_object_image_load_error_get(ep->object) == EVAS_LOAD_ERROR_GENERIC)
+			 printf("Error type: EVAS_LOAD_ERROR_GENERIC\n");
+		       else if (evas_object_image_load_error_get(ep->object) == EVAS_LOAD_ERROR_DOES_NOT_EXIST)
+			 printf("Error type: EVAS_LOAD_ERROR_DOES_NOT_EXIST\n");
+		       else if (evas_object_image_load_error_get(ep->object) == EVAS_LOAD_ERROR_PERMISSION_DENIED)
+			 printf("Error type: EVAS_LOAD_ERROR_PERMISSION_DENIED\n");
+		       else if (evas_object_image_load_error_get(ep->object) == EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED)
+			 printf("Error type: EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED\n");
+		       else if (evas_object_image_load_error_get(ep->object) == EVAS_LOAD_ERROR_CORRUPT_FILE)
+			 printf("Error type: EVAS_LOAD_ERROR_CORRUPT_FILE\n");
+		       else if (evas_object_image_load_error_get(ep->object) == EVAS_LOAD_ERROR_UNKNOWN_FORMAT)
+			 printf("Error type: EVAS_LOAD_ERROR_UNKNOWN_FORMAT\n");
+		    }
 	       }
 	     evas_object_color_set(ep->object, p3.color.r, p3.color.g, p3.color.b, p3.color.a);
 	     if (p3.visible) evas_object_show(ep->object);
