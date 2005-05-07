@@ -15,6 +15,7 @@ include_HEADERS      = Eet.h
 libeet_la_SOURCES  = \
 eet_lib.c \
 eet_data.c \
+eet_image.c \
 eet_memfile.c \
 Eet_private.h
 
