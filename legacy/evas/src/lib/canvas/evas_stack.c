@@ -315,17 +315,29 @@ Evas_Object *
 evas_object_top_get(Evas *e)
 {
    Evas_Object *obj2 = NULL;
+   Evas_Object_List *list;
+   Evas_Layer *layer;
    
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
-   if ((e->layers) &&
-       (((Evas_Object_List *)(e->layers))->last) &&
-       (((Evas_Layer *)(((Evas_Object_List *)(e->layers))->last))->objects) &&
-       (Evas_Object *)(((Evas_List *)(((Evas_Layer *)(((Evas_Object_List *)(e->layers))->last))->objects))->last))
-     obj2 = (Evas_Object *)(((Evas_List *)(((Evas_Layer *)(((Evas_Object_List *)(e->layers))->last))->objects))->last);
+
+   list = (Evas_Object_List *) e->layers;
+   if (!list) return NULL;
+
+   layer = (Evas_Layer *) list->last;
+   if (!layer) return NULL;
+
+   list = (Evas_Object_List *) layer->objects;
+   if (!list) return NULL;
+
+   obj2 = (Evas_Object *) list->last;
+   if (!obj2) return NULL;
+
    while (((obj2) && (obj2->smart.parent)) ||
-	  ((obj2) && (obj2->delete_me)))
+	  ((obj2) && (obj2->delete_me))) {
      obj2 = evas_object_below_get_internal(obj2);
+   }
+
    return obj2;
 }
