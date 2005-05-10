@@ -154,6 +154,7 @@ eet_data_image_jpeg_rgb_decode(void *data, int size, int *w, int *h)
    jpeg_create_decompress(&cinfo);
    jpeg_stdio_src(&cinfo, f);
    jpeg_read_header(&cinfo, TRUE);
+   cinfo.dct_method = JDCT_FASTEST;
    cinfo.do_fancy_upsampling = FALSE;
    cinfo.do_block_smoothing = FALSE;
    jpeg_start_decompress(&cinfo);
@@ -274,6 +275,7 @@ eet_data_image_jpeg_alpha_decode(void *data, int size, unsigned int *d, int *w, 
    jpeg_create_decompress(&cinfo);
    jpeg_stdio_src(&cinfo, f);
    jpeg_read_header(&cinfo, TRUE);
+   cinfo.dct_method = JDCT_FASTEST;
    cinfo.do_fancy_upsampling = FALSE;
    cinfo.do_block_smoothing = FALSE;
    jpeg_start_decompress(&cinfo);
