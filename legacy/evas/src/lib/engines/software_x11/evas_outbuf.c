@@ -3,50 +3,37 @@
 #include <sys/time.h>
 #include <sys/utsname.h>
 
-static double       evas_software_x11_outbuf_software_x11_get_time(void);
-
-/* used for performance tester code */
-static double
-evas_software_x11_outbuf_software_x11_get_time(void)
-{
-   struct timeval      timev;
-
-   gettimeofday(&timev, NULL);
-   return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
-}
-
 void
-evas_software_x11_outbuf_software_x11_init(void)
+evas_software_x11_outbuf_init(void)
 {
 }
 
 void
-evas_software_x11_outbuf_software_x11_free(Outbuf * buf)
+evas_software_x11_outbuf_free(Outbuf * buf)
 {
+   evas_software_x11_outbuf_flush(buf);
    XFreeGC(buf->priv.x.disp, buf->priv.x.gc);
    if (buf->priv.x.gcm)
       XFreeGC(buf->priv.x.disp, buf->priv.x.gcm);
    if (buf->priv.pal)
-      evas_software_x11_x_software_x11_color_deallocate(buf->priv.x.disp, buf->priv.x.cmap,
-				      buf->priv.x.vis, buf->priv.pal);
-   if (buf->priv.back_buf)
-      evas_common_image_free(buf->priv.back_buf);
-   evas_software_x11_outbuf_software_x11_perf_free(buf->perf);
+      evas_software_x11_x_color_deallocate(buf->priv.x.disp, buf->priv.x.cmap,
+					   buf->priv.x.vis, buf->priv.pal);
+   evas_software_x11_outbuf_perf_free(buf->perf);
    free(buf);
 }
 
 void
-evas_software_x11_outbuf_software_x11_rotation_set(Outbuf *buf, int rot)
+evas_software_x11_outbuf_rotation_set(Outbuf *buf, int rot)
 {
    buf->rot = rot;
 }
 
 Outbuf             *
-evas_software_x11_outbuf_software_x11_setup_x(int w, int h, int rot, Outbuf_Depth depth,
-			    Display * disp, Drawable draw, Visual * vis,
-			    Colormap cmap, int x_depth, Outbuf_Perf * perf,
-			    int grayscale, int max_colors, Pixmap mask,
-			    int shape_dither)
+evas_software_x11_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
+					      Display * disp, Drawable draw, Visual * vis,
+					      Colormap cmap, int x_depth, Outbuf_Perf * perf,
+					      int grayscale, int max_colors, Pixmap mask,
+					      int shape_dither)
 {
    Outbuf             *buf;
 
@@ -73,8 +60,8 @@ evas_software_x11_outbuf_software_x11_setup_x(int w, int h, int rot, Outbuf_Dept
       Gfx_Func_Convert    conv_func;
       X_Output_Buffer    *xob;
 
-      buf->priv.x.shm = evas_software_x11_x_software_x11_can_do_shm(buf->priv.x.disp);
-      xob = evas_software_x11_x_software_x11_output_buffer_new(buf->priv.x.disp,
+      buf->priv.x.shm = evas_software_x11_x_can_do_shm(buf->priv.x.disp);
+      xob = evas_software_x11_x_output_buffer_new(buf->priv.x.disp,
 					     buf->priv.x.vis,
 					     buf->priv.x.depth,
 					     1, 1, buf->priv.x.shm, NULL);
@@ -83,10 +70,10 @@ evas_software_x11_outbuf_software_x11_setup_x(int w, int h, int rot, Outbuf_Dept
       if (xob)
 	{
 #ifdef WORDS_BIGENDIAN
-	   if (evas_software_x11_x_software_x11_output_buffer_byte_order(xob) == LSBFirst)
+	   if (evas_software_x11_x_output_buffer_byte_order(xob) == LSBFirst)
 	     buf->priv.x.swap = 1;
 #else	   
-	   if (evas_software_x11_x_software_x11_output_buffer_byte_order(xob) == MSBFirst)
+	   if (evas_software_x11_x_output_buffer_byte_order(xob) == MSBFirst)
 	     buf->priv.x.swap = 1;
 #endif	     
 	   if ((vis->class == TrueColor) || (vis->class == DirectColor))
@@ -143,7 +130,7 @@ evas_software_x11_outbuf_software_x11_setup_x(int w, int h, int rot, Outbuf_Dept
 		     else
 			pm = PAL_MODE_MONO;
 		  }
-		buf->priv.pal = evas_software_x11_x_software_x11_color_allocate(disp, cmap, vis,
+		buf->priv.pal = evas_software_x11_x_color_allocate(disp, cmap, vis,
 							      PAL_MODE_RGB666);
 		if (!buf->priv.pal)
 		  {
@@ -155,7 +142,7 @@ evas_software_x11_outbuf_software_x11_setup_x(int w, int h, int rot, Outbuf_Dept
 	     {
 		if (buf->rot == 0)
 		   conv_func = evas_common_convert_func_get(0, buf->w, buf->h,
-						evas_software_x11_x_software_x11_output_buffer_depth
+						evas_software_x11_x_output_buffer_depth
 						(xob), buf->priv.mask.r,
 						buf->priv.mask.g,
 						buf->priv.mask.b,
@@ -163,7 +150,7 @@ evas_software_x11_outbuf_software_x11_setup_x(int w, int h, int rot, Outbuf_Dept
 						buf->rot);
 		else if (buf->rot == 270)
 		   conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
-						evas_software_x11_x_software_x11_output_buffer_depth
+						evas_software_x11_x_output_buffer_depth
 						(xob), buf->priv.mask.r,
 						buf->priv.mask.g,
 						buf->priv.mask.b,
@@ -171,7 +158,7 @@ evas_software_x11_outbuf_software_x11_setup_x(int w, int h, int rot, Outbuf_Dept
 						buf->rot);
 		else if (buf->rot == 90)
 		   conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
-						evas_software_x11_x_software_x11_output_buffer_depth
+						evas_software_x11_x_output_buffer_depth
 						(xob), buf->priv.mask.r,
 						buf->priv.mask.g,
 						buf->priv.mask.b,
@@ -182,27 +169,27 @@ evas_software_x11_outbuf_software_x11_setup_x(int w, int h, int rot, Outbuf_Dept
 	     {
 		if (buf->rot == 0)
 		   conv_func = evas_common_convert_func_get(0, buf->w, buf->h,
-						evas_software_x11_x_software_x11_output_buffer_depth
+						evas_software_x11_x_output_buffer_depth
 						(xob), buf->priv.mask.r,
 						buf->priv.mask.g,
 						buf->priv.mask.b, PAL_MODE_NONE,
 						buf->rot);
 		else if (buf->rot == 270)
 		   conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
-						evas_software_x11_x_software_x11_output_buffer_depth
+						evas_software_x11_x_output_buffer_depth
 						(xob), buf->priv.mask.r,
 						buf->priv.mask.g,
 						buf->priv.mask.b, PAL_MODE_NONE,
 						buf->rot);
 		else if (buf->rot == 90)
 		   conv_func = evas_common_convert_func_get(0, buf->h, buf->w,
-						evas_software_x11_x_software_x11_output_buffer_depth
+						evas_software_x11_x_output_buffer_depth
 						(xob), buf->priv.mask.r,
 						buf->priv.mask.g,
 						buf->priv.mask.b, PAL_MODE_NONE,
 						buf->rot);
 	     }
-	   evas_software_x11_x_software_x11_output_buffer_free(xob);
+	   evas_software_x11_x_output_buffer_free(xob, 1);
 	   if (!conv_func)
 	     {
 		printf(".[ Evas Error ].\n"
@@ -218,22 +205,403 @@ evas_software_x11_outbuf_software_x11_setup_x(int w, int h, int rot, Outbuf_Dept
 		       buf->priv.mask.b, buf->priv.pal->colors);
 	     }
 	}
-      evas_software_x11_outbuf_software_x11_drawable_set(buf, draw);
-      evas_software_x11_outbuf_software_x11_mask_set(buf, mask);
+      evas_software_x11_outbuf_drawable_set(buf, draw);
+      evas_software_x11_outbuf_mask_set(buf, mask);
    }
 
-#if 0
-   if (buf->priv.x.depth < 24)
-      buf->priv.back_buf = evas_common_image_create(buf->w, buf->h);
-#endif
-
    buf->perf = perf;
-
    return buf;
 }
 
+RGBA_Image         *
+evas_software_x11_outbuf_new_region_for_update(Outbuf * buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch)
+{
+   RGBA_Image         *im;
+   Outbuf_Region      *obr;
+   int                 bpl = 0;
+   int                 use_shm = 1;
+
+   obr = calloc(1, sizeof(Outbuf_Region));
+   obr->x = x;
+   obr->y = y;
+   obr->w = w;
+   obr->h = h;
+   *cx = 0;
+   *cy = 0;
+   *cw = w;
+   *ch = h;
+
+   use_shm = buf->priv.x.shm;
+   if (buf->perf)
+     {
+	if ((w * h) < buf->perf->min_shm_image_pixel_count) use_shm = 0;
+     }
+   else
+     {
+	if ((w * h) < (200 * 200)) use_shm = 0;
+     }
+   
+   if ((buf->rot == 0) &&
+       (buf->priv.mask.r == 0xff0000) &&
+       (buf->priv.mask.g == 0x00ff00) &&
+       (buf->priv.mask.b == 0x0000ff))
+     {
+	im = evas_common_image_new();
+	im->image = evas_common_image_surface_new(im);
+	im->image->w = w;
+	im->image->h = h;
+	im->image->data = NULL;
+	im->image->no_free = 1;
+	im->extended_info = obr;
+	obr->xob = evas_software_x11_x_output_buffer_new(buf->priv.x.disp,
+							 buf->priv.x.vis,
+							 buf->priv.x.depth,
+							 w, h,
+							 use_shm,
+							 NULL);
+	im->image->data = evas_software_x11_x_output_buffer_data(obr->xob, &bpl);
+	if (buf->priv.x.mask)
+	  obr->mxob = evas_software_x11_x_output_buffer_new(buf->priv.x.disp,
+							    buf->priv.x.vis,
+							    1, w, h, 
+							    use_shm,
+							    NULL);
+     }
+   else
+     {
+	im = evas_common_image_create(w, h);
+	im->extended_info = obr;
+	if ((buf->rot == 0) || (buf->rot == 180))
+	  obr->xob = evas_software_x11_x_output_buffer_new(buf->priv.x.disp,
+							   buf->priv.x.vis,
+							   buf->priv.x.depth,
+							   w, h,
+							   use_shm,
+							   NULL);
+	else if ((buf->rot == 90) || (buf->rot == 270))
+	  obr->xob = evas_software_x11_x_output_buffer_new(buf->priv.x.disp,
+							   buf->priv.x.vis,
+							   buf->priv.x.depth,
+							   h, w,
+							   use_shm,
+							   NULL);
+	if (buf->priv.x.mask)
+	  obr->mxob = evas_software_x11_x_output_buffer_new(buf->priv.x.disp,
+							    buf->priv.x.vis,
+							    1, w, h,
+							    use_shm,
+							    NULL);
+     }
+   if (buf->priv.x.mask)
+     {
+	im->flags |= RGBA_IMAGE_HAS_ALPHA;
+	/* FIXME: faster memset! */
+	memset(im->image->data, 0, w * h * sizeof(DATA32));
+     }
+   buf->priv.pending_writes = evas_list_append(buf->priv.pending_writes, im);
+   return im;
+}
+
+void
+evas_software_x11_outbuf_free_region_for_update(Outbuf * buf, RGBA_Image * update)
+{
+   /* no need to do anything - they are cleaned up on flush */
+}
+
+void
+evas_software_x11_outbuf_flush(Outbuf *buf)
+{
+   Evas_List *l;
+   
+   for (l = buf->priv.pending_writes; l; l = l->next)
+     {
+	RGBA_Image *im;
+	Outbuf_Region      *obr;
+	
+	im = l->data;
+	obr = im->extended_info;
+	/* paste now */
+	if (buf->priv.debug)
+	  evas_software_x11_outbuf_debug_show(buf, buf->priv.x.win,
+					      obr->x, obr->y, obr->w, obr->h);
+	evas_software_x11_x_output_buffer_paste(obr->xob, buf->priv.x.win,
+						buf->priv.x.gc,
+						obr->x, obr->y, 0);
+	if (obr->mxob)
+	  evas_software_x11_x_output_buffer_paste(obr->mxob,
+						  buf->priv.x.mask,
+						  buf->priv.x.gcm,
+						  obr->x, obr->y, 0);
+     }
+   XSync(buf->priv.x.disp, False);
+   while (buf->priv.pending_writes)
+     {
+        RGBA_Image *im;
+	Outbuf_Region      *obr;
+	
+	im = buf->priv.pending_writes->data;
+	buf->priv.pending_writes = evas_list_remove_list(buf->priv.pending_writes, buf->priv.pending_writes);
+	obr = im->extended_info;
+	evas_common_image_free(im);
+	if (obr->xob) evas_software_x11_x_output_buffer_free(obr->xob, 0);
+	if (obr->mxob) evas_software_x11_x_output_buffer_free(obr->mxob, 0);
+	free(obr);
+     }
+   evas_common_cpu_end_opt();
+}
+
+void
+evas_software_x11_outbuf_push_updated_region(Outbuf * buf, RGBA_Image * update, int x, int y, int w, int h)
+{
+   Gfx_Func_Convert    conv_func = NULL;
+   Outbuf_Region      *obr;
+   DATA32             *src_data;
+   void               *data;
+   int                 bpl = 0, yy;
+   
+   obr = update->extended_info;
+   if (buf->priv.pal)
+     {
+	if ((buf->rot == 0) || (buf->rot == 180))
+	  conv_func = evas_common_convert_func_get(0, w, h,
+						   evas_software_x11_x_output_buffer_depth
+						   (obr->xob), buf->priv.mask.r,
+						   buf->priv.mask.g, buf->priv.mask.b,
+						   buf->priv.pal->colors, buf->rot);
+	else if ((buf->rot == 90) || (buf->rot == 270))
+	  conv_func = evas_common_convert_func_get(0, h, w,
+						   evas_software_x11_x_output_buffer_depth
+						   (obr->xob), buf->priv.mask.r,
+						   buf->priv.mask.g, buf->priv.mask.b,
+						   buf->priv.pal->colors, buf->rot);
+     }
+   else
+     {
+	if ((buf->rot == 0) || (buf->rot == 180))
+	  conv_func = evas_common_convert_func_get(0, w, h,
+						   evas_software_x11_x_output_buffer_depth
+						   (obr->xob), buf->priv.mask.r,
+						   buf->priv.mask.g, buf->priv.mask.b,
+						   PAL_MODE_NONE, buf->rot);
+	else if ((buf->rot == 90) || (buf->rot == 270))
+	  conv_func = evas_common_convert_func_get(0, h, w,
+						   evas_software_x11_x_output_buffer_depth
+						   (obr->xob), buf->priv.mask.r,
+						   buf->priv.mask.g, buf->priv.mask.b,
+						   PAL_MODE_NONE, buf->rot);
+     }
+   if (!conv_func) return;
+   
+   data = evas_software_x11_x_output_buffer_data(obr->xob, &bpl);
+   src_data = update->image->data;
+   if (buf->rot == 0)
+     {
+	obr->x = x;
+	obr->y = y;
+     }
+   else if (buf->rot == 90)
+     {
+	obr->x = y;
+	obr->y = buf->w - x - w;
+     }
+   else if (buf->rot == 180)
+     {
+	obr->x = buf->w - x - w;
+	obr->y = buf->h - y - h;
+     }
+   else if (buf->rot == 270)
+     {
+	obr->x = buf->h - y - h;
+	obr->y = x;
+     }
+   if ((buf->rot == 0) || (buf->rot == 180))
+     {
+	obr->w = w;
+	obr->h = h;
+     }
+   else if ((buf->rot == 90) || (buf->rot == 270))
+     {
+	obr->w = h;
+	obr->h = w;
+     }
+   if (buf->priv.pal)
+     {
+	if (data != src_data)
+	  conv_func(src_data, data,
+		    0,
+		    bpl /
+		    ((evas_software_x11_x_output_buffer_depth(obr->xob) /
+		      8)) - obr->w, obr->w, obr->h, x, y,
+		    buf->priv.pal->lookup);
+     }
+   else
+     {
+	if (data != src_data)
+	  conv_func(src_data, data,
+		    0,
+		    bpl /
+		    ((evas_software_x11_x_output_buffer_depth(obr->xob) /
+		      8)) - obr->w, obr->w, obr->h, x, y, NULL);
+     }
+   if (obr->mxob)
+     {
+	for (yy = 0; yy < obr->h; yy++)
+	  evas_software_x11_x_write_mask_line(obr->mxob,
+					      src_data +
+					      (yy * obr->w), obr->w, yy);
+     }
+}
+
+void
+evas_software_x11_outbuf_reconfigure(Outbuf * buf, int w, int h, int rot,
+				Outbuf_Depth depth)
+{
+   if ((w == buf->w) && 
+       (h == buf->h) && 
+       (rot == buf->rot) && 
+       (depth == buf->depth)) return;
+   buf->w = w;
+   buf->h = h;
+   buf->rot = rot;
+}
+
+int
+evas_software_x11_outbuf_get_width(Outbuf * buf)
+{
+   return buf->w;
+}
+
+int
+evas_software_x11_outbuf_get_height(Outbuf * buf)
+{
+   return buf->h;
+}
+
+Outbuf_Depth
+evas_software_x11_outbuf_get_depth(Outbuf * buf)
+{
+   return buf->depth;
+}
+
+int
+evas_software_x11_outbuf_get_rot(Outbuf * buf)
+{
+   return buf->rot;
+}
+
+void
+evas_software_x11_outbuf_drawable_set(Outbuf * buf, Drawable draw)
+{
+   XGCValues           gcv;
+
+   if (buf->priv.x.win == draw) return;
+   if (buf->priv.x.gc)
+     {
+	XFreeGC(buf->priv.x.disp, buf->priv.x.gc);
+	buf->priv.x.gc = NULL;
+     }
+   buf->priv.x.win = draw;
+   buf->priv.x.gc = XCreateGC(buf->priv.x.disp, buf->priv.x.win, 0, &gcv);
+}
+
+void
+evas_software_x11_outbuf_mask_set(Outbuf * buf, Pixmap mask)
+{
+   XGCValues           gcv;
+
+   if (buf->priv.x.mask == mask) return;
+   if (buf->priv.x.gcm)
+     {
+	XFreeGC(buf->priv.x.disp, buf->priv.x.gcm);
+	buf->priv.x.gcm = NULL;
+     }
+   buf->priv.x.mask = mask;
+   if (buf->priv.x.mask)
+     buf->priv.x.gcm = XCreateGC(buf->priv.x.disp, buf->priv.x.mask, 0, &gcv);
+}
+
+void
+evas_software_x11_outbuf_debug_set(Outbuf * buf, int debug)
+{
+   buf->priv.debug = debug;
+}
+
+void
+evas_software_x11_outbuf_debug_show(Outbuf * buf, Drawable draw, int x, int y, int w,
+			       int h)
+{
+   int                 i;
+   int                 screen_num = 0;
+   
+     {
+	int                 wx, wy;
+	unsigned int        ww, wh, bd, dp;
+	Window              wdum, root;
+	XWindowAttributes   wattr;
+	
+	XGetGeometry(buf->priv.x.disp, draw, &root, &wx, &wy, &ww, &wh, &bd, &dp);
+	XGetGeometry(buf->priv.x.disp, root, &wdum, &wx, &wy, &ww, &wh, &bd, &dp);
+	XGetWindowAttributes(buf->priv.x.disp, root, &wattr);
+	screen_num = XScreenNumberOfScreen(wattr.screen);
+     }
+   for (i = 0; i < 10; i++)
+     {
+	XImage             *xim;
+	
+	XSetForeground(buf->priv.x.disp, buf->priv.x.gc,
+		       BlackPixel(buf->priv.x.disp, screen_num));
+	XFillRectangle(buf->priv.x.disp, draw, buf->priv.x.gc, x, y, w, h);
+	XSync(buf->priv.x.disp, False);
+	xim =
+	  XGetImage(buf->priv.x.disp, draw, x, y, w, h, 0xffffffff, ZPixmap);
+	if (xim)
+	  XDestroyImage(xim);
+	XSync(buf->priv.x.disp, False);
+	XSetForeground(buf->priv.x.disp, buf->priv.x.gc,
+		       WhitePixel(buf->priv.x.disp, screen_num));
+	XFillRectangle(buf->priv.x.disp, draw, buf->priv.x.gc, x, y, w, h);
+	XSync(buf->priv.x.disp, False);
+	xim =
+	  XGetImage(buf->priv.x.disp, draw, x, y, w, h, 0xffffffff, ZPixmap);
+	if (xim)
+	  XDestroyImage(xim);
+	XSync(buf->priv.x.disp, False);
+     }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* used for performance tester code */
+static double
+_evas_get_time(void)
+{
+   struct timeval      timev;
+
+   gettimeofday(&timev, NULL);
+   return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
+}
+
 char               *
-evas_software_x11_outbuf_software_x11_perf_serialize_x(Outbuf_Perf * perf)
+evas_software_x11_outbuf_perf_serialize_x(Outbuf_Perf * perf)
 {
    /* take performance results and turn it inot a munged string that can be */
    /* written out somewhere by a program */
@@ -244,7 +612,7 @@ evas_software_x11_outbuf_software_x11_perf_serialize_x(Outbuf_Perf * perf)
 }
 
 void
-evas_software_x11_outbuf_software_x11_perf_deserialize_x(Outbuf_Perf * perf, const char *data)
+evas_software_x11_outbuf_perf_deserialize_x(Outbuf_Perf * perf, const char *data)
 {
    /* take a munged string that is the result of outbuf_perf_serialize_x() */
    /* and turn it back into a structure  and fill the provided perf struct */
@@ -262,7 +630,7 @@ evas_software_x11_outbuf_software_x11_perf_deserialize_x(Outbuf_Perf * perf, con
 }
 
 Outbuf_Perf        *
-evas_software_x11_outbuf_software_x11_perf_new_x(Display * disp, Window draw, Visual * vis,
+evas_software_x11_outbuf_perf_new_x(Display * disp, Window draw, Visual * vis,
 			       Colormap cmap, int x_depth)
 {
    /* create an "empty" perf struct with just the system & display info */
@@ -371,7 +739,7 @@ evas_software_x11_outbuf_software_x11_perf_new_x(Display * disp, Window draw, Vi
 }
 
 char               *
-evas_software_x11_outbuf_software_x11_perf_serialize_info_x(Outbuf_Perf * perf)
+evas_software_x11_outbuf_perf_serialize_info_x(Outbuf_Perf * perf)
 {
    /* get a seriazed string that is a unique identifier for your */
    /* hardware/x/connection setup. */
@@ -401,7 +769,7 @@ evas_software_x11_outbuf_software_x11_perf_serialize_info_x(Outbuf_Perf * perf)
 }
 
 void
-evas_software_x11_outbuf_software_x11_perf_store_x(Outbuf_Perf * perf)
+evas_software_x11_outbuf_perf_store_x(Outbuf_Perf * perf)
 {
    /* write performance results to x root property */
    Atom                type, format;
@@ -409,7 +777,7 @@ evas_software_x11_outbuf_software_x11_perf_store_x(Outbuf_Perf * perf)
 
    type = XInternAtom(perf->x.disp, "__EVAS_PERF_ENGINE_SOFTWARE", False);
    format = XA_STRING;
-   str = evas_software_x11_outbuf_software_x11_perf_serialize_x(perf);
+   str = evas_software_x11_outbuf_perf_serialize_x(perf);
    XChangeProperty(perf->x.disp, perf->x.root, type, format, 8,
 		   PropModeReplace, (unsigned char *)str, strlen(str));
    XSync(perf->x.disp, False);
@@ -417,7 +785,7 @@ evas_software_x11_outbuf_software_x11_perf_store_x(Outbuf_Perf * perf)
 }
 
 Outbuf_Perf        *
-evas_software_x11_outbuf_software_x11_perf_restore_x(Display * disp, Window draw, Visual * vis,
+evas_software_x11_outbuf_perf_restore_x(Display * disp, Window draw, Visual * vis,
 				   Colormap cmap, int x_depth)
 {
    /* read performance results from root window */
@@ -428,7 +796,7 @@ evas_software_x11_outbuf_software_x11_perf_restore_x(Display * disp, Window draw
    unsigned long       bytes_after, num_ret;
    int                 format_ret;
 
-   perf = evas_software_x11_outbuf_software_x11_perf_new_x(disp, draw, vis, cmap, x_depth);
+   perf = evas_software_x11_outbuf_perf_new_x(disp, draw, vis, cmap, x_depth);
    type = XInternAtom(disp, "__EVAS_PERF_ENGINE_SOFTWARE", False);
    format = XA_STRING;
    retval = NULL;
@@ -446,7 +814,7 @@ evas_software_x11_outbuf_software_x11_perf_restore_x(Display * disp, Window draw
 	s = malloc(num_ret + 1);
 	strncpy(s, retval, num_ret);
 	s[num_ret] = 0;
-	evas_software_x11_outbuf_software_x11_perf_deserialize_x(perf, s);
+	evas_software_x11_outbuf_perf_deserialize_x(perf, s);
 	free(s);
       out:
 	XFree(retval);
@@ -455,7 +823,7 @@ evas_software_x11_outbuf_software_x11_perf_restore_x(Display * disp, Window draw
 }
 
 void
-evas_software_x11_outbuf_software_x11_perf_free(Outbuf_Perf * perf)
+evas_software_x11_outbuf_perf_free(Outbuf_Perf * perf)
 {
    /* free the perf struct */
    free(perf->x.display);
@@ -468,7 +836,7 @@ evas_software_x11_outbuf_software_x11_perf_free(Outbuf_Perf * perf)
 }
 
 Outbuf_Perf        *
-evas_software_x11_outbuf_software_x11_perf_x(Display * disp, Window draw, Visual * vis,
+evas_software_x11_outbuf_perf_x(Display * disp, Window draw, Visual * vis,
 			   Colormap cmap, int x_depth)
 {
    Outbuf_Perf        *perf;
@@ -477,7 +845,7 @@ evas_software_x11_outbuf_software_x11_perf_x(Display * disp, Window draw, Visual
    int                 w, h;
    int                 do_shm = 0;
 
-   perf = evas_software_x11_outbuf_software_x11_perf_new_x(disp, draw, vis, cmap, x_depth);
+   perf = evas_software_x11_outbuf_perf_new_x(disp, draw, vis, cmap, x_depth);
 
    attr.backing_store = Always;
    attr.colormap = cmap;
@@ -500,7 +868,7 @@ evas_software_x11_outbuf_software_x11_perf_x(Display * disp, Window draw, Visual
    XSync(disp, False);
    XMapRaised(disp, win);
 
-   do_shm = evas_software_x11_x_software_x11_can_do_shm(disp);
+   do_shm = evas_software_x11_x_can_do_shm(disp);
 
    /* set it to something ridiculous to start */
    perf->min_shm_image_pixel_count = w * w;
@@ -528,36 +896,36 @@ evas_software_x11_outbuf_software_x11_perf_x(Display * disp, Window draw, Visual
 	     int                 loops;
 
 	     loops = (h * h * 5) / (i * i);
-	     t0 = evas_software_x11_outbuf_software_x11_get_time();
+	     t0 = _evas_get_time();
 	     for (l = 0; l < loops; l++)
 	       {
-		  xob = evas_software_x11_x_software_x11_output_buffer_new(disp, vis, x_depth,
+		  xob = evas_software_x11_x_output_buffer_new(disp, vis, x_depth,
 							 i, i, do_shm, NULL);
 		  if (!xob)
 		     error = 1;
 		  else
 		    {
-		       evas_software_x11_x_software_x11_output_buffer_paste(xob, win, gc, 0, 0);
-		       evas_software_x11_x_software_x11_output_buffer_free(xob);
+		       evas_software_x11_x_output_buffer_paste(xob, win, gc, 0, 0, 1);
+		       evas_software_x11_x_output_buffer_free(xob, 1);
 		    }
 	       }
 	     XSync(disp, False);
-	     t1 = evas_software_x11_outbuf_software_x11_get_time() - t0;
-	     t0 = evas_software_x11_outbuf_software_x11_get_time();
+	     t1 = _evas_get_time() - t0;
+	     t0 = _evas_get_time();
 	     for (l = 0; l < loops; l++)
 	       {
-		  xob = evas_software_x11_x_software_x11_output_buffer_new(disp, vis, x_depth,
+		  xob = evas_software_x11_x_output_buffer_new(disp, vis, x_depth,
 							 i, i, 0, NULL);
 		  if (!xob)
 		     error = 1;
 		  else
 		    {
-		       evas_software_x11_x_software_x11_output_buffer_paste(xob, win, gc, 0, 0);
-		       evas_software_x11_x_software_x11_output_buffer_free(xob);
+		       evas_software_x11_x_output_buffer_paste(xob, win, gc, 0, 0, 1);
+		       evas_software_x11_x_output_buffer_free(xob, 1);
 		    }
 	       }
 	     XSync(disp, False);
-	     t2 = evas_software_x11_outbuf_software_x11_get_time() - t0;
+	     t2 = _evas_get_time() - t0;
 	     if ((!chosen) && (!error))
 	       {
 		  if ((t1 / t2) < 1.0)
@@ -573,730 +941,3 @@ evas_software_x11_outbuf_software_x11_perf_x(Display * disp, Window draw, Visual
    return perf;
 }
 
-void
-evas_software_x11_outbuf_software_x11_blit(Outbuf * buf, int src_x, int src_y, int w, int h,
-			 int dst_x, int dst_y)
-{
-   if (buf->priv.back_buf)
-     {
-	evas_common_blit_rectangle(buf->priv.back_buf, buf->priv.back_buf,
-		       src_x, src_y, w, h, dst_x, dst_y);
-	evas_software_x11_outbuf_software_x11_update(buf, dst_x, dst_y, w, h);
-     }
-   else
-     {
-	if (buf->priv.x.disp)
-	  {
-	     if (buf->rot == 0)
-		XCopyArea(buf->priv.x.disp, buf->priv.x.win, buf->priv.x.win,
-			  buf->priv.x.gc, src_x, src_y, w, h, dst_x, dst_y);
-	     else if (buf->rot == 270)
-		XCopyArea(buf->priv.x.disp, buf->priv.x.win, buf->priv.x.win,
-			  buf->priv.x.gc, buf->h - src_y - h, src_x, h, w,
-			  dst_y, dst_x);
-	     else if (buf->rot == 90)
-		XCopyArea(buf->priv.x.disp, buf->priv.x.win, buf->priv.x.win,
-			  buf->priv.x.gc, src_y, buf->w - src_x - w, h, w,
-			  dst_y, dst_x);
-	  }
-     }
-}
-
-void
-evas_software_x11_outbuf_software_x11_update(Outbuf * buf, int x, int y, int w, int h)
-{
-   Gfx_Func_Convert    conv_func;
-   DATA8              *data;
-   X_Output_Buffer    *xob;
-   int                 bpl;
-   int                 use_shm;
-
-   if (!(buf->priv.back_buf))
-      return;
-   use_shm = buf->priv.x.shm;
-   if (buf->perf)
-     {
-	if ((w * h) < buf->perf->min_shm_image_pixel_count)
-	   use_shm = 0;
-     }
-   else
-     {
-	if ((w * h) < (200 * 200))
-	   use_shm = 0;
-     }
-   xob = NULL;
-   if (buf->rot == 0)
-      xob = evas_software_x11_x_software_x11_output_buffer_new(buf->priv.x.disp, buf->priv.x.vis,
-					     buf->priv.x.depth, w, h, use_shm,
-					     NULL);
-   else if (buf->rot == 270)
-      xob = evas_software_x11_x_software_x11_output_buffer_new(buf->priv.x.disp, buf->priv.x.vis,
-					     buf->priv.x.depth, h, w, use_shm,
-					     NULL);
-   else if (buf->rot == 90)
-      xob = evas_software_x11_x_software_x11_output_buffer_new(buf->priv.x.disp, buf->priv.x.vis,
-					     buf->priv.x.depth, h, w, use_shm,
-					     NULL);
-   if (!xob)
-      return;
-   data = evas_software_x11_x_software_x11_output_buffer_data(xob, &bpl);
-   conv_func = NULL;
-   if (buf->priv.pal)
-     {
-	if (buf->rot == 0)
-	   conv_func = evas_common_convert_func_get(0, w, h,
-					evas_software_x11_x_software_x11_output_buffer_depth(xob),
-					buf->priv.mask.r,
-					buf->priv.mask.g,
-					buf->priv.mask.b,
-					buf->priv.pal->colors, buf->rot);
-	else if (buf->rot == 270)
-	   conv_func = evas_common_convert_func_get(0, h, w,
-					evas_software_x11_x_software_x11_output_buffer_depth(xob),
-					buf->priv.mask.r,
-					buf->priv.mask.g,
-					buf->priv.mask.b,
-					buf->priv.pal->colors, buf->rot);
-	else if (buf->rot == 90)
-	   conv_func = evas_common_convert_func_get(0, h, w,
-					evas_software_x11_x_software_x11_output_buffer_depth(xob),
-					buf->priv.mask.r,
-					buf->priv.mask.g,
-					buf->priv.mask.b,
-					buf->priv.pal->colors, buf->rot);
-     }
-   else
-     {
-	if (buf->rot == 0)
-	   conv_func = evas_common_convert_func_get(0, w, h,
-					evas_software_x11_x_software_x11_output_buffer_depth(xob),
-					buf->priv.mask.r,
-					buf->priv.mask.g,
-					buf->priv.mask.b,
-					PAL_MODE_NONE, buf->rot);
-	else if (buf->rot == 270)
-	   conv_func = evas_common_convert_func_get(0, h, w,
-					evas_software_x11_x_software_x11_output_buffer_depth(xob),
-					buf->priv.mask.r,
-					buf->priv.mask.g,
-					buf->priv.mask.b,
-					PAL_MODE_NONE, buf->rot);
-	else if (buf->rot == 90)
-	   conv_func = evas_common_convert_func_get(0, h, w,
-					evas_software_x11_x_software_x11_output_buffer_depth(xob),
-					buf->priv.mask.r,
-					buf->priv.mask.g,
-					buf->priv.mask.b,
-					PAL_MODE_NONE, buf->rot);
-     }
-   if (conv_func)
-     {
-	DATA32             *src_data;
-
-	src_data = buf->priv.back_buf->image->data + (y * buf->w) + x;
-	if (buf->priv.pal)
-	  {
-	     if (buf->rot == 0)
-	       {
-		  conv_func(src_data, data,
-			    buf->w - w,
-			    bpl /
-			    ((evas_software_x11_x_software_x11_output_buffer_depth(xob) / 8)) - w,
-			    w, h, x, y, buf->priv.pal->lookup);
-		  if (buf->priv.debug)
-		     evas_software_x11_outbuf_software_x11_debug_show(buf, buf->priv.x.win, x, y,
-						    w, h);
-		  evas_software_x11_x_software_x11_output_buffer_paste(xob, buf->priv.x.win,
-						     buf->priv.x.gc, x, y);
-	       }
-	     else if (buf->rot == 270)
-	       {
-		  conv_func(src_data, data,
-			    buf->w - w,
-			    bpl /
-			    ((evas_software_x11_x_software_x11_output_buffer_depth(xob) / 8)) - h,
-			    h, w, x, y, buf->priv.pal->lookup);
-		  if (buf->priv.debug)
-		     evas_software_x11_outbuf_software_x11_debug_show(buf, buf->priv.x.win, x, y,
-						    w, h);
-		  evas_software_x11_x_software_x11_output_buffer_paste(xob, buf->priv.x.win,
-						     buf->priv.x.gc,
-						     buf->h - y - h, x);
-	       }
-	     else if (buf->rot == 90)
-	       {
-		  conv_func(src_data, data,
-			    buf->w - w,
-			    bpl /
-			    ((evas_software_x11_x_software_x11_output_buffer_depth(xob) / 8)) - h,
-			    h, w, x, y, buf->priv.pal->lookup);
-		  if (buf->priv.debug)
-		     evas_software_x11_outbuf_software_x11_debug_show(buf, buf->priv.x.win, x, y,
-						    w, h);
-		  evas_software_x11_x_software_x11_output_buffer_paste(xob, buf->priv.x.win,
-						     buf->priv.x.gc, y,
-						     buf->w - x - w);
-	       }
-	  }
-	else
-	  {
-	     if (buf->rot == 0)
-	       {
-		  conv_func(src_data, data,
-			    buf->w - w,
-			    bpl /
-			    ((evas_software_x11_x_software_x11_output_buffer_depth(xob) / 8)) - w,
-			    w, h, x, y, NULL);
-		  if (buf->priv.debug)
-		     evas_software_x11_outbuf_software_x11_debug_show(buf, buf->priv.x.win, x, y,
-						    w, h);
-		  evas_software_x11_x_software_x11_output_buffer_paste(xob, buf->priv.x.win,
-						     buf->priv.x.gc, x, y);
-	       }
-	     else if (buf->rot == 270)
-	       {
-		  conv_func(src_data, data,
-			    buf->w - w,
-			    bpl /
-			    ((evas_software_x11_x_software_x11_output_buffer_depth(xob) / 8)) - h,
-			    h, w, x, y, NULL);
-		  if (buf->priv.debug)
-		     evas_software_x11_outbuf_software_x11_debug_show(buf, buf->priv.x.win, x, y,
-						    w, h);
-		  evas_software_x11_x_software_x11_output_buffer_paste(xob, buf->priv.x.win,
-						     buf->priv.x.gc,
-						     buf->h - y - h, x);
-	       }
-	     else if (buf->rot == 90)
-	       {
-		  conv_func(src_data, data,
-			    buf->w - w,
-			    bpl /
-			    ((evas_software_x11_x_software_x11_output_buffer_depth(xob) / 8)) - h,
-			    h, w, x, y, NULL);
-		  if (buf->priv.debug)
-		     evas_software_x11_outbuf_software_x11_debug_show(buf, buf->priv.x.win, x, y,
-						    w, h);
-		  evas_software_x11_x_software_x11_output_buffer_paste(xob, buf->priv.x.win,
-						     buf->priv.x.gc, y,
-						     buf->w - x - w);
-	       }
-	  }
-     }
-   else
-     {
-	evas_software_x11_x_software_x11_output_buffer_free(xob);
-	return;
-     }
-   evas_software_x11_x_software_x11_output_buffer_free(xob);
-}
-
-RGBA_Image         *
-evas_software_x11_outbuf_software_x11_new_region_for_update(Outbuf * buf, int x, int y, int w,
-					  int h, int *cx, int *cy, int *cw,
-					  int *ch)
-{
-   if (buf->priv.back_buf)
-     {
-	*cx = x;
-	*cy = y;
-	*cw = w;
-	*ch = h;
-	return buf->priv.back_buf;
-     }
-   else
-     {
-	RGBA_Image         *im;
-
-	*cx = 0;
-	*cy = 0;
-	*cw = w;
-	*ch = h;
-	im = evas_common_image_create(w, h);
-	if (buf->priv.x.mask)
-	  {
-	     im->flags |= RGBA_IMAGE_HAS_ALPHA;
-	     memset(im->image->data, 0, w * h * sizeof(DATA32));
-	  }
-	return im;
-     }
-   return NULL;
-}
-
-void
-evas_software_x11_outbuf_software_x11_free_region_for_update(Outbuf * buf, RGBA_Image * update)
-{
-   if (update != buf->priv.back_buf)
-      evas_common_image_free(update);
-}
-
-void
-evas_software_x11_outbuf_software_x11_push_updated_region(Outbuf * buf, RGBA_Image * update,
-					int x, int y, int w, int h)
-{
-   if (buf->priv.back_buf)
-     {
-	if (update != buf->priv.back_buf)
-	   evas_common_blit_rectangle(update, buf->priv.back_buf, 0, 0, w, h, x, y);
-	evas_software_x11_outbuf_software_x11_update(buf, x, y, w, h);
-     }
-   else
-     {
-	Gfx_Func_Convert    conv_func;
-	DATA8              *data;
-	X_Output_Buffer    *xob;
-	int                 bpl;
-	int                 use_shm = 1;
-	void               *orig_data;
-	int                 direct_data = 0;
-
-	use_shm = buf->priv.x.shm;
-	if (buf->perf)
-	  {
-	     if ((w * h) < buf->perf->min_shm_image_pixel_count)
-		use_shm = 0;
-	  }
-	else
-	  {
-	     if ((w * h) < (200 * 200))
-		use_shm = 0;
-	  }
-	xob = NULL;
-	orig_data = update->image->data;
-	/* Punch thru - if our output format is our */
-	/* input format - then avoid convert since we used */
-	/* the image data directly */
-	if ((buf->rot == 0) &&
-	    (buf->priv.mask.r == 0xff0000) &&
-	    (buf->priv.mask.g == 0x00ff00) &&
-	    (buf->priv.mask.b == 0x0000ff) &&
-	    (!use_shm) && (w == update->image->w) && (h == update->image->h))
-	   direct_data = 1;
-	if (!direct_data)
-	   orig_data = NULL;
-	if (buf->rot == 0)
-	   xob = evas_software_x11_x_software_x11_output_buffer_new(buf->priv.x.disp,
-						  buf->priv.x.vis,
-						  buf->priv.x.depth, w,
-						  h, use_shm, orig_data);
-	else if (buf->rot == 270)
-	   xob = evas_software_x11_x_software_x11_output_buffer_new(buf->priv.x.disp,
-						  buf->priv.x.vis,
-						  buf->priv.x.depth, h,
-						  w, use_shm, orig_data);
-	else if (buf->rot == 90)
-	   xob = evas_software_x11_x_software_x11_output_buffer_new(buf->priv.x.disp,
-						  buf->priv.x.vis,
-						  buf->priv.x.depth, h,
-						  w, use_shm, orig_data);
-	if (!xob)
-	   return;
-	data = evas_software_x11_x_software_x11_output_buffer_data(xob, &bpl);
-	conv_func = NULL;
-	if (buf->priv.pal)
-	  {
-	     if (buf->rot == 0)
-		conv_func = evas_common_convert_func_get(0, w, h,
-					     evas_software_x11_x_software_x11_output_buffer_depth
-					     (xob), buf->priv.mask.r,
-					     buf->priv.mask.g, buf->priv.mask.b,
-					     buf->priv.pal->colors, buf->rot);
-	     else if (buf->rot == 270)
-		conv_func = evas_common_convert_func_get(0, h, w,
-					     evas_software_x11_x_software_x11_output_buffer_depth
-					     (xob), buf->priv.mask.r,
-					     buf->priv.mask.g, buf->priv.mask.b,
-					     buf->priv.pal->colors, buf->rot);
-	     else if (buf->rot == 90)
-		conv_func = evas_common_convert_func_get(0, h, w,
-					     evas_software_x11_x_software_x11_output_buffer_depth
-					     (xob), buf->priv.mask.r,
-					     buf->priv.mask.g, buf->priv.mask.b,
-					     buf->priv.pal->colors, buf->rot);
-	  }
-	else
-	  {
-	     if (buf->rot == 0)
-		conv_func = evas_common_convert_func_get(0, w, h,
-					     evas_software_x11_x_software_x11_output_buffer_depth
-					     (xob), buf->priv.mask.r,
-					     buf->priv.mask.g, buf->priv.mask.b,
-					     PAL_MODE_NONE, buf->rot);
-	     else if (buf->rot == 270)
-		conv_func = evas_common_convert_func_get(0, h, w,
-					     evas_software_x11_x_software_x11_output_buffer_depth
-					     (xob), buf->priv.mask.r,
-					     buf->priv.mask.g, buf->priv.mask.b,
-					     PAL_MODE_NONE, buf->rot);
-	     else if (buf->rot == 90)
-		conv_func = evas_common_convert_func_get(0, h, w,
-					     evas_software_x11_x_software_x11_output_buffer_depth
-					     (xob), buf->priv.mask.r,
-					     buf->priv.mask.g, buf->priv.mask.b,
-					     PAL_MODE_NONE, buf->rot);
-	  }
-	if (conv_func)
-	  {
-	     DATA32             *src_data;
-	     X_Output_Buffer    *mxob = NULL;
-
-	     if (buf->priv.x.mask)
-	       {
-		  if (buf->rot == 0)
-		     mxob = evas_software_x11_x_software_x11_output_buffer_new(buf->priv.x.disp,
-							     buf->priv.x.vis,
-							     1, w, h, 0, NULL);
-		  else if (buf->rot == 270)
-		     mxob = evas_software_x11_x_software_x11_output_buffer_new(buf->priv.x.disp,
-							     buf->priv.x.vis,
-							     1, h, w, 0, NULL);
-		  else if (buf->rot == 90)
-		     mxob = evas_software_x11_x_software_x11_output_buffer_new(buf->priv.x.disp,
-							     buf->priv.x.vis,
-							     1, h, w, 0, NULL);
-	       }
-	     src_data = update->image->data;
-	     if (buf->priv.pal)
-	       {
-		  if (buf->rot == 0)
-		    {
-		       if (!direct_data)
-			  conv_func(src_data, data,
-				    0,
-				    bpl /
-				    ((evas_software_x11_x_software_x11_output_buffer_depth(xob) /
-				      8)) - w, w, h, x, y,
-				    buf->priv.pal->lookup);
-		       if (buf->priv.debug)
-			  evas_software_x11_outbuf_software_x11_debug_show(buf, buf->priv.x.win,
-							 x, y, w, h);
-		       evas_software_x11_x_software_x11_output_buffer_paste(xob, buf->priv.x.win,
-							  buf->priv.x.gc, x, y);
-		       if (mxob)
-			 {
-			    int                 yy;
-
-			    for (yy = 0; yy < h; yy++)
-			       evas_software_x11_x_software_x11_write_mask_line(mxob,
-							      src_data +
-							      (yy * w), w, yy);
-			    evas_software_x11_x_software_x11_output_buffer_paste(mxob,
-							       buf->priv.x.mask,
-							       buf->priv.x.gcm,
-							       x, y);
-			 }
-		    }
-		  else if (buf->rot == 270)
-		    {
-		       if (!direct_data)
-			  conv_func(src_data, data,
-				    0,
-				    bpl /
-				    ((evas_software_x11_x_software_x11_output_buffer_depth(xob) /
-				      8)) - h, h, w, x, y,
-				    buf->priv.pal->lookup);
-		       if (buf->priv.debug)
-			  evas_software_x11_outbuf_software_x11_debug_show(buf, buf->priv.x.win,
-							 x, y, w, h);
-		       evas_software_x11_x_software_x11_output_buffer_paste(xob, buf->priv.x.win,
-							  buf->priv.x.gc,
-							  buf->h - y - h, x);
-		       if (mxob)
-			 {
-			    int                 yy;
-
-/*			    for (yy = 0; yy < h; yy++)*/
-/*			      evas_software_x11_x_software_x11_write_mask_line(mxob, src_data + (yy * w), w, yy);*/
-			    evas_software_x11_x_software_x11_output_buffer_paste(mxob,
-							       buf->priv.x.mask,
-							       buf->priv.x.gcm,
-							       buf->h - y - h,
-							       x);
-			 }
-		    }
-		  else if (buf->rot == 90)
-		    {
-		       if (!direct_data)
-			  conv_func(src_data, data,
-				    0,
-				    bpl /
-				    ((evas_software_x11_x_software_x11_output_buffer_depth(xob) /
-				      8)) - h, h, w, x, y,
-				    buf->priv.pal->lookup);
-		       if (buf->priv.debug)
-			  evas_software_x11_outbuf_software_x11_debug_show(buf, buf->priv.x.win,
-							 x, y, w, h);
-		       evas_software_x11_x_software_x11_output_buffer_paste(xob, buf->priv.x.win,
-							  buf->priv.x.gc, y,
-							  buf->w - x - w);
-		       if (mxob)
-			 {
-			    int                 yy;
-
-/*			    for (yy = 0; yy < h; yy++)*/
-/*			      evas_software_x11_x_software_x11_write_mask_line(mxob, src_data + (yy * w), w, yy);*/
-			    evas_software_x11_x_software_x11_output_buffer_paste(mxob,
-							       buf->priv.x.mask,
-							       buf->priv.x.gcm,
-							       y,
-							       buf->w - x - w);
-			 }
-		    }
-	       }
-	     else
-	       {
-		  if (buf->rot == 0)
-		    {
-		       if (!direct_data)
-			  conv_func(src_data, data,
-				    0,
-				    bpl /
-				    ((evas_software_x11_x_software_x11_output_buffer_depth(xob) /
-				      8)) - w, w, h, x, y, NULL);
-		       if (buf->priv.debug)
-			  evas_software_x11_outbuf_software_x11_debug_show(buf, buf->priv.x.win,
-							 x, y, w, h);
-		       evas_software_x11_x_software_x11_output_buffer_paste(xob, buf->priv.x.win,
-							  buf->priv.x.gc, x, y);
-		       if (mxob)
-			 {
-			    int                 yy;
-
-			    for (yy = 0; yy < h; yy++)
-			       evas_software_x11_x_software_x11_write_mask_line(mxob,
-							      src_data +
-							      (yy * w), w, yy);
-			    evas_software_x11_x_software_x11_output_buffer_paste(mxob,
-							       buf->priv.x.mask,
-							       buf->priv.x.gcm,
-							       x, y);
-			 }
-		    }
-		  else if (buf->rot == 270)
-		    {
-		       if (!direct_data)
-			  conv_func(src_data, data,
-				    0,
-				    bpl /
-				    ((evas_software_x11_x_software_x11_output_buffer_depth(xob) /
-				      8)) - h, h, w, x, y, NULL);
-		       if (buf->priv.debug)
-			  evas_software_x11_outbuf_software_x11_debug_show(buf, buf->priv.x.win,
-							 x, y, w, h);
-		       evas_software_x11_x_software_x11_output_buffer_paste(xob, buf->priv.x.win,
-							  buf->priv.x.gc,
-							  buf->h - y - h, x);
-		       if (mxob)
-			 {
-			    int                 yy;
-
-/*			    for (yy = 0; yy < h; yy++)*/
-/*			      evas_software_x11_x_software_x11_write_mask_line(mxob, src_data + (yy * w), w, yy);*/
-			    evas_software_x11_x_software_x11_output_buffer_paste(mxob,
-							       buf->priv.x.mask,
-							       buf->priv.x.gcm,
-							       buf->h - y - h,
-							       x);
-			 }
-		    }
-		  else if (buf->rot == 90)
-		    {
-		       if (!direct_data)
-			  conv_func(src_data, data,
-				    0,
-				    bpl /
-				    ((evas_software_x11_x_software_x11_output_buffer_depth(xob) /
-				      8)) - h, h, w, x, y, NULL);
-		       if (buf->priv.debug)
-			  evas_software_x11_outbuf_software_x11_debug_show(buf, buf->priv.x.win,
-							 x, y, w, h);
-		       evas_software_x11_x_software_x11_output_buffer_paste(xob, buf->priv.x.win,
-							  buf->priv.x.gc, y,
-							  buf->w - x - w);
-		       if (mxob)
-			 {
-			    int                 yy;
-
-/*			    for (yy = 0; yy < h; yy++)*/
-/*			      evas_software_x11_x_software_x11_write_mask_line(mxob, src_data + (yy * w), w, yy);*/
-			    evas_software_x11_x_software_x11_output_buffer_paste(mxob,
-							       buf->priv.x.mask,
-							       buf->priv.x.gcm,
-							       y,
-							       buf->w - x - w);
-			 }
-		    }
-	       }
-	     if (mxob)
-		evas_software_x11_x_software_x11_output_buffer_free(mxob);
-	  }
-	else
-	  {
-	     evas_software_x11_x_software_x11_output_buffer_free(xob);
-	     return;
-	  }
-	evas_software_x11_x_software_x11_output_buffer_free(xob);
-     }
-}
-
-void
-evas_software_x11_outbuf_software_x11_reconfigure(Outbuf * buf, int w, int h, int rot,
-				Outbuf_Depth depth)
-{
-   if ((w == buf->w) && (h == buf->h) &&
-       (rot == buf->rot) && (depth == buf->depth))
-      return;
-   buf->w = w;
-   buf->h = h;
-   buf->rot = rot;
-   if (buf->priv.back_buf)
-     {
-	evas_common_image_free(buf->priv.back_buf);
-	buf->priv.back_buf = NULL;
-     }
-   if (buf->priv.x.disp)
-     {
-	if (buf->priv.x.depth < 24)
-	   buf->priv.back_buf = evas_common_image_create(buf->w, buf->h);
-     }
-}
-
-int
-evas_software_x11_outbuf_software_x11_get_width(Outbuf * buf)
-{
-   return buf->w;
-}
-
-int
-evas_software_x11_outbuf_software_x11_get_height(Outbuf * buf)
-{
-   return buf->h;
-}
-
-Outbuf_Depth
-evas_software_x11_outbuf_software_x11_get_depth(Outbuf * buf)
-{
-   return buf->depth;
-}
-
-int
-evas_software_x11_outbuf_software_x11_get_rot(Outbuf * buf)
-{
-   return buf->rot;
-}
-
-int
-evas_software_x11_outbuf_software_x11_get_have_backbuf(Outbuf * buf)
-{
-   if (buf->priv.back_buf)
-      return 1;
-   return 0;
-}
-
-void
-evas_software_x11_outbuf_software_x11_set_have_backbuf(Outbuf * buf, int have_backbuf)
-{
-   if (buf->priv.back_buf)
-     {
-	if (have_backbuf)
-	   return;
-	evas_common_image_free(buf->priv.back_buf);
-	buf->priv.back_buf = NULL;
-     }
-   else
-     {
-	if (!have_backbuf)
-	   return;
-	if (buf->priv.x.disp)
-	  {
-	     if (buf->priv.x.depth < 24)
-		buf->priv.back_buf = evas_common_image_create(buf->w, buf->h);
-	  }
-     }
-}
-
-void
-evas_software_x11_outbuf_software_x11_drawable_set(Outbuf * buf, Drawable draw)
-{
-   XGCValues           gcv;
-
-   if (buf->priv.x.win == draw)
-      return;
-
-   if (buf->priv.x.gc)
-     {
-	XFreeGC(buf->priv.x.disp, buf->priv.x.gc);
-	buf->priv.x.gc = NULL;
-     }
-
-   buf->priv.x.win = draw;
-   buf->priv.x.gc = XCreateGC(buf->priv.x.disp, buf->priv.x.win, 0, &gcv);
-}
-
-void
-evas_software_x11_outbuf_software_x11_mask_set(Outbuf * buf, Pixmap mask)
-{
-   XGCValues           gcv;
-
-   if (buf->priv.x.mask == mask)
-      return;
-
-   if (buf->priv.x.gcm)
-     {
-	XFreeGC(buf->priv.x.disp, buf->priv.x.gcm);
-	buf->priv.x.gcm = NULL;
-     }
-
-   buf->priv.x.mask = mask;
-   if (buf->priv.x.mask)
-      buf->priv.x.gcm = XCreateGC(buf->priv.x.disp, buf->priv.x.mask, 0, &gcv);
-}
-
-void
-evas_software_x11_outbuf_software_x11_debug_set(Outbuf * buf, int debug)
-{
-   buf->priv.debug = debug;
-}
-
-void
-evas_software_x11_outbuf_software_x11_debug_show(Outbuf * buf, Drawable draw, int x, int y, int w,
-			       int h)
-{
-   int                 i;
-   int                 screen_num = 0;
-
-   {
-      int                 wx, wy;
-      unsigned int        ww, wh, bd, dp;
-      Window              wdum, root;
-      XWindowAttributes   wattr;
-
-      XGetGeometry(buf->priv.x.disp, draw, &root, &wx, &wy, &ww, &wh, &bd, &dp);
-      XGetGeometry(buf->priv.x.disp, root, &wdum, &wx, &wy, &ww, &wh, &bd, &dp);
-      XGetWindowAttributes(buf->priv.x.disp, root, &wattr);
-      screen_num = XScreenNumberOfScreen(wattr.screen);
-   }
-   for (i = 0; i < 10; i++)
-     {
-	XImage             *xim;
-
-	XSetForeground(buf->priv.x.disp, buf->priv.x.gc,
-		       BlackPixel(buf->priv.x.disp, screen_num));
-	XFillRectangle(buf->priv.x.disp, draw, buf->priv.x.gc, x, y, w, h);
-	XSync(buf->priv.x.disp, False);
-	xim =
-	   XGetImage(buf->priv.x.disp, draw, x, y, w, h, 0xffffffff, ZPixmap);
-	if (xim)
-	   XDestroyImage(xim);
-	XSync(buf->priv.x.disp, False);
-	XSetForeground(buf->priv.x.disp, buf->priv.x.gc,
-		       WhitePixel(buf->priv.x.disp, screen_num));
-	XFillRectangle(buf->priv.x.disp, draw, buf->priv.x.gc, x, y, w, h);
-	XSync(buf->priv.x.disp, False);
-	xim =
-	   XGetImage(buf->priv.x.disp, draw, x, y, w, h, 0xffffffff, ZPixmap);
-	if (xim)
-	   XDestroyImage(xim);
-	XSync(buf->priv.x.disp, False);
-     }
-}

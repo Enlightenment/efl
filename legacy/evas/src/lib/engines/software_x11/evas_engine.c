@@ -243,9 +243,9 @@ evas_engine_software_x11_setup(Evas *e, void *in)
      e->engine.func->context_new(e->engine.data.output);   
    
    re = e->engine.data.output;
-   evas_software_x11_outbuf_software_x11_drawable_set(re->ob, info->info.drawable);
-   evas_software_x11_outbuf_software_x11_mask_set(re->ob, info->info.mask);
-   evas_software_x11_outbuf_software_x11_rotation_set(re->ob, info->info.rotation);
+   evas_software_x11_outbuf_drawable_set(re->ob, info->info.drawable);
+   evas_software_x11_outbuf_mask_set(re->ob, info->info.mask);
+   evas_software_x11_outbuf_rotation_set(re->ob, info->info.rotation);
 }
 
 static void *
@@ -270,25 +270,24 @@ evas_engine_software_x11_output_setup(int w, int h, int rot, Display *disp, Draw
    evas_common_draw_init();
    evas_common_tilebuf_init();
    
-   evas_software_x11_x_software_x11_init();
-   x_software_x11_color_init();
-   evas_software_x11_outbuf_software_x11_init();   
+   evas_software_x11_x_init();
+   evas_software_x11_x_color_init();
+   evas_software_x11_outbuf_init();   
    
    /* get any stored performance metrics from device (xserver) */
-   perf = evas_software_x11_outbuf_software_x11_perf_restore_x(disp, draw, vis, cmap, depth);
-   re->ob = evas_software_x11_outbuf_software_x11_setup_x(w, h, rot, OUTBUF_DEPTH_INHERIT, disp, draw, vis, cmap, depth, perf, grayscale, max_colors, mask, shape_dither);
+   perf = evas_software_x11_outbuf_perf_restore_x(disp, draw, vis, cmap, depth);
+   re->ob = evas_software_x11_outbuf_setup_x(w, h, rot, OUTBUF_DEPTH_INHERIT, disp, draw, vis, cmap, depth, perf, grayscale, max_colors, mask, shape_dither);
    if (!re->ob)
      {
-	evas_software_x11_outbuf_software_x11_perf_free(perf);
+	evas_software_x11_outbuf_perf_free(perf);
 	free(re);
 	return NULL;
      }
-   evas_software_x11_outbuf_software_x11_debug_set(re->ob, debug);
-   evas_software_x11_outbuf_software_x11_set_have_backbuf(re->ob, 0);
+   evas_software_x11_outbuf_debug_set(re->ob, debug);
    re->tb = evas_common_tilebuf_new(w, h);
    if (!re->tb)
      {
-	evas_software_x11_outbuf_software_x11_free(re->ob);
+	evas_software_x11_outbuf_free(re->ob);
 	free(re);
 	return NULL;
      }
@@ -303,7 +302,7 @@ evas_engine_software_x11_output_free(void *data)
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   evas_software_x11_outbuf_software_x11_free(re->ob);
+   evas_software_x11_outbuf_free(re->ob);
    evas_common_tilebuf_free(re->tb);
    if (re->rects) evas_common_tilebuf_free_render_rects(re->rects);
    free(re);
@@ -318,10 +317,9 @@ evas_engine_software_x11_output_resize(void *data, int w, int h)
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   evas_software_x11_outbuf_software_x11_reconfigure(re->ob, w, h, 
-				   evas_software_x11_outbuf_software_x11_get_rot(re->ob),
+   evas_software_x11_outbuf_reconfigure(re->ob, w, h, 
+				   evas_software_x11_outbuf_get_rot(re->ob),
 				   OUTBUF_DEPTH_INHERIT);
-   evas_software_x11_outbuf_software_x11_set_have_backbuf(re->ob, 0);
    evas_common_tilebuf_free(re->tb);
    re->tb = evas_common_tilebuf_new(w, h);
    if (re->tb)
@@ -394,9 +392,8 @@ evas_engine_software_x11_output_redraws_next_update_get(void *data, int *x, int 
 	re->end = 1;
      }
    
-   surface = evas_software_x11_outbuf_software_x11_new_region_for_update(re->ob, 
-					  ux, uy, uw, uh, 
-					  cx, cy, cw, ch);
+   surface = evas_software_x11_outbuf_new_region_for_update
+     (re->ob, ux, uy, uw, uh, cx, cy, cw, ch);
    *x = ux; *y = uy; *w = uw; *h = uh;
    return surface;
 }
@@ -408,8 +405,8 @@ evas_engine_software_x11_output_redraws_next_update_push(void *data, void *surfa
    Evas_Engine_Info_Software_X11 *info;
    
    re = (Render_Engine *)data;
-   evas_software_x11_outbuf_software_x11_push_updated_region(re->ob, surface, x, y, w, h);
-   evas_software_x11_outbuf_software_x11_free_region_for_update(re->ob, surface);
+   evas_software_x11_outbuf_push_updated_region(re->ob, surface, x, y, w, h);
+   evas_software_x11_outbuf_free_region_for_update(re->ob, surface);
    evas_common_cpu_end_opt();
 }
 
@@ -419,7 +416,7 @@ evas_engine_software_x11_output_flush(void *data)
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   XSync(re->ob->priv.x.disp, False);
+   evas_software_x11_outbuf_flush(re->ob);
 }
 
 static void *
@@ -1171,43 +1168,43 @@ evas_engine_software_x11_best_depth_get(Display *disp, int screen)
 static Evas_Performance *
 evas_engine_software_x11_output_perf_new(Evas *e, Display *disp, Visual *vis, Colormap cmap, Drawable draw, int depth)
 {
-   return evas_software_x11_outbuf_software_x11_perf_new_x(disp, draw, vis, cmap, depth);
+   return evas_software_x11_outbuf_perf_new_x(disp, draw, vis, cmap, depth);
    e = NULL;
 }
 
 static Evas_Performance *
 evas_engine_software_x11_output_perf_test(Evas *e, Display *disp, Visual *vis, Colormap cmap, Drawable draw, int depth)    
 {
-   return evas_software_x11_outbuf_software_x11_perf_x(disp, draw, vis, cmap, depth);
+   return evas_software_x11_outbuf_perf_x(disp, draw, vis, cmap, depth);
    e = NULL;
 }
 
 static char *
 evas_engine_software_x11_output_perf_data(Evas_Performance *perf)    
 {
-   return evas_software_x11_outbuf_software_x11_perf_serialize_x(perf);
+   return evas_software_x11_outbuf_perf_serialize_x(perf);
 }
 
 static char *
 evas_engine_software_x11_output_perf_key(Evas_Performance *perf)    
 {
-   return evas_software_x11_outbuf_software_x11_perf_serialize_info_x(perf);
+   return evas_software_x11_outbuf_perf_serialize_info_x(perf);
 }
 
 static void
 evas_engine_software_x11_output_perf_free(Evas_Performance *perf)    
 {
-   evas_software_x11_outbuf_software_x11_perf_free(perf);
+   evas_software_x11_outbuf_perf_free(perf);
 }
 
 static void
 evas_engine_software_x11_output_perf_build(Evas_Performance *perf, const char *data)
 {
-   evas_software_x11_outbuf_software_x11_perf_deserialize_x(perf, data);
+   evas_software_x11_outbuf_perf_deserialize_x(perf, data);
 }
 
 static void
 evas_engine_software_x11_output_perf_device_store(Evas_Performance *perf)    
 {
-   evas_software_x11_outbuf_software_x11_perf_store_x(perf);
+   evas_software_x11_outbuf_perf_store_x(perf);
 }

@@ -15,28 +15,28 @@ struct _Convert_Pal_Priv
 
 typedef DATA8 * (*X_Func_Alloc_Colors) (Display *d, Colormap cmap, Visual *v);
 
-static X_Func_Alloc_Colors x_software_x11_color_alloc[PAL_MODE_LAST + 1];
-static int                 x_software_x11_color_count[PAL_MODE_LAST + 1];
+static X_Func_Alloc_Colors x_color_alloc[PAL_MODE_LAST + 1];
+static int                 x_color_count[PAL_MODE_LAST + 1];
 static Evas_List          *palettes = NULL;
 
-static DATA8 * x_software_x11_color_alloc_rgb(int nr, int ng, int nb, Display *d, Colormap cmap, Visual *v);
-static DATA8 * x_software_x11_color_alloc_gray(int ng, Display *d, Colormap cmap, Visual *v);
+static DATA8 * x_color_alloc_rgb(int nr, int ng, int nb, Display *d, Colormap cmap, Visual *v);
+static DATA8 * x_color_alloc_gray(int ng, Display *d, Colormap cmap, Visual *v);
 
-static DATA8 * x_software_x11_color_alloc_rgb_332(Display *d, Colormap cmap, Visual *v);
-static DATA8 * x_software_x11_color_alloc_rgb_666(Display *d, Colormap cmap, Visual *v);
-static DATA8 * x_software_x11_color_alloc_rgb_232(Display *d, Colormap cmap, Visual *v);
-static DATA8 * x_software_x11_color_alloc_rgb_222(Display *d, Colormap cmap, Visual *v);
-static DATA8 * x_software_x11_color_alloc_rgb_221(Display *d, Colormap cmap, Visual *v);
-static DATA8 * x_software_x11_color_alloc_rgb_121(Display *d, Colormap cmap, Visual *v);
-static DATA8 * x_software_x11_color_alloc_rgb_111(Display *d, Colormap cmap, Visual *v);
-static DATA8 * x_software_x11_color_alloc_gray_256(Display *d, Colormap cmap, Visual *v);
-static DATA8 * x_software_x11_color_alloc_gray_64(Display *d, Colormap cmap, Visual *v);
-static DATA8 * x_software_x11_color_alloc_gray_16(Display *d, Colormap cmap, Visual *v);
-static DATA8 * x_software_x11_color_alloc_gray_4(Display *d, Colormap cmap, Visual *v);
-static DATA8 * x_software_x11_color_alloc_mono(Display *d, Colormap cmap, Visual *v);
+static DATA8 * x_color_alloc_rgb_332(Display *d, Colormap cmap, Visual *v);
+static DATA8 * x_color_alloc_rgb_666(Display *d, Colormap cmap, Visual *v);
+static DATA8 * x_color_alloc_rgb_232(Display *d, Colormap cmap, Visual *v);
+static DATA8 * x_color_alloc_rgb_222(Display *d, Colormap cmap, Visual *v);
+static DATA8 * x_color_alloc_rgb_221(Display *d, Colormap cmap, Visual *v);
+static DATA8 * x_color_alloc_rgb_121(Display *d, Colormap cmap, Visual *v);
+static DATA8 * x_color_alloc_rgb_111(Display *d, Colormap cmap, Visual *v);
+static DATA8 * x_color_alloc_gray_256(Display *d, Colormap cmap, Visual *v);
+static DATA8 * x_color_alloc_gray_64(Display *d, Colormap cmap, Visual *v);
+static DATA8 * x_color_alloc_gray_16(Display *d, Colormap cmap, Visual *v);
+static DATA8 * x_color_alloc_gray_4(Display *d, Colormap cmap, Visual *v);
+static DATA8 * x_color_alloc_mono(Display *d, Colormap cmap, Visual *v);
 
 static DATA8 *
-x_software_x11_color_alloc_rgb(int nr, int ng, int nb, Display *d, Colormap cmap, Visual *v)
+x_color_alloc_rgb(int nr, int ng, int nb, Display *d, Colormap cmap, Visual *v)
 {
    int r, g, b, i;
    DATA8 *color_lut;
@@ -92,7 +92,7 @@ x_software_x11_color_alloc_rgb(int nr, int ng, int nb, Display *d, Colormap cmap
 }
 
 static DATA8 *
-x_software_x11_color_alloc_gray(int ng, Display *d, Colormap cmap, Visual *v)
+x_color_alloc_gray(int ng, Display *d, Colormap cmap, Visual *v)
 {
    int g, i;
    DATA8 *color_lut;
@@ -140,129 +140,129 @@ x_software_x11_color_alloc_gray(int ng, Display *d, Colormap cmap, Visual *v)
 }
 
 static DATA8 *
-x_software_x11_color_alloc_rgb_332(Display *d, Colormap cmap, Visual *v)
+x_color_alloc_rgb_332(Display *d, Colormap cmap, Visual *v)
 {
-   return x_software_x11_color_alloc_rgb(8, 8, 4, d, cmap, v);
+   return x_color_alloc_rgb(8, 8, 4, d, cmap, v);
 }
 
 static DATA8 *
-x_software_x11_color_alloc_rgb_666(Display *d, Colormap cmap, Visual *v)
+x_color_alloc_rgb_666(Display *d, Colormap cmap, Visual *v)
 {
-   return x_software_x11_color_alloc_rgb(6, 6, 6, d, cmap, v);
+   return x_color_alloc_rgb(6, 6, 6, d, cmap, v);
 }
 
 static DATA8 *
-x_software_x11_color_alloc_rgb_232(Display *d, Colormap cmap, Visual *v)
+x_color_alloc_rgb_232(Display *d, Colormap cmap, Visual *v)
 {
-   return x_software_x11_color_alloc_rgb(4, 8, 4, d, cmap, v);
+   return x_color_alloc_rgb(4, 8, 4, d, cmap, v);
 }
 
 static DATA8 *
-x_software_x11_color_alloc_rgb_222(Display *d, Colormap cmap, Visual *v)
+x_color_alloc_rgb_222(Display *d, Colormap cmap, Visual *v)
 {
-   return x_software_x11_color_alloc_rgb(4, 4, 4, d, cmap, v);
+   return x_color_alloc_rgb(4, 4, 4, d, cmap, v);
 }
 
 static DATA8 *
-x_software_x11_color_alloc_rgb_221(Display *d, Colormap cmap, Visual *v)
+x_color_alloc_rgb_221(Display *d, Colormap cmap, Visual *v)
 {
-   return x_software_x11_color_alloc_rgb(4, 4, 2, d, cmap, v);
+   return x_color_alloc_rgb(4, 4, 2, d, cmap, v);
 }
 
 static DATA8 *
-x_software_x11_color_alloc_rgb_121(Display *d, Colormap cmap, Visual *v)
+x_color_alloc_rgb_121(Display *d, Colormap cmap, Visual *v)
 {
-   return x_software_x11_color_alloc_rgb(2, 4, 2, d, cmap, v);
+   return x_color_alloc_rgb(2, 4, 2, d, cmap, v);
 }
 
 static DATA8 *
-x_software_x11_color_alloc_rgb_111(Display *d, Colormap cmap, Visual *v)
+x_color_alloc_rgb_111(Display *d, Colormap cmap, Visual *v)
 {
-   return x_software_x11_color_alloc_rgb(2, 2, 2, d, cmap, v);
+   return x_color_alloc_rgb(2, 2, 2, d, cmap, v);
 }
 
 static DATA8 *
-x_software_x11_color_alloc_gray_256(Display *d, Colormap cmap, Visual *v)
+x_color_alloc_gray_256(Display *d, Colormap cmap, Visual *v)
 {
-   return x_software_x11_color_alloc_gray(256, d, cmap, v);
+   return x_color_alloc_gray(256, d, cmap, v);
 }
 
 static DATA8 *
-x_software_x11_color_alloc_gray_64(Display *d, Colormap cmap, Visual *v)
+x_color_alloc_gray_64(Display *d, Colormap cmap, Visual *v)
 {
-   return x_software_x11_color_alloc_gray(64, d, cmap, v);
+   return x_color_alloc_gray(64, d, cmap, v);
 }
 
 static DATA8 *
-x_software_x11_color_alloc_gray_16(Display *d, Colormap cmap, Visual *v)
+x_color_alloc_gray_16(Display *d, Colormap cmap, Visual *v)
 {
-   return x_software_x11_color_alloc_gray(32, d, cmap, v);
+   return x_color_alloc_gray(32, d, cmap, v);
 }
 
 static DATA8 *
-x_software_x11_color_alloc_gray_4(Display *d, Colormap cmap, Visual *v)
+x_color_alloc_gray_4(Display *d, Colormap cmap, Visual *v)
 {
-   return x_software_x11_color_alloc_gray(16, d, cmap, v);
+   return x_color_alloc_gray(16, d, cmap, v);
 }
 
 static DATA8 *
-x_software_x11_color_alloc_mono(Display *d, Colormap cmap, Visual *v)
+x_color_alloc_mono(Display *d, Colormap cmap, Visual *v)
 {
-   return x_software_x11_color_alloc_gray(2, d, cmap, v);
+   return x_color_alloc_gray(2, d, cmap, v);
 }
 
 void
-x_software_x11_color_init(void)
+evas_software_x11_x_color_init(void)
 {
    static int initialised = 0;
    
    if (initialised) return;
-   x_software_x11_color_alloc[PAL_MODE_NONE]    = NULL;
-   x_software_x11_color_count[PAL_MODE_NONE]    = 0;
+   x_color_alloc[PAL_MODE_NONE]    = NULL;
+   x_color_count[PAL_MODE_NONE]    = 0;
    
-   x_software_x11_color_alloc[PAL_MODE_MONO]    = x_software_x11_color_alloc_mono;
-   x_software_x11_color_count[PAL_MODE_MONO]    = 2;
+   x_color_alloc[PAL_MODE_MONO]    = x_color_alloc_mono;
+   x_color_count[PAL_MODE_MONO]    = 2;
    
-   x_software_x11_color_alloc[PAL_MODE_GRAY4]   = x_software_x11_color_alloc_gray_4;
-   x_software_x11_color_count[PAL_MODE_GRAY4]   = 4;
+   x_color_alloc[PAL_MODE_GRAY4]   = x_color_alloc_gray_4;
+   x_color_count[PAL_MODE_GRAY4]   = 4;
    
-   x_software_x11_color_alloc[PAL_MODE_GRAY16]  = x_software_x11_color_alloc_gray_16;
-   x_software_x11_color_count[PAL_MODE_GRAY16]  = 16;
+   x_color_alloc[PAL_MODE_GRAY16]  = x_color_alloc_gray_16;
+   x_color_count[PAL_MODE_GRAY16]  = 16;
    
-   x_software_x11_color_alloc[PAL_MODE_GRAY64]  = x_software_x11_color_alloc_gray_64;
-   x_software_x11_color_count[PAL_MODE_GRAY64]  = 64;
+   x_color_alloc[PAL_MODE_GRAY64]  = x_color_alloc_gray_64;
+   x_color_count[PAL_MODE_GRAY64]  = 64;
    
-   x_software_x11_color_alloc[PAL_MODE_GRAY256] = x_software_x11_color_alloc_gray_256;
-   x_software_x11_color_count[PAL_MODE_GRAY256] = 256;
+   x_color_alloc[PAL_MODE_GRAY256] = x_color_alloc_gray_256;
+   x_color_count[PAL_MODE_GRAY256] = 256;
    
-   x_software_x11_color_alloc[PAL_MODE_RGB111]  = x_software_x11_color_alloc_rgb_111;
-   x_software_x11_color_count[PAL_MODE_RGB111]  = 2 * 2 * 2;
+   x_color_alloc[PAL_MODE_RGB111]  = x_color_alloc_rgb_111;
+   x_color_count[PAL_MODE_RGB111]  = 2 * 2 * 2;
    
-   x_software_x11_color_alloc[PAL_MODE_RGB121]  = x_software_x11_color_alloc_rgb_121;
-   x_software_x11_color_count[PAL_MODE_RGB121]  = 2 * 4 * 2;
+   x_color_alloc[PAL_MODE_RGB121]  = x_color_alloc_rgb_121;
+   x_color_count[PAL_MODE_RGB121]  = 2 * 4 * 2;
    
-   x_software_x11_color_alloc[PAL_MODE_RGB221]  = x_software_x11_color_alloc_rgb_221;
-   x_software_x11_color_count[PAL_MODE_RGB221]  = 4 * 4 * 2;
+   x_color_alloc[PAL_MODE_RGB221]  = x_color_alloc_rgb_221;
+   x_color_count[PAL_MODE_RGB221]  = 4 * 4 * 2;
    
-   x_software_x11_color_alloc[PAL_MODE_RGB222]  = x_software_x11_color_alloc_rgb_222;
-   x_software_x11_color_count[PAL_MODE_RGB222]  = 4 * 4 * 4;
+   x_color_alloc[PAL_MODE_RGB222]  = x_color_alloc_rgb_222;
+   x_color_count[PAL_MODE_RGB222]  = 4 * 4 * 4;
    
-   x_software_x11_color_alloc[PAL_MODE_RGB232]  = x_software_x11_color_alloc_rgb_232;
-   x_software_x11_color_count[PAL_MODE_RGB232]  = 4 * 8 * 4;
+   x_color_alloc[PAL_MODE_RGB232]  = x_color_alloc_rgb_232;
+   x_color_count[PAL_MODE_RGB232]  = 4 * 8 * 4;
    
-   x_software_x11_color_alloc[PAL_MODE_RGB666]  = x_software_x11_color_alloc_rgb_666;
-   x_software_x11_color_count[PAL_MODE_RGB666]  = 6 * 6 * 6;
+   x_color_alloc[PAL_MODE_RGB666]  = x_color_alloc_rgb_666;
+   x_color_count[PAL_MODE_RGB666]  = 6 * 6 * 6;
    
-   x_software_x11_color_alloc[PAL_MODE_RGB332]  = x_software_x11_color_alloc_rgb_332;
-   x_software_x11_color_count[PAL_MODE_RGB332]  = 8 * 8 * 4;
+   x_color_alloc[PAL_MODE_RGB332]  = x_color_alloc_rgb_332;
+   x_color_count[PAL_MODE_RGB332]  = 8 * 8 * 4;
    
-   x_software_x11_color_alloc[PAL_MODE_LAST]    = NULL;
-   x_software_x11_color_count[PAL_MODE_LAST]    = 0;
+   x_color_alloc[PAL_MODE_LAST]    = NULL;
+   x_color_count[PAL_MODE_LAST]    = 0;
    initialised = 1;
 }
 
 Convert_Pal *
-evas_software_x11_x_software_x11_color_allocate(Display *disp, Colormap cmap, Visual *vis, Convert_Pal_Mode colors)
+evas_software_x11_x_color_allocate(Display *disp, Colormap cmap, Visual *vis, Convert_Pal_Mode colors)
 {
    Convert_Pal_Priv *palpriv;
    Convert_Pal      *pal;
@@ -285,15 +285,15 @@ evas_software_x11_x_software_x11_color_allocate(Display *disp, Colormap cmap, Vi
    if (!pal) return NULL;
    for (c = colors; c > PAL_MODE_NONE; c--)
      {
-	if (x_software_x11_color_alloc[c])
+	if (x_color_alloc[c])
 	  {
-	     pal->lookup = (x_software_x11_color_alloc[c])(disp, cmap, vis);
+	     pal->lookup = (x_color_alloc[c])(disp, cmap, vis);
 	     if (pal->lookup) break;
 	  }
      }
    pal->references = 1;
    pal->colors = c;
-   pal->count = x_software_x11_color_count[c];
+   pal->count = x_color_count[c];
    palpriv = calloc(1, sizeof(Convert_Pal_Priv));
    pal->data = palpriv;
    if (!palpriv)
@@ -316,8 +316,7 @@ evas_software_x11_x_software_x11_color_allocate(Display *disp, Colormap cmap, Vi
 }
 
 void
-evas_software_x11_x_software_x11_color_deallocate(Display *disp, Colormap cmap, Visual *vis, 
-				Convert_Pal *pal)
+evas_software_x11_x_color_deallocate(Display *disp, Colormap cmap, Visual *vis, Convert_Pal *pal)
 {
    unsigned long pixels[256];
    int j;

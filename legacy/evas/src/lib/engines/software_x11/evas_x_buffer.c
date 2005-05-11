@@ -1,63 +1,66 @@
 #include "evas_common.h"
 #include "evas_engine.h"
 
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/extensions/XShm.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-
-struct _X_Output_Buffer
-{
-   Display         *display;
-   XImage          *xim;
-   XShmSegmentInfo *shm_info;
-   void            *data;
-};
-
 static int _x_err = 0;
 
 void
-evas_software_x11_x_software_x11_write_mask_line(X_Output_Buffer *xob, DATA32 *src, int w, int y)
+evas_software_x11_x_write_mask_line(X_Output_Buffer *xob, DATA32 *src, int w, int y)
 {
    int x;
+   DATA32 *src_ptr;
+   DATA8 *dst_ptr;
+   int bpl = 0;
    
-   for (x = 0; x < w; x++)
+   src_ptr = src;
+   dst_ptr = evas_software_x11_x_output_buffer_data(xob, &bpl);
+   dst_ptr = dst_ptr + (bpl * y);
+   for (x = 0; x < w; x += 8)
      {
-	XPutPixel(xob->xim, x, y, A_VAL(&(src[x])) >> 7);
+	*dst_ptr =
+	  ((A_VAL(&(src_ptr[0])) >> 7) << 0) |
+	  ((A_VAL(&(src_ptr[1])) >> 7) << 1) |
+	  ((A_VAL(&(src_ptr[2])) >> 7) << 2) |
+	  ((A_VAL(&(src_ptr[3])) >> 7) << 3) |
+	  ((A_VAL(&(src_ptr[4])) >> 7) << 4) |
+	  ((A_VAL(&(src_ptr[5])) >> 7) << 5) |
+	  ((A_VAL(&(src_ptr[6])) >> 7) << 6) |
+	  ((A_VAL(&(src_ptr[7])) >> 7) << 7);
+	src_ptr += 8;
+	dst_ptr++;
+     }
+   for (; x < w; x ++)
+     {
+	XPutPixel(xob->xim, x, y, A_VAL(src_ptr) >> 7);
+	src_ptr++;
      }
 }
 
 int
-evas_software_x11_x_software_x11_can_do_shm(Display *d)
+evas_software_x11_x_can_do_shm(Display *d)
 {
    if (XShmQueryExtension(d))
      {
 	X_Output_Buffer *xob;
 	
-	xob = evas_software_x11_x_software_x11_output_buffer_new(d, 
-				  DefaultVisual(d, DefaultScreen(d)),
-				  DefaultDepth(d, DefaultScreen(d)),
-				  16, 16, 2, NULL);
-	if (!xob)
-	  return 0;
-	evas_software_x11_x_software_x11_output_buffer_free(xob);
+	xob = evas_software_x11_x_output_buffer_new
+	  (d, DefaultVisual(d, DefaultScreen(d)),
+	   DefaultDepth(d, DefaultScreen(d)), 16, 16, 2, NULL);
+	if (!xob) return 0;
+	evas_software_x11_x_output_buffer_free(xob, 1);
 	return 1;
      }
    return 0;
 }
 
 static void
-x_software_x11_output_tmp_x_err(Display * d, XErrorEvent * ev)
+x_output_tmp_x_err(Display * d, XErrorEvent * ev)
 {
    _x_err = 1;
    return;
-   d = NULL;
-   ev = NULL;
 }
 
 X_Output_Buffer *
-evas_software_x11_x_software_x11_output_buffer_new(Display *d, Visual *v, int depth, int w, int h, int try_shm, void *data)
+evas_software_x11_x_output_buffer_new(Display *d, Visual *v, int depth, int w, int h, int try_shm, void *data)
 {
    X_Output_Buffer *xob;
 
@@ -73,7 +76,8 @@ evas_software_x11_x_software_x11_output_buffer_new(Display *d, Visual *v, int de
 	xob->shm_info = malloc(sizeof(XShmSegmentInfo));
 	if (xob->shm_info)
 	  {
-	     xob->xim = XShmCreateImage(d, v, depth, ZPixmap, NULL, xob->shm_info, w, h);
+	     xob->xim = XShmCreateImage(d, v, depth, ZPixmap, NULL, 
+					xob->shm_info, w, h);
 	     if (xob->xim)
 	       {
 		  xob->shm_info->shmid = shmget(IPC_PRIVATE, 
@@ -92,7 +96,7 @@ evas_software_x11_x_software_x11_output_buffer_new(Display *d, Visual *v, int de
 			    XSync(d, False);
 			    _x_err = 0;
 			    ph = XSetErrorHandler((XErrorHandler)
-						  x_software_x11_output_tmp_x_err);
+						  x_output_tmp_x_err);
 			    XShmAttach(d, xob->shm_info);
 			    XSync(d, False);
 			    XSetErrorHandler((XErrorHandler)ph);
@@ -137,11 +141,11 @@ evas_software_x11_x_software_x11_output_buffer_new(Display *d, Visual *v, int de
 }
 
 void
-evas_software_x11_x_software_x11_output_buffer_free(X_Output_Buffer *xob)
+evas_software_x11_x_output_buffer_free(X_Output_Buffer *xob, int sync)
 {
    if (xob->shm_info)
      {
-	XSync(xob->display, False);
+	if (sync) XSync(xob->display, False);
 	XShmDetach(xob->display, xob->shm_info);
 	XDestroyImage(xob->xim);
 	shmdt(xob->shm_info->shmaddr);
@@ -157,34 +161,34 @@ evas_software_x11_x_software_x11_output_buffer_free(X_Output_Buffer *xob)
 }
 
 void
-evas_software_x11_x_software_x11_output_buffer_paste(X_Output_Buffer *xob, Drawable d, GC gc, int x, int y)
+evas_software_x11_x_output_buffer_paste(X_Output_Buffer *xob, Drawable d, GC gc, int x, int y, int sync)
 {
    if (xob->shm_info)
      {
-	XShmPutImage(xob->display, d, gc, xob->xim, 0, 0, x, y, xob->xim->width, xob->xim->height, False);
-	XSync(xob->display, False);
+	XShmPutImage(xob->display, d, gc, xob->xim, 0, 0, x, y,
+		     xob->xim->width, xob->xim->height, False);
+	if (sync) XSync(xob->display, False);
      }
    else
-     {
-	XPutImage(xob->display, d, gc, xob->xim, 0, 0, x, y, xob->xim->width, xob->xim->height);
-     }
+     XPutImage(xob->display, d, gc, xob->xim, 0, 0, x, y,
+	       xob->xim->width, xob->xim->height);
 }
 
 DATA8 *
-evas_software_x11_x_software_x11_output_buffer_data(X_Output_Buffer *xob, int *bytes_per_line_ret)
+evas_software_x11_x_output_buffer_data(X_Output_Buffer *xob, int *bytes_per_line_ret)
 {
    if (bytes_per_line_ret) *bytes_per_line_ret = xob->xim->bytes_per_line;
    return xob->xim->data;
 }
 
 int
-evas_software_x11_x_software_x11_output_buffer_depth(X_Output_Buffer *xob)
+evas_software_x11_x_output_buffer_depth(X_Output_Buffer *xob)
 {
    return xob->xim->bits_per_pixel;
 }
 
 int
-evas_software_x11_x_software_x11_output_buffer_byte_order(X_Output_Buffer *xob)
+evas_software_x11_x_output_buffer_byte_order(X_Output_Buffer *xob)
 {
    return xob->xim->byte_order;
 }
