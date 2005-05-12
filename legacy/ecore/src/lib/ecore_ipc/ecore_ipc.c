@@ -29,7 +29,7 @@
 #define DLT_R2     15
 
 /* byte swappers - for dealing with big vs little endian machines */
-static unsigned short
+unsigned short
 _ecore_ipc_swap_16(unsigned short v)
 {
    unsigned char *s, t;
@@ -39,7 +39,7 @@ _ecore_ipc_swap_16(unsigned short v)
    return v;
 }
 
-static unsigned int
+unsigned int
 _ecore_ipc_swap_32(unsigned int v)
 {
    unsigned char *s, t;
@@ -50,7 +50,7 @@ _ecore_ipc_swap_32(unsigned int v)
    return v;
 }
 
-static unsigned long long
+unsigned long long
 _ecore_ipc_swap_64(unsigned long long v)
 {
    unsigned char *s, t;

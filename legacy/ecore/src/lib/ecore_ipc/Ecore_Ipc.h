@@ -35,6 +35,10 @@ extern "C" {
 /**
  * Macros used for generic data packing
  */
+EAPI unsigned short _ecore_ipc_swap_16(unsigned short v);
+EAPI unsigned int _ecore_ipc_swap_32(unsigned int v);
+EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v);
+
 #ifdef WORDS_BIGENDIAN
 #define ECORE_IPC_SWAP2NET64(x) _ecore_ipc_swap_64(x)
 #define ECORE_IPC_SWAP2CPU64(x) _ecore_ipc_swap_64(x)
