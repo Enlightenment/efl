@@ -116,13 +116,13 @@ extern "C" {
     { \
 	if (ptr < ((unsigned char *)d + s)) \
 	    { \
-		p->v = ptr; \
+		p->v = (char *)ptr; \
 		ptr += strlen(p->v) + 1; \
 	    } \
     } 
 #define ECORE_IPC_PUTS(v, l)\
     { \
-	strcpy(ptr, p->v); \
+	strcpy((char *)ptr, p->v); \
 	ptr += l + 1; \
     }
 
