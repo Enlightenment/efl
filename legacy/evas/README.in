@@ -7,7 +7,7 @@ images, alpha-blend objects much and more.
 --------------------------------------------------------------------------
 Requires:
 
-  freetype 2.x.x (I want to make this optional)
+  freetype 2.1.7 and higher (I want to make this optional)
 
 Optional:
 
