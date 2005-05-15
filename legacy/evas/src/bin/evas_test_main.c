@@ -79,8 +79,6 @@ static int frames = 0;
 static Evas_Object *p_s[16];
 static Evas_Object *p_i[2];
 static Evas_Object *p_r[8];
-static Evas_Object *p_p[2];
-static Evas_Object *p_g[2];
 static Evas_Object *p_t[16];
 
 void
@@ -1951,28 +1949,28 @@ cb_mouse_down(void *data, Evas * e, Evas_Object * obj,
 	orig_start_time = start_time = get_time();
 	loop_count = orig_loop_count = 0;	
      }
-   printf("cb_mouse_down() [%i], %4i,%4i | %4.1f,%4.1f\n", ev->button,
+   printf("cb_mouse_down() [%i], %4i,%4i | %4i,%4i\n", ev->button,
 	  ev->output.x, ev->output.y, ev->canvas.x, ev->canvas.y);
 }
 
 void
 cb_mouse_up(void *data, Evas * e, Evas_Object * obj, Evas_Event_Mouse_Up * ev)
 {
-   printf("cb_mouse_up()   [%i], %4i,%4i | %4.1f,%4.1f\n", ev->button,
+   printf("cb_mouse_up()   [%i], %4i,%4i | %4i,%4i\n", ev->button,
 	  ev->output.x, ev->output.y, ev->canvas.x, ev->canvas.y);
 }
 
 void
 cb_mouse_in(void *data, Evas * e, Evas_Object * obj, Evas_Event_Mouse_In * ev)
 {
-   printf("cb_mouse_in()   [%08x], %4i,%4i | %4.1f,%4.1f\n", ev->buttons,
+   printf("cb_mouse_in()   [%08x], %4i,%4i | %4i,%4i\n", ev->buttons,
 	  ev->output.x, ev->output.y, ev->canvas.x, ev->canvas.y);
 }
 
 void
 cb_mouse_out(void *data, Evas * e, Evas_Object * obj, Evas_Event_Mouse_Out * ev)
 {
-   printf("cb_mouse_out()  [%08x], %4i,%4i | %4.1f,%4.1f\n", ev->buttons,
+   printf("cb_mouse_out()  [%08x], %4i,%4i | %4i,%4i\n", ev->buttons,
 	  ev->output.x, ev->output.y, ev->canvas.x, ev->canvas.y);
 }
 
@@ -1981,7 +1979,7 @@ cb_mouse_move(void *data, Evas * e, Evas_Object * obj,
 	      Evas_Event_Mouse_Move * ev)
 {
    printf
-      ("cb_mouse_move()  [%08x], %4i,%4i | %4.1f,%4.1f (%4i,%4i | %4.1f,%4.1f)\n",
+      ("cb_mouse_move()  [%08x], %4i,%4i | %4i,%4i (%4i,%4i | %4i,%4i)\n",
        ev->buttons, ev->cur.output.x, ev->cur.output.y, ev->cur.canvas.x,
        ev->cur.canvas.y, ev->prev.output.x, ev->prev.output.y,
        ev->prev.canvas.x, ev->prev.canvas.y);
