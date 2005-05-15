@@ -4,6 +4,6 @@
 #include <X11/XCB/xcb.h>
 
 void
-evas_software_x11_x_software_xcb_init(void)
+evas_software_xcb_x_init(void)
 {
 }

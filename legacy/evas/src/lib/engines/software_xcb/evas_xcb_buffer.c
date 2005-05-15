@@ -1,37 +1,45 @@
 #include "evas_common.h"
 #include "evas_engine.h"
 
-#include <X11/XCB/shm.h>
-#include <X11/XCB/xcb_image.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
-
-struct _Xcb_Output_Buffer
-{
-   XCBConnection     *connection;
-   XCBImage          *image;
-   XCBShmSegmentInfo *shm_info;
-   void              *data;
-};
-
 static int _xcb_err = 0;
 
 void
-evas_software_x11_x_software_xcb_write_mask_line(Xcb_Output_Buffer *xcbob,
-						 DATA32            *src,
-						 int                w,
-						 int                y)
+evas_software_xcb_x_write_mask_line(Xcb_Output_Buffer *xcbob,
+				    DATA32            *src,
+				    int                w,
+				    int                y)
 {
-   int x;
+   int     x;
+   DATA32 *src_ptr;
+   DATA8  *dst_ptr;
+   int     bpl = 0;
    
-   for (x = 0; x < w; x++)
-     {
-	XCBImagePutPixel(xcbob->image, x, y, A_VAL(&(src[x])) >> 7);
-     }
+   src_ptr = src;
+   dst_ptr = evas_software_xcb_x_output_buffer_data(xcbob, &bpl);
+   dst_ptr = dst_ptr + (bpl * y);
+   for (x = 0; x < w; x += 8)
+      {
+	 *dst_ptr =
+	   ((A_VAL(&(src_ptr[0])) >> 7) << 0) |
+	   ((A_VAL(&(src_ptr[1])) >> 7) << 1) |
+	   ((A_VAL(&(src_ptr[2])) >> 7) << 2) |
+	   ((A_VAL(&(src_ptr[3])) >> 7) << 3) |
+	   ((A_VAL(&(src_ptr[4])) >> 7) << 4) |
+	   ((A_VAL(&(src_ptr[5])) >> 7) << 5) |
+	   ((A_VAL(&(src_ptr[6])) >> 7) << 6) |
+	   ((A_VAL(&(src_ptr[7])) >> 7) << 7);
+	 src_ptr += 8;
+	 dst_ptr++;
+      }
+   for (; x < w; x ++)
+      {
+	 XCBImagePutPixel(xcbob->image, x, y, A_VAL(src_ptr) >> 7);
+	 src_ptr++;
+      }
 }
 
 int
-evas_software_x11_x_software_xcb_can_do_shm(XCBConnection *c)
+evas_software_xcb_x_can_do_shm(XCBConnection *c)
 {
    XCBGetGeometryRep *geom;
    XCBDRAWABLE        drawable;
@@ -49,15 +57,14 @@ evas_software_x11_x_software_xcb_can_do_shm(XCBConnection *c)
      {
 	Xcb_Output_Buffer *xcbob;
 	
-	xcbob = evas_software_x11_x_software_xcb_output_buffer_new(c, 
-								   depth,
-								   16,
-								   16,
-								   2,
-								   NULL);
-	if (!xcbob)
-	  return 0;
-	evas_software_x11_x_software_xcb_output_buffer_free(xcbob);
+	xcbob = evas_software_xcb_x_output_buffer_new(c, 
+						      depth,
+						      16,
+						      16,
+						      2,
+						      NULL);
+	if (!xcbob) return 0;
+	evas_software_xcb_x_output_buffer_free(xcbob, 1);
 	return 1;
      }
    return 0;
@@ -68,21 +75,19 @@ evas_software_x11_x_software_xcb_can_do_shm(XCBConnection *c)
  */
 
 /* static void */
-/* x_software_x11_output_tmp_x11_err(XCBConnection *c, XErrorEvent * ev) */
+/* x_output_tmp_xcb_err(XCBConnection *c, XErrorEvent * ev) */
 /* { */
 /*    _xcb_err = 1; */
 /*    return; */
-/*    d = NULL; */
-/*    ev = NULL; */
 /* } */
 
 Xcb_Output_Buffer *
-evas_software_x11_x_software_xcb_output_buffer_new(XCBConnection *c,
-						   int            depth,
-						   int            w,
-						   int            h,
-						   int            try_shm,
-						   void          *data)
+evas_software_xcb_x_output_buffer_new(XCBConnection *c,
+				      int            depth,
+				      int            w,
+				      int            h,
+				      int            try_shm,
+				      void          *data)
 {
    Xcb_Output_Buffer *xcbob;
 
@@ -117,11 +122,12 @@ evas_software_x11_x_software_xcb_output_buffer_new(XCBConnection *c,
 			    */
 
 /* 			    XErrorHandler ph; */
+/* 			    EventHandlers eh; */
 			    
 			    XCBSync(c, 0);
 			    _xcb_err = 0;
 /* 			    ph = XSetErrorHandler((XErrorHandler) */
-/* 						  x_software_x11_output_tmp_x_err); */
+/* 						  x_output_tmp_x_err); */
 			    XCBShmAttach(c,
 					 xcbob->shm_info->shmseg,
 					 xcbob->shm_info->shmid, 0);
@@ -168,11 +174,12 @@ evas_software_x11_x_software_xcb_output_buffer_new(XCBConnection *c,
 }
 
 void
-evas_software_x11_x_software_xcb_output_buffer_free(Xcb_Output_Buffer *xcbob)
+evas_software_xcb_x_output_buffer_free(Xcb_Output_Buffer *xcbob,
+				       int                sync)
 {
    if (xcbob->shm_info)
      {
-	XCBSync(xcbob->connection, 0);
+	if (sync) XCBSync(xcbob->connection, 0);
 	XCBShmDetach(xcbob->connection, xcbob->shm_info->shmseg);
 	XCBImageSHMDestroy(xcbob->image);
 	shmdt(xcbob->shm_info->shmaddr);
@@ -188,11 +195,12 @@ evas_software_x11_x_software_xcb_output_buffer_free(Xcb_Output_Buffer *xcbob)
 }
 
 void
-evas_software_x11_x_software_xcb_output_buffer_paste(Xcb_Output_Buffer *xcbob,
-						     XCBDRAWABLE        d,
-						     XCBGCONTEXT        gc,
-						     int                x,
-						     int                y)
+evas_software_xcb_x_output_buffer_paste(Xcb_Output_Buffer *xcbob,
+					XCBDRAWABLE        d,
+					XCBGCONTEXT        gc,
+					int                x,
+					int                y,
+					int                sync)
 {
    if (xcbob->shm_info)
      {
@@ -202,30 +210,34 @@ evas_software_x11_x_software_xcb_output_buffer_paste(Xcb_Output_Buffer *xcbob,
 		       x, y,
 		       xcbob->image->width, xcbob->image->height,
 		       0);
-	XCBSync(xcbob->connection, 0);
+	if (sync) XCBSync(xcbob->connection, 0);
      }
    else
-     {
-	XCBImagePut(xcbob->connection, d, gc, xcbob->image, 0, 0, x, y, xcbob->image->width, xcbob->image->height);
-     }
+      XCBImagePut(xcbob->connection,
+		  d,
+		  gc,
+		  xcbob->image,
+		  0, 0,
+		  x, y,
+		  xcbob->image->width, xcbob->image->height);
 }
 
 DATA8 *
-evas_software_x11_x_software_xcb_output_buffer_data(Xcb_Output_Buffer *xcbob,
-						    int               *bytes_per_line_ret)
+evas_software_xcb_x_output_buffer_data(Xcb_Output_Buffer *xcbob,
+				       int               *bytes_per_line_ret)
 {
    if (bytes_per_line_ret) *bytes_per_line_ret = xcbob->image->bytes_per_line;
    return xcbob->image->data;
 }
 
 int
-evas_software_x11_x_software_xcb_output_buffer_depth(Xcb_Output_Buffer *xcbob)
+evas_software_xcb_x_output_buffer_depth(Xcb_Output_Buffer *xcbob)
 {
    return xcbob->image->bits_per_pixel;
 }
 
 int
-evas_software_x11_x_software_xcb_output_buffer_byte_order(Xcb_Output_Buffer *xcbob)
+evas_software_xcb_x_output_buffer_byte_order(Xcb_Output_Buffer *xcbob)
 {
    return xcbob->image->image_byte_order;
 }
