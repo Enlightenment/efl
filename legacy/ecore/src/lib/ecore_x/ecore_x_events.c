@@ -1409,6 +1409,19 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
 	ecore_event_add(ECORE_X_EVENT_WINDOW_STATE, e, NULL, NULL);
      }
+   else if ((xevent->xclient.message_type == ECORE_X_ATOM_NET_WM_DESKTOP)
+	    && (xevent->xclient.format == 32))
+     {
+	Ecore_X_Event_Desktop_Change *e;
+
+	e = calloc(1, sizeof(Ecore_X_Event_Desktop_Change));
+	if (!e) return;
+	e->win = xevent->xclient.window;
+	e->desk = xevent->xclient.data.l[0];
+	e->source = xevent->xclient.data.l[1];
+
+	ecore_event_add(ECORE_X_EVENT_DESKTOP_CHANGE, e, NULL, NULL);
+     }
    else
      {
 	Ecore_X_Event_Client_Message *e;
