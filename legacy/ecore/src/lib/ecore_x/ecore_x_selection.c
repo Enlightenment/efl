@@ -494,7 +494,7 @@ _ecore_x_selection_converter_text(char *target, void *data, int size, void **dat
 #ifdef X_HAVE_UTF8_STRING
    if (Xutf8TextListToTextProperty(_ecore_x_disp, &mystr, 1, style, &text_prop) == Success)
      {
-	int bufsize = strlen(text_prop.value) + 1;
+	int bufsize = strlen((char *)text_prop.value) + 1;
 	*data_ret = malloc(bufsize);
 	memcpy(*data_ret, text_prop.value, bufsize);
 	*size_ret = bufsize;
@@ -718,7 +718,7 @@ _ecore_x_selection_parser_text(const char *target __UNUSED__, unsigned char *dat
 	data[size - 1] = 0;
      }
 
-   sel->text = data;
+   sel->text = (char *)data;
    ECORE_X_SELECTION_DATA(sel)->free = _ecore_x_selection_data_text_free;
    return sel;
 }

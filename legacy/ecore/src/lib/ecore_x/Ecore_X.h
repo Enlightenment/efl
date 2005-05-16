@@ -950,9 +950,10 @@ EAPI void             ecore_x_window_pixel_gravity_set(Ecore_X_Window win,
 EAPI Ecore_X_Atom     ecore_x_window_prop_any_type(void);
 EAPI void             ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Atom format, int size, void *data, int number);
 EAPI int              ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecore_X_Atom type, int size, unsigned char **data, int *num);
-EAPI void             ecore_x_window_prop_card32_set(Ecore_X_Window win, Ecore_X_Atom atom, unsigned int *val, unsigned int num);
+EAPI void             ecore_x_window_prop_card32_set(Ecore_X_Window win, Ecore_X_Atom atom,
+						     unsigned int *val, unsigned int num);
 EAPI int              ecore_x_window_prop_card32_get(Ecore_X_Window win, Ecore_X_Atom atom,
-			       unsigned int *val, unsigned int len);
+						     unsigned int *val, unsigned int len);
 EAPI void             ecore_x_window_prop_property_del(Ecore_X_Window win, Ecore_X_Atom property);
 EAPI void             ecore_x_window_prop_property_notify(Ecore_X_Window win, const char *type, long *data);
 EAPI void             ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom type, const char *str);
@@ -1153,8 +1154,10 @@ EAPI int ecore_x_mwm_hints_get(Ecore_X_Window win,
 			       Ecore_X_MWM_Hint_Decor *dhint,
 			       Ecore_X_MWM_Hint_Input *ihint);
        
+/* netwm */
 EAPI void                ecore_x_netwm_init(void);
 EAPI void                ecore_x_netwm_wm_identify(Ecore_X_Window root, Ecore_X_Window check, const char *wm_name);
+EAPI void                ecore_x_netwm_supported(Ecore_X_Window root, Ecore_X_Atom atom, int supported);
 EAPI void                ecore_x_netwm_desk_count_set(Ecore_X_Window root, unsigned int n_desks);
 EAPI void                ecore_x_netwm_desk_roots_set(Ecore_X_Window root, unsigned int n_desks, Ecore_X_Window * vroots);
 EAPI void                ecore_x_netwm_desk_names_set(Ecore_X_Window root, unsigned int n_desks, const char **names);

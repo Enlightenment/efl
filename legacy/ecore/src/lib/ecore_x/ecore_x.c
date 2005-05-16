@@ -544,10 +544,10 @@ ecore_x_killall(Ecore_X_Window root)
       Window root_r;
       Window parent_r;
       Window *children_r = NULL;
-      int num_children = 0;
+      unsigned int num_children = 0;
 
       while (XQueryTree(_ecore_x_disp, root, &root_r, &parent_r,
-               &children_r, &num_children) && num_children > 0)
+			&children_r, &num_children) && (num_children > 0))
       {
          for (j = 0; j < num_children; ++j)
          {

@@ -489,7 +489,7 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
 
 	     if (xprop.encoding == ECORE_X_ATOM_UTF8_STRING)
 	       {
-		  t = strdup(xprop.value);
+		  t = strdup((char *)xprop.value);
 	       }
 	     else
 	       {
@@ -506,7 +506,7 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
 		  if ((ret == XLocaleNotSupported) ||
 		      (ret == XNoMemory) || (ret == XConverterNotFound))
 		    {
-		       t = strdup(xprop.value);
+		       t = strdup((char *)xprop.value);
 		    }
 		  else if (ret >= Success)
 		    {

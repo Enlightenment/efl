@@ -162,7 +162,7 @@ ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom type, const char
    XTextProperty       xtp;
 
    if (win == 0) win = DefaultRootWindow(_ecore_x_disp);
-   xtp.value = (char*)str;
+   xtp.value = (unsigned char *)str;
    xtp.format = 8;
    xtp.encoding = ECORE_X_ATOM_UTF8_STRING;
    xtp.nitems = strlen(str);

@@ -27,7 +27,7 @@ ecore_x_e_init(void)
 void
 ecore_x_e_frame_size_set(Ecore_X_Window win, int fl, int fr, int ft, int fb)
 {
-   int frames[4];
+   unsigned int frames[4];
 
    frames[0] = fl;
    frames[1] = fr;

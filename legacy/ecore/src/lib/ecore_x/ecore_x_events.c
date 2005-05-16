@@ -1030,6 +1030,8 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
    xnotify.selection = xevent->xselectionrequest.selection;
    xnotify.target = xevent->xselectionrequest.target;
    xnotify.time = CurrentTime;
+   xnotify.send_event = True;
+   xnotify.serial = 0;
 
    if ((sd = _ecore_x_selection_get(xnotify.selection)) 
        && (sd->win == xevent->xselectionrequest.owner))
