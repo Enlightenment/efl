@@ -1390,7 +1390,23 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	     return;
 	  }
 	e->state[0] = _ecore_x_netwm_state_get(xevent->xclient.data.l[1]);
+	if (e->state[0] == ECORE_X_WINDOW_STATE_UNKNOWN)
+	  {
+	     char *name;
+	     name = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[1]);
+	     if (name)
+	       printf("Unknown state: %s\n", name);
+	     XFree(name);
+	  }
 	e->state[1] = _ecore_x_netwm_state_get(xevent->xclient.data.l[2]);
+	if (e->state[1] == ECORE_X_WINDOW_STATE_UNKNOWN)
+	  {
+	     char *name;
+	     name = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[2]);
+	     if (name)
+	       printf("Unknown state: %s\n", name);
+	     XFree(name);
+	  }
 	e->source = xevent->xclient.data.l[3];
 
 	ecore_event_add(ECORE_X_EVENT_WINDOW_STATE, e, NULL, NULL);
