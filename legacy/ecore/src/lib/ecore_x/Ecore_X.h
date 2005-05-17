@@ -610,7 +610,7 @@ struct _Ecore_X_Event_Window_State
 struct _Ecore_X_Event_Desktop_Change
 {
    Ecore_X_Window              win;
-   int                         desk;
+   unsigned int                desk;
    int                         source;
 };
 
