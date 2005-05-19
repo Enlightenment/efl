@@ -355,7 +355,7 @@ eet_data_put_float(void *src, int *size_ret)
    
    s = (float *)src;
    prev_locale = setlocale(LC_NUMERIC, "C");
-   snprintf(buf, sizeof(buf), "%16.16f", (double)(*s));
+   snprintf(buf, sizeof(buf), "%a", (double)(*s));
    if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
    len = strlen(buf);
    d = malloc(len + 1);
@@ -400,7 +400,7 @@ eet_data_put_double(void *src, int *size_ret)
    
    s = (double *)src;
    prev_locale = setlocale(LC_NUMERIC, "C");
-   snprintf(buf, sizeof(buf), "%32.32f", (double)(*s));
+   snprintf(buf, sizeof(buf), "%a", (double)(*s));
    if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
    len = strlen(buf);
    d = malloc(len + 1);
