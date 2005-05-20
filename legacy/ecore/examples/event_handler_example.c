@@ -38,4 +38,5 @@ int main(int argc, char **argv)
 				      event_hup, NULL);
    ecore_main_loop_begin();
    ecore_shutdown();
+   return 0;
 }
