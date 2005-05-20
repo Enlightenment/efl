@@ -1384,7 +1384,7 @@ ecore_x_window_button_ungrab(Ecore_X_Window win, int button,
    unsigned int        b;
    unsigned int        m;
    unsigned int        locks[8];
-   int                 i, shuffle = 0;
+   int                 i, shuffle = 0, found = 0;
    
    b = button;
    if (b == 0) b = AnyButton;
@@ -1400,14 +1400,21 @@ ecore_x_window_button_ungrab(Ecore_X_Window win, int button,
    locks[7] = ECORE_X_LOCK_CAPS   | ECORE_X_LOCK_NUM    | ECORE_X_LOCK_SCROLL;
    for (i = 0; i < 8; i++)
      XUngrabButton(_ecore_x_disp, b, m | locks[i], win);
-   for (i = 0; i < _ecore_window_grabs_num - 1; i++)
+   if (_ecore_window_grabs_num > 0)
      {
-	if (_ecore_window_grabs[i] == win) shuffle = 1;
-	if (shuffle) _ecore_window_grabs[i] = _ecore_window_grabs[i + 1];
+	for (i = 0; i < (_ecore_window_grabs_num - 1); i++)
+	  {
+	     if (shuffle) _ecore_window_grabs[i] = _ecore_window_grabs[i + 1];
+	     if ((!shuffle) && (_ecore_window_grabs[i] == win))
+	       shuffle = 1;
+	  }
+	if (shuffle)
+	  {
+	     _ecore_window_grabs_num--;
+	     _ecore_window_grabs = realloc(_ecore_window_grabs, 
+					   _ecore_window_grabs_num * sizeof(Window));
+	  }
      }
-   _ecore_window_grabs_num--;
-   _ecore_window_grabs = realloc(_ecore_window_grabs, 
-				 _ecore_window_grabs_num * sizeof(Window));
 }
 
 int      _ecore_key_grabs_num = 0;
@@ -1484,14 +1491,21 @@ ecore_x_window_key_ungrab(Ecore_X_Window win, char *key,
    locks[7] = ECORE_X_LOCK_CAPS   | ECORE_X_LOCK_NUM    | ECORE_X_LOCK_SCROLL;
    for (i = 0; i < 8; i++)
      XUngrabKey(_ecore_x_disp, keycode, m | locks[i], win);
-   for (i = 0; i < _ecore_key_grabs_num - 1; i++)
+   if (_ecore_key_grabs_num > 0)
      {
-	if (_ecore_key_grabs[i] == win) shuffle = 1;
-	if (shuffle) _ecore_key_grabs[i] = _ecore_key_grabs[i + 1];
+	for (i = 0; i < (_ecore_key_grabs_num - 1); i++)
+	  {
+	     if (shuffle) _ecore_key_grabs[i] = _ecore_key_grabs[i + 1];
+	     if ((!shuffle) && (_ecore_key_grabs[i] == win))
+	       shuffle = 1;
+	  }
+	if (shuffle)
+	  {
+	     _ecore_key_grabs_num--;
+	     _ecore_key_grabs = realloc(_ecore_key_grabs, 
+					_ecore_key_grabs_num * sizeof(Window));
+	  }
      }
-   _ecore_key_grabs_num--;
-   _ecore_key_grabs = realloc(_ecore_key_grabs, 
-				 _ecore_key_grabs_num * sizeof(Window));
 }
 
 /**

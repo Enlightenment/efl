@@ -315,9 +315,9 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 		  int replay = 0;
 		  
 		  if (_ecore_window_grab_replay_func)
-	       replay = _ecore_window_grab_replay_func(_ecore_window_grab_replay_data, 
-						       ECORE_X_EVENT_MOUSE_WHEEL,
-						       e);
+		    replay = _ecore_window_grab_replay_func(_ecore_window_grab_replay_data, 
+							    ECORE_X_EVENT_MOUSE_WHEEL,
+							    e);
 		  if (replay)
 		    XAllowEvents(xevent->xbutton.display,
 				 ReplayPointer,
