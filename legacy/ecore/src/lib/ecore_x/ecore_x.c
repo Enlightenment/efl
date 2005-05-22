@@ -1384,7 +1384,7 @@ ecore_x_window_button_ungrab(Ecore_X_Window win, int button,
    unsigned int        b;
    unsigned int        m;
    unsigned int        locks[8];
-   int                 i, shuffle = 0, found = 0;
+   int                 i, shuffle = 0;
    
    b = button;
    if (b == 0) b = AnyButton;

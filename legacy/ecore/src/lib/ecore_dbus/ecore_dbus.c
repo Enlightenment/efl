@@ -898,7 +898,7 @@ _ecore_dbus_getuid(void)
    char               *tmp;
 
    tmp = (char *)malloc(MAX_LONG_LEN);
-   len = snprintf(tmp, MAX_LONG_LEN, "%ld", getuid());
+   len = snprintf(tmp, MAX_LONG_LEN, "%ld", (long) getuid());
    uid = (char *)malloc(len + 1);
    uid = memcpy(uid, tmp, len);
    uid[len] = '\0';
@@ -1168,7 +1168,7 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
       /***************************/
       if (!svr->authenticated)
 	{
-	   Ecore_DBus_Auth    *auth;
+	   const Ecore_DBus_Auth *auth;
 	   Ecore_DBus_Auth_Transaction trans;
 
 	   if (!strncmp(e->data, "OK", 2))

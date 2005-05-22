@@ -15,7 +15,8 @@ static void app_delete_request(Ecore_Evas *ee);
 static int
 getpix_cb(void *data)
 {
-   int *pix, p;
+   const int *pix;
+   int p;
    int w, h;
    FILE *f;
    int x, y;
