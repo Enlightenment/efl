@@ -749,7 +749,7 @@ evas_string_char_next_get(const char *str, int pos, int *decoded)
    if (!str) return 0;
    if (pos < 0) return 0;
    p = pos;
-   d = evas_common_font_utf8_get_next((char *)str, &p);
+   d = evas_common_font_utf8_get_next((unsigned char *)str, &p);
    if (decoded) *decoded = d;
    return p;
 }
@@ -769,7 +769,7 @@ evas_string_char_prev_get(const char *str, int pos, int *decoded)
    if (!str) return 0;
    if (pos < 1) return 0;
    p = pos;
-   d = evas_common_font_utf8_get_prev((char *)str, &p);
+   d = evas_common_font_utf8_get_prev((unsigned char *)str, &p);
    if (decoded) *decoded = d;
    return p;
 }

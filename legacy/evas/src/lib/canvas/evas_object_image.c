@@ -905,8 +905,8 @@ evas_object_image_pixels_import(Evas_Object *obj, Evas_Pixel_Import_Source *pixe
 								  1,
 								  &image_pixels);
 		  if (image_pixels)
-		    evas_common_convert_yuv_420p_601_rgba(pixels->rows,
-							  image_pixels,
+		    evas_common_convert_yuv_420p_601_rgba((DATA8 **) pixels->rows,
+							  (DATA8 *) image_pixels,
 							  o->cur.image.w,
 							  o->cur.image.h);
 		  if (o->engine_data)

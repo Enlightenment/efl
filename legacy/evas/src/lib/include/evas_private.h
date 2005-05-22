@@ -654,7 +654,7 @@ void evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, 
 int evas_event_passes_through(Evas_Object *obj);
 Evas_List *evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y);
 int evas_file_path_is_full_path(char *path);
-char *evas_file_path_join(char *path, char *end);
+char *evas_file_path_join(const char *path, const char *end);
 int evas_file_path_exists(char *path);
 int evas_file_path_is_file(char *path);
 int evas_file_path_is_dir(char *path);
@@ -695,7 +695,7 @@ void evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mas
 void evas_font_dir_cache_free(void);
 char *evas_font_dir_cache_find(char *dir, char *font);
 void evas_font_free(Evas *evas, void *font);
-void *evas_font_load(Evas *evas, char *name, char *source, int size);
+void *evas_font_load(Evas *evas, const char *name, const char *source, int size);
 
 extern int _evas_alloc_error;
 

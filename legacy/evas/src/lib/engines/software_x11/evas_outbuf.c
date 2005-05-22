@@ -259,7 +259,7 @@ evas_software_x11_outbuf_new_region_for_update(Outbuf * buf, int x, int y, int w
 							 w, h,
 							 use_shm,
 							 NULL);
-	im->image->data = evas_software_x11_x_output_buffer_data(obr->xob, &bpl);
+	im->image->data = (DATA32 *) evas_software_x11_x_output_buffer_data(obr->xob, &bpl);
 	if (buf->priv.x.mask)
 	  obr->mxob = evas_software_x11_x_output_buffer_new(buf->priv.x.disp,
 							    buf->priv.x.vis,

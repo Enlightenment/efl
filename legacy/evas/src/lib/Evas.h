@@ -263,9 +263,9 @@ struct _Evas_Event_Key_Down /** Key press event */
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
 
-   char          *key; /**< The logical key : (eg shift+1 == exclamation) */
-   char          *string; /**< A UTF8 string if this keystroke has produced a visible string to be ADDED */
-   char          *compose; /**< A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one */
+   const char    *key; /**< The logical key : (eg shift+1 == exclamation) */
+   const char    *string; /**< A UTF8 string if this keystroke has produced a visible string to be ADDED */
+   const char    *compose; /**< A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one */
 };
 
 struct _Evas_Event_Key_Up /** Key release event */
@@ -275,9 +275,9 @@ struct _Evas_Event_Key_Up /** Key release event */
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
 
-   char          *key; /**< The logical key : (eg shift+1 == exclamation) */
-   char          *string; /**< A UTF8 string if this keystroke has produced a visible string to be ADDED */
-   char          *compose; /**< A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one */
+   const char    *key; /**< The logical key : (eg shift+1 == exclamation) */
+   const char    *string; /**< A UTF8 string if this keystroke has produced a visible string to be ADDED */
+   const char    *compose; /**< A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one */
 };
 
 #ifdef __cplusplus

@@ -230,7 +230,13 @@ evas_fb_outbuf_fb_new_region_for_update(Outbuf *buf, int x, int y, int w, int h,
 
 	*cx = 0; *cy = 0; *cw = w; *ch = h;
 	im = evas_common_image_create(w, h);
-	return im;
+
+        /* handle framebuffers with alpha channel */
+        if (buf->priv.fb.fb->fb_var.transp.length > 0) {
+           im->flags |= RGBA_IMAGE_HAS_ALPHA;
+           memset(im->image->data, 0, w * h * sizeof(DATA32));
+        }
+        return im;
      }
    return NULL;
 }

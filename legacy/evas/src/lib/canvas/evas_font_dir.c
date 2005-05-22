@@ -87,7 +87,7 @@ evas_font_dir_cache_find(char *dir, char *font)
 }
 
 static Evas_List *
-evas_font_set_get(char *name)
+evas_font_set_get(const char *name)
 {
    Evas_List *fonts = NULL;
    char *p;
@@ -99,7 +99,8 @@ evas_font_set_get(char *name)
      }
    else
      {
-	char *nm, *pp;
+	const char *pp;
+	char *nm;
 
 	pp = name;
 	while (p)
@@ -153,7 +154,7 @@ evas_font_free(Evas *evas, void *font)
 }
 
 void *
-evas_font_load(Evas *evas, char *name, char *source, int size)
+evas_font_load(Evas *evas, const char *name, const char *source, int size)
 {
    void *font = NULL;
    Evas_List *fonts, *l;

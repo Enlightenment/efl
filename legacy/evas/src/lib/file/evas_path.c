@@ -28,7 +28,7 @@ evas_file_path_is_full_path(char *path)
 }
 
 char *
-evas_file_path_join(char *path, char *end)
+evas_file_path_join(const char *path, const char *end)
 {
    char *res = NULL;
    int len;
