@@ -71,7 +71,7 @@
    {
       unsigned int        address;
       char                name[sEXPMAX + 1];
-   } AMX_FUNCSTUB __attribute__((packed));
+   } __attribute__((packed)) AMX_FUNCSTUB;
 
 /* The AMX structure is the internal structure for many functions. Not all
  * fields are valid at all times; many fields are cached in local variables.
@@ -108,7 +108,7 @@
       cell reset_stk     ;
       cell reset_hea     ;
       cell          *syscall_d;	/* relocated value/address for the SYSCALL.D opcode */
-   } AMX              __attribute__((packed));
+   } __attribute__((packed)) AMX;
 
 /* The AMX_HEADER structure is both the memory format as the file format. The
  * structure is used internaly.
@@ -132,7 +132,7 @@
       int pubvars    ;	/* the "public variables" table */
       int tags       ;	/* the "public tagnames" table */
       int nametable  ;	/* name table, file version 7 only */
-   } AMX_HEADER       __attribute__((packed));
+   } __attribute__((packed)) AMX_HEADER;
 #define AMX_MAGIC       0xf1e0
 
    enum
