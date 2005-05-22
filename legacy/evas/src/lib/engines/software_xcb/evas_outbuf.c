@@ -301,7 +301,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
 							   h,
 							   use_shm,
 							   NULL);
-	im->image->data = evas_software_xcb_x_output_buffer_data(obr->xcbob, &bpl);
+	im->image->data = (DATA32 *)evas_software_xcb_x_output_buffer_data(obr->xcbob, &bpl);
 	if (buf->priv.x.mask.pixmap.xid)
 	  obr->mxcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x.conn,
 							      1,
