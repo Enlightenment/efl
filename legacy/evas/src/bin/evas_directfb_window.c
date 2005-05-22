@@ -5,7 +5,7 @@
    Written by Denis Oliver Kropp <dok@directfb.org>,
               Andreas Hundt <andi@fischlustig.de> and
               Sven Neumann <neo@directfb.org>.
-              
+
    This file is subject to the terms and conditions of the MIT License:
 
    Permission is hereby granted, free of charge, to any person
@@ -127,7 +127,7 @@ int main( int argc, char *argv[] )
 
           DFBCHECK(dfb->CreateSurface( dfb, &desc, &bgsurface ) );
 
-         	  
+
           provider->RenderTo( provider, bgsurface, NULL );
           provider->Release( provider );
 
@@ -142,7 +142,7 @@ int main( int argc, char *argv[] )
           bgsurface->DrawString( bgsurface,
                     "You can drag them around, too, if you want.",
                                  -1, 10 , 40, DSTF_LEFT | DSTF_TOP );
-          
+
           bgsurface->SetColor( bgsurface, 0xCF, 0xCF, 0xFF, 0xFF );
 	  bgsurface->DrawString( bgsurface,
                     "The one with funky stuff happening and things flying around is an evas.",
@@ -150,7 +150,7 @@ int main( int argc, char *argv[] )
 
 
 
-	  
+
           layer->SetBackgroundImage( layer, bgsurface );
           layer->SetBackgroundMode( layer, DLBM_IMAGE );
      }
@@ -182,7 +182,7 @@ int main( int argc, char *argv[] )
 	     window_surface2->FillRectangle( window_surface2, 1, 1,
 		   desc.width-2, desc.height-2 );
 
- 
+
 	     DFBCHECK(window_surface2->SetFont(window_surface2, font ));
 	     window_surface2->SetColor( window_surface2, 0xCF, 0xFF, 0xCF, 0xFF );
 
@@ -236,7 +236,7 @@ int main( int argc, char *argv[] )
 	   einfo = (Evas_Engine_Info_DirectFB *) evas_engine_info_get(evas);
 
 	   einfo->info.dfb = dfb;
-	   einfo->info.surface = window_surface1;	 
+	   einfo->info.surface = window_surface1;
 	   einfo->info.flags = DSDRAW_BLEND;
 	   evas_engine_info_set(evas, (Evas_Engine_Info *) einfo);
 	}
@@ -368,18 +368,18 @@ int main( int argc, char *argv[] )
 	  loop();
 	  {
 	     Evas_List *updates;
-	     
+
 	     updates = evas_render_updates(evas);
 	     /* efficient update.. only flip the rectangle regions that changed! */
 	     if (updates)
 	       {
 		  DFBRegion region;
 		  Evas_List *l;
-		  
+
 		  for (l = updates; l; l = l->next)
 		    {
 		       Evas_Rectangle *rect;
-		       
+
 		       rect = l->data;
 		       region.x1 = rect->x;
 		       region.y1 = rect->y;
@@ -392,7 +392,7 @@ int main( int argc, char *argv[] )
 	       }
 	  }
      }
-   
+
      buffer->Release( buffer );
      window_surface2->Release( window_surface2 );
      window_surface1->Release( window_surface1 );

@@ -86,10 +86,10 @@ evas_software_xcb_outbuf_setup_x(int            w,
 #ifdef WORDS_BIGENDIAN
 	   if (evas_software_xcb_x_output_buffer_byte_order(xcbob) == LSBFirst)
 	     buf->priv.x.swap = 1;
-#else	   
+#else
 	   if (evas_software_xcb_x_output_buffer_byte_order(xcbob) == MSBFirst)
 	     buf->priv.x.swap = 1;
-#endif	     
+#endif
 	   if ((vis->_class == TrueColor) || (vis->_class == DirectColor))
 	     {
 		buf->priv.mask.r = (DATA32) vis->red_mask;
@@ -246,7 +246,7 @@ evas_software_xcb_outbuf_setup_x(int            w,
 
    return buf;
 }
- 
+
 RGBA_Image *
 evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
 					       int     x,
@@ -282,7 +282,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
      {
 	if ((w * h) < (200 * 200)) use_shm = 0;
      }
-   
+
    if ((buf->rot == 0) &&
        (buf->priv.mask.r == 0xff0000) &&
        (buf->priv.mask.g == 0x00ff00) &&
@@ -306,7 +306,7 @@ evas_software_xcb_outbuf_new_region_for_update(Outbuf *buf,
 	  obr->mxcbob = evas_software_xcb_x_output_buffer_new(buf->priv.x.conn,
 							      1,
 							      w,
-							      h, 
+							      h,
 							      use_shm,
 							      NULL);
      }
@@ -357,12 +357,12 @@ void
 evas_software_xcb_outbuf_flush(Outbuf *buf)
 {
    Evas_List *l;
-   
+
    for (l = buf->priv.pending_writes; l; l = l->next)
      {
 	RGBA_Image *im;
 	Outbuf_Region      *obr;
-	
+
 	im = l->data;
 	obr = im->extended_info;
 	/* paste now */
@@ -390,7 +390,7 @@ evas_software_xcb_outbuf_flush(Outbuf *buf)
      {
         RGBA_Image    *im;
 	Outbuf_Region *obr;
-	
+
 	im = buf->priv.pending_writes->data;
 	buf->priv.pending_writes = evas_list_remove_list(buf->priv.pending_writes,
 							 buf->priv.pending_writes);
@@ -417,7 +417,7 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf     *buf,
    void               *data;
    int                 bpl = 0;
    int                 yy;
-   
+
    obr = update->extended_info;
    if (buf->priv.pal)
      {
@@ -450,7 +450,7 @@ evas_software_xcb_outbuf_push_updated_region(Outbuf     *buf,
 						   PAL_MODE_NONE, buf->rot);
      }
    if (!conv_func) return;
-   
+
    data = evas_software_xcb_x_output_buffer_data(obr->xcbob, &bpl);
    src_data = update->image->data;
    if (buf->rot == 0)
@@ -518,9 +518,9 @@ evas_software_xcb_outbuf_reconfigure(Outbuf      *buf,
 				     int          rot,
 				     Outbuf_Depth depth)
 {
-   if ((w == buf->w) && 
-       (h == buf->h) && 
-       (rot == buf->rot) && 
+   if ((w == buf->w) &&
+       (h == buf->h) &&
+       (rot == buf->rot) &&
        (depth == buf->depth)) return;
    buf->w = w;
    buf->h = h;
@@ -909,7 +909,7 @@ evas_software_xcb_outbuf_perf_restore_x(XCBConnection *conn,
    int                  retnum;
 
    perf = evas_software_xcb_outbuf_perf_new_x(conn, draw, vis, cmap, x_depth);
-   
+
    type_str = "__EVAS_PERF_ENGINE_SOFTWARE";
    type_rep = XCBInternAtomReply(conn,
 				 XCBInternAtom(conn,

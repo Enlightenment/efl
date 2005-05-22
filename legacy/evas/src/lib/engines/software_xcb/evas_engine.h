@@ -32,7 +32,7 @@ struct _Outbuf
    int             w, h;
    int             rot;
    Outbuf_Perf    *perf;
-   
+
    struct {
       Convert_Pal *pal;
       struct {
@@ -55,9 +55,9 @@ struct _Outbuf
 
       /* a list of pending regions to write to the target */
       Evas_List   *pending_writes;
-      
+
       int          mask_dither : 1;
-      
+
       int          debug : 1;
    } priv;
 };
@@ -67,7 +67,7 @@ struct _Outbuf_Perf
    struct {
       XCBConnection  *conn;
       XCBDRAWABLE     root;
-      
+
       char *display;
       char *vendor;
       int   version;
@@ -86,10 +86,10 @@ struct _Outbuf_Perf
    struct {
       char *info;
    } cpu;
-   
+
    int   min_shm_image_pixel_count;
 };
- 
+
 struct _Outbuf_Region
 {
    Xcb_Output_Buffer *xcbob, *mxcbob;
@@ -143,10 +143,10 @@ Convert_Pal *evas_software_xcb_x_color_allocate   (XCBConnection   *conn,
 						   Convert_Pal_Mode colors);
 void         evas_software_xcb_x_color_deallocate (XCBConnection *conn,
 						   XCBCOLORMAP    cmap,
-						   XCBVISUALTYPE *vis, 
+						   XCBVISUALTYPE *vis,
 						   Convert_Pal   *pal);
 
-/* outbuf */    
+/* outbuf */
 void         evas_software_xcb_outbuf_init                   (void);
 void         evas_software_xcb_outbuf_free                   (Outbuf *buf);
 Outbuf      *evas_software_xcb_outbuf_setup_x                (int            w,

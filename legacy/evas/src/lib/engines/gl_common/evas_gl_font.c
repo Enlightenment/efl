@@ -10,10 +10,10 @@ evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
    Evas_GL_Font_Texture *ft;
    DATA8 *data;
    int w, h, j;
-   
+
    int nw;
    DATA8 *ndata;
-   
+
    ft = calloc(1, sizeof(Evas_GL_Font_Texture));
    if (!ft) return NULL;
 
@@ -22,7 +22,7 @@ evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
    h = fg->glyph_out->bitmap.rows;
    j = fg->glyph_out->bitmap.pitch;
    if (j < w) j = w;
-   
+
    ft->gc = gc;
 
    /* bug bug! glTexSubImage2D need a multiple of 4 pixels horizontally! :( */
@@ -36,7 +36,7 @@ evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
      {
 	int x, y;
 	DATA8 *p1, *p2;
-	
+
 	for (y = 0; y < h; y++)
 	  {
 	     p1 = data + (j * y);
@@ -49,7 +49,7 @@ evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
 	       }
 	  }
      }
-   
+
    /* where in pool texture does this live */
    ft->w = w;
    ft->h = h;
@@ -105,7 +105,7 @@ evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
 	ft->tx2 = (double)(ft->x + ft->w) / (double)(ft->pool->w);
 	ft->ty2 = (double)(ft->y + ft->h) / (double)(ft->pool->h);
      }
-   
+
    return ft;
 }
 
@@ -116,7 +116,7 @@ evas_gl_font_texture_free(Evas_GL_Font_Texture *ft)
      {
 	ft->gc->font_texture = 0;
 	ft->gc->change.texture = 1;
-     }   
+     }
    _evas_gl_font_texture_pool_relinquish(ft->alloc);
    free(ft);
 }
@@ -132,7 +132,7 @@ evas_gl_font_texture_draw(Evas_GL_Context *gc, void *surface, RGBA_Draw_Context 
    if (surface == 0)
      {
 	int r, g, b, a;
-	
+
 	a = (dc->col.col >> 24) & 0xff;
 	r = (dc->col.col >> 16) & 0xff;
 	g = (dc->col.col >> 8 ) & 0xff;
@@ -170,11 +170,11 @@ _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
    int minw = 256;
    int minh = 256;
    int shift;
-   
+
    for (l = gc->tex_pool; l; l = l->next)
      {
 	int x, y;
-	
+
 	fp = l->data;
 	if (_evas_gl_font_texture_pool_rect_find(fp, w, h, &x, &y))
 	  {
@@ -207,7 +207,7 @@ _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
 	minh = h;
 	shift = 1; while (minh > shift) shift = shift << 1; minh = shift;
      }
-   
+
    fp = calloc(1, sizeof(Evas_GL_Font_Texture_Pool));
    if (!fp) return NULL;
    gc->tex_pool = evas_list_append(gc->tex_pool, fp);
@@ -220,7 +220,7 @@ _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
    fp->w = minw;
    fp->h = minh;
    if (gc->ext.nv_texture_rectangle) fp->not_power_of_two = 1;
- 
+
    /* we dont want this mipmapped if sgis_generate_mipmap will mipmap it */
    if (gc->ext.sgis_generate_mipmap)
      glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_FALSE);
@@ -230,13 +230,13 @@ _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
 	glEnable(GL_TEXTURE_RECTANGLE_NV);
 	glGenTextures(1, &(fp->texture));
 	/* FIXME check gl error */
-	
+
 	glBindTexture(GL_TEXTURE_RECTANGLE_NV, fp->texture);
 	glTexParameteri(GL_TEXTURE_RECTANGLE_NV, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_RECTANGLE_NV, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_RECTANGLE_NV, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_RECTANGLE_NV, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0, 
+	glTexImage2D(GL_TEXTURE_RECTANGLE_NV, 0,
 		     GL_ALPHA4, fp->w, fp->h, 0,
 		     GL_ALPHA, GL_UNSIGNED_BYTE, NULL);
 	/* FIXME check gl error */
@@ -246,18 +246,18 @@ _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
 	glEnable(GL_TEXTURE_2D);
 	glGenTextures(1, &(fp->texture));
 	/* FIXME check gl error */
-	
+
 	glBindTexture(GL_TEXTURE_2D, fp->texture);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, 
+	glTexImage2D(GL_TEXTURE_2D, 0,
 		     GL_ALPHA4, fp->w, fp->h, 0,
 		     GL_ALPHA, GL_UNSIGNED_BYTE, NULL);
 	/* FIXME check gl error */
      }
-   
+
    /* new allocation entirely */
    fa = calloc(1, sizeof(Evas_GL_Font_Texture_Pool_Allocation));
    if (!fa)
@@ -293,7 +293,7 @@ _evas_gl_font_texture_pool_relinquish(Evas_GL_Font_Texture_Pool_Allocation *fa)
    fa->pool->references--;
    if (fa->pool->references <= 0)
      {
-	fa->pool->gc->tex_pool = 
+	fa->pool->gc->tex_pool =
 	  evas_list_remove(fa->pool->gc->tex_pool, fa->pool);
 	glDeleteTextures(1, &(fa->pool->texture));
 	free(fa->pool);
@@ -302,7 +302,7 @@ _evas_gl_font_texture_pool_relinquish(Evas_GL_Font_Texture_Pool_Allocation *fa)
 }
 
 static int
-_evas_gl_font_texture_pool_rect_find(Evas_GL_Font_Texture_Pool *fp, 
+_evas_gl_font_texture_pool_rect_find(Evas_GL_Font_Texture_Pool *fp,
 				     int w, int h,
 				     int *x, int *y)
 {
@@ -316,7 +316,7 @@ _evas_gl_font_texture_pool_rect_find(Evas_GL_Font_Texture_Pool *fp,
 	int tx, ty, tw, th;
 	int t1, t2;
 	int intersects;
-	
+
 	fa = l->data;
 	t1 = t2 = 1;
 	if ((fa->x + fa->w + w) > fp->w) t1 = 0;
@@ -341,10 +341,10 @@ _evas_gl_font_texture_pool_rect_find(Evas_GL_Font_Texture_Pool *fp,
 	       {
 		  Evas_GL_Font_Texture_Pool_Allocation *fa2;
 		  int rx, ry, rw, rh;
-		  
+
 		  /* dont do the rect we are just using as our offset */
 		  if (l2 == l) continue;
-		  fa2 = l2->data;		  
+		  fa2 = l2->data;
 		  rx = fa2->x;
 		  ry = fa2->y;
 		  rw = fa2->w;
@@ -383,7 +383,7 @@ _evas_gl_font_texture_pool_rect_find(Evas_GL_Font_Texture_Pool *fp,
 	       {
 		  Evas_GL_Font_Texture_Pool_Allocation *fa2;
 		  int rx, ry, rw, rh;
-		  
+
 		  /* dont do the rect we are just using as our offset */
 		  if (l2 == l) continue;
 		  /* hmmm crash here on mga... l2->data seems broken */
@@ -391,7 +391,7 @@ _evas_gl_font_texture_pool_rect_find(Evas_GL_Font_Texture_Pool *fp,
 		  /* use valgrind to inspect any further due to the dri */
 		  /* hardware stuff :( */
 		  fa2 = l2->data;
-		  
+
 		  rx = fa2->x;
 		  ry = fa2->y;
 		  rw = fa2->w;

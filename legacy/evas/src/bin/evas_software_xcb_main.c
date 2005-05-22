@@ -23,7 +23,7 @@ get_visual(XCBConnection *conn,
    for (cur = 0 ; cur < iter.rem ; XCBVISUALTYPENext(&iter), ++cur)
       if (root->root_visual.id == iter.data->visual_id.id)
 	 return iter.data;
-   
+
    return NULL;
 }
 
@@ -43,7 +43,7 @@ get_depth(XCBConnection *conn,
       perror ("GetGeometry(root) failed");
       exit (0);
     }
-  
+
   depth = geom->depth;
   free (geom);
 
@@ -69,14 +69,14 @@ main(int argc, char **argv)
 	printf("Error: cannot open a connection.\n");
 	exit(-1);
      }
-   
+
    screen = XCBConnSetupSuccessRepRootsIter (XCBGetSetup(conn)).data;
 
    mask =
      XCBCWBackingStore | XCBCWColormap |
      XCBCWBackPixmap   | XCBCWBorderPixel |
      XCBCWBitGravity   | XCBCWEventMask;
-   
+
    value[0] = None;
    value[1] = 0;
    value[2] = ForgetGravity;
@@ -134,7 +134,7 @@ main(int argc, char **argv)
    printf("################ evas free\n");
    evas_free(evas);
    printf("evas freed. DONE\n");
-	
+
    evas = evas_new();
    evas_output_method_set(evas, evas_render_method_lookup("software_xcb"));
    evas_output_size_set(evas, win_w, win_h);
@@ -158,7 +158,7 @@ main(int argc, char **argv)
    printf("################ evas free\n");
    evas_free(evas);
    printf("evas freed. DONE\n");
-	
+
    evas = evas_new();
    evas_output_method_set(evas, evas_render_method_lookup("software_xcb"));
    evas_output_size_set(evas, win_w, win_h);
@@ -182,7 +182,7 @@ main(int argc, char **argv)
    printf("################ evas free\n");
    evas_free(evas);
    printf("evas freed. DONE\n");
-	
+
    evas = evas_new();
    evas_output_method_set(evas, evas_render_method_lookup("software_xcb"));
    evas_output_size_set(evas, win_w, win_h);
@@ -206,7 +206,7 @@ main(int argc, char **argv)
    printf("################ evas free\n");
    evas_free(evas);
    printf("evas freed. DONE\n");
-   
+
    evas = evas_new();
    evas_output_method_set(evas, evas_render_method_lookup("software_xcb"));
    evas_output_size_set(evas, win_w, win_h);
@@ -238,37 +238,37 @@ main(int argc, char **argv)
 	   {
 	   case XCBButtonPress: {
 	     XCBButtonPressEvent *ev = (XCBButtonPressEvent *)e;
-	     
+
 	     if ((ev->state | Button3Mask) == Button3Mask)
 	       exit(0);
-#if 0		  
+#if 0
 	     if (!pause_me)
 	       pause_me = 1;
 	     else if (pause_me == 1)
 	       pause_me = 2;
 	     else
 	       pause_me = 1;
-#endif		  
+#endif
 	     evas_event_feed_mouse_move(evas, ev->event_x, ev->event_y, NULL);
 	     evas_event_feed_mouse_down(evas, ev->state, EVAS_BUTTON_NONE, NULL);
 	     break;
 	   }
 	   case XCBButtonRelease: {
 	     XCBButtonReleaseEvent *ev = (XCBButtonReleaseEvent *)e;
-	     
+
 	     evas_event_feed_mouse_move(evas, ev->event_x, ev->event_y, NULL);
 	     evas_event_feed_mouse_up(evas, ev->state, EVAS_BUTTON_NONE, NULL);
 	     break;
 	   }
 	   case XCBMotionNotify: {
 	     XCBMotionNotifyEvent *ev = (XCBMotionNotifyEvent *)e;
-	     
+
 	     evas_event_feed_mouse_move(evas, ev->event_x, ev->event_y, NULL);
 	     break;
 	   }
 	   case Expose: {
 	     XCBExposeEvent *ev = (XCBExposeEvent *)e;
-	     
+
 	     evas_damage_rectangle_add(evas,
 				       ev->x,
 				       ev->y,
@@ -278,7 +278,7 @@ main(int argc, char **argv)
 	   }
 	   case ConfigureNotify: {
 	     XCBConfigureNotifyEvent *ev = (XCBConfigureNotifyEvent *)e;
-	     
+
 	     evas_output_size_set(evas,
 				  ev->width,
 				  ev->height);
@@ -298,7 +298,7 @@ main(int argc, char **argv)
        if (pause_me == 2)
 	 usleep(100000);
      }
-   
+
    return 0;
 }
 

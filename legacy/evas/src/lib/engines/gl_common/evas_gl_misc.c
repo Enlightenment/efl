@@ -10,5 +10,5 @@ evas_gl_common_swap_rect(Evas_GL_Context *gc, int x, int y, int w, int h)
    evas_gl_common_context_dither_set(gc, 0);
    y = gc->h - y - h;
    glRasterPos2i(x, gc->h - y);
-   glCopyPixels(x, y, w, h, GL_COLOR);   
+   glCopyPixels(x, y, w, h, GL_COLOR);
 }

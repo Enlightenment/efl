@@ -11,7 +11,7 @@ evas_common_blit_rectangle(RGBA_Image *src, RGBA_Image *dst, int src_x, int src_
    int y;
    Gfx_Func_Blend_Src_Dst func;
    DATA32 *src_ptr, *dst_ptr;
-   
+
    /* clip clip clip */
    if (w <= 0) return;
    if (src_x + w > src->image->w) w = src->image->w - src_x;
@@ -23,7 +23,7 @@ evas_common_blit_rectangle(RGBA_Image *src, RGBA_Image *dst, int src_x, int src_
 	src_x = 0;
      }
    if (w <= 0) return;
-   
+
    if (h <= 0) return;
    if (src_y + h > src->image->h) h = src->image->h - src_y;
    if (h <= 0) return;
@@ -34,7 +34,7 @@ evas_common_blit_rectangle(RGBA_Image *src, RGBA_Image *dst, int src_x, int src_
 	src_y = 0;
      }
    if (h <= 0) return;
-   
+
    if (w <= 0) return;
    if (dst_x + w > dst->image->w) w = dst->image->w - dst_x;
    if (w <= 0) return;
@@ -45,7 +45,7 @@ evas_common_blit_rectangle(RGBA_Image *src, RGBA_Image *dst, int src_x, int src_
 	dst_x = 0;
      }
    if (w <= 0) return;
-   
+
    if (h <= 0) return;
    if (dst_y + h > dst->image->h) h = dst->image->h - dst_y;
    if (h <= 0) return;
@@ -56,7 +56,7 @@ evas_common_blit_rectangle(RGBA_Image *src, RGBA_Image *dst, int src_x, int src_
 	dst_y = 0;
      }
    if (h <= 0) return;
-   
+
    if (dst == src)
      {
 	/* src after dst - go forward */
@@ -84,7 +84,7 @@ evas_common_blit_rectangle(RGBA_Image *src, RGBA_Image *dst, int src_x, int src_
      }
    else
      {
-	func = evas_common_draw_func_copy_get(w, 0);   
+	func = evas_common_draw_func_copy_get(w, 0);
 	for (y = 0; y < h; y++)
 	  {
 	     src_ptr = src->image->data + ((y + src_y) * src->image->w) + src_x;

@@ -13,7 +13,7 @@ evas_software_xcb_x_write_mask_line(Xcb_Output_Buffer *xcbob,
    DATA32 *src_ptr;
    DATA8  *dst_ptr;
    int     bpl = 0;
-   
+
    src_ptr = src;
    dst_ptr = evas_software_xcb_x_output_buffer_data(xcbob, &bpl);
    dst_ptr = dst_ptr + (bpl * y);
@@ -44,20 +44,20 @@ evas_software_xcb_x_can_do_shm(XCBConnection *c)
    XCBGetGeometryRep *geom;
    XCBDRAWABLE        drawable;
    int                depth;
-     
+
    drawable.window = XCBConnSetupSuccessRepRootsIter (XCBGetSetup(c)).data->root;
    geom = XCBGetGeometryReply (c, XCBGetGeometry(c, drawable), 0);
    if(!geom)
      return 0;
-   
+
    depth = geom->depth;
    free (geom);
 
    if (XCBShmInit(c))
      {
 	Xcb_Output_Buffer *xcbob;
-	
-	xcbob = evas_software_xcb_x_output_buffer_new(c, 
+
+	xcbob = evas_software_xcb_x_output_buffer_new(c,
 						      depth,
 						      16,
 						      16,
@@ -70,7 +70,7 @@ evas_software_xcb_x_can_do_shm(XCBConnection *c)
    return 0;
 }
 
-/* 
+/*
  * FIXME: no error mechanism
  */
 
@@ -93,7 +93,7 @@ evas_software_xcb_x_output_buffer_new(XCBConnection *c,
 
    xcbob = calloc(1, sizeof(Xcb_Output_Buffer));
    if (!xcbob) return NULL;
-   
+
    xcbob->connection = c;
    xcbob->image      = NULL;
    xcbob->shm_info   = NULL;
@@ -107,23 +107,23 @@ evas_software_xcb_x_output_buffer_new(XCBConnection *c,
 	     xcbob->image = XCBImageSHMCreate(c, depth, ZPixmap, NULL, w, h);
 	     if (xcbob->image)
 	       {
-		  xcbob->shm_info->shmid = shmget(IPC_PRIVATE, 
-						  xcbob->image->bytes_per_line * 
+		  xcbob->shm_info->shmid = shmget(IPC_PRIVATE,
+						  xcbob->image->bytes_per_line *
 						  xcbob->image->height,
 						  IPC_CREAT | 0777);
 		  if (xcbob->shm_info->shmid >= 0)
 		    {
-		       xcbob->shm_info->shmaddr = xcbob->image->data = 
+		       xcbob->shm_info->shmaddr = xcbob->image->data =
 			 shmat(xcbob->shm_info->shmid, 0, 0);
 		       if (xcbob->shm_info->shmaddr != NULL)
 			 {
-			   /* 
+			   /*
 			    * FIXME: no error mechanism
 			    */
 
 /* 			    XErrorHandler ph; */
 /* 			    EventHandlers eh; */
-			    
+
 			    XCBSync(c, 0);
 			    _xcb_err = 0;
 /* 			    ph = XSetErrorHandler((XErrorHandler) */
@@ -138,8 +138,8 @@ evas_software_xcb_x_output_buffer_new(XCBConnection *c,
 				 return xcbob;
 			      }
 			 }
-		       shmdt(xcbob->shm_info->shmaddr);		       
-		       shmctl(xcbob->shm_info->shmid, IPC_RMID, 0);   
+		       shmdt(xcbob->shm_info->shmaddr);
+		       shmctl(xcbob->shm_info->shmid, IPC_RMID, 0);
 		    }
 		  if (xcbob->image) XCBImageSHMDestroy(xcbob->image);
 		  xcbob->image = NULL;
@@ -147,25 +147,25 @@ evas_software_xcb_x_output_buffer_new(XCBConnection *c,
 	     if (xcbob->shm_info) free(xcbob->shm_info);
 	     xcbob->shm_info = NULL;
 	  }
-     }   
+     }
 
-   if (try_shm > 1) return NULL;   
-   
-   xcbob->image = XCBImageCreate(c, depth, ZPixmap, 0, data, w, h, 32, 0);   
+   if (try_shm > 1) return NULL;
+
+   xcbob->image = XCBImageCreate(c, depth, ZPixmap, 0, data, w, h, 32, 0);
    if (!xcbob->image)
      {
 	free(xcbob);
 	return NULL;
      }
-   
+
    xcbob->data = data;
-   
+
    if (!xcbob->image->data)
      {
 	xcbob->image->data = malloc(xcbob->image->bytes_per_line * xcbob->image->height);
 	if (!xcbob->image->data)
 	  {
-	     XCBImageDestroy(xcbob->image);	
+	     XCBImageDestroy(xcbob->image);
 	     free(xcbob);
 	     return NULL;
 	  }
@@ -190,7 +190,7 @@ evas_software_xcb_x_output_buffer_free(Xcb_Output_Buffer *xcbob,
      {
 	if (xcbob->data) xcbob->image->data = NULL;
 	XCBImageDestroy(xcbob->image);
-     }   
+     }
    free(xcbob);
 }
 

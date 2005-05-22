@@ -24,7 +24,7 @@ evas_gl_common_poly_points_clear(Evas_GL_Polygon *poly)
    while (poly->points)
      {
 	Evas_GL_Polygon_Point *pt;
-	
+
 	pt = poly->points->data;
 	poly->points = evas_list_remove(poly->points, pt);
 	free(pt);
@@ -33,7 +33,7 @@ evas_gl_common_poly_points_clear(Evas_GL_Polygon *poly)
    return NULL;
 }
 
-#ifdef GLU_TESS   
+#ifdef GLU_TESS
 static void _evas_gl_tess_begin_cb(GLenum which);
 static void _evas_gl_tess_end_cb(void);
 static void _evas_gl_tess_error_cb(GLenum errorcode);
@@ -61,7 +61,7 @@ static void
 _evas_gl_tess_vertex_cb(GLvoid *vertex)
 {
    GLdouble *v;
-   
+
    v = vertex;
    glVertex2d(v[0], v[1]);
 }
@@ -70,7 +70,7 @@ static void
 _evas_gl_tess_combine_cb(GLdouble coords[3], GLdouble *vertex_data[4], GLfloat weight[4], GLdouble **data_out)
 {
    GLdouble *vertex;
-   
+
    vertex = (GLdouble *) malloc(6 * sizeof(GLdouble));
    vertex[0] = coords[0];
    vertex[1] = coords[1];
@@ -86,7 +86,7 @@ evas_gl_common_poly_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Pol
    static void *tess = NULL;
    GLdouble *glp = NULL;
    int i, num;
-   
+
    a = (dc->col.col >> 24) & 0xff;
    r = (dc->col.col >> 16) & 0xff;
    g = (dc->col.col >> 8 ) & 0xff;
@@ -105,11 +105,11 @@ evas_gl_common_poly_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Pol
    evas_gl_common_context_read_buf_set(gc, GL_BACK);
    evas_gl_common_context_write_buf_set(gc, GL_BACK);
 
-#ifdef GLU_TESS   
+#ifdef GLU_TESS
    if (!tess)
      {
 	tess = gluNewTess();
-	
+
 	gluTessCallback(tess, GLU_TESS_BEGIN, _evas_gl_tess_begin_cb);
 	gluTessCallback(tess, GLU_TESS_END, _evas_gl_tess_end_cb);
 	gluTessCallback(tess, GLU_TESS_ERROR, _evas_gl_tess_error_cb);
@@ -127,7 +127,7 @@ evas_gl_common_poly_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Pol
    for (l = poly->points; l; l = l->next)
      {
 	Evas_GL_Polygon_Point *p;
-	
+
 	p = l->data;
 	glp[i++] = p->x;
 	glp[i++] = p->y;
@@ -143,10 +143,10 @@ evas_gl_common_poly_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Pol
    for (l = poly->points; l; l = l->next)
      {
 	Evas_GL_Polygon_Point *p;
-	
+
 	p = l->data;
 	glVertex2i(p->x, p->y);
      }
    glEnd();
-#endif   
+#endif
 }

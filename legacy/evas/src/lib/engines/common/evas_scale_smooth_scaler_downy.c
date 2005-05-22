@@ -5,7 +5,7 @@
    int yap;
    int sow;
    int dyy, dxx;
-   
+
    dptr = dst_ptr;
    sow = src->image->w;
    dyy = dst_clip_y - dst_region_y;

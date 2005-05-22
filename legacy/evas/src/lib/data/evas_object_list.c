@@ -6,11 +6,11 @@ evas_object_list_append(void *in_list, void *in_item)
 {
    Evas_Object_List *l, *new_l;
    Evas_Object_List *list;
-   
+
    list = in_list;
    new_l = in_item;
    new_l->next = NULL;
-   if (!list) 
+   if (!list)
      {
 	new_l->prev = NULL;
 	new_l->last = new_l;
@@ -29,14 +29,14 @@ evas_object_list_prepend(void *in_list, void *in_item)
 {
    Evas_Object_List *new_l;
    Evas_Object_List *list;
-   
+
    list = in_list;
    new_l = in_item;
    new_l->prev = NULL;
-   if (!list) 
+   if (!list)
      {
 	new_l->next = NULL;
-	new_l->last = new_l;	
+	new_l->last = new_l;
 	return new_l;
      }
    new_l->next = list;
@@ -50,7 +50,7 @@ void *
 evas_object_list_append_relative(void *in_list, void *in_item, void *in_relative)
 {
    Evas_Object_List *list, *relative, *new_l;
-   
+
    list = in_list;
    new_l = in_item;
    relative = in_relative;
@@ -74,7 +74,7 @@ void *
 evas_object_list_prepend_relative(void *in_list, void *in_item, void *in_relative)
 {
    Evas_Object_List *list, *relative, *new_l;
-   
+
    list = in_list;
    new_l = in_item;
    relative = in_relative;
@@ -143,9 +143,9 @@ evas_object_list_find(void *in_list, void *in_item)
 {
    Evas_Object_List *l;
    Evas_Object_List *list, *item;
-   
+
    list = in_list;
-   item = in_item;   
+   item = in_item;
    for (l = list; l; l = l->next)
      {
 	if (l == item) return item;

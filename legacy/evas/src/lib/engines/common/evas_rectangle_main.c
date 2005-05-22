@@ -33,7 +33,7 @@ evas_common_rectangle_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
      {
 	dc->clip.use = c; dc->clip.x = cx; dc->clip.y = cy; dc->clip.w = cw; dc->clip.h = ch;
 	return;
-     }       
+     }
    rects = evas_common_draw_context_apply_cutouts(dc);
    for (l = (Evas_Object_List *)rects; l; l = l->next)
      {
@@ -56,13 +56,13 @@ rectangle_draw_internal(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, in
    if ((w <= 0) || (h <= 0)) return;
    RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, dst->image->w, dst->image->h);
    if ((w <= 0) || (h <= 0)) return;
-   
+
    if (dc->clip.use)
      {
 	RECTS_CLIP_TO_RECT(x, y, w, h, dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
      }
    if ((w <= 0) || (h <= 0)) return;
-   
+
    func = evas_common_draw_func_blend_color_get(dc->col.col, dst, w);
    ptr = dst->image->data + (y * dst->image->w) + x;
    for (yy = 0; yy < h; yy++)

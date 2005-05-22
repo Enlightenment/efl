@@ -20,8 +20,8 @@
 wchar_t buf[1024];
 
 #endif
- 
- 
+
+
 Evas               *evas = NULL;
 
 #ifdef VID_TEST
@@ -89,12 +89,12 @@ loop(void)
    loop_count++;
    orig_loop_count++;
    t = get_time() - start_time;
-   
+
    if (mode == 1)
      {
 	int iw, ih;
 	int i;
-	
+
 	evas_object_image_fill_set(scroll[0], 0, loop_count, 240, 320);
 	for (i = 1; i < 16; i++)
 	  {
@@ -128,7 +128,7 @@ loop(void)
 	     evas_object_image_fill_set(test_pattern, 0, 0, 720, 480);
 	     evas_object_show(test_pattern);
              frames = 0;
-	     time_start = t;	     
+	     time_start = t;
 	  }
 	  {
 	     int                 iw, ih;
@@ -141,8 +141,8 @@ loop(void)
 	     if (data)
 	       {
 		  int tt;
-		  
-#ifdef VID_WRITE		  
+
+#ifdef VID_WRITE
 		  tt = t * 1000;
 		  for (y = 0; y < ih; y++)
 		    {
@@ -150,7 +150,7 @@ loop(void)
 			 data[(y * iw) + x] =
 			 (((x * y / 10) + tt)) | 0xff000000;
 		    }
-#endif		  
+#endif
 		  evas_object_image_data_update_add(test_pattern, 0, 0, iw, ih);
 		  evas_object_image_data_set(test_pattern, data);
 	       }
@@ -165,8 +165,8 @@ loop(void)
 	printf("# EVAS BENCH:  %3.3f\n", ((double)frames / (t - time_start)) / 60.0);
 	exit(0);
      }
-   else 
-#endif     
+   else
+#endif
    if (t <= 2.0)
      {
 	Evas_Coord              y;
@@ -190,7 +190,7 @@ loop(void)
    else if (t <= 26.0)
      {
 	int i;
-	     
+
 	if (!did_setup)
 	  {
 	     frames = 0;
@@ -198,7 +198,7 @@ loop(void)
 	     for (i = 0; i < 16; i++)
 	       {
 		  Evas_Object        *ob;
-		  
+
 		  ob = evas_object_image_add(evas);
 		  if (i & 0x1)
 		    {
@@ -220,7 +220,7 @@ loop(void)
 	     for (i = 0; i < 2; i++)
 	       {
 		  Evas_Object        *ob;
-		  
+
 		  ob = evas_object_image_add(evas);
 		  evas_object_image_file_set(ob, IM "test_pattern.png", NULL);
 		  evas_object_layer_set(ob, 5);
@@ -228,7 +228,7 @@ loop(void)
 		  evas_object_show(ob);
 		  p_i[i] = ob;
 	       }
-	     evas_object_image_smooth_scale_set(p_i[1], 0);	
+	     evas_object_image_smooth_scale_set(p_i[1], 0);
 	     for (i = 0; i < 16; i++)
 	       {
 		  Evas_Object        *ob;
@@ -246,12 +246,12 @@ loop(void)
 	     for (i = 0; i < 8; i++)
 	       {
 		  Evas_Object        *ob;
-		  
+
 		  ob = evas_object_rectangle_add(evas);
 		  evas_object_color_set(ob, 100 + (i * 16), 255 - (i * 16), i * 64, i * 32);
 		  evas_object_layer_set(ob, 5);
 		  evas_object_clip_set(ob, panel_clip);
-		  evas_object_show(ob);		  
+		  evas_object_show(ob);
 		  p_r[i] = ob;
 	       }
 	     did_setup = 1;
@@ -260,7 +260,7 @@ loop(void)
 	  {
 	     Evas_Coord              x, y;
 	     double              v;
-	     
+
 	     v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
 	     x = cos(v * (double)i / 3) * ((240 - 48) / 2);
 	     y = sin(v * (double)i / 3) * ((240 - 48) / 2);
@@ -279,7 +279,7 @@ loop(void)
 	     int iw, ih;
 	     Evas_Coord              x, y;
 	     double              v;
-	     
+
 	     evas_object_image_size_get(p_i[i], &iw, &ih);
 	     v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
 	     x = cos(v * (double)(i + 1) * 3) * ((240 - iw) / 2);
@@ -295,7 +295,7 @@ loop(void)
 	  {
 	     Evas_Coord              x, y;
 	     double              v;
-	     
+
 	     v = (((t - 6.0) / 24.0) * EVAS_PI * 2) * 2;
 	     x = cos(v * (double)i / 3) * ((240 - 48) / 2);
 	     y = sin(v * (double)i / 2) * ((240 - 48) / 2);
@@ -305,7 +305,7 @@ loop(void)
 	  {
 	     Evas_Coord              x, y;
 	     double              v;
-	     
+
 	     v = (((t - 6.0) / 29.0) * EVAS_PI * 2) * 2;
 	     x = cos(v * (double)i / 2) * ((240 - 48) / 2);
 	     y = sin(v * (double)i / 3) * ((240 - 48) / 2);
@@ -324,11 +324,11 @@ loop(void)
      {
 	Evas_Coord              tw, th;
 	static int          did_fps = 0;
-	
+
 	if (!did_fps)
 	  {
 	     int i;
-	     
+
 	     did_fps = 1;
 	     printf("####################################################\n");
 	     printf("# Performance Test. Your system scores...\n");
@@ -1923,7 +1923,7 @@ loop(void)
 	exit(0);
      }
    /* need to test:
-    * 
+    *
     * callbacks & events...
     *
     */
@@ -1939,7 +1939,7 @@ cb_mouse_down(void *data, Evas * e, Evas_Object * obj,
 	setdown();
 	scroll_setup();
 	orig_start_time = start_time = get_time();
-	loop_count = orig_loop_count = 0;	
+	loop_count = orig_loop_count = 0;
      }
    else
      {
@@ -1947,7 +1947,7 @@ cb_mouse_down(void *data, Evas * e, Evas_Object * obj,
 	scroll_setdown();
 	setup();
 	orig_start_time = start_time = get_time();
-	loop_count = orig_loop_count = 0;	
+	loop_count = orig_loop_count = 0;
      }
    printf("cb_mouse_down() [%i], %4i,%4i | %4i,%4i\n", ev->button,
 	  ev->output.x, ev->output.y, ev->canvas.x, ev->canvas.y);
@@ -1989,10 +1989,10 @@ void
 scroll_setdown(void)
 {
    int i;
-   
-   evas_object_del(scroll[0]);   
+
+   evas_object_del(scroll[0]);
    for (i = 1; i < 16; i++)
-     evas_object_del(scroll[i]);   
+     evas_object_del(scroll[i]);
 }
 
 void
@@ -2282,7 +2282,7 @@ i3 = ob;
     * "ཨུ་ནི་ཀོཌྲ།"
     * Yiddish:
     * "יוניקאָד"
-    * 
+    *
     */
 ob = evas_object_text_add(evas);
 evas_object_move(ob, 10, 10);

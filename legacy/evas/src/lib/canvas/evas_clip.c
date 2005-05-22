@@ -17,7 +17,7 @@ evas_object_clip_recalc(Evas_Object *obj)
    cb = obj->cur.color.b; ca = obj->cur.color.a;
    if (obj->cur.clipper)
      {
-// this causes problems... hmmm	
+// this causes problems... hmmm
 //	if (obj->cur.clipper->cur.cache.clip.dirty)
 	  evas_object_clip_recalc(obj->cur.clipper);
 	nx = obj->cur.clipper->cur.cache.clip.x;
@@ -53,7 +53,7 @@ void
 evas_object_clip_dirty(Evas_Object *obj)
 {
    Evas_List *l;
-   
+
    obj->cur.cache.clip.dirty = 1;
    for (l = obj->clip.clipees; l; l = l->next)
      evas_object_clip_dirty(l->data);
@@ -63,7 +63,7 @@ void
 evas_object_recalc_clippees(Evas_Object *obj)
 {
    Evas_List *l;
-   
+
    if (obj->cur.cache.clip.dirty)
      {
 	evas_object_clip_recalc(obj);
@@ -108,7 +108,7 @@ evas_object_clippers_was_visible(Evas_Object *obj)
  * Clip one object to another.
  * @param obj The object to be clipped
  * @param clip The object to clip @p obj by
- * 
+ *
  * This function will clip the object @p obj to the area occupied by the
  * object @p clipper. This means the object @p obj will only be visible within
  * the area occupied by the clipping object (@p clip). The color of the object
@@ -127,21 +127,21 @@ evas_object_clippers_was_visible(Evas_Object *obj)
  * shown either. If the object was being clipped by another object when this
  * function is called, it is implicitly removed from the clipper it is being
  * clipped to, and now is made to clip its new clipper.
- * 
+ *
  * At the moment the only objects that can validly be used to clip other
  * objects are rectangle objects. All other object types are invalid and the
  * result of using them is undefined.
- * 
+ *
  * The clip object @p clip must be a valid object, but may also be NULL in
  * which case the effect of this function is the same as calling
  * evas_object_clip_unset() on the @p obj object.
- * 
+ *
  * Example:
  * @code
  * extern Evas *evas;
  * extern Evas_Object *obj;
  * Evas_Object *clipper;
- * 
+ *
  * clipper = evas_object_rectangle_add(evas);
  * evas_object_color_set(clipper, 255, 255, 255, 255);
  * evas_object_move(clipper, 10, 10);
@@ -158,7 +158,7 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   if (!clip) 
+   if (!clip)
      {
 	evas_object_clip_unset(obj);
 	return;
@@ -177,7 +177,7 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
 	/* unclip */
 	obj->cur.clipper->clip.clipees = evas_list_remove(obj->cur.clipper->clip.clipees, obj);
 	evas_object_change(obj);
-	obj->cur.clipper = NULL;	
+	obj->cur.clipper = NULL;
      }
    /* clip me */
    if ((clip->clip.clipees == NULL) && (clip->cur.visible))
@@ -196,11 +196,11 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
    evas_object_recalc_clippees(obj);
    if (!obj->smart.smart)
      {
-	if (evas_object_is_in_output_rect(obj, 
-					  obj->layer->evas->pointer.x, 
+	if (evas_object_is_in_output_rect(obj,
+					  obj->layer->evas->pointer.x,
 					  obj->layer->evas->pointer.y, 1, 1))
 	  evas_event_feed_mouse_move(obj->layer->evas,
-				     obj->layer->evas->pointer.x, 
+				     obj->layer->evas->pointer.x,
 				     obj->layer->evas->pointer.y,
 				     NULL);
      }
@@ -212,19 +212,19 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
  *
  * This function returns the the object clipping @p obj. If @p obj not being
  * clipped, NULL is returned. The object @p obj must be a valid object.
- * 
+ *
  * See also evas_object_clip_set(), evas_object_clip_unset() and
  * evas_object_clipees_get().
- * 
+ *
  * Example:
  * @code
  * extern Evas_Object *obj;
  * Evas_Object *clipper;
- * 
+ *
  * clipper = evas_object_clip_get(obj);
  * if (clipper) evas_object_show(clipper);
  * @endcode
- * 
+ *
  * @ingroup Evas_Clip_Group
  */
 Evas_Object *
@@ -240,19 +240,19 @@ evas_object_clip_get(Evas_Object *obj)
  * Disable clipping for an object.
  *
  * @param obj The object to cease clipping on
- * 
+ *
  * This function disables clipping for the object @p obj, if it was already
  * clipped. If it wasn't, this has no effect. The object @p obj must be a
  * valid object.
- * 
- * See also evas_object_clip_set(), evas_object_clipees_get() and 
+ *
+ * See also evas_object_clip_set(), evas_object_clipees_get() and
  * evas_object_clip_get().
- * 
+ *
  * Example:
  * @code
  * extern Evas_Object *obj;
  * Evas_Object *clipper;
- * 
+ *
  * clipper = evas_object_clip_get(obj);
  * if (clipper)
  *   {
@@ -260,7 +260,7 @@ evas_object_clip_get(Evas_Object *obj)
  *     evas_object_hide(obj);
  *   }
  * @endcode
- * 
+ *
  * @ingroup Evas_Clip_Group
  */
 void
@@ -283,11 +283,11 @@ evas_object_clip_unset(Evas_Object *obj)
    evas_object_recalc_clippees(obj);
    if (!obj->smart.smart)
      {
-	if (evas_object_is_in_output_rect(obj, 
-					  obj->layer->evas->pointer.x, 
+	if (evas_object_is_in_output_rect(obj,
+					  obj->layer->evas->pointer.x,
 					  obj->layer->evas->pointer.y, 1, 1))
-	  evas_event_feed_mouse_move(obj->layer->evas, 
-				     obj->layer->evas->pointer.x, 
+	  evas_event_feed_mouse_move(obj->layer->evas,
+				     obj->layer->evas->pointer.x,
 				     obj->layer->evas->pointer.y,
 				     NULL);
      }
@@ -295,9 +295,9 @@ evas_object_clip_unset(Evas_Object *obj)
 
 /**
  * Return a list of objects currently clipped by a specific object.
- * 
+ *
  * @param obj The object to get a list of clippees from
- * 
+ *
  * This returns the inernal list handle that contains all objects clipped by
  * the object @p obj. If none are clipped, it returns NULL. This list is only
  * valid until the clip list is changed and should be fetched again with another
@@ -309,25 +309,25 @@ evas_object_clip_unset(Evas_Object *obj)
  * segfaults and other strange memory errors. The object @p obj must be a valid
  * object.
  *
- * See also evas_object_clip_set(), evas_object_clip_unset() and 
+ * See also evas_object_clip_set(), evas_object_clip_unset() and
  * evas_object_clip_get().
- * 
+ *
  * Example:
  * @code
  * extern Evas_Object *obj;
  * Evas_Object *clipper;
- * 
+ *
  * clipper = evas_object_clip_get(obj);
  * if (clipper)
  *   {
  *     Evas_List *clippees, *l;
- * 
+ *
  *     clippees = evas_object_clipees_get(clipper);
  *     printf("Clipper clips %i objects\n", evas_list_count(clippees));
  *     for (l = clippees; l; l = l->next)
  *       {
  *         Evas_Object *obj_tmp;
- * 
+ *
  *         obj_tmp = l->data;
  *         evas_object_show(obj_tmp);
  *       }

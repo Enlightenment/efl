@@ -28,7 +28,7 @@ typedef enum _Evas_Callback_Type
    EVAS_CALLBACK_MOUSE_DOWN,
    EVAS_CALLBACK_MOUSE_UP,
    EVAS_CALLBACK_MOUSE_MOVE,
-   EVAS_CALLBACK_MOUSE_WHEEL,	 
+   EVAS_CALLBACK_MOUSE_WHEEL,
    EVAS_CALLBACK_FREE,
    EVAS_CALLBACK_KEY_DOWN,
    EVAS_CALLBACK_KEY_UP,
@@ -231,24 +231,24 @@ struct _Evas_Intercept_Func
    Evas_Intercept_Func_Obj     stack_above;
    Evas_Intercept_Func_Obj     stack_below;
    Evas_Intercept_Func_Int     layer_set;
-}; 
+};
 
 struct _Evas_Smart
 {
    DATA32            magic;
 
    int               usage;
-   
+
    char              delete_me : 1;
    char              class_allocated : 1;
-   
+
    Evas_Smart_Class *smart_class;
 };
 
 struct _Evas_Smart_Class /** a smart object class */
 {
    const char *name; /** the string name of the class */
-   
+
    void  (*add)         (Evas_Object *o);
    void  (*del)         (Evas_Object *o);
    void  (*layer_set)   (Evas_Object *o, int l);
@@ -263,7 +263,7 @@ struct _Evas_Smart_Class /** a smart object class */
    void  (*color_set)   (Evas_Object *o, int r, int g, int b, int a);
    void  (*clip_set)    (Evas_Object *o, Evas_Object *clip);
    void  (*clip_unset)  (Evas_Object *o);
-   
+
    const void *data;
 };
 
@@ -310,9 +310,9 @@ struct _Evas_Callbacks
 struct _Evas
 {
    Evas_Object_List  _list_data;
-   
+
    DATA32            magic;
-   
+
    struct {
       char           inside : 1;
       int            mouse_grabbed;
@@ -320,46 +320,46 @@ struct _Evas
       int            x, y;
 
       Evas_Coord         canvas_x, canvas_y;
-      
+
       struct {
 	 Evas_List *in;
       } object;
-      
+
    } pointer;
-   
+
    struct  {
       Evas_Coord         x, y, w, h;
       char           changed : 1;
    } viewport;
-   
+
    struct {
       int            w, h;
       DATA32         render_method;
       char           changed : 1;
    } output;
-   
+
    int               output_validity;
-   
+
    Evas_List        *damages;
    Evas_List        *obscures;
-   
+
    Evas_Layer       *layers;
-   
+
    Evas_Hash        *name_hash;
-   
+
    char              changed : 1;
    char              walking_layers : 1;
-   
+
    int               events_frozen;
-   
+
    struct {
       Evas_Func *func;
       struct {
 	 void *output;
-	 
+
 	 void *context;
       } data;
-      
+
       void *info;
       int   info_magic;
    } engine;
@@ -367,9 +367,9 @@ struct _Evas
    int            delete_grabs;
    int            walking_grabs;
    Evas_List     *grabs;
-   
+
    Evas_List     *font_path;
-   
+
    Evas_Object   *focused;
    Evas_Modifier  modifiers;
    Evas_Lock      locks;
@@ -378,10 +378,10 @@ struct _Evas
 struct _Evas_Layer
 {
    Evas_Object_List  _list_data;
-   
+
    int               layer;
    Evas_Object      *objects;
-   
+
    Evas             *evas;
 
    void             *engine_data;
@@ -391,12 +391,12 @@ struct _Evas_Layer
 struct _Evas_Object
 {
    Evas_Object_List  _list_data;
-   
+
    DATA32            magic;
-   
-   const char       *type;   
-   Evas_Layer       *layer;   
-   
+
+   const char       *type;
+   Evas_Layer       *layer;
+
    struct {
       struct {
 	 struct {
@@ -415,24 +415,24 @@ struct _Evas_Object
       } geometry;
       struct {
 	 unsigned char  r, g, b, a;
-      } color;      
-      char              visible : 1;      
-      int               layer;      
-      Evas_Object      *clipper;      
+      } color;
+      char              visible : 1;
+      int               layer;
+      Evas_Object      *clipper;
    } cur, prev;
-   
+
    char                       *name;
-   
+
    Evas_Intercept_Func *interceptors;
-   
+
    struct {
       Evas_List *elements;
    } data;
-   
+
    Evas_List *grabs;
 
    Evas_Callbacks *callbacks;
-   
+
    struct {
       Evas_List   *clipees;
       Evas_List   *changes;
@@ -441,7 +441,7 @@ struct _Evas_Object
    Evas_Object_Func *func;
 
    void             *object_data;
-   
+
    struct {
       int            walking_list;
       Evas_Smart    *smart;
@@ -451,9 +451,9 @@ struct _Evas_Object
       Evas_List     *callbacks;
       char           deletions_waiting : 1;
    } smart;
-   
+
    int                         mouse_grabbed;
-   
+
    short                       store : 1;
    short                       pass_events : 1;
    short                       repeat_events : 1;
@@ -464,12 +464,12 @@ struct _Evas_Object
    short                       intercepted : 1;
    short                       focused : 1;
 
-   unsigned char               delete_me;   
+   unsigned char               delete_me;
 };
 
 struct _Evas_Func_Node
 {
-   Evas_Object_List  _list_data;   
+   Evas_Object_List  _list_data;
    char delete_me : 1;
    void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info);
    void *data;
@@ -515,19 +515,19 @@ struct _Evas_Object_Func
    void (*render) (Evas_Object *obj, void *output, void *context, void *surface, int x, int y);
    void (*render_pre) (Evas_Object *obj);
    void (*render_post) (Evas_Object *obj);
-   
+
    void (*store) (Evas_Object *obj);
    void (*unstore) (Evas_Object *obj);
-   
+
    int  (*is_visible) (Evas_Object *obj);
    int  (*was_visible) (Evas_Object *obj);
-   
+
    int  (*is_opaque) (Evas_Object *obj);
    int  (*was_opaque) (Evas_Object *obj);
-   
+
    int  (*is_inside) (Evas_Object *obj, Evas_Coord x, Evas_Coord y);
    int  (*was_inside) (Evas_Object *obj, Evas_Coord x, Evas_Coord y);
-   
+
    void (*coords_recalc) (Evas_Object *obj);
 };
 
@@ -536,7 +536,7 @@ struct _Evas_Func
    void *(*info)                           (Evas *e);
    void (*info_free)                       (Evas *e, void *info);
    void (*setup)                           (Evas *e, void *info);
-   
+
    void (*output_free)                     (void *data);
    void (*output_resize)                   (void *data, int w, int h);
    void (*output_tile_size_set)            (void *data, int w, int h);
@@ -546,7 +546,7 @@ struct _Evas_Func
    void *(*output_redraws_next_update_get) (void *data, int *x, int *y, int *w, int *h, int *cx, int *cy, int *cw, int *ch);
    void (*output_redraws_next_update_push) (void *data, void *surface, int x, int y, int w, int h);
    void (*output_flush)                    (void *data);
-   
+
    void *(*context_new)                    (void *data);
    void (*context_free)                    (void *data, void *context);
    void (*context_clip_set)                (void *data, void *context, int x, int y, int w, int h);
@@ -560,20 +560,20 @@ struct _Evas_Func
    int  (*context_multiplier_get)          (void *data, void *context, int *r, int *g, int *b, int *a);
    void (*context_cutout_add)              (void *data, void *context, int x, int y, int w, int h);
    void (*context_cutout_clear)            (void *data, void *context);
-   
+
    void (*rectangle_draw)                  (void *data, void *context, void *surface, int x, int y, int w, int h);
 
    void (*line_draw)                       (void *data, void *context, void *surface, int x1, int y1, int x2, int y2);
-   
+
    void *(*polygon_point_add)              (void *data, void *context, void *polygon, int x, int y);
    void *(*polygon_points_clear)           (void *data, void *context, void *polygon);
    void (*polygon_draw)                    (void *data, void *context, void *surface, void *polygon);
-   
+
    void *(*gradient_color_add)             (void *data, void *context, void *gradient, int r, int g, int b, int a, int distance);
    void *(*gradient_colors_clear)          (void *data, void *context, void *gradient);
 
    void (*gradient_draw)                   (void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle);
-   
+
    void *(*image_load)                     (void *data, char *file, char *key, int *error);
    void *(*image_new_from_data)            (void *data, int w, int h, DATA32 *image_data);
    void *(*image_new_from_copied_data)     (void *data, int w, int h, DATA32 *image_data);
@@ -588,11 +588,11 @@ struct _Evas_Func
    void (*image_draw)                      (void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth);
    char *(*image_comment_get)              (void *data, void *image, char *key);
    char *(*image_format_get)               (void *data, void *image);
-   
+
    void (*image_cache_flush)               (void *data);
    void (*image_cache_set)                 (void *data, int bytes);
    int  (*image_cache_get)                 (void *data);
-   
+
    void *(*font_load)                      (void *data, char *name, int size);
    void *(*font_memory_load)               (void *data, char *name, int size, const void *fdata, int fdata_size);
    void *(*font_add)                       (void *data, void *font, char *name, int size);
@@ -609,18 +609,18 @@ struct _Evas_Func
    int  (*font_char_coords_get)            (void *data, void *font, char *text, int pos, int *cx, int *cy, int *cw, int *ch);
    int  (*font_char_at_coords_get)         (void *data, void *font, char *text, int x, int y, int *cx, int *cy, int *cw, int *ch);
    void (*font_draw)                       (void *data, void *context, void *surface, void *font, int x, int y, int w, int h, int ow, int oh, char *text);
-     
+
    void (*font_cache_flush)                (void *data);
    void (*font_cache_set)                  (void *data, int bytes);
    int  (*font_cache_get)                  (void *data);
-   
+
    /* Engine functions will over time expand from here */
 };
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-   
+
 Evas_Object *evas_object_new(void);
 void evas_object_free(Evas_Object *obj, int clean_layer);
 void evas_object_inject(Evas_Object *obj, Evas *e);
@@ -670,11 +670,11 @@ void evas_debug_magic_wrong(DATA32 expected, DATA32 supplied);
 void evas_debug_generic(const char *str);
 char *evas_debug_magic_string_get(DATA32 magic);
 void evas_object_smart_use(Evas_Smart *s);
-void evas_object_smart_unuse(Evas_Smart *s);   
+void evas_object_smart_unuse(Evas_Smart *s);
 void evas_object_smart_del(Evas_Object *obj);
 void evas_object_smart_cleanup(Evas_Object *obj);
 void *evas_mem_calloc(int size);
-void evas_object_event_callback_cleanup(Evas_Object *obj);       
+void evas_object_event_callback_cleanup(Evas_Object *obj);
 void evas_object_inform_call_show(Evas_Object *obj);
 void evas_object_inform_call_hide(Evas_Object *obj);
 void evas_object_inform_call_move(Evas_Object *obj);
@@ -696,7 +696,7 @@ void evas_font_dir_cache_free(void);
 char *evas_font_dir_cache_find(char *dir, char *font);
 void evas_font_free(Evas *evas, void *font);
 void *evas_font_load(Evas *evas, char *name, char *source, int size);
-       
+
 extern int _evas_alloc_error;
 
 typedef struct _Evas_Imaging_Image Evas_Imaging_Image;
@@ -711,7 +711,7 @@ struct _Evas_Imaging_Font
 {
    RGBA_Font *font;
 };
-   
+
 #ifdef __cplusplus
 }
 #endif

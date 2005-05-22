@@ -16,7 +16,7 @@ evas_key_grab_new(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modi
 {
    /* MEM OK */
    Evas_Key_Grab *g;
-   
+
    g = evas_mem_calloc(sizeof(Evas_Key_Grab));
    if (!g) return NULL;
    g->object = obj;
@@ -63,7 +63,7 @@ evas_key_grab_new(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modi
 	if (evas_list_alloc_error())
 	  {
 	     MERR_FATAL();
-	     g->object->grabs = evas_list_remove(g->object->grabs, g);	     
+	     g->object->grabs = evas_list_remove(g->object->grabs, g);
 	     free(g);
 	     free(g->keyname);
 	     return NULL;
@@ -81,7 +81,7 @@ evas_key_grab_find(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask mod
    for (l = obj->layer->evas->grabs; l; l = l->next)
      {
 	Evas_Key_Grab *g;
-	
+
 	g = l->data;
 	if ((g->modifiers == modifiers) &&
 	    (g->not_modifiers == not_modifiers) &&
@@ -101,11 +101,11 @@ evas_object_grabs_cleanup(Evas_Object *obj)
    if (obj->layer->evas->walking_grabs)
      {
 	Evas_List *l;
-	
+
 	for (l = obj->grabs; l; l = l->next)
 	  {
 	     Evas_Key_Grab *g;
-	     
+
 	     g = l->data;
 	     g->delete_me = 1;
 	  }
@@ -115,13 +115,13 @@ evas_object_grabs_cleanup(Evas_Object *obj)
 	while (obj->grabs)
 	  {
 	     Evas_Key_Grab *g;
-	     
+
 	     g = obj->grabs->data;
 	     if (g->keyname) free(g->keyname);
 	     free(g);
 	     obj->layer->evas->grabs = evas_list_remove(obj->layer->evas->grabs, g);
 	     obj->grabs = evas_list_remove(obj->grabs, g);
-	  }  
+	  }
      }
 }
 
@@ -130,7 +130,7 @@ evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask mod
 {
    /* MEM OK */
    Evas_Key_Grab *g;
-   
+
    g = evas_key_grab_find(obj, keyname, modifiers, not_modifiers, 0);
    if (!g) return;
    g->object->grabs = evas_list_remove(g->object->grabs, g);
@@ -145,7 +145,7 @@ evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask mod
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Bool
 evas_object_key_grab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Evas_Bool exclusive)
@@ -171,7 +171,7 @@ evas_object_key_grab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask m
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_object_key_ungrab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)

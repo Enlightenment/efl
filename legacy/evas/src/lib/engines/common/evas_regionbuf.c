@@ -4,7 +4,7 @@ Regionbuf *
 evas_common_regionbuf_new(int w, int h)
 {
    Regionbuf *rb;
-   
+
    rb = calloc(1, sizeof(Regionbuf) + (h * sizeof(Regionspan)));
    if (!rb) return NULL;
    rb->spans = (Regionspan **)(rb + sizeof(Regionbuf));
@@ -24,13 +24,13 @@ void
 evas_common_regionbuf_clear(Regionbuf *rb)
 {
    int y;
-   
+
    for (y = 0; y < rb->h; y++)
      {
 	while (rb->spans[y])
 	  {
 	     Regionspan *span;
-	     
+
 	     span = rb->spans[y];
 	     rb->spans[y] = evas_object_list_remove(rb->spans[y], rb->spans[y]);
 	     free(span);
@@ -61,7 +61,7 @@ evas_common_regionbuf_span_add(Regionbuf *rb, int x1, int x2, int y)
 	/* we dont know what t do with the span yet */
 	if (!sp_start)
 	  {
-	     /* if new span starts before or on this span or just after 
+	     /* if new span starts before or on this span or just after
 	      * with no gap */
 	     if (x1 <= (span->x2 + 1))
 	       sp_start = span;
@@ -175,7 +175,7 @@ evas_common_regionbuf_span_del(Regionbuf *rb, int x1, int x2, int y)
 	/* we dont know what t do with the span yet */
 	if (!sp_start)
 	  {
-	     /* if new span starts before or on this span or just after 
+	     /* if new span starts before or on this span or just after
 	      * with no gap */
 	     if (x1 <= (span->x2))
 	       sp_start = span;
@@ -304,31 +304,31 @@ evas_common_regionbuf_rects_get(Regionbuf *rb)
    Tilebuf_Rect *rects = NULL, *r;
    int y;
 
-   /* FIXME: take spans, make rects */ 
+   /* FIXME: take spans, make rects */
    for (y = 0; y < rb->h; y++)
      {
 	Evas_Object_List *l, *ll;
-	
+
 	for (l = (Evas_Object_List *)rb->spans[y]; l;)
-	  {  
+	  {
 	     Regionspan *span;
 	     Regionspan *sp_start;
 	     int yy;
-	     
+
 	     sp_start = (Regionspan *)l;
 	     l = l->next;
 	     rb->spans[y] = evas_object_list_remove(rb->spans[y], sp_start);
 	     for (yy = y + 1; yy < rb->h; yy++)
 	       {
 		  int match = 0;
-		  
+
 		  for (ll = (Evas_Object_List *)rb->spans[yy]; ll;)
 		    {
 		       span = (Regionspan *)ll;
 		       ll = ll->next;
 		       if (span->x1 == sp_start->x1)
 			 {
-			    if ((span->x1 != sp_start->x1) || 
+			    if ((span->x1 != sp_start->x1) ||
 				(span->x2 != sp_start->x2))
 			      {
 				 goto coallate;

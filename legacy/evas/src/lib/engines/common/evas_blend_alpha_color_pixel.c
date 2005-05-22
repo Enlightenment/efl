@@ -13,18 +13,18 @@ evas_common_blend_alpha_color_rgba_to_rgb_c (DATA8 *src, DATA32 *dst, int len, D
 {
    DATA8 *src_ptr;
    DATA32 *dst_ptr, *dst_end_ptr;
-   
+
    src_ptr = src;
    dst_ptr = dst;
    dst_end_ptr = dst + len;
-   
+
    if (A_VAL(&col) == 0) return;
-   
+
    while (dst_ptr < dst_end_ptr)
      {
 	DATA32 tmp;
 	DATA8 aa;
-	
+
 	aa = (((*src_ptr) +1) * A_VAL(&col)) >> 8;
 	switch (aa)
 	  {
@@ -35,14 +35,14 @@ evas_common_blend_alpha_color_rgba_to_rgb_c (DATA8 *src, DATA32 *dst, int len, D
 	     break;
 	   default:
 	     BLEND_ALPHA_SETUP(aa, tmp);
-	     BLEND_COLOR(aa, R_VAL(dst_ptr), 
-			 R_VAL(&col), R_VAL(dst_ptr), 
+	     BLEND_COLOR(aa, R_VAL(dst_ptr),
+			 R_VAL(&col), R_VAL(dst_ptr),
 			 tmp);
-	     BLEND_COLOR(aa, G_VAL(dst_ptr), 
-			 G_VAL(&col), G_VAL(dst_ptr), 
+	     BLEND_COLOR(aa, G_VAL(dst_ptr),
+			 G_VAL(&col), G_VAL(dst_ptr),
 			 tmp);
-	     BLEND_COLOR(aa, B_VAL(dst_ptr), 
-			 B_VAL(&col), B_VAL(dst_ptr), 
+	     BLEND_COLOR(aa, B_VAL(dst_ptr),
+			 B_VAL(&col), B_VAL(dst_ptr),
 			 tmp);
 	     break;
 	  }
@@ -58,9 +58,9 @@ evas_common_blend_alpha_color_rgba_to_rgb_mmx (DATA8 *src, DATA32 *dst, int len,
 {
    DATA8 *src_ptr;
    DATA32 *dst_ptr, *dst_end_ptr;
-   
+
    if (A_VAL(&col) == 0) return;
-   
+
    src_ptr = src;
    dst_ptr = dst;
    dst_end_ptr = dst + len;
@@ -71,14 +71,14 @@ evas_common_blend_alpha_color_rgba_to_rgb_mmx (DATA8 *src, DATA32 *dst, int len,
    psrlw_i2r(8, mm6);
    movq_m2r(*_evas_const_c1, mm5);
    paddw_r2r(mm5, mm6);
-   
+
    pxor_r2r(mm4, mm4);
-   
+
    while (dst_ptr < dst_end_ptr)
      {
 	DATA32 tmp;
         DATA8 aa;
-	
+
 	aa = (((*src_ptr) +1) * A_VAL(&col)) >> 8;
 	switch (aa)
 	  {
@@ -90,7 +90,7 @@ evas_common_blend_alpha_color_rgba_to_rgb_mmx (DATA8 *src, DATA32 *dst, int len,
 	   default:
 	     tmp = 0xffffff;
 	     A_VAL(&tmp) = *src_ptr;
-	
+
 	     movd_m2r(tmp, mm1);
 
 	     /* this could be more optimial.. but it beats the c code by almost */
@@ -104,32 +104,32 @@ evas_common_blend_alpha_color_rgba_to_rgb_mmx (DATA8 *src, DATA32 *dst, int len,
 	     movq_r2r(mm7, mm1);
 	     /* and back to our normal programming... */
 	     movd_m2r(dst_ptr[0], mm2);
-	     
+
 	     movq_r2r(mm1, mm3);
-	     
+
 	     punpcklbw_r2r(mm3, mm3);
 	     punpckhwd_r2r(mm3, mm3);
-	     punpckhdq_r2r(mm3, mm3);	
+	     punpckhdq_r2r(mm3, mm3);
 	     psrlw_i2r(1, mm3);
-	     
+
 //	     psrlq_i2r(16, mm3);
-	     
+
 	     punpcklbw_r2r(mm4, mm1);
 	     punpcklbw_r2r(mm4, mm2);
-	     
+
 	     psubw_r2r(mm2, mm1);
 	     psllw_i2r(1, mm1);
 	     paddw_r2r(mm5, mm1);
 	     pmulhw_r2r(mm3, mm1);
 	     paddw_r2r(mm1, mm2);
-	     
+
 	     packuswb_r2r(mm4, mm2);
 	     movd_r2m(mm2, dst_ptr[0]);
 	     break;
 	  }
 	src_ptr++;
 	dst_ptr++;
-     }   
+     }
 }
 #endif
 
@@ -138,9 +138,9 @@ evas_common_blend_alpha_color_rgba_to_rgba_c (DATA8 *src, DATA32 *dst, int len, 
 {
    DATA8 *src_ptr;
    DATA32 *dst_ptr, *dst_end_ptr;
-   
+
    if (A_VAL(&col) == 0) return;
-   
+
    src_ptr = src;
    dst_ptr = dst;
    dst_end_ptr = dst + len;
@@ -149,7 +149,7 @@ evas_common_blend_alpha_color_rgba_to_rgba_c (DATA8 *src, DATA32 *dst, int len, 
      {
 	DATA32 tmp;
 	DATA8  a, aa;
-	
+
 	aa = (((*src_ptr) + 1) * A_VAL(&col)) >> 8;
         switch (aa)
 	  {
@@ -161,18 +161,18 @@ evas_common_blend_alpha_color_rgba_to_rgba_c (DATA8 *src, DATA32 *dst, int len, 
 	   default:
 	     BLEND_ADST_ALPHA_SETUP(aa, tmp);
 	     a = _evas_pow_lut[(aa << 8) | A_VAL(dst_ptr)];
-	     BLEND_ADST_COLOR(aa, A_VAL(dst_ptr), 
-			      255, A_VAL(dst_ptr), 
+	     BLEND_ADST_COLOR(aa, A_VAL(dst_ptr),
+			      255, A_VAL(dst_ptr),
 			      tmp);
 	     BLEND_ADST_ALPHA_SETUP(a, tmp);
-	     BLEND_ADST_COLOR(a, R_VAL(dst_ptr), 
-			      R_VAL(&col), R_VAL(dst_ptr), 
+	     BLEND_ADST_COLOR(a, R_VAL(dst_ptr),
+			      R_VAL(&col), R_VAL(dst_ptr),
 			      tmp);
-	     BLEND_ADST_COLOR(a, G_VAL(dst_ptr), 
-			      G_VAL(&col), G_VAL(dst_ptr), 
+	     BLEND_ADST_COLOR(a, G_VAL(dst_ptr),
+			      G_VAL(&col), G_VAL(dst_ptr),
 			      tmp);
-	     BLEND_ADST_COLOR(a, B_VAL(dst_ptr), 
-			      B_VAL(&col), B_VAL(dst_ptr), 
+	     BLEND_ADST_COLOR(a, B_VAL(dst_ptr),
+			      B_VAL(&col), B_VAL(dst_ptr),
 			      tmp);
 	     break;
 	  }

@@ -173,7 +173,7 @@ Evas_Func evas_engine_software_x11_func =
      evas_engine_software_x11_font_h_advance_get,
      evas_engine_software_x11_font_v_advance_get,
      evas_engine_software_x11_font_char_coords_get,
-     evas_engine_software_x11_font_char_at_coords_get,     
+     evas_engine_software_x11_font_char_at_coords_get,
      evas_engine_software_x11_font_draw,
      /* font cache functions */
      evas_engine_software_x11_font_cache_flush,
@@ -185,7 +185,7 @@ static void *
 evas_engine_software_x11_info(Evas *e)
 {
    Evas_Engine_Info_Software_X11 *info;
-   
+
    info = calloc(1, sizeof(Evas_Engine_Info_Software_X11));
    if (!info) return NULL;
    info->magic.magic = rand();
@@ -210,7 +210,7 @@ static void
 evas_engine_software_x11_info_free(Evas *e, void *info)
 {
    Evas_Engine_Info_Software_X11 *in;
-   
+
    in = (Evas_Engine_Info_Software_X11 *)info;
    free(in);
 }
@@ -220,16 +220,16 @@ evas_engine_software_x11_setup(Evas *e, void *in)
 {
    Render_Engine *re;
    Evas_Engine_Info_Software_X11 *info;
-   
+
    info = (Evas_Engine_Info_Software_X11 *)in;
    if (!e->engine.data.output)
-     e->engine.data.output = 
+     e->engine.data.output =
      evas_engine_software_x11_output_setup(e->output.w,
 					   e->output.h,
 					   info->info.rotation,
-					   info->info.display, 
+					   info->info.display,
 					   info->info.drawable,
-					   info->info.visual, 
+					   info->info.visual,
 					   info->info.colormap,
 					   info->info.depth,
 					   info->info.debug,
@@ -239,9 +239,9 @@ evas_engine_software_x11_setup(Evas *e, void *in)
 					   info->info.shape_dither);
    if (!e->engine.data.output) return;
    if (!e->engine.data.context)
-     e->engine.data.context = 
-     e->engine.func->context_new(e->engine.data.output);   
-   
+     e->engine.data.context =
+     e->engine.func->context_new(e->engine.data.output);
+
    re = e->engine.data.output;
    evas_software_x11_outbuf_drawable_set(re->ob, info->info.drawable);
    evas_software_x11_outbuf_mask_set(re->ob, info->info.mask);
@@ -253,11 +253,11 @@ evas_engine_software_x11_output_setup(int w, int h, int rot, Display *disp, Draw
 {
    Render_Engine *re;
    Outbuf_Perf *perf;
-   
+
    re = calloc(1, sizeof(Render_Engine));
    /* if we haven't initialized - init (automatic abort if already done) */
    evas_common_cpu_init();
-   
+
    evas_common_blend_init();
    evas_common_image_init();
    evas_common_convert_init();
@@ -269,11 +269,11 @@ evas_engine_software_x11_output_setup(int w, int h, int rot, Display *disp, Draw
    evas_common_font_init();
    evas_common_draw_init();
    evas_common_tilebuf_init();
-   
+
    evas_software_x11_x_init();
    evas_software_x11_x_color_init();
-   evas_software_x11_outbuf_init();   
-   
+   evas_software_x11_outbuf_init();
+
    /* get any stored performance metrics from device (xserver) */
    perf = evas_software_x11_outbuf_perf_restore_x(disp, draw, vis, cmap, depth);
    re->ob = evas_software_x11_outbuf_setup_x(w, h, rot, OUTBUF_DEPTH_INHERIT, disp, draw, vis, cmap, depth, perf, grayscale, max_colors, mask, shape_dither);
@@ -300,7 +300,7 @@ static void
 evas_engine_software_x11_output_free(void *data)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_software_x11_outbuf_free(re->ob);
    evas_common_tilebuf_free(re->tb);
@@ -315,9 +315,9 @@ static void
 evas_engine_software_x11_output_resize(void *data, int w, int h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
-   evas_software_x11_outbuf_reconfigure(re->ob, w, h, 
+   evas_software_x11_outbuf_reconfigure(re->ob, w, h,
 				   evas_software_x11_outbuf_get_rot(re->ob),
 				   OUTBUF_DEPTH_INHERIT);
    evas_common_tilebuf_free(re->tb);
@@ -330,16 +330,16 @@ static void
 evas_engine_software_x11_output_tile_size_set(void *data, int w, int h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
-   evas_common_tilebuf_set_tile_size(re->tb, w, h);   
+   evas_common_tilebuf_set_tile_size(re->tb, w, h);
 }
 
 static void
 evas_engine_software_x11_output_redraws_rect_add(void *data, int x, int y, int w, int h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_tilebuf_add_redraw(re->tb, x, y, w, h);
 }
@@ -348,7 +348,7 @@ static void
 evas_engine_software_x11_output_redraws_rect_del(void *data, int x, int y, int w, int h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_tilebuf_del_redraw(re->tb, x, y, w, h);
 }
@@ -357,7 +357,7 @@ static void
 evas_engine_software_x11_output_redraws_clear(void *data)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_tilebuf_clear(re->tb);
 }
@@ -369,14 +369,14 @@ evas_engine_software_x11_output_redraws_next_update_get(void *data, int *x, int 
    RGBA_Image *surface;
    Tilebuf_Rect *rect;
    int ux, uy, uw, uh;
-   
+
    re = (Render_Engine *)data;
    if (re->end)
      {
 	re->end = 0;
 	return NULL;
      }
-   if (!re->rects) 
+   if (!re->rects)
      {
 	re->rects = evas_common_tilebuf_get_render_rects(re->tb);
 	re->cur_rect = (Evas_Object_List *)re->rects;
@@ -385,13 +385,13 @@ evas_engine_software_x11_output_redraws_next_update_get(void *data, int *x, int 
    rect = (Tilebuf_Rect *)re->cur_rect;
    ux = rect->x; uy = rect->y; uw = rect->w; uh = rect->h;
    re->cur_rect = re->cur_rect->next;
-   if (!re->cur_rect) 
+   if (!re->cur_rect)
      {
 	evas_common_tilebuf_free_render_rects(re->rects);
 	re->rects = NULL;
 	re->end = 1;
      }
-   
+
    surface = evas_software_x11_outbuf_new_region_for_update
      (re->ob, ux, uy, uw, uh, cx, cy, cw, ch);
    *x = ux; *y = uy; *w = uw; *h = uh;
@@ -403,7 +403,7 @@ evas_engine_software_x11_output_redraws_next_update_push(void *data, void *surfa
 {
    Render_Engine *re;
    Evas_Engine_Info_Software_X11 *info;
-   
+
    re = (Render_Engine *)data;
    evas_software_x11_outbuf_push_updated_region(re->ob, surface, x, y, w, h);
    evas_software_x11_outbuf_free_region_for_update(re->ob, surface);
@@ -414,7 +414,7 @@ static void
 evas_engine_software_x11_output_flush(void *data)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_software_x11_outbuf_flush(re->ob);
 }
@@ -423,7 +423,7 @@ static void *
 evas_engine_software_x11_context_new(void *data)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return evas_common_draw_context_new();
 }
@@ -432,7 +432,7 @@ static void
 evas_engine_software_x11_context_free(void *data, void *context)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_draw_context_free(context);
 }
@@ -441,7 +441,7 @@ static void
 evas_engine_software_x11_context_clip_set(void *data, void *context, int x, int y, int w, int h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_draw_context_set_clip(context, x, y, w, h);
 }
@@ -450,7 +450,7 @@ static void
 evas_engine_software_x11_context_clip_clip(void *data, void *context, int x, int y, int w, int h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_draw_context_clip_clip(context, x, y, w, h);
 }
@@ -459,7 +459,7 @@ static void
 evas_engine_software_x11_context_clip_unset(void *data, void *context)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_draw_context_unset_clip(context);
 }
@@ -468,7 +468,7 @@ static int
 evas_engine_software_x11_context_clip_get(void *data, void *context, int *x, int *y, int *w, int *h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    *x = ((RGBA_Draw_Context *)context)->clip.x;
    *y = ((RGBA_Draw_Context *)context)->clip.y;
@@ -481,7 +481,7 @@ static void
 evas_engine_software_x11_context_color_set(void *data, void *context, int r, int g, int b, int a)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_draw_context_set_color(context, r, g, b, a);
 }
@@ -490,7 +490,7 @@ static int
 evas_engine_software_x11_context_color_get(void *data, void *context, int *r, int *g, int *b, int *a)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    *r = (int)(R_VAL(&((RGBA_Draw_Context *)context)->col.col));
    *g = (int)(G_VAL(&((RGBA_Draw_Context *)context)->col.col));
@@ -503,7 +503,7 @@ static void
 evas_engine_software_x11_context_multiplier_set(void *data, void *context, int r, int g, int b, int a)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_draw_context_set_multiplier(context, r, g, b, a);
 }
@@ -512,7 +512,7 @@ static void
 evas_engine_software_x11_context_multiplier_unset(void *data, void *context)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_draw_context_unset_multiplier(context);
 }
@@ -521,7 +521,7 @@ static int
 evas_engine_software_x11_context_multiplier_get(void *data, void *context, int *r, int *g, int *b, int *a)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    *r = (int)(R_VAL(&((RGBA_Draw_Context *)context)->mul.col));
    *g = (int)(G_VAL(&((RGBA_Draw_Context *)context)->mul.col));
@@ -534,7 +534,7 @@ static void
 evas_engine_software_x11_context_cutout_add(void *data, void *context, int x, int y, int w, int h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_draw_context_add_cutout(context, x, y, w, h);
 }
@@ -543,7 +543,7 @@ static void
 evas_engine_software_x11_context_cutout_clear(void *data, void *context)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_draw_context_clear_cutouts(context);
 }
@@ -557,11 +557,11 @@ static void
 evas_engine_software_x11_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
-#ifdef IMGONLY   
+#ifdef IMGONLY
    return;
-#endif   
+#endif
    evas_common_rectangle_draw(surface, context, x, y, w, h);
    evas_common_cpu_end_opt();
 }
@@ -570,11 +570,11 @@ static void
 evas_engine_software_x11_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
-#ifdef IMGONLY   
+#ifdef IMGONLY
    return;
-#endif   
+#endif
    evas_common_line_draw(surface, context, x1, y1, x2, y2);
    evas_common_cpu_end_opt();
 }
@@ -583,7 +583,7 @@ static void *
 evas_engine_software_x11_polygon_point_add(void *data, void *context, void *polygon, int x, int y)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return evas_common_polygon_point_add(polygon, x, y);
    context = NULL;
@@ -593,7 +593,7 @@ static void *
 evas_engine_software_x11_polygon_points_clear(void *data, void *context, void *polygon)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return evas_common_polygon_points_clear(polygon);
    context = NULL;
@@ -603,11 +603,11 @@ static void
 evas_engine_software_x11_polygon_draw(void *data, void *context, void *surface, void *polygon)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
-#ifdef IMGONLY   
+#ifdef IMGONLY
    return;
-#endif   
+#endif
    evas_common_polygon_draw(surface, context, polygon);
    evas_common_cpu_end_opt();
 }
@@ -616,7 +616,7 @@ static void *
 evas_engine_software_x11_gradient_color_add(void *data, void *context, void *gradient, int r, int g, int b, int a, int distance)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    if (!gradient)
      gradient = evas_common_gradient_new();
@@ -629,7 +629,7 @@ static void *
 evas_engine_software_x11_gradient_colors_clear(void *data, void *context, void *gradient)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    if (gradient) evas_common_gradient_free(gradient);
    return NULL;
@@ -640,11 +640,11 @@ static void
 evas_engine_software_x11_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
-#ifdef IMGONLY   
+#ifdef IMGONLY
    return;
-#endif   
+#endif
    evas_common_gradient_draw(surface, context, x, y, w, h, gradient, angle);
    evas_common_cpu_end_opt();
 }
@@ -664,7 +664,7 @@ evas_engine_software_x11_image_new_from_data(void *data, int w, int h, DATA32 *i
 {
    Render_Engine *re;
    RGBA_Image *im;
-   
+
    re = (Render_Engine *)data;
    im = evas_common_image_new();
    im->image = evas_common_image_surface_new(im);
@@ -685,7 +685,7 @@ evas_engine_software_x11_image_new_from_copied_data(void *data, int w, int h, DA
 {
    Render_Engine *re;
    RGBA_Image *im;
-   
+
    re = (Render_Engine *)data;
    im = evas_common_image_create(w, h);
    if (!im) return NULL;
@@ -708,7 +708,7 @@ evas_engine_software_x11_image_size_get(void *data, void *image, int *w, int *h)
 {
    Render_Engine *re;
    RGBA_Image *im;
-   
+
    re = (Render_Engine *)data;
    im = image;
    if (w) *w = im->image->w;
@@ -720,7 +720,7 @@ evas_engine_software_x11_image_size_set(void *data, void *image, int w, int h)
 {
    Render_Engine *re;
    RGBA_Image *im, *im_old;
-   
+
    re = (Render_Engine *)data;
    im_old = image;
    im = evas_common_image_create(w, h);
@@ -742,7 +742,7 @@ static void *
 evas_engine_software_x11_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_image_dirty(image);
    return image;
@@ -757,7 +757,7 @@ evas_engine_software_x11_image_data_get(void *data, void *image, int to_write, D
 {
    Render_Engine *re;
    RGBA_Image *im;
-   
+
    re = (Render_Engine *)data;
    im = image;
    evas_common_load_image_data_from_file(im);
@@ -766,7 +766,7 @@ evas_engine_software_x11_image_data_get(void *data, void *image, int to_write, D
 	if (im->references > 1)
 	  {
 	     RGBA_Image *im_new;
-	     
+
 	     im_new = evas_common_image_create(im->image->w, im->image->h);
 	     if (!im_new) return im;
 	     evas_common_blit_rectangle(im, im_new, 0, 0, im->image->w, im->image->h, 0, 0);
@@ -786,13 +786,13 @@ evas_engine_software_x11_image_data_put(void *data, void *image, DATA32 *image_d
 {
    Render_Engine *re;
    RGBA_Image *im;
-   
+
    re = (Render_Engine *)data;
    im = image;
    if (image_data != im->image->data)
      {
 	int w, h;
-	
+
 	w = im->image->w;
 	h = im->image->h;
 	evas_common_image_unref(im);
@@ -808,13 +808,13 @@ evas_engine_software_x11_image_alpha_set(void *data, void *image, int has_alpha)
 {
    Render_Engine *re;
    RGBA_Image *im;
-   
+
    re = (Render_Engine *)data;
    im = image;
    if (im->references > 1)
      {
 	RGBA_Image *im_new;
-	
+
 	im_new = evas_common_image_create(im->image->w, im->image->h);
 	if (!im_new) return im;
 	evas_common_load_image_data_from_file(im);
@@ -838,7 +838,7 @@ evas_engine_software_x11_image_alpha_get(void *data, void *image)
 {
    Render_Engine *re;
    RGBA_Image *im;
-   
+
    re = (Render_Engine *)data;
    im = image;
    if (im->flags & RGBA_IMAGE_HAS_ALPHA) return 1;
@@ -853,13 +853,13 @@ evas_engine_software_x11_image_draw(void *data, void *context, void *surface, vo
    re = (Render_Engine *)data;
    evas_common_load_image_data_from_file(image);
    if (smooth)
-     evas_common_scale_rgba_in_to_out_clip_smooth(image, surface, context, 
-				      src_x, src_y, src_w, src_h, 
+     evas_common_scale_rgba_in_to_out_clip_smooth(image, surface, context,
+				      src_x, src_y, src_w, src_h,
 				      dst_x, dst_y, dst_w, dst_h);
    else
-     evas_common_scale_rgba_in_to_out_clip_sample(image, surface, context, 
-				      src_x, src_y, src_w, src_h, 
-				      dst_x, dst_y, dst_w, dst_h);     
+     evas_common_scale_rgba_in_to_out_clip_sample(image, surface, context,
+				      src_x, src_y, src_w, src_h,
+				      dst_x, dst_y, dst_w, dst_h);
    evas_common_cpu_end_opt();
 }
 
@@ -868,7 +868,7 @@ evas_engine_software_x11_image_comment_get(void *data, void *image, char *key)
 {
    Render_Engine *re;
    RGBA_Image *im;
-   
+
    re = (Render_Engine *)data;
    im = image;
    return im->info.comment;
@@ -880,7 +880,7 @@ evas_engine_software_x11_image_format_get(void *data, void *image)
 {
    Render_Engine *re;
    RGBA_Image *im;
-   
+
    re = (Render_Engine *)data;
    im = image;
    if (im->info.format == 1) return "png";
@@ -892,7 +892,7 @@ evas_engine_software_x11_image_cache_flush(void *data)
 {
    Render_Engine *re;
    int tmp_size;
-   
+
    re = (Render_Engine *)data;
    tmp_size = evas_common_image_get_cache();
    evas_common_image_set_cache(0);
@@ -971,7 +971,7 @@ evas_engine_software_x11_font_ascent_get(void *data, void *font)
    return evas_common_font_ascent_get(font);
 }
 
-static int 
+static int
 evas_engine_software_x11_font_descent_get(void *data, void *font)
 {
    Render_Engine *re;
@@ -1021,7 +1021,7 @@ evas_engine_software_x11_font_h_advance_get(void *data, void *font, char *text)
 {
    Render_Engine *re;
    int h, v;
-   
+
    re = (Render_Engine *)data;
    evas_common_font_query_advance(font, text, &h, &v);
    return h;
@@ -1062,9 +1062,9 @@ evas_engine_software_x11_font_draw(void *data, void *context, void *surface, voi
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-#ifdef IMGONLY   
+#ifdef IMGONLY
    return;
-#endif   
+#endif
    if ((w == ow) && (h == oh))
      evas_common_font_draw(surface, context, font, x, y, text);
    else
@@ -1078,7 +1078,7 @@ evas_engine_software_x11_font_draw(void *data, void *context, void *surface, voi
 	  {
 	     RGBA_Image *im;
 	     int inset;
-	     
+
 	     dc->col.col = dc_in->col.col;
 	     inset = evas_common_font_query_inset( font, text);
 	     im = evas_common_image_create(ow+inset, oh);
@@ -1086,18 +1086,18 @@ evas_engine_software_x11_font_draw(void *data, void *context, void *surface, voi
 	       {
 		  int max_ascent;
 		  int i, j;
-		  
+
 		  im->flags |= RGBA_IMAGE_HAS_ALPHA;
 		  j = (ow+inset) * oh;
 		  memset(im->image->data, 0, j * sizeof(DATA32));
-		  
+
 		  max_ascent = evas_common_font_max_ascent_get(font);
-		  
+
 		  evas_common_font_draw(im, dc, font, 0, max_ascent, text);
 		  evas_common_cpu_end_opt();
-		  evas_common_scale_rgba_in_to_out_clip_smooth(im, surface, context, 
-						   inset, 0, ow, oh, 
-						   x + ((inset * w) / ow), y - ((max_ascent * h) / oh), 
+		  evas_common_scale_rgba_in_to_out_clip_smooth(im, surface, context,
+						   inset, 0, ow, oh,
+						   x + ((inset * w) / ow), y - ((max_ascent * h) / oh),
 						   w, h);
 		  evas_common_image_free(im);
 	       }
@@ -1173,26 +1173,26 @@ evas_engine_software_x11_output_perf_new(Evas *e, Display *disp, Visual *vis, Co
 }
 
 static Evas_Performance *
-evas_engine_software_x11_output_perf_test(Evas *e, Display *disp, Visual *vis, Colormap cmap, Drawable draw, int depth)    
+evas_engine_software_x11_output_perf_test(Evas *e, Display *disp, Visual *vis, Colormap cmap, Drawable draw, int depth)
 {
    return evas_software_x11_outbuf_perf_x(disp, draw, vis, cmap, depth);
    e = NULL;
 }
 
 static char *
-evas_engine_software_x11_output_perf_data(Evas_Performance *perf)    
+evas_engine_software_x11_output_perf_data(Evas_Performance *perf)
 {
    return evas_software_x11_outbuf_perf_serialize_x(perf);
 }
 
 static char *
-evas_engine_software_x11_output_perf_key(Evas_Performance *perf)    
+evas_engine_software_x11_output_perf_key(Evas_Performance *perf)
 {
    return evas_software_x11_outbuf_perf_serialize_info_x(perf);
 }
 
 static void
-evas_engine_software_x11_output_perf_free(Evas_Performance *perf)    
+evas_engine_software_x11_output_perf_free(Evas_Performance *perf)
 {
    evas_software_x11_outbuf_perf_free(perf);
 }
@@ -1204,7 +1204,7 @@ evas_engine_software_x11_output_perf_build(Evas_Performance *perf, const char *d
 }
 
 static void
-evas_engine_software_x11_output_perf_device_store(Evas_Performance *perf)    
+evas_engine_software_x11_output_perf_device_store(Evas_Performance *perf)
 {
    evas_software_x11_outbuf_perf_store_x(perf);
 }

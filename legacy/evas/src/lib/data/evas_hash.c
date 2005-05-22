@@ -11,11 +11,11 @@ evas_hash_gen(const char *key)
 {
    unsigned int hash_num = 0;
    const unsigned char *ptr;
-   
+
    if (!key) return 0;
-   
+
    for (ptr = (unsigned char *)key; *ptr; ptr++) hash_num ^= (int)(*ptr);
-   
+
    hash_num &= 0xff;
    return (int)hash_num;
 }
@@ -30,7 +30,7 @@ evas_hash_gen(const char *key)
  * @code
  * Evas_Hash *hash = NULL;
  * extern void *my_data;
- * 
+ *
  * hash = evas_hash_add(hash, "My Data", my_data);
  * if (evas_hash_alloc_error())
  *   {
@@ -48,7 +48,7 @@ evas_hash_gen(const char *key)
  * @code
  * extern Evas_Hash *hash;
  * extern void *data;
- * 
+ *
  * printf("Insert some data...\n");
  * hash = evas_hash_add(hash, "My Data", my_data);
  * printf("Removing by key...\n");
@@ -108,7 +108,7 @@ evas_hash_add(Evas_Hash *hash, const char *key, const void *data)
 	_evas_hash_alloc_error = 1;
 	return hash;
      };
-   if (key) 
+   if (key)
      {
         el->key = strdup(key);
 	if (!el->key)
@@ -119,7 +119,7 @@ evas_hash_add(Evas_Hash *hash, const char *key, const void *data)
 	  }
         hash_num = evas_hash_gen(key);
      }
-   else 
+   else
      {
         el->key = NULL;
 	hash_num = 0;
@@ -158,7 +158,7 @@ evas_hash_del(Evas_Hash *hash, const char *key, const void *data)
    int hash_num;
    Evas_Hash_El *el;
    Evas_Object_List *l;
-   
+
    if (!hash) return NULL;
    hash_num = evas_hash_gen(key);
    for (l = hash->buckets[hash_num]; l; l = l->next)
@@ -250,17 +250,17 @@ evas_hash_size(Evas_Hash *hash)
 /**
  * Free an entire hash table
  * @param hash The hash table to be freed
- * 
+ *
  * This function frees up all the memory allocated to storing the specified
  * hash tale pointed to by @p hash. Any entries in the table that the program
  * has no more pointers for elsewhere may now be lost, so this should only be
  * called if the program has lready freed any allocated data in the hash table
  * or has the pointers for data in teh table stored elswehere as well.
- * 
+ *
  * Example:
  * @code
  * extern Evas_Hash *hash;
- * 
+ *
  * evas_hash_free(hash);
  * hash = NULL;
  * @endcode
@@ -270,7 +270,7 @@ void
 evas_hash_free(Evas_Hash *hash)
 {
    int i, size;
-   
+
    if (!hash) return;
    size = evas_hash_size(hash);
    for (i = 0; i < size; i++)
@@ -278,7 +278,7 @@ evas_hash_free(Evas_Hash *hash)
 	while (hash->buckets[i])
 	  {
 	     Evas_Hash_El *el;
-	     
+
 	     el = (Evas_Hash_El *)hash->buckets[i];
 	     if (el->key) free(el->key);
 	     hash->buckets[i] = evas_object_list_remove(hash->buckets[i], el);
@@ -293,27 +293,27 @@ evas_hash_free(Evas_Hash *hash)
  * @param hash The hash table whose members will be walked
  * @param func The function to call on each parameter
  * @param fdata The data pointer to pass to the function being called
- * 
+ *
  * This function goes through every entry in the hash table @p hash and calls
  * the function @p func on each member. The function should NOT modify the
  * hash table contents if it reeturns 1. IF the hash table contents are
  * modified by this function or the function wishes to stop processing it must
  * return 0, otherwise return 1 to keep processing.
- * 
+ *
  * Example:
  * @code
  * extern Evas_Hash *hash;
- * 
+ *
  * Evas_Bool hash_fn(Evas_Hash *hash, const char *key, void *data, void *fdata)
  * {
  *   printf("Func data: %s, Hash entry: %s / %p\n", fdata, key, data);
  *   return 1;
  * }
- * 
+ *
  * int main(int argc, char **argv)
  * {
  *   char *hash_fn_data;
- * 
+ *
  *   hash_fn_data = strdup("Hello World");
  *   evas_hash_foreach(hash, hash_fn, hash_fn_data);
  *   free(hash_fn_data);
@@ -331,11 +331,11 @@ evas_hash_foreach(Evas_Hash *hash, Evas_Bool (*func) (Evas_Hash *hash, const cha
    for (i = 0; i < size; i++)
      {
 	Evas_Object_List *l, *next_l;
-	
+
 	for (l = hash->buckets[i]; l;)
 	  {
 	     Evas_Hash_El *el;
-	     
+
 	     next_l = l->next;
 	     el = (Evas_Hash_El *)l;
 	     if (!func(hash, el->key, el->data, (void *)fdata)) return;
@@ -347,18 +347,18 @@ evas_hash_foreach(Evas_Hash *hash, Evas_Bool (*func) (Evas_Hash *hash, const cha
 /**
  * Return memory allocation failure flag after an function requiring allocation
  * @return The state of the allocation flag
- * 
+ *
  * This function returns the state of the memory allocation flag. This flag is
  * set if memory allocations fail during evas_hash_add() calls. If they do, 1
  * will be returned, otherwise 0 will be returned. The flag will remain in its
  * current state until the next call that requires allocation is called, and
  * is then reset.
- * 
+ *
  * Example:
  * @code
  * Evas_Hash *hash = NULL;
  * extern void *my_data;
- * 
+ *
  * hash = evas_hash_add(hash, "My Data", my_data);
  * if (evas_hash_alloc_error())
  *   {

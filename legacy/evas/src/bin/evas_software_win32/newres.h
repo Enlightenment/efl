@@ -12,7 +12,7 @@
 	#include <commctrl.h>
 	#define  SHMENUBAR RCDATA
 	#if defined(WIN32_PLATFORM_PSPC) && (_WIN32_WCE >= 300)
-		#include <aygshell.h> 
+		#include <aygshell.h>
 	#else
 		#define I_IMAGENONE		(-2)
 		#define NOMENU			0xFFFF

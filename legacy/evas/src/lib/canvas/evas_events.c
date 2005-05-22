@@ -21,17 +21,17 @@ evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y)
      {
 	Evas_Object_List *l2;
 	Evas_Layer *lay;
-	
-	lay = (Evas_Layer *)l;	     
+
+	lay = (Evas_Layer *)l;
 	for (l2 = ((Evas_Object_List *)(lay->objects))->last; l2; l2 = l2->prev)
 	  {
 	     Evas_Object *obj;
-	     
+
 	     obj = (Evas_Object *)l2;
 	     if (obj == stop) goto done;
 	     if ((!evas_event_passes_through(obj)) && (!obj->smart.smart))
 	       {
-// FIXME: i don't think we need this		  
+// FIXME: i don't think we need this
 //		  evas_object_clip_recalc(obj);
 		  if ((evas_object_is_in_output_rect(obj, x, y, 1, 1)) &&
 		      (obj->cur.visible) &&
@@ -54,7 +54,7 @@ static Evas_List *
 evas_event_list_copy(Evas_List *list)
 {
    Evas_List *l, *new_l = NULL;
-   
+
    for (l = list; l; l = l->next)
      new_l = evas_list_append(new_l, l->data);
    return new_l;
@@ -70,17 +70,17 @@ evas_event_list_copy(Evas_List *list)
 /**
  * Freeze alll event processing
  * @param e The canvas to freeze event processing on
- * 
+ *
  * This function will indicate to evas that the canvas @p e is to have all
  * event processing frozen until a matching evas_event_thaw() function is
  * called on the same canvas. Every freeze call must be matched by a thaw call
  * in order to completely thaw out a canvas.
- * 
+ *
  * Example:
  * @code
  * extern Evas *evas;
  * extern Evas_Object *object;
- * 
+ *
  * evas_event_freeze(evas);
  * evas_object_move(object, 50, 100);
  * evas_object_resize(object, 200, 200);
@@ -100,12 +100,12 @@ evas_event_freeze(Evas *e)
 /**
  * Thaw a canvas out after freezing
  * @param e The canvas to thaw out
- * 
+ *
  * This will thaw out a canvas after a matching evas_event_freeze() call. If
  * this call completely thaws out a canvas, events will start being processed
  * again after this call, but this call will not invole any "missed" events
  * to be evaluated.
- * 
+ *
  * See evas_event_freeze() for an example.
  * @ingroup Evas_Event_Freezing_Group
  */
@@ -123,17 +123,17 @@ evas_event_thaw(Evas *e)
 /**
  * Return the freeze count of a given canvas
  * @param e The canvas to fetch the freeze count from
- * 
+ *
  * This returns the number of times the canvas has been told to freeze events.
  * It is possible to call evas_event_freeze() multiple times, and these must
  * be matched by evas_event_thaw() calls. This call allows the program to
  * discover just how many times things have been frozen in case it may want
  * to break out of a deep freeze state where the count is high.
- * 
+ *
  * Example:
  * @code
  * extern Evas *evas;
- * 
+ *
  * while (evas_event_freeze_get(evas) > 0) evas_event_thaw(evas);
  * @endcode
  * @ingroup Evas_Event_Freezing_Group
@@ -151,33 +151,33 @@ evas_event_freeze_get(Evas *e)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, const void *data)
 {
    Evas_List *l, *copy;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
 
    if ((b < 1) || (b > 32)) return;
-   
+
    e->pointer.button |= (1 << (b - 1));
 
    if (e->events_frozen > 0) return;
-   
+
    copy = evas_event_list_copy(e->pointer.object.in);
    for (l = copy; l; l = l->next)
      {
 	Evas_Object *obj;
 	Evas_Event_Mouse_Down ev;
-	
+
 	obj = l->data;
 	obj->mouse_grabbed++;
 	e->pointer.mouse_grabbed++;
-		       
+
 	ev.button = b;
 	ev.output.x = e->pointer.x;
 	ev.output.y = e->pointer.y;
@@ -197,29 +197,29 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, const void *
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, const void *data)
 {
    Evas_List *l, *copy;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   
+
    if ((b < 1) || (b > 32)) return;
-   
+
    e->pointer.button &= ~(1 << (b - 1));
 
    if (e->events_frozen > 0) return;
-   
+
    copy = evas_event_list_copy(e->pointer.object.in);
    for (l = copy; l; l = l->next)
      {
 	Evas_Object *obj;
 	Evas_Event_Mouse_Up ev;
-	
+
 	obj = l->data;
 	if (obj->mouse_grabbed > 0) obj->mouse_grabbed--;
 	if (e->pointer.mouse_grabbed > 0) e->pointer.mouse_grabbed--;
@@ -236,11 +236,11 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, const void *da
 	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_UP, &ev);
      }
    if (copy) copy = evas_list_free(copy);
-   if (!e->pointer.button) 
+   if (!e->pointer.button)
      {
-	Evas_List *ins;	
+	Evas_List *ins;
 	Evas_List *l;
-   
+
 	/* get new list of ins */
 	ins = evas_event_objects_event_list(e, NULL, e->pointer.x, e->pointer.y);
 	/* go thru old list of in objects */
@@ -248,13 +248,13 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, const void *da
 	for (l = copy; l; l = l->next)
 	  {
 	     Evas_Object *obj;
-	    
+
 	     obj = l->data;
 	     if ((!evas_list_find(ins, obj)) ||
 		 (!e->pointer.inside))
 	       {
 		  Evas_Event_Mouse_Out ev;
-		  
+
 		  obj->mouse_in = 0;
 		  ev.buttons = e->pointer.button;
 		  ev.output.x = e->pointer.x;
@@ -263,7 +263,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, const void *da
 		  ev.canvas.y = e->pointer.canvas_y;
 		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
-		  ev.locks = &(e->locks);		  
+		  ev.locks = &(e->locks);
 		  if (!e->events_frozen)
 		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }
@@ -274,13 +274,13 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, const void *da
 	     for (l = ins; l; l = l->next)
 	       {
 		  Evas_Object *obj;
-		  
+
 		  obj = l->data;
-		  
+
 		  if (!evas_list_find(e->pointer.object.in, obj))
 		    {
 		       Evas_Event_Mouse_In ev;
-		       
+
 		       obj->mouse_in = 1;
 		       ev.buttons = e->pointer.button;
 		       ev.output.x = e->pointer.x;
@@ -312,26 +312,26 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, const void *da
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_event_feed_mouse_wheel(Evas *e, int direction, int z, const void *data)
 {
    Evas_List *l, *copy;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
 
    if (e->events_frozen > 0) return;
-   
+
    copy = evas_event_list_copy(e->pointer.object.in);
-   
+
    for (l = copy; l; l = l->next)
    {
       Evas_Event_Mouse_Wheel ev;
       Evas_Object *obj = l->data;
-	  
+
       ev.direction = direction;
       ev.z = z;
       ev.output.x = e->pointer.x;
@@ -340,8 +340,8 @@ evas_event_feed_mouse_wheel(Evas *e, int direction, int z, const void *data)
       ev.canvas.y = e->pointer.canvas_y;
       ev.data = (void *) data;
       ev.modifiers = &(e->modifiers);
-      ev.locks = &(e->locks);	
-      if (!e->events_frozen)   
+      ev.locks = &(e->locks);
+      if (!e->events_frozen)
 	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_WHEEL, &ev);
    }
    if (copy) copy = evas_list_free(copy);
@@ -353,31 +353,31 @@ evas_event_feed_mouse_wheel(Evas *e, int direction, int z, const void *data)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
 {
    int px, py;
    Evas_Coord pcx, pcy;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   
+
    px = e->pointer.x;
    py = e->pointer.y;
    pcx = e->pointer.canvas_x;
    pcy = e->pointer.canvas_y;
-   
+
    if (e->events_frozen > 0) return;
-   
+
    e->pointer.x = x;
    e->pointer.y = y;
    e->pointer.canvas_x = evas_coord_screen_x_to_world(e, x);
    e->pointer.canvas_y = evas_coord_screen_y_to_world(e, y);
    if ((!e->pointer.inside) && (e->pointer.mouse_grabbed == 0)) return;
-   /* if our mouse button is grabbed to any objects */   
+   /* if our mouse button is grabbed to any objects */
    if (e->pointer.mouse_grabbed != 0)
      {
 	/* go thru old list of in objects */
@@ -388,7 +388,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
 	for (l = copy; l; l = l->next)
 	  {
 	     Evas_Object *obj;
-	     
+
 	     obj = l->data;
 	     if ((obj->cur.visible) &&
 		 (evas_object_clippers_is_visible(obj)) &&
@@ -399,7 +399,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
 		  if ((px != x) || (py != y))
 		    {
 		       Evas_Event_Mouse_Move ev;
-		       
+
 		       ev.buttons = e->pointer.button;
 		       ev.cur.output.x = e->pointer.x;
 		       ev.cur.output.y = e->pointer.y;
@@ -423,7 +423,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
 	while (outs)
 	  {
 	     Evas_Object *obj;
-	     
+
 	     obj = outs->data;
 	     outs = evas_list_remove(outs, obj);
 	     if (!obj->mouse_grabbed)
@@ -431,7 +431,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
 		  e->pointer.object.in = evas_list_remove(e->pointer.object.in, obj);
 		    {
 		       Evas_Event_Mouse_Out ev;
-		       
+
 		       obj->mouse_in = 0;
 		       ev.buttons = e->pointer.button;
 		       ev.output.x = e->pointer.x;
@@ -443,7 +443,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
 		       ev.locks = &(e->locks);
 		       if (!e->events_frozen)
 			 evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
-		    }	     
+		    }
 	       }
 	  }
      }
@@ -451,7 +451,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
      {
 	Evas_List *ins;
 	Evas_List *l, *copy;
-   
+
 	/* get all new in objects */
 	ins = evas_event_objects_event_list(e, NULL, x, y);
 	/* go thru old list of in objects */
@@ -459,13 +459,13 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
 	for (l = copy; l; l = l->next)
 	  {
 	     Evas_Object *obj;
-	     
+
 	     obj = l->data;
 	     /* if its under the pointer and its visible and its in the new */
 	     /* in list */
-// FIXME: i don't think we need this	     
+// FIXME: i don't think we need this
 //	     evas_object_clip_recalc(obj);
-	     if (evas_object_is_in_output_rect(obj, x, y, 1, 1) && 
+	     if (evas_object_is_in_output_rect(obj, x, y, 1, 1) &&
 		 (obj->cur.visible) &&
 		 (evas_object_clippers_is_visible(obj)) &&
 		 (evas_list_find(ins, obj)) &&
@@ -476,7 +476,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
 		  if ((px != x) || (py != y))
 		    {
 		       Evas_Event_Mouse_Move ev;
-		       
+
 		       ev.buttons = e->pointer.button;
 		       ev.cur.output.x = e->pointer.x;
 		       ev.cur.output.y = e->pointer.y;
@@ -488,7 +488,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
 		       ev.prev.canvas.y = pcy;
 		       ev.data = (void *)data;
 		       ev.modifiers = &(e->modifiers);
-		       ev.locks = &(e->locks);		       
+		       ev.locks = &(e->locks);
 		       if (!e->events_frozen)
 			 evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_MOVE, &ev);
 		    }
@@ -497,7 +497,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
 	     else
 	       {
 		  Evas_Event_Mouse_Out ev;
-		  
+
 		  obj->mouse_in = 0;
 		  ev.buttons = e->pointer.button;
 		  ev.output.x = e->pointer.x;
@@ -506,7 +506,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
 		  ev.canvas.y = e->pointer.canvas_y;
 		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
-		  ev.locks = &(e->locks);		  
+		  ev.locks = &(e->locks);
 		  if (!e->events_frozen)
 		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }
@@ -516,13 +516,13 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
 	for (l = ins; l; l = l->next)
 	  {
 	     Evas_Object *obj;
-	     
+
 	     obj = l->data;
 	     /* if its not in the old list of ins send an enter event */
 	     if (!evas_list_find(e->pointer.object.in, obj))
 	       {
 		  Evas_Event_Mouse_In ev;
-		  
+
 		  obj->mouse_in = 1;
 		  ev.buttons = e->pointer.button;
 		  ev.output.x = e->pointer.x;
@@ -531,7 +531,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
 		  ev.canvas.y = e->pointer.canvas_y;
 		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
-		  ev.locks = &(e->locks);		  
+		  ev.locks = &(e->locks);
 		  if (!e->events_frozen)
 		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_IN, &ev);
 	       }
@@ -547,14 +547,14 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_event_feed_mouse_in(Evas *e, const void *data)
 {
-   Evas_List *ins;	
+   Evas_List *ins;
    Evas_List *l;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
@@ -563,19 +563,19 @@ evas_event_feed_mouse_in(Evas *e, const void *data)
    if (e->events_frozen > 0) return;
 
    if (e->pointer.mouse_grabbed != 0) return;
-   
+
    /* get new list of ins */
    ins = evas_event_objects_event_list(e, NULL, e->pointer.x, e->pointer.y);
    for (l = ins; l; l = l->next)
      {
 	Evas_Object *obj;
-	
+
 	obj = l->data;
-	
+
 	if (!evas_list_find(e->pointer.object.in, obj))
 	  {
 	     Evas_Event_Mouse_In ev;
-	     
+
 	     obj->mouse_in = 1;
 	     ev.buttons = e->pointer.button;
 	     ev.output.x = e->pointer.x;
@@ -600,7 +600,7 @@ evas_event_feed_mouse_in(Evas *e, const void *data)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_event_feed_mouse_out(Evas *e, const void *data)
@@ -609,10 +609,10 @@ evas_event_feed_mouse_out(Evas *e, const void *data)
    return;
    MAGIC_CHECK_END();
    e->pointer.inside = 0;
-   
+
    if (e->events_frozen > 0) return;
-   
-   /* if our mouse button is grabbed to any objects */   
+
+   /* if our mouse button is grabbed to any objects */
    if (e->pointer.mouse_grabbed == 0)
      {
 	/* go thru old list of in objects */
@@ -622,11 +622,11 @@ evas_event_feed_mouse_out(Evas *e, const void *data)
 	for (l = copy; l; l = l->next)
 	  {
 	     Evas_Object *obj;
-	     
+
 	     obj = l->data;
 	       {
 		  Evas_Event_Mouse_Out ev;
-		  
+
 		  obj->mouse_in = 0;
 		  ev.buttons = e->pointer.button;
 		  ev.output.x = e->pointer.x;
@@ -650,7 +650,7 @@ evas_event_feed_mouse_out(Evas *e, const void *data)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const char *string, const char *compose, const void *data)
@@ -663,7 +663,7 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
      {
 	Evas_Event_Key_Down ev;
 	int exclusive;
-	
+
 	exclusive = 0;
 	ev.keyname = (char *)keyname;
 	ev.data = (void *)data;
@@ -675,12 +675,12 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
 	if (e->grabs)
 	  {
 	     Evas_List *l;
-	     
+
 	     e->walking_grabs++;
 	     for (l = e->grabs; l; l= l->next)
 	       {
 		  Evas_Key_Grab *g;
-		  
+
 		  g = l->data;
 		  if (g->just_added)
 		    {
@@ -705,12 +705,12 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
 		  while (e->delete_grabs > 0)
 		    {
 		       Evas_List *l;
-		       
+
 		       e->delete_grabs--;
 		       for (l = e->grabs; l;)
 			 {
 			    Evas_Key_Grab *g;
-			    
+
 			    g = l->data;
 			    l = l->next;
 			    if (g->delete_me)
@@ -731,7 +731,7 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char *string, const char *compose, const void *data)
@@ -744,8 +744,8 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
      {
 	Evas_Event_Key_Up ev;
 	int exclusive;
-	
-	exclusive = 0;	
+
+	exclusive = 0;
 	ev.keyname = (char *)keyname;
 	ev.data = (void *)data;
 	ev.modifiers = &(e->modifiers);
@@ -756,12 +756,12 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
 	if (e->grabs)
 	  {
 	     Evas_List *l;
-	     
+
 	     e->walking_grabs++;
 	     for (l = e->grabs; l; l= l->next)
 	       {
 		  Evas_Key_Grab *g;
-		  
+
 		  g = l->data;
 		  if (g->just_added)
 		    {
@@ -778,7 +778,7 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
 		       if (!e->events_frozen)
 			 evas_object_event_callback_call(g->object, EVAS_CALLBACK_KEY_UP, &ev);
 		       if (g->exclusive) exclusive = 1;
-		    }		      
+		    }
 	       }
 	     e->walking_grabs--;
 	     if (e->walking_grabs <= 0)
@@ -786,12 +786,12 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
 		  while (e->delete_grabs > 0)
 		    {
 		       Evas_List *l;
-		       
+
 		       e->delete_grabs--;
 		       for (l = e->grabs; l; l= l->next)
 			 {
 			    Evas_Key_Grab *g;
-			    
+
 			    g = l->data;
 			    l = l->next;
 			    if (g->delete_me)
@@ -812,7 +812,7 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_object_pass_events_set(Evas_Object *obj, Evas_Bool pass)
@@ -821,11 +821,11 @@ evas_object_pass_events_set(Evas_Object *obj, Evas_Bool pass)
    return;
    MAGIC_CHECK_END();
    obj->pass_events = pass;
-   if (evas_object_is_in_output_rect(obj, 
-				     obj->layer->evas->pointer.x, 
+   if (evas_object_is_in_output_rect(obj,
+				     obj->layer->evas->pointer.x,
 				     obj->layer->evas->pointer.y, 1, 1))
-     evas_event_feed_mouse_move(obj->layer->evas, 
-				obj->layer->evas->pointer.x, 
+     evas_event_feed_mouse_move(obj->layer->evas,
+				obj->layer->evas->pointer.x,
 				obj->layer->evas->pointer.y,
 				NULL);
 }
@@ -834,7 +834,7 @@ evas_object_pass_events_set(Evas_Object *obj, Evas_Bool pass)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Bool
 evas_object_pass_events_get(Evas_Object *obj)
@@ -849,7 +849,7 @@ evas_object_pass_events_get(Evas_Object *obj)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_object_repeat_events_set(Evas_Object *obj, Evas_Bool repeat)
@@ -858,10 +858,10 @@ evas_object_repeat_events_set(Evas_Object *obj, Evas_Bool repeat)
    return;
    MAGIC_CHECK_END();
    obj->repeat_events = repeat;
-   if (evas_object_is_in_output_rect(obj, 
-				     obj->layer->evas->pointer.x, 
+   if (evas_object_is_in_output_rect(obj,
+				     obj->layer->evas->pointer.x,
 				     obj->layer->evas->pointer.y, 1, 1))
-     evas_event_feed_mouse_move(obj->layer->evas, 
+     evas_event_feed_mouse_move(obj->layer->evas,
 				obj->layer->evas->pointer.x,
 				obj->layer->evas->pointer.y,
 				NULL);
@@ -871,7 +871,7 @@ evas_object_repeat_events_set(Evas_Object *obj, Evas_Bool repeat)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Bool
 evas_object_repeat_events_get(Evas_Object *obj)

@@ -7,7 +7,7 @@ evas_rects_return_difference_rects(int x, int y, int w, int h, int xx, int yy, i
 {
    Evas_List *rects = NULL;
    Evas_Rectangle *r;
-   
+
    if (!RECTS_INTERSECT(x, y, w, h, xx, yy, ww, hh))
      {
 	NEW_RECT(r, x, y, w, h);
@@ -19,7 +19,7 @@ evas_rects_return_difference_rects(int x, int y, int w, int h, int xx, int yy, i
      {
 	int x1[4], y1[4], i, j;
 	Evas_List *rl = NULL, *rll;
-	
+
 	if (x < xx)
 	  {
 	     x1[0] = x;
@@ -76,7 +76,7 @@ evas_rects_return_difference_rects(int x, int y, int w, int h, int xx, int yy, i
 		  if ((r->w > 0) && (r->h > 0))
 		    {
 		       int intsec1, intsec2;
-		       
+
 		       intsec1 = (RECTS_INTERSECT(r->x, r->y, r->w, r->h, x, y, w, h));
 		       intsec2 = (RECTS_INTERSECT(r->x, r->y, r->w, r->h, xx, yy, ww, hh));
 		       if (intsec1 ^ intsec2)
@@ -89,7 +89,7 @@ evas_rects_return_difference_rects(int x, int y, int w, int h, int xx, int yy, i
 	       }
 	     rl = evas_list_free(rl);
 	  }
-	
+
      }
    return rects;
 }

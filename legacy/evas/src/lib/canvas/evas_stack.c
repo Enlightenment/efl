@@ -15,7 +15,7 @@ evas_object_above_get_internal(Evas_Object *obj)
 	if (((Evas_Object_List *)(((Evas_Object *)obj)->layer))->next)
 	  {
 	     Evas_Layer *l;
-	     
+
 	     l = (Evas_Layer *)(((Evas_Object_List *)(((Evas_Object *)obj)->layer))->next);
 	     return l->objects;
 	  }
@@ -33,7 +33,7 @@ evas_object_below_get_internal(Evas_Object *obj)
         if (((Evas_Object_List *)(((Evas_Object *)obj)->layer))->prev)
 	  {
 	     Evas_Layer *l;
-	     
+
 	     l = (Evas_Layer *)(((Evas_Object_List *)(((Evas_Object *)obj)->layer))->prev);
 	     return (Evas_Object *)(((Evas_Object_List *)(l->objects))->last);
 	  }
@@ -45,7 +45,7 @@ evas_object_below_get_internal(Evas_Object *obj)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_object_raise(Evas_Object *obj)
@@ -59,7 +59,7 @@ evas_object_raise(Evas_Object *obj)
        if (obj->smart.smart->smart_class->raise)
 	  obj->smart.smart->smart_class->raise(obj);
      }
-   if (!(((Evas_Object_List *)obj)->next)) 
+   if (!(((Evas_Object_List *)obj)->next))
      {
 	evas_object_inform_call_restack(obj);
 	return;
@@ -77,8 +77,8 @@ evas_object_raise(Evas_Object *obj)
      {
 	if (!obj->smart.smart)
 	  {
-	     if (evas_object_is_in_output_rect(obj, 
-					       obj->layer->evas->pointer.x, 
+	     if (evas_object_is_in_output_rect(obj,
+					       obj->layer->evas->pointer.x,
 					       obj->layer->evas->pointer.y, 1, 1) &&
 		 obj->cur.visible)
 	       evas_event_feed_mouse_move(obj->layer->evas, obj->layer->evas->pointer.x, obj->layer->evas->pointer.y, NULL);
@@ -91,7 +91,7 @@ evas_object_raise(Evas_Object *obj)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_object_lower(Evas_Object *obj)
@@ -123,8 +123,8 @@ evas_object_lower(Evas_Object *obj)
      {
 	if (!obj->smart.smart)
 	  {
-	     if (evas_object_is_in_output_rect(obj, 
-					       obj->layer->evas->pointer.x, 
+	     if (evas_object_is_in_output_rect(obj,
+					       obj->layer->evas->pointer.x,
 					       obj->layer->evas->pointer.y, 1, 1) &&
 		 obj->cur.visible)
 	       evas_event_feed_mouse_move(obj->layer->evas, obj->layer->evas->pointer.x, obj->layer->evas->pointer.y, NULL);
@@ -137,7 +137,7 @@ evas_object_lower(Evas_Object *obj)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
@@ -177,8 +177,8 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
      {
 	if (!obj->smart.smart)
 	  {
-	     if (evas_object_is_in_output_rect(obj, 
-					       obj->layer->evas->pointer.x, 
+	     if (evas_object_is_in_output_rect(obj,
+					       obj->layer->evas->pointer.x,
 					       obj->layer->evas->pointer.y, 1, 1) &&
 		 obj->cur.visible)
 	       evas_event_feed_mouse_move(obj->layer->evas, obj->layer->evas->pointer.x, obj->layer->evas->pointer.y, NULL);
@@ -191,7 +191,7 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
@@ -231,8 +231,8 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
      {
 	if (!obj->smart.smart)
 	  {
-	     if (evas_object_is_in_output_rect(obj, 
-					       obj->layer->evas->pointer.x, 
+	     if (evas_object_is_in_output_rect(obj,
+					       obj->layer->evas->pointer.x,
 					       obj->layer->evas->pointer.y, 1, 1) &&
 		 obj->cur.visible)
 	       evas_event_feed_mouse_move(obj->layer->evas, obj->layer->evas->pointer.x, obj->layer->evas->pointer.y, NULL);
@@ -245,20 +245,20 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Object *
 evas_object_above_get(Evas_Object *obj)
 {
    Evas_Object *obj2;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
    obj2 = evas_object_above_get_internal(obj);
    while (((obj2) && (obj2->smart.parent)) ||
 	  ((obj2) && (obj2->delete_me)))
-     obj2 = evas_object_above_get_internal(obj2);   
+     obj2 = evas_object_above_get_internal(obj2);
    return obj2;
 }
 
@@ -266,20 +266,20 @@ evas_object_above_get(Evas_Object *obj)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Object *
 evas_object_below_get(Evas_Object *obj)
 {
    Evas_Object *obj2;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
    obj2 = evas_object_below_get_internal(obj);
    while (((obj2) && (obj2->smart.parent)) ||
 	  ((obj2) && (obj2->delete_me)))
-     obj2 = evas_object_below_get_internal(obj2);   
+     obj2 = evas_object_below_get_internal(obj2);
    return obj2;
 }
 
@@ -287,13 +287,13 @@ evas_object_below_get(Evas_Object *obj)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Object *
 evas_object_bottom_get(Evas *e)
 {
    Evas_Object *obj2 = NULL;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
@@ -309,7 +309,7 @@ evas_object_bottom_get(Evas *e)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Object *
 evas_object_top_get(Evas *e)
@@ -317,7 +317,7 @@ evas_object_top_get(Evas *e)
    Evas_Object *obj2 = NULL;
    Evas_Object_List *list;
    Evas_Layer *layer;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();

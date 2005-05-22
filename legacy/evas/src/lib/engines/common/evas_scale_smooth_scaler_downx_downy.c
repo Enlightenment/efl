@@ -5,13 +5,13 @@
    int xap, yap;
    int sow;
    int dyy, dxx;
-   
+
    dptr = dst_ptr;
    sow = src->image->w;
    dyy = dst_clip_y - dst_region_y;
-   dxx = dst_clip_x - dst_region_x;		  
+   dxx = dst_clip_x - dst_region_x;
 /*#ifndef SCALE_USING_MMX */
-/* for now there's no mmx down scaling - so C only */	
+/* for now there's no mmx down scaling - so C only */
 #if 1
    if (src->flags & RGBA_IMAGE_HAS_ALPHA)
      {
@@ -19,12 +19,12 @@
 	  {
 	     Cy = YAP >> 16;
 	     yap = YAP & 0xffff;
-	     
+
 	     for (x = 0; x < dst_clip_w; x++)
 	       {
 		  Cx = XAP >> 16;
 		  xap = XAP & 0xffff;
-		  
+
 		  sptr = ypoints[dyy + y] + xpoints[dxx + x] + (src_region_y * sow) + src_region_x;
 		  pix = sptr;
 		  sptr += sow;
@@ -48,12 +48,12 @@
 		       bx += (B_VAL(pix) * i) >> 9;
 		       ax += (A_VAL(pix) * i) >> 9;
 		    }
-		  
+
 		  r = (rx * yap) >> 14;
 		  g = (gx * yap) >> 14;
 		  b = (bx * yap) >> 14;
 		  a = (ax * yap) >> 14;
-		  
+
 		  for (j = (1 << 14) - yap; j > Cy; j -= Cy)
 		    {
 		       pix = sptr;
@@ -78,14 +78,14 @@
 			    bx += (B_VAL(pix) * i) >> 9;
 			    ax += (A_VAL(pix) * i) >> 9;
 			 }
-		       
+
 		       r += (rx * Cy) >> 14;
 		       g += (gx * Cy) >> 14;
 		       b += (bx * Cy) >> 14;
 		       a += (ax * Cy) >> 14;
 		    }
 		  if (j > 0)
-		    {				 
+		    {
 		       pix = sptr;
 		       sptr += sow;
 		       rx = (R_VAL(pix) * xap) >> 9;
@@ -108,7 +108,7 @@
 			    bx += (B_VAL(pix) * i) >> 9;
 			    ax += (A_VAL(pix) * i) >> 9;
 			 }
-		       
+
 		       r += (rx * j) >> 14;
 		       g += (gx * j) >> 14;
 		       b += (bx * j) >> 14;
@@ -131,12 +131,12 @@
 	  {
 	     Cy = YAP >> 16;
 	     yap = YAP & 0xffff;
-	     
+
 	     for (x = 0; x < dst_clip_w; x++)
 	       {
 		  Cx = XAP >> 16;
 		  xap = XAP & 0xffff;
-		  
+
 		  sptr = ypoints[dyy + y] + xpoints[dxx + x] + (src_region_y * sow) + src_region_x;
 		  pix = sptr;
 		  sptr += sow;
@@ -157,11 +157,11 @@
 		       gx += (G_VAL(pix) * i) >> 9;
 		       bx += (B_VAL(pix) * i) >> 9;
 		    }
-		  
+
 		  r = (rx * yap) >> 14;
 		  g = (gx * yap) >> 14;
 		  b = (bx * yap) >> 14;
-		  
+
 		  for (j = (1 << 14) - yap; j > Cy; j -= Cy)
 		    {
 		       pix = sptr;
@@ -183,13 +183,13 @@
 			    gx += (G_VAL(pix) * i) >> 9;
 			    bx += (B_VAL(pix) * i) >> 9;
 			 }
-		       
+
 		       r += (rx * Cy) >> 14;
 		       g += (gx * Cy) >> 14;
 		       b += (bx * Cy) >> 14;
 		    }
 		  if (j > 0)
-		    {				 
+		    {
 		       pix = sptr;
 		       sptr += sow;
 		       rx = (R_VAL(pix) * xap) >> 9;
@@ -209,7 +209,7 @@
 			    gx += (G_VAL(pix) * i) >> 9;
 			    bx += (B_VAL(pix) * i) >> 9;
 			 }
-		       
+
 		       r += (rx * j) >> 14;
 		       g += (gx * j) >> 14;
 		       b += (bx * j) >> 14;
@@ -227,5 +227,5 @@
      }
 #else
    /* MMX scaling down would go here */
-#endif		  
+#endif
 }

@@ -11,7 +11,7 @@ typedef struct _Evas_Object_Text      Evas_Object_Text;
 struct _Evas_Object_Text
 {
    DATA32            magic;
-   
+
    struct {
       char          *text;
       char          *font;
@@ -19,10 +19,10 @@ struct _Evas_Object_Text
       Evas_Font_Size size;
    } cur, prev;
    char              changed : 1;
-   
+
    float             ascent, descent;
    float             max_ascent, max_descent;
-   
+
    void             *engine_data;
 };
 
@@ -63,13 +63,13 @@ static Evas_Object_Func object_func =
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Object *
 evas_object_text_add(Evas *e)
 {
    Evas_Object *obj;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
@@ -83,13 +83,13 @@ evas_object_text_add(Evas *e)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_object_text_font_source_set(Evas_Object *obj, const char *font_source)
 {
    Evas_Object_Text *o;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -97,8 +97,8 @@ evas_object_text_font_source_set(Evas_Object *obj, const char *font_source)
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
    return;
    MAGIC_CHECK_END();
-   if ((o->cur.source) && (font_source) && 
-       (!strcmp(o->cur.source, font_source))) 
+   if ((o->cur.source) && (font_source) &&
+       (!strcmp(o->cur.source, font_source)))
      return;
    if (o->cur.source) free(o->cur.source);
    if (font_source) o->cur.source = strdup(font_source);
@@ -109,13 +109,13 @@ evas_object_text_font_source_set(Evas_Object *obj, const char *font_source)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 const char *
 evas_object_text_font_source_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
@@ -130,7 +130,7 @@ evas_object_text_font_source_get(Evas_Object *obj)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size size)
@@ -138,7 +138,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
    Evas_Object_Text *o;
    int is, was = 0;
    int same_font = 0;
-      
+
    if (!font) return;
    if (size <= 0) return;
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -148,12 +148,12 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
    MAGIC_CHECK(o, Evas_Object_Text, MAGIC_OBJ_TEXT);
    return;
    MAGIC_CHECK_END();
-   if ((o->cur.font) && (font) && (!strcmp(o->cur.font, font))) 
+   if ((o->cur.font) && (font) && (!strcmp(o->cur.font, font)))
      {
 	same_font = 1;
 	if (size == o->cur.size) return;
      }
-   if (!evas_event_passes_through(obj))     
+   if (!evas_event_passes_through(obj))
      was = evas_object_is_in_output_rect(obj,
 					 obj->layer->evas->pointer.x,
 					 obj->layer->evas->pointer.y, 1, 1);
@@ -164,7 +164,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
 	o->engine_data = NULL;
      }
    o->engine_data = evas_font_load(obj->layer->evas, font, o->cur.source, size);
-   if (!same_font) 
+   if (!same_font)
      {
 	if (o->cur.font) free(o->cur.font);
 	if (font) o->cur.font = strdup(font);
@@ -175,7 +175,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
    if ((o->engine_data) && (o->cur.text))
      {
 	int w, h;
-	
+
 	obj->layer->evas->engine.func->font_string_size_get(obj->layer->evas->engine.data.output,
 							    o->engine_data,
 							    o->cur.text,
@@ -237,13 +237,13 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_object_text_font_get(Evas_Object *obj, char **font, Evas_Font_Size *size)
 {
    Evas_Object_Text *o;
-      
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    if (font) *font = "";
    if (size) *size = 0;
@@ -290,7 +290,7 @@ evas_object_text_text_set(Evas_Object *obj, const char *text)
    if ((o->engine_data) && (o->cur.text))
      {
 	int w, h;
-	
+
 	obj->layer->evas->engine.func->font_string_size_get(obj->layer->evas->engine.data.output,
 							    o->engine_data,
 							    o->cur.text,
@@ -303,7 +303,7 @@ evas_object_text_text_set(Evas_Object *obj, const char *text)
      {
 	obj->cur.geometry.w = 0;
         obj->cur.geometry.h = o->max_ascent + o->max_descent;
-        obj->cur.cache.geometry.validity = 0;	
+        obj->cur.cache.geometry.validity = 0;
      }
    o->changed = 1;
    evas_object_change(obj);
@@ -328,7 +328,7 @@ const char *
 evas_object_text_text_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
-      
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
@@ -343,13 +343,13 @@ evas_object_text_text_get(Evas_Object *obj)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Coord
 evas_object_text_ascent_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
-      
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
@@ -364,13 +364,13 @@ evas_object_text_ascent_get(Evas_Object *obj)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Coord
 evas_object_text_descent_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
-      
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
@@ -385,13 +385,13 @@ evas_object_text_descent_get(Evas_Object *obj)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Coord
 evas_object_text_max_ascent_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
-      
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
@@ -406,13 +406,13 @@ evas_object_text_max_ascent_get(Evas_Object *obj)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Coord
 evas_object_text_max_descent_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
-      
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
@@ -427,13 +427,13 @@ evas_object_text_max_descent_get(Evas_Object *obj)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Coord
 evas_object_text_inset_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
-      
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
@@ -452,13 +452,13 @@ evas_object_text_inset_get(Evas_Object *obj)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Coord
 evas_object_text_horiz_advance_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
-      
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
@@ -477,13 +477,13 @@ evas_object_text_horiz_advance_get(Evas_Object *obj)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Coord
 evas_object_text_vert_advance_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
-      
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
@@ -502,7 +502,7 @@ evas_object_text_vert_advance_get(Evas_Object *obj)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 int
 evas_object_text_char_pos_get(Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
@@ -510,7 +510,7 @@ evas_object_text_char_pos_get(Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Co
    Evas_Object_Text *o;
    int ret, x = 0, y = 0, w = 0, h = 0;
    int inset;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
@@ -520,15 +520,15 @@ evas_object_text_char_pos_get(Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Co
    MAGIC_CHECK_END();
    if (!o->engine_data) return 0;
    if (!o->cur.text) return 0;
-   inset = 
+   inset =
      obj->layer->evas->engine.func->font_inset_get(obj->layer->evas->engine.data.output,
 						   o->engine_data,
 						   o->cur.text);
    ret = obj->layer->evas->engine.func->font_char_coords_get(obj->layer->evas->engine.data.output,
 							     o->engine_data,
 							     o->cur.text,
-							     pos, 
-							     &x, &y, 
+							     pos,
+							     &x, &y,
 							     &w, &h);
    y += o->max_ascent;
    x -= inset;
@@ -557,7 +557,7 @@ evas_object_text_char_pos_get(Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Co
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 int
 evas_object_text_char_coords_get(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
@@ -565,7 +565,7 @@ evas_object_text_char_coords_get(Evas_Object *obj, Evas_Coord x, Evas_Coord y, E
    Evas_Object_Text *o;
    int ret, rx = 0, ry = 0, rw = 0, rh = 0;
    int inset;
-      
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return -1;
    MAGIC_CHECK_END();
@@ -575,7 +575,7 @@ evas_object_text_char_coords_get(Evas_Object *obj, Evas_Coord x, Evas_Coord y, E
    MAGIC_CHECK_END();
    if (!o->engine_data) return -1;
    if (!o->cur.text) return -1;
-   inset = 
+   inset =
      obj->layer->evas->engine.func->font_inset_get(obj->layer->evas->engine.data.output,
 						   o->engine_data,
 						   o->cur.text);
@@ -583,8 +583,8 @@ evas_object_text_char_coords_get(Evas_Object *obj, Evas_Coord x, Evas_Coord y, E
 								o->engine_data,
 								o->cur.text,
 								x + inset,
-								y - o->max_ascent, 
-								&rx, &ry, 
+								y - o->max_ascent,
+								&rx, &ry,
 								&rw, &rh);
    ry += o->max_ascent;
    rx -= inset;
@@ -689,7 +689,7 @@ evas_font_path_list(Evas *e)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_font_cache_flush(Evas *e)
@@ -697,7 +697,7 @@ evas_font_cache_flush(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   
+
    e->engine.func->font_cache_flush(e->engine.data.output);
 }
 
@@ -705,7 +705,7 @@ evas_font_cache_flush(Evas *e)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_font_cache_set(Evas *e, int size)
@@ -713,7 +713,7 @@ evas_font_cache_set(Evas *e, int size)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
-   
+
    if (size < 0) size = 0;
    e->engine.func->font_cache_set(e->engine.data.output, size);
 }
@@ -722,7 +722,7 @@ evas_font_cache_set(Evas *e, int size)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 int
 evas_font_cache_get(Evas *e)
@@ -730,7 +730,7 @@ evas_font_cache_get(Evas *e)
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return 0;
    MAGIC_CHECK_END();
-   
+
    return e->engine.func->font_cache_get(e->engine.data.output);
 }
 
@@ -738,13 +738,13 @@ evas_font_cache_get(Evas *e)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 int
 evas_string_char_next_get(const char *str, int pos, int *decoded)
 {
    int p, d;
-   
+
    if (decoded) *decoded = 0;
    if (!str) return 0;
    if (pos < 0) return 0;
@@ -758,13 +758,13 @@ evas_string_char_next_get(const char *str, int pos, int *decoded)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 int
 evas_string_char_prev_get(const char *str, int pos, int *decoded)
 {
    int p, d;
-   
+
    if (decoded) *decoded = 0;
    if (!str) return 0;
    if (pos < 1) return 0;
@@ -803,7 +803,7 @@ static void *
 evas_object_text_new(void)
 {
    Evas_Object_Text *o;
-   
+
    /* alloc obj private data */
    o = calloc(1, sizeof(Evas_Object_Text));
    o->magic = MAGIC_OBJ_TEXT;
@@ -839,7 +839,7 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
    o = (Evas_Object_Text *)(obj->object_data);
    obj->layer->evas->engine.func->context_multiplier_unset(output,
 							   context);
-/*   
+/*
    obj->layer->evas->engine.func->context_color_set(output,
 						    context,
 						    230, 160, 30, 100);
@@ -866,7 +866,7 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 					      obj->layer->evas->engine.func->font_inset_get(obj->layer->evas->engine.data.output,
 											    o->engine_data,
 											    o->cur.text),
-					      obj->cur.cache.geometry.y + y + 
+					      obj->cur.cache.geometry.y + y +
 					      (int)
 					      (((o->max_ascent * obj->cur.cache.geometry.h) / obj->cur.geometry.h) - 0.5),
 					      obj->cur.cache.geometry.w,
@@ -969,7 +969,7 @@ evas_object_text_render_post(Evas_Object *obj)
    while (obj->clip.changes)
      {
 	Evas_Rectangle *r;
-	
+
 	r = (Evas_Rectangle *)obj->clip.changes->data;
 	obj->clip.changes = evas_list_remove(obj->clip.changes, r);
 	free(r);
@@ -995,7 +995,7 @@ static int
 evas_object_text_was_opaque(Evas_Object *obj)
 {
    Evas_Object_Text *o;
-   
+
    /* this returns 1 if the internal object data implies that the object was */
    /* currently fulyl opque over the entire gradient it occupies */
    o = (Evas_Object_Text *)(obj->object_data);

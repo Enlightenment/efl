@@ -12,7 +12,7 @@
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_object_focus_set(Evas_Object *obj, Evas_Bool focus)
@@ -20,7 +20,7 @@ evas_object_focus_set(Evas_Object *obj, Evas_Bool focus)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   
+
    if (focus)
      {
 	if (obj->focused) return;
@@ -43,14 +43,14 @@ evas_object_focus_set(Evas_Object *obj, Evas_Bool focus)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Bool
 evas_object_focus_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
-   MAGIC_CHECK_END();   
+   MAGIC_CHECK_END();
    return obj->focused;
 }
 
@@ -58,7 +58,7 @@ evas_object_focus_get(Evas_Object *obj)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Object *
 evas_focus_get(Evas *e)

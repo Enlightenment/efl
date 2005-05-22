@@ -52,13 +52,13 @@ static Evas_Object_Func object_func =
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_object_smart_data_set(Evas_Object *obj, void *data)
 {
    Evas_Object_Smart *o;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -73,13 +73,13 @@ evas_object_smart_data_set(Evas_Object *obj, void *data)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void *
 evas_object_smart_data_get(Evas_Object *obj)
 {
    Evas_Object_Smart *o;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
@@ -94,13 +94,13 @@ evas_object_smart_data_get(Evas_Object *obj)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Smart *
 evas_object_smart_smart_get(Evas_Object *obj)
 {
    Evas_Object_Smart *o;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
@@ -115,13 +115,13 @@ evas_object_smart_smart_get(Evas_Object *obj)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
 {
    Evas_Object_Smart *o;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -134,7 +134,7 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
    MAGIC_CHECK_END();
 
    if (obj->smart.parent) evas_object_smart_member_del(obj);
-   
+
    obj->smart.parent = smart_obj;
    smart_obj->smart.contained = evas_list_append(smart_obj->smart.contained, obj);
 }
@@ -143,7 +143,7 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_object_smart_member_del(Evas_Object *obj)
@@ -153,7 +153,7 @@ evas_object_smart_member_del(Evas_Object *obj)
    MAGIC_CHECK_END();
 
    if (!obj->smart.parent) return;
-   
+
    obj->smart.parent->smart.contained = evas_list_remove(obj->smart.parent->smart.contained, obj);
    obj->smart.parent = NULL;
 }
@@ -162,13 +162,13 @@ evas_object_smart_member_del(Evas_Object *obj)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Object *
 evas_object_smart_add(Evas *e, Evas_Smart *s)
 {
    Evas_Object *obj;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
@@ -182,26 +182,26 @@ evas_object_smart_add(Evas *e, Evas_Smart *s)
    obj->type = s->smart_class->name;
    evas_object_smart_init(obj);
    evas_object_inject(obj, e);
-   
+
    evas_object_smart_use(s);
-   
+
    if (s->smart_class->add) s->smart_class->add(obj);
-   
-   return obj;   
+
+   return obj;
 }
 
 /**
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_object_smart_callback_add(Evas_Object *obj, const char *event, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
    Evas_Object_Smart *o;
    Evas_Smart_Callback *cb;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -222,14 +222,14 @@ evas_object_smart_callback_add(Evas_Object *obj, const char *event, void (*func)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void *
 evas_object_smart_callback_del(Evas_Object *obj, const char *event, void (*func) (void *data, Evas_Object *obj, void *event_info))
 {
    Evas_Object_Smart *o;
    Evas_List *l;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
@@ -241,12 +241,12 @@ evas_object_smart_callback_del(Evas_Object *obj, const char *event, void (*func)
    for (l = obj->smart.callbacks; l; l = l->next)
      {
 	Evas_Smart_Callback *cb;
-	
+
 	cb = l->data;
 	if ((!strcmp(cb->event, event)) && (cb->func == func))
 	  {
 	     void *data;
-	     
+
 	     data = cb->func_data;
 	     cb->delete_me = 1;
 	     obj->smart.deletions_waiting = 1;
@@ -261,14 +261,14 @@ evas_object_smart_callback_del(Evas_Object *obj, const char *event, void (*func)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_object_smart_callback_call(Evas_Object *obj, const char *event, void *event_info)
 {
    Evas_Object_Smart *o;
    Evas_List *l;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -282,7 +282,7 @@ evas_object_smart_callback_call(Evas_Object *obj, const char *event, void *event
    for (l = obj->smart.callbacks; l; l = l->next)
      {
 	Evas_Smart_Callback *cb;
-	
+
 	cb = l->data;
 	if (!cb->delete_me)
 	  {
@@ -301,13 +301,13 @@ static void
 evas_object_smart_callbacks_clear(Evas_Object *obj)
 {
    Evas_List *l;
-   
+
    if (obj->smart.walking_list) return;
    if (!obj->smart.deletions_waiting) return;
    for (l = obj->smart.callbacks; l;)
      {
 	Evas_Smart_Callback *cb;
-	
+
 	cb = l->data;
 	l = l->next;
 	if (cb->delete_me)
@@ -323,7 +323,7 @@ void
 evas_object_smart_del(Evas_Object *obj)
 {
    Evas_Smart *s;
-   
+
    s = obj->smart.smart;
    if ((s) && (s->smart_class->del)) s->smart_class->del(obj);
    if (obj->smart.parent) evas_object_smart_member_del(obj);
@@ -334,7 +334,7 @@ void
 evas_object_smart_cleanup(Evas_Object *obj)
 {
    Evas_Smart *s;
-   
+
    s = obj->smart.smart;
    if (obj->smart.parent)
      evas_object_smart_member_del(obj);
@@ -347,7 +347,7 @@ evas_object_smart_cleanup(Evas_Object *obj)
    while (obj->smart.callbacks)
      {
 	Evas_Smart_Callback *cb;
-	
+
 	cb = obj->smart.callbacks->data;
 	obj->smart.callbacks = evas_list_remove(obj->smart.callbacks, cb);
 	if (cb->event) free(cb->event);
@@ -384,18 +384,18 @@ static void *
 evas_object_smart_new(void)
 {
    Evas_Object_Smart *o;
-   
+
    /* alloc obj private data */
    o = calloc(1, sizeof(Evas_Object_Smart));
    o->magic = MAGIC_OBJ_SMART;
    return o;
 }
-   
+
 static void
 evas_object_smart_free(Evas_Object *obj)
 {
    Evas_Object_Smart *o;
-   
+
    /* frees private object data. very simple here */
    o = (Evas_Object_Smart *)(obj->object_data);
    MAGIC_CHECK(o, Evas_Object_Smart, MAGIC_OBJ_SMART);
@@ -406,7 +406,7 @@ evas_object_smart_free(Evas_Object *obj)
    free(o);
 }
 
-static void 
+static void
 evas_object_smart_render(Evas_Object *obj, void *output, void *context, void *surface, int x, int y)
 {
    return;

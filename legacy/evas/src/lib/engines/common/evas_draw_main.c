@@ -40,7 +40,7 @@ evas_common_draw_context_clip_clip(RGBA_Draw_Context *dc, int x, int y, int w, i
 {
    if (dc->clip.use)
      {
-	RECTS_CLIP_TO_RECT(dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h, 
+	RECTS_CLIP_TO_RECT(dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h,
 			   x, y, w, h);
      }
    else
@@ -93,7 +93,7 @@ void
 evas_common_draw_context_set_modifiers(RGBA_Draw_Context *dc, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod)
 {
    int i;
-   
+
    dc->mod.use = 1;
    dc->mul.use = 0;
    if (rmod) memcpy(dc->mod.r, rmod, sizeof(DATA8) * 256);
@@ -128,7 +128,7 @@ void
 evas_common_draw_context_add_cutout(RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
    Cutout_Rect *r;
-   
+
    r = calloc(1, sizeof(Cutout_Rect));
    r->x = x;
    r->y = y;
@@ -149,7 +149,7 @@ evas_common_draw_context_apply_cutouts(RGBA_Draw_Context *dc)
 {
    Cutout_Rect *r, *rects;
    Evas_Object_List *l;
-   
+
    if (!dc->clip.use) return NULL;
    if ((dc->clip.w <= 0) || (dc->clip.h <= 0)) return NULL;
    r = calloc(1, sizeof(Cutout_Rect));
@@ -172,7 +172,7 @@ evas_common_draw_context_apply_free_cutouts(Cutout_Rect *rects)
    while (rects)
      {
 	Cutout_Rect *r;
-	
+
 	r = rects;
 	rects = evas_object_list_remove(rects, rects);
 	free(r);
@@ -185,7 +185,7 @@ evas_common_draw_context_cutouts_split(Cutout_Rect *in, Cutout_Rect *split)
    /* multiple rect in, multiple out */
    Cutout_Rect *out;
    Evas_Object_List *l;
-   
+
    out = NULL;
    for (l = (Evas_Object_List *)in; l; l = l->next)
      {
@@ -196,7 +196,7 @@ evas_common_draw_context_cutouts_split(Cutout_Rect *in, Cutout_Rect *split)
 	while (r)
 	  {
 	     Cutout_Rect *r2;
-	     
+
 	     r2 = r;
 	     r = evas_object_list_remove(r, r);
 	     out = evas_object_list_append(out, r2);
@@ -217,35 +217,35 @@ evas_common_draw_context_cutout_split(Cutout_Rect *in, Cutout_Rect *split)
 #define INX1 (in->x)
 #define INX2 (in->x + in->w)
 #define SPX1 (split->x)
-#define SPX2 (split->x + split->w)   
+#define SPX2 (split->x + split->w)
 #define INY1 (in->y)
 #define INY2 (in->y + in->h)
 #define SPY1 (split->y)
-#define SPY2 (split->y + split->h)   
+#define SPY2 (split->y + split->h)
 #define X1_IN (in->x < split->x)
 #define X2_IN ((in->x + in->w) > (split->x + split->w))
 #define Y1_IN (in->y < split->y)
 #define Y2_IN ((in->y + in->h) > (split->y + split->h))
-#define R_NEW(_r, _x, _y, _w, _h) {(_r) = calloc(1, sizeof(Cutout_Rect)); (_r)->x = (_x); (_r)->y = (_y); (_r)->w = (_w); (_r)->h = (_h);}   
+#define R_NEW(_r, _x, _y, _w, _h) {(_r) = calloc(1, sizeof(Cutout_Rect)); (_r)->x = (_x); (_r)->y = (_y); (_r)->w = (_w); (_r)->h = (_h);}
    out = NULL;
-   if (!RECTS_INTERSECT(in->x, in->y, in->w, in->h, 
+   if (!RECTS_INTERSECT(in->x, in->y, in->w, in->h,
 			split->x, split->y, split->w, split->h))
      {
 	R_NEW(r, in->x, in->y, in->w, in->h);
 	out = evas_object_list_append(out, r);
 	return out;
      }
-   
+
    /* S    = split (ie cut out rect) */
    /* +--+ = in (rect to be cut) */
-   
-   /* 
+
+   /*
     *  +---+
     *  |   |
     *  | S |
     *  |   |
     *  +---+
-    * 
+    *
     */
    if (X1_IN && X2_IN && Y1_IN && Y2_IN)
      {
@@ -321,7 +321,7 @@ evas_common_draw_context_cutout_split(Cutout_Rect *in, Cutout_Rect *split)
     *  |   |
     *  |   |
     *  +---+
-    * 
+    *
     */
    if (!X1_IN && !X2_IN && !Y1_IN && Y2_IN)
      {
@@ -329,13 +329,13 @@ evas_common_draw_context_cutout_split(Cutout_Rect *in, Cutout_Rect *split)
 	out = evas_object_list_append(out, r);
 	return out;
      }
-   /* 
+   /*
     *  +---+
     *  |   |
     * S|SSS|S
     *  |   |
     *  +---+
-    * 
+    *
     */
    if (!X1_IN && !X2_IN && Y1_IN && Y2_IN)
      {
@@ -345,7 +345,7 @@ evas_common_draw_context_cutout_split(Cutout_Rect *in, Cutout_Rect *split)
 	out = evas_object_list_append(out, r);
 	return out;
      }
-   /* 
+   /*
     *  +---+
     *  |   |
     *  |   |
@@ -365,7 +365,7 @@ evas_common_draw_context_cutout_split(Cutout_Rect *in, Cutout_Rect *split)
     *  |   |
     *  |   |
     *  +---+
-    * 
+    *
     */
    if (!X1_IN && X2_IN && !Y1_IN && Y2_IN)
      {
@@ -381,7 +381,7 @@ evas_common_draw_context_cutout_split(Cutout_Rect *in, Cutout_Rect *split)
     *  |   |
     *  |   |
     *  +---+
-    * 
+    *
     */
    if (X1_IN && X2_IN && !Y1_IN && Y2_IN)
      {
@@ -399,7 +399,7 @@ evas_common_draw_context_cutout_split(Cutout_Rect *in, Cutout_Rect *split)
     *  |   |
     *  |   |
     *  +---+
-    * 
+    *
     */
    if (X1_IN && !X2_IN && !Y1_IN && Y2_IN)
      {
@@ -409,13 +409,13 @@ evas_common_draw_context_cutout_split(Cutout_Rect *in, Cutout_Rect *split)
 	out = evas_object_list_append(out, r);
 	return out;
      }
-   /* 
+   /*
     *  +---+
     *  |   |
     * S|S  |
     *  |   |
     *  +---+
-    * 
+    *
     */
    if (!X1_IN && X2_IN && Y1_IN && Y2_IN)
      {
@@ -427,13 +427,13 @@ evas_common_draw_context_cutout_split(Cutout_Rect *in, Cutout_Rect *split)
 	out = evas_object_list_append(out, r);
 	return out;
      }
-   /* 
+   /*
     *  +---+
     *  |   |
     *  |  S|S
     *  |   |
     *  +---+
-    * 
+    *
     */
    if (X1_IN && !X2_IN && Y1_IN && Y2_IN)
      {
@@ -445,7 +445,7 @@ evas_common_draw_context_cutout_split(Cutout_Rect *in, Cutout_Rect *split)
 	out = evas_object_list_append(out, r);
 	return out;
      }
-   /* 
+   /*
     *  +---+
     *  |   |
     *  |   |
@@ -461,7 +461,7 @@ evas_common_draw_context_cutout_split(Cutout_Rect *in, Cutout_Rect *split)
 	out = evas_object_list_append(out, r);
 	return out;
      }
-   /* 
+   /*
     *  +---+
     *  |   |
     *  |   |
@@ -479,7 +479,7 @@ evas_common_draw_context_cutout_split(Cutout_Rect *in, Cutout_Rect *split)
 	out = evas_object_list_append(out, r);
 	return out;
      }
-   /* 
+   /*
     *  +---+
     *  |   |
     *  |   |
@@ -531,7 +531,7 @@ evas_common_draw_context_cutout_merge(Cutout_Rect *in, Cutout_Rect *merge)
    while (r)
      {
 	Cutout_Rect *r2;
-	
+
 	r2 = r;
 	r = evas_object_list_remove(r, r);
 	out = evas_object_list_append(out, r2);
@@ -554,15 +554,15 @@ evas_common_draw_func_blend_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
 #ifdef BUILD_MMX
 # ifdef BUILD_C
 	     if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
-# endif	       
+# endif
 	       return evas_common_blend_pixels_rgba_to_rgb_mmx;
 # ifdef BUILD_C
 	     else
-# endif	       
+# endif
 #endif
 #ifdef BUILD_C
 	       return evas_common_blend_pixels_rgba_to_rgb_c;
-#endif	     
+#endif
 	  }
      }
    else
@@ -578,7 +578,7 @@ evas_common_draw_func_blend_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
 # ifdef BUILD_MMX
 # ifdef BUILD_C
 	     if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
-# endif	       
+# endif
 	       return evas_common_copy_pixels_rgba_to_rgba_mmx2;
 # ifdef BUILD_SSE
 	     else
@@ -596,43 +596,43 @@ evas_common_draw_func_blend_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
 #ifdef BUILD_MMX
 # ifdef BUILD_C
 	       if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
-# endif		 
+# endif
 		 return evas_common_copy_pixels_rgba_to_rgba_mmx;
 # ifdef BUILD_C
 	     else
-# endif	       
-#endif	       
-#ifdef BUILD_C
-	       return evas_common_copy_pixels_rgba_to_rgba_c;	     
-#endif	       
-
-#else	     
-
-# ifdef BUILD_SSE	     
-	     if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 256 * 256))
-	       return evas_common_copy_pixels_rgba_to_rgba_sse;
-# ifdef BUILD_MMX	     
-	     else
-# endif	       
-#endif	       
-#ifdef BUILD_MMX
-# ifdef BUILD_C
-	       if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
-# endif	       
-		 return evas_common_copy_pixels_rgba_to_rgba_mmx2;
-# ifdef BUILD_C
-	       else if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
-# endif	       
-		 return evas_common_copy_pixels_rgba_to_rgba_mmx;
-# ifdef BUILD_C
-	     else
-# endif	       
+# endif
 #endif
 #ifdef BUILD_C
 	       return evas_common_copy_pixels_rgba_to_rgba_c;
 #endif
 
-#endif	     
+#else
+
+# ifdef BUILD_SSE
+	     if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 256 * 256))
+	       return evas_common_copy_pixels_rgba_to_rgba_sse;
+# ifdef BUILD_MMX
+	     else
+# endif
+#endif
+#ifdef BUILD_MMX
+# ifdef BUILD_C
+	       if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
+# endif
+		 return evas_common_copy_pixels_rgba_to_rgba_mmx2;
+# ifdef BUILD_C
+	       else if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+# endif
+		 return evas_common_copy_pixels_rgba_to_rgba_mmx;
+# ifdef BUILD_C
+	     else
+# endif
+#endif
+#ifdef BUILD_C
+	       return evas_common_copy_pixels_rgba_to_rgba_c;
+#endif
+
+#endif
 	  }
      }
    if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
@@ -655,13 +655,13 @@ evas_common_draw_func_blend_color_get(DATA32 src, RGBA_Image *dst, int pixels)
 #ifdef BUILD_MMX
 	     if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
 	       return evas_common_blend_color_rgba_to_rgb_mmx;
-#endif	     
-#ifdef BUILD_C	       
+#endif
+#ifdef BUILD_C
 # ifdef BUILD_MMX
 	     else
 # endif
 	       return evas_common_blend_color_rgba_to_rgb_c;
-#endif	     
+#endif
 	  }
      }
    else
@@ -673,23 +673,23 @@ evas_common_draw_func_blend_color_get(DATA32 src, RGBA_Image *dst, int pixels)
 	  }
 	else
 	  {
-#ifdef  BUILD_SSE	     
+#ifdef  BUILD_SSE
 	     if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 64 * 64))
 	       return evas_common_copy_color_rgba_to_rgba_sse;
 #endif
 #ifdef BUILD_MMX
-# ifdef BUILD_SSE	     
+# ifdef BUILD_SSE
 	     else
-# endif	       
+# endif
 	       if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
 		 return evas_common_copy_color_rgba_to_rgba_mmx;
 #endif
 #ifdef BUILD_C
-# ifdef BUILD_MMX	     
+# ifdef BUILD_MMX
 	     else
-# endif	       
+# endif
 	       return evas_common_copy_color_rgba_to_rgba_c;
-#endif	     
+#endif
 	  }
      }
    if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
@@ -741,16 +741,16 @@ evas_common_draw_func_blend_mul_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst
 	  }
 	else
 	  {
-#ifdef BUILD_MMX	     
+#ifdef BUILD_MMX
 	     if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
 	       return evas_common_blend_pixels_mul_color_rgba_to_rgb_mmx;
 #endif
 #ifdef BUILD_C
-# ifdef BUILD_MMX	     
+# ifdef BUILD_MMX
 	     else
-# endif	       
+# endif
 	       return evas_common_blend_pixels_mul_color_rgba_to_rgb_c;
-#endif	     
+#endif
 	  }
      }
    else
@@ -762,16 +762,16 @@ evas_common_draw_func_blend_mul_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst
 	  }
 	else
 	  {
-#ifdef BUILD_MMX	     
+#ifdef BUILD_MMX
 	     if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
 	       return evas_common_blend_pixels_mul_color_rgba_to_rgb_mmx;
 #endif
 #ifdef BUILD_C
-# ifdef BUILD_MMX	     
+# ifdef BUILD_MMX
 	     else
-# endif	       
+# endif
 	       return evas_common_blend_pixels_mul_color_rgba_to_rgb_c;
-#endif	     
+#endif
 	  }
      }
    if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
@@ -790,7 +790,7 @@ evas_common_draw_func_blend_alpha_get(RGBA_Image *dst)
      }
    else
      {
-#ifdef BUILD_MMX	     
+#ifdef BUILD_MMX
 	if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
 	  return evas_common_blend_alpha_color_rgba_to_rgb_mmx;
 #endif
@@ -805,7 +805,7 @@ evas_common_draw_func_blend_alpha_get(RGBA_Image *dst)
    return evas_common_blend_alpha_color_rgba_to_rgba_c;
 #else
    return NULL;
-#endif   
+#endif
 }
 
 Gfx_Func_Blend_Src_Dst
@@ -813,23 +813,23 @@ evas_common_draw_func_copy_get(int pixels, int reverse)
 {
    if (reverse)
      {
-#ifdef  BUILD_SSE	     
+#ifdef  BUILD_SSE
 	if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 256 * 256))
 	  return evas_common_copy_pixels_rev_rgba_to_rgba_sse;
 #endif
 #ifdef BUILD_MMX
-# ifdef BUILD_SSE	     
+# ifdef BUILD_SSE
 	else
-# endif	       
+# endif
 	  if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
 	    return evas_common_copy_pixels_rev_rgba_to_rgba_mmx;
 #endif
 #ifdef BUILD_C
-# ifdef BUILD_MMX	     
+# ifdef BUILD_MMX
 	else
-# endif	       
+# endif
 	  return evas_common_copy_pixels_rev_rgba_to_rgba_c;
-#endif	       
+#endif
      }
    else
      {
@@ -838,7 +838,7 @@ evas_common_draw_func_copy_get(int pixels, int reverse)
 # ifdef BUILD_MMX
 # ifdef BUILD_C
 	     if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
-# endif	       
+# endif
 	       return evas_common_copy_pixels_rgba_to_rgba_mmx2;
 # ifdef BUILD_SSE
 	     else
@@ -856,43 +856,43 @@ evas_common_draw_func_copy_get(int pixels, int reverse)
 #ifdef BUILD_MMX
 # ifdef BUILD_C
 	       if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
-# endif		 
+# endif
 		 return evas_common_copy_pixels_rgba_to_rgba_mmx;
 # ifdef BUILD_C
 	     else
-# endif	       
-#endif	       
-#ifdef BUILD_C
-	       return evas_common_copy_pixels_rgba_to_rgba_c;	     
-#endif	       
-
-#else	     
-
-# ifdef BUILD_SSE	     
-	     if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 256 * 256))
-	       return evas_common_copy_pixels_rgba_to_rgba_sse;
-# ifdef BUILD_MMX	     
-	     else
-# endif	       
-#endif	       
-#ifdef BUILD_MMX
-# ifdef BUILD_C
-	       if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
-# endif	       
-		 return evas_common_copy_pixels_rgba_to_rgba_mmx2;
-# ifdef BUILD_C
-	       else if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
-# endif	       
-		 return evas_common_copy_pixels_rgba_to_rgba_mmx;
-# ifdef BUILD_C
-	     else
-# endif	       
+# endif
 #endif
 #ifdef BUILD_C
 	       return evas_common_copy_pixels_rgba_to_rgba_c;
 #endif
 
-#endif	     
+#else
+
+# ifdef BUILD_SSE
+	     if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 256 * 256))
+	       return evas_common_copy_pixels_rgba_to_rgba_sse;
+# ifdef BUILD_MMX
+	     else
+# endif
+#endif
+#ifdef BUILD_MMX
+# ifdef BUILD_C
+	       if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
+# endif
+		 return evas_common_copy_pixels_rgba_to_rgba_mmx2;
+# ifdef BUILD_C
+	       else if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
+# endif
+		 return evas_common_copy_pixels_rgba_to_rgba_mmx;
+# ifdef BUILD_C
+	     else
+# endif
+#endif
+#ifdef BUILD_C
+	       return evas_common_copy_pixels_rgba_to_rgba_c;
+#endif
+
+#endif
      }
    if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
 #ifdef BUILD_C

@@ -7,12 +7,12 @@
 #include "Evas.h"
 
 /* FIXME:
- * 
+ *
  * things to add:
- * 
+ *
  * * anchors (for inline objects other than text - images etc.) - variable size ones too
  * * if a word (or char) doesnt fit at all do something sensible
- * 
+ *
  * tough ones:
  * * overflow objects (overflow from this textblock can go into another)
  * * directly accessible text spans (so you can track where that span is, how big it is after many inserts/deletes) and modify its formatting etc.
@@ -21,15 +21,15 @@
  * * kerning control
  * * fully justified text (space chars evenly to fit the line)
  * * if a word spans 2 layout nodes with no whitespace, it should not be splittable.
- * 
+ *
  * really tough ones:
  * * fix core text code to properly handle unicode codeponts - handle ALL unicode domains properly.
  * * right to left text
  * * top down (japanese/chinese) text layout
- * 
+ *
  * insanely tough ones:
  * * for ultra-huge documents determine paging sections of the text in/out and being able to provide callbacks form the user api that can provide the text
- * 
+ *
  */
 
 /* save typing */
@@ -78,19 +78,19 @@ struct _Layout
    } font;
    struct {
       unsigned char     r, g, b, a;
-   } color, 
-     underline_color, 
-     double_underline_color, 
-     outline_color, 
-     shadow_color, 
-     glow_color, 
-     outer_glow_color, 
+   } color,
+     underline_color,
+     double_underline_color,
+     outline_color,
+     shadow_color,
+     glow_color,
+     outer_glow_color,
      backing_color,
      strikethrough_color
      ;
    struct {
-      int               inset, x, y, 
-	                ascent, descent, 
+      int               inset, x, y,
+	                ascent, descent,
 	                mascent, mdescent,
 	                advance;
    } line;
@@ -100,7 +100,7 @@ struct _Layout
       double            lf, rf;
    } margin;
    unsigned char        style;
-   
+
    unsigned char        word_wrap : 1;
    unsigned char        underline : 1;
    unsigned char        second_underline : 1;
@@ -156,7 +156,7 @@ struct _Evas_Object_Textblock
       int                 dummy;
    } cur, prev;
    char                   changed : 1;
-   
+
    int                    pos, len, lines;
    Node                  *nodes;
    Layout_Node           *layout_nodes;
@@ -248,7 +248,7 @@ evas_object_textblock_command_clear(Layout_Command *command)
    while (command->commands)
      {
 	Command *cmd;
-	
+
 	cmd = (Command *)command->commands;
 	command->commands = evas_object_list_remove(command->commands, cmd);
 	free(cmd);
@@ -334,7 +334,7 @@ evas_object_textblock_layout_format_apply(Layout *layout, Layout_Command *comman
 	     int r, g, b, a;
 
 	     r = g = b = a = 0;
-	     
+
 	     if (strlen(data) == 7) /* #RRGGBB */
 	       {
 		  r = (evas_object_textblock_hex_string_get(data[1]) << 4) |
@@ -506,12 +506,12 @@ evas_object_textblock_layout_format_apply(Layout *layout, Layout_Command *comman
 	else
 	  {
 	     int len;
-	     
+
 	     len = strlen(data);
 	     if (len > 0)
 	       {
 		  char lastchar, *num = NULL;
-		  
+
 		  lastchar = data[len - 1];
 		  num = strdup(data);
 		  if (lastchar == '%')
@@ -543,12 +543,12 @@ evas_object_textblock_layout_format_apply(Layout *layout, Layout_Command *comman
 	else
 	  {
 	     int len;
-	     
+
 	     len = strlen(data);
 	     if (len > 0)
 	       {
 		  char lastchar, *num = NULL;
-		  
+
 		  lastchar = data[len - 1];
 		  num = strdup(data);
 		  if (lastchar == '%')
@@ -573,13 +573,13 @@ evas_object_textblock_layout_format_apply(Layout *layout, Layout_Command *comman
    else if (!strcmp(key, "left_tab_stop"))
      {
 	int len;
-	
+
 	len = strlen(data);
 	if (len > 0)
 	  {
 	     char firstchar, lastchar, *num = NULL;
 	     Command *cmd;
-	     
+
 	     firstchar = data[0];
 	     lastchar = data[len - 1];
 	     /* possible formats:
@@ -646,13 +646,13 @@ evas_object_textblock_layout_format_apply(Layout *layout, Layout_Command *comman
    else if (!strcmp(key, "right_tab_stop"))
      {
 	int len;
-	
+
 	len = strlen(data);
 	if (len > 0)
 	  {
 	     char firstchar, lastchar, *num = NULL;
 	     Command *cmd;
-	     
+
 	     firstchar = data[0];
 	     lastchar = data[len - 1];
 	     /* possible formats:
@@ -724,7 +724,7 @@ evas_object_textblock_format_parse(const char *format)
    const char *p, *k1 = NULL, *k2 = NULL, *d1 = NULL, *d2 = NULL;
    int inquote = 0, inescape = 0;
    Evas_List *params = NULL;
-   
+
    if (!format) return NULL;
    p = format - 1;
    do
@@ -763,7 +763,7 @@ evas_object_textblock_format_parse(const char *format)
 	     if (d2)
 	       {
 		  char *key, *data;
-		  
+
 		  key = malloc(k2 - k1 + 1);
 		  data = malloc(d2 - d1 + 1);
 		  strncpy(key, k1, k2 - k1);
@@ -772,7 +772,7 @@ evas_object_textblock_format_parse(const char *format)
 		    {
 		       const char *p2;
 		       char *dst;
-		       
+
 		       inescape = 0;
 		       p2 = d1;
 		       dst = data;
@@ -812,13 +812,13 @@ static void
 evas_object_textblock_layout_format_modify(Layout *layout, Layout_Command *command, const char *format)
 {
    Evas_List *params;
-   
+
    params = evas_object_textblock_format_parse(format);
    while (params)
      {
 	char *key;
 	char *data;
-	
+
 	key = params->data;
 	params = evas_list_remove_list(params, params);
 	data = params->data;
@@ -851,12 +851,12 @@ evas_object_textblock_layout_fonts_hold(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
    Evas_Object_List *l;
-   
+
    o = (Evas_Object_Textblock *)(obj->object_data);
    for (l = (Evas_Object_List *)o->layout_nodes; l; l = l->next)
      {
 	Layout_Node *lnode;
-	
+
 	lnode = (Layout_Node *)l;
 	if (lnode->layout.font.font)
 	  {
@@ -871,9 +871,9 @@ static void
 evas_object_textblock_layout_fonts_hold_clean(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
-   
+
    o = (Evas_Object_Textblock *)(obj->object_data);
-   
+
    while (o->font_hold)
      {
 	evas_font_free(obj->layer->evas, o->font_hold->data);
@@ -887,7 +887,7 @@ evas_object_textblock_layout_nodes_free(Evas_Object *obj, Layout_Node *lnodes)
    while (lnodes)
      {
 	Layout_Node *lnode;
-	
+
 	lnode = (Layout_Node *)lnodes;
 	lnodes = evas_object_list_remove(lnodes, lnode);
 	evas_object_textblock_layout_clear(obj, &lnode->layout);
@@ -900,7 +900,7 @@ static void
 evas_object_textblock_layout_clean(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
-   
+
    o = (Evas_Object_Textblock *)(obj->object_data);
    evas_object_textblock_layout_nodes_free(obj, o->layout_nodes);
    o->layout_nodes = NULL;
@@ -910,12 +910,12 @@ static void
 evas_object_textblock_contents_clean(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
-   
+
    o = (Evas_Object_Textblock *)(obj->object_data);
    while (o->nodes)
      {
 	Node *node;
-	
+
 	node = (Node *)o->nodes;
 	o->nodes = evas_object_list_remove(o->nodes, node);
 	if (node->format) free(node->format);
@@ -929,7 +929,7 @@ evas_object_textblock_char_is_white(int c)
 {
    /*
     * unicode list of whitespace chars
-    * 
+    *
     * 0009..000D <control-0009>..<control-000D>
     * 0020 SPACE
     * 0085 <control-0085>
@@ -1074,7 +1074,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		  if (layout.line.mascent + layout.line.mdescent <= 0)
 		    {
 		       int ascent = 0, descent = 0;
-		       
+
 		       if (layout.font.name)
 			 layout.font.font = evas_font_load(obj->layer->evas, layout.font.name, layout.font.source, layout.font.size);
 		       if (layout.font.font) ascent = ENFN->font_max_ascent_get(ENDT, layout.font.font);
@@ -1106,11 +1106,11 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 	     else if (node->format[0] == '\t')
 	       {
 		  int hadvance = 0, inset = 0;
-		  
+
 		  lnode = calloc(1, sizeof(Layout_Node));
 		  lnode->source_node = node;
 		  lnode->line = line;
-		  lnode->text_pos = text_pos;	
+		  lnode->text_pos = text_pos;
 		  last_line = line;
 		  evas_object_textblock_layout_copy(&layout, &(lnode->layout));
 		  layout.font.font = NULL;
@@ -1166,11 +1166,11 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		  if (command.commands)
 		    {
 		       Evas_Object_List *l2;
-		       
+
 		       for (l2 = command.commands; l2; l2 = l2->next)
 			 {
 			    Command *cmd;
-			    
+
 			    cmd = (Command *)l2;
 			    switch (cmd->cmd)
 			      {
@@ -1267,7 +1267,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 	     if (just_wrapped)
 	       {
 		  int pos, chr;
-		  
+
 		  pos = 0;
 		  chr = evas_common_font_utf8_get_next(text, &pos);
 		  if (evas_object_textblock_char_is_white(chr))
@@ -1314,7 +1314,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 	     if (layout.line.mdescent < descent) layout.line.mdescent = descent;
 	     if (w > 0)
 	       {
-		  if (font) chrpos = ENFN->font_char_at_coords_get(ENDT, font, text, 
+		  if (font) chrpos = ENFN->font_char_at_coords_get(ENDT, font, text,
 								   (ww - marginr) - layout.line.x, 0,
 								   &cx, &cy, &cw, &ch);
 	       }
@@ -1335,9 +1335,9 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		  layout_nodes = evas_object_list_append(layout_nodes, lnode);
 		  /* and advance */
 		  /* fix up max ascent/descent for the line */
-		  adj = (double)((ww - marginr) - 
-				 (lnode->layout.line.x - 
-				  (pad_l + marginl) + tw + 
+		  adj = (double)((ww - marginr) -
+				 (lnode->layout.line.x -
+				  (pad_l + marginl) + tw +
 				  layout.line.inset)) * layout.align;
 		  if ((layout.line.x + hadvance) > fw)
 		    fw = layout.line.x + hadvance;
@@ -1348,7 +1348,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		  for (ll = l->next; ll; ll = ll->next)
 		    {
 		       Node *node2;
-		       
+
 		       node2 = (Node *)ll;
 		       if (node2->text)
 			 {
@@ -1366,7 +1366,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		       for (ll = (Evas_Object_List *)lnode; ll; ll = ll->prev)
 			 {
 			    Layout_Node *lnode2;
-			    
+
 			    lnode2 = (Layout_Node *)ll;
 			    lnode2->layout.line.x += adj;
 			    lnode2->layout.line.mascent = layout.line.mascent;
@@ -1389,7 +1389,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		  if (layout.word_wrap)
 		    {
 		       int ppos, pos, chr;
-		       
+
 		       if (chrpos == 0)
 			 {
 			    pos = chrpos;
@@ -1402,7 +1402,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 			    ppos = pos = chrpos;
 			    while ((!evas_object_textblock_char_is_white(chr))
 				   &&
-				   (pos >= 0) && 
+				   (pos >= 0) &&
 				   (chr > 0))
 			      {
 				 ppos = pos;
@@ -1426,10 +1426,10 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 				      chr = evas_common_font_utf8_get_next(text, &ppos);
 				      if (ppos < 0) ppos = 0;
 				      chrpos = ppos;
-				      while 
+				      while
 					((evas_object_textblock_char_is_white(chr))
 					 &&
-					 (pos >= 0) && 
+					 (pos >= 0) &&
 					 (chr > 0))
 					{
 					   ppos = pos;
@@ -1466,14 +1466,14 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 			 lnode = (Layout_Node *)((Evas_Object_List *)layout_nodes)->last;
 		       if (lnode)
 			 {
-			    adj = (double)((ww - marginr) - 
-					   (layout.line.x - 
-					    (pad_l + marginl) + tw + 
+			    adj = (double)((ww - marginr) -
+					   (layout.line.x -
+					    (pad_l + marginl) + tw +
 					    layout.line.inset)) * layout.align;
 			    for (ll = (Evas_Object_List *)lnode; ll; ll = ll->prev)
 			      {
 				 Layout_Node *lnode2;
-				 
+
 				 lnode2 = (Layout_Node *)ll;
 				 lnode2->layout.line.x += adj;
 				 lnode2->layout.line.mascent = layout.line.mascent;
@@ -1505,7 +1505,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		  else
 		    {
 		       char *text1, *text2;
-		       
+
 		       /* byte chrpos is over... so cut there */
 		       text1 = malloc(nchrpos + 1);
 		       strncpy(text1, text, nchrpos);
@@ -1524,14 +1524,14 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 		       lnode->h = th;
 		       lnode->layout.line.advance = hadvance;
 		       layout_nodes = evas_object_list_append(layout_nodes, lnode);
-		       adj = (double)((ww - marginr) - 
-				      (lnode->layout.line.x - 
-				       (pad_l + marginl) + tw + 
+		       adj = (double)((ww - marginr) -
+				      (lnode->layout.line.x -
+				       (pad_l + marginl) + tw +
 				       layout.line.inset)) * layout.align;
 		       for (ll = (Evas_Object_List *)lnode; ll; ll = ll->prev)
 			 {
 			    Layout_Node *lnode2;
-			    
+
 			    lnode2 = (Layout_Node *)ll;
 			    lnode2->layout.line.x += adj;
 			    lnode2->layout.line.mascent = layout.line.mascent;
@@ -1580,7 +1580,7 @@ evas_object_textblock_layout_internal(Evas_Object *obj, int w, int h, int *forma
 	lnode = calloc(1, sizeof(Layout_Node));
 	lnode->source_node = node;
 	lnode->line = line;
-	lnode->text_pos = text_pos;	
+	lnode->text_pos = text_pos;
 	last_line = line;
 	evas_object_textblock_layout_copy(&layout, &(lnode->layout));
 	if (layout.font.name)
@@ -1630,7 +1630,7 @@ static void
 evas_object_textblock_format_calc(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
-   
+
    o = (Evas_Object_Textblock *)(obj->object_data);
    evas_object_textblock_layout_fonts_hold(obj);
    evas_object_textblock_layout_clean(obj);
@@ -1644,7 +1644,7 @@ evas_object_textblock_native_calc(Evas_Object *obj)
    Evas_Object_Textblock *o;
    int fw = 0, fh = 0, lines = 0;
    Layout_Node *lnodes;
-   
+
    o = (Evas_Object_Textblock *)(obj->object_data);
    lnodes =  evas_object_textblock_layout_internal(obj, 0, 0, &fw, &fh, &lines);
    evas_object_textblock_layout_nodes_free(obj, lnodes);
@@ -1661,7 +1661,7 @@ evas_object_textblock_node_pos_get(Evas_Object *obj, int pos, int *pstart)
    Evas_Object_List *l;
    int p, ps = 0;
    Node *node = NULL;
-   
+
    o = (Evas_Object_Textblock *)(obj->object_data);
    ps = p = 0;
    for (l = (Evas_Object_List *)o->nodes; l; l = l->next)
@@ -1686,7 +1686,7 @@ evas_object_textblock_layout_node_pos_get(Evas_Object *obj, int pos, int *pstart
    Evas_Object_List *l;
    int p = 0;
    Layout_Node *lnode = NULL;
-   
+
    o = (Evas_Object_Textblock *)(obj->object_data);
    p = 0;
    for (l = (Evas_Object_List *)o->layout_nodes; l; l = l->next)
@@ -1715,13 +1715,13 @@ evas_object_textblock_layout_node_line_get(Evas_Object *obj, int line)
    Evas_Object_Textblock *o;
    Evas_Object_List *l;
    int p, ps;
-   
+
    o = (Evas_Object_Textblock *)(obj->object_data);
    ps = p = 0;
    for (l = (Evas_Object_List *)o->layout_nodes; l; l = l->next)
      {
 	Layout_Node *lnode;
-	
+
 	lnode = (Layout_Node *)l;
 	if (lnode->text)
 	  {
@@ -1778,7 +1778,7 @@ Evas_Object *
 evas_object_textblock_add(Evas *e)
 {
    Evas_Object *obj;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
@@ -1792,7 +1792,7 @@ void
 evas_object_textblock_clear(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -1815,7 +1815,7 @@ void
 evas_object_textblock_cursor_pos_set(Evas_Object *obj, int pos)
 {
    Evas_Object_Textblock *o;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -1847,7 +1847,7 @@ evas_object_textblock_cursor_pos_next(Evas_Object *obj)
      {
 	int chr;
 	int npos;
-	
+
 	npos = o->pos - ps;
 	chr = evas_common_font_utf8_get_next(node->text, &npos);
 	if ((!chr) || (npos >= node->text_len))
@@ -1867,7 +1867,7 @@ evas_object_textblock_cursor_pos_prev(Evas_Object *obj)
    Evas_Object_Textblock *o;
    Node *node;
    int ps = 0;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -1885,7 +1885,7 @@ evas_object_textblock_cursor_pos_prev(Evas_Object *obj)
 	     if (node)
 	       {
 		  int npos;
-		  
+
 		  npos = evas_common_font_utf8_get_last(node->text, node->text_len);
 		  o->pos = o->pos - node->text_len + npos;
 	       }
@@ -1897,7 +1897,7 @@ evas_object_textblock_cursor_pos_prev(Evas_Object *obj)
      {
 	int chr;
 	int npos;
-	
+
 	npos = o->pos - ps;
 	if (o->pos > ps)
 	  {
@@ -1922,7 +1922,7 @@ int
 evas_object_textblock_cursor_pos_get(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
@@ -1937,7 +1937,7 @@ int
 evas_object_textblock_length_get(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
@@ -1954,7 +1954,7 @@ evas_object_textblock_cursor_line_get(Evas_Object *obj)
    Evas_Object_Textblock *o;
    Layout_Node *lnode;
    int ps;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
@@ -1973,7 +1973,7 @@ int
 evas_object_textblock_lines_get(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
@@ -1990,7 +1990,7 @@ evas_object_textblock_line_start_pos_get(Evas_Object *obj)
    Evas_Object_Textblock *o;
    Layout_Node *lnode;
    int ps;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return EVAS_TEXT_INVALID;
    MAGIC_CHECK_END();
@@ -2004,7 +2004,7 @@ evas_object_textblock_line_start_pos_get(Evas_Object *obj)
    if (lnode)
      {
 	Evas_Object_List *l;
-	
+
 	for (l = (Evas_Object_List *)lnode; l; l = l->prev)
 	  {
 	     lnode = (Layout_Node *)l;
@@ -2021,7 +2021,7 @@ evas_object_textblock_line_end_pos_get(Evas_Object *obj)
    Evas_Object_Textblock *o;
    Layout_Node *lnode;
    int ps;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return EVAS_TEXT_INVALID;
    MAGIC_CHECK_END();
@@ -2035,14 +2035,14 @@ evas_object_textblock_line_end_pos_get(Evas_Object *obj)
    if (lnode)
      {
 	Evas_Object_List *l;
-	
+
 	for (l = (Evas_Object_List *)lnode; l; l = l->next)
 	  {
 	     lnode = (Layout_Node *)l;
 	     if ((lnode->text) && (lnode->line_end))
 	       {
 		  int index;
-		  
+
 		  index = evas_common_font_utf8_get_last(lnode->text, lnode->text_len);
 		  return lnode->text_pos + index;
 	       }
@@ -2057,7 +2057,7 @@ evas_object_textblock_line_get(Evas_Object *obj, int line, Evas_Coord *lx, Evas_
    Evas_Object_Textblock *o;
    Layout_Node *lnode;
    int ps;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
@@ -2072,7 +2072,7 @@ evas_object_textblock_line_get(Evas_Object *obj, int line, Evas_Coord *lx, Evas_
      {
 	Evas_Object_List *l;
 	Layout_Node *lnode_start = NULL, *lnode_end = NULL;
-	
+
 	for (l = (Evas_Object_List *)lnode; l; l = l->prev)
 	  {
 	     lnode_start = (Layout_Node *)l;
@@ -2110,7 +2110,7 @@ evas_object_textblock_char_pos_get(Evas_Object *obj, int pos, Evas_Coord *cx, Ev
    Evas_Object_Textblock *o;
    Layout_Node *lnode;
    int ps;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
@@ -2124,7 +2124,7 @@ evas_object_textblock_char_pos_get(Evas_Object *obj, int pos, Evas_Coord *cx, Ev
    if (lnode)
      {
 	int ret, x = 0, y = 0, w = 0, h = 0;
-	
+
 	if (lnode->layout.font.font)
 	  {
 	     ret = ENFN->font_char_coords_get(ENDT, lnode->layout.font.font,
@@ -2150,7 +2150,7 @@ evas_object_textblock_char_coords_get(Evas_Object *obj, Evas_Coord x, Evas_Coord
    Evas_Object_Textblock *o;
    Layout_Node *lnode;
    Evas_Object_List *l;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return EVAS_TEXT_INVALID;
    MAGIC_CHECK_END();
@@ -2163,14 +2163,14 @@ evas_object_textblock_char_coords_get(Evas_Object *obj, Evas_Coord x, Evas_Coord
    for (l = (Evas_Object_List *)o->layout_nodes; l; l = l->next)
      {
 	lnode = (Layout_Node *)l;
-	
-	if ((x >= lnode->layout.line.x) && 
+
+	if ((x >= lnode->layout.line.x) &&
 	    (x < (lnode->layout.line.x + lnode->layout.line.advance)) &&
-	    (y >= lnode->layout.line.y) && 
+	    (y >= lnode->layout.line.y) &&
 	    (y < (lnode->layout.line.y + lnode->layout.line.mascent + lnode->layout.line.mdescent)))
 	  {
 	     int ret, rx = 0, ry = 0, rw = 0, rh = 0;
-	     
+
 	     if (lnode->spacer)
 	       {
 		  ry = lnode->layout.line.y;
@@ -2204,7 +2204,7 @@ evas_object_textblock_char_coords_get(Evas_Object *obj, Evas_Coord x, Evas_Coord
 		       else
 			 {
 			    int pos;
-			    
+
 			    pos = evas_common_font_utf8_get_last(lnode->text, lnode->text_len);
 			    ret = ENFN->font_char_coords_get(ENDT, lnode->layout.font.font,
 							     lnode->text,
@@ -2234,7 +2234,7 @@ evas_object_textblock_text_insert(Evas_Object *obj, const char *text)
    Evas_Object_Textblock *o;
    Node *node;
    int ps;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -2260,7 +2260,7 @@ evas_object_textblock_text_insert(Evas_Object *obj, const char *text)
 	  {
 	     int len;
 	     char *ntext;
-	     
+
 	     node = (Node *)(((Evas_Object_List *)(o->nodes))->last);
 	     if (node->text)
 	       {
@@ -2289,7 +2289,7 @@ evas_object_textblock_text_insert(Evas_Object *obj, const char *text)
      {
 	int len;
 	char *ntext;
-	
+
 	len = strlen(text);
 	ntext = malloc(node->text_len + len + 1);
 	if (node->text) strncpy(ntext, node->text, o->pos - ps);
@@ -2358,7 +2358,7 @@ evas_object_textblock_text_get(Evas_Object *obj, int len)
 		       if (node)
 			 {
 			    int amt = 0;
-			    
+
 			    if (node->text_len >= remaining)
 			      amt = remaining;
 			    else
@@ -2369,7 +2369,7 @@ evas_object_textblock_text_get(Evas_Object *obj, int len)
 			    count += amt;
 			 }
 		       else
-			 { 
+			 {
 			    /* we ran out of nodes ... */
 			    break;
 			 }
@@ -2432,7 +2432,7 @@ evas_object_textblock_text_del(Evas_Object *obj, int len)
 	     if ((o->pos - ps) > 0)
 	       strncpy(node->text, tmp, o->pos - ps);
 	     node->text[o->pos - ps] = 0;
-	     
+
 	     /* any ending text */
 	     if (((o->pos - ps) + remaining) < node->text_len)
 	       strcpy(node->text + (o->pos - ps),
@@ -2456,7 +2456,7 @@ evas_object_textblock_text_del(Evas_Object *obj, int len)
 	     Evas_List *freenodes = NULL, *formatnodes = NULL;
 	     Node *node_start = NULL, *node_end = NULL, *format_start = NULL;
 	     Evas_Object_List *l;
-	     
+
 	     node_start = node_end = node;
 	     tmp = node->text;
 	     node->text = malloc(sizeof(char) * (o->pos - ps + 1));
@@ -2470,10 +2470,10 @@ evas_object_textblock_text_del(Evas_Object *obj, int len)
 	     node->text_len = o->pos - ps;
 	     free(tmp);
 	     ps += node->text_len;
-	     
+
              if (node->text_len <= 0)
 	       node->text = NULL;
-	     
+
 	     while (remaining > 0)
 	       {
 		  /* find next text node */
@@ -2485,7 +2485,7 @@ evas_object_textblock_text_del(Evas_Object *obj, int len)
 		  if (remaining < node->text_len)
 		    {
 		       tmp = node->text;
-		       
+
 		       node->text = malloc(sizeof(char) * (node->text_len - remaining + 1));
 		       strcpy(node->text, tmp + remaining);
 		       node->text_len -= remaining;
@@ -2518,7 +2518,7 @@ evas_object_textblock_text_del(Evas_Object *obj, int len)
 			 format_start = node;
 		       formatnodes = evas_list_append(formatnodes, node);
 		    }
-		  /* if the node is empty text add it to our list of nodes 
+		  /* if the node is empty text add it to our list of nodes
 		   * to free
 		   */
 		  else if (!node->text)
@@ -2552,7 +2552,7 @@ evas_object_textblock_format_insert(Evas_Object *obj, const char *format)
    Node *node;
    int ps;
    char *nformat;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -2580,7 +2580,7 @@ evas_object_textblock_format_insert(Evas_Object *obj, const char *format)
 	     char *ntext1 = NULL, *ntext2 = NULL;
 	     int len2;
 	     Node *node_rel;
-	     
+
 	     len2 = node->text_len - (o->pos - ps);
 	     if (o->pos - ps > 0)
 	       {
@@ -2598,7 +2598,7 @@ evas_object_textblock_format_insert(Evas_Object *obj, const char *format)
 		  free(node->text);
 		  node->text = ntext1;
 		  node->text_len = o->pos - ps;
-		  
+
 		  node_rel = node;
 		  node = calloc(1, sizeof(Node));
 		  node->format = nformat;
@@ -2633,7 +2633,7 @@ evas_object_textblock_format_next_pos_get(Evas_Object *obj)
    Evas_Object_Textblock *o;
    Node *node;
    int ps, pos;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return EVAS_TEXT_INVALID;
    MAGIC_CHECK_END();
@@ -2663,7 +2663,7 @@ evas_object_textblock_format_next_count_get(Evas_Object *obj)
    Evas_Object_Textblock *o;
    Node *node;
    int ps, num;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
@@ -2694,7 +2694,7 @@ evas_object_textblock_format_next_get(Evas_Object *obj, int n)
    Evas_Object_Textblock *o;
    Node *node;
    int ps, num;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
@@ -2725,7 +2725,7 @@ evas_object_textblock_format_next_del(Evas_Object *obj, int n)
    Evas_Object_Textblock *o;
    Node *node;
    int ps, num;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -2765,7 +2765,7 @@ evas_object_textblock_format_prev_pos_get(Evas_Object *obj)
    Evas_Object_Textblock *o;
    Node *node;
    int ps, pos;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return EVAS_TEXT_INVALID;
    MAGIC_CHECK_END();
@@ -2794,7 +2794,7 @@ evas_object_textblock_format_prev_count_get(Evas_Object *obj)
    Evas_Object_Textblock *o;
    Node *node;
    int ps, num;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
@@ -2825,7 +2825,7 @@ evas_object_textblock_format_prev_get(Evas_Object *obj, int n)
    Evas_Object_Textblock *o;
    Node *node;
    int ps, num;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
@@ -2856,7 +2856,7 @@ evas_object_textblock_format_prev_del(Evas_Object *obj, int n)
    Evas_Object_Textblock *o;
    Node *node;
    int ps, num;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -2896,7 +2896,7 @@ evas_object_textblock_format_current_get(Evas_Object *obj)
    Evas_Object_Textblock *o;
    Layout_Node *lnode;
    int ps;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
@@ -2912,7 +2912,7 @@ evas_object_textblock_format_current_get(Evas_Object *obj)
 	char tbuf[512];
 	char *buf;
 	int sz;
-	
+
 	sz = 0;
 	/* save typing below */
 #define CHECK_COL(str, col) \
@@ -2957,7 +2957,7 @@ evas_object_textblock_format_current_get(Evas_Object *obj)
 	else if (lnode->layout.underline) sz += strlen("underline=on") + 1;
 	if (lnode->layout.strikethrough) sz += strlen("strikethrough=on") + 1;
 	if (lnode->layout.backing) sz += strlen("backing=on") + 1;
-	
+
 #define PRINT_COL(str, col) \
 	if (lnode->layout.col.a > 0) \
 	  { \
@@ -2966,7 +2966,7 @@ evas_object_textblock_format_current_get(Evas_Object *obj)
 	     snprintf(tbuf, sizeof(tbuf), "#%02x%02x%02x%02x", lnode->layout.col.r, lnode->layout.col.g, lnode->layout.col.b, lnode->layout.col.a); \
 	     strcat(buf, tbuf); \
 	  }
-	
+
 	buf = malloc(sz);
 	if (buf)
 	  {
@@ -3048,7 +3048,7 @@ evas_object_textblock_format_current_get(Evas_Object *obj)
     * data in it (font, size, color, underline etc.) space delimited... or
     * what? i am tempted to opt for this solution right now - caller must
     * free the string when done with free()
-    * 
+    *
     * so to do this. find the layout node at the current pos, check the
     * layout params, and snprintf all that are not a default value (that u can
     * set via format parameters), then return a strdup of the buffer. if the
@@ -3061,7 +3061,7 @@ void
 evas_object_textblock_format_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
    Evas_Object_Textblock *o;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    if (w) *w = 0;
    if (h) *h = 0;
@@ -3083,7 +3083,7 @@ void
 evas_object_textblock_native_size_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
 {
    Evas_Object_Textblock *o;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    if (w) *w = 0;
    if (h) *h = 0;
@@ -3105,7 +3105,7 @@ int
 evas_object_textblock_native_lines_get(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
    MAGIC_CHECK_END();
@@ -3145,7 +3145,7 @@ static void *
 evas_object_textblock_new(void)
 {
    Evas_Object_Textblock *o;
-   
+
    /* alloc obj private data */
    o = calloc(1, sizeof(Evas_Object_Textblock));
    o->magic = MAGIC_OBJ_TEXTBLOCK;
@@ -3184,7 +3184,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 	  {1, 3, 4, 3, 1},
 	  {0, 1, 2, 1, 0}
      };
-   
+
    /* render object to surface with context, and offxet by x,y */
    o = (Evas_Object_Textblock *)(obj->object_data);
    obj->layer->evas->engine.func->context_multiplier_unset(output,
@@ -3206,12 +3206,12 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
                                                   obj->cur.cache.geometry.y + y,
                                                   obj->cur.cache.geometry.w,
                                                   obj->cur.cache.geometry.h);
-#endif   
+#endif
    /* 1ST PASS: BACKING */
    for (l = (Evas_Object_List *)o->layout_nodes; l; l = l->next)
      {
 	Layout_Node *lnode, *nlnode;
-	
+
 	lnode = (Layout_Node *)l;
 	nlnode = (Layout_Node *)(l->next);
 	if (lnode->line_start) pbackx = 0;
@@ -3219,16 +3219,16 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 	  {
 	     int lin = 0;
 	     int inset = 0;
-	     
+
 	     if (lnode->layout.backing) lin++;
 	     if (lin > 0)
-	       inset = ENFN->font_inset_get(ENDT, 
+	       inset = ENFN->font_inset_get(ENDT,
 					    lnode->layout.font.font,
 					    lnode->text);
 	     if (lnode->layout.backing)
 	       {
 		  int bx;
-		  
+
 		  ENFN->context_color_set(output,
 					  context,
 					  (obj->cur.cache.clip.r * lnode->layout.backing_color.r) / 255,
@@ -3244,7 +3244,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 		    ENFN->rectangle_draw(output,
 					 context,
 					 surface,
-					 obj->cur.cache.geometry.x + 
+					 obj->cur.cache.geometry.x +
 					 bx + x,
 					 obj->cur.cache.geometry.y +
 					 lnode->layout.line.y + y,
@@ -3254,7 +3254,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 		    ENFN->rectangle_draw(output,
 					 context,
 					 surface,
-					 obj->cur.cache.geometry.x + 
+					 obj->cur.cache.geometry.x +
 					 bx + x,
 					 obj->cur.cache.geometry.y +
 					 lnode->layout.line.y + y,
@@ -3299,19 +3299,19 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 			   (obj->cur.cache.clip.b * (bb)) / 255, \
 			   (obj->cur.cache.clip.a * (aa)) / 255); \
    }
-   
+
    /* 2ND PASS: SHADOWS */
    for (l = (Evas_Object_List *)o->layout_nodes; l; l = l->next)
      {
 	Layout_Node *lnode, *nlnode;
-	
+
 	lnode = (Layout_Node *)l;
 	nlnode = (Layout_Node *)(l->next);
 	if ((lnode->layout.font.font) && (lnode->text))
 	  {
 	     int lin = 0;
 	     int inset = 0;
-	     
+
 	     if (lnode->layout.underline) lin++;
 	     if (lnode->layout.second_underline) lin++;
 	     if (lnode->layout.strikethrough) lin++;
@@ -3347,7 +3347,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 		       for (j = 0; j < 5; j++)
 			 {
 			    for (i = 0; i < 5; i++)
-			      {  
+			      {
 				 if (vals[i][j] != 0)
 				   {
 				      SET_COL(lnode->layout.shadow_color.r,
@@ -3364,7 +3364,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 		       for (j = 0; j < 5; j++)
 			 {
 			    for (i = 0; i < 5; i++)
-			      {  
+			      {
 				 if (vals[i][j] != 0)
 				   {
 				      SET_COL(lnode->layout.shadow_color.r,
@@ -3383,14 +3383,14 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    for (l = (Evas_Object_List *)o->layout_nodes; l; l = l->next)
      {
 	Layout_Node *lnode, *nlnode;
-	
+
 	lnode = (Layout_Node *)l;
 	nlnode = (Layout_Node *)(l->next);
 	if ((lnode->layout.font.font) && (lnode->text))
 	  {
 	     int lin = 0;
 	     int inset = 0;
-	     
+
 	     if (lnode->layout.underline) lin++;
 	     if (lnode->layout.second_underline) lin++;
 	     if (lnode->layout.strikethrough) lin++;
@@ -3401,7 +3401,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 		  for (j = 0; j < 5; j++)
 		    {
 		       for (i = 0; i < 5; i++)
-			 {  
+			 {
 			    if (vals[i][j] > 0)
 			      {
 				 if (vals[i][j] == 1)
@@ -3425,7 +3425,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 		  for (j = 0; j < 5; j++)
 		    {
 		       for (i = 0; i < 5; i++)
-			 {  
+			 {
 			    if (vals[i][j] > 2)
 			      {
 				 if (vals[i][j] == 3)
@@ -3453,14 +3453,14 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    for (l = (Evas_Object_List *)o->layout_nodes; l; l = l->next)
      {
 	Layout_Node *lnode, *nlnode;
-	
+
 	lnode = (Layout_Node *)l;
 	nlnode = (Layout_Node *)(l->next);
 	if ((lnode->layout.font.font) && (lnode->text))
 	  {
 	     int lin = 0;
 	     int inset = 0;
-	     
+
 	     if (lnode->layout.underline) lin++;
 	     if (lnode->layout.second_underline) lin++;
 	     if (lnode->layout.strikethrough) lin++;
@@ -3485,20 +3485,20 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    for (l = (Evas_Object_List *)o->layout_nodes; l; l = l->next)
      {
 	Layout_Node *lnode, *nlnode;
-	
+
 	lnode = (Layout_Node *)l;
 	nlnode = (Layout_Node *)(l->next);
 	if ((lnode->layout.font.font) && (lnode->text))
 	  {
 	     int lin = 0;
 	     int inset = 0;
-	     
+
 	     if (lnode->layout.underline) lin++;
 	     if (lnode->layout.second_underline) lin++;
 	     if (lnode->layout.strikethrough) lin++;
 	     if (lnode->layout.backing) lin++;
 	     if (lin > 0)
-	       inset = ENFN->font_inset_get(ENDT, 
+	       inset = ENFN->font_inset_get(ENDT,
 					    lnode->layout.font.font,
 					    lnode->text);
 	     ENFN->context_color_set(output,
@@ -3512,10 +3512,10 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 			       context,
 			       surface,
 			       lnode->layout.font.font,
-			       obj->cur.cache.geometry.x + 
+			       obj->cur.cache.geometry.x +
 			       lnode->layout.line.x + x,
-			       obj->cur.cache.geometry.y + 
-			       lnode->layout.line.y + y + 
+			       obj->cur.cache.geometry.y +
+			       lnode->layout.line.y + y +
 			       lnode->layout.line.mascent,
 			       lnode->w,
 			       lnode->h,
@@ -3529,12 +3529,12 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 			       lnode->layout.font.font,
 			       obj->cur.cache.geometry.x +
 			       lnode->layout.line.x + x,
-			       obj->cur.cache.geometry.y + 
-			       lnode->layout.line.y + y + 
-			       ((double)((lnode->layout.line.mascent + 
+			       obj->cur.cache.geometry.y +
+			       lnode->layout.line.y + y +
+			       ((double)((lnode->layout.line.mascent +
 					  lnode->layout.line.mdescent) -
-					 (lnode->layout.line.ascent + 
-					  lnode->layout.line.descent) - 1) * 
+					 (lnode->layout.line.ascent +
+					  lnode->layout.line.descent) - 1) *
 					 lnode->layout.valign) +
 			       lnode->layout.line.ascent,
 			       lnode->w,
@@ -3553,10 +3553,10 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 		  ENFN->rectangle_draw(output,
 				       context,
 				       surface,
-				       obj->cur.cache.geometry.x + 
+				       obj->cur.cache.geometry.x +
 				       lnode->layout.line.x + x + inset,
 				       obj->cur.cache.geometry.y +
-				       lnode->layout.line.y + y + 
+				       lnode->layout.line.y + y +
 				       lnode->layout.line.mascent + 1,
 				       lnode->w,
 				       1);
@@ -3572,10 +3572,10 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 		  ENFN->rectangle_draw(output,
 				       context,
 				       surface,
-				       obj->cur.cache.geometry.x + 
+				       obj->cur.cache.geometry.x +
 				       lnode->layout.line.x + x + inset,
 				       obj->cur.cache.geometry.y +
-				       lnode->layout.line.y + y + 
+				       lnode->layout.line.y + y +
 				       lnode->layout.line.mascent + 3,
 				       lnode->w,
 				       1);
@@ -3591,20 +3591,20 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 		  ENFN->rectangle_draw(output,
 				       context,
 				       surface,
-				       obj->cur.cache.geometry.x + 
+				       obj->cur.cache.geometry.x +
 				       lnode->layout.line.x + x + inset,
 				       obj->cur.cache.geometry.y +
-				       lnode->layout.line.y + y + 
+				       lnode->layout.line.y + y +
 				       lnode->layout.line.mascent - ((lnode->layout.line.ascent - lnode->layout.line.descent) / 2),
 				       lnode->w,
 				       1);
 	       }
 	  }
      }
-/*   
+/*
    if (o->engine_data)
      {
-	
+
      }
  */
 }
@@ -3662,9 +3662,9 @@ evas_object_textblock_render_pre(Evas_Object *obj)
      }
    if (o->changed)
      {
-/*	
+/*
 	Evas_Rectangle *r;
-	
+
 	r = malloc(sizeof(Evas_Rectangle));
 	r->x = 0; r->y = 0;
 	r->w = obj->cur.geometry.w;
@@ -3695,7 +3695,7 @@ evas_object_textblock_render_post(Evas_Object *obj)
    while (obj->clip.changes)
      {
 	Evas_Rectangle *r;
-	
+
 	r = (Evas_Rectangle *)obj->clip.changes->data;
 	obj->clip.changes = evas_list_remove(obj->clip.changes, r);
 	free(r);
@@ -3710,7 +3710,7 @@ static int
 evas_object_textblock_is_opaque(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
-   
+
    /* this returns 1 if the internal object data implies that the object is */
    /* currently fulyl opque over the entire gradient it occupies */
    o = (Evas_Object_Textblock *)(obj->object_data);
@@ -3721,7 +3721,7 @@ static int
 evas_object_textblock_was_opaque(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
-   
+
    /* this returns 1 if the internal object data implies that the object was */
    /* currently fulyl opque over the entire gradient it occupies */
    o = (Evas_Object_Textblock *)(obj->object_data);
@@ -3732,7 +3732,7 @@ static void
 evas_object_textblock_coords_recalc(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
-   
+
    o = (Evas_Object_Textblock *)(obj->object_data);
    if ((obj->cur.geometry.w != o->last_w) ||
        (obj->cur.geometry.h != o->last_h))

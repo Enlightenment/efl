@@ -1,5 +1,5 @@
-#ifndef _EVAS_ENGINE_SOFTWARE_XCB_H 
-#define _EVAS_ENGINE_SOFTWARE_XCB_H 
+#ifndef _EVAS_ENGINE_SOFTWARE_XCB_H
+#define _EVAS_ENGINE_SOFTWARE_XCB_H
 
 #include <X11/XCB/xcb.h>
 
@@ -10,7 +10,7 @@ struct _Evas_Engine_Info_Software_Xcb
    /* PRIVATE - don't mess with this baby or evas will poke its tongue out */
    /* at you and make nasty noises */
    Evas_Engine_Info magic;
-   
+
    /* engine specific data & parameters it needs to set up */
    struct {
       XCBConnection  *conn;
@@ -20,7 +20,7 @@ struct _Evas_Engine_Info_Software_Xcb
       XCBCOLORMAP     colormap;
       int       depth;
       int       rotation;
-      
+
       int       alloc_grayscale : 1;
       int       debug : 1;
       int       shape_dither : 1;
@@ -33,7 +33,7 @@ struct _Evas_Engine_Info_Software_Xcb
       XCBVISUALTYPE * (*best_visual_get)   (XCBConnection *conn, int screen);
       XCBCOLORMAP     (*best_colormap_get) (XCBConnection *conn, int screen);
       int             (*best_depth_get)    (XCBConnection *conn, int screen);
-      
+
       Evas_Performance *(*performance_test)         (Evas          *e,
 						     XCBConnection *conn,
 						     XCBVISUALTYPE *vis,

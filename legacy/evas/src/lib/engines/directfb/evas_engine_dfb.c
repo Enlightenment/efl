@@ -84,7 +84,7 @@ Evas_Func           evas_engine_directfb_func = {
 };
 
 
-   
+
 void        *
 evas_engine_directfb_info(Evas * e)
 {
@@ -104,7 +104,7 @@ void
 evas_engine_directfb_info_free(Evas *e, void *info)
 {
    Evas_Engine_Info_DirectFB *in;
-   
+
    in = (Evas_Engine_Info_DirectFB *)info;
    free(in);
 }
@@ -179,13 +179,13 @@ evas_engine_directfb_output_setup(int w, int h, IDirectFB * dfb,
 
    re->backbuf->SetDrawingFlags(re->backbuf, flags);
 
-   /* We create a "fake" RGBA_Image which points the to DFB surface. Each access 
+   /* We create a "fake" RGBA_Image which points the to DFB surface. Each access
     * to that surface is wrapped in Lock / Unlock calls whenever the data is
     * manipulated directly. */
    im = evas_common_image_new();
    if (!im) return;
    im->image = evas_common_image_surface_new(im);
-   if (!im->image) 
+   if (!im->image)
    {
       evas_common_image_free(im);
       return;
@@ -334,7 +334,7 @@ evas_engine_directfb_output_redraws_next_update_get(void *data, int *x, int *y,
    re->backbuf->SetClip(re->backbuf, &region);
    re->backbuf->Clear(re->backbuf, 0, 0, 0, 0);
    re->backbuf->SetClip(re->backbuf, NULL);
-   
+
 
    /* Return the "fake" surface so it is passed to the drawing routines. */
    return re->rgba_image;
@@ -502,7 +502,7 @@ evas_engine_directfb_context_cutout_clear(void *data, void *context)
    evas_common_draw_context_clear_cutouts(context);
 }
 
-/* 
+/*
  * Rectangles
  *
  *
@@ -618,7 +618,7 @@ rectangle_draw_internal(void *data, void *context, int x, int y, int w, int h)
    evas_common_cpu_end_opt();
 }
 
-/* 
+/*
  * Lines
  *
  *
@@ -638,7 +638,7 @@ evas_engine_directfb_line_draw(void *data, void *context, void *surface, int x1,
    re->backbuf->DrawLine(re->backbuf, x1, y1, x2, y2);
 }
 
-/* 
+/*
  * Polygons
  *
  *
@@ -649,7 +649,7 @@ void *
 evas_engine_directfb_polygon_point_add(void *data, void *context, void *polygon, int x, int y)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return evas_common_polygon_point_add(polygon, x, y);
    context = NULL;
@@ -659,7 +659,7 @@ void *
 evas_engine_directfb_polygon_points_clear(void *data, void *context, void *polygon)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return evas_common_polygon_points_clear(polygon);
    context = NULL;
@@ -674,7 +674,7 @@ evas_engine_directfb_polygon_draw(void *data, void *context, void *surface, void
    RGBA_Image  *im;
    void *p;
    int pitch;
-   
+
    re = (Render_Engine *)data;
    im = surface;
    surf = (IDirectFBSurface *)im->image->data;
@@ -687,7 +687,7 @@ evas_engine_directfb_polygon_draw(void *data, void *context, void *surface, void
 }
 
 
-/* 
+/*
  * Gradients
  *
  *
@@ -697,7 +697,7 @@ void *
 evas_engine_directfb_gradient_color_add(void *data, void *context, void *gradient, int r, int g, int b, int a, int distance)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    if (!gradient)
      gradient = evas_common_gradient_new();
@@ -710,7 +710,7 @@ void *
 evas_engine_directfb_gradient_colors_clear(void *data, void *context, void *gradient)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    if (gradient) evas_common_gradient_free(gradient);
    return NULL;
@@ -725,7 +725,7 @@ evas_engine_directfb_gradient_draw(void *data, void *context, void *surface, voi
    RGBA_Image  *im;
    void *p;
    int pitch;
-   
+
    re = (Render_Engine *)data;
    im = surface;
    surf = (IDirectFBSurface *)im->image->data;
@@ -739,7 +739,7 @@ evas_engine_directfb_gradient_draw(void *data, void *context, void *surface, voi
 
 
 
-/* 
+/*
  * Font objects
  *
  *
@@ -768,7 +768,7 @@ void *
 evas_engine_directfb_font_add(void *data, void *font, char *name, int size)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return evas_common_font_add(font, name, size);
 }
@@ -777,7 +777,7 @@ void *
 evas_engine_directfb_font_memory_add(void *data, void *font, char *name, int size, const void *fdata, int fdata_size)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return evas_common_font_memory_add(font, name, size, fdata, fdata_size);
 }
@@ -904,7 +904,7 @@ evas_engine_directfb_font_draw(void *data, void *context, void *surface,
 
    im = surface;
    re = (Render_Engine *)data;
-   surf = (IDirectFBSurface *)im->image->data; 
+   surf = (IDirectFBSurface *)im->image->data;
    surf->Lock(surf, DSLF_WRITE, &p, &pitch);
    im->image->data = p;
    im->flags |= RGBA_IMAGE_HAS_ALPHA;
@@ -920,32 +920,32 @@ evas_engine_directfb_font_draw(void *data, void *context, void *surface,
 	if (dc)
 	  {
 	     RGBA_Image *im;
-	     
+
 	     dc->col.col = dc_in->col.col;
 	     im = evas_common_image_create(ow, oh);
 	     if (im)
 	       {
 		  int max_ascent;
 		  int i, j;
-		  
+
 		  im->flags |= RGBA_IMAGE_HAS_ALPHA;
 		  j = ow * oh;
 		  memset(im->image->data, 0, j * sizeof(DATA32));
-		  
+
 		  max_ascent = evas_common_font_max_ascent_get(font);
-		  
+
 		  evas_common_font_draw(im, dc, font, 0, max_ascent, text);
 		  evas_common_cpu_end_opt();
-		  evas_common_scale_rgba_in_to_out_clip_smooth(im, surface, context, 
-						   0, 0, ow, oh, 
-						   x, y - ((max_ascent * h) / oh), 
+		  evas_common_scale_rgba_in_to_out_clip_smooth(im, surface, context,
+						   0, 0, ow, oh,
+						   x, y - ((max_ascent * h) / oh),
 						   w, h);
 		  evas_common_image_free(im);
 	       }
 	     evas_common_draw_context_free(dc);
 	  }
      }
-      
+
    surf->Unlock(surf);
    im->image->data = (void *)surf;
    evas_common_cpu_end_opt();

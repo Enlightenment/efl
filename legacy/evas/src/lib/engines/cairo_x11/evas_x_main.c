@@ -19,7 +19,7 @@ evas_engine_cairo_x11_window_new(Display *disp,
 			      int      h)
 {
    Evas_Cairo_X11_Window *cw;
-   
+
    cw = calloc(1, sizeof(Evas_Cairo_X11_Window));
    if (!cw) return NULL;
    cw->disp = disp;

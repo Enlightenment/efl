@@ -21,7 +21,7 @@ Outbuf *
 evas_qtopia_outbuf_software_qtopia_setup_q(int w, int h, int rot, Outbuf_Depth depth, QWidget *target)
 {
    Outbuf *buf;
-   
+
    buf = calloc(1, sizeof(Outbuf));
    if (!buf)
      {
@@ -35,7 +35,7 @@ evas_qtopia_outbuf_software_qtopia_setup_q(int w, int h, int rot, Outbuf_Depth d
    buf->priv.target = target;
      {
 	QT_Direct *direct;
-	
+
 	direct = evas_qt_main_direct_start(buf->priv.target);
 	if (direct)
 	  {
@@ -62,7 +62,7 @@ RGBA_Image *
 evas_qtopia_outbuf_software_qtopia_new_region_for_update(Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch)
 {
    RGBA_Image *im;
-   
+
    *cx = 0; *cy = 0; *cw = w; *ch = h;
    im = evas_common_image_create(w, h);
    return im;
@@ -80,7 +80,7 @@ evas_qtopia_outbuf_software_qtopia_push_updated_region(Outbuf *buf, RGBA_Image *
    Gfx_Func_Convert conv_func;
    DATA8 *data;
    QT_Direct *d;
-   
+
    data = NULL;
    conv_func = NULL;
 
@@ -88,20 +88,20 @@ evas_qtopia_outbuf_software_qtopia_push_updated_region(Outbuf *buf, RGBA_Image *
    if (d)
      {
 	int i;
-	
+
 	for (i = 0; i < d->rects.count; i++)
 	  {
 	     int fb_bytes;
 	     DATA8 *fb_mem;
 	     int ox, oy, ow, oh;
 	     int rx, ry, rw, rh;
-	     
+
 	     ox = x; oy = y; ow = w; oh = h;
 	     rx = d->rects.r[i].x - d->location.x;
 	     ry = d->rects.r[i].y - d->location.y;
 	     rw = d->rects.r[i].w;
 	     rh = d->rects.r[i].h;
-	     if (x < rx) 
+	     if (x < rx)
 	       {
 		  w += (x - rx);
 		  x = rx;
@@ -118,8 +118,8 @@ evas_qtopia_outbuf_software_qtopia_push_updated_region(Outbuf *buf, RGBA_Image *
 	     fb_bytes = d->fb.bpp / 8;
 	     if (buf->rot == 0)
 	       {
-		  fb_mem = d->fb.data + 
-		    ((d->location.y * d->fb.width * fb_bytes) + 
+		  fb_mem = d->fb.data +
+		    ((d->location.y * d->fb.width * fb_bytes) +
 		     (d->location.x * fb_bytes));
 		  data = fb_mem + (fb_bytes * (x + (y * d->fb.width)));
 		  conv_func = evas_common_convert_func_get(data, w, h, d->fb.bpp,
@@ -129,7 +129,7 @@ evas_qtopia_outbuf_software_qtopia_push_updated_region(Outbuf *buf, RGBA_Image *
 	     else if (buf->rot == 270)
 	       {
                   fb_mem = d->fb.data +
-		    (fb_bytes * 
+		    (fb_bytes *
 		     ((d->location.x * d->fb.width) +
 		      (d->fb.width - d->location.y - d->location.h)));
 		  data = fb_mem + (fb_bytes * (buf->h - y - h + (x * d->fb.width)));
@@ -140,8 +140,8 @@ evas_qtopia_outbuf_software_qtopia_push_updated_region(Outbuf *buf, RGBA_Image *
 	     else if (buf->rot == 90)
 	       {
 		  // FIXME: wrong fb_mem
-		  fb_mem = d->fb.data + 
-		    ((d->location.y * d->fb.width * fb_bytes) + 
+		  fb_mem = d->fb.data +
+		    ((d->location.y * d->fb.width * fb_bytes) +
 		     (d->location.x * fb_bytes));
 		  data = fb_mem + (fb_bytes * (y + ((buf->w - x - w) * d->fb.width)));
 		  conv_func = evas_common_convert_func_get(data, h, w, d->fb.bpp,
@@ -151,7 +151,7 @@ evas_qtopia_outbuf_software_qtopia_push_updated_region(Outbuf *buf, RGBA_Image *
 	     if (conv_func)
 	       {
 		  DATA32 *src_data;
-		  
+
 		  if (buf->rot == 0)
 		    {
 		       src_data = update->image->data +
@@ -194,7 +194,7 @@ evas_qtopia_outbuf_software_qtopia_push_updated_region(Outbuf *buf, RGBA_Image *
 void
 evas_qtopia_outbuf_software_qtopia_reconfigure(Outbuf *buf, int w, int h, int rot, Outbuf_Depth depth)
 {
-   if ((w == buf->w) && (h == buf->h) && 
+   if ((w == buf->w) && (h == buf->h) &&
        (rot == buf->rot) && (depth == buf->depth))
      return;
    buf->w = w;

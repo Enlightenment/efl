@@ -109,7 +109,7 @@ x_color_alloc_gray(int ng, Display *d, Colormap cmap, Visual *v)
 	XColor xcl_in;
 	int val;
 	Status ret;
-	
+
 	val = (int)((((double)g) / ((ng) - 1)) * 65535);
 	xcl.red = (unsigned short)(val);
 	xcl.green = (unsigned short)(val);
@@ -123,7 +123,7 @@ x_color_alloc_gray(int ng, Display *d, Colormap cmap, Visual *v)
 	  {
 	     unsigned long pixels[256];
 	     int j;
-	     
+
 	     if (i > 0)
 	       {
 		  for(j = 0; j < i; j++)
@@ -215,47 +215,47 @@ void
 evas_software_x11_x_color_init(void)
 {
    static int initialised = 0;
-   
+
    if (initialised) return;
    x_color_alloc[PAL_MODE_NONE]    = NULL;
    x_color_count[PAL_MODE_NONE]    = 0;
-   
+
    x_color_alloc[PAL_MODE_MONO]    = x_color_alloc_mono;
    x_color_count[PAL_MODE_MONO]    = 2;
-   
+
    x_color_alloc[PAL_MODE_GRAY4]   = x_color_alloc_gray_4;
    x_color_count[PAL_MODE_GRAY4]   = 4;
-   
+
    x_color_alloc[PAL_MODE_GRAY16]  = x_color_alloc_gray_16;
    x_color_count[PAL_MODE_GRAY16]  = 16;
-   
+
    x_color_alloc[PAL_MODE_GRAY64]  = x_color_alloc_gray_64;
    x_color_count[PAL_MODE_GRAY64]  = 64;
-   
+
    x_color_alloc[PAL_MODE_GRAY256] = x_color_alloc_gray_256;
    x_color_count[PAL_MODE_GRAY256] = 256;
-   
+
    x_color_alloc[PAL_MODE_RGB111]  = x_color_alloc_rgb_111;
    x_color_count[PAL_MODE_RGB111]  = 2 * 2 * 2;
-   
+
    x_color_alloc[PAL_MODE_RGB121]  = x_color_alloc_rgb_121;
    x_color_count[PAL_MODE_RGB121]  = 2 * 4 * 2;
-   
+
    x_color_alloc[PAL_MODE_RGB221]  = x_color_alloc_rgb_221;
    x_color_count[PAL_MODE_RGB221]  = 4 * 4 * 2;
-   
+
    x_color_alloc[PAL_MODE_RGB222]  = x_color_alloc_rgb_222;
    x_color_count[PAL_MODE_RGB222]  = 4 * 4 * 4;
-   
+
    x_color_alloc[PAL_MODE_RGB232]  = x_color_alloc_rgb_232;
    x_color_count[PAL_MODE_RGB232]  = 4 * 8 * 4;
-   
+
    x_color_alloc[PAL_MODE_RGB666]  = x_color_alloc_rgb_666;
    x_color_count[PAL_MODE_RGB666]  = 6 * 6 * 6;
-   
+
    x_color_alloc[PAL_MODE_RGB332]  = x_color_alloc_rgb_332;
    x_color_count[PAL_MODE_RGB332]  = 8 * 8 * 4;
-   
+
    x_color_alloc[PAL_MODE_LAST]    = NULL;
    x_color_count[PAL_MODE_LAST]    = 0;
    initialised = 1;
@@ -279,7 +279,7 @@ evas_software_x11_x_color_allocate(Display *disp, Colormap cmap, Visual *vis, Co
 	  {
 	     pal->references++;
 	     return pal;
-	  }	    
+	  }
      }
    pal = calloc(1, sizeof(struct _Convert_Pal));
    if (!pal) return NULL;
@@ -320,12 +320,12 @@ evas_software_x11_x_color_deallocate(Display *disp, Colormap cmap, Visual *vis, 
 {
    unsigned long pixels[256];
    int j;
-   
+
    pal->references--;
    if (pal->references > 0) return;
-   if (pal->lookup) 
-     {	
-	for(j = 0; j < pal->count; j++) 
+   if (pal->lookup)
+     {
+	for(j = 0; j < pal->count; j++)
 	  pixels[j] = (unsigned long) pal->lookup[j];
 	XFreeColors(disp, cmap, pixels, pal->count, 0);
 	free(pal->lookup);

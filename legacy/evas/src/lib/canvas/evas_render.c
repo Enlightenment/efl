@@ -6,13 +6,13 @@
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_damage_rectangle_add(Evas *e, int x, int y, int w, int h)
 {
    Evas_Rectangle *r;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
@@ -27,13 +27,13 @@ evas_damage_rectangle_add(Evas *e, int x, int y, int w, int h)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_obscured_rectangle_add(Evas *e, int x, int y, int w, int h)
 {
    Evas_Rectangle *r;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
@@ -47,18 +47,18 @@ evas_obscured_rectangle_add(Evas *e, int x, int y, int w, int h)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_obscured_clear(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
-   MAGIC_CHECK_END();   
+   MAGIC_CHECK_END();
    while (e->obscures)
      {
 	Evas_Rectangle *r;
-	
+
 	r = (Evas_Rectangle *)e->obscures->data;
 	e->obscures = evas_list_remove(e->obscures, r);
 	free(r);
@@ -69,7 +69,7 @@ evas_obscured_clear(Evas *e)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_List *
 evas_render_updates(Evas *e)
@@ -85,23 +85,23 @@ evas_render_updates(Evas *e)
    void *surface;
    int ux, uy, uw, uh;
    int cx, cy, cw, ch;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
    if (!e->changed) return NULL;
-   
+
    /* phase 1. add extra updates for changed objects */
    for (l = (Evas_Object_List *)e->layers; l; l = l->next)
      {
 	Evas_Object_List *l2;
 	Evas_Layer *lay;
-	
+
 	lay = (Evas_Layer *)l;
 	for (l2 = (Evas_Object_List *)lay->objects; l2; l2 = l2->next)
 	  {
 	     Evas_Object *obj;
-	     
+
 	     obj = (Evas_Object *)l2;
 //	     if (obj->cur.cache.clip.dirty)
 	       evas_object_clip_recalc(obj);
@@ -111,7 +111,7 @@ evas_render_updates(Evas *e)
 	     /* something changed... maybe... */
 	     if (obj->changed)
 	       {
-		  if ((obj->restack) && 
+		  if ((obj->restack) &&
 		      (!obj->clip.clipees) &&
 		      (!obj->smart.smart) &&
 		      evas_object_is_active(obj))
@@ -121,16 +121,16 @@ evas_render_updates(Evas *e)
 	       }
 	     /* nothing changed at all */
 	     else
-	       {		  
+	       {
 		  if (evas_object_is_opaque(obj) &&
 		      evas_object_is_visible(obj) &&
 		      (!obj->smart.smart) &&
 		      (!obj->clip.clipees) &&
 		      (!obj->delete_me))
 		    e->engine.func->output_redraws_rect_del(e->engine.data.output,
-							    obj->cur.cache.clip.x, 
-							    obj->cur.cache.clip.y, 
-							    obj->cur.cache.clip.w, 
+							    obj->cur.cache.clip.x,
+							    obj->cur.cache.clip.y,
+							    obj->cur.cache.clip.w,
 							    obj->cur.cache.clip.h);
 	       }
 	  }
@@ -139,52 +139,52 @@ evas_render_updates(Evas *e)
    while (restack_objects)
      {
 	Evas_Object *obj;
-	
+
 	obj = restack_objects->data;
 	restack_objects = evas_list_remove(restack_objects, obj);
 	obj->func->render_pre(obj);
 	e->engine.func->output_redraws_rect_add(e->engine.data.output,
-						obj->prev.cache.clip.x, 
-						obj->prev.cache.clip.y, 
-						obj->prev.cache.clip.w, 
+						obj->prev.cache.clip.x,
+						obj->prev.cache.clip.y,
+						obj->prev.cache.clip.w,
 						obj->prev.cache.clip.h);
 	e->engine.func->output_redraws_rect_add(e->engine.data.output,
-						obj->cur.cache.clip.x, 
-						obj->cur.cache.clip.y, 
-						obj->cur.cache.clip.w, 
+						obj->cur.cache.clip.x,
+						obj->cur.cache.clip.y,
+						obj->cur.cache.clip.w,
 						obj->cur.cache.clip.h);
      }
    /* phase 3. add exposes */
    while (e->damages)
      {
 	Evas_Rectangle *r;
-	
+
 	r = e->damages->data;
 	e->damages = evas_list_remove(e->damages, r);
-	e->engine.func->output_redraws_rect_add(e->engine.data.output, 
+	e->engine.func->output_redraws_rect_add(e->engine.data.output,
 					       r->x, r->y, r->w, r->h);
 	free(r);
      }
    /* phase 4. output & viewport changes */
    if (e->viewport.changed)
      {
-	e->engine.func->output_redraws_rect_add(e->engine.data.output, 
-						0, 0, 
+	e->engine.func->output_redraws_rect_add(e->engine.data.output,
+						0, 0,
 						e->output.w, e->output.h);
      }
    if (e->output.changed)
      {
 	e->engine.func->output_resize(e->engine.data.output,
 				      e->output.w, e->output.h);
-	e->engine.func->output_redraws_rect_add(e->engine.data.output, 
-						0, 0, 
+	e->engine.func->output_redraws_rect_add(e->engine.data.output,
+						0, 0,
 						e->output.w, e->output.h);
      }
    /* phase 5. add obscures */
    for (ll = e->obscures; ll; ll = ll->next)
      {
 	Evas_Rectangle *r;
-	
+
 	r = ll->data;
 	e->engine.func->output_redraws_rect_del(e->engine.data.output,
 					       r->x, r->y, r->w, r->h);
@@ -193,11 +193,11 @@ evas_render_updates(Evas *e)
    for (ll = active_objects; ll; ll = ll->next)
      {
 	Evas_Object *obj;
-	
+
 	obj = (Evas_Object *)(ll->data);
-	if (evas_object_is_opaque(obj) && 
+	if (evas_object_is_opaque(obj) &&
 	    evas_object_is_visible(obj) &&
-	    (!obj->clip.clipees) && 
+	    (!obj->clip.clipees) &&
 	    (obj->cur.visible) &&
 	    (!obj->delete_me) &&
 	    (obj->cur.cache.clip.visible) &&
@@ -208,7 +208,7 @@ evas_render_updates(Evas *e)
    obscuring_objects_orig = obscuring_objects;
    obscuring_objects = NULL;
    /* phase 6. go thru each update rect and render objects in it*/
-   while ((surface = 
+   while ((surface =
 	   e->engine.func->output_redraws_next_update_get(e->engine.data.output,
 							 &ux, &uy, &uw, &uh,
 							 &cx, &cy, &cw, &ch)))
@@ -228,7 +228,7 @@ evas_render_updates(Evas *e)
 	for (ll = obscuring_objects_orig; ll; ll = ll->next)
 	  {
 	     Evas_Object *obj;
-	     
+
 	     obj = (Evas_Object *)(ll->data);
 	     if (evas_object_is_in_output_rect(obj, ux, uy, uw, uh))
 	       obscuring_objects = evas_list_append(obscuring_objects, obj);
@@ -239,7 +239,7 @@ evas_render_updates(Evas *e)
 	     Evas_Object *obj;
 	     Evas_List *l3;
 	     obj = (Evas_Object *)(ll->data);
-	     
+
 	     /* if it's in our outpout rect and it doesn't clip anything */
 	     if (evas_object_is_in_output_rect(obj, ux, uy, uw, uh) &&
 		 (!obj->clip.clipees) &&
@@ -250,7 +250,7 @@ evas_render_updates(Evas *e)
 		 (obj->cur.color.a > 0))
 	       {
 		  int x, y, w, h;
-		  
+
 		  if ((obscuring_objects) && (obscuring_objects->data == obj))
 		    obscuring_objects = evas_list_remove(obscuring_objects, obj);
 		  x = cx; y = cy; w = cw; h = ch;
@@ -261,14 +261,14 @@ evas_render_updates(Evas *e)
 				     obj->cur.cache.clip.h);
 		  if ((w > 0) && (h > 0))
 		    {
-		       e->engine.func->context_clip_set(e->engine.data.output, 
-							e->engine.data.context, 
+		       e->engine.func->context_clip_set(e->engine.data.output,
+							e->engine.data.context,
 							x, y, w, h);
 #if 1 /* FIXME: this can slow things down... figure out optimum... coverage */
 		       for (l3 = obscuring_objects; l3; l3 = l3->next)
 			 {
 			    Evas_Object *obj2;
-			    
+
 			    obj2 = (Evas_Object *)l3->data;
 			    e->engine.func->context_cutout_add(e->engine.data.output,
 							       e->engine.data.context,
@@ -277,8 +277,8 @@ evas_render_updates(Evas *e)
 							       obj2->cur.cache.clip.w,
 							       obj2->cur.cache.clip.h);
 			 }
-#endif		  
-		       obj->func->render(obj, 
+#endif
+		       obj->func->render(obj,
 					 e->engine.data.output,
 					 e->engine.data.context,
 					 surface,
@@ -289,8 +289,8 @@ evas_render_updates(Evas *e)
 	       }
 	  }
 	/* punch rect out */
-	e->engine.func->output_redraws_next_update_push(e->engine.data.output, 
-						       surface, 
+	e->engine.func->output_redraws_next_update_push(e->engine.data.output,
+						       surface,
 						       ux, uy, uw, uh);
 	/* free obscuring objects list */
 	obscuring_objects = evas_list_free(obscuring_objects);
@@ -298,18 +298,18 @@ evas_render_updates(Evas *e)
    /* flush redraws */
    e->engine.func->output_flush(e->engine.data.output);
    /* clear redraws */
-   e->engine.func->output_redraws_clear(e->engine.data.output);   
+   e->engine.func->output_redraws_clear(e->engine.data.output);
    /* and do a post render pass */
    for (l = (Evas_Object_List *)e->layers; l; l = l->next)
      {
 	Evas_Object_List *l2;
 	Evas_Layer *lay;
-	
+
 	lay = (Evas_Layer *)l;
 	for (l2 = (Evas_Object_List *)lay->objects; l2; l2 = l2->next)
 	  {
 	     Evas_Object *obj;
-	     
+
 	     obj = (Evas_Object *)l2;
 	     obj->pre_render_done = 0;
 	     if (obj->changed)
@@ -328,7 +328,7 @@ evas_render_updates(Evas *e)
    while (delete_objects)
      {
 	Evas_Object *obj;
-	
+
 	obj = (Evas_Object *)(delete_objects->data);
 	delete_objects = evas_list_remove(delete_objects, obj);
 	evas_object_free(obj, 1);
@@ -347,7 +347,7 @@ evas_render_updates(Evas *e)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_render_updates_free(Evas_List *updates)
@@ -363,13 +363,13 @@ evas_render_updates_free(Evas_List *updates)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_render(Evas *e)
 {
    Evas_List *updates;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();

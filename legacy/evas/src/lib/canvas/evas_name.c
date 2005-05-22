@@ -20,13 +20,13 @@ evas_object_name_set(Evas_Object *obj, const char *name)
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
-   if (obj->name) 
+   if (obj->name)
      {
 	obj->layer->evas->name_hash = evas_hash_del(obj->layer->evas->name_hash, obj->name, obj);
 	free(obj->name);
      }
    if (!name) obj->name = NULL;
-   else 
+   else
      {
 	obj->name = strdup(name);
 	obj->layer->evas->name_hash = evas_hash_add(obj->layer->evas->name_hash, obj->name, obj);

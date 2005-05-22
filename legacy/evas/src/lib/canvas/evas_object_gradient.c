@@ -11,14 +11,14 @@ typedef struct _Evas_Object_Gradient      Evas_Object_Gradient;
 struct _Evas_Object_Gradient
 {
    DATA32            magic;
-   
+
    struct {
       Evas_Angle     angle;
    } cur, prev;
    char              changed : 1;
    char              gradient_changed : 1;
    char              gradient_opaque : 1;
-   
+
    void             *engine_data;
 };
 
@@ -73,7 +73,7 @@ Evas_Object *
 evas_object_gradient_add(Evas *e)
 {
    Evas_Object *obj;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
@@ -114,10 +114,10 @@ evas_object_gradient_color_add(Evas_Object *obj, int r, int g, int b, int a, int
    MAGIC_CHECK(o, Evas_Object_Gradient, MAGIC_OBJ_GRADIENT);
    return;
    MAGIC_CHECK_END();
-   o->engine_data = obj->layer->evas->engine.func->gradient_color_add(obj->layer->evas->engine.data.output, 
+   o->engine_data = obj->layer->evas->engine.func->gradient_color_add(obj->layer->evas->engine.data.output,
 								      obj->layer->evas->engine.data.context,
 								      o->engine_data,
-								      r, g, b, a, 
+								      r, g, b, a,
 								      distance);
    o->gradient_changed = 1;
    if (a != 255) o->gradient_opaque = 0;
@@ -141,7 +141,7 @@ evas_object_gradient_colors_clear(Evas_Object *obj)
    MAGIC_CHECK(o, Evas_Object_Gradient, MAGIC_OBJ_GRADIENT);
    return;
    MAGIC_CHECK_END();
-   o->engine_data = obj->layer->evas->engine.func->gradient_colors_clear(obj->layer->evas->engine.data.output, 
+   o->engine_data = obj->layer->evas->engine.func->gradient_colors_clear(obj->layer->evas->engine.data.output,
 									 obj->layer->evas->engine.data.context,
 									 o->engine_data);
    o->gradient_changed = 1;
@@ -228,7 +228,7 @@ static void *
 evas_object_gradient_new(void)
 {
    Evas_Object_Gradient *o;
-   
+
    /* alloc obj private data */
    o = calloc(1, sizeof(Evas_Object_Gradient));
    o->magic = MAGIC_OBJ_GRADIENT;
@@ -249,7 +249,7 @@ evas_object_gradient_free(Evas_Object *obj)
    return;
    MAGIC_CHECK_END();
    /* free obj */
-   o->engine_data = obj->layer->evas->engine.func->gradient_colors_clear(obj->layer->evas->engine.data.output, 
+   o->engine_data = obj->layer->evas->engine.func->gradient_colors_clear(obj->layer->evas->engine.data.output,
 									 obj->layer->evas->engine.data.context,
 									 o->engine_data);
    o->magic = 0;
@@ -371,9 +371,9 @@ evas_object_gradient_render_pre(Evas_Object *obj)
    if (evas_object_is_visible(obj) &&
        evas_object_is_opaque(obj))
      obj->layer->evas->engine.func->output_redraws_rect_del(obj->layer->evas->engine.data.output,
-							    obj->cur.cache.clip.x, 
-							    obj->cur.cache.clip.y, 
-							    obj->cur.cache.clip.w, 
+							    obj->cur.cache.clip.x,
+							    obj->cur.cache.clip.y,
+							    obj->cur.cache.clip.w,
 							    obj->cur.cache.clip.h);
    done:
    evas_object_render_pre_effect_updates(updates, obj, is_v, was_v);
@@ -392,7 +392,7 @@ evas_object_gradient_render_post(Evas_Object *obj)
    while (obj->clip.changes)
      {
 	Evas_Rectangle *r;
-	
+
 	r = (Evas_Rectangle *)obj->clip.changes->data;
 	obj->clip.changes = evas_list_remove(obj->clip.changes, r);
 	free(r);
@@ -419,7 +419,7 @@ static int
 evas_object_gradient_was_opaque(Evas_Object *obj)
 {
    Evas_Object_Gradient *o;
-   
+
    /* this returns 1 if the internal object data implies that the object was */
    /* currently fulyl opque over the entire gradient it occupies */
    o = (Evas_Object_Gradient *)(obj->object_data);

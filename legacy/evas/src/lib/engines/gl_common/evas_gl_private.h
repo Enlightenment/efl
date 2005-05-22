@@ -29,13 +29,13 @@ void glBufferSubDataARB(GLenum target, int offset, GLsizei size,
 			                      const void *data);
 void glGetBufferSubDataARB(GLenum target, int offset,
 			                            GLsizei size, void *data);
-     
+
 void *glMapBufferARB(GLenum target, GLenum access);
 GLboolean glUnmapBufferARB(GLenum target);
-        
+
 void glGetBufferParameterivARB(GLenum target, GLenum pname, int *params);
 void glGetBufferPointervARB(GLenum target, GLenum pname, void **params);
-             
+
 #define GL_ARRAY_BUFFER_ARB                             0x8892
 #define GL_ELEMENT_ARRAY_BUFFER_ARB                     0x8893
 #define GL_ARRAY_BUFFER_BINDING_ARB                     0x8894
@@ -68,11 +68,11 @@ void glGetBufferPointervARB(GLenum target, GLenum pname, void **params);
 #define GL_BUFFER_MAPPED_ARB                            0x88BC
 #define GL_BUFFER_MAP_POINTER_ARB                       0x88BD
 #endif
-   
-   
 
 
-   
+
+
+
 
 /* evas ARGB pixel config */
 #define NATIVE_PIX_FORMAT GL_BGRA

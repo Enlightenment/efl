@@ -27,7 +27,7 @@ evas_gl_common_gradient_colors_clear(Evas_GL_Gradient *gr)
 
 void
 evas_gl_common_gradient_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Gradient *gr, int x, int y, int w, int h, double angle)
-{    
+{
    int r, g, b, a;
 
    if (dc->mul.use)
@@ -53,29 +53,29 @@ evas_gl_common_gradient_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL
    if (!gr->tex)
      _evas_gl_common_gradient_texture_build(gc, gr);
    evas_gl_common_context_texture_set(gc, gr->tex, 0, 255, 3);
-   
+
    evas_gl_common_context_read_buf_set(gc, GL_BACK);
    evas_gl_common_context_write_buf_set(gc, GL_BACK);
      {
 	double max, t[8];
 	int tw, th, i;
-	
+
 	tw = 256;
 	th = 4;
-	
+
 	t[0] = cos(((-angle + 45 + 90) * 2 * 3.141592654) / 360);
 	t[1] = sin(((-angle + 45 + 90) * 2 * 3.141592654) / 360);
-	
+
 	t[2] = cos(((-angle + 45 + 180) * 2 * 3.141592654) / 360);
 	t[3] = sin(((-angle + 45 + 180) * 2 * 3.141592654) / 360);
-	
+
 	t[4] = cos(((-angle + 45 + 270) * 2 * 3.141592654) / 360);
 	t[5] = sin(((-angle + 45 + 270) * 2 * 3.141592654) / 360);
-	
+
 	t[6] = cos(((-angle + 45 + 0) * 2 * 3.141592654) / 360);
 	t[7] = sin(((-angle + 45 + 0) * 2 * 3.141592654) / 360);
 	max = 0;
-	
+
 	for (i = 0; i < 8; i++)
 	  {
 	     if ((t[i] < 0) && (-t[i] > max)) max = -t[i];
@@ -120,7 +120,7 @@ _evas_gl_common_gradient_texture_build(Evas_GL_Context *gc, Evas_GL_Gradient *gr
 	if (im)
 	  {
 	     int i;
-	     
+
 	     for (i = 0; i < 4; i++)
 	       memcpy(im->image->data + (i * 256) , map, 256 * sizeof(DATA32));
 	     im->flags |= RGBA_IMAGE_HAS_ALPHA;

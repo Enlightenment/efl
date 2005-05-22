@@ -49,7 +49,7 @@ load_image_file_head_png(RGBA_Image *im, const char *file, const char *key)
    hasg = 0;
    f = fopen(file, "rb");
    if (!f) return -1;
-	
+
    /* if we havent read the header before, set the header data */
    fread(buf, 1, PNG_BYTES_TO_CHECK, f);
    if (!png_check_sig(buf, PNG_BYTES_TO_CHECK))
@@ -131,7 +131,7 @@ load_image_file_data_png(RGBA_Image *im, const char *file, const char *key)
    hasg = 0;
    f = fopen(file, "rb");
    if (!f) return -1;
-	
+
    /* if we havent read the header before, set the header data */
    fread(buf, 1, PNG_BYTES_TO_CHECK, f);
    if (!png_check_sig(buf, PNG_BYTES_TO_CHECK))
@@ -201,10 +201,10 @@ load_image_file_data_png(RGBA_Image *im, const char *file, const char *key)
 	return -1;
      }
    lines = (unsigned char **) malloc(h * sizeof(unsigned char *));
-   
+
    if (!lines)
      {
-	evas_common_image_surface_free(im->image);   
+	evas_common_image_surface_free(im->image);
 	png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
 	fclose(f);
 	return -1;
@@ -240,31 +240,31 @@ static void
 _JPEGFatalErrorHandler(j_common_ptr cinfo)
 {
    emptr errmgr;
-   
+
    errmgr = (emptr) cinfo->err;
    /*   cinfo->err->output_message(cinfo);*/
    longjmp(errmgr->setjmp_buffer, 1);
    return;
 }
-      
+
 static void _JPEGErrorHandler(j_common_ptr cinfo);
 static void
 _JPEGErrorHandler(j_common_ptr cinfo)
 {
    emptr errmgr;
-   
+
    errmgr = (emptr) cinfo->err;
    /*   cinfo->err->output_message(cinfo);*/
    /*   longjmp(errmgr->setjmp_buffer, 1);*/
    return;
 }
-      
-static void _JPEGErrorHandler2(j_common_ptr cinfo, int msg_level);         
+
+static void _JPEGErrorHandler2(j_common_ptr cinfo, int msg_level);
 static void
 _JPEGErrorHandler2(j_common_ptr cinfo, int msg_level)
 {
    emptr errmgr;
-   
+
    errmgr = (emptr) cinfo->err;
    /*   cinfo->err->output_message(cinfo);*/
    /*   longjmp(errmgr->setjmp_buffer, 1);*/
@@ -279,7 +279,7 @@ load_image_file_head_jpeg_internal(RGBA_Image *im, FILE *f)
    int w, h;
    struct jpeg_decompress_struct cinfo;
    struct _JPEG_error_mgr jerr;
-   
+
    if (!f) return -1;
    cinfo.err = jpeg_std_error(&(jerr.pub));
    jerr.pub.error_exit = _JPEGFatalErrorHandler;
@@ -296,7 +296,7 @@ load_image_file_head_jpeg_internal(RGBA_Image *im, FILE *f)
    cinfo.do_fancy_upsampling = FALSE;
    cinfo.do_block_smoothing = FALSE;
    jpeg_start_decompress(&cinfo);
-   
+
 /* head decoding */
    if (!im->image)
      im->image = evas_common_image_surface_new(im);
@@ -308,7 +308,7 @@ load_image_file_head_jpeg_internal(RGBA_Image *im, FILE *f)
    im->image->w = w = cinfo.output_width;
    im->image->h = h = cinfo.output_height;
 /* end head decoding */
-   
+
    jpeg_destroy_decompress(&cinfo);
    return 1;
 }
@@ -323,7 +323,7 @@ load_image_file_data_jpeg_internal(RGBA_Image *im, FILE *f)
    DATA8 *ptr, *line[16], *data;
    DATA32 *ptr2;
    int x, y, l, i, scans, count, prevy;
-   
+
    if (!f) return -1;
    cinfo.err = jpeg_std_error(&(jerr.pub));
    jerr.pub.error_exit = _JPEGFatalErrorHandler;
@@ -340,12 +340,12 @@ load_image_file_data_jpeg_internal(RGBA_Image *im, FILE *f)
    cinfo.do_fancy_upsampling = FALSE;
    cinfo.do_block_smoothing = FALSE;
    jpeg_start_decompress(&cinfo);
-   
+
 /* head decoding */
    im->image->w = w = cinfo.output_width;
    im->image->h = h = cinfo.output_height;
-/* end head decoding */   
-/* data decoding */   
+/* end head decoding */
+/* data decoding */
    if (cinfo.rec_outbuf_height > 16)
      {
 	jpeg_destroy_decompress(&cinfo);
@@ -412,7 +412,7 @@ load_image_file_data_jpeg_internal(RGBA_Image *im, FILE *f)
 	  }
      }
    free(data);
-/* end data decoding */   
+/* end data decoding */
    jpeg_finish_decompress(&cinfo);
    jpeg_destroy_decompress(&cinfo);
    return 1;
@@ -429,7 +429,7 @@ load_image_file_data_jpeg_alpha_internal(RGBA_Image *im, FILE *f)
    DATA8 *ptr, *line[16], *data;
    DATA32 *ptr2;
    int x, y, l, i, scans, count, prevy;
-   
+
    if (!f) return -1;
    cinfo.err = jpeg_std_error(&(jerr.pub));
    jerr.pub.error_exit = _JPEGFatalErrorHandler;
@@ -446,12 +446,12 @@ load_image_file_data_jpeg_alpha_internal(RGBA_Image *im, FILE *f)
    cinfo.do_fancy_upsampling = FALSE;
    cinfo.do_block_smoothing = FALSE;
    jpeg_start_decompress(&cinfo);
-   
+
 /* head decoding */
    im->image->w = w = cinfo.output_width;
    im->image->h = h = cinfo.output_height;
-/* end head decoding */   
-/* data decoding */   
+/* end head decoding */
+/* data decoding */
    if (cinfo.rec_outbuf_height > 16)
      {
 	jpeg_destroy_decompress(&cinfo);
@@ -486,8 +486,8 @@ load_image_file_data_jpeg_alpha_internal(RGBA_Image *im, FILE *f)
 	       {
 		  for (x = 0; x < w; x++)
 		    {
-		       *ptr2 = 
-			 ((*ptr2) & 0x00ffffff) | 
+		       *ptr2 =
+			 ((*ptr2) & 0x00ffffff) |
 			 (((ptr[0] + ptr[1] + ptr[2]) / 3) << 24);
 		       ptr += 3;
 		       ptr2++;
@@ -509,7 +509,7 @@ load_image_file_data_jpeg_alpha_internal(RGBA_Image *im, FILE *f)
 	       {
 		  for (x = 0; x < w; x++)
 		    {
-		       *ptr2 = 
+		       *ptr2 =
 			 ((*ptr2) & 0x00ffffff) |
 			 ((ptr[0]) << 24);
 		       ptr++;
@@ -519,12 +519,12 @@ load_image_file_data_jpeg_alpha_internal(RGBA_Image *im, FILE *f)
 	  }
      }
    free(data);
-/* end data decoding */   
+/* end data decoding */
    jpeg_finish_decompress(&cinfo);
    jpeg_destroy_decompress(&cinfo);
    return 1;
 }
-#endif 
+#endif
 
 static int load_image_file_head_jpeg(RGBA_Image *im, const char *file, const char *key);
 static int
@@ -532,7 +532,7 @@ load_image_file_head_jpeg(RGBA_Image *im, const char *file, const char *key)
 {
    int val;
    FILE *f;
-   
+
    if ((!file)) return -1;
    f = fopen(file, "rb");
    if (!f) return -1;
@@ -548,7 +548,7 @@ load_image_file_data_jpeg(RGBA_Image *im, const char *file, const char *key)
 {
    int val;
    FILE *f;
-   
+
    if ((!file)) return -1;
    f = fopen(file, "rb");
    if (!f) return -1;
@@ -567,11 +567,11 @@ load_image_file_head_eet(RGBA_Image *im, const char *file, const char *key)
    int                  w, h, alpha, compression, quality, lossy;
    Eet_File            *ef;
    int                  ok;
-   
+
    if ((!file) || (!key)) return -1;
    ef = eet_open((char *)file, EET_FILE_MODE_READ);
    if (!ef) return -1;
-   ok = eet_data_image_header_read(ef, (char *)key, 
+   ok = eet_data_image_header_read(ef, (char *)key,
 				   &w, &h, &alpha, &compression, &quality, &lossy);
    if (!ok)
      {
@@ -604,12 +604,12 @@ load_image_file_data_eet(RGBA_Image *im, const char *file, const char *key)
    int                  w, h, alpha, compression, quality, lossy;
    Eet_File            *ef;
    DATA32              *body;
-   
+
    if ((!file) || (!key)) return -1;
    if ((im->image) && (im->image->data)) return 1;
    ef = eet_open((char *)file, EET_FILE_MODE_READ);
    if (!ef) return -1;
-   body = eet_data_image_read(ef, (char *)key, 
+   body = eet_data_image_read(ef, (char *)key,
 			      &w, &h, &alpha, &compression, &quality, &lossy);
    if (!body)
      {
@@ -649,7 +649,7 @@ load_image_file_head_edb(RGBA_Image *im, const char *file, const char *key)
    E_DB_File           *db;
    DATA32              *ret;
    DATA32               header[8];
-   
+
    if ((!file) || (!key)) return -1;
    db = e_db_open_read((char *)file);
    if (!db) return -1;
@@ -669,7 +669,7 @@ load_image_file_head_edb(RGBA_Image *im, const char *file, const char *key)
 #ifdef WORDS_BIGENDIAN
      {
 	int i;
-	
+
 	for (i = 0; i < 8; i++) SWAP32(header[i]);
      }
 #endif
@@ -740,7 +740,7 @@ load_image_file_data_edb(RGBA_Image *im, const char *file, const char *key)
 #ifdef WORDS_BIGENDIAN
      {
 	int i;
-	
+
 	for (i = 0; i < 8; i++) SWAP32(header[i]);
      }
 #endif
@@ -790,29 +790,29 @@ load_image_file_data_edb(RGBA_Image *im, const char *file, const char *key)
 #ifdef WORDS_BIGENDIAN
 	  {
 	     int x;
-	     
+
 	     memcpy(im->image->data, body, w * h * sizeof(DATA32));
 	     for (x = 0; x < (w * h); x++) SWAP32(im->image->data[x]);
 	  }
 #else
 	memcpy(im->image->data, body, w * h * sizeof(DATA32));
-#endif       
+#endif
      }
    else
      {
 	uLongf dlen;
-	
+
 	dlen = w * h * sizeof(DATA32);
-	uncompress((Bytef *)im->image->data, &dlen, (Bytef *)body, 
+	uncompress((Bytef *)im->image->data, &dlen, (Bytef *)body,
 		   (uLongf)(size - 32));
 #ifdef WORDS_BIGENDIAN
 	  {
 	     int x;
-	     
+
 	     for (x = 0; x < (w * h); x++) SWAP32(im->image->data[x]);
 	  }
 #endif
-     }   
+     }
    free(ret);
    e_db_close(db);
    return 1;
@@ -851,7 +851,7 @@ evas_common_load_image_from_file(const char *file, const char *key)
 
    if (file == NULL)
         return NULL;
-   
+
    im = evas_common_image_find(file, key, 0);
    if (im)
      {
@@ -871,7 +871,7 @@ evas_common_load_image_from_file(const char *file, const char *key)
 	if (p)
 	  {
 	     p++;
-	     
+
 #ifdef BUILD_LOADER_PNG
 	     if (ok == -1)
 	       {
@@ -916,7 +916,7 @@ evas_common_load_image_from_file(const char *file, const char *key)
 #endif
 	  }
      }
-   
+
 #ifdef BUILD_LOADER_PNG
    if (ok == -1)
      {
@@ -959,7 +959,7 @@ evas_common_load_image_from_file(const char *file, const char *key)
      }
    else
      {
-//	if (real_file) free(real_file);	
+//	if (real_file) free(real_file);
      }
    if (key)
      im->info.key = strdup(key);
@@ -971,7 +971,7 @@ void
 evas_common_load_image_data_from_file(RGBA_Image *im)
 {
    int ok;
-   
+
    if (im->image->data) return;
    ok = -1;
 #ifdef BUILD_LOADER_PNG
@@ -996,7 +996,7 @@ evas_common_load_image_data_from_file(RGBA_Image *im)
 	if (!im->image->data)
 	  {
 	     const DATA32 pixel = 0xffffffff;
-	     
+
 	     im->image->w = 1;
 	     im->image->h = 1;
 	     im->image->data = (DATA32 *)&pixel;

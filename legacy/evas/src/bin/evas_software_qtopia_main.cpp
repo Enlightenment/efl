@@ -69,7 +69,7 @@ void EvasTargetWidget::resizeEvent(QResizeEvent *e)
 void EvasTargetWidget::idleHandler(void)
 {
    loop();
-   evas_render(evas);   
+   evas_render(evas);
 }
 
 void EvasTargetWidget::enableFullscreen(void)
@@ -85,25 +85,25 @@ void EvasTargetWidget::disableFullscreen(void)
 {
    fullscreen = 0;
    showNormal();
-   showMaximized();   
+   showMaximized();
 }
 
 EvasTestApp::EvasTestApp(QWidget *parent, const char *name, int wFlags)
   : QMainWindow(parent, name, wFlags)
 {
    setCaption(tr("Evas Qtopia Demo"));
-   
+
    evas_target_widget = new EvasTargetWidget(this, "EvasTargetWidget");
-   
+
    evas = evas_new();
    evas_output_method_set(evas, evas_render_method_lookup("software_qtopia"));
    evas_output_size_set(evas, win_w, win_h);
    evas_output_viewport_set(evas, 0, 0, win_w, win_h);
      {
 	Evas_Engine_Info_Software_Qtopia *einfo;
-	
+
 	einfo = (Evas_Engine_Info_Software_Qtopia *)evas_engine_info_get(evas);
-	
+
 	/* the following is specific to the engine */
 	einfo->info.target = evas_target_widget;
 	evas_engine_info_set(evas, (Evas_Engine_Info *) einfo);
@@ -132,8 +132,8 @@ void EvasTestApp::resizeEvent(QResizeEvent *e)
 int
 main(int argc, char **argv)
 {
-   QPEApplication a(argc, argv);   
+   QPEApplication a(argc, argv);
    EvasTestApp test_app;
-   a.showMainDocumentWidget(&test_app);   
+   a.showMainDocumentWidget(&test_app);
    return a.exec();
 }

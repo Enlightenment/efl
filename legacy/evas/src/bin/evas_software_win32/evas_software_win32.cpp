@@ -36,7 +36,7 @@ int WINAPI WinMain(	HINSTANCE hInstance,
 
 
 	// Perform application initialization:
-	if (!InitInstance (hInstance, nCmdShow)) 
+	if (!InitInstance (hInstance, nCmdShow))
 	{
 		return FALSE;
 	}
@@ -51,9 +51,9 @@ int WINAPI WinMain(	HINSTANCE hInstance,
 	// Main message loop:
 	for (;;)
 	{
-		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) 
+		while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
-			if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg)) 
+			if (!TranslateAccelerator(msg.hwnd, hAccelTable, &msg))
 			{
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
@@ -76,7 +76,7 @@ int WINAPI WinMain(	HINSTANCE hInstance,
 //
 //  COMMENTS:
 //
-//    It is important to call this function so that the application 
+//    It is important to call this function so that the application
 //    will get 'well formed' small icons associated with it.
 //
 ATOM MyRegisterClass(HINSTANCE hInstance, LPTSTR szWindowClass)
@@ -123,7 +123,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 		0, 0, (int)win_w, (int)win_h+24, NULL, NULL, hInstance, NULL);
 
 	if (!hWnd)
-	{	
+	{
 		return FALSE;
 	}
 
@@ -141,7 +141,7 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    {
 		Evas_Engine_Info_Software_Win32_GDI *einfo;
 
-		
+
 		einfo = (Evas_Engine_Info_Software_Win32_GDI *)evas_engine_info_get(evas);
 
 		einfo->info.hwnd = hWnd;
@@ -196,11 +196,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	RECT rect;
 
 
-	switch (message) 
+	switch (message)
 	{
 		case WM_COMMAND:
-			wmId    = LOWORD(wParam); 
-			wmEvent = HIWORD(wParam); 
+			wmId    = LOWORD(wParam);
+			wmEvent = HIWORD(wParam);
 			// Parse the menu selections:
 			switch (wmId)
 			{
@@ -215,7 +215,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			}
 			break;
 		case WM_CREATE:
-//			hwndCB = CommandBar_Create(hInst, hWnd, 1);			
+//			hwndCB = CommandBar_Create(hInst, hWnd, 1);
 //			CommandBar_InsertMenubar(hwndCB, hInst, IDM_MENU, 0);
 //			CommandBar_AddAdornments(hwndCB, 0, 0);
 			break;
@@ -224,8 +224,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		  evas_event_feed_mouse_move(evas, LOWORD(lParam), HIWORD(lParam));
 		  evas_event_feed_mouse_down(evas, 1);
 			break;
-		
-		
+
+
 		case WM_LBUTTONUP:
 		  evas_event_feed_mouse_move(evas, LOWORD(lParam), HIWORD(lParam));
 		  evas_event_feed_mouse_up(evas, 1);
@@ -302,8 +302,8 @@ LRESULT CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 				DlgHeight	= rt1.bottom - rt1.top ;
 				NewPosX		= (rt.right - rt.left - DlgWidth)/2;
 				NewPosY		= (rt.bottom - rt.top - DlgHeight)/2;
-				
-				// if the About box is larger than the physical screen 
+
+				// if the About box is larger than the physical screen
 				if (NewPosX < 0) NewPosX = 0;
 				if (NewPosY < 0) NewPosY = 0;
 				SetWindowPos(hDlg, 0, NewPosX, NewPosY,

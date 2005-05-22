@@ -10,7 +10,7 @@ RGBA_Gradient *
 evas_common_gradient_new(void)
 {
    RGBA_Gradient *gr;
-   
+
    gr = calloc(1, sizeof(RGBA_Gradient));
    return gr;
 }
@@ -43,7 +43,7 @@ void
 evas_common_gradient_color_add(RGBA_Gradient *gr, int r, int g, int b, int a, int dist)
 {
    RGBA_Gradient_Color *gc;
-   
+
    gc         = malloc(sizeof(RGBA_Gradient_Color));
    gc->r      = r;
    gc->g      = g;
@@ -65,9 +65,9 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, 
    RGBA_Image *tmp;
 
    o_x = x; o_y = y; o_w = w; o_h = h;
-   
+
    if ((w <= 0) || (h <= 0)) return;
-   
+
    if (!(RECTS_INTERSECT(x, y, w, h, 0, 0, dst->image->w, dst->image->h)))
      return;
    if (x < 0)
@@ -84,7 +84,7 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, 
    if ((x + w) > dst->image->w) w = dst->image->w - x;
    if ((y + h) > dst->image->h) h = dst->image->h - y;
    if ((w <= 0) || (h <= 0)) return;
-   
+
    if (dc->clip.use)
      {
 	if (dc->clip.x > x)
@@ -98,13 +98,13 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, 
 	     y = dc->clip.y;
 	  }
 	if ((w <= 0) || (h <= 0)) return;
-	if ((dc->clip.x + dc->clip.w) < (x + w)) 
+	if ((dc->clip.x + dc->clip.w) < (x + w))
 	  w = dc->clip.x + dc->clip.w - x;
-	if ((dc->clip.y + dc->clip.h) < (y + h)) 
+	if ((dc->clip.y + dc->clip.h) < (y + h))
 	  h = dc->clip.y + dc->clip.h - y;
      }
    if ((w <= 0) || (h <= 0)) return;
-   
+
    hlut = malloc(sizeof(int) * o_w);
    if (!hlut) return;
    vlut = malloc(sizeof(int) * o_h);
@@ -113,15 +113,15 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, 
 	free(hlut);
 	return;
      }
-   
+
    xoff = x - o_x;
    yoff = y - o_y;
-   
+
    if (o_w > o_h) len = o_w * 16;
    else           len = o_h * 16;
 
    map = evas_common_gradient_map(gr, dc, len);
-   if (!map) 
+   if (!map)
      {
 	free(hlut);
 	free(vlut);
@@ -144,7 +144,7 @@ evas_common_gradient_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, 
    divh = ((o_h - 1) << 5);
    if (divw < 1) divw = 1;
    if (divh < 1) divh = 1;
-   
+
    if (xx < 0)
      {
 	for (i = 0; i < o_w; i++) hlut[i] = (-xx * (o_w - 1 - i) * len) / divw;
@@ -192,10 +192,10 @@ evas_common_gradient_map(RGBA_Gradient *gr, RGBA_Draw_Context *dc, int len)
    Evas_Object_List *l;
    RGBA_Gradient_Color *gc, *gc_next;
    int r, g, b, a, rr, gg, bb, aa, i, j, inc, v1, v2, total;
-   
+
    if (!gr->colors) return NULL;
    if (!gr->colors->next) return NULL;
-   
+
    total = 1;
    for (l = gr->colors; l->next; l = l->next)
      {
@@ -214,7 +214,7 @@ evas_common_gradient_map(RGBA_Gradient *gr, RGBA_Draw_Context *dc, int len)
    for (l = gr->colors; l; l = l->next)
      {
 	gc = (RGBA_Gradient_Color *)l;
-	
+
 	if (l->next)
 	  {
 	     gc_next = (RGBA_Gradient_Color *)l->next;
@@ -234,7 +234,7 @@ evas_common_gradient_map(RGBA_Gradient *gr, RGBA_Draw_Context *dc, int len)
 		       a = ((a + 1) * (A_VAL(&dc->mul.col))) >> 8;
 		    }
 		  pmap[i++] = (a << 24) | (r << 16) | (g << 8) | b;
-	       }	     
+	       }
 	  }
 	else
 	  {
@@ -242,7 +242,7 @@ evas_common_gradient_map(RGBA_Gradient *gr, RGBA_Draw_Context *dc, int len)
 	     g = gc->g;
 	     b = gc->b;
 	     a = gc->a;
-	     pmap[i++] = (a << 24) | (r << 16) | (g << 8) | b;	     
+	     pmap[i++] = (a << 24) | (r << 16) | (g << 8) | b;
 	  }
      }
    inc = ((total - 1) << 16) / (len);

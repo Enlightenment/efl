@@ -73,7 +73,7 @@ main(int argc, char **argv)
    printf("################ evas free\n");
    evas_free(evas);
    printf("evas freed. DONE\n");
-	
+
    evas = evas_new();
    evas_output_method_set(evas, evas_render_method_lookup("software_x11"));
    evas_output_size_set(evas, win_w, win_h);
@@ -97,7 +97,7 @@ main(int argc, char **argv)
    printf("################ evas free\n");
    evas_free(evas);
    printf("evas freed. DONE\n");
-	
+
    evas = evas_new();
    evas_output_method_set(evas, evas_render_method_lookup("software_x11"));
    evas_output_size_set(evas, win_w, win_h);
@@ -121,7 +121,7 @@ main(int argc, char **argv)
    printf("################ evas free\n");
    evas_free(evas);
    printf("evas freed. DONE\n");
-	
+
    evas = evas_new();
    evas_output_method_set(evas, evas_render_method_lookup("software_x11"));
    evas_output_size_set(evas, win_w, win_h);
@@ -145,7 +145,7 @@ main(int argc, char **argv)
    printf("################ evas free\n");
    evas_free(evas);
    printf("evas freed. DONE\n");
-   
+
    evas = evas_new();
    evas_output_method_set(evas, evas_render_method_lookup("software_x11"));
    evas_output_size_set(evas, win_w, win_h);
@@ -184,14 +184,14 @@ main(int argc, char **argv)
 	       case ButtonPress:
 		  if (ev.xbutton.button == 3)
 		     exit(0);
-#if 0		  
+#if 0
 		  if (!pause_me)
 		     pause_me = 1;
 		  else if (pause_me == 1)
 		     pause_me = 2;
 		  else
 		     pause_me = 1;
-#endif		  
+#endif
 		  evas_event_feed_mouse_move(evas, ev.xbutton.x, ev.xbutton.y, NULL);
 		  evas_event_feed_mouse_down(evas, ev.xbutton.button, EVAS_BUTTON_NONE, NULL);
 		  break;

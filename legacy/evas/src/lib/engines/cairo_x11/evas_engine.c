@@ -162,7 +162,7 @@ Evas_Func evas_engine_cairo_x11_func =
      evas_engine_cairo_x11_font_h_advance_get,
      evas_engine_cairo_x11_font_v_advance_get,
      evas_engine_cairo_x11_font_char_coords_get,
-     evas_engine_cairo_x11_font_char_at_coords_get,     
+     evas_engine_cairo_x11_font_char_at_coords_get,
      evas_engine_cairo_x11_font_draw,
      /* font cache functions */
      evas_engine_cairo_x11_font_cache_flush,
@@ -174,7 +174,7 @@ static void *
 evas_engine_cairo_x11_info(Evas *e)
 {
    Evas_Engine_Info_Cairo_X11 *info;
-   
+
    info = calloc(1, sizeof(Evas_Engine_Info_Cairo_X11));
    if (!info) return NULL;
    info->magic.magic = rand();
@@ -187,7 +187,7 @@ static void
 evas_engine_cairo_x11_info_free(Evas *e, void *info)
 {
    Evas_Engine_Info_Cairo_X11 *in;
-   
+
    in = (Evas_Engine_Info_Cairo_X11 *)info;
    free(in);
 }
@@ -197,22 +197,22 @@ evas_engine_cairo_x11_setup(Evas *e, void *in)
 {
    Render_Engine *re;
    Evas_Engine_Info_Cairo_X11 *info;
-   
+
    info = (Evas_Engine_Info_Cairo_X11 *)in;
    printf("CAIRO: setup info...\n");
    if (!e->engine.data.output)
-     e->engine.data.output = 
+     e->engine.data.output =
      evas_engine_cairo_x11_output_setup(e->output.w,
 					e->output.h,
 					info->info.display,
 					info->info.drawable,
 					info->info.visual,
 					info->info.colormap,
-					info->info.depth);				     
+					info->info.depth);
    if (!e->engine.data.output) return;
-   
+
    if (!e->engine.data.context)
-     e->engine.data.context = 
+     e->engine.data.context =
      e->engine.func->context_new(e->engine.data.output);
    re = e->engine.data.output;
 }
@@ -222,9 +222,9 @@ evas_engine_cairo_x11_output_setup(int w, int h, Display *disp, Drawable draw, V
 {
    Render_Engine *re;
    int eb, evb;
-   
+
    re = calloc(1, sizeof(Render_Engine));
-   re->win = evas_engine_cairo_x11_window_new(disp, draw, 
+   re->win = evas_engine_cairo_x11_window_new(disp, draw,
 					   0 /* FIXME: screen 0 assumption */,
 					   vis, cmap, depth, w, h);
    if (!re->win)
@@ -234,7 +234,7 @@ evas_engine_cairo_x11_output_setup(int w, int h, Display *disp, Drawable draw, V
      }
    printf("CAIRO: cairo window setup done.\n");
    evas_common_cpu_init();
-   
+
    evas_common_blend_init();
    evas_common_image_init();
    evas_common_convert_init();
@@ -246,10 +246,10 @@ evas_engine_cairo_x11_output_setup(int w, int h, Display *disp, Drawable draw, V
    evas_common_font_init();
    evas_common_draw_init();
    evas_common_tilebuf_init();
-   
+
    re->tb = evas_common_tilebuf_new(w, h);
    evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
-   
+
    return re;
 }
 
@@ -257,14 +257,14 @@ static void
 evas_engine_cairo_x11_output_free(void *data)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
 
    evas_common_tilebuf_free(re->tb);
    if (re->rects) evas_common_tilebuf_free_render_rects(re->rects);
-   
+
    free(re);
-   
+
    evas_common_font_shutdown();
    evas_common_image_shutdown();
 }
@@ -273,11 +273,11 @@ static void
 evas_engine_cairo_x11_output_resize(void *data, int w, int h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    re->win->w = w;
    re->win->h = h;
-   
+
    evas_common_tilebuf_free(re->tb);
    re->tb = evas_common_tilebuf_new(w, h);
    if (re->tb)
@@ -288,7 +288,7 @@ static void
 evas_engine_cairo_x11_output_tile_size_set(void *data, int w, int h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_tilebuf_set_tile_size(re->tb, w, h);
 }
@@ -297,7 +297,7 @@ static void
 evas_engine_cairo_x11_output_redraws_rect_add(void *data, int x, int y, int w, int h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_tilebuf_add_redraw(re->tb, x, y, w, h);
 }
@@ -306,7 +306,7 @@ static void
 evas_engine_cairo_x11_output_redraws_rect_del(void *data, int x, int y, int w, int h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_tilebuf_del_redraw(re->tb, x, y, w, h);
 }
@@ -315,7 +315,7 @@ static void
 evas_engine_cairo_x11_output_redraws_clear(void *data)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_tilebuf_clear(re->tb);
 
@@ -337,7 +337,7 @@ evas_engine_cairo_x11_output_redraws_next_update_get(void *data, int *x, int *y,
    Tilebuf_Rect *rect;
    int ux, uy, uw, uh;
    Update *u;
-   
+
    re = (Render_Engine *)data;
    if (re->end)
      {
@@ -374,7 +374,7 @@ evas_engine_cairo_x11_output_redraws_next_update_push(void *data, void *surface,
 {
    Render_Engine *re;
    Update *u;
-   
+
    re = (Render_Engine *)data;
    u = surface;
    XCopyArea(re->win->disp, u->pm, re->win->win, u->gc, 0, 0, w, h, x, y);
@@ -388,7 +388,7 @@ evas_engine_cairo_x11_output_flush(void *data)
 {
    Render_Engine *re;
    static int fr = 0;
-   
+
    re = (Render_Engine *)data;
    XSync(re->win->disp, False);
 }
@@ -397,7 +397,7 @@ static void *
 evas_engine_cairo_x11_context_new(void *data)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return evas_common_draw_context_new();
 }
@@ -406,7 +406,7 @@ static void
 evas_engine_cairo_x11_context_free(void *data, void *context)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_draw_context_free(context);
 }
@@ -415,7 +415,7 @@ static void
 evas_engine_cairo_x11_context_clip_set(void *data, void *context, int x, int y, int w, int h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_draw_context_set_clip(context, x, y, w, h);
 }
@@ -424,7 +424,7 @@ static void
 evas_engine_cairo_x11_context_clip_clip(void *data, void *context, int x, int y, int w, int h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_draw_context_clip_clip(context, x, y, w, h);
 }
@@ -433,7 +433,7 @@ static void
 evas_engine_cairo_x11_context_clip_unset(void *data, void *context)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_draw_context_unset_clip(context);
 }
@@ -442,7 +442,7 @@ static int
 evas_engine_cairo_x11_context_clip_get(void *data, void *context, int *x, int *y, int *w, int *h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    *x = ((RGBA_Draw_Context *)context)->clip.x;
    *y = ((RGBA_Draw_Context *)context)->clip.y;
@@ -455,7 +455,7 @@ static void
 evas_engine_cairo_x11_context_color_set(void *data, void *context, int r, int g, int b, int a)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_draw_context_set_color(context, r, g, b, a);
 }
@@ -464,7 +464,7 @@ static int
 evas_engine_cairo_x11_context_color_get(void *data, void *context, int *r, int *g, int *b, int *a)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    *r = (int)(R_VAL(&((RGBA_Draw_Context *)context)->col.col));
    *g = (int)(G_VAL(&((RGBA_Draw_Context *)context)->col.col));
@@ -477,7 +477,7 @@ static void
 evas_engine_cairo_x11_context_multiplier_set(void *data, void *context, int r, int g, int b, int a)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_draw_context_set_multiplier(context, r, g, b, a);
 }
@@ -486,7 +486,7 @@ static void
 evas_engine_cairo_x11_context_multiplier_unset(void *data, void *context)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    evas_common_draw_context_unset_multiplier(context);
 }
@@ -495,7 +495,7 @@ static int
 evas_engine_cairo_x11_context_multiplier_get(void *data, void *context, int *r, int *g, int *b, int *a)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    *r = (int)(R_VAL(&((RGBA_Draw_Context *)context)->mul.col));
    *g = (int)(G_VAL(&((RGBA_Draw_Context *)context)->mul.col));
@@ -508,7 +508,7 @@ static void
 evas_engine_cairo_x11_context_cutout_add(void *data, void *context, int x, int y, int w, int h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    /* not used in cairo engine */
 }
@@ -517,7 +517,7 @@ static void
 evas_engine_cairo_x11_context_cutout_clear(void *data, void *context)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    /* not used in cairo engine */
 }
@@ -531,7 +531,7 @@ static void
 evas_engine_cairo_x11_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
 }
 
@@ -539,7 +539,7 @@ static void
 evas_engine_cairo_x11_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
 }
 
@@ -547,7 +547,7 @@ static void *
 evas_engine_cairo_x11_polygon_point_add(void *data, void *context, void *polygon, int x, int y)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return NULL;
 }
@@ -556,7 +556,7 @@ static void *
 evas_engine_cairo_x11_polygon_points_clear(void *data, void *context, void *polygon)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return NULL;
 }
@@ -565,7 +565,7 @@ static void
 evas_engine_cairo_x11_polygon_draw(void *data, void *context, void *surface, void *polygon)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
 }
 
@@ -573,7 +573,7 @@ static void *
 evas_engine_cairo_x11_gradient_color_add(void *data, void *context, void *gradient, int r, int g, int b, int a, int distance)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return NULL;
 }
@@ -582,7 +582,7 @@ static void *
 evas_engine_cairo_x11_gradient_colors_clear(void *data, void *context, void *gradient)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return NULL;
 }
@@ -591,7 +591,7 @@ static void
 evas_engine_cairo_x11_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
 }
 
@@ -604,7 +604,7 @@ evas_engine_cairo_x11_image_load(void *data, char *file, char *key, int *error)
    *error = 0;
      {
 	Evas_Cairo_Image *im;
-	
+
 	im = calloc(1, sizeof(Evas_Cairo_Image));
 	im->im = evas_common_load_image_from_file(file, key);
 	if (!im->im)
@@ -622,7 +622,7 @@ static void *
 evas_engine_cairo_x11_image_new_from_data(void *data, int w, int h, DATA32 *image_data)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return NULL;
 }
@@ -631,7 +631,7 @@ static void *
 evas_engine_cairo_x11_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return NULL;
 }
@@ -648,7 +648,7 @@ static void
 evas_engine_cairo_x11_image_size_get(void *data, void *image, int *w, int *h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    if (!image)
      {
@@ -658,7 +658,7 @@ evas_engine_cairo_x11_image_size_get(void *data, void *image, int *w, int *h)
      }
      {
 	Evas_Cairo_Image *im;
-	
+
 	im = image;
 	if (w) *w = im->im->image->w;
 	if (h) *h = im->im->image->h;
@@ -669,7 +669,7 @@ static void *
 evas_engine_cairo_x11_image_size_set(void *data, void *image, int w, int h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return image;
 }
@@ -678,7 +678,7 @@ static void *
 evas_engine_cairo_x11_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return image;
 }
@@ -687,7 +687,7 @@ static void *
 evas_engine_cairo_x11_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    *image_data = NULL;
    return image;
@@ -697,7 +697,7 @@ static void *
 evas_engine_cairo_x11_image_data_put(void *data, void *image, DATA32 *image_data)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return image;
 }
@@ -706,7 +706,7 @@ static void *
 evas_engine_cairo_x11_image_alpha_set(void *data, void *image, int has_alpha)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return image;
 }
@@ -715,14 +715,14 @@ static int
 evas_engine_cairo_x11_image_alpha_get(void *data, void *image)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    if (!image) return 0;
      {
 	Evas_Cairo_Image *im;
-	
+
 	im = image;
-	if (im->im->flags & RGBA_IMAGE_HAS_ALPHA) return 1;	
+	if (im->im->flags & RGBA_IMAGE_HAS_ALPHA) return 1;
      }
    return 0;
 }
@@ -731,14 +731,14 @@ static void
 evas_engine_cairo_x11_image_draw(void *data, void *context, void *surface, void *image, int src_x, int src_y, int src_w, int src_h, int dst_x, int dst_y, int dst_w, int dst_h, int smooth)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    if (!image) return;
      {
 	Evas_Cairo_Image *im;
 	Update *u;
 	DATA32 *pix;
-	
+
 	im = image;
 	u = surface;
 	evas_common_load_image_data_from_file(im->im);
@@ -752,13 +752,13 @@ evas_engine_cairo_x11_image_draw(void *data, void *context, void *surface, void 
 		    {
 		       int i, n;
 		       DATA32 *p;
-		       
+
 		       n = im->im->image->w * im->im->image->h;
 		       p = im->mulpix;
 		       for (i = 0; i < n; i++)
 			 {
 			    int a;
-			    
+
 			    a = A_VAL(pix);
 			    R_VAL(p) = (R_VAL(pix) * a) / 255;
 			    G_VAL(p) = (G_VAL(pix) * a) / 255;
@@ -806,7 +806,7 @@ static char *
 evas_engine_cairo_x11_image_comment_get(void *data, void *image, char *key)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return NULL;
 }
@@ -815,7 +815,7 @@ static char *
 evas_engine_cairo_x11_image_format_get(void *data, void *image)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return "";
 }
@@ -825,7 +825,7 @@ evas_engine_cairo_x11_image_cache_flush(void *data)
 {
    Render_Engine *re;
    int tmp_size;
-   
+
    re = (Render_Engine *)data;
    tmp_size = evas_common_image_get_cache();
    evas_common_image_set_cache(0);
@@ -872,7 +872,7 @@ static void *
 evas_engine_cairo_x11_font_add(void *data, void *font, char *name, int size)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return evas_common_font_add(font, name, size);
 }
@@ -881,7 +881,7 @@ static void *
 evas_engine_cairo_x11_font_memory_add(void *data, void *font, char *name, int size, const void *fdata, int fdata_size)
 {
    Render_Engine *re;
-   
+
    re = (Render_Engine *)data;
    return evas_common_font_memory_add(font, name, size, fdata, fdata_size);
 }
@@ -904,7 +904,7 @@ evas_engine_cairo_x11_font_ascent_get(void *data, void *font)
    return evas_common_font_ascent_get(font);
 }
 
-static int 
+static int
 evas_engine_cairo_x11_font_descent_get(void *data, void *font)
 {
    Render_Engine *re;
@@ -954,7 +954,7 @@ evas_engine_cairo_x11_font_h_advance_get(void *data, void *font, char *text)
 {
    Render_Engine *re;
    int h, v;
-   
+
    re = (Render_Engine *)data;
    evas_common_font_query_advance(font, text, &h, &v);
    return h;
@@ -965,7 +965,7 @@ evas_engine_cairo_x11_font_v_advance_get(void *data, void *font, char *text)
 {
    Render_Engine *re;
    int h, v;
-   
+
    re = (Render_Engine *)data;
    evas_common_font_query_advance(font, text, &h, &v);
    return v;
@@ -986,7 +986,7 @@ evas_engine_cairo_x11_font_char_at_coords_get(void *data, void *font, char *text
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   return evas_common_font_query_text_at_pos(font, text, x, y, cx, cy, cw, ch); 
+   return evas_common_font_query_text_at_pos(font, text, x, y, cx, cy, cw, ch);
 }
 
 static void

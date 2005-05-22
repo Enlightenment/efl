@@ -5,7 +5,7 @@
    int xap;
    int sow;
    int dyy, dxx;
-   
+
    dptr = dst_ptr;
    sow = src->image->w;
    dyy = dst_clip_y - dst_region_y;
@@ -18,7 +18,7 @@
 	       {
 		  Cx = XAP >> 16;
 		  xap = XAP & 0xffff;
-		  
+
 		  pix = ypoints[dyy + y] + xpoints[dxx + x] + (src_region_y * sow) + src_region_x;
 		  r = (R_VAL(pix) * xap) >> 10;
 		  g = (G_VAL(pix) * xap) >> 10;
@@ -98,7 +98,7 @@
 	       {
 		  Cx = XAP >> 16;
 		  xap = XAP & 0xffff;
-		  
+
 		  pix = ypoints[dyy + y] + xpoints[dxx + x] + (src_region_y * sow) + src_region_x;
 		  r = (R_VAL(pix) * xap) >> 10;
 		  g = (G_VAL(pix) * xap) >> 10;

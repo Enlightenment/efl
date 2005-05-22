@@ -50,15 +50,15 @@ static void
 fb_init_palette_332(FB_Mode *mode)
 {
   int r, g, b, i;
-  
+
   if (mode->fb_var.bits_per_pixel != 8)
     return;
   i = 0;
 
   if (ioctl(fb, FBIOGETCMAP, &cmap) == -1)
     perror("ioctl FBIOGETCMAP");
-  
-  /* generate the palette */ 
+
+  /* generate the palette */
   for (r = 0; r < 8; r++)
     {
       for (g = 0; g < 8; g++)
@@ -66,7 +66,7 @@ fb_init_palette_332(FB_Mode *mode)
 	  for (b = 0; b < 4; b++)
 	    {
 	      int val;
-	      
+
 	      val = (r << 5) | (r << 2) | (r >> 1);
 	      red[i] = (val << 8) | val;
 	      val = (g << 5) | (g << 2) | (g >> 1);
@@ -81,14 +81,14 @@ fb_init_palette_332(FB_Mode *mode)
   /* set colormap */
   if (ioctl(fb, FBIOPUTCMAP, &cmap) == -1)
     perror("ioctl FBIOPUTCMAP");
-   
+
 }
 
 static void
 fb_init_palette_linear(FB_Mode *mode)
 {
   int i;
-  
+
   if (mode->fb_var.bits_per_pixel != 8)
     return;
 
@@ -102,11 +102,11 @@ fb_init_palette_linear(FB_Mode *mode)
     green[i] = (i << 8) | i;
   for (i = 0; i < 256; i++)
     blue[i] = (i << 8) | i;
-  
+
   /* set colormap */
   if (ioctl(fb, FBIOPUTCMAP, &cmap) == -1)
     perror("ioctl FBIOPUTCMAP");
-   
+
 }
 
 /* -------------------------------------------------------------------- */
@@ -132,14 +132,14 @@ fb_list_modes(int *num_return)
       if (sscanf(line, "mode \"%250[^\"]\"", label) == 1)
 	{
 	  char f1[32], f2[32], f3[32], f4[32];
-	  
+
 	  f1[0] = 0; f2[0] = 0; f3[0] = 0; f4[0] = 0;
 	  sscanf(label, "%30[^x]x%30[^-]-%30[^-]-%30s", f1, f2, f3, f4);
 	  if ((f1[0]) && (f2[0]))
 	    {
 	      int geometry = 0;
 	      int timings = 0;
-	      
+
 	      num++;
 	      modes = realloc(modes, num * sizeof(FB_Mode));
 	      modes[num - 1].width = atoi(f1);
@@ -149,24 +149,24 @@ fb_list_modes(int *num_return)
 	      else
 		modes[num - 1].refresh = 0;
 	      modes[num - 1].fb_var.sync = 0;
-	      while ((fgets(line, sizeof(line) - 1, f)) && 
+	      while ((fgets(line, sizeof(line) - 1, f)) &&
 		     (!strstr(line, "endmode")))
 		{
-		  
+
 		  if (sscanf(line," geometry %i %i %i %i %i",
-			     &modes[num - 1].fb_var.xres, 
+			     &modes[num - 1].fb_var.xres,
 			     &modes[num - 1].fb_var.yres,
-			     &modes[num - 1].fb_var.xres_virtual, 
+			     &modes[num - 1].fb_var.xres_virtual,
 			     &modes[num - 1].fb_var.yres_virtual,
 			     &modes[num - 1].fb_var.bits_per_pixel) == 5)
 		    geometry = 1;
 		  if (sscanf(line," timings %i %i %i %i %i %i %i",
 			     &modes[num - 1].fb_var.pixclock,
-			     &modes[num - 1].fb_var.left_margin,  
+			     &modes[num - 1].fb_var.left_margin,
 			     &modes[num - 1].fb_var.right_margin,
-			     &modes[num - 1].fb_var.upper_margin, 
+			     &modes[num - 1].fb_var.upper_margin,
 			     &modes[num - 1].fb_var.lower_margin,
-			     &modes[num - 1].fb_var.hsync_len,    
+			     &modes[num - 1].fb_var.hsync_len,
 			     &modes[num - 1].fb_var.vsync_len) == 7)
 		    timings = 1;
 		  if ((sscanf(line, " hsync %15s", value) == 1) &&
@@ -203,7 +203,7 @@ fb_list_modes(int *num_return)
 		  modes[num - 1].fb_var.yoffset = 0;
 		}
 	    }
-	  
+
 	}
     }
   fclose(f);
@@ -217,12 +217,12 @@ fb_setmode(int width, int height, int depth, int refresh)
   FB_Mode *modes, *mode = NULL;
   int      i, num_modes;
 
-  modes = fb_list_modes(&num_modes);  
+  modes = fb_list_modes(&num_modes);
   if (modes)
     {
       for (i = 0; i < num_modes; i++)
 	{
-	  if ((modes[i].width == width) && 
+	  if ((modes[i].width == width) &&
 	      (modes[i].height == height) &&
 	      (!depth || modes[i].fb_var.bits_per_pixel == depth) &&
 	      (modes[i].refresh == refresh))
@@ -231,7 +231,7 @@ fb_setmode(int width, int height, int depth, int refresh)
 
 	      if (ioctl(fb, FBIOPUT_VSCREENINFO, &modes[i].fb_var) == -1)
 		perror("ioctl FBIOPUT_VSCREENINFO");
-	       
+
 	      free(modes);
 	      return fb_getmode();
 	    }
@@ -248,7 +248,7 @@ fb_changedepth(FB_Mode *cur_mode, int depth)
 
   if (ioctl(fb, FBIOPUT_VSCREENINFO, &cur_mode->fb_var) == -1)
     perror("ioctl FBIOPUT_VSCREENINFO");
-   
+
   free(cur_mode);
   return fb_getmode();
 }
@@ -258,7 +258,7 @@ fb_changeres(FB_Mode *cur_mode, int width, int height, int refresh)
 {
   FB_Mode *modes;
   int      i, num_modes;
-  
+
   modes = fb_list_modes(&num_modes);
   if (modes)
     {
@@ -272,7 +272,7 @@ fb_changeres(FB_Mode *cur_mode, int width, int height, int refresh)
 
 	      if (ioctl(fb, FBIOPUT_VSCREENINFO, &modes[i].fb_var) == -1)
 		perror("ioctl FBIOPUT_VSCREENINFO");
-	       
+
 	      free(modes);
 	      free(cur_mode);
 	      return fb_getmode();
@@ -288,7 +288,7 @@ fb_changemode(FB_Mode *cur_mode, int width, int height, int depth, int refresh)
 {
   FB_Mode *modes;
   int      i, num_modes;
-  
+
   modes = fb_list_modes(&num_modes);
   if (modes)
     {
@@ -303,13 +303,13 @@ fb_changemode(FB_Mode *cur_mode, int width, int height, int depth, int refresh)
 
 	      if (ioctl(fb, FBIOPUT_VSCREENINFO, &modes[i].fb_var) == -1)
 		perror("ioctl FBIOPUT_VSCREENINFO");
-	       
+
 	      free(modes);
 	      free(cur_mode);
 	      return fb_getmode();
 	    }
 	}
-      free(modes);      
+      free(modes);
     }
   return cur_mode;
 }
@@ -323,28 +323,28 @@ fb_getmode(void)
   mode = malloc(sizeof(FB_Mode));
   /* look what we have now ... */
 
-  if (ioctl(fb, FBIOGET_VSCREENINFO, &mode->fb_var) == -1) 
+  if (ioctl(fb, FBIOGET_VSCREENINFO, &mode->fb_var) == -1)
     {
       perror("ioctl FBIOGET_VSCREENINFO");
       exit(1);
     }
-   
+
   mode->width = mode->fb_var.xres;
   mode->height = mode->fb_var.yres;
-  hpix = 
-    mode->fb_var.left_margin + 
-    mode->fb_var.xres + 
+  hpix =
+    mode->fb_var.left_margin +
+    mode->fb_var.xres +
     mode->fb_var.right_margin +
     mode->fb_var.hsync_len;
-  lines = 
+  lines =
     mode->fb_var.upper_margin +
-    mode->fb_var.yres + 
+    mode->fb_var.yres +
     mode->fb_var.lower_margin +
     mode->fb_var.vsync_len;
-  clockrate = 
+  clockrate =
     1000000 / mode->fb_var.pixclock;
   mode->refresh = clockrate * 1000000 / (lines * hpix);
-  switch (mode->fb_var.bits_per_pixel) 
+  switch (mode->fb_var.bits_per_pixel)
     {
      case 1:
       bpp = 1;
@@ -395,8 +395,8 @@ fb_setvt(int vtno)
 {
   struct vt_stat vts;
   char vtname[32];
-  
-  if (vtno < 0) 
+
+  if (vtno < 0)
     {
 
       if ((ioctl(tty,VT_OPENQRY, &vtno) == -1))
@@ -409,47 +409,47 @@ fb_setvt(int vtno)
 	  perror("ioctl VT_OPENQRY vtno <= 0");
 	  exit(1);
 	}
-       
+
     }
   vtno &= 0xff;
   sprintf(vtname, "/dev/tty%i", vtno);
   chown(vtname, getuid(), getgid());
-  if (access(vtname,R_OK | W_OK) == -1) 
+  if (access(vtname,R_OK | W_OK) == -1)
     {
       fprintf(stderr,"access %s: %s\n",vtname,strerror(errno));
       exit(1);
     }
   open(vtname,O_RDWR);
 
-  if (ioctl(tty, VT_GETSTATE, &vts) == -1) 
+  if (ioctl(tty, VT_GETSTATE, &vts) == -1)
     {
       perror("ioctl VT_GETSTATE");
       exit(1);
     }
-   
+
   orig_vt_no = vts.v_active;
 /*
-  if (ioctl(tty, VT_ACTIVATE, vtno) == -1) 
+  if (ioctl(tty, VT_ACTIVATE, vtno) == -1)
     {
       perror("ioctl VT_ACTIVATE");
       exit(1);
     }
-  if (ioctl(tty, VT_WAITACTIVE, vtno) == -1) 
+  if (ioctl(tty, VT_WAITACTIVE, vtno) == -1)
     {
       perror("ioctl VT_WAITACTIVE");
       exit(1);
     }
 */
-   
+
 }
 
 void
 fb_init(int vt, int device)
 {
    char dev[32];
-   
+
    tty = 0;
-#if 0   
+#if 0
    if (vt != 0) fb_setvt(vt);
 #endif
    sprintf(dev, "/dev/fb/%i", device);
@@ -460,99 +460,99 @@ fb_init(int vt, int device)
        fb = open(dev, O_RDWR);
      }
    if (fb == -1)
-     {  
+     {
 	fprintf(stderr,"open %s: %s\n", dev, strerror(errno));
 	fb_cleanup();
 	exit(1);
      }
 
-   if (ioctl(fb, FBIOGET_VSCREENINFO, &fb_ovar) == -1) 
+   if (ioctl(fb, FBIOGET_VSCREENINFO, &fb_ovar) == -1)
      {
 	perror("ioctl FBIOGET_VSCREENINFO");
 	exit(1);
      }
-   if (ioctl(fb, FBIOGET_FSCREENINFO, &fb_fix) == -1) 
+   if (ioctl(fb, FBIOGET_FSCREENINFO, &fb_fix) == -1)
      {
 	perror("ioctl FBIOGET_FSCREENINFO");
 	exit(1);
      }
-   
+
    if ((fb_ovar.bits_per_pixel == 8) ||
        (fb_fix.visual == FB_VISUAL_DIRECTCOLOR))
      {
 
-	if (ioctl(fb,FBIOGETCMAP , &ocmap) == -1) 
+	if (ioctl(fb,FBIOGETCMAP , &ocmap) == -1)
 	  {
 	     perror("ioctl FBIOGETCMAP");
 	     exit(1);
 	  }
-	
+
      }
 #if 0
-   if (isatty(0)) 
+   if (isatty(0))
       tty = 0;
-   else if ((tty = open("/dev/tty",O_RDWR)) == -1) 
+   else if ((tty = open("/dev/tty",O_RDWR)) == -1)
      {
 	fprintf(stderr,"open %s: %s\n", "/dev/tty", strerror(errno));
 	exit(1);
      }
    if (tty)
      {
-	if (ioctl(tty, KDGETMODE, &kd_mode) == -1) 
+	if (ioctl(tty, KDGETMODE, &kd_mode) == -1)
 	  {
 	     perror("ioctl KDGETMODE");
 	     exit(1);
 	  }
-	if (ioctl(tty, VT_GETMODE, &vt_omode) == -1) 
+	if (ioctl(tty, VT_GETMODE, &vt_omode) == -1)
 	  {
 	     perror("ioctl VT_GETMODE");
 	     exit(1);
 	  }
-     }   
-#endif   
+     }
+#endif
 }
 
 int
 fb_postinit(FB_Mode *mode)
 {
 
-  if (ioctl(fb,FBIOGET_FSCREENINFO, &fb_fix) == -1) 
+  if (ioctl(fb,FBIOGET_FSCREENINFO, &fb_fix) == -1)
     {
       perror("ioctl FBIOGET_FSCREENINFO");
       fb_cleanup();
       exit(1);
     }
-   
-  if (fb_fix.type != FB_TYPE_PACKED_PIXELS) 
+
+  if (fb_fix.type != FB_TYPE_PACKED_PIXELS)
     {
       fprintf(stderr,"can handle only packed pixel frame buffers\n");
       fb_cleanup();
       exit(1);
     }
   mode->mem_offset = (unsigned)(fb_fix.smem_start) & (~PAGE_MASK);
-  mode->mem = (unsigned char *)mmap(NULL, fb_fix.smem_len + mode->mem_offset, 
+  mode->mem = (unsigned char *)mmap(NULL, fb_fix.smem_len + mode->mem_offset,
 				 PROT_WRITE | PROT_READ, MAP_SHARED, fb, 0);
-  if ((int)mode->mem == -1) 
+  if ((int)mode->mem == -1)
     {
       perror("mmap");
       fb_cleanup();
   }
   /* move viewport to upper left corner */
-  if ((mode->fb_var.xoffset != 0) || (mode->fb_var.yoffset != 0)) 
+  if ((mode->fb_var.xoffset != 0) || (mode->fb_var.yoffset != 0))
     {
       mode->fb_var.xoffset = 0;
       mode->fb_var.yoffset = 0;
 
-      if (ioctl(fb, FBIOPAN_DISPLAY, &(mode->fb_var)) == -1) 
+      if (ioctl(fb, FBIOPAN_DISPLAY, &(mode->fb_var)) == -1)
 	{
 	  perror("ioctl FBIOPAN_DISPLAY");
 	  fb_cleanup();
-	}       
+	}
     }
 #if 0
    if (tty)
      {
-	if (ioctl(tty,KDSETMODE, KD_GRAPHICS) == -1) 
+	if (ioctl(tty,KDSETMODE, KD_GRAPHICS) == -1)
 	  {
 	     perror("ioctl KDSETMODE");
 	     fb_cleanup();
@@ -572,17 +572,17 @@ fb_cleanup(void)
     perror("ioctl FBIOPUT_VSCREENINFO");
   if (ioctl(fb, FBIOGET_FSCREENINFO, &fb_fix) == -1)
     perror("ioctl FBIOGET_FSCREENINFO");
-   
-  if ((fb_ovar.bits_per_pixel == 8) || 
+
+  if ((fb_ovar.bits_per_pixel == 8) ||
       (fb_fix.visual == FB_VISUAL_DIRECTCOLOR))
     {
 
       if (ioctl(fb, FBIOPUTCMAP, &ocmap) == -1)
 	perror("ioctl FBIOPUTCMAP");
-       
+
     }
   close(fb);
-  
+
 
    if (tty)
      {
@@ -593,6 +593,6 @@ fb_cleanup(void)
 /*	if ((ioctl(tty, VT_ACTIVATE, orig_vt_no) == -1) && (orig_vt_no))
 	  perror("ioctl VT_ACTIVATE");
 */     }
-   
+
   close(tty);
 }

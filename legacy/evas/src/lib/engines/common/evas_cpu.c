@@ -34,7 +34,7 @@ evas_common_cpu_mmx_test(void)
 {
 #ifdef BUILD_MMX
    pxor_r2r(mm4, mm4);
-#endif   
+#endif
 }
 
 void
@@ -46,17 +46,17 @@ evas_common_cpu_mmx2_test(void)
    data[0] = 0;
    mmx_r2m(movntq, mm0, data);
    data[0] = 0;
-#endif   
+#endif
 }
 
 void
 evas_common_cpu_sse_test(void)
 {
-#ifdef BUILD_SSE 
+#ifdef BUILD_SSE
    int blah[2500];
-   
+
    prefetch(blah + 1200);
-#endif     
+#endif
 }
 
 void
@@ -65,7 +65,7 @@ evas_common_cpu_altivec_test(void)
 #ifdef __POWERPC__
 #ifdef __VEC__
    vector unsigned int zero;
-   
+
    zero = vec_splat_u32(0);
 #endif /* __VEC__ */
 #endif /* __POWERPC__ */
@@ -89,21 +89,21 @@ evas_common_cpu_feature_test(void (*feature)(void))
    act.sa_flags = SA_RESTART;
    sigemptyset(&act.sa_mask);
    sigaction(SIGILL, &act, &oact);
-   
+
    act.sa_handler = evas_common_cpu_catch_segv;
    act.sa_flags = SA_RESTART;
    sigemptyset(&act.sa_mask);
    sigaction(SIGSEGV, &act, &oact2);
-   
+
    if (sigsetjmp(detect_buf, 1))
      {
 	sigaction(SIGILL, &oact, NULL);
 	sigaction(SIGSEGV, &oact2, NULL);
 	return 0;
      }
-   
+
    feature();
-   
+
    sigaction(SIGILL, &oact, NULL);
    sigaction(SIGSEGV, &oact2, NULL);
    return enabled;
@@ -120,14 +120,14 @@ evas_common_cpu_init(void)
    if (called) return;
    called = 1;
 #ifdef BUILD_MMX
-   cpu_feature_mask |= CPU_FEATURE_MMX * 
+   cpu_feature_mask |= CPU_FEATURE_MMX *
      evas_common_cpu_feature_test(evas_common_cpu_mmx_test);
    evas_common_cpu_end_opt();
-   cpu_feature_mask |= CPU_FEATURE_MMX2 * 
+   cpu_feature_mask |= CPU_FEATURE_MMX2 *
      evas_common_cpu_feature_test(evas_common_cpu_mmx2_test);
    evas_common_cpu_end_opt();
 #ifdef BUILD_SSE
-   cpu_feature_mask |= CPU_FEATURE_SSE * 
+   cpu_feature_mask |= CPU_FEATURE_SSE *
      evas_common_cpu_feature_test(evas_common_cpu_sse_test);
    evas_common_cpu_end_opt();
 #endif /* BUILD_SSE */
@@ -157,7 +157,7 @@ evas_common_cpu_have_cpuid(void)
 {
 #ifdef BUILD_MMX
    unsigned int have_cpu_id;
-   
+
    have_cpu_id = 0;
    have_cpuid(have_cpu_id);
    return have_cpu_id;
@@ -195,7 +195,7 @@ evas_common_cpu_can_do(int *mmx, int *sse, int *sse2)
 void
 evas_common_cpu_end_opt(void)
 {
-   if (cpu_feature_mask & 
+   if (cpu_feature_mask &
        (CPU_FEATURE_MMX | CPU_FEATURE_MMX2))
      {
 	emms();

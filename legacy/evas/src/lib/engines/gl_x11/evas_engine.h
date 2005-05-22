@@ -15,7 +15,7 @@ struct _Evas_GL_X11_Window
    Visual          *visual;
    Colormap         colormap;
    int              depth;
-   GLXContext       context;   
+   GLXContext       context;
    Evas_GL_Context *gl_context;
    struct {
       int              redraw : 1;
@@ -40,5 +40,5 @@ void
   evas_engine_gl_x11_window_free(Evas_GL_X11_Window *gw);
 void
   evas_engine_gl_x11_window_use(Evas_GL_X11_Window *gw);
-    
+
 #endif

@@ -68,7 +68,7 @@ main(int argc, char *argv[])
       einfo = (Evas_Engine_Info_DirectFB *) evas_engine_info_get(evas);
 
       einfo->info.dfb = dfb;
-      einfo->info.surface = primary;	 
+      einfo->info.surface = primary;
       einfo->info.flags = DSDRAW_BLEND;
       evas_engine_info_set(evas, (Evas_Engine_Info *) einfo);
    }

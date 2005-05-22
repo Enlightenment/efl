@@ -6,10 +6,10 @@ evas_gl_common_image_load(Evas_GL_Context *gc, char *file, char *key)
    Evas_GL_Image *im;
    RGBA_Image *im_im;
    Evas_List *l;
-   
+
    im_im = evas_common_load_image_from_file(file, key);
    if (!im_im) return NULL;
-   
+
    for (l = gc->images; l; l = l->next)
      {
 	im = l->data;
@@ -22,7 +22,7 @@ evas_gl_common_image_load(Evas_GL_Context *gc, char *file, char *key)
 	     return im;
 	  }
      }
-   
+
    im = calloc(1, sizeof(Evas_GL_Image));
    if (!im) return NULL;
    im->references = 1;
@@ -44,7 +44,7 @@ evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, int *data)
 {
    Evas_GL_Image *im;
    Evas_List *l;
-   
+
    for (l = gc->images; l; l = l->next)
      {
 	im = l->data;
@@ -78,7 +78,7 @@ evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, int *data)
    im->im->image->data = data;
    im->im->image->no_free = 1;
    im->gc = gc;
-/*   
+/*
    im->cached = 1;
    gc->images = evas_list_prepend(gc->images, im);
  */
@@ -89,7 +89,7 @@ Evas_GL_Image *
 evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc, int w, int h, int *data)
 {
    Evas_GL_Image *im;
-   
+
    im = calloc(1, sizeof(Evas_GL_Image));
    im->references = 1;
    im->im = evas_common_image_create(w, h);
@@ -108,7 +108,7 @@ Evas_GL_Image *
 evas_gl_common_image_new(Evas_GL_Context *gc, int w, int h)
 {
    Evas_GL_Image *im;
-   
+
    im = calloc(1, sizeof(Evas_GL_Image));
    im->references = 1;
    im->im = evas_common_image_create(w, h);
@@ -202,7 +202,7 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Im
 				     0, 0, 0, 0);
    evas_gl_common_context_read_buf_set(gc, GL_BACK);
    evas_gl_common_context_write_buf_set(gc, GL_BACK);
-   
+
    glBegin(GL_QUADS);
    glTexCoord2d(tx1, ty1); glVertex2i(dx     , dy     );
    glTexCoord2d(tx2, ty1); glVertex2i(dx + dw, dy     );

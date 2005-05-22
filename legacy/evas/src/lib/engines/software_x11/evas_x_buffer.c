@@ -10,7 +10,7 @@ evas_software_x11_x_write_mask_line(X_Output_Buffer *xob, DATA32 *src, int w, in
    DATA32 *src_ptr;
    DATA8 *dst_ptr;
    int bpl = 0;
-   
+
    src_ptr = src;
    dst_ptr = evas_software_x11_x_output_buffer_data(xob, &bpl);
    dst_ptr = dst_ptr + (bpl * y);
@@ -41,7 +41,7 @@ evas_software_x11_x_can_do_shm(Display *d)
    if (XShmQueryExtension(d))
      {
 	X_Output_Buffer *xob;
-	
+
 	xob = evas_software_x11_x_output_buffer_new
 	  (d, DefaultVisual(d, DefaultScreen(d)),
 	   DefaultDepth(d, DefaultScreen(d)), 16, 16, 2, NULL);
@@ -66,7 +66,7 @@ evas_software_x11_x_output_buffer_new(Display *d, Visual *v, int depth, int w, i
 
    xob = calloc(1, sizeof(X_Output_Buffer));
    if (!xob) return NULL;
-   
+
    xob->display = d;
    xob->xim = NULL;
    xob->shm_info = NULL;
@@ -76,23 +76,23 @@ evas_software_x11_x_output_buffer_new(Display *d, Visual *v, int depth, int w, i
 	xob->shm_info = malloc(sizeof(XShmSegmentInfo));
 	if (xob->shm_info)
 	  {
-	     xob->xim = XShmCreateImage(d, v, depth, ZPixmap, NULL, 
+	     xob->xim = XShmCreateImage(d, v, depth, ZPixmap, NULL,
 					xob->shm_info, w, h);
 	     if (xob->xim)
 	       {
-		  xob->shm_info->shmid = shmget(IPC_PRIVATE, 
-						xob->xim->bytes_per_line * 
+		  xob->shm_info->shmid = shmget(IPC_PRIVATE,
+						xob->xim->bytes_per_line *
 						xob->xim->height,
 						IPC_CREAT | 0777);
 		  if (xob->shm_info->shmid >= 0)
 		    {
 		       xob->shm_info->readOnly = False;
-		       xob->shm_info->shmaddr = xob->xim->data = 
+		       xob->shm_info->shmaddr = xob->xim->data =
 			 shmat(xob->shm_info->shmid, 0, 0);
 		       if (xob->shm_info->shmaddr != NULL)
 			 {
 			    XErrorHandler ph;
-			    
+
 			    XSync(d, False);
 			    _x_err = 0;
 			    ph = XSetErrorHandler((XErrorHandler)
@@ -105,8 +105,8 @@ evas_software_x11_x_output_buffer_new(Display *d, Visual *v, int depth, int w, i
 				 return xob;
 			      }
 			 }
-		       shmdt(xob->shm_info->shmaddr);		       
-		       shmctl(xob->shm_info->shmid, IPC_RMID, 0);   
+		       shmdt(xob->shm_info->shmaddr);
+		       shmctl(xob->shm_info->shmid, IPC_RMID, 0);
 		    }
 		  if (xob->xim) XDestroyImage(xob->xim);
 		  xob->xim = NULL;
@@ -114,25 +114,25 @@ evas_software_x11_x_output_buffer_new(Display *d, Visual *v, int depth, int w, i
 	     if (xob->shm_info) free(xob->shm_info);
 	     xob->shm_info = NULL;
 	  }
-     }   
+     }
 
-   if (try_shm > 1) return NULL;   
-   
-   xob->xim = XCreateImage(d, v, depth, ZPixmap, 0, data, w, h, 32, 0);   
+   if (try_shm > 1) return NULL;
+
+   xob->xim = XCreateImage(d, v, depth, ZPixmap, 0, data, w, h, 32, 0);
    if (!xob->xim)
      {
 	free(xob);
 	return NULL;
      }
-   
+
    xob->data = data;
-   
+
    if (!xob->xim->data)
      {
 	xob->xim->data = malloc(xob->xim->bytes_per_line * xob->xim->height);
 	if (!xob->xim->data)
 	  {
-	     XDestroyImage(xob->xim);	
+	     XDestroyImage(xob->xim);
 	     free(xob);
 	     return NULL;
 	  }
@@ -156,7 +156,7 @@ evas_software_x11_x_output_buffer_free(X_Output_Buffer *xob, int sync)
      {
 	if (xob->data) xob->xim->data = NULL;
 	XDestroyImage(xob->xim);
-     }   
+     }
    free(xob);
 }
 

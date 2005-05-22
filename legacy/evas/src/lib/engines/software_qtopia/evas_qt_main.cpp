@@ -13,7 +13,7 @@ extern "C" {
      evas_qt_main_direct_start(void *target)
        {
 	  QT_Direct *d;
-	  QDirectPainter *dp;	  
+	  QDirectPainter *dp;
 	  QWidget *widget;
 	  int i;
 
@@ -55,7 +55,7 @@ extern "C" {
 		    for (i = 0; i < d->rects.count; i++)
 		      {
 			 QRect r;
-			 
+
 			 r = dp->rect(i);
 			 if (d->fb.rotation == 0)
 			   {
@@ -90,14 +90,14 @@ extern "C" {
      evas_qt_main_direct_stop(QT_Direct *d)
        {
 	  QDirectPainter *dp;
-	  
+
 #ifdef QVFB_BUG
 	    {
 	       QWidget *target = (QWidget *)d->target;
-	       QRect rect(d->updated.x, d->updated.y, 
+	       QRect rect(d->updated.x, d->updated.y,
 			  d->updated.w, d->updated.h);
 	       QPainter p(target);
-	       
+
 	       p.fillRect(rect, QBrush::NoBrush);
 	    }
 #endif

@@ -8,7 +8,7 @@
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Smart *
 evas_smart_new(const char *name,
@@ -29,14 +29,14 @@ evas_smart_new(const char *name,
 	       const void *data)
 {
    Evas_Smart *s;
-   
+
    if (!name) return NULL;
-   
+
    s = evas_mem_calloc(sizeof(Evas_Smart));
    if (!s) return NULL;
 
    s->magic = MAGIC_SMART;
-   
+
    s->class_allocated = 1;
 
    s->smart_class = evas_mem_calloc(sizeof(Evas_Smart_Class));
@@ -61,7 +61,7 @@ evas_smart_new(const char *name,
    s->smart_class->clip_set = func_clip_set;
    s->smart_class->clip_unset = func_clip_unset;
    s->smart_class->data = (void *)data;
-   
+
    return s;
 }
 
@@ -69,11 +69,11 @@ evas_smart_new(const char *name,
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void
 evas_smart_free(Evas_Smart *s)
-{   
+{
    MAGIC_CHECK(s, Evas_Smart, MAGIC_SMART);
    return;
    MAGIC_CHECK_END();
@@ -87,22 +87,22 @@ evas_smart_free(Evas_Smart *s)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Smart *
 evas_smart_class_new(Evas_Smart_Class *sc)
 {
    Evas_Smart *s;
-   
+
    if (!sc) return NULL;
-   
+
    s = evas_mem_calloc(sizeof(Evas_Smart));
    if (!s) return NULL;
 
    s->magic = MAGIC_SMART;
-   
+
    s->smart_class = sc;
-   
+
    return s;
 }
 
@@ -110,7 +110,7 @@ evas_smart_class_new(Evas_Smart_Class *sc)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 Evas_Smart_Class *
 evas_smart_class_get(Evas_Smart *s)
@@ -125,7 +125,7 @@ evas_smart_class_get(Evas_Smart *s)
  * To be documented.
  *
  * FIXME: To be fixed.
- * 
+ *
  */
 void *
 evas_smart_data_get(Evas_Smart *s)

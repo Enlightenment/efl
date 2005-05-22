@@ -24,7 +24,7 @@ struct _Outbuf
    Outbuf_Depth    depth;
    int             w, h;
    int             rot;
-   
+
    struct {
       struct {
 	 FB_Mode  *fb;

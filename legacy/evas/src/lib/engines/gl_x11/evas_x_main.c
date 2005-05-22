@@ -35,7 +35,7 @@ evas_engine_gl_x11_window_new(Display *disp,
 			      int      h)
 {
    Evas_GL_X11_Window *gw;
-   
+
    if (!_evas_gl_x11_vi) return NULL;
    gw = calloc(1, sizeof(Evas_GL_X11_Window));
    if (!gw) return NULL;
@@ -45,7 +45,7 @@ evas_engine_gl_x11_window_new(Display *disp,
    gw->visual = vis;
    gw->colormap = cmap;
    gw->depth = depth;
-  
+
    gw->visualinfo = _evas_gl_x11_vi;
    if (!context)
      context = glXCreateContext(disp, gw->visualinfo, NULL, GL_TRUE);

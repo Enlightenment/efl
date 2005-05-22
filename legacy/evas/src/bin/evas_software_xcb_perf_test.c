@@ -34,7 +34,7 @@ get_visual(XCBConnection *conn,
    for (cur = 0 ; cur < iter.rem ; XCBVISUALTYPENext(&iter), ++cur)
       if (root->root_visual.id == iter.data->visual_id.id)
 	 return iter.data;
-   
+
    return NULL;
 }
 
@@ -54,7 +54,7 @@ get_depth(XCBConnection *conn,
       perror ("GetGeometry(root) failed");
       exit (0);
     }
-  
+
   depth = geom->depth;
   free (geom);
 
@@ -79,7 +79,7 @@ main(int argc, char **argv)
 	printf("Error: cannot open a connection.\n");
 	exit(-1);
      }
-   
+
    screen = XCBConnSetupSuccessRepRootsIter (XCBGetSetup(c)).data;
 
    mask = CWBackingStore | CWColormap |
@@ -149,13 +149,13 @@ main(int argc, char **argv)
 	      {
 	      case XCBButtonPress: {
 	        XCBButtonPressEvent *ev = (XCBButtonPressEvent *)e;
-		
+
 /*		  evas_event_button_down(evas, ev->event_x, ev->event_y, ev->detail.id);*/
 		break;
 	      }
 	      case XCBButtonRelease: {
 	        XCBButtonReleaseEvent *ev = (XCBButtonReleaseEvent *)e;
-		
+
 		/*		  evas_event_button_up(evas, ev->event_x, ev->event_y, ev->detail.id);*/
 		break;
 	      }
@@ -173,7 +173,7 @@ main(int argc, char **argv)
 	      }
 	    free (e);
 	  }
-	    
+
 	evas_render(evas);
 	XCBFlush(c);
 
@@ -214,6 +214,6 @@ main(int argc, char **argv)
 	     exit(0);
 	  }
      }
-   
+
    return 0;
 }

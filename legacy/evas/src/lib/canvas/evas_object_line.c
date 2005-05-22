@@ -21,7 +21,7 @@ struct _Evas_Object_Line
       Evas_Coord         x1, y1, x2, y2;
    } cur, prev;
    char              changed : 1;
-   
+
    void             *engine_data;
 };
 
@@ -77,7 +77,7 @@ Evas_Object *
 evas_object_line_add(Evas *e)
 {
    Evas_Object *obj;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
@@ -102,7 +102,7 @@ evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coo
    Evas_Object_Line *o;
    Evas_Coord min_x, max_x, min_y, max_y;
    int is, was = 0;
-   
+
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return;
    MAGIC_CHECK_END();
@@ -116,12 +116,12 @@ evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coo
      was = evas_object_is_in_output_rect(obj,
 					 obj->layer->evas->pointer.x,
 					 obj->layer->evas->pointer.y, 1, 1);
-   if (x1 < x2) 
+   if (x1 < x2)
      {
 	min_x = x1;
 	max_x = x2;
      }
-   else 
+   else
      {
 	min_x = x2;
 	max_x = x1;
@@ -131,7 +131,7 @@ evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coo
 	min_y = y1;
 	max_y = y2;
      }
-   else 
+   else
      {
 	min_y = y2;
 	max_y = y1;
@@ -152,7 +152,7 @@ evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coo
 				      obj->layer->evas->pointer.x,
 				      obj->layer->evas->pointer.y, 1, 1);
    if (!evas_event_passes_through(obj))
-     {  
+     {
 	if ((is ^ was) && obj->cur.visible)
 	  evas_event_feed_mouse_move(obj->layer->evas,
 				     obj->layer->evas->pointer.x,
@@ -231,7 +231,7 @@ static void *
 evas_object_line_new(void)
 {
    Evas_Object_Line *o;
-   
+
    /* alloc obj private data */
    o = calloc(1, sizeof(Evas_Object_Line));
    o->magic = MAGIC_OBJ_LINE;
@@ -340,7 +340,7 @@ evas_object_line_render_pre(Evas_Object *obj)
        (obj->cur.geometry.y != obj->prev.geometry.y) ||
        (obj->cur.geometry.w != obj->prev.geometry.w) ||
        (obj->cur.geometry.h != obj->prev.geometry.h) ||
-       ((o->changed) && 
+       ((o->changed) &&
 	((o->cur.x1 != o->prev.x1) ||
 	 (o->cur.y1 != o->prev.y1) ||
 	 (o->cur.x2 != o->prev.x2) ||
@@ -367,7 +367,7 @@ evas_object_line_render_post(Evas_Object *obj)
    while (obj->clip.changes)
      {
 	Evas_Rectangle *r;
-	
+
 	r = (Evas_Rectangle *)obj->clip.changes->data;
 	obj->clip.changes = evas_list_remove(obj->clip.changes, r);
 	free(r);
@@ -393,7 +393,7 @@ static int
 evas_object_line_was_opaque(Evas_Object *obj)
 {
    Evas_Object_Line *o;
-   
+
    /* this returns 1 if the internal object data implies that the object was */
    /* previously fully opaque over the entire line it occupies */
    o = (Evas_Object_Line *)(obj->object_data);
@@ -404,7 +404,7 @@ static int
 evas_object_line_is_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    Evas_Object_Line *o;
-   
+
    /* this returns 1 if the canvas co-ordinates are inside the object based */
    /* on object private data. not much use for rects, but for polys, images */
    /* and other complex objects it might be */
@@ -418,7 +418,7 @@ static int
 evas_object_line_was_inside(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    Evas_Object_Line *o;
-   
+
    /* this returns 1 if the canvas co-ordinates were inside the object based */
    /* on object private data. not much use for rects, but for polys, images */
    /* and other complex objects it might be */

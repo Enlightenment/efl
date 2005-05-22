@@ -38,20 +38,20 @@ struct _Evas_Cairo_Context
       char         buf : 1;
       char         other : 1;
    } change;
-   
+
    struct {
       char         active : 1;
       int          x, y, w, h;
    } clip;
-   
+
    struct {
       int checked : 1;
       int sgis_generate_mipmap : 1;
       int nv_texture_rectangle : 1;
    } ext;
-   
+
    int             references;
-   
+
    Evas_List      *images;
 };
 
@@ -99,20 +99,20 @@ Evas_GL_Texture  *evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im
 void              evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth);
 void              evas_gl_common_texture_free(Evas_GL_Texture *tex);
 void              evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int smooth);
-    
+
 Evas_GL_Image    *evas_gl_common_image_load(Evas_GL_Context *gc, char *file, char *key);
 Evas_GL_Image    *evas_gl_common_image_new_from_data(Evas_GL_Context *gc, int w, int h, int *data);
 Evas_GL_Image    *evas_gl_common_image_new_from_copied_data(Evas_GL_Context *gc, int w, int h, int *data);
 Evas_GL_Image    *evas_gl_common_image_new(Evas_GL_Context *gc, int w, int h);
 void              evas_gl_common_image_free(Evas_GL_Image *im);
-void              evas_gl_common_image_dirty(Evas_GL_Image *im);    
+void              evas_gl_common_image_dirty(Evas_GL_Image *im);
 
 Evas_GL_Polygon  *evas_gl_common_poly_point_add(Evas_GL_Polygon *poly, int x, int y);
 Evas_GL_Polygon  *evas_gl_common_poly_points_clear(Evas_GL_Polygon *poly);
 
 Evas_GL_Gradient *evas_gl_common_gradient_color_add(Evas_GL_Gradient *gr, int r, int g, int b, int a, int distance);
 Evas_GL_Gradient *evas_gl_common_gradient_colors_clear(Evas_GL_Gradient *gr);
-    
+
 void              evas_gl_common_swap_rect(Evas_GL_Context *gc, int x, int y, int w, int h);
 
 void              evas_gl_common_rect_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, int x, int y, int w, int h);

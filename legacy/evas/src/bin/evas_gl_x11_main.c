@@ -44,7 +44,7 @@ main(int argc, char **argv)
 	ExposureMask | ButtonPressMask | ButtonReleaseMask | PointerMotionMask |
 	StructureNotifyMask;
       attr.bit_gravity = ForgetGravity;
-      
+
       win = XCreateWindow(disp, DefaultRootWindow(disp), 0, 0, win_w, win_h, 0,
 			  einfo->func.best_depth_get(disp, DefaultScreen(disp)),
 			  InputOutput,
@@ -52,7 +52,7 @@ main(int argc, char **argv)
 			  CWBackingStore | CWColormap |
 			  CWBackPixmap | CWBorderPixel |
 			  CWBitGravity | CWEventMask, &attr);
-      
+
       einfo->info.display = disp;
       einfo->info.visual = einfo->func.best_visual_get(disp, DefaultScreen(disp));
       einfo->info.colormap = einfo->func.best_colormap_get(disp, DefaultScreen(disp));
@@ -61,7 +61,7 @@ main(int argc, char **argv)
 
       evas_engine_info_set(evas, (Evas_Engine_Info *) einfo);
    }
-   
+
    XStoreName(disp, win, "Evas GL X11 Test");
    chint.res_name = "Evas_GL_X11_Test";
    chint.res_class = "Main";
@@ -74,9 +74,9 @@ main(int argc, char **argv)
 #endif
    XMapWindow(disp, win);
    XSync(disp, False);
-   
+
    setup();
-   
+
    orig_start_time = start_time = get_time();
    for (;;)
      {

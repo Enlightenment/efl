@@ -268,7 +268,7 @@ struct _RGBA_Draw_Context
       int    x, y, w, h;
    } clip;
    struct {
-     Cutout_Rect *rects; 
+     Cutout_Rect *rects;
    } cutout;
    struct {
       struct {
@@ -293,7 +293,7 @@ struct _RGBA_Image
    Evas_Object_List     _list_data;
    RGBA_Surface        *image;
    RGBA_Image_Flags     flags;
-   struct 
+   struct
      {
 	int             format;
 	char           *file;
@@ -332,7 +332,7 @@ struct _RGBA_Font
 struct _RGBA_Font_Int
 {
    Evas_Object_List  _list_data;
-   
+
    RGBA_Font_Source *src;
 
    int               size;
@@ -341,36 +341,36 @@ struct _RGBA_Font_Int
    struct {
       FT_Size       size;
    } ft;
-   
+
    Evas_Hash       *glyphs;
 
    int              usage;
-   
+
    int              references;
 };
 
 struct _RGBA_Font_Source
 {
    Evas_Object_List  _list_data;
-   
+
    char             *name;
    char             *file;
-   
+
    void             *data;
    int               data_size;
-   
+
    int               current_size;
-   
+
    struct {
       int           orig_upem;
       FT_Face       face;
    } ft;
-   
+
    int              references;
 };
 
 struct _RGBA_Font_Glyph
-{ 
+{
    FT_Glyph        glyph;
    FT_BitmapGlyph  glyph_out;
    void           *ext_dat;
@@ -381,7 +381,7 @@ struct _Tilebuf
 {
    int outbuf_w;
    int outbuf_h;
-   
+
    struct {
       int           w, h;
    } tile_size;
@@ -400,11 +400,11 @@ struct _Tilebuf_Tile
 {
    int redraw : 1;
 /* FIXME: need these flags later - but not now */
-/*   
+/*
    int done   : 1;
    int edge   : 1;
    int from   : 1;
-   
+
    struct {
       int dx, dy;
    } vector;
@@ -559,11 +559,11 @@ x++;
 
 /* thanks to some chats with Mirek Fidler... the new blender code for C
  * blender fallbacks is faster. benchmarks (for the blending code only):
- * 
+ *
  * OLD BLENDER:
  * MMX: 0.606
  * C:   1.026
- * 
+ *
  * NEW BLENDER:
  * MMX: 0.549
  * C:   0.716
@@ -630,7 +630,7 @@ x++;
 #ifdef __cplusplus
 extern "C" {
 #endif
-   
+
 Evas_List *evas_list_append             (Evas_List *list, const void *data);
 Evas_List *evas_list_prepend            (Evas_List *list, const void *data);
 Evas_List *evas_list_append_relative    (Evas_List *list, const void *data, const void *relative);
@@ -649,7 +649,7 @@ void      *evas_list_nth                (Evas_List *list, int n);
 Evas_List *evas_list_nth_list           (Evas_List *list, int n);
 Evas_List *evas_list_reverse            (Evas_List *list);
 int        evas_list_alloc_error        (void);
-   
+
 Evas_Hash *evas_hash_add                (Evas_Hash *hash, const char *key, const void *data);
 Evas_Hash *evas_hash_del                (Evas_Hash *hash, const char *key, const void *data);
 void      *evas_hash_find               (Evas_Hash *hash, const char *key);
@@ -657,14 +657,14 @@ int        evas_hash_size               (Evas_Hash *hash);
 void       evas_hash_free               (Evas_Hash *hash);
 void       evas_hash_foreach            (Evas_Hash *hash, Evas_Bool (*func) (Evas_Hash *hash, const char *key, void *data, void *fdata), const void *fdata);
 int        evas_hash_alloc_error        (void);
-   
+
 void *evas_object_list_append           (void *in_list, void *in_item);
 void *evas_object_list_prepend          (void *in_list, void *in_item);
 void *evas_object_list_append_relative  (void *in_list, void *in_item, void *in_relative);
 void *evas_object_list_prepend_relative (void *in_list, void *in_item, void *in_relative);
 void *evas_object_list_remove           (void *in_list, void *in_item);
 void *evas_object_list_find             (void *in_list, void *in_item);
-    
+
 /****/
 void evas_common_cpu_init                               (void);
 
@@ -672,11 +672,11 @@ int  evas_common_cpu_have_cpuid                         (void);
 int  evas_common_cpu_has_feature                        (unsigned int feature);
 void evas_common_cpu_can_do                             (int *mmx, int *sse, int *sse2);
 void evas_common_cpu_end_opt                            (void);
-    
+
 /****/
 void evas_common_blend_init                             (void);
 void evas_common_blend_init_evas_pow_lut                (void);
-   
+
 void evas_common_blend_pixels_rgba_to_rgb_c             (DATA32 *src, DATA32 *dst, int len);
 void evas_common_blend_pixels_rgba_to_rgb_mmx           (DATA32 *src, DATA32 *dst, int len);
 void evas_common_blend_pixels_rgba_to_rgba_c            (DATA32 *src, DATA32 *dst, int len);
@@ -781,7 +781,7 @@ void evas_common_convert_rgba_to_4bpp_gry_1_dith               (DATA32 *src, DAT
 void evas_common_convert_rgba_to_1bpp_gry_1_dith               (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
 
 void evas_common_convert_yuv_420p_601_rgba                     (DATA8 **src, DATA8 *dst, int w, int h);
-       
+
 /****/
 void evas_common_scale_init                            (void);
 
@@ -795,7 +795,7 @@ void evas_common_scale_rgb_mipmap_down_1x2_c           (DATA32 *src, DATA32 *dst
 void evas_common_scale_rgba_mipmap_down_2x2_mmx        (DATA32 *src, DATA32 *dst, int src_w, int src_h);
 void evas_common_scale_rgba_mipmap_down_2x1_mmx        (DATA32 *src, DATA32 *dst, int src_w, int src_h);
 void evas_common_scale_rgba_mipmap_down_1x2_mmx        (DATA32 *src, DATA32 *dst, int src_w, int src_h);
-  
+
 void evas_common_scale_rgba_in_to_out_clip_smooth_mmx  (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
 void evas_common_scale_rgba_in_to_out_clip_smooth_c    (RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, int src_region_x, int src_region_y, int src_region_w, int src_region_h, int dst_region_x, int dst_region_y, int dst_region_w, int dst_region_h);
 
@@ -805,12 +805,12 @@ void evas_common_scale_rgba_in_to_out_clip_sample      (RGBA_Image *src, RGBA_Im
 /****/
 void          evas_common_image_init              (void);
 void          evas_common_image_shutdown          (void);
-   
+
 RGBA_Surface *evas_common_image_surface_new       (RGBA_Image *im);
 void          evas_common_image_surface_free      (RGBA_Surface *is);
 void          evas_common_image_surface_alloc     (RGBA_Surface *is);
 void          evas_common_image_surface_dealloc   (RGBA_Surface *is);
-    
+
 RGBA_Image   *evas_common_image_create            (int w, int h);
 RGBA_Image   *evas_common_image_new               (void);
 void          evas_common_image_free              (RGBA_Image *im);
@@ -820,7 +820,7 @@ void          evas_common_image_cache             (RGBA_Image *im);
 void          evas_common_image_uncache           (RGBA_Image *im);
 void          evas_common_image_flush_cache       (void);
 void          evas_common_image_set_cache         (int size);
-int           evas_common_image_get_cache         (void);    
+int           evas_common_image_get_cache         (void);
 void          evas_common_image_store             (RGBA_Image *im);
 void          evas_common_image_unstore           (RGBA_Image *im);
 RGBA_Image   *evas_common_image_find              (const char *filename, const char *key, DATA64 timestamp);
@@ -871,7 +871,7 @@ RGBA_Font_Source *evas_common_font_source_memory_load(const char *name, const vo
 RGBA_Font_Source *evas_common_font_source_load       (const char *name);
 RGBA_Font_Source *evas_common_font_source_find       (const char *name);
 void              evas_common_font_source_free       (RGBA_Font_Source *fs);
-void              evas_common_font_size_use         (RGBA_Font *fn);       
+void              evas_common_font_size_use         (RGBA_Font *fn);
 RGBA_Font       *evas_common_font_memory_load       (const char *name, int size, const void *data, int data_size);
 RGBA_Font       *evas_common_font_load              (const char *name, int size);
 RGBA_Font       *evas_common_font_add               (RGBA_Font *fn, const char *name, int size);
@@ -900,7 +900,7 @@ int              evas_common_font_query_text_at_pos (RGBA_Font *fn, const char *
 int              evas_common_font_utf8_get_next     (unsigned char *buf, int *iindex);
 int              evas_common_font_utf8_get_prev     (unsigned char *buf, int *iindex);
 int              evas_common_font_utf8_get_last     (unsigned char *buf, int buflen);
-       
+
 /****/
 void         evas_common_tilebuf_init               (void);
 
@@ -922,7 +922,7 @@ void          evas_common_regionbuf_clear     (Regionbuf *rb);
 void          evas_common_regionbuf_span_add  (Regionbuf *rb, int x1, int x2, int y);
 void          evas_common_regionbuf_span_del  (Regionbuf *rb, int x1, int x2, int y);
 Tilebuf_Rect *evas_common_regionbuf_rects_get (Regionbuf *rb);
-   
+
 /****/
 void               evas_common_draw_init                      (void);
 

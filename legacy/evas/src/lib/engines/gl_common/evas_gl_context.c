@@ -30,7 +30,7 @@ evas_gl_common_context_new(void)
    gc->dither = 1;
    gc->blend = 0;
    gc->references     = 1;
-   
+
    gc->change.size    = 1;
    gc->change.dither  = 1;
    gc->change.blend   = 1;
@@ -47,7 +47,7 @@ evas_gl_common_context_free(Evas_GL_Context *gc)
 {
    gc->references--;
    if (gc->references > 0) return;
-   
+
    if (gc == _evas_gl_common_context) _evas_gl_common_context = NULL;
    free(gc);
 }
@@ -59,7 +59,7 @@ evas_gl_common_context_use(Evas_GL_Context *gc)
    if (!gc->ext.checked)
      {
 	const GLubyte *ext;
-	
+
 	ext = glGetString(GL_EXTENSIONS);
 	if (ext)
 	  {
@@ -156,7 +156,7 @@ evas_gl_common_context_texture_set(Evas_GL_Context *gc, Evas_GL_Texture *tex, in
      }
    if (tex)
      {
-	if (((smooth) && (!tex->smooth)) || 
+	if (((smooth) && (!tex->smooth)) ||
 	    ((!smooth) && (tex->smooth)))
 	  {
 	     tex->smooth = smooth;
@@ -192,18 +192,18 @@ evas_gl_common_context_clip_set(Evas_GL_Context *gc, int on, int x, int y, int w
 {
    if (x < 0)
      {
-	w += x; 
+	w += x;
 	x = 0;
      }
    if (y < 0)
      {
-	h += y; 
+	h += y;
 	y = 0;
      }
    if (w < 0) w = 0;
    if (h < 0) h = 0;
    if (((!on) && (!gc->clip.active)) ||
-       ((on) && (gc->clip.active) && 
+       ((on) && (gc->clip.active) &&
 	(x == gc->clip.x) && (y == gc->clip.y) &&
 	(w == gc->clip.w) && (h == gc->clip.h)))
      return;
@@ -245,7 +245,7 @@ _evas_gl_common_viewport_set(Evas_GL_Context *gc)
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
    glScalef(1, -1, 1);
-   glTranslatef(0, - gc->h, 0);	
+   glTranslatef(0, - gc->h, 0);
    gc->change.size = 0;
 }
 
@@ -264,7 +264,7 @@ static void
 _evas_gl_common_blend_set(Evas_GL_Context *gc)
 {
    if (!gc->change.blend) return;
-   if (gc->blend) 
+   if (gc->blend)
      {
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -278,7 +278,7 @@ static void
 _evas_gl_common_color_set(Evas_GL_Context *gc)
 {
    int r, g, b, a;
-   
+
    if (!gc->change.color) return;
    glColor4d((double)gc->r / 255.0,
 	     (double)gc->g / 255.0,
@@ -382,8 +382,8 @@ _evas_gl_common_clip_set(Evas_GL_Context *gc)
      {
 	glEnable(GL_SCISSOR_TEST);
 	glScissor(gc->clip.x,
-		  gc->h - gc->clip.y - gc->clip.h, 
-		  gc->clip.w, 
+		  gc->h - gc->clip.y - gc->clip.h,
+		  gc->clip.w,
 		  gc->clip.h);
      }
    else

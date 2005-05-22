@@ -40,11 +40,11 @@ evas_font_dir_cache_free(void)
    evas_hash_foreach (font_dirs, font_cache_dir_free, NULL);
    evas_hash_free (font_dirs);
    font_dirs = NULL;
-/*   
+/*
    while (fonts_cache)
      {
 	Fndat *fd;
-	
+
 	fd = evas_list_data(fonts_cache);
 	fonts_cache = evas_list_remove_list(fonts_cache, fonts_cache);
 	if (fd->name) free(fd->name);
@@ -55,7 +55,7 @@ evas_font_dir_cache_free(void)
    while (fonts_zero)
      {
 	Fndat *fd;
-	
+
 	fd = evas_list_data(fonts_zero);
 	fonts_zero = evas_list_remove_list(fonts_zero, fonts_zero);
 	if (fd->name) free(fd->name);
@@ -70,13 +70,13 @@ char *
 evas_font_dir_cache_find(char *dir, char *font)
 {
    Evas_Font_Dir *fd;
-   
+
    fd = evas_hash_find(font_dirs, dir);
    fd = object_text_font_cache_dir_update(dir, fd);
    if (fd)
      {
 	Evas_Font *fn;
-	
+
 	fn = object_text_font_cache_font_find(fd, font);
 	if (fn)
 	  {
@@ -91,7 +91,7 @@ evas_font_set_get(char *name)
 {
    Evas_List *fonts = NULL;
    char *p;
-   
+
    p = strchr(name, ',');
    if (!p)
      {
@@ -100,7 +100,7 @@ evas_font_set_get(char *name)
    else
      {
 	char *nm, *pp;
-	
+
 	pp = name;
 	while (p)
 	  {
@@ -120,11 +120,11 @@ void
 evas_font_free(Evas *evas, void *font)
 {
    Evas_List *l;
-   
+
    for (l = fonts_cache; l; l = l->next)
      {
 	Fndat *fd;
-	
+
 	fd = l->data;
 	if (fd->font == font)
 	  {
@@ -137,11 +137,11 @@ evas_font_free(Evas *evas, void *font)
 	     break;
 	  }
      }
-   while ((fonts_zero) && 
+   while ((fonts_zero) &&
 	  (evas_list_count(fonts_zero) > 4)) /* 4 is arbitrary */
      {
 	Fndat *fd;
-	
+
 	fd = evas_list_data(fonts_zero);
 	if (fd->ref != 0) break;
 	fonts_zero = evas_list_remove_list(fonts_zero, fonts_zero);
@@ -199,7 +199,7 @@ evas_font_load(Evas *evas, char *name, char *source, int size)
    for (l = fonts; l; l = l->next)
      {
 	char *nm;
-	
+
 	nm = l->data;
 	if ((l == fonts) || (!font))
 	  {
@@ -208,7 +208,7 @@ evas_font_load(Evas *evas, char *name, char *source, int size)
 	       {
 		  Eet_File *ef;
 		  char *fake_name;
-		  
+
 		  fake_name = evas_file_path_join(source, nm);
 		  if (fake_name)
 		    {
@@ -221,7 +221,7 @@ evas_font_load(Evas *evas, char *name, char *source, int size)
 			      {
 				 void *fdata;
 				 int fsize = 0;
-				 
+
 				 fdata = eet_read(ef, nm, &fsize);
 				 if ((fdata) && (fsize > 0))
 				   {
@@ -242,11 +242,11 @@ evas_font_load(Evas *evas, char *name, char *source, int size)
 		  else
 		    {
 		       Evas_List *l;
-		       
+
 		       for (l = evas->font_path; l; l = l->next)
 			 {
 			    char *f_file;
-			    
+
 			    f_file = evas_font_dir_cache_find(l->data, (char *)nm);
 			    if (f_file)
 			      {
@@ -262,13 +262,13 @@ evas_font_load(Evas *evas, char *name, char *source, int size)
 	else
 	  {
 	     void *ok = NULL;
-	     
+
 #ifdef BUILD_FONT_LOADER_EET
 	     if (source)
 	       {
 		  Eet_File *ef;
 		  char *fake_name;
-		  
+
 		  fake_name = evas_file_path_join(source, nm);
 		  if (fake_name)
 		    {
@@ -281,7 +281,7 @@ evas_font_load(Evas *evas, char *name, char *source, int size)
 			      {
 				 void *fdata;
 				 int fsize = 0;
-				 
+
 				 fdata = eet_read(ef, nm, &fsize);
 				 if ((fdata) && (fsize > 0))
 				   {
@@ -304,11 +304,11 @@ evas_font_load(Evas *evas, char *name, char *source, int size)
 		  else
 		    {
 		       Evas_List *l;
-		       
+
 		       for (l = evas->font_path; l; l = l->next)
 			 {
 			    char *f_file;
-			    
+
 			    f_file = evas_font_dir_cache_find(l->data, (char *)nm);
 			    if (f_file)
 			      {
@@ -400,19 +400,19 @@ object_text_font_cache_font_find_x(Evas_Font_Dir *fd, char *font)
    Evas_List *l;
    char font_prop[14][256];
    int num;
-   
+
    num = evas_object_text_font_string_parse(font, font_prop);
    if (num != 14) return NULL;
    for (l = fd->fonts; l; l = l->next)
      {
 	Evas_Font *fn;
-	
+
 	fn = l->data;
 	if (fn->type == 1)
 	  {
 	     int i;
 	     int match = 0;
-	     
+
 	     for (i = 0; i < 14; i++)
 	       {
 		  if ((font_prop[i][0] == '*') && (font_prop[i][1] == 0))
@@ -433,11 +433,11 @@ static Evas_Font *
 object_text_font_cache_font_find_file(Evas_Font_Dir *fd, char *font)
 {
    Evas_List *l;
-   
+
    for (l = fd->fonts; l; l = l->next)
      {
 	Evas_Font *fn;
-	
+
 	fn = l->data;
 	if (fn->type == 0)
 	  {
@@ -451,11 +451,11 @@ static Evas_Font *
 object_text_font_cache_font_find_alias(Evas_Font_Dir *fd, char *font)
 {
    Evas_List *l;
-   
+
    for (l = fd->aliases; l; l = l->next)
      {
 	Evas_Font_Alias *fa;
-	
+
 	fa = l->data;
 	if (!strcasecmp(fa->alias, font)) return fa->fn;
      }
@@ -466,7 +466,7 @@ static Evas_Font *
 object_text_font_cache_font_find(Evas_Font_Dir *fd, char *font)
 {
    Evas_Font *fn;
-   
+
    fn = evas_hash_find(fd->lookup, font);
    if (fn) return fn;
    fn = object_text_font_cache_font_find_alias(fd, font);
@@ -483,11 +483,11 @@ object_text_font_cache_dir_add(char *dir)
    Evas_Font_Dir *fd;
    char *tmp;
    Evas_List *fdir;
-   
+
    fd = calloc(1, sizeof(Evas_Font_Dir));
    if (!fd) return NULL;
    font_dirs = evas_hash_add(font_dirs, dir, fd);
-   
+
    /* READ fonts.alias, fonts.dir and directory listing */
 
    /* fonts.dir */
@@ -495,20 +495,20 @@ object_text_font_cache_dir_add(char *dir)
    if (tmp)
      {
 	FILE *f;
-	
+
 	f = fopen(tmp, "r");
 	if (f)
 	  {
 	     int num;
 	     char fname[4096], fdef[4096];
-	     
+
 	     if (fscanf(f, "%i\n", &num) != 1) goto cant_read;
 	     /* read font lines */
 	     while (fscanf(f, "%4090s %[^\n]\n", fname, fdef) == 2)
 	       {
 		  char font_prop[14][256];
 		  int i;
-		  
+
 		  /* skip comments */
 		  if ((fdef[0] == '!') || (fdef[0] == '#')) continue;
 		  /* parse font def */
@@ -516,7 +516,7 @@ object_text_font_cache_dir_add(char *dir)
 		  if (num == 14)
 		    {
 		       Evas_Font *fn;
-		       
+
 		       fn = calloc(1, sizeof(Evas_Font));
 		       if (fn)
 			 {
@@ -537,7 +537,7 @@ object_text_font_cache_dir_add(char *dir)
 	  }
 	free(tmp);
      }
-   
+
    /* directoy listing */
    fdir = evas_file_path_list(dir, "*.ttf", 0);
    while (fdir)
@@ -546,7 +546,7 @@ object_text_font_cache_dir_add(char *dir)
 	if (tmp)
 	  {
 	     Evas_Font *fn;
-	     
+
 	     fn = calloc(1, sizeof(Evas_Font));
 	     if (fn)
 	       {
@@ -555,7 +555,7 @@ object_text_font_cache_dir_add(char *dir)
 		  if (fn->simple.name)
 		    {
 		       char *p;
-		       
+
 		       p = strrchr(fn->simple.name, '.');
 		       if (p) *p = 0;
 		    }
@@ -567,23 +567,23 @@ object_text_font_cache_dir_add(char *dir)
 	free(fdir->data);
 	fdir = evas_list_remove(fdir, fdir->data);
      }
-   
+
    /* fonts.alias */
    tmp = evas_file_path_join(dir, "fonts.alias");
    if (tmp)
      {
 	FILE *f;
-	
+
 	f = fopen(tmp, "r");
 	if (f)
 	  {
 	     char fname[4096], fdef[4096];
-	     
+
 	     /* read font alias lines */
 	     while (fscanf(f, "%4090s %[^\n]\n", fname, fdef) == 2)
 	       {
 		  Evas_Font_Alias *fa;
-		  
+
 		  /* skip comments */
 		  if ((fdef[0] == '!') || (fdef[0] == '#')) continue;
 		  fa = calloc(1, sizeof(Evas_Font_Alias));
@@ -604,7 +604,7 @@ object_text_font_cache_dir_add(char *dir)
 	  }
 	free(tmp);
      }
-   
+
    fd->dir_mod_time = evas_file_modified_time(dir);
    tmp = evas_file_path_join(dir, "fonts.dir");
    if (tmp)
@@ -618,7 +618,7 @@ object_text_font_cache_dir_add(char *dir)
 	fd->fonts_alias_mod_time = evas_file_modified_time(tmp);
 	free(tmp);
      }
-   
+
    return fd;
 }
 
@@ -630,7 +630,7 @@ object_text_font_cache_dir_del(char *dir, Evas_Font_Dir *fd)
      {
 	Evas_Font *fn;
 	int i;
-	
+
 	fn = fd->fonts->data;
 	fd->fonts = evas_list_remove(fd->fonts, fn);
 	for (i = 0; i < 14; i++)
@@ -644,7 +644,7 @@ object_text_font_cache_dir_del(char *dir, Evas_Font_Dir *fd)
    while (fd->aliases)
      {
 	Evas_Font_Alias *fa;
-	
+
 	fa = fd->aliases->data;
 	fd->aliases = evas_list_remove(fd->aliases, fa);
 	if (fa->alias) free(fa->alias);

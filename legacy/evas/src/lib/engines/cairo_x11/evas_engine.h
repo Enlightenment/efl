@@ -30,5 +30,5 @@ void
   evas_engine_cairo_x11_window_free(Evas_Cairo_X11_Window *cw);
 void
   evas_engine_cairo_x11_window_use(Evas_Cairo_X11_Window *cw);
-    
+
 #endif

@@ -1,5 +1,5 @@
-#ifndef _EVAS_ENGINE_SOFTWARE_X11_H 
-#define _EVAS_ENGINE_SOFTWARE_X11_H 
+#ifndef _EVAS_ENGINE_SOFTWARE_X11_H
+#define _EVAS_ENGINE_SOFTWARE_X11_H
 
 #include <X11/Xlib.h>
 
@@ -10,7 +10,7 @@ struct _Evas_Engine_Info_Software_X11
    /* PRIVATE - don't mess with this baby or evas will poke its tongue out */
    /* at you and make nasty noises */
    Evas_Engine_Info magic;
-   
+
    /* engine specific data & parameters it needs to set up */
    struct {
       Display  *display;
@@ -20,7 +20,7 @@ struct _Evas_Engine_Info_Software_X11
       Colormap  colormap;
       int       depth;
       int       rotation;
-      
+
       int       alloc_grayscale : 1;
       int       debug : 1;
       int       shape_dither : 1;
@@ -33,7 +33,7 @@ struct _Evas_Engine_Info_Software_X11
       Visual *  (*best_visual_get)   (Display *disp, int screen);
       Colormap  (*best_colormap_get) (Display *disp, int screen);
       int       (*best_depth_get)    (Display *disp, int screen);
-      
+
       Evas_Performance *(*performance_test)         (Evas *e, Display *disp, Visual *vis, Colormap cmap, Drawable draw, int depth);
       void              (*performance_free)         (Evas_Performance *perf);
       char *            (*performance_data_get)     (Evas_Performance *perf);

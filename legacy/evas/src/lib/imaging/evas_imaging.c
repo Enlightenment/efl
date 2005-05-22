@@ -12,7 +12,7 @@ evas_imaging_image_load(const char *file, const char *key)
 {
    Evas_Imaging_Image *im;
    RGBA_Image *image;
-   
+
    if (!file) file = "";
    if (!key) key = "";
    evas_common_cpu_init();
@@ -64,13 +64,13 @@ evas_imaging_image_cache_get(void)
 {
    return evas_common_image_get_cache();
 }
- 
+
 Evas_Imaging_Font *
 evas_imaging_font_load(const char *file, const char *key, int size)
 {
    Evas_Imaging_Font *fn;
    RGBA_Font *font;
-   
+
    evas_common_cpu_init();
    evas_common_font_init();
    if (!file) file = "";
@@ -79,7 +79,7 @@ evas_imaging_font_load(const char *file, const char *key, int size)
    if (key)
      {
 	char *tmp;
-	
+
 	tmp = evas_file_path_join(file, key);
 	if (tmp)
 	  {
@@ -87,27 +87,27 @@ evas_imaging_font_load(const char *file, const char *key, int size)
 	     if (!font)
 	       {
 		  Eet_File *ef;
-		  
-		  ef = eet_open((char *)file, EET_FILE_MODE_READ);	     
+
+		  ef = eet_open((char *)file, EET_FILE_MODE_READ);
 		  if (ef)
 		    {
 		       void *fdata;
 		       int fsize = 0;
-		       
+
 		       fdata = eet_read(ef, (char *)key, &fsize);
 		       if ((fdata) && (fsize > 0))
 			 {
 			    font = evas_common_font_memory_load(tmp, size, fdata, fsize);
 			    free(fdata);
 			 }
-		       eet_close(ef);		  
+		       eet_close(ef);
 		    }
 	       }
 	     free(tmp);
 	  }
      }
    else
-#endif     
+#endif
      {
 	font = evas_common_font_load((char *)file, size);
      }

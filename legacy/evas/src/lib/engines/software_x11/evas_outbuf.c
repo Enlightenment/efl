@@ -72,10 +72,10 @@ evas_software_x11_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 #ifdef WORDS_BIGENDIAN
 	   if (evas_software_x11_x_output_buffer_byte_order(xob) == LSBFirst)
 	     buf->priv.x.swap = 1;
-#else	   
+#else
 	   if (evas_software_x11_x_output_buffer_byte_order(xob) == MSBFirst)
 	     buf->priv.x.swap = 1;
-#endif	     
+#endif
 	   if ((vis->class == TrueColor) || (vis->class == DirectColor))
 	     {
 		buf->priv.mask.r = (DATA32) vis->red_mask;
@@ -240,7 +240,7 @@ evas_software_x11_outbuf_new_region_for_update(Outbuf * buf, int x, int y, int w
      {
 	if ((w * h) < (200 * 200)) use_shm = 0;
      }
-   
+
    if ((buf->rot == 0) &&
        (buf->priv.mask.r == 0xff0000) &&
        (buf->priv.mask.g == 0x00ff00) &&
@@ -263,7 +263,7 @@ evas_software_x11_outbuf_new_region_for_update(Outbuf * buf, int x, int y, int w
 	if (buf->priv.x.mask)
 	  obr->mxob = evas_software_x11_x_output_buffer_new(buf->priv.x.disp,
 							    buf->priv.x.vis,
-							    1, w, h, 
+							    1, w, h,
 							    use_shm,
 							    NULL);
      }
@@ -312,12 +312,12 @@ void
 evas_software_x11_outbuf_flush(Outbuf *buf)
 {
    Evas_List *l;
-   
+
    for (l = buf->priv.pending_writes; l; l = l->next)
      {
 	RGBA_Image *im;
 	Outbuf_Region      *obr;
-	
+
 	im = l->data;
 	obr = im->extended_info;
 	/* paste now */
@@ -338,7 +338,7 @@ evas_software_x11_outbuf_flush(Outbuf *buf)
      {
         RGBA_Image *im;
 	Outbuf_Region      *obr;
-	
+
 	im = buf->priv.pending_writes->data;
 	buf->priv.pending_writes = evas_list_remove_list(buf->priv.pending_writes, buf->priv.pending_writes);
 	obr = im->extended_info;
@@ -358,7 +358,7 @@ evas_software_x11_outbuf_push_updated_region(Outbuf * buf, RGBA_Image * update, 
    DATA32             *src_data;
    void               *data;
    int                 bpl = 0, yy;
-   
+
    obr = update->extended_info;
    if (buf->priv.pal)
      {
@@ -391,7 +391,7 @@ evas_software_x11_outbuf_push_updated_region(Outbuf * buf, RGBA_Image * update, 
 						   PAL_MODE_NONE, buf->rot);
      }
    if (!conv_func) return;
-   
+
    data = evas_software_x11_x_output_buffer_data(obr->xob, &bpl);
    src_data = update->image->data;
    if (buf->rot == 0)
@@ -456,9 +456,9 @@ void
 evas_software_x11_outbuf_reconfigure(Outbuf * buf, int w, int h, int rot,
 				Outbuf_Depth depth)
 {
-   if ((w == buf->w) && 
-       (h == buf->h) && 
-       (rot == buf->rot) && 
+   if ((w == buf->w) &&
+       (h == buf->h) &&
+       (rot == buf->rot) &&
        (depth == buf->depth)) return;
    buf->w = w;
    buf->h = h;
@@ -532,13 +532,13 @@ evas_software_x11_outbuf_debug_show(Outbuf * buf, Drawable draw, int x, int y, i
 {
    int                 i;
    int                 screen_num = 0;
-   
+
      {
 	int                 wx, wy;
 	unsigned int        ww, wh, bd, dp;
 	Window              wdum, root;
 	XWindowAttributes   wattr;
-	
+
 	XGetGeometry(buf->priv.x.disp, draw, &root, &wx, &wy, &ww, &wh, &bd, &dp);
 	XGetGeometry(buf->priv.x.disp, root, &wdum, &wx, &wy, &ww, &wh, &bd, &dp);
 	XGetWindowAttributes(buf->priv.x.disp, root, &wattr);
@@ -547,7 +547,7 @@ evas_software_x11_outbuf_debug_show(Outbuf * buf, Drawable draw, int x, int y, i
    for (i = 0; i < 10; i++)
      {
 	XImage             *xim;
-	
+
 	XSetForeground(buf->priv.x.disp, buf->priv.x.gc,
 		       BlackPixel(buf->priv.x.disp, screen_num));
 	XFillRectangle(buf->priv.x.disp, draw, buf->priv.x.gc, x, y, w, h);

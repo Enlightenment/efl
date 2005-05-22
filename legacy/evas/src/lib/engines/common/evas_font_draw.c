@@ -4,7 +4,7 @@ RGBA_Font_Glyph *
 evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
 {
    RGBA_Font_Glyph *fg;
-   char key[6];   
+   char key[6];
    FT_Error error;
 
    key[0] = ((index       ) & 0x7f) + 1;
@@ -16,18 +16,18 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
 
    fg = evas_hash_find(fi->glyphs, key);
    if (fg) return fg;
-   
+
 //   error = FT_Load_Glyph(fi->src->ft.face, index, FT_LOAD_NO_BITMAP);
-   error = FT_Load_Glyph(fi->src->ft.face, index, 
+   error = FT_Load_Glyph(fi->src->ft.face, index,
 			 FT_LOAD_RENDER);
    if (error) return NULL;
-   
+
    fg = malloc(sizeof(struct _RGBA_Font_Glyph));
    if (!fg) return NULL;
    memset(fg, 0, (sizeof(struct _RGBA_Font_Glyph)));
-   
+
    error = FT_Get_Glyph(fi->src->ft.face->glyph, &(fg->glyph));
-   if (error) 
+   if (error)
      {
 	free(fg);
 	return NULL;
@@ -35,7 +35,7 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
    if (fg->glyph->format != ft_glyph_format_bitmap)
      {
 	error = FT_Glyph_To_Bitmap(&(fg->glyph), ft_render_mode_normal, 0, 1);
-	if (error) 
+	if (error)
 	  {
 	     FT_Done_Glyph(fg->glyph);
 	     free(fg);
@@ -43,7 +43,7 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
 	  }
      }
    fg->glyph_out = (FT_BitmapGlyph)fg->glyph;
-   
+
    fi->glyphs = evas_hash_add(fi->glyphs, key, fg);
    return fg;
 }
@@ -52,12 +52,12 @@ int
 evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, int gl)
 {
    Evas_List *l;
-   
+
    for (l = fn->fonts; l; l = l->next)
      {
 	RGBA_Font_Int *fi;
 	int index;
-	
+
 	fi = l->data;
         index = FT_Get_Char_Index(fi->src->ft.face, gl);
 	if (index != 0)
@@ -83,13 +83,13 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
    int c;
    RGBA_Font_Int *fi;
    FT_Face pface = NULL;
-   
+
    fi = fn->fonts->data;
-   
+
    im = dst->image->data;
    im_w = dst->image->w;
    im_h = dst->image->h;
-   
+
    ext_x = 0; ext_y = 0; ext_w = im_w; ext_h = im_h;
    if (dc->clip.use)
      {
@@ -114,7 +114,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
      }
    if (ext_w <= 0) return;
    if (ext_h <= 0) return;
-   
+
    pen_x = x << 8;
    pen_y = y << 8;
    evas_common_font_size_use(fn);
@@ -127,7 +127,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	RGBA_Font_Glyph *fg;
 	int chr_x, chr_y;
 	int gl;
-	
+
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (gl == 0) break;
 	index = evas_common_font_glyph_search(fn, &fi, gl);
@@ -138,7 +138,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	    (pface == fi->src->ft.face))
 	  {
 	     FT_Vector delta;
-	     
+
 	     if (FT_Get_Kerning(fi->src->ft.face, prev_index, index,
 				ft_kerning_default, &delta) == 0)
 	       pen_x += delta.x << 2;
@@ -146,7 +146,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	if (!fg) continue;
-	
+
 	if ((dc->font_ext.func.gl_new) && (!fg->ext_dat))
 	  {
 	     /* extension calls */
@@ -156,12 +156,12 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 
 	chr_x = (pen_x + (fg->glyph_out->left << 8)) >> 8;
 	chr_y = (pen_y + (fg->glyph_out->top << 8)) >> 8;
-	
+
 	if (chr_x < (ext_x + ext_w))
 	  {
 	     DATA8 *data;
 	     int i, j, w, h;
-	     
+
 	     data = fg->glyph_out->bitmap.buffer;
 	     j = fg->glyph_out->bitmap.pitch;
 	     w = fg->glyph_out->bitmap.width;
@@ -175,10 +175,10 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 		       if (fg->ext_dat)
 			 {
 			    /* ext glyph draw */
-			    dc->font_ext.func.gl_draw(dc->font_ext.data, 
+			    dc->font_ext.func.gl_draw(dc->font_ext.data,
 						      (void *)c,
-						      dc, fg, 
-						      chr_x, 
+						      dc, fg,
+						      chr_x,
 						      y - (chr_y - y)
 						      );
 			 }
@@ -188,7 +188,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 			      {
 				 int dx, dy;
 				 int in_x, in_w;
-				 
+
 				 in_x = 0;
 				 in_w = 0;
 				 dx = chr_x;
@@ -207,9 +207,9 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 					}
 				      if (in_w < w)
 					{
-					   func(data + (i * j) + in_x, 
+					   func(data + (i * j) + in_x,
 						im + (dy * im_w) + dx,
-						w - in_w, 
+						w - in_w,
 						dc->col.col);
 					}
 				   }
@@ -222,6 +222,6 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	else
 	  break;
 	pen_x += fg->glyph->advance.x >> 8;
-	prev_index = index;	
+	prev_index = index;
      }
 }

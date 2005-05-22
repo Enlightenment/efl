@@ -65,7 +65,7 @@ Evas_Object *
 evas_object_rectangle_add(Evas *e)
 {
    Evas_Object *obj;
-   
+
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
@@ -107,7 +107,7 @@ static void *
 evas_object_rectangle_new(void)
 {
    Evas_Object_Rectangle *o;
-   
+
    /* alloc obj private data */
    o = calloc(1, sizeof(Evas_Object_Rectangle));
    o->magic = MAGIC_OBJ_RECTANGLE;
@@ -214,20 +214,20 @@ evas_object_rectangle_render_pre(Evas_Object *obj)
      {
 	Evas_Rectangle *r;
 	Evas_List *rl;
-	
-	rl = evas_rects_return_difference_rects(obj->cur.cache.geometry.x, 
-						obj->cur.cache.geometry.y, 
-						obj->cur.cache.geometry.w, 
+
+	rl = evas_rects_return_difference_rects(obj->cur.cache.geometry.x,
+						obj->cur.cache.geometry.y,
+						obj->cur.cache.geometry.w,
 						obj->cur.cache.geometry.h,
-						obj->prev.cache.geometry.x, 
-						obj->prev.cache.geometry.y, 
-						obj->prev.cache.geometry.w, 
+						obj->prev.cache.geometry.x,
+						obj->prev.cache.geometry.y,
+						obj->prev.cache.geometry.w,
 						obj->prev.cache.geometry.h);
 	while (rl)
 	  {
 	     r = rl->data;
 	     rl = evas_list_remove(rl, r);
-	     updates = evas_list_append(updates, r);	     
+	     updates = evas_list_append(updates, r);
 	  }
 	goto done;
      }
@@ -238,9 +238,9 @@ evas_object_rectangle_render_pre(Evas_Object *obj)
        evas_object_is_opaque(obj) &&
        (!obj->clip.clipees))
      obj->layer->evas->engine.func->output_redraws_rect_del(obj->layer->evas->engine.data.output,
-							    obj->cur.cache.clip.x, 
-							    obj->cur.cache.clip.y, 
-							    obj->cur.cache.clip.w, 
+							    obj->cur.cache.clip.x,
+							    obj->cur.cache.clip.y,
+							    obj->cur.cache.clip.w,
 							    obj->cur.cache.clip.h);
    done:
    evas_object_render_pre_effect_updates(updates, obj, is_v, was_v);
@@ -259,7 +259,7 @@ evas_object_rectangle_render_post(Evas_Object *obj)
    while (obj->clip.changes)
      {
 	Evas_Rectangle *r;
-	
+
 	r = (Evas_Rectangle *)obj->clip.changes->data;
 	obj->clip.changes = evas_list_remove(obj->clip.changes, r);
 	free(r);
@@ -299,7 +299,7 @@ static int
 evas_object_rectangle_was_visible(Evas_Object *obj)
 {
    Evas_Object_Rectangle *o;
-   
+
    /* this returns 1 if the internal object data would imply that it was */
    /* visible (ie drawing it draws something. this is not to do with events */
    o = (Evas_Object_Rectangle *)(obj->object_data);
@@ -321,7 +321,7 @@ static int
 evas_object_rectangle_was_opaque(Evas_Object *obj)
 {
    Evas_Object_Rectangle *o;
-   
+
    /* this returns 1 if the internal object data implies that the object was */
    /* previously fully opaque over the entire rectangle it occupies */
    o = (Evas_Object_Rectangle *)(obj->object_data);
@@ -332,7 +332,7 @@ static int
 evas_object_rectangle_is_inside(Evas_Object *obj, double x, double y)
 {
    Evas_Object_Rectangle *o;
-   
+
    /* this returns 1 if the canvas co-ordinates are inside the object based */
    /* on object private data. not much use for rects, but for polys, images */
    /* and other complex objects it might be */
@@ -344,7 +344,7 @@ static int
 evas_object_rectangle_was_inside(Evas_Object *obj, double x, double y)
 {
    Evas_Object_Rectangle *o;
-   
+
    /* this returns 1 if the canvas co-ordinates were inside the object based */
    /* on object private data. not much use for rects, but for polys, images */
    /* and other complex objects it might be */

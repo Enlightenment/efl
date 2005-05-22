@@ -14,12 +14,12 @@ evas_common_blend_init(void)
    static int mmx = 0;
    static int sse = 0;
    static int sse2 = 0;
-   
+
    if (initialised) return;
    initialised = 1;
-   
+
    evas_common_cpu_can_do(&mmx, &sse, &sse2);
-   
+
 /*   evas_common_blend_init_evas_pow_lut(); */
 }
 
@@ -35,7 +35,7 @@ evas_common_blend_init_evas_pow_lut(void)
 	for (j = 0; j < 256; j++)
 	  {
 	     int divisor;
-	     
+
 	     divisor = (i + (j * (255 - i)) / 255);
 	     if (divisor > 0) _evas_pow_lut[(i << 8) | j] = (i * 255) / divisor;
 	     else             _evas_pow_lut[(i << 8) | j] = 0;

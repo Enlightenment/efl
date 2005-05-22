@@ -25,10 +25,10 @@ struct _Outbuf
    Outbuf_Depth    depth;
    int             w, h;
    int             rot;
-   
+
    struct {
       void *target;
-      
+
       struct {
 	 DATA32    r, g, b;
       } mask;
@@ -71,10 +71,10 @@ struct _QT_Direct
 #ifdef __cplusplus
 extern "C" {
 #endif
-   
+
 /****/
 void             x_software_qtopia_init                    (void);
-    
+
 void         evas_qtopia_outbuf_software_qtopia_init                   (void);
 void         evas_qtopia_outbuf_software_qtopia_free                   (Outbuf *buf);
 
