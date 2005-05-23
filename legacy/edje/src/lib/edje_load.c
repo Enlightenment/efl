@@ -360,6 +360,8 @@ edje_file_collection_list(const char *file)
    Evas_List *lst = NULL;
    Edje_File *ed_file;
 
+   if (!file || !*file) return NULL;
+
    ed_file = evas_hash_find(_edje_file_hash, file);
    if (!ed_file) ed_file = _edje_file_cache_find((char *)file);
    if (!ed_file)
