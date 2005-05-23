@@ -3,12 +3,12 @@
 
 /*
  * rotuines for doing data -> struct and struct -> data conversion
- * 
+ *
  * types:
- * 
+ *
  * basic types:
  *   a sequence of...
- * 
+ *
  *   char
  *   short
  *   int
@@ -20,23 +20,23 @@
  *   unsigned int
  *   unsgined long long
  *   string
- * 
+ *
  * groupings:
  *   multiple entries ordered as...
- * 
+ *
  *   fixed size array    [ of basic types ]
  *   variable size array [ of basic types ]
  *   linked list         [ of basic types ]
  *   hash table          [ of basic types ]
- * 
+ *
  * need to provide builder/accessor funcs for:
- * 
+ *
  *   list_next
  *   list_append
- * 
+ *
  *   hash_foreach
  *   hash_add
- * 
+ *
  */
 
 /*---*/
@@ -131,7 +131,7 @@ static void             eet_data_chunk_put(Eet_Data_Chunk *chnk, Eet_Data_Stream
 
 /*---*/
 
-const Eet_Data_Basic_Type_Decoder eet_coder[] = 
+const Eet_Data_Basic_Type_Decoder eet_coder[] =
 {
      {sizeof(char),      eet_data_get_char,      eet_data_put_char     },
      {sizeof(short),     eet_data_get_short,     eet_data_put_short    },
@@ -180,7 +180,7 @@ static int
 eet_data_get_char(void *src, void *src_end, void *dst)
 {
    char *s, *d;
-   
+
    if (((char *)src + sizeof(char)) > (char *)src_end) return -1;
    s = (char *)src;
    d = (char *)dst;
@@ -193,7 +193,7 @@ static void *
 eet_data_put_char(void *src, int *size_ret)
 {
    char *s, *d;
-   
+
    d = (char *)malloc(sizeof(char));
    if (!d) return NULL;
    s = (char *)src;
@@ -208,7 +208,7 @@ static int
 eet_data_get_short(void *src, void *src_end, void *dst)
 {
    short *d;
-   
+
    if (((char *)src + sizeof(short)) > (char *)src_end) return -1;
    memcpy(dst, src, sizeof(short));
    d = (short *)dst;
@@ -220,7 +220,7 @@ static void *
 eet_data_put_short(void *src, int *size_ret)
 {
    short *s, *d;
-   
+
    d = (short *)malloc(sizeof(short));
    if (!d) return NULL;
    s = (short *)src;
@@ -235,7 +235,7 @@ static int
 eet_data_get_int(void *src, void *src_end, void *dst)
 {
    int *d;
-   
+
    if (((char *)src + sizeof(int)) > (char *)src_end) return -1;
    memcpy(dst, src, sizeof(int));
    d = (int *)dst;
@@ -247,7 +247,7 @@ static void *
 eet_data_put_int(void *src, int *size_ret)
 {
    int *s, *d;
-   
+
    d = (int *)malloc(sizeof(int));
    if (!d) return NULL;
    s = (int *)src;
@@ -262,7 +262,7 @@ static int
 eet_data_get_long_long(void *src, void *src_end, void *dst)
 {
    unsigned long long *d;
-   
+
    if (((char *)src + sizeof(unsigned long long)) > (char *)src_end) return -1;
    memcpy(dst, src, sizeof(unsigned long long));
    d = (unsigned long long *)dst;
@@ -274,7 +274,7 @@ static void *
 eet_data_put_long_long(void *src, int *size_ret)
 {
    unsigned long long *s, *d;
-   
+
    d = (unsigned long long *)malloc(sizeof(unsigned long long));
    if (!d) return NULL;
    s = (unsigned long long *)src;
@@ -290,7 +290,7 @@ eet_data_get_string(void *src, void *src_end, void *dst)
 {
    char *s, **d, *p;
    int len;
-   
+
    s = (char *)src;
    d = (char **)dst;
    p = s;
@@ -309,7 +309,7 @@ eet_data_put_string(void *src, int *size_ret)
    char *s, *d;
    int len;
    const char *empty_s = "";
-   
+
    s = (char *)(*((char **)src));
    if (!s) s = (char *)empty_s;
    len = strlen(s);
@@ -327,7 +327,7 @@ eet_data_get_float(void *src, void *src_end, void *dst)
    float *d;
    char *s, *str, *p, *prev_locale;
    int len;
-   
+
    s = (char *)src;
    d = (float *)dst;
    p = s;
@@ -337,11 +337,11 @@ eet_data_get_float(void *src, void *src_end, void *dst)
    if (!str) return -1;
    memcpy(str, s, len);
    str[len] = 0;
-   
+
    prev_locale = setlocale(LC_NUMERIC, "C");
    *d = (float)atof(str);
    if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
-   
+
    free(str);
    return len + 1;
 }
@@ -352,7 +352,7 @@ eet_data_put_float(void *src, int *size_ret)
    float *s;
    char *d, buf[64], *prev_locale;
    int len;
-   
+
    s = (float *)src;
    prev_locale = setlocale(LC_NUMERIC, "C");
    snprintf(buf, sizeof(buf), "%a", (double)(*s));
@@ -372,7 +372,7 @@ eet_data_get_double(void *src, void *src_end, void *dst)
    double *d;
    char *s, *str, *p, *prev_locale;
    int len;
-   
+
    s = (char *)src;
    d = (double *)dst;
    p = s;
@@ -382,11 +382,11 @@ eet_data_get_double(void *src, void *src_end, void *dst)
    if (!str) return -1;
    memcpy(str, s, len);
    str[len] = 0;
-   
+
    prev_locale = setlocale(LC_NUMERIC, "C");
    *d = (double)atof(str);
    if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
-   
+
    free(str);
    return len + 1;
 }
@@ -397,7 +397,7 @@ eet_data_put_double(void *src, int *size_ret)
    double *s;
    char *d, buf[128], *prev_locale;
    int len;
-   
+
    s = (double *)src;
    prev_locale = setlocale(LC_NUMERIC, "C");
    snprintf(buf, sizeof(buf), "%a", (double)(*s));
@@ -414,7 +414,7 @@ static int
 eet_data_get_type(int type, void *src, void *src_end, void *dest)
 {
    int ret;
-   
+
    ret = eet_coder[type - 1].get(src, src_end, dest);
    return ret;
 }
@@ -423,20 +423,20 @@ static void *
 eet_data_put_type(int type, void *src, int *size_ret)
 {
    void *ret;
-   
+
    ret = eet_coder[type - 1].put(src, size_ret);
    return ret;
 }
 
 /* chunk format...
- * 
+ *
  * char[4] = "CHnK";
  * int     = chunk size (including magic string);
  * char[]  = chuck magic/name string (0 byte terminated);
  * ... sub-chunks (a chunk can contain chuncks recusrively) ...
  * or
  * ... payload data ...
- * 
+ *
  */
 
 static Eet_Data_Chunk *
@@ -445,13 +445,13 @@ eet_data_chunk_get(void *src, int size)
    Eet_Data_Chunk *chnk;
    char *s;
    int ret1, ret2;
-   
+
    if (!src) return NULL;
    if (size <= 8) return NULL;
-   
+
    chnk = calloc(1, sizeof(Eet_Data_Chunk));
    if (!chnk) return NULL;
-   
+
    s = src;
    if ((s[0] != 'C') || (s[1] != 'H') || (s[2] != 'n') || (s[3] != 'K'))
      {
@@ -462,18 +462,18 @@ eet_data_chunk_get(void *src, int size)
    if (ret1 <= 0)
      {
 	free(chnk);
-	return NULL;	
+	return NULL;
      }
    if ((chnk->size < 0) || ((chnk->size + 8) > size))
      {
 	free(chnk);
-	return NULL;	
+	return NULL;
      }
    ret2 = eet_data_get_type(EET_T_STRING, (void *)(s + 8), (void *)(s + size), &(chnk->name));
    if (ret2 <= 0)
      {
 	free(chnk);
-	return NULL;	
+	return NULL;
      }
    chnk->data = (char *)src + 4 + ret1 + ret2;
    chnk->size -= ret2;
@@ -484,15 +484,15 @@ static Eet_Data_Chunk *
 eet_data_chunk_new(void *data, int size, char *name)
 {
    Eet_Data_Chunk *chnk;
-   
+
    if (!name) return NULL;
    chnk = calloc(1, sizeof(Eet_Data_Chunk));
    if (!chnk) return NULL;
-   
+
    chnk->name = strdup(name);
    chnk->size = size;
    chnk->data = data;
-   
+
    return chnk;
 }
 
@@ -507,7 +507,7 @@ static Eet_Data_Stream *
 eet_data_stream_new(void)
 {
    Eet_Data_Stream *ds;
-   
+
    ds = calloc(1, sizeof(Eet_Data_Stream));
    if (!ds) return NULL;
    return ds;
@@ -524,7 +524,7 @@ static void
 eet_data_stream_write(Eet_Data_Stream *ds, void *data, int size)
 {
    char *p;
-	
+
    if ((ds->pos + size) > ds->size)
      {
 	ds->data = realloc(ds->data, ds->size + size + 256);
@@ -598,7 +598,7 @@ void
 eet_data_descriptor_free(Eet_Data_Descriptor *edd)
 {
    int i;
-   
+
    if (edd->name) free(edd->name);
    for (i = 0; i < edd->elements.num; i++)
      {
@@ -610,14 +610,14 @@ eet_data_descriptor_free(Eet_Data_Descriptor *edd)
 }
 
 void
-eet_data_descriptor_element_add(Eet_Data_Descriptor *edd, char *name, int type, 
-				int group_type, 
-				int offset, 
-				int count, char *counter_name, 
+eet_data_descriptor_element_add(Eet_Data_Descriptor *edd, char *name, int type,
+				int group_type,
+				int offset,
+				int count, char *counter_name,
 				Eet_Data_Descriptor *subtype)
 {
    Eet_Data_Element *ede;
-   
+
    edd->elements.num++;
    edd->elements.set = realloc(edd->elements.set, edd->elements.num * sizeof(Eet_Data_Element));
    if (!edd->elements.set) return;
@@ -639,7 +639,7 @@ eet_data_read(Eet_File *ef, Eet_Data_Descriptor *edd, char *name)
    void *data_dec;
    void *data;
    int size;
-   
+
    data = eet_read(ef, name, &size);
    if (!data) return NULL;
    data_dec = eet_data_descriptor_decode(edd, data, size);
@@ -653,7 +653,7 @@ eet_data_write(Eet_File *ef, Eet_Data_Descriptor *edd, char *name, void *data, i
    void *data_enc;
    int size;
    int val;
-   
+
    data_enc = eet_data_descriptor_encode(edd, data, &size);
    if (!data_enc) return 0;
    val = eet_write(ef, name, data_enc, size, compress);
@@ -720,7 +720,7 @@ static void
 _eet_freelist_list_add(void **data)
 {
    int i;
-   
+
    for (i = 0; i < freelist_list_num; i++)
      {
 	if (freelist_list[i] == data) return;
@@ -748,7 +748,7 @@ static void
 _eet_freelist_list_free(Eet_Data_Descriptor *edd)
 {
    int i;
-   
+
    if (freelist_list_ref > 0) return;
    for (i = 0; i < freelist_list_num; i++)
      edd->func.list_free(*(freelist_list[i]));
@@ -776,7 +776,7 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
    char *p;
    int size;
    Eet_Data_Chunk *chnk;
-   
+
    if (words_bigendian == -1)
      {
 	unsigned long int v;
@@ -785,7 +785,7 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 	if (v == 0x12345678) words_bigendian = 1;
 	else words_bigendian = 0;
      }
-   
+
    data = calloc(1, edd->size);
    if (!data) return NULL;
    _eet_freelist_ref();
@@ -815,7 +815,7 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
      {
 	Eet_Data_Chunk *echnk;
 	int i;
-	
+
 	/* get next data chunk */
 	echnk = eet_data_chunk_get(p, size);
 	if (!echnk)
@@ -830,7 +830,7 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 	for (i = 0; i < edd->elements.num; i++)
 	  {
 	     Eet_Data_Element *ede;
-	     
+
 	     ede = &(edd->elements.set[i]);
 	     if (!strcmp(echnk->name, ede->name))
 	       {
@@ -838,8 +838,8 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 		    {
 		       int ret;
 		       void *data_ret;
-		     
-		       if ((ede->type >= EET_T_CHAR) && 
+
+		       if ((ede->type >= EET_T_CHAR) &&
 			   (ede->type <= EET_T_STRING))
 			 {
 			    ret = eet_data_get_type(ede->type,
@@ -850,7 +850,7 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 		       else if (ede->subtype)
 			 {
 			    void **ptr;
-			    
+
 			    data_ret = eet_data_descriptor_decode(ede->subtype,
 								  echnk->data,
 								  echnk->size);
@@ -883,7 +883,7 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 				 void *list = NULL;
 				 void **ptr;
 				 void *data_ret;
-				   
+
 				 ptr = (void **)(((char *)data) + ede->offset);
 				 list = *ptr;
 				 data_ret = NULL;
@@ -974,7 +974,7 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
    int i;
    void *cdata;
    int csize;
-   
+
    if (words_bigendian == -1)
      {
 	unsigned long int v;
@@ -983,7 +983,7 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
 	if (v == 0x12345678) words_bigendian = 1;
 	else words_bigendian = 0;
      }
-   
+
    ds = eet_data_stream_new();
    for (i = 0; i < edd->elements.num; i++)
      {
@@ -991,24 +991,24 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
 	Eet_Data_Chunk *echnk;
 	void *data;
 	int size;
-	
+
 	ede = &(edd->elements.set[i]);
 	data = NULL;
 	if (ede->group_type == EET_G_UNKNOWN)
 	  {
-	     if ((ede->type >= EET_T_CHAR) && 
+	     if ((ede->type >= EET_T_CHAR) &&
 		 (ede->type <= EET_T_STRING))
-	       data = eet_data_put_type(ede->type, 
-					((char *)data_in) + ede->offset, 
+	       data = eet_data_put_type(ede->type,
+					((char *)data_in) + ede->offset,
 					&size);
 	     else if (ede->subtype)
 	       {
 		  if (*((char **)(((char *)data_in) + ede->offset)))
-		    data = eet_data_descriptor_encode(ede->subtype, 
+		    data = eet_data_descriptor_encode(ede->subtype,
 						      *((char **)(((char *)data_in) + ede->offset)),
 						      &size);
 	       }
-	     if (data) 
+	     if (data)
 	       {
 		  echnk = eet_data_chunk_new(data, size, ede->name);
 		  eet_data_chunk_put(echnk, ds);
@@ -1030,7 +1030,7 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
 		case EET_G_LIST:
 		    {
 		       void *l;
-		       
+
 		       l = *((void **)(((char *)data_in) + ede->offset));
 		       for (; l; l = edd->func.list_next(l))
 			 {
@@ -1045,7 +1045,7 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
 								&size);
 			    if (data)
 			      {
-				 echnk = eet_data_chunk_new(data, size, ede->name); 
+				 echnk = eet_data_chunk_new(data, size, ede->name);
 				 eet_data_chunk_put(echnk, ds);
 				 eet_data_chunk_free(echnk);
 				 free(data);
@@ -1068,7 +1068,7 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
    ds->data = NULL;
    ds->size = 0;
    eet_data_stream_free(ds);
-   
+
    ds = eet_data_stream_new();
    eet_data_chunk_put(chnk, ds);
    cdata = ds->data;
@@ -1078,9 +1078,9 @@ eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
    ds->size = 0;
    eet_data_stream_free(ds);
    *size_ret = csize;
-   
+
    free(chnk->data);
    eet_data_chunk_free(chnk);
-   
+
    return cdata;
 }

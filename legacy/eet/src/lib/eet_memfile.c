@@ -8,7 +8,7 @@ _eet_memfile_read_open(void *data, size_t size)
    return (FILE *)fmemopen(data, size, "rb");
 #else
    FILE *f;
-   
+
    f = tmpfile();
    if (!f)
      {
@@ -29,7 +29,7 @@ _eet_memfile_read_close(FILE *f)
    fclose(f);
 #else
    fclose(f);
-#endif   
+#endif
 }
 
 
@@ -67,17 +67,17 @@ _eet_memfile_write_open(void **data, size_t *size)
 {
 #ifdef HAVE_OPEN_MEMSTREAM
    return open_memstream((char **)data, size);
-#else   
+#else
    FILE *f;
-   
+
    _eet_memfile_info_num++;
    if (_eet_memfile_info_num > _eet_memfile_info_alloc_num)
      {
 	Eet_Memfile_Write_Info *tmp;
-	
+
 	_eet_memfile_info_alloc_num += 16;
-	tmp = realloc(_eet_memfile_info, 
-		      _eet_memfile_info_alloc_num * 
+	tmp = realloc(_eet_memfile_info,
+		      _eet_memfile_info_alloc_num *
 		      sizeof(Eet_Memfile_Write_Info));
 	if (!tmp)
 	  {
@@ -88,7 +88,7 @@ _eet_memfile_write_open(void **data, size_t *size)
 	_eet_memfile_info = tmp;
      }
    f = tmpfile();
-   if (!f) 
+   if (!f)
      {
 	_eet_memfile_info_num--;
 	return NULL;
@@ -104,10 +104,10 @@ void
 _eet_memfile_write_close(FILE *f)
 {
 #ifdef HAVE_OPEN_MEMSTREAM
-   fclose(f);   
+   fclose(f);
 #else
    int i;
-   
+
    for (i = 0; i < _eet_memfile_info_num; i++)
      {
 	if (_eet_memfile_info[i].f == f)

@@ -1,3 +1,6 @@
+/* strdup requires BSD source */
+#define _BSD_SOURCE
+
 #include "Eet.h"
 #include <stdio.h>
 #include <unistd.h>
@@ -16,7 +19,7 @@ double
 get_time(void)
 {
    struct timeval      timev;
-   
+
    gettimeofday(&timev, NULL);
    return (double)timev.tv_sec + (((double)timev.tv_usec) / 1000000);
 }
@@ -30,7 +33,10 @@ main(int argc, char **argv)
    int items_num;
    int i;
    double t1, t2;
-   
+
+   if (argc < 2)
+     exit(-1);
+
    file = argv[1];
    ef = eet_open(file, EET_FILE_MODE_READ);
    if (ef)
@@ -45,16 +51,17 @@ main(int argc, char **argv)
 	printf("EEK. cannot load %s\n", file);
 	exit(-1);
      }
-   
+
    t1 = get_time();
    ef = eet_open(file, EET_FILE_MODE_READ);
    if (ef)
      {
 	for (i = 0; i < items_num; i++)
 	  {
-	     int w, h, alpha, compress, quality, lossy;
+	     int alpha, compress, quality, lossy;
+	     unsigned int w, h;
 	     void *data;
-	     
+
 	     if (eet_data_image_header_read(ef, items[i], &w, &h, &alpha, &compress, &quality, &lossy))
 	       {
 		  data = eet_data_image_read(ef, items[i], &w, &h, &alpha, &compress, &quality, &lossy);
@@ -81,9 +88,10 @@ main(int argc, char **argv)
    t1 = get_time();
    for (i = 0; i < items_num; i++)
      {
-	int w, h, alpha, compress, quality, lossy;
+	int alpha, compress, quality, lossy;
+	unsigned int w, h;
 	void *data;
-	
+
 	ef = eet_open(file, EET_FILE_MODE_READ);
 	if (ef)
 	  {

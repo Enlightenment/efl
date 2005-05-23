@@ -1,3 +1,6 @@
+/* PATH_MAX requires POSIX source */
+#define _POSIX_SOURCE
+
 #include "Eet.h"
 #include <stdio.h>
 #include <unistd.h>
@@ -51,31 +54,31 @@ encdectest(void)
    int size;
    FILE *f;
    Blah *blah_in;
-   
+
    edd3 = eet_data_descriptor_new("blah3", sizeof(Blah3),
-				  evas_list_next, 
-				  evas_list_append, 
-				  evas_list_data, 
+				  evas_list_next,
+				  evas_list_append,
+				  evas_list_data,
 				  evas_list_free,
 				  evas_hash_foreach,
 				  evas_hash_add,
 				  evas_hash_free);
    EET_DATA_DESCRIPTOR_ADD_BASIC(edd3, Blah3, "string3", string, EET_T_STRING);
-   
+
    edd2 = eet_data_descriptor_new("blah2", sizeof(Blah2),
-				  evas_list_next, 
-				  evas_list_append, 
-				  evas_list_data, 
+				  evas_list_next,
+				  evas_list_append,
+				  evas_list_data,
 				  evas_list_free,
 				  evas_hash_foreach,
 				  evas_hash_add,
 				  evas_hash_free);
    EET_DATA_DESCRIPTOR_ADD_BASIC(edd2, Blah2, "string2", string, EET_T_STRING);
-   
+
    edd = eet_data_descriptor_new("blah", sizeof(Blah),
-				  evas_list_next, 
-				  evas_list_append, 
-				  evas_list_data, 
+				  evas_list_next,
+				  evas_list_append,
+				  evas_list_data,
 				  evas_list_free,
 				  evas_hash_foreach,
 				  evas_hash_add,
@@ -91,9 +94,9 @@ encdectest(void)
    EET_DATA_DESCRIPTOR_ADD_LIST (edd, Blah, "blah3", blah3, edd3);
 
    blah3.string="PANTS";
-   
+
    blah2.string="subtype string here!";
-   
+
    blah.character='7';
    blah.sixteen=0x7777;
    blah.integer=0xc0def00d;
@@ -109,14 +112,14 @@ encdectest(void)
    blah.blah3 = evas_list_append(blah.blah3, &blah3);
    blah.blah3 = evas_list_append(blah.blah3, &blah3);
    blah.blah3 = evas_list_append(blah.blah3, &blah3);
-   
+
    data = eet_data_descriptor_encode(edd, &blah, &size);
    f = fopen("out", "wb");
    if (f)
      {
 	fwrite(data, size, 1, f);
 	fclose(f);
-     }      
+     }
    printf("-----DECODING\n");
    blah_in = eet_data_descriptor_decode(edd, data, size);
    printf("-----DECODED!\n");
@@ -131,11 +134,11 @@ encdectest(void)
    printf("  %s\n", blah_in->blah2->string);
      {
 	Evas_List *l;
-	
+
 	for (l = blah_in->blah3; l; l = l->next)
 	  {
 	     Blah3 *blah3_in;
-	     
+
 	     blah3_in = l->data;
 	     printf("%p\n", blah3_in);
 	     printf("  %s\n", blah3_in->string);
@@ -144,7 +147,7 @@ encdectest(void)
    eet_data_descriptor_free(edd);
    eet_data_descriptor_free(edd2);
    eet_data_descriptor_free(edd3);
-   
+
    exit(0);
 }
 #endif
@@ -181,7 +184,7 @@ eet_mkdirs(char *s)
 {
    char ss[PATH_MAX];
    int  i, ii;
-   
+
    i = 0;
    ii = 0;
    while (s[i])
@@ -199,14 +202,14 @@ depak_file(Eet_File *ef, char *file)
    void *data;
    int size;
    char *last;
-   
+
    data = eet_read(ef, file, &size);
    if (data)
      {
 	FILE *f;
 	char buf[PATH_MAX];
 	int len;
-	
+
 	strncpy(buf, file, sizeof(buf) - 1);
 	buf[sizeof(buf) - 1] = 0;
 	if (buf[0] == '/') return;
@@ -219,12 +222,12 @@ depak_file(Eet_File *ef, char *file)
 	     if (!strcmp(&(buf[len - 3]), "/..")) return;
 	  }
 	last = strrchr(buf, '/');
-	if (last) 
+	if (last)
 	  {
 	     last[1] = 0;
 	     eet_mkdirs(buf);
 	  }
-	  
+
 	f = fopen(file, "wb");
 	if (f)
 	  {
@@ -248,8 +251,8 @@ depack(char *pak_file)
    int i, num;
    char **list;
    Eet_File *ef;
-   
-   ef = eet_open(pak_file, EET_FILE_MODE_READ);   
+
+   ef = eet_open(pak_file, EET_FILE_MODE_READ);
    if (!ef)
      {
 	printf("cannot open for reading: %s\n", pak_file);
@@ -262,7 +265,7 @@ depack(char *pak_file)
 	  depak_file(ef, list[i]);
 	free(list);
      }
-   eet_close(ef);   
+   eet_close(ef);
 }
 
 void
@@ -271,8 +274,8 @@ list(char *pak_file)
    int i, num;
    char **list;
    Eet_File *ef;
-   
-   ef = eet_open(pak_file, EET_FILE_MODE_READ);   
+
+   ef = eet_open(pak_file, EET_FILE_MODE_READ);
    if (!ef)
      {
 	printf("cannot open for reading: %s\n", pak_file);
@@ -285,29 +288,29 @@ list(char *pak_file)
 	  printf("%s\n",list[i]);
 	free(list);
      }
-   eet_close(ef);   
+   eet_close(ef);
 }
 
 void
 pak_file(Eet_File *ef, char *file, char **noz, int noz_num)
 {
    struct stat st;
-   
+
    if (stat(file, &st) >= 0)
      {
 	void *buf;
-	
+
 	buf = malloc(st.st_size);
 	if (buf)
 	  {
 	     FILE *f;
-	     
+
 	     f = fopen(file, "rb");
 	     if (f)
 	       {
 		  int compress = 1;
 		  int i;
-		  
+
 		  for (i = 0; i < noz_num; i++)
 		    {
 		       if (!fnmatch(noz[i], file, 0))
@@ -347,7 +350,7 @@ pak_dir(Eet_File *ef, char *dir, char **noz, int noz_num)
 	while ((dp = readdir(dirp)))
 	  {
 	     char buf[PATH_MAX];
-	     
+
 	     if ((!strcmp(".", dp->d_name)) || (!strcmp("..", dp->d_name)))
 	       {
 	       }
@@ -365,7 +368,7 @@ pack(char *pak_file, char **files, int count, char **noz, int noz_num)
 {
    Eet_File *ef;
    int i;
-   
+
    ef = eet_open(pak_file, EET_FILE_MODE_WRITE);
    if (!ef)
      {
@@ -379,7 +382,7 @@ pack(char *pak_file, char **files, int count, char **noz, int noz_num)
 
 int
 main(int argc, char **argv)
-{   
+{
    if (argc == 3)
      {
 	if (!strcmp(argv[1], "-d"))
@@ -397,11 +400,11 @@ main(int argc, char **argv)
      {
 	char **noz     = NULL;
 	int    noz_num = 0;
-	
+
 	if (!strcmp(argv[1], "-c"))
 	  {
 	     int i;
-	     
+
 	     for (i = 3; i < argc; i++)
 	       {
 		  if (!strcmp(argv[i], "-nz"))

@@ -13,7 +13,7 @@
 #define EET_MAGIC_FILE_HEADER           0x1ee7ff01
 #define EET_MAGIC_FILE_NODE             0x1ee7ff02
 #define EET_MAGIC_FILE_DIRECTORY        0x1ee7ff03
-#define EET_MAGIC_FILE_DIRECTORY_HASH   0x1ee7ff04   
+#define EET_MAGIC_FILE_DIRECTORY_HASH   0x1ee7ff04
 
 typedef struct _Eet_File_Header         Eet_File_Header;
 typedef struct _Eet_File_Node           Eet_File_Node;
@@ -24,15 +24,15 @@ struct _Eet_File
 {
    int              magic;
    int              references;
-   
+
    char            *path;
    char            *real_path;
-   
+
    FILE            *fp;
    Eet_File_Mode    mode;
-   
+
    int              writes_pending : 1;
-   
+
    Eet_File_Header *header;
 };
 
@@ -70,7 +70,7 @@ struct _Eet_File_Directory_Hash
 int magic; /* magic number ie 0x1ee7ff00 */
 int num_directory_entries; /* number of directory entries to follow */
 int bytes_directory_entries; /* bytes of directory entries to follow */
-struct 
+struct
 {
    int offset; /* bytes offset into file for data chunk */
    int flags; /* flags - for now 0 = uncompressed, 1 = compressed */
@@ -80,7 +80,7 @@ struct
    char name[name_size]; /* name string (variable length) */
 } directory[num_directory_entries];
 /* and now startes the data stream... */
-#endif	  
+#endif
 
 /* prototypes of internal calls */
 static Eet_File *eet_cache_find(char *real_path, Eet_File **cache, int cache_num);
@@ -102,7 +102,7 @@ static Eet_File *
 eet_cache_find(char *real_path, Eet_File **cache, int cache_num)
 {
    int i;
-   
+
    /* walk list */
    for (i = 0; i < cache_num; i++)
      {
@@ -119,7 +119,7 @@ eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num)
 {
    Eet_File **new_cache;
    int new_cache_num;
-   
+
    new_cache_num = *cache_num;
    new_cache = *cache;
    new_cache_num++;
@@ -132,7 +132,7 @@ eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num)
    if (!new_cache) return;
    new_cache[new_cache_num - 1] = ef;
    *cache = new_cache;
-   *cache_num = new_cache_num;   
+   *cache_num = new_cache_num;
 }
 
 /* delete from cache */
@@ -158,7 +158,7 @@ eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num)
 	return;
      }
    new_cache_num--;
-   for (j = i; j < new_cache_num; j++) new_cache[j] = new_cache[j + 1];   
+   for (j = i; j < new_cache_num; j++) new_cache[j] = new_cache[j + 1];
    if (new_cache_num > 0)
      {
         new_cache = realloc(new_cache, new_cache_num * sizeof(Eet_File *));
@@ -173,7 +173,7 @@ eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num)
 	free(new_cache);
 	new_cache = NULL;
      }
-   *cache_num = new_cache_num;   
+   *cache_num = new_cache_num;
    *cache = new_cache;
 }
 
@@ -190,7 +190,7 @@ eet_string_match(char *s1, char *s2)
 	if (*s1 != *s2) return 0;
 	s1++;
 	s2++;
-     }   
+     }
    while ((*s1) || (*s2));
    /* got this far. match */
    return 1;
@@ -214,13 +214,14 @@ eet_hash_gen(char *key, int hash_size)
 	0x7f,
 	0xff
      };
-   
+
    /* no string - index 0 */
    if (!key) return 0;
-   
+
    /* calc hash num */
-   for (ptr = key; *ptr; ptr++) hash_num ^= (int)(*ptr);
-   
+   for (ptr = (unsigned char *)key; *ptr; ptr++)
+     hash_num ^= (int)(*ptr);
+
    /* mask it */
    hash_num &= masks[hash_size];
    /* return it */
@@ -234,8 +235,8 @@ eet_flush(Eet_File *ef)
    int i, j, count, size, num, offset;
    int head[3];
    unsigned long int i1, i2;
-   
-   /* check to see its' an eet file pointer */   
+
+   /* check to see its' an eet file pointer */
    if ((!ef) || (ef->magic != EET_MAGIC_FILE))
      return;
    if (!ef->header) return;
@@ -252,7 +253,7 @@ eet_flush(Eet_File *ef)
 	for (j = 0; j < ef->header->directory->hash[i].size; j++)
 	  {
 	     if (ef->header->directory->hash[i].node[j].compression >= 0)
-	       {  
+	       {
 		  size += 20 + strlen(ef->header->directory->hash[i].node[j].name);
 		  count++;
 	       }
@@ -314,7 +315,7 @@ eet_flush(Eet_File *ef)
 		  i2 = htonl(i1);
 		  *((int *)(buf + 16)) = (int)i2;
 		  memcpy(buf + 20, ef->header->directory->hash[i].node[j].name, name_size);
-		  if (fwrite(buf, buf_size, 1, ef->fp) != 1) 
+		  if (fwrite(buf, buf_size, 1, ef->fp) != 1)
 		    {
 		       free(buf);
 		       return;
@@ -331,7 +332,7 @@ eet_flush(Eet_File *ef)
 	  {
 	     if (ef->header->directory->hash[i].node[j].compression >= 0)
 	       {
-		  if (fwrite(ef->header->directory->hash[i].node[j].data, 
+		  if (fwrite(ef->header->directory->hash[i].node[j].data,
 			     ef->header->directory->hash[i].node[j].size,
 			     1, ef->fp) != 1)
 		    return;
@@ -353,7 +354,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 //   printf("open %s\n", file);
 #ifdef HAVE_REALPATH
    /* in case this is a symlink... find out where it REALLY points */
-   if (!realpath(file, buf)) 
+   if (!realpath(file, buf))
      {
 	if (mode == EET_FILE_MODE_READ) return NULL;
      }
@@ -375,11 +376,11 @@ eet_open(const char *file, Eet_File_Mode mode)
 	ef->references++;
 	return ef;
      }
-   
+
    /* allocate struct for eet file and have it zero'd out */
    ef = calloc(sizeof(Eet_File), 1);
    if (!ef) return NULL;
-   
+
    /* fill some of the members */
    ef->path = strdup(file);
    ef->real_path = strdup(buf);
@@ -401,14 +402,14 @@ eet_open(const char *file, Eet_File_Mode mode)
 	eet_close(ef);
 	return NULL;
      }
-   
+
    /* if we can't open - bail out */
    if (!ef->fp)
      {
 	eet_close(ef);
 	return NULL;
      }
-   
+
    /* if we opened for read or read-write */
    if ((mode == EET_FILE_MODE_READ) || (mode == EET_FILE_MODE_READ_WRITE))
      {
@@ -417,14 +418,14 @@ eet_open(const char *file, Eet_File_Mode mode)
 	unsigned long int i1, i2;
 	int num_entries, byte_entries, i;
 	size_t count;
-	
+
 	/* build header table if read mode */
 	/* geat header */
 	count = fread(buf, 12, 1, ef->fp);
 	if (count != 1)
 	  {
 	     eet_close(ef);
-	     return NULL;	     
+	     return NULL;
 	  }
 	/* get magic no */
 	memcpy(&i1, buf + 0, sizeof(int));
@@ -432,7 +433,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	if (i2 != EET_MAGIC_FILE)
 	  {
 	     eet_close(ef);
-	     return NULL;	     
+	     return NULL;
 	  }
 	/* get entries count and byte count */
 	memcpy(&i1, buf + 4, sizeof(int));
@@ -445,20 +446,20 @@ eet_open(const char *file, Eet_File_Mode mode)
 	if ((num_entries <= 0) || (byte_entries <= 0))
 	  {
 	     eet_close(ef);
-	     return NULL;	     
+	     return NULL;
 	  }
 	/* we can't have more entires than minimum bytes for those! invalid! */
 	if ((num_entries * 20) > byte_entries)
 	  {
 	     eet_close(ef);
-	     return NULL;	     
+	     return NULL;
 	  }
 	/* allocate dynamic buffer for entire directory block */
 	dyn_buf = malloc(byte_entries);
 	if (!dyn_buf)
 	  {
 	     eet_close(ef);
-	     return NULL;	     
+	     return NULL;
 	  }
 	/* allocate header */
 	ef->header = calloc(sizeof(Eet_File_Header), 1);
@@ -509,9 +510,9 @@ eet_open(const char *file, Eet_File_Mode mode)
 	     Eet_File_Node *node;
 	     int node_size;
 	     void *data = NULL;
-	     
+
 	     /* out directory block is inconsistent - we have oveerun our */
-	     /* dynamic block buffer before we finished scanning dir entries */	     
+	     /* dynamic block buffer before we finished scanning dir entries */
 	     if (p >= (dyn_buf + byte_entries))
 	       {
 		  free(dyn_buf);
@@ -539,21 +540,21 @@ eet_open(const char *file, Eet_File_Mode mode)
 	       {
 		  free(dyn_buf);
 		  eet_close(ef);
-		  return NULL;		  
+		  return NULL;
 	       }
 	     /* invalid name_size */
 	     if (name_size <= 0)
 	       {
 		  free(dyn_buf);
 		  eet_close(ef);
-		  return NULL;		  
+		  return NULL;
 	       }
 	     /* reading name would mean falling off end of dyn_buf - invalid */
 	     if ((p + 16 + name_size) > (dyn_buf + byte_entries))
 	       {
 		  free(dyn_buf);
 		  eet_close(ef);
-		  return NULL;		  
+		  return NULL;
 	       }
 	     /* allocate name string */
 	     name = malloc(name_size + 1);
@@ -561,16 +562,16 @@ eet_open(const char *file, Eet_File_Mode mode)
 	       {
 		  free(dyn_buf);
 		  eet_close(ef);
-		  return NULL;		  
+		  return NULL;
 	       }
 	     /* copy name in and terminate it */
-	     strncpy(name, p + 20, name_size);
+	     strncpy(name, (char *)p + 20, name_size);
 	     name[name_size] = 0;
 	     /* get hask bucket it should go in */
 	     hash = eet_hash_gen(name, ef->header->directory->size);
 	     /* resize hask bucket */
-	     node = realloc(ef->header->directory->hash[hash].node, 
-			    (ef->header->directory->hash[hash].size  + 1) * 
+	     node = realloc(ef->header->directory->hash[hash].node,
+			    (ef->header->directory->hash[hash].size  + 1) *
 			    sizeof(Eet_File_Node));
 	     if (!node)
 	       {
@@ -615,7 +616,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 			    break;
 			 }
 		    }
-		  
+
                   ef->header->directory->hash[hash].node[node_size].data = data;
 	       }
 
@@ -647,7 +648,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 Eet_File_Mode
 eet_mode_get(Eet_File *ef)
 {
-   /* check to see its' an eet file pointer */   
+   /* check to see its' an eet file pointer */
    if ((!ef) || (ef->magic != EET_MAGIC_FILE))
      return EET_FILE_MODE_INVALID;
    else
@@ -657,7 +658,7 @@ eet_mode_get(Eet_File *ef)
 void
 eet_close(Eet_File *ef)
 {
-   /* check to see its' an eet file pointer */   
+   /* check to see its' an eet file pointer */
    if ((!ef) || (ef->magic != EET_MAGIC_FILE))
      return;
    /* deref */
@@ -678,14 +679,14 @@ eet_close(Eet_File *ef)
    if (ef->real_path) free(ef->real_path);
 
    /* free up data */
-   if (ef->header) 
+   if (ef->header)
      {
 	if (ef->header->directory)
 	  {
 	     if (ef->header->directory->hash)
 	       {
 		  int i, num;
-		  
+
 		  num = (1 << (ef->header->directory->size - 1));
 		  for (i = 0; i < num; i++)
 		    {
@@ -693,7 +694,7 @@ eet_close(Eet_File *ef)
 			 {
 			    int j;
 			    int num2;
-			    
+
 			    num2 = ef->header->directory->hash[i].size;
 			    for (j = 0; j < num2; j++)
 			      {
@@ -711,7 +712,7 @@ eet_close(Eet_File *ef)
 	  }
 	free(ef->header);
      }
-   
+
    /* zero out ram for struct - caution tactic against stale memory use */
    memset(ef, 0, sizeof(Eet_File));
    /* free it */
@@ -758,8 +759,8 @@ eet_read(Eet_File *ef, char *name, int *size_ret)
 		    {
 		       /* if we alreayd have the data in ram... copy that */
 		       if (ef->header->directory->hash[hash].node[i].data)
-			 memcpy(data, 
-				ef->header->directory->hash[hash].node[i].data, 
+			 memcpy(data,
+				ef->header->directory->hash[hash].node[i].data,
 				ef->header->directory->hash[hash].node[i].size);
 		       /* or get data from disk */
 		       else
@@ -786,7 +787,7 @@ eet_read(Eet_File *ef, char *name, int *size_ret)
 	     else
 	       {
 		  void *tmp_data;
-		  
+
 		  /* get size of data in file */
 		  tmp_size = ef->header->directory->hash[hash].node[i].size;
 		  tmp_data = malloc(tmp_size);
@@ -798,11 +799,11 @@ eet_read(Eet_File *ef, char *name, int *size_ret)
 		  if (data)
 		    {
 		       uLongf dlen;
-		       
+
 		       /* if we already have the data in ram... copy that */
 		       if (ef->header->directory->hash[hash].node[i].data)
-			 memcpy(tmp_data, 
-				ef->header->directory->hash[hash].node[i].data, 
+			 memcpy(tmp_data,
+				ef->header->directory->hash[hash].node[i].data,
 				tmp_size);
 		       /* or get data from disk */
 		       else
@@ -826,7 +827,7 @@ eet_read(Eet_File *ef, char *name, int *size_ret)
 			 }
 		       /* decompress it */
 		       dlen = size;
-		       if (uncompress((Bytef *)data, &dlen, 
+		       if (uncompress((Bytef *)data, &dlen,
 				      tmp_data, (uLongf)tmp_size))
 			 {
 			    free(tmp_data);
@@ -855,13 +856,13 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
    char *name2;
    void *data2;
    int exists_already = 0;
-   
-   /* check to see its' an eet file pointer */   
+
+   /* check to see its' an eet file pointer */
    if ((!ef) || (ef->magic != EET_MAGIC_FILE)
-       || (!name) || (!data) || (size <= 0) || 
+       || (!name) || (!data) || (size <= 0) ||
        ((ef->mode != EET_FILE_MODE_WRITE) &&
         (ef->mode != EET_FILE_MODE_READ_WRITE)))
-	
+
      return 0;
 
    if (!ef->header)
@@ -901,10 +902,10 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
      {
 	uLongf buflen;
 	int ok;
-	  
+
 	/* compress the data with max compression */
 	buflen = (uLongf)data_size;
-	if ((ok = compress2((Bytef *)data2, &buflen, (Bytef *)data, 
+	if ((ok = compress2((Bytef *)data2, &buflen, (Bytef *)data,
 			   (uLong)size, 9)) != Z_OK)
 	  {
 	     free(name2);
@@ -913,7 +914,7 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
 	  }
 	/* record compressed chunk size */
 	data_size = (int)buflen;
-	if (data_size >= size) 
+	if (data_size >= size)
 	  {
 	     compress = 0;
 	     data_size = size;
@@ -921,7 +922,7 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
 	else
 	  {
 	     void *data3;
-	     
+
 	     data3 = realloc(data2, data_size);
 	     if (data3) data2 = data3;
 	  }
@@ -952,9 +953,9 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
    if (!exists_already)
      {
 	/* increase hash bucket size */
-	node = realloc(ef->header->directory->hash[hash].node, 
+	node = realloc(ef->header->directory->hash[hash].node,
 		       (node_size  + 1) * sizeof(Eet_File_Node));
-	if (!node) 
+	if (!node)
 	  {
 	     free(name2);
 	     free(data2);
@@ -983,8 +984,8 @@ eet_delete(Eet_File *ef, char *name)
 {
    int hash, node_size, i;
    int exists_already = 0;
-   
-   /* check to see its' an eet file pointer */   
+
+   /* check to see its' an eet file pointer */
    if ((!ef) || (ef->magic != EET_MAGIC_FILE) || (!name))
      return 0;
 
@@ -992,11 +993,11 @@ eet_delete(Eet_File *ef, char *name)
    if (ef->mode != EET_FILE_MODE_READ_WRITE) return 0;
 
    if (!ef->header) return 0;
-   
+
    /* figure hash bucket */
    hash = eet_hash_gen(name, ef->header->directory->size);
    node_size = ef->header->directory->hash[hash].size;
-   
+
    /* Does this node already exist? */
    for (i = 0; i < node_size; i++)
      {
@@ -1026,7 +1027,7 @@ eet_list(Eet_File *ef, char *glob, int *count_ret)
    int list_count_alloc = 0;
    int i, j, num;
 
-   /* check to see its' an eet file pointer */   
+   /* check to see its' an eet file pointer */
    if ((!ef) || (ef->magic != EET_MAGIC_FILE) || (!glob) ||
        (!ef->header) || (!ef->header->directory) ||
        ((ef->mode != EET_FILE_MODE_READ) &&
@@ -1045,7 +1046,7 @@ eet_list(Eet_File *ef, char *glob, int *count_ret)
 	     if (!fnmatch(glob, ef->header->directory->hash[i].node[j].name, 0))
 	       {
 		  char **new_list;
-		  
+
 		  /* add it to our list */
 		  list_count++;
 		  /* only realloc in 32 entry chunks */
@@ -1057,7 +1058,7 @@ eet_list(Eet_File *ef, char *glob, int *count_ret)
 			 {
 			    free(list_ret);
 			    if (count_ret) *count_ret = 0;
-			    return NULL;		       
+			    return NULL;
 			 }
 		       list_ret = new_list;
 		    }
@@ -1067,7 +1068,7 @@ eet_list(Eet_File *ef, char *glob, int *count_ret)
 	  }
      }
    /* return count and list */
-   if (count_ret) *count_ret = list_count;   
+   if (count_ret) *count_ret = list_count;
    return list_ret;
 }
 
