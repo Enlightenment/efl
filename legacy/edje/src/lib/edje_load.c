@@ -689,6 +689,7 @@ _edje_file_add(Edje *ed)
 	ed->file = _edje_file_cache_find(ed->path);
 	if (!ed->file)
 	  {
+//	     printf("OPEN EDJE %s\n", ed->path);
 	     ef = eet_open(ed->path, EET_FILE_MODE_READ);
 	     if (!ef)
 	       {
@@ -763,6 +764,7 @@ _edje_file_add(Edje *ed)
 		  ed->load_error = EDJE_LOAD_ERROR_CORRUPT_FILE;
 		  goto out;
 	       }
+//	     printf("OPEN COLL %s\n", ed->part);
 	     
 	     snprintf(buf, sizeof(buf), "scripts/%i", id);
 	     data = eet_read(ef, buf, &size);
