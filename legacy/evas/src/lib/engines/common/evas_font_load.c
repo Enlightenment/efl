@@ -303,6 +303,7 @@ evas_common_font_memory_load(const char *name, int size, const void *data, int d
 
    fi = evas_common_font_int_memory_load(name, size, data, data_size);
    if (!fi) return NULL;
+//   printf("LOAD FONT MEM  %s %i\n", name, size);
    fn = calloc(1, sizeof(RGBA_Font));
    if (!fn) return NULL;
    fn->fonts = evas_list_append(fn->fonts, fi);
@@ -317,6 +318,7 @@ evas_common_font_load(const char *name, int size)
 
    fi = evas_common_font_int_load(name, size);
    if (!fi) return NULL;
+//   printf("LOAD FONT FILE  %s %i\n", name, size);
    fn = calloc(1, sizeof(RGBA_Font));
    if (!fn) return NULL;
    fn->fonts = evas_list_append(fn->fonts, fi);

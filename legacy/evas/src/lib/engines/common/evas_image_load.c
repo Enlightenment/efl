@@ -855,10 +855,12 @@ evas_common_load_image_from_file(const char *file, const char *key)
    im = evas_common_image_find(file, key, 0);
    if (im)
      {
+//	printf("CACHED %s %s found\n", file, key);
 	evas_common_image_ref(im);
 //	if (real_file) free(real_file);
 	return im;
      }
+//   printf("LOAD IMAGE %s %s\n", file, key);
    im = evas_common_image_new();
    if (!im)
      {
