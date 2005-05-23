@@ -389,7 +389,7 @@ edje_file_collection_list(const char *file)
 	     lst = evas_list_append(lst, strdup(ce->entry));
 	  }
      }
-   if (ed_file > 0) _edje_file_unref(ed_file);
+   if (ed_file->references > 0) _edje_file_unref(ed_file);
    else _edje_file_free(ed_file);
    return lst;
 }
@@ -453,7 +453,7 @@ edje_file_data_get(const char *file, const char *key)
 	     break;
 	  }
      }
-   if (ed_file > 0) _edje_file_unref(ed_file);
+   if (ed_file->references > 0) _edje_file_unref(ed_file);
    else _edje_file_free(ed_file);
    return str;
 }
