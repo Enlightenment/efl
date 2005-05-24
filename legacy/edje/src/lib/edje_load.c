@@ -23,6 +23,7 @@ static void _edje_collection_unref(Edje_File *edf, Edje_Part_Collection *coll);
 static void _edje_collection_cleanup(Edje_File *edf);
 
 static void _edje_collection_free_part_description_free(Edje_Part_Description *desc);
+static Evas_Bool _edje_file_collection_hash_foreach(Evas_Hash *hash, const char *key, void *data, void *fdata);
 #ifdef EDJE_PROGRAM_CACHE
 static int  _edje_collection_free_prog_cache_matches_free_cb(Evas_Hash *hash, const char *key, void *data, void *fdata);
 #endif
@@ -642,8 +643,8 @@ _edje_collection_cache_clean(Edje_File *edf)
      {
 	Edje_Part_Collection *coll;
 	
-	coll = edf->collection_cache->data;
-	edf->collection_cache = evas_list_remove_list(edf->collection_cache, edf->collection_cache);
+	coll = evas_list_last(edf->collection_cache)->data;
+	edf->collection_cache = evas_list_remove_list(edf->collection_cache, evas_list_last(edf->collection_cache));
 	_edje_collection_free(edf, coll);
 	count = evas_list_count(edf->collection_cache);
      }
@@ -653,7 +654,7 @@ static void
 _edje_collection_cache_add(Edje_File *edf, Edje_Part_Collection *coll)
 {
    edf->collection_hash = evas_hash_del(edf->collection_hash, coll->part, coll);
-   edf->collection_cache = evas_list_append(edf->collection_cache, coll);
+   edf->collection_cache = evas_list_prepend(edf->collection_cache, coll);
    _edje_collection_cache_clean(edf);
 }
 
@@ -683,11 +684,7 @@ _edje_file_add(Edje *ed)
    int id = -1;
 
    if (_edje_edd_edje_file == NULL)
-     {
-        printf("EDJE ERROR: NULL data descriptor. Did you edje_init()?.\n");
-     
-        return;
-     }
+     return;
 
    ed->file = evas_hash_find(_edje_file_hash, ed->path);
    if (ed->file)
@@ -800,6 +797,7 @@ _edje_file_add(Edje *ed)
 void
 _edje_file_del(Edje *ed)
 {
+   if (!((ed->file) && (ed->collection))) return;
    _edje_message_del(ed);
    _edje_block_violate(ed);
    _edje_var_shutdown(ed);
@@ -915,8 +913,6 @@ _edje_file_del(Edje *ed)
 void
 _edje_file_free(Edje_File *edf)
 {
-   if (edf->path) free(edf->path);
-   if (edf->compiler) free(edf->compiler);
    if (edf->font_dir)
      {
 	while (edf->font_dir->entries)
@@ -975,9 +971,21 @@ _edje_file_free(Edje_File *edf)
    /* FIXME: free collection_hash and collection_cache */
    if (edf->collection_hash)
      {
-	printf("EDJE: EEEK! file collection hash is not empty!\n");
+	printf("EDJE ERROR:\n"
+	       "\n"
+	       "Naughty Programmer - spank spank!\n"
+	       "\n"
+	       "This program as probably called edje_shutdown() with active Edje objects\n"
+	       "still around.\n This can cause problems as both Evas and Edje retain\n"
+	       "references to the objects. you should shut down all canvases and objects\n"
+	       "before calling edje_shutdown().\n"
+	       "The following errors are the edje object files and parts that are still\n"
+	       "hanging around, with their reference counts\n");
+	evas_hash_foreach(edf->collection_hash, _edje_file_collection_hash_foreach, edf);
 	evas_hash_free(edf->collection_hash);
      }
+   if (edf->path) free(edf->path);
+   if (edf->compiler) free(edf->compiler);
    if (edf->collection_cache)
      _edje_collection_cleanup(edf);
    free(edf);
@@ -1089,6 +1097,20 @@ _edje_collection_free_part_description_free(Edje_Part_Description *desc)
    if (desc->text.text_class) free(desc->text.text_class);
    if (desc->text.font)       free(desc->text.font);
    free(desc);
+}
+
+static Evas_Bool
+_edje_file_collection_hash_foreach(Evas_Hash *hash, const char *key, void *data, void *fdata)
+{
+   Edje_File *edf;
+   Edje_Part_Collection *coll;
+   
+   edf = fdata;
+   coll = data;
+   printf("EEK: EDJE FILE: \"%s\" ref(%i) PART: \"%s\" ref(%i) \n",
+	  edf->path, edf->references,
+	  coll->part, coll->references);
+   _edje_collection_free(edf, coll);
 }
 
 #ifdef EDJE_PROGRAM_CACHE
