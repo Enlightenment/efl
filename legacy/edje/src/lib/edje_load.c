@@ -377,7 +377,8 @@ edje_file_collection_list(const char *file)
 	eet_close(ef);
 	ed_file->path = strdup(file);
 	ed_file->collection_hash = NULL;
-	ed_file->references = -1;
+	ed_file->references = 1;
+	_edje_file_hash = evas_hash_add(_edje_file_hash, ed_file->path, ed_file);
      }
    if (ed_file->collection_dir)
      {
@@ -441,7 +442,7 @@ edje_file_data_get(const char *file, const char *key)
 	eet_close(ef);
 	ed_file->path = strdup(file);
 	ed_file->collection_hash = NULL;
-	ed_file->references = -1;
+	ed_file->references = 1;
 	_edje_file_hash = evas_hash_add(_edje_file_hash, ed_file->path, ed_file);
      }
    for (l = ed_file->data; l; l = l->next)
@@ -557,8 +558,8 @@ _edje_file_cache_clean(void)
      {
 	Edje_File *edf;
 	
-	edf = _edje_file_cache->data;
-	_edje_file_cache = evas_list_remove_list(_edje_file_cache, _edje_file_cache);
+	edf = evas_list_last(_edje_file_cache)->data;
+	_edje_file_cache = evas_list_remove_list(_edje_file_cache, evas_list_last(_edje_file_cache));
 	_edje_file_free(edf);
 	count = evas_list_count(_edje_file_cache);
      }
@@ -568,7 +569,7 @@ static void
 _edje_file_cache_add(Edje_File *edf)
 {
    _edje_file_hash = evas_hash_del(_edje_file_hash, edf->path, edf);
-   _edje_file_cache  = evas_list_append(_edje_file_cache, edf);
+   _edje_file_cache  = evas_list_prepend(_edje_file_cache, edf);
    _edje_file_cache_clean();
 }
 
@@ -582,6 +583,11 @@ _edje_file_unref(Edje_File *edf)
 static void
 _edje_file_ref(Edje_File *edf)
 {
+   if (edf->references == 0)
+     {
+	_edje_file_cache = evas_list_remove(_edje_file_cache, edf);
+	_edje_file_hash = evas_hash_add(_edje_file_hash, edf->path, edf);
+     }
    edf->references++;
 }
 
