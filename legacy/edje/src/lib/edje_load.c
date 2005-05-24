@@ -1111,6 +1111,8 @@ _edje_file_collection_hash_foreach(Evas_Hash *hash, const char *key, void *data,
 	  edf->path, edf->references,
 	  coll->part, coll->references);
    _edje_collection_free(edf, coll);
+
+   return 1;
 }
 
 #ifdef EDJE_PROGRAM_CACHE
