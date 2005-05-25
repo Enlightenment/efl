@@ -797,10 +797,10 @@ _edje_file_add(Edje *ed)
 void
 _edje_file_del(Edje *ed)
 {
-   if (!((ed->file) && (ed->collection))) return;
    _edje_message_del(ed);
    _edje_block_violate(ed);
    _edje_var_shutdown(ed);
+   if (!((ed->file) && (ed->collection))) return;
    if ((ed->file) && (ed->collection))
      {
 	Evas_List *l;
