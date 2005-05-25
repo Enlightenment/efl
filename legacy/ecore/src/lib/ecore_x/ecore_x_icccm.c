@@ -86,7 +86,7 @@ ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state)
 Ecore_X_Window_State_Hint
 ecore_x_icccm_state_get(Ecore_X_Window win)
 {
-   unsigned char *prop_ret;
+   unsigned char *prop_ret = NULL;
    Atom           type_ret;
    unsigned long  bytes_after, num_ret;
    int            format_ret;
@@ -446,6 +446,7 @@ ecore_x_icccm_title_set(Ecore_X_Window win, const char *t)
    XTextProperty       xprop;
    int                 ret;
 
+   xprop.value = NULL;
 #ifdef X_HAVE_UTF8_STRING
    list[0] = strdup(t);
    ret =
@@ -460,14 +461,14 @@ ecore_x_icccm_title_set(Ecore_X_Window win, const char *t)
    if (ret >= Success)
      {
 	XSetWMName(_ecore_x_disp, win, &xprop);
-	XFree(xprop.value);
+	if (xprop.value) XFree(xprop.value);
      }
    else
      {
 	if (XStringListToTextProperty(list, 1, &xprop) >= Success)
 	  {
 	     XSetWMName(_ecore_x_disp, win, &xprop);
-	     XFree(xprop.value);
+	     if (xprop.value) XFree(xprop.value);
 	  }
      }
    free(list[0]);
@@ -478,6 +479,7 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
 {
    XTextProperty       xprop;
 
+   xprop.value = NULL;
    if (XGetWMName(_ecore_x_disp, win, &xprop) >= Success)
      {
 	if (xprop.value)
@@ -518,8 +520,8 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
 			 XFreeStringList(list);
 		    }
 	       }
-
-	     XFree(xprop.value);
+	     
+	     if (xprop.value) XFree(xprop.value);
 	     return t;
 	  }
      }
@@ -603,7 +605,7 @@ ecore_x_icccm_protocol_set(Ecore_X_Window win,
 
  leave:
    if (protos)
-      XFree(protos);
+     XFree(protos);
 
 }
 
@@ -635,7 +637,7 @@ ecore_x_icccm_protocol_isset(Ecore_X_Window win, Ecore_X_WM_Protocol protocol)
 	   break;
 	}
 
-   XFree(protos);
+   if (protos) XFree(protos);
    return ret;
 
 }
@@ -677,6 +679,8 @@ ecore_x_icccm_name_class_get(Ecore_X_Window win, char **n, char **c)
    
    if (n) *n = NULL;
    if (c) *c = NULL;
+   xch.res_name = NULL;
+   xch.res_class = NULL;
    if (XGetClassHint(_ecore_x_disp, win, &xch))
      {
 	if (n)
@@ -804,7 +808,8 @@ ecore_x_icccm_colormap_window_set(Ecore_X_Window win, Ecore_X_Window subwin)
 	  {
 	     if (oldset[i] == subwin)
 	       {
-		  XFree(old_data);
+		  if (old_data) XFree(old_data);
+		  old_data = NULL;
 		  free(newset);
 		  return;
 	       }
@@ -813,7 +818,7 @@ ecore_x_icccm_colormap_window_set(Ecore_X_Window win, Ecore_X_Window subwin)
 	  }
 
 	newset[num++] = subwin;
-	XFree(old_data);
+	if (old_data) XFree(old_data);
 	data = (unsigned char *)newset;
      }
 
@@ -851,7 +856,8 @@ ecore_x_icccm_colormap_window_unset(Ecore_X_Window win, Ecore_X_Window subwin)
 	       {
 		  XDeleteProperty(_ecore_x_disp,
 				  win, ECORE_X_ATOM_WM_COLORMAP_WINDOWS);
-		  XFree(old_data);
+		  if (old_data) XFree(old_data);
+		  old_data = NULL;
 		  return;
 	       }
 	     else
@@ -864,14 +870,15 @@ ecore_x_icccm_colormap_window_unset(Ecore_X_Window win, Ecore_X_Window subwin)
 		  ecore_x_window_prop_property_set(win,
 						   ECORE_X_ATOM_WM_COLORMAP_WINDOWS,
 						   XA_WINDOW, 32, data, k);
-		  XFree(old_data);
+		  if (old_data) XFree(old_data);
+		  old_data = NULL;
 		  free(newset);
 		  return;
 	       }
 	  }
      }
 
-   XFree(old_data);
+   if (old_data) XFree(old_data);
 }
 
 /**
