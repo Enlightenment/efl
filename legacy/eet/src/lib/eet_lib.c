@@ -239,7 +239,7 @@ eet_flush(Eet_File *ef)
    /* calculate total size in bytes of directory block */
    size = 0;
    count = 0;
-   num = (1 << (ef->header->directory->size - 1));
+   num = (1 << ef->header->directory->size);
    for (i = 0; i < num; i++)
      {
 	for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
@@ -281,12 +281,12 @@ eet_flush(Eet_File *ef)
      {
 	for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
 	  {
-	     unsigned char *buf;
-	     int buf_size;
-	     int name_size;
-
 	     if (efn->compression >= 0)
 	       {
+		  unsigned char *buf;
+		  int buf_size;
+		  int name_size;
+
 		  name_size = strlen(efn->name);
 		  buf_size = 20 + name_size;
 		  buf = malloc(buf_size);
@@ -715,7 +715,6 @@ eet_read(Eet_File *ef, char *name, int *size_ret)
    if (!ef->header->directory) return NULL;
    /* get hash bucket this should be in */
    hash = eet_hash_gen(name, ef->header->directory->size);
-//   printf("read %s\n", name);
    /* hunt hash bucket */
    for (efn = ef->header->directory->nodes[hash]; efn; efn = efn->next)
      {
@@ -856,8 +855,7 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
    /* dup data */
    data_size = size;
    /* have bigger buffer for compress */
-   if (compress == 1)
-     data_size = 12 + ((size * 101) / 100);
+   if (compress == 1) data_size = 12 + ((size * 101) / 100);
    data2 = malloc(data_size);
    if (!data2)
      {
@@ -925,10 +923,8 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
 	     free(data2);
 	     return 0;
 	  }
-	/* resized node list set up */
 	efn->next = ef->header->directory->nodes[hash];
 	ef->header->directory->nodes[hash] = efn;
-	/* new node at end */
 	efn->name = name2;
 	efn->offset = 0;
 	efn->compression = compress;
@@ -939,7 +935,6 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
 
    /* flags that writes are pending */
    ef->writes_pending = 1;
-   /* update access time */
    return data_size;
 }
 
