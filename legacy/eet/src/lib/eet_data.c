@@ -661,7 +661,6 @@ static Eet_Data_Element *
 _eet_descriptor_hash_find(Eet_Data_Descriptor *edd, char *name)
 {
    int hash;
-   Eet_Data_Element *ede;
    Eet_Data_Descriptor_Hash *bucket;
    
    hash = _eet_descriptor_hash_gen(name, 6);

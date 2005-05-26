@@ -986,7 +986,7 @@ eet_list(Eet_File *ef, char *glob, int *count_ret)
    char **list_ret = NULL;
    int list_count = 0;
    int list_count_alloc = 0;
-   int i, j, num;
+   int i, num;
    Eet_File_Node *efn;
 
    /* check to see its' an eet file pointer */
