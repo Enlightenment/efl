@@ -904,7 +904,7 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
 	     if (eet_string_match(efn->name, name))
 	       {
 		  free(efn->data);
-		  efn->compression = compress;
+		  efn->compression = !!compress;
 		  efn->size = data_size;
 		  efn->data_size = size;
 		  efn->data = data2;
