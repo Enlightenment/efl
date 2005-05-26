@@ -883,7 +883,7 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
 	  }
 	/* record compressed chunk size */
 	data_size = (int)buflen;
-	if (data_size >= size)
+	if (data_size < 0 || data_size >= size)
 	  {
 	     compress = 0;
 	     data_size = size;
