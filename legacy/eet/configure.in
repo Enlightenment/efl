@@ -50,6 +50,20 @@ AC_DEFINE(__USE_GNU, , [Enable GNU extensions])
 
 AC_CHECK_FUNCS(fmemopen open_memstream realpath)
 
+dnl Check whether the null pointer is zero on this arch
+AC_MSG_CHECKING([value of the null pointer])
+AC_TRY_RUN([
+#include <stdlib.h>
+int main () {
+void *foo = NULL;
+int bar = (int) foo;
+
+return (int) foo;}
+], AC_MSG_RESULT([\o/]), [
+	AC_MSG_RESULT([o_O])
+	AC_MSG_WARN([Your system is a bit too funny, eet might not work properly])
+])
+
 if test "x${bindir}" = 'x${exec_prefix}/bin'; then
   if test "x${exec_prefix}" = "xNONE"; then
     if test "x${prefix}" = "xNONE"; then
