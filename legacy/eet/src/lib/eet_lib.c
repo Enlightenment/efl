@@ -866,12 +866,11 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
    if (compress)
      {
 	uLongf buflen;
-	int ok;
 
 	/* compress the data with max compression */
 	buflen = (uLongf)data_size;
-	if ((ok = compress2((Bytef *)data2, &buflen, (Bytef *)data,
-			   (uLong)size, 9)) != Z_OK)
+	if (compress2((Bytef *)data2, &buflen, (Bytef *)data,
+			   (uLong)size, 9) != Z_OK)
 	  {
 	     free(name2);
 	     free(data2);
