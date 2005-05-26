@@ -9,12 +9,13 @@ static int _evas_hash_alloc_error = 0;
 static int
 evas_hash_gen(const char *key)
 {
-   unsigned int hash_num = 0;
+   unsigned int hash_num = 0, i;
    const unsigned char *ptr;
 
    if (!key) return 0;
 
-   for (ptr = (unsigned char *)key; *ptr; ptr++) hash_num ^= (int)(*ptr);
+   for (i = 0, ptr = (unsigned char *)key; *ptr; ptr++, i++)
+     hash_num ^= ((int)(*ptr) | ((int)(*ptr) << 8)) >> (i % 8);
 
    hash_num &= 0xff;
    return (int)hash_num;
