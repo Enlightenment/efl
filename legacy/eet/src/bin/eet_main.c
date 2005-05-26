@@ -1,6 +1,3 @@
-/* PATH_MAX requires POSIX source */
-#define _POSIX_SOURCE
-
 #include "Eet.h"
 #include <stdio.h>
 #include <unistd.h>
@@ -12,6 +9,10 @@
 #include <dirent.h>
 #include <limits.h>
 #include <fnmatch.h>
+
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
 
 /* just some sample code on how to use encoder/decoders */
 #if 0
