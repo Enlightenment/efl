@@ -847,15 +847,20 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
 	ef->header->directory->nodes = calloc(1, sizeof(Eet_File_Node *) * (1 << ef->header->directory->size));
 	if (!ef->header->directory->nodes) return 0;
      }
+
    /* dup name */
    name2 = strdup(name);
    if (!name2) return 0;
+
    /* figure hash bucket */
    hash = eet_hash_gen(name, ef->header->directory->size);
+
    /* dup data */
    data_size = size;
+
    /* have bigger buffer for compress */
    if (compress) data_size = 12 + ((size * 101) / 100);
+
    data2 = malloc(data_size);
    if (!data2)
      {
