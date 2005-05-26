@@ -931,7 +931,7 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
 	ef->header->directory->nodes[hash] = efn;
 	efn->name = name2;
 	efn->offset = 0;
-	efn->compression = compress;
+	efn->compression = !!compress;
 	efn->size = data_size;
 	efn->data_size = size;
 	efn->data = data2;
