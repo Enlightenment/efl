@@ -855,7 +855,7 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
    /* dup data */
    data_size = size;
    /* have bigger buffer for compress */
-   if (compress == 1) data_size = 12 + ((size * 101) / 100);
+   if (compress) data_size = 12 + ((size * 101) / 100);
    data2 = malloc(data_size);
    if (!data2)
      {
@@ -863,7 +863,7 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
 	return 0;
      }
    /* if we want to compress */
-   if (compress == 1)
+   if (compress)
      {
 	uLongf buflen;
 	int ok;
