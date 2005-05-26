@@ -870,7 +870,7 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
 	/* compress the data with max compression */
 	buflen = (uLongf)data_size;
 	if (compress2((Bytef *)data2, &buflen, (Bytef *)data,
-			   (uLong)size, 9) != Z_OK)
+			   (uLong)size, Z_BEST_COMPRESSION) != Z_OK)
 	  {
 	     free(name2);
 	     free(data2);
