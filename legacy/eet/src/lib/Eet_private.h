@@ -34,7 +34,7 @@ void  _eet_memfile_write_close(FILE *f);
 void  _eet_memfile_shutdown();
 
 #ifndef PATH_MAX
-#define PATH_MAX 4095
+#define PATH_MAX 4096
 #endif
 
 #endif

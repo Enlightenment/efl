@@ -45,6 +45,7 @@ typedef struct _Eet_Data_Element            Eet_Data_Element;
 typedef struct _Eet_Data_Basic_Type_Decoder Eet_Data_Basic_Type_Decoder;
 typedef struct _Eet_Data_Chunk              Eet_Data_Chunk;
 typedef struct _Eet_Data_Stream             Eet_Data_Stream;
+typedef struct _Eet_Data_Descriptor_Hash    Eet_Data_Descriptor_Hash;
 
 /*---*/
 
@@ -69,6 +70,12 @@ struct _Eet_Data_Stream
    int   pos;
 };
 
+struct _Eet_Data_Descriptor_Hash
+{
+   Eet_Data_Element         *element;
+   Eet_Data_Descriptor_Hash *next;
+};
+
 struct _Eet_Data_Descriptor
 {
    char *name;
@@ -85,6 +92,10 @@ struct _Eet_Data_Descriptor
    struct {
       int               num;
       Eet_Data_Element *set;
+      struct {
+	 int                       size;
+	 Eet_Data_Descriptor_Hash *buckets;
+      } hash;
    } elements;
 };
 
@@ -567,6 +578,107 @@ eet_data_chunk_put(Eet_Data_Chunk *chnk, Eet_Data_Stream *ds)
 
 /*---*/
 
+static int
+_eet_descriptor_hash_gen(char *key, int hash_size)
+{
+   int hash_num = 0, i;
+   unsigned char *ptr;
+   const int masks[9] =
+     {
+	0x00,
+	  0x01,
+	  0x03,
+	  0x07,
+	  0x0f,
+	  0x1f,
+	  0x3f,
+	  0x7f,
+	  0xff
+     };
+   
+   /* no string - index 0 */
+   if (!key) return 0;
+
+   /* calc hash num */
+   for (i = 0, ptr = (unsigned char *)key; *ptr; ptr++, i++)
+     hash_num ^= ((int)(*ptr) | ((int)(*ptr) << 8)) >> (i % 8);
+
+   /* mask it */
+   hash_num &= masks[hash_size];
+   /* return it */
+   return hash_num;
+}
+
+static void
+_eet_descriptor_hash_new(Eet_Data_Descriptor *edd)
+{
+   int i;
+   
+   edd->elements.hash.size = 1 << 6;
+   edd->elements.hash.buckets = calloc(1, sizeof(Eet_Data_Descriptor_Hash) * edd->elements.hash.size);
+   for (i = 0; i < edd->elements.num; i++)
+     {
+	Eet_Data_Element *ede;
+	int hash;
+	
+	ede = &(edd->elements.set[i]);
+	hash = _eet_descriptor_hash_gen(ede->name, 6);
+	if (!edd->elements.hash.buckets[hash].element)
+	  edd->elements.hash.buckets[hash].element = ede;
+	else
+	  {
+	     Eet_Data_Descriptor_Hash *bucket;
+	     
+	     bucket = calloc(1, sizeof(Eet_Data_Descriptor_Hash));
+	     bucket->element = ede;
+	     bucket->next = edd->elements.hash.buckets[hash].next;
+	     edd->elements.hash.buckets[hash].next = bucket;
+	  }
+     }
+}
+
+static void
+_eet_descriptor_hash_free(Eet_Data_Descriptor *edd)
+{
+   int i;
+   
+   for (i = 0; i < edd->elements.hash.size; i++)
+     {
+	Eet_Data_Descriptor_Hash *bucket, *pbucket;
+	
+	bucket = edd->elements.hash.buckets[i].next;
+	while (bucket)
+	  {
+	     pbucket = bucket;
+	     bucket = bucket->next;
+	     free(pbucket);
+	  }
+     }
+   if (edd->elements.hash.buckets) free(edd->elements.hash.buckets);
+}
+
+static Eet_Data_Element *
+_eet_descriptor_hash_find(Eet_Data_Descriptor *edd, char *name)
+{
+   int hash;
+   Eet_Data_Element *ede;
+   Eet_Data_Descriptor_Hash *bucket;
+   
+   hash = _eet_descriptor_hash_gen(name, 6);
+   if (!edd->elements.hash.buckets[hash].element) return NULL;
+   if (!strcmp(edd->elements.hash.buckets[hash].element->name, name))
+     return edd->elements.hash.buckets[hash].element;
+   bucket = edd->elements.hash.buckets[hash].next;
+   while (bucket)
+     {
+	if (!strcmp(bucket->element->name, name)) return bucket->element;
+	bucket = bucket->next;
+     }
+   return NULL;
+}
+
+/*---*/
+
 Eet_Data_Descriptor *
 eet_data_descriptor_new(char *name,
 			int size,
@@ -599,6 +711,7 @@ eet_data_descriptor_free(Eet_Data_Descriptor *edd)
 {
    int i;
 
+   _eet_descriptor_hash_free(edd);
    if (edd->name) free(edd->name);
    for (i = 0; i < edd->elements.num; i++)
      {
@@ -811,10 +924,11 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
      }
    p = chnk->data;
    size = size_in - (4 + 4 + strlen(chnk->name) + 1);
+   if (!edd->elements.hash.buckets) _eet_descriptor_hash_new(edd);
    while (size > 0)
      {
 	Eet_Data_Chunk *echnk;
-	int i;
+	Eet_Data_Element *ede;
 
 	/* get next data chunk */
 	echnk = eet_data_chunk_get(p, size);
@@ -827,88 +941,77 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 	     eet_data_chunk_free(chnk);
 	     return NULL;
 	  }
-	for (i = 0; i < edd->elements.num; i++)
+	/* FIXME: this is a linear search/match - speed up by putting in a
+	 * hash lookup
+	 */
+	ede = _eet_descriptor_hash_find(edd, echnk->name);
+	if (ede)
 	  {
-	     Eet_Data_Element *ede;
-
-	     ede = &(edd->elements.set[i]);
-	     if (!strcmp(echnk->name, ede->name))
+	     if (ede->group_type == EET_G_UNKNOWN)
 	       {
-		  if (ede->group_type == EET_G_UNKNOWN)
+		  int ret;
+		  void *data_ret;
+		  
+		  if ((ede->type >= EET_T_CHAR) &&
+		      (ede->type <= EET_T_STRING))
 		    {
-		       int ret;
-		       void *data_ret;
-
-		       if ((ede->type >= EET_T_CHAR) &&
-			   (ede->type <= EET_T_STRING))
-			 {
-			    ret = eet_data_get_type(ede->type,
-						    echnk->data,
-						    ((char *)echnk->data) + echnk->size,
-						    ((char *)data) + ede->offset);
-			 }
-		       else if (ede->subtype)
-			 {
-			    void **ptr;
-
-			    data_ret = eet_data_descriptor_decode(ede->subtype,
-								  echnk->data,
-								  echnk->size);
-			    if (!data_ret)
-			      {
-				 _eet_freelist_unref();
-				 _eet_freelist_list_unref();
-				 _eet_freelist_free();
-				 _eet_freelist_list_free(edd);
-				 eet_data_chunk_free(chnk);
-				 return NULL;
-			      }
-			    ptr = (void **)(((char *)data) + ede->offset);
-			    *ptr = (void *)data_ret;
-			 }
+		       ret = eet_data_get_type(ede->type,
+					       echnk->data,
+					       ((char *)echnk->data) + echnk->size,
+					       ((char *)data) + ede->offset);
 		    }
-		  else
+		  else if (ede->subtype)
 		    {
-		       switch (ede->group_type)
+		       void **ptr;
+		       
+		       data_ret = eet_data_descriptor_decode(ede->subtype,
+							     echnk->data,
+							     echnk->size);
+		       if (!data_ret)
 			 {
-			  case EET_G_ARRAY:
-			  case EET_G_VAR_ARRAY:
+			    _eet_freelist_unref();
+			    _eet_freelist_list_unref();
+			    _eet_freelist_free();
+			    _eet_freelist_list_free(edd);
+			    eet_data_chunk_free(chnk);
+			    return NULL;
+			 }
+		       ptr = (void **)(((char *)data) + ede->offset);
+		       *ptr = (void *)data_ret;
+		    }
+	       }
+	     else
+	       {
+		  switch (ede->group_type)
+		    {
+		     case EET_G_ARRAY:
+		     case EET_G_VAR_ARRAY:
+			 {
+			    printf("ARRAY TYPE NOT IMPLIMENTED YET!!!\n");
+			 }
+		       break;
+		     case EET_G_LIST:
+			 {
+			    int ret;
+			    void *list = NULL;
+			    void **ptr;
+			    void *data_ret;
+			    
+			    ptr = (void **)(((char *)data) + ede->offset);
+			    list = *ptr;
+			    data_ret = NULL;
+			    if ((ede->type >= EET_T_CHAR) &&
+				(ede->type <= EET_T_STRING))
 			      {
-				 printf("ARRAY TYPE NOT IMPLIMENTED YET!!!\n");
-			      }
-			    break;
-			  case EET_G_LIST:
-			      {
-				 int ret;
-				 void *list = NULL;
-				 void **ptr;
-				 void *data_ret;
-
-				 ptr = (void **)(((char *)data) + ede->offset);
-				 list = *ptr;
-				 data_ret = NULL;
-				 if ((ede->type >= EET_T_CHAR) &&
-				     (ede->type <= EET_T_STRING))
+				 data_ret = calloc(1, eet_coder[ede->type].size);
+				 if (data_ret)
 				   {
-				      data_ret = calloc(1, eet_coder[ede->type].size);
-				      if (data_ret)
-					{
-					   _eet_freelist_add(data_ret);
-					   ret = eet_data_get_type(ede->type,
-								   echnk->data,
-								   ((char *)echnk->data) + echnk->size,
-								   data_ret);
-					   if (ret <= 0)
-					     {
-						_eet_freelist_unref();
-						_eet_freelist_list_unref();
-						_eet_freelist_free();
-						_eet_freelist_list_free(edd);
-						eet_data_chunk_free(chnk);
-						return NULL;
-					     }
-					}
-				      else
+				      _eet_freelist_add(data_ret);
+				      ret = eet_data_get_type(ede->type,
+							      echnk->data,
+							      ((char *)echnk->data) + echnk->size,
+							      data_ret);
+				      if (ret <= 0)
 					{
 					   _eet_freelist_unref();
 					   _eet_freelist_list_unref();
@@ -917,18 +1020,6 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 					   eet_data_chunk_free(chnk);
 					   return NULL;
 					}
-				   }
-				 else if (ede->subtype)
-				   {
-				      data_ret = eet_data_descriptor_decode(ede->subtype,
-									    echnk->data,
-									    echnk->size);
-				   }
-				 if (data_ret)
-				   {
-				      list = edd->func.list_append(list, data_ret);
-				      *ptr = list;
-				      _eet_freelist_list_add(ptr);
 				   }
 				 else
 				   {
@@ -940,15 +1031,35 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 				      return NULL;
 				   }
 			      }
-			    break;
-			  case EET_G_HASH:
-			    printf("HASH TYPE NOT IMPLIMENTED YET!!!\n");
-			    break;
-			  default:
-			    break;
+			    else if (ede->subtype)
+			      {
+				 data_ret = eet_data_descriptor_decode(ede->subtype,
+								       echnk->data,
+								       echnk->size);
+			      }
+			    if (data_ret)
+			      {
+				 list = edd->func.list_append(list, data_ret);
+				 *ptr = list;
+				 _eet_freelist_list_add(ptr);
+			      }
+			    else
+			      {
+				 _eet_freelist_unref();
+				 _eet_freelist_list_unref();
+				 _eet_freelist_free();
+				 _eet_freelist_list_free(edd);
+				 eet_data_chunk_free(chnk);
+				 return NULL;
+			      }
 			 }
+		       break;
+		     case EET_G_HASH:
+		       printf("HASH TYPE NOT IMPLIMENTED YET!!!\n");
+		       break;
+		     default:
+		       break;
 		    }
-		  break;
 	       }
 	  }
 	/* advance to next chunk */
