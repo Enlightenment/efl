@@ -44,12 +44,19 @@
 
 typedef unsigned int                Ecore_Magic;
 
-typedef struct _Ecore_Oldlist          Ecore_Oldlist;
+typedef struct _Ecore_Oldlist       Ecore_Oldlist;
+typedef struct _Ecore_Oldlist_Data  Ecore_Oldlist_Data;
 
 struct _Ecore_Oldlist
 {
    Ecore_Oldlist  *next, *prev;
    Ecore_Oldlist  *last;
+};
+
+struct _Ecore_Oldlist_Data
+{
+   Ecore_Oldlist   __list_data;
+   void *data;
 };
 
 #ifndef _ECORE_H
