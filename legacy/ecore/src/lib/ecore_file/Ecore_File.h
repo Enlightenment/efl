@@ -26,6 +26,7 @@
 # endif
 #endif
 
+#include <Ecore.h>
 #include <time.h>
 
 #ifdef __cplusplus
