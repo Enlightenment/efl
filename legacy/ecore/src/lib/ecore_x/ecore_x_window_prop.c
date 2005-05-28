@@ -10,10 +10,44 @@
 
 static Ecore_X_Atom _ecore_x_window_prop_state_atom_get(Ecore_X_Window_State s);
 
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
 Ecore_X_Atom
 ecore_x_window_prop_any_type(void)
 {
    return AnyPropertyType;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+Ecore_X_Atom *
+ecore_x_window_prop_list(Ecore_X_Window win, int num)
+{
+   Atom *atoms;
+   Ecore_X_Atom *ret;
+   int i;
+
+   atoms = XListProperties(_ecore_x_disp, win, &num);
+   if (!atoms) return NULL;
+
+   ret = malloc(num * sizeof(Ecore_X_Atom));
+   if (!ret)
+     {
+	XFree(atoms);
+	return NULL;
+     }
+
+   for (i = 0; i < num; i++)
+     ret[i] = atoms[i];
+
+   XFree(atoms);
+   return ret;
 }
 
 /**

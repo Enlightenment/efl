@@ -968,6 +968,7 @@ EAPI void             ecore_x_window_pixel_gravity_set(Ecore_X_Window win,
 						       Ecore_X_Gravity grav);
        
 EAPI Ecore_X_Atom     ecore_x_window_prop_any_type(void);
+EAPI Ecore_X_Atom    *ecore_x_window_prop_list(Ecore_X_Window win, int num);
 EAPI void             ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Atom format, int size, void *data, int number);
 EAPI int              ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecore_X_Atom type, int size, unsigned char **data, int *num);
 EAPI void             ecore_x_window_prop_card32_set(Ecore_X_Window win, Ecore_X_Atom atom,
