@@ -750,9 +750,7 @@ ecore_x_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv)
 void
 ecore_x_icccm_icon_name_set(Ecore_X_Window win, const char *t)
 {
-   ecore_x_window_prop_string_set(win, ECORE_X_ATOM_WM_ICON_NAME, (char *)t);
-   ecore_x_window_prop_string_set(win, ECORE_X_ATOM_NET_WM_ICON_NAME,
-				  (char *)t);
+   XSetIconName(_ecore_x_disp, win, (char *)t);
 }
 
 /**
@@ -767,9 +765,8 @@ ecore_x_icccm_icon_name_get(Ecore_X_Window win)
 {
    char               *name;
 
-   name = ecore_x_window_prop_string_get(win, ECORE_X_ATOM_NET_WM_ICON_NAME);
-   if (!name)
-      name = ecore_x_window_prop_string_get(win, ECORE_X_ATOM_WM_ICON_NAME);
+   if (!XGetIconName(_ecore_x_disp, win, &name))
+     return NULL;
    return name;
 }
 
