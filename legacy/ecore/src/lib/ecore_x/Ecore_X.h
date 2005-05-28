@@ -239,7 +239,8 @@ typedef struct _Ecore_X_Event_Xdnd_Status              Ecore_X_Event_Xdnd_Status
 typedef struct _Ecore_X_Event_Xdnd_Leave               Ecore_X_Event_Xdnd_Leave;
 typedef struct _Ecore_X_Event_Xdnd_Drop                Ecore_X_Event_Xdnd_Drop;
 typedef struct _Ecore_X_Event_Xdnd_Finished            Ecore_X_Event_Xdnd_Finished;
-typedef struct _Ecore_X_Event_Window_State             Ecore_X_Event_Window_State;
+typedef struct _Ecore_X_Event_Window_Move_Resize_Request Ecore_X_Event_Window_Move_Resize_Request;
+typedef struct _Ecore_X_Event_Window_State_Request     Ecore_X_Event_Window_State_Request;
 typedef struct _Ecore_X_Event_Desktop_Change           Ecore_X_Event_Desktop_Change;
 typedef struct _Ecore_X_Event_Client_Message           Ecore_X_Event_Client_Message;
 typedef struct _Ecore_X_Event_Window_Shape             Ecore_X_Event_Window_Shape;
@@ -599,7 +600,16 @@ struct _Ecore_X_Event_Xdnd_Finished
    Ecore_X_Atom         action;
 };
 
-struct _Ecore_X_Event_Window_State
+struct _Ecore_X_Event_Window_Move_Resize_Request
+{
+   Ecore_X_Window win;
+   int            x, y;
+   int            direction;
+   int            button;
+   int            source;
+};
+
+struct _Ecore_X_Event_Window_State_Request
 {
    Ecore_X_Window              win;
    Ecore_X_Window_State_Action action;
@@ -727,7 +737,8 @@ extern EAPI int ECORE_X_EVENT_WINDOW_MAPPING;
 extern EAPI int ECORE_X_EVENT_SELECTION_CLEAR;
 extern EAPI int ECORE_X_EVENT_SELECTION_REQUEST;
 extern EAPI int ECORE_X_EVENT_SELECTION_NOTIFY;
-extern EAPI int ECORE_X_EVENT_WINDOW_STATE;
+extern EAPI int ECORE_X_EVENT_WINDOW_MOVE_RESIZE_REQUEST;
+extern EAPI int ECORE_X_EVENT_WINDOW_STATE_REQUEST;
 extern EAPI int ECORE_X_EVENT_DESKTOP_CHANGE;
 extern EAPI int ECORE_X_EVENT_CLIENT_MESSAGE;
 extern EAPI int ECORE_X_EVENT_WINDOW_SHAPE;

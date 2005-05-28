@@ -1135,9 +1135,9 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
    /* checks here and generate synthetic events per special message known */
    /* otherwise generate generic client message event. this would handle*/
    /* netwm, ICCCM, gnomewm, old kde and mwm hint client message protocols */
-   if ((xevent->xclient.message_type == ECORE_X_ATOM_WM_PROTOCOLS)
-       && (xevent->xclient.format == 32)
-       && (xevent->xclient.data.l[0] == (long)ECORE_X_ATOM_WM_DELETE_WINDOW))
+   if ((xevent->xclient.message_type == ECORE_X_ATOM_WM_PROTOCOLS) &&
+       (xevent->xclient.format == 32) &&
+       (xevent->xclient.data.l[0] == (long)ECORE_X_ATOM_WM_DELETE_WINDOW))
      {
 	Ecore_X_Event_Window_Delete_Request *e;
 
@@ -1146,6 +1146,24 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	e->win = xevent->xclient.window;
 	e->time = _ecore_x_event_last_time;
 	ecore_event_add(ECORE_X_EVENT_WINDOW_DELETE_REQUEST, e, NULL, NULL);
+     }
+
+   else if ((xevent->xclient.message_type == ECORE_X_ATOM_NET_WM_MOVERESIZE) &&
+	    (xevent->xclient.format == 32) &&
+	    /* Ignore move and resize with keyboard */
+	    (xevent->xclient.data.l[2] < 9))
+     {
+	Ecore_X_Event_Window_Move_Resize_Request *e;
+
+	e = calloc(1, sizeof(Ecore_X_Event_Window_Move_Resize_Request));
+	if (!e) return;
+	e->win = xevent->xclient.window;
+	e->x = xevent->xclient.data.l[0];
+	e->y = xevent->xclient.data.l[1];
+	e->direction = xevent->xclient.data.l[2];
+	e->button = xevent->xclient.data.l[3];
+	e->source = xevent->xclient.data.l[4];
+	ecore_event_add(ECORE_X_EVENT_WINDOW_MOVE_RESIZE_REQUEST, e, NULL, NULL);
      }
 
    /* Xdnd Client Message Handling Begin */
@@ -1373,9 +1391,9 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
      }
    else if (xevent->xclient.message_type == ECORE_X_ATOM_NET_WM_STATE)
      {
-	Ecore_X_Event_Window_State *e;
+	Ecore_X_Event_Window_State_Request *e;
 
-	e = calloc(1, sizeof(Ecore_X_Event_Window_State));
+	e = calloc(1, sizeof(Ecore_X_Event_Window_State_Request));
 	if (!e) return;
 	e->win = xevent->xclient.window;
 	if (xevent->xclient.data.l[0] == 0)
@@ -1409,21 +1427,21 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	  }
 	e->source = xevent->xclient.data.l[3];
 
-	ecore_event_add(ECORE_X_EVENT_WINDOW_STATE, e, NULL, NULL);
+	ecore_event_add(ECORE_X_EVENT_WINDOW_STATE_REQUEST, e, NULL, NULL);
      }
    else if ((xevent->xclient.message_type == ECORE_X_ATOM_WM_CHANGE_STATE)
 	    && (xevent->xclient.format == 32)
 	    && (xevent->xclient.data.l[0] == IconicState))
      {
-	Ecore_X_Event_Window_State *e;
+	Ecore_X_Event_Window_State_Request *e;
 
-	e = calloc(1, sizeof(Ecore_X_Event_Window_State));
+	e = calloc(1, sizeof(Ecore_X_Event_Window_State_Request));
 	if (!e) return;
 	e->win = xevent->xclient.window;
 	e->action = ECORE_X_WINDOW_STATE_ACTION_ADD;
 	e->state[0] = ECORE_X_WINDOW_STATE_ICONIFIED;
 
-	ecore_event_add(ECORE_X_EVENT_WINDOW_STATE, e, NULL, NULL);
+	ecore_event_add(ECORE_X_EVENT_WINDOW_STATE_REQUEST, e, NULL, NULL);
      }
    else if ((xevent->xclient.message_type == ECORE_X_ATOM_NET_WM_DESKTOP)
 	    && (xevent->xclient.format == 32))
