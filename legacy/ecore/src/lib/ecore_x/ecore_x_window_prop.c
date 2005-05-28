@@ -26,35 +26,6 @@ ecore_x_window_prop_any_type(void)
  *
  * FIXME: To be fixed.
  */
-Ecore_X_Atom *
-ecore_x_window_prop_list(Ecore_X_Window win, int num)
-{
-   Atom *atoms;
-   Ecore_X_Atom *ret;
-   int i;
-
-   atoms = XListProperties(_ecore_x_disp, win, &num);
-   if (!atoms) return NULL;
-
-   ret = malloc(num * sizeof(Ecore_X_Atom));
-   if (!ret)
-     {
-	XFree(atoms);
-	return NULL;
-     }
-
-   for (i = 0; i < num; i++)
-     ret[i] = atoms[i];
-
-   XFree(atoms);
-   return ret;
-}
-
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- */
 void
 ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom property, Ecore_X_Atom type, int size, void *data, int number)
 {
