@@ -1026,6 +1026,7 @@ EAPI void             ecore_x_window_prop_window_type_normal_set(Ecore_X_Window 
 #endif
 EAPI void             ecore_x_window_prop_window_opacity_set(Ecore_X_Window win, int opacity);
 EAPI int              ecore_x_window_prop_window_opacity_get(Ecore_X_Window win);
+EAPI Ecore_X_Atom    *ecore_x_window_prop_list(Ecore_X_Window win, int *num_ret);
 EAPI void             ecore_x_window_prop_state_set(Ecore_X_Window win, Ecore_X_Window_State s);
 EAPI int              ecore_x_window_prop_state_isset(Ecore_X_Window win, Ecore_X_Window_State s);
 EAPI void             ecore_x_window_prop_state_unset(Ecore_X_Window win, Ecore_X_Window_State s);

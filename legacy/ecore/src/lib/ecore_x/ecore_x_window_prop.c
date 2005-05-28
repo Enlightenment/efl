@@ -1341,7 +1341,8 @@ ecore_x_window_prop_window_type_normal_set(Ecore_X_Window win)
  * as part of the EWMH specification. The value supplied should be an
  * integer between 0 and 255, with 255 representing full opacity.
  */
-void ecore_x_window_prop_window_opacity_set(Ecore_X_Window win, int opacity)
+void
+ecore_x_window_prop_window_opacity_set(Ecore_X_Window win, int opacity)
 {
    unsigned long o_val;
    double tmp;
@@ -1363,7 +1364,8 @@ void ecore_x_window_prop_window_opacity_set(Ecore_X_Window win, int opacity)
  * @return An int between 0 and 255 representing the window's opacity value,
  * or -1 if the property is not found.
  */
-int ecore_x_window_prop_window_opacity_get(Ecore_X_Window win)
+int
+ecore_x_window_prop_window_opacity_get(Ecore_X_Window win)
 {
    unsigned char  *data = NULL;
    unsigned long  lval;
@@ -1383,3 +1385,29 @@ int ecore_x_window_prop_window_opacity_get(Ecore_X_Window win)
    return ret_val;
 }
 
+Ecore_X_Atom *
+ecore_x_window_prop_list(Ecore_X_Window win, int *num_ret)
+{
+   Ecore_X_Atom *atoms;
+   Atom *atom_ret;
+   int num = 0, i;
+   
+   atom_ret = XListProperties(_ecore_x_disp, win, &num);
+   if (!atom_ret)
+     {
+	if (num_ret) *num_ret = 0;
+	return NULL;
+     }
+   atoms = malloc(num * sizeof(Ecore_X_Atom));
+   if (atoms)
+     {
+	for (i = 0; i < num; i++) atoms[i] = atom_ret[i];
+	XFree(atom_ret);
+	if (num_ret) *num_ret = num;
+     }
+   else
+     {
+	if (num_ret) *num_ret = 0;
+     }
+   return atoms;
+}
