@@ -750,7 +750,34 @@ ecore_x_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv)
 void
 ecore_x_icccm_icon_name_set(Ecore_X_Window win, const char *t)
 {
-   XSetIconName(_ecore_x_disp, win, (char *)t);
+   char               *list[1];
+   XTextProperty       xprop;
+   int                 ret;
+
+   xprop.value = NULL;
+#ifdef X_HAVE_UTF8_STRING
+   list[0] = strdup(t);
+   ret = Xutf8TextListToTextProperty(_ecore_x_disp, list, 1,
+				     XUTF8StringStyle, &xprop);
+#else
+   list[0] = strdup(t);
+   ret = XmbTextListToTextProperty(_ecore_x_disp, list, 1,
+				   XStdICCTextStyle, &xprop);
+#endif
+   if (ret >= Success)
+     {
+	XSetWMIconName(_ecore_x_disp, win, &xprop);
+	if (xprop.value) XFree(xprop.value);
+     }
+   else
+     {
+	if (XStringListToTextProperty(list, 1, &xprop) >= Success)
+	  {
+	     XSetWMIconName(_ecore_x_disp, win, &xprop);
+	     if (xprop.value) XFree(xprop.value);
+	  }
+     }
+   free(list[0]);
 }
 
 /**
@@ -763,11 +790,55 @@ ecore_x_icccm_icon_name_set(Ecore_X_Window win, const char *t)
 char               *
 ecore_x_icccm_icon_name_get(Ecore_X_Window win)
 {
-   char               *name;
+   XTextProperty       xprop;
 
-   if (!XGetIconName(_ecore_x_disp, win, &name))
-     return NULL;
-   return name;
+   xprop.value = NULL;
+   if (XGetWMIconName(_ecore_x_disp, win, &xprop) >= Success)
+     {
+	if (xprop.value)
+	  {
+	     char              **list = NULL;
+	     char               *t = NULL;
+	     int                 num = 0;
+	     int                 ret;
+
+	     if (xprop.encoding == ECORE_X_ATOM_UTF8_STRING)
+	       {
+		  t = strdup((char *)xprop.value);
+	       }
+	     else
+	       {
+
+		  /* convert to utf8 */
+#ifdef X_HAVE_UTF8_STRING
+		  ret = Xutf8TextPropertyToTextList(_ecore_x_disp, &xprop,
+						    &list, &num);
+#else
+		  ret = XmbTextPropertyToTextList(_ecore_x_disp, &xprop,
+						  &list, &num);
+#endif
+
+		  if ((ret == XLocaleNotSupported) ||
+		      (ret == XNoMemory) || (ret == XConverterNotFound))
+		    {
+		       t = strdup((char *)xprop.value);
+		    }
+		  else if (ret >= Success)
+		    {
+		       if ((num >= 1) && (list))
+			 {
+			    t = strdup(list[0]);
+			 }
+		       if (list)
+			 XFreeStringList(list);
+		    }
+	       }
+	     
+	     if (xprop.value) XFree(xprop.value);
+	     return t;
+	  }
+     }
+   return NULL;
 }
 
 /**
