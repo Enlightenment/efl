@@ -1396,23 +1396,18 @@ ecore_x_window_prop_list(Ecore_X_Window win, int *num_ret)
    Ecore_X_Atom *atoms;
    Atom *atom_ret;
    int num = 0, i;
-   
+	
+   if (num_ret) *num_ret = 0;
+
    atom_ret = XListProperties(_ecore_x_disp, win, &num);
-   if (!atom_ret)
-     {
-	if (num_ret) *num_ret = 0;
-	return NULL;
-     }
+   if (!atom_ret) return NULL;
+
    atoms = malloc(num * sizeof(Ecore_X_Atom));
    if (atoms)
      {
 	for (i = 0; i < num; i++) atoms[i] = atom_ret[i];
-	XFree(atom_ret);
 	if (num_ret) *num_ret = num;
      }
-   else
-     {
-	if (num_ret) *num_ret = 0;
-     }
+   XFree(atom_ret);
    return atoms;
 }

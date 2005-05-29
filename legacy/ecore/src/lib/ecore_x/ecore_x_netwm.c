@@ -910,6 +910,36 @@ _ecore_x_netwm_state_atom_get(Ecore_X_Window_State s)
      }
 }
 
+Ecore_X_Window_State *
+ecore_x_netwm_window_state_get(Ecore_X_Window win, int *num)
+{
+   int                   num_ret, i;
+   unsigned char        *data;
+   Ecore_X_Atom         *atoms;
+   Ecore_X_Window_State *state;
+
+   if (num) *num = 0;
+
+   if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_NET_WM_STATE,
+					 XA_ATOM, 32, &data, &num_ret))
+      return NULL;
+
+   if ((!data) || (!num_ret)) return NULL;
+
+   atoms = (Ecore_X_Atom *) data;
+   state = malloc(num_ret * sizeof(Ecore_X_Window_State));
+   if (state)
+     {
+	for (i = 0; i < num_ret; ++i)
+	  state[i] = _ecore_x_netwm_state_get(atoms[i]);
+
+	if (num) *num = num_ret;
+     }
+
+   XFree(data);
+   return state;
+}
+
 int
 ecore_x_netwm_window_state_isset(Ecore_X_Window win, Ecore_X_Window_State s)
 {
