@@ -516,10 +516,11 @@ ecore_fb_touch_screen_calibrate_set(int xscale, int xtrans, int yscale, int ytra
    cal.yscale = yscale;
    cal.ytrans = ytrans;
    cal.xyswap = xyswap;
-   if (ioctl(_ecore_fb_ts_fd, TS_SET_CAL, (void *)&cal)) {
-     _ecore_fb_ts_cal = cal;
-     _ecore_fb_ts_apply_cal = 1;
-   }
+   if (ioctl(_ecore_fb_ts_fd, TS_SET_CAL, (void *)&cal))
+     {
+	_ecore_fb_ts_cal = cal;
+	_ecore_fb_ts_apply_cal = 1;
+     }
 }
 
 /**
@@ -538,14 +539,13 @@ ecore_fb_touch_screen_calibrate_get(int *xscale, int *xtrans, int *yscale, int *
    Ecore_Fb_Ts_Calibrate cal;
    
    if (_ecore_fb_ts_fd < 0) return;
-   if (!_ecore_fb_ts_apply_cal) {
-     if (ioctl(_ecore_fb_ts_fd, TS_GET_CAL, (void *)&cal)) {
-        _ecore_fb_ts_cal = cal;
+   if (!_ecore_fb_ts_apply_cal)
+     {
+	if (ioctl(_ecore_fb_ts_fd, TS_GET_CAL, (void *)&cal))
+	  _ecore_fb_ts_cal = cal;
      }
-   }
-   if (_ecore_fb_ts_apply_cal) {
+   else
      cal = _ecore_fb_ts_cal;
-   }
    if (xscale) *xscale = cal.xscale;
    if (xtrans) *xtrans = cal.xtrans;
    if (yscale) *yscale = cal.yscale;
@@ -800,13 +800,16 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
 	if (v < num) return 1;
 	t = ecore_time_get();
 	_ecore_fb_ts_event_byte_count = 0;
-	if (_ecore_fb_ts_apply_cal) {
-	  x = ((_ecore_fb_ts_cal.xscale * _ecore_fb_ts_event.x) >> 8) + _ecore_fb_ts_cal.xtrans;
-	  y = ((_ecore_fb_ts_cal.yscale * _ecore_fb_ts_event.y) >> 8) + _ecore_fb_ts_cal.ytrans;
-	} else {
-	  x = _ecore_fb_ts_event.x;
-	  y = _ecore_fb_ts_event.y;
-	}
+	if (_ecore_fb_ts_apply_cal)
+	  {
+	     x = ((_ecore_fb_ts_cal.xscale * _ecore_fb_ts_event.x) >> 8) + _ecore_fb_ts_cal.xtrans;
+	     y = ((_ecore_fb_ts_cal.yscale * _ecore_fb_ts_event.y) >> 8) + _ecore_fb_ts_cal.ytrans;
+	  }
+	else
+	  {
+	     x = _ecore_fb_ts_event.x;
+	     y = _ecore_fb_ts_event.y;
+	  }
 	pressure = _ecore_fb_ts_event.pressure;
 	/* add event to queue */
 	/* always add a move event */
