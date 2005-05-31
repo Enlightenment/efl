@@ -128,6 +128,9 @@ static void  _ecore_fb_event_filter_end(void *data, void *loop_data);
 					  
 static double _ecore_fb_double_click_time = 0.25;
 
+static struct _Ecore_Fb_Ts_Calibrate _ecore_fb_ts_cal = {1,1,0,0,0};
+static int _ecore_fb_ts_apply_cal = 0;
+
 static const char *_ecore_fb_kbd_syms[128 * 6] =
 {
 #include "ecore_fb_keytab.h"
@@ -513,7 +516,10 @@ ecore_fb_touch_screen_calibrate_set(int xscale, int xtrans, int yscale, int ytra
    cal.yscale = yscale;
    cal.ytrans = ytrans;
    cal.xyswap = xyswap;
-   ioctl(_ecore_fb_ts_fd, TS_SET_CAL, (void *)&cal);
+   if (ioctl(_ecore_fb_ts_fd, TS_SET_CAL, (void *)&cal)) {
+     _ecore_fb_ts_cal = cal;
+     _ecore_fb_ts_apply_cal = 1;
+   }
 }
 
 /**
@@ -532,7 +538,14 @@ ecore_fb_touch_screen_calibrate_get(int *xscale, int *xtrans, int *yscale, int *
    Ecore_Fb_Ts_Calibrate cal;
    
    if (_ecore_fb_ts_fd < 0) return;
-   ioctl(_ecore_fb_ts_fd, TS_GET_CAL, (void *)&cal);
+   if (!_ecore_fb_ts_apply_cal) {
+     if (ioctl(_ecore_fb_ts_fd, TS_GET_CAL, (void *)&cal)) {
+        _ecore_fb_ts_cal = cal;
+     }
+   }
+   if (_ecore_fb_ts_apply_cal) {
+     cal = _ecore_fb_ts_cal;
+   }
    if (xscale) *xscale = cal.xscale;
    if (xtrans) *xtrans = cal.xtrans;
    if (yscale) *yscale = cal.yscale;
@@ -787,8 +800,13 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
 	if (v < num) return 1;
 	t = ecore_time_get();
 	_ecore_fb_ts_event_byte_count = 0;
-	x = _ecore_fb_ts_event.x;
-	y = _ecore_fb_ts_event.y;
+	if (_ecore_fb_ts_apply_cal) {
+	  x = ((_ecore_fb_ts_cal.xscale * _ecore_fb_ts_event.x) >> 8) + _ecore_fb_ts_cal.xtrans;
+	  y = ((_ecore_fb_ts_cal.yscale * _ecore_fb_ts_event.y) >> 8) + _ecore_fb_ts_cal.ytrans;
+	} else {
+	  x = _ecore_fb_ts_event.x;
+	  y = _ecore_fb_ts_event.y;
+	}
 	pressure = _ecore_fb_ts_event.pressure;
 	/* add event to queue */
 	/* always add a move event */
