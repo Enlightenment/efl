@@ -1219,7 +1219,8 @@ EAPI int                 ecore_x_netwm_handled_icons_get(Ecore_X_Window win);
 EAPI void                ecore_x_netwm_user_time_set(Ecore_X_Window win, int time);
 EAPI int                 ecore_x_netwm_user_time_get(Ecore_X_Window win, int *time);
 
-EAPI Ecore_X_Window_State *ecore_x_netwm_window_state_get(Ecore_X_Window win, int *num);
+EAPI Ecore_X_Window_State *ecore_x_netwm_window_state_list_get(Ecore_X_Window win, int *num);
+EAPI int                 ecore_x_netwm_window_state_list_set(Ecore_X_Window win, Ecore_X_Window_State *state, int num);
 
 EAPI void                ecore_x_netwm_window_state_set(Ecore_X_Window win, Ecore_X_Window_State state, int on);
 EAPI int                 ecore_x_netwm_window_state_isset(Ecore_X_Window win, Ecore_X_Window_State state);
