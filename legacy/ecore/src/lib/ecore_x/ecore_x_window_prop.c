@@ -89,18 +89,20 @@ ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecor
 	   return 0;
    }
 
-   for (i = 0; i < num_ret; i++)
-     switch (size) {
-	case 8:
+   switch (size) {
+      case 8:
+	 for (i = 0; i < num_ret; i++)
 	   (*data)[i] = prop_ret[i];
-	   break;
-	case 16:
+	 break;
+      case 16:
+	 for (i = 0; i < num_ret; i++)
 	   ((uint16_t *) *data)[i] = ((uint16_t *) prop_ret)[i];
-	   break;
-	case 32:
+	 break;
+      case 32:
+	 for (i = 0; i < num_ret; i++)
 	   ((uint32_t *) *data)[i] = ((uint32_t *) prop_ret)[i];
-	   break;
-     }
+	 break;
+   }
 
    XFree(prop_ret);
 
@@ -749,7 +751,7 @@ ecore_x_window_prop_sticky_set(Ecore_X_Window win, int on)
    
    ecore_x_window_prop_state_unset(win, ECORE_X_WINDOW_STATE_STICKY);
    ret = ecore_x_window_prop_property_get(0, ECORE_X_ATOM_NET_CURRENT_DESKTOP,
-                                         XA_CARDINAL, 32, &data, &num);
+					  XA_CARDINAL, 32, &data, &num);
    if (!ret || !num)
 	   return;
 
