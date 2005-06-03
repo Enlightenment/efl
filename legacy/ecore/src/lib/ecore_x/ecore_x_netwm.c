@@ -756,12 +756,12 @@ ecore_x_netwm_strut_partial_get(Ecore_X_Window win, int *left, int *right,
    return 1;
 }
 
-/* FIXME: safe to use unsigned int? Maybe uin32_t? */
 int
 ecore_x_netwm_icon_get(Ecore_X_Window win, int *width, int *height, unsigned int **data, int *num)
 {
-   unsigned char *data_ret, *src, *dst;
-   int            num_ret, pos, len;
+   unsigned char *data_ret;
+   unsigned int  *src;
+   int            num_ret, len;
 
    if (width) *width = 0;
    if (height) *height = 0;
@@ -771,8 +771,11 @@ ecore_x_netwm_icon_get(Ecore_X_Window win, int *width, int *height, unsigned int
 					 XA_CARDINAL, 32, &data_ret, &num_ret))
      return 0;
 
-   *data = malloc((num_ret - 2) * sizeof(unsigned int));
-   if (!(*data)) return 0;
+   if (data)
+     {
+	*data = malloc((num_ret - 2) * sizeof(unsigned int));
+	if (!(*data)) return 0;
+     }
 
    if (num) *num = (num_ret - 2);
    if (width) *width = ((unsigned int *)data_ret)[0];
@@ -780,16 +783,8 @@ ecore_x_netwm_icon_get(Ecore_X_Window win, int *width, int *height, unsigned int
 
    len = ((unsigned int *)data_ret)[0] * ((unsigned int *)data_ret)[1];
    src = &(((unsigned int *)data_ret)[2]);
-   dst = *data;
-   for (pos = 0; pos < len; ++pos, src += 4, dst += 4)
-     {
-	/* FIXME: Hm, seems firefox does this wrong! */
-	dst[0] = src[0]; /* R */
-	dst[1] = src[1]; /* G */
-	dst[2] = src[2]; /* B */
-	dst[3] = src[3]; /* A */
-     }
-
+   if (data)
+     memcpy(*data, &(data_ret[2]), len * sizeof(unsigned int));
    free(data_ret);
 
    return 1;
