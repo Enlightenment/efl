@@ -845,7 +845,8 @@ typedef enum _Ecore_X_Window_Type {
     ECORE_X_WINDOW_TYPE_UTILITY,
     ECORE_X_WINDOW_TYPE_SPLASH,
     ECORE_X_WINDOW_TYPE_DIALOG,
-    ECORE_X_WINDOW_TYPE_NORMAL
+    ECORE_X_WINDOW_TYPE_NORMAL,
+    ECORE_X_WINDOW_TYPE_UNKNOWN
 } Ecore_X_Window_Type;
 
 typedef enum _Ecore_X_Action {
