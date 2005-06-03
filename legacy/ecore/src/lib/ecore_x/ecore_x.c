@@ -115,6 +115,7 @@ int ECORE_X_EVENT_SELECTION_REQUEST = 0;
 int ECORE_X_EVENT_SELECTION_NOTIFY = 0;
 int ECORE_X_EVENT_WINDOW_MOVE_RESIZE_REQUEST = 0;
 int ECORE_X_EVENT_WINDOW_STATE_REQUEST = 0;
+int ECORE_X_EVENT_FRAME_EXTENTS_REQUEST = 0;
 int ECORE_X_EVENT_DESKTOP_CHANGE = 0;
 int ECORE_X_EVENT_CLIENT_MESSAGE = 0;
 int ECORE_X_EVENT_WINDOW_SHAPE = 0;
@@ -259,6 +260,7 @@ ecore_x_init(const char *name)
 	ECORE_X_EVENT_SELECTION_NOTIFY         = ecore_event_type_new();
 	ECORE_X_EVENT_WINDOW_MOVE_RESIZE_REQUEST = ecore_event_type_new();
 	ECORE_X_EVENT_WINDOW_STATE_REQUEST     = ecore_event_type_new();
+	ECORE_X_EVENT_FRAME_EXTENTS_REQUEST    = ecore_event_type_new();
 	ECORE_X_EVENT_DESKTOP_CHANGE           = ecore_event_type_new();
 	ECORE_X_EVENT_CLIENT_MESSAGE           = ecore_event_type_new();
 	ECORE_X_EVENT_WINDOW_SHAPE             = ecore_event_type_new();

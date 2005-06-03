@@ -1456,6 +1456,16 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
 	ecore_event_add(ECORE_X_EVENT_DESKTOP_CHANGE, e, NULL, NULL);
      }
+   else if ((xevent->xclient.message_type == ECORE_X_ATOM_NET_REQUEST_FRAME_EXTENTS))
+     {
+	Ecore_X_Event_Frame_Extents_Request *e;
+
+	e = calloc(1, sizeof(Ecore_X_Event_Frame_Extents_Request));
+	if (!e) return;
+	e->win = xevent->xclient.window;
+
+	ecore_event_add(ECORE_X_EVENT_FRAME_EXTENTS_REQUEST, e, NULL, NULL);
+     }
    else
      {
 	Ecore_X_Event_Client_Message *e;

@@ -241,6 +241,7 @@ typedef struct _Ecore_X_Event_Xdnd_Drop                Ecore_X_Event_Xdnd_Drop;
 typedef struct _Ecore_X_Event_Xdnd_Finished            Ecore_X_Event_Xdnd_Finished;
 typedef struct _Ecore_X_Event_Window_Move_Resize_Request Ecore_X_Event_Window_Move_Resize_Request;
 typedef struct _Ecore_X_Event_Window_State_Request     Ecore_X_Event_Window_State_Request;
+typedef struct _Ecore_X_Event_Frame_Extents_Request    Ecore_X_Event_Frame_Extents_Request;
 typedef struct _Ecore_X_Event_Desktop_Change           Ecore_X_Event_Desktop_Change;
 typedef struct _Ecore_X_Event_Client_Message           Ecore_X_Event_Client_Message;
 typedef struct _Ecore_X_Event_Window_Shape             Ecore_X_Event_Window_Shape;
@@ -617,6 +618,11 @@ struct _Ecore_X_Event_Window_State_Request
    int                         source;
 };
 
+struct _Ecore_X_Event_Frame_Extents_Request
+{
+   Ecore_X_Window              win;
+};
+
 struct _Ecore_X_Event_Desktop_Change
 {
    Ecore_X_Window              win;
@@ -739,6 +745,7 @@ extern EAPI int ECORE_X_EVENT_SELECTION_REQUEST;
 extern EAPI int ECORE_X_EVENT_SELECTION_NOTIFY;
 extern EAPI int ECORE_X_EVENT_WINDOW_MOVE_RESIZE_REQUEST;
 extern EAPI int ECORE_X_EVENT_WINDOW_STATE_REQUEST;
+extern EAPI int ECORE_X_EVENT_FRAME_EXTENTS_REQUEST;
 extern EAPI int ECORE_X_EVENT_DESKTOP_CHANGE;
 extern EAPI int ECORE_X_EVENT_CLIENT_MESSAGE;
 extern EAPI int ECORE_X_EVENT_WINDOW_SHAPE;
