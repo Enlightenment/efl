@@ -1163,6 +1163,17 @@ ecore_x_netwm_window_type_get(Ecore_X_Window win)
 
    atoms = (Ecore_X_Atom *) data;
 
+   /*
+    * FIXME: Why does nautilus and gkrellm report NORMAL as the
+    * first atom, and not the last?
+   for (i = 0; i < num; ++i)
+     {
+	char *s;
+	s = XGetAtomName(_ecore_x_disp, atoms[i]);
+	printf("window type: %s\n", s);
+	XFree(s);
+     }
+   */
    for (i = 0; i < num; ++i)
      {
 	type = _ecore_x_netwm_window_type_type_get(atoms[i]);
