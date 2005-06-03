@@ -1098,8 +1098,10 @@ _ecore_x_netwm_window_type_type_get(Ecore_X_Atom atom)
      return ECORE_X_WINDOW_TYPE_SPLASH;
    else if (atom == ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DIALOG)
      return ECORE_X_WINDOW_TYPE_DIALOG;
+   /*
    else if (atom == ECORE_X_ATOM_NET_WM_WINDOW_TYPE_NORMAL)
      return ECORE_X_WINDOW_TYPE_NORMAL;
+   */
    else
      return 0;
 }
@@ -1174,6 +1176,7 @@ ecore_x_netwm_window_type_get(Ecore_X_Window win)
 	XFree(s);
      }
    */
+   ret = ECORE_X_WINDOW_TYPE_NORMAL;
    for (i = 0; i < num; ++i)
      {
 	type = _ecore_x_netwm_window_type_type_get(atoms[i]);
