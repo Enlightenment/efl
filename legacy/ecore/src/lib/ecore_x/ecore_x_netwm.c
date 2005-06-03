@@ -726,6 +726,7 @@ ecore_x_netwm_strut_partial_set(Ecore_X_Window win, int left, int right,
    strut[10] = bottom_start_x;
    strut[11] = bottom_end_x;
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_STRUT_PARTIAL, strut, 12);
+   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_STRUT, strut, 4);
 }
 
 int
@@ -739,7 +740,16 @@ ecore_x_netwm_strut_partial_get(Ecore_X_Window win, int *left, int *right,
 
    ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_STRUT_PARTIAL, strut, 12);
    if (ret != 12)
-     return 0;
+     {
+	int i;
+
+	ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_STRUT, strut, 4);
+	if (ret != 4)
+	  return 0;
+
+	for (i = 4; i < 12; i++)
+	  strut[i] = 0;
+     }
 
    if (left) *left = strut[0];
    if (right) *right = strut[1];
