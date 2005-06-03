@@ -1098,10 +1098,8 @@ _ecore_x_netwm_window_type_type_get(Ecore_X_Atom atom)
      return ECORE_X_WINDOW_TYPE_SPLASH;
    else if (atom == ECORE_X_ATOM_NET_WM_WINDOW_TYPE_DIALOG)
      return ECORE_X_WINDOW_TYPE_DIALOG;
-   /*
    else if (atom == ECORE_X_ATOM_NET_WM_WINDOW_TYPE_NORMAL)
      return ECORE_X_WINDOW_TYPE_NORMAL;
-   */
    else
      return ECORE_X_WINDOW_TYPE_UNKNOWN;
 }
