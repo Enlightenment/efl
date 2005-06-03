@@ -658,15 +658,13 @@ ecore_x_netwm_desktop_get(Ecore_X_Window win, unsigned int *desk)
 }
 
 /*
- * _NET_WM_STRUT is deprecated, set both _NET_WM_STRUT and _NET_WM_STRUT_PARTIAL.
+ * _NET_WM_STRUT is deprecated
  */
 void
 ecore_x_netwm_strut_set(Ecore_X_Window win, int left, int right,
 			int top, int bottom)
 {
    unsigned int strut[4];
-
-   ecore_x_netwm_strut_partial_set(win, left, right, top, bottom, 0, 0, 0, 0, 0, 0, 0, 0);
 
    strut[0] = left;
    strut[1] = right;
@@ -676,23 +674,14 @@ ecore_x_netwm_strut_set(Ecore_X_Window win, int left, int right,
 }
 
 /*
- * _NET_WM_STRUT is deprecated, check first _NET_WM_STRUT_PARTIAL
- * and then _NET_WM_STRUT.
+ * _NET_WM_STRUT is deprecated
  */
 int
 ecore_x_netwm_strut_get(Ecore_X_Window win, int *left, int *right,
 			int *top, int *bottom)
 {
    int ret = 0;
-   int left_start_y, left_end_y, right_start_y, right_end_y;
-   int top_start_x, top_end_x, bottom_start_x, bottom_end_x;
    unsigned int strut[4];
-
-   ret = ecore_x_netwm_strut_partial_get(win, left, right, top, bottom,
-					 &left_start_y, &left_end_y, &right_start_y, &right_end_y,
-					 &top_start_x, &top_end_x, &bottom_start_x, &bottom_end_x);
-   if (ret == 12)
-     return 1;
 
    ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_STRUT, strut, 4);
    if (ret != 4)
@@ -726,7 +715,6 @@ ecore_x_netwm_strut_partial_set(Ecore_X_Window win, int left, int right,
    strut[10] = bottom_start_x;
    strut[11] = bottom_end_x;
    ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_STRUT_PARTIAL, strut, 12);
-   ecore_x_window_prop_card32_set(win, ECORE_X_ATOM_NET_WM_STRUT, strut, 4);
 }
 
 int
@@ -740,16 +728,7 @@ ecore_x_netwm_strut_partial_get(Ecore_X_Window win, int *left, int *right,
 
    ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_STRUT_PARTIAL, strut, 12);
    if (ret != 12)
-     {
-	int i;
-
-	ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_STRUT, strut, 4);
-	if (ret != 4)
-	  return 0;
-
-	for (i = 4; i < 12; i++)
-	  strut[i] = 0;
-     }
+     return 0;
 
    if (left) *left = strut[0];
    if (right) *right = strut[1];
