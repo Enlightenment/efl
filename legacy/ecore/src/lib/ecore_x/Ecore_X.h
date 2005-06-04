@@ -1186,7 +1186,8 @@ EAPI int ecore_x_mwm_hints_get(Ecore_X_Window win,
 /* netwm */
 EAPI void                ecore_x_netwm_init(void);
 EAPI void                ecore_x_netwm_wm_identify(Ecore_X_Window root, Ecore_X_Window check, const char *wm_name);
-EAPI void                ecore_x_netwm_supported(Ecore_X_Window root, Ecore_X_Atom atom, int supported);
+EAPI int                 ecore_x_netwm_supported_set(Ecore_X_Window root, Ecore_X_Atom *supported, int num);
+EAPI Ecore_X_Atom       *ecore_x_netwm_supported_get(Ecore_X_Window root, int *num);
 EAPI void                ecore_x_netwm_desk_count_set(Ecore_X_Window root, unsigned int n_desks);
 EAPI void                ecore_x_netwm_desk_roots_set(Ecore_X_Window root, unsigned int n_desks, Ecore_X_Window * vroots);
 EAPI void                ecore_x_netwm_desk_names_set(Ecore_X_Window root, unsigned int n_desks, const char **names);
