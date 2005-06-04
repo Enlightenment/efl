@@ -746,10 +746,10 @@ ecore_x_netwm_strut_partial_get(Ecore_X_Window win, int *left, int *right,
 }
 
 int
-ecore_x_netwm_icon_get(Ecore_X_Window win, int *width, int *height, unsigned int **data, int *num)
+ecore_x_netwm_icon_get(Ecore_X_Window win, int *width, int *height, unsigned int **icon, int *num)
 {
    unsigned char *data_ret;
-   unsigned int  *icon;
+   unsigned int  *data;
    unsigned int  *src;
    int            num_ret, len;
 
@@ -760,22 +760,22 @@ ecore_x_netwm_icon_get(Ecore_X_Window win, int *width, int *height, unsigned int
    if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_NET_WM_ICON,
 					 XA_CARDINAL, 32, &data_ret, &num_ret))
      return 0;
-   icon = (unsigned int *)data_ret;
+   data = (unsigned int *)data_ret;
 
-   if (data)
+   if (icon)
      {
-	*data = malloc((num_ret - 2) * sizeof(unsigned int));
-	if (!(*data)) return 0;
+	*icon = malloc((num_ret - 2) * sizeof(unsigned int));
+	if (!(*icon)) return 0;
      }
 
    if (num) *num = (num_ret - 2);
-   if (width) *width = icon[0];
-   if (height) *height = icon[1];
+   if (width) *width = data[0];
+   if (height) *height = data[1];
 
-   len = icon[0] * icon[1];
-   src = &(icon[2]);
-   if (data)
-     memcpy(*data, &(icon[2]), len * sizeof(unsigned int));
+   len = data[0] * data[1];
+   src = &(data[2]);
+   if (icon)
+     memcpy(*icon, &(data[2]), len * sizeof(unsigned int));
    free(data_ret);
 
    return 1;
@@ -1163,7 +1163,6 @@ ecore_x_netwm_window_type_get(Ecore_X_Window win)
 
    atoms = (Ecore_X_Atom *) data;
 
-   ret = ECORE_X_WINDOW_TYPE_NORMAL;
    for (i = 0; i < num; ++i)
      {
 	type = _ecore_x_netwm_window_type_type_get(atoms[i]);
