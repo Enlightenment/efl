@@ -115,6 +115,18 @@ source_fetch_file(char *fil, char *filname)
 			    haveinclude = 1;
 			    p += 7;
 			 }
+		       /* HACK! the logic above should be fixed so
+			* preprocessor statements don't have to begin
+			* in column 0.
+			* otoh, edje_cc should print a warning in that case,
+			* since according to the standard, preprocessor
+			* statements need to be put in column 0.
+			*/
+		       else if (!strncmp (p, "#include", 8))
+			 {
+			    haveinclude = 1;
+			    p += 8;
+			 }
 		       else
 			 forgetit = 1;
 		    }
