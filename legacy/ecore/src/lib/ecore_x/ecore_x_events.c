@@ -1466,6 +1466,20 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
 	ecore_event_add(ECORE_X_EVENT_FRAME_EXTENTS_REQUEST, e, NULL, NULL);
      }
+   else if ((xevent->xclient.message_type == ECORE_X_ATOM_WM_PROTOCOLS)
+	    && (xevent->xclient.data.l[0] == ECORE_X_ATOM_NET_WM_PING)
+	    && (xevent->xclient.format == 32))
+     {
+	Ecore_X_Event_Ping *e;
+
+	e = calloc(1, sizeof(Ecore_X_Event_Ping));
+	if (!e) return;
+	e->win = xevent->xclient.window;
+	e->time = xevent->xclient.data.l[1];
+	e->event_win = xevent->xclient.data.l[2];
+
+	ecore_event_add(ECORE_X_EVENT_PING, e, NULL, NULL);
+     }
    else
      {
 	Ecore_X_Event_Client_Message *e;
