@@ -1309,3 +1309,24 @@ ecore_x_netwm_frame_size_get(Ecore_X_Window win, int *fl, int *fr, int *ft, int 
    return 1;
 }
 
+void
+ecore_x_netwm_ping(Ecore_X_Window win)
+{
+   XEvent xev;
+
+   if (!win) return;
+
+   xev.xclient.type = ClientMessage;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.window = win;
+   xev.xclient.message_type = ECORE_X_ATOM_WM_PROTOCOLS;
+   xev.xclient.format = 32;
+   xev.xclient.data.l[0] = ECORE_X_ATOM_NET_WM_PING;
+   xev.xclient.data.l[1] = CurrentTime;
+   xev.xclient.data.l[2] = win;
+   xev.xclient.data.l[3] = 0;
+   xev.xclient.data.l[4] = 0;
+   xev.xclient.data.l[5] = 0;
+
+   XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
+}

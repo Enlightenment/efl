@@ -1217,11 +1217,7 @@ EAPI int                 ecore_x_netwm_strut_partial_get(Ecore_X_Window win, int
 EAPI int                 ecore_x_netwm_icon_get(Ecore_X_Window win, int *width, int *height, unsigned int **data, int *num);
 EAPI void                ecore_x_netwm_icon_geometry_set(Ecore_X_Window win, int x, int y, int width, int height);
 EAPI int                 ecore_x_netwm_icon_geometry_get(Ecore_X_Window win, int *x, int *y, int *width, int *height);
-#if 0
-/* FIXME */
-EAPI void                ecore_x_netwm_icon_set();
-EAPI int                 ecore_x_netwm_icon_get();
-#endif
+EAPI void                ecore_x_netwm_ping(Ecore_X_Window win);
 EAPI void                ecore_x_netwm_pid_set(Ecore_X_Window win, int pid);
 EAPI int                 ecore_x_netwm_pid_get(Ecore_X_Window win, int *pid);
 EAPI void                ecore_x_netwm_handled_icons_set(Ecore_X_Window win);
