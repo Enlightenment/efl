@@ -392,9 +392,8 @@ ecore_x_netwm_supported_set(Ecore_X_Window root, Ecore_X_Atom *supported, int nu
 Ecore_X_Atom *
 ecore_x_netwm_supported_get(Ecore_X_Window root, int *num)
 {
-   int            num_ret, i;
+   int            num_ret;
    unsigned char *data;
-   Ecore_X_Atom  *atoms;
 
    if (num) *num = 0;
 
@@ -941,12 +940,12 @@ ecore_x_netwm_window_state_list_set(Ecore_X_Window win, Ecore_X_Window_State *st
    data = malloc(num * sizeof(Ecore_X_Atom));
    if (!data) return 1;
 
-   set = (Ecore_X_Window_State *) data;
+   set = (Ecore_X_Atom *) data;
    for (i = 0; i < num; i++)
      set[i] = _ecore_x_netwm_state_atom_get(state[i]);
 
-   ecore_x_window_prop_property_set(win, ECORE_X_ATOM_NET_WM_STATE,
-				    XA_ATOM, 32, data, num);
+   _ATOM_SET_ATOM(win, ECORE_X_ATOM_NET_WM_STATE, data, num);
+
    free(data);
    return 1;
 }
