@@ -28,6 +28,7 @@ Ecore_X_Cursor.h
 libecore_x_la_SOURCES = \
 ecore_x.c \
 ecore_x_dnd.c \
+ecore_x_sync.c \
 ecore_x_error.c \
 ecore_x_events.c \
 ecore_x_icccm.c \
@@ -66,6 +67,7 @@ Ecore_X_Atoms.h \
 Ecore_X_Cursor.h \
 ecore_x.c \
 ecore_x_dnd.c \
+ecore_x_sync.c \
 ecore_x_error.c \
 ecore_x_events.c \
 ecore_x_icccm.c \

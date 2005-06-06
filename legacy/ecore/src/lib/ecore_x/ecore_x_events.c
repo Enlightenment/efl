@@ -1516,3 +1516,29 @@ _ecore_x_event_handle_shape_change(XEvent *xevent)
    e->time = shape_event->time;
    ecore_event_add(ECORE_X_EVENT_WINDOW_SHAPE, e, NULL, NULL);
 }
+
+void
+_ecore_x_event_handle_sync_counter(XEvent *xevent)
+{
+   XSyncCounterNotifyEvent *sync_counter_event;
+   Ecore_X_Event_Sync_Counter *e;
+   
+   sync_counter_event = (XSyncCounterNotifyEvent *)xevent;
+   e = calloc(1, sizeof(Ecore_X_Event_Sync_Counter));
+   if (!e) return;
+   e->time = sync_counter_event->time;
+   ecore_event_add(ECORE_X_EVENT_SYNC_COUNTER, e, NULL, NULL);
+}
+
+void
+_ecore_x_event_handle_sync_alarm(XEvent *xevent)
+{
+   XSyncAlarmNotifyEvent *sync_alarm_event;
+   Ecore_X_Event_Sync_Alarm *e;
+   
+   sync_alarm_event = (XSyncAlarmNotifyEvent *)xevent;
+   e = calloc(1, sizeof(Ecore_X_Event_Sync_Alarm));
+   if (!e) return;
+   e->time = sync_alarm_event->time;
+   ecore_event_add(ECORE_X_EVENT_SYNC_ALARM, e, NULL, NULL);
+}

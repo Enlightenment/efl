@@ -17,6 +17,7 @@
 #include <X11/keysymdef.h>
 #include <X11/extensions/XShm.h>
 #include <X11/extensions/shape.h>
+#include <X11/extensions/sync.h>
 #ifdef ECORE_XCURSOR
 #include <X11/Xcursor/Xcursor.h>
 #endif
@@ -174,6 +175,8 @@ void _ecore_x_event_handle_colormap_notify(XEvent *xevent);
 void _ecore_x_event_handle_client_message(XEvent *xevent);
 void _ecore_x_event_handle_mapping_notify(XEvent *xevent);
 void _ecore_x_event_handle_shape_change(XEvent *xevent);
+void _ecore_x_event_handle_sync_counter(XEvent *xevent);
+void _ecore_x_event_handle_sync_alarm(XEvent *xevent);
 
 void  _ecore_x_selection_data_init(void);
 void  _ecore_x_selection_shutdown(void);
@@ -195,5 +198,7 @@ void _ecore_x_dnd_shutdown(void);
 
 /* from netwm */
 Ecore_X_Window_State _ecore_x_netwm_state_get(Ecore_X_Atom a);
+
+/* from sync */
 
 #endif

@@ -239,24 +239,27 @@ typedef struct _Ecore_X_Event_Xdnd_Status              Ecore_X_Event_Xdnd_Status
 typedef struct _Ecore_X_Event_Xdnd_Leave               Ecore_X_Event_Xdnd_Leave;
 typedef struct _Ecore_X_Event_Xdnd_Drop                Ecore_X_Event_Xdnd_Drop;
 typedef struct _Ecore_X_Event_Xdnd_Finished            Ecore_X_Event_Xdnd_Finished;
-typedef struct _Ecore_X_Event_Window_Move_Resize_Request Ecore_X_Event_Window_Move_Resize_Request;
-typedef struct _Ecore_X_Event_Window_State_Request     Ecore_X_Event_Window_State_Request;
-typedef struct _Ecore_X_Event_Frame_Extents_Request    Ecore_X_Event_Frame_Extents_Request;
-typedef struct _Ecore_X_Event_Ping                     Ecore_X_Event_Ping;
-typedef struct _Ecore_X_Event_Desktop_Change           Ecore_X_Event_Desktop_Change;
 typedef struct _Ecore_X_Event_Client_Message           Ecore_X_Event_Client_Message;
 typedef struct _Ecore_X_Event_Window_Shape             Ecore_X_Event_Window_Shape;
+typedef struct _Ecore_X_Event_Sync_Counter             Ecore_X_Event_Sync_Counter;
+typedef struct _Ecore_X_Event_Sync_Alarm               Ecore_X_Event_Sync_Alarm;
 
 typedef struct _Ecore_X_Event_Window_Delete_Request                Ecore_X_Event_Window_Delete_Request;
 typedef struct _Ecore_X_Event_Window_Prop_Title_Change             Ecore_X_Event_Window_Prop_Title_Change;
 typedef struct _Ecore_X_Event_Window_Prop_Visible_Title_Change     Ecore_X_Event_Window_Prop_Visible_Title_Change;
 typedef struct _Ecore_X_Event_Window_Prop_Icon_Name_Change         Ecore_X_Event_Window_Prop_Icon_Name_Change;
 typedef struct _Ecore_X_Event_Window_Prop_Visible_Icon_Name_Change Ecore_X_Event_Window_Prop_Visible_Icon_Name_Change;
-typedef struct _Ecore_X_Event_Window_Prop_Client_Machine_Change      Ecore_X_Event_Window_Prop_Client_Machine_Change;
+typedef struct _Ecore_X_Event_Window_Prop_Client_Machine_Change    Ecore_X_Event_Window_Prop_Client_Machine_Change;
 typedef struct _Ecore_X_Event_Window_Prop_Name_Class_Change        Ecore_X_Event_Window_Prop_Name_Class_Change;
-typedef struct _Ecore_X_Event_Window_Prop_Pid_Change      Ecore_X_Event_Window_Prop_Pid_Change;
-typedef struct _Ecore_X_Event_Window_Prop_Desktop_Change      Ecore_X_Event_Window_Prop_Desktop_Change;
-     
+typedef struct _Ecore_X_Event_Window_Prop_Pid_Change               Ecore_X_Event_Window_Prop_Pid_Change;
+typedef struct _Ecore_X_Event_Window_Prop_Desktop_Change           Ecore_X_Event_Window_Prop_Desktop_Change;
+
+typedef struct _Ecore_X_Event_Window_Move_Resize_Request Ecore_X_Event_Window_Move_Resize_Request;
+typedef struct _Ecore_X_Event_Window_State_Request       Ecore_X_Event_Window_State_Request;
+typedef struct _Ecore_X_Event_Frame_Extents_Request      Ecore_X_Event_Frame_Extents_Request;
+typedef struct _Ecore_X_Event_Ping                       Ecore_X_Event_Ping;
+typedef struct _Ecore_X_Event_Desktop_Change             Ecore_X_Event_Desktop_Change;
+
 struct _Ecore_X_Event_Key_Down
 {
    char   *keyname;
@@ -602,42 +605,6 @@ struct _Ecore_X_Event_Xdnd_Finished
    Ecore_X_Atom         action;
 };
 
-struct _Ecore_X_Event_Window_Move_Resize_Request
-{
-   Ecore_X_Window win;
-   int            x, y;
-   int            direction;
-   int            button;
-   int            source;
-};
-
-struct _Ecore_X_Event_Window_State_Request
-{
-   Ecore_X_Window              win;
-   Ecore_X_Window_State_Action action;
-   Ecore_X_Window_State        state[2];
-   int                         source;
-};
-
-struct _Ecore_X_Event_Frame_Extents_Request
-{
-   Ecore_X_Window              win;
-};
-
-struct _Ecore_X_Event_Ping
-{
-   Ecore_X_Window  win;
-   Ecore_X_Window  event_win;
-   Ecore_X_Time    time;
-};
-
-struct _Ecore_X_Event_Desktop_Change
-{
-   Ecore_X_Window              win;
-   unsigned int                desk;
-   int                         source;
-};
-
 struct _Ecore_X_Event_Client_Message
 {
    Ecore_X_Window       win;
@@ -654,6 +621,16 @@ struct _Ecore_X_Event_Client_Message
 struct _Ecore_X_Event_Window_Shape
 {
    Ecore_X_Window  win;
+   Ecore_X_Time    time;
+};
+
+struct _Ecore_X_Event_Sync_Counter
+{
+   Ecore_X_Time    time;
+};
+
+struct _Ecore_X_Event_Sync_Alarm
+{
    Ecore_X_Time    time;
 };
 
@@ -720,6 +697,42 @@ struct _Ecore_X_Event_Window_Prop_Desktop_Change
    Ecore_X_Time    time;
 };
 
+struct _Ecore_X_Event_Window_Move_Resize_Request
+{
+   Ecore_X_Window win;
+   int            x, y;
+   int            direction;
+   int            button;
+   int            source;
+};
+
+struct _Ecore_X_Event_Window_State_Request
+{
+   Ecore_X_Window              win;
+   Ecore_X_Window_State_Action action;
+   Ecore_X_Window_State        state[2];
+   int                         source;
+};
+
+struct _Ecore_X_Event_Frame_Extents_Request
+{
+   Ecore_X_Window              win;
+};
+
+struct _Ecore_X_Event_Ping
+{
+   Ecore_X_Window  win;
+   Ecore_X_Window  event_win;
+   Ecore_X_Time    time;
+};
+
+struct _Ecore_X_Event_Desktop_Change
+{
+   Ecore_X_Window              win;
+   unsigned int                desk;
+   int                         source;
+};
+
 extern EAPI int ECORE_X_EVENT_KEY_DOWN;
 extern EAPI int ECORE_X_EVENT_KEY_UP;
 extern EAPI int ECORE_X_EVENT_MOUSE_BUTTON_DOWN;
@@ -751,13 +764,10 @@ extern EAPI int ECORE_X_EVENT_WINDOW_MAPPING;
 extern EAPI int ECORE_X_EVENT_SELECTION_CLEAR;
 extern EAPI int ECORE_X_EVENT_SELECTION_REQUEST;
 extern EAPI int ECORE_X_EVENT_SELECTION_NOTIFY;
-extern EAPI int ECORE_X_EVENT_WINDOW_MOVE_RESIZE_REQUEST;
-extern EAPI int ECORE_X_EVENT_WINDOW_STATE_REQUEST;
-extern EAPI int ECORE_X_EVENT_FRAME_EXTENTS_REQUEST;
-extern EAPI int ECORE_X_EVENT_PING;
-extern EAPI int ECORE_X_EVENT_DESKTOP_CHANGE;
 extern EAPI int ECORE_X_EVENT_CLIENT_MESSAGE;
 extern EAPI int ECORE_X_EVENT_WINDOW_SHAPE;
+extern EAPI int ECORE_X_EVENT_SYNC_COUNTER;
+extern EAPI int ECORE_X_EVENT_SYNC_ALARM;
 
 extern EAPI int ECORE_X_EVENT_WINDOW_DELETE_REQUEST;
 extern EAPI int ECORE_X_EVENT_WINDOW_PROP_TITLE_CHANGE;
@@ -768,6 +778,12 @@ extern EAPI int ECORE_X_EVENT_WINDOW_PROP_CLIENT_MACHINE_CHANGE;
 extern EAPI int ECORE_X_EVENT_WINDOW_PROP_NAME_CLASS_CHANGE;
 extern EAPI int ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE;
 extern EAPI int ECORE_X_EVENT_WINDOW_PROP_DESKTOP_CHANGE;
+
+extern EAPI int ECORE_X_EVENT_WINDOW_MOVE_RESIZE_REQUEST;
+extern EAPI int ECORE_X_EVENT_WINDOW_STATE_REQUEST;
+extern EAPI int ECORE_X_EVENT_FRAME_EXTENTS_REQUEST;
+extern EAPI int ECORE_X_EVENT_PING;
+extern EAPI int ECORE_X_EVENT_DESKTOP_CHANGE;
 
 extern EAPI int ECORE_X_EVENT_XDND_ENTER;
 extern EAPI int ECORE_X_EVENT_XDND_POSITION;
