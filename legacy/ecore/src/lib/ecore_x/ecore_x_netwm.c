@@ -268,6 +268,7 @@ Ecore_X_Atom        ECORE_X_ATOM_NET_REQUEST_FRAME_EXTENTS = 0;
 
 Ecore_X_Atom        ECORE_X_ATOM_NET_WM_PING = 0;
 Ecore_X_Atom        ECORE_X_ATOM_NET_WM_SYNC_REQUEST = 0;
+Ecore_X_Atom        ECORE_X_ATOM_NET_WM_SYNC_REQUEST_COUNTER = 0;
 
 void
 ecore_x_netwm_init(void)
@@ -363,6 +364,7 @@ ecore_x_netwm_init(void)
 
    ECORE_X_ATOM_NET_WM_PING = _ATOM_GET("_NET_WM_PING");
    ECORE_X_ATOM_NET_WM_SYNC_REQUEST = _ATOM_GET("_NET_WM_SYNC_REQUEST");
+   ECORE_X_ATOM_NET_WM_SYNC_REQUEST_COUNTER = _ATOM_GET("_NET_WM_SYNC_REQUEST_COUNTER");
 }
 
 /*
@@ -1329,4 +1331,39 @@ ecore_x_netwm_ping(Ecore_X_Window win)
    xev.xclient.data.l[5] = 0;
 
    XSendEvent(_ecore_x_disp, win, False, NoEventMask, &xev);
+}
+
+int
+ecore_x_netwm_sync_counter_get(Ecore_X_Window win, Ecore_X_Sync_Counter *counter)
+{
+   int          ret;
+   unsigned int tmp;
+
+   ret = ecore_x_window_prop_card32_get(win, ECORE_X_ATOM_NET_WM_SYNC_REQUEST_COUNTER,
+					&tmp, 1);
+
+   if (counter) *counter = tmp;
+   return ret == 1 ? 1 : 0;
+}
+
+void
+ecore_x_netwm_sync_request_send(Ecore_X_Window win, unsigned int serial)
+{
+   XSyncValue value;
+   XEvent xev;
+
+   XSyncIntToValue(&value, serial);
+
+   xev.xclient.type = ClientMessage;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.window = win;
+   xev.xclient.message_type = ECORE_X_ATOM_WM_PROTOCOLS;
+   xev.xclient.format = 32;
+   xev.xclient.data.l[0] = ECORE_X_ATOM_NET_WM_SYNC_REQUEST;
+   xev.xclient.data.l[1] = CurrentTime;
+   xev.xclient.data.l[2] = XSyncValueLow32(value);
+   xev.xclient.data.l[3] = XSyncValueHigh32(value);
+   xev.xclient.data.l[4] = 0;
+
+   XSendEvent(_ecore_x_disp, win, False, 0, &xev);
 }

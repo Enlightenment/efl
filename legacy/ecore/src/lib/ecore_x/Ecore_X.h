@@ -46,6 +46,8 @@ typedef Ecore_X_ID   Ecore_X_Colormap;
 typedef Ecore_X_ID   Ecore_X_Time;
 typedef Ecore_X_ID   Ecore_X_Cursor;
 typedef void         Ecore_X_Display;
+typedef Ecore_X_ID   Ecore_X_Sync_Counter;
+typedef Ecore_X_ID   Ecore_X_Sync_Alarm;
 
 #ifdef __cplusplus
 extern "C" {
@@ -631,7 +633,8 @@ struct _Ecore_X_Event_Sync_Counter
 
 struct _Ecore_X_Event_Sync_Alarm
 {
-   Ecore_X_Time    time;
+   Ecore_X_Time       time;
+   Ecore_X_Sync_Alarm alarm;
 };
 
 struct _Ecore_X_Event_Window_Delete_Request
@@ -1242,7 +1245,6 @@ EAPI int                 ecore_x_netwm_strut_partial_get(Ecore_X_Window win, int
 EAPI int                 ecore_x_netwm_icon_get(Ecore_X_Window win, int *width, int *height, unsigned int **data, int *num);
 EAPI void                ecore_x_netwm_icon_geometry_set(Ecore_X_Window win, int x, int y, int width, int height);
 EAPI int                 ecore_x_netwm_icon_geometry_get(Ecore_X_Window win, int *x, int *y, int *width, int *height);
-EAPI void                ecore_x_netwm_ping(Ecore_X_Window win);
 EAPI void                ecore_x_netwm_pid_set(Ecore_X_Window win, int pid);
 EAPI int                 ecore_x_netwm_pid_get(Ecore_X_Window win, int *pid);
 EAPI void                ecore_x_netwm_handled_icons_set(Ecore_X_Window win);
@@ -1263,6 +1265,11 @@ EAPI void                ecore_x_netwm_opacity_set(Ecore_X_Window win, unsigned 
 EAPI int                 ecore_x_netwm_opacity_get(Ecore_X_Window win, unsigned int *opacity);
 EAPI void                ecore_x_netwm_frame_size_set(Ecore_X_Window win, int fl, int fr, int ft, int fb);
 EAPI int                 ecore_x_netwm_frame_size_get(Ecore_X_Window win, int *fl, int *fr, int *ft, int *fb);
+EAPI void                ecore_x_netwm_ping(Ecore_X_Window win);
+EAPI int                 ecore_x_netwm_sync_counter_get(Ecore_X_Window win, Ecore_X_Sync_Counter *counter);
+EAPI void                ecore_x_netwm_sync_request_send(Ecore_X_Window win, unsigned int serial);
+
+
 
 EAPI void                ecore_x_e_init(void);
 EAPI void                ecore_x_e_frame_size_set(Ecore_X_Window win, int fl, int fr, int ft, int fb);
@@ -1344,6 +1351,10 @@ EAPI void ecore_x_events_allow_all(void);
 EAPI void ecore_x_pointer_last_xy_get(int *x, int *y);
 EAPI void ecore_x_pointer_xy_get(Ecore_X_Window win, int *x, int *y);
        
+/* ecore_x_sync.c */
+EAPI Ecore_X_Sync_Alarm ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter);
+EAPI int                ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm);
+
 #ifdef __cplusplus
 }
 #endif

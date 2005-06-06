@@ -121,6 +121,7 @@ extern Ecore_X_Atom ECORE_X_ATOM_NET_REQUEST_FRAME_EXTENTS;
 
 extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_PING;
 extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_SYNC_REQUEST;
+extern Ecore_X_Atom ECORE_X_ATOM_NET_WM_SYNC_REQUEST_COUNTER;
 
 /* Selections */
 extern Ecore_X_Atom ECORE_X_ATOM_SELECTION_TARGETS;

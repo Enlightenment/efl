@@ -1535,10 +1535,12 @@ _ecore_x_event_handle_sync_alarm(XEvent *xevent)
 {
    XSyncAlarmNotifyEvent *sync_alarm_event;
    Ecore_X_Event_Sync_Alarm *e;
-   
+
    sync_alarm_event = (XSyncAlarmNotifyEvent *)xevent;
+
    e = calloc(1, sizeof(Ecore_X_Event_Sync_Alarm));
    if (!e) return;
    e->time = sync_alarm_event->time;
+   e->alarm = sync_alarm_event->alarm;
    ecore_event_add(ECORE_X_EVENT_SYNC_ALARM, e, NULL, NULL);
 }
