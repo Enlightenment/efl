@@ -3,5 +3,5 @@
 Ecore_Con.h
 Makefile
 Makefile.in
-ecore_con.lo
-libecore_con.la
+*.lo
+libecore_dbus.la
