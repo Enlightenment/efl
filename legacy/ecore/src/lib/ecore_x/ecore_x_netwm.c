@@ -1352,6 +1352,8 @@ ecore_x_netwm_sync_request_send(Ecore_X_Window win, unsigned int serial)
    XSyncValue value;
    XEvent xev;
 
+   if (!win) return;
+
    XSyncIntToValue(&value, serial);
 
    xev.xclient.type = ClientMessage;
