@@ -57,14 +57,13 @@ ecore_config_file_load(const char *file)
    Ecore_Config_DB_File  *db;
    char                 **keys;
    int                    key_count;
+   double                 ftmp;
    int                    x, pt;
    int                    itmp;
-   double                 ftmp;
-   char                   *type;
+   Ecore_Config_Type      type;
    char                   *data;
 
    db = NULL;
-   type = NULL;
    data = NULL;
 
    db = _ecore_config_db_open_read(file);
@@ -79,72 +78,7 @@ ecore_config_file_load(const char *file)
      {
 	for (x = 0; x < key_count; x++)
 	  {
-	     type = _ecore_config_db_key_type_get(db, keys[x]);
-	     if (!type) type = strdup("?");
-	     if (!strcmp(type, "int"))
-	       {
-		  if (_ecore_config_db_key_int_get(db, keys[x], &itmp))
-		    {
-		       Ecore_Config_Prop  *p;
-		       
-		       pt = PT_INT;
-		       if ((p = ecore_config_get(keys[x]))) pt = p->type;
-		       switch (pt)
-			 {
-			  case PT_BLN:
-			    ecore_config_boolean_set(keys[x], itmp);
-			    break;
-			  default:
-			    ecore_config_int_set(keys[x], itmp);
-			    break;
-			 }
-		    }
-		  else
-		    {
-		       E(0, "Could not read key %s!\n", keys[x]);
-		    }
-	       }
-	     else if (!strcmp(type, "float"))
-	       {
-		  if (_ecore_config_db_key_float_get(db, keys[x], &ftmp))
-		    {
-		       ecore_config_float_set(keys[x], ftmp);
-		    }
-		  else
-		    {
-		       E(0, "Could not read key %s!\n", keys[x]);
-		    }
-	       }
-	     else if (!strcmp(type, "str"))
-	       {
-		  data = _ecore_config_db_key_str_get(db, keys[x]);
-		  if (data)
-		    {
-		       pt = ecore_config_type_guess(keys[x], data);
-		       switch (pt)
-			 {
-			  case PT_RGB:
-			    ecore_config_argb_set(keys[x], data);
-			    break;
-			  case PT_THM:
-			    ecore_config_theme_set(keys[x], data);
-			    break;
-			  default:
-			    ecore_config_string_set(keys[x], data);
-			 }
-		       free(data);
-		    }
-		  else
-		    {
-		       E(0, "Could not read key %s!\n", keys[x]);
-		    }
-	       }
-	     else
-	       {
-		  E(1, "Unexpected type: %s\n", type);
-		  continue;
-	       }
-	     if (type) free(type);
+	     _ecore_config_db_read(db, keys[x]);
 	  }
      }
    _ecore_config_db_close(db);
@@ -194,7 +128,6 @@ ecore_config_file_save(const char *file)
    Ecore_Config_Prop    *next;
    Ecore_Config_DB_File *db;
    struct stat           status;
-   char                 *tmp;
 
    next = __ecore_config_bundle_local->data;
    db = NULL;
@@ -222,37 +155,7 @@ ecore_config_file_save(const char *file)
 	     continue;
 	  }
 
-	tmp = NULL;
-
-	switch (next->type)
-	  {
-	  case PT_INT:
-	     _ecore_config_db_key_int_set(db, next->key, ecore_config_int_get(next->key));
-	     break;
-	  case PT_BLN:
-	     _ecore_config_db_key_int_set(db, next->key, ecore_config_boolean_get(next->key));
-	     break;
-	  case PT_FLT:
-	     _ecore_config_db_key_float_set(db, next->key, ecore_config_float_get(next->key));
-	     break;
-	  case PT_RGB:
-	     tmp = ecore_config_argbstr_get(next->key);
-	     break;
-	  case PT_STR:
-	     tmp = ecore_config_string_get(next->key);
-	     break;
-	  case PT_THM:
-	     tmp = ecore_config_theme_get(next->key);
-	     break;
-	  case PT_NIL:
-	     /* currently we do nothing for undefined ojects */
-	     break;
-	  }
-
-	if (tmp) {
-	   _ecore_config_db_key_str_set(db, next->key, tmp);
-	   free(tmp);
-	}
+	_ecore_config_db_write(db, next->key);
 
 	next = next->next;
      }

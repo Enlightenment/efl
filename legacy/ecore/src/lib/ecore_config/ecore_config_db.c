@@ -83,7 +83,7 @@ _ecore_config_db_keys_get(Ecore_Config_DB_File *db, int *num_ret)
    return keys;
 }
 
-char *
+Ecore_Config_Type
 _ecore_config_db_key_type_get(Ecore_Config_DB_File *db, const char *key)
 {
    char *data;
@@ -95,23 +95,25 @@ _ecore_config_db_key_type_get(Ecore_Config_DB_File *db, const char *key)
 	if (size <= 2)
 	  {
 	     free(data);
-	     return NULL;
+	     return PT_NIL;
 	  }
 	if (data[size - 1] != 0)
 	  {
 	     free(data);
-	     return NULL;
+	     return PT_NIL;
 	  }
-	return data;
+	return (Ecore_Config_Type) data[0];
      }
-   return NULL;
+   return PT_NIL;
 }
 
 int
-_ecore_config_db_key_int_get(Ecore_Config_DB_File *db, const char *key, int *dest)
+_ecore_config_db_read(Ecore_Config_DB_File *db, const char *key)
 {
-   char *data;
+   char *data, *value;
    int size;
+   Ecore_Config_Prop *prop;
+   Ecore_Config_Type type;
    
    data = eet_read(db->ef, (char*)key, &size);
    if (data)
@@ -137,90 +139,48 @@ _ecore_config_db_key_int_get(Ecore_Config_DB_File *db, const char *key, int *des
 	     return 0;
 	  }
    
-	prev_locale = setlocale(LC_NUMERIC, "C");
-	*dest = atoi(data + l + 1);
-	if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
+	type = data[0];
+	value = data + l + 1;
+	prop = ecore_config_get(key);
+	
+	switch (type) 
+	  {
+	     case PT_INT:
+	     case PT_BLN:
+	       {
+		  int tmp;
+		  prev_locale = setlocale(LC_NUMERIC, "C");
+		  tmp = atoi(value);
+		  if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
+
+		  ecore_config_typed_set(key, (void *)&tmp, type);
+		  break;
+	       }
+	     case PT_FLT:
+	       {
+		  float tmp;
+		  prev_locale = setlocale(LC_NUMERIC, "C");
+		  tmp = atof(value);
+		  if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
+	       
+		  ecore_config_typed_set(key, (void *)&tmp, type);
+		  break;
+	       }
+	     case PT_STR:
+	     case PT_RGB:
+	     case PT_THM:
+	       ecore_config_typed_set(key, (void *)value, type);
+	       break;
+	     default:
+	       E(0, "Type %d not handled\n", type);
+	  }
 	free(data);
 	return 1;
      }
    return 0;
 }
 
-int
-_ecore_config_db_key_float_get(Ecore_Config_DB_File *db, const char *key, double *dest)
-{
-   char *data;
-   int size;
-   
-   data = eet_read(db->ef, (char*)key, &size);
-   if (data)
-     {
-	int l;
-	char *prev_locale;
-	
-	if (size <= 2)
-	  {
-	     free(data);
-	     return 0;
-	  }
-	if (data[size - 1] != 0)
-	  {
-	     free(data);
-	     return 0;
-	  }
-	/* "type" NIL "1242.4234" NIL */
-	l = strlen(data);
-	if (l >= (size - 1))
-	  {
-	     free(data);
-	     return 0;
-	  }
-	
-	prev_locale = setlocale(LC_NUMERIC, "C");
-	*dest = atof(data + l + 1);
-	if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
-	free(data);
-	return 1;
-     }
-   return 0;
-}
-
-char *
-_ecore_config_db_key_str_get(Ecore_Config_DB_File *db, const char *key)
-{
-   char *data;
-   int size;
-   
-   data = eet_read(db->ef, (char*)key, &size);
-   if (data)
-     {
-	int l;
-	char *s;
-	
-	if (size <= 2)
-	  {
-	     free(data);
-	     return NULL;
-	  }
-	if (data[size - 1] != 0)
-	  {
-	     free(data);
-	     return NULL;
-	  }
-	/* "type" NIL "string goes here" NIL */
-	l = strlen(data);
-	if (l >= (size - 1))
-	  {
-	     free(data);
-	     return NULL;
-	  }
-	s  = strdup(data + l + 1);
-	free(data);
-	return s;
-     }
-   return NULL;
-}
-
+/*
 void *
 _ecore_config_db_key_data_get(Ecore_Config_DB_File *db, const char *key, int *size_ret)
 {
@@ -243,7 +203,7 @@ _ecore_config_db_key_data_get(Ecore_Config_DB_File *db, const char *key, int *si
 	     free(data);
 	     return NULL;
 	  }
-	/* "type" NIL data_goes_here NIL */
+	* "type" NIL data_goes_here NIL *
 	l = strlen(data);
 	if (l >= (size - 1))
 	  {
@@ -257,65 +217,70 @@ _ecore_config_db_key_data_get(Ecore_Config_DB_File *db, const char *key, int *si
 	return dat;
      }
    return NULL;
-}
+}*/
 
 void
-_ecore_config_db_key_int_set(Ecore_Config_DB_File *db, const char *key, int val)
+_ecore_config_db_write(Ecore_Config_DB_File *db, const char *key)
 {
    char buf[256];
    int num;
    char *prev_locale;
+   Ecore_Config_Prop *prop;
+   Ecore_Config_Type type;
    
-   prev_locale = setlocale(LC_NUMERIC, "C");
-   num = snprintf(buf, sizeof(buf), "%s %i ", "int", val);
+   
+   type = ecore_config_get(key)->type;
+	prev_locale = setlocale(LC_NUMERIC, "C");
+
+	switch (type) 
+	  {
+	     case PT_INT:
+	       num = snprintf(buf, sizeof(buf), "%c %i ", (char) type,
+			      ecore_config_int_get(key));
+	       break;
+	     case PT_BLN:
+	       num = snprintf(buf, sizeof(buf), "%c %i ", (char) type,
+			      ecore_config_int_get(key));
+	       break;
+	     case PT_FLT:
+	       num = snprintf(buf, sizeof(buf), "%c %16.16f ", (char) type,
+			      ecore_config_float_get(key));
+	       break;
+	     case PT_STR:
+	       num = snprintf(buf, sizeof(buf), "%c %s ", (char) type,
+			      ecore_config_string_get(key));
+	       break;
+	     case PT_THM:
+	       num = snprintf(buf, sizeof(buf), "%c %s ", (char) type,
+			      ecore_config_theme_get(key));
+	       break;
+	     case PT_RGB:
+	       num = snprintf(buf, sizeof(buf), "%c %s ", (char) type,
+			      ecore_config_argbstr_get(key));
+	       break;
+	     default:
+	       E(0, "Type %d not handled\n", type);
+	  }
+
    if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
-   buf[3] = 0;
+   buf[1] = 0;
    buf[num - 1] = 0;
    eet_write(db->ef, (char*)key, buf, num, 1);
 }
-
-void
-_ecore_config_db_key_float_set(Ecore_Config_DB_File *db, const char *key, double val)
-{
-   char buf[256];
-   int num;
-   char *prev_locale;
-   
-   prev_locale = setlocale(LC_NUMERIC, "C");
-   num = snprintf(buf, sizeof(buf), "%s %16.16f ", "float", val);
-   if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
-   buf[5] = 0;
-   buf[num - 1] = 0;
-   eet_write(db->ef, (char*)key, buf, num, 1);
-}
-
-void
-_ecore_config_db_key_str_set(Ecore_Config_DB_File *db, const char *key, char *str)
-{
-   char *buf;
-   int num;
-   
-   num = 3 + 1 + strlen(str) + 1;
-   buf = malloc(num);
-   if (!buf) return;
-   strcpy(buf, "str");
-   strcpy(buf + 4, str);
-   eet_write(db->ef, (char*)key, buf, num, 1);
-   free(buf);
-}
-
+/*
 void
 _ecore_config_db_key_data_set(Ecore_Config_DB_File *db, const char *key, void *data, int data_size)
 {
    char *buf;
    int num;
    
-   num = 3 + 1 + data_size + 1;
+   num = 1 + 1 + data_size + 1;
    buf = malloc(num);
    if (!buf) return;
-   strcpy(buf, "data");
-   memcpy(buf + 5, data, data_size);
+   buf[0] = (char) PT_BIN;
+   buf[1] = 0;
+   memcpy(buf + 2, data, data_size);
    buf[num - 1] = 0;
    eet_write(db->ef, (char*)key, buf, num, 1);
    free(buf);
-}
+}*/

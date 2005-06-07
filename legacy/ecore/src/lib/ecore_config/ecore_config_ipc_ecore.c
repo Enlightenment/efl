@@ -54,7 +54,8 @@ _ecore_config_ipc_global_prop_list(Ecore_Config_Server * srv __UNUSED__, long se
    int                    key_count, x;
    estring               *s;
    int                    f;
-   char                   buf[PATH_MAX], *p, *type, *data;
+   char                   buf[PATH_MAX], *p, *data;
+   Ecore_Config_Type      type;
 
    db = NULL;
    s = estring_new(8192);
@@ -77,33 +78,30 @@ _ecore_config_ipc_global_prop_list(Ecore_Config_Server * srv __UNUSED__, long se
 	for (x = 0; x < key_count; x++)
 	  {
 	     type = _ecore_config_db_key_type_get(db, keys[x]);
-	     if (!type) type = strdup("?");
-	     if (!strcmp(type, "int"))
-	       estring_appendf(s, "%s%s: integer", f ? "\n" : "", keys[x]);
-	     else if (!strcmp(type, "float"))
-	       estring_appendf(s, "%s%s: float", f ? "\n" : "", keys[x]);
-	     else if (!strcmp(type, "str"))
+	     switch (type)
 	       {
-		  data = _ecore_config_db_key_str_get(db, keys[x]);
-		  if (data)
-		    {
-		       if (ecore_config_type_guess(keys[x], data) == PT_RGB)
-			 estring_appendf(s, "%s%s: colour", f ? "\n" : "", keys[x]);
-		       else
-			 estring_appendf(s, "%s%s: string", f ? "\n" : "", keys[x]);
-		       free(data);
-		    }
-		  else
-		    {
-		       estring_appendf(s, "%s%s: string", f ? "\n" : "", keys[x]);
-		    }
+		  case PT_INT:
+		    estring_appendf(s, "%s%s: integer", f ? "\n" : "", keys[x]);
+		    break;
+		  case PT_BLN:
+		    estring_appendf(s, "%s%s: boolean", f ? "\n" : "", keys[x]);
+		    break;
+		  case PT_FLT:
+		    estring_appendf(s, "%s%s: float", f ? "\n" : "", keys[x]);
+		    break;
+		  case PT_STR:
+		    estring_appendf(s, "%s%s: string", f ? "\n" : "", keys[x]);
+		    break;
+		  case PT_RGB:
+		    estring_appendf(s, "%s%s: colour", f ? "\n" : "", keys[x]);
+		    break;
+		  case PT_THM:
+		    estring_appendf(s, "%s%s: theme", f ? "\n" : "", keys[x]);
+		    break;
+		  default:
+		    estring_appendf(s, "%s%s: unknown", f ? "\n" : "", keys[x]);
+		    continue;
 	       }
-	     else
-	       {
-		  estring_appendf(s, "%s%s: unknown", f ? "\n" : "", keys[x]);
-		  continue;
-	       }
-	     if (type) free(type);
 	     f = 1;
 	  }
      }
