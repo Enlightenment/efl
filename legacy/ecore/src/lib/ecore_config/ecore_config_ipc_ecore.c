@@ -276,7 +276,7 @@ _ecore_config_ipc_client_sent(void *data, int type __UNUSED__, void *event)
 /*****************************************************************************/
 
 int
-_ecore_config_mod_init(const char *pipe_name, void **data)
+_ecore_config_ipc_ecore_init(const char *pipe_name, void **data)
 {
    Ecore_Ipc_Server  **server;
    struct stat         st;
@@ -335,7 +335,7 @@ _ecore_config_mod_init(const char *pipe_name, void **data)
 }
 
 int
-_ecore_config_mod_exit(void **data)
+_ecore_config_ipc_ecore_exit(void **data)
 {
    int                 ret;
    Ecore_Ipc_Server  **server;
@@ -360,7 +360,7 @@ _ecore_config_mod_exit(void **data)
 /*****************************************************************************/
 
 int
-_ecore_config_mod_poll(void **data)
+_ecore_config_ipc_ecore_poll(void **data)
 {
    Ecore_Ipc_Server  **server;
 

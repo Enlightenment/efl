@@ -22,36 +22,24 @@
 #  define TRUE (!FALSE)
 #endif
 
-typedef struct _ecore_config_ipc
-{
-   void               *lib;
-   void               *data;
-   int                 (*ipc_init) (const char *pipe_name, void **data);
-   int                 (*ipc_exit) (void **data);
-   int                 (*ipc_poll) (void **data);
-   struct _ecore_config_ipc *next;
-} Ecore_Config_Ipc;
-
-static Ecore_Config_Ipc *ipc_modules = NULL;
+static Ecore_Config_Server *__ecore_config_servers;
 static unsigned long ipc_timer = 0L;
+
+extern int _ecore_config_ipc_ecore_init(const char *pipe_name, void **data);
+extern int _ecore_config_ipc_ecore_exit(void **data);
+extern int _ecore_config_ipc_ecore_poll(void **data);
 
 Ecore_Config_Server *
 _ecore_config_server_convert(void *srv)
 {
-   Ecore_Config_Ipc   *ipc_tmp;
    Ecore_Config_Server *srv_tmp;
 
-   ipc_tmp = ipc_modules;
-   while (ipc_tmp)
+   srv_tmp = __ecore_config_servers;
+   while (srv_tmp)
      {
-	srv_tmp = ipc_tmp->data;
-	while (srv_tmp)
-	  {
-	     if (srv_tmp->server == srv)
-		return srv_tmp;
-	     srv_tmp = srv_tmp->next;
-	  }
-	ipc_tmp = ipc_tmp->next;
+	if (srv_tmp->server == srv)
+	  return srv_tmp;
+	srv_tmp = srv_tmp->next;
      }
 
    return __ecore_config_server_global;
@@ -231,19 +219,13 @@ _ecore_config_ipc_bundle_label_find(Ecore_Config_Server * srv,
 static int
 _ecore_config_ipc_poll(void *data)
 {
-   Ecore_Config_Ipc   *m;
    Ecore_Config_Server *s;
 
-   m = (Ecore_Config_Ipc *) data;
-   while (m)
+   s = __ecore_config_servers;
+   while (s)
      {
-	s = m->data;
-	while (s)
-	  {
-	     m->ipc_poll(&s->server);
-	     s = s->next;
-	  }
-	m = m->next;
+	_ecore_config_ipc_ecore_poll(&s->server);
+        s = s->next;
      }
 
    return TRUE;
@@ -252,160 +234,51 @@ _ecore_config_ipc_poll(void *data)
 int
 _ecore_config_ipc_exit(void)
 {
-   Ecore_Config_Ipc   *m;
    Ecore_Config_Server *l;
 
    if (ipc_timer)
       timeout_remove(ipc_timer);
-   while (ipc_modules)
+   l = __ecore_config_servers;
+   while (l)
      {
-	m = ipc_modules;
-	ipc_modules = ipc_modules->next;
-	l = m->data;
-	while (l)
-	  {
-	     m->ipc_exit(&l->server);
-	     l = l->next;
-	  }
-	free(m);
+	_ecore_config_ipc_ecore_exit(&l->server);
+	l = l->next;
      }
-   return ECORE_CONFIG_ERR_IGNORED;
+
+   return ECORE_CONFIG_ERR_SUCC;
 }
 
 Ecore_Config_Server *
 _ecore_config_ipc_init(const char *pipe_name)
 {
-   char                buf[PATH_MAX];
-   glob_t              globbuf;
    int                 ret;
-   unsigned int        c;
-   Ecore_Config_Ipc   *nm;
    Ecore_Config_Server *list;
    Ecore_Config_Server *ret_srv;
 
-   nm = NULL;
    list = NULL;
    ret_srv = NULL;
-
-   if (nm)
-     {
-	list = (Ecore_Config_Server *) nm->data;
-	while (list)
-	  {
-	     if (!strcmp(list->name, pipe_name))
-		return NULL;
-
-	     list = list->next;
-	  }
-     }
-
    list = NULL;
 
-   if (ipc_modules)
+   list = malloc(sizeof(Ecore_Config_Server));
+   memset(list, 0, sizeof(Ecore_Config_Server));
+   if ((ret = _ecore_config_ipc_ecore_init(pipe_name, &list->server)) != ECORE_CONFIG_ERR_SUCC)
      {
-	nm = ipc_modules;
-	while (nm)
-	  {
-	     list = malloc(sizeof(Ecore_Config_Server));
-	     memset(list, 0, sizeof(Ecore_Config_Server));
-	     if ((ret =
-		  nm->ipc_init(pipe_name,
-			       &list->server)) != ECORE_CONFIG_ERR_SUCC)
-	       {
-		  E(2,
-		    "_ecore_config_ipc_init: failed to register %s, code %d\n",
-		    pipe_name, ret);
-		  break;
-	       }
-
-	     E(2, "_ecore_config_ipc_init: registered \"%s\"...\n", pipe_name);
-
-	     list->name = strdup(pipe_name);
-	     list->next = nm->data;
-
-	     nm->data = list;
-	     if (!ret_srv)
-		ret_srv = list;
-	     nm = nm->next;
-	  }
-
-	return ret_srv;
+	E(2, "_ecore_config_ipc_init: failed to register %s, code %d\n",
+	  pipe_name, ret);
      }
 
-   if (((ret =
-	 snprintf(buf, PATH_MAX, PACKAGE_LIB_DIR "/ecore_config_ipc_*.so")) < 0)
-       || (ret >= PATH_MAX))
-      return NULL;
+   E(2, "_ecore_config_ipc_init: registered \"%s\"...\n", pipe_name);
 
-   glob(buf, 0, NULL, &globbuf);
-   if (!globbuf.gl_pathc)
-      return NULL;
+   list->name = strdup(pipe_name);
+   list->next = __ecore_config_servers;
 
-   for (c = 0; c < globbuf.gl_pathc; c++)
-     {
-	if (!(nm = malloc(sizeof(Ecore_Config_Ipc))))
-	  {
-	     ret = ECORE_CONFIG_ERR_OOM;
-	     goto done;
-	  }
-	memset(nm, 0, sizeof(Ecore_Config_Ipc));
+   __ecore_config_servers = list;
+   if (!ret_srv)
+     ret_srv = list;
 
-	E(1, "_ecore_config_ipc_init: checking \"%s\"...\n",
-	  globbuf.gl_pathv[c]);
-	ret =
-	   dlmulti("IPC-plugin", globbuf.gl_pathv[c], RTLD_NOW, &nm->lib,
-		   "!_ecore_config_mod_init !_ecore_config_mod_exit !_ecore_config_mod_poll",
-		   &nm->ipc_init, &nm->ipc_exit, &nm->ipc_poll);
-	if (ret == ECORE_CONFIG_ERR_NODATA)
-	   E(0, "_ecore_config_ipc_init: could not load \"%s\": %s...\n",
-	     globbuf.gl_pathv[c], dlerror());
-	else if (ret == ECORE_CONFIG_ERR_SUCC)
-	  {
-	     list = malloc(sizeof(Ecore_Config_Server));
-/*      memcpy(list, 0, sizeof(Ecore_Config_Server));*/
-	     if ((ret =
-		  nm->ipc_init(pipe_name,
-			       &list->server)) != ECORE_CONFIG_ERR_SUCC)
-		E(0,
-		  "_ecore_config_ipc_init: could not initialize \"%s\": %d\n",
-		  globbuf.gl_pathv[c], ret);
-	     else
-	       {
-		  char               *p = globbuf.gl_pathv[c];
-
-		  if (DEBUG != 0)
-		    {
-		       char               *q = strrchr(p, DIR_DELIMITER);
-
-		       if (q)
-			  p = ++q;
-		    }
-		  E(0, "_ecore_config_ipc_init: adding \"%s\"...\n", p);
-		  E(2, "_ecore_config_ipc_init: registered \"%s\"...\n",
-		    pipe_name);
-
-		  list->name = strdup(pipe_name);
-		  list->next = nm->data;
-		  nm->data = list;
-		  if (!ret_srv)
-		     ret_srv = list;
-
-		  nm->next = ipc_modules;
-		  ipc_modules = nm;
-	       }
-	  }
-	if (ret != ECORE_CONFIG_ERR_SUCC)
-	   free(nm);
-     }
-
- done:
-   globfree(&globbuf);
-
-   if (ipc_modules)
-     {
-	ipc_timer = timeout_add(100, _ecore_config_ipc_poll, ipc_modules);
-     }
+   if (!ipc_timer)
+     ipc_timer = timeout_add(100, _ecore_config_ipc_poll, NULL);
+   
    return ret_srv;
 }
-
 /*****************************************************************************/
