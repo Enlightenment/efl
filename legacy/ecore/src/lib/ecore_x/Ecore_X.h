@@ -1214,28 +1214,28 @@ EAPI int ecore_x_mwm_hints_get(Ecore_X_Window win,
 /* netwm */
 EAPI void                ecore_x_netwm_init(void);
 EAPI void                ecore_x_netwm_wm_identify(Ecore_X_Window root, Ecore_X_Window check, const char *wm_name);
-EAPI int                 ecore_x_netwm_supported_set(Ecore_X_Window root, Ecore_X_Atom *supported, int num);
-EAPI Ecore_X_Atom       *ecore_x_netwm_supported_get(Ecore_X_Window root, int *num);
+EAPI void                ecore_x_netwm_supported_set(Ecore_X_Window root, Ecore_X_Atom *supported, int num);
+EAPI int                 ecore_x_netwm_supported_get(Ecore_X_Window root, Ecore_X_Atom **supported, int *num);
 EAPI void                ecore_x_netwm_desk_count_set(Ecore_X_Window root, unsigned int n_desks);
-EAPI void                ecore_x_netwm_desk_roots_set(Ecore_X_Window root, unsigned int n_desks, Ecore_X_Window * vroots);
-EAPI void                ecore_x_netwm_desk_names_set(Ecore_X_Window root, unsigned int n_desks, const char **names);
+EAPI void                ecore_x_netwm_desk_roots_set(Ecore_X_Window root, Ecore_X_Window *vroots, unsigned int n_desks);
+EAPI void                ecore_x_netwm_desk_names_set(Ecore_X_Window root, const char **names, unsigned int n_desks);
 EAPI void                ecore_x_netwm_desk_size_set(Ecore_X_Window root, unsigned int width, unsigned int height);
-EAPI void                ecore_x_netwm_desk_workareas_set(Ecore_X_Window root, unsigned int n_desks, unsigned int *areas);
+EAPI void                ecore_x_netwm_desk_workareas_set(Ecore_X_Window root, unsigned int *areas, unsigned int n_desks);
 EAPI void                ecore_x_netwm_desk_current_set(Ecore_X_Window root, unsigned int desk);
-EAPI void                ecore_x_netwm_desk_viewports_set(Ecore_X_Window root, unsigned int n_desks, unsigned int *origins);
+EAPI void                ecore_x_netwm_desk_viewports_set(Ecore_X_Window root, unsigned int *origins, unsigned int n_desks);
 EAPI void                ecore_x_netwm_desk_layout_set(Ecore_X_Window root, int orientation, int columns, int rows, int starting_corner);
 EAPI void                ecore_x_netwm_showing_desktop_set(Ecore_X_Window root, int on);
-EAPI void                ecore_x_netwm_client_list_set(Ecore_X_Window root, unsigned int n_clients, Ecore_X_Window * p_clients);
-EAPI void                ecore_x_netwm_client_list_stacking_set(Ecore_X_Window root, unsigned int n_clients, Ecore_X_Window * p_clients);
+EAPI void                ecore_x_netwm_client_list_set(Ecore_X_Window root, Ecore_X_Window *p_clients, unsigned int n_clients);
+EAPI void                ecore_x_netwm_client_list_stacking_set(Ecore_X_Window root, Ecore_X_Window *p_clients, unsigned int n_clients);
 EAPI void                ecore_x_netwm_client_active_set(Ecore_X_Window root, Ecore_X_Window win);
 EAPI void                ecore_x_netwm_name_set(Ecore_X_Window win, const char *name);
-EAPI char               *ecore_x_netwm_name_get(Ecore_X_Window win);
+EAPI int                 ecore_x_netwm_name_get(Ecore_X_Window win, char **name);
 EAPI void                ecore_x_netwm_visible_name_set(Ecore_X_Window win, const char *name);
-EAPI char               *ecore_x_netwm_visible_name_get(Ecore_X_Window win);
+EAPI int                 ecore_x_netwm_visible_name_get(Ecore_X_Window win, char **name);
 EAPI void                ecore_x_netwm_icon_name_set(Ecore_X_Window win, const char *name);
-EAPI char               *ecore_x_netwm_icon_name_get(Ecore_X_Window win);
+EAPI int                 ecore_x_netwm_icon_name_get(Ecore_X_Window win, char **name);
 EAPI void                ecore_x_netwm_visible_icon_name_set(Ecore_X_Window win, const char *name);
-EAPI char               *ecore_x_netwm_visible_icon_name_get(Ecore_X_Window win);
+EAPI int                 ecore_x_netwm_visible_icon_name_get(Ecore_X_Window win, char **name);
 EAPI void                ecore_x_netwm_desktop_set(Ecore_X_Window win, unsigned int desk);
 EAPI int                 ecore_x_netwm_desktop_get(Ecore_X_Window win, unsigned int *desk);
 EAPI void                ecore_x_netwm_strut_set(Ecore_X_Window win, int left, int right, int top, int bottom);
@@ -1251,22 +1251,18 @@ EAPI void                ecore_x_netwm_handled_icons_set(Ecore_X_Window win);
 EAPI int                 ecore_x_netwm_handled_icons_get(Ecore_X_Window win);
 EAPI void                ecore_x_netwm_user_time_set(Ecore_X_Window win, unsigned int time);
 EAPI int                 ecore_x_netwm_user_time_get(Ecore_X_Window win, unsigned int *time);
-
-EAPI Ecore_X_Window_State *ecore_x_netwm_window_state_list_get(Ecore_X_Window win, int *num);
-EAPI int                 ecore_x_netwm_window_state_list_set(Ecore_X_Window win, Ecore_X_Window_State *state, int num);
-
-EAPI void                ecore_x_netwm_window_state_set(Ecore_X_Window win, Ecore_X_Window_State state, int on);
-EAPI int                 ecore_x_netwm_window_state_isset(Ecore_X_Window win, Ecore_X_Window_State state);
+EAPI void                ecore_x_netwm_window_state_set(Ecore_X_Window win, Ecore_X_Window_State *state, unsigned int num);
+EAPI int                 ecore_x_netwm_window_state_get(Ecore_X_Window win, Ecore_X_Window_State **state, unsigned int *num);
 EAPI void                ecore_x_netwm_window_type_set(Ecore_X_Window win, Ecore_X_Window_Type type);
-EAPI Ecore_X_Window_Type ecore_x_netwm_window_type_get(Ecore_X_Window win);
+EAPI int                 ecore_x_netwm_window_type_get(Ecore_X_Window win, Ecore_X_Window_Type *type);
 EAPI int                 ecore_x_netwm_allowed_action_isset(Ecore_X_Window win, Ecore_X_Action action);
 EAPI void                ecore_x_netwm_allowed_action_set(Ecore_X_Window win, Ecore_X_Action action, int on);
 EAPI void                ecore_x_netwm_opacity_set(Ecore_X_Window win, unsigned int opacity);
 EAPI int                 ecore_x_netwm_opacity_get(Ecore_X_Window win, unsigned int *opacity);
 EAPI void                ecore_x_netwm_frame_size_set(Ecore_X_Window win, int fl, int fr, int ft, int fb);
 EAPI int                 ecore_x_netwm_frame_size_get(Ecore_X_Window win, int *fl, int *fr, int *ft, int *fb);
-EAPI void                ecore_x_netwm_ping(Ecore_X_Window win);
 EAPI int                 ecore_x_netwm_sync_counter_get(Ecore_X_Window win, Ecore_X_Sync_Counter *counter);
+EAPI void                ecore_x_netwm_ping(Ecore_X_Window win);
 EAPI void                ecore_x_netwm_sync_request_send(Ecore_X_Window win, unsigned int serial);
 
 
