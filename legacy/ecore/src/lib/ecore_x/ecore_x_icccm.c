@@ -258,7 +258,7 @@ ecore_x_icccm_hints_get(Ecore_X_Window win,
 	  }
 	if ((hints->flags & IconMaskHint) && (icon_mask))
 	  {
-	     *icon_mask = hints->icon_pixmap;
+	     *icon_mask = hints->icon_mask;
 	  }
 	if ((hints->flags & IconWindowHint) && (icon_window))
 	  {
@@ -329,9 +329,9 @@ ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
      {
 	hint.flags |= PAspect;
 	hint.min_aspect.x = min_aspect * 10000;
-	hint.min_aspect.x = 10000;
+	hint.min_aspect.y = 10000;
 	hint.max_aspect.x = max_aspect * 10000;
-	hint.max_aspect.x = 10000;
+	hint.max_aspect.y = 10000;
      }
    XSetWMNormalHints(_ecore_x_disp, win, &hint);
 }
