@@ -1008,7 +1008,6 @@ ecore_x_window_client_sniff(Ecore_X_Window win)
 {
    XSelectInput(_ecore_x_disp, win,
 		PropertyChangeMask |
-		StructureNotifyMask |
 		FocusChangeMask |
 		ColormapChangeMask |
 		VisibilityChangeMask |
