@@ -1143,8 +1143,6 @@ _em_fd_ev_active(void *data, Ecore_Fd_Handler *fdh)
 	       {
 		case XINE_EVENT_UI_PLAYBACK_FINISHED:
 		    {
-		       if ((ev->pos / ev->len) < 0.999)
-			 break;
 		       if (ev->timer)
 			 {
 			    ecore_timer_del(ev->timer);
