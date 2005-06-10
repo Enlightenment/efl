@@ -570,6 +570,15 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
 			 ecore_x_window_shape_mask_set(ee->engine.x.win_container, ee->engine.x.mask);
 		    }
 		  XSetRegion(ecore_x_display_get(), ee->engine.x.gc, ee->engine.x.damages);
+/* debug rendering */
+/*		  
+		  XSetForeground(ecore_x_display_get(), ee->engine.x.gc, rand());
+		  XFillRectangle(ecore_x_display_get(), ee->engine.x.win, ee->engine.x.gc,
+				 0, 0, ee->w, ee->h);
+		  XSync(ecore_x_display_get(), False);
+		  usleep(20000);
+		  XSync(ecore_x_display_get(), False);
+ */
 		  ecore_x_pixmap_paste(ee->engine.x.pmap, ee->engine.x.win, ee->engine.x.gc,
 				       0, 0, ee->w, ee->h, 0, 0);
 		  XDestroyRegion(ee->engine.x.damages);
