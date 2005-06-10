@@ -62,7 +62,8 @@ return (int) foo;}
 ], AC_MSG_RESULT([\o/]), [
 	AC_MSG_RESULT([o_O])
 	AC_MSG_WARN([Your system is a bit too funny, eet might not work properly])
-])
+], AC_MSG_WARN([Cannot check when cross-compiling -- assuming null is okay])
+)
 
 if test "x${bindir}" = 'x${exec_prefix}/bin'; then
   if test "x${exec_prefix}" = "xNONE"; then
