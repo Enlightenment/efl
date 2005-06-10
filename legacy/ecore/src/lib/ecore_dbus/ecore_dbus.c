@@ -280,7 +280,7 @@ _ecore_dbus_message_marshal_path(unsigned char **buf, unsigned int *old_length,
    _ecore_dbus_message_append_byte(*buf + *old_length, ECORE_DBUS_DATA_TYPE_OBJECT_PATH);	// append the data type
    *old_length += 1;
 
-   str_len = strlen(str);
+   str_len = strlen((char *)str);
    _ecore_dbus_message_4byte_padding(buf, old_length);
    _ecore_dbus_message_increase_length(buf, *old_length + 4);
    f = _ecore_dbus_message_new_field(ECORE_DBUS_DATA_TYPE_OBJECT_PATH,
@@ -305,7 +305,7 @@ _ecore_dbus_message_marshal_string(unsigned char **buf,
    _ecore_dbus_message_append_byte(*buf + *old_length, ECORE_DBUS_DATA_TYPE_STRING);	// append the data type
    *old_length += 1;		// old_length = new_length
 
-   str_len = strlen(str);
+   str_len = strlen((char *)str);
    _ecore_dbus_message_4byte_padding(buf, old_length);
    _ecore_dbus_message_increase_length(buf, *old_length + 4);
    f = _ecore_dbus_message_new_field(ECORE_DBUS_DATA_TYPE_STRING, *old_length);
@@ -838,12 +838,12 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server * svr, char *service,
 	     break;
 	  case ECORE_DBUS_DATA_TYPE_STRING:
 	     f = _ecore_dbus_message_marshal_string(&msg->body, &msg->bpos,
-						    va_arg(ap, char *));
+						    (unsigned char *)va_arg(ap, char *));
 	     msg->body_fields = _ecore_list_append(msg->body_fields, f);
 	     break;
 	  case ECORE_DBUS_DATA_TYPE_OBJECT_PATH:
 	     f = _ecore_dbus_message_marshal_path(&msg->body, &msg->bpos,
-						  va_arg(ap, char *));
+						  (unsigned char *)va_arg(ap, char *));
 	     msg->body_fields = _ecore_list_append(msg->body_fields, f);
 	     break;
 	  case ECORE_DBUS_DATA_TYPE_INVALID:
@@ -869,9 +869,9 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server * svr, char *service,
     * _ecore_dbus_message_print_raw(msg->header,msg->hlength);
     * _ecore_dbus_message_print_raw(msg->body,msg->blength); */
    /* send message */
-   ecore_dbus_server_send(svr, msg->header, msg->hlength);
+   ecore_dbus_server_send(svr, (char *)msg->header, msg->hlength);
    if (msg->body)
-      ecore_dbus_server_send(svr, msg->body, msg->blength);
+      ecore_dbus_server_send(svr, (char *)msg->body, msg->blength);
    /* free data TODO free the list of fields */
    /*for(i=0; i<8; i++)
     * free(msg->header_fields[i]);
@@ -939,18 +939,18 @@ _ecore_dbus_hex_encode(char *src_str)
    return enc_str;
 }
 
-unsigned char      *
+unsigned char *
 _ecore_dbus_auth_external(void *data)
 {
-   char               *uid, *enc_uid, *msg;
+   char          *uid, *enc_uid, *msg;
 
    uid = _ecore_dbus_getuid();
    enc_uid = _ecore_dbus_hex_encode(uid);
    free(uid);
-   msg = (char *)malloc(strlen(enc_uid) + 17);
+   msg = malloc(strlen(enc_uid) + 17);
    sprintf(msg, "AUTH EXTERNAL %s\r\n", enc_uid);
    free(enc_uid);
-   return msg;
+   return (unsigned char *)msg;
 }
 
 /*****************************/
@@ -1202,7 +1202,7 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
 		trans = auth->transactions[0];
 		printf("[ecore_dbus] auth type %s started\n", auth->name);
 		msg = trans(NULL);
-		ecore_dbus_server_send(svr, msg, strlen(msg));
+		ecore_dbus_server_send(svr, (char *)msg, strlen((char *)msg));
 		free(msg);
 
 	     }

@@ -92,7 +92,7 @@ extern "C" {
    
    struct _Ecore_DBus_Auth
      {
-	unsigned char	*name;
+	char		*name;
 	unsigned int	num_transactions;
 	Ecore_DBus_Auth_Transaction transactions[5];
      };
