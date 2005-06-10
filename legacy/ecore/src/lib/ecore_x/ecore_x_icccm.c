@@ -288,8 +288,11 @@ ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
 				 int step_x, int step_y,
 				 double min_aspect, double max_aspect)
 {
-   /* FIXME: working here */
-   XSizeHints          hint;
+   XSizeHints  hint;
+   long        mask;
+
+   if (!XGetWMNormalHints(_ecore_x_disp, win, &hint, &mask))
+     return;
 
    hint.flags = 0;
    if (request_pos)
@@ -339,7 +342,7 @@ ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
 int
 ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
 				 int *request_pos,
-				 Ecore_X_Gravity * gravity,
+				 Ecore_X_Gravity *gravity,
 				 int *min_w, int *min_h,
 				 int *max_w, int *max_h,
 				 int *base_w, int *base_h,
@@ -357,6 +360,7 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
 
    if (!XGetWMNormalHints(_ecore_x_disp, win, &hint, &mask))
      return 0;
+
    if ((hint.flags & USPosition) || ((hint.flags & PPosition)))
      {
 	if (request_pos)
@@ -510,15 +514,12 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
 		    {
 		       t = strdup((char *)xprop.value);
 		    }
-		  else if (ret >= Success)
+		  else if ((ret >= Success) && (num > 0))
 		    {
-		       if ((num >= 1) && (list))
-			 {
-			    t = strdup(list[0]);
-			 }
-		       if (list)
-			 XFreeStringList(list);
+		       t = strdup(list[0]);
 		    }
+		  if (list)
+		    XFreeStringList(list);
 	       }
 	     
 	     if (xprop.value) XFree(xprop.value);
@@ -1044,8 +1045,26 @@ ecore_x_icccm_client_leader_get(Ecore_X_Window win)
       return 0;
 }
 
-/* FIXME: move these things in here as they are icccm related */
-/* send iconify request */
+void
+ecore_x_icccm_iconic_request_send(Ecore_X_Window win, Ecore_X_Window root)
+{
+   XEvent xev;
+
+   if (!win) return;
+   if (!root) root = DefaultRootWindow(_ecore_x_disp);
+
+   xev.xclient.type = ClientMessage;
+   xev.xclient.serial = 0;
+   xev.xclient.send_event = True;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.window = win;
+   xev.xclient.format = 32;
+   xev.xclient.message_type = ECORE_X_ATOM_WM_CHANGE_STATE;
+   xev.xclient.data.l[0] = IconicState;
+
+   XSendEvent(_ecore_x_disp, root, False,
+              SubstructureNotifyMask | SubstructureRedirectMask, &xev);
+}
 
 /* FIXME: there are older E hints, gnome hints and mwm hints and new netwm */
 /*        hints. each should go in their own file/section so we know which */

@@ -76,3 +76,18 @@ ecore_x_mwm_hints_get(Ecore_X_Window win,
      }
    return ret;
 }
+
+void
+ecore_x_mwm_borderless_set(Ecore_X_Window win, int borderless)
+{
+   unsigned int data[5] = {0, 0, 0, 0, 0};
+
+   data[0] = 2; /* just set the decorations hint! */
+   data[2] = !borderless;
+   
+   ecore_x_window_prop_property_set(win, 
+				    ECORE_X_ATOM_MOTIF_WM_HINTS,
+				    ECORE_X_ATOM_MOTIF_WM_HINTS,
+				    32, (void *)data, 5);
+}
+

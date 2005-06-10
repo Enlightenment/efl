@@ -1,3 +1,6 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 #include "config.h"
 #include "Ecore.h"
 #include "ecore_private.h"
@@ -472,6 +475,157 @@ _ecore_evas_event_window_hide(void *data __UNUSED__, int type __UNUSED__, void *
    return 1;
 }
 
+/* FIXME, should be in idler */
+static void
+_ecore_evas_size_pos_hints_update(Ecore_Evas *ee)
+{
+   ecore_x_icccm_size_pos_hints_set(ee->engine.x.win_container,
+				    0 /*request_pos */,
+				    ECORE_X_GRAVITY_NW /* gravity */,
+				    ee->prop.min.w /* min_w */,
+				    ee->prop.min.h /* min_h */,
+				    ee->prop.max.w /* max_w */,
+				    ee->prop.max.h /* max_h */,
+				    ee->prop.base.w /* base_w */,
+				    ee->prop.base.h /* base_h */,
+				    ee->prop.step.w /* step_x */,
+				    ee->prop.step.h /* step_y */,
+				    0 /* min_aspect */,
+				    0 /* max_aspect */);
+}
+
+/* FIXME, should be in idler */
+static void
+_ecore_evas_state_update(Ecore_Evas *ee)
+{
+   Ecore_X_Window_State state[10];
+   int num;
+
+   num = 0;
+
+   /*
+   if (bd->client.netwm.state.modal)
+     state[num++] = ECORE_X_WINDOW_STATE_MODAL;
+   */
+   if (ee->engine.x.state.sticky)
+     state[num++] = ECORE_X_WINDOW_STATE_STICKY;
+   /*
+   if (bd->client.netwm.state.maximized_v)
+     state[num++] = ECORE_X_WINDOW_STATE_MAXIMIZED_VERT;
+   if (bd->client.netwm.state.maximized_h)
+     state[num++] = ECORE_X_WINDOW_STATE_MAXIMIZED_HORZ;
+   if (bd->client.netwm.state.shaded)
+     state[num++] = ECORE_X_WINDOW_STATE_SHADED;
+   if (bd->client.netwm.state.skip_taskbar)
+     state[num++] = ECORE_X_WINDOW_STATE_SKIP_TASKBAR;
+   if (bd->client.netwm.state.skip_pager)
+     state[num++] = ECORE_X_WINDOW_STATE_SKIP_PAGER;
+   if (bd->client.netwm.state.hidden)
+     state[num++] = ECORE_X_WINDOW_STATE_HIDDEN;
+   if (bd->client.netwm.state.fullscreen)
+     state[num++] = ECORE_X_WINDOW_STATE_FULLSCREEN;
+   */
+   if (ee->engine.x.state.above)
+     state[num++] = ECORE_X_WINDOW_STATE_ABOVE;
+   if (ee->engine.x.state.below)
+     state[num++] = ECORE_X_WINDOW_STATE_BELOW;
+
+   ecore_x_netwm_window_state_set(ee->engine.x.win_container, state, num);
+}
+
+void
+_ecore_evas_layer_update(Ecore_Evas *ee)
+{
+   if (ee->should_be_visible)
+     {
+	/* We need to send a netwm request to the wm */
+	/* FIXME: Do we have to remove old state before adding new? */
+	if (ee->prop.layer < 3)
+	  {
+	     if (ee->engine.x.state.above)
+	       {
+		  ee->engine.x.state.above = 0;
+		  ecore_x_netwm_state_request_send(ee->engine.x.win_container,
+						   ee->engine.x.win_root,
+						   ECORE_X_WINDOW_STATE_ABOVE, -1, 0);
+	       }
+	     if (!ee->engine.x.state.below)
+	       {
+		  ee->engine.x.state.below = 1;
+		  ecore_x_netwm_state_request_send(ee->engine.x.win_container,
+						   ee->engine.x.win_root,
+						   ECORE_X_WINDOW_STATE_BELOW, -1, 1);
+	       }
+	  }
+	else if (ee->prop.layer > 5)
+	  {
+	     if (ee->engine.x.state.below)
+	       {
+		  ee->engine.x.state.below = 0;
+		  ecore_x_netwm_state_request_send(ee->engine.x.win_container,
+						   ee->engine.x.win_root,
+						   ECORE_X_WINDOW_STATE_BELOW, -1, 0);
+	       }
+	     if (!ee->engine.x.state.above)
+	       {
+		  ee->engine.x.state.above = 1;
+		  ecore_x_netwm_state_request_send(ee->engine.x.win_container,
+						   ee->engine.x.win_root,
+						   ECORE_X_WINDOW_STATE_ABOVE, -1, 1);
+	       }
+	  }
+	else
+	  {
+	     if (ee->engine.x.state.below)
+	       {
+		  ee->engine.x.state.below = 0;
+		  ecore_x_netwm_state_request_send(ee->engine.x.win_container,
+						   ee->engine.x.win_root,
+						   ECORE_X_WINDOW_STATE_BELOW, -1, 0);
+	       }
+	     if (ee->engine.x.state.above)
+	       {
+		  ee->engine.x.state.above = 0;
+		  ecore_x_netwm_state_request_send(ee->engine.x.win_container,
+						   ee->engine.x.win_root,
+						   ECORE_X_WINDOW_STATE_ABOVE, -1, 0);
+	       }
+	  }
+     }
+   else
+     {
+	/* Just set the state */
+	if (ee->prop.layer < 3)
+	  {
+	     if ((ee->engine.x.state.above) || (!ee->engine.x.state.below))
+	       {
+		  ee->engine.x.state.above = 0;
+		  ee->engine.x.state.below = 1;
+		  _ecore_evas_state_update(ee);
+	       }
+	  }
+	else if (ee->prop.layer > 5)
+	  {
+	     if ((!ee->engine.x.state.above) || (ee->engine.x.state.below))
+	       {
+		  ee->engine.x.state.above = 1;
+		  ee->engine.x.state.below = 0;
+		  _ecore_evas_state_update(ee);
+	       }
+	  }
+	else
+	  {
+	     if ((ee->engine.x.state.above) || (ee->engine.x.state.below))
+	       {
+		  ee->engine.x.state.above = 0;
+		  ee->engine.x.state.below = 0;
+		  _ecore_evas_state_update(ee);
+	       }
+	  }
+     }
+   /* FIXME: Set gnome layer */
+}
+
 static int
 _ecore_evas_idle_enter(void *data __UNUSED__)
 {
@@ -690,8 +844,10 @@ _ecore_evas_x_free(Ecore_Evas *ee)
 static void
 _ecore_evas_callback_delete_request_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 {
-   if (func) ecore_x_window_prop_protocol_set(ee->engine.x.win_container, ECORE_X_WM_PROTOCOL_DELETE_REQUEST,1);
-   else ecore_x_window_prop_protocol_set(ee->engine.x.win_container, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 0);
+   if (func)
+     ecore_x_icccm_protocol_set(ee->engine.x.win_container, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 1);
+   else
+     ecore_x_icccm_protocol_set(ee->engine.x.win_container, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 0);
    ee->func.fn_delete_request = func;
 }
 
@@ -922,7 +1078,8 @@ _ecore_evas_title_set(Ecore_Evas *ee, const char *t)
    if (ee->prop.title) free(ee->prop.title);
    ee->prop.title = NULL;
    if (t) ee->prop.title = strdup(t);
-   ecore_x_window_prop_title_set(ee->engine.x.win_container, ee->prop.title);
+   ecore_x_icccm_title_set(ee->engine.x.win_container, ee->prop.title);
+   ecore_x_netwm_name_set(ee->engine.x.win_container, ee->prop.title);
 }
 
 static void
@@ -934,7 +1091,7 @@ _ecore_evas_name_class_set(Ecore_Evas *ee, const char *n, const char *c)
    ee->prop.clas = NULL;
    ee->prop.name = strdup(n);
    ee->prop.clas = strdup(c);
-   ecore_x_window_prop_name_class_set(ee->engine.x.win_container, ee->prop.name, ee->prop.clas);
+   ecore_x_icccm_name_class_set(ee->engine.x.win_container, ee->prop.name, ee->prop.clas);
 }
 
 static void
@@ -945,7 +1102,7 @@ _ecore_evas_size_min_set(Ecore_Evas *ee, int w, int h)
    if ((ee->prop.min.w == w) && (ee->prop.min.h == h)) return;
    ee->prop.min.w = w;
    ee->prop.min.h = h;
-   ecore_x_window_prop_min_size_set(ee->engine.x.win_container, ee->prop.min.w, ee->prop.min.h);
+   _ecore_evas_size_pos_hints_update(ee);
 }
 
 static void
@@ -956,7 +1113,7 @@ _ecore_evas_size_max_set(Ecore_Evas *ee, int w, int h)
    if ((ee->prop.max.w == w) && (ee->prop.max.h == h)) return;
    ee->prop.max.w = w;
    ee->prop.max.h = h;
-   ecore_x_window_prop_max_size_set(ee->engine.x.win_container, ee->prop.max.w, ee->prop.max.h);
+   _ecore_evas_size_pos_hints_update(ee);
 }
 
 static void
@@ -967,7 +1124,7 @@ _ecore_evas_size_base_set(Ecore_Evas *ee, int w, int h)
    if ((ee->prop.base.w == w) && (ee->prop.base.h == h)) return;
    ee->prop.base.w = w;
    ee->prop.base.h = h;
-   ecore_x_window_prop_base_size_set(ee->engine.x.win_container, ee->prop.base.w, ee->prop.base.h);
+   _ecore_evas_size_pos_hints_update(ee);
 }
 
 static void
@@ -978,7 +1135,7 @@ _ecore_evas_size_step_set(Ecore_Evas *ee, int w, int h)
    if ((ee->prop.step.w == w) && (ee->prop.step.h == h)) return;
    ee->prop.step.w = w;
    ee->prop.step.h = h;
-   ecore_x_window_prop_step_size_set(ee->engine.x.win_container, ee->prop.step.w, ee->prop.step.h);
+   _ecore_evas_size_pos_hints_update(ee);
 }
 
 static void
@@ -1020,12 +1177,27 @@ _ecore_evas_cursor_set(Ecore_Evas *ee, const char *file, int layer, int hot_x, i
      evas_object_show(ee->prop.cursor.object);
 }
 
+/*
+ * @param ee
+ * @param layer If < 3, @a ee will be put below all other windows.
+ *              If > 5, @a ee will be "always-on-top"
+ *              If = 4, @a ee will be put in the default layer.
+ *              Acceptable values range from 1 to 255 (0 reserved for
+ *              desktop windows)
+ */
 static void
 _ecore_evas_layer_set(Ecore_Evas *ee, int layer)
 {
    if (ee->prop.layer == layer) return;
+
+   /* FIXME: Should this logic be here? */
+   if (layer < 1)
+     layer = 1;
+   else if (layer > 255)
+     layer = 255;
+
    ee->prop.layer = layer;
-   ecore_x_window_prop_layer_set(ee->engine.x.win_container, ee->prop.layer);
+   _ecore_evas_layer_update(ee);
 }
 
 static void
@@ -1040,8 +1212,30 @@ _ecore_evas_iconified_set(Ecore_Evas *ee, int on)
    if (((ee->prop.iconified) && (on)) ||
        ((!ee->prop.iconified) && (!on))) return;
    ee->prop.iconified = on;
-   ecore_x_window_prop_state_request(ee->engine.x.win_container,
-	   ECORE_X_WINDOW_STATE_ICONIFIED, on);
+   if (on)
+     {
+	ecore_x_icccm_hints_set(ee->engine.x.win_container,
+				1 /* accepts_focus */,
+				ECORE_X_WINDOW_STATE_HINT_ICONIC /* initial_state */,
+				0 /* icon_pixmap */,
+				0 /* icon_mask */,
+				0 /* icon_window */,
+				0 /* window_group */,
+				0 /* is_urgent */);
+	ecore_x_icccm_iconic_request_send(ee->engine.x.win_container, ee->engine.x.win_root);
+     }
+   else
+     {
+     	ecore_x_icccm_hints_set(ee->engine.x.win_container,
+				1 /* accepts_focus */,
+				ECORE_X_WINDOW_STATE_HINT_NORMAL /* initial_state */,
+				0 /* icon_pixmap */,
+				0 /* icon_mask */,
+				0 /* icon_window */,
+				0 /* window_group */,
+				0 /* is_urgent */);
+	ecore_evas_show(ee);
+     }
 }
 
 static void
@@ -1050,17 +1244,33 @@ _ecore_evas_borderless_set(Ecore_Evas *ee, int on)
    if (((ee->prop.borderless) && (on)) ||
        ((!ee->prop.borderless) && (!on))) return;
    ee->prop.borderless = on;
-   ecore_x_window_prop_borderless_set(ee->engine.x.win_container, ee->prop.borderless);
+   ecore_x_mwm_borderless_set(ee->engine.x.win_container, ee->prop.borderless);
 }
 
+/* FIXME: This function changes the initial state of the ee
+ * whilest the iconic function changes the current state! */
 static void
 _ecore_evas_withdrawn_set(Ecore_Evas *ee, int withdrawn)
 {
+   Ecore_X_Window_State_Hint hint;
+
    if ((ee->prop.withdrawn && withdrawn) ||
       (!ee->prop.withdrawn && !withdrawn)) return;
 
    ee->prop.withdrawn = withdrawn;
-   ecore_x_window_prop_withdrawn_set(ee->engine.x.win_container, ee->prop.withdrawn);
+   if (withdrawn)
+     hint = ECORE_X_WINDOW_STATE_HINT_WITHDRAWN;
+   else
+     hint = ECORE_X_WINDOW_STATE_HINT_NORMAL;
+
+   ecore_x_icccm_hints_set(ee->engine.x.win_container,
+			   1 /* accepts_focus */,
+			   hint /* initial_state */,
+			   0 /* icon_pixmap */,
+			   0 /* icon_mask */,
+			   0 /* icon_window */,
+			   0 /* window_group */,
+			   0 /* is_urgent */);
 }
 
 static void
@@ -1070,8 +1280,12 @@ _ecore_evas_sticky_set(Ecore_Evas *ee, int sticky)
       (!ee->prop.sticky && !sticky)) return;
 
    ee->prop.sticky = sticky;
-   ecore_x_window_prop_sticky_set(ee->engine.x.win_container,
-                                  ee->prop.sticky);
+   ee->engine.x.state.sticky = sticky;
+   if (ee->should_be_visible)
+     ecore_x_netwm_state_request_send(ee->engine.x.win_container, ee->engine.x.win_root,
+				      ECORE_X_WINDOW_STATE_STICKY, -1, sticky);
+   else
+     _ecore_evas_state_update(ee);
 }
 
 static void
@@ -1087,20 +1301,25 @@ _ecore_evas_override_set(Ecore_Evas *ee, int on)
      ee->engine.x.win_container = ecore_x_window_override_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
    else
      {
+	Ecore_X_Window_State_Hint hint;
+	if (ee->prop.withdrawn)
+	  hint = ECORE_X_WINDOW_STATE_HINT_WITHDRAWN;
+	else
+	  hint = ECORE_X_WINDOW_STATE_HINT_NORMAL;
+
 	ee->engine.x.win_container = ecore_x_window_new(ee->engine.x.win_root, ee->x, ee->y, ee->w, ee->h);
-	ecore_x_window_prop_title_set(ee->engine.x.win_container, ee->prop.title);
-	ecore_x_window_prop_name_class_set(ee->engine.x.win_container, ee->prop.name, ee->prop.clas);
+	ecore_x_icccm_title_set(ee->engine.x.win_container, ee->prop.title);
+	ecore_x_netwm_name_set(ee->engine.x.win_container, ee->prop.title);
+	ecore_x_icccm_name_class_set(ee->engine.x.win_container, ee->prop.name, ee->prop.clas);
 	if (ee->func.fn_delete_request)
-	  ecore_x_window_prop_protocol_set(ee->engine.x.win_container, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 1);
-	ecore_x_window_prop_min_size_set(ee->engine.x.win_container, ee->prop.min.w, ee->prop.min.h);
-	ecore_x_window_prop_max_size_set(ee->engine.x.win_container, ee->prop.max.w, ee->prop.max.h);
-	ecore_x_window_prop_base_size_set(ee->engine.x.win_container, ee->prop.base.w, ee->prop.base.h);
-	ecore_x_window_prop_step_size_set(ee->engine.x.win_container, ee->prop.step.w, ee->prop.step.h);
-	ecore_x_window_prop_borderless_set(ee->engine.x.win_container, ee->prop.borderless);
-	ecore_x_window_prop_layer_set(ee->engine.x.win_container, ee->prop.layer);
-	ecore_x_window_prop_withdrawn_set(ee->engine.x.win_container, ee->prop.withdrawn);
-	ecore_x_window_prop_sticky_set(ee->engine.x.win_container,
-				       ee->prop.sticky);
+	  ecore_x_icccm_protocol_set(ee->engine.x.win_container, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 1);
+	_ecore_evas_size_pos_hints_update(ee);
+	ecore_x_mwm_borderless_set(ee->engine.x.win_container, ee->prop.borderless);
+	_ecore_evas_layer_update(ee);
+	ecore_x_icccm_hints_set(ee->engine.x.win_container, 1 /* accepts_focus */,
+				hint /* initial_state */, 0 /* icon_pixmap */, 0 /* icon_mask */,
+				0 /* icon_window */, 0 /* window_group */, 0 /* is_urgent */);
+	_ecore_evas_state_update(ee);
      }
    ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win_container), ee);
    ecore_x_window_reparent(ee->engine.x.win, ee->engine.x.win_container, 0, 0);	

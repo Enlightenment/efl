@@ -120,6 +120,7 @@ int ECORE_X_EVENT_SYNC_COUNTER = 0;
 int ECORE_X_EVENT_SYNC_ALARM = 0;
 
 int ECORE_X_EVENT_WINDOW_DELETE_REQUEST = 0;
+/*
 int ECORE_X_EVENT_WINDOW_PROP_TITLE_CHANGE = 0;
 int ECORE_X_EVENT_WINDOW_PROP_VISIBLE_TITLE_CHANGE = 0;
 int ECORE_X_EVENT_WINDOW_PROP_NAME_CLASS_CHANGE = 0;
@@ -128,6 +129,7 @@ int ECORE_X_EVENT_WINDOW_PROP_VISIBLE_ICON_NAME_CHANGE = 0;
 int ECORE_X_EVENT_WINDOW_PROP_CLIENT_MACHINE_CHANGE = 0;
 int ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE = 0;
 int ECORE_X_EVENT_WINDOW_PROP_DESKTOP_CHANGE = 0;
+*/
 
 int ECORE_X_EVENT_WINDOW_MOVE_RESIZE_REQUEST = 0;
 int ECORE_X_EVENT_WINDOW_STATE_REQUEST = 0;
@@ -291,6 +293,7 @@ ecore_x_init(const char *name)
 	ECORE_X_EVENT_SYNC_ALARM               = ecore_event_type_new();
 	
 	ECORE_X_EVENT_WINDOW_DELETE_REQUEST                = ecore_event_type_new();
+	/*
 	ECORE_X_EVENT_WINDOW_PROP_TITLE_CHANGE             = ecore_event_type_new();
 	ECORE_X_EVENT_WINDOW_PROP_VISIBLE_TITLE_CHANGE     = ecore_event_type_new();
         ECORE_X_EVENT_WINDOW_PROP_NAME_CLASS_CHANGE        = ecore_event_type_new();
@@ -299,6 +302,7 @@ ecore_x_init(const char *name)
 	ECORE_X_EVENT_WINDOW_PROP_CLIENT_MACHINE_CHANGE    = ecore_event_type_new();
 	ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE               = ecore_event_type_new();
 	ECORE_X_EVENT_WINDOW_PROP_DESKTOP_CHANGE               = ecore_event_type_new();
+	*/
 
 	ECORE_X_EVENT_DESKTOP_CHANGE           = ecore_event_type_new();
 	ECORE_X_EVENT_WINDOW_MOVE_RESIZE_REQUEST = ecore_event_type_new();

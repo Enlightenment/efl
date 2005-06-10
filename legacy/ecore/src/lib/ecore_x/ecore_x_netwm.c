@@ -33,74 +33,6 @@
                    (unsigned char *)p_val, cnt)
 
 /*
- * Convenience functions. Should probably go elsewhere.
- */
-
-/*
- * Set CARD32 (array) property
- */
-void
-ecore_x_window_prop_card32_set(Ecore_X_Window win, Ecore_X_Atom atom,
-			       unsigned int *val, unsigned int num)
-{
-#if SIZEOF_INT == 4
-   _ATOM_SET_CARD32(win, atom, val, num);
-#else
-   CARD32             *c32;
-   unsigned int        i;
-
-   c32 = malloc(num * sizeof(CARD32));
-   if (!c32)
-      return;
-   for (i = 0; i < num; i++)
-      c32[i] = val[i];
-   _ATOM_SET_CARD32(win, atom, c32, num);
-   free(c32);
-#endif
-}
-
-/*
- * Get CARD32 (array) property
- *
- * At most len items are returned in val.
- * If the property was successfully fetched the number of items stored in
- * val is returned, otherwise -1 is returned.
- * Note: Return value 0 means that the property exists but has no elements.
- */
-int
-ecore_x_window_prop_card32_get(Ecore_X_Window win, Ecore_X_Atom atom,
-			       unsigned int *val, unsigned int len)
-{
-   unsigned char      *prop_ret;
-   Atom                type_ret;
-   unsigned long       bytes_after, num_ret;
-   int                 format_ret;
-   unsigned int        i;
-   int                 num;
-
-   prop_ret = NULL;
-   XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
-		      XA_CARDINAL, &type_ret, &format_ret, &num_ret,
-		      &bytes_after, &prop_ret);
-   if (prop_ret && type_ret == XA_CARDINAL && format_ret == 32)
-     {
-	if (num_ret < len)
-	   len = num_ret;
-	for (i = 0; i < len; i++)
-	   val[i] = ((unsigned long *)prop_ret)[i];
-	num = len;
-     }
-   else
-     {
-	num = -1;
-     }
-   if (prop_ret)
-      XFree(prop_ret);
-
-   return num;
-}
-
-/*
  * Set UTF-8 string property
  */
 static void
@@ -880,7 +812,7 @@ ecore_x_netwm_window_state_set(Ecore_X_Window win, Ecore_X_Window_State *state, 
 
    if (!num)
      {
-	XDeleteProperty(_ecore_x_disp, win, ECORE_X_ATOM_NET_WM_STATE);
+	ecore_x_window_prop_property_del(win, ECORE_X_ATOM_NET_WM_STATE);
 	return;
      }
 
@@ -1212,7 +1144,7 @@ ecore_x_netwm_sync_counter_get(Ecore_X_Window win, Ecore_X_Sync_Counter *counter
 }
 
 void
-ecore_x_netwm_ping(Ecore_X_Window win)
+ecore_x_netwm_ping_send(Ecore_X_Window win)
 {
    XEvent xev;
 
@@ -1255,4 +1187,52 @@ ecore_x_netwm_sync_request_send(Ecore_X_Window win, unsigned int serial)
    xev.xclient.data.l[4] = 0;
 
    XSendEvent(_ecore_x_disp, win, False, 0, &xev);
+}
+
+void
+ecore_x_netwm_state_request_send(Ecore_X_Window win, Ecore_X_Window root,
+				 Ecore_X_Window_State s1, Ecore_X_Window_State s2, int set)
+{
+   XEvent xev;
+
+   if (!win) return;
+   if (!root) root = DefaultRootWindow(_ecore_x_disp);
+
+   xev.xclient.type = ClientMessage;
+   xev.xclient.serial = 0;
+   xev.xclient.send_event = True;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.window = win;
+   xev.xclient.format = 32;
+   xev.xclient.message_type = ECORE_X_ATOM_NET_WM_STATE;
+   xev.xclient.data.l[0] = !!set;
+   xev.xclient.data.l[1] = _ecore_x_netwm_state_atom_get(s1);
+   xev.xclient.data.l[2] = _ecore_x_netwm_state_atom_get(s2);
+   /* 1 == normal client, if someone wants to use this
+    * function in a pager, this should be 2 */
+   xev.xclient.data.l[3] = 1;
+   xev.xclient.data.l[4] = 0;
+
+   XSendEvent(_ecore_x_disp, root, False, 0, &xev);
+}
+
+void
+ecore_x_netwm_desktop_request_send(Ecore_X_Window win, Ecore_X_Window root, unsigned int desktop)
+{
+   XEvent xev;
+
+   if (!win) return;
+   if (!root) root = DefaultRootWindow(_ecore_x_disp);
+
+   xev.xclient.type = ClientMessage;
+   xev.xclient.serial = 0;
+   xev.xclient.send_event = True;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.window = win;
+   xev.xclient.format = 32;
+   xev.xclient.message_type = ECORE_X_ATOM_NET_WM_DESKTOP;
+   xev.xclient.data.l[0] = desktop;
+
+   XSendEvent(_ecore_x_disp, root, False,
+	      SubstructureNotifyMask | SubstructureRedirectMask, &xev);
 }

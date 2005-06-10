@@ -1,7 +1,6 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
-
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
@@ -221,13 +220,12 @@ ecore_x_window_defaults_set(Ecore_X_Window win)
     * Set _NET_WM_PID
     */
    pid = getpid();
-   ecore_x_window_prop_property_set(win, ECORE_X_ATOM_NET_WM_PID, XA_CARDINAL,
-		                    32, &pid, 1);
+   ecore_x_netwm_pid_set(win, pid);
 
-   ecore_x_window_prop_window_type_set(win, ECORE_X_WINDOW_TYPE_NORMAL);
+   ecore_x_netwm_window_type_set(win, ECORE_X_WINDOW_TYPE_NORMAL);
 
    ecore_app_args_get(&argc, &argv);
-   ecore_x_window_prop_command_set(win, argc, argv);
+   ecore_x_icccm_command_set(win, argc, argv);
 }
 
 void

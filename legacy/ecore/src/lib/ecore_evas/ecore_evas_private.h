@@ -1,3 +1,6 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 #ifndef _ECORE_EVAS_PRIVATE_H
 #define _ECORE_EVAS_PRIVATE_H
 
@@ -90,6 +93,22 @@ struct _Ecore_Evas_Engine
       Ecore_X_GC     gc;
       Region         damages;
       unsigned char  direct_resize : 1;
+      struct {
+	   /*
+	   unsigned char modal : 1;
+	   */
+	   unsigned char sticky : 1;
+	   /*
+	   unsigned char maximized_v : 1;
+	   unsigned char maximized_h : 1;
+	   unsigned char shaded : 1;
+	   unsigned char skip_taskbar : 1;
+	   unsigned char skip_pager : 1;
+	   unsigned char fullscreen : 1;
+	   */
+	   unsigned char above : 1;
+	   unsigned char below : 1;
+      } state;
    } x;
 #endif   
 #ifdef BUILD_ECORE_EVAS_FB

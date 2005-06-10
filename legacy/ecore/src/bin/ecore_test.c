@@ -391,7 +391,7 @@ handler_x_window_configure(void *data, int type, void *event)
    e = event;
    printf("Configure %i %i, %ix%i\n", e->x, e->y, e->w, e->h);
    printf("Switching desktops to %d\n", desktop);
-   ecore_x_window_prop_desktop_request(e->win, desktop);
+   ecore_x_netwm_desktop_request_send(e->win, 0, desktop);
    return 1;
 }
 
@@ -507,13 +507,17 @@ void
 setup_ecore_x_test(void)
 {
    char *tmp;
+   int pid;
+   unsigned int desktop;
 
    win = ecore_x_window_new(0, 0, 0, 120, 60);
-   ecore_x_window_prop_title_set(win, "Ecore Test Program");
-   tmp = ecore_x_window_prop_title_get(win);
+   ecore_x_netwm_name_set(win, "Ecore Test Program");
+   ecore_x_icccm_title_set(win, "Ecore Test Program");
    printf("Title currently: %s\n", tmp);
    free(tmp);
-   tmp = ecore_x_window_prop_visible_title_get(win);
+#if 0
+   /* Visibile title should be set by the wm */
+   tmp = ecore_x_netwm_visible_name_get(win);
    if (!tmp)
      {
         printf("No visible title, setting it to Ecore ... Program\n");
@@ -522,15 +526,18 @@ setup_ecore_x_test(void)
      }
    printf("Visible title: %s\n", tmp);
    free(tmp);
-   tmp = ecore_x_window_prop_icon_name_get(win);
+#endif
+   ecore_x_netwm_icon_name_get(win, &tmp);
    if (!tmp)
      {
         printf("No icon name, setting it to Ecore_Test\n");
-	ecore_x_window_prop_icon_name_set(win, "Ecore_Test");
-        tmp = ecore_x_window_prop_icon_name_get(win);
+	ecore_x_netwm_icon_name_set(win, "Ecore_Test");
+        ecore_x_netwm_icon_name_get(win, &tmp);
      }
    printf("Icon Name: %s\n", tmp);
    free(tmp);
+#if 0
+   /* Visibile icon should be set by the wm */
    tmp = ecore_x_window_prop_visible_icon_name_get(win);
    if (!tmp)
      {
@@ -540,18 +547,21 @@ setup_ecore_x_test(void)
      }
    printf("Visible icon Name: %s\n", tmp);
    free(tmp);
-   tmp = ecore_x_window_prop_client_machine_get(win);
+#endif
+   tmp = ecore_x_icccm_client_machine_get(win);
    if (tmp)
      {
         printf("Client machine: %s\n", tmp);
         free(tmp);
      }
-   printf("Pid: %d\n", ecore_x_window_prop_pid_get(win));
-   ecore_x_window_prop_name_class_set(win, "ecore_test", "main");
-   ecore_x_window_prop_desktop_set(win, 1);
-   printf("Window on desktop %lu\n", ecore_x_window_prop_desktop_get(win));
-   ecore_x_window_prop_window_type_set(win, ECORE_X_WINDOW_TYPE_DIALOG);
-   ecore_x_window_prop_protocol_set(win, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 1);
+   ecore_x_netwm_pid_get(win, &pid);
+   printf("Pid: %d\n", pid);
+   ecore_x_icccm_name_class_set(win, "ecore_test", "main");
+   ecore_x_netwm_desktop_set(win, 1);
+   ecore_x_netwm_desktop_get(win, &desktop);
+   printf("Window on desktop %u\n", desktop);
+   ecore_x_netwm_window_type_set(win, ECORE_X_WINDOW_TYPE_DIALOG);
+   ecore_x_icccm_protocol_set(win, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 1);
    ecore_x_window_show(win);
    ecore_x_flush();
    
@@ -568,6 +578,7 @@ setup_ecore_x_test(void)
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_DESTROY, handler_x_window_destroy, NULL);
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_CONFIGURE, handler_x_window_configure, NULL);
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_DELETE_REQUEST, handler_x_window_delete_request, NULL);
+   /*
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_TITLE_CHANGE, handler_x_window_prop_title_change, NULL);
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_VISIBLE_TITLE_CHANGE, handler_x_window_prop_visible_title_change, NULL);
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_ICON_NAME_CHANGE, handler_x_window_prop_icon_name_change, NULL);
@@ -575,6 +586,7 @@ setup_ecore_x_test(void)
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_NAME_CLASS_CHANGE, handler_x_window_prop_name_class_change, NULL);
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_CLIENT_MACHINE_CHANGE, handler_x_window_prop_client_machine_change, NULL);
    ecore_event_handler_add(ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE, handler_x_window_prop_pid_change, NULL);
+   */
 
 }
 #endif
