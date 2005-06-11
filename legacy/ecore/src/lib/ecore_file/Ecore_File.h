@@ -75,7 +75,9 @@ extern "C" {
 						   void *data);
    EAPI void        ecore_file_monitor_del(Ecore_File_Monitor *ecore_file_monitor);
    EAPI const char *ecore_file_monitor_path_get(Ecore_File_Monitor *ecore_file_monitor);
-   
+
+   EAPI int         ecore_file_app_installed(const char *app);
+
 #ifdef __cplusplus
 }
 #endif

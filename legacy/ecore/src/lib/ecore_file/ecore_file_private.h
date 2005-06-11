@@ -13,6 +13,9 @@
 int ecore_file_monitor_init(void);
 int ecore_file_monitor_shutdown(void);
 
+int ecore_file_path_init(void);
+int ecore_file_path_shutdown(void);
+
 #define ECORE_FILE_MONITOR(x) ((Ecore_File_Monitor *)(x))
 
 struct _Ecore_File_Monitor
