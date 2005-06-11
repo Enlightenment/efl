@@ -21,7 +21,7 @@ static Ecore_Event_Handler *ecore_evas_event_handlers[16];
 static Ecore_Idle_Enterer *ecore_evas_idle_enterer = NULL;
 
 static void
-_ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y)
+_ecore_evas_x_mouse_move_process(Ecore_Evas *ee, int x, int y)
 {
    ee->mouse.x = x;
    ee->mouse.y = y;
@@ -109,7 +109,7 @@ _ecore_evas_x_resize_shape(Ecore_Evas *ee)
 }
 
 static void
-_ecore_evas_modifier_locks_update(Ecore_Evas *ee, int modifiers)
+_ecore_evas_x_modifier_locks_update(Ecore_Evas *ee, int modifiers)
 {
    if (modifiers & ECORE_X_MODIFIER_SHIFT)
      evas_key_modifier_on(ee->evas, "Shift");
@@ -148,7 +148,7 @@ _ecore_evas_modifier_locks_update(Ecore_Evas *ee, int modifiers)
 }
 
 static int
-_ecore_evas_event_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Key_Down *e;
@@ -156,13 +156,13 @@ _ecore_evas_event_key_down(void *data __UNUSED__, int type __UNUSED__, void *eve
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if (!ee) return 1; /* pass on event */
-   _ecore_evas_modifier_locks_update(ee, e->modifiers);
+   _ecore_evas_x_modifier_locks_update(ee, e->modifiers);
    evas_event_feed_key_down(ee->evas, e->keyname, e->keysymbol, e->key_compose, NULL, NULL);
    return 1;
 }
 
 static int
-_ecore_evas_event_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_key_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Key_Up *e;
@@ -170,13 +170,13 @@ _ecore_evas_event_key_up(void *data __UNUSED__, int type __UNUSED__, void *event
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if (!ee) return 1; /* pass on event */
-   _ecore_evas_modifier_locks_update(ee, e->modifiers);
+   _ecore_evas_x_modifier_locks_update(ee, e->modifiers);
    evas_event_feed_key_up(ee->evas, e->keyname, e->keysymbol, e->key_compose, NULL, NULL);
    return 1;
 }
 
 static int
-_ecore_evas_event_mouse_button_down(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_mouse_button_down(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Mouse_Button_Down *e;
@@ -185,8 +185,8 @@ _ecore_evas_event_mouse_button_down(void *data __UNUSED__, int type __UNUSED__, 
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if (!ee) return 1; /* pass on event */
-   _ecore_evas_modifier_locks_update(ee, e->modifiers);
-   _ecore_evas_mouse_move_process(ee, e->x, e->y);
+   _ecore_evas_x_modifier_locks_update(ee, e->modifiers);
+   _ecore_evas_x_mouse_move_process(ee, e->x, e->y);
    if (e->double_click) flags |= EVAS_BUTTON_DOUBLE_CLICK;
    if (e->triple_click) flags |= EVAS_BUTTON_TRIPLE_CLICK;
    evas_event_feed_mouse_down(ee->evas, e->button, flags, NULL);
@@ -194,7 +194,7 @@ _ecore_evas_event_mouse_button_down(void *data __UNUSED__, int type __UNUSED__, 
 }
 
 static int
-_ecore_evas_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Mouse_Button_Up *e;
@@ -202,14 +202,14 @@ _ecore_evas_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, vo
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if (!ee) return 1; /* pass on event */
-   _ecore_evas_modifier_locks_update(ee, e->modifiers);   
-   _ecore_evas_mouse_move_process(ee, e->x, e->y);
+   _ecore_evas_x_modifier_locks_update(ee, e->modifiers);   
+   _ecore_evas_x_mouse_move_process(ee, e->x, e->y);
    evas_event_feed_mouse_up(ee->evas, e->button, EVAS_BUTTON_NONE, NULL);
    return 1;
 }
 
 static int
-_ecore_evas_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Mouse_Wheel *e;
@@ -220,15 +220,15 @@ _ecore_evas_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void *
    if (!ee)
       return 1; /* pass on event */
 
-   _ecore_evas_modifier_locks_update(ee, e->modifiers);
-   _ecore_evas_mouse_move_process(ee, e->x, e->y);
+   _ecore_evas_x_modifier_locks_update(ee, e->modifiers);
+   _ecore_evas_x_mouse_move_process(ee, e->x, e->y);
    evas_event_feed_mouse_wheel(ee->evas, e->direction, e->z, NULL);
 
    return 1;
 }
 
 static int
-_ecore_evas_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Mouse_Move *e;
@@ -236,13 +236,13 @@ _ecore_evas_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *e
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if (!ee) return 1; /* pass on event */
-   _ecore_evas_modifier_locks_update(ee, e->modifiers);
-   _ecore_evas_mouse_move_process(ee, e->x, e->y);
+   _ecore_evas_x_modifier_locks_update(ee, e->modifiers);
+   _ecore_evas_x_mouse_move_process(ee, e->x, e->y);
    return 1;
 }
 
 static int
-_ecore_evas_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Mouse_In *e;
@@ -253,14 +253,14 @@ _ecore_evas_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *eve
    if (e->event_win == ee->engine.x.win_container) return 0;
 /* if (e->mode != ECORE_X_EVENT_MODE_NORMAL) return 0; */
    if (ee->func.fn_mouse_in) ee->func.fn_mouse_in(ee);
-   _ecore_evas_modifier_locks_update(ee, e->modifiers);
+   _ecore_evas_x_modifier_locks_update(ee, e->modifiers);
    evas_event_feed_mouse_in(ee->evas, NULL);
-   _ecore_evas_mouse_move_process(ee, e->x, e->y);
+   _ecore_evas_x_mouse_move_process(ee, e->x, e->y);
    return 1;
 }
 
 static int
-_ecore_evas_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Mouse_Out *e;
@@ -270,8 +270,8 @@ _ecore_evas_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *ev
    if (!ee) return 1; /* pass on event */
    if (e->event_win == ee->engine.x.win_container) return 0;
 /* if (e->mode != ECORE_X_EVENT_MODE_NORMAL) return 0; */
-   _ecore_evas_modifier_locks_update(ee, e->modifiers);   
-   _ecore_evas_mouse_move_process(ee, e->x, e->y);
+   _ecore_evas_x_modifier_locks_update(ee, e->modifiers);   
+   _ecore_evas_x_mouse_move_process(ee, e->x, e->y);
    evas_event_feed_mouse_out(ee->evas, NULL);
    if (ee->func.fn_mouse_out) ee->func.fn_mouse_out(ee);
    if (ee->prop.cursor.object) evas_object_hide(ee->prop.cursor.object);
@@ -279,7 +279,7 @@ _ecore_evas_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *ev
 }
 
 static int
-_ecore_evas_event_window_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_window_focus_in(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Focus_In *e;
@@ -293,7 +293,7 @@ _ecore_evas_event_window_focus_in(void *data __UNUSED__, int type __UNUSED__, vo
 }
 
 static int
-_ecore_evas_event_window_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_window_focus_out(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Focus_Out *e;
@@ -309,7 +309,7 @@ _ecore_evas_event_window_focus_out(void *data __UNUSED__, int type __UNUSED__, v
 }
 
 static int
-_ecore_evas_event_window_damage(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_window_damage(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Damage *e;
@@ -359,7 +359,7 @@ _ecore_evas_event_window_damage(void *data __UNUSED__, int type __UNUSED__, void
 }
 
 static int
-_ecore_evas_event_window_destroy(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_window_destroy(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Destroy *e;
@@ -373,7 +373,7 @@ _ecore_evas_event_window_destroy(void *data __UNUSED__, int type __UNUSED__, voi
 }
 
 static int
-_ecore_evas_event_window_configure(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_window_configure(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Configure *e;
@@ -423,7 +423,7 @@ _ecore_evas_event_window_configure(void *data __UNUSED__, int type __UNUSED__, v
 	  {
 	     if ((ee->expecting_resize.w == ee->w) &&
 		 (ee->expecting_resize.h == ee->h))
-	       _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y);
+	       _ecore_evas_x_mouse_move_process(ee, ee->mouse.x, ee->mouse.y);
 	     ee->expecting_resize.w = 0;
 	     ee->expecting_resize.h = 0;
 	  }
@@ -433,7 +433,7 @@ _ecore_evas_event_window_configure(void *data __UNUSED__, int type __UNUSED__, v
 }
 
 static int
-_ecore_evas_event_window_delete_request(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_window_delete_request(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Delete_Request *e;
@@ -446,7 +446,7 @@ _ecore_evas_event_window_delete_request(void *data __UNUSED__, int type __UNUSED
 }
 
 static int
-_ecore_evas_event_window_show(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_window_show(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Show *e;
@@ -461,7 +461,7 @@ _ecore_evas_event_window_show(void *data __UNUSED__, int type __UNUSED__, void *
 }
 
 static int
-_ecore_evas_event_window_hide(void *data __UNUSED__, int type __UNUSED__, void *event)
+_ecore_evas_x_event_window_hide(void *data __UNUSED__, int type __UNUSED__, void *event)
 {
    Ecore_Evas *ee;
    Ecore_X_Event_Window_Hide *e;
@@ -477,7 +477,7 @@ _ecore_evas_event_window_hide(void *data __UNUSED__, int type __UNUSED__, void *
 
 /* FIXME, should be in idler */
 static void
-_ecore_evas_size_pos_hints_update(Ecore_Evas *ee)
+_ecore_evas_x_size_pos_hints_update(Ecore_Evas *ee)
 {
    ecore_x_icccm_size_pos_hints_set(ee->engine.x.win_container,
 				    0 /*request_pos */,
@@ -496,7 +496,7 @@ _ecore_evas_size_pos_hints_update(Ecore_Evas *ee)
 
 /* FIXME, should be in idler */
 static void
-_ecore_evas_state_update(Ecore_Evas *ee)
+_ecore_evas_x_state_update(Ecore_Evas *ee)
 {
    Ecore_X_Window_State state[10];
    int num;
@@ -534,7 +534,7 @@ _ecore_evas_state_update(Ecore_Evas *ee)
 }
 
 void
-_ecore_evas_layer_update(Ecore_Evas *ee)
+_ecore_evas_x_layer_update(Ecore_Evas *ee)
 {
    if (ee->should_be_visible)
      {
@@ -601,7 +601,7 @@ _ecore_evas_layer_update(Ecore_Evas *ee)
 	       {
 		  ee->engine.x.state.above = 0;
 		  ee->engine.x.state.below = 1;
-		  _ecore_evas_state_update(ee);
+		  _ecore_evas_x_state_update(ee);
 	       }
 	  }
 	else if (ee->prop.layer > 5)
@@ -610,7 +610,7 @@ _ecore_evas_layer_update(Ecore_Evas *ee)
 	       {
 		  ee->engine.x.state.above = 1;
 		  ee->engine.x.state.below = 0;
-		  _ecore_evas_state_update(ee);
+		  _ecore_evas_x_state_update(ee);
 	       }
 	  }
 	else
@@ -619,7 +619,7 @@ _ecore_evas_layer_update(Ecore_Evas *ee)
 	       {
 		  ee->engine.x.state.above = 0;
 		  ee->engine.x.state.below = 0;
-		  _ecore_evas_state_update(ee);
+		  _ecore_evas_x_state_update(ee);
 	       }
 	  }
      }
@@ -627,7 +627,7 @@ _ecore_evas_layer_update(Ecore_Evas *ee)
 }
 
 static int
-_ecore_evas_idle_enter(void *data __UNUSED__)
+_ecore_evas_x_idle_enter(void *data __UNUSED__)
 {
    Ecore_Oldlist *l;
    double t1 = 0.;
@@ -800,23 +800,23 @@ _ecore_evas_x_init(void)
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
    if (getenv("ECORE_EVAS_FPS_DEBUG")) _ecore_evas_fps_debug = 1;
-   ecore_evas_idle_enterer = ecore_idle_enterer_add(_ecore_evas_idle_enter, NULL);
-   ecore_evas_event_handlers[0]  = ecore_event_handler_add(ECORE_X_EVENT_KEY_DOWN, _ecore_evas_event_key_down, NULL);
-   ecore_evas_event_handlers[1]  = ecore_event_handler_add(ECORE_X_EVENT_KEY_UP, _ecore_evas_event_key_up, NULL);
-   ecore_evas_event_handlers[2]  = ecore_event_handler_add(ECORE_X_EVENT_MOUSE_BUTTON_DOWN, _ecore_evas_event_mouse_button_down, NULL);
-   ecore_evas_event_handlers[3]  = ecore_event_handler_add(ECORE_X_EVENT_MOUSE_BUTTON_UP, _ecore_evas_event_mouse_button_up, NULL);
-   ecore_evas_event_handlers[4]  = ecore_event_handler_add(ECORE_X_EVENT_MOUSE_MOVE, _ecore_evas_event_mouse_move, NULL);
-   ecore_evas_event_handlers[5]  = ecore_event_handler_add(ECORE_X_EVENT_MOUSE_IN, _ecore_evas_event_mouse_in, NULL);
-   ecore_evas_event_handlers[6]  = ecore_event_handler_add(ECORE_X_EVENT_MOUSE_OUT, _ecore_evas_event_mouse_out, NULL);
-   ecore_evas_event_handlers[7]  = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_FOCUS_IN, _ecore_evas_event_window_focus_in, NULL);
-   ecore_evas_event_handlers[8]  = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_FOCUS_OUT, _ecore_evas_event_window_focus_out, NULL);
-   ecore_evas_event_handlers[9]  = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_DAMAGE, _ecore_evas_event_window_damage, NULL);
-   ecore_evas_event_handlers[10] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_DESTROY, _ecore_evas_event_window_destroy, NULL);
-   ecore_evas_event_handlers[11] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_CONFIGURE, _ecore_evas_event_window_configure, NULL);
-   ecore_evas_event_handlers[12] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_DELETE_REQUEST, _ecore_evas_event_window_delete_request, NULL);
-   ecore_evas_event_handlers[13] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_SHOW, _ecore_evas_event_window_show, NULL);
-   ecore_evas_event_handlers[14] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_HIDE, _ecore_evas_event_window_hide, NULL);
-   ecore_evas_event_handlers[15] = ecore_event_handler_add(ECORE_X_EVENT_MOUSE_WHEEL, _ecore_evas_event_mouse_wheel, NULL);
+   ecore_evas_idle_enterer = ecore_idle_enterer_add(_ecore_evas_x_idle_enter, NULL);
+   ecore_evas_event_handlers[0]  = ecore_event_handler_add(ECORE_X_EVENT_KEY_DOWN, _ecore_evas_x_event_key_down, NULL);
+   ecore_evas_event_handlers[1]  = ecore_event_handler_add(ECORE_X_EVENT_KEY_UP, _ecore_evas_x_event_key_up, NULL);
+   ecore_evas_event_handlers[2]  = ecore_event_handler_add(ECORE_X_EVENT_MOUSE_BUTTON_DOWN, _ecore_evas_x_event_mouse_button_down, NULL);
+   ecore_evas_event_handlers[3]  = ecore_event_handler_add(ECORE_X_EVENT_MOUSE_BUTTON_UP, _ecore_evas_x_event_mouse_button_up, NULL);
+   ecore_evas_event_handlers[4]  = ecore_event_handler_add(ECORE_X_EVENT_MOUSE_MOVE, _ecore_evas_x_event_mouse_move, NULL);
+   ecore_evas_event_handlers[5]  = ecore_event_handler_add(ECORE_X_EVENT_MOUSE_IN, _ecore_evas_x_event_mouse_in, NULL);
+   ecore_evas_event_handlers[6]  = ecore_event_handler_add(ECORE_X_EVENT_MOUSE_OUT, _ecore_evas_x_event_mouse_out, NULL);
+   ecore_evas_event_handlers[7]  = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_FOCUS_IN, _ecore_evas_x_event_window_focus_in, NULL);
+   ecore_evas_event_handlers[8]  = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_FOCUS_OUT, _ecore_evas_x_event_window_focus_out, NULL);
+   ecore_evas_event_handlers[9]  = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_DAMAGE, _ecore_evas_x_event_window_damage, NULL);
+   ecore_evas_event_handlers[10] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_DESTROY, _ecore_evas_x_event_window_destroy, NULL);
+   ecore_evas_event_handlers[11] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_CONFIGURE, _ecore_evas_x_event_window_configure, NULL);
+   ecore_evas_event_handlers[12] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_DELETE_REQUEST, _ecore_evas_x_event_window_delete_request, NULL);
+   ecore_evas_event_handlers[13] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_SHOW, _ecore_evas_x_event_window_show, NULL);
+   ecore_evas_event_handlers[14] = ecore_event_handler_add(ECORE_X_EVENT_WINDOW_HIDE, _ecore_evas_x_event_window_hide, NULL);
+   ecore_evas_event_handlers[15] = ecore_event_handler_add(ECORE_X_EVENT_MOUSE_WHEEL, _ecore_evas_x_event_mouse_wheel, NULL);
    if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_init();
    return _ecore_evas_init_count;
 }
@@ -842,7 +842,7 @@ _ecore_evas_x_free(Ecore_Evas *ee)
 }
 
 static void
-_ecore_evas_callback_delete_request_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
+_ecore_evas_x_callback_delete_request_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee))
 {
    if (func)
      ecore_x_icccm_protocol_set(ee->engine.x.win_container, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 1);
@@ -852,13 +852,13 @@ _ecore_evas_callback_delete_request_set(Ecore_Evas *ee, void (*func) (Ecore_Evas
 }
 
 static void
-_ecore_evas_move(Ecore_Evas *ee, int x, int y)
+_ecore_evas_x_move(Ecore_Evas *ee, int x, int y)
 {
    ecore_x_window_move(ee->engine.x.win_container, x, y);
 }
 
 static void
-_ecore_evas_resize(Ecore_Evas *ee, int w, int h)
+_ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
 {
    ecore_x_window_resize(ee->engine.x.win_container, w, h);
    if (ee->engine.x.direct_resize)
@@ -892,7 +892,7 @@ _ecore_evas_resize(Ecore_Evas *ee, int w, int h)
 }
 
 static void
-_ecore_evas_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
+_ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 {
    ecore_x_window_move_resize(ee->engine.x.win_container, x, y, w, h);
    if (ee->engine.x.direct_resize)
@@ -926,7 +926,7 @@ _ecore_evas_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 }
 
 static void
-_ecore_evas_rotation_set(Ecore_Evas *ee, int rotation)
+_ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation)
 {
    Evas_Engine_Info_Software_X11 *einfo;
    int rot_dif;
@@ -976,14 +976,14 @@ _ecore_evas_rotation_set(Ecore_Evas *ee, int rotation)
 	ecore_evas_size_max_set(ee, maxh, maxw);
 	ecore_evas_size_base_set(ee, baseh, basew);
 	ecore_evas_size_step_set(ee, steph, stepw);
-	_ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y);
+	_ecore_evas_x_mouse_move_process(ee, ee->mouse.x, ee->mouse.y);
      }
    else
      {
 	einfo->info.rotation = rotation;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
 	ee->rotation = rotation;
-	_ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y);
+	_ecore_evas_x_mouse_move_process(ee, ee->mouse.x, ee->mouse.y);
 	if (ee->func.fn_resize) ee->func.fn_resize(ee);	
      }
    if ((ee->rotation == 90) || (ee->rotation == 270))
@@ -993,7 +993,7 @@ _ecore_evas_rotation_set(Ecore_Evas *ee, int rotation)
 }
 
 static void
-_ecore_evas_shaped_set(Ecore_Evas *ee, int shaped)
+_ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 {
    Evas_Engine_Info_Software_X11 *einfo;
    
@@ -1035,7 +1035,7 @@ _ecore_evas_shaped_set(Ecore_Evas *ee, int shaped)
 }
 
 static void
-_ecore_evas_show(Ecore_Evas *ee)
+_ecore_evas_x_show(Ecore_Evas *ee)
 {
    if (!ee->prop.fullscreen)
      ecore_x_window_show(ee->engine.x.win_container);
@@ -1046,7 +1046,7 @@ _ecore_evas_show(Ecore_Evas *ee)
 }
 
 static void
-_ecore_evas_hide(Ecore_Evas *ee)
+_ecore_evas_x_hide(Ecore_Evas *ee)
 {
    if (!ee->prop.fullscreen)
      ecore_x_window_hide(ee->engine.x.win_container);
@@ -1055,7 +1055,7 @@ _ecore_evas_hide(Ecore_Evas *ee)
 }
 
 static void
-_ecore_evas_raise(Ecore_Evas *ee)
+_ecore_evas_x_raise(Ecore_Evas *ee)
 {
    if (!ee->prop.fullscreen)
      ecore_x_window_raise(ee->engine.x.win_container);
@@ -1064,7 +1064,7 @@ _ecore_evas_raise(Ecore_Evas *ee)
 }
 
 static void
-_ecore_evas_lower(Ecore_Evas *ee)
+_ecore_evas_x_lower(Ecore_Evas *ee)
 {
    if (!ee->prop.fullscreen)
      ecore_x_window_lower(ee->engine.x.win_container);
@@ -1073,7 +1073,7 @@ _ecore_evas_lower(Ecore_Evas *ee)
 }
 
 static void
-_ecore_evas_title_set(Ecore_Evas *ee, const char *t)
+_ecore_evas_x_title_set(Ecore_Evas *ee, const char *t)
 {
    if (ee->prop.title) free(ee->prop.title);
    ee->prop.title = NULL;
@@ -1083,7 +1083,7 @@ _ecore_evas_title_set(Ecore_Evas *ee, const char *t)
 }
 
 static void
-_ecore_evas_name_class_set(Ecore_Evas *ee, const char *n, const char *c)
+_ecore_evas_x_name_class_set(Ecore_Evas *ee, const char *n, const char *c)
 {
    if (ee->prop.name) free(ee->prop.name);
    if (ee->prop.clas) free(ee->prop.clas);
@@ -1095,51 +1095,51 @@ _ecore_evas_name_class_set(Ecore_Evas *ee, const char *n, const char *c)
 }
 
 static void
-_ecore_evas_size_min_set(Ecore_Evas *ee, int w, int h)
+_ecore_evas_x_size_min_set(Ecore_Evas *ee, int w, int h)
 {
    if (w < 0) w = 0;
    if (h < 0) h = 0;
    if ((ee->prop.min.w == w) && (ee->prop.min.h == h)) return;
    ee->prop.min.w = w;
    ee->prop.min.h = h;
-   _ecore_evas_size_pos_hints_update(ee);
+   _ecore_evas_x_size_pos_hints_update(ee);
 }
 
 static void
-_ecore_evas_size_max_set(Ecore_Evas *ee, int w, int h)
+_ecore_evas_x_size_max_set(Ecore_Evas *ee, int w, int h)
 {
    if (w < 0) w = 0;
    if (h < 0) h = 0;
    if ((ee->prop.max.w == w) && (ee->prop.max.h == h)) return;
    ee->prop.max.w = w;
    ee->prop.max.h = h;
-   _ecore_evas_size_pos_hints_update(ee);
+   _ecore_evas_x_size_pos_hints_update(ee);
 }
 
 static void
-_ecore_evas_size_base_set(Ecore_Evas *ee, int w, int h)
+_ecore_evas_x_size_base_set(Ecore_Evas *ee, int w, int h)
 {
    if (w < 0) w = 0;
    if (h < 0) h = 0;
    if ((ee->prop.base.w == w) && (ee->prop.base.h == h)) return;
    ee->prop.base.w = w;
    ee->prop.base.h = h;
-   _ecore_evas_size_pos_hints_update(ee);
+   _ecore_evas_x_size_pos_hints_update(ee);
 }
 
 static void
-_ecore_evas_size_step_set(Ecore_Evas *ee, int w, int h)
+_ecore_evas_x_size_step_set(Ecore_Evas *ee, int w, int h)
 {
    if (w < 1) w = 1;
    if (h < 1) h = 1;
    if ((ee->prop.step.w == w) && (ee->prop.step.h == h)) return;
    ee->prop.step.w = w;
    ee->prop.step.h = h;
-   _ecore_evas_size_pos_hints_update(ee);
+   _ecore_evas_x_size_pos_hints_update(ee);
 }
 
 static void
-_ecore_evas_cursor_set(Ecore_Evas *ee, const char *file, int layer, int hot_x, int hot_y)
+_ecore_evas_x_cursor_set(Ecore_Evas *ee, const char *file, int layer, int hot_x, int hot_y)
 {
    int x, y;
    
@@ -1186,7 +1186,7 @@ _ecore_evas_cursor_set(Ecore_Evas *ee, const char *file, int layer, int hot_x, i
  *              desktop windows)
  */
 static void
-_ecore_evas_layer_set(Ecore_Evas *ee, int layer)
+_ecore_evas_x_layer_set(Ecore_Evas *ee, int layer)
 {
    if (ee->prop.layer == layer) return;
 
@@ -1197,17 +1197,17 @@ _ecore_evas_layer_set(Ecore_Evas *ee, int layer)
      layer = 255;
 
    ee->prop.layer = layer;
-   _ecore_evas_layer_update(ee);
+   _ecore_evas_x_layer_update(ee);
 }
 
 static void
-_ecore_evas_focus_set(Ecore_Evas *ee, int on __UNUSED__)
+_ecore_evas_x_focus_set(Ecore_Evas *ee, int on __UNUSED__)
 {
    ecore_x_window_focus(ee->engine.x.win_container);
 }
 
 static void
-_ecore_evas_iconified_set(Ecore_Evas *ee, int on)
+_ecore_evas_x_iconified_set(Ecore_Evas *ee, int on)
 {
    if (((ee->prop.iconified) && (on)) ||
        ((!ee->prop.iconified) && (!on))) return;
@@ -1239,7 +1239,7 @@ _ecore_evas_iconified_set(Ecore_Evas *ee, int on)
 }
 
 static void
-_ecore_evas_borderless_set(Ecore_Evas *ee, int on)
+_ecore_evas_x_borderless_set(Ecore_Evas *ee, int on)
 {
    if (((ee->prop.borderless) && (on)) ||
        ((!ee->prop.borderless) && (!on))) return;
@@ -1250,7 +1250,7 @@ _ecore_evas_borderless_set(Ecore_Evas *ee, int on)
 /* FIXME: This function changes the initial state of the ee
  * whilest the iconic function changes the current state! */
 static void
-_ecore_evas_withdrawn_set(Ecore_Evas *ee, int withdrawn)
+_ecore_evas_x_withdrawn_set(Ecore_Evas *ee, int withdrawn)
 {
    Ecore_X_Window_State_Hint hint;
 
@@ -1274,7 +1274,7 @@ _ecore_evas_withdrawn_set(Ecore_Evas *ee, int withdrawn)
 }
 
 static void
-_ecore_evas_sticky_set(Ecore_Evas *ee, int sticky)
+_ecore_evas_x_sticky_set(Ecore_Evas *ee, int sticky)
 {
    if ((ee->prop.sticky && sticky) ||
       (!ee->prop.sticky && !sticky)) return;
@@ -1285,11 +1285,11 @@ _ecore_evas_sticky_set(Ecore_Evas *ee, int sticky)
      ecore_x_netwm_state_request_send(ee->engine.x.win_container, ee->engine.x.win_root,
 				      ECORE_X_WINDOW_STATE_STICKY, -1, sticky);
    else
-     _ecore_evas_state_update(ee);
+     _ecore_evas_x_state_update(ee);
 }
 
 static void
-_ecore_evas_override_set(Ecore_Evas *ee, int on)
+_ecore_evas_x_override_set(Ecore_Evas *ee, int on)
 {
    if (((ee->prop.override) && (on)) ||
        ((!ee->prop.override) && (!on))) return;
@@ -1313,13 +1313,13 @@ _ecore_evas_override_set(Ecore_Evas *ee, int on)
 	ecore_x_icccm_name_class_set(ee->engine.x.win_container, ee->prop.name, ee->prop.clas);
 	if (ee->func.fn_delete_request)
 	  ecore_x_icccm_protocol_set(ee->engine.x.win_container, ECORE_X_WM_PROTOCOL_DELETE_REQUEST, 1);
-	_ecore_evas_size_pos_hints_update(ee);
+	_ecore_evas_x_size_pos_hints_update(ee);
 	ecore_x_mwm_borderless_set(ee->engine.x.win_container, ee->prop.borderless);
-	_ecore_evas_layer_update(ee);
+	_ecore_evas_x_layer_update(ee);
 	ecore_x_icccm_hints_set(ee->engine.x.win_container, 1 /* accepts_focus */,
 				hint /* initial_state */, 0 /* icon_pixmap */, 0 /* icon_mask */,
 				0 /* icon_window */, 0 /* window_group */, 0 /* is_urgent */);
-	_ecore_evas_state_update(ee);
+	_ecore_evas_x_state_update(ee);
      }
    ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win_container), ee);
    ecore_x_window_reparent(ee->engine.x.win, ee->engine.x.win_container, 0, 0);	
@@ -1330,7 +1330,7 @@ _ecore_evas_override_set(Ecore_Evas *ee, int on)
 }
 
 static void
-_ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
+_ecore_evas_x_fullscreen_set(Ecore_Evas *ee, int on)
 {
    if (((ee->prop.fullscreen) && (on)) ||
        ((!ee->prop.fullscreen) && (!on))) return;
@@ -1393,7 +1393,7 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
      {
 	if ((ee->expecting_resize.w == ee->w) &&
 	    (ee->expecting_resize.h == ee->h))
-	  _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y);
+	  _ecore_evas_x_mouse_move_process(ee, ee->mouse.x, ee->mouse.y);
 	ee->expecting_resize.w = 0;
 	ee->expecting_resize.h = 0;
      }
@@ -1402,7 +1402,7 @@ _ecore_evas_fullscreen_set(Ecore_Evas *ee, int on)
 }
 
 static void
-_ecore_evas_avoid_damage_set(Ecore_Evas *ee, int on)
+_ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
 {
    Evas_Engine_Info_Software_X11 *einfo;
 
@@ -1463,7 +1463,7 @@ static const Ecore_Evas_Engine_Func _ecore_x_engine_func =
      NULL,
      NULL,
      NULL,
-     _ecore_evas_callback_delete_request_set,
+     _ecore_evas_x_callback_delete_request_set,
      NULL,
      NULL,
      NULL,
@@ -1471,32 +1471,32 @@ static const Ecore_Evas_Engine_Func _ecore_x_engine_func =
      NULL,
      NULL,
      NULL,
-     _ecore_evas_move,
-     _ecore_evas_resize,
-     _ecore_evas_move_resize,
-     _ecore_evas_rotation_set,
-     _ecore_evas_shaped_set,
-     _ecore_evas_show,
-     _ecore_evas_hide,
-     _ecore_evas_raise,
-     _ecore_evas_lower,
-     _ecore_evas_title_set,
-     _ecore_evas_name_class_set,
-     _ecore_evas_size_min_set,
-     _ecore_evas_size_max_set,
-     _ecore_evas_size_base_set,
-     _ecore_evas_size_step_set,
-     _ecore_evas_cursor_set,
-     _ecore_evas_layer_set,
-     _ecore_evas_focus_set,
-     _ecore_evas_iconified_set,
-     _ecore_evas_borderless_set,
-     _ecore_evas_override_set,
+     _ecore_evas_x_move,
+     _ecore_evas_x_resize,
+     _ecore_evas_x_move_resize,
+     _ecore_evas_x_rotation_set,
+     _ecore_evas_x_shaped_set,
+     _ecore_evas_x_show,
+     _ecore_evas_x_hide,
+     _ecore_evas_x_raise,
+     _ecore_evas_x_lower,
+     _ecore_evas_x_title_set,
+     _ecore_evas_x_name_class_set,
+     _ecore_evas_x_size_min_set,
+     _ecore_evas_x_size_max_set,
+     _ecore_evas_x_size_base_set,
+     _ecore_evas_x_size_step_set,
+     _ecore_evas_x_cursor_set,
+     _ecore_evas_x_layer_set,
+     _ecore_evas_x_focus_set,
+     _ecore_evas_x_iconified_set,
+     _ecore_evas_x_borderless_set,
+     _ecore_evas_x_override_set,
      NULL,
-     _ecore_evas_fullscreen_set,
-     _ecore_evas_avoid_damage_set,
-     _ecore_evas_withdrawn_set,
-     _ecore_evas_sticky_set
+     _ecore_evas_x_fullscreen_set,
+     _ecore_evas_x_avoid_damage_set,
+     _ecore_evas_x_withdrawn_set,
+     _ecore_evas_x_sticky_set
 };
 #endif
 
