@@ -1099,10 +1099,6 @@ EAPI int   ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
 					    int *step_x, int *step_y,
 					    double *min_aspect,
 					    double *max_aspect);
-EAPI void  ecore_x_icccm_min_size_set(Ecore_X_Window win, int w, int h);
-EAPI void  ecore_x_icccm_max_size_set(Ecore_X_Window win, int w, int h);
-EAPI void  ecore_x_icccm_base_size_set(Ecore_X_Window win, int w, int h);
-EAPI void  ecore_x_icccm_step_size_set(Ecore_X_Window win, int x, int y);
 EAPI void  ecore_x_icccm_title_set(Ecore_X_Window win, const char *t);
 EAPI char *ecore_x_icccm_title_get(Ecore_X_Window win);
 EAPI void  ecore_x_icccm_protocol_set(Ecore_X_Window win,
