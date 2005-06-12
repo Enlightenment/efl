@@ -291,7 +291,10 @@ ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
    XSizeHints  hint;
    long        mask;
 
-   XGetWMNormalHints(_ecore_x_disp, win, &hint, &mask);
+   if (!XGetWMNormalHints(_ecore_x_disp, win, &hint, &mask))
+     {
+	memset(&hint, 0, sizeof(XSizeHints));
+     }
 
    hint.flags = 0;
    if (request_pos)
