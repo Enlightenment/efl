@@ -72,8 +72,7 @@ ecore_file_app_installed(const char *app)
 
    while ((dir = ecore_list_next(__ecore_file_path_bin)) != NULL)
      {
-	snprintf(buf, strlen(dir) + strlen(app) + 2, "%s/%s", dir, app);
-	    // 2 = "/" + "\0"
+	snprintf(buf, sizeof(buf), "%s/%s", dir, app);
 	if (ecore_file_exists(buf) && ecore_file_can_exec(buf))
 	  {
 	     found = 1;
