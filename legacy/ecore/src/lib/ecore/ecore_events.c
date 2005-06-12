@@ -420,6 +420,7 @@ _ecore_event_call(void)
 	     ecore_raw_event_type = e->type;
 	     ecore_raw_event_event = e->event;
 //	     printf("HANDLE ev type %i, %p\n", e->type, e->event);
+	     if (e->type >= 0 && e->type < event_handlers_num)
 	     for (ll = (Ecore_Oldlist *)event_handlers[e->type]; ll; ll = ll->next)
 	       {
 		  eh = (Ecore_Event_Handler *)ll;
