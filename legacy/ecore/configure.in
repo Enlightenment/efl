@@ -502,6 +502,8 @@ AC_ARG_ENABLE(ecore-evas-gl,
 dnl GL support requires X support, so we should
 dnl handle the case where our user is on crack
 dnl i.e. user disables X but enables GL
+PCFLAGS=$CFLAGS
+export CFLAGS="$evas_cflags $PCFLAGS"
 if test "x$have_ecore_evas_gl" = "xyes" -a "x$have_ecore_x" = "xyes"; then
   AC_CHECK_HEADER(Evas_Engine_GL_X11.h,
     [
@@ -613,6 +615,7 @@ else
 fi
 
 AC_SUBST(BUILD_ECORE_EVAS_BUFFER)
+export CFLAGS="&PCFLAGS"
 
 AC_MSG_CHECKING(whether ecore_con module is to be built)
 
