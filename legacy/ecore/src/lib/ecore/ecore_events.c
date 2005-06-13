@@ -420,15 +420,17 @@ _ecore_event_call(void)
 	     ecore_raw_event_type = e->type;
 	     ecore_raw_event_event = e->event;
 //	     printf("HANDLE ev type %i, %p\n", e->type, e->event);
-	     if (e->type >= 0 && e->type < event_handlers_num)
-	     for (ll = (Ecore_Oldlist *)event_handlers[e->type]; ll; ll = ll->next)
+	     if ((e->type >= 0) && (e->type < event_handlers_num))
 	       {
-		  eh = (Ecore_Event_Handler *)ll;
-		  if (!eh->delete_me)
+		  for (ll = (Ecore_Oldlist *)event_handlers[e->type]; ll; ll = ll->next)
 		    {
-		       handle_count++;
-		       if (!eh->func(eh->data, e->type, e->event))
-			 break;  /* 0 == "call no further handlers" */
+		       eh = (Ecore_Event_Handler *)ll;
+		       if (!eh->delete_me)
+			 {
+			    handle_count++;
+			    if (!eh->func(eh->data, e->type, e->event))
+			      break;  /* 0 == "call no further handlers" */
+			 }
 		    }
 	       }
 	     /* if no handlers were set for EXIT signal - then default is */
