@@ -480,7 +480,7 @@ static void
 _ecore_evas_x_size_pos_hints_update(Ecore_Evas *ee)
 {
    ecore_x_icccm_size_pos_hints_set(ee->engine.x.win_container,
-				    0 /*request_pos */,
+				    1 /*request_pos */,
 				    ECORE_X_GRAVITY_NW /* gravity */,
 				    ee->prop.min.w /* min_w */,
 				    ee->prop.min.h /* min_h */,
@@ -855,6 +855,11 @@ static void
 _ecore_evas_x_move(Ecore_Evas *ee, int x, int y)
 {
    ecore_x_window_move(ee->engine.x.win_container, x, y);
+   if (!ee->should_be_visible)
+     {
+	/* We need to request pos */
+	_ecore_evas_x_size_pos_hints_update(ee);
+     }
 }
 
 static void
