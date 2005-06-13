@@ -54,7 +54,9 @@ endif
 if BUILD_ECORE_CONFIG
 config_basic_example_SOURCES  = config_basic_example.c
 config_basic_example_LDADD    = $(top_builddir)/src/lib/ecore/libecore.la \
-                                $(top_builddir)/src/lib/ecore_config/libecore_config.la
+                                $(top_builddir)/src/lib/ecore_config/libecore_config.la \
+                                $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
+                                $(top_builddir)/src/lib/ecore_con/libecore_con.la
 endif
 
 if BUILD_ECORE_X
