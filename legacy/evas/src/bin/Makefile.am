@@ -2,7 +2,7 @@ MAINTAINERCLEANFILES = Makefile.in
 
 INCLUDES = \
 -I. -I$(top_srcdir)/src/lib -I$(top_srcdir) \
-@DIRECTFB_CFLAGS@ @qt_cflags@ @gl_cflags@ @CAIRO_CFLAGS@
+@DIRECTFB_CFLAGS@ @qt_cflags@ @gl_cflags@
 
 bin_PROGRAMS = \
 @ENGINE_SOFTWARE_X11_PRG@ \
