@@ -505,6 +505,13 @@ else
   AM_CONDITIONAL(BUILD_ENGINE_CAIRO_COMMON, false)
 fi
 
+## Set these variables while the PKG_CHECK is disabled.
+CAIRO_CFLAGS=""
+CAIRO_LIBS=""
+
+AC_SUBST(CAIRO_CFLAGS)
+AC_SUBST(CAIRO_LIBS)
+
 #####################################################################
 ## Image loaders
 
