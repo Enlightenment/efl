@@ -19,7 +19,8 @@ ecore_file_monitor.c \
 ecore_file_monitor_fam.c \
 ecore_file_monitor_inotify.c \
 ecore_file_monitor_poll.c \
-ecore_file_path.c
+ecore_file_path.c \
+ecore_file_download.c
 
 libecore_file_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
