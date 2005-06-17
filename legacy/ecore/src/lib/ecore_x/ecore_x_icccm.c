@@ -1042,9 +1042,17 @@ ecore_x_icccm_client_leader_get(Ecore_X_Window win)
    if (ecore_x_window_prop_property_get(win,
 					ECORE_X_ATOM_WM_CLIENT_LEADER,
 					XA_WINDOW, 32, &data, &num))
-      return (Ecore_X_Window) * data;
-   else
-      return 0;
+     {
+	if (data) 
+	  {
+	     Ecore_X_Window wlead;
+	     
+	     wlead = *((Ecore_X_Window *)data);
+	     free(data);
+	     return wlead;
+	  }
+     }
+   return 0;
 }
 
 void
