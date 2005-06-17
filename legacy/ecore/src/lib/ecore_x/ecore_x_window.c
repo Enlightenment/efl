@@ -403,7 +403,8 @@ void
 ecore_x_window_focus(Ecore_X_Window win)
 {
    if (win == 0) win = DefaultRootWindow(_ecore_x_disp);   
-   XSetInputFocus(_ecore_x_disp, win, RevertToNone, CurrentTime);
+//   XSetInputFocus(_ecore_x_disp, win, RevertToNone, CurrentTime);
+   XSetInputFocus(_ecore_x_disp, win, PointerRoot, CurrentTime);
 }
 
 /**
@@ -416,7 +417,8 @@ void
 ecore_x_window_focus_at_time(Ecore_X_Window win, Ecore_X_Time t)
 {
    if (win == 0) win = DefaultRootWindow(_ecore_x_disp);   
-   XSetInputFocus(_ecore_x_disp, win, RevertToNone, t);
+//   XSetInputFocus(_ecore_x_disp, win, RevertToNone, t);
+   XSetInputFocus(_ecore_x_disp, win, PointerRoot, t);
 }
 
 /**
