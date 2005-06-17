@@ -78,7 +78,11 @@ extern "C" {
 
    EAPI int         ecore_file_app_installed(const char *app);
 
-   EAPI int         ecore_file_download(const char *url, const char *dst_dir);
+   EAPI int         ecore_file_download(const char *url, const char *dst,
+					void (*completion_cb)(void *data,
+							      const char *file,
+							      int status),
+					void *data);
 
 #ifdef __cplusplus
 }

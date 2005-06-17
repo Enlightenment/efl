@@ -10,11 +10,9 @@
 #include "Ecore.h"
 #include "Ecore_File.h"
 
+/* ecore_file_monitor */
 int ecore_file_monitor_init(void);
 int ecore_file_monitor_shutdown(void);
-
-int ecore_file_path_init(void);
-int ecore_file_path_shutdown(void);
 
 #define ECORE_FILE_MONITOR(x) ((Ecore_File_Monitor *)(x))
 
@@ -65,4 +63,13 @@ EAPI Ecore_File_Monitor *ecore_file_monitor_poll_add(const char *path,
 								   const char *path),
 						     void *data);
 EAPI void                ecore_file_monitor_poll_del(Ecore_File_Monitor *ecore_file_monitor);
+
+/* ecore_file_path */
+int ecore_file_path_init(void);
+int ecore_file_path_shutdown(void);
+
+/* ecore_file_download */
+int ecore_file_download_init(void);
+int ecore_file_download_shutdown(void);
+
 #endif

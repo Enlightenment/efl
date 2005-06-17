@@ -11,6 +11,8 @@ ecore_file_init()
      return 0;
    if (!ecore_file_path_init())
      return 0;
+   if (!ecore_file_download_init())
+     return 0;
    return 1;
 }
 
@@ -20,6 +22,8 @@ ecore_file_shutdown()
    if (!ecore_file_monitor_shutdown())
      return 0;
    if (!ecore_file_path_shutdown())
+     return 0;
+   if (!ecore_file_download_shutdown())
      return 0;
    return 1;
 }
