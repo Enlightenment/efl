@@ -5,10 +5,10 @@ AUTOMAKE_OPTIONS     = 1.4 foreign
 # A list of all the files in the current directory which can be regenerated
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES	     = @freetype_cflags@ @gl_cflags@ \
-                       -I. \
+INCLUDES	     = -I. \
 		       -I$(top_srcdir)/src/lib \
-		       -I$(top_srcdir)/src/lib/include
+		       -I$(top_srcdir)/src/lib/include \
+		       @freetype_cflags@ @gl_cflags@
 
 if BUILD_ENGINE_GL_COMMON
 

@@ -2,7 +2,6 @@
 #include "evas_private.h"
 #include "evas_engine.h"
 #include "evas_engine_api_gl_x11.h"
-#include "Evas.h"
 #include "Evas_Engine_GL_X11.h"
 #include "evas_gl_common.h"
 

@@ -1,10 +1,11 @@
 #ifndef EVAS_PRIVATE_H
 #define EVAS_PRIVATE_H
-#endif
 
 #ifndef _GNU_SOURCE
 #define _GNU_SOURCE
 #endif
+
+#include "Evas.h"
 
 /* complain when peole pass in wrong object types etc. */
 #define MAGIC_DEBUG
@@ -20,33 +21,6 @@
 #define RENDER_METHOD_SOFTWARE_XCB       0x00000009
 
 #define RENDER_METHOD_INVALID            0x00000000
-
-typedef enum _Evas_Callback_Type
-{
-   EVAS_CALLBACK_MOUSE_IN,
-   EVAS_CALLBACK_MOUSE_OUT,
-   EVAS_CALLBACK_MOUSE_DOWN,
-   EVAS_CALLBACK_MOUSE_UP,
-   EVAS_CALLBACK_MOUSE_MOVE,
-   EVAS_CALLBACK_MOUSE_WHEEL,
-   EVAS_CALLBACK_FREE,
-   EVAS_CALLBACK_KEY_DOWN,
-   EVAS_CALLBACK_KEY_UP,
-   EVAS_CALLBACK_FOCUS_IN,
-   EVAS_CALLBACK_FOCUS_OUT,
-   EVAS_CALLBACK_SHOW,
-   EVAS_CALLBACK_HIDE,
-   EVAS_CALLBACK_MOVE,
-   EVAS_CALLBACK_RESIZE,
-   EVAS_CALLBACK_RESTACK
-} Evas_Callback_Type;
-
-typedef enum _Evas_Button_Flags
-{
-   EVAS_BUTTON_NONE = 0,
-   EVAS_BUTTON_DOUBLE_CLICK = (1 << 0),
-   EVAS_BUTTON_TRIPLE_CLICK = (1 << 1)
-} Evas_Button_Flags;
 
 typedef enum _Evas_Format_Type
 {
@@ -72,11 +46,7 @@ typedef enum _Evas_Format_Direction
    EVAS_FORMAT_DIRECTION_HORIZONTAL = 1
 } Evas_Format_Direction;
 
-typedef struct _Evas_Rectangle              Evas_Rectangle;
-
-typedef struct _Evas                        Evas;
 typedef struct _Evas_Layer                  Evas_Layer;
-typedef struct _Evas_Object                 Evas_Object;
 typedef struct _Evas_Font_Dir               Evas_Font_Dir;
 typedef struct _Evas_Font                   Evas_Font;
 typedef struct _Evas_Font_Alias             Evas_Font_Alias;
@@ -84,11 +54,6 @@ typedef struct _Evas_Data_Node              Evas_Data_Node;
 typedef struct _Evas_Func_Node              Evas_Func_Node;
 typedef struct _Evas_Func                   Evas_Func;
 typedef struct _Evas_Object_Func            Evas_Object_Func;
-typedef struct _Evas_Modifier               Evas_Modifier;
-typedef struct _Evas_Lock                   Evas_Lock;
-typedef unsigned long long                  Evas_Modifier_Mask;
-typedef struct _Evas_Smart                  Evas_Smart;
-typedef void                                Evas_Performance;
 typedef struct _Evas_Intercept_Func         Evas_Intercept_Func;
 typedef struct _Evas_Intercept_Func_Basic   Evas_Intercept_Func_Basic;
 typedef struct _Evas_Intercept_Func_SizePos Evas_Intercept_Func_SizePos;
@@ -96,23 +61,7 @@ typedef struct _Evas_Intercept_Func_Obj     Evas_Intercept_Func_Obj;
 typedef struct _Evas_Intercept_Func_Int     Evas_Intercept_Func_Int;
 typedef struct _Evas_Key_Grab               Evas_Key_Grab;
 typedef struct _Evas_Callbacks              Evas_Callbacks;
-typedef struct _Evas_Smart_Class            Evas_Smart_Class;
 typedef struct _Evas_Format                 Evas_Format;
-#if 0 /* able to change co-ordinate systems to remove all fp ops */
-typedef double                              Evas_Coord;
-typedef double                              Evas_Font_Size;
-typedef double                              Evas_Angle;
-#ifndef EVAS_COMMON_H
-typedef int                                 Evas_Bool;
-#endif
-#else
-typedef int                                 Evas_Coord;
-typedef int                                 Evas_Font_Size;
-typedef int                                 Evas_Angle;
-#ifndef EVAS_COMMON_H
-typedef char                                Evas_Bool;
-#endif
-#endif
 
 #define MAGIC_EVAS          0x70777770
 #define MAGIC_OBJ           0x71777770
@@ -180,11 +129,6 @@ if (_r) \
 	 (o)->prev.key = NULL;                                              \
      }
 
-struct _Evas_Rectangle
-{
-   int x, y, w, h;
-};
-
 struct _Evas_Intercept_Func_Basic
 {
    void (*func) (void *data, Evas_Object *obj);
@@ -243,28 +187,6 @@ struct _Evas_Smart
    char              class_allocated : 1;
 
    Evas_Smart_Class *smart_class;
-};
-
-struct _Evas_Smart_Class /** a smart object class */
-{
-   const char *name; /** the string name of the class */
-
-   void  (*add)         (Evas_Object *o);
-   void  (*del)         (Evas_Object *o);
-   void  (*layer_set)   (Evas_Object *o, int l);
-   void  (*raise)       (Evas_Object *o);
-   void  (*lower)       (Evas_Object *o);
-   void  (*stack_above) (Evas_Object *o, Evas_Object *above);
-   void  (*stack_below) (Evas_Object *o, Evas_Object *below);
-   void  (*move)        (Evas_Object *o, Evas_Coord x, Evas_Coord y);
-   void  (*resize)      (Evas_Object *o, Evas_Coord w, Evas_Coord h);
-   void  (*show)        (Evas_Object *o);
-   void  (*hide)        (Evas_Object *o);
-   void  (*color_set)   (Evas_Object *o, int r, int g, int b, int a);
-   void  (*clip_set)    (Evas_Object *o, Evas_Object *clip);
-   void  (*clip_unset)  (Evas_Object *o);
-
-   const void *data;
 };
 
 struct _Evas_Modifier
@@ -699,9 +621,6 @@ void *evas_font_load(Evas *evas, const char *name, const char *source, int size)
 
 extern int _evas_alloc_error;
 
-typedef struct _Evas_Imaging_Image Evas_Imaging_Image;
-typedef struct _Evas_Imaging_Font Evas_Imaging_Font;
-
 struct _Evas_Imaging_Image
 {
    RGBA_Image *image;
@@ -714,4 +633,5 @@ struct _Evas_Imaging_Font
 
 #ifdef __cplusplus
 }
+#endif
 #endif

@@ -4,10 +4,10 @@ SUBDIRS = canvas data file engines imaging include
 
 AUTOMAKE_OPTIONS     = 1.4 foreign
 
-INCLUDES	     = @freetype_cflags@ @x_cflags@ @xcb_cflags@ @qt_cflags@ @DIRECTFB_CFLAGS@ @gl_cflags@ \
-                       -I. \
+INCLUDES	     = -I. \
                        -I$(top_srcdir)/src/lib \
-		       -I$(top_srcdir)/src/lib/include
+		       -I$(top_srcdir)/src/lib/include \
+		       @freetype_cflags@ @x_cflags@ @xcb_cflags@ @qt_cflags@ @DIRECTFB_CFLAGS@ @gl_cflags@
 
 lib_LTLIBRARIES      = libevas.la
 

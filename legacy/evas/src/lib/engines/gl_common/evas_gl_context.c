@@ -277,8 +277,6 @@ _evas_gl_common_blend_set(Evas_GL_Context *gc)
 static void
 _evas_gl_common_color_set(Evas_GL_Context *gc)
 {
-   int r, g, b, a;
-
    if (!gc->change.color) return;
    glColor4d((double)gc->r / 255.0,
 	     (double)gc->g / 255.0,

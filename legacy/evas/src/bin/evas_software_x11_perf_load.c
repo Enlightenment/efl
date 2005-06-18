@@ -2,6 +2,7 @@
 #include <X11/Xutil.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <math.h>
 #include <sys/time.h>
@@ -121,9 +122,6 @@ main(int argc, char **argv)
 	     Evas_Performance   *perf;
 	     char                buf[4096];
 	     char               *data, *key;
-	     static mode_t       default_mode =
-		S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH |
-		S_IXOTH;
 	     FILE               *f;
 
 	     data = NULL;

@@ -1,5 +1,3 @@
-#include "config.h"
-#include "evas_options.h"
 #include "evas_common.h"
 #include "evas_private.h"
 

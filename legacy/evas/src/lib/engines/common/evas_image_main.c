@@ -233,8 +233,6 @@ evas_common_image_new(void)
 void
 evas_common_image_free(RGBA_Image *im)
 {
-   int i;
-
    if (im->image) evas_common_image_surface_free(im->image);
    if (im->info.file) free(im->info.file);
    if (im->info.real_file) free(im->info.real_file);
@@ -478,7 +476,6 @@ int
 evas_common_image_ram_usage(RGBA_Image *im)
 {
    int ram = 0;
-   int i;
 
    ram += sizeof(struct _RGBA_Image);
    if (im->info.file) ram += strlen(im->info.file);
@@ -493,8 +490,6 @@ evas_common_image_ram_usage(RGBA_Image *im)
 void
 evas_common_image_dirty(RGBA_Image *im)
 {
-   int i;
-
    evas_common_image_unstore(im);
    im->flags |= RGBA_IMAGE_IS_DIRTY;
 }

@@ -28,8 +28,6 @@
 #include "evas_engine_api_cairo_x11.h"
 #endif
 
-#include "Evas.h"
-
 static int initcount = 0;
 
 int

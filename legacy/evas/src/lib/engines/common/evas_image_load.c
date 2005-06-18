@@ -564,7 +564,8 @@ static int load_image_file_head_eet(RGBA_Image *im, const char *file, const char
 static int
 load_image_file_head_eet(RGBA_Image *im, const char *file, const char *key)
 {
-   int                  w, h, alpha, compression, quality, lossy;
+   int                  alpha, compression, quality, lossy;
+   unsigned int         w, h;
    Eet_File            *ef;
    int                  ok;
 

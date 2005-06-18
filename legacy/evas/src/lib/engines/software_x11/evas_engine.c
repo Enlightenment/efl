@@ -2,7 +2,6 @@
 #include "evas_private.h"
 #include "evas_engine.h"
 #include "evas_engine_api_software_x11.h"
-#include "Evas.h"
 #include "Evas_Engine_Software_X11.h"
 
 static void *evas_engine_software_x11_info(Evas *e);
@@ -402,7 +401,6 @@ static void
 evas_engine_software_x11_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h)
 {
    Render_Engine *re;
-   Evas_Engine_Info_Software_X11 *info;
 
    re = (Render_Engine *)data;
    evas_software_x11_outbuf_push_updated_region(re->ob, surface, x, y, w, h);
@@ -1085,7 +1083,7 @@ evas_engine_software_x11_font_draw(void *data, void *context, void *surface, voi
 	     if (im)
 	       {
 		  int max_ascent;
-		  int i, j;
+		  int j;
 
 		  im->flags |= RGBA_IMAGE_HAS_ALPHA;
 		  j = (ow+inset) * oh;

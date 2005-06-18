@@ -142,12 +142,11 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
    int *im_data;
    int im_w, im_h;
    int tw, th;
-   int shift;
    GLenum pixfmt, texfmt, target;
 
    if (tex->not_power_of_two)
      {
-	void *tmp = NULL, *data;
+	void *data;
 
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_TEXTURE_RECTANGLE_NV);

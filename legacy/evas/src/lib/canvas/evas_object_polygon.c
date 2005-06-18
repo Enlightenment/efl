@@ -1,6 +1,5 @@
 #include "evas_common.h"
 #include "evas_private.h"
-#include "Evas.h"
 
 /* private magic number for polygon objects */
 static const char o_type[] = "polygon";

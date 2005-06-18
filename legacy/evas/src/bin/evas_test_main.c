@@ -576,7 +576,6 @@ loop(void)
    else if (t <= 106.0)
      {
 	Evas_Coord              tw, th;
-	int                 iw, ih;
 
 	evas_object_text_text_set(title, "Test 8: Raise & Lower");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
@@ -610,7 +609,6 @@ loop(void)
    else if (t <= 116.0)
      {
 	Evas_Coord              tw, th;
-	int                 iw, ih;
 
 	evas_object_text_text_set(title, "Test 9: Layer Setting");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
@@ -646,7 +644,6 @@ loop(void)
    else if (t <= 126.0)
      {
 	Evas_Coord              tw, th;
-	int                 iw, ih;
 
 	evas_object_text_text_set(title, "Test 10: Show & Hide");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);

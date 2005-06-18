@@ -2,7 +2,6 @@
 #include "evas_private.h"
 #include "evas_engine.h"
 #include "evas_engine_api_software_xcb.h"
-#include "Evas.h"
 #include "Evas_Engine_Software_Xcb.h"
 
 static void *evas_engine_software_xcb_info(Evas *e);

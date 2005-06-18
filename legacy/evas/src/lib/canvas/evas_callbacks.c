@@ -1,6 +1,5 @@
 #include "evas_common.h"
 #include "evas_private.h"
-#include "Evas.h"
 
 static void evas_object_event_callback_list_free(Evas_Object_List **list);
 static void evas_object_event_callback_list_post_free(Evas_Object_List **list);

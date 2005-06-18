@@ -2,7 +2,6 @@
 #include "evas_private.h"
 #include "evas_engine.h"
 #include "evas_engine_api_gl_x11.h"
-#include "Evas.h"
 #include "Evas_Engine_GL_X11.h"
 #include "evas_gl_common.h"
 
@@ -375,7 +374,6 @@ static void
 evas_engine_gl_x11_output_flush(void *data)
 {
    Render_Engine *re;
-   static int fr = 0;
 
    re = (Render_Engine *)data;
 //   printf("GL: flush your mush!\n");
@@ -686,7 +684,6 @@ static void *
 evas_engine_gl_x11_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 {
    Render_Engine *re;
-   Evas_GL_Image *im;
 
    re = (Render_Engine *)data;
    evas_gl_common_image_dirty(image);

@@ -126,7 +126,9 @@ evas_file_modified_time(const char *file)
 char *
 evas_file_path_resolve(const char *file)
 {
+#if 0
    char buf[PATH_MAX], *buf2;
+#endif
 
    return strdup(file);
 #if 0

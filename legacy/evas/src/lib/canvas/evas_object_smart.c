@@ -1,6 +1,5 @@
 #include "evas_common.h"
 #include "evas_private.h"
-#include "Evas.h"
 
 typedef struct _Evas_Object_Smart      Evas_Object_Smart;
 typedef struct _Evas_Smart_Callback    Evas_Smart_Callback;

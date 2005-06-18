@@ -3,7 +3,6 @@
  */
 #include "evas_common.h"
 #include "evas_private.h"
-#include "Evas.h"
 
 static int _evas_list_alloc_error = 0;
 

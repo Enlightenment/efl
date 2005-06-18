@@ -174,7 +174,6 @@ evas_common_font_query_char_coords(RGBA_Font *fn, const char *text, int pos, int
 	RGBA_Font_Glyph *fg;
 	int chr_x, chr_y, chr_w;
         int gl, kern;
-	FT_Vector delta;
 
 	pchr = chr;
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
@@ -261,7 +260,6 @@ evas_common_font_query_text_at_pos(RGBA_Font *fn, const char *text, int x, int y
 	RGBA_Font_Glyph *fg;
 	int chr_x, chr_y, chr_w;
         int gl, kern;
-	FT_Vector delta;
 
 	pchr = chr;
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);

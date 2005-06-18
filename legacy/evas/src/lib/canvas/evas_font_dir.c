@@ -1,6 +1,5 @@
 #include "evas_common.h"
 #include "evas_private.h"
-#include "Evas.h"
 #ifdef BUILD_FONT_LOADER_EET
 #include <Eet.h>
 #endif

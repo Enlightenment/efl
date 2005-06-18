@@ -2,7 +2,6 @@
 #include "evas_private.h"
 #include "evas_engine.h"
 #include "evas_engine_api_fb.h"
-#include "Evas.h"
 #include "Evas_Engine_FB.h"
 
 static void *evas_engine_fb_info(Evas *e);

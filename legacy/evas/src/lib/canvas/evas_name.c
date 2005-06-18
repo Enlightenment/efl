@@ -1,6 +1,5 @@
 #include "evas_common.h"
 #include "evas_private.h"
-#include "Evas.h"
 
 /**
  * @defgroup Evas_Object_Name_Group Object Name Function

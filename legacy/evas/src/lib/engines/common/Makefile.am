@@ -5,10 +5,10 @@ AUTOMAKE_OPTIONS     = 1.4 foreign
 # A list of all the files in the current directory which can be regenerated
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES	     = @freetype_cflags@ @VALGRIND_CFLAGS@ \
-                       -I. \
+INCLUDES	     = -I. \
 		       -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include \
+		       @freetype_cflags@ @VALGRIND_CFLAGS@ \
 		       @eet_cflags@ @edb_cflags@
 
 noinst_LTLIBRARIES      = libevas_engine_common.la

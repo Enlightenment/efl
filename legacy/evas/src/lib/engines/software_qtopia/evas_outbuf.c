@@ -1,7 +1,6 @@
 #include "evas_common.h"
 #include "evas_engine.h"
 #include "evas_private.h"
-#include "Evas.h"
 #include "Evas_Engine_Software_Qtopia.h"
 #include <sys/time.h>
 #include <sys/utsname.h>

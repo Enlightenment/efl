@@ -17,7 +17,6 @@ main(int argc, char **argv)
    Window              win;
    XSetWindowAttributes attr;
    XClassHint          chint;
-   XSizeHints          szhints;
 
    disp = XOpenDisplay(NULL);
    if (!disp)

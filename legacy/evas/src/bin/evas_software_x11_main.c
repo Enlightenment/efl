@@ -1,5 +1,6 @@
 #include "evas_test_main.h"
 
+#include <unistd.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 
@@ -14,7 +15,6 @@ main(int argc, char **argv)
    Window              win;
    XSetWindowAttributes attr;
    XClassHint          chint;
-   XSizeHints          szhints;
 
    disp = XOpenDisplay(NULL);
    if (!disp)

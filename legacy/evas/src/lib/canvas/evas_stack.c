@@ -1,6 +1,5 @@
 #include "evas_common.h"
 #include "evas_private.h"
-#include "Evas.h"
 
 static Evas_Object *evas_object_above_get_internal(Evas_Object *obj);
 static Evas_Object *evas_object_below_get_internal(Evas_Object *obj);

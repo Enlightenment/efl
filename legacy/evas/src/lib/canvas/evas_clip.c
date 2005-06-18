@@ -1,6 +1,5 @@
 #include "evas_common.h"
 #include "evas_private.h"
-#include "Evas.h"
 
 void
 evas_object_clip_recalc(Evas_Object *obj)

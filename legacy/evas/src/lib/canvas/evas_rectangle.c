@@ -1,6 +1,5 @@
 #include "evas_common.h"
 #include "evas_private.h"
-#include "Evas.h"
 
 Evas_List *
 evas_rects_return_difference_rects(int x, int y, int w, int h, int xx, int yy, int ww, int hh)

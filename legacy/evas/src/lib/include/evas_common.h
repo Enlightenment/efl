@@ -1,6 +1,7 @@
 #ifndef EVAS_COMMON_H
 #define EVAS_COMMON_H
 
+#include "Evas.h"
 #include "config.h"
 
 /*****************************************************************************/
@@ -138,16 +139,7 @@ typedef unsigned char                 DATA8;
 
 typedef struct _Evas_Object_List      Evas_Object_List;
 
-typedef struct _Evas_List             Evas_List;
-typedef struct _Evas_Hash             Evas_Hash;
 typedef struct _Evas_Hash_El          Evas_Hash_El;
-#ifndef EVAS_PRIVATE_H
-#if 1 /* able to change co-ordinate systems to remove all fp ops */
-typedef int                           Evas_Bool;
-#else
-typedef char                          Evas_Bool;
-#endif
-#endif
 
 typedef struct _RGBA_Image            RGBA_Image;
 typedef struct _RGBA_Surface          RGBA_Surface;
@@ -227,14 +219,6 @@ struct _Evas_Object_List
 {
    Evas_Object_List  *next, *prev;
    Evas_Object_List  *last;
-};
-
-struct _Evas_List
-{
-   void      *data;
-   Evas_List *next, *prev;
-   Evas_List *last;
-   int        count;
 };
 
 struct _Evas_Hash

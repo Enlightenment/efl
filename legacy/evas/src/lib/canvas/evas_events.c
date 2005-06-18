@@ -1,6 +1,5 @@
 #include "evas_common.h"
 #include "evas_private.h"
-#include "Evas.h"
 
 int
 evas_event_passes_through(Evas_Object *obj)

@@ -18,9 +18,6 @@
 # endif
 #endif
 
-#ifndef EVAS_COMMON_H
-#ifndef EVAS_PRIVATE_H
-
 /**
  * @file
  * @brief These routines are used for Evas library interaction.
@@ -66,17 +63,10 @@ typedef struct _Evas_Lock Evas_Lock; /**< An Evas Lock */
 typedef struct _Evas_Smart Evas_Smart; /**< An Evas Smart Object handle */
 typedef unsigned long long Evas_Modifier_Mask; /**< An Evas modifier mask type */
 
-#if 0 /* able to change co-ordinate systems to remove all fp ops */
-typedef double Evas_Coord; /**< A unit in canvas space. Normally a double, but may vary on platforms */
-typedef double Evas_Font_Size; /**< Units to descript font sizes. Normally a double, but may vary on platforms */
-typedef double Evas_Angle; /**< A unit to measure angles (in degrees). Normally a double, but may vary on platforms */
-typedef int    Evas_Bool; /**< A boolean. 1 = on/true/yes, 0 = off/false/no */
-#else
 typedef int    Evas_Coord;
 typedef int    Evas_Font_Size;
 typedef int    Evas_Angle;
 typedef char   Evas_Bool;
-#endif
 
 struct _Evas_List /** A linked list node */
 {
@@ -117,8 +107,6 @@ struct _Evas_Smart_Class /** a smart object class */
 
    const void *data;
 };
-#endif
-#endif
 
 typedef struct _Evas_Pixel_Import_Source Evas_Pixel_Import_Source; /**< A source description of pixels for importing pixels */
 typedef struct _Evas_Engine_Info      Evas_Engine_Info; /**< A generic Evas Engine information structure */
@@ -599,14 +587,8 @@ extern "C" {
 /* this is not complete and should be considered experimental. use at your */
 /* own risk */
 
-#ifndef EVAS_COMMON_H
-#ifndef EVAS_PRIVATE_H
-
    typedef struct _Evas_Imaging_Image Evas_Imaging_Image;
    typedef struct _Evas_Imaging_Font Evas_Imaging_Font;
-
-#endif
-#endif
 
    EAPI Evas_Imaging_Image *evas_imaging_image_load      (const char *file, const char *key);
    EAPI void                evas_imaging_image_free      (Evas_Imaging_Image *im);
@@ -636,5 +618,3 @@ extern "C" {
 #endif
 
 #endif
-
-
