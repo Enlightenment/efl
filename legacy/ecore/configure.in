@@ -777,7 +777,7 @@ AC_ARG_ENABLE(ecore-config,
 )
 
 if test "x$have_ecore_config" = "xyes"; then
-  AC_ARG_WITH(eet-config, [   --with-eet-config=EET_CONFIG      use eet-config specified ],
+  AC_ARG_WITH(eet-config, [  --with-eet-config=EET_CONFIG      use eet-config specified ],
    [ EET_CONFIG=$withval;
      echo "using "$EET_CONFIG" for eet-config"; ],
    [ if test -z "$EET_CONFIG"; then
@@ -892,19 +892,26 @@ fi
 
 curl_flags=""
 curl_libs=""
-# Check for CURL
-AC_ARG_WITH(curl-config, [ --with-curl-config=CURL_CONFIG      use curl-config specified ],
-   [ CURL_CONFIG=$withval;
-     echo "using "$CURL_CONFIG" for curl-config"; ],
-   [ if test -z "$CURL_CONFIG"; then
-       AC_PATH_PROG(CURL_CONFIG, "curl-config", "", $PATH)
-     fi
-   ])
-if test "$CURL_CONFIG"; then
+AC_ARG_WITH(curl-config,
+[  --with-curl-config=CURL_CONFIG      use curl-config specified], [
+  CURL_CONFIG=$withval
+],[
+  CURL_CONFIG="yes"
+]
+)
+if test "$CURL_CONFIG" = "yes"; then
+  AC_PATH_PROG(CURL_CONFIG, "curl-config", "", $PATH)
+elif test "$CURL_CONFIG" != "no"; then
+  AC_MSG_RESULT(using "$CURL_CONFIG" for curl-config)
+else
+  CURL_CONFIG=""
+fi
+
+if test -n "$CURL_CONFIG"; then
   use_curl="yes"
   curl_cflags=`$CURL_CONFIG --cflags`
   curl_libs=`$CURL_CONFIG --libs`
-  AC_DEFINE(HAVE_CURL, 1, [Downloading with CURL])
+  AC_DEFINE(HAVE_CURL, 1, [ Downloading with CURL ])
 fi
 
 if test "x$have_ecore_file" = "xyes"; then
