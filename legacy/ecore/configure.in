@@ -241,15 +241,22 @@ else
 fi
 
 if test "x$have_ecore_x" = "xyes"; then
-  AM_CONDITIONAL(BUILD_ECORE_X, true)
-  AC_DEFINE(BUILD_ECORE_X, 1, [Build Ecore_X Module])
-  BUILD_ECORE_X=1
-  x_dir="/usr/X11R6";
-  x_includes="";
-  x_cflags="-I"$x_dir"/include";
-  x_libs="-L"$x_dir"/lib -lX11 -lXext";
-  x_ldflags=" "$ecore_x_libs;
-  ecore_x_libs="-lecore_x";
+  AC_PATH_XTRA
+  AC_CHECK_HEADER(X11/X.h,
+    [
+      AM_CONDITIONAL(BUILD_ECORE_X, true)
+      AC_DEFINE(BUILD_ECORE_X, 1, [Build Ecore_X Module])
+      BUILD_ECORE_X=1
+      x_dir=${x_dir:-/usr/X11R6}
+      x_cflags=${x_cflags:--I${x_includes:-$x_dir/include}}
+      x_libs="${x_libs:--L${x_libraries:-$x_dir/lib}} -lX11 -lXext"
+      x_ldflags=" "$ecore_x_libs;
+      ecore_x_libs="-lecore_x";
+    ],[
+      AM_CONDITIONAL(BUILD_ECORE_X, false)
+      BUILD_ECORE_X=0
+    ]
+  )
 else
   AM_CONDITIONAL(BUILD_ECORE_X, false)
   BUILD_ECORE_X=0
