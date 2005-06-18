@@ -208,17 +208,14 @@ _ecore_file_download_curl(const char *url, const char *dst,
 
 	/* Stupid curl, why can't I get the fd to the current added job? */
 	curl_multi_fdset(curlm, &read_set, &write_set, &exc_set, &fd_max);
-	printf("max: %d\n", fd_max);
 	for (fd = 0; fd <= fd_max; fd++)
 	  {
 	     if (!FD_ISSET(fd, &_current_fd_set))
 	       {
-		  printf("Found %d!!!\n", fd);
 		  flags = 0;
 		  if (FD_ISSET(fd, &read_set)) flags |= ECORE_FD_READ;
 		  if (FD_ISSET(fd, &write_set)) flags |= ECORE_FD_WRITE;
 		  if (FD_ISSET(fd, &exc_set)) flags |= ECORE_FD_ERROR;
-		  printf("flags: %d\n", flags);
 		  if (flags)
 		    {
 		       FD_SET(fd, &_current_fd_set);
@@ -230,7 +227,6 @@ _ecore_file_download_curl(const char *url, const char *dst,
 	  }
 	if (!job->fd_handler)
 	  {
-	     printf("No fd handler?\n");
 	     curl_easy_cleanup(job->curl);
 	     fclose(job->file);
 	     free(job);
