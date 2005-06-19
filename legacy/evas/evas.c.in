@@ -167,6 +167,8 @@ make install
 @endverbatim
 
 
+@todo (1.0) Need a way ot scaling an image and just PRODUCING the output (scaling direct to target buffe r- no blend/copy etc.)
+@todo (1.0) Could improve evas's scaling down code to limit multiple samples per output pixel to maybe 2x2?
 @todo (1.0) Document API
 @todo (1.0) Evas needs to check delete_me member for all object functions
 @todo (1.0) Evas engine that renders to Evas_Objects

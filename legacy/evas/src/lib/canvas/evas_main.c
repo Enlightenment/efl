@@ -150,9 +150,12 @@ evas_free(Evas *e)
 	e->obscures = evas_list_remove(e->obscures, e->obscures->data);
      }
 
-   e->engine.func->info_free(e, e->engine.info);
-   e->engine.func->context_free(e->engine.data.output, e->engine.data.context);
-   e->engine.func->output_free(e->engine.data.output);
+   if (e->engine.func) 
+     {
+	e->engine.func->info_free(e, e->engine.info);
+	e->engine.func->context_free(e->engine.data.output, e->engine.data.context);
+	e->engine.func->output_free(e->engine.data.output);
+     }
 
    for (i = 0; i < e->modifiers.mod.count; i++)
      free(e->modifiers.mod.list[i]);
