@@ -98,13 +98,14 @@ evas_free(Evas *e)
 {
    Evas_Object_List *l;
    int i;
-   int del = 1;
+   int del;
 
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
 
-   while (del != 0)
+   del = 1;
+   while (del)
      {
 	del = 0;
 	for (l = (Evas_Object_List *)(e->layers); l; l = l->next)
@@ -120,10 +121,9 @@ evas_free(Evas *e)
 
 		  o = (Evas_Object *)ll;
 		  if (!o->delete_me)
-		    del += o->delete_me;
+		    del = 1;
 	       }
 	  }
-
      }
    while (e->layers)
      {
