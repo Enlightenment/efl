@@ -22,6 +22,9 @@ ecore_config_load(void)
 {
    char                file[PATH_MAX];
 
+   if (!__ecore_config_app_name)
+      return ECORE_CONFIG_ERR_FAIL;
+
    snprintf(file, PATH_MAX, "%s/.e/apps/%s/config.eet", getenv("HOME"),
 	    __ecore_config_app_name);
    return ecore_config_file_load(file);
@@ -38,6 +41,9 @@ int
 ecore_config_save(void)
 {
    char                file[PATH_MAX];
+
+   if (!__ecore_config_app_name)
+      return ECORE_CONFIG_ERR_FAIL;
 
    snprintf(file, PATH_MAX, "%s/.e/apps/%s/config.eet", getenv("HOME"),
 	    __ecore_config_app_name);
