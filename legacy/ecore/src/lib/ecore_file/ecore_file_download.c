@@ -97,7 +97,7 @@ ecore_file_download(const char *url, const char *dst,
      }
 #ifdef HAVE_CURL
    else if ((!strncmp(url, "http://", 7)) ||
-	    (!strncmp(url, "ftp://", 7)))
+	    (!strncmp(url, "ftp://", 6)))
      {
 	/* download */
 	Ecore_File_Download_Job *job;
@@ -113,6 +113,18 @@ ecore_file_download(const char *url, const char *dst,
      {
 	return 0;
      }
+}
+
+int
+ecore_file_download_protocol_available(const char *protocol)
+{
+   if (!strncmp(protocol, "file://", 7)) return 1;
+#ifdef HAVE_CURL
+   else if (!strncmp(protocol, "http://", 7)) return 1;
+   else if (!strncmp(protocol, "ftp://", 6)) return 1;
+#endif
+
+   return 0;
 }
 
 #ifdef HAVE_CURL
