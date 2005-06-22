@@ -185,13 +185,13 @@ _ecore_file_download_curl(const char *url, const char *dst,
 			      &_current_fd_set);
 		       ecore_main_fd_handler_del(current->fd_handler);
 		    }
-		  if (current->completion_cb)
-		    current->completion_cb(current->data, current->dst,
-					   curlmsg->data.result);
 		  ecore_list_remove(_job_list);
 		  curl_multi_remove_handle(curlm, current->curl);
 		  curl_easy_cleanup(current->curl);
 		  fclose(current->file);
+		  if (current->completion_cb)
+		    current->completion_cb(current->data, current->dst,
+					   curlmsg->data.result);
 		  free(current->dst);
 		  free(current);
 		  break;
@@ -261,13 +261,13 @@ _ecore_file_download_curl_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
 		  /* We have a match -- delete the job */
 		  FD_CLR(ecore_main_fd_handler_fd_get(job->fd_handler),
 			&_current_fd_set);
-		  if (job->completion_cb)
-		    job->completion_cb(job->data, job->dst, !curlmsg->data.result);
 		  ecore_list_remove(_job_list);
 		  ecore_main_fd_handler_del(job->fd_handler);
 		  curl_multi_remove_handle(curlm, job->curl);
 		  curl_easy_cleanup(job->curl);
 		  fclose(job->file);
+		  if (job->completion_cb)
+		    job->completion_cb(job->data, job->dst, !curlmsg->data.result);
 		  free(job->dst);
 		  free(job);
 		  break;
