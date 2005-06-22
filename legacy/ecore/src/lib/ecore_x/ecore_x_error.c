@@ -73,17 +73,23 @@ _ecore_x_error_handler_init(void)
 }
 
 static void
-_ecore_x_error_handle(Display *d __UNUSED__, XErrorEvent *ev)
+_ecore_x_error_handle(Display *d, XErrorEvent *ev)
 {
-   _error_request_code = ev->request_code;
-   _error_code = ev->error_code;
-   if (_error_func) _error_func(_error_data);
+    if (d == _ecore_x_disp)
+     {
+	_error_request_code = ev->request_code;
+	_error_code = ev->error_code;
+	if (_error_func) _error_func(_error_data);
+     }
 }
 
 static int
-_ecore_x_io_error_handle(Display *d __UNUSED__)
+_ecore_x_io_error_handle(Display *d)
 {
-   if (_io_error_func) _io_error_func(_io_error_data);
-   else exit(-1);
+    if (d == _ecore_x_disp)
+     {
+	if (_io_error_func) _io_error_func(_io_error_data);
+	else exit(-1);
+     }
    return 0;
 }
