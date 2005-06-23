@@ -73,7 +73,8 @@ INCLUDES = \
 
 bin_PROGRAMS = \
 ecore_test \
-ecore_evas_test
+ecore_evas_test \
+ecore_config
 
 ecore_test_SOURCES = \
 ecore_test.c
@@ -134,4 +135,14 @@ $(ECORE_EVAS_LIB) \
 $(ECORE_CON_LIB) \
 $(ECORE_IPC_LIB) \
 $(ECORE_TXT_LIB)
+
+ecore_config_SOURCES = \
+ecore_config.c
+
+ecore_config_LDADD = \
+$(ECORE_CONFIG_LIB)
+
+ecore_config_DEPENDENCIES = \
+$(top_builddir)/src/lib/ecore/libecore.la \
+$(ECORE_CONFIG_LIB)
 
