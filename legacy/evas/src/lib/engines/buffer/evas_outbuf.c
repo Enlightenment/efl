@@ -237,18 +237,28 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 	  }
 	break;
       case OUTBUF_DEPTH_RGB_32BPP_888_8888:
-	if (!buf->priv.back_buf)
-	  {
-	     /* simple memcpy */
-	     /* FIXME: write this */
-	  }
-	else
-	  {
-	  }
+	printf("NOT IMPLEMENTED\n");
 	break;
       case OUTBUF_DEPTH_BGR_32BPP_888_8888:
-	/* simple memcpy */
-	/* FIXME: write this */
+	  {
+	     DATA32 *src;
+	     DATA8 *dest;
+	     int yy, row_bytes;
+	     Gfx_Func_Blend_Src_Dst func;
+	     
+	     row_bytes = buf->dest_row_bytes;
+	     dest = (DATA8 *)(buf->dest) + (y * row_bytes) + (x * 4);
+	     func = evas_common_draw_func_copy_get(w, 0);
+	     if (func)
+	       {
+		  for (yy = 0; yy < h; yy++) 
+		    {
+		       src = update->image->data + (yy * update->image->w);
+		       func(src, dest, w);
+		       dest += row_bytes;
+		    }
+	       }
+	 }
 	break;
       default:
 	break;
