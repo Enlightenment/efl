@@ -365,6 +365,7 @@ _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match)
 		       FD_CLR(ecore_main_fd_handler_fd_get(url_con->fd_handler),
 			      &_current_fd_set);
 		       ecore_main_fd_handler_del(url_con->fd_handler);
+		       url_con->fd_handler = NULL;
 		    }
 		  ecore_list_remove(_url_con_list);
 		  curl_multi_remove_handle(curlm, url_con->curl_easy);
