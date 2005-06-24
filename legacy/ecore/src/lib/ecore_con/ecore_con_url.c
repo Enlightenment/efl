@@ -62,7 +62,6 @@ int
 ecore_con_url_init(void)
 {
 #ifdef HAVE_CURL
-   init_count++;
    if (!ECORE_CON_EVENT_URL_DATA)
      {
 	ECORE_CON_EVENT_URL_DATA = ecore_event_type_new();
@@ -78,7 +77,12 @@ ecore_con_url_init(void)
    if (!curlm)
      {
 	FD_ZERO(&_current_fd_set);
-	if (curl_global_init(CURL_GLOBAL_NOTHING)) return 0;
+	if (curl_global_init(CURL_GLOBAL_NOTHING))
+	  {
+	     ecore_list_destroy(_url_con_list);
+	     _url_con_list = NULL;
+	     return 0;
+	  }
 
 	curlm = curl_multi_init();
 	if (!curlm)
@@ -88,6 +92,7 @@ ecore_con_url_init(void)
 	     return 0;
 	  }
      }
+   init_count++;
    return 1;
 #else
    return 0;
