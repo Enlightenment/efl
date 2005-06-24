@@ -57,6 +57,7 @@ extern "C" {
 #ifndef _ECORE_CON_PRIVATE_H
    typedef void Ecore_Con_Server; /**< A connection handle */
    typedef void Ecore_Con_Client; /**< A connection handle */
+   typedef void Ecore_Con_Url;
    
    typedef enum _Ecore_Con_Type
      {
@@ -74,6 +75,8 @@ extern "C" {
    typedef struct _Ecore_Con_Event_Server_Del  Ecore_Con_Event_Server_Del;
    typedef struct _Ecore_Con_Event_Client_Data Ecore_Con_Event_Client_Data;
    typedef struct _Ecore_Con_Event_Server_Data Ecore_Con_Event_Server_Data;
+   typedef struct _Ecore_Con_Event_Url_Data Ecore_Con_Event_Url_Data;
+   typedef struct _Ecore_Con_Event_Url_Complete Ecore_Con_Event_Url_Complete;
 
    struct _Ecore_Con_Event_Client_Add
      {
@@ -109,12 +112,27 @@ extern "C" {
 	int               size;
      };
    
+   struct _Ecore_Con_Event_Url_Data
+     {
+	Ecore_Con_Url    *url_con;
+	void             *data;
+	int               size;
+     };
+	 
+   struct _Ecore_Con_Event_Url_Complete
+     {
+	Ecore_Con_Url    *url_con;
+	int               status;
+     };
+	 
    extern int ECORE_CON_EVENT_CLIENT_ADD;
    extern int ECORE_CON_EVENT_CLIENT_DEL;
    extern int ECORE_CON_EVENT_SERVER_ADD;
    extern int ECORE_CON_EVENT_SERVER_DEL;
    extern int ECORE_CON_EVENT_CLIENT_DATA;
    extern int ECORE_CON_EVENT_SERVER_DATA;
+   extern int ECORE_CON_EVENT_URL_DATA;
+   extern int ECORE_CON_EVENT_URL_COMPLETE;
    
    EAPI int               ecore_con_init(void);
    EAPI int               ecore_con_shutdown(void);
@@ -136,7 +154,13 @@ extern "C" {
    
    EAPI int               ecore_con_ssl_available_get(void);
 
-   
+   EAPI int               ecore_con_url_init(void);
+   EAPI int               ecore_con_url_shutdown(void);
+   EAPI Ecore_Con_Url    *ecore_con_url_new(const char *url);
+   EAPI void              ecore_con_url_destroy(Ecore_Con_Url *url_con);
+   EAPI int               ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url);
+   EAPI int               ecore_con_url_send(Ecore_Con_Url *url_con, void *data, size_t length, char *content_type);
+
 #ifdef __cplusplus
 }
 #endif
