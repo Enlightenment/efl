@@ -144,7 +144,10 @@ ecore_con_url_new(const char *url)
 
    url_con->curl_easy = curl_easy_init();
    if (!url_con->curl_easy)
-     return NULL;
+     {
+	free(url_con);
+	return NULL;
+     }
    
    ecore_con_url_url_set(url_con, url);
 
@@ -190,6 +193,7 @@ ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url)
    if (url_con->active) return 0;
 
    free(url_con->url);
+   url_con->url = NULL;
    if (url)
      url_con->url = strdup(url);
    curl_easy_setopt(url_con->curl_easy, CURLOPT_URL, url_con->url);
