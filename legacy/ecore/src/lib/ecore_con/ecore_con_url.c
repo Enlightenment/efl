@@ -178,7 +178,7 @@ ecore_con_url_destroy(Ecore_Con_Url *url_con)
      ecore_main_fd_handler_del(url_con->fd_handler);
    if (url_con->curl_easy)
      {
-	if (curlm)
+	if (url_con->active)
 	  curl_multi_remove_handle(curlm, url_con->curl_easy);
 	curl_easy_cleanup(url_con->curl_easy);
      }
