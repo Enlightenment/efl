@@ -139,6 +139,8 @@ ecore_con_url_new(const char *url)
 #ifdef HAVE_CURL
    Ecore_Con_Url *url_con;
 
+   if (!init_count) return NULL;
+
    url_con = calloc(1, sizeof(Ecore_Con_Url));
    if (!url_con) return NULL;
 
@@ -256,7 +258,7 @@ _ecore_con_url_data_cb(void *buffer, size_t size, size_t nmemb, void *userp)
 	e->data = buffer;
 	e->size = real_size;
 	ecore_event_add(ECORE_CON_EVENT_URL_DATA, e,
-	      _ecore_con_event_url_data_free, NULL);
+			_ecore_con_event_url_data_free, NULL);
      }
    return real_size;
 }
@@ -306,16 +308,15 @@ _ecore_con_url_perform(Ecore_Con_Url *url_con)
 		    {
 		       FD_SET(fd, &_current_fd_set);
 		       url_con->fd_handler = ecore_main_fd_handler_add(fd, flags,
-			     _ecore_con_url_fd_handler,
-			     NULL, NULL, NULL);
+								       _ecore_con_url_fd_handler,
+								       NULL, NULL, NULL);
 		    }
 	       }
 	  }
 	if (!url_con->fd_handler)
 	  {
 	     /* Failed to set up an fd_handler */
-	     if (curlm)
-	       curl_multi_remove_handle(curlm, url_con->curl_easy);
+	     curl_multi_remove_handle(curlm, url_con->curl_easy);
 	     url_con->active = 0;
 	     return 0;
 	  }
@@ -362,7 +363,7 @@ _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match)
 		  if (url_con->fd_handler)
 		    {
 		       FD_CLR(ecore_main_fd_handler_fd_get(url_con->fd_handler),
-			     &_current_fd_set);
+			      &_current_fd_set);
 		       ecore_main_fd_handler_del(url_con->fd_handler);
 		    }
 		  ecore_list_remove(_url_con_list);
@@ -375,7 +376,8 @@ _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match)
 			 {
 			    e->url_con = url_con;
 			    e->status = curlmsg->data.result;
-			    ecore_event_add(ECORE_CON_EVENT_URL_COMPLETE, e, _ecore_con_event_url_complete_free, NULL);
+			    ecore_event_add(ECORE_CON_EVENT_URL_COMPLETE, e,
+					    _ecore_con_event_url_complete_free, NULL);
 			 }
 		    }
 		  break;
