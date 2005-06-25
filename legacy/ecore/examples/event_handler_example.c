@@ -31,7 +31,7 @@ int event_exit(void *data, int ev_type, void *ev)
 int main(int argc, char **argv)
 {
    ecore_init();
-   ecore_app_args_set(argc, argv);
+   ecore_app_args_set(argc, (const char **) argv);
    handler1 = ecore_event_handler_add(ECORE_EVENT_SIGNAL_EXIT, 
 				      event_exit, NULL);
    handler2 = ecore_event_handler_add(ECORE_EVENT_SIGNAL_HUP, 
