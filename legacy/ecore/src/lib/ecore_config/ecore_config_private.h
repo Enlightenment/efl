@@ -21,6 +21,7 @@ Ecore_Config_DB_File *_ecore_config_db_open_read(const char *file);
 Ecore_Config_DB_File *_ecore_config_db_open_write(const char *file);
 void                  _ecore_config_db_close(Ecore_Config_DB_File *db);
 char                **_ecore_config_db_keys_get(Ecore_Config_DB_File *db, int *num_ret);
+Ecore_Config_Type     _ecore_config_db_key_type_get(Ecore_Config_DB_File *db, const char *key);
 int                   _ecore_config_db_read(Ecore_Config_DB_File *db, const char *key);
 void                  _ecore_config_db_write(Ecore_Config_DB_File *db, const char *key);
 

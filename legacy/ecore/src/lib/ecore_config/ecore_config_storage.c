@@ -63,10 +63,11 @@ ecore_config_file_load(const char *file)
    Ecore_Config_DB_File  *db;
    char                 **keys;
    int                    key_count;
-   double                 ftmp;
-   int                    x, pt;
-   int                    itmp;
-   Ecore_Config_Type      type;
+   int                    x;
+   // double                 ftmp;	UNUSED
+   // int                    pt;	UNUSED
+   // int                    itmp; 	UNUSED
+   // Ecore_Config_Type      type;	UNUSED
    char                   *data;
 
    db = NULL;

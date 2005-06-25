@@ -225,7 +225,7 @@ _ecore_config_db_write(Ecore_Config_DB_File *db, const char *key)
    char buf[256];
    int num;
    char *prev_locale;
-   Ecore_Config_Prop *prop;
+   // Ecore_Config_Prop *prop;
    Ecore_Config_Type type;
    
    
@@ -236,11 +236,11 @@ _ecore_config_db_write(Ecore_Config_DB_File *db, const char *key)
 	  {
 	     case PT_INT:
 	       num = snprintf(buf, sizeof(buf), "%c %i ", (char) type,
-			      ecore_config_int_get(key));
+			      (int) ecore_config_int_get(key));
 	       break;
 	     case PT_BLN:
 	       num = snprintf(buf, sizeof(buf), "%c %i ", (char) type,
-			      ecore_config_int_get(key));
+			      (int) ecore_config_int_get(key));
 	       break;
 	     case PT_FLT:
 	       num = snprintf(buf, sizeof(buf), "%c %16.16f ", (char) type,
