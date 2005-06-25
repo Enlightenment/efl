@@ -242,7 +242,7 @@ ecore_x_window_prop_string_get(Ecore_X_Window win, Ecore_X_Atom type)
    if (XGetTextProperty(_ecore_x_disp, win, &xtp, type))
      {
 	int      items;
-	char   **list;
+	char   **list = NULL;
 	Status   s;
 	
 	if (xtp.encoding == ECORE_X_ATOM_UTF8_STRING)
