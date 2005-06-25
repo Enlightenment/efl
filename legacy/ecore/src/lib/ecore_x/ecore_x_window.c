@@ -748,3 +748,21 @@ ecore_x_window_pixel_gravity_set(Ecore_X_Window win, Ecore_X_Gravity grav)
    att.bit_gravity = grav;
    XChangeWindowAttributes(_ecore_x_disp, win, CWBitGravity, &att);
 }
+
+void
+ecore_x_window_pixmap_set(Ecore_X_Window win, Ecore_X_Pixmap pmap)
+{
+   XSetWindowBackgroundPixmap(_ecore_x_disp, win, pmap);
+}
+
+void
+ecore_x_window_area_clear(Ecore_X_Window win, int x, int y, int w, int h)
+{
+   XClearArea(_ecore_x_disp, win, x, y, w, h, False);
+}
+
+void
+ecore_x_window_area_expose(Ecore_X_Window win, int x, int y, int w, int h)
+{
+   XClearArea(_ecore_x_disp, win, x, y, w, h, True);
+}

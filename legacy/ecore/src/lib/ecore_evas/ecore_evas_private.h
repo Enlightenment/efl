@@ -93,6 +93,7 @@ struct _Ecore_Evas_Engine
       Ecore_X_GC     gc;
       Region         damages;
       unsigned char  direct_resize : 1;
+      unsigned char  using_bg_pixmap : 1;
       struct {
 	   /*
 	   unsigned char modal : 1;
