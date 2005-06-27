@@ -692,6 +692,7 @@ _ecore_evas_x_idle_enter(void *data __UNUSED__)
 			      ecore_x_window_shape_mask_set(ee->engine.x.win_container, ee->engine.x.mask);
 			 }
 		    }
+		  if (updates) evas_render_updates_free(updates);
 	       }
 	     else
 	       {
