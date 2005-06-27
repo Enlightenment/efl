@@ -152,6 +152,7 @@ _edje_var_init(Edje *ed)
    if (!ed) return;
    if (!ed->collection) return;
    if (!ed->collection->script) return;
+   if (ed->var_pool) return;
    ed->var_pool = calloc(1, sizeof(Edje_Var_Pool));
    if (!ed->var_pool) return;
    ed->var_pool->size = embryo_program_variable_count_get(ed->collection->script);
