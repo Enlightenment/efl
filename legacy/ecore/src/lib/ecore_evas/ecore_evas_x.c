@@ -1456,8 +1456,10 @@ _ecore_evas_x_avoid_damage_set(Ecore_Evas *ee, int on)
 	       evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
 	     if (ee->engine.x.direct_resize)
 	       {
+/* Turn this off for now 		  
 		  ee->engine.x.using_bg_pixmap = 1;
 		  ecore_x_window_pixmap_set(ee->engine.x.win, ee->engine.x.pmap);
+ */
 	       }
 	  }
 	else
@@ -1695,8 +1697,10 @@ ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, int on)
      {
 	if (ee->engine.x.direct_resize)
 	  {
+/* turn this off for now	     
 	     ee->engine.x.using_bg_pixmap = 1;
 	     ecore_x_window_pixmap_set(ee->engine.x.win, ee->engine.x.pmap);
+ */
 	  }
 	else
 	  {
