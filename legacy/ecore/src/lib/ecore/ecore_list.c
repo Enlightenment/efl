@@ -369,6 +369,7 @@ static int _ecore_list_append_0(Ecore_List * list, Ecore_List_Node *end)
 	if (list->first == NULL) {
 		list->first = end;
 		list->index = 0;
+		list->current = NULL;
 	}
 
 	list->nodes++;
@@ -1322,10 +1323,10 @@ static void *_ecore_dlist_goto_index(Ecore_DList *list, int index)
 	if (ecore_list_is_empty(ECORE_LIST(list)))
 		return FALSE;
 
-	if (index > ecore_list_nodes(ECORE_LIST(list)) || index < 1)
+	if (index > ecore_list_nodes(ECORE_LIST(list)) || index < 0)
 		return FALSE;
 
-	if (ECORE_LIST(list)->index > ECORE_LIST(list)->nodes)
+	if (ECORE_LIST(list)->index >= ECORE_LIST(list)->nodes)
 		_ecore_list_goto_last(ECORE_LIST(list));
 
 	if (index < ECORE_LIST(list)->index)
