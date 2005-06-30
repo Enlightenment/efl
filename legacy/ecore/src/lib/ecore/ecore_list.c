@@ -1258,9 +1258,18 @@ void *ecore_dlist_remove_first(Ecore_DList * list)
  */
 int ecore_dlist_remove_destroy(Ecore_DList *list)
 {
+	void *data;
+
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	return ecore_list_remove_destroy(list);
+	data = ecore_dlist_remove(list);
+	if (!data)
+		return FALSE;
+
+	if (list->free_func)
+		list->free_func(data);
+
+	return TRUE;
 }
 
 static void *_ecore_dlist_remove_first(Ecore_DList *list)
