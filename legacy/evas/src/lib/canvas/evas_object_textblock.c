@@ -2119,7 +2119,7 @@ evas_object_textblock_char_pos_get(Evas_Object *obj, int pos, Evas_Coord *cx, Ev
    MAGIC_CHECK_END();
    if (o->format.dirty)
      evas_object_textblock_format_calc(obj);
-   lnode = evas_object_textblock_layout_node_pos_get(obj, o->pos, &ps);
+   lnode = evas_object_textblock_layout_node_pos_get(obj, pos, &ps);
    if (lnode)
      {
 	int ret, x = 0, y = 0, w = 0, h = 0;
