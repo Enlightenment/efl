@@ -52,7 +52,7 @@ ecore_exe_run(const char *exe_cmd, const void *data)
      }
    setsid();
    execl("/bin/sh", "/bin/sh", "-c", exe_cmd, (char *)NULL);
-   exit(0);
+   exit(127);
    return NULL;
 }
 

@@ -334,13 +334,13 @@ bg_cb_key_down(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	if (!ecore_evas_shaped_get(ee))
 	  {
 	     evas_object_hide(o_bg_rect);
-	     evas_object_hide(o_bg);
+//	     evas_object_hide(o_bg);
 	     ecore_evas_shaped_set(ee, 1);
 	  }
 	else
 	  {
 	     evas_object_show(o_bg_rect);
-	     evas_object_show(o_bg);
+//	     evas_object_show(o_bg);
 	     ecore_evas_shaped_set(ee, 0);
 	  }
      }

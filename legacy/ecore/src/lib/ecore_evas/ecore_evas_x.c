@@ -21,6 +21,178 @@ static Ecore_Event_Handler *ecore_evas_event_handlers[16];
 static Ecore_Idle_Enterer *ecore_evas_idle_enterer = NULL;
 
 static void
+_ecore_evas_x_render(Ecore_Evas *ee)
+{
+#ifdef BUILD_ECORE_EVAS_BUFFER
+   Evas_List *ll;
+#endif
+   
+   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
+#ifdef BUILD_ECORE_EVAS_BUFFER
+   for (ll = ee->sub_ecore_evas; ll; ll = ll->next)
+     {
+	Ecore_Evas *ee2;
+	
+	ee2 = ll->data;
+	if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
+	_ecore_evas_buffer_render(ee2);
+	if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
+     }
+#endif	
+   if (ee->prop.avoid_damage)
+     {
+	Evas_List *updates, *l;
+	
+	updates = evas_render_updates(ee->evas);
+#if 0
+	for (l = updates; l; l = l->next)
+	  {
+	     Evas_Rectangle *r;
+	     
+	     r = l->data;
+	     printf("DMG render [%i %i %ix%i]\n",
+		    r->x, r->y, r->w, r->h);
+	  }
+#endif		       
+	if (ee->engine.x.using_bg_pixmap)
+	  {
+	     if (updates)
+	       {
+		  for (l = updates; l; l = l->next)
+		    {
+		       Evas_Rectangle *r;
+		       
+		       r = l->data;
+		       ecore_x_window_area_clear(ee->engine.x.win, r->x, r->y, r->w, r->h);
+		    }
+		  if ((ee->shaped) && (updates))
+		    {
+		       if (ee->prop.fullscreen)
+			 ecore_x_window_shape_mask_set(ee->engine.x.win, ee->engine.x.mask);
+		       else
+			 ecore_x_window_shape_mask_set(ee->engine.x.win_container, ee->engine.x.mask);
+		    }
+	       }
+	     if (updates) evas_render_updates_free(updates);
+	  }
+	else
+	  {
+	     for (l = updates; l; l = l->next)
+	       {
+		  Evas_Rectangle *r;
+		  XRectangle xr;
+		  Region tmpr;
+		  
+		  if (!ee->engine.x.damages)
+		    ee->engine.x.damages = XCreateRegion();
+		  r = l->data;
+		  tmpr = XCreateRegion();
+		  if (ee->rotation == 0)
+		    {
+		       xr.x = r->x;
+		       xr.y = r->y;
+		       xr.width = r->w;
+		       xr.height = r->h;
+		    }
+		  else if (ee->rotation == 90)
+		    {
+		       xr.x = r->y;
+		       xr.y = ee->h - r->x - r->w;
+		       xr.width = r->h;
+		       xr.height = r->w;
+		    }
+		  else if (ee->rotation == 180)
+		    {
+		       xr.x = ee->w - r->x - r->w;
+		       xr.y = ee->h - r->y - r->h;
+		       xr.width = r->w;
+		       xr.height = r->h;
+		    }
+		  else if (ee->rotation == 270)
+		    {
+		       xr.x = ee->w - r->y - r->h;
+		       xr.y = r->x;
+		       xr.width = r->h;
+		       xr.height = r->w;
+		    }
+		  XUnionRectWithRegion(&xr, ee->engine.x.damages, tmpr);
+		  XDestroyRegion(ee->engine.x.damages);
+		  ee->engine.x.damages = tmpr;
+	       }
+	     if (ee->engine.x.damages)
+	       {
+		  if ((ee->shaped) && (updates))
+		    {
+		       if (ee->prop.fullscreen)
+			 ecore_x_window_shape_mask_set(ee->engine.x.win, ee->engine.x.mask);
+		       else
+			 ecore_x_window_shape_mask_set(ee->engine.x.win_container, ee->engine.x.mask);
+		    }
+		  XSetRegion(ecore_x_display_get(), ee->engine.x.gc, ee->engine.x.damages);
+		  /* debug rendering */
+		  /*		  
+		   XSetForeground(ecore_x_display_get(), ee->engine.x.gc, rand());
+		   XFillRectangle(ecore_x_display_get(), ee->engine.x.win, ee->engine.x.gc,
+		   0, 0, ee->w, ee->h);
+		   XSync(ecore_x_display_get(), False);
+		   usleep(20000);
+		   XSync(ecore_x_display_get(), False);
+		   */
+		  ecore_x_pixmap_paste(ee->engine.x.pmap, ee->engine.x.win, ee->engine.x.gc,
+				       0, 0, ee->w, ee->h, 0, 0);
+		  XDestroyRegion(ee->engine.x.damages);
+		  ee->engine.x.damages = 0;
+	       }
+	     if (updates) evas_render_updates_free(updates);
+	  }
+     }
+   else if ((ee->visible) || 
+	    ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
+	    ((ee->should_be_visible) && (ee->prop.override)))
+     {
+	if (ee->shaped)
+	  {
+	     Evas_List *updates;
+	     
+	     updates = evas_render_updates(ee->evas);
+	     if (updates)
+	       {
+		  if (ee->prop.fullscreen)
+		    ecore_x_window_shape_mask_set(ee->engine.x.win, ee->engine.x.mask);
+		  else
+		    ecore_x_window_shape_mask_set(ee->engine.x.win_container, ee->engine.x.mask);
+		  evas_render_updates_free(updates);
+	       }
+	  }
+	else
+	  {
+	     Evas_List *updates;
+	     
+	     updates = evas_render_updates(ee->evas);
+	     if (updates)
+	       {
+#if 0
+		  Evas_List *l;
+		  
+		  printf("RENDER [%p] [%i] [%ix%i]\n",
+			 ee, ee->visible, ee->w, ee->h);
+		  for (l = updates; l; l = l->next)
+		    {
+		       Evas_Rectangle *r;
+		       
+		       r = l->data;
+		       printf("   render [%i %i %ix%i]\n",
+			      r->x, r->y, r->w, r->h);
+		    }
+#endif		       
+		  evas_render_updates_free(updates);
+	       }
+	  }
+     }
+   if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
+}
+
+static void
 _ecore_evas_x_mouse_move_process(Ecore_Evas *ee, int x, int y)
 {
    ee->mouse.x = x;
@@ -631,8 +803,8 @@ static int
 _ecore_evas_x_idle_enter(void *data __UNUSED__)
 {
    Ecore_Oldlist *l;
-   double t1 = 0.;
-   double t2 = 0.;
+   double t1 = 0.0;
+   double t2 = 0.0;
 
    if (_ecore_evas_fps_debug)
      {
@@ -641,176 +813,10 @@ _ecore_evas_x_idle_enter(void *data __UNUSED__)
    for (l = (Ecore_Oldlist *)ecore_evases; l; l = l->next)
      {
 	Ecore_Evas *ee;
-#ifdef BUILD_ECORE_EVAS_BUFFER
-	Evas_List *ll;
-#endif
 	
 	ee = (Ecore_Evas *)l;
-	if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
-#ifdef BUILD_ECORE_EVAS_BUFFER
-	for (ll = ee->sub_ecore_evas; ll; ll = ll->next)
-	  {
-	     Ecore_Evas *ee2;
-	     
-	     ee2 = ll->data;
-	     if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
-	     _ecore_evas_buffer_render(ee2);
-	     if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
-	  }
-#endif	
-	if (ee->prop.avoid_damage)
-	  {
-	     Evas_List *updates, *l;
-	     
-	     updates = evas_render_updates(ee->evas);
-#if 0
-	     for (l = updates; l; l = l->next)
-	       {
-		  Evas_Rectangle *r;
-		  
-		  r = l->data;
-		  printf("DMG render [%i %i %ix%i]\n",
-			 r->x, r->y, r->w, r->h);
-	       }
-#endif		       
-	     if (ee->engine.x.using_bg_pixmap)
-	       {
-		  if (updates)
-		    {
-		       for (l = updates; l; l = l->next)
-			 {
-			    Evas_Rectangle *r;
-			    
-			    r = l->data;
-			    ecore_x_window_area_clear(ee->engine.x.win, r->x, r->y, r->w, r->h);
-			 }
-		       if ((ee->shaped) && (updates))
-			 {
-			    if (ee->prop.fullscreen)
-			      ecore_x_window_shape_mask_set(ee->engine.x.win, ee->engine.x.mask);
-			    else
-			      ecore_x_window_shape_mask_set(ee->engine.x.win_container, ee->engine.x.mask);
-			 }
-		    }
-		  if (updates) evas_render_updates_free(updates);
-	       }
-	     else
-	       {
-		  for (l = updates; l; l = l->next)
-		    {
-		       Evas_Rectangle *r;
-		       XRectangle xr;
-		       Region tmpr;
-		       
-		       if (!ee->engine.x.damages)
-			 ee->engine.x.damages = XCreateRegion();
-		       r = l->data;
-		       tmpr = XCreateRegion();
-		       if (ee->rotation == 0)
-			 {
-			    xr.x = r->x;
-			    xr.y = r->y;
-			    xr.width = r->w;
-			    xr.height = r->h;
-			 }
-		       else if (ee->rotation == 90)
-			 {
-			    xr.x = r->y;
-			    xr.y = ee->h - r->x - r->w;
-			    xr.width = r->h;
-			    xr.height = r->w;
-			 }
-		       else if (ee->rotation == 180)
-			 {
-			    xr.x = ee->w - r->x - r->w;
-			    xr.y = ee->h - r->y - r->h;
-			    xr.width = r->w;
-			    xr.height = r->h;
-			 }
-		       else if (ee->rotation == 270)
-			 {
-			    xr.x = ee->w - r->y - r->h;
-			    xr.y = r->x;
-			    xr.width = r->h;
-			    xr.height = r->w;
-			 }
-		       XUnionRectWithRegion(&xr, ee->engine.x.damages, tmpr);
-		       XDestroyRegion(ee->engine.x.damages);
-		       ee->engine.x.damages = tmpr;
-		    }
-		  if (ee->engine.x.damages)
-		    {
-		       if ((ee->shaped) && (updates))
-			 {
-			    if (ee->prop.fullscreen)
-			      ecore_x_window_shape_mask_set(ee->engine.x.win, ee->engine.x.mask);
-			    else
-			      ecore_x_window_shape_mask_set(ee->engine.x.win_container, ee->engine.x.mask);
-			 }
-		       XSetRegion(ecore_x_display_get(), ee->engine.x.gc, ee->engine.x.damages);
-/* debug rendering */
-/*		  
-		  XSetForeground(ecore_x_display_get(), ee->engine.x.gc, rand());
-		  XFillRectangle(ecore_x_display_get(), ee->engine.x.win, ee->engine.x.gc,
-				 0, 0, ee->w, ee->h);
-		  XSync(ecore_x_display_get(), False);
-		  usleep(20000);
-		  XSync(ecore_x_display_get(), False);
- */
-		       ecore_x_pixmap_paste(ee->engine.x.pmap, ee->engine.x.win, ee->engine.x.gc,
-					    0, 0, ee->w, ee->h, 0, 0);
-		       XDestroyRegion(ee->engine.x.damages);
-		       ee->engine.x.damages = 0;
-		    }
-		  if (updates) evas_render_updates_free(updates);
-	       }
-	  }
-	else if ((ee->visible) || 
-		 ((ee->should_be_visible) && (ee->prop.fullscreen)) ||
-		 ((ee->should_be_visible) && (ee->prop.override)))
-	  {
-	     if (ee->shaped)
-	       {
-		  Evas_List *updates;
-		  
-		  updates = evas_render_updates(ee->evas);
-		  if (updates)
-		    {
-		       if (ee->prop.fullscreen)
-			 ecore_x_window_shape_mask_set(ee->engine.x.win, ee->engine.x.mask);
-		       else
-			 ecore_x_window_shape_mask_set(ee->engine.x.win_container, ee->engine.x.mask);
-		       evas_render_updates_free(updates);
-		    }
-	       }
-	     else
-	       {
-		  Evas_List *updates;
-		  
-		  updates = evas_render_updates(ee->evas);
-		  if (updates)
-		    {
-#if 0
-		       Evas_List *l;
-
-		       printf("RENDER [%p] [%i] [%ix%i]\n",
-			      ee, ee->visible, ee->w, ee->h);
-		       for (l = updates; l; l = l->next)
-			 {
-			    Evas_Rectangle *r;
-			    
-			    r = l->data;
-			    printf("   render [%i %i %ix%i]\n",
-				   r->x, r->y, r->w, r->h);
-			 }
-#endif		       
-		       evas_render_updates_free(updates);
-		    }
-	       }
-	  }
-	if (ee->func.fn_post_render) ee->func.fn_post_render(ee);
+	_ecore_evas_x_render(ee);
      }
-   ecore_x_flush();
    if (_ecore_evas_fps_debug)
      {
 	t2 = ecore_time_get();
@@ -1067,12 +1073,14 @@ _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 static void
 _ecore_evas_x_show(Ecore_Evas *ee)
 {
+   ee->should_be_visible = 1;
+   if ((ee->shaped) && (ee->prop.avoid_damage))
+     _ecore_evas_x_render(ee);
    if (!ee->prop.fullscreen)
      ecore_x_window_show(ee->engine.x.win_container);
    ecore_x_window_show(ee->engine.x.win);
    if (ee->prop.fullscreen)
      ecore_x_window_focus(ee->engine.x.win);
-   ee->should_be_visible = 1;
 }
 
 static void
