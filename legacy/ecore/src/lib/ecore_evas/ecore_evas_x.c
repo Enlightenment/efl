@@ -1074,7 +1074,7 @@ static void
 _ecore_evas_x_show(Ecore_Evas *ee)
 {
    ee->should_be_visible = 1;
-   if ((ee->shaped) && (ee->prop.avoid_damage))
+   if (ee->prop.avoid_damage)
      _ecore_evas_x_render(ee);
    if (!ee->prop.fullscreen)
      ecore_x_window_show(ee->engine.x.win_container);
