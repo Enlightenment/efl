@@ -16,10 +16,8 @@ static double em_pos_get(void *ef);
 static double em_ratio_get(void *ef);
 static int em_seekable(void *ef);
 static void em_frame_done(void *ef);
-static Emotion_Format em_format_get(void *ef);
-static void em_video_data_size_get(void *ef, int *w, int *h);
+static void em_yuv_size_get(void *ef, int *w, int *h);
 static int em_yuv_rows_get(void *ef, int w, int h, unsigned char **yrows, unsigned char **urows, unsigned char **vrows);
-static int em_bgra_data_get(void *ef, unsigned char **bgra_data);
 static void em_event_feed(void *ef, int event);
 static void em_event_mouse_button_feed(void *ef, int button, int x, int y);
 static void em_event_mouse_move_feed(void *ef, int x, int y);
@@ -546,21 +544,8 @@ em_frame_done(void *ef)
      }
 }
 
-static Emotion_Format em_format_get(void *ef)
-{
-   Emotion_Xine_Video *ev;
-   Emotion_Xine_Video_Frame *fr;
-   
-   ev = (Emotion_Xine_Video *)ef;
-   fr = ev->cur_frame;
-
-   if (fr)
-     return fr->format;
-   return EMOTION_YV12;
-}
-
 static void
-em_video_data_size_get(void *ef, int *w, int *h)
+em_yuv_size_get(void *ef, int *w, int *h)
 {
    Emotion_Xine_Video *ev;
    Emotion_Xine_Video_Frame *fr;
@@ -593,23 +578,6 @@ em_yuv_rows_get(void *ef, int w, int h, unsigned char **yrows, unsigned char **u
 	for (i = 0; i < h; i++) yrows[i] = fr->y + (i * fr->y_stride);
 	for (i = 0; i < (h / 2); i++) urows[i] = fr->u + (i * fr->u_stride);
 	for (i = 0; i < (h / 2); i++) vrows[i] = fr->v + (i * fr->v_stride);
-	return 1;
-     }
-   return 0;
-}
-
-static int
-em_bgra_data_get(void *ef, unsigned char **bgra_data)
-{
-   Emotion_Xine_Video *ev;
-   Emotion_Xine_Video_Frame *fr;
-   
-   ev = (Emotion_Xine_Video *)ef;
-   fr = ev->cur_frame;
-   if (!fr) return 0;
-   if (fr->bgra_data)
-     {
-   *bgra_data = fr->bgra_data;
 	return 1;
      }
    return 0;
@@ -1369,10 +1337,8 @@ static Emotion_Video_Module em_module =
      em_audio_handled, /* audio_handled */
      em_seekable, /* seekable */
      em_frame_done, /* frame_done */
-     em_format_get, /* format_get */
-     em_video_data_size_get, /* video_data_size_get */
+     em_yuv_size_get, /* yuv_size_get */
      em_yuv_rows_get, /* yuv_rows_get */
-     em_bgra_data_get, /* bgra_data_get */
      em_event_feed, /* event_feed */
      em_event_mouse_button_feed, /* event_mouse_button_feed */
      em_event_mouse_move_feed, /* event_mouse_move_feed */

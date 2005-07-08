@@ -982,55 +982,42 @@ _pos_set_job(void *data)
 static void
 _pixels_get(void *data, Evas_Object *obj)
 {
+   Evas_Pixel_Import_Source ps;
    int iw, ih, w, h;
+   int i;
+   unsigned char **rows;
    Smart_Data *sd;
-   Emotion_Format format;
 
    sd = data;
    evas_object_image_size_get(obj, &iw, &ih);
-   sd->module->video_data_size_get(sd->video, &w, &h);
+   sd->module->yuv_size_get(sd->video, &w, &h);
    if ((w != iw) || (h != ih))
      {
-       evas_object_image_size_set(obj, w, h);
-       iw = w;
-       ih = h;
+	evas_object_image_size_set(obj, w, h);
+	iw = w;
+	ih = h;
      }
-   format = sd->module->format_get(sd->video);
-   if (format == EMOTION_YV12)
-     {
-       unsigned char **rows;
-       Evas_Pixel_Import_Source ps;
+   ps.format = EVAS_PIXEL_FORMAT_YUV420P_601;
+   ps.w = iw;
+   ps.h = ih;
    
-       ps.format = EVAS_PIXEL_FORMAT_YUV420P_601;
-       ps.w = iw;
-       ps.h = ih;
-      
-       ps.rows = malloc(ps.h * 2 * sizeof(void *));
-       if (!ps.rows)
-         {
-           sd->module->frame_done(sd->video);
-           return;
-         }
-   
-       rows = (unsigned char **)ps.rows;
-      
-       if (sd->module->yuv_rows_get(sd->video, iw, ih,
-             rows, 
-            &rows[ps.h], 
-            &rows[ps.h + (ps.h / 2)]))
-         evas_object_image_pixels_import(obj, &ps);
-       evas_object_image_pixels_dirty_set(obj, 0);
-       free(ps.rows);
-   }
-   else if (format == EMOTION_BGRA)
+   ps.rows = malloc(ps.h * 2 * sizeof(void *));
+   if (!ps.rows)
      {
-       unsigned char *bgra_data;
-       if (sd->module->bgra_data_get(sd->video, &bgra_data));
-         {
-           evas_object_image_data_set(obj, bgra_data);
-         }
+	sd->module->frame_done(sd->video);
+	return;
      }
-
+   
+   
+   rows = (unsigned char **)ps.rows;
+   
+   if (sd->module->yuv_rows_get(sd->video, iw, ih,
+				rows, 
+				&rows[ps.h], 
+				&rows[ps.h + (ps.h / 2)]))
+     evas_object_image_pixels_import(obj, &ps);
+   evas_object_image_pixels_dirty_set(obj, 0);
+   free(ps.rows);
    sd->module->frame_done(sd->video);
 }
 

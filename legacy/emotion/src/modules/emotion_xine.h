@@ -57,9 +57,7 @@ struct _Emotion_Xine_Video_Frame
 {
    int            w, h;
    double         ratio;
-   Emotion_Format format;
    unsigned char *y, *u, *v;
-   unsigned char *bgra_data;
    int            y_stride, u_stride, v_stride;
    Evas_Object   *obj;
    double         timestamp;
