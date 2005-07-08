@@ -15,7 +15,15 @@
 #define META_TRACK_YEAR 6
 #define META_TRACK_DISCID 7
 
+typedef enum _Emotion_Format Emotion_Format;
 typedef struct _Emotion_Video_Module Emotion_Video_Module;
+
+enum _Emotion_Format
+{
+   EMOTION_YV12,
+   EMOTION_YUY2,     /* unused for now since evas does not support yuy2 format */
+   EMOTION_BGRA
+};
 
 struct _Emotion_Video_Module
 {
@@ -35,8 +43,10 @@ struct _Emotion_Video_Module
    int          (*audio_handled) (void *ef);
    int          (*seekable) (void *ef);
    void         (*frame_done) (void *ef);
-   void         (*yuv_size_get) (void *ef, int *w, int *h);
+   Emotion_Format (*format_get) (void *ef);
+   void         (*video_data_size_get) (void *ef, int *w, int *h);
    int          (*yuv_rows_get) (void *ef, int w, int h, unsigned char **yrows, unsigned char **urows, unsigned char **vrows);
+   int          (*bgra_data_get) (void *ef, unsigned char **bgra_data);
    void         (*event_feed) (void *ef, int event);
    void         (*event_mouse_button_feed) (void *ef, int button, int x, int y);
    void         (*event_mouse_move_feed) (void *ef, int x, int y);

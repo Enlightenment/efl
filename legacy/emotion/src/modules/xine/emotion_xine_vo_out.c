@@ -94,6 +94,8 @@ static void         _emotion_overlay_blend         (vo_driver_t *vo_driver, vo_f
 static void         _emotion_overlay_mem_blend_8   (uint8_t *mem, uint8_t val, uint8_t o, size_t sz);
 static void         _emotion_overlay_blend_yuv     (uint8_t *dst_base[3], vo_overlay_t * img_overl, int dst_width, int dst_height, int dst_pitches[3]);
 
+static void         _emotion_yuy2_to_bgra32        (int width, int height, unsigned char *src, unsigned char *dst);
+
 /***************************************************************************/
 static vo_info_t _emotion_info = 
 {
@@ -215,7 +217,7 @@ _emotion_capabilities_get(vo_driver_t *vo_driver)
    
    dv = (Emotion_Driver *)vo_driver;
 //   printf("emotion: _emotion_capabilities_get()\n");
-   return VO_CAP_YV12;
+   return VO_CAP_YV12 | VO_CAP_YUY2;
 }
 
 /***************************************************************************/
@@ -358,6 +360,7 @@ _emotion_frame_format_update(vo_driver_t *vo_driver, vo_frame_t *vo_frame, uint3
 	       {
 		  int y_size, uv_size;
 		  
+        fr->frame.format = EMOTION_YV12;
 		  fr->vo_frame.pitches[0] = 8 * ((width + 7) / 8);
 		  fr->vo_frame.pitches[1] = 8 * ((width + 15) / 16);
 		  fr->vo_frame.pitches[2] = 8 * ((width + 15) / 16);
@@ -374,9 +377,36 @@ _emotion_frame_format_update(vo_driver_t *vo_driver, vo_frame_t *vo_frame, uint3
 		  fr->frame.y = fr->vo_frame.base[0];
 		  fr->frame.u = fr->vo_frame.base[1];
 		  fr->frame.v = fr->vo_frame.base[2];
+        fr->frame.bgra_data = NULL;
 		  fr->frame.y_stride = fr->vo_frame.pitches[0];
 		  fr->frame.u_stride = fr->vo_frame.pitches[1];
 		  fr->frame.v_stride = fr->vo_frame.pitches[2];
+		  fr->frame.obj = dv->ev->obj;
+	       }
+	     break;
+      case XINE_IMGFMT_YUY2: 
+	       {
+		  int y_size, uv_size;
+		  
+        fr->frame.format = EMOTION_BGRA;
+		  fr->vo_frame.pitches[0] = 8 * ((width + 3) / 4);
+		  fr->vo_frame.pitches[1] = 0;
+		  fr->vo_frame.pitches[2] = 0;
+		  
+		  fr->vo_frame.base[0] = malloc(fr->vo_frame.pitches[0] * height);
+		  fr->vo_frame.base[1] = NULL;
+		  fr->vo_frame.base[2] = NULL;
+        
+		  fr->frame.w = fr->width;
+		  fr->frame.h = fr->height;
+		  fr->frame.ratio = fr->vo_frame.ratio;
+		  fr->frame.y = NULL;
+		  fr->frame.u = NULL;
+		  fr->frame.v = NULL;
+        fr->frame.bgra_data = malloc(fr->width * fr->height * 4);
+		  fr->frame.y_stride = 0;
+		  fr->frame.u_stride = 0;
+		  fr->frame.v_stride = 0;
 		  fr->frame.obj = dv->ev->obj;
 	       }
 	     break;
@@ -386,7 +416,10 @@ _emotion_frame_format_update(vo_driver_t *vo_driver, vo_frame_t *vo_frame, uint3
 	if (((format == XINE_IMGFMT_YV12)
 	     && ((fr->vo_frame.base[0] == NULL)
 		 || (fr->vo_frame.base[1] == NULL)
-		 || (fr->vo_frame.base[2] == NULL))))
+		 || (fr->vo_frame.base[2] == NULL)))
+      || ((format == XINE_IMGFMT_YUY2)
+	     && ((fr->vo_frame.base[0] == NULL)
+       || (fr->frame.bgra_data == NULL))))
 	  {
 	     _emotion_frame_data_free(fr);
 	  }
@@ -408,6 +441,11 @@ _emotion_frame_display(vo_driver_t *vo_driver, vo_frame_t *vo_frame)
      {
 	void *buf;
 	int ret;
+
+   if (fr->format == XINE_IMGFMT_YUY2)
+     {
+   _emotion_yuy2_to_bgra32(fr->width, fr->height, fr->vo_frame.base[0], fr->frame.bgra_data);
+     }
 	
 	buf = &(fr->frame);
 	fr->frame.timestamp = (double)fr->vo_frame.vpts / 90000.0;
@@ -443,6 +481,11 @@ _emotion_frame_data_free(Emotion_Frame *fr)
 	fr->frame.y = fr->vo_frame.base[0];
 	fr->frame.u = fr->vo_frame.base[1];
 	fr->frame.v = fr->vo_frame.base[2];
+     }
+   if (fr->frame.bgra_data)
+     {
+   free(fr->frame.bgra_data);
+   fr->frame.bgra_data = NULL;
      }
 }
 
@@ -671,4 +714,66 @@ static void _emotion_overlay_blend_yuv(uint8_t *dst_base[3], vo_overlay_t * img_
 	 dst_cb += dst_pitches[1];
       }
    }
+}
+
+/*MoOm:
+* yuy2 to bgra converter taken from vgrabbj (http://vgrabbj.gecius.de)
+* This code is under GPLv2. Copyright Jens Gecius.
+* If it causes problem with emotion BSD license, tell me, I'll remove it!
+* TODO: Really need to improve this converter! 
+*/ 
+#define LIMIT(x)  ((x) > 0xffff ? 0xff : ((x) <= 0xff ? 0 : ((x) >> 8 )))
+
+static void
+_emotion_yuy2_to_bgra32(int width, int height, unsigned char *src, unsigned char *dst)
+{
+   int line, col, linewidth;
+   int y, yy;
+   int u, v;
+   int vr, ug, vg, ub;
+   int r, g, b;
+   unsigned char *py, *pu, *pv;
+
+   linewidth = width - (width >> 1);
+   py = src;
+   pu = src + 1;
+   pv = src + 3;
+
+   y = *py;
+   yy = y << 8;
+   u = *pu - 128;
+   ug =   88 * u;
+   ub =  454 * u;
+   v = *pv - 128;
+   vg =  183 * v;
+   vr =  359 * v;
+
+   for (line = 0; line < height; line++)
+     {
+       for (col = 0; col < width; col++)
+         {
+           r = LIMIT(yy + vr);
+           g = LIMIT(yy - ug - vg);
+           b = LIMIT(yy + ub);
+           *dst++ = b;
+           *dst++ = g;
+           *dst++ = r;
+           *dst++ = 0;
+         
+           py += 2;
+           y = *py;
+           yy = y << 8;
+           if ((col & 1) == 1)
+             {
+               pu += 4; //skip yvy every second y
+               pv += 4; //skip yuy every second y
+             }
+           u = *pu - 128;
+           ug = 88 * u;
+           ub = 454 * u;
+           v = *pv - 128;
+           vg = 183 * v;
+           vr = 359 * v;
+         }
+     }
 }
