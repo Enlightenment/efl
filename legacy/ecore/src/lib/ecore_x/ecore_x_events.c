@@ -275,7 +275,8 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
    static Time last_last_time = 0;
    int did_triple = 0;
    int i;
-   
+
+   printf("PROCESS BTN!\n");
    if ((xevent->xbutton.button > 3) && (xevent->xbutton.button < 6))
      {
 	Ecore_X_Event_Mouse_Wheel *e;
@@ -367,18 +368,29 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 	     else e->win = xevent->xbutton.window;
 	     e->event_win = xevent->xbutton.window;
 	     e->time = xevent->xbutton.time;
-	     if (((int)(e->time - last_time) <= 
-		  (int)(1000 * _ecore_x_double_click_time)) &&
-		 (e->win == last_win) &&
-		 (e->event_win == last_event_win))
-	       e->double_click = 1;
-	     if (((int)(e->time - last_last_time) <= 
-		  (int)(2 * 1000 * _ecore_x_double_click_time)) &&
-		 (e->win == last_win) && (e->win == last_last_win) &&
-		 (e->event_win == last_event_win) && (e->event_win == last_last_event_win))
+	     if (e->win == e->event_win)
 	       {
-		  did_triple = 1;
-		  e->triple_click = 1;
+		  if (((int)(e->time - last_time) <= 
+		       (int)(1000 * _ecore_x_double_click_time)) &&
+		      (e->win == last_win)
+		      && (e->event_win == last_event_win)
+		      )
+		    e->double_click = 1;
+		  else
+		    {
+		       printf("NOT DBL: ");
+		       if (e->win != last_win) printf("e->win != last_win\n");
+		       if (e->event_win != last_event_win) printf("e->event_win != last_event_win\n");
+		    }
+		  if (((int)(e->time - last_last_time) <= 
+		       (int)(2 * 1000 * _ecore_x_double_click_time)) &&
+		      (e->win == last_win) && (e->win == last_last_win)
+		      && (e->event_win == last_event_win) && (e->event_win == last_last_event_win)
+		      )
+		    {
+		       did_triple = 1;
+		       e->triple_click = 1;
+		    }
 	       }
 	     _ecore_x_event_last_time = e->time;
 	     _ecore_x_event_last_win = e->win;
@@ -407,27 +419,30 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 		       break;
 		    }
 	       }
-	  }
-	if (did_triple)
-	  {
-	     last_win = 0;
-	     last_last_win = 0;
-	     last_event_win = 0;
-	     last_last_event_win = 0;
-	     last_time = 0;
-	     last_last_time = 0;
-	  }
-	else
-	  {
-	     last_last_win = last_win;
-	     if (xevent->xbutton.subwindow)
-	       last_win = xevent->xbutton.subwindow;
-	     else
-	       last_win = xevent->xbutton.window;
-	     last_last_event_win = last_event_win;
-	     last_event_win = xevent->xbutton.window;
-	     last_last_time = last_time;
-	     last_time = xevent->xbutton.time;
+	     if (e->win == e->event_win)
+	       {
+		  if (did_triple)
+		    {
+		       last_win = 0;
+		       last_last_win = 0;
+		       last_event_win = 0;
+		       last_last_event_win = 0;
+		       last_time = 0;
+		       last_last_time = 0;
+		    }
+		  else
+		    {
+		       last_last_win = last_win;
+		       if (xevent->xbutton.subwindow)
+			 last_win = xevent->xbutton.subwindow;
+		       else
+			 last_win = xevent->xbutton.window;
+		       last_last_event_win = last_event_win;
+		       last_event_win = xevent->xbutton.window;
+		       last_last_time = last_time;
+		       last_time = xevent->xbutton.time;
+		    }
+	       }
 	  }
      }
 }
