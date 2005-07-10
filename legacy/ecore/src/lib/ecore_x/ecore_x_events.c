@@ -376,12 +376,6 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 		      && (e->event_win == last_event_win)
 		      )
 		    e->double_click = 1;
-		  else
-		    {
-		       printf("NOT DBL: ");
-		       if (e->win != last_win) printf("e->win != last_win\n");
-		       if (e->event_win != last_event_win) printf("e->event_win != last_event_win\n");
-		    }
 		  if (((int)(e->time - last_last_time) <= 
 		       (int)(2 * 1000 * _ecore_x_double_click_time)) &&
 		      (e->win == last_win) && (e->win == last_last_win)
