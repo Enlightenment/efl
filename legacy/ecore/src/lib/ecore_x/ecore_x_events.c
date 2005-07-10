@@ -276,7 +276,6 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
    int did_triple = 0;
    int i;
 
-   printf("PROCESS BTN!\n");
    if ((xevent->xbutton.button > 3) && (xevent->xbutton.button < 6))
      {
 	Ecore_X_Event_Mouse_Wheel *e;
