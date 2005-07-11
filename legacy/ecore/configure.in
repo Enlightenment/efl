@@ -716,7 +716,7 @@ dbus_includes="";
 dbus_cflags="";
 dbus_libs="";
 
-AC_ARG_ENABLE(ecore-con,
+AC_ARG_ENABLE(ecore-dbus,
 [  --disable-ecore-dbus              disable the ecore_dbus module], [
   if [ test "$enableval" = "yes" ]; then
     AC_MSG_RESULT(yes)
