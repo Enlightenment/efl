@@ -27,7 +27,6 @@ _ecore_evas_x_render(Ecore_Evas *ee)
    Evas_List *ll;
 #endif
    
-   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
 #ifdef BUILD_ECORE_EVAS_BUFFER
    for (ll = ee->sub_ecore_evas; ll; ll = ll->next)
      {
@@ -39,6 +38,7 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 	if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
      }
 #endif	
+   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
    if (ee->prop.avoid_damage)
      {
 	Evas_List *updates, *l;
@@ -817,6 +817,7 @@ _ecore_evas_x_idle_enter(void *data __UNUSED__)
 	ee = (Ecore_Evas *)l;
 	_ecore_evas_x_render(ee);
      }
+   ecore_x_flush();
    if (_ecore_evas_fps_debug)
      {
 	t2 = ecore_time_get();
