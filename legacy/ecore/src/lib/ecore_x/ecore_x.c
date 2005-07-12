@@ -332,7 +332,7 @@ ecore_x_init(const char *name)
    /* the windows key... a valid modifier :) */
    ECORE_X_MODIFIER_WIN   = _ecore_x_key_mask_get(XK_Super_L);
    if (!ECORE_X_MODIFIER_WIN) 
-     ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(XK_Mode_switch);   
+     ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(XK_Mode_switch);
    if (!ECORE_X_MODIFIER_WIN) 
      ECORE_X_MODIFIER_WIN = _ecore_x_key_mask_get(XK_Meta_L);
    
@@ -659,8 +659,8 @@ static int
 _ecore_x_key_mask_get(KeySym sym)
 {
    XModifierKeymap    *mod;
-   KeyCode             nl;
-   int                 i;
+   KeySym              sym2;
+   int                 i, j;
    const int           masks[8] = 
      {
 	ShiftMask, LockMask, ControlMask, 
@@ -668,12 +668,16 @@ _ecore_x_key_mask_get(KeySym sym)
      };
    
    mod = XGetModifierMapping(_ecore_x_disp);
-   nl = XKeysymToKeycode(_ecore_x_disp, sym);
    if ((mod) && (mod->max_keypermod > 0))
      {
 	for (i = 0; i < (8 * mod->max_keypermod); i++)
 	  {
-	     if ((nl) && (mod->modifiermap[i] == nl))
+	     for (j = 0; j < 8; j++)
+	       {
+		  sym2 = XKeycodeToKeysym(_ecore_x_disp, mod->modifiermap[i], j);
+		  if (sym2 != 0) break;
+	       }
+	     if (sym2 == sym)
 	       {
 		  int mask;
 		  
