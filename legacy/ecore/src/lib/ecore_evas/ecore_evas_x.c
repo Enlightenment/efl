@@ -50,8 +50,8 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 	     Evas_Rectangle *r;
 	     
 	     r = l->data;
-	     printf("DMG render [%i %i %ix%i]\n",
-		    r->x, r->y, r->w, r->h);
+	     printf("DMG render [%p] %ix%i, [%i %i %ix%i]\n",
+		    ee, ee->w, ee->h, r->x, r->y, r->w, r->h);
 	  }
 #endif		       
 	if (ee->engine.x.using_bg_pixmap)
@@ -174,7 +174,7 @@ _ecore_evas_x_render(Ecore_Evas *ee)
 #if 0
 		  Evas_List *l;
 		  
-		  printf("RENDER [%p] [%i] [%ix%i]\n",
+		  printf("RENDER [%p] [%i] %ix%i\n",
 			 ee, ee->visible, ee->w, ee->h);
 		  for (l = updates; l; l = l->next)
 		    {
