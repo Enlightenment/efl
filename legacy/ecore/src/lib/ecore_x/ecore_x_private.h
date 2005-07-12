@@ -141,6 +141,8 @@ extern Window  *_ecore_window_grabs;
 extern int    (*_ecore_window_grab_replay_func) (void *data, int event_type, void *event);
 extern void    *_ecore_window_grab_replay_data;
 
+extern Ecore_X_Window _ecore_x_private_win;
+
 void _ecore_x_error_handler_init(void);
 void _ecore_x_event_handle_key_press(XEvent *xevent);
 void _ecore_x_event_handle_key_release(XEvent *xevent);
@@ -188,6 +190,10 @@ Ecore_X_Selection_Intern *
 int   _ecore_x_selection_set(Window w, unsigned char *data, int len, Ecore_X_Atom selection);
 int   _ecore_x_selection_convert(Ecore_X_Atom selection, Ecore_X_Atom target, void **data_ret);
 void *_ecore_x_selection_parse(const char *target, unsigned char *data, int size);
+
+void _ecore_x_sync_magic_send(int val, Ecore_X_Window swin);
+void _ecore_x_window_grab_remove(Ecore_X_Window win);
+void _ecore_x_key_grab_remove(Ecore_X_Window win);
 
 /* from dnd */
 void _ecore_x_dnd_init(void);

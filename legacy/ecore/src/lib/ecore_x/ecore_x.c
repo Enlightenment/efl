@@ -32,6 +32,8 @@ int      _ecore_x_event_last_root_x = 0;
 int      _ecore_x_event_last_root_y = 0;
 int      _ecore_x_xcursor = 0;
 
+Ecore_X_Window _ecore_x_private_win = 0;
+
 /* FIXME - These are duplicates after making ecore atoms public */
 Ecore_X_Atom     ECORE_X_ATOM_FILE_NAME = 0;
 Ecore_X_Atom     ECORE_X_ATOM_STRING = 0;
@@ -418,6 +420,9 @@ ecore_x_init(const char *name)
    _ecore_x_dnd_init();
    
    _ecore_x_init_count++;
+   
+   _ecore_x_private_win = ecore_x_window_override_new(0, -77, -777, 123, 456);
+   
    return _ecore_x_init_count;
 }
 
@@ -1420,13 +1425,53 @@ ecore_x_window_button_grab(Ecore_X_Window win, int button,
 }
 
 void
+_ecore_x_sync_magic_send(int val, Ecore_X_Window swin)
+{
+   XEvent xev;
+   
+   xev.xclient.type = ClientMessage;
+   xev.xclient.serial = 0;
+   xev.xclient.send_event = True;
+   xev.xclient.display = _ecore_x_disp;
+   xev.xclient.window = _ecore_x_private_win;
+   xev.xclient.format = 32;
+   xev.xclient.message_type = 27777;
+   xev.xclient.data.l[0] = 0x7162534;
+   xev.xclient.data.l[1] = 0x10000000 + val;
+   xev.xclient.data.l[2] = swin;
+   XSendEvent(_ecore_x_disp, _ecore_x_private_win, False, NoEventMask, &xev);
+}
+
+void
+_ecore_x_window_grab_remove(Ecore_X_Window win)
+{
+   int i, shuffle = 0;
+   
+   if (_ecore_window_grabs_num > 0)
+     {
+	for (i = 0; i < _ecore_window_grabs_num; i++)
+	  {
+	     if (shuffle) _ecore_window_grabs[i - 1] = _ecore_window_grabs[i];
+	     if ((!shuffle) && (_ecore_window_grabs[i] == win))
+	       shuffle = 1;
+	  }
+	if (shuffle)
+	  {
+	     _ecore_window_grabs_num--;
+	     _ecore_window_grabs = realloc(_ecore_window_grabs, 
+					   _ecore_window_grabs_num * sizeof(Window));
+	  }
+     }
+}
+
+void
 ecore_x_window_button_ungrab(Ecore_X_Window win, int button, 
 			     int mod, int any_mod)
 {
    unsigned int        b;
    unsigned int        m;
    unsigned int        locks[8];
-   int                 i, shuffle = 0;
+   int                 i;
    
    b = button;
    if (b == 0) b = AnyButton;
@@ -1442,21 +1487,7 @@ ecore_x_window_button_ungrab(Ecore_X_Window win, int button,
    locks[7] = ECORE_X_LOCK_CAPS   | ECORE_X_LOCK_NUM    | ECORE_X_LOCK_SCROLL;
    for (i = 0; i < 8; i++)
      XUngrabButton(_ecore_x_disp, b, m | locks[i], win);
-   if (_ecore_window_grabs_num > 0)
-     {
-	for (i = 0; i < (_ecore_window_grabs_num - 1); i++)
-	  {
-	     if (shuffle) _ecore_window_grabs[i] = _ecore_window_grabs[i + 1];
-	     if ((!shuffle) && (_ecore_window_grabs[i] == win))
-	       shuffle = 1;
-	  }
-	if (shuffle)
-	  {
-	     _ecore_window_grabs_num--;
-	     _ecore_window_grabs = realloc(_ecore_window_grabs, 
-					   _ecore_window_grabs_num * sizeof(Window));
-	  }
-     }
+   _ecore_x_sync_magic_send(1, win);
 }
 
 int      _ecore_key_grabs_num = 0;
@@ -1502,6 +1533,28 @@ ecore_x_window_key_grab(Ecore_X_Window win, char *key,
 }
 
 void
+_ecore_x_key_grab_remove(Ecore_X_Window win)
+{
+   int i, shuffle = 0;
+   
+   if (_ecore_key_grabs_num > 0)
+     {
+	for (i = 0; i < _ecore_key_grabs_num; i++)
+	  {
+	     if (shuffle) _ecore_key_grabs[i - 1] = _ecore_key_grabs[i];
+	     if ((!shuffle) && (_ecore_key_grabs[i] == win))
+	       shuffle = 1;
+	  }
+	if (shuffle)
+	  {
+	     _ecore_key_grabs_num--;
+	     _ecore_key_grabs = realloc(_ecore_key_grabs, 
+					_ecore_key_grabs_num * sizeof(Window));
+	  }
+     }
+}
+
+void
 ecore_x_window_key_ungrab(Ecore_X_Window win, char *key,
 			  int mod, int any_mod)
 {
@@ -1509,7 +1562,7 @@ ecore_x_window_key_ungrab(Ecore_X_Window win, char *key,
    KeySym              keysym;
    unsigned int        m;
    unsigned int        locks[8];
-   int                 i, shuffle = 0;
+   int                 i;
 
    if (!strncmp(key, "Keycode-", 8))
      keycode = atoi(key + 8);
@@ -1533,21 +1586,7 @@ ecore_x_window_key_ungrab(Ecore_X_Window win, char *key,
    locks[7] = ECORE_X_LOCK_CAPS   | ECORE_X_LOCK_NUM    | ECORE_X_LOCK_SCROLL;
    for (i = 0; i < 8; i++)
      XUngrabKey(_ecore_x_disp, keycode, m | locks[i], win);
-   if (_ecore_key_grabs_num > 0)
-     {
-	for (i = 0; i < (_ecore_key_grabs_num - 1); i++)
-	  {
-	     if (shuffle) _ecore_key_grabs[i] = _ecore_key_grabs[i + 1];
-	     if ((!shuffle) && (_ecore_key_grabs[i] == win))
-	       shuffle = 1;
-	  }
-	if (shuffle)
-	  {
-	     _ecore_key_grabs_num--;
-	     _ecore_key_grabs = realloc(_ecore_key_grabs, 
-					_ecore_key_grabs_num * sizeof(Window));
-	  }
-     }
+   _ecore_x_sync_magic_send(2, win);
 }
 
 /**

@@ -1488,6 +1488,17 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
 	ecore_event_add(ECORE_X_EVENT_PING, e, NULL, NULL);
      }
+   else if ((xevent->xclient.message_type == 27777)
+	    && (xevent->xclient.data.l[0] == 0x7162534)
+	    && (xevent->xclient.format == 32)
+	    && (xevent->xclient.window == _ecore_x_private_win))
+     {
+	/* a grab sync marker */
+	if (xevent->xclient.data.l[1] == 0x10000001)
+	  _ecore_x_window_grab_remove(xevent->xclient.data.l[2]);
+	else if (xevent->xclient.data.l[1] == 0x10000002)
+	  _ecore_x_key_grab_remove(xevent->xclient.data.l[2]);
+     }
    else
      {
 	Ecore_X_Event_Client_Message *e;
