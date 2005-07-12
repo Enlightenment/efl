@@ -23,8 +23,7 @@ dist-hook:
 
 bin_SCRIPTS = edje-config
 
-EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN edje.spec edje.pc.in edje.c.in gendoc Doxyfile edje_docs.tar.gz \
-make_cross_compile_arm.sh
+EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN edje.spec edje.pc.in edje.c.in gendoc Doxyfile edje_docs.tar.gz
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = edje.pc
