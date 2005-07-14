@@ -1007,8 +1007,11 @@ eet_list(Eet_File *ef, char *glob, int *count_ret)
      {
 	for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
 	  {
-	     /* if the entry matches the input glob */
-	     if (!fnmatch(glob, efn->name, 0))
+	     /* if the entry matches the input glob
+	      * check for * explicitly, because on some systems, * isn't well
+	      * supported
+	      */
+	     if ((!strcmp (glob, "*")) || !fnmatch(glob, efn->name, 0))
 	       {
 		  char **new_list;
 
