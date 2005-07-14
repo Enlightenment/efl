@@ -3702,7 +3702,7 @@ evas_object_textblock_render_post(Evas_Object *obj)
    /* move cur to prev safely for object data */
    obj->prev = obj->cur;
    o->prev = o->cur;
-   o->changed = 0;
+/*   o->changed = 0; */
 }
 
 static int
