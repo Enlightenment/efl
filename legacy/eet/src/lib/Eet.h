@@ -243,6 +243,14 @@ extern "C" {
     */
    EAPI char    **eet_list  (Eet_File *ef, char *glob, int *count_ret);
 
+   /**
+    * Return the number of entries in the specified eet file.
+    * @param ef A valid eet file handle.
+    * @return Number of entries in ef or -1 if the number of entries
+    *         cannot be read due to open mode restrictions.
+    */
+   EAPI int       eet_num_entries(Eet_File *ef);
+
 /***************************************************************************/
 
    /**

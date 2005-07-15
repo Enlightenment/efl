@@ -1040,6 +1040,34 @@ eet_list(Eet_File *ef, char *glob, int *count_ret)
    return list_ret;
 }
 
+int
+eet_num_entries(Eet_File *ef)
+{
+   int i, num, ret = 0;
+   Eet_File_Node *efn;
+
+   /* check to see its' an eet file pointer */
+   if ((!ef) || (ef->magic != EET_MAGIC_FILE) ||
+       (!ef->header) || (!ef->header->directory) ||
+       ((ef->mode != EET_FILE_MODE_READ) &&
+        (ef->mode != EET_FILE_MODE_READ_WRITE)))
+     {
+	return -1;
+     }
+
+   /* loop through all entries */
+   num = (1 << ef->header->directory->size);
+   for (i = 0; i < num; i++)
+     {
+	for (efn = ef->header->directory->nodes[i]; efn; efn = efn->next)
+	  {
+	     ret++;
+	  }
+     }
+
+   return ret;
+}
+
 int eet_init(void)
 {
    return ++eet_initcount;
