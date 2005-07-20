@@ -74,6 +74,5 @@ void ecore_string_release(char *string)
 	if (str->references < 1) {
 		ecore_hash_remove(ecore_strings, string);
 		FREE(str->string);
-		FREE(str);
 	}
 }
