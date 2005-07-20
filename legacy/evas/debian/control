@@ -30,6 +30,7 @@ Package: libevas0
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}
+Provides: libevas
 Description: enlightenment advanced canvas library
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
