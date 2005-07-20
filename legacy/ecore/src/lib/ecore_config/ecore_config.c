@@ -549,6 +549,7 @@ ecore_config_typed_val(Ecore_Config_Prop * e, const void *val, int type)
 static int
 ecore_config_typed_add(const char *key, const void *val, int type)
 {
+   int error = ECORE_CONFIG_ERR_SUCC;
    Ecore_Config_Prop  *e;
    Ecore_Config_Bundle *t;
 
@@ -561,23 +562,29 @@ ecore_config_typed_add(const char *key, const void *val, int type)
    memset(e, 0, sizeof(Ecore_Config_Prop));
 
    if (!(e->key = strdup(key)))
-      goto ret_free_nte;
+     {
+	error = ECORE_CONFIG_ERR_OOM;
+        goto ret_free_nte;
+     }
 
-   if (ecore_config_typed_val(e, val, type) == ECORE_CONFIG_ERR_OOM)
+   if ((error = ecore_config_typed_val(e, val, type) != ECORE_CONFIG_ERR_SUCC))
       goto ret_free_key;
 
    e->next = t ? t->data : NULL;
    if (t)
-      t->data = e;
-
-   return ECORE_CONFIG_ERR_SUCC;
+     {
+	t->data = e;
+	return ECORE_CONFIG_ERR_SUCC;
+     }
 
  ret_free_key:
    free(e->key);
  ret_free_nte:
    free(e);
  ret:
-   return ECORE_CONFIG_ERR_OOM;
+   if (error == ECORE_CONFIG_ERR_SUCC)
+      error = ECORE_CONFIG_ERR_FAIL;
+   return error;
 }
 
 static int
