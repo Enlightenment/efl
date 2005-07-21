@@ -372,6 +372,9 @@ static int _ecore_list_append_0(Ecore_List * list, Ecore_List_Node *end)
 		list->current = NULL;
 	}
 
+	if (list->index >= list->nodes)
+		list->index++;
+
 	list->nodes++;
 
 	return TRUE;
