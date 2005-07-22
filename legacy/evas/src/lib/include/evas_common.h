@@ -160,10 +160,10 @@ typedef struct _Convert_Pal           Convert_Pal;
 typedef struct _Tilebuf               Tilebuf;
 typedef struct _Tilebuf_Tile          Tilebuf_Tile;
 typedef struct _Tilebuf_Rect          Tilebuf_Rect;
-
+/*
 typedef struct _Regionbuf             Regionbuf;
 typedef struct _Regionspan            Regionspan;
-
+*/
 typedef void (*Gfx_Func_Blend_Src_Dst) (DATA32 *src, DATA32 *dst, int len);
 typedef void (*Gfx_Func_Blend_Color_Dst) (DATA32 src, DATA32 *dst, int len);
 typedef void (*Gfx_Func_Blend_Src_Cmod_Dst) (DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod);
@@ -382,7 +382,7 @@ struct _Tilebuf
 
 struct _Tilebuf_Tile
 {
-   int redraw : 1;
+   unsigned char redraw : 1;
 /* FIXME: need these flags later - but not now */
 /*
    int done   : 1;
@@ -400,7 +400,7 @@ struct _Tilebuf_Rect
    Evas_Object_List  _list_data;
    int               x, y, w, h;
 };
-
+/*
 struct _Regionbuf
 {
    int w, h;
@@ -412,7 +412,7 @@ struct _Regionspan
    Evas_Object_List  _list_data;
    int x1, x2;
 };
-
+*/
 struct _Cutout_Rect
 {
    Evas_Object_List  _list_data;
@@ -899,14 +899,15 @@ void          evas_common_tilebuf_clear             (Tilebuf *tb);
 Tilebuf_Rect *evas_common_tilebuf_get_render_rects  (Tilebuf *tb);
 void          evas_common_tilebuf_free_render_rects (Tilebuf_Rect *rects);
 
-
+/*
 Regionbuf    *evas_common_regionbuf_new       (int w, int h);
 void          evas_common_regionbuf_free      (Regionbuf *rb);
 void          evas_common_regionbuf_clear     (Regionbuf *rb);
 void          evas_common_regionbuf_span_add  (Regionbuf *rb, int x1, int x2, int y);
 void          evas_common_regionbuf_span_del  (Regionbuf *rb, int x1, int x2, int y);
 Tilebuf_Rect *evas_common_regionbuf_rects_get (Regionbuf *rb);
-
+*/
+   
 /****/
 void               evas_common_draw_init                      (void);
 

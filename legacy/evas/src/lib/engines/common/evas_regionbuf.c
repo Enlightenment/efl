@@ -1,5 +1,6 @@
 #include "evas_common.h"
 
+#if 0
 Regionbuf *
 evas_common_regionbuf_new(int w, int h)
 {
@@ -353,3 +354,4 @@ evas_common_regionbuf_rects_get(Regionbuf *rb)
    evas_common_regionbuf_clear(rb);
    return rects;
 }
+#endif

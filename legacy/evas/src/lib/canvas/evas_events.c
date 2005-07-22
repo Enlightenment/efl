@@ -4,8 +4,18 @@
 int
 evas_event_passes_through(Evas_Object *obj)
 {
+   if (obj->layer->evas->events_frozen > 0) return 1;
    if (obj->pass_events) return 1;
-   if (obj->smart.parent) return evas_event_passes_through(obj->smart.parent);
+   if (obj->parent_cache_valid) return obj->parent_pass_events;
+   if (obj->smart.parent)
+     {
+	int par_pass;
+	
+	par_pass = evas_event_passes_through(obj->smart.parent);
+	obj->parent_cache_valid = 1;
+	obj->parent_pass_events = par_pass;
+	return par_pass;
+     }
    return 0;
 }
 
@@ -115,6 +125,26 @@ evas_event_thaw(Evas *e)
    return;
    MAGIC_CHECK_END();
    e->events_frozen--;
+   if (e->events_frozen == 0)
+     {
+	Evas_Object_List *l;
+	
+	for (l = (Evas_Object_List *)e->layers; l; l = l->next)
+	  {
+	     Evas_Object_List *l2;
+	     Evas_Layer *lay;
+	     
+	     lay = (Evas_Layer *)l;
+	     for (l2 = (Evas_Object_List *)lay->objects; l2; l2 = l2->next)
+	       {
+		  Evas_Object *obj;
+		  
+		  obj = (Evas_Object *)l2;
+		  evas_object_clip_recalc(obj);
+		  evas_object_recalc_clippees(obj);
+	       }
+	  }
+     }
    if (e->events_frozen < 0)
      evas_debug_generic("  Thaw of events when already thawed!!!\n");
 }
@@ -820,6 +850,7 @@ evas_object_pass_events_set(Evas_Object *obj, Evas_Bool pass)
    return;
    MAGIC_CHECK_END();
    obj->pass_events = pass;
+   evas_object_smart_member_cache_invalidate(obj);
    if (evas_object_is_in_output_rect(obj,
 				     obj->layer->evas->pointer.x,
 				     obj->layer->evas->pointer.y, 1, 1))

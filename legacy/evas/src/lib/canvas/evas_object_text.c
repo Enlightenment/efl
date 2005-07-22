@@ -135,7 +135,7 @@ void
 evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size size)
 {
    Evas_Object_Text *o;
-   int is, was = 0;
+   int is, was = 0, pass = 0;
    int same_font = 0;
 
    if (!font) return;
@@ -152,10 +152,14 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
 	same_font = 1;
 	if (size == o->cur.size) return;
      }
-   if (!evas_event_passes_through(obj))
-     was = evas_object_is_in_output_rect(obj,
-					 obj->layer->evas->pointer.x,
-					 obj->layer->evas->pointer.y, 1, 1);
+   if (obj->layer->evas->events_frozen != 0)
+     {
+	pass = evas_event_passes_through(obj);
+	if (!pass)
+	  was = evas_object_is_in_output_rect(obj,
+					      obj->layer->evas->pointer.x,
+					      obj->layer->evas->pointer.y, 1, 1);
+     }
    /* DO IT */
    if (o->engine_data)
      {
@@ -218,16 +222,19 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
    o->changed = 1;
    evas_object_change(obj);
    evas_object_coords_recalc(obj);
-   if (!evas_event_passes_through(obj))
+   if (obj->layer->evas->events_frozen != 0)
      {
-	is = evas_object_is_in_output_rect(obj,
-					   obj->layer->evas->pointer.x,
-					   obj->layer->evas->pointer.y, 1, 1);
-	if ((is ^ was) && obj->cur.visible)
-	  evas_event_feed_mouse_move(obj->layer->evas,
-				     obj->layer->evas->pointer.x,
-				     obj->layer->evas->pointer.y,
-				     NULL);
+	if (!pass)
+	  {
+	     is = evas_object_is_in_output_rect(obj,
+						obj->layer->evas->pointer.x,
+						obj->layer->evas->pointer.y, 1, 1);
+	     if ((is ^ was) && obj->cur.visible)
+	       evas_event_feed_mouse_move(obj->layer->evas,
+					  obj->layer->evas->pointer.x,
+					  obj->layer->evas->pointer.y,
+					  NULL);
+	  }
      }
    evas_object_inform_call_resize(obj);
 }

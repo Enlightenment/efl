@@ -136,6 +136,7 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
 
    obj->smart.parent = smart_obj;
    smart_obj->smart.contained = evas_list_append(smart_obj->smart.contained, obj);
+   evas_object_smart_member_cache_invalidate(obj);
 }
 
 /**
@@ -155,6 +156,7 @@ evas_object_smart_member_del(Evas_Object *obj)
 
    obj->smart.parent->smart.contained = evas_list_remove(obj->smart.parent->smart.contained, obj);
    obj->smart.parent = NULL;
+   evas_object_smart_member_cache_invalidate(obj);
 }
 
 /**
@@ -355,6 +357,21 @@ evas_object_smart_cleanup(Evas_Object *obj)
    obj->smart.parent = NULL;
    obj->smart.data = NULL;
    obj->smart.smart = NULL;
+}
+
+void
+evas_object_smart_member_cache_invalidate(Evas_Object *obj)
+{
+   Evas_List *l;
+   
+   obj->parent_cache_valid = 0;
+   for (l = obj->smart.contained; l; l = l->next)
+     {
+	Evas_Object *obj2;
+	
+	obj2 = l->data;
+	evas_object_smart_member_cache_invalidate(obj2);
+     }
 }
 
 /* all nice and private */

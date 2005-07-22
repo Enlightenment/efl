@@ -73,9 +73,7 @@ struct _Evas_List /** A linked list node */
    void      *data; /**< Pointer to list element payload */
    Evas_List *next; /**< Next member in the list */
    Evas_List *prev; /**< Previous member in the list */
-
-   Evas_List *last; /**< Private member. Don't use this */
-   int        count; /**< Private member. Don't use this */
+   void      *accounting; /**< Private list accounting info - don't touch */
 };
 
 struct _Evas_Rectangle /** A rectangle */

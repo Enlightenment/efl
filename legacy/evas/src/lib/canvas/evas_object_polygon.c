@@ -105,10 +105,13 @@ evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    MAGIC_CHECK(o, Evas_Object_Polygon, MAGIC_OBJ_POLYGON);
    return;
    MAGIC_CHECK_END();
-   if (!evas_event_passes_through(obj))
-     was = evas_object_is_in_output_rect(obj,
-					 obj->layer->evas->pointer.x,
-					 obj->layer->evas->pointer.y, 1, 1);
+   if (obj->layer->evas->events_frozen != 0)
+     {
+	if (!evas_event_passes_through(obj))
+	  was = evas_object_is_in_output_rect(obj,
+					      obj->layer->evas->pointer.x,
+					      obj->layer->evas->pointer.y, 1, 1);
+     }
    p = malloc(sizeof(Evas_Polygon_Point));
    if (!p) return;
    p->x = x;
@@ -142,16 +145,19 @@ evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    o->changed = 1;
    evas_object_change(obj);
    evas_object_coords_recalc(obj);
-   is = evas_object_is_in_output_rect(obj,
-				      obj->layer->evas->pointer.x,
-				      obj->layer->evas->pointer.y, 1, 1);
-   if (!evas_event_passes_through(obj))
+   if (obj->layer->evas->events_frozen != 0)
      {
-	if ((is ^ was) && obj->cur.visible)
-	  evas_event_feed_mouse_move(obj->layer->evas,
-				     obj->layer->evas->pointer.x,
-				     obj->layer->evas->pointer.y,
-				     NULL);
+	is = evas_object_is_in_output_rect(obj,
+					   obj->layer->evas->pointer.x,
+					   obj->layer->evas->pointer.y, 1, 1);
+	if (!evas_event_passes_through(obj))
+	  {
+	     if ((is ^ was) && obj->cur.visible)
+	       evas_event_feed_mouse_move(obj->layer->evas,
+					  obj->layer->evas->pointer.x,
+					  obj->layer->evas->pointer.y,
+					  NULL);
+	  }
      }
    evas_object_inform_call_move(obj);
    evas_object_inform_call_resize(obj);

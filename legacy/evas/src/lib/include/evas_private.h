@@ -378,6 +378,8 @@ struct _Evas_Object
 
    short                       store : 1;
    short                       pass_events : 1;
+   short                       parent_pass_events : 1;
+   short                       parent_cache_valid : 1;
    short                       repeat_events : 1;
    short                       restack : 1;
    short                       changed : 1;
@@ -618,7 +620,8 @@ void evas_font_dir_cache_free(void);
 char *evas_font_dir_cache_find(char *dir, char *font);
 void evas_font_free(Evas *evas, void *font);
 void *evas_font_load(Evas *evas, const char *name, const char *source, int size);
-
+void evas_object_smart_member_cache_invalidate(Evas_Object *obj);
+     
 extern int _evas_alloc_error;
 
 struct _Evas_Imaging_Image

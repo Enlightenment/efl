@@ -4,6 +4,14 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
+typedef struct _Evas_List_Accounting Evas_List_Accounting;
+
+struct _Evas_List_Accounting
+{
+   Evas_List *last;
+   int        count;
+};
+
 static int _evas_list_alloc_error = 0;
 
 /**
@@ -51,37 +59,27 @@ evas_list_append(Evas_List *list, const void *data)
 	return list;
      }
    new_l->next = NULL;
-   new_l->prev = NULL;
    new_l->data = (void *)data;
    if (!list)
      {
-	new_l->last = new_l;
-	new_l->count = 1;
+	new_l->prev = NULL;
+	new_l->accounting = malloc(sizeof(Evas_List_Accounting));
+	if (!new_l->accounting)
+	  {
+	     _evas_list_alloc_error = 1;
+	     free(new_l);
+	     return list;
+	  }
+	((Evas_List_Accounting *)(new_l->accounting))->last = new_l;
+	((Evas_List_Accounting *)(new_l->accounting))->count = 1;
 	return new_l;
      }
-   if (list->last)
-     {
-	l = list->last;
-	l->next = new_l;
-	new_l->prev = l;
-	list->last = new_l;
-	list->count++;
-	return list;
-     }
-   else
-     {
-	for (l = list; l; l = l->next)
-	  {
-	     if (!l->next)
-	       {
-		  l->next = new_l;
-		  new_l->prev = l;
-		  list->last = new_l;
-		  list->count++;
-		  return list;
-	       }
-	  }
-     }
+   l = ((Evas_List_Accounting *)(list->accounting))->last;
+   l->next = new_l;
+   new_l->prev = l;
+   new_l->accounting = list->accounting;
+   ((Evas_List_Accounting *)(list->accounting))->last = new_l;
+   ((Evas_List_Accounting *)(list->accounting))->count++;
    return list;
 }
 
@@ -128,15 +126,21 @@ evas_list_prepend(Evas_List *list, const void *data)
    if (!list)
      {
 	new_l->next = NULL;
-	new_l->last = new_l;
-	new_l->count = 1;
+	new_l->accounting = malloc(sizeof(Evas_List_Accounting));
+	if (!new_l->accounting)
+	  {
+	     _evas_list_alloc_error = 1;
+	     free(new_l);
+	     return list;
+	  }
+	((Evas_List_Accounting *)(new_l->accounting))->last = new_l;
+	((Evas_List_Accounting *)(new_l->accounting))->count = 1;
 	return new_l;
      }
    new_l->next = list;
    list->prev = new_l;
-   new_l->last = list->last;
-   list->last = NULL;
-   new_l->count = list->count + 1;
+   new_l->accounting = list->accounting;
+   ((Evas_List_Accounting *)(list->accounting))->count++;
    return new_l;
 }
 
@@ -206,8 +210,10 @@ evas_list_append_relative(Evas_List *list, const void *data, const void *relativ
 
 	     l->next = new_l;
 	     new_l->prev = l;
-	     if (!new_l->next) list->last = new_l;
-	     list->count++;
+	     new_l->accounting = list->accounting;
+	     ((Evas_List_Accounting *)(list->accounting))->count++;
+	     if (!new_l->next)
+	       ((Evas_List_Accounting *)(new_l->accounting))->last = new_l;
 	     return list;
 	  }
      }
@@ -281,19 +287,12 @@ evas_list_prepend_relative(Evas_List *list, const void *data, const void *relati
 	     new_l->next = l;
 	     if (l->prev) l->prev->next = new_l;
 	     l->prev = new_l;
+	     new_l->accounting = list->accounting;
+	     ((Evas_List_Accounting *)(list->accounting))->count++;
 	     if (new_l->prev)
-	       {
-		  if (!new_l->next) list->last = new_l;
-		  list->count++;
-		  return list;
-	       }
+	       return list;
 	     else
-	       {
-		  new_l->last = list->last;
-		  list->last = NULL;
-		  new_l->count = list->count + 1;
-		  return new_l;
-	       }
+	       return new_l;
 	  }
      }
    return evas_list_prepend(list, data);
@@ -362,6 +361,7 @@ evas_list_remove_list(Evas_List *list, Evas_List *remove_list)
 {
    Evas_List *return_l;
 
+   if (!list) return NULL;
    if (!remove_list) return list;
    if (remove_list->next) remove_list->next->prev = remove_list->prev;
    if (remove_list->prev)
@@ -370,15 +370,13 @@ evas_list_remove_list(Evas_List *list, Evas_List *remove_list)
 	return_l = list;
      }
    else
-     {
-	if (remove_list->next)
-	  remove_list->next->count = remove_list->count;
-	return_l = remove_list->next;
-	if (return_l) return_l->last = list->last;
-     }
-   if (remove_list == list->last) list->last = remove_list->prev;
+     return_l = remove_list->next;
+   if (remove_list == ((Evas_List_Accounting *)(list->accounting))->last)
+     ((Evas_List_Accounting *)(list->accounting))->last = remove_list->prev;
+   ((Evas_List_Accounting *)(list->accounting))->count--;
+   if (((Evas_List_Accounting *)(list->accounting))->count == 0)
+     free(list->accounting);
    free(remove_list);
-   if (return_l) return_l->count--;
    return return_l;
 }
 
@@ -479,6 +477,8 @@ evas_list_free(Evas_List *list)
 {
    Evas_List *l, *free_l;
 
+   if (!list) return NULL;
+   free(list->accounting);
    for (l = list; l;)
      {
 	free_l = l;
@@ -523,7 +523,7 @@ Evas_List *
 evas_list_last(Evas_List *list)
 {
    if (!list) return NULL;
-   return list->last;
+   return ((Evas_List_Accounting *)(list->accounting))->last;
 }
 
 /**
@@ -640,7 +640,7 @@ int
 evas_list_count(Evas_List *list)
 {
    if (!list) return 0;
-   return list->count;
+   return ((Evas_List_Accounting *)(list->accounting))->count;
 }
 
 /**
@@ -668,8 +668,9 @@ evas_list_count(Evas_List *list)
 void *
 evas_list_nth(Evas_List *list, int n)
 {
-   Evas_List *l = evas_list_nth_list(list, n);
-
+   Evas_List *l;
+   
+   l = evas_list_nth_list(list, n);
    return l ? l->data : NULL;
 }
 
@@ -702,14 +703,19 @@ evas_list_nth_list(Evas_List *list, int n)
    Evas_List *l;
 
    /* check for non-existing nodes */
-   if ((!list) || (n < 0) || (n > list->count - 1)) return NULL;
+   if ((!list) || (n < 0) || 
+       (n > ((Evas_List_Accounting *)(list->accounting))->count - 1))
+     return NULL;
 
    /* if the node is in the 2nd half of the list, search from the end
     * else, search from the beginning.
     */
-   if (n > list->count / 2)
+   if (n > (((Evas_List_Accounting *)(list->accounting))->count / 2))
      {
-	for (i = list->count - 1, l = list->last; l; l = l->prev, i--)
+	for (i = ((Evas_List_Accounting *)(list->accounting))->count - 1,
+	     l = ((Evas_List_Accounting *)(list->accounting))->last; 
+	     l; 
+	     l = l->prev, i--)
 	  {
 	     if (i == n) return l;
 	  }
@@ -753,7 +759,7 @@ evas_list_reverse(Evas_List *list)
 
    if (!list) return NULL;
    l1 = list;
-   l2 = list->last;
+   l2 = ((Evas_List_Accounting *)(list->accounting))->last;
    while (l1 != l2)
      {
 	void *data;
@@ -859,31 +865,36 @@ evas_list_combine(Evas_List *l, Evas_List *ll, int (*func)(void *, void*))
 Evas_List *
 evas_list_sort(Evas_List *list, int size, int (*func)(void *, void *))
 {
-   Evas_List *l = NULL, *ll = NULL;
+   Evas_List *l = NULL, *ll = NULL, *llast;
    int mid;
 
    if (!list || !func)
      return NULL;
 
+   /* FIXME: this is really inefficient - calling evas_list_nth is not
+    * fast as it has to walk the list */
+   
    /* if the caller specified an invalid size, sort the whole list */
-   if (size <= 0 || size > list->count)
-     size = list->count;
+   if ((size <= 0) ||
+       (size > ((Evas_List_Accounting *)(list->accounting))->count))
+     size = ((Evas_List_Accounting *)(list->accounting))->count;
 
    mid = size / 2;
-   if (mid < 1)
-     return list;
+   if (mid < 1) return list;
 
    /* bleh evas list splicing */
+   llast = ((Evas_List_Accounting *)(list->accounting))->last;
    ll = evas_list_nth_list(list, mid);
    if (ll->prev)
      {
-	list->last = ll->prev;
-	list->count = mid;
+	((Evas_List_Accounting *)(list->accounting))->last = ll->prev;
+	((Evas_List_Accounting *)(list->accounting))->count = mid;
 	ll->prev->next = NULL;
 	ll->prev = NULL;
      }
-
-   ll->count = size - mid;
+   ll->accounting = malloc(sizeof(Evas_List_Accounting));
+   ((Evas_List_Accounting *)(ll->accounting))->last = llast;
+   ((Evas_List_Accounting *)(ll->accounting))->count = size - mid;
 
    /* merge sort */
    l = evas_list_sort(list, mid, func);
