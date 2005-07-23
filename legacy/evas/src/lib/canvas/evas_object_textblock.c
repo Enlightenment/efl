@@ -1706,8 +1706,6 @@ evas_object_textblock_layout_node_pos_get(Evas_Object *obj, int pos, int *pstart
    return lnode;
 }
 
-/* unused */
-#if 0
 static Layout_Node *
 evas_object_textblock_layout_node_line_get(Evas_Object *obj, int line)
 {
@@ -1731,7 +1729,6 @@ evas_object_textblock_layout_node_line_get(Evas_Object *obj, int line)
      }
    return NULL;
 }
-#endif
 
 /* private methods for textblock objects */
 static void evas_object_textblock_init(Evas_Object *obj);
@@ -2055,7 +2052,6 @@ evas_object_textblock_line_get(Evas_Object *obj, int line, Evas_Coord *lx, Evas_
 {
    Evas_Object_Textblock *o;
    Layout_Node *lnode;
-   int ps;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
@@ -2066,7 +2062,7 @@ evas_object_textblock_line_get(Evas_Object *obj, int line, Evas_Coord *lx, Evas_
    MAGIC_CHECK_END();
    if (o->format.dirty)
      evas_object_textblock_format_calc(obj);
-   lnode = evas_object_textblock_layout_node_pos_get(obj, o->pos, &ps);
+   lnode = evas_object_textblock_layout_node_line_get(obj, line);
    if (lnode)
      {
 	Evas_Object_List *l;
