@@ -168,7 +168,11 @@ evas_object_layer_set(Evas_Object *obj, int l)
 					  obj->layer->evas->pointer.y, 1, 1) &&
 	    obj->cur.visible)
 	  if (evas_list_find(obj->layer->evas->pointer.object.in, obj))
-	    evas_event_feed_mouse_move(obj->layer->evas, obj->layer->evas->pointer.x, obj->layer->evas->pointer.y, NULL);
+	    evas_event_feed_mouse_move(obj->layer->evas,
+				       obj->layer->evas->pointer.x,
+				       obj->layer->evas->pointer.y,
+				       obj->layer->evas->last_timestamp,
+				       NULL);
      }
    evas_object_inform_call_restack(obj);
 }

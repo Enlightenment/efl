@@ -183,7 +183,7 @@ evas_event_freeze_get(Evas *e)
  *
  */
 void
-evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, const void *data)
+evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
 {
    Evas_List *l, *copy;
 
@@ -196,6 +196,7 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, const void *
    e->pointer.button |= (1 << (b - 1));
 
    if (e->events_frozen > 0) return;
+   e->last_timestamp = timestamp;
 
    copy = evas_event_list_copy(e->pointer.object.in);
    for (l = copy; l; l = l->next)
@@ -216,6 +217,7 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, const void *
 	ev.modifiers = &(e->modifiers);
 	ev.locks = &(e->locks);
 	ev.flags = flags;
+	ev.timestamp = timestamp;
 	if (!e->events_frozen)
 	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_DOWN, &ev);
      }
@@ -229,7 +231,7 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, const void *
  *
  */
 void
-evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, const void *data)
+evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
 {
    Evas_List *l, *copy;
 
@@ -242,6 +244,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, const void *da
    e->pointer.button &= ~(1 << (b - 1));
 
    if (e->events_frozen > 0) return;
+   e->last_timestamp = timestamp;
 
    copy = evas_event_list_copy(e->pointer.object.in);
    for (l = copy; l; l = l->next)
@@ -261,6 +264,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, const void *da
 	ev.modifiers = &(e->modifiers);
 	ev.locks = &(e->locks);
 	ev.flags = flags;
+	ev.timestamp = timestamp;
 	if (!e->events_frozen)
 	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_UP, &ev);
      }
@@ -293,6 +297,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, const void *da
 		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);
+		  ev.timestamp = timestamp;
 		  if (!e->events_frozen)
 		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }
@@ -319,6 +324,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, const void *da
 		       ev.data = (void *)data;
 		       ev.modifiers = &(e->modifiers);
 		       ev.locks = &(e->locks);
+		       ev.timestamp = timestamp;
 		       if (!e->events_frozen)
 			 evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_IN, &ev);
 		    }
@@ -333,7 +339,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, const void *da
 	/* and set up the new one */
 	e->pointer.object.in = ins;
 	if (e->pointer.inside)
-	  evas_event_feed_mouse_move(e, e->pointer.x, e->pointer.y, data);
+	  evas_event_feed_mouse_move(e, e->pointer.x, e->pointer.y, timestamp, data);
      }
 }
 
@@ -344,7 +350,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, const void *da
  *
  */
 void
-evas_event_feed_mouse_wheel(Evas *e, int direction, int z, const void *data)
+evas_event_feed_mouse_wheel(Evas *e, int direction, int z, unsigned int timestamp, const void *data)
 {
    Evas_List *l, *copy;
 
@@ -353,6 +359,7 @@ evas_event_feed_mouse_wheel(Evas *e, int direction, int z, const void *data)
    MAGIC_CHECK_END();
 
    if (e->events_frozen > 0) return;
+   e->last_timestamp = timestamp;
 
    copy = evas_event_list_copy(e->pointer.object.in);
 
@@ -370,6 +377,7 @@ evas_event_feed_mouse_wheel(Evas *e, int direction, int z, const void *data)
       ev.data = (void *) data;
       ev.modifiers = &(e->modifiers);
       ev.locks = &(e->locks);
+      ev.timestamp = timestamp;
       if (!e->events_frozen)
 	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_WHEEL, &ev);
    }
@@ -385,7 +393,7 @@ evas_event_feed_mouse_wheel(Evas *e, int direction, int z, const void *data)
  *
  */
 void
-evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
+evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const void *data)
 {
    int px, py;
    Evas_Coord pcx, pcy;
@@ -400,6 +408,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
    pcy = e->pointer.canvas_y;
 
    if (e->events_frozen > 0) return;
+   e->last_timestamp = timestamp;
 
    e->pointer.x = x;
    e->pointer.y = y;
@@ -441,6 +450,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
 		       ev.data = (void *)data;
 		       ev.modifiers = &(e->modifiers);
 		       ev.locks = &(e->locks);
+		       ev.timestamp = timestamp;
 		       if (!e->events_frozen)
 			 evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_MOVE, &ev);
 		    }
@@ -470,6 +480,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
 		       ev.data = (void *)data;
 		       ev.modifiers = &(e->modifiers);
 		       ev.locks = &(e->locks);
+		       ev.timestamp = timestamp;
 		       if (!e->events_frozen)
 			 evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 		    }
@@ -518,6 +529,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
 		       ev.data = (void *)data;
 		       ev.modifiers = &(e->modifiers);
 		       ev.locks = &(e->locks);
+		       ev.timestamp = timestamp;
 		       if (!e->events_frozen)
 			 evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_MOVE, &ev);
 		    }
@@ -536,6 +548,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
 		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);
+		  ev.timestamp = timestamp;
 		  if (!e->events_frozen)
 		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }
@@ -561,6 +574,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
 		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);
+		  ev.timestamp = timestamp;
 		  if (!e->events_frozen)
 		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_IN, &ev);
 	       }
@@ -579,7 +593,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, const void *data)
  *
  */
 void
-evas_event_feed_mouse_in(Evas *e, const void *data)
+evas_event_feed_mouse_in(Evas *e, unsigned int timestamp, const void *data)
 {
    Evas_List *ins;
    Evas_List *l;
@@ -590,6 +604,7 @@ evas_event_feed_mouse_in(Evas *e, const void *data)
    e->pointer.inside = 1;
 
    if (e->events_frozen > 0) return;
+   e->last_timestamp = timestamp;
 
    if (e->pointer.mouse_grabbed != 0) return;
 
@@ -614,6 +629,7 @@ evas_event_feed_mouse_in(Evas *e, const void *data)
 	     ev.data = (void *)data;
 	     ev.modifiers = &(e->modifiers);
 	     ev.locks = &(e->locks);
+	     ev.timestamp = timestamp;
 	     if (!e->events_frozen)
 	       evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_IN, &ev);
 	  }
@@ -622,7 +638,7 @@ evas_event_feed_mouse_in(Evas *e, const void *data)
    e->pointer.object.in = evas_list_free(e->pointer.object.in);
    /* and set up the new one */
    e->pointer.object.in = ins;
-   evas_event_feed_mouse_move(e, e->pointer.x, e->pointer.y, data);
+   evas_event_feed_mouse_move(e, e->pointer.x, e->pointer.y, timestamp, data);
 }
 
 /**
@@ -632,7 +648,7 @@ evas_event_feed_mouse_in(Evas *e, const void *data)
  *
  */
 void
-evas_event_feed_mouse_out(Evas *e, const void *data)
+evas_event_feed_mouse_out(Evas *e, unsigned int timestamp, const void *data)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
@@ -640,6 +656,7 @@ evas_event_feed_mouse_out(Evas *e, const void *data)
    e->pointer.inside = 0;
 
    if (e->events_frozen > 0) return;
+   e->last_timestamp = timestamp;
 
    /* if our mouse button is grabbed to any objects */
    if (e->pointer.mouse_grabbed == 0)
@@ -665,6 +682,7 @@ evas_event_feed_mouse_out(Evas *e, const void *data)
 		  ev.data = (void *)data;
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);
+		  ev.timestamp = timestamp;
 		  if (!e->events_frozen)
 		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }
@@ -682,13 +700,14 @@ evas_event_feed_mouse_out(Evas *e, const void *data)
  *
  */
 void
-evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const char *string, const char *compose, const void *data)
+evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
    if (!keyname) return;
    if (e->events_frozen > 0) return;
+   e->last_timestamp = timestamp;
      {
 	Evas_Event_Key_Down ev;
 	int exclusive;
@@ -701,6 +720,7 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
 	ev.key = key;
 	ev.string = string;
 	ev.compose = compose;
+	ev.timestamp = timestamp;
 	if (e->grabs)
 	  {
 	     Evas_List *l;
@@ -763,13 +783,14 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
  *
  */
 void
-evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char *string, const char *compose, const void *data)
+evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
    if (!keyname) return;
    if (e->events_frozen > 0) return;
+   e->last_timestamp = timestamp;
      {
 	Evas_Event_Key_Up ev;
 	int exclusive;
@@ -782,6 +803,7 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
 	ev.key = key;
 	ev.string = string;
 	ev.compose = compose;
+	ev.timestamp = timestamp;
 	if (e->grabs)
 	  {
 	     Evas_List *l;
@@ -857,6 +879,7 @@ evas_object_pass_events_set(Evas_Object *obj, Evas_Bool pass)
      evas_event_feed_mouse_move(obj->layer->evas,
 				obj->layer->evas->pointer.x,
 				obj->layer->evas->pointer.y,
+				obj->layer->evas->last_timestamp,
 				NULL);
 }
 
@@ -894,6 +917,7 @@ evas_object_repeat_events_set(Evas_Object *obj, Evas_Bool repeat)
      evas_event_feed_mouse_move(obj->layer->evas,
 				obj->layer->evas->pointer.x,
 				obj->layer->evas->pointer.y,
+				obj->layer->evas->last_timestamp,
 				NULL);
 }
 

@@ -295,6 +295,7 @@ struct _Evas
    Evas_Object   *focused;
    Evas_Modifier  modifiers;
    Evas_Lock      locks;
+   unsigned int   last_timestamp;
 };
 
 struct _Evas_Layer

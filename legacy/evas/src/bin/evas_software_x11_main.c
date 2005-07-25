@@ -192,15 +192,15 @@ main(int argc, char **argv)
 		  else
 		     pause_me = 1;
 #endif
-		  evas_event_feed_mouse_move(evas, ev.xbutton.x, ev.xbutton.y, NULL);
-		  evas_event_feed_mouse_down(evas, ev.xbutton.button, EVAS_BUTTON_NONE, NULL);
+		  evas_event_feed_mouse_move(evas, ev.xbutton.x, ev.xbutton.y, 0, NULL);
+		  evas_event_feed_mouse_down(evas, ev.xbutton.button, EVAS_BUTTON_NONE, 0, NULL);
 		  break;
 	       case ButtonRelease:
-		  evas_event_feed_mouse_move(evas, ev.xbutton.x, ev.xbutton.y, NULL);
-		  evas_event_feed_mouse_up(evas, ev.xbutton.button, EVAS_BUTTON_NONE, NULL);
+		  evas_event_feed_mouse_move(evas, ev.xbutton.x, ev.xbutton.y, 0, NULL);
+		  evas_event_feed_mouse_up(evas, ev.xbutton.button, EVAS_BUTTON_NONE, 0, NULL);
 		  break;
 	       case MotionNotify:
-		  evas_event_feed_mouse_move(evas, ev.xmotion.x, ev.xmotion.y, NULL);
+		  evas_event_feed_mouse_move(evas, ev.xmotion.x, ev.xmotion.y, 0, NULL);
 		  break;
 	       case Expose:
 		  evas_damage_rectangle_add(evas,

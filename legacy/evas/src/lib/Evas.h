@@ -162,6 +162,7 @@ struct _Evas_Event_Mouse_Down /** Mouse button press event */
    Evas_Lock     *locks;
 
    Evas_Button_Flags flags;
+   unsigned int      timestamp;
 };
 
 struct _Evas_Event_Mouse_Up /** Mouse butotn relase event */
@@ -178,6 +179,7 @@ struct _Evas_Event_Mouse_Up /** Mouse butotn relase event */
    Evas_Lock     *locks;
 
    Evas_Button_Flags flags;
+   unsigned int      timestamp;
 };
 
 struct _Evas_Event_Mouse_In /** Mouse enter event */
@@ -192,6 +194,7 @@ struct _Evas_Event_Mouse_In /** Mouse enter event */
    void          *data;
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
+   unsigned int   timestamp;
 };
 
 struct _Evas_Event_Mouse_Out /** Mouse leave event */
@@ -206,6 +209,7 @@ struct _Evas_Event_Mouse_Out /** Mouse leave event */
    void          *data;
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
+   unsigned int   timestamp;
 };
 
 struct _Evas_Event_Mouse_Move /** Mouse button down event */
@@ -222,6 +226,7 @@ struct _Evas_Event_Mouse_Move /** Mouse button down event */
    void          *data;
    Evas_Modifier *modifiers;
    Evas_Lock     *locks;
+   unsigned int   timestamp;
 };
 
 struct _Evas_Event_Mouse_Wheel /** Wheel event */
@@ -240,6 +245,7 @@ struct _Evas_Event_Mouse_Wheel /** Wheel event */
    void		 *data;
    Evas_Modifier *modifiers;
    Evas_Lock	 *locks;
+   unsigned int   timestamp;
 };
 
 struct _Evas_Event_Key_Down /** Key press event */
@@ -252,6 +258,7 @@ struct _Evas_Event_Key_Down /** Key press event */
    const char    *key; /**< The logical key : (eg shift+1 == exclamation) */
    const char    *string; /**< A UTF8 string if this keystroke has produced a visible string to be ADDED */
    const char    *compose; /**< A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one */
+   unsigned int   timestamp;
 };
 
 struct _Evas_Event_Key_Up /** Key release event */
@@ -264,6 +271,7 @@ struct _Evas_Event_Key_Up /** Key release event */
    const char    *key; /**< The logical key : (eg shift+1 == exclamation) */
    const char    *string; /**< A UTF8 string if this keystroke has produced a visible string to be ADDED */
    const char    *compose; /**< A UTF8 string if this keystroke has modified a string in the middle of being composed - this string replaces the previous one */
+   unsigned int   timestamp;
 };
 
 #ifdef __cplusplus
@@ -518,14 +526,14 @@ extern "C" {
    EAPI void              evas_event_freeze                 (Evas *e);
    EAPI void              evas_event_thaw                   (Evas *e);
    EAPI int               evas_event_freeze_get             (Evas *e);
-   EAPI void              evas_event_feed_mouse_down        (Evas *e, int b, Evas_Button_Flags flags, const void *data);
-   EAPI void              evas_event_feed_mouse_up          (Evas *e, int b, Evas_Button_Flags flags, const void *data);
-   EAPI void              evas_event_feed_mouse_move        (Evas *e, int x, int y, const void *data);
-   EAPI void              evas_event_feed_mouse_in          (Evas *e, const void *data);
-   EAPI void              evas_event_feed_mouse_out         (Evas *e, const void *data);
-   EAPI void              evas_event_feed_mouse_wheel       (Evas *e, int direction, int z, const void *data);
-   EAPI void              evas_event_feed_key_down          (Evas *e, const char *keyname, const char *key, const char *string, const char *compose, const void *data);
-   EAPI void              evas_event_feed_key_up            (Evas *e, const char *keyname, const char *key, const char *string, const char *compose, const void *data);
+   EAPI void              evas_event_feed_mouse_down        (Evas *e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data);
+   EAPI void              evas_event_feed_mouse_up          (Evas *e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data);
+   EAPI void              evas_event_feed_mouse_move        (Evas *e, int x, int y, unsigned int timestamp, const void *data);
+   EAPI void              evas_event_feed_mouse_in          (Evas *e, unsigned int timestamp, const void *data);
+   EAPI void              evas_event_feed_mouse_out         (Evas *e, unsigned int timestamp, const void *data);
+   EAPI void              evas_event_feed_mouse_wheel       (Evas *e, int direction, int z, unsigned int timestamp, const void *data);
+   EAPI void              evas_event_feed_key_down          (Evas *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data);
+   EAPI void              evas_event_feed_key_up            (Evas *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data);
 
    EAPI void              evas_object_focus_set             (Evas_Object *obj, Evas_Bool focus);
    EAPI Evas_Bool         evas_object_focus_get             (Evas_Object *obj);

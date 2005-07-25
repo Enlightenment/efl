@@ -161,6 +161,7 @@ evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coo
 	       evas_event_feed_mouse_move(obj->layer->evas,
 					  obj->layer->evas->pointer.x,
 					  obj->layer->evas->pointer.y,
+					  obj->layer->evas->last_timestamp,
 					  NULL);
 	  }
      }

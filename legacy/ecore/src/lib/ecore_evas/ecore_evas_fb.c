@@ -17,7 +17,7 @@ static Ecore_Event_Handler *ecore_evas_event_handlers[5];
 static Ecore_Idle_Enterer *ecore_evas_idle_enterer = NULL;
 
 static void
-_ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y)
+_ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp)
 {
    int fbw, fbh;
    
@@ -45,13 +45,13 @@ _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y)
 			   (fbw - ee->w) + ee->w - x - 1 - ee->prop.cursor.hot.y);
      }
    if (ee->rotation == 0)
-     evas_event_feed_mouse_move(ee->evas, x, y, NULL);
+     evas_event_feed_mouse_move(ee->evas, x, y, timestamp, NULL);
    else if (ee->rotation == 90)
-     evas_event_feed_mouse_move(ee->evas, (fbh - ee->h) + ee->h - y - 1, x, NULL);
+     evas_event_feed_mouse_move(ee->evas, (fbh - ee->h) + ee->h - y - 1, x, timestamp, NULL);
    else if (ee->rotation == 180)
-     evas_event_feed_mouse_move(ee->evas, (fbw - ee->w) + ee->w - x - 1, (fbh - ee->h) + ee->h - y - 1, NULL);
+     evas_event_feed_mouse_move(ee->evas, (fbw - ee->w) + ee->w - x - 1, (fbh - ee->h) + ee->h - y - 1, timestamp, NULL);
    else if (ee->rotation == 270)
-     evas_event_feed_mouse_move(ee->evas, y, (fbw - ee->w) + ee->w - x - 1, NULL);   
+     evas_event_feed_mouse_move(ee->evas, y, (fbw - ee->w) + ee->w - x - 1, timestamp, NULL);   
 }
 
 static Ecore_Evas *
@@ -107,7 +107,7 @@ _ecore_evas_event_key_down(void *data __UNUSED__, int type __UNUSED__, void *eve
    e = event;
    ee = _ecore_evas_fb_match();
    if (!ee) return 1; /* pass on event */
-   evas_event_feed_key_down(ee->evas, e->keyname, e->keysymbol, e->key_compose, NULL, NULL);
+   evas_event_feed_key_down(ee->evas, e->keyname, e->keysymbol, e->key_compose, NULL, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
    return 0; /* dont pass it on */
 }
 
@@ -120,7 +120,7 @@ _ecore_evas_event_key_up(void *data __UNUSED__, int type __UNUSED__, void *event
    e = event;
    ee = _ecore_evas_fb_match();
    if (!ee) return 1; /* pass on event */
-   evas_event_feed_key_up(ee->evas, e->keyname, e->keysymbol, e->key_compose, NULL, NULL);
+   evas_event_feed_key_up(ee->evas, e->keyname, e->keysymbol, e->key_compose, NULL, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
    return 0; /* dont pass it on */
 }
 
@@ -134,10 +134,10 @@ _ecore_evas_event_mouse_button_down(void *data __UNUSED__, int type __UNUSED__, 
    e = event;
    ee = _ecore_evas_fb_match();
    if (!ee) return 1; /* pass on event */
-   _ecore_evas_mouse_move_process(ee, e->x, e->y);
+   _ecore_evas_mouse_move_process(ee, e->x, e->y, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff));
    if (e->double_click) flags |= EVAS_BUTTON_DOUBLE_CLICK;
    if (e->triple_click) flags |= EVAS_BUTTON_TRIPLE_CLICK;
-   evas_event_feed_mouse_down(ee->evas, e->button, flags, NULL);
+   evas_event_feed_mouse_down(ee->evas, e->button, flags, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
    return 0; /* dont pass it on */
 }
 
@@ -150,8 +150,8 @@ _ecore_evas_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, vo
    e = event;
    ee = _ecore_evas_fb_match();
    if (!ee) return 1; /* pass on event */
-   _ecore_evas_mouse_move_process(ee, e->x, e->y);
-   evas_event_feed_mouse_up(ee->evas, e->button, EVAS_BUTTON_NONE, NULL);
+   _ecore_evas_mouse_move_process(ee, e->x, e->y, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff));
+   evas_event_feed_mouse_up(ee->evas, e->button, EVAS_BUTTON_NONE, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
    return 0; /* dont pass it on */
 }
 
@@ -164,7 +164,7 @@ _ecore_evas_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *e
    e = event;
    ee = _ecore_evas_fb_match();
    if (!ee) return 1; /* pass on event */
-   _ecore_evas_mouse_move_process(ee, e->x, e->y);
+   _ecore_evas_mouse_move_process(ee, e->x, e->y, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff));
    return 0; /* dont pass it on */
 }
 
@@ -311,7 +311,7 @@ _ecore_evas_rotation_set(Ecore_Evas *ee, int rotation)
      evas_damage_rectangle_add(ee->evas, 0, 0, ee->h, ee->w);
    else
      evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
-   _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y);
+   _ecore_evas_mouse_move_process(ee, ee->mouse.x, ee->mouse.y, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff));
    if (ee->func.fn_resize) ee->func.fn_resize(ee);
 }
 
@@ -532,7 +532,7 @@ ecore_evas_fb_new(char *disp_name, int rotation, int w, int h)
    evas_key_lock_add(ee->evas, "Num_Lock");
    evas_key_lock_add(ee->evas, "Scroll_Lock");
    
-   evas_event_feed_mouse_in(ee->evas, NULL);
+   evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
 
    ecore_evases = _ecore_list_prepend(ecore_evases, ee);
    return ee;

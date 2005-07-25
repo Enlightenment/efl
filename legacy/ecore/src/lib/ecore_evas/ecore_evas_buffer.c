@@ -12,11 +12,11 @@ static int _ecore_evas_fps_debug = 0;
 static Ecore_Evas *ecore_evases = NULL;
 
 static void
-_ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y)
+_ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timestamp)
 {
    ee->mouse.x = x;
    ee->mouse.y = y;
-   evas_event_feed_mouse_move(ee->evas, x, y, NULL);
+   evas_event_feed_mouse_move(ee->evas, x, y, timestamp, NULL);
 }
 
 static int
@@ -162,18 +162,22 @@ static void
 _ecore_evas_buffer_cb_mouse_in(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee;
+   Evas_Event_Mouse_In *ev;
    
    ee = data;
-   evas_event_feed_mouse_in(ee->evas, NULL);
+   ev = event_info;
+   evas_event_feed_mouse_in(ee->evas, ev->timestamp, NULL);
 }
 
 static void
 _ecore_evas_buffer_cb_mouse_out(void *data, Evas *e __UNUSED__, Evas_Object *obj __UNUSED__, void *event_info __UNUSED__)
 {
    Ecore_Evas *ee;
+   Evas_Event_Mouse_Out *ev;
    
    ee = data;
-   evas_event_feed_mouse_out(ee->evas, NULL);
+   ev = event_info;
+   evas_event_feed_mouse_out(ee->evas, ev->timestamp, NULL);
 }
 
 static void
@@ -184,7 +188,7 @@ _ecore_evas_buffer_cb_mouse_down(void *data, Evas *e __UNUSED__, Evas_Object *ob
   
    ee = data;
    ev = event_info;
-   evas_event_feed_mouse_down(ee->evas, ev->button, ev->flags, NULL);
+   evas_event_feed_mouse_down(ee->evas, ev->button, ev->flags, ev->timestamp, NULL);
 }
 
 static void
@@ -195,7 +199,7 @@ _ecore_evas_buffer_cb_mouse_up(void *data, Evas *e __UNUSED__, Evas_Object *obj 
    
    ee = data;
    ev = event_info;
-   evas_event_feed_mouse_up(ee->evas, ev->button, ev->flags, NULL);
+   evas_event_feed_mouse_up(ee->evas, ev->button, ev->flags, ev->timestamp, NULL);
 }
 
 static void
@@ -210,7 +214,7 @@ _ecore_evas_buffer_cb_mouse_move(void *data, Evas *e __UNUSED__, Evas_Object *ob
    x = ev->cur.canvas.x;
    y = ev->cur.canvas.y;
    _ecore_evas_buffer_coord_translate(ee, &x, &y);
-   _ecore_evas_mouse_move_process(ee, x, y);
+   _ecore_evas_mouse_move_process(ee, x, y, ev->timestamp);
 }
 
 static void
@@ -221,7 +225,7 @@ _ecore_evas_buffer_cb_mouse_wheel(void *data, Evas *e __UNUSED__, Evas_Object *o
    
    ee = data;
    ev = event_info;
-   evas_event_feed_mouse_wheel(ee->evas, ev->direction, ev->z, NULL);
+   evas_event_feed_mouse_wheel(ee->evas, ev->direction, ev->z, ev->timestamp, NULL);
 }
 
 static void
@@ -278,7 +282,7 @@ _ecore_evas_buffer_cb_key_down(void *data, Evas *e, Evas_Object *obj __UNUSED__,
      evas_key_lock_on(e, "Caps_Lock");
    else
      evas_key_lock_off(e, "Caps_Lock");
-   evas_event_feed_key_down(ee->evas, ev->keyname, ev->key, ev->string, ev->compose, NULL);
+   evas_event_feed_key_down(ee->evas, ev->keyname, ev->key, ev->string, ev->compose, ev->timestamp, NULL);
 }
 
 static void
@@ -325,7 +329,7 @@ _ecore_evas_buffer_cb_key_up(void *data, Evas *e, Evas_Object *obj __UNUSED__, v
      evas_key_lock_on(e, "Caps_Lock");
    else
      evas_key_lock_off(e, "Caps_Lock");
-   evas_event_feed_key_up(ee->evas, ev->keyname, ev->key, ev->string, ev->compose, NULL);
+   evas_event_feed_key_up(ee->evas, ev->keyname, ev->key, ev->string, ev->compose, ev->timestamp, NULL);
 }
 
 static void
@@ -486,7 +490,7 @@ ecore_evas_buffer_new(int w, int h)
    evas_key_lock_add(ee->evas, "Num_Lock");
    evas_key_lock_add(ee->evas, "Scroll_Lock");
    
-   evas_event_feed_mouse_in(ee->evas, NULL);
+   evas_event_feed_mouse_in(ee->evas, 0, NULL);
 
    ecore_evases = _ecore_list_prepend(ecore_evases, ee);
    return ee;

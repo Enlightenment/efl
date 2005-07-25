@@ -202,6 +202,7 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
 	  evas_event_feed_mouse_move(obj->layer->evas,
 				     obj->layer->evas->pointer.x,
 				     obj->layer->evas->pointer.y,
+				     obj->layer->evas->last_timestamp,
 				     NULL);
      }
 }
@@ -289,6 +290,7 @@ evas_object_clip_unset(Evas_Object *obj)
 	  evas_event_feed_mouse_move(obj->layer->evas,
 				     obj->layer->evas->pointer.x,
 				     obj->layer->evas->pointer.y,
+                                     obj->layer->evas->last_timestamp,
 				     NULL);
      }
 }

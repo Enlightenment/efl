@@ -249,21 +249,21 @@ main(int argc, char **argv)
 	     else
 	       pause_me = 1;
 #endif
-	     evas_event_feed_mouse_move(evas, ev->event_x, ev->event_y, NULL);
-	     evas_event_feed_mouse_down(evas, ev->state, EVAS_BUTTON_NONE, NULL);
+	     evas_event_feed_mouse_move(evas, ev->event_x, ev->event_y, 0, NULL);
+	     evas_event_feed_mouse_down(evas, ev->state, EVAS_BUTTON_NONE, 0, NULL);
 	     break;
 	   }
 	   case XCBButtonRelease: {
 	     XCBButtonReleaseEvent *ev = (XCBButtonReleaseEvent *)e;
 
-	     evas_event_feed_mouse_move(evas, ev->event_x, ev->event_y, NULL);
-	     evas_event_feed_mouse_up(evas, ev->state, EVAS_BUTTON_NONE, NULL);
+	     evas_event_feed_mouse_move(evas, ev->event_x, ev->event_y, 0, NULL);
+	     evas_event_feed_mouse_up(evas, ev->state, EVAS_BUTTON_NONE, 0, NULL);
 	     break;
 	   }
 	   case XCBMotionNotify: {
 	     XCBMotionNotifyEvent *ev = (XCBMotionNotifyEvent *)e;
 
-	     evas_event_feed_mouse_move(evas, ev->event_x, ev->event_y, NULL);
+	     evas_event_feed_mouse_move(evas, ev->event_x, ev->event_y, 0, NULL);
 	     break;
 	   }
 	   case Expose: {

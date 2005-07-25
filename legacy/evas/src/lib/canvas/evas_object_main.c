@@ -494,6 +494,7 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 		    evas_event_feed_mouse_move(obj->layer->evas,
 					       obj->layer->evas->pointer.x,
 					       obj->layer->evas->pointer.y,
+					       obj->layer->evas->last_timestamp,
 					       NULL);
 	       }
 	  }
@@ -558,6 +559,7 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 		    evas_event_feed_mouse_move(obj->layer->evas,
 					       obj->layer->evas->pointer.x,
 					       obj->layer->evas->pointer.y,
+					       obj->layer->evas->last_timestamp,
 					       NULL);
 	       }
 	  }
@@ -645,6 +647,7 @@ evas_object_show(Evas_Object *obj)
 		    evas_event_feed_mouse_move(obj->layer->evas,
 					       obj->layer->evas->pointer.x,
 					       obj->layer->evas->pointer.y,
+					       obj->layer->evas->last_timestamp,
 					       NULL);
 	       }
 	  }
@@ -691,6 +694,7 @@ evas_object_hide(Evas_Object *obj)
 		    evas_event_feed_mouse_move(obj->layer->evas,
 					       obj->layer->evas->pointer.x,
 					       obj->layer->evas->pointer.y,
+					       obj->layer->evas->last_timestamp,
 					       NULL);
 		  if (obj->mouse_grabbed > 0)
 		    {
