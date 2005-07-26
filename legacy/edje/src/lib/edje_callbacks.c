@@ -1,7 +1,6 @@
 /*
- * vim: ts=8
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
-
 
 #include "Edje.h"
 #include "edje_private.h"
@@ -61,64 +60,55 @@ _edje_mouse_down_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    _edje_emit(ed, buf, rp->part->name);
 
    if (rp->events_to)
-   {
-       int x, y;
-       Edje_Real_Part* events;
-       events = rp->events_to;
+     {
+	int x = 0, y = 0;
+	Edje_Real_Part *events = rp->events_to;
 
-       //fprintf(stderr,"rp = %s, events = %s\n", rp->part->name, events->part->name);
+	evas_object_geometry_get(rp->object, &x, &y, NULL, NULL);
 
-       evas_object_geometry_get(rp->object, &x, &y, NULL, NULL);
-       /*
-       fprintf(stderr,"x = %d, y = %d\n", x, y);
-       fprintf(stderr,"ev->canvas.x = %d\n", ev->canvas.x);
-       *
-       x = ed->x;
-       y = ed->y;
-       */
-       if ((events->part->dragable.x) || (events->part->dragable.y))
-       {
-	       if (events->part->dragable.x)
+	if ((events->part->dragable.x) || (events->part->dragable.y))
+	  {
+	     if (events->part->dragable.x)
 	       {
-		   events->drag.tmp.x = ev->canvas.x - x - (events->x + events->w/2);
-		   events->drag.down.x = ev->canvas.x - x;
-		   events->x = ev->canvas.x - x - events->w/2;
+		  events->drag.tmp.x = ev->canvas.x - x - (events->x + events->w / 2);
+		  events->drag.down.x = ev->canvas.x - x;
+		  events->x = ev->canvas.x - x - events->w / 2;
 	       }
-	       if (events->part->dragable.y)
+	     if (events->part->dragable.y)
 	       {
-		   events->drag.tmp.y = ev->canvas.y - y - (events->y + events->h/2);
-		   events->drag.down.y = ev->canvas.y - y;
-		   events->y = ev->canvas.y - y - events->h/2;
+		  events->drag.tmp.y = ev->canvas.y - y - (events->y + events->h / 2);
+		  events->drag.down.y = ev->canvas.y - y;
+		  events->y = ev->canvas.y - y - events->h / 2;
 	       }
 
-	       snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
-	       _edje_emit(ed, buf, events->part->name);
-	       ed->dirty = 1;
-       }
-       _edje_recalc(ed);
-       _edje_thaw(ed);
-       _edje_unref(ed);
-       _edje_ref(ed);
-       _edje_freeze(ed);
+	     snprintf(buf, sizeof(buf), "mouse,down,%i", ev->button);
+	     _edje_emit(ed, buf, events->part->name);
+	     ed->dirty = 1;
+	  }
+	_edje_recalc(ed);
+	_edje_thaw(ed);
+	_edje_unref(ed);
+	_edje_ref(ed);
+	_edje_freeze(ed);
 
-       rp = events;
-       {
-	   double dx, dy;
-	   int dir;
+	rp = events;
+	  {
+	     double dx = 0.0, dy = 0.0;
+	     int dir;
 
-	   dir = _edje_part_dragable_calc(ed, rp, &dx, &dy);
-//	   fprintf(stderr,"dx = %f, dy = %f\n", dx, dy);
-	   if ((dx != rp->drag.val.x) || (dy != rp->drag.val.y))
-	   {
-	       rp->drag.val.x = dx;
-	       rp->drag.val.y = dy;
-	       _edje_emit(ed, "drag", rp->part->name);
-	       ed->dirty = 1;
-	       rp->drag.need_reset = 1;
-	       _edje_recalc(ed);
-	   }
-       }
-   }
+	     dir = _edje_part_dragable_calc(ed, rp, &dx, &dy);
+
+	     if ((dx != rp->drag.val.x) || (dy != rp->drag.val.y))
+	       {
+		  rp->drag.val.x = dx;
+		  rp->drag.val.y = dy;
+		  _edje_emit(ed, "drag", rp->part->name);
+		  ed->dirty = 1;
+		  rp->drag.need_reset = 1;
+		  _edje_recalc(ed);
+	       }
+	  }
+     }
 
    if ((rp->part->dragable.x) || (rp->part->dragable.y))
      {
@@ -161,11 +151,11 @@ _edje_mouse_up_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    _edje_ref(ed);
    _edje_emit(ed, buf, rp->part->name);
 
-   if(rp->events_to)
-   {
-       rp = rp->events_to;
-       snprintf(buf, sizeof(buf), "mouse,up,%i", ev->button);
-       _edje_emit(ed, buf, rp->part->name);
+   if (rp->events_to)
+     {
+	rp = rp->events_to;
+	snprintf(buf, sizeof(buf), "mouse,up,%i", ev->button);
+	_edje_emit(ed, buf, rp->part->name);
    }
 
    if ((rp->part->dragable.x) || (rp->part->dragable.y))
@@ -208,7 +198,9 @@ _edje_mouse_move_cb(void *data, Evas * e, Evas_Object * obj, void *event_info)
    rp = evas_object_data_get(obj, "real_part");
    if (!rp) return;
    if (rp->events_to)
-       rp = rp->events_to;
+     {
+	rp = rp->events_to;
+     }
 
    if (rp->still_in)
      {
