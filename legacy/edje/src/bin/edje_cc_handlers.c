@@ -30,6 +30,7 @@ static void st_collections_group_parts_part_clip_to_id(void);
 static void st_collections_group_parts_part_dragable_x(void);
 static void st_collections_group_parts_part_dragable_y(void);
 static void st_collections_group_parts_part_dragable_confine(void);
+static void st_collections_group_parts_part_dragable_events(void);
 
 static void ob_collections_group_parts_part_description(void);
 static void st_collections_group_parts_part_description_inherit(void);
@@ -118,6 +119,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.dragable.x", st_collections_group_parts_part_dragable_x},
      {"collections.group.parts.part.dragable.y", st_collections_group_parts_part_dragable_y},
      {"collections.group.parts.part.dragable.confine", st_collections_group_parts_part_dragable_confine},
+     {"collections.group.parts.part.dragable.events", st_collections_group_parts_part_dragable_events},
      {"collections.group.parts.part.image", st_images_image}, /* dup */
      {"collections.group.parts.part.images.image", st_images_image}, /* dup */
      {"collections.group.parts.part.font", st_fonts_font}, /* dup */
@@ -573,6 +575,7 @@ ob_collections_group_parts_part(void)
    ep->repeat_events = 0;
    ep->clip_to_id = -1;
    ep->dragable.confine_id = -1;
+   ep->dragable.events_id = -1;
 }
 
 static void
@@ -714,6 +717,25 @@ st_collections_group_parts_part_dragable_confine(void)
 	
 	name = parse_str(0);
 	data_queue_part_lookup(pc, name, &(ep->dragable.confine_id));
+	free(name);
+     }
+}
+
+static void
+st_collections_group_parts_part_dragable_events(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+     {
+	char *name;
+	
+	name = parse_str(0);
+	data_queue_part_lookup(pc, name, &(ep->dragable.events_id));
 	free(name);
      }
 }

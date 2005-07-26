@@ -85,6 +85,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 		  desc = hist->data;
 		  if (desc->color_class) _edje_color_class_member_add(ed, desc->color_class);
 	       }
+	     hist = NULL;
 	     hist = evas_list_append(hist, ep);
 	     while (ep->dragable.confine_id >= 0)
 	       {
@@ -94,6 +95,32 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 		    {
 		       printf("EDJE ERROR: confine_to loops. invalidating loop.\n");
 		       ep->dragable.confine_id = -1;
+		       break;
+		    }
+		  hist = evas_list_append(hist, ep);
+	       }
+	     evas_list_free(hist);
+	     hist = NULL;
+	     hist = evas_list_append(hist, ep);
+	     while (ep->dragable.events_id >= 0)
+	       {
+		  Edje_Part* prev;
+
+		  prev = ep;
+
+		  ep = evas_list_nth(ed->collection->parts,
+				     ep->dragable.events_id);
+		  
+		  if (!ep->dragable.x && !ep->dragable.y)
+		    {
+		       prev->dragable.events_id = -1;
+		       break;
+		    }
+
+		  if (evas_list_find(hist, ep))
+		    {
+		       printf("EDJE ERROR: events_to loops. invalidating loop.\n");
+		       ep->dragable.events_id = -1;
 		       break;
 		    }
 		  hist = evas_list_append(hist, ep);
@@ -232,6 +259,18 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 		  if (rp->part->dragable.confine_id >= 0)
 		    rp->confine_to = evas_list_nth(ed->parts, rp->part->dragable.confine_id);
 		  
+		  /* replay events for dragable */
+		  if (rp->part->dragable.events_id >= 0)
+		    {
+		       rp->events_to = 
+			  evas_list_nth(ed->parts,
+				rp->part->dragable.events_id);
+		       /* events_to may be used only with dragable */
+		       if (!rp->events_to->part->dragable.x &&
+			   !rp->events_to->part->dragable.y)
+			 rp->events_to = NULL;
+		    }
+
 		  rp->swallow_params.min.w = 0;
 		  rp->swallow_params.min.w = 0;
 		  rp->swallow_params.max.w = -1;

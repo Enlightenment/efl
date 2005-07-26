@@ -182,7 +182,7 @@ struct _Edje_Font_Directory_Entry
    char *entry; /* the name of the font */
 };
 
-
+	
 /*----------*/
 
 struct _Edje_Image_Directory
@@ -305,6 +305,9 @@ struct _Edje_Part
       int                 count_y; /* drag area divided by n (0 = no limit) */
       
       int                 confine_id; /* dragging within this bit, -1 = no */
+
+      /* davinchi */
+      int				  events_id;	/* If it is used as scrollbar */
    } dragable;
 };
 
@@ -542,6 +545,7 @@ struct _Edje_Real_Part
    Edje_Real_Part           *clip_to;
    
    Edje_Running_Program     *program;
+   Edje_Real_Part           *events_to;
 };
 
 struct _Edje_Running_Program
