@@ -592,9 +592,9 @@ ecore_dbus_get_body_field(Ecore_DBus_Message * m, Ecore_DBus_Message_Field * mf,
 			  unsigned int pos)
 {
    Ecore_Oldlist      *l, *list;
+   unsigned int        i = 0;
 
    list = (Ecore_Oldlist *) mf;
-   unsigned int        i = 0;
 
    for (l = list; l; l = l->next)
      {
@@ -860,7 +860,7 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server * svr, char *service,
 	     printf("[ecore_dbus] unknown/unhandled data type %c\n", *fmt);
 	     break;
 	  }
-	*fmt++;
+	fmt++;
      }
    va_end(ap);
    *(unsigned int *)(msg->header + 8) = msg->blength = msg->bpos;
