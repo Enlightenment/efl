@@ -732,8 +732,9 @@ ecore_con_client_del(Ecore_Con_Client *cl)
 	return NULL;
      }   
    data = cl->data;
+   if (ecore_list_goto(cl->server->clients, cl))
+     ecore_list_remove(cl->server->clients);
    _ecore_con_client_free(cl);
-   if (ecore_list_goto(cl->server->clients, cl)) ecore_list_remove(cl->server->clients);
    return data;
 }
 
