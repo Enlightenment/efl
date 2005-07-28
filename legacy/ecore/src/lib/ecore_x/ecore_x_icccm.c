@@ -220,7 +220,7 @@ ecore_x_icccm_hints_get(Ecore_X_Window win,
    XWMHints *hints;
 
    if (accepts_focus)
-      *accepts_focus = 0;
+      *accepts_focus = 1;
    if (initial_state)
       *initial_state = ECORE_X_WINDOW_STATE_HINT_NORMAL;
    if (icon_pixmap)
