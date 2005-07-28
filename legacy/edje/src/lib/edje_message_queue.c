@@ -592,11 +592,19 @@ _edje_message_queue_process(void)
 	while (tmp_msgq)
 	  {
 	     Edje_Message *em;
+	     Edje *ed;
 	     
 	     em = tmp_msgq->data;
+	     ed = em->edje;
+	     ed->processing_messages++;
 	     tmp_msgq = evas_list_remove_list(tmp_msgq, tmp_msgq);
 	     _edje_message_process(em);
 	     _edje_message_free(em);
+	     ed->processing_messages--;
+	     if (ed->processing_messages == 0)
+	       {
+		  if (ed->delete_me) _edje_del(ed);
+	       }
 	  }
      }
    

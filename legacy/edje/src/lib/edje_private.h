@@ -473,6 +473,7 @@ struct _Edje
       void *data;
    } text_change;
    
+   int                      processing_messages;
    struct {
       int                   num;
       void                (*func) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg);

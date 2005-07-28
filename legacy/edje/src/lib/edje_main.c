@@ -75,6 +75,12 @@ _edje_add(Evas_Object *obj)
 void
 _edje_del(Edje *ed)
 {
+   if (ed->processing_messages)
+     {
+	ed->delete_me = 1;
+	return;
+     }
+   _edje_message_del(ed);
    _edje_file_del(ed);
    if (ed->path) free(ed->path);
    ed->path = NULL;
