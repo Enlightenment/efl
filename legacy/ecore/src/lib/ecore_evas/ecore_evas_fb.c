@@ -64,7 +64,9 @@ _ecore_evas_fb_match(void)
 	Ecore_Evas *ee;
 	
 	ee = (Ecore_Evas *)l;
-	return ee;
+	if (ee->delete_idle_enterer) continue;
+	else
+	  return ee;
      }
    return NULL;
 }
@@ -404,7 +406,7 @@ _ecore_evas_fb_shutdown(void)
      {
 	int i;
    
-	while (ecore_evases) ecore_evas_free(ecore_evases);
+	while (ecore_evases) _ecore_evas_free(ecore_evases);
 	for (i = 0; i < 5; i++)
 	  ecore_event_handler_del(ecore_evas_event_handlers[i]);
 	ecore_idle_enterer_del(ecore_evas_idle_enterer);

@@ -6,6 +6,8 @@
 
 static int _ecore_evas_init_count = 0;
 
+static int _ecore_evas_idle_enter_delete(void *data);
+
 /**
  * Query if a particular renginering engine target has support
  * @param  engine The engine to check support for
@@ -110,31 +112,10 @@ ecore_evas_free(Ecore_Evas *ee)
 			 "ecore_evas_free");
 	return;
      }
-   ECORE_MAGIC_SET(ee, ECORE_MAGIC_NONE);
-   while (ee->sub_ecore_evas)
-     {
-	ecore_evas_free(ee->sub_ecore_evas->data);
-     }
-   if (ee->data) evas_hash_free(ee->data);
-   if (ee->driver) free(ee->driver);
-   if (ee->name) free(ee->name);
-   if (ee->prop.title) free(ee->prop.title);
-   if (ee->prop.name) free(ee->prop.name);
-   if (ee->prop.clas) free(ee->prop.clas);
-   if (ee->prop.cursor.file) free(ee->prop.cursor.file);
-   if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
-   if (ee->evas) evas_free(ee->evas);
-   ee->data = NULL;
-   ee->driver = NULL;
-   ee->name = NULL;
-   ee->prop.title = NULL;
-   ee->prop.name = NULL;
-   ee->prop.clas = NULL;
-   ee->prop.cursor.file = NULL;
-   ee->prop.cursor.object = NULL;
-   ee->evas = NULL;
-   if (ee->engine.func->fn_free) ee->engine.func->fn_free(ee);
-   free(ee);
+   if (ee->delete_idle_enterer) return;
+   ee->delete_idle_enterer = 
+     ecore_idle_enterer_add(_ecore_evas_idle_enter_delete, ee);
+   return;
 }
 
 void *
@@ -1603,3 +1584,48 @@ _ecore_evas_fps_debug_rendertime_add(double t)
      }
 }
 #endif
+
+void
+_ecore_evas_free(Ecore_Evas *ee)
+{
+   ECORE_MAGIC_SET(ee, ECORE_MAGIC_NONE);
+   if (ee->delete_idle_enterer)
+     {
+	ecore_idle_enterer_del(ee->delete_idle_enterer);
+	ee->delete_idle_enterer = NULL;
+     }
+   while (ee->sub_ecore_evas)
+     {
+	ecore_evas_free(ee->sub_ecore_evas->data);
+     }
+   if (ee->data) evas_hash_free(ee->data);
+   if (ee->driver) free(ee->driver);
+   if (ee->name) free(ee->name);
+   if (ee->prop.title) free(ee->prop.title);
+   if (ee->prop.name) free(ee->prop.name);
+   if (ee->prop.clas) free(ee->prop.clas);
+   if (ee->prop.cursor.file) free(ee->prop.cursor.file);
+   if (ee->prop.cursor.object) evas_object_del(ee->prop.cursor.object);
+   if (ee->evas) evas_free(ee->evas);
+   ee->data = NULL;
+   ee->driver = NULL;
+   ee->name = NULL;
+   ee->prop.title = NULL;
+   ee->prop.name = NULL;
+   ee->prop.clas = NULL;
+   ee->prop.cursor.file = NULL;
+   ee->prop.cursor.object = NULL;
+   ee->evas = NULL;
+   if (ee->engine.func->fn_free) ee->engine.func->fn_free(ee);
+   free(ee);
+}
+
+static int
+_ecore_evas_idle_enter_delete(void *data)
+{
+   Ecore_Evas *ee;
+   
+   ee = (Ecore_Evas *)data;
+   _ecore_evas_free(ee);
+   return 0;
+}

@@ -27,12 +27,14 @@ _ecore_evas_x_render(Ecore_Evas *ee)
    Evas_List *ll;
 #endif
    
+   if (ee->delete_idle_enterer) return;
 #ifdef BUILD_ECORE_EVAS_BUFFER
    for (ll = ee->sub_ecore_evas; ll; ll = ll->next)
      {
 	Ecore_Evas *ee2;
 	
 	ee2 = ll->data;
+	if (ee2->delete_idle_enterer) continue;
 	if (ee2->func.fn_pre_render) ee2->func.fn_pre_render(ee2);
 	_ecore_evas_buffer_render(ee2);
 	if (ee2->func.fn_post_render) ee2->func.fn_post_render(ee2);
@@ -250,7 +252,11 @@ _ecore_evas_x_winid_str_get(Ecore_X_Window win)
 static Ecore_Evas *
 _ecore_evas_x_match(Ecore_X_Window win)
 {
-   return evas_hash_find(ecore_evases_hash, _ecore_evas_x_winid_str_get(win));
+   Ecore_Evas *ee;
+   
+   ee = evas_hash_find(ecore_evases_hash, _ecore_evas_x_winid_str_get(win));
+   if ((ee) && (ee->delete_idle_enterer)) return NULL;
+   return ee;
 }
 
 static void
@@ -1500,7 +1506,7 @@ _ecore_evas_x_shutdown(void)
      {
 	int i;
    
-	while (ecore_evases) ecore_evas_free(ecore_evases);
+	while (ecore_evases) _ecore_evas_free(ecore_evases);
 	for (i = 0; i < 16; i++)
 	  ecore_event_handler_del(ecore_evas_event_handlers[i]);
 	ecore_idle_enterer_del(ecore_evas_idle_enterer);

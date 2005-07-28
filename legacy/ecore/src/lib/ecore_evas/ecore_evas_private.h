@@ -139,6 +139,8 @@ struct _Ecore_Evas
    char        visible : 1;
    char        should_be_visible : 1;
 
+   Ecore_Idle_Enterer *delete_idle_enterer;
+   
    Evas_Hash  *data;
 
    struct {
@@ -212,5 +214,6 @@ void _ecore_evas_buffer_render(Ecore_Evas *ee);
 void _ecore_evas_fps_debug_init(void);
 void _ecore_evas_fps_debug_shutdown(void);
 void _ecore_evas_fps_debug_rendertime_add(double t);
+void _ecore_evas_free(Ecore_Evas *ee);
 
 #endif
