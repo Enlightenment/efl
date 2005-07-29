@@ -5,7 +5,5 @@ libeet.so.0.0.0
 .libs
 Makefile
 Makefile.in
-eet_data.lo
-eet_lib.lo
-eet_memfile.lo
+*.lo
 libeet.la

@@ -2,5 +2,6 @@
 .libs
 Makefile
 Makefile.in
+ecore_config
 ecore_evas_test
 ecore_test
