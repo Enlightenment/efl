@@ -1596,7 +1596,7 @@ _ecore_evas_free(Ecore_Evas *ee)
      }
    while (ee->sub_ecore_evas)
      {
-	ecore_evas_free(ee->sub_ecore_evas->data);
+	_ecore_evas_free(ee->sub_ecore_evas->data);
      }
    if (ee->data) evas_hash_free(ee->data);
    if (ee->driver) free(ee->driver);
