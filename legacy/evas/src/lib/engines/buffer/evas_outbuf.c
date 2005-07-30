@@ -237,7 +237,7 @@ evas_buffer_outbuf_buf_push_updated_region(Outbuf *buf, RGBA_Image *update, int 
 	  }
 	break;
       case OUTBUF_DEPTH_RGB_32BPP_888_8888:
-	printf("NOT IMPLEMENTED\n");
+	/* no need src == dest */
 	break;
       case OUTBUF_DEPTH_BGR_32BPP_888_8888:
 	  {
