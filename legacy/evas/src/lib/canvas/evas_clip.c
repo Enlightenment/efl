@@ -52,6 +52,12 @@ evas_object_clip_recalc(Evas_Object *obj)
    obj->cur.cache.clip.b = cb;
    obj->cur.cache.clip.a = ca;
    obj->cur.cache.clip.dirty = 0;
+   if (cvis)
+     {
+	Evas_List *l;
+	for (l = obj->clip.clipees; l; l = l->next)
+          evas_object_clip_dirty(l->data);
+     }
 }
 
 void
@@ -60,8 +66,6 @@ evas_object_clip_dirty(Evas_Object *obj)
    Evas_List *l;
 
    obj->cur.cache.clip.dirty = 1;
-   for (l = obj->clip.clipees; l; l = l->next)
-     evas_object_clip_dirty(l->data);
 }
 
 void
