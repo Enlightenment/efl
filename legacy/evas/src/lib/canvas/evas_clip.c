@@ -22,8 +22,8 @@ evas_object_clip_recalc(Evas_Object *obj)
    cb = obj->cur.color.b; ca = obj->cur.color.a;
    if (obj->cur.clipper)
      {
-// this causes problems... hmmm
-//	if (obj->cur.clipper->cur.cache.clip.dirty)
+	/* Don't recalculate clean clipper */
+	if (obj->cur.clipper->cur.cache.clip.dirty)
 	  evas_object_clip_recalc(obj->cur.clipper);
 	nx = obj->cur.clipper->cur.cache.clip.x;
 	ny = obj->cur.clipper->cur.cache.clip.y;
