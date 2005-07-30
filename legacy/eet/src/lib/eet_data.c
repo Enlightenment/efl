@@ -336,6 +336,7 @@ static int
 eet_data_get_float(void *src, void *src_end, void *dst)
 {
    float *d;
+   float tf;
    char *s, *str, *p, *prev_locale;
    int len;
 
@@ -350,7 +351,10 @@ eet_data_get_float(void *src, void *src_end, void *dst)
    str[len] = 0;
 
    prev_locale = setlocale(LC_NUMERIC, "C");
-   *d = (float)atof(str);
+/* solaris atof is broken and doesnt understand %a format as a float */   
+/*   *d = (float)atof(str); */
+   sscanf(str, "%a", &tf);
+   *d = (float)tf;
    if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
 
    free(str);
@@ -380,7 +384,8 @@ eet_data_put_float(void *src, int *size_ret)
 static int
 eet_data_get_double(void *src, void *src_end, void *dst)
 {
-   double *d;
+   double *d, td;
+   float tf;
    char *s, *str, *p, *prev_locale;
    int len;
 
@@ -395,7 +400,10 @@ eet_data_get_double(void *src, void *src_end, void *dst)
    str[len] = 0;
 
    prev_locale = setlocale(LC_NUMERIC, "C");
-   *d = (double)atof(str);
+/* solaris atof is broken and doesnt understand %a format as a float */   
+/*   *d = (double)atof(str); */
+   sscanf(str, "%a", &tf);
+   *d = (double)tf;
    if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
 
    free(str);
