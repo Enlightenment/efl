@@ -2,7 +2,7 @@
 
 Summary: Complex Graphical Design/Layout Engine
 Name: edje
-Version: 0.5.0.011
+Version: 0.5.0.012
 Release: 1
 License: BSD
 Group: System Environment/Libraries
