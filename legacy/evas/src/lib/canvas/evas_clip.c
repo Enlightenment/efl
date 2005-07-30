@@ -6,14 +6,9 @@ evas_object_clip_recalc(Evas_Object *obj)
 {
    int cx, cy, cw, ch, cvis, cr, cg, cb, ca;
    int nx, ny, nw, nh, nvis, nr, ng, nb, na;
-   // FIXME: This shouldn't be necessary as frozen checks should happen at a
-   // higher level.
-   // if (obj->layer->evas->events_frozen > 0) return;
 
-   /* Skip coord recalc on smart object and invalid output */
-   if ((!obj->smart.smart) &&
-       (obj->cur.cache.geometry.validity != obj->layer->evas->output_validity))
-     evas_object_coords_recalc(obj);
+   if (obj->layer->evas->events_frozen > 0) return;
+   evas_object_coords_recalc(obj);
    cx = obj->cur.cache.geometry.x; cy = obj->cur.cache.geometry.y;
    cw = obj->cur.cache.geometry.w; ch = obj->cur.cache.geometry.h;
    if (obj->cur.color.a == 0) cvis = 0;
@@ -22,8 +17,8 @@ evas_object_clip_recalc(Evas_Object *obj)
    cb = obj->cur.color.b; ca = obj->cur.color.a;
    if (obj->cur.clipper)
      {
-	/* Don't recalculate clean clipper */
-	if (obj->cur.clipper->cur.cache.clip.dirty)
+// this causes problems... hmmm
+//	if (obj->cur.clipper->cur.cache.clip.dirty)
 	  evas_object_clip_recalc(obj->cur.clipper);
 	nx = obj->cur.clipper->cur.cache.clip.x;
 	ny = obj->cur.clipper->cur.cache.clip.y;
@@ -52,12 +47,6 @@ evas_object_clip_recalc(Evas_Object *obj)
    obj->cur.cache.clip.b = cb;
    obj->cur.cache.clip.a = ca;
    obj->cur.cache.clip.dirty = 0;
-   if (cvis)
-     {
-	Evas_List *l;
-	for (l = obj->clip.clipees; l; l = l->next)
-          evas_object_clip_dirty(l->data);
-     }
 }
 
 void
@@ -66,6 +55,8 @@ evas_object_clip_dirty(Evas_Object *obj)
    Evas_List *l;
 
    obj->cur.cache.clip.dirty = 1;
+   for (l = obj->clip.clipees; l; l = l->next)
+     evas_object_clip_dirty(l->data);
 }
 
 void
@@ -73,10 +64,10 @@ evas_object_recalc_clippees(Evas_Object *obj)
 {
    Evas_List *l;
 
-   evas_object_clip_recalc(obj);
-   for (l = obj->clip.clipees; l; l = l->next)
+   if (obj->cur.cache.clip.dirty)
      {
-        if (obj->cur.cache.clip.dirty)
+	evas_object_clip_recalc(obj);
+	for (l = obj->clip.clipees; l; l = l->next)
 	  evas_object_recalc_clippees(l->data);
      }
 }
@@ -202,8 +193,7 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
    clip->clip.clipees = evas_list_append(clip->clip.clipees, obj);
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
-   if ((!obj->layer->evas->events_frozen) && (obj->cur.cache.clip.dirty))
-     evas_object_recalc_clippees(obj);
+   evas_object_recalc_clippees(obj);
    if (!obj->smart.smart)
      {
 	if (evas_object_is_in_output_rect(obj,
@@ -291,8 +281,7 @@ evas_object_clip_unset(Evas_Object *obj)
    obj->cur.clipper = NULL;
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
-   if (!obj->layer->evas->events_frozen && obj->cur.cache.clip.dirty)
-     evas_object_recalc_clippees(obj);
+   evas_object_recalc_clippees(obj);
    if (!obj->smart.smart)
      {
 	if (evas_object_is_in_output_rect(obj,

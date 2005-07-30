@@ -275,10 +275,9 @@ evas_object_render_pre_effect_updates(Evas_List *updates, Evas_Object *obj, int 
 void
 evas_object_coords_recalc(Evas_Object *obj)
 {
-   // FIXME: Check before entering
-   // if (obj->smart.smart) return;
-   // if (obj->cur.cache.geometry.validity == obj->layer->evas->output_validity)
-   //   return;
+   if (obj->smart.smart) return;
+   if (obj->cur.cache.geometry.validity == obj->layer->evas->output_validity)
+     return;
    obj->cur.cache.geometry.x =
      evas_coord_world_x_to_screen(obj->layer->evas, obj->cur.geometry.x);
    obj->cur.cache.geometry.y =
@@ -483,6 +482,7 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    evas_object_clip_dirty(obj);
    if (obj->layer->evas->events_frozen != 0)
      {
+	evas_object_recalc_clippees(obj);
 	if (!pass)
 	  {
 	     if (!obj->smart.smart)
@@ -499,8 +499,6 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 	       }
 	  }
      }
-   else if (obj->cur.cache.clip.dirty)
-     evas_object_recalc_clippees(obj);
    evas_object_inform_call_move(obj);
 }
 
@@ -546,6 +544,7 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    obj->cur.cache.geometry.validity = 0;
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
+   evas_object_recalc_clippees(obj);
    if (obj->layer->evas->events_frozen != 0)
      {
 	//   if (obj->func->coords_recalc) obj->func->coords_recalc(obj);
@@ -565,8 +564,6 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 	       }
 	  }
      }
-   else if (obj->cur.cache.clip.dirty)
-     evas_object_recalc_clippees(obj);
    evas_object_inform_call_resize(obj);
 }
 
@@ -639,6 +636,7 @@ evas_object_show(Evas_Object *obj)
    evas_object_clip_dirty(obj);
    if (obj->layer->evas->events_frozen != 0)
      {
+	evas_object_recalc_clippees(obj);
 	if (!evas_event_passes_through(obj))
 	  {
 	     if (!obj->smart.smart)
@@ -654,8 +652,6 @@ evas_object_show(Evas_Object *obj)
 	       }
 	  }
      }
-   else if (obj->cur.cache.clip.dirty)
-     evas_object_recalc_clippees(obj);
    evas_object_inform_call_show(obj);
 }
 
@@ -687,6 +683,7 @@ evas_object_hide(Evas_Object *obj)
    evas_object_clip_dirty(obj);
    if (obj->layer->evas->events_frozen != 0)
      {
+	evas_object_recalc_clippees(obj);
 	if (!evas_event_passes_through(obj))
 	  {
 	     if (!obj->smart.smart)
@@ -734,8 +731,6 @@ evas_object_hide(Evas_Object *obj)
 	       }
 	  }
      }
-   else if (obj->cur.cache.clip.dirty)
-     evas_object_recalc_clippees(obj);
    evas_object_inform_call_hide(obj);
 }
 

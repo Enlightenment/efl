@@ -40,6 +40,8 @@ evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y)
 	     if (obj == stop) goto done;
 	     if ((!evas_event_passes_through(obj)) && (!obj->smart.smart))
 	       {
+// FIXME: i don't think we need this
+//		  evas_object_clip_recalc(obj);
 		  if ((evas_object_is_in_output_rect(obj, x, y, 1, 1)) &&
 		      (obj->cur.visible) &&
 		      (obj->delete_me == 0) &&
@@ -138,8 +140,8 @@ evas_event_thaw(Evas *e)
 		  Evas_Object *obj;
 		  
 		  obj = (Evas_Object *)l2;
-		  if (obj->cur.cache.clip.dirty)
-		    evas_object_recalc_clippees(obj);
+		  evas_object_clip_recalc(obj);
+		  evas_object_recalc_clippees(obj);
 	       }
 	  }
      }
