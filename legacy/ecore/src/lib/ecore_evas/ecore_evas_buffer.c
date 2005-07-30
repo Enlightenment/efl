@@ -92,7 +92,9 @@ _ecore_evas_buffer_shutdown(void)
    if (_ecore_evas_init_count == 0)
      {
 	while (ecore_evases)
-	  ecore_evas_free((Ecore_Evas *)(ecore_evases->data));
+	  {
+	     _ecore_evas_free((Ecore_Evas *)ecore_evases);
+	  }
 	if (_ecore_evas_fps_debug) _ecore_evas_fps_debug_shutdown();
      }
    if (_ecore_evas_init_count < 0) _ecore_evas_init_count = 0;
@@ -235,7 +237,7 @@ _ecore_evas_buffer_cb_free(void *data, Evas *e __UNUSED__, Evas_Object *obj __UN
    
    ee = data;
    if (ee->driver)
-     ecore_evas_free(ee);
+     _ecore_evas_free(ee);
 }
 
 static void
