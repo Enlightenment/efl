@@ -696,17 +696,18 @@ evas_object_hide(Evas_Object *obj)
 					       obj->layer->evas->pointer.y,
 					       obj->layer->evas->last_timestamp,
 					       NULL);
+		  if (obj->delete_me) return;
 		  if (obj->mouse_grabbed > 0)
 		    {
 		       if (obj->layer->evas->pointer.mouse_grabbed >= obj->mouse_grabbed)
 			 obj->layer->evas->pointer.mouse_grabbed -= obj->mouse_grabbed;
 		    }
 		    {
-		       obj->mouse_grabbed = 0;
 		       if ((obj->mouse_in) || (obj->mouse_grabbed > 0))
 			 {
 			    obj->layer->evas->pointer.object.in = evas_list_remove(obj->layer->evas->pointer.object.in, obj);
 			 }
+		       obj->mouse_grabbed = 0;
 		       if (obj->layer->evas->events_frozen > 0)
 			 {
 			    obj->mouse_in = 0;
@@ -730,6 +731,13 @@ evas_object_hide(Evas_Object *obj)
 		    }
 	       }
 	  }
+     }
+   else
+     {
+	if ((obj->mouse_in) || (obj->mouse_grabbed > 0))
+	  obj->layer->evas->pointer.object.in = evas_list_remove(obj->layer->evas->pointer.object.in, obj);
+	obj->mouse_grabbed = 0;
+	obj->mouse_in = 0;
      }
    evas_object_inform_call_hide(obj);
 }
