@@ -644,7 +644,7 @@ eet_close(Eet_File *ef)
    /* deref */
    ef->references--;
    /* if its still referenced - dont go any further */
-   if (ef->references > 0) return;
+   if (ef->references != 0) return;
    /* remove from cache */
    if (ef->mode == EET_FILE_MODE_READ)
      eet_cache_del(ef, &eet_readers, &eet_readers_num);
