@@ -13,6 +13,7 @@ bin_SCRIPTS = \
 @EDJE_RECC_PRG@
 
 EXTRA_DIST = @EDJE_RECC_PRG@
+EXTRA_SCRIPTS = @EDJE_RECC_PRG@
 
 bin_PROGRAMS = \
 edje \
@@ -95,8 +96,3 @@ edje_test_LDADD = \
 $(top_builddir)/src/lib/libedje.la
 
 edje_test_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
-
-
-EXTRA_SCRIPTS = edje_recc
-
-EXTRA_DIST = edje_recc
