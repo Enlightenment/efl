@@ -178,7 +178,8 @@ struct _Ecore_Evas
       char            fullscreen   : 1;
       char            avoid_damage : 1;
       char            withdrawn    : 1;
-      char            sticky       : 1;	  
+      char            sticky       : 1;
+      char            request_pos  : 1;
    } prop;
    
    struct {

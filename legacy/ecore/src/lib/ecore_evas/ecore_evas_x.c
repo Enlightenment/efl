@@ -660,7 +660,7 @@ static void
 _ecore_evas_x_size_pos_hints_update(Ecore_Evas *ee)
 {
    ecore_x_icccm_size_pos_hints_set(ee->engine.x.win_container,
-				    1 /*request_pos */,
+				    ee->prop.request_pos /*request_pos */,
 				    ECORE_X_GRAVITY_NW /* gravity */,
 				    ee->prop.min.w /* min_w */,
 				    ee->prop.min.h /* min_h */,
@@ -897,6 +897,7 @@ _ecore_evas_x_move(Ecore_Evas *ee, int x, int y)
    if (!ee->should_be_visible)
      {
 	/* We need to request pos */
+	ee->prop.request_pos = 1;
 	_ecore_evas_x_size_pos_hints_update(ee);
      }
 }
@@ -1600,6 +1601,7 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
    ee->prop.max.w = 32767;
    ee->prop.max.h = 32767;
    ee->prop.layer = 4;
+   ee->prop.request_pos = 0;
    
    /* init evas here */
    ee->evas = evas_new();
@@ -1787,6 +1789,7 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
    ee->prop.max.w = 32767;
    ee->prop.max.h = 32767;
    ee->prop.layer = 4;
+   ee->prop.request_pos = 0;
    
    /* init evas here */
    ee->evas = evas_new();
