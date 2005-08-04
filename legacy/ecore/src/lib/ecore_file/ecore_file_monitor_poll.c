@@ -287,8 +287,10 @@ _ecore_file_monitor_poll_check(Ecore_File_Monitor *em)
 	       {
 		  em->func(em->data, em, ECORE_FILE_EVENT_MODIFIED, buf);
 		  _interval = ECORE_FILE_INTERVAL_MIN;
+		  f->mtime = mtime;
 	       }
-	     f->mtime = mtime;
+	     else
+	       f->mtime = mtime;
 	  }
 
 	/* Check for new files */
