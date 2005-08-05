@@ -475,7 +475,7 @@ extern "C" {
    EAPI const Evas_Textblock_Style  *evas_object_textblock2_style_get(Evas_Object *obj);
    
    EAPI void                         evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text);
-   EAPI char                        *evas_object_textblock2_text_markup_get(Evas_Object *obj);
+   EAPI const char                  *evas_object_textblock2_text_markup_get(Evas_Object *obj);
     
    EAPI const Evas_Textblock_Cursor *evas_object_textblock2_cursor_get(Evas_Object *obj);
    EAPI Evas_Textblock_Cursor       *evas_object_textblock2_cursor_new(Evas_Object *obj);
@@ -490,9 +490,8 @@ extern "C" {
    EAPI void                         evas_textblock2_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text);
    EAPI const char                  *evas_textblock2_cursor_node_text_get(Evas_Textblock_Cursor *cur);
 
-   EAPI void                         evas_textblock2_cursor_format_push(Evas_Textblock_Cursor *cur, const char *format);
-   EAPI void                         evas_textblock2_cursor_format_pop(Evas_Textblock_Cursor *cur);
-   EAPI const char                  *evas_textblock2_cursor_format_get(Evas_Textblock_Cursor *cur);
+   EAPI void                         evas_textblock2_cursor_format_append(Evas_Textblock_Cursor *cur, const char *format);
+   EAPI const char                  *evas_textblock2_cursor_node_format_get(Evas_Textblock_Cursor *cur);
        
    EAPI void                         evas_object_textblock2_clear(Evas_Object *obj);
    EAPI void                         evas_object_textblock2_size_requested_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
