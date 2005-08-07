@@ -262,6 +262,8 @@ Ecore_List *ecore_hash_keys(Ecore_Hash *hash)
 		i++;
 	}
 
+	ecore_list_goto_first(keys);
+
 	ECORE_READ_UNLOCK(hash);
 
 	return keys;
