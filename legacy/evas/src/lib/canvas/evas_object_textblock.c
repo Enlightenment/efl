@@ -20,17 +20,17 @@
 static const char o_type[] = "textblock";
 
 /* private struct for textblock object internal data */
-typedef struct _Evas_Object_Textblock       Evas_Object_Textblock;
-typedef struct _Evas_Object_Style_Tag       Evas_Object_Style_Tag;
-typedef struct _Evas_Object_Textblock_Node  Evas_Object_Textblock_Node;
-typedef struct _Evas_Object_Textblock_Lnode Evas_Object_Textblock_Lnode;
+typedef struct _Evas_Object_Textblock        Evas_Object_Textblock;
+typedef struct _Evas_Object_Style_Tag        Evas_Object_Style_Tag;
+typedef struct _Evas_Object_Textblock_Node   Evas_Object_Textblock_Node;
+typedef struct _Evas_Object_Textblock_Line   Evas_Object_Textblock_Line;
+typedef struct _Evas_Object_Textblock_Item   Evas_Object_Textblock_Item;
+typedef struct _Evas_Object_Textblock_Format Evas_Object_Textblock_Format;
 
 /* the current state of the formatting */
 
 struct _Evas_Object_Style_Tag
-{
-   Evas_Object_List _list_data;
-   
+{  Evas_Object_List _list_data;
    char *tag;
    char *replace;
 };
@@ -39,19 +39,56 @@ struct _Evas_Object_Style_Tag
 #define  NODE_FORMAT 1
 
 struct _Evas_Object_Textblock_Node
-{
-   Evas_Object_List _list_data;
+{  Evas_Object_List _list_data;
    int   type;
    char *text;
    int   len, alloc;
 };
 
-struct _Evas_Object_Textblock_Lnode
+struct _Evas_Object_Textblock_Line
+{  Evas_Object_List _list_data;
+   Evas_Object_Textblock_Item *items;
+   double                      align;
+   int                         x, y, w, h;
+   int                         baseline;
+   int                         line_no;
+};
+
+struct _Evas_Object_Textblock_Item
+{  Evas_Object_List _list_data;
+   char                         *text;
+   int                           x, w, h;
+   int                           inset, baseline;
+   Evas_Object_Textblock_Format *format;
+};
+
+struct _Evas_Object_Textblock_Format
 {
-   Evas_Object_List _list_data;
-   int   type;
-   char *text;
-   int   len, alloc;
+   int                  ref;
+   double               halign;
+   double               valign;
+   struct {
+      char             *name;
+      char             *source;
+      int               size;
+      void             *font;
+   } font;
+   struct {
+      struct {
+	 unsigned char  r, g, b, a;
+      } normal, underline, underline2, outline, shadow, glow, backing,
+	strikethrough;
+   } color;
+   struct {
+      int               l, r;
+   } margin;
+   unsigned char        style;
+   unsigned char        wrap_word : 1;
+   unsigned char        wrap_char : 1;
+   unsigned char        underline : 1;
+   unsigned char        underline2 : 1;
+   unsigned char        strikethrough : 1;
+   unsigned char        backing : 1;
 };
 
 struct _Evas_Textblock_Style
@@ -80,7 +117,7 @@ struct _Evas_Object_Textblock
    Evas_Textblock_Cursor       *cursor;
    Evas_List                   *cursors;
    Evas_Object_Textblock_Node  *nodes;
-   Evas_Object_Textblock_Lnode *lnodes;
+   Evas_Object_Textblock_Line *lines;
    char                        *markup_text;
    char                         changed : 1;
    void                        *engine_data;
@@ -177,12 +214,12 @@ evas_object_textblock2_add(Evas *e)
       // popped
       // tags starting with / (ie </blah>) will ALWAYS pop UNLESS provided
       // with an override here in the style (like /p)
-      "DEFAULT='push font=Vera font_size=10 align=left color=#000000'"
-      "center='push align=middle'"
-      "h1='push font_size=20'"
-      "red='push color=#ff0000'"
-      "p='push font=Vera font_size=12 align=left'"
-      "/p='pop \n\n'" // you can define end tags - override default pop on /...
+      "DEFAULT='font=Vera font_size=10 align=left color=#000000'"
+      "center='+ align=middle'"
+      "h1='+ font_size=20'"
+      "red='+ color=#ff0000'"
+      "p='+ font=Vera font_size=12 align=left'"
+      "/p='- \n \n'" // you can define end tags - override default pop on /...
       "br='\n'"
       );
    evas_object_textblock2_style_set(obj, ts); // tell object to use this style
@@ -276,18 +313,20 @@ evas_textblock2_style_set(Evas_Textblock_Style *ts, const char *text)
 		  char *tags, *replaces;
 		  Evas_Object_Style_Tag *tag;
 		  
-		  tags = malloc(key_stop - key_start);
+		  tags = malloc(key_stop - key_start + 1);
 		  if (tags)
 		    {
 		       tags[key_stop - key_start] = 0;
-		       strncpy(tags, key_start, key_stop - key_start - 1);
+		       strncpy(tags, key_start, key_stop - key_start);
+		       tags[key_stop - key_start] = 0;
 		    }
 		  
-		  replaces = malloc(val_stop - val_start);
+		  replaces = malloc(val_stop - val_start + 1);
 		  if (replaces)
 		    {
 		       replaces[val_stop - val_start] = 0;
-		       strncpy(replaces, val_start, val_stop - val_start - 1);
+		       strncpy(replaces, val_start, val_stop - val_start);
+		       replaces[val_stop - val_start] = 0;
 		    }
 		  if ((tags) && (replaces))
 		    {
@@ -500,18 +539,18 @@ _nodes_clear(Evas_Object *obj)
 }
 
 static void
-_lnodes_clear(Evas_Object *obj)
+_lines_clear(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
 
    o = (Evas_Object_Textblock *)(obj->object_data);
-   while (o->lnodes)
+   while (o->lines)
      {
-	Evas_Object_Textblock_Lnode *ln;
+	Evas_Object_Textblock_Line *ln;
 	
-	ln = (Evas_Object_Textblock_Lnode *)o->lnodes;
-	o->lnodes = evas_object_list_remove(o->lnodes, ln);
-	if (ln->text) free(ln->text);
+	ln = (Evas_Object_Textblock_Line *)o->lines;
+	o->lines = evas_object_list_remove(o->lines, ln);
+	/* FIXME: free line->items */
 	free(ln);
      }
 }
@@ -685,7 +724,7 @@ evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
      }
    if (text) o->markup_text = strdup(text);
    _nodes_clear(obj);
-   _lnodes_clear(obj);
+   _lines_clear(obj);
    o->changed = 1;
    evas_object_change(obj);
    if (o->markup_text)
@@ -704,18 +743,23 @@ evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
 	       {
 		  if (tag_end)
 		    {
-		       char *ttag;
+		       char *ttag, *match;
 		       
 		       ttag = malloc(tag_end - tag_start);
 		       if (ttag)
 			 {
 			    strncpy(ttag, tag_start + 1, tag_end - tag_start - 1);
-			    ttag[tag_end - tag_start] = 0;
-			    s = _style_match_tag(o->style, ttag);
-			    if (s)
-			      evas_textblock2_cursor_format_append(o->cursor, s);
+			    ttag[tag_end - tag_start - 1] = 0;
+			    match = _style_match_tag(o->style, ttag);
+			    if (match)
+			      evas_textblock2_cursor_format_append(o->cursor, match);
 			    else
-			      evas_textblock2_cursor_format_append(o->cursor, ttag);
+			      {
+				 if (ttag[0] == '/')
+				   evas_textblock2_cursor_format_append(o->cursor, "-");
+				 else
+				   evas_textblock2_cursor_format_append(o->cursor, ttag);
+			      }
 			    free(ttag);
 			 }
 		       tag_start = tag_end = NULL;
@@ -735,20 +779,6 @@ evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
 			 }
 		       esc_start = esc_end = NULL;
 		    }
-		  else if (s)
-		    {
-		       char *ts;
-
-		       ts = malloc(p - s);
-		       if (ts)
-			 {
-			    strncpy(ts, s, p - s - 1);
-			    ts[p - s] = 0;
-			    evas_textblock2_cursor_text_append(o->cursor, ts);
-			    free(ts);
-			 }
-		       s = NULL;
-		    }
 		  if (*p == 0)
 		    break;
 	       }
@@ -758,6 +788,20 @@ evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
 		    {
 		       tag_start = p;
 		       tag_end = NULL;
+		       if ((s) && (p > s))
+			 {
+			    char *ts;
+			    
+			    ts = malloc(p - s + 1);
+			    if (ts)
+			      {
+				 strncpy(ts, s, p - s);
+				 ts[p - s] = 0;
+				 evas_textblock2_cursor_text_append(o->cursor, ts);
+				 free(ts);
+			      }
+			    s = NULL;
+			 }
 		    }
 	       }
 	     else if (*p == '>')
@@ -774,6 +818,21 @@ evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
 		    {
 		       esc_start = p;
 		       esc_end = NULL;
+		       if ((s) && (p > s))
+			 {
+			    char *ts;
+			    
+			    ts = malloc(p - s + 1);
+			    if (ts)
+			      {
+				 strncpy(ts, s, p - s);
+				 ts[p - s] = 0;
+				 evas_textblock2_cursor_text_append(o->cursor, ts);
+				 free(ts);
+			      }
+			    s = NULL;
+			 }
+		       s = NULL;
 		    }
 	       }
 	     else if (*p == ';')
@@ -850,6 +909,7 @@ evas_object_textblock2_text_markup_get(Evas_Object *obj)
 			    ps = p + 1;
 			 }
 		       /* FIXME: learn how to do all the other escapes */
+		       /* FIXME: strip extra whitespace ala HTML */
 		       p++;
 		    }
 	       }
@@ -1005,7 +1065,7 @@ evas_textblock2_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text)
    n->text = _strbuf_append(n->text, (char *)text, &(n->len), &(n->alloc));
    cur->node = n;
    cur->pos = n->len - 1;
-   _lnodes_clear(cur->obj);
+   _lines_clear(cur->obj);
    o->changed = 1;
    evas_object_change(cur->obj);
 }
@@ -1037,7 +1097,7 @@ evas_textblock2_cursor_format_append(Evas_Textblock_Cursor *cur, const char *for
    n->text = _strbuf_append(n->text, (char *)format, &(n->len), &(n->alloc));
    cur->node = n;
    cur->pos = 0;
-   _lnodes_clear(cur->obj);
+   _lines_clear(cur->obj);
    o->changed = 1;
    evas_object_change(cur->obj);
 }
@@ -1077,7 +1137,7 @@ evas_object_textblock2_clear(Evas_Object *obj)
 	free(o->markup_text);
 	o->markup_text = NULL;
      }
-   _lnodes_clear(obj);
+   _lines_clear(obj);
    o->changed = 1;
    evas_object_change(obj);
 }
@@ -1089,30 +1149,584 @@ evas_object_textblock2_size_requested_get(Evas_Object *obj, Evas_Coord *w, Evas_
    /* FIXME */
 }
 
+static int
+_hex_string_get(char ch)
+{
+   if ((ch >= '0') && (ch <= '9')) return (ch - '0');
+   else if ((ch >= 'A') && (ch <= 'F')) return (ch - 'A' + 10);
+   else if ((ch >= 'a') && (ch <= 'f')) return (ch - 'a' + 10);
+   return 0;
+}
+
+static void
+_format_color_parse(char *str, unsigned char *r, unsigned char *g, unsigned char *b, unsigned char *a)
+{
+   int slen;
+   
+   slen = strlen(str);
+   *r = *g = *b = *a = 0;
+   
+   if (slen == 7) /* #RRGGBB */
+     {
+	*r = (_hex_string_get(str[1]) << 4) | (_hex_string_get(str[2]));
+	*g = (_hex_string_get(str[3]) << 4) | (_hex_string_get(str[4]));
+	*b = (_hex_string_get(str[5]) << 4) | (_hex_string_get(str[6]));
+	*a = 0xff;
+     }
+   else if (slen == 9) /* #RRGGBBAA */
+     {
+	*r = (_hex_string_get(str[1]) << 4) | (_hex_string_get(str[2]));
+	*g = (_hex_string_get(str[3]) << 4) | (_hex_string_get(str[4]));
+	*b = (_hex_string_get(str[5]) << 4) | (_hex_string_get(str[6]));
+	*a = (_hex_string_get(str[7]) << 4) | (_hex_string_get(str[8]));
+     }
+   else if (slen == 4) /* #RGB */
+     {
+	*r = _hex_string_get(str[1]);
+	*r = (*r << 4) | *r;
+	*g = _hex_string_get(str[2]);
+	*g = (*g << 4) | *g;
+	*b = _hex_string_get(str[3]);
+	*b = (*b << 4) | *b;
+	*a = 0xff;
+     }
+   else if (slen == 5) /* #RGBA */
+     {
+	*r = _hex_string_get(str[1]);
+	*r = (*r << 4) | *r;
+	*g = _hex_string_get(str[2]);
+	*g = (*g << 4) | *g;
+	*b = _hex_string_get(str[3]);
+	*b = (*b << 4) | *b;
+	*a = _hex_string_get(str[4]);
+	*a = (*a << 4) | *a;
+     }
+}
+
+static void
+_format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, char *param)
+{
+   int new_font = 0;
+   
+   if (!strcmp(cmd, "font"))
+     {
+	if ((!fmt->font.name) ||
+	    ((fmt->font.name) && (strcmp(fmt->font.name, param))))
+	  {
+	     if (fmt->font.name) free(fmt->font.name);
+	     fmt->font.name = strdup(param);
+	     new_font = 1;
+	  }
+     }
+   else if (!strcmp(cmd, "font_size"))
+     {
+	int v;
+	
+	v = atoi(param);
+	if (v != fmt->font.size)
+	  {
+	     fmt->font.size = v;
+	     new_font = 1;
+	  }
+     }
+   else if (!strcmp(cmd, "font_source"))
+     {
+	if ((!fmt->font.source) ||
+	    ((fmt->font.source) && (strcmp(fmt->font.source, param))))
+	  {
+	     if (fmt->font.source) free(fmt->font.source);
+	     fmt->font.source = strdup(param);
+	     new_font = 1;
+	  }
+     }
+   else if (!strcmp(cmd, "color"))
+     {
+	_format_color_parse(param,
+			    &(fmt->color.normal.r), &(fmt->color.normal.g),
+			    &(fmt->color.normal.b), &(fmt->color.normal.a));
+     }
+   else if (!strcmp(cmd, "align"))
+     {
+	if (!strcmp(param, "middle")) fmt->halign = 0.5;
+	else if (!strcmp(param, "center")) fmt->halign = 0.5;
+	else if (!strcmp(param, "left")) fmt->halign = 0.0;
+	else if (!strcmp(param, "right")) fmt->halign = 1.0;
+	else if (strchr(param, '%'))
+	  {
+	     char *ts, *p;
+	     
+	     ts = strdup(param);
+	     if (ts)
+	       {
+		  p = strchr(ts, '%');
+		  *p = 0;
+		  fmt->halign = ((double)atoi(ts)) / 100.0;
+		  free(ts);
+	       }
+	  }
+	else
+	  {
+	     fmt->halign = atoi(param);
+	  }
+	if (fmt->halign < 0.0) fmt->halign = 0.0;
+	else if (fmt->halign > 1.0) fmt->halign = 1.0;
+     }
+   else if (!strcmp(cmd, "wrap"))
+     {
+	if (!strcmp(param, "word"))
+	  {
+	     fmt->wrap_word = 1;
+	     fmt->wrap_char = 0;
+	  }
+	else if (!strcmp(param, "char"))
+	  {
+	     fmt->wrap_word = 0;
+	     fmt->wrap_char = 1;
+	  }
+	else
+	  {
+	     fmt->wrap_word = 0;
+	     fmt->wrap_char = 0;
+	  }
+     }
+   
+   if (new_font)
+     {
+	void *of;
+	
+	of = fmt->font.font;
+	fmt->font.font = evas_font_load(obj->layer->evas, 
+					fmt->font.name, fmt->font.source, 
+					fmt->font.size);
+	if (of) evas_font_free(obj->layer->evas, of);
+     }
+}
+
+static int
+_format_is_param(char *item)
+{
+   if (strchr(item, '=')) return 1;
+   return 0;
+}
+
+static void
+_format_param_parse(char *item, char **key, char **val)
+{
+   char *p, *pv;
+   char *k, *v;
+   int qoute = 0;
+   
+   p = strchr(item, '=');
+   k = malloc(p - item);
+   strncpy(k, item, p - item);
+   k[p - item] = 0;
+   *key = k;
+   p++;
+   v = strdup(p);
+   pv = v;
+   for (;;)
+     {
+	if (*p == 0)
+	  {
+	     *pv = 0;
+	     break;
+	  }
+	else if (*p != '"')
+	  {
+	     *pv = *p;
+	  }
+	pv++;
+	p++;
+     }
+   *val = v;
+}
+
+static char *
+_format_parse(char **s)
+{
+   char *p, *item;
+   char *s1 = NULL, *s2 = NULL;
+   int quote = 0;
+   
+   p = *s;
+   if (*p == 0) return NULL;
+   for (;;)
+     {
+	if (!s1)
+	  {
+	     if (*p != ' ') s1 = p;
+	  }
+	else if (!s2)
+	  {
+	     if (!quote)
+	       {
+		  if (*p == '"') quote = 1;
+		  else if (*p == ' ') s2 = p;
+		  else if (*p == 0) s2 = p;
+	       }
+	     else
+	       {
+		  if (*p == '"') quote = 0;
+	       }
+	  }
+	p++;
+	if (s1 && s2)
+	  {
+	     item = malloc(s2 - s1 + 1);
+	     if (item)
+	       {
+		  strncpy(item, s1, s2 - s1);
+		  item[s2 - s1] = 0;
+	       }
+	     *s = s2;
+	     return item;
+	  }
+     }
+   *s = p;
+   return NULL;
+}
+
+static void
+_format_fill(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *str)
+{
+   char *s;
+   char *item;
+   
+   s = str;
+   while ((item = _format_parse(&s)))
+     {
+	if (_format_is_param(item))
+	  {
+	     char *key = NULL, *val = NULL;
+	     
+	     _format_param_parse(item, &key, &val);
+	     _format_command(obj, fmt, key, val);
+	     free(key);
+	     free(val);
+	  }
+	else
+	  {
+	     /* immediate - not handled here */
+	  }
+	free(item);
+     }
+}
+
+static Evas_Object_Textblock_Format *
+_format_dup(Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
+{
+   Evas_Object_Textblock_Format *fmt2;
+   
+   fmt2 = calloc(1, sizeof(Evas_Object_Textblock_Format));
+   memcpy(fmt2, fmt, sizeof(Evas_Object_Textblock_Format));
+   fmt2->ref = 1;
+   if (fmt->font.name) fmt2->font.name = strdup(fmt->font.name);
+   if (fmt->font.source) fmt2->font.source = strdup(fmt->font.source);
+   fmt2->font.font = evas_font_load(obj->layer->evas, 
+				   fmt2->font.name, fmt2->font.source, 
+				   fmt2->font.size);
+   return fmt2;
+}
+
+static void
+_format_free(Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
+{
+   fmt->ref--;
+   if (fmt->ref > 0) return;
+   if (fmt->font.name) free(fmt->font.name);
+   if (fmt->font.source) free(fmt->font.source);
+   evas_font_free(obj->layer->evas, fmt->font.font);
+   free(fmt);
+}
+
+static int
+_is_white(int c)
+{
+   /*
+    * unicode list of whitespace chars
+    *
+    * 0009..000D <control-0009>..<control-000D>
+    * 0020 SPACE
+    * 0085 <control-0085>
+    * 00A0 NO-BREAK SPACE
+    * 1680 OGHAM SPACE MARK
+    * 180E MONGOLIAN VOWEL SEPARATOR
+    * 2000..200A EN QUAD..HAIR SPACE
+    * 2028 LINE SEPARATOR
+    * 2029 PARAGRAPH SEPARATOR
+    * 202F NARROW NO-BREAK SPACE
+    * 205F MEDIUM MATHEMATICAL SPACE
+    * 3000 IDEOGRAPHIC SPACE
+    */
+   if (
+       (c == 0x20) ||
+       ((c >= 0x9) && (c <= 0xd)) ||
+       (c == 0x85) ||
+       (c == 0xa0) ||
+       (c == 0x1680) ||
+       (c == 0x180e) ||
+       ((c >= 0x2000) && (c <= 0x200a)) ||
+       (c == 0x2028) ||
+       (c == 0x2029) ||
+       (c == 0x202f) ||
+       (c == 0x205f) ||
+       (c == 0x3000)
+       )
+     return 1;
+   return 0;
+}
+
 static void
 _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 {
    Evas_Object_Textblock *o;
    Evas_Object_List *l;
-   Evas_Object_Textblock_Lnode *lnodes = NULL;
-   int x, y, wmax, hmax;
+   Evas_Object_Textblock_Line *lines = NULL, *ln = NULL;
+   int x, y, wmax, hmax, ascent, descent, maxascent, maxdescent, advance, 
+     maxadvance, maxh, line_no;
+   Evas_List *format_stack = NULL;
+   Evas_Object_Textblock_Item *it = NULL;   
+   Evas_Object_Textblock_Format *fmt = NULL;
    
+   /* this is formatting context */
    x = 0;
    y = 0;
    wmax = 0;
    hmax = 0;
+   
+   ascent = 0;
+   descent = 0;
+   maxascent = 0;
+   maxdescent = 0;
+   maxh = 0;
+   line_no = 0;
+   
    o = (Evas_Object_Textblock *)(obj->object_data);
-   /* FIXME: generate format stack using default format from the style */
+   if ((o->style) && (o->style->default_tag))
+     {
+	fmt = calloc(1, sizeof(Evas_Object_Textblock_Format));
+	fmt->ref = 1;
+	format_stack  = evas_list_prepend(format_stack, fmt);
+	_format_fill(obj, fmt, o->style->default_tag);
+     }
    for (l = (Evas_Object_List *)o->nodes; l; l = l->next)
      {
 	Evas_Object_Textblock_Node *n;
 	
 	n = (Evas_Object_Textblock_Node *)l;
-	/* FIXME: go thru o->nodes and generate o->lnodes */
+	if (!ln)
+	  {
+	     ln = calloc(1, sizeof(Evas_Object_Textblock_Line));
+	     ln->align = fmt->halign;
+	     lines = evas_object_list_append(lines, ln);
+	     x = 0;
+	     maxascent = 0;
+	     maxdescent = 0;
+	     ascent = ENFN->font_max_ascent_get(ENDT, fmt->font.font);
+	     descent = ENFN->font_max_descent_get(ENDT, fmt->font.font);
+	     if (maxascent < ascent) maxascent = ascent;
+	     if (maxdescent < descent) maxdescent = descent;
+	  }
+	if ((n->type == NODE_FORMAT) && (n->text))
+	  {
+	     char *s;
+	     char *item;
+	     
+//	     printf("F: %s\n", n->text);
+	     s = n->text;
+	     if (s[0] == '+')
+	       {
+		  if (fmt)
+		    {
+		       fmt = _format_dup(obj, fmt);
+		       format_stack  = evas_list_prepend(format_stack, fmt);
+		    }
+		  else
+		    {
+		       fmt = calloc(1, sizeof(Evas_Object_Textblock_Format));
+		       format_stack  = evas_list_prepend(format_stack, fmt);
+		    }
+		  s++;
+	       }
+	     else if (s[0] == '-')
+	       {
+		  if ((format_stack) && (format_stack->next))
+		    {
+		       _format_free(obj, fmt);
+		       format_stack = evas_list_remove_list(format_stack, format_stack);
+		       fmt = format_stack->data;
+		    }
+		  s++;
+	       }
+	     while ((item = _format_parse(&s)))
+	       {
+//		  printf("ITEM %s\n", item);
+		  if (_format_is_param(item))
+		    {
+		       char *key = NULL, *val = NULL;
+		       
+		       _format_param_parse(item, &key, &val);
+		       _format_command(obj, fmt, key, val);
+		       free(key);
+		       free(val);
+		       ascent = ENFN->font_max_ascent_get(ENDT, fmt->font.font);
+		       descent = ENFN->font_max_descent_get(ENDT, fmt->font.font);
+		       if (maxascent < ascent) maxascent = ascent;
+		       if (maxdescent < descent) maxdescent = descent;
+		       ln->align = fmt->halign;
+		    }
+		  else
+		    {
+//		       printf("IMM: ->%s<-\n", item);
+		       /* immediate */
+		       if (!strcmp(item, "\n"))
+			 {
+			    /* finish line */
+			    if (ln->w > wmax) wmax = ln->w;
+			    ln->y = y;
+			    ln->h = maxascent + maxdescent;
+			    ln->baseline = maxascent;
+			    ln->line_no = line_no;
+			    line_no++;
+			    x = 0;
+			    y += maxascent + maxdescent;
+			    ln->x = (w - ln->w) * ln->align;
+			    
+			    ln = calloc(1, sizeof(Evas_Object_Textblock_Line));
+			    ln->align = fmt->halign;
+			    lines = evas_object_list_append(lines, ln);
+			    maxascent = 0;
+			    maxdescent = 0;
+			    ascent = ENFN->font_max_ascent_get(ENDT, fmt->font.font);
+			    descent = ENFN->font_max_descent_get(ENDT, fmt->font.font);
+			    if (maxascent < ascent) maxascent = ascent;
+			    if (maxdescent < descent) maxdescent = descent;
+			 }
+		       else if (!strcmp(item, "\t"))
+			 {
+			    /* jump to next tabstop */
+			 }
+		    }
+		  free(item);
+	       }
+	  }
+	else if ((n->type == NODE_TEXT) && (n->text))
+	  {
+	     int adv, inset, tw, th, x2;
+	     char *str, new_line;
+	     
+	     str = n->text;
+	     new_line = 0;
+	     while (str)
+	       {
+		  it = calloc(1, sizeof(Evas_Object_Textblock_Item));
+		  fmt->ref++;
+		  it->format = fmt;
+		  it->text = strdup(str);
+		  inset = ENFN->font_inset_get(ENDT, fmt->font.font, it->text);
+		  //	     if (ln->items == NULL) x += inset;
+		  ENFN->font_string_size_get(ENDT, fmt->font.font,
+					     it->text, &tw, &th);
+		  if (((fmt->wrap_word) || (fmt->wrap_char)) &&
+		      ((x + tw) > w))
+		    {
+		       int wrap, twrap, cx, cy, cw, ch;
+		       
+		       wrap = ENFN->font_char_at_coords_get(ENDT,
+							    fmt->font.font,
+							    it->text, w - x, 0,
+							    &cx, &cy,
+							    &cw, &ch);
+		       if (wrap >= 0)
+			 {
+			    char *ts;
+			    
+			    /* FIXME: handle wrap */
+			    if (fmt->wrap_word)
+			      {
+				 /* walk pack to start of word */
+				 while ((wrap >= 0) &&
+					(!_is_white(str[wrap])))
+				   {
+				      wrap--;
+				   }
+				 wrap++;
+				 /* cut of pointless whitespace at end of
+				  * previous line
+				  */
+				 twrap = wrap - 1;
+				 while ((twrap > 0) &&
+					_is_white(it->text[twrap]))
+				   {
+				      twrap--;
+				   }
+				 ts = it->text;
+				 ts[twrap] = 0;
+				 it->text = strdup(ts);
+				 free(ts);
+				 /* back to start of word */
+				 str = str + wrap - 1;
+			      }
+			    else if (fmt->wrap_char)
+			      {
+				 ts = it->text;
+				 ts[wrap] = 0;
+				 it->text = strdup(ts);
+				 free(ts);
+				 str = str + wrap;
+			      }
+			    new_line = 1;
+			 }
+		       ENFN->font_string_size_get(ENDT, fmt->font.font,
+						  it->text, &tw, &th);
+		    }
+		  else
+		    str = NULL;
+		  it->w = tw;
+		  it->h = th;
+		  it->inset = inset;
+		  it->x = x;
+		  adv = ENFN->font_h_advance_get(ENDT, fmt->font.font,
+						 it->text);
+		  x2 = x + tw - inset;
+		  x += adv;
+		  if (x2 > ln->w) ln->w = x2;
+		  ln->items = evas_object_list_append(ln->items, it);
+		  if (new_line)
+		    {
+		       new_line = 0;
+		       /* finish line */
+		       if (ln->w > wmax) wmax = ln->w;
+		       ln->y = y;
+		       ln->h = maxascent + maxdescent;
+		       ln->baseline = maxascent;
+		       ln->line_no = line_no;
+		       line_no++;
+		       x = 0;
+		       y += maxascent + maxdescent;
+		       ln->x = (w - ln->w) * ln->align;
+		       
+		       ln = calloc(1, sizeof(Evas_Object_Textblock_Line));
+		       ln->align = fmt->halign;
+		       lines = evas_object_list_append(lines, ln);
+		       maxascent = 0;
+		       maxdescent = 0;
+		       ascent = ENFN->font_max_ascent_get(ENDT, fmt->font.font);
+		       descent = ENFN->font_max_descent_get(ENDT, fmt->font.font);
+		       if (maxascent < ascent) maxascent = ascent;
+		       if (maxdescent < descent) maxdescent = descent;
+		    }
+	       }
+	  }
      }
+   hmax = y;
    if (!calc_only)
      {
-	o->lnodes = lnodes;
+	o->lines = lines;
+     }
+   else
+     {
+	/* free lines */
      }
 }
 
@@ -1183,7 +1797,8 @@ static void
 evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void *surface, int x, int y)
 {
    Evas_Object_Textblock *o;
-
+   Evas_Object_List *l, *ll;
+   
    /* render object to surface with context, and offxet by x,y */
    o = (Evas_Object_Textblock *)(obj->object_data);
    obj->layer->evas->engine.func->context_multiplier_unset(output,
@@ -1200,6 +1815,28 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
                                                   obj->cur.cache.geometry.w,
                                                   obj->cur.cache.geometry.h);
 #endif
+   for (l = (Evas_Object_List *)o->lines; l; l = l->next)
+     {
+	Evas_Object_Textblock_Line *ln;
+	
+	ln = (Evas_Object_Textblock_Line *)l;
+	for (ll = (Evas_Object_List *)ln->items; ll; ll = ll->next)
+	  {
+	     Evas_Object_Textblock_Item *it;
+	     
+	     it = (Evas_Object_Textblock_Item *)ll;
+	     ENFN->context_color_set(output, context,
+				     it->format->color.normal.r,
+				     it->format->color.normal.g,
+				     it->format->color.normal.b,
+				     it->format->color.normal.a);
+	     ENFN->font_draw(output, context, surface, it->format->font.font,
+			     obj->cur.cache.geometry.x + ln->x + it->x + x,
+			     obj->cur.cache.geometry.y + ln->y + ln->baseline + y,
+			     it->w, it->h, it->w, it->h, it->text);
+	  }
+     }
+     
 /*
    if (o->engine_data)
      {
