@@ -734,6 +734,100 @@ static const char *_escapes[] =
      "&omega;", "ω"
 };
 
+static int
+_is_white(int c)
+{
+   /*
+    * unicode list of whitespace chars
+    *
+    * 0009..000D <control-0009>..<control-000D>
+    * 0020 SPACE
+    * 0085 <control-0085>
+    * 00A0 NO-BREAK SPACE
+    * 1680 OGHAM SPACE MARK
+    * 180E MONGOLIAN VOWEL SEPARATOR
+    * 2000..200A EN QUAD..HAIR SPACE
+    * 2028 LINE SEPARATOR
+    * 2029 PARAGRAPH SEPARATOR
+    * 202F NARROW NO-BREAK SPACE
+    * 205F MEDIUM MATHEMATICAL SPACE
+    * 3000 IDEOGRAPHIC SPACE
+    */
+   if (
+       (c == 0x20) ||
+       ((c >= 0x9) && (c <= 0xd)) ||
+       (c == 0x85) ||
+       (c == 0xa0) ||
+       (c == 0x1680) ||
+       (c == 0x180e) ||
+       ((c >= 0x2000) && (c <= 0x200a)) ||
+       (c == 0x2028) ||
+       (c == 0x2029) ||
+       (c == 0x202f) ||
+       (c == 0x205f) ||
+       (c == 0x3000)
+       )
+     return 1;
+   return 0;
+}
+
+static char *
+_clean_white(int clean_start, int clean_end, char *str)
+{
+   char *p, *p2, *str2 = NULL;
+   int white, pwhite, start, ok;
+
+   str2 = malloc(strlen(str) + 2);
+   p = str;
+   p2 = str2;
+   white = 0;
+   pwhite = 0;
+   start = 1;
+   ok = 1;
+   while (*p != 0)
+     {
+	pwhite = white;
+	if (isspace(*p) || _is_white(*p)) white = 1;
+	else white = 0;
+	if ((pwhite) && (white)) ok = 0;
+	else
+	  {
+	     if (!clean_start)
+	       {
+		  if ((start) && (pwhite) && (!white))
+		    {
+		       *p2 = ' ';
+		       p2++;
+		    }
+	       }
+	     ok = 1;
+	     if (!white) start = 0;
+	  }
+	if (clean_start)
+	  {
+	     if ((start) && (ok)) ok = 0;
+	  }
+	if (ok)
+	  {
+	     *p2 = *p;
+	     p2++;
+	  }
+	p++;
+     }
+   *p2 = 0;
+   if (clean_end)
+     {
+	while (p2 > str2)
+	  {
+	     p2--;
+	     if (!(isspace(*p2) || _is_white(*p2))) break;
+	     *p2 = 0;
+	  }
+     }
+   free(str);
+   return str2;
+}
+
 void
 evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
 {
@@ -818,6 +912,7 @@ evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
 			      {
 				 strncpy(ts, s, p - s);
 				 ts[p - s] = 0;
+				 ts = _clean_white(0, 0, ts);
 				 evas_textblock2_cursor_text_append(o->cursor, ts);
 				 free(ts);
 			      }
@@ -848,6 +943,7 @@ evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
 			      {
 				 strncpy(ts, s, p - s);
 				 ts[p - s] = 0;
+				 ts = _clean_white(0, 0, ts);
 				 evas_textblock2_cursor_text_append(o->cursor, ts);
 				 free(ts);
 			      }
@@ -1447,43 +1543,6 @@ _format_dup(Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
 				   fmt2->font.name, fmt2->font.source, 
 				   fmt2->font.size);
    return fmt2;
-}
-
-static int
-_is_white(int c)
-{
-   /*
-    * unicode list of whitespace chars
-    *
-    * 0009..000D <control-0009>..<control-000D>
-    * 0020 SPACE
-    * 0085 <control-0085>
-    * 00A0 NO-BREAK SPACE
-    * 1680 OGHAM SPACE MARK
-    * 180E MONGOLIAN VOWEL SEPARATOR
-    * 2000..200A EN QUAD..HAIR SPACE
-    * 2028 LINE SEPARATOR
-    * 2029 PARAGRAPH SEPARATOR
-    * 202F NARROW NO-BREAK SPACE
-    * 205F MEDIUM MATHEMATICAL SPACE
-    * 3000 IDEOGRAPHIC SPACE
-    */
-   if (
-       (c == 0x20) ||
-       ((c >= 0x9) && (c <= 0xd)) ||
-       (c == 0x85) ||
-       (c == 0xa0) ||
-       (c == 0x1680) ||
-       (c == 0x180e) ||
-       ((c >= 0x2000) && (c <= 0x200a)) ||
-       (c == 0x2028) ||
-       (c == 0x2029) ||
-       (c == 0x202f) ||
-       (c == 0x205f) ||
-       (c == 0x3000)
-       )
-     return 1;
-   return 0;
 }
 
 static void
