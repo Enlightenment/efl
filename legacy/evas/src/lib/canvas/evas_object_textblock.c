@@ -118,6 +118,7 @@ struct _Evas_Object_Textblock
    Evas_List                   *cursors;
    Evas_Object_Textblock_Node  *nodes;
    Evas_Object_Textblock_Line *lines;
+   int                         last_w;
    char                        *markup_text;
    char                         changed : 1;
    void                        *engine_data;
@@ -539,6 +540,17 @@ _nodes_clear(Evas_Object *obj)
 }
 
 static void
+_format_free(Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
+{
+   fmt->ref--;
+   if (fmt->ref > 0) return;
+   if (fmt->font.name) free(fmt->font.name);
+   if (fmt->font.source) free(fmt->font.source);
+   evas_font_free(obj->layer->evas, fmt->font.font);
+   free(fmt);
+}
+
+static void
 _lines_clear(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
@@ -550,7 +562,16 @@ _lines_clear(Evas_Object *obj)
 	
 	ln = (Evas_Object_Textblock_Line *)o->lines;
 	o->lines = evas_object_list_remove(o->lines, ln);
-	/* FIXME: free line->items */
+	while (ln->items)
+	  {
+	     Evas_Object_Textblock_Item *it;
+	     
+	     it = (Evas_Object_Textblock_Item *)ln->items;
+	     ln->items = evas_object_list_remove(ln->items, ln->items);
+	     if (it->text) free(it->text);
+	     _format_free(obj, it->format);
+	     free(it);
+	  }
 	free(ln);
      }
 }
@@ -1273,6 +1294,7 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
      }
    else if (!strcmp(cmd, "wrap"))
      {
+	printf("WRAP \"%s\"\n", param);
 	if (!strcmp(param, "word"))
 	  {
 	     fmt->wrap_word = 1;
@@ -1428,17 +1450,6 @@ _format_dup(Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
    return fmt2;
 }
 
-static void
-_format_free(Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
-{
-   fmt->ref--;
-   if (fmt->ref > 0) return;
-   if (fmt->font.name) free(fmt->font.name);
-   if (fmt->font.source) free(fmt->font.source);
-   evas_font_free(obj->layer->evas, fmt->font.font);
-   free(fmt);
-}
-
 static int
 _is_white(int c)
 {
@@ -1480,7 +1491,7 @@ static void
 _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 {
    Evas_Object_Textblock *o;
-   Evas_Object_List *l;
+   Evas_Object_List *l, *ll;
    Evas_Object_Textblock_Line *lines = NULL, *ln = NULL;
    int x, y, wmax, hmax, ascent, descent, maxascent, maxdescent, advance, 
      maxadvance, maxh, line_no;
@@ -1569,10 +1580,6 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 		       _format_command(obj, fmt, key, val);
 		       free(key);
 		       free(val);
-		       ascent = ENFN->font_max_ascent_get(ENDT, fmt->font.font);
-		       descent = ENFN->font_max_descent_get(ENDT, fmt->font.font);
-		       if (maxascent < ascent) maxascent = ascent;
-		       if (maxdescent < descent) maxdescent = descent;
 		       ln->align = fmt->halign;
 		    }
 		  else
@@ -1582,6 +1589,17 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 		       if (!strcmp(item, "\n"))
 			 {
 			    /* finish line */
+			    maxascent = 0;
+			    maxdescent = 0;
+			    for (ll = (Evas_Object_List *)ln->items; ll; ll = ll->next)
+			      {
+				 it = (Evas_Object_Textblock_Item *)ll;
+				 
+				 ascent = ENFN->font_max_ascent_get(ENDT, it->format->font.font);
+				 descent = ENFN->font_max_descent_get(ENDT, it->format->font.font);
+				 if (maxascent < ascent) maxascent = ascent;
+				 if (maxdescent < descent) maxdescent = descent;
+			      }
 			    if (ln->w > wmax) wmax = ln->w;
 			    ln->y = y;
 			    ln->h = maxascent + maxdescent;
@@ -1595,12 +1613,6 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 			    ln = calloc(1, sizeof(Evas_Object_Textblock_Line));
 			    ln->align = fmt->halign;
 			    lines = evas_object_list_append(lines, ln);
-			    maxascent = 0;
-			    maxdescent = 0;
-			    ascent = ENFN->font_max_ascent_get(ENDT, fmt->font.font);
-			    descent = ENFN->font_max_descent_get(ENDT, fmt->font.font);
-			    if (maxascent < ascent) maxascent = ascent;
-			    if (maxdescent < descent) maxdescent = descent;
 			 }
 		       else if (!strcmp(item, "\t"))
 			 {
@@ -1633,27 +1645,24 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 		      ((x + tw) > w))
 		    {
 		       int wrap, twrap, cx, cy, cw, ch;
+		       char *ts;
 		       
 		       wrap = ENFN->font_char_at_coords_get(ENDT,
 							    fmt->font.font,
 							    it->text, w - x, 0,
 							    &cx, &cy,
 							    &cw, &ch);
-		       if (wrap >= 0)
+		       if (wrap > 0)
 			 {
-			    char *ts;
-			    
+			    printf("WRAP AT %i [%c]\n", wrap, str[wrap]);
 			    /* FIXME: handle wrap */
 			    if (fmt->wrap_word)
 			      {
 				 /* walk pack to start of word */
 				 while ((wrap >= 0) &&
-					(!_is_white(str[wrap])))
-				   {
-				      printf("- %i %c\n", wrap, str[wrap]);
-				      wrap--;
-				   }
+					(!_is_white(str[wrap]))) wrap--;
 				 wrap++;
+				 printf("back to [%c]\n", str[wrap]);
 				 /* wrap now is the index of the word START */
 				 /* cut of pointless whitespace at end of
 				  * previous line
@@ -1662,22 +1671,58 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 				   {
 				      twrap = wrap - 1;
 				      while ((twrap > 0) &&
-					     _is_white(str[twrap]))
-					{
-					   twrap--;
-					}
+					     _is_white(str[twrap])) twrap--;
 				      ts = it->text;
+				      while (!_is_white(str[twrap])) twrap++;
+				      printf("ts[twrap] = %c\n", ts[twrap]);
 				      ts[twrap] = 0;
 				      it->text = strdup(ts);
 				      free(ts);
+				      str = str + wrap;
 				   }
 				 else
 				   {
-				      /* FIXME: last text item on line - remove remaining spaces and recalc size */
-				      empty_item = 1;
+				      printf("%p\n", ln->items);
+				      if (ln->items != NULL)
+					{
+					   printf("EMPTY\n");
+					   empty_item = 1;
+					   if (it->text) free(it->text);
+					   _format_free(obj, it->format);
+					   free(it);
+					   if (ln->items)
+					     {
+						it = (Evas_Object_Textblock_Item *)((Evas_Object_List *)ln->items)->last;
+						twrap = strlen(it->text) - 1;
+						while ((twrap > 0) &&
+						       (_is_white(it->text[twrap])))
+						  twrap--;
+						if ((twrap > 0) && 
+						    (_is_white(it->text[twrap])))
+						  it->text[twrap] = 0;
+						ENFN->font_string_size_get(ENDT, fmt->font.font,
+									   it->text, &tw, &th);
+						ln->w -= it->w - tw;
+						it->w = tw;
+						it->h = th;
+					     }
+					   str = str + wrap;
+					}
+				      /* this is the last word on a line.
+				       * no choice. just put it on anyway */
+				      else
+					{
+					   str = str + 1;
+					   if (*str == 0) str = NULL;
+					   else
+					     {
+						ts = it->text;
+						ts[1] = 0;
+						it->text = strdup(ts);
+						free(ts);
+					     }
+					}
 				   }
-				 str = str + wrap;
-				 printf("WWRAP %s\n", str);
 			      }
 			    else if (fmt->wrap_char)
 			      {
@@ -1689,18 +1734,55 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 			      }
 			    new_line = 1;
 			 }
-		       ENFN->font_string_size_get(ENDT, fmt->font.font,
-						  it->text, &tw, &th);
+		       else
+			 {
+			    printf("NO WRAP!\n");
+			    if (ln->items != NULL)
+			      {
+				 empty_item = 1;
+				 if (it->text) free(it->text);
+				 _format_free(obj, it->format);
+				 free(it);
+				 if (ln->items)
+				   {
+				      it = (Evas_Object_Textblock_Item *)((Evas_Object_List *)ln->items)->last;
+				      twrap = strlen(it->text) - 1;
+				      while ((twrap > 0) &&
+					     (_is_white(it->text[twrap])))
+					twrap--;
+				      if ((twrap > 0) && 
+					  (_is_white(it->text[twrap])))
+					it->text[twrap] = 0;
+				      ENFN->font_string_size_get(ENDT, fmt->font.font,
+								 it->text, &tw, &th);
+				      ln->w -= it->w - tw;
+				      it->w = tw;
+				      it->h = th;
+				   }
+				 new_line = 1;
+			      }
+			    else
+			      {
+				 str = str + 1;
+				 if (*str == 0) str = NULL;
+				 else
+				   {
+				      ts = it->text;
+				      ts[1] = 0;
+				      it->text = strdup(ts);
+				      free(ts);
+				   }
+			      }
+			 }
+		       if (!empty_item)
+			 ENFN->font_string_size_get(ENDT, fmt->font.font,
+						    it->text, &tw, &th);
 		    }
 		  else
 		    str = NULL;
 		  if (empty_item)
 		    {
 		       empty_item = 0;
-		       
-		       if (it->text) free(it->text);
-		       _format_free(obj, it->format);
-		       free(it);
 		    }
 		  else
 		    {
@@ -1719,6 +1801,17 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 		    {
 		       new_line = 0;
 		       /* finish line */
+		       maxascent = 0;
+		       maxdescent = 0;
+		       for (ll = (Evas_Object_List *)ln->items; ll; ll = ll->next)
+			 {
+			    it = (Evas_Object_Textblock_Item *)ll;
+			    
+			    ascent = ENFN->font_max_ascent_get(ENDT, it->format->font.font);
+			    descent = ENFN->font_max_descent_get(ENDT, it->format->font.font);
+			    if (maxascent < ascent) maxascent = ascent;
+			    if (maxdescent < descent) maxdescent = descent;
+			 }
 		       if (ln->w > wmax) wmax = ln->w;
 		       ln->y = y;
 		       ln->h = maxascent + maxdescent;
@@ -1732,12 +1825,6 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 		       ln = calloc(1, sizeof(Evas_Object_Textblock_Line));
 		       ln->align = fmt->halign;
 		       lines = evas_object_list_append(lines, ln);
-		       maxascent = 0;
-		       maxdescent = 0;
-		       ascent = ENFN->font_max_ascent_get(ENDT, fmt->font.font);
-		       descent = ENFN->font_max_descent_get(ENDT, fmt->font.font);
-		       if (maxascent < ascent) maxascent = ascent;
-		       if (maxdescent < descent) maxdescent = descent;
 		    }
 	       }
 	  }
@@ -1884,13 +1971,18 @@ evas_object_textblock_render_pre(Evas_Object *obj)
    /* then when this is done the object needs to figure if it changed and */
    /* if so what and where and add the appropriate redraw textblocks */
    o = (Evas_Object_Textblock *)(obj->object_data);
-   if (o->changed)
+   if ((o->changed) ||
+       (o->last_w != obj->cur.geometry.w))
      {
+	_lines_clear(obj);
 	_layout(obj, 
 		0,
 		obj->cur.geometry.w, obj->cur.geometry.h,
 		NULL, NULL);
+	o->last_w = obj->cur.geometry.w;
+	updates = evas_object_render_pre_prev_cur_add(updates, obj);
 	o->changed = 0;
+	goto done;
      }
    /* if someone is clipping this obj - go calculate the clipper */
    if (obj->cur.clipper)
