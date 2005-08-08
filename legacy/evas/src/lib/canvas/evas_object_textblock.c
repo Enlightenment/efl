@@ -1613,18 +1613,20 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 	else if ((n->type == NODE_TEXT) && (n->text))
 	  {
 	     int adv, inset, tw, th, x2;
-	     char *str, new_line;
+	     char *str, new_line, empty_item;
 	     
 	     str = n->text;
 	     new_line = 0;
+	     empty_item = 0;
 	     while (str)
 	       {
 		  it = calloc(1, sizeof(Evas_Object_Textblock_Item));
 		  fmt->ref++;
 		  it->format = fmt;
+		  printf("IT: %s\n", str);
 		  it->text = strdup(str);
 		  inset = ENFN->font_inset_get(ENDT, fmt->font.font, it->text);
-		  //	     if (ln->items == NULL) x += inset;
+//		  if (ln->items == NULL) x = inset;
 		  ENFN->font_string_size_get(ENDT, fmt->font.font,
 					     it->text, &tw, &th);
 		  if (((fmt->wrap_word) || (fmt->wrap_char)) &&
@@ -1648,24 +1650,34 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 				 while ((wrap >= 0) &&
 					(!_is_white(str[wrap])))
 				   {
+				      printf("- %i %c\n", wrap, str[wrap]);
 				      wrap--;
 				   }
 				 wrap++;
+				 /* wrap now is the index of the word START */
 				 /* cut of pointless whitespace at end of
 				  * previous line
 				  */
-				 twrap = wrap - 1;
-				 while ((twrap > 0) &&
-					_is_white(it->text[twrap]))
+				 if (wrap > 0)
 				   {
-				      twrap--;
+				      twrap = wrap - 1;
+				      while ((twrap > 0) &&
+					     _is_white(str[twrap]))
+					{
+					   twrap--;
+					}
+				      ts = it->text;
+				      ts[twrap] = 0;
+				      it->text = strdup(ts);
+				      free(ts);
 				   }
-				 ts = it->text;
-				 ts[twrap] = 0;
-				 it->text = strdup(ts);
-				 free(ts);
-				 /* back to start of word */
-				 str = str + wrap - 1;
+				 else
+				   {
+				      /* FIXME: last text item on line - remove remaining spaces and recalc size */
+				      empty_item = 1;
+				   }
+				 str = str + wrap;
+				 printf("WWRAP %s\n", str);
 			      }
 			    else if (fmt->wrap_char)
 			      {
@@ -1682,16 +1694,27 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 		    }
 		  else
 		    str = NULL;
-		  it->w = tw;
-		  it->h = th;
-		  it->inset = inset;
-		  it->x = x;
-		  adv = ENFN->font_h_advance_get(ENDT, fmt->font.font,
-						 it->text);
-		  x2 = x + tw - inset;
-		  x += adv;
-		  if (x2 > ln->w) ln->w = x2;
-		  ln->items = evas_object_list_append(ln->items, it);
+		  if (empty_item)
+		    {
+		       empty_item = 0;
+		       
+		       if (it->text) free(it->text);
+		       _format_free(obj, it->format);
+		       free(it);
+		    }
+		  else
+		    {
+		       it->w = tw;
+		       it->h = th;
+		       it->inset = inset;
+		       it->x = x;
+		       adv = ENFN->font_h_advance_get(ENDT, fmt->font.font,
+						      it->text);
+		       x2 = x + tw;
+		       x += adv;
+		       if (x2 > ln->w) ln->w = x2;
+		       ln->items = evas_object_list_append(ln->items, it);
+		    }
 		  if (new_line)
 		    {
 		       new_line = 0;
