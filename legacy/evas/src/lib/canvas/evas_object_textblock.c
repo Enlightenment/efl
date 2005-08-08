@@ -1294,7 +1294,6 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
      }
    else if (!strcmp(cmd, "wrap"))
      {
-	printf("WRAP \"%s\"\n", param);
 	if (!strcmp(param, "word"))
 	  {
 	     fmt->wrap_word = 1;
@@ -1635,7 +1634,6 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 		  it = calloc(1, sizeof(Evas_Object_Textblock_Item));
 		  fmt->ref++;
 		  it->format = fmt;
-		  printf("IT: %s\n", str);
 		  it->text = strdup(str);
 		  inset = ENFN->font_inset_get(ENDT, fmt->font.font, it->text);
 //		  if (ln->items == NULL) x = inset;
@@ -1654,7 +1652,6 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 							    &cw, &ch);
 		       if (wrap > 0)
 			 {
-			    printf("WRAP AT %i [%c]\n", wrap, str[wrap]);
 			    /* FIXME: handle wrap */
 			    if (fmt->wrap_word)
 			      {
@@ -1662,7 +1659,6 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 				 while ((wrap >= 0) &&
 					(!_is_white(str[wrap]))) wrap--;
 				 wrap++;
-				 printf("back to [%c]\n", str[wrap]);
 				 /* wrap now is the index of the word START */
 				 /* cut of pointless whitespace at end of
 				  * previous line
@@ -1674,7 +1670,6 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 					     _is_white(str[twrap])) twrap--;
 				      ts = it->text;
 				      while (!_is_white(str[twrap])) twrap++;
-				      printf("ts[twrap] = %c\n", ts[twrap]);
 				      ts[twrap] = 0;
 				      it->text = strdup(ts);
 				      free(ts);
@@ -1682,10 +1677,8 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 				   }
 				 else
 				   {
-				      printf("%p\n", ln->items);
 				      if (ln->items != NULL)
 					{
-					   printf("EMPTY\n");
 					   empty_item = 1;
 					   if (it->text) free(it->text);
 					   _format_free(obj, it->format);
@@ -1736,7 +1729,6 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 			 }
 		       else
 			 {
-			    printf("NO WRAP!\n");
 			    if (ln->items != NULL)
 			      {
 				 empty_item = 1;
