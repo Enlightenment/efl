@@ -1889,7 +1889,7 @@ st_collections_group_programs_program_name(void)
 	     Edje_Program *lep;
 	     
 	     lep = l->data;
-	     if ((lep != ep) && (!strcmp(lep->name, ep->name)))
+	     if ((lep != ep) && && (lep->name) && (!strcmp(lep->name, ep->name)))
 	       {
 		  fprintf(stderr, "%s: Error. parse error %s:%i. There is already a program of the name %s\n",
 			  progname, file_in, line - 1, ep->name);
