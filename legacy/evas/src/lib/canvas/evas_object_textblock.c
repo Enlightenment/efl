@@ -1786,7 +1786,6 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	     wrap = _layout_text_cutoff_get(c, fmt, it);
 	     if (wrap > 0)
 	       {
-		  printf("WRAP %s [%i]\n", str, wrap);
 		  if (fmt->wrap_word)
 		    {
 		       wrap = _layout_word_start(str, wrap);
