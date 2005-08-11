@@ -48,7 +48,7 @@ struct _Evas_Object_Textblock_Node
 struct _Evas_Object_Textblock_Line
 {  Evas_Object_List _list_data;
    Evas_Object_Textblock_Item *items;
-   double                      align;
+//   double                      align;
    int                         x, y, w, h;
    int                         baseline;
    int                         line_no;
@@ -215,12 +215,13 @@ evas_object_textblock2_add(Evas *e)
       // popped
       // tags starting with / (ie </blah>) will ALWAYS pop UNLESS provided
       // with an override here in the style (like /p)
-      "DEFAULT='font=Vera font_size=10 align=left color=#000000'"
-      "center='+ align=middle'"
+      "DEFAULT='font=Vera font_size=8 align=left color=#000000 wrap=char'"
+      "center='+ align=center'"
+      "/center='- \n \n'"
       "h1='+ font_size=20'"
       "red='+ color=#ff0000'"
-      "p='+ font=Vera font_size=12 align=left'"
-      "/p='- \n \n'" // you can define end tags - override default pop on /...
+      "p='+ font=Vera font_size=10 align=left'"
+      "/p='- \n \n'"
       "br='\n'"
       );
    evas_object_textblock2_style_set(obj, ts); // tell object to use this style
@@ -873,7 +874,18 @@ evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
 				 if (ttag[0] == '/')
 				   evas_textblock2_cursor_format_append(o->cursor, "-");
 				 else
-				   evas_textblock2_cursor_format_append(o->cursor, ttag);
+				   {
+				      char *ttag2;
+				      
+				      ttag2 = malloc(strlen(ttag) + 2 + 1);
+				      if (ttag2)
+					{
+					   strcpy(ttag2, "+ ");
+					   strcat(ttag2, ttag);
+					   evas_textblock2_cursor_format_append(o->cursor, ttag2);
+					   free(ttag2);
+					}
+				   }
 			      }
 			    free(ttag);
 			 }
@@ -1545,345 +1557,452 @@ _format_dup(Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
    return fmt2;
 }
 
+
+
+
+
+
+
+
+
+
+typedef struct _Ctxt Ctxt;
+
+struct _Ctxt
+{
+   Evas_Object *obj;
+   Evas_Object_Textblock *o;
+   
+   Evas_Object_Textblock_Line *lines;
+   Evas_Object_Textblock_Line *ln;
+
+   Evas_List *format_stack;
+   
+   int x, y;
+   int w, h;
+   int wmax, hmax;
+   int maxascent, maxdescent;
+   int marginl, marginr;
+   int line_no;
+   double align;
+};
+
+static void
+_layout_format_ascent_descent_adjust(Ctxt *c, Evas_Object_Textblock_Format *fmt)
+{
+   int ascent, descent;
+   
+   ascent = c->ENFN->font_max_ascent_get(c->ENDT, fmt->font.font);
+   descent = c->ENFN->font_max_descent_get(c->ENDT, fmt->font.font);
+   if (c->maxascent < ascent) c->maxascent = ascent;
+   if (c->maxdescent < descent) c->maxdescent = descent;
+}
+
+static void
+_layout_line_new(Ctxt *c, Evas_Object_Textblock_Format *fmt)
+{
+   c->ln = calloc(1, sizeof(Evas_Object_Textblock_Line));
+   c->align = fmt->halign;
+   c->lines = evas_object_list_append(c->lines, c->ln);
+   c->x = 0;
+   c->maxascent = c->maxdescent = 0;
+   _layout_format_ascent_descent_adjust(c, fmt);
+}
+
+static Evas_Object_Textblock_Format *
+_layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt)
+{
+   if (fmt)
+     {
+	fmt = _format_dup(c->obj, fmt);
+	c->format_stack  = evas_list_prepend(c->format_stack, fmt);
+     }
+   else
+     {
+	fmt = calloc(1, sizeof(Evas_Object_Textblock_Format));
+	c->format_stack  = evas_list_prepend(c->format_stack, fmt);
+     }
+   return fmt;
+}
+
+static Evas_Object_Textblock_Format *
+_layout_format_pop(Ctxt *c, Evas_Object_Textblock_Format *fmt)
+{
+   if ((c->format_stack) && (c->format_stack->next))
+     {
+	_format_free(c->obj, fmt);
+	c->format_stack = evas_list_remove_list(c->format_stack, c->format_stack);
+	fmt = c->format_stack->data;
+     }
+   return fmt;
+}
+
+static void
+_layout_format_value_handle(Ctxt *c, Evas_Object_Textblock_Format *fmt, char *item)
+{
+   char *key = NULL, *val = NULL;
+   
+   _format_param_parse(item, &key, &val);
+   if ((key) && (val)) _format_command(c->obj, fmt, key, val);
+   if (key) free(key);
+   if (val) free(val);
+   c->align = fmt->halign;
+}
+
+static void
+_layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
+{
+   Evas_Object_Textblock_Item *it;
+   Evas_Object_List *l;
+   
+   c->maxascent = c->maxdescent = 0;
+   if (!c->ln->items)
+     _layout_format_ascent_descent_adjust(c, fmt);
+   for (l = (Evas_Object_List *)c->ln->items; l; l = l->next)
+     {
+	int endx;
+	
+	it = (Evas_Object_Textblock_Item *)l;
+	_layout_format_ascent_descent_adjust(c, it->format);
+	endx = it->x + it->w;
+	if (endx > c->ln->w) c->ln->w = endx;
+     }
+   if (c->ln->w > c->wmax) c->wmax = c->ln->w;
+   c->ln->y = c->y;
+   c->ln->h = c->maxascent + c->maxdescent;
+   c->ln->baseline = c->maxascent;
+   c->ln->line_no = c->line_no;
+   c->line_no++;
+   c->y += c->maxascent + c->maxdescent;
+   c->ln->x = c->marginl + ((c->w - c->ln->w - c->marginl - c->marginr) * c->align);
+   _layout_line_new(c, fmt);
+}
+
+static Evas_Object_Textblock_Item *
+_layout_item_new(Ctxt *c, Evas_Object_Textblock_Format *fmt, char *str)
+{
+   Evas_Object_Textblock_Item *it;
+   
+   it = calloc(1, sizeof(Evas_Object_Textblock_Item));
+   it->format = fmt;
+   it->format->ref++;
+   it->text = strdup(str);
+   return it;
+}
+
+static int
+_layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Item *it)
+{
+   int cx, cy, cw, ch;
+	     
+   return c->ENFN->font_char_at_coords_get(c->ENDT, fmt->font.font, it->text,
+					   c->w - c->marginl - c->marginr - c->x,
+					   0, &cx, &cy, &cw, &ch);
+}
+
+static void
+_layout_item_text_cutoff(Ctxt *c, Evas_Object_Textblock_Item *it, int cut)
+{
+   char *ts;
+   
+   ts = it->text;
+   ts[cut] = 0;
+   it->text = strdup(ts);
+   free(ts);
+}
+
+static int
+_layout_word_start(char *str, int start)
+{
+   int p, tp, chr = 0;
+   
+   tp = 0;
+   p = start;
+   while (p >= 0)
+     {
+	chr = evas_common_font_utf8_get_prev((unsigned char *)(str), &p);
+	if (_is_white(chr)) break;
+	tp = p;
+     }
+   p = tp;
+   if ((p >= 0) && (_is_white(chr)))
+     evas_common_font_utf8_get_next((unsigned char *)(str), &p);
+   return p;
+}
+
+static int
+_layout_ends_with_space(char *str)
+{
+   int p, chr;
+   
+   p = evas_common_font_utf8_get_last((unsigned char *)(str), strlen(str));
+   chr = evas_common_font_utf8_get_next((unsigned char *)(str), &p);
+   return _is_white(chr);
+}
+
+static void
+_layout_strip_trailing_whitespace(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Item *it)
+{
+   int p, tp, chr, adv, tw, th;
+   
+   p = evas_common_font_utf8_get_last((unsigned char *)(it->text), strlen(it->text));
+   tp = p;
+   while (p >= 0)
+     {
+	chr = evas_common_font_utf8_get_prev((unsigned char *)(it->text), &p);
+	if (!_is_white(chr))
+	  {
+	     evas_common_font_utf8_get_next((unsigned char *)(it->text), &tp);
+	     _layout_item_text_cutoff(c, it, tp);
+	     adv = c->ENFN->font_h_advance_get(c->ENDT, it->format->font.font, it->text);
+	     c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, it->text, &tw, &th);
+	     it->w = tw;
+	     it->h = th;
+	     c->x = it->x + adv;
+	     return;
+	  }
+	tp = p;
+     }
+}
+
+static void
+_layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Node *n)
+{
+   int adv, inset, tw, th, new_line, empty_item;
+   char *str;
+   Evas_Object_Textblock_Item *it, *tit;
+   
+   str = n->text;
+   new_line = 0;
+   empty_item = 0;
+   while (str)
+     {
+	it = _layout_item_new(c, fmt, str);
+	c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, it->text, &tw, &th);
+	if (((fmt->wrap_word) || (fmt->wrap_char)) && ((c->x + tw) > (c->w - c->marginl - c->marginr)))
+	  {
+	     int wrap, twrap, ch;
+	     
+	     wrap = _layout_text_cutoff_get(c, fmt, it);
+	     if (wrap > 0)
+	       {
+		  printf("WRAP %s [%i]\n", str, wrap);
+		  if (fmt->wrap_word)
+		    {
+		       wrap = _layout_word_start(str, wrap);
+		       /* wrap now is the index of the word START */
+		       if (wrap == 0)
+			 {
+			    /* we are at the start of the node - maybe the
+			     * word is spread over previous nodes too? we
+			     * now need to walk back over previous items and
+			     * check
+			     */
+			 }
+		       /* cut of pointless whitespace at end of previous line */
+		       if (wrap > 0)
+			 {
+			    twrap = wrap;
+			    evas_common_font_utf8_get_prev((unsigned char *)str, &twrap);
+			    ch = evas_common_font_utf8_get_prev((unsigned char *)str, &twrap);
+			    while (_is_white(ch) && (twrap >= 0))
+			      ch = evas_common_font_utf8_get_prev((unsigned char *)str, &twrap);
+			    if (!_is_white(ch))
+			      {
+				 evas_common_font_utf8_get_next((unsigned char *)str, &twrap);
+				 evas_common_font_utf8_get_next((unsigned char *)str, &twrap);
+			      }
+			    else
+			      twrap = 0;
+			    if (twrap == 0)
+			      {
+				 int ptwrap;
+				 
+				 empty_item = 1;
+				 if (it->text) free(it->text);
+				 _format_free(c->obj, it->format);
+				 free(it);
+				 ptwrap = twrap;
+				 for (;;)
+				   {
+				      ch = evas_common_font_utf8_get_next((unsigned char *)str, &twrap);
+				      if (twrap < 0)
+					{
+					   ptwrap = twrap;
+					   break;
+					}
+				      if (!_is_white(ch)) break;
+				      ptwrap = twrap;
+				   }
+				 str = str + ptwrap;
+			      }
+			    else
+			      {
+				 _layout_item_text_cutoff(c, it, twrap);
+				 str = str + wrap;
+			      }
+			 }
+		       else
+			 {
+			    if (c->ln->items != NULL)
+			      {
+				 empty_item = 1;
+				 if (it->text) free(it->text);
+				 _format_free(c->obj, it->format);
+				 free(it);
+				 if (c->ln->items)
+				   {
+				      it = (Evas_Object_Textblock_Item *)((Evas_Object_List *)c->ln->items)->last;
+				      _layout_strip_trailing_whitespace(c, fmt, it);
+				   }
+			      }
+			    /* this is the last word on a line. no choice.
+			     * just put it on anyway */
+			    else
+			      {
+				 str = str + 1;
+				 if (*str == 0) str = NULL;
+				 else
+				   _layout_item_text_cutoff(c, it, 1);
+			      }
+			 }
+		    }
+		  else if (fmt->wrap_char)
+		    {
+		       _layout_item_text_cutoff(c, it, wrap);
+		       str = str + wrap;
+		    }
+		  new_line = 1;
+	       }
+	     else
+	       {
+		  if (c->ln->items != NULL)
+		    {
+		       empty_item = 1;
+		       if (it->text) free(it->text);
+		       _format_free(c->obj, it->format);
+		       free(it);
+		       if (c->ln->items)
+			 {
+			    it = (Evas_Object_Textblock_Item *)((Evas_Object_List *)c->ln->items)->last;
+			    _layout_strip_trailing_whitespace(c, fmt, it);
+			 }
+		       new_line = 1;
+		    }
+		  else
+		    {
+		       str = str + 1;
+		       if (*str == 0) str = NULL;
+		       else
+			 _layout_item_text_cutoff(c, it, 1);
+		    }
+	       }
+	     if (!empty_item)
+	      c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, it->text, &tw, &th);
+	  }
+	else
+	  str = NULL;
+	if (empty_item) empty_item = 0;
+	else
+	  {
+	     it->w = tw;
+	     it->h = th;
+	     inset = c->ENFN->font_inset_get(c->ENDT, fmt->font.font, it->text);
+	     it->inset = inset;
+	     it->x = c->x;
+	     adv = c->ENFN->font_h_advance_get(c->ENDT, fmt->font.font, it->text);
+	     c->x += adv;
+	     c->ln->items = evas_object_list_append(c->ln->items, it);
+	  }
+	if (new_line)
+	  {
+	     new_line = 0;
+	     _layout_line_advance(c, fmt);
+	  }
+     }
+}
+
 static void
 _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 {
-   Evas_Object_Textblock *o;
+   Ctxt ctxt, *c;
    Evas_Object_List *l, *ll;
-   Evas_Object_Textblock_Line *lines = NULL, *ln = NULL;
-   int x, y, wmax, hmax, ascent, descent, maxascent, maxdescent, advance, 
-     maxadvance, maxh, line_no;
-   Evas_List *format_stack = NULL;
-   Evas_Object_Textblock_Item *it = NULL;   
-   Evas_Object_Textblock_Format *fmt = NULL;
+   Evas_Object_Textblock_Format *fmt = NULL; /* current format */
    
-   /* this is formatting context */
-   x = 0;
-   y = 0;
-   wmax = 0;
-   hmax = 0;
+   /* setup context */
+   c = &ctxt;
+   c->obj =obj;
+   c->o = (Evas_Object_Textblock *)(obj->object_data);
+   c->lines = c->ln = NULL;
+   c->format_stack = NULL;
+   c->x = c->y = 0;
+   c->w = w;
+   c->h = h;
+   c->wmax = c->hmax = 0;
+   c->maxascent = c->maxdescent = 0;
+   c->marginl = c->marginr = 0;
+   c->line_no = 0;
+   c->align = 0.0;
    
-   ascent = 0;
-   descent = 0;
-   maxascent = 0;
-   maxdescent = 0;
-   maxh = 0;
-   line_no = 0;
-   
-   o = (Evas_Object_Textblock *)(obj->object_data);
-   if ((o->style) && (o->style->default_tag))
+   /* setup default base style */
+   if ((c->o->style) && (c->o->style->default_tag))
      {
 	fmt = calloc(1, sizeof(Evas_Object_Textblock_Format));
 	fmt->ref = 1;
-	format_stack  = evas_list_prepend(format_stack, fmt);
-	_format_fill(obj, fmt, o->style->default_tag);
+	c->format_stack = evas_list_prepend(c->format_stack, fmt);
+	_format_fill(c->obj, fmt, c->o->style->default_tag);
      }
-   for (l = (Evas_Object_List *)o->nodes; l; l = l->next)
+   /* run thru all text and format nodes generating lines */
+   for (l = (Evas_Object_List *)c->o->nodes; l; l = l->next)
      {
 	Evas_Object_Textblock_Node *n;
 	
 	n = (Evas_Object_Textblock_Node *)l;
-	if (!ln)
-	  {
-	     ln = calloc(1, sizeof(Evas_Object_Textblock_Line));
-	     ln->align = fmt->halign;
-	     lines = evas_object_list_append(lines, ln);
-	     x = 0;
-	     maxascent = 0;
-	     maxdescent = 0;
-	     ascent = ENFN->font_max_ascent_get(ENDT, fmt->font.font);
-	     descent = ENFN->font_max_descent_get(ENDT, fmt->font.font);
-	     if (maxascent < ascent) maxascent = ascent;
-	     if (maxdescent < descent) maxdescent = descent;
-	  }
+	if (!c->ln) _layout_line_new(c, fmt);
 	if ((n->type == NODE_FORMAT) && (n->text))
 	  {
 	     char *s;
 	     char *item;
 	     
-//	     printf("F: %s\n", n->text);
 	     s = n->text;
 	     if (s[0] == '+')
 	       {
-		  if (fmt)
-		    {
-		       fmt = _format_dup(obj, fmt);
-		       format_stack  = evas_list_prepend(format_stack, fmt);
-		    }
-		  else
-		    {
-		       fmt = calloc(1, sizeof(Evas_Object_Textblock_Format));
-		       format_stack  = evas_list_prepend(format_stack, fmt);
-		    }
+		  fmt = _layout_format_push(c, fmt);
 		  s++;
 	       }
 	     else if (s[0] == '-')
 	       {
-		  if ((format_stack) && (format_stack->next))
-		    {
-		       _format_free(obj, fmt);
-		       format_stack = evas_list_remove_list(format_stack, format_stack);
-		       fmt = format_stack->data;
-		    }
+		  fmt = _layout_format_pop(c, fmt);
 		  s++;
 	       }
 	     while ((item = _format_parse(&s)))
 	       {
-//		  printf("ITEM %s\n", item);
 		  if (_format_is_param(item))
-		    {
-		       char *key = NULL, *val = NULL;
-		       
-		       _format_param_parse(item, &key, &val);
-		       _format_command(obj, fmt, key, val);
-		       free(key);
-		       free(val);
-		       ln->align = fmt->halign;
-		    }
+		    _layout_format_value_handle(c, fmt, item);
 		  else
 		    {
-//		       printf("IMM: ->%s<-\n", item);
-		       /* immediate */
 		       if (!strcmp(item, "\n"))
-			 {
-			    /* finish line */
-			    maxascent = 0;
-			    maxdescent = 0;
-			    for (ll = (Evas_Object_List *)ln->items; ll; ll = ll->next)
-			      {
-				 it = (Evas_Object_Textblock_Item *)ll;
-				 
-				 ascent = ENFN->font_max_ascent_get(ENDT, it->format->font.font);
-				 descent = ENFN->font_max_descent_get(ENDT, it->format->font.font);
-				 if (maxascent < ascent) maxascent = ascent;
-				 if (maxdescent < descent) maxdescent = descent;
-			      }
-			    if (ln->w > wmax) wmax = ln->w;
-			    ln->y = y;
-			    ln->h = maxascent + maxdescent;
-			    ln->baseline = maxascent;
-			    ln->line_no = line_no;
-			    line_no++;
-			    x = 0;
-			    y += maxascent + maxdescent;
-			    ln->x = (w - ln->w) * ln->align;
-			    
-			    ln = calloc(1, sizeof(Evas_Object_Textblock_Line));
-			    ln->align = fmt->halign;
-			    lines = evas_object_list_append(lines, ln);
-			 }
+			 _layout_line_advance(c, fmt);
 		       else if (!strcmp(item, "\t"))
-			 {
-			    /* jump to next tabstop */
+			 { /* jump to next tabstop */
 			 }
 		    }
 		  free(item);
 	       }
 	  }
 	else if ((n->type == NODE_TEXT) && (n->text))
-	  {
-	     int adv, inset, tw, th, x2;
-	     char *str, new_line, empty_item;
-	     
-	     str = n->text;
-	     new_line = 0;
-	     empty_item = 0;
-	     while (str)
-	       {
-		  it = calloc(1, sizeof(Evas_Object_Textblock_Item));
-		  fmt->ref++;
-		  it->format = fmt;
-		  it->text = strdup(str);
-		  inset = ENFN->font_inset_get(ENDT, fmt->font.font, it->text);
-//		  if (ln->items == NULL) x = inset;
-		  ENFN->font_string_size_get(ENDT, fmt->font.font,
-					     it->text, &tw, &th);
-		  if (((fmt->wrap_word) || (fmt->wrap_char)) &&
-		      ((x + tw) > w))
-		    {
-		       int wrap, twrap, cx, cy, cw, ch;
-		       char *ts;
-		       
-		       wrap = ENFN->font_char_at_coords_get(ENDT,
-							    fmt->font.font,
-							    it->text, w - x, 0,
-							    &cx, &cy,
-							    &cw, &ch);
-		       if (wrap > 0)
-			 {
-			    /* FIXME: handle wrap */
-			    if (fmt->wrap_word)
-			      {
-				 /* walk pack to start of word */
-				 while ((wrap >= 0) &&
-					(!_is_white(str[wrap]))) wrap--;
-				 wrap++;
-				 /* wrap now is the index of the word START */
-				 /* cut of pointless whitespace at end of
-				  * previous line
-				  */
-				 if (wrap > 0)
-				   {
-				      twrap = wrap - 1;
-				      while ((twrap > 0) &&
-					     _is_white(str[twrap])) twrap--;
-				      ts = it->text;
-				      while (!_is_white(str[twrap])) twrap++;
-				      ts[twrap] = 0;
-				      it->text = strdup(ts);
-				      free(ts);
-				      str = str + wrap;
-				   }
-				 else
-				   {
-				      if (ln->items != NULL)
-					{
-					   empty_item = 1;
-					   if (it->text) free(it->text);
-					   _format_free(obj, it->format);
-					   free(it);
-					   if (ln->items)
-					     {
-						it = (Evas_Object_Textblock_Item *)((Evas_Object_List *)ln->items)->last;
-						twrap = strlen(it->text) - 1;
-						while ((twrap > 0) &&
-						       (_is_white(it->text[twrap])))
-						  twrap--;
-						if ((twrap > 0) && 
-						    (_is_white(it->text[twrap])))
-						  it->text[twrap] = 0;
-						ENFN->font_string_size_get(ENDT, fmt->font.font,
-									   it->text, &tw, &th);
-						ln->w -= it->w - tw;
-						it->w = tw;
-						it->h = th;
-					     }
-					   str = str + wrap;
-					}
-				      /* this is the last word on a line.
-				       * no choice. just put it on anyway */
-				      else
-					{
-					   str = str + 1;
-					   if (*str == 0) str = NULL;
-					   else
-					     {
-						ts = it->text;
-						ts[1] = 0;
-						it->text = strdup(ts);
-						free(ts);
-					     }
-					}
-				   }
-			      }
-			    else if (fmt->wrap_char)
-			      {
-				 ts = it->text;
-				 ts[wrap] = 0;
-				 it->text = strdup(ts);
-				 free(ts);
-				 str = str + wrap;
-			      }
-			    new_line = 1;
-			 }
-		       else
-			 {
-			    if (ln->items != NULL)
-			      {
-				 empty_item = 1;
-				 if (it->text) free(it->text);
-				 _format_free(obj, it->format);
-				 free(it);
-				 if (ln->items)
-				   {
-				      it = (Evas_Object_Textblock_Item *)((Evas_Object_List *)ln->items)->last;
-				      twrap = strlen(it->text) - 1;
-				      while ((twrap > 0) &&
-					     (_is_white(it->text[twrap])))
-					twrap--;
-				      if ((twrap > 0) && 
-					  (_is_white(it->text[twrap])))
-					it->text[twrap] = 0;
-				      ENFN->font_string_size_get(ENDT, fmt->font.font,
-								 it->text, &tw, &th);
-				      ln->w -= it->w - tw;
-				      it->w = tw;
-				      it->h = th;
-				   }
-				 new_line = 1;
-			      }
-			    else
-			      {
-				 str = str + 1;
-				 if (*str == 0) str = NULL;
-				 else
-				   {
-				      ts = it->text;
-				      ts[1] = 0;
-				      it->text = strdup(ts);
-				      free(ts);
-				   }
-			      }
-			 }
-		       if (!empty_item)
-			 ENFN->font_string_size_get(ENDT, fmt->font.font,
-						    it->text, &tw, &th);
-		    }
-		  else
-		    str = NULL;
-		  if (empty_item)
-		    {
-		       empty_item = 0;
-		    }
-		  else
-		    {
-		       it->w = tw;
-		       it->h = th;
-		       it->inset = inset;
-		       it->x = x;
-		       adv = ENFN->font_h_advance_get(ENDT, fmt->font.font,
-						      it->text);
-		       x2 = x + tw;
-		       x += adv;
-		       if (x2 > ln->w) ln->w = x2;
-		       ln->items = evas_object_list_append(ln->items, it);
-		    }
-		  if (new_line)
-		    {
-		       new_line = 0;
-		       /* finish line */
-		       maxascent = 0;
-		       maxdescent = 0;
-		       for (ll = (Evas_Object_List *)ln->items; ll; ll = ll->next)
-			 {
-			    it = (Evas_Object_Textblock_Item *)ll;
-			    
-			    ascent = ENFN->font_max_ascent_get(ENDT, it->format->font.font);
-			    descent = ENFN->font_max_descent_get(ENDT, it->format->font.font);
-			    if (maxascent < ascent) maxascent = ascent;
-			    if (maxdescent < descent) maxdescent = descent;
-			 }
-		       if (ln->w > wmax) wmax = ln->w;
-		       ln->y = y;
-		       ln->h = maxascent + maxdescent;
-		       ln->baseline = maxascent;
-		       ln->line_no = line_no;
-		       line_no++;
-		       x = 0;
-		       y += maxascent + maxdescent;
-		       ln->x = (w - ln->w) * ln->align;
-		       
-		       ln = calloc(1, sizeof(Evas_Object_Textblock_Line));
-		       ln->align = fmt->halign;
-		       lines = evas_object_list_append(lines, ln);
-		    }
-	       }
-	  }
+	  _layout_text_append(c, fmt, n);
      }
-   hmax = y;
+   while (c->format_stack)
+     {
+	fmt = c->format_stack->data;
+	c->format_stack = evas_list_remove_list(c->format_stack, c->format_stack);
+	_format_free(c->obj, fmt);
+     }
+   c->hmax = c->y;
    if (!calc_only)
      {
-	o->lines = lines;
+	c->o->lines = c->lines;
      }
    else
      {
