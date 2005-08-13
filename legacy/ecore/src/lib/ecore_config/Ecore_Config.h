@@ -136,7 +136,7 @@ extern              "C"
    extern EAPI char        *__ecore_config_app_name;
 
    EAPI Ecore_Config_Prop  *ecore_config_get(const char *key);
-   EAPI const char         *ecore_config_type_get(const Ecore_Config_Prop * e);
+   EAPI const char         *ecore_config_type_get(const Ecore_Config_Prop *e);
    EAPI int                 ecore_config_boolean_get(const char *key);
    EAPI void               *ecore_config_data_get(const char *key);
    EAPI char               *ecore_config_string_get(const char *key);
@@ -150,7 +150,7 @@ extern              "C"
    EAPI float               ecore_config_float_get(const char *key);
    EAPI char               *ecore_config_theme_get(const char *key);
    EAPI char               *ecore_config_as_string_get(const char *key);
-   EAPI int                 ecore_config_bound(Ecore_Config_Prop * e);
+   EAPI int                 ecore_config_bound(Ecore_Config_Prop *e);
    EAPI int                 ecore_config_describe(const char *key, char *desc);
    EAPI int                 ecore_config_short_opt_set(const char *key,
 						       char short_opt);
@@ -193,19 +193,19 @@ extern              "C"
 						int tag, void *data);
    EAPI int                 ecore_config_deaf(const char *name, const char *key,
 					      Ecore_Config_Listener listener);
-   EAPI Ecore_Config_Prop  *ecore_config_dst(Ecore_Config_Prop * e);
+   EAPI Ecore_Config_Prop  *ecore_config_dst(Ecore_Config_Prop *e);
    EAPI int                 ecore_config_type_guess(const char *key, const char *val);
 
-   EAPI Ecore_Config_Bundle *ecore_config_bundle_new(Ecore_Config_Server * srv,
+   EAPI Ecore_Config_Bundle *ecore_config_bundle_new(Ecore_Config_Server *srv,
 						     const char *id);
-   EAPI Ecore_Config_Bundle *ecore_config_bundle_1st_get(Ecore_Config_Server * srv);
-   EAPI Ecore_Config_Bundle *ecore_config_bundle_next_get(Ecore_Config_Bundle * ns);
+   EAPI Ecore_Config_Bundle *ecore_config_bundle_1st_get(Ecore_Config_Server *srv);
+   EAPI Ecore_Config_Bundle *ecore_config_bundle_next_get(Ecore_Config_Bundle *ns);
    EAPI Ecore_Config_Bundle *ecore_config_bundle_by_serial_get(Ecore_Config_Server *srv,
 							       long serial);
    EAPI Ecore_Config_Bundle *ecore_config_bundle_by_label_get(Ecore_Config_Server *srv,
 							      const char *label);
-   EAPI long                ecore_config_bundle_serial_get(Ecore_Config_Bundle * ns);
-   EAPI char               *ecore_config_bundle_label_get(Ecore_Config_Bundle * ns);
+   EAPI long                ecore_config_bundle_serial_get(Ecore_Config_Bundle *ns);
+   EAPI char               *ecore_config_bundle_label_get(Ecore_Config_Bundle *ns);
 
    EAPI int                 ecore_config_init(const char *name);
    EAPI int                 ecore_config_shutdown(void);
@@ -243,7 +243,7 @@ extern              "C"
 
 /* convenience mathods in convenience.c */
    /* FIXME: this should only be included if evas is present */
-   EAPI int                 ecore_config_evas_font_path_apply(Evas * evas);
+   EAPI int                 ecore_config_evas_font_path_apply(Evas *evas);
    EAPI char               *ecore_config_theme_search_path_get(void);
    EAPI int                 ecore_config_theme_search_path_append(char *append);
      
