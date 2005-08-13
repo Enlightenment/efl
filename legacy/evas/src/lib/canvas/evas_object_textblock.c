@@ -48,7 +48,6 @@ struct _Evas_Object_Textblock_Node
 struct _Evas_Object_Textblock_Line
 {  Evas_Object_List _list_data;
    Evas_Object_Textblock_Item *items;
-//   double                      align;
    int                         x, y, w, h;
    int                         baseline;
    int                         line_no;
@@ -586,7 +585,7 @@ static const char *_escapes[] =
      "&lt;", "<",
      "&gt;", ">",
      "&amp;", "&",
-     "&nbsp;", " ", /* NOTE: we will allow nbsp's to break as we map early */
+     "&nbsp;", " ", /* NOTE: we will allow nbsp's to break as we map early - maybe map to ascii 0x01 and then make the rendring code think 0x01 -> 0x20 */
      "&quot;", "\"",
      /* all the rest */
      "&copy;", "©",
@@ -1716,11 +1715,25 @@ _layout_word_start(char *str, int start)
 {
    int p, tp, chr = 0;
    
-   tp = 0;
    p = start;
+   chr = evas_common_font_utf8_get_next((unsigned char *)(str), &p);
+//   printf("_layout_word_start -> %c\n", (char)chr);
+   if (_is_white(chr))
+     {
+	tp = p;
+	while (_is_white(chr) && (p >= 0))
+	  {
+	     tp = p;
+	     chr = evas_common_font_utf8_get_next((unsigned char *)(str), &p);
+	  }
+	return tp;
+     }
+   p = start;
+   tp = p;
    while (p >= 0)
      {
 	chr = evas_common_font_utf8_get_prev((unsigned char *)(str), &p);
+//	printf("go bak... was at %c\n", (char)chr);
 	if (_is_white(chr)) break;
 	tp = p;
      }
@@ -1766,9 +1779,40 @@ _layout_strip_trailing_whitespace(Ctxt *c, Evas_Object_Textblock_Format *fmt, Ev
 }
 
 static void
+_layout_item_abort(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Item *it)
+{
+   if (it->text) free(it->text);
+   _format_free(c->obj, it->format);
+   free(it);
+   if (c->ln->items)
+     {
+	it = (Evas_Object_Textblock_Item *)((Evas_Object_List *)c->ln->items)->last;
+	_layout_strip_trailing_whitespace(c, fmt, it);
+     }
+}
+
+static char *
+_layout_next_char_jump(Ctxt *c, Evas_Object_Textblock_Item *it, char *str)
+{
+   int index;
+   
+   index = 0;
+   evas_common_font_utf8_get_next((unsigned char *)str, &index);
+   if (index >= 0)
+     {
+	str = str + index;
+	_layout_item_text_cutoff(c, it, index);
+     }
+   else
+     str = NULL;
+   return str;
+}
+
+static void
 _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Node *n)
 {
    int adv, inset, tw, th, new_line, empty_item;
+   int wrap, twrap, ch, index;
    char *str;
    Evas_Object_Textblock_Item *it, *tit;
    
@@ -1777,12 +1821,23 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
    empty_item = 0;
    while (str)
      {
+	/* if this is the first line item and it starts with spaces - remove them */
+	wrap = 0;
+	if (!c->ln->items)
+	  {
+	     twrap = wrap;
+	     ch = evas_common_font_utf8_get_next((unsigned char *)str, &wrap);
+	     while (_is_white(ch))
+	       {
+		  twrap = wrap;
+		  ch = evas_common_font_utf8_get_next((unsigned char *)str, &wrap);
+	       }
+	     str = str + twrap;
+	  }
 	it = _layout_item_new(c, fmt, str);
 	c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, it->text, &tw, &th);
 	if (((fmt->wrap_word) || (fmt->wrap_char)) && ((c->x + tw) > (c->w - c->marginl - c->marginr)))
 	  {
-	     int wrap, twrap, ch;
-	     
 	     wrap = _layout_text_cutoff_get(c, fmt, it);
 	     if (wrap > 0)
 	       {
@@ -1798,7 +1853,6 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 			     * check
 			     */
 			 }
-		       /* cut of pointless whitespace at end of previous line */
 		       if (wrap > 0)
 			 {
 			    twrap = wrap;
@@ -1845,25 +1899,13 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 			 {
 			    if (c->ln->items != NULL)
 			      {
+				 _layout_item_abort(c, fmt, it);
 				 empty_item = 1;
-				 if (it->text) free(it->text);
-				 _format_free(c->obj, it->format);
-				 free(it);
-				 if (c->ln->items)
-				   {
-				      it = (Evas_Object_Textblock_Item *)((Evas_Object_List *)c->ln->items)->last;
-				      _layout_strip_trailing_whitespace(c, fmt, it);
-				   }
 			      }
 			    /* this is the last word on a line. no choice.
 			     * just put it on anyway */
 			    else
-			      {
-				 str = str + 1;
-				 if (*str == 0) str = NULL;
-				 else
-				   _layout_item_text_cutoff(c, it, 1);
-			      }
+			      str = _layout_next_char_jump(c, it, str);
 			 }
 		    }
 		  else if (fmt->wrap_char)
@@ -1877,27 +1919,15 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	       {
 		  if (c->ln->items != NULL)
 		    {
+		       _layout_item_abort(c, fmt, it);
 		       empty_item = 1;
-		       if (it->text) free(it->text);
-		       _format_free(c->obj, it->format);
-		       free(it);
-		       if (c->ln->items)
-			 {
-			    it = (Evas_Object_Textblock_Item *)((Evas_Object_List *)c->ln->items)->last;
-			    _layout_strip_trailing_whitespace(c, fmt, it);
-			 }
 		       new_line = 1;
 		    }
 		  else
-		    {
-		       str = str + 1;
-		       if (*str == 0) str = NULL;
-		       else
-			 _layout_item_text_cutoff(c, it, 1);
-		    }
+		    str = _layout_next_char_jump(c, it, str);
 	       }
 	     if (!empty_item)
-	      c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, it->text, &tw, &th);
+	       c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, it->text, &tw, &th);
 	  }
 	else
 	  str = NULL;
@@ -1927,7 +1957,8 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
    Ctxt ctxt, *c;
    Evas_Object_List *l, *ll;
    Evas_Object_Textblock_Format *fmt = NULL; /* current format */
-   
+
+   printf("------------------ LAYOUT\n");
    /* setup context */
    c = &ctxt;
    c->obj =obj;
