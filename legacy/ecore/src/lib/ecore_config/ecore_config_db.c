@@ -240,7 +240,7 @@ _ecore_config_db_write(Ecore_Config_DB_File *db, const char *key)
 	       break;
 	     case PT_BLN:
 	       num = snprintf(buf, sizeof(buf), "%c %i ", (char) type,
-			      (int) ecore_config_int_get(key));
+			      (int) ecore_config_boolean_get(key));
 	       break;
 	     case PT_FLT:
 	       num = snprintf(buf, sizeof(buf), "%c %16.16f ", (char) type,
