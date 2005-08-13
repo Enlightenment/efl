@@ -1581,3 +1581,25 @@ _ecore_x_event_handle_sync_alarm(XEvent *xevent)
    e->alarm = sync_alarm_event->alarm;
    ecore_event_add(ECORE_X_EVENT_SYNC_ALARM, e, NULL, NULL);
 }
+
+#ifdef ECORE_XRANDR
+void
+_ecore_x_event_handle_randr_change(XEvent *xevent)
+{
+   XRRScreenChangeNotifyEvent *randr_event;
+   Ecore_X_Event_Screen_Change *e;
+
+   randr_event = (XRRScreenChangeNotifyEvent *)xevent;
+   if (!XRRUpdateConfiguration(xevent))
+     printf("ERROR: Can't update RR config!\n");
+
+   e = calloc(1, sizeof(Ecore_X_Event_Screen_Change));
+   if (!e) return;
+   e->win = randr_event->window;
+   e->root = randr_event->root;
+   e->width = randr_event->width;
+   e->height = randr_event->height;
+   ecore_event_add(ECORE_X_EVENT_SCREEN_CHANGE, e, NULL, NULL);
+}
+#endif
+

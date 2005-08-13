@@ -27,6 +27,9 @@
 #ifdef ECORE_XINERAMA
 #include <X11/extensions/Xinerama.h>
 #endif
+#ifdef ECORE_XRANDR
+#include <X11/extensions/Xrandr.h>
+#endif
 
 #include "Ecore_X.h"
 
@@ -179,6 +182,9 @@ void _ecore_x_event_handle_mapping_notify(XEvent *xevent);
 void _ecore_x_event_handle_shape_change(XEvent *xevent);
 void _ecore_x_event_handle_sync_counter(XEvent *xevent);
 void _ecore_x_event_handle_sync_alarm(XEvent *xevent);
+#ifdef ECORE_XRANDR
+void _ecore_x_event_handle_randr_change(XEvent *xevent);
+#endif
 
 void  _ecore_x_selection_data_init(void);
 void  _ecore_x_selection_shutdown(void);

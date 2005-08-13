@@ -18,6 +18,9 @@ static Ecore_Fd_Handler *_ecore_x_fd_handler_handle = NULL;
 static Ecore_Event_Filter *_ecore_x_filter_handler = NULL;
 static int _ecore_x_event_shape_id = 0;
 static int _ecore_x_event_sync_id = 0;
+#ifdef ECORE_XRANDR
+static int _ecore_x_event_randr_id = 0;
+#endif
 static int _ecore_x_event_handlers_num = 0;
 static void (**_ecore_x_event_handlers) (XEvent * event) = NULL;
 
@@ -120,6 +123,7 @@ int ECORE_X_EVENT_CLIENT_MESSAGE = 0;
 int ECORE_X_EVENT_WINDOW_SHAPE = 0;
 int ECORE_X_EVENT_SYNC_COUNTER = 0;
 int ECORE_X_EVENT_SYNC_ALARM = 0;
+int ECORE_X_EVENT_SCREEN_CHANGE = 0;
 
 int ECORE_X_EVENT_WINDOW_DELETE_REQUEST = 0;
 /*
@@ -177,6 +181,10 @@ ecore_x_init(const char *name)
    int shape_err_base = 0;
    int sync_base = 0;
    int sync_err_base = 0;
+#ifdef ECORE_XRANDR
+   int randr_base = 0;
+   int randr_err_base = 0;
+#endif
    
    if (_ecore_x_init_count > 0) 
      {
@@ -203,6 +211,13 @@ ecore_x_init(const char *name)
      }
    if (_ecore_x_event_sync_id + XSyncAlarmNotify >= LASTEvent)
      _ecore_x_event_handlers_num = _ecore_x_event_sync_id + XSyncAlarmNotify + 1;
+
+#ifdef ECORE_XRANDR
+   if (XRRQueryExtension(_ecore_x_disp, &randr_base, &randr_err_base))
+     _ecore_x_event_randr_id = randr_base + RRScreenChangeNotify;
+   if (_ecore_x_event_randr_id >= LASTEvent)
+     _ecore_x_event_handlers_num = _ecore_x_event_randr_id + 1;
+#endif
 
    _ecore_x_event_handlers = calloc(_ecore_x_event_handlers_num, sizeof(void *));
    if (!_ecore_x_event_handlers)
@@ -256,6 +271,10 @@ ecore_x_init(const char *name)
 	_ecore_x_event_handlers[_ecore_x_event_sync_id + XSyncAlarmNotify] =
 	   _ecore_x_event_handle_sync_alarm;
      }
+#ifdef ECORE_XRANDR
+   if (_ecore_x_event_randr_id)
+     _ecore_x_event_handlers[_ecore_x_event_randr_id] = _ecore_x_event_handle_randr_change;
+#endif
    if (!ECORE_X_EVENT_KEY_DOWN)
      {
 	ECORE_X_EVENT_KEY_DOWN                 = ecore_event_type_new();
@@ -293,6 +312,7 @@ ecore_x_init(const char *name)
 	ECORE_X_EVENT_WINDOW_SHAPE             = ecore_event_type_new();
 	ECORE_X_EVENT_SYNC_COUNTER             = ecore_event_type_new();
 	ECORE_X_EVENT_SYNC_ALARM               = ecore_event_type_new();
+	ECORE_X_EVENT_SCREEN_CHANGE            = ecore_event_type_new();
 	
 	ECORE_X_EVENT_WINDOW_DELETE_REQUEST                = ecore_event_type_new();
 	/*
@@ -303,7 +323,7 @@ ecore_x_init(const char *name)
 	ECORE_X_EVENT_WINDOW_PROP_VISIBLE_ICON_NAME_CHANGE = ecore_event_type_new();
 	ECORE_X_EVENT_WINDOW_PROP_CLIENT_MACHINE_CHANGE    = ecore_event_type_new();
 	ECORE_X_EVENT_WINDOW_PROP_PID_CHANGE               = ecore_event_type_new();
-	ECORE_X_EVENT_WINDOW_PROP_DESKTOP_CHANGE               = ecore_event_type_new();
+	ECORE_X_EVENT_WINDOW_PROP_DESKTOP_CHANGE           = ecore_event_type_new();
 	*/
 
 	ECORE_X_EVENT_DESKTOP_CHANGE           = ecore_event_type_new();
@@ -853,15 +873,20 @@ ecore_x_window_root_list(int *num_ret)
 {
    int num, i;
    Ecore_X_Window *roots;
+#ifdef ECORE_XPRINT
+   int xp_base, xp_err_base;
+#endif
    
    if (!num_ret) return NULL;
    *num_ret = 0;
+
 #ifdef ECORE_XPRINT
+   num = ScreenCount(_ecore_x_disp);
+   if (XpQueryExtension(_ecore_x_disp, &xp_base, &xp_err_base))
      {
 	Screen **ps = NULL;
 	int psnum = 0;
 	
-	num = ScreenCount(_ecore_x_disp);
 	ps = XpQueryScreens(_ecore_x_disp, &psnum);
 	if (ps)
 	  {
@@ -913,6 +938,14 @@ ecore_x_window_root_list(int *num_ret)
 	     for (i = 0; i < num; i++)
 	       roots[i] = RootWindow(_ecore_x_disp, i);
 	  }
+     }
+   else
+     {
+	roots = malloc(num * sizeof(Window));
+	if (!roots) return NULL;
+	*num_ret = num;
+	for (i = 0; i < num; i++)
+	  roots[i] = RootWindow(_ecore_x_disp, i);
      }
 #else   
    num = ScreenCount(_ecore_x_disp);

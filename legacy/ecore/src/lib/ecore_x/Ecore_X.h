@@ -245,6 +245,7 @@ typedef struct _Ecore_X_Event_Client_Message           Ecore_X_Event_Client_Mess
 typedef struct _Ecore_X_Event_Window_Shape             Ecore_X_Event_Window_Shape;
 typedef struct _Ecore_X_Event_Sync_Counter             Ecore_X_Event_Sync_Counter;
 typedef struct _Ecore_X_Event_Sync_Alarm               Ecore_X_Event_Sync_Alarm;
+typedef struct _Ecore_X_Event_Screen_Change            Ecore_X_Event_Screen_Change;
 
 typedef struct _Ecore_X_Event_Window_Delete_Request                Ecore_X_Event_Window_Delete_Request;
 typedef struct _Ecore_X_Event_Window_Prop_Title_Change             Ecore_X_Event_Window_Prop_Title_Change;
@@ -637,6 +638,12 @@ struct _Ecore_X_Event_Sync_Alarm
    Ecore_X_Sync_Alarm alarm;
 };
 
+struct _Ecore_X_Event_Screen_Change
+{
+   Ecore_X_Window win, root;
+   int            width, height;
+};
+
 struct _Ecore_X_Event_Window_Delete_Request
 {
    Ecore_X_Window  win;
@@ -771,6 +778,7 @@ extern EAPI int ECORE_X_EVENT_CLIENT_MESSAGE;
 extern EAPI int ECORE_X_EVENT_WINDOW_SHAPE;
 extern EAPI int ECORE_X_EVENT_SYNC_COUNTER;
 extern EAPI int ECORE_X_EVENT_SYNC_ALARM;
+extern EAPI int ECORE_X_EVENT_SCREEN_CHANGE;
 
 extern EAPI int ECORE_X_EVENT_WINDOW_DELETE_REQUEST;
 /*
@@ -1312,6 +1320,19 @@ EAPI void ecore_x_pointer_xy_get(Ecore_X_Window win, int *x, int *y);
 /* ecore_x_sync.c */
 EAPI Ecore_X_Sync_Alarm ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter);
 EAPI int                ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm);
+
+/* ecore_x_randr.c */
+typedef struct _Ecore_X_Screen_Size Ecore_X_Screen_Size;
+struct _Ecore_X_Screen_Size
+{
+   int width, height;
+};
+
+EAPI int                  ecore_x_randr_events_select(Ecore_X_Window win, int on);
+EAPI Ecore_X_Screen_Size *ecore_x_randr_screen_sizes_get(Ecore_X_Window root, int *num);
+EAPI int                  ecore_x_randr_screen_size_set(Ecore_X_Window root,
+							Ecore_X_Screen_Size *size);
+
 
 #ifdef __cplusplus
 }

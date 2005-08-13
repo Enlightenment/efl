@@ -4,6 +4,7 @@ INCLUDES = \
 @Xcursor_cflags@ \
 @Xprint_cflags@ \
 @Xinerama_cflags@ \
+@Xrandr_cflags@ \
 @x_cflags@ \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_txt \
@@ -29,6 +30,7 @@ libecore_x_la_SOURCES = \
 ecore_x.c \
 ecore_x_dnd.c \
 ecore_x_sync.c \
+ecore_x_randr.c \
 ecore_x_error.c \
 ecore_x_events.c \
 ecore_x_icccm.c \
@@ -48,6 +50,7 @@ libecore_x_la_LIBADD = \
 @Xcursor_libs@ \
 @Xprint_libs@ \
 @Xinerama_libs@ \
+@Xrandr_libs@ \
 @x_ldflags@ \
 @x_libs@ \
 $(top_builddir)/src/lib/ecore/libecore.la \
@@ -68,6 +71,7 @@ Ecore_X_Cursor.h \
 ecore_x.c \
 ecore_x_dnd.c \
 ecore_x_sync.c \
+ecore_x_randr.c \
 ecore_x_error.c \
 ecore_x_events.c \
 ecore_x_icccm.c \
