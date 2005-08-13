@@ -1478,7 +1478,7 @@ ecore_config_init(const char *name)
    free(temp);
 
    path = ecore_config_theme_default_path_get();
-	 ecore_config_string_default("/e/themes/search_path", path);
+   ecore_config_string_default("/e/themes/search_path", path);
    if (path)
       free(path);
 
