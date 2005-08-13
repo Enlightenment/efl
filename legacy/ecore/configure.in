@@ -471,7 +471,7 @@ if test "x$have_ecore_evas" = "xyes"; then
   AM_CONDITIONAL(BUILD_ECORE_EVAS, true)
   AC_DEFINE(BUILD_ECORE_EVAS, 1, [Build Ecore_Evas Module])
   if [ test -z $EVAS_CONFIG ]; then
-    echo $PROG " is not in your \$PATH. Please ensure it is.";
+    echo $EVAS_CONFIG " is not in your \$PATH. Please ensure it is.";
     echo "Read the manual page for you shell as to how to extend your path.";
     AC_MSG_ERROR(Cannot find $PROG)
   fi
