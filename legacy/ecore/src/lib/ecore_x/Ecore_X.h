@@ -1330,8 +1330,9 @@ struct _Ecore_X_Screen_Size
 
 EAPI int                  ecore_x_randr_events_select(Ecore_X_Window win, int on);
 EAPI Ecore_X_Screen_Size *ecore_x_randr_screen_sizes_get(Ecore_X_Window root, int *num);
+EAPI Ecore_X_Screen_Size  ecore_x_randr_current_screen_size_get(Ecore_X_Window root);
 EAPI int                  ecore_x_randr_screen_size_set(Ecore_X_Window root,
-							Ecore_X_Screen_Size *size);
+							Ecore_X_Screen_Size size);
 
 
 #ifdef __cplusplus

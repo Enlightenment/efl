@@ -47,8 +47,37 @@ ecore_x_randr_screen_sizes_get(Ecore_X_Window root, int *num)
 #endif
 }
 
+Ecore_X_Screen_Size
+ecore_x_randr_current_screen_size_get(Ecore_X_Window root)
+{
+   Ecore_X_Screen_Size ret = { -1, -1 };
+#ifdef ECORE_XRANDR
+   XRRScreenSize *sizes;
+   XRRScreenConfiguration *sc;
+   SizeID size_index;
+   Rotation rotation;
+   int n;
+
+   sc = XRRGetScreenInfo(_ecore_x_disp, root);
+   if (!sc)
+     {
+	printf("ERROR: Couldn't get screen information for %d\n", root);
+	return ret;
+     }
+   size_index = XRRConfigCurrentConfiguration(sc, &rotation);
+
+   sizes = XRRSizes(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp, root), &n);
+   if (size_index < n)
+     {
+	ret.width = sizes[size_index].width;
+	ret.height = sizes[size_index].height;
+     }
+#endif
+   return ret;
+}
+
 int
-ecore_x_randr_screen_size_set(Ecore_X_Window root, Ecore_X_Screen_Size *size)
+ecore_x_randr_screen_size_set(Ecore_X_Window root, Ecore_X_Screen_Size size)
 {
 #ifdef ECORE_XRANDR
    XRRScreenConfiguration *sc;
@@ -58,7 +87,7 @@ ecore_x_randr_screen_size_set(Ecore_X_Window root, Ecore_X_Screen_Size *size)
    sizes = XRRSizes(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp, root), &n);
    for (i = 0; i < n; i++)
      {
-	if ((sizes[i].width == size->width) && (sizes[i].height == size->height))
+	if ((sizes[i].width == size.width) && (sizes[i].height == size.height))
 	  {
 	     size_index = i;
 	     break;
