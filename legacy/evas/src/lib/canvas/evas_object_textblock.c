@@ -796,8 +796,8 @@ _clean_white(int clean_start, int clean_end, char *str)
 	       {
 		  if ((start) && (pwhite) && (!white))
 		    {
-		       *p2 = ' ';
-		       p2++;
+//		       *p2 = ' ';
+//		       p2++;
 		    }
 	       }
 	     ok = 1;
@@ -828,6 +828,25 @@ _clean_white(int clean_start, int clean_end, char *str)
    return str2;
 }
 
+static void
+_append_text_run(Evas_Object_Textblock *o, char *s, char *p)
+{
+   if ((s) && (p > s))
+     {
+	char *ts;
+	
+	ts = malloc(p - s + 1);
+	if (ts)
+	  {
+	     strncpy(ts, s, p - s);
+	     ts[p - s] = 0;
+	     ts = _clean_white(0, 0, ts);
+	     evas_textblock2_cursor_text_append(o->cursor, ts);
+	     free(ts);
+	  }
+     }
+}
+
 void
 evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
 {
@@ -837,18 +856,17 @@ evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
 	free(o->markup_text);
 	o->markup_text = NULL;
      }
-   if (text) o->markup_text = strdup(text);
    _nodes_clear(obj);
    _lines_clear(obj);
    o->changed = 1;
    evas_object_change(obj);
-   if (o->markup_text)
+   if (text)
      {
 	char *s, *p;
 	char *tag_start, *tag_end, *esc_start, *esc_end;
 	
 	tag_start = tag_end = esc_start = esc_end = NULL;
-	p = o->markup_text;
+	p = (char *)text;
 	s = p;
 	for (;;)
 	  {
@@ -914,21 +932,8 @@ evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
 		    {
 		       tag_start = p;
 		       tag_end = NULL;
-		       if ((s) && (p > s))
-			 {
-			    char *ts;
-			    
-			    ts = malloc(p - s + 1);
-			    if (ts)
-			      {
-				 strncpy(ts, s, p - s);
-				 ts[p - s] = 0;
-				 ts = _clean_white(0, 0, ts);
-				 evas_textblock2_cursor_text_append(o->cursor, ts);
-				 free(ts);
-			      }
-			    s = NULL;
-			 }
+		       _append_text_run(o, s, p);
+		       s = NULL;
 		    }
 	       }
 	     else if (*p == '>')
@@ -945,21 +950,7 @@ evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
 		    {
 		       esc_start = p;
 		       esc_end = NULL;
-		       if ((s) && (p > s))
-			 {
-			    char *ts;
-			    
-			    ts = malloc(p - s + 1);
-			    if (ts)
-			      {
-				 strncpy(ts, s, p - s);
-				 ts[p - s] = 0;
-				 ts = _clean_white(0, 0, ts);
-				 evas_textblock2_cursor_text_append(o->cursor, ts);
-				 free(ts);
-			      }
-			    s = NULL;
-			 }
+		       _append_text_run(o, s, p);
 		       s = NULL;
 		    }
 	       }
@@ -973,6 +964,7 @@ evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
 	       }
 	     p++;
 	  }
+	o->markup_text = strdup(text);
      }
 }
 
@@ -1717,7 +1709,6 @@ _layout_word_start(char *str, int start)
    
    p = start;
    chr = evas_common_font_utf8_get_next((unsigned char *)(str), &p);
-//   printf("_layout_word_start -> %c\n", (char)chr);
    if (_is_white(chr))
      {
 	tp = p;
@@ -1733,11 +1724,11 @@ _layout_word_start(char *str, int start)
    while (p >= 0)
      {
 	chr = evas_common_font_utf8_get_prev((unsigned char *)(str), &p);
-//	printf("go bak... was at %c\n", (char)chr);
 	if (_is_white(chr)) break;
 	tp = p;
      }
    p = tp;
+   if (p < 0) p = 0;
    if ((p >= 0) && (_is_white(chr)))
      evas_common_font_utf8_get_next((unsigned char *)(str), &p);
    return p;
@@ -1749,6 +1740,7 @@ _layout_ends_with_space(char *str)
    int p, chr;
    
    p = evas_common_font_utf8_get_last((unsigned char *)(str), strlen(str));
+   if (p < 0) return 0;
    chr = evas_common_font_utf8_get_next((unsigned char *)(str), &p);
    return _is_white(chr);
 }
@@ -1808,6 +1800,68 @@ _layout_next_char_jump(Ctxt *c, Evas_Object_Textblock_Item *it, char *str)
    return str;
 }
 
+static int
+_layout_last_item_ends_in_whitespace(Ctxt *c)
+{
+   Evas_Object_Textblock_Item *it;
+
+   if (!c->ln->items) return 1;
+   it = (Evas_Object_Textblock_Item *)((Evas_Object_List *)c->ln->items)->last;
+   return _layout_ends_with_space(it->text);
+}
+
+static int
+_layout_word_end(char *str, int p)
+{
+   int ch, tp;
+   
+   tp = p;
+   ch = evas_common_font_utf8_get_next((unsigned char *)str, &tp);
+   while ((!_is_white(ch)) && (tp >= 0) && (ch != 0))
+     {
+	p = tp;
+	ch = evas_common_font_utf8_get_next((unsigned char *)str, &tp);
+     }
+   if (ch == 0) return -1;
+   return p;
+}
+
+static int
+_layout_word_next(char *str, int p)
+{
+   int ch, tp;
+   
+   tp = p;
+   ch = evas_common_font_utf8_get_next((unsigned char *)str, &tp);
+   while ((!_is_white(ch)) && (tp >= 0) && (ch != 0))
+     {
+	p = tp;
+	ch = evas_common_font_utf8_get_next((unsigned char *)str, &tp);
+     }
+   if (ch == 0) return -1;
+   while ((_is_white(ch)) && (tp >= 0) && (ch != 0))
+     {
+	p = tp;
+	ch = evas_common_font_utf8_get_next((unsigned char *)str, &tp);
+     }
+   if (ch == 0) return -1;
+   return p;
+}
+
+static void
+_layout_walk_back_to_item_word_redo(Ctxt *c, Evas_Object_Textblock_Item *it)
+{
+   Evas_Object_Textblock_Item *pit;
+   
+   /* it is not appended yet */
+   for (pit = (Evas_Object_Textblock_Item *)((Evas_Object_List *)c->ln->items)->last;
+	pit;
+	pit = (Evas_Object_Textblock_Item *)((Evas_Object_List *)pit)->prev)
+     {
+	
+     }
+}
+
 static void
 _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Node *n)
 {
@@ -1844,25 +1898,18 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 		  if (fmt->wrap_word)
 		    {
 		       wrap = _layout_word_start(str, wrap);
-		       /* wrap now is the index of the word START */
-		       if (wrap == 0)
-			 {
-			    /* we are at the start of the node - maybe the
-			     * word is spread over previous nodes too? we
-			     * now need to walk back over previous items and
-			     * check
-			     */
-			 }
 		       if (wrap > 0)
 			 {
 			    twrap = wrap;
-			    evas_common_font_utf8_get_prev((unsigned char *)str, &twrap);
+ 			    evas_common_font_utf8_get_prev((unsigned char *)str, &twrap);
 			    ch = evas_common_font_utf8_get_prev((unsigned char *)str, &twrap);
 			    while (_is_white(ch) && (twrap >= 0))
 			      ch = evas_common_font_utf8_get_prev((unsigned char *)str, &twrap);
 			    if (!_is_white(ch))
 			      {
-				 evas_common_font_utf8_get_next((unsigned char *)str, &twrap);
+				 if (twrap >= 0)
+				   evas_common_font_utf8_get_next((unsigned char *)str, &twrap);
+				 else twrap = 0;
 				 evas_common_font_utf8_get_next((unsigned char *)str, &twrap);
 			      }
 			    else
@@ -1897,15 +1944,42 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 			 }
 		       else
 			 {
+			    /* wrap now is the index of the word START */
+			    if (wrap == 0)
+			      {
+				 index = wrap;
+				 ch = evas_common_font_utf8_get_next((unsigned char *)str, &index);
+				 if (!_is_white(ch) && 
+				     (!_layout_last_item_ends_in_whitespace(c)))
+				   {
+				      /* word spread over previois nodes */
+				      printf("[%s] 1 spreads over prior nodes\n",
+					     it->text);
+				   }
+			      }
 			    if (c->ln->items != NULL)
 			      {
 				 _layout_item_abort(c, fmt, it);
 				 empty_item = 1;
 			      }
-			    /* this is the last word on a line. no choice.
-			     * just put it on anyway */
 			    else
-			      str = _layout_next_char_jump(c, it, str);
+			      {
+				 if (wrap <= 0)
+				   {
+				      wrap = 0;
+				      twrap = _layout_word_end(it->text, wrap);
+				      wrap = _layout_word_next(it->text, wrap);
+				      if (twrap >= 0)
+					_layout_item_text_cutoff(c, it, twrap);
+				      if (wrap > 0)
+					str = str + wrap;
+				      else
+					str = NULL;
+				      new_line = 1;
+				   }
+				 else
+				   str = NULL;
+			      }
 			 }
 		    }
 		  else if (fmt->wrap_char)
@@ -1917,6 +1991,19 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	       }
 	     else
 	       {
+		  /* wrap now is the index of the word START */
+		  if (wrap == 0)
+		    {
+		       index = wrap;
+		       ch = evas_common_font_utf8_get_next((unsigned char *)str, &index);
+		       if (!_is_white(ch) && 
+			   (!_layout_last_item_ends_in_whitespace(c)))
+			 {
+			    /* word spread over previois nodes */
+			    printf("[%s] 2 spreads over prior nodes\n",
+				   it->text);
+			 }
+		    }
 		  if (c->ln->items != NULL)
 		    {
 		       _layout_item_abort(c, fmt, it);
@@ -1924,7 +2011,21 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 		       new_line = 1;
 		    }
 		  else
-		    str = _layout_next_char_jump(c, it, str);
+		    {
+		       if (wrap <= 0)
+			 {
+			    wrap = 0;
+			    twrap = _layout_word_end(it->text, wrap);
+			    wrap = _layout_word_next(it->text, wrap);
+			    if (twrap >= 0)
+			      _layout_item_text_cutoff(c, it, twrap);
+			    str = str + wrap;
+			    new_line = 1;
+			 }
+		       else
+			 str = NULL;
+		       new_line = 1;
+		    }
 	       }
 	     if (!empty_item)
 	       c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, it->text, &tw, &th);
