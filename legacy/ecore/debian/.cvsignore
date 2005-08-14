@@ -9,3 +9,4 @@ libecore1.postinst.debhelper
 libecore1.postrm.debhelper
 libecore1.substvars
 tmp
+changelog
