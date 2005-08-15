@@ -954,7 +954,7 @@ svr_try_connect_plain(Ecore_Con_Server *svr)
 }
 
 /* returns 1 on success, 0 on failure */
-static int svr_try_connect (Ecore_Con_Server *svr)
+static int svr_try_connect(Ecore_Con_Server *svr)
 {
 #if USE_OPENSSL
    if (!svr->ssl)
