@@ -91,6 +91,7 @@ struct _Evas_Object_Textblock_Format
    struct {
       int               l, r;
    } margin;
+   int                  tabstops;
    unsigned char        style;
    unsigned char        wrap_word : 1;
    unsigned char        wrap_char : 1;
@@ -1524,6 +1525,11 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	else if (!strcmp(param, "far_soft_shadow")) fmt->style = STYLE_FAR_SOFT_SHADOW;
 	else fmt->style = STYLE_PLAIN;
      }
+   else if (!strcmp(cmd, "tabstops"))
+     {
+	fmt->tabstops = atoi(param);
+	if (fmt->tabstops < 1) fmt->tabstops = 1;
+     }
    
    if (new_font)
      {
@@ -1733,6 +1739,7 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt)
    fmt->halign = 0.0;
    fmt->valign = -1.0;
    fmt->style = STYLE_PLAIN;
+   fmt->tabstops = 32;
    return fmt;
 }
 
@@ -2298,7 +2305,11 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 		       if (!strcmp(item, "\n"))
 			 _layout_line_advance(c, fmt);
 		       else if (!strcmp(item, "\t"))
-			 { /* jump to next tabstop */
+			 { 
+			    int x2;
+			    
+			    x2 = (fmt->tabstops * ((c->x + fmt->tabstops) / fmt->tabstops));
+			    c->x = x2;
 			 }
 		    }
 		  free(item);
