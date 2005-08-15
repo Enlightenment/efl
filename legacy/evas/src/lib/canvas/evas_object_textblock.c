@@ -200,34 +200,6 @@ evas_object_textblock2_add(Evas *e)
 }
 
 /* styles */
-#if 0 // EXAMPLE USAGE
-{
-   Evas_Object *obj = my_global_object;
-   Evas_Textblock_Style *ts;
-   
-   ts = evas_textblock2_style_new(); // create a new style
-   evas_textblock2_style_set // set the style
-     (ts,
-      // format MUST be KEY='VALUE'[KEY='VALUE']...
-      // KEY may be DEFAULT to indicate default format for a textblock before
-      // any tags have been used or when no tag is active. this can never be
-      // popped
-      // tags starting with / (ie </blah>) will ALWAYS pop UNLESS provided
-      // with an override here in the style (like /p)
-      "DEFAULT='font=Vera font_size=8 align=left color=#000000 wrap=char'"
-      "center='+ align=center'"
-      "/center='- \n \n'"
-      "h1='+ font_size=20'"
-      "red='+ color=#ff0000'"
-      "p='+ font=Vera font_size=10 align=left'"
-      "/p='- \n \n'"
-      "br='\n'"
-      );
-   evas_object_textblock2_style_set(obj, ts); // tell object to use this style
-   evas_textblock2_style_free(ts); // free style - if object no longer needs it it will also be freed. you can keep it around as long as u like though and change it and all objects using it will change too. if you dont free it it will stay around until it is freed
-}
-#endif
-
 static void
 _style_clear(Evas_Textblock_Style *ts)
 {
@@ -417,24 +389,6 @@ evas_object_textblock2_style_get(Evas_Object *obj)
 }
 
 /* setting a textblock via markup */
-#if 0 // EXAMPLE USAGE
-{
-   Evas *evas = my_global_evas;
-   Evas_Textblock_Style *ts = my_global_style; // using previous example style
-   Evas_Object *obj;
-   
-   obj = evas_object_textblock2_add(evas);
-   evas_textblock2_style_set(obj, ts);
-   evas_object_textblock2_text_markup_set
-     (obj,
-      "<center><h1>Title</h1></center>"
-      "<p>A pragraph here <red>red text</red> and stuff.</p>"
-      "<p>And escaping &lt; and &gt; as well as &amp; as normal.</p>"
-      "<p>If you want a newline use <br>woo a new line!</p>"
-      );
-}
-#endif
-
 static char *
 _style_match_replace(Evas_Textblock_Style *ts, char *s)
 {
@@ -1851,14 +1805,75 @@ _layout_word_next(char *str, int p)
 static void
 _layout_walk_back_to_item_word_redo(Ctxt *c, Evas_Object_Textblock_Item *it)
 {
-   Evas_Object_Textblock_Item *pit;
+   Evas_Object_Textblock_Item *pit, *new_it = NULL;
+   Evas_List *remove_items = NULL, *l;
+   int index, p, ch, tw, th, inset, adv;
    
    /* it is not appended yet */
    for (pit = (Evas_Object_Textblock_Item *)((Evas_Object_List *)c->ln->items)->last;
 	pit;
 	pit = (Evas_Object_Textblock_Item *)((Evas_Object_List *)pit)->prev)
      {
-	
+	if (_layout_ends_with_space(pit->text))
+	  {
+	     break;
+	  }
+	index = evas_common_font_utf8_get_last((unsigned char *)(pit->text), strlen(pit->text));
+	index = _layout_word_start(pit->text, index);
+	if (index == 0)
+	  remove_items = evas_list_prepend(remove_items, pit);
+	else
+	  {
+	     new_it = _layout_item_new(c, pit->format, pit->text + index);
+	     _layout_item_text_cutoff(c, pit, index);
+	     _layout_strip_trailing_whitespace(c, pit->format, pit);
+	     break;
+	  }
+     }
+   for (l = remove_items; l; l = l->next)
+     {
+	c->ln->items = evas_object_list_remove(c->ln->items, l->data);
+     }
+   /* new line now */
+   if (remove_items)
+     {
+	pit = remove_items->data;
+	_layout_line_advance(c, pit->format);
+     }
+   else
+     {
+	_layout_line_advance(c, it->format);
+     }
+   if (new_it)
+     {
+	/* append new_it */
+	c->ENFN->font_string_size_get(c->ENDT, new_it->format->font.font, new_it->text, &tw, &th);
+	new_it->w = tw;
+	new_it->h = th;
+	inset = c->ENFN->font_inset_get(c->ENDT, new_it->format->font.font, new_it->text);
+	new_it->inset = inset;
+	new_it->x = c->x;
+	adv = c->ENFN->font_h_advance_get(c->ENDT, new_it->format->font.font, new_it->text);
+	c->x += adv;
+	c->ln->items = evas_object_list_append(c->ln->items, new_it);
+     }
+   while (remove_items)
+     {
+	pit = remove_items->data;
+	remove_items = evas_list_remove_list(remove_items, remove_items);
+	/* append pit */
+	pit->x = c->x;
+	adv = c->ENFN->font_h_advance_get(c->ENDT, pit->format->font.font, pit->text);
+	c->x += adv;
+	c->ln->items = evas_object_list_append(c->ln->items, pit);
+     }
+   if (it)
+     {
+	/* append it */
+	it->x = c->x;
+	adv = c->ENFN->font_h_advance_get(c->ENDT, it->format->font.font, it->text);
+	c->x += adv;
+	c->ln->items = evas_object_list_append(c->ln->items, it);
      }
 }
 
@@ -1952,9 +1967,8 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 				 if (!_is_white(ch) && 
 				     (!_layout_last_item_ends_in_whitespace(c)))
 				   {
-				      /* word spread over previois nodes */
-				      printf("[%s] 1 spreads over prior nodes\n",
-					     it->text);
+				      _layout_walk_back_to_item_word_redo(c, it);
+				      return;
 				   }
 			      }
 			    if (c->ln->items != NULL)
@@ -1975,7 +1989,6 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 					str = str + wrap;
 				      else
 					str = NULL;
-				      new_line = 1;
 				   }
 				 else
 				   str = NULL;
@@ -1992,16 +2005,16 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	     else
 	       {
 		  /* wrap now is the index of the word START */
-		  if (wrap == 0)
+		  if (wrap <= 0)
 		    {
+		       if (wrap < 0) wrap = 0;
 		       index = wrap;
 		       ch = evas_common_font_utf8_get_next((unsigned char *)str, &index);
 		       if (!_is_white(ch) && 
 			   (!_layout_last_item_ends_in_whitespace(c)))
 			 {
-			    /* word spread over previois nodes */
-			    printf("[%s] 2 spreads over prior nodes\n",
-				   it->text);
+			    _layout_walk_back_to_item_word_redo(c, it);
+			    return;
 			 }
 		    }
 		  if (c->ln->items != NULL)
@@ -2019,8 +2032,10 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 			    wrap = _layout_word_next(it->text, wrap);
 			    if (twrap >= 0)
 			      _layout_item_text_cutoff(c, it, twrap);
-			    str = str + wrap;
-			    new_line = 1;
+			    if (wrap >= 0)
+			      str = str + wrap;
+			    else
+			      str = NULL;
 			 }
 		       else
 			 str = NULL;
@@ -2059,7 +2074,6 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
    Evas_Object_List *l, *ll;
    Evas_Object_Textblock_Format *fmt = NULL; /* current format */
 
-   printf("------------------ LAYOUT\n");
    /* setup context */
    c = &ctxt;
    c->obj =obj;
