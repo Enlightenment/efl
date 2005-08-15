@@ -342,7 +342,8 @@ evas_textblock2_style_set(Evas_Textblock_Style *ts, const char *text)
 	
 	obj = l->data;
 	o = (Evas_Object_Textblock *)(obj->object_data);
-	evas_object_textblock2_text_markup_set(obj, o->markup_text);
+	if (o->markup_text)
+	  evas_object_textblock2_text_markup_set(obj, o->markup_text);
      }
 }
 
@@ -378,7 +379,8 @@ evas_object_textblock2_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
      {
 	o->style = NULL;
      }
-   evas_object_textblock2_text_markup_set(obj, o->markup_text);
+   if (o->markup_text)
+     evas_object_textblock2_text_markup_set(obj, o->markup_text);
 }
 
 const Evas_Textblock_Style *
@@ -408,7 +410,7 @@ static char *
 _style_match_tag(Evas_Textblock_Style *ts, char *s)
 {
    Evas_Object_List *l;
-   
+
    for (l = (Evas_Object_List *)ts->tags; l; l = l->next)
      {
 	Evas_Object_Style_Tag *tag;
@@ -505,17 +507,17 @@ _format_free(Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
 }
 
 static void
-_lines_clear(Evas_Object *obj)
+_lines_clear(Evas_Object *obj, Evas_Object_Textblock_Line *lines)
 {
    Evas_Object_Textblock *o;
 
    o = (Evas_Object_Textblock *)(obj->object_data);
-   while (o->lines)
+   while (lines)
      {
 	Evas_Object_Textblock_Line *ln;
 	
-	ln = (Evas_Object_Textblock_Line *)o->lines;
-	o->lines = evas_object_list_remove(o->lines, ln);
+	ln = (Evas_Object_Textblock_Line *)lines;
+	lines = evas_object_list_remove(lines, ln);
 	while (ln->items)
 	  {
 	     Evas_Object_Textblock_Item *it;
@@ -811,9 +813,15 @@ evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
 	o->markup_text = NULL;
      }
    _nodes_clear(obj);
-   _lines_clear(obj);
+   _lines_clear(obj, o->lines);
+   o->lines = NULL;
    o->changed = 1;
    evas_object_change(obj);
+   if (!o->style)
+     {
+        o->markup_text = strdup(text);
+	return;
+     }
    if (text)
      {
 	char *s, *p;
@@ -1139,7 +1147,8 @@ evas_textblock2_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text)
    n->text = _strbuf_append(n->text, (char *)text, &(n->len), &(n->alloc));
    cur->node = n;
    cur->pos = n->len - 1;
-   _lines_clear(cur->obj);
+   _lines_clear(cur->obj, o->lines);
+   o->lines = NULL;
    o->changed = 1;
    evas_object_change(cur->obj);
 }
@@ -1171,7 +1180,8 @@ evas_textblock2_cursor_format_append(Evas_Textblock_Cursor *cur, const char *for
    n->text = _strbuf_append(n->text, (char *)format, &(n->len), &(n->alloc));
    cur->node = n;
    cur->pos = 0;
-   _lines_clear(cur->obj);
+   _lines_clear(cur->obj, o->lines);
+   o->lines = NULL;
    o->changed = 1;
    evas_object_change(cur->obj);
 }
@@ -1211,7 +1221,8 @@ evas_object_textblock2_clear(Evas_Object *obj)
 	free(o->markup_text);
 	o->markup_text = NULL;
      }
-   _lines_clear(obj);
+   _lines_clear(obj, o->lines);
+   o->lines = NULL;
    o->changed = 1;
    evas_object_change(obj);
 }
@@ -2264,7 +2275,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    o = (Evas_Object_Textblock *)(obj->object_data);
    obj->layer->evas->engine.func->context_multiplier_unset(output,
 							   context);
-#if 1 /* using for some debugging. will go soon */
+#if 0 /* using for some debugging. will go soon */
     obj->layer->evas->engine.func->context_color_set(output,
                                                      context,
                                                      230, 160, 30, 100);
@@ -2326,11 +2337,15 @@ evas_object_textblock_render_pre(Evas_Object *obj)
    if ((o->changed) ||
        (o->last_w != obj->cur.geometry.w))
      {
-	_lines_clear(obj);
+	Evas_Object_Textblock_Line *lines;
+	
+	lines = o->lines;
+	o->lines = NULL;
 	_layout(obj, 
 		0,
 		obj->cur.geometry.w, obj->cur.geometry.h,
 		NULL, NULL);
+	_lines_clear(obj, lines);
 	o->last_w = obj->cur.geometry.w;
 	updates = evas_object_render_pre_prev_cur_add(updates, obj);
 	o->changed = 0;
