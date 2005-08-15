@@ -434,7 +434,7 @@ _strbuf_append(char *s, char *s2, int *len, int *alloc)
 	int talloc;
 	  
 	talloc = ((tlen + 31) >> 5) << 5;
-	ts = realloc(s, talloc);
+	ts = realloc(s, talloc + 1);
 	if (!ts) return s;
 	s = ts;
 	*alloc = talloc;
@@ -465,7 +465,7 @@ _strbuf_append_n(char *s, char *s2, int n, int *len, int *alloc)
 	int talloc;
 	  
 	talloc = ((tlen + 31) >> 5) << 5;
-	ts = realloc(s, talloc);
+	ts = realloc(s, talloc + 1);
 	if (!ts) return s;
 	s = ts;
 	*alloc = talloc;
@@ -1363,6 +1363,36 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	     fmt->wrap_char = 0;
 	  }
      }
+   else if (!strcmp(cmd, "left_margin"))
+     {
+	if (!strcmp(param, "reset"))
+	  fmt->margin.l = 0;
+	else
+	  {
+	     if (param[0] == '+')
+	       fmt->margin.l += atoi(&(param[1]));
+	     else if (param[0] == '-')
+	       fmt->margin.l -= atoi(&(param[1]));
+	     else
+	       fmt->margin.l = atoi(param);
+	     if (fmt->margin.l < 0) fmt->margin.l = 0;
+	  }
+     }
+   else if (!strcmp(cmd, "right_margin"))
+     {
+	if (!strcmp(param, "reset"))
+	  fmt->margin.r = 0;
+	else
+	  {
+	     if (param[0] == '+')
+	       fmt->margin.r += atoi(&(param[1]));
+	     else if (param[0] == '-')
+	       fmt->margin.r -= atoi(&(param[1]));
+	     else
+	       fmt->margin.r = atoi(param);
+	     if (fmt->margin.r < 0) fmt->margin.r = 0;
+	  }
+     }
    
    if (new_font)
      {
@@ -1391,7 +1421,7 @@ _format_param_parse(char *item, char **key, char **val)
    int qoute = 0;
    
    p = strchr(item, '=');
-   k = malloc(p - item);
+   k = malloc(p - item + 1);
    strncpy(k, item, p - item);
    k[p - item] = 0;
    *key = k;
@@ -1548,6 +1578,8 @@ _layout_line_new(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 {
    c->ln = calloc(1, sizeof(Evas_Object_Textblock_Line));
    c->align = fmt->halign;
+   c->marginl = fmt->margin.l;
+   c->marginr = fmt->margin.r;
    c->lines = evas_object_list_append(c->lines, c->ln);
    c->x = 0;
    c->maxascent = c->maxdescent = 0;
@@ -1592,6 +1624,8 @@ _layout_format_value_handle(Ctxt *c, Evas_Object_Textblock_Format *fmt, char *it
    if (key) free(key);
    if (val) free(val);
    c->align = fmt->halign;
+   c->marginl = fmt->margin.l;
+   c->marginr = fmt->margin.r;
 }
 
 static void
@@ -2138,6 +2172,8 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 	else if ((n->type == NODE_TEXT) && (n->text))
 	  _layout_text_append(c, fmt, n);
      }
+   if ((c->ln) && (c->ln->items) && (fmt))
+     _layout_line_advance(c, fmt);
    while (c->format_stack)
      {
 	fmt = c->format_stack->data;
@@ -2255,6 +2291,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 				     it->format->color.normal.g,
 				     it->format->color.normal.b,
 				     it->format->color.normal.a);
+//	     printf("DRAW: %i,%i [%s]\n", ln->x + it->x, ln->y + ln->baseline, it->text);
 	     ENFN->font_draw(output, context, surface, it->format->font.font,
 			     obj->cur.cache.geometry.x + ln->x + it->x + x,
 			     obj->cur.cache.geometry.y + ln->y + ln->baseline + y,
