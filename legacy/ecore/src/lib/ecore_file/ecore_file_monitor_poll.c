@@ -301,7 +301,8 @@ _ecore_file_monitor_poll_check(Ecore_File_Monitor *em)
 
 	     /* Files have been added or removed */
 	     files = ecore_file_ls(em->path);
-	     while ((file = ecore_list_next(files)))
+	     if (files) { /*Are we a directory? We should check first, rather than rely on null here*/
+	       while ((file = ecore_list_next(files)))
 	       {
 		  Ecore_File *f;
 		  char buf[PATH_MAX];
@@ -331,7 +332,9 @@ _ecore_file_monitor_poll_check(Ecore_File_Monitor *em)
 		  em->func(em->data, em, event, buf);
 		  em->files = _ecore_list_append(em->files, f);
 	       }
-	     ecore_list_destroy(files);
+	       ecore_list_destroy(files);
+	     }
+	     
 	     if (!ecore_file_is_dir(em->path))
 	       em->func(em->data, em, ECORE_FILE_EVENT_MODIFIED, em->path);
 	     _interval = ECORE_FILE_INTERVAL_MIN;
