@@ -104,8 +104,15 @@ ecore_con_dns_init(void)
 
 	/* remove whitespace */
 	p = strchr(buf, ' ');
-	while (isspace(*p))
+	if (!p)
+	  p = strchr(buf, '\t');
+	if (!p) continue;
+	while ((*p) && (isspace(*p)))
 	  p++;
+	/* Remove trailing newline */
+	p2 = strchr(buf, '\n');
+	if (p2)
+	  *p2 = 0;
 
 	if (!strncmp(buf, "nameserver", 10))
 	  {
@@ -123,7 +130,7 @@ ecore_con_dns_init(void)
 	     while ((p) && (_search_count < 6))
 	       {
 		  /* Remove whitespace */
-		  while (isspace(*p))
+		  while ((*p) && (isspace(*p)))
 		    p++;
 		  /* Find next element */
 		  p2 = strchr(p, ' ');
