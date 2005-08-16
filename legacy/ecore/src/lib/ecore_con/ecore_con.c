@@ -29,6 +29,7 @@
 #include <time.h>
 #endif
 
+static void _ecore_con_cb_gethostbyname(struct hostent *he, void *data);
 static void _ecore_con_server_free(Ecore_Con_Server *svr);
 static void _ecore_con_client_free(Ecore_Con_Client *cl);
 static int _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler);
@@ -80,7 +81,10 @@ ecore_con_init(void)
 #if USE_OPENSSL
 	SSL_library_init();
 	SSL_load_error_strings();
-#endif	
+#endif
+
+	/* TODO Remember return value, if it fails, use gethostbyname() */
+	ecore_con_dns_init();
      }
    if (!servers)
       servers = ecore_list_new();
@@ -104,6 +108,8 @@ ecore_con_shutdown(void)
 	     _ecore_con_server_free(ecore_list_remove_first(servers));
 	ecore_list_destroy(servers);
 	servers = NULL;
+
+	ecore_con_dns_shutdown();
      }
    return 0;
 }
@@ -371,7 +377,6 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    Ecore_Con_Server   *svr;
    Ecore_Con_Type      type;
    struct sockaddr_un  socket_unix;
-   struct sockaddr_in  socket_addr;
    int                 curstate = 0;
    char                buf[4096];
 
@@ -437,36 +442,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
      }
    else if (type == ECORE_CON_REMOTE_SYSTEM)
      {
-	struct hostent *he;
-	
-	/* FIXME: gethostbyname is blocking... */
-	if (!(he = gethostbyname(name))) goto error;
-	svr->fd = socket(AF_INET, SOCK_STREAM, 0);
-	if (svr->fd < 0) goto error;
-	if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
-	if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
-	if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &curstate, sizeof(curstate)) < 0) goto error;
-	socket_addr.sin_family = AF_INET;
-	socket_addr.sin_port = htons(port);
-	memcpy((struct in_addr *)&socket_addr.sin_addr, 
-	       he->h_addr, sizeof(struct in_addr));
-	if (connect(svr->fd, (struct sockaddr *)&socket_addr, sizeof(struct sockaddr_in)) < 0) 
-	  {
-	     if (errno != EINPROGRESS)
-	       goto error;
-	     svr->connecting = 1;
-	     svr->fd_handler = ecore_main_fd_handler_add(svr->fd,
-							 ECORE_FD_READ | ECORE_FD_WRITE,
-							 _ecore_con_cl_handler, svr,
-							 NULL, NULL);
-	  }
-	else
-	  svr->fd_handler = ecore_main_fd_handler_add(svr->fd,
-						      ECORE_FD_READ,
-						      _ecore_con_cl_handler, svr,
-						      NULL, NULL);
-
-	if (!svr->fd_handler) goto error;
+	ecore_con_dns_gethostbyname(name, _ecore_con_cb_gethostbyname, svr);
      }
 
 #if USE_OPENSSL
@@ -922,10 +898,52 @@ kill_server(Ecore_Con_Server *svr)
    svr->fd_handler = NULL;
 }
 
+static void
+_ecore_con_cb_gethostbyname(struct hostent *he, void *data)
+{
+   Ecore_Con_Server   *svr;
+   struct sockaddr_in  socket_addr;
+   int                 curstate = 0;
+
+   svr = data;
+
+   svr->fd = socket(AF_INET, SOCK_STREAM, 0);
+   if (svr->fd < 0) goto error;
+   if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
+   if (fcntl(svr->fd, F_SETFD, FD_CLOEXEC) < 0) goto error;
+   if (setsockopt(svr->fd, SOL_SOCKET, SO_REUSEADDR, &curstate, sizeof(curstate)) < 0) goto error;
+   socket_addr.sin_family = AF_INET;
+   socket_addr.sin_port = htons(svr->port);
+   memcpy((struct in_addr *)&socket_addr.sin_addr, 
+	 he->h_addr, sizeof(struct in_addr));
+   if (connect(svr->fd, (struct sockaddr *)&socket_addr, sizeof(struct sockaddr_in)) < 0) 
+     {
+	if (errno != EINPROGRESS)
+	  goto error;
+	svr->connecting = 1;
+	svr->fd_handler = ecore_main_fd_handler_add(svr->fd,
+	      ECORE_FD_READ | ECORE_FD_WRITE,
+	      _ecore_con_cl_handler, svr,
+	      NULL, NULL);
+     }
+   else
+     svr->fd_handler = ecore_main_fd_handler_add(svr->fd,
+	   ECORE_FD_READ,
+	   _ecore_con_cl_handler, svr,
+	   NULL, NULL);
+
+   if (!svr->fd_handler) goto error;
+   return;
+
+   error:
+   kill_server(svr);
+}
+
 static int
 svr_try_connect_plain(Ecore_Con_Server *svr)
 {
-   int so_err = 0, size = sizeof(int);
+   int so_err = 0;
+   unsigned int size = sizeof(int);
 
    if (getsockopt(svr->fd, SOL_SOCKET, SO_ERROR, &so_err, &size) < 0)
      so_err = -1;
