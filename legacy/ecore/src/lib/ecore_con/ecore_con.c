@@ -907,6 +907,7 @@ _ecore_con_cb_gethostbyname(struct hostent *he, void *data)
 
    svr = data;
 
+   if (!he) goto error;
    svr->fd = socket(AF_INET, SOCK_STREAM, 0);
    if (svr->fd < 0) goto error;
    if (fcntl(svr->fd, F_SETFL, O_NONBLOCK) < 0) goto error;
@@ -915,24 +916,25 @@ _ecore_con_cb_gethostbyname(struct hostent *he, void *data)
    socket_addr.sin_family = AF_INET;
    socket_addr.sin_port = htons(svr->port);
    memcpy((struct in_addr *)&socket_addr.sin_addr, 
-	 he->h_addr, sizeof(struct in_addr));
+	  he->h_addr, sizeof(struct in_addr));
    if (connect(svr->fd, (struct sockaddr *)&socket_addr, sizeof(struct sockaddr_in)) < 0) 
      {
 	if (errno != EINPROGRESS)
 	  goto error;
 	svr->connecting = 1;
 	svr->fd_handler = ecore_main_fd_handler_add(svr->fd,
-	      ECORE_FD_READ | ECORE_FD_WRITE,
-	      _ecore_con_cl_handler, svr,
-	      NULL, NULL);
+						    ECORE_FD_READ | ECORE_FD_WRITE,
+						    _ecore_con_cl_handler, svr,
+						    NULL, NULL);
      }
    else
      svr->fd_handler = ecore_main_fd_handler_add(svr->fd,
-	   ECORE_FD_READ,
-	   _ecore_con_cl_handler, svr,
-	   NULL, NULL);
+						 ECORE_FD_READ,
+						 _ecore_con_cl_handler, svr,
+						 NULL, NULL);
 
    if (!svr->fd_handler) goto error;
+
    return;
 
    error:
