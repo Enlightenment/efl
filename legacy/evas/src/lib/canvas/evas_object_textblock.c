@@ -2571,6 +2571,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
         pback = 0; \
         pline = 0; \
         pline2 = 0; \
+	pstrike = 0; \
 	for (ll = (Evas_Object_List *)ln->items; ll; ll = ll->next) \
 	  { \
 	     Evas_Object_Textblock_Item *it; \
