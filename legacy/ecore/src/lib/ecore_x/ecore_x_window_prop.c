@@ -132,9 +132,9 @@ ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecor
    if (num) *num = 0;
 
    if (data)
-	  *data = NULL;
+     *data = NULL;
    else /* we can't store the retrieved data, so just return */
-	  return 0;
+     return 0;
 
    if (!win) win = DefaultRootWindow(_ecore_x_disp);
 
@@ -147,14 +147,14 @@ ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecor
 
    if (size != size_ret || !num_ret) {
       XFree(prop_ret);
-	  return 0;
+      return 0;
    }
-
+   
    if (!(*data = malloc(num_ret * size / 8))) {
-	   XFree(prop_ret);
-	   return 0;
+      XFree(prop_ret);
+      return 0;
    }
-
+   
    switch (size) {
       case 8:
 	 for (i = 0; i < num_ret; i++)
@@ -162,11 +162,11 @@ ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecor
 	 break;
       case 16:
 	 for (i = 0; i < num_ret; i++)
-	   ((uint16_t *) *data)[i] = ((uint16_t *) prop_ret)[i];
+	   ((unsigned short *) *data)[i] = ((unsigned short *) prop_ret)[i];
 	 break;
       case 32:
 	 for (i = 0; i < num_ret; i++)
-	   ((uint32_t *) *data)[i] = ((uint32_t *) prop_ret)[i];
+	   ((unsigned int *) *data)[i] = ((unsigned long *) prop_ret)[i];
 	 break;
    }
 
