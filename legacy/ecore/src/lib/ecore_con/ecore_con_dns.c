@@ -13,11 +13,10 @@
  * TODO
  * * Check env LOCALDOMAIN to override search
  * * Check env RES_OPTIONS to override options
- * * Lookup names using domain or search
- *
- * * Make search and domain mutually exclusive
  *
  * * Read /etc/host.conf
+ * * host.conf env
+ *   RESOLV_HOST_CONF, RESOLV_SERV_ORDER
  * * Check /etc/hosts
  *
  * * Caching
@@ -46,10 +45,13 @@ struct _Ecore_Con_Dns_Query {
      int socket[SERVERS];
      Ecore_Fd_Handler *fd_handlers[SERVERS];
 
-     int length;
-
      Ecore_Timer *timeout;
 
+     int search;
+
+     /* The name the user searches for */
+     char *searchname;
+     /* The name vi send to dns and return to the user */
      char *hostname;
 
      struct {
@@ -59,6 +61,7 @@ struct _Ecore_Con_Dns_Query {
 
 };
 
+static void _ecore_con_dns_ghbn(Ecore_Con_Dns_Query *query);
 static int  _ecore_con_dns_timeout(void *data);
 static int  _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static void _ecore_con_dns_query_free(Ecore_Con_Dns_Query *query);
@@ -123,7 +126,16 @@ ecore_con_dns_init(void)
 	  }
 	else if (!strncmp(buf, "domain", 6))
 	  {
+	     int i;
+
 	     _domain = strdup(p);
+	     /* clear search */
+	     for (i = 0; i < _search_count; i++)
+	       {
+		  free(_search[i]);
+		  _search[i] = NULL;
+	       }
+	     _search_count = 0;
 	  }
 	else if (!strncmp(buf, "search", 6))
 	  {
@@ -143,6 +155,11 @@ ecore_con_dns_init(void)
 		  _search_count++;
 		  if (p2) p = p2 + 1;
 		  else p = NULL;
+	       }
+	     if (_domain)
+	       {
+		  free(_domain);
+		  _domain = NULL;
 	       }
 	  }
 	else if (!strncmp(buf, "sortlist", 8))
@@ -206,7 +223,6 @@ ecore_con_dns_gethostbyname(const char *name,
 		       	    void *data)
 {
    Ecore_Con_Dns_Query *query;
-   int i;
 
    if (!_server_count) return 0;
    if ((!name) || (!*name)) return 0;
@@ -218,14 +234,94 @@ ecore_con_dns_gethostbyname(const char *name,
    query->done.data = data;
    query->timeout = ecore_timer_add(20.0, _ecore_con_dns_timeout, query);
    query->hostname = strdup(name);
+   query->searchname = strdup(name);
+   query->search = -1;
+
+   _ecore_con_dns_ghbn(query);
+   return 1;
+}
+
+static void
+_ecore_con_dns_ghbn(Ecore_Con_Dns_Query *query)
+{
+   char buf[256];
+   char *p, *q, *pl;
+   int i, len, total_len;
+
+   /* Create buf */
+   memset(buf, 0, sizeof(buf));
+   p = buf;
+   total_len = 0;
+
+   p += 2;
+   /* opcode */
+   *p |= (QUERY & 0xf) << 3;
+   /* TODO: rd, do we always want recursive? */
+   *p |= 1 & 0x1;
+   /* qdcount, only asking for one name */
+   p += 2;
+   SET_16BIT(p, 1);
+
+   total_len += HFIXEDSZ;
+   p = &buf[HFIXEDSZ];
+
+   /* remember where the length shall be placed */
+   pl = p;
+   p++;
+   total_len++;
+   /* name */
+   q = query->hostname;
+   len = 0;
+   while ((*q) && (total_len < 1024))
+     {
+	if (*q == '.')
+	  {
+	     if (len)
+	       {
+		  *pl = len;
+		  pl = p;
+		  p++;
+		  len = 0;
+		  total_len++;
+	       }
+	     q++;
+	  }
+	else if ((*q == '\\') && (*(q + 1) == 0))
+	  {
+	     q++;
+
+	     *p++ = *q++;
+	     len++;
+	     total_len++;
+	  }
+	else
+	  {
+	     *p++ = *q++;
+	     len++;
+	     total_len++;
+	  }
+     }
+   /* Null at the end of the query */
+   if (len)
+     {
+	*pl = len;
+	*p = 0;
+	p++;
+	total_len++;
+     }
+
+   /* type */
+   SET_16BIT(p, T_A);
+   p += 2;
+   /* class */
+   SET_16BIT(p, C_IN);
+   p += 2;
+   total_len += QFIXEDSZ;
 
    /* We're crazy, just ask all servers! */
    for (i = 0; i < _server_count; i++)
      {
 	struct sockaddr_in sin;
-	unsigned char buf[256];
-	unsigned char *p, *q, *pl;
-	int len;
 
 	query->socket[i] = socket(AF_INET, SOCK_DGRAM, 0);
 	if (query->socket[i] == -1)
@@ -247,79 +343,11 @@ ecore_con_dns_gethostbyname(const char *name,
 	     continue;
 	  }
 
-	query->id[i] = ++_id;
-
-	/* Create buf */
-	memset(buf, 0, sizeof(buf));
-	p = buf;
 	/* qid */
-	SET_16BIT(p, query->id[i]);
-	p += 2;
-	/* opcode */
-	*p |= (QUERY & 0xf) << 3;
-	/* TODO: rd, do we always want recursive? */
-	*p |= 1 & 0x1;
-	p += 2;
-	/* qdcount, only asking for one name */
-	SET_16BIT(p, 1);
+	query->id[i] = ++_id;
+	SET_16BIT(buf, query->id[i]);
 
-	query->length += HFIXEDSZ;
-	p = &buf[HFIXEDSZ];
-
-	/* remember where the length shall be placed */
-	pl = p;
-	p++;
-	query->length++;
-	/* name */
-	q = name;
-	len = 0;
-	while ((*q) && (query->length < 1024))
-	  {
-	     if (*q == '.')
-	       {
-		  if (len)
-		    {
-		       *pl = len;
-		       pl = p;
-		       p++;
-		       len = 0;
-		       query->length++;
-		    }
-		  q++;
-	       }
-	     else if ((*q == '\\') && (*(q + 1) == 0))
-	       {
-		  q++;
-
-		  *p++ = *q++;
-		  len++;
-		  query->length++;
-	       }
-	     else
-	       {
-		  *p++ = *q++;
-		  len++;
-		  query->length++;
-	       }
-	  }
-	/* Null at the end of the query */
-	if (len)
-	  {
-	     *pl = len;
-	     *p = 0;
-	     p++;
-	     query->length++;
-	  }
-
-	/* type */
-	SET_16BIT(p, T_A);
-	p += 2;
-	/* class */
-	SET_16BIT(p, C_IN);
-	p += 2;
-	query->length += QFIXEDSZ;
-
-	if (send(query->socket[i], buf, query->length, 0) == -1)
+	if (send(query->socket[i], buf, total_len, 0) == -1)
 	  {
 	     printf("ERROR: Send failed\n");
 	     close(query->socket[i]);
@@ -328,12 +356,11 @@ ecore_con_dns_gethostbyname(const char *name,
 	  }
 
 	query->fd_handlers[i] = ecore_main_fd_handler_add(query->socket[i],
-							  ECORE_FD_READ|ECORE_FD_ERROR,
+							  ECORE_FD_READ,
 							  _ecore_con_cb_fd_handler, query,
 							  NULL, NULL);
 
      }
-   return 1;
 }
 
 static int
@@ -355,11 +382,15 @@ _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
    Ecore_Con_Dns_Query *query;
    int i, n, fd, found = 0;
    unsigned int id;
-   unsigned char buf[256];
+   unsigned char buf[1024];
+   unsigned char *p;
+   int size;
+   struct hostent he;
 
    query = data;
    fd = ecore_main_fd_handler_fd_get(fd_handler);
 
+   memset(buf, 0, sizeof(buf));
    n = recv(fd, buf, sizeof(buf), 0);
    if (n == -1) goto error;
    /* Check if this message is for us */
@@ -373,49 +404,44 @@ _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	     break;
 	  }
      }
+   if (!found) goto error;
 
-   if ((found) && (n > query->length))
-       {
-	  /* This should be it! */
-	  unsigned char *p;
-	  int size;
+   /* This should be it! */
+   p = buf;
 
-	  p = buf;
+   /* Skip the query */
+   p += HFIXEDSZ;
+   while (*p)
+     p += (*p + 1);
+   p++;
+   p += QFIXEDSZ;
 
-	  /* Skip the query */
-	  p += query->length;
+   /* Skip the header */
+   p += RRFIXEDSZ;
+   size = GET_16BIT(p);
+   /* We should get 4 bytes, 1 for each octet in the IP addres */
+   if (size != 4) goto error;
 
-	  /* Skip the header */
-	  p += RRFIXEDSZ;
-	  size = GET_16BIT(p);
-	  if (size == 4)
-	    {
-	       struct hostent he;
+   p += 2;
 
-	       p += 2;
+   /* Get the IP address */
+   he.h_addr_list = malloc(2 * sizeof(char *));
+   if (!he.h_addr_list) goto error;
+   /* Fill in the hostent and return successfully. */
+   /* TODO: Maybe get the hostname from the reply */
+   he.h_name = strdup(query->hostname);
+   /* he.h_aliases = aliases; */
+   he.h_addrtype = AF_INET;
+   he.h_length = sizeof(struct in_addr);
+   he.h_addr_list[0] = malloc(4 * sizeof(char));
+   memcpy(he.h_addr_list[0], p, he.h_length);
+   he.h_addr_list[1] = NULL;
 
-	       /* Get the IP address */
-	       he.h_addr_list = malloc(2 * sizeof(char *));
-	       if (he.h_addr_list)
-		 {
-		    /* Fill in the hostent and return successfully. */
-		    /* TODO: Maybe get the hostname from the reply */
-		    he.h_name = strdup(query->hostname);
-		    /* he.h_aliases = aliases; */
-		    he.h_addrtype = AF_INET;
-		    he.h_length = sizeof(struct in_addr);
-		    he.h_addr_list[0] = malloc(4 * sizeof(char));
-		    memcpy(he.h_addr_list[0], p, he.h_length);
-		    he.h_addr_list[1] = NULL;
-
-		    if (query->done.cb)
-		      query->done.cb(&he, query->done.data);
-		    free(he.h_addr_list);
-		    _ecore_con_dns_query_free(query);
-		    return 0;
-		 }
-	    }
-       }
+   if (query->done.cb)
+     query->done.cb(&he, query->done.data);
+   free(he.h_addr_list);
+   _ecore_con_dns_query_free(query);
+   return 0;
 
 error:
    found = 0;
@@ -427,7 +453,6 @@ error:
 	     if (query->socket[i]) close(query->socket[i]);
 	     query->socket[i] = 0;
 	     query->fd_handlers[i] = NULL;
-	     break;
 	  }
 	else if (query->socket[i])
 	  {
@@ -438,10 +463,46 @@ error:
 
    if (!found)
      {
-	/* Shutdown */
-	if (query->done.cb)
-	  query->done.cb(NULL, query->done.data);
-	_ecore_con_dns_query_free(query);
+	char buf[256];
+
+	/* Should we look more? */
+	if ((_domain) && (query->search++))
+	  {
+	     if (snprintf(buf, sizeof(buf), "%s%s", query->searchname, _domain) < sizeof(buf))
+	       {
+		  free(query->hostname);
+		  query->hostname = strdup(buf);
+		  _ecore_con_dns_ghbn(query);
+	       }
+	     else
+	       {
+		  if (query->done.cb)
+		    query->done.cb(NULL, query->done.data);
+		  _ecore_con_dns_query_free(query);
+	       }
+	  }
+	else if ((++query->search) < _search_count)
+	  {
+	     if (snprintf(buf, sizeof(buf), "%s%s", query->searchname, _search[query->search]) < sizeof(buf))
+	       {
+		  free(query->hostname);
+		  query->hostname = strdup(buf);
+		  _ecore_con_dns_ghbn(query);
+	       }
+	     else
+	       {
+		  if (query->done.cb)
+		    query->done.cb(NULL, query->done.data);
+		  _ecore_con_dns_query_free(query);
+	       }
+	  }
+	else
+	  {
+	     /* Shutdown */
+	     if (query->done.cb)
+	       query->done.cb(NULL, query->done.data);
+	     _ecore_con_dns_query_free(query);
+	  }
      }
    return 0;
 }

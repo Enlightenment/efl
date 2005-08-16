@@ -894,7 +894,7 @@ kill_server(Ecore_Con_Server *svr)
      }
    
    svr->dead = 1;
-   ecore_main_fd_handler_del(svr->fd_handler);
+   if (svr->fd_handler) ecore_main_fd_handler_del(svr->fd_handler);
    svr->fd_handler = NULL;
 }
 
