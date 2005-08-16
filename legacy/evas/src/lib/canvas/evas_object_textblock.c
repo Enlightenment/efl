@@ -69,6 +69,8 @@ struct _Evas_Object_Textblock_Item
    int                           x, w, h;
    int                           inset, baseline;
    Evas_Object_Textblock_Format *format;
+   Evas_Object_Textblock_Node   *source_node;
+   int                           source_pos;
 };
 
 struct _Evas_Object_Textblock_Format
@@ -129,6 +131,9 @@ struct _Evas_Object_Textblock
    Evas_Object_Textblock_Node  *nodes;
    Evas_Object_Textblock_Line *lines;
    int                         last_w;
+   struct {
+      int                      l, r, t, b;
+   } style_pad;
    char                        *markup_text;
    char                         changed : 1;
    void                        *engine_data;
@@ -1696,6 +1701,8 @@ struct _Ctxt
    int maxascent, maxdescent;
    int marginl, marginr;
    int line_no;
+   int underline_extend;
+   int have_underline, have_underline2;
    double align;
 };
 
@@ -1735,11 +1742,11 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt)
      {
 	fmt = calloc(1, sizeof(Evas_Object_Textblock_Format));
 	c->format_stack  = evas_list_prepend(c->format_stack, fmt);
+	fmt->halign = 0.0;
+	fmt->valign = -1.0;
+	fmt->style = STYLE_PLAIN;
+	fmt->tabstops = 32;
      }
-   fmt->halign = 0.0;
-   fmt->valign = -1.0;
-   fmt->style = STYLE_PLAIN;
-   fmt->tabstops = 32;
    return fmt;
 }
 
@@ -1789,13 +1796,24 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 	if (endx > c->ln->w) c->ln->w = endx;
      }
    if (c->ln->w > c->wmax) c->wmax = c->ln->w;
-   c->ln->y = c->y;
+   c->ln->y = c->y + c->o->style_pad.t;
    c->ln->h = c->maxascent + c->maxdescent;
    c->ln->baseline = c->maxascent;
+   if (c->have_underline2)
+     {
+	if (c->maxdescent < 4) c->underline_extend = 4 - c->maxdescent;
+     }
+   else if (c->have_underline)
+     {
+	if (c->maxdescent < 2) c->underline_extend = 2 - c->maxdescent;
+     }
    c->ln->line_no = c->line_no;
    c->line_no++;
    c->y += c->maxascent + c->maxdescent;
-   c->ln->x = c->marginl + ((c->w - c->ln->w - c->marginl - c->marginr) * c->align);
+   c->ln->x = c->marginl + c->o->style_pad.l +
+     ((c->w - c->ln->w -
+       c->o->style_pad.l - c->o->style_pad.r - 
+       c->marginl - c->marginr) * c->align);
    _layout_line_new(c, fmt);
 }
 
@@ -1817,7 +1835,12 @@ _layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_
    int cx, cy, cw, ch;
 	     
    return c->ENFN->font_char_at_coords_get(c->ENDT, fmt->font.font, it->text,
-					   c->w - c->marginl - c->marginr - c->x,
+					   c->w - 
+					   c->o->style_pad.l - 
+					   c->o->style_pad.r - 
+					   c->marginl - 
+					   c->marginr -
+					   c->x,
 					   0, &cx, &cy, &cw, &ch);
 }
 
@@ -2001,6 +2024,8 @@ _layout_walk_back_to_item_word_redo(Ctxt *c, Evas_Object_Textblock_Item *it)
 	else
 	  {
 	     new_it = _layout_item_new(c, pit->format, pit->text + index);
+	     new_it->source_node = pit->source_node;
+	     new_it->source_pos = pit->source_pos + index;
 	     _layout_item_text_cutoff(c, pit, index);
 	     _layout_strip_trailing_whitespace(c, pit->format, pit);
 	     break;
@@ -2080,8 +2105,13 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	     str = str + twrap;
 	  }
 	it = _layout_item_new(c, fmt, str);
+	it->source_node = n;
+	it->source_pos = str - n->text;
 	c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, it->text, &tw, &th);
-	if (((fmt->wrap_word) || (fmt->wrap_char)) && ((c->x + tw) > (c->w - c->marginl - c->marginr)))
+	if (((fmt->wrap_word) || (fmt->wrap_char)) && 
+	    ((c->x + tw) > 
+	     (c->w - c->o->style_pad.l - c->o->style_pad.r - 
+	      c->marginl - c->marginr)))
 	  {
 	     wrap = _layout_text_cutoff_get(c, fmt, it);
 	     if (wrap > 0)
@@ -2246,14 +2276,17 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 static void
 _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 {
+   Evas_Object_Textblock *o;
    Ctxt ctxt, *c;
    Evas_Object_List *l, *ll;
-   Evas_Object_Textblock_Format *fmt = NULL; /* current format */
+   Evas_Object_Textblock_Format *fmt = NULL;
+   int style_pad_l = 0, style_pad_r = 0, style_pad_t = 0, style_pad_b = 0;
 
    /* setup context */
+   o = (Evas_Object_Textblock *)(obj->object_data);
    c = &ctxt;
    c->obj =obj;
-   c->o = (Evas_Object_Textblock *)(obj->object_data);
+   c->o = o;
    c->lines = c->ln = NULL;
    c->format_stack = NULL;
    c->x = c->y = 0;
@@ -2262,15 +2295,16 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
    c->wmax = c->hmax = 0;
    c->maxascent = c->maxdescent = 0;
    c->marginl = c->marginr = 0;
+   c->have_underline = 0;
+   c->have_underline2 = 0;
+   c->underline_extend = 0;
    c->line_no = 0;
    c->align = 0.0;
    
    /* setup default base style */
    if ((c->o->style) && (c->o->style->default_tag))
      {
-	fmt = calloc(1, sizeof(Evas_Object_Textblock_Format));
-	fmt->ref = 1;
-	c->format_stack = evas_list_prepend(c->format_stack, fmt);
+	fmt = _layout_format_push(c, NULL);
 	_format_fill(c->obj, fmt, c->o->style->default_tag);
      }
    /* run thru all text and format nodes generating lines */
@@ -2314,9 +2348,73 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 		    }
 		  free(item);
 	       }
+	     if (fmt->style == STYLE_SHADOW)
+	       {
+		  if (style_pad_r < 1) style_pad_r = 1;
+		  if (style_pad_b < 1) style_pad_b = 1;
+	       }
+	     else if (fmt->style == STYLE_OUTLINE)
+	       {
+		  if (style_pad_l < 1) style_pad_l = 1;
+		  if (style_pad_r < 1) style_pad_r = 1;
+		  if (style_pad_t < 1) style_pad_t = 1;
+		  if (style_pad_b < 1) style_pad_b = 1;
+	       }
+	     else if (fmt->style == STYLE_GLOW)
+	       {
+		  if (style_pad_l < 2) style_pad_l = 2;
+		  if (style_pad_r < 2) style_pad_r = 2;
+		  if (style_pad_t < 2) style_pad_t = 2;
+		  if (style_pad_b < 2) style_pad_b = 2;
+	       }
+	     else if (fmt->style == STYLE_OUTLINE_SHADOW)
+	       {
+		  if (style_pad_l < 1) style_pad_l = 1;
+		  if (style_pad_r < 2) style_pad_r = 2;
+		  if (style_pad_t < 1) style_pad_t = 1;
+		  if (style_pad_b < 2) style_pad_b = 2;
+	       }
+	     else if (fmt->style == STYLE_FAR_SHADOW)
+	       {
+		  if (style_pad_r < 2) style_pad_r = 2;
+		  if (style_pad_b < 2) style_pad_b = 2;
+	       }
+	     else if (fmt->style == STYLE_OUTLINE_SOFT_SHADOW)
+	       {
+		  if (style_pad_l < 1) style_pad_l = 1;
+		  if (style_pad_r < 3) style_pad_r = 3;
+		  if (style_pad_t < 1) style_pad_t = 1;
+		  if (style_pad_b < 3) style_pad_b = 3;
+	       }
+	     else if (fmt->style == STYLE_SOFT_SHADOW)
+	       {
+		  if (style_pad_l < 1) style_pad_l = 1;
+		  if (style_pad_r < 3) style_pad_r = 3;
+		  if (style_pad_t < 1) style_pad_t = 1;
+		  if (style_pad_b < 3) style_pad_b = 3;
+	       }
+	     else if (fmt->style == STYLE_FAR_SOFT_SHADOW)
+	       {
+		  if (style_pad_r < 4) style_pad_r = 4;
+		  if (style_pad_b < 4) style_pad_b = 4;
+	       }
+	     if (fmt->underline2)
+	       c->have_underline2 = 1;
+	     else if (fmt->underline)
+	       c->have_underline = 1;
 	  }
 	else if ((n->type == NODE_TEXT) && (n->text))
-	  _layout_text_append(c, fmt, n);
+	  {
+	     _layout_text_append(c, fmt, n);
+	     if ((c->have_underline2) || (c->have_underline))
+	       {
+		  if (style_pad_b < c->underline_extend)
+		    style_pad_b = c->underline_extend;
+		  c->have_underline = 0;
+		  c->have_underline2 = 0;
+		  c->underline_extend = 0;
+	       }
+	  }
      }
    if ((c->ln) && (c->ln->items) && (fmt))
      _layout_line_advance(c, fmt);
@@ -2326,14 +2424,26 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 	c->format_stack = evas_list_remove_list(c->format_stack, c->format_stack);
 	_format_free(c->obj, fmt);
      }
-   c->hmax = c->y;
+   c->hmax = c->y + o->style_pad.t + o->style_pad.b;
+   if (w_ret) *w_ret = c->wmax;
+   if (h_ret) *h_ret = c->hmax;
+   if ((o->style_pad.l != style_pad_l) || (o->style_pad.r != style_pad_r) ||
+       (o->style_pad.t != style_pad_t) || (o->style_pad.b != style_pad_b))
+     {
+        _lines_clear(obj, c->lines);
+	o->style_pad.l = style_pad_l;
+	o->style_pad.r = style_pad_r;
+	o->style_pad.t = style_pad_t;
+	o->style_pad.b = style_pad_b;
+	return _layout(obj, calc_only, w, h, w_ret, h_ret);
+     }
    if (!calc_only)
      {
 	c->o->lines = c->lines;
      }
    else
      {
-	/* free lines */
+	_lines_clear(obj, c->lines);
      }
 }
 
@@ -2405,12 +2515,29 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 {
    Evas_Object_Textblock *o;
    Evas_Object_List *l, *ll;
+   int i, j;
+   int pback, backx = 0;
+   int pline, linex = 0;
+   int pline2, line2x = 0;
+   int pstrike, strikex = 0;
+   int x2;
+   unsigned char r = 0, g = 0, b = 0, a = 0;
+   unsigned char r2 = 0, g2 = 0, b2 = 0, a2 = 0;
+   unsigned char r3 = 0, g3 = 0, b3 = 0, a3 = 0;
+   const char vals[5][5] =
+     {
+	  {0, 1, 2, 1, 0},
+	  {1, 3, 4, 3, 1},
+	  {2, 4, 5, 4, 2},
+	  {1, 3, 4, 3, 1},
+	  {0, 1, 2, 1, 0}
+     };
    
    /* render object to surface with context, and offxet by x,y */
    o = (Evas_Object_Textblock *)(obj->object_data);
    obj->layer->evas->engine.func->context_multiplier_unset(output,
 							   context);
-#if 0 /* using for some debugging. will go soon */
+#if 1 /* using for some debugging. will go soon */
     obj->layer->evas->engine.func->context_color_set(output,
                                                      context,
                                                      230, 160, 30, 100);
@@ -2422,40 +2549,347 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
                                                   obj->cur.cache.geometry.w,
                                                   obj->cur.cache.geometry.h);
 #endif
-   for (l = (Evas_Object_List *)o->lines; l; l = l->next)
+#define ITEM_WALK() \
+   for (l = (Evas_Object_List *)o->lines; l; l = l->next) \
+     { \
+	Evas_Object_Textblock_Line *ln; \
+	\
+	ln = (Evas_Object_Textblock_Line *)l; \
+	for (ll = (Evas_Object_List *)ln->items; ll; ll = ll->next) \
+	  { \
+	     Evas_Object_Textblock_Item *it; \
+	     int yoff; \
+	     \
+	     it = (Evas_Object_Textblock_Item *)ll; \
+	     yoff = ln->baseline; \
+	     if (it->format->valign != -1.0) \
+	       yoff = (it->format->valign * (double)(ln->h - it->h)) + it->baseline;
+#define ITEM_WALK_END() \
+	  } \
+        pback = 0; \
+        pline = 0; \
+        pline2 = 0; \
+     }
+#define COLOR_SET(col) \
+	ENFN->context_color_set(output, context, \
+				it->format->color.col.r, \
+				it->format->color.col.g, \
+				it->format->color.col.b, \
+				it->format->color.col.a);
+#define COLOR_SET_AMUL(col, amul) \
+	ENFN->context_color_set(output, context, \
+				it->format->color.col.r, \
+				it->format->color.col.g, \
+				it->format->color.col.b, \
+				((int)it->format->color.col.a * (amul)) / 255);
+#define DRAW_TEXT(ox, oy) \
+   ENFN->font_draw(output, context, surface, it->format->font.font, \
+		   obj->cur.cache.geometry.x + ln->x + it->x - it->inset + x + (ox), \
+		   obj->cur.cache.geometry.y + ln->y + yoff + y + (oy), \
+		   it->w, it->h, it->w, it->h, it->text);
+   pback = 0;
+   /* backing */
+   ITEM_WALK();
+   if ((it->format->backing) && (!pback) && (ll->next))
      {
-	Evas_Object_Textblock_Line *ln;
-	
-	ln = (Evas_Object_Textblock_Line *)l;
-	for (ll = (Evas_Object_List *)ln->items; ll; ll = ll->next)
+	pback = 1;
+	backx = it->x;
+	r = it->format->color.backing.r;
+	g = it->format->color.backing.g;
+	b = it->format->color.backing.b;
+	a = it->format->color.backing.a;
+     }
+   else if (((pback) && (!it->format->backing)) ||
+	    (!ll->next) ||
+	    (it->format->color.backing.r != r) ||
+	    (it->format->color.backing.g != g) ||
+	    (it->format->color.backing.b != b) ||
+	    (it->format->color.backing.a != a))
+     {
+	if ((it->format->backing) && (!pback))
 	  {
-	     Evas_Object_Textblock_Item *it;
-	     int yoff;
-	     
-	     it = (Evas_Object_Textblock_Item *)ll;
-	     ENFN->context_color_set(output, context,
-				     it->format->color.normal.r,
-				     it->format->color.normal.g,
-				     it->format->color.normal.b,
-				     it->format->color.normal.a);
-	     yoff = ln->baseline;
-	     if (it->format->valign != -1.0)
-	       yoff = (it->format->valign * (double)(ln->h - it->h)) +
-	       it->baseline;
-//	     printf("DRAW: %i,%i [%s]\n", ln->x + it->x, ln->y + ln->baseline, it->text);
-	     ENFN->font_draw(output, context, surface, it->format->font.font,
-			     obj->cur.cache.geometry.x + ln->x + it->x + x,
-			     obj->cur.cache.geometry.y + ln->y + yoff + y,
-			     it->w, it->h, it->w, it->h, it->text);
+	     backx = it->x;
+	     r = it->format->color.backing.r;
+	     g = it->format->color.backing.g;
+	     b = it->format->color.backing.b;
+	     a = it->format->color.backing.a;
+	  }
+	x2 = it->x + it->w;
+	if (!it->format->backing)
+	  {
+	     x2 = it->x;
+	     pback = 0;
+	  }
+	if (x2 > backx)
+	  {
+	     ENFN->context_color_set(output,
+				     context,
+				     (obj->cur.cache.clip.r * r) / 255,
+				     (obj->cur.cache.clip.g * g) / 255,
+				     (obj->cur.cache.clip.b * b) / 255,
+				     (obj->cur.cache.clip.a * a) / 255);
+	     ENFN->rectangle_draw(output,
+				  context,
+				  surface,
+				  obj->cur.cache.geometry.x + ln->x + backx + x,
+				  obj->cur.cache.geometry.y + ln->y + y,
+				  x2 - backx,
+				  ln->h);
+	  }
+	if (it->format->backing) pback = 1;
+	backx = it->x;
+	r = it->format->color.backing.r;
+	g = it->format->color.backing.g;
+	b = it->format->color.backing.b;
+	a = it->format->color.backing.a;
+     }
+   ITEM_WALK_END();
+   
+   /* shadows */
+   ITEM_WALK();
+   if (it->format->style == STYLE_SHADOW)
+     {
+	COLOR_SET(shadow);
+	DRAW_TEXT(1, 1);
+     }
+   else if ((it->format->style == STYLE_OUTLINE_SHADOW) ||
+	    (it->format->style == STYLE_FAR_SHADOW))
+     {
+	COLOR_SET(shadow);
+	DRAW_TEXT(2, 2);
+     }
+   else if ((it->format->style == STYLE_OUTLINE_SOFT_SHADOW) ||
+	    (it->format->style == STYLE_FAR_SOFT_SHADOW))
+     {
+	for (j = 0; j < 5; j++)
+	  {
+	     for (i = 0; i < 5; i++)
+	       {
+		  if (vals[i][j] != 0)
+		    {
+		       COLOR_SET_AMUL(shadow, vals[i][j] * 50);
+		       DRAW_TEXT(i, j);
+		    }
+	       }
 	  }
      }
-     
-/*
-   if (o->engine_data)
+   else if (it->format->style == STYLE_SOFT_SHADOW)
      {
-
+	for (j = 0; j < 5; j++)
+	  {
+	     for (i = 0; i < 5; i++)
+	       {
+		  if (vals[i][j] != 0)
+		    {
+		       COLOR_SET_AMUL(shadow, vals[i][j] * 50);
+		       DRAW_TEXT(i - 1, j - 1);
+		    }
+	       }
+	  }
      }
- */
+   ITEM_WALK_END();
+   
+   /* glows */
+   ITEM_WALK();
+   if (it->format->style == STYLE_GLOW)
+     {
+	for (j = 0; j < 5; j++)
+	  {
+	     for (i = 0; i < 5; i++)
+	       {
+		  if (vals[i][j] != 0)
+		    {
+		       COLOR_SET_AMUL(glow, vals[i][j] * 50);
+		       DRAW_TEXT(i - 2, j - 2);
+		    }
+	       }
+	  }
+	COLOR_SET(glow2);
+	DRAW_TEXT(-1, 0);
+	DRAW_TEXT(1, 0);
+	DRAW_TEXT(0, -1);
+	DRAW_TEXT(0, 1);
+     }
+   ITEM_WALK_END();
+   
+   /* outlines */
+   ITEM_WALK();
+   if ((it->format->style == STYLE_OUTLINE) ||
+       (it->format->style == STYLE_OUTLINE_SHADOW) ||
+       (it->format->style == STYLE_OUTLINE_SOFT_SHADOW))
+     {
+	COLOR_SET(outline);
+	DRAW_TEXT(-1, 0);
+	DRAW_TEXT(1, 0);
+	DRAW_TEXT(0, -1);
+	DRAW_TEXT(0, 1);
+     }
+   ITEM_WALK_END();
+   
+   /* normal text */
+   ITEM_WALK();
+   COLOR_SET(normal);
+   DRAW_TEXT(0, 0);
+   if ((it->format->strikethrough) && (!pstrike) && (ll->next))
+     {
+	pstrike = 1;
+	strikex = it->x;
+	r3 = it->format->color.strikethrough.r;
+	g3 = it->format->color.strikethrough.g;
+	b3 = it->format->color.strikethrough.b;
+	a3 = it->format->color.strikethrough.a;
+     }
+   else if (((pstrike) && (!it->format->strikethrough)) ||
+	    (!ll->next) ||
+	    (it->format->color.strikethrough.r != r3) ||
+	    (it->format->color.strikethrough.g != g3) ||
+	    (it->format->color.strikethrough.b != b3) ||
+	    (it->format->color.strikethrough.a != a3))
+     {
+	if ((it->format->strikethrough) && (!pstrike))
+	  {
+	     strikex = it->x;
+	     r3 = it->format->color.strikethrough.r;
+	     g3 = it->format->color.strikethrough.g;
+	     b3 = it->format->color.strikethrough.b;
+	     a3 = it->format->color.strikethrough.a;
+	  }
+	x2 = it->x + it->w;
+	if (!it->format->strikethrough)
+	  {
+	     x2 = it->x;
+	     pstrike = 0;
+	  }
+	if (x2 > strikex)
+	  {
+	     ENFN->context_color_set(output,
+				     context,
+				     (obj->cur.cache.clip.r * r3) / 255,
+				     (obj->cur.cache.clip.g * g3) / 255,
+				     (obj->cur.cache.clip.b * b3) / 255,
+				     (obj->cur.cache.clip.a * a3) / 255);
+	     ENFN->rectangle_draw(output,
+				  context,
+				  surface,
+				  obj->cur.cache.geometry.x + ln->x + strikex + x,
+				  obj->cur.cache.geometry.y + ln->y + y + (ln->h / 2),
+				  x2 - strikex,
+				  1);
+	  }
+	if (it->format->strikethrough) pstrike = 1;
+	strikex = it->x;
+	r3 = it->format->color.strikethrough.r;
+	g3 = it->format->color.strikethrough.g;
+	b3 = it->format->color.strikethrough.b;
+	a3 = it->format->color.strikethrough.a;
+     }
+   if ((it->format->underline) && (!pline) && (ll->next))
+     {
+	pline = 1;
+	linex = it->x;
+	r = it->format->color.underline.r;
+	g = it->format->color.underline.g;
+	b = it->format->color.underline.b;
+	a = it->format->color.underline.a;
+     }
+   else if (((pline) && (!it->format->underline)) ||
+	    (!ll->next) ||
+	    (it->format->color.underline.r != r) ||
+	    (it->format->color.underline.g != g) ||
+	    (it->format->color.underline.b != b) ||
+	    (it->format->color.underline.a != a))
+     {
+	if ((it->format->underline) && (!pline))
+	  {
+	     linex = it->x;
+	     r = it->format->color.underline.r;
+	     g = it->format->color.underline.g;
+	     b = it->format->color.underline.b;
+	     a = it->format->color.underline.a;
+	  }
+	x2 = it->x + it->w;
+	if (!it->format->underline)
+	  {
+	     x2 = it->x;
+	     pline = 0;
+	  }
+	if (x2 > linex)
+	  {
+	     ENFN->context_color_set(output,
+				     context,
+				     (obj->cur.cache.clip.r * r) / 255,
+				     (obj->cur.cache.clip.g * g) / 255,
+				     (obj->cur.cache.clip.b * b) / 255,
+				     (obj->cur.cache.clip.a * a) / 255);
+	     ENFN->rectangle_draw(output,
+				  context,
+				  surface,
+				  obj->cur.cache.geometry.x + ln->x + linex + x,
+				  obj->cur.cache.geometry.y + ln->y + y + ln->baseline + 1,
+				  x2 - linex,
+				  1);
+	  }
+	if (it->format->underline) pline = 1;
+	linex = it->x;
+	r = it->format->color.underline.r;
+	g = it->format->color.underline.g;
+	b = it->format->color.underline.b;
+	a = it->format->color.underline.a;
+     }
+   if ((it->format->underline2) && (!pline2) && (ll->next))
+     {
+	pline2 = 1;
+	line2x = it->x;
+	r2 = it->format->color.underline2.r;
+	g2 = it->format->color.underline2.g;
+	b2 = it->format->color.underline2.b;
+	a2 = it->format->color.underline2.a;
+     }
+   else if (((pline2) && (!it->format->underline2)) ||
+	    (!ll->next) ||
+	    (it->format->color.underline2.r != r2) ||
+	    (it->format->color.underline2.g != g2) ||
+	    (it->format->color.underline2.b != b2) ||
+	    (it->format->color.underline2.a != a2))
+     {
+	if ((it->format->underline2) && (!pline2))
+	  {
+	     line2x = it->x;
+	     r2 = it->format->color.underline2.r;
+	     g2 = it->format->color.underline2.g;
+	     b2 = it->format->color.underline2.b;
+	     a2 = it->format->color.underline2.a;
+	  }
+	x2 = it->x + it->w;
+	if (!it->format->underline2)
+	  {
+	     x2 = it->x;
+	     pline2 = 0;
+	  }
+	if (x2 > line2x)
+	  {
+	     ENFN->context_color_set(output,
+				     context,
+				     (obj->cur.cache.clip.r * r2) / 255,
+				     (obj->cur.cache.clip.g * g2) / 255,
+				     (obj->cur.cache.clip.b * b2) / 255,
+				     (obj->cur.cache.clip.a * a2) / 255);
+	     ENFN->rectangle_draw(output,
+				  context,
+				  surface,
+				  obj->cur.cache.geometry.x + ln->x + line2x + x,
+				  obj->cur.cache.geometry.y + ln->y + y + ln->baseline + 3,
+				  x2 - line2x,
+				  1);
+	  }
+	if (it->format->underline2) pline2 = 1;
+	line2x = it->x;
+	r2 = it->format->color.underline2.r;
+	g2 = it->format->color.underline2.g;
+	b2 = it->format->color.underline2.b;
+	a2 = it->format->color.underline2.a;
+     }
+   ITEM_WALK_END();
 }
 
 static void
