@@ -1271,9 +1271,16 @@ ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int
 		    ((r - br) * (r - br)) +
 		    ((g - bg) * (g - bg)) +
 		    ((b - bb) * (b - bb));
-		  v = (((d2 * 255) / (d1 + d2)) * 5) / 256;
-		  if (v > dither[x & 0x1][y & 0x1]) v = 1;
-		  else v = 0;
+		  if (d1 + d2)
+		    {
+		       v = (((d2 * 255) / (d1 + d2)) * 5) / 256;
+		       if (v > dither[x & 0x1][y & 0x1]) v = 1;
+		       else v = 0;
+		    }
+		  else
+		    {
+		       v = 0;
+		    }
 		  XPutPixel(xim, x, y, v);
 		  pix++;
 	       }
