@@ -494,6 +494,63 @@ _strbuf_append_n(char *s, char *s2, int n, int *len, int *alloc)
    return s;
 }
 
+static char *
+_strbuf_insert(char *s, char *s2, int pos, int *len, int *alloc)
+{
+   int l2;
+   int tlen;
+   
+   if (!s2) return s;
+   else if (pos < 0) return s;
+   else if (pos > *len) return s;
+   else if (pos == *len) return _strbuf_append(s, s2, len, alloc);
+   l2 = strlen(s2);
+   tlen = *len + l2;
+   if (tlen > *alloc)
+     {
+	char *ts;
+	int talloc;
+	  
+	talloc = ((tlen + 31) >> 5) << 5;
+	ts = realloc(s, talloc + 1);
+	if (!ts) return s;
+	s = ts;
+	*alloc = talloc;
+     }
+   strncpy(s + pos + l2, s + pos, *len - pos);
+   strncpy(s + pos, s2, l2);
+   *len = tlen;
+   s[tlen] = 0;
+   return s;
+}
+
+static char *
+_strbuf_remove(char *s, int p, int p2, int *len, int *alloc)
+{
+/*   
+   int l2;
+   int tlen;
+   
+   tlen = *len + l2;
+   if (tlen > *alloc)
+     {
+	char *ts;
+	int talloc;
+	  
+	talloc = ((tlen + 31) >> 5) << 5;
+	ts = realloc(s, talloc + 1);
+	if (!ts) return s;
+	s = ts;
+	*alloc = talloc;
+     }
+   strncpy(s + pos + l2, s + pos, *len - pos);
+   strncpy(s + pos, s2, l2);
+   *len = tlen;
+   s[tlen] = 0;
+ */
+   return s;
+}
+
 static void
 _nodes_clear(Evas_Object *obj)
 {
@@ -1101,10 +1158,7 @@ evas_textblock2_cursor_node_last(Evas_Textblock_Cursor *cur)
    if (o->nodes)
      {
 	cur->node = (Evas_Object_Textblock_Node *)(((Evas_Object_List *)(o->nodes))->last);
-	if (cur->node->type == NODE_TEXT)
-	  cur->pos = cur->node->len - 1;
-	else
-	  cur->pos = 0;
+	evas_textblock2_cursor_char_last(cur);
      }
    else
      {
@@ -1147,12 +1201,63 @@ evas_textblock2_cursor_node_prev(Evas_Textblock_Cursor *cur)
    return 0;
 }
 
+Evas_Bool
+evas_textblock2_cursor_char_next(Evas_Textblock_Cursor *cur)
+{
+   Evas_Object_Textblock *o;
+   int index, tindex, ch;
+   
+   if (!cur) return 0;
+   o = (Evas_Object_Textblock *)(cur->obj->object_data);
+   if (!cur->node) return 0;
+   if (cur->node->type == NODE_FORMAT) return 0;
+   index = cur->pos;
+   ch = evas_common_font_utf8_get_next((unsigned char *)(cur->node->text), &index);
+   if ((ch == 0) || (index < 0)) return 0;
+   tindex = index;
+   cur->pos = index;
+   ch = evas_common_font_utf8_get_next((unsigned char *)(cur->node->text), &tindex);
+   if ((ch == 0) || (tindex < 0)) return 0;
+   return 1;
+}
+
+Evas_Bool
+evas_textblock2_cursor_char_prev(Evas_Textblock_Cursor *cur)
+{
+   return 0;
+}
+
+void
+evas_textblock2_cursor_char_first(Evas_Textblock_Cursor *cur)
+{
+   if (!cur) return;
+   cur->pos = 0;
+}
+
+void
+evas_textblock2_cursor_char_last(Evas_Textblock_Cursor *cur)
+{
+   int index;
+   
+   if (!cur) return;
+   if (!cur->node) return;
+   if (cur->node->type == NODE_FORMAT)
+     {
+	cur->pos = 0;
+	return;
+     }
+   index = evas_common_font_utf8_get_last((unsigned char *)cur->node->text, cur->node->len);
+   if (index < 0) cur->pos = 0;
+   cur->pos = index;
+}
+
 /* text controls */
 void
 evas_textblock2_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text)
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Node *n;
+   int index, ch;
    
    if (!cur) return;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
@@ -1163,9 +1268,19 @@ evas_textblock2_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text)
 	n->type = NODE_TEXT;
 	o->nodes = evas_object_list_append(o->nodes, n);
      }
-   n->text = _strbuf_append(n->text, (char *)text, &(n->len), &(n->alloc));
    cur->node = n;
-   cur->pos = n->len - 1;
+   index = cur->pos;
+   if (n->text)
+     {
+	ch = evas_common_font_utf8_get_next((unsigned char *)(n->text), &index);
+	if (ch != 0)
+	  cur->pos = index;
+     }
+   if (cur->pos >= (n->len - 1))
+     n->text = _strbuf_append(n->text, (char *)text, &(n->len), &(n->alloc));
+   else
+     n->text = _strbuf_insert(n->text, (char *)text, cur->pos, &(n->len), &(n->alloc));
+   cur->pos += strlen(text);
    if (o->lines)
      {
 	_lines_clear(cur->obj, o->lines);

@@ -486,6 +486,10 @@ extern "C" {
    EAPI void                         evas_textblock2_cursor_node_last(Evas_Textblock_Cursor *cur);
    EAPI Evas_Bool                    evas_textblock2_cursor_node_next(Evas_Textblock_Cursor *cur);
    EAPI Evas_Bool                    evas_textblock2_cursor_node_prev(Evas_Textblock_Cursor *cur);
+   EAPI Evas_Bool                    evas_textblock2_cursor_char_next(Evas_Textblock_Cursor *cur);
+   EAPI Evas_Bool                    evas_textblock2_cursor_char_prev(Evas_Textblock_Cursor *cur);
+   EAPI void                         evas_textblock2_cursor_char_first(Evas_Textblock_Cursor *cur);
+   EAPI void                         evas_textblock2_cursor_char_last(Evas_Textblock_Cursor *cur);
 
    EAPI void                         evas_textblock2_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text);
    EAPI const char                  *evas_textblock2_cursor_node_text_get(Evas_Textblock_Cursor *cur);
