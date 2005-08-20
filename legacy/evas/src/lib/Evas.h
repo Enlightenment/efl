@@ -497,10 +497,13 @@ extern "C" {
    EAPI void                         evas_textblock2_cursor_format_append(Evas_Textblock_Cursor *cur, const char *format);
    EAPI const char                  *evas_textblock2_cursor_node_format_get(Evas_Textblock_Cursor *cur);
        
+   EAPI Evas_Bool                    evas_textblock2_cursor_char_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
+   EAPI int                          evas_textblock2_cursor_line_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
+     
+   EAPI Evas_Bool                    evas_object_textblock2_line_number_geometry_get(Evas_Object *obj, int line, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
    EAPI void                         evas_object_textblock2_clear(Evas_Object *obj);
    EAPI void                         evas_object_textblock2_size_requested_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
 
-   
    
    
    

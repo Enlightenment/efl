@@ -876,506 +876,6 @@ _append_text_run(Evas_Object_Textblock *o, char *s, char *p)
      }
 }
 
-void
-evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
-{
-   TB_HEAD();
-   if (o->markup_text)
-     {
-	free(o->markup_text);
-	o->markup_text = NULL;
-     }
-   _nodes_clear(obj);
-   if (o->lines)
-     {
-	_lines_clear(obj, o->lines);
-	o->lines = NULL;
-     }
-   o->changed = 1;
-   evas_object_change(obj);
-   if (!o->style)
-     {
-        o->markup_text = strdup(text);
-	return;
-     }
-   if (text)
-     {
-	char *s, *p;
-	char *tag_start, *tag_end, *esc_start, *esc_end;
-	
-	tag_start = tag_end = esc_start = esc_end = NULL;
-	p = (char *)text;
-	s = p;
-	for (;;)
-	  {
-	     if ((*p == 0) || 
-		 (tag_end) || (esc_end) || 
-		 (tag_start) || (esc_start))
-	       {
-		  if (tag_end)
-		    {
-		       char *ttag, *match;
-		       
-		       ttag = malloc(tag_end - tag_start);
-		       if (ttag)
-			 {
-			    strncpy(ttag, tag_start + 1, tag_end - tag_start - 1);
-			    ttag[tag_end - tag_start - 1] = 0;
-			    match = _style_match_tag(o->style, ttag);
-			    if (match)
-			      evas_textblock2_cursor_format_append(o->cursor, match);
-			    else
-			      {
-				 if (ttag[0] == '/')
-				   evas_textblock2_cursor_format_append(o->cursor, "-");
-				 else
-				   {
-				      char *ttag2;
-				      
-				      ttag2 = malloc(strlen(ttag) + 2 + 1);
-				      if (ttag2)
-					{
-					   strcpy(ttag2, "+ ");
-					   strcat(ttag2, ttag);
-					   evas_textblock2_cursor_format_append(o->cursor, ttag2);
-					   free(ttag2);
-					}
-				   }
-			      }
-			    free(ttag);
-			 }
-		       tag_start = tag_end = NULL;
-		    }
-		  else if (esc_end)
-		    {
-		       int i;
-		       
-		       for (i = 0; i < (sizeof(_escapes) / sizeof(char *)); i += 2)
-			 {
-			    if (!strncmp(_escapes[i], esc_start, 
-					 esc_end - esc_start + 1))
-			      {
-				 evas_textblock2_cursor_text_append(o->cursor, _escapes[i + 1]);
-				 break;
-			      }
-			 }
-		       esc_start = esc_end = NULL;
-		    }
-		  if (*p == 0)
-		    break;
-	       }
-	     if (*p == '<')
-	       {
-		  if (!esc_start)
-		    {
-		       tag_start = p;
-		       tag_end = NULL;
-		       _append_text_run(o, s, p);
-		       s = NULL;
-		    }
-	       }
-	     else if (*p == '>')
-	       {
-		  if (tag_start)
-		    {
-		       tag_end = p;
-		       s = p + 1;
-		    }
-	       }
-	     else if (*p == '&')
-	       {
-		  if (!tag_start)
-		    {
-		       esc_start = p;
-		       esc_end = NULL;
-		       _append_text_run(o, s, p);
-		       s = NULL;
-		    }
-	       }
-	     else if (*p == ';')
-	       {
-		  if (esc_start)
-		    {
-		       esc_end = p;
-		       s = p + 1;
-		    }
-	       }
-	     p++;
-	  }
-	o->markup_text = strdup(text);
-     }
-}
-
-const char *
-evas_object_textblock2_text_markup_get(Evas_Object *obj)
-{
-   TB_HEAD_RETURN(NULL);
-   if (!o->markup_text)
-     {
-	Evas_Textblock_Cursor *cur;
-	int slen = 0;
-	int salloc = 0;
-	
-	cur = evas_object_textblock2_cursor_new(obj);
-	evas_textblock2_cursor_node_first(cur);
-	do
-	  {
-	     char *s, *p, *ps;
-	     
-	     s = (char *)evas_textblock2_cursor_node_text_get(cur);
-	     if (s)
-	       {
-		  p = s;
-		  ps = p;
-		  for (;;)
-		    {
-		       if (*p == 0)
-			 {
-			    o->markup_text = _strbuf_append(o->markup_text,
-							    ps,
-							    &slen, &salloc);
-			    break;
-			 }
-		       else if (*p == '<')
-			 {
-			    o->markup_text = _strbuf_append_n(o->markup_text,
-							      ps, p - ps,
-							      &slen, &salloc);
-			    o->markup_text = _strbuf_append(o->markup_text,
-							    "&lt;",
-							    &slen, &salloc);
-			    ps = p + 1;
-			 }
-		       else if (*p == '>')
-			 {
-			    o->markup_text = _strbuf_append_n(o->markup_text,
-							      ps, p - ps,
-							      &slen, &salloc);
-			    o->markup_text = _strbuf_append(o->markup_text,
-							    "&gt;",
-							    &slen, &salloc);
-			    ps = p + 1;
-			 }
-		       else if (*p == '&')
-			 {
-			    o->markup_text = _strbuf_append_n(o->markup_text,
-							      ps, p - ps,
-							      &slen, &salloc);
-			    o->markup_text = _strbuf_append(o->markup_text,
-							    "&amp;",
-							    &slen, &salloc);
-			    ps = p + 1;
-			 }
-		       /* FIXME: learn how to do all the other escapes */
-		       /* FIXME: strip extra whitespace ala HTML */
-		       p++;
-		    }
-	       }
-	     else
-	       {
-		  s = (char *)evas_textblock2_cursor_node_format_get(cur);
-		  if (s)
-		    {
-		       char *stag;
-		       
-		       o->markup_text = _strbuf_append(o->markup_text,
-						       "<",
-						       &slen, &salloc);
-		       stag = _style_match_replace(o->style, s);
-		       if (stag)
-			 o->markup_text = _strbuf_append(o->markup_text,
-							 stag,
-							 &slen, &salloc);
-		       else
-			 o->markup_text = _strbuf_append(o->markup_text,
-							 s,
-							 &slen, &salloc);
-		       o->markup_text = _strbuf_append(o->markup_text,
-						       ">",
-						       &slen, &salloc);
-		    }
-	       }
-	     
-	  }
-	while (evas_textblock2_cursor_node_next(cur));
-	evas_textblock2_cursor_free(cur);
-     }
-   return o->markup_text;
-}
-
-/* cursors */
-const Evas_Textblock_Cursor *
-evas_object_textblock2_cursor_get(Evas_Object *obj)
-{
-   TB_HEAD_RETURN(NULL);
-   return o->cursor;
-}
-
-Evas_Textblock_Cursor *
-evas_object_textblock2_cursor_new(Evas_Object *obj)
-{
-   Evas_Textblock_Cursor *cur;
-   
-   TB_HEAD_RETURN(NULL);
-   cur = calloc(1, sizeof(Evas_Textblock_Cursor));
-   cur->obj = obj;
-   cur->node = o->nodes;
-   cur->pos = 0;
-   o->cursors = evas_list_append(o->cursors, cur);
-   return cur;
-}
-
-void
-evas_textblock2_cursor_free(Evas_Textblock_Cursor *cur)
-{
-   Evas_Object_Textblock *o;
-
-   if (!cur) return;
-   o = (Evas_Object_Textblock *)(cur->obj->object_data);
-   if (cur == o->cursor) return;
-   o->cursors = evas_list_remove(o->cursors, cur);
-   free(cur);
-}
-
-void
-evas_textblock2_cursor_node_first(Evas_Textblock_Cursor *cur)
-{
-   Evas_Object_Textblock *o;
-   
-   if (!cur) return;
-   o = (Evas_Object_Textblock *)(cur->obj->object_data);
-   cur->node = o->nodes;
-   cur->pos = 0;
-}
-
-void
-evas_textblock2_cursor_node_last(Evas_Textblock_Cursor *cur)
-{
-   Evas_Object_Textblock *o;
-   
-   if (!cur) return;
-   o = (Evas_Object_Textblock *)(cur->obj->object_data);
-   if (o->nodes)
-     {
-	cur->node = (Evas_Object_Textblock_Node *)(((Evas_Object_List *)(o->nodes))->last);
-	evas_textblock2_cursor_char_last(cur);
-     }
-   else
-     {
-	cur->node = NULL;
-	cur->pos = 0;
-     }
-}
-
-Evas_Bool
-evas_textblock2_cursor_node_next(Evas_Textblock_Cursor *cur)
-{
-   Evas_Object_Textblock *o;
-   
-   if (!cur) return 0;
-   o = (Evas_Object_Textblock *)(cur->obj->object_data);
-   if (!cur->node) return 0;
-   if (((Evas_Object_List *)(o->nodes))->next)
-     {
-	cur->node = (Evas_Object_Textblock_Node *)(((Evas_Object_List *)(o->nodes))->next);
-	cur->pos = 0;
-	return 1;
-     }
-   return 0;
-}
-
-Evas_Bool
-evas_textblock2_cursor_node_prev(Evas_Textblock_Cursor *cur)
-{
-   Evas_Object_Textblock *o;
-   
-   if (!cur) return 0;
-   o = (Evas_Object_Textblock *)(cur->obj->object_data);
-   if (!cur->node) return 0;
-   if (((Evas_Object_List *)(o->nodes))->prev)
-     {
-	cur->node = (Evas_Object_Textblock_Node *)(((Evas_Object_List *)(o->nodes))->prev);
-	cur->pos = 0;
-	return 1;
-     }
-   return 0;
-}
-
-Evas_Bool
-evas_textblock2_cursor_char_next(Evas_Textblock_Cursor *cur)
-{
-   Evas_Object_Textblock *o;
-   int index, tindex, ch;
-   
-   if (!cur) return 0;
-   o = (Evas_Object_Textblock *)(cur->obj->object_data);
-   if (!cur->node) return 0;
-   if (cur->node->type == NODE_FORMAT) return 0;
-   index = cur->pos;
-   ch = evas_common_font_utf8_get_next((unsigned char *)(cur->node->text), &index);
-   if ((ch == 0) || (index < 0)) return 0;
-   tindex = index;
-   cur->pos = index;
-   ch = evas_common_font_utf8_get_next((unsigned char *)(cur->node->text), &tindex);
-   if ((ch == 0) || (tindex < 0)) return 0;
-   return 1;
-}
-
-Evas_Bool
-evas_textblock2_cursor_char_prev(Evas_Textblock_Cursor *cur)
-{
-   return 0;
-}
-
-void
-evas_textblock2_cursor_char_first(Evas_Textblock_Cursor *cur)
-{
-   if (!cur) return;
-   cur->pos = 0;
-}
-
-void
-evas_textblock2_cursor_char_last(Evas_Textblock_Cursor *cur)
-{
-   int index;
-   
-   if (!cur) return;
-   if (!cur->node) return;
-   if (cur->node->type == NODE_FORMAT)
-     {
-	cur->pos = 0;
-	return;
-     }
-   index = evas_common_font_utf8_get_last((unsigned char *)cur->node->text, cur->node->len);
-   if (index < 0) cur->pos = 0;
-   cur->pos = index;
-}
-
-/* text controls */
-void
-evas_textblock2_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text)
-{
-   Evas_Object_Textblock *o;
-   Evas_Object_Textblock_Node *n;
-   int index, ch;
-   
-   if (!cur) return;
-   o = (Evas_Object_Textblock *)(cur->obj->object_data);
-   n = cur->node;
-   if ((!n) || (n->type == NODE_FORMAT))
-     {
-	n = calloc(1, sizeof(Evas_Object_Textblock_Node));
-	n->type = NODE_TEXT;
-	o->nodes = evas_object_list_append(o->nodes, n);
-     }
-   cur->node = n;
-   index = cur->pos;
-   if (n->text)
-     {
-	ch = evas_common_font_utf8_get_next((unsigned char *)(n->text), &index);
-	if (ch != 0)
-	  cur->pos = index;
-     }
-   if (cur->pos >= (n->len - 1))
-     n->text = _strbuf_append(n->text, (char *)text, &(n->len), &(n->alloc));
-   else
-     n->text = _strbuf_insert(n->text, (char *)text, cur->pos, &(n->len), &(n->alloc));
-   cur->pos += strlen(text);
-   if (o->lines)
-     {
-	_lines_clear(cur->obj, o->lines);
-	o->lines = NULL;
-     }
-   o->changed = 1;
-   evas_object_change(cur->obj);
-}
-
-const char *
-evas_textblock2_cursor_node_text_get(Evas_Textblock_Cursor *cur)
-{
-   if (!cur) return NULL;
-   if (!cur->node) return NULL;
-   if (cur->node->type == NODE_TEXT)
-     {
-	return cur->node->text;
-     }
-   return NULL;
-}
-
-/* formatting controls */
-void
-evas_textblock2_cursor_format_append(Evas_Textblock_Cursor *cur, const char *format)
-{
-   Evas_Object_Textblock *o;
-   Evas_Object_Textblock_Node *n;
-   
-   if (!cur) return;
-   o = (Evas_Object_Textblock *)(cur->obj->object_data);
-   n = calloc(1, sizeof(Evas_Object_Textblock_Node));
-   n->type = NODE_FORMAT;
-   o->nodes = evas_object_list_append(o->nodes, n);
-   n->text = _strbuf_append(n->text, (char *)format, &(n->len), &(n->alloc));
-   cur->node = n;
-   cur->pos = 0;
-   if (o->lines)
-     {
-	_lines_clear(cur->obj, o->lines);
-	o->lines = NULL;
-     }
-   o->changed = 1;
-   evas_object_change(cur->obj);
-}
-
-const char *
-evas_textblock2_cursor_node_format_get(Evas_Textblock_Cursor *cur)
-{
-   if (!cur) return NULL;
-   if (!cur->node) return NULL;
-   if (cur->node->type == NODE_FORMAT)
-     {
-	return cur->node->text;
-     }
-   return NULL;
-}
-
-/* general controls */
-void
-evas_object_textblock2_clear(Evas_Object *obj)
-{
-   Evas_List *l;
-   
-   TB_HEAD();
-   _nodes_clear(obj);
-   o->cursor->node = NULL;
-   o->cursor->pos = 0;
-   for (l = o->cursors; l; l = l->next)
-     {
-	Evas_Textblock_Cursor *cur;
-	
-	cur = (Evas_Textblock_Cursor *)l->data;
-	cur->node = NULL;
-	cur->pos = 0;
-     }
-   if (o->markup_text)
-     {
-	free(o->markup_text);
-	o->markup_text = NULL;
-     }
-   if (o->lines)
-     {
-	_lines_clear(obj, o->lines);
-	o->lines = NULL;
-     }
-   o->changed = 1;
-   evas_object_change(obj);
-}
-
-void
-evas_object_textblock2_size_requested_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
-{
-   TB_HEAD();
-   /* FIXME */
-}
 
 static int
 _hex_string_get(char ch)
@@ -2042,7 +1542,7 @@ _layout_strip_trailing_whitespace(Ctxt *c, Evas_Object_Textblock_Format *fmt, Ev
 	     evas_common_font_utf8_get_next((unsigned char *)(it->text), &tp);
 	     _layout_item_text_cutoff(c, it, tp);
 	     adv = c->ENFN->font_h_advance_get(c->ENDT, it->format->font.font, it->text);
-	     c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, it->text, &tw, &th);
+	     c->ENFN->font_string_size_get(c->ENDT, it->format->font.font, it->text, &tw, &th);
 	     it->w = tw;
 	     it->h = th;
 	     c->x = it->x + adv;
@@ -2575,7 +2075,655 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
    if (c->lines) _lines_clear(obj, c->lines);
 }
 
+static void
+_relayout(Evas_Object *obj)
+{
+   Evas_Object_Textblock *o;
+   Evas_Object_Textblock_Line *lines;
+   
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   lines = o->lines;
+   o->lines = NULL;
+   _layout(obj, 
+	   0,
+	   obj->cur.geometry.w, obj->cur.geometry.h,
+	   NULL, NULL);
+   if (lines) _lines_clear(obj, lines);
+   o->last_w = obj->cur.geometry.w;
+   o->changed = 0;
+}
 
+void
+evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
+{
+   TB_HEAD();
+   if (o->markup_text)
+     {
+	free(o->markup_text);
+	o->markup_text = NULL;
+     }
+   _nodes_clear(obj);
+   if (o->lines)
+     {
+	_lines_clear(obj, o->lines);
+	o->lines = NULL;
+     }
+   o->changed = 1;
+   evas_object_change(obj);
+   if (!o->style)
+     {
+        o->markup_text = strdup(text);
+	return;
+     }
+   if (text)
+     {
+	char *s, *p;
+	char *tag_start, *tag_end, *esc_start, *esc_end;
+	
+	tag_start = tag_end = esc_start = esc_end = NULL;
+	p = (char *)text;
+	s = p;
+	for (;;)
+	  {
+	     if ((*p == 0) || 
+		 (tag_end) || (esc_end) || 
+		 (tag_start) || (esc_start))
+	       {
+		  if (tag_end)
+		    {
+		       char *ttag, *match;
+		       
+		       ttag = malloc(tag_end - tag_start);
+		       if (ttag)
+			 {
+			    strncpy(ttag, tag_start + 1, tag_end - tag_start - 1);
+			    ttag[tag_end - tag_start - 1] = 0;
+			    match = _style_match_tag(o->style, ttag);
+			    if (match)
+			      evas_textblock2_cursor_format_append(o->cursor, match);
+			    else
+			      {
+				 if (ttag[0] == '/')
+				   evas_textblock2_cursor_format_append(o->cursor, "-");
+				 else
+				   {
+				      char *ttag2;
+				      
+				      ttag2 = malloc(strlen(ttag) + 2 + 1);
+				      if (ttag2)
+					{
+					   strcpy(ttag2, "+ ");
+					   strcat(ttag2, ttag);
+					   evas_textblock2_cursor_format_append(o->cursor, ttag2);
+					   free(ttag2);
+					}
+				   }
+			      }
+			    free(ttag);
+			 }
+		       tag_start = tag_end = NULL;
+		    }
+		  else if (esc_end)
+		    {
+		       int i;
+		       
+		       for (i = 0; i < (sizeof(_escapes) / sizeof(char *)); i += 2)
+			 {
+			    if (!strncmp(_escapes[i], esc_start, 
+					 esc_end - esc_start + 1))
+			      {
+				 evas_textblock2_cursor_text_append(o->cursor, _escapes[i + 1]);
+				 break;
+			      }
+			 }
+		       esc_start = esc_end = NULL;
+		    }
+		  if (*p == 0)
+		    break;
+	       }
+	     if (*p == '<')
+	       {
+		  if (!esc_start)
+		    {
+		       tag_start = p;
+		       tag_end = NULL;
+		       _append_text_run(o, s, p);
+		       s = NULL;
+		    }
+	       }
+	     else if (*p == '>')
+	       {
+		  if (tag_start)
+		    {
+		       tag_end = p;
+		       s = p + 1;
+		    }
+	       }
+	     else if (*p == '&')
+	       {
+		  if (!tag_start)
+		    {
+		       esc_start = p;
+		       esc_end = NULL;
+		       _append_text_run(o, s, p);
+		       s = NULL;
+		    }
+	       }
+	     else if (*p == ';')
+	       {
+		  if (esc_start)
+		    {
+		       esc_end = p;
+		       s = p + 1;
+		    }
+	       }
+	     p++;
+	  }
+	o->markup_text = strdup(text);
+     }
+}
+
+const char *
+evas_object_textblock2_text_markup_get(Evas_Object *obj)
+{
+   TB_HEAD_RETURN(NULL);
+   if (!o->markup_text)
+     {
+	Evas_Textblock_Cursor *cur;
+	int slen = 0;
+	int salloc = 0;
+	
+	cur = evas_object_textblock2_cursor_new(obj);
+	evas_textblock2_cursor_node_first(cur);
+	do
+	  {
+	     char *s, *p, *ps;
+	     
+	     s = (char *)evas_textblock2_cursor_node_text_get(cur);
+	     if (s)
+	       {
+		  p = s;
+		  ps = p;
+		  for (;;)
+		    {
+		       if (*p == 0)
+			 {
+			    o->markup_text = _strbuf_append(o->markup_text,
+							    ps,
+							    &slen, &salloc);
+			    break;
+			 }
+		       else if (*p == '<')
+			 {
+			    o->markup_text = _strbuf_append_n(o->markup_text,
+							      ps, p - ps,
+							      &slen, &salloc);
+			    o->markup_text = _strbuf_append(o->markup_text,
+							    "&lt;",
+							    &slen, &salloc);
+			    ps = p + 1;
+			 }
+		       else if (*p == '>')
+			 {
+			    o->markup_text = _strbuf_append_n(o->markup_text,
+							      ps, p - ps,
+							      &slen, &salloc);
+			    o->markup_text = _strbuf_append(o->markup_text,
+							    "&gt;",
+							    &slen, &salloc);
+			    ps = p + 1;
+			 }
+		       else if (*p == '&')
+			 {
+			    o->markup_text = _strbuf_append_n(o->markup_text,
+							      ps, p - ps,
+							      &slen, &salloc);
+			    o->markup_text = _strbuf_append(o->markup_text,
+							    "&amp;",
+							    &slen, &salloc);
+			    ps = p + 1;
+			 }
+		       /* FIXME: learn how to do all the other escapes */
+		       /* FIXME: strip extra whitespace ala HTML */
+		       p++;
+		    }
+	       }
+	     else
+	       {
+		  s = (char *)evas_textblock2_cursor_node_format_get(cur);
+		  if (s)
+		    {
+		       char *stag;
+		       
+		       o->markup_text = _strbuf_append(o->markup_text,
+						       "<",
+						       &slen, &salloc);
+		       stag = _style_match_replace(o->style, s);
+		       if (stag)
+			 o->markup_text = _strbuf_append(o->markup_text,
+							 stag,
+							 &slen, &salloc);
+		       else
+			 o->markup_text = _strbuf_append(o->markup_text,
+							 s,
+							 &slen, &salloc);
+		       o->markup_text = _strbuf_append(o->markup_text,
+						       ">",
+						       &slen, &salloc);
+		    }
+	       }
+	     
+	  }
+	while (evas_textblock2_cursor_node_next(cur));
+	evas_textblock2_cursor_free(cur);
+     }
+   return o->markup_text;
+}
+
+/* cursors */
+const Evas_Textblock_Cursor *
+evas_object_textblock2_cursor_get(Evas_Object *obj)
+{
+   TB_HEAD_RETURN(NULL);
+   return o->cursor;
+}
+
+Evas_Textblock_Cursor *
+evas_object_textblock2_cursor_new(Evas_Object *obj)
+{
+   Evas_Textblock_Cursor *cur;
+   
+   TB_HEAD_RETURN(NULL);
+   cur = calloc(1, sizeof(Evas_Textblock_Cursor));
+   cur->obj = obj;
+   cur->node = o->nodes;
+   cur->pos = 0;
+   o->cursors = evas_list_append(o->cursors, cur);
+   return cur;
+}
+
+void
+evas_textblock2_cursor_free(Evas_Textblock_Cursor *cur)
+{
+   Evas_Object_Textblock *o;
+
+   if (!cur) return;
+   o = (Evas_Object_Textblock *)(cur->obj->object_data);
+   if (cur == o->cursor) return;
+   o->cursors = evas_list_remove(o->cursors, cur);
+   free(cur);
+}
+
+void
+evas_textblock2_cursor_node_first(Evas_Textblock_Cursor *cur)
+{
+   Evas_Object_Textblock *o;
+   
+   if (!cur) return;
+   o = (Evas_Object_Textblock *)(cur->obj->object_data);
+   cur->node = o->nodes;
+   cur->pos = 0;
+}
+
+void
+evas_textblock2_cursor_node_last(Evas_Textblock_Cursor *cur)
+{
+   Evas_Object_Textblock *o;
+   
+   if (!cur) return;
+   o = (Evas_Object_Textblock *)(cur->obj->object_data);
+   if (o->nodes)
+     {
+	cur->node = (Evas_Object_Textblock_Node *)(((Evas_Object_List *)(o->nodes))->last);
+	evas_textblock2_cursor_char_last(cur);
+     }
+   else
+     {
+	cur->node = NULL;
+	cur->pos = 0;
+     }
+}
+
+Evas_Bool
+evas_textblock2_cursor_node_next(Evas_Textblock_Cursor *cur)
+{
+   Evas_Object_Textblock *o;
+   
+   if (!cur) return 0;
+   o = (Evas_Object_Textblock *)(cur->obj->object_data);
+   if (!cur->node) return 0;
+   if (((Evas_Object_List *)(cur->node))->next)
+     {
+	cur->node = (Evas_Object_Textblock_Node *)(((Evas_Object_List *)(cur->node))->next);
+	cur->pos = 0;
+	return 1;
+     }
+   return 0;
+}
+
+Evas_Bool
+evas_textblock2_cursor_node_prev(Evas_Textblock_Cursor *cur)
+{
+   Evas_Object_Textblock *o;
+   
+   if (!cur) return 0;
+   o = (Evas_Object_Textblock *)(cur->obj->object_data);
+   if (!cur->node) return 0;
+   if (((Evas_Object_List *)(cur->node))->prev)
+     {
+	cur->node = (Evas_Object_Textblock_Node *)(((Evas_Object_List *)(cur->node))->prev);
+	evas_textblock2_cursor_char_last(cur);
+	return 1;
+     }
+   return 0;
+}
+
+Evas_Bool
+evas_textblock2_cursor_char_next(Evas_Textblock_Cursor *cur)
+{
+   Evas_Object_Textblock *o;
+   int index, tindex, ch;
+   
+   if (!cur) return 0;
+   o = (Evas_Object_Textblock *)(cur->obj->object_data);
+   if (!cur->node) return 0;
+   if (cur->node->type == NODE_FORMAT) return 0;
+   index = cur->pos;
+   ch = evas_common_font_utf8_get_next((unsigned char *)(cur->node->text), &index);
+   if ((ch == 0) || (index < 0)) return 0;
+   if (cur->node->text[index] == 0) return 0;
+   tindex = index;
+   cur->pos = index;
+   return 1;
+}
+
+Evas_Bool
+evas_textblock2_cursor_char_prev(Evas_Textblock_Cursor *cur)
+{
+   Evas_Object_Textblock *o;
+   int index, ch;
+   
+   if (!cur) return 0;
+   o = (Evas_Object_Textblock *)(cur->obj->object_data);
+   if (!cur->node) return 0;
+   if (cur->node->type == NODE_FORMAT) return 0;
+   index = cur->pos;
+   ch = evas_common_font_utf8_get_prev((unsigned char *)(cur->node->text), &index);
+   if ((ch == 0) || (index < 0)) return 0;
+   cur->pos = index;
+   return 1;
+}
+
+void
+evas_textblock2_cursor_char_first(Evas_Textblock_Cursor *cur)
+{
+   if (!cur) return;
+   cur->pos = 0;
+}
+
+void
+evas_textblock2_cursor_char_last(Evas_Textblock_Cursor *cur)
+{
+   int index;
+   
+   if (!cur) return;
+   if (!cur->node) return;
+   if (cur->node->type == NODE_FORMAT)
+     {
+	cur->pos = 0;
+	return;
+     }
+   index = evas_common_font_utf8_get_last((unsigned char *)cur->node->text, cur->node->len);
+   if (index < 0) cur->pos = 0;
+   cur->pos = index;
+}
+
+/* text controls */
+void
+evas_textblock2_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text)
+{
+   Evas_Object_Textblock *o;
+   Evas_Object_Textblock_Node *n;
+   int index, ch;
+   
+   if (!cur) return;
+   o = (Evas_Object_Textblock *)(cur->obj->object_data);
+   n = cur->node;
+   if ((!n) || (n->type == NODE_FORMAT))
+     {
+	n = calloc(1, sizeof(Evas_Object_Textblock_Node));
+	n->type = NODE_TEXT;
+	o->nodes = evas_object_list_append(o->nodes, n);
+     }
+   cur->node = n;
+   index = cur->pos;
+   if (n->text)
+     {
+	ch = evas_common_font_utf8_get_next((unsigned char *)(n->text), &index);
+	if (ch != 0)
+	  cur->pos = index;
+     }
+   if (cur->pos >= (n->len - 1))
+     n->text = _strbuf_append(n->text, (char *)text, &(n->len), &(n->alloc));
+   else
+     n->text = _strbuf_insert(n->text, (char *)text, cur->pos, &(n->len), &(n->alloc));
+   cur->pos += strlen(text);
+   if (o->lines)
+     {
+	_lines_clear(cur->obj, o->lines);
+	o->lines = NULL;
+     }
+   o->changed = 1;
+   evas_object_change(cur->obj);
+}
+
+const char *
+evas_textblock2_cursor_node_text_get(Evas_Textblock_Cursor *cur)
+{
+   if (!cur) return NULL;
+   if (!cur->node) return NULL;
+   if (cur->node->type == NODE_TEXT)
+     {
+	return cur->node->text;
+     }
+   return NULL;
+}
+
+/* formatting controls */
+void
+evas_textblock2_cursor_format_append(Evas_Textblock_Cursor *cur, const char *format)
+{
+   Evas_Object_Textblock *o;
+   Evas_Object_Textblock_Node *n;
+   
+   if (!cur) return;
+   o = (Evas_Object_Textblock *)(cur->obj->object_data);
+   n = calloc(1, sizeof(Evas_Object_Textblock_Node));
+   n->type = NODE_FORMAT;
+   o->nodes = evas_object_list_append(o->nodes, n);
+   n->text = _strbuf_append(n->text, (char *)format, &(n->len), &(n->alloc));
+   cur->node = n;
+   cur->pos = 0;
+   if (o->lines)
+     {
+	_lines_clear(cur->obj, o->lines);
+	o->lines = NULL;
+     }
+   o->changed = 1;
+   evas_object_change(cur->obj);
+}
+
+const char *
+evas_textblock2_cursor_node_format_get(Evas_Textblock_Cursor *cur)
+{
+   if (!cur) return NULL;
+   if (!cur->node) return NULL;
+   if (cur->node->type == NODE_FORMAT)
+     {
+	return cur->node->text;
+     }
+   return NULL;
+}
+
+static void
+_find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, int pos, Evas_Object_Textblock_Line **lnr, Evas_Object_Textblock_Item **itr)
+{
+   Evas_Object_List *l, *ll;
+   Evas_Object_Textblock *o;
+   
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   for (l = (Evas_Object_List *)o->lines; l; l = l->next)
+     {
+        Evas_Object_Textblock_Line *ln;
+
+        ln = (Evas_Object_Textblock_Line *)l;
+	for (ll = (Evas_Object_List *)ln->items; ll; ll = ll->next)
+	  {
+	     Evas_Object_Textblock_Item *it;
+
+	     it = (Evas_Object_Textblock_Item *)ll;
+	     if (it->source_node == n)
+	       {
+		  if ((it->source_pos + strlen(it->text)) > pos)
+		    {
+		       *lnr = ln;
+		       *itr = it;
+		       return;
+		    }
+	       }
+	  }
+     }
+}
+
+Evas_Bool
+evas_textblock2_cursor_char_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+{
+   Evas_Object_Textblock *o;
+   Evas_Object_Textblock_Line *ln = NULL;
+   Evas_Object_Textblock_Item *it = NULL;
+   int x, y, w, h;
+   int pos, ret;
+   
+   if (!cur) return 0;
+   if (!cur->node) return 0;
+   if (cur->node->type == NODE_FORMAT) return 0;
+   o = (Evas_Object_Textblock *)(cur->obj->object_data);
+   if (!o->lines) _relayout(cur->obj);
+   _find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln, &it);
+   if ((!ln) || (!it)) return 0;
+   pos = cur->pos - it->source_pos;
+   ret = cur->ENFN->font_char_coords_get(cur->ENDT, it->format->font.font,
+					 it->text,
+					 pos,
+					 &x, &y, &w, &h);
+   if (ret <= 0) return 0;
+   x = ln->x + it->x - it->inset + x;
+   y = ln->y;
+   h = ln->h;
+   if (cx) *cx = x;
+   if (cy) *cy = y;
+   if (cw) *cw = w;
+   if (ch) *ch = h;
+   return 1;
+}
+
+static Evas_Object_Textblock_Line *
+_find_layout_line_num(Evas_Object *obj, int line)
+{
+   Evas_Object_List *l;
+   Evas_Object_Textblock *o;
+   
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   for (l = (Evas_Object_List *)o->lines; l; l = l->next)
+     {
+        Evas_Object_Textblock_Line *ln;
+
+        ln = (Evas_Object_Textblock_Line *)l;
+	if (ln->line_no == line) return ln;
+     }
+   return NULL;
+}
+
+int
+evas_textblock2_cursor_line_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+{
+   Evas_Object_Textblock *o;
+   Evas_Object_Textblock_Line *ln = NULL;
+   Evas_Object_Textblock_Item *it = NULL;
+   int x, y, w, h;
+   int pos, ret;
+   
+   if (!cur) return -1;
+   if (!cur->node) return -1;
+   if (cur->node->type == NODE_FORMAT) return -1;
+   o = (Evas_Object_Textblock *)(cur->obj->object_data);
+   if (!o->lines) _relayout(cur->obj);
+   _find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln, &it);
+   if ((!ln) || (!it)) return -1;
+   x = ln->x;
+   y = ln->y;
+   w = ln->w;
+   h = ln->h;
+   if (cx) *cx = x;
+   if (cy) *cy = y;
+   if (cw) *cw = w;
+   if (ch) *ch = h;
+   return ln->line_no;
+}
+
+/* general controls */
+Evas_Bool
+evas_object_textblock2_line_number_geometry_get(Evas_Object *obj, int line, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+{
+   Evas_Object_Textblock_Line *ln;
+   
+   TB_HEAD();
+   ln = _find_layout_line_num(obj, line);
+   if (!ln) return 0;
+   if (cx) *cx = ln->x;
+   if (cy) *cy = ln->y;
+   if (cw) *cw = ln->w;
+   if (ch) *ch = ln->h;
+   return 1;
+}
+
+void
+evas_object_textblock2_clear(Evas_Object *obj)
+{
+   Evas_List *l;
+   
+   TB_HEAD();
+   _nodes_clear(obj);
+   o->cursor->node = NULL;
+   o->cursor->pos = 0;
+   for (l = o->cursors; l; l = l->next)
+     {
+	Evas_Textblock_Cursor *cur;
+	
+	cur = (Evas_Textblock_Cursor *)l->data;
+	cur->node = NULL;
+	cur->pos = 0;
+     }
+   if (o->markup_text)
+     {
+	free(o->markup_text);
+	o->markup_text = NULL;
+     }
+   if (o->lines)
+     {
+	_lines_clear(obj, o->lines);
+	o->lines = NULL;
+     }
+   o->changed = 1;
+   evas_object_change(obj);
+}
+
+void
+evas_object_textblock2_size_requested_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h)
+{
+   TB_HEAD();
+   /* FIXME */
+}
 
 /* all nice and private */
 static void
