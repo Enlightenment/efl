@@ -121,7 +121,11 @@ ecore_con_dns_init(void)
 	if (p2)
 	  *p2 = 0;
 
-	if (!strncmp(buf, "nameserver", 10))
+	if (!strncmp(buf, ";", 1))
+	  {
+	     /* Ignore comment */
+	  }
+	else if (!strncmp(buf, "nameserver", 10))
 	  {
 	     if (_server_count >= SERVERS) continue;
 
