@@ -20,20 +20,15 @@
 static const char o_type[] = "textblock";
 
 /* private struct for textblock object internal data */
-typedef struct _Evas_Object_Textblock        Evas_Object_Textblock;
-typedef struct _Evas_Object_Style_Tag        Evas_Object_Style_Tag;
-typedef struct _Evas_Object_Textblock_Node   Evas_Object_Textblock_Node;
-typedef struct _Evas_Object_Textblock_Line   Evas_Object_Textblock_Line;
-typedef struct _Evas_Object_Textblock_Item   Evas_Object_Textblock_Item;
-typedef struct _Evas_Object_Textblock_Format Evas_Object_Textblock_Format;
+typedef struct _Evas_Object_Textblock             Evas_Object_Textblock;
+typedef struct _Evas_Object_Style_Tag             Evas_Object_Style_Tag;
+typedef struct _Evas_Object_Textblock_Node        Evas_Object_Textblock_Node;
+typedef struct _Evas_Object_Textblock_Line        Evas_Object_Textblock_Line;
+typedef struct _Evas_Object_Textblock_Item        Evas_Object_Textblock_Item;
+typedef struct _Evas_Object_Textblock_Format_Item Evas_Object_Textblock_Format_Item;
+typedef struct _Evas_Object_Textblock_Format      Evas_Object_Textblock_Format;
 
 /* the current state of the formatting */
-
-struct _Evas_Object_Style_Tag
-{  Evas_Object_List _list_data;
-   char *tag;
-   char *replace;
-};
 
 #define  NODE_TEXT   0
 #define  NODE_FORMAT 1
@@ -48,6 +43,12 @@ struct _Evas_Object_Style_Tag
 #define STYLE_SOFT_SHADOW 7
 #define STYLE_FAR_SOFT_SHADOW 8
 
+struct _Evas_Object_Style_Tag
+{  Evas_Object_List _list_data;
+   char *tag;
+   char *replace;
+};
+
 struct _Evas_Object_Textblock_Node
 {  Evas_Object_List _list_data;
    int   type;
@@ -57,20 +58,29 @@ struct _Evas_Object_Textblock_Node
 
 struct _Evas_Object_Textblock_Line
 {  Evas_Object_List _list_data;
-   Evas_Object_Textblock_Item *items;
-   int                         x, y, w, h;
-   int                         baseline;
-   int                         line_no;
+   Evas_Object_Textblock_Item        *items;
+   Evas_Object_Textblock_Format_Item *format_items;
+   int                                x, y, w, h;
+   int                                baseline;
+   int                                line_no;
 };
 
 struct _Evas_Object_Textblock_Item
 {  Evas_Object_List _list_data;
+   unsigned char                 type;
    char                         *text;
    int                           x, w, h;
    int                           inset, baseline;
    Evas_Object_Textblock_Format *format;
    Evas_Object_Textblock_Node   *source_node;
    int                           source_pos;
+};
+
+struct _Evas_Object_Textblock_Format_Item
+{  Evas_Object_List _list_data;
+   char                         *item;
+   Evas_Object_Textblock_Node   *source_node;
+   int                           x, w;
 };
 
 struct _Evas_Object_Textblock_Format
@@ -195,26 +205,6 @@ static Evas_Object_Func object_func =
 
 
 
-/**
- * Adds a textblock to the given evas.
- * @param   e The given evas.
- * @return  The new textblock object.
- * @todo Find a documentation group to put this under.
- */
-Evas_Object *
-evas_object_textblock2_add(Evas *e)
-{
-   Evas_Object *obj;
-
-   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
-   return NULL;
-   MAGIC_CHECK_END();
-   obj = evas_object_new();
-   evas_object_textblock_init(obj);
-   evas_object_inject(obj, e);
-   return obj;
-}
-
 /* styles */
 static void
 _style_clear(Evas_Textblock_Style *ts)
@@ -234,176 +224,6 @@ _style_clear(Evas_Textblock_Style *ts)
    ts->style_text = NULL;
    ts->default_tag = NULL;
    ts->tags = NULL;
-}
-
-Evas_Textblock_Style *
-evas_textblock2_style_new(void)
-{
-   Evas_Textblock_Style *ts;
-   
-   ts = calloc(1, sizeof(Evas_Textblock_Style));
-   return ts;
-}
-
-void
-evas_textblock2_style_free(Evas_Textblock_Style *ts)
-{
-   if (!ts) return;
-   if (ts->objects)
-     {
-	ts->delete_me = 1;
-	return;
-     }
-   _style_clear(ts);
-   free(ts);
-}
-
-void
-evas_textblock2_style_set(Evas_Textblock_Style *ts, const char *text)
-{
-   Evas_List *l;
-   
-   if (!ts) return;
-   _style_clear(ts);
-   if (text) ts->style_text = strdup(text);
-
-   if (ts->style_text)
-     {
-	// format MUST be KEY='VALUE'[KEY='VALUE']...
-	char *p;
-	char *key_start, *key_stop, *val_start, *val_stop;
-	
-	key_start = key_stop = val_start = val_stop = NULL;
-	p = ts->style_text;
-	while (*p)
-	  {
-	     if (!key_start)
-	       {
-		  if (!isspace(*p))
-		    key_start = p;
-	       }
-	     else if (!key_stop)
-	       {
-		  if ((*p == '=') || (isspace(*p)))
-		    key_stop = p;
-	       }
-	     else if (!val_start)
-	       {
-		  if (((*p) == '\'') && (*(p + 1)))
-		    val_start = p + 1;
-	       }
-	     else if (!val_stop)
-	       {
-		  if ((*p) == '\'')
-		    val_stop = p;
-	       }
-	     if ((key_start) && (key_stop) && (val_start) && (val_stop))
-	       {
-		  char *tags, *replaces;
-		  Evas_Object_Style_Tag *tag;
-		  
-		  tags = malloc(key_stop - key_start + 1);
-		  if (tags)
-		    {
-		       tags[key_stop - key_start] = 0;
-		       strncpy(tags, key_start, key_stop - key_start);
-		       tags[key_stop - key_start] = 0;
-		    }
-		  
-		  replaces = malloc(val_stop - val_start + 1);
-		  if (replaces)
-		    {
-		       replaces[val_stop - val_start] = 0;
-		       strncpy(replaces, val_start, val_stop - val_start);
-		       replaces[val_stop - val_start] = 0;
-		    }
-		  if ((tags) && (replaces))
-		    {
-		       if (!strcmp(tags, "DEFAULT"))
-			 {
-			    ts->default_tag = replaces;
-			    free(tags);
-			 }
-		       else
-			 {
-			    tag = calloc(1, sizeof(Evas_Object_Style_Tag));
-			    if (tag)
-			      {
-				 tag->tag = tags;
-				 tag->replace = replaces;
-				 ts->tags = evas_object_list_append(ts->tags, tag);
-			      }
-			    else
-			      {
-				 free(tags);
-				 free(replaces);
-			      }
-			 }
-		    }
-		  else
-		    {
-		       if (tags) free(tags);
-		       if (replaces) free(replaces);
-		    }
-		  key_start = key_stop = val_start = val_stop = NULL;
-	       }
-	     p++;
-	  }
-     }
-   
-   for (l = ts->objects; l; l = l->next)
-     {
-	Evas_Object *obj;
-	Evas_Object_Textblock *o;
-	
-	obj = l->data;
-	o = (Evas_Object_Textblock *)(obj->object_data);
-	if (o->markup_text)
-	  evas_object_textblock2_text_markup_set(obj, o->markup_text);
-     }
-}
-
-const char *
-evas_textblock2_style_get(Evas_Textblock_Style *ts)
-{
-   if (!ts) return NULL;
-   return ts->style_text;
-}
-
-/* textblock styles */
-void
-evas_object_textblock2_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
-{
-   TB_HEAD();
-   if (ts == o->style) return;
-   if ((ts) && (ts->delete_me)) return;
-   if (o->style)
-     {
-	Evas_Textblock_Style *old_ts;
-	
-	old_ts = o->style;
-	old_ts->objects = evas_list_remove(old_ts->objects, obj);
-	if ((old_ts->delete_me) && (!old_ts->objects))
-	  evas_textblock2_style_free(old_ts);
-     }
-   if (ts)
-     {
-	ts->objects = evas_list_append(ts->objects, ts);
-	o->style = ts;
-     }
-   else
-     {
-	o->style = NULL;
-     }
-   if (o->markup_text)
-     evas_object_textblock2_text_markup_set(obj, o->markup_text);
-}
-
-const Evas_Textblock_Style *
-evas_object_textblock2_style_get(Evas_Object *obj)
-{
-   TB_HEAD_RETURN(NULL);
-   return o->style;
 }
 
 /* setting a textblock via markup */
@@ -600,6 +420,15 @@ _lines_clear(Evas_Object *obj, Evas_Object_Textblock_Line *lines)
 	     if (it->text) free(it->text);
 	     _format_free(obj, it->format);
 	     free(it);
+	  }
+	while (ln->format_items)
+	  {
+	     Evas_Object_Textblock_Format_Item *fi;
+	     
+	     fi = (Evas_Object_Textblock_Format_Item *)ln->format_items;
+	     ln->format_items = evas_object_list_remove(ln->format_items, ln->format_items);
+	     if (fi->item) free(fi->item);
+	     free(fi);
 	  }
 	free(ln);
      }
@@ -1902,6 +1731,18 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
      }
 }
 
+static Evas_Object_Textblock_Format_Item *
+_layout_format_item_add(Ctxt *c, Evas_Object_Textblock_Node *n, char *item)
+{
+   Evas_Object_Textblock_Format_Item *fi;
+   
+   fi = calloc(1, sizeof(Evas_Object_Textblock_Format_Item));
+   fi->item = strdup(item);
+   fi->source_node = n;
+   c->ln->format_items = evas_object_list_append(c->ln->format_items, fi);
+   return fi;
+}
+
 static void
 _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 {
@@ -1966,12 +1807,23 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 		  else
 		    {
 		       if (!strcmp(item, "\n"))
-			 _layout_line_advance(c, fmt);
+			 {
+			    Evas_Object_Textblock_Format_Item *fi;
+			    
+			    fi = _layout_format_item_add(c, n, item);
+			    fi->x = c->x;
+			    fi->w = 0;
+			    _layout_line_advance(c, fmt);
+			 }
 		       else if (!strcmp(item, "\t"))
 			 { 
+			    Evas_Object_Textblock_Format_Item *fi;
 			    int x2;
 			    
 			    x2 = (fmt->tabstops * ((c->x + fmt->tabstops) / fmt->tabstops));
+			    fi = _layout_format_item_add(c, n, item);
+			    fi->x = c->x;
+			    fi->w = x2 - c->x;
 			    c->x = x2;
 			 }
 		    }
@@ -2091,6 +1943,270 @@ _relayout(Evas_Object *obj)
    if (lines) _lines_clear(obj, lines);
    o->last_w = obj->cur.geometry.w;
    o->changed = 0;
+}
+
+static void
+_find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, int pos, Evas_Object_Textblock_Line **lnr, Evas_Object_Textblock_Item **itr)
+{
+   Evas_Object_List *l, *ll;
+   Evas_Object_Textblock *o;
+   
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   for (l = (Evas_Object_List *)o->lines; l; l = l->next)
+     {
+        Evas_Object_Textblock_Line *ln;
+
+        ln = (Evas_Object_Textblock_Line *)l;
+	for (ll = (Evas_Object_List *)ln->items; ll; ll = ll->next)
+	  {
+	     Evas_Object_Textblock_Item *it;
+
+	     it = (Evas_Object_Textblock_Item *)ll;
+	     if (it->source_node == n)
+	       {
+		  if ((it->source_pos + strlen(it->text)) > pos)
+		    {
+		       *lnr = ln;
+		       *itr = it;
+		       return;
+		    }
+	       }
+	  }
+     }
+}
+
+static void
+_find_layout_format_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, Evas_Object_Textblock_Line **lnr, Evas_Object_Textblock_Format_Item **fir)
+{
+   Evas_Object_List *l, *ll;
+   Evas_Object_Textblock *o;
+   
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   for (l = (Evas_Object_List *)o->lines; l; l = l->next)
+     {
+        Evas_Object_Textblock_Line *ln;
+
+        ln = (Evas_Object_Textblock_Line *)l;
+	for (ll = (Evas_Object_List *)ln->format_items; ll; ll = ll->next)
+	  {
+	     Evas_Object_Textblock_Format_Item *fi;
+
+	     fi = (Evas_Object_Textblock_Format_Item *)ll;
+	     if (fi->source_node == n)
+	       {
+		  *lnr = ln;
+		  *fir = fi;
+		  return;
+	       }
+	  }
+     }
+}
+
+static Evas_Object_Textblock_Line *
+_find_layout_line_num(Evas_Object *obj, int line)
+{
+   Evas_Object_List *l;
+   Evas_Object_Textblock *o;
+   
+   o = (Evas_Object_Textblock *)(obj->object_data);
+   for (l = (Evas_Object_List *)o->lines; l; l = l->next)
+     {
+        Evas_Object_Textblock_Line *ln;
+
+        ln = (Evas_Object_Textblock_Line *)l;
+	if (ln->line_no == line) return ln;
+     }
+   return NULL;
+}
+
+/**
+ * Adds a textblock to the given evas.
+ * @param   e The given evas.
+ * @return  The new textblock object.
+ * @todo Find a documentation group to put this under.
+ */
+Evas_Object *
+evas_object_textblock2_add(Evas *e)
+{
+   Evas_Object *obj;
+
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return NULL;
+   MAGIC_CHECK_END();
+   obj = evas_object_new();
+   evas_object_textblock_init(obj);
+   evas_object_inject(obj, e);
+   return obj;
+}
+
+Evas_Textblock_Style *
+evas_textblock2_style_new(void)
+{
+   Evas_Textblock_Style *ts;
+   
+   ts = calloc(1, sizeof(Evas_Textblock_Style));
+   return ts;
+}
+
+void
+evas_textblock2_style_free(Evas_Textblock_Style *ts)
+{
+   if (!ts) return;
+   if (ts->objects)
+     {
+	ts->delete_me = 1;
+	return;
+     }
+   _style_clear(ts);
+   free(ts);
+}
+
+void
+evas_textblock2_style_set(Evas_Textblock_Style *ts, const char *text)
+{
+   Evas_List *l;
+   
+   if (!ts) return;
+   _style_clear(ts);
+   if (text) ts->style_text = strdup(text);
+
+   if (ts->style_text)
+     {
+	// format MUST be KEY='VALUE'[KEY='VALUE']...
+	char *p;
+	char *key_start, *key_stop, *val_start, *val_stop;
+	
+	key_start = key_stop = val_start = val_stop = NULL;
+	p = ts->style_text;
+	while (*p)
+	  {
+	     if (!key_start)
+	       {
+		  if (!isspace(*p))
+		    key_start = p;
+	       }
+	     else if (!key_stop)
+	       {
+		  if ((*p == '=') || (isspace(*p)))
+		    key_stop = p;
+	       }
+	     else if (!val_start)
+	       {
+		  if (((*p) == '\'') && (*(p + 1)))
+		    val_start = p + 1;
+	       }
+	     else if (!val_stop)
+	       {
+		  if ((*p) == '\'')
+		    val_stop = p;
+	       }
+	     if ((key_start) && (key_stop) && (val_start) && (val_stop))
+	       {
+		  char *tags, *replaces;
+		  Evas_Object_Style_Tag *tag;
+		  
+		  tags = malloc(key_stop - key_start + 1);
+		  if (tags)
+		    {
+		       tags[key_stop - key_start] = 0;
+		       strncpy(tags, key_start, key_stop - key_start);
+		       tags[key_stop - key_start] = 0;
+		    }
+		  
+		  replaces = malloc(val_stop - val_start + 1);
+		  if (replaces)
+		    {
+		       replaces[val_stop - val_start] = 0;
+		       strncpy(replaces, val_start, val_stop - val_start);
+		       replaces[val_stop - val_start] = 0;
+		    }
+		  if ((tags) && (replaces))
+		    {
+		       if (!strcmp(tags, "DEFAULT"))
+			 {
+			    ts->default_tag = replaces;
+			    free(tags);
+			 }
+		       else
+			 {
+			    tag = calloc(1, sizeof(Evas_Object_Style_Tag));
+			    if (tag)
+			      {
+				 tag->tag = tags;
+				 tag->replace = replaces;
+				 ts->tags = evas_object_list_append(ts->tags, tag);
+			      }
+			    else
+			      {
+				 free(tags);
+				 free(replaces);
+			      }
+			 }
+		    }
+		  else
+		    {
+		       if (tags) free(tags);
+		       if (replaces) free(replaces);
+		    }
+		  key_start = key_stop = val_start = val_stop = NULL;
+	       }
+	     p++;
+	  }
+     }
+   
+   for (l = ts->objects; l; l = l->next)
+     {
+	Evas_Object *obj;
+	Evas_Object_Textblock *o;
+	
+	obj = l->data;
+	o = (Evas_Object_Textblock *)(obj->object_data);
+	if (o->markup_text)
+	  evas_object_textblock2_text_markup_set(obj, o->markup_text);
+     }
+}
+
+const char *
+evas_textblock2_style_get(Evas_Textblock_Style *ts)
+{
+   if (!ts) return NULL;
+   return ts->style_text;
+}
+
+/* textblock styles */
+void
+evas_object_textblock2_style_set(Evas_Object *obj, Evas_Textblock_Style *ts)
+{
+   TB_HEAD();
+   if (ts == o->style) return;
+   if ((ts) && (ts->delete_me)) return;
+   if (o->style)
+     {
+	Evas_Textblock_Style *old_ts;
+	
+	old_ts = o->style;
+	old_ts->objects = evas_list_remove(old_ts->objects, obj);
+	if ((old_ts->delete_me) && (!old_ts->objects))
+	  evas_textblock2_style_free(old_ts);
+     }
+   if (ts)
+     {
+	ts->objects = evas_list_append(ts->objects, ts);
+	o->style = ts;
+     }
+   else
+     {
+	o->style = NULL;
+     }
+   if (o->markup_text)
+     evas_object_textblock2_text_markup_set(obj, o->markup_text);
+}
+
+const Evas_Textblock_Style *
+evas_object_textblock2_style_get(Evas_Object *obj)
+{
+   TB_HEAD_RETURN(NULL);
+   return o->style;
 }
 
 void
@@ -2565,83 +2681,51 @@ evas_textblock2_cursor_node_format_get(Evas_Textblock_Cursor *cur)
    return NULL;
 }
 
-static void
-_find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, int pos, Evas_Object_Textblock_Line **lnr, Evas_Object_Textblock_Item **itr)
-{
-   Evas_Object_List *l, *ll;
-   Evas_Object_Textblock *o;
-   
-   o = (Evas_Object_Textblock *)(obj->object_data);
-   for (l = (Evas_Object_List *)o->lines; l; l = l->next)
-     {
-        Evas_Object_Textblock_Line *ln;
-
-        ln = (Evas_Object_Textblock_Line *)l;
-	for (ll = (Evas_Object_List *)ln->items; ll; ll = ll->next)
-	  {
-	     Evas_Object_Textblock_Item *it;
-
-	     it = (Evas_Object_Textblock_Item *)ll;
-	     if (it->source_node == n)
-	       {
-		  if ((it->source_pos + strlen(it->text)) > pos)
-		    {
-		       *lnr = ln;
-		       *itr = it;
-		       return;
-		    }
-	       }
-	  }
-     }
-}
-
-Evas_Bool
+int
 evas_textblock2_cursor_char_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Line *ln = NULL;
    Evas_Object_Textblock_Item *it = NULL;
-   int x, y, w, h;
+   Evas_Object_Textblock_Format_Item *fi = NULL;
+   int x = 0, y = 0, w = 0, h = 0;
    int pos, ret;
    
-   if (!cur) return 0;
-   if (!cur->node) return 0;
-   if (cur->node->type == NODE_FORMAT) return 0;
+   if (!cur) return -1;
+   if (!cur->node) return -1;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->lines) _relayout(cur->obj);
-   _find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln, &it);
-   if ((!ln) || (!it)) return 0;
-   pos = cur->pos - it->source_pos;
-   ret = cur->ENFN->font_char_coords_get(cur->ENDT, it->format->font.font,
-					 it->text,
-					 pos,
-					 &x, &y, &w, &h);
-   if (ret <= 0) return 0;
-   x = ln->x + it->x - it->inset + x;
-   y = ln->y;
-   h = ln->h;
+   if (cur->node->type == NODE_FORMAT)
+     _find_layout_format_item_line_match(cur->obj, cur->node, &ln, &fi);
+   else
+     _find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln, &it);
+   if (!ln) return -1;
+   if (it)
+     {
+	pos = cur->pos - it->source_pos;
+	ret = cur->ENFN->font_char_coords_get(cur->ENDT, it->format->font.font,
+					      it->text,
+					      pos,
+					      &x, &y, &w, &h);
+	if (ret <= 0) return -1;
+	x = ln->x + it->x - it->inset + x;
+	y = ln->y;
+	h = ln->h;
+     }
+   else if (fi)
+     {
+	x = ln->x + fi->x;
+	y = ln->y;
+	w = fi->w;
+	h = ln->h;
+     }
+   else
+     return -1;
    if (cx) *cx = x;
    if (cy) *cy = y;
    if (cw) *cw = w;
    if (ch) *ch = h;
-   return 1;
-}
-
-static Evas_Object_Textblock_Line *
-_find_layout_line_num(Evas_Object *obj, int line)
-{
-   Evas_Object_List *l;
-   Evas_Object_Textblock *o;
-   
-   o = (Evas_Object_Textblock *)(obj->object_data);
-   for (l = (Evas_Object_List *)o->lines; l; l = l->next)
-     {
-        Evas_Object_Textblock_Line *ln;
-
-        ln = (Evas_Object_Textblock_Line *)l;
-	if (ln->line_no == line) return ln;
-     }
-   return NULL;
+   return ln->line_no;
 }
 
 int
@@ -2650,16 +2734,19 @@ evas_textblock2_cursor_line_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord 
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Line *ln = NULL;
    Evas_Object_Textblock_Item *it = NULL;
+   Evas_Object_Textblock_Format_Item *fi = NULL;
    int x, y, w, h;
    int pos, ret;
    
    if (!cur) return -1;
    if (!cur->node) return -1;
-   if (cur->node->type == NODE_FORMAT) return -1;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->lines) _relayout(cur->obj);
-   _find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln, &it);
-   if ((!ln) || (!it)) return -1;
+   if (cur->node->type == NODE_FORMAT)
+     _find_layout_format_item_line_match(cur->obj, cur->node, &ln, &fi);
+   else
+     _find_layout_item_line_match(cur->obj, cur->node, cur->pos, &ln, &it);
+   if (!ln) return -1;
    x = ln->x;
    y = ln->y;
    w = ln->w;
