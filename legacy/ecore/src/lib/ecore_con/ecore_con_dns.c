@@ -121,11 +121,7 @@ ecore_con_dns_init(void)
 	if (p2)
 	  *p2 = 0;
 
-	if ((buf[0] == ';') || (buf[0] == '#'))
-	  {
-	     /* Ignore comment */
-	  }
-	else if (!strncmp(buf, "nameserver", 10))
+	if (!strncmp(buf, "nameserver", 10))
 	  {
 	     if (_server_count >= SERVERS) continue;
 
@@ -178,8 +174,6 @@ ecore_con_dns_init(void)
 	  {
 	     /* TODO */
 	  }
-	else
-	  printf("WARNING: Weird line in resolv.conf: %s\n", buf);
      }
    fclose(file);
 
