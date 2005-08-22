@@ -20,7 +20,9 @@
  * * Check /etc/hosts
  *
  * * Caching
- * * Remember all querys and delete on shutdown
+ * * Remember all querys and delete them on shutdown
+ *
+ * * Need more buffer overflow checks.
  */
 #include <stdlib.h>
 #include <stdio.h>
