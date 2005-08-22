@@ -121,7 +121,7 @@ ecore_con_dns_init(void)
 	if (p2)
 	  *p2 = 0;
 
-	if (!strncmp(buf, ";", 1))
+	if ((buf[0] == ';') || (buf[0] == '#'))
 	  {
 	     /* Ignore comment */
 	  }
