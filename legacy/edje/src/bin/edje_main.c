@@ -396,6 +396,7 @@ bottom_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
      {
 	Evas_Coord x, y, w, h;
 	Evas_Coord minw, minh;
+	Evas_Coord maxw, maxh;
 	int hdir, vdir;
 	
 	evas_object_geometry_get(de->edje, &x, &y, &w, &h);
@@ -407,10 +408,14 @@ bottom_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	h += 30;
 	minw = 20 + de->minw;
 	minh = 30 + de->minh;
+	maxw = 20 + de->maxw;
+	maxh = 30 + de->maxh;
+	
 	if (hdir > 0)
 	  {
 	     w += ev->cur.canvas.x - ev->prev.canvas.x;
 	     if (w < minw) w = minw;
+	     else if (w > maxw) w = maxw;
 	  }
 	else
 	  {
@@ -421,11 +426,17 @@ bottom_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 		  x += w - minw;
 		  w = minw;
 	       }
+	     if (w > maxw)
+	       {
+		  x -= w - maxw;
+		  w = maxw;
+	       }
 	  }
 	if (vdir > 0)
 	  {
 	     h += ev->cur.canvas.y - ev->prev.canvas.y;
 	     if (h < minh) h = minh;
+	     if (h > maxh) h = maxh;
 	  }
 	else
 	  {
@@ -435,6 +446,11 @@ bottom_move_cb(void *data, Evas *e, Evas_Object *obj, void *event_info)
 	       {
 		  y += h - minh;
 		  h = minh;
+	       }
+	     if (h > maxh)
+	       {
+		  y -= h - maxh;
+		  h = maxh;
 	       }
 	  }
 	evas_object_move(de->edje, x + 10, y + 20);
