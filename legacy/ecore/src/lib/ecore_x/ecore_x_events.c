@@ -751,6 +751,7 @@ _ecore_x_event_handle_create_notify(XEvent *xevent)
    Ecore_X_Event_Window_Create *e;
 
    e = calloc(1, sizeof(Ecore_X_Event_Window_Create));
+   if (!e) return;
    e->win = xevent->xcreatewindow.window;
    if (xevent->xcreatewindow.override_redirect)
       e->override = 1;
@@ -898,6 +899,7 @@ _ecore_x_event_handle_circulate_notify(XEvent *xevent)
    Ecore_X_Event_Window_Stack *e;
    
    e = calloc(1, sizeof(Ecore_X_Event_Window_Stack));
+   if (!e) return;
    e->win = xevent->xcirculate.window;
    e->event_win = xevent->xcirculate.event;
    if (xevent->xcirculate.place == PlaceOnTop)
@@ -914,6 +916,7 @@ _ecore_x_event_handle_circulate_request(XEvent *xevent)
    Ecore_X_Event_Window_Stack_Request *e;
    
    e = calloc(1, sizeof(Ecore_X_Event_Window_Stack_Request));
+   if (!e) return;
    e->win = xevent->xcirculaterequest.window;
    e->parent = xevent->xcirculaterequest.parent;
    if (xevent->xcirculaterequest.place == PlaceOnTop)
@@ -1136,6 +1139,7 @@ _ecore_x_event_handle_selection_notify(XEvent *xevent)
      }
 
    e = calloc(1, sizeof(Ecore_X_Event_Selection_Notify));
+   if (!e) return;
    e->win = xevent->xselection.requestor;
    e->time = xevent->xselection.time;
    e->target = _ecore_x_selection_target_get(xevent->xselection.target);
@@ -1164,6 +1168,7 @@ _ecore_x_event_handle_colormap_notify(XEvent *xevent)
    Ecore_X_Event_Window_Colormap *e;
 
    e = calloc(1,sizeof(Ecore_X_Event_Window_Colormap));
+   if (!e) return;
    e->win = xevent->xcolormap.window;
    e->cmap = xevent->xcolormap.colormap;
    e->time = _ecore_x_event_last_time;
@@ -1255,8 +1260,11 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	       }
 	     types = (Ecore_X_Atom *)data;
 	     e->types = calloc(num_ret, sizeof(char *));
-	     for (i = 0; i < num_ret; i++)
-	       e->types[i] = XGetAtomName(_ecore_x_disp, types[i]);
+	     if (e->types)
+	       {
+		  for (i = 0; i < num_ret; i++)
+		    e->types[i] = XGetAtomName(_ecore_x_disp, types[i]);
+	       }
 	     e->num_types = num_ret;
 	  }
 	else
@@ -1264,10 +1272,13 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	     int i = 0;
 
 	     e->types = calloc(3, sizeof(char *));
-	     while ((i < 3) && (xevent->xclient.data.l[i + 2]))
+	     if (e->types)
 	       {
-		  e->types[i] = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[i + 2]);
-		  i++;
+		  while ((i < 3) && (xevent->xclient.data.l[i + 2]))
+		    {
+		       e->types[i] = XGetAtomName(_ecore_x_disp, xevent->xclient.data.l[i + 2]);
+		       i++;
+		    }
 	       }
 	     e->num_types = i;
 	  }
