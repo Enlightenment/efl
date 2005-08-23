@@ -366,23 +366,23 @@ struct _Ecore_X_Event_Mouse_Wheel
 
    Ecore_X_Window win;
    Ecore_X_Window event_win;
-   Ecore_X_Time time;
+   Ecore_X_Time   time;
 };
 
 struct _Ecore_X_Event_Window_Focus_In
 {
-   Ecore_X_Window               win;
+   Ecore_X_Window       win;
    Ecore_X_Event_Mode   mode;
    Ecore_X_Event_Detail detail;
-   Ecore_X_Time                 time;
+   Ecore_X_Time         time;
 };
 
 struct _Ecore_X_Event_Window_Focus_Out
 {
-   Ecore_X_Window               win;
+   Ecore_X_Window       win;
    Ecore_X_Event_Mode   mode;
    Ecore_X_Event_Detail detail;
-   Ecore_X_Time                 time;
+   Ecore_X_Time         time;
 };
 
 struct _Ecore_X_Event_Window_Keymap
@@ -393,7 +393,7 @@ struct _Ecore_X_Event_Window_Keymap
 struct _Ecore_X_Event_Window_Damage
 {
    Ecore_X_Window  win;
-   int     x, y, w, h;
+   int             x, y, w, h;
    Ecore_X_Time    time;
 };
 
@@ -447,10 +447,10 @@ struct _Ecore_X_Event_Window_Configure
 {
    Ecore_X_Window  win;
    Ecore_X_Window  abovewin;
-   int     x, y, w, h;
-   int     border;
-   int     override : 1;
-   int     from_wm : 1;
+   int             x, y, w, h;
+   int             border;
+   int             override : 1;
+   int             from_wm : 1;
    Ecore_X_Time    time;
 };
 
@@ -458,10 +458,10 @@ struct _Ecore_X_Event_Window_Configure_Request
 {
    Ecore_X_Window  win;
    Ecore_X_Window  abovewin;
-   int     x, y, w, h;
-   int     border;
+   int             x, y, w, h;
+   int             border;
    Ecore_X_Window_Stack_Mode detail;
-   unsigned long value_mask;
+   unsigned long   value_mask;
    Ecore_X_Time    time;
 };
 
@@ -474,19 +474,23 @@ struct _Ecore_X_Event_Window_Gravity
 struct _Ecore_X_Event_Window_Resize_Request
 {
    Ecore_X_Window  win;
-   int     w, h;
+   int             w, h;
    Ecore_X_Time    time;
 };
 
 struct _Ecore_X_Event_Window_Stack
 {
    Ecore_X_Window  win;
+   Ecore_X_Window  event_win;
+   Ecore_X_Window_Stack_Mode detail;
    Ecore_X_Time    time;
 };
 
 struct _Ecore_X_Event_Window_Stack_Request
 {
    Ecore_X_Window  win;
+   Ecore_X_Window  parent;
+   Ecore_X_Window_Stack_Mode detail;
    Ecore_X_Time    time;
 };
 
@@ -499,10 +503,10 @@ struct _Ecore_X_Event_Window_Property
 
 struct _Ecore_X_Event_Window_Colormap
 {
-   Ecore_X_Window  win;
+   Ecore_X_Window   win;
    Ecore_X_Colormap cmap;
-   int             installed;
-   Ecore_X_Time    time;
+   int              installed;
+   Ecore_X_Time     time;
 };
 
 struct _Ecore_X_Event_Selection_Clear

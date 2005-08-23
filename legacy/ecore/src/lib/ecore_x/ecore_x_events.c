@@ -893,15 +893,35 @@ _ecore_x_event_handle_resize_request(XEvent *xevent)
 }
 
 void
-_ecore_x_event_handle_circulate_notify(XEvent *xevent __UNUSED__)
+_ecore_x_event_handle_circulate_notify(XEvent *xevent)
 {
-   /* FIXME: handle this event type */
+   Ecore_X_Event_Window_Stack *e;
+   
+   e = calloc(1, sizeof(Ecore_X_Event_Window_Stack));
+   e->win = xevent->xcirculate.window;
+   e->event_win = xevent->xcirculate.event;
+   if (xevent->xcirculate.place == PlaceOnTop)
+     e->detail = ECORE_X_WINDOW_STACK_ABOVE;
+   else
+     e->detail = ECORE_X_WINDOW_STACK_BELOW; 
+   e->time = _ecore_x_event_last_time;
+   ecore_event_add(ECORE_X_EVENT_WINDOW_STACK, e, NULL, NULL);
 }
 
 void
-_ecore_x_event_handle_circulate_request(XEvent *xevent __UNUSED__)
+_ecore_x_event_handle_circulate_request(XEvent *xevent)
 {
-   /* FIXME: handle this event type */
+   Ecore_X_Event_Window_Stack_Request *e;
+   
+   e = calloc(1, sizeof(Ecore_X_Event_Window_Stack_Request));
+   e->win = xevent->xcirculaterequest.window;
+   e->parent = xevent->xcirculaterequest.parent;
+   if (xevent->xcirculaterequest.place == PlaceOnTop)
+     e->detail = ECORE_X_WINDOW_STACK_ABOVE;
+   else
+     e->detail = ECORE_X_WINDOW_STACK_BELOW; 
+   e->time = _ecore_x_event_last_time;
+   ecore_event_add(ECORE_X_EVENT_WINDOW_STACK_REQUEST, e, NULL, NULL);
 }
 
 void
