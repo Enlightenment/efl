@@ -46,7 +46,7 @@ evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, in
        (buf->dest) && (buf->dest_row_bytes == (buf->w * sizeof(DATA32))))
      {
 	buf->priv.back_buf = evas_common_image_new();
-	buf->priv.back_buf->image = evas_common_image_surface_new( buf->priv.back_buf);
+	buf->priv.back_buf->image = evas_common_image_surface_new(buf->priv.back_buf);
 	buf->priv.back_buf->image->w = w;
 	buf->priv.back_buf->image->h = h;
 	buf->priv.back_buf->image->data = buf->dest;
@@ -61,18 +61,16 @@ RGBA_Image *
 evas_buffer_outbuf_buf_new_region_for_update(Outbuf *buf, int x, int y, int w, int h, int *cx, int *cy, int *cw, int *ch)
 {
    RGBA_Image *im;
+   DATA32 *ptr;
+   int xx, yy;
 
    if (buf->priv.back_buf)
      {
-	int xx, yy;
-
 	*cx = x; *cy = y; *cw = w; *ch = h;
 	for (yy = 0; yy < h; yy++)
 	  {
-	     DATA32 *ptr;
-
 	     ptr = buf->priv.back_buf->image->data +
-	       (y * buf->priv.back_buf->image->w) + x;
+	       ((y + yy) * buf->priv.back_buf->image->w) + x;
 	     for (xx = 0; xx < w; xx++)
 	       {
 		  A_VAL(ptr) = 0;
