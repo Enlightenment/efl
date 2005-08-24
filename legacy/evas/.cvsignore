@@ -24,3 +24,5 @@ doc
 *.oe
 *.bb
 *.spec
+README
+mkinstalldirs

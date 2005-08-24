@@ -16,3 +16,5 @@ Makefile.in
 Makefile
 doc
 *.tar.gz
+ltmain.sh
+mkinstalldirs

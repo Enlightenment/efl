@@ -5,3 +5,4 @@ libeet0.postinst.debhelper
 libeet0.postrm.debhelper
 libeet0.substvars
 tmp
+changelog
