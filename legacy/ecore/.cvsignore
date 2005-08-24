@@ -26,3 +26,6 @@ stamp-h1
 doc
 *.tar.gz
 README
+*.oe
+*.bb
+*.spec

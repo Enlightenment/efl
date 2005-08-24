@@ -21,3 +21,6 @@ missing
 install-sh
 doc
 *.tar.gz
+*.oe
+*.bb
+*.spec
