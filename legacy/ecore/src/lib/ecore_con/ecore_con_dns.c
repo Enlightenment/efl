@@ -616,6 +616,7 @@ _ecore_con_dns_query_free(Ecore_Con_Dns_Query *query)
    if (query->timeout) ecore_timer_del(query->timeout);
    query->timeout = NULL;
    free(query->hostname);
+   free(query->searchname);
    free(query);
 }
 
