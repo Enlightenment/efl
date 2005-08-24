@@ -445,23 +445,9 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 	ecore_con_dns_lookup(name, _ecore_con_cb_dns_lookup, svr);
      }
 
-#if USE_OPENSSL
-   if (compl_type & ECORE_CON_USE_SSL)
-     {
-	/* SSLv3 gives *weird* results on my box, don't use it yet */
-	if (!(svr->ssl_ctx = SSL_CTX_new(SSLv2_client_method())))
-	  goto error;
-	
-	if (!(svr->ssl = SSL_new(svr->ssl_ctx)))
-	  goto error;
-	
-	SSL_set_fd(svr->ssl, svr->fd);
-     }
-#endif
-   
    svr->name = strdup(name);
    if (!svr->name) goto error;
-   svr->type = type;
+   svr->type = compl_type;
    svr->port = port;
    svr->data = (void *)data;
    svr->created = 0;
@@ -934,6 +920,20 @@ _ecore_con_cb_dns_lookup(struct hostent *he, void *data)
 						 NULL, NULL);
 
    if (!svr->fd_handler) goto error;
+
+#if USE_OPENSSL
+   if (svr->type & ECORE_CON_USE_SSL)
+     {
+	/* SSLv3 gives *weird* results on my box, don't use it yet */
+	if (!(svr->ssl_ctx = SSL_CTX_new(SSLv2_client_method())))
+	  goto error;
+	
+	if (!(svr->ssl = SSL_new(svr->ssl_ctx)))
+	  goto error;
+	
+	SSL_set_fd(svr->ssl, svr->fd);
+     }
+#endif
 
    return;
 
