@@ -163,9 +163,9 @@ extern "C" {
    EAPI int               ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url);
    EAPI int               ecore_con_url_send(Ecore_Con_Url *url_con, void *data, size_t length, char *content_type);
 
-   EAPI int               ecore_con_dns_gethostbyname(const char *name,
-						      void (*done_cb)(struct hostent *hostent, void *data),
-		       				      void *data);
+   EAPI int               ecore_con_dns_lookup(const char *name,
+					       void (*done_cb)(struct hostent *hostent, void *data),
+					       void *data);
 
 
 #ifdef __cplusplus

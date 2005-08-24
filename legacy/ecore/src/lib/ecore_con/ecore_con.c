@@ -29,7 +29,7 @@
 #include <time.h>
 #endif
 
-static void _ecore_con_cb_gethostbyname(struct hostent *he, void *data);
+static void _ecore_con_cb_dns_lookup(struct hostent *he, void *data);
 static void _ecore_con_server_free(Ecore_Con_Server *svr);
 static void _ecore_con_client_free(Ecore_Con_Client *cl);
 static int _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler);
@@ -442,7 +442,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
      }
    else if (type == ECORE_CON_REMOTE_SYSTEM)
      {
-	ecore_con_dns_gethostbyname(name, _ecore_con_cb_gethostbyname, svr);
+	ecore_con_dns_lookup(name, _ecore_con_cb_dns_lookup, svr);
      }
 
 #if USE_OPENSSL
@@ -899,7 +899,7 @@ kill_server(Ecore_Con_Server *svr)
 }
 
 static void
-_ecore_con_cb_gethostbyname(struct hostent *he, void *data)
+_ecore_con_cb_dns_lookup(struct hostent *he, void *data)
 {
    Ecore_Con_Server   *svr;
    struct sockaddr_in  socket_addr;

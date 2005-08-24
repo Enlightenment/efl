@@ -231,9 +231,9 @@ ecore_con_dns_shutdown(void)
 }
 
 int
-ecore_con_dns_gethostbyname(const char *name,
-			    void (*done_cb)(struct hostent *hostent, void *data),
-		       	    void *data)
+ecore_con_dns_lookup(const char *name,
+		     void (*done_cb)(struct hostent *hostent, void *data),
+		     void *data)
 {
    Ecore_Con_Dns_Query *query;
 
