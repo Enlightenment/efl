@@ -71,6 +71,8 @@ static void _ecore_con_dns_ghbn(Ecore_Con_Dns_Query *query);
 static int  _ecore_con_dns_timeout(void *data);
 static int  _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static void _ecore_con_dns_query_free(Ecore_Con_Dns_Query *query);
+static int  _ecore_con_hostname_get(unsigned char *buf, char *hostname,
+				    int pos, int length);
 
 static int _init = 0;
 
@@ -134,6 +136,10 @@ ecore_con_dns_init(void)
 	  {
 	     int i;
 
+	     /* Skip leading dot */
+	     if (*p == '.')
+	       p++;
+	     /* Get the domain */
 	     _domain = strdup(p);
 	     /* clear search */
 	     for (i = 0; i < _search_count; i++)
@@ -149,6 +155,9 @@ ecore_con_dns_init(void)
 	       {
 		  /* Remove whitespace */
 		  while ((*p) && (isspace(*p)))
+		    p++;
+		  /* Skip leading dot */
+		  if (*p == '.')
 		    p++;
 		  /* Find next element */
 		  p2 = strchr(p, ' ');
@@ -374,6 +383,7 @@ _ecore_con_dns_timeout(void *data)
 
    query = data;
 
+   query->timeout = NULL;
    if (query->done.cb)
      query->done.cb(NULL, query->done.data);
    _ecore_con_dns_query_free(query);
@@ -384,11 +394,15 @@ static int
 _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
 {
    Ecore_Con_Dns_Query *query;
-   int i, n, fd, found = 0;
+   int i, n, fd, found, len;
    unsigned int id;
    unsigned char buf[1024];
+   char hostname[1024];
    unsigned char *p;
-   int size;
+   char **aliases;
+   struct in_addr *addrs;
+   int naliases, naddrs;
+   int ancount;
    struct hostent he;
 
    query = data;
@@ -396,9 +410,10 @@ _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
 
    memset(buf, 0, sizeof(buf));
    n = recv(fd, buf, sizeof(buf), 0);
-   if (n == -1) goto error;
+   if ((n == -1) || (n < HFIXEDSZ) || (n > sizeof(buf))) goto error;
    /* Check if this message is for us */
    id = GET_16BIT(buf);
+   found = 0;
    for (i = 0; i < _server_count; i++)
      {
 	if (query->id[i] == id)
@@ -414,40 +429,115 @@ _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
    p = buf;
 
    /* Skip the query */
-   p += HFIXEDSZ;
-   while (*p)
-     p += (*p + 1);
-   p++;
-   p += QFIXEDSZ;
-
-   /* Skip the header */
-   p += RRFIXEDSZ;
-   size = GET_16BIT(p);
-   /* We should get 4 bytes, 1 for each octet in the IP addres */
-   if (size != 4) goto error;
-
+   /* Skip id and flags */
+   p += 4;
+   /* Check question count (QDCOUNT)*/
+   i = GET_16BIT(p);
+   p += 2;
+   if (i != 1) goto error;
+   /* Get the number of answers (ANCOUNT) */
+   ancount = GET_16BIT(p);
+   p += 2;
+   if (ancount < 1) goto error;
+   /* Skip NSCOUNT */
+   p += 2;
+   /* Skip ARCOUNT */
    p += 2;
 
-   /* Get the IP address */
-   he.h_addr_list = malloc(2 * sizeof(char *));
-   if (!he.h_addr_list) goto error;
+   /* Skip the hostname */
+   if ((len = _ecore_con_hostname_get(buf, hostname, p - buf, n)) == -1) goto error;
+   if (strcmp(hostname, query->hostname))
+     printf("WARNING: Not the same hostname: %s %s?\n", hostname, query->hostname);
+   p += len;
+   /* Skip the question */
+   if (((p + QFIXEDSZ) - buf) >= n) goto error;
+   p += QFIXEDSZ;
+
+   aliases = malloc((ancount + 1) * sizeof(char *));
+   naliases = 0;
+   addrs = malloc((ancount + 1) * sizeof(struct in_addr));
+   naddrs = 0;
+
+   for (i = 0; i < ancount; i++)
+     {
+	int rr_type, rr_class, rr_len;
+	char rr_name[1024], rr_data[1024];
+
+	/* Get the name */
+	if ((len = _ecore_con_hostname_get(buf, rr_name, p - buf, n)) == -1) goto error;
+	p += len;
+	if (((p + RRFIXEDSZ) - buf) >= n) goto error;
+	/* Get the resource record type */
+	rr_type = GET_16BIT(p);
+	p += 2;
+	/* Get the resource record class */
+	rr_class = GET_16BIT(p);
+	p += 2;
+	/* Skip resource record ttl */
+	p += 4;
+	/* Get the resource record length */
+	rr_len = GET_16BIT(p);
+	p += 2;
+	/* > n is correct here. On the last message p will point after the last
+	 * data bit, but for all other messages p will point to the next data
+	 */
+	if (((p + rr_len) - buf) > n) goto error;
+
+	if ((rr_class == C_IN) && (rr_type == T_CNAME))
+	  {
+	     /* Store name as alias */
+	     aliases[naliases++] = strdup(rr_name);
+
+	     /* Get hostname */
+	     if ((len = _ecore_con_hostname_get(buf, rr_data, p - buf, n)) == -1) goto error;
+	     strcpy(hostname, rr_data);
+	     p += rr_len;
+	  }
+	else if ((rr_class == C_IN) && (rr_type == T_A) && (!strcmp(hostname, rr_name)))
+	  {
+	     /* We should get 4 bytes, 1 for each octet in the IP addres */
+	     if (rr_len != 4) goto error;
+	     memcpy(&addrs[naddrs++], p, sizeof(struct in_addr));
+	     p += rr_len;
+	  }
+	else
+	  p += rr_len;
+     }
+
    /* Fill in the hostent and return successfully. */
-   /* TODO: Maybe get the hostname from the reply */
-   he.h_name = strdup(query->hostname);
-   /* he.h_aliases = aliases; */
+   he.h_addr_list = malloc((naddrs + 1) * sizeof(char *));
+   if (!he.h_addr_list) goto error;
+   he.h_name = strdup(hostname);
+   aliases[naliases] = NULL;
+   he.h_aliases = aliases;
    he.h_addrtype = AF_INET;
    he.h_length = sizeof(struct in_addr);
-   he.h_addr_list[0] = malloc(4 * sizeof(char));
-   memcpy(he.h_addr_list[0], p, he.h_length);
-   he.h_addr_list[1] = NULL;
+   for (i = 0; i < naddrs; i++)
+     he.h_addr_list[i] = (char *) &addrs[i];
+   he.h_addr_list[naddrs] = NULL;
 
    if (query->done.cb)
      query->done.cb(&he, query->done.data);
+
    free(he.h_addr_list);
+   free(he.h_name);
+   free(addrs);
+   for (i = 0; i < naliases; i++)
+     free(aliases[i]);
+   free(aliases);
+
    _ecore_con_dns_query_free(query);
    return 0;
 
 error:
+   if (addrs) free(addrs);
+   if (aliases)
+     {
+	for (i = 0; i < naliases; i++)
+	  free(aliases[i]);
+	free(aliases);
+     }
+
    found = 0;
    for (i = 0; i < _server_count; i++)
      {
@@ -472,7 +562,7 @@ error:
 	/* Should we look more? */
 	if ((_domain) && (query->search++))
 	  {
-	     if (snprintf(buf, sizeof(buf), "%s%s", query->searchname, _domain) < sizeof(buf))
+	     if (snprintf(buf, sizeof(buf), "%s.%s", query->searchname, _domain) < sizeof(buf))
 	       {
 		  free(query->hostname);
 		  query->hostname = strdup(buf);
@@ -487,7 +577,7 @@ error:
 	  }
 	else if ((++query->search) < _search_count)
 	  {
-	     if (snprintf(buf, sizeof(buf), "%s%s", query->searchname, _search[query->search]) < sizeof(buf))
+	     if (snprintf(buf, sizeof(buf), "%s.%s", query->searchname, _search[query->search]) < sizeof(buf))
 	       {
 		  free(query->hostname);
 		  query->hostname = strdup(buf);
@@ -527,4 +617,64 @@ _ecore_con_dns_query_free(Ecore_Con_Dns_Query *query)
    query->timeout = NULL;
    free(query->hostname);
    free(query);
+}
+
+static int
+_ecore_con_hostname_get(unsigned char *buf, char *hostname,
+			int pos, int length)
+{
+   unsigned char *p;
+   char *q;
+   int offset, indir, len, data;
+
+   p = buf;
+   p += pos;
+
+   q = hostname;
+
+   offset = pos;
+   data = 0;
+   indir = 0;
+   while (*p)
+     {
+	if ((*p & INDIR_MASK) == INDIR_MASK)
+	  {
+	     /* Check offset */
+	     if (((p + 1) - buf) >= length) return -1;
+	     offset = (*p & ~INDIR_MASK) << 8 | *(p + 1);
+	     if (offset >= length) return -1;
+	     p = buf + offset;
+
+	     if (!indir)
+	       {
+		  data = 2;
+		  indir = 1;
+	       }
+	  }
+	else
+	  {
+	     offset += (*p + 1);
+	     if (offset >= length) return -1;
+
+	     len = *p;
+	     if (!indir)
+	       data += len + 1;
+
+	     /* Get the name */
+	     *p++;
+	     while (len--)
+	       {
+		  if (*p == '.')
+		    *q++ = '\\';
+		  *q++ = *p++;
+	       }
+	     if (*(p + 1))
+	       *q++ = '.';
+	     else
+	       *q++ = 0;
+	  }
+     }
+   if (!indir)
+     data++;
+   return data;
 }
