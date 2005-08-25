@@ -1013,7 +1013,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	       {
 		  snprintf(buf, sizeof(buf), "images/%i", image_id);
 		  evas_object_image_file_set(ep->object, ed->file->path, buf);
-		  if (evas_object_image_load_error_get(ep->object)  != EVAS_LOAD_ERROR_NONE)
+		  if (evas_object_image_load_error_get(ep->object) != EVAS_LOAD_ERROR_NONE)
 		    {
 		       printf("EDJE: Error loading image collection \"%s\" from file \"%s\"\n",
 			      buf, ed->file->path);
