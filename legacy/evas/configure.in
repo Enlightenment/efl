@@ -427,23 +427,32 @@ AC_ARG_ENABLE(gl-x11, [  --enable-gl-x11                 enable the OpenGL X11 d
 if test "x$have_evas_gl_x11" = "xyes"; then
   AC_CHECK_HEADER(GL/gl.h,
     [
-      AC_CHECK_HEADER(X11/X.h,
+      AC_CHECK_HEADER(GL/glu.h,
         [
-          AM_CONDITIONAL(BUILD_ENGINE_GL_X11, true)
-	  AC_DEFINE(BUILD_ENGINE_GL_X11, 1, [OpenGL X11 Rendering Backend])
-	  AM_CONDITIONAL(BUILD_ENGINE_GL_COMMON, true)
-	  AC_DEFINE(BUILD_ENGINE_GL_COMMON, 1, [Generic OpenGL Rendering Support])
-	  x_dir=${x_dir:-/usr/X11R6};
-	  x_cflags=${x_cflags:--I$x_dir/include}
-	  x_libs="${x_libs:--L$x_dir/lib -lX11 -lXext}"
-	  gl_cflags="-I/usr/include"
-	  gl_libs="-lGL -lGLU -lpthread"
-	  gl_dir=""
-	  ENGINE_GL_X11_PRG="evas_gl_x11_test"
+          AC_CHECK_HEADER(X11/X.h,
+            [
+              AM_CONDITIONAL(BUILD_ENGINE_GL_X11, true)
+	      AC_DEFINE(BUILD_ENGINE_GL_X11, 1, [OpenGL X11 Rendering Backend])
+	      AM_CONDITIONAL(BUILD_ENGINE_GL_COMMON, true)
+	      AC_DEFINE(BUILD_ENGINE_GL_COMMON, 1, [Generic OpenGL Rendering Support])
+	      x_dir=${x_dir:-/usr/X11R6};
+	      x_cflags=${x_cflags:--I$x_dir/include}
+	      x_libs="${x_libs:--L$x_dir/lib -lX11 -lXext}"
+	      gl_cflags="-I/usr/include"
+	      gl_libs="-lGL -lGLU -lpthread"
+	      gl_dir=""
+	      ENGINE_GL_X11_PRG="evas_gl_x11_test"
+            ], [
+              AM_CONDITIONAL(BUILD_ENGINE_GL_X11, false)
+              AM_CONDITIONAL(BUILD_ENGINE_GL_COMMON, false)
+              AC_MSG_RESULT(disabling GL X11 engine)
+              have_evas_gl_x11="no"
+            ]
         ], [
           AM_CONDITIONAL(BUILD_ENGINE_GL_X11, false)
           AM_CONDITIONAL(BUILD_ENGINE_GL_COMMON, false)
           AC_MSG_RESULT(disabling GL X11 engine)
+          have_evas_gl_x11="no"
         ]
       )
     ], [
@@ -456,6 +465,7 @@ if test "x$have_evas_gl_x11" = "xyes"; then
 else
   AM_CONDITIONAL(BUILD_ENGINE_GL_X11, false)
   AM_CONDITIONAL(BUILD_ENGINE_GL_COMMON, false)
+  have_evas_gl_x11="no"
 fi
 
 
