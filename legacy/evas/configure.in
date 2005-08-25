@@ -448,6 +448,7 @@ if test "x$have_evas_gl_x11" = "xyes"; then
               AC_MSG_RESULT(disabling GL X11 engine)
               have_evas_gl_x11="no"
             ]
+	  )
         ], [
           AM_CONDITIONAL(BUILD_ENGINE_GL_X11, false)
           AM_CONDITIONAL(BUILD_ENGINE_GL_COMMON, false)
