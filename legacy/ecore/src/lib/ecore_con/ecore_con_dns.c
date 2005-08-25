@@ -399,9 +399,9 @@ _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
    unsigned char buf[1024];
    char hostname[1024];
    unsigned char *p;
-   char **aliases;
-   struct in_addr *addrs;
-   int naliases, naddrs;
+   char **aliases = NULL;
+   struct in_addr *addrs = NULL;
+   int naliases = 0, naddrs = 0;
    int ancount;
    struct hostent he;
 
@@ -454,9 +454,7 @@ _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
    p += QFIXEDSZ;
 
    aliases = malloc((ancount + 1) * sizeof(char *));
-   naliases = 0;
    addrs = malloc((ancount + 1) * sizeof(struct in_addr));
-   naddrs = 0;
 
    for (i = 0; i < ancount; i++)
      {
