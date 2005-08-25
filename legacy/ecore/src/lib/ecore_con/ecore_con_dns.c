@@ -57,8 +57,6 @@ struct _Ecore_Con_Dns_Query {
 
      /* The name the user searches for */
      char *searchname;
-     /* The name vi send to dns and return to the user */
-     char *hostname;
 
      struct {
 	  void (*cb)(struct hostent *hostent, void *data);
@@ -67,7 +65,7 @@ struct _Ecore_Con_Dns_Query {
 
 };
 
-static void _ecore_con_dns_ghbn(Ecore_Con_Dns_Query *query);
+static void _ecore_con_dns_ghbn(Ecore_Con_Dns_Query *query, const char *hostname);
 static int  _ecore_con_dns_timeout(void *data);
 static int  _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static void _ecore_con_dns_query_free(Ecore_Con_Dns_Query *query);
@@ -246,19 +244,19 @@ ecore_con_dns_lookup(const char *name,
    query->done.cb = done_cb;
    query->done.data = data;
    query->timeout = ecore_timer_add(20.0, _ecore_con_dns_timeout, query);
-   query->hostname = strdup(name);
    query->searchname = strdup(name);
    query->search = -1;
 
-   _ecore_con_dns_ghbn(query);
+   _ecore_con_dns_ghbn(query, name);
    return 1;
 }
 
 static void
-_ecore_con_dns_ghbn(Ecore_Con_Dns_Query *query)
+_ecore_con_dns_ghbn(Ecore_Con_Dns_Query *query, const char *hostname)
 {
    char buf[256];
-   char *p, *q, *pl;
+   char *p, *pl;
+   const char *q;
    int i, len, total_len;
 
    /* Create buf */
@@ -283,7 +281,7 @@ _ecore_con_dns_ghbn(Ecore_Con_Dns_Query *query)
    p++;
    total_len++;
    /* name */
-   q = query->hostname;
+   q = hostname;
    len = 0;
    while ((*q) && (total_len < 1024))
      {
@@ -446,8 +444,6 @@ _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
 
    /* Skip the hostname */
    if ((len = _ecore_con_hostname_get(buf, hostname, p - buf, n)) == -1) goto error;
-   if (strcmp(hostname, query->hostname))
-     printf("WARNING: Not the same hostname: %s %s?\n", hostname, query->hostname);
    p += len;
    /* Skip the question */
    if (((p + QFIXEDSZ) - buf) >= n) goto error;
@@ -562,9 +558,7 @@ error:
 	  {
 	     if (snprintf(buf, sizeof(buf), "%s.%s", query->searchname, _domain) < sizeof(buf))
 	       {
-		  free(query->hostname);
-		  query->hostname = strdup(buf);
-		  _ecore_con_dns_ghbn(query);
+		  _ecore_con_dns_ghbn(query, buf);
 	       }
 	     else
 	       {
@@ -577,9 +571,7 @@ error:
 	  {
 	     if (snprintf(buf, sizeof(buf), "%s.%s", query->searchname, _search[query->search]) < sizeof(buf))
 	       {
-		  free(query->hostname);
-		  query->hostname = strdup(buf);
-		  _ecore_con_dns_ghbn(query);
+		  _ecore_con_dns_ghbn(query, buf);
 	       }
 	     else
 	       {
@@ -613,7 +605,6 @@ _ecore_con_dns_query_free(Ecore_Con_Dns_Query *query)
      }
    if (query->timeout) ecore_timer_del(query->timeout);
    query->timeout = NULL;
-   free(query->hostname);
    free(query->searchname);
    free(query);
 }
