@@ -2294,6 +2294,11 @@ evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
 			 }
 		       esc_start = esc_end = NULL;
 		    }
+		  else if (*p == 0)
+		    {
+		       _append_text_run(o, s, p);
+		       s = NULL;
+		    }
 		  if (*p == 0)
 		    break;
 	       }
