@@ -72,9 +72,13 @@ evas_software_x11_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 #ifdef WORDS_BIGENDIAN
 	   if (evas_software_x11_x_output_buffer_byte_order(xob) == LSBFirst)
 	     buf->priv.x.swap = 1;
+	   if (evas_software_x11_x_output_buffer_bit_order(xob) == MSBFirst)
+	     buf->priv.x.bit_swap = 1;
 #else
 	   if (evas_software_x11_x_output_buffer_byte_order(xob) == MSBFirst)
 	     buf->priv.x.swap = 1;
+	   if (evas_software_x11_x_output_buffer_bit_order(xob) == MSBFirst)
+	     buf->priv.x.bit_swap = 1;
 #endif
 	   if ((vis->class == TrueColor) || (vis->class == DirectColor))
 	     {
@@ -446,7 +450,7 @@ evas_software_x11_outbuf_push_updated_region(Outbuf * buf, RGBA_Image * update, 
    if (obr->mxob)
      {
 	for (yy = 0; yy < obr->h; yy++)
-	  evas_software_x11_x_write_mask_line(obr->mxob,
+	  evas_software_x11_x_write_mask_line(buf, obr->mxob,
 					      src_data +
 					      (yy * obr->w), obr->w, yy);
      }

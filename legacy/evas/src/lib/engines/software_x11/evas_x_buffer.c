@@ -4,7 +4,7 @@
 static int _x_err = 0;
 
 void
-evas_software_x11_x_write_mask_line(X_Output_Buffer *xob, DATA32 *src, int w, int y)
+evas_software_x11_x_write_mask_line(Outbuf *buf, X_Output_Buffer *xob, DATA32 *src, int w, int y)
 {
    int x;
    DATA32 *src_ptr;
@@ -14,19 +14,39 @@ evas_software_x11_x_write_mask_line(X_Output_Buffer *xob, DATA32 *src, int w, in
    src_ptr = src;
    dst_ptr = evas_software_x11_x_output_buffer_data(xob, &bpl);
    dst_ptr = dst_ptr + (bpl * y);
-   for (x = 0; x < w; x += 8)
+   if (buf->priv.x.bit_swap)
      {
-	*dst_ptr =
-	  ((A_VAL(&(src_ptr[0])) >> 7) << 0) |
-	  ((A_VAL(&(src_ptr[1])) >> 7) << 1) |
-	  ((A_VAL(&(src_ptr[2])) >> 7) << 2) |
-	  ((A_VAL(&(src_ptr[3])) >> 7) << 3) |
-	  ((A_VAL(&(src_ptr[4])) >> 7) << 4) |
-	  ((A_VAL(&(src_ptr[5])) >> 7) << 5) |
-	  ((A_VAL(&(src_ptr[6])) >> 7) << 6) |
-	  ((A_VAL(&(src_ptr[7])) >> 7) << 7);
-	src_ptr += 8;
-	dst_ptr++;
+	for (x = 0; x < w; x += 8)
+	  {
+	     *dst_ptr =
+	       ((A_VAL(&(src_ptr[0])) >> 7) << 7) |
+	       ((A_VAL(&(src_ptr[1])) >> 7) << 6) |
+	       ((A_VAL(&(src_ptr[2])) >> 7) << 5) |
+	       ((A_VAL(&(src_ptr[3])) >> 7) << 4) |
+	       ((A_VAL(&(src_ptr[4])) >> 7) << 3) |
+	       ((A_VAL(&(src_ptr[5])) >> 7) << 2) |
+	       ((A_VAL(&(src_ptr[6])) >> 7) << 1) |
+	       ((A_VAL(&(src_ptr[7])) >> 7) << 0);
+	     src_ptr += 8;
+	     dst_ptr++;
+	  }
+     }
+   else
+     {
+	for (x = 0; x < w; x += 8)
+	  {
+	     *dst_ptr =
+	       ((A_VAL(&(src_ptr[0])) >> 7) << 0) |
+	       ((A_VAL(&(src_ptr[1])) >> 7) << 1) |
+	       ((A_VAL(&(src_ptr[2])) >> 7) << 2) |
+	       ((A_VAL(&(src_ptr[3])) >> 7) << 3) |
+	       ((A_VAL(&(src_ptr[4])) >> 7) << 4) |
+	       ((A_VAL(&(src_ptr[5])) >> 7) << 5) |
+	       ((A_VAL(&(src_ptr[6])) >> 7) << 6) |
+	       ((A_VAL(&(src_ptr[7])) >> 7) << 7);
+	     src_ptr += 8;
+	     dst_ptr++;
+	  }
      }
    for (; x < w; x ++)
      {
@@ -191,4 +211,10 @@ int
 evas_software_x11_x_output_buffer_byte_order(X_Output_Buffer *xob)
 {
    return xob->xim->byte_order;
+}
+
+int
+evas_software_x11_x_output_buffer_bit_order(X_Output_Buffer *xob)
+{
+   return xob->xim->bitmap_bit_order;
 }

@@ -41,16 +41,17 @@ struct _Outbuf
    struct {
       Convert_Pal *pal;
       struct {
-	 Display  *disp;
-	 Window    win;
-	 Pixmap    mask;
-	 Visual   *vis;
-	 Colormap  cmap;
-	 int       depth;
-	 int       shm;
-	 GC        gc;
-	 GC        gcm;
-	 int       swap : 1;
+	 Display       *disp;
+	 Window         win;
+	 Pixmap         mask;
+	 Visual        *vis;
+	 Colormap       cmap;
+	 int            depth;
+	 int            shm;
+	 GC             gc;
+	 GC             gcm;
+	 unsigned char  swap : 1;
+	 unsigned char  bit_swap : 1;
       } x;
       struct {
 	 DATA32    r, g, b;
@@ -112,7 +113,7 @@ struct _X_Output_Buffer
 /****/
 void             evas_software_x11_x_init                        (void);
 
-void             evas_software_x11_x_write_mask_line             (X_Output_Buffer *xob, DATA32 *src, int w, int y);
+void             evas_software_x11_x_write_mask_line             (Outbuf *buf, X_Output_Buffer *xob, DATA32 *src, int w, int y);
 int              evas_software_x11_x_can_do_shm                  (Display *d);
 X_Output_Buffer *evas_software_x11_x_output_buffer_new           (Display *d, Visual *v, int depth, int w, int h, int try_shm, void *data);
 void             evas_software_x11_x_output_buffer_free          (X_Output_Buffer *xob, int sync);
@@ -120,6 +121,7 @@ void             evas_software_x11_x_output_buffer_paste         (X_Output_Buffe
 DATA8           *evas_software_x11_x_output_buffer_data          (X_Output_Buffer *xob, int *bytes_per_line_ret);
 int              evas_software_x11_x_output_buffer_depth         (X_Output_Buffer *xob);
 int              evas_software_x11_x_output_buffer_byte_order    (X_Output_Buffer *xob);
+int              evas_software_x11_x_output_buffer_bit_order     (X_Output_Buffer *xob);
 
 void             evas_software_x11_x_color_init                  (void);
 Convert_Pal     *evas_software_x11_x_color_allocate              (Display *disp, Colormap cmap, Visual *vis, Convert_Pal_Mode colors);
