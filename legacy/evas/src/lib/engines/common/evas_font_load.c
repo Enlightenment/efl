@@ -305,7 +305,11 @@ evas_common_font_memory_load(const char *name, int size, const void *data, int d
    if (!fi) return NULL;
 //   printf("LOAD FONT MEM  %s %i\n", name, size);
    fn = calloc(1, sizeof(RGBA_Font));
-   if (!fn) return NULL;
+   if (!fn)
+      {
+         free(fi);
+         return NULL;
+      }
    fn->fonts = evas_list_append(fn->fonts, fi);
    return fn;
 }
@@ -320,7 +324,11 @@ evas_common_font_load(const char *name, int size)
    if (!fi) return NULL;
 //   printf("LOAD FONT FILE  %s %i\n", name, size);
    fn = calloc(1, sizeof(RGBA_Font));
-   if (!fn) return NULL;
+   if (!fn)
+      {
+         free(fi);
+         return NULL;
+      }
    fn->fonts = evas_list_append(fn->fonts, fi);
    return fn;
 }
@@ -330,6 +338,8 @@ evas_common_font_add(RGBA_Font *fn, const char *name, int size)
 {
    RGBA_Font_Int *fi;
 
+   if (!fn)
+      return NULL;
    fi = evas_common_font_int_load(name, size);
    if (fi)
      {
@@ -344,6 +354,8 @@ evas_common_font_memory_add(RGBA_Font *fn, const char *name, int size, const voi
 {
    RGBA_Font_Int *fi;
 
+   if (!fn)
+      return NULL;
    fi = evas_common_font_int_memory_load(name, size, data, data_size);
    if (fi)
      {
@@ -358,6 +370,8 @@ evas_common_font_free(RGBA_Font *fn)
 {
    Evas_List *l;
 
+   if (!fn)
+      return;
    for (l = fn->fonts; l; l = l->next)
      {
 	RGBA_Font_Int *fi;
