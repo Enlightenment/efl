@@ -8,6 +8,8 @@ static void _edje_smart_raise(Evas_Object * obj);
 static void _edje_smart_lower(Evas_Object * obj);
 static void _edje_smart_stack_above(Evas_Object * obj, Evas_Object * above);
 static void _edje_smart_stack_below(Evas_Object * obj, Evas_Object * below);
+static Evas_Object *_edje_smart_above_get(Evas_Object * obj);
+static Evas_Object *_edje_smart_below_get(Evas_Object * obj);
 static void _edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y);
 static void _edje_smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h);
 static void _edje_smart_show(Evas_Object * obj);
@@ -50,6 +52,8 @@ edje_object_add(Evas *evas)
 				     _edje_smart_clip_set, 
 				     _edje_smart_clip_unset, 
 				     NULL);
+   evas_smart_above_get_set(_edje_smart, _edje_smart_above_get);
+   evas_smart_below_get_set(_edje_smart, _edje_smart_below_get);
      }
    return evas_object_smart_add(evas, _edje_smart);
 }
@@ -241,6 +245,42 @@ _edje_smart_stack_below(Evas_Object * obj, Evas_Object * below)
 	  evas_object_stack_below(ep->swallowed_object, below);
      }
    _edje_emit(ed, "stack_below", "");
+}
+
+static Evas_Object *
+_edje_smart_above_get(Evas_Object * obj)
+{
+   Edje *ed;
+
+   ed = evas_object_smart_data_get(obj);
+   if (!ed) return obj;
+   if (ed->parts)
+   {
+      Edje_Real_Part *ep;
+
+      ep = evas_list_last(ed->parts)->data;
+      if (ep->swallowed_object)
+         return ep->swallowed_object;
+      return ep->object;
+   }
+   return obj;
+}
+
+static Evas_Object *
+_edje_smart_below_get(Evas_Object * obj)
+{
+   Edje *ed;
+
+   ed = evas_object_smart_data_get(obj);
+   if (!ed) return obj;
+   if (ed->parts)
+   {
+      Edje_Real_Part *ep;
+
+      ep = ed->parts->data;
+      return ep->object;
+   }
+   return obj;
 }
 
 static void 

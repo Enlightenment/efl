@@ -53,11 +53,6 @@ evas_object_raise(Evas_Object *obj)
    return;
    MAGIC_CHECK_END();
    if (evas_object_intercept_call_raise(obj)) return;
-   if (obj->smart.smart)
-     {
-       if (obj->smart.smart->smart_class->raise)
-	  obj->smart.smart->smart_class->raise(obj);
-     }
    if (!(((Evas_Object_List *)obj)->next))
      {
 	evas_object_inform_call_restack(obj);
@@ -65,6 +60,11 @@ evas_object_raise(Evas_Object *obj)
      }
    obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
    obj->layer->objects = evas_object_list_append(obj->layer->objects, obj);
+   if (obj->smart.smart)
+     {
+       if (obj->smart.smart->smart_class->raise)
+	  obj->smart.smart->smart_class->raise(obj);
+     }
    if (obj->clip.clipees)
      {
 	evas_object_inform_call_restack(obj);
@@ -162,6 +162,11 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
    return;
    MAGIC_CHECK_END();
    if (evas_object_intercept_call_stack_above(obj, above)) return;
+   if (above->smart.smart)
+     {
+       if (above->smart.smart->smart_class->above_get)
+     above = above->smart.smart->smart_class->above_get(above);
+     }
    if (obj->smart.smart)
      {
        if (obj->smart.smart->smart_class->stack_above)
@@ -223,6 +228,11 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
    return;
    MAGIC_CHECK_END();
    if (evas_object_intercept_call_stack_below(obj, below)) return;
+   if (below->smart.smart)
+     {
+       if (below->smart.smart->smart_class->below_get)
+     below = below->smart.smart->smart_class->below_get(below);
+     }
    if (obj->smart.smart)
      {
        if (obj->smart.smart->smart_class->stack_below)

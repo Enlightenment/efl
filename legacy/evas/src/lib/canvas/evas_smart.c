@@ -88,6 +88,38 @@ evas_smart_free(Evas_Smart *s)
  * FIXME: To be fixed.
  *
  */
+void
+evas_smart_above_get_set(Evas_Smart *s, Evas_Object *(*func_above_get) (Evas_Object *o))
+{
+   Evas_Smart_Class *sc;
+
+   if (!(sc = evas_smart_class_get(s)))
+      return;
+   sc->above_get = func_above_get;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+void
+evas_smart_below_get_set(Evas_Smart *s, Evas_Object *(*func_below_get) (Evas_Object *o))
+{
+   Evas_Smart_Class *sc;
+
+   if (!(sc = evas_smart_class_get(s)))
+      return;
+   sc->below_get = func_below_get;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
 Evas_Smart *
 evas_smart_class_new(Evas_Smart_Class *sc)
 {
