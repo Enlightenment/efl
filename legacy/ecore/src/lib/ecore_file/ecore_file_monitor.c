@@ -22,7 +22,6 @@ int
 ecore_file_monitor_init(void)
 {
 #ifdef HAVE_INOTIFY
-   printf("inotify\n");
    monitor_type = ECORE_FILE_MONITOR_TYPE_INOTIFY;
    if (ecore_file_monitor_inotify_init())
      return 1;
@@ -35,12 +34,10 @@ ecore_file_monitor_init(void)
 #endif
 #endif
 #ifdef HAVE_POLL
-   printf("poll\n");
    monitor_type = ECORE_FILE_MONITOR_TYPE_POLL;
    if (ecore_file_monitor_poll_init())
      return 1;
 #endif
-   printf("none\n");
    monitor_type = ECORE_FILE_MONITOR_TYPE_NONE;
    return 0;
 }
@@ -81,7 +78,6 @@ ecore_file_monitor_add(const char *path,
 	 return NULL;
 #ifdef HAVE_INOTIFY
       case ECORE_FILE_MONITOR_TYPE_INOTIFY:
-	 printf("inotify add\n");
 	 return ecore_file_monitor_inotify_add(path, func, data);
 #endif
 #ifdef HAVE_FAM
@@ -90,7 +86,6 @@ ecore_file_monitor_add(const char *path,
 #endif
 #ifdef HAVE_POLL
       case ECORE_FILE_MONITOR_TYPE_POLL:
-	 printf("poll add\n");
 	 return ecore_file_monitor_poll_add(path, func, data);
 #endif
      }

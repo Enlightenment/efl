@@ -82,13 +82,10 @@ ecore_file_monitor_inotify_init(void)
 {
    int fd;
 
-   /* Check if we can open /dev/inotify */
-   printf("open\n");
    fd = inotify_init();
    if (fd < 0)
      return 0;
 
-   printf("handler\n");
    _fdh = ecore_main_fd_handler_add(fd, ECORE_FD_READ, _ecore_file_monitor_inotify_handler,
 				    NULL, NULL, NULL);
    if (!_fdh)
