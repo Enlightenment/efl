@@ -161,15 +161,18 @@ ecore_file_monitor_poll_del(Ecore_File_Monitor *em)
      }
 
    /* Remove files */
-   for (l = em->files; l;)
-     {
-	Ecore_File *file;
-
-	file = (Ecore_File *)l;
-	l = l->next;
-	free(file->name);
-	free(file);
-     }
+   /*It's possible there weren't any files to monitor, so check if the list is init*/
+   if (em->files) {
+	   for (l = em->files; l;)
+	     {
+		Ecore_File *file;
+	
+		file = (Ecore_File *)l;
+		l = l->next;
+		free(file->name);
+		free(file);
+	     }
+   }
 
    _monitors = _ecore_list_remove(_monitors, em);
 
