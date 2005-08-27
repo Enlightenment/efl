@@ -42,7 +42,8 @@ ecore_file_exists(const char *file)
 {
    struct stat st;
 
-   if (stat(file, &st) < 0) return 0;
+   /*Workaround so that "/" returns a true, otherwise we can't monitor "/" in ecore_file_monitor*/
+   if (stat(file, &st) < 0 && strcmp(file, "/")) return 0;
    return 1;
 }
 
