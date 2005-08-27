@@ -98,7 +98,7 @@ ecore_file_monitor_poll_add(const char *path,
 
    em->path = strdup(path);
    len = strlen(em->path);
-   if (em->path[len - 1] == '/')
+   if (em->path[len - 1] == '/' && strcmp(em->path, "/"))
      em->path[len - 1] = 0;
 
    em->func = func;
