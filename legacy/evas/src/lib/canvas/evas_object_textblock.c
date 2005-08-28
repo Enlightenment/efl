@@ -1842,6 +1842,14 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 			    int x2;
 			    
 			    x2 = (fmt->tabstops * ((c->x + fmt->tabstops) / fmt->tabstops));
+			    if (x2 >
+				(c->w - c->o->style_pad.l - 
+				 c->o->style_pad.r - 
+				 c->marginl - c->marginr))
+			      {
+				 _layout_line_advance(c, fmt);
+				 x2 = (fmt->tabstops * ((c->x + fmt->tabstops) / fmt->tabstops));
+			      }
 			    fi = _layout_format_item_add(c, n, item);
 			    fi->x = c->x;
 			    fi->w = x2 - c->x;
@@ -2726,26 +2734,52 @@ evas_textblock2_cursor_format_append(Evas_Textblock_Cursor *cur, const char *for
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Node *n, *nc, *n2;
    
-   /* FIXME: handle format inset in the middle of a text node */
    if (!cur) return;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    nc = cur->node;
    n = calloc(1, sizeof(Evas_Object_Textblock_Node));
    n->type = NODE_FORMAT;
+   n->text = strdup(format);
+   n->len = strlen(n->text);
+   n->alloc = n->len + 1;
    if (!nc)
      {
 	o->nodes = evas_object_list_append(o->nodes, n);
      }
    else if (nc->type == NODE_FORMAT)
      {
-	o->nodes = evas_object_list_append_relative(o->nodes, nc, n);
+	o->nodes = evas_object_list_append_relative(o->nodes, n, nc);
      }
    else if (nc->type == NODE_TEXT)
      {
-	/* split text node */
-	/* FIXME: */
+	int index, ch = 0;
+	char *ts;
+	
+	index = cur->pos;
+	if (nc->text)
+	  {
+	     ch = evas_common_font_utf8_get_next((unsigned char *)(nc->text), &index);
+	     if (ch != 0)
+	       cur->pos = index;
+	  }
+	o->nodes = evas_object_list_append_relative(o->nodes, n, nc);
+	if ((ch != 0) && (cur->pos < nc->len))
+	  {
+	     n2 = calloc(1, sizeof(Evas_Object_Textblock_Node));
+	     n2->type = NODE_TEXT;
+	     n2->text = _strbuf_append(n2->text, (char *)(nc->text + cur->pos), &(n2->len), &(n2->alloc));
+	     o->nodes = evas_object_list_append_relative(o->nodes, n2, n);
+	     
+	     *(nc->text + cur->pos) = 0;
+	     nc->len = cur->pos;
+	     ts = realloc(nc->text, nc->len + 1);
+	     if (ts)
+	       {
+		  nc->text = ts;
+		  nc->alloc = nc->len + 1;
+	       }
+	  }
      }
-   n->text = _strbuf_append(n->text, (char *)format, &(n->len), &(n->alloc));
    cur->node = n;
    cur->pos = 0;
    if (o->lines)
@@ -2762,7 +2796,58 @@ evas_textblock2_cursor_format_append(Evas_Textblock_Cursor *cur, const char *for
 void
 evas_textblock2_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *format)
 {
-   /* FIXME: handle this similar to above */
+   Evas_Object_Textblock *o;
+   Evas_Object_Textblock_Node *n, *nc, *n2;
+   
+   if (!cur) return;
+   o = (Evas_Object_Textblock *)(cur->obj->object_data);
+   nc = cur->node;
+   n = calloc(1, sizeof(Evas_Object_Textblock_Node));
+   n->type = NODE_FORMAT;
+   n->text = strdup(format);
+   n->len = strlen(n->text);
+   n->alloc = n->len + 1;
+   if (!nc)
+     {
+	o->nodes = evas_object_list_append(o->nodes, n);
+     }
+   else if (nc->type == NODE_FORMAT)
+     {
+	o->nodes = evas_object_list_append_relative(o->nodes, n, nc);
+     }
+   else if (nc->type == NODE_TEXT)
+     {
+	char *ts;
+	
+	o->nodes = evas_object_list_append_relative(o->nodes, n, nc);
+	if (cur->pos < nc->len)
+	  {
+	     n2 = calloc(1, sizeof(Evas_Object_Textblock_Node));
+	     n2->type = NODE_TEXT;
+	     n2->text = _strbuf_append(n2->text, (char *)(nc->text + cur->pos), &(n2->len), &(n2->alloc));
+	     o->nodes = evas_object_list_append_relative(o->nodes, n2, n);
+	     
+	     *(nc->text + cur->pos) = 0;
+	     nc->len = cur->pos;
+	     ts = realloc(nc->text, nc->len + 1);
+	     if (ts)
+	       {
+		  nc->text = ts;
+		  nc->alloc = nc->len + 1;
+	       }
+	  }
+     }
+   cur->node = n;
+   cur->pos = 0;
+   if (o->lines)
+     {
+	_lines_clear(cur->obj, o->lines);
+	o->lines = NULL;
+     }
+   o->formatted.valid = 0;
+   o->native.valid = 0;
+   o->changed = 1;
+   evas_object_change(cur->obj);
 }
 
 const char *
