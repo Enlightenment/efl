@@ -2809,18 +2809,21 @@ evas_textblock2_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *fo
    n->alloc = n->len + 1;
    if (!nc)
      {
-	o->nodes = evas_object_list_append(o->nodes, n);
+	o->nodes = evas_object_list_prepend(o->nodes, n);
      }
    else if (nc->type == NODE_FORMAT)
      {
-	o->nodes = evas_object_list_append_relative(o->nodes, n, nc);
+	o->nodes = evas_object_list_prepend_relative(o->nodes, n, nc);
      }
    else if (nc->type == NODE_TEXT)
      {
 	char *ts;
 	
-	o->nodes = evas_object_list_append_relative(o->nodes, n, nc);
-	if (cur->pos < nc->len)
+	if (cur->pos == 0)
+	  o->nodes = evas_object_list_prepend_relative(o->nodes, n, nc);
+	else
+	  o->nodes = evas_object_list_append_relative(o->nodes, n, nc);
+	if ((cur->pos < nc->len) && (cur->pos != 0))
 	  {
 	     n2 = calloc(1, sizeof(Evas_Object_Textblock_Node));
 	     n2->type = NODE_TEXT;
