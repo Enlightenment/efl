@@ -2,7 +2,7 @@
 
 Summary: emotion
 Name: emotion
-Version: 0.0.1.003
+Version: 0.0.1.004
 Release: 1
 License: BSD
 Group: System Environment/Libraries
