@@ -13,47 +13,8 @@
 
 #ifdef HAVE_INOTIFY
 
-#include <sys/syscall.h>
-#include <sys/ioctl.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
+#include <asm/unistd.h>
 #include <linux/inotify.h>
-
-/* These should go when it is standard that they are defined in userspace kernel headers */
-#if defined(__i386__)
-# define __NR_inotify_init	291
-# define __NR_inotify_add_watch	292
-# define __NR_inotify_rm_watch	293
-#elif defined(__x86_64__)
-# define __NR_inotify_init	253
-# define __NR_inotify_add_watch	254
-# define __NR_inotify_rm_watch	255
-#elif defined(__alpha__)
-# define __NR_inotify_init      444
-# define __NR_inotify_add_watch 445
-# define __NR_inotify_rm_watch  446
-#elif defined(__ppc__) || defined(__powerpc__) || defined(__powerpc64__)
-# define __NR_inotify_init      275
-# define __NR_inotify_add_watch 276
-# define __NR_inotify_rm_watch  277
-#elif defined(__sparc__)
-# define __NR_inotify_init      151
-# define __NR_inotify_add_watch 152
-# define __NR_inotify_rm_watch  156
-#elif defined (__ia64__)
-# define __NR_inotify_init  1277
-# define __NR_inotify_add_watch 1278
-# define __NR_inotify_rm_watch  1279
-#elif defined (__s390__)
-# define __NR_inotify_init  284
-# define __NR_inotify_add_watch 285
-# define __NR_inotify_rm_watch  286
-#else
-# warning "Unsupported architecture"
-#endif
-
-#ifdef __NR_inotify_init
 
 typedef struct _Ecore_File_Monitor_Inotify Ecore_File_Monitor_Inotify;
 
@@ -131,7 +92,6 @@ ecore_file_monitor_inotify_add(const char *path,
    Ecore_File_Monitor *em;
    int len;
 
-   printf("Using inotify!\n");
    em = calloc(1, sizeof(Ecore_File_Monitor_Inotify));
    if (!em) return NULL;
 
@@ -155,7 +115,7 @@ ecore_file_monitor_inotify_add(const char *path,
 							       mask);
 	if (ECORE_FILE_MONITOR_INOTIFY(em)->wd < 0)
 	  {
-	     printf("ioctl error\n");
+	     printf("inotify_add_watch error\n");
 	     ecore_file_monitor_inotify_del(em);
 	     return NULL;
 	  }
@@ -277,6 +237,11 @@ _ecore_file_monitor_inotify_events(Ecore_File_Monitor *em, char *file, int mask)
      {
 	em->func(em->data, em, ECORE_FILE_EVENT_DELETED_SELF, em->path);
      }
+   if (mask & IN_MOVE_SELF)
+     {
+	/* We just call delete. The dir is gone... */
+	em->func(em->data, em, ECORE_FILE_EVENT_DELETED_SELF, em->path);
+     }
    if (mask & IN_UNMOUNT)
      {
 	/* We just call delete. The dir is gone... */
@@ -301,5 +266,4 @@ inotify_rm_watch(int fd, __u32 wd)
 {
    return syscall(__NR_inotify_rm_watch, fd, wd);
 }
-#endif /* __NR_inotify_init */
 #endif /* HAVE_INOTIFY */
