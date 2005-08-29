@@ -492,15 +492,18 @@ extern "C" {
    EAPI Evas_Bool                    evas_textblock2_cursor_char_prev(Evas_Textblock_Cursor *cur);
    EAPI void                         evas_textblock2_cursor_char_first(Evas_Textblock_Cursor *cur);
    EAPI void                         evas_textblock2_cursor_char_last(Evas_Textblock_Cursor *cur);
-
+   /* FIXME: add line start, line end, node start, node end, compare, pos get, copy, go to line X, go to pos X */
+   
    EAPI void                         evas_textblock2_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text);
    EAPI void                         evas_textblock2_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text);
 
    EAPI void                         evas_textblock2_cursor_format_append(Evas_Textblock_Cursor *cur, const char *format);
    EAPI void                         evas_textblock2_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *format);
+   /* FIXME: add node delete, cursor delete, range delete */
    
    EAPI const char                  *evas_textblock2_cursor_node_text_get(Evas_Textblock_Cursor *cur);
    EAPI const char                  *evas_textblock2_cursor_node_format_get(Evas_Textblock_Cursor *cur);
+   /* FIXME: add text range get */
        
    EAPI int                          evas_textblock2_cursor_char_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
    EAPI int                          evas_textblock2_cursor_line_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
@@ -510,8 +513,7 @@ extern "C" {
    EAPI void                         evas_object_textblock2_size_formatted_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
    EAPI void                         evas_object_textblock2_size_native_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
    EAPI void                         evas_object_textblock2_style_insets_get(Evas_Object *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b);
-
-   
+   /* FIXME: jump cursor to object-relative x, y */
    
    
    EAPI void              evas_object_del                   (Evas_Object *obj);
