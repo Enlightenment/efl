@@ -85,19 +85,19 @@ static void _ecore_con_dns_cache_free(Ecore_Con_Dns_Cache *cache);
 static int  _ecore_con_hostname_get(unsigned char *buf, char *hostname,
 				    int pos, int length);
 
-static int _init = 0;
+static int dns_init = 0;
 
-static struct in_addr _servers[SERVERS];
-static int            _server_count;
+static struct in_addr servers[SERVERS];
+static int            server_count;
 
-static char *_search[6];
-static int   _search_count = 0;
+static char *search[6];
+static int   search_count = 0;
 
-static char *_domain = NULL;
+static char *domain = NULL;
 
-static uint16_t _id = 0;
+static uint16_t dns_id = 0;
 
-static Ecore_Con_Dns_Cache *_cache = NULL;
+static Ecore_Con_Dns_Cache *dns_cache = NULL;
 
 #define SET_16BIT(p, v) \
    (((p)[0]) = ((v) >> 8) & 0xff), \
@@ -114,11 +114,11 @@ ecore_con_dns_init(void)
    char *p, *p2;
    int ret;
 
-   _init++;
-   if (_init > 1) return 1;
+   dns_init++;
+   if (dns_init > 1) return 1;
 
-   memset(_servers, 0, sizeof(_servers));
-   _server_count = 0;
+   memset(servers, 0, sizeof(servers));
+   server_count = 0;
 
    file = fopen("/etc/resolv.conf", "rb");
    if (!file) return 0;
@@ -141,10 +141,10 @@ ecore_con_dns_init(void)
 
 	if (!strncmp(buf, "nameserver", 10))
 	  {
-	     if (_server_count >= SERVERS) continue;
+	     if (server_count >= SERVERS) continue;
 
-	     _servers[_server_count].s_addr = inet_addr(p);
-	     _server_count++;
+	     servers[server_count].s_addr = inet_addr(p);
+	     server_count++;
 	  }
 	else if (!strncmp(buf, "domain", 6))
 	  {
@@ -154,18 +154,18 @@ ecore_con_dns_init(void)
 	     if (*p == '.')
 	       p++;
 	     /* Get the domain */
-	     _domain = strdup(p);
+	     domain = strdup(p);
 	     /* clear search */
-	     for (i = 0; i < _search_count; i++)
+	     for (i = 0; i < search_count; i++)
 	       {
-		  free(_search[i]);
-		  _search[i] = NULL;
+		  free(search[i]);
+		  search[i] = NULL;
 	       }
-	     _search_count = 0;
+	     search_count = 0;
 	  }
 	else if (!strncmp(buf, "search", 6))
 	  {
-	     while ((p) && (_search_count < 6))
+	     while ((p) && (search_count < 6))
 	       {
 		  /* Remove whitespace */
 		  while ((*p) && (isspace(*p)))
@@ -180,15 +180,15 @@ ecore_con_dns_init(void)
 		  if (p2)
 		    *p2 = 0;
 		  /* Get this element */
-		  _search[_search_count] = strdup(p);
-		  _search_count++;
+		  search[search_count] = strdup(p);
+		  search_count++;
 		  if (p2) p = p2 + 1;
 		  else p = NULL;
 	       }
-	     if (_domain)
+	     if (domain)
 	       {
-		  free(_domain);
-		  _domain = NULL;
+		  free(domain);
+		  domain = NULL;
 	       }
 	  }
 	else if (!strncmp(buf, "sortlist", 8))
@@ -202,13 +202,13 @@ ecore_con_dns_init(void)
      }
    fclose(file);
 
-   if (!_server_count)
+   if (!server_count)
      {
 	/* We should try localhost */
-	_servers[_server_count].s_addr = inet_addr("127.0.0.1");
-	_server_count++;
+	servers[server_count].s_addr = inet_addr("127.0.0.1");
+	server_count++;
      }
-   if ((!_search_count) && (!_domain))
+   if ((!search_count) && (!domain))
      {
 	/* Get domain from hostname */
 	ret = gethostname(buf, sizeof(buf));
@@ -218,7 +218,7 @@ ecore_con_dns_init(void)
 	     if (p)
 	       {
 		  p++;
-		  _domain = strdup(p);
+		  domain = strdup(p);
 	       }
 	  }
      }
@@ -229,19 +229,30 @@ ecore_con_dns_init(void)
 void
 ecore_con_dns_shutdown(void)
 {
+   Ecore_List2 *l;
    int i;
 
-   _init--;
-   if (_init > 0) return;
+   dns_init--;
+   if (dns_init > 0) return;
 
-   if (_domain)
+   for (l = (Ecore_List2 *)dns_cache; l;)
      {
-	free(_domain);
-	_domain = NULL;
+	Ecore_Con_Dns_Cache *current;
+	
+	current = (Ecore_Con_Dns_Cache *)l;
+	l = l->next;
+	_ecore_con_dns_cache_free(current);
      }
-   for (i = 0; i < _search_count; i++)
-     free(_search[i]);
-   _search_count = 0;
+   dns_cache = NULL;
+
+   if (domain)
+     {
+	free(domain);
+	domain = NULL;
+     }
+   for (i = 0; i < search_count; i++)
+     free(search[i]);
+   search_count = 0;
 }
 
 int
@@ -253,10 +264,10 @@ ecore_con_dns_lookup(const char *name,
    Ecore_Con_Dns_Cache *current;
    Ecore_List2 *l;
 
-   if (!_server_count) return 0;
+   if (!server_count) return 0;
    if ((!name) || (!*name)) return 0;
 
-   for (l = (Ecore_List2 *)_cache; l;)
+   for (l = (Ecore_List2 *)dns_cache; l;)
      {
 	double time;
 	int i;
@@ -267,7 +278,7 @@ ecore_con_dns_lookup(const char *name,
 	time = ecore_time_get();
 	if ((time - current->time) > current->ttl)
 	  {
-	     _cache = _ecore_list2_remove(_cache, current);
+	     dns_cache = _ecore_list2_remove(dns_cache, current);
 	     _ecore_con_dns_cache_free(current);
 	  }
 	else
@@ -277,8 +288,8 @@ ecore_con_dns_lookup(const char *name,
 	       {
 		  if (done_cb)
 		    done_cb(data, current->he);
-		  _cache = _ecore_list2_remove(_cache, current);
-		  _cache = _ecore_list2_prepend(_cache, current);
+		  dns_cache = _ecore_list2_remove(dns_cache, current);
+		  dns_cache = _ecore_list2_prepend(dns_cache, current);
 		  return 1;
 	       }
 	     for (i = 0; current->he->h_aliases[i]; i++)
@@ -287,8 +298,8 @@ ecore_con_dns_lookup(const char *name,
 		    {
 		       if (done_cb)
 			 done_cb(data, current->he);
-		       _cache = _ecore_list2_remove(_cache, current);
-		       _cache = _ecore_list2_prepend(_cache, current);
+		       dns_cache = _ecore_list2_remove(dns_cache, current);
+		       dns_cache = _ecore_list2_prepend(dns_cache, current);
 		       return 1;
 		    }
 	       }
@@ -387,7 +398,7 @@ _ecore_con_dns_ghbn(Ecore_Con_Dns_Query *query, const char *hostname)
    total_len += QFIXEDSZ;
 
    /* We're crazy, just ask all servers! */
-   for (i = 0; i < _server_count; i++)
+   for (i = 0; i < server_count; i++)
      {
 	struct sockaddr_in sin;
 
@@ -400,7 +411,7 @@ _ecore_con_dns_ghbn(Ecore_Con_Dns_Query *query, const char *hostname)
 
 	memset(&sin, 0, sizeof(sin));
 	sin.sin_family = AF_INET;
-	sin.sin_addr = _servers[i];
+	sin.sin_addr = servers[i];
 	sin.sin_port = htons(NAMESERVER_PORT);
 	if (connect(query->socket[i], (struct sockaddr *) &sin, sizeof(sin)) == -1)
 	  {
@@ -412,7 +423,7 @@ _ecore_con_dns_ghbn(Ecore_Con_Dns_Query *query, const char *hostname)
 	  }
 
 	/* qid */
-	query->id[i] = ++_id;
+	query->id[i] = ++dns_id;
 	SET_16BIT(buf, query->id[i]);
 
 	if (send(query->socket[i], buf, total_len, 0) == -1)
@@ -470,7 +481,7 @@ _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
    /* Check if this message is for us */
    id = GET_16BIT(buf);
    found = 0;
-   for (i = 0; i < _server_count; i++)
+   for (i = 0; i < server_count; i++)
      {
 	if (query->id[i] == id)
 	  {
@@ -584,19 +595,19 @@ _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	cache->ttl = ttl;
 	cache->time = ecore_time_get();
 	cache->he = he;
-	_cache = _ecore_list2_prepend(_cache, cache);
+	dns_cache = _ecore_list2_prepend(dns_cache, cache);
 
 	/* Check cache size */
 	i = 1;
-	l = (Ecore_List2 *)_cache;
+	l = (Ecore_List2 *)dns_cache;
 	while ((l = l->next))
 	  i++;
 
 	/* Remove old stuff if cache to big */
 	if (i > 16)
 	  {
-	     cache = (Ecore_Con_Dns_Cache *)((Ecore_List2 *)_cache)->last;
-	     _cache = _ecore_list2_remove(_cache, cache);
+	     cache = (Ecore_Con_Dns_Cache *)((Ecore_List2 *)dns_cache)->last;
+	     dns_cache = _ecore_list2_remove(dns_cache, cache);
 	     _ecore_con_dns_cache_free(cache);
 	  }
      }
@@ -624,7 +635,7 @@ error:
      }
 
    found = 0;
-   for (i = 0; i < _server_count; i++)
+   for (i = 0; i < server_count; i++)
      {
 	if (query->fd_handlers[i] == fd_handler)
 	  {
@@ -645,9 +656,9 @@ error:
 	char buf[256];
 
 	/* Should we look more? */
-	if ((_domain) && (query->search++))
+	if ((domain) && (query->search++))
 	  {
-	     if (snprintf(buf, sizeof(buf), "%s.%s", query->searchname, _domain) < sizeof(buf))
+	     if (snprintf(buf, sizeof(buf), "%s.%s", query->searchname, domain) < sizeof(buf))
 	       {
 		  _ecore_con_dns_ghbn(query, buf);
 	       }
@@ -658,9 +669,9 @@ error:
 		  _ecore_con_dns_query_free(query);
 	       }
 	  }
-	else if ((++query->search) < _search_count)
+	else if ((++query->search) < search_count)
 	  {
-	     if (snprintf(buf, sizeof(buf), "%s.%s", query->searchname, _search[query->search]) < sizeof(buf))
+	     if (snprintf(buf, sizeof(buf), "%s.%s", query->searchname, search[query->search]) < sizeof(buf))
 	       {
 		  _ecore_con_dns_ghbn(query, buf);
 	       }
@@ -687,7 +698,7 @@ _ecore_con_dns_query_free(Ecore_Con_Dns_Query *query)
 {
    int i;
  
-   for (i = 0; i < _server_count; i++)
+   for (i = 0; i < server_count; i++)
      {
 	if (query->socket[i]) close(query->socket[i]);
 	query->socket[i] = 0;
