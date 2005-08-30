@@ -63,7 +63,7 @@ struct _Ecore_Con_Dns_Query {
      char *searchname;
 
      struct {
-	  void (*cb)(struct hostent *hostent, void *data);
+	  void (*cb)(void *data, struct hostent *hostent);
 	  void *data;
      } done;
 
@@ -246,7 +246,7 @@ ecore_con_dns_shutdown(void)
 
 int
 ecore_con_dns_lookup(const char *name,
-		     void (*done_cb)(struct hostent *hostent, void *data),
+		     void (*done_cb)(void *data, struct hostent *hostent),
 		     void *data)
 {
    Ecore_Con_Dns_Query *query;
@@ -276,7 +276,7 @@ ecore_con_dns_lookup(const char *name,
 	     if (!strcmp(name, current->he->h_name))
 	       {
 		  if (done_cb)
-		    done_cb(current->he, data);
+		    done_cb(data, current->he);
 		  _cache = _ecore_list_remove(_cache, current);
 		  _cache = _ecore_list_prepend(_cache, current);
 		  return 1;
@@ -286,7 +286,7 @@ ecore_con_dns_lookup(const char *name,
 		  if (!strcmp(name, current->he->h_aliases[i]))
 		    {
 		       if (done_cb)
-			 done_cb(current->he, data);
+			 done_cb(data, current->he);
 		       _cache = _ecore_list_remove(_cache, current);
 		       _cache = _ecore_list_prepend(_cache, current);
 		       return 1;
@@ -440,7 +440,7 @@ _ecore_con_dns_timeout(void *data)
 
    query->timeout = NULL;
    if (query->done.cb)
-     query->done.cb(NULL, query->done.data);
+     query->done.cb(query->done.data, NULL);
    _ecore_con_dns_query_free(query);
    return 0;
 }
@@ -574,7 +574,7 @@ _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
    he->h_addr_list[naddrs] = NULL;
 
    if (query->done.cb)
-     query->done.cb(he, query->done.data);
+     query->done.cb(query->done.data, he);
 
    cache = malloc(sizeof(Ecore_Con_Dns_Cache));
    if (cache)
@@ -654,7 +654,7 @@ error:
 	     else
 	       {
 		  if (query->done.cb)
-		    query->done.cb(NULL, query->done.data);
+		    query->done.cb(query->done.data, NULL);
 		  _ecore_con_dns_query_free(query);
 	       }
 	  }
@@ -667,7 +667,7 @@ error:
 	     else
 	       {
 		  if (query->done.cb)
-		    query->done.cb(NULL, query->done.data);
+		    query->done.cb(query->done.data, NULL);
 		  _ecore_con_dns_query_free(query);
 	       }
 	  }
@@ -675,7 +675,7 @@ error:
 	  {
 	     /* Shutdown */
 	     if (query->done.cb)
-	       query->done.cb(NULL, query->done.data);
+	       query->done.cb(query->done.data, NULL);
 	     _ecore_con_dns_query_free(query);
 	  }
      }

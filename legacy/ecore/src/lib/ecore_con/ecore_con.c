@@ -29,7 +29,7 @@
 #include <time.h>
 #endif
 
-static void _ecore_con_cb_dns_lookup(struct hostent *he, void *data);
+static void _ecore_con_cb_dns_lookup(void *data, struct hostent *he);
 static void _ecore_con_server_free(Ecore_Con_Server *svr);
 static void _ecore_con_client_free(Ecore_Con_Client *cl);
 static int _ecore_con_svr_handler(void *data, Ecore_Fd_Handler *fd_handler);
@@ -885,7 +885,7 @@ kill_server(Ecore_Con_Server *svr)
 }
 
 static void
-_ecore_con_cb_dns_lookup(struct hostent *he, void *data)
+_ecore_con_cb_dns_lookup(void *data, struct hostent *he)
 {
    Ecore_Con_Server   *svr;
    struct sockaddr_in  socket_addr;
