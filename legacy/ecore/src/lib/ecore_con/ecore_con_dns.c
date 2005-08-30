@@ -20,6 +20,8 @@
  * * Check /etc/hosts
  *
  * * Caching
+ *   We should store all names returned when CNAME, might have different ttl.
+ *   Check against search and hostname when querying cache?
  * * Remember all querys and delete them on shutdown
  *
  * * Need more buffer overflow checks.
@@ -43,6 +45,8 @@
 #define SERVERS 3
 
 typedef struct _Ecore_Con_Dns_Query Ecore_Con_Dns_Query;
+typedef struct _Ecore_Con_Dns_Cache Ecore_Con_Dns_Cache;
+
 struct _Ecore_Con_Dns_Query {
      Ecore_Oldlist list;
 
@@ -65,10 +69,19 @@ struct _Ecore_Con_Dns_Query {
 
 };
 
+struct _Ecore_Con_Dns_Cache {
+     Ecore_Oldlist list;
+
+     int ttl;
+     double time;
+     struct hostent *he;
+};
+
 static void _ecore_con_dns_ghbn(Ecore_Con_Dns_Query *query, const char *hostname);
 static int  _ecore_con_dns_timeout(void *data);
 static int  _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static void _ecore_con_dns_query_free(Ecore_Con_Dns_Query *query);
+static void _ecore_con_dns_cache_free(Ecore_Con_Dns_Cache *cache);
 static int  _ecore_con_hostname_get(unsigned char *buf, char *hostname,
 				    int pos, int length);
 
@@ -84,11 +97,14 @@ static char *_domain = NULL;
 
 static uint16_t _id = 0;
 
+static Ecore_Con_Dns_Cache *_cache = NULL;
+
 #define SET_16BIT(p, v) \
    (((p)[0]) = ((v) >> 8) & 0xff), \
    (((p)[1]) = v & 0xff)
 
 #define GET_16BIT(p) (((p)[0]) << 8 | ((p)[1]))
+#define GET_32BIT(p) (((p)[0]) << 24 | ((p)[1]) << 16 | ((p)[2]) << 8 | ((p)[3]))
 
 int
 ecore_con_dns_init(void)
@@ -234,9 +250,50 @@ ecore_con_dns_lookup(const char *name,
 		     void *data)
 {
    Ecore_Con_Dns_Query *query;
+   Ecore_Con_Dns_Cache *current;
+   Ecore_Oldlist *l;
 
    if (!_server_count) return 0;
    if ((!name) || (!*name)) return 0;
+
+   for (l = (Ecore_Oldlist *)_cache; l;)
+     {
+	double time;
+	int i;
+
+	current = (Ecore_Con_Dns_Cache *)l;
+	l = l->next;
+
+	time = ecore_time_get();
+	if ((time - current->time) > current->ttl)
+	  {
+	     _cache = _ecore_list_remove(_cache, current);
+	     _ecore_con_dns_cache_free(current);
+	  }
+	else
+	  {
+	     /* Check if we have a match */
+	     if (!strcmp(name, current->he->h_name))
+	       {
+		  if (done_cb)
+		    done_cb(current->he, data);
+		  _cache = _ecore_list_remove(_cache, current);
+		  _cache = _ecore_list_prepend(_cache, current);
+		  return 1;
+	       }
+	     for (i = 0; current->he->h_aliases[i]; i++)
+	       {
+		  if (!strcmp(name, current->he->h_aliases[i]))
+		    {
+		       if (done_cb)
+			 done_cb(current->he, data);
+		       _cache = _ecore_list_remove(_cache, current);
+		       _cache = _ecore_list_prepend(_cache, current);
+		       return 1;
+		    }
+	       }
+	  }
+     }
 
    query = calloc(1, sizeof(Ecore_Con_Dns_Query));
    if (!query) return 0;
@@ -392,6 +449,7 @@ static int
 _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
 {
    Ecore_Con_Dns_Query *query;
+   Ecore_Con_Dns_Cache *cache;
    int i, n, fd, found, len;
    unsigned int id;
    unsigned char buf[1024];
@@ -400,8 +458,8 @@ _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
    char **aliases = NULL;
    struct in_addr *addrs = NULL;
    int naliases = 0, naddrs = 0;
-   int ancount;
-   struct hostent he;
+   int ancount, ttl = INT_MAX;
+   struct hostent *he;
 
    query = data;
    fd = ecore_main_fd_handler_fd_get(fd_handler);
@@ -454,7 +512,7 @@ _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
 
    for (i = 0; i < ancount; i++)
      {
-	int rr_type, rr_class, rr_len;
+	int rr_type, rr_class, rr_len, rr_ttl;
 	char rr_name[1024], rr_data[1024];
 
 	/* Get the name */
@@ -467,7 +525,8 @@ _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	/* Get the resource record class */
 	rr_class = GET_16BIT(p);
 	p += 2;
-	/* Skip resource record ttl */
+	/* Get the resource record ttl */
+	rr_ttl = GET_32BIT(p);
 	p += 4;
 	/* Get the resource record length */
 	rr_len = GET_16BIT(p);
@@ -486,6 +545,7 @@ _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	     if ((len = _ecore_con_hostname_get(buf, rr_data, p - buf, n)) == -1) goto error;
 	     strcpy(hostname, rr_data);
 	     p += rr_len;
+	     ttl = MIN(rr_ttl, ttl);
 	  }
 	else if ((rr_class == C_IN) && (rr_type == T_A) && (!strcmp(hostname, rr_name)))
 	  {
@@ -493,32 +553,63 @@ _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
 	     if (rr_len != 4) goto error;
 	     memcpy(&addrs[naddrs++], p, sizeof(struct in_addr));
 	     p += rr_len;
+	     ttl = MIN(rr_ttl, ttl);
 	  }
 	else
 	  p += rr_len;
      }
 
    /* Fill in the hostent and return successfully. */
-   he.h_addr_list = malloc((naddrs + 1) * sizeof(char *));
-   if (!he.h_addr_list) goto error;
-   he.h_name = strdup(hostname);
+   he = malloc(sizeof(struct hostent));
+   if (!he) goto error;
+   he->h_addr_list = malloc((naddrs + 1) * sizeof(char *));
+   if (!he->h_addr_list) goto error;
+   he->h_name = strdup(hostname);
    aliases[naliases] = NULL;
-   he.h_aliases = aliases;
-   he.h_addrtype = AF_INET;
-   he.h_length = sizeof(struct in_addr);
+   he->h_aliases = aliases;
+   he->h_addrtype = AF_INET;
+   he->h_length = sizeof(struct in_addr);
    for (i = 0; i < naddrs; i++)
-     he.h_addr_list[i] = (char *) &addrs[i];
-   he.h_addr_list[naddrs] = NULL;
+     he->h_addr_list[i] = (char *) &addrs[i];
+   he->h_addr_list[naddrs] = NULL;
 
    if (query->done.cb)
-     query->done.cb(&he, query->done.data);
+     query->done.cb(he, query->done.data);
 
-   free(he.h_addr_list);
-   free(he.h_name);
-   free(addrs);
-   for (i = 0; i < naliases; i++)
-     free(aliases[i]);
-   free(aliases);
+   cache = malloc(sizeof(Ecore_Con_Dns_Cache));
+   if (cache)
+     {
+	Ecore_Oldlist *l;
+
+	cache->ttl = ttl;
+	cache->time = ecore_time_get();
+	cache->he = he;
+	_cache = _ecore_list_prepend(_cache, cache);
+
+	/* Check cache size */
+	i = 1;
+	l = (Ecore_Oldlist *)_cache;
+	while ((l = l->next))
+	  i++;
+
+	/* Remove old stuff if cache to big */
+	if (i > 16)
+	  {
+	     cache = (Ecore_Con_Dns_Cache *)((Ecore_Oldlist *)_cache)->last;
+	     _cache = _ecore_list_remove(_cache, cache);
+	     _ecore_con_dns_cache_free(cache);
+	  }
+     }
+   else
+     {
+	free(he->h_addr_list);
+	free(he->h_name);
+	free(addrs);
+	for (i = 0; i < naliases; i++)
+	  free(aliases[i]);
+	free(aliases);
+	free(he);
+     }
 
    _ecore_con_dns_query_free(query);
    return 0;
@@ -607,6 +698,24 @@ _ecore_con_dns_query_free(Ecore_Con_Dns_Query *query)
    query->timeout = NULL;
    free(query->searchname);
    free(query);
+}
+
+static void
+_ecore_con_dns_cache_free(Ecore_Con_Dns_Cache *cache)
+{
+   int i;
+
+   free(cache->he->h_addr_list);
+   free(cache->he->h_name);
+   i = 0;
+   while (cache->he->h_addr_list[i])
+     free(cache->he->h_addr_list[i++]);
+   i = 0;
+   while (cache->he->h_aliases[i])
+     free(cache->he->h_aliases[i++]);
+   free(cache->he->h_aliases);
+   free(cache->he);
+   free(cache);
 }
 
 static int
