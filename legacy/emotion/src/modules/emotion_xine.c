@@ -67,7 +67,7 @@ em_init(Evas_Object *obj, void **emotion_video)
 	int fds[2];
 
    if (!emotion_video)
-      return;
+      return 0;
    
    ev = calloc(1, sizeof(Emotion_Xine_Video));
    if (!ev) return 0;
@@ -296,6 +296,7 @@ em_shutdown(void *video)
    close(ev->fd_ev_read);
    xine_exit(ev->decoder);
    free(ev);
+   return 1;
 }
 
 static unsigned char
@@ -1015,6 +1016,7 @@ em_eject(void *ef)
    
    ev = (Emotion_Xine_Video *)ef;
    xine_eject(ev->stream);
+   return 1;
 }
 
 static const char *

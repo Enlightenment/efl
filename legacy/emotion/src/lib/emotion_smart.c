@@ -141,7 +141,7 @@ emotion_object_init(Evas_Object *obj)
 {
    Smart_Data *sd;
    
-   E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
+   E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
 
    if (sd->file) free(sd->file);
    sd->file = NULL;
@@ -247,7 +247,6 @@ void
 emotion_object_position_set(Evas_Object *obj, double sec)
 {
    Smart_Data *sd;
-   int frame;
    
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    if (!sd->module) return;
