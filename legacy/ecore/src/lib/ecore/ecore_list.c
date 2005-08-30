@@ -32,10 +32,10 @@ static void *_ecore_dlist_goto_index(Ecore_DList *list, int index);
 
 /* XXX: Begin deprecated code */
 void *
-_ecore_list_append(void *in_list, void *in_item)
+_ecore_list2_append(void *in_list, void *in_item)
 {
-   Ecore_Oldlist *l, *new_l;
-   Ecore_Oldlist *list, *item;
+   Ecore_List2 *l, *new_l;
+   Ecore_List2 *list, *item;
    
    list = in_list;
    item = in_item;
@@ -56,10 +56,10 @@ _ecore_list_append(void *in_list, void *in_item)
 }
 
 void *
-_ecore_list_prepend(void *in_list, void *in_item)
+_ecore_list2_prepend(void *in_list, void *in_item)
 {
-   Ecore_Oldlist *new_l;
-   Ecore_Oldlist *list, *item;
+   Ecore_List2 *new_l;
+   Ecore_List2 *list, *item;
    
    list = in_list;
    item = in_item;   
@@ -79,10 +79,10 @@ _ecore_list_prepend(void *in_list, void *in_item)
 }
 
 void *
-_ecore_list_append_relative(void *in_list, void *in_item, void *in_relative)
+_ecore_list2_append_relative(void *in_list, void *in_item, void *in_relative)
 {
-   Ecore_Oldlist *l;
-   Ecore_Oldlist *list, *item, *relative;
+   Ecore_List2 *l;
+   Ecore_List2 *list, *item, *relative;
    
    list = in_list;
    item = in_item;
@@ -91,7 +91,7 @@ _ecore_list_append_relative(void *in_list, void *in_item, void *in_relative)
      {
 	if (l == relative)
 	  {
-	     Ecore_Oldlist *new_l;
+	     Ecore_List2 *new_l;
 	     
 	     new_l = item;
 	     if (l->next)
@@ -108,14 +108,14 @@ _ecore_list_append_relative(void *in_list, void *in_item, void *in_relative)
 	     return list;
 	  }
      }
-   return _ecore_list_append(list, item);
+   return _ecore_list2_append(list, item);
 }
 
 void *
-_ecore_list_prepend_relative(void *in_list, void *in_item, void *in_relative)
+_ecore_list2_prepend_relative(void *in_list, void *in_item, void *in_relative)
 {
-   Ecore_Oldlist *l;
-   Ecore_Oldlist *list, *item, *relative;
+   Ecore_List2 *l;
+   Ecore_List2 *list, *item, *relative;
    
    list = in_list;
    item = in_item;
@@ -124,7 +124,7 @@ _ecore_list_prepend_relative(void *in_list, void *in_item, void *in_relative)
      {
 	if (l == relative)
 	  {
-	     Ecore_Oldlist *new_l;
+	     Ecore_List2 *new_l;
 	     
 	     new_l = item;
 	     new_l->prev = l->prev;
@@ -150,14 +150,14 @@ _ecore_list_prepend_relative(void *in_list, void *in_item, void *in_relative)
 	       }
 	  }
      }
-   return _ecore_list_prepend(list, item);
+   return _ecore_list2_prepend(list, item);
 }
 
 void *
-_ecore_list_remove(void *in_list, void *in_item)
+_ecore_list2_remove(void *in_list, void *in_item)
 {
-   Ecore_Oldlist *return_l;
-   Ecore_Oldlist *list, *item;
+   Ecore_List2 *return_l;
+   Ecore_List2 *list, *item;
 
    /* checkme */
    if(!in_list)
@@ -187,10 +187,10 @@ _ecore_list_remove(void *in_list, void *in_item)
 }
 
 void *
-_ecore_list_find(void *in_list, void *in_item)
+_ecore_list2_find(void *in_list, void *in_item)
 {
-   Ecore_Oldlist *l;
-   Ecore_Oldlist *list, *item;
+   Ecore_List2 *l;
+   Ecore_List2 *list, *item;
    
    list = in_list;
    item = in_item;   

@@ -36,7 +36,7 @@ ecore_animator_add(int (*func) (void *data), const void *data)
    ECORE_MAGIC_SET(animator, ECORE_MAGIC_ANIMATOR);
    animator->func = func;
    animator->data = (void *)data;
-   animators = _ecore_list_append(animators, animator);
+   animators = _ecore_list2_append(animators, animator);
    if (!timer)
      timer = ecore_timer_add(animators_frametime, _ecore_animator, NULL);
    return animator;
@@ -115,7 +115,7 @@ _ecore_animator_shutdown(void)
 	Ecore_Animator *animator;
 	
 	animator = animators;
-	animators = _ecore_list_remove(animators, animator);
+	animators = _ecore_list2_remove(animators, animator);
 	ECORE_MAGIC_SET(animator, ECORE_MAGIC_NONE);
 	free(animator);
      }
@@ -124,9 +124,9 @@ _ecore_animator_shutdown(void)
 static int
 _ecore_animator(void *data __UNUSED__)
 {
-   Ecore_Oldlist *l;
+   Ecore_List2 *l;
 
-   for (l = (Ecore_Oldlist *)animators; l;)
+   for (l = (Ecore_List2 *)animators; l;)
      {
 	Ecore_Animator *animator;
 	
@@ -144,7 +144,7 @@ _ecore_animator(void *data __UNUSED__)
    if (animators_delete_me)
      {
 	
-	for (l = (Ecore_Oldlist *)animators; l;)
+	for (l = (Ecore_List2 *)animators; l;)
 	  {
 	     Ecore_Animator *animator;
 	     
@@ -152,7 +152,7 @@ _ecore_animator(void *data __UNUSED__)
 	     l = l->next;
 	     if (animator->delete_me)
 	       {
-		  animators = _ecore_list_remove(animators, animator);
+		  animators = _ecore_list2_remove(animators, animator);
 		  ECORE_MAGIC_SET(animator, ECORE_MAGIC_NONE);
 		  free(animator);
 		  animators_delete_me--;

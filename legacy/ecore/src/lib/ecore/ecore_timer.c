@@ -90,7 +90,7 @@ _ecore_timer_shutdown(void)
 	Ecore_Timer *timer;
 	
 	timer = timers;
-	timers = _ecore_list_remove(timers, timer);
+	timers = _ecore_list2_remove(timers, timer);
 	ECORE_MAGIC_SET(timer, ECORE_MAGIC_NONE);
 	free(timer);
      }
@@ -99,10 +99,10 @@ _ecore_timer_shutdown(void)
 void
 _ecore_timer_cleanup(void)
 {
-   Ecore_Oldlist *l;
+   Ecore_List2 *l;
 
    if (!timers_delete_me) return;
-   for (l = (Ecore_Oldlist *)timers; l;)
+   for (l = (Ecore_List2 *)timers; l;)
      {
 	Ecore_Timer *timer;
 	
@@ -110,7 +110,7 @@ _ecore_timer_cleanup(void)
 	l = l->next;
 	if (timer->delete_me)
 	  {
-	     timers = _ecore_list_remove(timers, timer);
+	     timers = _ecore_list2_remove(timers, timer);
 	     ECORE_MAGIC_SET(timer, ECORE_MAGIC_NONE);
 	     free(timer);
 	     timers_delete_me--;
@@ -123,11 +123,11 @@ _ecore_timer_cleanup(void)
 void
 _ecore_timer_enable_new(void)
 {
-   Ecore_Oldlist *l;   
+   Ecore_List2 *l;   
 
    if (!timers_added) return;
    timers_added = 0;
-   for (l = (Ecore_Oldlist *)timers; l; l = l->next)
+   for (l = (Ecore_List2 *)timers; l; l = l->next)
      {
 	Ecore_Timer *timer;
 	
@@ -152,28 +152,28 @@ _ecore_timer_next_get(void)
 int
 _ecore_timer_call(double when)
 {
-   Ecore_Oldlist *l;   
+   Ecore_List2 *l;   
    Ecore_Timer *timer;
    
    if (!timers) return 0;
    if (last_check > when)
      {
 	/* User set time backwards */
-	for (l = (Ecore_Oldlist *)timers; l; l = l->next)
+	for (l = (Ecore_List2 *)timers; l; l = l->next)
 	  {
 	     timer = (Ecore_Timer *)l;
 	     timer->at -= (last_check - when);
 	  }
      }
    last_check = when;
-   for (l = (Ecore_Oldlist *)timers; l; l = l->next)
+   for (l = (Ecore_List2 *)timers; l; l = l->next)
      {
 	timer = (Ecore_Timer *)l;
 	if ((timer->at <= when) &&
 	    (!timer->just_added) &&
 	    (!timer->delete_me))
 	  {
-	     timers = _ecore_list_remove(timers, timer);
+	     timers = _ecore_list2_remove(timers, timer);
 	     _ecore_timer_call(when);
 	     if ((!timer->delete_me) && (timer->func(timer->data)))
 	       {
@@ -197,7 +197,7 @@ _ecore_timer_call(double when)
 static void
 _ecore_timer_set(Ecore_Timer *timer, double at, double in, int (*func) (void *data), void *data)
 {
-   Ecore_Oldlist *l;
+   Ecore_List2 *l;
    
    timers_added = 1;
    timer->at = at;
@@ -207,17 +207,17 @@ _ecore_timer_set(Ecore_Timer *timer, double at, double in, int (*func) (void *da
    timer->just_added = 1;
    if (timers)
      {
-	for (l = ((Ecore_Oldlist *)(timers))->last; l; l = l->prev)
+	for (l = ((Ecore_List2 *)(timers))->last; l; l = l->prev)
 	  {
 	     Ecore_Timer *t2;
 	     
 	     t2 = (Ecore_Timer *)l;
 	     if (timer->at > t2->at)
 	       {
-		  timers = _ecore_list_append_relative(timers, timer, t2);
+		  timers = _ecore_list2_append_relative(timers, timer, t2);
 		  return;
 	       }
 	  }
      }
-   timers = _ecore_list_prepend(timers, timer);
+   timers = _ecore_list2_prepend(timers, timer);
 }

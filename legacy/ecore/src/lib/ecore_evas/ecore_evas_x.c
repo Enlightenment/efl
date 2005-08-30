@@ -809,7 +809,7 @@ _ecore_evas_x_layer_update(Ecore_Evas *ee)
 static int
 _ecore_evas_x_idle_enter(void *data __UNUSED__)
 {
-   Ecore_Oldlist *l;
+   Ecore_List2 *l;
    double t1 = 0.0;
    double t2 = 0.0;
 
@@ -817,7 +817,7 @@ _ecore_evas_x_idle_enter(void *data __UNUSED__)
      {
 	t1 = ecore_time_get();
      }
-   for (l = (Ecore_Oldlist *)ecore_evases; l; l = l->next)
+   for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
      {
 	Ecore_Evas *ee;
 	
@@ -875,7 +875,7 @@ _ecore_evas_x_free(Ecore_Evas *ee)
    ee->engine.x.damages = 0;
    ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
    ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win_container), ee);
-   ecore_evases = _ecore_list_remove(ecore_evases, ee);
+   ecore_evases = _ecore_list2_remove(ecore_evases, ee);
    _ecore_evas_x_shutdown();
    ecore_x_shutdown();
 }
@@ -1665,7 +1665,7 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
    evas_key_lock_add(ee->evas, "Num_Lock");
    evas_key_lock_add(ee->evas, "Scroll_Lock");
 
-   ecore_evases = _ecore_list_prepend(ecore_evases, ee);
+   ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
    ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
    ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win_container), ee);
    return ee;
@@ -1876,7 +1876,7 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
    evas_key_lock_add(ee->evas, "Num_Lock");
    evas_key_lock_add(ee->evas, "Scroll_Lock");
 
-   ecore_evases = _ecore_list_prepend(ecore_evases, ee);
+   ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
    ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
    ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win_container), ee);
    return ee;

@@ -44,7 +44,7 @@
 
 static int          ecore_dbus_server_send(Ecore_DBus_Server * svr,
 					   char *command, int length);
-Ecore_Oldlist      *_ecore_dbus_message_print_field(Ecore_Oldlist * l,
+Ecore_List2        *_ecore_dbus_message_print_field(Ecore_List2 * l,
 						    unsigned char *buf);
 void                _ecore_dbus_message_print_raw(unsigned char *msg,
 						  unsigned int msg_len);
@@ -204,8 +204,8 @@ void
 _ecore_dbus_message_free(void *data, void *ev)
 {
    Ecore_DBus_Message *msg = ev;
-   Ecore_Oldlist      *l = (Ecore_Oldlist *) msg->body_fields;
-   Ecore_Oldlist      *next;
+   Ecore_List2        *l = (Ecore_List2 *) msg->body_fields;
+   Ecore_List2        *next;
 
    while (l)
      {
@@ -213,7 +213,7 @@ _ecore_dbus_message_free(void *data, void *ev)
 	free(l);
 	l = next;
      }
-   l = (Ecore_Oldlist *) msg->header_fields;
+   l = (Ecore_List2 *) msg->header_fields;
    while (l)
      {
 	next = l->next;
@@ -525,7 +525,7 @@ _ecore_dbus_message_unmarshal(Ecore_DBus_Server * svr, unsigned char *message)
    while ((msg->hpos + 8 - (msg->hpos % 8)) < msg->hlength)
      {
 	f = _ecore_dbus_message_unmarshal_custom_header(message, &msg->hpos);
-	msg->header_fields = _ecore_list_append(msg->header_fields, f);
+	msg->header_fields = _ecore_list2_append(msg->header_fields, f);
      }
    msg->hpos = msg->hlength;
    /* message body */
@@ -536,7 +536,7 @@ _ecore_dbus_message_unmarshal(Ecore_DBus_Server * svr, unsigned char *message)
    while (msg->bpos < msg->blength)
      {
 	f = _ecore_dbus_message_unmarshal_data(message, &msg->bpos);
-	msg->body_fields = _ecore_list_append(msg->body_fields, f);
+	msg->body_fields = _ecore_list2_append(msg->body_fields, f);
 
      }
    return msg;
@@ -591,10 +591,10 @@ void               *
 ecore_dbus_get_body_field(Ecore_DBus_Message * m, Ecore_DBus_Message_Field * mf,
 			  unsigned int pos)
 {
-   Ecore_Oldlist      *l, *list;
-   unsigned int        i = 0;
+   Ecore_List2      *l, *list;
+   unsigned int      i = 0;
 
-   list = (Ecore_Oldlist *) mf;
+   list = (Ecore_List2 *) mf;
 
    for (l = list; l; l = l->next)
      {
@@ -611,9 +611,9 @@ ecore_dbus_get_header_field(Ecore_DBus_Message * m,
 			    Ecore_DBus_Message_Field * mf,
 			    Ecore_DBus_Message_Header_Field hft)
 {
-   Ecore_Oldlist      *l, *list;
+   Ecore_List2      *l, *list;
 
-   list = (Ecore_Oldlist *) mf;
+   list = (Ecore_List2 *) mf;
    for (l = list; l; l = l->next)
       if (((Ecore_DBus_Message_Field *) l)->hfield == hft)
 	 return _ecore_dbus_get_field(m->header,
@@ -623,8 +623,8 @@ ecore_dbus_get_header_field(Ecore_DBus_Message * m,
 
 /* printing functions */
 /**********************/
-Ecore_Oldlist      *
-_ecore_dbus_message_print_field(Ecore_Oldlist * l, unsigned char *buf)
+Ecore_List2      *
+_ecore_dbus_message_print_field(Ecore_List2 * l, unsigned char *buf)
 {
    int                 i;
    Ecore_DBus_Message_Field *f;
@@ -675,8 +675,8 @@ _ecore_dbus_message_print_field(Ecore_Oldlist * l, unsigned char *buf)
    return l->next;
 }
 
-Ecore_Oldlist      *
-_ecore_dbus_message_print_header_field(Ecore_Oldlist * l, unsigned char *buf)
+Ecore_List2      *
+_ecore_dbus_message_print_header_field(Ecore_List2 * l, unsigned char *buf)
 {
    static const char  *header_fields[] =
       { "INVALID", "PATH", "INTERFACE", "MEMBER", "ERROR_NAME", "REPLY_SERIAL",
@@ -692,10 +692,10 @@ _ecore_dbus_message_print_header_field(Ecore_Oldlist * l, unsigned char *buf)
 void
 _ecore_dbus_message_print_fields(Ecore_DBus_Message_Field * f)
 {
-   int                 i = 0;
-   Ecore_Oldlist      *l;
+   int               i = 0;
+   Ecore_List2      *l;
 
-   l = (Ecore_Oldlist *) f;
+   l = (Ecore_List2 *) f;
    while (l)
      {
 	printf("%d\n", i);
@@ -727,7 +727,7 @@ _ecore_dbus_message_print_raw(unsigned char *msg, unsigned int msg_len)
 void
 ecore_dbus_message_print(Ecore_DBus_Message * msg)
 {
-   Ecore_Oldlist      *list;
+   Ecore_List2        *list;
    static const char  *msg_type[] =
       { "INVALID", "METHOD_CALL", "METHOD_RETURN", "ERROR", "SIGNAL" };
    printf("[ecore_dbus] per field message:\n");
@@ -743,14 +743,14 @@ ecore_dbus_message_print(Ecore_DBus_Message * msg)
    printf("[ecore_dbus] header serial   	: %lu\n", msg->serial);
 
    /* header custom fields */
-   list = (Ecore_Oldlist *) msg->header_fields;
+   list = (Ecore_List2 *) msg->header_fields;
    while (list)
      {
 	list = _ecore_dbus_message_print_header_field(list, msg->header);
      }
    /* body fields */
    printf("[ecore_dbus] body fields:\n");
-   list = (Ecore_Oldlist *) msg->body_fields;
+   list = (Ecore_List2 *) msg->body_fields;
    while (list)
      {
 	list = _ecore_dbus_message_print_field(list, msg->body);
@@ -787,7 +787,7 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server * svr, char *service,
 						      1,
 						      ECORE_DBUS_DATA_TYPE_OBJECT_PATH,
 						      path);
-	msg->header_fields = _ecore_list_append(msg->header_fields, f);
+	msg->header_fields = _ecore_list2_append(msg->header_fields, f);
      }
 
    if (interface)
@@ -796,7 +796,7 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server * svr, char *service,
 						      2,
 						      ECORE_DBUS_DATA_TYPE_STRING,
 						      interface);
-	msg->header_fields = _ecore_list_append(msg->header_fields, f);
+	msg->header_fields = _ecore_list2_append(msg->header_fields, f);
      }
    if (method)
      {
@@ -804,7 +804,7 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server * svr, char *service,
 						      3,
 						      ECORE_DBUS_DATA_TYPE_STRING,
 						      method);
-	msg->header_fields = _ecore_list_append(msg->header_fields, f);
+	msg->header_fields = _ecore_list2_append(msg->header_fields, f);
      }
    if (service)
      {
@@ -812,7 +812,7 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server * svr, char *service,
 						      6,
 						      ECORE_DBUS_DATA_TYPE_STRING,
 						      service);
-	msg->header_fields = _ecore_list_append(msg->header_fields, f);
+	msg->header_fields = _ecore_list2_append(msg->header_fields, f);
      }
    if (fmt)
      {
@@ -820,7 +820,7 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server * svr, char *service,
 						      8,
 						      ECORE_DBUS_DATA_TYPE_STRING,
 						      fmt);
-	msg->header_fields = _ecore_list_append(msg->header_fields, f);
+	msg->header_fields = _ecore_list2_append(msg->header_fields, f);
      }
    _ecore_dbus_message_8byte_padding(&msg->header, &msg->hpos);
    /* header length */
@@ -834,17 +834,17 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server * svr, char *service,
 	  case ECORE_DBUS_DATA_TYPE_UINT32:
 	     f = _ecore_dbus_message_marshal_uint32(&msg->body, &msg->bpos,
 						    va_arg(ap, unsigned long));
-	     msg->body_fields = _ecore_list_append(msg->body_fields, f);
+	     msg->body_fields = _ecore_list2_append(msg->body_fields, f);
 	     break;
 	  case ECORE_DBUS_DATA_TYPE_STRING:
 	     f = _ecore_dbus_message_marshal_string(&msg->body, &msg->bpos,
 						    (unsigned char *)va_arg(ap, char *));
-	     msg->body_fields = _ecore_list_append(msg->body_fields, f);
+	     msg->body_fields = _ecore_list2_append(msg->body_fields, f);
 	     break;
 	  case ECORE_DBUS_DATA_TYPE_OBJECT_PATH:
 	     f = _ecore_dbus_message_marshal_path(&msg->body, &msg->bpos,
 						  (unsigned char *)va_arg(ap, char *));
-	     msg->body_fields = _ecore_list_append(msg->body_fields, f);
+	     msg->body_fields = _ecore_list2_append(msg->body_fields, f);
 	     break;
 	  case ECORE_DBUS_DATA_TYPE_INVALID:
 	  case ECORE_DBUS_DATA_TYPE_BYTE:
@@ -1064,7 +1064,7 @@ ecore_dbus_server_connect(Ecore_DBus_Type compl_type, char *name, int port,
    svr->cnt_msg = 0;
    svr->auth_type = -1;
    svr->auth_type_transaction = 0;
-   servers = _ecore_list_append(servers, svr);
+   servers = _ecore_list2_append(servers, svr);
 
    return svr;
 }
@@ -1103,7 +1103,7 @@ _ecore_dbus_event_server_add(void *data, int ev_type, void *ev)
    Ecore_DBus_Event_Server_Add *e;
 
    e = ev;
-   if (!_ecore_list_find(servers, ecore_con_server_data_get(e->server)))
+   if (!_ecore_list2_find(servers, ecore_con_server_data_get(e->server)))
       return 1;
    {
       Ecore_DBus_Server  *svr;
@@ -1122,7 +1122,7 @@ _ecore_dbus_event_server_del(void *udata, int ev_type, void *ev)
    Ecore_Con_Event_Server_Del *e;
 
    e = ev;
-   if (!_ecore_list_find(servers, ecore_con_server_data_get(e->server)))
+   if (!_ecore_list2_find(servers, ecore_con_server_data_get(e->server)))
       return 1;
    {
       Ecore_DBus_Server  *svr;
@@ -1155,7 +1155,7 @@ _ecore_dbus_event_server_data(void *udata, int ev_type, void *ev)
    Ecore_Con_Event_Server_Data *e;
 
    e = ev;
-   if (!_ecore_list_find(servers, ecore_con_server_data_get(e->server)))
+   if (!_ecore_list2_find(servers, ecore_con_server_data_get(e->server)))
       return 1;
 
    {

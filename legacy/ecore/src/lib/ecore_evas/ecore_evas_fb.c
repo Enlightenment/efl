@@ -57,9 +57,9 @@ _ecore_evas_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned int timest
 static Ecore_Evas *
 _ecore_evas_fb_match(void)
 {
-   Ecore_Oldlist *l;
+   Ecore_List2 *l;
    
-   for (l = (Ecore_Oldlist *)ecore_evases; l; l = l->next)
+   for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
      {
 	Ecore_Evas *ee;
 	
@@ -74,9 +74,9 @@ _ecore_evas_fb_match(void)
 static void
 _ecore_evas_fb_lose(void *data __UNUSED__)
 {
-   Ecore_Oldlist *l;
+   Ecore_List2 *l;
 
-   for (l = (Ecore_Oldlist *)ecore_evases; l; l = l->next)
+   for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
      {
 	Ecore_Evas *ee;
 	
@@ -88,9 +88,9 @@ _ecore_evas_fb_lose(void *data __UNUSED__)
 static void
 _ecore_evas_fb_gain(void *data __UNUSED__)
 {
-   Ecore_Oldlist *l;
+   Ecore_List2 *l;
 
-   for (l = (Ecore_Oldlist *)ecore_evases; l; l = l->next)
+   for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
      {
 	Ecore_Evas *ee;
 	
@@ -173,7 +173,7 @@ _ecore_evas_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void *e
 static int
 _ecore_evas_idle_enter(void *data __UNUSED__)
 {
-   Ecore_Oldlist *l;
+   Ecore_List2 *l;
    double t1 = 0.;
    double t2 = 0.;
 
@@ -181,7 +181,7 @@ _ecore_evas_idle_enter(void *data __UNUSED__)
      {
 	t1 = ecore_time_get();
      }
-   for (l = (Ecore_Oldlist *)ecore_evases; l; l = l->next)
+   for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
      {
 	Ecore_Evas *ee;
 	
@@ -235,7 +235,7 @@ _ecore_evas_fb_init(void)
 static void
 _ecore_evas_fb_free(Ecore_Evas *ee)
 {
-   ecore_evases = _ecore_list_remove(ecore_evases, ee);   
+   ecore_evases = _ecore_list2_remove(ecore_evases, ee);   
    _ecore_evas_fb_shutdown();
    ecore_fb_shutdown();
 }
@@ -536,7 +536,7 @@ ecore_evas_fb_new(char *disp_name, int rotation, int w, int h)
    
    evas_event_feed_mouse_in(ee->evas, (unsigned int)((unsigned long long)(ecore_time_get() * 1000.0) & 0xffffffff), NULL);
 
-   ecore_evases = _ecore_list_prepend(ecore_evases, ee);
+   ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
    return ee;
 #else
    return NULL;

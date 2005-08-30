@@ -140,7 +140,7 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, int (*func) (voi
    fdh->data = (void *)data;
    fdh->buf_func = buf_func;
    fdh->buf_data = (void *)buf_data;
-   fd_handlers = _ecore_list_append(fd_handlers, fdh);
+   fd_handlers = _ecore_list2_append(fd_handlers, fdh);
    return fdh;
 }
 
@@ -257,7 +257,7 @@ _ecore_main_shutdown(void)
 	Ecore_Fd_Handler *fdh;
 	
 	fdh = fd_handlers;
-	fd_handlers = _ecore_list_remove(fd_handlers, fdh);
+	fd_handlers = _ecore_list2_remove(fd_handlers, fdh);
 	ECORE_MAGIC_SET(fdh, ECORE_MAGIC_NONE);
 	free(fdh);
      }
@@ -271,7 +271,7 @@ _ecore_main_select(double timeout)
    fd_set         rfds, wfds, exfds;
    int            max_fd;
    int            ret;
-   Ecore_Oldlist    *l;
+   Ecore_List2    *l;
 
    t = NULL;
    if (timeout > 0.0)
@@ -302,7 +302,7 @@ _ecore_main_select(double timeout)
    FD_ZERO(&exfds);
 
    /* call the prepare callback for all handlers */
-   for (l = (Ecore_Oldlist *)fd_handlers; l; l = l->next)
+   for (l = (Ecore_List2 *)fd_handlers; l; l = l->next)
      {
 	Ecore_Fd_Handler *fdh;
 	
@@ -311,7 +311,7 @@ _ecore_main_select(double timeout)
 	if (fdh->prep_func)
 		fdh->prep_func (fdh->prep_data, fdh);
      }
-   for (l = (Ecore_Oldlist *)fd_handlers; l; l = l->next)
+   for (l = (Ecore_List2 *)fd_handlers; l; l = l->next)
      {
 	Ecore_Fd_Handler *fdh;
 	
@@ -342,7 +342,7 @@ _ecore_main_select(double timeout)
      }
    if (ret > 0)
      {
-	for (l = (Ecore_Oldlist *)fd_handlers; l; l = l->next)
+	for (l = (Ecore_List2 *)fd_handlers; l; l = l->next)
 	  {
 	     Ecore_Fd_Handler *fdh;
 	     
@@ -366,10 +366,10 @@ _ecore_main_select(double timeout)
 static void
 _ecore_main_fd_handlers_cleanup(void)
 {
-   Ecore_Oldlist *l;
+   Ecore_List2 *l;
    
    if (!fd_handlers_delete_me) return;
-   for (l = (Ecore_Oldlist *)fd_handlers; l;)
+   for (l = (Ecore_List2 *)fd_handlers; l;)
      {
 	Ecore_Fd_Handler *fdh;
 	
@@ -377,7 +377,7 @@ _ecore_main_fd_handlers_cleanup(void)
 	l = l->next;
 	if (fdh->delete_me)
 	  {
-	     fd_handlers = _ecore_list_remove(fd_handlers, fdh);
+	     fd_handlers = _ecore_list2_remove(fd_handlers, fdh);
 	     ECORE_MAGIC_SET(fdh, ECORE_MAGIC_NONE);
 	     free(fdh);
 	  }
@@ -388,9 +388,9 @@ _ecore_main_fd_handlers_cleanup(void)
 static void
 _ecore_main_fd_handlers_call(void)
 {
-   Ecore_Oldlist    *l;
+   Ecore_List2    *l;
    
-   for (l = (Ecore_Oldlist *)fd_handlers; l; l = l->next)
+   for (l = (Ecore_List2 *)fd_handlers; l; l = l->next)
      {
 	Ecore_Fd_Handler *fdh;
 	
@@ -417,11 +417,11 @@ _ecore_main_fd_handlers_call(void)
 static int
 _ecore_main_fd_handlers_buf_call(void)
 {
-   Ecore_Oldlist    *l;
+   Ecore_List2    *l;
    int ret;
    
    ret = 0;
-   for (l = (Ecore_Oldlist *)fd_handlers; l; l = l->next)
+   for (l = (Ecore_List2 *)fd_handlers; l; l = l->next)
      {
 	Ecore_Fd_Handler *fdh;
 	

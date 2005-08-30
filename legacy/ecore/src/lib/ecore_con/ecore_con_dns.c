@@ -48,7 +48,7 @@ typedef struct _Ecore_Con_Dns_Query Ecore_Con_Dns_Query;
 typedef struct _Ecore_Con_Dns_Cache Ecore_Con_Dns_Cache;
 
 struct _Ecore_Con_Dns_Query {
-     Ecore_Oldlist list;
+     Ecore_List2 list;
 
      /* Can ask three servers */
      unsigned int id[SERVERS];
@@ -70,7 +70,7 @@ struct _Ecore_Con_Dns_Query {
 };
 
 struct _Ecore_Con_Dns_Cache {
-     Ecore_Oldlist list;
+     Ecore_List2 list;
 
      int ttl;
      double time;
@@ -251,12 +251,12 @@ ecore_con_dns_lookup(const char *name,
 {
    Ecore_Con_Dns_Query *query;
    Ecore_Con_Dns_Cache *current;
-   Ecore_Oldlist *l;
+   Ecore_List2 *l;
 
    if (!_server_count) return 0;
    if ((!name) || (!*name)) return 0;
 
-   for (l = (Ecore_Oldlist *)_cache; l;)
+   for (l = (Ecore_List2 *)_cache; l;)
      {
 	double time;
 	int i;
@@ -267,7 +267,7 @@ ecore_con_dns_lookup(const char *name,
 	time = ecore_time_get();
 	if ((time - current->time) > current->ttl)
 	  {
-	     _cache = _ecore_list_remove(_cache, current);
+	     _cache = _ecore_list2_remove(_cache, current);
 	     _ecore_con_dns_cache_free(current);
 	  }
 	else
@@ -277,8 +277,8 @@ ecore_con_dns_lookup(const char *name,
 	       {
 		  if (done_cb)
 		    done_cb(data, current->he);
-		  _cache = _ecore_list_remove(_cache, current);
-		  _cache = _ecore_list_prepend(_cache, current);
+		  _cache = _ecore_list2_remove(_cache, current);
+		  _cache = _ecore_list2_prepend(_cache, current);
 		  return 1;
 	       }
 	     for (i = 0; current->he->h_aliases[i]; i++)
@@ -287,8 +287,8 @@ ecore_con_dns_lookup(const char *name,
 		    {
 		       if (done_cb)
 			 done_cb(data, current->he);
-		       _cache = _ecore_list_remove(_cache, current);
-		       _cache = _ecore_list_prepend(_cache, current);
+		       _cache = _ecore_list2_remove(_cache, current);
+		       _cache = _ecore_list2_prepend(_cache, current);
 		       return 1;
 		    }
 	       }
@@ -579,24 +579,24 @@ _ecore_con_cb_fd_handler(void *data, Ecore_Fd_Handler *fd_handler)
    cache = malloc(sizeof(Ecore_Con_Dns_Cache));
    if (cache)
      {
-	Ecore_Oldlist *l;
+	Ecore_List2 *l;
 
 	cache->ttl = ttl;
 	cache->time = ecore_time_get();
 	cache->he = he;
-	_cache = _ecore_list_prepend(_cache, cache);
+	_cache = _ecore_list2_prepend(_cache, cache);
 
 	/* Check cache size */
 	i = 1;
-	l = (Ecore_Oldlist *)_cache;
+	l = (Ecore_List2 *)_cache;
 	while ((l = l->next))
 	  i++;
 
 	/* Remove old stuff if cache to big */
 	if (i > 16)
 	  {
-	     cache = (Ecore_Con_Dns_Cache *)((Ecore_Oldlist *)_cache)->last;
-	     _cache = _ecore_list_remove(_cache, cache);
+	     cache = (Ecore_Con_Dns_Cache *)((Ecore_List2 *)_cache)->last;
+	     _cache = _ecore_list2_remove(_cache, cache);
 	     _ecore_con_dns_cache_free(cache);
 	  }
      }

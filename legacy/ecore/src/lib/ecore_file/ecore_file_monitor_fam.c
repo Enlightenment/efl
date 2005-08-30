@@ -27,13 +27,13 @@ struct _Ecore_File_Monitor_Fam
 
 struct _Ecore_File
 {
-   Ecore_Oldlist   __list_data;
+   Ecore_List2   __list_data;
    char            *name;
 };
 
 static Ecore_Fd_Handler *_fdh = NULL;
 static FAMConnection    *_fc = NULL;
-static Ecore_Oldlist    *_monitors = NULL;
+static Ecore_List2    *_monitors = NULL;
 
 static int               _ecore_file_monitor_fam_handler(void *data, Ecore_Fd_Handler *fdh);
 static Ecore_File       *_ecore_file_monitor_fam_file_find(Ecore_File_Monitor *em, char *name);
@@ -55,7 +55,7 @@ ecore_file_monitor_fam_init(void)
 int
 ecore_file_monitor_fam_shutdown(void)
 {
-   Ecore_Oldlist *l;
+   Ecore_List2 *l;
 
    for (l = _monitors; l;)
      {
@@ -119,7 +119,7 @@ ecore_file_monitor_fam_add(const char *path,
 	return NULL;
      }
 
-   _monitors = _ecore_list_append(_monitors, em);
+   _monitors = _ecore_list2_append(_monitors, em);
 
    return em;
 }
@@ -127,7 +127,7 @@ ecore_file_monitor_fam_add(const char *path,
 void
 ecore_file_monitor_fam_del(Ecore_File_Monitor *em)
 {
-   Ecore_Oldlist *l;
+   Ecore_List2 *l;
 
    for (l = em->files; l; l = l->next)
      {
@@ -138,7 +138,7 @@ ecore_file_monitor_fam_del(Ecore_File_Monitor *em)
 	free(f);
      }
 
-   _monitors = _ecore_list_remove(_monitors, em);
+   _monitors = _ecore_list2_remove(_monitors, em);
 
    if (ECORE_FILE_MONITOR_FAM(em)->request)
      {

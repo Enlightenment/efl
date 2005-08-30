@@ -22,7 +22,7 @@ ecore_idler_add(int (*func) (void *data), const void *data)
    ECORE_MAGIC_SET(ie, ECORE_MAGIC_IDLER);
    ie->func = func;
    ie->data = (void *)data;
-   idlers = _ecore_list_append(idlers, ie);
+   idlers = _ecore_list2_append(idlers, ie);
    return ie;
 }
 
@@ -55,7 +55,7 @@ _ecore_idler_shutdown(void)
 	Ecore_Idler *ie;
 	
 	ie = idlers;
-	idlers = _ecore_list_remove(idlers, ie);
+	idlers = _ecore_list2_remove(idlers, ie);
 	ECORE_MAGIC_SET(ie, ECORE_MAGIC_NONE);
 	free(ie);
      }
@@ -65,9 +65,9 @@ _ecore_idler_shutdown(void)
 int
 _ecore_idler_call(void)
 {
-   Ecore_Oldlist *l;
+   Ecore_List2 *l;
 
-   for (l = (Ecore_Oldlist *)idlers; l; l = l->next)
+   for (l = (Ecore_List2 *)idlers; l; l = l->next)
      {
 	Ecore_Idler *ie;
 	
@@ -79,7 +79,7 @@ _ecore_idler_call(void)
      }
    if (idlers_delete_me)
      {
-	for (l = (Ecore_Oldlist *)idlers; l;)
+	for (l = (Ecore_List2 *)idlers; l;)
 	  {
 	     Ecore_Idler *ie;
 	     
@@ -87,7 +87,7 @@ _ecore_idler_call(void)
 	     l = l->next;
 	     if (ie->delete_me)
 	       {
-		  idlers = _ecore_list_remove(idlers, ie);
+		  idlers = _ecore_list2_remove(idlers, ie);
 		  ECORE_MAGIC_SET(ie, ECORE_MAGIC_NONE);
 		  free(ie);
 	       }

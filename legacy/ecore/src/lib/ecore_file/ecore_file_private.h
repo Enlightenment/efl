@@ -18,7 +18,7 @@ int ecore_file_monitor_shutdown(void);
 
 struct _Ecore_File_Monitor
 {
-   Ecore_Oldlist __list_data;
+   Ecore_List2 __list_data;
    void (*func) (void *data,
 		 Ecore_File_Monitor *ecore_file_monitor,
 		 Ecore_File_Event event,
@@ -26,7 +26,7 @@ struct _Ecore_File_Monitor
 
    char               *path;
    void               *data;
-   Ecore_Oldlist      *files;
+   Ecore_List2      *files;
 };
 
 #ifdef HAVE_INOTIFY

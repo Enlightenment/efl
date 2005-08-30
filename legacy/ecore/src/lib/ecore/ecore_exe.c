@@ -47,7 +47,7 @@ ecore_exe_run(const char *exe_cmd, const void *data)
 	ECORE_MAGIC_SET(exe, ECORE_MAGIC_EXE);
 	exe->pid = pid;
 	exe->data = (void *)data;
-	exes = _ecore_list_append(exes, exe);
+	exes = _ecore_list2_append(exes, exe);
 	return exe;
      }
    setsid();
@@ -237,9 +237,9 @@ _ecore_exe_shutdown(void)
 Ecore_Exe *
 _ecore_exe_find(pid_t pid)
 {
-   Ecore_Oldlist *l;
+   Ecore_List2 *l;
    
-   for (l = (Ecore_Oldlist *)exes; l; l = l->next)
+   for (l = (Ecore_List2 *)exes; l; l = l->next)
      {
 	Ecore_Exe *exe;
 	
@@ -255,7 +255,7 @@ _ecore_exe_free(Ecore_Exe *exe)
    void *data;
    
    data = exe->data;
-   exes = _ecore_list_remove(exes, exe);
+   exes = _ecore_list2_remove(exes, exe);
    ECORE_MAGIC_SET(exe, ECORE_MAGIC_NONE);
    free(exe);
    return data;

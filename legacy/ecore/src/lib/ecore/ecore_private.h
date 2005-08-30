@@ -44,18 +44,18 @@
 
 typedef unsigned int                Ecore_Magic;
 
-typedef struct _Ecore_Oldlist       Ecore_Oldlist;
-typedef struct _Ecore_Oldlist_Data  Ecore_Oldlist_Data;
+typedef struct _Ecore_List2       Ecore_List2;
+typedef struct _Ecore_List2_Data  Ecore_List2_Data;
 
-struct _Ecore_Oldlist
+struct _Ecore_List2
 {
-   Ecore_Oldlist  *next, *prev;
-   Ecore_Oldlist  *last;
+   Ecore_List2  *next, *prev;
+   Ecore_List2  *last;
 };
 
-struct _Ecore_Oldlist_Data
+struct _Ecore_List2_Data
 {
-   Ecore_Oldlist   __list_data;
+   Ecore_List2   __list_data;
    void *data;
 };
 
@@ -84,7 +84,7 @@ typedef struct _Ecore_Animator      Ecore_Animator;
 #ifndef WIN32
 struct _Ecore_Exe
 {
-   Ecore_Oldlist   __list_data;
+   Ecore_List2   __list_data;
    ECORE_MAGIC;
    pid_t        pid;
    void        *data;
@@ -93,7 +93,7 @@ struct _Ecore_Exe
 
 struct _Ecore_Timer
 {
-   Ecore_Oldlist   __list_data;
+   Ecore_List2   __list_data;
    ECORE_MAGIC;
    double       in;
    double       at;
@@ -105,7 +105,7 @@ struct _Ecore_Timer
 
 struct _Ecore_Idler
 {
-   Ecore_Oldlist   __list_data;
+   Ecore_List2   __list_data;
    ECORE_MAGIC;
    int          delete_me : 1;
    int        (*func) (void *data);   
@@ -114,7 +114,7 @@ struct _Ecore_Idler
 
 struct _Ecore_Idle_Enterer
 {
-   Ecore_Oldlist   __list_data;
+   Ecore_List2   __list_data;
    ECORE_MAGIC;
    int          delete_me : 1;
    int        (*func) (void *data);   
@@ -123,7 +123,7 @@ struct _Ecore_Idle_Enterer
 
 struct _Ecore_Idle_Exiter
 {
-   Ecore_Oldlist   __list_data;
+   Ecore_List2   __list_data;
    ECORE_MAGIC;
    int          delete_me : 1;
    int        (*func) (void *data);   
@@ -132,7 +132,7 @@ struct _Ecore_Idle_Exiter
 
 struct _Ecore_Fd_Handler
 {
-   Ecore_Oldlist               __list_data;
+   Ecore_List2               __list_data;
    ECORE_MAGIC;
    int                      fd;
    Ecore_Fd_Handler_Flags   flags;
@@ -150,7 +150,7 @@ struct _Ecore_Fd_Handler
 
 struct _Ecore_Event_Handler
 {
-   Ecore_Oldlist   __list_data;
+   Ecore_List2   __list_data;
    ECORE_MAGIC;
    int          type;
    int          delete_me : 1;
@@ -160,7 +160,7 @@ struct _Ecore_Event_Handler
 
 struct _Ecore_Event_Filter
 {
-   Ecore_Oldlist   __list_data;
+   Ecore_List2   __list_data;
    ECORE_MAGIC;
    int          delete_me : 1;
    void *     (*func_start) (void *data);
@@ -172,7 +172,7 @@ struct _Ecore_Event_Filter
 
 struct _Ecore_Event
 {
-   Ecore_Oldlist   __list_data;
+   Ecore_List2   __list_data;
    ECORE_MAGIC;
    int          type;
    void        *event;
@@ -183,7 +183,7 @@ struct _Ecore_Event
 
 struct _Ecore_Animator
 {
-   Ecore_Oldlist   __list_data;
+   Ecore_List2   __list_data;
    ECORE_MAGIC;
    signed char  delete_me : 1;
    int        (*func) (void *data);
@@ -244,12 +244,12 @@ void         *_ecore_exe_free(Ecore_Exe *exe);
 void          _ecore_animator_shutdown(void);
     
 
-void         *_ecore_list_append           (void *in_list, void *in_item);
-void         *_ecore_list_prepend          (void *in_list, void *in_item);
-void         *_ecore_list_append_relative  (void *in_list, void *in_item, void *in_relative);
-void         *_ecore_list_prepend_relative (void *in_list, void *in_item, void *in_relative);
-void         *_ecore_list_remove           (void *in_list, void *in_item);
-void         *_ecore_list_find             (void *in_list, void *in_item);
+void         *_ecore_list2_append           (void *in_list, void *in_item);
+void         *_ecore_list2_prepend          (void *in_list, void *in_item);
+void         *_ecore_list2_append_relative  (void *in_list, void *in_item, void *in_relative);
+void         *_ecore_list2_prepend_relative (void *in_list, void *in_item, void *in_relative);
+void         *_ecore_list2_remove           (void *in_list, void *in_item);
+void         *_ecore_list2_find             (void *in_list, void *in_item);
 
 void          _ecore_fps_debug_init(void);
 void          _ecore_fps_debug_shutdown(void);

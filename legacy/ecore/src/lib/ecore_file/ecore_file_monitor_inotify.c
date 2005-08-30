@@ -27,7 +27,7 @@ struct _Ecore_File_Monitor_Inotify
 };
 
 static Ecore_Fd_Handler *_fdh = NULL;
-static Ecore_Oldlist    *_monitors = NULL;
+static Ecore_List2    *_monitors = NULL;
 
 static int                 _ecore_file_monitor_inotify_handler(void *data, Ecore_Fd_Handler *fdh);
 static Ecore_File_Monitor *_ecore_file_monitor_inotify_monitor_find(int wd);
@@ -62,7 +62,7 @@ int
 ecore_file_monitor_inotify_shutdown(void)
 {
    int fd;
-   Ecore_Oldlist *l;
+   Ecore_List2 *l;
 
    for (l = _monitors; l;)
      {
@@ -126,7 +126,7 @@ ecore_file_monitor_inotify_add(const char *path,
 	return NULL;
      }
 
-   _monitors = _ecore_list_append(_monitors, em);
+   _monitors = _ecore_list2_append(_monitors, em);
 
    return em;
 }
@@ -136,7 +136,7 @@ ecore_file_monitor_inotify_del(Ecore_File_Monitor *em)
 {
    int fd;
 
-   _monitors = _ecore_list_remove(_monitors, em);
+   _monitors = _ecore_list2_remove(_monitors, em);
 
    fd = ecore_main_fd_handler_fd_get(_fdh);
    if (ECORE_FILE_MONITOR_INOTIFY(em)->wd)
@@ -174,7 +174,7 @@ _ecore_file_monitor_inotify_handler(void *data, Ecore_Fd_Handler *fdh)
 static Ecore_File_Monitor *
 _ecore_file_monitor_inotify_monitor_find(int wd)
 {
-   Ecore_Oldlist *l;
+   Ecore_List2 *l;
 
    for (l = _monitors; l; l = l->next)
      {

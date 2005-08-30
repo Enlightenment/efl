@@ -7,7 +7,7 @@ static Ecore_Event         *events = NULL;
 static Ecore_Event_Handler **event_handlers = NULL;
 static int                   event_handlers_num = 0;
 static int                   event_handlers_alloc_num = 0;
-static Ecore_Oldlist_Data   *event_handlers_delete_list = NULL;
+static Ecore_List2_Data     *event_handlers_delete_list = NULL;
 
 static Ecore_Event_Filter  *event_filters = NULL;
 static int                  event_filters_delete_me = 0;
@@ -76,7 +76,7 @@ ecore_event_handler_add(int type, int (*func) (void *data, int type, void *event
 	       event_handlers[i] = NULL;
 	  }
      }
-   event_handlers[type] = _ecore_list_append(event_handlers[type], eh);
+   event_handlers[type] = _ecore_list2_append(event_handlers[type], eh);
    return eh;
 }
 
@@ -93,7 +93,7 @@ ecore_event_handler_add(int type, int (*func) (void *data, int type, void *event
 void *
 ecore_event_handler_del(Ecore_Event_Handler *event_handler)
 {
-   Ecore_Oldlist_Data *node;
+   Ecore_List2_Data *node;
    
    if (!ECORE_MAGIC_CHECK(event_handler, ECORE_MAGIC_EVENT_HANDLER)) 
      {
@@ -102,9 +102,9 @@ ecore_event_handler_del(Ecore_Event_Handler *event_handler)
 	return NULL;
      }
    event_handler->delete_me = 1;
-   node = calloc(1, sizeof(Ecore_Oldlist_Data));
+   node = calloc(1, sizeof(Ecore_List2_Data));
    node->data = event_handler;
-   event_handlers_delete_list = _ecore_list_append(event_handlers_delete_list, node);
+   event_handlers_delete_list = _ecore_list2_append(event_handlers_delete_list, node);
    return event_handler->data;
 }
 
@@ -215,7 +215,7 @@ ecore_event_filter_add(void * (*func_start) (void *data), int (*func_filter) (vo
    ef->func_filter = func_filter;
    ef->func_end = func_end;
    ef->data = (void *)data;
-   event_filters = _ecore_list_append(event_filters, ef);
+   event_filters = _ecore_list2_append(event_filters, ef);
    return ef;
 }
 
@@ -295,17 +295,17 @@ _ecore_event_shutdown(void)
 	     Ecore_Event_Handler *eh;
 	     
 	     eh = event_handlers[i];
-	     event_handlers[i] = _ecore_list_remove(event_handlers[i], eh);
+	     event_handlers[i] = _ecore_list2_remove(event_handlers[i], eh);
 	     ECORE_MAGIC_SET(eh, ECORE_MAGIC_NONE);
 	     free(eh);
 	  }
      }
    while (event_handlers_delete_list)
      {
-	Ecore_Oldlist_Data *ehd;
+	Ecore_List2_Data *ehd;
 	
 	ehd = event_handlers_delete_list;
-	event_handlers_delete_list = _ecore_list_remove(event_handlers_delete_list, ehd);
+	event_handlers_delete_list = _ecore_list2_remove(event_handlers_delete_list, ehd);
 	free(ehd);
      }
    if (event_handlers) free(event_handlers);
@@ -317,7 +317,7 @@ _ecore_event_shutdown(void)
 	Ecore_Event_Filter *ef;
 	
 	ef = event_filters;
-	event_filters = _ecore_list_remove(event_filters, ef);   
+	event_filters = _ecore_list2_remove(event_filters, ef);   
 	ECORE_MAGIC_SET(ef, ECORE_MAGIC_NONE);
 	free(ef);
      }
@@ -343,7 +343,7 @@ _ecore_event_add(int type, void *ev, void (*func_free) (void *data, void *ev), v
    e->event = ev;
    e->func_free = func_free;
    e->data = data;
-   events = _ecore_list_append(events, e);
+   events = _ecore_list2_append(events, e);
    events_num++;
    return e;
 }
@@ -355,7 +355,7 @@ _ecore_event_del(Ecore_Event *event)
    
    data = event->data;
    event->func_free(event->data, event->event);
-   events = _ecore_list_remove(events, event);
+   events = _ecore_list2_remove(events, event);
    ECORE_MAGIC_SET(event, ECORE_MAGIC_NONE);
    free(event);
    events_num--;
@@ -365,21 +365,21 @@ _ecore_event_del(Ecore_Event *event)
 void
 _ecore_event_call(void)
 {
-   Ecore_Oldlist *l, *ll;
+   Ecore_List2 *l, *ll;
    Ecore_Event *e;
    Ecore_Event_Filter *ef;
    Ecore_Event_Handler *eh;
-   Ecore_Oldlist_Data *ehd;
+   Ecore_List2_Data *ehd;
    int handle_count;
 
-   for (l = (Ecore_Oldlist *)event_filters; l; l = l->next)
+   for (l = (Ecore_List2 *)event_filters; l; l = l->next)
      {
 	ef = (Ecore_Event_Filter *)l;
 	if (!ef->delete_me)
 	  {
 	     if (ef->func_start)
 	       ef->loop_data = ef->func_start(ef->data);
-	     for (ll = (Ecore_Oldlist *)events; ll; ll = ll->next)
+	     for (ll = (Ecore_List2 *)events; ll; ll = ll->next)
 	       {
 		  Ecore_Event *e;
 		  
@@ -397,13 +397,13 @@ _ecore_event_call(void)
      }
    if (event_filters_delete_me)
      {
-	for (l = (Ecore_Oldlist *)event_filters; l;)
+	for (l = (Ecore_List2 *)event_filters; l;)
 	  {
 	     ef = (Ecore_Event_Filter *)l;
 	     l = l->next;
 	     if (ef->delete_me)
 	       {
-		  event_filters = _ecore_list_remove(event_filters, ef);
+		  event_filters = _ecore_list2_remove(event_filters, ef);
 		  ECORE_MAGIC_SET(ef, ECORE_MAGIC_NONE);
 		  free(ef);
 	       }
@@ -411,7 +411,7 @@ _ecore_event_call(void)
 	event_filters_delete_me = 0;
      }
 //   printf("EVENT BATCH...\n");
-   for (l = (Ecore_Oldlist *)events; l; l = l->next)
+   for (l = (Ecore_List2 *)events; l; l = l->next)
      {
 	e = (Ecore_Event *)l;
 	if (!e->delete_me)
@@ -422,7 +422,7 @@ _ecore_event_call(void)
 //	     printf("HANDLE ev type %i, %p\n", e->type, e->event);
 	     if ((e->type >= 0) && (e->type < event_handlers_num))
 	       {
-		  for (ll = (Ecore_Oldlist *)event_handlers[e->type]; ll; ll = ll->next)
+		  for (ll = (Ecore_List2 *)event_handlers[e->type]; ll; ll = ll->next)
 		    {
 		       eh = (Ecore_Event_Handler *)ll;
 		       if (!eh->delete_me)
@@ -447,8 +447,8 @@ _ecore_event_call(void)
      {
 	ehd = event_handlers_delete_list;
 	eh = ehd->data;
-	event_handlers[eh->type] = _ecore_list_remove(event_handlers[eh->type], eh);
-	event_handlers_delete_list = _ecore_list_remove(event_handlers_delete_list, ehd);
+	event_handlers[eh->type] = _ecore_list2_remove(event_handlers[eh->type], eh);
+	event_handlers_delete_list = _ecore_list2_remove(event_handlers_delete_list, ehd);
 	ECORE_MAGIC_SET(eh, ECORE_MAGIC_NONE);
 	free(eh);
 	free(ehd);

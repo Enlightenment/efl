@@ -32,7 +32,7 @@ _ecore_evas_buffer_init(void)
 static void
 _ecore_evas_buffer_free(Ecore_Evas *ee)
 {
-   ecore_evases = _ecore_list_remove(ecore_evases, ee);   
+   ecore_evases = _ecore_list2_remove(ecore_evases, ee);   
    _ecore_evas_buffer_shutdown();
    if (ee->engine.buffer.image)
      {
@@ -494,7 +494,7 @@ ecore_evas_buffer_new(int w, int h)
    
    evas_event_feed_mouse_in(ee->evas, 0, NULL);
 
-   ecore_evases = _ecore_list_prepend(ecore_evases, ee);
+   ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
    return ee;
 #else
    return NULL;
