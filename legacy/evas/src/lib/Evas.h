@@ -492,7 +492,14 @@ extern "C" {
    EAPI Evas_Bool                    evas_textblock2_cursor_char_prev(Evas_Textblock_Cursor *cur);
    EAPI void                         evas_textblock2_cursor_char_first(Evas_Textblock_Cursor *cur);
    EAPI void                         evas_textblock2_cursor_char_last(Evas_Textblock_Cursor *cur);
-   /* FIXME: add line start, line end, node start, node end, compare, pos get, copy, go to line X, go to pos X */
+   EAPI void                         evas_textblock2_cursor_line_first(Evas_Textblock_Cursor *cur);
+   EAPI void                         evas_textblock2_cursor_line_last(Evas_Textblock_Cursor *cur);
+   EAPI int                          evas_textblock2_cursor_pos_get(Evas_Textblock_Cursor *cur);
+   EAPI void                         evas_textblock2_cursor_pos_set(Evas_Textblock_Cursor *cur, int pos);
+   EAPI void                         evas_textblock2_cursor_line_set(Evas_Textblock_Cursor *cur, int line);
+   EAPI int                          evas_textblock2_cursor_compare(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2);
+   EAPI void                         evas_textblock2_cursor_copy(Evas_Textblock_Cursor *cur, Evas_Textblock_Cursor *cur_dest);
+       
    
    EAPI void                         evas_textblock2_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text);
    EAPI void                         evas_textblock2_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text);
