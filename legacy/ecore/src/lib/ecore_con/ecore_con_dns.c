@@ -705,14 +705,11 @@ _ecore_con_dns_cache_free(Ecore_Con_Dns_Cache *cache)
 {
    int i;
 
-   free(cache->he->h_addr_list);
    free(cache->he->h_name);
-   i = 0;
-   while (cache->he->h_addr_list[i])
-     free(cache->he->h_addr_list[i++]);
-   i = 0;
-   while (cache->he->h_aliases[i])
-     free(cache->he->h_aliases[i++]);
+   free(cache->he->h_addr_list[0]);
+   free(cache->he->h_addr_list);
+   for (i = 0; cache->he->h_aliases[i]; i++)
+     free(cache->he->h_aliases[i]);
    free(cache->he->h_aliases);
    free(cache->he);
    free(cache);
