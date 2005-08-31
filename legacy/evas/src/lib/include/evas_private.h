@@ -558,6 +558,7 @@ void evas_object_render_pre_effect_updates(Evas_List *updates, Evas_Object *obj,
 Evas_List * evas_rects_return_difference_rects(int x, int y, int w, int h, int xx, int yy, int ww, int hh);
 void evas_object_clip_recalc(Evas_Object *obj);
 void evas_object_clip_dirty(Evas_Object *obj);
+void evas_object_recalc_clippees(Evas_Object *obj);
 Evas_Layer *evas_layer_new(Evas *e);
 void evas_layer_pre_free(Evas_Layer *lay);
 void evas_layer_free(Evas_Layer *lay);

@@ -1,4 +1,6 @@
 #include "evas_common.h"
+/* The freetype size functions are not normally exported */
+#include <freetype/ftsizes.h>
 
 extern FT_Library         evas_ft_lib;
 
@@ -7,8 +9,8 @@ static int                font_cache = 0;
 static Evas_Object_List * fonts_src = NULL;
 static Evas_Object_List * fonts = NULL;
 
-static int font_modify_cache_cb(Evas_Hash *hash, const char *key, void *data, void *fdata);
-static int font_flush_free_glyph_cb(Evas_Hash *hash, const char *key, void *data, void *fdata);
+static Evas_Bool font_modify_cache_cb(Evas_Hash *hash, const char *key, void *data, void *fdata);
+static Evas_Bool font_flush_free_glyph_cb(Evas_Hash *hash, const char *key, void *data, void *fdata);
 
 RGBA_Font_Source *
 evas_common_font_source_memory_load(const char *name, const void *data, int data_size)
@@ -388,7 +390,7 @@ evas_common_font_free(RGBA_Font *fn)
    free(fn);
 }
 
-static int
+static Evas_Bool
 font_modify_cache_cb(Evas_Hash *hash, const char *key, void *data, void *fdata)
 {
    int *dir;
@@ -435,7 +437,7 @@ evas_common_font_flush(void)
    while (font_cache_usage > font_cache) evas_common_font_flush_last();
 }
 
-static int
+static Evas_Bool
 font_flush_free_glyph_cb(Evas_Hash *hash, const char *key, void *data, void *fdata)
 {
    RGBA_Font_Glyph *fg;

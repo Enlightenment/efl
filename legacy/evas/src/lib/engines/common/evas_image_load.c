@@ -602,7 +602,8 @@ static int load_image_file_data_eet(RGBA_Image *im, const char *file, const char
 static int
 load_image_file_data_eet(RGBA_Image *im, const char *file, const char *key)
 {
-   int                  w, h, alpha, compression, quality, lossy;
+   unsigned int         w, h;
+   int                  alpha, compression, quality, lossy;
    Eet_File            *ef;
    DATA32              *body;
 
