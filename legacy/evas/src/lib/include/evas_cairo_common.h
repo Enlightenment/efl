@@ -17,6 +17,7 @@
 #include <X11/Xutil.h>
 
 #include <cairo.h>
+#include <cairo-xlib.h>
 
 typedef struct _Evas_Cairo_Context                   Evas_Cairo_Context;
 typedef struct _Evas_Cairo_Image                     Evas_Cairo_Image;
@@ -24,6 +25,44 @@ typedef struct _Evas_Cairo_Polygon                   Evas_Cairo_Polygon;
 typedef struct _Evas_Cairo_Polygon_Point             Evas_Cairo_Polygon_Point;
 typedef struct _Evas_Cairo_Gradient                  Evas_Cairo_Gradient;
 
+struct _Evas_Cairo_Context
+{
+   cairo_t         *cairo;
+
+   struct {
+      double r, g, b, a;
+   } col;
+   struct {
+      unsigned int set : 1;
+      double r, g, b, a;
+   } mul;
+};
+
+struct _Evas_Cairo_Image
+{
+   RGBA_Image         *im;
+   int                 references;
+   DATA32             *mulpix;
+   cairo_surface_t    *surface;
+   cairo_pattern_t    *pattern;
+#if 0
+   Evas_Cairo_Context *cc;
+   char                dirty : 1;
+   char                cached : 1;
+#endif
+};
+
+struct _Evas_Cairo_Polygon
+{
+   Evas_List *points;
+};
+
+struct _Evas_Cairo_Polygon_Point
+{
+   int x, y;
+};
+
+#if 0
 struct _Evas_Cairo_Context
 {
    unsigned char   r, g, b, a;
@@ -80,6 +119,7 @@ struct _Evas_Cairo_Gradient
 {
    RGBA_Gradient   *grad;
 };
+#endif
 
 /*
 Evas_GL_Context  *evas_gl_common_context_new(void);

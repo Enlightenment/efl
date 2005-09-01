@@ -9,13 +9,13 @@ static Evas_Cairo_X11_Window *_evas_cairo_x11_window = NULL;
 
 Evas_Cairo_X11_Window *
 evas_engine_cairo_x11_window_new(Display *disp,
-			      Window   win,
-			      int      screen,
-			      Visual  *vis,
-			      Colormap cmap,
-			      int      depth,
-			      int      w,
-			      int      h)
+				 Window   win,
+				 int      screen,
+				 Visual  *vis,
+				 Colormap cmap,
+				 int      depth,
+				 int      w,
+				 int      h)
 {
    Evas_Cairo_X11_Window *cw;
 
@@ -27,8 +27,7 @@ evas_engine_cairo_x11_window_new(Display *disp,
    cw->visual = vis;
    cw->colormap = cmap;
    cw->depth = depth;
-   cw->cairo = cairo_create();
-//   evas_gl_common_context_resize(gw->gl_context, w, h);
+   cw->surface = cairo_xlib_surface_create(disp, win, vis, w, h);
    return cw;
 }
 
@@ -36,7 +35,7 @@ void
 evas_engine_cairo_x11_window_free(Evas_Cairo_X11_Window *cw)
 {
    if (cw == _evas_cairo_x11_window) _evas_cairo_x11_window = NULL;
-   cairo_destroy(cw->cairo);
+   cairo_surface_destroy(cw->surface);
    free(cw);
 }
 
@@ -47,5 +46,10 @@ evas_engine_cairo_x11_window_use(Evas_Cairo_X11_Window *cw)
      {
 	_evas_cairo_x11_window = cw;
      }
-//   evas_gl_common_context_use(cw->gl_context);
+}
+
+void
+evas_engine_cairo_x11_window_size_set(Evas_Cairo_X11_Window *cw, int w, int h)
+{
+   cairo_xlib_surface_set_size(cw->surface, w, h);
 }

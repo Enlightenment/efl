@@ -475,25 +475,25 @@ fi
 ## Check if we should build the gl_x11 engine
 have_evas_cairo_x11="no";
 ENGINE_CAIRO_X11_PRG="";
-## Automatic check...
-#PKG_CHECK_MODULES(CAIRO, cairo >= 0.1.23,
-#  [ have_evas_cairo_x11="yes" ],
-#  [ have_evas_cairo_x11="no" ]
-#)
-## Manual override
-#AC_MSG_CHECKING(whether cairo x11 backend is to be built)
-#AC_ARG_ENABLE(cairo-x11, [  --enable-cairo-x11              enable the Cairo X11 display engine], [
-#	   if [ test "$enableval" = "yes" ]; then
-#	     AC_MSG_RESULT(yes)
-#	     have_evas_cairo_x11="yes"
-#	   else
-#	     AC_MSG_RESULT(no)
-#	     have_evas_cairo_x11="no"
-#	   fi
-#        ], [
-#	   AC_MSG_RESULT($have_evas_cairo_x11)
-#	]
-#)
+# Automatic check...
+PKG_CHECK_MODULES(CAIRO, cairo >= 1.0.0,
+  [ have_evas_cairo_x11="yes" ],
+  [ have_evas_cairo_x11="no" ]
+)
+# Manual override
+AC_MSG_CHECKING(whether cairo x11 backend is to be built)
+AC_ARG_ENABLE(cairo-x11, [  --enable-cairo-x11              enable the Cairo X11 display engine], [
+	   if [ test "$enableval" = "yes" ]; then
+	     AC_MSG_RESULT(yes)
+	     have_evas_cairo_x11="yes"
+	   else
+	     AC_MSG_RESULT(no)
+	     have_evas_cairo_x11="no"
+	   fi
+        ], [
+	   AC_MSG_RESULT($have_evas_cairo_x11)
+	]
+)
 if test "x$have_evas_cairo_x11" = "xyes"; then
   AC_CHECK_HEADER(X11/X.h,
     [

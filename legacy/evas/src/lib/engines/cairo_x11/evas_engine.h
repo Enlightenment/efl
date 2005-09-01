@@ -14,7 +14,12 @@ struct _Evas_Cairo_X11_Window
    Visual          *visual;
    Colormap         colormap;
    int              depth;
-   cairo_t         *cairo;
+   cairo_surface_t *surface;
+
+   struct {
+      int redraw : 1;
+      int x1, y1, x2, y2;
+   } draw;
 };
 
 Evas_Cairo_X11_Window *
@@ -30,5 +35,7 @@ void
   evas_engine_cairo_x11_window_free(Evas_Cairo_X11_Window *cw);
 void
   evas_engine_cairo_x11_window_use(Evas_Cairo_X11_Window *cw);
+void
+  evas_engine_cairo_x11_window_size_set(Evas_Cairo_X11_Window *cw, int w, int h);
 
 #endif

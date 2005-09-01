@@ -2,5 +2,5 @@ Makefile.in
 Makefile
 .deps
 .libs
-libevas_engine_gl_x11.la
+libevas_engine_cairo_x11.la
 *.lo

@@ -11,3 +11,4 @@ evas_software_x11_test
 evas_directfb_test
 evas_directfb_window
 moc_evas_software_qtopia_main.cpp
+evas_cairo_x11_test
