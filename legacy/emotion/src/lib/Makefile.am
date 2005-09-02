@@ -4,8 +4,7 @@ AUTOMAKE_OPTIONS     = 1.4 foreign
 
 MAINTAINERCLEANFILES = Makefile.in
 
-INCLUDES	     = -I$(includedir) \
-		       -I$(top_srcdir) \
+INCLUDES	     = -I$(top_srcdir) \
 		       -I$(top_srcdir)/src/lib \
 		       @my_cflags@
 

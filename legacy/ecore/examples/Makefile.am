@@ -21,7 +21,6 @@ endif
 noinst_PROGRAMS = $(EXAMPLES) $(CON_EXAMPLES) $(CONFIG_EXAMPLES) $(X_EXAMPLES)
 
 INCLUDES = \
--I$(includedir) \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_config \
 -I$(top_srcdir)/src/lib/ecore_x \
