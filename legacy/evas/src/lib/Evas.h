@@ -496,10 +496,9 @@ extern "C" {
    EAPI void                         evas_textblock2_cursor_line_last(Evas_Textblock_Cursor *cur);
    EAPI int                          evas_textblock2_cursor_pos_get(Evas_Textblock_Cursor *cur);
    EAPI void                         evas_textblock2_cursor_pos_set(Evas_Textblock_Cursor *cur, int pos);
-   EAPI void                         evas_textblock2_cursor_line_set(Evas_Textblock_Cursor *cur, int line);
+   EAPI Evas_Bool                    evas_textblock2_cursor_line_set(Evas_Textblock_Cursor *cur, int line);
    EAPI int                          evas_textblock2_cursor_compare(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2);
    EAPI void                         evas_textblock2_cursor_copy(Evas_Textblock_Cursor *cur, Evas_Textblock_Cursor *cur_dest);
-       
    
    EAPI void                         evas_textblock2_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text);
    EAPI void                         evas_textblock2_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text);
@@ -514,13 +513,13 @@ extern "C" {
        
    EAPI int                          evas_textblock2_cursor_char_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
    EAPI int                          evas_textblock2_cursor_line_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
-     
+   EAPI Evas_Bool                    evas_textblock2_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, Evas_Coord y);
+
    EAPI Evas_Bool                    evas_object_textblock2_line_number_geometry_get(Evas_Object *obj, int line, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
    EAPI void                         evas_object_textblock2_clear(Evas_Object *obj);
    EAPI void                         evas_object_textblock2_size_formatted_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
    EAPI void                         evas_object_textblock2_size_native_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
    EAPI void                         evas_object_textblock2_style_insets_get(Evas_Object *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b);
-   /* FIXME: jump cursor to object-relative x, y */
    
    
    EAPI void              evas_object_del                   (Evas_Object *obj);

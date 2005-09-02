@@ -1383,16 +1383,28 @@ _layout_ends_with_space(char *str)
    return _is_white(chr);
 }
 
-static void
+static int
 _layout_strip_trailing_whitespace(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Item *it)
 {
    int p, tp, chr, adv, tw, th;
    
    p = evas_common_font_utf8_get_last((unsigned char *)(it->text), strlen(it->text));
    tp = p;
-   while (p >= 0)
+   if (p > 0)
+/*   while (p >= 0)*/
      {
 	chr = evas_common_font_utf8_get_prev((unsigned char *)(it->text), &p);
+	if (_is_white(chr))
+	  {
+	     _layout_item_text_cutoff(c, it, tp);
+	     adv = c->ENFN->font_h_advance_get(c->ENDT, it->format->font.font, it->text);
+	     c->ENFN->font_string_size_get(c->ENDT, it->format->font.font, it->text, &tw, &th);
+	     it->w = tw;
+	     it->h = th;
+	     c->x = it->x + adv;
+	     return 1;
+	  }
+/*	  
 	if (!_is_white(chr))
 	  {
 	     evas_common_font_utf8_get_next((unsigned char *)(it->text), &tp);
@@ -1405,10 +1417,12 @@ _layout_strip_trailing_whitespace(Ctxt *c, Evas_Object_Textblock_Format *fmt, Ev
 	     return;
 	  }
 	tp = p;
+ */
      }
+   return 0;
 }
 
-static void
+static int
 _layout_item_abort(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Item *it)
 {
    if (it->text) free(it->text);
@@ -1417,8 +1431,9 @@ _layout_item_abort(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textb
    if (c->ln->items)
      {
 	it = (Evas_Object_Textblock_Item *)((Evas_Object_List *)c->ln->items)->last;
-	_layout_strip_trailing_whitespace(c, fmt, it);
+	return _layout_strip_trailing_whitespace(c, fmt, it);
      }
+   return 0;
 }
 
 static char *
@@ -1493,6 +1508,7 @@ _layout_walk_back_to_item_word_redo(Ctxt *c, Evas_Object_Textblock_Item *it)
    Evas_List *remove_items = NULL, *l;
    int index, p, ch, tw, th, inset, adv;
    
+//   printf("_layout_walk_back_to_item_word_redo(...)\n");
    /* it is not appended yet */
    for (pit = (Evas_Object_Textblock_Item *)((Evas_Object_List *)c->ln->items)->last;
 	pit;
@@ -1513,6 +1529,14 @@ _layout_walk_back_to_item_word_redo(Ctxt *c, Evas_Object_Textblock_Item *it)
 	     new_it->source_pos = pit->source_pos + index;
 	     _layout_item_text_cutoff(c, pit, index);
 	     _layout_strip_trailing_whitespace(c, pit->format, pit);
+/* ***	     
+	     if (!white_stripped)
+	       {
+		  index = 0;
+		  ch = evas_common_font_utf8_get_next((unsigned char *)str, &index);
+		  if (_is_white(ch)) str += index;
+	       }
+ */
 	     break;
 	  }
      }
@@ -1567,7 +1591,7 @@ static void
 _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Node *n)
 {
    int adv, inset, tw, th, new_line, empty_item;
-   int wrap, twrap, ch, index;
+   int wrap, twrap, ch, index, white_stripped;
    char *str;
    Evas_Object_Textblock_Item *it, *tit;
    
@@ -1578,6 +1602,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
      {
 	/* if this is the first line item and it starts with spaces - remove them */
 	wrap = 0;
+	white_stripped = 0;
 	if (!c->ln->items)
 	  {
 	     twrap = wrap;
@@ -1665,7 +1690,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 			      }
 			    if (c->ln->items != NULL)
 			      {
-				 _layout_item_abort(c, fmt, it);
+				 white_stripped = _layout_item_abort(c, fmt, it);
 				 empty_item = 1;
 			      }
 			    else
@@ -1711,7 +1736,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 		    }
 		  if (c->ln->items != NULL)
 		    {
-		       _layout_item_abort(c, fmt, it);
+		       white_stripped = _layout_item_abort(c, fmt, it);
 		       empty_item = 1;
 		       new_line = 1;
 		    }
@@ -1753,6 +1778,12 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	  }
 	if (new_line)
 	  {
+	     if (!white_stripped)
+	       {
+		  index = 0;
+		  ch = evas_common_font_utf8_get_next((unsigned char *)str, &index);
+		  if (_is_white(ch)) str += index;
+	       }
 	     new_line = 0;
 	     _layout_line_advance(c, fmt);
 	  }
@@ -1855,8 +1886,16 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 				 c->o->style_pad.r - 
 				 c->marginl - c->marginr))
 			      {
+				 
 				 _layout_line_advance(c, fmt);
 				 x2 = (fmt->tabstops * ((c->x + fmt->tabstops) / fmt->tabstops));
+			      }
+			    if (c->ln->items)
+			      {
+				 Evas_Object_Textblock_Item *it;
+				 
+				 it = (Evas_Object_Textblock_Item *)((Evas_Object_List *)c->ln->items)->last;
+				 _layout_strip_trailing_whitespace(c, fmt, it);
 			      }
 			    fi = _layout_format_item_add(c, n, item);
 			    fi->x = c->x;
@@ -2692,7 +2731,7 @@ evas_textblock2_cursor_line_first(Evas_Textblock_Cursor *cur)
    if (it)
      {
 	cur->pos = it->source_pos;
-	     cur->node = it->source_node;
+	cur->node = it->source_node;
      }
    else if (fi)
      {
@@ -2765,41 +2804,38 @@ evas_textblock2_cursor_pos_set(Evas_Textblock_Cursor *cur, int pos)
    cur->pos = pos;
 }
 
-void
+Evas_Bool
 evas_textblock2_cursor_line_set(Evas_Textblock_Cursor *cur, int line)
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Line *ln;
+   Evas_Object_Textblock_Item *it;
+   Evas_Object_Textblock_Format_Item *fi;
    
-   if (!cur) return;
+   if (!cur) return 0;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->formatted.valid) _relayout(cur->obj);
 
    ln = _find_layout_line_num(cur->obj, line);
-   if (!ln) return;
-   if (ln->line_no == line)
+   if (!ln) return 0;
+   it = (Evas_Object_Textblock_Item *)ln->items;
+   fi = (Evas_Object_Textblock_Format_Item *)ln->format_items;
+   if ((it) && (fi))
      {
-	Evas_Object_Textblock_Item *it;
-	Evas_Object_Textblock_Format_Item *fi;
-	
-	it = (Evas_Object_Textblock_Item *)ln->items;
-	fi = (Evas_Object_Textblock_Format_Item *)ln->format_items;
-	if ((it) && (fi))
-	  {
-	     if (it->x < fi->x) fi = NULL;
-	     else it = NULL;
-	  }
-	if (it)
-	  {
-	     cur->pos = it->source_pos;
-	     cur->node = it->source_node;
-	  }
-	else if (fi)
-	  {
-	     cur->pos = 0;
-	     cur->node = fi->source_node;
-	  }
+	if (it->x < fi->x) fi = NULL;
+	else it = NULL;
      }
+   if (it)
+     {
+	cur->pos = it->source_pos;
+	cur->node = it->source_node;
+     }
+   else if (fi)
+     {
+	cur->pos = 0;
+	cur->node = fi->source_node;
+     }
+   return 1;
 }
 
 int
@@ -3119,6 +3155,63 @@ evas_textblock2_cursor_line_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord 
    if (cw) *cw = w;
    if (ch) *ch = h;
    return ln->line_no;
+}
+
+Evas_Bool
+evas_textblock2_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, Evas_Coord y)
+{
+   Evas_Object_Textblock *o;
+   Evas_Object_List *l, *ll;
+   Evas_Object_Textblock_Line *ln = NULL;
+   Evas_Object_Textblock_Item *it = NULL;
+   Evas_Object_Textblock_Format_Item *fi = NULL;
+   
+   if (!cur) return 0;
+   o = (Evas_Object_Textblock *)(cur->obj->object_data);
+   if (!o->formatted.valid) _relayout(cur->obj);
+   for (l = (Evas_Object_List *)o->lines; l; l = l->next)
+     {
+        Evas_Object_Textblock_Line *ln;
+
+        ln = (Evas_Object_Textblock_Line *)l;
+	if (ln->y > y) break;
+	if ((ln->y <= y) && ((ln->y + ln->h) > y))
+	  {
+	     for (ll = (Evas_Object_List *)ln->items; ll; ll = ll->next)
+	       {
+		  it = (Evas_Object_Textblock_Item *)ll;
+		  if ((it->x +ln->x) > x) break;
+		  if (((it->x + ln->x) <= x) && (((it->x + ln->x) + it->w) > x))
+		    {
+		       int pos;
+		       int cx, cy, cw, ch;
+		       
+		       pos = cur->ENFN->font_char_at_coords_get(cur->ENDT,
+								it->format->font.font,
+								it->text,
+								x - it->x - ln->x, 0,
+								&cx, &cy, &cw, &ch);
+		       if (pos < 0)
+			 return 0;
+		       cur->pos = pos + it->source_pos;
+		       cur->node = it->source_node;
+		       return 1;
+		    }
+	       }
+	     for (ll = (Evas_Object_List *)ln->format_items; ll; ll = ll->next)
+	       {
+		  fi = (Evas_Object_Textblock_Format_Item *)ll;
+		  if ((fi->x + ln->x) > x) break;
+		  if (((fi->x + ln->x) <= x) && (((fi->x + ln->x) + fi->w) > x))
+		    {
+		       cur->pos = 0;
+		       cur->node = fi->source_node;
+		       return 1;
+		    }
+	       }
+	  }
+     }
+   return 0;
 }
 
 /* general controls */
