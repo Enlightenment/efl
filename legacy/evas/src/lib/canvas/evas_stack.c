@@ -165,7 +165,7 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
    if (above->smart.smart)
      {
        if (above->smart.smart->smart_class->above_get)
-     above = above->smart.smart->smart_class->above_get(above);
+	  above = above->smart.smart->smart_class->above_get(above);
      }
    if (obj->smart.smart)
      {
