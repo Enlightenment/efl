@@ -3,7 +3,7 @@
 INCLUDES = \
 -I$(top_srcdir) \
 -I$(top_srcdir)/src/lib \
-@my_cflags@ @edje_cflags@
+@EVAS_CFLAGS@ @ECORE_CFLAGS@ @EDJE_CFLAGS@
 
 bin_PROGRAMS = \
 emotion_test
@@ -12,7 +12,7 @@ emotion_test_SOURCES = \
 emotion_test_main.c
 
 emotion_test_LDADD = \
-@my_libs@ @edje_libs@ \
+@EVAS_LIBS@ @ECORE_LIBS@ @EDJE_LIBS@ \
 $(top_builddir)/src/lib/libemotion.la
 
 

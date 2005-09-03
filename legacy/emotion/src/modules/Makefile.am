@@ -9,7 +9,7 @@ MAINTAINERCLEANFILES = Makefile.in
 INCLUDES	     = -I$(top_srcdir) \
 		       -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/modules \
-		       @my_cflags@ @xine_cflags@
+		       @EVAS_CFLAGS@ @ECORE_CFLAGS@ @XINE_CFLAGS@
 
 pkgdir               = $(libdir)/emotion
 
@@ -17,7 +17,7 @@ pkg_LTLIBRARIES      = emotion_decoder_xine.la
 emotion_decoder_xine_la_SOURCES  = \
 emotion_xine.c \
 emotion_xine.h
-emotion_decoder_xine_la_LIBADD       = @my_libs@ @xine_libs@
+emotion_decoder_xine_la_LIBADD       = @EVAS_LIBS@ @ECORE_LIBS@ @XINE_LIBS@
 emotion_decoder_xine_la_LDFLAGS      = -module -avoid-version \
 				       -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
 emotion_decoder_xine_la_DEPENDENCIES = $(top_builddir)/config.h
