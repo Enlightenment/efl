@@ -115,15 +115,10 @@ AC_ARG_WITH(qtdir,
   qt_dir="/opt/Qtopia";
 ])
 # check for freetype
-AC_ARG_WITH(freetype-config, [  --with-freetype-config=FREETYPE_CONFIG    use freetype-config specified ],
-[ FREETYPE_CONFIG=$withval;
-  echo "using "$FREETYPE_CONFIG" for freetype-config"; ],
-[ if test -z "$FREETYPE_CONFIG"; then
-    AC_PATH_PROG(FREETYPE_CONFIG, "freetype-config", "", $PATH)
-  fi
-])
-freetype_cflags=`$FREETYPE_CONFIG --cflags`
-freetype_libs=`$FREETYPE_CONFIG --libs`
+AC_PATH_GENERIC(freetype, 9.8.0,
+  [ ],
+  [ AC_MSG_ERROR(Freetype isn't installed) ]
+)
 
 #####################################################################
 ## Engines
@@ -1491,9 +1486,6 @@ fi
 
 AC_SUBST(VALGRIND_CFLAGS)
 AC_SUBST(VALGRIND_LIBS)
-
-AC_SUBST(freetype_cflags)
-AC_SUBST(freetype_libs)
 
 AC_SUBST(x_cflags)
 AC_SUBST(x_libs)

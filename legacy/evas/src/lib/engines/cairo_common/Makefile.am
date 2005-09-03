@@ -8,7 +8,7 @@ MAINTAINERCLEANFILES = Makefile.in
 INCLUDES	     = -I. \
 		       -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include \
-		       @freetype_cflags@ @CAIRO_CFLAGS@
+		       @FREETYPE_CFLAGS@ @CAIRO_CFLAGS@
 
 if BUILD_ENGINE_CAIRO_COMMON
 

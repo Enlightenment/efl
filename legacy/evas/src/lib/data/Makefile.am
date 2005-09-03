@@ -8,7 +8,7 @@ MAINTAINERCLEANFILES = Makefile.in
 INCLUDES	     = -I. \
 		       -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include \
-		       @freetype_cflags@
+		       @FREETYPE_CFLAGS@
 
 noinst_LTLIBRARIES      = libevas_data.la
 libevas_data_la_SOURCES  = \

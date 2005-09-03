@@ -8,7 +8,7 @@ MAINTAINERCLEANFILES = Makefile.in
 INCLUDES	     = -I. \
 		       -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include \
-		       @freetype_cflags@ @x_cflags@
+		       @FREETYPE_CFLAGS@ @x_cflags@
 		       
 if BUILD_ENGINE_SOFTWARE_X11
 

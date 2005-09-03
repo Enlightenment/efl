@@ -8,7 +8,7 @@ MAINTAINERCLEANFILES = Makefile.in
 INCLUDES	     = -I. \
 		       -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include \
-		       @freetype_cflags@ @gl_cflags@
+		       @FREETYPE_CFLAGS@ @gl_cflags@
 
 if BUILD_ENGINE_GL_COMMON
 

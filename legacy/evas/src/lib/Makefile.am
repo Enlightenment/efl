@@ -7,7 +7,7 @@ AUTOMAKE_OPTIONS     = 1.4 foreign
 INCLUDES	     = -I. \
                        -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include \
-		       @freetype_cflags@ @x_cflags@ @xcb_cflags@ @qt_cflags@ @DIRECTFB_CFLAGS@ @gl_cflags@
+		       @FREETYPE_CFLAGS@ @x_cflags@ @xcb_cflags@ @qt_cflags@ @DIRECTFB_CFLAGS@ @gl_cflags@
 
 lib_LTLIBRARIES      = libevas.la
 
@@ -125,7 +125,7 @@ libevas_la_LIBADD       = \
 			  imaging/libevas_imaging.la \
 			  engines/common/libevas_engine_common.la \
 			  -lm \
-			  @freetype_libs@ \
+			  @FREETYPE_LIBS@ \
 			  @png_libs@ @jpeg_libs@ @eet_libs@ @edb_libs@ \
 			  $(ENGINE_SOFTWARE_X11) \
 			  $(ENGINE_SOFTWARE_XCB) \

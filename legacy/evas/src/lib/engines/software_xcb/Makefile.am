@@ -8,7 +8,7 @@ MAINTAINERCLEANFILES = Makefile.in
 INCLUDES	     = -I. \
 		       -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include \
-		       @freetype_cflags@ @xcb_cflags@
+		       @FREETYPE_CFLAGS@ @xcb_cflags@
 		       
 if BUILD_ENGINE_SOFTWARE_XCB
 
