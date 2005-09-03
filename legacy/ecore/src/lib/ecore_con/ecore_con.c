@@ -440,10 +440,6 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
 	       }
 	  }
      }
-   else if (type == ECORE_CON_REMOTE_SYSTEM)
-     {
-	ecore_con_dns_lookup(name, _ecore_con_cb_dns_lookup, svr);
-     }
 
    svr->name = strdup(name);
    if (!svr->name) goto error;
@@ -456,6 +452,10 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    svr->clients = ecore_list_new();
    ecore_list_append(servers, svr);
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_CON_SERVER);   
+
+   if (type == ECORE_CON_REMOTE_SYSTEM)
+     ecore_con_dns_lookup(svr->name, _ecore_con_cb_dns_lookup, svr);
+
    return svr;
    
    error:
