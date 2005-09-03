@@ -53,6 +53,10 @@ typedef enum _Emotion_Meta_Info Emotion_Meta_Info;
 #define EMOTION_CHANNEL_AUTO -1
 #define EMOTION_CHANNEL_DEFAULT 0
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+   
 /* api calls available */
 Evas_Object *emotion_object_add                   (Evas *evas);
 Evas_Bool    emotion_object_init                  (Evas_Object *obj);
@@ -107,4 +111,8 @@ int          emotion_object_spu_button_count_get  (Evas_Object *obj);
 int          emotion_object_spu_button_get        (Evas_Object *obj);
 const char  *emotion_object_meta_info_get         (Evas_Object *obj, Emotion_Meta_Info meta);
 
+#ifdef __cplusplus
+}
+#endif
+      
 #endif
