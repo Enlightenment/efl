@@ -42,8 +42,9 @@ while test $# -gt 0; do
       echo @VERSION@
       ;;
     --cflags)
+      includes=@evas_cflags@
       if test @includedir@ != /usr/include ; then
-        includes=-I@includedir@
+        includes="$includes -I@includedir@"
       fi
       echo $includes
       ;;
