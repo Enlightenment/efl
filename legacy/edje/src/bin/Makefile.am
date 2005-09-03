@@ -4,10 +4,10 @@ INCLUDES = \
 -I$(top_srcdir) \
 -I$(top_srcdir)/bin \
 -I$(top_srcdir)/src/lib \
-@eet_cflags@ \
-@evas_cflags@ \
-@ecore_cflags@ \
-@imlib2_cflags@
+@EET_CFLAGS@ \
+@EVAS_CFLAGS@ \
+@ECORE_CFLAGS@ \
+@IMLIB2_CFLAGS@
 
 bin_SCRIPTS = \
 @EDJE_RECC_PRG@
@@ -49,7 +49,7 @@ edje_cc_sources.c
 
 edje_cc_LDADD = \
 $(top_builddir)/src/lib/libedje.la \
-@imlib2_libs@
+@IMLIB2_LIBS@
 
 edje_cc_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 
@@ -62,7 +62,7 @@ edje_cc_sources.c
 
 edje_decc_LDADD = \
 $(top_builddir)/src/lib/libedje.la \
-@imlib2_libs@
+@IMLIB2_LIBS@
 
 edje_decc_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 
@@ -73,7 +73,7 @@ edje_thumb.h
 
 edje_thumb_LDADD = \
 $(top_builddir)/src/lib/libedje.la \
-@imlib2_libs@
+@IMLIB2_LIBS@
 
 edje_thumb_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 

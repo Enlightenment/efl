@@ -114,63 +114,40 @@ AC_ARG_ENABLE(edje-cc, [  --disable-edje-cc       disable building of edje_cc ],
    ]
 )
 
-AC_ARG_WITH(evas-config, [  --with-evas-config=EVAS_CONFIG    use evas-config specified ],
-[ EVAS_CONFIG=$withval;
-  echo "using "$EVAS_CONFIG" for evas-config"; ],
-[ if test -z "$EVAS_CONFIG"; then
-    AC_PATH_PROG(EVAS_CONFIG, "evas-config", "", $PATH)
-  fi
-])
-evas_cflags=`$EVAS_CONFIG --cflags`
-evas_libs=`$EVAS_CONFIG --libs`
+AC_PATH_GENERIC(evas, 0.9.9,
+  [ ],
+  [ AC_MSG_ERROR(Evas isn't installed) ],
+)
 
-AC_ARG_WITH(ecore-config, [  --with-ecore-config=ECORE_CONFIG  use ecore-config specified ],
-[ ECORE_CONFIG=$withval;
-  echo "using "$ECORE_CONFIG" for ecore-config"; ],
-[ if test -z "$ECORE_CONFIG"; then
-    AC_PATH_PROG(ECORE_CONFIG, "ecore-config", "", $PATH)
-  fi
-])
-ecore_cflags=`$ECORE_CONFIG --cflags`
-ecore_libs=`$ECORE_CONFIG --libs`
+AC_PATH_GENERIC(ecore, 0.9.9,
+  [ ],
+  [ AC_MSG_ERROR(Ecore isn't installed) ],
+)
 
 CP=$CFLAGS
-CFLAGS=$ecore_cflags
+CFLAGS=$ECORE_CFLAGS
 AC_CHECK_HEADER(Ecore_X.h, AC_DEFINE(HAVE_ECORE_X, 1, [Ecore_X.h exists]))
 AC_CHECK_HEADER(Ecore_Fb.h, AC_DEFINE(HAVE_ECORE_FB, 1, [Ecore_Fb.h exists]))
 CFLAGS=$CP
 
-AC_ARG_WITH(eet-config, [  --with-eet-config=EET_CONFIG      use eet-config specified ],
-[ EET_CONFIG=$withval;
-  echo "using "$EET_CONFIG" for eet-config"; ],
-[ if test -z "$EET_CONFIG"; then
-    AC_PATH_PROG(EET_CONFIG, "eet-config", "", $PATH)
-  fi
-])
-eet_cflags=`$EET_CONFIG --cflags`
-eet_libs=`$EET_CONFIG --libs`
+AC_PATH_GENERIC(eet, 0.9.10,
+  [ ],
+  [ AC_MSG_ERROR(Eet isn't installed) ],
+)
 
-AC_ARG_WITH(embryo-config, [  --with-embryo-config=EMBRYO_CONFIG use embryo-config specified ],
-[ EMBRYO_CONFIG=$withval;
-  echo "using "$EMBRYO_CONFIG" for embryo-config"; ],
-[ if test -z "$EMBRYO_CONFIG"; then
-    AC_PATH_PROG(EMBRYO_CONFIG, "embryo-config", "", $PATH)
-  fi
-])
-embryo_cflags=`$EMBRYO_CONFIG --cflags`
-embryo_libs=`$EMBRYO_CONFIG --libs`
+AC_PATH_GENERIC(embryo, 0.9.1,
+  [ ],
+  [ AC_MSG_ERROR(Embryo isn't installed) ],
+)
+EMBRYO_PREFIX=`$EMBRYO_CONFIG --prefix`
+AC_DEFINE_UNQUOTED(EMBRYO_PREFIX, "${EMBRYO_PREFIX}", [Embryo prefix])
 
 if test "x$have_edje_cc" = "xyes"; then
-  AC_ARG_WITH(imlib2-config, [  --with-imlib2-config=IMLIB2_CONFIG use imlib2-config specified ],
-  [ IMLIB2_CONFIG=$withval;
-    echo "using "$IMLIB2_CONFIG" for imlib2-config"; ],
-  [ if test -z "$IMLIB2_CONFIG"; then
-    AC_PATH_PROG(IMLIB2_CONFIG, "imlib2-config", "", $PATH)
-    fi
-  ])
-  imlib2_cflags=`$IMLIB2_CONFIG --cflags`
-  imlib2_libs=`$IMLIB2_CONFIG --libs`
-  AC_DEFINE(HAVE_IMLIB, 1, [Define to 1 if you have Imlib2])
+  AC_PATH_GENERIC(imlib2, 1.0.0,
+    [ have_imlib2="yes"],
+    [ have_imlib2="no" ],
+  )
+  AC_DEFINE(HAVE_IMLIB, 1, [Imlib2 is installed])
 fi
 
 AC_MSG_CHECKING([for location of Vim data files])
@@ -201,8 +178,7 @@ else
    AC_MSG_RESULT([Not found, EDC syntax file will not be installed])
 fi
 
-EMBRYO_PREFIX=`$EMBRYO_CONFIG --prefix`
-AC_DEFINE_UNQUOTED(EMBRYO_PREFIX, "${EMBRYO_PREFIX}", [Embryo prefix])
+AC_SUBST(vimdir)
 
 EDJE_CC_PRG=""
 EDJE_DECC_PRG=""
@@ -225,19 +201,6 @@ AC_SUBST(EDJE_CC_PRG)
 AC_SUBST(EDJE_DECC_PRG)
 AC_SUBST(EDJE_RECC_PRG)
 AC_SUBST(EDJE_THUMB_PRG)
-
-AC_SUBST(evas_cflags)
-AC_SUBST(evas_libs)
-AC_SUBST(ecore_cflags)
-AC_SUBST(ecore_libs)
-AC_SUBST(eet_cflags)
-AC_SUBST(eet_libs)
-AC_SUBST(embryo_cflags)
-AC_SUBST(embryo_libs)
-AC_SUBST(imlib2_cflags)
-AC_SUBST(imlib2_libs)
-
-AC_SUBST(vimdir)
 
 AC_OUTPUT([
 edje.pc
