@@ -19,6 +19,8 @@
 # endif
 #endif
 
+#include <Ecore_Data.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
