@@ -3163,7 +3163,7 @@ evas_textblock2_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, 
    Evas_Object_Textblock *o;
    Evas_Object_List *l, *ll;
    Evas_Object_Textblock_Line *ln = NULL;
-   Evas_Object_Textblock_Item *it = NULL;
+   Evas_Object_Textblock_Item *it = NULL, *it_break = NULL;
    Evas_Object_Textblock_Format_Item *fi = NULL;
    
    if (!cur) return 0;
@@ -3180,7 +3180,11 @@ evas_textblock2_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, 
 	     for (ll = (Evas_Object_List *)ln->items; ll; ll = ll->next)
 	       {
 		  it = (Evas_Object_Textblock_Item *)ll;
-		  if ((it->x +ln->x) > x) break;
+		  if ((it->x +ln->x) > x)
+		    {
+		       it_break = it;
+		       break;
+		    }
 		  if (((it->x + ln->x) <= x) && (((it->x + ln->x) + it->w) > x))
 		    {
 		       int pos;
@@ -3208,6 +3212,13 @@ evas_textblock2_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, 
 		       cur->node = fi->source_node;
 		       return 1;
 		    }
+	       }
+	     if (it_break)
+	       {
+		  it = it_break;
+		  cur->pos = it->source_pos;
+		  cur->node = it->source_node;
+		  return 1;
 	       }
 	  }
      }
