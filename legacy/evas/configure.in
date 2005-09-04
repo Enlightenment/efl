@@ -115,7 +115,7 @@ AC_ARG_WITH(qtdir,
   qt_dir="/opt/Qtopia";
 ])
 # check for freetype
-AC_PATH_GENERIC(freetype, 9.8.0,
+AC_PATH_GENERIC(freetype, 9.5.0,
   [ ],
   [ AC_MSG_ERROR(Freetype isn't installed) ]
 )
