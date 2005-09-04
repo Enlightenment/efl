@@ -1,6 +1,7 @@
 #ifndef _EVAS_ENGINE_GL_X11_H
 #define _EVAS_ENGINE_GL_X11_H
 
+#include <Evas.h>
 #include <X11/Xlib.h>
 #include <GL/gl.h>
 #include <GL/glu.h>

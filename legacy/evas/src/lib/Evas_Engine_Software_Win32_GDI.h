@@ -1,6 +1,7 @@
 #ifndef _EVAS_ENGINE_SOFTWARE_WIN32_GDI_H
 #define _EVAS_ENGINE_SOFTWARE_WIN32_GDI_H
 
+#include <Evas.h>
 
 typedef struct _Evas_Engine_Info_Software_Win32_GDI Evas_Engine_Info_Software_Win32_GDI;
 

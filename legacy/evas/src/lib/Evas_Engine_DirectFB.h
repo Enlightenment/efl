@@ -1,7 +1,7 @@
 #ifndef _EVAS_ENGINE_DIRECTFB_H
 #define _EVAS_ENGINE_DIRECTFB_H
-#include <Evas.h>
 
+#include <Evas.h>
 #include <directfb/directfb.h>
 
 typedef struct _Evas_Engine_Info_DirectFB Evas_Engine_Info_DirectFB;
