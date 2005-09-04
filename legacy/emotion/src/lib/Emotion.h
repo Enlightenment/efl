@@ -2,7 +2,6 @@
 #define EMOTION_H
 
 #include <Evas.h>
-#include <Ecore.h>
 
 enum _Emotion_Event
 {
