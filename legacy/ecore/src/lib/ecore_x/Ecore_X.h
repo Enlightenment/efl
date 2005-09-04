@@ -22,6 +22,8 @@
 # endif
 #endif
 
+#include <sys/types.h>
+
 /**
  * @file
  * @brief Ecore functions for dealing with the X Windows System
