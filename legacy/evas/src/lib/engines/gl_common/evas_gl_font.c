@@ -33,6 +33,7 @@ evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
 	free(ft);
 	return NULL;
      }
+   if (fg->glyph_out->bitmap.num_grays == 256)
      {
 	int x, y;
 	DATA8 *p1, *p2;
@@ -49,7 +50,47 @@ evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
 	       }
 	  }
      }
-
+   else if (fg->glyph_out->bitmap.num_grays == 0)
+     {
+	DATA8 *tmpbuf = NULL, *dp, *tp, bits;
+	int bi, bj, end;
+	const DATA8 bitrepl[2] = {0x0, 0xff};
+	
+	tmpbuf = malloc(w);
+	if (tmpbuf)
+	  {
+	     int x, y;
+	     DATA8 *p1, *p2;
+	     
+	     for (y = 0; y < h; y++)
+	       {
+		  p1 = tmpbuf;
+		  p2 = ndata + (nw * y);
+		  tp = tmpbuf;
+		  dp = data + (y * fg->glyph_out->bitmap.pitch);
+		  for (bi = 0; bi < w; bi += 8)
+		    {
+		       bits = *dp;
+		       if ((w - bi) < 8) end = w - bi;
+		       else end = 8;
+		       for (bj = 0; bj < end; bj++)
+			 {
+			    *tp = bitrepl[(bits >> (7 - bj)) & 0x1];
+			    tp++;
+			 }
+		       dp++;
+		    }
+		  for (x = 0; x < w; x++)
+		    {
+		       *p2 = *p1;
+		       p1++;
+		       p2++;
+		    }
+	       }
+	     free(tmpbuf);
+	  }
+     }
+   
    /* where in pool texture does this live */
    ft->w = w;
    ft->h = h;

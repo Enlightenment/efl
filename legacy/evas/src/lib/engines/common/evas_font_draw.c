@@ -167,8 +167,11 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	     w = fg->glyph_out->bitmap.width;
 	     if (j < w) j = w;
 	     h = fg->glyph_out->bitmap.rows;
-	     if ((fg->glyph_out->bitmap.pixel_mode == ft_pixel_mode_grays) &&
-		 (fg->glyph_out->bitmap.num_grays == 256))
+/*	     
+	     if ((fg->glyph_out->bitmap.pixel_mode == ft_pixel_mode_grays)
+		 && (fg->glyph_out->bitmap.num_grays == 256)
+		 )
+ */
 	       {
 		  if ((j > 0) && (chr_x + w > ext_x))
 		    {
@@ -184,34 +187,93 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 			 }
 		       else
 			 {
-			    for (i = 0; i < h; i++)
+			    if (fg->glyph_out->bitmap.num_grays == 256)
 			      {
-				 int dx, dy;
-				 int in_x, in_w;
-
-				 in_x = 0;
-				 in_w = 0;
-				 dx = chr_x;
-				 dy = y - (chr_y - i - y);
-				 if ((dx < (ext_x + ext_w)) &&
-				     (dy >= (ext_y)) &&
-				     (dy < (ext_y + ext_h)))
+				 for (i = 0; i < h; i++)
 				   {
-				      if (dx + w > (ext_x + ext_w))
-					in_w += (dx + w) - (ext_x + ext_w);
-				      if (dx < ext_x)
+				      int dx, dy;
+				      int in_x, in_w;
+				      
+				      in_x = 0;
+				      in_w = 0;
+				      dx = chr_x;
+				      dy = y - (chr_y - i - y);
+				      if ((dx < (ext_x + ext_w)) &&
+					  (dy >= (ext_y)) &&
+					  (dy < (ext_y + ext_h)))
 					{
-					   in_w += ext_x - dx;
-					   in_x = ext_x - dx;
-					   dx = ext_x;
+					   if (dx + w > (ext_x + ext_w))
+					     in_w += (dx + w) - (ext_x + ext_w);
+					   if (dx < ext_x)
+					     {
+						in_w += ext_x - dx;
+						in_x = ext_x - dx;
+						dx = ext_x;
+					     }
+					   if (in_w < w)
+					     {
+						func(data + (i * j) + in_x,
+						     im + (dy * im_w) + dx,
+						     w - in_w,
+						     dc->col.col);
+					     }
 					}
-				      if (in_w < w)
+				   }
+			      }
+			    else if (fg->glyph_out->bitmap.num_grays == 0)
+			      {
+				 DATA8 *tmpbuf = NULL, *dp, *tp, bits;
+				 int bi, bj;
+				 const DATA8 bitrepl[2] = {0x0, 0xff};
+				 
+				 tmpbuf = malloc(w);
+				 if (tmpbuf)
+				   {
+				      for (i = 0; i < h; i++)
 					{
-					   func(data + (i * j) + in_x,
-						im + (dy * im_w) + dx,
-						w - in_w,
-						dc->col.col);
+					   int dx, dy;
+					   int in_x, in_w, end;
+					   
+					   in_x = 0;
+					   in_w = 0;
+					   dx = chr_x;
+					   dy = y - (chr_y - i - y);
+					   tp = tmpbuf;
+					   dp = data + (i * fg->glyph_out->bitmap.pitch);
+					   for (bi = 0; bi < w; bi += 8)
+					     {
+						bits = *dp;
+						if ((w - bi) < 8) end = w - bi;
+						else end = 8;
+						for (bj = 0; bj < end; bj++)
+						  {
+						     *tp = bitrepl[(bits >> (7 - bj)) & 0x1];
+						     tp++;
+						  }
+						dp++;
+					     }
+					   if ((dx < (ext_x + ext_w)) &&
+					       (dy >= (ext_y)) &&
+					       (dy < (ext_y + ext_h)))
+					     {
+						if (dx + w > (ext_x + ext_w))
+						  in_w += (dx + w) - (ext_x + ext_w);
+						if (dx < ext_x)
+						  {
+						     in_w += ext_x - dx;
+						     in_x = ext_x - dx;
+						     dx = ext_x;
+						  }
+						if (in_w < w)
+						  {
+						     func(tmpbuf + in_x,
+							  im + (dy * im_w) + dx,
+							  w - in_w,
+							  dc->col.col);
+						  }
+					     }
 					}
+				      free(tmpbuf);
 				   }
 			      }
 			 }

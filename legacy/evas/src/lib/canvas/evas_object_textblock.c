@@ -1633,7 +1633,40 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 		       if (wrap > 0)
 			 {
 			    twrap = wrap;
- 			    evas_common_font_utf8_get_prev((unsigned char *)str, &twrap);
+			    ch = evas_common_font_utf8_get_prev((unsigned char *)str, &twrap);
+//			    
+			    /* the text intersects the wrap point on a whitespace char */
+			    if (_is_white(ch))
+			      {
+				 _layout_item_text_cutoff(c, it, wrap);
+				 twrap = wrap;
+				 ch = evas_common_font_utf8_get_next((unsigned char *)str, &twrap);
+				 str = str + twrap;
+			      }
+			    /* intersects a word */
+			    else
+			      {
+				 /* walk back to start of word */
+				 twrap = _layout_word_start(str, wrap);
+				 if (twrap != 0)
+				   {
+				      wrap = twrap;
+				      ch = evas_common_font_utf8_get_prev((unsigned char *)str, &twrap);
+				      _layout_item_text_cutoff(c, it, twrap);
+				      str = str + wrap;
+				   }
+				 else
+				   {
+				      empty_item = 1;
+				      if (it->text) free(it->text);
+				      _format_free(c->obj, it->format);
+				      free(it);
+				      twrap = _layout_word_end(str, wrap);
+				      ch = evas_common_font_utf8_get_next((unsigned char *)str, &twrap);
+				      str = str + twrap;
+				   }
+			      }
+#if 0				
 			    ch = evas_common_font_utf8_get_prev((unsigned char *)str, &twrap);
 			    while (_is_white(ch) && (twrap >= 0))
 			      ch = evas_common_font_utf8_get_prev((unsigned char *)str, &twrap);
@@ -1673,6 +1706,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 				 _layout_item_text_cutoff(c, it, twrap);
 				 str = str + wrap;
 			      }
+#endif				
 			 }
 		       else
 			 {
