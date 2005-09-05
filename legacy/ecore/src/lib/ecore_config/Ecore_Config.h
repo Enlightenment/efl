@@ -29,11 +29,6 @@
 # define DIR_DELIMITER      '/'
 # define ECORE_CONFIG_FLOAT_PRECISION 1000
 
-# ifndef TRUE
-#  define FALSE (0)
-#  define TRUE  (!FALSE)
-# endif
-
 /* FIXME: this should only be included if evas is present */
 # include <Evas.h>
 

@@ -223,7 +223,7 @@ _ecore_config_ipc_poll(void *data)
         s = s->next;
      }
 
-   return TRUE;
+   return 1;
 }
 
 int
