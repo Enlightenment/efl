@@ -23,9 +23,13 @@
 #include <alloca.h>
 #endif
 
+#include <stdlib.h>
+#include <stdio.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <string.h>
+#include <limits.h>
 
 #ifndef ABS
 #define ABS(x) (x < 0 ? -x : x)
@@ -33,6 +37,10 @@
 
 #ifndef CLAMP
 #define CLAMP(x, min, max) (((x) > (max)) ? (max) : (((x) < (min)) ? (min) : (x)))
+#endif
+
+#ifndef MIN
+#define MIN(a, b) (((a) < (b)) ? (a) : (b))
 #endif
 
 /* increment this when the EET data descriptors have changed and old

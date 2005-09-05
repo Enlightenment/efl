@@ -5,6 +5,9 @@
 #include <config.h>
 #endif
 
+#include <stdlib.h>
+#include <stdio.h>
+
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Evas.h>
