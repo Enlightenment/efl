@@ -1390,7 +1390,7 @@ _layout_strip_trailing_whitespace(Ctxt *c, Evas_Object_Textblock_Format *fmt, Ev
    
    p = evas_common_font_utf8_get_last((unsigned char *)(it->text), strlen(it->text));
    tp = p;
-   if (p > 0)
+   if (p >= 0)
 /*   while (p >= 0)*/
      {
 	chr = evas_common_font_utf8_get_prev((unsigned char *)(it->text), &p);
@@ -1661,6 +1661,8 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 				      if (it->text) free(it->text);
 				      _format_free(c->obj, it->format);
 				      free(it);
+				      it = (Evas_Object_Textblock_Item *)((Evas_Object_List *)c->ln->items)->last;
+				      _layout_strip_trailing_whitespace(c, fmt, it);
 				      twrap = _layout_word_end(str, wrap);
 				      ch = evas_common_font_utf8_get_next((unsigned char *)str, &twrap);
 				      str = str + twrap;
@@ -1710,17 +1712,15 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 			 }
 		       else
 			 {
+#if 1			    
 			    /* wrap now is the index of the word START */
-			    if (wrap == 0)
+			    index = wrap;
+			    ch = evas_common_font_utf8_get_next((unsigned char *)str, &index);
+			    if (!_is_white(ch) && 
+				(!_layout_last_item_ends_in_whitespace(c)))
 			      {
-				 index = wrap;
-				 ch = evas_common_font_utf8_get_next((unsigned char *)str, &index);
-				 if (!_is_white(ch) && 
-				     (!_layout_last_item_ends_in_whitespace(c)))
-				   {
-				      _layout_walk_back_to_item_word_redo(c, it);
-				      return;
-				   }
+				 _layout_walk_back_to_item_word_redo(c, it);
+				 return;
 			      }
 			    if (c->ln->items != NULL)
 			      {
@@ -1733,7 +1733,8 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 				   {
 				      wrap = 0;
 				      twrap = _layout_word_end(it->text, wrap);
-				      wrap = _layout_word_next(it->text, wrap);
+				      wrap = twrap;
+				      ch = evas_common_font_utf8_get_next((unsigned char *)str, &wrap);
 				      if (twrap >= 0)
 					_layout_item_text_cutoff(c, it, twrap);
 				      if (wrap > 0)
@@ -1745,6 +1746,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 				   str = NULL;
 			      }
 			 }
+#endif		       
 		    }
 		  else if (fmt->wrap_char)
 		    {
