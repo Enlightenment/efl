@@ -14,6 +14,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 typedef struct _Frame_Data Frame_Data;
 
@@ -613,7 +614,7 @@ static void
 video_obj_signal_jump_cb(void *data, Evas_Object *o, const char *emission, const char *source)
 {
    Evas_Object *ov;
-   double pos, len;
+   double len;
    double x, y;
    
    ov = data;
@@ -634,7 +635,7 @@ video_obj_signal_speed_cb(void *data, Evas_Object *o, const char *emission, cons
    edje_object_part_drag_value_get(o, source, &x, &y);
    spd = 255 * y;
    evas_object_color_set(ov, 255, 255, 255, spd);
-   snprintf(buf, sizeof(buf), "%i", spd);
+   snprintf(buf, sizeof(buf), "%.0f", spd);
    edje_object_part_text_set(o, "video_speed_txt", buf);
 }
 
@@ -805,7 +806,6 @@ enter_idle(void *data)
 int
 main(int argc, char **argv)
 {
-   char *file;
    int i;
    
    if (main_start(argc, argv) < 1) return -1;
