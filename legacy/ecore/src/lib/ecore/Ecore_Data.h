@@ -17,10 +17,6 @@ extern "C" {
 #endif
 #endif
    
-# define PRIME_TABLE_MAX 21
-# define PRIME_MIN 17
-# define PRIME_MAX 16777213
-   
    extern const unsigned int ecore_prime_table[];
    
    typedef void (*Ecore_For_Each) (void *value, void *user_data);
@@ -314,66 +310,8 @@ extern "C" {
    int ecore_hash_set(Ecore_Hash *hash, void *key, void *value);
    void *ecore_hash_remove(Ecore_Hash *hash, void *key);
    void ecore_hash_dump_graph(Ecore_Hash *hash);
-   
-   
-   inline void ecore_print_warning(const char *function, const char *sparam);
-   
-   /* Wrappers around free() that helps debug free() bugs such as freeing NULL
-    * or accessing a pointer that has already been freed */
-# ifndef IF_FREE
-#  define IF_FREE(ptr) if (ptr) free(ptr); ptr = NULL;
-# endif
-   
-# ifndef FREE
-#  define FREE(ptr) free(ptr); ptr = NULL;
-# endif
-   
-   /* Debugging printf, basically a wrapper to fprintf that checks the level
-    * of the message and checks that it is to be printed at the current debugging
-    * level */
-# ifndef DPRINTF
-#  ifdef __sgi
-#   define DPRINTF(debug, format, args) \
-     if (debug >= DEBUG_LEVEL) \
-	 fprintf(stderr, format, args);
-#  else   
-#   define DPRINTF(debug, format, args...) \
-     if (debug >= DEBUG_LEVEL) \
-	 fprintf(stderr, format, args);
-#  endif   
-# endif
 
-   
-   /* convenience macros for checking pointer parameters for non-NULL */
-# ifndef CHECK_PARAM_POINTER_RETURN
-#  define   CHECK_PARAM_POINTER_RETURN(sparam, param, ret) \
-     if (!(param)) \
-	 { \
-	    ecore_print_warning(__FUNCTION__, sparam); \
-	    return ret; \
-	 }
-# endif
-   
-# ifndef CHECK_PARAM_POINTER
-#  define   CHECK_PARAM_POINTER(sparam, param) \
-     if (!(param)) \
-	 { \
-	    ecore_print_warning(__FUNCTION__, sparam); \
-	    return; \
-	 }
-# endif
-   
-   /* Use the larger of a and b */
-# ifndef MAX
-#  define MAX(a, b) (((a) > (b)) ? (a) : (b))
-# endif
-   
-   /* Use the smaller of a and b */
-# ifndef MIN
-#  define MIN(a, b) (((a) < (b)) ? (a) : (b))
-# endif
-   
-   
+
    typedef struct _ecore_path_group Ecore_Path_Group;
    struct _ecore_path_group
      {
@@ -437,17 +375,11 @@ extern "C" {
    void *ecore_plugin_call(Ecore_Plugin * plugin, char *symbol_name);
    
    Ecore_List *ecore_plugin_get_available(int group_id);
-   
-   
+
+
 # define ECORE_SHEAP_MIN 0
 # define ECORE_SHEAP_MAX 1
-   
-# define HEAP_INCREMENT 4096
-   
-# define PARENT(i) (i / 2)
-# define LEFT(i) (2 * i)
-# define RIGHT(i) (2 * i + 1)
-   
+
    typedef struct _ecore_heap Ecore_Sheap;
 # define ECORE_HEAP(heap) ((Ecore_Sheap *)heap)
    
@@ -588,4 +520,3 @@ extern "C" {
 }
 #endif
 #endif				/* _ECORE_DATA_H */
-   

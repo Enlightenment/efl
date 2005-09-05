@@ -1,6 +1,15 @@
 #include "ecore_private.h"
 #include "Ecore_Data.h"
 
+# define ECORE_SHEAP_MIN 0
+# define ECORE_SHEAP_MAX 1
+
+# define HEAP_INCREMENT 4096
+
+# define PARENT(i) (i / 2)
+# define LEFT(i) (2 * i)
+# define RIGHT(i) (2 * i + 1)
+
 static void _ecore_sheap_heapify(Ecore_Sheap *heap, int i);
 static void _ecore_sheap_update_data(Ecore_Sheap *heap);
 

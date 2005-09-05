@@ -73,7 +73,33 @@
 #define ECORE_MAGIC_CHECK(d, m)     ((d) && ((d)->__magic == (m)))
 #define ECORE_MAGIC_FAIL(d, m, fn)  _ecore_magic_fail((d), (d) ? (d)->__magic : 0, (m), (fn));
 
-typedef unsigned int                Ecore_Magic;
+/* undef the following, we want out version */
+#undef FREE
+#define FREE(ptr) free(ptr); ptr = NULL;
+
+#undef IF_FREE
+#define IF_FREE(ptr) if (ptr) free(ptr); ptr = NULL;
+
+inline void ecore_print_warning(const char *function, const char *sparam);
+
+/* convenience macros for checking pointer parameters for non-NULL */
+#undef CHECK_PARAM_POINTER_RETURN
+#define CHECK_PARAM_POINTER_RETURN(sparam, param, ret) \
+     if (!(param)) \
+	 { \
+	    ecore_print_warning(__FUNCTION__, sparam); \
+	    return ret; \
+	 }
+   
+#undef CHECK_PARAM_POINTER
+#define CHECK_PARAM_POINTER(sparam, param) \
+     if (!(param)) \
+	 { \
+	    ecore_print_warning(__FUNCTION__, sparam); \
+	    return; \
+	 }
+
+typedef unsigned int              Ecore_Magic;
 
 typedef struct _Ecore_List2       Ecore_List2;
 typedef struct _Ecore_List2_Data  Ecore_List2_Data;

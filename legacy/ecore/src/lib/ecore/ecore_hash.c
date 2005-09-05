@@ -1,6 +1,10 @@
 #include "ecore_private.h"
 #include "Ecore_Data.h"
 
+#define PRIME_TABLE_MAX 21
+#define PRIME_MIN 17
+#define PRIME_MAX 1677721
+
 #define ECORE_HASH_CHAIN_MAX 3
 
 #define ECORE_COMPUTE_HASH(hash, key) hash->hash_func(key) % \
