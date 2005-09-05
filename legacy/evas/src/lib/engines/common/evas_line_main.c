@@ -56,10 +56,10 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
 	     ptr = dst->image->data + (y1 * dst->image->w) + x1;
 	     __blend_a = _evas_pow_lut[(A_VAL(&(col)) << 8) | A_VAL(ptr)];
 
+	     BLEND_ALPHA_SETUP(__blend_a, __blend_tmp);
 	     BLEND_COLOR(A_VAL(&(col)), A_VAL(ptr),
 			 255, A_VAL(ptr),
 			 __blend_tmp);
-	     BLEND_ALPHA_SETUP(__blend_a, __blend_tmp);
 	     BLEND_COLOR(__blend_a, R_VAL(ptr),
 			 R_VAL(&(col)), R_VAL(ptr),
 			 __blend_tmp);
@@ -151,10 +151,10 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
 
 			    __blend_a = _evas_pow_lut[(A_VAL(&(col)) << 8) | A_VAL(ptr)];
 
+			    BLEND_ALPHA_SETUP(__blend_a, __blend_tmp);
 			    BLEND_COLOR(A_VAL(&(col)), A_VAL(ptr),
 					255, A_VAL(ptr),
 					__blend_tmp);
-			    BLEND_ALPHA_SETUP(__blend_a, __blend_tmp);
 			    BLEND_COLOR(__blend_a, R_VAL(ptr),
 					R_VAL(&(col)), R_VAL(ptr),
 					__blend_tmp);
@@ -191,10 +191,10 @@ evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, in
 
 			    __blend_a = _evas_pow_lut[(A_VAL(&(col)) << 8) | A_VAL(ptr)];
 
+			    BLEND_ALPHA_SETUP(__blend_a, __blend_tmp);
 			    BLEND_COLOR(A_VAL(&(col)), A_VAL(ptr),
 					255, A_VAL(ptr),
 					__blend_tmp);
-			    BLEND_ALPHA_SETUP(__blend_a, __blend_tmp);
 			    BLEND_COLOR(__blend_a, R_VAL(ptr),
 					R_VAL(&(col)), R_VAL(ptr),
 					__blend_tmp);
