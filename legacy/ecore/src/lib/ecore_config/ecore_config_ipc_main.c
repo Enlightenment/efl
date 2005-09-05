@@ -17,11 +17,6 @@
 #include <string.h>
 #include <stdlib.h>		/* malloc(), free() */
 
-#ifndef TRUE
-#  define FALSE 0
-#  define TRUE (!FALSE)
-#endif
-
 static Ecore_Config_Server *__ecore_config_servers;
 static unsigned long ipc_timer = 0L;
 
