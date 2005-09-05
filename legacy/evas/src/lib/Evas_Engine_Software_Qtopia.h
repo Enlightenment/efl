@@ -1,8 +1,6 @@
 #ifndef _EVAS_ENGINE_SOFTWARE_QTOPIA_H
 #define _EVAS_ENGINE_SOFTWARE_QTOPIA_H
 
-#include <Evas.h>
-
 #ifdef EVAS_COMMON_H
 #ifdef EVAS_PRIVATE_H
 typedef void QWidget;

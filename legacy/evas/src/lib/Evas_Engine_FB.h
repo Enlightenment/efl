@@ -1,8 +1,6 @@
 #ifndef _EVAS_ENGINE_FB_H
 #define _EVAS_ENGINE_FB_H
 
-#include <Evas.h>
-
 typedef struct _Evas_Engine_Info_FB Evas_Engine_Info_FB;
 
 struct _Evas_Engine_Info_FB

@@ -1,7 +1,6 @@
 #ifndef _EVAS_ENGINE_CAIRO_X11_H
 #define _EVAS_ENGINE_CAIRO_X11_H
 
-#include <Evas.h>
 #include <X11/Xlib.h>
 
 typedef struct _Evas_Engine_Info_Cairo_X11 Evas_Engine_Info_Cairo_X11;

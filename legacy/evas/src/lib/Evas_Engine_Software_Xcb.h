@@ -1,7 +1,6 @@
 #ifndef _EVAS_ENGINE_SOFTWARE_XCB_H
 #define _EVAS_ENGINE_SOFTWARE_XCB_H
 
-#include <Evas.h>
 #include <X11/XCB/xcb.h>
 
 typedef struct _Evas_Engine_Info_Software_Xcb   Evas_Engine_Info_Software_Xcb;
