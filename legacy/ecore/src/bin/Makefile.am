@@ -67,9 +67,9 @@ INCLUDES = \
 -I$(top_builddir)/src/lib/ecore_ipc \
 -I$(top_builddir)/src/lib/ecore_txt @iconv_cflags@ \
 -I$(top_builddir)/src/lib/ecore_config \
-@evas_cflags@ \
+@EVAS_CFLAGS@ \
 @x_cflags@ \
-@eet_cflags@
+@EET_CFLAGS@
 
 bin_PROGRAMS = \
 ecore_test \

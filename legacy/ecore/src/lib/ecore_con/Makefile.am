@@ -5,7 +5,7 @@ INCLUDES = \
 -I$(top_builddir)/src/lib/ecore_con \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_con \
-@SSL_CFLAGS@ @curl_cflags@
+@SSL_CFLAGS@ @CURL_CFLAGS@
 
 libecore_con_la_LDFLAGS = -version-info 1:0:0 \
 -L$(top_builddir)/src/lib/ecore/.libs
@@ -24,7 +24,7 @@ ecore_con_private.h
 
 libecore_con_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
-@SSL_LIBS@ @winsock_libs@ @curl_libs@
+@SSL_LIBS@ @winsock_libs@ @CURL_LIBS@
 
 libecore_con_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la

@@ -27,7 +27,7 @@ INCLUDES = \
 -I$(top_builddir)/src/lib/ecore_evas \
 $(ECORE_X_INC) \
 $(ECORE_FB_INC) \
-@evas_cflags@ 
+@EVAS_CFLAGS@ 
 
 libecore_evas_la_LDFLAGS = -version-info 1:0:0 \
 $(ECORE_X_LDF) \
@@ -51,7 +51,7 @@ libecore_evas_la_LIBADD = \
 $(ECORE_X_LIB) \
 $(ECORE_FB_LIB) \
 $(top_builddir)/src/lib/ecore/libecore.la \
-@evas_libs@
+@EVAS_LIBS@
 
 libecore_evas_la_DEPENDENCIES = \
 $(ECORE_X_LIB) \

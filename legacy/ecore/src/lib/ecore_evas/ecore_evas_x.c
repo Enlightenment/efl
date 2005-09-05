@@ -713,7 +713,7 @@ _ecore_evas_x_state_update(Ecore_Evas *ee)
    ecore_x_netwm_window_state_set(ee->engine.x.win_container, state, num);
 }
 
-void
+static void
 _ecore_evas_x_layer_update(Ecore_Evas *ee)
 {
    if (ee->should_be_visible)

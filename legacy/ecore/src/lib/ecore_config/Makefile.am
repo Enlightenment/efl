@@ -7,7 +7,7 @@ INCLUDES = \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore_ipc \
 -I$(top_builddir)/ \
-@evas_cflags@ @eet_cflags@
+@EVAS_CFLAGS@ @EET_CFLAGS@
 
 CLEANFILES = $(DB)
 
@@ -43,8 +43,8 @@ ecore_config_private.h
 libecore_config_la_LIBADD = \
 $(top_builddir)/src/lib/ecore/libecore.la \
 $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
-@eet_libs@ \
-@evas_libs@
+@EET_LIBS@ \
+@EVAS_LIBS@
 
 libecore_config_la_DEPENDENCIES = \
 $(top_builddir)/src/lib/ecore/libecore.la \
