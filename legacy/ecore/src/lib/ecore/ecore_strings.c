@@ -1,4 +1,5 @@
-#include <Ecore.h>
+#include "ecore_private.h"
+#include "Ecore_Data.h"
 
 static Ecore_Hash *ecore_strings = NULL;
 

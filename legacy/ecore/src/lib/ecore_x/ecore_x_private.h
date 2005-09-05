@@ -31,6 +31,7 @@
 #include <X11/extensions/Xrandr.h>
 #endif
 
+#include "ecore_private.h"
 #include "Ecore_X.h"
 
 /* FIXME: this is for simulation only */

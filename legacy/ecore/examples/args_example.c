@@ -1,6 +1,9 @@
 /* Example of how to set and retrieve program arguments.
  */
 #include <Ecore.h>
+
+#include <stdlib.h>
+#include <stdio.h>
  
 int timer_once(void *data)
 {

@@ -1,4 +1,5 @@
-#include <Ecore.h>
+#include "ecore_private.h"
+#include "Ecore_Data.h"
 
 static void _ecore_sheap_heapify(Ecore_Sheap *heap, int i);
 static void _ecore_sheap_update_data(Ecore_Sheap *heap);

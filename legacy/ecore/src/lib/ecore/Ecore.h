@@ -41,49 +41,10 @@
  */
 
 #include <sys/types.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <dirent.h>
-#include <limits.h>
 #include <signal.h>
-
-#include <Ecore_Data.h>
 
 #ifdef __cplusplus
 extern "C" {
-#endif
-
-#ifndef TRUE
-#define TRUE 1
-#endif
-
-#ifndef FALSE
-#define FALSE 0
-#endif
-
-#ifndef PATH_MAX
-#define PATH_MAX 4096
-#endif
-
-#ifndef MIN
-#define MIN(x, y) (((x) > (y)) ? (y) : (x))
-#endif
-
-#ifndef MAX
-#define MAX(x, y) (((x) > (y)) ? (x) : (y))
-#endif
-
-#ifndef ABS
-#define ABS(x) ((x) < 0 ? -(x) : (x))
-#endif
-
-#ifndef CLAMP
-#define CLAMP(x, min, max) (((x) > (max)) ? (max) : (((x) < (min)) ? (min) : (x)))
 #endif
 
 #define ECORE_EVENT_NONE         0

@@ -2,6 +2,9 @@
  */
 
 #include <Ecore.h>
+
+#include <stdlib.h>
+#include <stdio.h>
  
 Ecore_Timer *timer1 = NULL;
 Ecore_Timer *timer2 = NULL;

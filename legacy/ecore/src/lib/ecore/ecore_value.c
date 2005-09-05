@@ -24,7 +24,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 */
 
-#include <Ecore.h>
+#include "ecore_private.h"
 
 const unsigned int ecore_prime_table[] = { 17, 31, 61, 127, 257, 509, 1021,
 	2053, 4093, 8191, 16381, 32771, 65537, 131071, 262147, 524287, 1048573,

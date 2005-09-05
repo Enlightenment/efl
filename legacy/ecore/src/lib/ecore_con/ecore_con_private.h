@@ -1,6 +1,8 @@
 #ifndef _ECORE_CON_PRIVATE_H
 #define _ECORE_CON_PRIVATE_H
 
+#include "Ecore_Data.h"
+
 #define ECORE_MAGIC_CON_SERVER             0x77665544
 #define ECORE_MAGIC_CON_CLIENT             0x77556677
 

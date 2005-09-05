@@ -1,6 +1,8 @@
 #ifndef _ECORE_IPC_PRIVATE_H
 #define _ECORE_IPC_PRIVATE_H
 
+#include "Ecore_Data.h"
+
 #if USE_OPENSSL
 #include <openssl/ssl.h>
 #endif

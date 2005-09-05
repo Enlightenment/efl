@@ -1,5 +1,8 @@
 /* Ecore Event Handler Example. */
 #include <Ecore.h>
+
+#include <stdlib.h>
+#include <stdio.h>
  
 Ecore_Event_Handler *handler1 = NULL, *handler2 = NULL;
  

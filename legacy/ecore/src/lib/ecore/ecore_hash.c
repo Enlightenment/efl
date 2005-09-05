@@ -1,4 +1,5 @@
-#include <Ecore.h>
+#include "ecore_private.h"
+#include "Ecore_Data.h"
 
 #define ECORE_HASH_CHAIN_MAX 3
 

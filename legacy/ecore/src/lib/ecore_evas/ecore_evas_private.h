@@ -4,6 +4,8 @@
 #ifndef _ECORE_EVAS_PRIVATE_H
 #define _ECORE_EVAS_PRIVATE_H
 
+#include "Ecore_Data.h"
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>

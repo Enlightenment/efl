@@ -4,6 +4,9 @@
 #include "config.h"
 #include "Ecore.h"
 #include <math.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
 
 #ifdef BUILD_ECORE_EVAS
 #include "Ecore_Evas.h"

@@ -1,4 +1,5 @@
-#include <Ecore.h>
+#include "ecore_private.h"
+#include "Ecore_Data.h"
 
 /* A macro for determining the highest node at given branch */
 #define MAX_HEIGHT(node) (node ? MAX(node->max_left, node->max_right) : 0)

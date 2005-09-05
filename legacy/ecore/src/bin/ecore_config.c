@@ -1,6 +1,10 @@
 #include "config.h"
 #include "Ecore.h"
 
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+
 #ifdef BUILD_ECORE_CONFIG
 #include "Ecore_Config.h"
 

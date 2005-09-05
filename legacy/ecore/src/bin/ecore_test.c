@@ -20,6 +20,11 @@
 #endif
 
 #include <math.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 /* APP GLOBALS */
 double start_time = 0;
