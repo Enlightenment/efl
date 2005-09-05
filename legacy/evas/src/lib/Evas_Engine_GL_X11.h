@@ -3,9 +3,6 @@
 
 #include <Evas.h>
 #include <X11/Xlib.h>
-#include <GL/gl.h>
-#include <GL/glu.h>
-#include <GL/glx.h>
 
 typedef struct _Evas_Engine_Info_GL_X11              Evas_Engine_Info_GL_X11;
 
