@@ -45,11 +45,11 @@ while test $# -gt 0; do
       if test @includedir@ != /usr/include ; then
         includes="-I@includedir@"
       fi
-      echo $includes @evas_cflags@
+      echo $includes @EVAS_CFLAGS@
       ;;
     --libs)
       libdirs=-L@libdir@
-      echo $libdirs -lecore @ecore_job_libs@ @ecore_x_libs@ @ecore_evas_libs@ @ecore_con_libs@ @ecore_ipc_libs@ @ecore_txt_libs@ @ecore_fb_libs@ @ecore_config_libs@ @ecore_file_libs@ @ecore_dbus_libs@ @eet_libs@ -lm
+      echo $libdirs -lecore @ecore_job_libs@ @ecore_x_libs@ @ecore_evas_libs@ @ecore_con_libs@ @ecore_ipc_libs@ @ecore_txt_libs@ @ecore_fb_libs@ @ecore_config_libs@ @ecore_file_libs@ @ecore_dbus_libs@ @EET_LIBS@ -lm
       ;;
     --libs-con)
       libdirs=-L@libdir@
@@ -57,7 +57,7 @@ while test $# -gt 0; do
       ;;
     --libs-config)
       libdirs=-L@libdir@
-      echo $libdirs -lecore @ecore_config_libs@ @eet_libs@ -lm
+      echo $libdirs -lecore @ecore_config_libs@ @EET_LIBS@ -lm
       ;;
     --libs-dbus)
       libdirs=-L@libdir@
@@ -65,7 +65,7 @@ while test $# -gt 0; do
       ;;
     --libs-evas)
       libdirs=-L@libdir@
-      echo $libdirs -lecore @ecore_evas_libs@ @eet_libs@ -lm
+      echo $libdirs -lecore @ecore_evas_libs@ @EET_LIBS@ -lm
       ;;
     --libs-fb)
       libdirs=-L@libdir@
