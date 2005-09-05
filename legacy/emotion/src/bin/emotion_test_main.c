@@ -12,6 +12,9 @@
 
 #include "config.h"
 
+#include <stdlib.h>
+#include <stdio.h>
+
 typedef struct _Frame_Data Frame_Data;
 
 struct _Frame_Data

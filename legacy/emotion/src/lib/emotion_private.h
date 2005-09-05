@@ -5,6 +5,10 @@
 #include <Ecore.h>
 #include <Ecore_Job.h>
 
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
 #include "config.h"
 
 #define META_TRACK_TITLE 1
