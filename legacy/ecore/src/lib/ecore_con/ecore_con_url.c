@@ -36,7 +36,6 @@
  * FIXME: Support more CURL features: Authentication, FTP upload, Progress callbacks and more...
  */
 #include "Ecore.h"
-#include "config.h"
 #include "ecore_private.h"
 #include "ecore_con_private.h"
 #include "Ecore_Con.h"

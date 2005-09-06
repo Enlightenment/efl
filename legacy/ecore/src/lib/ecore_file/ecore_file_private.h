@@ -1,7 +1,5 @@
 #define _GNU_SOURCE
 
-#include "config.h"
-
 #include "ecore_private.h"
 #include "Ecore.h"
 #include "Ecore_File.h"
