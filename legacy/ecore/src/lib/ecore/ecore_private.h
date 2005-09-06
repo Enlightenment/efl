@@ -27,14 +27,6 @@
 #define __UNUSED__
 #endif
 
-#ifndef TRUE
-#define TRUE 1
-#endif
-
-#ifndef FALSE
-#define FALSE 0
-#endif
-
 #ifndef PATH_MAX
 #define PATH_MAX 4096
 #endif
