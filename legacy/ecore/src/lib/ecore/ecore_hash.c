@@ -356,7 +356,7 @@ void *ecore_hash_get(Ecore_Hash *hash, void *key)
 	void *data;
 	Ecore_Hash_Node *node;
 
-	CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
+	CHECK_PARAM_POINTER_RETURN("hash", hash, NULL);
 
 	node = _ecore_hash_get_node(hash, key);
 	if (!node)

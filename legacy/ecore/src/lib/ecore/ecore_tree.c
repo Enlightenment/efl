@@ -175,7 +175,7 @@ void *ecore_tree_node_value_get(Ecore_Tree_Node * node)
 {
 	void *ret;
 
-	CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
+	CHECK_PARAM_POINTER_RETURN("node", node, NULL);
 	ECORE_READ_LOCK(node);
 	ret = node->value;
 	ECORE_READ_UNLOCK(node);
@@ -210,7 +210,7 @@ void *ecore_tree_node_key_get(Ecore_Tree_Node * node)
 {
 	void *ret;
 
-	CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
+	CHECK_PARAM_POINTER_RETURN("node", node, NULL);
 	ECORE_READ_LOCK(node);
 	ret = node->key;
 	ECORE_READ_UNLOCK(node);
@@ -254,7 +254,7 @@ Ecore_Tree_Node *ecore_tree_get_node(Ecore_Tree * tree, void *key)
 {
 	Ecore_Tree_Node *ret;
 
-	CHECK_PARAM_POINTER_RETURN("tree", tree, FALSE);
+	CHECK_PARAM_POINTER_RETURN("tree", tree, NULL);
 
 	ECORE_READ_LOCK(tree);
 	ret = tree_node_find(tree, key);
@@ -274,7 +274,7 @@ void *ecore_tree_get(Ecore_Tree * tree, void *key)
 	void *ret;
 	Ecore_Tree_Node *node;
 
-	CHECK_PARAM_POINTER_RETURN("tree", tree, FALSE);
+	CHECK_PARAM_POINTER_RETURN("tree", tree, NULL);
 
 	ECORE_READ_LOCK(tree);
 	node = tree_node_find(tree, key);
@@ -298,7 +298,7 @@ void *ecore_tree_get_closest_larger(Ecore_Tree * tree, void *key)
 {
 	Ecore_Tree_Node *node;
 
-	CHECK_PARAM_POINTER_RETURN("tree", tree, FALSE);
+	CHECK_PARAM_POINTER_RETURN("tree", tree, NULL);
 
 	ECORE_READ_LOCK(tree);
 	node = tree_node_find(tree, key);
@@ -334,7 +334,7 @@ void *ecore_tree_get_closest_smaller(Ecore_Tree * tree, void *key)
 {
 	Ecore_Tree_Node *node;
 
-	CHECK_PARAM_POINTER_RETURN("tree", tree, FALSE);
+	CHECK_PARAM_POINTER_RETURN("tree", tree, NULL);
 
 	ECORE_READ_LOCK(tree);
 	node = tree_node_find(tree, key);
@@ -614,7 +614,7 @@ Ecore_Tree_Node *tree_node_find_parent(Ecore_Tree * tree, void *key)
 {
 	Ecore_Tree_Node *parent, *travel;
 
-	CHECK_PARAM_POINTER_RETURN("tree", tree, FALSE);
+	CHECK_PARAM_POINTER_RETURN("tree", tree, NULL);
 
 	parent = tree_node_find(tree, key);
 	if (parent)
@@ -647,7 +647,7 @@ Ecore_Tree_Node *tree_node_find(Ecore_Tree * tree, void *key)
 	int compare;
 	Ecore_Tree_Node *node;
 
-	CHECK_PARAM_POINTER_RETURN("tree", tree, FALSE);
+	CHECK_PARAM_POINTER_RETURN("tree", tree, NULL);
 
 	node = tree->tree;
 	while (node && (compare = tree->compare_func(key, node->key)) != 0) {

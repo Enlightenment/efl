@@ -494,7 +494,7 @@ inline void *ecore_list_remove(Ecore_List * list)
 {
 	void *ret;
 
-	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+	CHECK_PARAM_POINTER_RETURN("list", list, NULL);
 
 	ret = _ecore_list_remove_0(list);
 
@@ -508,13 +508,13 @@ static void *_ecore_list_remove_0(Ecore_List * list)
 	Ecore_List_Node *old;
 
 	if (!list)
-		return FALSE;
+		return NULL;
 
 	if (ecore_list_is_empty(list))
-		return FALSE;
+		return NULL;
 
 	if (!list->current)
-		return FALSE;
+		return NULL;
 
 	if (list->current == list->first)
 		return _ecore_list_remove_first(list);
@@ -569,7 +569,7 @@ inline void *ecore_list_remove_first(Ecore_List * list)
 {
 	void *ret;
 
-	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+	CHECK_PARAM_POINTER_RETURN("list", list, NULL);
 
 	ret = _ecore_list_remove_first(list);
 
@@ -583,13 +583,13 @@ static void *_ecore_list_remove_first(Ecore_List * list)
 	Ecore_List_Node *old;
 
 	if (!list)
-		return FALSE;
+		return NULL;
 
 	if (ecore_list_is_empty(list))
-		return FALSE;
+		return NULL;
 
 	if (!list->first)
-		return FALSE;
+		return NULL;
 
 	old = list->first;
 
@@ -622,7 +622,7 @@ inline void *ecore_list_remove_last(Ecore_List * list)
 {
 	void *ret;
 
-	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+	CHECK_PARAM_POINTER_RETURN("list", list, NULL);
 
 	ret = _ecore_list_remove_last(list);
 
@@ -636,13 +636,13 @@ static void *_ecore_list_remove_last(Ecore_List * list)
 	Ecore_List_Node *old, *prev;
 
 	if (!list)
-		return FALSE;
+		return NULL;
 
 	if (ecore_list_is_empty(list))
-		return FALSE;
+		return NULL;
 
 	if (!list->last)
-		return FALSE;
+		return NULL;
 
 	old = list->last;
 	if (list->current == old)
@@ -689,7 +689,7 @@ inline void *ecore_list_goto_index(Ecore_List * list, int index)
 {
 	void *ret;
 
-	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+	CHECK_PARAM_POINTER_RETURN("list", list, NULL);
 
 	ret = _ecore_list_goto_index(list, index);
 
@@ -703,20 +703,20 @@ static void *_ecore_list_goto_index(Ecore_List *list, int index)
 	int i;
 
 	if (!list)
-		return FALSE;
+		return NULL;
 
 	if (ecore_list_is_empty(list))
-		return FALSE;
+		return NULL;
 
 	if (index > ecore_list_nodes(list) || index < 0)
-		return FALSE;
+		return NULL;
 
 	_ecore_list_goto_first(list);
 
 	for (i = 0; i < index && _ecore_list_next(list); i++);
 
 	if (i >= list->nodes)
-		return FALSE;
+		return NULL;
 
 	list->index = i;
 
@@ -734,7 +734,7 @@ inline void *ecore_list_goto(Ecore_List * list, void *data)
 {
 	void *ret;
 
-	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+	CHECK_PARAM_POINTER_RETURN("list", list, NULL);
 
 	ret = _ecore_list_goto(list, data);
 
@@ -785,7 +785,7 @@ inline void *ecore_list_goto_first(Ecore_List *list)
 {
 	void *ret;
 
-	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+	CHECK_PARAM_POINTER_RETURN("list", list, NULL);
 
 	ret = _ecore_list_goto_first(list);
 
@@ -814,7 +814,7 @@ inline void *ecore_list_goto_last(Ecore_List * list)
 {
 	void *ret;
 
-	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+	CHECK_PARAM_POINTER_RETURN("list", list, NULL);
 
 	ret = _ecore_list_goto_last(list);
 
@@ -870,7 +870,7 @@ inline void *ecore_list_next(Ecore_List * list)
 {
 	void *data;
 
-	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+	CHECK_PARAM_POINTER_RETURN("list", list, NULL);
 
 	data = _ecore_list_next(list);
 
@@ -1224,7 +1224,7 @@ void *ecore_dlist_remove(Ecore_DList * list)
 	Ecore_List *l2 = ECORE_LIST(list);
 	Ecore_DList_Node *node;
 
-	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+	CHECK_PARAM_POINTER_RETURN("list", list, NULL);
 
 	if (l2->current) {
 		node = ECORE_DLIST_NODE(list->current->next);
@@ -1246,7 +1246,7 @@ void *ecore_dlist_remove_first(Ecore_DList * list)
 {
 	void *ret;
 
-	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+	CHECK_PARAM_POINTER_RETURN("list", list, NULL);
 
 	ret = _ecore_dlist_remove_first(list);
 
@@ -1281,7 +1281,7 @@ static void *_ecore_dlist_remove_first(Ecore_DList *list)
 	void *ret;
 
 	if (!list)
-		return FALSE;
+		return NULL;
 
 	ret = _ecore_list_remove_first(list);
 	if (ret && ECORE_LIST(list)->first)
@@ -1300,7 +1300,7 @@ void *ecore_dlist_remove_last(Ecore_DList * list)
 {
 	void *ret;
 
-	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+	CHECK_PARAM_POINTER_RETURN("list", list, NULL);
 
 	ret = _ecore_list_remove_last(list);
 
@@ -1317,7 +1317,7 @@ void *ecore_dlist_goto_index(Ecore_DList * list, int index)
 {
 	void *ret;
 
-	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+	CHECK_PARAM_POINTER_RETURN("list", list, NULL);
 
 	ret = _ecore_dlist_goto_index(list, index);
 
@@ -1331,13 +1331,13 @@ static void *_ecore_dlist_goto_index(Ecore_DList *list, int index)
 	int i, increment;
 
 	if (!list)
-		return FALSE;
+		return NULL;
 
 	if (ecore_list_is_empty(ECORE_LIST(list)))
-		return FALSE;
+		return NULL;
 
 	if (index > ecore_list_nodes(ECORE_LIST(list)) || index < 0)
-		return FALSE;
+		return NULL;
 
 	if (ECORE_LIST(list)->index >= ECORE_LIST(list)->nodes)
 		_ecore_list_goto_last(ECORE_LIST(list));
@@ -1368,7 +1368,7 @@ void *ecore_dlist_goto(Ecore_DList * list, void *data)
 {
 	void *ret;
 
-	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+	CHECK_PARAM_POINTER_RETURN("list", list, NULL);
 
 	ret = _ecore_list_goto(ECORE_LIST(list), data);
 
@@ -1385,7 +1385,7 @@ void *ecore_dlist_goto_first(Ecore_DList *list)
 {
 	void *ret;
 
-	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+	CHECK_PARAM_POINTER_RETURN("list", list, NULL);
 
 	ret = _ecore_list_goto_first(list);
 
@@ -1401,7 +1401,7 @@ void *ecore_dlist_goto_last(Ecore_DList * list)
 {
 	void *ret;
 
-	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
+	CHECK_PARAM_POINTER_RETURN("list", list, NULL);
 
 	ret = _ecore_list_goto_last(ECORE_LIST(list));
 
