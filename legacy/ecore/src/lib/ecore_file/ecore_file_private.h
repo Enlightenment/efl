@@ -1,5 +1,3 @@
-#define _GNU_SOURCE
-
 #include "ecore_private.h"
 #include "Ecore.h"
 #include "Ecore_File.h"
@@ -20,7 +18,7 @@ struct _Ecore_File_Monitor
 
    char               *path;
    void               *data;
-   Ecore_List2      *files;
+   Ecore_List2        *files;
 };
 
 #ifdef HAVE_INOTIFY
