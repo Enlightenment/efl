@@ -19,20 +19,16 @@ void
 ecore_x_window_prop_card32_set(Ecore_X_Window win, Ecore_X_Atom atom,
 			       unsigned int *val, unsigned int num)
 {
-#if SIZEOF_INT == 4
-   _ATOM_SET_CARD32(win, atom, val, num);
-#else
-   CARD32             *c32;
+   long               *v2;
    unsigned int        i;
 
-   c32 = malloc(num * sizeof(CARD32));
-   if (!c32)
+   v2 = malloc(num * sizeof(long));
+   if (!v2)
       return;
    for (i = 0; i < num; i++)
-      c32[i] = val[i];
-   _ATOM_SET_CARD32(win, atom, c32, num);
-   free(c32);
-#endif
+      v2[i] = val[i];
+   _ATOM_SET_CARD32(win, atom, v2, num);
+   free(v2);
 }
 
 /*
@@ -62,8 +58,10 @@ ecore_x_window_prop_card32_get(Ecore_X_Window win, Ecore_X_Atom atom,
      {
 	if (num_ret < len)
 	   len = num_ret;
+
 	for (i = 0; i < len; i++)
 	   val[i] = ((unsigned long*)prop_ret)[i];
+	
 	num = len;
      }
    else
