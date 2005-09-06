@@ -257,10 +257,11 @@ _ecore_file_monitor_fam_handler(void *data, Ecore_Fd_Handler *fdh)
 static Ecore_File *
 _ecore_file_monitor_fam_file_find(Ecore_File_Monitor *em, char *name)
 {
+   Ecore_List2 *l;
    for (l = em->files; l; l = l->next)
      {
 	Ecore_File *f;
-	f = l->data;
+	f = (Ecore_File *)l;
 	if (!strcmp(f->name, name))
 	  return f;
      }
