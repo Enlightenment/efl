@@ -63,7 +63,7 @@ ecore_x_window_prop_card32_get(Ecore_X_Window win, Ecore_X_Atom atom,
 	if (num_ret < len)
 	   len = num_ret;
 	for (i = 0; i < len; i++)
-	   val[i] = ((unsigned int *)prop_ret)[i];
+	   val[i] = ((unsigned long*)prop_ret)[i];
 	num = len;
      }
    else
