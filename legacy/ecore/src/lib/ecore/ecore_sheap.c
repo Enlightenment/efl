@@ -1,4 +1,5 @@
 #include "ecore_private.h"
+#include "Ecore.h"
 #include "Ecore_Data.h"
 
 #define HEAP_INCREMENT 4096

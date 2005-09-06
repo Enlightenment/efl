@@ -1,4 +1,5 @@
 #include "ecore_private.h"
+#include "Ecore.h"
 #include "Ecore_Data.h"
 
 /* Return information about the list */
