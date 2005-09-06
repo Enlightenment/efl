@@ -1,10 +1,6 @@
 #include "ecore_private.h"
 #include "Ecore.h"
 
-#include <sys/types.h>
-#include <signal.h>
-#include <unistd.h>
-
 #ifndef WIN32
 static Ecore_Exe *exes = NULL;
 
