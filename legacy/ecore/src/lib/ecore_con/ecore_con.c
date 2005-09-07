@@ -63,26 +63,25 @@ static int init_count = 0;
 int
 ecore_con_init(void)
 {
-   init_count++;
-   if (!ECORE_CON_EVENT_CLIENT_ADD)
-     {
-	ECORE_CON_EVENT_CLIENT_ADD = ecore_event_type_new();
-	ECORE_CON_EVENT_CLIENT_DEL = ecore_event_type_new();
-	ECORE_CON_EVENT_SERVER_ADD = ecore_event_type_new();
-	ECORE_CON_EVENT_SERVER_DEL = ecore_event_type_new();
-	ECORE_CON_EVENT_CLIENT_DATA = ecore_event_type_new();
-	ECORE_CON_EVENT_SERVER_DATA = ecore_event_type_new();
+   if (++init_count != 1) return init_count;
+
+   ECORE_CON_EVENT_CLIENT_ADD = ecore_event_type_new();
+   ECORE_CON_EVENT_CLIENT_DEL = ecore_event_type_new();
+   ECORE_CON_EVENT_SERVER_ADD = ecore_event_type_new();
+   ECORE_CON_EVENT_SERVER_DEL = ecore_event_type_new();
+   ECORE_CON_EVENT_CLIENT_DATA = ecore_event_type_new();
+   ECORE_CON_EVENT_SERVER_DATA = ecore_event_type_new();
 
 #if USE_OPENSSL
-	SSL_library_init();
-	SSL_load_error_strings();
+   SSL_library_init();
+   SSL_load_error_strings();
 #endif
 
-	/* TODO Remember return value, if it fails, use gethostbyname() */
-	ecore_con_dns_init();
-     }
-   if (!servers)
-      servers = ecore_list_new();
+   /* TODO Remember return value, if it fails, use gethostbyname() */
+   ecore_con_dns_init();
+
+   servers = ecore_list_new();
+
    return init_count;
 }
 
@@ -95,18 +94,16 @@ ecore_con_init(void)
 int
 ecore_con_shutdown(void)
 {
-   if (init_count > 0)
-     {
-	init_count--;
-	if (init_count > 0) return init_count;
-	while (!ecore_list_is_empty(servers))
-	     _ecore_con_server_free(ecore_list_remove_first(servers));
-	ecore_list_destroy(servers);
-	servers = NULL;
+   if (--init_count != 0) return init_count;
 
-	ecore_con_dns_shutdown();
-     }
-   return 0;
+   while (!ecore_list_is_empty(servers))
+     _ecore_con_server_free(ecore_list_remove_first(servers));
+   ecore_list_destroy(servers);
+   servers = NULL;
+
+   ecore_con_dns_shutdown();
+
+   return init_count;
 }
 
 /**
