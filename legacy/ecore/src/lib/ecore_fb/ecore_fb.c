@@ -1,13 +1,9 @@
 
+#include "ecore_private.h"
 #include "Ecore.h"
 #include "ecore_fb_private.h"
 #include "Ecore_Fb.h"
-#include "ecore_private.h"
 
-#include <fcntl.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <stdlib.h>
 #include <termios.h>
 #include <sys/types.h>
 #include <sys/stat.h>
