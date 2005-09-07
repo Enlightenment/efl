@@ -4,8 +4,6 @@
 #ifndef _ECORE_X_ATOMS_H
 #define _ECORE_X_ATOMS_H
 
-#include "Ecore_X.h"
-
 /**
  * @file
  * @brief Ecore X atoms
