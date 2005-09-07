@@ -88,5 +88,5 @@ struct _Ecore_Con_Url
 
 /* from ecore_con_dns.c */
 int ecore_con_dns_init(void);
-void ecore_con_dns_shutdown(void);
+int ecore_con_dns_shutdown(void);
 #endif

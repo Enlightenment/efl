@@ -109,14 +109,13 @@ ecore_con_dns_init(void)
    char *p, *p2;
    int ret;
 
-   dns_init++;
-   if (dns_init > 1) return 1;
+   if (++dns_init > 1) return dns_init;
 
    memset(servers, 0, sizeof(servers));
    server_count = 0;
 
    file = fopen("/etc/resolv.conf", "rb");
-   if (!file) return 0;
+   if (!file) return --dns_init;
    while (fgets(buf, sizeof(buf), file))
      {
 	if (strlen(buf) >= 1023)
@@ -217,18 +216,18 @@ ecore_con_dns_init(void)
 	       }
 	  }
      }
-	     
-   return 1;
+
+   printf("init: %d\n", dns_init);
+   return dns_init;
 }
 
-void
+int
 ecore_con_dns_shutdown(void)
 {
    Ecore_List2 *l;
    int i;
 
-   dns_init--;
-   if (dns_init > 0) return;
+   if (--dns_init > 0) return dns_init;
 
    for (l = (Ecore_List2 *)dns_cache; l;)
      {
@@ -248,6 +247,9 @@ ecore_con_dns_shutdown(void)
    for (i = 0; i < search_count; i++)
      free(search[i]);
    search_count = 0;
+
+   printf("shutdown: %d\n", dns_init);
+   return dns_init;
 }
 
 int
