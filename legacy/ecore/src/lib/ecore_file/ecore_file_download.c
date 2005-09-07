@@ -33,7 +33,7 @@ static fd_set _current_fd_set;
 int
 ecore_file_download_init(void)
 {
-   if (++init > 1) return init;
+   if (++init != 1) return init;
 
 #ifdef HAVE_CURL
    FD_ZERO(&_current_fd_set);
@@ -56,7 +56,7 @@ ecore_file_download_init(void)
 int
 ecore_file_download_shutdown(void)
 {
-   if (--init > 0) return init;
+   if (--init != 0) return init;
 #ifdef HAVE_CURL
    Ecore_File_Download_Job *job;
 

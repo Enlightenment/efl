@@ -23,7 +23,7 @@ static Ecore_File_Monitor_Type monitor_type = ECORE_FILE_MONITOR_TYPE_NONE;
 int
 ecore_file_monitor_init(void)
 {
-   if (++init > 1) return init;
+   if (++init != 1) return init;
 
 #ifdef HAVE_INOTIFY
    monitor_type = ECORE_FILE_MONITOR_TYPE_INOTIFY;
@@ -49,7 +49,7 @@ ecore_file_monitor_init(void)
 int
 ecore_file_monitor_shutdown(void)
 {
-   if (--init > 0) return init;
+   if (--init != 0) return init;
 
    switch (monitor_type)
      {

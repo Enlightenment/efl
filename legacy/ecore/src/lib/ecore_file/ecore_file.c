@@ -9,7 +9,7 @@ static int init = 0;
 int
 ecore_file_init()
 {
-   if (++init > 1) return init;
+   if (++init != 1) return init;
 
    if (!ecore_file_monitor_init())
      goto error;
@@ -31,7 +31,7 @@ error:
 int
 ecore_file_shutdown()
 {
-   if (--init > 0) return init;
+   if (--init != 0) return init;
 
    ecore_file_monitor_shutdown();
    ecore_file_path_shutdown();

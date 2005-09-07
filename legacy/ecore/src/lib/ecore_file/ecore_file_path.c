@@ -11,7 +11,7 @@ static Ecore_List *_ecore_file_path_from_env(const char *env);
 int
 ecore_file_path_init(void)
 {
-   if (++init > 1) return init;
+   if (++init != 1) return init;
    __ecore_file_path_bin = _ecore_file_path_from_env("PATH");
    return init;
 }
@@ -19,7 +19,7 @@ ecore_file_path_init(void)
 int
 ecore_file_path_shutdown(void)
 {
-   if (--init > 0) return init;
+   if (--init != 0) return init;
    ecore_list_destroy(__ecore_file_path_bin);
    return init;
 }
