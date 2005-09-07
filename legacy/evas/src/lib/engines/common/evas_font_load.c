@@ -1,6 +1,4 @@
 #include "evas_common.h"
-/* The freetype size functions are not normally exported */
-#include <freetype/ftsizes.h>
 
 extern FT_Library         evas_ft_lib;
 
