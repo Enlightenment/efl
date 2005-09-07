@@ -109,7 +109,7 @@ ecore_con_dns_init(void)
    char *p, *p2;
    int ret;
 
-   if (++dns_init > 1) return dns_init;
+   if (++dns_init != 1) return dns_init;
 
    memset(servers, 0, sizeof(servers));
    server_count = 0;
@@ -217,7 +217,6 @@ ecore_con_dns_init(void)
 	  }
      }
 
-   printf("init: %d\n", dns_init);
    return dns_init;
 }
 
@@ -227,7 +226,7 @@ ecore_con_dns_shutdown(void)
    Ecore_List2 *l;
    int i;
 
-   if (--dns_init > 0) return dns_init;
+   if (--dns_init != 0) return dns_init;
 
    for (l = (Ecore_List2 *)dns_cache; l;)
      {
@@ -248,7 +247,6 @@ ecore_con_dns_shutdown(void)
      free(search[i]);
    search_count = 0;
 
-   printf("shutdown: %d\n", dns_init);
    return dns_init;
 }
 
