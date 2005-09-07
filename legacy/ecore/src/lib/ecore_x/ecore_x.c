@@ -385,17 +385,17 @@ ecore_x_init(const char *name)
    ECORE_X_ATOM_TEXT               = XInternAtom(_ecore_x_disp, "TEXT", False);
 
    /* Set up the ICCCM hints */
-   _ecore_x_icccm_init();
+   ecore_x_icccm_init();
 
    ECORE_X_ATOM_MOTIF_WM_HINTS           = XInternAtom(_ecore_x_disp, "_MOTIF_WM_HINTS", False);
 
    ECORE_X_ATOM_WIN_LAYER                = XInternAtom(_ecore_x_disp, "_WIN_LAYER", False);
 
    /* Set up the _NET_... hints */
-   _ecore_x_netwm_init();
+   ecore_x_netwm_init();
 
    /* old e hints init */
-   _ecore_x_e_init();
+   ecore_x_e_init();
    
    /* This is just to be anal about naming conventions */
    ECORE_X_ATOM_SELECTION_TARGETS        = XInternAtom(_ecore_x_disp, "TARGETS", False);

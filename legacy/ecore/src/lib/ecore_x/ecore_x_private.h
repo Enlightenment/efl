@@ -210,14 +210,7 @@ void _ecore_x_dnd_drag(int x, int y);
 void _ecore_x_dnd_shutdown(void);
 
 /* from netwm */
-void                 _ecore_x_netwm_init(void);
 Ecore_X_Window_State _ecore_x_netwm_state_get(Ecore_X_Atom a);
-
-/* from icccm */
-void _ecore_x_icccm_init(void);
-
-/* from e */
-void _ecore_x_e_init(void);
 
 /* from sync */
 

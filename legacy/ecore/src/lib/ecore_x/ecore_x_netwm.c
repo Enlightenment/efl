@@ -169,7 +169,7 @@ Ecore_X_Atom        ECORE_X_ATOM_NET_WM_SYNC_REQUEST = 0;
 Ecore_X_Atom        ECORE_X_ATOM_NET_WM_SYNC_REQUEST_COUNTER = 0;
 
 void
-_ecore_x_netwm_init(void)
+ecore_x_netwm_init(void)
 {
    ECORE_X_ATOM_NET_SUPPORTED = _ATOM_GET("_NET_SUPPORTED");
    ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK = _ATOM_GET("_NET_SUPPORTING_WM_CHECK");

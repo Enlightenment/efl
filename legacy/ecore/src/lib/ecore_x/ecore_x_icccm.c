@@ -32,7 +32,7 @@ Ecore_X_Atom        ECORE_X_ATOM_WM_TRANSIENT_FOR = 0;
 Ecore_X_Atom        ECORE_X_ATOM_WM_SAVE_YOURSELF = 0;
 
 void
-_ecore_x_icccm_init(void)
+ecore_x_icccm_init(void)
 {
 
    ECORE_X_ATOM_WM_STATE = XInternAtom(_ecore_x_disp, "WM_STATE", False);
