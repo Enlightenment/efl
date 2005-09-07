@@ -3,29 +3,41 @@
  */
 #include "ecore_file_private.h"
 
+static int init = 0;
+
 /* externally accessible functions */
 int
 ecore_file_init()
 {
+   if (++init > 1) return init;
+
    if (!ecore_file_monitor_init())
-     return 0;
+     goto error;
    if (!ecore_file_path_init())
-     return 0;
+     goto error;
    if (!ecore_file_download_init())
-     return 0;
-   return 1;
+     goto error;
+   return init;
+
+error:
+
+   ecore_file_monitor_shutdown();
+   ecore_file_path_shutdown();
+   ecore_file_download_shutdown();
+
+   return --init;
 }
 
 int
 ecore_file_shutdown()
 {
-   if (!ecore_file_monitor_shutdown())
-     return 0;
-   if (!ecore_file_path_shutdown())
-     return 0;
-   if (!ecore_file_download_shutdown())
-     return 0;
-   return 1;
+   if (--init > 0) return init;
+
+   ecore_file_monitor_shutdown();
+   ecore_file_path_shutdown();
+   ecore_file_download_shutdown();
+
+   return init;
 }
 
 time_t

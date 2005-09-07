@@ -3,6 +3,8 @@
  */
 #include "ecore_file_private.h"
 
+static int init = 0;
+
 #ifdef HAVE_CURL
 #include <curl/curl.h>
 
@@ -31,10 +33,12 @@ static fd_set _current_fd_set;
 int
 ecore_file_download_init(void)
 {
+   if (++init > 1) return init;
+
 #ifdef HAVE_CURL
    FD_ZERO(&_current_fd_set);
    _job_list = ecore_list_new();
-   if (!_job_list) return 0;
+   if (!_job_list) return --init;
 
    if (curl_global_init(CURL_GLOBAL_NOTHING)) return 0;
 
@@ -43,15 +47,16 @@ ecore_file_download_init(void)
      {
 	ecore_list_destroy(_job_list);
 	_job_list = NULL;
-	return 0;
+	return --init;
      }
 #endif
-   return 1;
+   return init;
 }
 
 int
 ecore_file_download_shutdown(void)
 {
+   if (--init > 0) return init;
 #ifdef HAVE_CURL
    Ecore_File_Download_Job *job;
 
@@ -72,7 +77,7 @@ ecore_file_download_shutdown(void)
    curl_multi_cleanup(curlm);
    curl_global_cleanup();
 #endif
-   return 1;
+   return init;
 }
 
 int

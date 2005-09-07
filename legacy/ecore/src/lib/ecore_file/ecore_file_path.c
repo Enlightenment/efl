@@ -3,22 +3,25 @@
  */
 #include "ecore_file_private.h"
 
-Ecore_List *__ecore_file_path_bin;
+static int init = 0;
+static Ecore_List *__ecore_file_path_bin;
 
 static Ecore_List *_ecore_file_path_from_env(const char *env);
 
 int
 ecore_file_path_init(void)
 {
+   if (++init > 1) return init;
    __ecore_file_path_bin = _ecore_file_path_from_env("PATH");
-   return 1;
+   return init;
 }
 
 int
 ecore_file_path_shutdown(void)
 {
+   if (--init > 0) return init;
    ecore_list_destroy(__ecore_file_path_bin);
-   return 1;
+   return init;
 }
 
 Ecore_List *
