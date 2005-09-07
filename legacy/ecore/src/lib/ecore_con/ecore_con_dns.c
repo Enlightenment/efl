@@ -26,21 +26,16 @@
  *
  * * Need more buffer overflow checks.
  */
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <unistd.h>
+#include "Ecore.h"
+#include "ecore_private.h"
+
 #include <ctype.h>
 #include <netinet/in.h>
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
 #include <arpa/nameser.h>
 #include <arpa/nameser_compat.h>
 #include <netdb.h>
-
-#include <Ecore.h>
-#include "ecore_private.h"
 
 #define SERVERS 3
 
