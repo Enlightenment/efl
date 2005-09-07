@@ -972,8 +972,9 @@ static const Ecore_DBus_Auth auths[] = {
    {"SKEY", 0, {NULL, NULL, NULL, NULL, NULL}},
 };
 
-static int          init_count = 0;
-static Ecore_List  *servers = NULL;
+static int                  init_count = 0;
+static Ecore_List          *servers = NULL;
+static Ecore_Event_Handler *handler[6];
 
 static int          _ecore_dbus_event_client_add(void *data, int ev_type,
 						 void *ev);
@@ -993,31 +994,47 @@ void                _ecore_dbus_message_free(void *data, void *ev);
 int
 ecore_dbus_init(void)
 {
-   if (!init_count)
-      ecore_con_init();
-   init_count++;
-   if (!ECORE_DBUS_EVENT_CLIENT_ADD)
-     {
-	ECORE_DBUS_EVENT_CLIENT_ADD = ecore_event_type_new();
-	ECORE_DBUS_EVENT_CLIENT_DEL = ecore_event_type_new();
-	ECORE_DBUS_EVENT_SERVER_ADD = ecore_event_type_new();
-	ECORE_DBUS_EVENT_SERVER_DEL = ecore_event_type_new();
-	ECORE_DBUS_EVENT_CLIENT_DATA = ecore_event_type_new();
-	ECORE_DBUS_EVENT_SERVER_DATA = ecore_event_type_new();
+   int i = 0;
 
-	ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_ADD,
-				_ecore_dbus_event_client_add, NULL);
-	ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DEL,
-				_ecore_dbus_event_client_del, NULL);
-	ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ADD,
-				_ecore_dbus_event_server_add, NULL);
-	ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DEL,
-				_ecore_dbus_event_server_del, NULL);
-	ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DATA,
-				_ecore_dbus_event_client_data, NULL);
-	ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DATA,
-				_ecore_dbus_event_server_data, NULL);
-     }
+   if (++init_count != 1) return init_count;
+
+   ecore_con_init();
+
+   ECORE_DBUS_EVENT_CLIENT_ADD = ecore_event_type_new();
+   ECORE_DBUS_EVENT_CLIENT_DEL = ecore_event_type_new();
+   ECORE_DBUS_EVENT_SERVER_ADD = ecore_event_type_new();
+   ECORE_DBUS_EVENT_SERVER_DEL = ecore_event_type_new();
+   ECORE_DBUS_EVENT_CLIENT_DATA = ecore_event_type_new();
+   ECORE_DBUS_EVENT_SERVER_DATA = ecore_event_type_new();
+
+   handler[i++] = ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_ADD,
+					  _ecore_dbus_event_client_add, NULL);
+   handler[i++] = ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DEL,
+					  _ecore_dbus_event_client_del, NULL);
+   handler[i++] = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ADD,
+					  _ecore_dbus_event_server_add, NULL);
+   handler[i++] = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DEL,
+					  _ecore_dbus_event_server_del, NULL);
+   handler[i++] = ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DATA,
+					  _ecore_dbus_event_client_data, NULL);
+   handler[i++] = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DATA,
+					  _ecore_dbus_event_server_data, NULL);
+
+   return init_count;
+}
+
+int
+ecore_dbus_shutdown(void)
+{
+   int i = 0;
+
+   if (--init_count != 0) return init_count;
+
+   for (i = 0; i < 6; i++)
+     ecore_event_handler_del(handler[i]);
+
+   ecore_con_shutdown();
+
    return init_count;
 }
 

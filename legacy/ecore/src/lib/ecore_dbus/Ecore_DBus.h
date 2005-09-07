@@ -199,6 +199,8 @@ extern "C" {
    
    /* connection */
    EAPI int ecore_dbus_init(void);
+   EAPI int ecore_dbus_shutdown(void);
+
    EAPI Ecore_DBus_Server* ecore_dbus_server_connect(Ecore_DBus_Type compl_type, char *name, int port, const void *data);
    /* message */	
    EAPI unsigned int ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr,char *service,char *path,char *interface,char *method,char *fmt, ...);
