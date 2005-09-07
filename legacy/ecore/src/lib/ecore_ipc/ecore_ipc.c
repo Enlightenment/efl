@@ -227,8 +227,9 @@ int ECORE_IPC_EVENT_SERVER_DEL = 0;
 int ECORE_IPC_EVENT_CLIENT_DATA = 0;
 int ECORE_IPC_EVENT_SERVER_DATA = 0;
 
-static int init_count = 0;
-static Ecore_Ipc_Server *servers = NULL;
+static int                  init_count = 0;
+static Ecore_Ipc_Server    *servers = NULL;
+static Ecore_Event_Handler *handler[6];
 
 /**
  * @defgroup Ecore_IPC_Library_Group IPC Library Functions
@@ -245,24 +246,31 @@ static Ecore_Ipc_Server *servers = NULL;
 int
 ecore_ipc_init(void)
 {
-   if (!init_count) ecore_con_init();
-   init_count++;
-   if (!ECORE_IPC_EVENT_CLIENT_ADD)
-     {
-	ECORE_IPC_EVENT_CLIENT_ADD = ecore_event_type_new();
-	ECORE_IPC_EVENT_CLIENT_DEL = ecore_event_type_new();
-	ECORE_IPC_EVENT_SERVER_ADD = ecore_event_type_new();
-	ECORE_IPC_EVENT_SERVER_DEL = ecore_event_type_new();
-	ECORE_IPC_EVENT_CLIENT_DATA = ecore_event_type_new();
-	ECORE_IPC_EVENT_SERVER_DATA = ecore_event_type_new();
-	
-	ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_ADD, _ecore_ipc_event_client_add, NULL);
-	ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DEL, _ecore_ipc_event_client_del, NULL);
-	ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ADD, _ecore_ipc_event_server_add, NULL);
-	ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DEL, _ecore_ipc_event_server_del, NULL);
-	ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DATA, _ecore_ipc_event_client_data, NULL);
-	ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DATA, _ecore_ipc_event_server_data, NULL);
-     }
+   int i = 0;
+
+   if (++init_count != 1) return init_count;
+
+   ecore_con_init();
+
+   ECORE_IPC_EVENT_CLIENT_ADD = ecore_event_type_new();
+   ECORE_IPC_EVENT_CLIENT_DEL = ecore_event_type_new();
+   ECORE_IPC_EVENT_SERVER_ADD = ecore_event_type_new();
+   ECORE_IPC_EVENT_SERVER_DEL = ecore_event_type_new();
+   ECORE_IPC_EVENT_CLIENT_DATA = ecore_event_type_new();
+   ECORE_IPC_EVENT_SERVER_DATA = ecore_event_type_new();
+
+   handler[i++] = ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_ADD,
+					  _ecore_ipc_event_client_add, NULL);
+   handler[i++] = ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DEL,
+					  _ecore_ipc_event_client_del, NULL);
+   handler[i++] = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_ADD,
+					  _ecore_ipc_event_server_add, NULL);
+   handler[i++] = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DEL,
+					  _ecore_ipc_event_server_del, NULL);
+   handler[i++] = ecore_event_handler_add(ECORE_CON_EVENT_CLIENT_DATA,
+					  _ecore_ipc_event_client_data, NULL);
+   handler[i++] = ecore_event_handler_add(ECORE_CON_EVENT_SERVER_DATA,
+					  _ecore_ipc_event_server_data, NULL);
    return init_count;   
 }
 
@@ -275,14 +283,18 @@ ecore_ipc_init(void)
 int
 ecore_ipc_shutdown(void)
 {
-   if (init_count > 0)
-     {
-	init_count--;
-	if (init_count > 0) return init_count;
-	while (servers) ecore_ipc_server_del(servers);
-	ecore_con_shutdown();
-     }
-   return 0;
+   int i;
+
+   if (--init_count != 0) return init_count;
+
+   while (servers) ecore_ipc_server_del(servers);
+
+   for (i = 0; i < 6; i++)
+     ecore_event_handler_del(handler[i]);
+
+   ecore_con_shutdown();
+
+   return init_count;
 }
 
 /**
