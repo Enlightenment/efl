@@ -3,7 +3,6 @@
  */
 
 #include "Ecore.h"
-#include "config.h"
 #include "ecore_private.h"
 #include "ecore_con_private.h"
 #include "Ecore_Con.h"
@@ -14,15 +13,11 @@
 #include <winsock.h>
 #endif
 
-#include <sys/types.h>
 #include <sys/stat.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <errno.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <fcntl.h>
 #include <netdb.h>
 
 #if USE_OPENSSL
