@@ -19,7 +19,7 @@
 Ecore_X_Atom        ECORE_X_ATOM_E_FRAME_SIZE = 0;
 
 void
-ecore_x_e_init(void)
+_ecore_x_e_init(void)
 {
    ECORE_X_ATOM_E_FRAME_SIZE = _ATOM_GET("_E_FRAME_SIZE");
 }

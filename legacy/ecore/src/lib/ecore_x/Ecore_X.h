@@ -1078,7 +1078,6 @@ EAPI void            ecore_x_window_sniff(Ecore_X_Window win);
 EAPI void            ecore_x_window_client_sniff(Ecore_X_Window win);
 EAPI Ecore_X_Atom    ecore_x_atom_get(const char *name);
 
-EAPI void            ecore_x_icccm_init(void);
 EAPI void            ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state);
 EAPI Ecore_X_Window_State_Hint ecore_x_icccm_state_get(Ecore_X_Window win);
 EAPI void            ecore_x_icccm_delete_window_send(Ecore_X_Window win, Ecore_X_Time t);
@@ -1185,7 +1184,6 @@ EAPI int ecore_x_mwm_hints_get(Ecore_X_Window win,
 EAPI void ecore_x_mwm_borderless_set(Ecore_X_Window win, int borderless);
        
 /* netwm */
-EAPI void                ecore_x_netwm_init(void);
 EAPI void                ecore_x_netwm_wm_identify(Ecore_X_Window root, Ecore_X_Window check, const char *wm_name);
 EAPI void                ecore_x_netwm_supported_set(Ecore_X_Window root, Ecore_X_Atom *supported, int num);
 EAPI int                 ecore_x_netwm_supported_get(Ecore_X_Window root, Ecore_X_Atom **supported, int *num);
@@ -1243,7 +1241,6 @@ EAPI void                ecore_x_netwm_desktop_request_send(Ecore_X_Window win, 
 
 
 
-EAPI void                ecore_x_e_init(void);
 EAPI void                ecore_x_e_frame_size_set(Ecore_X_Window win, int fl, int fr, int ft, int fb);
        
    
