@@ -3,7 +3,7 @@
 Summary: Enlightened Core X interface library
 Name: @PACKAGE@
 Version: @VERSION@
-Release: 1
+Release: 0.20050908
 License: BSD
 Group: User Interface/X
 Source: %{name}-%{version}.tar.gz

@@ -3,7 +3,7 @@
 Summary: A small virtual machine engine (in a library) and bytecode compiler
 Name: @PACKAGE@
 Version: @VERSION@
-Release: 1
+Release: 0.20050908
 License: BSD
 Group: System Environment/Libraries
 Source: %{name}-%{version}.tar.gz

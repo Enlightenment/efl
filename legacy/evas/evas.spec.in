@@ -3,7 +3,7 @@
 Summary: Multi-platform Canvas Library
 Name: @PACKAGE@
 Version: @VERSION@
-Release: 1
+Release: 0.20050908
 License: BSD
 Group: System Environment/Libraries
 URL: http://www.enlightenment.org/
