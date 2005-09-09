@@ -6,7 +6,7 @@
 #endif
 
 #ifdef HAVE_VALGRIND
-#include <valgrind/valgrind.h>
+#include <memcheck.h>
 #endif
 
 static Evas_Hash        * images = NULL;
@@ -163,24 +163,17 @@ void
 evas_common_image_surface_alloc(RGBA_Surface *is)
 {
    size_t siz = 0;
-   static int on_valgrind;
 
-   /* init data when we're under Valgrind's control */
-#ifdef HAVE_VALGRIND
-   static int init;
-
-   if (!init)
-     {
-	on_valgrind = RUNNING_ON_VALGRIND;
-	init = 1;
-     }
-#endif
    if (is->im->flags & RGBA_IMAGE_ALPHA_ONLY)
      siz = is->w * is->h * sizeof(DATA8);
    else
      siz = is->w * is->h * sizeof(DATA32);
 
-   is->data = on_valgrind ? calloc(1, siz) : malloc(siz);
+   is->data = malloc(siz);
+
+#ifdef HAVE_VALGRIND
+   VALGRIND_MAKE_READABLE(is->data, siz);
+#endif
 }
 
 void
