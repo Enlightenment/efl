@@ -463,8 +463,14 @@ extern "C" {
    
    
    /* NEW texblock api - intended to replace the old - not complete yet */
-   typedef struct _Evas_Textblock_Style  Evas_Textblock_Style;
-   typedef struct _Evas_Textblock_Cursor Evas_Textblock_Cursor;
+   typedef struct _Evas_Textblock_Style     Evas_Textblock_Style;
+   typedef struct _Evas_Textblock_Cursor    Evas_Textblock_Cursor;
+   typedef struct _Evas_Textblock_Rectangle Evas_Textblock_Rectangle;
+   
+   struct _Evas_Textblock_Rectangle
+     {
+	Evas_Coord x, y, w, h;
+     };
    
    EAPI Evas_Object                 *evas_object_textblock2_add(Evas *e);
    
@@ -505,16 +511,20 @@ extern "C" {
 
    EAPI void                         evas_textblock2_cursor_format_append(Evas_Textblock_Cursor *cur, const char *format);
    EAPI void                         evas_textblock2_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *format);
-   /* FIXME: add node delete, cursor delete, range delete */
+   EAPI void                         evas_textblock2_cursor_node_delete(Evas_Textblock_Cursor *cur);
+   EAPI void                         evas_textblock2_cursor_char_delete(Evas_Textblock_Cursor *cur);
+   EAPI void                         evas_textblock2_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2);
    
    EAPI const char                  *evas_textblock2_cursor_node_text_get(Evas_Textblock_Cursor *cur);
    EAPI const char                  *evas_textblock2_cursor_node_format_get(Evas_Textblock_Cursor *cur);
-   /* FIXME: add text range get */
+   EAPI char                        *evas_textblock2_cursor_range_text_get(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2);
        
    EAPI int                          evas_textblock2_cursor_char_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
    EAPI int                          evas_textblock2_cursor_line_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
    EAPI Evas_Bool                    evas_textblock2_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, Evas_Coord y);
-
+   EAPI int                          evas_textblock2_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y);
+   EAPI Evas_List                   *evas_textblock2_cursor_range_geometry_get(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2);
+   
    EAPI Evas_Bool                    evas_object_textblock2_line_number_geometry_get(Evas_Object *obj, int line, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
    EAPI void                         evas_object_textblock2_clear(Evas_Object *obj);
    EAPI void                         evas_object_textblock2_size_formatted_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);

@@ -27,7 +27,7 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
 	FT_UInt index;
 	RGBA_Font_Glyph *fg;
 	int chr_x, chr_y, chr_w;
-        int gl;
+        int gl, kern;
 
 	gl = evas_common_font_utf8_get_next((unsigned char *)text, &chr);
 	if (gl == 0) break;
@@ -35,6 +35,7 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
         /* hmmm kerning means i can't sanely do my own cached metric tables! */
 	/* grrr - this means font face sharing is kinda... not an option if */
 	/* you want performance */
+	kern = 0;
 	if ((use_kerning) && (prev_index) && (index) &&
 	    (pface == fi->src->ft.face))
 	  {
@@ -42,7 +43,10 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
 
 	     if (FT_Get_Kerning(fi->src->ft.face, prev_index, index,
 				ft_kerning_default, &delta) == 0)
-	       pen_x += delta.x << 2;
+	       {
+		  kern = delta.x << 2;
+		  pen_x += kern;
+	       }
 	  }
 	pface = fi->src->ft.face;
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
@@ -50,7 +54,14 @@ evas_common_font_query_size(RGBA_Font *fn, const char *text, int *w, int *h)
 
         chr_x = (pen_x + (fg->glyph_out->left << 8)) >> 8;
 	chr_y = (pen_y + (fg->glyph_out->top << 8)) >> 8;
-	chr_w = fg->glyph_out->bitmap.width;
+//	chr_w = fg->glyph_out->bitmap.width;
+	chr_w = fg->glyph_out->bitmap.width + (kern >> 8);
+	  {
+	     int advw;
+
+	     advw = ((fg->glyph->advance.x + (kern << 8)) >> 16);
+	     if (chr_w < advw) chr_w = advw;
+	  }
 
 	if ((!prev_index) && (chr_x < 0))
 	  start_x = chr_x;

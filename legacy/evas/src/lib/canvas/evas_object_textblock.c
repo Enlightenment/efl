@@ -138,10 +138,10 @@ struct _Evas_Object_Textblock
    Evas_Textblock_Cursor       *cursor;
    Evas_List                   *cursors;
    Evas_Object_Textblock_Node  *nodes;
-   Evas_Object_Textblock_Line *lines;
-   int                         last_w;
+   Evas_Object_Textblock_Line  *lines;
+   int                          last_w;
    struct {
-      int                      l, r, t, b;
+      int                       l, r, t, b;
    } style_pad;
    char                        *markup_text;
    char                         changed : 1;
@@ -357,12 +357,23 @@ _strbuf_insert(char *s, char *s2, int pos, int *len, int *alloc)
 static char *
 _strbuf_remove(char *s, int p, int p2, int *len, int *alloc)
 {
-/*   
    int l2;
    int tlen;
+   char *tbuf;
    
-   tlen = *len + l2;
-   if (tlen > *alloc)
+   if ((p == 0) && (p2 ==  *len))
+     {
+	free(s);
+	*len = 0;
+	*alloc = 0;
+	return NULL;
+     }
+   tbuf = malloc(*len - p2 + 1);
+   strcpy(tbuf, s + p2);
+   strcpy(s + p, tbuf);
+   free(tbuf);
+   tlen = *len - (p2 - p);
+   if (tlen < ((*alloc >> 5) << 15))
      {
 	char *ts;
 	int talloc;
@@ -373,11 +384,7 @@ _strbuf_remove(char *s, int p, int p2, int *len, int *alloc)
 	s = ts;
 	*alloc = talloc;
      }
-   strncpy(s + pos + l2, s + pos, *len - pos);
-   strncpy(s + pos, s2, l2);
    *len = tlen;
-   s[tlen] = 0;
- */
    return s;
 }
 
@@ -2482,6 +2489,7 @@ evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
 	  }
 	o->markup_text = strdup(text);
      }
+   /* FIXME: adjust cursors that are affected by the change */
 }
 
 const char *
@@ -2880,6 +2888,7 @@ evas_textblock2_cursor_compare(Evas_Textblock_Cursor *cur1, Evas_Textblock_Curso
    Evas_Object_List *l1, *l2;
    
    if (!cur1) return 0;
+   if (!cur2) return 0;
    if (cur1->obj != cur2->obj) return 0;
    if ((!cur1->node) || (!cur2->node)) return 0;
    if (cur1->node == cur2->node)
@@ -2946,6 +2955,7 @@ evas_textblock2_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text)
    o->native.valid = 0;
    o->changed = 1;
    evas_object_change(cur->obj);
+   /* FIXME: adjust cursors that are affected by the change */
 }
 
 void
@@ -2975,6 +2985,7 @@ evas_textblock2_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text
    o->native.valid = 0;
    o->changed = 1;
    evas_object_change(cur->obj);
+   /* FIXME: adjust cursors that are affected by the change */
 }
 
 void
@@ -3035,6 +3046,7 @@ evas_textblock2_cursor_format_append(Evas_Textblock_Cursor *cur, const char *for
    o->native.valid = 0;
    o->changed = 1;
    evas_object_change(cur->obj);
+   /* FIXME: adjust cursors that are affected by the change */
 }
 
 void
@@ -3090,6 +3102,168 @@ evas_textblock2_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *fo
    o->native.valid = 0;
    o->changed = 1;
    evas_object_change(cur->obj);
+   /* FIXME: adjust cursors that are affected by the change */
+}
+
+void
+evas_textblock2_cursor_node_delete(Evas_Textblock_Cursor *cur)
+{
+   Evas_Object_Textblock *o;
+   Evas_Object_Textblock_Node *n, *n2;
+   
+   if (!cur) return;
+   o = (Evas_Object_Textblock *)(cur->obj->object_data);
+   n = cur->node;
+   n2 = (Evas_Object_Textblock_Node *)(((Evas_Object_List *)n)->next);
+   if (n2)
+     {
+	cur->node = n2;
+	cur->pos = 0;
+     }
+   else
+     {
+	n2 = (Evas_Object_Textblock_Node *)(((Evas_Object_List *)n)->prev);
+	cur->node = n2;
+	cur->pos = 0;
+	evas_textblock2_cursor_char_last(cur);
+     }
+
+   o->nodes = evas_object_list_remove(o->nodes, n);
+   if (n->text) free(n->text);
+   free(n);
+   
+   o->formatted.valid = 0;
+   o->native.valid = 0;
+   o->changed = 1;
+   evas_object_change(cur->obj);
+   /* FIXME: adjust cursors that are affected by the change */
+}
+
+void
+evas_textblock2_cursor_char_delete(Evas_Textblock_Cursor *cur)
+{
+   Evas_Object_Textblock *o;
+   Evas_Object_Textblock_Node *n, *n2;
+   int chr, index;
+   
+   if (!cur) return;
+   o = (Evas_Object_Textblock *)(cur->obj->object_data);
+   n = cur->node;
+   if (n->type == NODE_FORMAT)
+     {
+	evas_textblock2_cursor_node_delete(cur);
+	return;
+     }
+   index = cur->pos;
+   chr = evas_common_font_utf8_get_next((unsigned char *)n->text, &index);
+   if (chr == 0) return;
+   n->text = _strbuf_remove(n->text, cur->pos, index, &(n->len), &(n->alloc));
+   if (!n->text)
+     {
+	evas_textblock2_cursor_node_delete(cur);
+	return;
+     }
+   if (cur->pos == n->len)
+     {
+	n2 = (Evas_Object_Textblock_Node *)(((Evas_Object_List *)n)->next);
+	if (n2)
+	  {
+	     cur->node = n2;
+	     cur->pos = 0;
+	  }
+	else
+	  {
+	     cur->pos = 0;
+	     evas_textblock2_cursor_char_last(cur);
+	  }
+     }
+   
+   o->formatted.valid = 0;
+   o->native.valid = 0;
+   o->changed = 1;
+   evas_object_change(cur->obj);
+   /* FIXME: adjust cursors that are affected by the change */
+}
+
+void
+evas_textblock2_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2)
+{
+   Evas_Object_Textblock *o;
+   Evas_Object_Textblock_Node *n1, *n2, *n;
+   Evas_Object_List *l;
+   
+   int chr, index;
+   
+   if (!cur1) return;
+   if (!cur2) return;
+   if (cur1->obj != cur2->obj) return;
+   o = (Evas_Object_Textblock *)(cur1->obj->object_data);
+   if (evas_textblock2_cursor_compare(cur1, cur2) > 0)
+     {
+	Evas_Textblock_Cursor *tc;
+	
+	tc = cur1;
+	cur1 = cur2;
+	cur2 = tc;
+     }
+   n1 = cur1->node;
+   n2 = cur2->node;
+   index = cur2->pos;
+   chr = evas_common_font_utf8_get_next((unsigned char *)n2->text, &index);
+   if (chr == 0) return;
+   if (n1 == n2)
+     {
+	if (cur1->pos == cur2->pos)
+	  {
+	     evas_textblock2_cursor_char_delete(cur1);
+	     return;
+	  }
+	n1->text = _strbuf_remove(n1->text, cur1->pos, index, &(n->len), &(n->alloc));
+	if (!n1->text)
+	  {
+	     evas_textblock2_cursor_node_delete(cur1);
+	     return;
+	  }
+	if (cur1->pos == n1->len)
+	  {
+	     n2 = (Evas_Object_Textblock_Node *)(((Evas_Object_List *)n1)->next);
+	     if (n2)
+	       {
+		  cur1->node = n2;
+		  cur1->pos = 0;
+	       }
+	     else
+	       {
+		  cur1->pos = 0;
+		  evas_textblock2_cursor_char_last(cur1);
+	       }
+	  }
+     }
+   else
+     {
+	Evas_List *removes = NULL;
+	
+	n1->text = _strbuf_remove(n1->text, cur1->pos, index, &(n->len), &(n->alloc));
+	for (l = ((Evas_Object_List *)n1)->next; l != (Evas_Object_List *)n2; l = l->next)
+	  removes = evas_list_append(removes, l);
+	while (removes)
+	  {
+	     n = removes->data;
+	     o->nodes = evas_object_list_remove(o->nodes, n);
+	     if (n->text) free(n->text);
+	     free(n);
+	     removes = evas_list_remove_list(removes, removes);
+	  }
+	if (!n1->text)
+	  evas_textblock2_cursor_node_delete(cur1);
+	if (!n2->text)
+	  evas_textblock2_cursor_node_delete(cur2);
+     }
+   o->formatted.valid = 0;
+   o->native.valid = 0;
+   o->changed = 1;
+   evas_object_change(cur1->obj);
+   /* FIXME: adjust cursors that are affected by the change */
 }
 
 const char *
@@ -3113,6 +3287,30 @@ evas_textblock2_cursor_node_format_get(Evas_Textblock_Cursor *cur)
      {
 	return cur->node->text;
      }
+   return NULL;
+}
+
+char *
+evas_textblock2_cursor_range_text_get(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2)
+{
+   Evas_Object_Textblock *o;
+   Evas_Object_Textblock_Node *n1, *n2;
+   
+   if (!cur1) return NULL;
+   if (!cur2) return NULL;
+   if (cur1->obj != cur2->obj) return NULL;
+   o = (Evas_Object_Textblock *)(cur1->obj->object_data);
+   if (evas_textblock2_cursor_compare(cur1, cur2) > 0)
+     {
+	Evas_Textblock_Cursor *tc;
+	
+	tc = cur1;
+	cur1 = cur2;
+	cur2 = tc;
+     }
+   n1 = cur1->node;
+   n2 = cur2->node;
+   /* FIXME: */
    return NULL;
 }
 
@@ -3144,6 +3342,11 @@ evas_textblock2_cursor_char_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord 
 					      &x, &y, &w, &h);
 	if (ret <= 0) return -1;
 	x = ln->x + it->x - it->inset + x;
+	if (x < ln->x)
+	  {
+	     x = ln->x;
+	     w -= (ln->x - x);
+	  }
 	y = ln->y;
 	h = ln->h;
      }
@@ -3205,6 +3408,8 @@ evas_textblock2_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, 
    if (!cur) return 0;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
    if (!o->formatted.valid) _relayout(cur->obj);
+   x += o->style_pad.l;
+   y += o->style_pad.t;
    for (l = (Evas_Object_List *)o->lines; l; l = l->next)
      {
         Evas_Object_Textblock_Line *ln;
@@ -3261,6 +3466,96 @@ evas_textblock2_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, 
    return 0;
 }
 
+int
+evas_textblock2_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
+{
+   Evas_Object_Textblock *o;
+   Evas_Object_List *l;
+   Evas_Object_Textblock_Line *ln = NULL;
+   
+   if (!cur) return -1;
+   o = (Evas_Object_Textblock *)(cur->obj->object_data);
+   if (!o->formatted.valid) _relayout(cur->obj);
+   y += o->style_pad.t;
+   for (l = (Evas_Object_List *)o->lines; l; l = l->next)
+     {
+        Evas_Object_Textblock_Line *ln;
+
+        ln = (Evas_Object_Textblock_Line *)l;
+	if (ln->y > y) break;
+	if ((ln->y <= y) && ((ln->y + ln->h) > y))
+	  {
+	     evas_textblock2_cursor_line_set(cur, ln->line_no);
+	     return ln->line_no;
+	  }
+     }
+   return -1;
+}
+
+Evas_List *
+evas_textblock2_cursor_range_geometry_get(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2)
+{
+   Evas_Object_Textblock *o;
+   Evas_List *rects = NULL;
+   Evas_Coord cx, cy, cw, ch, lx, ly, lw, lh;
+   Evas_Textblock_Rectangle *tr;
+   int i, line, line2;
+   
+   if (!cur1) return NULL;
+   if (!cur2) return NULL;
+   if (cur1->obj != cur2->obj) return NULL;
+   o = (Evas_Object_Textblock *)(cur1->obj->object_data);
+   if (evas_textblock2_cursor_compare(cur1, cur2) > 0)
+     {
+	Evas_Textblock_Cursor *tc;
+	
+	tc = cur1;
+	cur1 = cur2;
+	cur2 = tc;
+     }
+   line = evas_textblock2_cursor_char_geometry_get(cur1, &cx, &cy, &cw, &ch);
+   line = evas_textblock2_cursor_line_geometry_get(cur1, &lx, &ly, &lw, &lh);
+   line2 = evas_textblock2_cursor_line_geometry_get(cur2, NULL, NULL, NULL, NULL);
+   if (line == line2)
+     {
+	tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
+	rects = evas_list_append(rects, tr);
+	tr->x = cx;
+	tr->y = ly;
+	tr->h = lh;
+	line = evas_textblock2_cursor_char_geometry_get(cur2, &cx, &cy, &cw, &ch);
+	tr->w = cx + cw - tr->x;
+     }
+   else
+     {
+	tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
+	rects = evas_list_append(rects, tr);
+	tr->x = cx;
+	tr->y = ly;
+	tr->h = lh;
+	tr->w = lx + lw - cx;
+	for (i = line +1; i < line2; i++)
+	  {
+	     evas_object_textblock2_line_number_geometry_get(cur1->obj, i, &lx, &ly, &lw, &lh);
+	     tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
+	     rects = evas_list_append(rects, tr);
+	     tr->x = lx;
+	     tr->y = ly;
+	     tr->h = lh;
+	     tr->w = lw;
+	  }
+	line = evas_textblock2_cursor_char_geometry_get(cur2, &cx, &cy, &cw, &ch);
+	line = evas_textblock2_cursor_line_geometry_get(cur2, &lx, &ly, &lw, &lh);
+	tr = calloc(1, sizeof(Evas_Textblock_Rectangle));
+	rects = evas_list_append(rects, tr);
+	tr->x = lx;
+	tr->y = ly;
+	tr->h = lh;
+	tr->w = cx + cw - lx;
+     }
+   return rects;
+}
+
 /* general controls */
 Evas_Bool
 evas_object_textblock2_line_number_geometry_get(Evas_Object *obj, int line, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
@@ -3308,6 +3603,7 @@ evas_object_textblock2_clear(Evas_Object *obj)
    o->native.valid = 0;
    o->changed = 1;
    evas_object_change(obj);
+   /* FIXME: adjust cursors that are affected by the change */
 }
 
 void
