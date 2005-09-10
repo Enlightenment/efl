@@ -297,7 +297,7 @@ extern "C" {
    EAPI void             *evas_list_nth                     (Evas_List *list, int n);
    EAPI Evas_List        *evas_list_nth_list                (Evas_List *list, int n);
    EAPI Evas_List        *evas_list_reverse                 (Evas_List *list);
-   EAPI Evas_List        *evas_list_sort		       (Evas_List *list, int size, int(*func)(void*,void*));
+   EAPI Evas_List        *evas_list_sort                    (Evas_List *list, int size, int(*func)(void*,void*));
    EAPI int               evas_list_alloc_error             (void);
 
    /* FIXME: add:
@@ -516,6 +516,7 @@ extern "C" {
    EAPI void                         evas_textblock2_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2);
    
    EAPI const char                  *evas_textblock2_cursor_node_text_get(Evas_Textblock_Cursor *cur);
+   EAPI int                          evas_textblock2_cursor_node_text_length_get(Evas_Textblock_Cursor *cur);
    EAPI const char                  *evas_textblock2_cursor_node_format_get(Evas_Textblock_Cursor *cur);
    EAPI char                        *evas_textblock2_cursor_range_text_get(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2);
        

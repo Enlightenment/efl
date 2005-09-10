@@ -2489,7 +2489,13 @@ evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
 	  }
 	o->markup_text = strdup(text);
      }
-   /* FIXME: adjust cursors that are affected by the change */
+     {
+	Evas_List *l;
+	
+	evas_textblock2_cursor_node_first(o->cursor);
+	for (l = o->cursors; l; l = l->next)
+	  evas_textblock2_cursor_node_first(l->data);
+     }
 }
 
 const char *
@@ -2931,6 +2937,29 @@ evas_textblock2_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text)
    
    if (!cur) return;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
+     {
+	Evas_List *l;
+
+	if (cur != o->cursor)
+	  {
+	     if (cur->node == o->cursor->node)
+	       {
+		  if (o->cursor->pos > cur->pos)
+		    o->cursor->pos += strlen(text);
+	       }
+	  }
+	for (l = o->cursors; l; l = l->next)
+	  {
+	     if (l->data != cur)
+	       {
+		  if (cur->node == ((Evas_Textblock_Cursor *)l->data)->node)
+		    {
+		       if (((Evas_Textblock_Cursor *)l->data)->pos > cur->pos)
+			 ((Evas_Textblock_Cursor *)l->data)->pos += strlen(text);
+		    }
+	       }
+	  }
+     }
    n = cur->node;
    if ((!n) || (n->type == NODE_FORMAT))
      {
@@ -2955,7 +2984,6 @@ evas_textblock2_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text)
    o->native.valid = 0;
    o->changed = 1;
    evas_object_change(cur->obj);
-   /* FIXME: adjust cursors that are affected by the change */
 }
 
 void
@@ -2967,6 +2995,33 @@ evas_textblock2_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text
    
    if (!cur) return;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
+     {
+	Evas_List *l;
+
+	if (cur != o->cursor)
+	  {
+	     if (cur->node == o->cursor->node)
+	       {
+		  if ((o->cursor->node) &&
+		      (o->cursor->node->type == NODE_TEXT) &&
+		      (o->cursor->pos >- cur->pos))
+		    o->cursor->pos += strlen(text);
+	       }
+	  }
+	for (l = o->cursors; l; l = l->next)
+	  {
+	     if (l->data != cur)
+	       {
+		  if (cur->node == ((Evas_Textblock_Cursor *)l->data)->node)
+		    {
+		       if ((((Evas_Textblock_Cursor *)l->data)->node) &&
+			   (((Evas_Textblock_Cursor *)l->data)->node->type == NODE_TEXT) &&
+			   (((Evas_Textblock_Cursor *)l->data)->pos >- cur->pos))
+			 ((Evas_Textblock_Cursor *)l->data)->pos += strlen(text);
+		    }
+	       }
+	  }
+     }
    n = cur->node;
    if ((!n) || (n->type == NODE_FORMAT))
      {
@@ -2985,7 +3040,6 @@ evas_textblock2_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text
    o->native.valid = 0;
    o->changed = 1;
    evas_object_change(cur->obj);
-   /* FIXME: adjust cursors that are affected by the change */
 }
 
 void
@@ -3046,7 +3100,6 @@ evas_textblock2_cursor_format_append(Evas_Textblock_Cursor *cur, const char *for
    o->native.valid = 0;
    o->changed = 1;
    evas_object_change(cur->obj);
-   /* FIXME: adjust cursors that are affected by the change */
 }
 
 void
@@ -3102,7 +3155,6 @@ evas_textblock2_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *fo
    o->native.valid = 0;
    o->changed = 1;
    evas_object_change(cur->obj);
-   /* FIXME: adjust cursors that are affected by the change */
 }
 
 void
@@ -3128,6 +3180,30 @@ evas_textblock2_cursor_node_delete(Evas_Textblock_Cursor *cur)
 	evas_textblock2_cursor_char_last(cur);
      }
 
+     {
+	Evas_List *l;
+
+	if (cur != o->cursor)
+	  {
+	     if (n == o->cursor->node)
+	       {
+		  o->cursor->node = cur->node;
+		  o->cursor->pos = cur->pos;
+	       }
+	  }
+	for (l = o->cursors; l; l = l->next)
+	  {
+	     if (l->data != cur)
+	       {
+		  if (n == ((Evas_Textblock_Cursor *)l->data)->node)
+		    {
+		       ((Evas_Textblock_Cursor *)l->data)->node = cur->node;
+		       ((Evas_Textblock_Cursor *)l->data)->pos = cur->pos;
+		    }
+	       }
+	  }
+     }
+   
    o->nodes = evas_object_list_remove(o->nodes, n);
    if (n->text) free(n->text);
    free(n);
@@ -3136,7 +3212,6 @@ evas_textblock2_cursor_node_delete(Evas_Textblock_Cursor *cur)
    o->native.valid = 0;
    o->changed = 1;
    evas_object_change(cur->obj);
-   /* FIXME: adjust cursors that are affected by the change */
 }
 
 void
@@ -3216,15 +3291,17 @@ evas_textblock2_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_
 	if (cur1->pos == cur2->pos)
 	  {
 	     evas_textblock2_cursor_char_delete(cur1);
+	     evas_textblock2_cursor_copy(cur1, cur2);
 	     return;
 	  }
-	n1->text = _strbuf_remove(n1->text, cur1->pos, index, &(n->len), &(n->alloc));
+	n1->text = _strbuf_remove(n1->text, cur1->pos, index, &(n1->len), &(n1->alloc));
 	if (!n1->text)
 	  {
 	     evas_textblock2_cursor_node_delete(cur1);
+	     evas_textblock2_cursor_copy(cur1, cur2);
 	     return;
 	  }
-	if (cur1->pos == n1->len)
+	if (cur1->pos >= n1->len)
 	  {
 	     n2 = (Evas_Object_Textblock_Node *)(((Evas_Object_List *)n1)->next);
 	     if (n2)
@@ -3238,26 +3315,127 @@ evas_textblock2_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_
 		  evas_textblock2_cursor_char_last(cur1);
 	       }
 	  }
+	evas_textblock2_cursor_copy(cur1, cur2);
      }
    else
      {
-	Evas_List *removes = NULL;
+	Evas_List *removes = NULL, *format_hump = NULL;
+	Evas_Textblock_Cursor tcur;
 	
-	n1->text = _strbuf_remove(n1->text, cur1->pos, index, &(n->len), &(n->alloc));
+	tcur.node = n2;
+	tcur.pos = 0;
+	index = cur2->pos;
+	chr = evas_common_font_utf8_get_next((unsigned char *)n2->text, &index);
+	if ((chr == 0) || (index >= n2->len))
+	  {
+	     tcur.node = (Evas_Object_Textblock_Node *)((Evas_Object_List *)n2)->next;
+	     tcur.pos = 0;
+	     if (!tcur.node)
+	       {
+		  if (cur1->pos != 0)
+		    {
+		       tcur.node = n1;
+		       index = cur1->pos;
+		       chr = evas_common_font_utf8_get_prev((unsigned char *)n2->text, &index);
+		       tcur.pos = index;
+		    }
+		  else
+		    {
+		       tcur.node = (Evas_Object_Textblock_Node *)((Evas_Object_List *)n1)->prev;
+		       if (tcur.node->type == NODE_TEXT)
+			 tcur.pos = evas_common_font_utf8_get_last((unsigned char *)tcur.node->text, tcur.node->len);
+		       else
+			 tcur.pos = 0;
+		    }
+	       }
+	  }
+	n1->text = _strbuf_remove(n1->text, cur1->pos, n1->len, &(n1->len), &(n1->alloc));
 	for (l = ((Evas_Object_List *)n1)->next; l != (Evas_Object_List *)n2; l = l->next)
 	  removes = evas_list_append(removes, l);
+	if (n1->type == NODE_TEXT)
+	  {
+	     if (!n1->text)
+	       evas_textblock2_cursor_node_delete(cur1);
+	  }
+	else
+	  {
+	     if (n1->text[0] == '+')
+	       format_hump = evas_list_append(format_hump, n1);
+	     else
+	       {
+		  o->nodes = evas_object_list_remove(o->nodes, n1);
+		  if (n1->text) free(n1->text);
+		  free(n1);
+	       }
+	  }
 	while (removes)
 	  {
 	     n = removes->data;
-	     o->nodes = evas_object_list_remove(o->nodes, n);
-	     if (n->text) free(n->text);
-	     free(n);
+	     if (n->type == NODE_TEXT)
+	       {
+		  o->nodes = evas_object_list_remove(o->nodes, n);
+		  if (n->text) free(n->text);
+		  free(n);
+	       }
+	     else
+	       {
+		  if (n->text[0] == '+')
+		    format_hump = evas_list_append(format_hump, n);
+		  else if (n->text[0] == '-')
+		    {
+		       o->nodes = evas_object_list_remove(o->nodes, n);
+		       if (n->text) free(n->text);
+		       free(n);
+		       n = evas_list_data(evas_list_last(format_hump));
+		       if (n)
+			 {
+			    o->nodes = evas_object_list_remove(o->nodes, n);
+			    if (n->text) free(n->text);
+			    free(n);
+			 }
+		    }
+		  else
+		    {
+		  o->nodes = evas_object_list_remove(o->nodes, n);
+		       if (n->text) free(n->text);
+		       free(n);
+		    }
+	       }
 	     removes = evas_list_remove_list(removes, removes);
 	  }
-	if (!n1->text)
-	  evas_textblock2_cursor_node_delete(cur1);
-	if (!n2->text)
-	  evas_textblock2_cursor_node_delete(cur2);
+        if (n2->type == NODE_TEXT)
+	  {
+	     n2->text = _strbuf_remove(n2->text, 0, index, &(n2->len), &(n2->alloc));
+	     if (!n2->text)
+	       evas_textblock2_cursor_node_delete(cur2);
+	  }
+	else
+	  {
+	     if (n2->text[0] == '-')
+	       {
+		  o->nodes = evas_object_list_remove(o->nodes, n2);
+		  if (n2->text) free(n2->text);
+		  free(n2);
+		  n = evas_list_data(evas_list_last(format_hump));
+		  if (n)
+		    {
+		       o->nodes = evas_object_list_remove(o->nodes, n);
+		       if (n->text) free(n->text);
+		       free(n);
+		    }
+	       }
+	     else
+	       {
+		  o->nodes = evas_object_list_remove(o->nodes, n2);
+		  if (n2->text) free(n2->text);
+		  free(n2);
+	       }
+	  }
+	if (format_hump) format_hump = evas_list_free(format_hump);
+	cur1->node = tcur.node;
+	cur1->pos = tcur.pos;
+	cur2->node = tcur.node;
+	cur2->pos = tcur.pos;
      }
    o->formatted.valid = 0;
    o->native.valid = 0;
@@ -3276,6 +3454,18 @@ evas_textblock2_cursor_node_text_get(Evas_Textblock_Cursor *cur)
 	return cur->node->text;
      }
    return NULL;
+}
+
+int
+evas_textblock2_cursor_node_text_length_get(Evas_Textblock_Cursor *cur)
+{
+   if (!cur) return 0;
+   if (!cur->node) return 0;
+   if (cur->node->type == NODE_TEXT)
+     {
+	return cur->node->len;
+     }
+   return 0;
 }
 
 const char *
