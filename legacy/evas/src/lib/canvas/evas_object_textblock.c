@@ -93,6 +93,7 @@ struct _Evas_Object_Textblock_Format
    struct {
       char             *name;
       char             *source;
+      char             *fallbacks;
       int               size;
       void             *font;
    } font;
@@ -411,6 +412,7 @@ _format_free(Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
    fmt->ref--;
    if (fmt->ref > 0) return;
    if (fmt->font.name) free(fmt->font.name);
+   if (fmt->font.fallbacks) free(fmt->font.fallbacks);
    if (fmt->font.source) free(fmt->font.source);
    evas_font_free(obj->layer->evas, fmt->font.font);
    free(fmt);
@@ -658,6 +660,7 @@ _clean_white(int clean_start, int clean_end, char *str)
    char *p, *p2, *str2 = NULL;
    int white, pwhite, start, ok;
 
+   return str;
    str2 = malloc(strlen(str) + 2);
    p = str;
    p2 = str2;
@@ -795,6 +798,19 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	  {
 	     if (fmt->font.name) free(fmt->font.name);
 	     fmt->font.name = strdup(param);
+	     new_font = 1;
+	  }
+     }
+   else if (!strcmp(cmd, "font_fallbacks"))
+     {
+	if ((!fmt->font.fallbacks) ||
+	    ((fmt->font.fallbacks) && (strcmp(fmt->font.fallbacks, param))))
+	  {
+	     /* policy - when we say "fallbacks" do we prepend and use prior
+	      * fallbacks... or shoudl we replace. for nwo we replace
+	      */
+	     if (fmt->font.fallbacks) free(fmt->font.fallbacks);
+	     fmt->font.fallbacks = strdup(param);
 	     new_font = 1;
 	  }
      }
@@ -1018,11 +1034,22 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
    if (new_font)
      {
 	void *of;
-	
+	char *buf = NULL;
+
 	of = fmt->font.font;
+	if ((fmt->font.name) && (fmt->font.fallbacks))
+	  {
+	     buf = malloc(strlen(fmt->font.name) + 1 + strlen(fmt->font.fallbacks) + 1);
+	     strcpy(buf, fmt->font.name);
+	     strcat(buf, ",");
+	     strcat(buf, fmt->font.fallbacks);
+	  }
+	else if (fmt->font.name)
+	  buf = strdup(fmt->font.name);
 	fmt->font.font = evas_font_load(obj->layer->evas, 
 					fmt->font.name, fmt->font.source, 
 					fmt->font.size);
+	if (buf) free(buf);
 	if (of) evas_font_free(obj->layer->evas, of);
      }
 }
@@ -1142,15 +1169,28 @@ static Evas_Object_Textblock_Format *
 _format_dup(Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
 {
    Evas_Object_Textblock_Format *fmt2;
+   char *buf = NULL;
    
    fmt2 = calloc(1, sizeof(Evas_Object_Textblock_Format));
    memcpy(fmt2, fmt, sizeof(Evas_Object_Textblock_Format));
    fmt2->ref = 1;
    if (fmt->font.name) fmt2->font.name = strdup(fmt->font.name);
+   if (fmt->font.fallbacks) fmt2->font.fallbacks = strdup(fmt->font.fallbacks);
    if (fmt->font.source) fmt2->font.source = strdup(fmt->font.source);
+
+   if ((fmt2->font.name) && (fmt2->font.fallbacks))
+     {
+	buf = malloc(strlen(fmt2->font.name) + 1 + strlen(fmt2->font.fallbacks) + 1);
+	strcpy(buf, fmt2->font.name);
+	strcat(buf, ",");
+	strcat(buf, fmt2->font.fallbacks);
+     }
+   else if (fmt2->font.name)
+     buf = strdup(fmt2->font.name);
    fmt2->font.font = evas_font_load(obj->layer->evas, 
-				   fmt2->font.name, fmt2->font.source, 
+				   fmt2->font.name, fmt2->font.source,
 				   fmt2->font.size);
+   if (buf) free(buf);
    return fmt2;
 }
 
@@ -2363,7 +2403,7 @@ void
 evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
 {
    TB_HEAD();
-   if (o->markup_text)
+   if ((text != o->markup_text) && (o->markup_text))
      {
 	free(o->markup_text);
 	o->markup_text = NULL;
@@ -2375,9 +2415,13 @@ evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
    evas_object_change(obj);
    if (!o->style)
      {
-        if (text) o->markup_text = strdup(text);
+	if (text != o->markup_text)
+	  {
+	     if (text) o->markup_text = strdup(text);
+	  }
 	return;
      }
+   evas_textblock2_cursor_node_first(o->cursor);
    if (text)
      {
 	char *s, *p;
@@ -2487,7 +2531,8 @@ evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text)
 	       }
 	     p++;
 	  }
-	o->markup_text = strdup(text);
+	if (text != o->markup_text)
+	  o->markup_text = strdup(text);
      }
      {
 	Evas_List *l;
