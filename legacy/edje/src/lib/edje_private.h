@@ -68,9 +68,11 @@
 */
 
 typedef struct _Edje_File                            Edje_File;
+typedef struct _Edje_Style                           Edje_Style;
+typedef struct _Edje_Style_Tag                       Edje_Style_Tag;
 typedef struct _Edje_Data                            Edje_Data;
-typedef struct _Edje_Font_Directory                 Edje_Font_Directory;
-typedef struct _Edje_Font_Directory_Entry           Edje_Font_Directory_Entry;
+typedef struct _Edje_Font_Directory                  Edje_Font_Directory;
+typedef struct _Edje_Font_Directory_Entry            Edje_Font_Directory_Entry;
 typedef struct _Edje_Image_Directory                 Edje_Image_Directory;
 typedef struct _Edje_Image_Directory_Entry           Edje_Image_Directory_Entry;
 typedef struct _Edje_Program                         Edje_Program;
@@ -96,7 +98,8 @@ typedef struct _Edje_Part_Description                Edje_Part_Description;
 #define EDJE_PART_TYPE_TEXT      2
 #define EDJE_PART_TYPE_IMAGE     3
 #define EDJE_PART_TYPE_SWALLOW   4
-#define EDJE_PART_TYPE_LAST      5
+#define EDJE_PART_TYPE_TEXTBLOCK 5
+#define EDJE_PART_TYPE_LAST      6
 
 #define EDJE_TEXT_EFFECT_NONE                0
 #define EDJE_TEXT_EFFECT_PLAIN               1
@@ -160,6 +163,7 @@ struct _Edje_File
    Edje_Image_Directory           *image_dir;
    Edje_Part_Collection_Directory *collection_dir;
    Evas_List                      *data;
+   Evas_List                      *styles;
    
    int                             references;
    char                           *compiler;
@@ -168,6 +172,19 @@ struct _Edje_File
    
    Evas_Hash                      *collection_hash;
    Evas_List                      *collection_cache;
+};
+
+struct _Edje_Style
+{
+   char                           *name;
+   Evas_List                      *tags;
+   Evas_Textblock_Style           *style;
+};
+
+struct _Edje_Style_Tag
+{
+   char                           *key;
+   char                           *value;
 };
 
 /*----------*/
@@ -390,6 +407,7 @@ struct _Edje_Part_Description
    struct {
       char          *text; /* if "" or NULL, then leave text unchanged */
       char          *text_class; /* how to apply/modify the font */
+      char          *style; /* the text style if a tectblock */
       char          *font; /* if a specific font is asked for */
       
       int            size; /* 0 = use user set size */
@@ -528,6 +546,7 @@ struct _Edje_Real_Part
    struct {
       char                  *text;
       char                  *font;
+      char                  *style;
       int                    size;
       struct {
 	 double              in_w, in_h;
@@ -732,6 +751,8 @@ struct _Edje_Message
 };
 
 extern Eet_Data_Descriptor *_edje_edd_edje_file;
+extern Eet_Data_Descriptor *_edje_edd_edje_style;
+extern Eet_Data_Descriptor *_edje_edd_edje_style_tag;
 extern Eet_Data_Descriptor *_edje_edd_edje_data;
 extern Eet_Data_Descriptor *_edje_edd_edje_font_directory;
 extern Eet_Data_Descriptor *_edje_edd_edje_font_directory_entry;

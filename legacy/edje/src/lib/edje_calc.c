@@ -429,7 +429,76 @@ _edje_part_recalc_single(Edje *ed,
 	if (ep->swallow_params.min.h > desc->min.h) minh = ep->swallow_params.min.h;
      }
    /* if we have text that wants to make the min size the text size... */
-   if ((chosen_desc) && (ep->part->type == EDJE_PART_TYPE_TEXT))
+   if ((chosen_desc) && (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK))
+     {
+	Evas_Coord tw, th, ins_l, ins_r, ins_t, ins_b;
+	char *text = "";
+	char *style = "";
+	Edje_Style *stl  = NULL;
+	Evas_List *l;
+	
+	if (chosen_desc->text.id_source >= 0)
+	  {
+	     ep->text.source = ed->table_parts[chosen_desc->text.id_source % ed->table_parts_size];
+	     style = ep->text.source->chosen_description->text.style;
+	  }
+	else
+	  {
+	     ep->text.source = NULL;
+	     style = chosen_desc->text.style;
+	  }
+	
+	if (chosen_desc->text.id_text_source >= 0)
+	  {
+	     ep->text.text_source = ed->table_parts[chosen_desc->text.id_text_source % ed->table_parts_size];
+	     text = ep->text.text_source->chosen_description->text.text;
+	     if (ep->text.text_source->text.text) text = ep->text.text_source->text.text;
+	  }
+	else
+	  {
+	     ep->text.text_source = NULL;
+	     text = chosen_desc->text.text;
+	     if (ep->text.text) text = ep->text.text;
+	  }
+	
+	for (l = ed->file->styles; l; l = l->next)
+	  {
+	     stl = l->data;
+	     if (!strcmp(stl->name, style)) break;
+	     stl = NULL;
+	  }
+	
+	if (stl)
+	  {
+	     char *ptxt;
+	     
+	     if (evas_object_textblock2_style_get(ep->object) != stl->style)
+	       evas_object_textblock2_style_set(ep->object, stl->style);
+	     ptxt = evas_object_textblock2_text_markup_get(ep->object);
+	     if (((!ptxt) && (text)) || 
+		 ((ptxt) && (text) && (strcmp(ptxt, text))) ||
+		 ((ptxt) && (!text)))
+	       evas_object_textblock2_text_markup_set(ep->object, text);
+	     if ((chosen_desc->text.min_x) || (chosen_desc->text.min_y))
+	       {
+		  int mw = 0, mh = 0;
+		  
+		  if (!chosen_desc->text.min_x)
+		    {
+		       evas_object_resize(ep->object, params->w, params->h);
+		       evas_object_textblock2_size_formatted_get(ep->object, &tw, &th);
+		    }
+		  else
+		    evas_object_textblock2_size_native_get(ep->object, &tw, &th);
+		  evas_object_textblock2_style_insets_get(ep->object, &ins_l, &ins_r, &ins_t, &ins_b);
+		  mw = ins_l + tw + ins_r;
+		  mh = ins_t + th + ins_b;
+		  if (mw > minw) minw = mw;
+		  if (mh > minh) minh = mh;
+	       }
+	  }
+     }
+   else if ((chosen_desc) && (ep->part->type == EDJE_PART_TYPE_TEXT))
      {
 	char      *text;
 	char      *font;
@@ -1036,6 +1105,11 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 	     else evas_object_hide(ep->object);
 	  }
 	else if (ep->part->type == EDJE_PART_TYPE_SWALLOW)
+	  {
+	     evas_object_move(ep->object, ed->x + p3.x, ed->y + p3.y);
+	     evas_object_resize(ep->object, p3.w, p3.h);
+	  }
+	else if (ep->part->type == EDJE_PART_TYPE_TEXTBLOCK)
 	  {
 	     evas_object_move(ep->object, ed->x + p3.x, ed->y + p3.y);
 	     evas_object_resize(ep->object, p3.w, p3.h);

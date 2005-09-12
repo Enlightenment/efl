@@ -2,6 +2,8 @@
 #include "edje_private.h"
 
 Eet_Data_Descriptor *_edje_edd_edje_file = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_style = NULL;
+Eet_Data_Descriptor *_edje_edd_edje_style_tag = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_data = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_font_directory = NULL;
 Eet_Data_Descriptor *_edje_edd_edje_font_directory_entry = NULL;
@@ -38,6 +40,8 @@ void
 _edje_edd_free(void)
 {
    FREED(_edje_edd_edje_file);
+   FREED(_edje_edd_edje_style);
+   FREED(_edje_edd_edje_style_tag);
    FREED(_edje_edd_edje_data);
    FREED(_edje_edd_edje_font_directory);
    FREED(_edje_edd_edje_font_directory_entry);
@@ -101,6 +105,18 @@ _edje_edd_setup(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_data, Edje_Data, "key", key, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_data, Edje_Data, "value", value, EET_T_STRING);
    
+   _edje_edd_edje_style_tag = 
+     NEWD("Edje_Style_Tag", 
+	  Edje_Style_Tag);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_style_tag, Edje_Style_Tag, "key", key, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_style_tag, Edje_Style_Tag, "value", value, EET_T_STRING);
+   
+   _edje_edd_edje_style = 
+     NEWD("Edje_Style", 
+	  Edje_Style);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_style, Edje_Style, "name", name, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_style, Edje_Style, "tags", tags, _edje_edd_edje_style_tag);
+   
    /* the main file directory */
    _edje_edd_edje_file = 
      NEWD("Edje_File", 
@@ -112,6 +128,7 @@ _edje_edd_setup(void)
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "image_dir", image_dir, _edje_edd_edje_image_directory);
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "collection_dir", collection_dir, _edje_edd_edje_part_collection_directory);   
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "data", data, _edje_edd_edje_data);
+   EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "styles", styles, _edje_edd_edje_style);
 
    /* parts & programs - loaded induvidually */
    _edje_edd_edje_program_target = 
@@ -208,6 +225,7 @@ _edje_edd_setup(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description, Edje_Part_Description, "color3.a", color3.a, EET_T_UCHAR);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description, Edje_Part_Description, "text.text", text.text, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description, Edje_Part_Description, "text.text_class", text.text_class, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description, Edje_Part_Description, "text.style", text.style, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description, Edje_Part_Description, "text.font", text.font, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description, Edje_Part_Description, "text.size", text.size, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_part_description, Edje_Part_Description, "text.fit_x", text.fit_x, EET_T_UCHAR);

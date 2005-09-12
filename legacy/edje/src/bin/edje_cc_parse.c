@@ -345,6 +345,16 @@ next_token(char *p, char *end, char **new_p, int *delim)
 	       memmove(p, p + 1, strlen(p));
 	     else if ((*p == '\\') && (*(p + 1) == '\\'))
 	       memmove(p, p + 1, strlen(p));
+	     else if ((*p == '\\') && (*(p + 1) == 'n'))
+	       {
+		  memmove(p, p + 1, strlen(p));
+		  *p = '\n';
+	       }
+	     else if ((*p == '\\') && (*(p + 1) == 't'))
+	       {
+		  memmove(p, p + 1, strlen(p));
+		  *p = '\t';
+	       }
 	     else
 	       p++;
 	  }

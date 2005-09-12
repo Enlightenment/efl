@@ -10,6 +10,11 @@ static void st_fonts_font(void);
 
 static void st_data_item(void);
 
+static void ob_styles_style(void);
+static void st_styles_style_name(void);
+static void st_styles_style_base(void);
+static void st_styles_style_tag(void);
+
 static void ob_collections(void);
 
 static void ob_collections_group(void);
@@ -68,6 +73,7 @@ static void st_collections_group_parts_part_description_color3(void);
 static void st_collections_group_parts_part_description_text_text(void);
 static void st_collections_group_parts_part_description_text_text_class(void);
 static void st_collections_group_parts_part_description_text_font(void);
+static void st_collections_group_parts_part_description_text_style(void);
 static void st_collections_group_parts_part_description_text_size(void);
 static void st_collections_group_parts_part_description_text_fit(void);
 static void st_collections_group_parts_part_description_text_min(void);
@@ -94,10 +100,16 @@ New_Statement_Handler statement_handlers[] =
      {"images.image", st_images_image},
      {"fonts.font", st_fonts_font},
      {"data.item", st_data_item},
+     {"styles.style.name", st_styles_style_name},
+     {"styles.style.base", st_styles_style_base},
+     {"styles.style.tag", st_styles_style_tag},
      {"collections.image", st_images_image}, /* dup */
      {"collections.images.image", st_images_image}, /* dup */
      {"collections.font", st_fonts_font}, /* dup */
      {"collections.fonts.font", st_fonts_font}, /* dup */
+     {"collections.styles.style.name", st_styles_style_name}, /* dup */
+     {"collections.styles.style.base", st_styles_style_base}, /* dup */
+     {"collections.styles.style.tag", st_styles_style_tag}, /* dup */
      {"collections.group.name", st_collections_group_name},
      {"collections.group.min", st_collections_group_min},
      {"collections.group.max", st_collections_group_max},
@@ -106,10 +118,16 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.images.image", st_images_image}, /* dup */
      {"collections.group.font", st_fonts_font}, /* dup */
      {"collections.group.fonts.font", st_fonts_font}, /* dup */
+     {"collections.group.styles.style.name", st_styles_style_name}, /* dup */
+     {"collections.group.styles.style.base", st_styles_style_base}, /* dup */
+     {"collections.group.styles.style.tag", st_styles_style_tag}, /* dup */
      {"collections.group.parts.image", st_images_image}, /* dup */
      {"collections.group.parts.images.image", st_images_image}, /* dup */
      {"collections.group.parts.font", st_fonts_font}, /* dup */
      {"collections.group.parts.fonts.font", st_fonts_font}, /* dup */
+     {"collections.group.parts.styles.style.name", st_styles_style_name}, /* dup */
+     {"collections.group.parts.styles.style.base", st_styles_style_base}, /* dup */
+     {"collections.group.parts.styles.style.tag", st_styles_style_tag}, /* dup */
      {"collections.group.parts.part.name", st_collections_group_parts_part_name},
      {"collections.group.parts.part.type", st_collections_group_parts_part_type},
      {"collections.group.parts.part.effect", st_collections_group_parts_part_effect},
@@ -124,6 +142,9 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.images.image", st_images_image}, /* dup */
      {"collections.group.parts.part.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.fonts.font", st_fonts_font}, /* dup */
+     {"collections.group.parts.part.styles.style.name", st_styles_style_name}, /* dup */
+     {"collections.group.parts.part.styles.style.base", st_styles_style_base}, /* dup */
+     {"collections.group.parts.part.styles.style.tag", st_styles_style_tag}, /* dup */
      {"collections.group.parts.part.description.inherit", st_collections_group_parts_part_description_inherit},
      {"collections.group.parts.part.description.state", st_collections_group_parts_part_description_state},
      {"collections.group.parts.part.description.visible", st_collections_group_parts_part_description_visible},
@@ -161,6 +182,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.text.text", st_collections_group_parts_part_description_text_text},
      {"collections.group.parts.part.description.text.text_class", st_collections_group_parts_part_description_text_text_class},
      {"collections.group.parts.part.description.text.font", st_collections_group_parts_part_description_text_font},
+     {"collections.group.parts.part.description.text.style", st_collections_group_parts_part_description_text_style},
      {"collections.group.parts.part.description.text.size", st_collections_group_parts_part_description_text_size},
      {"collections.group.parts.part.description.text.fit", st_collections_group_parts_part_description_text_fit},
      {"collections.group.parts.part.description.text.min", st_collections_group_parts_part_description_text_min},
@@ -172,6 +194,9 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.images.image", st_images_image}, /* dup */
      {"collections.group.parts.part.description.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.fonts.font", st_fonts_font}, /* dup */
+     {"collections.group.parts.part.description.styles.style.name", st_styles_style_name}, /* dup */
+     {"collections.group.parts.part.description.styles.style.base", st_styles_style_base}, /* dup */
+     {"collections.group.parts.part.description.styles.style.tag", st_styles_style_tag}, /* dup */
      {"collections.group.parts.part.description.programs.image", st_images_image}, /* dup */
      {"collections.group.parts.part.description.programs.images.image", st_images_image}, /* dup */
      {"collections.group.parts.part.description.programs.font", st_fonts_font}, /* dup */
@@ -259,21 +284,31 @@ New_Object_Handler object_handlers[] =
      {"images", NULL},
      {"fonts", NULL},
      {"data", NULL},
+     {"styles", NULL},
+     {"styles.style", ob_styles_style},
      {"collections", ob_collections},
      {"collections.images", NULL}, /* dup */
      {"collections.fonts", NULL}, /* dup */
+     {"collections.styles", NULL}, /* dup */
+     {"collections.styles.style", ob_styles_style}, /* dup */
      {"collections.group", ob_collections_group},
      {"collections.group.data", NULL},
      {"collections.group.script", ob_collections_group_script},
      {"collections.group.images", NULL}, /* dup */
      {"collections.group.fonts", NULL}, /* dup */
+     {"collections.group.styles", NULL}, /* dup */
+     {"collections.group.styles.style", ob_styles_style}, /* dup */
      {"collections.group.parts", NULL},
      {"collections.group.parts.images", NULL}, /* dup */
      {"collections.group.parts.fonts", NULL}, /* dup */
+     {"collections.group.parts.styles", NULL}, /* dup */
+     {"collections.group.parts.styles.style", ob_styles_style}, /* dup */
      {"collections.group.parts.part", ob_collections_group_parts_part},
      {"collections.group.parts.part.dragable", NULL},
      {"collections.group.parts.part.images", NULL}, /* dup */
      {"collections.group.parts.part.fonts", NULL}, /* dup */
+     {"collections.group.parts.part.styles", NULL}, /* dup */
+     {"collections.group.parts.part.styles.style", ob_styles_style}, /* dup */
      {"collections.group.parts.part.description", ob_collections_group_parts_part_description},
      {"collections.group.parts.part.description.rel1", NULL},
      {"collections.group.parts.part.description.rel2", NULL},
@@ -286,6 +321,8 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.text.fonts", NULL}, /* dup */
      {"collections.group.parts.part.description.images", NULL}, /* dup */
      {"collections.group.parts.part.description.fonts", NULL}, /* dup */
+     {"collections.group.parts.part.description.styles", NULL}, /* dup */
+     {"collections.group.parts.part.description.styles.style", ob_styles_style}, /* dup */
      {"collections.group.parts.part.description.program", ob_collections_group_programs_program}, /* dup */
      {"collections.group.parts.part.description.program.script", ob_collections_group_programs_program_script}, /* dup */
      {"collections.group.parts.part.description.programs", NULL}, /* dup */
@@ -451,6 +488,67 @@ st_data_item(void)
    di->key = parse_str(0);
    di->value = parse_str(1);
    edje_file->data = evas_list_append(edje_file->data, di);
+}
+
+static void
+ob_styles_style(void)
+{
+   Edje_Style *stl;
+   
+   stl = mem_alloc(SZ(Edje_Style));
+   edje_file->styles = evas_list_append(edje_file->styles, stl);
+}
+
+static void
+st_styles_style_name(void)
+{
+   Edje_Style *stl, *tstl;
+   Evas_List *l;
+   
+   stl = evas_list_data(evas_list_last(edje_file->styles));
+   stl->name = parse_str(0);
+   for (l = edje_file->styles; l; l = l->next)
+     {
+	tstl = l->data;
+	if ((stl != tstl) && (!strcmp(stl->name, tstl->name)))
+	  {
+	     fprintf(stderr, "%s: Error. parse error %s:%i. There is already a style named \"%s\"\n",
+		     progname, file_in, line - 1, stl->name);
+	     exit(-1);
+	  }
+     }
+}
+
+static void
+st_styles_style_base(void)
+{
+   Edje_Style *stl;
+   Edje_Style_Tag *tag;
+   
+   stl = evas_list_data(evas_list_last(edje_file->styles));
+   if (stl->tags)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. There is already a basic format for the style\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+   tag = mem_alloc(SZ(Edje_Style_Tag));
+   tag->key = mem_strdup("DEFAULT");
+   tag->value = parse_str(0);
+   stl->tags = evas_list_append(stl->tags, tag);
+}
+
+static void
+st_styles_style_tag(void)
+{
+   Edje_Style *stl;
+   Edje_Style_Tag *tag;
+   
+   stl = evas_list_data(evas_list_last(edje_file->styles));
+   tag = mem_alloc(SZ(Edje_Style_Tag));
+   tag->key = parse_str(0);
+   tag->value = parse_str(1);
+   stl->tags = evas_list_append(stl->tags, tag);
 }
 
 static void
@@ -624,6 +722,7 @@ st_collections_group_parts_part_type(void)
 			 "TEXT", EDJE_PART_TYPE_TEXT,
 			 "IMAGE", EDJE_PART_TYPE_IMAGE,
 			 "SWALLOW", EDJE_PART_TYPE_SWALLOW,
+			 "TEXTBLOCK", EDJE_PART_TYPE_TEXTBLOCK,
 			 NULL);
 }
 
@@ -1600,13 +1699,14 @@ st_collections_group_parts_part_description_text_text(void)
    Edje_Part_Collection *pc;
    Edje_Part *ep;
    Edje_Part_Description *ed;
-
-   check_arg_count(1);
-
+   char *str = NULL;
+   int i;
+   
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
 
-   if (ep->type != EDJE_PART_TYPE_TEXT)
+   if ((ep->type != EDJE_PART_TYPE_TEXT) &&
+       (ep->type != EDJE_PART_TYPE_TEXTBLOCK))
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"text attributes in non-TEXT part.\n",
@@ -1616,7 +1716,21 @@ st_collections_group_parts_part_description_text_text(void)
 
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-   ed->text.text = parse_str(0);
+   for (i = 0; ;i++)
+     {
+	char *s;
+	
+	if (!is_param(i)) break;
+	s = parse_str(i);
+	if (!str) str = s;
+	else
+	  {
+	     str = realloc(str, strlen(str) + strlen(s) + 1);
+	     strcat(str, s);
+	     free(s);
+	  }
+     }
+   ed->text.text = str;
 }
 
 static void
@@ -1667,6 +1781,31 @@ st_collections_group_parts_part_description_text_font(void)
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
    ed->text.font = parse_str(0);
+}
+
+static void
+st_collections_group_parts_part_description_text_style(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_TEXTBLOCK)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"text attributes in non-TEXTBLOCK part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->text.style = parse_str(0);
 }
 
 static void

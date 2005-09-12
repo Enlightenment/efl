@@ -1,6 +1,6 @@
 fonts {
    font: "Vera.ttf" "Vera";
-   font: "VeraBd.ttf" "Vera Bold";
+   font: "VeraBd.ttf" "Vera-Bold";
 }
 images {
    image: "bg.png" LOSSY 95;
@@ -134,6 +134,17 @@ data
    item: "The Key" "String data attached to the key";
 }
 
+styles
+{
+   style {
+      name: "default";
+      base: "font=Vera font_size=10 align=left color=#ffffff style=soft_shadow shadow_color=#00000020 wrap=word";
+      
+      tag:  "br" "\n";
+      tag:  "hilight" "+ font_size=12 font=Vera-Bold style=glow glow2_color=#fe87 glow_color=#fa14";
+   }
+}
+
 collections {
    group {
       name: "test";
@@ -220,6 +231,28 @@ collections {
 	       image {
 		  normal: "bg.png";
 	       border: 12 12 12 12;
+	       }
+	    }
+	 }
+	 part {
+	    name:   "textblock";
+	    type:   TEXTBLOCK;
+	    description {
+	       state:    "default" 0.0;
+	       rel1 {
+		  relative: 0.0  0.0;
+		  offset:   10 10;
+	       }
+	       rel2 {
+		  relative: 1.0 1.0;
+		  offset:   -11 -11;
+	       }
+	       text {
+		  style: "default";
+		  text:  
+		  "This is a longer test string<br>"
+		    "after a newline some <hilight>HILIGHTED text can be styled</hilight> by the edje...<br>"
+		    "and more.";
 	       }
 	    }
 	 }
@@ -583,7 +616,7 @@ collections {
 	       get_text_class("plainjane", font, size);
 	       snprintf(buf, 256, "%s SIZE: %f", font, size);
 	       emit("DEBUG...", buf); 
-	       set_text_class("plainjane", "Vera Bold", 10.0);
+	       set_text_class("plainjane", "Vera-Bold", 10.0);
             }
         }   
 	program {

@@ -501,7 +501,8 @@ edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
    if ((!ed) || (!part)) return;
    rp = _edje_real_part_get(ed, (char *)part);
    if (!rp) return;
-   if (rp->part->type != EDJE_PART_TYPE_TEXT) return;
+   if ((rp->part->type != EDJE_PART_TYPE_TEXT) &&
+       (rp->part->type != EDJE_PART_TYPE_TEXTBLOCK)) return;
    if ((!rp->text.text) && (!text))
      return;
    if ((rp->text.text) && (text) && 

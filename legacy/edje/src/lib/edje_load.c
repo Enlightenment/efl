@@ -176,6 +176,8 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 		  evas_object_color_set(rp->object, 0, 0, 0, 0);
 		  evas_object_pass_events_set(rp->object, 1);
 	       }
+	     else if (ep->type == EDJE_PART_TYPE_TEXTBLOCK)
+	       rp->object = evas_object_textblock2_add(ed->evas);
 	     else
 	       {
 		  printf("EDJE ERROR: wrong part type %i!\n", ep->type);
@@ -719,7 +721,7 @@ void
 _edje_file_add(Edje *ed)
 {
    Eet_File *ef = NULL;
-   Evas_List *l;
+   Evas_List *l, *ll;
    int id = -1;
 
    if (_edje_edd_edje_file == NULL)
@@ -733,7 +735,6 @@ _edje_file_add(Edje *ed)
 	ed->file = _edje_file_cache_find(ed->path);
 	if (!ed->file)
 	  {
-//	     printf("OPEN EDJE %s\n", ed->path);
 	     ef = eet_open(ed->path, EET_FILE_MODE_READ);
 	     if (!ef)
 	       {
@@ -769,6 +770,59 @@ _edje_file_add(Edje *ed)
 	  }
      }
 
+   for (l = ed->file->styles; l; l = l->next)
+     {
+	Edje_Style *stl;
+	Edje_Style_Tag *tag;
+	char *buf = NULL;
+	int len = 0;
+	int def_done;
+	
+	stl = l->data;
+	if (stl->style) break;
+	stl->style = evas_textblock2_style_new();
+	evas_textblock2_style_set(stl->style, (const char *)buf);
+	for (ll = stl->tags; ll; ll = ll->next)
+	  {
+	     tag = ll->data;
+	     len += strlen(tag->key);
+	     len += 1;
+	     len += 1;
+	     len += strlen(tag->value);
+	     len += 1;
+	  }
+	if (_edje_fontset_append)
+	  {
+	     len += 1 + strlen("font_fallbacks=") + strlen(_edje_fontset_append);
+	  }
+	len += 1 + strlen("font_source=") + strlen(ed->path);
+	buf = malloc(len + 1);
+	buf[0] = 0;
+	for (ll = stl->tags; ll; ll = ll->next)
+	  {
+	     tag = ll->data;
+	     strcat(buf, tag->key);
+	     strcat(buf, "='");
+	     strcat(buf, tag->value);
+	     if ((!def_done) && (!strcmp(tag->key, "DEFAULT")))
+	       {
+		  if (_edje_fontset_append)
+		    {
+		       strcat(buf, " ");
+		       strcat(buf, "font_fallbacks=");
+		       strcat(buf, _edje_fontset_append);
+		    }
+		  strcat(buf, " ");
+		  strcat(buf, "font_source=");
+		  strcat(buf, ed->path);
+		  def_done = 1;
+	       }
+	     strcat(buf, "'");
+	  }
+	evas_textblock2_style_set(stl->style, buf);
+	free(buf);
+     }
+   
    ed->collection = _edje_collection_find(ed->file, ed->part);
    if (!ed->collection)
      {
@@ -1027,6 +1081,26 @@ _edje_file_free(Edje_File *edf)
    if (edf->compiler) free(edf->compiler);
    if (edf->collection_cache)
      _edje_collection_cleanup(edf);
+   while (edf->styles)
+     {
+	Edje_Style *stl;
+	
+	stl == edf->styles->data;
+	edf->styles = evas_list_remove_list(edf->styles, edf->styles);
+	while (stl->tags)
+	  {
+	     Edje_Style_Tag *tag;
+	     
+	     tag = stl->tags->data;
+	     stl->tags = evas_list_remove_list(stl->tags, stl->tags);
+	     if (tag->key) free(tag->key);
+	     if (tag->value) free(tag->value);
+	     free(tag);
+	  }
+	if (stl->name) free(stl->name);
+	if (stl->style) evas_textblock2_style_free(stl->style);
+	free(stl);
+     }
    free(edf);
 }
 
