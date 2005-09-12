@@ -247,7 +247,7 @@ ecore_file_ls(const char *dir)
 	     ecore_list_goto_first(list);
 	     while ((file = ecore_list_current(list)))
 	       {
-		  if (strcmp(file, dp->d_name) > 0)
+		  if (strcasecmp(file, dp->d_name) > 0)
 		    {
 		       f = strdup(dp->d_name);
 		       ecore_list_insert(list, f);
@@ -259,7 +259,7 @@ ecore_file_ls(const char *dir)
 	     if (!file)
 	       {
 		  f = strdup(dp->d_name);
-		  ecore_list_append(list, f);
+		  ecore_list_insert(list, f);
 	       }
 	  }
      }
