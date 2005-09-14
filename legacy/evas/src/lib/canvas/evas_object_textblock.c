@@ -833,7 +833,6 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	     if (fmt->font.source) free(fmt->font.source);
 	     fmt->font.source = strdup(param);
 	     new_font = 1;
-	     printf("font src: %s\n", fmt->font.source);
 	  }
      }
    else if (!strcmp(cmd, "color"))
@@ -1097,7 +1096,7 @@ _format_param_parse(char *item, char **key, char **val)
 static char *
 _format_parse(char **s)
 {
-   char *p, *item;
+   char *p, *item, *ss, *ds;
    char *s1 = NULL, *s2 = NULL;
    int quote = 0;
    
@@ -1114,12 +1113,18 @@ _format_parse(char **s)
 	  {
 	     if (!quote)
 	       {
-		  if (*p == '"') quote = 1;
-		  else if (*p == ' ') s2 = p;
+		  if ((p > *s) && (p[-1] != '\\'))
+		    {
+		       if (*p == '"') quote = 1;
+		       else if (*p == ' ') s2 = p;
+		    }
 	       }
 	     else
 	       {
-		  if (*p == '"') quote = 0;
+		  if ((p > *s) && (p[-1] != '\\'))
+		    {
+		       if (*p == '"') quote = 0;
+		    }
 	       }
 	     if (*p == 0) s2 = p;
 	  }
@@ -1129,10 +1134,17 @@ _format_parse(char **s)
 	     item = malloc(s2 - s1 + 1);
 	     if (item)
 	       {
-		  strncpy(item, s1, s2 - s1);
-		  item[s2 - s1] = 0;
+		  ds = item;
+		  for (ds = item, ss = s1; ss < s2; ss++)
+		    {
+		       if ((*ss == '\\') && (ss < (s2 - 1))) ss++;
+		       *ds = *ss;
+		       ds++;
+		    }
+		  *ds = 0;
 	       }
 	     *s = s2;
+	     printf("ITEM: %s\n", item);
 	     return item;
 	  }
      }
@@ -1566,7 +1578,6 @@ _layout_walk_back_to_item_word_redo(Ctxt *c, Evas_Object_Textblock_Item *it)
    Evas_List *remove_items = NULL, *l;
    int index, p, ch, tw, th, inset, adv;
    
-//   printf("_layout_walk_back_to_item_word_redo(...)\n");
    /* it is not appended yet */
    for (pit = (Evas_Object_Textblock_Item *)((Evas_Object_List *)c->ln->items)->last;
 	pit;
@@ -2316,7 +2327,7 @@ evas_textblock2_style_set(Evas_Textblock_Style *ts, const char *text)
 	       }
 	     else if (!val_stop)
 	       {
-		  if ((*p) == '\'')
+		  if (((*p) == '\'') && (p > ts->style_text) && (p[-1] != '\\'))
 		    val_stop = p;
 	       }
 	     if ((key_start) && (key_stop) && (val_start) && (val_stop))
