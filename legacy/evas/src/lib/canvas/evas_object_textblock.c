@@ -1061,22 +1061,6 @@ _format_is_param(char *item)
    return 0;
 }
 
-static char *
-_str_deescape(char *str)
-{
-   char *s2, *s, *d;
-   
-   s2 = malloc(strlen(str) + 1);
-   if (!s2) return NULL;
-   for (s = str, d = s2; *s != 0; s++, d++)
-     {
-	if ((*s == '\\') && (s[1] != 0)) s++;
-	*d = *s;
-     }
-   *d = 0;
-   return s2;
-}
-
 static void
 _format_param_parse(char *item, char **key, char **val)
 {
@@ -1090,7 +1074,7 @@ _format_param_parse(char *item, char **key, char **val)
    k[p - item] = 0;
    *key = k;
    p++;
-   v = _str_deescape(p);
+   v = strdup(p);
    *val = v;
 }
 
