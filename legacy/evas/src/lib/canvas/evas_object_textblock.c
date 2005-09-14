@@ -1132,7 +1132,6 @@ _format_parse(char **s)
 		  *ds = 0;
 	       }
 	     *s = s2;
-	     printf("ITEM: %s\n", item);
 	     return item;
 	  }
      }
