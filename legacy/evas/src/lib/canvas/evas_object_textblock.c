@@ -1098,7 +1098,6 @@ _format_parse(char **s)
 {
    char *p, *item, *ss, *ds;
    char *s1 = NULL, *s2 = NULL;
-   int quote = 0;
    
    p = *s;
    if (*p == 0) return NULL;
@@ -1111,20 +1110,9 @@ _format_parse(char **s)
 	  }
 	else if (!s2)
 	  {
-	     if (!quote)
+	     if ((p > *s) && (p[-1] != '\\'))
 	       {
-		  if ((p > *s) && (p[-1] != '\\'))
-		    {
-		       if (*p == '"') quote = 1;
-		       else if (*p == ' ') s2 = p;
-		    }
-	       }
-	     else
-	       {
-		  if ((p > *s) && (p[-1] != '\\'))
-		    {
-		       if (*p == '"') quote = 0;
-		    }
+		  if (*p == ' ') s2 = p;
 	       }
 	     if (*p == 0) s2 = p;
 	  }
