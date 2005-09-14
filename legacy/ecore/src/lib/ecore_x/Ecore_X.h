@@ -1203,6 +1203,8 @@ EAPI void                ecore_x_netwm_client_list_stacking_set(Ecore_X_Window r
 EAPI void                ecore_x_netwm_client_active_set(Ecore_X_Window root, Ecore_X_Window win);
 EAPI void                ecore_x_netwm_name_set(Ecore_X_Window win, const char *name);
 EAPI int                 ecore_x_netwm_name_get(Ecore_X_Window win, char **name);
+EAPI void                ecore_x_netwm_startup_id_set(Ecore_X_Window win, const char *id);
+EAPI int                 ecore_x_netwm_startup_id_get(Ecore_X_Window win, char **id);
 EAPI void                ecore_x_netwm_visible_name_set(Ecore_X_Window win, const char *name);
 EAPI int                 ecore_x_netwm_visible_name_get(Ecore_X_Window win, char **name);
 EAPI void                ecore_x_netwm_icon_name_set(Ecore_X_Window win, const char *name);
