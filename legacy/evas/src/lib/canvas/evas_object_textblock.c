@@ -1066,7 +1066,6 @@ _format_param_parse(char *item, char **key, char **val)
 {
    char *p, *pv;
    char *k, *v;
-   int qoute = 0;
    
    p = strchr(item, '=');
    k = malloc(p - item + 1);
