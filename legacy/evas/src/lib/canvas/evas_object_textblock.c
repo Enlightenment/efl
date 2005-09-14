@@ -1123,11 +1123,10 @@ _format_parse(char **s)
 	     if (item)
 	       {
 		  ds = item;
-		  for (ds = item, ss = s1; ss < s2; ss++)
+		  for (ds = item, ss = s1; ss < s2; ss++, ds++)
 		    {
 		       if ((*ss == '\\') && (ss < (s2 - 1))) ss++;
 		       *ds = *ss;
-		       ds++;
 		    }
 		  *ds = 0;
 	       }
