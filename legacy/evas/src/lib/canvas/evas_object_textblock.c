@@ -833,6 +833,7 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	     if (fmt->font.source) free(fmt->font.source);
 	     fmt->font.source = strdup(param);
 	     new_font = 1;
+	     printf("font src: %s\n", fmt->font.source);
 	  }
      }
    else if (!strcmp(cmd, "color"))
@@ -1230,11 +1231,14 @@ static void
 _layout_format_ascent_descent_adjust(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 {
    int ascent, descent;
-   
-   ascent = c->ENFN->font_max_ascent_get(c->ENDT, fmt->font.font);
-   descent = c->ENFN->font_max_descent_get(c->ENDT, fmt->font.font);
-   if (c->maxascent < ascent) c->maxascent = ascent;
-   if (c->maxdescent < descent) c->maxdescent = descent;
+
+   if (fmt->font.font)
+     {
+	ascent = c->ENFN->font_max_ascent_get(c->ENDT, fmt->font.font);
+	descent = c->ENFN->font_max_descent_get(c->ENDT, fmt->font.font);
+	if (c->maxascent < ascent) c->maxascent = ascent;
+	if (c->maxdescent < descent) c->maxdescent = descent;
+     }
 }
 
 static void
@@ -1312,7 +1316,8 @@ _layout_line_advance(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 	int endx;
 	
 	it = (Evas_Object_Textblock_Item *)l;
-	it->baseline = c->ENFN->font_max_ascent_get(c->ENDT, it->format->font.font);
+	if (it->format->font.font)
+	  it->baseline = c->ENFN->font_max_ascent_get(c->ENDT, it->format->font.font);
 	_layout_format_ascent_descent_adjust(c, it->format);
 	endx = it->x + it->w;
 	if (endx > c->ln->w) c->ln->w = endx;
@@ -1365,15 +1370,17 @@ static int
 _layout_text_cutoff_get(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textblock_Item *it)
 {
    int cx, cy, cw, ch;
-	     
-   return c->ENFN->font_char_at_coords_get(c->ENDT, fmt->font.font, it->text,
-					   c->w - 
-					   c->o->style_pad.l - 
-					   c->o->style_pad.r - 
-					   c->marginl - 
-					   c->marginr -
-					   c->x,
-					   0, &cx, &cy, &cw, &ch);
+
+   if (fmt->font.font)
+     return c->ENFN->font_char_at_coords_get(c->ENDT, fmt->font.font, it->text,
+					     c->w - 
+					     c->o->style_pad.l - 
+					     c->o->style_pad.r - 
+					     c->marginl - 
+					     c->marginr -
+					     c->x,
+					     0, &cx, &cy, &cw, &ch);
+   return -1;
 }
 
 static void
@@ -1444,8 +1451,12 @@ _layout_strip_trailing_whitespace(Ctxt *c, Evas_Object_Textblock_Format *fmt, Ev
 	if (_is_white(chr))
 	  {
 	     _layout_item_text_cutoff(c, it, tp);
-	     adv = c->ENFN->font_h_advance_get(c->ENDT, it->format->font.font, it->text);
-	     c->ENFN->font_string_size_get(c->ENDT, it->format->font.font, it->text, &tw, &th);
+	     adv = 0;
+	     if (it->format->font.font)
+	       adv = c->ENFN->font_h_advance_get(c->ENDT, it->format->font.font, it->text);
+	     tw = th = 0;
+	     if (it->format->font.font)
+	       c->ENFN->font_string_size_get(c->ENDT, it->format->font.font, it->text, &tw, &th);
 	     it->w = tw;
 	     it->h = th;
 	     c->x = it->x + adv;
@@ -1604,13 +1615,19 @@ _layout_walk_back_to_item_word_redo(Ctxt *c, Evas_Object_Textblock_Item *it)
    if (new_it)
      {
 	/* append new_it */
-	c->ENFN->font_string_size_get(c->ENDT, new_it->format->font.font, new_it->text, &tw, &th);
+	tw = th = 0;
+	if (new_it->format->font.font)
+	  c->ENFN->font_string_size_get(c->ENDT, new_it->format->font.font, new_it->text, &tw, &th);
 	new_it->w = tw;
 	new_it->h = th;
-	inset = c->ENFN->font_inset_get(c->ENDT, new_it->format->font.font, new_it->text);
+	inset = 0;
+	if (new_it->format->font.font)
+	  inset = c->ENFN->font_inset_get(c->ENDT, new_it->format->font.font, new_it->text);
 	new_it->inset = inset;
 	new_it->x = c->x;
-	adv = c->ENFN->font_h_advance_get(c->ENDT, new_it->format->font.font, new_it->text);
+	adv = 0;
+	if (new_it->format->font.font)
+	  adv = c->ENFN->font_h_advance_get(c->ENDT, new_it->format->font.font, new_it->text);
 	c->x += adv;
 	c->ln->items = evas_object_list_append(c->ln->items, new_it);
      }
@@ -1628,7 +1645,9 @@ _layout_walk_back_to_item_word_redo(Ctxt *c, Evas_Object_Textblock_Item *it)
      {
 	/* append it */
 	it->x = c->x;
-	adv = c->ENFN->font_h_advance_get(c->ENDT, it->format->font.font, it->text);
+	adv = 0;
+	if (it->format->font.font)
+	  adv = c->ENFN->font_h_advance_get(c->ENDT, it->format->font.font, it->text);
 	c->x += adv;
 	c->ln->items = evas_object_list_append(c->ln->items, it);
      }
@@ -1664,7 +1683,9 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	it = _layout_item_new(c, fmt, str);
 	it->source_node = n;
 	it->source_pos = str - n->text;
-	c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, it->text, &tw, &th);
+	tw = th = 0;
+	if (fmt->font.font)
+	  c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, it->text, &tw, &th);
 	if ((c->w >= 0) && 
 	    ((fmt->wrap_word) || (fmt->wrap_char)) && 
 	    ((c->x + tw) > 
@@ -1843,7 +1864,11 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 		    }
 	       }
 	     if (!empty_item)
-	       c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, it->text, &tw, &th);
+	       {
+		  tw = th = 0;
+		  if (fmt->font.font)
+		    c->ENFN->font_string_size_get(c->ENDT, fmt->font.font, it->text, &tw, &th);
+	       }
 	  }
 	else
 	  str = NULL;
@@ -1852,10 +1877,14 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	  {
 	     it->w = tw;
 	     it->h = th;
-	     inset = c->ENFN->font_inset_get(c->ENDT, fmt->font.font, it->text);
+	     inset = 0;
+	     if (fmt->font.font)
+	       inset = c->ENFN->font_inset_get(c->ENDT, fmt->font.font, it->text);
 	     it->inset = inset;
 	     it->x = c->x;
-	     adv = c->ENFN->font_h_advance_get(c->ENDT, fmt->font.font, it->text);
+	     adv = 0;
+	     if (fmt->font.font)
+	       adv = c->ENFN->font_h_advance_get(c->ENDT, fmt->font.font, it->text);
 	     c->x += adv;
 	     c->ln->items = evas_object_list_append(c->ln->items, it);
 	  }
@@ -3667,10 +3696,12 @@ evas_textblock2_cursor_char_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord 
    if (it)
      {
 	pos = cur->pos - it->source_pos;
-	ret = cur->ENFN->font_char_coords_get(cur->ENDT, it->format->font.font,
-					      it->text,
-					      pos,
-					      &x, &y, &w, &h);
+	ret = -1;
+	if (it->format->font.font)
+	  ret = cur->ENFN->font_char_coords_get(cur->ENDT, it->format->font.font,
+						it->text,
+						pos,
+						&x, &y, &w, &h);
 	if (ret <= 0) return -1;
 	x = ln->x + it->x - it->inset + x;
 	if (x < ln->x)
@@ -3762,11 +3793,13 @@ evas_textblock2_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, 
 		       int pos;
 		       int cx, cy, cw, ch;
 		       
-		       pos = cur->ENFN->font_char_at_coords_get(cur->ENDT,
-								it->format->font.font,
-								it->text,
-								x - it->x - ln->x, 0,
-								&cx, &cy, &cw, &ch);
+		       pos = -1;
+		       if (it->format->font.font)
+			 pos = cur->ENFN->font_char_at_coords_get(cur->ENDT,
+								  it->format->font.font,
+								  it->text,
+								  x - it->x - ln->x, 0,
+								  &cx, &cy, &cw, &ch);
 		       if (pos < 0)
 			 return 0;
 		       cur->pos = pos + it->source_pos;
@@ -4138,10 +4171,10 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 				it->format->color.col.b, \
 				((int)it->format->color.col.a * (amul)) / 255);
 #define DRAW_TEXT(ox, oy) \
-   ENFN->font_draw(output, context, surface, it->format->font.font, \
-		   obj->cur.cache.geometry.x + ln->x + it->x - it->inset + x + (ox), \
-		   obj->cur.cache.geometry.y + ln->y + yoff + y + (oy), \
-		   it->w, it->h, it->w, it->h, it->text);
+   if (it->format->font.font) ENFN->font_draw(output, context, surface, it->format->font.font, \
+						 obj->cur.cache.geometry.x + ln->x + it->x - it->inset + x + (ox), \
+						 obj->cur.cache.geometry.y + ln->y + yoff + y + (oy), \
+						 it->w, it->h, it->w, it->h, it->text);
    
    pback = 0;
    /* backing */
