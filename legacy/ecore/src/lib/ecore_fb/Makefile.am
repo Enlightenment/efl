@@ -19,6 +19,7 @@ ecore_fb_private.h \
 ecore_fb_keytab.h
 
 libecore_fb_la_LIBADD = \
+@tslib_libs@ \
 $(top_builddir)/src/lib/ecore/libecore.la
 
 libecore_fb_la_DEPENDENCIES = \

@@ -1,8 +1,12 @@
-
 #include "ecore_private.h"
 #include "Ecore.h"
 #include "ecore_fb_private.h"
 #include "Ecore_Fb.h"
+
+#ifdef HAVE_TSLIB
+#include <tslib.h>
+#include <errno.h>
+#endif
 
 #include <termios.h>
 #include <sys/types.h>
@@ -72,6 +76,11 @@ struct _Ecore_Fb_Ps2_Event
    unsigned char y;
    unsigned char z;
 };
+
+#ifdef HAVE_TSLIB
+struct tsdev *_ecore_fb_tslib_tsdev = NULL;
+struct ts_sample _ecore_fb_tslib_event;
+#endif
 
 static void _ecore_fb_size_get(int *w, int *h);
 static int _ecore_fb_ts_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
@@ -265,10 +274,39 @@ int
 ecore_fb_init(const char *name __UNUSED__)
 {
    int prev_flags;
+#ifdef HAVE_TSLIB
+   char *tslib_tsdevice = NULL;
+#endif
 
    _ecore_fb_init_count++;
    if (_ecore_fb_init_count > 1) return _ecore_fb_init_count;
+#ifdef HAVE_TSLIB
+    if ( ( tslib_tsdevice = getenv("TSLIB_TSDEVICE") ) != NULL )
+    {
+        printf( "ECORE_FB: TSLIB_TSDEVICE = '%s'\n", tslib_tsdevice );
+        _ecore_fb_tslib_tsdev = ts_open( tslib_tsdevice, 1 ); /* 1 = nonblocking, 0 = blocking */
+
+        if ( !_ecore_fb_tslib_tsdev )
+        {
+            printf( "ECORE_FB: Can't ts_open (%s)\n", strerror( errno ) );
+            return 0;
+        }
+
+        if ( ts_config( _ecore_fb_tslib_tsdev ) )
+        {
+            printf( "ECORE_FB: Can't ts_config (%s)\n", strerror( errno ) );
+            return 0;
+        }
+        _ecore_fb_ts_fd = ts_fd( _ecore_fb_tslib_tsdev );
+        if ( _ecore_fb_ts_fd < 0 )
+        {
+            printf( "ECORE_FB: Can't open touchscreen (%s)\n", strerror( errno ) );
+            return 0;
+        }
+    }
+#else
    _ecore_fb_ts_fd = open("/dev/touchscreen/0", O_RDONLY);
+#endif
    if (_ecore_fb_ts_fd >= 0)
      {
 	prev_flags = fcntl(_ecore_fb_ts_fd, F_GETFL);
@@ -786,7 +824,21 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
 	char *ptr;
 	double t;
 	int did_triple = 0;
-	
+
+#ifdef HAVE_TSLIB
+    if ( _ecore_fb_ts_apply_cal )
+        num = ts_read_raw( _ecore_fb_tslib_tsdev, &_ecore_fb_tslib_event, 1 );
+    else
+        num = ts_read( _ecore_fb_tslib_tsdev, &_ecore_fb_tslib_event, 1 );
+    if ( num != 1 )
+    {
+        return 1; /* no more samples at this time */
+    }
+    x = _ecore_fb_tslib_event.x;
+    y = _ecore_fb_tslib_event.y;
+    pressure = _ecore_fb_tslib_event.pressure;
+    v = 1; /* loop, there might be more samples */
+#else
 	ptr = (char *)&(_ecore_fb_ts_event);
 	ptr += _ecore_fb_ts_event_byte_count;
 	num = sizeof(Ecore_Fb_Ts_Event) - _ecore_fb_ts_event_byte_count;
@@ -807,6 +859,7 @@ _ecore_fb_ts_fd_handler(void *data __UNUSED__, Ecore_Fd_Handler *fd_handler __UN
 	     y = _ecore_fb_ts_event.y;
 	  }
 	pressure = _ecore_fb_ts_event.pressure;
+#endif   
 	/* add event to queue */
 	/* always add a move event */
 	if ((pressure) || (prev_pressure))
