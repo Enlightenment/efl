@@ -59,23 +59,23 @@ _ecore_config_ipc_prop_list(Ecore_Config_Server * srv, const long serial)
    while (e)
      {
 	/* ignore system properties in listings, unless they have been overridden */
-	if (e->flags & PF_SYSTEM && !(e->flags & PF_MODIFIED))
+	if (e->flags & ECORE_CONFIG_FLAG_SYSTEM && !(e->flags & ECORE_CONFIG_FLAG_MODIFIED))
 	  {
 	     e = e->next;
 	     continue;
 	  }
 	estring_appendf(s, "%s%s: %s", f ? "\n" : "", e->key,
 			ecore_config_type_get(e));
-	if (e->flags & PF_BOUNDS)
+	if (e->flags & ECORE_CONFIG_FLAG_BOUNDS)
 	  {
-	     if (e->type == PT_FLT)
+	     if (e->type == ECORE_CONFIG_FLT)
 		estring_appendf(s, ", range %le..%le",
 				(float)e->lo / ECORE_CONFIG_FLOAT_PRECISION,
 				(float)e->hi / ECORE_CONFIG_FLOAT_PRECISION);
 	     else
 		estring_appendf(s, ", range %d..%d", e->lo, e->hi);
 	  }
-	if (e->type == PT_THM)
+	if (e->type == ECORE_CONFIG_THM)
 	   estring_appendf(s, ", group %s", e->data ? e->data : "Main");
 	f = 1;
 	e = e->next;
@@ -100,7 +100,7 @@ _ecore_config_ipc_prop_desc(Ecore_Config_Server * srv, const long serial,
 	estring            *s = estring_new(512);
 
 	estring_appendf(s, "%s: %s", e->key, ecore_config_type_get(e));
-	if (e->flags & PF_BOUNDS)
+	if (e->flags & ECORE_CONFIG_FLAG_BOUNDS)
 	   estring_appendf(s, ", range %d..%d", e->lo, e->hi);
 	return estring_disown(s);
      }

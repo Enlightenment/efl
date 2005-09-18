@@ -156,7 +156,7 @@ ecore_config_file_save(const char *file)
 	 * handyande: hmm, not sure that it ever does - reinstating until
 	 * further discussions satisfy me!
 	 */
-	if (!(next->flags & PF_MODIFIED) || next->flags & PF_CMDLN)
+	if (!(next->flags & ECORE_CONFIG_FLAG_MODIFIED) || next->flags & ECORE_CONFIG_FLAG_CMDLN)
 	  {
 	     next = next->next;
 	     continue;

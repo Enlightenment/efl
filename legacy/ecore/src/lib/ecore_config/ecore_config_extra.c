@@ -101,7 +101,7 @@ ecore_config_boolean_create(const char *key, int val, char short_opt,
 			char *long_opt, char *desc)
 {
    return
-      ecore_config_typed_create(key, (void *)&val, PT_BLN, short_opt, long_opt,
+      ecore_config_typed_create(key, (void *)&val, ECORE_CONFIG_BLN, short_opt, long_opt,
 				desc);
 }
 
@@ -122,7 +122,7 @@ ecore_config_int_create(const char *key, int val, char short_opt,
 			char *long_opt, char *desc)
 {
    return
-      ecore_config_typed_create(key, (void *)&val, PT_INT, short_opt, long_opt,
+      ecore_config_typed_create(key, (void *)&val, ECORE_CONFIG_INT, short_opt, long_opt,
 				desc);
 }
 
@@ -150,7 +150,7 @@ ecore_config_int_create_bound(const char *key, int val, int low, int high,
    int                 ret;
 
    ret =
-      ecore_config_typed_create(key, (void *)&val, PT_INT, short_opt, long_opt,
+      ecore_config_typed_create(key, (void *)&val, ECORE_CONFIG_INT, short_opt, long_opt,
 				desc);
    if (ret != ECORE_CONFIG_ERR_SUCC)
       return ret;
@@ -158,7 +158,7 @@ ecore_config_int_create_bound(const char *key, int val, int low, int high,
    if (e)
      {
 	e->step = step;
-	e->flags |= PF_BOUNDS;
+	e->flags |= ECORE_CONFIG_FLAG_BOUNDS;
 	e->lo = low;
 	e->hi = high;
 	ecore_config_bound(e);
@@ -183,7 +183,7 @@ ecore_config_string_create(const char *key, char *val, char short_opt,
 			   char *long_opt, char *desc)
 {
    return
-      ecore_config_typed_create(key, (void *)val, PT_STR, short_opt, long_opt,
+      ecore_config_typed_create(key, (void *)val, ECORE_CONFIG_STR, short_opt, long_opt,
 				desc);
 }
 
@@ -204,7 +204,7 @@ ecore_config_float_create(const char *key, float val, char short_opt,
 			  char *long_opt, char *desc)
 {
    return
-      ecore_config_typed_create(key, (void *)&val, PT_FLT, short_opt, long_opt,
+      ecore_config_typed_create(key, (void *)&val, ECORE_CONFIG_FLT, short_opt, long_opt,
 				desc);
 }
 
@@ -232,13 +232,13 @@ ecore_config_float_create_bound(const char *key, float val, float low,
    int                 ret;
 
    ret =
-      ecore_config_typed_create(key, (void *)&val, PT_FLT, short_opt, long_opt,
+      ecore_config_typed_create(key, (void *)&val, ECORE_CONFIG_FLT, short_opt, long_opt,
 				desc);
    e = ecore_config_get(key);
    if (e)
      {
 	e->step = (int)(step * ECORE_CONFIG_FLOAT_PRECISION);
-	e->flags |= PF_BOUNDS;
+	e->flags |= ECORE_CONFIG_FLAG_BOUNDS;
 	e->lo = (int)(low * ECORE_CONFIG_FLOAT_PRECISION);
 	e->hi = (int)(high * ECORE_CONFIG_FLOAT_PRECISION);
 	ecore_config_bound(e);
@@ -289,7 +289,7 @@ ecore_config_argb_create(const char *key, char *val, char short_opt,
 			char *long_opt, char *desc)
 {
    return
-      ecore_config_typed_create(key, (void *)val, PT_RGB, short_opt, long_opt,
+      ecore_config_typed_create(key, (void *)val, ECORE_CONFIG_RGB, short_opt, long_opt,
 				desc);
 }
 
@@ -310,7 +310,7 @@ ecore_config_theme_create(const char *key, char *val, char short_opt,
 			  char *long_opt, char *desc)
 {
    return
-      ecore_config_typed_create(key, (void *)val, PT_THM, short_opt, long_opt,
+      ecore_config_typed_create(key, (void *)val, ECORE_CONFIG_THM, short_opt, long_opt,
 				desc);
 }
 
@@ -458,7 +458,7 @@ ecore_config_theme_search_path_append(char *path)
 	ecore_config_string_set("/e/themes/search_path", new_search_path);
   prop = ecore_config_get("/e/themes/search_path");
   if (prop)
-     prop->flags &= ~PF_MODIFIED;
+     prop->flags &= ~ECORE_CONFIG_FLAG_MODIFIED;
 
 	free(new_search_path);
 
@@ -560,7 +560,7 @@ ecore_config_args_display(void)
    while (props)
      {
 	/* if it is a system prop, or cannot be set on command line hide it */
-	if (props->flags & PF_SYSTEM || (!props->short_opt && !props->long_opt))
+	if (props->flags & ECORE_CONFIG_FLAG_SYSTEM || (!props->short_opt && !props->long_opt))
 	  {
 	     props = props->next;
 	     continue;
@@ -605,7 +605,7 @@ ecore_config_parse_set(Ecore_Config_Prop * prop, char *arg, char *opt,
    else
      {
 	ecore_config_set(prop->key, arg);
-	prop->flags |= PF_CMDLN;
+	prop->flags |= ECORE_CONFIG_FLAG_CMDLN;
      }   
    return ECORE_CONFIG_PARSE_CONTINUE;
 }
@@ -634,14 +634,14 @@ void
 ecore_config_args_callback_str_add(char short_opt, char *long_opt, char *desc,
 			           void (*func)(char *val, void *data),
 			           void *data) {
-   ecore_config_args_callback_add(short_opt, long_opt, desc, func, data, PT_STR);
+   ecore_config_args_callback_add(short_opt, long_opt, desc, func, data, ECORE_CONFIG_STR);
 }
 
 void
 ecore_config_args_callback_noarg_add(char short_opt, char *long_opt, char *desc,
 			             void (*func)(char *val, void *data),
 			             void *data) {
-   ecore_config_args_callback_add(short_opt, long_opt, desc, func, data, PT_NIL);
+   ecore_config_args_callback_add(short_opt, long_opt, desc, func, data, ECORE_CONFIG_NIL);
 }
 
 /**
@@ -717,7 +717,7 @@ ecore_config_args_parse(void)
 			    !strcmp(long_opt, callback->long_opt)))
 			 {
 			    found = 1;
-			    if (callback->type == PT_NIL)
+			    if (callback->type == ECORE_CONFIG_NIL)
 			      {
 				 callback->func(NULL, callback->data);
 			      }
@@ -780,7 +780,7 @@ ecore_config_args_parse(void)
 				 if (short_opt == callback->short_opt)
 				   {
 				      found = 1;
-				      if (callback->type == PT_NIL)
+				      if (callback->type == ECORE_CONFIG_NIL)
 					{
 					   callback->func(NULL, callback->data);
 					}

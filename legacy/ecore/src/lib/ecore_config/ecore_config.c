@@ -80,7 +80,7 @@ ecore_config_dst(Ecore_Config_Prop * e)
 
    if (e->key)
       free(e->key);
-   if (e->ptr && (e->type == PT_STR))
+   if (e->ptr && (e->type == ECORE_CONFIG_STR))
       free(e->ptr);
 
    memset(e, 0, sizeof(Ecore_Config_Prop));
@@ -150,7 +150,7 @@ ecore_config_data_get(const char *key)
    Ecore_Config_Prop  *e;
 
    e = ecore_config_get(key);
-   return (e ? ((e->type == PT_STR) ? ((void *)&e->ptr) : ((void *)&e->val))
+   return (e ? ((e->type == ECORE_CONFIG_STR) ? ((void *)&e->ptr) : ((void *)&e->val))
 	   : NULL);
 }
 
@@ -167,7 +167,7 @@ ecore_config_string_get(const char *key)
    Ecore_Config_Prop  *e;
 
    e = ecore_config_get(key);
-   return (e && (e->type == PT_STR)) ? strdup(e->ptr) : NULL;
+   return (e && (e->type == ECORE_CONFIG_STR)) ? strdup(e->ptr) : NULL;
 }
 
 /**
@@ -183,7 +183,7 @@ ecore_config_boolean_get(const char *key)
    Ecore_Config_Prop  *e;
 
    e = ecore_config_get(key);
-   return (e && ((e->type == PT_INT) || (e->type == PT_BLN))) ? (e->val != 0) : -1;
+   return (e && ((e->type == ECORE_CONFIG_INT) || (e->type == ECORE_CONFIG_BLN))) ? (e->val != 0) : -1;
 }
 
 /**
@@ -199,7 +199,7 @@ ecore_config_int_get(const char *key)
    Ecore_Config_Prop  *e;
 
    e = ecore_config_get(key);
-   return (e && ((e->type == PT_INT) || (e->type == PT_RGB))) ? e->val : 0L;
+   return (e && ((e->type == ECORE_CONFIG_INT) || (e->type == ECORE_CONFIG_RGB))) ? e->val : 0L;
 }
 
 /**
@@ -217,7 +217,7 @@ ecore_config_float_get(const char *key)
    e = ecore_config_get(key);
    return (e
 	   && (e->type ==
-	       PT_FLT)) ? ((float)e->val / ECORE_CONFIG_FLOAT_PRECISION) : 0.0;
+	       ECORE_CONFIG_FLT)) ? ((float)e->val / ECORE_CONFIG_FLOAT_PRECISION) : 0.0;
 }
 
 /**
@@ -256,7 +256,7 @@ ecore_config_argb_get(const char *key, int *a, int *r, int *g, int *b)
 
    e = ecore_config_get(key);
 
-   if (e && ((e->type == PT_RGB)))
+   if (e && ((e->type == ECORE_CONFIG_RGB)))
      {
 	*a = (e->val >> 24) & 0xff;
 	*r = (e->val >> 16) & 0xff;
@@ -314,7 +314,7 @@ ecore_config_theme_get(const char *key)
    Ecore_Config_Prop  *e;
 
    e = ecore_config_get(key);
-   return (e && (e->type == PT_THM)) ? strdup(e->ptr) : NULL;
+   return (e && (e->type == ECORE_CONFIG_THM)) ? strdup(e->ptr) : NULL;
 }
 
 /**
@@ -339,26 +339,26 @@ ecore_config_as_string_get(const char *key)
 
 	switch (e->type)
 	  {
-	  case PT_NIL:
+	  case ECORE_CONFIG_NIL:
 	     esprintf(&r, "%s:%s=<nil>", key, type);
 	     break;
-	  case PT_INT:
+	  case ECORE_CONFIG_INT:
 	     esprintf(&r, "%s:%s=%ld", key, type, ecore_config_int_get(key));
 	     break;
-     case PT_BLN:
+     case ECORE_CONFIG_BLN:
         esprintf(&r, "%s:%s=%ld", key, type, ecore_config_boolean_get(key));
         break;
-	  case PT_FLT:
+	  case ECORE_CONFIG_FLT:
 	     esprintf(&r, "%s:%s=%lf", key, type, ecore_config_float_get(key));
 	     break;
-	  case PT_STR:
+	  case ECORE_CONFIG_STR:
 	     esprintf(&r, "%s:%s=\"%s\"", key, type,
 		      ecore_config_string_get(key));
 	     break;
-	  case PT_RGB:
+	  case ECORE_CONFIG_RGB:
 	     esprintf(&r, "%s:%s=#%08x", key, type, ecore_config_int_get(key));
 	     break;
-	  case PT_THM:
+	  case ECORE_CONFIG_THM:
 	     esprintf(&r, "%s:%s=\"%s\"", key, type,
 		      ecore_config_theme_get(key));
 	     break;
@@ -380,7 +380,7 @@ ecore_config_bound(Ecore_Config_Prop * e)
 
    if (!e)
       return ECORE_CONFIG_ERR_FAIL;
-   if (e->flags & PF_BOUNDS)
+   if (e->flags & ECORE_CONFIG_FLAG_BOUNDS)
      {
 	if ((e->val < e->lo))
 	  {
@@ -407,7 +407,7 @@ ecore_config_bound(Ecore_Config_Prop * e)
 	v = ((int)(e->val / e->step)) * e->step;
 	if (v != e->val)
 	  {
-	     if (e->type == PT_FLT)
+	     if (e->type == ECORE_CONFIG_FLT)
 		E(0,
 		  "ecore_config_bound(\"%s\"): float value %f not a multiple of %f, adjusted to %f...\n",
 		  e->key, ((double)e->val) / ECORE_CONFIG_FLOAT_PRECISION,
@@ -435,7 +435,7 @@ ecore_config_bound(Ecore_Config_Prop * e)
  * @param  key The property key.
  * @param  val The value in string form.
  * @return The type of the property determined by the function.  Note that if
- *         val is @c NULL, @c PT_NIL will be returned.
+ *         val is @c NULL, @c ECORE_CONFIG_NIL will be returned.
  */
 int
 ecore_config_type_guess(const char *key, const char *val)
@@ -446,23 +446,23 @@ ecore_config_type_guess(const char *key, const char *val)
 
    l = NULL;
 
-   if ((p = ecore_config_get(key)) && p->type != PT_NIL)
+   if ((p = ecore_config_get(key)) && p->type != ECORE_CONFIG_NIL)
       return p->type;
 
    if (!val)
-      return PT_NIL;
+      return ECORE_CONFIG_NIL;
    if (val[0] == '#')
-      return PT_RGB;
+      return ECORE_CONFIG_RGB;
    v = strtol(val, &l, 10);
    if (*l)
      {
 	float               f;
 
 	if (sscanf(val, "%f%*s", &f) != 1)
-	   return PT_STR;
-	return PT_FLT;
+	   return ECORE_CONFIG_STR;
+	return ECORE_CONFIG_FLT;
      }
-   return PT_INT;
+   return ECORE_CONFIG_INT;
 }
 
 static int
@@ -480,26 +480,26 @@ ecore_config_typed_val(Ecore_Config_Prop * e, const void *val, int type)
       e->ptr = NULL;
    else
      {
-	if (type == PT_INT)
+	if (type == ECORE_CONFIG_INT)
 	  {
 	     i = (int *)val;
 	     e->val = (long)*i;
-	     e->type = PT_INT;
+	     e->type = ECORE_CONFIG_INT;
 	  }
-	else if (type == PT_BLN )
+	else if (type == ECORE_CONFIG_BLN )
 	  {
 	     i = (int *)val;
 	     e->val = (long)*i;
-	     e->type = PT_BLN;
+	     e->type = ECORE_CONFIG_BLN;
 	  }
-	else if (type == PT_STR || type == PT_THM)
+	else if (type == ECORE_CONFIG_STR || type == ECORE_CONFIG_THM)
 	  {
 	     if (!(e->ptr = strdup(val)))
 		return ECORE_CONFIG_ERR_OOM;
-	     if (e->type == PT_NIL)
+	     if (e->type == ECORE_CONFIG_NIL)
 		e->type = type;
 	  }
-	else if (type == PT_RGB)
+	else if (type == ECORE_CONFIG_RGB)
 	  {
 	     if (((char *)val)[0] == '#')
 	       {
@@ -526,21 +526,21 @@ ecore_config_typed_val(Ecore_Config_Prop * e, const void *val, int type)
 	     else
 	       {
 		  e->val = v;
-		  e->type = PT_RGB;
+		  e->type = ECORE_CONFIG_RGB;
 	       }
 	  }
-	else if (type == PT_FLT)
+	else if (type == ECORE_CONFIG_FLT)
 	  {
 	     f = (float *)val;
 	     e->val = (long)((*f) * ECORE_CONFIG_FLOAT_PRECISION);
-	     e->type = PT_FLT;
+	     e->type = ECORE_CONFIG_FLT;
 	  }
 	else
-	   e->type = PT_NIL;
+	   e->type = ECORE_CONFIG_NIL;
 
 	ecore_config_bound(e);
-	e->flags |= PF_MODIFIED;
-  e->flags = e->flags & ~PF_CMDLN;
+	e->flags |= ECORE_CONFIG_FLAG_MODIFIED;
+  e->flags = e->flags & ~ECORE_CONFIG_FLAG_CMDLN;
 	return ECORE_CONFIG_ERR_SUCC;
      }
    return ECORE_CONFIG_ERR_IGNORED;
@@ -722,12 +722,12 @@ ecore_config_set(const char *key, char *val)
    float               tmpf;
 
    type = ecore_config_type_guess(key, val);
-   if (type == PT_INT || type == PT_BLN)
+   if (type == ECORE_CONFIG_INT || type == ECORE_CONFIG_BLN)
      {
 	tmpi = atoi(val);
 	return ecore_config_typed_set(key, (void *)&tmpi, type);
      }
-   else if (type == PT_FLT)
+   else if (type == ECORE_CONFIG_FLT)
      {
 	tmpf = atof(val);
 	return ecore_config_typed_set(key, (void *)&tmpf, type);
@@ -760,7 +760,7 @@ int
 ecore_config_boolean_set(const char *key, int val)
 {
    val = val ? 1 : 0;
-   return ecore_config_typed_set(key, (void *)&val, PT_BLN);
+   return ecore_config_typed_set(key, (void *)&val, ECORE_CONFIG_BLN);
 }
 
 /**
@@ -773,7 +773,7 @@ ecore_config_boolean_set(const char *key, int val)
 int
 ecore_config_int_set(const char *key, int val)
 {
-   return ecore_config_typed_set(key, (void *)&val, PT_INT);
+   return ecore_config_typed_set(key, (void *)&val, ECORE_CONFIG_INT);
 }
 
 /**
@@ -786,7 +786,7 @@ ecore_config_int_set(const char *key, int val)
 int
 ecore_config_string_set(const char *key, char *val)
 {
-   return ecore_config_typed_set(key, (void *)val, PT_STR);
+   return ecore_config_typed_set(key, (void *)val, ECORE_CONFIG_STR);
 }
 
 /**
@@ -799,7 +799,7 @@ ecore_config_string_set(const char *key, char *val)
 int
 ecore_config_float_set(const char *key, float val)
 {
-   return ecore_config_typed_set(key, (void *)&val, PT_FLT);
+   return ecore_config_typed_set(key, (void *)&val, ECORE_CONFIG_FLT);
 }
 
 char              *
@@ -843,7 +843,7 @@ ecore_config_rgb_set(const char *key, char *val)
 int
 ecore_config_argb_set(const char *key, char *val)
 {
-   return ecore_config_typed_set(key, (void *)val, PT_RGB);
+   return ecore_config_typed_set(key, (void *)val, ECORE_CONFIG_RGB);
 }
 
 /**
@@ -856,7 +856,7 @@ ecore_config_argb_set(const char *key, char *val)
 int
 ecore_config_theme_set(const char *key, char *val)
 {
-   return ecore_config_typed_set(key, (void *)val, PT_THM);
+   return ecore_config_typed_set(key, (void *)val, ECORE_CONFIG_THM);
 }
 
 /**
@@ -875,7 +875,7 @@ ecore_config_theme_preview_group_set(const char *key, char *group)
    ret = ECORE_CONFIG_ERR_SUCC;
    if (!(e = ecore_config_get(key)))
      {				/* prop doesn't exist yet */
-	if ((ret = ecore_config_typed_add(key, "", PT_THM)) != ECORE_CONFIG_ERR_SUCC)	/* try to add it */
+	if ((ret = ecore_config_typed_add(key, "", ECORE_CONFIG_THM)) != ECORE_CONFIG_ERR_SUCC)	/* try to add it */
 	   return ret;		/* ...failed */
 	if (!(e = ecore_config_get(key)))	/* get handle */
 	   return ECORE_CONFIG_ERR_FAIL;
@@ -901,14 +901,14 @@ ecore_config_typed_default(const char *key, void *val, int type)
 	   return ret;		/* ...failed */
 	if (!(e = ecore_config_get(key)))	/* get handle */
 	   return ECORE_CONFIG_ERR_FAIL;
-	e->flags = e->flags & ~PF_MODIFIED;
+	e->flags = e->flags & ~ECORE_CONFIG_FLAG_MODIFIED;
      }
-   else if (!(e->flags & PF_MODIFIED) && !(e->flags & PF_SYSTEM))
+   else if (!(e->flags & ECORE_CONFIG_FLAG_MODIFIED) && !(e->flags & ECORE_CONFIG_FLAG_SYSTEM))
      {
 	ecore_config_typed_set(key, val, type);
 	if (!(e = ecore_config_get(key)))       /* get handle */
 	   return ECORE_CONFIG_ERR_FAIL;
-	e->flags = e->flags & ~PF_MODIFIED;
+	e->flags = e->flags & ~ECORE_CONFIG_FLAG_MODIFIED;
      }
    return ret;
 }
@@ -942,18 +942,18 @@ ecore_config_default(const char *key, char *val, float lo, float hi, float step)
    e = ecore_config_get(key);
    if (e)
      {
-	if (type == PT_INT)
+	if (type == ECORE_CONFIG_INT)
 	  {
 	     e->step = step;
-	     e->flags |= PF_BOUNDS;
+	     e->flags |= ECORE_CONFIG_FLAG_BOUNDS;
 	     e->lo = lo;
 	     e->hi = hi;
 	     ecore_config_bound(e);
 	  }
-	else if (type == PT_FLT)
+	else if (type == ECORE_CONFIG_FLT)
 	  {
 	     e->step = (int)(step * ECORE_CONFIG_FLOAT_PRECISION);
-	     e->flags |= PF_BOUNDS;
+	     e->flags |= ECORE_CONFIG_FLAG_BOUNDS;
 	     e->lo = (int)(lo * ECORE_CONFIG_FLOAT_PRECISION);
 	     e->hi = (int)(hi * ECORE_CONFIG_FLOAT_PRECISION);
 	     ecore_config_bound(e);
@@ -975,7 +975,7 @@ int
 ecore_config_boolean_default(const char *key, int val)
 {
    val = val ? 1 : 0;
-   return ecore_config_typed_default(key, (void *)&val, PT_BLN);
+   return ecore_config_typed_default(key, (void *)&val, ECORE_CONFIG_BLN);
 }
 
 /**
@@ -989,7 +989,7 @@ ecore_config_boolean_default(const char *key, int val)
 int
 ecore_config_int_default(const char *key, int val)
 {
-   return ecore_config_typed_default(key, (void *)&val, PT_INT);
+   return ecore_config_typed_default(key, (void *)&val, ECORE_CONFIG_INT);
 }
 
 /**
@@ -1013,12 +1013,12 @@ ecore_config_int_default_bound(const char *key, int val, int low, int high,
    Ecore_Config_Prop  *e;
    int                 ret;
 
-   ret = ecore_config_typed_default(key, (void *)&val, PT_INT);
+   ret = ecore_config_typed_default(key, (void *)&val, ECORE_CONFIG_INT);
    e = ecore_config_get(key);
    if (e)
      {
 	e->step = step;
-	e->flags |= PF_BOUNDS;
+	e->flags |= ECORE_CONFIG_FLAG_BOUNDS;
 	e->lo = low;
 	e->hi = high;
 	ecore_config_bound(e);
@@ -1038,7 +1038,7 @@ ecore_config_int_default_bound(const char *key, int val, int low, int high,
 int
 ecore_config_string_default(const char *key, const char *val)
 {
-   return ecore_config_typed_default(key, (void *)val, PT_STR);
+   return ecore_config_typed_default(key, (void *)val, ECORE_CONFIG_STR);
 }
 
 /**
@@ -1052,7 +1052,7 @@ ecore_config_string_default(const char *key, const char *val)
 int
 ecore_config_float_default(const char *key, float val)
 {
-   return ecore_config_typed_default(key, (void *)&val, PT_FLT);
+   return ecore_config_typed_default(key, (void *)&val, ECORE_CONFIG_FLT);
 }
 
 /**
@@ -1076,12 +1076,12 @@ ecore_config_float_default_bound(const char *key, float val, float low,
    Ecore_Config_Prop  *e;
    int                 ret;
 
-   ret = ecore_config_typed_default(key, (void *)&val, PT_FLT);
+   ret = ecore_config_typed_default(key, (void *)&val, ECORE_CONFIG_FLT);
    e = ecore_config_get(key);
    if (e)
      {
 	e->step = (int)(step * ECORE_CONFIG_FLOAT_PRECISION);
-	e->flags |= PF_BOUNDS;
+	e->flags |= ECORE_CONFIG_FLAG_BOUNDS;
 	e->lo = (int)(low * ECORE_CONFIG_FLOAT_PRECISION);
 	e->hi = (int)(high * ECORE_CONFIG_FLOAT_PRECISION);
 	ecore_config_bound(e);
@@ -1122,7 +1122,7 @@ ecore_config_rgb_default(const char *key, char *val)
 int
 ecore_config_argb_default(const char *key, char *val)
 {
-   return ecore_config_typed_default(key, (void *)val, PT_RGB);
+   return ecore_config_typed_default(key, (void *)val, ECORE_CONFIG_RGB);
 }
 
 /**
@@ -1136,7 +1136,7 @@ ecore_config_argb_default(const char *key, char *val)
 int
 ecore_config_theme_default(const char *key, char *val)
 {
-   return ecore_config_typed_default(key, (void *)val, PT_THM);
+   return ecore_config_typed_default(key, (void *)val, ECORE_CONFIG_THM);
 }
 
 /**
@@ -1206,7 +1206,7 @@ ecore_config_listen(const char *name, const char *key,
    l->next = e->listeners;
    e->listeners = l;
 
-   if (e->type != PT_NIL)	/* call right on creation if prop exists and has val */
+   if (e->type != ECORE_CONFIG_NIL)	/* call right on creation if prop exists and has val */
       listener(key, e->type, tag, data);
 
    return ECORE_CONFIG_ERR_SUCC;
@@ -1485,8 +1485,8 @@ ecore_config_init(const char *name)
    list = ecore_config_get("/e/themes/search_path");
    if (list)
      {
-	list->flags |= PF_SYSTEM;
-	list->flags &= ~PF_MODIFIED;
+	list->flags |= ECORE_CONFIG_FLAG_SYSTEM;
+	list->flags &= ~ECORE_CONFIG_FLAG_MODIFIED;
      }
 
    return _ecore_config_system_load();
@@ -1585,9 +1585,9 @@ _ecore_config_system_load(void)
 	     while (sys)
 	       {
 		  /* unmark it modified - modification will mean it has been overridden */
-		  sys->flags &= ~PF_MODIFIED;
+		  sys->flags &= ~ECORE_CONFIG_FLAG_MODIFIED;
 		  /* mark as system so that examine can hide them */
-		  sys->flags |= PF_SYSTEM;
+		  sys->flags |= ECORE_CONFIG_FLAG_SYSTEM;
 		  sys = sys->next;
 	       }
 	  }

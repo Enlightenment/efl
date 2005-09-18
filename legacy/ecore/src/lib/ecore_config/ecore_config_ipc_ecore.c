@@ -81,22 +81,22 @@ _ecore_config_ipc_global_prop_list(Ecore_Config_Server * srv __UNUSED__, long se
 	     type = _ecore_config_db_key_type_get(db, keys[x]);
 	     switch (type)
 	       {
-		  case PT_INT:
+		  case ECORE_CONFIG_INT:
 		    estring_appendf(s, "%s%s: integer", f ? "\n" : "", keys[x]);
 		    break;
-		  case PT_BLN:
+		  case ECORE_CONFIG_BLN:
 		    estring_appendf(s, "%s%s: boolean", f ? "\n" : "", keys[x]);
 		    break;
-		  case PT_FLT:
+		  case ECORE_CONFIG_FLT:
 		    estring_appendf(s, "%s%s: float", f ? "\n" : "", keys[x]);
 		    break;
-		  case PT_STR:
+		  case ECORE_CONFIG_STR:
 		    estring_appendf(s, "%s%s: string", f ? "\n" : "", keys[x]);
 		    break;
-		  case PT_RGB:
+		  case ECORE_CONFIG_RGB:
 		    estring_appendf(s, "%s%s: colour", f ? "\n" : "", keys[x]);
 		    break;
-		  case PT_THM:
+		  case ECORE_CONFIG_THM:
 		    estring_appendf(s, "%s%s: theme", f ? "\n" : "", keys[x]);
 		    break;
 		  default:

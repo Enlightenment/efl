@@ -41,22 +41,22 @@
  */
 typedef enum Ecore_Config_Type
 {
-   PT_NIL = 0,			/**< Property with no value. */
-   PT_INT = 1,			/**< Integer property type. */
-   PT_FLT = 2,			/**< Float property type. */
-   PT_STR = 3,			/**< String property type. */
-   PT_RGB = 4,			/**< Colour property type. */
-   PT_THM = 5,			/**< Theme property type. */
-   PT_BLN = 6,			/**< Boolean property type. */
+   ECORE_CONFIG_NIL = 0,			/**< Property with no value. */
+   ECORE_CONFIG_INT = 1,			/**< Integer property type. */
+   ECORE_CONFIG_FLT = 2,			/**< Float property type. */
+   ECORE_CONFIG_STR = 3,			/**< String property type. */
+   ECORE_CONFIG_RGB = 4,			/**< Colour property type. */
+   ECORE_CONFIG_THM = 5,			/**< Theme property type. */
+   ECORE_CONFIG_BLN = 6,			/**< Boolean property type. */
 } Ecore_Config_Type;
 
 typedef enum Ecore_Config_Flag
 {
-   PF_NONE = 0,
-   PF_BOUNDS = 1,
-   PF_MODIFIED = 2,
-   PF_SYSTEM = 4,
-   PF_CMDLN = 8
+   ECORE_CONFIG_FLAG_NONE = 0,
+   ECORE_CONFIG_FLAG_BOUNDS = 1,
+   ECORE_CONFIG_FLAG_MODIFIED = 2,
+   ECORE_CONFIG_FLAG_SYSTEM = 4,
+   ECORE_CONFIG_FLAG_CMDLN = 8
 } Ecore_Config_Flag;
 
 /**

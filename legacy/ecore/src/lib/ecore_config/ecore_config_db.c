@@ -95,16 +95,16 @@ _ecore_config_db_key_type_get(Ecore_Config_DB_File *db, const char *key)
 	if (size <= 2)
 	  {
 	     free(data);
-	     return PT_NIL;
+	     return ECORE_CONFIG_NIL;
 	  }
 	if (data[size - 1] != 0)
 	  {
 	     free(data);
-	     return PT_NIL;
+	     return ECORE_CONFIG_NIL;
 	  }
 	return (Ecore_Config_Type) data[0];
      }
-   return PT_NIL;
+   return ECORE_CONFIG_NIL;
 }
 
 int
@@ -145,8 +145,8 @@ _ecore_config_db_read(Ecore_Config_DB_File *db, const char *key)
 	
 	switch (type) 
 	  {
-	     case PT_INT:
-	     case PT_BLN:
+	     case ECORE_CONFIG_INT:
+	     case ECORE_CONFIG_BLN:
 	       {
 		  int tmp;
 		  prev_locale = setlocale(LC_NUMERIC, "C");
@@ -156,7 +156,7 @@ _ecore_config_db_read(Ecore_Config_DB_File *db, const char *key)
 		  ecore_config_typed_set(key, (void *)&tmp, type);
 		  break;
 	       }
-	     case PT_FLT:
+	     case ECORE_CONFIG_FLT:
 	       {
 		  float tmp;
 		  prev_locale = setlocale(LC_NUMERIC, "C");
@@ -166,9 +166,9 @@ _ecore_config_db_read(Ecore_Config_DB_File *db, const char *key)
 		  ecore_config_typed_set(key, (void *)&tmp, type);
 		  break;
 	       }
-	     case PT_STR:
-	     case PT_RGB:
-	     case PT_THM:
+	     case ECORE_CONFIG_STR:
+	     case ECORE_CONFIG_RGB:
+	     case ECORE_CONFIG_THM:
 	       ecore_config_typed_set(key, (void *)value, type);
 	       break;
 	     default:
@@ -234,27 +234,27 @@ _ecore_config_db_write(Ecore_Config_DB_File *db, const char *key)
 
 	switch (type) 
 	  {
-	     case PT_INT:
+	     case ECORE_CONFIG_INT:
 	       num = snprintf(buf, sizeof(buf), "%c %i ", (char) type,
 			      (int) ecore_config_int_get(key));
 	       break;
-	     case PT_BLN:
+	     case ECORE_CONFIG_BLN:
 	       num = snprintf(buf, sizeof(buf), "%c %i ", (char) type,
 			      (int) ecore_config_boolean_get(key));
 	       break;
-	     case PT_FLT:
+	     case ECORE_CONFIG_FLT:
 	       num = snprintf(buf, sizeof(buf), "%c %16.16f ", (char) type,
 			      ecore_config_float_get(key));
 	       break;
-	     case PT_STR:
+	     case ECORE_CONFIG_STR:
 	       num = snprintf(buf, sizeof(buf), "%c %s ", (char) type,
 			      ecore_config_string_get(key));
 	       break;
-	     case PT_THM:
+	     case ECORE_CONFIG_THM:
 	       num = snprintf(buf, sizeof(buf), "%c %s ", (char) type,
 			      ecore_config_theme_get(key));
 	       break;
-	     case PT_RGB:
+	     case ECORE_CONFIG_RGB:
 	       num = snprintf(buf, sizeof(buf), "%c %s ", (char) type,
 			      ecore_config_argbstr_get(key));
 	       break;
@@ -277,7 +277,7 @@ _ecore_config_db_key_data_set(Ecore_Config_DB_File *db, const char *key, void *d
    num = 1 + 1 + data_size + 1;
    buf = malloc(num);
    if (!buf) return;
-   buf[0] = (char) PT_BIN;
+   buf[0] = (char) ECORE_CONFIG_BIN;
    buf[1] = 0;
    memcpy(buf + 2, data, data_size);
    buf[num - 1] = 0;
