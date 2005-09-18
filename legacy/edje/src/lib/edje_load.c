@@ -1016,7 +1016,6 @@ _edje_file_add(Edje *ed)
 	     if (ts)
 	       {
 		  len += strlen(ts);
-		  printf("%s\n", ts);
 		  free(ts);
 		  len += 1;
 	       }
