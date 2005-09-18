@@ -483,6 +483,7 @@ _edje_part_recalc_single(Edje *ed,
 	       {
 		  int mw = 0, mh = 0;
 		  
+		  tw = th = 0;
 		  if (!chosen_desc->text.min_x)
 		    {
 		       evas_object_resize(ep->object, params->w, params->h);
@@ -493,8 +494,14 @@ _edje_part_recalc_single(Edje *ed,
 		  evas_object_textblock2_style_insets_get(ep->object, &ins_l, &ins_r, &ins_t, &ins_b);
 		  mw = ins_l + tw + ins_r;
 		  mh = ins_t + th + ins_b;
-		  if (mw > minw) minw = mw;
-		  if (mh > minh) minh = mh;
+		  if (chosen_desc->text.min_x)
+		    {
+		       if (mw > minw) minw = mw;
+		    }
+		  if (chosen_desc->text.min_y)
+		    {
+		       if (mh > minh) minh = mh;
+		    }
 	       }
 	  }
      }
