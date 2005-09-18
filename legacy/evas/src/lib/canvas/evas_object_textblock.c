@@ -4547,6 +4547,17 @@ evas_object_textblock_render_pre(Evas_Object *obj)
 	updates = evas_object_render_pre_prev_cur_add(updates, obj);
 	goto done;
      }
+   /* if it changed geometry - and obviously not visibility or color */
+   /* caluclate differences since we have a constant color fill */
+   /* we really only need to update the differences */
+   if ((obj->cur.geometry.x != obj->prev.geometry.x) ||
+       (obj->cur.geometry.y != obj->prev.geometry.y) ||
+       (obj->cur.geometry.w != obj->prev.geometry.w) ||
+       (obj->cur.geometry.h != obj->prev.geometry.h))
+     {
+	updates = evas_object_render_pre_prev_cur_add(updates, obj);
+	goto done;
+     }
    if (o->changed)
      {
 /*
