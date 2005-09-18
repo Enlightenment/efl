@@ -1871,11 +1871,14 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	  }
 	if (new_line)
 	  {
-	     if (!white_stripped)
+	     if (str)
 	       {
-		  index = 0;
-		  ch = evas_common_font_utf8_get_next((unsigned char *)str, &index);
-		  if (_is_white(ch)) str += index;
+		  if (!white_stripped)
+		    {
+		       index = 0;
+		       ch = evas_common_font_utf8_get_next((unsigned char *)str, &index);
+		       if (_is_white(ch)) str += index;
+		    }
 	       }
 	     new_line = 0;
 	     _layout_line_advance(c, fmt);
