@@ -15,19 +15,19 @@ set(const char *key, int ec_type, const char *value)
 	float f;
 	
 	switch (ec_type) {
-	case PT_INT:
-	case PT_BLN:
+	case ECORE_CONFIG_INT:
+	case ECORE_CONFIG_BLN:
 		i = atoi(value);
 		if (ecore_config_typed_set(key, &i, ec_type) != ECORE_CONFIG_ERR_SUCC) return -1;
 		break;
-	case PT_FLT:
+	case ECORE_CONFIG_FLT:
 		f = atof(value);
 		if (ecore_config_typed_set(key, &f, ec_type) != ECORE_CONFIG_ERR_SUCC) return -1;
 		break;
-	case PT_STR:
-	case PT_RGB:
-	case PT_THM:
-	case PT_NIL:
+	case ECORE_CONFIG_STR:
+	case ECORE_CONFIG_RGB:
+	case ECORE_CONFIG_THM:
+	case ECORE_CONFIG_NIL:
 		if (ecore_config_typed_set(key, value, ec_type) != ECORE_CONFIG_ERR_SUCC) return -1;
 		break;
 	}
@@ -45,25 +45,25 @@ get(const char *key)
 	}
 		
 	switch (e->type) {
-	case PT_NIL:
+	case ECORE_CONFIG_NIL:
 		printf("\n");
 		break;
-	case PT_INT:
+	case ECORE_CONFIG_INT:
 		printf("%ld\n", ecore_config_int_get(key));
 		break;
-	case PT_BLN:
+	case ECORE_CONFIG_BLN:
 		printf("%d\n", ecore_config_boolean_get(key));
 		break;
-	case PT_FLT:
+	case ECORE_CONFIG_FLT:
 		printf("%lf\n", ecore_config_float_get(key));
 		break;
-	case PT_STR:
+	case ECORE_CONFIG_STR:
 		printf("%s\n", ecore_config_string_get(key));
 		break;
-	case PT_RGB:
+	case ECORE_CONFIG_RGB:
 		printf("%s\n", ecore_config_argbstr_get(key));
 		break;
-	case PT_THM:
+	case ECORE_CONFIG_THM:
 		printf("%s\n", ecore_config_theme_get(key));
 		break;
 	default:
@@ -90,25 +90,25 @@ get_type(const char *key)
 	}
 		
 	switch (e->type) {
-	case PT_NIL:
+	case ECORE_CONFIG_NIL:
 		printf("nil\n");
 		break;
-	case PT_INT:
+	case ECORE_CONFIG_INT:
 		printf("int\n");
 		break;
-	case PT_BLN:
+	case ECORE_CONFIG_BLN:
 		printf("bool\n");
 		break;
-	case PT_FLT:
+	case ECORE_CONFIG_FLT:
 		printf("float\n");
 		break;
-	case PT_STR:
+	case ECORE_CONFIG_STR:
 		printf("string\n");
 		break;
-	case PT_RGB:
+	case ECORE_CONFIG_RGB:
 		printf("rgb\n");
 		break;
-	case PT_THM:
+	case ECORE_CONFIG_THM:
 		printf("theme\n");
 		break;
 	default:
@@ -122,19 +122,19 @@ int
 parse_type(const char *type)
 {
 	if (!strcmp("nil", type)) {
-		return PT_NIL;
+		return ECORE_CONFIG_NIL;
 	} else if (!strcmp("int", type)) {
-		return PT_INT;
+		return ECORE_CONFIG_INT;
 	} else if (!strcmp("float", type)) {
-		return PT_FLT;
+		return ECORE_CONFIG_FLT;
 	} else if (!strcmp("bool", type)) {
-		return PT_BLN;
+		return ECORE_CONFIG_BLN;
 	} else if (!strcmp("str", type)) {
-		return PT_STR;
+		return ECORE_CONFIG_STR;
 	} else if (!strcmp("rgb", type)) {
-		return PT_RGB;
+		return ECORE_CONFIG_RGB;
 	} else if (!strcmp("theme", type)) {
-		return PT_THM;
+		return ECORE_CONFIG_THM;
 	}
 	return -1;
 }
