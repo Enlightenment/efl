@@ -1745,7 +1745,8 @@ st_collections_group_parts_part_description_text_text_class(void)
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
 
-   if (ep->type != EDJE_PART_TYPE_TEXT)
+   if ((ep->type != EDJE_PART_TYPE_TEXT) &&
+       (ep->type != EDJE_PART_TYPE_TEXTBLOCK))
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"text attributes in non-TEXT part.\n",
@@ -1893,7 +1894,8 @@ st_collections_group_parts_part_description_text_min(void)
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
 
-   if (ep->type != EDJE_PART_TYPE_TEXT)
+   if ((ep->type != EDJE_PART_TYPE_TEXT) &&
+       (ep->type != EDJE_PART_TYPE_TEXTBLOCK))
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"text attributes in non-TEXT part.\n",
@@ -1945,7 +1947,8 @@ st_collections_group_parts_part_description_text_source(void)
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
 
-   if (ep->type != EDJE_PART_TYPE_TEXT)
+   if ((ep->type != EDJE_PART_TYPE_TEXT) &&
+       (ep->type != EDJE_PART_TYPE_TEXTBLOCK))
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"text attributes in non-TEXT part.\n",
@@ -1976,7 +1979,8 @@ st_collections_group_parts_part_description_text_text_source(void)
    pc = evas_list_data(evas_list_last(edje_collections));
    ep = evas_list_data(evas_list_last(pc->parts));
 
-   if (ep->type != EDJE_PART_TYPE_TEXT)
+   if ((ep->type != EDJE_PART_TYPE_TEXT) &&
+       (ep->type != EDJE_PART_TYPE_TEXTBLOCK))
      {
 	fprintf(stderr, "%s: Error. parse error %s:%i. "
 		"text attributes in non-TEXT part.\n",
