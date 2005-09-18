@@ -364,7 +364,6 @@ _ecore_evas_x_event_mouse_button_down(void *data __UNUSED__, int type __UNUSED__
    ee = _ecore_evas_x_match(e->win);
    if (!ee) return 1; /* pass on event */
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);
-   _ecore_evas_x_mouse_move_process(ee, e->x, e->y, e->time);
    if (e->double_click) flags |= EVAS_BUTTON_DOUBLE_CLICK;
    if (e->triple_click) flags |= EVAS_BUTTON_TRIPLE_CLICK;
    evas_event_feed_mouse_down(ee->evas, e->button, flags, e->time, NULL);
@@ -381,7 +380,6 @@ _ecore_evas_x_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, 
    ee = _ecore_evas_x_match(e->win);
    if (!ee) return 1; /* pass on event */
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);   
-   _ecore_evas_x_mouse_move_process(ee, e->x, e->y, e->time);
    evas_event_feed_mouse_up(ee->evas, e->button, EVAS_BUTTON_NONE, e->time, NULL);
    return 1;
 }
@@ -399,7 +397,6 @@ _ecore_evas_x_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void
       return 1; /* pass on event */
 
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);
-   _ecore_evas_x_mouse_move_process(ee, e->x, e->y, e->time);
    evas_event_feed_mouse_wheel(ee->evas, e->direction, e->z, e->time, NULL);
 
    return 1;
