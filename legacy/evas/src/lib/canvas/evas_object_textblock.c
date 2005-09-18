@@ -1427,7 +1427,6 @@ _layout_strip_trailing_whitespace(Ctxt *c, Evas_Object_Textblock_Format *fmt, Ev
    p = evas_common_font_utf8_get_last((unsigned char *)(it->text), strlen(it->text));
    tp = p;
    if (p >= 0)
-/*   while (p >= 0)*/
      {
 	chr = evas_common_font_utf8_get_prev((unsigned char *)(it->text), &p);
 	if (_is_white(chr))
@@ -1444,20 +1443,6 @@ _layout_strip_trailing_whitespace(Ctxt *c, Evas_Object_Textblock_Format *fmt, Ev
 	     c->x = it->x + adv;
 	     return 1;
 	  }
-/*	  
-	if (!_is_white(chr))
-	  {
-	     evas_common_font_utf8_get_next((unsigned char *)(it->text), &tp);
-	     _layout_item_text_cutoff(c, it, tp);
-	     adv = c->ENFN->font_h_advance_get(c->ENDT, it->format->font.font, it->text);
-	     c->ENFN->font_string_size_get(c->ENDT, it->format->font.font, it->text, &tw, &th);
-	     it->w = tw;
-	     it->h = th;
-	     c->x = it->x + adv;
-	     return;
-	  }
-	tp = p;
- */
      }
    return 0;
 }
@@ -1568,14 +1553,6 @@ _layout_walk_back_to_item_word_redo(Ctxt *c, Evas_Object_Textblock_Item *it)
 	     new_it->source_pos = pit->source_pos + index;
 	     _layout_item_text_cutoff(c, pit, index);
 	     _layout_strip_trailing_whitespace(c, pit->format, pit);
-/* ***	     
-	     if (!white_stripped)
-	       {
-		  index = 0;
-		  ch = evas_common_font_utf8_get_next((unsigned char *)str, &index);
-		  if (_is_white(ch)) str += index;
-	       }
- */
 	     break;
 	  }
      }
@@ -1650,6 +1627,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	/* if this is the first line item and it starts with spaces - remove them */
 	wrap = 0;
 	white_stripped = 0;
+/*	
 	if (!c->ln->items)
 	  {
 	     twrap = wrap;
@@ -1661,6 +1639,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	       }
 	     str = str + twrap;
 	  }
+ */
 	it = _layout_item_new(c, fmt, str);
 	it->source_node = n;
 	it->source_pos = str - n->text;
@@ -1678,12 +1657,14 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 	       {
 		  if (fmt->wrap_word)
 		    {
-		       wrap = _layout_word_start(str, wrap);
+		       index = wrap;
+		       ch = evas_common_font_utf8_get_next((unsigned char *)str, &index);
+		       if (!_is_white(ch))
+			 wrap = _layout_word_start(str, wrap);
 		       if (wrap > 0)
 			 {
 			    twrap = wrap;
 			    ch = evas_common_font_utf8_get_prev((unsigned char *)str, &twrap);
-//			    
 			    /* the text intersects the wrap point on a whitespace char */
 			    if (_is_white(ch))
 			      {
@@ -1717,51 +1698,9 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 				      str = str + twrap;
 				   }
 			      }
-#if 0				
-			    ch = evas_common_font_utf8_get_prev((unsigned char *)str, &twrap);
-			    while (_is_white(ch) && (twrap >= 0))
-			      ch = evas_common_font_utf8_get_prev((unsigned char *)str, &twrap);
-			    if (!_is_white(ch))
-			      {
-				 if (twrap >= 0)
-				   evas_common_font_utf8_get_next((unsigned char *)str, &twrap);
-				 else twrap = 0;
-				 evas_common_font_utf8_get_next((unsigned char *)str, &twrap);
-			      }
-			    else
-			      twrap = 0;
-			    if (twrap == 0)
-			      {
-				 int ptwrap;
-				 
-				 empty_item = 1;
-				 if (it->text) free(it->text);
-				 _format_free(c->obj, it->format);
-				 free(it);
-				 ptwrap = twrap;
-				 for (;;)
-				   {
-				      ch = evas_common_font_utf8_get_next((unsigned char *)str, &twrap);
-				      if (twrap < 0)
-					{
-					   ptwrap = twrap;
-					   break;
-					}
-				      if (!_is_white(ch)) break;
-				      ptwrap = twrap;
-				   }
-				 str = str + ptwrap;
-			      }
-			    else
-			      {
-				 _layout_item_text_cutoff(c, it, twrap);
-				 str = str + wrap;
-			      }
-#endif				
 			 }
 		       else
 			 {
-#if 1			    
 			    /* wrap now is the index of the word START */
 			    index = wrap;
 			    ch = evas_common_font_utf8_get_next((unsigned char *)str, &index);
@@ -1795,7 +1734,6 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
 				   str = NULL;
 			      }
 			 }
-#endif		       
 		    }
 		  else if (fmt->wrap_char)
 		    {
