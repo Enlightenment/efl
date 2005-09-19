@@ -71,7 +71,7 @@ _edje_part_description_find(Edje *ed, Edje_Real_Part *rp, char *name,
      {
 	Edje_Part_Description *d = l->data;
 
-	if (!strcmp (d->state.name, name))
+	if (!strcmp(d->state.name, name))
 	  {
 	     double dst;
 
