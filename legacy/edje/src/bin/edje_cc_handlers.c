@@ -42,6 +42,7 @@ static void st_collections_group_parts_part_description_inherit(void);
 static void st_collections_group_parts_part_description_state(void);
 static void st_collections_group_parts_part_description_visible(void);
 static void st_collections_group_parts_part_description_align(void);
+static void st_collections_group_parts_part_description_fixed(void);
 static void st_collections_group_parts_part_description_min(void);
 static void st_collections_group_parts_part_description_max(void);
 static void st_collections_group_parts_part_description_step(void);
@@ -149,6 +150,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.state", st_collections_group_parts_part_description_state},
      {"collections.group.parts.part.description.visible", st_collections_group_parts_part_description_visible},
      {"collections.group.parts.part.description.align", st_collections_group_parts_part_description_align},
+     {"collections.group.parts.part.description.fixed", st_collections_group_parts_part_description_fixed},
      {"collections.group.parts.part.description.min", st_collections_group_parts_part_description_min},
      {"collections.group.parts.part.description.max", st_collections_group_parts_part_description_max},
      {"collections.group.parts.part.description.step", st_collections_group_parts_part_description_step},
@@ -858,6 +860,8 @@ ob_collections_group_parts_part_description(void)
    ed->align.y = 0.5;
    ed->min.w = 0;
    ed->min.h = 0;
+   ed->fixed.w = 0;
+   ed->fixed.h = 0;
    ed->max.w = -1;
    ed->max.h = -1;
    ed->rel1.relative_x = 0.0;
@@ -1080,6 +1084,23 @@ st_collections_group_parts_part_description_align(void)
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
    ed->align.x = parse_float_range(0, 0.0, 1.0);
    ed->align.y = parse_float_range(1, 0.0, 1.0);
+}
+
+static void
+st_collections_group_parts_part_description_fixed(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(2);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->fixed.w = parse_float_range(0, 0, 1);
+   ed->fixed.h = parse_float_range(1, 0, 1);
 }
 
 static void

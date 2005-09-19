@@ -344,6 +344,21 @@ main(int argc, char **argv)
    evas_object_show(o);
    o_edje = o;
 
+/*   
+     {
+	Evas_Coord mw, mh;
+	
+	printf("---EMIT SIGNALS\n");
+	edje_object_signal_emit(o_edje, "icon_visible", "");
+	printf("---PROCESS SIGNALS\n");
+	edje_object_message_signal_process(o_edje);
+	printf("---MIN CALC\n");
+	edje_object_size_min_calc(o_edje, &mw, &mh);
+	printf("---MIN %ix%i\n", mw, mh);
+	evas_object_resize(o_edje, mw, mh);
+     }
+ */
+   
    ecore_evas_callback_resize_set(ee, resize_cb);   
    ecore_evas_show(ee);
    

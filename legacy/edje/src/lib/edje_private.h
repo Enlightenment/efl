@@ -355,6 +355,10 @@ struct _Edje_Part_Description
    } align;
    
    struct {
+      unsigned char  w, h; /* width or height si fixed in side (cannot expand with edje object size) */
+   } fixed;
+   
+   struct {
       int            w, h; /* min & max size, 0 = none */
    } min, max;
 

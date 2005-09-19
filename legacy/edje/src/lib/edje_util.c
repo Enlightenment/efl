@@ -820,6 +820,8 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
    Evas_Coord pw, ph;   
    int maxw, maxh;
    int ok;
+   int reset_maxwh;
+   Edje_Real_Part *pep = NULL;
    
    ed = _edje_fetch(obj);
    if ((!ed) || (!ed->collection))
@@ -828,9 +830,12 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 	if (minh) *minh = 0;
 	return;
      }
+   reset_maxwh = 1;
    ed->calc_only = 1;
    pw = ed->w;
    ph = ed->h;
+   
+   again:
    ed->w = 0;
    ed->h = 0;
    
@@ -844,7 +849,14 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 	
 	ok = 0;
 	ed->dirty = 1;
+//	printf("...CALC %s\n", ed->part);
 	_edje_recalc(ed);
+	if (reset_maxwh)
+	  {
+	     maxw = 0;
+	     maxh = 0;
+	  }
+	pep = NULL;
 	for (l = ed->parts; l; l = l->next)
 	  {
 	     Edje_Real_Part *ep;
@@ -853,21 +865,56 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 	     ep = l->data;
 	     w = ep->w - ep->req.w;
 	     h = ep->h - ep->req.h;
-	     if (w > maxw)
+//	     printf("EP: %s size %ix%i, req %ix%i, dif %ix%i, max %ix%i\n",
+//		    ep->part->name,
+//		    ep->w, ep->h,
+//		    ep->req.w, ep->req.h,
+//		    w, h,
+//		    maxw, maxh);
+	     if (!((ep->chosen_description) &&
+		   (ep->chosen_description->fixed.w)))
 	       {
-		  maxw = w;
-		  ok = 1;
+		  if (w > maxw)
+		    {
+		       maxw = w;
+		       ok = 1;
+		       pep = ep;
+		    }
 	       }
-	     if (h > maxh)
+	     if (!((ep->chosen_description) &&
+		   (ep->chosen_description->fixed.h)))
 	       {
-		  maxh = h;
-		  ok = 1;
+		  if (h > maxh)
+		    {
+		       maxh = h;
+		       ok = 1;
+		       pep = ep;
+		    }
 	       }
 	  }
 	if (ok)
 	  {
 	     ed->w += maxw;
 	     ed->h += maxh;
+	  }
+	if ((ed->w > 8000) || (ed->h > 8000))
+	  {
+	     printf("EDJE ERROR: An element in file %s, group %s has a non expandable\n"
+		    "part not marked as fixed size in one dimension. This needs\n"
+		    "to be fixed in the source .edc by adding:\n"
+		    "  fixed: 1 1;\n"
+		    "to the part that cannot expand in size if the edje object does.\n",
+		    ed->path, ed->part);
+	     if (pep)
+	       printf("The part suspected causing this problem is:\n"
+		      "  part: \"%s\"\n",
+		      pep->part->name);
+	     printf("Will recalc min size not allowing broken parts to affect the result.\n");
+	     if (reset_maxwh)
+	       {
+		  reset_maxwh = 0;
+		  goto again;
+	       }
 	  }
      }
    ed->min.w = ed->w;
