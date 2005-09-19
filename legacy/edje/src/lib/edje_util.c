@@ -849,7 +849,6 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 	
 	ok = 0;
 	ed->dirty = 1;
-//	printf("...CALC %s\n", ed->part);
 	_edje_recalc(ed);
 	if (reset_maxwh)
 	  {
@@ -865,12 +864,6 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 	     ep = l->data;
 	     w = ep->w - ep->req.w;
 	     h = ep->h - ep->req.h;
-//	     printf("EP: %s size %ix%i, req %ix%i, dif %ix%i, max %ix%i\n",
-//		    ep->part->name,
-//		    ep->w, ep->h,
-//		    ep->req.w, ep->req.h,
-//		    w, h,
-//		    maxw, maxh);
 	     if (!((ep->chosen_description) &&
 		   (ep->chosen_description->fixed.w)))
 	       {
