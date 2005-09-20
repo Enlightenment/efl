@@ -1,4 +1,5 @@
 #include "evas_common.h"
+#include "evas_macros.h"
 
 extern DATA8       *_evas_pow_lut;
 
@@ -6,9 +7,6 @@ void
 evas_common_line_init(void)
 {
 }
-
-#define ABS(_x) (((_x) < 0) ? - (_x) : (_x))
-#define SGN(_x) (((_x) < 0) ? -1 : 1)
 
 void
 evas_common_line_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2)

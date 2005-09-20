@@ -1,5 +1,6 @@
 #include "evas_common.h"
 #include "evas_engine.h"
+#include "evas_macros.h"
 #include <X11/XCB/shm.h>
 #include <X11/XCB/xcb_image.h>
 #include <X11/XCB/xcb_atom.h>

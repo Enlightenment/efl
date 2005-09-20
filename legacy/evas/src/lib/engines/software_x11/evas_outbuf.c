@@ -1,5 +1,6 @@
 #include "evas_common.h"
 #include "evas_engine.h"
+#include "evas_macros.h"
 #include <sys/time.h>
 #include <sys/utsname.h>
 
