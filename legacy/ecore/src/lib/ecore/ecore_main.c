@@ -308,7 +308,7 @@ _ecore_main_select(double timeout)
 	
 	fdh = (Ecore_Fd_Handler *)l;
 
-	if (fdh->prep_func)
+	if (!fdh->delete_me && fdh->prep_func)
 		fdh->prep_func (fdh->prep_data, fdh);
      }
    for (l = (Ecore_List2 *)fd_handlers; l; l = l->next)
