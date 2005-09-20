@@ -1559,8 +1559,8 @@ st_collections_group_parts_part_description_fill_origin_relative(void)
 
    ed = ep->default_desc;
    if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
-   ed->fill.pos_rel_x = parse_float_range(0, 0.0, 999999999.0);   
-   ed->fill.pos_rel_y = parse_float_range(1, 0.0, 999999999.0);   
+   ed->fill.pos_rel_x = parse_float_range(0, -999999999.0, 999999999.0);   
+   ed->fill.pos_rel_y = parse_float_range(1, -999999999.0, 999999999.0);   
 }
 
 static void
