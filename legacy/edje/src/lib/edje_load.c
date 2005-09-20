@@ -1322,7 +1322,7 @@ _edje_file_free(Edje_File *edf)
      {
 	Edje_Style *stl;
 	
-	stl == edf->styles->data;
+	stl = edf->styles->data;
 	edf->styles = evas_list_remove_list(edf->styles, edf->styles);
 	while (stl->tags)
 	  {
