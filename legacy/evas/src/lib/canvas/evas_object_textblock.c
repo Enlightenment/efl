@@ -3878,7 +3878,7 @@ evas_object_textblock2_line_number_geometry_get(Evas_Object *obj, int line, Evas
 {
    Evas_Object_Textblock_Line *ln;
    
-   TB_HEAD();
+   TB_HEAD_RETURN(0);
    ln = _find_layout_line_num(obj, line);
    if (!ln) return 0;
    if (cx) *cx = ln->x;
