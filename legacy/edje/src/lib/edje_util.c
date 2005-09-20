@@ -860,10 +860,12 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 	  {
 	     Edje_Real_Part *ep;
 	     int w, h;
+	     int didw;
 	     
 	     ep = l->data;
 	     w = ep->w - ep->req.w;
 	     h = ep->h - ep->req.h;
+	     didw = 0;
 	     if (!((ep->chosen_description) &&
 		   (ep->chosen_description->fixed.w)))
 	       {
@@ -872,16 +874,22 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 		       maxw = w;
 		       ok = 1;
 		       pep = ep;
+		       didw = 1;
 		    }
 	       }
 	     if (!((ep->chosen_description) &&
 		   (ep->chosen_description->fixed.h)))
 	       {
-		  if (h > maxh)
+		  if (!((ep->part->type == EDJE_PART_TYPE_TEXTBLOCK) &&
+			(!ep->chosen_description->text.min_x) &&
+			(didw)))
 		    {
-		       maxh = h;
-		       ok = 1;
-		       pep = ep;
+		       if (h > maxh)
+			 {
+			    maxh = h;
+			    ok = 1;
+			    pep = ep;
+			 }
 		    }
 	       }
 	  }
