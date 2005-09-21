@@ -50,19 +50,19 @@
 
 /* FIXME:
  * 
- * more example edje files
+ * More example Edje files
  * 
  * ? programs can do multiple actions from one signal
  * ? add containering (hbox, vbox, table, wrapping multi-line hbox & vbox)
  * ? text entry widget (single line only)
  * ? reduce linked list walking and list_nth calls
  * 
- * ? recursions, unsafe callbacks outside edje etc. with freeze, ref/unref and block/unblock and break_programs needs to be redesigned & fixed
+ * ? recursions, unsafe callbacks outside Edje etc. with freeze, ref/unref and block/unblock and break_programs needs to be redesigned & fixed
  * ? all unsafe calls that may result in callbacks must be marked and dealt with
  */
 
 
-/* Cache result of program glob matches - this uses up extra ram withthe gain
+/* Cache result of program glob matches - this uses up extra ram with the gain
  * of faster program matching if a part has LOTS of programs.
 #define EDJE_PROGRAM_CACHE
 */
@@ -355,7 +355,7 @@ struct _Edje_Part_Description
    } align;
    
    struct {
-      unsigned char  w, h; /* width or height si fixed in side (cannot expand with edje object size) */
+      unsigned char  w, h; /* width or height is fixed in side (cannot expand with Edje object size) */
    } fixed;
    
    struct {
@@ -411,7 +411,7 @@ struct _Edje_Part_Description
    struct {
       char          *text; /* if "" or NULL, then leave text unchanged */
       char          *text_class; /* how to apply/modify the font */
-      char          *style; /* the text style if a tectblock */
+      char          *style; /* the text style if a textblock */
       char          *font; /* if a specific font is asked for */
       
       int            size; /* 0 = use user set size */
@@ -475,9 +475,9 @@ struct _Edje
    unsigned short        block_break : 1;
    unsigned short        delete_me : 1;
    double                paused_at;
-   Evas                 *evas; /* the evas this edje belongs to */
+   Evas                 *evas; /* the Evas this Edje belongs to */
    Evas_Object          *obj; /* the smart object */
-   Evas_Object          *clipper; /* a big rect to clip this edje to */
+   Evas_Object          *clipper; /* a big rect to clip this Edje to */
    Edje_File            *file; /* the file the data comes form */
    Edje_Part_Collection *collection; /* the description being used */
    Evas_List            *parts; /* private list of parts */
@@ -490,7 +490,7 @@ struct _Edje
    int                   block;
    int                   load_error;
    int                   freeze;
-   /* variable pool for edje embryo scripts */
+   /* variable pool for Edje Embryo scripts */
    Edje_Var_Pool        *var_pool;
    /* for faster lookups to avoid nth list walks */
    int                   table_parts_size;

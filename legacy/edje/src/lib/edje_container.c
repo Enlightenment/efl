@@ -257,7 +257,7 @@ edje_item_object_get(Edje_Item *ei)
    return ei->object;
 }
 
-/* optionally you can manage each column's object yourself OR let edje do it */
+/* optionally you can manage each column's object yourself OR let Edje do it */
 void
 edje_item_object_column_set(Edje_Item *ei, int col, Evas_Object *obj)
 {

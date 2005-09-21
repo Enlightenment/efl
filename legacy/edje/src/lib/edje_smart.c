@@ -25,11 +25,11 @@ Evas_List *_edje_edjes = NULL;
 /************************** API Routines **************************/
 
 /* FIXDOC: Verify/Expand */
-/** Contructs the edje object
+/** Constructs the Edje object
  * @param evas A valid Evas handle
  * @return The Evas_Object pointer.
  *
- * Creates the edje smart object, returning the Evas_Object handle.
+ * Creates the Edje smart object, returning the Evas_Object handle.
  */
 Evas_Object *
 edje_object_add(Evas *evas)

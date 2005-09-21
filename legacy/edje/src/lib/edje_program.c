@@ -121,7 +121,8 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
  * @param emission The signal
  * @param source The signal source
  *
- * This sends a signal to the edje.  These are defined in the programs section of an edc.
+ * This sends a signal to the edje.  These are defined in the programs
+ * section of an edc.
  */
 void
 edje_object_signal_emit(Evas_Object *obj, const char *emission, const char *source)
@@ -137,10 +138,11 @@ edje_object_signal_emit(Evas_Object *obj, const char *emission, const char *sour
 
 /* FIXDOC: Verify/Expand */
 /** Set the Edje to play or pause
- * @param obj A vaild Evas_Object handle
+ * @param obj A valid Evas_Object handle
  * @param play Play instruction (1 to play, 0 to pause)
  *
- * This sets the Edje to play or pause depending on the parameter.  This has no effect if the Edje is already in that state.
+ * This sets the Edje to play or pause depending on the parameter.
+ * This has no effect if the Edje is already in that state.
  */
 void
 edje_object_play_set(Evas_Object *obj, int play)

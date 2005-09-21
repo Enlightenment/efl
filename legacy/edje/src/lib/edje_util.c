@@ -29,7 +29,7 @@ edje_freeze(void)
 }
 
 /* FIXDOC: Expand */
-/** Thaw all objects in Edje
+/** Thaw all objects in Edje.
  */
 void
 edje_thaw(void)
@@ -89,7 +89,8 @@ edje_object_data_get(Evas_Object *obj, const char *key)
  * @return The frozen state\n
  * 0 on Error
  *
- * This puts all changes on hold.  Successive freezes will nest, requiring an equal number of thaws.
+ * This puts all changes on hold.  Successive freezes will nest,
+ * requiring an equal number of thaws.
  */
 int
 edje_object_freeze(Evas_Object *obj)
@@ -220,7 +221,8 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
  * @param b3 Shadow Blue value
  * @param a3 Shadow Alpha value
  *
- * Applys the color class to the object, where the first color is the object, the second is the outline, and the third is the shadow.
+ * Applies the color class to the object, where the first color is the
+ * object, the second is the outline, and the third is the shadow.
  */
 void
 edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
@@ -360,7 +362,7 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
 }
 
 /** Sets Edje text class
- * @param obj A vaild Evas_Object handle
+ * @param obj A valid Evas_Object handle
  * @param text_class The text class name
  * @param font Font name
  * @param size Font Size
@@ -541,7 +543,9 @@ edje_object_part_text_get(Evas_Object *obj, const char *part)
  * @param part The part name
  * @param obj_swallow The object to swallow
  *
- * Swallows the object into the edje part so that all geometry changes for the part affect the swallowed object. (e.g. resize, move, show, raise/lower, etc.)
+ * Swallows the object into the edje part so that all geometry changes
+ * for the part affect the swallowed object. (e.g. resize, move, show,
+ * raise/lower, etc.).
  */
 void
 edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_swallow)
@@ -647,7 +651,7 @@ edje_extern_object_min_size_set(Evas_Object *obj, Evas_Coord minw, Evas_Coord mi
 }
 
 /** Set the object maximum size
- * @param obj A vaild Evas_Object handle
+ * @param obj A valid Evas_Object handle
  * @param maxw The maximum width
  * @param maxh The maximum height
  *
@@ -731,7 +735,8 @@ edje_object_part_swallow_get(Evas_Object *obj, const char *part)
  * @param minw Minimum width pointer
  * @param minh Minimum height pointer
  *
- * Gets the object's minimum size values from the Edje. These are set to zero if no Edje is connected to the Evas Object.
+ * Gets the object's minimum size values from the Edje. These are set
+ * to zero if no Edje is connected to the Evas Object.
  */
 void
 edje_object_size_min_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
@@ -754,7 +759,8 @@ edje_object_size_min_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
  * @param maxw Maximum width pointer
  * @param maxh Maximum height pointer
  *
- * Gets the object's maximum size values from the Edje.  These are set to zero if no Edje is connected to the Evas Object.
+ * Gets the object's maximum size values from the Edje.  These are set
+ * to zero if no Edje is connected to the Evas Object.
  */
 void
 edje_object_size_max_get(Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh)
@@ -786,10 +792,11 @@ edje_object_size_max_get(Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh)
      }
 }
 
-/** Force a Size/Geometry Calc
+/** Force a Size/Geometry calculation
  * @param obj A valid Evas_Object handle
  *
- * Forces the object @p obj to recalc layout regardless of freeze/thaw
+ * Forces the object @p obj to recalculation layout regardless of
+ * freeze/thaw.
  */
 void
 edje_object_calc_force(Evas_Object *obj)
@@ -904,7 +911,7 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 		    "part not marked as fixed size in one dimension. This needs\n"
 		    "to be fixed in the source .edc by adding:\n"
 		    "  fixed: 1 1;\n"
-		    "to the part that cannot expand in size if the edje object does.\n",
+		    "to the part that cannot expand in size if the Edje object does.\n",
 		    ed->path, ed->part);
 	     if (pep)
 	       printf("The part suspected causing this problem is:\n"
@@ -931,7 +938,7 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
    ed->calc_only = 0;
 }
 
-/** Returns the state of the edje part
+/** Returns the state of the Edje part
  * @param obj A valid Evas_Objectart handle
  * @param part The part name
  * @param val_ret 
@@ -1049,6 +1056,7 @@ edje_object_part_drag_value_set(Evas_Object *obj, const char *part, double dx, d
    _edje_dragable_pos_set(ed, rp, dx, dy);
    _edje_emit(ed, "drag,set", rp->part->name);   
 }
+
 /** Get the dragable object location
  * @param obj A valid Evas_Object handle
  * @param part The part name
@@ -1093,7 +1101,7 @@ edje_object_part_drag_value_get(Evas_Object *obj, const char *part, double *dx, 
  * @param dw The drag width
  * @param dh The drag height
  *
- * Sets the size of the dragable object
+ * Sets the size of the dragable object.
  */
 void
 edje_object_part_drag_size_set(Evas_Object *obj, const char *part, double dw, double dh)
@@ -1290,7 +1298,8 @@ edje_object_part_drag_page_get(Evas_Object *obj, const char *part, double *dx, d
  * @param dx The x step
  * @param dy The y step
  *
- * Steps x,y where the step increment is the ammount set by edje_object_part_drag_step_set.
+ * Steps x,y where the step increment is the amount set by
+ * edje_object_part_drag_step_set.
  */
 void
 edje_object_part_drag_step(Evas_Object *obj, const char *part, double dx, double dy)

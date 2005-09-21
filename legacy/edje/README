@@ -48,29 +48,29 @@ Quick start-up guide:
   sudo make install
   cd
 
-5. You need imlib2 installed. any reelease from 1.0.0 on will do.
-6. You already have edje. now build it:
+5. You need imlib2 installed. any release from 1.0.0 on will do.
+6. You already have Edje. now build it:
 
    ./autogen.sh
    make
    sudo make install
 
-You now want to go test it out. first you'll need to make an edje EET file.
+You now want to go test it out. first you'll need to make an Edje EET file.
    
    cd data
    ./e_logo.sh
    
-Now you can view the edje you just built:
+Now you can view the Edje you just built:
    
    edje ./e_logo.edj
    
-You can view multilpe files at once with the edje test program:
+You can view multiple files at once with the Edje test program:
    
    edje ./e_logo.edj ./e_logo.edj ./e_logo.edj
    
 to view the same one 3 times.
    
-You can read the source fuile that builds the edje EET file by looking at:
+You can read the source file that builds the Edje EET file by looking at:
 
    data/src/e_logo.edc
 

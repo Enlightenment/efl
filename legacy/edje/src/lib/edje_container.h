@@ -144,18 +144,18 @@ struct _Edje_Item_Cell
  * +-----------------------------+ +-------+ +----------------+
  * 
  * spacer object:
- * 1 edje object goes inbetween each row as a spacer object (opt)
- * 1 edje object goes inbetween each column as a spacer object (opt)
+ * 1 Edje object goes in-between each row as a spacer object (opt)
+ * 1 Edje object goes in-between each column as a spacer object (opt)
  * 
  * surround object:
- * 1 edje object goes around each item - item swallowed into "item" part (opt)
+ * 1 Edje object goes around each item - item swallowed into "item" part (opt)
  *   if no "item" part then just underlay it
  *   on select send "select" "" signal
  *   on unselect send "unselect" "" signal
  *   on focus send "focus" "" signal
  *   on unfocus send "unfocus" signal
  * 
- *   if any list item/cell is an edje object emit this to them too.
+ *   if any list item/cell is an Edje object emit this to them too.
  * 
  *   also call callbacks.
  *   if a surround object emits such a signal itself then call callbacks too
