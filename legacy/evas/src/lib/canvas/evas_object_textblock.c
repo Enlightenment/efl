@@ -1047,7 +1047,7 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	else if (fmt->font.name)
 	  buf = strdup(fmt->font.name);
 	fmt->font.font = evas_font_load(obj->layer->evas, 
-					fmt->font.name, fmt->font.source, 
+					buf, fmt->font.source, 
 					fmt->font.size);
 	if (buf) free(buf);
 	if (of) evas_font_free(obj->layer->evas, of);
@@ -1171,7 +1171,7 @@ _format_dup(Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
    else if (fmt2->font.name)
      buf = strdup(fmt2->font.name);
    fmt2->font.font = evas_font_load(obj->layer->evas, 
-				   fmt2->font.name, fmt2->font.source,
+				   buf, fmt2->font.source,
 				   fmt2->font.size);
    if (buf) free(buf);
    return fmt2;
