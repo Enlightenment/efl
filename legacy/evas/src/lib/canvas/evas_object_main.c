@@ -467,7 +467,7 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 	evas_object_inform_call_move(obj);
 	return;
      }
-   if (obj->layer->evas->events_frozen != 0)
+   if (obj->layer->evas->events_frozen <= 0)
      {
 	pass = evas_event_passes_through(obj);
 	if (pass)
@@ -480,7 +480,7 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    obj->cur.cache.geometry.validity = 0;
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
-   if (obj->layer->evas->events_frozen != 0)
+   if (obj->layer->evas->events_frozen <= 0)
      {
 	evas_object_recalc_clippees(obj);
 	if (!pass)
@@ -531,7 +531,7 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 	evas_object_inform_call_resize(obj);
 	return;
      }
-   if (obj->layer->evas->events_frozen != 0)
+   if (obj->layer->evas->events_frozen <= 0)
      {
 	pass = evas_event_passes_through(obj);
 	if (!pass)
@@ -545,7 +545,7 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
    evas_object_recalc_clippees(obj);
-   if (obj->layer->evas->events_frozen != 0)
+   if (obj->layer->evas->events_frozen <= 0)
      {
 	//   if (obj->func->coords_recalc) obj->func->coords_recalc(obj);
 	if (!pass)
@@ -634,7 +634,7 @@ evas_object_show(Evas_Object *obj)
    obj->cur.visible = 1;
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
-   if (obj->layer->evas->events_frozen != 0)
+   if (obj->layer->evas->events_frozen <= 0)
      {
 	evas_object_recalc_clippees(obj);
 	if (!evas_event_passes_through(obj))
@@ -681,7 +681,7 @@ evas_object_hide(Evas_Object *obj)
    obj->cur.visible = 0;
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
-   if (obj->layer->evas->events_frozen != 0)
+   if (obj->layer->evas->events_frozen <= 0)
      {
 	evas_object_recalc_clippees(obj);
 	if (!evas_event_passes_through(obj))

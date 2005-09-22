@@ -111,7 +111,7 @@ evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coo
    MAGIC_CHECK_END();
    if ((x1 == o->cur.x1) && (y1 == o->cur.y1) &&
        (x2 == o->cur.x2) && (y2 == o->cur.y2)) return;
-   if (obj->layer->evas->events_frozen != 0)
+   if (obj->layer->evas->events_frozen <= 0)
      {
 	if (!evas_event_passes_through(obj))
 	  was = evas_object_is_in_output_rect(obj,
@@ -150,7 +150,7 @@ evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coo
    o->changed = 1;
    evas_object_change(obj);
    evas_object_coords_recalc(obj);
-   if (obj->layer->evas->events_frozen != 0)
+   if (obj->layer->evas->events_frozen <= 0)
      {
 	is = evas_object_is_in_output_rect(obj,
 					   obj->layer->evas->pointer.x,

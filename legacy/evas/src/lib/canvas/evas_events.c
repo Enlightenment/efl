@@ -218,7 +218,7 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
 	ev.locks = &(e->locks);
 	ev.flags = flags;
 	ev.timestamp = timestamp;
-	if (!e->events_frozen)
+	if (e->events_frozen <= 0)
 	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_DOWN, &ev);
      }
    if (copy) copy = evas_list_free(copy);
@@ -265,7 +265,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 	ev.locks = &(e->locks);
 	ev.flags = flags;
 	ev.timestamp = timestamp;
-	if (!e->events_frozen)
+	if (e->events_frozen <= 0)
 	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_UP, &ev);
      }
    if (copy) copy = evas_list_free(copy);
@@ -298,7 +298,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);
 		  ev.timestamp = timestamp;
-		  if (!e->events_frozen)
+		  if (e->events_frozen <= 0)
 		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }
 	  }
@@ -325,7 +325,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
 		       ev.modifiers = &(e->modifiers);
 		       ev.locks = &(e->locks);
 		       ev.timestamp = timestamp;
-		       if (!e->events_frozen)
+		       if (e->events_frozen <= 0)
 			 evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_IN, &ev);
 		    }
 	       }
@@ -362,25 +362,25 @@ evas_event_feed_mouse_wheel(Evas *e, int direction, int z, unsigned int timestam
    e->last_timestamp = timestamp;
 
    copy = evas_event_list_copy(e->pointer.object.in);
-
+   
    for (l = copy; l; l = l->next)
-   {
-      Evas_Event_Mouse_Wheel ev;
-      Evas_Object *obj = l->data;
-
-      ev.direction = direction;
-      ev.z = z;
-      ev.output.x = e->pointer.x;
-      ev.output.y = e->pointer.y;
-      ev.canvas.x = e->pointer.canvas_x;
-      ev.canvas.y = e->pointer.canvas_y;
-      ev.data = (void *) data;
-      ev.modifiers = &(e->modifiers);
-      ev.locks = &(e->locks);
-      ev.timestamp = timestamp;
-      if (!e->events_frozen)
+     {
+	Evas_Event_Mouse_Wheel ev;
+	Evas_Object *obj = l->data;
+	
+	ev.direction = direction;
+	ev.z = z;
+	ev.output.x = e->pointer.x;
+	ev.output.y = e->pointer.y;
+	ev.canvas.x = e->pointer.canvas_x;
+	ev.canvas.y = e->pointer.canvas_y;
+	ev.data = (void *) data;
+	ev.modifiers = &(e->modifiers);
+	ev.locks = &(e->locks);
+	ev.timestamp = timestamp;
+	if (e->events_frozen <= 0)
 	  evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_WHEEL, &ev);
-   }
+     }
    if (copy) copy = evas_list_free(copy);
 
    return;
@@ -451,7 +451,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 		       ev.modifiers = &(e->modifiers);
 		       ev.locks = &(e->locks);
 		       ev.timestamp = timestamp;
-		       if (!e->events_frozen)
+		       if (e->events_frozen <= 0)
 			 evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_MOVE, &ev);
 		    }
 	       }
@@ -481,7 +481,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 		       ev.modifiers = &(e->modifiers);
 		       ev.locks = &(e->locks);
 		       ev.timestamp = timestamp;
-		       if (!e->events_frozen)
+		       if (e->events_frozen <= 0)
 			 evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 		    }
 	       }
@@ -530,7 +530,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 		       ev.modifiers = &(e->modifiers);
 		       ev.locks = &(e->locks);
 		       ev.timestamp = timestamp;
-		       if (!e->events_frozen)
+		       if (e->events_frozen <= 0)
 			 evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_MOVE, &ev);
 		    }
 	       }
@@ -549,7 +549,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);
 		  ev.timestamp = timestamp;
-		  if (!e->events_frozen)
+		  if (e->events_frozen <= 0)
 		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }
 	  }
@@ -575,7 +575,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);
 		  ev.timestamp = timestamp;
-		  if (!e->events_frozen)
+		  if (e->events_frozen <= 0)
 		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_IN, &ev);
 	       }
 	  }
@@ -630,7 +630,7 @@ evas_event_feed_mouse_in(Evas *e, unsigned int timestamp, const void *data)
 	     ev.modifiers = &(e->modifiers);
 	     ev.locks = &(e->locks);
 	     ev.timestamp = timestamp;
-	     if (!e->events_frozen)
+	     if (e->events_frozen <= 0)
 	       evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_IN, &ev);
 	  }
      }
@@ -683,7 +683,7 @@ evas_event_feed_mouse_out(Evas *e, unsigned int timestamp, const void *data)
 		  ev.modifiers = &(e->modifiers);
 		  ev.locks = &(e->locks);
 		  ev.timestamp = timestamp;
-		  if (!e->events_frozen)
+		  if (e->events_frozen <= 0)
 		    evas_object_event_callback_call(obj, EVAS_CALLBACK_MOUSE_OUT, &ev);
 	       }
 	  }
@@ -743,7 +743,7 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
 			 (g->not_modifiers == ~e->modifiers.mask))) &&
 		      (!strcmp(keyname, g->keyname)))
 		    {
-		       if (!e->events_frozen)
+		       if (e->events_frozen <= 0)
 			 evas_object_event_callback_call(g->object, EVAS_CALLBACK_KEY_DOWN, &ev);
 		       if (g->exclusive) exclusive = 1;
 		    }
@@ -770,7 +770,7 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
 	  }
 	if ((e->focused) && (!exclusive))
 	  {
-	     if (!e->events_frozen)
+	     if (e->events_frozen <= 0)
 	       evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_DOWN, &ev);
 	  }
      }
@@ -826,7 +826,7 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
 			 (g->not_modifiers == ~e->modifiers.mask))) &&
 		      (!strcmp(keyname, g->keyname)))
 		    {
-		       if (!e->events_frozen)
+		       if (e->events_frozen <= 0)
 			 evas_object_event_callback_call(g->object, EVAS_CALLBACK_KEY_UP, &ev);
 		       if (g->exclusive) exclusive = 1;
 		    }
@@ -853,7 +853,7 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
 	  }
 	if ((e->focused) && (!exclusive))
 	  {
-	     if (!e->events_frozen)
+	     if (e->events_frozen <= 0)
 	       evas_object_event_callback_call(e->focused, EVAS_CALLBACK_KEY_UP, &ev);
 	  }
      }

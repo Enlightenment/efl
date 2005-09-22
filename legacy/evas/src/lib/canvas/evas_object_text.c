@@ -152,7 +152,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
 	same_font = 1;
 	if (size == o->cur.size) return;
      }
-   if (obj->layer->evas->events_frozen != 0)
+   if (obj->layer->evas->events_frozen <= 0)
      {
 	pass = evas_event_passes_through(obj);
 	if (!pass)
@@ -222,7 +222,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
    o->changed = 1;
    evas_object_change(obj);
    evas_object_coords_recalc(obj);
-   if (obj->layer->evas->events_frozen != 0)
+   if (obj->layer->evas->events_frozen <= 0)
      {
 	if (!pass)
 	  {

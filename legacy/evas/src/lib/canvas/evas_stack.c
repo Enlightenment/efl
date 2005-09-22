@@ -72,7 +72,7 @@ evas_object_raise(Evas_Object *obj)
      }
    obj->restack = 1;
    evas_object_change(obj);
-   if (obj->layer->evas->events_frozen != 0)
+   if (obj->layer->evas->events_frozen <= 0)
      {
 	if (!evas_event_passes_through(obj))
 	  {
@@ -125,7 +125,7 @@ evas_object_lower(Evas_Object *obj)
      }
    obj->restack = 1;
    evas_object_change(obj);
-   if (obj->layer->evas->events_frozen != 0)
+   if (obj->layer->evas->events_frozen <= 0)
      {
 	if (!evas_event_passes_through(obj))
 	  {
@@ -191,7 +191,7 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
      }
    obj->restack = 1;
    evas_object_change(obj);
-   if (obj->layer->evas->events_frozen != 0)
+   if (obj->layer->evas->events_frozen <= 0)
      {
 	if (!evas_event_passes_through(obj))
 	  {
@@ -257,7 +257,7 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
      }
    obj->restack = 1;
    evas_object_change(obj);
-   if (obj->layer->evas->events_frozen != 0)
+   if (obj->layer->evas->events_frozen <= 0)
      {
 	if (!evas_event_passes_through(obj))
 	  {
