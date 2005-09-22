@@ -285,7 +285,7 @@ _ecore_x_event_handle_button_press(XEvent *xevent)
 	if (!e)
 	  return;
 	
-	e->modifiers = 0;
+	e->modifiers = xevent->xbutton.state;
 	e->direction = 0;
 	e->z = 0;
 	if      (xevent->xbutton.button == 4)
