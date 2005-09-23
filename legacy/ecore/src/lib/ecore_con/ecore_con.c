@@ -545,7 +545,8 @@ ecore_con_server_send(Ecore_Con_Server *svr, void *data, int size)
    if (svr->dead) return 0;
    if (!data) return 0;
    if (size < 1) return 0;
-   ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
+   if (svr->fd_handler)
+     ecore_main_fd_handler_active_set(svr->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
    if (svr->write_buf)
      {
 	unsigned char *newbuf;
@@ -628,7 +629,8 @@ ecore_con_client_send(Ecore_Con_Client *cl, void *data, int size)
    if (cl->dead) return 0;
    if (!data) return 0;
    if (size < 1) return 0;
-   ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
+   if (cl->fd_handler)
+     ecore_main_fd_handler_active_set(cl->fd_handler, ECORE_FD_READ | ECORE_FD_WRITE);
    if (cl->buf)
      {
 	unsigned char *newbuf;
@@ -1009,17 +1011,27 @@ _ecore_con_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
 
 	for (;;)
 	  {
-	     int num, lost_server = 0;
+	     int num, lost_server;
 	     char buf[READBUFSIZ];
 
+	     lost_server = 0;
 #if USE_OPENSSL
 	     if (!svr->ssl)
 	       {
 #endif
 		  if ((num = read(svr->fd, buf, READBUFSIZ)) < 1)
-		    lost_server = (errno == EIO || errno == EBADF ||
-				   errno == EPIPE || errno == EINVAL ||
-				   errno == ENOSPC || num == 0); /* is num == 0 right? */
+		    {
+		       lost_server = ((errno == EIO) || 
+				      (errno == EBADF) ||
+				      (errno == EPIPE) || 
+				      (errno == EINVAL) ||
+				      (errno == ENOSPC) || 
+				      (num == 0));
+		       /* is num == 0 is right - when the server closes us 
+			* off we will get this (as this is called when select
+			* tells us there is data to read!)
+			*/
+		    }
 #if USE_OPENSSL
 	       }
 	     else

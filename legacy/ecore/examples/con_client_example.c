@@ -13,7 +13,7 @@ Ecore_Con_Server *svr;
 #define SOCKET_NAME "con_example"
 #define SOCKET_PORT 0
 
-char *msg = "Hello server!";
+char *msg = "get http://www.enlightenment.org\n";
 
 typedef int (*Handler_Func) (void *data, int type, void *event);
 
@@ -33,8 +33,8 @@ main (int argc,
   ecore_con_init();
 
   // Try to conect to server.
-  svr = ecore_con_server_connect(ECORE_CON_REMOTE_SYSTEM, "mail.valinux.co.jp",
-				 110, NULL);
+  svr = ecore_con_server_connect(ECORE_CON_REMOTE_SYSTEM, "www.enlightenment.org",
+				 80, NULL);
   if (NULL == svr) {
     printf("*** ERROR: Unable to connect to server.\n");
     printf("*** Start con_server_example before running this program.\n");
