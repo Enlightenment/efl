@@ -470,7 +470,7 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
    if (obj->layer->evas->events_frozen <= 0)
      {
 	pass = evas_event_passes_through(obj);
-	if (pass)
+	if (!pass)
 	  was = evas_object_is_in_output_rect(obj,
 					      obj->layer->evas->pointer.x,
 					      obj->layer->evas->pointer.y, 1, 1);
