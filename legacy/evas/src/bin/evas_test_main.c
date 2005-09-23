@@ -1927,9 +1927,13 @@ loop(void)
 }
 
 void
-cb_mouse_down(void *data, Evas * e, Evas_Object * obj,
-	      Evas_Event_Mouse_Down * ev)
+cb_mouse_down(void *data, Evas *e, Evas_Object *obj,
+	      void *event)
 {
+   Evas_Event_Mouse_Down *ev;
+
+   ev = event;
+
    if (mode == 0)
      {
 	mode = 1;
