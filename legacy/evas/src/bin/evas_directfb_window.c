@@ -75,7 +75,11 @@ int main( int argc, char *argv[] )
      IDirectFBEventBuffer   *buffer;
 
      DFBDisplayLayerConfig  layer_config;
+#if (DIRECTFB_MAJOR_VERSION == 0) && (DIRECTFB_MINOR_VERSION == 9) && (DIRECTFB_MICRO_VERSION < 23)
      DFBCardCapabilities    caps;
+#else
+     DFBGraphicsDeviceDescription caps;
+#endif
      IDirectFBWindow*       upper;
      DFBWindowID            id1;
 
@@ -88,7 +92,11 @@ int main( int argc, char *argv[] )
      DFBCHECK(DirectFBInit( &argc, &argv ));
      DFBCHECK(DirectFBCreate( &dfb ));
 
+#if (DIRECTFB_MAJOR_VERSION == 0) && (DIRECTFB_MINOR_VERSION == 9) && (DIRECTFB_MICRO_VERSION < 23)
      dfb->GetCardCapabilities( dfb, &caps );
+#else
+     dfb->GetDeviceDescription( dfb, &caps );
+#endif
 
      dfb->GetDisplayLayer( dfb, DLID_PRIMARY, &layer );
 
