@@ -20,7 +20,6 @@ typedef struct _Ecore_Ipc_Msg_Head Ecore_Ipc_Msg_Head;
 #endif
 struct _Ecore_Ipc_Msg_Head
 {
-      int head;
       int major;
       int minor;
       int ref;

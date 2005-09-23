@@ -985,7 +985,7 @@ _ecore_ipc_event_client_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 	redo:
 	if ((cl->buf_size - offset) >= (int)sizeof(int))
 	  {
-	     int s, md, d, head;
+	     int s, md, d = 0, head;
 	     unsigned char *dd;
 	     
 	     dd = (unsigned char *)&head;
@@ -1158,7 +1158,7 @@ _ecore_ipc_event_server_data(void *data __UNUSED__, int ev_type __UNUSED__, void
 	redo:
 	if ((svr->buf_size - offset) >= (int)sizeof(int))
 	  {
-	     int s, md, d, head;
+	     int s, md, d = 0, head;
 	     unsigned char *dd;
 	     
 	     dd = (unsigned char *)&head;
