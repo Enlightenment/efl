@@ -8,6 +8,7 @@ Standards-Version: 3.6.0
 Package: embryo0-bin
 Section: graphics
 Architecture: any
+Provides: embryo-bin
 Depends: ${shlibs:Depends}
 Description: SMALL compiler creating Embryo bytecode
  This package contains the compiler embryo_cc.
@@ -15,6 +16,7 @@ Description: SMALL compiler creating Embryo bytecode
 Package: libembryo0-dev
 Section: devel
 Architecture: any
+Provides: libembryo-dev
 Depends: libembryo0 (= ${Source-Version}), libc6-dev | libc-dev
 Description: Development files for libembryo0
  Headers, static libraries and documentation for Embryo.
@@ -22,6 +24,7 @@ Description: Development files for libembryo0
 Package: libembryo0
 Section: libs
 Architecture: any
+Provides: libembryo
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Suggests: embryo0-bin (= ${Source-Version})
 Description: SMALL-based abstract machine (AMX) bytecode interpreter
