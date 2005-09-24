@@ -739,13 +739,14 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
 		  if (g->delete_me) continue;
 		  if (((e->modifiers.mask & g->modifiers) ||
 		       (g->modifiers == e->modifiers.mask)) &&
-		      (!((e->modifiers.mask & g->not_modifiers) ||
-			 (g->not_modifiers == ~e->modifiers.mask))) &&
 		      (!strcmp(keyname, g->keyname)))
 		    {
-		       if (e->events_frozen <= 0)
-			 evas_object_event_callback_call(g->object, EVAS_CALLBACK_KEY_DOWN, &ev);
-		       if (g->exclusive) exclusive = 1;
+		       if (!(e->modifiers.mask & g->not_modifiers))
+			 {
+			    if (e->events_frozen <= 0)
+			      evas_object_event_callback_call(g->object, EVAS_CALLBACK_KEY_DOWN, &ev);
+			    if (g->exclusive) exclusive = 1;
+			 }
 		    }
 	       }
 	     e->walking_grabs--;
