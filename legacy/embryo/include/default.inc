@@ -68,7 +68,7 @@ native       fnmatch(glob[], str[]);
 /* same as strcmp() */
 native       strcmp(str1[], str2[]);
 /* same as strncmp */
-native       strncmp(str1[], str2[]);
+native       strncmp(str1[], str2[], n);
 /* same as strcpy */
 native       strcpy(dst[], src[]);
 /* same as strncpy  except it nul terminates */
