@@ -637,6 +637,8 @@ ecore_x_netwm_icon_get(Ecore_X_Window win, int *width, int *height, unsigned int
    if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_NET_WM_ICON,
 					 XA_CARDINAL, 32, &data_ret, &num_ret))
      return 0;
+   if (!data_ret) return 0;
+   
    data = (unsigned int *)data_ret;
 
    if (icon)
@@ -651,8 +653,14 @@ ecore_x_netwm_icon_get(Ecore_X_Window win, int *width, int *height, unsigned int
 
    len = data[0] * data[1];
    src = &(data[2]);
-   if (icon)
-     memcpy(*icon, &(data[2]), len * sizeof(unsigned int));
+   if (len > (num_ret - 2))
+     {
+	if (icon) free(*icon);
+	free(data_ret);
+	return 0;
+     }
+   if (icon) memcpy(*icon, src, len * sizeof(unsigned int));
+   
    free(data_ret);
 
    return 1;
