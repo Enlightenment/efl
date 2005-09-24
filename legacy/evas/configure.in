@@ -762,7 +762,6 @@ case $host_cpu in
     ;;
 esac
 altivec_cflags=""
-altivec_libs=""
 AC_MSG_CHECKING(whether to build altivec code)
 AC_ARG_ENABLE(cpu-altivec, 
   [  --enable-cpu-altivec            enable altivec code], [
@@ -782,12 +781,22 @@ AC_ARG_ENABLE(cpu-altivec,
 if test "x$have_altivec" = "xyes"; then
    AC_CHECK_HEADER(altivec.h,
      [
-        altivec_libs="-laltivec"
         AC_DEFINE(BUILD_ALTIVEC, 1, [Build Altivec Code])
 	build_cpu_altivec="yes"
      ],
      [
-        build_cpu_altivec="no"
+       PF=$CFLAGS
+       CFLAGS=$CFLAGS" -maltivec"
+       AC_CHECK_HEADER(altivec.h,
+         [
+            AC_DEFINE(BUILD_ALTIVEC, 1, [Build Altivec Code])
+    	    build_cpu_altivec="yes"
+         ],
+         [
+            build_cpu_altivec="no"
+         ]
+       )
+       CFLAGS=$PF
      ]
    )
 fi
@@ -797,6 +806,10 @@ if test "x$have_altivec" = "xyes"; then
       if echo "int main(){ return 0;}" | gcc -faltivec -E - > /dev/null 2>&1; then
          AC_MSG_RESULT(yes)
          altivec_cflags="-faltivec"
+         AC_DEFINE(BUILD_ALTIVEC, 1, [Build Altivec Code])
+      elif echo "int main(){ return 0;}" | gcc -maltivec -E - > /dev/null 2>&1; then
+         AC_MSG_RESULT(yes)
+         altivec_cflags="-maltivec"
          AC_DEFINE(BUILD_ALTIVEC, 1, [Build Altivec Code])
       else
          AC_MSG_RESULT(no)
