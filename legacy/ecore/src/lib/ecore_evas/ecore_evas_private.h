@@ -90,6 +90,7 @@ struct _Ecore_Evas_Engine
       Ecore_X_Window win_root;
       Ecore_X_Window win_container;
       Ecore_X_Window win;
+      Evas_List     *win_extra;
       Ecore_X_Pixmap pmap;
       Ecore_X_Pixmap mask;
       Ecore_X_GC     gc;

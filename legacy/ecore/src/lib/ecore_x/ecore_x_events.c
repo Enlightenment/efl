@@ -171,7 +171,7 @@ _ecore_x_event_handle_key_press(XEvent *xevent)
    char                    buf[256];
    KeySym                  sym;
    XComposeStatus          stat;
-   
+
    e = calloc(1, sizeof(Ecore_X_Event_Key_Down));
    if (!e) return;
    keyname = XKeysymToString(XKeycodeToKeysym(xevent->xkey.display, 

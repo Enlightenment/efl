@@ -79,12 +79,14 @@ EAPI Ecore_X_Window  ecore_evas_software_x11_window_get(Ecore_Evas *ee);
 EAPI Ecore_X_Window  ecore_evas_software_x11_subwindow_get(Ecore_Evas *ee);
 EAPI void            ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, int on);
 EAPI int             ecore_evas_software_x11_direct_resize_get(Ecore_Evas *ee);
+EAPI void            ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win);
    
 EAPI Ecore_Evas     *ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent, int x, int y, int w, int h);
 EAPI Ecore_X_Window  ecore_evas_gl_x11_window_get(Ecore_Evas *ee);
 EAPI Ecore_X_Window  ecore_evas_gl_x11_subwindow_get(Ecore_Evas *ee);
 EAPI void            ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee, int on);
 EAPI int             ecore_evas_gl_x11_direct_resize_get(Ecore_Evas *ee);
+EAPI void            ecore_evas_gl_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win);
 
 EAPI Ecore_Evas     *ecore_evas_fb_new(char *disp_name, int rotation, int w, int h);
 

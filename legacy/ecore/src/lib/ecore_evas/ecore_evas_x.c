@@ -872,6 +872,15 @@ _ecore_evas_x_free(Ecore_Evas *ee)
    ee->engine.x.damages = 0;
    ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
    ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win_container), ee);
+   while (ee->engine.x.win_extra)
+     {
+	Ecore_X_Window *winp;
+	
+	winp = ee->engine.x.win_extra->data;
+	ee->engine.x.win_extra = evas_list_remove_list(ee->engine.x.win_extra, ee->engine.x.win_extra);
+	ecore_evases_hash = evas_hash_del(ecore_evases_hash, _ecore_evas_x_winid_str_get(*winp), ee);
+	free(winp);
+     }
    ecore_evases = _ecore_list2_remove(ecore_evases, ee);
    _ecore_evas_x_shutdown();
    ecore_x_shutdown();
@@ -1757,6 +1766,28 @@ ecore_evas_software_x11_direct_resize_get(Ecore_Evas *ee)
  *
  * FIXME: To be fixed.
  */
+void
+ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win)
+{
+#ifdef BUILD_ECORE_X
+   Ecore_X_Window *winp;
+   
+   winp = malloc(sizeof(Ecore_X_Window));
+   if (winp)
+     {
+	*winp = win;
+	ee->engine.x.win_extra = evas_list_append(ee->engine.x.win_extra, winp);
+	ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(win), ee);
+     }
+#else
+#endif   
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
 Ecore_Evas *
 ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent, 
 		      int x, int y, int w, int h)
@@ -1951,5 +1982,16 @@ ecore_evas_gl_x11_direct_resize_get(Ecore_Evas *ee)
 #else
    return 0;
 #endif   
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+void
+ecore_evas_gl_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win)
+{
+   ecore_evas_software_x11_extra_event_window_add(ee, win);
 }
 

@@ -52,7 +52,7 @@ ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h)
                                 ColormapChangeMask;
    win = XCreateWindow(_ecore_x_disp, parent,
 		       x, y, w, h, 0,
-		       0, /*DefaultDepth(_ecore_x_disp, DefaultScreen(_ecore_x_disp)),*/
+		       CopyFromParent, /*DefaultDepth(_ecore_x_disp, DefaultScreen(_ecore_x_disp)),*/
 		       InputOutput, 
 		       CopyFromParent, /*DefaultVisual(_ecore_x_disp, DefaultScreen(_ecore_x_disp)),*/
 		       CWBackingStore |
@@ -109,7 +109,7 @@ ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h)
                                 ColormapChangeMask;
    win = XCreateWindow(_ecore_x_disp, parent,
 		       x, y, w, h, 0,
-		       0, /*DefaultDepth(_ecore_x_disp, DefaultScreen(_ecore_x_disp)),*/
+		       CopyFromParent, /*DefaultDepth(_ecore_x_disp, DefaultScreen(_ecore_x_disp)),*/
 		       InputOutput, 
 		       CopyFromParent, /*DefaultVisual(_ecore_x_disp, DefaultScreen(_ecore_x_disp)),*/
 		       CWBackingStore |
@@ -161,7 +161,7 @@ ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h)
                                 ColormapChangeMask;
    win = XCreateWindow(_ecore_x_disp, parent,
 		       x, y, w, h, 0,
-		       0, 
+		       CopyFromParent, 
 		       InputOnly,
 		       CopyFromParent, /*DefaultVisual(_ecore_x_disp, DefaultScreen(_ecore_x_disp)),*/
 		       CWOverrideRedirect | 

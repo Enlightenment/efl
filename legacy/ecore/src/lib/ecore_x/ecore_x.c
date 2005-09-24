@@ -1022,7 +1022,6 @@ void
 ecore_x_window_container_manage(Ecore_X_Window win)
 {
    XSelectInput(_ecore_x_disp, win, 
-		ResizeRedirectMask |
 		SubstructureRedirectMask | 
 		SubstructureNotifyMask);
 }
