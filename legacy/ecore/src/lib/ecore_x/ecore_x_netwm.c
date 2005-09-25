@@ -623,16 +623,16 @@ ecore_x_netwm_strut_partial_get(Ecore_X_Window win, int *left, int *right,
 }
 
 int
-ecore_x_netwm_icon_get(Ecore_X_Window win, int *width, int *height, unsigned int **icon, int *num)
+ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
 {
    unsigned char *data_ret;
-   unsigned int  *data;
+   unsigned int  *data, *p;
    unsigned int  *src;
-   int            num_ret, len;
+   unsigned int   len, icons, i;
+   int            num_ret;
 
-   if (width) *width = 0;
-   if (height) *height = 0;
    if (num) *num = 0;
+   if (icon) *icon = NULL;
 
    if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_NET_WM_ICON,
 					 XA_CARDINAL, 32, &data_ret, &num_ret))
@@ -646,26 +646,67 @@ ecore_x_netwm_icon_get(Ecore_X_Window win, int *width, int *height, unsigned int
 
    data = (unsigned int *)data_ret;
 
-   if (icon)
+   /* Check how many icons there are */
+   icons = 0;
+   p = data;
+   while (p)
      {
-	*icon = malloc((num_ret - 2) * sizeof(unsigned int));
-	if (!(*icon)) return 0;
+	len = p[0] * p[1];
+	p += (len + 2);
+	if ((p - data) > num_ret)
+	  {
+	     free(data_ret);
+	     return 0;
+	  }
+	icons++;
+
+	if ((p - data) == num_ret)
+	  p = NULL;
+     }
+   if (num) *num = icons;
+
+   /* If the user doesn't want the icons, return */
+   if (!icon)
+     {
+	free(data_ret);
+	return 1;
      }
 
-   if (num) *num = (num_ret - 2);
-   if (width) *width = data[0];
-   if (height) *height = data[1];
-
-   len = data[0] * data[1];
-   src = &(data[2]);
-   if (len != (num_ret - 2))
+   /* Allocate memory */
+   *icon = malloc(icons * sizeof(Ecore_X_Icon));
+   if (!(*icon))
      {
-	if (icon) free(*icon);
 	free(data_ret);
 	return 0;
      }
-   if (icon) memcpy(*icon, src, len * sizeof(unsigned int));
-   
+
+   for (i = 0; i < icons; i++)
+     {
+	((*icon)[i]).data = malloc(len * sizeof(unsigned int));
+	if (!((*icon)[i]).data)
+	  {
+	     while (i)
+	       free(((*icon)[--i]).data);
+	     free(*icon);
+	     free(data_ret);
+	     return 0;
+	  }
+     }
+
+   /* Fetch the icons */
+   p = data;
+   for (i = 0; i < icons; i++)
+     {
+	len = p[0] * p[1];
+	((*icon)[i]).width = p[0];
+	((*icon)[i]).height = p[1];
+	src = &(p[2]);
+	((*icon)[i]).data = malloc(len * sizeof(unsigned int));
+	memcpy(((*icon)[i]).data, src, len * sizeof(unsigned int));
+
+	p += (len + 2);
+     }
+
    free(data_ret);
 
    return 1;
