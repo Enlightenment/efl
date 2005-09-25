@@ -658,7 +658,7 @@ ecore_x_netwm_icon_get(Ecore_X_Window win, int *width, int *height, unsigned int
 
    len = data[0] * data[1];
    src = &(data[2]);
-   if (len > (num_ret - 2))
+   if (len != (num_ret - 2))
      {
 	if (icon) free(*icon);
 	free(data_ret);
