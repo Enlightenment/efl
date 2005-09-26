@@ -21,7 +21,7 @@ syn match	cType		"+ + +;" contained
 syn keyword	cLabel		item name min max type effect
 syn keyword	cLabel		mouse_events repeat_events clip_to
 syn keyword	cLabel		color_class text_class x y confine
-syn keyword	cLabel		state visible align step aspect
+syn keyword	cLabel		state visible align step aspect fixed
 syn keyword	cLabel		relative offset to to_x to_y normal tween
 syn keyword	cLabel		border color color2 color3 font size fit align
 syn keyword	cLabel		signal source action transition in target after
