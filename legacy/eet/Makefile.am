@@ -1,6 +1,12 @@
 ## Process this file with automake to produce Makefile.in
 
-SUBDIRS = src
+if BUILD_DOCS
+SUBDIRS_DOCS = doc
+else
+SUBDIRS_DOCS =
+endif
+
+SUBDIRS = src $(SUBDIRS_DOCS)
 
 MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
                        config.h.in config.sub configure install-sh \

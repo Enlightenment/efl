@@ -123,9 +123,14 @@ dnl Set PACKAGE_SOURCE_DIR in config.h.
 packagesrcdir=`cd $srcdir && pwd`
 AC_DEFINE_UNQUOTED(PACKAGE_SOURCE_DIR, "${packagesrcdir}", [Source code directory])
 
+dnl Documentation
+AM_CHECK_DOXYGEN()
+
 AC_OUTPUT([
 Makefile
 eet.pc
+eet.c
+doc/Makefile
 src/Makefile
 src/lib/Makefile
 src/bin/Makefile
@@ -140,3 +145,29 @@ debian/changelog
 ],[
 chmod +x eet-config
 ])
+
+
+#####################################################################
+## Info
+
+echo
+echo
+echo
+echo "------------------------------------------------------------------------"
+echo "$PACKAGE $VERSION"
+echo "------------------------------------------------------------------------"
+echo
+echo "Configuration Options Summary:"
+echo
+echo "  Build documentation..: $BUILD_DOCS"
+echo
+echo "  Compilation..........: make"
+echo
+echo "  Installation.........: make install"
+echo
+echo "    prefix.........: $prefix"
+echo "    binaries.......: $bindir"
+echo "    libraries......: $libdir"
+echo "    headers........: $includedir"
+echo "    documentation..: $datadir/$PACKAGE/doc"
+echo

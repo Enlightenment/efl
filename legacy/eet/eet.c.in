@@ -9,7 +9,7 @@ These routines are used for Eet Library interaction
 
 @mainpage Eet Library Documentation
 @image html  eet.png
-@version 0.9.9
+@version @VERSION@
 @author Carsten Haitzler <raster@rasterman.com>
 @date 2000-2004
 
