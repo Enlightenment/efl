@@ -22,6 +22,14 @@
 extern "C" {
 #endif
 
+/**
+ * @file Eet.h
+ * @brief The file that provides the eet functions.
+ *
+ * This header provides the Eet management functions.
+ *
+ */
+
 /***************************************************************************/
 
 #define EET_T_UNKNOW     0 /**< Unknown data encding type */
@@ -62,7 +70,7 @@ extern "C" {
 
 /***************************************************************************/
 
-   /*
+   /**
     * Initialize the EET library.
     *
     * @return The new init count.
