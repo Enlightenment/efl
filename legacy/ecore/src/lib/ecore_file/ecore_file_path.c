@@ -2,6 +2,7 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 #include "ecore_file_private.h"
+#include <ctype.h>
 
 static int init = 0;
 static Ecore_List *__ecore_file_path_bin;
@@ -85,6 +86,8 @@ ecore_file_app_installed(const char *app)
      p = strchr(file, '\n');
    if (p)
      {
+	while (isspace(*p)) --p;
+
 	*p = '\0';
 	if (ecore_file_exists(file) && ecore_file_can_exec(file)) return 1;
 	ecore_list_goto_first(__ecore_file_path_bin);
