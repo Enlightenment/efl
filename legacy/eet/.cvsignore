@@ -32,3 +32,4 @@ doc
 *.bb
 *.spec
 README
+eet.c
