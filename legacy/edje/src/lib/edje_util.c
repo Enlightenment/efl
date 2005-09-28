@@ -1585,6 +1585,7 @@ _edje_fetch(Evas_Object *obj)
    if (!type) return NULL;
    if (strcmp(type, "edje")) return NULL;
    ed = evas_object_smart_data_get(obj);
+   if ((ed) && (ed->delete_me)) return NULL;
    return ed;
 }
 
