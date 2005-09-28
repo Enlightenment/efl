@@ -62,11 +62,11 @@ ecore_file_app_installed(const char *app)
 {
    char *dir;
    char  buf[PATH_MAX];
+   char *file, *p;
 
    if (!app) return 0;
    if (ecore_file_exists(app) && ecore_file_can_exec(app)) return 1;
 
-   if (ecore_list_is_empty(__ecore_file_path_bin)) return 0;
    ecore_list_goto_first(__ecore_file_path_bin);
    while ((dir = ecore_list_next(__ecore_file_path_bin)) != NULL)
      {
@@ -74,6 +74,31 @@ ecore_file_app_installed(const char *app)
 	if (ecore_file_exists(buf) && ecore_file_can_exec(buf))
 	  return 1;
      }
+
+   /* Maybe the app has arguments */
+   file = strdup(app);
+   if (!file) return 0;
+   p = strchr(file, ' ');
+   if (!p)
+     p = strchr(file, '\t');
+   if (!p)
+     p = strchr(file, '\n');
+   if (p)
+     {
+	*p = '\0';
+	if (ecore_file_exists(file) && ecore_file_can_exec(file)) return 1;
+	ecore_list_goto_first(__ecore_file_path_bin);
+	while ((dir = ecore_list_next(__ecore_file_path_bin)) != NULL)
+	  {
+	     snprintf(buf, sizeof(buf), "%s/%s", dir, file);
+	     if (ecore_file_exists(buf) && ecore_file_can_exec(buf))
+	       {
+		  free(file);
+		  return 1;
+	       }
+	  }
+     }
+   free(file);
 
    return 0;
 }
