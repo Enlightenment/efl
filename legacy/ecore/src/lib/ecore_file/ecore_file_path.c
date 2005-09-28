@@ -60,28 +60,20 @@ _ecore_file_path_from_env(const char *env)
 int
 ecore_file_app_installed(const char *app)
 {
-   int   found;
    char *dir;
    char  buf[PATH_MAX];
 
-   if (!app)
-     return 0;
+   if (!app) return 0;
+   if (ecore_file_exists(app) && ecore_file_can_exec(app)) return 1;
 
-   found = 0;
-
-   if (ecore_list_is_empty(__ecore_file_path_bin))
-     return 0;
+   if (ecore_list_is_empty(__ecore_file_path_bin)) return 0;
    ecore_list_goto_first(__ecore_file_path_bin);
-
    while ((dir = ecore_list_next(__ecore_file_path_bin)) != NULL)
      {
 	snprintf(buf, sizeof(buf), "%s/%s", dir, app);
 	if (ecore_file_exists(buf) && ecore_file_can_exec(buf))
-	  {
-	     found = 1;
-	     break;
-	  }
+	  return 1;
      }
 
-   return found;
+   return 0;
 }
