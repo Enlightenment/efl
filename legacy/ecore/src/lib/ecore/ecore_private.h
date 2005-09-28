@@ -137,6 +137,7 @@ struct _Ecore_Exe
    ECORE_MAGIC;
    pid_t        pid;
    void        *data;
+   char        *tag;
 };
 #endif
 

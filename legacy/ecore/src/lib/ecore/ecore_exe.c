@@ -53,6 +53,49 @@ ecore_exe_run(const char *exe_cmd, const void *data)
 }
 
 /**
+ * Sets the string tag for the given process handle
+ *
+ * @param   exe The given process handle.
+ * @param   tag The string tag to set on the process handle.
+ * @ingroup Ecore_Exe_Basic_Group
+ */
+void
+ecore_exe_tag_set(Ecore_Exe *exe, const char *tag)
+{
+   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
+     {
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
+			 "ecore_exe_tag_set");
+	return NULL;
+     }
+   if (exe->tag) free(exe->tag);
+   exe->tag = NULL;
+   if (tag) exe->tag = strdup(tag);
+}
+
+/**
+ * Retrieves the tag attached to the given process handle. There is no need to
+ * free it as it just returns the internal pointer value. This value is only
+ * valid as long as the @p exe is valid or until the tag is set to something
+ * else on this @p exe.
+ * 
+ * @param   exe The given process handle.
+ * @return  The string attached to @p exe.
+ * @ingroup Ecore_Exe_Basic_Group
+ */
+char *
+ecore_exe_tag_get(Ecore_Exe *exe)
+{
+   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
+     {
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
+			 "ecore_exe_tag_get");
+	return NULL;
+     }
+   return exe->tag;
+}
+
+/**
  * Frees the given process handle.
  *
  * Note that the process that the handle represents is unaffected by this
@@ -253,6 +296,7 @@ _ecore_exe_free(Ecore_Exe *exe)
    data = exe->data;
    exes = _ecore_list2_remove(exes, exe);
    ECORE_MAGIC_SET(exe, ECORE_MAGIC_NONE);
+   if (exe->tag) free(exe->tag);
    free(exe);
    return data;
 }

@@ -175,16 +175,18 @@ extern "C" {
        
        
 #ifndef WIN32
-   EAPI Ecore_Exe *ecore_exe_run(const char *exe_cmd, const void *data);
-   EAPI void      *ecore_exe_free(Ecore_Exe *exe);
-   EAPI pid_t      ecore_exe_pid_get(Ecore_Exe *exe);
-   EAPI void      *ecore_exe_data_get(Ecore_Exe *exe);
-   EAPI void       ecore_exe_pause(Ecore_Exe *exe);
-   EAPI void       ecore_exe_continue(Ecore_Exe *exe);
-   EAPI void       ecore_exe_terminate(Ecore_Exe *exe);
-   EAPI void       ecore_exe_kill(Ecore_Exe *exe);
-   EAPI void       ecore_exe_signal(Ecore_Exe *exe, int num);
-   EAPI void       ecore_exe_hup(Ecore_Exe *exe);
+   EAPI Ecore_Exe  *ecore_exe_run(const char *exe_cmd, const void *data);
+   EAPI void       *ecore_exe_free(Ecore_Exe *exe);
+   EAPI pid_t       ecore_exe_pid_get(Ecore_Exe *exe);
+   EAPI void        ecore_exe_tag_set(Ecore_Exe *exe, const char *tag);
+   EAPI char       *ecore_exe_tag_get(Ecore_Exe *exe);
+   EAPI void       *ecore_exe_data_get(Ecore_Exe *exe);
+   EAPI void        ecore_exe_pause(Ecore_Exe *exe);
+   EAPI void        ecore_exe_continue(Ecore_Exe *exe);
+   EAPI void        ecore_exe_terminate(Ecore_Exe *exe);
+   EAPI void        ecore_exe_kill(Ecore_Exe *exe);
+   EAPI void        ecore_exe_signal(Ecore_Exe *exe, int num);
+   EAPI void        ecore_exe_hup(Ecore_Exe *exe);
 #endif
        
    EAPI Ecore_Idler *ecore_idler_add(int (*func) (void *data), const void *data);
