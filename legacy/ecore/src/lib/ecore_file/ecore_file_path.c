@@ -86,7 +86,7 @@ ecore_file_app_installed(const char *app)
      p = strchr(file, '\n');
    if (p)
      {
-	while (isspace(*p)) --p;
+	while (isspace(*(p - 1))) --p;
 
 	*p = '\0';
 	if (ecore_file_exists(file) && ecore_file_can_exec(file)) return 1;
