@@ -79,15 +79,14 @@ ecore_file_app_installed(const char *app)
    /* Maybe the app has arguments */
    file = strdup(app);
    if (!file) return 0;
-   p = strchr(file, ' ');
-   if (!p)
-     p = strchr(file, '\t');
-   if (!p)
-     p = strchr(file, '\n');
-   if (p)
-     {
-	while (isspace(*(p - 1))) --p;
+   while ((*file) && isspace(*file))
+     file++;
 
+   p = file;
+   while ((*p) && !isspace(*p))
+     p++;
+   if ((p) && (*p))
+     {
 	*p = '\0';
 	if (ecore_file_exists(file) && ecore_file_can_exec(file)) return 1;
 	ecore_list_goto_first(__ecore_file_path_bin);
