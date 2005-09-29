@@ -40,6 +40,7 @@ MAINTAINERCLEANFILES = Makefile.in eet.c
 
 DISTCLEANFILES = Makefile.in eet.c
 
+endif
+
 EXTRA_DIST = Doxyfile eet.css foot.html head.html img/
 
-endif
