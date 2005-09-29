@@ -21,9 +21,6 @@ doc-build.stamp: doc-prepare.stamp
 clean-local:
 	@rm -rf html/ latex/ man/ xml/
 
-distclean-local: clean
-	rm -f Makefile.in
-
 # rule to install the documentation in $(docdir)
 install-data-local:
 	@if ! test -d $(DESTDIR)$(datadir)/$(PACKAGE); then \
