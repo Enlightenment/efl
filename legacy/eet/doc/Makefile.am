@@ -19,13 +19,13 @@ doc-build.stamp: doc-prepare.stamp
 
 # rule to install the documentation in $(docdir)
 install-data-local:
-	@if ! test -d $(datadir)/$(PACKAGE); then \
-	  mkdir $(datadir)/$(PACKAGE); \
+	@if ! test -d "$(DESTDIR)$(datadir)/$(PACKAGE)"; then \
+	  mkdir "$(DESTDIR)$(datadir)/$(PACKAGE)"; \
 	fi
-	@if ! test -d $(docdir); then \
-	  mkdir $(docdir); \
+	@if ! test -d "$(DESTDIR)$(docdir)"; then \
+	  mkdir "$(DESTDIR)$(docdir)"; \
 	fi
-	@cp -pr html/ man/ latex/ xml/ $(docdir)
+	@cp -pr html/ man/ latex/ xml/ "$(DESTDIR)$(docdir)"
 
 # rule to uninstall the documentation
 uninstall-local:
