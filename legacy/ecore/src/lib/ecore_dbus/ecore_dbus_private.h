@@ -1,28 +1,80 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
 #ifndef _ECORE_DBUS_PRIVATE_H
 #define _ECORE_DBUS_PRIVATE_H
 
-struct _Ecore_DBus_Client
+typedef struct _Ecore_DBus_Auth Ecore_DBus_Auth;
+typedef unsigned char *(*Ecore_DBus_Auth_Transaction)(void *);
+
+typedef enum _Ecore_DBus_Auth_Type
 {
-   Ecore_DBus_Client	*client;
-};
+   ECORE_DBUS_AUTH_TYPE_EXTERNAL,
+   ECORE_DBUS_AUTH_MAGIC_COOKIE,
+   ECORE_DBUS_AUTH_TYPE_ECORE_DBUS_COOKIE_SHA1,
+   ECORE_DBUS_AUTH_TYPE_KERBEROS_V4,
+   ECORE_DBUS_AUTH_TYPE_SKEY
+} Ecore_DBus_Auth_Type;
+
+typedef enum _Ecore_DBus_Message_Type
+{
+   ECORE_DBUS_MESSAGE_TYPE_INVALID,
+   ECORE_DBUS_MESSAGE_TYPE_METHOD_CALL,
+   ECORE_DBUS_MESSAGE_TYPE_METHOD_RETURN,
+   ECORE_DBUS_MESSAGE_TYPE_ERROR,
+   ECORE_DBUS_MESSAGE_TYPE_SIGNAL
+} Ecore_DBus_Message_Type;
 
 struct _Ecore_DBus_Server
 {
-   Ecore_List        	__list_data;
-   Ecore_Con_Server 	*server;
-   Ecore_DBus_Client 	*clients;
-   /* unsigned char		*buf; */
-   /* int			buf_size; */
-   unsigned int		cnt_msg;
-   Ecore_List		*msg_queue;
-   /* void			*data;*/
-   unsigned int		authenticated;
-   int			auth_type;
-   unsigned int		auth_type_transaction;
+   Ecore_List2        __list_data;
+   Ecore_Con_Server    *server;
+   int                  authenticated;
+   int                  auth_type;
+   int                  auth_type_transaction;
+   int                  cnt_msg;
 };
 
+struct _Ecore_DBus_Message
+{
+   /* header fields */
+   unsigned char                byte_order;
+   unsigned char                type;
+   unsigned char                flags;
+   unsigned char                protocol;
+   unsigned long                hlength;
+   unsigned long                blength;
+   unsigned long                serial;
+
+   Ecore_DBus_Server           *ref_server;
+
+   unsigned char               *header;
+   unsigned int                 hpos;
+   Ecore_DBus_Message_Field    *header_fields;
+   unsigned char               *body;
+   unsigned int                 bpos;
+   Ecore_DBus_Message_Field    *body_fields;
+   unsigned char               *signature;
+};
+
+struct _Ecore_DBus_Message_Field
+{
+   Ecore_List2          __list_data;
+   Ecore_DBus_Data_Type   type;
+   unsigned int           offset;
+   unsigned int           count;  /* number of elements, usefull for structs, arrays, dicts */
+   unsigned int           hfield; /* if the field is a header field, we need the type of it */
+};
+
+struct _Ecore_DBus_Auth
+{
+   char                        *name;
+   unsigned int                 num_transactions;
+   Ecore_DBus_Auth_Transaction  transactions[5];
+};
+
+
 /* Errors */
-/* WARNING dont change order or ABI breaks. */
 #define DBUS_ERROR_FAILED                     "org.freedesktop.DBus.Error.Failed"
 #define DBUS_ERROR_NO_MEMORY                  "org.freedesktop.DBus.Error.NoMemory"
 #define DBUS_ERROR_ACTIVATE_SERVICE_NOT_FOUND "org.freedesktop.DBus.Error.ServiceNotFound"
