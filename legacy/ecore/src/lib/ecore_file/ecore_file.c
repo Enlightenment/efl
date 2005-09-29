@@ -193,9 +193,11 @@ ecore_file_can_exec(const char *file)
    static gid_t        gid = -1;
    struct stat st;
    int                 ok;
+   char                buf[PATH_MAX];
 
    if (!file) return 0;
-   if (stat(file, &st) < 0) return 0;
+   if (!realpath(file, buf)) return 0;
+   if (stat(buf, &st) < 0) return 0;
 
    ok = 0;
    if (!have_uid) uid = getuid();

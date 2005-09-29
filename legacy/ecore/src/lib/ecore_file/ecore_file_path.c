@@ -61,16 +61,16 @@ int
 ecore_file_app_installed(const char *exe)
 {
    char *dir;
-   char  buf[PATH_MAX], buf2[PATH_MAX];
+   char  buf[PATH_MAX];
 
    if (!exe) return 0;
-   if (realpath(exe, buf) && ecore_file_can_exec(buf)) return 1;
+   if (ecore_file_can_exec(exe)) return 1;
 
    ecore_list_goto_first(__ecore_file_path_bin);
    while ((dir = ecore_list_next(__ecore_file_path_bin)) != NULL)
      {
 	snprintf(buf, sizeof(buf), "%s/%s", dir, exe);
-	if (realpath(buf, buf2) && ecore_file_can_exec(buf2)) return 1;
+	if (ecore_file_can_exec(buf)) return 1;
      }
    return 0;
 }
