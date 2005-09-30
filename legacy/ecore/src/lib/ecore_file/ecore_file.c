@@ -397,6 +397,5 @@ ecore_file_app_exe_get(const char *app)
 	p++;
      }
    *pp = 0;
-   printf("%s\n", exe);
    return exe;
 }
