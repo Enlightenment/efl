@@ -307,12 +307,39 @@ ecore_file_app_exe_get(const char *app)
      }
    exe2 = p;
    if (exe2 == exe1) return NULL;
-   exe = malloc(exe2 - exe1 + 1);
-   if (!exe) return NULL;
+   if (*exe1 == '~')
+     {
+	char *homedir;
+	int len;
+
+	/* Skip ~ */
+	exe1++;
+
+	homedir = getenv("HOME");
+	if (!homedir) return NULL;
+	len = strlen(homedir);
+	exe = malloc(len + exe2 - exe1 + 2);
+	if (!exe) return NULL;
+	if (len)
+	  {
+	     strcpy(exe, homedir);
+	     pp = exe + len;
+	     if (*(pp - 1) != '/')
+	       {
+		  *pp = '/';
+		  pp++;
+	       }
+	  }
+     }
+   else
+     {
+	exe = malloc(exe2 - exe1 + 1);
+	if (!exe) return NULL;
+	pp = exe;
+     }
    p = exe1;
    in_quot_dbl = 0;
    in_quot_sing = 0;
-   pp = exe;
    while (*p)
      {
 	if (in_quot_sing)
