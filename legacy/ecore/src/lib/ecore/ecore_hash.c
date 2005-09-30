@@ -423,7 +423,7 @@ void *ecore_hash_remove(Ecore_Hash *hash, void *key)
 			ret = node->value;
 			node->value = NULL;
 			_ecore_hash_node_destroy(node, hash->free_key,
-						 hash->free_value);
+						 NULL);
 		}
 	}
 
