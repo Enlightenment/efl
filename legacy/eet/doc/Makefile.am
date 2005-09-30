@@ -23,13 +23,13 @@ clean-local:
 
 # rule to install the documentation in $(docdir)
 install-data-local:
-	@if ! test -d $(DESTDIR)$(datadir)/$(PACKAGE); then \
-	  mkdir $(DESTDIR)$(datadir)/$(PACKAGE); \
+	@if ! test -d "$(DESTDIR)$(datadir)/$(PACKAGE)"; then \
+	  mkdir -p "$(DESTDIR)$(datadir)/$(PACKAGE)"; \
 	fi
-	@if ! test -d $(DESTDIR)$(docdir); then \
-	  mkdir $(DESTDIR)$(docdir); \
+	@if ! test -d "$(DESTDIR)$(docdir)"; then \
+	  mkdir -p "$(DESTDIR)$(docdir)"; \
 	fi
-	@cp -pr html/ man/ latex/ xml/ $(DESTDIR)$(docdir)
+	@cp -pr html/ man/ latex/ xml/ "$(DESTDIR)$(docdir)"
 
 # rule to uninstall the documentation
 uninstall-local:
