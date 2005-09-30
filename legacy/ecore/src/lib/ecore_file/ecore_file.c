@@ -2,6 +2,7 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 #include "ecore_file_private.h"
+#include <ctype.h>
 
 static int init = 0;
 
@@ -269,4 +270,104 @@ ecore_file_ls(const char *dir)
 
    ecore_list_goto_first(list);
    return list;
+}
+
+char *
+ecore_file_app_exe_get(const char *app)
+{
+   char *p, *pp, *exe1 = NULL, *exe2 = NULL;
+   char *exe;
+   int in_quot_dbl = 0, in_quot_sing = 0;
+   
+   p = (char *)app;
+   while ((*p) && (isspace(*p))) p++;
+   exe1 = p;
+   while (*p)
+     {
+	if (in_quot_sing)
+	  {
+	     if (*p == '\'')
+	       in_quot_sing = 0;
+	  }
+	else if (in_quot_dbl)
+	  {
+	     if (*p == '\"')
+	       in_quot_dbl = 0;
+	  }
+	else
+	  {
+	     if (*p == '\'')
+	       in_quot_sing = 1;
+	     else if (*p == '\"')
+	       in_quot_dbl = 1;
+	     if ((isspace(*p)) && (!((p > app) && (p[-1] != '\\'))))
+	       break;
+	  }
+	p++;
+     }
+   exe2 = p;
+   if (exe2 == exe1) return NULL;
+   exe = malloc(exe2 - exe1 + 1);
+   if (!exe) return NULL;
+   p = exe1;
+   in_quot_dbl = 0;
+   in_quot_sing = 0;
+   pp = exe;
+   while (*p)
+     {
+	if (in_quot_sing)
+	  {
+	     if (*p == '\'')
+	       in_quot_sing = 0;
+	     else
+	       {
+		  *pp = *p;
+		  pp++;
+	       }
+	  }
+	else if (in_quot_dbl)
+	  {
+	     if (*p == '\"')
+	       in_quot_dbl = 0;
+	     else
+	       {
+		  /* techcincally this is wrong. double quotes also accept
+		   * special chars:
+		   * 
+		   * $, `, \
+		   */
+		  *pp = *p;
+		  pp++;
+	       }
+	  }
+	else
+	  {
+	     /* technically we should handle special chars:
+	      * 
+	      * $, `, \, etc.
+	      */
+	     if ((p > app) && (p[-1] == '\\'))
+	       {
+		  if (*p != '\n')
+		    {
+		       *pp = *p;
+		       pp++;
+		    }
+	       }
+	     else if (*p == '\'')
+	       in_quot_sing = 1;
+	     else if (*p == '\"')
+	       in_quot_dbl = 1;
+	     else if (isspace(*p))
+	       break;
+	     else
+	       {
+		  *pp = *p;
+		  pp++;
+	       }
+	  }
+	p++;
+     }
+   *pp = 0;
+   return exe;
 }
