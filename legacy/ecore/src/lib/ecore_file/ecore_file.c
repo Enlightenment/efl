@@ -212,11 +212,8 @@ ecore_file_can_exec(const char *file)
      {
 	if (st.st_mode & S_IXGRP) ok = 1;
      }
-   else
-     {
-	if (st.st_mode & S_IXOTH) ok = 1;
-     }
-   return(ok);
+   if (st.st_mode & S_IXOTH) ok = 1;
+   return (ok);
 }
 
 char *
