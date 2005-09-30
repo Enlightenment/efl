@@ -14,8 +14,8 @@ endif
 " A bunch of useful C keywords
 syn keyword	cStatement	images data fonts collections group
 syn keyword	cStatement	part parts dragable description rel1 rel2
-syn keyword	cStatement	text image font fill origin size
-syn keyword	cStatement	programs program script
+syn keyword	cStatement	text image font fill origin size tag
+syn keyword	cStatement	programs program script styles style base
 syn match	cType		"+ + +;" contained 
 
 syn keyword	cLabel		item name min max type effect
