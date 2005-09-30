@@ -24,10 +24,10 @@ clean-local:
 # rule to install the documentation in $(docdir)
 install-data-local:
 	@if ! test -d "$(DESTDIR)$(datadir)/$(PACKAGE)"; then \
-	  mkdir -p "$(DESTDIR)$(datadir)/$(PACKAGE)"; \
+	  $(mkinstalldirs) "$(DESTDIR)$(datadir)/$(PACKAGE)"; \
 	fi
 	@if ! test -d "$(DESTDIR)$(docdir)"; then \
-	  mkdir -p "$(DESTDIR)$(docdir)"; \
+	  $(mkinstalldirs) "$(DESTDIR)$(docdir)"; \
 	fi
 	@cp -pr html/ man/ latex/ xml/ "$(DESTDIR)$(docdir)"
 
