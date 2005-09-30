@@ -374,7 +374,7 @@ ecore_file_app_exe_get(const char *app)
 	      * 
 	      * $, `, \, etc.
 	      */
-	     if ((p > app) && (p[-1] == '\\'))
+	     if ((p > exe1) && (p[-1] == '\\'))
 	       {
 		  if (*p != '\n')
 		    {
