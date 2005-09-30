@@ -320,10 +320,11 @@ ecore_file_app_exe_get(const char *app)
 	len = strlen(homedir);
 	exe = malloc(len + exe2 - exe1 + 2);
 	if (!exe) return NULL;
+	pp = exe;
 	if (len)
 	  {
 	     strcpy(exe, homedir);
-	     pp = exe + len;
+	     pp += len;
 	     if (*(pp - 1) != '/')
 	       {
 		  *pp = '/';
@@ -396,5 +397,6 @@ ecore_file_app_exe_get(const char *app)
 	p++;
      }
    *pp = 0;
+   printf("%s\n", exe);
    return exe;
 }
