@@ -270,6 +270,8 @@ typedef struct _Ecore_X_Event_Frame_Extents_Request      Ecore_X_Event_Frame_Ext
 typedef struct _Ecore_X_Event_Ping                       Ecore_X_Event_Ping;
 typedef struct _Ecore_X_Event_Desktop_Change             Ecore_X_Event_Desktop_Change;
 
+typedef struct _Ecore_X_Event_Startup_Sequence           Ecore_X_Event_Startup_Sequence;
+
 struct _Ecore_X_Event_Key_Down
 {
    char   *keyname;
@@ -718,6 +720,11 @@ struct _Ecore_X_Event_Window_Prop_Desktop_Change
    Ecore_X_Time    time;
 };
 
+struct _Ecore_X_Event_Startup_Sequence
+{
+   Ecore_X_Window  win;
+};
+
 struct _Ecore_X_Event_Window_Move_Resize_Request
 {
    Ecore_X_Window win;
@@ -808,6 +815,10 @@ extern EAPI int ECORE_X_EVENT_WINDOW_STATE_REQUEST;
 extern EAPI int ECORE_X_EVENT_FRAME_EXTENTS_REQUEST;
 extern EAPI int ECORE_X_EVENT_PING;
 extern EAPI int ECORE_X_EVENT_DESKTOP_CHANGE;
+
+extern EAPI int ECORE_X_EVENT_STARTUP_SEQUENCE_NEW;
+extern EAPI int ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE;
+extern EAPI int ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE;
 
 extern EAPI int ECORE_X_EVENT_XDND_ENTER;
 extern EAPI int ECORE_X_EVENT_XDND_POSITION;
@@ -1191,6 +1202,7 @@ EAPI void ecore_x_mwm_borderless_set(Ecore_X_Window win, int borderless);
        
 /* netwm */
 EAPI void                ecore_x_netwm_init(void);
+EAPI void                ecore_x_netwm_shutdown(void);
 EAPI void                ecore_x_netwm_wm_identify(Ecore_X_Window root, Ecore_X_Window check, const char *wm_name);
 EAPI void                ecore_x_netwm_supported_set(Ecore_X_Window root, Ecore_X_Atom *supported, int num);
 EAPI int                 ecore_x_netwm_supported_get(Ecore_X_Window root, Ecore_X_Atom **supported, int *num);

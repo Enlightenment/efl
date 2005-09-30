@@ -143,6 +143,10 @@ int ECORE_X_EVENT_FRAME_EXTENTS_REQUEST = 0;
 int ECORE_X_EVENT_PING = 0;
 int ECORE_X_EVENT_DESKTOP_CHANGE = 0;
 
+int ECORE_X_EVENT_STARTUP_SEQUENCE_NEW = 0;
+int ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE = 0;
+int ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE = 0;
+
 int ECORE_X_EVENT_XDND_ENTER = 0;
 int ECORE_X_EVENT_XDND_POSITION = 0;
 int ECORE_X_EVENT_XDND_STATUS = 0;
@@ -332,6 +336,10 @@ ecore_x_init(const char *name)
 	ECORE_X_EVENT_FRAME_EXTENTS_REQUEST    = ecore_event_type_new();
 	ECORE_X_EVENT_PING                     = ecore_event_type_new();
 
+	ECORE_X_EVENT_STARTUP_SEQUENCE_NEW     = ecore_event_type_new();
+	ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE  = ecore_event_type_new();
+	ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE  = ecore_event_type_new();
+
 	ECORE_X_EVENT_XDND_ENTER               = ecore_event_type_new();
 	ECORE_X_EVENT_XDND_POSITION            = ecore_event_type_new();
 	ECORE_X_EVENT_XDND_STATUS              = ecore_event_type_new();
@@ -465,6 +473,7 @@ _ecore_x_shutdown(int close_display)
    _ecore_x_event_handlers = NULL;
    _ecore_x_selection_shutdown();
    _ecore_x_dnd_shutdown();
+   ecore_x_netwm_shutdown();
    if (_ecore_x_init_count < 0) _ecore_x_init_count = 0;
    return _ecore_x_init_count;
 }

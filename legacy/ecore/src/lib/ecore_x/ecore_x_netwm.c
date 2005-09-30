@@ -6,9 +6,42 @@
  */
 #include "config.h"
 #include "Ecore.h"
+#include "Ecore_Data.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
 #include "Ecore_X_Atoms.h"
+
+typedef struct _Ecore_X_Startup_Info Ecore_X_Startup_Info;
+
+struct _Ecore_X_Startup_Info
+{
+   Ecore_X_Window win;
+
+   int   init;
+
+   int   buffer_size;
+   char *buffer;
+
+   int   length;
+
+   /* These are the sequence info fields */
+   char *id;
+   char *name;
+   int   screen;
+   char *bin;
+   char *icon;
+   int   desktop;
+   int   timestamp;
+   char *description;
+   char *wmclass;
+   int   silent;
+};
+
+static void  _ecore_x_window_prop_string_utf8_set(Ecore_X_Window win, Ecore_X_Atom atom, const char *str);
+static char *_ecore_x_window_prop_string_utf8_get(Ecore_X_Window win, Ecore_X_Atom atom);
+static int   _ecore_x_netwm_startup_info_process(Ecore_X_Startup_Info *info);
+static int   _ecore_x_netwm_startup_info_parse(Ecore_X_Startup_Info *info, char *data);
+static void  _ecore_x_netwm_startup_info_free(void *data);
 
 /*
  * Convenience macros
@@ -33,46 +66,10 @@
                    (unsigned char *)p_val, cnt)
 
 /*
- * Set UTF-8 string property
+ * Local variables
  */
-static void
-_ecore_x_window_prop_string_utf8_set(Ecore_X_Window win, Ecore_X_Atom atom,
-				     const char *str)
-{
-   _ATOM_SET_UTF8_STRING(win, atom, str);
-}
 
-/*
- * Get UTF-8 string property
- */
-static char *
-_ecore_x_window_prop_string_utf8_get(Ecore_X_Window win, Ecore_X_Atom atom)
-{
-   char               *str;
-   unsigned char      *prop_ret;
-   Atom                type_ret;
-   unsigned long       bytes_after, num_ret;
-   int                 format_ret;
-
-   str = NULL;
-   prop_ret = NULL;
-   XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
-		      ECORE_X_ATOM_UTF8_STRING, &type_ret,
-		      &format_ret, &num_ret, &bytes_after, &prop_ret);
-   if (prop_ret && num_ret > 0 && format_ret == 8)
-     {
-	str = malloc(num_ret + 1);
-	if (str)
-	  {
-	     memcpy(str, prop_ret, num_ret);
-	     str[num_ret] = '\0';
-	  }
-     }
-   if (prop_ret)
-      XFree(prop_ret);
-
-   return str;
-}
+static Ecore_Hash *startup_info = NULL;
 
 /*
  * Root window NetWM hints.
@@ -169,6 +166,9 @@ Ecore_X_Atom        ECORE_X_ATOM_NET_WM_PING = 0;
 Ecore_X_Atom        ECORE_X_ATOM_NET_WM_SYNC_REQUEST = 0;
 Ecore_X_Atom        ECORE_X_ATOM_NET_WM_SYNC_REQUEST_COUNTER = 0;
 
+Ecore_X_Atom        ECORE_X_ATOM_NET_STARTUP_INFO_BEGIN = 0;
+Ecore_X_Atom        ECORE_X_ATOM_NET_STARTUP_INFO = 0;
+
 void
 ecore_x_netwm_init(void)
 {
@@ -255,6 +255,23 @@ ecore_x_netwm_init(void)
    ECORE_X_ATOM_NET_WM_PING = _ATOM_GET("_NET_WM_PING");
    ECORE_X_ATOM_NET_WM_SYNC_REQUEST = _ATOM_GET("_NET_WM_SYNC_REQUEST");
    ECORE_X_ATOM_NET_WM_SYNC_REQUEST_COUNTER = _ATOM_GET("_NET_WM_SYNC_REQUEST_COUNTER");
+
+   ECORE_X_ATOM_NET_STARTUP_INFO_BEGIN = _ATOM_GET("_NET_STARTUP_INFO_BEGIN");
+   ECORE_X_ATOM_NET_STARTUP_INFO = _ATOM_GET("_NET_STARTUP_INFO");
+
+   startup_info = ecore_hash_new(ecore_direct_hash, ecore_direct_compare);
+   if (startup_info)
+     {
+	ecore_hash_set_free_value(startup_info, _ecore_x_netwm_startup_info_free);
+     }
+}
+
+void
+ecore_x_netwm_shutdown(void)
+{
+   if (startup_info)
+     ecore_hash_destroy(startup_info);
+   startup_info = NULL;
 }
 
 /*
@@ -1295,4 +1312,359 @@ ecore_x_netwm_desktop_request_send(Ecore_X_Window win, Ecore_X_Window root, unsi
 
    XSendEvent(_ecore_x_disp, root, False,
 	      SubstructureNotifyMask | SubstructureRedirectMask, &xev);
+}
+
+int
+_ecore_x_netwm_startup_info_begin(Ecore_X_Window win, char *data)
+{
+   Ecore_X_Startup_Info *info;
+
+#if 0
+   if (!startup_info) return 0;
+   info = ecore_hash_get(startup_info, (void *)win);
+   if (info)
+     {
+	printf("Already got info for win: 0x%x\n", win);
+	_ecore_x_netwm_startup_info_free(info);
+     }
+   info = calloc(1, sizeof(Ecore_X_Startup_Info));
+   if (!info) return 0;
+   info->win = win;
+   info->length = 0;
+   info->buffer_size = 161;
+   info->buffer = calloc(info->buffer_size, sizeof(char));
+   if (!info->buffer)
+     {
+	_ecore_x_netwm_startup_info_free(info);
+	return 0;
+     }
+   memcpy(info->buffer, data, 20);
+   info->length += 20;
+   info->buffer[info->length] = 0;
+   ecore_hash_set(startup_info, (void *)info->win, info);
+   if (strlen(info->buffer) != 20)
+     {
+	/* We have a '\0' in there, the message is done */
+	_ecore_x_netwm_startup_info_process(info);
+     }
+#endif
+   return 1;
+}
+
+int
+_ecore_x_netwm_startup_info(Ecore_X_Window win, char *data)
+{
+   Ecore_X_Startup_Info *info;
+   char *p;
+
+#if 0
+   if (!startup_info) return 0;
+   info = ecore_hash_get(startup_info, (void *)win);
+   if (!info) return 0;
+   if ((info->length + 20) > info->buffer_size)
+     {
+	info->buffer_size += 160;
+	info->buffer = realloc(info->buffer, info->buffer_size * sizeof(char));
+	if (!info->buffer)
+	  {
+	     ecore_hash_remove(startup_info, (void *)info->win);
+	     _ecore_x_netwm_startup_info_free(info);
+	     return 0;
+	  }
+     }
+   memcpy(info->buffer + info->length, data, 20);
+   p = info->buffer + info->length;
+   info->length += 20;
+   info->buffer[info->length] = 0;
+   if (strlen(p) != 20)
+     {
+	/* We have a '\0' in there, the message is done */
+	_ecore_x_netwm_startup_info_process(info);
+     }
+#endif
+   return 1;
+}
+
+/*
+ * Set UTF-8 string property
+ */
+static void
+_ecore_x_window_prop_string_utf8_set(Ecore_X_Window win, Ecore_X_Atom atom,
+				     const char *str)
+{
+   _ATOM_SET_UTF8_STRING(win, atom, str);
+}
+
+/*
+ * Get UTF-8 string property
+ */
+static char *
+_ecore_x_window_prop_string_utf8_get(Ecore_X_Window win, Ecore_X_Atom atom)
+{
+   char               *str;
+   unsigned char      *prop_ret;
+   Atom                type_ret;
+   unsigned long       bytes_after, num_ret;
+   int                 format_ret;
+
+   str = NULL;
+   prop_ret = NULL;
+   XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
+		      ECORE_X_ATOM_UTF8_STRING, &type_ret,
+		      &format_ret, &num_ret, &bytes_after, &prop_ret);
+   if (prop_ret && num_ret > 0 && format_ret == 8)
+     {
+	str = malloc(num_ret + 1);
+	if (str)
+	  {
+	     memcpy(str, prop_ret, num_ret);
+	     str[num_ret] = '\0';
+	  }
+     }
+   if (prop_ret)
+      XFree(prop_ret);
+
+   return str;
+}
+
+/*
+ * Process startup info
+ */
+static int
+_ecore_x_netwm_startup_info_process(Ecore_X_Startup_Info *info)
+{
+   Ecore_X_Event_Startup_Sequence *e;
+   int                             event;
+   char                           *p;
+
+   p = strchr(info->buffer, ':');
+   if (!p)
+     {
+	ecore_hash_remove(startup_info, (void *)info->win);
+	_ecore_x_netwm_startup_info_free(info);
+	return 0;
+     }
+   *p = 0;
+   if (!strcmp(info->buffer, "new"))
+     {
+	if (info->init)
+	  event = ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE;
+	else
+	  event = ECORE_X_EVENT_STARTUP_SEQUENCE_NEW;
+	info->init = 1;
+     }
+   else if (!strcmp(info->buffer, "change"))
+     {
+	event = ECORE_X_EVENT_STARTUP_SEQUENCE_CHANGE;
+     }
+   else if (!strcmp(info->buffer, "remove"))
+     event = ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE;
+   else
+     {
+	ecore_hash_remove(startup_info, (void *)info->win);
+	_ecore_x_netwm_startup_info_free(info);
+	return 0;
+     }
+
+   p++;
+
+   if (!_ecore_x_netwm_startup_info_parse(info, p))
+     {
+	ecore_hash_remove(startup_info, (void *)info->win);
+	_ecore_x_netwm_startup_info_free(info);
+	return 0;
+     }
+
+   if (info->init)
+     {
+	e = calloc(1, sizeof(Ecore_X_Event_Startup_Sequence));
+	if (!e)
+	  {
+	     ecore_hash_remove(startup_info, (void *)info->win);
+	     _ecore_x_netwm_startup_info_free(info);
+	     return 0;
+	  }
+	e->win = info->win;
+	ecore_event_add(event, e, NULL, NULL);
+     }
+
+   if (event == ECORE_X_EVENT_STARTUP_SEQUENCE_REMOVE)
+     {
+	ecore_hash_remove(startup_info, (void *)info->win);
+	_ecore_x_netwm_startup_info_free(info);
+     }
+   else
+     {
+	/* Discard buffer */
+	info->length = 0;
+	info->buffer[0] = 0;
+     }
+   return 1;
+}
+
+/*
+ * Parse startup info
+ */
+static int
+_ecore_x_netwm_startup_info_parse(Ecore_X_Startup_Info *info, char *data)
+{
+
+   while (*data)
+     {
+	int in_quot_sing, in_quot_dbl, escaped;
+	char *p, *pp;
+	char *key;
+	char value[1024];
+
+	/* Skip space */
+	while (*data == ' ') data++;
+	/* Get key */
+	key = data;
+	data = strchr(key, '=');
+	if (!data) return 0;
+	*data = 0;
+	data++;
+
+	/* Get value */
+	p = data;
+	pp = value;
+	in_quot_dbl = 0;
+	in_quot_sing = 0;
+	escaped = 0;
+	while (*p)
+	  {
+	     if ((pp - value) >= 1024) return 0;
+	     if (escaped)
+	       {
+		  *pp = *p;
+		  pp++;
+		  escaped = 0;
+	       }
+	     else if (in_quot_sing)
+	       {
+		  if (*p == '\\')
+		    escaped = 1;
+		  else if (*p == '\'')
+		    in_quot_sing = 0;
+		  else
+		    {
+		       *pp = *p;
+		       pp++;
+		    }
+	       }
+	     else if (in_quot_dbl)
+	       {
+		  if (*p == '\\')
+		    escaped = 1;
+		  else if (*p == '\"')
+		    in_quot_dbl = 0;
+		  else
+		    {
+		       *pp = *p;
+		       pp++;
+		    }
+	       }
+	     else
+	       {
+		  if (*p == '\\')
+		    escaped = 1;
+		  else if (*p == '\'')
+		    in_quot_sing = 1;
+		  else if (*p == '\"')
+		    in_quot_dbl = 1;
+		  else if (*p == ' ')
+		    {
+		       break;
+		    }
+		  else
+		    {
+		       *pp = *p;
+		       pp++;
+		    }
+	       }
+	     p++;
+	  }
+	data = p;
+	*pp = 0;
+
+	/* Parse info */
+	if (!strcmp(key, "ID"))
+	  {
+	     if ((info->id) && (strcmp(info->id, value))) return 0;
+	     info->id = strdup(value);
+	     p = strstr(value, "_TIME");
+	     if (p)
+	       {
+		  info->timestamp = atoi(p + 5);
+	       }
+	  }
+	else if (!strcmp(key, "NAME"))
+	  {
+	     if (info->name) free(info->name);
+	     info->name = strdup(value);
+	  }
+	else if (!strcmp(key, "SCREEN"))
+	  {
+	     info->screen = atoi(value);
+	  }
+	else if (!strcmp(key, "BIN"))
+	  {
+	     if (info->bin) free(info->bin);
+	     info->bin = strdup(value);
+	  }
+	else if (!strcmp(key, "ICON"))
+	  {
+	     if (info->icon) free(info->icon);
+	     info->icon = strdup(value);
+	  }
+	else if (!strcmp(key, "DESKTOP"))
+	  {
+	     info->desktop = atoi(value);
+	  }
+	else if (!strcmp(key, "TIMESTAMP"))
+	  {
+	     if (!info->timestamp)
+	       info->timestamp = atoi(value);
+	  }
+	else if (!strcmp(key, "DESCRIPTION"))
+	  {
+	     if (info->description) free(info->description);
+	     info->description = strdup(value);
+	  }
+	else if (!strcmp(key, "WMCLASS"))
+	  {
+	     if (info->wmclass) free(info->wmclass);
+	     info->wmclass = strdup(value);
+	  }
+	else if (!strcmp(key, "SILENT"))
+	  {
+	     info->silent = atoi(value);
+	  }
+	else
+	  {
+	     printf("Ecore X Sequence, Unknown: %s=%s\n", key, value);
+	  }
+     }
+   if (!info->id) return 0;
+   return 1;
+}
+
+/*
+ * Free startup info struct
+ */
+static void
+_ecore_x_netwm_startup_info_free(void *data)
+{
+   Ecore_X_Startup_Info *info;
+
+   info = data;
+   if (!info) return;
+   if (info->buffer) free(info->buffer);
+   if (info->id) free(info->id);
+   if (info->name) free(info->name);
+   if (info->bin) free(info->bin);
+   if (info->icon) free(info->icon);
+   if (info->description) free(info->description);
+   if (info->wmclass) free(info->wmclass);
+   free(info);
 }

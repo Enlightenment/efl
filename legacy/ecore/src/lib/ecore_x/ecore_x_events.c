@@ -1537,6 +1537,18 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
 	ecore_event_add(ECORE_X_EVENT_PING, e, NULL, NULL);
      }
+   else if ((xevent->xclient.message_type == ECORE_X_ATOM_NET_STARTUP_INFO_BEGIN) &&
+	    (xevent->xclient.format == 8))
+     {
+	printf("new startup info\n");
+	_ecore_x_netwm_startup_info_begin(xevent->xclient.window, xevent->xclient.data.b);
+     }
+   else if ((xevent->xclient.message_type == ECORE_X_ATOM_NET_STARTUP_INFO) &&
+	    (xevent->xclient.format == 8))
+     {
+	printf("startup info\n");
+	_ecore_x_netwm_startup_info(xevent->xclient.window, xevent->xclient.data.b);
+     }
    else if ((xevent->xclient.message_type == 27777)
 	    && (xevent->xclient.data.l[0] == 0x7162534)
 	    && (xevent->xclient.format == 32)
