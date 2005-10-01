@@ -445,6 +445,7 @@ collections {
 	    name: "video_progress_img";
 	    mouse_events: 0;
 	    clip_to: "panel_clip";
+            fixed: 1 1;
 	    description {
 	       state: "default" 0.0;
 	       min:   9 16;
