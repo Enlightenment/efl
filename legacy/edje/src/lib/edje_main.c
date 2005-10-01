@@ -150,6 +150,7 @@ _edje_clean_objects(Edje *ed)
 void
 _edje_ref(Edje *ed)
 {
+   if (ed->references <= 0) return;
    ed->references++;
 }
 
@@ -157,5 +158,5 @@ void
 _edje_unref(Edje *ed)
 {
    ed->references--;
-   if (ed->references <= 0) _edje_del(ed);
+   if (ed->references == 0) _edje_del(ed);
 }

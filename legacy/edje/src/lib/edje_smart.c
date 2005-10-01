@@ -81,10 +81,9 @@ _edje_smart_del(Evas_Object * obj)
    _edje_block_violate(ed);
    ed->delete_me = 1;
    _edje_clean_objects(ed);
-   _edje_unref(ed);
    _edje_edjes = evas_list_remove(_edje_edjes, obj);
-   /* ... be paranoid */
    evas_object_smart_data_set(obj, NULL);
+   _edje_unref(ed);
 }
 
 static void
