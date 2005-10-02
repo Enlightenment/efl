@@ -154,6 +154,13 @@ PKG_CHECK_MODULES(GSTPLUG, \
    gstreamer-plugins-$GST_MAJORMINOR >= $GSTPLUG_REQS,
    HAVE_GSTPLUG="yes", HAVE_GSTPLUG="no")
 
+if test "${HAVE_GSTPLUG}" = "no" ; then
+   AC_MSG_WARN([You should install gstreamer plugins and gst-ffmpeg to decode properly your video and audio files])
+   GSTPLUG_MSG="no (you should install gst-plugins and gst-ffmpeg)"
+else
+   GSTPLUG_MSG="yes"
+fi
+
 AC_SUBST(GST_CFLAGS)
 AC_SUBST(GST_LIBS)
 
@@ -200,7 +207,7 @@ echo
 echo "  Modules:"
 echo "    Xine...............: $HAVE_XINE"
 echo "    Gstreamer..........: $HAVE_GSTREAMER"
-echo "    Gsteamer plugins...: $HAVE_GSTPLUG"
+echo "    Gstreamer plugins..: $GSTPLUG_MSG"
 echo
 echo "  Compilation..........: make"
 echo
