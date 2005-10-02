@@ -1,2 +1,17 @@
+
+Emotion smart object
+--------------------
+
+
+Xine module
+-----------
+
 * Fix seek and get_pos threads delete bugs (infinite loop)
+* Add support of visualizations for audio files (Goom...)
+
+
+Gstreamer module
+----------------
+
+* Add gststreamselector to support multiple video and audio streams.
 * Add support of visualizations for audio files (Goom...)

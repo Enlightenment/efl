@@ -3,6 +3,12 @@
 
 #include <Evas.h>
 
+enum _Emotion_Module
+{
+  EMOTION_MODULE_XINE,
+  EMOTION_MODULE_GSTREAMER
+};
+
 enum _Emotion_Event
 {
    EMOTION_EVENT_MENU1, // Escape Menu
@@ -46,6 +52,7 @@ enum _Emotion_Meta_Info
    EMOTION_META_INFO_TRACK_DISC_ID
 };
 
+typedef enum _Emotion_Module    Emotion_Module;
 typedef enum _Emotion_Event     Emotion_Event;
 typedef enum _Emotion_Meta_Info Emotion_Meta_Info;
 
@@ -58,8 +65,8 @@ extern "C" {
    
 /* api calls available */
 Evas_Object *emotion_object_add                   (Evas *evas);
-Evas_Bool    emotion_object_init                  (Evas_Object *obj);
-void         emotion_object_file_set              (Evas_Object *obj, const char *file);
+Evas_Bool    emotion_object_init                  (Evas_Object *obj, const char *module_filename);
+void         emotion_object_file_set              (Evas_Object *obj, const char *filename);
 const char  *emotion_object_file_get              (Evas_Object *obj);
 void         emotion_object_play_set              (Evas_Object *obj, Evas_Bool play);
 Evas_Bool    emotion_object_play_get              (Evas_Object *obj);

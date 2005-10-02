@@ -715,7 +715,7 @@ video_obj_signal_frame_move_cb(void *data, Evas_Object *o, const char *emission,
 
 
 static void
-init_video_object(char *file)
+init_video_object(char *module_filename, char *filename)
 {
    Evas_Object *o, *oe;
    int iw, ih;
@@ -724,8 +724,10 @@ init_video_object(char *file)
 
    
 /* basic video object setup */   
-   o = emotion_object_add(evas);   
-   emotion_object_file_set(o, file);
+   o = emotion_object_add(evas); 
+   if (!emotion_object_init(o, module_filename))
+     return; 
+   emotion_object_file_set(o, filename);
    emotion_object_play_set(o, 1);
    evas_object_move(o, 0, 0);
    evas_object_resize(o, 320, 240);
@@ -806,10 +808,13 @@ enter_idle(void *data)
 int
 main(int argc, char **argv)
 {
+   char *module_filename;
    int i;
    
    if (main_start(argc, argv) < 1) return -1;
    bg_setup();
+
+   module_filename = "emotion_decoder_xine.so";
 
    for (i = 1; i < argc; i++)
      {
@@ -822,7 +827,7 @@ main(int argc, char **argv)
 	    (!strcmp(argv[i], "--help"))))
 	  {
 	     printf("Usage:\n");
-	     printf("  %s [-gl] [-g WxH] \n", argv[0]);
+	     printf("  %s [-gl] [-g WxH] [-xine] [-gstreamer] filename\n", argv[0]);
 	     exit(-1);
 	  }
 	else if (!strcmp(argv[i], "-gl"))
@@ -831,9 +836,18 @@ main(int argc, char **argv)
 	else if (!strcmp(argv[i], "-fb"))
 	  {
 	  }
-	else
+	else if (!strcmp(argv[i], "-xine"))
 	  {
-	     init_video_object(argv[i]);
+             module_filename = "emotion_decoder_xine.so";
+	  }
+	else if (!strcmp(argv[i], "-gstreamer"))
+	  {
+             module_filename = "emotion_decoder_gstreamer.so";
+	  }
+        else
+	  {
+             printf ("module : %s\n", module_filename);
+	     init_video_object(module_filename, argv[i]);
 	  }
      }
    

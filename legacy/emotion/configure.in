@@ -130,17 +130,40 @@ AC_PATH_GENERIC(embryo, 0.9.1,
 )
 
 AC_PATH_GENERIC(xine, 1.0.0,
-  [ ],
-  [ AC_MSG_ERROR(Xine isn't installed)]
+  [HAVE_XINE="yes"],
+  [HAVE_XINE="no"]
 )
 
 xine_plugins=`$XINE_CONFIG --plugindir`
 AC_SUBST(xine_plugins)
 
+dnl gstreamer
+gstreamer_cflags=
+gstreamer_libs=
+
+dnl Gstreamer version requirement
+GST_REQS=0.8.10
+GSTPLUG_REQS=0.8.10
+GST_MAJORMINOR=0.8
+
+PKG_CHECK_MODULES(GST, \
+   gstreamer-$GST_MAJORMINOR >= $GST_REQS,
+   HAVE_GSTREAMER="yes", HAVE_GSTREAMER="no")
+
+AC_SUBST(GST_CFLAGS)
+AC_SUBST(GST_LIBS)
+
+if test "${HAVE_XINE}" = "no" && test "${HAVE_GSTREAMER}" = "no" ; then
+   AC_MSG_ERROR([Xine or Gstreamer must be installed to build emotion])
+fi
+
+AM_CONDITIONAL([BUILD_XINE_MODULE], [test "$HAVE_XINE" = yes])
+AM_CONDITIONAL([BUILD_GSTREAMER_MODULE], [test "$HAVE_GSTREAMER" = yes])
+
 AC_CHECK_LIB(dl, dlopen, dlopen_libs=-ldl)
 AC_SUBST(dlopen_libs)
 
-requirements="eet evas ecore edje libxine"
+requirements="eet evas ecore edje libxine gstreamer"
 AC_SUBST(requirements)
 
 AC_OUTPUT([
@@ -156,3 +179,31 @@ emotion-config
 ],[
 chmod +x emotion-config
 ])
+
+
+#####################################################################
+## Info
+
+echo
+echo
+echo
+echo "------------------------------------------------------------------------"
+echo "$PACKAGE $VERSION"
+echo "------------------------------------------------------------------------"
+echo
+echo "Configuration Options Summary:"
+echo
+echo "  Modules:"
+echo "    Xine...............: $HAVE_XINE"
+echo "    Gstreamer..........: $HAVE_GSTREAMER"
+echo
+echo "  Compilation..........: make"
+echo
+echo "  Installation.........: make install"
+echo
+echo "    prefix.........: $prefix"
+echo "    binaries.......: $bindir"
+echo "    libraries......: $libdir"
+echo "    headers........: $includedir"
+echo
+

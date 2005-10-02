@@ -9,7 +9,7 @@ These routines are used for Emotion.
 
 @mainpage Emotion Library Documentation
 @image html  emotion.png
-@version 0.0.1
+@version @VERSION@
 @author Carsten Haitzler <raster@rasterman.com>
 @date 2003-2004
 
