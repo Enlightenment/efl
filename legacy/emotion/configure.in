@@ -150,6 +150,10 @@ PKG_CHECK_MODULES(GST, \
    gstreamer-$GST_MAJORMINOR >= $GST_REQS,
    HAVE_GSTREAMER="yes", HAVE_GSTREAMER="no")
 
+PKG_CHECK_MODULES(GSTPLUG, \
+   gstreamer-plugins-$GST_MAJORMINOR >= $GSTPLUG_REQS,
+   HAVE_GSTPLUG="yes", HAVE_GSTPLUG="no")
+
 AC_SUBST(GST_CFLAGS)
 AC_SUBST(GST_LIBS)
 
@@ -196,6 +200,7 @@ echo
 echo "  Modules:"
 echo "    Xine...............: $HAVE_XINE"
 echo "    Gstreamer..........: $HAVE_GSTREAMER"
+echo "    Gsteamer plugins...: $HAVE_GSTPLUG"
 echo
 echo "  Compilation..........: make"
 echo
