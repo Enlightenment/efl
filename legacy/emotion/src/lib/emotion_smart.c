@@ -98,13 +98,11 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
    
    snprintf(buf, sizeof(buf), "%s%s", PACKAGE_LIB_DIR"/emotion/",
    name);
-   printf ("module : %s\n", buf);
    handle = dlopen(buf, RTLD_NOW | RTLD_GLOBAL);
    if (handle)
      {
 	unsigned char (*func_module_open)(Evas_Object *, Emotion_Video_Module **, void **);
 	
-	printf ("module opened\n");
 	func_module_open = dlsym(handle, "module_open");
 	if (func_module_open)
 	  {
@@ -120,7 +118,7 @@ _emotion_module_open(const char *name, Evas_Object *obj, Emotion_Video_Module **
      {
        char *err;
        err = dlerror();
-       printf ("pas de module : %s\n", err);
+       printf ("No module. Error: %s\n", err);
      }
    return 0;
 }
@@ -173,12 +171,6 @@ emotion_object_init(Evas_Object *obj, const char *module_filename)
    sd->pos = 0;
    sd->seek_pos = 0;
    sd->len = 0;
-   
-   if (!sd->module || !sd->video)
-     {
-        if (!_emotion_module_open(module_filename, obj, &sd->module, &sd->video))
-	  return 0;
-     }
 
    if (!sd->module || !sd->video)
      if (!_emotion_module_open(module_filename, obj, &sd->module, &sd->video))
@@ -251,11 +243,9 @@ emotion_object_play_get(Evas_Object *obj)
 {
    Smart_Data *sd;
    
-   printf ("play get\n");
    E_SMART_OBJ_GET_RETURN(sd, obj, E_OBJ_NAME, 0);
-   printf ("play get1\n");
    if (!sd->video) return 0;
-   printf ("play get2\n");
+
    return sd->play;
 }
 
@@ -826,7 +816,7 @@ _emotion_frame_resize(Evas_Object *obj, int w, int h, double ratio)
    Smart_Data *sd;
    int iw, ih;
    int changed = 0;
-   printf ("frame resize %d %d\n", w, h);   
+
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    evas_object_image_size_get(sd->obj, &iw, &ih);
    if ((w != iw) || (h != ih))
