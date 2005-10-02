@@ -12,4 +12,5 @@ directfb \
 gl_common \
 gl_x11 \
 cairo_common \
-cairo_x11
+cairo_x11 \
+xrender_x11

@@ -10,6 +10,7 @@ evas_engine_api_buffer.h \
 evas_engine_api_software_qtopia.h \
 evas_engine_api_gl_x11.h \
 evas_engine_api_cairo_x11.h \
+evas_engine_api_xrender_x11.h \
 evas_gl_common.h \
 evas_cairo_common.h \
 evas_mmx.h  \

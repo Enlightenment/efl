@@ -20,7 +20,8 @@ Evas_Engine_Buffer.h \
 Evas_Engine_Software_Win32_GDI.h \
 Evas_Engine_Software_Qtopia.h \
 Evas_Engine_GL_X11.h \
-Evas_Engine_Cairo_X11.h
+Evas_Engine_Cairo_X11.h \
+Evas_Engine_XRender_X11.h
 
 if BUILD_ENGINE_SOFTWARE_X11
 ENGINE_SOFTWARE_X11 = engines/software_x11/libevas_engine_software_x11.la
@@ -102,6 +103,14 @@ ENGINE_CAIRO_X11 =
 ENGINE_CAIRO_X11_INC =
 endif
 
+if BUILD_ENGINE_XRENDER_X11
+ENGINE_XRENDER_X11 = engines/xrender_x11/libevas_engine_xrender_x11.la
+ENGINE_XRENDER_X11_INC = Evas_Engine_XRender_X11.h
+else
+ENGINE_XRENDER_X11 =
+ENGINE_XRENDER_X11_INC =
+endif
+
 include_HEADERS      = \
 Evas.h \
 $(ENGINE_SOFTWARE_X11_INC) \
@@ -113,7 +122,8 @@ $(ENGINE_SOFTWARE_QTOPIA_INC) \
 $(ENGINE_GL_COMMON_INC) \
 $(ENGINE_GL_X11_INC) \
 $(ENGINE_CAIRO_COMMON_INC) \
-$(ENGINE_CAIRO_X11_INC)
+$(ENGINE_CAIRO_X11_INC) \
+$(ENGINE_XRENDER_X11_INC)
 
 libevas_la_SOURCES  = \
 main.c
@@ -136,7 +146,8 @@ libevas_la_LIBADD       = \
 			  $(ENGINE_GL_COMMON) \
 			  $(ENGINE_GL_X11) \
 			  $(ENGINE_CAIRO_COMMON) \
-			  $(ENGINE_CAIRO_X11)
+			  $(ENGINE_CAIRO_X11) \
+			  $(ENGINE_XRENDER_X11)
 			  
 
 libevas_la_DEPENDENCIES = \
@@ -155,6 +166,7 @@ libevas_la_DEPENDENCIES = \
 			  $(ENGINE_GL_COMMON) \
 			  $(ENGINE_GL_X11) \
 			  $(ENGINE_CAIRO_COMMON) \
-			  $(ENGINE_CAIRO_X11)
+			  $(ENGINE_CAIRO_X11) \
+			  $(ENGINE_XRENDER_X11)
 
 libevas_la_LDFLAGS      = -version-info 1:0:0

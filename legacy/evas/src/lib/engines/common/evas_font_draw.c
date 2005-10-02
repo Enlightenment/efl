@@ -147,7 +147,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 	fg = evas_common_font_int_cache_glyph_get(fi, index);
 	if (!fg) continue;
 
-	if ((dc->font_ext.func.gl_new) && (!fg->ext_dat))
+	if (dc->font_ext.func.gl_new)
 	  {
 	     /* extension calls */
 	     fg->ext_dat = dc->font_ext.func.gl_new(dc->font_ext.data, fg);
@@ -179,7 +179,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 			 {
 			    /* ext glyph draw */
 			    dc->font_ext.func.gl_draw(dc->font_ext.data,
-						      (void *)c,
+						      (void *)dst,
 						      dc, fg,
 						      chr_x,
 						      y - (chr_y - y)

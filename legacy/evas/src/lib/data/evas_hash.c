@@ -208,16 +208,51 @@ evas_hash_find(Evas_Hash *hash, const char *key)
 	  {
 	     if (l != hash->buckets[hash_num])
 	       {
-		  /* FIXME: move to front of list without alloc */
 		  hash->buckets[hash_num] = evas_object_list_remove(hash->buckets[hash_num], el);
 		  hash->buckets[hash_num] = evas_object_list_prepend(hash->buckets[hash_num], el);
-		  if (evas_list_alloc_error())
-		    {
-		       _evas_hash_alloc_error = 1;
-		       return el->data;
-		    }
 	       }
 	     return el->data;
+	  }
+     }
+   return NULL;
+}
+
+/**
+ * Modifies the entry pointer at the specified key and returns the old entry
+ * @param   hash The given hash table.
+ * @param   key  The key string of the entry to modify.
+ * @param   data The data to replace the old entry, if it exists.
+ * @return  The data pointer for the old stored entry, or @c NULL if not
+ *          found. If an existing entry is not found, nothing is added to the
+ *          hash.
+ * @ingroup Evas_Hash_Data
+ */
+void *
+evas_hash_modify(Evas_Hash *hash, const char *key, const void *data)
+{
+   int hash_num;
+   Evas_Hash_El *el;
+   Evas_Object_List *l;
+
+   _evas_hash_alloc_error = 0;
+   if (!hash) return NULL;
+   hash_num = evas_hash_gen(key);
+   for (l = hash->buckets[hash_num]; l; l = l->next)
+     {
+	el = (Evas_Hash_El *)l;
+	if (((el->key) && (key) && (!strcmp(el->key, key))) ||
+	    ((!el->key) && (!key)))
+	  {
+	     void *old_data;
+	     
+	     if (l != hash->buckets[hash_num])
+	       {
+		  hash->buckets[hash_num] = evas_object_list_remove(hash->buckets[hash_num], el);
+		  hash->buckets[hash_num] = evas_object_list_prepend(hash->buckets[hash_num], el);
+	       }
+	     old_data = el->data;
+	     el->data = data;
+	     return old_data;
 	  }
      }
    return NULL;

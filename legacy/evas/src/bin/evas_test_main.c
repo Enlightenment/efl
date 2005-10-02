@@ -342,7 +342,7 @@ loop(void)
 	     printf("# EVAS BENCH: %3.3f\n", ((double)frames / (t - time_start)) / 60.0);
 	     printf("#\n");
 	     printf("####################################################\n");
-	     exit(0);
+//	     exit(0);
 	     for (i = 0; i < 16; i++) evas_object_del(p_s[i]);
 	     for (i = 0; i < 2; i++) evas_object_del(p_i[i]);
 	     for (i = 0; i < 16; i++) evas_object_del(p_t[i]);

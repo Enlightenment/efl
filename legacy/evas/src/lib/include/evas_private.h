@@ -19,32 +19,9 @@
 #define RENDER_METHOD_GL_X11             0x00000007
 #define RENDER_METHOD_CAIRO_X11          0x00000008
 #define RENDER_METHOD_SOFTWARE_XCB       0x00000009
+#define RENDER_METHOD_XRENDER_X11        0x0000000a
 
 #define RENDER_METHOD_INVALID            0x00000000
-
-typedef enum _Evas_Format_Type
-{
-   EVAS_FORMAT_NONE = 0,
-   EVAS_FORMAT_FONT,
-   EVAS_FORMAT_SIZE,
-   EVAS_FORMAT_COLOR,
-   EVAS_FORMAT_COLOR2,
-   EVAS_FORMAT_COLOR3,
-   EVAS_FORMAT_ALIGN,
-   EVAS_FORMAT_STYLE,
-   EVAS_FORMAT_UNDERLINE,
-   EVAS_FORMAT_NEWLINE,
-   EVAS_FORMAT_TAB,
-   EVAS_FORMAT_L2R,
-   EVAS_FORMAT_R2L,
-   EVAS_FORMAT_ANCHOR
-} Evas_Format_Type;
-
-typedef enum _Evas_Format_Direction
-{
-   EVAS_FORMAT_DIRECTION_VERTICAL = 0,
-   EVAS_FORMAT_DIRECTION_HORIZONTAL = 1
-} Evas_Format_Direction;
 
 typedef struct _Evas_Layer                  Evas_Layer;
 typedef struct _Evas_Font_Dir               Evas_Font_Dir;

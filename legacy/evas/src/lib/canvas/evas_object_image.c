@@ -831,7 +831,7 @@ evas_object_image_reload(Evas_Object *obj)
    if ((!o->cur.file) ||
        (o->pixels_checked_out > 0)) return;
    if (o->engine_data)
-     o->engine_data = obj->layer->evas->engine.func->image_dirty_region(obj->layer->evas->engine.data.output, o->engine_data, 0, 0, 1, 1);
+     o->engine_data = obj->layer->evas->engine.func->image_dirty_region(obj->layer->evas->engine.data.output, o->engine_data, 0, 0, o->cur.image.w, o->cur.image.h);
    evas_object_image_unload(obj);
 /*   evas_image_cache_flush(obj->layer->evas);*/
    evas_object_image_load(obj);
@@ -1615,6 +1615,8 @@ evas_object_image_render_pre(Evas_Object *obj)
 
 		  rr = o->pixel_updates->data;
 		  o->pixel_updates = evas_list_remove(o->pixel_updates, rr);
+		  obj->layer->evas->engine.func->image_dirty_region(obj->layer->evas->engine.data.output, o->engine_data, rr->x, rr->y, rr->w, rr->h);
+		  
 		  idx = evas_object_image_figure_x_fill(obj, o->cur.fill.x, o->cur.fill.w, &idw);
 		  idy = evas_object_image_figure_y_fill(obj, o->cur.fill.y, o->cur.fill.h, &idh);
 
@@ -1662,6 +1664,7 @@ evas_object_image_render_pre(Evas_Object *obj)
 		       o->pixel_updates = evas_list_remove(o->pixel_updates, r);
 		       free(r);
 		    }
+		  obj->layer->evas->engine.func->image_dirty_region(obj->layer->evas->engine.data.output, o->engine_data, 0, 0, o->cur.image.w, o->cur.image.h);
 		  updates = evas_object_render_pre_prev_cur_add(updates, obj);
 		  goto done;
 	       }

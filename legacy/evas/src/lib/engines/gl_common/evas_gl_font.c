@@ -153,6 +153,7 @@ evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
 void
 evas_gl_font_texture_free(Evas_GL_Font_Texture *ft)
 {
+   if (!ft) return NULL;
    if (ft->gc->font_texture == ft->texture)
      {
 	ft->gc->font_texture = 0;
@@ -170,7 +171,7 @@ evas_gl_font_texture_draw(Evas_GL_Context *gc, void *surface, RGBA_Draw_Context 
    /* 35 */
    ft = fg->ext_dat;
    if (!ft) return;
-   if (surface == 0)
+//   if (surface == 0)
      {
 	int r, g, b, a;
 
