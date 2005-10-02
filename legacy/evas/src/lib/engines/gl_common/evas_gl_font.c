@@ -14,6 +14,8 @@ evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
    int nw;
    DATA8 *ndata;
 
+   if (fg->ext_dat) return fg->ext_dat;
+   
    ft = calloc(1, sizeof(Evas_GL_Font_Texture));
    if (!ft) return NULL;
 
