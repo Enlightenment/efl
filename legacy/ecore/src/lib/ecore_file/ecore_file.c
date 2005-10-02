@@ -189,31 +189,9 @@ ecore_file_get_dir(char *file)
 int
 ecore_file_can_exec(const char *file)
 {
-   static int          have_uid = 0;
-   static uid_t        uid = -1;
-   static gid_t        gid = -1;
-   struct stat st;
-   int                 ok;
-   char                buf[PATH_MAX];
-
    if (!file) return 0;
-   if (!realpath(file, buf)) return 0;
-   if (stat(buf, &st) < 0) return 0;
-
-   ok = 0;
-   if (!have_uid) uid = getuid();
-   if (!have_uid) gid = getgid();
-   have_uid = 1;
-   if (st.st_uid == uid)
-     {
-	if (st.st_mode & S_IXUSR) ok = 1;
-     }
-   else if (st.st_gid == gid)
-     {
-	if (st.st_mode & S_IXGRP) ok = 1;
-     }
-   if (st.st_mode & S_IXOTH) ok = 1;
-   return (ok);
+   if (!access(file, X_OK)) return 1;
+   return 0;
 }
 
 char *
