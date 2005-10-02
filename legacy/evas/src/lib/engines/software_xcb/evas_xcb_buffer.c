@@ -100,53 +100,59 @@ evas_software_xcb_x_output_buffer_new(XCBConnection *c,
 
    if (try_shm > 0)
      {
-	xcbob->shm_info = malloc(sizeof(XCBShmSegmentInfo));
-	if (xcbob->shm_info)
-	  {
-	     xcbob->shm_info->shmseg = XCBShmSEGNew(c);
-	     xcbob->image = XCBImageSHMCreate(c, depth, ZPixmap, NULL, w, h);
-	     if (xcbob->image)
-	       {
-		  xcbob->shm_info->shmid = shmget(IPC_PRIVATE,
-						  xcbob->image->bytes_per_line *
-						  xcbob->image->height,
-						  IPC_CREAT | 0777);
-		  if (xcbob->shm_info->shmid >= 0)
-		    {
-		       xcbob->shm_info->shmaddr = xcbob->image->data =
-			 shmat(xcbob->shm_info->shmid, 0, 0);
-		       if (xcbob->shm_info->shmaddr != NULL)
-			 {
-			   /*
-			    * FIXME: no error mechanism
-			    */
+       XCBQueryExtensionRep *rep;
 
-/* 			    XErrorHandler ph; */
-/* 			    EventHandlers eh; */
-
-			    XCBSync(c, 0);
-			    _xcb_err = 0;
-/* 			    ph = XSetErrorHandler((XErrorHandler) */
-/* 						  x_output_tmp_x_err); */
-			    XCBShmAttach(c,
-					 xcbob->shm_info->shmseg,
-					 xcbob->shm_info->shmid, 0);
-			    XCBSync(c, 0);
-/* 			    XSetErrorHandler((XErrorHandler)ph); */
-			    if (!_xcb_err)
-			      {
-				 return xcbob;
-			      }
-			 }
-		       shmdt(xcbob->shm_info->shmaddr);
-		       shmctl(xcbob->shm_info->shmid, IPC_RMID, 0);
-		    }
-		  if (xcbob->image) XCBImageSHMDestroy(xcbob->image);
-		  xcbob->image = NULL;
-	       }
-	     if (xcbob->shm_info) free(xcbob->shm_info);
-	     xcbob->shm_info = NULL;
-	  }
+       rep = XCBGetExtensionData(c, &XCBShmId);
+       if (rep && rep->present)
+         {
+            xcbob->shm_info = malloc(sizeof(XCBShmSegmentInfo));
+            if (xcbob->shm_info)
+              {
+                 xcbob->shm_info->shmseg = XCBShmSEGNew(c);
+                 xcbob->image = XCBImageSHMCreate(c, depth, ZPixmap, NULL, w, h);
+                 if (xcbob->image)
+                   {
+                      xcbob->shm_info->shmid = shmget(IPC_PRIVATE,
+                                                      xcbob->image->bytes_per_line *
+                                                      xcbob->image->height,
+                                                      IPC_CREAT | 0777);
+                      if (xcbob->shm_info->shmid >= 0)
+                        {
+                           xcbob->shm_info->shmaddr = xcbob->image->data =
+                             shmat(xcbob->shm_info->shmid, 0, 0);
+                           if (xcbob->shm_info->shmaddr != NULL)
+                             {
+                                /*
+                                 * FIXME: no error mechanism
+                                 */
+                               
+                                /* 			    XErrorHandler ph; */
+                                /* 			    EventHandlers eh; */
+                               
+                                XCBSync(c, 0);
+                                _xcb_err = 0;
+                                /* 			    ph = XSetErrorHandler((XErrorHandler) */
+                                /* 						  x_output_tmp_x_err); */
+                                XCBShmAttach(c,
+                                             xcbob->shm_info->shmseg,
+                                             xcbob->shm_info->shmid, 0);
+                                XCBSync(c, 0);
+                                /* 			    XSetErrorHandler((XErrorHandler)ph); */
+                                if (!_xcb_err)
+                                  {
+                                     return xcbob;
+                                  }
+                             }
+                           shmdt(xcbob->shm_info->shmaddr);
+                           shmctl(xcbob->shm_info->shmid, IPC_RMID, 0);
+                        }
+                      if (xcbob->image) XCBImageSHMDestroy(xcbob->image);
+                      xcbob->image = NULL;
+                   }
+                 if (xcbob->shm_info) free(xcbob->shm_info);
+                 xcbob->shm_info = NULL;
+              }
+         }
      }
 
    if (try_shm > 1) return NULL;
