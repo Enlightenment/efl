@@ -1494,7 +1494,7 @@ evas_object_image_render_pre(Evas_Object *obj)
    if (is_v != was_v)
      {
 	updates = evas_object_render_pre_visible_change(updates, obj, is_v, was_v);
-	goto done;
+	if (!o->pixel_updates) goto done;
      }
    /* it's not visible - we accounted for it appearing or not so just abort */
    if (!is_v) goto done;
@@ -1504,7 +1504,7 @@ evas_object_image_render_pre(Evas_Object *obj)
    if (obj->restack)
      {
 	updates = evas_object_render_pre_prev_cur_add(updates, obj);
-	goto done;
+	if (!o->pixel_updates) goto done;
      }
    /* if it changed color */
    if ((obj->cur.color.r != obj->prev.color.r) ||
@@ -1513,7 +1513,7 @@ evas_object_image_render_pre(Evas_Object *obj)
        (obj->cur.color.a != obj->prev.color.a))
      {
 	updates = evas_object_render_pre_prev_cur_add(updates, obj);
-	goto done;
+	if (!o->pixel_updates) goto done;
      }
    if (o->changed)
      {
@@ -1526,7 +1526,7 @@ evas_object_image_render_pre(Evas_Object *obj)
 	    )
 	  {
 	     updates = evas_object_render_pre_prev_cur_add(updates, obj);
-	     goto done;
+	     if (!o->pixel_updates) goto done;
 	  }
 	if ((o->cur.image.w != o->prev.image.w) ||
 	    (o->cur.image.h != o->prev.image.h) ||
@@ -1534,7 +1534,7 @@ evas_object_image_render_pre(Evas_Object *obj)
 	    (o->cur.smooth_scale != o->prev.smooth_scale))
 	  {
 	     updates = evas_object_render_pre_prev_cur_add(updates, obj);
-	     goto done;
+	     if (!o->pixel_updates) goto done;
 	  }
 	if ((o->cur.border.l != o->prev.border.l) ||
 	    (o->cur.border.r != o->prev.border.r) ||
@@ -1542,12 +1542,12 @@ evas_object_image_render_pre(Evas_Object *obj)
 	    (o->cur.border.b != o->prev.border.b))
 	  {
 	     updates = evas_object_render_pre_prev_cur_add(updates, obj);
-	     goto done;
+	     if (!o->pixel_updates) goto done;
 	  }
 	if (o->dirty_pixels)
 	  {
 	     updates = evas_object_render_pre_prev_cur_add(updates, obj);
-	     goto done;
+	     if (!o->pixel_updates) goto done;
 	  }
      }
    /* if it changed geometry - and obviously not visibility or color */
@@ -1581,7 +1581,7 @@ evas_object_image_render_pre(Evas_Object *obj)
 	     rl = evas_list_remove(rl, r);
 	     updates = evas_list_append(updates, r);
 	  }
-	goto done;
+	if (!o->pixel_updates) goto done;
      }
    if (((obj->cur.geometry.x != obj->prev.geometry.x) ||
 	(obj->cur.geometry.y != obj->prev.geometry.y) ||
@@ -1590,7 +1590,7 @@ evas_object_image_render_pre(Evas_Object *obj)
        )
      {
 	updates = evas_object_render_pre_prev_cur_add(updates, obj);
-	goto done;
+	if (!o->pixel_updates) goto done;
      }
    if (o->changed)
      {
@@ -1600,7 +1600,7 @@ evas_object_image_render_pre(Evas_Object *obj)
 	    (o->cur.fill.h != o->prev.fill.h))
 	  {
 	     updates = evas_object_render_pre_prev_cur_add(updates, obj);
-	     goto done;
+	     if (!o->pixel_updates) goto done;
 	  }
 	if ((o->cur.border.l == 0) &&
 	    (o->cur.border.r == 0) &&

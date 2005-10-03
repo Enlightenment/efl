@@ -635,18 +635,22 @@ static void *
 evas_engine_xrender_x11_image_new_from_data(void *data, int w, int h, DATA32 *image_data)
 {
    Render_Engine *re;
+   XR_Image *im;
    
    re = (Render_Engine *)data;
-   return _xre_image_new_from_data(re->xinf, w, h, image_data);
+   im = _xre_image_new_from_data(re->xinf, w, h, image_data);
+   return im;
 }
 
 static void *
 evas_engine_xrender_x11_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data)
 {
    Render_Engine *re;
+   XR_Image *im;
    
    re = (Render_Engine *)data;
-   return _xre_image_new_from_copied_data(re->xinf, w, h, image_data);
+   im = _xre_image_new_from_copied_data(re->xinf, w, h, image_data);
+   return im;
 }
 
 static void
@@ -673,6 +677,9 @@ evas_engine_xrender_x11_image_size_get(void *data, void *image, int *w, int *h)
 static void *
 evas_engine_xrender_x11_image_size_set(void *data, void *image, int w, int h)
 {
+   Render_Engine *re;
+   
+   re = (Render_Engine *)data;
    if (!image) return image;
    if (((XR_Image *)image)->references > 1)
      {
@@ -696,6 +703,9 @@ evas_engine_xrender_x11_image_size_set(void *data, void *image, int w, int h)
 static void *
 evas_engine_xrender_x11_image_dirty_region(void *data, void *image, int x, int y, int w, int h)
 {
+   Render_Engine *re;
+   
+   re = (Render_Engine *)data;
    if (!image) return image;
    if (((XR_Image *)image)->references > 1)
      {
@@ -714,6 +724,9 @@ evas_engine_xrender_x11_image_dirty_region(void *data, void *image, int x, int y
 static void *
 evas_engine_xrender_x11_image_data_get(void *data, void *image, int to_write, DATA32 **image_data)
 {
+   Render_Engine *re;
+   
+   re = (Render_Engine *)data;
    if (!image) return image;
    if (to_write)
      {
@@ -738,13 +751,16 @@ evas_engine_xrender_x11_image_data_get(void *data, void *image, int to_write, DA
 static void *
 evas_engine_xrender_x11_image_data_put(void *data, void *image, DATA32 *image_data)
 {
+   Render_Engine *re;
+   
+   re = (Render_Engine *)data;
    if (!image) return image;
    if (_xre_image_data_get((XR_Image *)image) != image_data)
      {
 	XR_Image *old_image;
 
 	old_image = (XR_Image *)image;
-	image = _xre_image_new_from_data(old_image->xinf, old_image->w, old_image->h, data);
+	image = _xre_image_new_from_data(old_image->xinf, old_image->w, old_image->h, image_data);
 	if (image)
 	  {
 	     ((XR_Image *)image)->alpha = old_image->alpha;
@@ -759,6 +775,9 @@ evas_engine_xrender_x11_image_data_put(void *data, void *image, DATA32 *image_da
 static void *
 evas_engine_xrender_x11_image_alpha_set(void *data, void *image, int has_alpha)
 {
+   Render_Engine *re;
+   
+   re = (Render_Engine *)data;
    if (!image) return image;
    if ((int)((XR_Image *)image)->alpha == has_alpha) return image;
    if (((XR_Image *)image)->references > 1)
@@ -805,6 +824,9 @@ evas_engine_xrender_x11_image_draw(void *data, void *context, void *surface, voi
 static char *
 evas_engine_xrender_x11_image_comment_get(void *data, void *image, char *key)
 {
+   Render_Engine *re;
+   
+   re = (Render_Engine *)data;
    if (!image) return NULL;
    return ((XR_Image *)image)->comment;
 }
@@ -812,6 +834,9 @@ evas_engine_xrender_x11_image_comment_get(void *data, void *image, char *key)
 static char *
 evas_engine_xrender_x11_image_format_get(void *data, void *image)
 {
+   Render_Engine *re;
+   
+   re = (Render_Engine *)data;
    if (!image) return NULL;
    return ((XR_Image *)image)->format;
 }

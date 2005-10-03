@@ -410,6 +410,7 @@ _xre_image_surface_gen(XR_Image *im)
 {
    void *data = NULL;
 
+   if ((im->surface) && (!im->updates)) return;
    if (im->data) data = im->data;
    else
      {
