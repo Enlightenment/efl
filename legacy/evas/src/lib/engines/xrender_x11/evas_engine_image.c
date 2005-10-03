@@ -111,6 +111,7 @@ _xre_image_new_from_copied_data(Ximage_Info *xinf, int w, int h, void *data)
    im->xinf->references++;
    im->free_data = 1;
    
+   if (data)
      {
 	Gfx_Func_Blend_Src_Dst func;
 	
