@@ -681,21 +681,26 @@ evas_engine_xrender_x11_image_size_set(void *data, void *image, int w, int h)
    
    re = (Render_Engine *)data;
    if (!image) return image;
+   if ((w <= 0) || (h <= 0))
+     {
+	_xre_image_free((XR_Image *)image);
+	return NULL;
+     }
    if (((XR_Image *)image)->references > 1)
      {
 	XR_Image *old_image;
 
 	old_image = (XR_Image *)image;
 	image = _xre_image_copy((XR_Image *)old_image);
-	_xre_image_free(old_image);
+	if (image)
+	  {
+	     _xre_image_free(old_image);
+	  }
+	else
+	  image = old_image;
      }
    else
      _xre_image_dirty((XR_Image *)image);
-   if ((w <= 0) || (h <= 0))
-     {
-	_xre_image_free((XR_Image *)image);
-	return NULL;
-     }
    _xre_image_resize((XR_Image *)image, w, h);
    return image;
 }
@@ -713,7 +718,12 @@ evas_engine_xrender_x11_image_dirty_region(void *data, void *image, int x, int y
 
 	old_image = (XR_Image *)image;
 	image = _xre_image_copy((XR_Image *)old_image);
-	_xre_image_free(old_image);
+	if (image)
+	  {
+	     _xre_image_free(old_image);
+	  }
+	else
+	  image = old_image;
      }
    else
      _xre_image_dirty((XR_Image *)image);
@@ -737,7 +747,9 @@ evas_engine_xrender_x11_image_data_get(void *data, void *image, int to_write, DA
 	     old_image = (XR_Image *)image;
 	     image = _xre_image_copy((XR_Image *)old_image);
 	     if (image)
-	       _xre_image_free(old_image);
+	       {
+		  _xre_image_free(old_image);
+	       }
 	     else
 	       image = old_image;
 	  }
@@ -786,7 +798,13 @@ evas_engine_xrender_x11_image_alpha_set(void *data, void *image, int has_alpha)
 	
 	old_image = (XR_Image *)image;
 	image = _xre_image_copy((XR_Image *)old_image);
-	_xre_image_free(old_image);
+	if (image)
+	  {
+	     ((XR_Image *)image)->alpha = old_image->alpha;
+	     _xre_image_free(old_image);
+	  }
+	else
+	  image = old_image;
      }
    else
      _xre_image_dirty((XR_Image *)image);

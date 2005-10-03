@@ -48,7 +48,10 @@ _xre_image_load(Ximage_Info *xinf, char *file, char *key)
    else
      snprintf(buf, sizeof(buf), "/@%p@%x@/%s", xinf->disp, xinf->root, file);
    im = __xre_image_find(buf);
-   if (im) return im;
+   if (im)
+     {
+	return im;
+     }
    
    im = calloc(1, sizeof(XR_Image));
    if (!im) return NULL;
@@ -179,7 +182,9 @@ _xre_image_free(XR_Image *im)
 	_xre_image_cache_set(_xr_image_cache_size);
      }
    else
-     __xre_image_real_free(im);
+     {
+	__xre_image_real_free(im);
+     }
 }
 
 void
