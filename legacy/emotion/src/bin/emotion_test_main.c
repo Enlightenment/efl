@@ -87,6 +87,10 @@ main_start(int argc, char **argv)
                {
 		  mode = 2;
                }
+             else if (!strcmp(argv[i], "-xr"))
+               {
+		  mode = 3;
+               }
           }
      }
 #if HAVE_ECORE_EVAS_X
@@ -101,6 +105,8 @@ main_start(int argc, char **argv)
    if (mode == 2)
      ecore_evas = ecore_evas_fb_new(NULL, 0, startw, starth);
 #endif
+   if (mode == 3)
+     ecore_evas = ecore_evas_xrender_x11_new(NULL, 0, 0, 0, startw, starth);
    
 #else
    startw = 240;
@@ -834,6 +840,9 @@ main(int argc, char **argv)
 	  {
 	  }
 	else if (!strcmp(argv[i], "-fb"))
+	  {
+	  }
+	else if (!strcmp(argv[i], "-xr"))
 	  {
 	  }
 	else if (!strcmp(argv[i], "-xine"))
