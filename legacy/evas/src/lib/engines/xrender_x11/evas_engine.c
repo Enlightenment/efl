@@ -74,10 +74,6 @@ static void evas_engine_xrender_x11_font_cache_flush(void *data);
 static void evas_engine_xrender_x11_font_cache_set(void *data, int bytes);
 static int evas_engine_xrender_x11_font_cache_get(void *data);
 
-static Visual *evas_engine_xrender_x11_best_visual_get(Display *disp, int screen);
-static Colormap evas_engine_xrender_x11_best_colormap_get(Display *disp, int screen);
-static int evas_engine_xrender_x11_best_depth_get(Display *disp, int screen);
-
 typedef struct _Render_Engine Render_Engine;
 
 struct _Render_Engine
@@ -188,9 +184,6 @@ evas_engine_xrender_x11_info(Evas *e)
    info = calloc(1, sizeof(Evas_Engine_Info_XRender_X11));
    if (!info) return NULL;
    info->magic.magic = rand();
-   info->func.best_visual_get = evas_engine_xrender_x11_best_visual_get;
-   info->func.best_colormap_get = evas_engine_xrender_x11_best_colormap_get;
-   info->func.best_depth_get = evas_engine_xrender_x11_best_depth_get;
    return info;
    e = NULL;
 }
@@ -262,11 +255,11 @@ evas_engine_xrender_x11_output_free(void *data)
    re = (Render_Engine *)data;
    evas_common_font_shutdown();
    evas_common_image_shutdown();
-   if (re->xinf) _xr_image_info_free(re->xinf);
    if (re->tb) evas_common_tilebuf_free(re->tb);
    if (re->output) _xr_render_surface_free(re->output);
    if (re->mask_output) _xr_render_surface_free(re->mask_output);
    if (re->rects) evas_common_tilebuf_free_render_rects(re->rects);
+   if (re->xinf) _xr_image_info_free(re->xinf);
    free(re);
 }
 
@@ -1043,35 +1036,4 @@ evas_engine_xrender_x11_font_cache_get(void *data)
 
    re = (Render_Engine *)data;
    return evas_common_font_cache_get();
-}
-
-
-
-
-
-
-
-
-
-/* private engine functions the calling prog can use */
-
-static Visual *
-evas_engine_xrender_x11_best_visual_get(Display *disp, int screen)
-{
-   if (!disp) return NULL;
-   return DefaultVisual(disp, screen);
-}
-
-static Colormap
-evas_engine_xrender_x11_best_colormap_get(Display *disp, int screen)
-{
-   if (!disp) return 0;
-   return DefaultColormap(disp, screen);
-}
-
-static int
-evas_engine_xrender_x11_best_depth_get(Display *disp, int screen)
-{
-   if (!disp) return 0;
-   return DefaultDepth(disp, screen);
 }

@@ -19,13 +19,6 @@ struct _Evas_Engine_Info_XRender_X11
       Visual        *visual;
       unsigned char  destination_alpha : 1;
    } info;
-   /* engine specific function calls to query stuff about the destination */
-   /* engine (what visual & colormap & depth to use, performance info etc. */
-   struct {
-      Visual *  (*best_visual_get)   (Display *disp, int screen);
-      Colormap  (*best_colormap_get) (Display *disp, int screen);
-      int       (*best_depth_get)    (Display *disp, int screen);
-   } func;
 };
 #endif
 
