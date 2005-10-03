@@ -786,7 +786,7 @@ evas_object_image_smooth_scale_set(Evas_Object *obj, Evas_Bool smooth_scale)
        ((!smooth_scale) && (!o->cur.smooth_scale)))
      return;
    o->cur.smooth_scale = smooth_scale;
-   evas_object_image_data_update_add(obj, 0, 0, o->cur.image.w, o->cur.image.h);
+//   evas_object_image_data_update_add(obj, 0, 0, o->cur.image.w, o->cur.image.h);
 }
 
 /**
@@ -1269,6 +1269,7 @@ evas_object_image_free(Evas_Object *obj)
    if (o->engine_data)
      obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output,
 					       o->engine_data);
+   o->engine_data = NULL;
    o->magic = 0;
    while (o->pixel_updates)
      {

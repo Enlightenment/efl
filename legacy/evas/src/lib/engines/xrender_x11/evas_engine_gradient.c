@@ -73,7 +73,7 @@ _xre_gradient_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, 
      }
    if (!gr->surface)
      {
-	im = evas_common_image_create(w, h);
+	im = evas_common_image_create(256, 256);
 	if (im)
 	  {
 	     RGBA_Draw_Context *dc2;
@@ -83,10 +83,10 @@ _xre_gradient_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, 
 	       {
 		  im->flags |= RGBA_IMAGE_HAS_ALPHA;
 		  memset(im->image->data, 0, im->image->w * im->image->h * sizeof(DATA32));
-		  evas_common_gradient_draw(im, dc2, 0, 0, w, h, gr->grad, angle);
-		  gr->surface = _xr_render_surface_new(gr->xinf, w, h, gr->xinf->fmt32, 1);
+		  evas_common_gradient_draw(im, dc2, 0, 0, 256, 256, gr->grad, angle);
+		  gr->surface = _xr_render_surface_new(gr->xinf, 256, 256, gr->xinf->fmt32, 1);
 		  if (gr->surface)
-		    _xr_render_surface_argb_pixels_fill(gr->surface, w, h, im->image->data, 0, 0, w, h);
+		    _xr_render_surface_argb_pixels_fill(gr->surface, 256, 256, im->image->data, 0, 0, 256, 256);
 		  evas_common_draw_context_free(dc2);
 		  gr->angle = angle;
 	       }
