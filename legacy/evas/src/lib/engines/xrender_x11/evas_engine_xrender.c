@@ -321,31 +321,6 @@ _xr_render_surface_line_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, int x1,
 	rect.width = dc->clip.w; rect.height = dc->clip.h;
 	XRenderSetPictureClipRectangles(rs->xinf->disp, rs->pic, 0, 0, &rect, 1);
      }
-   if ((y1 == y2) || (x1 == x2))
-     {
-	XRenderColor col;
-	int r, g, b, a, aa;
-	
-	a = (dc->col.col >> 24) & 0xff;
-	if (a == 0) return;
-	if (a < 0xff) op = PictOpOver;
-	r = (dc->col.col >> 16) & 0xff;
-	g = (dc->col.col >> 8 ) & 0xff;
-	b = (dc->col.col      ) & 0xff;
-	aa = a +1;
-	r = (r * aa) >> 8;
-	g = (g * aa) >> 8;
-	b = (b * aa) >> 8;
-	col.red   = (r << 8) | r;
-	col.green = (g << 8) | g;
-	col.blue  = (b << 8) | b;
-	col.alpha = (a << 8) | a;
-	if (y1 == y2)
-	  XRenderFillRectangle(rs->xinf->disp, op, rs->pic, &col, x1, y1, x2 - x1 + 1, 1);
-	else
-	  XRenderFillRectangle(rs->xinf->disp, op, rs->pic, &col, x1, y1, 1, y2 - y1 + 1);
-     }
-   else
      {
 	int r, g, b, a;
 	XPointDouble poly[4];
@@ -423,9 +398,12 @@ _xre_poly_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point *p
    i = 0;
    for (pt = points; pt; pt = (RGBA_Polygon_Point *)(((Evas_Object_List *)pt)->next))
      {
-	pts[i].x = pt->x;
-	pts[i].y = pt->y;
-	i++;
+	if (i < num)
+	  {
+	     pts[i].x = pt->x;
+	     pts[i].y = pt->y;
+	     i++;
+	  }
      }
    rect.x = 0; rect.y = 0; rect.width = rs->w; rect.height = rs->h;
    att.clip_mask = None;
