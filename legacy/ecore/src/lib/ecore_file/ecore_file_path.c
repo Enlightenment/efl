@@ -13,6 +13,7 @@ ecore_file_path_init(void)
 {
    if (++init != 1) return init;
    __ecore_file_path_bin = _ecore_file_path_from_env("PATH");
+   ecore_list_set_free_cb(__ecore_file_path_bin, free);
    return init;
 }
 
