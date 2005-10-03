@@ -86,9 +86,11 @@ struct _Render_Engine
    Visual               *vis;
    Drawable              win;
    Pixmap                mask;
+   unsigned char         destination_alpha : 1;
    
    Ximage_Info          *xinf;
    Xrender_Surface      *output;
+   Xrender_Surface      *mask_output;
    
    Tilebuf              *tb;
    Tilebuf_Rect         *rects;
@@ -238,11 +240,18 @@ evas_engine_xrender_x11_setup(Evas *e, void *in)
    re->vis = info->info.visual;
    re->win = info->info.drawable;
    re->mask = info->info.mask;
+   re->destination_alpha = info->info.destination_alpha;
+   
    if (re->xinf) _xr_image_info_free(re->xinf);
    re->xinf = _xr_image_info_get(re->disp, re->win, re->vis);
 
    if (re->output) _xr_render_surface_free(re->output);
    re->output = _xr_render_surface_adopt(re->xinf, re->win, e->output.w, e->output.h, 0);
+   if (re->mask)
+     {
+	if (re->mask_output) _xr_render_surface_free(re->mask_output);
+	re->mask_output = _xr_render_surface_format_adopt(re->xinf, re->win, e->output.w, e->output.h, re->xinf->fmt1, 1);
+     }
 }
 
 static void
@@ -256,6 +265,7 @@ evas_engine_xrender_x11_output_free(void *data)
    if (re->xinf) _xr_image_info_free(re->xinf);
    if (re->tb) evas_common_tilebuf_free(re->tb);
    if (re->output) _xr_render_surface_free(re->output);
+   if (re->mask_output) _xr_render_surface_free(re->mask_output);
    if (re->rects) evas_common_tilebuf_free_render_rects(re->rects);
    free(re);
 }
@@ -272,6 +282,11 @@ evas_engine_xrender_x11_output_resize(void *data, int w, int h)
 	if (re->output) _xr_render_surface_free(re->output);
      }
    re->output = _xr_render_surface_adopt(re->xinf, re->win, w, h, 0);
+   if (re->mask_output)
+     {
+	if (re->mask_output) _xr_render_surface_free(re->mask_output);
+	re->mask_output = _xr_render_surface_format_adopt(re->xinf, re->win, w, h, re->xinf->fmt1, 1);
+     }
    evas_common_tilebuf_free(re->tb);
    re->tb = evas_common_tilebuf_new(w, h);
    if (re->tb) evas_common_tilebuf_set_tile_size(re->tb, TILESIZE, TILESIZE);
@@ -344,6 +359,8 @@ evas_engine_xrender_x11_output_redraws_next_update_get(void *data, int *x, int *
 
    *x = ux; *y = uy; *w = uw; *h = uh;
    *cx = 0; *cy = 0; *cw = uw; *ch = uh;
+   if ((re->destination_alpha)|| (re->mask))
+     return _xr_render_surface_new(re->xinf, uw, uh, re->xinf->fmt32, 1);
    return _xr_render_surface_new(re->xinf, uw, uh, re->xinf->fmt24, 0);
 }
 
@@ -353,8 +370,27 @@ evas_engine_xrender_x11_output_redraws_next_update_push(void *data, void *surfac
    Render_Engine *re;
    
    re = (Render_Engine *)data;
-   _xr_render_surface_copy((Xrender_Surface *)surface, re->output, 0, 0,
-			   x, y, w, h);
+   if (re->mask_output)
+     {
+	Xrender_Surface *tsurf;
+	
+	_xr_render_surface_copy((Xrender_Surface *)surface, re->output, 0, 0,
+				x, y, w, h);
+	tsurf = _xr_render_surface_new(re->xinf, w, h, re->xinf->fmt1, 1);
+	if (tsurf)
+	  {
+	     _xr_render_surface_copy((Xrender_Surface *)surface, tsurf, 0, 0,
+				     0, 0, w, h);
+	     _xr_render_surface_copy(tsurf, re->mask_output, 0, 0,
+				     x, y, w, h);
+	     _xr_render_surface_free(tsurf);
+	  }
+     }
+   else
+     {
+	_xr_render_surface_copy((Xrender_Surface *)surface, re->output, 0, 0,
+				x, y, w, h);
+     }
    _xr_render_surface_free((Xrender_Surface *)surface);
 }
 

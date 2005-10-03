@@ -68,6 +68,7 @@ void          _xr_image_put(Ximage_Image *xim, Drawable draw, int x, int y, int 
 /* xrender support calls */
 Xrender_Surface *_xr_render_surface_new(Ximage_Info *xinf, int w, int h, XRenderPictFormat *fmt, int alpha);
 Xrender_Surface *_xr_render_surface_adopt(Ximage_Info *xinf, Drawable draw, int w, int h, int alpha);
+Xrender_Surface *_xr_render_surface_format_adopt(Ximage_Info *xinf, Drawable draw, int w, int h, XRenderPictFormat *fmt, int alpha);
 void             _xr_render_surface_free(Xrender_Surface *rs);
 void             _xr_render_surface_repeat_set(Xrender_Surface *rs, int repeat);
 void             _xr_render_surface_solid_rectangle_set(Xrender_Surface *rs, int r, int g, int b, int a, int x, int y, int w, int h);

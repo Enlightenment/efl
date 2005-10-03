@@ -42,6 +42,30 @@ _xr_render_surface_adopt(Ximage_Info *xinf, Drawable draw, int w, int h, int alp
    rs->fmt = fmt;
    rs->alpha = alpha;
    rs->depth = fmt->depth;
+   if (fmt->depth == 32) rs->alpha = 1;
+   rs->allocated = 0;
+   rs->draw = draw;
+   att.dither = 1;
+   att.component_alpha = 1;
+   att.repeat = 0;
+   rs->pic = XRenderCreatePicture(xinf->disp, rs->draw, fmt, CPRepeat | CPDither | CPComponentAlpha, &att);
+   return rs;
+}
+
+Xrender_Surface *
+_xr_render_surface_format_adopt(Ximage_Info *xinf, Drawable draw, int w, int h, XRenderPictFormat *fmt, int alpha)
+{
+   Xrender_Surface *rs;
+   XRenderPictureAttributes att;
+   
+   rs = calloc(1, sizeof(Xrender_Surface));
+   rs->xinf = xinf;
+   rs->w = w;
+   rs->h = h;
+   rs->fmt = fmt;
+   rs->alpha = alpha;
+   rs->depth = fmt->depth;
+   if (fmt->depth == 32) rs->alpha = 1;
    rs->allocated = 0;
    rs->draw = draw;
    att.dither = 1;

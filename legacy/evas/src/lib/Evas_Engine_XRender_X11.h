@@ -13,10 +13,11 @@ struct _Evas_Engine_Info_XRender_X11
 
    /* engine specific data & parameters it needs to set up */
    struct {
-      Display  *display;
-      Drawable  drawable;
-      Pixmap    mask;
-      Visual   *visual;
+      Display       *display;
+      Drawable       drawable;
+      Pixmap         mask;
+      Visual        *visual;
+      unsigned char  destination_alpha : 1;
    } info;
    /* engine specific function calls to query stuff about the destination */
    /* engine (what visual & colormap & depth to use, performance info etc. */
