@@ -1048,41 +1048,78 @@ _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation)
 static void
 _ecore_evas_x_shaped_set(Ecore_Evas *ee, int shaped)
 {
-   Evas_Engine_Info_Software_X11 *einfo;
-   
-   if (((ee->shaped) && (shaped)) ||
-       ((!ee->shaped) && (!shaped)))
+   if (((ee->shaped) && (shaped)) || ((!ee->shaped) && (!shaped)))
      return;
-   if (!strcmp(ee->driver, "gl_x11")) return;
-   ee->shaped = shaped;
-   einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
-   if (einfo)
+   if (!strcmp(ee->driver, "software_x11"))
      {
-	if (ee->shaped)
+	Evas_Engine_Info_Software_X11 *einfo;
+	
+	ee->shaped = shaped;
+	einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
+	if (einfo)
 	  {
-	     GC gc;
-	     XGCValues gcv;
-	     
-	     ee->engine.x.mask = ecore_x_pixmap_new(ee->engine.x.win, ee->w, ee->h, 1);
-	     gcv.foreground = 0;
-	     gc = XCreateGC(ecore_x_display_get(), ee->engine.x.mask, 
-			    GCForeground,
-			    &gcv);
-	     XFillRectangle(ecore_x_display_get(), ee->engine.x.mask, gc,
-			    0, 0, ee->w, ee->h);
-	     XFreeGC(ecore_x_display_get(), gc);
-	     einfo->info.mask = ee->engine.x.mask;
-	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-	     evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+	     if (ee->shaped)
+	       {
+		  GC gc;
+		  XGCValues gcv;
+		  
+		  ee->engine.x.mask = ecore_x_pixmap_new(ee->engine.x.win, ee->w, ee->h, 1);
+		  gcv.foreground = 0;
+		  gc = XCreateGC(ecore_x_display_get(), ee->engine.x.mask, 
+				 GCForeground,
+				 &gcv);
+		  XFillRectangle(ecore_x_display_get(), ee->engine.x.mask, gc,
+				 0, 0, ee->w, ee->h);
+		  XFreeGC(ecore_x_display_get(), gc);
+		  einfo->info.mask = ee->engine.x.mask;
+		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+		  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+	       }
+	     else
+	       {
+		  if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+		  ee->engine.x.mask = 0;
+		  einfo->info.mask = 0;
+		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+		  ecore_x_window_shape_mask_set(ee->engine.x.win, 0);
+		  ecore_x_window_shape_mask_set(ee->engine.x.win_container, 0);
+	       }
 	  }
-	else
+     }
+   else if (!strcmp(ee->driver, "xrender_x11"))
+     {
+	Evas_Engine_Info_XRender_X11 *einfo;
+	
+	ee->shaped = shaped;
+	einfo = (Evas_Engine_Info_XRender_X11 *)evas_engine_info_get(ee->evas);
+	if (einfo)
 	  {
-	     if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
-	     ee->engine.x.mask = 0;
-	     einfo->info.mask = 0;
-	     evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
-	     ecore_x_window_shape_mask_set(ee->engine.x.win, 0);
-	     ecore_x_window_shape_mask_set(ee->engine.x.win_container, 0);
+	     if (ee->shaped)
+	       {
+		  GC gc;
+		  XGCValues gcv;
+		  
+		  ee->engine.x.mask = ecore_x_pixmap_new(ee->engine.x.win, ee->w, ee->h, 1);
+		  gcv.foreground = 0;
+		  gc = XCreateGC(ecore_x_display_get(), ee->engine.x.mask, 
+				 GCForeground,
+				 &gcv);
+		  XFillRectangle(ecore_x_display_get(), ee->engine.x.mask, gc,
+				 0, 0, ee->w, ee->h);
+		  XFreeGC(ecore_x_display_get(), gc);
+		  einfo->info.mask = ee->engine.x.mask;
+		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+		  evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
+	       }
+	     else
+	       {
+		  if (ee->engine.x.mask) ecore_x_pixmap_del(ee->engine.x.mask);
+		  ee->engine.x.mask = 0;
+		  einfo->info.mask = 0;
+		  evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+		  ecore_x_window_shape_mask_set(ee->engine.x.win, 0);
+		  ecore_x_window_shape_mask_set(ee->engine.x.win_container, 0);
+	       }
 	  }
      }
 }
@@ -1932,7 +1969,7 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
 Ecore_X_Window
 ecore_evas_gl_x11_window_get(Ecore_Evas *ee)
 {
-#ifdef BUILD_ECORE_EVAS_GL 
+#ifdef BUILD_ECORE_X
    return ee->engine.x.win_container;
 #else
    return 0;
@@ -1991,6 +2028,216 @@ ecore_evas_gl_x11_direct_resize_get(Ecore_Evas *ee)
  */
 void
 ecore_evas_gl_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win)
+{
+   ecore_evas_software_x11_extra_event_window_add(ee, win);
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+Ecore_Evas *
+ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent, 
+		      int x, int y, int w, int h)
+{
+#ifdef BUILD_ECORE_EVAS_XRENDER
+   Evas_Engine_Info_XRender_X11 *einfo;
+   Ecore_Evas *ee;
+   int rmethod;
+
+   rmethod = evas_render_method_lookup("xrender_x11");
+   if (!rmethod) return NULL;
+   if (!ecore_x_init(disp_name)) return NULL;
+   ee = calloc(1, sizeof(Ecore_Evas));
+   if (!ee) return NULL;
+   
+   ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
+   
+   _ecore_evas_x_init();
+   
+   ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_x_engine_func;
+   
+   ee->driver = strdup("xrender_x11");
+   if (disp_name) ee->name = strdup(disp_name);
+
+   if (w < 1) w = 1;
+   if (h < 1) h = 1;
+   ee->x = x;
+   ee->y = y;
+   ee->w = w;
+   ee->h = h;
+   
+   ee->prop.max.w = 32767;
+   ee->prop.max.h = 32767;
+   ee->prop.layer = 4;
+   ee->prop.request_pos = 0;
+   
+   /* init evas here */
+   ee->evas = evas_new();
+   evas_output_method_set(ee->evas, rmethod);
+   evas_output_size_set(ee->evas, w, h);
+   evas_output_viewport_set(ee->evas, 0, 0, w, h);
+   
+   ee->engine.x.win_root = parent;
+   ee->engine.x.win_container = ecore_x_window_new(parent, x, y, w, h);
+   if (getenv("DESKTOP_STARTUP_ID"))
+     {
+	ecore_x_netwm_startup_id_set(ee->engine.x.win_container,
+				     getenv("DESKTOP_STARTUP_ID"));
+	putenv("DESKTOP_STARTUP_ID");
+     }
+   einfo = (Evas_Engine_Info_XRender_X11 *)evas_engine_info_get(ee->evas);
+   if (einfo)
+     {
+	XSetWindowAttributes attr;
+	int screen;
+
+	/* FIXME: this is inefficient as its a round trip */
+	screen = DefaultScreen(ecore_x_display_get());
+	if (ScreenCount(ecore_x_display_get()) > 1)
+	  {
+	     Ecore_X_Window *roots;
+	     int num, i;
+	     
+	     num = 0;
+	     roots = ecore_x_window_root_list(&num);
+	     if (roots)
+	       {
+		  XWindowAttributes at;
+		  
+		  if (XGetWindowAttributes(ecore_x_display_get(),
+					   parent, &at))
+		    {
+		       for (i = 0; i < num; i++)
+			 {
+			    if (at.root == roots[i])
+			      {
+				 screen = i;
+				 break;
+			      }
+			 }
+		    }
+		  free(roots);
+	       }
+	  }
+	attr.backing_store = NotUseful;
+	attr.override_redirect = True;
+	attr.colormap = DefaultColormap(ecore_x_display_get(), screen);
+	attr.border_pixel = 0;
+	attr.background_pixmap = None;
+	attr.event_mask =
+	  KeyPressMask | KeyReleaseMask |
+	  ExposureMask | ButtonPressMask | ButtonReleaseMask | 
+	  EnterWindowMask | LeaveWindowMask |
+	  PointerMotionMask | StructureNotifyMask | VisibilityChangeMask |
+	  FocusChangeMask | PropertyChangeMask | ColormapChangeMask;
+	attr.bit_gravity = ForgetGravity;
+	
+	ee->engine.x.win = 
+	  XCreateWindow(ecore_x_display_get(), 
+			ee->engine.x.win_container,
+			0, 0, 
+			w, h, 0,
+			DefaultDepth(ecore_x_display_get(), screen),
+			InputOutput,
+			DefaultVisual(ecore_x_display_get(), screen),
+			CWBackingStore | CWColormap |
+			CWBackPixmap | CWBorderPixel |
+			CWBitGravity | CWEventMask |
+			CWOverrideRedirect,
+			&attr);
+	einfo->info.display  = ecore_x_display_get();
+	einfo->info.visual   = DefaultVisual(ecore_x_display_get(), screen);
+	einfo->info.drawable = ee->engine.x.win;
+	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
+     }
+   evas_key_modifier_add(ee->evas, "Shift");
+   evas_key_modifier_add(ee->evas, "Control");
+   evas_key_modifier_add(ee->evas, "Alt");
+   evas_key_modifier_add(ee->evas, "Meta");
+   evas_key_modifier_add(ee->evas, "Hyper");
+   evas_key_modifier_add(ee->evas, "Super");
+   evas_key_lock_add(ee->evas, "Caps_Lock");
+   evas_key_lock_add(ee->evas, "Num_Lock");
+   evas_key_lock_add(ee->evas, "Scroll_Lock");
+
+   ecore_evases = _ecore_list2_prepend(ecore_evases, ee);
+   ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win), ee);
+   ecore_evases_hash = evas_hash_add(ecore_evases_hash, _ecore_evas_x_winid_str_get(ee->engine.x.win_container), ee);
+   return ee;
+#else
+   return NULL;
+#endif
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+Ecore_X_Window
+ecore_evas_xrender_x11_window_get(Ecore_Evas *ee)
+{
+#ifdef BUILD_ECORE_X 
+   return ee->engine.x.win_container;
+#else
+   return 0;
+#endif
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+Ecore_X_Window
+ecore_evas_xrender_x11_subwindow_get(Ecore_Evas *ee)
+{
+#ifdef BUILD_ECORE_X
+   return ee->engine.x.win;
+#else
+   return 0;
+#endif   
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+void
+ecore_evas_xrender_x11_direct_resize_set(Ecore_Evas *ee, int on)
+{
+#ifdef BUILD_ECORE_X
+   ee->engine.x.direct_resize = on;
+#else
+   return;
+#endif   
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+int
+ecore_evas_xrender_x11_direct_resize_get(Ecore_Evas *ee)
+{
+#ifdef BUILD_ECORE_X
+   return ee->engine.x.direct_resize;
+#else
+   return 0;
+#endif   
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ */
+void
+ecore_evas_xrender_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win)
 {
    ecore_evas_software_x11_extra_event_window_add(ee, win);
 }

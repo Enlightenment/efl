@@ -26,6 +26,9 @@
 #ifdef BUILD_ECORE_EVAS_GL
 #include <Evas_Engine_GL_X11.h>
 #endif
+#ifdef BUILD_ECORE_EVAS_XRENDER
+#include <Evas_Engine_XRender_X11.h>
+#endif
 #endif
 #ifdef BUILD_ECORE_EVAS_FB
 #include <Evas_Engine_FB.h>
