@@ -849,6 +849,7 @@ Evas_Bool
 evas_object_image_pixels_import(Evas_Object *obj, Evas_Pixel_Import_Source *pixels)
 {
    Evas_Object_Image *o;
+   Evas_Rectangle *r;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;
@@ -1316,7 +1317,10 @@ evas_object_image_render(Evas_Object *obj, void *output, void *context, void *su
 	if (o->dirty_pixels)
 	  {
 	     if (o->func.get_pixels)
-	       o->func.get_pixels(o->func.get_pixels_data, obj);
+	       {
+		  o->func.get_pixels(o->func.get_pixels_data, obj);
+		  o->engine_data = obj->layer->evas->engine.func->image_dirty_region(obj->layer->evas->engine.data.output, o->engine_data, 0, 0, o->cur.image.w, o->cur.image.h);
+	       }
 	     o->dirty_pixels = 0;
 	  }
 	idx = evas_object_image_figure_x_fill(obj, o->cur.fill.x, o->cur.fill.w, &idw);
