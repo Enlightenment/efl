@@ -243,7 +243,9 @@ evas_engine_xrender_x11_setup(Evas *e, void *in)
    if (re->mask)
      {
 	if (re->mask_output) _xr_render_surface_free(re->mask_output);
-	re->mask_output = _xr_render_surface_format_adopt(re->xinf, re->win, e->output.w, e->output.h, re->xinf->fmt1, 1);
+	re->mask_output = _xr_render_surface_format_adopt(re->xinf, re->mask, 
+							  e->output.w, e->output.h,
+							  re->xinf->fmt1, 1);
      }
 }
 
@@ -278,7 +280,9 @@ evas_engine_xrender_x11_output_resize(void *data, int w, int h)
    if (re->mask_output)
      {
 	if (re->mask_output) _xr_render_surface_free(re->mask_output);
-	re->mask_output = _xr_render_surface_format_adopt(re->xinf, re->win, w, h, re->xinf->fmt1, 1);
+	re->mask_output = _xr_render_surface_format_adopt(re->xinf, re->mask, 
+							  w, h, 
+							  re->xinf->fmt1, 1);
      }
    evas_common_tilebuf_free(re->tb);
    re->tb = evas_common_tilebuf_new(w, h);
@@ -352,8 +356,14 @@ evas_engine_xrender_x11_output_redraws_next_update_get(void *data, int *x, int *
 
    *x = ux; *y = uy; *w = uw; *h = uh;
    *cx = 0; *cy = 0; *cw = uw; *ch = uh;
-   if ((re->destination_alpha)|| (re->mask))
-     return _xr_render_surface_new(re->xinf, uw, uh, re->xinf->fmt32, 1);
+   if ((re->destination_alpha) || (re->mask))
+     {
+	Xrender_Surface *surface;
+	
+	surface = _xr_render_surface_new(re->xinf, uw, uh, re->xinf->fmt32, 1);
+	_xr_render_surface_solid_rectangle_set(surface, 0, 0, 0, 0, 0, 0, uw, uh);
+	return surface;
+     }
    return _xr_render_surface_new(re->xinf, uw, uh, re->xinf->fmt24, 0);
 }
 
