@@ -384,7 +384,7 @@ eet_data_put_float(void *src, int *size_ret)
 static int
 eet_data_get_double(void *src, void *src_end, void *dst)
 {
-   double *d, td;
+   double *d;
    float tf;
    char *s, *str, *p, *prev_locale;
    int len;
