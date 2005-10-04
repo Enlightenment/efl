@@ -1584,6 +1584,7 @@ _ecore_x_netwm_startup_info_parse(Ecore_X_Startup_Info *info, char *data)
 	       }
 	     p++;
 	  }
+	if ((in_quot_dbl) || (in_quot_sing)) return 0;
 	data = p;
 	*pp = 0;
 
