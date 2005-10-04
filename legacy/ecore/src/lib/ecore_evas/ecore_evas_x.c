@@ -559,7 +559,11 @@ _ecore_evas_x_event_window_configure(void *data __UNUSED__, int type __UNUSED__,
    if (!ee) return 1; /* pass on event */
    if ((ee->prop.fullscreen) && (e->win == ee->engine.x.win_container)) return 0;
    if (ee->engine.x.direct_resize) return 0;
-   
+   /* Only accept configure events on main windows */
+   if ((e->win != ee->engine.x.win_container) &&
+       (e->win != ee->engine.x.win))
+     return 0;
+ 
    if ((e->from_wm) || (ee->prop.fullscreen) || (ee->prop.override))
      {
 	if ((ee->x != e->x) || (ee->y != e->y))
