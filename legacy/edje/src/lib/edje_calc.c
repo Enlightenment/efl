@@ -470,7 +470,7 @@ _edje_part_recalc_single(Edje *ed,
 	
 	if (stl)
 	  {
-	     char *ptxt;
+	     const char *ptxt;
 	     
 	     if (evas_object_textblock2_style_get(ep->object) != stl->style)
 	       evas_object_textblock2_style_set(ep->object, stl->style);
