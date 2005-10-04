@@ -369,6 +369,7 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
 {
    Evas_List *l;
    char *pname = NULL;
+   int free_runp = 0;
 
    if (ed->delete_me) return;
    _edje_ref(ed);
@@ -402,7 +403,7 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
      {
 	_edje_anim_count--;
 	ed->actions = evas_list_remove(ed->actions, runp);
-	free(runp);
+	free_runp = 1;
 	if (!ed->actions)
 	  {
 	     _edje_animators = evas_list_remove(_edje_animators, ed);
@@ -411,6 +412,7 @@ _edje_program_end(Edje *ed, Edje_Running_Program *runp)
    _edje_emit(ed, "program,stop", pname);
    _edje_thaw(ed);
    _edje_unref(ed);   
+   if (free_runp) free(runp);
 }
    
 void
