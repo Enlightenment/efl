@@ -729,12 +729,18 @@ _edje_embryo_fn_stop_program(Embryo_Program *ep, Embryo_Cell *params)
    ed = embryo_program_data_get(ep);
    program_id = params[1];
    if (program_id < 0) return 0;
+
+   ed->walking_actions = 1;
+
    for (l = ed->actions; l; l = l->next)
      {
 	runp = l->data;
 	if (program_id == runp->program->id)
 	  _edje_program_end(ed, runp);
      }
+
+   ed->walking_actions = 0;
+
    return 0;
 }
 
