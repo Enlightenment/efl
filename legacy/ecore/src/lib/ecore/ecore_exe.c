@@ -66,7 +66,7 @@ ecore_exe_tag_set(Ecore_Exe *exe, const char *tag)
      {
 	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
 			 "ecore_exe_tag_set");
-	return NULL;
+	return;
      }
    if (exe->tag) free(exe->tag);
    exe->tag = NULL;
