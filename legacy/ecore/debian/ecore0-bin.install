@@ -1,0 +1,3 @@
+usr/bin/*test
+usr/bin/ecore_*
+usr/share/ecore/images/*

@@ -26,10 +26,14 @@ Conflicts: libecore-dev, libecore0-dev
 Description: libecore0 headers, static libraries and documentation
  Headers, static libraries and documentation for the Ecore library.
 
-Package: ecore0-test
+Package: ecore0-bin
 Architecture: any
 Section: libs
 Depends: ${shlibs:Depends}
-Description: Test programs for libecore0
- Programs for testing Ecore and demonstrating what it can do.
+Provides: ecore-bin
+Description: Tools that support libecore.
+ The package includes:
+  - ecore_config: allows creation/editing of ecore_config databases
+  - ecore_evas_test: test evas support.
+  - ecore_test: test ecore features.
 
