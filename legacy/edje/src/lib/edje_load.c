@@ -5,23 +5,6 @@
 #include "Edje.h"
 #include "edje_private.h"
 
-static Evas_Hash   *_edje_file_hash = NULL;
-static int          _edje_file_cache_size = 16;
-static Evas_List   *_edje_file_cache = NULL;
-static int          _edje_collection_cache_size = 16;
-
-static Edje_File *_edje_file_cache_find(char *path);
-static void _edje_file_cache_clean(void);
-static void _edje_file_cache_add(Edje_File *edf);
-static void _edje_file_unref(Edje_File *edf);
-static void _edje_file_ref(Edje_File *edf);
-static void _edje_file_cleanup(void);
-static Edje_Part_Collection *_edje_collection_find(Edje_File *edf, char *part);
-static void _edje_collection_cache_clean(Edje_File *edf);
-static void _edje_collection_cache_add(Edje_File *edf, Edje_Part_Collection *coll);
-static void _edje_collection_unref(Edje_File *edf, Edje_Part_Collection *coll);
-static void _edje_collection_cleanup(Edje_File *edf);
-
 static void _edje_collection_free_part_description_free(Edje_Part_Description *desc);
 static Evas_Bool _edje_file_collection_hash_foreach(Evas_Hash *hash, const char *key, void *data, void *fdata);
 #ifdef EDJE_PROGRAM_CACHE
@@ -398,35 +381,16 @@ edje_object_load_error_get(Evas_Object *obj)
 Evas_List *
 edje_file_collection_list(const char *file)
 {
-   Eet_File *ef = NULL;
    Evas_List *lst = NULL;
-   Edje_File *ed_file;
+   Edje_File *edf;
 
-   if (!file || !*file) return NULL;
-
-   ed_file = evas_hash_find(_edje_file_hash, file);
-   if (!ed_file) ed_file = _edje_file_cache_find((char *)file);
-   if (!ed_file)
-     {
-	ef = eet_open((char *)file, EET_FILE_MODE_READ);
-	if (!ef) return NULL;
-	ed_file = eet_data_read(ef, _edje_edd_edje_file, "edje_file");
-	if (!ed_file)
-	  {
-	     eet_close(ef);
-	     return NULL;
-	  }
-	eet_close(ef);
-	ed_file->path = strdup(file);
-	ed_file->collection_hash = NULL;
-	ed_file->references = 1;
-	_edje_file_hash = evas_hash_add(_edje_file_hash, ed_file->path, ed_file);
-     }
-   if (ed_file->collection_dir)
+   if ((!file) || (!*file)) return NULL;
+   edf = _edje_cache_file_coll_open((char *)file, NULL, NULL, NULL);
+   if (edf->collection_dir)
      {
 	Evas_List *l;
 	
-	for (l = ed_file->collection_dir->entries; l; l = l->next)
+	for (l = edf->collection_dir->entries; l; l = l->next)
 	  {
 	     Edje_Part_Collection_Directory_Entry *ce;
 	     
@@ -434,8 +398,7 @@ edje_file_collection_list(const char *file)
 	     lst = evas_list_append(lst, strdup(ce->entry));
 	  }
      }
-   if (ed_file->references > 0) _edje_file_unref(ed_file);
-   else _edje_file_free(ed_file);
+   _edje_cache_file_unref(edf);   
    return lst;
 }
 
@@ -464,30 +427,12 @@ edje_file_collection_list_free(Evas_List *lst)
 char *
 edje_file_data_get(const char *file, const char *key)
 {
-   Eet_File *ef = NULL;
-   Edje_File *ed_file;
+   Edje_File *edf;
    Evas_List *l;
    char *str = NULL;
    
-   ed_file = evas_hash_find(_edje_file_hash, file);
-   if (!ed_file) ed_file = _edje_file_cache_find((char *)file);
-   if (!ed_file)
-     {
-	ef = eet_open((char *)file, EET_FILE_MODE_READ);
-	if (!ef) return NULL;
-	ed_file = eet_data_read(ef, _edje_edd_edje_file, "edje_file");
-	if (!ed_file)
-	  {
-	     eet_close(ef);
-	     return NULL;
-	  }
-	eet_close(ef);
-	ed_file->path = strdup(file);
-	ed_file->collection_hash = NULL;
-	ed_file->references = 1;
-	_edje_file_hash = evas_hash_add(_edje_file_hash, ed_file->path, ed_file);
-     }
-   for (l = ed_file->data; l; l = l->next)
+   edf = _edje_cache_file_coll_open((char *)file, NULL, NULL, NULL);
+   for (l = edf->data; l; l = l->next)
      {
 	Edje_Data *di;
 	
@@ -498,630 +443,25 @@ edje_file_data_get(const char *file, const char *key)
 	     break;
 	  }
      }
-   if (ed_file->references > 0) _edje_file_unref(ed_file);
-   else _edje_file_free(ed_file);
+   _edje_cache_file_unref(edf);
    return str;
-}
-
-void
-edje_file_cache_set(int count)
-{
-   if (count < 0) count = 0;
-   _edje_file_cache_size = count;
-   _edje_file_cache_clean();
-}
-
-int
-edje_file_cache_get(void)
-{
-   return _edje_file_cache_size;
-}
-
-void
-edje_file_cache_flush(void)
-{
-   int ps;
-   
-   ps = _edje_file_cache_size;
-   _edje_file_cache_size = 0;
-   _edje_file_cache_clean();
-   _edje_file_cache_size = ps;
-}
-
-void
-edje_collection_cache_set(int count)
-{
-   Evas_List *l;
-   
-   if (count < 0) count = 0;
-   _edje_collection_cache_size = count;
-   for (l = _edje_file_cache; l; l = l->next)
-     {
-	Edje_File *edf;
-	
-	edf = l->data;
-	_edje_collection_cache_clean(edf);
-     }
-}
-
-int
-edje_collection_cache_get(void)
-{
-   return _edje_collection_cache_size;
-}
-
-void
-edje_collection_cache_flush(void)
-{
-   int ps;
-   Evas_List *l;
-   
-   ps = _edje_collection_cache_size;
-   _edje_collection_cache_size = 0;
-   for (l = _edje_file_cache; l; l = l->next)
-     {
-	Edje_File *edf;
-	
-	edf = l->data;
-	_edje_collection_cache_clean(edf);
-     }
-   _edje_collection_cache_size = ps;
-}
-    
-
-static Edje_File *
-_edje_file_cache_find(char *path)
-{
-   Evas_List *l;
-   
-   for (l = _edje_file_cache; l; l = l->next)
-     {
-	Edje_File *edf;
-	
-	edf = l->data;
-	if (!strcmp(edf->path, path))
-	  {
-	     edf->references = 1;
-	     _edje_file_cache = evas_list_remove_list(_edje_file_cache, l);
-	     _edje_file_hash = evas_hash_add(_edje_file_hash, path, edf);
-	     return edf;
-	  }
-     }
-   return NULL;
-}
-
-static void
-_edje_file_cache_clean(void)
-{
-   int count;
-   
-   count = evas_list_count(_edje_file_cache);
-   while ((_edje_file_cache) && (count > _edje_file_cache_size))
-     {
-	Edje_File *edf;
-	
-	edf = evas_list_last(_edje_file_cache)->data;
-	_edje_file_cache = evas_list_remove_list(_edje_file_cache, evas_list_last(_edje_file_cache));
-	_edje_file_free(edf);
-	count = evas_list_count(_edje_file_cache);
-     }
-}
-
-static void
-_edje_file_cache_add(Edje_File *edf)
-{
-   _edje_file_hash = evas_hash_del(_edje_file_hash, edf->path, edf);
-   _edje_file_cache  = evas_list_prepend(_edje_file_cache, edf);
-   _edje_file_cache_clean();
-}
-
-static void
-_edje_file_unref(Edje_File *edf)
-{
-   edf->references--;
-   if (edf->references == 0) _edje_file_cache_add(edf);
-}
-
-static void
-_edje_file_ref(Edje_File *edf)
-{
-   if (edf->references == 0)
-     {
-	_edje_file_cache = evas_list_remove(_edje_file_cache, edf);
-	_edje_file_hash = evas_hash_add(_edje_file_hash, edf->path, edf);
-     }
-   edf->references++;
-}
-
-static void
-_edje_file_cleanup(void)
-{
-   int ps;
-   
-   ps = _edje_file_cache_size;
-   _edje_file_cache_size = 0;
-   _edje_file_cache_clean();
-   _edje_file_cache_size = ps;
-}
-
-
-
-
-static Edje_Part_Collection *
-_edje_collection_find(Edje_File *edf, char *part)
-{
-   Evas_List *l;
-   Edje_Part_Collection *coll = NULL;
-   
-   coll = evas_hash_find(edf->collection_hash, part);
-   if (coll)
-     {
-	coll->references++;
-	return coll;
-     }
-   for (l = edf->collection_cache; l; l = l->next)
-     {
-	coll = l->data;
-
-	if (!strcmp(coll->part, part))
-	  {
-	     coll->references = 1;
-	     edf->collection_cache = evas_list_remove_list(edf->collection_cache, l);
-	     edf->collection_hash = evas_hash_add(edf->collection_hash, part, coll);
-	     return coll;
-	  }
-     }
-   return NULL;
-}
-
-static void
-_edje_collection_cache_clean(Edje_File *edf)
-{
-   int count;
-   
-   count = evas_list_count(edf->collection_cache);
-   while ((edf->collection_cache) && (count > _edje_collection_cache_size))
-     {
-	Edje_Part_Collection *coll;
-	
-	coll = evas_list_last(edf->collection_cache)->data;
-	edf->collection_cache = evas_list_remove_list(edf->collection_cache, evas_list_last(edf->collection_cache));
-	_edje_collection_free(edf, coll);
-	count = evas_list_count(edf->collection_cache);
-     }
-}
-
-static void
-_edje_collection_cache_add(Edje_File *edf, Edje_Part_Collection *coll)
-{
-   edf->collection_hash = evas_hash_del(edf->collection_hash, coll->part, coll);
-   edf->collection_cache = evas_list_prepend(edf->collection_cache, coll);
-   _edje_collection_cache_clean(edf);
-}
-
-static void
-_edje_collection_unref(Edje_File *edf, Edje_Part_Collection *coll)
-{
-   coll->references--;
-   if (coll->references == 0) _edje_collection_cache_add(edf, coll);
-}
-
-static void
-_edje_collection_cleanup(Edje_File *edf)
-{
-   int ps;
-   
-   ps = _edje_collection_cache_size;
-   _edje_collection_cache_size = 0;
-   _edje_collection_cache_clean(edf);
-   _edje_collection_cache_size = ps;
-}
-
-static int
-_edje_font_is_embedded(Edje_File *edf, char *font)
-{
-   Evas_List *l;
-   
-   if (!edf->font_dir) return 0;
-   for (l = edf->font_dir->entries; l; l = l->next)
-     {
-	Edje_Font_Directory_Entry *fnt = l->data;
-	
-	if ((fnt->entry) && (!strcmp(fnt->entry, font)))
-	  return 1;
-     }
-   return 1;
-}
-
-static char *
-_edje_str_deescape(char *str)
-{
-   char *s2, *s, *d;
-   
-   s2 = malloc(strlen(str) + 1);
-   if (!s2) return NULL;
-   for (s = str, d = s2; *s != 0; s++, d++)
-     {
-	if ((*s == '\\') && (s[1] != 0)) s++;
-	*d = *s;
-     }
-   *d = 0;
-   return s2;
-}
-
-static char *
-_edje_str_escape(char *str)
-{
-   char *s2, *s, *d;
-   
-   s2 = malloc((strlen(str) * 2) + 1);
-   if (!s2) return NULL;
-   for (s = str, d = s2; *s != 0; s++, d++)
-     {
-	if ((*s == ' ') || (*s == '\\') || (*s == '\''))
-	  {
-	     *d = '\\';
-	     d++;
-	  }
-	*d = *s;
-     }
-   *d = 0;
-   return s2;
-}
-
-static void
-_edje_format_param_parse(char *item, char **key, char **val)
-{
-   char *p, *pv;
-   char *k, *v;
-   
-   p = strchr(item, '=');
-   k = malloc(p - item + 1);
-   strncpy(k, item, p - item);
-   k[p - item] = 0;
-   *key = k;
-   p++;
-   v = strdup(p);
-   *val = v;
-}
-
-static char *
-_edje_format_parse(char **s)
-{
-   char *p, *item, *ss, *ds;
-   char *s1 = NULL, *s2 = NULL;
-   
-   p = *s;
-   if (*p == 0) return NULL;
-   for (;;)
-     {
-	if (!s1)
-	  {
-	     if (*p != ' ') s1 = p;
-	     if (*p == 0) break;
-	  }
-	else if (!s2)
-	  {
-	     if ((p > *s) && (p[-1] != '\\'))
-	       {
-		  if (*p == ' ') s2 = p;
-	       }
-	     if (*p == 0) s2 = p;
-	  }
-	p++;
-	if (s1 && s2)
-	  {
-	     item = malloc(s2 - s1 + 1);
-	     if (item)
-	       {
-		  ds = item;
-		  for (ds = item, ss = s1; ss < s2; ss++, ds++)
-		    {
-		       if ((*ss == '\\') && (ss < (s2 - 1))) ss++;
-		       *ds = *ss;
-		    }
-		  *ds = 0;
-	       }
-	     *s = s2;
-	     return item;
-	  }
-     }
-   *s = p;
-   return NULL;
-}
-
-static int
-_edje_format_is_param(char *item)
-{
-   if (strchr(item, '=')) return 1;
-   return 0;
-}
-
-static char *
-_edje_strbuf_append(char *s, char *s2, int *len, int *alloc)
-{
-   int l2;
-   int tlen;
-   
-   if (!s2) return s;
-   l2 = strlen(s2);
-   tlen = *len + l2;
-   if (tlen > *alloc)
-     {
-	char *ts;
-	int talloc;
-	
-	talloc = ((tlen + 31) >> 5) << 5;
-	ts = realloc(s, talloc + 1);
-	if (!ts) return s;
-	s = ts;
-	*alloc = talloc;
-     }   
-   strcpy(s + *len, s2);
-   *len = tlen;
-   return s;
-}
-
-static char *
-_edje_format_reparse(Edje_File *edf, char *str)
-{
-   char *s, *s2;
-   char *item;
-   char *newstr = NULL;
-   int newlen = 0, newalloc = 0;
-   
-   s = str;
-   while ((item = _edje_format_parse(&s)))
-     {
-	if (_edje_format_is_param(item))
-	  {
-	     char *key = NULL, *val = NULL;
-	     
-	     _edje_format_param_parse(item, &key, &val);
-	     if (!strcmp(key, "font_source"))
-	       {
-		  /* dont allow font sources */
-	       }
-	     else if (!strcmp(key, "font"))
-	       {
-		  if (_edje_font_is_embedded(edf, val))
-		    {
-		       if (newstr) newstr = _edje_strbuf_append(newstr, " ", &newlen, &newalloc);
-		       newstr = _edje_strbuf_append(newstr, key, &newlen, &newalloc);
-		       newstr = _edje_strbuf_append(newstr, "=fonts/", &newlen, &newalloc);
-		       s2 = _edje_str_escape(val);
-		       if (s2)
-			 {
-			    newstr = _edje_strbuf_append(newstr, s2, &newlen, &newalloc);
-			    free(s2);
-			 }
-		    }
-		  else
-		    {
-		       s2 = _edje_str_escape(item);
-		       if (s2)
-			 {
-			    if (newstr) newstr = _edje_strbuf_append(newstr, " ", &newlen, &newalloc);
-			    newstr = _edje_strbuf_append(newstr, s2, &newlen, &newalloc);
-			    free(s2);
-			 }
-		    }
-	       }
-	     else
-	       {
-		  s2 = _edje_str_escape(item);
-		  if (s2)
-		    {
-		       if (newstr) newstr = _edje_strbuf_append(newstr, " ", &newlen, &newalloc);
-		       newstr = _edje_strbuf_append(newstr, s2, &newlen, &newalloc);
-		       free(s2);
-		    }
-	       }
-	     free(key);
-	     free(val);
-	  }
-	else
-	  {
-	     if (newstr) newstr = _edje_strbuf_append(newstr, " ", &newlen, &newalloc);
-	     newstr = _edje_strbuf_append(newstr, item, &newlen, &newalloc);
-	  }
-	free(item);
-     }
-   return newstr;
 }
 
 void
 _edje_file_add(Edje *ed)
 {
-   Eet_File *ef = NULL;
-   Evas_List *l, *ll;
-   int id = -1;
-
-   if (_edje_edd_edje_file == NULL)
-     return;
-
-   ed->file = evas_hash_find(_edje_file_hash, ed->path);
-   if (ed->file)
-     _edje_file_ref(ed->file);
-   else
-     {
-	ed->file = _edje_file_cache_find(ed->path);
-	if (!ed->file)
-	  {
-	     ef = eet_open(ed->path, EET_FILE_MODE_READ);
-	     if (!ef)
-	       {
-		  ed->load_error = EDJE_LOAD_ERROR_UNKNOWN_FORMAT;
-		  return;
-	       }
-	     
-	     ed->file = eet_data_read(ef, _edje_edd_edje_file, "edje_file");
-	     if (!ed->file)
-	       {
-		  ed->load_error = EDJE_LOAD_ERROR_CORRUPT_FILE;
-		  goto out;
-	       }
-	     
-	     if (ed->file->version != EDJE_FILE_VERSION)
-	       {
-		  _edje_file_free(ed->file);
-		  ed->file = NULL;
-		  ed->load_error = EDJE_LOAD_ERROR_INCOMPATIBLE_FILE;
-		  goto out;
-	       }
-	     
-	     ed->file->references = 1;   
-	     ed->file->path = strdup(ed->path);
-	     if (!ed->file->collection_dir)
-	       {
-		  _edje_file_free(ed->file);
-		  ed->file = NULL;
-		  ed->load_error = EDJE_LOAD_ERROR_CORRUPT_FILE;
-		  goto out;
-	       }
-	     _edje_file_hash = evas_hash_add(_edje_file_hash, ed->file->path, ed->file);
-	  }
-     }
-
-   for (l = ed->file->styles; l; l = l->next)
-     {
-	Edje_Style *stl;
-	Edje_Style_Tag *tag;
-	char *buf = NULL;
-	int len = 0;
-	int def_done;
-	char *fontset = NULL, *fontsource = NULL, *ts;
-	
-	stl = l->data;
-	if (stl->style) break;
-	stl->style = evas_textblock2_style_new();
-	evas_textblock2_style_set(stl->style, (const char *)buf);
-	def_done = 0;
-	/* FIXME: i think we have no choice by to parse the style line,
-	 * look for font= tags and IF that font is in the .edj then prepend
-	 * a "fonts/" to it to it's found
-	 */
-	if (_edje_fontset_append)
-	  fontset = _edje_str_escape(_edje_fontset_append);
-	fontsource = _edje_str_escape(ed->path);
-	  
-	for (ll = stl->tags; ll; ll = ll->next)
-	  {
-	     tag = ll->data;
-	     len += strlen(tag->key);
-	     len += 1;
-	     len += 1;
-
-	     ts = _edje_format_reparse(ed->file, tag->value);
-	     if (ts)
-	       {
-		  len += strlen(ts);
-		  free(ts);
-		  len += 1;
-	       }
-	  }
-	
-	if (fontset)
-	  {
-	     len += 1 + strlen("font_fallbacks=") + strlen(fontset);
-	  }
-	len += 1 + strlen("font_source=") + strlen(ed->path);
-	buf = malloc(len + 1);
-	buf[0] = 0;
-	for (ll = stl->tags; ll; ll = ll->next)
-	  {
-	     tag = ll->data;
-	     strcat(buf, tag->key);
-	     strcat(buf, "='");
-	     ts = _edje_format_reparse(ed->file, tag->value);
-	     if (ts)
-	       {
-		  strcat(buf, ts);
-		  free(ts);
-	       }
-	     if ((!def_done) && (!strcmp(tag->key, "DEFAULT")))
-	       {
-		  if (fontset)
-		    {
-		       strcat(buf, " ");
-		       strcat(buf, "font_fallbacks=");
-		       strcat(buf, fontset);
-		    }
-		  strcat(buf, " ");
-		  strcat(buf, "font_source=");
-		  strcat(buf, fontsource);
-		  def_done = 1;
-	       }
-	     strcat(buf, "'");
-	  }
-	if (fontset) free(fontset);
-	if (fontsource) free(fontsource);
-	evas_textblock2_style_set(stl->style, (const char *)buf);
-	free(buf);
-     }
-   
-   ed->collection = _edje_collection_find(ed->file, ed->part);
+   if (_edje_edd_edje_file == NULL) return;
+   ed->file = _edje_cache_file_coll_open(ed->path, ed->part, 
+					 &(ed->load_error), 
+					 &(ed->collection));
    if (!ed->collection)
      {
-	for (l = ed->file->collection_dir->entries; l; l = l->next)
+	if (ed->file)
 	  {
-	     Edje_Part_Collection_Directory_Entry *ce;
-	     
-	     ce = l->data;
-	     if ((ce->entry) && (!strcmp(ce->entry, ed->part)))
-	       {
-		  id = ce->id;
-		  break;
-	       }
-	  }
-	if (id >= 0)
-	  {
-	     char buf[256];
-	     int  size;
-	     void *data;
-	     
-	     snprintf(buf, sizeof(buf), "collections/%i", id);
-	     if (!ef) ef = eet_open(ed->path, EET_FILE_MODE_READ);
-	     if (!ef)
-	       {
-		  _edje_file_unref(ed->file);
-		  ed->file = NULL;
-		  ed->load_error = EDJE_LOAD_ERROR_CORRUPT_FILE;
-		  goto out;
-	       }
-	     ed->collection = eet_data_read(ef, 
-					    _edje_edd_edje_part_collection, 
-					    buf);
-	     if (!ed->collection)
-	       {
-		  _edje_file_unref(ed->file);
-		  ed->file = NULL;
-		  ed->load_error = EDJE_LOAD_ERROR_CORRUPT_FILE;
-		  goto out;
-	       }
-//	     printf("OPEN COLL %s\n", ed->part);
-	     
-	     snprintf(buf, sizeof(buf), "scripts/%i", id);
-	     data = eet_read(ef, buf, &size);
-	     if (data)
-	       {
-		  ed->collection->script = embryo_program_new(data, size);
-		  free(data);
-	       }
-	     
-	     ed->collection->part = strdup(ed->part);
-	     ed->collection->references = 1;
-	     ed->file->collection_hash = evas_hash_add(ed->file->collection_hash, ed->part, ed->collection);
-	  }
-	else
-	  {
-	     _edje_file_unref(ed->file);
+	     _edje_cache_file_unref(ed->file);
 	     ed->file = NULL;
-	     ed->load_error = EDJE_LOAD_ERROR_CORRUPT_FILE;	     
 	  }
      }
-   out:
-   if (ef) eet_close(ef);
 }
 
 void
@@ -1143,12 +483,12 @@ _edje_file_del(Edje *ed)
 	     _edje_text_part_on_del(ed, ep);
 	     _edje_color_class_on_del(ed, ep);
 	  }
-	_edje_collection_unref(ed->file, ed->collection);
+	_edje_cache_coll_unref(ed->file, ed->collection);
 	ed->collection = NULL;
      }
    if (ed->file)
      {
-	_edje_file_unref(ed->file);
+	_edje_cache_file_unref(ed->file);
 	ed->file = NULL;
      }
    if (ed->parts)
@@ -1316,35 +656,9 @@ _edje_file_free(Edje_File *edf)
      }
    if (edf->path) free(edf->path);
    if (edf->compiler) free(edf->compiler);
-   if (edf->collection_cache)
-     _edje_collection_cleanup(edf);
-   while (edf->styles)
-     {
-	Edje_Style *stl;
-	
-	stl = edf->styles->data;
-	edf->styles = evas_list_remove_list(edf->styles, edf->styles);
-	while (stl->tags)
-	  {
-	     Edje_Style_Tag *tag;
-	     
-	     tag = stl->tags->data;
-	     stl->tags = evas_list_remove_list(stl->tags, stl->tags);
-	     if (tag->key) free(tag->key);
-	     if (tag->value) free(tag->value);
-	     free(tag);
-	  }
-	if (stl->name) free(stl->name);
-	if (stl->style) evas_textblock2_style_free(stl->style);
-	free(stl);
-     }
+   if (edf->collection_cache) _edje_cache_coll_clean(edf);
+   _edje_textblock_style_cleanup(edf);
    free(edf);
-}
-
-void
-_edje_file_cache_shutdown(void)
-{
-   _edje_file_cleanup();
 }
 
 void

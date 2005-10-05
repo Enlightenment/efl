@@ -35,7 +35,9 @@ edje_var.c \
 edje_container.c \
 edje_container.h \
 edje_message_queue.c \
-edje_private.h
+edje_private.h \
+edje_cache.c \
+edje_textblock_styles.c
 
 libedje_la_LIBADD       = -lm @EVAS_LIBS@ @ECORE_LIBS@ @EET_LIBS@ @EMBRYO_LIBS@ @fnmatch_libs@
 libedje_la_CPPFLAGS     =
