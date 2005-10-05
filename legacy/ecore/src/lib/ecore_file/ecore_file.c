@@ -381,6 +381,7 @@ ecore_file_strip_ext(const char *path)
    char *p;
 
    file = strdup(path);
+   if (!file) return NULL;
 
    p = strrchr(file, '.');
    if (p)
