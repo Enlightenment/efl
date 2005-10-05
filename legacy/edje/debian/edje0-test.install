@@ -1,6 +1,0 @@
-usr/bin/edje
-usr/share/edje/data/test/fonts/*.alias
-usr/share/edje/data/test/fonts/*.ttf
-usr/share/edje/data/test/fonts/*.dir
-usr/share/edje/data/test/images/*.png
-usr/share/edje/data/template/*
