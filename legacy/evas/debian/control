@@ -30,6 +30,7 @@ Package: libevas0
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}
+Suggests: evas-bin
 Provides: libevas
 Description: enlightenment advanced canvas library
  Evas is an advanced canvas library, providing six engines for rendering: X11,
@@ -44,12 +45,13 @@ Description: enlightenment advanced canvas library
  hardware-accelerated canvas library, or if you want to try out the
  applications under development.
 
-Package: evas-test
+Package: evas0-bin
 Section: graphics
 Architecture: any
 Depends: ${shlibs:Depends}
-Description: test programs for evas
- This package provides test programs packaged with evas.
+Provides: evas-bin
+Description: Programs for libevas
+ This package provides programs packaged with evas.
  .
  Evas is an advanced canvas library, providing six engines for rendering: X11,
  OpenGL (hardware accelerated), DirectFB, the framebuffer, Microsoft Windows
