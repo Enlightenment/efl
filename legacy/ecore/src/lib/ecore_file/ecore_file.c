@@ -374,3 +374,17 @@ ecore_file_app_exe_get(const char *app)
    *pp = 0;
    return exe;
 }
+
+char *
+ecore_file_strip_ext(const char *path)
+{
+   char *p;
+
+   file = strdup(path);
+
+   p = strrchr(file, '.');
+   if (p)
+     *p = 0;
+
+   return file;
+}
