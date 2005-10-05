@@ -378,7 +378,7 @@ ecore_file_app_exe_get(const char *app)
 char *
 ecore_file_strip_ext(const char *path)
 {
-   char *p;
+   char *p, *file;
 
    file = strdup(path);
    if (!file) return NULL;
