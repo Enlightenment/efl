@@ -20,8 +20,8 @@ _xr_render_surface_new(Ximage_Info *xinf, int w, int h, XRenderPictFormat *fmt, 
    rs->depth = fmt->depth;
    rs->allocated = 1;
    rs->draw = XCreatePixmap(xinf->disp, xinf->root, w, h, fmt->depth);
-   att.dither = 1;
-   att.component_alpha = 1;
+   att.dither = 0;
+   att.component_alpha = 0;
    att.repeat = 0;
    rs->pic = XRenderCreatePicture(xinf->disp, rs->draw, fmt, CPRepeat | CPDither | CPComponentAlpha, &att);
    return rs;
@@ -45,8 +45,8 @@ _xr_render_surface_adopt(Ximage_Info *xinf, Drawable draw, int w, int h, int alp
    if (fmt->depth == 32) rs->alpha = 1;
    rs->allocated = 0;
    rs->draw = draw;
-   att.dither = 1;
-   att.component_alpha = 1;
+   att.dither = 0;
+   att.component_alpha = 0;
    att.repeat = 0;
    rs->pic = XRenderCreatePicture(xinf->disp, rs->draw, fmt, CPRepeat | CPDither | CPComponentAlpha, &att);
    return rs;
@@ -68,8 +68,8 @@ _xr_render_surface_format_adopt(Ximage_Info *xinf, Drawable draw, int w, int h, 
    if (fmt->depth == 32) rs->alpha = 1;
    rs->allocated = 0;
    rs->draw = draw;
-   att.dither = 1;
-   att.component_alpha = 1;
+   att.dither = 0;
+   att.component_alpha = 0;
    att.repeat = 0;
    rs->pic = XRenderCreatePicture(xinf->disp, rs->draw, fmt, CPRepeat | CPDither | CPComponentAlpha, &att);
    return rs;
@@ -224,6 +224,9 @@ _xr_render_surface_rgb_pixels_fill(Xrender_Surface *rs, int sw, int sh, void *pi
    _xr_image_put(xim, rs->draw, x, y, w, h);
 }
 
+// when color multiplier is used want: instead
+// CA src IN mask SRC temp; non-CA temp OVER dst.
+// 
 void
 _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Draw_Context *dc, int sx, int sy, int sw, int sh, int x, int y, int w, int h, int smooth)
 {
