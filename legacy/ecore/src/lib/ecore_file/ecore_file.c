@@ -214,7 +214,10 @@ ecore_file_ls(const char *dir)
 
    dirp = opendir(dir);
    if (!dirp) return NULL;
+
    list = ecore_list_new();
+   ecore_list_set_free_cb(list, free);
+
    while ((dp = readdir(dirp)))
      {
 	if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
