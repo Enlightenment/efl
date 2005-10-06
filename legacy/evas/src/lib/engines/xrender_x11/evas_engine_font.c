@@ -56,8 +56,8 @@ _xre_font_surface_new(Ximage_Info *xinf, RGBA_Font_Glyph *fg)
    _xr_fg_pool = evas_hash_add(_xr_fg_pool, buf, pool);
    
    fs->draw = XCreatePixmap(xinf->disp, xinf->root, w, h, xinf->fmt8->depth);
-   att.dither = 1;
-   att.component_alpha = 1;
+   att.dither = 0;
+   att.component_alpha = 0;
    att.repeat = 0;
    fs->pic = XRenderCreatePicture(xinf->disp, fs->draw, xinf->fmt8, CPRepeat | CPDither | CPComponentAlpha, &att);
    
