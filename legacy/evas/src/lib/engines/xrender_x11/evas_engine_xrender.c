@@ -124,22 +124,50 @@ _xr_render_surface_argb_pixels_fill(Xrender_Surface *rs, int sw, int sh, void *p
    jump = ((xim->line_bytes / 4) - w);
    sjump = sw - w;
    spe = sp + ((h - 1) * sw) + w;
-   while (sp < spe)
+   if
+#ifdef WORDS_BIGENDIAN
+     (xim->xim->byte_order == LSBFirst)
+#else
+     (xim->xim->byte_order == MSBFirst)
+#endif
      {
-	sple = sp + w;
-	while (sp < sple)
+	while (sp < spe)
 	  {
-	     a = A_VAL(sp);
-	     aa = a + 1;
-	     r = ((R_VAL(sp)) * aa) >> 8;
-	     g = ((G_VAL(sp)) * aa) >> 8;
-	     b = ((B_VAL(sp)) * aa) >> 8;
-	     *p = (a << 24) | (r << 16) | (g << 8) | b;
-	     p++;
-	     sp++;
+	     sple = sp + w;
+	     while (sp < sple)
+	       {
+		  a = A_VAL(sp);
+		  aa = a + 1;
+		  r = ((R_VAL(sp)) * aa) >> 8;
+		  g = ((G_VAL(sp)) * aa) >> 8;
+		  b = ((B_VAL(sp)) * aa) >> 8;
+		  *p = (b << 24) | (g << 16) | (r << 8) | a;
+		  p++;
+		  sp++;
+	       }
+	     p += jump;
+	     sp += sjump;
 	  }
-	p += jump;
-	sp += sjump;
+     }
+   else
+     {
+	while (sp < spe)
+	  {
+	     sple = sp + w;
+	     while (sp < sple)
+	       {
+		  a = A_VAL(sp);
+		  aa = a + 1;
+		  r = ((R_VAL(sp)) * aa) >> 8;
+		  g = ((G_VAL(sp)) * aa) >> 8;
+		  b = ((B_VAL(sp)) * aa) >> 8;
+		  *p = (a << 24) | (r << 16) | (g << 8) | b;
+		  p++;
+		  sp++;
+	       }
+	     p += jump;
+	     sp += sjump;
+	  }
      }
    _xr_image_put(xim, rs->draw, x, y, w, h);
 }
@@ -158,17 +186,40 @@ _xr_render_surface_rgb_pixels_fill(Xrender_Surface *rs, int sw, int sh, void *pi
    jump = ((xim->line_bytes / 4) - w);
    sjump = sw - w;
    spe = sp + ((h - 1) * sw) + w;
-   while (sp < spe)
+   if
+#ifdef WORDS_BIGENDIAN
+     (xim->xim->byte_order == LSBFirst)
+#else
+     (xim->xim->byte_order == MSBFirst)
+#endif
      {
-	sple = sp + w;
-	while (sp < sple)
+	while (sp < spe)
 	  {
-	     *p = 0xff000000 | ((R_VAL(sp)) << 16) | ((G_VAL(sp)) << 8) | (B_VAL(sp));
-	     p++;
-	     sp++;
+	     sple = sp + w;
+	     while (sp < sple)
+	       {
+		  *p = ((B_VAL(sp)) << 24) | ((G_VAL(sp)) << 16) | ((R_VAL(sp)) << 8) | 0x000000ff;
+		  p++;
+		  sp++;
+	       }
+	     p += jump;
+	     sp += sjump;
 	  }
-	p += jump;
-	sp += sjump;
+     }
+   else
+     {
+	while (sp < spe)
+	  {
+	     sple = sp + w;
+	     while (sp < sple)
+	       {
+		  *p = 0xff000000 | ((R_VAL(sp)) << 16) | ((G_VAL(sp)) << 8) | (B_VAL(sp));
+		  p++;
+		  sp++;
+	       }
+	     p += jump;
+	     sp += sjump;
+	  }
      }
    _xr_image_put(xim, rs->draw, x, y, w, h);
 }
