@@ -1,4 +1,4 @@
-MAINTAINERCLEANFILES = Makefile.in
+MAINTAINERCLEANFILES = Makefile.in moc_evas_software_qtopia_main.cpp
 
 INCLUDES = \
 -I. -I$(top_srcdir)/src/lib -I$(top_srcdir) \
@@ -109,4 +109,8 @@ evas_xrender_x11_test_LDADD = $(top_builddir)/src/lib/libevas.la -lm @x_libs@
 evas_xrender_x11_test_CFLAGS = $(CFLAGS) @x_cflags@
 evas_xrender_x11_test_DEPENDENCIES = $(top_builddir)/src/lib/libevas.la
 
-EXTRA_DIST = evas_software_qtopia_main.h evas_software_qtopia_main.cpp moc_evas_software_qtopia_main.cpp
+EXTRA_DIST = evas_software_qtopia_main.h evas_software_qtopia_main.cpp
+# moc_evas_software_qtopia_main.cpp
+
+clean-local:
+	    rm -f moc_evas_software_qtopia_main.cpp

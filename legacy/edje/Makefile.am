@@ -15,15 +15,9 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 #	  cp -p $(srcdir)/data/edc.vim $(DESTDIR)$(vimdir)/syntax/; \
 #	fi
 
-dist-hook:
-	./gendoc; \
-	tar cvf edje_docs.tar doc/html doc/latex doc/man; \
-	rm -f edje_docs.tar.gz; \
-	gzip -9 edje_docs.tar;
-
 bin_SCRIPTS = edje-config
 
-EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN edje.spec edje.pc.in edje.c.in gendoc Doxyfile edje_docs.tar.gz
+EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN edje.spec edje.pc.in edje.c.in gendoc Doxyfile
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = edje.pc
