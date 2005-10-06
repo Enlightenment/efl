@@ -113,7 +113,7 @@ _ecore_config_recurse_mkdir(const char *file)
       file_ptr--;
    *file_ptr = '\0';
 
-   if (stat(file_tmp, &status))
+   if ((strlen(file_tmp) > 0) && stat(file_tmp, &status))
      {
 	_ecore_config_recurse_mkdir(file_tmp);
 	mkdir(file_tmp, S_IRUSR | S_IWUSR | S_IXUSR);
