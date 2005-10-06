@@ -65,10 +65,6 @@ evas_gl_common_context_use(Evas_GL_Context *gc)
 	  {
 	     if (strstr(ext, "GL_SGIS_generate_mipmap")) gc->ext.sgis_generate_mipmap = 1;
 	     if (strstr(ext, "GL_NV_texture_rectangle")) gc->ext.nv_texture_rectangle = 1;
-	     /* technically this should work, as its a compatible */
-	     /* implementation of the nvidia texture_rectangle extension */
-	     /* since the #define value is the same as is the description */
-	     /* it was fixed in the latest (3.2.5) fglrx drivers */
 	     if (strstr(ext, "GL_EXT_texture_rectangle")) gc->ext.nv_texture_rectangle = 1;
 	     printf("GL EXT supported: GL_SGIS_generate_mipmap = %x\n", gc->ext.sgis_generate_mipmap);
 	     printf("GL EXT supported: GL_NV_texture_rectangle = %x\n", gc->ext.nv_texture_rectangle);

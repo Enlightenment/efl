@@ -111,6 +111,7 @@ void      _xre_image_region_dirty(XR_Image *im, int x, int y, int w, int h);
 void      _xre_image_dirty(XR_Image *im);
 XR_Image *_xre_image_copy(XR_Image *im);
 void     *_xre_image_data_get(XR_Image *im);
+XR_Image *_xre_image_data_find(void *data);
 void      _xre_image_data_put(XR_Image *im, void *data);
 void      _xre_image_alpha_set(XR_Image *im, int alpha);
 int       _xre_image_alpha_get(XR_Image *im);

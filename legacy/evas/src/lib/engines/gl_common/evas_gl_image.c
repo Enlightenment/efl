@@ -172,7 +172,8 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Im
    oh = (dh * im->tex->th) / sh;
    evas_gl_common_context_texture_set(gc, im->tex, smooth, ow, oh);
    if ((!im->tex->have_mipmaps) && (smooth) &&
-       ((im->tex->uw < im->tex->tw) || (im->tex->uh < im->tex->th)))
+       ((im->tex->uw < im->tex->tw) || (im->tex->uh < im->tex->th)) &&
+       (!gc->ext.sgis_generate_mipmap))
      evas_gl_common_texture_mipmaps_build(im->tex, im->im, smooth);
 
    if (im->tex->not_power_of_two)
@@ -204,9 +205,19 @@ evas_gl_common_image_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Im
    evas_gl_common_context_write_buf_set(gc, GL_BACK);
 
    glBegin(GL_QUADS);
-   glTexCoord2d(tx1, ty1); glVertex2i(dx     , dy     );
-   glTexCoord2d(tx2, ty1); glVertex2i(dx + dw, dy     );
-   glTexCoord2d(tx2, ty2); glVertex2i(dx + dw, dy + dh);
-   glTexCoord2d(tx1, ty2); glVertex2i(dx     , dy + dh);
+   if (im->tex->not_power_of_two)
+     {
+	glTexCoord2d(tx1, ty1); glVertex2i(dx     , dy     );
+	glTexCoord2d(tx2, ty1); glVertex2i(dx + dw, dy     );
+	glTexCoord2d(tx2, ty2); glVertex2i(dx + dw, dy + dh);
+	glTexCoord2d(tx1, ty2); glVertex2i(dx     , dy + dh);
+     }
+   else
+     {
+	glTexCoord2d(tx1, ty1); glVertex2f(dx           , dy     );
+	glTexCoord2d(tx2, ty1); glVertex2f(dx + dw + 0.5, dy     );
+	glTexCoord2d(tx2, ty2); glVertex2f(dx + dw + 0.5, dy + dh + 0.5);
+	glTexCoord2d(tx1, ty2); glVertex2f(dx           , dy + dh + 0.5);
+     }
    glEnd();
 }

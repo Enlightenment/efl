@@ -8,6 +8,36 @@ static Evas_Hash *_xr_image_hash        = NULL;
 static int        _xr_image_cache_size  = 0;
 static int        _xr_image_cache_usage = 0;
 static Evas_List *_xr_image_cache       = NULL;
+static Evas_Hash *_xr_image_dirty_hash  = NULL;
+
+static void
+__xre_image_dirty_hash_add(XR_Image *im)
+{
+   char buf[64];
+   
+   if (!im->data) return;
+   snprintf(buf, sizeof(buf), "%p", im->data);
+   _xr_image_dirty_hash = evas_hash_add(_xr_image_dirty_hash, buf, im);
+}
+
+static void
+__xre_image_dirty_hash_del(XR_Image *im)
+{
+   char buf[64];
+   
+   if (!im->data) return;
+   snprintf(buf, sizeof(buf), "%p", im->data);
+   _xr_image_dirty_hash = evas_hash_del(_xr_image_dirty_hash, buf, im);
+}
+
+static XR_Image *
+__xre_image_dirty_hash_find(void *data)
+{
+   char buf[64];
+   
+   snprintf(buf, sizeof(buf), "%p", data);
+   return evas_hash_find(_xr_image_dirty_hash, buf);
+}
 
 static XR_Image *
 __xre_image_find(char *fkey)
@@ -91,11 +121,45 @@ _xre_image_new_from_data(Ximage_Info *xinf, int w, int h, void *data)
    im->data = data;
    im->alpha = 1;
    im->dirty = 1;
+   __xre_image_dirty_hash_add(im);
    return im;
 }
 
 XR_Image *
 _xre_image_new_from_copied_data(Ximage_Info *xinf, int w, int h, void *data)
+{
+   XR_Image *im;
+
+   im = calloc(1, sizeof(XR_Image));
+   if (!im) return NULL;
+   im->data = malloc(w * h * 4);
+   if (!im->data)
+     {
+	free(im);
+	return NULL;
+     }
+   if (data)
+     {
+	Gfx_Func_Blend_Src_Dst func;
+	
+	func = evas_common_draw_func_copy_get(w * h, 0);
+	if (func) func(data, im->data, w * h);
+	evas_common_cpu_end_opt();
+     }
+   im->w = w;
+   im->h = h;
+   im->references = 1;
+   im->xinf = xinf;
+   im->xinf->references++;
+   im->free_data = 1;
+   im->alpha = 1;
+   im->dirty = 1;
+   __xre_image_dirty_hash_add(im);
+   return im;
+}
+
+XR_Image *
+_xre_image_new(Ximage_Info *xinf, int w, int h)
 {
    XR_Image *im;
 
@@ -113,42 +177,9 @@ _xre_image_new_from_copied_data(Ximage_Info *xinf, int w, int h, void *data)
    im->xinf = xinf;
    im->xinf->references++;
    im->free_data = 1;
-   
-   if (data)
-     {
-	Gfx_Func_Blend_Src_Dst func;
-	
-	func = evas_common_draw_func_copy_get(w * h, 0);
-	if (func) func(data, im->data, w * h);
-	evas_common_cpu_end_opt();
-     }
-   
    im->alpha = 1;
    im->dirty = 1;
-   return im;
-}
-
-XR_Image *
-_xre_image_new(Ximage_Info *xinf, int w, int h)
-{
-   XR_Image *im;
-
-   im = calloc(1, sizeof(XR_Image));
-   if (!im) return NULL;
-   im->xinf = xinf;
-   im->xinf->references++;
-   im->w = w;
-   im->h = h;
-   im->references = 1;
-   im->data = malloc(w * h * 4);
-   if (!im->data)
-     {
-	im->xinf->references--;
-	free(im);
-     }
-   im->free_data = 1;
-   im->alpha = 1;
-   im->dirty = 1;
+   __xre_image_dirty_hash_add(im);
    return im;
 }
 
@@ -159,6 +190,7 @@ __xre_image_real_free(XR_Image *im)
    if (im->key) free(im->key);
    if (im->fkey) free(im->fkey);
    if (im->im) evas_common_image_unref(im->im);
+   if ((im->data) && (im->dirty)) __xre_image_dirty_hash_del(im);
    if ((im->free_data) && (im->data)) free(im->data);
    if (im->surface) _xr_render_surface_free(im->surface);
    if (im->format) free(im->format);
@@ -283,8 +315,10 @@ _xre_image_resize(XR_Image *im, int w, int h)
 	       }
 	     evas_common_cpu_end_opt();
 	  }
+	__xre_image_dirty_hash_del(im);
 	free(im->data);
 	im->data = data;
+	__xre_image_dirty_hash_add(im);
      }
    else if (im->im)
      {
@@ -312,12 +346,19 @@ _xre_image_resize(XR_Image *im, int w, int h)
              evas_common_blit_rectangle(im_old, im->im, 0, 0, ww, hh, 0, 0);
 	     evas_common_cpu_end_opt();
 	  }
+	im->free_data = 1;
+	im->data = im->im->image->data;
+	im->im->image->data = NULL;
+        evas_common_image_unref(im->im);
+	im->im = NULL;
         evas_common_image_unref(im_old);
+	__xre_image_dirty_hash_add(im);
      }
    else
      {
 	im->data = malloc(w * h * 4);
 	im->free_data = 1;
+	__xre_image_dirty_hash_add(im);
      }
    im->w = w;
    im->h = h;
@@ -341,6 +382,16 @@ _xre_image_data_get(XR_Image *im)
    return data;
 }
 
+XR_Image *
+_xre_image_data_find(void *data)
+{
+   XR_Image *im;
+   
+   im = __xre_image_dirty_hash_find(data);
+   if (im) im->references++;
+   return im;
+}
+
 void
 _xre_image_data_put(XR_Image *im, void *data)
 {
@@ -351,6 +402,7 @@ _xre_image_data_put(XR_Image *im, void *data)
      {
 	imdata = im->data;
 	if (data == imdata) return;
+	__xre_image_dirty_hash_del(im);
 	if (im->free_data) free(im->data);
      }
    else
@@ -364,6 +416,7 @@ _xre_image_data_put(XR_Image *im, void *data)
 	  }
      }
    im->data = data;
+   __xre_image_dirty_hash_add(im);
    im->free_data = 0;
    if (im->surface)
      {

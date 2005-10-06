@@ -772,14 +772,22 @@ evas_engine_xrender_x11_image_data_put(void *data, void *image, DATA32 *image_da
 	XR_Image *old_image;
 
 	old_image = (XR_Image *)image;
-	image = _xre_image_new_from_data(old_image->xinf, old_image->w, old_image->h, image_data);
-	if (image)
+	image = _xre_image_data_find(image_data);
+	if (!image)
 	  {
-	     ((XR_Image *)image)->alpha = old_image->alpha;
-	     _xre_image_free(old_image);
+	     image = _xre_image_new_from_data(old_image->xinf, old_image->w, old_image->h, image_data);
+	     if (image)
+	       {
+		  ((XR_Image *)image)->alpha = old_image->alpha;
+		  _xre_image_free(old_image);
+	       }
+	     else
+	       image = old_image;
 	  }
 	else
-	  image = old_image;
+	  {
+	     _xre_image_free(old_image);
+	  }
      }
    return image;
 }
