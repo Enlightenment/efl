@@ -17,6 +17,8 @@ AC_C_CONST
 AM_ENABLE_SHARED
 AM_PROG_LIBTOOL
 AC_FUNC_ALLOCA
+AC_SUBST(DEBIANSTAMP)
+DEBIANSTAMP="`date "+%a, %d %b %G %T %z"`"
 
 AC_CHECK_FUNCS(realpath)
 
@@ -224,6 +226,7 @@ src/Makefile
 src/lib/Makefile
 src/bin/Makefile
 edje-config
+debian/changelog
 ],[
 chmod +x edje-config
 ])
