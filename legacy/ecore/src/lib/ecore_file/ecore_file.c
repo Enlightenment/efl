@@ -254,10 +254,11 @@ char *
 ecore_file_app_exe_get(const char *app)
 {
    char *p, *pp, *exe1 = NULL, *exe2 = NULL;
-   char *exe;
-   int in_quot_dbl = 0, in_quot_sing = 0;
+   char *exe = NULL;
+   int in_quot_dbl = 0, in_quot_sing = 0, restart = 0;
    
    p = (char *)app;
+restart:
    while ((*p) && (isspace(*p))) p++;
    exe1 = p;
    while (*p)
@@ -296,6 +297,7 @@ ecore_file_app_exe_get(const char *app)
 	homedir = getenv("HOME");
 	if (!homedir) return NULL;
 	len = strlen(homedir);
+	if (exe) free(exe);
 	exe = malloc(len + exe2 - exe1 + 2);
 	if (!exe) return NULL;
 	pp = exe;
@@ -312,11 +314,13 @@ ecore_file_app_exe_get(const char *app)
      }
    else
      {
+	if (exe) free(exe);
 	exe = malloc(exe2 - exe1 + 1);
 	if (!exe) return NULL;
 	pp = exe;
      }
    p = exe1;
+   restart = 0;
    in_quot_dbl = 0;
    in_quot_sing = 0;
    while (*p)
@@ -360,12 +364,23 @@ ecore_file_app_exe_get(const char *app)
 		       pp++;
 		    }
 	       }
+	     else if ((p > exe1) && (*p == '='))
+	       {
+		  restart = 1;
+		  *pp = *p;
+		  pp++;
+	       }
 	     else if (*p == '\'')
 	       in_quot_sing = 1;
 	     else if (*p == '\"')
 	       in_quot_dbl = 1;
 	     else if (isspace(*p))
-	       break;
+	       {
+		  if (restart)
+		    goto restart;
+		  else
+		    break;
+	       }
 	     else
 	       {
 		  *pp = *p;
