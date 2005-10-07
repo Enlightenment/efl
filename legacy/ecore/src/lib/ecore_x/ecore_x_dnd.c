@@ -163,7 +163,7 @@ ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, int on)
 }
 
 void
-ecore_x_dnd_types_set(Ecore_X_Window win, const char **types, unsigned int num_types)
+ecore_x_dnd_types_set(Ecore_X_Window win, char **types, unsigned int num_types)
 {
    Ecore_X_Atom      *newset = NULL;
    int               i;

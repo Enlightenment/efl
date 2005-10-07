@@ -986,7 +986,7 @@ EAPI void             ecore_x_dnd_aware_set(Ecore_X_Window win, int on);
 EAPI int              ecore_x_dnd_version_get(Ecore_X_Window win);
 EAPI int              ecore_x_dnd_type_isset(Ecore_X_Window win, const char *type);
 EAPI void             ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, int on);
-EAPI void             ecore_x_dnd_types_set(Ecore_X_Window win, const char **types, unsigned int num_types);
+EAPI void             ecore_x_dnd_types_set(Ecore_X_Window win, char **types, unsigned int num_types);
 EAPI int              ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size);
 EAPI void             ecore_x_dnd_drop(void);
 EAPI void             ecore_x_dnd_send_status(int will_accept, int suppress, Ecore_X_Rectangle rectangle, Ecore_X_Atom action);
