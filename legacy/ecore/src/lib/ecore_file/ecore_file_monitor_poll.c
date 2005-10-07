@@ -89,7 +89,7 @@ ecore_file_monitor_poll_add(const char *path,
 
    em = calloc(1, sizeof(Ecore_File_Monitor_Poll));
    if (!em) return NULL;
-
+   
    if (!_timer)
      _timer = ecore_timer_add(_interval, _ecore_file_monitor_poll_handler, NULL);
    else
@@ -122,13 +122,10 @@ ecore_file_monitor_poll_add(const char *path,
 
 		       f = calloc(1, sizeof(Ecore_File));
 		       if (!f)
-			 {
-			    free(file);
-			    continue;
-			 }
+			 continue;
 
 		       snprintf(buf, sizeof(buf), "%s/%s", em->path, file);
-		       f->name = file;
+		       f->name = strdup(file);
 		       f->mtime = ecore_file_mod_time(buf);
 		       f->is_dir = ecore_file_is_dir(buf);
 		       em->files = _ecore_list2_append(em->files, f);
@@ -161,23 +158,24 @@ ecore_file_monitor_poll_del(Ecore_File_Monitor *em)
 
    /* Remove files */
    /*It's possible there weren't any files to monitor, so check if the list is init*/
-   if (em->files) {
-	   for (l = em->files; l;)
-	     {
-		Ecore_File *file;
-	
-		file = (Ecore_File *)l;
-		l = l->next;
-		free(file->name);
-		free(file);
-	     }
-   }
-
+   if (em->files)
+     {
+	for (l = em->files; l;)
+	  {
+	     Ecore_File *file;
+	     
+	     file = (Ecore_File *)l;
+	     l = l->next;
+	     free(file->name);
+	     free(file);
+	  }
+     }
+   
    _monitors = _ecore_list2_remove(_monitors, em);
-
+   
    free(em->path);
    free(em);
-
+   
    if ((!_monitors) && (_timer))
      {
 	ecore_timer_del(_timer);
@@ -232,13 +230,13 @@ _ecore_file_monitor_poll_check(Ecore_File_Monitor *em)
      {
 	Ecore_List2 *l;
 	Ecore_File_Event event;
-
+	
 	/* Notify all files deleted */
 	for (l = em->files; l;)
 	  {
 	     Ecore_File *f;
 	     char buf[PATH_MAX];
-
+	     
 	     f = (Ecore_File *)l;
 	     l = l->next;
 
@@ -303,39 +301,35 @@ _ecore_file_monitor_poll_check(Ecore_File_Monitor *em)
 
 	     /* Files have been added or removed */
 	     files = ecore_file_ls(em->path);
-	     if (files) { /*Are we a directory? We should check first, rather than rely on null here*/
-	       while ((file = ecore_list_next(files)))
-	       {
-		  Ecore_File *f;
-		  char buf[PATH_MAX];
-		  Ecore_File_Event event;
-
-		  if (_ecore_file_monitor_poll_checking(em, file))
+	     if (files)
+	       { 
+		  /* Are we a directory? We should check first, rather than rely on null here*/
+		  while ((file = ecore_list_next(files)))
 		    {
-		       free(file);
-		       continue;
+		       Ecore_File *f;
+		       char buf[PATH_MAX];
+		       Ecore_File_Event event;
+		       
+		       if (_ecore_file_monitor_poll_checking(em, file))
+			 continue;
+		       
+		       snprintf(buf, sizeof(buf), "%s/%s", em->path, file);
+		       f = calloc(1, sizeof(Ecore_File));
+		       if (!f)
+			 continue;
+		       
+		       f->name = strdup(file);
+		       f->mtime = ecore_file_mod_time(buf);
+		       f->is_dir = ecore_file_is_dir(buf);
+		       if (f->is_dir)
+			 event = ECORE_FILE_EVENT_CREATED_DIRECTORY;
+		       else
+			 event = ECORE_FILE_EVENT_CREATED_FILE;
+		       em->func(em->data, em, event, buf);
+		       em->files = _ecore_list2_append(em->files, f);
 		    }
-
-		  snprintf(buf, sizeof(buf), "%s/%s", em->path, file);
-		  f = calloc(1, sizeof(Ecore_File));
-		  if (!f)
-		    {
-		       free(file);
-		       continue;
-		    }
-
-		  f->name = file;
-		  f->mtime = ecore_file_mod_time(buf);
-		  f->is_dir = ecore_file_is_dir(buf);
-		  if (f->is_dir)
-		    event = ECORE_FILE_EVENT_CREATED_DIRECTORY;
-		  else
-		    event = ECORE_FILE_EVENT_CREATED_FILE;
-		  em->func(em->data, em, event, buf);
-		  em->files = _ecore_list2_append(em->files, f);
+		  ecore_list_destroy(files);
 	       }
-	       ecore_list_destroy(files);
-	     }
 	     
 	     if (!ecore_file_is_dir(em->path))
 	       em->func(em->data, em, ECORE_FILE_EVENT_MODIFIED, em->path);
@@ -358,7 +352,6 @@ _ecore_file_monitor_poll_checking(Ecore_File_Monitor *em, char *name)
 	if (!strcmp(f->name, name))
 	  return 1;
      }
-
    return 0;
 }
 #endif
