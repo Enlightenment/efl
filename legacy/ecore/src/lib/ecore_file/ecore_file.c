@@ -381,14 +381,22 @@ ecore_file_app_exe_get(const char *app)
 char *
 ecore_file_strip_ext(const char *path)
 {
-   char *p, *file;
+   char *p, *file = NULL;
 
-   file = strdup(path);
-   if (!file) return NULL;
-
-   p = strrchr(file, '.');
-   if (p)
-     *p = 0;
+   p = strrchr(path, '.');
+   if (!p)
+     {
+	file = strdup(path);
+     }
+   else if (p != path)
+     {
+	file = malloc(((p - path) + 1) * sizeof(char));
+	if (file)
+	  {
+	     memcpy(file, path, (p - path));
+	     file[p - path] = 0;
+	  }
+     }
 
    return file;
 }
