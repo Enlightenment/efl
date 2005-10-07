@@ -21,6 +21,7 @@ _edje_font_is_embedded(Edje_File *edf, char *font)
    return 1;
 }
 
+#if 0
 static char *
 _edje_str_deescape(char *str)
 {
@@ -36,6 +37,7 @@ _edje_str_deescape(char *str)
    *d = 0;
    return s2;
 }
+#endif
 
 static char *
 _edje_str_escape(char *str)
@@ -60,7 +62,7 @@ _edje_str_escape(char *str)
 static void
 _edje_format_param_parse(char *item, char **key, char **val)
 {
-   char *p, *pv;
+   char *p;
    char *k, *v;
    
    p = strchr(item, '=');
