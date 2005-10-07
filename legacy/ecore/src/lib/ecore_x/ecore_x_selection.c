@@ -626,8 +626,8 @@ _ecore_x_selection_parser_files(const char *target, unsigned char *data, int siz
    int i, is;
    char *tmp;
 
-   if (strcmp(target, "text/uri-list")
-       && strcmp(target, "_NETSCAPE_URL"))
+   if (strcmp(target, "text/uri-list") &&
+       strcmp(target, "_NETSCAPE_URL"))
      return NULL;
 
    sel = calloc(1, sizeof(Ecore_X_Selection_Data_Files));
@@ -636,7 +636,6 @@ _ecore_x_selection_parser_files(const char *target, unsigned char *data, int siz
    if (data[size - 1])
      {
 	/* Isn't nul terminated */
-	printf("BUG: isn't nul terminated!\n");
 	size++;
 	data = realloc(data, size);
 	data[size - 1] = 0;
@@ -653,16 +652,14 @@ _ecore_x_selection_parser_files(const char *target, unsigned char *data, int siz
 	  }
 	else
 	  {
-	     if ((data[is] != '\r')
-		   && (data[is] != '\n'))
+	     if ((data[is] != '\r') &&
+		 (data[is] != '\n'))
 	       {
 		  tmp[i++] = data[is++];
 	       }
 	     else
 	       {
-		  while ((data[is] == '\r')
-			|| (data[is] == '\n'))
-		    is++;
+		  while ((data[is] == '\r') || (data[is] == '\n')) is++;
 		  tmp[i] = 0;
 		  sel->num_files++;
 		  sel->files = realloc(sel->files, sel->num_files * sizeof(char *));
@@ -712,7 +709,6 @@ _ecore_x_selection_parser_text(const char *target __UNUSED__, unsigned char *dat
    if (data[size - 1])
      {
 	/* Isn't nul terminated */
-	printf("BUG: isn't nul terminated!\n");
 	size++;
 	data = realloc(data, size);
 	data[size - 1] = 0;
