@@ -1,4 +1,7 @@
 /*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+/*
  * Xinerama code
  */
 #include "Ecore.h"
@@ -15,14 +18,17 @@ int
 ecore_x_xinerama_screen_count_get(void)
 {
 #ifdef ECORE_XINERAMA
+   int event_base, error_base;
+
    if (_xin_info) XFree(_xin_info);
    _xin_info = NULL;
-   _xin_info = XineramaQueryScreens(_ecore_x_disp, &_xin_scr_num);
-   if (_xin_info) return _xin_scr_num;
-   else return 0;
-#else
-   return 0;
+   if (XineramaQueryExtension(_ecore_x_disp, &event_base, &error_base))
+     {
+	_xin_info = XineramaQueryScreens(_ecore_x_disp, &_xin_scr_num);
+	if (_xin_info) return _xin_scr_num;
+     }
 #endif
+   return 0;
 }
 
 int
