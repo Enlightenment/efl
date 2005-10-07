@@ -1,3 +1,7 @@
+/*
+ * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
+ */
+
 #include "Edje.h"
 #include "edje_private.h"
 
@@ -992,39 +996,59 @@ _edje_var_anim_add(Edje *ed, double len, char *fname, int val)
    return ea->id;
 }
 
-void
-_edje_var_anim_del(Edje *ed, int id)
+static Edje_Var_Animator *
+_edje_var_anim_find(Edje *ed, int id)
 {
    Evas_List *l;
 
-   if (!ed->var_pool) return;
+   if (!ed->var_pool) return NULL;
+
    for (l = ed->var_pool->animators; l; l = l->next)
      {
-	Edje_Var_Animator *ea;
-	
-	ea = l->data;
-	if (ea->id == id)
+	Edje_Var_Animator *ea = l->data;
+
+	if (ea->id == id) return ea;
+     }
+
+   return NULL;
+}
+
+void
+_edje_var_anim_del(Edje *ed, int id)
+{
+   Edje_Var_Animator *ea;
+
+   ea = _edje_var_anim_find(ed, id);
+   if (!ea)
+     {
+   fprintf(stderr,
+	 "*** EDJE ERROR: Cannot find animator to cancel\n"
+	 "*** NAUGHTY PROGRAMMER!!!\n"
+	 "*** SPANK SPANK SPANK!!!\n"
+	 "*** Now go fix your code. Tut tut tut!\n"
+	 "\n");
+   if (getenv("EDJE_ERROR_ABORT")) abort();
+   return;
+     }
+
+   if (ed->var_pool->walking_list)
+     {
+	ea->delete_me = 1;
+	return;
+     }
+
+   ed->var_pool->animators = evas_list_remove(ed->var_pool->animators, ea);
+   free(ea);
+
+   if (ed->var_pool->animators) return;
+
+   _edje_anim_list = evas_list_remove(_edje_anim_list, ed);
+   if (!_edje_anim_list)
+     {
+	if (_edje_animator)
 	  {
-	     if (!ed->var_pool->walking_list)
-	       {
-		  ed->var_pool->animators = evas_list_remove(ed->var_pool->animators, ea);
-		  free(ea);
-		  if (!ed->var_pool->animators)
-		    {
-		       _edje_anim_list = evas_list_remove(_edje_anim_list, ed);
-		       if (!_edje_anim_list)
-			 {
-			    if (_edje_animator)
-			      {
-				 ecore_animator_del(_edje_animator);
-				 _edje_animator = NULL;
-			      }
-			 }
-		    }
-	       }
-	     else
-	       ea->delete_me = 1;
-	     return;
+	     ecore_animator_del(_edje_animator);
+	     _edje_animator = NULL;
 	  }
      }
 }
