@@ -162,6 +162,30 @@ ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, int on)
    free(newset);
 }
 
+void
+ecore_x_dnd_types_set(Ecore_X_Window win, const char **types, unsigned int num_types)
+{
+   Ecore_X_Atom      *newset = NULL;
+   int               i;
+   unsigned char     *data = NULL;
+
+   if (!num_types)
+     {
+	ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_TYPE_LIST);
+     }
+   else
+     {
+	newset = calloc(num_types, sizeof(Ecore_X_Atom));
+	if (!newset) return;
+	data = (unsigned char *)newset;
+	for (i = 0; i < num_types; i++)
+	  newset[i] = ecore_x_atom_get(types[i]);
+	ecore_x_window_prop_property_set(win, ECORE_X_ATOM_XDND_TYPE_LIST,
+					 XA_ATOM, 32, data, num_types);
+	free(newset);
+     }
+}
+
 Ecore_X_DND_Source *
 _ecore_x_dnd_source_get(void)
 {
