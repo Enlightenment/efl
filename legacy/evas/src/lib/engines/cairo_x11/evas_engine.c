@@ -606,6 +606,7 @@ evas_engine_cairo_x11_polygon_points_clear(void *data, void *context, void *poly
    re = (Render_Engine *)data;
    ctxt = (Evas_Cairo_Context *)context;
    poly = (Evas_Cairo_Polygon *)polygon;
+   if (!poly) return NULL;
 
    while (poly->points)
      {
@@ -756,8 +757,8 @@ evas_engine_cairo_x11_image_new_from_copied_data(void *data, int w, int h, DATA3
 	free(im);
 	return NULL;
      }
-   if (data)
-     memcpy(im->im->image->data, data, w * h * sizeof(DATA32));
+   if (image_data)
+     memcpy(im->im->image->data, image_data, w * h * sizeof(DATA32));
    return im;
 }
 
@@ -769,7 +770,7 @@ evas_engine_cairo_x11_image_free(void *data, void *image)
 
    re = (Render_Engine *)data;
    im = (Evas_Cairo_Image *)image;
-   evas_common_image_free(im->im);
+   evas_common_image_unref(im->im);
    if (im->surface) cairo_surface_destroy(im->surface);
    if (im->pattern) cairo_pattern_destroy(im->pattern);
    free(im);
