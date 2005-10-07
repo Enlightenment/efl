@@ -950,25 +950,44 @@ _edje_var_timer_add(Edje *ed, double in, char *fname, int val)
    return et->id;
 }
 
-void
-_edje_var_timer_del(Edje *ed, int id)
+static Edje_Var_Timer *
+_edje_var_timer_find(Edje *ed, int id)
 {
    Evas_List *l;
 
-   if (!ed->var_pool) return;
+   if (!ed->var_pool) return NULL;
+
    for (l = ed->var_pool->timers; l; l = l->next)
      {
-	Edje_Var_Timer *et;
-	
-	et = l->data;
-	if (et->id == id)
-	  {
-	     ed->var_pool->timers = evas_list_remove(ed->var_pool->timers, et);
-	     ecore_timer_del(et->timer);
-	     free(et);
-	     return;
-	  }
+	Edje_Var_Timer *et = l->data;
+
+	if (et->id == id) return et;
      }
+
+   return NULL;
+}
+
+void
+_edje_var_timer_del(Edje *ed, int id)
+{
+   Edje_Var_Timer *et;
+
+   et = _edje_var_timer_find(ed, id);
+   if (!et)
+     {
+   fprintf(stderr,
+	 "*** EDJE ERROR: Cannot find timer to cancel\n"
+	 "*** NAUGHTY PROGRAMMER!!!\n"
+	 "*** SPANK SPANK SPANK!!!\n"
+	 "*** Now go fix your code. Tut tut tut!\n"
+	 "\n");
+   if (getenv("EDJE_ERROR_ABORT")) abort();
+   return;
+     }
+
+   ed->var_pool->timers = evas_list_remove(ed->var_pool->timers, et);
+   ecore_timer_del(et->timer);
+   free(et);
 }
 
 int
