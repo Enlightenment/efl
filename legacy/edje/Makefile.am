@@ -19,11 +19,11 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 bin_SCRIPTS = edje-config
 
 EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN edje.spec \
-	edje.pc.in edje.c.in gendoc Doxyfile edje_docs.tar.gz \
-	debian/changelog debian/changelog.in debian/edje.files \
+	edje.pc.in edje.c.in gendoc Doxyfile \
+	debian/changelog debian/changelog.in \
 	debian/control debian/rules debian/copyright \
-	debian/libedje0.install debian/edje-bin.install \
-	libedje0-dev.install
+	debian/libedje0.install debian/edje0-bin.install \
+	debian/libedje0-dev.install
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = edje.pc
