@@ -65,6 +65,7 @@ struct _Evas_GL_Context
       int checked : 1;
       int sgis_generate_mipmap : 1;
       int nv_texture_rectangle : 1;
+      int arb_texture_non_power_of_two : 1;
    } ext;
 
    GLenum          read_buf;
@@ -72,7 +73,7 @@ struct _Evas_GL_Context
 
    Evas_GL_Texture      *texture;
    GLuint                font_texture;
-   char                  font_texture_not_power_of_two : 1;
+   char                  font_texture_rectangle : 1;
 
    int             max_texture_depth;
    int             max_texture_size;
@@ -95,6 +96,7 @@ struct _Evas_GL_Texture
    char             smooth : 1;
    char             changed : 1;
    char             have_mipmaps : 1;
+   char             rectangle : 1;
    char             not_power_of_two : 1;
    char             opt : 1;
 
@@ -106,6 +108,7 @@ struct _Evas_GL_Image
    Evas_GL_Context *gc;
    RGBA_Image      *im;
    Evas_GL_Texture *tex;
+   int              putcount;
    int              references;
    char             dirty : 1;
    char             cached : 1;
@@ -144,7 +147,7 @@ struct _Evas_GL_Font_Texture_Pool
    int              w, h;
    GLuint           texture;
    int              references;
-   char             not_power_of_two : 1;
+   char             rectangle : 1;
    Evas_List       *allocations;
 };
 

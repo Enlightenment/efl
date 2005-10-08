@@ -13,12 +13,14 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
    tex = calloc(1, sizeof(Evas_GL_Texture));
    if (!tex) return NULL;
 
-   if (gc->ext.nv_texture_rectangle)
+   if ((gc->ext.nv_texture_rectangle) && 
+       (!(gc->ext.arb_texture_non_power_of_two && 
+	  gc->ext.sgis_generate_mipmap)))
      {
 	tex->gc = gc;
 	tex->w = im->image->w;
 	tex->h = im->image->h;
-	tex->not_power_of_two = 1;
+	tex->rectangle = 1;
 	tex->tw = im->image->w;
 	tex->th = im->image->h;
 	tex->references = 0;
@@ -55,8 +57,16 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
 	return tex;
      }
 
-   shift = 1; while (im->image->w > shift) shift = shift << 1; tw = shift;
-   shift = 1; while (im->image->h > shift) shift = shift << 1; th = shift;
+   if ((gc->ext.arb_texture_non_power_of_two) && (gc->ext.sgis_generate_mipmap))
+     {
+	tw = im->image->w;
+	th = im->image->h;
+     }
+   else
+     {
+	shift = 1; while (im->image->w > shift) shift = shift << 1; tw = shift;
+	shift = 1; while (im->image->h > shift) shift = shift << 1; th = shift;
+     }
    tex->gc = gc;
    tex->w = tw;
    tex->h = th;
@@ -73,7 +83,7 @@ evas_gl_common_texture_new(Evas_GL_Context *gc, RGBA_Image *im, int smooth)
    gc->change.texture = 1;
    tex->references++;
 
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 8);
+//   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 8);
    
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -145,7 +155,7 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
    int tw, th;
    GLenum pixfmt, texfmt, target;
 
-   if (tex->not_power_of_two)
+   if (tex->rectangle)
      {
 	void *data;
 
@@ -196,16 +206,16 @@ evas_gl_common_texture_update(Evas_GL_Texture *tex, RGBA_Image *im, int smooth)
    th = tex->h;
    tex->changed = 1;
    tex->have_mipmaps = 0;
-   if (tex->gc->ext.nv_texture_rectangle) glDisable(GL_TEXTURE_RECTANGLE_NV);
+//   if (tex->gc->ext.nv_texture_rectangle) glDisable(GL_TEXTURE_RECTANGLE_NV);
    glEnable(GL_TEXTURE_2D);
-   if (tex->not_power_of_two)
+   if (tex->rectangle)
      {
 	glEnable(GL_TEXTURE_RECTANGLE_NV);
 	target = GL_TEXTURE_RECTANGLE_NV;
      }
    else
      {
-	glDisable(GL_TEXTURE_RECTANGLE_NV);
+//	glDisable(GL_TEXTURE_RECTANGLE_NV);
 	glEnable(GL_TEXTURE_2D);//
 	target = GL_TEXTURE_2D;
      }
@@ -299,7 +309,7 @@ evas_gl_common_texture_mipmaps_build(Evas_GL_Texture *tex, RGBA_Image *im, int s
 #endif
 
    if (!smooth) return;
-   if (tex->not_power_of_two) return;
+   if (tex->rectangle) return;
 #ifdef BUILD_MMX
    evas_common_cpu_can_do(&mmx, &sse, &sse2);
 #endif

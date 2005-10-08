@@ -110,7 +110,7 @@ evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
    ft->y = ft->alloc->y;
    ft->pool = ft->alloc->pool;
    ft->texture =  ft->pool->texture;
-   if (ft->pool->not_power_of_two)
+   if (ft->pool->rectangle)
      {
 	glEnable(GL_TEXTURE_RECTANGLE_NV);
 	glBindTexture(GL_TEXTURE_RECTANGLE_NV, ft->texture);
@@ -132,9 +132,9 @@ evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
 	gc->texture = NULL;
      }
    gc->font_texture = ft->texture;
-   gc->font_texture_not_power_of_two = ft->pool->not_power_of_two;
+   gc->font_texture_rectangle = ft->pool->rectangle;
    gc->change.texture = 1;
-   if (ft->pool->not_power_of_two)
+   if (ft->pool->rectangle)
      {
 	ft->tx1 = ft->x;
 	ft->ty1 = ft->y;
@@ -263,13 +263,13 @@ _evas_gl_font_texture_pool_request(Evas_GL_Context *gc, int w, int h)
    fp->gc = gc;
    fp->w = minw;
    fp->h = minh;
-   if (gc->ext.nv_texture_rectangle) fp->not_power_of_two = 1;
+   if (gc->ext.nv_texture_rectangle) fp->rectangle = 1;
 
    /* we dont want this mipmapped if sgis_generate_mipmap will mipmap it */
    if (gc->ext.sgis_generate_mipmap)
      glTexParameteri(GL_TEXTURE_2D, GL_GENERATE_MIPMAP_SGIS, GL_FALSE);
 //   glEnable(GL_TEXTURE_2D);
-   if (fp->not_power_of_two)
+   if (fp->rectangle)
      {
 	glEnable(GL_TEXTURE_RECTANGLE_NV);
 	glGenTextures(1, &(fp->texture));

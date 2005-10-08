@@ -66,8 +66,15 @@ evas_gl_common_context_use(Evas_GL_Context *gc)
 	     if (strstr(ext, "GL_SGIS_generate_mipmap")) gc->ext.sgis_generate_mipmap = 1;
 	     if (strstr(ext, "GL_NV_texture_rectangle")) gc->ext.nv_texture_rectangle = 1;
 	     if (strstr(ext, "GL_EXT_texture_rectangle")) gc->ext.nv_texture_rectangle = 1;
+	     if (strstr(ext, "GL_ARB_texture_non_power_of_two")) gc->ext.arb_texture_non_power_of_two = 1;
 	     printf("GL EXT supported: GL_SGIS_generate_mipmap = %x\n", gc->ext.sgis_generate_mipmap);
 	     printf("GL EXT supported: GL_NV_texture_rectangle = %x\n", gc->ext.nv_texture_rectangle);
+	     printf("GL EXT supported: GL_ARB_texture_non_power_of_two = %x\n", gc->ext.arb_texture_non_power_of_two);
+// this causes at least nvidia's drivers to go into pathological pain when
+// changing textures a lot (doing video). so we wont do anything with this
+// for now, but it does work.
+	     gc->ext.arb_texture_non_power_of_two = 0; printf("DISABLE GL_ARB_texture_non_power_of_two\n");
+//	     gc->ext.nv_texture_rectangle = 0; printf("DISABLE GL_NV_texture_rectangle\n");
 	  }
 	else
 	  {
@@ -176,7 +183,7 @@ evas_gl_common_context_font_texture_set(Evas_GL_Context *gc, Evas_GL_Font_Textur
    if (gc->font_texture != ft->texture)
      {
 	gc->font_texture = ft->texture;
-	gc->font_texture_not_power_of_two = ft->pool->not_power_of_two;
+	gc->font_texture_rectangle = ft->pool->rectangle;
 	gc->change.texture = 1;
      }
    if (!gc->change.texture) return;
@@ -287,7 +294,7 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
    if (!gc->change.texture) return;
    if (gc->font_texture > 0)
      {
-	if (gc->font_texture_not_power_of_two)
+	if (gc->font_texture_rectangle)
 	  {
 	     glEnable(GL_TEXTURE_2D);
 	     glEnable(GL_TEXTURE_RECTANGLE_NV);
@@ -303,7 +310,7 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
      }
    else if (gc->texture)
      {
-	if (gc->texture->not_power_of_two)
+	if (gc->texture->rectangle)
 	  {
 	     glEnable(GL_TEXTURE_2D);
 	     glEnable(GL_TEXTURE_RECTANGLE_NV);
@@ -315,7 +322,7 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
 	     glEnable(GL_TEXTURE_2D);
 	     glBindTexture(GL_TEXTURE_2D, gc->texture->texture);
 	  }
-	if (gc->texture->not_power_of_two)
+	if (gc->texture->rectangle)
 	  {
 	     if (gc->texture->changed)
 	       {
@@ -326,7 +333,7 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
 	  {
 	     if (gc->texture->changed)
 	       {
-		  if (gc->texture->not_power_of_two)
+		  if (gc->texture->rectangle)
 		    {
 		       if (gc->texture->smooth)
 			 {
@@ -343,6 +350,7 @@ _evas_gl_common_texture_set(Evas_GL_Context *gc)
 		    {
 		       if (gc->texture->smooth)
 			 {
+			    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 8);
 			    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 			    if (gc->texture->have_mipmaps)
 			      glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
