@@ -1517,6 +1517,46 @@ ecore_evas_sticky_get(Ecore_Evas *ee)
       return ee->prop.sticky ? 1:0;
 }
 
+/**
+ * Set if this evas should ignore events
+ *
+ * @param ee The Ecore_Evas whose window's to ignore events
+ * @param sticky The Ecore_Evas new ignore state
+ *
+ */
+void
+ecore_evas_ignore_events_set(Ecore_Evas *ee, int ignore)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+   {
+      ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+         "ecore_evas_ignore_events_set");
+      return;
+   }
+   
+   IFC(ee, fn_ignore_events_set) (ee, ignore);
+   IFE;
+}
+
+/**
+ * Returns the ignore state of an Ecore_Evas' window.
+ * 
+ * @param ee The Ecore_Evas whose window's ignore events state is returned.
+ * @return The Ecore_Evas window's ignore state.
+ *
+ */
+int
+ecore_evas_ignore_events_get(Ecore_Evas *ee)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+   {
+      ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+         "ecore_evas_ignore_events_get");
+      return 0;
+   } else
+      return ee->ignore_events ? 1 : 0;
+}
+
 #ifndef WIN32
 /* fps debug calls - for debugging how much time your app actually spends */
 /* rendering graphics... :) */

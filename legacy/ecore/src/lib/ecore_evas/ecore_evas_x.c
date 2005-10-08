@@ -333,7 +333,7 @@ _ecore_evas_x_event_key_down(void *data __UNUSED__, int type __UNUSED__, void *e
    
    e = event;
    ee = _ecore_evas_x_match(e->win);
-   if (!ee) return 1; /* pass on event */
+   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);
    evas_event_feed_key_down(ee->evas, e->keyname, e->keysymbol, e->key_compose, NULL, e->time, NULL);
    return 1;
@@ -347,7 +347,7 @@ _ecore_evas_x_event_key_up(void *data __UNUSED__, int type __UNUSED__, void *eve
    
    e = event;
    ee = _ecore_evas_x_match(e->win);
-   if (!ee) return 1; /* pass on event */
+   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);
    evas_event_feed_key_up(ee->evas, e->keyname, e->keysymbol, e->key_compose, NULL, e->time, NULL);
    return 1;
@@ -362,7 +362,7 @@ _ecore_evas_x_event_mouse_button_down(void *data __UNUSED__, int type __UNUSED__
    
    e = event;
    ee = _ecore_evas_x_match(e->win);
-   if (!ee) return 1; /* pass on event */
+   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);
    if (e->double_click) flags |= EVAS_BUTTON_DOUBLE_CLICK;
    if (e->triple_click) flags |= EVAS_BUTTON_TRIPLE_CLICK;
@@ -378,7 +378,7 @@ _ecore_evas_x_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, 
    
    e = event;
    ee = _ecore_evas_x_match(e->win);
-   if (!ee) return 1; /* pass on event */
+   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);   
    evas_event_feed_mouse_up(ee->evas, e->button, EVAS_BUTTON_NONE, e->time, NULL);
    return 1;
@@ -393,8 +393,7 @@ _ecore_evas_x_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void
    e = event;
    ee = _ecore_evas_x_match(e->win);
 
-   if (!ee)
-      return 1; /* pass on event */
+   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
 
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);
    evas_event_feed_mouse_wheel(ee->evas, e->direction, e->z, e->time, NULL);
@@ -410,7 +409,7 @@ _ecore_evas_x_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void 
    
    e = event;
    ee = _ecore_evas_x_match(e->win);
-   if (!ee) return 1; /* pass on event */
+   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);
    _ecore_evas_x_mouse_move_process(ee, e->x, e->y, e->time);
    return 1;
@@ -424,7 +423,7 @@ _ecore_evas_x_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *e
    
    e = event;
    ee = _ecore_evas_x_match(e->win);
-   if (!ee) return 1; /* pass on event */
+   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
    if (e->event_win == ee->engine.x.win_container) return 0;
 /* if (e->mode != ECORE_X_EVENT_MODE_NORMAL) return 0; */
    if (ee->func.fn_mouse_in) ee->func.fn_mouse_in(ee);
@@ -442,7 +441,7 @@ _ecore_evas_x_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *
    
    e = event;
    ee = _ecore_evas_x_match(e->win);
-   if (!ee) return 1; /* pass on event */
+   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
    if (e->event_win == ee->engine.x.win_container) return 0;
 /* if (e->mode != ECORE_X_EVENT_MODE_NORMAL) return 0; */
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);   
@@ -461,7 +460,7 @@ _ecore_evas_x_event_window_focus_in(void *data __UNUSED__, int type __UNUSED__, 
    
    e = event;
    ee = _ecore_evas_x_match(e->win);
-   if (!ee) return 1; /* pass on event */
+   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
    ee->prop.focused = 1;
    if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
    return 1;
@@ -475,7 +474,7 @@ _ecore_evas_x_event_window_focus_out(void *data __UNUSED__, int type __UNUSED__,
    
    e = event;
    ee = _ecore_evas_x_match(e->win);
-   if (!ee) return 1; /* pass on event */
+   if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
    if (ee->prop.fullscreen)
      ecore_x_window_focus(ee->engine.x.win);
    ee->prop.focused = 0;
@@ -1385,6 +1384,30 @@ _ecore_evas_x_sticky_set(Ecore_Evas *ee, int sticky)
 }
 
 static void
+_ecore_evas_x_ignore_events_set(Ecore_Evas *ee, int ignore)
+{
+   if ((ee->ignore_events && ignore) ||
+       (!ee->ignore_events && !ignore)) return;
+
+   if (ignore)
+     {
+	ee->ignore_events = 1;
+	if (ee->engine.x.win_container)
+	  ecore_x_window_ignore_set(ee->engine.x.win_container, 1);
+	if (ee->engine.x.win)
+	  ecore_x_window_ignore_set(ee->engine.x.win, 1);
+     }
+   else
+     {
+	ee->ignore_events = 0;
+	if (ee->engine.x.win_container)
+	  ecore_x_window_ignore_set(ee->engine.x.win_container, 0);
+	if (ee->engine.x.win)
+	  ecore_x_window_ignore_set(ee->engine.x.win, 0);
+     }
+}
+
+static void
 _ecore_evas_x_override_set(Ecore_Evas *ee, int on)
 {
    if (((ee->prop.override) && (on)) ||
@@ -1605,7 +1628,8 @@ static const Ecore_Evas_Engine_Func _ecore_x_engine_func =
      _ecore_evas_x_fullscreen_set,
      _ecore_evas_x_avoid_damage_set,
      _ecore_evas_x_withdrawn_set,
-     _ecore_evas_x_sticky_set
+     _ecore_evas_x_sticky_set,
+     _ecore_evas_x_ignore_events_set
 };
 #endif
 

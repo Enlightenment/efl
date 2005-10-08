@@ -82,6 +82,7 @@ struct _Ecore_Evas_Engine_Func
    void        (*fn_avoid_damage_set) (Ecore_Evas *ee, int on);
    void        (*fn_withdrawn_set) (Ecore_Evas *ee, int withdrawn);
    void        (*fn_sticky_set) (Ecore_Evas *ee, int sticky);
+   void        (*fn_ignore_events_set) (Ecore_Evas *ee, int ignore);
 };
 
 struct _Ecore_Evas_Engine
@@ -205,6 +206,8 @@ struct _Ecore_Evas
    
    Ecore_Evas_Engine engine;
    Evas_List *sub_ecore_evas;
+
+   unsigned char ignore_events : 1;
 };
 
 #ifdef BUILD_ECORE_X
