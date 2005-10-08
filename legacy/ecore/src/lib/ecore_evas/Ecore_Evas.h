@@ -167,6 +167,8 @@ EAPI void        ecore_evas_withdrawn_set(Ecore_Evas *ee, int withdrawn);
 EAPI int         ecore_evas_withdrawn_get(Ecore_Evas *ee);
 EAPI void        ecore_evas_sticky_set(Ecore_Evas *ee, int sticky);
 EAPI int         ecore_evas_sticky_get(Ecore_Evas *ee);
+EAPI void        ecore_evas_ignore_events_set(Ecore_Evas *ee, int ignore);
+EAPI int         ecore_evas_ignore_events_get(Ecore_Evas *ee);
 
 #ifdef __cplusplus
 }
