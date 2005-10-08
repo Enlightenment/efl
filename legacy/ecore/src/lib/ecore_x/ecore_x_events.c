@@ -1295,8 +1295,8 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	Ecore_X_DND_Target *target;
 
 	target = _ecore_x_dnd_target_get();
-	if ((target->source != xevent->xclient.data.l[0])
-	    || (target->win != xevent->xclient.window))
+	if ((target->source != xevent->xclient.data.l[0]) ||
+	    (target->win != xevent->xclient.window))
 	  return;
 
 	target->pos.x = xevent->xclient.data.l[2] >> 16;
@@ -1324,8 +1324,8 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
 	source = _ecore_x_dnd_source_get();
 	/* Make sure source/target match */
-	if ((source->win != xevent->xclient.window )
-	    || (source->dest != (Window)xevent->xclient.data.l[0]))
+	if ((source->win != xevent->xclient.window ) ||
+	    (source->dest != (Window)xevent->xclient.data.l[0]))
 	  return;
 
 	source->await_status = 0;
@@ -1362,8 +1362,8 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 	Ecore_X_DND_Target *target;
 
 	target = _ecore_x_dnd_target_get();
-	if ((target->source != xevent->xclient.data.l[0])
-	    || (target->win != xevent->xclient.window))
+	if ((target->source != xevent->xclient.data.l[0]) ||
+	    (target->win != xevent->xclient.window))
 	  return;
 
 	target->state = ECORE_X_DND_TARGET_IDLE;
@@ -1383,8 +1383,8 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
 	target = _ecore_x_dnd_target_get();
 	/* Match source/target */
-	if ((target->source != (Window)xevent->xclient.data.l[0])
-	    || (target->win != xevent->xclient.window))
+	if ((target->source != (Window)xevent->xclient.data.l[0]) ||
+	    (target->win != xevent->xclient.window))
 	  return;
 
 	target->time = (target->version >= 1) ? 
@@ -1409,8 +1409,8 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
 
 	source = _ecore_x_dnd_source_get();
 	/* Match source/target */
-	if ((source->win != xevent->xclient.window)
-	    || (source->dest != (Window)xevent->xclient.data.l[0]))
+	if ((source->win != xevent->xclient.window) ||
+	    (source->dest != (Window)xevent->xclient.data.l[0]))
 	  return;
 
 	if ((source->version >= 5) && (xevent->xclient.data.l[1] & 0x1UL))
@@ -1540,13 +1540,11 @@ _ecore_x_event_handle_client_message(XEvent *xevent)
    else if ((xevent->xclient.message_type == ECORE_X_ATOM_NET_STARTUP_INFO_BEGIN) &&
 	    (xevent->xclient.format == 8))
      {
-	printf("new startup info\n");
 	_ecore_x_netwm_startup_info_begin(xevent->xclient.window, xevent->xclient.data.b);
      }
    else if ((xevent->xclient.message_type == ECORE_X_ATOM_NET_STARTUP_INFO) &&
 	    (xevent->xclient.format == 8))
      {
-	printf("startup info\n");
 	_ecore_x_netwm_startup_info(xevent->xclient.window, xevent->xclient.data.b);
      }
    else if ((xevent->xclient.message_type == 27777)

@@ -6,6 +6,39 @@
 #include "Ecore_X.h"
 #include "Ecore_X_Atoms.h"
 
+Ecore_X_Atom     ECORE_X_ATOM_SELECTION_XDND = 0;
+Ecore_X_Atom     ECORE_X_ATOM_SELECTION_PROP_XDND = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_AWARE = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_ENTER = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_TYPE_LIST = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_POSITION = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_ACTION_COPY = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_ACTION_MOVE = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_ACTION_LINK = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_ACTION_PRIVATE = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_ACTION_ASK = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_ACTION_LIST = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_ACTION_DESCRIPTION = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_PROXY = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_STATUS = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_DROP = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_FINISHED = 0;
+Ecore_X_Atom     ECORE_X_ATOM_XDND_LEAVE = 0;
+
+/* Xdnd atoms that need to be exposed to the application interface */
+Ecore_X_Atom  ECORE_X_DND_ACTION_COPY = 0;
+Ecore_X_Atom  ECORE_X_DND_ACTION_MOVE = 0;
+Ecore_X_Atom  ECORE_X_DND_ACTION_LINK = 0;
+Ecore_X_Atom  ECORE_X_DND_ACTION_ASK = 0;
+Ecore_X_Atom  ECORE_X_DND_ACTION_PRIVATE = 0;
+
+int ECORE_X_EVENT_XDND_ENTER = 0;
+int ECORE_X_EVENT_XDND_POSITION = 0;
+int ECORE_X_EVENT_XDND_STATUS = 0;
+int ECORE_X_EVENT_XDND_LEAVE = 0;
+int ECORE_X_EVENT_XDND_DROP = 0;
+int ECORE_X_EVENT_XDND_FINISHED = 0;
+
 static Ecore_X_DND_Source *_source = NULL;
 static Ecore_X_DND_Target *_target = NULL;
 static int _ecore_x_dnd_init_count = 0;
@@ -25,6 +58,39 @@ _ecore_x_dnd_init(void)
 	_target->win = None;
 	_target->source = None;
 	_target->state = ECORE_X_DND_TARGET_IDLE;
+	
+	ECORE_X_EVENT_XDND_ENTER              = ecore_event_type_new();
+	ECORE_X_EVENT_XDND_POSITION           = ecore_event_type_new();
+	ECORE_X_EVENT_XDND_STATUS             = ecore_event_type_new();
+	ECORE_X_EVENT_XDND_LEAVE              = ecore_event_type_new();
+	ECORE_X_EVENT_XDND_DROP               = ecore_event_type_new();
+	ECORE_X_EVENT_XDND_FINISHED           = ecore_event_type_new();
+
+	ECORE_X_ATOM_SELECTION_PROP_XDND      = XInternAtom(_ecore_x_disp, "JXSelectionWindowProperty", False);
+	ECORE_X_ATOM_SELECTION_XDND           = XInternAtom(_ecore_x_disp, "XdndSelection", False);
+	ECORE_X_ATOM_XDND_AWARE               = XInternAtom(_ecore_x_disp, "XdndAware", False);
+	ECORE_X_ATOM_XDND_TYPE_LIST           = XInternAtom(_ecore_x_disp, "XdndTypeList", False);
+	ECORE_X_ATOM_XDND_ENTER               = XInternAtom(_ecore_x_disp, "XdndEnter", False);
+	ECORE_X_ATOM_XDND_POSITION            = XInternAtom(_ecore_x_disp, "XdndPosition", False);
+	ECORE_X_ATOM_XDND_ACTION_COPY         = XInternAtom(_ecore_x_disp, "XdndActionCopy", False);
+	ECORE_X_ATOM_XDND_ACTION_MOVE         = XInternAtom(_ecore_x_disp, "XdndActionMove", False);
+	ECORE_X_ATOM_XDND_ACTION_PRIVATE      = XInternAtom(_ecore_x_disp, "XdndActionPrivate", False);
+	ECORE_X_ATOM_XDND_ACTION_ASK          = XInternAtom(_ecore_x_disp, "XdndActionAsk", False);
+	ECORE_X_ATOM_XDND_ACTION_LIST         = XInternAtom(_ecore_x_disp, "XdndActionList", False);
+	ECORE_X_ATOM_XDND_ACTION_LINK         = XInternAtom(_ecore_x_disp, "XdndActionLink", False);
+	ECORE_X_ATOM_XDND_ACTION_DESCRIPTION  = XInternAtom(_ecore_x_disp, "XdndActionDescription", False);
+	ECORE_X_ATOM_XDND_PROXY               = XInternAtom(_ecore_x_disp, "XdndProxy", False);
+	ECORE_X_ATOM_XDND_STATUS              = XInternAtom(_ecore_x_disp, "XdndStatus", False);
+	ECORE_X_ATOM_XDND_LEAVE               = XInternAtom(_ecore_x_disp, "XdndLeave", False);
+	ECORE_X_ATOM_XDND_DROP                = XInternAtom(_ecore_x_disp, "XdndDrop", False);
+	ECORE_X_ATOM_XDND_FINISHED            = XInternAtom(_ecore_x_disp, "XdndFinished", False);
+
+	/* Initialize the globally defined xdnd atoms */
+	ECORE_X_DND_ACTION_COPY                = ECORE_X_ATOM_XDND_ACTION_COPY;
+	ECORE_X_DND_ACTION_MOVE                = ECORE_X_ATOM_XDND_ACTION_MOVE;
+	ECORE_X_DND_ACTION_LINK                = ECORE_X_ATOM_XDND_ACTION_LINK;
+	ECORE_X_DND_ACTION_ASK                 = ECORE_X_ATOM_XDND_ACTION_ASK;
+	ECORE_X_DND_ACTION_PRIVATE             = ECORE_X_ATOM_XDND_ACTION_PRIVATE;
      }
 
    _ecore_x_dnd_init_count++;
@@ -211,12 +277,11 @@ ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size)
 
    _source->win = source;
    ecore_x_window_ignore_set(_source->win, 1);
-   printf("source: 0x%x\n", source);
    _source->state = ECORE_X_DND_SOURCE_DRAGGING;
    _source->time = _ecore_x_event_last_time;
 
    /* Default Accepted Action: ask */
-   _source->action = ECORE_X_ATOM_XDND_ACTION_ASK;
+   _source->action = ECORE_X_ATOM_XDND_ACTION_COPY;
    _source->accepted_action = None;
    return 1;
 }
