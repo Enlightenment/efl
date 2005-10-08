@@ -21,6 +21,7 @@ _xr_render_surface_new(Ximage_Info *xinf, int w, int h, XRenderPictFormat *fmt, 
    rs->depth = fmt->depth;
    rs->allocated = 1;
    rs->draw = XCreatePixmap(xinf->disp, xinf->root, w, h, fmt->depth);
+   rs->xinf->references++;
    att.dither = 0;
    att.component_alpha = 0;
    att.repeat = 0;
@@ -46,6 +47,7 @@ _xr_render_surface_adopt(Ximage_Info *xinf, Drawable draw, int w, int h, int alp
    if (fmt->depth == 32) rs->alpha = 1;
    rs->allocated = 0;
    rs->draw = draw;
+   rs->xinf->references++;
    att.dither = 0;
    att.component_alpha = 0;
    att.repeat = 0;
@@ -67,6 +69,7 @@ _xr_render_surface_format_adopt(Ximage_Info *xinf, Drawable draw, int w, int h, 
    rs->alpha = alpha;
    rs->depth = fmt->depth;
    if (fmt->depth == 32) rs->alpha = 1;
+   rs->xinf->references++;
    rs->allocated = 0;
    rs->draw = draw;
    att.dither = 0;
@@ -81,6 +84,8 @@ _xr_render_surface_free(Xrender_Surface *rs)
 {
    if (rs->allocated) XFreePixmap(rs->xinf->disp, rs->draw);
    XRenderFreePicture(rs->xinf->disp, rs->pic);
+   _xr_image_info_free(rs->xinf);
+   rs->xinf = NULL;
    free(rs);
 }
 
