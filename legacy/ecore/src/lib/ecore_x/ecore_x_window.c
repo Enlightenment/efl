@@ -6,6 +6,9 @@
 #include "Ecore_X.h"
 #include "Ecore_X_Atoms.h"
 
+static int             ignore_num = 0;
+static Ecore_X_Window *ignore_list = NULL;
+
 /**
  * @defgroup Ecore_X_Window_Create_Group X Window Creation Functions
  *
@@ -270,6 +273,62 @@ ecore_x_window_del(Ecore_X_Window win)
     */
    if (win)
       XDestroyWindow(_ecore_x_disp, win);
+}
+
+/**
+ * Set if a window should be ignored.
+ * @param   win The given window.
+ * @param   ignore if to ignore
+ */
+void
+ecore_x_window_ignore_set(Ecore_X_Window win, int ignore)
+{
+   int i, j;
+
+   if (ignore)
+     {
+	if (ignore_list)
+	  {
+	     for (i = 0; i < ignore_num; i++)
+	       {
+		  if (win == ignore_list[i])
+		    return;
+	       }
+	     ignore_list = realloc(ignore_list, (ignore_num + 1) * sizeof(Ecore_X_Window));
+	     if (!ignore_list) return;
+	     ignore_list[ignore_num++] = win;
+	  }
+	else
+	  {
+	     ignore_num = 0;
+	     ignore_list = malloc(sizeof(Ecore_X_Window));
+	     ignore_list[ignore_num++] = win;
+	  }
+     }
+   else
+     {
+	if (!ignore_list) return;
+	for (i = 0, j = 0; i < ignore_num; i++)
+	  {
+	     if (win != ignore_list[i])
+	       ignore_list[i] = ignore_list[j++];
+	     else
+	       ignore_num--;
+	  }
+	ignore_list = realloc(ignore_list, ignore_num * sizeof(Ecore_X_Window));
+     }
+}
+
+/**
+ * Get the ignore list
+ * @param   num number of windows in the list
+ * @return  list of windows to ignore
+ */
+Ecore_X_Window *
+ecore_x_window_ignore_list(int *num)
+{
+   if (num) *num = ignore_num;
+   return ignore_list;
 }
 
 /**
@@ -626,40 +685,60 @@ ecore_x_window_visible_get(Ecore_X_Window win)
 }
 
 static Window
-_ecore_x_window_at_xy_get(Window base, int bx, int by, int x, int y)
+_ecore_x_window_at_xy_get(Window base, int bx, int by, int x, int y,
+			  Ecore_X_Window *skip, int skip_num)
 {
    Window           *list = NULL;
    Window            parent_win = 0, child = 0, root_win = 0;
-   int               i, wx, wy, ww, wh;
+   int               i, j, wx, wy, ww, wh;
    unsigned int      num;
 
    if (!ecore_x_window_visible_get(base))
-      return 0;
+     return 0;
 
    ecore_x_window_geometry_get(base, &wx, &wy, &ww, &wh);
    wx += bx;
    wy += by;
 
    if (!((x >= wx) && (y >= wy) && (x < (wx + ww)) && (y < (wy + wh))))
-      return 0;
-   
+     return 0;
+
    if (!XQueryTree(_ecore_x_disp, base, &root_win, &parent_win, &list, &num))
-      return base;
+     {
+	if (skip)
+	  {
+	     for (i = 0; i < skip_num; i++)
+	       if (base == skip[i])
+		 return 0;
+	  }
+	return base;
+     }
 
    if (list)
-   {
-      for (i = num - 1;; --i)
-      {
-         if ((child = _ecore_x_window_at_xy_get(list[i], wx, wy, x, y)))
-         {
-            XFree(list);
-            return child;
-         }
-         if (!i)
-            break;
-      }
-      XFree(list);
-   }
+     {
+	for (i = num - 1; i >= 0; --i)
+	  {
+	     if (skip)
+	       {
+		  for (j = 0; j < skip_num; j++)
+		    if (list[i] == skip[j])
+		      continue;
+	       }
+	     if ((child = _ecore_x_window_at_xy_get(list[i], wx, wy, x, y, skip, skip_num)))
+	       {
+		  XFree(list);
+		  return child;
+	       }
+	  }
+	XFree(list);
+     }
+
+   if (skip)
+     {
+	for (i = 0; i < skip_num; i++)
+	  if (base == skip[i])
+	    return 0;
+     }
 
    return base;
 }
@@ -681,7 +760,31 @@ ecore_x_window_at_xy_get(int x, int y)
    root = DefaultRootWindow(_ecore_x_disp);
    
    ecore_x_grab();
-   win = _ecore_x_window_at_xy_get(root, 0, 0, x, y);
+   win = _ecore_x_window_at_xy_get(root, 0, 0, x, y, NULL, 0);
+   ecore_x_ungrab();
+   
+   return win ? win : root;
+}
+
+/**
+ * Retrieves the top, visible window at the given location,
+ * but skips the windows in the list.
+ * @param   x The given X position.
+ * @param   y The given Y position.
+ * @return  The window at that position.
+ * @ingroup Ecore_X_Window_Geometry_Group
+ */
+Ecore_X_Window
+ecore_x_window_at_xy_with_skip_get(int x, int y, Ecore_X_Window *skip, int skip_num)
+{
+   Ecore_X_Window    win, root;
+   
+   /* FIXME: Proper function to determine current root/virtual root
+    * window missing here */
+   root = DefaultRootWindow(_ecore_x_disp);
+   
+   ecore_x_grab();
+   win = _ecore_x_window_at_xy_get(root, 0, 0, x, y, skip, skip_num);
    ecore_x_ungrab();
    
    return win ? win : root;

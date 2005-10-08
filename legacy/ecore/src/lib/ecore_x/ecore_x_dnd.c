@@ -210,6 +210,7 @@ ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size)
      return 0;
 
    _source->win = source;
+   ecore_x_window_ignore_set(_source->win, 1);
    printf("source: 0x%x\n", source);
    _source->state = ECORE_X_DND_SOURCE_DRAGGING;
    _source->time = _ecore_x_event_last_time;
@@ -220,10 +221,11 @@ ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size)
    return 1;
 }
 
-void
+int
 ecore_x_dnd_drop(void)
 {
    XEvent xev;
+   int status = 0;
 
    if (_source->dest)
      {
@@ -240,6 +242,7 @@ ecore_x_dnd_drop(void)
 	     xev.xclient.data.l[2] = _source->time;
 	     XSendEvent(_ecore_x_disp, _source->dest, False, 0, &xev);
 	     _source->state = ECORE_X_DND_SOURCE_DROPPED;
+	     status = 1;
 	  }
 	else
 	  {
@@ -256,6 +259,8 @@ ecore_x_dnd_drop(void)
 	ecore_x_selection_xdnd_clear();
 	_source->state = ECORE_X_DND_SOURCE_IDLE;
      }
+   ecore_x_window_ignore_set(_source->win, 0);
+   return status;
 }
 
 void
@@ -335,8 +340,10 @@ ecore_x_dnd_send_finished(void)
 void
 _ecore_x_dnd_drag(int x, int y)
 {
-   XEvent         xev;
-   Ecore_X_Window win;
+   XEvent          xev;
+   Ecore_X_Window  win;
+   Ecore_X_Window *skip;
+   int             num;
 
    if (_source->state != ECORE_X_DND_SOURCE_DRAGGING)
      return;
@@ -348,7 +355,8 @@ _ecore_x_dnd_drag(int x, int y)
    xev.xclient.format = 32;
 
    /* Attempt to find a DND-capable window under the cursor */
-   win = ecore_x_window_at_xy_get(x, y);
+   skip = ecore_x_window_ignore_list(&num);
+   win = ecore_x_window_at_xy_with_skip_get(x, y, skip, num);
    while ((win) && !(ecore_x_dnd_version_get(win)))
      win = ecore_x_window_parent_get(win);
 

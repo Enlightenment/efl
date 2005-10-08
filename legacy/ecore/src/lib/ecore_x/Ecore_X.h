@@ -988,7 +988,7 @@ EAPI int              ecore_x_dnd_type_isset(Ecore_X_Window win, const char *typ
 EAPI void             ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, int on);
 EAPI void             ecore_x_dnd_types_set(Ecore_X_Window win, char **types, unsigned int num_types);
 EAPI int              ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size);
-EAPI void             ecore_x_dnd_drop(void);
+EAPI int              ecore_x_dnd_drop(void);
 EAPI void             ecore_x_dnd_send_status(int will_accept, int suppress, Ecore_X_Rectangle rectangle, Ecore_X_Atom action);
 EAPI void             ecore_x_dnd_send_finished(void);
                  
@@ -1004,6 +1004,9 @@ EAPI void             ecore_x_window_configure(Ecore_X_Window win,
 EAPI void             ecore_x_window_cursor_set(Ecore_X_Window win,
 						Ecore_X_Cursor c);
 EAPI void             ecore_x_window_del(Ecore_X_Window win);
+EAPI void             ecore_x_window_ignore_set(Ecore_X_Window win, int ignore);
+EAPI Ecore_X_Window  *ecore_x_window_ignore_list(int *num);
+
 EAPI void             ecore_x_window_delete_request_send(Ecore_X_Window win);
 EAPI void             ecore_x_window_show(Ecore_X_Window win);
 EAPI void             ecore_x_window_hide(Ecore_X_Window win);
@@ -1025,6 +1028,7 @@ EAPI void             ecore_x_window_cursor_show(Ecore_X_Window win, int show);
 EAPI void             ecore_x_window_defaults_set(Ecore_X_Window win);
 EAPI int              ecore_x_window_visible_get(Ecore_X_Window win);
 EAPI Ecore_X_Window   ecore_x_window_at_xy_get(int x, int y);
+EAPI Ecore_X_Window   ecore_x_window_at_xy_with_skip_get(int x, int y, Ecore_X_Window *skip, int skip_num);
 EAPI Ecore_X_Window   ecore_x_window_parent_get(Ecore_X_Window win);
 
 EAPI void             ecore_x_window_background_color_set(Ecore_X_Window win,
