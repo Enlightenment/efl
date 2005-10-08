@@ -414,10 +414,9 @@ _ecore_x_dnd_drag(int x, int y)
 	y1 = _source->rectangle.y;
 	y2 = _source->rectangle.y + _source->rectangle.height;
 
-	if (!(_source->await_status)
-	    || !(_source->suppress)
-	    || ((x < x1) || (x > x2)
-		|| (y < y1) || (y > y2)))
+	if ((!_source->await_status) ||
+	    (!_source->suppress) ||
+	    ((x < x1) || (x > x2) || (y < y1) || (y > y2)))
 	  {
 	     xev.xclient.window = win;
 	     xev.xclient.message_type = ECORE_X_ATOM_XDND_POSITION;

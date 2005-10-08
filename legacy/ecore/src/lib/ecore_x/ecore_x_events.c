@@ -1082,8 +1082,8 @@ _ecore_x_event_handle_selection_request(XEvent *xevent)
    xnotify.send_event = True;
    xnotify.serial = 0;
 
-   if ((sd = _ecore_x_selection_get(xnotify.selection)) 
-       && (sd->win == xevent->xselectionrequest.owner))
+   if ((sd = _ecore_x_selection_get(xnotify.selection)) &&
+       (sd->win == xevent->xselectionrequest.owner))
      {
 	if (!_ecore_x_selection_convert(xnotify.selection, xnotify.target,
 					&data) == -1)
