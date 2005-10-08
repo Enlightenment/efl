@@ -204,7 +204,6 @@ src/modules/xine/Makefile
 src/bin/Makefile
 data/Makefile
 emotion-config
-debian/changelog
 ],[
 chmod +x emotion-config
 ])
