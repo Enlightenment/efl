@@ -795,7 +795,9 @@ evas_engine_xrender_x11_image_alpha_set(void *data, void *image, int has_alpha)
    
    re = (Render_Engine *)data;
    if (!image) return image;
-   if ((int)((XR_Image *)image)->alpha == has_alpha) return image;
+   if (((((XR_Image *)image)->alpha) && (has_alpha)) ||
+       ((!((XR_Image *)image)->alpha) && (!has_alpha))) 
+     return image;
    if (((XR_Image *)image)->references > 1)
      {
 	XR_Image *old_image;

@@ -388,7 +388,10 @@ _xre_image_data_find(void *data)
    XR_Image *im;
    
    im = __xre_image_dirty_hash_find(data);
-   if (im) im->references++;
+   if (im) 
+     {
+	im->references++;
+     }
    return im;
 }
 
