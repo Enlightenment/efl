@@ -521,23 +521,19 @@ evas_engine_xrender_x11_context_multiplier_get(void *data, void *context, int *r
 static void
 evas_engine_xrender_x11_context_cutout_add(void *data, void *context, int x, int y, int w, int h)
 {
-/*   
    Render_Engine *re;
 
    re = (Render_Engine *)data;
    evas_common_draw_context_add_cutout(context, x, y, w, h);
- */
 }
 
 static void
 evas_engine_xrender_x11_context_cutout_clear(void *data, void *context)
 {
-/*   
    Render_Engine *re;
 
    re = (Render_Engine *)data;
    evas_common_draw_context_clear_cutouts(context);
- */
 }
 
 
@@ -1056,6 +1052,7 @@ evas_engine_xrender_x11_font_draw(void *data, void *context, void *surface, void
 	  }
 	im->image->w = ((Xrender_Surface *)surface)->w;
 	im->image->h = ((Xrender_Surface *)surface)->h;
+	_xr_render_surface_clips_set((Xrender_Surface *)surface, (RGBA_Draw_Context *)context, x, y, w, h);
 	im->image->data = surface;
 	evas_common_draw_context_font_ext_set(context,
 					      re->xinf,

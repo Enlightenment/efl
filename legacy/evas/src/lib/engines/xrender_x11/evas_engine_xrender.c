@@ -3,6 +3,7 @@
 #include "evas_engine.h"
 #include "evas_engine_api_xrender_x11.h"
 #include "Evas_Engine_XRender_X11.h"
+#include <math.h>
 
 Xrender_Surface *
 _xr_render_surface_new(Ximage_Info *xinf, int w, int h, XRenderPictFormat *fmt, int alpha)
@@ -224,14 +225,58 @@ _xr_render_surface_rgb_pixels_fill(Xrender_Surface *rs, int sw, int sh, void *pi
    _xr_image_put(xim, rs->draw, x, y, w, h);
 }
 
+void
+_xr_render_surface_clips_set(Xrender_Surface *rs, RGBA_Draw_Context *dc, int rx, int ry, int rw, int rh)
+{
+   int num = 0;
+   XRectangle *rect = NULL;
+   
+   if ((dc) && (dc->clip.use))
+     {
+	RECTS_CLIP_TO_RECT(rx, ry, rw, rh,
+			   dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
+     }
+   if ((!dc) || (!dc->cutout.rects))
+     {
+	rect = malloc(sizeof(XRectangle));
+	if (!rect) return;
+	rect->x = rx;
+	rect->y = ry;
+	rect->width = rw;
+	rect->height = rh;
+	num = 1;
+     }
+   else
+     {
+	int i;
+	Cutout_Rect *rects, *r;
+	Evas_Object_List *l;
+	
+	rects = evas_common_draw_context_apply_cutouts(dc);
+	for (num = 0, l = (Evas_Object_List *)rects; l; l = l->next) num++;
+	rect = malloc(num * sizeof(XRectangle));
+	if (!rect) return;
+	for (i = 0, l = (Evas_Object_List *)rects; l; l = l->next, i++)
+	  {
+	     r = (Cutout_Rect *)l;
+	     rect[i].x = r->x;
+	     rect[i].y = r->y;
+	     rect[i].width = r->w;
+	     rect[i].height = r->h;
+	  }
+	evas_common_draw_context_apply_free_cutouts(rects);
+     }
+   if (!rect) return;
+   XRenderSetPictureClipRectangles(rs->xinf->disp, rs->pic, 0, 0, rect, num);
+   free(rect);
+}
+
 // when color multiplier is used want: instead
-// CA src IN mask SRC temp; non-CA temp OVER dst.
-// 
+// CA src IN mask SRC temp; non-CA temp OVER dst. - i think. need to check.
 void
 _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Draw_Context *dc, int sx, int sy, int sw, int sh, int x, int y, int w, int h, int smooth)
 {
    XTransform xf;
-   XRectangle rect;
    XRenderPictureAttributes att;
    Picture mask;
    int r, g, b, a, op;
@@ -278,17 +323,11 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
    att.clip_mask = None;
    XRenderChangePicture(srs->xinf->disp, srs->pic, CPClipMask, &att);
    XRenderChangePicture(srs->xinf->disp, drs->pic, CPClipMask, &att);
-   rect.x = x; rect.y = y; rect.width = w; rect.height = h;
-   if ((dc) && (dc->clip.use))
-     {
-	RECTS_CLIP_TO_RECT(rect.x, rect.y, rect.width, rect.height,
-			   dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
-     }
    
    if (smooth) XRenderSetPictureFilter(srs->xinf->disp, srs->pic, "bilinear", NULL, 0);
    else XRenderSetPictureFilter(srs->xinf->disp, srs->pic, "nearest", NULL, 0);
 
-   XRenderSetPictureClipRectangles(srs->xinf->disp, drs->pic, 0, 0, &rect, 1);
+   _xr_render_surface_clips_set(drs, dc, x, y, w, h);
    XRenderComposite(srs->xinf->disp, op, srs->pic, mask, drs->pic,
 		    ((sx * w) + (sw / 2)) / sw, 
 		    ((sy * h) + (sh / 2)) / sh,
@@ -328,7 +367,6 @@ void
 _xr_render_surface_rectangle_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, int x, int y, int w, int h)
 {
    XRenderColor col;
-   XRectangle rect;
    XRenderPictureAttributes att;
    int r, g, b, a, aa, op;
 
@@ -350,31 +388,22 @@ _xr_render_surface_rectangle_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, in
    if (a < 0xff) op = PictOpOver;
    att.clip_mask = None;
    XRenderChangePicture(rs->xinf->disp, rs->pic, CPClipMask, &att);
-   if ((dc) && (dc->clip.use))
-     {
-	rect.x = dc->clip.x; rect.y = dc->clip.y;
-	rect.width = dc->clip.w; rect.height = dc->clip.h;
-	XRenderSetPictureClipRectangles(rs->xinf->disp, rs->pic, 0, 0, &rect, 1);
-     }
+
+   _xr_render_surface_clips_set(rs, dc, x, y, w, h);
    XRenderFillRectangle(rs->xinf->disp, op, rs->pic, &col, x, y, w, h);
 }
 
 void
 _xr_render_surface_line_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2)
 {
-   XRectangle rect;
    XRenderPictureAttributes att;
    int op;
    
    op = PictOpSrc;
    att.clip_mask = None;
    XRenderChangePicture(rs->xinf->disp, rs->pic, CPClipMask, &att);
-   if ((dc) && (dc->clip.use))
-     {
-	rect.x = dc->clip.x; rect.y = dc->clip.y;
-	rect.width = dc->clip.w; rect.height = dc->clip.h;
-	XRenderSetPictureClipRectangles(rs->xinf->disp, rs->pic, 0, 0, &rect, 1);
-     }
+   _xr_render_surface_clips_set(rs, dc, 0, 0, rs->w, rs->h);
+   
      {
 	int r, g, b, a;
 	XPointDouble poly[4];
@@ -383,7 +412,7 @@ _xr_render_surface_line_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, int x1,
 	
 	dx = x2 - x1;
 	dy = y2 - y1;
-	len = sqrt((dx * dx) + (dy * dy));
+	len = sqrt((double)(dx * dx) + (double)(dy * dy));
 	ddx = (0.5 * dx) / len;
 	ddy = (0.5 * dy) / len;
 	poly[0].x =  (x1 + ddx);
@@ -424,7 +453,6 @@ _xre_poly_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point *p
    int i, num;
    XPointDouble *pts;
    int r, g, b, a;
-   XRectangle rect;
    XRenderPictureAttributes att;
    int op;
    
@@ -459,15 +487,10 @@ _xre_poly_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, RGBA_Polygon_Point *p
 	     i++;
 	  }
      }
-   rect.x = 0; rect.y = 0; rect.width = rs->w; rect.height = rs->h;
    att.clip_mask = None;
    XRenderChangePicture(rs->xinf->disp, rs->pic, CPClipMask, &att);
-   if ((dc) && (dc->clip.use))
-     {
-	RECTS_CLIP_TO_RECT(rect.x, rect.y, rect.width, rect.height,
-			   dc->clip.x, dc->clip.y, dc->clip.w, dc->clip.h);
-     }
-   XRenderSetPictureClipRectangles(rs->xinf->disp, rs->pic, 0, 0, &rect, 1);
+
+   _xr_render_surface_clips_set(rs, dc, 0, 0, rs->w, rs->h);
    XRenderCompositeDoublePoly(rs->xinf->disp, op,
 			      rs->xinf->mul->pic, rs->pic, 
 			      rs->xinf->fmt8, 0, 0, 0, 0,
