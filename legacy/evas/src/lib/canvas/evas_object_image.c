@@ -849,7 +849,6 @@ Evas_Bool
 evas_object_image_pixels_import(Evas_Object *obj, Evas_Pixel_Import_Source *pixels)
 {
    Evas_Object_Image *o;
-   Evas_Rectangle *r;
 
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return 0;

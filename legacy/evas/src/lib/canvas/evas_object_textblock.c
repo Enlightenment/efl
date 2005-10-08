@@ -358,7 +358,6 @@ _strbuf_insert(char *s, char *s2, int pos, int *len, int *alloc)
 static char *
 _strbuf_remove(char *s, int p, int p2, int *len, int *alloc)
 {
-   int l2;
    int tlen;
    char *tbuf;
    
@@ -1064,7 +1063,7 @@ _format_is_param(char *item)
 static void
 _format_param_parse(char *item, char **key, char **val)
 {
-   char *p, *pv;
+   char *p;
    char *k, *v;
    
    p = strchr(item, '=');
@@ -1461,6 +1460,7 @@ _layout_item_abort(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Textb
    return 0;
 }
 
+#if 0
 static char *
 _layout_next_char_jump(Ctxt *c, Evas_Object_Textblock_Item *it, char *str)
 {
@@ -1477,6 +1477,7 @@ _layout_next_char_jump(Ctxt *c, Evas_Object_Textblock_Item *it, char *str)
      str = NULL;
    return str;
 }
+#endif
 
 static int
 _layout_last_item_ends_in_whitespace(Ctxt *c)
@@ -1531,7 +1532,7 @@ _layout_walk_back_to_item_word_redo(Ctxt *c, Evas_Object_Textblock_Item *it)
 {
    Evas_Object_Textblock_Item *pit, *new_it = NULL;
    Evas_List *remove_items = NULL, *l;
-   int index, p, ch, tw, th, inset, adv;
+   int index, tw, th, inset, adv;
    
    /* it is not appended yet */
    for (pit = (Evas_Object_Textblock_Item *)((Evas_Object_List *)c->ln->items)->last;
@@ -1617,7 +1618,7 @@ _layout_text_append(Ctxt *c, Evas_Object_Textblock_Format *fmt, Evas_Object_Text
    int adv, inset, tw, th, new_line, empty_item;
    int wrap, twrap, ch, index, white_stripped;
    char *str;
-   Evas_Object_Textblock_Item *it, *tit;
+   Evas_Object_Textblock_Item *it;
    
    str = n->text;
    new_line = 0;
@@ -1841,7 +1842,7 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 {
    Evas_Object_Textblock *o;
    Ctxt ctxt, *c;
-   Evas_Object_List *l, *ll;
+   Evas_Object_List *l;
    Evas_List *removes = NULL;
    Evas_Object_Textblock_Format *fmt = NULL;
    int style_pad_l = 0, style_pad_r = 0, style_pad_t = 0, style_pad_b = 0;
@@ -2987,7 +2988,7 @@ evas_textblock2_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text
 {
    Evas_Object_Textblock *o;
    Evas_Object_Textblock_Node *n;
-   int index, ch;
+   int index;
    
    if (!cur) return;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
@@ -3339,7 +3340,7 @@ evas_textblock2_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_
      }
    else
      {
-	Evas_List *removes, *format_hump;
+	Evas_List *removes, *format_hump = NULL;
 	Evas_Textblock_Cursor tcur;
 	
 	tcur.node = n2;
@@ -3658,7 +3659,6 @@ evas_textblock2_cursor_line_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord 
    Evas_Object_Textblock_Item *it = NULL;
    Evas_Object_Textblock_Format_Item *fi = NULL;
    int x, y, w, h;
-   int pos, ret;
    
    if (!cur) return -1;
    if (!cur->node) return -1;
@@ -3685,7 +3685,6 @@ evas_textblock2_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, 
 {
    Evas_Object_Textblock *o;
    Evas_Object_List *l, *ll;
-   Evas_Object_Textblock_Line *ln = NULL;
    Evas_Object_Textblock_Item *it = NULL, *it_break = NULL;
    Evas_Object_Textblock_Format_Item *fi = NULL;
    
@@ -3757,7 +3756,6 @@ evas_textblock2_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y)
 {
    Evas_Object_Textblock *o;
    Evas_Object_List *l;
-   Evas_Object_Textblock_Line *ln = NULL;
    
    if (!cur) return -1;
    o = (Evas_Object_Textblock *)(cur->obj->object_data);
