@@ -1317,9 +1317,9 @@ ecore_x_netwm_desktop_request_send(Ecore_X_Window win, Ecore_X_Window root, unsi
 int
 _ecore_x_netwm_startup_info_begin(Ecore_X_Window win, char *data)
 {
+#if 0
    Ecore_X_Startup_Info *info;
 
-#if 0
    if (!startup_info) return 0;
    info = ecore_hash_get(startup_info, (void *)win);
    if (info)
@@ -1354,10 +1354,10 @@ _ecore_x_netwm_startup_info_begin(Ecore_X_Window win, char *data)
 int
 _ecore_x_netwm_startup_info(Ecore_X_Window win, char *data)
 {
+#if 0
    Ecore_X_Startup_Info *info;
    char *p;
 
-#if 0
    if (!startup_info) return 0;
    info = ecore_hash_get(startup_info, (void *)win);
    if (!info) return 0;
