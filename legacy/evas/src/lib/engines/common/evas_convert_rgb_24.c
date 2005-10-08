@@ -9,6 +9,7 @@ evas_common_convert_rgba_to_24bpp_rgb_888(DATA32 *src, DATA8 *dst, int src_jump,
    int x, y;
 
    dst_ptr = (DATA8 *)dst;
+   src_ptr = (DATA8 *)src;
 
    for (y = 0; y < h; y++)
      {
