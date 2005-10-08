@@ -199,10 +199,10 @@ evas_software_x11_outbuf_setup_x(int w, int h, int rot, Outbuf_Depth depth,
 	     {
 		printf(".[ Evas Error ].\n"
 		       " {\n"
-		       "  At depth         %i:\n",
+		       "  At depth         %i:\n"
 		       "  RGB format mask: %08x, %08x, %08x\n"
 		       "  Palette mode:    %i\n"
-		       "  Not supported by and compiled in converters!\n",
+		       "  Not supported by and compiled in converters!\n"
 		       " }\n",
 		       buf->priv.x.depth,
 		       buf->priv.mask.r,
