@@ -796,7 +796,7 @@ evas_software_x11_outbuf_perf_restore_x(Display * disp, Window draw, Visual * vi
    /* read performance results from root window */
    Atom                type, format;
    Outbuf_Perf        *perf;
-   char               *retval;
+   unsigned char      *retval = NULL;
    Atom                type_ret;
    unsigned long       bytes_after, num_ret;
    int                 format_ret;
@@ -804,26 +804,21 @@ evas_software_x11_outbuf_perf_restore_x(Display * disp, Window draw, Visual * vi
    perf = evas_software_x11_outbuf_perf_new_x(disp, draw, vis, cmap, x_depth);
    type = XInternAtom(disp, "__EVAS_PERF_ENGINE_SOFTWARE", False);
    format = XA_STRING;
-   retval = NULL;
    XGetWindowProperty(disp, perf->x.root, type, 0, 16384, False, format,
-		      &type_ret, &format_ret, &num_ret, &bytes_after,
-		      (unsigned char **)&retval);
-   if (retval)
+		      &type_ret, &format_ret, &num_ret, &bytes_after, &retval);
+   if (format_ret == 8 && type_ret == type)
      {
-	char               *s;
+	char *s;
 
-	if (format_ret != 8)
-	   goto out;
-	if (type_ret != type)
-	   goto out;
 	s = malloc(num_ret + 1);
 	strncpy(s, retval, num_ret);
 	s[num_ret] = 0;
 	evas_software_x11_outbuf_perf_deserialize_x(perf, s);
 	free(s);
-      out:
-	XFree(retval);
      }
+
+   if (retval) XFree(retval);
+
    return perf;
 }
 
