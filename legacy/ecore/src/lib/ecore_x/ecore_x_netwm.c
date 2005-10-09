@@ -697,19 +697,6 @@ ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
 	return 0;
      }
 
-   for (i = 0; i < icons; i++)
-     {
-	((*icon)[i]).data = malloc(len * sizeof(unsigned int));
-	if (!((*icon)[i]).data)
-	  {
-	     while (i)
-	       free(((*icon)[--i]).data);
-	     free(*icon);
-	     free(data_ret);
-	     return 0;
-	  }
-     }
-
    /* Fetch the icons */
    p = data;
    for (i = 0; i < icons; i++)
@@ -719,6 +706,15 @@ ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
 	((*icon)[i]).height = p[1];
 	src = &(p[2]);
 	((*icon)[i]).data = malloc(len * sizeof(unsigned int));
+	if (!((*icon)[i]).data)
+	  {
+	     while (i)
+	       free(((*icon)[--i]).data);
+	     free(*icon);
+	     free(data_ret);
+	     return 0;
+	  }
+
 	memcpy(((*icon)[i]).data, src, len * sizeof(unsigned int));
 
 	p += (len + 2);
