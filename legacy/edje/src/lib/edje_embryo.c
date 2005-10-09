@@ -829,6 +829,56 @@ _edje_embryo_fn_set_state(Embryo_Program *ep, Embryo_Cell *params)
    return 0;
 }
 
+/* get_state(part_id, dst[], maxlen, &Float:val) */
+static Embryo_Cell
+_edje_embryo_fn_get_state(Embryo_Program *ep, Embryo_Cell *params)
+{
+   Edje *ed;
+   int part_id = 0;
+   Edje_Real_Part *rp;
+   char *s;
+
+   CHKPARAM(4);
+   ed = embryo_program_data_get(ep);
+   part_id = params[1];
+   if (part_id < 0) return 0;
+   rp = ed->table_parts[part_id % ed->table_parts_size];
+   if (rp->chosen_description)
+     {
+	SETFLOAT(rp->chosen_description->state.value, params[4]);
+	s = rp->chosen_description->state.name;
+	if (s)
+	  {
+	     if (strlen(s) < params[3])
+	       {
+		  SETSTR(s, params[2]);
+	       }
+	     else
+	       {
+		  char *ss;
+		  
+		  ss = strdup(s);
+		  if (ss)
+		    {
+		       ss[params[3] - 1] = 0;
+		       SETSTR(ss, params[2]);
+		       free(ss);
+		    }
+	       }
+	  }
+	else
+	  {
+	     SETSTR("", params[2]);
+	  }
+     }
+   else
+     {
+	SETFLOAT(0.0, params[4]);
+	SETSTR("", params[2]);
+     }
+   return 0;
+}
+
 /* set_tween_state(part_id, Float:tween, state1[], Float:state1_val, state2[], Float:state2_val) */
 static Embryo_Cell
 _edje_embryo_fn_set_tween_state(Embryo_Program *ep, Embryo_Cell *params)
@@ -1736,6 +1786,7 @@ _edje_embryo_script_init(Edje *ed)
    
    embryo_program_native_call_add(ep, "emit", _edje_embryo_fn_emit);
    embryo_program_native_call_add(ep, "set_state", _edje_embryo_fn_set_state);
+   embryo_program_native_call_add(ep, "get_state", _edje_embryo_fn_get_state);
    embryo_program_native_call_add(ep, "set_tween_state", _edje_embryo_fn_set_tween_state);
    embryo_program_native_call_add(ep, "run_program", _edje_embryo_fn_run_program);
    embryo_program_native_call_add(ep, "get_drag_dir", _edje_embryo_fn_get_drag_dir);
