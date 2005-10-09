@@ -116,11 +116,11 @@ main_start(int argc, char **argv)
      }
    if (mode == 0)
      ecore_evas = ecore_evas_software_x11_new(NULL, 0,  0, 0, startw, starth);
-   if ((!ecore_evas) || (mode == 1))
+   if ((!ecore_evas) && (mode == 1))
      ecore_evas = ecore_evas_gl_x11_new(NULL, 0, 0, 0, startw, starth);
-   if ((!ecore_evas) || (mode == 2))
+   if ((!ecore_evas) && (mode == 2))
      ecore_evas = ecore_evas_fb_new(NULL, 270,  startw, starth);
-   if ((!ecore_evas) || (mode == 3))
+   if ((!ecore_evas) && (mode == 3))
      ecore_evas = ecore_evas_xrender_x11_new(NULL, 0, 0, 0, startw, starth);
    
    if (!ecore_evas) return -1;
