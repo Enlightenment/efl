@@ -88,8 +88,8 @@ _xr_image_info_get(Display *disp, Drawable draw, Visual *vis)
 		       XSync(xinf->disp, False);
 		       XSetErrorHandler((XErrorHandler)ph);
 		       if (!_x_err) xinf->can_do_shm = 1;
+		       shmdt(shm_info.shmaddr);
 		    }
-		  shmdt(shm_info.shmaddr);
 		  shmctl(shm_info.shmid, IPC_RMID, 0);
 	       }
 	     XDestroyImage(xim);
@@ -177,8 +177,8 @@ _xr_image_new(Ximage_Info *xinf, int w, int h, int depth)
 				 XSync(xim->xinf->disp, False);
 				 XSetErrorHandler((XErrorHandler)ph);
 				 if (!_x_err) goto xim_ok;
+				 shmdt(xim->shm_info->shmaddr);
 			      }
-			    shmdt(xim->shm_info->shmaddr);
 			    shmctl(xim->shm_info->shmid, IPC_RMID, 0);
 			 }
 		       XDestroyImage(xim->xim);

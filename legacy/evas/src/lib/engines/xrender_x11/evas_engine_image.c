@@ -238,6 +238,7 @@ _xre_image_dirty(XR_Image *im)
    if (im->fkey)
      _xr_image_hash = evas_hash_del(_xr_image_hash, im->fkey, im);
    im->dirty = 1;
+   __xre_image_dirty_hash_add(im);
 }
 
 XR_Image *
@@ -426,7 +427,12 @@ _xre_image_data_put(XR_Image *im, void *data)
 	_xr_render_surface_free(im->surface);
 	im->surface = NULL;
      }
-   _xre_image_dirty(im);
+   if (!im->dirty)
+     {
+	if (im->fkey)
+	  _xr_image_hash = evas_hash_del(_xr_image_hash, im->fkey, im);
+	im->dirty = 1;
+     }
    if (im->updates)
      {
 	evas_common_tilebuf_free(im->updates);

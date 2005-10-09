@@ -74,7 +74,14 @@ static void evas_engine_xrender_x11_font_cache_flush(void *data);
 static void evas_engine_xrender_x11_font_cache_set(void *data, int bytes);
 static int evas_engine_xrender_x11_font_cache_get(void *data);
 
-typedef struct _Render_Engine Render_Engine;
+typedef struct _Render_Engine        Render_Engine;
+typedef struct _Render_Engine_Update Render_Engine_Update;
+
+struct _Render_Engine_Update
+{
+   int x, y, w, h;
+   Xrender_Surface *surface;
+};
 
 struct _Render_Engine
 {
@@ -92,6 +99,8 @@ struct _Render_Engine
    Tilebuf_Rect         *rects;
    Evas_Object_List     *cur_rect;
    int                   end : 1;
+   
+   Evas_List            *updates;
 };
 
 Evas_Func evas_engine_xrender_x11_func =
@@ -257,6 +266,15 @@ evas_engine_xrender_x11_output_free(void *data)
    re = (Render_Engine *)data;
    evas_common_font_shutdown();
    evas_common_image_shutdown();
+   while (re->updates)
+     {
+	Render_Engine_Update *reu;
+	
+	reu = re->updates->data;
+	re->updates = evas_list_remove_list(re->updates, re->updates);
+	_xr_render_surface_free(reu->surface);
+	free(reu);
+     }
    if (re->tb) evas_common_tilebuf_free(re->tb);
    if (re->output) _xr_render_surface_free(re->output);
    if (re->mask_output) _xr_render_surface_free(re->mask_output);
@@ -371,30 +389,17 @@ static void
 evas_engine_xrender_x11_output_redraws_next_update_push(void *data, void *surface, int x, int y, int w, int h)
 {
    Render_Engine *re;
+   Render_Engine_Update *reu;
    
    re = (Render_Engine *)data;
-   if (re->mask_output)
-     {
-	Xrender_Surface *tsurf;
-	
-	_xr_render_surface_copy((Xrender_Surface *)surface, re->output, 0, 0,
-				x, y, w, h);
-	tsurf = _xr_render_surface_new(re->xinf, w, h, re->xinf->fmt1, 1);
-	if (tsurf)
-	  {
-	     _xr_render_surface_copy((Xrender_Surface *)surface, tsurf, 0, 0,
-				     0, 0, w, h);
-	     _xr_render_surface_copy(tsurf, re->mask_output, 0, 0,
-				     x, y, w, h);
-	     _xr_render_surface_free(tsurf);
-	  }
-     }
-   else
-     {
-	_xr_render_surface_copy((Xrender_Surface *)surface, re->output, 0, 0,
-				x, y, w, h);
-     }
-   _xr_render_surface_free((Xrender_Surface *)surface);
+   reu = malloc(sizeof(Render_Engine_Update));
+   if (!reu) return;
+   reu->x = x;
+   reu->y = y;
+   reu->w = w;
+   reu->h = h;
+   reu->surface = (Xrender_Surface *)surface;
+   re->updates = evas_list_append(re->updates, reu);
 }
 
 static void
@@ -403,6 +408,36 @@ evas_engine_xrender_x11_output_flush(void *data)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
+   while (re->updates)
+     {
+	Render_Engine_Update *reu;
+	
+	reu = re->updates->data;
+	re->updates = evas_list_remove_list(re->updates, re->updates);
+	if (re->mask_output)
+	  {
+	     Xrender_Surface *tsurf;
+	     
+	     _xr_render_surface_copy(reu->surface, re->output, 0, 0,
+				     reu->x, reu->y, reu->w, reu->h);
+	     tsurf = _xr_render_surface_new(re->xinf, reu->w, reu->h, re->xinf->fmt1, 1);
+	     if (tsurf)
+	       {
+		  _xr_render_surface_copy(reu->surface, tsurf, 0, 0,
+					  0, 0, reu->w, reu->h);
+		  _xr_render_surface_copy(tsurf, re->mask_output, 0, 0,
+					  reu->x, reu->y, reu->w, reu->h);
+		  _xr_render_surface_free(tsurf);
+	       }
+	  }
+	else
+	  {
+	     _xr_render_surface_copy(reu->surface, re->output, 0, 0,
+				     reu->x, reu->y, reu->w, reu->h);
+	  }
+	_xr_render_surface_free(reu->surface);
+	free(reu);
+     }
    XSync(re->disp, False);
    _xr_image_info_pool_flush(re->xinf, 0, 0);
 }
@@ -621,10 +656,12 @@ static void *
 evas_engine_xrender_x11_image_load(void *data, char *file, char *key, int *error)
 {
    Render_Engine *re;
+   XR_Image *im;
    
    re = (Render_Engine *)data;
    *error = 0;
-   return _xre_image_load(re->xinf, file, key);
+   im = _xre_image_load(re->xinf, file, key);
+   return im;
 }
 
 static void *
@@ -690,6 +727,7 @@ evas_engine_xrender_x11_image_size_set(void *data, void *image, int w, int h)
 	image = _xre_image_copy((XR_Image *)old_image);
 	if (image)
 	  {
+	     ((XR_Image *)image)->alpha = old_image->alpha;
 	     _xre_image_free(old_image);
 	  }
 	else
@@ -708,21 +746,7 @@ evas_engine_xrender_x11_image_dirty_region(void *data, void *image, int x, int y
    
    re = (Render_Engine *)data;
    if (!image) return image;
-   if (((XR_Image *)image)->references > 1)
-     {
-	XR_Image *old_image;
-
-	old_image = (XR_Image *)image;
-	image = _xre_image_copy((XR_Image *)old_image);
-	if (image)
-	  {
-	     _xre_image_free(old_image);
-	  }
-	else
-	  image = old_image;
-     }
-   else
-     _xre_image_dirty((XR_Image *)image);
+   _xre_image_dirty((XR_Image *)image);
    _xre_image_region_dirty((XR_Image *)image, x, y, w, h);
    return image;
 }
@@ -744,6 +768,7 @@ evas_engine_xrender_x11_image_data_get(void *data, void *image, int to_write, DA
 	     image = _xre_image_copy((XR_Image *)old_image);
 	     if (image)
 	       {
+		  ((XR_Image *)image)->alpha = old_image->alpha;
 		  _xre_image_free(old_image);
 	       }
 	     else
@@ -769,20 +794,27 @@ evas_engine_xrender_x11_image_data_put(void *data, void *image, DATA32 *image_da
 
 	old_image = (XR_Image *)image;
 	image = _xre_image_data_find(image_data);
-	if (!image)
+	if (image != old_image)
 	  {
-	     image = _xre_image_new_from_data(old_image->xinf, old_image->w, old_image->h, image_data);
-	     if (image)
+	     if (!image)
 	       {
-		  ((XR_Image *)image)->alpha = old_image->alpha;
-		  _xre_image_free(old_image);
+		  image = _xre_image_new_from_data(old_image->xinf, old_image->w, old_image->h, image_data);
+		  if (image)
+		    {
+		       ((XR_Image *)image)->alpha = old_image->alpha;
+		       _xre_image_free(old_image);
+		    }
+		  else
+		    image = old_image;
 	       }
 	     else
-	       image = old_image;
+	       {
+		  _xre_image_free(old_image);
+	       }
 	  }
 	else
 	  {
-	     _xre_image_free(old_image);
+	     _xre_image_free(image);
 	  }
      }
    return image;

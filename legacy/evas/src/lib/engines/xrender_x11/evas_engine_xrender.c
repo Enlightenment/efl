@@ -1,4 +1,5 @@
 #include "evas_common.h"
+#include "evas_macros.h"
 #include "evas_private.h"
 #include "evas_engine.h"
 #include "evas_engine_api_xrender_x11.h"
@@ -285,19 +286,37 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
    XRenderPictureAttributes att;
    Picture mask;
    int r, g, b, a, op;
+   int sf;
 
    if ((sw <= 0) || (sh <= 0) || (w <= 0) || (h <= 0)) return;
-   xf.matrix[0][0] = (0x10000 * sw) / w;
+   
+   sf = MAX(sw, sh);
+#define BMAX 26
+   if      (sf <= 8    ) sf = 1 << (BMAX - 3);
+   else if (sf <= 16   ) sf = 1 << (BMAX - 4);
+   else if (sf <= 32   ) sf = 1 << (BMAX - 5);
+   else if (sf <= 64   ) sf = 1 << (BMAX - 6);
+   else if (sf <= 128  ) sf = 1 << (BMAX - 7);
+   else if (sf <= 256  ) sf = 1 << (BMAX - 8);
+   else if (sf <= 512  ) sf = 1 << (BMAX - 9);
+   else if (sf <= 1024 ) sf = 1 << (BMAX - 10);
+   else if (sf <= 2048 ) sf = 1 << (BMAX - 11);
+   else if (sf <= 4096 ) sf = 1 << (BMAX - 12);
+   else if (sf <= 8192 ) sf = 1 << (BMAX - 13);
+   else if (sf <= 16384) sf = 1 << (BMAX - 14);
+   else                  sf = 1 << (BMAX - 15);
+   
+   xf.matrix[0][0] = (sf * sw) / w;
    xf.matrix[0][1] = 0;
    xf.matrix[0][2] = 0;
 
    xf.matrix[1][0] = 0;
-   xf.matrix[1][1] = (0x10000 * sh) / h;
+   xf.matrix[1][1] = (sf * sh) / h;
    xf.matrix[1][2] = 0;
 
    xf.matrix[2][0] = 0;
    xf.matrix[2][1] = 0;
-   xf.matrix[2][2] = 0x10000;
+   xf.matrix[2][2] = sf;
 
    op = PictOpSrc;
    if (srs->alpha) op = PictOpOver;
