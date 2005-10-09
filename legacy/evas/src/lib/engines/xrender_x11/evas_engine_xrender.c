@@ -348,7 +348,7 @@ _xr_render_surface_composite(Xrender_Surface *srs, Xrender_Surface *drs, RGBA_Dr
    XRenderChangePicture(srs->xinf->disp, srs->pic, CPClipMask, &att);
    XRenderChangePicture(srs->xinf->disp, drs->pic, CPClipMask, &att);
    
-   if (smooth) XRenderSetPictureFilter(srs->xinf->disp, srs->pic, "bilinear", NULL, 0);
+   if (smooth) XRenderSetPictureFilter(srs->xinf->disp, srs->pic, "best", NULL, 0);
    else XRenderSetPictureFilter(srs->xinf->disp, srs->pic, "nearest", NULL, 0);
 
    _xr_render_surface_clips_set(drs, dc, x, y, w, h);
