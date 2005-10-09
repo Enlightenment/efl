@@ -1,5 +1,6 @@
-edje (0.5.0-0cvs20040918) unstable; urgency=low
+edje (0.5.0.017-1) unstable; urgency=low
 
-  * a CVS release
-  
- -- Sytse Wielinga <s.b.wielinga@student.utwente.nl>  Sat, 18 Sep 2004 14:20:13 +0200
+  * a CVS snapshot release.
+
+ -- Blake Barnett (shadoi) <shadoi@soulmachine.net>  Fri, 23 Sep 2005 12:55:44 -0700
+

@@ -104,6 +104,10 @@ main_start(int argc, char **argv)
                {
 		  mode = 2;
                }
+             else if (!strcmp(argv[i], "-xr"))
+               {
+		  mode = 3;
+               }
              else if (!strcmp(argv[i], "-fill"))
                {
 		  mdfill = 1;
@@ -116,6 +120,8 @@ main_start(int argc, char **argv)
      ecore_evas = ecore_evas_gl_x11_new(NULL, 0, 0, 0, startw, starth);
    if ((!ecore_evas) || (mode == 2))
      ecore_evas = ecore_evas_fb_new(NULL, 270,  startw, starth);
+   if ((!ecore_evas) || (mode == 3))
+     ecore_evas = ecore_evas_xrender_x11_new(NULL, 0, 0, 0, startw, starth);
    
    if (!ecore_evas) return -1;
    ecore_evas_callback_delete_request_set(ecore_evas, main_delete_request);
