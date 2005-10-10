@@ -1103,7 +1103,7 @@ ecore_x_cursor_color_supported_get(void)
 Ecore_X_Cursor
 ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int hot_y)
 {
-#ifdef ECORE_XCURSOR   
+#ifdef ECORE_XCURSOR
    if (_ecore_x_xcursor)
      {
 	Cursor c;
@@ -1293,6 +1293,18 @@ ecore_x_cursor_shape_get(int shape)
 {
    /* Shapes are defined in Ecore_X_Cursor.h */
    return XCreateFontCursor(_ecore_x_disp, shape);
+}
+
+void
+ecore_x_cursor_size_set(int size)
+{
+   XcursorSetDefaultSize(_ecore_x_disp, size);
+}
+
+int
+ecore_x_cursor_size_get(void)
+{
+   return XcursorGetDefaultSize(_ecore_x_disp);
 }
 
 int
