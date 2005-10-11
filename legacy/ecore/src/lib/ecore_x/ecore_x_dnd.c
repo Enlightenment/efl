@@ -471,6 +471,7 @@ _ecore_x_dnd_drag(int x, int y)
 	     XFree(data);
 	     XSendEvent(_ecore_x_disp, win, False, 0, &xev);
 	     _source->await_status = 0;
+	     _source->will_accept = 0;
 	  }
 
 	/* Determine if we're still in the rectangle from the last status */
