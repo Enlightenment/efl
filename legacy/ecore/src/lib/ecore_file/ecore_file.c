@@ -129,13 +129,8 @@ ecore_file_cp(const char *src, const char *dst)
    char                realpath2[PATH_MAX];
    size_t              num;
    
-   if (realpath(src, realpath1) && realpath(dst, realpath2))
-     {
-	if (!strcmp(realpath1, realpath2))
-	  return 0;
-     }
-   else
-     return 0;
+   if (!realpath(src, realpath1)) return 0;
+   if (realpath(dst, realpath2) && !strcmp(realpath1, realpath2)) return 0;
 
    f1 = fopen(src, "rb");
    if (!f1) return 0;
