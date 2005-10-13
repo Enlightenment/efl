@@ -9,6 +9,7 @@ Package: libecore0
 Architecture: any
 Section: libs
 Depends: ${shlibs:Depends}
+Provides: libecore
 Description: Core abstraction layer for enlightenment DR 0.17
  This is the core event abstraction layer and X abstraction layer that makes
  doing selections, Xdnd, general X stuff, and event loops, timeouts and idle
@@ -31,6 +32,7 @@ Architecture: any
 Section: libs
 Depends: ${shlibs:Depends}
 Provides: ecore-bin
+Conflicts: ecore-test
 Description: Tools that support libecore.
  The package includes:
   - ecore_config: allows creation/editing of ecore_config databases
