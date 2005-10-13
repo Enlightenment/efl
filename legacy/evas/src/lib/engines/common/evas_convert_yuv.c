@@ -4,6 +4,10 @@
 # include "evas_mmx.h"
 #endif
 
+#if defined HAVE_ALTIVEC_H
+# include <altivec.h>
+#endif
+
 #ifdef BUILD_CONVERT_YUV
 
 static void _evas_yuv_init         (void);
