@@ -363,6 +363,7 @@ _ecore_evas_x_event_mouse_button_down(void *data __UNUSED__, int type __UNUSED__
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
+   if ((e->win != ee->engine.x.win_container) && (e->win != ee->engine.x.win)) return 1;
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);
    if (e->double_click) flags |= EVAS_BUTTON_DOUBLE_CLICK;
    if (e->triple_click) flags |= EVAS_BUTTON_TRIPLE_CLICK;
@@ -379,6 +380,7 @@ _ecore_evas_x_event_mouse_button_up(void *data __UNUSED__, int type __UNUSED__, 
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
+   if ((e->win != ee->engine.x.win_container) && (e->win != ee->engine.x.win)) return 1;
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);   
    evas_event_feed_mouse_up(ee->evas, e->button, EVAS_BUTTON_NONE, e->time, NULL);
    return 1;
@@ -392,9 +394,8 @@ _ecore_evas_x_event_mouse_wheel(void *data __UNUSED__, int type __UNUSED__, void
 
    e = event;
    ee = _ecore_evas_x_match(e->win);
-
    if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
-
+   if ((e->win != ee->engine.x.win_container) && (e->win != ee->engine.x.win)) return 1;
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);
    evas_event_feed_mouse_wheel(ee->evas, e->direction, e->z, e->time, NULL);
 
@@ -410,6 +411,7 @@ _ecore_evas_x_event_mouse_move(void *data __UNUSED__, int type __UNUSED__, void 
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
+   if ((e->win != ee->engine.x.win_container) && (e->win != ee->engine.x.win)) return 1;
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);
    _ecore_evas_x_mouse_move_process(ee, e->x, e->y, e->time);
    return 1;
@@ -424,6 +426,7 @@ _ecore_evas_x_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *e
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
+   if ((e->win != ee->engine.x.win_container) && (e->win != ee->engine.x.win)) return 1;
    if (e->event_win == ee->engine.x.win_container) return 0;
 /* if (e->mode != ECORE_X_EVENT_MODE_NORMAL) return 0; */
    if (ee->func.fn_mouse_in) ee->func.fn_mouse_in(ee);
@@ -442,6 +445,7 @@ _ecore_evas_x_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
+   if ((e->win != ee->engine.x.win_container) && (e->win != ee->engine.x.win)) return 1;
    if (e->event_win == ee->engine.x.win_container) return 0;
 /* if (e->mode != ECORE_X_EVENT_MODE_NORMAL) return 0; */
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);   
@@ -461,6 +465,7 @@ _ecore_evas_x_event_window_focus_in(void *data __UNUSED__, int type __UNUSED__, 
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
+   if ((e->win != ee->engine.x.win_container) && (e->win != ee->engine.x.win)) return 1;
    ee->prop.focused = 1;
    if (ee->func.fn_focus_in) ee->func.fn_focus_in(ee);
    return 1;
@@ -475,6 +480,7 @@ _ecore_evas_x_event_window_focus_out(void *data __UNUSED__, int type __UNUSED__,
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
+   if ((e->win != ee->engine.x.win_container) && (e->win != ee->engine.x.win)) return 1;
    if (ee->prop.fullscreen)
      ecore_x_window_focus(ee->engine.x.win);
    ee->prop.focused = 0;
@@ -491,6 +497,7 @@ _ecore_evas_x_event_window_damage(void *data __UNUSED__, int type __UNUSED__, vo
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if (!ee) return 1; /* pass on event */
+   if ((e->win != ee->engine.x.win_container) && (e->win != ee->engine.x.win)) return 1;
    if (ee->engine.x.using_bg_pixmap) return 1;
    if (ee->prop.avoid_damage)
      {
@@ -542,6 +549,7 @@ _ecore_evas_x_event_window_destroy(void *data __UNUSED__, int type __UNUSED__, v
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if (!ee) return 1; /* pass on event */
+   if ((e->win != ee->engine.x.win_container) && (e->win != ee->engine.x.win)) return 1;
    if (ee->func.fn_destroy) ee->func.fn_destroy(ee);
    ecore_evas_free(ee);
    return 1;
@@ -556,12 +564,9 @@ _ecore_evas_x_event_window_configure(void *data __UNUSED__, int type __UNUSED__,
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if (!ee) return 1; /* pass on event */
+   if ((e->win != ee->engine.x.win_container) && (e->win != ee->engine.x.win)) return 1;
    if ((ee->prop.fullscreen) && (e->win == ee->engine.x.win_container)) return 0;
    if (ee->engine.x.direct_resize) return 0;
-   /* Only accept configure events on main windows */
-   if ((e->win != ee->engine.x.win_container) &&
-       (e->win != ee->engine.x.win))
-     return 0;
  
    if ((e->from_wm) || (ee->prop.fullscreen) || (ee->prop.override))
      {
@@ -621,6 +626,7 @@ _ecore_evas_x_event_window_delete_request(void *data __UNUSED__, int type __UNUS
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if (!ee) return 1; /* pass on event */
+   if ((e->win != ee->engine.x.win_container) && (e->win != ee->engine.x.win)) return 1;
    if (ee->func.fn_delete_request) ee->func.fn_delete_request(ee);
    return 1;
 }
@@ -634,6 +640,7 @@ _ecore_evas_x_event_window_show(void *data __UNUSED__, int type __UNUSED__, void
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if (!ee) return 1; /* pass on event */
+   if ((e->win != ee->engine.x.win_container) && (e->win != ee->engine.x.win)) return 1;
    if (ee->visible) return 0; /* dont pass it on */
    ee->visible = 1;
    if (ee->func.fn_show) ee->func.fn_show(ee);
@@ -649,6 +656,7 @@ _ecore_evas_x_event_window_hide(void *data __UNUSED__, int type __UNUSED__, void
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if (!ee) return 1; /* pass on event */
+   if ((e->win != ee->engine.x.win_container) && (e->win != ee->engine.x.win)) return 1;
    if (!ee->visible) return 0; /* dont pass it on */
    ee->visible = 0;
    if (ee->func.fn_hide) ee->func.fn_hide(ee);
