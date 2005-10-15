@@ -1705,7 +1705,10 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
      {
 	ecore_x_netwm_startup_id_set(ee->engine.x.win_container,
 				     getenv("DESKTOP_STARTUP_ID"));
-	putenv("DESKTOP_STARTUP_ID");
+	/* NB: on linux this may simply empty the env as opposed to completely
+	 * unset it to being empty - unsure as solartis libc crashes looking 
+	 * for the '=' char */
+	putenv("DESKTOP_STARTUP_ID=");
      }
    einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
    if (einfo)
@@ -1919,7 +1922,10 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
      {
 	ecore_x_netwm_startup_id_set(ee->engine.x.win_container,
 				     getenv("DESKTOP_STARTUP_ID"));
-	putenv("DESKTOP_STARTUP_ID");
+	/* NB: on linux this may simply empty the env as opposed to completely
+	 * unset it to being empty - unsure as solartis libc crashes looking 
+	 * for the '=' char */
+	putenv("DESKTOP_STARTUP_ID=");
      }
    einfo = (Evas_Engine_Info_GL_X11 *)evas_engine_info_get(ee->evas);
    if (einfo)
@@ -2131,7 +2137,10 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
      {
 	ecore_x_netwm_startup_id_set(ee->engine.x.win_container,
 				     getenv("DESKTOP_STARTUP_ID"));
-	putenv("DESKTOP_STARTUP_ID");
+	/* NB: on linux this may simply empty the env as opposed to completely
+	 * unset it to being empty - unsure as solartis libc crashes looking 
+	 * for the '=' char */
+	putenv("DESKTOP_STARTUP_ID=");
      }
    einfo = (Evas_Engine_Info_XRender_X11 *)evas_engine_info_get(ee->evas);
    if (einfo)

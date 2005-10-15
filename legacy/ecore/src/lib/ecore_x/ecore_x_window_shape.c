@@ -1,6 +1,7 @@
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
+#include <alloca.h>
 
 /**
  * @defgroup Ecore_X_Window_Shape X Window Shape Functions
