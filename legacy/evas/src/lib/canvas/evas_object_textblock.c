@@ -268,9 +268,8 @@ _strbuf_append(char *s, char *s2, int *len, int *alloc)
    int l2;
    int tlen;
    
-   if (!s2) return s;
+   if ((!s2) || (!s2[0])) return s;
    l2 = strlen(s2);
-   if (l2 == 0) return s;
    tlen = *len + l2;
    if (tlen > *alloc)
      {
