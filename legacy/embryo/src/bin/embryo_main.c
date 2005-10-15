@@ -10,6 +10,7 @@
 #include <limits.h>
 #include <stdarg.h>
 #include <string.h>
+#include <alloca.h>
 
 /* debugging native calls */
 static int process_format_char(Embryo_Program *ep, char ch, Embryo_Cell param);
