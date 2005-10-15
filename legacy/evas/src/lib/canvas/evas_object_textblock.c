@@ -747,7 +747,7 @@ _format_color_parse(char *str, unsigned char *r, unsigned char *g, unsigned char
    
    slen = strlen(str);
    *r = *g = *b = *a = 0;
-   
+
    if (slen == 7) /* #RRGGBB */
      {
 	*r = (_hex_string_get(str[1]) << 4) | (_hex_string_get(str[2]));
@@ -1128,6 +1128,10 @@ _format_fill(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *str)
    char *item;
    
    s = str;
+
+   /* get rid of anything +'s or -'s off the start of the string */
+   while ((*s == ' ') || (*s == '+') || (*s == '-')) s++;
+
    while ((item = _format_parse(&s)))
      {
 	if (_format_is_param(item))

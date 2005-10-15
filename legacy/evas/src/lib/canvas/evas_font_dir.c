@@ -159,6 +159,8 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
    Evas_List *fonts, *l;
    Fndat *fd;
 
+   if (!name) return NULL;
+
    for (l = fonts_cache; l; l = l->next)
      {
 	fd = l->data;
