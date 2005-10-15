@@ -454,6 +454,44 @@ fi
 AC_SUBST(ecore_job_cflags)
 AC_SUBST(ecore_job_libs)
 
+want_ecore_dfb="yes";
+have_ecore_dfb="no";
+ecore_dfb_cflags="";
+ecore_dfb_libs="";
+
+AC_MSG_CHECKING(whether ecore_dfb module is to be built)
+
+AC_ARG_ENABLE(ecore-dfb, 
+  [  --disable-ecore-dfb               disable the ecore_dfb module],
+  [
+    if [ test "$enableval" = "yes" ]; then  
+      AC_MSG_RESULT(yes)
+    else
+      AC_MSG_RESULT(no)
+      want_ecore_dfb="no"
+    fi
+  ], [
+    AC_MSG_RESULT(yes)
+  ]
+)
+
+if test "x$want_ecore_dfb" = "xyes"; then
+PKG_CHECK_MODULES(DIRECTFB, directfb >= 0.9.16,
+    [
+      AM_CONDITIONAL(BUILD_ECORE_DIRECTFB, true)
+      AC_DEFINE(BUILD_ECORE_DIRECTFB, 1, [Build Ecore_DirectFB Module])
+      have_ecore_dfb="yes"
+      dnl ecore_dfb_libs="-lecore_fb";
+    ], [
+      AM_CONDITIONAL(BUILD_ECORE_DIRECTFB, false)
+    ]
+  )
+else
+  AM_CONDITIONAL(BUILD_ECORE_DIRECTFB, false)
+fi
+AC_SUBST(ecore_dfb_cflags)
+AC_SUBST(ecore_dfb_libs)
+
 want_ecore_fb="yes";
 have_ecore_fb="no";
 ecore_fb_cflags="";
@@ -617,6 +655,42 @@ else
     AC_MSG_WARN(Silly monkey: ecore_evas_xrender requires ecore_x ... disabling ecore_evas_xrender)
   fi
 fi
+
+want_ecore_evas_dfb="yes";
+have_ecore_evas_dfb="no";
+
+AC_MSG_CHECKING(whether ecore_evas DirectFB support is to be built)
+AC_ARG_ENABLE(ecore-evas-dfb, 
+  [  --disable-ecore-evas-dfb          disable DirectFB in the ecore_evas module],
+  [
+    if [ test "$enableval" = "yes" ]; then  
+      AC_MSG_RESULT(yes)
+    else
+      AC_MSG_RESULT(no)
+      want_ecore_evas_dfb="no"
+    fi
+  ], [
+    AC_MSG_RESULT(yes)
+  ]
+)
+
+if test "x$want_ecore_evas_dfb" = "xyes"; then
+  dnl AC_CHECK_HEADER(Evas_Engine_DirectFB.h,
+  AC_CHECK_HEADER(Evas_Engine_Buffer.h,
+    [
+      AM_CONDITIONAL(BUILD_ECORE_EVAS_DIRECTFB, true)
+      AC_DEFINE(BUILD_ECORE_EVAS_DIRECTFB, 1, [Support for DirectFB in Ecore_Evas])
+      have_ecore_evas_dfb="yes"
+    ], [
+      AM_CONDITIONAL(BUILD_ECORE_EVAS_DIRECTFB, false)
+    ], [
+      #include <Evas.h>
+    ]
+  )
+else
+  AM_CONDITIONAL(BUILD_ECORE_EVAS_DIRECTFB, false)
+fi
+
 
 want_ecore_evas_fb="yes";
 have_ecore_evas_fb="no";
@@ -1076,6 +1150,7 @@ src/lib/ecore_txt/Makefile
 src/lib/ecore_config/Makefile
 src/lib/ecore_file/Makefile
 src/lib/ecore_dbus/Makefile
+src/lib/ecore_directfb/Makefile
 examples/Makefile
 ecore-config
 README
@@ -1099,10 +1174,12 @@ echo "  Ecore_Con....................: $have_ecore_con (OpenSSL: $use_openssl)"
 echo "  Ecore_Txt....................: $have_ecore_txt"
 echo "  Ecore_X......................: $have_ecore_x (Xcursor: $use_Xcursor) (Xprint: $use_Xprint) (Xinerama: $use_Xinerama) (Xrandr: $use_Xrandr)"
 echo "  Ecore_FB.....................: $have_ecore_fb"
+echo "  Ecore_DFB....................: $have_ecore_dfb"
 echo "  Ecore_Evas...................: $have_ecore_evas"
 echo "  Ecore_Evas GL Support........: $have_ecore_evas_gl"
 echo "  Ecore_Evas XRender Support...: $have_ecore_evas_xrender"
 echo "  Ecore_Evas FB Support........: $have_ecore_evas_fb"
+echo "  Ecore_Evas DFB Support.......: $have_ecore_evas_dfb"
 echo "  Ecore_Buffer.................: $have_ecore_evas_buffer"
 echo "  Ecore_Ipc....................: $have_ecore_ipc (OpenSSL: $use_openssl)"
 echo "  Ecore_Config.................: $have_ecore_config"

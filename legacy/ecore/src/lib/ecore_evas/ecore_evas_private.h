@@ -18,6 +18,10 @@
 
 #define ECORE_MAGIC_EVAS 0x76543211
 
+#ifndef BUILD_ECORE_DIRECTFB
+#undef BUILD_ECORE_EVAS_DIRECTFB
+#endif
+
 #ifdef BUILD_ECORE_X
 #include "Ecore_X.h"
 #include <Evas_Engine_Software_X11.h>
@@ -32,6 +36,10 @@
 #endif
 #ifdef BUILD_ECORE_EVAS_FB
 #include <Evas_Engine_FB.h>
+#endif
+#ifdef BUILD_ECORE_EVAS_DIRECTFB
+#include <Evas_Engine_DirectFB.h>
+#include "Ecore_DirectFB.h"
 #endif
 #ifdef BUILD_ECORE_EVAS_BUFFER
 #include <Evas_Engine_Buffer.h>
@@ -130,6 +138,14 @@ struct _Ecore_Evas_Engine
       void *pixels;
       Evas_Object *image;
    } buffer;
+#endif
+#ifdef BUILD_ECORE_EVAS_DIRECTFB
+   struct {
+	   Ecore_DirectFB_Window *window;
+	   /*IDirectFBWindow *window;
+	   DirectFBSurface *surface;
+	   DirectFBWindowID id;*/
+   } directfb;
 #endif
 };
   

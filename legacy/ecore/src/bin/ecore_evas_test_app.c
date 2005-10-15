@@ -84,6 +84,13 @@ app_start(int argc, const char **argv)
 	evas = ecore_evas_get(ee);
      }
 #endif
+#if HAVE_ECORE_EVAS_DIRECTFB
+   else if ((argc > 1) && (!strcmp(argv[1], "-dfb")))
+     {
+	ee = ecore_evas_directfb_new(NULL, 0,  0, 0, 240, 320);
+	evas = ecore_evas_get(ee);
+     }
+#endif
    else if ((argc > 1) && (!strcmp(argv[1], "-buf")))
      {
 	ee = ecore_evas_buffer_new(240, 320);
@@ -116,11 +123,12 @@ app_start(int argc, const char **argv)
      {
 	printf("%s -x         Test ecore_evas in X (default)\n"
 	       "%s -gl        Test ecore_evas in X GL\n"
+	       "%s -dfb       Test ecore_evas in DirectFB\n"
 	       "%s -fb        Test ecore_evas in the Framebuffer\n"
 	       "%s -buf       Test ecore_evas in the Buffer\n"
 	       "%s -buf2      Test ecore_evas in the Image Buffer\n"
 	       "%s -h         Display this help\n",
-	       argv[0], argv[0], argv[0], argv[0], argv[0], argv[0]);
+	       argv[0], argv[0], argv[0], argv[0], argv[0], argv[0], argv[0]);
 	ecore_evas_shutdown();
 	ecore_shutdown();
 	return 0;

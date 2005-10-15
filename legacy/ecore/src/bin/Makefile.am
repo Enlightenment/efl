@@ -6,6 +6,12 @@ else
 ECORE_EVAS_LIB =
 endif
 
+if BUILD_ECORE_DIRECTFB
+ECORE_DIRECTFB_LIB = $(top_builddir)/src/lib/ecore_directfb/libecore_directfb.la
+else
+ECORE_DIRECTFB_LIB =
+endif
+
 if BUILD_ECORE_X
 ECORE_X_LIB = $(top_builddir)/src/lib/ecore_x/libecore_x.la
 else
@@ -51,6 +57,7 @@ endif
 INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore \
 -I$(top_srcdir)/src/lib/ecore_evas \
+-I$(top_srcdir)/src/lib/ecore_directfb \
 -I$(top_srcdir)/src/lib/ecore_x \
 -I$(top_srcdir)/src/lib/ecore_fb \
 -I$(top_srcdir)/src/lib/ecore_job \
@@ -60,6 +67,7 @@ INCLUDES = \
 -I$(top_srcdir)/src/lib/ecore_config \
 -I$(top_builddir)/src/lib/ecore \
 -I$(top_builddir)/src/lib/ecore_evas \
+-I$(top_builddir)/src/lib/ecore_directfb \
 -I$(top_builddir)/src/lib/ecore_x \
 -I$(top_builddir)/src/lib/ecore_fb \
 -I$(top_builddir)/src/lib/ecore_job \

@@ -56,6 +56,11 @@ ecore_evas_engine_type_supported_get(Ecore_Evas_Engine_Type engine)
 	return 0;
 #endif	
 	break;
+      case ECORE_EVAS_ENGINE_DIRECTFB:
+#ifdef BUILD_ECORE_EVAS_DIRECTFB
+	return 1;
+#endif
+	return 0;
       default:
 	return 0;
 	break;
@@ -97,6 +102,9 @@ ecore_evas_shutdown(void)
 #endif
 #ifdef BUILD_ECORE_EVAS_BUFFER
 	while (_ecore_evas_buffer_shutdown());
+#endif
+#ifdef BUILD_ECORE_EVAS_DIRECTFB
+	while (_ecore_evas_directfb_shutdown());
 #endif
 	evas_shutdown(); 
      }

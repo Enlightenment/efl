@@ -4,10 +4,11 @@ ecore \
 ecore_job \
 ecore_txt \
 ecore_fb \
+ecore_directfb \
 ecore_con \
 ecore_x \
 ecore_ipc \
 ecore_evas \
 ecore_config \
 ecore_file \
-ecore_dbus
+ecore_dbus 

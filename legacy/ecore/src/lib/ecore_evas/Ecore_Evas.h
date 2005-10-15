@@ -47,6 +47,7 @@ extern "C" {
 #define HAVE_ECORE_EVAS_X 1
 #define HAVE_ECORE_EVAS_FB 1
 #define HAVE_ECORE_EVAS_GL 1
+#define HAVE_ECORE_EVAS_DIRECTFB 1
 
 typedef enum
 {
@@ -54,12 +55,18 @@ typedef enum
    ECORE_EVAS_ENGINE_SOFTWARE_FB,
    ECORE_EVAS_ENGINE_GL_X11,
    ECORE_EVAS_ENGINE_SOFTWARE_BUFFER,
-   ECORE_EVAS_ENGINE_XRENDER_X11
+   ECORE_EVAS_ENGINE_XRENDER_X11,
+   ECORE_EVAS_ENGINE_DIRECTFB
 } Ecore_Evas_Engine_Type;
 
 #ifndef _ECORE_X_H
 #define _ECORE_X_WINDOW_PREDEF
 typedef unsigned int Ecore_X_Window;
+#endif
+   
+#ifndef _ECORE_DIRECTFB_H
+#define _ECORE_DIRECTFB_WINDOW_PREDEF
+typedef void Ecore_DirectFB_Window;
 #endif
    
 #ifndef _ECORE_EVAS_PRIVATE_H

@@ -316,7 +316,7 @@ static int
 _ecore_hash_add_node(Ecore_Hash *hash, Ecore_Hash_Node *node)
 {
 	unsigned int hash_val;
-
+		
 	CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
 	CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
 
@@ -326,8 +326,7 @@ _ecore_hash_add_node(Ecore_Hash *hash, Ecore_Hash_Node *node)
 
 	/* Compute the position in the table */
 	if (!hash->hash_func)
-		hash_val = (unsigned int)node->key %
-			ecore_prime_table[hash->size];
+		hash_val = (unsigned int)node->key % ecore_prime_table[hash->size];
 	else
 		hash_val = ECORE_COMPUTE_HASH(hash, node->key);
 
@@ -392,7 +391,7 @@ void *ecore_hash_remove(Ecore_Hash *hash, void *key)
 
 	/* Compute the position in the table */
 	if (!hash->hash_func)
-		hash_val = (unsigned int)key % ecore_prime_table[hash->size];
+		hash_val = (unsigned int )key % ecore_prime_table[hash->size];
 	else
 		hash_val = ECORE_COMPUTE_HASH(hash, key);
 
@@ -453,7 +452,7 @@ _ecore_hash_get_node(Ecore_Hash *hash, void *key)
 
 	/* Compute the position in the table */
 	if (!hash->hash_func)
-		hash_val = (unsigned int)key % ecore_prime_table[hash->size];
+		hash_val = (unsigned int )key % ecore_prime_table[hash->size];
 	else
 		hash_val = ECORE_COMPUTE_HASH(hash, key);
 
