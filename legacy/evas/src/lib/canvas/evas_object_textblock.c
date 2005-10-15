@@ -270,6 +270,7 @@ _strbuf_append(char *s, char *s2, int *len, int *alloc)
    
    if (!s2) return s;
    l2 = strlen(s2);
+   if (l2 == 0) return s;
    tlen = *len + l2;
    if (tlen > *alloc)
      {
@@ -3967,7 +3968,7 @@ static void
 evas_object_textblock_init(Evas_Object *obj)
 {
    Evas_Object_Textblock *o;
-   
+
    /* alloc image ob, setup methods and default values */
    obj->object_data = evas_object_textblock_new();
    /* set up default settings for this kind of object */
