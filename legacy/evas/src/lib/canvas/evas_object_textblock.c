@@ -1872,6 +1872,12 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 	fmt = _layout_format_push(c, NULL);
 	_format_fill(c->obj, fmt, c->o->style->default_tag);
      }
+   if (!fmt)
+     {
+	if (w_ret) *w_ret = 0;
+	if (h_ret) *h_ret = 0;
+	return;
+     }
    /* run thru all text and format nodes generating lines */
    for (l = (Evas_Object_List *)c->o->nodes; l; l = l->next)
      {
