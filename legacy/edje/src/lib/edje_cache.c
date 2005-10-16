@@ -110,8 +110,12 @@ _edje_file_open(char *file, char *coll, int *error_ret, Edje_Part_Collection **e
      }
    
    edc = _edje_file_coll_open(edf, ef, coll);
+   if (!edc)
+     {
+	*error_ret = EDJE_LOAD_ERROR_UNKNOWN_COLLECTION;
+     }
    if (edc_ret) *edc_ret = edc;
-   
+
    eet_close(ef);
    return edf;
 }
@@ -176,6 +180,10 @@ _edje_cache_file_coll_open(char *file, char *coll, int *error_ret, Edje_Part_Col
    if (!edc)
      {
 	edc = _edje_file_coll_open(edf, NULL, coll);
+	if (!edc)
+	  {
+	     *error_ret = EDJE_LOAD_ERROR_UNKNOWN_COLLECTION;
+	  }
      }
    if (edc_ret) *edc_ret = edc;
    
