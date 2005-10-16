@@ -43,7 +43,7 @@ extern int ECORE_DIRECTFB_EVENT_WHEEL;
 
 	
 
-#ifdnef _ECORE_DIRECTFB_WINDOW_PREDEF
+#ifndef _ECORE_DIRECTFB_WINDOW_PREDEF
 typedef struct _Ecore_DirectFB_Window			Ecore_DirectFB_Window;
 #endif   
 typedef struct _Ecore_DirectFB_Cursor			Ecore_DirectFB_Cursor;
