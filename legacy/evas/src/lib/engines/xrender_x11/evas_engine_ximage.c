@@ -77,7 +77,7 @@ _xr_image_info_get(Display *disp, Drawable draw, Visual *vis)
 	     if (shm_info.shmid >= 0)
 	       {
 		  shm_info.shmaddr = xim->data = shmat(shm_info.shmid, 0, 0);
-		  if ((shm_info.shmaddr != NULL) && (shm_info.shmaddr != -1))
+		  if ((shm_info.shmaddr) && (shm_info.shmaddr != (void *) -1))
 		    {
 		       XErrorHandler ph;
 		       
@@ -166,7 +166,7 @@ _xr_image_new(Ximage_Info *xinf, int w, int h, int depth)
 		       if (xim->shm_info->shmid >= 0)
 			 {
 			    xim->shm_info->shmaddr = xim->xim->data = shmat(xim->shm_info->shmid, 0, 0);
-			    if ((xim->shm_info->shmaddr != NULL) && (xim->shm_info->shmaddr != -1))
+			    if ((xim->shm_info->shmaddr) && (xim->shm_info->shmaddr != (void *) -1))
 			      {
 				 XErrorHandler ph;
 				 

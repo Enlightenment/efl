@@ -251,7 +251,7 @@ evas_hash_modify(Evas_Hash *hash, const char *key, const void *data)
 		  hash->buckets[hash_num] = evas_object_list_prepend(hash->buckets[hash_num], el);
 	       }
 	     old_data = el->data;
-	     el->data = data;
+	     el->data = (void *) data;
 	     return old_data;
 	  }
      }
