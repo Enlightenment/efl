@@ -1,7 +1,6 @@
 #include "Ecore.h"
 #include "ecore_x_private.h"
 #include "Ecore_X.h"
-#include <alloca.h>
 
 /**
  * @defgroup Ecore_X_Window_Shape X Window Shape Functions
@@ -55,16 +54,22 @@ ecore_x_window_shape_rectangles_set(Ecore_X_Window win, Ecore_X_Rectangle *rects
    
    if (num > 0)
      {
-	rect = alloca(sizeof(XRectangle) * num);
-	for (i = 0; i < num; i++)
+	rect = malloc(sizeof(XRectangle) * num);
+	if (rect)
 	  {
-	     rect[i].x = rects[i].x;
-	     rect[i].y = rects[i].y;
-	     rect[i].width = rects[i].width;
-	     rect[i].height = rects[i].height;
+	     for (i = 0; i < num; i++)
+	       {
+		  rect[i].x = rects[i].x;
+		  rect[i].y = rects[i].y;
+		  rect[i].width = rects[i].width;
+		  rect[i].height = rects[i].height;
+	       }
 	  }
+	else
+	  num = 0;
      }
    XShapeCombineRectangles(_ecore_x_disp, win, ShapeBounding, 0, 0, rect, num, ShapeSet, Unsorted);
+   if (rect) free(rect);
 }
 
 void
@@ -111,16 +116,22 @@ ecore_x_window_shape_rectangles_add(Ecore_X_Window win, Ecore_X_Rectangle *rects
    
    if (num > 0)
      {
-	rect = alloca(sizeof(XRectangle) * num);
-	for (i = 0; i < num; i++)
+	rect = malloc(sizeof(XRectangle) * num);
+	if (rect)
 	  {
-	     rect[i].x = rects[i].x;
-	     rect[i].y = rects[i].y;
-	     rect[i].width = rects[i].width;
-	     rect[i].height = rects[i].height;
+	     for (i = 0; i < num; i++)
+	       {
+		  rect[i].x = rects[i].x;
+		  rect[i].y = rects[i].y;
+		  rect[i].width = rects[i].width;
+		  rect[i].height = rects[i].height;
+	       }
 	  }
+	else
+	  num = 0;
      }
    XShapeCombineRectangles(_ecore_x_disp, win, ShapeBounding, 0, 0, rect, num, ShapeUnion, Unsorted);
+   if (rect) free(rect);
 }
 
 Ecore_X_Rectangle *
