@@ -18,3 +18,5 @@ doc
 *.tar.gz
 ltmain.sh
 mkinstalldirs
+config.guess
+config.sub
