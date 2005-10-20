@@ -1,3 +1,10 @@
+#include "config.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+
+#if defined(HAVE_ECORE_X_H) || defined(HAVE_ECORE_FB_H)
+
 #include <Evas.h>
 #include <Ecore.h>
 #ifndef FB_ONLY
@@ -9,12 +16,6 @@
 #include <Edje.h>
 
 #include "Emotion.h"
-
-#include "config.h"
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 
 typedef struct _Frame_Data Frame_Data;
 
@@ -867,3 +868,10 @@ main(int argc, char **argv)
    return 0;
 }
 
+#else
+int main()
+{
+	puts("Could not find Ecore_X.h or Ecore_Fb.h so test is disabled");
+	return 0;
+}
+#endif
