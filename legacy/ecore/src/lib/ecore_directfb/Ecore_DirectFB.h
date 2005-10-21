@@ -19,7 +19,7 @@
 #endif
 
 #include <Ecore_Data.h>
-#include "directfb.h"
+#include <directfb.h>
 
 
 #ifdef __cplusplus
