@@ -167,7 +167,7 @@ ecore_config_string_get(const char *key)
    Ecore_Config_Prop  *e;
 
    e = ecore_config_get(key);
-   return (e && (e->type == ECORE_CONFIG_STR)) ? strdup(e->ptr) : NULL;
+   return (e && (e->type == ECORE_CONFIG_STR) && e->ptr) ? strdup(e->ptr) : NULL;
 }
 
 /**
