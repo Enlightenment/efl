@@ -673,8 +673,7 @@ AC_ARG_ENABLE(ecore-evas-dfb,
 )
 
 if test "x$want_ecore_evas_dfb" = "xyes"; then
-  dnl AC_CHECK_HEADER(Evas_Engine_DirectFB.h,
-  AC_CHECK_HEADER(Evas_Engine_Buffer.h,
+  AC_CHECK_HEADER(Evas_Engine_DirectFB.h,
     [
       AM_CONDITIONAL(BUILD_ECORE_EVAS_DIRECTFB, true)
       AC_DEFINE(BUILD_ECORE_EVAS_DIRECTFB, 1, [Support for DirectFB in Ecore_Evas])
