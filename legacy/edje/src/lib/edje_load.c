@@ -387,22 +387,26 @@ edje_file_collection_list(const char *file)
 {
    Evas_List *lst = NULL;
    Edje_File *edf;
+   int error_ret = 0;
 
    if ((!file) || (!*file)) return NULL;
-   edf = _edje_cache_file_coll_open((char *)file, NULL, NULL, NULL);
-   if (edf->collection_dir)
+   edf = _edje_cache_file_coll_open((char *)file, NULL, &error_ret, NULL);
+   if (edf != NULL)
      {
-	Evas_List *l;
-	
-	for (l = edf->collection_dir->entries; l; l = l->next)
+	if (edf->collection_dir)
 	  {
-	     Edje_Part_Collection_Directory_Entry *ce;
+	     Evas_List *l;
+	
+	     for (l = edf->collection_dir->entries; l; l = l->next)
+	       {
+		  Edje_Part_Collection_Directory_Entry *ce;
 	     
-	     ce = l->data;
-	     lst = evas_list_append(lst, strdup(ce->entry));
+		  ce = l->data;
+		  lst = evas_list_append(lst, strdup(ce->entry));
+	       }
 	  }
+	_edje_cache_file_unref(edf);   
      }
-   _edje_cache_file_unref(edf);   
    return lst;
 }
 
@@ -434,20 +438,25 @@ edje_file_data_get(const char *file, const char *key)
    Edje_File *edf;
    Evas_List *l;
    char *str = NULL;
+   int error_ret = 0;
    
-   edf = _edje_cache_file_coll_open((char *)file, NULL, NULL, NULL);
-   for (l = edf->data; l; l = l->next)
+   edf = _edje_cache_file_coll_open((char *)file, NULL, &error_ret, NULL);
+   if (edf != NULL)
      {
-	Edje_Data *di;
-	
-	di = l->data;
-	if (!strcmp(di->key, key))
+	for (l = edf->data; l; l = l->next)
 	  {
-	     str = strdup(di->value);
-	     break;
+	     Edje_Data *di;
+	
+	     di = l->data;
+	     if (!strcmp(di->key, key))
+	       {
+		  str = strdup(di->value);
+		  break;
+	       }
+     
 	  }
+	_edje_cache_file_unref(edf);
      }
-   _edje_cache_file_unref(edf);
    return str;
 }
 
