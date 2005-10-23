@@ -772,7 +772,7 @@ AC_ARG_ENABLE(ecore-con,
       AC_MSG_RESULT(yes)
     else
       AC_MSG_RESULT(no)
-      want_ecore_con="yes"
+      want_ecore_con="no"
     fi
   ], [
     AC_MSG_RESULT(yes)
