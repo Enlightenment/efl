@@ -4,6 +4,7 @@
 #include "ecore_file_private.h"
 #include <ctype.h>
 
+
 static int init = 0;
 
 /* externally accessible functions */
@@ -91,6 +92,47 @@ ecore_file_unlink(const char *file)
 {
    if (unlink(file) < 0) return 0;
    return 1;
+}
+
+int
+ecore_file_recursive_rm(const char *dir)
+{    
+   DIR                *dirp;
+   struct dirent      *dp;
+   Ecore_List        *list;
+   int                ret;
+
+   ret = 0;
+   dirp = opendir(dir);
+   if (!dirp) return ret;
+   
+   while ((dp = readdir(dirp)))
+     {
+	if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
+	  {
+	     char path[PATH_MAX];
+	     struct stat st;
+	     
+	     snprintf(path, PATH_MAX, "%s/%s", dir, dp->d_name);
+	     if (stat(path, &st) == -1) { ret = 0; continue; }
+	     
+	     if(S_ISDIR(st.st_mode))
+	       {
+		  ecore_file_recursive_rm(path);
+		  ecore_file_rmdir(path);
+	       }
+	     else if(S_ISREG(st.st_mode)||S_ISLNK(st.st_mode))
+	       {
+		  ecore_file_unlink(path);
+	       }
+	  }
+     }
+   closedir(dirp);
+
+   if(ecore_file_rmdir(dir))
+     ret = 1;
+   
+   return ret;
 }
 
 int
