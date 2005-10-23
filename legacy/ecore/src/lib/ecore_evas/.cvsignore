@@ -1,10 +1,6 @@
 .deps
 .libs
-Ecore_Evas.h
 Makefile
 Makefile.in
-ecore_evas.lo
-ecore_evas_fb.lo
-ecore_evas_x.lo
-ecore_evas_buffer.lo
-libecore_evas.la
+*.lo
+*.la
