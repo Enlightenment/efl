@@ -146,8 +146,10 @@ struct _Ecore_Exe
    void        *data;
    char        *tag;
    Ecore_Fd_Handler *fd_handler; /* FIXME: the fd_handler to handle read/write to child - if this was used, or NULL if not */
-   void         *data_buf; /* FIXME: a data buffer for data to write to the child - realloced as needed for more data and flushed when the fd handler says writes are possible */
-   int           data_size; /* FIXME: the size in bytes of the data buffer */
+   void         *write_data_buf; /* FIXME: a data buffer for data to write to the child - realloced as needed for more data and flushed when the fd handler says writes are possible */
+   int           write_data_size; /* FIXME: the size in bytes of the data buffer */
+   void         *read_data_buf; /* FIXME: data read from the child awating delivery to an event */
+   int           read_data_size; /* FIXME: data read from child in bytes */
    int           child_fd_write; /* FIXME: fd to write TO to send data to the child */
    int           child_fd_read; /* FIXME: fd to read FROM whne child has send us (parent) data */
 };
