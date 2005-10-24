@@ -96,35 +96,39 @@ ecore_file_unlink(const char *file)
 
 int
 ecore_file_recursive_rm(const char *dir)
-{    
+{
    DIR                *dirp;
    struct dirent      *dp;
    Ecore_List        *list;
    int                ret;
 
-   if(!ecore_file_is_dir(dir))
+   if (!ecore_file_is_dir(dir))
      return ecore_file_unlink(dir);
-   
-   ret = 0;
+
    dirp = opendir(dir);
-   if (!dirp) return ret;
-   
+   if (!dirp) return 0;
+
+   ret = 1;
    while ((dp = readdir(dirp)))
      {
 	if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
 	  {
 	     char path[PATH_MAX];
 	     struct stat st;
-	     
+
 	     snprintf(path, PATH_MAX, "%s/%s", dir, dp->d_name);
-	     if (stat(path, &st) == -1) { ret = 0; continue; }
-	     
-	     if(S_ISDIR(st.st_mode))
+	     if (stat(path, &st) == -1)
+	       {
+		  ret = 0;
+		  continue;
+	       }
+
+	     if (S_ISDIR(st.st_mode))
 	       {
 		  ecore_file_recursive_rm(path);
 		  ecore_file_rmdir(path);
 	       }
-	     else if(S_ISREG(st.st_mode)||S_ISLNK(st.st_mode))
+	     else if (S_ISREG(st.st_mode) || S_ISLNK(st.st_mode))
 	       {
 		  ecore_file_unlink(path);
 	       }
@@ -132,9 +136,9 @@ ecore_file_recursive_rm(const char *dir)
      }
    closedir(dirp);
 
-   if(ecore_file_rmdir(dir))
-     ret = 1;
-   
+   if (!ecore_file_rmdir(dir))
+     ret = 0;
+
    return ret;
 }
 
@@ -173,7 +177,7 @@ ecore_file_cp(const char *src, const char *dst)
    char                realpath1[PATH_MAX];
    char                realpath2[PATH_MAX];
    size_t              num;
-   
+
    if (!realpath(src, realpath1)) return 0;
    if (realpath(dst, realpath2) && !strcmp(realpath1, realpath2)) return 0;
 
@@ -306,7 +310,7 @@ ecore_file_app_exe_get(const char *app)
    char *p, *pp, *exe1 = NULL, *exe2 = NULL;
    char *exe = NULL;
    int in_quot_dbl = 0, in_quot_sing = 0, restart = 0;
-   
+
    p = (char *)app;
 restart:
    while ((*p) && (isspace(*p))) p++;
@@ -393,7 +397,7 @@ restart:
 	       {
 		  /* techcincally this is wrong. double quotes also accept
 		   * special chars:
-		   * 
+		   *
 		   * $, `, \
 		   */
 		  *pp = *p;
@@ -403,7 +407,7 @@ restart:
 	else
 	  {
 	     /* technically we should handle special chars:
-	      * 
+	      *
 	      * $, `, \, etc.
 	      */
 	     if ((p > exe1) && (p[-1] == '\\'))
