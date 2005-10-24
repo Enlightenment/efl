@@ -1,6 +1,9 @@
 #include "ecore_private.h"
 #include "Ecore.h"
 
+#include <errno.h>
+#include <sys/wait.h>
+
 #ifndef WIN32
 static Ecore_Exe *exes = NULL;
 
@@ -52,6 +55,9 @@ ecore_exe_run(const char *exe_cmd, const void *data)
    return NULL;
 }
 
+
+static char *shell = 0;
+
 /**
  * Spawns a child process with its stdin/out available for communication.
  *
@@ -73,7 +79,12 @@ Ecore_Exe *
 ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 {
    Ecore_Exe *exe;
-   pid_t pid;
+   pid_t pid = 0;
+   int dataPipe[2] = { -1, -1 };
+   int statusPipe[2] = { -1, -1 };
+   int n;
+   volatile int vfork_exec_errno = 0;
+   char **args;
 
    /* FIXME: 
     * if flags does not have read or write in them - just execute using
@@ -99,15 +110,99 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
     * chars are left, then take trailing data (if any) and put in read buf
     * waiting for more data.
     * 
+    * Just for the sake of example, this currently closes the parent to child pipe,
+    * and leaves the other one open.
     */
    if (!exe_cmd) return NULL;
-   pid = fork();   
+
+   if (shell == 0) 
+      {
+         shell = getenv("SHELL");
+	if (shell == 0)
+	   shell = "/bin/sh";
+      }
+
+   args = (char **) calloc(4, sizeof(char *));
+   n = 0;
+   args[n++] = shell;
+   args[n++] = "-c";
+   args[n++] = exe_cmd;
+   args[n++] = 0;
+
+   if (pipe(dataPipe) < 0 || pipe(statusPipe) < 0)
+      printf("Failed to create pipe\n");
+   signal(SIGPIPE, SIG_IGN);	/* we only want EPIPE on errors */
+   pid = fork();
+
+   if (pid == 0)
+      {		/* child */
+         setsid();
+         close(STDIN_FILENO);
+	 dup2(dataPipe[1], STDOUT_FILENO);
+	 dup2(dataPipe[1], STDERR_FILENO);
+	 close(dataPipe[0]);
+	 close(statusPipe[0]);
+	 fcntl(statusPipe[1], F_SETFD, FD_CLOEXEC);	/* close on exec shows sucess */
+
+	 errno = 0;
+	 execvp(shell, (char **) args);
+
+	 vfork_exec_errno = errno;
+	 close(statusPipe[1]);
+	 _exit(-1);
+      }
+   else if (pid > 0)
+      {	/* parent */
+         close(dataPipe[1]);
+	 close(statusPipe[1]);
+
+	 while (1)
+	    {
+               char buf;
+
+	       n = read(statusPipe[0], &buf, 1);
+
+	       if (n == 0 && vfork_exec_errno != 0)
+	          {
+		     errno = vfork_exec_errno;
+		     printf("Could not exec process\n");
+		  }
+	       break;
+	    }
+         close(statusPipe[0]);
+
+      }
+   else
+      {
+	  printf("Failed to fork process\n");
+	  pid = 0;
+      }
+
+   n = 0;
+   if (pid)
+      {
+	  close(dataPipe[0]);
+
+	  if (WIFEXITED(n))
+	    {
+		n = WEXITSTATUS(n);
+		printf("Process %s returned %i\n", exe_cmd, n);
+		pid = 0;
+	    }
+         else
+	    n = -1;
+      }
+
+   free(args);
+   errno = n;
+
    if (pid)
      {
 	exe = calloc(1, sizeof(Ecore_Exe));
 	if (!exe)
 	  {
 	     kill(pid, SIGKILL);
+             printf("No memory for Ecore_Exe %s\n", exe_cmd);
 	     return NULL;
 	  }
 	ECORE_MAGIC_SET(exe, ECORE_MAGIC_EXE);
@@ -116,9 +211,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 	exes = _ecore_list2_append(exes, exe);
 	return exe;
      }
-   setsid();
-   execl("/bin/sh", "/bin/sh", "-c", exe_cmd, (char *)NULL);
-   exit(127);
+
    return NULL;
 }
 
