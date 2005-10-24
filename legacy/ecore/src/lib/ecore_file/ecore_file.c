@@ -99,7 +99,6 @@ ecore_file_recursive_rm(const char *dir)
 {
    DIR                *dirp;
    struct dirent      *dp;
-   Ecore_List        *list;
    int                ret;
 
    if (!ecore_file_is_dir(dir))
