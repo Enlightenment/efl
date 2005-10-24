@@ -53,6 +53,92 @@ ecore_exe_run(const char *exe_cmd, const void *data)
 }
 
 /**
+ * Spawns a child process with its stdin/out available for communication.
+ *
+ * This function does the same thing as ecore_exe_run(), but also makes the
+ * standard in and/or out from the child process available for reading or
+ * writing. To write use ecore_exe_pipe_write(). To read listen to 
+ * ECORE_EVENT_EXE_DATA events (set up a handler). Ecore may buffer read data
+ * until a newline character if asked to wit the @p flags. All data will be
+ * included in the events (newlines will not be stripped). This will only
+ * happen if the process is run with ECORE_EXE_PIPE_READ enabled in the flags.
+ * 
+ * @param   exe_cmd The command to run with @c /bin/sh.
+ * @param   flags   The flag parameters for how to deal with inter-process I/O
+ * @param   data    Data to attach to the returned process handle.
+ * @return  A process handle to the spawned process.
+ * @ingroup Ecore_Exe_Basic_Group
+ */
+Ecore_Exe *
+ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
+{
+   Ecore_Exe *exe;
+   pid_t pid;
+
+   /* FIXME: 
+    * if flags does not have read or write in them - just execute using
+    * ecore_exe_run() as normal.
+    * pipe() to creeate pipes (as necessary accoring to flags)
+    * in child close() parent side of pipes
+    * in child dup2() stdin, stdout (according to flags as necessary)
+    * in parent (here) close() child side of pipes
+    * set up fd's in ecore_exe struct FIXME - add to struct
+    * set up fd handler in ecore_exe struct 
+    * see ecore_con for code and examples on this (fd's there are to a socket
+    * but otherwise work the same as here). the ECORE_EVENT_EXE_EXIT event
+    * aces like the client del event from ecore_con - signalling that the
+    * connection is closed. once this event has been handled the child
+    * ecore_exe struct is freed automatically and is no longer valid.
+    */
+   if (!exe_cmd) return NULL;
+   pid = fork();   
+   if (pid)
+     {
+	exe = calloc(1, sizeof(Ecore_Exe));
+	if (!exe)
+	  {
+	     kill(pid, SIGKILL);
+	     return NULL;
+	  }
+	ECORE_MAGIC_SET(exe, ECORE_MAGIC_EXE);
+	exe->pid = pid;
+	exe->data = (void *)data;
+	exes = _ecore_list2_append(exes, exe);
+	return exe;
+     }
+   setsid();
+   execl("/bin/sh", "/bin/sh", "-c", exe_cmd, (char *)NULL);
+   exit(127);
+   return NULL;
+}
+
+/**
+ * Writes data to the given child process which it recieves on stdin.
+ * 
+ * This function writes to a child processes standard in, with unlimited
+ * buffering. This call will never block. It may fail if the system runs out
+ * of memory.
+ * 
+ * @param exe  The child process to write to
+ * @param data The data to write
+ * @param size The size of the data to write, in bytes
+ * @return 1 if successful, 0 on failure.
+ * @ingroup Ecore_Exe_Basic_Group
+ */
+int
+ecore_exe_pipe_write(Ecore_Exe *exe, void *data, int size)
+{
+   /* FIXME: add data to buffer and flag fd handlers to wake up when write
+    * to child fd is available, and when it is, flush as much data as possible
+    * at that time (much like ecore_con). this means the parent is mallocing
+    * its own write buffer in process space - giving us potentially huge
+    * buffers, so synchronisation needs to be done at a higher level here as
+    * buffers could just get huge
+    */
+   return 0;
+}
+
+/**
  * Sets the string tag for the given process handle
  *
  * @param   exe The given process handle.
@@ -292,7 +378,8 @@ void *
 _ecore_exe_free(Ecore_Exe *exe)
 {
    void *data;
-   
+
+   /* FIXME: close fdhanlders and free buffers if they exist */
    data = exe->data;
    exes = _ecore_list2_remove(exes, exe);
    ECORE_MAGIC_SET(exe, ECORE_MAGIC_NONE);

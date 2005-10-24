@@ -116,6 +116,13 @@ enum _Ecore_Fd_Handler_Flags
    ECORE_FD_ERROR = 4
 };
 typedef enum _Ecore_Fd_Handler_Flags Ecore_Fd_Handler_Flags;
+enum _Ecore_Exe_Flags
+{
+   ECORE_EXE_PIPE_READ = 1,
+     ECORE_EXE_PIPE_WRITE = 2,
+     ECORE_EXE_PIPE_READ_LINE_BUFFERED = 4
+};
+typedef enum _Ecore_Exe_Flags Ecore_Exe_Flags;
 
 #ifndef WIN32
 typedef struct _Ecore_Exe           Ecore_Exe;
@@ -138,6 +145,11 @@ struct _Ecore_Exe
    pid_t        pid;
    void        *data;
    char        *tag;
+   Ecore_Fd_Handler *fd_handler; /* FIXME: the fd_handler to handle read/write to child - if this was used, or NULL if not */
+   void         *data_buf; /* FIXME: a data buffer for data to write to the child - realloced as needed for more data and flushed when the fd handler says writes are possible */
+   int           data_size; /* FIXME: the size in bytes of the data buffer */
+   int           child_fd_write; /* FIXME: fd to write TO to send data to the child */
+   int           child_fd_read; /* FIXME: fd to read FROM whne child has send us (parent) data */
 };
 #endif
 

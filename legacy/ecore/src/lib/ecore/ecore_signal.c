@@ -161,6 +161,12 @@ _ecore_signal_call(void)
 	  {
 	     Ecore_Event_Exe_Exit *e;
 	     
+	     /* FIXME: If this process is set to read from the child, DELAY
+	      * the exe event until the pipe from the child dies and reports
+	      * errors - THEN report and exe - so store this exe value in the
+	      * ecore_exe struct waiting for the read fd to die then report
+	      * final read data, THEN this exit event
+	      */
 	     e = _ecore_event_exe_exit_new();
 	     if (e)
 	       {

@@ -55,14 +55,15 @@
 extern "C" {
 #endif
 
-#define ECORE_EVENT_NONE         0
-#define ECORE_EVENT_EXE_EXIT     1 /**< Spawned Exe has exit event */
-#define ECORE_EVENT_SIGNAL_USER  2 /**< User signal event */
-#define ECORE_EVENT_SIGNAL_HUP   3 /**< Hup signal event */
-#define ECORE_EVENT_SIGNAL_EXIT  4 /**< Exit signal event */
-#define ECORE_EVENT_SIGNAL_POWER 5 /**< Power signal event */
+#define ECORE_EVENT_NONE            0
+#define ECORE_EVENT_EXE_EXIT        1 /**< Spawned Exe has exit event */
+#define ECORE_EVENT_SIGNAL_USER     2 /**< User signal event */
+#define ECORE_EVENT_SIGNAL_HUP      3 /**< Hup signal event */
+#define ECORE_EVENT_SIGNAL_EXIT     4 /**< Exit signal event */
+#define ECORE_EVENT_SIGNAL_POWER    5 /**< Power signal event */
 #define ECORE_EVENT_SIGNAL_REALTIME 6 /**< Realtime signal event */
-#define ECORE_EVENT_COUNT        7
+#define ECORE_EVENT_EXE_DATA        7 /**< Data from a child process */
+#define ECORE_EVENT_COUNT           8
    
 #ifndef _ECORE_PRIVATE_H   
    enum _Ecore_Fd_Handler_Flags
@@ -72,6 +73,14 @@ extern "C" {
 	ECORE_FD_ERROR = 4 /**< Fd Error mask */
      };
    typedef enum _Ecore_Fd_Handler_Flags Ecore_Fd_Handler_Flags;
+   
+   enum _Ecore_Exe_Flags /* FIXME: flags for executing a child with its stdin and/or stdout piped back */
+     {
+	ECORE_EXE_PIPE_READ = 1, /**< Exe Pipe Read mask */
+	ECORE_EXE_PIPE_WRITE = 2, /**< Exe Pipe Write mask */
+	ECORE_EXE_PIPE_READ_LINE_BUFFERED = 4 /**< Reads are buffered until a newline and delivered 1 event per line */
+     };
+   typedef enum _Ecore_Exe_Flags Ecore_Exe_Flags;
    
 #ifndef WIN32
    typedef void Ecore_Exe; /**< A handle for spawned processes */
@@ -86,12 +95,13 @@ extern "C" {
    typedef void Ecore_Event; /**< A handle for an event */
    typedef void Ecore_Animator; /**< A handle for animators */
 #endif
-   typedef struct _Ecore_Event_Exe_Exit     Ecore_Event_Exe_Exit; /**< Spawned Exe exit event */
-   typedef struct _Ecore_Event_Signal_User  Ecore_Event_Signal_User; /**< User signal event */
-   typedef struct _Ecore_Event_Signal_Hup   Ecore_Event_Signal_Hup; /**< Hup signal event */
-   typedef struct _Ecore_Event_Signal_Exit  Ecore_Event_Signal_Exit; /**< Exit signal event */
-   typedef struct _Ecore_Event_Signal_Power Ecore_Event_Signal_Power; /**< Power signal event */
+   typedef struct _Ecore_Event_Exe_Exit        Ecore_Event_Exe_Exit; /**< Spawned Exe exit event */
+   typedef struct _Ecore_Event_Signal_User     Ecore_Event_Signal_User; /**< User signal event */
+   typedef struct _Ecore_Event_Signal_Hup      Ecore_Event_Signal_Hup; /**< Hup signal event */
+   typedef struct _Ecore_Event_Signal_Exit     Ecore_Event_Signal_Exit; /**< Exit signal event */
+   typedef struct _Ecore_Event_Signal_Power    Ecore_Event_Signal_Power; /**< Power signal event */
    typedef struct _Ecore_Event_Signal_Realtime Ecore_Event_Signal_Realtime; /**< Realtime signal event */
+   typedef struct _Ecore_Event_Exe_Data        Ecore_Event_Exe_Data; /**< Data from a child process */
 
 #ifndef WIN32
    struct _Ecore_Event_Exe_Exit /** Process exit event */
@@ -156,6 +166,15 @@ extern "C" {
 #endif
      };
 
+#ifndef WIN32
+   struct _Ecore_Event_Exe_Data /** Data from a child process event */
+     {
+	Ecore_Exe *exe; /**< The handle to the process */
+	void *data; /**< the raw binary data from the child process that was recieved */
+	int   size; /**< the size of this data in bytes */
+     };
+#endif
+   
    EAPI int  ecore_init(void);
    EAPI int  ecore_shutdown(void);
        
@@ -176,6 +195,8 @@ extern "C" {
        
 #ifndef WIN32
    EAPI Ecore_Exe  *ecore_exe_run(const char *exe_cmd, const void *data);
+   EAPI Ecore_Exe  *ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data);
+   EAPI int         ecore_exe_pipe_write(Ecore_Exe *exe, void *data, int size);
    EAPI void       *ecore_exe_free(Ecore_Exe *exe);
    EAPI pid_t       ecore_exe_pid_get(Ecore_Exe *exe);
    EAPI void        ecore_exe_tag_set(Ecore_Exe *exe, const char *tag);
