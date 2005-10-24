@@ -89,6 +89,16 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
     * aces like the client del event from ecore_con - signalling that the
     * connection is closed. once this event has been handled the child
     * ecore_exe struct is freed automatically and is no longer valid.
+    * 
+    * when fd handlers report data - if line buffering is nto enabled instantly
+    * copy data to a exe data event struct and add the event like ecore_con. if
+    * line buffering is enabled, parse new data block for a \n. if there is
+    * none, then simply append to read buf. if there are 1 or more, append
+    * until, and including the first \n, to the existing read ubf (if any) then
+    * generate data event for that. repeat for each other \n found until no \n
+    * chars are left, then take trailing data (if any) and put in read buf
+    * waiting for more data.
+    * 
     */
    if (!exe_cmd) return NULL;
    pid = fork();   
