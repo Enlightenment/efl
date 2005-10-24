@@ -102,6 +102,9 @@ ecore_file_recursive_rm(const char *dir)
    Ecore_List        *list;
    int                ret;
 
+   if(!ecore_file_is_dir(dir))
+     return ecore_file_unlink(dir);
+   
    ret = 0;
    dirp = opendir(dir);
    if (!dirp) return ret;
