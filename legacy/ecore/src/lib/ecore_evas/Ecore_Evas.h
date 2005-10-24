@@ -105,6 +105,8 @@ EAPI void            ecore_evas_xrender_x11_extra_event_window_add(Ecore_Evas *e
 
 EAPI Ecore_Evas     *ecore_evas_fb_new(char *disp_name, int rotation, int w, int h);
 
+EAPI Ecore_Evas     *ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w, int h);
+
 EAPI Ecore_Evas     *ecore_evas_buffer_new(int w, int h);
 EAPI const int      *ecore_evas_buffer_pixels_get(Ecore_Evas *ee);
        
