@@ -145,6 +145,7 @@ struct _Ecore_Exe
    pid_t        pid;
    void        *data;
    char        *tag;
+   Ecore_Exe_Flags  flags;
    Ecore_Fd_Handler *fd_handler; /* FIXME: the fd_handler to handle read/write to child - if this was used, or NULL if not */
    void         *write_data_buf; /* FIXME: a data buffer for data to write to the child - realloced as needed for more data and flushed when the fd handler says writes are possible */
    int           write_data_size; /* FIXME: the size in bytes of the data buffer */
