@@ -204,6 +204,7 @@ AC_SUBST(EDJE_THUMB_PRG)
 
 AC_OUTPUT([
 edje.pc
+edje.spec
 Makefile
 data/Makefile
 data/images/Makefile
