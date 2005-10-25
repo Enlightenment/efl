@@ -1,4 +1,5 @@
 #include "Embryo.h"
+#include "config.h"
 
 /* This is ugly code! don't look at it please! i am embarrassed! i need to */
 /* cleanit up! */
@@ -10,7 +11,10 @@
 #include <limits.h>
 #include <stdarg.h>
 #include <string.h>
-#include <alloca.h>
+
+#if HAVE_ALLOCA_H
+# include <alloca.h>
+#endif
 
 /* debugging native calls */
 static int process_format_char(Embryo_Program *ep, char ch, Embryo_Cell param);
