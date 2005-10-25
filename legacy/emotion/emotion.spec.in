@@ -1,9 +1,9 @@
 %define _missing_doc_files_terminate_build 0
 
 Summary: emotion
-Name: emotion
-Version: 0.0.1.004
-Release: 0.20050908
+Name: @PACKAGE@
+Version: @VERSION@
+Release: 0.%(date '+%Y%m%d')
 License: BSD
 Group: System Environment/Libraries
 URL: http://www.enlightenment.org/

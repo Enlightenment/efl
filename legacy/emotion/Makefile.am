@@ -2,7 +2,7 @@
 
 SUBDIRS = src data
 
-MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
+MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess emotion.spec \
                        config.h.in config.sub configure install-sh \
 		       ltconfig ltmain.sh missing mkinstalldirs \
 		       stamp-h.in emotion_docs.tar emotion_docs.tar.gz \
@@ -11,8 +11,8 @@ MAINTAINERCLEANFILES = Makefile.in aclocal.m4 config.guess \
 bin_SCRIPTS = emotion-config
 
 EXTRA_DIST = README AUTHORS COPYING COPYING-PLAIN \
-	emotion.spec emotion.c.in gendoc Doxyfile emotion.pc.in \
-	debian/changelog debian/changelog.in debian/control \
+	emotion.spec emotion.spec.in emotion.c.in gendoc Doxyfile \
+	emotion.pc.in debian/changelog debian/changelog.in debian/control \
 	debian/copyright debian/rules debian/libemotion0.files \
 	debian/libemotion0-dev.files debian/emotion0-bin.files \
 	debian/docs

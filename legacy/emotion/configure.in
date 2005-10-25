@@ -198,6 +198,7 @@ AC_SUBST(requirements)
 AC_OUTPUT([
 Makefile
 emotion.pc
+emotion.spec
 src/Makefile
 src/lib/Makefile
 src/modules/Makefile
