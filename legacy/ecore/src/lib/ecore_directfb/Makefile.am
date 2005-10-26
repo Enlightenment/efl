@@ -12,11 +12,11 @@ if BUILD_ECORE_DIRECTFB
 
 lib_LTLIBRARIES = libecore_directfb.la
 include_HEADERS = \
-Ecore_DirectFB.h \
-ecore_directfb_keys.h
+Ecore_DirectFB.h
 
 libecore_directfb_la_SOURCES = \
 ecore_directfb.c \
+ecore_directfb_keys.h \
 ecore_directfb_private.h 
 
 libecore_directfb_la_LIBADD = \
@@ -31,4 +31,5 @@ endif
 EXTRA_DIST = \
 Ecore_DirectFB.h \
 ecore_directfb.c \
+ecore_directfb_keys.h \
 ecore_directfb_private.h
