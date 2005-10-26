@@ -74,9 +74,9 @@ _xre_image_load(Ximage_Info *xinf, char *file, char *key)
 
    if (!file) return NULL;
    if (key)
-     snprintf(buf, sizeof(buf), "/@%p@%x@/%s//://%s", xinf->disp, xinf->root, file, key);
+     snprintf(buf, sizeof(buf), "/@%p@%lx@/%s//://%s", xinf->disp, xinf->root, file, key);
    else
-     snprintf(buf, sizeof(buf), "/@%p@%x@/%s", xinf->disp, xinf->root, file);
+     snprintf(buf, sizeof(buf), "/@%p@%lx@/%s", xinf->disp, xinf->root, file);
    im = __xre_image_find(buf);
    if (im)
      {

@@ -12,7 +12,6 @@ _xre_font_surface_new(Ximage_Info *xinf, RGBA_Font_Glyph *fg)
    XR_Font_Surface *fs;
    DATA8 *data;
    int w, h, j;
-   DATA8 *ndata;
    XRenderPictureAttributes att;
    Ximage_Image  *xim;
    Evas_Hash *pool;
@@ -30,7 +29,7 @@ _xre_font_surface_new(Ximage_Info *xinf, RGBA_Font_Glyph *fg)
 	fs = fg->ext_dat;
 	if ((fs->xinf->disp == xinf->disp) && (fs->xinf->root == xinf->root))
 	  return fs;
-	snprintf(buf, sizeof(buf), "@%p@/@%x@", fs->xinf->disp, fs->xinf->root);
+	snprintf(buf, sizeof(buf), "@%p@/@%lx@", fs->xinf->disp, fs->xinf->root);
 	pool = evas_hash_find(_xr_fg_pool, buf);
 	if (pool)
 	  {
@@ -49,7 +48,7 @@ _xre_font_surface_new(Ximage_Info *xinf, RGBA_Font_Glyph *fg)
    fs->w = w;
    fs->h = h;
    
-   snprintf(buf, sizeof(buf), "@%p@/@%x@", fs->xinf->disp, fs->xinf->root);
+   snprintf(buf, sizeof(buf), "@%p@/@%lx@", fs->xinf->disp, fs->xinf->root);
    pool = evas_hash_find(_xr_fg_pool, buf);
    snprintf(buf2, sizeof(buf2), "%p", fg);
    pool = evas_hash_add(pool, buf2, fs);
@@ -129,11 +128,11 @@ _xre_font_pool_cb(Evas_Hash *hash, const char *key, void *data, void *fdata)
 {
    Evas_Hash *pool;
    XR_Font_Surface *fs;
-   char buf[256], buf2[256];
+   char buf[256];
    
    fs = fdata;
    pool = data;
-   snprintf(buf, sizeof(buf), "@%p@/@%x@", fs->xinf->disp, fs->xinf->root);
+   snprintf(buf, sizeof(buf), "@%p@/@%lx@", fs->xinf->disp, fs->xinf->root);
    pool = evas_hash_del(pool, buf, fs);
    hash = evas_hash_modify(hash, key, pool);
    return 1;
@@ -156,7 +155,6 @@ _xre_font_surface_draw(Ximage_Info *xinf, RGBA_Image *surface, RGBA_Draw_Context
    XR_Font_Surface *fs;
    Xrender_Surface *target_surface;
    XRectangle rect;
-   XRenderPictureAttributes att;
    int r, g, b, a;
    
    fs = fg->ext_dat;

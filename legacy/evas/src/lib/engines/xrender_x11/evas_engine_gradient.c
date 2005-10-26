@@ -53,13 +53,7 @@ _xre_gradient_colors_clear(XR_Gradient *gr)
 void
 _xre_gradient_draw(Xrender_Surface *rs, RGBA_Draw_Context *dc, XR_Gradient *gr, int x, int y, int w, int h, double angle)
 {
-   XTransform xf;
-   XRectangle rect;
-   XRenderPictureAttributes att;
-   Picture mask;
-   int r, g, b, a, op;
    RGBA_Image *im;
-   double a2;
    
    if ((w <= 0) || (h <= 0)) return;
    
