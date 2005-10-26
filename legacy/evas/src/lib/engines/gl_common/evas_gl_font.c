@@ -155,7 +155,7 @@ evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg)
 void
 evas_gl_font_texture_free(Evas_GL_Font_Texture *ft)
 {
-   if (!ft) return NULL;
+   if (!ft) return;
    if (ft->gc->font_texture == ft->texture)
      {
 	ft->gc->font_texture = 0;
