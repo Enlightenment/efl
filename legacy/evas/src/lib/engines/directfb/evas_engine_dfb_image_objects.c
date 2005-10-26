@@ -36,7 +36,6 @@ evas_engine_directfb_image_load(void *data, char *file, char *key, int *error)
    IDirectFBImageProvider *provider;
    IDirectFBSurface   *image;
    RGBA_Image         *im = NULL;
-   DFBResult           err;
    DATA64 mod_time;
 
    re = (Render_Engine *) data;
@@ -203,8 +202,8 @@ evas_engine_directfb_image_data_get(void *data, void *image, int to_write,
    IDirectFBSurface   *surf;
    void               *p;
    int                 pitch;
-   int                *buf = NULL;
-   int                 size, i, tmp;
+   DATA32             *buf = NULL;
+   int                 size;
 
    re = (Render_Engine *) data;
    im = image;
@@ -212,7 +211,7 @@ evas_engine_directfb_image_data_get(void *data, void *image, int to_write,
    size = im->image->w * im->image->h * sizeof(DATA32);
    surf->Lock(surf, DSLF_READ, &p, &pitch);
 
-   if (buf = malloc(size))
+   if ((buf = malloc(size)))
       buf = memcpy(buf, p, size);
    *image_data = buf;
 
@@ -253,6 +252,7 @@ evas_engine_directfb_image_alpha_set(void *data, void *image, int has_alpha)
       im->flags |= RGBA_IMAGE_HAS_ALPHA;
    else
       im->flags &= ~RGBA_IMAGE_HAS_ALPHA;
+   return im;
 }
 
 int
@@ -285,7 +285,6 @@ evas_engine_directfb_image_draw(void *data, void *context, void *surface,
    RGBA_Image         *im = (RGBA_Image *) image;
    RGBA_Draw_Context  *dc = (RGBA_Draw_Context *) context;
    IDirectFBSurface   *img = (IDirectFBSurface *) im->image->data;
-   DFBSurfaceDescription dsc;
 
    src_w = im->image->w;
    src_h = im->image->h;
@@ -585,8 +584,6 @@ _dfb_image_create(Render_Engine *re, int w, int h)
 static void
 _dfb_image_free(RGBA_Image *im)
 {
-  int i;
-
    if (im->image) _dfb_image_surface_free(im->image);
    if (im->info.file) free(im->info.file);
    if (im->info.key) free(im->info.key);
@@ -690,8 +687,6 @@ _dfb_image_flush_cache(void)
 static void
 _dfb_image_dirty(RGBA_Image *im)
 {
-   int i;
-
    _dfb_image_unstore(im);
    im->flags |= RGBA_IMAGE_IS_DIRTY;
 }

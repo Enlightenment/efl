@@ -113,7 +113,6 @@ void
 evas_engine_directfb_setup(Evas * e, void *in)
 {
    Evas_Engine_Info_DirectFB *info;
-   IDirectFBImageProvider *provider;
 
    info = (Evas_Engine_Info_DirectFB *) in;
    /* if we arent set to directfb, why the hell do we get called?! */
@@ -131,7 +130,7 @@ evas_engine_directfb_setup(Evas * e, void *in)
    e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
 }
 
-void        *
+void *
 evas_engine_directfb_output_setup(int w, int h, IDirectFB * dfb,
 				  IDirectFBSurface * surf,
 				  DFBSurfaceDrawingFlags flags)
@@ -183,12 +182,12 @@ evas_engine_directfb_output_setup(int w, int h, IDirectFB * dfb,
     * to that surface is wrapped in Lock / Unlock calls whenever the data is
     * manipulated directly. */
    im = evas_common_image_new();
-   if (!im) return;
+   if (!im) return NULL;
    im->image = evas_common_image_surface_new(im);
    if (!im->image)
    {
       evas_common_image_free(im);
-      return;
+      return NULL;
    }
    im->image->w = w;
    im->image->h = h;
@@ -291,12 +290,9 @@ evas_engine_directfb_output_redraws_next_update_get(void *data, int *x, int *y,
 						    int *cy, int *cw, int *ch)
 {
    Render_Engine      *re;
-   RGBA_Image         *surface;
    Tilebuf_Rect       *rect;
-   Evas_Object_List   *l;
    int                 ux, uy, uw, uh;
-   static             first = 1;
-   DFBRegion          region;
+   DFBRegion           region;
 
    re = (Render_Engine *) data;
    if (re->end)
@@ -447,6 +443,7 @@ evas_engine_directfb_context_color_get(void *data, void *context, int *r,
    *g = (int)(G_VAL(&((RGBA_Draw_Context *)context)->col.col));
    *b = (int)(B_VAL(&((RGBA_Draw_Context *)context)->col.col));
    *a = (int)(A_VAL(&((RGBA_Draw_Context *)context)->col.col));
+   return 1;
 }
 
 void
@@ -565,8 +562,6 @@ evas_engine_directfb_draw_rectangle(void *data, void *context, void *surface,
 void
 rectangle_draw_internal(void *data, void *context, int x, int y, int w, int h)
 {
-   int                 yy;
-   DATA32             *ptr;
    RGBA_Draw_Context  *dc = (RGBA_Draw_Context *) context;
    Render_Engine      *re = (Render_Engine *) data;
    int                 r, g, b, a;
@@ -926,7 +921,7 @@ evas_engine_directfb_font_draw(void *data, void *context, void *surface,
 	     if (im)
 	       {
 		  int max_ascent;
-		  int i, j;
+		  int j;
 
 		  im->flags |= RGBA_IMAGE_HAS_ALPHA;
 		  j = ow * oh;
