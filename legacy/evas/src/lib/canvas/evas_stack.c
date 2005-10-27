@@ -196,6 +196,7 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
      }
    else
      {
+	if (above->smart.parent) return;
 	if (obj->layer != above->layer)
 	  {
 	     return;
@@ -272,6 +273,7 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
      }
    else
      {
+	if (below->smart.parent) return;
 	if (obj->layer != below->layer)
 	  {
 	     return;

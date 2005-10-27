@@ -155,6 +155,7 @@ evas_object_layer_set(Evas_Object *obj, int l)
    obj->cur.layer = l;
    evas_object_inject(obj, e);
    obj->restack = 1;
+   evas_object_change(obj);
    if (obj->clip.clipees)
      {
 	evas_object_inform_call_restack(obj);
