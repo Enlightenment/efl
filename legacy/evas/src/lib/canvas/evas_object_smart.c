@@ -132,11 +132,18 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
    return;
    MAGIC_CHECK_END();
 
+   if (obj->smart.parent ==  smart_obj) return;
+   
    if (obj->smart.parent) evas_object_smart_member_del(obj);
-
+   
+   evas_object_release(obj, 1);
+   obj->layer = smart_obj->layer;
+   obj->cur.layer = obj->layer->layer;
    obj->smart.parent = smart_obj;
-   smart_obj->smart.contained = evas_list_append(smart_obj->smart.contained, obj);
+   smart_obj->smart.contained = evas_object_list_append(smart_obj->smart.contained, obj);
    evas_object_smart_member_cache_invalidate(obj);
+   obj->restack = 1;
+   evas_object_change(obj);
 }
 
 /**
@@ -153,10 +160,13 @@ evas_object_smart_member_del(Evas_Object *obj)
    MAGIC_CHECK_END();
 
    if (!obj->smart.parent) return;
-
-   obj->smart.parent->smart.contained = evas_list_remove(obj->smart.parent->smart.contained, obj);
+   obj->smart.parent->smart.contained = evas_object_list_remove(obj->smart.parent->smart.contained, obj);
    obj->smart.parent = NULL;
    evas_object_smart_member_cache_invalidate(obj);
+   obj->cur.layer = obj->layer->layer;
+   evas_object_inject(obj, obj->layer->evas);
+   obj->restack = 1;
+   evas_object_change(obj);
 }
 
 /**
@@ -340,11 +350,7 @@ evas_object_smart_cleanup(Evas_Object *obj)
    if (obj->smart.parent)
      evas_object_smart_member_del(obj);
    while (obj->smart.contained)
-     {
-	/* null out smart parent object - maybe a hole to creep through? */
-	((Evas_Object *)obj->smart.contained->data)->smart.parent = NULL;
-	obj->smart.contained = evas_list_remove(obj->smart.contained, obj->smart.contained->data);
-     }
+     evas_object_smart_member_del((Evas_Object *)obj->smart.contained);
    while (obj->smart.callbacks)
      {
 	Evas_Smart_Callback *cb;
@@ -362,14 +368,14 @@ evas_object_smart_cleanup(Evas_Object *obj)
 void
 evas_object_smart_member_cache_invalidate(Evas_Object *obj)
 {
-   Evas_List *l;
+   Evas_Object_List *l;
    
    obj->parent_cache_valid = 0;
    for (l = obj->smart.contained; l; l = l->next)
      {
 	Evas_Object *obj2;
 	
-	obj2 = l->data;
+	obj2 = (Evas_Object *)l;
 	evas_object_smart_member_cache_invalidate(obj2);
      }
 }

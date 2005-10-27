@@ -18,13 +18,15 @@ evas_object_new(void)
 void
 evas_object_free(Evas_Object *obj, int clean_layer)
 {
+   int was_smart_child = 0;
+   
    evas_object_grabs_cleanup(obj);
    evas_object_intercept_cleanup(obj);
+   if (obj->smart.parent) was_smart_child = 1;
    evas_object_smart_cleanup(obj);
    obj->func->free(obj);
-   if (obj->name)
-     evas_object_name_set(obj, NULL);
-   evas_object_release(obj, clean_layer);
+   if (obj->name) evas_object_name_set(obj, NULL);
+   if (!was_smart_child) evas_object_release(obj, clean_layer);
    if (obj->name)
      {
 	free(obj->name);
@@ -59,12 +61,9 @@ evas_object_change(Evas_Object *obj)
 {
    Evas_List *l;
 
-   if (obj->smart.smart) return;
-   if (!((obj->cur.visible != obj->prev.visible) || (obj->cur.visible)))
-     return;
+   obj->layer->evas->changed = 1;
    if (obj->changed) return;
    obj->changed = 1;
-   obj->layer->evas->changed = 1;
    /* set changed flag on all objects this one clips too */
    for (l = obj->clip.clipees; l; l = l->next)
      {
@@ -73,6 +72,7 @@ evas_object_change(Evas_Object *obj)
 	o = (Evas_Object *)l->data;
 	evas_object_change(o);
      }
+   if (obj->smart.parent) evas_object_change(obj->smart.parent);
 }
 
 Evas_List *

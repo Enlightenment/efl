@@ -343,13 +343,13 @@ struct _Evas_Object
    void             *object_data;
 
    struct {
-      int            walking_list;
-      Evas_Smart    *smart;
-      void          *data;
-      Evas_Object   *parent;
-      Evas_List     *contained;
-      Evas_List     *callbacks;
-      char           deletions_waiting : 1;
+      int               walking_list;
+      Evas_Smart       *smart;
+      void             *data;
+      Evas_Object      *parent;
+      Evas_Object_List *contained;
+      Evas_List        *callbacks;
+      char              deletions_waiting : 1;
    } smart;
 
    int                         mouse_grabbed;
@@ -365,6 +365,7 @@ struct _Evas_Object
    short                       pre_render_done : 1;
    short                       intercepted : 1;
    short                       focused : 1;
+   short                       in_layer : 1;
 
    unsigned char               delete_me;
 };

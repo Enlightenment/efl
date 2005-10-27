@@ -6,6 +6,7 @@ evas_object_inject(Evas_Object *obj, Evas *e)
 {
    Evas_Layer *lay;
 
+   if (obj->in_layer) return;
    lay = evas_layer_find(e, obj->cur.layer);
    if (!lay)
      {
@@ -15,11 +16,13 @@ evas_object_inject(Evas_Object *obj, Evas *e)
      }
    lay->objects = evas_object_list_append(lay->objects, obj);
    obj->layer = lay;
+   obj->in_layer = 1;
 }
 
 void
 evas_object_release(Evas_Object *obj, int clean_layer)
 {
+   if (!obj->in_layer) return;
    obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
    if (clean_layer)
      {
@@ -30,6 +33,7 @@ evas_object_release(Evas_Object *obj, int clean_layer)
 	  }
      }
    obj->layer = NULL;
+   obj->in_layer = 0;
 }
 
 Evas_Layer *
@@ -140,15 +144,11 @@ evas_object_layer_set(Evas_Object *obj, int l)
    return;
    MAGIC_CHECK_END();
    if (evas_object_intercept_call_layer_set(obj, l)) return;
+   if (obj->smart.parent) return;
    if (obj->cur.layer == l)
      {
 	evas_object_raise(obj);
 	return;
-     }
-   if (obj->smart.smart)
-     {
-       if (obj->smart.smart->smart_class->layer_set)
-	  obj->smart.smart->smart_class->layer_set(obj, l);
      }
    e = obj->layer->evas;
    evas_object_release(obj, 1);

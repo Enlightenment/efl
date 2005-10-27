@@ -19,6 +19,61 @@ evas_event_passes_through(Evas_Object *obj)
    return 0;
 }
 
+static Evas_List *
+_evas_event_object_list_in_get(Evas *e, Evas_List *in, Evas_Object_List *list, Evas_Object *stop, int x, int y, int *no_rep)
+{
+   Evas_Object_List *l;
+
+   if (!list) return in;
+   for (l = list->last; l; l = l->prev)
+     {
+	Evas_Object *obj;
+	
+	obj = (Evas_Object *)l;
+	if (obj == stop)
+	  {
+	     *no_rep = 1;
+	     return in;
+	  }
+	if (!evas_event_passes_through(obj))
+	  {
+	     if ((obj->cur.visible) && (obj->delete_me == 0) &&
+		 (!obj->clip.clipees) &&
+		 (evas_object_clippers_is_visible(obj)))
+	       {
+		  if (obj->smart.smart)
+		    {
+		       int norep;
+		       
+		       norep = 0;
+		       in = _evas_event_object_list_in_get(e, in,
+							   obj->smart.contained,
+							   stop, x, y, &norep);
+		       if (norep)
+			 {
+			    *no_rep = 1;
+			    return in;
+			 }
+		    }
+		  else
+		    {
+		       if (evas_object_is_in_output_rect(obj, x, y, 1, 1))
+			 {
+			    in = evas_list_append(in, obj);
+			    if (!obj->repeat_events)
+			      {
+				 *no_rep = 1;
+				 return in;
+			      }
+			 }
+		    }
+	       }
+	  }
+     }
+   *no_rep = 0;
+   return in;
+}
+
 Evas_List *
 evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y)
 {
@@ -28,33 +83,15 @@ evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y)
    if (!e->layers) return NULL;
    for (l = ((Evas_Object_List *)(e->layers))->last; l; l = l->prev)
      {
-	Evas_Object_List *l2;
 	Evas_Layer *lay;
+	int norep;
 
 	lay = (Evas_Layer *)l;
-	for (l2 = ((Evas_Object_List *)(lay->objects))->last; l2; l2 = l2->prev)
-	  {
-	     Evas_Object *obj;
-
-	     obj = (Evas_Object *)l2;
-	     if (obj == stop) goto done;
-	     if ((!evas_event_passes_through(obj)) && (!obj->smart.smart))
-	       {
-// FIXME: i don't think we need this
-//		  evas_object_clip_recalc(obj);
-		  if ((evas_object_is_in_output_rect(obj, x, y, 1, 1)) &&
-		      (obj->cur.visible) &&
-		      (obj->delete_me == 0) &&
-		      (evas_object_clippers_is_visible(obj)) &&
-		      (!obj->clip.clipees))
-		    {
-		       in = evas_list_append(in, obj);
-		       if (!obj->repeat_events) goto done;
-		    }
-	       }
-	  }
+	norep = 0;
+	in = _evas_event_object_list_in_get(e, in, lay->objects, stop,
+					    x, y, &norep);
+	if (norep) return in;
      }
-   done:
    return in;
 }
 
@@ -431,7 +468,6 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 	     if ((obj->cur.visible) &&
 		 (evas_object_clippers_is_visible(obj)) &&
 		 (!evas_event_passes_through(obj)) &&
-		 (!obj->smart.smart) &&
 		 (!obj->clip.clipees))
 	       {
 		  if ((px != x) || (py != y))
@@ -510,7 +546,6 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
 		 (evas_object_clippers_is_visible(obj)) &&
 		 (evas_list_find(ins, obj)) &&
 		 (!evas_event_passes_through(obj)) &&
-		 (!obj->smart.smart) &&
 		 (!obj->clip.clipees))
 	       {
 		  if ((px != x) || (py != y))

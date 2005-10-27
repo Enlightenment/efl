@@ -457,7 +457,6 @@ struct _Edje
    char                 *path;
    char                 *part;
    
-   int                   layer;
    Evas_Coord            x, y, w, h;
    struct {
       Evas_Coord         w, h;

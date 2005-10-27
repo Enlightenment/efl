@@ -90,20 +90,13 @@ struct _Evas_Smart_Class /** a smart object class */
 
    void  (*add)         (Evas_Object *o);
    void  (*del)         (Evas_Object *o);
-   void  (*layer_set)   (Evas_Object *o, int l);
-   void  (*raise)       (Evas_Object *o);
-   void  (*lower)       (Evas_Object *o);
-   void  (*stack_above) (Evas_Object *o, Evas_Object *above);
-   void  (*stack_below) (Evas_Object *o, Evas_Object *below);
-   Evas_Object *(*above_get) (Evas_Object *o);
-   Evas_Object *(*below_get) (Evas_Object *o);
    void  (*move)        (Evas_Object *o, Evas_Coord x, Evas_Coord y);
-   void  (*resize)      (Evas_Object *o, Evas_Coord w, Evas_Coord h);
-   void  (*show)        (Evas_Object *o);
-   void  (*hide)        (Evas_Object *o);
-   void  (*color_set)   (Evas_Object *o, int r, int g, int b, int a);
-   void  (*clip_set)    (Evas_Object *o, Evas_Object *clip);
-   void  (*clip_unset)  (Evas_Object *o);
+   void  (*resize)      (Evas_Object *o, Evas_Coord w, Evas_Coord h); 
+   void  (*show)        (Evas_Object *o); // FIXME: DELETE ME
+   void  (*hide)        (Evas_Object *o); // FIXME: DELETE ME
+   void  (*color_set)   (Evas_Object *o, int r, int g, int b, int a); // FIXME: DELETE ME
+   void  (*clip_set)    (Evas_Object *o, Evas_Object *clip); // FIXME: DELETE ME
+   void  (*clip_unset)  (Evas_Object *o); // FIXME: DELETE ME
 
    const void *data;
 };
@@ -591,8 +584,6 @@ extern "C" {
 
    EAPI Evas_Smart       *evas_smart_new                    (const char *name, void (*func_add) (Evas_Object *obj), void (*func_del) (Evas_Object *obj), void (*func_layer_set) (Evas_Object *obj, int l), void (*func_raise) (Evas_Object *obj), void (*func_lower) (Evas_Object *obj), void (*func_stack_above) (Evas_Object *obj, Evas_Object *above), void (*func_stack_below) (Evas_Object *obj, Evas_Object *below), void (*func_move) (Evas_Object *obj, Evas_Coord x, Evas_Coord y), void (*func_resize) (Evas_Object *obj, Evas_Coord w, Evas_Coord h), void (*func_show) (Evas_Object *obj), void (*func_hide) (Evas_Object *obj), void (*func_color_set) (Evas_Object *obj, int r, int g, int b, int a), void (*func_clip_set) (Evas_Object *obj, Evas_Object *clip), void (*func_clip_unset) (Evas_Object *obj), const void *data);
    EAPI void              evas_smart_free                   (Evas_Smart *s);
-   EAPI void              evas_smart_above_get_set          (Evas_Smart *s, Evas_Object *(*func_above_get) (Evas_Object *o));
-   EAPI void              evas_smart_below_get_set          (Evas_Smart *s, Evas_Object *(*func_below_get) (Evas_Object *o));
    EAPI Evas_Smart       *evas_smart_class_new              (Evas_Smart_Class *sc);
    EAPI Evas_Smart_Class *evas_smart_class_get              (Evas_Smart *s);
 
@@ -644,7 +635,7 @@ extern "C" {
 
    EAPI Evas_Modifier_Mask evas_key_modifier_mask_get       (Evas *e, const char *keyname);
 
-   EAPI Evas_Bool         evas_object_key_grab        (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Evas_Bool exclusive);
+   EAPI Evas_Bool         evas_object_key_grab              (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Evas_Bool exclusive);
    EAPI void              evas_object_key_ungrab            (Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
 
    EAPI void              evas_object_pass_events_set       (Evas_Object *obj, Evas_Bool pass);

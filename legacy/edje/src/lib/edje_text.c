@@ -198,7 +198,6 @@ _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep)
 	evas_object_smart_member_add(o, ed->obj);
 	evas_object_pass_events_set(o, 1);
 	evas_object_clip_set(o, ed->clipper);
-	evas_object_layer_set(o, evas_object_layer_get(ed->obj));
 	evas_object_show(o);
 	ep->extra_objects = evas_list_append(ep->extra_objects, o);
 

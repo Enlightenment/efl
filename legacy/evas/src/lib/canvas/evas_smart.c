@@ -47,11 +47,6 @@ evas_smart_new(const char *name,
    s->smart_class->name = name;
    s->smart_class->add = func_add;
    s->smart_class->del = func_del;
-   s->smart_class->layer_set = func_layer_set;
-   s->smart_class->raise = func_raise;
-   s->smart_class->lower = func_lower;
-   s->smart_class->stack_above = func_stack_above;
-   s->smart_class->stack_below = func_stack_below;
    s->smart_class->move = func_move;
    s->smart_class->resize = func_resize;
    s->smart_class->show = func_show;
@@ -80,38 +75,6 @@ evas_smart_free(Evas_Smart *s)
    if (s->usage > 0) return;
    if (s->class_allocated) free(s->smart_class);
    free(s);
-}
-
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
-void
-evas_smart_above_get_set(Evas_Smart *s, Evas_Object *(*func_above_get) (Evas_Object *o))
-{
-   Evas_Smart_Class *sc;
-
-   if (!(sc = evas_smart_class_get(s)))
-      return;
-   sc->above_get = func_above_get;
-}
-
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
-void
-evas_smart_below_get_set(Evas_Smart *s, Evas_Object *(*func_below_get) (Evas_Object *o))
-{
-   Evas_Smart_Class *sc;
-
-   if (!(sc = evas_smart_class_get(s)))
-      return;
-   sc->below_get = func_below_get;
 }
 
 /**

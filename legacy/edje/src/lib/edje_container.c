@@ -725,11 +725,6 @@ edje_container_scroll_get(Evas_Object *obj, double *pos, double *shift)
 static void _smart_init(void);
 static void _smart_add(Evas_Object * obj);
 static void _smart_del(Evas_Object * obj);
-static void _smart_layer_set(Evas_Object * obj, int layer);
-static void _smart_raise(Evas_Object * obj);
-static void _smart_lower(Evas_Object * obj);
-static void _smart_stack_above(Evas_Object * obj, Evas_Object * above);
-static void _smart_stack_below(Evas_Object * obj, Evas_Object * below);
 static void _smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y);
 static void _smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h);
 static void _smart_show(Evas_Object * obj);
@@ -757,11 +752,7 @@ _smart_init(void)
    smart = evas_smart_new(E_OBJ_NAME,
 			  _smart_add,
 			  _smart_del,
-			  _smart_layer_set,
-			  _smart_raise,
-			  _smart_lower,
-			  _smart_stack_above,
-			  _smart_stack_below,
+			  NULL, NULL, NULL, NULL, NULL,
 			  _smart_move,
 			  _smart_resize,
 			  _smart_show,
@@ -794,56 +785,6 @@ _smart_del(Evas_Object *obj)
    if (sd->colinfo) free(sd->colinfo);
 //   evas_object_del(sd->obj);
    free(sd);
-}
-
-static void
-_smart_layer_set(Evas_Object *obj, int layer)
-{
-   Smart_Data *sd;
-   
-   sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
-//   evas_object_layer_set(sd->obj, layer);
-}
-   
-static void
-_smart_raise(Evas_Object *obj)
-{
-   Smart_Data *sd;
-   
-   sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
-//   evas_object_raise(sd->obj);
-}
-
-static void
-_smart_lower(Evas_Object *obj)
-{
-   Smart_Data *sd;
-   
-   sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
-//   evas_object_lower(sd->obj);
-}
-   
-static void
-_smart_stack_above(Evas_Object *obj, Evas_Object *above)
-{
-   Smart_Data *sd;
-   
-   sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
-//   evas_object_stack_above(sd->obj, above);
-}
-
-static void
-_smart_stack_below(Evas_Object *obj, Evas_Object *below)
-{
-   Smart_Data *sd;
-   
-   sd = evas_object_smart_data_get(obj);
-   if (!sd) return;
-//   evas_object_stack_below(sd->obj, below);
 }
 
 static void

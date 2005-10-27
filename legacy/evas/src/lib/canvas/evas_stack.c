@@ -58,12 +58,18 @@ evas_object_raise(Evas_Object *obj)
 	evas_object_inform_call_restack(obj);
 	return;
      }
-   obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
-   obj->layer->objects = evas_object_list_append(obj->layer->objects, obj);
-   if (obj->smart.smart)
+   if (obj->smart.parent)
      {
-       if (obj->smart.smart->smart_class->raise)
-	  obj->smart.smart->smart_class->raise(obj);
+	obj->smart.parent->smart.contained = evas_object_list_remove(obj->smart.parent->smart.contained, obj);
+	obj->smart.parent->smart.contained = evas_object_list_append(obj->smart.parent->smart.contained, obj);
+     }
+   else
+     {
+	if (obj->in_layer)
+	  {
+	     obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
+	     obj->layer->objects = evas_object_list_append(obj->layer->objects, obj);
+	  }
      }
    if (obj->clip.clipees)
      {
@@ -106,18 +112,24 @@ evas_object_lower(Evas_Object *obj)
    return;
    MAGIC_CHECK_END();
    if (evas_object_intercept_call_lower(obj)) return;
-   if (obj->smart.smart)
-     {
-       if (obj->smart.smart->smart_class->lower)
-	  obj->smart.smart->smart_class->lower(obj);
-     }
    if (!(((Evas_Object_List *)obj)->prev))
      {
 	evas_object_inform_call_restack(obj);
 	return;
      }
-   obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
-   obj->layer->objects = evas_object_list_prepend(obj->layer->objects, obj);
+   if (obj->smart.parent)
+     {
+	obj->smart.parent->smart.contained = evas_object_list_remove(obj->smart.parent->smart.contained, obj);
+	obj->smart.parent->smart.contained = evas_object_list_prepend(obj->smart.parent->smart.contained, obj);
+     }
+   else
+     {
+	if (obj->in_layer)
+	  {
+	     obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
+	     obj->layer->objects = evas_object_list_prepend(obj->layer->objects, obj);
+	  }
+     }
    if (obj->clip.clipees)
      {
 	evas_object_inform_call_restack(obj);
@@ -162,19 +174,9 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
    return;
    MAGIC_CHECK_END();
    if (evas_object_intercept_call_stack_above(obj, above)) return;
-   if (above->smart.smart)
+   if (!above)
      {
-       if (above->smart.smart->smart_class->above_get)
-	  above = above->smart.smart->smart_class->above_get(above);
-     }
-   if (obj->smart.smart)
-     {
-       if (obj->smart.smart->smart_class->stack_above)
-	  obj->smart.smart->smart_class->stack_above(obj, above);
-     }
-   if (above->layer != obj->layer)
-     {
-	evas_object_inform_call_restack(obj);
+	evas_object_raise(obj);
 	return;
      }
    if (((Evas_Object_List *)obj)->prev == (Evas_Object_List *)above)
@@ -182,8 +184,28 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
 	evas_object_inform_call_restack(obj);
 	return;
      }
-   obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
-   obj->layer->objects = evas_object_list_append_relative(obj->layer->objects, obj, above);
+   if (obj->smart.parent)
+     {
+	if (obj->smart.parent != above->smart.parent)
+	  {
+//	     printf("BITCH! evas_object_stack_above(), %p not inside same smart as %p!\n", obj, above);
+	     return;
+	  }
+	obj->smart.parent->smart.contained = evas_object_list_remove(obj->smart.parent->smart.contained, obj);
+	obj->smart.parent->smart.contained = evas_object_list_append_relative(obj->smart.parent->smart.contained, obj, above);
+     }
+   else
+     {
+	if (obj->layer != above->layer)
+	  {
+	     return;
+	  }
+	if (obj->in_layer)
+	  {
+	     obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
+	     obj->layer->objects = evas_object_list_append_relative(obj->layer->objects, obj, above);
+	  }
+     }
    if (obj->clip.clipees)
      {
 	evas_object_inform_call_restack(obj);
@@ -228,19 +250,9 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
    return;
    MAGIC_CHECK_END();
    if (evas_object_intercept_call_stack_below(obj, below)) return;
-   if (below->smart.smart)
+   if (!below)
      {
-       if (below->smart.smart->smart_class->below_get)
-     below = below->smart.smart->smart_class->below_get(below);
-     }
-   if (obj->smart.smart)
-     {
-       if (obj->smart.smart->smart_class->stack_below)
-	  obj->smart.smart->smart_class->stack_below(obj, below);
-     }
-   if (below->layer != obj->layer)
-     {
-	evas_object_inform_call_restack(obj);
+	evas_object_lower(obj);
 	return;
      }
    if (((Evas_Object_List *)obj)->next == (Evas_Object_List *)below)
@@ -248,8 +260,28 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
 	evas_object_inform_call_restack(obj);
 	return;
      }
-   obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
-   obj->layer->objects = evas_object_list_prepend_relative(obj->layer->objects, obj, below);
+   if (obj->smart.parent)
+     {
+	if (obj->smart.parent != below->smart.parent)
+	  {
+//	     printf("BITCH! evas_object_stack_below(), %p not inside same smart as %p!\n", obj, below);
+	     return;
+	  }
+	obj->smart.parent->smart.contained = evas_object_list_remove(obj->smart.parent->smart.contained, obj);
+	obj->smart.parent->smart.contained = evas_object_list_prepend_relative(obj->smart.parent->smart.contained, obj, below);
+     }
+   else
+     {
+	if (obj->layer != below->layer)
+	  {
+	     return;
+	  }
+	if (obj->in_layer)
+	  {
+	     obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
+	     obj->layer->objects = evas_object_list_prepend_relative(obj->layer->objects, obj, below);
+	  }
+     }
    if (obj->clip.clipees)
      {
 	evas_object_inform_call_restack(obj);
@@ -287,16 +319,12 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
 Evas_Object *
 evas_object_above_get(Evas_Object *obj)
 {
-   Evas_Object *obj2;
-
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
-   obj2 = evas_object_above_get_internal(obj);
-   while (((obj2) && (obj2->smart.parent)) ||
-	  ((obj2) && (obj2->delete_me)))
-     obj2 = evas_object_above_get_internal(obj2);
-   return obj2;
+   if (obj->smart.parent)
+     return (Evas_Object *)(((Evas_Object_List *)(obj))->next);
+   return evas_object_above_get_internal(obj);
 }
 
 /**
@@ -308,16 +336,12 @@ evas_object_above_get(Evas_Object *obj)
 Evas_Object *
 evas_object_below_get(Evas_Object *obj)
 {
-   Evas_Object *obj2;
-
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
    return NULL;
    MAGIC_CHECK_END();
-   obj2 = evas_object_below_get_internal(obj);
-   while (((obj2) && (obj2->smart.parent)) ||
-	  ((obj2) && (obj2->delete_me)))
-     obj2 = evas_object_below_get_internal(obj2);
-   return obj2;
+   if (obj->smart.parent)
+     return (Evas_Object *)(((Evas_Object_List *)(obj))->prev);
+   return evas_object_below_get_internal(obj);
 }
 
 /**
@@ -329,17 +353,12 @@ evas_object_below_get(Evas_Object *obj)
 Evas_Object *
 evas_object_bottom_get(Evas *e)
 {
-   Evas_Object *obj2 = NULL;
-
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return NULL;
    MAGIC_CHECK_END();
    if (e->layers)
-     obj2 = e->layers->objects;
-   while (((obj2) && (obj2->smart.parent)) ||
-	  ((obj2) && (obj2->delete_me)))
-     obj2 = evas_object_above_get_internal(obj2);
-   return obj2;
+     return e->layers->objects;
+   return NULL;
 }
 
 /**
@@ -370,11 +389,6 @@ evas_object_top_get(Evas *e)
 
    obj2 = (Evas_Object *) list->last;
    if (!obj2) return NULL;
-
-   while (((obj2) && (obj2->smart.parent)) ||
-	  ((obj2) && (obj2->delete_me))) {
-     obj2 = evas_object_below_get_internal(obj2);
-   }
 
    return obj2;
 }
