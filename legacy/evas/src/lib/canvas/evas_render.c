@@ -68,17 +68,15 @@ evas_obscured_clear(Evas *e)
 static void
 _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active_objects, Evas_List **restack_objects, int restack)
 {
+   int is_active;
+   
 /* if (obj->cur.cache.clip.dirty) */
    evas_object_clip_recalc(obj);
    /* build active object list */
-   if (evas_object_is_active(obj))
+   is_active = evas_object_is_active(obj);
+   if (is_active)
      *active_objects = evas_list_append(*active_objects, obj);
-   if (restack)
-     {
-	obj->restack = 1;
-	obj->changed = 1;
-     }
-   if (obj->changed)
+   if ((obj->changed) || (restack))
      {
 	if (obj->smart.smart)
 	  {
@@ -92,13 +90,14 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 		  obj2 = (Evas_Object *)l;
 		  _evas_render_phase1_object_process(e, obj2, 
 						     active_objects,
-						     restack_objects, obj->restack);
+						     restack_objects,
+						     obj->restack | restack);
 	       }
 	  }
 	else
 	  {
-	     if ((obj->restack) && (!obj->clip.clipees) &&
-		 evas_object_is_active(obj))
+	     if ((is_active) && (obj->restack | restack) &&
+		 (!obj->clip.clipees))
 	       *restack_objects = evas_list_append(*restack_objects, obj);
 	     else
 	       obj->func->render_pre(obj);
@@ -135,8 +134,8 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 							    obj->cur.cache.clip.h);
 	       }
 	  }
-	obj->restack = 0;
      }
+   obj->restack = 0;
 }
 
 static void
