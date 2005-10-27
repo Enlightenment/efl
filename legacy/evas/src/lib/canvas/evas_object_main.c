@@ -296,14 +296,14 @@ int
 evas_object_is_active(Evas_Object *obj)
 {
    if (obj->smart.smart) return 0;
-   if ((evas_object_is_in_output_rect(obj, 0, 0,
+   if ((evas_object_is_visible(obj) ||
+	evas_object_was_visible(obj)) &&
+       (evas_object_is_in_output_rect(obj, 0, 0,
 				      obj->layer->evas->output.w,
 				      obj->layer->evas->output.h) ||
 	evas_object_was_in_output_rect(obj, 0, 0,
 				       obj->layer->evas->output.w,
-				       obj->layer->evas->output.h)) &&
-       (evas_object_is_visible(obj) ||
-	evas_object_was_visible(obj)))
+				       obj->layer->evas->output.h)))
      return 1;
    return 0;
 }

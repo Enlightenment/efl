@@ -73,7 +73,6 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
    /* build active object list */
    if (evas_object_is_active(obj))
      *active_objects = evas_list_append(*active_objects, obj);
-   /* something changed... maybe... */
    if (restack)
      {
 	obj->restack = 1;
@@ -85,6 +84,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 	  {
 	     Evas_Object_List *l;
 	     
+	     obj->func->render_pre(obj);
 	     for (l = obj->smart.contained; l; l = l->next)
 	       {
 		  Evas_Object *obj2;
@@ -94,7 +94,6 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 						     active_objects,
 						     restack_objects, obj->restack);
 	       }
-	     
 	  }
 	else
 	  {
@@ -105,7 +104,6 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 	       obj->func->render_pre(obj);
 	  }
      }
-   /* nothing changed at all */
    else
      {
 	if ((!obj->clip.clipees) && (obj->delete_me == 0))
@@ -114,6 +112,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 	       {
 		  Evas_Object_List *l;
 		  
+		  obj->func->render_pre(obj);
 		  for (l = obj->smart.contained; l; l = l->next)
 		    {
 		       Evas_Object *obj2;
@@ -136,8 +135,8 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 							    obj->cur.cache.clip.h);
 	       }
 	  }
+	obj->restack = 0;
      }
-   obj->restack = 0;
 }
 
 static void
@@ -368,22 +367,24 @@ evas_render_updates(Evas *e)
 	  }
 	/* if the object is flagged for deletion - note it */
 	if (obj->delete_me == 2)
-	  delete_objects = evas_list_append(delete_objects, obj);
-	if (obj->delete_me) obj->delete_me ++;
+	  {
+	     delete_objects = evas_list_append(delete_objects, obj);
+	  }
+	else if (obj->delete_me != 0) obj->delete_me++;
      }
+   /* free our obscuring object list */
+   evas_list_free(obscuring_objects_orig);
+   /* free our active object list */
+   evas_list_free(active_objects);
    /* delete all objects flagged for deletion now */
    while (delete_objects)
      {
 	Evas_Object *obj;
 
 	obj = (Evas_Object *)(delete_objects->data);
-	delete_objects = evas_list_remove(delete_objects, obj);
+	delete_objects = evas_list_remove_list(delete_objects, delete_objects);
 	evas_object_free(obj, 1);
      }
-   /* free our obscuring object list */
-   evas_list_free(obscuring_objects_orig);
-   /* free our active object list */
-   evas_list_free(active_objects);
    e->changed = 0;
    e->viewport.changed = 0;
    e->output.changed = 0;
