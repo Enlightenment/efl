@@ -74,9 +74,13 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
    evas_object_clip_recalc(obj);
    /* build active object list */
    is_active = evas_object_is_active(obj);
-   if (is_active)
-     *active_objects = evas_list_append(*active_objects, obj);
-   if ((obj->changed) || (restack))
+   if (is_active) *active_objects = evas_list_append(*active_objects, obj);
+   if (restack)
+     {
+	obj->restack = 1;
+	obj->changed = 1;
+     }
+   if (obj->changed)
      {
 	if (obj->smart.smart)
 	  {
@@ -91,15 +95,14 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 		  _evas_render_phase1_object_process(e, obj2, 
 						     active_objects,
 						     restack_objects,
-						     obj->restack | restack);
+						     obj->restack);
 	       }
 	  }
 	else
 	  {
-	     if ((is_active) && (obj->restack | restack) &&
-		 (!obj->clip.clipees))
+	     if ((is_active) && (obj->restack) && (!obj->clip.clipees))
 	       *restack_objects = evas_list_append(*restack_objects, obj);
-	     else
+	     else if (is_active)
 	       obj->func->render_pre(obj);
 	  }
      }
@@ -135,7 +138,7 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 	       }
 	  }
      }
-   obj->restack = 0;
+   if (!is_active) obj->restack = 0;     
 }
 
 static void
@@ -364,7 +367,6 @@ evas_render_updates(Evas *e)
 	     obj->restack = 0;
 	     obj->changed = 0;
 	  }
-	/* if the object is flagged for deletion - note it */
 	if (obj->delete_me == 2)
 	  {
 	     delete_objects = evas_list_append(delete_objects, obj);
