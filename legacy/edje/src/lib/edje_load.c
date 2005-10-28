@@ -164,7 +164,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 		  evas_object_pass_events_set(rp->object, 1);
 	       }
 	     else if (ep->type == EDJE_PART_TYPE_TEXTBLOCK)
-	       rp->object = evas_object_textblock2_add(ed->evas);
+	       rp->object = evas_object_textblock_add(ed->evas);
 	     else
 	       {
 		  printf("EDJE ERROR: wrong part type %i!\n", ep->type);

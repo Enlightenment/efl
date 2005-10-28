@@ -34,7 +34,6 @@ evas_object_rectangle.c \
 evas_object_smart.c \
 evas_object_text.c \
 evas_object_textblock.c \
-evas_object_textblock_old.c \
 evas_font_dir.c \
 evas_rectangle.c \
 evas_render.c \

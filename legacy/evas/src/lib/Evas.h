@@ -424,39 +424,6 @@ extern "C" {
    EAPI void              evas_font_cache_set               (Evas *e, int size);
    EAPI int               evas_font_cache_get               (Evas *e);
 
-   EAPI Evas_Object           *evas_object_textblock_add                  (Evas *e);
-   EAPI void                   evas_object_textblock_clear                (Evas_Object *obj);
-   EAPI void                   evas_object_textblock_cursor_pos_set       (Evas_Object *obj, int pos);
-   EAPI int                    evas_object_textblock_cursor_pos_get       (Evas_Object *obj);
-   EAPI int                    evas_object_textblock_length_get           (Evas_Object *obj);
-   EAPI int                    evas_object_textblock_cursor_line_get      (Evas_Object *obj);
-   EAPI int                    evas_object_textblock_lines_get            (Evas_Object *obj);
-   EAPI int                    evas_object_textblock_line_start_pos_get   (Evas_Object *obj);
-   EAPI int                    evas_object_textblock_line_end_pos_get     (Evas_Object *obj);
-   EAPI Evas_Bool              evas_object_textblock_line_get             (Evas_Object *obj, int line, Evas_Coord *lx, Evas_Coord *ly, Evas_Coord *lw, Evas_Coord *lh);
-   EAPI Evas_Bool              evas_object_textblock_char_pos_get         (Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
-   EAPI int                    evas_object_textblock_char_coords_get      (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
-   EAPI void                   evas_object_textblock_text_insert          (Evas_Object *obj, const char *text);
-   EAPI char                  *evas_object_textblock_text_get             (Evas_Object *obj, int len);
-   EAPI void                   evas_object_textblock_text_del             (Evas_Object *obj, int len);
-   EAPI void                   evas_object_textblock_format_insert        (Evas_Object *obj, const char *format);
-   EAPI int                    evas_object_textblock_format_next_pos_get  (Evas_Object *obj);
-   EAPI int                    evas_object_textblock_format_next_count_get(Evas_Object *obj);
-   EAPI const char            *evas_object_textblock_format_next_get      (Evas_Object *obj, int n);
-   EAPI void                   evas_object_textblock_format_next_del      (Evas_Object *obj, int n);
-   EAPI int                    evas_object_textblock_format_prev_pos_get  (Evas_Object *obj);
-   EAPI int                    evas_object_textblock_format_prev_count_get(Evas_Object *obj);
-   EAPI const char            *evas_object_textblock_format_prev_get      (Evas_Object *obj, int n);
-   EAPI void                   evas_object_textblock_format_prev_del      (Evas_Object *obj, int n);
-   EAPI char                  *evas_object_textblock_format_current_get   (Evas_Object *obj);
-   EAPI void                   evas_object_textblock_format_size_get      (Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
-   EAPI void                   evas_object_textblock_native_size_get      (Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
-   EAPI int                    evas_object_textblock_native_lines_get     (Evas_Object *obj);
-
-   
-   
-   
-   /* NEW texblock api - intended to replace the old - not complete yet */
    typedef struct _Evas_Textblock_Style     Evas_Textblock_Style;
    typedef struct _Evas_Textblock_Cursor    Evas_Textblock_Cursor;
    typedef struct _Evas_Textblock_Rectangle Evas_Textblock_Rectangle;
@@ -472,65 +439,65 @@ extern "C" {
 	EVAS_TEXTBLOCK_TEXT_PLAIN
      } Evas_Textblock_Text_Type;
    
-   EAPI Evas_Object                 *evas_object_textblock2_add(Evas *e);
+   EAPI Evas_Object                 *evas_object_textblock_add(Evas *e);
    
-   EAPI Evas_Textblock_Style        *evas_textblock2_style_new(void);
-   EAPI void                         evas_textblock2_style_free(Evas_Textblock_Style *ts);
-   EAPI void                         evas_textblock2_style_set(Evas_Textblock_Style *ts, const char *text);
-   EAPI const char                  *evas_textblock2_style_get(Evas_Textblock_Style *ts);
+   EAPI Evas_Textblock_Style        *evas_textblock_style_new(void);
+   EAPI void                         evas_textblock_style_free(Evas_Textblock_Style *ts);
+   EAPI void                         evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text);
+   EAPI const char                  *evas_textblock_style_get(Evas_Textblock_Style *ts);
    
-   EAPI void                         evas_object_textblock2_style_set(Evas_Object *obj, Evas_Textblock_Style *ts);
-   EAPI const Evas_Textblock_Style  *evas_object_textblock2_style_get(Evas_Object *obj);
+   EAPI void                         evas_object_textblock_style_set(Evas_Object *obj, Evas_Textblock_Style *ts);
+   EAPI const Evas_Textblock_Style  *evas_object_textblock_style_get(Evas_Object *obj);
    
-   EAPI void                         evas_object_textblock2_text_markup_set(Evas_Object *obj, const char *text);
-   EAPI const char                  *evas_object_textblock2_text_markup_get(Evas_Object *obj);
+   EAPI void                         evas_object_textblock_text_markup_set(Evas_Object *obj, const char *text);
+   EAPI const char                  *evas_object_textblock_text_markup_get(Evas_Object *obj);
     
-   EAPI const Evas_Textblock_Cursor *evas_object_textblock2_cursor_get(Evas_Object *obj);
-   EAPI Evas_Textblock_Cursor       *evas_object_textblock2_cursor_new(Evas_Object *obj);
+   EAPI const Evas_Textblock_Cursor *evas_object_textblock_cursor_get(Evas_Object *obj);
+   EAPI Evas_Textblock_Cursor       *evas_object_textblock_cursor_new(Evas_Object *obj);
    
-   EAPI void                         evas_textblock2_cursor_free(Evas_Textblock_Cursor *cur);
+   EAPI void                         evas_textblock_cursor_free(Evas_Textblock_Cursor *cur);
    
-   EAPI void                         evas_textblock2_cursor_node_first(Evas_Textblock_Cursor *cur);
-   EAPI void                         evas_textblock2_cursor_node_last(Evas_Textblock_Cursor *cur);
-   EAPI Evas_Bool                    evas_textblock2_cursor_node_next(Evas_Textblock_Cursor *cur);
-   EAPI Evas_Bool                    evas_textblock2_cursor_node_prev(Evas_Textblock_Cursor *cur);
-   EAPI Evas_Bool                    evas_textblock2_cursor_char_next(Evas_Textblock_Cursor *cur);
-   EAPI Evas_Bool                    evas_textblock2_cursor_char_prev(Evas_Textblock_Cursor *cur);
-   EAPI void                         evas_textblock2_cursor_char_first(Evas_Textblock_Cursor *cur);
-   EAPI void                         evas_textblock2_cursor_char_last(Evas_Textblock_Cursor *cur);
-   EAPI void                         evas_textblock2_cursor_line_first(Evas_Textblock_Cursor *cur);
-   EAPI void                         evas_textblock2_cursor_line_last(Evas_Textblock_Cursor *cur);
-   EAPI int                          evas_textblock2_cursor_pos_get(Evas_Textblock_Cursor *cur);
-   EAPI void                         evas_textblock2_cursor_pos_set(Evas_Textblock_Cursor *cur, int pos);
-   EAPI Evas_Bool                    evas_textblock2_cursor_line_set(Evas_Textblock_Cursor *cur, int line);
-   EAPI int                          evas_textblock2_cursor_compare(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2);
-   EAPI void                         evas_textblock2_cursor_copy(Evas_Textblock_Cursor *cur, Evas_Textblock_Cursor *cur_dest);
+   EAPI void                         evas_textblock_cursor_node_first(Evas_Textblock_Cursor *cur);
+   EAPI void                         evas_textblock_cursor_node_last(Evas_Textblock_Cursor *cur);
+   EAPI Evas_Bool                    evas_textblock_cursor_node_next(Evas_Textblock_Cursor *cur);
+   EAPI Evas_Bool                    evas_textblock_cursor_node_prev(Evas_Textblock_Cursor *cur);
+   EAPI Evas_Bool                    evas_textblock_cursor_char_next(Evas_Textblock_Cursor *cur);
+   EAPI Evas_Bool                    evas_textblock_cursor_char_prev(Evas_Textblock_Cursor *cur);
+   EAPI void                         evas_textblock_cursor_char_first(Evas_Textblock_Cursor *cur);
+   EAPI void                         evas_textblock_cursor_char_last(Evas_Textblock_Cursor *cur);
+   EAPI void                         evas_textblock_cursor_line_first(Evas_Textblock_Cursor *cur);
+   EAPI void                         evas_textblock_cursor_line_last(Evas_Textblock_Cursor *cur);
+   EAPI int                          evas_textblock_cursor_pos_get(Evas_Textblock_Cursor *cur);
+   EAPI void                         evas_textblock_cursor_pos_set(Evas_Textblock_Cursor *cur, int pos);
+   EAPI Evas_Bool                    evas_textblock_cursor_line_set(Evas_Textblock_Cursor *cur, int line);
+   EAPI int                          evas_textblock_cursor_compare(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2);
+   EAPI void                         evas_textblock_cursor_copy(Evas_Textblock_Cursor *cur, Evas_Textblock_Cursor *cur_dest);
    
-   EAPI void                         evas_textblock2_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text);
-   EAPI void                         evas_textblock2_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text);
+   EAPI void                         evas_textblock_cursor_text_append(Evas_Textblock_Cursor *cur, const char *text);
+   EAPI void                         evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const char *text);
 
-   EAPI void                         evas_textblock2_cursor_format_append(Evas_Textblock_Cursor *cur, const char *format);
-   EAPI void                         evas_textblock2_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *format);
-   EAPI void                         evas_textblock2_cursor_node_delete(Evas_Textblock_Cursor *cur);
-   EAPI void                         evas_textblock2_cursor_char_delete(Evas_Textblock_Cursor *cur);
-   EAPI void                         evas_textblock2_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2);
+   EAPI void                         evas_textblock_cursor_format_append(Evas_Textblock_Cursor *cur, const char *format);
+   EAPI void                         evas_textblock_cursor_format_prepend(Evas_Textblock_Cursor *cur, const char *format);
+   EAPI void                         evas_textblock_cursor_node_delete(Evas_Textblock_Cursor *cur);
+   EAPI void                         evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur);
+   EAPI void                         evas_textblock_cursor_range_delete(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2);
    
-   EAPI const char                  *evas_textblock2_cursor_node_text_get(Evas_Textblock_Cursor *cur);
-   EAPI int                          evas_textblock2_cursor_node_text_length_get(Evas_Textblock_Cursor *cur);
-   EAPI const char                  *evas_textblock2_cursor_node_format_get(Evas_Textblock_Cursor *cur);
-   EAPI char                        *evas_textblock2_cursor_range_text_get(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2, Evas_Textblock_Text_Type format);
+   EAPI const char                  *evas_textblock_cursor_node_text_get(Evas_Textblock_Cursor *cur);
+   EAPI int                          evas_textblock_cursor_node_text_length_get(Evas_Textblock_Cursor *cur);
+   EAPI const char                  *evas_textblock_cursor_node_format_get(Evas_Textblock_Cursor *cur);
+   EAPI char                        *evas_textblock_cursor_range_text_get(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2, Evas_Textblock_Text_Type format);
        
-   EAPI int                          evas_textblock2_cursor_char_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
-   EAPI int                          evas_textblock2_cursor_line_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
-   EAPI Evas_Bool                    evas_textblock2_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, Evas_Coord y);
-   EAPI int                          evas_textblock2_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y);
-   EAPI Evas_List                   *evas_textblock2_cursor_range_geometry_get(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2);
+   EAPI int                          evas_textblock_cursor_char_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
+   EAPI int                          evas_textblock_cursor_line_geometry_get(Evas_Textblock_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
+   EAPI Evas_Bool                    evas_textblock_cursor_char_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, Evas_Coord y);
+   EAPI int                          evas_textblock_cursor_line_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord y);
+   EAPI Evas_List                   *evas_textblock_cursor_range_geometry_get(Evas_Textblock_Cursor *cur1, Evas_Textblock_Cursor *cur2);
    
-   EAPI Evas_Bool                    evas_object_textblock2_line_number_geometry_get(Evas_Object *obj, int line, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
-   EAPI void                         evas_object_textblock2_clear(Evas_Object *obj);
-   EAPI void                         evas_object_textblock2_size_formatted_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
-   EAPI void                         evas_object_textblock2_size_native_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
-   EAPI void                         evas_object_textblock2_style_insets_get(Evas_Object *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b);
+   EAPI Evas_Bool                    evas_object_textblock_line_number_geometry_get(Evas_Object *obj, int line, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
+   EAPI void                         evas_object_textblock_clear(Evas_Object *obj);
+   EAPI void                         evas_object_textblock_size_formatted_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
+   EAPI void                         evas_object_textblock_size_native_get(Evas_Object *obj, Evas_Coord *w, Evas_Coord *h);
+   EAPI void                         evas_object_textblock_style_insets_get(Evas_Object *obj, Evas_Coord *l, Evas_Coord *r, Evas_Coord *t, Evas_Coord *b);
    
    
    EAPI void              evas_object_del                   (Evas_Object *obj);

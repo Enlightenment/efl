@@ -236,8 +236,8 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
 	
 	stl = l->data;
 	if (stl->style) break;
-	stl->style = evas_textblock2_style_new();
-	evas_textblock2_style_set(stl->style, (const char *)buf);
+	stl->style = evas_textblock_style_new();
+	evas_textblock_style_set(stl->style, (const char *)buf);
 	def_done = 0;
 	/* FIXME: i think we have no choice by to parse the style line,
 	 * look for font= tags and IF that font is in the .edj then prepend
@@ -298,7 +298,7 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
 	  }
 	if (fontset) free(fontset);
 	if (fontsource) free(fontsource);
-	evas_textblock2_style_set(stl->style, (const char *)buf);
+	evas_textblock_style_set(stl->style, (const char *)buf);
 	free(buf);
      }
 }
@@ -323,7 +323,7 @@ _edje_textblock_style_cleanup(Edje_File *edf)
 	     free(tag);
 	  }
 	if (stl->name) free(stl->name);
-	if (stl->style) evas_textblock2_style_free(stl->style);
+	if (stl->style) evas_textblock_style_free(stl->style);
 	free(stl);
      }
 }

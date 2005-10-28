@@ -472,13 +472,13 @@ _edje_part_recalc_single(Edje *ed,
 	  {
 	     const char *ptxt;
 	     
-	     if (evas_object_textblock2_style_get(ep->object) != stl->style)
-	       evas_object_textblock2_style_set(ep->object, stl->style);
-	     ptxt = evas_object_textblock2_text_markup_get(ep->object);
+	     if (evas_object_textblock_style_get(ep->object) != stl->style)
+	       evas_object_textblock_style_set(ep->object, stl->style);
+	     ptxt = evas_object_textblock_text_markup_get(ep->object);
 	     if (((!ptxt) && (text)) || 
 		 ((ptxt) && (text) && (strcmp(ptxt, text))) ||
 		 ((ptxt) && (!text)))
-	       evas_object_textblock2_text_markup_set(ep->object, text);
+	       evas_object_textblock_text_markup_set(ep->object, text);
 	     if ((chosen_desc->text.min_x) || (chosen_desc->text.min_y))
 	       {
 		  int mw = 0, mh = 0;
@@ -487,11 +487,11 @@ _edje_part_recalc_single(Edje *ed,
 		  if (!chosen_desc->text.min_x)
 		    {
 		       evas_object_resize(ep->object, params->w, params->h);
-		       evas_object_textblock2_size_formatted_get(ep->object, &tw, &th);
+		       evas_object_textblock_size_formatted_get(ep->object, &tw, &th);
 		    }
 		  else
-		    evas_object_textblock2_size_native_get(ep->object, &tw, &th);
-		  evas_object_textblock2_style_insets_get(ep->object, &ins_l, &ins_r, &ins_t, &ins_b);
+		    evas_object_textblock_size_native_get(ep->object, &tw, &th);
+		  evas_object_textblock_style_insets_get(ep->object, &ins_l, &ins_r, &ins_t, &ins_b);
 		  mw = ins_l + tw + ins_r;
 		  mh = ins_t + th + ins_b;
 		  if (chosen_desc->text.min_x)
