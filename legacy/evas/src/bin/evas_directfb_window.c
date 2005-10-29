@@ -35,6 +35,8 @@
 #include <time.h>
 
 #include <directfb/directfb.h>
+#include <directfb/directfb_version.h>
+
 #include "config.h"
 #include "Evas.h"
 #include "Evas_Engine_DirectFB.h"
@@ -75,7 +77,8 @@ int main( int argc, char *argv[] )
      IDirectFBEventBuffer   *buffer;
 
      DFBDisplayLayerConfig  layer_config;
-#if (DIRECTFB_MAJOR_VERSION == 0) && (DIRECTFB_MINOR_VERSION == 9) && (DIRECTFB_MICRO_VERSION < 23)
+
+#if ((DIRECTFB_MAJOR_VERSION == 0) && (DIRECTFB_MINOR_VERSION == 9) && (DIRECTFB_MICRO_VERSION < 23))
      DFBCardCapabilities    caps;
 #else
      DFBGraphicsDeviceDescription caps;
@@ -92,7 +95,7 @@ int main( int argc, char *argv[] )
      DFBCHECK(DirectFBInit( &argc, &argv ));
      DFBCHECK(DirectFBCreate( &dfb ));
 
-#if (DIRECTFB_MAJOR_VERSION == 0) && (DIRECTFB_MINOR_VERSION == 9) && (DIRECTFB_MICRO_VERSION < 23)
+#if ((DIRECTFB_MAJOR_VERSION == 0) && (DIRECTFB_MINOR_VERSION == 9) && (DIRECTFB_MICRO_VERSION < 23))
      dfb->GetCardCapabilities( dfb, &caps );
 #else
      dfb->GetDeviceDescription( dfb, &caps );
