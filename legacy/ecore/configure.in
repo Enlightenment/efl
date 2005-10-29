@@ -673,6 +673,8 @@ AC_ARG_ENABLE(ecore-evas-dfb,
 )
 
 if test "x$want_ecore_evas_dfb" = "xyes"; then
+  save_CFLAGS="$CFLAGS"
+  CFLAGS="$CFLAGS $DIRECTFB_CFLAGS"
   AC_CHECK_HEADER(Evas_Engine_DirectFB.h,
     [
       AM_CONDITIONAL(BUILD_ECORE_EVAS_DIRECTFB, true)
@@ -684,6 +686,7 @@ if test "x$want_ecore_evas_dfb" = "xyes"; then
       #include <Evas.h>
     ]
   )
+  CFLAGS="$save_CFLAGS"
 else
   AM_CONDITIONAL(BUILD_ECORE_EVAS_DIRECTFB, false)
 fi
