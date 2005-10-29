@@ -119,63 +119,54 @@ esac
 
 AC_SUBST(winsock_libs)
 
-AC_MSG_CHECKING(whether ecore_txt module is to be built)
-
-iconv_cflags="";
-iconv_libs="";
-
-want_ecore_txt="yes";
-have_ecore_txt="no";
-ecore_txt_cflags="";
-ecore_txt_libs="";
-
+ecore_txt_cflags=""
+ecore_txt_libs=""
+AC_MSG_CHECKING(whether ecore_txt module should be built)
 AC_ARG_ENABLE(ecore-txt, 
   [  --disable-ecore-txt           disable the ecore_txt module],
   [
-    if test x"$enableval" = x"yes" ; then  
-      AC_MSG_RESULT(yes)
+    if test "x$enableval" = "xno" ; then  
+      want_ecore_txt=no
     else
-      AC_MSG_RESULT(no)
-      want_ecore_txt="no"
+      want_ecore_txt=yes
     fi
   ], [
-    AC_MSG_RESULT(yes)
+    want_ecore_txt=maybe
   ]
 )
+AC_MSG_RESULT($want_ecore_txt)
 
+iconv_cflags=""
+iconv_libs=""
+AC_MSG_CHECKING(for explicit iconv link options)
 AC_ARG_WITH(iconv-link,
   [  --with-iconv-link=ICONV_LINK     explicitly specify an iconv link option],
   [
-    v=$withval;
-    iconv_libs=$v;
-    echo "  Ecore iconv link flags explicitly set to: "$iconv_libs;
+    iconv_libs=$withval
+    AC_MSG_RESULT($iconv_libs)
+  ],[
+    AC_MSG_RESULT(none)
   ]
 )
 
-if test "x$want_ecore_txt" = "xyes"; then
-  if test -z "$iconv_libs"; then 
+have_ecore_txt="no"
+AC_MSG_CHECKING(whether ecore_txt module is to be built)
+if test "x$want_ecore_txt" != "xno" ; then
+  if test "x$iconv_libs" != "x" ; then 
     AC_CHECK_LIB(iconv, libiconv,
       [
-        AC_DEFINE(BUILD_ECORE_TXT, 1, [Build Ecore_Txt Module])
-        AM_CONDITIONAL(BUILD_ECORE_TXT, true)
         iconv_libs="-liconv"
         ecore_txt_libs="-lecore_txt "$iconv_libs
         have_ecore_txt="yes"
-      ], [
-        have_ecore_txt="no"
       ]
     )
   
     if test "x$have_ecore_txt" != "xyes"; then
       AC_CHECK_LIB(iconv, iconv,
         [
-          AC_DEFINE(BUILD_ECORE_TXT, 1, [Build Ecore_Txt Module])
-          AM_CONDITIONAL(BUILD_ECORE_TXT, true)
           iconv_libs="-liconv"
           ecore_txt_libs="-lecore_txt "$iconv_libs
           have_ecore_txt="yes"
-        ], [
-          have_ecore_txt="no"
         ]
       )
     fi
@@ -183,12 +174,8 @@ if test "x$want_ecore_txt" = "xyes"; then
     if test "x$have_ecore_txt" != "xyes"; then
       AC_CHECK_LIB(c, libiconv,
         [
-          AC_DEFINE(BUILD_ECORE_TXT, 1, [Build Ecore_Txt Module])
-          AM_CONDITIONAL(BUILD_ECORE_TXT, true)
           ecore_txt_libs="-lecore_txt "$iconv_libs
           have_ecore_txt="yes"
-         ], [
-          have_ecore_txt="no"
         ]
       )
     fi
@@ -196,26 +183,21 @@ if test "x$want_ecore_txt" = "xyes"; then
     if test "x$have_ecore_txt" != "xyes"; then
       AC_CHECK_LIB(c, iconv,
         [
-          AC_DEFINE(BUILD_ECORE_TXT, 1, [Build Ecore_Txt Module])
-          AM_CONDITIONAL(BUILD_ECORE_TXT, true)
           ecore_txt_libs="-lecore_txt "$iconv_libs
           have_ecore_txt="yes"
-        ], [
-          AC_MSG_RESULT("no - disabling ecore_txt")
-          AM_CONDITIONAL(BUILD_ECORE_TXT, false)
-          have_ecore_txt="no"
         ]
       )
     fi
   else
-    AC_DEFINE(BUILD_ECORE_TXT, 1, [Build Ecore_Txt Module])
-    AM_CONDITIONAL(BUILD_ECORE_TXT, true)
     ecore_txt_libs="-lecore_txt "$iconv_libs
     have_ecore_txt="yes"
   fi
-else
-  AM_CONDITIONAL(BUILD_ECORE_TXT, false)
 fi
+AC_MSG_RESULT($have_ecore_txt)
+if test "x$have_ecore_txt" = "xyes" ; then
+  AC_DEFINE(BUILD_ECORE_TXT, 1, [Build Ecore_Txt Module])
+fi
+AM_CONDITIONAL(BUILD_ECORE_TXT, test "x$have_ecore_txt" = "xyes")
 
 AC_SUBST(iconv_cflags)
 AC_SUBST(iconv_libs)
@@ -249,7 +231,7 @@ if test "x$have_ecore_txt" = "xyes"; then
   ]
   )
 else
-  AC_MSG_RESULT(ecore_txt not enabled, so ecore_x will not be enabled)
+  AC_MSG_RESULT(ecore_txt not enabled so ecore_x will not be enabled)
   want_ecore_x="no"
 fi
 
@@ -654,42 +636,41 @@ else
   fi
 fi
 
-want_ecore_evas_dfb="yes";
-have_ecore_evas_dfb="no";
 
 AC_MSG_CHECKING(whether ecore_evas DirectFB support is to be built)
-AC_ARG_ENABLE(ecore-evas-dfb, 
+AC_ARG_ENABLE(ecore-evas-dfb,
   [  --disable-ecore-evas-dfb      disable DirectFB in the ecore_evas module],
   [
-    if test "$enableval" = "yes" ; then  
-      AC_MSG_RESULT(yes)
+    if test "x$enableval" = "xno" ; then  
+      want_ecore_evas_dfb=no
     else
-      AC_MSG_RESULT(no)
-      want_ecore_evas_dfb="no"
+      want_ecore_evas_dfb=yes
     fi
   ], [
-    AC_MSG_RESULT(yes)
+    want_ecore_evas_dfb=maybe
   ]
 )
+AC_MSG_RESULT($want_ecore_evas_dfb)
 
-if test "x$want_ecore_evas_dfb" = "xyes"; then
+have_ecore_evas_dfb="no"
+if test "x$want_ecore_evas_dfb" != "xno" ; then
   save_CFLAGS="$CFLAGS"
   CFLAGS="$CFLAGS $DIRECTFB_CFLAGS"
   AC_CHECK_HEADER(Evas_Engine_DirectFB.h,
     [
-      AM_CONDITIONAL(BUILD_ECORE_EVAS_DIRECTFB, true)
       AC_DEFINE(BUILD_ECORE_EVAS_DIRECTFB, 1, [Support for DirectFB in Ecore_Evas])
       have_ecore_evas_dfb="yes"
     ], [
-      AM_CONDITIONAL(BUILD_ECORE_EVAS_DIRECTFB, false)
+      if test "x$want_ecore_evas_dfb" = "xyes" ; then
+        AC_MSG_ERROR(DirectFB requested but support not found)
+      fi
     ], [
       #include <Evas.h>
     ]
   )
   CFLAGS="$save_CFLAGS"
-else
-  AM_CONDITIONAL(BUILD_ECORE_EVAS_DIRECTFB, false)
 fi
+AM_CONDITIONAL(BUILD_ECORE_EVAS_DIRECTFB, test "x$have_ecore_evas_dfb" = "xyes")
 
 
 want_ecore_evas_fb="yes";
@@ -831,7 +812,7 @@ if test "x$have_ecore_con" = "xyes"; then
     ]
   )
 else
-  AC_MSG_RESULT(ecore_con not enabled, so ecore_ipc will not be enabled)
+  AC_MSG_RESULT(ecore_con not enabled so ecore_ipc will not be enabled)
   want_ecore_ipc="no"
 fi
 
