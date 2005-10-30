@@ -653,12 +653,12 @@ compile(void)
 		  strcat(def, " ");
 	       }
 	  }
-	snprintf(buf, sizeof(buf), "cat %s | /usr/bin/cpp -I%s %s -E -o %s", 
+	snprintf(buf, sizeof(buf), "cat %s | cpp -I%s %s -E -o %s", 
 		 file_in, inc, def, tmpn);
 	ret = system(buf);
 	if (ret < 0)
 	  {
-	     snprintf(buf, sizeof(buf), "/usr/bin/gcc -I%s %s -E -o %s %s",
+	     snprintf(buf, sizeof(buf), "gcc -I%s %s -E -o %s %s",
 		      inc, def, tmpn, file_in);
 	     ret = system(buf);
 	  }
