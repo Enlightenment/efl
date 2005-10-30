@@ -1295,6 +1295,8 @@ ecore_x_cursor_shape_get(int shape)
    return XCreateFontCursor(_ecore_x_disp, shape);
 }
 
+#ifdef ECORE_XCURSOR
+
 void
 ecore_x_cursor_size_set(int size)
 {
@@ -1306,6 +1308,7 @@ ecore_x_cursor_size_get(void)
 {
    return XcursorGetDefaultSize(_ecore_x_disp);
 }
+#endif
 
 int
 ecore_x_pointer_grab(Ecore_X_Window win)
