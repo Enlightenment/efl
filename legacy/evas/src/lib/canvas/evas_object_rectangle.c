@@ -213,7 +213,7 @@ evas_object_rectangle_render_pre(Evas_Object *obj)
      {
 	Evas_Rectangle *r;
 	Evas_List *rl;
-
+	
 	rl = evas_rects_return_difference_rects(obj->cur.cache.geometry.x,
 						obj->cur.cache.geometry.y,
 						obj->cur.cache.geometry.w,
@@ -233,6 +233,7 @@ evas_object_rectangle_render_pre(Evas_Object *obj)
    /* it obviously didn't change - add a NO obscure - this "unupdates"  this */
    /* area so if there were updates for it they get wiped. don't do it if we */
    /* arent fully opaque and we are visible */
+/*   
    if (evas_object_is_visible(obj) &&
        evas_object_is_opaque(obj) &&
        (!obj->clip.clipees))
@@ -241,6 +242,7 @@ evas_object_rectangle_render_pre(Evas_Object *obj)
 							    obj->cur.cache.clip.y,
 							    obj->cur.cache.clip.w,
 							    obj->cur.cache.clip.h);
+ */
    done:
    evas_object_render_pre_effect_updates(updates, obj, is_v, was_v);
 }

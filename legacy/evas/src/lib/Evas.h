@@ -609,7 +609,9 @@ extern "C" {
    EAPI Evas_Bool         evas_object_pass_events_get       (Evas_Object *obj);
    EAPI void              evas_object_repeat_events_set     (Evas_Object *obj, Evas_Bool repeat);
    EAPI Evas_Bool         evas_object_repeat_events_get     (Evas_Object *obj);
-
+   EAPI void              evas_object_propagate_events_set  (Evas_Object *obj, Evas_Bool prop);
+   EAPI Evas_Bool         evas_object_propagate_events_get  (Evas_Object *obj);
+       
    EAPI void              evas_object_event_callback_add    (Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), const void *data);
    EAPI void             *evas_object_event_callback_del    (Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info));
 

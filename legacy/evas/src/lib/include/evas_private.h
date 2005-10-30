@@ -136,9 +136,9 @@ struct _Evas_Key_Grab
    Evas_Modifier_Mask  modifiers;
    Evas_Modifier_Mask  not_modifiers;
    Evas_Object        *object;
-   char                exclusive : 1;
-   char                just_added : 1;
-   char                delete_me : 1;
+   unsigned char       exclusive : 1;
+   unsigned char       just_added : 1;
+   unsigned char       delete_me : 1;
 };
 
 struct _Evas_Intercept_Func
@@ -160,8 +160,8 @@ struct _Evas_Smart
 
    int               usage;
 
-   char              delete_me : 1;
-   char              class_allocated : 1;
+   unsigned char     delete_me : 1;
+   unsigned char     class_allocated : 1;
 
    Evas_Smart_Class *smart_class;
 };
@@ -186,7 +186,7 @@ struct _Evas_Lock
 
 struct _Evas_Callbacks
 {
-   char              deletions_waiting : 1;
+   unsigned char     deletions_waiting : 1;
    int               walking_list;
    Evas_Object_List *down;
    Evas_Object_List *up;
@@ -213,7 +213,7 @@ struct _Evas
    DATA32            magic;
 
    struct {
-      char           inside : 1;
+      unsigned char  inside : 1;
       int            mouse_grabbed;
       DATA32         button;
       int            x, y;
@@ -227,14 +227,14 @@ struct _Evas
    } pointer;
 
    struct  {
-      Evas_Coord         x, y, w, h;
-      char           changed : 1;
+      Evas_Coord     x, y, w, h;
+      unsigned char  changed : 1;
    } viewport;
 
    struct {
       int            w, h;
       DATA32         render_method;
-      char           changed : 1;
+      unsigned char  changed : 1;
    } output;
 
    int               output_validity;
@@ -246,8 +246,8 @@ struct _Evas
 
    Evas_Hash        *name_hash;
 
-   char              changed : 1;
-   char              walking_layers : 1;
+   unsigned char     changed : 1;
+   unsigned char     walking_layers : 1;
 
    int               events_frozen;
 
@@ -285,7 +285,7 @@ struct _Evas_Layer
    Evas             *evas;
 
    void             *engine_data;
-   char              delete_me : 1;
+   unsigned char     delete_me : 1;
 };
 
 struct _Evas_Object
@@ -306,8 +306,8 @@ struct _Evas_Object
 	 struct {
 	    int            x, y, w, h;
 	    unsigned char  r, g, b, a;
-	    char           visible : 1;
-	    char           dirty : 1;
+	    unsigned char  visible : 1;
+	    unsigned char  dirty : 1;
 	 } clip;
       } cache;
       struct {
@@ -316,7 +316,7 @@ struct _Evas_Object
       struct {
 	 unsigned char  r, g, b, a;
       } color;
-      char              visible : 1;
+      unsigned char     visible : 1;
       int               layer;
       Evas_Object      *clipper;
    } cur, prev;
@@ -349,23 +349,24 @@ struct _Evas_Object
       Evas_Object      *parent;
       Evas_Object_List *contained;
       Evas_List        *callbacks;
-      char              deletions_waiting : 1;
+      unsigned char     deletions_waiting : 1;
    } smart;
 
    int                         mouse_grabbed;
 
-   short                       store : 1;
-   short                       pass_events : 1;
-   short                       parent_pass_events : 1;
-   short                       parent_cache_valid : 1;
-   short                       repeat_events : 1;
-   short                       restack : 1;
-   short                       changed : 1;
-   short                       mouse_in : 1;
-   short                       pre_render_done : 1;
-   short                       intercepted : 1;
-   short                       focused : 1;
-   short                       in_layer : 1;
+   unsigned short              store : 1;
+   unsigned short              pass_events : 1;
+   unsigned short              parent_pass_events : 1;
+   unsigned short              parent_cache_valid : 1;
+   unsigned short              repeat_events : 1;
+   unsigned short              restack : 1;
+   unsigned short              changed : 1;
+   unsigned short              mouse_in : 1;
+   unsigned short              pre_render_done : 1;
+   unsigned short              intercepted : 1;
+   unsigned short              focused : 1;
+   unsigned short              in_layer : 1;
+   unsigned short              no_propagate : 1;
 
    unsigned char               delete_me;
 };

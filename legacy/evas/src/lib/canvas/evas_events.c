@@ -971,3 +971,33 @@ evas_object_repeat_events_get(Evas_Object *obj)
    MAGIC_CHECK_END();
    return obj->repeat_events;
 }
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+void
+evas_object_propagate_events_set(Evas_Object *obj, Evas_Bool prop)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   obj->no_propagate = !prop;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+Evas_Bool
+evas_object_propagate_events_get(Evas_Object *obj)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   return !(obj->no_propagate);
+}
