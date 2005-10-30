@@ -332,7 +332,7 @@ struct _Edje_Part
       int                 confine_id; /* dragging within this bit, -1 = no */
 
       /* davinchi */
-      int				  events_id;	/* If it is used as scrollbar */
+      int		  events_id; /* If it is used as scrollbar */
    } dragable;
 };
 

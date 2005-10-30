@@ -772,6 +772,7 @@ _edje_collection_free_part_description_free(Edje_Part_Description *desc)
    if (desc->color_class)     free(desc->color_class);
    if (desc->text.text)       free(desc->text.text);
    if (desc->text.text_class) free(desc->text.text_class);
+   if (desc->text.style)      free(desc->text.style);
    if (desc->text.font)       free(desc->text.font);
    free(desc);
 }
