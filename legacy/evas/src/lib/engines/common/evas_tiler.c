@@ -23,8 +23,8 @@ evas_common_tilebuf_new(int w, int h)
    tb = calloc(1, sizeof(Tilebuf));
    if (!tb) return NULL;
 
-   tb->tile_size.w = 16;
-   tb->tile_size.h = 16;
+   tb->tile_size.w = 8;
+   tb->tile_size.h = 8;
    tb->outbuf_w = w;
    tb->outbuf_h = h;
 
@@ -57,79 +57,6 @@ evas_common_tilebuf_get_tile_size(Tilebuf *tb, int *tw, int *th)
    if (th) *th = tb->tile_size.h;
 }
 
-/* new update tile types:
- *
- * redraw        R  = redraw everything in the tile
- * blit          B  = blit area by dx or dy != 0
- * blit alpha    BA = area blit by dx or dy != 0 with alpha mask
- * no blit       N  = no redraw, no blit (dx & dy == 0)
- * no blit alpha NA = no blit, but alpha channel there
- * edge          E  = edge of blit or no blit tile area that rect only
- *                    partially fills
- *
- * existing tile types can be:
- *
- * R, B, N, E
- *
- * for delta rects:
- *
- *   +-----+
- * dx| New |
- * +-|     |
- * | +-----+
- * | Old | dy
- * +-----+
- *
- */
-
-/* redraw rect logic
- *
- * existing rect |    logic
- * R            ----> R
- * B            -+--> R in old input rect
- *               +--> R in new input rect
- * N            ----> R
- * E            ----> R
- *
- */
-
-/* motion vector logic
- *
- * apply: B
- * R            -+--> new input rect: B
- *               +--> old input rect: B, from = 1
- * B            -+--> new input rect: B
- *               +--> old input rect: if blits == then from = 0
- *               +--> old input rect: if blits != then R in old,new rect + dxdy
- * N
- * E
- *
- * apply: BA
- * R
- * B
- * N
- * E
- *
- * apply: N
- * R
- * B
- * N
- * E
- *
- * apply: NA
- * R
- * B
- * N
- * E
- *
- * apply: E
- * R
- * B
- * N
- * E
- *
- */
-
 int
 evas_common_tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)
 {
@@ -156,10 +83,10 @@ evas_common_tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)
 	     for (xx = tx1; xx <= tx2; xx++)
 	       {
 		  tbt->redraw = 1;
-		  num++;
 		  tbt++;
 	       }
 	  }
+	num = (tx2 - tx1 + 1) * (ty2 - ty1 + 1);
      }
    return num;
 #endif
@@ -194,10 +121,10 @@ evas_common_tilebuf_del_redraw(Tilebuf *tb, int x, int y, int w, int h)
 	     for (xx = tx1; xx <= tx2; xx++)
 	       {
 		  tbt->redraw = 0;
-		  num++;
 		  tbt++;
 	       }
 	  }
+	num = (tx2 - tx1 + 1) * (ty2 - ty1 + 1);
      }
    return num;
 #endif
@@ -213,8 +140,6 @@ evas_common_tilebuf_add_motion_vector(Tilebuf *tb, int x, int y, int w, int h, i
    num = evas_common_tilebuf_add_redraw(tb, x, y, w, h);
    num += evas_common_tilebuf_add_redraw(tb, x + dx, y + dy, w, h);
    return num;
-   /* FIXME: unused */
-   alpha = 0;
 }
 
 void

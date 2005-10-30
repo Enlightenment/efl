@@ -6,6 +6,12 @@
 
 #if defined HAVE_ALTIVEC_H
 # include <altivec.h>
+#ifdef CONFIG_DARWIN
+#define AVV(x...) (x)
+#else
+#define AVV(x...) {x}
+#endif
+
 #endif
 
 #ifdef BUILD_CONVERT_YUV
@@ -66,37 +72,33 @@ const int _cgv = RZ(CGV);   /* 0.813 */
 
 #ifdef BUILD_ALTIVEC
 #ifdef __VEC__
-const vector unsigned short res     = (vector unsigned short)(RES);
-const vector signed short crv       = (vector signed short)(RZ(CRV));
-const vector signed short cbu       = (vector signed short)(RZ(CBU));
-const vector signed short cgu       = (vector signed short)(RZ(CGU));
-const vector signed short cgv       = (vector signed short)(RZ(CGV));
-const vector signed short ymul      = (vector signed short)(RZ(YMUL));
-const vector signed short c128      = (vector signed short)(128);
-const vector signed short c32       = (vector signed short)(RZ(OFF));
-const vector signed short c16       = (vector signed short)(16);
-const vector unsigned char zero     = (vector unsigned char)(0);
-const vector signed short maxchar   = (vector signed short)(255);
-const vector unsigned char pickrg1  = (vector unsigned char)
-						(0, 0x1, 0x11, 0,
-						 0, 0x3, 0x13, 0,
-						 0, 0x5, 0x15, 0,
-						 0, 0x7, 0x17, 0);
-const vector unsigned char pickrg2  = (vector unsigned char)
-						(0, 0x9, 0x19, 0,
-						 0, 0xb, 0x1b, 0,
-						 0, 0xd, 0x1d, 0,
-						 0, 0xf, 0x1f, 0);
-const vector unsigned char pickrgb1 = (vector unsigned char)
-						(0x3, 0x1, 0x2, 0x11,
-						 0x7, 0x5, 0x6, 0x13,
-						 0xb, 0x9, 0xa, 0x15,
-						 0xf, 0xd, 0xe, 0x17);
-const vector unsigned char pickrgb2 = (vector unsigned char)
-						(0x3, 0x1, 0x2, 0x19,
-						 0x7, 0x5, 0x6, 0x1b,
-						 0xb, 0x9, 0xa, 0x1d,
-						 0xf, 0xd, 0xe, 0x1f);
+const vector unsigned short res     = AVV(RES);
+const vector signed short crv       = AVV(RZ(CRV));
+const vector signed short cbu       = AVV(RZ(CBU));
+const vector signed short cgu       = AVV(RZ(CGU));
+const vector signed short cgv       = AVV(RZ(CGV));
+const vector signed short ymul      = AVV(RZ(YMUL));
+const vector signed short c128      = AVV(128);
+const vector signed short c32       = AVV(RZ(OFF));
+const vector signed short c16       = AVV(16);
+const vector unsigned char zero     = AVV(0);
+const vector signed short maxchar   = AVV(255);
+const vector unsigned char pickrg1  = AVV(0, 0x1, 0x11, 0,
+					  0, 0x3, 0x13, 0,
+					  0, 0x5, 0x15, 0,
+					  0, 0x7, 0x17, 0);
+const vector unsigned char pickrg2  = AVV(0, 0x9, 0x19, 0,
+					  0, 0xb, 0x1b, 0,
+					  0, 0xd, 0x1d, 0,
+					  0, 0xf, 0x1f, 0);
+const vector unsigned char pickrgb1 = AVV(0x3, 0x1, 0x2, 0x11,
+					  0x7, 0x5, 0x6, 0x13,
+					  0xb, 0x9, 0xa, 0x15,
+					  0xf, 0xd, 0xe, 0x17);
+const vector unsigned char pickrgb2 = AVV(0x3, 0x1, 0x2, 0x19,
+					  0x7, 0x5, 0x6, 0x1b,
+					  0xb, 0x9, 0xa, 0x1d,
+					  0xf, 0xd, 0xe, 0x1f);
 #endif
 #endif
 
@@ -546,7 +548,7 @@ _evas_yv12torgb_altivec(unsigned char **yuv, unsigned char *rgb, int w, int h)
    dp1 = rgb;
    dp2 = rgb + (w * 4);
 
-   alpha = vec_mergeh((vector unsigned char)(255), zero);
+   alpha = vec_mergeh((vector unsigned char)AVV(255), zero);
    alpha = (vector unsigned char)vec_mergeh((vector unsigned short)alpha,
 					    (vector unsigned short)zero);
 
