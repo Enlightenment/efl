@@ -212,8 +212,8 @@ ecore_file_realpath(const char *file)
    return strdup(buf);
 }
 
-char *
-ecore_file_get_file(char *path)
+const char *
+ecore_file_get_file(const char *path)
 {
    char *result = NULL;
 
