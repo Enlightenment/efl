@@ -164,8 +164,8 @@ evas_hash_del(Evas_Hash *hash, const char *key, const void *data)
    for (l = hash->buckets[hash_num]; l; l = l->next)
      {
 	el = (Evas_Hash_El *)l;
-	if ((((el->key) && (key) && (!strcmp(el->key, key))) ||
-	     ((!el->key) && (!key))) && (el->data == data))
+	if (((el->key) && (key) && (!strcmp(el->key, key))) ||
+	    ((!key) && (el->data == data)))
 	  {
 	     hash->buckets[hash_num] = evas_object_list_remove(hash->buckets[hash_num], el);
 	     if (el->key) free(el->key);
@@ -240,8 +240,7 @@ evas_hash_modify(Evas_Hash *hash, const char *key, const void *data)
    for (l = hash->buckets[hash_num]; l; l = l->next)
      {
 	el = (Evas_Hash_El *)l;
-	if (((el->key) && (key) && (!strcmp(el->key, key))) ||
-	    ((!el->key) && (!key)))
+	if ((el->key) && (key) && (!strcmp(el->key, key)))
 	  {
 	     void *old_data;
 	     

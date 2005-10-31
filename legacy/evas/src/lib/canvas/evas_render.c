@@ -74,7 +74,8 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
    evas_object_clip_recalc(obj);
    /* build active object list */
    is_active = evas_object_is_active(obj);
-   if (is_active) *active_objects = evas_list_append(*active_objects, obj);
+   if ((is_active) || (obj->delete_me != 0)) 
+     *active_objects = evas_list_append(*active_objects, obj);
    if (restack)
      {
 	obj->restack = 1;
