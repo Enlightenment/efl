@@ -26,11 +26,6 @@ main(int argc, char *argv[])
    IDirectFBEventBuffer *buffer;
    DFBResult           err;
    DFBSurfaceDescription dsc;
-//#if (DIRECTFB_MAJOR_VERSION == 0) && (DIRECTFB_MINOR_VERSION == 9) && (DIRECTFB_MICRO_VERSION < 23)
-//   DFBCardCapabilities    caps;
-//#else
-//   DFBGraphicsDeviceDescription caps;
-//#endif
    DFBDisplayLayerConfig layer_config;
    DFBInputEvent       evt;
 
