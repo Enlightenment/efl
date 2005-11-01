@@ -279,7 +279,7 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
 //	printf("no job... add\n");
 	job = ecore_job_add(_edje_job, NULL);
 	if (job_loss_timer) ecore_timer_del(job_loss_timer);
-	job_loss_timer = ecore_timer_add(0.25, _edje_job_loss_timer, NULL);
+	job_loss_timer = ecore_timer_add(0.05, _edje_job_loss_timer, NULL);
      }
    em = _edje_message_new(ed, queue, type, id);
    if (!em) return;
