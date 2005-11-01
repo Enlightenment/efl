@@ -1664,6 +1664,7 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
    Evas_Engine_Info_Software_X11 *einfo;
    Ecore_Evas *ee;
    int rmethod;
+   static int redraw_debug = -1;
 
    rmethod = evas_render_method_lookup("software_x11");
    if (!rmethod) return NULL;
@@ -1743,13 +1744,21 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
 		  free(roots);
 	       }
 	  }
+	
+	if (redraw_debug < 0)
+	  {
+	     if (getenv("REDRAW_DEBUG"))
+	       redraw_debug = atoi(getenv("REDRAW_DEBUG"));
+	     else
+	       redraw_debug = 0;
+	  }
 	einfo->info.display  = ecore_x_display_get();
 	einfo->info.visual   = DefaultVisual(ecore_x_display_get(), screen);
 	einfo->info.colormap = DefaultColormap(ecore_x_display_get(), screen);
 	einfo->info.drawable = ee->engine.x.win;
 	einfo->info.depth    = DefaultDepth(ecore_x_display_get(), screen);
 	einfo->info.rotation = 0;
-	einfo->info.debug    = 0;
+	einfo->info.debug    = redraw_debug;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
    evas_key_modifier_add(ee->evas, "Shift");
