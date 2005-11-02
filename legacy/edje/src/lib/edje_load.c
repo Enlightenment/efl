@@ -669,7 +669,7 @@ _edje_file_free(Edje_File *edf)
      }
    if (edf->path) free(edf->path);
    if (edf->compiler) free(edf->compiler);
-   if (edf->collection_cache) _edje_cache_coll_clean(edf);
+   if (edf->collection_cache) _edje_cache_coll_flush(edf);
    _edje_textblock_style_cleanup(edf);
    free(edf);
 }

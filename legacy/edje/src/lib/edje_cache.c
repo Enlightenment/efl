@@ -208,6 +208,19 @@ _edje_cache_coll_clean(Edje_File *edf)
 }
 
 void
+_edje_cache_coll_flush(Edje_File *edf)
+{
+   while (edf->collection_cache)
+     {
+	Edje_Part_Collection *edc;
+	
+	edc = evas_list_last(edf->collection_cache)->data;
+	edf->collection_cache = evas_list_remove_list(edf->collection_cache, evas_list_last(edf->collection_cache));
+	_edje_collection_free(edf, edc);
+     }
+}
+
+void
 _edje_cache_coll_unref(Edje_File *edf, Edje_Part_Collection *edc)
 {
    edc->references--;
@@ -316,7 +329,7 @@ edje_collection_cache_flush(void)
 	Edje_File *edf;
 	
 	edf = l->data;
-	_edje_cache_coll_clean(edf);
+	_edje_cache_coll_flush(edf);
      }
    /* FIXME: freach in file hash too! */
    _edje_collection_cache_size = ps;
