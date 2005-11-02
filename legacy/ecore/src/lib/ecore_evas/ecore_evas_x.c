@@ -428,6 +428,40 @@ _ecore_evas_x_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *e
    if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
    if ((e->win != ee->engine.x.win_container) && (e->win != ee->engine.x.win)) return 1;
    if (e->event_win == ee->engine.x.win_container) return 0;
+/*   
+     {   
+	time_t t;
+	char *ct;
+	
+	const char *modes[] = {
+	   "MODE_NORMAL",
+	     "MODE_WHILE_GRABBED",
+	     "MODE_GRAB",
+	     "MODE_UNGRAB"
+	};
+	const char *details[] = {
+	   "DETAIL_ANCESTOR",
+	     "DETAIL_VIRTUAL",
+	     "DETAIL_INFERIOR",
+	     "DETAIL_NON_LINEAR",
+	     "DETAIL_NON_LINEAR_VIRTUAL",
+	     "DETAIL_POINTER",
+	     "DETAIL_POINTER_ROOT",
+	     "DETAIL_DETAIL_NONE"
+	};
+	t = time(NULL);
+	ct = ctime(&t);
+	ct[strlen(ct) - 1] = 0;
+	printf("@@ ->IN 0x%x 0x%x %s md=%s dt=%s\n",
+	       e->win, e->event_win,
+	       ct,
+	       modes[e->mode],
+	       details[e->detail]);
+     }
+ */
+   if ((e->mode == ECORE_X_EVENT_MODE_GRAB) || 
+       (e->mode == ECORE_X_EVENT_MODE_UNGRAB))
+     return 0;
 /* if (e->mode != ECORE_X_EVENT_MODE_NORMAL) return 0; */
    if (ee->func.fn_mouse_in) ee->func.fn_mouse_in(ee);
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);
@@ -447,6 +481,40 @@ _ecore_evas_x_event_mouse_out(void *data __UNUSED__, int type __UNUSED__, void *
    if ((!ee) || (ee->ignore_events)) return 1; /* pass on event */
    if ((e->win != ee->engine.x.win_container) && (e->win != ee->engine.x.win)) return 1;
    if (e->event_win == ee->engine.x.win_container) return 0;
+/*   
+     {   
+	time_t t;
+	char *ct;
+	
+	const char *modes[] = {
+	   "MODE_NORMAL",
+	     "MODE_WHILE_GRABBED",
+	     "MODE_GRAB",
+	     "MODE_UNGRAB"
+	};
+	const char *details[] = {
+	   "DETAIL_ANCESTOR",
+	     "DETAIL_VIRTUAL",
+	     "DETAIL_INFERIOR",
+	     "DETAIL_NON_LINEAR",
+	     "DETAIL_NON_LINEAR_VIRTUAL",
+	     "DETAIL_POINTER",
+	     "DETAIL_POINTER_ROOT",
+	     "DETAIL_DETAIL_NONE"
+	};
+	t = time(NULL);
+	ct = ctime(&t);
+	ct[strlen(ct) - 1] = 0;
+	printf("@@ ->OUT 0x%x 0x%x %s md=%s dt=%s\n",
+	       e->win, e->event_win,
+	       ct,
+	       modes[e->mode],
+	       details[e->detail]);
+     }
+ */ 
+   if ((e->mode == ECORE_X_EVENT_MODE_GRAB) ||
+       (e->mode == ECORE_X_EVENT_MODE_UNGRAB))
+     return 0;
 /* if (e->mode != ECORE_X_EVENT_MODE_NORMAL) return 0; */
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);   
    _ecore_evas_x_mouse_move_process(ee, e->x, e->y, e->time);
