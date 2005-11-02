@@ -105,13 +105,17 @@ _evas_render_phase1_object_process(Evas *e, Evas_Object *obj, Evas_List **active
 		 ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) || 
 		  (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
 	       *restack_objects = evas_list_append(*restack_objects, obj);
-	     else if ((is_active) && (!obj->clip.clipees))
+	     else if ((is_active) && (!obj->clip.clipees) &&
+		      ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) || 
+		       (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
 	       obj->func->render_pre(obj);
 	  }
      }
    else
      {
-	if ((!obj->clip.clipees) && (obj->delete_me == 0))
+	if ((!obj->clip.clipees) && (obj->delete_me == 0) &&
+	    ((evas_object_is_visible(obj) && (!obj->cur.have_clipees)) || 
+	     (evas_object_was_visible(obj) && (!obj->prev.have_clipees))))
 	  {
 	     if (obj->smart.smart)
 	       {
