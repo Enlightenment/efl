@@ -176,6 +176,8 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
      {
 	/* unclip */
 	obj->cur.clipper->clip.clipees = evas_list_remove(obj->cur.clipper->clip.clipees, obj);
+	if (!obj->cur.clipper->clip.clipees) obj->cur.clipper->cur.have_clipees = 0;
+	evas_object_change(obj->cur.clipper);
 	evas_object_change(obj);
 	obj->cur.clipper = NULL;
      }
@@ -191,6 +193,8 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
      }
    obj->cur.clipper = clip;
    clip->clip.clipees = evas_list_append(clip->clip.clipees, obj);
+   if (clip->clip.clipees) clip->cur.have_clipees = 1;
+   evas_object_change(clip);
    evas_object_change(obj);
    evas_object_clip_dirty(obj);
    evas_object_recalc_clippees(obj);
@@ -278,6 +282,8 @@ evas_object_clip_unset(Evas_Object *obj)
 	  obj->smart.smart->smart_class->clip_unset(obj);
      }
    obj->cur.clipper->clip.clipees = evas_list_remove(obj->cur.clipper->clip.clipees, obj);
+   if (!obj->cur.clipper->clip.clipees) obj->cur.clipper->cur.have_clipees = 0;
+   evas_object_change(obj->cur.clipper);
    obj->cur.clipper = NULL;
    evas_object_change(obj);
    evas_object_clip_dirty(obj);

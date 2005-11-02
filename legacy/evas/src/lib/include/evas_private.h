@@ -317,6 +317,7 @@ struct _Evas_Object
 	 unsigned char  r, g, b, a;
       } color;
       unsigned char     visible : 1;
+      unsigned char     have_clipees : 1;
       int               layer;
       Evas_Object      *clipper;
    } cur, prev;
