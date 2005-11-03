@@ -75,18 +75,21 @@ struct
 
 /* prototypes of internal calls */
 static Eet_File *eet_cache_find(char *real_path, Eet_File **cache, int cache_num);
-static void      eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num);
-static void      eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num);
+static void      eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc);
+static void      eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc);
 static int       eet_string_match(char *s1, char *s2);
 static int       eet_hash_gen(char *key, int hash_size);
 static void      eet_flush(Eet_File *ef);
 
 /* cache. i don't expect this to ever be large, so arrays will do */
-static int        eet_writers_num = 0;
-static Eet_File **eet_writers     = NULL;
-static int        eet_readers_num = 0;
-static Eet_File **eet_readers     = NULL;
-static int        eet_initcount   = 0;
+static int        eet_writers_num     = 0;
+static int        eet_writers_alloc   = 0;
+static Eet_File **eet_writers         = NULL;
+static int        eet_readers_num     = 0;
+static int        eet_readers_alloc   = 0;
+static Eet_File **eet_readers         = NULL;
+static int        eet_initcount       = 0;
+static int        eet_cacheburst_mode = 0;
 
 /* find an eet file in the currently in use cache */
 static Eet_File *
@@ -106,36 +109,43 @@ eet_cache_find(char *real_path, Eet_File **cache, int cache_num)
 
 /* add to end of cache */
 static void
-eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num)
+eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
 {
    Eet_File **new_cache;
-   int new_cache_num;
+   int new_cache_num, new_cache_alloc;
 
-   new_cache_num = *cache_num;
    new_cache = *cache;
+   new_cache_num = *cache_num;
+   new_cache_alloc = *cache_alloc;
    new_cache_num++;
-   new_cache = realloc(new_cache, new_cache_num * sizeof(Eet_File *));
-   if (!new_cache)
+   if (new_cache_num > new_cache_alloc)
      {
-	fprintf(stderr, "BAD ERROR! Eet realloc of cache list failed. Abort\n");
-	abort();
+	new_cache_alloc += 64;
+	new_cache = realloc(new_cache, new_cache_alloc * sizeof(Eet_File *));
+	if (!new_cache)
+	  {
+	     fprintf(stderr, "BAD ERROR! Eet realloc of cache list failed. Abort\n");
+	     abort();
+	  }
      }
-   if (!new_cache) return;
    new_cache[new_cache_num - 1] = ef;
    *cache = new_cache;
    *cache_num = new_cache_num;
+   *cache_alloc = new_cache_alloc;
 }
 
 /* delete from cache */
 static void
-eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num)
+eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
 {
    Eet_File **new_cache;
-   int new_cache_num;
+   int new_cache_num, new_cache_alloc;
    int i, j;
 
-   new_cache_num = *cache_num;
+   if (eet_cacheburst_mode) return;
    new_cache = *cache;
+   new_cache_num = *cache_num;
+   new_cache_alloc = *cache_alloc;
    if (new_cache_num <= 0)
      {
 	return;
@@ -150,22 +160,27 @@ eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num)
      }
    new_cache_num--;
    for (j = i; j < new_cache_num; j++) new_cache[j] = new_cache[j + 1];
-   if (new_cache_num > 0)
+   if (new_cache_num < (new_cache_alloc - 64))
      {
-        new_cache = realloc(new_cache, new_cache_num * sizeof(Eet_File *));
-	if (!new_cache)
+	new_cache_alloc -= 64;
+	if (new_cache_num > 0)
 	  {
-	     fprintf(stderr, "BAD ERROR! Eet realloc of cache list failed. Abort\n");
-	     abort();
+	     new_cache = realloc(new_cache, new_cache_alloc * sizeof(Eet_File *));
+	     if (!new_cache)
+	       {
+		  fprintf(stderr, "BAD ERROR! Eet realloc of cache list failed. Abort\n");
+		  abort();
+	       }
+	  }
+	else
+	  {
+	     free(new_cache);
+	     new_cache = NULL;
 	  }
      }
-   else
-     {
-	free(new_cache);
-	new_cache = NULL;
-     }
-   *cache_num = new_cache_num;
    *cache = new_cache;
+   *cache_num = new_cache_num;
+   *cache_alloc = new_cache_alloc;
 }
 
 /* internal string match. bails out at first mismatch - not comparing all */
@@ -175,16 +190,7 @@ eet_string_match(char *s1, char *s2)
 {
    /* both null- no match */
    if ((!s1) || (!s2)) return 0;
-   /* go thru - first mismatch - exit with 0 */
-   do
-     {
-	if (*s1 != *s2) return 0;
-	s1++;
-	s2++;
-     }
-   while ((*s1) || (*s2));
-   /* got this far. match */
-   return 1;
+   return (!strcmp(s1, s2));
 }
 
 /* caluclate hash table entry valu with bitmask size of hash_size */
@@ -331,6 +337,58 @@ eet_flush(Eet_File *ef)
      }
    /* no more writes pending */
    ef->writes_pending = 0;
+}
+
+void
+eet_cacheburst(int on)
+{
+   if (eet_cacheburst_mode == on) return;
+   eet_cacheburst_mode = on;
+   if (!eet_cacheburst_mode)
+     {
+	int i;
+	int num;
+	
+	num = 0;
+	for (i = 0; i < eet_writers_num; i++)
+	  {
+	     if (eet_writers[i]->references == 0) num++;
+	  }
+	for (i = 0; i < eet_readers_num; i++)
+	  {
+	     if (eet_readers[i]->references == 0) num++;
+	  }
+	if (num > 0)
+	  {
+	     Eet_File **closelist = NULL;
+	     
+	     closelist = malloc(num * sizeof(Eet_File *));
+	     if (!closelist)
+	       {
+		  fprintf(stderr, "BAD ERROR! Eet malloc of closelist. Abort\n");
+		  abort();
+	       }
+	     num = 0;
+	     for (i = 0; i < eet_writers_num; i++)
+	       {
+		  if (eet_writers[i]->references == 0)
+		    {
+		       closelist[num] = eet_writers[i];
+		       num++;
+		    }
+	       }
+	     for (i = 0; i < eet_readers_num; i++)
+	       {
+		  if (eet_readers[i]->references == 0)
+		    {
+		       closelist[num] = eet_readers[i];
+		       num++;
+		    }
+	       }
+	     for (i = 0; i < num; i++) eet_close(closelist[i]);
+	     free(closelist);
+	  }
+     }
 }
 
 Eet_File *
@@ -619,9 +677,9 @@ eet_open(const char *file, Eet_File_Mode mode)
 
    /* add to cache */
    if (ef->mode == EET_FILE_MODE_READ)
-     eet_cache_add(ef, &eet_readers, &eet_readers_num);
+     eet_cache_add(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
    else if ((ef->mode == EET_FILE_MODE_WRITE) || (ef->mode == EET_FILE_MODE_READ_WRITE))
-     eet_cache_add(ef, &eet_writers, &eet_writers_num);
+     eet_cache_add(ef, &eet_writers, &eet_writers_num, &eet_writers_alloc);
    return ef;
 }
 
@@ -645,11 +703,13 @@ eet_close(Eet_File *ef)
    ef->references--;
    /* if its still referenced - dont go any further */
    if (ef->references != 0) return;
+   /* if we are in cacheburst mode - dont free it - leave it in cache */
+   if (eet_cacheburst_mode) return;
    /* remove from cache */
    if (ef->mode == EET_FILE_MODE_READ)
-     eet_cache_del(ef, &eet_readers, &eet_readers_num);
+     eet_cache_del(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
    else if ((ef->mode == EET_FILE_MODE_WRITE) || (ef->mode == EET_FILE_MODE_READ_WRITE))
-     eet_cache_del(ef, &eet_writers, &eet_writers_num);
+     eet_cache_del(ef, &eet_writers, &eet_writers_num, &eet_writers_alloc);
    /* flush any writes */
    eet_flush(ef);
 

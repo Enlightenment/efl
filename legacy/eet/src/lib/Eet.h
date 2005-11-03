@@ -85,6 +85,20 @@ extern "C" {
    EAPI int eet_shutdown(void);
 
    /**
+    * Turn cacheburst on/off
+    *
+    * @param on Set this to 1 to turn on, 0 to turn off.
+    * 
+    * This enables cacheburst mode. This is where eet will not free items from
+    * its internal share cache even when their references hit 0. This is
+    * intended to be enabled during bursts where eet may open several eet
+    * files over and over and over again (eg in initialization of an app) and
+    * thius this will avoid repeated openings. It will NOT respect changes
+    * on disk and if you open a LOT of files may use a lot of memory.
+    */
+   EAPI void eet_cacheburst(int on);
+
+   /**
     * Open an eet file on disk, and returns a handle to it.
     * @param file The file path to the eet file. eg: "/tmp/file.eet".
     * @param mode The mode for opening. Either EET_FILE_MODE_READ or EET_FILE_MODE_WRITE, but not both.
