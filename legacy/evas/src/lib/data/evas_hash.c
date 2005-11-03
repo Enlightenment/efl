@@ -1,12 +1,12 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
-static int evas_hash_gen(const char *key);
+static inline int _evas_hash_gen(const char *key);
 
 static int _evas_hash_alloc_error = 0;
 
-static int
-evas_hash_gen(const char *key)
+static inline int
+_evas_hash_gen(const char *key)
 {
    unsigned int hash_num = 0, i;
    const unsigned char *ptr;
@@ -88,6 +88,7 @@ evas_hash_add(Evas_Hash *hash, const char *key, const void *data)
    int hash_num;
    Evas_Hash_El *el;
 
+   if ((!key) || (!data)) return hash;
    _evas_hash_alloc_error = 0;
    if (!hash)
      {
@@ -98,7 +99,7 @@ evas_hash_add(Evas_Hash *hash, const char *key, const void *data)
 	     return NULL;
 	  }
      }
-   if (!(el = malloc(sizeof(struct _Evas_Hash_El))))
+   if (!(el = malloc(sizeof(struct _Evas_Hash_El) + strlen(key) + 1)))
      {
         if (hash->population <= 0)
 	  {
@@ -108,23 +109,10 @@ evas_hash_add(Evas_Hash *hash, const char *key, const void *data)
 	_evas_hash_alloc_error = 1;
 	return hash;
      };
-   if (key)
-     {
-        el->key = strdup(key);
-	if (!el->key)
-	  {
-	     free(el);
-	     _evas_hash_alloc_error = 1;
-	     return hash;
-	  }
-        hash_num = evas_hash_gen(key);
-     }
-   else
-     {
-        el->key = NULL;
-	hash_num = 0;
-     }
+   el->key = ((unsigned char *)el) + sizeof(struct _Evas_Hash_El);
+   strcpy(el->key, key);
    el->data = (void *)data;
+   hash_num = _evas_hash_gen(key);
    hash->buckets[hash_num] = evas_object_list_prepend(hash->buckets[hash_num], el);
    if (evas_list_alloc_error())
      {
@@ -160,15 +148,14 @@ evas_hash_del(Evas_Hash *hash, const char *key, const void *data)
    Evas_Object_List *l;
 
    if (!hash) return NULL;
-   hash_num = evas_hash_gen(key);
+   hash_num = _evas_hash_gen(key);
    for (l = hash->buckets[hash_num]; l; l = l->next)
      {
 	el = (Evas_Hash_El *)l;
-	if (((el->key) && (key) && (!strcmp(el->key, key))) ||
+	if (((key) && (!strcmp(el->key, key))) ||
 	    ((!key) && (el->data == data)))
 	  {
 	     hash->buckets[hash_num] = evas_object_list_remove(hash->buckets[hash_num], el);
-	     if (el->key) free(el->key);
 	     free(el);
 	     hash->population--;
 	     if (hash->population <= 0)
@@ -198,13 +185,12 @@ evas_hash_find(Evas_Hash *hash, const char *key)
    Evas_Object_List *l;
 
    _evas_hash_alloc_error = 0;
-   if (!hash) return NULL;
-   hash_num = evas_hash_gen(key);
+   if ((!hash) || (!key)) return NULL;
+   hash_num = _evas_hash_gen(key);
    for (l = hash->buckets[hash_num]; l; l = l->next)
      {
 	el = (Evas_Hash_El *)l;
-	if (((el->key) && (key) && (!strcmp(el->key, key))) ||
-	    ((!el->key) && (!key)))
+	if (!strcmp(el->key, key))
 	  {
 	     if (l != hash->buckets[hash_num])
 	       {
@@ -236,11 +222,11 @@ evas_hash_modify(Evas_Hash *hash, const char *key, const void *data)
 
    _evas_hash_alloc_error = 0;
    if (!hash) return NULL;
-   hash_num = evas_hash_gen(key);
+   hash_num = _evas_hash_gen(key);
    for (l = hash->buckets[hash_num]; l; l = l->next)
      {
 	el = (Evas_Hash_El *)l;
-	if ((el->key) && (key) && (!strcmp(el->key, key)))
+	if ((key) && (!strcmp(el->key, key)))
 	  {
 	     void *old_data;
 	     
@@ -314,7 +300,6 @@ evas_hash_free(Evas_Hash *hash)
 	     Evas_Hash_El *el;
 
 	     el = (Evas_Hash_El *)hash->buckets[i];
-	     if (el->key) free(el->key);
 	     hash->buckets[i] = evas_object_list_remove(hash->buckets[i], el);
 	     free(el);
 	  }
