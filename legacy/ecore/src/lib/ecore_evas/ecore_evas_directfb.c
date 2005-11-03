@@ -507,6 +507,7 @@ static const Ecore_Evas_Engine_Func _ecore_directfb_engine_func =
      NULL,				/* cb pre render */
      NULL,				/* cb post render */
      _ecore_evas_directfb_move,	/* move */
+     NULL,                              /* managed move */
      _ecore_evas_directfb_resize,	/* resize */
      NULL,				/* move resize */
      NULL,//_ecore_evas_directfb_rotation_set,/* rotation */

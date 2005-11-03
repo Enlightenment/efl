@@ -130,6 +130,7 @@ EAPI void        ecore_evas_callback_pre_render_set(Ecore_Evas *ee, void (*func)
 EAPI void        ecore_evas_callback_post_render_set(Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
 EAPI Evas       *ecore_evas_get(Ecore_Evas *ee);
 EAPI void        ecore_evas_move(Ecore_Evas *ee, int x, int y);
+EAPI void        ecore_evas_managed_move(Ecore_Evas *ee, int x, int y);
 EAPI void        ecore_evas_resize(Ecore_Evas *ee, int w, int h);
 EAPI void        ecore_evas_move_resize(Ecore_Evas *ee, int x, int y, int w, int h);
 EAPI void        ecore_evas_geometry_get(Ecore_Evas *ee, int *x, int *y, int *w, int *h);

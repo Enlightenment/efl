@@ -433,6 +433,7 @@ static const Ecore_Evas_Engine_Func _ecore_fb_engine_func =
      NULL,
      NULL,
      NULL,
+     NULL,
      _ecore_evas_resize,
      _ecore_evas_move_resize,
      _ecore_evas_rotation_set,

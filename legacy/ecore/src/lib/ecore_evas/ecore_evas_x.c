@@ -978,28 +978,59 @@ _ecore_evas_x_callback_delete_request_set(Ecore_Evas *ee, void (*func) (Ecore_Ev
 static void
 _ecore_evas_x_move(Ecore_Evas *ee, int x, int y)
 {
-   ecore_x_window_move(ee->engine.x.win_container, x, y);
-   if (!ee->should_be_visible)
-     {
-	/* We need to request pos */
-	ee->prop.request_pos = 1;
-	_ecore_evas_x_size_pos_hints_update(ee);
-     }
    if (ee->engine.x.direct_resize)
      {
-	if (ee->func.fn_move) ee->func.fn_move(ee);
+	if (!ee->engine.x.managed)
+	  {
+	     if ((x != ee->x) || (y != ee->y))
+	       {
+		  ecore_x_window_move(ee->engine.x.win_container, x, y);
+		  if (!ee->should_be_visible)
+		    {
+		       /* We need to request pos */
+		       ee->prop.request_pos = 1;
+		       _ecore_evas_x_size_pos_hints_update(ee);
+		    }
+		  if (ee->func.fn_move) ee->func.fn_move(ee);
+	       }
+	  }
+     }
+   else
+     {
+	ecore_x_window_move(ee->engine.x.win_container, x, y);
+	if (!ee->should_be_visible)
+	  {
+	     /* We need to request pos */
+	     ee->prop.request_pos = 1;
+	     _ecore_evas_x_size_pos_hints_update(ee);
+	  }
+     }
+}
+
+static void
+_ecore_evas_x_managed_move(Ecore_Evas *ee, int x, int y)
+{
+   if (ee->engine.x.direct_resize)
+     {
+	ee->engine.x.managed = 1;
+	if ((x != ee->x) || (y != ee->y))
+	  {
+	     ee->x = x;
+	     ee->y = y;
+	     if (ee->func.fn_move) ee->func.fn_move(ee);
+	  }
      }
 }
 
 static void
 _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
 {
-   ecore_x_window_resize(ee->engine.x.win_container, w, h);
    if (ee->engine.x.direct_resize)
      {
-	ecore_x_window_move_resize(ee->engine.x.win, 0, 0, w, h);
 	if ((ee->w != w) || (ee->h != h))
 	  {
+	     ecore_x_window_resize(ee->engine.x.win_container, w, h);
+	     ecore_x_window_move_resize(ee->engine.x.win, 0, 0, w, h);
 	     ee->w = w;
 	     ee->h = h;
 	     if ((ee->rotation == 90) || (ee->rotation == 270))
@@ -1021,20 +1052,34 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
 	       {
 		  _ecore_evas_x_resize_shape(ee);
 	       }
+	     if (ee->func.fn_resize) ee->func.fn_resize(ee);
 	  }
-	if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
+   else
+     ecore_x_window_resize(ee->engine.x.win_container, w, h);
 }
 
 static void
 _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 {
-   ecore_x_window_move_resize(ee->engine.x.win_container, x, y, w, h);
    if (ee->engine.x.direct_resize)
      {
-	ecore_x_window_move_resize(ee->engine.x.win, 0, 0, w, h);
-	if ((ee->w != w) || (ee->h != h))
+	if ((ee->w != w) || (ee->h != h) || (x != ee->x) || (y != ee->y))
 	  {
+	     int change_size = 0, change_pos = 0;
+	     
+	     if ((ee->w != w) || (ee->h != h)) change_size = 1;
+	     if (!ee->engine.x.managed)
+	       {
+		  if ((x != ee->x) || (y != ee->y)) change_pos = 1;
+	       }
+	     ecore_x_window_move_resize(ee->engine.x.win_container, x, y, w, h);
+	     ecore_x_window_move_resize(ee->engine.x.win, 0, 0, w, h);
+	     if (!ee->engine.x.managed)
+	       {
+		  ee->x = x;
+		  ee->y = y;
+	       }
 	     ee->w = w;
 	     ee->h = h;
 	     if ((ee->rotation == 90) || (ee->rotation == 270))
@@ -1056,10 +1101,18 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 	       {
 		  _ecore_evas_x_resize_shape(ee);
 	       }
+	     if (change_pos)
+	       {
+		  if (ee->func.fn_move) ee->func.fn_move(ee);
+	       }
+	     if (change_size)
+	       {
+		  if (ee->func.fn_resize) ee->func.fn_resize(ee);
+	       }
 	  }
-	if (ee->func.fn_move) ee->func.fn_move(ee);
-	if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
+   else
+     ecore_x_window_move_resize(ee->engine.x.win_container, x, y, w, h);
 }
 
 static void
@@ -1697,6 +1750,7 @@ static const Ecore_Evas_Engine_Func _ecore_x_engine_func =
      NULL,
      NULL,
      _ecore_evas_x_move,
+     _ecore_evas_x_managed_move,
      _ecore_evas_x_resize,
      _ecore_evas_x_move_resize,
      _ecore_evas_x_rotation_set,

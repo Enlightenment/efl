@@ -65,6 +65,7 @@ struct _Ecore_Evas_Engine_Func
    void        (*fn_callback_pre_render_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
    void        (*fn_callback_post_render_set) (Ecore_Evas *ee, void (*func) (Ecore_Evas *ee));
    void        (*fn_move) (Ecore_Evas *ee, int x, int y);
+   void        (*fn_managed_move) (Ecore_Evas *ee, int x, int y);
    void        (*fn_resize) (Ecore_Evas *ee, int w, int h);
    void        (*fn_move_resize) (Ecore_Evas *ee, int x, int y, int w, int h);
    void        (*fn_rotation_set) (Ecore_Evas *ee, int rot);
@@ -109,6 +110,7 @@ struct _Ecore_Evas_Engine
       Region         damages;
       unsigned char  direct_resize : 1;
       unsigned char  using_bg_pixmap : 1;
+      unsigned char  managed : 1;
       struct {
 	   /*
 	   unsigned char modal : 1;

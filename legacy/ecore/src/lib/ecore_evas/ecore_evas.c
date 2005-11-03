@@ -473,6 +473,27 @@ ecore_evas_move(Ecore_Evas *ee, int x, int y)
 }
 
 /**
+ * Provide Managed move co-ordinates for an Ecore_Evas
+ * @param ee The Ecore_Evas to move
+ * @param x The x coordinate to set as the managed location
+ * @param y The y coordinate to set as the managed location
+ *
+ * This sets the managed geometry position of the @p ee to (@p x, @p y)
+ */
+void
+ecore_evas_managed_move(Ecore_Evas *ee, int x, int y)
+{
+   if (!ECORE_MAGIC_CHECK(ee, ECORE_MAGIC_EVAS))
+     {
+	ECORE_MAGIC_FAIL(ee, ECORE_MAGIC_EVAS,
+			 "ecore_evas_move");
+	return;
+     }
+   IFC(ee, fn_managed_move) (ee, x, y);
+   IFE;
+}
+
+/**
  * Resize an Ecore_Evas
  * @param ee The Ecore_Evas to move
  * @param w The w coordinate to resize to

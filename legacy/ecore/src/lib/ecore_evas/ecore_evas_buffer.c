@@ -390,6 +390,7 @@ static const Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
      NULL,
      NULL,
      NULL,
+     NULL,
      _ecore_evas_resize,
      NULL,
      NULL,
