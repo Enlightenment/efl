@@ -985,6 +985,10 @@ _ecore_evas_x_move(Ecore_Evas *ee, int x, int y)
 	ee->prop.request_pos = 1;
 	_ecore_evas_x_size_pos_hints_update(ee);
      }
+   if (ee->engine.x.direct_resize)
+     {
+	if (ee->func.fn_move) ee->func.fn_move(ee);
+     }
 }
 
 static void
@@ -1018,6 +1022,7 @@ _ecore_evas_x_resize(Ecore_Evas *ee, int w, int h)
 		  _ecore_evas_x_resize_shape(ee);
 	       }
 	  }
+	if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
 }
 
@@ -1052,6 +1057,8 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 		  _ecore_evas_x_resize_shape(ee);
 	       }
 	  }
+	if (ee->func.fn_move) ee->func.fn_move(ee);
+	if (ee->func.fn_resize) ee->func.fn_resize(ee);
      }
 }
 
