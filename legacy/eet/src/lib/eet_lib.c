@@ -27,7 +27,8 @@ struct _Eet_File
    FILE            *fp;
    Eet_File_Mode    mode;
 
-   int              writes_pending : 1;
+   unsigned char    writes_pending : 1;
+   unsigned char    delete_me_now : 1;
 
    Eet_File_Header *header;
 };
@@ -101,7 +102,10 @@ eet_cache_find(char *real_path, Eet_File **cache, int cache_num)
    for (i = 0; i < cache_num; i++)
      {
 	/* if matches real path - return it */
-	if (eet_string_match(cache[i]->real_path, real_path)) return cache[i];
+	if (eet_string_match(cache[i]->real_path, real_path))
+	  {
+	     if (!cache[i]->delete_me_now) return cache[i];
+	  }
      }
    /* not found */
    return NULL;
@@ -339,6 +343,24 @@ eet_flush(Eet_File *ef)
    ef->writes_pending = 0;
 }
 
+int
+eet_init(void)
+{
+   return ++eet_initcount;
+}
+
+int
+eet_shutdown(void)
+{
+   if (--eet_initcount == 0)
+     {
+	eet_cacheburst(0);
+	_eet_memfile_shutdown();
+     }
+
+   return eet_initcount;
+}
+
 void
 eet_cacheburst(int on)
 {
@@ -414,9 +436,21 @@ eet_open(const char *file, Eet_File_Mode mode)
    /* find the current file handle in cache*/
    ef = NULL;
    if (mode == EET_FILE_MODE_READ)
-     ef = eet_cache_find(buf, eet_readers, eet_readers_num);
+     {
+	ef = eet_cache_find(buf, eet_writers, eet_writers_num);
+	if (ef)
+	  {
+	     eet_flush(ef);
+	     ef->delete_me_now = 1;
+	  }
+	ef = eet_cache_find(buf, eet_readers, eet_readers_num);
+     }
    else if ((mode == EET_FILE_MODE_WRITE) || (mode == EET_FILE_MODE_READ_WRITE))
-     ef = eet_cache_find(buf, eet_writers, eet_writers_num);
+     {
+	ef = eet_cache_find(buf, eet_readers, eet_readers_num);
+	if (ef) ef->delete_me_now = 1;
+	ef = eet_cache_find(buf, eet_writers, eet_writers_num);
+     }
    /* we found one */
    if (ef)
      {
@@ -447,6 +481,7 @@ eet_open(const char *file, Eet_File_Mode mode)
      }
    else
      {
+	ef->delete_me_now = 1;
 	eet_close(ef);
 	return NULL;
      }
@@ -454,6 +489,7 @@ eet_open(const char *file, Eet_File_Mode mode)
    /* if we can't open - bail out */
    if (!ef->fp)
      {
+	ef->delete_me_now = 1;
 	eet_close(ef);
 	return NULL;
      }
@@ -494,12 +530,14 @@ eet_open(const char *file, Eet_File_Mode mode)
 	/* we cant have <= 0 values here - invalid */
 	if ((num_entries <= 0) || (byte_entries <= 0))
 	  {
+	     ef->delete_me_now = 1;
 	     eet_close(ef);
 	     return NULL;
 	  }
 	/* we can't have more entires than minimum bytes for those! invalid! */
 	if ((num_entries * 20) > byte_entries)
 	  {
+	     ef->delete_me_now = 1;
 	     eet_close(ef);
 	     return NULL;
 	  }
@@ -507,6 +545,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	dyn_buf = malloc(byte_entries);
 	if (!dyn_buf)
 	  {
+	     ef->delete_me_now = 1;
 	     eet_close(ef);
 	     return NULL;
 	  }
@@ -514,6 +553,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	ef->header = calloc(1, sizeof(Eet_File_Header));
 	if (!ef->header)
 	  {
+	     ef->delete_me_now = 1;
 	     free(dyn_buf);
 	     eet_close(ef);
 	     return NULL;
@@ -523,6 +563,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	ef->header->directory = calloc(1, sizeof(Eet_File_Directory));
 	if (!ef->header->directory)
 	  {
+	     ef->delete_me_now = 1;
 	     free(dyn_buf);
 	     eet_close(ef);
 	     return NULL;
@@ -533,6 +574,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	ef->header->directory->nodes = calloc(1, sizeof(Eet_File_Node *) * (1 << ef->header->directory->size));
 	if (!ef->header->directory->nodes)
 	  {
+	     ef->delete_me_now = 1;
 	     free(dyn_buf);
 	     eet_close(ef);
 	     return NULL;
@@ -541,6 +583,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	count = fread(dyn_buf, byte_entries, 1, ef->fp);
 	if (count != 1)
 	  {
+	     ef->delete_me_now = 1;
 	     free(dyn_buf);
 	     eet_close(ef);
 	     return NULL;
@@ -564,6 +607,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	     /* dynamic block buffer before we finished scanning dir entries */
 	     if (p >= (dyn_buf + byte_entries))
 	       {
+		  ef->delete_me_now = 1;
 		  free(dyn_buf);
 		  eet_close(ef);
 		  return NULL;
@@ -594,6 +638,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	     /* invalid name_size */
 	     if (name_size <= 0)
 	       {
+		  ef->delete_me_now = 1;
 		  free(dyn_buf);
 		  eet_close(ef);
 		  return NULL;
@@ -601,6 +646,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	     /* reading name would mean falling off end of dyn_buf - invalid */
 	     if ((p + 16 + name_size) > (dyn_buf + byte_entries))
 	       {
+		  ef->delete_me_now = 1;
 		  free(dyn_buf);
 		  eet_close(ef);
 		  return NULL;
@@ -609,6 +655,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	     name = malloc(name_size + 1);
 	     if (!name)
 	       {
+		  ef->delete_me_now = 1;
 		  free(dyn_buf);
 		  eet_close(ef);
 		  return NULL;
@@ -621,6 +668,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	     efn = calloc(1, sizeof(Eet_File_Node));
 	     if (!efn)
 	       {
+		  ef->delete_me_now = 1;
 		  free(dyn_buf);
 		  eet_close(ef);
 		  return NULL;
@@ -676,10 +724,13 @@ eet_open(const char *file, Eet_File_Mode mode)
      }
 
    /* add to cache */
-   if (ef->mode == EET_FILE_MODE_READ)
-     eet_cache_add(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
-   else if ((ef->mode == EET_FILE_MODE_WRITE) || (ef->mode == EET_FILE_MODE_READ_WRITE))
-     eet_cache_add(ef, &eet_writers, &eet_writers_num, &eet_writers_alloc);
+   if (ef->references == 1)
+     {
+	if (ef->mode == EET_FILE_MODE_READ)
+	  eet_cache_add(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
+	else if ((ef->mode == EET_FILE_MODE_WRITE) || (ef->mode == EET_FILE_MODE_READ_WRITE))
+	  eet_cache_add(ef, &eet_writers, &eet_writers_num, &eet_writers_alloc);
+     }
    return ef;
 }
 
@@ -702,9 +753,12 @@ eet_close(Eet_File *ef)
    /* deref */
    ef->references--;
    /* if its still referenced - dont go any further */
-   if (ef->references != 0) return;
+   if (ef->references > 0) return;
    /* if we are in cacheburst mode - dont free it - leave it in cache */
-   if (eet_cacheburst_mode) return;
+   if (eet_cacheburst_mode)
+     {
+	if (!ef->delete_me_now) return;
+     }
    /* remove from cache */
    if (ef->mode == EET_FILE_MODE_READ)
      eet_cache_del(ef, &eet_readers, &eet_readers_num, &eet_readers_alloc);
@@ -1126,17 +1180,4 @@ eet_num_entries(Eet_File *ef)
      }
 
    return ret;
-}
-
-int eet_init(void)
-{
-   return ++eet_initcount;
-}
-
-int eet_shutdown(void)
-{
-   if (--eet_initcount == 0)
-      _eet_memfile_shutdown();
-
-   return eet_initcount;
 }
