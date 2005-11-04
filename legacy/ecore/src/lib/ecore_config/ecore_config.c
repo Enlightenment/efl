@@ -1541,7 +1541,7 @@ _ecore_config_system_init_no_load(void)
       return ECORE_CONFIG_ERR_IGNORED;
 
    DEBUG = -1;
-   if ((p = getenv("ECORE_CONFIG_DEBUG")) && strlen(p) > 0)
+   if ((p = getenv("ECORE_CONFIG_DEBUG")) && p[0] != 0)
      {
 	DEBUG = atoi(p);
      }
