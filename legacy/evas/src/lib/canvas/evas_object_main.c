@@ -49,7 +49,6 @@ evas_object_free(Evas_Object *obj, int clean_layer)
 
 	node = obj->data.elements->data;
 	obj->data.elements = evas_list_remove(obj->data.elements, node);
-	free(node->key);
 	free(node);
      }
    obj->magic = 0;
