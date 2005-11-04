@@ -916,10 +916,6 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
 	if (!ef->header->directory->nodes) return 0;
      }
 
-   /* dup name */
-   name = strdup(name);
-   if (!name) return 0;
-
    /* figure hash bucket */
    hash = eet_hash_gen(name, ef->header->directory->size);
 
@@ -930,11 +926,8 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
    if (compress) data_size = 12 + ((size * 101) / 100);
 
    data2 = malloc(data_size);
-   if (!data2)
-     {
-	free(name);
-	return 0;
-     }
+   if (!data2) return 0;
+
    /* if we want to compress */
    if (compress)
      {
@@ -945,7 +938,6 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
 	if (compress2((Bytef *)data2, &buflen, (Bytef *)data,
 			   (uLong)size, Z_BEST_COMPRESSION) != Z_OK)
 	  {
-	     free(name);
 	     free(data2);
 	     return 0;
 	  }
@@ -981,7 +973,6 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
 		  efn->data_size = size;
 		  efn->data = data2;
 		  exists_already = 1;
-		  free(name);
 		  break;
 	       }
 	  }
@@ -991,13 +982,18 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
 	efn = calloc(1, sizeof(Eet_File_Node));
 	if (!efn)
 	  {
-	     free(name);
+	     free(data2);
+	     return 0;
+	  }
+	efn->name = strdup(name);
+	if (!efn->name)
+	  {
+	     free(efn);
 	     free(data2);
 	     return 0;
 	  }
 	efn->next = ef->header->directory->nodes[hash];
 	ef->header->directory->nodes[hash] = efn;
-	efn->name = name;
 	efn->offset = 0;
 	efn->compression = !!compress;
 	efn->size = data_size;
@@ -1036,6 +1032,7 @@ eet_delete(Eet_File *ef, char *name)
 	if (eet_string_match(efn->name, name))
 	  {
 	     if (efn->data) free(efn->data);
+	     if (efn->name) free(efn->name);
 	     if (efn == ef->header->directory->nodes[hash])
 	       ef->header->directory->nodes[hash] = efn->next;
 	     else
