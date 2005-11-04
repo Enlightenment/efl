@@ -505,11 +505,10 @@ eet_data_chunk_new(void *data, int size, char *name)
    Eet_Data_Chunk *chnk;
 
    if (!name) return NULL;
-   chnk = malloc(sizeof(Eet_Data_Chunk) + strlen(name) + 1);
+   chnk = calloc(1, sizeof(Eet_Data_Chunk));
    if (!chnk) return NULL;
 
-   chnk->name = ((char *)chnk) + sizeof(Eet_Data_Chunk);
-   strcpy(chnk->name, name);
+   chnk->name = strdup(name);
    chnk->size = size;
    chnk->data = data;
 
@@ -519,6 +518,7 @@ eet_data_chunk_new(void *data, int size, char *name)
 static void
 eet_data_chunk_free(Eet_Data_Chunk *chnk)
 {
+   if (chnk->name) free(chnk->name);
    free(chnk);
 }
 
@@ -792,7 +792,7 @@ _eet_freelist_add(void *data)
    freelist_num++;
    if (freelist_num > freelist_len)
      {
-	freelist_len += 64;
+	freelist_len += 16;
 	freelist = realloc(freelist, freelist_len * sizeof(void *));
      }
    freelist[freelist_num - 1] = data;
