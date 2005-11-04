@@ -187,7 +187,7 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
    E_SMART_OBJ_GET(sd, obj, E_OBJ_NAME);
    
    if ((file) && (sd->file) && (!strcmp(file, sd->file))) return;
-   if ((file) && (strlen(file) > 0))
+   if ((file) && (file[0] != 0))
      {
         int w, h;
 	sd->file = strdup(file);
