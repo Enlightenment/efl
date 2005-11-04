@@ -505,10 +505,11 @@ eet_data_chunk_new(void *data, int size, char *name)
    Eet_Data_Chunk *chnk;
 
    if (!name) return NULL;
-   chnk = calloc(1, sizeof(Eet_Data_Chunk));
+   chnk = malloc(sizeof(Eet_Data_Chunk) + strlen(name) + 1);
    if (!chnk) return NULL;
 
-   chnk->name = strdup(name);
+   chnk->name = ((char *)chnk) + sizeof(Eet_Data_Chunk);
+   strcpy(chnk->name, name);
    chnk->size = size;
    chnk->data = data;
 
@@ -518,7 +519,6 @@ eet_data_chunk_new(void *data, int size, char *name)
 static void
 eet_data_chunk_free(Eet_Data_Chunk *chnk)
 {
-   if (chnk->name) free(chnk->name);
    free(chnk);
 }
 
@@ -700,8 +700,9 @@ eet_data_descriptor_new(char *name,
    Eet_Data_Descriptor *edd;
 
    if (!name) return NULL;
-   edd = calloc(1, sizeof(Eet_Data_Descriptor));
-   edd->name = strdup(name);
+   edd = calloc(1, sizeof(Eet_Data_Descriptor) + strlen(name) + 1);
+   edd->name = ((char *)edd) + sizeof(Eet_Data_Descriptor);
+   strcpy(edd->name, name);
    edd->size = size;
    edd->func.list_next = func_list_next;
    edd->func.list_append = func_list_append;
@@ -719,7 +720,6 @@ eet_data_descriptor_free(Eet_Data_Descriptor *edd)
    int i;
 
    _eet_descriptor_hash_free(edd);
-   if (edd->name) free(edd->name);
    for (i = 0; i < edd->elements.num; i++)
      {
 	if (edd->elements.set[i].name) free(edd->elements.set[i].name);
@@ -792,7 +792,7 @@ _eet_freelist_add(void *data)
    freelist_num++;
    if (freelist_num > freelist_len)
      {
-	freelist_len += 16;
+	freelist_len += 64;
 	freelist = realloc(freelist, freelist_len * sizeof(void *));
      }
    freelist[freelist_num - 1] = data;

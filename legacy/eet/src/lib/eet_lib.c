@@ -22,7 +22,6 @@ struct _Eet_File
    int              references;
 
    char            *path;
-   char            *real_path;
 
    FILE            *fp;
    Eet_File_Mode    mode;
@@ -75,7 +74,7 @@ struct
 #endif
 
 /* prototypes of internal calls */
-static Eet_File *eet_cache_find(char *real_path, Eet_File **cache, int cache_num);
+static Eet_File *eet_cache_find(char *path, Eet_File **cache, int cache_num);
 static void      eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc);
 static void      eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc);
 static int       eet_string_match(char *s1, char *s2);
@@ -94,7 +93,7 @@ static int        eet_cacheburst_mode = 0;
 
 /* find an eet file in the currently in use cache */
 static Eet_File *
-eet_cache_find(char *real_path, Eet_File **cache, int cache_num)
+eet_cache_find(char *path, Eet_File **cache, int cache_num)
 {
    int i;
 
@@ -102,7 +101,7 @@ eet_cache_find(char *real_path, Eet_File **cache, int cache_num)
    for (i = 0; i < cache_num; i++)
      {
 	/* if matches real path - return it */
-	if (eet_string_match(cache[i]->real_path, real_path))
+	if (eet_string_match(cache[i]->path, path))
 	  {
 	     if (!cache[i]->delete_me_now) return cache[i];
 	  }
@@ -299,7 +298,7 @@ eet_flush(Eet_File *ef)
 
 		  name_size = strlen(efn->name);
 		  buf_size = 20 + name_size;
-		  buf = malloc(buf_size);
+		  buf = alloca(buf_size);
 		  if (!buf) return;
 		  i1 = (unsigned long int)efn->offset;
 		  i2 = htonl(i1);
@@ -317,13 +316,8 @@ eet_flush(Eet_File *ef)
 		  i2 = htonl(i1);
 		  *((int *)(buf + 16)) = (int)i2;
 		  memcpy(buf + 20, efn->name, name_size);
-		  if (fwrite(buf, buf_size, 1, ef->fp) != 1)
-		    {
-		       free(buf);
-		       return;
-		    }
+		  if (fwrite(buf, buf_size, 1, ef->fp) != 1) return;
 		  offset += buf_size;
-		  free(buf);
 	       }
 	  }
      }
@@ -384,12 +378,7 @@ eet_cacheburst(int on)
 	  {
 	     Eet_File **closelist = NULL;
 	     
-	     closelist = malloc(num * sizeof(Eet_File *));
-	     if (!closelist)
-	       {
-		  fprintf(stderr, "BAD ERROR! Eet malloc of closelist. Abort\n");
-		  abort();
-	       }
+	     closelist = alloca(num * sizeof(Eet_File *));
 	     num = 0;
 	     for (i = 0; i < eet_writers_num; i++)
 	       {
@@ -408,7 +397,6 @@ eet_cacheburst(int on)
 		    }
 	       }
 	     for (i = 0; i < num; i++) eet_close(closelist[i]);
-	     free(closelist);
 	  }
      }
 }
@@ -417,39 +405,25 @@ Eet_File *
 eet_open(const char *file, Eet_File_Mode mode)
 {
    Eet_File *ef;
-   char buf[PATH_MAX];
 
    if (!file) return NULL;
-
-//   printf("open %s\n", file);
-#ifdef HAVE_REALPATH
-   /* in case this is a symlink... find out where it REALLY points */
-   if (!realpath(file, buf))
-     {
-	if (mode == EET_FILE_MODE_READ) return NULL;
-     }
-#else
-   strncpy(buf, file, sizeof(buf));
-   buf[sizeof(buf) - 1] = 0;
-#endif
-
    /* find the current file handle in cache*/
    ef = NULL;
    if (mode == EET_FILE_MODE_READ)
      {
-	ef = eet_cache_find(buf, eet_writers, eet_writers_num);
+	ef = eet_cache_find((char *)file, eet_writers, eet_writers_num);
 	if (ef)
 	  {
 	     eet_flush(ef);
 	     ef->delete_me_now = 1;
 	  }
-	ef = eet_cache_find(buf, eet_readers, eet_readers_num);
+	ef = eet_cache_find((char *)file, eet_readers, eet_readers_num);
      }
    else if ((mode == EET_FILE_MODE_WRITE) || (mode == EET_FILE_MODE_READ_WRITE))
      {
-	ef = eet_cache_find(buf, eet_readers, eet_readers_num);
+	ef = eet_cache_find((char *)file, eet_readers, eet_readers_num);
 	if (ef) ef->delete_me_now = 1;
-	ef = eet_cache_find(buf, eet_writers, eet_writers_num);
+	ef = eet_cache_find((char *)file, eet_writers, eet_writers_num);
      }
    /* we found one */
    if (ef)
@@ -460,12 +434,12 @@ eet_open(const char *file, Eet_File_Mode mode)
      }
 
    /* allocate struct for eet file and have it zero'd out */
-   ef = calloc(1, sizeof(Eet_File));
+   ef = calloc(1, sizeof(Eet_File) + strlen(file) + 1);
    if (!ef) return NULL;
 
    /* fill some of the members */
-   ef->path = strdup(file);
-   ef->real_path = strdup(buf);
+   ef->path = ((char *)ef) + sizeof(Eet_File);
+   strcpy(ef->path, file);
    ef->magic = EET_MAGIC_FILE;
    ef->references = 1;
    ef->mode = mode;
@@ -476,7 +450,7 @@ eet_open(const char *file, Eet_File_Mode mode)
    else if (ef->mode == EET_FILE_MODE_WRITE)
      {
 	/* opening for write - delete old copy of file right away */
-	unlink(ef->real_path);
+	unlink(ef->path);
 	ef->fp = fopen(ef->path, "wb");
      }
    else
@@ -542,7 +516,7 @@ eet_open(const char *file, Eet_File_Mode mode)
 	     return NULL;
 	  }
 	/* allocate dynamic buffer for entire directory block */
-	dyn_buf = malloc(byte_entries);
+	dyn_buf = alloca(byte_entries);
 	if (!dyn_buf)
 	  {
 	     ef->delete_me_now = 1;
@@ -554,7 +528,6 @@ eet_open(const char *file, Eet_File_Mode mode)
 	if (!ef->header)
 	  {
 	     ef->delete_me_now = 1;
-	     free(dyn_buf);
 	     eet_close(ef);
 	     return NULL;
 	  }
@@ -564,7 +537,6 @@ eet_open(const char *file, Eet_File_Mode mode)
 	if (!ef->header->directory)
 	  {
 	     ef->delete_me_now = 1;
-	     free(dyn_buf);
 	     eet_close(ef);
 	     return NULL;
 	  }
@@ -575,7 +547,6 @@ eet_open(const char *file, Eet_File_Mode mode)
 	if (!ef->header->directory->nodes)
 	  {
 	     ef->delete_me_now = 1;
-	     free(dyn_buf);
 	     eet_close(ef);
 	     return NULL;
 	  }
@@ -584,7 +555,6 @@ eet_open(const char *file, Eet_File_Mode mode)
 	if (count != 1)
 	  {
 	     ef->delete_me_now = 1;
-	     free(dyn_buf);
 	     eet_close(ef);
 	     return NULL;
 	  }
@@ -598,7 +568,6 @@ eet_open(const char *file, Eet_File_Mode mode)
 	     int size;
 	     int data_size;
 	     int name_size;
-	     char *name;
 	     int hash;
 	     Eet_File_Node *efn;
 	     void *data = NULL;
@@ -608,7 +577,6 @@ eet_open(const char *file, Eet_File_Mode mode)
 	     if (p >= (dyn_buf + byte_entries))
 	       {
 		  ef->delete_me_now = 1;
-		  free(dyn_buf);
 		  eet_close(ef);
 		  return NULL;
 	       }
@@ -631,7 +599,6 @@ eet_open(const char *file, Eet_File_Mode mode)
 	     /* invalid size */
 	     if (size <= 0)
 	       {
-		  free(dyn_buf);
 		  eet_close(ef);
 		  return NULL;
 	       }
@@ -639,7 +606,6 @@ eet_open(const char *file, Eet_File_Mode mode)
 	     if (name_size <= 0)
 	       {
 		  ef->delete_me_now = 1;
-		  free(dyn_buf);
 		  eet_close(ef);
 		  return NULL;
 	       }
@@ -647,35 +613,25 @@ eet_open(const char *file, Eet_File_Mode mode)
 	     if ((p + 16 + name_size) > (dyn_buf + byte_entries))
 	       {
 		  ef->delete_me_now = 1;
-		  free(dyn_buf);
 		  eet_close(ef);
 		  return NULL;
 	       }
-	     /* allocate name string */
-	     name = malloc(name_size + 1);
-	     if (!name)
-	       {
-		  ef->delete_me_now = 1;
-		  free(dyn_buf);
-		  eet_close(ef);
-		  return NULL;
-	       }
-	     /* copy name in and terminate it */
-	     strncpy(name, (char *)p + 20, name_size);
-	     name[name_size] = 0;
-	     /* get hask bucket it should go in */
-	     hash = eet_hash_gen(name, ef->header->directory->size);
-	     efn = calloc(1, sizeof(Eet_File_Node));
+	     /* allocate all the ram needed for this stored node accounting */
+	     efn = malloc(sizeof(Eet_File_Node) + name_size + 1);
 	     if (!efn)
 	       {
 		  ef->delete_me_now = 1;
-		  free(dyn_buf);
 		  eet_close(ef);
 		  return NULL;
 	       }
+	     efn->name = ((char *)efn) + sizeof(Eet_File_Node);
+	     /* copy name in and terminate it */
+	     strncpy(efn->name, (char *)p + 20, name_size);
+	     efn->name[name_size] = 0;
+	     /* get hask bucket it should go in */
+	     hash = eet_hash_gen(efn->name, ef->header->directory->size);
 	     efn->next = ef->header->directory->nodes[hash];
 	     ef->header->directory->nodes[hash] = efn;
-	     efn->name = name;
 	     efn->offset = offset;
 	     efn->compression = flags;
 	     efn->size = size;
@@ -707,19 +663,16 @@ eet_open(const char *file, Eet_File_Mode mode)
 		    }
                   efn->data = data;
 	       }
-
 	     /* advance */
 	     p += 20 + name_size;
 	  }
-	/* done - free dynamic buffer */
-	free(dyn_buf);
      }
 
    /* we need to delete the original file in read-write mode and re-open for writing */
    if (ef->mode == EET_FILE_MODE_READ_WRITE)
      {
 	fclose(ef->fp);
-	unlink(ef->real_path);
+	unlink(ef->path);
 	ef->fp = fopen(ef->path, "wb");
      }
 
@@ -769,8 +722,6 @@ eet_close(Eet_File *ef)
 
    /* free up members */
    if (ef->fp) fclose(ef->fp);
-   if (ef->path) free(ef->path);
-   if (ef->real_path) free(ef->real_path);
 
    /* free up data */
    if (ef->header)
@@ -788,7 +739,6 @@ eet_close(Eet_File *ef)
 		       
 		       while ((efn = ef->header->directory->nodes[i]))
 			 {
-			    if (efn->name) free(efn->name);
 			    if (efn->data) free(efn->data);
 			    ef->header->directory->nodes[i] = efn->next;
 			    free(efn);
@@ -872,11 +822,16 @@ eet_read(Eet_File *ef, char *name, int *size_ret)
 	     else
 	       {
 		  void *tmp_data;
+		  int free_tmp = 0;
 
 		  /* get size of data in file */
 		  tmp_size = efn->size;
-		  tmp_data = malloc(tmp_size);
-		  if (!tmp_data) break;
+		  if (!efn->data)
+		    {
+		       tmp_data = malloc(tmp_size);
+		       if (!tmp_data) break;
+		       free_tmp = 1;
+		    }
 		  /* get size uncompressed */
 		  size = efn->data_size;
 		  /* allocate data */
@@ -887,7 +842,7 @@ eet_read(Eet_File *ef, char *name, int *size_ret)
 
 		       /* if we already have the data in ram... copy that */
 		       if (efn->data)
-			 memcpy(tmp_data, efn->data, tmp_size);
+			 tmp_data = efn->data;
 		       /* or get data from disk */
 		       else
 			 {
@@ -913,13 +868,13 @@ eet_read(Eet_File *ef, char *name, int *size_ret)
 		       if (uncompress((Bytef *)data, &dlen,
 				      tmp_data, (uLongf)tmp_size))
 			 {
-			    free(tmp_data);
+			    if (free_tmp) free(tmp_data);
 			    free(data);
 			    data = NULL;
 			    break;
 			 }
 		    }
-		  free(tmp_data);
+		  if (free_tmp) free(tmp_data);
 		  break;
 	       }
 	  }
@@ -1066,8 +1021,8 @@ eet_delete(Eet_File *ef, char *name)
    if ((!ef) || (ef->magic != EET_MAGIC_FILE) || (!name))
      return 0;
 
-   /* deleting keys is only possible in RW mode */
-   if (ef->mode != EET_FILE_MODE_READ_WRITE) return 0;
+   /* deleting keys is only possible in RW or WRITE mode */
+   if (ef->mode == EET_FILE_MODE_READ) return 0;
 
    if (!ef->header) return 0;
 
@@ -1080,7 +1035,6 @@ eet_delete(Eet_File *ef, char *name)
 	/* if it matches */
 	if (eet_string_match(efn->name, name))
 	  {
-	     if (efn->name) free(efn->name);
 	     if (efn->data) free(efn->data);
 	     if (efn == ef->header->directory->nodes[hash])
 	       ef->header->directory->nodes[hash] = efn->next;
@@ -1134,7 +1088,7 @@ eet_list(Eet_File *ef, char *glob, int *count_ret)
 		  /* only realloc in 32 entry chunks */
 		  if (list_count > list_count_alloc)
 		    {
-		       list_count_alloc += 32;
+		       list_count_alloc += 64;
 		       new_list = realloc(list_ret, list_count_alloc * (sizeof(char *)));
 		       if (!new_list)
 			 {

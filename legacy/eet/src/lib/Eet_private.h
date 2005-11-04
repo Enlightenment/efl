@@ -1,9 +1,7 @@
 #ifndef _EET_PRIVATE_H
 #define _EET_PRIVATE_H
 
-#ifdef HAVE_CONFIG_H
 #include "config.h"
-#endif
 
 #include <stdio.h>
 #include <unistd.h>
@@ -13,6 +11,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#if HAVE_ALLOCA_H
+#include <alloca.h>
+#endif
 
 #ifdef HAVE_NETINET_IN_H
 #include <netinet/in.h>

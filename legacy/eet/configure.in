@@ -16,6 +16,7 @@ AC_HEADER_STDC
 AC_C_CONST
 AM_ENABLE_SHARED
 AM_PROG_LIBTOOL
+AC_FUNC_ALLOCA
 
 AC_CHECK_HEADER(zlib.h,, AC_MSG_ERROR("Cannot find zlib.h. Make sure your CFLAGS environment variable contains include lines for the location of this file"))
 AC_CHECK_HEADER(jpeglib.h,, AC_MSG_ERROR("Cannot find jpeglib.h. Make sure your CFLAGS environment variable contains include lines for the location of this file"))
