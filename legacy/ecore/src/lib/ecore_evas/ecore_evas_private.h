@@ -238,6 +238,9 @@ int _ecore_evas_fb_shutdown(void);
 int _ecore_evas_buffer_shutdown(void);
 void _ecore_evas_buffer_render(Ecore_Evas *ee);
 #endif
+#ifdef BUILD_ECORE_EVAS_DIRECTFB
+int _ecore_evas_directfb_shutdown(void);
+#endif
 
 void _ecore_evas_fps_debug_init(void);
 void _ecore_evas_fps_debug_shutdown(void);

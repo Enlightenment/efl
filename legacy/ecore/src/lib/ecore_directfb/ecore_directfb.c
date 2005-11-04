@@ -35,8 +35,6 @@ int ECORE_DIRECTFB_EVENT_LEAVE = 0;
 int ECORE_DIRECTFB_EVENT_WHEEL = 0;
 
 
-static int _ecore_directfb_event_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
-
 static Ecore_Fd_Handler *_window_event_fd_handler_handle = NULL;
 static Ecore_Fd_Handler *_input_event_fd_handler_handle = NULL;
 
