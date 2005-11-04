@@ -979,19 +979,14 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
      }
    if (!exists_already)
      {
-	efn = calloc(1, sizeof(Eet_File_Node));
+	efn = malloc(sizeof(Eet_File_Node) + strlen(name) + 1);
 	if (!efn)
 	  {
 	     free(data2);
 	     return 0;
 	  }
-	efn->name = strdup(name);
-	if (!efn->name)
-	  {
-	     free(efn);
-	     free(data2);
-	     return 0;
-	  }
+	efn->name = (char *)efn + sizeof(Eet_File_Node);
+	strcpy(efn->name, name);
 	efn->next = ef->header->directory->nodes[hash];
 	ef->header->directory->nodes[hash] = efn;
 	efn->offset = 0;
@@ -1032,7 +1027,6 @@ eet_delete(Eet_File *ef, char *name)
 	if (eet_string_match(efn->name, name))
 	  {
 	     if (efn->data) free(efn->data);
-	     if (efn->name) free(efn->name);
 	     if (efn == ef->header->directory->nodes[hash])
 	       ef->header->directory->nodes[hash] = efn->next;
 	     else
