@@ -931,7 +931,7 @@ command(void)
 	     char                pathname[_MAX_PATH];
 
 	     lptr = getstring(pathname, sizeof pathname, lptr);
-	     if (strlen(pathname) > 0)
+	     if (pathname[0] != '\0')
 	       {
 		  free(inpfname);
 		  inpfname = strdup(pathname);
@@ -1000,7 +1000,7 @@ command(void)
 			       name[i] = *lptr;
 			    name[i] = '\0';
 			 }	/* if */
-		       if (strlen(name) == 0)
+		       if (name[0] == '\0')
 			 {
 			    curlibrary = NULL;
 			 }
@@ -1308,7 +1308,7 @@ command(void)
 		     delete_subst(pattern, prefixlen);
 		  }		/* if */
 		/* add the pattern/substitution pair to the list */
-		assert(strlen(pattern) > 0);
+		assert(pattern[0] != '\0');
 		insert_subst(pattern, substitution, prefixlen);
 		free(pattern);
 		free(substitution);

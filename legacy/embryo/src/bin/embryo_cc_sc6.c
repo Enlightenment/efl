@@ -710,7 +710,7 @@ assemble(FILE * fout, FILE * fin)
 	  }			/* if */
 	if (match)
 	  {
-	     assert(strlen(alias) > 0);
+	     assert(alias[0] != '\0');
 	     nametablesize += strlen(alias) + 1;
 	  }			/* if */
      }				/* for */
@@ -723,7 +723,7 @@ assemble(FILE * fout, FILE * fin)
      {
 	if (constptr->value > 0)
 	  {
-	     assert(strlen(constptr->name) > 0);
+	     assert(constptr->name[0] != '\0');
 	     numlibraries++;
 	     nametablesize += strlen(constptr->name) + 1;
 	  }			/* if */
@@ -736,7 +736,7 @@ assemble(FILE * fout, FILE * fin)
      {
 	if ((constptr->value & PUBLICTAG) != 0)
 	  {
-	     assert(strlen(constptr->name) > 0);
+	     assert(constptr->name[0] != '\0');
 	     numtags++;
 	     nametablesize += strlen(constptr->name) + 1;
 	  }			/* if */
@@ -892,7 +892,7 @@ assemble(FILE * fout, FILE * fin)
      {
 	if (constptr->value > 0)
 	  {
-	     assert(strlen(constptr->name) > 0);
+	     assert(constptr->name[0] != '\0');
 	     func.address = 0;
 	     func.nameofs = nameofs;
 #ifdef WORDS_BIGENDIAN
@@ -938,7 +938,7 @@ assemble(FILE * fout, FILE * fin)
      {
 	if ((constptr->value & PUBLICTAG) != 0)
 	  {
-	     assert(strlen(constptr->name) > 0);
+	     assert(constptr->name[0] != '\0');
 	     func.address = constptr->value & TAGMASK;
 	     func.nameofs = nameofs;
 #ifdef WORDS_BIGENDIAN

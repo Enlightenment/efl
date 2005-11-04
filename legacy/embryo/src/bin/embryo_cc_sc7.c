@@ -360,7 +360,7 @@ stgset(int onoff)
 	/* write any contents that may be put in the buffer by stgwrite()
 	 * when "staging" was 0
 	 */
-	if (strlen(stgbuf) > 0)
+	if (stgbuf[0] != '\0')
 	   filewrite(stgbuf);
      }				/* if */
    stgbuf[0] = '\0';

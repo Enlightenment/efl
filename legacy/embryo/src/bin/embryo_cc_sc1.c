@@ -342,7 +342,7 @@ sc_compile(int argc, char *argv[])
    sc_status = statFIRST;
    /* do the first pass through the file */
    inpfmark = sc_getpossrc(inpf);
-   if (strlen(incfname) > 0)
+   if (incfname[0] != '\0')
      {
 	if (strcmp(incfname, sDEF_PREFIX) == 0)
 	  {
@@ -390,7 +390,7 @@ sc_compile(int argc, char *argv[])
 				 * by resetglobals() */
    writeleader();
    setfile(inpfname, fnumber);
-   if (strlen(incfname) > 0)
+   if (incfname[0] != '\0')
      {
 	if (strcmp(incfname, sDEF_PREFIX) == 0)
 	   plungefile(incfname, FALSE, TRUE);	/* parse "default.inc" (again) */
@@ -601,19 +601,16 @@ parseoptions(int argc, char **argv, char *iname, char *oname,
       {
 	 /* include directory */
 	 i++;
-	 snprintf(str, sizeof(str), "%s", argv[i]);
+	 strncpy(str, argv[i], sizeof(str));
 
 	 len = strlen(str);
-	 if (len > 0)
+	 if (str[len - 1] != DIRSEP_CHAR)
 	 {
-	    if (str[len - 1] != DIRSEP_CHAR)
-	    {
-	       str[len] = DIRSEP_CHAR;
-	       str[len + 1] = '\0';
-	    }
-
-	    insert_path(str);
+	    str[len] = DIRSEP_CHAR;
+	    str[len + 1] = '\0';
 	 }
+
+	 insert_path(str);
       }
       else if (!strcmp (argv[i], "-o") && *argv[i + 1])
       {
@@ -640,7 +637,7 @@ parseoptions(int argc, char **argv, char *iname, char *oname,
       else
       {
 	 /* only allow one input filename */
-	 about ();
+	 about();
       }
    }
 }
@@ -656,7 +653,7 @@ setopt(int argc, char **argv, char *iname, char *oname,
    strcpy(pname, sDEF_PREFIX);
 
    parseoptions(argc, argv, iname, oname, pname, rname);
-   if (strlen(iname) == 0)
+   if (iname[0] == '\0')
       about();
 }
 
@@ -1668,7 +1665,7 @@ decl_enum(int vclass)
    matchtoken(';');		/* eat an optional ; */
 
    /* set the enum name to the last value plus one */
-   if (strlen(enumname) > 0)
+   if (enumname[0] != '\0')
       add_constant(enumname, value, vclass, tag);
 }
 
@@ -1884,7 +1881,7 @@ operatoradjust(int opertok, symbol * sym, char *opername, int resulttag)
       error(64);		/* cannot change predefined operators */
 
    /* change the operator name */
-   assert(strlen(opername) > 0);
+   assert(opername[0] != '\0');
    operator_symname(tmpname, opername, tags[0], tags[1], count, resulttag);
    if ((oldsym = findglb(tmpname)) != NULL)
      {
@@ -1919,7 +1916,7 @@ operatoradjust(int opertok, symbol * sym, char *opername, int resulttag)
 static int
 check_operatortag(int opertok, int resulttag, char *opername)
 {
-   assert(opername != NULL && strlen(opername) > 0);
+   assert(opername != NULL && opername[0] != '\0');
    switch (opertok)
      {
      case '!':
@@ -2891,7 +2888,7 @@ testsymbols(symbol * root, int level, int testlabs, int testconst)
 	     if ((sym->usage & (uDEFINE | uREAD | uNATIVE | uSTOCK)) == uDEFINE)
 	       {
 		  funcdisplayname(symname, sym->name);
-		  if (strlen(symname) > 0)
+		  if (symname[0] != '\0')
 		     error(203, symname);	/* symbol isn't used ...
 						 * (and not native/stock) */
 	       }		/* if */
