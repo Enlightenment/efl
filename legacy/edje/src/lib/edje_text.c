@@ -514,7 +514,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    font = chosen_desc->text.font;
    size = chosen_desc->text.size;
    
-   if ((chosen_desc->text.text_class) && (strlen(chosen_desc->text.text_class) > 0))
+   if ((chosen_desc->text.text_class) && (chosen_desc->text.text_class[0] != 0))
      {
 	Edje_Text_Class *tc;
 	
