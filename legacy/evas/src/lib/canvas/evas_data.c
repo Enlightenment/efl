@@ -52,8 +52,9 @@ evas_object_data_set(Evas_Object *obj, const char *key, const void *data)
 
    evas_object_data_del(obj, key);
    if (data == NULL) return;
-   node = malloc(sizeof(Evas_Data_Node));
-   node->key = strdup(key);
+   node = malloc(sizeof(Evas_Data_Node) + strlen(key) + 1);
+   node->key = (char *)node + sizeof(Evas_Data_Node);
+   strcpy(node->key, key);
    node->data = (void *)data;
    obj->data.elements = evas_list_prepend(obj->data.elements, node);
 }
@@ -150,7 +151,6 @@ evas_object_data_del(Evas_Object *obj, const char *key)
 
 	     data = node->data;
 	     obj->data.elements = evas_list_remove(obj->data.elements, node);
-	     free(node->key);
 	     free(node);
 	     return data;
 	  }
