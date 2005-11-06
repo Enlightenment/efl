@@ -187,6 +187,7 @@ collections
 //			    fit:    0 0;
 //			    min:    1 1;
 //			    align:  0.5 0.5;
+//                          alipsis: 0.0;
 //			 }
 		    }
 	       }

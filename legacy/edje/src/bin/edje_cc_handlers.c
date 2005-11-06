@@ -81,6 +81,7 @@ static void st_collections_group_parts_part_description_text_min(void);
 static void st_collections_group_parts_part_description_text_align(void);
 static void st_collections_group_parts_part_description_text_source(void);
 static void st_collections_group_parts_part_description_text_text_source(void);
+static void st_collections_group_parts_part_description_text_elipsis(void);
 
 static void ob_collections_group_programs_program(void);
 static void st_collections_group_programs_program_name(void);
@@ -193,6 +194,7 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.text.text_source", st_collections_group_parts_part_description_text_text_source},
      {"collections.group.parts.part.description.text.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.text.fonts.font", st_fonts_font}, /* dup */
+     {"collections.group.parts.part.description.text.elipsis", st_collections_group_parts_part_description_text_elipsis},
      {"collections.group.parts.part.description.images.image", st_images_image}, /* dup */
      {"collections.group.parts.part.description.font", st_fonts_font}, /* dup */
      {"collections.group.parts.part.description.fonts.font", st_fonts_font}, /* dup */
@@ -2018,6 +2020,31 @@ st_collections_group_parts_part_description_text_text_source(void)
 	data_queue_part_lookup(pc, name, &(ed->text.id_text_source));
 	free(name);
      }
+}
+
+static void
+st_collections_group_parts_part_description_text_elipsis(void)
+{
+   Edje_Part_Collection *pc;
+   Edje_Part *ep;
+   Edje_Part_Description *ed;
+
+   check_arg_count(1);
+
+   pc = evas_list_data(evas_list_last(edje_collections));
+   ep = evas_list_data(evas_list_last(pc->parts));
+
+   if (ep->type != EDJE_PART_TYPE_TEXT)
+     {
+	fprintf(stderr, "%s: Error. parse error %s:%i. "
+		"text attributes in non-TEXT part.\n",
+		progname, file_in, line - 1);
+	exit(-1);
+     }
+
+   ed = ep->default_desc;
+   if (ep->other_desc) ed = evas_list_data(evas_list_last(ep->other_desc));
+   ed->text.elipsis = parse_float_range(0, 0.0, 1.0);
 }
 
 static void

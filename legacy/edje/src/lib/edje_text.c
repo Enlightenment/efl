@@ -340,16 +340,16 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
 
    evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
 
-   p = ((sw - tw) * params->text.align.x);
+   p = ((sw - tw) * params->text.elipsis);
 
    /* chop chop */
    if (tw > sw)
      {
-	if (params->text.align.x != 0.0)
+	if (params->text.elipsis != 0.0)
 	  c1 = evas_object_text_char_coords_get(ep->object,
 		-p, th / 2,
 		NULL, NULL, NULL, NULL);
-	if (params->text.align.x != 1.0)
+	if (params->text.elipsis != 1.0)
 	  c2 = evas_object_text_char_coords_get(ep->object,
 		-p + sw, th / 2,
 		NULL, NULL, NULL, NULL);
@@ -575,7 +575,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
        (text) &&
        (!strcmp(ep->text.cache.in_str, text)) &&
        (ep->text.cache.align_x == params->text.align.x) &&
-       (ep->text.cache.align_y == params->text.align.y))
+       (ep->text.cache.align_y == params->text.align.y) &&
+       (ep->text.cache.elipsis == params->text.elipsis))
      {
 	text = ep->text.cache.out_str;
 	size = ep->text.cache.out_size;
@@ -703,6 +704,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    ep->text.cache.out_size = size;
    ep->text.cache.align_x = params->text.align.x;
    ep->text.cache.align_y = params->text.align.y;
+   ep->text.cache.elipsis = params->text.elipsis;
    arrange_text:
    
    if (inlined_font) evas_object_text_font_source_set(ep->object, ed->path);

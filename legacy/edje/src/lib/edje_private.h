@@ -427,6 +427,7 @@ struct _Edje_Part_Description
       
       int            id_source; /* -1 if none */
       int            id_text_source; /* -1 if none */
+      double         elipsis; /* 0.0 - 1.0 defining where the elipsis align */
    } text;
 };
 
@@ -558,6 +559,7 @@ struct _Edje_Real_Part
 	 char               *out_str;
 	 int                 out_size;
 	 double              align_x, align_y;
+	 double              elipsis;
       } cache;
       Edje_Real_Part        *source;
       Edje_Real_Part        *text_source;
@@ -621,6 +623,7 @@ struct _Edje_Calc_Params
       struct {
          double      x, y; /* text alignment within bounds */
       } align;
+      double         elipsis;
    } text;
 };
 

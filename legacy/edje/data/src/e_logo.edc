@@ -284,6 +284,7 @@ collections {
 //		  fit:    0 1;
 //		  min:    1 1;
 		  align:   0.0 0.5;
+		  elipsis: 1.0;
 	       }
 	    }
 	 }

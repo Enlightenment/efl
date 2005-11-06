@@ -879,6 +879,7 @@ _edje_part_recalc_single(Edje *ed,
      {
 	params->text.align.y = desc->text.align.y;
      }
+   params->text.elipsis = desc->text.elipsis;
 }
 
 static void
@@ -1008,6 +1009,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 
 	p3.text.align.x = (p1.text.align.x * (1.0 - pos)) + (p2.text.align.x * (pos));
 	p3.text.align.y = (p1.text.align.y * (1.0 - pos)) + (p2.text.align.y * (pos));
+	p3.text.elipsis = (p1.text.elipsis * (1.0 - pos)) + (p2.text.elipsis * (pos));
      }
    else
      {
