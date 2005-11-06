@@ -983,3 +983,33 @@ evas_pointer_inside_get(Evas *e)
    MAGIC_CHECK_END();
    return (int)e->pointer.inside;
 }
+
+/**
+ * Attaches a specific pointer to the evas for fetching later
+ * 
+ * @param e The canvas to attach the pointer to
+ * @param data The pointer to attach
+ */
+void
+evas_data_attach_set(Evas *e, void *data)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return;
+   MAGIC_CHECK_END();
+   e->attach_data = data;
+}
+
+/**
+ * Returns the pointer attached by evas_data_attach_set()
+ * 
+ * @param e The canvas to attach the pointer to
+ * @return The pointer attached
+ */
+void *
+evas_data_attach_get(Evas *e)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return NULL;
+   MAGIC_CHECK_END();
+   return e->attach_data;
+}

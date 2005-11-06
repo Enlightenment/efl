@@ -512,6 +512,7 @@ ecore_evas_fb_new(char *disp_name, int rotation, int w, int h)
    
    /* init evas here */
    ee->evas = evas_new();
+   evas_data_attach_set(ee->evas, ee);
    evas_output_method_set(ee->evas, rmethod);
    evas_output_size_set(ee->evas, w, h);
    evas_output_viewport_set(ee->evas, 0, 0, w, h);

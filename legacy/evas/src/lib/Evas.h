@@ -340,6 +340,9 @@ extern "C" {
    EAPI void              evas_pointer_canvas_xy_get        (Evas *e, Evas_Coord *x, Evas_Coord *y);
    EAPI int               evas_pointer_button_down_mask_get (Evas *e);
    EAPI Evas_Bool         evas_pointer_inside_get           (Evas *e);
+   EAPI void              evas_data_attach_set              (Evas *e, void *data);
+   EAPI void             *evas_data_attach_get              (Evas *e);
+       
 /* DOC UP TO HERE */
    EAPI void              evas_damage_rectangle_add         (Evas *e, int x, int y, int w, int h);
    EAPI void              evas_obscured_rectangle_add       (Evas *e, int x, int y, int w, int h);

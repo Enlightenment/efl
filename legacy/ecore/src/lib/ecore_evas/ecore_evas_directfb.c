@@ -600,6 +600,7 @@ ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w
    
    /* init evas here */
    ee->evas = evas_new();
+   evas_data_attach_set(ee->evas, ee);
    evas_output_method_set(ee->evas, rmethod);
    evas_output_size_set(ee->evas, w, h);
    evas_output_viewport_set(ee->evas, 0, 0, w, h);

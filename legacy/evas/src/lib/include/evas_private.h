@@ -273,6 +273,7 @@ struct _Evas
    Evas_Modifier  modifiers;
    Evas_Lock      locks;
    unsigned int   last_timestamp;
+   void          *attach_data;
 };
 
 struct _Evas_Layer

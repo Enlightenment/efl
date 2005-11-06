@@ -113,6 +113,7 @@ EAPI const int      *ecore_evas_buffer_pixels_get(Ecore_Evas *ee);
 EAPI Evas_Object    *ecore_evas_object_image_new(Ecore_Evas *ee_target);
 
 /* generic manipulation calls */
+EAPI Ecore_Evas *ecore_evas_ecore_evas_get(Evas *e);
 EAPI void        ecore_evas_free(Ecore_Evas *ee);
 EAPI void       *ecore_evas_data_get(Ecore_Evas *ee, const char *key);
 EAPI void        ecore_evas_data_set(Ecore_Evas *ee, const char *key, const void *data);

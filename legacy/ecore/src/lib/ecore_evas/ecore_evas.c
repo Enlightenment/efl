@@ -113,6 +113,18 @@ ecore_evas_shutdown(void)
 }
 
 /**
+ * Return the Ecore_Evase for this Evas
+ * 
+ * @param e The Evas to get the Ecore_Evas from
+ * @return The Ecore_Evas that holds this Evas
+ */
+Ecore_Evas *
+ecore_evas_ecore_evas_get(Evas *e)
+{
+   return evas_data_attach_get(e);
+}
+
+/**
  * Free an Ecore_Evas
  * @param ee The Ecore_Evas to free
  *
