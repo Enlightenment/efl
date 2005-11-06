@@ -205,6 +205,8 @@ evas_engine_buffer_setup(Evas *e, void *in)
    Evas_Engine_Info_Buffer *info;
 
    info = (Evas_Engine_Info_Buffer *)in;
+   if (e->engine.data.output)
+     evas_engine_buffer_output_free(e->engine.data.output);
    re = evas_engine_buffer_output_setup(e->output.w,
 					e->output.h,
 					info->info.dest_buffer,
