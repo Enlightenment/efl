@@ -219,7 +219,8 @@ evas_engine_buffer_setup(Evas *e, void *in)
 					info->info.func.free_update_region);
    e->engine.data.output = re;
    if (!e->engine.data.output) return;
-   e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
+   if (!e->engine.data.context)
+     e->engine.data.context = e->engine.func->context_new(e->engine.data.output);
 }
 
 static void *
