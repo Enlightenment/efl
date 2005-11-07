@@ -117,6 +117,28 @@ eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
    Eet_File **new_cache;
    int new_cache_num, new_cache_alloc;
 
+   new_cache_num = *cache_num;
+   if (new_cache_num > 128) /* avoid fd overruns - limit to 128 (most recent) in the cache */
+     {
+	Eet_File *del_ef = NULL;
+	int i;
+	
+	new_cache = *cache;
+	for (i = 0; i < new_cache_num; i++)
+	  {
+	     if (new_cache[i]->references == 0)
+	       {
+		  del_ef = new_cache[i];
+		  break;
+	       }
+	  }
+	if (del_ef)
+	  {
+	     eet_cacheburst_mode = 0;
+	     eet_cache_del(del_ef, cache, cache_num, cache_alloc);
+	     eet_cacheburst_mode = 1;
+	  }
+     }
    new_cache = *cache;
    new_cache_num = *cache_num;
    new_cache_alloc = *cache_alloc;
