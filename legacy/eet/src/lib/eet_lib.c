@@ -135,7 +135,7 @@ eet_cache_add(Eet_File *ef, Eet_File ***cache, int *cache_num, int *cache_alloc)
 	if (del_ef)
 	  {
 	     eet_cacheburst_mode = 0;
-	     eet_cache_del(del_ef, cache, cache_num, cache_alloc);
+	     eet_close(del_ef);
 	     eet_cacheburst_mode = 1;
 	  }
      }
