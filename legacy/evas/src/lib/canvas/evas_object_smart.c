@@ -139,6 +139,7 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
    evas_object_release(obj, 1);
    obj->layer = smart_obj->layer;
    obj->cur.layer = obj->layer->layer;
+   obj->layer->usage++;
    obj->smart.parent = smart_obj;
    smart_obj->smart.contained = evas_object_list_append(smart_obj->smart.contained, obj);
    evas_object_smart_member_cache_invalidate(obj);
@@ -163,6 +164,7 @@ evas_object_smart_member_del(Evas_Object *obj)
    obj->smart.parent->smart.contained = evas_object_list_remove(obj->smart.parent->smart.contained, obj);
    obj->smart.parent = NULL;
    evas_object_smart_member_cache_invalidate(obj);
+   obj->layer->usage--;
    obj->cur.layer = obj->layer->layer;
    evas_object_inject(obj, obj->layer->evas);
    obj->restack = 1;

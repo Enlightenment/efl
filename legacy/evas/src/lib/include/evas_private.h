@@ -286,6 +286,7 @@ struct _Evas_Layer
    Evas             *evas;
 
    void             *engine_data;
+   int               usage;
    unsigned char     delete_me : 1;
 };
 

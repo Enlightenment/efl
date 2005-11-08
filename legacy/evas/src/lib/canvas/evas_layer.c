@@ -15,6 +15,7 @@ evas_object_inject(Evas_Object *obj, Evas *e)
 	evas_layer_add(lay);
      }
    lay->objects = evas_object_list_append(lay->objects, obj);
+   lay->usage++;
    obj->layer = lay;
    obj->in_layer = 1;
 }
@@ -24,9 +25,10 @@ evas_object_release(Evas_Object *obj, int clean_layer)
 {
    if (!obj->in_layer) return;
    obj->layer->objects = evas_object_list_remove(obj->layer->objects, obj);
+   obj->layer->usage--;
    if (clean_layer)
      {
-	if (!obj->layer->objects)
+	if (obj->layer->usage <= 0)
 	  {
 	     evas_layer_del(obj->layer);
 	     evas_layer_free(obj->layer);
