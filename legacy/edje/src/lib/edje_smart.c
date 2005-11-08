@@ -114,7 +114,7 @@ _edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
 	       }
 	  }
      }
-   _edje_emit(ed, "move", "");
+//   _edje_emit(ed, "move", "");
 }
 
 static void 
@@ -167,7 +167,7 @@ _edje_smart_color_set(Evas_Object * obj, int r, int g, int b, int a)
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
    evas_object_color_set(ed->clipper, r, g, b, a);
-   _edje_emit(ed, "color_set", "");
+//   _edje_emit(ed, "color_set", "");
 }
 
 static void 
@@ -179,7 +179,7 @@ _edje_smart_clip_set(Evas_Object * obj, Evas_Object * clip)
    if (!ed) return;
    if (evas_object_clip_get(obj) == clip) return;
    evas_object_clip_set(ed->clipper, clip);
-   _edje_emit(ed, "clip_set", "");
+//   _edje_emit(ed, "clip_set", "");
 }
 
 static void 
@@ -191,5 +191,5 @@ _edje_smart_clip_unset(Evas_Object * obj)
    if (!ed) return;
    if (!evas_object_clip_get(obj)) return;
    evas_object_clip_unset(ed->clipper);
-   _edje_emit(ed, "clip_unset", "");
+//   _edje_emit(ed, "clip_unset", "");
 }
