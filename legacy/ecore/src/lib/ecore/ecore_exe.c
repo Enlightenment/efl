@@ -249,8 +249,17 @@ ecore_exe_pipe_write(Ecore_Exe *exe, void *data, int size)
     * its own write buffer in process space - giving us potentially huge
     * buffers, so synchronisation needs to be done at a higher level here as
     * buffers could just get huge
+    *
+    * But for now, a quick and dirty test implementation -
     */
-   return 0;
+   ssize_t outsize = write(exe->child_fd_write, data, size);
+   if (outsize == -1)
+      {
+         /* FIXME: should check errno to see what went wrong. */
+         return 0;
+      }
+   else
+      return 1;
 }
 
 /**
