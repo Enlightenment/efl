@@ -78,7 +78,8 @@ extern "C" {
      {
 	ECORE_EXE_PIPE_READ = 1, /**< Exe Pipe Read mask */
 	ECORE_EXE_PIPE_WRITE = 2, /**< Exe Pipe Write mask */
-	ECORE_EXE_PIPE_READ_LINE_BUFFERED = 4 /**< Reads are buffered until a newline and delivered 1 event per line */
+	ECORE_EXE_PIPE_READ_LINE_BUFFERED = 4, /**< Reads are buffered until a newline and delivered 1 event per line */
+	ECORE_EXE_RESPAWN = 8 /**< Exe is restarted if it dies */
      };
    typedef enum _Ecore_Exe_Flags Ecore_Exe_Flags;
    
@@ -205,6 +206,7 @@ extern "C" {
    EAPI void        ecore_exe_pause(Ecore_Exe *exe);
    EAPI void        ecore_exe_continue(Ecore_Exe *exe);
    EAPI void        ecore_exe_terminate(Ecore_Exe *exe);
+   EAPI void        ecore_exe_kill_maybe(Ecore_Exe *exe);
    EAPI void        ecore_exe_kill(Ecore_Exe *exe);
    EAPI void        ecore_exe_signal(Ecore_Exe *exe, int num);
    EAPI void        ecore_exe_hup(Ecore_Exe *exe);

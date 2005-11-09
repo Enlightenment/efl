@@ -166,6 +166,9 @@ _ecore_signal_call(void)
 	      * errors - THEN report and exe - so store this exe value in the
 	      * ecore_exe struct waiting for the read fd to die then report
 	      * final read data, THEN this exit event
+	      *
+	      * If this process is set respawn, respawn with a suitable backoff
+	      * for those that need too much respawning. 
 	      */
 	     e = _ecore_event_exe_exit_new();
 	     if (e)
