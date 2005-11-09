@@ -82,9 +82,8 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
    pid_t pid = 0;
    int dataPipe[2] = { -1, -1 };
    int statusPipe[2] = { -1, -1 };
-   int n;
+   int n = 0;
    volatile int vfork_exec_errno = 0;
-   char **args;
 
    /* FIXME: 
     * set up fd handler in ecore_exe struct 
@@ -93,6 +92,8 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
     * aces like the client del event from ecore_con - signalling that the
     * connection is closed. once this event has been handled the child
     * ecore_exe struct is freed automatically and is no longer valid.
+    * 
+    * _ecore_con_svr_cl_handler(void *data, Ecore_Fd_Handler *fd_handler)
     * 
     * when fd handlers report data - if line buffering is nto enabled instantly
     * copy data to a exe data event struct and add the event like ecore_con. if
@@ -111,129 +112,116 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
    if (shell == 0) 
       {
          shell = getenv("SHELL");
-	if (shell == 0)
-	   shell = "/bin/sh";
+	 if (shell == 0)
+	    shell = "/bin/sh";
       }
 
-   args = (char **) calloc(4, sizeof(char *));
-   n = 0;
-   args[n++] = shell;
-   args[n++] = "-c";
-   args[n++] = exe_cmd;
-   args[n++] = 0;
+   exe = calloc(1, sizeof(Ecore_Exe));
+   if (exe == NULL) return NULL;
 
-   if (pipe(dataPipe) < 0 || pipe(statusPipe) < 0)
-      printf("Failed to create pipe\n");
-   /* FIXME: I should check this. */
-   signal(SIGPIPE, SIG_IGN);	/* we only want EPIPE on errors */
+   exe->args[n++] = shell;
+   exe->args[n++] = "-c";
+   exe->args[n++] = exe_cmd;
+   exe->args[n++] = NULL;
+
+   if ((pipe(dataPipe) == -1) || pipe(statusPipe) == -1)
+      printf("Failed to create pipes\n");
+   /* FIXME: I should double check this.  After a quick look around, this is already done, but via a more modern method. */
+   /* signal(SIGPIPE, SIG_IGN);	/* we only want EPIPE on errors */
    pid = fork();
 
-   if (pid == 0)
-      {		/* child */
-         setsid();
+   if (pid == -1)
+      {
+	  printf("Failed to fork process\n");
+	  pid = 0;
+      }
+   else if (pid == 0)		/* child */
+      {
+         setsid();  /*  FIXME: Check for -1 then errno. */
 
+         close(STDOUT_FILENO);  /*  FIXME: Check for -1 then errno. */
+         close(STDERR_FILENO);  /*  FIXME: Check for -1 then errno. */
+         close(STDIN_FILENO);  /*  FIXME: Check for -1 then errno. */
          if (flags & ECORE_EXE_PIPE_READ)
 	    {
-	       dup2(dataPipe[1], STDOUT_FILENO);
-	       dup2(dataPipe[1], STDERR_FILENO);
+	       dup2(dataPipe[1], STDOUT_FILENO);  /*  FIXME: Check for -1 then errno. */
+	       dup2(dataPipe[1], STDERR_FILENO);  /*  FIXME: Check for -1 then errno. */
 	    }
 	 else
 	    {
-	       close(dataPipe[1]);
-               close(STDOUT_FILENO);
-               close(STDERR_FILENO);
+	       close(dataPipe[1]);  /*  FIXME: Check for -1 then errno. */
 	    }
          if (flags & ECORE_EXE_PIPE_WRITE)
 	    {
-	       dup2(dataPipe[0], STDIN_FILENO);
+	       dup2(dataPipe[0], STDIN_FILENO);  /*  FIXME: Check for -1 then errno. */
 	    }
 	 else
 	    {
-	       close(dataPipe[0]);
-               close(STDIN_FILENO);
+	       close(dataPipe[0]);  /*  FIXME: Check for -1 then errno. */
 	    }
-	 close(statusPipe[0]);
-	 fcntl(statusPipe[1], F_SETFD, FD_CLOEXEC);	/* close on exec shows sucess */
+	 close(statusPipe[0]);  /*  FIXME: Check for -1 then errno. */
+	 fcntl(statusPipe[1], F_SETFD, FD_CLOEXEC);	/* close on exec shows sucess */    /*  FIXME: Check for -1 then errno. */
 
 	 errno = 0;
-	 execvp(shell, (char **) args);
+	 execvp(shell, (char **) exe->args);
 
+         /* Something went 'orribly wrong. */
 	 vfork_exec_errno = errno;
-	 close(statusPipe[1]);
+//         if (! (flags & ECORE_EXE_PIPE_READ))
+//	    close(dataPipe[1]);  /*  FIXME: Check for -1 then errno. */
+//         if (! (flags & ECORE_EXE_PIPE_WRITE))
+//	    close(dataPipe[0]);  /*  FIXME: Check for -1 then errno. */
+//	 close(statusPipe[1]);  /*  FIXME: Check for -1 then errno. */
 	 _exit(-1);
       }
-   else if (pid > 0)
-      {	/* parent */
+   else		/* parent */
+      {
          if (! (flags & ECORE_EXE_PIPE_READ))
-	    close(dataPipe[0]);
+	    close(dataPipe[0]);  /*  FIXME: Check for -1 then errno. */
          if (! (flags & ECORE_EXE_PIPE_WRITE))
-	    close(dataPipe[1]);
-	 close(statusPipe[1]);
+	    close(dataPipe[1]);  /*  FIXME: Check for -1 then errno. */
+	 close(statusPipe[1]);  /*  FIXME: Check for -1 then errno. */
 
-	 while (1)
+         /* FIXME: after having a good look at the current e fd handling, investigate fcntl(dataPipe[x], F_SETSIG, ...) */
+
+	 while (1)  /* Wait for it to start executing. */
 	    {
                char buf;
 
 	       n = read(statusPipe[0], &buf, 1);
 
-	       if (n == 0 && vfork_exec_errno != 0)
+	       if ((n == -1) && ((errno == EAGAIN) || (errno == EINTR)))
+		  continue;	/* try it again */
+	       if (n == 0)
 	          {
-		     errno = vfork_exec_errno;
-		     printf("Could not exec process\n");
-		  }
-	       break;
+	             if (vfork_exec_errno != 0)
+		        {
+		           n = vfork_exec_errno;
+		           printf("Could not exec process\n"); /* FIXME: maybe set the pid to 0? */
+		        }
+		     break;
+	          }
 	    }
          close(statusPipe[0]);
 
       }
-   else
-      {
-	  printf("Failed to fork process\n");
-	  pid = 0;
-      }
 
-   n = 0;
    if (pid)
       {
-	  if (WIFEXITED(n))
-	    {
-               if (flags & ECORE_EXE_PIPE_READ)
-	          close(dataPipe[0]);
-               if (flags & ECORE_EXE_PIPE_WRITE)
-	          close(dataPipe[1]);
-
-		n = WEXITSTATUS(n);
-		printf("Process %s returned %i\n", exe_cmd, n);
-		pid = 0;
-	    }
-         else
-	    {
-	       n = -1;
-
-	       exe = calloc(1, sizeof(Ecore_Exe));
-	       if (!exe)
-	          {
-                     if (flags & ECORE_EXE_PIPE_READ)
-	                close(dataPipe[0]);
-                     if (flags & ECORE_EXE_PIPE_WRITE)
-	                close(dataPipe[1]);
-	             kill(pid, SIGKILL);
-                     printf("No memory for Ecore_Exe %s\n", exe_cmd);
-	             return NULL;
-	          }
-	       ECORE_MAGIC_SET(exe, ECORE_MAGIC_EXE);
-	       exe->pid = pid;
-	       exe->flags = flags;
-	       exe->data = (void *)data;
-               if (flags & ECORE_EXE_PIPE_READ)
-	          exe->child_fd_read = dataPipe[0];
-               if (flags & ECORE_EXE_PIPE_WRITE)
-	          exe->child_fd_write = dataPipe[1];
-	       exes = _ecore_list2_append(exes, exe);
-            }
+         ECORE_MAGIC_SET(exe, ECORE_MAGIC_EXE);
+	 exe->pid = pid;
+	 exe->flags = flags;
+	 exe->data = (void *)data;
+         exe->cmd = exe_cmd;  /* FIXME: should calloc and cpy. */
+         if (flags & ECORE_EXE_PIPE_READ)
+	    exe->child_fd_read = dataPipe[0];
+         if (flags & ECORE_EXE_PIPE_WRITE)
+	    exe->child_fd_write = dataPipe[1];
+	 exes = _ecore_list2_append(exes, exe);
+         n = 0;
+         printf("Ecore_Exe %s success!\n", exe_cmd);
       }
 
-   free(args);
    errno = n;
 
    return exe;
@@ -374,6 +362,25 @@ ecore_exe_data_get(Ecore_Exe *exe)
  */
 
 /**
+ * Makes sure the process is dead, one way or another.
+ * @param   exe Process handle to the given process.
+ * @ingroup Ecore_Exe_Signal_Group
+ */
+void
+ecore_exe_kill_maybe(Ecore_Exe *exe)
+{
+   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
+     {
+        /* Since Ecore_Exe's can be freed without the users knowledge, we need a way to kill them without bitchin'. */
+	/* FIXME: On the other hand, handling the exe exit event may be the way to go. */
+	return;
+     }
+   kill(exe->pid, SIGTERM);
+/* FIXME: should pause for a bit. */
+   kill(exe->pid, SIGKILL);
+}
+
+/**
  * Pauses the given process by sending it a @c SIGSTOP signal.
  * @param   exe Process handle to the given process.
  * @ingroup Ecore_Exe_Signal_Group
@@ -506,8 +513,15 @@ _ecore_exe_free(Ecore_Exe *exe)
 {
    void *data;
 
-   /* FIXME: close fdhanlders and free buffers if they exist */
+printf("FREEING Ecore_Exe %s\n", exe->cmd);
    data = exe->data;
+
+   /* FIXME: close fdhanlders and free buffers if they exist */
+   if (exe->flags & ECORE_EXE_PIPE_READ)
+      close(exe->child_fd_read);  /*  FIXME: Check for -1 then errno. */
+   if (exe->flags & ECORE_EXE_PIPE_WRITE)
+      close(exe->child_fd_write);  /*  FIXME: Check for -1 then errno. */
+
    exes = _ecore_list2_remove(exes, exe);
    ECORE_MAGIC_SET(exe, ECORE_MAGIC_NONE);
    if (exe->tag) free(exe->tag);
