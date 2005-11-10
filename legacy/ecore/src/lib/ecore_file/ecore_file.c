@@ -300,6 +300,8 @@ ecore_file_ls(const char *dir)
 	ecore_list_append(list, f);
      }
 
+   ecore_sheap_destroy(heap);
+
    ecore_list_goto_first(list);
    return list;
 }
