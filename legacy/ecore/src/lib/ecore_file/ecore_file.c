@@ -261,9 +261,11 @@ ecore_file_readlink(const char *link)
 Ecore_List *
 ecore_file_ls(const char *dir)
 {
+   char               *f;
    DIR                *dirp;
    struct dirent      *dp;
-   Ecore_List        *list;
+   Ecore_List         *list;
+   Ecore_Sheap        *heap;
 
    dirp = opendir(dir);
    if (!dirp) return NULL;
@@ -275,29 +277,28 @@ ecore_file_ls(const char *dir)
      {
 	if ((strcmp(dp->d_name, ".")) && (strcmp(dp->d_name, "..")))
 	  {
-	     char *file, *f;
-
-	     /* insertion sort */
-	     ecore_list_goto_first(list);
-	     while ((file = ecore_list_current(list)))
-	       {
-		  if (strcasecmp(file, dp->d_name) > 0)
-		    {
-		       f = strdup(dp->d_name);
-		       ecore_list_insert(list, f);
-		       break;
-		    }
-		  ecore_list_next(list);
-	       }
-	     /* nowhwre to go? just append it */
-	     if (!file)
-	       {
-		  f = strdup(dp->d_name);
-		  ecore_list_insert(list, f);
-	       }
+	       f = strdup(dp->d_name);
+	       ecore_list_append(list, f);
 	  }
      }
    closedir(dirp);
+
+   /*
+    * Push the data into a heap.
+    */
+   heap = ecore_sheap_new(ECORE_COMPARE_CB(strcasecmp), ecore_list_nodes(list));
+   while ((f = ecore_list_remove_first(list)))
+     {
+	ecore_sheap_insert(heap, f);
+     }
+
+   /*
+    * Extract in sorted order.
+    */
+   while ((f = ecore_sheap_extract(heap)))
+     {
+	ecore_list_append(list, f);
+     }
 
    ecore_list_goto_first(list);
    return list;
