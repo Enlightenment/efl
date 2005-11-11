@@ -2,7 +2,7 @@ Source: edje
 Section: libs
 Priority: optional
 Maintainer: Sytse Wielinga <s.b.wielinga@student.utwente.nl>
-Build-Depends: libimlib2-dev, libeet-dev, libecore-dev, libevas-dev, libembryo-dev, debhelper (>> 4.0.0), automake-1.7 | automaken, libtool
+Build-Depends: libeet-dev, libecore-dev, libevas-dev, libembryo-dev, debhelper (>> 4.0.0), automake-1.7 | automaken, libtool
 Standards-Version: 3.6.1.0
 
 Package: edje0-bin

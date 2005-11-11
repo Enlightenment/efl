@@ -142,14 +142,6 @@ AC_PATH_GENERIC(embryo, 0.9.1,
 EMBRYO_PREFIX=`$EMBRYO_CONFIG --prefix`
 AC_DEFINE_UNQUOTED(EMBRYO_PREFIX, "${EMBRYO_PREFIX}", [Embryo prefix])
 
-if test "x$have_edje_cc" = "xyes"; then
-  AC_PATH_GENERIC(imlib2, 1.0.0,
-    [ have_imlib2="yes"],
-    [ have_imlib2="no" ],
-  )
-  AC_DEFINE(HAVE_IMLIB, 1, [Imlib2 is installed])
-fi
-
 AC_MSG_CHECKING([for location of Vim data files])
 install_vim="yes";
 AC_ARG_WITH(vim,
@@ -229,11 +221,3 @@ debian/changelog
 ],[
 chmod +x edje-config
 ])
-
-if test "x$have_edje_cc" = "xyes"; then
-	if test "x$have_imlib2" = "xno"; then
-		echo
-		echo "WARNING: Building edje_cc without Imlib2 support!"
-		echo
-	fi
-fi

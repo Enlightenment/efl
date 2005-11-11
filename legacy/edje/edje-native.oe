@@ -6,7 +6,7 @@ SECTION = "e/libs"
 PRIORITY = "optional"
 include edje.oe
 inherit native
-DEPENDS = "evas-native ecore-native embryo-native eet-native imlib2-native"
+DEPENDS = "evas-native ecore-native embryo-native eet-native"
 
 EXTRA_OECONF = "--enable-fb-only"
 
@@ -16,7 +16,6 @@ export FREETYPE_CONFIG = "${STAGING_BINDIR}/freetype-config-native"
 export EVAS_CONFIG = "${STAGING_BINDIR}/evas-config-native"
 export ECORE_CONFIG = "${STAGING_BINDIR}/ecore-config-native"
 export EMBRYO_CONFIG = "${STAGING_BINDIR}/embryo-config-native"
-export IMLIB2_CONFIG = "${STAGING_BINDIR}/imlib2-config-native"
 
 do_stage() {
   for i in edje edje_ls edje_cc; do

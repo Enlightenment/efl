@@ -14,9 +14,5 @@
 #include <Ecore_Evas.h>
 #include <Eet.h>
 #include "Edje.h"
-#define X_DISPLAY_MISSING
-#include <Imlib2.h>
-
-
 
 #endif

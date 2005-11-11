@@ -1,14 +1,13 @@
 #include "edje_thumb.h"
 
-static void save_pixels(const int *pixels, int w, int h, char *out);
 static void args_parse(void);
 static void help_show(void);
 static int signal_exit(void *data, int ev_type, void *ev);
 static int frame_grab(void *data);
 
-Ecore_Evas *ee = NULL;
-Evas *evas = NULL;
-Evas_Object *edje = NULL;
+Ecore_Evas *ee = NULL, *ee_im = NULL, *ee_im2 = NULL;
+Evas *evas = NULL, *evas_im = NULL, *evas_im2 = NULL;
+Evas_Object *edje = NULL, *im = NULL, *im2 = NULL;
 char *file = NULL;
 char *group = NULL;
 char *outfile = NULL;
@@ -31,15 +30,28 @@ main(int argc, char **argv)
 
    args_parse();
    
-   ee = ecore_evas_buffer_new(w, h);
-   if (!ee)
-     {
-	printf("Cannot create buffer canvas! ERROR!\n");
-	exit(-1);
-     }
+   ee = ecore_evas_buffer_new(outw, outh);
    evas = ecore_evas_get(ee);
    
-   edje = edje_object_add(evas);
+   im = ecore_evas_object_image_new(ee);
+   evas_object_move(im, 0, 0);
+   evas_object_resize(im, outw, outh);
+   evas_object_image_fill_set(im, 0, 0, outw, outh);
+   evas_object_show(im);
+   evas_object_image_size_set(im, outw, outh);
+   ee_im = evas_object_data_get(im, "Ecore_Evas");
+   evas_im = ecore_evas_get(ee_im);
+   
+   im2 = ecore_evas_object_image_new(ee_im);
+   evas_object_move(im2, 0, 0);
+   evas_object_resize(im2, outw, outh);
+   evas_object_image_fill_set(im2, 0, 0, outw, outh);
+   evas_object_show(im2);
+   evas_object_image_size_set(im2, w, h);
+   ee_im2 = evas_object_data_get(im2, "Ecore_Evas");
+   evas_im2 = ecore_evas_get(ee_im2);
+   
+   edje = edje_object_add(evas_im2);
    if (!edje_object_file_set(edje, file, group))
      {
 	printf("Cannot load file %s, group %s\n", file, group);
@@ -58,10 +70,8 @@ main(int argc, char **argv)
      }
    else
      {
-	const int *pixels;
-
-	pixels = ecore_evas_buffer_pixels_get(ee);
-	save_pixels(pixels, w, h, outfile);
+	ecore_evas_buffer_pixels_get(ee);
+	evas_object_image_save(im, outfile, NULL, "quality=100 compress=9");
      }
    
    evas_object_del(edje);
@@ -70,27 +80,6 @@ main(int argc, char **argv)
    ecore_evas_shutdown();
    ecore_shutdown();
    return 0;
-}
-
-static void
-save_pixels(const int *pixels, int w, int h, char *out)
-{
-   Imlib_Image im;
-   
-   im = imlib_create_image_using_data(w, h, (DATA32 *) pixels);
-   imlib_context_set_image(im);
-   imlib_image_set_irrelevant_alpha(0);
-   imlib_image_set_has_alpha(1);
-   if ((w != outw) || (h != outh))
-     {
-	Imlib_Image im2;
-	
-	im2 = imlib_create_cropped_scaled_image(0, 0, w, h, outw, outh);
-	imlib_free_image();
-	imlib_context_set_image(im2);
-     }
-   imlib_save_image(out);
-   imlib_free_image();
 }
 
 static void
@@ -202,11 +191,10 @@ static int
 frame_grab(void *data)
 {
    char buf[4096];
-   const int *pixels;
    
-   pixels = ecore_evas_buffer_pixels_get(ee);
    snprintf(buf, sizeof(buf), outfile, frnum);
-   save_pixels(pixels, w, h, buf);
+   ecore_evas_buffer_pixels_get(ee);
+   evas_object_image_save(im, buf, NULL, "quality=100 compress=9");
    frnum++;
    if (frnum == frames)
      {

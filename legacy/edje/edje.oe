@@ -4,7 +4,7 @@ HOMEPAGE = "http://www.enlightenment.org"
 MAINTAINER = "Carsten Haitzler (Rasterman) <raster@rasterman.com>"
 SECTION = "e/libs"
 PRIORITY = "optional"
-DEPENDS = "evas ecore embryo eet imlib2"
+DEPENDS = "evas ecore embryo eet"
 PV = "0.5.0"
 PR = "1"
 
@@ -22,7 +22,6 @@ export EET_CONFIG = "${STAGING_BINDIR}/eet-config"
 export EVAS_CONFIG = "${STAGING_BINDIR}/evas-config"
 export ECORE_CONFIG = "${STAGING_BINDIR}/ecore-config"
 export EMBRYO_CONFIG = "${STAGING_BINDIR}/embryo-config"
-export IMLIB2_CONFIG = "${STAGING_BINDIR}/imlib2-config"
 
 LEAD_SONAME = "libedje.so"
 

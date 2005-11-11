@@ -48,8 +48,7 @@ Quick start-up guide:
   sudo make install
   cd
 
-5. You need imlib2 installed. any release from 1.0.0 on will do.
-6. You already have Edje. now build it:
+5. You already have Edje. now build it:
 
    ./autogen.sh
    make

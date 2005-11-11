@@ -308,9 +308,15 @@ data_write(void)
 	     free(fdata);
 	  }
      }
-#ifdef HAVE_IMLIB
    if ((edje_file) && (edje_file->image_dir))
      {
+	Ecore_Evas *ee;
+	Evas *evas;
+	
+	ecore_init();
+	ecore_evas_init();
+	ee = ecore_evas_buffer_new(1, 1);
+	evas = ecore_evas_get(ee);
 	for (l = edje_file->image_dir->entries; l; l = l->next)
 	  {
 	     Edje_Image_Directory_Entry *img;
@@ -318,70 +324,53 @@ data_write(void)
 	     img = l->data;	
 	     if (img->source_type != EDJE_IMAGE_SOURCE_TYPE_EXTERNAL)
 	       {
-		  Imlib_Image im;
-		  Evas_List *l;
+		  Evas_Object *im;
+		  Evas_List *ll;
 		  
 		  im = NULL;
-		  imlib_set_cache_size(0);	     
-		  for (l = img_dirs; l; l = l->next)
+		  for (ll = img_dirs; ll; ll = ll->next)
 		    {
 		       char buf[4096];
 		       
 		       snprintf(buf, sizeof(buf), "%s/%s", 
-				(char *)(l->data), img->entry);
-		       im = imlib_load_image(buf);
-		       if (im) break;
+				(char *)(ll->data), img->entry);
+		       im = evas_object_image_add(evas);
+		       if (im)
+			 {
+			    evas_object_image_file_set(im, buf, NULL);
+			    if (evas_object_image_load_error_get(im) == 
+				EVAS_LOAD_ERROR_NONE)
+			      {
+				 break;
+			      }
+			    evas_object_del(im);
+			    im = NULL;
+			 }
 		    }
-		  if (!im) im = imlib_load_image(img->entry);
+		  if (!im)
+		    {
+		       im = evas_object_image_add(evas);
+		       if (im)
+			 {
+			    evas_object_image_file_set(im, img->entry, NULL);
+			    if (evas_object_image_load_error_get(im) != 
+				EVAS_LOAD_ERROR_NONE)
+			      {
+				 evas_object_del(im);
+				 im = NULL;
+			      }
+			 }
+		    }
 		  if (im)
 		    {
-		       DATA32 *im_data;
+		       void *im_data;
 		       int  im_w, im_h;
 		       int  im_alpha;
 		       char buf[256];
 		       
-		       imlib_context_set_image(im);
-		       im_w = imlib_image_get_width();
-		       im_h = imlib_image_get_height();
-		       if ((img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT) &&
-			   (img->source_param == 0) &&
-			   (scale_raw != 100))
-			 {
-			    im = imlib_create_cropped_scaled_image(0, 0,
-								   im_w, im_h,
-								   (im_w * scale_raw) / 100,
-								   (im_h * scale_raw) / 100);
-			    imlib_free_image();
-			    imlib_context_set_image(im);
-			    im_w = imlib_image_get_width();
-			    im_h = imlib_image_get_height();
-			 }
-		       else if ((img->source_type == EDJE_IMAGE_SOURCE_TYPE_INLINE_PERFECT) &&
-				(img->source_param == 1) &&
-				(scale_comp != 100))
-			 {
-			    im = imlib_create_cropped_scaled_image(0, 0,
-								   im_w, im_h,
-								   (im_w * scale_comp) / 100,
-								   (im_h * scale_comp) / 100);
-			    imlib_free_image();
-			    imlib_context_set_image(im);
-			    im_w = imlib_image_get_width();
-			    im_h = imlib_image_get_height();
-			 }
-		       else if (scale_lossy != 100)
-			 {
-			    im = imlib_create_cropped_scaled_image(0, 0,
-								   im_w, im_h,
-								   (im_w * scale_lossy) / 100,
-								   (im_h * scale_lossy) / 100);
-			    imlib_free_image();
-			    imlib_context_set_image(im);
-			    im_w = imlib_image_get_width();
-			    im_h = imlib_image_get_height();
-			 }
-		       im_alpha = imlib_image_has_alpha();
-		       im_data = imlib_image_get_data_for_reading_only();
+		       evas_object_image_size_get(im, &im_w, &im_h);
+		       im_alpha = evas_object_image_alpha_get(im);
+		       im_data = evas_object_image_data_get(im, 0);
 		       if ((im_data) && (im_w > 0) && (im_h > 0))
 			 {
 			    int mode, qual;
@@ -454,8 +443,10 @@ data_write(void)
 		       if (verbose)
 			 {
 			    struct stat st;
+			    char *file = NULL;
 		       
-			    if (stat(imlib_image_get_filename(), &st) != 0)
+			    evas_object_image_file_get(im, &file, NULL);
+			    if ((file) && (stat(file, &st) != 0))
 			      st.st_size = 0;
 			    input_bytes += st.st_size;
 			    input_raw_bytes += im_w * im_h * 4;
@@ -465,8 +456,7 @@ data_write(void)
 				   100 - (100 * (double)bytes) / ((double)(st.st_size))
 				   );
 			 }
-		       if (im_data) imlib_image_put_back_data(im_data);
-		       imlib_free_image();
+		       evas_object_del(im);
 		    }
 		  else
 		    {
@@ -476,8 +466,10 @@ data_write(void)
 		    }
 	       }
 	  }
+	ecore_evas_free(ee);
+	ecore_evas_shutdown();
+	ecore_shutdown();
      }
-#endif
 
    /* sanity checks for parts and programs */
    for (l = edje_collections; l; l = l->next)
@@ -487,64 +479,9 @@ data_write(void)
 	
 	pc = l->data;
 	for (ll = pc->parts; ll; ll = ll->next)
-	  {
-	     check_part (pc, ll->data, ef);
-
-/*
-	     Edje_Part *ep = ll->data;
-	     Edje_Part_Description *epd = ep->default_desc;
-
-	     if (epd->text.font)
-	       {
-		  Evas_List *lll;
-		  
-		  for (lll = fonts; lll; lll = lll->next)
-		    {
-		       Font *fn;
-		       
-		       fn = lll->data;
-		       if (!strcmp(fn->name, epd->text.font))
-			 {
-			    char *s;
-			    
-			    s = malloc(strlen(epd->text.font) + strlen("fonts/") + 1);
-			    strcpy(s, "fonts/");
-			    strcat(s, epd->text.font);
-			    free(epd->text.font);
-			    epd->text.font = s;
-			 }
-		    }
-	       }
-	     for (l3 = ep->other_desc; l3; l3 = l3->next)
-	       {
-		  epd = l3->data;
-		  if (epd->text.font)
-		    {
-		       Evas_List *lll;
-		       
-		       for (lll = fonts; lll; lll = lll->next)
-			 {
-			    Font *fn;
-			    
-			    fn = lll->data;
-			    if (!strcmp(fn->name, epd->text.font))
-			      {
-				 char *s;
-				 
-				 s = malloc(strlen(epd->text.font) + strlen("fonts/") + 1);
-				 strcpy(s, "fonts/");
-				 strcat(s, epd->text.font);
-				 free(epd->text.font);
-				 epd->text.font = s;
-			      }
-			 }
-		    }
-	       }
- */
-	  }
-
+	  check_part (pc, ll->data, ef);
 	for (ll = pc->programs; ll; ll = ll->next)
-	     check_program (pc, ll->data, ef);
+	  check_program (pc, ll->data, ef);
      }
    for (l = edje_collections; l; l = l->next)
      {

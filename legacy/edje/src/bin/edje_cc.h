@@ -2,10 +2,6 @@
 #define EDJE_CC_H
 
 #include "edje_main.h"
-/* Imlib2 stuff for loading up input images */
-#define X_DISPLAY_MISSING
-#include <Imlib2.h>
-/* done Imlib2 stuff */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -136,9 +132,6 @@ extern int                    no_comp;
 extern int                    no_raw;
 extern int                    min_quality;
 extern int                    max_quality;
-extern int                    scale_lossy;
-extern int                    scale_comp;
-extern int                    scale_raw;
 extern int                    line;
 extern Evas_List             *stack;
 extern Evas_List             *params;

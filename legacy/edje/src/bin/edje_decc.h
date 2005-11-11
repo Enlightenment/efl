@@ -2,10 +2,6 @@
 #define EDJE_DECC_H
 
 #include "edje_main.h"
-/* Imlib2 stuff for loading up input images */
-#define X_DISPLAY_MISSING
-#include <Imlib2.h>
-/* done Imlib2 stuff */
 
 #include <stdio.h>
 #include <stdlib.h>

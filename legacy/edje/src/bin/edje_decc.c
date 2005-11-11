@@ -132,7 +132,6 @@ output(void)
    
    ef = eet_open(file_in, EET_FILE_MODE_READ);
 
-#ifdef HAVE_IMLIB
    if (edje_file->image_dir)
      {
 	for (l = edje_file->image_dir->entries; l; l = l->next)
@@ -142,56 +141,40 @@ output(void)
 	     ei = l->data;
 	     if ((ei->source_type) && (ei->entry))
 	       {
-		  DATA32 *pix;
-		  int w, h, alpha, comp, qual, lossy;
+		  Ecore_Evas *ee;
+		  Evas *evas;
+		  Evas_Object *im;
 		  char buf[4096];
+		  char out[4096];
+		  char *pp;
 		  
+		  ecore_init();
+		  ecore_evas_init();
+		  ee = ecore_evas_buffer_new(1, 1);
+		  evas = ecore_evas_get(ee);
+		  im = evas_object_image_add(evas);
 		  snprintf(buf, sizeof(buf), "images/%i", ei->id);
-		  pix = eet_data_image_read(ef, buf, &w, &h, &alpha, &comp, &qual, &lossy);
-		  if (pix)
+		  evas_object_image_file_set(im, file_in, buf);
+		  snprintf(out, sizeof(out), "%s/%s", outdir, ei->entry);
+		  printf("Output Image: %s\n", out);
+		  pp = strdup(out);
+		  p = strrchr(pp, '/');
+		  *p = 0;
+		  if (strstr(pp, "../"))
 		    {
-		       Imlib_Image im;
-		       char out[4096];
-		       char *pp;
-		       
-		       snprintf(out, sizeof(out), "%s/%s", outdir, ei->entry);
-		       printf("Output Image: %s\n", out);
-		       pp = strdup(out);
-		       p = strrchr(pp, '/');
-		       *p = 0;
-		       if (strstr(pp, "../"))
-			 {
-			    printf("ERROR: potential security violation. attempt to write in parent dir.\n");
-			    exit (-1);
-			 }
-		       e_file_mkpath(pp);
-		       free(pp);
-		       im = imlib_create_image_using_data(w, h, pix);
-		       imlib_context_set_image(im);
-		       if (alpha)
-			 imlib_image_set_has_alpha(1);
-		       if ((lossy) && (!alpha))
-			 {
-			    imlib_image_set_format("jpg");
-			    imlib_image_attach_data_value("quality", NULL, qual, NULL);
-			 }
-		       else
-			 {
-			    imlib_image_set_format("png");
-			 }
-		       if (strstr(out, "../"))
-			 {
-			    printf("ERROR: potential security violation. attempt to write in parent dir.\n");
-			    exit (-1);
-			 }
-		       imlib_save_image(out);
-		       imlib_free_image();
-		       free(pix);
+		       printf("ERROR: potential security violation. attempt to write in parent dir.\n");
+		       exit (-1);
 		    }
+		  e_file_mkpath(pp);
+		  free(pp);
+		  evas_object_image_save(im, out, NULL, "quality=100 compress=9");
+		  evas_object_del(im);
+		  ecore_evas_free(ee);
+		  ecore_evas_shutdown();
+		  ecore_shutdown();
 	       }
 	  }
      }
-#endif
 
    for (l = srcfiles->list; l; l = l->next)
      {

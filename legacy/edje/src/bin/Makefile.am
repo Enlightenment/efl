@@ -7,7 +7,6 @@ INCLUDES = \
 @EET_CFLAGS@ \
 @EVAS_CFLAGS@ \
 @ECORE_CFLAGS@ \
-@IMLIB2_CFLAGS@ \
 @EMBRYO_CFLAGS@
 
 bin_SCRIPTS = \
@@ -49,8 +48,7 @@ edje_cc_handlers.c \
 edje_cc_sources.c
 
 edje_cc_LDADD = \
-$(top_builddir)/src/lib/libedje.la \
-@IMLIB2_LIBS@
+$(top_builddir)/src/lib/libedje.la
 
 edje_cc_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 
@@ -62,8 +60,7 @@ edje_cc_mem.c \
 edje_cc_sources.c
 
 edje_decc_LDADD = \
-$(top_builddir)/src/lib/libedje.la \
-@IMLIB2_LIBS@
+$(top_builddir)/src/lib/libedje.la
 
 edje_decc_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 
@@ -73,8 +70,7 @@ edje_thumb.c \
 edje_thumb.h
 
 edje_thumb_LDADD = \
-$(top_builddir)/src/lib/libedje.la \
-@IMLIB2_LIBS@
+$(top_builddir)/src/lib/libedje.la
 
 edje_thumb_DEPENDENCIES = $(top_builddir)/src/lib/libedje.la
 

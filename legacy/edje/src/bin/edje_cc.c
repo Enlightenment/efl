@@ -19,9 +19,6 @@ int        no_comp = 0;
 int        no_raw = 0;
 int        min_quality = 0;
 int        max_quality = 100;
-int        scale_lossy = 100;
-int        scale_comp = 100;
-int        scale_raw = 100;
 
 static void
 main_help(void)
@@ -40,9 +37,6 @@ main_help(void)
       "-no-raw                  Do NOT allow images to be stored with zero compression (raw)\n"
       "-min-quality VAL         Do NOT allow lossy images with quality < VAL (0-100)\n"
       "-max-quality VAL         Do NOT allow lossy images with quality > VAL (0-100)\n"
-      "-scale-lossy VAL         Scale lossy image pixels by this percentage factor (0 - 100)\n"
-      "-scale-comp VAL          Scale lossless compressed image pixels by this percentage factor (0 - 100)\n"
-      "-scale-raw VAL           Scale uncompressed (raw) image pixels by this percentage factor (0 - 100)\n"
       "-Ddefine_val=to          CPP style define to define input macro definitions to the .edc source\n"
       ,progname);
 }
@@ -103,27 +97,6 @@ main(int argc, char **argv)
 	     max_quality = atoi(argv[i]);
 	     if (max_quality < 0) max_quality = 0;
 	     if (max_quality > 100) max_quality = 100;
-	  }
-	else if ((!strcmp(argv[i], "-scale-lossy")) && (i < (argc - 1)))
-	  {
-	     i++;
-	     scale_lossy = atoi(argv[i]);
-	     if (scale_lossy < 0) scale_lossy = 0;
-	     if (scale_lossy > 100) scale_lossy = 100;
-	  }
-	else if ((!strcmp(argv[i], "-scale-comp")) && (i < (argc - 1)))
-	  {
-	     i++;
-	     scale_comp = atoi(argv[i]);
-	     if (scale_comp < 0) scale_comp = 0;
-	     if (scale_comp > 100) scale_comp = 100;
-	  }
-	else if ((!strcmp(argv[i], "-scale-raw")) && (i < (argc - 1)))
-	  {
-	     i++;
-	     scale_raw = atoi(argv[i]);
-	     if (scale_raw < 0) scale_raw = 0;
-	     if (scale_raw > 100) scale_raw = 100;
 	  }
 	else if (!strncmp(argv[i], "-D", 2))
 	  {
