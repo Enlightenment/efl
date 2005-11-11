@@ -742,6 +742,7 @@ void          evas_common_image_dirty             (RGBA_Image *im);
 
 RGBA_Image         *evas_common_load_image_from_file     (const char *file, const char *key);
 void                evas_common_load_image_data_from_file(RGBA_Image *im);
+int                 evas_common_save_image_to_file       (RGBA_Image *im, const char *file, const char *key, int quality, int compress);
 
 /****/
 void           evas_common_rectangle_init          (void);

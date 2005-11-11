@@ -188,6 +188,8 @@ PKG_CHECK_MODULES(
   [ have_evas_software_xcb="yes" ],
   [ have_evas_software_xcb="no" ])
 
+## manually disable xcb engine by default - not auto detected.
+have_evas_software_xcb="no"
 ## Manual override
 AC_MSG_CHECKING(whether software xcb backend is to be built)
 AC_ARG_ENABLE(software-xcb, [  --enable-software-xcb           enable the Software XCB rendering backend], [
@@ -239,6 +241,8 @@ PKG_CHECK_MODULES(DIRECTFB, directfb >= 0.9.16,
   [ have_evas_directfb="yes" ],
   [ have_evas_directfb="no" ]
 )
+## manually disable directfb engine by default - not auto detected.
+have_evas_directfb="no"
 ## Manual override
 AC_MSG_CHECKING(whether directfb backend is to be built)
 AC_ARG_ENABLE(directfb, [  --enable-directfb               enable the DirectFB rendering backend], [
@@ -352,6 +356,8 @@ AC_CHECK_HEADER(qdirectpainter_qws.h,
     #include <qpainter.h>
   ]
 )
+## manually disable qtopia engine by default - not auto detected.
+have_evas_qtopia="no"
 ## Manual override
 AC_MSG_CHECKING(whether software qtopia backend is to be built)
 AC_ARG_ENABLE(software-qtopia, [  --enable-software-qtopia        enable the Software Qtopia rendering backend], [
@@ -405,6 +411,8 @@ ENGINE_GL_X11_PRG="";
     ],
     [ have_evas_gl_x11="no" ]
 )
+## manually disable gl engine by default - not auto detected.
+have_evas_gl_x11="no"
 ## Manual override
 AC_MSG_CHECKING(whether gl x11 backend is to be built)
 AC_ARG_ENABLE(gl-x11, [  --enable-gl-x11                 enable the OpenGL X11 display engine], [

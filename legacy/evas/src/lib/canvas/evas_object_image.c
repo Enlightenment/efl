@@ -846,6 +846,72 @@ evas_object_image_reload(Evas_Object *obj)
  *
  */
 Evas_Bool
+evas_object_image_save(Evas_Object *obj, const char *file, const char *key, const char *flags)
+{
+   Evas_Object_Image *o;
+   DATA32 *data = NULL;
+   int quality = 80, compress = 9, ok = 0;
+   RGBA_Image *im;
+   
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   o = (Evas_Object_Image *)(obj->object_data);
+   MAGIC_CHECK(o, Evas_Object_Image, MAGIC_OBJ_IMAGE);
+   return 0;
+   MAGIC_CHECK_END();
+
+   if (!o->engine_data) return 0;
+   o->engine_data = obj->layer->evas->engine.func->image_data_get(obj->layer->evas->engine.data.output,
+								  o->engine_data,
+								  0,
+								  &data);
+   if (flags)
+     {
+	char *p, *pp;
+	char *tflags;
+	
+	tflags = strdup(flags);
+	if (tflags)
+	  {
+	     p = tflags;
+	     while (p)
+	       {
+		  pp = strchr(p, ' ');
+		  if (pp) *pp = 0;
+		  sscanf(p, "quality=%i", &quality);
+		  sscanf(p, "compress=%i", &compress);
+		  if (pp) p = pp + 1;
+		  else break;
+	       }
+	     free(tflags);
+	  }
+     }
+   im = evas_common_image_new();
+   if (im)
+     {
+	if (o->cur.has_alpha) im->flags |= RGBA_IMAGE_HAS_ALPHA;
+	im->image = evas_common_image_surface_new(im);
+	if (im->image)
+	  {
+	     im->image->data = data;
+	     im->image->w = o->cur.image.w;
+	     im->image->h = o->cur.image.h;
+	     im->image->no_free = 1;
+	     ok = evas_common_save_image_to_file(im, file, key, quality, compress);
+	  }
+	evas_common_image_free(im);
+     }
+   return ok;
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
+Evas_Bool
 evas_object_image_pixels_import(Evas_Object *obj, Evas_Pixel_Import_Source *pixels)
 {
    Evas_Object_Image *o;

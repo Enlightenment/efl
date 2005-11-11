@@ -2062,6 +2062,11 @@ setup(void)
 
    ob = evas_object_image_add(evas);
    evas_object_image_file_set(ob, IM "e_logo.png", NULL);
+   
+//   evas_object_image_save(ob, "t.png", NULL, "compress=9");
+//   evas_object_image_save(ob, "t.jpg", NULL, "quality=20 compress=7");
+//   evas_object_image_save(ob, "t.eet", "key", "quality=50");
+   
    evas_object_image_size_get(ob, &iw, &ih);
    evas_object_move(ob, (win_w - iw) / 2, 0);
    evas_object_resize(ob, iw, ih);
