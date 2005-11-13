@@ -130,6 +130,8 @@ AC_PATH_GENERIC(embryo, 0.9.1,
   [ AC_MSG_ERROR(Embryo isn't installed)]
 )
 
+requirements="eet evas edje ecore embryo"
+
 AC_ARG_ENABLE(xine,
 	AC_HELP_STRING([--disable-xine],[disable xine support @<:@default=auto@:>@]),
 	[enable_xine=$enableval],[enable_xine=auto])
@@ -138,6 +140,7 @@ if test "$enable_xine" != "no" ; then
 	AC_PATH_GENERIC(xine, 1.0.0, [HAVE_XINE="yes"])
 
 	if test "$HAVE_XINE" = "yes" ; then
+		requirements="$requirements libxine"
 		xine_plugins=`$XINE_CONFIG --plugindir`
 		AC_SUBST(xine_plugins)
 	fi
@@ -179,6 +182,7 @@ if test "$HAVE_GSTPLUG" = "no" ; then
 		GSTPLUG_MSG="no (you should install gst-plugins and gst-ffmpeg)"
 	fi
 else
+	requirements="$requirements gstreamer"
 	GSTPLUG_MSG="yes"
 fi
 
@@ -192,7 +196,6 @@ AM_CONDITIONAL([BUILD_GSTREAMER_MODULE], [test "$HAVE_GSTREAMER" = yes])
 AC_CHECK_LIB(dl, dlopen, dlopen_libs=-ldl)
 AC_SUBST(dlopen_libs)
 
-requirements="eet evas ecore edje libxine gstreamer"
 AC_SUBST(requirements)
 
 AC_OUTPUT([
