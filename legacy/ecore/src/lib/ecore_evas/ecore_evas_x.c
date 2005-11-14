@@ -565,7 +565,7 @@ _ecore_evas_x_event_window_damage(void *data __UNUSED__, int type __UNUSED__, vo
    e = event;
    ee = _ecore_evas_x_match(e->win);
    if (!ee) return 1; /* pass on event */
-   if ((e->win != ee->engine.x.win_container) && (e->win != ee->engine.x.win)) return 1;
+   if (e->win != ee->engine.x.win) return 1;
    if (ee->engine.x.using_bg_pixmap) return 1;
    if (ee->prop.avoid_damage)
      {
@@ -2274,6 +2274,7 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
    
    ee->engine.x.win_root = parent;
    ee->engine.x.win_container = ecore_x_window_new(parent, x, y, w, h);
+   ee->engine.x.win = ecore_x_window_override_new(ee->engine.x.win_container, 0, 0, w, h);
    if (getenv("DESKTOP_STARTUP_ID"))
      {
 	ecore_x_netwm_startup_id_set(ee->engine.x.win_container,
@@ -2286,7 +2287,6 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
    einfo = (Evas_Engine_Info_XRender_X11 *)evas_engine_info_get(ee->evas);
    if (einfo)
      {
-	XSetWindowAttributes attr;
 	int screen;
 
 	/* FIXME: this is inefficient as its a round trip */
@@ -2317,32 +2317,6 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
 		  free(roots);
 	       }
 	  }
-	attr.backing_store = NotUseful;
-	attr.override_redirect = True;
-	attr.colormap = DefaultColormap(ecore_x_display_get(), screen);
-	attr.border_pixel = 0;
-	attr.background_pixmap = None;
-	attr.event_mask =
-	  KeyPressMask | KeyReleaseMask |
-	  ExposureMask | ButtonPressMask | ButtonReleaseMask | 
-	  EnterWindowMask | LeaveWindowMask |
-	  PointerMotionMask | StructureNotifyMask | VisibilityChangeMask |
-	  FocusChangeMask | PropertyChangeMask | ColormapChangeMask;
-	attr.bit_gravity = ForgetGravity;
-	
-	ee->engine.x.win = 
-	  XCreateWindow(ecore_x_display_get(), 
-			ee->engine.x.win_container,
-			0, 0, 
-			w, h, 0,
-			DefaultDepth(ecore_x_display_get(), screen),
-			InputOutput,
-			DefaultVisual(ecore_x_display_get(), screen),
-			CWBackingStore | CWColormap |
-			CWBackPixmap | CWBorderPixel |
-			CWBitGravity | CWEventMask |
-			CWOverrideRedirect,
-			&attr);
 	einfo->info.display  = ecore_x_display_get();
 	einfo->info.visual   = DefaultVisual(ecore_x_display_get(), screen);
 	einfo->info.drawable = ee->engine.x.win;
