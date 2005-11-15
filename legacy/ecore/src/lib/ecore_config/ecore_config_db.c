@@ -223,7 +223,8 @@ void
 _ecore_config_db_write(Ecore_Config_DB_File *db, const char *key)
 {
    char buf[256];
-   int num;
+   char* str = NULL;
+   int num = 0;
    char *prev_locale;
    // Ecore_Config_Prop *prop;
    Ecore_Config_Type type;
@@ -246,9 +247,12 @@ _ecore_config_db_write(Ecore_Config_DB_File *db, const char *key)
 	       num = snprintf(buf, sizeof(buf), "%c %16.16f ", (char) type,
 			      ecore_config_float_get(key));
 	       break;
-	     case ECORE_CONFIG_STR:
-	       num = snprintf(buf, sizeof(buf), "%c %s ", (char) type,
+	     case ECORE_CONFIG_STR: {
+	       int slen = (strlen(ecore_config_string_get(key)) * sizeof(char)) + 3;
+	       str = malloc(slen);
+	       num = snprintf(str, slen, "%c %s ", (char) type,
 			      ecore_config_string_get(key));
+	       }
 	       break;
 	     case ECORE_CONFIG_THM:
 	       num = snprintf(buf, sizeof(buf), "%c %s ", (char) type,
@@ -263,9 +267,17 @@ _ecore_config_db_write(Ecore_Config_DB_File *db, const char *key)
 	  }
 
    if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
-   buf[1] = 0;
-   buf[num - 1] = 0;
-   eet_write(db->ef, (char*)key, buf, num, 1);
+   
+   if (!(type == ECORE_CONFIG_STR)) {
+	   buf[1] = 0;
+	   buf[num - 1] = 0;
+	   eet_write(db->ef, (char*)key, buf, num, 1);
+   } else {
+	   str[1] = 0;
+	   str[num-1] = 0;
+	   eet_write(db->ef, (char*)key, str, num, 1);
+	   free(str);
+   }
 }
 /*
 void
