@@ -104,7 +104,7 @@ extern "C" {
 #  define ECORE_NO_THREADS(function, arg)
    
 # else /* No pthreads available */
-   
+
 #  define ECORE_DECLARE_LOCKS 
 #  define ECORE_INIT_LOCKS(structure)
 #  define ECORE_READ_LOCK(structure)
@@ -266,8 +266,9 @@ extern "C" {
 # define ECORE_HASH_NODE(hash) ((Ecore_Hash_Node *)hash)
    
    struct _ecore_hash_node {
-      void *key;	/* The key for the data node */
-      void *value;	/* The value associated with this node */
+      Ecore_Hash_Node *next; /* Pointer to the next node in the bucket list */
+      void *key;	     /* The key for the data node */
+      void *value;	     /* The value associated with this node */
       
       ECORE_DECLARE_LOCKS;
    };
@@ -276,12 +277,12 @@ extern "C" {
 # define ECORE_HASH(hash) ((Ecore_Hash *)hash)
    
    struct _ecore_hash {
-      Ecore_List **buckets;
+      Ecore_Hash_Node **buckets;
       int size;		/* An index into the table of primes to
 			 determine size */
       int nodes;		/* The number of nodes currently in the hash */
 
-			int index;    /* The current index into the bucket table */
+      int index;    /* The current index into the bucket table */
       
       Ecore_Compare_Cb compare;	/* The function used to compare node values */
       Ecore_Hash_Cb hash_func;	/* The function used to compare node values */

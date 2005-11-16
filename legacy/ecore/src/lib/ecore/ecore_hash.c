@@ -24,11 +24,11 @@ static int _ecore_hash_add_node(Ecore_Hash *hash, Ecore_Hash_Node *node);
 static Ecore_Hash_Node * _ecore_hash_get_node(Ecore_Hash *hash, void *key);
 static int _ecore_hash_increase(Ecore_Hash *hash);
 static int _ecore_hash_decrease(Ecore_Hash *hash);
-inline int _ecore_hash_rehash(Ecore_Hash *hash, Ecore_List **old_table, int old_size);
-static int _ecore_hash_bucket_destroy(Ecore_List *list, Ecore_Free_Cb keyd,
+inline int _ecore_hash_rehash(Ecore_Hash *hash, Ecore_Hash_Node **old_table, int old_size);
+static int _ecore_hash_bucket_destroy(Ecore_Hash_Node *list, Ecore_Free_Cb keyd,
 		Ecore_Free_Cb valued);
-inline Ecore_Hash_Node * _ecore_hash_get_bucket(Ecore_Hash *hash, Ecore_List *bucket,
-		void *key);
+inline Ecore_Hash_Node * _ecore_hash_get_bucket(Ecore_Hash *hash,
+		Ecore_Hash_Node *bucket, void *key);
 
 static Ecore_Hash_Node *_ecore_hash_node_new(void *key, void *value);
 static int _ecore_hash_node_init(Ecore_Hash_Node *node, void *key, void *value);
@@ -79,9 +79,8 @@ int ecore_hash_init(Ecore_Hash *hash, Ecore_Hash_Cb hash_func, Ecore_Compare_Cb 
 	hash->hash_func = hash_func;
 	hash->compare = compare;
 
-	hash->buckets = (Ecore_List **)malloc(ecore_prime_table[0] *
-			sizeof(Ecore_List *));
-	memset(hash->buckets, 0, ecore_prime_table[0] * sizeof(Ecore_List *));
+	hash->buckets = (Ecore_Hash_Node **)calloc(ecore_prime_table[0],
+			sizeof(Ecore_Hash_Node *));
 
 	ECORE_INIT_LOCKS(hash);
 
@@ -182,9 +181,11 @@ void ecore_hash_destroy(Ecore_Hash *hash)
 	ECORE_WRITE_LOCK(hash);
 
 	while (i < ecore_prime_table[hash->size]) {
-		if (hash->buckets[i])
+		if (hash->buckets[i]) {
 			_ecore_hash_bucket_destroy(hash->buckets[i],
 					hash->free_key, hash->free_value);
+			hash->buckets[i] = NULL;
+		}
 		i++;
 	}
 
@@ -226,8 +227,7 @@ int ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func,
 		if (hash->buckets[i]) {
 			Ecore_Hash_Node *node;
 
-			ecore_list_goto_first(hash->buckets[i]);
-			while ((node = ecore_list_next(hash->buckets[i]))) {
+			for (node = hash->buckets[i]; node; node = node->next) {
 				for_each_func(node, user_data);
 			}
 		}
@@ -260,8 +260,7 @@ Ecore_List *ecore_hash_keys(Ecore_Hash *hash)
 		if (hash->buckets[i]) {
 			Ecore_Hash_Node *node;
 
-			ecore_list_goto_first(hash->buckets[i]);
-			while ((node = ecore_list_next(hash->buckets[i]))) {
+			for (node = hash->buckets[i]; node; node = node->next) {
 				ecore_list_append(keys, node->key);
 			}
 		}
@@ -285,23 +284,28 @@ ecore_hash_dump_graph(Ecore_Hash *hash)
 	unsigned int i;
 
 	for (i = 0; i < ecore_prime_table[hash->size]; i++)
-		if (hash->buckets[i])
-			printf("%d\t%u\n", i, ecore_list_nodes(hash->buckets[i]));
+		if (hash->buckets[i]) {
+			int n = 0;
+			Ecore_Hash_Node *node;
+			for (node = hash->buckets[i]; node; node = node->next)
+				n++;
+			printf("%d\t%u\n", i, n);
+		}
 		else
 			printf("%d\t0\n", i);
 }
 
 static int
-_ecore_hash_bucket_destroy(Ecore_List *list, Ecore_Free_Cb keyd, Ecore_Free_Cb valued)
+_ecore_hash_bucket_destroy(Ecore_Hash_Node *list, Ecore_Free_Cb keyd, Ecore_Free_Cb valued)
 {
 	Ecore_Hash_Node *node;
 
 	CHECK_PARAM_POINTER_RETURN("list", list, FALSE);
 
-	while ((node = ecore_list_remove_first(list)) != NULL)
+	for (node = list; node; node = list) {
+		list = list->next;
 		_ecore_hash_node_destroy(node, keyd, valued);
-
-	ecore_list_destroy(list);
+	}
 
 	return TRUE;
 }
@@ -330,13 +334,9 @@ _ecore_hash_add_node(Ecore_Hash *hash, Ecore_Hash_Node *node)
 	else
 		hash_val = ECORE_COMPUTE_HASH(hash, node->key);
 
-	/* Create the list if it's not already present */
-	if (!hash->buckets[hash_val])
-		hash->buckets[hash_val] = ecore_list_new();
-
-	/* Append the node to the list at the index position */
-	if (!ecore_list_prepend(hash->buckets[hash_val], node))
-		return FALSE;
+	/* Prepend the node to the list at the index position */
+	node->next = hash->buckets[hash_val];
+	hash->buckets[hash_val] = node;
 	hash->nodes++;
 
 	return TRUE;
@@ -381,7 +381,7 @@ void *ecore_hash_get(Ecore_Hash *hash, void *key)
 void *ecore_hash_remove(Ecore_Hash *hash, void *key)
 {
 	Ecore_Hash_Node *node = NULL;
-	Ecore_List *list;
+	Ecore_Hash_Node *list;
 	unsigned int hash_val;
 	void *ret = NULL;
 
@@ -401,24 +401,32 @@ void *ecore_hash_remove(Ecore_Hash *hash, void *key)
 	 */
 	if (hash->buckets[hash_val]) {
 		list = hash->buckets[hash_val];
-		ecore_list_goto_first(list);
 
 		/*
 		 * Traverse the list to find the specified key
 		 */
+		node = list;
 		if (hash->compare) {
-			while ((node = ecore_list_current(list)) &&
-					hash->compare(node->key, key) != 0)
-				ecore_list_next(list);
+			while ((node) && (hash->compare(node->key, key) != 0)) {
+				list = node;
+				node = node->next;
+			}
 		}
 		else {
-			while ((node = ecore_list_current(list)) &&
-					node->key != key)
-				ecore_list_next(list);
+			while ((node) && (node->key != key)) {
+				list = node;
+				node = node->next;
+			}
 		}
 
+		/*
+		 * Remove the node with the matching key and free it's memory
+		 */
 		if (node) {
-			ecore_list_remove(list);
+			if (list == node)
+				hash->buckets[hash_val] = node->next;
+			else
+				list->next = node->next;
 			ret = node->value;
 			node->value = NULL;
 			_ecore_hash_node_destroy(node, hash->free_key,
@@ -450,6 +458,11 @@ _ecore_hash_get_node(Ecore_Hash *hash, void *key)
 
 	ECORE_READ_LOCK(hash);
 
+	if (!hash->buckets) {
+		ECORE_READ_UNLOCK(hash);
+		return NULL;
+	}
+
 	/* Compute the position in the table */
 	if (!hash->hash_func)
 		hash_val = (unsigned int )key % ecore_prime_table[hash->size];
@@ -457,8 +470,17 @@ _ecore_hash_get_node(Ecore_Hash *hash, void *key)
 		hash_val = ECORE_COMPUTE_HASH(hash, key);
 
 	/* Grab the bucket at the specified position */
-	if (hash->buckets[hash_val])
+	if (hash->buckets[hash_val]) {
 		node = _ecore_hash_get_bucket(hash, hash->buckets[hash_val], key);
+		/*
+		 * Move matched node to the front of the list as it's likely
+		 * to be searched for again soon.
+		 */
+		if (node && node != hash->buckets[hash_val]) {
+			node->next = hash->buckets[hash_val];
+			hash->buckets[hash_val] = node;
+		}
+	}
 
 	ECORE_READ_UNLOCK(hash);
 
@@ -473,42 +495,52 @@ _ecore_hash_get_node(Ecore_Hash *hash, void *key)
  * @return Returns NULL on error or not found, the found node on success
  */
 inline Ecore_Hash_Node *
-_ecore_hash_get_bucket(Ecore_Hash *hash, Ecore_List *bucket, void *key)
+_ecore_hash_get_bucket(Ecore_Hash *hash, Ecore_Hash_Node *bucket, void *key)
 {
+	Ecore_Hash_Node *prev = NULL;
 	Ecore_Hash_Node *node = NULL;
 
 	ECORE_READ_LOCK(hash);
-	ecore_list_goto_first(bucket);
 
 	/*
 	 * Traverse the list to find the desired node, if the node is in the
 	 * list, then return the node.
 	 */
 	if (hash->compare) {
-		while ((node = ecore_list_next(bucket)) != NULL) {
+		for (node = bucket; node; node = node->next) {
 			ECORE_READ_LOCK(node);
-			if (hash->compare(node->key, key) == 0) {
-				ECORE_READ_UNLOCK(node);
-				ECORE_READ_UNLOCK(hash);
-				return node;
-			}
+			if (hash->compare(node->key, key) == 0)
+				break;
+			prev = node;
 			ECORE_READ_UNLOCK(node);
 		}
 	}
 	else {
-		while ((node = ecore_list_next(bucket)) != NULL) {
+		for (node = bucket; node; node = node->next) {
 			ECORE_READ_LOCK(node);
-			if (node->key == key) {
-				ECORE_READ_UNLOCK(node);
-				ECORE_READ_UNLOCK(hash);
-				return node;
-			}
+			if (node->key == key)
+				break;
+			prev = node;
 			ECORE_READ_UNLOCK(node);
 		}
 	}
+
+	/*
+	 * Remove node from the list to replace it at the beginning.
+	 */
+	if (node && prev) {
+		ECORE_WRITE_LOCK(prev);
+		prev->next = node->next;
+		ECORE_WRITE_UNLOCK(prev);
+
+		ECORE_WRITE_LOCK(node);
+		node->next = NULL;
+		ECORE_WRITE_UNLOCK(node);
+	}
+
 	ECORE_READ_UNLOCK(hash);
 
-	return NULL;
+	return node;
 }
 
 /*
@@ -536,8 +568,8 @@ _ecore_hash_increase(Ecore_Hash *hash)
 	/*
 	 * Allocate a new bucket area, of the new larger size
 	 */
-	hash->buckets = (Ecore_List **)calloc(ecore_prime_table[hash->size],
-			sizeof(Ecore_List *));
+	hash->buckets = calloc(ecore_prime_table[hash->size],
+			sizeof(Ecore_Hash_Node *));
 
 	/*
 	 * Make sure the allocation succeeded, if not replace the old data and
@@ -574,7 +606,7 @@ _ecore_hash_increase(Ecore_Hash *hash)
 static int
 _ecore_hash_decrease(Ecore_Hash *hash)
 {
-	Ecore_List **old;
+	Ecore_Hash_Node **old;
 
 	CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
 
@@ -590,8 +622,8 @@ _ecore_hash_decrease(Ecore_Hash *hash)
 	/*
 	 * Allocate a new area to store the data
 	 */
-	hash->buckets = (Ecore_List **)malloc(ecore_prime_table[hash->size] *
-			sizeof(Ecore_List *));
+	hash->buckets = (Ecore_Hash_Node **)calloc(ecore_prime_table[hash->size],
+			sizeof(Ecore_Hash_Node *));
 
 	/*
 	 * Make sure allocation succeeded otherwise rreturn to the previous
@@ -603,11 +635,6 @@ _ecore_hash_decrease(Ecore_Hash *hash)
 		return FALSE;
 	}
 
-	/*
-	 * Zero out the new area
-	 */
-	memset(hash->buckets, 0, ecore_prime_table[hash->size]
-			* sizeof(Ecore_List *));
 	hash->nodes = 0;
 
 	if (_ecore_hash_rehash(hash, old, hash->size - 1)) {
@@ -625,11 +652,10 @@ _ecore_hash_decrease(Ecore_Hash *hash)
  * @return Returns TRUE on success, FALSE on success
  */
 inline int
-_ecore_hash_rehash(Ecore_Hash *hash, Ecore_List **old_table, int old_size)
+_ecore_hash_rehash(Ecore_Hash *hash, Ecore_Hash_Node **old_table, int old_size)
 {
 	unsigned int i;
-	Ecore_Hash_Node *node;
-	Ecore_List *old;
+	Ecore_Hash_Node *old;
 
 	CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
 	CHECK_PARAM_POINTER_RETURN("old_table", old_table, FALSE);
@@ -641,13 +667,10 @@ _ecore_hash_rehash(Ecore_Hash *hash, Ecore_List **old_table, int old_size)
 		old_table[i] = NULL;
 
 		/* Loop through re-adding each node to the hash table */
-		while (old && (node = ecore_list_remove_last(old))) {
-			_ecore_hash_add_node(hash, node);
+		while ((old = old_table[i])) {
+			_ecore_hash_add_node(hash, old);
+			old_table[i] = old->next;
 		}
-
-		/* Now free up the old list space */
-		if (old)
-			ecore_list_destroy(old);
 	}
 
 	return TRUE;
