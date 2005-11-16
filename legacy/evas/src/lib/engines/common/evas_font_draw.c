@@ -16,7 +16,7 @@ evas_common_font_int_cache_glyph_get(RGBA_Font_Int *fi, FT_UInt index)
 
    fg = evas_hash_find(fi->glyphs, key);
    if (fg) return fg;
-
+   
 //   error = FT_Load_Glyph(fi->src->ft.face, index, FT_LOAD_NO_BITMAP);
    error = FT_Load_Glyph(fi->src->ft.face, index,
 			 FT_LOAD_RENDER);
@@ -187,7 +187,8 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 			 }
 		       else
 			 {
-			    if (fg->glyph_out->bitmap.num_grays == 256)
+			    if ((fg->glyph_out->bitmap.num_grays == 256) &&
+				(fg->glyph_out->bitmap.pixel_mode == ft_pixel_mode_grays))
 			      {
 				 for (i = 0; i < h; i++)
 				   {
@@ -220,7 +221,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 					}
 				   }
 			      }
-			    else if (fg->glyph_out->bitmap.num_grays == 0)
+			    else
 			      {
 				 DATA8 *tmpbuf = NULL, *dp, *tp, bits;
 				 int bi, bj;

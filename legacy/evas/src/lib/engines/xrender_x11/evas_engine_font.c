@@ -61,7 +61,8 @@ _xre_font_surface_new(Ximage_Info *xinf, RGBA_Font_Glyph *fg)
    fs->pic = XRenderCreatePicture(xinf->disp, fs->draw, xinf->fmt8, CPRepeat | CPDither | CPComponentAlpha, &att);
    
    xim = _xr_image_new(fs->xinf, w, h, xinf->fmt8->depth);
-   if (fg->glyph_out->bitmap.num_grays == 256)
+   if ((fg->glyph_out->bitmap.num_grays == 256) &&
+       (fg->glyph_out->bitmap.pixel_mode == ft_pixel_mode_grays))
      {
 	int x, y;
 	DATA8 *p1, *p2;
@@ -79,7 +80,7 @@ _xre_font_surface_new(Ximage_Info *xinf, RGBA_Font_Glyph *fg)
 	  }
 	
      }
-   else if (fg->glyph_out->bitmap.num_grays == 0)
+   else
      {
         DATA8 *tmpbuf = NULL, *dp, *tp, bits;
 	int bi, bj, end;
