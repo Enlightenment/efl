@@ -438,6 +438,7 @@ void *ecore_hash_remove(Ecore_Hash *hash, void *key)
 			node->value = NULL;
 			_ecore_hash_node_destroy(node, hash->free_key,
 						 NULL);
+			hash->nodes--;
 		}
 	}
 
@@ -670,13 +671,10 @@ _ecore_hash_rehash(Ecore_Hash *hash, Ecore_Hash_Node **old_table, int old_size)
 	for (i = 0; i < ecore_prime_table[old_size]; i++) {
 		/* Hash into a new list to avoid loops of rehashing the same
 		 * nodes */
-		old = old_table[i];
-		old_table[i] = NULL;
-
-		/* Loop through re-adding each node to the hash table */
 		while ((old = old_table[i])) {
-			_ecore_hash_add_node(hash, old);
 			old_table[i] = old->next;
+			old->next = NULL;
+			_ecore_hash_add_node(hash, old);
 		}
 	}
 
