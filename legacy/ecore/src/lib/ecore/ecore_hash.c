@@ -182,9 +182,16 @@ void ecore_hash_destroy(Ecore_Hash *hash)
 
 	while (i < ecore_prime_table[hash->size]) {
 		if (hash->buckets[i]) {
-			_ecore_hash_bucket_destroy(hash->buckets[i],
-					hash->free_key, hash->free_value);
+			Ecore_Hash_Node *bucket;
+
+			/*
+			 * Remove the bucket list to avoid possible recursion
+			 * on the free callbacks.
+			 */
+			bucket = hash->buckets[i];
 			hash->buckets[i] = NULL;
+			_ecore_hash_bucket_destroy(bucket,
+					hash->free_key, hash->free_value);
 		}
 		i++;
 	}
