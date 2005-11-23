@@ -234,7 +234,7 @@ edje_object_animation_set(Evas_Object *obj, int on)
      }
    else
      {
-	_edje_emit(ed, "load", "");	
+	_edje_emit(ed, "load", NULL);
 	if (evas_object_visible_get(obj))
 	  {
 	     evas_object_hide(obj);
@@ -811,9 +811,7 @@ _edje_emit_handle(Edje *ed, char *sig, char *src)
 		  Edje_Program *pr;
 		  
 		  pr = l->data;
-		  if ((pr->signal) &&
-		      (pr->source) &&
-		      (_edje_glob_match(sig, pr->signal)) &&
+		  if ((_edje_glob_match(sig, pr->signal)) &&
 		      (_edje_glob_match(src, pr->source)))
 		    {
 #ifdef EDJE_PROGRAM_CACHE

@@ -1587,13 +1587,14 @@ _edje_fetch(Evas_Object *obj)
 int
 _edje_glob_match(char *str, char *glob)
 {
-   if (glob[0] == 0)
+   if ((!glob) || (glob[0] == 0))
      {
-	if (str[0] == 0) return 1;
+	if ((!str) || (str[0] == 0)) return 1;
+	if ((glob) && (glob[0] == '*')) return 1;
 	return 0;
      }
-   if (!strcmp(glob, "*")) return 1;
-   if (!fnmatch(glob, str, 0)) return 1;
+   if (glob[0] == '*') return 1;
+   if ((glob) && (str) && (!fnmatch(glob, str, 0))) return 1;
    return 0;
 }
 
