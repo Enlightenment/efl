@@ -567,6 +567,7 @@ _edje_part_recalc_single(Edje *ed,
 		    }
 	       }
 	  }
+	if (!font) font = "";
 	
 	if (ep->text.text_source)
 	  {
@@ -586,6 +587,8 @@ _edje_part_recalc_single(Edje *ed,
 	     if (ep->text.font) font = ep->text.font;
 	     if (ep->text.size > 0) size = ep->text.size;
 	  }
+	if (!text) text = "";
+	
         /* check if the font is embedded in the .eet */
         /* FIXME: we should cache this result */
         if (ed->file->font_dir)
