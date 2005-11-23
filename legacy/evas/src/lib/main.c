@@ -502,7 +502,8 @@ _evas_mempool2_debug(Evas_Mempool *pool)
 }
 */
 
-/*#define NOPOOL 1*/
+/* disabled for now - it seems a little bit slower than glibc */
+#define NOPOOL 1
 
 void *
 evas_mempool_malloc(Evas_Mempool *pool, int size)
