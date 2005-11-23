@@ -618,6 +618,20 @@ struct _Evas_Imaging_Font
    RGBA_Font *font;
 };
 
+typedef struct _Evas_Mempool Evas_Mempool;
+   
+struct _Evas_Mempool
+{
+   int           item_size;
+   int           pool_size;
+   int           usage;
+   void         *first;
+};
+
+void *evas_mempool_malloc(Evas_Mempool *pool, int size);
+void  evas_mempool_free(Evas_Mempool *pool, void *ptr);
+void *evas_mempool_calloc(Evas_Mempool *pool, int size);
+   
 #ifdef __cplusplus
 }
 #endif

@@ -14,6 +14,20 @@ struct _Evas_List_Accounting
 
 static int _evas_list_alloc_error = 0;
 
+static Evas_Mempool _evas_list_mempool =
+{
+   sizeof(Evas_List),
+   (4096 - (34 * sizeof(int)) - (sizeof(void *) * 2)) / sizeof(Evas_List),
+// 32,
+   0, NULL
+};
+static Evas_Mempool _evas_list_accounting_mempool =
+{
+   sizeof(Evas_List_Accounting),
+   32,
+   0, NULL
+};
+   
 /**
  * @defgroup Evas_List_Data_Group Linked List Creation Functions
  *
@@ -52,7 +66,7 @@ evas_list_append(Evas_List *list, const void *data)
    Evas_List *l, *new_l;
 
    _evas_list_alloc_error = 0;
-   new_l = malloc(sizeof(Evas_List));
+   new_l = evas_mempool_malloc(&_evas_list_mempool, sizeof(Evas_List));
    if (!new_l)
      {
 	_evas_list_alloc_error = 1;
@@ -63,11 +77,11 @@ evas_list_append(Evas_List *list, const void *data)
    if (!list)
      {
 	new_l->prev = NULL;
-	new_l->accounting = malloc(sizeof(Evas_List_Accounting));
+	new_l->accounting = evas_mempool_malloc(&_evas_list_accounting_mempool, sizeof(Evas_List_Accounting));
 	if (!new_l->accounting)
 	  {
 	     _evas_list_alloc_error = 1;
-	     free(new_l);
+	     evas_mempool_free(&_evas_list_mempool, new_l);
 	     return list;
 	  }
 	((Evas_List_Accounting *)(new_l->accounting))->last = new_l;
@@ -115,7 +129,7 @@ evas_list_prepend(Evas_List *list, const void *data)
    Evas_List *new_l;
 
    _evas_list_alloc_error = 0;
-   new_l = malloc(sizeof(Evas_List));
+   new_l = evas_mempool_malloc(&_evas_list_mempool, sizeof(Evas_List));
    if (!new_l)
      {
 	_evas_list_alloc_error = 1;
@@ -126,11 +140,11 @@ evas_list_prepend(Evas_List *list, const void *data)
    if (!list)
      {
 	new_l->next = NULL;
-	new_l->accounting = malloc(sizeof(Evas_List_Accounting));
+	new_l->accounting = evas_mempool_malloc(&_evas_list_accounting_mempool, sizeof(Evas_List_Accounting));
 	if (!new_l->accounting)
 	  {
 	     _evas_list_alloc_error = 1;
-	     free(new_l);
+	     evas_mempool_free(&_evas_list_mempool, new_l);
 	     return list;
 	  }
 	((Evas_List_Accounting *)(new_l->accounting))->last = new_l;
@@ -193,7 +207,7 @@ evas_list_append_relative(Evas_List *list, const void *data, const void *relativ
 	  {
 	     Evas_List *new_l;
 
-	     new_l = malloc(sizeof(Evas_List));
+	     new_l = evas_mempool_malloc(&_evas_list_mempool, sizeof(Evas_List));
 	     if (!new_l)
 	       {
 		  _evas_list_alloc_error = 1;
@@ -276,7 +290,7 @@ evas_list_prepend_relative(Evas_List *list, const void *data, const void *relati
 	  {
 	     Evas_List *new_l;
 
-	     new_l = malloc(sizeof(Evas_List));
+	     new_l = evas_mempool_malloc(&_evas_list_mempool, sizeof(Evas_List));
              if (!new_l)
 	       {
 		  _evas_list_alloc_error = 1;
@@ -375,8 +389,8 @@ evas_list_remove_list(Evas_List *list, Evas_List *remove_list)
      ((Evas_List_Accounting *)(list->accounting))->last = remove_list->prev;
    ((Evas_List_Accounting *)(list->accounting))->count--;
    if (((Evas_List_Accounting *)(list->accounting))->count == 0)
-     free(list->accounting);
-   free(remove_list);
+     evas_mempool_free(&_evas_list_accounting_mempool, list->accounting);
+   evas_mempool_free(&_evas_list_mempool, remove_list);
    return return_l;
 }
 
@@ -478,12 +492,12 @@ evas_list_free(Evas_List *list)
    Evas_List *l, *free_l;
 
    if (!list) return NULL;
-   free(list->accounting);
+   evas_mempool_free(&_evas_list_accounting_mempool, list->accounting);
    for (l = list; l;)
      {
 	free_l = l;
 	l = l->next;
-	free(free_l);
+	evas_mempool_free(&_evas_list_mempool, free_l);
      }
    return NULL;
 }
@@ -892,7 +906,7 @@ evas_list_sort(Evas_List *list, int size, int (*func)(void *, void *))
 	ll->prev->next = NULL;
 	ll->prev = NULL;
      }
-   ll->accounting = malloc(sizeof(Evas_List_Accounting));
+   ll->accounting = evas_mempool_malloc(&_evas_list_accounting_mempool, sizeof(Evas_List_Accounting));
    ((Evas_List_Accounting *)(ll->accounting))->last = llast;
    ((Evas_List_Accounting *)(ll->accounting))->count = size - mid;
 
