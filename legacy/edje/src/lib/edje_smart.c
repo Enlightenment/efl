@@ -114,7 +114,7 @@ _edje_smart_move(Evas_Object * obj, Evas_Coord x, Evas_Coord y)
 	       }
 	  }
      }
-//   _edje_emit(ed, "move", "");
+//   _edje_emit(ed, "move", NULL);
 }
 
 static void 
@@ -130,7 +130,7 @@ _edje_smart_resize(Evas_Object * obj, Evas_Coord w, Evas_Coord h)
 //   evas_object_resize(ed->clipper, ed->w, ed->h);
    ed->dirty = 1;
    _edje_recalc(ed);
-   _edje_emit(ed, "resize", "");
+   _edje_emit(ed, "resize", NULL);
 }
 
 static void 
@@ -143,7 +143,7 @@ _edje_smart_show(Evas_Object * obj)
    if (evas_object_visible_get(ed->clipper)) return;
    if ((ed->collection) && (evas_object_clipees_get(ed->clipper)))
      evas_object_show(ed->clipper);
-   _edje_emit(ed, "show", "");
+   _edje_emit(ed, "show", NULL);
 }
 
 static void 
@@ -156,7 +156,7 @@ _edje_smart_hide(Evas_Object * obj)
    if (!evas_object_visible_get(ed->clipper)) return;
    if ((ed->collection) && (evas_object_clipees_get(ed->clipper)))
      evas_object_hide(ed->clipper);
-   _edje_emit(ed, "hide", "");
+   _edje_emit(ed, "hide", NULL);
 }
 
 static void 
@@ -167,7 +167,7 @@ _edje_smart_color_set(Evas_Object * obj, int r, int g, int b, int a)
    ed = evas_object_smart_data_get(obj);
    if (!ed) return;
    evas_object_color_set(ed->clipper, r, g, b, a);
-//   _edje_emit(ed, "color_set", "");
+//   _edje_emit(ed, "color_set", NULL);
 }
 
 static void 
@@ -179,7 +179,7 @@ _edje_smart_clip_set(Evas_Object * obj, Evas_Object * clip)
    if (!ed) return;
    if (evas_object_clip_get(obj) == clip) return;
    evas_object_clip_set(ed->clipper, clip);
-//   _edje_emit(ed, "clip_set", "");
+//   _edje_emit(ed, "clip_set", NULL);
 }
 
 static void 
@@ -191,5 +191,5 @@ _edje_smart_clip_unset(Evas_Object * obj)
    if (!ed) return;
    if (!evas_object_clip_get(obj)) return;
    evas_object_clip_unset(ed->clipper);
-//   _edje_emit(ed, "clip_unset", "");
+//   _edje_emit(ed, "clip_unset", NULL);
 }

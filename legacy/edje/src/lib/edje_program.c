@@ -744,6 +744,8 @@ _edje_emit_handle(Edje *ed, char *sig, char *src)
    Evas_List *l;
 
    if (ed->delete_me) return;
+   if (!sig) sig = "";
+   if (!src) src = "";
 //   printf("EDJE EMIT: signal: \"%s\" source: \"%s\"\n", sig, src);
    _edje_block(ed);
    _edje_ref(ed);

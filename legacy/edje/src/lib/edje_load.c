@@ -317,7 +317,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	_edje_unblock(ed);
 	_edje_unref(ed);
 	ed->load_error = EDJE_LOAD_ERROR_NONE;
-	_edje_emit(ed, "load", "");
+	_edje_emit(ed, "load", NULL);
 	return 1;
      }
    else
