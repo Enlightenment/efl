@@ -54,8 +54,10 @@ edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const ch
    if (!ed) return;
    if (ed->delete_me) return;
    escb = calloc(1, sizeof(Edje_Signal_Callback));
-   escb->signal = strdup(emission);
-   escb->source = strdup(source);
+   if ((emission) && (emission[0]))
+     escb->signal = strdup(emission);
+   if ((source) && (source[0]))
+     escb->source = strdup(source);
    escb->func = func;
    escb->data = data;
    ed->callbacks = evas_list_append(ed->callbacks, escb);
