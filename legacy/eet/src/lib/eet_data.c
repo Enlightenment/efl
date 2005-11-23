@@ -307,6 +307,11 @@ eet_data_get_string(void *src, void *src_end, void *dst)
    p = s;
    len = 0;
    while ((p < (char *)src_end) && (*p != 0)) {len++; p++;}
+   if (len == 0)
+     {
+	*d = NULL;
+	return 0;
+     }
    *d = malloc(len + 1);
    if (!(*d)) return -1;
    memcpy(*d, s, len);
@@ -322,7 +327,8 @@ eet_data_put_string(void *src, int *size_ret)
    const char *empty_s = "";
 
    s = (char *)(*((char **)src));
-   if (!s) s = (char *)empty_s;
+   if (!s) return NULL;
+//   if (!s) s = (char *)empty_s;
    len = strlen(s);
    d = malloc(len + 1);
    if (!d) return NULL;
