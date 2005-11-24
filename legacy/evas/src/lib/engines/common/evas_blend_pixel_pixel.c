@@ -6,7 +6,7 @@
 
 #define ALIGN_FIX
 
-extern DATA8       *_evas_pow_lut;
+extern const DATA8  _evas_pow_lut[65536];
 extern const DATA16 _evas_const_c1[4];
 
 #ifdef BUILD_C

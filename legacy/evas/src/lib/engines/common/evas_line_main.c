@@ -1,7 +1,7 @@
 #include "evas_common.h"
 #include "evas_macros.h"
 
-extern DATA8       *_evas_pow_lut;
+extern const DATA8  _evas_pow_lut[65536];
 
 void
 evas_common_line_init(void)

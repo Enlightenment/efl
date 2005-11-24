@@ -1,6 +1,6 @@
 #include "evas_common.h"
 
-extern DATA8        *_evas_pow_lut;
+extern const DATA8  _evas_pow_lut[65536];
 
 void
 evas_common_draw_init(void)

@@ -4440,6 +4440,7 @@ evas_object_textblock_render_pre(Evas_Object *obj)
 	o->formatted.valid = 1;
 	if (lines) _lines_clear(obj, lines);
 	o->last_w = obj->cur.geometry.w;
+	o->redraw = 0;
 	updates = evas_object_render_pre_prev_cur_add(updates, obj);
 	o->changed = 0;
 	is_v = evas_object_is_visible(obj);
