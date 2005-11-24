@@ -208,8 +208,6 @@
    if ((___cptr = (int *)embryo_data_address_get(ep, (par)))) { \
    *___cptr = (int)val;}}
 
-static void _edje_embryo_globals_init(Edje *ed);
-
 /* get_int(id) */
 static Embryo_Cell
 _edje_embryo_fn_get_int(Embryo_Program *ep, Embryo_Cell *params)
@@ -1815,9 +1813,9 @@ _edje_embryo_script_init(Edje *ed)
    embryo_program_native_call_add(ep, "custom_state", _edje_embryo_fn_custom_state);
    embryo_program_native_call_add(ep, "set_state_val", _edje_embryo_fn_set_state_val);
    embryo_program_native_call_add(ep, "get_state_val", _edje_embryo_fn_get_state_val);
-   
-   embryo_program_vm_push(ep); /* need a new vm to run in */
-   _edje_embryo_globals_init(ed);
+
+//   embryo_program_vm_push(ed->collection->script);
+//   _edje_embryo_globals_init(ed);
 }
 
 void
@@ -1827,7 +1825,7 @@ _edje_embryo_script_shutdown(Edje *ed)
    if (!ed->collection) return;
    if (!ed->collection->script) return;
    if (embryo_program_recursion_get(ed->collection->script) > 0) return;
-   embryo_program_vm_pop(ed->collection->script);
+//   embryo_program_vm_pop(ed->collection->script);
    embryo_program_free(ed->collection->script);
    ed->collection->script = NULL;
 }
@@ -1848,17 +1846,20 @@ void
 _edje_embryo_test_run(Edje *ed, char *fname, char *sig, char *src)
 {
    Embryo_Function fn;
-   
+
    if (!ed) return;
    if (!ed->collection) return;
    if (!ed->collection->script) return;
-   _edje_embryo_script_reset(ed);
+   embryo_program_vm_push(ed->collection->script);
+   _edje_embryo_globals_init(ed);
+
+   //   _edje_embryo_script_reset(ed);
    fn = embryo_program_function_find(ed->collection->script, fname);
    if (fn != EMBRYO_FUNCTION_NONE)
      {
 	void *pdata;
 	int ret;
-	
+
 	embryo_parameter_string_push(ed->collection->script, sig);
 	embryo_parameter_string_push(ed->collection->script, src);
 	pdata = embryo_program_data_get(ed->collection->script);
@@ -1866,12 +1867,12 @@ _edje_embryo_test_run(Edje *ed, char *fname, char *sig, char *src)
 	/* 5 million instructions is an arbitary number. on my p4-2.6 here */
 	/* IF embryo is ONLY runing embryo stuff and NO native calls thats */
 	/* about 0.016 seconds, and longer on slower cpu's. if a simple */
-	/* embryo scritp snippet hasn't managed to do its work in 5 MILLION */
+	/* embryo script snippet hasn't managed to do its work in 5 MILLION */
 	/* embryo virtual machine instructions - something is wrong, or */
 	/* embryo is simply being mis-used. Embryo is meant to be minimal */
 	/* logic enhancment - not entire applications. this cycle count */
 	/* does NOT include time spent in native function calls, that the */
-	/* scritp may call to do the REAL work, so in terms of time this */
+	/* script may call to do the REAL work, so in terms of time this */
 	/* will likely end up being much longer than 0.016 seconds - more */
 	/* like 0.03 - 0.05 seconds or even more */
 	embryo_program_max_cycle_run_set(ed->collection->script, 5000000);
@@ -1894,9 +1895,10 @@ _edje_embryo_test_run(Edje *ed, char *fname, char *sig, char *src)
 	  }
 	embryo_program_data_set(ed->collection->script, pdata);
      }
+   embryo_program_vm_pop(ed->collection->script);
 }
 
-static void
+void
 _edje_embryo_globals_init(Edje *ed)
 {
    int n, i;

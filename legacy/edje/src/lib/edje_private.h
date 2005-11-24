@@ -925,4 +925,6 @@ void _edje_cache_coll_flush(Edje_File *edf);
 void _edje_cache_coll_unref(Edje_File *edf, Edje_Part_Collection *edc);
 void _edje_cache_file_unref(Edje_File *edf);
 
+void _edje_embryo_globals_init(Edje *ed);
+
 #endif

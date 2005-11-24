@@ -557,10 +557,14 @@ _edje_message_process(Edje_Message *em)
       default:
 	break;
      }
+   embryo_program_vm_push(em->edje->collection->script);
+   _edje_embryo_globals_init(em->edje);
    pdata = embryo_program_data_get(em->edje->collection->script);
    embryo_program_data_set(em->edje->collection->script, em->edje);
+   embryo_program_max_cycle_run_set(em->edje->collection->script, 5000000);
    embryo_program_run(em->edje->collection->script, fn);
    embryo_program_data_set(em->edje->collection->script, pdata);
+   embryo_program_vm_pop(em->edje->collection->script);
 }
 
 void

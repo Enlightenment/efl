@@ -21,7 +21,9 @@ _edje_var_timer_cb(void *data)
    et = data;
    if (!et) return 0;
    ed = et->edje;
-   _edje_embryo_script_reset(ed);
+//      _edje_embryo_script_reset(ed);
+   embryo_program_vm_push(ed->collection->script);
+   _edje_embryo_globals_init(ed);
    embryo_parameter_cell_push(ed->collection->script, (Embryo_Cell)et->val);
    ed->var_pool->timers = evas_list_remove(ed->var_pool->timers, et);
    fn = et->func;
@@ -31,9 +33,11 @@ _edje_var_timer_cb(void *data)
 	
 	pdata = embryo_program_data_get(ed->collection->script);
 	embryo_program_data_set(ed->collection->script, ed);	
+        embryo_program_max_cycle_run_set(ed->collection->script, 5000000);
 	embryo_program_run(ed->collection->script, fn);
 	embryo_program_data_set(ed->collection->script, pdata);
-	_edje_recalc(ed);
+	embryo_program_vm_pop(ed->collection->script);
+   	_edje_recalc(ed);
      }
    return 0;
 }
@@ -76,7 +80,9 @@ _edje_var_anim_cb(void *data)
 		       
 		       v = (t - ea->start)  / ea->len;
 		       if (v > 1.0) v= 1.0;
-		       _edje_embryo_script_reset(ed);
+//		       _edje_embryo_script_reset(ed);
+		       embryo_program_vm_push(ed->collection->script);
+		       _edje_embryo_globals_init(ed);
 		       embryo_parameter_cell_push(ed->collection->script, (Embryo_Cell)ea->val);
 		       embryo_parameter_cell_push(ed->collection->script, EMBRYO_FLOAT_TO_CELL(v));
 		       fn = ea->func;
@@ -85,8 +91,10 @@ _edje_var_anim_cb(void *data)
 			    
 			    pdata = embryo_program_data_get(ed->collection->script);
 			    embryo_program_data_set(ed->collection->script, ed);	
+			    embryo_program_max_cycle_run_set(ed->collection->script, 5000000);
 			    embryo_program_run(ed->collection->script, fn);
 			    embryo_program_data_set(ed->collection->script, pdata);
+			    embryo_program_vm_pop(ed->collection->script);
 			    _edje_recalc(ed);
 			 }
 		       if (v == 1.0) ea->delete_me = 1;
