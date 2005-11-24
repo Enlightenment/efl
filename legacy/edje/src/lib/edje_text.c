@@ -514,9 +514,6 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    font = chosen_desc->text.font;
    size = chosen_desc->text.size;
 
-   if (!text) text = "";
-   if (!font) font = "";
-   
    if ((chosen_desc->text.text_class) && (chosen_desc->text.text_class[0] != 0))
      {
 	Edje_Text_Class *tc;
@@ -533,6 +530,9 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    if (ep->text.font) font = ep->text.font;
    if (ep->text.size > 0) size = ep->text.size;
 
+   if (!text) text = "";
+   if (!font) font = "";
+   
    /* check if the font is embedded in the .eet */
    /* FIXME: we should cache this result */
    if (ed->file->font_dir)
@@ -583,6 +583,9 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
      {
 	text = ep->text.cache.out_str;
 	size = ep->text.cache.out_size;
+	
+	if (!text) text = "";
+   
 	goto arrange_text;
      }
    if (ep->text.cache.in_str) free(ep->text.cache.in_str);
