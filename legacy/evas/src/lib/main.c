@@ -208,303 +208,51 @@ evas_debug_magic_string_get(DATA32 magic)
    return "<UNKNOWN>";
 }
 
-typedef struct _Evas_Mempool1 Evas_Mempool1;
-typedef struct _Evas_Mempool2 Evas_Mempool2;
-typedef unsigned int Evas_Mempool_Bitmask;
 
-struct _Evas_Mempool1 /* used if pool size <= 32 */
+
+
+
+
+
+
+
+typedef struct _Pool Pool;
+
+struct _Pool
 {
-   Evas_Mempool_Bitmask  allocated;
-   Evas_Mempool1        *next;
-   unsigned char        *mem;
+   int   usage;
+   void *base;
+   Pool *prev, *next;
 };
 
-struct _Evas_Mempool2 /* used if pool size > 32 */
+Pool *
+_evas_mp_pool_new(Evas_Mempool *pool)
 {
-   Evas_Mempool_Bitmask  allocated, filled;
-   Evas_Mempool_Bitmask  allocated_list[32];
-   Evas_Mempool2        *next;
-   unsigned char        *mem;
-};
-
-static Evas_Mempool1 *
-_evas_mempoool1_new(Evas_Mempool *pool)
-{
-   Evas_Mempool1 *mp;
+   Pool *p;
+   void **ptr;
+   int item_alloc, i;
    
-   if (pool->pool_size <= 32)
-     mp = malloc(sizeof(Evas_Mempool1) + (pool->item_size * pool->pool_size));
-   else
-     mp = malloc(sizeof(Evas_Mempool1) + (pool->item_size * 32));
-   mp->allocated = 0;
-   mp->next = NULL;
-   mp->mem = (unsigned char *)mp + sizeof(Evas_Mempool1);
-   return mp;
-}
-
-static void
-_evas_mempool1_free(Evas_Mempool1 *mp)
-{
-   free(mp);
-}
-
-static Evas_Mempool1 *
-_evas_mempool1_free_find(Evas_Mempool *pool, int *slot, Evas_Mempool1 **pmp)
-{
-   Evas_Mempool1 *mp;
-   int i, psize;
-   Evas_Mempool_Bitmask allocated;
-   
-   psize = pool->pool_size;
-   if (psize > 32) psize = 32;
-   for (mp = (Evas_Mempool1 *)pool->first; mp; mp = mp->next)
+   item_alloc = ((pool->item_size + sizeof(void *) - 1) / sizeof(void *)) * sizeof(void *);
+   p = malloc(sizeof(Pool) + (pool->pool_size * item_alloc));
+   ptr = (void **)(((unsigned char *)p) + sizeof(Pool));
+   p->usage = 0;
+   p->base = ptr;
+   for (i = 0; i < pool->pool_size - 1; i++)
      {
-	allocated = mp->allocated;
-	if (allocated != 0xffffffff)
-	  {
-	     for (i = 0; i < psize; i++)
-	       {
-		  if ((allocated & (1 << i)) == 0)
-		    {
-		       *slot = i;
-		       return mp;
-		    }
-	       }
-	  }
-	*pmp = mp;
-	if (!mp->next) mp->next = _evas_mempoool1_new(pool);
+	*ptr = (void **)(((unsigned char *)ptr) + item_alloc);
+	ptr = *ptr;
      }
-   return NULL;
+   *ptr = NULL;
+   return p;
 }
 
-static Evas_Mempool1 *
-_evas_mempool1_pointer_find(Evas_Mempool *pool, int *slot, Evas_Mempool1 **pmp, unsigned char *ptr)
+void
+_evas_mp_pool_free(Pool *p)
 {
-   Evas_Mempool1 *mp;
-   int i, psize, isize;
-   unsigned char *mem;
-   
-   psize = pool->pool_size;
-   if (psize > 32) psize = 32;
-   isize = pool->item_size;
-   for (mp = (Evas_Mempool1 *)pool->first; mp; mp = mp->next)
-     {
-	mem = mp->mem;
-	if (ptr >= mem)
-	  {
-	     i = (ptr - mem) / isize;
-	     if (i < psize)
-	       {
-		  *slot = i;
-		  return mp;
-	       }
-	  }
-	*pmp = mp;
-     }
-   return NULL;
+   free(p);
 }
 
-static void
-_evas_mempool1_slot_set(Evas_Mempool1 *mp, int slot)
-{
-   mp->allocated |= (1 << slot);
-}
-
-static void
-_evas_mempool1_slot_unset(Evas_Mempool1 *mp, int slot)
-{
-   mp->allocated &= ~(1 << slot);
-}
-
-/*
-static void
-_evas_mempool1_debug(Evas_Mempool *pool)
-{
-   Evas_Mempool1 *mp;
-   int psize, isize, i, j, bits, space, allocated, nodes;
-   
-   psize = pool->pool_size;
-   if (psize > 32) psize = 32;
-   isize = pool->item_size;
-   nodes = allocated = space = 0;
-   for (i = 0, mp = (Evas_Mempool1 *)pool->first; mp; mp = mp->next, i++)
-     {
-	bits = 0;
-	
-	for (j = 0; j < 32; j++)
-	  {
-	     if ((mp->allocated & (1 << j)) != 0) bits++;
-	  }
-	allocated += bits * isize;
-	space += psize * isize;
-	nodes++;
-//	printf("pool %i, alloc %08x, full %i/%i\n",
-//	       i, mp->allocated, bits, 32);
-     }
-   printf("pool[0-32] %p usage (%i @ %i, %i nodes) %3.1f%%\n",
-	  pool, pool->usage, psize, nodes, 
-	  100.0 * (double)allocated / (double)space);
-}
-*/
-
-
-
-static Evas_Mempool2 *
-_evas_mempoool2_new(Evas_Mempool *pool)
-{
-   Evas_Mempool2 *mp;
-
-   if (pool->pool_size <= 1024)
-     mp = malloc(sizeof(Evas_Mempool2) + (pool->item_size * pool->pool_size));
-   else
-     mp = malloc(sizeof(Evas_Mempool2) + (pool->item_size * 1024));
-   mp->allocated = 0;
-   mp->filled = 0;
-   memset(mp->allocated_list, 0, sizeof(int) * 32);
-   mp->next = NULL;
-   mp->mem = (unsigned char *)mp + sizeof(Evas_Mempool2);
-   return mp;
-}
-
-static void
-_evas_mempool2_free(Evas_Mempool2 *mp)
-{
-   free(mp);
-}
-
-static Evas_Mempool2 *
-_evas_mempool2_free_find(Evas_Mempool *pool, int *slot, Evas_Mempool2 **pmp)
-{
-   Evas_Mempool2 *mp;
-   int i, j, psize, ps, bsize;
-   Evas_Mempool_Bitmask allocated, filled;
-   
-   psize = pool->pool_size;
-   if (psize > 1024) psize = 1024;
-   bsize = (psize + 31) / 32;
-   for (mp = (Evas_Mempool2 *)pool->first; mp; mp = mp->next)
-     {
-	filled = mp->filled;
-	if (filled != 0xffffffff)
-	  {
-	     for (j = 0; j < bsize; j++)
-	       {
-		  if ((filled & (1 << j)) == 0)
-		    {
-		       if (j == bsize - 1)
-			 ps = psize - (j * 32);
-		       else
-			 ps = 32;
-		       allocated = mp->allocated_list[j];
-		       for (i = 0; i < ps; i++)
-			 {
-			    if ((allocated & (1 << i)) == 0)
-			      {
-				 *slot = (j * 32) + i;
-				 return mp;
-			      }
-			 }
-		    }
-	       }
-	  }
-	*pmp = mp;
-	if (!mp->next) mp->next = _evas_mempoool2_new(pool);
-     }
-   return NULL;
-}
-
-static Evas_Mempool2 *
-_evas_mempool2_pointer_find(Evas_Mempool *pool, int *slot, Evas_Mempool2 **pmp, unsigned char *ptr)
-{
-   Evas_Mempool2 *mp;
-   int i, psize, isize;
-   unsigned char *mem;
-   
-   psize = pool->pool_size;
-   if (psize > 1024) psize = 1024;
-   isize = pool->item_size;
-   for (mp = (Evas_Mempool2 *)pool->first; mp; mp = mp->next)
-     {
-	mem = mp->mem;
-	if (ptr >= mem)
-	  {
-	     i = (ptr - mem) / isize;
-	     if (i < psize)
-	       {
-		  *slot = i;
-		  return mp;
-	       }
-	  }
-	*pmp = mp;
-     }
-   return NULL;
-}
-
-static void
-_evas_mempool2_slot_set(Evas_Mempool2 *mp, int slot)
-{
-   int bucket;
-   
-   bucket = slot / 32;
-   mp->allocated_list[bucket] |= (1 << (slot - (bucket * 32)));
-   mp->allocated |= (1 << bucket);
-   if (mp->allocated_list[bucket] == 0xffffffff)
-     mp->filled |= (1 << bucket);
-}
-
-static void
-_evas_mempool2_slot_unset(Evas_Mempool2 *mp, int slot)
-{
-   int bucket;
-   
-   bucket = slot / 32;
-   mp->allocated_list[bucket] &= ~(1 << (slot - (bucket * 32)));
-   mp->filled &= ~(1 << bucket);
-   if (mp->allocated_list[bucket] == 0)
-     mp->allocated &= ~(1 << bucket);
-}
-
-/*
-static void
-_evas_mempool2_debug(Evas_Mempool *pool)
-{
-   Evas_Mempool2 *mp;
-   int psize, bsize, isize, i, j, ps, bits, allocated, space, nodes;
-   
-   psize = pool->pool_size;
-   if (psize > 1024) psize = 1024;
-   bsize = (psize + 31) / 32;
-   isize = pool->item_size;
-   nodes = allocated = space = 0;
-   for (i = 0, mp = (Evas_Mempool2 *)pool->first; mp; mp = mp->next, i++)
-     {
-	for (i = 0; i < bsize; i++)
-	  {
-	     bits = 0;
-	     if (i == bsize - 1)
-	       ps = psize - (i * 32);
-	     else
-	       ps = 32;
-	     for (j = 0; j < ps; j++)
-	       {
-		  if ((mp->allocated_list[i] & (1 << j)) != 0) bits++;
-	       }
-//	     printf("pool %i, alloc %08x, full %i/%i\n",
-//		    i, mp->allocated, bits, 32);
-	     allocated += bits * isize;
-	  }
-	space += psize * isize;
-	nodes++;
-     }
-   printf("pool[32-1024] %p usage (%i @ %i, %i nodes) %3.1f%%\n",
-	  pool, pool->usage, psize, nodes, 
-	  100.0 * (double)allocated / (double)space);
-}
-*/
-
-/* disabled for now - it seems a little bit slower than glibc */
-#define NOPOOL 1
-
+//#define NOPOOL
 void *
 evas_mempool_malloc(Evas_Mempool *pool, int size)
 #ifdef NOPOOL
@@ -513,62 +261,53 @@ evas_mempool_malloc(Evas_Mempool *pool, int size)
 }
 #else
 {
-   if (pool->pool_size <= 32)
+   Pool *p;
+   void *mem;
+   
+   for (p = pool->first; p; p = p->next) // look 4 pool from 2nd bucket on
      {
-	Evas_Mempool1 *mp, *pmp = NULL;
-	int freeslot;
-	
-	mp = pool->first;
-	if (!mp)
+	if (p->base) // base is not NULL - has a free slot
 	  {
-	     mp = _evas_mempoool1_new(pool);
-	     pool->first = mp;
-	     freeslot = 0;
-	  }
-	else mp = _evas_mempool1_free_find(pool, &freeslot, &pmp);
-	if (!mp) return NULL;
-	pool->usage++;
-	_evas_mempool1_slot_set(mp, freeslot);
-	if (mp->allocated == 0xffffffff)
-	  {
-	     if (mp->next)
+	     if (p->prev)
 	       {
-		  if (pool->first == mp) pool->first = mp->next;
-		  else pmp->next = mp;
-		  mp->next = NULL;
+		  if (pool->last == p) pool->last = p->prev;
+		  p->prev->next = p->next;
+		  p->prev = NULL;
+		  p->next = pool->first;
+		  p->next->prev = p;
+		  pool->first = p;
 	       }
+	     break;
 	  }
-/*	_evas_mempool1_debug(pool);*/
-	return mp->mem + (freeslot * pool->item_size);
      }
-   else
+   if (!p) // we have reached the end of the list - no free pools
      {
-	Evas_Mempool2 *mp, *pmp = NULL;
-	int freeslot;
-	
-	mp = pool->first;
-	if (!mp)
-	  {
-	     mp = _evas_mempoool2_new(pool);
-	     pool->first = mp;
-	     freeslot = 0;
-	  }
-	else mp = _evas_mempool2_free_find(pool, &freeslot, &pmp);
-	if (!mp) return NULL;
-	pool->usage++;
-	_evas_mempool2_slot_set(mp, freeslot);
-	if (mp->allocated == 0xffffffff)
-	  {
-	     if (mp->next)
-	       {
-		  if (pool->first == mp) pool->first = mp->next;
-		  else pmp->next = mp;
-		  mp->next = NULL;
-	       }
-	  }
-/*	_evas_mempool2_debug(pool);*/
-	return mp->mem + (freeslot * pool->item_size);
+	p = _evas_mp_pool_new(pool);
+	if (!p) return NULL;
+	p->prev = NULL;
+	p->next = pool->first;
+	if (p->next) p->next->prev = p;
+	if (!pool->last) pool->last = p;
+	pool->first = p;
      }
+   mem = p->base; // this points to the next free block - so take it
+   p->base = *((void **)mem); // base now points to the next free block
+   if (!p->base) // move to end - it just filled up
+     {
+	if (p->next)
+	  {
+	     if (p->prev) p->prev->next = p->next;
+	     else pool->first = p->next;
+	     p->next->prev = p->prev;
+	     ((Pool *)pool->last)->next = p;
+	     p->prev = pool->last;
+	     p->next = NULL;
+	     pool->last = p;
+	  }
+     }
+   p->usage++;
+   pool->usage++;
+   return mem;
 }
 #endif
 
@@ -580,55 +319,44 @@ evas_mempool_free(Evas_Mempool *pool, void *ptr)
 }
 #else
 {
-   if (pool->pool_size <= 32)
+   Pool *p;
+   void *pmem;
+   int item_alloc, psize;
+   
+   item_alloc = ((pool->item_size + sizeof(void *) - 1) / sizeof(void *)) * sizeof(void *);
+   psize = item_alloc * pool->pool_size;
+   for (p = (Pool *)(pool->first); p; p = p->next) // look 4 pool
      {
-	Evas_Mempool1 *mp, *pmp = NULL;
-	int allocslot;
-	
-	mp = _evas_mempool1_pointer_find(pool, &allocslot, &pmp, (unsigned char*)ptr);
-	if (!mp) return;
-	_evas_mempool1_slot_unset(mp, allocslot);
-	if (mp->allocated == 0)
+	pmem = (void *)(((unsigned char *)p) + sizeof(Pool)); // pool mem base
+	if ((ptr >= pmem) && (ptr < (pmem + psize))) // is it in pool mem?
 	  {
-	     if (pool->first == mp) pool->first = mp->next;
-	     else pmp->next = mp->next;
-	     _evas_mempool1_free(mp);
-	  }
-	else
-	  {
-	     if (pool->first != mp)
+	     *((void **)ptr) = p->base; // freed node points to prev free node
+	     p->base = ptr; // next free node is now the one we freed
+	     p->usage--;
+	     pool->usage--;
+	     if (p->usage == 0) // free bucket
 	       {
-		  pmp->next = mp->next;
-		  mp->next = pool->first;
-		  pool->first = mp;
+		  if (p->prev) p->prev->next = p->next;
+		  if (p->next) p->next->prev = p->prev;
+		  if (pool->last == p) pool->last = p->prev;
+		  if (pool->first == p) pool->first = p->next;
+		  _evas_mp_pool_free(p);
 	       }
-	  }
-	pool->usage--;
-     }
-   else
-     {
-	Evas_Mempool2 *mp, *pmp = NULL;
-	int allocslot;
-	
-	mp = _evas_mempool2_pointer_find(pool, &allocslot, &pmp, (unsigned char*)ptr);
-	if (!mp) return;
-	_evas_mempool2_slot_unset(mp, allocslot);
-	if (mp->allocated == 0)
-	  {
-	     if (pool->first == mp) pool->first = mp->next;
-	     else pmp->next = mp->next;
-	     _evas_mempool2_free(mp);
-	  }
-	else
-	  {
-	     if (pool->first != mp)
+	     else
 	       {
-		  pmp->next = mp->next;
-		  mp->next = pool->first;
-		  pool->first = mp;
+		  if (p->prev) // if not the first - move to front
+		    {
+		       p->prev->next = p->next;
+		       if (p->next) p->next->prev = p->prev;
+		       if (pool->last == p) pool->last = p->prev;
+		       p->prev = NULL;
+		       p->next = pool->first;
+		       p->next->prev = p;
+		       pool->first = p;
+		    }
 	       }
+	     break;
 	  }
-	pool->usage--;
      }
 }
 #endif

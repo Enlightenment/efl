@@ -625,7 +625,7 @@ struct _Evas_Mempool
    int           item_size;
    int           pool_size;
    int           usage;
-   void         *first;
+   void         *first, *last;
 };
 
 void *evas_mempool_malloc(Evas_Mempool *pool, int size);

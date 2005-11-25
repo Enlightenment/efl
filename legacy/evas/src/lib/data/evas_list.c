@@ -17,15 +17,14 @@ static int _evas_list_alloc_error = 0;
 static Evas_Mempool _evas_list_mempool =
 {
    sizeof(Evas_List),
-   (4096 - (34 * sizeof(int)) - (sizeof(void *) * 2)) / sizeof(Evas_List),
-/* 32,*/
-   0, NULL
+   320,
+   0, NULL, NULL
 };
 static Evas_Mempool _evas_list_accounting_mempool =
 {
    sizeof(Evas_List_Accounting),
-   32,
-   0, NULL
+   80,
+   0, NULL, NULL
 };
    
 /**
