@@ -279,7 +279,7 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    char   *font, *font2 = NULL;
    int     size;
    Evas_Coord  tw, th;
-   Evas_Coord  ox, oy, sw, sh;
+   Evas_Coord  sw, sh;
    char     font_buf[4096];
    int      inlined_font = 0, free_text = 0;
    
@@ -342,9 +342,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
      }
      {
 	int l, r, t, b;
+	
 	evas_object_text_style_pad_get(ep->object, &l, &r, &t, &b);
-	ox = l;
-	oy = t;
 	sw = params->w - (l + r);
 	sh = params->h - (t + b);
      }
@@ -496,8 +495,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    evas_object_text_font_set(ep->object, font, size);
    evas_object_text_text_set(ep->object, text);
    evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
-   ep->offset.x = ox + ((sw - tw) * params->text.align.x);
-   ep->offset.y = oy + ((sh - th) * params->text.align.y);
+   ep->offset.x = ((sw - tw) * params->text.align.x);
+   ep->offset.y = ((sh - th) * params->text.align.y);
    
    evas_object_move(ep->object,
 		    ed->x + params->x + ep->offset.x,
