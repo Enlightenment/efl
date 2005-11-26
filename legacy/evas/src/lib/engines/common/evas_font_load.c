@@ -13,28 +13,22 @@ static Evas_Bool font_flush_free_glyph_cb(Evas_Hash *hash, const char *key, void
 RGBA_Font_Source *
 evas_common_font_source_memory_load(const char *name, const void *data, int data_size)
 {
-   int error;
+   int error, len;
    RGBA_Font_Source *fs;
 
-   fs = calloc(1, sizeof(RGBA_Font_Source));
+   len = strlen(name);
+   fs = calloc(1, sizeof(RGBA_Font_Source) + len + 1 + data_size);
    if (!fs) return NULL;
-   fs->name = strdup(name);
+   fs->name = ((char *)fs) + sizeof(RGBA_Font_Source);
+   strcpy(fs->name, name);
    fs->file = NULL;
-   fs->data = malloc(data_size);
+   fs->data = fs->name + len + 1;
    fs->current_size = 0;
-   if (!fs->data)
-     {
-	if (fs->name) free(fs->name);
-	free(fs);
-	return NULL;
-     }
    memcpy(fs->data, data, data_size);
    fs->data_size = data_size;
    error = FT_New_Memory_Face(evas_ft_lib, fs->data, fs->data_size, 0, &(fs->ft.face));
    if (error)
      {
-	if (fs->name) free(fs->name);
-	if (fs->data) free(fs->data);
 	free(fs);
 	return NULL;
      }
@@ -52,51 +46,24 @@ evas_common_font_source_memory_load(const char *name, const void *data, int data
 RGBA_Font_Source *
 evas_common_font_source_load(const char *name)
 {
-   int error;
+   int error, len;
    RGBA_Font_Source *fs;
 
-   fs = calloc(1, sizeof(RGBA_Font_Source));
+   len = strlen(name);
+   fs = calloc(1, sizeof(RGBA_Font_Source) + len + 1);
    if (!fs) return NULL;
-   fs->name = strdup(name);
-   fs->file = strdup(name);
+   fs->name = ((char *)fs) + sizeof(RGBA_Font_Source);
+   strcpy(fs->name, name);
+   fs->file = fs->name;
    fs->data = NULL;
    fs->data_size = 0;
    fs->current_size = 0;
    error = FT_New_Face(evas_ft_lib, fs->file, 0, &(fs->ft.face));
    if (error)
      {
-	if (fs->name) free(fs->name);
-	if (fs->file) free(fs->file);
 	free(fs);
 	return NULL;
      }
-#if 0 /* debugging to look at charmaps in a ttf */
-   printf("charmaps [%s]: %i\n", name, fs->ft.face->num_charmaps);
-     {
-	int i;
-
-	for (i = 0; i < fs->ft.face->num_charmaps; i++)
-	  {
-	     printf("  %i: %x, ",
-		    i, fs->ft.face->charmaps[i]->encoding);
-	     if      (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_NONE)           printf("none\n");
-	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_UNICODE)        printf("unicode\n");
-	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_MS_SYMBOL)      printf("ms_symbol\n");
-	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_SJIS)           printf("sjis\n");
-	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_GB2312)         printf("gb3212\n");
-	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_BIG5)           printf("big5\n");
-	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_WANSUNG)        printf("wansung\n");
-	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_JOHAB)          printf("johab\n");
-	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_ADOBE_LATIN_1)  printf("adobe_latin_1\n");
-	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_ADOBE_STANDARD) printf("adobe_standard\n");
-	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_ADOBE_EXPERT)   printf("adobe_expert\n");
-	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_ADOBE_CUSTOM)   printf("adobe_custom\n");
-	     else if (fs->ft.face->charmaps[i]->encoding == FT_ENCODING_APPLE_ROMAN)    printf("apple_roman\n");
-	     else                                                                       printf("UNKNOWN");
-	     printf("\n");
-	  }
-     }
-#endif
    error = FT_Select_Charmap(fs->ft.face, ft_encoding_unicode);
    if (error)
      {
@@ -158,9 +125,6 @@ evas_common_font_source_free(RGBA_Font_Source *fs)
    if (fs->references > 0) return;
 
    fonts_src = evas_object_list_remove(fonts_src, fs);
-   if (fs->name) free(fs->name);
-   if (fs->file) free(fs->file);
-   if (fs->data) free(fs->data);
    FT_Done_Face(fs->ft.face);
    free(fs);
 }
@@ -221,12 +185,7 @@ evas_common_font_int_load(const char *name, int size)
 
    fi->src = evas_common_font_source_find(name);
    if (!fi->src)
-     {
-/*	printf("REAL LOAD FILE %s %i\n", name, size);*/
-	fi->src = evas_common_font_source_load(name);
-     }
-/*   else*/
-/*     printf("REAL LOAD SIZE %s %i\n", name, size);*/
+     fi->src = evas_common_font_source_load(name);
 
    if (!fi->src)
      {
@@ -303,7 +262,6 @@ evas_common_font_memory_load(const char *name, int size, const void *data, int d
 
    fi = evas_common_font_int_memory_load(name, size, data, data_size);
    if (!fi) return NULL;
-//   printf("LOAD FONT MEM  %s %i\n", name, size);
    fn = calloc(1, sizeof(RGBA_Font));
    if (!fn)
       {
@@ -322,7 +280,6 @@ evas_common_font_load(const char *name, int size)
 
    fi = evas_common_font_int_load(name, size);
    if (!fi) return NULL;
-//   printf("LOAD FONT FILE  %s %i\n", name, size);
    fn = calloc(1, sizeof(RGBA_Font));
    if (!fn)
       {
@@ -484,13 +441,11 @@ evas_common_font_int_find(const char *name, int size)
 {
    Evas_Object_List *l;
 
-//   printf("SEARCH!\n");
    for (l = fonts; l; l = l->next)
      {
 	RGBA_Font_Int *fi;
 
 	fi = (RGBA_Font_Int *)l;
-//	printf("%s == %s, %i == %i\n", name, fi->src->name, size, fi->size);
 	if ((fi->size == size) && (!strcmp(name, fi->src->name)))
 	  {
 	     if (fi->references == 0) evas_common_font_int_modify_cache_by(fi, -1);
