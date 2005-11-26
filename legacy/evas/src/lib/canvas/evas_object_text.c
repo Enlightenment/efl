@@ -1148,7 +1148,7 @@ evas_text_style_pad_get(Evas_Text_Style_Type style, int *l, int *r, int *t, int 
    if (l) *l = sl;
    if (r) *r = sr;
    if (t) *t = st;
-   if (b) *t = sb;
+   if (b) *b = sb;
 }
 
 /* all nice and private */
