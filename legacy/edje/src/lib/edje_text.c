@@ -344,8 +344,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	int l, r, t, b;
 	
 	evas_object_text_style_pad_get(ep->object, &l, &r, &t, &b);
-	sw = params->w - (l + r);
-	sh = params->h - (t + b);
+	sw = params->w;
+	sh = params->h;
      }
    if ((ep->text.cache.in_size == size) &&
        (ep->text.cache.in_w == sw) &&
