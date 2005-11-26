@@ -776,7 +776,6 @@ extern Eet_Data_Descriptor *_edje_edd_edje_part_image_id;
 extern int              _edje_anim_count;
 extern Ecore_Animator  *_edje_timer;
 extern Evas_List       *_edje_animators;
-extern Edje_Text_Style  _edje_text_styles[EDJE_TEXT_EFFECT_LAST];
 extern Evas_List       *_edje_edjes;
 
 extern char            *_edje_fontset_append;

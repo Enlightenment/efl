@@ -637,16 +637,16 @@ _edje_part_recalc_single(Edje *ed,
 	     evas_object_geometry_get(ep->object, NULL, NULL, &tw, &th);
 	     if (chosen_desc->text.min_x)
 	       {
-		  mw = tw +
-		    _edje_text_styles[ep->part->effect].pad.l +
-		    _edje_text_styles[ep->part->effect].pad.r;
+		  int l, r;
+		  evas_object_text_style_pad_get(ep->object, &l, &r, NULL, NULL);
+		  mw = tw + l + r;
 		  if (mw > minw) minw = mw;
 	       }
 	     if (chosen_desc->text.min_y)
 	       {
-		  mh = th + 
-		    _edje_text_styles[ep->part->effect].pad.t +
-		    _edje_text_styles[ep->part->effect].pad.b;
+		  int t, b;
+		  evas_object_text_style_pad_get(ep->object, NULL, NULL, &t, &b);
+		  mh = th + t + b;
 		  if (mh > minh) minh = mh;
 	       }
 	  }
