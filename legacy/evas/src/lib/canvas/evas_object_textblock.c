@@ -26,16 +26,6 @@ typedef struct _Evas_Object_Textblock_Format      Evas_Object_Textblock_Format;
 #define  NODE_TEXT   0
 #define  NODE_FORMAT 1
 
-#define STYLE_PLAIN 0
-#define STYLE_SHADOW 1
-#define STYLE_OUTLINE 2
-#define STYLE_GLOW 3
-#define STYLE_OUTLINE_SHADOW 4
-#define STYLE_FAR_SHADOW 5
-#define STYLE_OUTLINE_SOFT_SHADOW 6
-#define STYLE_SOFT_SHADOW 7
-#define STYLE_FAR_SOFT_SHADOW 8
-
 struct _Evas_Object_Style_Tag
 {  Evas_Object_List _list_data;
    char *tag;
@@ -1008,18 +998,19 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
      }
    else if (!strcmp(cmd, "style"))
      {
-	if (!strcmp(param, "off")) fmt->style = STYLE_PLAIN;
-	else if (!strcmp(param, "none")) fmt->style = STYLE_PLAIN;
-	else if (!strcmp(param, "plain")) fmt->style = STYLE_PLAIN;
-	else if (!strcmp(param, "shadow")) fmt->style = STYLE_SHADOW;
-	else if (!strcmp(param, "outline")) fmt->style = STYLE_OUTLINE;
-	else if (!strcmp(param, "outline_shadow")) fmt->style = STYLE_OUTLINE_SHADOW;
-	else if (!strcmp(param, "outline_soft_shadow")) fmt->style = STYLE_OUTLINE_SOFT_SHADOW;
-	else if (!strcmp(param, "glow")) fmt->style = STYLE_GLOW;
-	else if (!strcmp(param, "far_shadow")) fmt->style = STYLE_FAR_SHADOW;
-	else if (!strcmp(param, "soft_shadow")) fmt->style = STYLE_SOFT_SHADOW;
-	else if (!strcmp(param, "far_soft_shadow")) fmt->style = STYLE_FAR_SOFT_SHADOW;
-	else fmt->style = STYLE_PLAIN;
+	if (!strcmp(param, "off")) fmt->style = EVAS_TEXT_STYLE_PLAIN;
+	else if (!strcmp(param, "none")) fmt->style = EVAS_TEXT_STYLE_PLAIN;
+	else if (!strcmp(param, "plain")) fmt->style = EVAS_TEXT_STYLE_PLAIN;
+	else if (!strcmp(param, "shadow")) fmt->style = EVAS_TEXT_STYLE_SHADOW;
+	else if (!strcmp(param, "outline")) fmt->style = EVAS_TEXT_STYLE_OUTLINE;
+	else if (!strcmp(param, "soft_outline")) fmt->style = EVAS_TEXT_STYLE_SOFT_OUTLINE;
+	else if (!strcmp(param, "outline_shadow")) fmt->style = EVAS_TEXT_STYLE_OUTLINE_SHADOW;
+	else if (!strcmp(param, "outline_soft_shadow")) fmt->style = EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW;
+	else if (!strcmp(param, "glow")) fmt->style = EVAS_TEXT_STYLE_GLOW;
+	else if (!strcmp(param, "far_shadow")) fmt->style = EVAS_TEXT_STYLE_FAR_SHADOW;
+	else if (!strcmp(param, "soft_shadow")) fmt->style = EVAS_TEXT_STYLE_SOFT_SHADOW;
+	else if (!strcmp(param, "far_soft_shadow")) fmt->style = EVAS_TEXT_STYLE_FAR_SOFT_SHADOW;
+	else fmt->style = EVAS_TEXT_STYLE_PLAIN;
      }
    else if (!strcmp(cmd, "tabstops"))
      {
@@ -1252,7 +1243,7 @@ _layout_format_push(Ctxt *c, Evas_Object_Textblock_Format *fmt)
 	fmt->ref = 1;
 	fmt->halign = 0.0;
 	fmt->valign = -1.0;
-	fmt->style = STYLE_PLAIN;
+	fmt->style = EVAS_TEXT_STYLE_PLAIN;
 	fmt->tabstops = 32;
      }
    return fmt;
@@ -1947,56 +1938,9 @@ _layout(Evas_Object *obj, int calc_only, int w, int h, int *w_ret, int *h_ret)
 		    }
 		  free(item);
 	       }
-	     if (fmt->style == STYLE_SHADOW)
-	       {
-		  if (style_pad_r < 1) style_pad_r = 1;
-		  if (style_pad_b < 1) style_pad_b = 1;
-	       }
-	     else if (fmt->style == STYLE_OUTLINE)
-	       {
-		  if (style_pad_l < 1) style_pad_l = 1;
-		  if (style_pad_r < 1) style_pad_r = 1;
-		  if (style_pad_t < 1) style_pad_t = 1;
-		  if (style_pad_b < 1) style_pad_b = 1;
-	       }
-	     else if (fmt->style == STYLE_GLOW)
-	       {
-		  if (style_pad_l < 2) style_pad_l = 2;
-		  if (style_pad_r < 2) style_pad_r = 2;
-		  if (style_pad_t < 2) style_pad_t = 2;
-		  if (style_pad_b < 2) style_pad_b = 2;
-	       }
-	     else if (fmt->style == STYLE_OUTLINE_SHADOW)
-	       {
-		  if (style_pad_l < 1) style_pad_l = 1;
-		  if (style_pad_r < 2) style_pad_r = 2;
-		  if (style_pad_t < 1) style_pad_t = 1;
-		  if (style_pad_b < 2) style_pad_b = 2;
-	       }
-	     else if (fmt->style == STYLE_FAR_SHADOW)
-	       {
-		  if (style_pad_r < 2) style_pad_r = 2;
-		  if (style_pad_b < 2) style_pad_b = 2;
-	       }
-	     else if (fmt->style == STYLE_OUTLINE_SOFT_SHADOW)
-	       {
-		  if (style_pad_l < 1) style_pad_l = 1;
-		  if (style_pad_r < 3) style_pad_r = 3;
-		  if (style_pad_t < 1) style_pad_t = 1;
-		  if (style_pad_b < 3) style_pad_b = 3;
-	       }
-	     else if (fmt->style == STYLE_SOFT_SHADOW)
-	       {
-		  if (style_pad_l < 1) style_pad_l = 1;
-		  if (style_pad_r < 3) style_pad_r = 3;
-		  if (style_pad_t < 1) style_pad_t = 1;
-		  if (style_pad_b < 3) style_pad_b = 3;
-	       }
-	     else if (fmt->style == STYLE_FAR_SOFT_SHADOW)
-	       {
-		  if (style_pad_r < 4) style_pad_r = 4;
-		  if (style_pad_b < 4) style_pad_b = 4;
-	       }
+
+	     evas_text_style_pad_get(fmt->style, &style_pad_l, &style_pad_r, &style_pad_t, &style_pad_b);
+
 	     if (fmt->underline2)
 	       c->have_underline2 = 1;
 	     else if (fmt->underline)
@@ -4163,19 +4107,19 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    
    /* shadows */
    ITEM_WALK();
-   if (it->format->style == STYLE_SHADOW)
+   if (it->format->style == EVAS_TEXT_STYLE_SHADOW)
      {
 	COLOR_SET(shadow);
 	DRAW_TEXT(1, 1);
      }
-   else if ((it->format->style == STYLE_OUTLINE_SHADOW) ||
-	    (it->format->style == STYLE_FAR_SHADOW))
+   else if ((it->format->style == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
+	    (it->format->style == EVAS_TEXT_STYLE_FAR_SHADOW))
      {
 	COLOR_SET(shadow);
 	DRAW_TEXT(2, 2);
      }
-   else if ((it->format->style == STYLE_OUTLINE_SOFT_SHADOW) ||
-	    (it->format->style == STYLE_FAR_SOFT_SHADOW))
+   else if ((it->format->style == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW) ||
+	    (it->format->style == EVAS_TEXT_STYLE_FAR_SOFT_SHADOW))
      {
 	for (j = 0; j < 5; j++)
 	  {
@@ -4189,7 +4133,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
 	       }
 	  }
      }
-   else if (it->format->style == STYLE_SOFT_SHADOW)
+   else if (it->format->style == EVAS_TEXT_STYLE_SOFT_SHADOW)
      {
 	for (j = 0; j < 5; j++)
 	  {
@@ -4207,7 +4151,7 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    
    /* glows */
    ITEM_WALK();
-   if (it->format->style == STYLE_GLOW)
+   if (it->format->style == EVAS_TEXT_STYLE_GLOW)
      {
 	for (j = 0; j < 5; j++)
 	  {
@@ -4230,15 +4174,29 @@ evas_object_textblock_render(Evas_Object *obj, void *output, void *context, void
    
    /* outlines */
    ITEM_WALK();
-   if ((it->format->style == STYLE_OUTLINE) ||
-       (it->format->style == STYLE_OUTLINE_SHADOW) ||
-       (it->format->style == STYLE_OUTLINE_SOFT_SHADOW))
+   if ((it->format->style == EVAS_TEXT_STYLE_OUTLINE) ||
+       (it->format->style == EVAS_TEXT_STYLE_OUTLINE_SHADOW) ||
+       (it->format->style == EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW))
      {
 	COLOR_SET(outline);
 	DRAW_TEXT(-1, 0);
 	DRAW_TEXT(1, 0);
 	DRAW_TEXT(0, -1);
 	DRAW_TEXT(0, 1);
+     }
+   else if (it->format->style == EVAS_TEXT_STYLE_SOFT_OUTLINE)
+     {
+	for (j = 0; j < 5; j++)
+	  {
+	     for (i = 0; i < 5; i++)
+	       {
+		  if (((i != 2) || (j != 2)) && (vals[i][j] != 0))
+		    {
+		       COLOR_SET_AMUL(outline, vals[i][j] * 50);
+		       DRAW_TEXT(i - 2, j - 2);
+		    }
+	       }
+	  }
      }
    ITEM_WALK_END();
    

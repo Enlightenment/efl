@@ -605,6 +605,7 @@ char *evas_font_dir_cache_find(char *dir, char *font);
 void evas_font_free(Evas *evas, void *font);
 void *evas_font_load(Evas *evas, const char *name, const char *source, int size);
 void evas_object_smart_member_cache_invalidate(Evas_Object *obj);
+void evas_text_style_pad_get(Evas_Text_Style_Type style, int *l, int *r, int *t, int *b);
      
 extern int _evas_alloc_error;
 

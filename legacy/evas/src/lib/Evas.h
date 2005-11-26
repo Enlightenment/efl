@@ -399,6 +399,20 @@ extern "C" {
    EAPI void              evas_image_cache_set              (Evas *e, int size);
    EAPI int               evas_image_cache_get              (Evas *e);
 
+   typedef enum _Evas_Text_Style_Type
+     {
+	EVAS_TEXT_STYLE_PLAIN,
+	EVAS_TEXT_STYLE_SHADOW,
+	EVAS_TEXT_STYLE_OUTLINE,
+	EVAS_TEXT_STYLE_SOFT_OUTLINE,
+	EVAS_TEXT_STYLE_GLOW,
+	EVAS_TEXT_STYLE_OUTLINE_SHADOW,
+	EVAS_TEXT_STYLE_FAR_SHADOW,
+	EVAS_TEXT_STYLE_OUTLINE_SOFT_SHADOW,
+	EVAS_TEXT_STYLE_SOFT_SHADOW,
+	EVAS_TEXT_STYLE_FAR_SOFT_SHADOW
+     } Evas_Text_Style_Type;
+
    EAPI Evas_Object      *evas_object_text_add              (Evas *e);
    EAPI void              evas_object_text_font_source_set  (Evas_Object *obj, const char *font);
    EAPI const char       *evas_object_text_font_source_get  (Evas_Object *obj);
@@ -415,6 +429,17 @@ extern "C" {
    EAPI Evas_Coord        evas_object_text_inset_get        (Evas_Object *obj);
    EAPI int               evas_object_text_char_pos_get     (Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
    EAPI int               evas_object_text_char_coords_get  (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
+   EAPI Evas_Text_Style_Type evas_object_text_style_get     (Evas_Object *obj);
+   EAPI void              evas_object_text_style_set        (Evas_Object *obj, Evas_Text_Style_Type type);
+   EAPI void              evas_object_text_shadow_color_set (Evas_Object *obj, int r, int g, int b, int a);
+   EAPI void              evas_object_text_shadow_color_get (Evas_Object *obj, int *r, int *g, int *b, int *a);
+   EAPI void              evas_object_text_glow_color_set   (Evas_Object *obj, int r, int g, int b, int a);
+   EAPI void              evas_object_text_glow_color_get   (Evas_Object *obj, int *r, int *g, int *b, int *a);
+   EAPI void              evas_object_text_glow2_color_set  (Evas_Object *obj, int r, int g, int b, int a);
+   EAPI void              evas_object_text_glow2_color_get  (Evas_Object *obj, int *r, int *g, int *b, int *a);
+   EAPI void              evas_object_text_outline_color_set(Evas_Object *obj, int r, int g, int b, int a);
+   EAPI void              evas_object_text_outline_color_get(Evas_Object *obj, int *r, int *g, int *b, int *a);
+   EAPI void              evas_object_text_style_pad_get    (Evas_Object *obj, int *l, int *r, int *t, int *b);
 
    EAPI int               evas_string_char_next_get         (const char *str, int pos, int *decoded);
    EAPI int               evas_string_char_prev_get         (const char *str, int pos, int *decoded);
