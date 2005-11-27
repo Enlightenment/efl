@@ -97,6 +97,8 @@ struct _Eet_Data_Descriptor
 	 Eet_Data_Descriptor_Hash *buckets;
       } hash;
    } elements;
+   char *strings;
+   int   strings_len;
 };
 
 struct _Eet_Data_Element
@@ -723,14 +725,8 @@ eet_data_descriptor_new(char *name,
 void
 eet_data_descriptor_free(Eet_Data_Descriptor *edd)
 {
-   int i;
-
    _eet_descriptor_hash_free(edd);
-   for (i = 0; i < edd->elements.num; i++)
-     {
-	if (edd->elements.set[i].name) free(edd->elements.set[i].name);
-	if (edd->elements.set[i].counter_name) free(edd->elements.set[i].counter_name);
-     }
+   if (edd->strings) free(edd->strings);
    if (edd->elements.set) free(edd->elements.set);
    free(edd);
 }
@@ -743,18 +739,49 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd, char *name, int type,
 				Eet_Data_Descriptor *subtype)
 {
    Eet_Data_Element *ede;
+   int l1, l2, p1, p2, i;
+   char *ps;
 
    edd->elements.num++;
    edd->elements.set = realloc(edd->elements.set, edd->elements.num * sizeof(Eet_Data_Element));
    if (!edd->elements.set) return;
    ede = &(edd->elements.set[edd->elements.num - 1]);
-   ede->name = strdup(name);
+
+   l1 = strlen(name);
+   p1 = edd->strings_len;
+   if (counter_name)
+     {
+	l2 = strlen(counter_name);
+	p2 = p1 + l1 + 1;
+     }
+   else l2 = -1;
+   ps = edd->strings;
+   edd->strings_len += l1 + 1 + l2 + 1;
+   edd->strings = realloc(edd->strings, edd->strings_len);
+   if (!edd->strings)
+     {
+	edd->strings = ps;
+	return;
+     }
+   for (i = 0; i < edd->elements.num; i++)
+     {
+	edd->elements.set[i].name = 
+	  edd->strings + (edd->elements.set[i].name - ps);
+	if (edd->elements.set[i].counter_name)
+	  edd->elements.set[i].counter_name =
+	  edd->strings + (edd->elements.set[i].counter_name - ps);
+     }
+   ede->name = edd->strings + p1;
+   strcpy(ede->name, name);
    ede->type = type;
    ede->group_type = group_type;
    ede->offset = offset;
    ede->count = count;
    if (counter_name)
-     ede->counter_name = strdup(counter_name);
+     {
+	ede->counter_name = edd->strings + p2;
+	strcpy(ede->counter_name, counter_name);
+     }
    else ede->counter_name = NULL;
    ede->subtype = subtype;
 }
