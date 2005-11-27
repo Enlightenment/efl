@@ -1,7 +1,10 @@
 #include "ecore_private.h"
 #include "Ecore_Data.h"
 
+static void ecore_string_free_cb(void *data);
+
 static Ecore_Hash *ecore_strings = NULL;
+static int ecore_string_init_count = 0;
 
 /**
  * @defgroup Ecore_String_Group String Instance Functions
@@ -9,6 +12,27 @@ static Ecore_Hash *ecore_strings = NULL;
  * These functions allow you to store one copy of a string, and use it
  * throughout your program.
  */
+
+/**
+ * Initialize the ecore string internal structure.
+ * @return  Zero on failure, non-zero on successful initialization.
+ */
+int ecore_string_init()
+{
+	/*
+	 * No strings have been loaded at this point, so create the hash
+	 * table for storing string info for later.
+	 */
+	if (!ecore_string_init_count) {
+		ecore_strings = ecore_hash_new(ecore_str_hash, ecore_str_compare);
+		if (!ecore_strings)
+			return 0;
+		ecore_hash_set_free_value(ecore_strings, ecore_string_free_cb);
+	}
+	ecore_string_init_count++;
+
+	return 1;
+}
 
 /**
  * Retrieves an instance of a string for use in an ecore program.
@@ -22,13 +46,6 @@ char *ecore_string_instance(char *string)
 	Ecore_String *str;
 
 	CHECK_PARAM_POINTER_RETURN("string", string, NULL);
-
-	/*
-	 * No strings have been loaded at this point, so create the hash
-	 * table for storing string info for later.
-	 */
-	if (!ecore_strings)
-		ecore_strings = ecore_hash_new(ecore_str_hash, ecore_str_compare);
 
 	/*
 	 * Check for a previous instance of the string, if not found, create
@@ -77,4 +94,25 @@ void ecore_string_release(char *string)
 		FREE(str->string);
 		FREE(str);
 	}
+}
+
+/**
+ * Shutdown the ecore string internal structures
+ */
+void ecore_string_shutdown()
+{
+	--ecore_string_init_count;
+	if (!ecore_string_init_count) {
+		ecore_hash_destroy(ecore_strings);
+		ecore_strings = NULL;
+	}
+}
+
+static void ecore_string_free_cb(void *data)
+{
+	Ecore_String *str;
+
+	str = data;
+	FREE(str->string);
+	FREE(str);
 }
