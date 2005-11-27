@@ -478,7 +478,7 @@ extern "C" {
 
    /**
     * Create a new empty data structure descriptor.
-    * @param name The string name of this data structure.
+    * @param name The string name of this data structure (most be a global constant and never change).
     * @param size The size of the struct (in bytes).
     * @param func_list_next The function to get the next list node.
     * @param func_list_append The function to append a member to a list.
@@ -647,7 +647,7 @@ extern "C" {
     * @endcode
     *
     */
-   EAPI Eet_Data_Descriptor *eet_data_descriptor_new(char *name, int size, void *(*func_list_next) (void *l), void *(*func_list_append) (void *l, void *d), void *(*func_list_data) (void *l), void *(*func_list_free) (void *l), void  (*func_hash_foreach) (void *h, int (*func) (void *h, const char *k, void *dt, void *fdt), void *fdt), void *(*func_hash_add) (void *h, const char *k, void *d), void  (*func_hash_free) (void *h));
+   EAPI Eet_Data_Descriptor *eet_data_descriptor_new(const char *name, int size, void *(*func_list_next) (void *l), void *(*func_list_append) (void *l, void *d), void *(*func_list_data) (void *l), void *(*func_list_free) (void *l), void  (*func_hash_foreach) (void *h, int (*func) (void *h, const char *k, void *dt, void *fdt), void *fdt), void *(*func_hash_add) (void *h, const char *k, void *d), void  (*func_hash_free) (void *h));
 
    /**
     * This function frees a data descriptor when it is not needed anymore.
@@ -669,7 +669,7 @@ extern "C" {
     * thus is not documented.
     *
     */
-   EAPI void  eet_data_descriptor_element_add(Eet_Data_Descriptor *edd, char *name, int type, int group_type, int offset, int count, char *counter_name, Eet_Data_Descriptor *subtype);
+   EAPI void  eet_data_descriptor_element_add(Eet_Data_Descriptor *edd, const char *name, int type, int group_type, int offset, int count, const char *counter_name, Eet_Data_Descriptor *subtype);
 
    /**
     * Read a data structure from an eet file and decodes it.
@@ -767,7 +767,7 @@ extern "C" {
     * Add a basic data element to a data descriptor.
     * @param edd The data descriptor to add the type to.
     * @param struct_type The type of the struct.
-    * @param name The string name to use to encode/decode this member.
+    * @param name The string name to use to encode/decode this member (must be a constant global and never change).
     * @param member The struct member itself to be encoded.
     * @param type The type of the member to encode.
     *
@@ -796,7 +796,7 @@ extern "C" {
     * Add a sub-element type to a data descriptor
     * @param edd The data descriptor to add the type to.
     * @param struct_type The type of the struct.
-    * @param name The string name to use to encode/decode this member.
+    * @param name The string name to use to encode/decode this member (must be a constant global and never change).
     * @param member The struct member itself to be encoded.
     * @param subtype The type of sub-type struct to add.
     *
@@ -820,7 +820,7 @@ extern "C" {
     * Add a linked list type to a data descriptor
     * @param edd The data descriptor to add the type to.
     * @param struct_type The type of the struct.
-    * @param name The string name to use to encode/decode this member.
+    * @param name The string name to use to encode/decode this member (must be a constant global and never change).
     * @param member The struct member itself to be encoded.
     * @param subtype The type of linked list member to add.
     *
