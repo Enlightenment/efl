@@ -294,7 +294,7 @@ evas_object_text_text_set(Evas_Object *obj, const char *text)
 				       obj->layer->evas->pointer.y, 1, 1);
    /* DO II */
    if (o->cur.text) free(o->cur.text);
-   if (text) o->cur.text = strdup(text);
+   if (text && *text) o->cur.text = strdup(text);
    else o->cur.text = NULL;
    o->prev.text = NULL;
    if ((o->engine_data) && (o->cur.text))
