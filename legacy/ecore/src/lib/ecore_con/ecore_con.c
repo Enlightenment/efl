@@ -44,6 +44,7 @@ int ECORE_CON_EVENT_SERVER_DATA = 0;
 
 static Ecore_List *servers = NULL;
 static int init_count = 0;
+static int ssl_init_count = 0;
 
 #define LENGTH_OF_SOCKADDR_UN(s) (strlen((s)->sun_path) + (size_t)(((struct sockaddr_un *)NULL)->sun_path))
 
@@ -71,11 +72,6 @@ ecore_con_init(void)
    ECORE_CON_EVENT_SERVER_DEL = ecore_event_type_new();
    ECORE_CON_EVENT_CLIENT_DATA = ecore_event_type_new();
    ECORE_CON_EVENT_SERVER_DATA = ecore_event_type_new();
-
-#if USE_OPENSSL
-   SSL_library_init();
-   SSL_load_error_strings();
-#endif
 
    /* TODO Remember return value, if it fails, use gethostbyname() */
    ecore_con_dns_init();
@@ -295,6 +291,13 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
 #if USE_OPENSSL
    if (compl_type & ECORE_CON_USE_SSL)
      {
+	if (!ssl_init_count)
+	  {
+	     SSL_library_init();
+	     SSL_load_error_strings();
+	  }
+	ssl_init_count++;
+
 	/* SSLv3 gives *weird* results on my box, don't use it yet */
 	if (!(svr->ssl_ctx = SSL_CTX_new(SSLv2_client_method())))
 	  goto error;
@@ -847,6 +850,13 @@ static int
 svr_try_connect_ssl(Ecore_Con_Server *svr)
 {
    int res, ssl_err, flag = 0;
+
+   if (!ssl_init_count)
+     {
+	SSL_library_init();
+	SSL_load_error_strings();
+     }
+   ssl_init_count++;
    
    res = SSL_connect(svr->ssl);
    if (res == 1) return 1;
@@ -918,6 +928,13 @@ _ecore_con_cb_dns_lookup(void *data, struct hostent *he)
 #if USE_OPENSSL
    if (svr->type & ECORE_CON_USE_SSL)
      {
+	if (!ssl_init_count)
+	  {
+	     SSL_library_init();
+	     SSL_load_error_strings();
+	  }
+	ssl_init_count++;
+
 	/* SSLv3 gives *weird* results on my box, don't use it yet */
 	if (!(svr->ssl_ctx = SSL_CTX_new(SSLv2_client_method())))
 	  goto error;
