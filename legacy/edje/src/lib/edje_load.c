@@ -39,10 +39,18 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
    
    _edje_file_del(ed);
    
-   if (ed->path) free(ed->path);
-   ed->path = strdup(file);
-   if (ed->part) free(ed->part);
-   ed->part = strdup(part);
+   if (ed->path)
+     {
+	if (!ed->no_free_path) free(ed->path);
+     }
+   if (ed->part)
+     {
+	if (!ed->no_free_part) free(ed->part);
+     }
+   ed->path = file;
+   ed->part = part;
+//   ed->path = strdup(file);
+//   ed->part = strdup(part);
    
    ed->load_error = EDJE_LOAD_ERROR_NONE;
    _edje_file_add(ed);
@@ -51,7 +59,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
      {
 	Evas_List *l;
 	int errors = 0;
-	
+
 	/* check for invalid loops */
 	for (l = ed->collection->parts; (l && ! errors); l = l->next)
 	  {
@@ -137,6 +145,10 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	     if (!rp)
 	       {
 		  ed->load_error = EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+		  ed->no_free_path = 0;
+		  ed->no_free_part = 0;
+		  ed->path = strdup(ed->path);
+		  ed->part = strdup(ed->part);
 	          return 0;
 	       }
 	     rp->part = ep;
@@ -318,12 +330,25 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	_edje_unref(ed);
 	ed->load_error = EDJE_LOAD_ERROR_NONE;
 	_edje_emit(ed, "load", NULL);
+	ed->path = ed->file->path;
+	ed->part = ed->collection->part;
+	ed->no_free_path = 1;
+	ed->no_free_part = 1;
 	return 1;
      }
    else
      {
+	ed->no_free_path = 0;
+	ed->no_free_part = 0;
+	ed->path = strdup(ed->path);
+	ed->part = strdup(ed->part);
 	return 0;
      }
+   /* we should never get here anyway */
+   ed->no_free_path = 0;
+   ed->no_free_part = 0;
+   ed->path = NULL;
+   ed->part = NULL;
    ed->load_error = EDJE_LOAD_ERROR_NONE;
    return 1;
 }
