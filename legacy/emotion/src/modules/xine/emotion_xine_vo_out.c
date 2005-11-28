@@ -559,7 +559,7 @@ static void _emotion_overlay_blend_yuv(uint8_t *dst_base[3], vo_overlay_t * img_
    int rle_remainder;
    int rlelen;
    int x, y;
-   int clip_right;
+   int hili_right;
    uint8_t clr = 0;
    
    src_width = img_overl->width;
@@ -574,14 +574,14 @@ static void _emotion_overlay_blend_yuv(uint8_t *dst_base[3], vo_overlay_t * img_
    uint8_t *dst_y = dst_base[0] + dst_pitches[0] * y_off + x_off;
    uint8_t *dst_cr = dst_base[2] + (y_off / 2) * dst_pitches[1] + (x_off / 2) + 1;
    uint8_t *dst_cb = dst_base[1] + (y_off / 2) * dst_pitches[2] + (x_off / 2) + 1;
-   my_clut = (Emotion_Lut *) img_overl->clip_color;
-   my_trans = img_overl->clip_trans;
+   my_clut = (Emotion_Lut *) img_overl->hili_color;
+   my_trans = img_overl->hili_trans;
    
    /* avoid wraping overlay if drawing to small image */
-   if( (x_off + img_overl->clip_right) < dst_width )
-     clip_right = img_overl->clip_right;
+   if( (x_off + img_overl->hili_right) < dst_width )
+     hili_right = img_overl->hili_right;
    else
-     clip_right = dst_width - 1 - x_off;
+     hili_right = dst_width - 1 - x_off;
    
    /* avoid buffer overflow */
    if( (src_height + y_off) >= dst_height )
@@ -589,7 +589,7 @@ static void _emotion_overlay_blend_yuv(uint8_t *dst_base[3], vo_overlay_t * img_
    
    rlelen=rle_remainder=0;
    for (y = 0; y < src_height; y++) {
-      ymask = ((img_overl->clip_top > y) || (img_overl->clip_bottom < y));
+      ymask = ((img_overl->hili_top > y) || (img_overl->hili_bottom < y));
       xmask = 0;
       
       for (x = 0; x < src_width;) {
@@ -609,11 +609,11 @@ static void _emotion_overlay_blend_yuv(uint8_t *dst_base[3], vo_overlay_t * img_
 	 } 
 	 
 	 if (ymask == 0) {
-	    if (x <= img_overl->clip_left) {
+	    if (x <= img_overl->hili_left) {
 	       /* Starts outside clip area */
-	       if ((x + rle_remainder - 1) > img_overl->clip_left ) {
+	       if ((x + rle_remainder - 1) > img_overl->hili_left ) {
 		  /* Cutting needed, starts outside, ends inside */
-		  rle_this_bite = (img_overl->clip_left - x + 1);
+		  rle_this_bite = (img_overl->hili_left - x + 1);
 		  rle_remainder -= rle_this_bite;
 		  rlelen -= rle_this_bite;
 		  my_clut = (Emotion_Lut *) img_overl->color;
@@ -628,26 +628,26 @@ static void _emotion_overlay_blend_yuv(uint8_t *dst_base[3], vo_overlay_t * img_
 		  my_trans = img_overl->trans;
 		  xmask = 0;
 	       }
-	    } else if (x < clip_right) {
+	    } else if (x < hili_right) {
 	       /* Starts inside clip area */
-	       if ((x + rle_remainder) > clip_right ) {
+	       if ((x + rle_remainder) > hili_right ) {
 		  /* Cutting needed, starts inside, ends outside */
-		  rle_this_bite = (clip_right - x);
+		  rle_this_bite = (hili_right - x);
 		  rle_remainder -= rle_this_bite;
 		  rlelen -= rle_this_bite;
-		  my_clut = (Emotion_Lut *) img_overl->clip_color;
-		  my_trans = img_overl->clip_trans;
+		  my_clut = (Emotion_Lut *) img_overl->hili_color;
+		  my_trans = img_overl->hili_trans;
 		  xmask++;
 	       } else {
 		  /* no cutting needed, starts inside, ends inside */
 		  rle_this_bite = rle_remainder;
 		  rle_remainder = 0;
 		  rlelen -= rle_this_bite;
-		  my_clut = (Emotion_Lut *) img_overl->clip_color;
-		  my_trans = img_overl->clip_trans;
+		  my_clut = (Emotion_Lut *) img_overl->hili_color;
+		  my_trans = img_overl->hili_trans;
 		  xmask++;
 	       }
-	    } else if (x >= clip_right) {
+	    } else if (x >= hili_right) {
 	       /* Starts outside clip area, ends outsite clip area */
 	       if ((x + rle_remainder ) > src_width ) {
 		  /* Cutting needed, starts outside, ends at right edge */
