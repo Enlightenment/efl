@@ -250,6 +250,7 @@ evas_common_tilebuf_free_render_rects(Tilebuf_Rect *rects)
 static void
 tilebuf_setup(Tilebuf *tb)
 {
+   if ((tb->outbuf_w <= 0) || (tb->outbuf_h <= 0)) return;
 #ifdef RECTUPDATE
    tb->rb = evas_common_regionbuf_new(tb->outbuf_w, tb->outbuf_h);
 #else
