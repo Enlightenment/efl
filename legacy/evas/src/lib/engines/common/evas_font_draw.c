@@ -227,54 +227,50 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
 				 int bi, bj;
 				 const DATA8 bitrepl[2] = {0x0, 0xff};
 				 
-				 tmpbuf = malloc(w);
-				 if (tmpbuf)
+				 tmpbuf = alloca(w);
+				 for (i = 0; i < h; i++)
 				   {
-				      for (i = 0; i < h; i++)
+				      int dx, dy;
+				      int in_x, in_w, end;
+				      
+				      in_x = 0;
+				      in_w = 0;
+				      dx = chr_x;
+				      dy = y - (chr_y - i - y);
+				      tp = tmpbuf;
+				      dp = data + (i * fg->glyph_out->bitmap.pitch);
+				      for (bi = 0; bi < w; bi += 8)
 					{
-					   int dx, dy;
-					   int in_x, in_w, end;
-					   
-					   in_x = 0;
-					   in_w = 0;
-					   dx = chr_x;
-					   dy = y - (chr_y - i - y);
-					   tp = tmpbuf;
-					   dp = data + (i * fg->glyph_out->bitmap.pitch);
-					   for (bi = 0; bi < w; bi += 8)
+					   bits = *dp;
+					   if ((w - bi) < 8) end = w - bi;
+					   else end = 8;
+					   for (bj = 0; bj < end; bj++)
 					     {
-						bits = *dp;
-						if ((w - bi) < 8) end = w - bi;
-						else end = 8;
-						for (bj = 0; bj < end; bj++)
-						  {
-						     *tp = bitrepl[(bits >> (7 - bj)) & 0x1];
-						     tp++;
-						  }
-						dp++;
+						*tp = bitrepl[(bits >> (7 - bj)) & 0x1];
+						tp++;
 					     }
-					   if ((dx < (ext_x + ext_w)) &&
-					       (dy >= (ext_y)) &&
-					       (dy < (ext_y + ext_h)))
+					   dp++;
+					}
+				      if ((dx < (ext_x + ext_w)) &&
+					  (dy >= (ext_y)) &&
+					  (dy < (ext_y + ext_h)))
+					{
+					   if (dx + w > (ext_x + ext_w))
+					     in_w += (dx + w) - (ext_x + ext_w);
+					   if (dx < ext_x)
 					     {
-						if (dx + w > (ext_x + ext_w))
-						  in_w += (dx + w) - (ext_x + ext_w);
-						if (dx < ext_x)
-						  {
-						     in_w += ext_x - dx;
-						     in_x = ext_x - dx;
-						     dx = ext_x;
-						  }
-						if (in_w < w)
-						  {
-						     func(tmpbuf + in_x,
-							  im + (dy * im_w) + dx,
-							  w - in_w,
-							  dc->col.col);
-						  }
+						in_w += ext_x - dx;
+						in_x = ext_x - dx;
+						dx = ext_x;
+					     }
+					   if (in_w < w)
+					     {
+						func(tmpbuf + in_x,
+						     im + (dy * im_w) + dx,
+						     w - in_w,
+						     dc->col.col);
 					     }
 					}
-				      free(tmpbuf);
 				   }
 			      }
 			 }

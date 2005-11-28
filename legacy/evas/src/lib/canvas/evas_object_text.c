@@ -108,8 +108,8 @@ evas_object_text_font_source_set(Evas_Object *obj, const char *font_source)
    if ((o->cur.source) && (font_source) &&
        (!strcmp(o->cur.source, font_source)))
      return;
-   if (o->cur.source) free(o->cur.source);
-   if (font_source) o->cur.source = strdup(font_source);
+   if (o->cur.source) evas_stringshare_del(o->cur.source);
+   if (font_source) o->cur.source = evas_stringshare_add(font_source);
    else o->cur.source = NULL;
 }
 
@@ -179,8 +179,8 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
    o->engine_data = evas_font_load(obj->layer->evas, font, o->cur.source, size);
    if (!same_font)
      {
-	if (o->cur.font) free(o->cur.font);
-	if (font) o->cur.font = strdup(font);
+	if (o->cur.font) evas_stringshare_del(o->cur.font);
+	if (font) o->cur.font = evas_stringshare_add(font);
 	else o->cur.font = NULL;
 	o->prev.font = NULL;
      }
@@ -293,8 +293,8 @@ evas_object_text_text_set(Evas_Object *obj, const char *text)
 				       obj->layer->evas->pointer.x,
 				       obj->layer->evas->pointer.y, 1, 1);
    /* DO II */
-   if (o->cur.text) free(o->cur.text);
-   if (text && *text) o->cur.text = strdup(text);
+   if (o->cur.text) evas_stringshare_del(o->cur.text);
+   if (text && *text) o->cur.text = evas_stringshare_add(text);
    else o->cur.text = NULL;
    o->prev.text = NULL;
    if ((o->engine_data) && (o->cur.text))
@@ -917,7 +917,7 @@ evas_font_path_clear(Evas *e)
    MAGIC_CHECK_END();
    while (e->font_path)
      {
-	free(e->font_path->data);
+	evas_stringshare_del(e->font_path->data);
 	e->font_path = evas_list_remove(e->font_path, e->font_path->data);
      }
 }
@@ -935,7 +935,7 @@ evas_font_path_append(Evas *e, const char *path)
    return;
    MAGIC_CHECK_END();
    if (!path) return;
-   e->font_path = evas_list_append(e->font_path, strdup(path));
+   e->font_path = evas_list_append(e->font_path, evas_stringshare_add(path));
 }
 
 /**
@@ -951,7 +951,7 @@ evas_font_path_prepend(Evas *e, const char *path)
    return;
    MAGIC_CHECK_END();
    if (!path) return;
-   e->font_path = evas_list_prepend(e->font_path, strdup(path));
+   e->font_path = evas_list_prepend(e->font_path, evas_stringshare_add(path));
 }
 
 /**
@@ -1197,9 +1197,9 @@ evas_object_text_free(Evas_Object *obj)
    return;
    MAGIC_CHECK_END();
    /* free obj */
-   if (o->cur.text) free(o->cur.text);
-   if (o->cur.font) free(o->cur.font);
-   if (o->cur.source) free(o->cur.source);
+   if (o->cur.text) evas_stringshare_del(o->cur.text);
+   if (o->cur.font) evas_stringshare_del(o->cur.font);
+   if (o->cur.source) evas_stringshare_del(o->cur.source);
    if (o->engine_data) evas_font_free(obj->layer->evas, o->engine_data);
    o->magic = 0;
    free(o);

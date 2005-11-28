@@ -42,6 +42,10 @@
 #include <sys/types.h>
 #include <ctype.h>
 
+#ifdef HAVE_ALLOCA_H
+#include <alloca.h>
+#endif
+
 #ifdef _WIN32_WCE
 #include <windows.h>
 #endif
@@ -210,7 +214,7 @@ struct _RGBA_Image
      {
 	int             format;
 	char           *file;
-	char           *real_file;
+//	char           *real_file;
 	char           *key;
 	char           *comment;
      } info;
@@ -571,6 +575,9 @@ void       evas_hash_free               (Evas_Hash *hash);
 void       evas_hash_foreach            (Evas_Hash *hash, Evas_Bool (*func) (Evas_Hash *hash, const char *key, void *data, void *fdata), const void *fdata);
 int        evas_hash_alloc_error        (void);
 
+const char *evas_stringshare_add        (const char *str);
+void        evas_stringshare_del        (const char *str);
+   
 void *evas_object_list_append           (void *in_list, void *in_item);
 void *evas_object_list_prepend          (void *in_list, void *in_item);
 void *evas_object_list_append_relative  (void *in_list, void *in_item, void *in_relative);

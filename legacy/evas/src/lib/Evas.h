@@ -300,6 +300,7 @@ extern "C" {
     * do we really need this? hmmm - let me think... there may be a better way
     */
    EAPI Evas_Hash        *evas_hash_add                     (Evas_Hash *hash, const char *key, const void*data);
+   EAPI Evas_Hash        *evas_hash_direct_add              (Evas_Hash *hash, const char *key, const void*data);
    EAPI Evas_Hash        *evas_hash_del                     (Evas_Hash *hash, const char *key, const void*data);
    EAPI void             *evas_hash_find                    (Evas_Hash *hash, const char *key);
    EAPI void             *evas_hash_modify                  (Evas_Hash *hash, const char *key, const void*data);
@@ -307,6 +308,10 @@ extern "C" {
    EAPI void              evas_hash_free                    (Evas_Hash *hash);
    EAPI void              evas_hash_foreach                 (Evas_Hash *hash, Evas_Bool (*func) (Evas_Hash *hash, const char *key, void *data, void *fdata), const void *fdata);
    EAPI int               evas_hash_alloc_error             (void);
+   
+   EAPI const char       *evas_stringshare_add              (const char *str);
+   EAPI void              evas_stringshare_del              (const char *str);
+       
 
    EAPI int               evas_alloc_error                  (void);
 

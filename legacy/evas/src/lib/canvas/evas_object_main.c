@@ -27,11 +27,6 @@ evas_object_free(Evas_Object *obj, int clean_layer)
    obj->func->free(obj);
    if (obj->name) evas_object_name_set(obj, NULL);
    if (!was_smart_child) evas_object_release(obj, clean_layer);
-   if (obj->name)
-     {
-	free(obj->name);
-	obj->name = NULL;
-     }
    if (obj->clip.clipees)
      evas_list_free(obj->clip.clipees);
    while (obj->clip.changes)

@@ -86,8 +86,7 @@ _xre_font_surface_new(Ximage_Info *xinf, RGBA_Font_Glyph *fg)
 	int bi, bj, end;
 	const DATA8 bitrepl[2] = {0x0, 0xff};
 	
-	tmpbuf = malloc(w);
-	if (tmpbuf)
+	tmpbuf = alloca(w);
 	  {
 	     int x, y;
 	     DATA8 *p1, *p2;
@@ -117,7 +116,6 @@ _xre_font_surface_new(Ximage_Info *xinf, RGBA_Font_Glyph *fg)
 		       p2++;
 		    }
 	       }
-	     free(tmpbuf);
 	  }
      }
    _xr_image_put(xim, fs->draw, 0, 0, w, h);

@@ -94,14 +94,7 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
 	png_set_IHDR(png_ptr, info_ptr, im->image->w, im->image->h, 8,
 		     PNG_COLOR_TYPE_RGB, png_ptr->interlaced,
 		     PNG_COMPRESSION_TYPE_BASE, PNG_FILTER_TYPE_BASE);
-	data = malloc(im->image->w * 3 * sizeof(char));
-	if (!data)
-	  {
-	     png_write_end(png_ptr, info_ptr);
-	     png_destroy_write_struct(&png_ptr, (png_infopp)&info_ptr);
-	     png_destroy_info_struct(png_ptr, (png_infopp)&info_ptr);
-	     fclose(f);
-	  }
+	data = alloca(im->image->w * 3 * sizeof(char));
      }
    sig_bit.red = 8;
    sig_bit.green = 8;
@@ -136,7 +129,6 @@ save_image_png(RGBA_Image *im, const char *file, int compress, int interlace)
 	     ptr += im->image->w;
 	  }
      }
-   if (data) free(data);
    png_write_end(png_ptr, info_ptr);
    png_destroy_write_struct(&png_ptr, (png_infopp) & info_ptr);
    png_destroy_info_struct(png_ptr, (png_infopp) & info_ptr);
@@ -198,12 +190,10 @@ save_image_jpeg(RGBA_Image *im, const char *file, int quality)
    int                 y = 0;
    int                 i, j;
    
-   buf = malloc(im->image->w * 3 * sizeof(DATA8));
-   if (!buf) return 0;
+   buf = alloca(im->image->w * 3 * sizeof(DATA8));
    f = fopen(file, "wb");
    if (!f)
      {
-	free(buf);
 	return 0;
      }
    jerr.pub.error_exit = _JPEGFatalErrorHandler;
@@ -213,7 +203,6 @@ save_image_jpeg(RGBA_Image *im, const char *file, int quality)
    if (sigsetjmp(jerr.setjmp_buffer, 1))
      {
 	jpeg_destroy_compress(&cinfo);
-	free(buf);
 	fclose(f);
 	return 0;
      }
@@ -242,7 +231,6 @@ save_image_jpeg(RGBA_Image *im, const char *file, int quality)
      }
    jpeg_finish_compress(&cinfo);
    jpeg_destroy_compress(&cinfo);
-   free(buf);
    fclose(f);
    return 1;
 }

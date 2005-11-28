@@ -117,7 +117,70 @@ evas_hash_add(Evas_Hash *hash, const char *key, const void *data)
    if (evas_list_alloc_error())
      {
 	_evas_hash_alloc_error = 1;
-	if (el->key) free(el->key);
+	free(el);
+	return hash;
+     }
+   hash->population++;
+   return hash;
+}
+
+/**
+ * Adds an entry to the given hash table and does not duplicate the string key.
+ *
+ * @p key is expected to be a unique string within the hash table.
+ * Otherwise, you cannot be sure which inserted data pointer will be
+ * accessed with @ref evas_hash_find , and removed with
+ * @ref evas_hash_del . This call does nto make a copy of the key so it must
+ * be a string constant or stored elsewhere (in the object being added) etc.
+ *
+ * Key strings are case sensitive.
+ *
+ * @ref evas_hash_alloc_error should be used to determine if an
+ * allocation error occurred during this function.
+ *
+ * @param   hash The given hash table.  Can be @c NULL, in which case a
+ *               new hash table is allocated and returned.
+ * @param   key  A unique string.  Can be @c NULL.
+ * @param   data Data to associate with the string given by @p key.
+ * @return  Either the given hash table, or if the given value for @p
+ *          hash is @c NULL, then a new one.  @c NULL will be returned
+ *          if memory could not be allocated for a new table.
+ * @ingroup Evas_Hash_Data
+ */
+Evas_Hash *
+evas_hash_direct_add(Evas_Hash *hash, const char *key, const void *data)
+{
+   int hash_num;
+   Evas_Hash_El *el;
+
+   if ((!key) || (!data)) return hash;
+   _evas_hash_alloc_error = 0;
+   if (!hash)
+     {
+	hash = calloc(1, sizeof(struct _Evas_Hash));
+	if (!hash)
+	  {
+	     _evas_hash_alloc_error = 1;
+	     return NULL;
+	  }
+     }
+   if (!(el = malloc(sizeof(struct _Evas_Hash_El))))
+     {
+        if (hash->population <= 0)
+	  {
+	     free(hash);
+	     hash = NULL;
+	  }
+	_evas_hash_alloc_error = 1;
+	return hash;
+     };
+   el->key = key;
+   el->data = (void *)data;
+   hash_num = _evas_hash_gen(key);
+   hash->buckets[hash_num] = evas_object_list_prepend(hash->buckets[hash_num], el);
+   if (evas_list_alloc_error())
+     {
+	_evas_hash_alloc_error = 1;
 	free(el);
 	return hash;
      }
