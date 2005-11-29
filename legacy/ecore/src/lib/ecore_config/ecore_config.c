@@ -503,7 +503,7 @@ ecore_config_typed_val(Ecore_Config_Prop * e, const void *val, int type)
 	  {
 	     if (((char *)val)[0] == '#')
 	       {
-		  if ((v = strtol(&((char *)val)[1], &l, 16)) < 0)
+		  if ((v = (long) strtoul(&((char *)val)[1], &l, 16)) < 0)
 		    {
 		       v = 0;
 		       E(0,
