@@ -225,11 +225,11 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 
          /* Something went 'orribly wrong. */
 	 vfork_exec_errno = errno;
-//         if (! (flags & ECORE_EXE_PIPE_READ))
-//	    close(dataPipe[1]);  /*  FIXME: Check for -1 then errno. */
-//         if (! (flags & ECORE_EXE_PIPE_WRITE))
-//	    close(dataPipe[0]);  /*  FIXME: Check for -1 then errno. */
-//	 close(statusPipe[1]);  /*  FIXME: Check for -1 then errno. */
+         if (! (flags & ECORE_EXE_PIPE_READ))
+	    close(dataPipe[1]);  /*  FIXME: Check for -1 then errno. */
+         if (! (flags & ECORE_EXE_PIPE_WRITE))
+	    close(dataPipe[0]);  /*  FIXME: Check for -1 then errno. */
+	 close(statusPipe[1]);  /*  FIXME: Check for -1 then errno. */
 	 _exit(-1);
       }
    else		/* parent */
@@ -429,25 +429,6 @@ ecore_exe_data_get(Ecore_Exe *exe)
  */
 
 /**
- * Makes sure the process is dead, one way or another.
- * @param   exe Process handle to the given process.
- * @ingroup Ecore_Exe_Signal_Group
- */
-void
-ecore_exe_kill_maybe(Ecore_Exe *exe)
-{
-   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
-     {
-        /* Since Ecore_Exe's can be freed without the users knowledge, we need a way to kill them without bitchin'. */
-	/* FIXME: On the other hand, handling the exe exit event may be the way to go. */
-	return;
-     }
-   kill(exe->pid, SIGTERM);
-/* FIXME: should pause for a bit. */
-   kill(exe->pid, SIGKILL);
-}
-
-/**
  * Pauses the given process by sending it a @c SIGSTOP signal.
  * @param   exe Process handle to the given process.
  * @ingroup Ecore_Exe_Signal_Group
@@ -580,7 +561,6 @@ _ecore_exe_free(Ecore_Exe *exe)
 {
    void *data;
 
-printf("FREEING Ecore_Exe %s\n", exe->cmd);
    data = exe->data;
 
    /* FIXME: close fdhanlders and free buffers if they exist */
