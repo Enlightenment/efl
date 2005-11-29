@@ -34,7 +34,7 @@ ecore_exe_run(const char *exe_cmd, const void *data)
    pid_t pid;
 
    if (!exe_cmd) return NULL;
-   pid = fork();   
+   pid = fork();
    if (pid)
      {
 	exe = calloc(1, sizeof(Ecore_Exe));
@@ -49,8 +49,66 @@ ecore_exe_run(const char *exe_cmd, const void *data)
 	exes = _ecore_list2_append(exes, exe);
 	return exe;
      }
-   setsid();
-   execl("/bin/sh", "/bin/sh", "-c", exe_cmd, (char *)NULL);
+   {
+     char use_sh = 1;
+     char* buf = NULL;
+     char** args = NULL;
+     if (! strpbrk(exe_cmd, "|&;<>()$`\\\"'*?#"))
+       {
+	 if (! (buf = strdup(exe_cmd)))
+	   return NULL;
+	 char* token = strtok(buf, " \t\n\v");
+	 char pre_command = 1;
+	 int num_tokens = 0;
+	 while(token)
+	   {
+	     if (token[0] == '~')
+	       break;
+	     if (pre_command)
+	       {
+		 if (token[0] == '[')
+		   break;
+		 if (strchr(token, '='))
+		   break;
+		 else
+		   pre_command = 0;
+	       }
+	     num_tokens ++;
+	     token = strtok(NULL, " \t\n\v");
+	   }
+	 free(buf);
+	 buf = NULL;
+	 if (! token && num_tokens)
+	   {
+	     int i = 0;
+	     char* token;
+	     if (! (buf = strdup(exe_cmd)))
+	       return NULL;
+	     token = strtok(buf, " \t\n\v");
+	     use_sh = 0;
+	     if (! (args = (char**) calloc(num_tokens + 1, sizeof(char*)))) {
+	       free (buf);
+	       return NULL;
+	     }
+	     for (i = 0; i < num_tokens; i ++)
+	       {
+		 if (token)
+		   args[i] = token;
+		 token = strtok(NULL, " \t\n\v");
+	       }
+	     args[num_tokens] = NULL;
+	   }
+       }
+     setsid();
+     if (use_sh)
+       execl("/bin/sh", "/bin/sh", "-c", exe_cmd, (char *)NULL);
+     else
+       execvp(args[0], args);
+     if (buf)
+       free(buf);
+     if(args)
+       free(args);
+   }
    exit(127);
    return NULL;
 }
