@@ -783,7 +783,7 @@ void *
 eet_read(Eet_File *ef, char *name, int *size_ret)
 {
    void *data = NULL;
-   int size = 0, tmp_size;
+   int size = 0;
    int hash;
    Eet_File_Node *efn;
    
@@ -844,66 +844,65 @@ eet_read(Eet_File *ef, char *name, int *size_ret)
 	     else
 	       {
 		  void *tmp_data;
-		  int free_tmp = 0;
+		  int free_tmp = 0, compr_size = efn->size;
+		  uLongf dlen;
 
-		  /* get size of data in file */
-		  tmp_size = efn->size;
-		  if (!efn->data)
-		    {
-		       tmp_data = malloc(tmp_size);
-		       if (!tmp_data) break;
-		       free_tmp = 1;
-		    }
 		  /* get size uncompressed */
 		  size = efn->data_size;
 		  /* allocate data */
 		  data = malloc(size);
-		  if (data)
-		    {
-		       uLongf dlen;
+		  if (!data) break;
 
-		       /* if we already have the data in ram... copy that */
-		       if (efn->data)
-			 tmp_data = efn->data;
-		       /* or get data from disk */
-		       else
+		  /* if we already have the data in ram... copy that */
+		  if (efn->data)
+		    tmp_data = efn->data;
+		  else
+		    {
+		       tmp_data = malloc(compr_size);
+		       if (!tmp_data)
 			 {
-			    /* seek to data location */
-			    if (fseek(ef->fp, efn->offset, SEEK_SET) < 0)
-			      {
-				 free(tmp_data);
-				 free(data);
-				 data = NULL;
-				 break;
-			      }
-			    /* read it */
-			    if (fread(tmp_data, tmp_size, 1, ef->fp) != 1)
-			      {
-				 free(tmp_data);
-				 free(data);
-				 data = NULL;
-				 break;
-			      }
+			    free(data);
+			    data = NULL;
+			    break;
 			 }
-		       /* decompress it */
-		       dlen = size;
-		       if (uncompress((Bytef *)data, &dlen,
-				      tmp_data, (uLongf)tmp_size))
+
+		       free_tmp = 1;
+
+		       /* get data from disk */
+		       /* seek to data location */
+		       if (fseek(ef->fp, efn->offset, SEEK_SET) < 0)
 			 {
-			    if (free_tmp) free(tmp_data);
+			    free(tmp_data);
+			    free(data);
+			    data = NULL;
+			    break;
+			 }
+		       /* read it */
+		       if (fread(tmp_data, compr_size, 1, ef->fp) != 1)
+			 {
+			    free(tmp_data);
 			    free(data);
 			    data = NULL;
 			    break;
 			 }
 		    }
+
+		  /* decompress it */
+		  dlen = size;
+		  if (uncompress((Bytef *)data, &dlen,
+			   tmp_data, (uLongf)compr_size))
+		    {
+		       free(data);
+		       data = NULL;
+		    }
+
 		  if (free_tmp) free(tmp_data);
 		  break;
 	       }
 	  }
      }
    /* fill in return values */
-   *size_ret = size;
-   /* update access time */
+   if (size_ret) *size_ret = size;
    return data;
 }
 
