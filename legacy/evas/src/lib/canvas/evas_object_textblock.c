@@ -329,10 +329,14 @@ _strbuf_insert(char *s, char *s2, int pos, int *len, int *alloc)
 	s = ts;
 	*alloc = talloc;
      }
-   tbuf = alloca(*len - pos);   
-   strncpy(tbuf, s + pos, *len - pos);
-   strncpy(s + pos, s2, l2);   
-   strncpy(s + pos + l2, tbuf, *len - pos);
+   tbuf = malloc(*len - pos);   
+   if (tbuf)
+     {
+	strncpy(tbuf, s + pos, *len - pos);
+	strncpy(s + pos, s2, l2);   
+	strncpy(s + pos + l2, tbuf, *len - pos);
+	free(tbuf);
+     }
    *len = tlen;
    s[tlen] = 0;
    return s;
@@ -351,9 +355,10 @@ _strbuf_remove(char *s, int p, int p2, int *len, int *alloc)
 	*alloc = 0;
 	return NULL;
      }
-   tbuf = alloca(*len - p2 + 1);
+   tbuf = malloc(*len - p2 + 1);
    strcpy(tbuf, s + p2);
    strcpy(s + p, tbuf);
+   free(tbuf);
    tlen = *len - (p2 - p);
    if (tlen < ((*alloc >> 5) << 15))
      {
@@ -392,9 +397,9 @@ _format_free(Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
 {
    fmt->ref--;
    if (fmt->ref > 0) return;
-   if (fmt->font.name) evas_stringshare_del(fmt->font.name);
-   if (fmt->font.fallbacks) evas_stringshare_del(fmt->font.fallbacks);
-   if (fmt->font.source) evas_stringshare_del(fmt->font.source);
+   if (fmt->font.name) free(fmt->font.name);
+   if (fmt->font.fallbacks) free(fmt->font.fallbacks);
+   if (fmt->font.source) free(fmt->font.source);
    evas_font_free(obj->layer->evas, fmt->font.font);
    free(fmt);
 }
@@ -418,7 +423,7 @@ _line_free(Evas_Object *obj, Evas_Object_Textblock_Line *ln)
 	
 	fi = (Evas_Object_Textblock_Format_Item *)ln->format_items;
 	ln->format_items = evas_object_list_remove(ln->format_items, ln->format_items);
-	if (fi->item) evas_stringshare_del(fi->item);
+	if (fi->item) free(fi->item);
 	free(fi);
      }
    free(ln);
@@ -700,11 +705,15 @@ _append_text_run(Evas_Object_Textblock *o, char *s, char *p)
      {
 	char *ts;
 	
-	ts = alloca(p - s + 1);
-	strncpy(ts, s, p - s);
-	ts[p - s] = 0;
-	ts = _clean_white(0, 0, ts);
-	evas_textblock_cursor_text_append(o->cursor, ts);
+	ts = malloc(p - s + 1);
+	if (ts)
+	  {
+	     strncpy(ts, s, p - s);
+	     ts[p - s] = 0;
+	     ts = _clean_white(0, 0, ts);
+	     evas_textblock_cursor_text_append(o->cursor, ts);
+	     free(ts);
+	  }
      }
 }
 
@@ -773,8 +782,8 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	if ((!fmt->font.name) ||
 	    ((fmt->font.name) && (strcmp(fmt->font.name, param))))
 	  {
-	     if (fmt->font.name) evas_stringshare_del(fmt->font.name);
-	     fmt->font.name = evas_stringshare_add(param);
+	     if (fmt->font.name) free(fmt->font.name);
+	     fmt->font.name = strdup(param);
 	     new_font = 1;
 	  }
      }
@@ -786,8 +795,8 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	     /* policy - when we say "fallbacks" do we prepend and use prior
 	      * fallbacks... or shoudl we replace. for nwo we replace
 	      */
-	     if (fmt->font.fallbacks) evas_stringshare_del(fmt->font.fallbacks);
-	     fmt->font.fallbacks = evas_stringshare_add(param);
+	     if (fmt->font.fallbacks) free(fmt->font.fallbacks);
+	     fmt->font.fallbacks = strdup(param);
 	     new_font = 1;
 	  }
      }
@@ -807,8 +816,8 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	if ((!fmt->font.source) ||
 	    ((fmt->font.source) && (strcmp(fmt->font.source, param))))
 	  {
-	     if (fmt->font.source) evas_stringshare_del(fmt->font.source);
-	     fmt->font.source = evas_stringshare_add(param);
+	     if (fmt->font.source) free(fmt->font.source);
+	     fmt->font.source = strdup(param);
 	     new_font = 1;
 	  }
      }
@@ -858,11 +867,14 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	  {
 	     char *ts, *p;
 	     
-	     ts = alloca(strlen(param));
-	     strcpy(ts, param);
-	     p = strchr(ts, '%');
-	     *p = 0;
-	     fmt->halign = ((double)atoi(ts)) / 100.0;
+	     ts = strdup(param);
+	     if (ts)
+	       {
+		  p = strchr(ts, '%');
+		  *p = 0;
+		  fmt->halign = ((double)atoi(ts)) / 100.0;
+		  free(ts);
+	       }
 	     if (fmt->halign < 0.0) fmt->halign = 0.0;
 	     else if (fmt->halign > 1.0) fmt->halign = 1.0;
 	  }
@@ -885,11 +897,14 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	  {
 	     char *ts, *p;
 	     
-	     ts = alloca(strlen(param));
-	     strcpy(ts, param);
-	     p = strchr(ts, '%');
-	     *p = 0;
-	     fmt->valign = ((double)atoi(ts)) / 100.0;
+	     ts = strdup(param);
+	     if (ts)
+	       {
+		  p = strchr(ts, '%');
+		  *p = 0;
+		  fmt->valign = ((double)atoi(ts)) / 100.0;
+		  free(ts);
+	       }
 	     if (fmt->valign < 0.0) fmt->valign = 0.0;
 	     else if (fmt->valign > 1.0) fmt->valign = 1.0;
 	  }
@@ -1133,9 +1148,9 @@ _format_dup(Evas_Object *obj, Evas_Object_Textblock_Format *fmt)
    fmt2 = calloc(1, sizeof(Evas_Object_Textblock_Format));
    memcpy(fmt2, fmt, sizeof(Evas_Object_Textblock_Format));
    fmt2->ref = 1;
-   if (fmt->font.name) fmt2->font.name = evas_stringshare_add(fmt->font.name);
-   if (fmt->font.fallbacks) fmt2->font.fallbacks = evas_stringshare_add(fmt->font.fallbacks);
-   if (fmt->font.source) fmt2->font.source = evas_stringshare_add(fmt->font.source);
+   if (fmt->font.name) fmt2->font.name = strdup(fmt->font.name);
+   if (fmt->font.fallbacks) fmt2->font.fallbacks = strdup(fmt->font.fallbacks);
+   if (fmt->font.source) fmt2->font.source = strdup(fmt->font.source);
 
    if ((fmt2->font.name) && (fmt2->font.fallbacks))
      {
@@ -1808,7 +1823,7 @@ _layout_format_item_add(Ctxt *c, Evas_Object_Textblock_Node *n, char *item)
    Evas_Object_Textblock_Format_Item *fi;
    
    fi = calloc(1, sizeof(Evas_Object_Textblock_Format_Item));
-   fi->item = evas_stringshare_add(item);
+   fi->item = strdup(item);
    fi->source_node = n;
    c->ln->format_items = evas_object_list_append(c->ln->format_items, fi);
    return fi;

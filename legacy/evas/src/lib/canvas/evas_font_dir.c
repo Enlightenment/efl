@@ -94,7 +94,7 @@ evas_font_set_get(const char *name)
    p = strchr(name, ',');
    if (!p)
      {
-	fonts = evas_list_append(fonts, evas_stringshare_add(name));
+	fonts = evas_list_append(fonts, strdup(name));
      }
    else
      {
@@ -110,7 +110,7 @@ evas_font_set_get(const char *name)
 	     fonts = evas_list_append(fonts, nm);
 	     pp = p + 1;
 	     p = strchr(pp, ',');
-	     if (!p) fonts = evas_list_append(fonts, evas_stringshare_add(pp));
+	     if (!p) fonts = evas_list_append(fonts, strdup(pp));
 	  }
      }
    return fonts;
@@ -145,8 +145,8 @@ evas_font_free(Evas *evas, void *font)
 	fd = evas_list_data(fonts_zero);
 	if (fd->ref != 0) break;
 	fonts_zero = evas_list_remove_list(fonts_zero, fonts_zero);
-	if (fd->name) evas_stringshare_del(fd->name);
-	if (fd->source) evas_stringshare_del(fd->source);
+	if (fd->name) free(fd->name);
+	if (fd->source) free(fd->source);
 	evas->engine.func->font_free(evas->engine.data.output, fd->font);
 	free(fd);
      }
@@ -323,14 +323,14 @@ evas_font_load(Evas *evas, const char *name, const char *source, int size)
 	       }
 #endif
 	  }
-	evas_stringshare_del(nm);
+	free(nm);
      }
    evas_list_free(fonts);
    fd = calloc(1, sizeof(Fndat));
    if (fd)
      {
-	fd->name = evas_stringshare_add(name);
-	if (source) fd->source = evas_stringshare_add(source);
+	fd->name = strdup(name);
+	if (source) fd->source = strdup(source);
 	fd->size = size;
 	fd->font = font;
 	fd->ref = 1;
@@ -525,7 +525,7 @@ object_text_font_cache_dir_add(char *dir)
 			    fn->type = 1;
 			    for (i = 0; i < 14; i++)
 			      {
-				 fn->x.prop[i] = evas_stringshare_add(font_prop[i]);
+				 fn->x.prop[i] = strdup(font_prop[i]);
 				 /* FIXME: what if strdup fails! */
 			      }
 			    fn->path = evas_file_path_join(dir, fname);
@@ -553,7 +553,7 @@ object_text_font_cache_dir_add(char *dir)
 	     if (fn)
 	       {
 		  fn->type = 0;
-		  fn->simple.name = evas_stringshare_add(fdir->data);
+		  fn->simple.name = strdup(fdir->data);
 		  if (fn->simple.name)
 		    {
 		       char *p;
@@ -591,11 +591,11 @@ object_text_font_cache_dir_add(char *dir)
 		  fa = calloc(1, sizeof(Evas_Font_Alias));
 		  if (fa)
 		    {
-		       fa->alias = evas_stringshare_add(fname);
+		       fa->alias = strdup(fname);
 		       fa->fn = object_text_font_cache_font_find_x(fd, fdef);
 		       if ((!fa->alias) || (!fa->fn))
 			 {
-			    if (fa->alias) evas_stringshare_del(fa->alias);
+			    if (fa->alias) free(fa->alias);
 			    free(fa);
 			 }
 		       else
@@ -637,10 +637,10 @@ object_text_font_cache_dir_del(char *dir, Evas_Font_Dir *fd)
 	fd->fonts = evas_list_remove(fd->fonts, fn);
 	for (i = 0; i < 14; i++)
 	  {
-	     if (fn->x.prop[i]) evas_stringshare_del(fn->x.prop[i]);
+	     if (fn->x.prop[i]) free(fn->x.prop[i]);
 	  }
-	if (fn->simple.name) evas_stringshare_del(fn->simple.name);
-	if (fn->path) evas_stringshare_del(fn->path);
+	if (fn->simple.name) free(fn->simple.name);
+	if (fn->path) free(fn->path);
 	free(fn);
      }
    while (fd->aliases)
@@ -649,7 +649,7 @@ object_text_font_cache_dir_del(char *dir, Evas_Font_Dir *fd)
 
 	fa = fd->aliases->data;
 	fd->aliases = evas_list_remove(fd->aliases, fa);
-	if (fa->alias) evas_stringshare_del(fa->alias);
+	if (fa->alias) free(fa->alias);
 	free(fa);
      }
    free(fd);

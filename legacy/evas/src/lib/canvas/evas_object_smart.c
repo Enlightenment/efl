@@ -225,7 +225,7 @@ evas_object_smart_callback_add(Evas_Object *obj, const char *event, void (*func)
    if (!event) return;
    if (!func) return;
    cb = calloc(1, sizeof(Evas_Smart_Callback));
-   cb->event = evas_stringshare_add(event);
+   cb->event = strdup(event);
    cb->func = func;
    cb->func_data = (void *)data;
    obj->smart.callbacks = evas_list_prepend(obj->smart.callbacks, cb);
@@ -326,7 +326,7 @@ evas_object_smart_callbacks_clear(Evas_Object *obj)
 	if (cb->delete_me)
 	  {
 	     obj->smart.callbacks = evas_list_remove(obj->smart.callbacks, cb);
-	     if (cb->event) evas_stringshare_add(cb->event);
+	     if (cb->event) free(cb->event);
 	     free(cb);
 	  }
      }
@@ -359,7 +359,7 @@ evas_object_smart_cleanup(Evas_Object *obj)
 
 	cb = obj->smart.callbacks->data;
 	obj->smart.callbacks = evas_list_remove(obj->smart.callbacks, cb);
-	if (cb->event) evas_stringshare_add(cb->event);
+	if (cb->event) free(cb->event);
 	free(cb);
      }
    obj->smart.parent = NULL;

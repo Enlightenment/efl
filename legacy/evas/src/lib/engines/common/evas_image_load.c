@@ -200,8 +200,15 @@ load_image_file_data_png(RGBA_Image *im, const char *file, const char *key)
 	fclose(f);
 	return -1;
      }
-   lines = (unsigned char **) alloca(h * sizeof(unsigned char *));
+   lines = (unsigned char **) malloc(h * sizeof(unsigned char *));
 
+   if (!lines)
+     {
+	evas_common_image_surface_free(im->image);
+	png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
+	fclose(f);
+	return -1;
+     }
    if (hasg)
      {
 	png_set_gray_to_rgb(png_ptr);
@@ -211,6 +218,7 @@ load_image_file_data_png(RGBA_Image *im, const char *file, const char *key)
    for (i = 0; i < h; i++)
      lines[i] = ((unsigned char *)(im->image->data)) + (i * w * sizeof(DATA32));
    png_read_image(png_ptr, lines);
+   free(lines);
    png_read_end(png_ptr, info_ptr);
    png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
    fclose(f);
@@ -343,10 +351,16 @@ load_image_file_data_jpeg_internal(RGBA_Image *im, FILE *f)
 	jpeg_destroy_decompress(&cinfo);
 	return -1;
      }
-   data = alloca(w * 16 * 3);
+   data = malloc(w * 16 * 3);
+   if (!data)
+     {
+	jpeg_destroy_decompress(&cinfo);
+	return -1;
+     }
    evas_common_image_surface_alloc(im->image);
    if (!im->image->data)
      {
+	free(data);
 	jpeg_destroy_decompress(&cinfo);
 	return -1;
      }
@@ -397,6 +411,7 @@ load_image_file_data_jpeg_internal(RGBA_Image *im, FILE *f)
 	       }
 	  }
      }
+   free(data);
 /* end data decoding */
    jpeg_finish_decompress(&cinfo);
    jpeg_destroy_decompress(&cinfo);
@@ -442,9 +457,15 @@ load_image_file_data_jpeg_alpha_internal(RGBA_Image *im, FILE *f)
 	jpeg_destroy_decompress(&cinfo);
 	return -1;
      }
-   data = alloca(w * 16 * 3);
+   data = malloc(w * 16 * 3);
+   if (!data)
+     {
+	jpeg_destroy_decompress(&cinfo);
+	return -1;
+     }
    if (!im->image->data)
      {
+	free(data);
 	jpeg_destroy_decompress(&cinfo);
 	return -1;
      }
@@ -497,6 +518,7 @@ load_image_file_data_jpeg_alpha_internal(RGBA_Image *im, FILE *f)
 	       }
 	  }
      }
+   free(data);
 /* end data decoding */
    jpeg_finish_decompress(&cinfo);
    jpeg_destroy_decompress(&cinfo);
@@ -936,14 +958,15 @@ evas_common_load_image_from_file(const char *file, const char *key)
 //   im->timestamp = mod_time;
    if (file)
      {
-	im->info.file = evas_stringshare_add(file);
+	im->info.file = strdup(file);
 //	im->info.real_file = real_file;
      }
    else
      {
 //	if (real_file) free(real_file);
      }
-   if (key) im->info.key = evas_stringshare_add(key);
+   if (key)
+     im->info.key = strdup(key);
    evas_common_image_ref(im);
    return im;
 }

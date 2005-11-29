@@ -22,13 +22,13 @@ evas_object_name_set(Evas_Object *obj, const char *name)
    if (obj->name)
      {
 	obj->layer->evas->name_hash = evas_hash_del(obj->layer->evas->name_hash, obj->name, obj);
-	evas_stringshare_del(obj->name);
+	free(obj->name);
      }
    if (!name) obj->name = NULL;
    else
      {
-	obj->name = evas_stringshare_add(name);
-	obj->layer->evas->name_hash = evas_hash_direct_add(obj->layer->evas->name_hash, obj->name, obj);
+	obj->name = strdup(name);
+	obj->layer->evas->name_hash = evas_hash_add(obj->layer->evas->name_hash, obj->name, obj);
      }
 }
 

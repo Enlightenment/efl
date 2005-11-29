@@ -227,10 +227,10 @@ void
 evas_common_image_free(RGBA_Image *im)
 {
    if (im->image) evas_common_image_surface_free(im->image);
-   if (im->info.file) evas_stringshare_del(im->info.file);
-//   if (im->info.real_file) evas_stringshare_del(im->info.real_file);
-   if (im->info.key) evas_stringshare_del(im->info.key);
-   if (im->info.comment) evas_stringshare_del(im->info.comment);
+   if (im->info.file) free(im->info.file);
+   if (im->info.real_file) free(im->info.real_file);
+   if (im->info.key) free(im->info.key);
+   if (im->info.comment) free(im->info.comment);
    free(im);
 }
 
@@ -335,9 +335,8 @@ evas_common_image_store(RGBA_Image *im)
    if (im->flags & RGBA_IMAGE_INDEXED) return;
    if ((!im->info.file) && (!im->info.key)) return;
    l1 = 0;
-//   if (im->info.real_file) l1 = strlen(im->info.real_file);
-//   else
-     if (im->info.file) l1 = strlen(im->info.file);
+   if (im->info.real_file) l1 = strlen(im->info.real_file);
+   else if (im->info.file) l1 = strlen(im->info.file);
    l2 = 0;
    if (im->info.key) l2 = strlen(im->info.key);
    snprintf(buf, sizeof(buf), "%llx", im->timestamp);
@@ -345,9 +344,8 @@ evas_common_image_store(RGBA_Image *im)
    key = malloc(l1 + 5 + l2 + 5 + l3 +1);
    if (!key) return;
    key[0] = 0;
-//   if (im->info.real_file) strcpy(key, im->info.real_file);
-//   else
-     if (im->info.file) strcpy(key, im->info.file);
+   if (im->info.real_file) strcpy(key, im->info.real_file);
+   else if (im->info.file) strcpy(key, im->info.file);
    strcat(key, "//://");
    if (im->info.key) strcat(key, im->info.key);
    strcat(key, "//://");
@@ -367,9 +365,8 @@ evas_common_image_unstore(RGBA_Image *im)
    if (!(im->flags & RGBA_IMAGE_INDEXED)) return;
    if ((!im->info.file) && (!im->info.key)) return;
    l1 = 0;
-//   if (im->info.real_file) l1 = strlen(im->info.real_file);
-//   else
-     if (im->info.file) l1 = strlen(im->info.file);
+   if (im->info.real_file) l1 = strlen(im->info.real_file);
+   else if (im->info.file) l1 = strlen(im->info.file);
    l2 = 0;
    if (im->info.key) l2 = strlen(im->info.key);
    snprintf(buf, sizeof(buf), "%llx", im->timestamp);
@@ -377,9 +374,8 @@ evas_common_image_unstore(RGBA_Image *im)
    key = malloc(l1 + 5 + l2 + 5 + l3 +1);
    if (!key) return;
    key[0] = 0;
-//   if (im->info.real_file) strcpy(key, im->info.real_file);
-//   else 
-     if (im->info.file) strcpy(key, im->info.file);
+   if (im->info.real_file) strcpy(key, im->info.real_file);
+   else if (im->info.file) strcpy(key, im->info.file);
    strcat(key, "//://");
    if (im->info.key) strcat(key, im->info.key);
    strcat(key, "//://");
@@ -427,7 +423,7 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
    free(str);
    if (im)
      {
-//	if (real_filename) free(real_filename);
+	if (real_filename) free(real_filename);
 	return im;
      }
 
@@ -437,7 +433,6 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
 
 	im = (RGBA_Image *)l;
 	ok = 0;
-/*	
 	if ((real_filename) && (im->info.real_file))
 	  {
              if ((im->info.real_file) &&
@@ -446,7 +441,6 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
 	       ok++;
 	  }
 	else
- */
 	  {
 	     if ((filename) && (im->info.file) &&
 		 (!strcmp(filename, im->info.file)))
@@ -463,11 +457,11 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
 	  ok++;
 	if (ok >= 3)
 	  {
-//	     if (real_filename) free(real_filename);
+	     if (real_filename) free(real_filename);
 	     return im;
 	  }
      }
-//   if (real_filename) free(real_filename);
+   if (real_filename) free(real_filename);
    return NULL;
 }
 
@@ -478,7 +472,7 @@ evas_common_image_ram_usage(RGBA_Image *im)
 
    ram += sizeof(struct _RGBA_Image);
    if (im->info.file) ram += strlen(im->info.file);
-//   if (im->info.real_file) ram += strlen(im->info.real_file);
+   if (im->info.real_file) ram += strlen(im->info.real_file);
    if (im->info.key) ram += strlen(im->info.key);
    if (im->info.comment) ram += strlen(im->info.comment);
    if ((im->image) && (im->image->data) && (!im->image->no_free))
