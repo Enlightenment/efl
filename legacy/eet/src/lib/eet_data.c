@@ -78,7 +78,7 @@ struct _Eet_Data_Descriptor_Hash
 
 struct _Eet_Data_Descriptor
 {
-   char *name;
+   const char *name;
    int   size;
    struct {
       void *(*list_next) (void *l);
@@ -103,12 +103,12 @@ struct _Eet_Data_Descriptor
 
 struct _Eet_Data_Element
 {
-   char                *name;
+   const char          *name;
    int                  type;
    int                  group_type;
    int                  offset;
    int                  count;
-   char                *counter_name;
+   const char          *counter_name;
    Eet_Data_Descriptor *subtype;
 };
 
@@ -133,7 +133,7 @@ static int   eet_data_get_type(int type, void *src, void *src_end, void *dest);
 static void *eet_data_put_type(int type, void *src, int *size_ret);
 
 static void            eet_data_chunk_get(Eet_Data_Chunk *chnk, void *src, int size);
-static Eet_Data_Chunk *eet_data_chunk_new(void *data, int size, char *name);
+static Eet_Data_Chunk *eet_data_chunk_new(void *data, int size, const char *name);
 static void            eet_data_chunk_free(Eet_Data_Chunk *chnk);
 
 static Eet_Data_Stream *eet_data_stream_new(void);
@@ -326,7 +326,7 @@ eet_data_put_string(void *src, int *size_ret)
 {
    char *s, *d;
    int len;
-   const char *empty_s = "";
+   /* const char *empty_s = ""; */
 
    s = (char *)(*((char **)src));
    if (!s) return NULL;
@@ -502,7 +502,7 @@ eet_data_chunk_get(Eet_Data_Chunk *chnk, void *src, int size)
 }
 
 static Eet_Data_Chunk *
-eet_data_chunk_new(void *data, int size, char *name)
+eet_data_chunk_new(void *data, int size, const char *name)
 {
    Eet_Data_Chunk *chnk;
 
@@ -632,7 +632,7 @@ _eet_descriptor_hash_new(Eet_Data_Descriptor *edd)
 	int hash;
 	
 	ede = &(edd->elements.set[i]);
-	hash = _eet_descriptor_hash_gen(ede->name, 6);
+	hash = _eet_descriptor_hash_gen((char *) ede->name, 6);
 	if (!edd->elements.hash.buckets[hash].element)
 	  edd->elements.hash.buckets[hash].element = ede;
 	else
@@ -738,8 +738,8 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
 				Eet_Data_Descriptor *subtype)
 {
    Eet_Data_Element *ede;
-   int l1, l2, p1, p2, i;
-   char *ps;
+   /* int l1, l2, p1, p2, i;
+   char *ps;*/
 
    edd->elements.num++;
    edd->elements.set = realloc(edd->elements.set, edd->elements.num * sizeof(Eet_Data_Element));
