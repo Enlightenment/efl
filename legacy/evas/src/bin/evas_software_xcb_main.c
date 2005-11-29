@@ -111,6 +111,7 @@ main(int argc, char **argv)
    XCBSync(conn, 0);
 
    /* test evas_free....  :) */
+   evas_init();
    evas = evas_new();
    evas_output_method_set(evas, evas_render_method_lookup("software_xcb"));
    evas_output_size_set(evas, win_w, win_h);
@@ -132,6 +133,7 @@ main(int argc, char **argv)
    }
    setup();
    printf("################ evas free\n");
+   setdown();
    evas_free(evas);
    printf("evas freed. DONE\n");
 
@@ -156,6 +158,7 @@ main(int argc, char **argv)
    }
    setup();
    printf("################ evas free\n");
+   setdown();
    evas_free(evas);
    printf("evas freed. DONE\n");
 
@@ -180,6 +183,7 @@ main(int argc, char **argv)
    }
    setup();
    printf("################ evas free\n");
+   setdown();
    evas_free(evas);
    printf("evas freed. DONE\n");
 
@@ -204,6 +208,7 @@ main(int argc, char **argv)
    }
    setup();
    printf("################ evas free\n");
+   setdown();
    evas_free(evas);
    printf("evas freed. DONE\n");
 
@@ -239,8 +244,15 @@ main(int argc, char **argv)
 	   case XCBButtonPress: {
 	     XCBButtonPressEvent *ev = (XCBButtonPressEvent *)e;
 
-	     if ((ev->state | Button3Mask) == Button3Mask)
-	       exit(0);
+	     if (ev->button.id == 3)
+	       {
+		 setdown();
+		 evas_free(evas);
+		 XCBDisconnect(conn);
+		 evas_shutdown();
+		 exit(0);
+		 
+	       }
 #if 0
 	     if (!pause_me)
 	       pause_me = 1;
@@ -298,6 +310,11 @@ main(int argc, char **argv)
        if (pause_me == 2)
 	 usleep(100000);
      }
+
+   setdown();
+   evas_free(evas);
+   XCBDisconnect(conn);
+   evas_shutdown();
 
    return 0;
 }
