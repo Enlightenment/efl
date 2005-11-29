@@ -80,6 +80,8 @@ static void      eet_cache_del(Eet_File *ef, Eet_File ***cache, int *cache_num, 
 static int       eet_string_match(char *s1, char *s2);
 static int       eet_hash_gen(char *key, int hash_size);
 static void      eet_flush(Eet_File *ef);
+static Eet_File_Node *find_node_by_name (Eet_File *ef, char *name);
+static int read_data_from_disk(Eet_File *ef, Eet_File_Node *efn, void *buf, int len);
 
 /* cache. i don't expect this to ever be large, so arrays will do */
 static int        eet_writers_num     = 0;
@@ -784,123 +786,85 @@ eet_read(Eet_File *ef, char *name, int *size_ret)
 {
    void *data = NULL;
    int size = 0;
-   int hash;
    Eet_File_Node *efn;
    
+   if (size_ret) *size_ret = 0;
+
    /* check to see its' an eet file pointer */
    if ((!ef) || (ef->magic != EET_MAGIC_FILE) || (!name) ||
        ((ef->mode != EET_FILE_MODE_READ) &&
         (ef->mode != EET_FILE_MODE_READ_WRITE)))
      {
-	if (size_ret) *size_ret = 0;
 	return NULL;
      }
    /* no header, return NULL */
    if (!ef->header) return NULL;
    /* no directory, return NULL */
    if (!ef->header->directory) return NULL;
-   /* get hash bucket this should be in */
-   hash = eet_hash_gen(name, ef->header->directory->size);
+
    /* hunt hash bucket */
-   for (efn = ef->header->directory->nodes[hash]; efn; efn = efn->next)
+   efn = find_node_by_name(ef, name);
+   if (!efn) return NULL;
+
+   /* get size (uncompressed, if compressed at all) */
+   size = efn->data_size;
+
+   /* allocate data */
+   data = malloc(size);
+   if (!data) return NULL;
+
+   /* uncompressed data */
+   if (efn->compression == 0)
      {
-	/* if it matches */
-	if (eet_string_match(efn->name, name))
+	/* if we alreayd have the data in ram... copy that */
+	if (efn->data)
+	  memcpy(data, efn->data, efn->size);
+	else if (!read_data_from_disk(ef, efn, data, size))
 	  {
-	     /* uncompressed data */
-	     if (efn->compression == 0)
-	       {
-		  /* get size */
-		  size = efn->size;
-		  /* allocate data */
-		  data = malloc(size);
-		  if (data)
-		    {
-		       /* if we alreayd have the data in ram... copy that */
-		       if (efn->data)
-			 memcpy(data, efn->data, efn->size);
-		       /* or get data from disk */
-		       else
-			 {
-			    /* seek to data location */
-			    if (fseek(ef->fp, efn->offset, SEEK_SET) < 0)
-			      {
-				 free(data);
-				 data = NULL;
-				 break;
-			      }
-			    /* read it */
-			    if (fread(data, size, 1, ef->fp) != 1)
-			      {
-				 free(data);
-				 data = NULL;
-				 break;
-			      }
-			 }
-		    }
-		  break;
-	       }
-	     /* compressed data */
-	     else
-	       {
-		  void *tmp_data;
-		  int free_tmp = 0, compr_size = efn->size;
-		  uLongf dlen;
-
-		  /* get size uncompressed */
-		  size = efn->data_size;
-		  /* allocate data */
-		  data = malloc(size);
-		  if (!data) break;
-
-		  /* if we already have the data in ram... copy that */
-		  if (efn->data)
-		    tmp_data = efn->data;
-		  else
-		    {
-		       tmp_data = malloc(compr_size);
-		       if (!tmp_data)
-			 {
-			    free(data);
-			    data = NULL;
-			    break;
-			 }
-
-		       free_tmp = 1;
-
-		       /* get data from disk */
-		       /* seek to data location */
-		       if (fseek(ef->fp, efn->offset, SEEK_SET) < 0)
-			 {
-			    free(tmp_data);
-			    free(data);
-			    data = NULL;
-			    break;
-			 }
-		       /* read it */
-		       if (fread(tmp_data, compr_size, 1, ef->fp) != 1)
-			 {
-			    free(tmp_data);
-			    free(data);
-			    data = NULL;
-			    break;
-			 }
-		    }
-
-		  /* decompress it */
-		  dlen = size;
-		  if (uncompress((Bytef *)data, &dlen,
-			   tmp_data, (uLongf)compr_size))
-		    {
-		       free(data);
-		       data = NULL;
-		    }
-
-		  if (free_tmp) free(tmp_data);
-		  break;
-	       }
+	     free(data);
+	     return NULL;
 	  }
      }
+   /* compressed data */
+   else
+     {
+	void *tmp_data;
+	int free_tmp = 0, compr_size = efn->size;
+	uLongf dlen;
+
+	/* if we already have the data in ram... copy that */
+	if (efn->data)
+	  tmp_data = efn->data;
+	else
+	  {
+	     tmp_data = malloc(compr_size);
+	     if (!tmp_data)
+	       {
+		  free(data);
+		  return NULL;
+	       }
+
+	     free_tmp = 1;
+
+	     if (!read_data_from_disk(ef, efn, tmp_data, compr_size))
+	       {
+		  free(data);
+		  return NULL;
+	       }
+	  }
+
+	/* decompress it */
+	dlen = size;
+	if (uncompress((Bytef *)data, &dlen,
+		 tmp_data, (uLongf)compr_size))
+	  {
+	     free(data);
+	     return NULL;
+	  }
+
+	if (free_tmp) free(tmp_data);
+     }
+
    /* fill in return values */
    if (size_ret) *size_ret = size;
    return data;
@@ -1146,4 +1110,29 @@ eet_num_entries(Eet_File *ef)
      }
 
    return ret;
+}
+
+static Eet_File_Node *
+find_node_by_name(Eet_File *ef, char *name)
+{
+   Eet_File_Node *efn;
+   int hash;
+
+   /* get hash bucket this should be in */
+   hash = eet_hash_gen(name, ef->header->directory->size);
+
+   for (efn = ef->header->directory->nodes[hash]; efn; efn = efn->next)
+     if (eet_string_match(efn->name, name)) return efn;
+
+   return NULL;
+}
+
+static int
+read_data_from_disk(Eet_File *ef, Eet_File_Node *efn, void *buf, int len)
+{
+   /* seek to data location */
+   if (fseek(ef->fp, efn->offset, SEEK_SET) < 0) return 0;
+
+   /* read it */
+   return (fread(buf, len, 1, ef->fp) == 1);
 }
