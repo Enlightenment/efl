@@ -11,9 +11,8 @@ struct _Evas_Stringshare
 
 struct _Evas_Stringshare_El
 {
-   Evas_Object_List  _list_data;
-   char             *str;
-   int               references;
+   int                  references;
+   Evas_Stringshare_El *next, *prev;
 };
 
 static inline int _evas_stringshare_hash_gen(const char *str);
@@ -59,55 +58,69 @@ const char *
 evas_stringshare_add(const char *str)
 {
    int hash_num;
+   char *el_str;
    Evas_Stringshare_El *el;
-   Evas_Object_List *l;
 
    hash_num = _evas_stringshare_hash_gen(str);
-   for (l = share.buckets[hash_num]; l; l = l->next)
+   for (el = share.buckets[hash_num]; el; el = el->next)
      {
-	el = (Evas_Stringshare_El *)l;
-	if (!strcmp(el->str, str))
+	el_str = ((char *)el) + sizeof(Evas_Stringshare_El);
+	if (!strcmp(el_str, str))
 	  {
-	     if (l != share.buckets[hash_num])
+	     if (el->prev)
 	       {
-		  share.buckets[hash_num] = evas_object_list_remove(share.buckets[hash_num], el);
-		  share.buckets[hash_num] = evas_object_list_prepend(share.buckets[hash_num], el);
+		  el->prev->next = el->next;
+		  if (el->next) el->next->prev = el->prev;
+		  el->prev = NULL;
+		  el->next = share.buckets[hash_num];
+		  share.buckets[hash_num] = el;
 	       }
 	     el->references++;
-	     return el->str;
+	     return el_str;
 	  }
      }
-   if (!(el = malloc(sizeof(struct _Evas_Stringshare_El) + strlen(str) + 1))) return NULL;
-   el->str = ((unsigned char *)el) + sizeof(struct _Evas_Stringshare_El);
-   strcpy(el->str, str);
+   if (!(el = malloc(sizeof(Evas_Stringshare_El) + strlen(str) + 1))) return NULL;
+   el_str = ((char *)el) + sizeof(Evas_Stringshare_El);
+   strcpy(el_str, str);
    el->references = 1;
-   share.buckets[hash_num] = evas_object_list_prepend(share.buckets[hash_num], el);
-   return el->str;
+   el->prev = NULL;
+   el->next = share.buckets[hash_num];
+   share.buckets[hash_num] = el;
+   return el_str;
 }
 
 void
 evas_stringshare_del(const char *str)
 {
    int hash_num;
+   char *el_str;
    Evas_Stringshare_El *el;
-   Evas_Object_List *l;
 
    hash_num = _evas_stringshare_hash_gen(str);
-   for (l = share.buckets[hash_num]; l; l = l->next)
+   for (el = share.buckets[hash_num]; el; el = el->next)
      {
-	el = (Evas_Stringshare_El *)l;
-	if (!strcmp(el->str, str))
+	el_str = ((char *)el) + sizeof(Evas_Stringshare_El);
+	if (!strcmp(el_str, str))
 	  {
 	     el->references--;
 	     if (el->references == 0)
 	       {
+		  if (el->next) el->next->prev = el->prev;
+		  if (el->prev) el->prev->next = el->next;
+		  else share.buckets[hash_num] = el->next;
 		  share.buckets[hash_num] = evas_object_list_remove(share.buckets[hash_num], el);
 		  free(el);
 	       }
 	     else
 	       {
-		  share.buckets[hash_num] = evas_object_list_remove(share.buckets[hash_num], el);
-		  share.buckets[hash_num] = evas_object_list_prepend(share.buckets[hash_num], el);
+		  if (el->prev)
+		    {
+		       el->prev->next = el->next;
+		       if (el->next) el->next->prev = el->prev;
+		       el->prev = NULL;
+		       el->next = share.buckets[hash_num];
+		       share.buckets[hash_num] = el;
+		    }
 	       }
 	     return;
 	  }
