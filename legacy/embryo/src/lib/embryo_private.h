@@ -218,6 +218,7 @@ struct _Embryo_Param
 struct _Embryo_Program
 {
    unsigned char *base; /* points to the Embryo_Program header ("ephdr") plus the code, optionally also the data */
+   int pushes; /* number of pushes - pops */
    /* for external functions a few registers must be accessible from the outside */
    Embryo_Cell cip; /* instruction pointer: relative to base + ephdr->cod */
    Embryo_Cell frm; /* stack frame base: relative to base + ephdr->dat */

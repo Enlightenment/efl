@@ -478,10 +478,20 @@ embryo_program_vm_push(Embryo_Program *ep)
 {
    Embryo_Header *hdr;
 
-   if ((!ep) || (ep->base)) return;
+   if (!ep) return;
+   ep->pushes++;
+   if (ep->pushes > 1)
+     {
+	embryo_program_vm_reset(ep);
+	return;
+     }
    hdr = (Embryo_Header *)ep->code;
    ep->base = malloc(hdr->stp);
-   if (!ep->base) return;
+   if (!ep->base)
+     {
+	ep->pushes = 0;
+	return;
+     }
    embryo_program_vm_reset(ep);
 }
 
@@ -499,6 +509,8 @@ void
 embryo_program_vm_pop(Embryo_Program *ep)
 {
    if ((!ep) || (!ep->base)) return;
+   ep->pushes--;
+   if (ep->pushes >= 1) return;
    free(ep->base);
    ep->base = NULL;
 }
