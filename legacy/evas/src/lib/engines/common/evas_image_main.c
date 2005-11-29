@@ -312,6 +312,18 @@ evas_common_image_flush_cache(void)
 }
 
 void
+evas_common_image_free_cache(void)
+{
+	while (cache)
+	{
+		RGBA_Image *im = (RGBA_Image *) cache;
+
+		evas_common_image_uncache(im);
+		evas_common_image_free(im);
+	}
+}
+
+void
 evas_common_image_set_cache(int size)
 {
    cache_size = size;
