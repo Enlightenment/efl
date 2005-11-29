@@ -167,7 +167,9 @@ _edje_var_init(Edje *ed)
    if (ed->var_pool) return;
    ed->var_pool = calloc(1, sizeof(Edje_Var_Pool));
    if (!ed->var_pool) return;
+   embryo_program_vm_push(ed->collection->script);
    ed->var_pool->size = embryo_program_variable_count_get(ed->collection->script);
+   embryo_program_vm_pop(ed->collection->script);
    ed->var_pool->vars = calloc(1, sizeof(Edje_Var) * ed->var_pool->size);
 }
 
@@ -983,14 +985,14 @@ _edje_var_timer_del(Edje *ed, int id)
    et = _edje_var_timer_find(ed, id);
    if (!et)
      {
-   fprintf(stderr,
-	 "*** EDJE ERROR: Cannot find timer to cancel\n"
-	 "*** NAUGHTY PROGRAMMER!!!\n"
-	 "*** SPANK SPANK SPANK!!!\n"
-	 "*** Now go fix your code. Tut tut tut!\n"
-	 "\n");
-   if (getenv("EDJE_ERROR_ABORT")) abort();
-   return;
+	fprintf(stderr,
+		"*** EDJE ERROR: Cannot find timer to cancel\n"
+		"*** NAUGHTY PROGRAMMER!!!\n"
+		"*** SPANK SPANK SPANK!!!\n"
+		"*** Now go fix your code. Tut tut tut!\n"
+		"\n");
+	if (getenv("EDJE_ERROR_ABORT")) abort();
+	return;
      }
 
    ed->var_pool->timers = evas_list_remove(ed->var_pool->timers, et);
@@ -1048,14 +1050,14 @@ _edje_var_anim_del(Edje *ed, int id)
    ea = _edje_var_anim_find(ed, id);
    if (!ea)
      {
-   fprintf(stderr,
-	 "*** EDJE ERROR: Cannot find animator to cancel\n"
-	 "*** NAUGHTY PROGRAMMER!!!\n"
-	 "*** SPANK SPANK SPANK!!!\n"
-	 "*** Now go fix your code. Tut tut tut!\n"
-	 "\n");
-   if (getenv("EDJE_ERROR_ABORT")) abort();
-   return;
+	fprintf(stderr,
+		"*** EDJE ERROR: Cannot find animator to cancel\n"
+		"*** NAUGHTY PROGRAMMER!!!\n"
+		"*** SPANK SPANK SPANK!!!\n"
+		"*** Now go fix your code. Tut tut tut!\n"
+		"\n");
+	if (getenv("EDJE_ERROR_ABORT")) abort();
+	return;
      }
 
    if (ed->var_pool->walking_list)
