@@ -459,9 +459,10 @@ _ecore_evas_x_event_mouse_in(void *data __UNUSED__, int type __UNUSED__, void *e
 	       details[e->detail]);
      }
  */
-   if ((e->mode == ECORE_X_EVENT_MODE_GRAB) || 
-       (e->mode == ECORE_X_EVENT_MODE_UNGRAB))
-     return 0;
+// disable. causes mroe problems than it fixes   
+//   if ((e->mode == ECORE_X_EVENT_MODE_GRAB) || 
+//       (e->mode == ECORE_X_EVENT_MODE_UNGRAB))
+//     return 0;
 /* if (e->mode != ECORE_X_EVENT_MODE_NORMAL) return 0; */
    if (ee->func.fn_mouse_in) ee->func.fn_mouse_in(ee);
    _ecore_evas_x_modifier_locks_update(ee, e->modifiers);
