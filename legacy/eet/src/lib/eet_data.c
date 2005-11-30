@@ -81,6 +81,10 @@ struct _Eet_Data_Descriptor
    const char *name;
    int   size;
    struct {
+      void *(*mem_alloc) (size_t size);
+      void  (*mem_free) (void *mem);
+      char *(*str_alloc) (const char *str);
+      void  (*str_free) (const char *str);
       void *(*list_next) (void *l);
       void *(*list_append) (void *l, void *d);
       void *(*list_data) (void *l);
@@ -353,8 +357,7 @@ eet_data_get_float(void *src, void *src_end, void *dst)
    p = s;
    len = 0;
    while ((p < (char *)src_end) && (*p != 0)) {len++; p++;}
-   str = malloc(len + 1);
-   if (!str) return -1;
+   str = alloca(len + 1);
    memcpy(str, s, len);
    str[len] = 0;
 
@@ -364,8 +367,7 @@ eet_data_get_float(void *src, void *src_end, void *dst)
    sscanf(str, "%a", &tf);
    *d = (float)tf;
    if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
-
-   free(str);
+   
    return len + 1;
 }
 
@@ -402,8 +404,7 @@ eet_data_get_double(void *src, void *src_end, void *dst)
    p = s;
    len = 0;
    while ((p < (char *)src_end) && (*p != 0)) {len++; p++;}
-   str = malloc(len + 1);
-   if (!str) return -1;
+   str = alloca(len + 1);
    memcpy(str, s, len);
    str[len] = 0;
 
@@ -414,7 +415,6 @@ eet_data_get_double(void *src, void *src_end, void *dst)
    *d = (double)tf;
    if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
 
-   free(str);
    return len + 1;
 }
 
@@ -686,6 +686,30 @@ _eet_descriptor_hash_find(Eet_Data_Descriptor *edd, char *name)
    return NULL;
 }
 
+static void *
+_eet_mem_alloc(size_t size)
+{
+   return calloc(1, size);
+}
+
+static void
+_eet_mem_free(void *mem)
+{
+   free(mem);
+}
+
+static char *
+_eet_str_alloc(const char *str)
+{
+   return strdup(str);
+}
+
+static void
+_eet_str_free(const char *str)
+{
+   free((char *)str);
+}
+
 /*---*/
 
 Eet_Data_Descriptor *
@@ -710,6 +734,10 @@ eet_data_descriptor_new(const char *name,
    edd = calloc(1, sizeof(Eet_Data_Descriptor));
    edd->name = name;
    edd->size = size;
+   edd->func.mem_alloc = _eet_mem_alloc;
+   edd->func.mem_free = _eet_mem_free;
+   edd->func.str_alloc = _eet_str_alloc;
+   edd->func.str_free = _eet_str_free;
    edd->func.list_next = func_list_next;
    edd->func.list_append = func_list_append;
    edd->func.list_data = func_list_data;
@@ -717,6 +745,39 @@ eet_data_descriptor_new(const char *name,
    edd->func.hash_foreach = func_hash_foreach;
    edd->func.hash_add = func_hash_add;
    edd->func.hash_free = func_hash_free;
+   return edd;
+}
+
+/* new replcement */
+Eet_Data_Descriptor *
+eet_data_descriptor2_new(Eet_Data_Descriptor_Class *eddc)
+{
+   Eet_Data_Descriptor *edd;
+
+   if (!eddc) return NULL;
+   edd = calloc(1, sizeof(Eet_Data_Descriptor));
+   if (eddc->version < 1) return edd;
+   edd->name = eddc->name;
+   edd->size = eddc->size;
+   edd->func.mem_alloc = _eet_mem_alloc;
+   edd->func.mem_free = _eet_mem_free;
+   edd->func.str_alloc = _eet_str_alloc;
+   edd->func.str_free = _eet_str_free;
+   if (eddc->func.mem_alloc)
+     edd->func.mem_alloc = eddc->func.mem_alloc;
+   if (eddc->func.mem_free)
+     edd->func.mem_free = eddc->func.mem_free;
+   if (eddc->func.str_alloc)
+     edd->func.str_alloc = eddc->func.str_alloc;
+   if (eddc->func.str_free)
+     edd->func.str_free = eddc->func.str_free;
+   edd->func.list_next = eddc->func.list_next;
+   edd->func.list_append = eddc->func.list_append;
+   edd->func.list_data = eddc->func.list_data;
+   edd->func.list_free = eddc->func.list_free;
+   edd->func.hash_foreach = eddc->func.hash_foreach;
+   edd->func.hash_add = eddc->func.hash_add;
+   edd->func.hash_free = eddc->func.hash_free;
    return edd;
 }
 
@@ -848,13 +909,13 @@ _eet_freelist_reset(void)
 }
 
 static void
-_eet_freelist_free(void)
+_eet_freelist_free(Eet_Data_Descriptor *edd)
 {
    int i;
 
    if (freelist_ref > 0) return;
    for (i = 0; i < freelist_num; i++)
-     free(freelist[i]);
+     edd->func.mem_free(freelist[i]);
    _eet_freelist_reset();
 }
 
@@ -926,6 +987,56 @@ _eet_freelist_list_unref(void)
    freelist_list_ref--;
 }
 
+static int    freelist_str_ref = 0;
+static int    freelist_str_len = 0;
+static int    freelist_str_num = 0;
+static void **freelist_str = NULL;
+
+static void
+_eet_freelist_str_add(void *data)
+{
+   freelist_str_num++;
+   if (freelist_str_num > freelist_str_len)
+     {
+	freelist_str_len += 16;
+	freelist_str = realloc(freelist_str, freelist_str_len * sizeof(void *));
+     }
+   freelist_str[freelist_str_num - 1] = data;
+}
+
+static void
+_eet_freelist_str_reset(void)
+{
+   if (freelist_str_ref > 0) return;
+   freelist_str_len = 0;
+   freelist_str_num = 0;
+   if (freelist_str) free(freelist_str);
+   freelist_str = NULL;
+}
+
+static void
+_eet_freelist_str_free(Eet_Data_Descriptor *edd)
+{
+   int i;
+
+   if (freelist_str_ref > 0) return;
+   for (i = 0; i < freelist_str_num; i++)
+     edd->func.str_free(freelist_str[i]);
+   _eet_freelist_str_reset();
+}
+
+static void
+_eet_freelist_str_ref(void)
+{
+   freelist_str_ref++;
+}
+
+static void
+_eet_freelist_str_unref(void)
+{
+   freelist_str_ref--;
+}
+
 void *
 eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 			   void *data_in,
@@ -945,9 +1056,10 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 	else words_bigendian = 0;
      }
 
-   data = calloc(1, edd->size);
+   data = edd->func.mem_alloc(edd->size);
    if (!data) return NULL;
    _eet_freelist_ref();
+   _eet_freelist_str_ref();
    _eet_freelist_list_ref();
    _eet_freelist_add(data);
    memset(&chnk, 0, sizeof(Eet_Data_Chunk));
@@ -955,8 +1067,10 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
    if (!chnk.name)
      {
 	_eet_freelist_unref();
+	_eet_freelist_str_unref();
 	_eet_freelist_list_unref();
-	_eet_freelist_free();
+	_eet_freelist_free(edd);
+	_eet_freelist_str_free(edd);
 	_eet_freelist_list_free(edd);
 	return NULL;
      }
@@ -964,8 +1078,10 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
      {
 	free(chnk.name);
 	_eet_freelist_unref();
+	_eet_freelist_str_unref();
 	_eet_freelist_list_unref();
-	_eet_freelist_free();
+	_eet_freelist_free(edd);
+	_eet_freelist_str_free(edd);
 	_eet_freelist_list_free(edd);
 	return NULL;
      }
@@ -983,15 +1099,14 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 	if (!echnk.name)
 	  {
 	     _eet_freelist_unref();
+	     _eet_freelist_str_unref();
 	     _eet_freelist_list_unref();
-	     _eet_freelist_free();
+	     _eet_freelist_free(edd);
+	     _eet_freelist_str_free(edd);
 	     _eet_freelist_list_free(edd);
 	     free(chnk.name);
 	     return NULL;
 	  }
-	/* FIXME: this is a linear search/match - speed up by putting in a
-	 * hash lookup
-	 */
 	ede = _eet_descriptor_hash_find(edd, echnk.name);
 	if (ede)
 	  {
@@ -1007,6 +1122,19 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 					       echnk.data,
 					       ((char *)echnk.data) + echnk.size,
 					       ((char *)data) + ede->offset);
+		       if (ede->type == EET_T_STRING)
+			 {
+			    char **str, *str2;
+			    
+			    str = (((char *)data) + ede->offset);
+			    if (*str)
+			      {
+				 str2 = edd->func.str_alloc(*str);
+				 free(*str);
+				 *str = str2;
+				 _eet_freelist_str_add(str2);
+			      }
+			 }
 		    }
 		  else if (ede->subtype)
 		    {
@@ -1018,8 +1146,10 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 		       if (!data_ret)
 			 {
 			    _eet_freelist_unref();
+			    _eet_freelist_str_unref();
 			    _eet_freelist_list_unref();
-			    _eet_freelist_free();
+			    _eet_freelist_free(edd);
+			    _eet_freelist_str_free(edd);
 			    _eet_freelist_list_free(edd);
 			    free(chnk.name);
 			    return NULL;
@@ -1062,8 +1192,10 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 				      if (ret <= 0)
 					{
 					   _eet_freelist_unref();
+					   _eet_freelist_str_unref();
 					   _eet_freelist_list_unref();
-					   _eet_freelist_free();
+					   _eet_freelist_free(edd);
+					   _eet_freelist_str_free(edd);
 					   _eet_freelist_list_free(edd);
 					   free(chnk.name);
 					   return NULL;
@@ -1072,8 +1204,10 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 				 else
 				   {
 				      _eet_freelist_unref();
+				      _eet_freelist_str_unref();
 				      _eet_freelist_list_unref();
-				      _eet_freelist_free();
+				      _eet_freelist_free(edd);
+				      _eet_freelist_str_free(edd);
 				      _eet_freelist_list_free(edd);
 				      free(chnk.name);
 				      return NULL;
@@ -1094,8 +1228,10 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 			    else
 			      {
 				 _eet_freelist_unref();
+				 _eet_freelist_str_unref();
 				 _eet_freelist_list_unref();
-				 _eet_freelist_free();
+				 _eet_freelist_free(edd);
+				 _eet_freelist_str_free(edd);
 				 _eet_freelist_list_free(edd);
 				 free(chnk.name);
 				 return NULL;
@@ -1117,8 +1253,10 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
      }
    free(chnk.name);
    _eet_freelist_unref();
+   _eet_freelist_str_unref();
    _eet_freelist_list_unref();
    _eet_freelist_reset();
+   _eet_freelist_str_reset();
    _eet_freelist_list_reset();
    return data;
 }

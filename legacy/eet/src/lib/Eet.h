@@ -1,6 +1,8 @@
 #ifndef _EET_H
 #define _EET_H
 
+#include <stdlib.h>
+
 #ifdef EAPI
 #undef EAPI
 #endif
@@ -63,11 +65,34 @@ extern "C" {
 	EET_FILE_MODE_READ_WRITE
      };
 
-   typedef enum _Eet_File_Mode             Eet_File_Mode;
+   typedef enum _Eet_File_Mode               Eet_File_Mode;
 
-   typedef struct _Eet_File                Eet_File;
-   typedef struct _Eet_Data_Descriptor     Eet_Data_Descriptor;
+   typedef struct _Eet_File                  Eet_File;
+   typedef struct _Eet_Data_Descriptor       Eet_Data_Descriptor;
 
+   typedef struct _Eet_Data_Descriptor_Class Eet_Data_Descriptor_Class;
+   
+#define EET_DATA_DESCRIPTOR_CLASS_VERSION 1
+   struct _Eet_Data_Descriptor_Class
+     {
+	int         version;
+	const char *name;
+	int         size;
+	struct {
+	   void   *(*mem_alloc) (size_t size);
+	   void    (*mem_free) (void *mem);
+	   char   *(*str_alloc) (const char *str);
+	   void    (*str_free) (const char *str);
+	   void   *(*list_next) (void *l);
+	   void   *(*list_append) (void *l, void *d);
+	   void   *(*list_data) (void *l);
+	   void   *(*list_free) (void *l);
+	   void    (*hash_foreach) (void *h, int (*func) (void *h, const char *k, void *dt, void *fdt), void *fdt);
+	   void   *(*hash_add) (void *h, const char *k, void *d);
+	   void    (*hash_free) (void *h);
+	} func;
+     };
+   
 /***************************************************************************/
 
    /**
