@@ -77,6 +77,7 @@ evas_stringshare_add(const char *str)
 		  share.buckets[hash_num] = el;
 	       }
 	     el->references++;
+//	     printf("SSHARE + \"%s\", ref %i\n", el_str, el->references);
 	     return el_str;
 	  }
      }
