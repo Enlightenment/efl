@@ -308,7 +308,7 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
    Evas_List *members;
    Edje_Text_Class *tc;
 
-   return;
+   return; // this is broken right now - need to fix
    if (!text_class) return;
 
    if (size < 0) size = 0;
@@ -377,7 +377,7 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
    Evas_List *l;
    Edje_Text_Class *tc;
 
-   return;
+   return; // this is broken right now. need to fix
 //   printf("------------ edje_object_text_class_set\n");
    ed = _edje_fetch(obj);
    if ((!ed) || (!text_class)) return;

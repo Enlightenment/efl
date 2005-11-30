@@ -39,18 +39,10 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
    
    _edje_file_del(ed);
    
-   if (ed->path)
-     {
-	if (!ed->no_free_path) free(ed->path);
-     }
-   if (ed->part)
-     {
-	if (!ed->no_free_part) free(ed->part);
-     }
-   ed->path = file;
-   ed->part = part;
-//   ed->path = strdup(file);
-//   ed->part = strdup(part);
+   if (ed->path) evas_stringshare_del(ed->path);
+   if (ed->part) evas_stringshare_del(ed->part);
+   ed->path = evas_stringshare_add(file);
+   ed->part = evas_stringshare_add(part);
    
    ed->load_error = EDJE_LOAD_ERROR_NONE;
    _edje_file_add(ed);
@@ -145,10 +137,6 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	     if (!rp)
 	       {
 		  ed->load_error = EDJE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
-		  ed->no_free_path = 0;
-		  ed->no_free_part = 0;
-		  ed->path = strdup(ed->path);
-		  ed->part = strdup(ed->part);
 	          return 0;
 	       }
 	     rp->part = ep;
@@ -330,25 +318,12 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	_edje_unref(ed);
 	ed->load_error = EDJE_LOAD_ERROR_NONE;
 	_edje_emit(ed, "load", NULL);
-	ed->path = ed->file->path;
-	ed->part = ed->collection->part;
-	ed->no_free_path = 1;
-	ed->no_free_part = 1;
 	return 1;
      }
    else
      {
-	ed->no_free_path = 0;
-	ed->no_free_part = 0;
-	ed->path = strdup(ed->path);
-	ed->part = strdup(ed->part);
 	return 0;
      }
-   /* we should never get here anyway */
-   ed->no_free_path = 0;
-   ed->no_free_part = 0;
-   ed->path = NULL;
-   ed->part = NULL;
    ed->load_error = EDJE_LOAD_ERROR_NONE;
    return 1;
 }
@@ -573,8 +548,8 @@ _edje_file_del(Edje *ed)
 	       }
 	     if (rp->text.text) free(rp->text.text);
 	     if (rp->text.font) free(rp->text.font);
-	     if (rp->text.cache.in_str) free(rp->text.cache.in_str);
-	     if (rp->text.cache.out_str) free(rp->text.cache.out_str);	     
+	     if (rp->text.cache.in_str) evas_stringshare_del(rp->text.cache.in_str);
+	     if (rp->text.cache.out_str) evas_stringshare_del(rp->text.cache.out_str);	     
 
 	     if (rp->custom.description)
 	       {
@@ -692,7 +667,7 @@ _edje_file_free(Edje_File *edf)
 	evas_hash_foreach(edf->collection_hash, _edje_file_collection_hash_foreach, edf);
 	evas_hash_free(edf->collection_hash);
      }
-   if (edf->path) free(edf->path);
+   if (edf->path) evas_stringshare_del(edf->path);
    if (edf->compiler) free(edf->compiler);
    if (edf->collection_cache) _edje_cache_coll_flush(edf);
    _edje_textblock_style_cleanup(edf);
@@ -766,8 +741,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
 	     free(edt);
 	  }
      }
-   if (ec->part)
-     free(ec->part);
+   if (ec->part) evas_stringshare_del(ec->part);
 #ifdef EDJE_PROGRAM_CACHE
    if (ec->prog_cache.no_matches) evas_hash_free(ec->prog_cache.no_matches);
    if (ec->prog_cache.matches)

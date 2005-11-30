@@ -364,8 +364,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
    
 	goto arrange_text;
      }
-   if (ep->text.cache.in_str) free(ep->text.cache.in_str);
-   ep->text.cache.in_str = strdup(text);
+   if (ep->text.cache.in_str) evas_stringshare_del(ep->text.cache.in_str);
+   ep->text.cache.in_str = evas_stringshare_add(text);
    ep->text.cache.in_size = size;
    if (chosen_desc->text.fit_x)
      {
@@ -479,8 +479,8 @@ _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 	                        &free_text);
      }
 
-   if (ep->text.cache.out_str) free(ep->text.cache.out_str);
-   ep->text.cache.out_str = strdup(text);
+   if (ep->text.cache.out_str) evas_stringshare_del(ep->text.cache.out_str);
+   ep->text.cache.out_str = evas_stringshare_add(text);
    ep->text.cache.in_w = sw;
    ep->text.cache.in_h = sh;
    ep->text.cache.out_size = size;

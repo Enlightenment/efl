@@ -474,8 +474,6 @@ struct _Edje
    unsigned short        walking_actions : 1;
    unsigned short        block_break : 1;
    unsigned short        delete_me : 1;
-   unsigned short        no_free_path : 1;
-   unsigned short        no_free_part : 1;
    double                paused_at;
    Evas                 *evas; /* the Evas this Edje belongs to */
    Evas_Object          *obj; /* the smart object */

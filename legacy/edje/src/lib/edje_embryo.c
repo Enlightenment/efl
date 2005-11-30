@@ -279,13 +279,10 @@ _edje_embryo_fn_get_str(Embryo_Program *ep, Embryo_Cell *params)
 	  {
 	     char *ss;
 	     
-	     ss = strdup(s);
-	     if (ss)
-	       {
-		  ss[params[3] - 1] = 0;
-		  SETSTR(ss, params[2]);
-		  free(ss);
-	       }
+	     ss = alloca(strlen(s));
+	     strcpy(ss, s);
+	     ss[params[3] - 1] = 0;
+	     SETSTR(ss, params[2]);
 	  }
      }
    else
@@ -505,13 +502,10 @@ _edje_embryo_fn_fetch_str(Embryo_Program *ep, Embryo_Cell *params)
 	  {
 	     char *ss;
 	     
-	     ss = strdup(s);
-	     if (ss)
-	       {
-		  ss[params[4] - 1] = 0;
-		  SETSTR(ss, params[3]);
-		  free(ss);
-	       }
+	     ss = alloca(strlen(s));
+	     strcpy(ss, s);
+	     ss[params[4] - 1] = 0;
+	     SETSTR(ss, params[3]);
 	  }
      }
    else
@@ -855,13 +849,10 @@ _edje_embryo_fn_get_state(Embryo_Program *ep, Embryo_Cell *params)
 	       {
 		  char *ss;
 		  
-		  ss = strdup(s);
-		  if (ss)
-		    {
-		       ss[params[3] - 1] = 0;
-		       SETSTR(ss, params[2]);
-		       free(ss);
-		    }
+		  ss = alloca(strlen(s));
+		  strcpy(ss, s);
+		  ss[params[3] - 1] = 0;
+		  SETSTR(ss, params[2]);
 	       }
 	  }
 	else
@@ -1033,13 +1024,10 @@ _edje_embryo_fn_get_text(Embryo_Program *ep, Embryo_Cell *params)
 	  {
 	     char *ss;
 	     
-	     ss = strdup(s);
-	     if (ss)
-	       {
-		  ss[params[3] - 1] = 0;
-		  SETSTR(ss, params[2]);
-		  free(ss);
-	       }
+	     ss = alloca(strlen(s));
+	     strcpy(ss, s);
+	     ss[params[3] - 1] = 0;
+	     SETSTR(ss, params[2]);
 	  }
      }
    else

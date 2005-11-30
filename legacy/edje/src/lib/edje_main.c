@@ -82,16 +82,10 @@ _edje_del(Edje *ed)
      }
    _edje_message_del(ed);
    _edje_file_del(ed);
-   if (ed->path)
-     {
-	if (!ed->no_free_path) free(ed->path);
-	ed->path = NULL;
-     }
-   if (ed->part)
-     {
-	if (!ed->no_free_part) free(ed->part);
-	ed->part = NULL;
-     }
+   if (ed->path) evas_stringshare_del(ed->path);
+   if (ed->part) evas_stringshare_del(ed->part);
+   ed->path = NULL;
+   ed->part = NULL;
    if ((ed->actions) || (ed->pending_actions))
      {
 	_edje_animators = evas_list_remove(_edje_animators, ed);

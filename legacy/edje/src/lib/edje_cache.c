@@ -57,7 +57,7 @@ _edje_file_coll_open(Edje_File *edf, Eet_File *ef, char *coll)
 	free(data);
      }
    
-   edc->part = strdup(coll);
+   edc->part = evas_stringshare_add(coll);
    edc->references = 1;
    edf->collection_hash = evas_hash_add(edf->collection_hash, coll, edc);
    return edc;
@@ -98,7 +98,7 @@ _edje_file_open(char *file, char *coll, int *error_ret, Edje_Part_Collection **e
 	return NULL;
      }
    
-   edf->path = strdup(file);
+   edf->path = evas_stringshare_add(file);
    edf->references = 1;
 
    _edje_textblock_style_parse_and_fix(edf);
