@@ -55,9 +55,9 @@ edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const ch
    if (ed->delete_me) return;
    escb = calloc(1, sizeof(Edje_Signal_Callback));
    if ((emission) && (emission[0]))
-     escb->signal = strdup(emission);
+     escb->signal = evas_stringshare_add(emission);
    if ((source) && (source[0]))
-     escb->source = strdup(source);
+     escb->source = evas_stringshare_add(source);
    escb->func = func;
    escb->data = data;
    ed->callbacks = evas_list_append(ed->callbacks, escb);
@@ -107,8 +107,8 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
 	     else
 	       {
 		  ed->callbacks = evas_list_remove_list(ed->callbacks, l);
-		  free(escb->signal);
-		  free(escb->source);
+		  if (escb->signal) evas_stringshare_del(escb->signal);
+		  if (escb->source) evas_stringshare_del(escb->source);
 		  free(escb);
 	       }
 	     return data;
@@ -765,19 +765,14 @@ _edje_emit_handle(Edje *ed, char *sig, char *src)
 #ifdef EDJE_PROGRAM_CACHE
 	l1 = strlen(sig);
 	l2 = strlen(src);
-	tmps = malloc(l1 + l2 + 2);
-	
-	if (tmps)
-	  {
-	     strcpy(tmps, sig);
-	     tmps[l1] = '\377';
-	     strcpy(&(tmps[l1 + 1]), src);
-	  }
+	tmps = alloca(l1 + l2 + 2);
+	strcpy(tmps, sig);
+	tmps[l1] = '\377';
+	strcpy(&(tmps[l1 + 1]), src);
 #endif	     
 	done = 0;
 	
 #ifdef EDJE_PROGRAM_CACHE
-	if (tmps)
 	  {
 	     Evas_List *matches;
 	     
@@ -795,7 +790,6 @@ _edje_emit_handle(Edje *ed, char *sig, char *src)
 		       _edje_program_run(ed, pr, 0, sig, src);
 		       if (_edje_block_break(ed))
 			 {
-			    if (tmps) free(tmps);
 			    goto break_prog;
 			 }
 		    }
@@ -825,7 +819,6 @@ _edje_emit_handle(Edje *ed, char *sig, char *src)
 		       if (_edje_block_break(ed))
 			 {
 #ifdef EDJE_PROGRAM_CACHE
-			    if (tmps) free(tmps);
 			    evas_list_free(matches);
 #endif				 
 			    goto break_prog;
@@ -850,15 +843,8 @@ _edje_emit_handle(Edje *ed, char *sig, char *src)
 	_edje_emit_cb(ed, sig, src);
 	if (_edje_block_break(ed))
 	  {
-#ifdef EDJE_PROGRAM_CACHE
-	     if (tmps) free(tmps);
-#endif		  
 	     goto break_prog;
 	  }
-#ifdef EDJE_PROGRAM_CACHE
-	if (tmps) free(tmps);
-	tmps = NULL;
-#endif	     
      }
    break_prog:
    _edje_thaw(ed);
@@ -906,8 +892,8 @@ _edje_emit_cb(Edje *ed, char *sig, char *src)
 	     if (escb->delete_me)
 	       {
 		  ed->callbacks = evas_list_remove_list(ed->callbacks, l);
-		  free(escb->signal);
-		  free(escb->source);
+		  if (escb->signal) evas_stringshare_del(escb->signal);
+		  if (escb->source) evas_stringshare_del(escb->source);
 		  free(escb);
 	       }
 	     l = next_l;

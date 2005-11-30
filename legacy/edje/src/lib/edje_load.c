@@ -402,7 +402,7 @@ edje_file_collection_list(const char *file)
 		  Edje_Part_Collection_Directory_Entry *ce;
 	     
 		  ce = l->data;
-		  lst = evas_list_append(lst, strdup(ce->entry));
+		  lst = evas_list_append(lst, evas_stringshare_add(ce->entry));
 	       }
 	  }
 	_edje_cache_file_unref(edf);   
@@ -421,7 +421,7 @@ edje_file_collection_list_free(Evas_List *lst)
 {
    while (lst)
      {
-	if (lst->data) free(lst->data);
+	if (lst->data) evas_stringshare_del(lst->data);
 	lst = evas_list_remove(lst, lst->data);
      }
 }
@@ -546,8 +546,8 @@ _edje_file_del(Edje *ed)
 /* I think it would be better swallowed objects dont get deleted */
 /*		  evas_object_del(rp->swallowed_object);*/
 	       }
-	     if (rp->text.text) free(rp->text.text);
-	     if (rp->text.font) free(rp->text.font);
+	     if (rp->text.text) evas_stringshare_del(rp->text.text);
+	     if (rp->text.font) evas_stringshare_del(rp->text.font);
 	     if (rp->text.cache.in_str) evas_stringshare_del(rp->text.cache.in_str);
 	     if (rp->text.cache.out_str) evas_stringshare_del(rp->text.cache.out_str);	     
 
@@ -605,7 +605,7 @@ _edje_file_free(Edje_File *edf)
 	     fe = edf->font_dir->entries->data;
 	     edf->font_dir->entries = 
 	       evas_list_remove(edf->font_dir->entries, fe);
-	     if (fe->entry) free(fe->entry);
+	     if (fe->entry) evas_stringshare_del(fe->entry);
 	     free(fe);
 	  }
 	free(edf->font_dir);
@@ -619,7 +619,7 @@ _edje_file_free(Edje_File *edf)
 	     ie = edf->image_dir->entries->data;
 	     edf->image_dir->entries = 
 	       evas_list_remove(edf->image_dir->entries, ie);
-	     if (ie->entry) free(ie->entry);
+	     if (ie->entry) evas_stringshare_del(ie->entry);
 	     free(ie);
 	  }
 	free(edf->image_dir);
@@ -633,7 +633,7 @@ _edje_file_free(Edje_File *edf)
 	     ce = edf->collection_dir->entries->data;
 	     edf->collection_dir->entries = 
 	       evas_list_remove(edf->collection_dir->entries, ce);
-	     if (ce->entry) free(ce->entry);
+	     if (ce->entry) evas_stringshare_del(ce->entry);
 	     free(ce);
 	  }
 	free(edf->collection_dir);
@@ -646,8 +646,8 @@ _edje_file_free(Edje_File *edf)
 	     
 	     edt = edf->data->data;
 	     edf->data = evas_list_remove(edf->data, edt);
-	     if (edt->key) free(edt->key);
-	     if (edt->value) free(edt->value);
+	     if (edt->key) evas_stringshare_del(edt->key);
+	     if (edt->value) evas_stringshare_del(edt->value);
 	     free(edt);
 	  }
      }
@@ -668,7 +668,7 @@ _edje_file_free(Edje_File *edf)
 	evas_hash_free(edf->collection_hash);
      }
    if (edf->path) evas_stringshare_del(edf->path);
-   if (edf->compiler) free(edf->compiler);
+   if (edf->compiler) evas_stringshare_del(edf->compiler);
    if (edf->collection_cache) _edje_cache_coll_flush(edf);
    _edje_textblock_style_cleanup(edf);
    free(edf);
@@ -683,11 +683,11 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
 
 	pr = ec->programs->data;
 	ec->programs = evas_list_remove(ec->programs, pr);
-	if (pr->name) free(pr->name);
-	if (pr->signal) free(pr->signal);
-	if (pr->source) free(pr->source);
-	if (pr->state) free(pr->state);
-	if (pr->state2) free(pr->state2);
+	if (pr->name) evas_stringshare_del(pr->name);
+	if (pr->signal) evas_stringshare_del(pr->signal);
+	if (pr->source) evas_stringshare_del(pr->source);
+	if (pr->state) evas_stringshare_del(pr->state);
+	if (pr->state2) evas_stringshare_del(pr->state2);
 	while (pr->targets)
 	  {
 	     Edje_Program_Target *prt;
@@ -702,7 +702,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
 
 	     pa = pr->after->data;
 	     pr->after = evas_list_remove(pr->after, pa);
-		 free(pa);
+	     free(pa);
 	  }
 	free(pr);
      }
@@ -712,7 +712,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
 
 	ep = ec->parts->data;
 	ec->parts = evas_list_remove(ec->parts, ep);
-	if (ep->name) free(ep->name);
+	if (ep->name) evas_stringshare_del(ep->name);
 	if (ep->default_desc)
 	  {
 	     _edje_collection_free_part_description_free(ep->default_desc);
@@ -736,8 +736,8 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
 	     
 	     edt = ec->data->data;
 	     ec->data = evas_list_remove(ec->data, edt);
-	     if (edt->key) free(edt->key);
-	     if (edt->value) free(edt->value);
+	     if (edt->key) evas_stringshare_del(edt->key);
+	     if (edt->value) evas_stringshare_del(edt->value);
 	     free(edt);
 	  }
      }
@@ -759,7 +759,7 @@ _edje_collection_free(Edje_File *edf, Edje_Part_Collection *ec)
 static void
 _edje_collection_free_part_description_free(Edje_Part_Description *desc)
 {
-   if (desc->state.name) free(desc->state.name);
+   if (desc->state.name) evas_stringshare_del(desc->state.name);
    while (desc->image.tween_list)
      {
 	Edje_Part_Image_Id *pi;
@@ -768,11 +768,11 @@ _edje_collection_free_part_description_free(Edje_Part_Description *desc)
 	desc->image.tween_list = evas_list_remove(desc->image.tween_list, pi);
 	free(pi);
      }
-   if (desc->color_class)     free(desc->color_class);
-   if (desc->text.text)       free(desc->text.text);
-   if (desc->text.text_class) free(desc->text.text_class);
-   if (desc->text.style)      free(desc->text.style);
-   if (desc->text.font)       free(desc->text.font);
+   if (desc->color_class)     evas_stringshare_del(desc->color_class);
+   if (desc->text.text)       evas_stringshare_del(desc->text.text);
+   if (desc->text.text_class) evas_stringshare_del(desc->text.text_class);
+   if (desc->text.style)      evas_stringshare_del(desc->text.style);
+   if (desc->text.font)       evas_stringshare_del(desc->text.font);
    free(desc);
 }
 

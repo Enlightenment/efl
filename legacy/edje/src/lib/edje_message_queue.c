@@ -242,8 +242,8 @@ _edje_message_free(Edje_Message *em)
 		  Edje_Message_Signal *emsg;
 		  
 		  emsg = (Edje_Message_Signal *)em->msg;
-		  if (emsg->sig) free(emsg->sig);
-		  if (emsg->src) free(emsg->src);
+		  if (emsg->sig) evas_stringshare_del(emsg->sig);
+		  if (emsg->src) evas_stringshare_del(emsg->src);
 		  free(emsg);
 	       }
 	     break;
@@ -293,8 +293,8 @@ _edje_message_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id, v
 	     
 	     emsg2 = (Edje_Message_Signal *)emsg;
 	     emsg3 = calloc(1, sizeof(Edje_Message_Signal));
-	     if (emsg2->sig) emsg3->sig = strdup(emsg2->sig);
-	     if (emsg2->src) emsg3->src = strdup(emsg2->src);
+	     if (emsg2->sig) emsg3->sig = evas_stringshare_add(emsg2->sig);
+	     if (emsg2->src) emsg3->src = evas_stringshare_add(emsg2->src);
 	     msg = (unsigned char *)emsg3;
 	  }
 	break;

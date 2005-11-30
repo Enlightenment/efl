@@ -112,8 +112,8 @@ _edje_del(Edje *ed)
 	
 	escb = ed->callbacks->data;
 	ed->callbacks = evas_list_remove(ed->callbacks, escb);
-	free(escb->signal);
-	free(escb->source);
+	if (escb->signal) evas_stringshare_del(escb->signal);
+	if (escb->source) evas_stringshare_del(escb->source);
 	free(escb);
      }
    while (ed->color_classes)
