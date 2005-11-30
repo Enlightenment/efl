@@ -6,3 +6,4 @@ libevas_data.la
 evas_list.lo
 evas_hash.lo
 evas_object_list.lo
+evas_stringshare.lo
