@@ -227,10 +227,10 @@ void
 evas_common_image_free(RGBA_Image *im)
 {
    if (im->image) evas_common_image_surface_free(im->image);
-   if (im->info.file) free(im->info.file);
-   if (im->info.real_file) free(im->info.real_file);
-   if (im->info.key) free(im->info.key);
-   if (im->info.comment) free(im->info.comment);
+   if (im->info.file) evas_stringshare_del(im->info.file);
+//   if (im->info.real_file) evas_stringshare_del(im->info.real_file);
+   if (im->info.key) evas_stringshare_del(im->info.key);
+   if (im->info.comment) evas_stringshare_del(im->info.comment);
    free(im);
 }
 
@@ -312,18 +312,6 @@ evas_common_image_flush_cache(void)
 }
 
 void
-evas_common_image_free_cache(void)
-{
-	while (cache)
-	{
-		RGBA_Image *im = (RGBA_Image *) cache;
-
-		evas_common_image_uncache(im);
-		evas_common_image_free(im);
-	}
-}
-
-void
 evas_common_image_set_cache(int size)
 {
    cache_size = size;
@@ -347,23 +335,23 @@ evas_common_image_store(RGBA_Image *im)
    if (im->flags & RGBA_IMAGE_INDEXED) return;
    if ((!im->info.file) && (!im->info.key)) return;
    l1 = 0;
-   if (im->info.real_file) l1 = strlen(im->info.real_file);
-   else if (im->info.file) l1 = strlen(im->info.file);
+//   if (im->info.real_file) l1 = strlen(im->info.real_file);
+//   else
+     if (im->info.file) l1 = strlen(im->info.file);
    l2 = 0;
    if (im->info.key) l2 = strlen(im->info.key);
    snprintf(buf, sizeof(buf), "%llx", im->timestamp);
    l3 = strlen(buf);
-   key = malloc(l1 + 5 + l2 + 5 + l3 +1);
-   if (!key) return;
+   key = alloca(l1 + 5 + l2 + 5 + l3 +1);
    key[0] = 0;
-   if (im->info.real_file) strcpy(key, im->info.real_file);
-   else if (im->info.file) strcpy(key, im->info.file);
+//   if (im->info.real_file) strcpy(key, im->info.real_file);
+//   else
+     if (im->info.file) strcpy(key, im->info.file);
    strcat(key, "//://");
    if (im->info.key) strcat(key, im->info.key);
    strcat(key, "//://");
    strcat(key, buf);
    images = evas_hash_add(images, key, im);
-   free(key);
    im->flags |= RGBA_IMAGE_INDEXED;
 }
 
@@ -377,23 +365,23 @@ evas_common_image_unstore(RGBA_Image *im)
    if (!(im->flags & RGBA_IMAGE_INDEXED)) return;
    if ((!im->info.file) && (!im->info.key)) return;
    l1 = 0;
-   if (im->info.real_file) l1 = strlen(im->info.real_file);
-   else if (im->info.file) l1 = strlen(im->info.file);
+//   if (im->info.real_file) l1 = strlen(im->info.real_file);
+//   else
+     if (im->info.file) l1 = strlen(im->info.file);
    l2 = 0;
    if (im->info.key) l2 = strlen(im->info.key);
    snprintf(buf, sizeof(buf), "%llx", im->timestamp);
    l3 = strlen(buf);
-   key = malloc(l1 + 5 + l2 + 5 + l3 +1);
-   if (!key) return;
+   key = alloca(l1 + 5 + l2 + 5 + l3 +1);
    key[0] = 0;
-   if (im->info.real_file) strcpy(key, im->info.real_file);
-   else if (im->info.file) strcpy(key, im->info.file);
+//   if (im->info.real_file) strcpy(key, im->info.real_file);
+//   else 
+     if (im->info.file) strcpy(key, im->info.file);
    strcat(key, "//://");
    if (im->info.key) strcat(key, im->info.key);
    strcat(key, "//://");
    strcat(key, buf);
    images = evas_hash_del(images, key, im);
-   free(key);
    im->flags &= ~RGBA_IMAGE_INDEXED;
 }
 
@@ -418,12 +406,7 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
    if (key) l2 = strlen(key);
    snprintf(buf, sizeof(buf), "%llx", timestamp);
    l3 = strlen(buf);
-   str = malloc(l1 + 5 + l2 + 5 + l3 +1);
-   if (!str)
-     {
-	if (real_filename) free(real_filename);
-	return NULL;
-     }
+   str = alloca(l1 + 5 + l2 + 5 + l3 +1);
    str[0] = 0;
    if (real_filename) strcpy(str, real_filename);
    else if (filename) strcpy(str, filename);
@@ -432,10 +415,9 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
    strcat(str, "//://");
    strcat(str, buf);
    im = evas_hash_find(images, str);
-   free(str);
    if (im)
      {
-	if (real_filename) free(real_filename);
+//	if (real_filename) free(real_filename);
 	return im;
      }
 
@@ -445,6 +427,7 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
 
 	im = (RGBA_Image *)l;
 	ok = 0;
+/*	
 	if ((real_filename) && (im->info.real_file))
 	  {
              if ((im->info.real_file) &&
@@ -453,6 +436,7 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
 	       ok++;
 	  }
 	else
+ */
 	  {
 	     if ((filename) && (im->info.file) &&
 		 (!strcmp(filename, im->info.file)))
@@ -469,11 +453,11 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
 	  ok++;
 	if (ok >= 3)
 	  {
-	     if (real_filename) free(real_filename);
+//	     if (real_filename) free(real_filename);
 	     return im;
 	  }
      }
-   if (real_filename) free(real_filename);
+//   if (real_filename) free(real_filename);
    return NULL;
 }
 
@@ -484,7 +468,7 @@ evas_common_image_ram_usage(RGBA_Image *im)
 
    ram += sizeof(struct _RGBA_Image);
    if (im->info.file) ram += strlen(im->info.file);
-   if (im->info.real_file) ram += strlen(im->info.real_file);
+//   if (im->info.real_file) ram += strlen(im->info.real_file);
    if (im->info.key) ram += strlen(im->info.key);
    if (im->info.comment) ram += strlen(im->info.comment);
    if ((im->image) && (im->image->data) && (!im->image->no_free))
@@ -497,5 +481,17 @@ evas_common_image_dirty(RGBA_Image *im)
 {
    evas_common_image_unstore(im);
    im->flags |= RGBA_IMAGE_IS_DIRTY;
+}
+
+void
+evas_common_image_free_cache(void)
+{
+   while (cache)
+     {
+	RGBA_Image *im = (RGBA_Image *) cache;
+	
+	evas_common_image_uncache(im);
+	evas_common_image_free(im);
+     }
 }
 

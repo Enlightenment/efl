@@ -11,8 +11,8 @@ struct _Evas_Stringshare
 
 struct _Evas_Stringshare_El
 {
-   int                  references;
    Evas_Stringshare_El *next, *prev;
+   int                  references;
 };
 
 static inline int _evas_stringshare_hash_gen(const char *str);
@@ -73,6 +73,7 @@ evas_stringshare_add(const char *str)
 		  if (el->next) el->next->prev = el->prev;
 		  el->prev = NULL;
 		  el->next = share.buckets[hash_num];
+		  el->next->prev = el;
 		  share.buckets[hash_num] = el;
 	       }
 	     el->references++;
@@ -85,6 +86,7 @@ evas_stringshare_add(const char *str)
    el->references = 1;
    el->prev = NULL;
    el->next = share.buckets[hash_num];
+   if (el->next) el->next->prev = el;
    share.buckets[hash_num] = el;
    return el_str;
 }
@@ -108,7 +110,6 @@ evas_stringshare_del(const char *str)
 		  if (el->next) el->next->prev = el->prev;
 		  if (el->prev) el->prev->next = el->next;
 		  else share.buckets[hash_num] = el->next;
-		  share.buckets[hash_num] = evas_object_list_remove(share.buckets[hash_num], el);
 		  free(el);
 	       }
 	     else
@@ -119,6 +120,7 @@ evas_stringshare_del(const char *str)
 		       if (el->next) el->next->prev = el->prev;
 		       el->prev = NULL;
 		       el->next = share.buckets[hash_num];
+		       el->next->prev = el;
 		       share.buckets[hash_num] = el;
 		    }
 	       }

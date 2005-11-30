@@ -138,11 +138,11 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
 	if ((o->cur.key) && (key) && (!strcmp(o->cur.key, key)))
 	  return;
      }
-   if (o->cur.file) free(o->cur.file);
-   if (o->cur.key) free(o->cur.key);
-   if (file) o->cur.file = strdup(file);
+   if (o->cur.file) evas_stringshare_del(o->cur.file);
+   if (o->cur.key) evas_stringshare_del(o->cur.key);
+   if (file) o->cur.file = evas_stringshare_add(file);
    else o->cur.file = NULL;
-   if (key) o->cur.key = strdup(key);
+   if (key) o->cur.key = evas_stringshare_add(key);
    else o->cur.key = NULL;
    o->prev.file = NULL;
    o->prev.key = NULL;
@@ -871,20 +871,17 @@ evas_object_image_save(Evas_Object *obj, const char *file, const char *key, cons
 	char *p, *pp;
 	char *tflags;
 	
-	tflags = strdup(flags);
-	if (tflags)
+	tflags = alloca(strlen(flags) + 1);
+	strcpy(tflags, flags);
+	p = tflags;
+	while (p)
 	  {
-	     p = tflags;
-	     while (p)
-	       {
-		  pp = strchr(p, ' ');
-		  if (pp) *pp = 0;
-		  sscanf(p, "quality=%i", &quality);
-		  sscanf(p, "compress=%i", &compress);
-		  if (pp) p = pp + 1;
-		  else break;
-	       }
-	     free(tflags);
+	     pp = strchr(p, ' ');
+	     if (pp) *pp = 0;
+	     sscanf(p, "quality=%i", &quality);
+	     sscanf(p, "compress=%i", &compress);
+	     if (pp) p = pp + 1;
+	     else break;
 	  }
      }
    im = evas_common_image_new();
@@ -1330,8 +1327,8 @@ evas_object_image_free(Evas_Object *obj)
    return;
    MAGIC_CHECK_END();
    /* free obj */
-   if (o->cur.file) free(o->cur.file);
-   if (o->cur.key) free(o->cur.key);
+   if (o->cur.file) evas_stringshare_del(o->cur.file);
+   if (o->cur.key) evas_stringshare_del(o->cur.key);
    if (o->engine_data)
      obj->layer->evas->engine.func->image_free(obj->layer->evas->engine.data.output,
 					       o->engine_data);
@@ -1589,10 +1586,8 @@ evas_object_image_render_pre(Evas_Object *obj)
      {
 	if (((o->cur.file) && (!o->prev.file)) ||
 	    ((!o->cur.file) && (o->prev.file)) ||
-	    (((o->cur.file) && (o->prev.file) && (strcmp(o->cur.file, o->prev.file)))) ||
 	    ((o->cur.key) && (!o->prev.key)) ||
-	    ((!o->cur.key) && (o->prev.key)) ||
-	    (((o->cur.key) && (o->prev.key) && (strcmp(o->cur.key, o->prev.key))))
+	    ((!o->cur.key) && (o->prev.key))
 	    )
 	  {
 	     updates = evas_object_render_pre_prev_cur_add(updates, obj);
