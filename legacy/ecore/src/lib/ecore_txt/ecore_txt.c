@@ -22,7 +22,7 @@ ecore_txt_convert(const char *enc_from, const char *enc_to, const char *text)
    
    if (!text) return strdup("");
    ic = iconv_open(enc_to, enc_from);
-   if (!ic) return strdup("");
+   if (ic == (iconv_t)(-1)) return strdup("");
    new_txt  = malloc(64);
    inb      = strlen(text);
    outb     = 64;
