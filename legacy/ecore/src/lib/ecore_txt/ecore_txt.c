@@ -20,9 +20,9 @@ ecore_txt_convert(const char *enc_from, const char *enc_to, const char *text)
    char *new_txt, *inp, *outp;
    size_t inb, outb, outlen, tob, outalloc;
    
-   if (!text) return strdup("");
+   if (!text) return NULL;
    ic = iconv_open(enc_to, enc_from);
-   if (ic == (iconv_t)(-1)) return strdup("");
+   if (ic == (iconv_t)(-1)) return NULL;
    new_txt  = malloc(64);
    inb      = strlen(text);
    outb     = 64;
