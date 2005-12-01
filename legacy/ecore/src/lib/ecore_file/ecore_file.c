@@ -188,7 +188,7 @@ ecore_file_cp(const char *src, const char *dst)
 	fclose(f1);
 	return 0;
      }
-   while ((num = fread(buf, 1, 16384, f1)) > 0) fwrite(buf, 1, num, f2);
+   while ((num = fread(buf, 1, sizeof(buf), f1)) > 0) fwrite(buf, 1, num, f2);
    fclose(f1);
    fclose(f2);
    return 1;
@@ -237,6 +237,22 @@ ecore_file_get_dir(char *file)
      }
    *p = 0;
    return strdup(buf);
+}
+
+int
+ecore_file_can_read(const char *file)
+{
+   if (!file) return 0;
+   if (!access(file, R_OK)) return 1;
+   return 0;
+}
+
+int
+ecore_file_can_write(const char *file)
+{
+   if (!file) return 0;
+   if (!access(file, W_OK)) return 1;
+   return 0;
 }
 
 int
