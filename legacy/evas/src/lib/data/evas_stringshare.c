@@ -11,24 +11,21 @@ struct _Evas_Stringshare
 
 struct _Evas_Stringshare_El
 {
-   Evas_Stringshare_El *next, *prev;
+   Evas_Stringshare_El *next;
    int                  references;
 };
 
-static inline int _evas_stringshare_hash_gen(const char *str);
-
 static inline int
-_evas_stringshare_hash_gen(const char *str)
+_evas_stringshare_hash_gen(const char *str, int *len)
 {
    unsigned int hash_num = 0, i;
    const unsigned char *ptr;
-
-   if (!str) return 0;
 
    for (i = 0, ptr = (unsigned char *)str; *ptr; ptr++, i++)
      hash_num ^= ((int)(*ptr) | ((int)(*ptr) << 8)) >> (i % 8);
 
    hash_num &= 0xff;
+   *len = i;
    return (int)hash_num;
 }
 
@@ -57,23 +54,20 @@ static Evas_Stringshare share =
 const char *
 evas_stringshare_add(const char *str)
 {
-   int hash_num;
+   int hash_num, slen;
    char *el_str;
-   Evas_Stringshare_El *el;
+   Evas_Stringshare_El *el, *pel = NULL;
 
-   hash_num = _evas_stringshare_hash_gen(str);
-   for (el = share.buckets[hash_num]; el; el = el->next)
+   hash_num = _evas_stringshare_hash_gen(str, &slen);
+   for (el = share.buckets[hash_num]; el; pel = el, el = el->next)
      {
 	el_str = ((char *)el) + sizeof(Evas_Stringshare_El);
 	if (!strcmp(el_str, str))
 	  {
-	     if (el->prev)
+	     if (pel)
 	       {
-		  el->prev->next = el->next;
-		  if (el->next) el->next->prev = el->prev;
-		  el->prev = NULL;
+		  pel->next = el->next;
 		  el->next = share.buckets[hash_num];
-		  el->next->prev = el;
 		  share.buckets[hash_num] = el;
 	       }
 	     el->references++;
@@ -81,13 +75,11 @@ evas_stringshare_add(const char *str)
 	     return el_str;
 	  }
      }
-   if (!(el = malloc(sizeof(Evas_Stringshare_El) + strlen(str) + 1))) return NULL;
+   if (!(el = malloc(sizeof(Evas_Stringshare_El) + slen + 1))) return NULL;
    el_str = ((char *)el) + sizeof(Evas_Stringshare_El);
    strcpy(el_str, str);
    el->references = 1;
-   el->prev = NULL;
    el->next = share.buckets[hash_num];
-   if (el->next) el->next->prev = el;
    share.buckets[hash_num] = el;
    return el_str;
 }
@@ -95,33 +87,29 @@ evas_stringshare_add(const char *str)
 void
 evas_stringshare_del(const char *str)
 {
-   int hash_num;
+   int hash_num, slen;
    char *el_str;
-   Evas_Stringshare_El *el;
+   Evas_Stringshare_El *el, *pel = NULL;
 
-   hash_num = _evas_stringshare_hash_gen(str);
-   for (el = share.buckets[hash_num]; el; el = el->next)
+   hash_num = _evas_stringshare_hash_gen(str, &slen);
+   for (el = share.buckets[hash_num]; el; pel = el, el = el->next)
      {
 	el_str = ((char *)el) + sizeof(Evas_Stringshare_El);
-	if (!strcmp(el_str, str))
+	if (el_str == str)
 	  {
 	     el->references--;
 	     if (el->references == 0)
 	       {
-		  if (el->next) el->next->prev = el->prev;
-		  if (el->prev) el->prev->next = el->next;
+		  if (pel) pel->next = el->next;
 		  else share.buckets[hash_num] = el->next;
 		  free(el);
 	       }
 	     else
 	       {
-		  if (el->prev)
+		  if (pel)
 		    {
-		       el->prev->next = el->next;
-		       if (el->next) el->next->prev = el->prev;
-		       el->prev = NULL;
+		       pel->next = el->next;
 		       el->next = share.buckets[hash_num];
-		       el->next->prev = el;
 		       share.buckets[hash_num] = el;
 		    }
 	       }
