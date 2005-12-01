@@ -128,4 +128,5 @@ evas_stringshare_del(const char *str)
 	     return;
 	  }
      }
+   printf("EEEK trying to del non-shared stringshare \"%s\"\n", str);
 }
