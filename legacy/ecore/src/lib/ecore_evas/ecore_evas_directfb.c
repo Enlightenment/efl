@@ -21,18 +21,21 @@ static Ecore_Idle_Enterer *ecore_evas_directfb_idle_enterer = NULL;
 static void
 _ecore_evas_directfb_render(Ecore_Evas *ee)
 {
-   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
    Evas_List *updates;
+   
+   if (ee->func.fn_pre_render) ee->func.fn_pre_render(ee);
    updates = evas_render_updates(ee->evas);
    if (updates)
      {
 	DFBRegion region;
 	IDirectFBSurface *surface;
 	Evas_List *l;
+	
 	surface = ee->engine.directfb.window->surface;
 	for (l = updates; l; l = l->next)
 	  {
 	     Evas_Rectangle *rect;
+	     
 	     rect = l->data;
 	     region.x1 = rect->x;
 	     region.y1 = rect->y;
@@ -58,6 +61,7 @@ _ecore_evas_directfb_idle_enter(void *data __UNUSED__)
    for (l = (Ecore_List2 *)ecore_evases; l; l = l->next)
      {
 	Ecore_Evas *ee;
+	
 	ee = (Ecore_Evas *)l;
 	_ecore_evas_directfb_render(ee);
      }
@@ -132,7 +136,7 @@ _ecore_evas_directfb_mouse_move_process(Ecore_Evas *ee, int x, int y, unsigned i
    else if (ee->rotation == 270)
      evas_event_feed_mouse_move(ee->evas, y, ee->w - x - 1, timestamp, NULL);
 }
-	
+
 
 static int 
 _ecore_evas_directfb_event_key_down(void *data __UNUSED__, int type __UNUSED__, void *event)
@@ -144,9 +148,8 @@ _ecore_evas_directfb_event_key_down(void *data __UNUSED__, int type __UNUSED__, 
    ee = _ecore_evas_directfb_match(e->win);
    
    if (!ee) return 1; /* pass on event */
-   evas_event_feed_key_down(ee->evas, e->keyname, e->keysymbol, e->key_compose, NULL, e->time, NULL);
+   evas_event_feed_key_down(ee->evas, e->name, NULL, e->string, e->key_compose, e->time, NULL);
    return 1;
-   
 }
 
 static int
@@ -159,9 +162,8 @@ _ecore_evas_directfb_event_key_up(void *data __UNUSED__, int type __UNUSED__, vo
    ee = _ecore_evas_directfb_match(e->win);
    
    if (!ee) return 1; /* pass on event */
-   evas_event_feed_key_up(ee->evas, e->keyname, e->keysymbol, e->key_compose, NULL, e->time, NULL);
+   evas_event_feed_key_up(ee->evas, e->name, NULL, e->string, e->key_compose, e->time, NULL);
    return 1;	
-   
 }
 
 static int
@@ -176,7 +178,6 @@ _ecore_evas_directfb_event_motion(void *data __UNUSED__, int type __UNUSED__, vo
    if (!ee) return 1; /* pass on event */
    _ecore_evas_directfb_mouse_move_process(ee, e->x, e->y, e->time);
    return 1;	
-   
 }
 
 static int
@@ -283,7 +284,6 @@ _ecore_evas_directfb_event_lost_focus(void *data __UNUSED__, int type __UNUSED__
    ee->prop.focused = 0;
    return 1;	
 }
-
 	
 int
 _ecore_evas_directfb_shutdown(void)
@@ -478,13 +478,13 @@ _ecore_evas_directfb_fullscreen_set(Ecore_Evas *ee, int on)
 	  }
      }
    einfo = (Evas_Engine_Info_DirectFB *)evas_engine_info_get(ee->evas);
-   if(einfo)
+   if (einfo)
      {
 	einfo->info.surface = ee->engine.directfb.window->surface;
 	evas_engine_info_set(ee->evas, (Evas_Engine_Info *)einfo);
      }
    ee->prop.fullscreen = on;
-   if(resized)
+   if (resized)
      {
 	if(ee->func.fn_resize) ee->func.fn_resize(ee);
      }
@@ -506,14 +506,14 @@ static const Ecore_Evas_Engine_Func _ecore_directfb_engine_func =
      NULL,				/* cb mouse out */
      NULL,				/* cb pre render */
      NULL,				/* cb post render */
-     _ecore_evas_directfb_move,	/* move */
+     _ecore_evas_directfb_move,	        /* move */
      NULL,                              /* managed move */
      _ecore_evas_directfb_resize,	/* resize */
      NULL,				/* move resize */
      NULL,//_ecore_evas_directfb_rotation_set,/* rotation */
-     _ecore_evas_directfb_shaped_set,/* shaped */
-     _ecore_evas_directfb_show,	/* show */
-     _ecore_evas_directfb_hide,	/* hide */
+     _ecore_evas_directfb_shaped_set,   /* shaped */
+     _ecore_evas_directfb_show,	        /* show */
+     _ecore_evas_directfb_hide,	        /* hide */
      NULL,				/* raise */
      NULL,				/* lower */
      NULL,				/* title set */
@@ -522,7 +522,7 @@ static const Ecore_Evas_Engine_Func _ecore_directfb_engine_func =
      NULL,				/* size max */
      NULL,				/* size base */
      NULL,				/* size step */
-     _ecore_evas_directfb_cursor_set,/* cursor set */
+     _ecore_evas_directfb_cursor_set,   /* cursor set */
      NULL,				/* layer set */
      _ecore_evas_directfb_focus_set,	/* focus */
      NULL,				/* iconified */
@@ -556,10 +556,7 @@ ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
    Evas_Engine_Info_DirectFB *einfo;
    Ecore_Evas *ee;
-   
    Ecore_DirectFB_Window *window;
-   
-   
    int rmethod;
    
    rmethod = evas_render_method_lookup("directfb");
@@ -576,7 +573,6 @@ ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w
    if (disp_name) ee->name = strdup(disp_name);
    
    if (w < 1) w = 1;
-   
    if (h < 1) h = 1;
    
    ee->rotation = 0;
@@ -587,16 +583,6 @@ ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w
    ee->h = h;
    ee->prop.layer = 1;	
    ee->prop.fullscreen = 0;
-   /*ee->prop.max.w = 0;
-    ee->prop.max.h = 0;
-    ee->prop.layer = 0;
-    ee->prop.focused = 1;
-    ee->prop.borderless = 0;
-    ee->prop.override = 1;
-    ee->prop.maximized = 0;
-    ee->prop.withdrawn = 0;
-    ee->prop.sticky = 0;*/
-   //ee->prop.cursor.object = 0;
    
    /* init evas here */
    ee->evas = evas_new();

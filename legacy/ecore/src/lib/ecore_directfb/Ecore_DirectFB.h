@@ -45,7 +45,7 @@ extern int ECORE_DIRECTFB_EVENT_WHEEL;
 
 #ifndef _ECORE_DIRECTFB_WINDOW_PREDEF
 typedef struct _Ecore_DirectFB_Window			Ecore_DirectFB_Window;
-#endif   
+#endif
 typedef struct _Ecore_DirectFB_Cursor			Ecore_DirectFB_Cursor;
 
 typedef struct _Ecore_DirectFB_Event_Key_Down		Ecore_DirectFB_Event_Key_Down; 
@@ -83,8 +83,8 @@ struct _Ecore_DirectFB_Cursor
 
 struct _Ecore_DirectFB_Event_Key_Down /** DirectFB Key Down event */
 {
-	char   *keyname; /**< The name of the key that was released */
-   	char   *keysymbol; /**< The logical symbol of the key that was pressed */
+	char   *name; /**< The name of the key that was released */
+   	char   *string; /**< The logical symbol of the key that was pressed */
 	char   *key_compose; /**< The UTF-8 string conversion if any */
    	unsigned int time;
 	DFBWindowID win;
@@ -92,8 +92,8 @@ struct _Ecore_DirectFB_Event_Key_Down /** DirectFB Key Down event */
    
 struct _Ecore_DirectFB_Event_Key_Up /** DirectFB Key Up event */
 {
-	char   *keyname; /**< The name of the key that was released */
-   	char   *keysymbol; /**< The logical symbol of the key that was pressed */
+	char   *name; /**< The name of the key that was released */
+   	char   *string; /**< The logical symbol of the key that was pressed */
 	char   *key_compose; /**< The UTF-8 string conversion if any */
    	unsigned int time;
 	DFBWindowID win;

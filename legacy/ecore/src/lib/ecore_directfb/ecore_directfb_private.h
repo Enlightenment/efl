@@ -8,4 +8,8 @@
           }                                                            \
      }
 
-
+struct keymap
+{
+	char *name;
+	char *string;
+};

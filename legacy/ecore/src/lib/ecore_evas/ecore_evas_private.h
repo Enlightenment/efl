@@ -143,10 +143,7 @@ struct _Ecore_Evas_Engine
 #endif
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
    struct {
-	   Ecore_DirectFB_Window *window;
-	   /*IDirectFBWindow *window;
-	   DirectFBSurface *surface;
-	   DirectFBWindowID id;*/
+      Ecore_DirectFB_Window *window;
    } directfb;
 #endif
 };

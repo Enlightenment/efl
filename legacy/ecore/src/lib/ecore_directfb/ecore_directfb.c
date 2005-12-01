@@ -7,7 +7,11 @@
 /* ecore_directfb */
 /******************/
 /* About */
-/* with this you can create windows of directfb and handle events through ecore */
+/* with this you can create windows of directfb and handle events through ecore
+ * TODO:
+ * - handle all event types
+ * - 
+ * */
 
 static int _ecore_directfb_key_symbols_count = sizeof(_ecore_directfb_key_symbols)/sizeof(Ecore_DirectFB_Key_Symbols);
 static int _ecore_directfb_init_count = 0;
@@ -62,8 +66,8 @@ _ecore_directfb_event_free_key_down(void *data __UNUSED__, void *ev)
    Ecore_DirectFB_Event_Key_Up *e;
    
    e = ev;
-   free(e->keyname);
-   if (e->keysymbol) free(e->keysymbol);
+   if(e->name) free(e->name);
+   if (e->string) free(e->string);
    if (e->key_compose) free(e->key_compose);
    free(e);
 }
@@ -74,8 +78,8 @@ _ecore_directfb_event_free_key_up(void *data __UNUSED__, void *ev)
    Ecore_DirectFB_Event_Key_Up *e;
    
    e = ev;
-   free(e->keyname);
-   if (e->keysymbol) free(e->keysymbol);
+   if(e->name) free(e->name);
+   if (e->string) free(e->string);
    if (e->key_compose) free(e->key_compose);
    free(e);
 }
@@ -151,7 +155,7 @@ _ecore_directfb_event_handle_key_down(DFBEvent *evt)
 
 	Ecore_DirectFB_Event_Key_Down *e;
 	unsigned int key_symbol;
-	char *key_name;
+	struct keymap *k;
 	
 	e = calloc(1, sizeof(Ecore_DirectFB_Event_Key_Down));
 	
@@ -159,31 +163,31 @@ _ecore_directfb_event_handle_key_down(DFBEvent *evt)
 	{
 		case DFEC_INPUT:
 			key_symbol = evt->input.key_symbol;
-			key_name = ecore_hash_get(_ecore_directfb_key_symbols_hash, &key_symbol);
+			k = ecore_hash_get(_ecore_directfb_key_symbols_hash, &key_symbol);
 
-			if(!key_name) 
+			if(!k) 
 			{
 				printf("error en el numero, %0X\n", evt->input.key_symbol);
 				return;
 			}
-			e->keyname = strdup(key_name);
-  			e->keysymbol = strdup(key_name);
+			e->name = strdup(k->name);
+  			e->string = strdup(k->string);
 	 		e->key_compose = NULL;
 			e->win = _ecore_directfb_fullscreen_window_id;
 			e->time = 0;
-		break;
+			break;
 	      
 		case DFEC_WINDOW:
 			key_symbol = evt->window.key_symbol;
-			key_name = ecore_hash_get(_ecore_directfb_key_symbols_hash, &key_symbol);
+			k = ecore_hash_get(_ecore_directfb_key_symbols_hash, &key_symbol);
 
-			if(!key_name) 
+			if(!k) 
 			{
 				printf("error en el numero, %0X\n", evt->window.key_symbol);
 				return;
 			}
-			e->keyname = strdup(key_name);
-	  		e->keysymbol = strdup(key_name);
+			e->name = strdup(k->name);
+  			e->string = strdup(k->string);
 	 		e->key_compose = NULL;
 			e->win = evt->window.window_id;
 			e->time = 0;
@@ -199,7 +203,7 @@ _ecore_directfb_event_handle_key_up(DFBEvent *evt)
 {
 	Ecore_DirectFB_Event_Key_Up *e;
 	unsigned int key_symbol;
-	char *key_name;
+	struct keymap *k;
 	
 	e = calloc(1, sizeof(Ecore_DirectFB_Event_Key_Up));
 	
@@ -207,15 +211,16 @@ _ecore_directfb_event_handle_key_up(DFBEvent *evt)
 	{
 		case DFEC_INPUT:
 			key_symbol = evt->input.key_symbol;
-			key_name = ecore_hash_get(_ecore_directfb_key_symbols_hash, &key_symbol);
+			k = ecore_hash_get(_ecore_directfb_key_symbols_hash, &key_symbol);
 
-			if(!key_name) 
+			
+			if(!k) 
 			{
 				printf("error en el numero, %0X\n", evt->input.key_symbol);
 				return;
 			}
-			e->keyname = strdup(key_name);
-  			e->keysymbol = strdup(key_name);
+			e->name = strdup(k->name);
+  			e->string = strdup(k->string);
 	 		e->key_compose = NULL;
 			e->win = _ecore_directfb_fullscreen_window_id;
 			e->time = 0;
@@ -223,15 +228,15 @@ _ecore_directfb_event_handle_key_up(DFBEvent *evt)
 	      
 		case DFEC_WINDOW:
 			key_symbol = evt->window.key_symbol;
-			key_name = ecore_hash_get(_ecore_directfb_key_symbols_hash, &key_symbol);
+			k = ecore_hash_get(_ecore_directfb_key_symbols_hash, &key_symbol);
 
-			if(!key_name) 
+			if(!k) 
 			{
 				printf("error en el numero, %0X\n", evt->window.key_symbol);
 				return;
 			}
-			e->keyname = strdup(key_name);
-	  		e->keysymbol = strdup(key_name);
+			e->name = strdup(k->name);
+  			e->string = strdup(k->string);
 	 		e->key_compose = NULL;
 			e->win = evt->window.window_id;
 			e->time = 0;
@@ -695,7 +700,11 @@ ecore_directfb_init(const char *name)
 	_ecore_directfb_key_symbols_hash = ecore_hash_new(_ecore_directfb_hash_create,_ecore_directfb_hash_compare);
 	for(i=0; i<_ecore_directfb_key_symbols_count; i++)
 	{
-		ecore_hash_set(_ecore_directfb_key_symbols_hash, &_ecore_directfb_key_symbols[i].keycode, _ecore_directfb_key_symbols[i].keysymbol);
+		struct keymap *k;
+		k = malloc(sizeof(struct keymap));
+		k->name = _ecore_directfb_key_symbols[i].name;
+		k->string = _ecore_directfb_key_symbols[i].string;
+		ecore_hash_set(_ecore_directfb_key_symbols_hash, &_ecore_directfb_key_symbols[i].id, k);
 	}
 	/* create the hash for the windows(key = windowid, val = Ecore_DirectFB_Window struct) */
 	return _ecore_directfb_init_count;
@@ -717,7 +726,10 @@ ecore_directfb_shutdown(void)
 	/* free the key symbol names hash */
 	for(i=0; i<_ecore_directfb_key_symbols_count; i++)
 	{
-		ecore_hash_remove(_ecore_directfb_key_symbols_hash, &_ecore_directfb_key_symbols[i].keycode);
+		struct keymap *k;
+		k = ecore_hash_get(_ecore_directfb_key_symbols_hash, &_ecore_directfb_key_symbols[i].id);
+		ecore_hash_remove(_ecore_directfb_key_symbols_hash, &_ecore_directfb_key_symbols[i].id);
+		free(k);
 	}
 	
 	if(_ecore_directfb_fullscreen_window_id)
