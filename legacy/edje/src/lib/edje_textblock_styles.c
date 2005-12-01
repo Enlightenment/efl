@@ -318,11 +318,11 @@ _edje_textblock_style_cleanup(Edje_File *edf)
 	     
 	     tag = stl->tags->data;
 	     stl->tags = evas_list_remove_list(stl->tags, stl->tags);
-	     if (tag->key) free(tag->key);
-	     if (tag->value) free(tag->value);
+	     if (tag->key) evas_stringshare_del(tag->key);
+	     if (tag->value) evas_stringshare_del(tag->value);
 	     free(tag);
 	  }
-	if (stl->name) free(stl->name);
+	if (stl->name) evas_stringshare_del(stl->name);
 	if (stl->style) evas_textblock_style_free(stl->style);
 	free(stl);
      }
