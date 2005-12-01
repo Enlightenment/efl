@@ -2042,7 +2042,7 @@ _find_layout_item_line_match(Evas_Object *obj, Evas_Object_Textblock_Node *n, in
 	     it = (Evas_Object_Textblock_Item *)ll;
 	     if (it->source_node == n)
 	       {
-		  if ((it->source_pos + strlen(it->text)) > pos)
+		  if ((it->source_pos + strlen(it->text)) >= pos)
 		    {
 		       *lnr = ln;
 		       *itr = it;
