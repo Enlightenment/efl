@@ -180,23 +180,26 @@ void ecore_hash_destroy(Ecore_Hash *hash)
 
 	ECORE_WRITE_LOCK(hash);
 
-	while (i < ecore_prime_table[hash->size]) {
-		if (hash->buckets[i]) {
-			Ecore_Hash_Node *bucket;
+	if (hash->buckets) {
+		while (i < ecore_prime_table[hash->size]) {
+			if (hash->buckets[i]) {
+				Ecore_Hash_Node *bucket;
 
-			/*
-			 * Remove the bucket list to avoid possible recursion
-			 * on the free callbacks.
-			 */
-			bucket = hash->buckets[i];
-			hash->buckets[i] = NULL;
-			_ecore_hash_bucket_destroy(bucket,
-					hash->free_key, hash->free_value);
+				/*
+				 * Remove the bucket list to avoid possible recursion
+				 * on the free callbacks.
+				 */
+				bucket = hash->buckets[i];
+				hash->buckets[i] = NULL;
+				_ecore_hash_bucket_destroy(bucket,
+						hash->free_key,
+						hash->free_value);
+			}
+			i++;
 		}
-		i++;
-	}
 
-	FREE(hash->buckets);
+		FREE(hash->buckets);
+	}
 
 	ECORE_WRITE_UNLOCK(hash);
 	ECORE_DESTROY_LOCKS(hash);
