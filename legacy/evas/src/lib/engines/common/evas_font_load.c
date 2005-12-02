@@ -18,11 +18,10 @@ evas_common_font_source_memory_load(const char *name, const void *data, int data
 
    fs = calloc(1, sizeof(RGBA_Font_Source) + data_size);
    if (!fs) return NULL;
-   fs->file = NULL;
    fs->data = ((unsigned char *)fs) + sizeof(RGBA_Font_Source);
+   fs->data_size = data_size;
    fs->current_size = 0;
    memcpy(fs->data, data, data_size);
-   fs->data_size = data_size;
    error = FT_New_Memory_Face(evas_ft_lib, fs->data, fs->data_size, 0, &(fs->ft.face));
    if (error)
      {
@@ -30,6 +29,7 @@ evas_common_font_source_memory_load(const char *name, const void *data, int data
 	return NULL;
      }
    fs->name = evas_stringshare_add(name);
+   fs->file = NULL;
    error = FT_Select_Charmap(fs->ft.face, ft_encoding_unicode);
    fs->ft.orig_upem = fs->ft.face->units_per_EM;
    fs->references = 1;
@@ -45,17 +45,17 @@ evas_common_font_source_load(const char *name)
 
    fs = calloc(1, sizeof(RGBA_Font_Source));
    if (!fs) return NULL;
-   fs->file = fs->name;
    fs->data = NULL;
    fs->data_size = 0;
    fs->current_size = 0;
-   error = FT_New_Face(evas_ft_lib, fs->file, 0, &(fs->ft.face));
+   error = FT_New_Face(evas_ft_lib, name, 0, &(fs->ft.face));
    if (error)
      {
 	free(fs);
 	return NULL;
      }
    fs->name = evas_stringshare_add(name);
+   fs->file = fs->name;
    error = FT_Select_Charmap(fs->ft.face, ft_encoding_unicode);
    fs->ft.orig_upem = fs->ft.face->units_per_EM;
    fs->references = 1;
