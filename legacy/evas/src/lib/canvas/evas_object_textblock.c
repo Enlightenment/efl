@@ -858,7 +858,7 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	  {
 	     char *ts, *p;
 	     
-	     ts = alloca(strlen(param));
+	     ts = alloca(strlen(param) + 1);
 	     strcpy(ts, param);
 	     p = strchr(ts, '%');
 	     *p = 0;
@@ -885,7 +885,7 @@ _format_command(Evas_Object *obj, Evas_Object_Textblock_Format *fmt, char *cmd, 
 	  {
 	     char *ts, *p;
 	     
-	     ts = alloca(strlen(param));
+	     ts = alloca(strlen(param) + 1);
 	     strcpy(ts, param);
 	     p = strchr(ts, '%');
 	     *p = 0;
