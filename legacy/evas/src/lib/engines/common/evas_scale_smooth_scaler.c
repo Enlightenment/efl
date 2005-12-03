@@ -6,17 +6,10 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
 	   int dst_region_x, int dst_region_y,
 	   int dst_region_w, int dst_region_h)
 {
-   int      x, y;
-   int     *lin_ptr, *lin2_ptr;
-   int     *interp_x, *interp_y;
-   int     *sample_x, *sample_y;
-   char    *iterate_x, *iterate_y;
-   DATA32  *buf, *dptr;
-   DATA32 **row_ptr, **row2_ptr;
-   DATA32  *ptr, *dst_ptr, *dst_data, *ptr2, *ptr3, *ptr4;
+   DATA32  *dst_ptr;
    int      dst_jump;
    int      dst_clip_x, dst_clip_y, dst_clip_w, dst_clip_h;
-   int      src_w, src_h, dst_w, dst_h;
+   int      src_w, src_h, dst_w, dst_h; 
 
    if (!(RECTS_INTERSECT(dst_region_x, dst_region_y, dst_region_w, dst_region_h, 0, 0, dst->image->w, dst->image->h)))
      return;
@@ -27,8 +20,6 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
    src_h = src->image->h;
    dst_w = dst->image->w;
    dst_h = dst->image->h;
-
-   dst_data = dst->image->data;
 
    if (dc->clip.use)
      {
@@ -146,32 +137,11 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
      }
    if (dst_clip_h <= 0) return;
 
-   lin_ptr = malloc(dst_clip_w * sizeof(int));
-   if (!lin_ptr) goto no_lin_ptr;
-   row_ptr = malloc(dst_clip_h * sizeof(DATA32 *));
-   if (!row_ptr) goto no_row_ptr;
-   lin2_ptr = malloc(dst_clip_w * sizeof(int));
-   if (!lin2_ptr) goto no_lin2_ptr;
-   row2_ptr = malloc(dst_clip_h * sizeof(DATA32 *));
-   if (!row2_ptr) goto no_row2_ptr;
-   interp_x = malloc(dst_clip_w * sizeof(int));
-   if (!interp_x) goto no_interp_x;
-   interp_y = malloc(dst_clip_h * sizeof(int));
-   if (!interp_y) goto no_interp_y;
-   sample_x = malloc(dst_clip_w * sizeof(int) * 3);
-   if (!sample_x) goto no_sample_x;
-   sample_y = malloc(dst_clip_h * sizeof(int) * 3);
-   if (!sample_y) goto no_sample_y;
-   iterate_x = malloc(dst_clip_w * sizeof(char));
-   if (!iterate_x) goto no_iterate_x;
-   iterate_y = malloc(dst_clip_h * sizeof(char));
-   if (!iterate_y) goto no_iterate_y;
-
    /* figure out dst jump */
    dst_jump = dst_w - dst_clip_w;
 
    /* figure out dest start ptr */
-   dst_ptr = dst_data + dst_clip_x + (dst_clip_y * dst_w);
+   dst_ptr = dst->image->data + dst_clip_x + (dst_clip_y * dst_w);
 
 /* FIXME:
  *
@@ -218,51 +188,17 @@ SCALE_FUNC(RGBA_Image *src, RGBA_Image *dst,
      }
    else
      {
-	Gfx_Func_Blend_Src_Cmod_Dst func_cmod;
-	Gfx_Func_Blend_Src_Mul_Dst  func_mul;
-	Gfx_Func_Blend_Src_Dst      func;
-
-	/* a scanline buffer */
-	buf = malloc(dst_clip_w * sizeof(DATA32));
-	if (!buf) goto no_buf;
-
-	func      = evas_common_draw_func_blend_get      (src, dst, dst_clip_w);
-	func_cmod = evas_common_draw_func_blend_cmod_get (src, dst, dst_clip_w);
-	func_mul  = evas_common_draw_func_blend_mul_get  (src, dc->mul.col, dst, dst_clip_w);
-
 	/* scaling up only - dont need anything except original */
 	if ((dst_region_w >= src_region_w) && (dst_region_h >= src_region_h))
 	  {
 #include "evas_scale_smooth_scaler_up.c"
+	     return;
 	  }
 	else
 	  /* scaling down... funkiness */
 	  {
 #include "evas_scale_smooth_scaler_down.c"
+	     return;
 	  }
-	free(buf);
      }
-   no_buf:
-   /* free scale tables */
-   free(iterate_y);
-   no_iterate_y:
-   free(iterate_x);
-   no_iterate_x:
-   free(sample_y);
-   no_sample_y:
-   free(sample_x);
-   no_sample_x:
-   free(interp_y);
-   no_interp_y:
-   free(interp_x);
-   no_interp_x:
-   free(row2_ptr);
-   no_row2_ptr:
-   free(lin2_ptr);
-   no_lin2_ptr:
-   free(row_ptr);
-   no_row_ptr:
-   free(lin_ptr);
-   no_lin_ptr:
-   ;
 }

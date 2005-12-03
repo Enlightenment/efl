@@ -1,6 +1,9 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
+static Evas_List *
+evas_render_updates_internal(Evas *e, unsigned char make_updates);
+
 /**
  * To be documented.
  *
@@ -169,14 +172,8 @@ _evas_render_phase1_process(Evas *e, Evas_List **active_objects, Evas_List **res
      }
 }
 
-/**
- * To be documented.
- *
- * FIXME: To be fixed.
- *
- */
-Evas_List *
-evas_render_updates(Evas *e)
+static Evas_List *
+evas_render_updates_internal(Evas *e, unsigned char make_updates)
 {
    Evas_List *updates = NULL;
    Evas_List *obscuring_objects = NULL;
@@ -275,14 +272,18 @@ evas_render_updates(Evas *e)
 							 &ux, &uy, &uw, &uh,
 							 &cx, &cy, &cw, &ch)))
      {
-	Evas_Rectangle *rect;
 	int off_x, off_y;
 
-	rect = malloc(sizeof(Evas_Rectangle));
-	if (rect)
+	if (make_updates)
 	  {
-	     rect->x = ux; rect->y = uy; rect->w = uw; rect->h = uh;
-	     updates = evas_list_append(updates, rect);
+	    Evas_Rectangle *rect;
+
+	    rect = malloc(sizeof(Evas_Rectangle));
+	    if (rect)
+	      {
+		rect->x = ux; rect->y = uy; rect->w = uw; rect->h = uh;
+		updates = evas_list_append(updates, rect);
+	      }
 	  }
 	off_x = cx - ux;
 	off_y = cy - uy;
@@ -421,15 +422,32 @@ evas_render_updates_free(Evas_List *updates)
  * FIXME: To be fixed.
  *
  */
+Evas_List *
+evas_render_updates(Evas *e)
+{
+   MAGIC_CHECK(e, Evas, MAGIC_EVAS);
+   return NULL;
+   MAGIC_CHECK_END();
+   
+   if (!e->changed)
+       return NULL;
+   return evas_render_updates_internal(e, 1);
+}
+
+/**
+ * To be documented.
+ *
+ * FIXME: To be fixed.
+ *
+ */
 void
 evas_render(Evas *e)
 {
-   Evas_List *updates;
-
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
 
-   updates = evas_render_updates(e);
-   if (updates) evas_render_updates_free(updates);
+   if (!e->changed)
+       return;
+  (void)evas_render_updates_internal(e, 0);
 }

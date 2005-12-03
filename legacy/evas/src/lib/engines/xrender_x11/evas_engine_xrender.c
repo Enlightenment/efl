@@ -143,12 +143,22 @@ _xr_render_surface_argb_pixels_fill(Xrender_Surface *rs, int sw, int sh, void *p
 	     sple = sp + w;
 	     while (sp < sple)
 	       {
-		  a = A_VAL(sp);
-		  aa = a + 1;
-		  r = ((R_VAL(sp)) * aa) >> 8;
-		  g = ((G_VAL(sp)) * aa) >> 8;
-		  b = ((B_VAL(sp)) * aa) >> 8;
-		  *p = (b << 24) | (g << 16) | (r << 8) | a;
+		  switch (a = A_VAL(sp))
+		  {
+		    case 0:
+			*p = 0;
+		    break;
+		    case 255:
+			*p = (B_VAL(sp) << 24) | (G_VAL(sp) << 16) | (R_VAL(sp) << 8) | 0xff;
+		    break;
+		    default:
+			aa = a + 1;
+			r = ((R_VAL(sp)) * aa) >> 8;
+			g = ((G_VAL(sp)) * aa) >> 8;
+			b = ((B_VAL(sp)) * aa) >> 8;
+			*p = (b << 24) | (g << 16) | (r << 8) | a;
+		    break;
+		  }
 		  p++;
 		  sp++;
 	       }
@@ -163,12 +173,22 @@ _xr_render_surface_argb_pixels_fill(Xrender_Surface *rs, int sw, int sh, void *p
 	     sple = sp + w;
 	     while (sp < sple)
 	       {
-		  a = A_VAL(sp);
-		  aa = a + 1;
-		  r = ((R_VAL(sp)) * aa) >> 8;
-		  g = ((G_VAL(sp)) * aa) >> 8;
-		  b = ((B_VAL(sp)) * aa) >> 8;
-		  *p = (a << 24) | (r << 16) | (g << 8) | b;
+		  switch (a = A_VAL(sp))
+		  {
+		    case 0:
+			*p = 0;
+		    break;
+		    case 255:
+			*p = *sp;
+		    break;
+		    default:
+			aa = a + 1;
+			r = ((R_VAL(sp)) * aa) >> 8;
+			g = ((G_VAL(sp)) * aa) >> 8;
+			b = ((B_VAL(sp)) * aa) >> 8;
+			*p = (a << 24) | (r << 16) | (g << 8) | b;
+		    break;
+		  }
 		  p++;
 		  sp++;
 	       }

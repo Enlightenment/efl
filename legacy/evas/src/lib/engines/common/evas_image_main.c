@@ -14,6 +14,11 @@ static Evas_Object_List * cache = NULL;
 static int                cache_size = 0;
 static int                cache_usage = 0;
 
+static RGBA_Image *evas_rgba_line_buffer = NULL;
+
+#define  EVAS_RGBA_LINE_BUFFER_MIN_LEN  256
+#define  EVAS_RGBA_LINE_BUFFER_MAX_LEN  1024
+
 #if 0
 int
 image_debug_hash_cb(Evas_Hash *hash, const char *key, void *data, void *fdata)
@@ -484,14 +489,57 @@ evas_common_image_dirty(RGBA_Image *im)
 }
 
 void
-evas_common_image_free_cache(void)
+evas_common_image_cache_free(void)
 {
-   while (cache)
+   evas_common_image_set_cache(0);
+}
+
+RGBA_Image *
+evas_common_image_line_buffer_obtain(int len)
+{
+   if (len < 1) return NULL;
+   if (len < EVAS_RGBA_LINE_BUFFER_MIN_LEN)
+	len = EVAS_RGBA_LINE_BUFFER_MIN_LEN;
+   if (evas_rgba_line_buffer)
      {
-	RGBA_Image *im = (RGBA_Image *) cache;
-	
-	evas_common_image_uncache(im);
-	evas_common_image_free(im);
+	if (evas_rgba_line_buffer->image->w >= len)
+	   return evas_rgba_line_buffer;
+	evas_rgba_line_buffer->image->data = (DATA32 *)realloc(evas_rgba_line_buffer->image->data, len * sizeof(DATA32));
+	if (!evas_rgba_line_buffer->image->data)
+	  {
+	   evas_common_image_free(evas_rgba_line_buffer);
+	   evas_rgba_line_buffer = NULL;
+	   return NULL;
+	  }
+	evas_rgba_line_buffer->image->w = len;
+	return evas_rgba_line_buffer;
+     }
+   evas_rgba_line_buffer = evas_common_image_create(len, 1);
+   if (!evas_rgba_line_buffer) return NULL;
+   return evas_rgba_line_buffer;
+}
+
+void
+evas_common_image_line_buffer_release(void)
+{
+   if (!evas_rgba_line_buffer) return;
+   if (EVAS_RGBA_LINE_BUFFER_MAX_LEN < evas_rgba_line_buffer->image->w)
+     {
+	evas_rgba_line_buffer->image->w = EVAS_RGBA_LINE_BUFFER_MAX_LEN;
+	evas_rgba_line_buffer->image->data = (DATA32 *)realloc(evas_rgba_line_buffer->image->data,
+	                         evas_rgba_line_buffer->image->w * sizeof(DATA32));
+	if (!evas_rgba_line_buffer->image->data)
+	  {
+	   evas_common_image_free(evas_rgba_line_buffer);
+	   evas_rgba_line_buffer = NULL;
+	  }
      }
 }
 
+void
+evas_common_image_line_buffer_free(void)
+{
+   if (!evas_rgba_line_buffer) return;
+   evas_common_image_free(evas_rgba_line_buffer);
+   evas_rgba_line_buffer = NULL;
+}

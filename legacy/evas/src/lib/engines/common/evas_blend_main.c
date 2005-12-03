@@ -288,6 +288,7 @@ evas_common_blend_init_evas_pow_lut(void)
 /*   
    int i, j;
 
+   if (_evas_pow_lut) return;
    _evas_pow_lut = malloc(256 * 256);
    if (!_evas_pow_lut) return;
    printf("const DATA8 _evas_pow_lut[65536] = {\n");
@@ -308,3 +309,15 @@ evas_common_blend_init_evas_pow_lut(void)
    printf("};\n");
  */
 }
+
+void
+evas_common_blend_free_evas_pow_lut(void)
+{
+   return;
+/*
+   if (!_evas_pow_lut) return;
+   free(_evas_pow_lut);
+   _evas_pow_lut = NULL;
+*/
+}
+

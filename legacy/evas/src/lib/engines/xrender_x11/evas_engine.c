@@ -29,6 +29,10 @@ static void evas_engine_xrender_x11_context_multiplier_unset(void *data, void *c
 static int evas_engine_xrender_x11_context_multiplier_get(void *data, void *context, int *r, int *g, int *b, int *a);
 static void evas_engine_xrender_x11_context_cutout_add(void *data, void *context, int x, int y, int w, int h);
 static void evas_engine_xrender_x11_context_cutout_clear(void *data, void *context);
+static void evas_engine_xrender_x11_context_anti_alias_set(void *data, void *context, unsigned char aa);
+static unsigned char evas_engine_xrender_x11_context_anti_alias_get(void *data, void *context);
+static void evas_engine_xrender_x11_context_color_interpolation_set(void *data, void *context, int color_space);
+static int evas_engine_xrender_x11_context_color_interpolation_get(void *data, void *context);
 static void evas_engine_xrender_x11_rectangle_draw(void *data, void *context, void *surface, int x, int y, int w, int h);
 static void evas_engine_xrender_x11_line_draw(void *data, void *context, void *surface, int x1, int y1, int x2, int y2);
 static void *evas_engine_xrender_x11_polygon_point_add(void *data, void *context, void *polygon, int x, int y);
@@ -36,7 +40,14 @@ static void *evas_engine_xrender_x11_polygon_points_clear(void *data, void *cont
 static void evas_engine_xrender_x11_polygon_draw(void *data, void *context, void *surface, void *polygon);
 static void *evas_engine_xrender_x11_gradient_color_add(void *data, void *context, void *gradient, int r, int g, int b, int a, int distance);
 static void *evas_engine_xrender_x11_gradient_colors_clear(void *data, void *context, void *gradient);
-static void evas_engine_xrender_x11_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle);
+static void evas_engine_xrender_x11_gradient_free(void *data, void *gradient);
+static void evas_engine_xrender_x11_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h);
+static void evas_engine_xrender_x11_gradient_type_set(void *data, void *gradient, char *name);
+static void evas_engine_xrender_x11_gradient_type_params_set(void *data, void *gradient, char *params);
+static void *evas_engine_xrender_x11_gradient_geometry_init(void *data, void *gradient, int spread);
+static int  evas_engine_xrender_x11_gradient_alpha_get(void *data, void *gradient, int spread);
+static void evas_engine_xrender_x11_gradient_map(void *data, void *context, void *gradient, int spread);
+static void evas_engine_xrender_x11_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread);
 static void *evas_engine_xrender_x11_image_load(void *data, char *file, char *key, int *error);
 static void *evas_engine_xrender_x11_image_new_from_data(void *data, int w, int h, DATA32 *image_data);
 static void *evas_engine_xrender_x11_image_new_from_copied_data(void *data, int w, int h, DATA32 *image_data);
@@ -131,6 +142,10 @@ Evas_Func evas_engine_xrender_x11_func =
      evas_engine_xrender_x11_context_multiplier_get,
      evas_engine_xrender_x11_context_cutout_add,
      evas_engine_xrender_x11_context_cutout_clear,
+     evas_engine_xrender_x11_context_anti_alias_set,
+     evas_engine_xrender_x11_context_anti_alias_get,
+     evas_engine_xrender_x11_context_color_interpolation_set,
+     evas_engine_xrender_x11_context_color_interpolation_get,
      /* rectangle draw funcs */
      evas_engine_xrender_x11_rectangle_draw,
      /* line draw funcs */
@@ -142,6 +157,13 @@ Evas_Func evas_engine_xrender_x11_func =
      /* gradient draw funcs */
      evas_engine_xrender_x11_gradient_color_add,
      evas_engine_xrender_x11_gradient_colors_clear,
+     evas_engine_xrender_x11_gradient_free,
+     evas_engine_xrender_x11_gradient_fill_set,
+     evas_engine_xrender_x11_gradient_type_set,
+     evas_engine_xrender_x11_gradient_type_params_set,
+     evas_engine_xrender_x11_gradient_geometry_init,
+     evas_engine_xrender_x11_gradient_alpha_get,
+     evas_engine_xrender_x11_gradient_map,
      evas_engine_xrender_x11_gradient_draw,
      /* image draw funcs */
      evas_engine_xrender_x11_image_load,
@@ -571,6 +593,41 @@ evas_engine_xrender_x11_context_cutout_clear(void *data, void *context)
    evas_common_draw_context_clear_cutouts(context);
 }
 
+static void
+evas_engine_xrender_x11_context_anti_alias_set(void *data, void *context, unsigned char aa)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   evas_common_draw_context_set_anti_alias(context, aa);
+}
+
+static unsigned char
+evas_engine_xrender_x11_context_anti_alias_get(void *data, void *context)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   return ((RGBA_Draw_Context *)context)->anti_alias;
+}
+
+static void
+evas_engine_xrender_x11_context_color_interpolation_set(void *data, void *context, int color_space)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   evas_common_draw_context_set_color_interpolation(context, color_space);
+}
+
+static int
+evas_engine_xrender_x11_context_color_interpolation_get(void *data, void *context)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   return ((RGBA_Draw_Context *)context)->interpolation.color_space;
+}
 
 
 
@@ -642,14 +699,77 @@ evas_engine_xrender_x11_gradient_colors_clear(void *data, void *context, void *g
 }
 
 static void
-evas_engine_xrender_x11_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle)
+evas_engine_xrender_x11_gradient_free(void *data, void *gradient)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   _xre_gradient_free((XR_Gradient *)gradient);
+}
+
+static void
+evas_engine_xrender_x11_gradient_fill_set(void *data, void *gradient, int x, int y, int w, int h)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   _xre_gradient_fill_set((XR_Gradient *)gradient, x, y, w, h);
+}
+
+static void
+evas_engine_xrender_x11_gradient_type_set(void *data, void *gradient, char *name)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   _xre_gradient_type_set((XR_Gradient *)gradient, name);
+}
+
+static void
+evas_engine_xrender_x11_gradient_type_params_set(void *data, void *gradient, char *params)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   _xre_gradient_type_params_set((XR_Gradient *)gradient, params);
+}
+
+static void *
+evas_engine_xrender_x11_gradient_geometry_init(void *data, void *gradient, int spread)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   return _xre_gradient_geometry_init((XR_Gradient *)gradient, spread);
+}
+
+static int
+evas_engine_xrender_x11_gradient_alpha_get(void *data, void *gradient, int spread)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   return _xre_gradient_alpha_get((XR_Gradient *)gradient, spread);
+}
+
+static void
+evas_engine_xrender_x11_gradient_map(void *data, void *context, void *gradient, int spread)
+{
+   Render_Engine *re;
+
+   re = (Render_Engine *)data;
+   _xre_gradient_map((RGBA_Draw_Context *)context, (XR_Gradient *)gradient, spread);
+}
+
+static void
+evas_engine_xrender_x11_gradient_draw(void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread)
 {
    Render_Engine *re;
 
    re = (Render_Engine *)data;
    _xre_gradient_draw((Xrender_Surface *)surface,
 		      (RGBA_Draw_Context *)context,
-		      (XR_Gradient *)gradient, x, y, w, h, angle);
+		      (XR_Gradient *)gradient, x, y, w, h, angle, spread);
 }
 
 static void *

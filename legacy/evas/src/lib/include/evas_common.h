@@ -80,6 +80,7 @@ typedef struct _RGBA_Image_Span       RGBA_Image_Span;
 typedef struct _RGBA_Draw_Context     RGBA_Draw_Context;
 typedef struct _RGBA_Gradient         RGBA_Gradient;
 typedef struct _RGBA_Gradient_Color   RGBA_Gradient_Color;
+typedef struct _RGBA_Gradient_Type    RGBA_Gradient_Type;
 typedef struct _RGBA_Polygon_Point    RGBA_Polygon_Point;
 typedef struct _RGBA_Font             RGBA_Font;
 typedef struct _RGBA_Font_Int         RGBA_Font_Int;
@@ -104,6 +105,10 @@ typedef void (*Gfx_Func_Blend_Src_Mul_Dst) (DATA32 *src, DATA32 *dst, int len, D
 typedef void (*Gfx_Func_Blend_Src_Alpha_Mul_Dst) (DATA8 *src, DATA32 *dst, int len, DATA32 col);
 
 typedef void (*Gfx_Func_Convert) (DATA32 *src, DATA8 *dst, int src_jump, int dst_jump, int w, int h, int dith_x, int dith_y, DATA8 *pal);
+
+typedef void (*Gfx_Func_Gradient_Span)(DATA32 *map, int map_len, DATA32 *dst, int dst_len,
+                                       int x, int y, int axx, int axy, int ayx, int ayy,
+                                       void *geom_data);
 
 /*****************************************************************************/
 
@@ -195,6 +200,10 @@ struct _RGBA_Draw_Context
       } func;
       void *data;
    } font_ext;
+   struct {
+      int color_space;
+   } interpolation;
+   unsigned char  anti_alias : 1;
 };
 
 struct _RGBA_Surface
@@ -233,6 +242,36 @@ struct _RGBA_Gradient_Color
 struct _RGBA_Gradient
 {
    Evas_Object_List *colors;
+   int               ncolors;
+   int               len;
+
+   unsigned char     has_alpha : 1;
+   struct
+     {
+	int            x, y, w, h;
+     } fill;
+   struct
+     {
+	char          *name;
+	char          *params;
+	RGBA_Gradient_Type *geometer;
+     } type;
+   struct
+     {
+	DATA32        *data;
+	int            len;
+	unsigned char  has_alpha : 1;
+     } map;
+};
+
+struct _RGBA_Gradient_Type
+{
+   char                   *name;
+   void                   *geom_data;
+   void                    (*setup_geom)(RGBA_Gradient *gr, int spread);
+   int                     (*has_alpha)(RGBA_Gradient *gr, int spread);
+   int                     (*get_map_len)(RGBA_Gradient *gr, int spread);
+   Gfx_Func_Gradient_Span  (*get_span_func)(RGBA_Gradient *gr, int spread, unsigned char aa);
 };
 
 struct _RGBA_Polygon_Point
@@ -362,6 +401,7 @@ struct _Convert_Pal
 };
 
 /*****************************************************************************/
+#include "evas_macros.h"
 
 #define CONVERT_LOOP_START_ROT_0() \
    src_ptr = src; \
@@ -474,6 +514,12 @@ x++;
 #define GB_VAL(p) ((DATA16 *)(p)[1])
 #endif
 
+#define RGB_JOIN(r,g,b) \
+        (((r) << 16) + ((g) << 8) + (b))
+
+#define ARGB_JOIN(a,r,g,b) \
+        (((a) << 24) + ((r) << 16) + ((g) << 8) + (b))
+
 /* thanks to some chats with Mirek Fidler... the new blender code for C
  * blender fallbacks is faster. benchmarks (for the blending code only):
  *
@@ -541,6 +587,12 @@ x++;
      } \
 }
 
+#define _EVAS_TEXTURE_REFLECT     0
+#define _EVAS_TEXTURE_REPEAT      1
+#define _EVAS_TEXTURE_RESTRICT    2
+
+#define _EVAS_COLOR_SPACE_ARGB    0
+#define _EVAS_COLOR_SPACE_AHSV    1
 
 /*****************************************************************************/
 
@@ -586,6 +638,9 @@ void *evas_object_list_remove           (void *in_list, void *in_item);
 void *evas_object_list_find             (void *in_list, void *in_item);
 
 /****/
+void evas_common_init                                   (void);
+void evas_common_shutdown                               (void);
+
 void evas_common_cpu_init                               (void);
 
 int  evas_common_cpu_have_cpuid                         (void);
@@ -596,6 +651,7 @@ void evas_common_cpu_end_opt                            (void);
 /****/
 void evas_common_blend_init                             (void);
 void evas_common_blend_init_evas_pow_lut                (void);
+void evas_common_blend_free_evas_pow_lut                (void);
 
 void evas_common_blend_pixels_rgba_to_rgb_c             (DATA32 *src, DATA32 *dst, int len);
 void evas_common_blend_pixels_rgba_to_rgb_mmx           (DATA32 *src, DATA32 *dst, int len);
@@ -626,10 +682,6 @@ void evas_common_blend_pixels_cmod_rgba_to_rgba_c       (DATA32 *src, DATA32 *ds
 
 void evas_common_copy_pixels_cmod_rgba_to_rgba_c        (DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod);
 void evas_common_copy_pixels_cmod_rgb_to_rgba_c         (DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod);
-
-void evas_common_blend_pixels_mul_color_rgba_to_rgb_c   (DATA32 *src, DATA32 *dst, int len, DATA32 mul_color);
-void evas_common_blend_pixels_mul_color_rgba_to_rgb_mmx (DATA32 *src, DATA32 *dst, int len, DATA32 mul_color);
-void evas_common_blend_pixels_mul_color_rgba_to_rgba_c  (DATA32 *src, DATA32 *dst, int len, DATA32 mul_color);
 
 void evas_common_blend_alpha_color_rgba_to_rgb_c        (DATA8 *src, DATA32 *dst, int len, DATA32 col);
 void evas_common_blend_alpha_color_rgba_to_rgb_mmx      (DATA8 *src, DATA32 *dst, int len, DATA32 col);
@@ -702,6 +754,11 @@ void evas_common_convert_rgba_to_1bpp_gry_1_dith               (DATA32 *src, DAT
 
 void evas_common_convert_yuv_420p_601_rgba                     (DATA8 **src, DATA8 *dst, int w, int h);
 
+void evas_common_convert_hsv_to_rgb                     (float h, float s, float v, int *r, int *g, int *b);
+void evas_common_convert_rgb_to_hsv                     (int r, int g, int b, float *h, float *s, float *v);
+void evas_common_convert_hsv_to_rgb_int                 (int h, int s, int v, int *r, int *g, int *b);
+void evas_common_convert_rgb_to_hsv_int                 (int r, int g, int b, int *h, int *s, int *v);
+
 /****/
 void evas_common_scale_init                            (void);
 
@@ -746,10 +803,15 @@ void          evas_common_image_unstore           (RGBA_Image *im);
 RGBA_Image   *evas_common_image_find              (const char *filename, const char *key, DATA64 timestamp);
 int           evas_common_image_ram_usage         (RGBA_Image *im);
 void          evas_common_image_dirty             (RGBA_Image *im);
+void          evas_common_image_cache_free        (void);
 
 RGBA_Image         *evas_common_load_image_from_file     (const char *file, const char *key);
 void                evas_common_load_image_data_from_file(RGBA_Image *im);
 int                 evas_common_save_image_to_file       (RGBA_Image *im, const char *file, const char *key, int quality, int compress);
+
+RGBA_Image   *evas_common_image_line_buffer_obtain       (int len);
+void          evas_common_image_line_buffer_release      (void);
+void          evas_common_image_line_buffer_free         (void);
 
 /****/
 void           evas_common_rectangle_init          (void);
@@ -763,8 +825,21 @@ RGBA_Gradient *evas_common_gradient_new            (void);
 void           evas_common_gradient_free           (RGBA_Gradient *gr);
 void           evas_common_gradient_colors_clear   (RGBA_Gradient *gr);
 void           evas_common_gradient_color_add      (RGBA_Gradient *gr, int r, int g, int b, int a, int dist);
-void           evas_common_gradient_draw           (RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h, RGBA_Gradient *gr, double angle);
-DATA32        *evas_common_gradient_map            (RGBA_Gradient *gr, RGBA_Draw_Context *dc, int len);
+void           evas_common_gradient_type_set        (RGBA_Gradient *gr, char *name);
+void           evas_common_gradient_type_params_set (RGBA_Gradient *gr, char *params);
+void           evas_common_gradient_fill_set        (RGBA_Gradient *gr, int x, int y, int w, int h);
+RGBA_Gradient *evas_common_gradient_geometry_init   (RGBA_Gradient *gr, int spread);
+int            evas_common_gradient_has_alpha       (RGBA_Gradient *gr, int spread);
+void           evas_common_gradient_map             (RGBA_Draw_Context *dc, RGBA_Gradient *gr, int spread);
+void           evas_common_gradient_draw            (RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y, int w, int h, RGBA_Gradient *gr, double angle, int spread);
+
+RGBA_Gradient_Type  *evas_common_gradient_geometer_get     (char *name);
+RGBA_Gradient_Type  *evas_common_gradient_linear_get       (void);
+RGBA_Gradient_Type  *evas_common_gradient_radial_get       (void);
+RGBA_Gradient_Type  *evas_common_gradient_angular_get      (void);
+RGBA_Gradient_Type  *evas_common_gradient_rectangular_get  (void);
+RGBA_Gradient_Type  *evas_common_gradient_sinusoidal_get   (void);
+char                *evas_common_gradient_get_key_fval     (char *in, char *key, float *val);
 
 /****/
 void          evas_common_line_init               (void);
@@ -870,11 +945,14 @@ void               evas_common_draw_context_apply_free_cutouts(Cutout_Rect *rect
 Cutout_Rect       *evas_common_draw_context_cutouts_split     (Cutout_Rect *in, Cutout_Rect *split);
 Cutout_Rect       *evas_common_draw_context_cutout_split      (Cutout_Rect *in, Cutout_Rect *split);
 Cutout_Rect       *evas_common_draw_context_cutout_merge      (Cutout_Rect *in, Cutout_Rect *merge);
+void               evas_common_draw_context_set_anti_alias    (RGBA_Draw_Context *dc, unsigned char aa);
+void               evas_common_draw_context_set_color_interpolation    (RGBA_Draw_Context *dc, int color_space);
+
 Gfx_Func_Blend_Src_Dst           evas_common_draw_func_blend_get       (RGBA_Image *src, RGBA_Image *dst, int pixels);
 Gfx_Func_Blend_Color_Dst         evas_common_draw_func_blend_color_get (DATA32 src, RGBA_Image *dst, int pixels);
 Gfx_Func_Blend_Src_Cmod_Dst      evas_common_draw_func_blend_cmod_get  (RGBA_Image *src, RGBA_Image *dst, int pixels);
 Gfx_Func_Blend_Src_Mul_Dst       evas_common_draw_func_blend_mul_get   (RGBA_Image *src, DATA32 col, RGBA_Image *dst, int pixels);
-Gfx_Func_Blend_Src_Alpha_Mul_Dst evas_common_draw_func_blend_alpha_get (RGBA_Image *dst);
+Gfx_Func_Blend_Src_Alpha_Mul_Dst evas_common_draw_func_blend_alpha_get (DATA32 src, RGBA_Image *dst);
 Gfx_Func_Blend_Src_Dst           evas_common_draw_func_copy_get        (int pixels, int reverse);
 
 void              evas_font_dir_cache_free(void);

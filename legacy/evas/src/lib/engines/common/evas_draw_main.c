@@ -3,6 +3,33 @@
 extern const DATA8  _evas_pow_lut[65536];
 
 void
+evas_common_init(void)
+{
+   evas_common_cpu_init();
+
+   evas_common_blend_init();
+   evas_common_image_init();
+   evas_common_convert_init();
+   evas_common_scale_init();
+   evas_common_rectangle_init();
+   evas_common_gradient_init();
+   evas_common_polygon_init();
+   evas_common_line_init();
+   evas_common_font_init();
+   evas_common_draw_init();
+   evas_common_tilebuf_init();
+}
+
+void
+evas_common_shutdown(void)
+{
+//   evas_common_blend_free_evas_pow_lut();
+   evas_font_dir_cache_free();
+   evas_common_image_line_buffer_free();
+   evas_common_image_cache_free();
+}
+
+void
 evas_common_draw_init(void)
 {
 }
@@ -539,162 +566,16 @@ evas_common_draw_context_cutout_merge(Cutout_Rect *in, Cutout_Rect *merge)
    return out;
 }
 
-Gfx_Func_Blend_Src_Dst
-evas_common_draw_func_blend_get(RGBA_Image *src, RGBA_Image *dst, int pixels)
+void
+evas_common_draw_context_set_anti_alias(RGBA_Draw_Context *dc , unsigned char aa)
 {
-   if (src->flags & RGBA_IMAGE_HAS_ALPHA)
-     {
-	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
-	  {
-	     if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
-	     return evas_common_blend_pixels_rgba_to_rgba_c;
-	  }
-	else
-	  {
-#ifdef BUILD_MMX
-# ifdef BUILD_C
-	     if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
-# endif
-	       return evas_common_blend_pixels_rgba_to_rgb_mmx;
-# ifdef BUILD_C
-	     else
-# endif
-#endif
-#ifdef BUILD_C
-	       return evas_common_blend_pixels_rgba_to_rgb_c;
-#endif
-	  }
-     }
-   else
-     {
-	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
-	  {
-	     return evas_common_copy_pixels_rgb_to_rgba_c;
-	  }
-	else
-	  {
-#if 1
-
-# ifdef BUILD_MMX
-# ifdef BUILD_C
-	     if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
-# endif
-	       return evas_common_copy_pixels_rgba_to_rgba_mmx2;
-# ifdef BUILD_SSE
-	     else
-# endif
-#endif
-#ifdef BUILD_SSE
-# ifdef BUILD_C
-	       if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 64 * 64))
-# endif
-		 return evas_common_copy_pixels_rgba_to_rgba_sse;
-# ifdef BUILD_MMX
-	     else
-# endif
-#endif
-#ifdef BUILD_MMX
-# ifdef BUILD_C
-	       if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
-# endif
-		 return evas_common_copy_pixels_rgba_to_rgba_mmx;
-# ifdef BUILD_C
-	     else
-# endif
-#endif
-#ifdef BUILD_C
-	       return evas_common_copy_pixels_rgba_to_rgba_c;
-#endif
-
-#else
-
-# ifdef BUILD_SSE
-	     if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 256 * 256))
-	       return evas_common_copy_pixels_rgba_to_rgba_sse;
-# ifdef BUILD_MMX
-	     else
-# endif
-#endif
-#ifdef BUILD_MMX
-# ifdef BUILD_C
-	       if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
-# endif
-		 return evas_common_copy_pixels_rgba_to_rgba_mmx2;
-# ifdef BUILD_C
-	       else if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
-# endif
-		 return evas_common_copy_pixels_rgba_to_rgba_mmx;
-# ifdef BUILD_C
-	     else
-# endif
-#endif
-#ifdef BUILD_C
-	       return evas_common_copy_pixels_rgba_to_rgba_c;
-#endif
-
-#endif
-	  }
-     }
-   if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
-   return evas_common_blend_pixels_rgba_to_rgba_c;
-   pixels = 0;
+   dc->anti_alias = !!aa;
 }
 
-Gfx_Func_Blend_Color_Dst
-evas_common_draw_func_blend_color_get(DATA32 src, RGBA_Image *dst, int pixels)
+void
+evas_common_draw_context_set_color_interpolation(RGBA_Draw_Context *dc, int color_space)
 {
-   if (A_VAL(&src) != 0xff)
-     {
-	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
-	  {
-	     if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
-	     return evas_common_blend_color_rgba_to_rgba_c;
-	  }
-	else
-	  {
-#ifdef BUILD_MMX
-	     if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
-	       return evas_common_blend_color_rgba_to_rgb_mmx;
-#endif
-#ifdef BUILD_C
-# ifdef BUILD_MMX
-	     else
-# endif
-	       return evas_common_blend_color_rgba_to_rgb_c;
-#endif
-	  }
-     }
-   else
-     {
-	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
-	  {
-	     if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
-	     return evas_common_copy_color_rgb_to_rgba_c;
-	  }
-	else
-	  {
-#ifdef  BUILD_SSE
-	     if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 64 * 64))
-	       return evas_common_copy_color_rgba_to_rgba_sse;
-#endif
-#ifdef BUILD_MMX
-# ifdef BUILD_SSE
-	     else
-# endif
-	       if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
-		 return evas_common_copy_color_rgba_to_rgba_mmx;
-#endif
-#ifdef BUILD_C
-# ifdef BUILD_MMX
-	     else
-# endif
-	       return evas_common_copy_color_rgba_to_rgba_c;
-#endif
-	  }
-     }
-   if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
-   return evas_common_blend_color_rgba_to_rgba_c;
-   pixels = 0;
+   dc->interpolation.color_space = color_space;
 }
 
 Gfx_Func_Blend_Src_Cmod_Dst
@@ -704,7 +585,7 @@ evas_common_draw_func_blend_cmod_get(RGBA_Image *src, RGBA_Image *dst, int pixel
      {
 	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
 	  {
-	     if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
+//	     evas_common_blend_init_evas_pow_lut();
 	     return evas_common_blend_pixels_cmod_rgba_to_rgba_c;
 	  }
 	else
@@ -716,7 +597,7 @@ evas_common_draw_func_blend_cmod_get(RGBA_Image *src, RGBA_Image *dst, int pixel
      {
 	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
 	  {
-	     if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
+//	     evas_common_blend_init_evas_pow_lut();
 	     return evas_common_copy_pixels_cmod_rgb_to_rgba_c;
 	  }
 	else
@@ -724,182 +605,9 @@ evas_common_draw_func_blend_cmod_get(RGBA_Image *src, RGBA_Image *dst, int pixel
 	     return evas_common_copy_pixels_cmod_rgba_to_rgba_c;
 	  }
      }
-   if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
+//   evas_common_blend_init_evas_pow_lut();
    return evas_common_blend_pixels_cmod_rgba_to_rgba_c;
    pixels = 0;
 }
 
-Gfx_Func_Blend_Src_Mul_Dst
-evas_common_draw_func_blend_mul_get(RGBA_Image *src, DATA32 col, RGBA_Image *dst, int pixels)
-{
-   if (src->flags & RGBA_IMAGE_HAS_ALPHA)
-     {
-	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
-	  {
-	     if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
-	     return evas_common_blend_pixels_mul_color_rgba_to_rgba_c;
-	  }
-	else
-	  {
-#ifdef BUILD_MMX
-	     if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
-	       return evas_common_blend_pixels_mul_color_rgba_to_rgb_mmx;
-#endif
-#ifdef BUILD_C
-# ifdef BUILD_MMX
-	     else
-# endif
-	       return evas_common_blend_pixels_mul_color_rgba_to_rgb_c;
-#endif
-	  }
-     }
-   else
-     {
-	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
-	  {
-	     if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
-	     return evas_common_blend_pixels_mul_color_rgba_to_rgba_c;
-	  }
-	else
-	  {
-#ifdef BUILD_MMX
-	     if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
-	       return evas_common_blend_pixels_mul_color_rgba_to_rgb_mmx;
-#endif
-#ifdef BUILD_C
-# ifdef BUILD_MMX
-	     else
-# endif
-	       return evas_common_blend_pixels_mul_color_rgba_to_rgb_c;
-#endif
-	  }
-     }
-   if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
-   return evas_common_blend_pixels_mul_color_rgba_to_rgba_c;
-   col = 0;
-   pixels = 0;
-}
-
-Gfx_Func_Blend_Src_Alpha_Mul_Dst
-evas_common_draw_func_blend_alpha_get(RGBA_Image *dst)
-{
-   if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
-     {
-	if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
-	return evas_common_blend_alpha_color_rgba_to_rgba_c;
-     }
-   else
-     {
-#ifdef BUILD_MMX
-	if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
-	  return evas_common_blend_alpha_color_rgba_to_rgb_mmx;
-#endif
-#ifdef BUILD_C
-# ifdef BUILD_MMX
-	else
-# endif
-	  return evas_common_blend_alpha_color_rgba_to_rgb_c;
-#endif
-     }
-#ifdef BUILD_C
-   return evas_common_blend_alpha_color_rgba_to_rgba_c;
-#else
-   return NULL;
-#endif
-}
-
-Gfx_Func_Blend_Src_Dst
-evas_common_draw_func_copy_get(int pixels, int reverse)
-{
-   if (reverse)
-     {
-#ifdef  BUILD_SSE
-	if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 256 * 256))
-	  return evas_common_copy_pixels_rev_rgba_to_rgba_sse;
-#endif
-#ifdef BUILD_MMX
-# ifdef BUILD_SSE
-	else
-# endif
-	  if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
-	    return evas_common_copy_pixels_rev_rgba_to_rgba_mmx;
-#endif
-#ifdef BUILD_C
-# ifdef BUILD_MMX
-	else
-# endif
-	  return evas_common_copy_pixels_rev_rgba_to_rgba_c;
-#endif
-     }
-   else
-     {
-#if 1
-
-# ifdef BUILD_MMX
-# ifdef BUILD_C
-	     if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
-# endif
-	       return evas_common_copy_pixels_rgba_to_rgba_mmx2;
-# ifdef BUILD_SSE
-	     else
-# endif
-#endif
-#ifdef BUILD_SSE
-# ifdef BUILD_C
-	       if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 64 * 64))
-# endif
-		 return evas_common_copy_pixels_rgba_to_rgba_sse;
-# ifdef BUILD_MMX
-	     else
-# endif
-#endif
-#ifdef BUILD_MMX
-# ifdef BUILD_C
-	       if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
-# endif
-		 return evas_common_copy_pixels_rgba_to_rgba_mmx;
-# ifdef BUILD_C
-	     else
-# endif
-#endif
-#ifdef BUILD_C
-	       return evas_common_copy_pixels_rgba_to_rgba_c;
-#endif
-
-#else
-
-# ifdef BUILD_SSE
-	     if (evas_common_cpu_has_feature(CPU_FEATURE_SSE) && (pixels > 256 * 256))
-	       return evas_common_copy_pixels_rgba_to_rgba_sse;
-# ifdef BUILD_MMX
-	     else
-# endif
-#endif
-#ifdef BUILD_MMX
-# ifdef BUILD_C
-	       if (evas_common_cpu_has_feature(CPU_FEATURE_MMX2))
-# endif
-		 return evas_common_copy_pixels_rgba_to_rgba_mmx2;
-# ifdef BUILD_C
-	       else if (evas_common_cpu_has_feature(CPU_FEATURE_MMX))
-# endif
-		 return evas_common_copy_pixels_rgba_to_rgba_mmx;
-# ifdef BUILD_C
-	     else
-# endif
-#endif
-#ifdef BUILD_C
-	       return evas_common_copy_pixels_rgba_to_rgba_c;
-#endif
-
-#endif
-     }
-   if (!_evas_pow_lut) evas_common_blend_init_evas_pow_lut();
-#ifdef BUILD_C
-   return evas_common_copy_pixels_rgba_to_rgba_c;
-#else
-   return NULL;
-#endif
-   pixels = 0;
-}
 

@@ -322,6 +322,10 @@ struct _Evas_Object
       unsigned char     have_clipees : 1;
       int               layer;
       Evas_Object      *clipper;
+      unsigned char     anti_alias;
+      struct {
+         int color_space;
+      } interpolation;
    } cur, prev;
 
    char                       *name;
@@ -467,6 +471,10 @@ struct _Evas_Func
    int  (*context_multiplier_get)          (void *data, void *context, int *r, int *g, int *b, int *a);
    void (*context_cutout_add)              (void *data, void *context, int x, int y, int w, int h);
    void (*context_cutout_clear)            (void *data, void *context);
+   void (*context_anti_alias_set)          (void *data, void *context, unsigned char aa);
+   unsigned char (*context_anti_alias_get) (void *data, void *context);
+   void (*context_color_interpolation_set) (void *data, void *context, int color_space);
+   int  (*context_color_interpolation_get) (void *data, void *context);
 
    void (*rectangle_draw)                  (void *data, void *context, void *surface, int x, int y, int w, int h);
 
@@ -478,8 +486,14 @@ struct _Evas_Func
 
    void *(*gradient_color_add)             (void *data, void *context, void *gradient, int r, int g, int b, int a, int distance);
    void *(*gradient_colors_clear)          (void *data, void *context, void *gradient);
-
-   void (*gradient_draw)                   (void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle);
+   void (*gradient_free)                   (void *data, void *gradient);
+   void (*gradient_fill_set)               (void *data, void *gradient, int x, int y, int w, int h);
+   void (*gradient_type_set)               (void *data, void *gradient, char *name);
+   void (*gradient_type_params_set)        (void *data, void *gradient, char *params);
+   void *(*gradient_geometry_init)         (void *data, void *gradient, int spread);
+   int  (*gradient_alpha_get)              (void *data, void *gradient, int spread);
+   void (*gradient_map)                    (void *data, void *context, void *gradient, int spread);
+   void (*gradient_draw)                   (void *data, void *context, void *surface, void *gradient, int x, int y, int w, int h, double angle, int spread);
 
    void *(*image_load)                     (void *data, char *file, char *key, int *error);
    void *(*image_new_from_data)            (void *data, int w, int h, DATA32 *image_data);

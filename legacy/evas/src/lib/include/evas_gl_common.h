@@ -187,6 +187,14 @@ Evas_GL_Polygon  *evas_gl_common_poly_points_clear(Evas_GL_Polygon *poly);
 
 Evas_GL_Gradient *evas_gl_common_gradient_color_add(Evas_GL_Gradient *gr, int r, int g, int b, int a, int distance);
 Evas_GL_Gradient *evas_gl_common_gradient_colors_clear(Evas_GL_Gradient *gr);
+void              evas_gl_common_gradient_free(Evas_GL_Gradient *gr);
+void              evas_gl_common_gradient_fill_set(Evas_GL_Gradient *gr, int x, int y, int w, int h);
+void              evas_gl_common_gradient_type_set(Evas_GL_Gradient *gr, char *name);
+void              evas_gl_common_gradient_type_params_set(Evas_GL_Gradient *gr, char *params);
+void             *evas_gl_common_gradient_geometry_init(Evas_GL_Gradient *gr, int spread);
+int               evas_gl_common_gradient_alpha_get(Evas_GL_Gradient *gr, int spread);
+
+void              evas_gl_common_gradient_map(RGBA_Draw_Context *dc, Evas_GL_Gradient *gr, int spread);
 
 void              evas_gl_common_swap_rect(Evas_GL_Context *gc, int x, int y, int w, int h);
 
@@ -194,7 +202,7 @@ void              evas_gl_common_rect_draw(Evas_GL_Context *gc, RGBA_Draw_Contex
 void              evas_gl_common_image_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Image *im, int sx, int sy, int sw, int sh, int dx, int dy, int dw, int dh, int smooth);
 void              evas_gl_common_line_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, int x1, int y1, int x2, int y2);
 void              evas_gl_common_poly_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Polygon *poly);
-void              evas_gl_common_gradient_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Gradient *gr, int x, int y, int w, int h, double angle);
+void              evas_gl_common_gradient_draw(Evas_GL_Context *gc, RGBA_Draw_Context *dc, Evas_GL_Gradient *gr, int x, int y, int w, int h, double angle, int spread);
 
 Evas_GL_Font_Texture *evas_gl_font_texture_new(Evas_GL_Context *gc, RGBA_Font_Glyph *fg);
 void                  evas_gl_font_texture_free(Evas_GL_Font_Texture *ft);

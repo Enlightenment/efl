@@ -138,6 +138,13 @@ struct _Evas_Pixel_Import_Source
 #define EVAS_PIXEL_FORMAT_ARGB32                   1 /**< ARGB 32bit pixel format with A in the high byte per 32bit pixel word */
 #define EVAS_PIXEL_FORMAT_YUV420P_601              2 /**< YUV 420 Planar format with CCIR 601 color encoding wuth contiguous planes in the order Y, U and V */
 
+#define EVAS_COLOR_SPACE_ARGB                      0 /**< ARGB color space */
+#define EVAS_COLOR_SPACE_AHSV                      1 /**< AHSV color space */
+
+#define EVAS_TEXTURE_REFLECT      0 /**< Gradient and image fill tiling mode - tiling reflects */
+#define EVAS_TEXTURE_REPEAT       1 /**< tiling repeats */
+#define EVAS_TEXTURE_RESTRICT     2 /**< tiling clamps */
+
 struct _Evas_Engine_Info /** Generic engine information. Generic info is useless */
 {
    int magic; /**< Magic number */
@@ -367,6 +374,13 @@ extern "C" {
    EAPI void              evas_object_gradient_colors_clear (Evas_Object *obj);
    EAPI void              evas_object_gradient_angle_set    (Evas_Object *obj, Evas_Angle angle);
    EAPI Evas_Angle        evas_object_gradient_angle_get    (Evas_Object *obj);
+   EAPI void              evas_object_gradient_type_set     (Evas_Object *obj, const char *type, const char *instance_params);
+   EAPI void              evas_object_gradient_type_get     (Evas_Object *obj, char **type, char **instance_params);
+   EAPI void              evas_object_gradient_fill_set     (Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h);
+   EAPI void              evas_object_gradient_fill_get     (Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h);
+   EAPI void              evas_object_gradient_spread_set   (Evas_Object *obj, int
+tile_mode);
+   EAPI int               evas_object_gradient_spread_get   (Evas_Object *obj);
 
    EAPI Evas_Object      *evas_object_polygon_add           (Evas *e);
    EAPI void              evas_object_polygon_point_add     (Evas_Object *obj, Evas_Coord x, Evas_Coord y);
@@ -558,8 +572,14 @@ extern "C" {
    EAPI void              evas_object_hide                  (Evas_Object *obj);
    EAPI Evas_Bool         evas_object_visible_get           (Evas_Object *obj);
 
+   EAPI void              evas_object_anti_alias_set        (Evas_Object *obj, Evas_Bool antialias);
+   EAPI Evas_Bool         evas_object_anti_alias_get        (Evas_Object *obj);
+
    EAPI void              evas_object_color_set             (Evas_Object *obj, int r, int g, int b, int a);
    EAPI void              evas_object_color_get             (Evas_Object *obj, int *r, int *g, int *b, int *a);
+
+   EAPI void              evas_object_color_interpolation_set  (Evas_Object *obj, int color_space);
+   EAPI int               evas_object_color_interpolation_get  (Evas_Object *obj);
 
    EAPI void              evas_object_clip_set              (Evas_Object *obj, Evas_Object *clip);
    EAPI Evas_Object      *evas_object_clip_get              (Evas_Object *obj);
@@ -667,6 +687,12 @@ extern "C" {
    EAPI void             *evas_object_intercept_stack_below_callback_del (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *below));
    EAPI void              evas_object_intercept_layer_set_callback_add   (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, int l), const void *data);
    EAPI void             *evas_object_intercept_layer_set_callback_del   (Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, int l));
+
+/* Evas utility routines for color space conversions */
+/* hsv color space has h in the range 0.0 to 360.0, and s,v in the range 0.0 to 1.0 */
+/* rgb color space has r,g,b in the range 0 to 255 */
+   EAPI void              evas_color_hsv_to_rgb             (float h, float s, float v, int *r, int *g, int *b);
+   EAPI void              evas_color_rgb_to_hsv             (int r, int g, int b, float *h, float *s, float *v); 
 
 /* Evas imaging api - exports some of the comon gfx engine routines */
 /* this is not complete and should be considered experimental. use at your */

@@ -43,11 +43,10 @@ int
 evas_shutdown(void)
 {
    if (--initcount == 0)
-   {
-      evas_font_dir_cache_free();
-	  evas_common_image_free_cache();
-   }
-
+     {
+	evas_font_dir_cache_free();
+	evas_common_shutdown();
+     }
    return initcount;
 }
 

@@ -822,6 +822,78 @@ evas_object_color_get(Evas_Object *obj, int *r, int *g, int *b, int *a)
 }
 
 /**
+ * Sets whether or not the given evas object is to be drawn anti_aliased.
+ * @param   obj The given evas object.
+ * @param   anti_alias. 1 if the object is to be anti_aliased, 0 otherwise.
+ * @ingroup Evas_Object_Group
+ */
+void
+evas_object_anti_alias_set(Evas_Object *obj, Evas_Bool anti_alias)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (obj->delete_me) return;
+   if (obj->cur.anti_alias == !!anti_alias)
+   	return;
+   obj->cur.anti_alias = !!anti_alias;
+   evas_object_change(obj);  
+}
+
+
+/**
+ * Retrieves whether or not the given evas object is to be drawn anti_aliased.
+ * @param   obj The given evas object.
+ * @return  @c 1 if the object is to be anti_aliased.  @c 0 otherwise.
+ * @ingroup Evas_Object_Group
+ */
+Evas_Bool
+evas_object_anti_alias_get(Evas_Object *obj)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   if (obj->delete_me) return 0;
+   return obj->cur.anti_alias;
+}
+
+/**
+ * Sets the color_space to be used for linear interpolation of colors.
+ * @param   obj The given evas object.
+ * @param   color_space, one of EVAS_COLOR_SPACE_ARGB or EVAS_COLOR_SPACE_AHSV.
+ * @ingroup Evas_Object_Group
+ */
+void
+evas_object_color_interpolation_set(Evas_Object *obj, int color_space)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return;
+   MAGIC_CHECK_END();
+   if (obj->delete_me) return;
+   if (obj->cur.interpolation.color_space == color_space)
+   	return;
+   obj->cur.interpolation.color_space = color_space;
+   evas_object_change(obj);  
+}
+
+
+/**
+ * Retrieves the current value of the color space used for linear interpolation.
+ * @param   obj The given evas object.
+ * @return  @c EVAS_COLOR_SPACE_ARGB or EVAS_COLOR_SPACE_AHSV.
+ * @ingroup Evas_Object_Group
+ */
+int
+evas_object_color_interpolation_get(Evas_Object *obj)
+{
+   MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
+   return 0;
+   MAGIC_CHECK_END();
+   if (obj->delete_me) return 0;
+   return obj->cur.interpolation.color_space;
+}
+
+/**
  * Retrieves the evas that the given evas object is on.
  * @param   obj The given evas object.
  * @return  The evas that the object is on.
