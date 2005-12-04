@@ -56,9 +56,6 @@ evas_gl_common_gradient_type_params_set(Evas_GL_Gradient *gr, char *params)
 void *
 evas_gl_common_gradient_geometry_init(Evas_GL_Gradient *gr, int spread)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
    if (!gr) return NULL;
    gr->grad = evas_common_gradient_geometry_init(gr->grad, spread);
    return gr;
@@ -67,9 +64,6 @@ evas_gl_common_gradient_geometry_init(Evas_GL_Gradient *gr, int spread)
 int
 evas_gl_common_gradient_alpha_get(Evas_GL_Gradient *gr, int spread)
 {
-   Render_Engine *re;
-
-   re = (Render_Engine *)data;
    if (!gr) return 0;
    return evas_common_gradient_has_alpha(gr->grad, spread);
 }
