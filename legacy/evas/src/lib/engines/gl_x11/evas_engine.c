@@ -702,7 +702,7 @@ evas_engine_gl_x11_gradient_alpha_get(void *data, void *gradient, int spread)
    Render_Engine *re;
 
    re = (Render_Engine *)data;
-   return evas_gl_common_gradient_has_alpha(gradient, spread);
+   return evas_gl_common_gradient_alpha_get(gradient, spread);
 }
 
 static void
