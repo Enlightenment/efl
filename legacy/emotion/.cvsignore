@@ -20,3 +20,4 @@ ltmain.sh
 mkinstalldirs
 config.guess
 config.sub
+emotion.spec
