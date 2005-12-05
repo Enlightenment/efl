@@ -8,14 +8,13 @@ static int _evas_hash_alloc_error = 0;
 static inline int
 _evas_hash_gen(const char *key)
 {
-   unsigned int hash_num = 0, i;
+   unsigned int hash_num = 5381;
    const unsigned char *ptr;
-
+   
    if (!key) return 0;
-
-   for (i = 0, ptr = (unsigned char *)key; *ptr; ptr++, i++)
-     hash_num ^= ((int)(*ptr) | ((int)(*ptr) << 8)) >> (i % 8);
-
+   for (ptr = (unsigned char *)key; *ptr; ptr++)
+     hash_num = (hash_num * 33) ^ *ptr;
+   
    hash_num &= 0xff;
    return (int)hash_num;
 }
@@ -109,7 +108,7 @@ evas_hash_add(Evas_Hash *hash, const char *key, const void *data)
 	_evas_hash_alloc_error = 1;
 	return hash;
      };
-   el->key = ((unsigned char *)el) + sizeof(struct _Evas_Hash_El);
+   el->key = ((char *)el) + sizeof(struct _Evas_Hash_El);
    strcpy(el->key, key);
    el->data = (void *)data;
    hash_num = _evas_hash_gen(key);
