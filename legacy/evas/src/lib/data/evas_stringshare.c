@@ -18,11 +18,11 @@ struct _Evas_Stringshare_El
 static inline int
 _evas_stringshare_hash_gen(const char *str, int *len)
 {
-   unsigned int hash_num = 0, i;
+   unsigned int hash_num = 5381, i;
    const unsigned char *ptr;
 
    for (i = 0, ptr = (unsigned char *)str; *ptr; ptr++, i++)
-     hash_num ^= ((int)(*ptr) | ((int)(*ptr) << 8)) >> (i % 8);
+     hash_num = (hash_num * 33) ^ *ptr;
 
    hash_num &= 0xff;
    *len = i;
