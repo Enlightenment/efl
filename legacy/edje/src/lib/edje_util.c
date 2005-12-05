@@ -78,7 +78,8 @@ edje_object_data_get(Evas_Object *obj, const char *key)
 	Edje_Data *di;
 	
 	di = l->data;
-	if (!strcmp(di->key, key)) return (const char *)di->value;
+	if ((di->key) && (!strcmp(di->key, key)))
+	  return (const char *)di->value;
      }
    return NULL;
 }
@@ -244,7 +245,7 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
    for (l = ed->color_classes; l; l = l->next)
      {
 	cc = l->data;
-	if (!strcmp(cc->name, color_class))
+	if ((cc->name) && (!strcmp(cc->name, color_class)))
 	  {
 	     if ((cc->r == r) && (cc->g == g) && 
 		 (cc->b == b) && (cc->a == a) &&
@@ -338,7 +339,7 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
 	return;
      }
 
-   if ((tc->size == size) && (!strcmp(tc->font, font)))
+   if ((tc->size == size) && (tc->font) && (!strcmp(tc->font, font)))
      return;
    free(tc->font);
    tc->font = strdup(font);
@@ -385,7 +386,7 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
    for (l = ed->text_classes; l; l = l->next)
      {
 	tc = l->data;
-	if (!strcmp(tc->name, text_class))
+	if ((tc->name) && (!strcmp(tc->name, text_class)))
 	  {
 	     if ((tc->font) && (font) && 
 		 (!strcmp(tc->font, font)) &&
@@ -1378,8 +1379,8 @@ _edje_real_part_get(Edje *ed, char *part)
      {
 	Edje_Real_Part *rp;
 	
-	rp = l->data;	
-	if (!strcmp(rp->part->name, part)) return rp;
+	rp = l->data;
+	if ((rp->part->name) && (!strcmp(rp->part->name, part))) return rp;
      }
    return NULL;
 }
@@ -1395,7 +1396,7 @@ _edje_color_class_find(Edje *ed, char *color_class)
 	Edje_Color_Class *cc;
 	
 	cc = l->data;
-	if (!strcmp(color_class, cc->name)) return cc;
+	if ((cc->name) && (!strcmp(color_class, cc->name))) return cc;
      }
    return evas_hash_find(_edje_color_class_hash, color_class);
 }
@@ -1504,7 +1505,7 @@ _edje_text_class_find(Edje *ed, char *text_class)
 	Edje_Text_Class *tc;
 	
 	tc = l->data;
-	if (!strcmp(text_class, tc->name)) return tc;
+	if ((tc->name) && (!strcmp(text_class, tc->name))) return tc;
      }
    return evas_hash_find(_edje_text_class_hash, text_class);
 }
