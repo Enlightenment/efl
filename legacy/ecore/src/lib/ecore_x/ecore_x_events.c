@@ -191,7 +191,7 @@ _ecore_x_event_handle_key_press(XEvent *xevent)
    if (val > 0)
      {
 	buf[val] = 0;
-	e->key_compose = ecore_txt_convert("LATIN1", "UTF-8", buf);
+	e->key_compose = ecore_txt_convert("ISO8859-1", "UTF-8", buf);
      }
    else e->key_compose = NULL;
    keyname = XKeysymToString(sym);
@@ -242,7 +242,7 @@ _ecore_x_event_handle_key_release(XEvent *xevent)
    if (val > 0)
      {
 	buf[val] = 0;
-	e->key_compose = ecore_txt_convert("LATIN1", "UTF-8", buf);
+	e->key_compose = ecore_txt_convert("ISO8859-1", "UTF-8", buf);
      }
    else e->key_compose = NULL;
    keyname = XKeysymToString(sym);
