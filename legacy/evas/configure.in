@@ -1529,25 +1529,25 @@ AC_ARG_ENABLE(convert-32-rgb-rot-90,
 # Setting have_valgrind to "no" seems pointless, but we just need to
 # put something in as the 4th parameter, so configure doesn't abort
 # when valgrind.pc isn't found.
-have_valgrind="no"
-PKG_CHECK_MODULES(VALGRIND, valgrind >= 2.4.0, have_valgrind=yes, have_valgrind=no)
-AC_ARG_ENABLE(valgrind,
-  [  --enable-valgrind               enable valgrind fixes to stop false reports], [
-      if test x"$enableval" = x"yes" ; then
-        have_valgrind="yes"
-      else
-        have_valgrind="no"
-        VALGRIND_CFLAGS=""
-        VALGRIND_LIBS=""
-      fi
-  ], [
-    have_valgrind=$have_valgrind
-  ]
-)
+#have_valgrind="no"
+#PKG_CHECK_MODULES(VALGRIND, valgrind >= 2.4.0, have_valgrind=yes, have_valgrind=no)
+#AC_ARG_ENABLE(valgrind,
+#  [  --enable-valgrind               enable valgrind fixes to stop false reports], [
+#      if test x"$enableval" = x"yes" ; then
+#        have_valgrind="yes"
+#      else
+#        have_valgrind="no"
+#        VALGRIND_CFLAGS=""
+#        VALGRIND_LIBS=""
+#      fi
+#  ], [
+#    have_valgrind=$have_valgrind
+#  ]
+#)
 
-if test x$have_valgrind = "xyes"; then
-  AC_DEFINE(HAVE_VALGRIND, 1, [Valgrind support])
-fi
+#if test x$have_valgrind = "xyes"; then
+#  AC_DEFINE(HAVE_VALGRIND, 1, [Valgrind support])
+#fi
 
 #####################################################################
 ## Fill in flags
