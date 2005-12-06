@@ -1119,19 +1119,19 @@ _ecore_evas_x_move_resize(Ecore_Evas *ee, int x, int y, int w, int h)
 static void
 _ecore_evas_x_rotation_set(Ecore_Evas *ee, int rotation)
 {
-   Evas_Engine_Info_Software_X11 *einfo;
    int rot_dif;
    
    if (ee->rotation == rotation) return;   
    if (!strcmp(ee->driver, "gl_x11")) return;
-   einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
-   if (!einfo) return;
    rot_dif = ee->rotation - rotation;
    if (rot_dif < 0) rot_dif = -rot_dif;
    if (!strcmp(ee->driver, "software_x11"))
      {   
 #ifdef BUILD_ECORE_X
 	Evas_Engine_Info_Software_X11 *einfo;
+	
+	einfo = (Evas_Engine_Info_Software_X11 *)evas_engine_info_get(ee->evas);
+	if (!einfo) return;
 	if (rot_dif != 180)
 	  {
 	     int minw, minh, maxw, maxh, basew, baseh, stepw, steph;
