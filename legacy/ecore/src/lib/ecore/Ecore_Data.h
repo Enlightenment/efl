@@ -421,8 +421,8 @@ extern "C" {
    
    int ecore_string_init(void);
    void ecore_string_shutdown(void);
-   char *ecore_string_instance(char *string);
-   void ecore_string_release(char *string);
+   const char *ecore_string_instance(char *string);
+   void ecore_string_release(const char *string);
    
    
    typedef struct _Ecore_Tree_Node Ecore_Tree_Node;
