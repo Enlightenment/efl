@@ -6,7 +6,7 @@ typedef struct _Evas_Stringshare_El          Evas_Stringshare_El;
 
 struct _Evas_Stringshare
 {
-   Evas_Object_List *buckets[256];
+   Evas_Stringshare_El *buckets[256];
 };
 
 struct _Evas_Stringshare_El
