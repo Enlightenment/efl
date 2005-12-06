@@ -41,7 +41,7 @@ int ecore_string_init()
  *          @c NULL on failure.
  * @ingroup Ecore_String_Group
  */
-char *ecore_string_instance(char *string)
+const char *ecore_string_instance(char *string)
 {
 	Ecore_String *str;
 
@@ -78,7 +78,7 @@ char *ecore_string_instance(char *string)
  * @param   string The given string.
  * @ingroup Ecore_String_Group
  */
-void ecore_string_release(char *string)
+void ecore_string_release(const char *string)
 {
 	Ecore_String *str;
 
