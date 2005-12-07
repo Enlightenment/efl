@@ -74,3 +74,32 @@ ecore_file_app_installed(const char *exe)
      }
    return 0;
 }
+
+Ecore_List *
+ecore_file_app_list(void)
+{
+   Ecore_List *list, *files;
+   char  buf[PATH_MAX], *dir, *exe;
+   
+   list = ecore_list_new();
+   if (!list) return NULL;
+   ecore_list_set_free_cb(list, free);
+   ecore_list_goto_first(__ecore_file_path_bin);
+   while ((dir = ecore_list_next(__ecore_file_path_bin)) != NULL)
+     {
+	files = ecore_file_ls(dir);
+	if (files)
+	  {
+	     ecore_list_goto_first(files);
+	     while ((exe = ecore_list_next(files)) != NULL)
+	       {
+		  snprintf(buf, sizeof(buf), "%s/%s", dir, exe);
+		  if ((ecore_file_can_exec(buf)) &&
+		      (!ecore_file_is_dir(buf)))
+		    ecore_list_append(list, strdup(buf));
+	       }
+	     ecore_list_destroy(files);
+	  }
+     }
+   return list;
+}
