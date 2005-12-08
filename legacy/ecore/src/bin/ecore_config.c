@@ -224,6 +224,8 @@ main(int argc, char * const argv[])
 	// Load configuration from file
 	ecore_config_file_load(file);
 
+	ret = 0;
+
 	// Execute command
 	switch (cmd) {
 		case 's':
