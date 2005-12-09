@@ -51,6 +51,7 @@ extern "C" {
    EAPI int         ecore_file_init         (void);
    EAPI int         ecore_file_shutdown     (void);
    EAPI time_t      ecore_file_mod_time     (const char *file);
+   EAPI int         ecore_file_size         (const char *file);   
    EAPI int         ecore_file_exists       (const char *file);
    EAPI int         ecore_file_is_dir       (const char *file);
    EAPI int         ecore_file_mkdir        (const char *dir);

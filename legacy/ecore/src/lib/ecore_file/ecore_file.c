@@ -52,6 +52,15 @@ ecore_file_mod_time(const char *file)
 }
 
 int
+ecore_file_size(const char *file)
+{
+   struct stat st;
+
+   if (stat(file, &st) < 0) return 0;
+   return st.st_size;
+}
+
+int
 ecore_file_exists(const char *file)
 {
    struct stat st;
