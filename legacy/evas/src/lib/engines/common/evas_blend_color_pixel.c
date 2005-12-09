@@ -15,72 +15,89 @@ evas_common_blend_color_rgba_to_rgba_c(DATA32 col, DATA32 *dst, int len)
    DATA32 *dst_end = dst + len, ca = A_VAL(&col);
 
    ca += ca >> 7;
-   dst--;
-   while (++dst < dst_end)
+   while (dst < dst_end)
      {
-	DATA32  da = A_VAL(dst);
-
-	switch(da)
+	DATA32  da;
+	
+	da = A_VAL(dst);
+	switch (da)
 	  {
 	   case 0:
-		*dst = col;
-		break;
+	     *dst = col;
+	     break;
 	   case 255:
-		*dst += RGB_JOIN( ((R_VAL(&col) - R_VAL(dst)) * ca) >> 8,
-		                  ((G_VAL(&col) - G_VAL(dst)) * ca) >> 8,
-		                  ((B_VAL(&col) - B_VAL(dst)) * ca) >> 8 );
-		break;
+	     *dst += RGB_JOIN( ((R_VAL(&col) - R_VAL(dst)) * ca) >> 8,
+			       ((G_VAL(&col) - G_VAL(dst)) * ca) >> 8,
+			       ((B_VAL(&col) - B_VAL(dst)) * ca) >> 8 );
+	     break;
 	   default:
-		da = _evas_pow_lut[(A_VAL(&col) << 8) | da];
-		da += da >> 7;
-		*dst += ARGB_JOIN( ((255 - A_VAL(dst)) * ca) >> 8,
-		                   ((R_VAL(&col) - R_VAL(dst)) * da) >> 8,
-		                   ((G_VAL(&col) - G_VAL(dst)) * da) >> 8,
-		                   ((B_VAL(&col) - B_VAL(dst)) * da) >> 8 );
-		break;
+	     da = _evas_pow_lut[(A_VAL(&col) << 8) | da];
+	     da += da >> 7;
+	     *dst += ARGB_JOIN( ((255 - A_VAL(dst)) * ca) >> 8,
+				((R_VAL(&col) - R_VAL(dst)) * da) >> 8,
+				((G_VAL(&col) - G_VAL(dst)) * da) >> 8,
+				((B_VAL(&col) - B_VAL(dst)) * da) >> 8 );
+	     break;
 	  }
+	dst++;
      }
 }
 
 void
 evas_common_blend_color_rgba_to_rgb_c(DATA32 col, DATA32 *dst, int len)
 {
-   DATA32 *dst_end = dst + len, ca = A_VAL(&col);
-
+   DATA32 *dst_end, ca;
+   
+   dst_end = dst + len;
+   ca = A_VAL(&col);
    ca += ca >> 7;
    while (dst < dst_end)
-	*dst++ += RGB_JOIN( ((R_VAL(&col) - R_VAL(dst)) * ca) >> 8,
-	                    ((G_VAL(&col) - G_VAL(dst)) * ca) >> 8,
-	                    ((B_VAL(&col) - B_VAL(dst)) * ca) >> 8 );
+     {
+	*dst += RGB_JOIN(((R_VAL(&col) - R_VAL(dst)) * ca) >> 8,
+			 ((G_VAL(&col) - G_VAL(dst)) * ca) >> 8,
+			 ((B_VAL(&col) - B_VAL(dst)) * ca) >> 8 );
+	dst++;
+     }
 }
 
 void
 evas_common_copy_color_rgba_to_rgba_c(DATA32 col, DATA32 *dst, int len)
 {
-   DATA32 *dst_end = dst + len;
-
+   DATA32 *dst_end;
+   
+   dst_end = dst + len;
    while (dst < dst_end)
-	*dst++ = col;
+     {
+	*dst = col;
+	dst++;
+     }
 }
 
 void
 evas_common_copy_color_rgb_to_rgba_c(DATA32 col, DATA32 *dst, int len)
 {
-   DATA32 *dst_end = dst + len;
-
+   DATA32 *dst_end;
+   
+   dst_end = dst + len;
    col |= PIXEL_SOLID_ALPHA;
-
    while (dst < dst_end)
-	*dst++ = col;
+     {
+	*dst = col;
+	dst++;
+     }
 }
 
 void
 evas_common_copy_color_rgb_to_rgb_c(DATA32 col, DATA32 *dst, int len)
 {
-   DATA32 *dst_end = dst + len;
+   DATA32 *dst_end;
 
+   dst_end = dst + len;
    while (dst < dst_end)
-	*dst++ = col & (*dst | 0x00ffffff);
+     {
+	*dst = col & (*dst | 0x00ffffff);
+	dst++;
+     }
 }
 #endif
 
@@ -90,8 +107,9 @@ evas_common_copy_color_rgb_to_rgb_c(DATA32 col, DATA32 *dst, int len)
 void
 evas_common_blend_color_rgba_to_rgba_mmx(DATA32 col, DATA32 *dst, int len)
 {
-   DATA32 *dst_end = dst + len;
-
+   DATA32 *dst_end;
+   
+   dst_end = dst + len;
    pxor_r2r(mm0, mm0);
    movq_m2r(*_evas_const_c1, mm6);
 
@@ -111,59 +129,60 @@ evas_common_blend_color_rgba_to_rgba_mmx(DATA32 col, DATA32 *dst, int len)
    punpcklbw_r2r(mm0, mm1);
    A_VAL(&col) = len;
 
-   dst--;
-   while (++dst < dst_end)
+   while (dst < dst_end)
      {
 	DATA32  da = A_VAL(dst);
 
 	switch(da)
 	  {
 	   case 0:
-		*dst = col;
-		break;
+	     *dst = col;
+	     break;
 	   case 255:
-		movd_m2r(*dst, mm2);
-		punpcklbw_r2r(mm0, mm2);
-	
-		movq_r2r(mm1, mm3);
-		psubw_r2r(mm2, mm3);
-		psllw_i2r(1, mm3);
-		paddw_r2r(mm6, mm3);
-		pmulhw_r2r(mm5, mm3);
-		paddw_r2r(mm3, mm2);
-	
-		packuswb_r2r(mm0, mm2);
-		movd_r2m(mm2, *dst);
-
-		break;
+	     movd_m2r(*dst, mm2);
+	     punpcklbw_r2r(mm0, mm2);
+	     
+	     movq_r2r(mm1, mm3);
+	     psubw_r2r(mm2, mm3);
+	     psllw_i2r(1, mm3);
+	     paddw_r2r(mm6, mm3);
+	     pmulhw_r2r(mm5, mm3);
+	     paddw_r2r(mm3, mm2);
+	     
+	     packuswb_r2r(mm0, mm2);
+	     movd_r2m(mm2, *dst);
+	     
+	     break;
 	   default:
-		da = _evas_pow_lut[(A_VAL(&col) << 8) + da];
-		da = ARGB_JOIN(A_VAL(&col), da, da, da);
-		movd_m2r(da, mm3);
-		punpcklbw_r2r(mm3, mm3);
-		psrlw_i2r(1, mm3);
-
-		movq_r2r(mm1, mm4);
-		psubw_r2r(mm2, mm4);
-		psllw_i2r(1, mm4);
-		paddw_r2r(mm6, mm4);
-      
-		pmulhw_r2r(mm3, mm4);
-		paddw_r2r(mm4, mm2);
-	
-		packuswb_r2r(mm0, mm2);
-		movd_r2m(mm2, *dst);
-
-		break;
+	     da = _evas_pow_lut[(A_VAL(&col) << 8) + da];
+	     da = ARGB_JOIN(A_VAL(&col), da, da, da);
+	     movd_m2r(da, mm3);
+	     punpcklbw_r2r(mm3, mm3);
+	     psrlw_i2r(1, mm3);
+	     
+	     movq_r2r(mm1, mm4);
+	     psubw_r2r(mm2, mm4);
+	     psllw_i2r(1, mm4);
+	     paddw_r2r(mm6, mm4);
+	     
+	     pmulhw_r2r(mm3, mm4);
+	     paddw_r2r(mm4, mm2);
+	     
+	     packuswb_r2r(mm0, mm2);
+	     movd_r2m(mm2, *dst);
+	     
+	     break;
 	  }
+	dst++;
      }
 }
 
 void
 evas_common_blend_color_rgba_to_rgb_mmx(DATA32 col, DATA32 *dst, int len)
 {
-   DATA32 *dst_end = dst + len;
-
+   DATA32 *dst_end;
+   
+   dst_end = dst + len;
    pxor_r2r(mm0, mm0);
    movq_m2r(*_evas_const_c1, mm6);
 
@@ -180,8 +199,7 @@ evas_common_blend_color_rgba_to_rgb_mmx(DATA32 col, DATA32 *dst, int len)
    movd_m2r(col, mm1);
    punpcklbw_r2r(mm0, mm1);
 
-   dst--;
-   while (++dst < dst_end)
+   while (dst < dst_end)
      {
 	movd_m2r(*dst, mm2);
 	punpcklbw_r2r(mm0, mm2);
@@ -195,6 +213,7 @@ evas_common_blend_color_rgba_to_rgb_mmx(DATA32 col, DATA32 *dst, int len)
 	
 	packuswb_r2r(mm0, mm2);
 	movd_r2m(mm2, *dst);
+	dst++;
      }
 }
 
@@ -307,7 +326,7 @@ evas_common_gfx_func_blend_col_get_mmx(DATA32 col, RGBA_Image *dst, int pixels)
 	if (dst->flags & RGBA_IMAGE_HAS_ALPHA)
 	  {
 //	   evas_common_blend_init_evas_pow_lut();
-	   return evas_common_blend_color_rgba_to_rgba_mmx;
+	     return evas_common_blend_color_rgba_to_rgba_mmx;
 	  }
 	return evas_common_blend_color_rgba_to_rgb_mmx;
      }
