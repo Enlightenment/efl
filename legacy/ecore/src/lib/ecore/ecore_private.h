@@ -47,6 +47,8 @@
 #define CLAMP(x, min, max) (((x) > (max)) ? (max) : (((x) < (min)) ? (min) : (x)))
 #endif
 
+#define READBUFSIZ 65536
+
 #define ECORE_MAGIC_NONE            0x1234fedc
 #define ECORE_MAGIC_EXE             0xf7e812f5
 #define ECORE_MAGIC_TIMER           0xf7d713f4
@@ -148,14 +150,15 @@ struct _Ecore_Exe
    char        *tag;
    char        *cmd;
    Ecore_Exe_Flags  flags;
-   char        *args[4];	/* Arguments for child */
-   Ecore_Fd_Handler *fd_handler; /* FIXME: the fd_handler to handle read/write to child - if this was used, or NULL if not */
+   Ecore_Fd_Handler *write_fd_handler; /* FIXME: the fd_handler to handle write to child - if this was used, or NULL if not */
+   Ecore_Fd_Handler *read_fd_handler; /* FIXME: the fd_handler to handle read from child - if this was used, or NULL if not */
    void        *write_data_buf; /* FIXME: a data buffer for data to write to the child - realloced as needed for more data and flushed when the fd handler says writes are possible */
    int          write_data_size; /* FIXME: the size in bytes of the data buffer */
+   int          write_data_offset; /* FIXME: the offset in bytes in the data buffer */
    void        *read_data_buf; /* FIXME: data read from the child awating delivery to an event */
    int          read_data_size; /* FIXME: data read from child in bytes */
    int          child_fd_write;	/* fd to write TO to send data to the child */
-   int          child_fd_read;	/* fd to read FROM whne child has send us (parent) data */
+   int          child_fd_read;	/* fd to read FROM when child has sent us (the parent) data */
 };
 #endif
 
