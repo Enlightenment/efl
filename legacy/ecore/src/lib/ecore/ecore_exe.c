@@ -242,7 +242,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 	 exe->pid = pid;
 	 exe->flags = flags;
 	 exe->data = (void *)data;
-         exe->cmd = exe_cmd;  /* FIXME: should calloc and cpy. */
+         exe->cmd = strdup(exe_cmd);
          if (flags & ECORE_EXE_PIPE_READ)
 	    {
 	       exe->child_fd_read = readPipe[0];
@@ -254,6 +254,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
          if (flags & ECORE_EXE_PIPE_WRITE)
 	    {
 	       exe->child_fd_write = writePipe[1];
+	       fcntl(exe->child_fd_write, F_SETFL, O_NONBLOCK);  /*  FIXME: Check for -1 then errno. */
 	       exe->write_fd_handler = ecore_main_fd_handler_add(exe->child_fd_write,
 	          ECORE_FD_WRITE, _ecore_exe_data_write_handler, exe,
 	          NULL, NULL);
@@ -639,7 +640,8 @@ _ecore_exe_free(Ecore_Exe *exe)
    if (exe->read_data_buf)                  free(exe->read_data_buf);
    if (exe->flags & ECORE_EXE_PIPE_READ)    close(exe->child_fd_read);  /*  FIXME: Check for -1 then errno. */
    if (exe->flags & ECORE_EXE_PIPE_WRITE)   close(exe->child_fd_write);  /*  FIXME: Check for -1 then errno. */
-
+   if (exe->cmd)                            free(exe->cmd);
+   
    exes = _ecore_list2_remove(exes, exe);
    ECORE_MAGIC_SET(exe, ECORE_MAGIC_NONE);
    if (exe->tag) free(exe->tag);

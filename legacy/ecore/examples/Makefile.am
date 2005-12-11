@@ -4,7 +4,8 @@ timer_example \
 event_handler_example \
 args_example \
 list_example \
-list_destroy_example
+list_destroy_example \
+exe_example
 
 if BUILD_ECORE_CON
 CON_EXAMPLES = con_server_example con_client_example
@@ -39,6 +40,7 @@ list_example_SOURCES          = list_example.c
 list_destroy_example_SOURCES  = list_destroy_example.c
 event_handler_example_SOURCES = event_handler_example.c
 args_example_SOURCES          = args_example.c
+exe_example_SOURCES           = exe_example.c
 
 if BUILD_ECORE_CON
 con_server_example_SOURCES    = con_server_example.c
