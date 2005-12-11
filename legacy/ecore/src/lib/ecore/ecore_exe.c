@@ -257,11 +257,12 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 	       exe->write_fd_handler = ecore_main_fd_handler_add(exe->child_fd_write,
 	          ECORE_FD_WRITE, _ecore_exe_data_write_handler, exe,
 	          NULL, NULL);
+               if (exe->write_fd_handler)
+                 ecore_main_fd_handler_active_set(exe->write_fd_handler, 0);
 	    }
 
 	 exes = _ecore_list2_append(exes, exe);
          n = 0;
-         printf("Ecore_Exe %s success!\n", exe_cmd);
       }
 
    errno = n;
@@ -293,6 +294,9 @@ ecore_exe_pipe_write(Ecore_Exe *exe, void *data, int size)
    exe->write_data_buf = buf;
    memcpy(exe->write_data_buf + exe->write_data_size, data, size);
    exe->write_data_size += size;
+
+   if (exe->write_fd_handler)
+     ecore_main_fd_handler_active_set(exe->write_fd_handler, ECORE_FD_WRITE);
       
    return 1;
 }
@@ -752,7 +756,11 @@ _ecore_exe_flush(Ecore_Exe *exe)
          if (errno == EIO   || errno == EBADF ||
  	     errno == EPIPE || errno == EINVAL ||
 	     errno == ENOSPC)   /* we lost our server! */
-            ecore_exe_terminate(exe);
+	    {
+               ecore_exe_terminate(exe);
+               if (exe->write_fd_handler)
+                 ecore_main_fd_handler_active_set(exe->write_fd_handler, 0);
+	    }
       }
    else
       {
@@ -763,6 +771,8 @@ _ecore_exe_flush(Ecore_Exe *exe)
 	       exe->write_data_offset = 0;
 	       free(exe->write_data_buf);
 	       exe->write_data_buf = NULL;
+               if (exe->write_fd_handler)
+                 ecore_main_fd_handler_active_set(exe->write_fd_handler, 0);
             }
       }
 }
