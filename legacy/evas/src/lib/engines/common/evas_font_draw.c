@@ -120,7 +120,7 @@ evas_common_font_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Font *fn, int
    evas_common_font_size_use(fn);
    use_kerning = FT_HAS_KERNING(fi->src->ft.face);
    prev_index = 0;
-   func = evas_common_draw_func_blend_alpha_get(dc->col.col, dst);
+   func = evas_common_draw_func_blend_alpha_get(dst);
    for (c = 0, chr = 0; text[chr];)
      {
 	FT_UInt index;

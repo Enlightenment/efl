@@ -683,6 +683,10 @@ void evas_common_blend_pixels_cmod_rgba_to_rgba_c       (DATA32 *src, DATA32 *ds
 void evas_common_copy_pixels_cmod_rgba_to_rgba_c        (DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod);
 void evas_common_copy_pixels_cmod_rgb_to_rgba_c         (DATA32 *src, DATA32 *dst, int len, DATA8 *rmod, DATA8 *gmod, DATA8 *bmod, DATA8 *amod);
 
+void evas_common_blend_pixels_mul_color_rgba_to_rgb_c   (DATA32 *src, DATA32 *dst, int len, DATA32 mul_color);
+void evas_common_blend_pixels_mul_color_rgba_to_rgb_mmx (DATA32 *src, DATA32 *dst, int len, DATA32 mul_color);
+void evas_common_blend_pixels_mul_color_rgba_to_rgba_c  (DATA32 *src, DATA32 *dst, int len, DATA32 mul_color);
+
 void evas_common_blend_alpha_color_rgba_to_rgb_c        (DATA8 *src, DATA32 *dst, int len, DATA32 col);
 void evas_common_blend_alpha_color_rgba_to_rgb_mmx      (DATA8 *src, DATA32 *dst, int len, DATA32 col);
 void evas_common_blend_alpha_color_rgba_to_rgba_c       (DATA8 *src, DATA32 *dst, int len, DATA32 col);
@@ -952,7 +956,7 @@ Gfx_Func_Blend_Src_Dst           evas_common_draw_func_blend_get       (RGBA_Ima
 Gfx_Func_Blend_Color_Dst         evas_common_draw_func_blend_color_get (DATA32 src, RGBA_Image *dst, int pixels);
 Gfx_Func_Blend_Src_Cmod_Dst      evas_common_draw_func_blend_cmod_get  (RGBA_Image *src, RGBA_Image *dst, int pixels);
 Gfx_Func_Blend_Src_Mul_Dst       evas_common_draw_func_blend_mul_get   (RGBA_Image *src, DATA32 col, RGBA_Image *dst, int pixels);
-Gfx_Func_Blend_Src_Alpha_Mul_Dst evas_common_draw_func_blend_alpha_get (DATA32 src, RGBA_Image *dst);
+Gfx_Func_Blend_Src_Alpha_Mul_Dst evas_common_draw_func_blend_alpha_get (RGBA_Image *dst);
 Gfx_Func_Blend_Src_Dst           evas_common_draw_func_copy_get        (int pixels, int reverse);
 
 void              evas_font_dir_cache_free(void);
