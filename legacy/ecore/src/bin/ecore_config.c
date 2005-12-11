@@ -7,6 +7,7 @@
 
 #ifdef BUILD_ECORE_CONFIG
 #include <unistd.h>
+#include <getopt.h>
 #include <Eet.h>
 #include "Ecore_Config.h"
 #include "Ecore_Data.h"
@@ -124,20 +125,22 @@ void
 usage_and_exit(const char *prog, int ret, const char *msg)
 {
 	if (msg) fprintf(stderr, msg);
-	fprintf(stderr, "Usage: %s -c <file> <command> [-k key]\n", prog);
+	fprintf(stderr, "Usage: %s <options> <command>\n", prog);
 	fprintf(stderr, "Modify ecore_config files\n\n");
-	fprintf(stderr, "Accepted commands:\n");
-	fprintf(stderr, "  -a          get all keys\n");
-	fprintf(stderr, "  -g          get key\n");
-	fprintf(stderr, "  -d          delete key\n");
-	fprintf(stderr, "  -b <value>  set boolean\n");
-	fprintf(stderr, "  -f <value>  set float\n");
-	fprintf(stderr, "  -i <value>  set integer\n");
-	fprintf(stderr, "  -n          set nil\n");
-	fprintf(stderr, "  -r <value>  set RGBA\n");
-	fprintf(stderr, "  -s <value>  set string\n");
-	fprintf(stderr, "  -t <value>  set theme\n\n");
-	fprintf(stderr, "  -k <key> must be specified for all commands except -a\n\n");
+	fprintf(stderr, "Options:\n");
+	fprintf(stderr, "  -c, --file=FILE config file\n");
+	fprintf(stderr, "  -k, --key=KEY   must be given for all commands except -a\n\n");
+	fprintf(stderr, "Commands:\n");
+	fprintf(stderr, "  -a, --list         get all keys\n");
+	fprintf(stderr, "  -g, --get          get key\n");
+	fprintf(stderr, "  -d, --del          delete key\n");
+	fprintf(stderr, "  -b, --bool=VALUE   set boolean\n");
+	fprintf(stderr, "  -f, --float=VALUE  set float\n");
+	fprintf(stderr, "  -i, --int=VALUE    set integer\n");
+	fprintf(stderr, "  -n, --nil          set nil\n");
+	fprintf(stderr, "  -r, --rgb=VALUE    set RGBA\n");
+	fprintf(stderr, "  -s, --string=VALUE set string\n");
+	fprintf(stderr, "  -t, --theme=VALUE  set theme\n\n");
 	exit(ret);
 }
 
@@ -159,7 +162,27 @@ main(int argc, char * const argv[])
 	if(argc < 4)
 		usage_and_exit(prog, 2, NULL);
 
-	while((ret = getopt(argc, argv, "angdb:f:i:r:s:t:c:k:")) != -1) {
+	while(1) {
+		static struct option long_options[] = {
+			{"file",   1, 0, 'c'},
+			{"list",   0, 0, 'a'},
+			{"get",    0, 0, 'g'},
+			{"del",    0, 0, 'd'},
+			{"bool",   1, 0, 'b'},
+			{"float",  1, 0, 'f'},
+			{"int",    1, 0, 'i'},
+			{"nil",    0, 0, 'n'},
+			{"rgb",    1, 0, 'r'},
+			{"string", 1, 0, 's'},
+			{"theme",  1, 0, 't'},
+			{"key",    1, 0, 'k'},
+			{0, 0, 0, 0}
+		};
+
+		ret = getopt_long(argc, argv, "c:agdb:f:i:nr:s:t:k:", long_options, NULL);
+		if(ret == -1)
+			break;
+
 		switch(ret) {
 			case 'k':
 				key = strdup(optarg);
