@@ -181,10 +181,15 @@ _ecore_timer_call(double when)
 		   * assume that the system hung and set the timer to go off
 		   * timer->in from now.
 		   */
-		  if ((timer->at + timer->in) < (when - 30.0))
-		    _ecore_timer_set(timer, when + timer->in, timer->in, timer->func, timer->data);
+		  if (!timer->delete_me)
+		    {
+		       if ((timer->at + timer->in) < (when - 30.0))
+			 _ecore_timer_set(timer, when + timer->in, timer->in, timer->func, timer->data);
+		       else
+			 _ecore_timer_set(timer, timer->at + timer->in, timer->in, timer->func, timer->data);
+		    }
 		  else
-		    _ecore_timer_set(timer, timer->at + timer->in, timer->in, timer->func, timer->data);
+		    free(timer);
 	       }
 	     else
 	       free(timer);
