@@ -7,6 +7,7 @@ con_client_example
 con_server_example
 config_basic_example
 event_handler_example
+exe_example
 list_destroy_example
 list_example
 timer_example
