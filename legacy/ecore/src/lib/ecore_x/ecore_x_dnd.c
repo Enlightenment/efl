@@ -325,6 +325,10 @@ ecore_x_dnd_drop(void)
 	_source->state = ECORE_X_DND_SOURCE_IDLE;
      }
    ecore_x_window_ignore_set(_source->win, 0);
+
+   _source->dest = None; 
+
+
    return status;
 }
 
