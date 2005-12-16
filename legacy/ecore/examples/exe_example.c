@@ -19,8 +19,21 @@ exe_data(void *data, int type, void *event)
 
    ev = event;
    printf("  [*] DATA RET EXE %p - %p [%i bytes]\n", ev->exe, ev->data, ev->size);
-   for (i = 0; i < ev->size; i++)
-     putchar(((unsigned char *)ev->data)[i]);
+
+   if (ev->lines)
+      {
+         int i;
+	       
+	 for (i = 0; ev->lines[i].line != NULL; i++)
+	    {
+               printf("%d %s\n", ev->lines[i].size, ev->lines[i].line);
+	    }
+      }
+   else
+      {
+         for (i = 0; i < ev->size; i++)
+            putchar(((unsigned char *)ev->data)[i]);
+      }
    printf("\n");
    return 1;
 }
@@ -46,7 +59,7 @@ int main(int argc, char **argv) {
 			    NULL);
    ecore_exe_pipe_write(exe1, "ls\n", 3);
    exe2 = ecore_exe_pipe_run("/usr/bin/find / -print",
-			    ECORE_EXE_PIPE_READ,
+			    ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_READ_LINE_BUFFERED,
 			    NULL);
    exe3 = ecore_exe_pipe_run("/bin/cat",
 			    ECORE_EXE_PIPE_WRITE,
