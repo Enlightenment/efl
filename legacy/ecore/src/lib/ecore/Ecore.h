@@ -180,7 +180,7 @@ extern "C" {
 	Ecore_Exe *exe; /**< The handle to the process */
 	void *data; /**< the raw binary data from the child process that was recieved */
 	int   size; /**< the size of this data in bytes */
-	Ecore_Event_Exe_Data_Line *lines; /**< an array of line data if line buffered */
+	Ecore_Event_Exe_Data_Line *lines; /**< a NULL terminated array of line data if line buffered */
      };
 #endif
    
