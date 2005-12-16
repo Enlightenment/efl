@@ -127,12 +127,15 @@ ecore_exe_run(const char *exe_cmd, const void *data)
  *
  * This function does the same thing as ecore_exe_run(), but also makes the
  * standard in and/or out from the child process available for reading or
- * writing. To write use ecore_exe_pipe_write(). To read listen to 
- * ECORE_EVENT_EXE_DATA events (set up a handler). Ecore may buffer read data
- * until a newline character if asked for with the @p flags. All data will be
- * included in the events (newlines will not be stripped). This will only
- * happen if the process is run with ECORE_EXE_PIPE_READ enabled in the flags.
- * 
+ * writing.  To write use ecore_exe_pipe_write().  To read listen to
+ * ECORE_EVENT_EXE_DATA events (set up a handler).  Ecore may buffer read
+ * data until a newline character if asked for with the @p flags.  All
+ * data will be included in the events (newlines will be replaced with
+ * NULLS if line buffered).  ECORE_EVENT_EXE_DATA events will only happen
+ * if the process is run with ECORE_EXE_PIPE_READ enabled in the flags.
+ * Writing will only be allowed with ECORE_EXE_PIPE_WRITE enabled in the
+ * flags.
+ *
  * @param   exe_cmd The command to run with @c /bin/sh.
  * @param   flags   The flag parameters for how to deal with inter-process I/O
  * @param   data    Data to attach to the returned process handle.
@@ -142,6 +145,7 @@ ecore_exe_run(const char *exe_cmd, const void *data)
 Ecore_Exe *
 ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 {
+/* FIXME: MAybe we should allow STDERR reading as well. */
    Ecore_Exe *exe = NULL;
    pid_t pid = 0;
    int readPipe[2] = { -1, -1 };
@@ -658,73 +662,120 @@ _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler)
    exe = data;
    if ((exe->read_fd_handler) && (ecore_main_fd_handler_active_get(exe->read_fd_handler, ECORE_FD_READ)))
       {
-         unsigned char *inbuf = NULL;
-	 int inbuf_num = 0;
+         unsigned char *inbuf;
+	 int inbuf_num;
+
+         inbuf = exe->read_data_buf;
+         inbuf_num = exe->read_data_size;
+	 exe->read_data_buf = NULL;
+	 exe->read_data_size = 0;
 
 	 for (;;)
 	    {
-	       int num, lost_server;
+	       int num, lost_exe;
 	       char buf[READBUFSIZ];
 
-	       lost_server = 0;
+	       lost_exe = 0;
 	       errno = 0;
-	       if ((num = read(exe->child_fd_read, buf, READBUFSIZ)) < 1)
+	       if ((num = read(exe->child_fd_read, buf, READBUFSIZ)) < 1)  /* FIXME: SPEED/SIZE TRADE OFF - add a smaller READBUFSIZE (currently 64k) to inbuf, use that instead of buf, and save ourselves a memcpy(). */
 	          {
-		     lost_server = ((errno == EIO) || 
-			            (errno == EBADF) ||
-				    (errno == EPIPE) || 
-				    (errno == EINVAL) ||
-				    (errno == ENOSPC) || 
-				    (num == 0));
-		       /* is num == 0 is right - when the server closes us 
-			* off we will get this (as this is called when select
-			* tells us there is data to read!)
-			*/
+		     lost_exe = ((errno == EIO) || 
+			         (errno == EBADF) ||
+				 (errno == EPIPE) || 
+				 (errno == EINVAL) ||
+				 (errno == ENOSPC));
                      if ((errno != EAGAIN) && (errno != EINTR))
                         perror("_ecore_exe_data_handler() read problem ");
                   }
-	       if (num < 1)
-	       {
-		  if (inbuf) 
-		     {
-		        Ecore_Event_Exe_Data *e;
+	       if (num > 0)
+	          {
+		     inbuf = realloc(inbuf, inbuf_num + num);
+		     memcpy(inbuf + inbuf_num, buf, num);
+		     inbuf_num += num;
+	          }
+	       else
+	          {
+		     if (inbuf) 
+		        {
+		           Ecore_Event_Exe_Data *e;
 		       
-		        e = calloc(1, sizeof(Ecore_Event_Exe_Data));
-		        if (e)
-			   {
-			      e->exe = exe;
-			      e->data = inbuf;
-			      e->size = inbuf_num;
-			      ecore_event_add(ECORE_EVENT_EXE_DATA, e,
+		           e = calloc(1, sizeof(Ecore_Event_Exe_Data));
+		           if (e)
+			      {
+			         e->exe = exe;
+			         e->data = inbuf;
+			         e->size = inbuf_num;
+
+                                 if (exe->flags & ECORE_EXE_PIPE_READ_LINE_BUFFERED)
+				    {
+				       int max = 0;
+				       int count = 0;
+				       int i;
+				       int last = 0;
+				       char *c;
+
+                                       c = inbuf;
+				       for (i = 0; i < inbuf_num; i++) /* Find the lines. */
+				          {
+					     if (inbuf[i] == '\n')
+					        {
+					           if (count >= max)
+					              {
+						         max += 10;  /* FIXME: Maybe keep track of the largest number of lines ever sent, and add half that many instead of 10. */
+		                                         e->lines = realloc(e->lines, sizeof(Ecore_Event_Exe_Data_Line) * (max + 1)); /* Allow room for the NULL termination. */
+						      }
+						   /* raster said to leave the line endings as line endings, however -
+						    * This is line buffered mode, we are not dealing with binary here, but lines.
+						    * If we are not dealing with binary, we must be dealing with ASCII, unicode, or some other text format.
+						    * Thus the user is most likely gonna deal with this text as strings.
+						    * Thus the user is most likely gonna pass this data to str functions.
+						    * rasters way - the endings are always gonna be '\n';  onefangs way - they will always be '\0'
+						    * We are handing them the string length as a convenience.
+						    * Thus if they really want it in raw format, they can e->lines[i].line[e->lines[i].size - 1] = '\n'; easily enough.
+						    * In the default case, we can do this conversion quicker than the user can, as we already have the index and pointer.
+						    * Let's make it easy on them to use these as standard C strings.
+						    *
+						    * onefang is proud to announce that he has just set a new personal record for the
+						    * most over documentation of a simple assignment statement.  B-)
+						    */
+						   inbuf[i] = '\0';
+						   e->lines[count].line = c;
+						   e->lines[count].size = i - last;
+						   last = i + 1;
+						   c = &inbuf[last];
+					           count++;
+					        }
+					  }
+					  if (count == 0) /* No lines to send, cancel the event. */
+					     {
+                                                _ecore_exe_event_exe_data_free(NULL, e);
+					        e = NULL;
+					     }
+					  else /* NULL terminate the array, so that people know where the end is. */
+					     {
+						e->lines[count].line = NULL;
+						e->lines[count].size = 0;
+					     }
+					  if (i > last) /* Partial line left over, save it for next time. */
+					     {
+					        e->size = last;
+	                                        exe->read_data_size = i - last;
+	                                        exe->read_data_buf = malloc(exe->read_data_size);
+		                                memcpy(exe->read_data_buf, c, exe->read_data_size);
+					     }
+				    }
+
+				 if (e)
+			            ecore_event_add(ECORE_EVENT_EXE_DATA, e,
 					    _ecore_exe_event_exe_data_free, NULL);
-			   }
-		     }
-		  if (lost_server)
-		     {
-		        /* we lost our server! */
+			      }
+		        }
+		     if (lost_exe)
                         ecore_exe_terminate(exe);
-		        return 1;
-		     }
-		  break;
-	       }
-	    else
-	       {
-		   inbuf = realloc(inbuf, inbuf_num + num);
-		   memcpy(inbuf + inbuf_num, buf, num);
-		   inbuf_num += num;
-   /* FIXME: 
-    * when fd handlers report data - if line buffering is not enabled instantly
-    * copy data to a exe data event struct and add the event like ecore_con. if
-    * line buffering is enabled, parse new data block for a \n. if there is
-    * none, then simply append to read buf. if there are 1 or more, append
-    * until, and including the first \n, to the existing read buf (if any) then
-    * generate data event for that. repeat for each other \n found until no \n
-    * chars are left, then take trailing data (if any) and put in read buf
-    * waiting for more data.
-    */
-	       }
-	  }
-     }
+		     break;
+	          }
+	    }
+      }
 
    return 1;
 }
@@ -785,7 +836,9 @@ _ecore_exe_event_exe_data_free(void *data __UNUSED__, void *ev)
    Ecore_Event_Exe_Data *e;
 
    e = ev;
-   if (e->data) free(e->data);
+
+   if (e->lines)   free(e->lines);
+   if (e->data)    free(e->data);
    free(e);
 }
 #endif
