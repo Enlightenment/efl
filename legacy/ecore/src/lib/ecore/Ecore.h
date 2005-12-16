@@ -102,6 +102,7 @@ extern "C" {
    typedef struct _Ecore_Event_Signal_Exit     Ecore_Event_Signal_Exit; /**< Exit signal event */
    typedef struct _Ecore_Event_Signal_Power    Ecore_Event_Signal_Power; /**< Power signal event */
    typedef struct _Ecore_Event_Signal_Realtime Ecore_Event_Signal_Realtime; /**< Realtime signal event */
+   typedef struct _Ecore_Event_Exe_Data_Line   Ecore_Event_Exe_Data_Line; /**< Lines from a child process */
    typedef struct _Ecore_Event_Exe_Data        Ecore_Event_Exe_Data; /**< Data from a child process */
 
 #ifndef WIN32
@@ -168,11 +169,18 @@ extern "C" {
      };
 
 #ifndef WIN32
+   struct _Ecore_Event_Exe_Data_Line /**< Lines from a child process */
+      {
+         char *line;
+	 int   size;
+      };
+
    struct _Ecore_Event_Exe_Data /** Data from a child process event */
      {
 	Ecore_Exe *exe; /**< The handle to the process */
 	void *data; /**< the raw binary data from the child process that was recieved */
 	int   size; /**< the size of this data in bytes */
+	Ecore_Event_Exe_Data_Line *lines; /**< an array of line data if line buffered */
      };
 #endif
    
