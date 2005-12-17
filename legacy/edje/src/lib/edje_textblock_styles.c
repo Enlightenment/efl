@@ -82,7 +82,7 @@ _edje_format_parse(char **s)
    char *s1 = NULL, *s2 = NULL;
    
    p = *s;
-   if (*p == 0) return NULL;
+   if ((!p) || (*p == 0)) return NULL;
    for (;;)
      {
 	if (!s1)
@@ -250,6 +250,7 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
 	for (ll = stl->tags; ll; ll = ll->next)
 	  {
 	     tag = ll->data;
+	     if (!tag->key) continue;
 	     len += strlen(tag->key);
 	     len += 1;
 	     len += 1;
@@ -273,6 +274,7 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
 	for (ll = stl->tags; ll; ll = ll->next)
 	  {
 	     tag = ll->data;
+	     if (!tag->key) continue;
 	     strcat(buf, tag->key);
 	     strcat(buf, "='");
 	     ts = _edje_format_reparse(edf, tag->value);

@@ -464,7 +464,7 @@ _edje_part_recalc_single(Edje *ed,
 	for (l = ed->file->styles; l; l = l->next)
 	  {
 	     stl = l->data;
-	     if (!strcmp(stl->name, style)) break;
+	     if ((stl->name) && (!strcmp(stl->name, style))) break;
 	     stl = NULL;
 	  }
 	
