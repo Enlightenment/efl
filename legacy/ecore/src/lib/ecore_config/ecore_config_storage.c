@@ -23,7 +23,7 @@ ecore_config_load(void)
    char                file[PATH_MAX];
 
    if (!__ecore_config_app_name)
-      return ECORE_CONFIG_ERR_FAIL;
+     return ECORE_CONFIG_ERR_FAIL;
 
    snprintf(file, PATH_MAX, "%s/.e/apps/%s/config.eet", getenv("HOME"),
 	    __ecore_config_app_name);
@@ -43,7 +43,7 @@ ecore_config_save(void)
    char                file[PATH_MAX];
 
    if (!__ecore_config_app_name)
-      return ECORE_CONFIG_ERR_FAIL;
+     return ECORE_CONFIG_ERR_FAIL;
 
    snprintf(file, PATH_MAX, "%s/.e/apps/%s/config.eet", getenv("HOME"),
 	    __ecore_config_app_name);
@@ -85,7 +85,7 @@ ecore_config_file_load(const char *file)
      {
 	for (x = 0; x < key_count; x++)
 	  {
-	     _ecore_config_db_read(db, keys[x]);
+	    _ecore_config_db_read(db, keys[x]);
 	  }
      }
    _ecore_config_db_close(db);
@@ -162,7 +162,7 @@ ecore_config_file_save(const char *file)
 	     continue;
 	  }
 
-	_ecore_config_db_write(db, next->key);
+	_ecore_config_db_write(db, next);
 
 	next = next->next;
      }

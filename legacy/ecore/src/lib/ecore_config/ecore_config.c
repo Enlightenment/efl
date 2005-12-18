@@ -164,9 +164,12 @@ ecore_config_data_get(const char *key)
 char               *
 ecore_config_string_get(const char *key)
 {
-   Ecore_Config_Prop  *e;
+   return _ecore_config_string_get( ecore_config_get(key) );
+}
 
-   e = ecore_config_get(key);
+char               *
+_ecore_config_string_get(Ecore_Config_Prop *e)
+{
    return (e && (e->type == ECORE_CONFIG_STR) && e->ptr) ? strdup(e->ptr) : NULL;
 }
 
@@ -180,9 +183,12 @@ ecore_config_string_get(const char *key)
 int
 ecore_config_boolean_get(const char *key)
 {
-   Ecore_Config_Prop  *e;
+   return _ecore_config_boolean_get( ecore_config_get(key) );
+}
 
-   e = ecore_config_get(key);
+int
+_ecore_config_boolean_get(Ecore_Config_Prop *e)
+{
    return (e && ((e->type == ECORE_CONFIG_INT) || (e->type == ECORE_CONFIG_BLN))) ? (e->val != 0) : -1;
 }
 
@@ -196,9 +202,12 @@ ecore_config_boolean_get(const char *key)
 long
 ecore_config_int_get(const char *key)
 {
-   Ecore_Config_Prop  *e;
+   return _ecore_config_int_get( ecore_config_get(key) );
+}
 
-   e = ecore_config_get(key);
+long
+_ecore_config_int_get(Ecore_Config_Prop *e)
+{
    return (e && ((e->type == ECORE_CONFIG_INT) || (e->type == ECORE_CONFIG_RGB))) ? e->val : 0L;
 }
 
@@ -212,12 +221,13 @@ ecore_config_int_get(const char *key)
 float
 ecore_config_float_get(const char *key)
 {
-   Ecore_Config_Prop  *e;
+   return _ecore_config_float_get( ecore_config_get(key) );
+}
 
-   e = ecore_config_get(key);
-   return (e
-	   && (e->type ==
-	       ECORE_CONFIG_FLT)) ? ((float)e->val / ECORE_CONFIG_FLOAT_PRECISION) : 0.0;
+float
+_ecore_config_float_get(Ecore_Config_Prop *e)
+{
+   return (e && (e->type == ECORE_CONFIG_FLT)) ? ((float)e->val / ECORE_CONFIG_FLOAT_PRECISION) : 0.0;
 }
 
 /**
@@ -234,8 +244,7 @@ ecore_config_float_get(const char *key)
 int
 ecore_config_rgb_get(const char *key, int *r, int *g, int *b)
 {
-   int                 alpha;
-   return ecore_config_argb_get(key, &alpha, r, g, b);
+   return _ecore_config_argb_get( ecore_config_get(key), NULL, r, g, b);
 }
 
 /**
@@ -252,16 +261,18 @@ ecore_config_rgb_get(const char *key, int *r, int *g, int *b)
 int
 ecore_config_argb_get(const char *key, int *a, int *r, int *g, int *b)
 {
-   Ecore_Config_Prop  *e;
+   return _ecore_config_argb_get( ecore_config_get(key), a, r, g, b);
+}
 
-   e = ecore_config_get(key);
-
+int
+_ecore_config_argb_get(Ecore_Config_Prop *e, int *a, int *r, int *g, int *b)
+{
    if (e && ((e->type == ECORE_CONFIG_RGB)))
      {
-	*a = (e->val >> 24) & 0xff;
-	*r = (e->val >> 16) & 0xff;
-	*g = (e->val >> 8) & 0xff;
-	*b = e->val & 0xff;
+	if(a) *a = (e->val >> 24) & 0xff;
+	if(r) *r = (e->val >> 16) & 0xff;
+	if(g) *g = (e->val >> 8) & 0xff;
+	if(b) *b = e->val & 0xff;
 	return ECORE_CONFIG_ERR_SUCC;
      }
    return ECORE_CONFIG_ERR_FAIL;
@@ -294,10 +305,16 @@ ecore_config_rgbstr_get(const char *key)
 char               *
 ecore_config_argbstr_get(const char *key)
 {
+   return _ecore_config_argbstr_get( ecore_config_get(key) );
+}
+
+char               *
+_ecore_config_argbstr_get(Ecore_Config_Prop *e)
+{
    char               *r;
 
    r = NULL;
-   esprintf(&r, "#%08x", ecore_config_int_get(key));
+   esprintf(&r, "#%08x", _ecore_config_int_get(e));
    return r;
 }
 
@@ -311,9 +328,12 @@ ecore_config_argbstr_get(const char *key)
 char               *
 ecore_config_theme_get(const char *key)
 {
-   Ecore_Config_Prop  *e;
+   return _ecore_config_theme_get( ecore_config_get(key) );
+}
 
-   e = ecore_config_get(key);
+char               *
+_ecore_config_theme_get(Ecore_Config_Prop *e)
+{
    return (e && (e->type == ECORE_CONFIG_THM)) ? strdup(e->ptr) : NULL;
 }
 
@@ -328,44 +348,47 @@ char               *
 ecore_config_as_string_get(const char *key)
 {
    Ecore_Config_Prop  *e;
+   char               *val;
    char               *r;
 
+   val = NULL;
    r = NULL;
    if (!(e = ecore_config_get(key)))
       E(0, "no such property, \"%s\"...\n", key);
    else
      {
-	const char         *type = ecore_config_type_get(e);
-
 	switch (e->type)
-	  {
-	  case ECORE_CONFIG_NIL:
-	     esprintf(&r, "%s:%s=<nil>", key, type);
-	     break;
-	  case ECORE_CONFIG_INT:
-	     esprintf(&r, "%s:%s=%ld", key, type, ecore_config_int_get(key));
-	     break;
-     case ECORE_CONFIG_BLN:
-        esprintf(&r, "%s:%s=%ld", key, type, ecore_config_boolean_get(key));
-        break;
-	  case ECORE_CONFIG_FLT:
-	     esprintf(&r, "%s:%s=%lf", key, type, ecore_config_float_get(key));
-	     break;
-	  case ECORE_CONFIG_STR:
-	     esprintf(&r, "%s:%s=\"%s\"", key, type,
-		      ecore_config_string_get(key));
-	     break;
-	  case ECORE_CONFIG_RGB:
-	     esprintf(&r, "%s:%s=#%08x", key, type, ecore_config_int_get(key));
-	     break;
-	  case ECORE_CONFIG_THM:
-	     esprintf(&r, "%s:%s=\"%s\"", key, type,
-		      ecore_config_theme_get(key));
-	     break;
-	  default:
-	     esprintf(&r, "%s:unknown_type", key);
-	     break;
-	  }
+	   {
+	     case ECORE_CONFIG_NIL:
+		val = strdup("<nil>");
+		break;
+	     case ECORE_CONFIG_INT:
+		esprintf(&val, "%ld",    _ecore_config_int_get(e));
+		break;
+	     case ECORE_CONFIG_BLN:
+		esprintf(&val, "%ld",    _ecore_config_boolean_get(e));
+		break;
+	     case ECORE_CONFIG_FLT:
+		esprintf(&val, "%lf",    _ecore_config_float_get(e));
+		break;
+	     case ECORE_CONFIG_STR:
+		esprintf(&val, "\"%s\"", _ecore_config_string_get(e));
+		break;
+	     case ECORE_CONFIG_RGB:
+		esprintf(&val, "#%08x",  _ecore_config_int_get(e));
+		break;
+	     case ECORE_CONFIG_THM:
+		esprintf(&val, "\"%s\"", _ecore_config_theme_get(e));
+		break;
+	     default:
+		esprintf(&r, "%s:unknown_type", key);
+		break;
+	   }
+	if (val)
+	   {
+	     esprintf(&r, "%s:%s=%s", key, e->type, val);
+	     free(val);
+	   }
      }
    return r;
 }
@@ -446,7 +469,7 @@ ecore_config_type_guess(const char *key, const char *val)
 
    l = NULL;
 
-   if ((p = ecore_config_get(key)) && p->type != ECORE_CONFIG_NIL)
+   if (key && (p = ecore_config_get(key)) && p->type != ECORE_CONFIG_NIL)
       return p->type;
 
    if (!val)

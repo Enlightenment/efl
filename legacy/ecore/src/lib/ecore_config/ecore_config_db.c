@@ -1,5 +1,6 @@
 #include "Ecore_Config.h"
 #include "ecore_config_private.h"
+#include "ecore_config_util.h"
 #include <Eet.h>
 
 #include <stdlib.h>
@@ -220,64 +221,54 @@ _ecore_config_db_key_data_get(Ecore_Config_DB_File *db, const char *key, int *si
 }*/
 
 void
-_ecore_config_db_write(Ecore_Config_DB_File *db, const char *key)
+_ecore_config_db_write(Ecore_Config_DB_File *db, Ecore_Config_Prop *e)
 {
-   char buf[256];
-   char* str = NULL;
-   int num = 0;
    char *prev_locale;
-   // Ecore_Config_Prop *prop;
-   Ecore_Config_Type type;
+   char *val = NULL;
+   char *r = NULL;
+   int num;
    
-   
-   type = ecore_config_get(key)->type;
-	prev_locale = setlocale(LC_NUMERIC, "C");
+   prev_locale = setlocale(LC_NUMERIC, "C");
 
-	switch (type) 
-	  {
-	     case ECORE_CONFIG_INT:
-	       num = snprintf(buf, sizeof(buf), "%c %i ", (char) type,
-			      (int) ecore_config_int_get(key));
-	       break;
-	     case ECORE_CONFIG_BLN:
-	       num = snprintf(buf, sizeof(buf), "%c %i ", (char) type,
-			      (int) ecore_config_boolean_get(key));
-	       break;
-	     case ECORE_CONFIG_FLT:
-	       num = snprintf(buf, sizeof(buf), "%c %16.16f ", (char) type,
-			      ecore_config_float_get(key));
-	       break;
-	     case ECORE_CONFIG_STR: {
-	       int slen = (strlen(ecore_config_string_get(key)) * sizeof(char)) + 3;
-	       str = malloc(slen);
-	       num = snprintf(str, slen, "%c %s ", (char) type,
-			      ecore_config_string_get(key));
-	       }
-	       break;
-	     case ECORE_CONFIG_THM:
-	       num = snprintf(buf, sizeof(buf), "%c %s ", (char) type,
-			      ecore_config_theme_get(key));
-	       break;
-	     case ECORE_CONFIG_RGB:
-	       num = snprintf(buf, sizeof(buf), "%c %s ", (char) type,
-			      ecore_config_argbstr_get(key));
-	       break;
-	     default:
-	       E(0, "Type %d not handled\n", type);
-	  }
+   switch (e->type) 
+     {
+	case ECORE_CONFIG_INT:
+	   esprintf(&val, "%i", _ecore_config_int_get(e));
+	   break;
+	case ECORE_CONFIG_BLN:
+	   esprintf(&val, "%i", _ecore_config_boolean_get(e));
+	   break;
+	case ECORE_CONFIG_FLT:
+	   esprintf(&val, "%16.16f", _ecore_config_float_get(e));
+	   break;
+	case ECORE_CONFIG_STR: 
+	   val = _ecore_config_string_get(e);
+	   break;
+	case ECORE_CONFIG_THM:
+	   val = _ecore_config_theme_get(e);
+	   break;
+	case ECORE_CONFIG_RGB:
+	   val = _ecore_config_argbstr_get(e);
+	   break;
+	default:
+	   E(0, "Type %d not handled\n", e->type);
+     }
 
-   if (prev_locale) setlocale(LC_NUMERIC, prev_locale);
+   if (prev_locale)
+     {
+	setlocale(LC_NUMERIC, prev_locale);
+	free(prev_locale);
+     }
    
-   if (!(type == ECORE_CONFIG_STR)) {
-	   buf[1] = 0;
-	   buf[num - 1] = 0;
-	   eet_write(db->ef, (char*)key, buf, num, 1);
-   } else {
-	   str[1] = 0;
-	   str[num-1] = 0;
-	   eet_write(db->ef, (char*)key, str, num, 1);
-	   free(str);
-   }
+   if(val)
+     {
+	num = esprintf(&r, "%c%c%s%c", (char) e->type, 0, val, 0);
+	if(num)
+	  eet_write(db->ef, e->key, r, num, 1);
+	free(r);
+     }
+
+   free(val);
 }
 /*
 void

@@ -23,6 +23,15 @@ void                  _ecore_config_db_close(Ecore_Config_DB_File *db);
 char                **_ecore_config_db_keys_get(Ecore_Config_DB_File *db, int *num_ret);
 Ecore_Config_Type     _ecore_config_db_key_type_get(Ecore_Config_DB_File *db, const char *key);
 int                   _ecore_config_db_read(Ecore_Config_DB_File *db, const char *key);
-void                  _ecore_config_db_write(Ecore_Config_DB_File *db, const char *key);
+void                  _ecore_config_db_write(Ecore_Config_DB_File *db, Ecore_Config_Prop *e);
+
+int                   _ecore_config_boolean_get(Ecore_Config_Prop *e);
+char                 *_ecore_config_string_get(Ecore_Config_Prop *e);
+long                  _ecore_config_int_get(Ecore_Config_Prop *e);
+int                   _ecore_config_argb_get(Ecore_Config_Prop *e, int *a, int *r,
+					  int *g, int *b);
+char                 *_ecore_config_argbstr_get(Ecore_Config_Prop *e);
+float                 _ecore_config_float_get(Ecore_Config_Prop *e);
+char                 *_ecore_config_theme_get(Ecore_Config_Prop *e);
 
 #endif
