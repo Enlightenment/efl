@@ -1293,15 +1293,16 @@ static XCBSCREEN *
 evas_engine_software_xcb_screen_get(XCBConnection *conn, int screen)
 {
    XCBSCREENIter i;
-   int           cur;
 
    if (!conn) return NULL;
 
    i = XCBConnSetupSuccessRepRootsIter(XCBGetSetup(conn));
    if (screen > i.rem - 1) return NULL; /* screen must be between 0 and i.rem - 1 */
-   for (cur = 0; cur <= screen; XCBSCREENNext(&i), ++cur) {}
+   for (; i.rem; --screen, XCBSCREENNext(&i))
+      if (screen == 0)
+         return i.data;
 
-   return i.data;
+   return NULL;
 }
 
 static XCBVISUALTYPE *
@@ -1310,7 +1311,6 @@ evas_engine_software_xcb_best_visual_get(XCBConnection *conn, int screen)
    XCBSCREEN        *scr;
    XCBDEPTH         *d;
    XCBVISUALTYPEIter iter;
-   int               cur;
 
    if (!conn) return NULL;
    scr = evas_engine_software_xcb_screen_get(conn, screen);
@@ -1319,7 +1319,7 @@ evas_engine_software_xcb_best_visual_get(XCBConnection *conn, int screen)
    if (!d) return NULL;
 
    iter = XCBDEPTHVisualsIter(d);
-   for (cur = 0 ; cur < iter.rem ; XCBVISUALTYPENext(&iter), ++cur)
+   for (; iter.rem ; XCBVISUALTYPENext(&iter))
       if (scr->root_visual.id == iter.data->visual_id.id)
 	 return iter.data;
 

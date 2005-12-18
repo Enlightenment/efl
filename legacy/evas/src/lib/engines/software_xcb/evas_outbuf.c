@@ -600,13 +600,12 @@ evas_software_xcb_outbuf_debug_show(Outbuf     *buf,
 				    int         h)
 {
    int                 i;
-   XCBSCREEN          *screen;
+   XCBSCREEN          *screen = NULL;
 
    {
       XCBGetGeometryRep *geom;
       XCBDRAWABLE        root;
       XCBSCREENIter      i;
-      int                cur;
 
       geom = XCBGetGeometryReply (buf->priv.x.conn, XCBGetGeometry (buf->priv.x.conn, draw), 0);
       root.window = geom->root;
@@ -614,7 +613,7 @@ evas_software_xcb_outbuf_debug_show(Outbuf     *buf,
       geom = XCBGetGeometryReply (buf->priv.x.conn, XCBGetGeometry (buf->priv.x.conn, root), 0);
 
       i = XCBConnSetupSuccessRepRootsIter(XCBGetSetup(buf->priv.x.conn));
-      for (cur = 0; cur < i.rem; XCBSCREENNext(&i), ++cur)
+      for (; i.rem; XCBSCREENNext(&i))
 	 if (i.data->root.xid == geom->root.xid)
 	    {
 	       screen = i.data;
@@ -747,7 +746,7 @@ evas_software_xcb_outbuf_perf_new_x(XCBConnection *conn,
 
 	perf->x.screen_num = 0;
 	i = XCBConnSetupSuccessRepRootsIter(XCBGetSetup(conn));
-	for (cur = 0; cur < i.rem; XCBSCREENNext(&i), ++cur)
+	for (cur = 0; i.rem; XCBSCREENNext(&i), ++cur)
 	  if (i.data->root.xid == geom->root.xid)
 	    {
 	      perf->x.screen_num = cur;
