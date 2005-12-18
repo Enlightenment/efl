@@ -921,6 +921,7 @@ evas_software_xcb_outbuf_perf_restore_x(XCBConnection *conn,
    type = type_rep->atom;
    format = STRING;
    retval = NULL;
+   free(type_rep);
 
    cookie = XCBGetProperty(conn, 0, perf->x.root.window,
 			   type, format,
@@ -942,9 +943,9 @@ evas_software_xcb_outbuf_perf_restore_x(XCBConnection *conn,
 	   evas_software_xcb_outbuf_perf_deserialize_x(perf, s);
 	   free(s);
 	}
-	/* FIXME: doesn't seem to be need (from valgrind) */
-/* 	free(retval); */
      }
+   free(prop_rep);
+   
    return perf;
 }
 

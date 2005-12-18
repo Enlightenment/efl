@@ -8,6 +8,20 @@
 
 
 
+XCBSCREEN *
+get_screen (XCBConnection *c,
+            int            screen)
+{
+  XCBSCREENIter i;
+
+  i = XCBConnSetupSuccessRepRootsIter(XCBGetSetup(c));
+  for (; i.rem; --screen, XCBSCREENNext(&i))
+    if (screen == 0)
+      return i.data;
+
+  return NULL;
+}
+
 XCBVISUALTYPE *
 get_visual(XCBConnection *conn,
 	   XCBSCREEN     *root)
@@ -62,15 +76,16 @@ main(int argc, char **argv)
    CARD32           value[6];
 /*    XClassHint       chint; */
    SizeHints       *szhints;
+   int              screen_nbr;
 
-   conn = XCBConnectBasic ();
+   conn = XCBConnect (NULL, &screen_nbr);
    if (!conn)
      {
 	printf("Error: cannot open a connection.\n");
 	exit(-1);
      }
 
-   screen = XCBConnSetupSuccessRepRootsIter (XCBGetSetup(conn)).data;
+   screen = get_screen (conn, screen_nbr);
 
    mask =
      XCBCWBackingStore | XCBCWColormap |
@@ -244,10 +259,11 @@ main(int argc, char **argv)
 	   case XCBButtonPress: {
 	     XCBButtonPressEvent *ev = (XCBButtonPressEvent *)e;
 
-	     if (ev->button.id == 3)
+	     if (ev->detail.id == 3)
 	       {
 		 setdown();
 		 evas_free(evas);
+                 free(e);
 		 XCBDisconnect(conn);
 		 evas_shutdown();
 		 exit(0);

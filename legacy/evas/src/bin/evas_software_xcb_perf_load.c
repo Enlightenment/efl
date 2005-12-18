@@ -19,6 +19,20 @@ Evas            *evas = NULL;
 int              win_w = 240;
 int              win_h = 240;
 
+XCBSCREEN *
+get_screen (XCBConnection *c,
+            int            screen)
+{
+  XCBSCREENIter i;
+
+  i = XCBConnSetupSuccessRepRootsIter(XCBGetSetup(c));
+  for (; i.rem; --screen, XCBSCREENNext(&i))
+    if (screen == 0)
+      return i.data;
+
+  return NULL;
+}
+
 XCBVISUALTYPE *
 get_visual(XCBConnection *conn,
 	   XCBSCREEN     *root)
@@ -72,15 +86,16 @@ main(int argc, char **argv)
    CARD32           value[6];
 /*    XClassHint          chint; */
    SizeHints       *szhints;
+   int              screen_nbr;
 
-   c = XCBConnectBasic ();
+   c = XCBConnect (NULL, &screen_nbr);
    if (!c)
      {
 	printf("Error: cannot open a connection.\n");
 	exit(-1);
      }
 
-   screen = XCBConnSetupSuccessRepRootsIter (XCBGetSetup(c)).data;
+   screen = get_screen (c, screen_nbr);
 
    mask = CWBackingStore | CWColormap |
      CWBackPixmap | CWBorderPixel |
