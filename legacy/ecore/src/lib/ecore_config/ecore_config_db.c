@@ -223,7 +223,7 @@ _ecore_config_db_key_data_get(Ecore_Config_DB_File *db, const char *key, int *si
 void
 _ecore_config_db_write(Ecore_Config_DB_File *db, Ecore_Config_Prop *e)
 {
-   char *prev_locale;
+   char *prev_locale= NULL;
    char *val = NULL;
    char *r = NULL;
    int num;
@@ -257,7 +257,6 @@ _ecore_config_db_write(Ecore_Config_DB_File *db, Ecore_Config_Prop *e)
    if (prev_locale)
      {
 	setlocale(LC_NUMERIC, prev_locale);
-	free(prev_locale);
      }
    
    if(val)
