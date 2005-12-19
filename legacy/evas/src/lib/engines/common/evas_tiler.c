@@ -63,6 +63,9 @@ evas_common_tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)
 #ifdef RECTUPDATE
    int i;
 
+   if ((w <= 0) || (h <= 0)) return 0;
+   RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, tb->outbuf_w, tb->outbuf_h);
+   if ((w <= 0) || (h <= 0)) return 0;
    for (i = 0; i < h; i++)
      evas_common_regionbuf_span_add(tb->rb, x, x + w - 1, y + i);
    return 1;
@@ -70,6 +73,9 @@ evas_common_tilebuf_add_redraw(Tilebuf *tb, int x, int y, int w, int h)
    int tx1, tx2, ty1, ty2, tfx1, tfx2, tfy1, tfy2, xx, yy;
    int num;
 
+   if ((w <= 0) || (h <= 0)) return 0;
+   RECTS_CLIP_TO_RECT(x, y, w, h, 0, 0, tb->outbuf_w, tb->outbuf_h);
+   if ((w <= 0) || (h <= 0)) return 0;
    num = 0;
    /* wipes out any motion vectors in tiles it touches into redraws */
    if (tilebuf_x_intersect(tb, x, w, &tx1, &tx2, &tfx1, &tfx2) &&
