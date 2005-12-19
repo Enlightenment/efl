@@ -771,7 +771,16 @@ _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler)
 			      }
 		        }
 		     if (lost_exe)
-                        ecore_exe_terminate(exe);
+		        {
+			   if (exe->exit_event)
+			      {
+		                 _ecore_event_add(ECORE_EVENT_EXE_EXIT, exe->exit_event, 
+				                  _ecore_event_exe_exit_free, NULL);
+				 exe->exit_event = NULL;   /* Just being paranoid. */
+			      }
+			   else
+                              ecore_exe_terminate(exe);   /* FIXME: give this some deep thought later. */
+                        }
 		     break;
 	          }
 	    }

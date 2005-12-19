@@ -161,14 +161,8 @@ _ecore_signal_call(void)
 	  {
 	     Ecore_Event_Exe_Exit *e;
 	     
-	     /* FIXME: If this process is set to read from the child, DELAY
-	      * the exe event until the pipe from the child dies and reports
-	      * errors - THEN report and exe - so store this exe value in the
-	      * ecore_exe struct waiting for the read fd to die then report
-	      * final read data, THEN this exit event
-	      *
-	      * If this process is set respawn, respawn with a suitable backoff
-	      * for those that need too much respawning. 
+	     /* FIXME: If this process is set respawn, respawn with a suitable backoff
+	      * period for those that need too much respawning. 
 	      */
 	     e = _ecore_event_exe_exit_new();
 	     if (e)
@@ -187,9 +181,12 @@ _ecore_signal_call(void)
 		  e->exe = _ecore_exe_find(pid);
 		  
 		  if (sigchld_info.si_signo)
-		    e->data = sigchld_info;
+		    e->data = sigchld_info; /* FIXME: I'm not sure, but maybe we should clone this.  I don't know if anybody uses it. */
 		  
-		  _ecore_event_add(ECORE_EVENT_EXE_EXIT, e, 
+                  if ((e->exe) && (e->exe->flags & ECORE_EXE_PIPE_READ))
+		     e->exe->exit_event = e;   /* We want to report the Last Words of the exe, so delay this event. */
+		  else
+		     _ecore_event_add(ECORE_EVENT_EXE_EXIT, e, 
 				   _ecore_event_exe_exit_free, NULL);
 	       }
 	  }
