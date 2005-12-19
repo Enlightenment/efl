@@ -103,9 +103,19 @@ ecore_main_loop_quit(void)
  *
  * @p func will be called during the execution of @ref ecore_main_loop_begin
  * when the file descriptor is available for reading, or writing, or both.
+ *
+ * Normally the return value from the @p func is "zero means this handler is 
+ * finished and can be deleted" as is usual for handler callbacks.  However,
+ * if the @p buf_func is supplied, then the return value from the @p func is "non 
+ * zero means the handler should be called again in a tight loop".
+ *
  * @p buf_func is called during event loop handling to check if data that has
  * been read from the file descriptor is in a buffer and is available to
- * read.
+ * read.  Some systems (notably xlib) handle their own buffering, and would
+ * otherwise not work with select().  These systems should use a @p buf_func.
+ * This is a most annoying hack, only ecore_x uses it, so refer to that for
+ * an example.  NOTE - @p func should probably return "one" always if @p buf_func
+ * is used, to avoid confusion with the other return walue semantics.
  *
  * @param   fd       The file descriptor to watch.
  * @param   flags    To watch it for read (@c ECORE_FD_READ) and/or
