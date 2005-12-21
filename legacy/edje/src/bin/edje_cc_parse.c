@@ -653,6 +653,29 @@ compile(void)
 		  strcat(def, " ");
 	       }
 	  }
+
+	/*
+	 * Run the input through the C pre-processor.
+	 *
+	 * On some BSD based systems (MacOS, OpenBSD), the default cpp
+	 * in the path is a wrapper script that chokes on the -o option.
+	 * If the preprocessor is invoked via gcc -E, it will treat
+	 * file_in as a linker file. The safest route seems to be to
+	 * run cpp with the output as the second non-option argument.
+	 */
+	snprintf(buf, sizeof(buf), "cpp -I%s %s %s %s",
+		 inc, def, file_in, tmpn);
+	ret = system(buf);
+	if (ret < 0)
+	  {
+	     snprintf(buf, sizeof(buf), "gcc -I%s %s -E -o %s %s",
+		      inc, def, tmpn, file_in);
+	     ret = system(buf);
+	  }
+	if (ret == EXIT_SUCCESS)
+	  file_in = tmpn;
+	free(def);
+/* OLD CODE
 	snprintf(buf, sizeof(buf), "cat %s | cpp -I%s %s -E -o %s", 
 		 file_in, inc, def, tmpn);
 	ret = system(buf);
@@ -664,6 +687,7 @@ compile(void)
 	  }
 	if (ret >= 0) file_in = tmpn;
 	free(def);
+ */
      }
    fd = open(file_in, O_RDONLY);
    if (fd < 0)
