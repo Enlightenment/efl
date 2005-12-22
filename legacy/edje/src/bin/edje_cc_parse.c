@@ -662,9 +662,14 @@ compile(void)
 	 * If the preprocessor is invoked via gcc -E, it will treat
 	 * file_in as a linker file. The safest route seems to be to
 	 * run cpp with the output as the second non-option argument.
+	 * 
+	 * Redirecting the output is required for MacOS 10.3, and works fine
+	 * on other systems.
 	 */
-	snprintf(buf, sizeof(buf), "cpp -I%s %s %s %s",
-		 inc, def, file_in, tmpn);
+	snprintf(buf, sizeof(buf), "cat %s | cpp -I%s -E %s > %s", 
+		 file_in, inc, def, tmpn);
+	/* snprintf(buf, sizeof(buf), "cpp -I%s %s %s %s",
+		 inc, def, file_in, tmpn); */
 	ret = system(buf);
 	if (ret < 0)
 	  {
