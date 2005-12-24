@@ -237,6 +237,8 @@ _ecore_config_ipc_exit(void)
    while (l)
      {
 	_ecore_config_ipc_ecore_exit(&l->server);
+        if (l->name)
+          free(l->name);
 	l = l->next;
      }
 
