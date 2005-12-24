@@ -74,6 +74,9 @@
 #undef IF_FREE
 #define IF_FREE(ptr) if (ptr) free(ptr); ptr = NULL;
 
+#undef IF_FN_DEL
+#define IF_FN_DEL(_fn, ptr) if (ptr) { _fn(ptr); ptr = NULL; }
+
 inline void ecore_print_warning(const char *function, const char *sparam);
 
 /* convenience macros for checking pointer parameters for non-NULL */
