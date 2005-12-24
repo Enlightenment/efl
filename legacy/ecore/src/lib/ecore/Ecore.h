@@ -74,12 +74,12 @@ extern "C" {
      };
    typedef enum _Ecore_Fd_Handler_Flags Ecore_Fd_Handler_Flags;
    
-   enum _Ecore_Exe_Flags /* FIXME: flags for executing a child with its stdin and/or stdout piped back */
+   enum _Ecore_Exe_Flags /* flags for executing a child with its stdin and/or stdout piped back */
      {
 	ECORE_EXE_PIPE_READ = 1, /**< Exe Pipe Read mask */
 	ECORE_EXE_PIPE_WRITE = 2, /**< Exe Pipe Write mask */
 	ECORE_EXE_PIPE_READ_LINE_BUFFERED = 4, /**< Reads are buffered until a newline and delivered 1 event per line */
-	ECORE_EXE_RESPAWN = 8 /**< Exe is restarted if it dies */
+	ECORE_EXE_RESPAWN = 8 /* FIXME: Exe is restarted if it dies */
      };
    typedef enum _Ecore_Exe_Flags Ecore_Exe_Flags;
    
