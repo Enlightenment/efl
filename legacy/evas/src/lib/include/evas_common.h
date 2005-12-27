@@ -1,12 +1,22 @@
 #ifndef EVAS_COMMON_H
 #define EVAS_COMMON_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
 #include "Evas.h"
 #include "config.h"
 
 /*****************************************************************************/
 
 #include "evas_options.h"
+
+#ifdef __GNUC__
+# if __GNUC__ >= 4
+#  pragma GCC visibility push(hidden)
+# endif
+#endif
 
 /*****************************************************************************/
 

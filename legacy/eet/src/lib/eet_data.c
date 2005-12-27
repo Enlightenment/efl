@@ -39,6 +39,12 @@
  *
  */
 
+#ifdef __GNUC__
+# if __GNUC__ >= 4
+#  pragma GCC visibility push(hidden)
+# endif
+#endif
+
 /*---*/
 
 typedef struct _Eet_Data_Element            Eet_Data_Element;
@@ -712,7 +718,7 @@ _eet_str_free(const char *str)
 
 /*---*/
 
-Eet_Data_Descriptor *
+EAPI Eet_Data_Descriptor *
 eet_data_descriptor_new(const char *name,
 			int size,
 			void *(*func_list_next) (void *l),
@@ -749,7 +755,7 @@ eet_data_descriptor_new(const char *name,
 }
 
 /* new replcement */
-Eet_Data_Descriptor *
+EAPI Eet_Data_Descriptor *
 eet_data_descriptor2_new(Eet_Data_Descriptor_Class *eddc)
 {
    Eet_Data_Descriptor *edd;
@@ -781,7 +787,7 @@ eet_data_descriptor2_new(Eet_Data_Descriptor_Class *eddc)
    return edd;
 }
 
-void
+EAPI void
 eet_data_descriptor_free(Eet_Data_Descriptor *edd)
 {
    _eet_descriptor_hash_free(edd);
@@ -790,7 +796,7 @@ eet_data_descriptor_free(Eet_Data_Descriptor *edd)
    free(edd);
 }
 
-void
+EAPI void
 eet_data_descriptor_element_add(Eet_Data_Descriptor *edd, 
 				const char *name, int type,
 				int group_type,
@@ -853,7 +859,7 @@ eet_data_descriptor_element_add(Eet_Data_Descriptor *edd,
    ede->subtype = subtype;
 }
 
-void *
+EAPI void *
 eet_data_read(Eet_File *ef, Eet_Data_Descriptor *edd, char *name)
 {
    void *data_dec;
@@ -867,7 +873,7 @@ eet_data_read(Eet_File *ef, Eet_Data_Descriptor *edd, char *name)
    return data_dec;
 }
 
-int
+EAPI int
 eet_data_write(Eet_File *ef, Eet_Data_Descriptor *edd, char *name, void *data, int compress)
 {
    void *data_enc;
@@ -1037,7 +1043,7 @@ _eet_freelist_str_unref(void)
    freelist_str_ref--;
 }
 
-void *
+EAPI void *
 eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 			   void *data_in,
 			   int size_in)
@@ -1126,7 +1132,7 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
 			 {
 			    char **str, *str2;
 			    
-			    str = (((char *)data) + ede->offset);
+			    str = (char **)(((char *)data) + ede->offset);
 			    if (*str)
 			      {
 				 str2 = edd->func.str_alloc(*str);
@@ -1261,7 +1267,7 @@ eet_data_descriptor_decode(Eet_Data_Descriptor *edd,
    return data;
 }
 
-void *
+EAPI void *
 eet_data_descriptor_encode(Eet_Data_Descriptor *edd,
 			   void *data_in,
 			   int *size_ret)

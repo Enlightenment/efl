@@ -3,20 +3,6 @@
 
 #include "edje_main.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <fcntl.h>
-#include <errno.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <stdarg.h>
-#include <locale.h>
-#include <ctype.h>
-#ifdef HAVE_ALLOCA_H
-#include <alloca.h>
-#endif
-
 /* types */
 typedef struct _New_Object_Handler    New_Object_Handler;
 typedef struct _New_Statement_Handler New_Statement_Handler;

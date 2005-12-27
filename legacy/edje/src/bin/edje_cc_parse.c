@@ -666,10 +666,8 @@ compile(void)
 	 * Redirecting the output is required for MacOS 10.3, and works fine
 	 * on other systems.
 	 */
-	snprintf(buf, sizeof(buf), "cat %s | cpp -I%s -E %s > %s", 
+	snprintf(buf, sizeof(buf), "cat %s | cpp -I%s %s > %s",
 		 file_in, inc, def, tmpn);
-	/* snprintf(buf, sizeof(buf), "cpp -I%s %s %s %s",
-		 inc, def, file_in, tmpn); */
 	ret = system(buf);
 	if (ret < 0)
 	  {

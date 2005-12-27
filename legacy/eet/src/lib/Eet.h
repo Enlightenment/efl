@@ -13,8 +13,12 @@
 #  define EAPI __declspec(dllimport)
 # endif
 #else
-# ifdef GCC_HASCLASSVISIBILITY
-#  define EAPI __attribute__ ((visibility("default")))
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
 # else
 #  define EAPI
 # endif
@@ -673,7 +677,14 @@ extern "C" {
     *
     */
    EAPI Eet_Data_Descriptor *eet_data_descriptor_new(const char *name, int size, void *(*func_list_next) (void *l), void *(*func_list_append) (void *l, void *d), void *(*func_list_data) (void *l), void *(*func_list_free) (void *l), void  (*func_hash_foreach) (void *h, int (*func) (void *h, const char *k, void *dt, void *fdt), void *fdt), void *(*func_hash_add) (void *h, const char *k, void *d), void  (*func_hash_free) (void *h));
-
+   /*
+    * FIXME:
+    * 
+    * moving to this api from the old above. this will break things when the
+    * move happens - but be warned
+    */
+   EAPI Eet_Data_Descriptor *eet_data_descriptor2_new(Eet_Data_Descriptor_Class *eddc);
+       
    /**
     * This function frees a data descriptor when it is not needed anymore.
     * @param edd The data descriptor to free.

@@ -11,8 +11,12 @@
 #  define EAPI __declspec(dllimport)
 # endif
 #else
-# ifdef GCC_HASCLASSVISIBILITY
-#  define EAPI __attribute__ ((visibility("default")))
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
 # else
 #  define EAPI
 # endif
@@ -272,12 +276,12 @@ EAPI unsigned long long _ecore_ipc_swap_64(unsigned long long v);
 	int               size;
      };
    
-   extern int ECORE_IPC_EVENT_CLIENT_ADD;
-   extern int ECORE_IPC_EVENT_CLIENT_DEL;
-   extern int ECORE_IPC_EVENT_SERVER_ADD;
-   extern int ECORE_IPC_EVENT_SERVER_DEL;
-   extern int ECORE_IPC_EVENT_CLIENT_DATA;
-   extern int ECORE_IPC_EVENT_SERVER_DATA;
+   EAPI extern int ECORE_IPC_EVENT_CLIENT_ADD;
+   EAPI extern int ECORE_IPC_EVENT_CLIENT_DEL;
+   EAPI extern int ECORE_IPC_EVENT_SERVER_ADD;
+   EAPI extern int ECORE_IPC_EVENT_SERVER_DEL;
+   EAPI extern int ECORE_IPC_EVENT_CLIENT_DATA;
+   EAPI extern int ECORE_IPC_EVENT_SERVER_DATA;
    
    EAPI int               ecore_ipc_init(void);
    EAPI int               ecore_ipc_shutdown(void);

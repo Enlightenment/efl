@@ -11,8 +11,12 @@
 #  define EAPI __declspec(dllimport)
 # endif
 #else
-# ifdef GCC_HASCLASSVISIBILITY
-#  define EAPI __attribute__ ((visibility("default")))
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
 # else
 #  define EAPI
 # endif
@@ -33,11 +37,11 @@
 extern "C" {
 #endif
 
-extern int ECORE_FB_EVENT_KEY_DOWN; /**< FB Key Down event */
-extern int ECORE_FB_EVENT_KEY_UP; /**< FB Key Up event */
-extern int ECORE_FB_EVENT_MOUSE_BUTTON_DOWN; /**< FB Mouse Down event */
-extern int ECORE_FB_EVENT_MOUSE_BUTTON_UP; /**< FB Mouse Up event */
-extern int ECORE_FB_EVENT_MOUSE_MOVE; /**< FB Mouse Move event */
+EAPI extern int ECORE_FB_EVENT_KEY_DOWN; /**< FB Key Down event */
+EAPI extern int ECORE_FB_EVENT_KEY_UP; /**< FB Key Up event */
+EAPI extern int ECORE_FB_EVENT_MOUSE_BUTTON_DOWN; /**< FB Mouse Down event */
+EAPI extern int ECORE_FB_EVENT_MOUSE_BUTTON_UP; /**< FB Mouse Up event */
+EAPI extern int ECORE_FB_EVENT_MOUSE_MOVE; /**< FB Mouse Move event */
 
 typedef struct _Ecore_Fb_Event_Key_Down          Ecore_Fb_Event_Key_Down; /**< FB Key Down event */
 typedef struct _Ecore_Fb_Event_Key_Up            Ecore_Fb_Event_Key_Up; /**< FB Key Up event */

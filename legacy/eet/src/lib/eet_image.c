@@ -1,6 +1,12 @@
 #include "Eet.h"
 #include "Eet_private.h"
 
+#ifdef __GNUC__
+# if __GNUC__ >= 4
+#  pragma GCC visibility push(hidden)
+# endif
+#endif
+
 /*---*/
 
 typedef struct _JPEG_error_mgr             *emptr;
@@ -691,7 +697,7 @@ eet_data_image_jpeg_alpha_convert(int *size, void *data, unsigned int w, unsigne
    return d;
 }
 
-int
+EAPI int
 eet_data_image_write(Eet_File *ef, char *name,
 		     void *data, unsigned int w, unsigned int h, int alpha,
 		     int compress, int quality, int lossy)
@@ -711,7 +717,7 @@ eet_data_image_write(Eet_File *ef, char *name,
    return 0;
 }
 
-void *
+EAPI void *
 eet_data_image_read(Eet_File *ef, char *name,
 		    unsigned int *w, unsigned int *h, int *alpha,
 		    int *compress, int *quality, int *lossy)
@@ -727,7 +733,7 @@ eet_data_image_read(Eet_File *ef, char *name,
    return d;
 }
 
-int
+EAPI int
 eet_data_image_header_read(Eet_File *ef, char *name,
 			   unsigned int *w, unsigned int *h, int *alpha,
 			   int *compress, int *quality, int *lossy)
@@ -743,7 +749,7 @@ eet_data_image_header_read(Eet_File *ef, char *name,
    return d;
 }
 
-void *
+EAPI void *
 eet_data_image_encode(void *data, int *size_ret, unsigned int w, unsigned int h, int alpha, int compress, int quality, int lossy)
 {
    void *d = NULL;
@@ -767,7 +773,7 @@ eet_data_image_encode(void *data, int *size_ret, unsigned int w, unsigned int h,
    return d;
 }
 
-int
+EAPI int
 eet_data_image_header_decode(void *data, int size, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy)
 {
    int header[8];
@@ -851,7 +857,7 @@ eet_data_image_header_decode(void *data, int size, unsigned int *w, unsigned int
    return 0;
 }
 
-void *
+EAPI void *
 eet_data_image_decode(void *data, int size, unsigned int *w, unsigned int *h, int *alpha, int *compress, int *quality, int *lossy)
 {
    unsigned int *d = NULL;

@@ -11,8 +11,12 @@
 #  define EAPI __declspec(dllimport)
 # endif
 #else
-# ifdef GCC_HASCLASSVISIBILITY
-#  define EAPI __attribute__ ((visibility("default")))
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
 # else
 #  define EAPI
 # endif
@@ -127,14 +131,14 @@ extern "C" {
 	int               status;
      };
 	 
-   extern int ECORE_CON_EVENT_CLIENT_ADD;
-   extern int ECORE_CON_EVENT_CLIENT_DEL;
-   extern int ECORE_CON_EVENT_SERVER_ADD;
-   extern int ECORE_CON_EVENT_SERVER_DEL;
-   extern int ECORE_CON_EVENT_CLIENT_DATA;
-   extern int ECORE_CON_EVENT_SERVER_DATA;
-   extern int ECORE_CON_EVENT_URL_DATA;
-   extern int ECORE_CON_EVENT_URL_COMPLETE;
+   EAPI extern int ECORE_CON_EVENT_CLIENT_ADD;
+   EAPI extern int ECORE_CON_EVENT_CLIENT_DEL;
+   EAPI extern int ECORE_CON_EVENT_SERVER_ADD;
+   EAPI extern int ECORE_CON_EVENT_SERVER_DEL;
+   EAPI extern int ECORE_CON_EVENT_CLIENT_DATA;
+   EAPI extern int ECORE_CON_EVENT_SERVER_DATA;
+   EAPI extern int ECORE_CON_EVENT_URL_DATA;
+   EAPI extern int ECORE_CON_EVENT_URL_COMPLETE;
    
    EAPI int               ecore_con_init(void);
    EAPI int               ecore_con_shutdown(void);

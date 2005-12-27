@@ -16,6 +16,12 @@
 #include <alloca.h>
 #endif
 
+#ifdef __GNUC__
+# if __GNUC__ >= 4
+#  pragma GCC visibility push(hidden)
+# endif
+#endif
+
 typedef enum _Embryo_Opcode Embryo_Opcode;
 
 enum _Embryo_Opcode

@@ -21,6 +21,33 @@
 #include <config.h>
 #endif
 
+#ifdef EAPI
+#undef EAPI
+#endif
+#ifdef WIN32
+# ifdef BUILDING_DLL
+#  define EAPI __declspec(dllexport)
+# else
+#  define EAPI __declspec(dllimport)
+# endif
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI
+# endif
+#endif
+
+#ifdef __GNUC__
+# if __GNUC__ >= 4
+#  pragma GCC visibility push(hidden)
+# endif
+#endif
+
 #if HAVE___ATTRIBUTE__
 #define __UNUSED__ __attribute__((unused))
 #else
@@ -273,7 +300,7 @@ struct _Ecore_Animator
 
 #endif
 
-void          _ecore_magic_fail(void *d, Ecore_Magic m, Ecore_Magic req_m, const char *fname);
+EAPI void          _ecore_magic_fail(void *d, Ecore_Magic m, Ecore_Magic req_m, const char *fname);
 
 void          _ecore_timer_shutdown(void);
 void          _ecore_timer_cleanup(void);    
@@ -303,7 +330,7 @@ void          _ecore_event_call(void);
 void         *_ecore_event_exe_exit_new(void);
 void          _ecore_event_exe_exit_free(void *data, void *ev);
 #endif
-void         *_ecore_event_signal_user_new(void);
+EAPI void         *_ecore_event_signal_user_new(void);
 void         *_ecore_event_signal_hup_new(void);
 void         *_ecore_event_signal_exit_new(void);
 void         *_ecore_event_signal_power_new(void);
@@ -325,12 +352,12 @@ void         *_ecore_exe_free(Ecore_Exe *exe);
 void          _ecore_animator_shutdown(void);
     
 
-void         *_ecore_list2_append           (void *in_list, void *in_item);
-void         *_ecore_list2_prepend          (void *in_list, void *in_item);
-void         *_ecore_list2_append_relative  (void *in_list, void *in_item, void *in_relative);
-void         *_ecore_list2_prepend_relative (void *in_list, void *in_item, void *in_relative);
-void         *_ecore_list2_remove           (void *in_list, void *in_item);
-void         *_ecore_list2_find             (void *in_list, void *in_item);
+EAPI void         *_ecore_list2_append           (void *in_list, void *in_item);
+EAPI void         *_ecore_list2_prepend          (void *in_list, void *in_item);
+EAPI void         *_ecore_list2_append_relative  (void *in_list, void *in_item, void *in_relative);
+EAPI void         *_ecore_list2_prepend_relative (void *in_list, void *in_item, void *in_relative);
+EAPI void         *_ecore_list2_remove           (void *in_list, void *in_item);
+EAPI void         *_ecore_list2_find             (void *in_list, void *in_item);
 
 void          _ecore_fps_debug_init(void);
 void          _ecore_fps_debug_shutdown(void);

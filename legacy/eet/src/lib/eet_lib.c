@@ -5,6 +5,12 @@
 #include "Eet.h"
 #include "Eet_private.h"
 
+#ifdef __GNUC__
+# if __GNUC__ >= 4
+#  pragma GCC visibility push(hidden)
+# endif
+#endif
+
 #ifdef HAVE_REALPATH
 #undef HAVE_REALPATH
 #endif
@@ -361,13 +367,13 @@ eet_flush(Eet_File *ef)
    ef->writes_pending = 0;
 }
 
-int
+EAPI int
 eet_init(void)
 {
    return ++eet_initcount;
 }
 
-int
+EAPI int
 eet_shutdown(void)
 {
    if (--eet_initcount == 0)
@@ -379,7 +385,7 @@ eet_shutdown(void)
    return eet_initcount;
 }
 
-void
+EAPI void
 eet_cacheburst(int on)
 {
    if (eet_cacheburst_mode == on) return;
@@ -425,7 +431,7 @@ eet_cacheburst(int on)
      }
 }
 
-Eet_File *
+EAPI Eet_File *
 eet_open(const char *file, Eet_File_Mode mode)
 {
    Eet_File *ef;
@@ -711,7 +717,7 @@ eet_open(const char *file, Eet_File_Mode mode)
    return ef;
 }
 
-Eet_File_Mode
+EAPI Eet_File_Mode
 eet_mode_get(Eet_File *ef)
 {
    /* check to see its' an eet file pointer */
@@ -721,7 +727,7 @@ eet_mode_get(Eet_File *ef)
      return ef->mode;
 }
 
-void
+EAPI void
 eet_close(Eet_File *ef)
 {
    /* check to see its' an eet file pointer */
@@ -781,7 +787,7 @@ eet_close(Eet_File *ef)
    free(ef);
 }
 
-void *
+EAPI void *
 eet_read(Eet_File *ef, char *name, int *size_ret)
 {
    void *data = NULL;
@@ -870,7 +876,7 @@ eet_read(Eet_File *ef, char *name, int *size_ret)
    return data;
 }
 
-int
+EAPI int
 eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
 {
    int data_size;
@@ -986,7 +992,7 @@ eet_write(Eet_File *ef, char *name, void *data, int size, int compress)
    return data_size;
 }
 
-int
+EAPI int
 eet_delete(Eet_File *ef, char *name)
 {
    int hash;
@@ -1027,7 +1033,7 @@ eet_delete(Eet_File *ef, char *name)
    return exists_already;
 }
 
-char **
+EAPI char **
 eet_list(Eet_File *ef, char *glob, int *count_ret)
 {
    char **list_ret = NULL;
@@ -1084,7 +1090,7 @@ eet_list(Eet_File *ef, char *glob, int *count_ret)
    return list_ret;
 }
 
-int
+EAPI int
 eet_num_entries(Eet_File *ef)
 {
    int i, num, ret = 0;

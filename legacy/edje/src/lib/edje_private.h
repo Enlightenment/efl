@@ -31,6 +31,34 @@
 #include <string.h>
 #include <limits.h>
 
+
+#ifdef EAPI
+#undef EAPI
+#endif
+#ifdef WIN32
+# ifdef BUILDING_DLL
+#  define EAPI __declspec(dllexport)
+# else
+#  define EAPI __declspec(dllimport)
+# endif
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI
+# endif
+#endif
+
+#ifdef __GNUC__
+# if __GNUC__ >= 4
+#  pragma GCC visibility push(hidden)
+# endif
+#endif
+
 #ifndef ABS
 #define ABS(x) ((x) < 0 ? -(x) : (x))
 #endif
@@ -756,22 +784,22 @@ struct _Edje_Message
    unsigned char     *msg;
 };
 
-extern Eet_Data_Descriptor *_edje_edd_edje_file;
-extern Eet_Data_Descriptor *_edje_edd_edje_style;
-extern Eet_Data_Descriptor *_edje_edd_edje_style_tag;
-extern Eet_Data_Descriptor *_edje_edd_edje_data;
-extern Eet_Data_Descriptor *_edje_edd_edje_font_directory;
-extern Eet_Data_Descriptor *_edje_edd_edje_font_directory_entry;
-extern Eet_Data_Descriptor *_edje_edd_edje_image_directory;
-extern Eet_Data_Descriptor *_edje_edd_edje_image_directory_entry;
-extern Eet_Data_Descriptor *_edje_edd_edje_program;
-extern Eet_Data_Descriptor *_edje_edd_edje_program_target;
-extern Eet_Data_Descriptor *_edje_edd_edje_part_collection_directory;
-extern Eet_Data_Descriptor *_edje_edd_edje_part_collection_directory_entry;
-extern Eet_Data_Descriptor *_edje_edd_edje_part_collection;
-extern Eet_Data_Descriptor *_edje_edd_edje_part;
-extern Eet_Data_Descriptor *_edje_edd_edje_part_description;
-extern Eet_Data_Descriptor *_edje_edd_edje_part_image_id;
+EAPI extern Eet_Data_Descriptor *_edje_edd_edje_file;
+EAPI extern Eet_Data_Descriptor *_edje_edd_edje_style;
+EAPI extern Eet_Data_Descriptor *_edje_edd_edje_style_tag;
+EAPI extern Eet_Data_Descriptor *_edje_edd_edje_data;
+EAPI extern Eet_Data_Descriptor *_edje_edd_edje_font_directory;
+EAPI extern Eet_Data_Descriptor *_edje_edd_edje_font_directory_entry;
+EAPI extern Eet_Data_Descriptor *_edje_edd_edje_image_directory;
+EAPI extern Eet_Data_Descriptor *_edje_edd_edje_image_directory_entry;
+EAPI extern Eet_Data_Descriptor *_edje_edd_edje_program;
+EAPI extern Eet_Data_Descriptor *_edje_edd_edje_program_target;
+EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_collection_directory;
+EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_collection_directory_entry;
+EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_collection;
+EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part;
+EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_description;
+EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_image_id;
 
 extern int              _edje_anim_count;
 extern Ecore_Animator  *_edje_timer;

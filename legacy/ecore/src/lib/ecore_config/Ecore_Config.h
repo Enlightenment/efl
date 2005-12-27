@@ -11,8 +11,12 @@
 #  define EAPI __declspec(dllimport)
 # endif
 #else
-# ifdef GCC_HASCLASSVISIBILITY
-#  define EAPI __attribute__ ((visibility("default")))
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
 # else
 #  define EAPI
 # endif
@@ -125,10 +129,10 @@ extern              "C"
 # endif
 
 /* global ptrs to save passing them through the API */
-   extern EAPI Ecore_Config_Server *__ecore_config_server_global;
-   extern EAPI Ecore_Config_Server *__ecore_config_server_local;
-   extern EAPI Ecore_Config_Bundle *__ecore_config_bundle_local;
-   extern EAPI char        *__ecore_config_app_name;
+   EAPI extern Ecore_Config_Server *__ecore_config_server_global;
+   EAPI extern Ecore_Config_Server *__ecore_config_server_local;
+   EAPI extern Ecore_Config_Bundle *__ecore_config_bundle_local;
+   EAPI extern char        *__ecore_config_app_name;
 
    EAPI Ecore_Config_Prop  *ecore_config_get(const char *key);
    EAPI const char         *ecore_config_type_get(const Ecore_Config_Prop *e);

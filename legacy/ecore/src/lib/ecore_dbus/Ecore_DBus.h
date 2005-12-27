@@ -15,8 +15,12 @@
 #  define EAPI __declspec(dllimport)
 # endif
 #else
-# ifdef GCC_HASCLASSVISIBILITY
-#  define EAPI __attribute__ ((visibility("default")))
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#  else
+#   define EAPI
+#  endif
 # else
 #  define EAPI
 # endif
@@ -86,9 +90,9 @@ extern "C" {
 	ECORE_DBUS_HEADER_FIELD_SIGNATURE
      } Ecore_DBus_Message_Header_Field;
 
-   extern int ECORE_DBUS_EVENT_SERVER_ADD;
-   extern int ECORE_DBUS_EVENT_SERVER_DATA;
-   extern int ECORE_DBUS_EVENT_SERVER_DEL;
+   EAPI extern int ECORE_DBUS_EVENT_SERVER_ADD;
+   EAPI extern int ECORE_DBUS_EVENT_SERVER_DATA;
+   EAPI extern int ECORE_DBUS_EVENT_SERVER_DEL;
 
    /* init */
    EAPI int ecore_dbus_init(void);
