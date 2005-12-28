@@ -80,7 +80,7 @@ ecore_config_dst(Ecore_Config_Prop * e)
 
    if (e->key)
       free(e->key);
-   if (e->ptr && (e->type == ECORE_CONFIG_STR))
+   if (e->ptr && ((e->type == ECORE_CONFIG_STR) || (e->type == ECORE_CONFIG_THM)))
       free(e->ptr);
 
    memset(e, 0, sizeof(Ecore_Config_Prop));
