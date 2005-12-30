@@ -210,6 +210,7 @@ extern "C" {
    EAPI Ecore_Exe  *ecore_exe_run(const char *exe_cmd, const void *data);
    EAPI Ecore_Exe  *ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data);
    EAPI int         ecore_exe_pipe_write(Ecore_Exe *exe, void *data, int size);
+   EAPI void        ecore_exe_pipe_write_close(Ecore_Exe *exe);
    EAPI void       *ecore_exe_free(Ecore_Exe *exe);
    EAPI pid_t       ecore_exe_pid_get(Ecore_Exe *exe);
    EAPI void        ecore_exe_tag_set(Ecore_Exe *exe, const char *tag);

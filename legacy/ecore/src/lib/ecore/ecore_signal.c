@@ -33,6 +33,8 @@ static void _ecore_signal_callback_sigpwr(int sig, siginfo_t *si, void *foo);
 static void _ecore_signal_callback_sigrt(int sig, siginfo_t *si, void *foo);
 #endif
 
+static int _ecore_signal_exe_exit_delay(void *data);
+
 static volatile sig_atomic_t sig_count = 0;
 static volatile sig_atomic_t sigchld_count = 0;
 static volatile sig_atomic_t sigusr1_count = 0;
@@ -184,10 +186,37 @@ _ecore_signal_call(void)
 		    e->data = sigchld_info; /* FIXME: I'm not sure, but maybe we should clone this.  I don't know if anybody uses it. */
 		  
                   if ((e->exe) && (e->exe->flags & ECORE_EXE_PIPE_READ))
-		     e->exe->exit_event = e;   /* We want to report the Last Words of the exe, so delay this event. */
+                     {
+		        /* We want to report the Last Words of the exe, so delay this event.
+			 * There are three possibilities here -
+			 *  1 There are no Last Words.
+			 *  2 There are Last Words, they are not ready to be read.
+			 *  3 There are Last Words, they are ready to be read.
+			 *
+			 * For 1 we don't want to delay, for 3 we want to delay.
+			 * 2 is the problem.  If we check for data now and there 
+			 * is none, then there is no way to differentiate 1 and 2.
+			 * If we don't delay, we may loose data, but if we do delay, 
+			 * there may not be data and the exit event never gets sent.
+			 * 
+			 * Any way you look at it, there has to be some time passed 
+			 * before the exit event gets sent.  So the startegy here is
+			 * to setup a timer event that will send the exit event after
+			 * an arbitrary, but brief, time.
+			 *
+			 * This is probably paranoid, for the less paraniod, we could 
+			 * check to see for Last Words, and only delay if there are any.
+			 * This has it's own set of problems.
+			 */
+printf("Delaying exit event for %s.\n", e->exe->cmd);
+                        ecore_timer_add(0.1, _ecore_signal_exe_exit_delay, e);
+                     }
 		  else
+{
+printf("Sending exit event for %s.\n", e->exe->cmd);
 		     _ecore_event_add(ECORE_EVENT_EXE_EXIT, e, 
 				   _ecore_event_exe_exit_free, NULL);
+}
 	       }
 	  }
 	sigchld_count--;
@@ -458,4 +487,19 @@ _ecore_signal_callback_sigrt(int sig, siginfo_t *si, void *foo __UNUSED__)
    sig_count++;
 }
 #endif
+
+static int
+_ecore_signal_exe_exit_delay(void *data)
+{
+   Ecore_Event_Exe_Exit *e;
+
+   e = data;
+   if (e)
+      {
+printf("Sending delayed exit event for %s.\n", e->exe->cmd);
+      _ecore_event_add(ECORE_EVENT_EXE_EXIT, e, 
+	   _ecore_event_exe_exit_free, NULL);
+      }
+   return 0;
+}
 #endif

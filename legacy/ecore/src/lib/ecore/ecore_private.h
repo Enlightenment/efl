@@ -191,11 +191,7 @@ struct _Ecore_Exe
    int          read_data_size; /* data read from child in bytes */
    int          child_fd_write;	/* fd to write TO to send data to the child */
    int          child_fd_read;	/* fd to read FROM when child has sent us (the parent) data */
-   /* I thought a bit about wether or not their could be multiple exit events, then realised that since we 
-    * delete the exe on the first exit event, the answer is no.  On the other hand, STOPing an exe may trigger
-    * this, even though it has not truly exited.  Probably should investigate this further.
-    */
-   struct _Ecore_Event_Exe_Exit  *exit_event; /* Process exit event */
+   int          close_write;
 };
 #endif
 

@@ -71,6 +71,10 @@ int _ecore_exe_check_errno(int result, char *file, int line)
  *     EMFILE  Too many file descriptors used by process.
  *     ENOLCK  Problem getting a lock.
  *     EPERM   Not allowed to do that.
+ *   fsync
+ *     EBADF   This is not an fd that is open for writing.
+ *     EINVAL, EROFS  This is not an fd that can be fsynced.
+ *     EIO     I/O error.
  *
  * How to use it -
  *    int ok = 0;
@@ -88,7 +92,7 @@ int _ecore_exe_check_errno(int result, char *file, int line)
  *        // Something failed, cleanup.
  *     }
  */
-         switch (result)
+         switch (saved_errno)
 	    {
 	       case EACCES :
 	       case EAGAIN :
@@ -118,6 +122,7 @@ int _ecore_exe_check_errno(int result, char *file, int line)
 	       case EFAULT :
 	       case EBADF :
 	       case EINVAL :
+	       case EROFS :
 	       case EISDIR :
 	       case EDEADLK :
 	       case EPERM :
@@ -137,9 +142,9 @@ int _ecore_exe_check_errno(int result, char *file, int line)
                      fprintf(stderr, 
 	                "*** NAUGHTY PROGRAMMER!!!\n"
 	                "*** SPANK SPANK SPANK!!!\n"
-			"*** Unsupported errno code, please add this one.\n"
-	                "*** Now go fix your code in %s @%u. Tut tut tut!\n"
-	                "\n", __FILE__, __LINE__);
+			"*** Unsupported errno code %d, please add this one.\n"
+	                "*** Now go fix your code in %s @%u, from %s @%u. Tut tut tut!\n"
+	                "\n", saved_errno, __FILE__, __LINE__, file, line);
 		     result = 0;
 		     break;
 		  }
@@ -193,6 +198,7 @@ ecore_exe_run(const char *exe_cmd, const void *data)
 	ECORE_MAGIC_SET(exe, ECORE_MAGIC_EXE);
 	exe->pid = pid;
 	exe->data = (void *)data;
+        exe->cmd = strdup(exe_cmd);
 	exes = _ecore_list2_append(exes, exe);
 	return exe;
      }
@@ -389,6 +395,8 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
       {   /* Something went wrong, so pull down everything. */
          IF_FN_DEL(_ecore_exe_free, exe);
       }
+else
+printf("Running as %d for %s.\n", exe->pid, exe->cmd);
 
    errno = n;
    return exe;
@@ -424,6 +432,25 @@ ecore_exe_pipe_write(Ecore_Exe *exe, void *data, int size)
       
    return 1;
 }
+
+/**
+ * The stdin pipe of the given child process will close when the write buffer is empty.
+ * 
+ * @param exe  The child process to write to
+ * @ingroup Ecore_Exe_Basic_Group
+ */
+void
+ecore_exe_pipe_write_close(Ecore_Exe *exe)
+{
+   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
+     {
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
+			 "ecore_exe_pipe_write_close");
+	return;
+     }
+   exe->close_write = 1;
+}
+
 
 /**
  * Sets the string tag for the given process handle
@@ -782,6 +809,7 @@ _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler)
          unsigned char *inbuf;
 	 int inbuf_num;
 
+//printf("Reading data for %s\n", exe->cmd);
          /* Get any left over data from last time. */
          inbuf = exe->read_data_buf;
          inbuf_num = exe->read_data_size;
@@ -890,14 +918,17 @@ _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler)
 		        }
 		     if (lost_exe)
 		        {
-			   if (exe->exit_event)
-			      {   /*  There is a pending exit event to send, so send it. */
-		                 _ecore_event_add(ECORE_EVENT_EXE_EXIT, exe->exit_event, 
-				                  _ecore_event_exe_exit_free, NULL);
-				 exe->exit_event = NULL;   /* Just being paranoid. */
-			      }
-			   else
-                              ecore_exe_terminate(exe);   /* FIXME: give this some deep thought later. */
+if (exe->read_data_size)
+   printf("Theer are %d bytes left unsent from the dead exe %s.\n", exe->read_data_size, exe->cmd);
+//			   if (exe->exit_event)
+//			      {   /*  There is a pending exit event to send, so send it. */
+//printf("Sending delayed exit event for %s.\n", exe->cmd);
+//		                 _ecore_event_add(ECORE_EVENT_EXE_EXIT, exe->exit_event, 
+//				                  _ecore_event_exe_exit_free, NULL);
+//				 exe->exit_event = NULL;   /* Just being paranoid. */
+//			      }
+//			   else
+//                              ecore_exe_terminate(exe);   /* FIXME: give this some deep thought later. */
                         }
 		     break;
 	          }
@@ -915,6 +946,22 @@ _ecore_exe_data_write_handler(void *data, Ecore_Fd_Handler *fd_handler)
    exe = data;
    if ((exe->write_fd_handler) && (ecore_main_fd_handler_active_get(exe->write_fd_handler, ECORE_FD_WRITE)))
       _ecore_exe_flush(exe);
+
+   /* If we have sent all there is to send, and we need to close the pipe, then close it. */
+   if ((exe->close_write == 1) && /*(!exe->write_data_buf) &&*/ (exe->write_data_size == exe->write_data_offset))
+      {
+         int ok = 0;
+         int result;
+
+printf("Closing stdin for %s\n", exe->cmd);
+//         if (exe->child_fd_write)  E_NO_ERRNO(result, fsync(exe->child_fd_write), ok);
+         IF_FN_DEL(ecore_main_fd_handler_del, exe->write_fd_handler);
+         if (exe->child_fd_write)  E_NO_ERRNO(result, close(exe->child_fd_write), ok);
+	 exe->child_fd_write = 0;
+         IF_FREE(exe->write_data_buf);
+         exe->flags &= ~ECORE_EXE_PIPE_WRITE;
+	 exe->close_write = 0;
+      }
 
    return 1;
 }
