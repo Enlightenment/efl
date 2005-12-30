@@ -1,6 +1,7 @@
 /* ############## bad */
 #define HAVE_EVAS2
 
+#include "Ecore.h"
 #include "Ecore_Config.h"
 #include "ecore_config_util.h"
 #include "ecore_config_ipc.h"
@@ -18,7 +19,7 @@
 #include <stdlib.h>		/* malloc(), free() */
 
 static Ecore_Config_Server *__ecore_config_servers;
-static unsigned long ipc_timer = 0L;
+Ecore_Timer *ipc_timer = NULL;
 
 extern int _ecore_config_ipc_ecore_init(const char *pipe_name, void **data);
 extern int _ecore_config_ipc_ecore_exit(void **data);
@@ -232,7 +233,8 @@ _ecore_config_ipc_exit(void)
    Ecore_Config_Server *l;
 
    if (ipc_timer)
-      timeout_remove(ipc_timer);
+      ecore_timer_del(ipc_timer);
+
    l = __ecore_config_servers;
    while (l)
      {
@@ -274,7 +276,7 @@ _ecore_config_ipc_init(const char *pipe_name)
      ret_srv = list;
 
    if (!ipc_timer)
-     ipc_timer = timeout_add(100, _ecore_config_ipc_poll, NULL);
+     ipc_timer = ecore_timer_add(100, _ecore_config_ipc_poll, NULL);
    
    return ret_srv;
 }
