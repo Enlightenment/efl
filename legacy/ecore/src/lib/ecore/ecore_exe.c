@@ -259,7 +259,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
                      volatile int vfork_exec_errno = 0;
 
                      /* FIXME: I should double check this.  After a quick look around, this is already done, but via a more modern method. */
-                     /* signal(SIGPIPE, SIG_IGN);	/* we only want EPIPE on errors */
+                     /* signal(SIGPIPE, SIG_IGN);    We only want EPIPE on errors */
                      pid = fork();
 
                      if (pid == -1)
@@ -395,8 +395,8 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
       {   /* Something went wrong, so pull down everything. */
          IF_FN_DEL(_ecore_exe_free, exe);
       }
-else
-printf("Running as %d for %s.\n", exe->pid, exe->cmd);
+   else
+      printf("Running as %d for %s.\n", exe->pid, exe->cmd);
 
    errno = n;
    return exe;
@@ -809,7 +809,6 @@ _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler)
          unsigned char *inbuf;
 	 int inbuf_num;
 
-//printf("Reading data for %s\n", exe->cmd);
          /* Get any left over data from last time. */
          inbuf = exe->read_data_buf;
          inbuf_num = exe->read_data_size;
@@ -918,17 +917,9 @@ _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler)
 		        }
 		     if (lost_exe)
 		        {
-if (exe->read_data_size)
-   printf("Theer are %d bytes left unsent from the dead exe %s.\n", exe->read_data_size, exe->cmd);
-//			   if (exe->exit_event)
-//			      {   /*  There is a pending exit event to send, so send it. */
-//printf("Sending delayed exit event for %s.\n", exe->cmd);
-//		                 _ecore_event_add(ECORE_EVENT_EXE_EXIT, exe->exit_event, 
-//				                  _ecore_event_exe_exit_free, NULL);
-//				 exe->exit_event = NULL;   /* Just being paranoid. */
-//			      }
-//			   else
-//                              ecore_exe_terminate(exe);   /* FIXME: give this some deep thought later. */
+                           if (exe->read_data_size)
+                              printf("There are %d bytes left unsent from the dead exe %s.\n", exe->read_data_size, exe->cmd);
+                           ecore_exe_terminate(exe);   /* FIXME: give this some deep thought later. */
                         }
 		     break;
 	          }
@@ -948,13 +939,13 @@ _ecore_exe_data_write_handler(void *data, Ecore_Fd_Handler *fd_handler)
       _ecore_exe_flush(exe);
 
    /* If we have sent all there is to send, and we need to close the pipe, then close it. */
-   if ((exe->close_write == 1) && /*(!exe->write_data_buf) &&*/ (exe->write_data_size == exe->write_data_offset))
+   if ((exe->close_write == 1) && (exe->write_data_size == exe->write_data_offset))
       {
          int ok = 0;
          int result;
 
 printf("Closing stdin for %s\n", exe->cmd);
-//         if (exe->child_fd_write)  E_NO_ERRNO(result, fsync(exe->child_fd_write), ok);
+         /* if (exe->child_fd_write)  E_NO_ERRNO(result, fsync(exe->child_fd_write), ok);   This a) doesn't work, and b) isn't needed. */
          IF_FN_DEL(ecore_main_fd_handler_del, exe->write_fd_handler);
          if (exe->child_fd_write)  E_NO_ERRNO(result, close(exe->child_fd_write), ok);
 	 exe->child_fd_write = 0;
