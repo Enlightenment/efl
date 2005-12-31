@@ -1640,6 +1640,7 @@ ecore_config_system_shutdown(void)
       free(__ecore_config_app_name);
    while(__ecore_config_bundle_local->data)
      ecore_config_dst(__ecore_config_bundle_local->data);
+   free(__ecore_config_bundle_local);
    free(__ecore_config_server_local);
    free(__ecore_config_server_global);
    return ret;
