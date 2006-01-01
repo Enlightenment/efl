@@ -208,12 +208,12 @@ _ecore_signal_call(void)
 			 * check to see for Last Words, and only delay if there are any.
 			 * This has it's own set of problems.
 			 */
-printf("Delaying exit event for %s.\n", e->exe->cmd);
+			printf("Delaying exit event for %s.\n", e->exe->cmd);
                         ecore_timer_add(0.1, _ecore_signal_exe_exit_delay, e);
                      }
 		  else
-{
-printf("Sending exit event for %s.\n", e->exe->cmd);
+		    {
+		       if (e->exe) printf("Sending exit event for %s.\n", e->exe->cmd);
 		     _ecore_event_add(ECORE_EVENT_EXE_EXIT, e, 
 				   _ecore_event_exe_exit_free, NULL);
 }
