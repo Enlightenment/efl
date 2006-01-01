@@ -402,7 +402,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 
    if (!ok)
       {   /* Something went wrong, so pull down everything. */
-         /* FIXME: should kill it if it managed to start up. */
+	 if (exe->pid)   ecore_exe_terminate(exe);
          IF_FN_DEL(_ecore_exe_free, exe);
       }
    else
@@ -1035,7 +1035,14 @@ _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler)
 		        {
                            if (exe->read_data_size)
                               printf("There are %d bytes left unsent from the dead exe %s.\n", exe->read_data_size, exe->cmd);
-                           ecore_exe_terminate(exe);   /* FIXME: give this some deep thought later. */
+			   /* Thought about this a bit.  If the exe has actually 
+			    * died, this won't do any harm as it must have died 
+			    * recently and the pid has not had a chance to recycle.
+			    * It is also a paranoid catchall, coz the usual ecore_signal
+			    * mechenism should kick in.  But let's give it a good
+			    * kick anyway.
+			    */
+                           ecore_exe_terminate(exe);   
                         }
 		     break;
 	          }
