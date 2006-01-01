@@ -67,7 +67,7 @@ exe_data_count(void *data, int type, void *event)
    if (data_count >= size)
       {
          now = ecore_time_get();
-	 printf("\n\nApproximate data rate - %f bytes/second (%d lines and %d bytes in %f seconds).\n", ((double) data_count) / (now - then), line_count, data_count, now - then);
+	 printf("\n\nApproximate data rate - %f bytes/second (%d lines and %d bytes (x2) in %f seconds).\n", ((double) data_count * 2.0) / (now - then), line_count, data_count, now - then);
 	 if (data_count != size)
 	    printf("Size discrepency of %d bytes.\n", size - data_count);
          printf("\n");
