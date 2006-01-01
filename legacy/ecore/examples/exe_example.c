@@ -15,7 +15,7 @@ int size = 0;
 int exe_count = 0;
 int data_count = 0;
 int line_count = 0;
-int one_percent = 0;
+double then = 0.0, now = 0.0;
 Ecore_Exe *exe0 = NULL;
 Ecore_Exe *exe1 = NULL;
 Ecore_Exe *exe2 = NULL;
@@ -58,26 +58,20 @@ exe_data_count(void *data, int type, void *event)
 
    if (ev->lines)
       {
-         int i;
-	       
 	 for (i = 0; ev->lines[i].line != NULL; i++)
 	    line_count++;
-         printf("%d ", i);
+         /* printf("%d ", i);   This is for testing the number of lines per event.*/
       }
 
-   for (i = 0; i < ev->size; i++)
-      {
-         data_count++;
-	 if ((data_count % one_percent) == 0)
-	    {
-               putchar('.');
-	       fflush(stdout);
-	    }
-      }
-
+   data_count += ev->size;
    if (data_count >= size)
       {
+         now = ecore_time_get();
+	 printf("\n\nApproximate data rate - %f bytes/second (%d lines and %d bytes in %f seconds).\n", ((double) data_count) / (now - then), line_count, data_count, now - then);
+	 if (data_count != size)
+	    printf("Size discrepency of %d bytes.\n", size - data_count);
          printf("\n");
+
          /* Since there does not seem to be anyway to convince /bin/cat to finish... */
 	 ecore_exe_terminate(exe0);
       }
@@ -98,9 +92,49 @@ exe_exit(void *data, int type, void *event)
    return 1;
 }
 
+int timer_once(void *data)
+{
+   int argc;
+   char **argv;
+   int i = 1;
+
+   ecore_app_args_get(&argc, &argv);
+   ecore_event_handler_add(ECORE_EVENT_EXE_DATA, exe_data_count, NULL);
+   printf("FILE : %s\n", argv[i]);
+   exe0 = ecore_exe_pipe_run("/bin/cat", ECORE_EXE_PIPE_WRITE | ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_READ_LINE_BUFFERED, NULL);
+
+   if (exe0)
+      {
+         struct stat s;
+
+	 exe_count++;
+         if (stat(argv[i], &s) == 0)
+	    {
+	       int fd;
+
+               size = s.st_size;
+	       if ((fd = open(argv[i], O_RDONLY)) != -1)
+	          {
+		      char buf[1024];
+		      int length;
+
+                      then = ecore_time_get();
+		      while ((length = read(fd, buf, 1024)) > 0)
+                         ecore_exe_pipe_write(exe0, buf, length);
+		         close(fd);
+		  }
+	    }
+         /* FIXME: Fuckit, neither of these will actually cause /bin/cat to shut down.  What the fuck does it take? */
+         ecore_exe_pipe_write(exe0, "\004", 1);  /* Send an EOF. */
+         ecore_exe_pipe_write_close(exe0);  /* /bin/cat should stop when it's stdin closes. */
+      }
+
+  return 0;
+}
+
 int main(int argc, char **argv) 
 {
-   double then = 0.0, now = 0.0;
+  ecore_app_args_set(argc, (const char **) argv);
 
    ecore_init();
    ecore_event_handler_add(ECORE_EVENT_EXE_EXIT, exe_exit, NULL);
@@ -141,55 +175,10 @@ int main(int argc, char **argv)
          printf("  [*] exe3 = %p (echo \"ls\" | /bin/cat)\n", exe3);
       }
    else
-      {
-         int i = 1;
+      ecore_timer_add(0.5, timer_once, NULL);
 
-         ecore_event_handler_add(ECORE_EVENT_EXE_DATA, exe_data_count, NULL);
-	 printf("FILE : %s\n", argv[i]);
-         exe0 = ecore_exe_pipe_run("/bin/cat",
-	    ECORE_EXE_PIPE_WRITE | ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_READ_LINE_BUFFERED,
-	    NULL);
-         if (exe0)
-            {
-	       struct stat s;
-
-	       exe_count++;
-               if (stat(argv[i], &s) == 0)
-		  {
-		     int fd;
-
-                     size = s.st_size;
-                     one_percent = s.st_size / 100;
-		     if (one_percent == 0)
-		        one_percent = 1;
-		     if ((fd = open(argv[i], O_RDONLY)) != -1)
-		        {
-		           char buf[1024];
-			   int length;
-			   while ((length = read(fd, buf, 1024)) > 0)
-                              ecore_exe_pipe_write(exe0, buf, length);
-		           close(fd);
-		        }
-	          }
-	       /* FIXME: Fuckit, neither of these will actually cause /bin/cat to shut down.  What the fuck does it take? */
-               ecore_exe_pipe_write(exe0, "\004", 1);  /* Send an EOF. */
-               ecore_exe_pipe_write_close(exe0);  /* /bin/cat should stop when it's stdin closes. */
-            }
-      }
-
-   if (one_percent)
-      then = ecore_time_get() + 0.1;  /* Factor in the exe exit delay at least. */
-
-   if (exe_count > 0)
+   if ((exe_count > 0) || (argc > 1))
       ecore_main_loop_begin();
-
-   if (one_percent)
-      {
-         now = ecore_time_get();
-	 printf("Approximate data rate (overhead not accounted for) - %f bytes/second ( %d lines and %d bytes in %f seconds).\n", ((double) data_count) / (now - then), line_count, data_count, now - then);
-	 if (data_count != size)
-	    printf("Size discrepency of %d bytes.\n", size - data_count);
-      }
 
    ecore_shutdown();
    return 0;
