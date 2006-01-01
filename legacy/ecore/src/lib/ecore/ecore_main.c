@@ -7,6 +7,7 @@
 
 #define FIX_HZ 1   
 
+#include <math.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
@@ -284,7 +285,13 @@ _ecore_main_select(double timeout)
    Ecore_List2    *l;
 
    t = NULL;
-   if (timeout > 0.0)
+   if ((!finite(timeout)) || (timeout == 0.0))  /* finite() tests for NaN, too big, too small, and infinity.  */
+     {
+	tv.tv_sec = 0;
+	tv.tv_usec = 0;
+	t = &tv;
+     }
+   else if (timeout > 0.0)
      {
 	int sec, usec;
 
@@ -298,12 +305,6 @@ _ecore_main_select(double timeout)
 #endif	
 	tv.tv_sec = sec;
 	tv.tv_usec = usec;
-	t = &tv;
-     }
-   else if (timeout == 0.0)
-     {
-	tv.tv_sec = 0;
-	tv.tv_usec = 0;
 	t = &tv;
      }
    max_fd = 0;
