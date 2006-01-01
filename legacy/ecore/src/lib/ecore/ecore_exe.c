@@ -6,11 +6,20 @@
 
 #ifndef WIN32
 
+struct _ecore_exe_dead_exe
+{
+   pid_t        pid;
+   char        *cmd;
+};
+
 static void _ecore_exe_exec_it(const char *exe_cmd);
 static int _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_exe_data_write_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static void _ecore_exe_flush(Ecore_Exe *exe);
 static void _ecore_exe_event_exe_data_free(void *data __UNUSED__, void *ev);
+static int _ecore_exe_is_it_alive(pid_t pid);
+static int _ecore_exe_make_sure_its_dead(void *data);
+static int _ecore_exe_make_sure_its_really_dead(void *data);
 
 static Ecore_Exe *exes = NULL;
 static char *shell = NULL;
@@ -393,6 +402,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 
    if (!ok)
       {   /* Something went wrong, so pull down everything. */
+         /* FIXME: should kill it if it managed to start up. */
          IF_FN_DEL(_ecore_exe_free, exe);
       }
    else
@@ -601,13 +611,24 @@ ecore_exe_continue(Ecore_Exe *exe)
 void
 ecore_exe_terminate(Ecore_Exe *exe)
 {
+   struct _ecore_exe_dead_exe *dead;
+
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
 	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
 			 "ecore_exe_terminate");
 	return;
      }
+   printf("Sending TERM signal to %s (%d).\n", exe->cmd, exe->pid);
    kill(exe->pid, SIGTERM);
+
+   dead = calloc(1, sizeof(struct _ecore_exe_dead_exe));
+   if (dead)
+      {
+         dead->pid = exe->pid;
+         dead->cmd = strdup(exe->cmd);
+         ecore_timer_add(10.0, _ecore_exe_make_sure_its_dead, dead);
+      }
 }
 
 /**
@@ -618,13 +639,24 @@ ecore_exe_terminate(Ecore_Exe *exe)
 void
 ecore_exe_kill(Ecore_Exe *exe)
 {
+   struct _ecore_exe_dead_exe *dead;
+
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
 	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
 			 "ecore_exe_kill");
 	return;
      }
+   printf("Sending KILL signal to %s (%d).\n", exe->cmd, exe->pid);
    kill(exe->pid, SIGKILL);
+
+   dead = calloc(1, sizeof(struct _ecore_exe_dead_exe));
+   if (dead)
+      {
+         dead->pid = exe->pid;
+         dead->cmd = strdup(exe->cmd);
+         ecore_timer_add(10.0, _ecore_exe_make_sure_its_really_dead, dead);
+      }
 }
 
 /**
@@ -664,6 +696,90 @@ ecore_exe_hup(Ecore_Exe *exe)
 	return;
      }
    kill(exe->pid, SIGHUP);
+}
+
+static int
+_ecore_exe_is_it_alive(pid_t pid)
+{
+   Ecore_Exe *exe;
+
+   /* FIXME: There is no nice, safe, OS independant way to tell if a 
+    * particular PID is still alive.  I have written code to do so
+    * for my urunlevel busybox applet (http://urunlevel.sourceforge.net/), 
+    * but it's for linux only, and still not guaranteed.
+    *
+    * So for now, we just check that a valid Ecore_Exe structure 
+    * exists for it.  Even that is not a guarantee, as the structure
+    * can be freed without killing the process.
+    *
+    * I think we can safely put exe's into two categories, those users
+    * that care about the life of the exe, and the run and forget type.
+    * The run and forget type starts up the exe, then free's the 
+    * Ecore_Exe structure straight away.  They can never call any of 
+    * the functions that can call this, so we don't worry about them.
+    *
+    * Those user's that care about the life of exe's will keep the 
+    * Ecore_Exe structure around, terminate them eventually, or
+    * register for exit events.  For these ones the assumption
+    * that valid Ecore_Exe struct == live exe is almost valid.
+    *
+    * I will probably copy my urunlevel code into here someday.
+    */
+   exe = _ecore_exe_find(pid);
+   if (exe)
+      {
+         if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
+            return (pid_t) 1;
+      }
+
+   return (pid_t) 0;
+}
+
+static int
+_ecore_exe_make_sure_its_dead(void *data)
+{
+   struct _ecore_exe_dead_exe *dead;
+
+   dead = data;
+   if (dead)
+      {
+         if (_ecore_exe_is_it_alive(dead->pid))
+	    {
+	       if (dead->cmd)
+                  printf("Sending KILL signal to alledgedly dead %s (%d).\n", dead->cmd, dead->pid);
+	       else
+                  printf("Sending KILL signal to alledgedly dead PID %d.\n", dead->pid);
+               kill(dead->pid, SIGKILL);
+               ecore_timer_add(10.0, _ecore_exe_make_sure_its_really_dead, dead);
+	    }
+         else
+	    {
+	       IF_FREE(dead->cmd);
+	       free(dead);
+	    }
+      }
+   return 0;
+}
+
+static int
+_ecore_exe_make_sure_its_really_dead(void *data)
+{
+   struct _ecore_exe_dead_exe *dead;
+
+   dead = data;
+   if (dead)
+      {
+         if (_ecore_exe_is_it_alive(dead->pid))
+	    {
+	       if (dead->cmd)
+                  printf("%s (%d) is not really dead.\n", dead->cmd, dead->pid);
+	       else
+                  printf("PID %d is not really dead.\n", dead->pid);
+	    }
+	 IF_FREE(dead->cmd);
+	 free(dead);
+      }
+   return 0;
 }
 
 
