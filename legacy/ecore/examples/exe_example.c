@@ -121,7 +121,7 @@ int timer_once(void *data)
                       then = ecore_time_get();
 		      while ((length = read(fd, buf, 1024)) > 0)
                          ecore_exe_pipe_write(exe0, buf, length);
-		         close(fd);
+		      close(fd);
 		  }
 	    }
          /* FIXME: Fuckit, neither of these will actually cause /bin/cat to shut down.  What the fuck does it take? */
