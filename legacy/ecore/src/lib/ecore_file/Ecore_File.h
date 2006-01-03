@@ -64,6 +64,7 @@ extern "C" {
    EAPI int         ecore_file_mkpath       (const char *path);
    EAPI int         ecore_file_cp           (const char *src, const char *dst);
    EAPI int         ecore_file_mv           (const char *src, const char *dst);
+   EAPI int         ecore_file_symlink      (const char *src, const char *dest);
    EAPI char       *ecore_file_realpath     (const char *file);
    EAPI int         ecore_file_unlink       (const char *file);
    EAPI const char *ecore_file_get_file     (const char *path);

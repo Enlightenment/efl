@@ -211,6 +211,14 @@ ecore_file_mv(const char *src, const char *dst)
    return 1;
 }
 
+int
+ecore_file_symlink(const char *src, const char *dest)
+{
+   if(!symlink(src, dest))
+     return 1;
+   return 0;
+}
+
 char *
 ecore_file_realpath(const char *file)
 {
