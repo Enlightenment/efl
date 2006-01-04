@@ -219,7 +219,6 @@ extern "C" {
    EAPI void        ecore_exe_pause(Ecore_Exe *exe);
    EAPI void        ecore_exe_continue(Ecore_Exe *exe);
    EAPI void        ecore_exe_terminate(Ecore_Exe *exe);
-   EAPI void        ecore_exe_kill_maybe(Ecore_Exe *exe);
    EAPI void        ecore_exe_kill(Ecore_Exe *exe);
    EAPI void        ecore_exe_signal(Ecore_Exe *exe, int num);
    EAPI void        ecore_exe_hup(Ecore_Exe *exe);
