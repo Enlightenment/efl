@@ -247,7 +247,7 @@ struct _Ecore_Exe
    int          read_data_size; /* data read from child in bytes */
    int          child_fd_write;	/* fd to write TO to send data to the child */
    int          child_fd_read;	/* fd to read FROM when child has sent us (the parent) data */
-   int          close_write;
+   int          close_stdin;
 };
 #endif
 

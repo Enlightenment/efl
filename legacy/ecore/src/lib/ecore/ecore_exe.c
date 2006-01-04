@@ -444,21 +444,21 @@ ecore_exe_send(Ecore_Exe *exe, void *data, int size)
 }
 
 /**
- * The stdin pipe of the given child process will close when the write buffer is empty.
+ * The stdin of the given child process will close when the write buffer is empty.
  * 
- * @param exe  The child process to write to
+ * @param exe  The child process
  * @ingroup Ecore_Exe_Basic_Group
  */
 void
-ecore_exe_pipe_write_close(Ecore_Exe *exe)
+ecore_exe_close_stdin(Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
 	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
-			 "ecore_exe_pipe_write_close");
+			 "ecore_exe_close_stdin");
 	return;
      }
-   exe->close_write = 1;
+   exe->close_stdin = 1;
 }
 
 
@@ -1062,7 +1062,7 @@ _ecore_exe_data_write_handler(void *data, Ecore_Fd_Handler *fd_handler)
       _ecore_exe_flush(exe);
 
    /* If we have sent all there is to send, and we need to close the pipe, then close it. */
-   if ((exe->close_write == 1) && (exe->write_data_size == exe->write_data_offset))
+   if ((exe->close_stdin == 1) && (exe->write_data_size == exe->write_data_offset))
       {
          int ok = 0;
          int result;
@@ -1073,7 +1073,6 @@ printf("Closing stdin for %s\n", exe->cmd);
          if (exe->child_fd_write)  E_NO_ERRNO(result, close(exe->child_fd_write), ok);
 	 exe->child_fd_write = 0;
          IF_FREE(exe->write_data_buf);
-	 exe->close_write = 0;
       }
 
    return 1;
