@@ -419,7 +419,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
  * buffering. This call will never block. It may fail if the system runs out
  * of memory.
  * 
- * @param exe  The child process tosend to
+ * @param exe  The child process to send to
  * @param data The data to send
  * @param size The size of the data to send, in bytes
  * @return 1 if successful, 0 on failure.
