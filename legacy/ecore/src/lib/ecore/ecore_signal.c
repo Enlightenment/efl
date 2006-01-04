@@ -200,7 +200,7 @@ _ecore_signal_call(void)
 			 * there may not be data and the exit event never gets sent.
 			 * 
 			 * Any way you look at it, there has to be some time passed 
-			 * before the exit event gets sent.  So the startegy here is
+			 * before the exit event gets sent.  So the strategy here is
 			 * to setup a timer event that will send the exit event after
 			 * an arbitrary, but brief, time.
 			 *
