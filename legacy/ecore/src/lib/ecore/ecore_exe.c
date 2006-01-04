@@ -221,7 +221,7 @@ ecore_exe_run(const char *exe_cmd, const void *data)
  *
  * This function does the same thing as ecore_exe_run(), but also makes the
  * standard in and/or out from the child process available for reading or
- * writing.  To write use ecore_exe_pipe_write().  To read listen to
+ * writing.  To write use ecore_exe_send().  To read listen to
  * ECORE_EVENT_EXE_DATA events (set up a handler).  Ecore may buffer read
  * data until a newline character if asked for with the @p flags.  All
  * data will be included in the events (newlines will be replaced with
@@ -413,20 +413,20 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 }
 
 /**
- * Writes data to the given child process which it recieves on stdin.
+ * Sends data to the given child process which it recieves on stdin.
  * 
  * This function writes to a child processes standard in, with unlimited
  * buffering. This call will never block. It may fail if the system runs out
  * of memory.
  * 
- * @param exe  The child process to write to
- * @param data The data to write
- * @param size The size of the data to write, in bytes
+ * @param exe  The child process tosend to
+ * @param data The data to send
+ * @param size The size of the data to send, in bytes
  * @return 1 if successful, 0 on failure.
  * @ingroup Ecore_Exe_Basic_Group
  */
 int
-ecore_exe_pipe_write(Ecore_Exe *exe, void *data, int size)
+ecore_exe_send(Ecore_Exe *exe, void *data, int size)
 {
    void *buf;
 
