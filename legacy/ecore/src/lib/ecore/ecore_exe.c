@@ -900,8 +900,8 @@ _ecore_exe_free(Ecore_Exe *exe)
 
    IF_FN_DEL(ecore_main_fd_handler_del, exe->write_fd_handler);
    IF_FN_DEL(ecore_main_fd_handler_del, exe->read_fd_handler);
-   if (exe->flags & ECORE_EXE_PIPE_READ)   E_NO_ERRNO(result, close(exe->child_fd_read), ok);
-   if (exe->flags & ECORE_EXE_PIPE_WRITE)  E_NO_ERRNO(result, close(exe->child_fd_write), ok);
+   if (exe->child_fd_read)   E_NO_ERRNO(result, close(exe->child_fd_read), ok);
+   if (exe->child_fd_write)  E_NO_ERRNO(result, close(exe->child_fd_write), ok);
    IF_FREE(exe->write_data_buf);
    IF_FREE(exe->read_data_buf);
    IF_FREE(exe->cmd);
@@ -1073,7 +1073,6 @@ printf("Closing stdin for %s\n", exe->cmd);
          if (exe->child_fd_write)  E_NO_ERRNO(result, close(exe->child_fd_write), ok);
 	 exe->child_fd_write = 0;
          IF_FREE(exe->write_data_buf);
-         exe->flags &= ~ECORE_EXE_PIPE_WRITE;
 	 exe->close_write = 0;
       }
 
