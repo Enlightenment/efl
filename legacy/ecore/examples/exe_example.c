@@ -120,12 +120,12 @@ int timer_once(void *data)
 
                       then = ecore_time_get();
 		      while ((length = read(fd, buf, 1024)) > 0)
-                         ecore_exe_pipe_write(exe0, buf, length);
+                         ecore_exe_send(exe0, buf, length);
 		      close(fd);
 		  }
 	    }
          /* FIXME: Fuckit, neither of these will actually cause /bin/cat to shut down.  What the fuck does it take? */
-         ecore_exe_pipe_write(exe0, "\004", 1);  /* Send an EOF. */
+         ecore_exe_send(exe0, "\004", 1);  /* Send an EOF. */
          ecore_exe_pipe_write_close(exe0);  /* /bin/cat should stop when it's stdin closes. */
       }
 
@@ -151,8 +151,8 @@ int main(int argc, char **argv)
          if (exe1)
 	    {
 	       exe_count++;
-               ecore_exe_pipe_write(exe1, "ls\n", 3);
-               ecore_exe_pipe_write(exe1, "exit\n", 5);
+               ecore_exe_send(exe1, "ls\n", 3);
+               ecore_exe_send(exe1, "exit\n", 5);
 	    }
 
          exe2 = ecore_exe_pipe_run("/usr/bin/find . -print",
@@ -166,7 +166,7 @@ int main(int argc, char **argv)
          if (exe3)
 	    {
 	       exe_count++;
-               ecore_exe_pipe_write(exe3, "ls\n", 3);
+               ecore_exe_send(exe3, "ls\n", 3);
 	    }
 
          printf("  [*] exe0 = %p (/bin/uname -a)\n", exe0);
