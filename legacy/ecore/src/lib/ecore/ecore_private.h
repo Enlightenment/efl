@@ -154,6 +154,62 @@ enum _Ecore_Exe_Flags
    ECORE_EXE_PIPE_WRITE = 2,
    ECORE_EXE_PIPE_READ_LINE_BUFFERED = 4,
    ECORE_EXE_RESPAWN = 8
+   /* FIXME: Getting respawn to work
+    *
+    * There is no way that we can do anything about the internal state info of
+    * an external exe.  The same can be said about the state of user code.  User
+    * code in this context means the code that is using ecore_exe to manage exe's
+    * for it.
+    *
+    * Document that the exe must be respawnable, in other words, there is no
+    * state that it cannot regenerate by just killing it and starting it again.
+    * This includes state that the user code knows about, as the respawn is 
+    * transparent to that code.  On the other hand, maybe a respawn event might 
+    * be useful, or maybe resend the currently non existant add event.  For 
+    * consistancy with ecore_con, an add event is good anyway.
+    *
+    * The Ecore_exe structure is reused for respawning, so that the (opaque)
+    * pointer held by the user remains valid.  This means that the Ecore_Exe
+    * init and del functions may need to be split into two parts each to avoid 
+    * duplicating code - common code part, and the rest.  This implies that
+    * the unchanging members mentioned next should NEVER change.
+    *
+    * These structure members don't need to change -
+    *   __list_data       - we stay on the list
+    *   ECORE_MAGIC       - this is a constant
+    *   data              - passed in originally
+    *   cmd               - passed in originally
+    *   flags             - passed in originally
+    *
+    * These structure members need to change -
+    *   tag               - state that must be regenerated, zap it
+    *   pid               - it will be different
+    *   child_fd_write    - it will be different
+    *   child_fd_read     - it will be different
+    *   write_fd_handler  - we cannot change the fd used by a handler, this changes coz the fd changes.
+    *   read_fd_handler   - we cannot change the fd used by a handler, this changes coz the fd changes.
+    *
+    * Hmm, the read and write buffers could be tricky.
+    * They are not atomic, and could be in a semi complete state.
+    * They fall into the "state must be regenerated" mentioned above.
+    * A respawn/add event should take care of it.
+    *
+    * These structure members need to change -
+    *   write_data_buf    - state that must be regenerated, zap it
+    *   write_data_size   - state that must be regenerated, zap it
+    *   write_data_offset - state that must be regenerated, zap it
+    *   read_data_buf     - state that must be regenerated, zap it
+    *   read_data_size    - state that must be regenerated, zap it
+    *   close_write       - state that must be regenerated, zap it
+    *
+    * There is the problem that an exe that fell over and needs respawning
+    * might keep falling over, keep needing to be respawned, and tie up system 
+    * resources with the constant respawning.  An exponentially increasing 
+    * timeout (with maximum timeout) between respawns should take care of that.
+    * Although this is not a "contention for a resource" problem, the exe falling 
+    * over may be, so a random element added to the timeout may help, and won't 
+    * hurt.  The user code may need to be informed that a timeout is in progress. 
+    */
 };
 typedef enum _Ecore_Exe_Flags Ecore_Exe_Flags;
 
