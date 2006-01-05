@@ -78,6 +78,316 @@ ecore_x_window_prop_card32_get(Ecore_X_Window win, Ecore_X_Atom atom,
    return num;
 }
 
+/*
+ * Get CARD32 (array) property of any length
+ *
+ * If the property was successfully fetched the number of items stored in
+ * val is returned, otherwise -1 is returned.
+ * Note: Return value 0 means that the property exists but has no elements.
+ */
+int
+ecore_x_window_prop_card32_list_get(Ecore_X_Window win, Ecore_X_Atom atom,
+				    unsigned int **plst)
+{
+   unsigned char      *prop_ret;
+   Atom                type_ret;
+   unsigned long       bytes_after, num_ret;
+   int                 format_ret;
+   unsigned int        i, *val;
+   int                 num;
+
+   prop_ret = NULL;
+   if (XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
+			  XA_CARDINAL, &type_ret, &format_ret, &num_ret,
+			  &bytes_after, &prop_ret) != Success)
+      return -1;
+
+   if (type_ret == None || num_ret == 0)
+     {
+	num = 0;
+	*plst = NULL;
+     }
+   else if (prop_ret && type_ret == XA_CARDINAL && format_ret == 32)
+     {
+	val = malloc(num_ret * sizeof(unsigned int));
+	for (i = 0; i < num_ret; i++)
+	   val[i] = ((unsigned long *)prop_ret)[i];
+	num = num_ret;
+	*plst = val;
+     }
+   else
+     {
+	num = -1;
+	*plst = NULL;
+     }
+   if (prop_ret)
+      XFree(prop_ret);
+
+   return num;
+}
+
+/*
+ * Set X ID (array) property
+ */
+void
+ecore_x_window_prop_xid_set(Ecore_X_Window win, Ecore_X_Atom atom,
+			    Ecore_X_Atom type, Ecore_X_ID * lst,
+			    unsigned int num)
+{
+#if SIZEOF_INT == SIZEOF_LONG
+   XChangeProperty(_ecore_x_disp, win, atom, type, 32, PropModeReplace,
+		   (unsigned char *)lst, num);
+#else
+   unsigned long      *pl;
+   unsigned int        i;
+
+   pl = malloc(num * sizeof(long));
+   if (!pl)
+      return;
+   for (i = 0; i < num; i++)
+      pl[i] = lst[i];
+   XChangeProperty(_ecore_x_disp, win, atom, type, 32, PropModeReplace,
+		   (unsigned char *)pl, num);
+   free(pl);
+#endif
+}
+
+/*
+ * Get X ID (array) property
+ *
+ * At most len items are returned in val.
+ * If the property was successfully fetched the number of items stored in
+ * val is returned, otherwise -1 is returned.
+ * Note: Return value 0 means that the property exists but has no elements.
+ */
+int
+ecore_x_window_prop_xid_get(Ecore_X_Window win, Ecore_X_Atom atom,
+			    Ecore_X_Atom type, Ecore_X_ID * lst,
+			    unsigned int len)
+{
+   unsigned char      *prop_ret;
+   Atom                type_ret;
+   unsigned long       bytes_after, num_ret;
+   int                 format_ret;
+   int                 num;
+   unsigned            i;
+
+   prop_ret = NULL;
+   if (XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
+			  type, &type_ret, &format_ret, &num_ret,
+			  &bytes_after, &prop_ret) != Success)
+      return -1;
+
+   if (type_ret == None)
+     {
+	num = 0;
+     }
+   else if (prop_ret && type_ret == type && format_ret == 32)
+     {
+	if (num_ret < len)
+	   len = num_ret;
+	for (i = 0; i < len; i++)
+	   lst[i] = ((unsigned long *)prop_ret)[i];
+	num = len;
+     }
+   else
+     {
+	num = -1;
+     }
+   if (prop_ret)
+      XFree(prop_ret);
+
+   return num;
+}
+
+/*
+ * Get X ID (array) property
+ *
+ * If the property was successfully fetched the number of items stored in
+ * val is returned, otherwise -1 is returned.
+ * The returned array must be freed with free().
+ * Note: Return value 0 means that the property exists but has no elements.
+ */
+int
+ecore_x_window_prop_xid_list_get(Ecore_X_Window win, Ecore_X_Atom atom,
+				 Ecore_X_Atom type, Ecore_X_ID ** val)
+{
+   unsigned char      *prop_ret;
+   Atom                type_ret;
+   unsigned long       bytes_after, num_ret;
+   int                 format_ret;
+   Ecore_X_Atom       *alst;
+   int                 num;
+   unsigned            i;
+
+   *val = NULL;
+   prop_ret = NULL;
+   if (XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
+			  type, &type_ret, &format_ret, &num_ret,
+			  &bytes_after, &prop_ret) != Success)
+      return -1;
+
+   if (type_ret == None || num_ret == 0)
+     {
+	num = 0;
+     }
+   else if (prop_ret && type_ret == type && format_ret == 32)
+     {
+	alst = malloc(num_ret * sizeof(Ecore_X_ID));
+	for (i = 0; i < num_ret; i++)
+	   alst[i] = ((unsigned long *)prop_ret)[i];
+	*val = alst;
+	num = num_ret;
+     }
+   else
+     {
+	num = -1;
+     }
+   if (prop_ret)
+      XFree(prop_ret);
+
+   return num;
+}
+
+/*
+ * Remove/add/toggle X ID list item.
+ */
+void
+ecore_x_window_prop_xid_list_change(Ecore_X_Window win, Ecore_X_Atom atom,
+				    Ecore_X_Atom type, Ecore_X_ID item, int op)
+{
+   Ecore_X_ID         *lst;
+   int                 i, num;
+
+   num = ecore_x_window_prop_xid_list_get(win, atom, type, &lst);
+   if (num < 0)
+      return;			/* Error - assuming invalid window */
+
+   /* Is it there? */
+   for (i = 0; i < num; i++)
+     {
+	if (lst[i] == item)
+	   break;
+     }
+
+   if (i < num)
+     {
+	/* Was in list */
+	if (op == ECORE_X_PROP_LIST_ADD)
+	   goto done;
+	/* Remove it */
+	num--;
+	for (; i < num; i++)
+	   lst[i] = lst[i + 1];
+     }
+   else
+     {
+	/* Was not in list */
+	if (op == ECORE_X_PROP_LIST_REMOVE)
+	   goto done;
+	/* Add it */
+	num++;
+	lst = realloc(lst, num * sizeof(Ecore_X_ID));
+	lst[i] = item;
+     }
+
+   ecore_x_window_prop_xid_set(win, atom, type, lst, num);
+
+ done:
+   if (lst)
+      free(lst);
+}
+
+/*
+ * Set Atom (array) property
+ */
+void
+ecore_x_window_prop_atom_set(Ecore_X_Window win, Ecore_X_Atom atom,
+			     Ecore_X_Atom * lst, unsigned int num)
+{
+   ecore_x_window_prop_xid_set(win, atom, XA_ATOM, lst, num);
+}
+
+/*
+ * Get Atom (array) property
+ *
+ * At most len items are returned in val.
+ * If the property was successfully fetched the number of items stored in
+ * val is returned, otherwise -1 is returned.
+ * Note: Return value 0 means that the property exists but has no elements.
+ */
+int
+ecore_x_window_prop_atom_get(Ecore_X_Window win, Ecore_X_Atom atom,
+			     Ecore_X_Atom * lst, unsigned int len)
+{
+   return ecore_x_window_prop_xid_get(win, atom, XA_ATOM, lst, len);
+}
+
+/*
+ * Get Atom (array) property
+ *
+ * If the property was successfully fetched the number of items stored in
+ * val is returned, otherwise -1 is returned.
+ * The returned array must be freed with free().
+ * Note: Return value 0 means that the property exists but has no elements.
+ */
+int
+ecore_x_window_prop_atom_list_get(Ecore_X_Window win, Ecore_X_Atom atom,
+				  Ecore_X_Atom ** plst)
+{
+   return ecore_x_window_prop_xid_list_get(win, atom, XA_ATOM, plst);
+}
+
+/*
+ * Remove/add/toggle atom list item.
+ */
+void
+ecore_x_window_prop_atom_list_change(Ecore_X_Window win, Ecore_X_Atom atom,
+				     Ecore_X_Atom item, int op)
+{
+   ecore_x_window_prop_xid_list_change(win, atom, XA_ATOM, item, op);
+}
+
+/*
+ * Set Window (array) property
+ */
+void
+ecore_x_window_prop_window_set(Ecore_X_Window win, Ecore_X_Atom atom,
+			       Ecore_X_Window * lst, unsigned int num)
+{
+   ecore_x_window_prop_xid_set(win, atom, XA_WINDOW, lst, num);
+}
+
+/*
+ * Get Window (array) property
+ *
+ * At most len items are returned in val.
+ * If the property was successfully fetched the number of items stored in
+ * val is returned, otherwise -1 is returned.
+ * Note: Return value 0 means that the property exists but has no elements.
+ */
+int
+ecore_x_window_prop_window_get(Ecore_X_Window win, Ecore_X_Atom atom,
+			       Ecore_X_Window * lst, unsigned int len)
+{
+   return ecore_x_window_prop_xid_get(win, atom, XA_WINDOW, lst, len);
+}
+
+/*
+ * Get Window (array) property
+ *
+ * If the property was successfully fetched the number of items stored in
+ * val is returned, otherwise -1 is returned.
+ * The returned array must be freed with free().
+ * Note: Return value 0 means that the property exists but has no elements.
+ */
+int
+ecore_x_window_prop_window_list_get(Ecore_X_Window win, Ecore_X_Atom atom,
+				    Ecore_X_Window ** plst)
+{
+   return ecore_x_window_prop_xid_list_get(win, atom, XA_WINDOW, plst);
+}
+
 /**
  * To be documented.
  *

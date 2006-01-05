@@ -1024,9 +1024,8 @@ ecore_x_icccm_window_role_get(Ecore_X_Window win)
 void
 ecore_x_icccm_client_leader_set(Ecore_X_Window win, Ecore_X_Window l)
 {
-   ecore_x_window_prop_property_set(win,
-				    ECORE_X_ATOM_WM_CLIENT_LEADER,
-				    XA_WINDOW, 32, &l, 1);
+   ecore_x_window_prop_window_set(win, ECORE_X_ATOM_WM_CLIENT_LEADER,
+				  &l, 1);
 }
 
 /**
@@ -1036,22 +1035,11 @@ ecore_x_icccm_client_leader_set(Ecore_X_Window win, Ecore_X_Window l)
 Ecore_X_Window
 ecore_x_icccm_client_leader_get(Ecore_X_Window win)
 {
-   unsigned char      *data;
-   int                 num;
+   Ecore_X_Window      l;
 
-   if (ecore_x_window_prop_property_get(win,
-					ECORE_X_ATOM_WM_CLIENT_LEADER,
-					XA_WINDOW, 32, &data, &num))
-     {
-	if (data) 
-	  {
-	     Ecore_X_Window wlead;
-	     
-	     wlead = *((Ecore_X_Window *)data);
-	     free(data);
-	     return wlead;
-	  }
-     }
+   if (ecore_x_window_prop_window_get(win, ECORE_X_ATOM_WM_CLIENT_LEADER,
+				      &l, 1) > 0)
+      return l;
    return 0;
 }
 

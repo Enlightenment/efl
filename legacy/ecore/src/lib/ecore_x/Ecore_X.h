@@ -941,6 +941,12 @@ typedef enum _Ecore_X_Window_Configure_Mask {
 #define ECORE_X_WINDOW_LAYER_NORMAL 4
 #define ECORE_X_WINDOW_LAYER_ABOVE 6
 
+/* Property list operations */
+#define ECORE_X_PROP_LIST_REMOVE    0
+#define ECORE_X_PROP_LIST_ADD       1
+#define ECORE_X_PROP_LIST_TOGGLE    2
+
+
 EAPI int              ecore_x_init(const char *name);
 EAPI int              ecore_x_shutdown(void);       
 EAPI int              ecore_x_disconnect(void);       
@@ -1053,6 +1059,56 @@ EAPI void             ecore_x_window_prop_card32_set(Ecore_X_Window win, Ecore_X
 						     unsigned int *val, unsigned int num);
 EAPI int              ecore_x_window_prop_card32_get(Ecore_X_Window win, Ecore_X_Atom atom,
 						     unsigned int *val, unsigned int len);
+EAPI int              ecore_x_window_prop_card32_list_get(Ecore_X_Window win,
+                                                          Ecore_X_Atom atom,
+                                                          unsigned int **plst);
+
+EAPI void             ecore_x_window_prop_xid_set(Ecore_X_Window win,
+                                                  Ecore_X_Atom atom,
+                                                  Ecore_X_Atom type,
+                                                  Ecore_X_ID * lst,
+                                                  unsigned int num);
+EAPI int              ecore_x_window_prop_xid_get(Ecore_X_Window win,
+                                                  Ecore_X_Atom atom,
+                                                  Ecore_X_Atom type,
+                                                  Ecore_X_ID * lst,
+                                                  unsigned int len);
+EAPI int              ecore_x_window_prop_xid_list_get(Ecore_X_Window win,
+                                                       Ecore_X_Atom atom,
+                                                       Ecore_X_Atom type,
+                                                       Ecore_X_ID ** plst);
+EAPI void             ecore_x_window_prop_xid_list_change(Ecore_X_Window win,
+                                                          Ecore_X_Atom atom,
+                                                          Ecore_X_Atom type,
+                                                          Ecore_X_ID item,
+                                                          int op);
+EAPI void             ecore_x_window_prop_atom_set(Ecore_X_Window win,
+                                                   Ecore_X_Atom atom,
+                                                   Ecore_X_Atom * val,
+                                                   unsigned int num);
+EAPI int              ecore_x_window_prop_atom_get(Ecore_X_Window win,
+                                                   Ecore_X_Atom atom,
+                                                   Ecore_X_Atom * val,
+                                                   unsigned int len);
+EAPI int              ecore_x_window_prop_atom_list_get(Ecore_X_Window win,
+                                                        Ecore_X_Atom atom,
+                                                        Ecore_X_Atom ** plst);
+EAPI void             ecore_x_window_prop_atom_list_change(Ecore_X_Window win,
+                                                           Ecore_X_Atom atom,
+                                                           Ecore_X_Atom item,
+                                                           int op); 
+EAPI void             ecore_x_window_prop_window_set(Ecore_X_Window win,
+                                                     Ecore_X_Atom atom,
+                                                     Ecore_X_Window * val,
+                                                     unsigned int num);
+EAPI int              ecore_x_window_prop_window_get(Ecore_X_Window win,
+                                                     Ecore_X_Atom atom,
+                                                     Ecore_X_Window * val,
+                                                     unsigned int len);
+EAPI int              ecore_x_window_prop_window_list_get(Ecore_X_Window win,
+                                                          Ecore_X_Atom atom,
+                                                          Ecore_X_Window ** plst);
+
 EAPI Ecore_X_Atom     ecore_x_window_prop_any_type(void);
 EAPI void             ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom type, Ecore_X_Atom format, int size, void *data, int number);
 EAPI int              ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecore_X_Atom type, int size, unsigned char **data, int *num);

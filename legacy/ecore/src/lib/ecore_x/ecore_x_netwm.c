@@ -49,21 +49,9 @@ static void  _ecore_x_netwm_startup_info_free(void *data);
 #define _ATOM_GET(name) \
    XInternAtom(_ecore_x_disp, name, False)
 
-#define _ATOM_SET_UTF8_STRING(win, atom, string) \
-   XChangeProperty(_ecore_x_disp, win, atom, ECORE_X_ATOM_UTF8_STRING, 8, PropModeReplace, \
-                   (unsigned char *)string, strlen(string))
 #define _ATOM_SET_UTF8_STRING_LIST(win, atom, string, cnt) \
    XChangeProperty(_ecore_x_disp, win, atom, ECORE_X_ATOM_UTF8_STRING, 8, PropModeReplace, \
                    (unsigned char *)string, cnt)
-#define _ATOM_SET_WINDOW(win, atom, p_wins, cnt) \
-   XChangeProperty(_ecore_x_disp, win, atom, XA_WINDOW, 32, PropModeReplace, \
-                   (unsigned char *)p_wins, cnt)
-#define _ATOM_SET_ATOM(win, atom, p_atom, cnt) \
-   XChangeProperty(_ecore_x_disp, win, atom, XA_ATOM, 32, PropModeReplace, \
-                   (unsigned char *)p_atom, cnt)
-#define _ATOM_SET_CARD32(win, atom, p_val, cnt) \
-   XChangeProperty(_ecore_x_disp, win, atom, XA_CARDINAL, 32, PropModeReplace, \
-                   (unsigned char *)p_val, cnt)
 
 /*
  * Local variables
@@ -281,11 +269,11 @@ void
 ecore_x_netwm_wm_identify(Ecore_X_Window root, Ecore_X_Window check,
 			  const char *wm_name)
 {
-   _ATOM_SET_WINDOW(root, ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK, &check, 1);
-   _ATOM_SET_WINDOW(check, ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK, &check, 1);
-   _ATOM_SET_UTF8_STRING(check, ECORE_X_ATOM_NET_WM_NAME, wm_name);
+   ecore_x_window_prop_window_set(root, ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK, &check, 1);
+   ecore_x_window_prop_window_set(check, ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK, &check, 1);
+   _ecore_x_window_prop_string_utf8_set(check, ECORE_X_ATOM_NET_WM_NAME, wm_name);
    /* This one isn't mandatory */
-   _ATOM_SET_UTF8_STRING(root, ECORE_X_ATOM_NET_WM_NAME, wm_name);
+   _ecore_x_window_prop_string_utf8_set(root, ECORE_X_ATOM_NET_WM_NAME, wm_name);
 }
 
 /*
@@ -294,26 +282,23 @@ ecore_x_netwm_wm_identify(Ecore_X_Window root, Ecore_X_Window check,
 void
 ecore_x_netwm_supported_set(Ecore_X_Window root, Ecore_X_Atom *supported, int num)
 {
-   _ATOM_SET_ATOM(root, ECORE_X_ATOM_NET_SUPPORTED, supported, num);
+   ecore_x_window_prop_atom_set(root, ECORE_X_ATOM_NET_SUPPORTED, supported, num);
 }
 
 int
 ecore_x_netwm_supported_get(Ecore_X_Window root, Ecore_X_Atom **supported, int *num)
 {
    int            num_ret;
-   unsigned char *data;
 
    if (num) *num = 0;
    if (supported) *supported = NULL;
 
-   if (!ecore_x_window_prop_property_get(root, ECORE_X_ATOM_NET_SUPPORTED,
-					 XA_ATOM, 32, &data, &num_ret))
+   num_ret = ecore_x_window_prop_atom_list_get(root, ECORE_X_ATOM_NET_SUPPORTED,
+					       supported);
+   if (num_ret <= 0)
       return 0;
 
-   if ((!data) || (!num_ret)) return 0;
-
    if (num) *num = num_ret;
-   if (supported) *supported = (Ecore_X_Atom *)data;
    return 1;
 }
 
@@ -331,7 +316,7 @@ void
 ecore_x_netwm_desk_roots_set(Ecore_X_Window root,
 			     Ecore_X_Window *vroots, unsigned int n_desks)
 {
-   _ATOM_SET_WINDOW(root, ECORE_X_ATOM_NET_VIRTUAL_ROOTS, vroots, n_desks);
+   ecore_x_window_prop_window_set(root, ECORE_X_ATOM_NET_VIRTUAL_ROOTS, vroots, n_desks);
 }
 
 void
@@ -436,7 +421,8 @@ void
 ecore_x_netwm_client_list_set(Ecore_X_Window root,
 			      Ecore_X_Window *p_clients, unsigned int n_clients)
 {
-   _ATOM_SET_WINDOW(root, ECORE_X_ATOM_NET_CLIENT_LIST, p_clients, n_clients);
+   ecore_x_window_prop_window_set(root, ECORE_X_ATOM_NET_CLIENT_LIST,
+				  p_clients, n_clients);
 }
 
 /* Stacking order */
@@ -445,14 +431,15 @@ ecore_x_netwm_client_list_stacking_set(Ecore_X_Window root,
 				       Ecore_X_Window *p_clients,
 				       unsigned int n_clients)
 {
-   _ATOM_SET_WINDOW(root, ECORE_X_ATOM_NET_CLIENT_LIST_STACKING, p_clients,
-		    n_clients);
+   ecore_x_window_prop_window_set(root, ECORE_X_ATOM_NET_CLIENT_LIST_STACKING,
+				  p_clients, n_clients);
 }
 
 void
 ecore_x_netwm_client_active_set(Ecore_X_Window root, Ecore_X_Window win)
 {
-   _ATOM_SET_WINDOW(root, ECORE_X_ATOM_NET_ACTIVE_WINDOW, &win, 1);
+   ecore_x_window_prop_window_set(root, ECORE_X_ATOM_NET_ACTIVE_WINDOW,
+				  &win, 1);
 }
 
 void
@@ -642,7 +629,6 @@ ecore_x_netwm_strut_partial_get(Ecore_X_Window win, int *left, int *right,
 int
 ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
 {
-   unsigned char *data_ret;
    unsigned int  *data, *p;
    unsigned int  *src;
    unsigned int   len, icons, i;
@@ -651,17 +637,16 @@ ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
    if (num) *num = 0;
    if (icon) *icon = NULL;
 
-   if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_NET_WM_ICON,
-					 XA_CARDINAL, 32, &data_ret, &num_ret))
+   num_ret = ecore_x_window_prop_card32_list_get(win, ECORE_X_ATOM_NET_WM_ICON,
+						 &data);
+   if (num_ret <= 0)
      return 0;
-   if (!data_ret) return 0;
+   if (!data) return 0;
    if (num_ret < 2)
      {
-	free(data_ret);
+	free(data);
 	return 0;
      }
-
-   data = (unsigned int *)data_ret;
 
    /* Check how many icons there are */
    icons = 0;
@@ -672,7 +657,7 @@ ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
 	p += (len + 2);
 	if ((p - data) > num_ret)
 	  {
-	     free(data_ret);
+	     free(data);
 	     return 0;
 	  }
 	icons++;
@@ -685,7 +670,7 @@ ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
    /* If the user doesn't want the icons, return */
    if (!icon)
      {
-	free(data_ret);
+	free(data);
 	return 1;
      }
 
@@ -693,7 +678,7 @@ ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
    *icon = malloc(icons * sizeof(Ecore_X_Icon));
    if (!(*icon))
      {
-	free(data_ret);
+	free(data);
 	return 0;
      }
 
@@ -711,7 +696,7 @@ ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
 	     while (i)
 	       free(((*icon)[--i]).data);
 	     free(*icon);
-	     free(data_ret);
+	     free(data);
 	     return 0;
 	  }
 
@@ -720,7 +705,7 @@ ecore_x_netwm_icons_get(Ecore_X_Window win, Ecore_X_Icon **icon, int *num)
 	p += (len + 2);
      }
 
-   free(data_ret);
+   free(data);
 
    return 1;
 }
@@ -879,7 +864,6 @@ _ecore_x_netwm_state_atom_get(Ecore_X_Window_State s)
 void
 ecore_x_netwm_window_state_set(Ecore_X_Window win, Ecore_X_Window_State *state, unsigned int num)
 {
-   unsigned char *data;
    Ecore_X_Atom  *set;
    int            i;
 
@@ -889,36 +873,31 @@ ecore_x_netwm_window_state_set(Ecore_X_Window win, Ecore_X_Window_State *state, 
 	return;
      }
 
-   data = malloc(num * sizeof(Ecore_X_Atom));
-   if (!data) return;
+   set = malloc(num * sizeof(Ecore_X_Atom));
+   if (!set) return;
 
-   set = (Ecore_X_Atom *) data;
    for (i = 0; i < num; i++)
      set[i] = _ecore_x_netwm_state_atom_get(state[i]);
 
-   _ATOM_SET_ATOM(win, ECORE_X_ATOM_NET_WM_STATE, data, num);
+   ecore_x_window_prop_atom_set(win, ECORE_X_ATOM_NET_WM_STATE, set, num);
 
-   free(data);
-   return;
+   free(set);
 }
 
 int
 ecore_x_netwm_window_state_get(Ecore_X_Window win, Ecore_X_Window_State **state, unsigned int *num)
 {
    int                   num_ret, i;
-   unsigned char        *data;
    Ecore_X_Atom         *atoms;
 
    if (num) *num = 0;
    if (state) *state = NULL;
 
-   if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_NET_WM_STATE,
-					 XA_ATOM, 32, &data, &num_ret))
+   num_ret = ecore_x_window_prop_atom_list_get(win, ECORE_X_ATOM_NET_WM_STATE,
+					       &atoms);
+   if (num_ret <= 0)
       return 0;
 
-   if ((!data) || (!num_ret)) return 0;
-
-   atoms = (Ecore_X_Atom *) data;
    if (state)
      {
 	*state = malloc(num_ret * sizeof(Ecore_X_Window_State));
@@ -929,7 +908,7 @@ ecore_x_netwm_window_state_get(Ecore_X_Window win, Ecore_X_Window_State **state,
 	if (num) *num = num_ret;
      }
 
-   free(data);
+   free(atoms);
    return 1;
 }
 
@@ -992,8 +971,8 @@ ecore_x_netwm_window_type_set(Ecore_X_Window win, Ecore_X_Window_Type type)
    Ecore_X_Atom atom;
 
    atom = _ecore_x_netwm_window_type_atom_get(type);
-   ecore_x_window_prop_property_set(win, ECORE_X_ATOM_NET_WM_WINDOW_TYPE,
-				    XA_ATOM, 32, (unsigned char *)&atom, 1);
+   ecore_x_window_prop_atom_set(win, ECORE_X_ATOM_NET_WM_WINDOW_TYPE,
+				&atom, 1);
 }
 
 /* FIXME: Maybe return 0 on some conditions? */
@@ -1001,21 +980,20 @@ int
 ecore_x_netwm_window_type_get(Ecore_X_Window win, Ecore_X_Window_Type *type)
 {
    int                  num, i;
-   unsigned char       *data;
    Ecore_X_Atom        *atoms;
 
    if (type) *type = ECORE_X_WINDOW_TYPE_NORMAL;
 
-   if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_NET_WM_WINDOW_TYPE,
-					 XA_ATOM, 32, &data, &num))
+   num = ecore_x_window_prop_atom_list_get(win, ECORE_X_ATOM_NET_WM_WINDOW_TYPE,
+					   &atoms);
+   if (num < 0)
      {
+	/* IMO this is not the place to mix netwm and icccm /kwo */
 	/* Check if WM_TRANSIENT_FOR is set */
 	if ((type) && (ecore_x_icccm_transient_for_get(win)))
 	  *type = ECORE_X_WINDOW_TYPE_DIALOG;
 	return 1;
      }
-
-   atoms = (Ecore_X_Atom *) data;
 
    if (type)
      {
@@ -1027,7 +1005,7 @@ ecore_x_netwm_window_type_get(Ecore_X_Window win, Ecore_X_Window_Type *type)
 	  }
      }
 
-   free(data);
+   free(atoms);
    return 1;
 }
 
@@ -1066,15 +1044,14 @@ int
 ecore_x_netwm_allowed_action_isset(Ecore_X_Window win, Ecore_X_Action action)
 {
    int                  num, i, ret = 0;
-   unsigned char       *data;
    Ecore_X_Atom        *atoms, atom;
 
-   if (!ecore_x_window_prop_property_get(win, ECORE_X_ATOM_NET_WM_WINDOW_TYPE,
-					 XA_ATOM, 32, &data, &num))
+   num = ecore_x_window_prop_atom_list_get(win, ECORE_X_ATOM_NET_WM_WINDOW_TYPE,
+					   &atoms);
+   if (num <= 0)
      return ret;
 
    atom = _ecore_x_netwm_action_atom_get(action);
-   atoms = (Ecore_X_Atom *) data;
 
    for (i = 0; i < num; ++i)
      {
@@ -1085,7 +1062,7 @@ ecore_x_netwm_allowed_action_isset(Ecore_X_Window win, Ecore_X_Action action)
 	  }
      }
 
-   free(data);
+   free(atoms);
    return ret;
 }
 
@@ -1093,66 +1070,13 @@ ecore_x_netwm_allowed_action_isset(Ecore_X_Window win, Ecore_X_Action action)
 void
 ecore_x_netwm_allowed_action_set(Ecore_X_Window win, Ecore_X_Action action, int on)
 {
-   Ecore_X_Atom      atom;
-   Ecore_X_Atom      *oldset = NULL, *newset = NULL;
-   int               i, j = 0, num = 0;
-   unsigned char     *data = NULL;
-   unsigned char     *old_data = NULL;
+   Ecore_X_Atom atom;
 
    atom = _ecore_x_netwm_action_atom_get(action);
+   on = (on) ? ECORE_X_PROP_LIST_ADD : ECORE_X_PROP_LIST_REMOVE;
 
-   ecore_x_window_prop_property_get(win, ECORE_X_ATOM_NET_WM_ALLOWED_ACTIONS,
-                                    XA_ATOM, 32, &old_data, &num);
-   oldset = (Ecore_X_Atom *) old_data;
-
-   if (on)
-     {
-	for (i = 0; i < num; ++i)
-	  {
-	     if (oldset[i] == atom)
-	       goto done;
-	  }
-
-	newset = calloc(num + 1, sizeof(Ecore_X_Atom));
-	if (!newset)
-	  goto done;
-
-	data = (unsigned char *) newset;
-	for (i = 0; i < num; i++)
-	  newset[i] = oldset[i];
-	newset[num] = atom;
-
-	ecore_x_window_prop_property_set(win, ECORE_X_ATOM_NET_WM_ALLOWED_ACTIONS,
-					 XA_ATOM, 32, data, num + 1);
-     }
-   else
-     {
-	int has;
-
-	has = 0;
-	for (i = 0; i < num; ++i)
-	  {
-	     if (oldset[i] == atom)
-	       has = 1;
-	  }
-	if (!has)
-	  goto done;
-
-	newset = calloc(num - 1, sizeof(Ecore_X_Atom));
-	if (!newset)
-	  goto done;
-
-	data = (unsigned char *) newset;
-	for (i = 0; i < num; i++)
-	  if (oldset[i] != atom)
-	    newset[j++] = oldset[i];
-
-	ecore_x_window_prop_property_set(win, ECORE_X_ATOM_NET_WM_ALLOWED_ACTIONS,
-					 XA_ATOM, 32, data, num - 1);
-     }
-   free(newset);
-done:
-   free(oldset);
+   ecore_x_window_prop_atom_list_change(win, ECORE_X_ATOM_NET_WM_ALLOWED_ACTIONS,
+                                        atom, on);
 }
 
 void
@@ -1388,7 +1312,8 @@ static void
 _ecore_x_window_prop_string_utf8_set(Ecore_X_Window win, Ecore_X_Atom atom,
 				     const char *str)
 {
-   _ATOM_SET_UTF8_STRING(win, atom, str);
+   XChangeProperty(_ecore_x_disp, win, atom, ECORE_X_ATOM_UTF8_STRING, 8,
+		   PropModeReplace, (unsigned char *)str, strlen(str));
 }
 
 /*
