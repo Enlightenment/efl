@@ -126,7 +126,7 @@ int timer_once(void *data)
 	    }
          /* FIXME: Fuckit, neither of these will actually cause /bin/cat to shut down.  What the fuck does it take? */
          ecore_exe_send(exe0, "\004", 1);  /* Send an EOF. */
-         ecore_exe_pipe_write_close(exe0);  /* /bin/cat should stop when it's stdin closes. */
+         ecore_exe_close_stdin(exe0);  /* /bin/cat should stop when it's stdin closes. */
       }
 
   return 0;
