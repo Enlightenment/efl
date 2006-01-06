@@ -23,20 +23,20 @@ static int _ecore_directfb_fullscreen_window_id = 0;
 static int _cursor_x = 0;
 static int _cursor_y = 0;
 
-int ECORE_DIRECTFB_EVENT_POSITION = 0;
-int ECORE_DIRECTFB_EVENT_SIZE = 0;
-int ECORE_DIRECTFB_EVENT_CLOSE = 0;
-int ECORE_DIRECTFB_EVENT_DESTROYED = 0;
-int ECORE_DIRECTFB_EVENT_GOT_FOCUS = 0;
-int ECORE_DIRECTFB_EVENT_LOST_FOCUS = 0;
-int ECORE_DIRECTFB_EVENT_KEY_DOWN = 0;
-int ECORE_DIRECTFB_EVENT_KEY_UP = 0;
-int ECORE_DIRECTFB_EVENT_BUTTON_DOWN = 0;
-int ECORE_DIRECTFB_EVENT_BUTTON_UP = 0;
-int ECORE_DIRECTFB_EVENT_MOTION = 0;
-int ECORE_DIRECTFB_EVENT_ENTER = 0;
-int ECORE_DIRECTFB_EVENT_LEAVE = 0;
-int ECORE_DIRECTFB_EVENT_WHEEL = 0;
+EAPI int ECORE_DIRECTFB_EVENT_POSITION = 0;
+EAPI int ECORE_DIRECTFB_EVENT_SIZE = 0;
+EAPI int ECORE_DIRECTFB_EVENT_CLOSE = 0;
+EAPI int ECORE_DIRECTFB_EVENT_DESTROYED = 0;
+EAPI int ECORE_DIRECTFB_EVENT_GOT_FOCUS = 0;
+EAPI int ECORE_DIRECTFB_EVENT_LOST_FOCUS = 0;
+EAPI int ECORE_DIRECTFB_EVENT_KEY_DOWN = 0;
+EAPI int ECORE_DIRECTFB_EVENT_KEY_UP = 0;
+EAPI int ECORE_DIRECTFB_EVENT_BUTTON_DOWN = 0;
+EAPI int ECORE_DIRECTFB_EVENT_BUTTON_UP = 0;
+EAPI int ECORE_DIRECTFB_EVENT_MOTION = 0;
+EAPI int ECORE_DIRECTFB_EVENT_ENTER = 0;
+EAPI int ECORE_DIRECTFB_EVENT_LEAVE = 0;
+EAPI int ECORE_DIRECTFB_EVENT_WHEEL = 0;
 
 
 static Ecore_Fd_Handler *_window_event_fd_handler_handle = NULL;
@@ -470,7 +470,7 @@ _ecore_directfb_window_event_fd_handler(void *data __UNUSED__,Ecore_Fd_Handler *
 /*****************/
 
 
-IDirectFB *
+EAPI IDirectFB *
 ecore_directfb_interface_get(void)
 {
 	return _dfb;
@@ -478,7 +478,7 @@ ecore_directfb_interface_get(void)
 
 
 
-Ecore_DirectFB_Window *
+EAPI Ecore_DirectFB_Window *
 ecore_directfb_window_new(int x, int y, int w, int h)
 {
 	Ecore_DirectFB_Window *window;
@@ -513,7 +513,7 @@ ecore_directfb_window_new(int x, int y, int w, int h)
 	return window;
 }
 
-void
+EAPI void
 ecore_directfb_window_del(Ecore_DirectFB_Window *ecore_window)
 {
 	DFBCHECK(ecore_window->surface->Release(ecore_window->surface));
@@ -521,38 +521,38 @@ ecore_directfb_window_del(Ecore_DirectFB_Window *ecore_window)
 }
 
 
-void
+EAPI void
 ecore_directfb_window_move(Ecore_DirectFB_Window *ecore_window, int x, int y)
 {
 	DFBCHECK(ecore_window->window->MoveTo(ecore_window->window, x, y));
 }
 
-void
+EAPI void
 ecore_directfb_window_resize(Ecore_DirectFB_Window *ecore_window, int w, int h)
 {
 	DFBCHECK(ecore_window->window->Resize(ecore_window->window, w, h));
 }
 
-void 
+EAPI void 
 ecore_directfb_window_focus(Ecore_DirectFB_Window *ecore_window)
 {	
 	DFBCHECK(ecore_window->window->RequestFocus(ecore_window->window));	
 }
 
-void 
+EAPI void 
 ecore_directfb_window_hide(Ecore_DirectFB_Window *ecore_window)
 {
 	DFBCHECK(ecore_window->window->SetOpacity(ecore_window->window,0));
 
 }
 
-void
+EAPI void
 ecore_directfb_window_show(Ecore_DirectFB_Window *ecore_window)
 {
 	DFBCHECK(ecore_window->window->SetOpacity(ecore_window->window, 0xFF));
 }
 
-void
+EAPI void
 ecore_directfb_window_shaped_set(Ecore_DirectFB_Window *ecore_window, int set)
 {
 	DFBWindowOptions opts;
@@ -572,7 +572,7 @@ ecore_directfb_window_shaped_set(Ecore_DirectFB_Window *ecore_window, int set)
 	}
 }
 
-void
+EAPI void
 ecore_directfb_window_cursor_show(Ecore_DirectFB_Window *ecore_window, int show)
 {
 	if(!show)
@@ -607,7 +607,7 @@ ecore_directfb_window_cursor_show(Ecore_DirectFB_Window *ecore_window, int show)
 	}
 }
 
-void
+EAPI void
 ecore_directfb_window_cursor_set(Ecore_DirectFB_Window *ecore_window, Ecore_DirectFB_Cursor *cursor)
 {
 	if( (!cursor) && (ecore_window->cursor))
@@ -625,7 +625,7 @@ ecore_directfb_window_cursor_set(Ecore_DirectFB_Window *ecore_window, Ecore_Dire
 
 }
 
-void 
+EAPI void 
 ecore_directfb_window_fullscreen_set(Ecore_DirectFB_Window *ecore_window, int on)
 {
 	// always release the surface (we are going to get a new one in both cases)
@@ -653,14 +653,14 @@ ecore_directfb_window_fullscreen_set(Ecore_DirectFB_Window *ecore_window, int on
 		
 }
 
-void
+EAPI void
 ecore_directfb_window_size_get(Ecore_DirectFB_Window *ecore_window, int *w, int *h)
 {
 	DFBCHECK(ecore_window->surface->GetSize(ecore_window->surface,w,h));
 	return;
 }
 
-int
+EAPI int
 ecore_directfb_init(const char *name)
 {
 	int i = 0;
@@ -710,7 +710,7 @@ ecore_directfb_init(const char *name)
 	return _ecore_directfb_init_count;
 }
 
-int
+EAPI int
 ecore_directfb_shutdown(void)
 {
 	int i;
