@@ -84,13 +84,13 @@ EAPI void ecore_string_release(const char *string)
 
 	CHECK_PARAM_POINTER("string", string);
 
-	str = ecore_hash_get(ecore_strings, string);
+	str = ecore_hash_get(ecore_strings, (char *)string);
 	if (!str)
 		return;
 
 	str->references--;
 	if (str->references < 1) {
-		ecore_hash_remove(ecore_strings, string);
+		ecore_hash_remove(ecore_strings, (char *)string);
 		FREE(str->string);
 		FREE(str);
 	}
