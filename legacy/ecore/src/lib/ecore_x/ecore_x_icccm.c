@@ -31,7 +31,7 @@ Ecore_X_Atom        ECORE_X_ATOM_WM_CLIENT_LEADER = 0;
 Ecore_X_Atom        ECORE_X_ATOM_WM_TRANSIENT_FOR = 0;
 Ecore_X_Atom        ECORE_X_ATOM_WM_SAVE_YOURSELF = 0;
 
-void
+EAPI void
 ecore_x_icccm_init(void)
 {
 
@@ -66,7 +66,7 @@ ecore_x_icccm_init(void)
       XInternAtom(_ecore_x_disp, "WM_SAVE_YOURSELF", False);
 }
 
-void
+EAPI void
 ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state)
 {
    unsigned long       c[2];
@@ -83,7 +83,7 @@ ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state)
 		   (unsigned char *)c, 2);
 }
 
-Ecore_X_Window_State_Hint
+EAPI Ecore_X_Window_State_Hint
 ecore_x_icccm_state_get(Ecore_X_Window win)
 {
    unsigned char *prop_ret = NULL;
@@ -113,7 +113,7 @@ ecore_x_icccm_state_get(Ecore_X_Window win)
    return hint;
 }
 
-void
+EAPI void
 ecore_x_icccm_delete_window_send(Ecore_X_Window win, Ecore_X_Time t)
 {
    ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS,
@@ -122,7 +122,7 @@ ecore_x_icccm_delete_window_send(Ecore_X_Window win, Ecore_X_Time t)
 				 t, 0, 0, 0);
 }
 
-void
+EAPI void
 ecore_x_icccm_take_focus_send(Ecore_X_Window win, Ecore_X_Time t)
 {
    ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS,
@@ -131,7 +131,7 @@ ecore_x_icccm_take_focus_send(Ecore_X_Window win, Ecore_X_Time t)
 				 t, 0, 0, 0);
 }
 
-void
+EAPI void
 ecore_x_icccm_save_yourself_send(Ecore_X_Window win, Ecore_X_Time t)
 {
    ecore_x_client_message32_send(win, ECORE_X_ATOM_WM_PROTOCOLS,
@@ -140,7 +140,7 @@ ecore_x_icccm_save_yourself_send(Ecore_X_Window win, Ecore_X_Time t)
 				 t, 0, 0, 0);
 }
 
-void
+EAPI void
 ecore_x_icccm_move_resize_send(Ecore_X_Window win, int x, int y, int w, int h)
 {
    XEvent              ev;
@@ -159,7 +159,7 @@ ecore_x_icccm_move_resize_send(Ecore_X_Window win, int x, int y, int w, int h)
    XSendEvent(_ecore_x_disp, win, False, StructureNotifyMask, &ev);
 }
 
-void
+EAPI void
 ecore_x_icccm_hints_set(Ecore_X_Window win,
 			int accepts_focus,
 			Ecore_X_Window_State_Hint initial_state,
@@ -208,7 +208,7 @@ ecore_x_icccm_hints_set(Ecore_X_Window win,
    XFree(hints);
 }
 
-int
+EAPI int
 ecore_x_icccm_hints_get(Ecore_X_Window win,
 			int *accepts_focus,
 			Ecore_X_Window_State_Hint *initial_state,
@@ -278,7 +278,7 @@ ecore_x_icccm_hints_get(Ecore_X_Window win,
    return 0;
 }
 
-void
+EAPI void
 ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
 				 int request_pos,
 				 Ecore_X_Gravity gravity,
@@ -341,7 +341,7 @@ ecore_x_icccm_size_pos_hints_set(Ecore_X_Window win,
    XSetWMNormalHints(_ecore_x_disp, win, &hint);
 }
 
-int
+EAPI int
 ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
 				 int *request_pos,
 				 Ecore_X_Gravity *gravity,
@@ -445,7 +445,7 @@ ecore_x_icccm_size_pos_hints_get(Ecore_X_Window win,
    return 1;
 }
 
-void
+EAPI void
 ecore_x_icccm_title_set(Ecore_X_Window win, const char *t)
 {
    char               *list[1];
@@ -480,7 +480,7 @@ ecore_x_icccm_title_set(Ecore_X_Window win, const char *t)
    free(list[0]);
 }
 
-char               *
+EAPI char               *
 ecore_x_icccm_title_get(Ecore_X_Window win)
 {
    XTextProperty       xprop;
@@ -537,7 +537,7 @@ ecore_x_icccm_title_get(Ecore_X_Window win)
  * @param protocol The protocol to enable/disable
  * @param on On/Off
  */
-void
+EAPI void
 ecore_x_icccm_protocol_set(Ecore_X_Window win,
 			   Ecore_X_WM_Protocol protocol, int on)
 {
@@ -618,7 +618,7 @@ ecore_x_icccm_protocol_set(Ecore_X_Window win,
  * @param protocol The protocol to query
  * @return 1 if the protocol is set, else 0.
  */
-int
+EAPI int
 ecore_x_icccm_protocol_isset(Ecore_X_Window win, Ecore_X_WM_Protocol protocol)
 {
    Atom                proto, *protos = NULL;
@@ -653,7 +653,7 @@ ecore_x_icccm_protocol_isset(Ecore_X_Window win, Ecore_X_WM_Protocol protocol)
  * 
  * Set a window name * class
  */
-void
+EAPI void
 ecore_x_icccm_name_class_set(Ecore_X_Window win, const char *n, const char *c)
 {
    XClassHint         *xch;
@@ -675,7 +675,7 @@ ecore_x_icccm_name_class_set(Ecore_X_Window win, const char *n, const char *c)
  * 
  * Get a window name * class
  */
-void
+EAPI void
 ecore_x_icccm_name_class_get(Ecore_X_Window win, char **n, char **c)
 {
    XClassHint          xch;
@@ -706,7 +706,7 @@ ecore_x_icccm_name_class_get(Ecore_X_Window win, char **n, char **c)
  * 
  * Return the client machine of a window. String must be free'd when done with.
  */
-char               *
+EAPI char               *
 ecore_x_icccm_client_machine_get(Ecore_X_Window win)
 {
    char               *name;
@@ -722,7 +722,7 @@ ecore_x_icccm_client_machine_get(Ecore_X_Window win)
  * @param argc Number of arguments.
  * @param argv Arguments.
  */
-void
+EAPI void
 ecore_x_icccm_command_set(Ecore_X_Window win, int argc, char **argv)
 {
    XSetCommand(_ecore_x_disp, win, argv, argc);
@@ -737,7 +737,7 @@ ecore_x_icccm_command_set(Ecore_X_Window win, int argc, char **argv)
  * @param argc Number of arguments.
  * @param argv Arguments.
  */
-void
+EAPI void
 ecore_x_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv)
 {
    XGetCommand(_ecore_x_disp, win, argv, argc);
@@ -750,7 +750,7 @@ ecore_x_icccm_command_get(Ecore_X_Window win, int *argc, char ***argv)
  * 
  * Set a window icon name
  */
-void
+EAPI void
 ecore_x_icccm_icon_name_set(Ecore_X_Window win, const char *t)
 {
    char               *list[1];
@@ -790,7 +790,7 @@ ecore_x_icccm_icon_name_set(Ecore_X_Window win, const char *t)
  * 
  * Return the icon name of a window. String must be free'd when done with.
  */
-char               *
+EAPI char               *
 ecore_x_icccm_icon_name_get(Ecore_X_Window win)
 {
    XTextProperty       xprop;
@@ -849,7 +849,7 @@ ecore_x_icccm_icon_name_get(Ecore_X_Window win)
  * @param win The toplevel window
  * @param subwin The subwindow to be added to the colormap windows list
  */
-void
+EAPI void
 ecore_x_icccm_colormap_window_set(Ecore_X_Window win, Ecore_X_Window subwin)
 {
    int                 num = 0, i;
@@ -904,7 +904,7 @@ ecore_x_icccm_colormap_window_set(Ecore_X_Window win, Ecore_X_Window subwin)
  * @param win The toplevel window
  * @param subwin The window to be removed from the colormap window list.
  */
-void
+EAPI void
 ecore_x_icccm_colormap_window_unset(Ecore_X_Window win, Ecore_X_Window subwin)
 {
    int                 num = 0, i, j, k = 0;
@@ -957,7 +957,7 @@ ecore_x_icccm_colormap_window_unset(Ecore_X_Window win, Ecore_X_Window subwin)
  * @param win the transient window
  * @param forwin the toplevel window
  */
-void
+EAPI void
 ecore_x_icccm_transient_for_set(Ecore_X_Window win, Ecore_X_Window forwin)
 {
    XSetTransientForHint(_ecore_x_disp, win, forwin);
@@ -967,7 +967,7 @@ ecore_x_icccm_transient_for_set(Ecore_X_Window win, Ecore_X_Window forwin)
  * Remove the transient_for setting from a window.
  * @param The window
  */
-void
+EAPI void
 ecore_x_icccm_transient_for_unset(Ecore_X_Window win)
 {
    XDeleteProperty(_ecore_x_disp, win, ECORE_X_ATOM_WM_TRANSIENT_FOR);
@@ -978,7 +978,7 @@ ecore_x_icccm_transient_for_unset(Ecore_X_Window win)
  * @param win The window to check
  * @return The window ID of the top-level window, or 0 if the property does not exist.
  */
-Ecore_X_Window
+EAPI Ecore_X_Window
 ecore_x_icccm_transient_for_get(Ecore_X_Window win)
 {
    Window              forwin;
@@ -995,7 +995,7 @@ ecore_x_icccm_transient_for_get(Ecore_X_Window win)
  * @param win The window
  * @param role The role string
  */
-void
+EAPI void
 ecore_x_icccm_window_role_set(Ecore_X_Window win, const char *role)
 {
    ecore_x_window_prop_string_set(win, ECORE_X_ATOM_WM_WINDOW_ROLE,
@@ -1007,7 +1007,7 @@ ecore_x_icccm_window_role_set(Ecore_X_Window win, const char *role)
  * @param win The window
  * @return The window's role string.
  */
-char               *
+EAPI char               *
 ecore_x_icccm_window_role_get(Ecore_X_Window win)
 {
    return ecore_x_window_prop_string_get(win, ECORE_X_ATOM_WM_WINDOW_ROLE);
@@ -1021,7 +1021,7 @@ ecore_x_icccm_window_role_get(Ecore_X_Window win)
  * All non-transient top-level windows created by an app other than
  * the main window must have this property set to the app's main window.
  */
-void
+EAPI void
 ecore_x_icccm_client_leader_set(Ecore_X_Window win, Ecore_X_Window l)
 {
    ecore_x_window_prop_window_set(win, ECORE_X_ATOM_WM_CLIENT_LEADER,
@@ -1032,7 +1032,7 @@ ecore_x_icccm_client_leader_set(Ecore_X_Window win, Ecore_X_Window l)
  * Get the window's client leader.
  * @param win The window
  * @return The window's client leader window, or 0 if unset */
-Ecore_X_Window
+EAPI Ecore_X_Window
 ecore_x_icccm_client_leader_get(Ecore_X_Window win)
 {
    Ecore_X_Window      l;
@@ -1043,7 +1043,7 @@ ecore_x_icccm_client_leader_get(Ecore_X_Window win)
    return 0;
 }
 
-void
+EAPI void
 ecore_x_icccm_iconic_request_send(Ecore_X_Window win, Ecore_X_Window root)
 {
    XEvent xev;

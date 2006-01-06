@@ -15,7 +15,7 @@
 /*
  * Set CARD32 (array) property
  */
-void
+EAPI void
 ecore_x_window_prop_card32_set(Ecore_X_Window win, Ecore_X_Atom atom,
 			       unsigned int *val, unsigned int num)
 {
@@ -43,7 +43,7 @@ ecore_x_window_prop_card32_set(Ecore_X_Window win, Ecore_X_Atom atom,
  * val is returned, otherwise -1 is returned.
  * Note: Return value 0 means that the property exists but has no elements.
  */
-int
+EAPI int
 ecore_x_window_prop_card32_get(Ecore_X_Window win, Ecore_X_Atom atom,
 			       unsigned int *val, unsigned int len)
 {
@@ -85,7 +85,7 @@ ecore_x_window_prop_card32_get(Ecore_X_Window win, Ecore_X_Atom atom,
  * val is returned, otherwise -1 is returned.
  * Note: Return value 0 means that the property exists but has no elements.
  */
-int
+EAPI int
 ecore_x_window_prop_card32_list_get(Ecore_X_Window win, Ecore_X_Atom atom,
 				    unsigned int **plst)
 {
@@ -129,7 +129,7 @@ ecore_x_window_prop_card32_list_get(Ecore_X_Window win, Ecore_X_Atom atom,
 /*
  * Set X ID (array) property
  */
-void
+EAPI void
 ecore_x_window_prop_xid_set(Ecore_X_Window win, Ecore_X_Atom atom,
 			    Ecore_X_Atom type, Ecore_X_ID * lst,
 			    unsigned int num)
@@ -160,7 +160,7 @@ ecore_x_window_prop_xid_set(Ecore_X_Window win, Ecore_X_Atom atom,
  * val is returned, otherwise -1 is returned.
  * Note: Return value 0 means that the property exists but has no elements.
  */
-int
+EAPI int
 ecore_x_window_prop_xid_get(Ecore_X_Window win, Ecore_X_Atom atom,
 			    Ecore_X_Atom type, Ecore_X_ID * lst,
 			    unsigned int len)
@@ -208,7 +208,7 @@ ecore_x_window_prop_xid_get(Ecore_X_Window win, Ecore_X_Atom atom,
  * The returned array must be freed with free().
  * Note: Return value 0 means that the property exists but has no elements.
  */
-int
+EAPI int
 ecore_x_window_prop_xid_list_get(Ecore_X_Window win, Ecore_X_Atom atom,
 				 Ecore_X_Atom type, Ecore_X_ID ** val)
 {
@@ -252,7 +252,7 @@ ecore_x_window_prop_xid_list_get(Ecore_X_Window win, Ecore_X_Atom atom,
 /*
  * Remove/add/toggle X ID list item.
  */
-void
+EAPI void
 ecore_x_window_prop_xid_list_change(Ecore_X_Window win, Ecore_X_Atom atom,
 				    Ecore_X_Atom type, Ecore_X_ID item, int op)
 {
@@ -301,7 +301,7 @@ ecore_x_window_prop_xid_list_change(Ecore_X_Window win, Ecore_X_Atom atom,
 /*
  * Set Atom (array) property
  */
-void
+EAPI void
 ecore_x_window_prop_atom_set(Ecore_X_Window win, Ecore_X_Atom atom,
 			     Ecore_X_Atom * lst, unsigned int num)
 {
@@ -316,7 +316,7 @@ ecore_x_window_prop_atom_set(Ecore_X_Window win, Ecore_X_Atom atom,
  * val is returned, otherwise -1 is returned.
  * Note: Return value 0 means that the property exists but has no elements.
  */
-int
+EAPI int
 ecore_x_window_prop_atom_get(Ecore_X_Window win, Ecore_X_Atom atom,
 			     Ecore_X_Atom * lst, unsigned int len)
 {
@@ -331,7 +331,7 @@ ecore_x_window_prop_atom_get(Ecore_X_Window win, Ecore_X_Atom atom,
  * The returned array must be freed with free().
  * Note: Return value 0 means that the property exists but has no elements.
  */
-int
+EAPI int
 ecore_x_window_prop_atom_list_get(Ecore_X_Window win, Ecore_X_Atom atom,
 				  Ecore_X_Atom ** plst)
 {
@@ -341,7 +341,7 @@ ecore_x_window_prop_atom_list_get(Ecore_X_Window win, Ecore_X_Atom atom,
 /*
  * Remove/add/toggle atom list item.
  */
-void
+EAPI void
 ecore_x_window_prop_atom_list_change(Ecore_X_Window win, Ecore_X_Atom atom,
 				     Ecore_X_Atom item, int op)
 {
@@ -351,7 +351,7 @@ ecore_x_window_prop_atom_list_change(Ecore_X_Window win, Ecore_X_Atom atom,
 /*
  * Set Window (array) property
  */
-void
+EAPI void
 ecore_x_window_prop_window_set(Ecore_X_Window win, Ecore_X_Atom atom,
 			       Ecore_X_Window * lst, unsigned int num)
 {
@@ -366,7 +366,7 @@ ecore_x_window_prop_window_set(Ecore_X_Window win, Ecore_X_Atom atom,
  * val is returned, otherwise -1 is returned.
  * Note: Return value 0 means that the property exists but has no elements.
  */
-int
+EAPI int
 ecore_x_window_prop_window_get(Ecore_X_Window win, Ecore_X_Atom atom,
 			       Ecore_X_Window * lst, unsigned int len)
 {
@@ -381,7 +381,7 @@ ecore_x_window_prop_window_get(Ecore_X_Window win, Ecore_X_Atom atom,
  * The returned array must be freed with free().
  * Note: Return value 0 means that the property exists but has no elements.
  */
-int
+EAPI int
 ecore_x_window_prop_window_list_get(Ecore_X_Window win, Ecore_X_Atom atom,
 				    Ecore_X_Window ** plst)
 {
@@ -393,7 +393,7 @@ ecore_x_window_prop_window_list_get(Ecore_X_Window win, Ecore_X_Atom atom,
  *
  * FIXME: To be fixed.
  */
-Ecore_X_Atom
+EAPI Ecore_X_Atom
 ecore_x_window_prop_any_type(void)
 {
    return AnyPropertyType;
@@ -404,7 +404,7 @@ ecore_x_window_prop_any_type(void)
  *
  * FIXME: To be fixed.
  */
-void
+EAPI void
 ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom property, Ecore_X_Atom type, int size, void *data, int number)
 {
    if (win == 0) win = DefaultRootWindow(_ecore_x_disp);
@@ -432,7 +432,7 @@ ecore_x_window_prop_property_set(Ecore_X_Window win, Ecore_X_Atom property, Ecor
  *
  * FIXME: To be fixed.
  */
-int
+EAPI int
 ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecore_X_Atom type, int size, unsigned char **data, int *num)
 {
    Atom type_ret = 0;
@@ -488,13 +488,13 @@ ecore_x_window_prop_property_get(Ecore_X_Window win, Ecore_X_Atom property, Ecor
    return 1;
 }
 
-void
+EAPI void
 ecore_x_window_prop_property_del(Ecore_X_Window win, Ecore_X_Atom property)
 {
    XDeleteProperty(_ecore_x_disp, win, property);
 }
 
-Ecore_X_Atom *
+EAPI Ecore_X_Atom *
 ecore_x_window_prop_list(Ecore_X_Window win, int *num_ret)
 {
    Ecore_X_Atom *atoms;
@@ -524,7 +524,7 @@ ecore_x_window_prop_list(Ecore_X_Window win, int *num_ret)
  * 
  * Set a window string property
  */
-void
+EAPI void
 ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom type, const char *str)
 {
    XTextProperty       xtp;
@@ -544,7 +544,7 @@ ecore_x_window_prop_string_set(Ecore_X_Window win, Ecore_X_Atom type, const char
  * 
  * Return window string property of a window. String must be free'd when done.
  */
-char *
+EAPI char *
 ecore_x_window_prop_string_get(Ecore_X_Window win, Ecore_X_Atom type)
 {
    XTextProperty       xtp;
@@ -587,7 +587,7 @@ ecore_x_window_prop_string_get(Ecore_X_Window win, Ecore_X_Atom type)
    return str;
 }
 
-int
+EAPI int
 ecore_x_window_prop_protocol_isset(Ecore_X_Window win,
                                    Ecore_X_WM_Protocol protocol)
 {
@@ -620,7 +620,7 @@ ecore_x_window_prop_protocol_isset(Ecore_X_Window win,
  *
  * FIXME: To be fixed.
  */
-Ecore_X_WM_Protocol *
+EAPI Ecore_X_WM_Protocol *
 ecore_x_window_prop_protocol_list_get(Ecore_X_Window win, int *num_ret)
 {
    Atom *protos = NULL;

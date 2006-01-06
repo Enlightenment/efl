@@ -20,7 +20,7 @@
  * @return  New pixmap.
  * @ingroup Ecore_X_Pixmap_Group
  */
-Ecore_X_Pixmap
+EAPI Ecore_X_Pixmap
 ecore_x_pixmap_new(Ecore_X_Window win, int w, int h, int dep)
 {
    if (win == 0) win = DefaultRootWindow(_ecore_x_disp);
@@ -37,7 +37,7 @@ ecore_x_pixmap_new(Ecore_X_Window win, int w, int h, int dep)
  * @param   pmap The given pixmap.
  * @ingroup Ecore_X_Pixmap_Group
  */
-void
+EAPI void
 ecore_x_pixmap_del(Ecore_X_Pixmap pmap)
 {
    XFreePixmap(_ecore_x_disp, pmap);
@@ -57,7 +57,7 @@ ecore_x_pixmap_del(Ecore_X_Pixmap pmap)
  * @param   dy   The Y position at which to paste the area on @p dest.
  * @ingroup Ecore_X_Pixmap_Group
  */
-void
+EAPI void
 ecore_x_pixmap_paste(Ecore_X_Pixmap pmap, Ecore_X_Drawable dest, 
 		     Ecore_X_GC gc, int sx, int sy, 
 		     int w, int h, int dx, int dy)
@@ -74,7 +74,7 @@ ecore_x_pixmap_paste(Ecore_X_Pixmap pmap, Ecore_X_Drawable dest,
  * @param   h    Pointer to an integer in which to store the height.
  * @ingroup Ecore_X_Pixmap_Group
  */
-void
+EAPI void
 ecore_x_pixmap_geometry_get(Ecore_X_Pixmap pmap, int *x, int *y, int *w, int *h)
 {
    if (pmap)
@@ -87,7 +87,7 @@ ecore_x_pixmap_geometry_get(Ecore_X_Pixmap pmap, int *x, int *y, int *w, int *h)
  * @return  The depth of the pixmap.
  * @ingroup Ecore_X_Pixmap_Group
  */
-int
+EAPI int
 ecore_x_pixmap_depth_get(Ecore_X_Pixmap pmap)
 {
    return ecore_x_drawable_depth_get(pmap);

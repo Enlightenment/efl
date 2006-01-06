@@ -18,13 +18,13 @@
 
 Ecore_X_Atom        ECORE_X_ATOM_E_FRAME_SIZE = 0;
 
-void
+EAPI void
 ecore_x_e_init(void)
 {
    ECORE_X_ATOM_E_FRAME_SIZE = _ATOM_GET("_E_FRAME_SIZE");
 }
 
-void
+EAPI void
 ecore_x_e_frame_size_set(Ecore_X_Window win, int fl, int fr, int ft, int fb)
 {
    unsigned int frames[4];

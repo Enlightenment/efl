@@ -14,7 +14,7 @@ static XineramaScreenInfo *_xin_info = NULL;
 static int _xin_scr_num = 0;
 #endif
 
-int
+EAPI int
 ecore_x_xinerama_screen_count_get(void)
 {
 #ifdef ECORE_XINERAMA
@@ -31,7 +31,7 @@ ecore_x_xinerama_screen_count_get(void)
    return 0;
 }
 
-int
+EAPI int
 ecore_x_xinerama_screen_geometry_get(int screen, int *x, int *y, int *w, int *h)
 {
 #ifdef ECORE_XINERAMA

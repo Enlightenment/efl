@@ -27,7 +27,7 @@ MWMHints;
 /* Atoms */
 Ecore_X_Atom        ECORE_X_ATOM_MOTIF_WM_HINTS = 0;
 
-int
+EAPI int
 ecore_x_mwm_hints_get(Ecore_X_Window win,
 		      Ecore_X_MWM_Hint_Func * fhint,
 		      Ecore_X_MWM_Hint_Decor * dhint,
@@ -77,7 +77,7 @@ ecore_x_mwm_hints_get(Ecore_X_Window win,
    return ret;
 }
 
-void
+EAPI void
 ecore_x_mwm_borderless_set(Ecore_X_Window win, int borderless)
 {
    unsigned int data[5] = {0, 0, 0, 0, 0};

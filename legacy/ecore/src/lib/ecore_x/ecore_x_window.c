@@ -26,7 +26,7 @@ static Ecore_X_Window *ignore_list = NULL;
  * @return  The new window handle.
  * @ingroup Ecore_X_Window_Create_Group
  */
-Ecore_X_Window
+EAPI Ecore_X_Window
 ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h)
 {
    Window               win;
@@ -87,7 +87,7 @@ ecore_x_window_new(Ecore_X_Window parent, int x, int y, int w, int h)
  * @return  The new window handle.
  * @ingroup Ecore_X_Window_Create_Group
  */
-Ecore_X_Window
+EAPI Ecore_X_Window
 ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h)
 {
    Window               win;
@@ -148,7 +148,7 @@ ecore_x_window_override_new(Ecore_X_Window parent, int x, int y, int w, int h)
  * @return  The new window.
  * @ingroup Ecore_X_Window_Create_Group
  */
-Ecore_X_Window
+EAPI Ecore_X_Window
 ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h)
 {
    Window               win;
@@ -201,7 +201,7 @@ ecore_x_window_input_new(Ecore_X_Window parent, int x, int y, int w, int h)
  * @param   win The given window.
  * @ingroup Evas_X_Window_Properties_Groups
  */
-void
+EAPI void
 ecore_x_window_defaults_set(Ecore_X_Window win)
 {
    long pid;
@@ -239,7 +239,7 @@ ecore_x_window_defaults_set(Ecore_X_Window win)
    ecore_x_icccm_command_set(win, argc, argv);
 }
 
-void
+EAPI void
 ecore_x_window_configure(Ecore_X_Window win,
                          Ecore_X_Window_Configure_Mask mask,
                          int x, int y, int w, int h,
@@ -273,7 +273,7 @@ ecore_x_window_configure(Ecore_X_Window win,
  * @param   win The given window.
  * @ingroup Evas_X_Window_Destroy_Group
  */
-void
+EAPI void
 ecore_x_window_del(Ecore_X_Window win)
 {
    /* sorry sir, deleting the root window doesn't sound like
@@ -288,7 +288,7 @@ ecore_x_window_del(Ecore_X_Window win)
  * @param   win The given window.
  * @param   ignore if to ignore
  */
-void
+EAPI void
 ecore_x_window_ignore_set(Ecore_X_Window win, int ignore)
 {
    int i, j;
@@ -332,7 +332,7 @@ ecore_x_window_ignore_set(Ecore_X_Window win, int ignore)
  * @param   num number of windows in the list
  * @return  list of windows to ignore
  */
-Ecore_X_Window *
+EAPI Ecore_X_Window *
 ecore_x_window_ignore_list(int *num)
 {
    if (num) *num = ignore_num;
@@ -344,7 +344,7 @@ ecore_x_window_ignore_list(int *num)
  * @param   win The given window.
  * @ingroup Evas_X_Window_Destroy_Group
  */
-void
+EAPI void
 ecore_x_window_delete_request_send(Ecore_X_Window win)
 {
    XEvent xev;
@@ -380,7 +380,7 @@ ecore_x_window_delete_request_send(Ecore_X_Window win)
  * @param   win The window to show.
  * @ingroup Evas_X_Window_Visibility
  */
-void
+EAPI void
 ecore_x_window_show(Ecore_X_Window win)
 {
    XMapWindow(_ecore_x_disp, win);
@@ -394,7 +394,7 @@ ecore_x_window_show(Ecore_X_Window win)
  * @param   win The window to hide.
  * @ingroup Evas_X_Window_Visibility
  */
-void
+EAPI void
 ecore_x_window_hide(Ecore_X_Window win)
 {
    XUnmapWindow(_ecore_x_disp, win);
@@ -417,7 +417,7 @@ ecore_x_window_hide(Ecore_X_Window win)
  * @param   y   Y position.
  * @ingroup Ecore_X_Window_Geometry_Group
  */
-void
+EAPI void
 ecore_x_window_move(Ecore_X_Window win, int x, int y)
 {
    XMoveWindow(_ecore_x_disp, win, x, y);
@@ -430,7 +430,7 @@ ecore_x_window_move(Ecore_X_Window win, int x, int y)
  * @param   h   New height of the window.
  * @ingroup Ecore_X_Window_Geometry_Group
  */
-void
+EAPI void
 ecore_x_window_resize(Ecore_X_Window win, int w, int h)
 {
    if (w < 1) w = 1;
@@ -447,7 +447,7 @@ ecore_x_window_resize(Ecore_X_Window win, int w, int h)
  * @param   h   New height of the window.
  * @ingroup Ecore_X_Window_Geometry_Group
  */
-void
+EAPI void
 ecore_x_window_move_resize(Ecore_X_Window win, int x, int y, int w, int h)
 {
    if (w < 1) w = 1;
@@ -466,7 +466,7 @@ ecore_x_window_move_resize(Ecore_X_Window win, int x, int y, int w, int h)
  * @param   win The window to focus.
  * @ingroup Ecore_X_Window_Focus_Functions
  */
-void
+EAPI void
 ecore_x_window_focus(Ecore_X_Window win)
 {
    if (win == 0) win = DefaultRootWindow(_ecore_x_disp);   
@@ -480,7 +480,7 @@ ecore_x_window_focus(Ecore_X_Window win)
  * @param   t   When to set the focus to the window.
  * @ingroup Ecore_X_Window_Focus_Functions
  */
-void
+EAPI void
 ecore_x_window_focus_at_time(Ecore_X_Window win, Ecore_X_Time t)
 {
    if (win == 0) win = DefaultRootWindow(_ecore_x_disp);   
@@ -493,7 +493,7 @@ ecore_x_window_focus_at_time(Ecore_X_Window win, Ecore_X_Time t)
  * @return  The window that has focus.
  * @ingroup Ecore_X_Window_Focus_Functions
  */
-Ecore_X_Window
+EAPI Ecore_X_Window
 ecore_x_window_focus_get(void)
 {
    Window win;
@@ -516,7 +516,7 @@ ecore_x_window_focus_get(void)
  * @param   win The window to raise.
  * @ingroup Ecore_X_Window_Z_Order_Group
  */
-void
+EAPI void
 ecore_x_window_raise(Ecore_X_Window win)
 {
    XRaiseWindow(_ecore_x_disp, win);
@@ -527,7 +527,7 @@ ecore_x_window_raise(Ecore_X_Window win)
  * @param   win The window to lower.
  * @ingroup Ecore_X_Window_Z_Order_Group
  */
-void
+EAPI void
 ecore_x_window_lower(Ecore_X_Window win)
 {
    XLowerWindow(_ecore_x_disp, win);
@@ -547,7 +547,7 @@ ecore_x_window_lower(Ecore_X_Window win)
  * @param   y          Y position within new parent window.
  * @ingroup Ecore_X_Window_Parent_Group
  */
-void
+EAPI void
 ecore_x_window_reparent(Ecore_X_Window win, Ecore_X_Window new_parent, int x, int y)
 {
    if (new_parent == 0) new_parent = DefaultRootWindow(_ecore_x_disp);   
@@ -561,7 +561,7 @@ ecore_x_window_reparent(Ecore_X_Window win, Ecore_X_Window new_parent, int x, in
  * @param   h   Pointer to an integer into which the height is to be stored.
  * @ingroup Ecore_X_Window_Geometry_Group
  */
-void
+EAPI void
 ecore_x_window_size_get(Ecore_X_Window win, int *w, int *h)
 {
    int dummy_x, dummy_y;
@@ -581,7 +581,7 @@ ecore_x_window_size_get(Ecore_X_Window win, int *w, int *h)
  * @param   h   Pointer to an integer in which the height is to be stored.
  * @ingroup Ecore_X_Window_Geometry_Group
  */
-void
+EAPI void
 ecore_x_window_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h)
 {
    if (!win)
@@ -596,7 +596,7 @@ ecore_x_window_geometry_get(Ecore_X_Window win, int *x, int *y, int *w, int *h)
  * @return  Width of the border of @p win.
  * @ingroup Ecore_X_Window_Geometry_Group
  */
-int
+EAPI int
 ecore_x_window_border_width_get(Ecore_X_Window win)
 {
    /* doesn't make sense to call this on a root window */
@@ -612,7 +612,7 @@ ecore_x_window_border_width_get(Ecore_X_Window win)
  * @param   width The new border width.
  * @ingroup Ecore_X_Window_Geometry_Group
  */
-void
+EAPI void
 ecore_x_window_border_width_set(Ecore_X_Window win, int width)
 {
    /* doesn't make sense to call this on a root window */
@@ -627,7 +627,7 @@ ecore_x_window_border_width_set(Ecore_X_Window win, int width)
  * @param  win The given window.
  * @return Depth of the window.
  */
-int
+EAPI int
 ecore_x_window_depth_get(Ecore_X_Window win)
 {
    return ecore_x_drawable_depth_get(win);
@@ -638,7 +638,7 @@ ecore_x_window_depth_get(Ecore_X_Window win)
  *
  * FIXME: To be fixed.
  */
-void
+EAPI void
 ecore_x_window_cursor_show(Ecore_X_Window win, int show)
 {
    if (win == 0) win = DefaultRootWindow(_ecore_x_disp);
@@ -668,7 +668,7 @@ ecore_x_window_cursor_show(Ecore_X_Window win, int show)
      }
 }
 
-void
+EAPI void
 ecore_x_window_cursor_set(Ecore_X_Window win, Ecore_X_Cursor c)
 {
    if (c == 0)
@@ -683,7 +683,7 @@ ecore_x_window_cursor_set(Ecore_X_Window win, Ecore_X_Cursor c)
  * @return  1 if the window is visible, otherwise 0.
  * @ingroup Ecore_X_Window_Visibility_Group
  */
-int
+EAPI int
 ecore_x_window_visible_get(Ecore_X_Window win)
 {
    XWindowAttributes attr;
@@ -758,7 +758,7 @@ _ecore_x_window_at_xy_get(Window base, int bx, int by, int x, int y,
  * @return  The window at that position.
  * @ingroup Ecore_X_Window_Geometry_Group
  */
-Ecore_X_Window
+EAPI Ecore_X_Window
 ecore_x_window_at_xy_get(int x, int y)
 {
    Ecore_X_Window    win, root;
@@ -782,7 +782,7 @@ ecore_x_window_at_xy_get(int x, int y)
  * @return  The window at that position.
  * @ingroup Ecore_X_Window_Geometry_Group
  */
-Ecore_X_Window
+EAPI Ecore_X_Window
 ecore_x_window_at_xy_with_skip_get(int x, int y, Ecore_X_Window *skip, int skip_num)
 {
    Ecore_X_Window    win, root;
@@ -804,7 +804,7 @@ ecore_x_window_at_xy_with_skip_get(int x, int y, Ecore_X_Window *skip, int skip_
  * @return  The parent window of @p win.
  * @ingroup Ecore_X_Window_Parent_Group
  */
-Ecore_X_Window
+EAPI Ecore_X_Window
 ecore_x_window_parent_get(Ecore_X_Window win)
 {
    Window         root, parent, *children = NULL;
@@ -823,7 +823,7 @@ ecore_x_window_parent_get(Ecore_X_Window win)
  * @param win   The given window
  * @param color The color to set to (i.e. 0xff0000)
  */
-void
+EAPI void
 ecore_x_window_background_color_set(Ecore_X_Window win, unsigned short r,
 				    unsigned short g, unsigned short b)
 {
@@ -842,7 +842,7 @@ ecore_x_window_background_color_set(Ecore_X_Window win, unsigned short r,
    XChangeWindowAttributes(_ecore_x_disp, win, CWBackPixel, &attr);
 }
 
-void
+EAPI void
 ecore_x_window_gravity_set(Ecore_X_Window win, Ecore_X_Gravity grav)
 {
    XSetWindowAttributes att;
@@ -851,7 +851,7 @@ ecore_x_window_gravity_set(Ecore_X_Window win, Ecore_X_Gravity grav)
    XChangeWindowAttributes(_ecore_x_disp, win, CWWinGravity, &att);
 }
 
-void
+EAPI void
 ecore_x_window_pixel_gravity_set(Ecore_X_Window win, Ecore_X_Gravity grav)
 {
    XSetWindowAttributes att;
@@ -860,19 +860,19 @@ ecore_x_window_pixel_gravity_set(Ecore_X_Window win, Ecore_X_Gravity grav)
    XChangeWindowAttributes(_ecore_x_disp, win, CWBitGravity, &att);
 }
 
-void
+EAPI void
 ecore_x_window_pixmap_set(Ecore_X_Window win, Ecore_X_Pixmap pmap)
 {
    XSetWindowBackgroundPixmap(_ecore_x_disp, win, pmap);
 }
 
-void
+EAPI void
 ecore_x_window_area_clear(Ecore_X_Window win, int x, int y, int w, int h)
 {
    XClearArea(_ecore_x_disp, win, x, y, w, h, False);
 }
 
-void
+EAPI void
 ecore_x_window_area_expose(Ecore_X_Window win, int x, int y, int w, int h)
 {
    XClearArea(_ecore_x_disp, win, x, y, w, h, True);

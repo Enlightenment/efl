@@ -9,7 +9,7 @@
 #include "Ecore_X.h"
 #include "Ecore_X_Atoms.h"
 
-Ecore_X_Sync_Alarm
+EAPI Ecore_X_Sync_Alarm
 ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter)
 {
    Ecore_X_Sync_Alarm alarm;
@@ -41,7 +41,7 @@ ecore_x_sync_alarm_new(Ecore_X_Sync_Counter counter)
    return alarm;
 }
 
-int
+EAPI int
 ecore_x_sync_alarm_free(Ecore_X_Sync_Alarm alarm)
 {
    return XSyncDestroyAlarm(_ecore_x_disp, alarm);

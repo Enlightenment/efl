@@ -9,7 +9,7 @@
  *              given instead, the default root window is used.
  * @return The new default graphics context.
  */
-Ecore_X_GC
+EAPI Ecore_X_GC
 ecore_x_gc_new(Ecore_X_Drawable draw)
 {
    XGCValues           gcv;
@@ -22,7 +22,7 @@ ecore_x_gc_new(Ecore_X_Drawable draw)
  * Deletes and frees the given graphics context.
  * @param gc The given graphics context.
  */
-void
+EAPI void
 ecore_x_gc_del(Ecore_X_GC gc)
 {
    XFreeGC(_ecore_x_disp, gc);   

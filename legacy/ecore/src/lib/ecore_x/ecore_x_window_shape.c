@@ -16,25 +16,25 @@
  *               window.
  * @ingroup Ecore_X_Window_Shape
  */
-void
+EAPI void
 ecore_x_window_shape_mask_set(Ecore_X_Window win, Ecore_X_Pixmap mask)
 {
    XShapeCombineMask(_ecore_x_disp, win, ShapeBounding, 0, 0, mask, ShapeSet);
 }
 
-void
+EAPI void
 ecore_x_window_shape_window_set(Ecore_X_Window win, Ecore_X_Window shape_win)
 {
    XShapeCombineShape(_ecore_x_disp, win, ShapeBounding, 0, 0, shape_win, ShapeBounding, ShapeSet);
 }
 
-void
+EAPI void
 ecore_x_window_shape_window_set_xy(Ecore_X_Window win, Ecore_X_Window shape_win, int x, int y)
 {
    XShapeCombineShape(_ecore_x_disp, win, ShapeBounding, x, y, shape_win, ShapeBounding, ShapeSet);
 }
 
-void
+EAPI void
 ecore_x_window_shape_rectangle_set(Ecore_X_Window win, int x, int y, int w, int h)
 {
    XRectangle rect;
@@ -46,7 +46,7 @@ ecore_x_window_shape_rectangle_set(Ecore_X_Window win, int x, int y, int w, int 
    XShapeCombineRectangles(_ecore_x_disp, win, ShapeBounding, 0, 0, &rect, 1, ShapeSet, Unsorted);
 }
 
-void
+EAPI void
 ecore_x_window_shape_rectangles_set(Ecore_X_Window win, Ecore_X_Rectangle *rects, int num)
 {
    XRectangle *rect = NULL;
@@ -72,19 +72,19 @@ ecore_x_window_shape_rectangles_set(Ecore_X_Window win, Ecore_X_Rectangle *rects
    if (rect) free(rect);
 }
 
-void
+EAPI void
 ecore_x_window_shape_window_add(Ecore_X_Window win, Ecore_X_Window shape_win)
 {
    XShapeCombineShape(_ecore_x_disp, win, ShapeBounding, 0, 0, shape_win, ShapeBounding, ShapeUnion);
 }
 
-void
+EAPI void
 ecore_x_window_shape_window_add_xy(Ecore_X_Window win, Ecore_X_Window shape_win, int x, int y)
 {
    XShapeCombineShape(_ecore_x_disp, win, ShapeBounding, x, y, shape_win, ShapeBounding, ShapeUnion);
 }
 
-void
+EAPI void
 ecore_x_window_shape_rectangle_add(Ecore_X_Window win, int x, int y, int w, int h)
 {
    XRectangle rect;
@@ -96,7 +96,7 @@ ecore_x_window_shape_rectangle_add(Ecore_X_Window win, int x, int y, int w, int 
    XShapeCombineRectangles(_ecore_x_disp, win, ShapeBounding, 0, 0, &rect, 1, ShapeUnion, Unsorted);
 }
 
-void
+EAPI void
 ecore_x_window_shape_rectangle_clip(Ecore_X_Window win, int x, int y, int w, int h)
 {
    XRectangle rect;
@@ -108,7 +108,7 @@ ecore_x_window_shape_rectangle_clip(Ecore_X_Window win, int x, int y, int w, int
    XShapeCombineRectangles(_ecore_x_disp, win, ShapeBounding, 0, 0, &rect, 1, ShapeIntersect, Unsorted);
 }
 
-void
+EAPI void
 ecore_x_window_shape_rectangles_add(Ecore_X_Window win, Ecore_X_Rectangle *rects, int num)
 {
    XRectangle *rect = NULL;
@@ -134,7 +134,7 @@ ecore_x_window_shape_rectangles_add(Ecore_X_Window win, Ecore_X_Rectangle *rects
    if (rect) free(rect);
 }
 
-Ecore_X_Rectangle *
+EAPI Ecore_X_Rectangle *
 ecore_x_window_shape_rectangles_get(Ecore_X_Window win, int *num_ret)
 {
    XRectangle *rect;
@@ -161,7 +161,7 @@ ecore_x_window_shape_rectangles_get(Ecore_X_Window win, int *num_ret)
    return rects;
 }
 
-void
+EAPI void
 ecore_x_window_shape_events_select(Ecore_X_Window win, int on)
 {
    if (on)

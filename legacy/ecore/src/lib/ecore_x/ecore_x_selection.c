@@ -152,7 +152,7 @@ _ecore_x_selection_set(Window w, unsigned char *data, int size, Ecore_X_Atom sel
  * @return     Returns 1 if the ownership of the selection was successfully 
  *             claimed, or 0 if unsuccessful.
  */
-int 
+EAPI int 
 ecore_x_selection_primary_set(Ecore_X_Window w, unsigned char *data, int size)
 {
    return _ecore_x_selection_set(w, data, size, ECORE_X_ATOM_SELECTION_PRIMARY);
@@ -164,7 +164,7 @@ ecore_x_selection_primary_set(Ecore_X_Window w, unsigned char *data, int size)
  *             or 0 if unsuccessful.
  *
  */
-int 
+EAPI int 
 ecore_x_selection_primary_clear(void)
 {
    return _ecore_x_selection_set(None, NULL, 0, ECORE_X_ATOM_SELECTION_PRIMARY);
@@ -178,7 +178,7 @@ ecore_x_selection_primary_clear(void)
  * @return     Returns 1 if the ownership of the selection was successfully 
  *             claimed, or 0 if unsuccessful.
  */
-int 
+EAPI int 
 ecore_x_selection_secondary_set(Ecore_X_Window w, unsigned char *data, int size)
 {
    return _ecore_x_selection_set(w, data, size, ECORE_X_ATOM_SELECTION_SECONDARY);
@@ -190,7 +190,7 @@ ecore_x_selection_secondary_set(Ecore_X_Window w, unsigned char *data, int size)
  *             or 0 if unsuccessful.
  *
  */
-int 
+EAPI int 
 ecore_x_selection_secondary_clear(void)
 {
    return _ecore_x_selection_set(None, NULL, 0, ECORE_X_ATOM_SELECTION_SECONDARY);
@@ -204,7 +204,7 @@ ecore_x_selection_secondary_clear(void)
  * @return     Returns 1 if the ownership of the selection was successfully 
  *             claimed, or 0 if unsuccessful.
  */
-int 
+EAPI int 
 ecore_x_selection_xdnd_set(Ecore_X_Window w, unsigned char *data, int size)
 {
    return _ecore_x_selection_set(w, data, size, ECORE_X_ATOM_SELECTION_XDND);
@@ -216,7 +216,7 @@ ecore_x_selection_xdnd_set(Ecore_X_Window w, unsigned char *data, int size)
  *             or 0 if unsuccessful.
  *
  */
-int 
+EAPI int 
 ecore_x_selection_xdnd_clear(void)
 {
    return _ecore_x_selection_set(None, NULL, 0, ECORE_X_ATOM_SELECTION_XDND);
@@ -233,7 +233,7 @@ ecore_x_selection_xdnd_clear(void)
  * Get the converted data from a previous CLIPBOARD selection
  * request. The buffer must be freed when done with.
  */
-int 
+EAPI int 
 ecore_x_selection_clipboard_set(Ecore_X_Window w, unsigned char *data, int size)
 {
    return _ecore_x_selection_set(w, data, size, ECORE_X_ATOM_SELECTION_CLIPBOARD);
@@ -245,7 +245,7 @@ ecore_x_selection_clipboard_set(Ecore_X_Window w, unsigned char *data, int size)
  *             or 0 if unsuccessful.
  *
  */
-int 
+EAPI int 
 ecore_x_selection_clipboard_clear(void)
 {
    return _ecore_x_selection_set(None, NULL, 0, ECORE_X_ATOM_SELECTION_CLIPBOARD);
@@ -309,19 +309,19 @@ _ecore_x_selection_request(Ecore_X_Window w, Ecore_X_Atom selection, char *targe
 		     w, CurrentTime);
 }
 
-void 
+EAPI void 
 ecore_x_selection_primary_request(Ecore_X_Window w, char *target)
 {
    _ecore_x_selection_request(w, ECORE_X_ATOM_SELECTION_PRIMARY, target);
 }
 
-void 
+EAPI void 
 ecore_x_selection_secondary_request(Ecore_X_Window w, char *target)
 {
    _ecore_x_selection_request(w, ECORE_X_ATOM_SELECTION_SECONDARY, target);
 }
 
-void 
+EAPI void 
 ecore_x_selection_xdnd_request(Ecore_X_Window w, char *target)
 {
    Ecore_X_Atom atom;
@@ -334,13 +334,13 @@ ecore_x_selection_xdnd_request(Ecore_X_Window w, char *target)
 		     _target->time);
 }
 
-void 
+EAPI void 
 ecore_x_selection_clipboard_request(Ecore_X_Window w, char *target)
 {
    _ecore_x_selection_request(w, ECORE_X_ATOM_SELECTION_CLIPBOARD, target);
 }
 
-void
+EAPI void
 ecore_x_selection_converter_atom_add(Ecore_X_Atom target,
       int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret))
 {
@@ -374,7 +374,7 @@ ecore_x_selection_converter_atom_add(Ecore_X_Atom target,
    cnv->convert = func;
 }
 
-void
+EAPI void
 ecore_x_selection_converter_add(char *target, 
       int (*func)(char *target, void *data, int size, void **data_ret, int *size_ret))
 {
@@ -388,7 +388,7 @@ ecore_x_selection_converter_add(char *target,
    ecore_x_selection_converter_atom_add(x_target, func);
 }
 
-void
+EAPI void
 ecore_x_selection_converter_atom_del(Ecore_X_Atom target)
 {
    Ecore_X_Selection_Converter *cnv, *prev_cnv;
@@ -413,7 +413,7 @@ ecore_x_selection_converter_atom_del(Ecore_X_Atom target)
      }
 }
 
-void
+EAPI void
 ecore_x_selection_converter_del(char *target)
 {
    Ecore_X_Atom x_target;
@@ -521,7 +521,7 @@ _ecore_x_selection_converter_text(char *target, void *data, int size, void **dat
      }
 }
 
-void
+EAPI void
 ecore_x_selection_parser_add(const char *target,
       void *(*func)(const char *target, unsigned char *data, int size))
 {
@@ -555,7 +555,7 @@ ecore_x_selection_parser_add(const char *target,
    prs->parse = func;
 }
 
-void
+EAPI void
 ecore_x_selection_parser_del(const char *target)
 {
    Ecore_X_Selection_Parser *prs, *prev_prs;

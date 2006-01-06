@@ -18,7 +18,7 @@ static void _ecore_x_event_free_window_prop_client_machine_change(void *data, vo
 static void _ecore_x_event_free_key_down(void *data, void *ev);
 static void _ecore_x_event_free_key_up(void *data, void *ev);
 
-void
+EAPI void
 ecore_x_event_mask_set(Ecore_X_Window w, Ecore_X_Event_Mask mask)
 {
    XWindowAttributes attr;
@@ -33,7 +33,7 @@ ecore_x_event_mask_set(Ecore_X_Window w, Ecore_X_Event_Mask mask)
    XChangeWindowAttributes(_ecore_x_disp, w, CWEventMask, &s_attr);
 }
 
-void
+EAPI void
 ecore_x_event_mask_unset(Ecore_X_Window w, Ecore_X_Event_Mask mask)
 {
    XWindowAttributes attr;

@@ -20,7 +20,7 @@ static int   _error_code = 0;
  * 
  * Set the X error handler function
  */
-void
+EAPI void
 ecore_x_error_handler_set(void (*func) (void *data), const void *data)
 {
    _error_func = func;
@@ -34,7 +34,7 @@ ecore_x_error_handler_set(void (*func) (void *data), const void *data)
  * 
  * Set the X I/O error handler function
  */
-void
+EAPI void
 ecore_x_io_error_handler_set(void (*func) (void *data), const void *data)
 {
    _io_error_func = func;
@@ -47,7 +47,7 @@ ecore_x_io_error_handler_set(void (*func) (void *data), const void *data)
  * 
  * Return the X request code that caused the last X error
  */
-int
+EAPI int
 ecore_x_error_request_get(void)
 {
    return _error_request_code;
@@ -59,7 +59,7 @@ ecore_x_error_request_get(void)
  * 
  * Return the error code from the last X error
  */
-int
+EAPI int
 ecore_x_error_code_get(void)
 {
    return _error_code;

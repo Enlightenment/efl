@@ -26,18 +26,18 @@ Ecore_X_Atom     ECORE_X_ATOM_XDND_FINISHED = 0;
 Ecore_X_Atom     ECORE_X_ATOM_XDND_LEAVE = 0;
 
 /* Xdnd atoms that need to be exposed to the application interface */
-Ecore_X_Atom  ECORE_X_DND_ACTION_COPY = 0;
-Ecore_X_Atom  ECORE_X_DND_ACTION_MOVE = 0;
-Ecore_X_Atom  ECORE_X_DND_ACTION_LINK = 0;
-Ecore_X_Atom  ECORE_X_DND_ACTION_ASK = 0;
-Ecore_X_Atom  ECORE_X_DND_ACTION_PRIVATE = 0;
+EAPI Ecore_X_Atom  ECORE_X_DND_ACTION_COPY = 0;
+EAPI Ecore_X_Atom  ECORE_X_DND_ACTION_MOVE = 0;
+EAPI Ecore_X_Atom  ECORE_X_DND_ACTION_LINK = 0;
+EAPI Ecore_X_Atom  ECORE_X_DND_ACTION_ASK = 0;
+EAPI Ecore_X_Atom  ECORE_X_DND_ACTION_PRIVATE = 0;
 
-int ECORE_X_EVENT_XDND_ENTER = 0;
-int ECORE_X_EVENT_XDND_POSITION = 0;
-int ECORE_X_EVENT_XDND_STATUS = 0;
-int ECORE_X_EVENT_XDND_LEAVE = 0;
-int ECORE_X_EVENT_XDND_DROP = 0;
-int ECORE_X_EVENT_XDND_FINISHED = 0;
+EAPI int ECORE_X_EVENT_XDND_ENTER = 0;
+EAPI int ECORE_X_EVENT_XDND_POSITION = 0;
+EAPI int ECORE_X_EVENT_XDND_STATUS = 0;
+EAPI int ECORE_X_EVENT_XDND_LEAVE = 0;
+EAPI int ECORE_X_EVENT_XDND_DROP = 0;
+EAPI int ECORE_X_EVENT_XDND_FINISHED = 0;
 
 static Ecore_X_DND_Source *_source = NULL;
 static Ecore_X_DND_Target *_target = NULL;
@@ -114,7 +114,7 @@ _ecore_x_dnd_shutdown(void)
    _ecore_x_dnd_init_count = 0;
 }
 
-void
+EAPI void
 ecore_x_dnd_aware_set(Ecore_X_Window win, int on)
 {
    Ecore_X_Atom prop_data = ECORE_X_DND_VERSION;
@@ -126,7 +126,7 @@ ecore_x_dnd_aware_set(Ecore_X_Window win, int on)
      ecore_x_window_prop_property_del(win, ECORE_X_ATOM_XDND_AWARE);
 }
 
-int
+EAPI int
 ecore_x_dnd_version_get(Ecore_X_Window win)
 {
    unsigned char *prop_data;
@@ -143,7 +143,7 @@ ecore_x_dnd_version_get(Ecore_X_Window win)
      return 0;
 }
 
-int
+EAPI int
 ecore_x_dnd_type_isset(Ecore_X_Window win, const char *type)
 {
    int                  num, i, ret = 0;
@@ -170,7 +170,7 @@ ecore_x_dnd_type_isset(Ecore_X_Window win, const char *type)
    return ret;
 }
 
-void
+EAPI void
 ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, int on)
 {
    Ecore_X_Atom      atom;
@@ -228,7 +228,7 @@ ecore_x_dnd_type_set(Ecore_X_Window win, const char *type, int on)
    free(newset);
 }
 
-void
+EAPI void
 ecore_x_dnd_types_set(Ecore_X_Window win, char **types, unsigned int num_types)
 {
    Ecore_X_Atom      *newset = NULL;
@@ -264,7 +264,7 @@ _ecore_x_dnd_target_get(void)
    return _target;
 }
 
-int
+EAPI int
 ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size)
 {
 
@@ -286,7 +286,7 @@ ecore_x_dnd_begin(Ecore_X_Window source, unsigned char *data, int size)
    return 1;
 }
 
-int
+EAPI int
 ecore_x_dnd_drop(void)
 {
    XEvent xev;
@@ -332,7 +332,7 @@ ecore_x_dnd_drop(void)
    return status;
 }
 
-void
+EAPI void
 ecore_x_dnd_send_status(int will_accept, int suppress, Ecore_X_Rectangle rectangle, Ecore_X_Atom action)
 {
    XEvent xev;
@@ -379,7 +379,7 @@ ecore_x_dnd_send_status(int will_accept, int suppress, Ecore_X_Rectangle rectang
    XSendEvent(_ecore_x_disp, _target->source, False, 0, &xev);
 }
 
-void
+EAPI void
 ecore_x_dnd_send_finished(void)
 {
    XEvent   xev;

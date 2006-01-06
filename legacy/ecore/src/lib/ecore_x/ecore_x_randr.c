@@ -3,7 +3,7 @@
  */
 #include "ecore_x_private.h"
 
-int
+EAPI int
 ecore_x_randr_events_select(Ecore_X_Window win, int on)
 {
 #ifdef ECORE_XRANDR
@@ -18,7 +18,7 @@ ecore_x_randr_events_select(Ecore_X_Window win, int on)
 #endif
 }
 
-Ecore_X_Screen_Size *
+EAPI Ecore_X_Screen_Size *
 ecore_x_randr_screen_sizes_get(Ecore_X_Window root, int *num)
 {
 #ifdef ECORE_XRANDR
@@ -46,7 +46,7 @@ ecore_x_randr_screen_sizes_get(Ecore_X_Window root, int *num)
 #endif
 }
 
-Ecore_X_Screen_Size
+EAPI Ecore_X_Screen_Size
 ecore_x_randr_current_screen_size_get(Ecore_X_Window root)
 {
    Ecore_X_Screen_Size ret = { -1, -1 };
@@ -75,7 +75,7 @@ ecore_x_randr_current_screen_size_get(Ecore_X_Window root)
    return ret;
 }
 
-int
+EAPI int
 ecore_x_randr_screen_size_set(Ecore_X_Window root, Ecore_X_Screen_Size size)
 {
 #ifdef ECORE_XRANDR
