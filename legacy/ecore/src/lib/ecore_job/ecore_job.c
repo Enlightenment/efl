@@ -18,7 +18,7 @@ static int ecore_event_job_type = 0;
  * @ingroup Ecore_Job_Group
  * @note    Once the job has been executed, the job handle is invalid.
  */
-Ecore_Job *
+EAPI Ecore_Job *
 ecore_job_add(void (*func) (void *data), const void *data)
 {
    Ecore_Job *job;
@@ -49,7 +49,7 @@ ecore_job_add(void (*func) (void *data), const void *data)
  * @return  The data pointer that was to be passed to the job.
  * @ingroup Ecore_Job_Group
  */
-void *
+EAPI void *
 ecore_job_del(Ecore_Job *job)
 {
    void *data;

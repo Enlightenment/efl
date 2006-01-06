@@ -96,7 +96,7 @@ ecore_shutdown(void)
    return _ecore_init_count;
 }
 
-void
+EAPI void
 _ecore_magic_fail(void *d, Ecore_Magic m, Ecore_Magic req_m, const char *fname)
 {
    fprintf(stderr, 
