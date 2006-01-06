@@ -1692,7 +1692,7 @@ loop(void)
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
 	{
-	   Evas_Coord              x, y;
+	   Evas_Coord              y;
 	   double                  v, d = (160 * sqrt(2)) / 2;
 
 	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
@@ -1740,7 +1740,7 @@ loop(void)
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
 	{
-	   Evas_Coord              x, y;
+	   Evas_Coord              y;
 	   double              v;
 
 	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
@@ -1774,7 +1774,7 @@ loop(void)
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
 	{
-	   Evas_Coord              x, y;
+	   Evas_Coord              y;
 	   double              v;
 
 	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
@@ -1809,7 +1809,7 @@ loop(void)
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
 	{
-	   Evas_Coord              x, y;
+	   Evas_Coord              y;
 	   double              v;
 
 	   evas_object_gradient_angle_set(t1, t * 60);

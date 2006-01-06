@@ -87,8 +87,6 @@ evas_common_gradient_free(RGBA_Gradient *gr)
 void
 evas_common_gradient_colors_clear(RGBA_Gradient *gr)
 {
-   RGBA_Gradient_Color  *p, *pp;
-
    if (!gr) return;
    if (gr->colors)
      {

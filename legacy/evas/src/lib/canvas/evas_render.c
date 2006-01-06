@@ -182,7 +182,6 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates)
    Evas_List *delete_objects = NULL;
    Evas_List *restack_objects = NULL;
    Evas_List *ll;
-   Evas_Object_List *l;
    void *surface;
    int ux, uy, uw, uh;
    int cx, cy, cw, ch;

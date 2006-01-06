@@ -296,4 +296,5 @@ evas_common_save_image_to_file(RGBA_Image *im, const char *file, const char *key
 	  return save_image_edb(im, file, key, quality, compress);
 #endif
      }
+   return 0;
 }

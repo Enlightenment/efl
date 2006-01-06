@@ -104,7 +104,7 @@ angular_setup_geom(RGBA_Gradient *gr, int spread)
    if (!s) return;
 
    p = s;
-   while (p = evas_common_gradient_get_key_fval(p, key, &val))
+   while ((p = evas_common_gradient_get_key_fval(p, key, &val)))
      {
 	if (!strcmp(key, "annulus"))
 	  {

@@ -82,7 +82,7 @@ radial_setup_geom(RGBA_Gradient *gr, int spread)
    if (!s) return;
 
    p = s;
-   while (p = evas_common_gradient_get_key_fval(p, key, &r0))
+   while ((p = evas_common_gradient_get_key_fval(p, key, &r0)))
      {
 	if (!strcmp(key, "inner_radius"))
 	    err = 0;

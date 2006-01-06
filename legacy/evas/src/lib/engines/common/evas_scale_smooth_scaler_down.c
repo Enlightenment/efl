@@ -1,6 +1,4 @@
 {
-   DATA32   *sptr;
-   int       x, y;
    DATA32  **ypoints;
    int     *xpoints;
    int     *xapoints, *xapp;
