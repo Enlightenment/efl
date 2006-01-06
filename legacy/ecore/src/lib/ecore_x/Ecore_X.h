@@ -1158,6 +1158,8 @@ EAPI void            ecore_x_window_sniff(Ecore_X_Window win);
 EAPI void            ecore_x_window_client_sniff(Ecore_X_Window win);
 EAPI Ecore_X_Atom    ecore_x_atom_get(const char *name);
 
+
+
 EAPI void            ecore_x_icccm_init(void);
 EAPI void            ecore_x_icccm_state_set(Ecore_X_Window win, Ecore_X_Window_State_Hint state);
 EAPI Ecore_X_Window_State_Hint ecore_x_icccm_state_get(Ecore_X_Window win);
@@ -1334,16 +1336,6 @@ EAPI int                 ecore_x_xinerama_screen_count_get(void);
 EAPI int                 ecore_x_xinerama_screen_geometry_get(int screen, int *x, int *y, int *w, int *h);
    
 /* FIXME: these funcs need categorising */
-EAPI void            ecore_x_drawable_geometry_get(Ecore_X_Drawable d, int *x, int *y, int *w, int *h);
-EAPI int             ecore_x_drawable_border_width_get(Ecore_X_Drawable d);
-EAPI int             ecore_x_drawable_depth_get(Ecore_X_Drawable d);
-EAPI Ecore_X_Window *ecore_x_window_root_list(int *num_ret);
-EAPI int             ecore_x_window_manage(Ecore_X_Window win);
-EAPI void            ecore_x_window_container_manage(Ecore_X_Window win);
-EAPI void            ecore_x_window_client_manage(Ecore_X_Window win);
-EAPI void            ecore_x_window_sniff(Ecore_X_Window win);
-EAPI void            ecore_x_window_client_sniff(Ecore_X_Window win);
-EAPI Ecore_X_Atom    ecore_x_atom_get(const char *name);
 
 typedef struct _Ecore_X_Window_Attributes
 {
