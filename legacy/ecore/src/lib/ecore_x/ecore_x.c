@@ -38,29 +38,29 @@ int      _ecore_x_xcursor = 0;
 Ecore_X_Window _ecore_x_private_win = 0;
 
 /* FIXME - These are duplicates after making ecore atoms public */
-Ecore_X_Atom     ECORE_X_ATOM_FILE_NAME = 0;
-Ecore_X_Atom     ECORE_X_ATOM_STRING = 0;
-Ecore_X_Atom     ECORE_X_ATOM_TEXT = 0;
-Ecore_X_Atom     ECORE_X_ATOM_UTF8_STRING = 0;
-Ecore_X_Atom     ECORE_X_ATOM_COMPOUND_TEXT = 0;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_FILE_NAME = 0;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_STRING = 0;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_TEXT = 0;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_UTF8_STRING = 0;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_COMPOUND_TEXT = 0;
 
 Ecore_X_Atom     _ecore_x_atoms_wm_protocols[ECORE_X_WM_PROTOCOL_NUM];
 
 /*
  * GNOME hints.
  */
-Ecore_X_Atom     ECORE_X_ATOM_WIN_LAYER = 0;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_WIN_LAYER = 0;
 
 /*
  * Other hints.
  */
-Ecore_X_Atom     ECORE_X_ATOM_SELECTION_TARGETS;
-Ecore_X_Atom     ECORE_X_ATOM_SELECTION_PRIMARY = 0;
-Ecore_X_Atom     ECORE_X_ATOM_SELECTION_SECONDARY = 0;
-Ecore_X_Atom     ECORE_X_ATOM_SELECTION_CLIPBOARD = 0;
-Ecore_X_Atom     ECORE_X_ATOM_SELECTION_PROP_PRIMARY = 0;
-Ecore_X_Atom     ECORE_X_ATOM_SELECTION_PROP_SECONDARY = 0;
-Ecore_X_Atom     ECORE_X_ATOM_SELECTION_PROP_CLIPBOARD = 0;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_SELECTION_TARGETS;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_SELECTION_PRIMARY = 0;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_SELECTION_SECONDARY = 0;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_SELECTION_CLIPBOARD = 0;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_SELECTION_PROP_PRIMARY = 0;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_SELECTION_PROP_SECONDARY = 0;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_SELECTION_PROP_CLIPBOARD = 0;
 
 EAPI int ECORE_X_EVENT_KEY_DOWN = 0;
 EAPI int ECORE_X_EVENT_KEY_UP = 0;
@@ -1162,7 +1162,7 @@ ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int
 	
 	fr = 0x00; fg = 0x00; fb = 0x00;
 	br = 0xff; bg = 0xff; bb = 0xff;
-	pix = pixels;
+	pix = (unsigned int*)pixels;
 	for (y = 0; y < h; y++)
 	  {
 	     for (x = 0; x < w; x++)
@@ -1194,7 +1194,7 @@ ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int
 	       }
 	  }
 	
-	pix = pixels;
+	pix = (unsigned int*)pixels;
 	for (y = 0; y < h; y++)
 	  {
 	     for (x = 0; x < w; x++)
@@ -1232,7 +1232,7 @@ ecore_x_cursor_new(Ecore_X_Window win, int *pixels, int w, int h, int hot_x, int
 	XPutImage(_ecore_x_disp, pmap, gc, xim, 0, 0, 0, 0, w, h);   
 	XFreeGC(_ecore_x_disp, gc);
 	
-	pix = pixels;
+	pix = (unsigned int*)pixels;
 	for (y = 0; y < h; y++)
 	  {
 	     for (x = 0; x < w; x++)

@@ -25,7 +25,7 @@ typedef struct _mwmhints
 MWMHints;
 
 /* Atoms */
-Ecore_X_Atom        ECORE_X_ATOM_MOTIF_WM_HINTS = 0;
+EAPI Ecore_X_Atom  ECORE_X_ATOM_MOTIF_WM_HINTS = 0;
 
 EAPI int
 ecore_x_mwm_hints_get(Ecore_X_Window win,
