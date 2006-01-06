@@ -80,12 +80,12 @@ ecore_file_download_shutdown(void)
    return init;
 }
 
-int
+EAPI int
 ecore_file_download(const char *url, const char *dst,
 		    void (*completion_cb)(void *data, const char *file, int status),
 		    void *data)
 {
-   if (!ecore_file_is_dir(ecore_file_get_dir(dst))) return 0;
+   if (!ecore_file_is_dir(ecore_file_get_dir((char *)dst))) return 0;
    if (ecore_file_exists(dst)) return 0;
 
    /* FIXME: Add handlers for http and ftp! */
@@ -120,7 +120,7 @@ ecore_file_download(const char *url, const char *dst,
      }
 }
 
-int
+EAPI int
 ecore_file_download_protocol_available(const char *protocol)
 {
    if (!strncmp(protocol, "file://", 7)) return 1;

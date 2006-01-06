@@ -57,7 +57,7 @@ _ecore_file_path_from_env(const char *env)
    return path;
 }
 
-int
+EAPI int
 ecore_file_app_installed(const char *exe)
 {
    char *dir;
@@ -75,7 +75,7 @@ ecore_file_app_installed(const char *exe)
    return 0;
 }
 
-Ecore_List *
+EAPI Ecore_List *
 ecore_file_app_list(void)
 {
    Ecore_List *list, *files;

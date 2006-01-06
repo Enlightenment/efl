@@ -74,7 +74,7 @@ ecore_file_monitor_shutdown(void)
    return init;
 }
 
-Ecore_File_Monitor *
+EAPI Ecore_File_Monitor *
 ecore_file_monitor_add(const char *path,
 			    void (*func) (void *data, Ecore_File_Monitor *em,
 					  Ecore_File_Event event,
@@ -101,7 +101,7 @@ ecore_file_monitor_add(const char *path,
    return NULL;
 }
 
-void
+EAPI void
 ecore_file_monitor_del(Ecore_File_Monitor *em)
 {
    switch (monitor_type)
@@ -126,7 +126,7 @@ ecore_file_monitor_del(Ecore_File_Monitor *em)
      }
 }
 
-const char *
+EAPI const char *
 ecore_file_monitor_path_get(Ecore_File_Monitor *em)
 {
    return em->path;

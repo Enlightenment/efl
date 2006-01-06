@@ -1786,7 +1786,7 @@ static const Ecore_Evas_Engine_Func _ecore_x_engine_func =
  *
  * FIXME: To be fixed.
  */
-Ecore_Evas *
+EAPI Ecore_Evas *
 ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent, 
 			    int x, int y, int w, int h)
 {
@@ -1916,7 +1916,7 @@ ecore_evas_software_x11_new(const char *disp_name, Ecore_X_Window parent,
  *
  * FIXME: To be fixed.
  */
-Ecore_X_Window
+EAPI Ecore_X_Window
 ecore_evas_software_x11_window_get(Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_X
@@ -1931,7 +1931,7 @@ ecore_evas_software_x11_window_get(Ecore_Evas *ee)
  *
  * FIXME: To be fixed.
  */
-Ecore_X_Window
+EAPI Ecore_X_Window
 ecore_evas_software_x11_subwindow_get(Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_X
@@ -1946,7 +1946,7 @@ ecore_evas_software_x11_subwindow_get(Ecore_Evas *ee)
  *
  * FIXME: To be fixed.
  */
-void
+EAPI void
 ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, int on)
 {
 #ifdef BUILD_ECORE_X
@@ -1977,7 +1977,7 @@ ecore_evas_software_x11_direct_resize_set(Ecore_Evas *ee, int on)
  *
  * FIXME: To be fixed.
  */
-int
+EAPI int
 ecore_evas_software_x11_direct_resize_get(Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_X
@@ -1992,7 +1992,7 @@ ecore_evas_software_x11_direct_resize_get(Ecore_Evas *ee)
  *
  * FIXME: To be fixed.
  */
-void
+EAPI void
 ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win)
 {
 #ifdef BUILD_ECORE_X
@@ -2014,7 +2014,7 @@ ecore_evas_software_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window wi
  *
  * FIXME: To be fixed.
  */
-Ecore_Evas *
+EAPI Ecore_Evas *
 ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent, 
 		      int x, int y, int w, int h)
 {
@@ -2159,7 +2159,7 @@ ecore_evas_gl_x11_new(const char *disp_name, Ecore_X_Window parent,
  *
  * FIXME: To be fixed.
  */
-Ecore_X_Window
+EAPI Ecore_X_Window
 ecore_evas_gl_x11_window_get(Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_X
@@ -2174,7 +2174,7 @@ ecore_evas_gl_x11_window_get(Ecore_Evas *ee)
  *
  * FIXME: To be fixed.
  */
-Ecore_X_Window
+EAPI Ecore_X_Window
 ecore_evas_gl_x11_subwindow_get(Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_X
@@ -2189,7 +2189,7 @@ ecore_evas_gl_x11_subwindow_get(Ecore_Evas *ee)
  *
  * FIXME: To be fixed.
  */
-void
+EAPI void
 ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee, int on)
 {
 #ifdef BUILD_ECORE_X
@@ -2204,7 +2204,7 @@ ecore_evas_gl_x11_direct_resize_set(Ecore_Evas *ee, int on)
  *
  * FIXME: To be fixed.
  */
-int
+EAPI int
 ecore_evas_gl_x11_direct_resize_get(Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_X
@@ -2219,7 +2219,7 @@ ecore_evas_gl_x11_direct_resize_get(Ecore_Evas *ee)
  *
  * FIXME: To be fixed.
  */
-void
+EAPI void
 ecore_evas_gl_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win)
 {
    ecore_evas_software_x11_extra_event_window_add(ee, win);
@@ -2230,7 +2230,7 @@ ecore_evas_gl_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win)
  *
  * FIXME: To be fixed.
  */
-Ecore_Evas *
+EAPI Ecore_Evas *
 ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent, 
 		      int x, int y, int w, int h)
 {
@@ -2347,7 +2347,7 @@ ecore_evas_xrender_x11_new(const char *disp_name, Ecore_X_Window parent,
  *
  * FIXME: To be fixed.
  */
-Ecore_X_Window
+EAPI Ecore_X_Window
 ecore_evas_xrender_x11_window_get(Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_X 
@@ -2362,7 +2362,7 @@ ecore_evas_xrender_x11_window_get(Ecore_Evas *ee)
  *
  * FIXME: To be fixed.
  */
-Ecore_X_Window
+EAPI Ecore_X_Window
 ecore_evas_xrender_x11_subwindow_get(Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_X
@@ -2377,7 +2377,7 @@ ecore_evas_xrender_x11_subwindow_get(Ecore_Evas *ee)
  *
  * FIXME: To be fixed.
  */
-void
+EAPI void
 ecore_evas_xrender_x11_direct_resize_set(Ecore_Evas *ee, int on)
 {
 #ifdef BUILD_ECORE_X
@@ -2392,7 +2392,7 @@ ecore_evas_xrender_x11_direct_resize_set(Ecore_Evas *ee, int on)
  *
  * FIXME: To be fixed.
  */
-int
+EAPI int
 ecore_evas_xrender_x11_direct_resize_get(Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_X
@@ -2407,7 +2407,7 @@ ecore_evas_xrender_x11_direct_resize_get(Ecore_Evas *ee)
  *
  * FIXME: To be fixed.
  */
-void
+EAPI void
 ecore_evas_xrender_x11_extra_event_window_add(Ecore_Evas *ee, Ecore_X_Window win)
 {
    ecore_evas_software_x11_extra_event_window_add(ee, win);

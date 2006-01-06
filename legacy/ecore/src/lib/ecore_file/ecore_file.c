@@ -1,14 +1,14 @@
 /*
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
-#include "ecore_file_private.h"
 #include <ctype.h>
+#include "ecore_file_private.h"
 
 
 static int init = 0;
 
 /* externally accessible functions */
-int
+EAPI int
 ecore_file_init()
 {
    if (++init != 1) return init;
@@ -30,7 +30,7 @@ error:
    return --init;
 }
 
-int
+EAPI int
 ecore_file_shutdown()
 {
    if (--init != 0) return init;
@@ -42,7 +42,7 @@ ecore_file_shutdown()
    return init;
 }
 
-time_t
+EAPI time_t
 ecore_file_mod_time(const char *file)
 {
    struct stat st;
@@ -51,7 +51,7 @@ ecore_file_mod_time(const char *file)
    return st.st_mtime;
 }
 
-int
+EAPI int
 ecore_file_size(const char *file)
 {
    struct stat st;
@@ -60,7 +60,7 @@ ecore_file_size(const char *file)
    return st.st_size;
 }
 
-int
+EAPI int
 ecore_file_exists(const char *file)
 {
    struct stat st;
@@ -70,7 +70,7 @@ ecore_file_exists(const char *file)
    return 1;
 }
 
-int
+EAPI int
 ecore_file_is_dir(const char *file)
 {
    struct stat st;
@@ -82,28 +82,28 @@ ecore_file_is_dir(const char *file)
 
 static mode_t default_mode = S_IRUSR | S_IWUSR | S_IXUSR | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH;
 
-int
+EAPI int
 ecore_file_mkdir(const char *dir)
 {
    if (mkdir(dir, default_mode) < 0) return 0;
    return 1;
 }
 
-int
+EAPI int
 ecore_file_rmdir(const char *dir)
 {
    if (rmdir(dir) < 0) return 0;
    return 1;
 }
 
-int
+EAPI int
 ecore_file_unlink(const char *file)
 {
    if (unlink(file) < 0) return 0;
    return 1;
 }
 
-int
+EAPI int
 ecore_file_recursive_rm(const char *dir)
 {
    DIR                *dirp;
@@ -150,7 +150,7 @@ ecore_file_recursive_rm(const char *dir)
    return ret;
 }
 
-int
+EAPI int
 ecore_file_mkpath(const char *path)
 {
    char ss[PATH_MAX];
@@ -177,7 +177,7 @@ ecore_file_mkpath(const char *path)
    return 1;
 }
 
-int
+EAPI int
 ecore_file_cp(const char *src, const char *dst)
 {
    FILE               *f1, *f2;
@@ -203,7 +203,7 @@ ecore_file_cp(const char *src, const char *dst)
    return 1;
 }
 
-int
+EAPI int
 ecore_file_mv(const char *src, const char *dst)
 {
    if (ecore_file_exists(dst)) return 0;
@@ -211,7 +211,7 @@ ecore_file_mv(const char *src, const char *dst)
    return 1;
 }
 
-int
+EAPI int
 ecore_file_symlink(const char *src, const char *dest)
 {
    if(!symlink(src, dest))
@@ -219,7 +219,7 @@ ecore_file_symlink(const char *src, const char *dest)
    return 0;
 }
 
-char *
+EAPI char *
 ecore_file_realpath(const char *file)
 {
    char  buf[PATH_MAX];
@@ -229,18 +229,18 @@ ecore_file_realpath(const char *file)
    return strdup(buf);
 }
 
-const char *
+EAPI const char *
 ecore_file_get_file(const char *path)
 {
    char *result = NULL;
 
    if (!path) return NULL;
    if ((result = strrchr(path, '/'))) result++;
-   else result = path;
+   else result = (char *)path;
    return result;
 }
 
-char *
+EAPI char *
 ecore_file_get_dir(char *file)
 {
    char               *p;
@@ -256,7 +256,7 @@ ecore_file_get_dir(char *file)
    return strdup(buf);
 }
 
-int
+EAPI int
 ecore_file_can_read(const char *file)
 {
    if (!file) return 0;
@@ -264,7 +264,7 @@ ecore_file_can_read(const char *file)
    return 0;
 }
 
-int
+EAPI int
 ecore_file_can_write(const char *file)
 {
    if (!file) return 0;
@@ -272,7 +272,7 @@ ecore_file_can_write(const char *file)
    return 0;
 }
 
-int
+EAPI int
 ecore_file_can_exec(const char *file)
 {
    if (!file) return 0;
@@ -280,7 +280,7 @@ ecore_file_can_exec(const char *file)
    return 0;
 }
 
-char *
+EAPI char *
 ecore_file_readlink(const char *link)
 {
    char                buf[PATH_MAX];
@@ -291,7 +291,7 @@ ecore_file_readlink(const char *link)
    return strdup(buf);
 }
 
-Ecore_List *
+EAPI Ecore_List *
 ecore_file_ls(const char *dir)
 {
    char               *f;
@@ -339,7 +339,7 @@ ecore_file_ls(const char *dir)
    return list;
 }
 
-char *
+EAPI char *
 ecore_file_app_exe_get(const char *app)
 {
    char *p, *pp, *exe1 = NULL, *exe2 = NULL;
@@ -482,7 +482,7 @@ restart:
    return exe;
 }
 
-char *
+EAPI char *
 ecore_file_strip_ext(const char *path)
 {
    char *p, *file = NULL;

@@ -424,7 +424,7 @@ static const Ecore_Evas_Engine_Func _ecore_buffer_engine_func =
  *
  * FIXME: To be fixed.
  */
-Ecore_Evas *
+EAPI Ecore_Evas *
 ecore_evas_buffer_new(int w, int h)
 {
 #ifdef BUILD_ECORE_EVAS_BUFFER
@@ -503,7 +503,7 @@ ecore_evas_buffer_new(int w, int h)
 #endif   
 }
 
-const int *
+EAPI const int *
 ecore_evas_buffer_pixels_get(Ecore_Evas *ee)
 {
 #ifdef BUILD_ECORE_EVAS_BUFFER
@@ -514,7 +514,7 @@ ecore_evas_buffer_pixels_get(Ecore_Evas *ee)
 #endif   
 }
 
-Evas_Object *
+EAPI Evas_Object *
 ecore_evas_object_image_new(Ecore_Evas *ee_target)
 {
 #ifdef BUILD_ECORE_EVAS_BUFFER
