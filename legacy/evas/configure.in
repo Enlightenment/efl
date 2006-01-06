@@ -175,17 +175,11 @@ ENGINE_SOFTWARE_XCB_PRG="";
 ## Automatic check...
 PKG_CHECK_MODULES(
   XCB,
-  xcb-image,
+  xcb xcb-image xcb-icccm,
   [AC_CHECK_HEADER(
       X11/X.h,
       [have_evas_software_xcb="yes"],
       [have_evas_software_xcb="no"])],
-  [ have_evas_software_xcb="no" ])
-
-PKG_CHECK_MODULES(
-  XCB_ICCCM,
-  xcb-icccm,
-  [ have_evas_software_xcb="yes" ],
   [ have_evas_software_xcb="no" ])
 
 ## manually disable xcb engine by default - not auto detected.
@@ -208,26 +202,16 @@ if test "x$have_evas_software_xcb" = "xyes"; then
   AC_PATH_XTRA
 
   PKG_CHECK_MODULES(
-    XCB_ICCCM,
-    xcb-icccm)
-
-  PKG_CHECK_MODULES(
     XCB,
-    xcb-image,
-    [AC_CHECK_HEADER(
-        X11/X.h,
-        [AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_XCB, true)
-         AC_DEFINE(BUILD_ENGINE_SOFTWARE_XCB, 1, [Software XCB Rendering Backend])
-         xcb_dir=${x_dir:-/usr/X11R6}
-         xcb_cflags="${x_cflags:--I${x_includes:-$x_dir/include}} $XCB_CFLAGS $XCB_ICCCM_CFLAGS"
-         xcb_libs="${x_libs:--L${x_libraries:-$x_dir/lib}}  $XCB_LIBS $XCB_ICCCM_LIBS"
-         ENGINE_SOFTWARE_XCB_PRG="evas_software_xcb_test evas_software_xcb_perf_test evas_software_xcb_perf_load"],
-        [AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_XCB, false)
-         AC_MSG_RESULT(disabling software XCB engine)
-         have_evas_software_xcb="no"])],
+    xcb xcb-image xcb-icccm,
+    [AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_XCB, true)
+     AC_DEFINE(BUILD_ENGINE_SOFTWARE_XCB, 1, [Software XCB Rendering Backend])
+     xcb_cflags=$XCB_CFLAGS
+     xcb_libs=$XCB_LIBS
+     ENGINE_SOFTWARE_XCB_PRG="evas_software_xcb_test evas_software_xcb_perf_test evas_software_xcb_perf_load"],
     [AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_XCB, false)
      AC_MSG_RESULT(disabling software XCB engine)
-     have_evas_software_xcb="no" ])
+     have_evas_software_xcb="no"])
 else
   AM_CONDITIONAL(BUILD_ENGINE_SOFTWARE_XCB, false)
 fi
