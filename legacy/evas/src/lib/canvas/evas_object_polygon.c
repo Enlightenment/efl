@@ -69,7 +69,7 @@ static Evas_Object_Func object_func =
  * @return  A new evas polygon object.
  * @ingroup Evas_Polygon_Group
  */
-Evas_Object *
+EAPI Evas_Object *
 evas_object_polygon_add(Evas *e)
 {
    Evas_Object *obj;
@@ -90,7 +90,7 @@ evas_object_polygon_add(Evas *e)
  * @param y   The Y coordinate of the given point.
  * @ingroup Evas_Polygon_Group
  */
-void
+EAPI void
 evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    Evas_Object_Polygon *o;
@@ -169,7 +169,7 @@ evas_object_polygon_point_add(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
  * @param   obj The given polygon object.
  * @ingroup Evas_Polygon_Group
  */
-void
+EAPI void
 evas_object_polygon_points_clear(Evas_Object *obj)
 {
    Evas_Object_Polygon *o;

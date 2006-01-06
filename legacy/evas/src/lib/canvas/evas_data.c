@@ -40,7 +40,7 @@
  * @endcode
  * @ingroup Evas_Object_Data_Group
  */
-void
+EAPI void
 evas_object_data_set(Evas_Object *obj, const char *key, const void *data)
 {
    Evas_Data_Node *node;
@@ -86,7 +86,7 @@ evas_object_data_set(Evas_Object *obj, const char *key, const void *data)
  * @endcode
  * @ingroup Evas_Object_Data_Group
  */
-void *
+EAPI void *
 evas_object_data_get(Evas_Object *obj, const char *key)
 {
    Evas_List *l;
@@ -131,7 +131,7 @@ evas_object_data_get(Evas_Object *obj, const char *key)
  * @endcode
  * @ingroup Evas_Object_Data_Group
  */
-void *
+EAPI void *
 evas_object_data_del(Evas_Object *obj, const char *key)
 {
    Evas_List *l;

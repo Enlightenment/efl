@@ -53,7 +53,7 @@ static Evas_Object_Func object_func =
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_smart_data_set(Evas_Object *obj, void *data)
 {
    Evas_Object_Smart *o;
@@ -74,7 +74,7 @@ evas_object_smart_data_set(Evas_Object *obj, void *data)
  * FIXME: To be fixed.
  *
  */
-void *
+EAPI void *
 evas_object_smart_data_get(Evas_Object *obj)
 {
    Evas_Object_Smart *o;
@@ -95,7 +95,7 @@ evas_object_smart_data_get(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-Evas_Smart *
+EAPI Evas_Smart *
 evas_object_smart_smart_get(Evas_Object *obj)
 {
    Evas_Object_Smart *o;
@@ -116,7 +116,7 @@ evas_object_smart_smart_get(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
 {
    Evas_Object_Smart *o;
@@ -153,7 +153,7 @@ evas_object_smart_member_add(Evas_Object *obj, Evas_Object *smart_obj)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_smart_member_del(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -177,7 +177,7 @@ evas_object_smart_member_del(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-Evas_Object *
+EAPI Evas_Object *
 evas_object_smart_add(Evas *e, Evas_Smart *s)
 {
    Evas_Object *obj;
@@ -209,7 +209,7 @@ evas_object_smart_add(Evas *e, Evas_Smart *s)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_smart_callback_add(Evas_Object *obj, const char *event, void (*func) (void *data, Evas_Object *obj, void *event_info), const void *data)
 {
    Evas_Object_Smart *o;
@@ -237,7 +237,7 @@ evas_object_smart_callback_add(Evas_Object *obj, const char *event, void (*func)
  * FIXME: To be fixed.
  *
  */
-void *
+EAPI void *
 evas_object_smart_callback_del(Evas_Object *obj, const char *event, void (*func) (void *data, Evas_Object *obj, void *event_info))
 {
    Evas_Object_Smart *o;
@@ -276,7 +276,7 @@ evas_object_smart_callback_del(Evas_Object *obj, const char *event, void (*func)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_smart_callback_call(Evas_Object *obj, const char *event, void *event_info)
 {
    Evas_Object_Smart *o;

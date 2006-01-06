@@ -92,7 +92,7 @@ static Evas_Object_Func object_func =
  * @return  The created image object.
  * @ingroup Evas_Object_Image
  */
-Evas_Object *
+EAPI Evas_Object *
 evas_object_image_add(Evas *e)
 {
    Evas_Object *obj;
@@ -119,7 +119,7 @@ evas_object_image_add(Evas *e)
  * @param   key  Can be NULL.
  * @ingroup Evas_Object_Image_File_Group
  */
-void
+EAPI void
 evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
 {
    Evas_Object_Image *o;
@@ -185,7 +185,7 @@ evas_object_image_file_set(Evas_Object *obj, const char *file, const char *key)
  *               string in.
  * @ingroup Evas_Object_Image_File_Group
  */
-void
+EAPI void
 evas_object_image_file_get(Evas_Object *obj, char **file, char **key)
 {
    Evas_Object_Image *o;
@@ -230,7 +230,7 @@ evas_object_image_file_get(Evas_Object *obj, char **file, char **key)
  * @param   b   Distance of the bottom border that is not to be stretched.
  * @ingroup Evas_Object_Image_Border_Group
  */
-void
+EAPI void
 evas_object_image_border_set(Evas_Object *obj, int l, int r, int t, int b)
 {
    Evas_Object_Image *o;
@@ -274,7 +274,7 @@ evas_object_image_border_set(Evas_Object *obj, int l, int r, int t, int b)
  * @param   b   Pointer to an integer to store the bottom border width in.
  * @ingroup Evas_Object_Image_Border_Group
  */
-void
+EAPI void
 evas_object_image_border_get(Evas_Object *obj, int *l, int *r, int *t, int *b)
 {
    Evas_Object_Image *o;
@@ -314,7 +314,7 @@ evas_object_image_border_get(Evas_Object *obj, int *l, int *r, int *t, int *b)
  * @param   fill If the center of the image object should be drawn/filled
  * @ingroup Evas_Object_Image_Border_Group
  */
-void
+EAPI void
 evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Bool fill)
 {
    Evas_Object_Image *o;
@@ -343,7 +343,7 @@ evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Bool fill)
  * @return  If the center is to be filled or not.
  * @ingroup Evas_Object_Image_Border_Group
  */
-Evas_Bool
+EAPI Evas_Bool
 evas_object_image_border_center_fill_get(Evas_Object *obj)
 {
    Evas_Object_Image *o;
@@ -384,7 +384,7 @@ evas_object_image_border_center_fill_get(Evas_Object *obj)
  * @param   h   The height of the image.
  * @ingroup Evas_Object_Image_Fill_Group
  */
-void
+EAPI void
 evas_object_image_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    Evas_Object_Image *o;
@@ -425,7 +425,7 @@ evas_object_image_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Co
  * @param   h   Pointer to an integer to store the height in.
  * @ingroup Evas_Object_Image_Fill_Group
  */
-void
+EAPI void
 evas_object_image_fill_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    Evas_Object_Image *o;
@@ -471,7 +471,7 @@ evas_object_image_fill_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_
  * @param   h   The new height.
  * @ingroup Evas_Object_Image_Size
  */
-void
+EAPI void
 evas_object_image_size_set(Evas_Object *obj, int w, int h)
 {
    Evas_Object_Image *o;
@@ -516,7 +516,7 @@ evas_object_image_size_set(Evas_Object *obj, int w, int h)
  *              @c NULL.
  * @ingroup Evas_Object_Image_Size
  */
-void
+EAPI void
 evas_object_image_size_get(Evas_Object *obj, int *w, int *h)
 {
    Evas_Object_Image *o;
@@ -545,7 +545,7 @@ evas_object_image_size_get(Evas_Object *obj, int *w, int *h)
  *         returned if there was no error.
  * @ingroup Evas_Object_Image
  */
-int
+EAPI int
 evas_object_image_load_error_get(Evas_Object *obj)
 {
    Evas_Object_Image *o;
@@ -566,7 +566,7 @@ evas_object_image_load_error_get(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_image_data_set(Evas_Object *obj, void *data)
 {
    Evas_Object_Image *o;
@@ -622,7 +622,7 @@ evas_object_image_data_set(Evas_Object *obj, void *data)
  * FIXME: To be fixed.
  *
  */
-void *
+EAPI void *
 evas_object_image_data_get(Evas_Object *obj, Evas_Bool for_writing)
 {
    Evas_Object_Image *o;
@@ -656,7 +656,7 @@ evas_object_image_data_get(Evas_Object *obj, Evas_Bool for_writing)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_image_data_copy_set(Evas_Object *obj, void *data)
 {
    Evas_Object_Image *o;
@@ -692,7 +692,7 @@ evas_object_image_data_copy_set(Evas_Object *obj, void *data)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_image_data_update_add(Evas_Object *obj, int x, int y, int w, int h)
 {
    Evas_Object_Image *o;
@@ -719,7 +719,7 @@ evas_object_image_data_update_add(Evas_Object *obj, int x, int y, int w, int h)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_image_alpha_set(Evas_Object *obj, Evas_Bool has_alpha)
 {
    Evas_Object_Image *o;
@@ -749,7 +749,7 @@ evas_object_image_alpha_set(Evas_Object *obj, Evas_Bool has_alpha)
  * FIXME: To be fixed.
  *
  */
-Evas_Bool
+EAPI Evas_Bool
 evas_object_image_alpha_get(Evas_Object *obj)
 {
    Evas_Object_Image *o;
@@ -770,7 +770,7 @@ evas_object_image_alpha_get(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_image_smooth_scale_set(Evas_Object *obj, Evas_Bool smooth_scale)
 {
    Evas_Object_Image *o;
@@ -795,7 +795,7 @@ evas_object_image_smooth_scale_set(Evas_Object *obj, Evas_Bool smooth_scale)
  * FIXME: To be fixed.
  *
  */
-Evas_Bool
+EAPI Evas_Bool
 evas_object_image_smooth_scale_get(Evas_Object *obj)
 {
    Evas_Object_Image *o;
@@ -816,7 +816,7 @@ evas_object_image_smooth_scale_get(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_image_reload(Evas_Object *obj)
 {
    Evas_Object_Image *o;
@@ -845,7 +845,7 @@ evas_object_image_reload(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-Evas_Bool
+EAPI Evas_Bool
 evas_object_image_save(Evas_Object *obj, const char *file, const char *key, const char *flags)
 {
    Evas_Object_Image *o;
@@ -908,7 +908,7 @@ evas_object_image_save(Evas_Object *obj, const char *file, const char *key, cons
  * FIXME: To be fixed.
  *
  */
-Evas_Bool
+EAPI Evas_Bool
 evas_object_image_pixels_import(Evas_Object *obj, Evas_Pixel_Import_Source *pixels)
 {
    Evas_Object_Image *o;
@@ -1000,7 +1000,7 @@ evas_object_image_pixels_import(Evas_Object *obj, Evas_Pixel_Import_Source *pixe
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_image_pixels_get_callback_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *o), void *data)
 {
    Evas_Object_Image *o;
@@ -1022,7 +1022,7 @@ evas_object_image_pixels_get_callback_set(Evas_Object *obj, void (*func) (void *
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_image_pixels_dirty_set(Evas_Object *obj, Evas_Bool dirty)
 {
    Evas_Object_Image *o;
@@ -1046,7 +1046,7 @@ evas_object_image_pixels_dirty_set(Evas_Object *obj, Evas_Bool dirty)
  * FIXME: To be fixed.
  *
  */
-Evas_Bool
+EAPI Evas_Bool
 evas_object_image_pixels_dirty_get(Evas_Object *obj)
 {
    Evas_Object_Image *o;
@@ -1068,7 +1068,7 @@ evas_object_image_pixels_dirty_get(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_image_cache_flush(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -1084,7 +1084,7 @@ evas_image_cache_flush(Evas *e)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_image_cache_reload(Evas *e)
 {
    Evas_Object_List *l;
@@ -1144,7 +1144,7 @@ evas_image_cache_reload(Evas *e)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_image_cache_set(Evas *e, int size)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -1161,7 +1161,7 @@ evas_image_cache_set(Evas *e, int size)
  * FIXME: To be fixed.
  *
  */
-int
+EAPI int
 evas_image_cache_get(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);

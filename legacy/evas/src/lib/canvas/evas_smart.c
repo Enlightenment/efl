@@ -9,7 +9,7 @@
  * FIXME: To be fixed.
  *
  */
-Evas_Smart *
+EAPI Evas_Smart *
 evas_smart_new(const char *name,
 	       void      (*func_add) (Evas_Object *o),
 	       void      (*func_del) (Evas_Object *o),
@@ -65,7 +65,7 @@ evas_smart_new(const char *name,
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_smart_free(Evas_Smart *s)
 {
    MAGIC_CHECK(s, Evas_Smart, MAGIC_SMART);
@@ -83,7 +83,7 @@ evas_smart_free(Evas_Smart *s)
  * FIXME: To be fixed.
  *
  */
-Evas_Smart *
+EAPI Evas_Smart *
 evas_smart_class_new(Evas_Smart_Class *sc)
 {
    Evas_Smart *s;
@@ -106,7 +106,7 @@ evas_smart_class_new(Evas_Smart_Class *sc)
  * FIXME: To be fixed.
  *
  */
-Evas_Smart_Class *
+EAPI Evas_Smart_Class *
 evas_smart_class_get(Evas_Smart *s)
 {
    MAGIC_CHECK(s, Evas_Smart, MAGIC_SMART);
@@ -121,7 +121,7 @@ evas_smart_class_get(Evas_Smart *s)
  * FIXME: To be fixed.
  *
  */
-void *
+EAPI void *
 evas_smart_data_get(Evas_Smart *s)
 {
    MAGIC_CHECK(s, Evas_Smart, MAGIC_SMART);

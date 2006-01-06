@@ -146,7 +146,7 @@ evas_key_grab_free(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask mod
  * FIXME: To be fixed.
  *
  */
-Evas_Bool
+EAPI Evas_Bool
 evas_object_key_grab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers, Evas_Bool exclusive)
 {
    /* MEM OK */
@@ -172,7 +172,7 @@ evas_object_key_grab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask m
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_key_ungrab(Evas_Object *obj, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers)
 {
    /* MEM OK */

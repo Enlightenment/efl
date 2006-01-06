@@ -60,7 +60,7 @@ static Evas_Object_Func object_func =
  * @return  The new rectangle object.
  * @todo Find a documentation group to put this under.
  */
-Evas_Object *
+EAPI Evas_Object *
 evas_object_rectangle_add(Evas *e)
 {
    Evas_Object *obj;

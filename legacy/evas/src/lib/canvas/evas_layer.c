@@ -137,7 +137,7 @@ evas_layer_del(Evas_Layer *lay)
  * @param   l   The number of the layer to place the object on.
  * @ingroup Evas_Object_Layer_Group
  */
-void
+EAPI void
 evas_object_layer_set(Evas_Object *obj, int l)
 {
    Evas *e;
@@ -186,7 +186,7 @@ evas_object_layer_set(Evas_Object *obj, int l)
  * @return  Number of the layer.
  * @ingroup Evas_Object_Layer_Group
  */
-int
+EAPI int
 evas_object_layer_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);

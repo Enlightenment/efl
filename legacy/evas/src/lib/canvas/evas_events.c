@@ -134,7 +134,7 @@ evas_event_list_copy(Evas_List *list)
  * @endcode
  * @ingroup Evas_Event_Freezing_Group
  */
-void
+EAPI void
 evas_event_freeze(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -155,7 +155,7 @@ evas_event_freeze(Evas *e)
  * See evas_event_freeze() for an example.
  * @ingroup Evas_Event_Freezing_Group
  */
-void
+EAPI void
 evas_event_thaw(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -204,7 +204,7 @@ evas_event_thaw(Evas *e)
  * @endcode
  * @ingroup Evas_Event_Freezing_Group
  */
-int
+EAPI int
 evas_event_freeze_get(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -219,7 +219,7 @@ evas_event_freeze_get(Evas *e)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
 {
    Evas_List *l, *copy;
@@ -267,7 +267,7 @@ evas_event_feed_mouse_down(Evas *e, int b, Evas_Button_Flags flags, unsigned int
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int timestamp, const void *data)
 {
    Evas_List *l, *copy;
@@ -386,7 +386,7 @@ evas_event_feed_mouse_up(Evas *e, int b, Evas_Button_Flags flags, unsigned int t
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_event_feed_mouse_wheel(Evas *e, int direction, int z, unsigned int timestamp, const void *data)
 {
    Evas_List *l, *copy;
@@ -429,7 +429,7 @@ evas_event_feed_mouse_wheel(Evas *e, int direction, int z, unsigned int timestam
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const void *data)
 {
    int px, py;
@@ -627,7 +627,7 @@ evas_event_feed_mouse_move(Evas *e, int x, int y, unsigned int timestamp, const 
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_event_feed_mouse_in(Evas *e, unsigned int timestamp, const void *data)
 {
    Evas_List *ins;
@@ -682,7 +682,7 @@ evas_event_feed_mouse_in(Evas *e, unsigned int timestamp, const void *data)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_event_feed_mouse_out(Evas *e, unsigned int timestamp, const void *data)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -734,7 +734,7 @@ evas_event_feed_mouse_out(Evas *e, unsigned int timestamp, const void *data)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -818,7 +818,7 @@ evas_event_feed_key_down(Evas *e, const char *keyname, const char *key, const ch
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char *string, const char *compose, unsigned int timestamp, const void *data)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -901,7 +901,7 @@ evas_event_feed_key_up(Evas *e, const char *keyname, const char *key, const char
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_pass_events_set(Evas_Object *obj, Evas_Bool pass)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -925,7 +925,7 @@ evas_object_pass_events_set(Evas_Object *obj, Evas_Bool pass)
  * FIXME: To be fixed.
  *
  */
-Evas_Bool
+EAPI Evas_Bool
 evas_object_pass_events_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -940,7 +940,7 @@ evas_object_pass_events_get(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_repeat_events_set(Evas_Object *obj, Evas_Bool repeat)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -963,7 +963,7 @@ evas_object_repeat_events_set(Evas_Object *obj, Evas_Bool repeat)
  * FIXME: To be fixed.
  *
  */
-Evas_Bool
+EAPI Evas_Bool
 evas_object_repeat_events_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -978,7 +978,7 @@ evas_object_repeat_events_get(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_propagate_events_set(Evas_Object *obj, Evas_Bool prop)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -993,7 +993,7 @@ evas_object_propagate_events_set(Evas_Object *obj, Evas_Bool prop)
  * FIXME: To be fixed.
  *
  */
-Evas_Bool
+EAPI Evas_Bool
 evas_object_propagate_events_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);

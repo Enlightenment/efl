@@ -56,7 +56,7 @@ static int _evas_debug_abort = 0;
  *   }
  * @endcode
  */
-int
+EAPI int
 evas_alloc_error(void)
 {
    return _evas_alloc_error;

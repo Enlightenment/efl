@@ -33,13 +33,13 @@
 
 static int initcount = 0;
 
-int
+EAPI int
 evas_init(void)
 {
    return ++initcount;
 }
 
-int
+EAPI int
 evas_shutdown(void)
 {
    if (--initcount == 0)
@@ -74,7 +74,7 @@ evas_shutdown(void)
  * @return  A new uninitialised Evas canvas on success.  Otherwise, @c NULL.
  * @ingroup Evas_Canvas
  */
-Evas *
+EAPI Evas *
 evas_new(void)
 {
    Evas *e;
@@ -98,7 +98,7 @@ evas_new(void)
  * @param   e The given evas.
  * @ingroup Evas_Canvas
  */
-void
+EAPI void
 evas_free(Evas *e)
 {
    Evas_Object_List *l;
@@ -213,7 +213,7 @@ evas_free(Evas *e)
  * @param   render_method The numeric engine value to use.
  * @ingroup Evas_Output_Method
  */
-void
+EAPI void
 evas_output_method_set(Evas *e, int render_method)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -291,7 +291,7 @@ evas_output_method_set(Evas *e, int render_method)
  *          returned if there is an error.
  * @ingroup Evas_Output_Method
  */
-int
+EAPI int
 evas_output_method_get(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -314,7 +314,7 @@ evas_output_method_get(Evas *e)
  *          an engine has not yet been assigned.
  * @ingroup Evas_Output_Method
  */
-Evas_Engine_Info *
+EAPI Evas_Engine_Info *
 evas_engine_info_get(Evas *e)
 {
    Evas_Engine_Info *info;
@@ -351,7 +351,7 @@ evas_engine_info_get(Evas *e)
  * @param   info The pointer to the Engine Info to use
  * @ingroup Evas_Output_Method
  */
-void
+EAPI void
 evas_engine_info_set(Evas *e, Evas_Engine_Info *info)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -384,7 +384,7 @@ evas_engine_info_set(Evas *e, Evas_Engine_Info *info)
  * @param   h The height in output units, usually pixels.
  * @ingroup Evas_Output_Size
  */
-void
+EAPI void
 evas_output_size_set(Evas *e, int w, int h)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -415,7 +415,7 @@ evas_output_size_set(Evas *e, int w, int h)
  * @param   h The pointer to an integer to store the height in.
  * @ingroup Evas_Output_Size
  */
-void
+EAPI void
 evas_output_size_get(Evas *e, int *w, int *h)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -446,7 +446,7 @@ evas_output_size_get(Evas *e, int *w, int *h)
  * @param   h The height of the viewport.  Must be greater than 0.
  * @ingroup Evas_Output_Size
  */
-void
+EAPI void
 evas_output_viewport_set(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -489,7 +489,7 @@ evas_output_viewport_set(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas
  * evas_output_viewport_get(evas, &x, &y, &w, &h);
  * @endcode
  */
-void
+EAPI void
 evas_output_viewport_get(Evas *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -535,7 +535,7 @@ evas_output_viewport_get(Evas *e, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, E
  * canvas_x = evas_coord_screen_x_to_world(evas, screen_x);
  * @endcode
  */
-Evas_Coord
+EAPI Evas_Coord
 evas_coord_screen_x_to_world(Evas *e, int x)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -567,7 +567,7 @@ evas_coord_screen_x_to_world(Evas *e, int x)
  * canvas_y = evas_coord_screen_y_to_world(evas, screen_y);
  * @endcode
  */
-Evas_Coord
+EAPI Evas_Coord
 evas_coord_screen_y_to_world(Evas *e, int y)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -599,7 +599,7 @@ evas_coord_screen_y_to_world(Evas *e, int y)
  * screen_x = evas_coord_world_x_to_screen(evas, canvas_x);
  * @endcode
  */
-int
+EAPI int
 evas_coord_world_x_to_screen(Evas *e, Evas_Coord x)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -631,7 +631,7 @@ evas_coord_world_x_to_screen(Evas *e, Evas_Coord x)
  * screen_y = evas_coord_world_y_to_screen(evas, canvas_y);
  * @endcode
  */
-int
+EAPI int
 evas_coord_world_y_to_screen(Evas *e, Evas_Coord y)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -678,7 +678,7 @@ evas_coord_world_y_to_screen(Evas *e, Evas_Coord y)
  * evas_output_method_set(evas, engine_id);
  * @endcode
  */
-int
+EAPI int
 evas_render_method_lookup(const char *name)
 {
    if (!name) return RENDER_METHOD_INVALID;
@@ -751,7 +751,7 @@ evas_render_method_lookup(const char *name)
  * evas_render_method_list_free(engine_list);
  * @endcode
  */
-Evas_List *
+EAPI Evas_List *
 evas_render_method_list(void)
 {
    Evas_List *methods = NULL;
@@ -821,7 +821,7 @@ evas_render_method_list(void)
  * evas_render_method_list_free(engine_list);
  * @endcode
  */
-void
+EAPI void
 evas_render_method_list_free(Evas_List *list)
 {
    while (list)
@@ -859,7 +859,7 @@ evas_render_method_list_free(Evas_List *list)
  * printf("Mouse is at screen position %i, %i\n", mouse_x, mouse_y);
  * @endcode
  */
-void
+EAPI void
 evas_pointer_output_xy_get(Evas *e, int *x, int *y)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -893,7 +893,7 @@ evas_pointer_output_xy_get(Evas *e, int *x, int *y)
  * printf("Mouse is at canvas position %f, %f\n", mouse_x, mouse_y);
  * @endcode
  */
-void
+EAPI void
 evas_pointer_canvas_xy_get(Evas *e, Evas_Coord *x, Evas_Coord *y)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -941,7 +941,7 @@ evas_pointer_canvas_xy_get(Evas *e, Evas_Coord *x, Evas_Coord *y)
  *   }
  * @endcode
  */
-int
+EAPI int
 evas_pointer_button_down_mask_get(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -977,7 +977,7 @@ evas_pointer_button_down_mask_get(Evas *e)
  * else printf("Mouse is out!\n");
  * @endcode
  */
-Evas_Bool
+EAPI Evas_Bool
 evas_pointer_inside_get(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -992,7 +992,7 @@ evas_pointer_inside_get(Evas *e)
  * @param e The canvas to attach the pointer to
  * @param data The pointer to attach
  */
-void
+EAPI void
 evas_data_attach_set(Evas *e, void *data)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -1007,7 +1007,7 @@ evas_data_attach_set(Evas *e, void *data)
  * @param e The canvas to attach the pointer to
  * @return The pointer attached
  */
-void *
+EAPI void *
 evas_data_attach_get(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);

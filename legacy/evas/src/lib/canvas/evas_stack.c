@@ -46,7 +46,7 @@ evas_object_below_get_internal(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_raise(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -105,7 +105,7 @@ evas_object_raise(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_lower(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -164,7 +164,7 @@ evas_object_lower(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -241,7 +241,7 @@ evas_object_stack_above(Evas_Object *obj, Evas_Object *above)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -318,7 +318,7 @@ evas_object_stack_below(Evas_Object *obj, Evas_Object *below)
  * FIXME: To be fixed.
  *
  */
-Evas_Object *
+EAPI Evas_Object *
 evas_object_above_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -335,7 +335,7 @@ evas_object_above_get(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-Evas_Object *
+EAPI Evas_Object *
 evas_object_below_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -352,7 +352,7 @@ evas_object_below_get(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-Evas_Object *
+EAPI Evas_Object *
 evas_object_bottom_get(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -369,7 +369,7 @@ evas_object_bottom_get(Evas *e)
  * FIXME: To be fixed.
  *
  */
-Evas_Object *
+EAPI Evas_Object *
 evas_object_top_get(Evas *e)
 {
    Evas_Object *obj2 = NULL;

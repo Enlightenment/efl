@@ -73,7 +73,7 @@ static Evas_Object_Func object_func =
  * FIXME: To be fixed.
  *
  */
-Evas_Object *
+EAPI Evas_Object *
 evas_object_text_add(Evas *e)
 {
    Evas_Object *obj;
@@ -93,7 +93,7 @@ evas_object_text_add(Evas *e)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_text_font_source_set(Evas_Object *obj, const char *font_source)
 {
    Evas_Object_Text *o;
@@ -119,7 +119,7 @@ evas_object_text_font_source_set(Evas_Object *obj, const char *font_source)
  * FIXME: To be fixed.
  *
  */
-const char *
+EAPI const char *
 evas_object_text_font_source_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
@@ -140,7 +140,7 @@ evas_object_text_font_source_get(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size size)
 {
    Evas_Object_Text *o;
@@ -249,7 +249,7 @@ evas_object_text_font_set(Evas_Object *obj, const char *font, Evas_Font_Size siz
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_text_font_get(Evas_Object *obj, char **font, Evas_Font_Size *size)
 {
    Evas_Object_Text *o;
@@ -274,7 +274,7 @@ evas_object_text_font_get(Evas_Object *obj, char **font, Evas_Font_Size *size)
  * @param obj  Evas text object.
  * @param text Text to display.
  */
-void
+EAPI void
 evas_object_text_text_set(Evas_Object *obj, const char *text)
 {
    Evas_Object_Text *o;
@@ -340,7 +340,7 @@ evas_object_text_text_set(Evas_Object *obj, const char *text)
  * @param  obj The given evas text object.
  * @return The text currently being displayed.  Do not free it.
  */
-const char *
+EAPI const char *
 evas_object_text_text_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
@@ -361,7 +361,7 @@ evas_object_text_text_get(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-Evas_Coord
+EAPI Evas_Coord
 evas_object_text_ascent_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
@@ -382,7 +382,7 @@ evas_object_text_ascent_get(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-Evas_Coord
+EAPI Evas_Coord
 evas_object_text_descent_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
@@ -403,7 +403,7 @@ evas_object_text_descent_get(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-Evas_Coord
+EAPI Evas_Coord
 evas_object_text_max_ascent_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
@@ -424,7 +424,7 @@ evas_object_text_max_ascent_get(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-Evas_Coord
+EAPI Evas_Coord
 evas_object_text_max_descent_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
@@ -445,7 +445,7 @@ evas_object_text_max_descent_get(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-Evas_Coord
+EAPI Evas_Coord
 evas_object_text_inset_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
@@ -468,7 +468,7 @@ evas_object_text_inset_get(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-Evas_Coord
+EAPI Evas_Coord
 evas_object_text_horiz_advance_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
@@ -491,7 +491,7 @@ evas_object_text_horiz_advance_get(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-Evas_Coord
+EAPI Evas_Coord
 evas_object_text_vert_advance_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
@@ -514,7 +514,7 @@ evas_object_text_vert_advance_get(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-int
+EAPI int
 evas_object_text_char_pos_get(Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Evas_Object_Text *o;
@@ -567,7 +567,7 @@ evas_object_text_char_pos_get(Evas_Object *obj, int pos, Evas_Coord *cx, Evas_Co
  * FIXME: To be fixed.
  *
  */
-int
+EAPI int
 evas_object_text_char_coords_get(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
    Evas_Object_Text *o;
@@ -623,7 +623,7 @@ evas_object_text_char_coords_get(Evas_Object *obj, Evas_Coord x, Evas_Coord y, E
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_text_style_set(Evas_Object *obj, Evas_Text_Style_Type style)
 {
    Evas_Object_Text *o;
@@ -647,7 +647,7 @@ evas_object_text_style_set(Evas_Object *obj, Evas_Text_Style_Type style)
  * FIXME: To be fixed.
  *
  */
-Evas_Text_Style_Type
+EAPI Evas_Text_Style_Type
 evas_object_text_style_get(Evas_Object *obj)
 {
    Evas_Object_Text *o;
@@ -668,7 +668,7 @@ evas_object_text_style_get(Evas_Object *obj)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_text_shadow_color_set(Evas_Object *obj, int r, int g, int b, int a)
 {
    Evas_Object_Text *o;
@@ -696,7 +696,7 @@ evas_object_text_shadow_color_set(Evas_Object *obj, int r, int g, int b, int a)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_text_shadow_color_get(Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
    Evas_Object_Text *o;
@@ -720,7 +720,7 @@ evas_object_text_shadow_color_get(Evas_Object *obj, int *r, int *g, int *b, int 
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_text_glow_color_set(Evas_Object *obj, int r, int g, int b, int a)
 {
    Evas_Object_Text *o;
@@ -748,7 +748,7 @@ evas_object_text_glow_color_set(Evas_Object *obj, int r, int g, int b, int a)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_text_glow_color_get(Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
    Evas_Object_Text *o;
@@ -772,7 +772,7 @@ evas_object_text_glow_color_get(Evas_Object *obj, int *r, int *g, int *b, int *a
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_text_glow2_color_set(Evas_Object *obj, int r, int g, int b, int a)
 {
    Evas_Object_Text *o;
@@ -800,7 +800,7 @@ evas_object_text_glow2_color_set(Evas_Object *obj, int r, int g, int b, int a)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_text_glow2_color_get(Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
    Evas_Object_Text *o;
@@ -824,7 +824,7 @@ evas_object_text_glow2_color_get(Evas_Object *obj, int *r, int *g, int *b, int *
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_text_outline_color_set(Evas_Object *obj, int r, int g, int b, int a)
 {
    Evas_Object_Text *o;
@@ -852,7 +852,7 @@ evas_object_text_outline_color_set(Evas_Object *obj, int r, int g, int b, int a)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_text_outline_color_get(Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
    Evas_Object_Text *o;
@@ -876,7 +876,7 @@ evas_object_text_outline_color_get(Evas_Object *obj, int *r, int *g, int *b, int
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_text_style_pad_get(Evas_Object *obj, int *l, int *r, int *t, int *b)
 {
    int sl = 0, sr = 0, st = 0, sb = 0;
@@ -909,7 +909,7 @@ evas_object_text_style_pad_get(Evas_Object *obj, int *l, int *r, int *t, int *b)
  * @param   e The given evas.
  * @ingroup Evas_Font_Path_Group
  */
-void
+EAPI void
 evas_font_path_clear(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -928,7 +928,7 @@ evas_font_path_clear(Evas *e)
  * @param   path The new font path.
  * @ingroup Evas_Font_Path_Group
  */
-void
+EAPI void
 evas_font_path_append(Evas *e, const char *path)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -944,7 +944,7 @@ evas_font_path_append(Evas *e, const char *path)
  * @param   path The new font path.
  * @ingroup Evas_Font_Path_Group
  */
-void
+EAPI void
 evas_font_path_prepend(Evas *e, const char *path)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -960,7 +960,7 @@ evas_font_path_prepend(Evas *e, const char *path)
  * @return  The list of font paths used.
  * @ingroup Evas_Font_Path_Group
  */
-const Evas_List *
+EAPI const Evas_List *
 evas_font_path_list(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -979,7 +979,7 @@ evas_font_path_list(Evas *e)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_font_cache_flush(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -995,7 +995,7 @@ evas_font_cache_flush(Evas *e)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_font_cache_set(Evas *e, int size)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -1012,7 +1012,7 @@ evas_font_cache_set(Evas *e, int size)
  * FIXME: To be fixed.
  *
  */
-int
+EAPI int
 evas_font_cache_get(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -1028,7 +1028,7 @@ evas_font_cache_get(Evas *e)
  * FIXME: To be fixed.
  *
  */
-int
+EAPI int
 evas_string_char_next_get(const char *str, int pos, int *decoded)
 {
    int p, d;
@@ -1048,7 +1048,7 @@ evas_string_char_next_get(const char *str, int pos, int *decoded)
  * FIXME: To be fixed.
  *
  */
-int
+EAPI int
 evas_string_char_prev_get(const char *str, int pos, int *decoded)
 {
    int p, d;

@@ -13,7 +13,7 @@
  * @param   name The given name.
  * @ingroup Evas_Object_Name_Group
  */
-void
+EAPI void
 evas_object_name_set(Evas_Object *obj, const char *name)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -39,7 +39,7 @@ evas_object_name_set(Evas_Object *obj, const char *name)
  *          to the object.
  * @ingroup Evas_Object_Name_Group
  */
-const char *
+EAPI const char *
 evas_object_name_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -56,7 +56,7 @@ evas_object_name_get(Evas_Object *obj)
  *          @c NULL.
  * @ingroup Evas_Object_Name_Group
  */
-Evas_Object *
+EAPI Evas_Object *
 evas_object_name_find(Evas *e, const char *name)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);

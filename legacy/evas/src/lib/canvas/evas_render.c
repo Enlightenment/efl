@@ -10,7 +10,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates);
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_damage_rectangle_add(Evas *e, int x, int y, int w, int h)
 {
    Evas_Rectangle *r;
@@ -31,7 +31,7 @@ evas_damage_rectangle_add(Evas *e, int x, int y, int w, int h)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_obscured_rectangle_add(Evas *e, int x, int y, int w, int h)
 {
    Evas_Rectangle *r;
@@ -51,7 +51,7 @@ evas_obscured_rectangle_add(Evas *e, int x, int y, int w, int h)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_obscured_clear(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -406,7 +406,7 @@ evas_render_updates_internal(Evas *e, unsigned char make_updates)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_render_updates_free(Evas_List *updates)
 {
    while (updates)
@@ -422,7 +422,7 @@ evas_render_updates_free(Evas_List *updates)
  * FIXME: To be fixed.
  *
  */
-Evas_List *
+EAPI Evas_List *
 evas_render_updates(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -440,7 +440,7 @@ evas_render_updates(Evas *e)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_render(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);

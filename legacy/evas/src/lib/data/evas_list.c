@@ -59,7 +59,7 @@ static Evas_Mempool _evas_list_accounting_mempool =
  *          pointer is returned.
  * @ingroup Evas_List_Data_Group
  */
-Evas_List *
+EAPI Evas_List *
 evas_list_append(Evas_List *list, const void *data)
 {
    Evas_List *l, *new_l;
@@ -122,7 +122,7 @@ evas_list_append(Evas_List *list, const void *data)
  *          pointer is returned.
  * @ingroup Evas_List_Data_Group
  */
-Evas_List *
+EAPI Evas_List *
 evas_list_prepend(Evas_List *list, const void *data)
 {
    Evas_List *new_l;
@@ -194,7 +194,7 @@ evas_list_prepend(Evas_List *list, const void *data)
  *          is returned.
  * @ingroup Evas_List_Data_Group
  */
-Evas_List *
+EAPI Evas_List *
 evas_list_append_relative(Evas_List *list, const void *data, const void *relative)
 {
    Evas_List *l;
@@ -277,7 +277,7 @@ evas_list_append_relative(Evas_List *list, const void *data, const void *relativ
  *          is returned.
  * @ingroup Evas_List_Data_Group
  */
-Evas_List *
+EAPI Evas_List *
 evas_list_prepend_relative(Evas_List *list, const void *data, const void *relative)
 {
    Evas_List *l;
@@ -328,7 +328,7 @@ evas_list_prepend_relative(Evas_List *list, const void *data, const void *relati
  *          passed to this functions.
  * @ingroup Evas_List_Remove_Group
  */
-Evas_List *
+EAPI Evas_List *
 evas_list_remove(Evas_List *list, const void *data)
 {
    Evas_List *l;
@@ -369,7 +369,7 @@ evas_list_remove(Evas_List *list, const void *data)
  * @endcode
  * @ingroup Evas_List_Remove_Group
  */
-Evas_List *
+EAPI Evas_List *
 evas_list_remove_list(Evas_List *list, Evas_List *remove_list)
 {
    Evas_List *return_l;
@@ -421,7 +421,7 @@ evas_list_remove_list(Evas_List *list, Evas_List *remove_list)
  * @endcode
  * @ingroup Evas_List_Find_Group
  */
-void *
+EAPI void *
 evas_list_find(Evas_List *list, const void *data)
 {
    Evas_List *l;
@@ -458,7 +458,7 @@ evas_list_find(Evas_List *list, const void *data)
  * @endcode
  * @ingroup Evas_List_Find_Group
  */
-Evas_List *
+EAPI Evas_List *
 evas_list_find_list(Evas_List *list, const void *data)
 {
    Evas_List *l;
@@ -485,7 +485,7 @@ evas_list_find_list(Evas_List *list, const void *data)
  * @endcode
  * @ingroup Evas_List_Remove_Group
  */
-Evas_List *
+EAPI Evas_List *
 evas_list_free(Evas_List *list)
 {
    Evas_List *l, *free_l;
@@ -532,7 +532,7 @@ evas_list_free(Evas_List *list)
  * @endcode
  * @ingroup Evas_List_Traverse_Group
  */
-Evas_List *
+EAPI Evas_List *
 evas_list_last(Evas_List *list)
 {
    if (!list) return NULL;
@@ -560,7 +560,7 @@ evas_list_last(Evas_List *list)
  * @endcode
  * @ingroup Evas_List_Traverse_Group
  */
-Evas_List *
+EAPI Evas_List *
 evas_list_next(Evas_List *list)
 {
    if (!list) return NULL;
@@ -589,7 +589,7 @@ evas_list_next(Evas_List *list)
  * @endcode
  * @ingroup Evas_List_Traverse_Group
  */
-Evas_List *
+EAPI Evas_List *
 evas_list_prev(Evas_List *list)
 {
    if (!list) return NULL;
@@ -623,7 +623,7 @@ evas_list_prev(Evas_List *list)
  * @endcode
  * @ingroup Evas_List_General_Group
  */
-void *
+EAPI void *
 evas_list_data(Evas_List *list)
 {
    if (!list) return NULL;
@@ -649,7 +649,7 @@ evas_list_data(Evas_List *list)
  * @endcode
  * @ingroup Evas_List_General_Group
  */
-int
+EAPI int
 evas_list_count(Evas_List *list)
 {
    if (!list) return 0;
@@ -678,7 +678,7 @@ evas_list_count(Evas_List *list)
  * @endcode
  * @ingroup Evas_List_Find_Group
  */
-void *
+EAPI void *
 evas_list_nth(Evas_List *list, int n)
 {
    Evas_List *l;
@@ -709,7 +709,7 @@ evas_list_nth(Evas_List *list, int n)
  * @endcode
  * @ingroup Evas_List_Find_Group
  */
-Evas_List *
+EAPI Evas_List *
 evas_list_nth_list(Evas_List *list, int n)
 {
    int i;
@@ -765,7 +765,7 @@ evas_list_nth_list(Evas_List *list, int n)
  * @endcode
  * @ingroup Evas_List_Ordering_Group
  */
-Evas_List *
+EAPI Evas_List *
 evas_list_reverse(Evas_List *list)
 {
    Evas_List *l1, *l2;
@@ -875,7 +875,7 @@ evas_list_combine(Evas_List *l, Evas_List *ll, int (*func)(void *, void*))
  * @endcode
  * @ingroup Evas_List_Ordering_Group
  */
-Evas_List *
+EAPI Evas_List *
 evas_list_sort(Evas_List *list, int size, int (*func)(void *, void *))
 {
    Evas_List *l = NULL, *ll = NULL, *llast;
@@ -941,7 +941,7 @@ evas_list_sort(Evas_List *list, int size, int (*func)(void *, void *))
  * @endcode
  * @ingroup Evas_List_General_Group
  */
-int
+EAPI int
 evas_list_alloc_error(void)
 {
    return _evas_list_alloc_error;

@@ -368,7 +368,7 @@ evas_object_event_callback_call(Evas_Object *obj, Evas_Callback_Type type, void 
  * @endcode
  * @ingroup Evas_Object_Callback_Group
  */
-void
+EAPI void
 evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info), const void *data)
 {
    /* MEM OK */
@@ -475,7 +475,7 @@ evas_object_event_callback_add(Evas_Object *obj, Evas_Callback_Type type, void (
  * @endcode
  * @ingroup Evas_Object_Callback_Group
  */
-void *
+EAPI void *
 evas_object_event_callback_del(Evas_Object *obj, Evas_Callback_Type type, void (*func) (void *data, Evas *e, Evas_Object *obj, void *event_info))
 {
    /* MEM OK */

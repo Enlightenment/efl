@@ -152,7 +152,7 @@ evas_object_clippers_was_visible(Evas_Object *obj)
  *
  * @ingroup Evas_Clip_Group
  */
-void
+EAPI void
 evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -232,7 +232,7 @@ evas_object_clip_set(Evas_Object *obj, Evas_Object *clip)
  *
  * @ingroup Evas_Clip_Group
  */
-Evas_Object *
+EAPI Evas_Object *
 evas_object_clip_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -268,7 +268,7 @@ evas_object_clip_get(Evas_Object *obj)
  *
  * @ingroup Evas_Clip_Group
  */
-void
+EAPI void
 evas_object_clip_unset(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -343,7 +343,7 @@ evas_object_clip_unset(Evas_Object *obj)
  * @endcode
  * @ingroup Evas_Clip_Group
  */
-const Evas_List *
+EAPI const Evas_List *
 evas_object_clipees_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);

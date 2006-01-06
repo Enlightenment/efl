@@ -401,7 +401,7 @@ evas_object_was_opaque(Evas_Object *obj)
  * @param   obj The given evas object.
  * @ingroup Evas_Object_Group
  */
-void
+EAPI void
 evas_object_del(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -437,7 +437,7 @@ evas_object_del(Evas_Object *obj)
  * @param   y   Y position to move the object to, in canvas units.
  * @ingroup Evas_Object_Group
  */
-void
+EAPI void
 evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
 {
    int is, was = 0, pass = 0;
@@ -500,7 +500,7 @@ evas_object_move(Evas_Object *obj, Evas_Coord x, Evas_Coord y)
  * @param   h   The new height of the evas object.
  * @ingroup Evas_Object_Group
  */
-void
+EAPI void
 evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
 {
    int is, was = 0, pass = 0;
@@ -575,7 +575,7 @@ evas_object_resize(Evas_Object *obj, Evas_Coord w, Evas_Coord h)
  *              object.
  * @ingroup Evas_Object_Group
  */
-void
+EAPI void
 evas_object_geometry_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -604,7 +604,7 @@ evas_object_geometry_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Co
  * @param   obj The given evas object.
  * @ingroup Evas_Object_Visibility_Group
  */
-void
+EAPI void
 evas_object_show(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -651,7 +651,7 @@ evas_object_show(Evas_Object *obj)
  * @param   obj The given evas object.
  * @ingroup Evas_Object_Visibility_Group
  */
-void
+EAPI void
 evas_object_hide(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -739,7 +739,7 @@ evas_object_hide(Evas_Object *obj)
  * @return  @c 1 if the object is visible.  @c 0 otherwise.
  * @ingroup Evas_Object_Visibility_Group
  */
-Evas_Bool
+EAPI Evas_Bool
 evas_object_visible_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -758,7 +758,7 @@ evas_object_visible_get(Evas_Object *obj)
  * @param a   The alpha component of the given colour.
  * @ingroup Evas_Object_Group
  */
-void
+EAPI void
 evas_object_color_set(Evas_Object *obj, int r, int g, int b, int a)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -803,7 +803,7 @@ evas_object_color_set(Evas_Object *obj, int r, int g, int b, int a)
  *              the colour.
  * @ingroup Evas_Object_Group
  */
-void
+EAPI void
 evas_object_color_get(Evas_Object *obj, int *r, int *g, int *b, int *a)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -827,7 +827,7 @@ evas_object_color_get(Evas_Object *obj, int *r, int *g, int *b, int *a)
  * @param   anti_alias. 1 if the object is to be anti_aliased, 0 otherwise.
  * @ingroup Evas_Object_Group
  */
-void
+EAPI void
 evas_object_anti_alias_set(Evas_Object *obj, Evas_Bool anti_alias)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -847,7 +847,7 @@ evas_object_anti_alias_set(Evas_Object *obj, Evas_Bool anti_alias)
  * @return  @c 1 if the object is to be anti_aliased.  @c 0 otherwise.
  * @ingroup Evas_Object_Group
  */
-Evas_Bool
+EAPI Evas_Bool
 evas_object_anti_alias_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -863,7 +863,7 @@ evas_object_anti_alias_get(Evas_Object *obj)
  * @param   color_space, one of EVAS_COLOR_SPACE_ARGB or EVAS_COLOR_SPACE_AHSV.
  * @ingroup Evas_Object_Group
  */
-void
+EAPI void
 evas_object_color_interpolation_set(Evas_Object *obj, int color_space)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -883,7 +883,7 @@ evas_object_color_interpolation_set(Evas_Object *obj, int color_space)
  * @return  @c EVAS_COLOR_SPACE_ARGB or EVAS_COLOR_SPACE_AHSV.
  * @ingroup Evas_Object_Group
  */
-int
+EAPI int
 evas_object_color_interpolation_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -899,7 +899,7 @@ evas_object_color_interpolation_get(Evas_Object *obj)
  * @return  The evas that the object is on.
  * @ingroup Evas_Object_Group
  */
-Evas *
+EAPI Evas *
 evas_object_evas_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);
@@ -922,7 +922,7 @@ evas_object_evas_get(Evas_Object *obj)
  * FIXME: To be fixed.
  * @ingroup Evas_Object_Finders
  */
-Evas_Object *
+EAPI Evas_Object *
 evas_object_top_at_xy_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
 {
    Evas_Object_List *l;
@@ -962,7 +962,7 @@ evas_object_top_at_xy_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include
  * FIXME: To be fixed.
  * @ingroup Evas_Object_Finders
  */
-Evas_Object *
+EAPI Evas_Object *
 evas_object_top_at_pointer_get(Evas *e)
 {
    return evas_object_top_at_xy_get(e, e->pointer.canvas_x, e->pointer.canvas_y, 0, 0);
@@ -974,7 +974,7 @@ evas_object_top_at_pointer_get(Evas *e)
  * FIXME: To be fixed.
  * @ingroup Evas_Object_Finders
  */
-Evas_Object *
+EAPI Evas_Object *
 evas_object_top_in_rectangle_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
 {
    Evas_Object_List *l;
@@ -1018,7 +1018,7 @@ evas_object_top_in_rectangle_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord
  * FIXME: To be fixed.
  * @ingroup Evas_Object_Finders
  */
-Evas_List *
+EAPI Evas_List *
 evas_objects_at_xy_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
 {
    Evas_List *in = NULL;
@@ -1059,7 +1059,7 @@ evas_objects_at_xy_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pa
  * FIXME: To be fixed.
  * @ingroup Evas_Object_Finders
  */
-Evas_List *
+EAPI Evas_List *
 evas_objects_in_rectangle_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h, Evas_Bool include_pass_events_objects, Evas_Bool include_hidden_objects)
 {
    Evas_List *in = NULL;
@@ -1104,7 +1104,7 @@ evas_objects_in_rectangle_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w,
  * @return  The name.
  * @ingroup Evas_Object_Group
  */
-const char *
+EAPI const char *
 evas_object_type_get(Evas_Object *obj)
 {
    MAGIC_CHECK(obj, Evas_Object, MAGIC_OBJ);

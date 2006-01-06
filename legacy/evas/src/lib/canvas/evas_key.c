@@ -40,7 +40,7 @@ evas_key_lock_number(Evas_Lock *l, const char *keyname)
  * FIXME: To be fixed.
  *
  */
-Evas_Modifier *
+EAPI Evas_Modifier *
 evas_key_modifier_get(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -55,7 +55,7 @@ evas_key_modifier_get(Evas *e)
  * FIXME: To be fixed.
  *
  */
-Evas_Lock *
+EAPI Evas_Lock *
 evas_key_lock_get(Evas *e)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -70,7 +70,7 @@ evas_key_lock_get(Evas *e)
  * FIXME: To be fixed.
  *
  */
-Evas_Bool
+EAPI Evas_Bool
 evas_key_modifier_is_set(Evas_Modifier *m, const char *keyname)
 {
    Evas_Modifier_Mask num;
@@ -92,7 +92,7 @@ evas_key_modifier_is_set(Evas_Modifier *m, const char *keyname)
  * FIXME: To be fixed.
  *
  */
-Evas_Bool
+EAPI Evas_Bool
 evas_key_lock_is_set(Evas_Lock *l, const char *keyname)
 {
    Evas_Modifier_Mask num;
@@ -114,7 +114,7 @@ evas_key_lock_is_set(Evas_Lock *l, const char *keyname)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_key_modifier_add(Evas *e, const char *keyname)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -135,7 +135,7 @@ evas_key_modifier_add(Evas *e, const char *keyname)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_key_modifier_del(Evas *e, const char *keyname)
 {
    int i;
@@ -166,7 +166,7 @@ evas_key_modifier_del(Evas *e, const char *keyname)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_key_lock_add(Evas *e, const char *keyname)
 {
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
@@ -187,7 +187,7 @@ evas_key_lock_add(Evas *e, const char *keyname)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_key_lock_del(Evas *e, const char *keyname)
 {
    int i;
@@ -219,7 +219,7 @@ evas_key_lock_del(Evas *e, const char *keyname)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_key_modifier_on(Evas *e, const char *keyname)
 {
    Evas_Modifier_Mask num;
@@ -241,7 +241,7 @@ evas_key_modifier_on(Evas *e, const char *keyname)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_key_modifier_off(Evas *e, const char *keyname)
 {
    Evas_Modifier_Mask num;
@@ -263,7 +263,7 @@ evas_key_modifier_off(Evas *e, const char *keyname)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_key_lock_on(Evas *e, const char *keyname)
 {
    Evas_Modifier_Mask num;
@@ -285,7 +285,7 @@ evas_key_lock_on(Evas *e, const char *keyname)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_key_lock_off(Evas *e, const char *keyname)
 {
    Evas_Modifier_Mask num;
@@ -309,7 +309,7 @@ evas_key_lock_off(Evas *e, const char *keyname)
  * FIXME: To be fixed.
  *
  */
-Evas_Modifier_Mask
+EAPI Evas_Modifier_Mask
 evas_key_modifier_mask_get(Evas *e, const char *keyname)
 {
    Evas_Modifier_Mask num;

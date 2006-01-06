@@ -72,7 +72,7 @@ static Evas_Object_Func object_func =
  * @return  The new evas line object.
  * @ingroup Evas_Line_Group
  */
-Evas_Object *
+EAPI Evas_Object *
 evas_object_line_add(Evas *e)
 {
    Evas_Object *obj;
@@ -95,7 +95,7 @@ evas_object_line_add(Evas *e)
  * @param   y2  The Y coordinate of the second point.
  * @ingroup Evas_Line_Group
  */
-void
+EAPI void
 evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coord x2, Evas_Coord y2)
 {
    Evas_Object_Line *o;
@@ -182,7 +182,7 @@ evas_object_line_xy_set(Evas_Object *obj, Evas_Coord x1, Evas_Coord y1, Evas_Coo
  *            second end point.
  * @ingroup Evas_Line_Group
  */
-void
+EAPI void
 evas_object_line_xy_get(Evas_Object *obj, Evas_Coord *x1, Evas_Coord *y1, Evas_Coord *x2, Evas_Coord *y2)
 {
    Evas_Object_Line *o;

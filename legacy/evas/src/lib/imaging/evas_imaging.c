@@ -5,7 +5,7 @@
 #include <Eet.h>
 #endif
 
-Evas_Imaging_Image *
+EAPI Evas_Imaging_Image *
 evas_imaging_image_load(const char *file, const char *key)
 {
    Evas_Imaging_Image *im;
@@ -27,7 +27,7 @@ evas_imaging_image_load(const char *file, const char *key)
    return im;
 }
 
-void
+EAPI void
 evas_imaging_image_free(Evas_Imaging_Image *im)
 {
    if (!im) return;
@@ -35,7 +35,7 @@ evas_imaging_image_free(Evas_Imaging_Image *im)
    free(im);
 }
 
-void
+EAPI void
 evas_imaging_image_size_get(Evas_Imaging_Image *im, int *w, int *h)
 {
    if (!im) return;
@@ -43,7 +43,7 @@ evas_imaging_image_size_get(Evas_Imaging_Image *im, int *w, int *h)
    if (h) *h = im->image->image->h;
 }
 
-Evas_Bool
+EAPI Evas_Bool
 evas_imaging_image_alpha_get(Evas_Imaging_Image *im)
 {
    if (!im) return 0;
@@ -51,19 +51,19 @@ evas_imaging_image_alpha_get(Evas_Imaging_Image *im)
    return 0;
 }
 
-void
+EAPI void
 evas_imaging_image_cache_set(int bytes)
 {
    evas_common_image_set_cache(bytes);
 }
 
-int
+EAPI int
 evas_imaging_image_cache_get(void)
 {
    return evas_common_image_get_cache();
 }
 
-Evas_Imaging_Font *
+EAPI Evas_Imaging_Font *
 evas_imaging_font_load(const char *file, const char *key, int size)
 {
    Evas_Imaging_Font *fn;
@@ -115,80 +115,80 @@ evas_imaging_font_load(const char *file, const char *key, int size)
    return fn;
 }
 
-void
+EAPI void
 evas_imaging_font_free(Evas_Imaging_Font *fn)
 {
    evas_common_font_free(fn->font);
    free(fn);
 }
 
-int
+EAPI int
 evas_imaging_font_ascent_get(Evas_Imaging_Font *fn)
 {
    return evas_common_font_ascent_get(fn->font);
 }
 
-int
+EAPI int
 evas_imaging_font_descent_get(Evas_Imaging_Font *fn)
 {
    return evas_common_font_descent_get(fn->font);
 }
 
-int
+EAPI int
 evas_imaging_font_max_ascent_get(Evas_Imaging_Font *fn)
 {
    return evas_common_font_max_ascent_get(fn->font);
 }
 
-int
+EAPI int
 evas_imaging_font_max_descent_get(Evas_Imaging_Font *fn)
 {
    return evas_common_font_max_descent_get(fn->font);
 }
 
-int
+EAPI int
 evas_imaging_font_line_advance_get(Evas_Imaging_Font *fn)
 {
    return evas_common_font_get_line_advance(fn->font);
 }
 
-void
+EAPI void
 evas_imaging_font_string_advance_get(Evas_Imaging_Font *fn, char *str, int *x, int *y)
 {
    evas_common_font_query_advance(fn->font, str, x, y);
 }
 
-void
+EAPI void
 evas_imaging_font_string_size_query(Evas_Imaging_Font *fn, char *str, int *w, int *h)
 {
    evas_common_font_query_size(fn->font, str, w, h);
 }
 
-int
+EAPI int
 evas_imaging_font_string_inset_get(Evas_Imaging_Font *fn, char *str)
 {
    return evas_common_font_query_inset(fn->font, str);
 }
 
-int
+EAPI int
 evas_imaging_font_string_char_coords_get(Evas_Imaging_Font *fn, char *str, int pos, int *cx, int *cy, int *cw, int *ch)
 {
    return evas_common_font_query_char_coords(fn->font, str, pos, cx, cy, cw, ch);
 }
 
-int
+EAPI int
 evas_imaging_font_string_char_at_coords_get(Evas_Imaging_Font *fn, char *str, int x, int y, int *cx, int *cy, int *cw, int *ch)
 {
    return evas_common_font_query_text_at_pos(fn->font, str, x, y, cx, cy, cw, ch);
 }
 
-void
+EAPI void
 evas_imaging_font_cache_set(int bytes)
 {
    evas_common_font_cache_set(bytes);
 }
 
-int
+EAPI int
 evas_imaging_font_cache_get(void)
 {
    return evas_common_font_cache_get();

@@ -81,7 +81,7 @@ _evas_hash_gen(const char *key)
  *          if memory could not be allocated for a new table.
  * @ingroup Evas_Hash_Data
  */
-Evas_Hash *
+EAPI Evas_Hash *
 evas_hash_add(Evas_Hash *hash, const char *key, const void *data)
 {
    int hash_num;
@@ -146,7 +146,7 @@ evas_hash_add(Evas_Hash *hash, const char *key, const void *data)
  *          if memory could not be allocated for a new table.
  * @ingroup Evas_Hash_Data
  */
-Evas_Hash *
+EAPI Evas_Hash *
 evas_hash_direct_add(Evas_Hash *hash, const char *key, const void *data)
 {
    int hash_num;
@@ -202,7 +202,7 @@ evas_hash_direct_add(Evas_Hash *hash, const char *key, const void *data)
  *          hash table will be freed and @c NULL will be returned.
  * @ingroup Evas_Hash_Data
  */
-Evas_Hash *
+EAPI Evas_Hash *
 evas_hash_del(Evas_Hash *hash, const char *key, const void *data)
 {
    int hash_num;
@@ -239,7 +239,7 @@ evas_hash_del(Evas_Hash *hash, const char *key, const void *data)
  *          found.
  * @ingroup Evas_Hash_Data
  */
-void *
+EAPI void *
 evas_hash_find(Evas_Hash *hash, const char *key)
 {
    int hash_num;
@@ -275,7 +275,7 @@ evas_hash_find(Evas_Hash *hash, const char *key)
  *          hash.
  * @ingroup Evas_Hash_Data
  */
-void *
+EAPI void *
 evas_hash_modify(Evas_Hash *hash, const char *key, const void *data)
 {
    int hash_num;
@@ -317,7 +317,7 @@ evas_hash_modify(Evas_Hash *hash, const char *key, const void *data)
  * @return @c 256 if @p hash is not @c NULL.  @c 0 otherwise.
  * @ingroup Evas_Hash_General_Group
  */
-int
+EAPI int
 evas_hash_size(Evas_Hash *hash)
 {
    if (!hash) return 0;
@@ -348,7 +348,7 @@ evas_hash_size(Evas_Hash *hash)
  * @endcode
  * @ingroup Evas_Hash_General_Group
  */
-void
+EAPI void
 evas_hash_free(Evas_Hash *hash)
 {
    int i, size;
@@ -402,7 +402,7 @@ evas_hash_free(Evas_Hash *hash)
  * @endcode
  * @ingroup Evas_Hash_General_Group
  */
-void
+EAPI void
 evas_hash_foreach(Evas_Hash *hash, Evas_Bool (*func) (Evas_Hash *hash, const char *key, void *data, void *fdata), const void *fdata)
 {
    int i, size;
@@ -453,7 +453,7 @@ evas_hash_foreach(Evas_Hash *hash, Evas_Bool (*func) (Evas_Hash *hash, const cha
  * @endcode
  * @ingroup Evas_Hash_General_Group
  */
-int
+EAPI int
 evas_hash_alloc_error(void)
 {
    return _evas_hash_alloc_error;

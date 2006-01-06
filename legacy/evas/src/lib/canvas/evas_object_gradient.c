@@ -77,7 +77,7 @@ static Evas_Object_Func object_func =
  * @return  A new evas gradient object if successful.  Otherwise, @c NULL.
  * @ingroup Evas_Object_Gradient_Group
  */
-Evas_Object *
+EAPI Evas_Object *
 evas_object_gradient_add(Evas *e)
 {
    Evas_Object *obj;
@@ -110,7 +110,7 @@ evas_object_gradient_add(Evas *e)
  * @param   distance Proportion of the gradient object that is this colour.
  * @ingroup Evas_Object_Gradient_Group
  */
-void
+EAPI void
 evas_object_gradient_color_add(Evas_Object *obj, int r, int g, int b, int a, int distance)
 {
    Evas_Object_Gradient *o;
@@ -138,7 +138,7 @@ evas_object_gradient_color_add(Evas_Object *obj, int r, int g, int b, int a, int
  * @param   obj The given evas gradient object.
  * @ingroup Evas_Object_Gradient_Group
  */
-void
+EAPI void
 evas_object_gradient_colors_clear(Evas_Object *obj)
 {
    Evas_Object_Gradient *o;
@@ -166,7 +166,7 @@ evas_object_gradient_colors_clear(Evas_Object *obj)
  * @param   angle Angle in degrees.  Can be negative.
  * @ingroup Evas_Object_Gradient_Group
  */
-void
+EAPI void
 evas_object_gradient_angle_set(Evas_Object *obj, Evas_Angle angle)
 {
    Evas_Object_Gradient *o;
@@ -191,7 +191,7 @@ evas_object_gradient_angle_set(Evas_Object *obj, Evas_Angle angle)
  * @return  The current angle if successful. @c 0.0 otherwise.
  * @ingroup Evas_Object_Gradient_Group
  */
-Evas_Angle
+EAPI Evas_Angle
 evas_object_gradient_angle_get(Evas_Object *obj)
 {
    Evas_Object_Gradient *o;
@@ -234,7 +234,7 @@ evas_object_gradient_angle_get(Evas_Object *obj)
  * @param   h   The height of the rect.
  * @ingroup Evas_Object_Gradient_Fill_Group
  */
-void
+EAPI void
 evas_object_gradient_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas_Coord w, Evas_Coord h)
 {
    Evas_Object_Gradient *o;
@@ -274,7 +274,7 @@ evas_object_gradient_fill_set(Evas_Object *obj, Evas_Coord x, Evas_Coord y, Evas
  * @param   h   Pointer to an Evas_Coord to store the height in.
  * @ingroup Evas_Object_Gradient_Fill_Group
  */
-void
+EAPI void
 evas_object_gradient_fill_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h)
 {
    Evas_Object_Gradient *o;
@@ -307,7 +307,7 @@ evas_object_gradient_fill_get(Evas_Object *obj, Evas_Coord *x, Evas_Coord *y, Ev
  * or EVAS_TEXTURE_REFLECT.
  * @ingroup Evas_Object_Gradient_Group
  */
-void
+EAPI void
 evas_object_gradient_spread_set(Evas_Object *obj, int spread)
 {
    Evas_Object_Gradient *o;
@@ -334,7 +334,7 @@ evas_object_gradient_spread_set(Evas_Object *obj, int spread)
  * @return  The current spread mode of the gradient object.
  * @ingroup Evas_Object_Gradient_Group
  */
-int
+EAPI int
 evas_object_gradient_spread_get(Evas_Object *obj)
 {
    Evas_Object_Gradient *o;
@@ -366,7 +366,7 @@ evas_object_gradient_spread_get(Evas_Object *obj)
  * Can be NULL.
  * @ingroup Evas_Object_Gradient_Type_Group
  */
-void
+EAPI void
 evas_object_gradient_type_set(Evas_Object *obj, const char *name, const char *params)
 {
    Evas_Object_Gradient *o;
@@ -438,7 +438,7 @@ evas_object_gradient_type_set(Evas_Object *obj, const char *name, const char *pa
  *               params string in.
  * @ingroup Evas_Object_Gradient_Type_Group
  */
-void
+EAPI void
 evas_object_gradient_type_get(Evas_Object *obj, char **name, char **params)
 {
    Evas_Object_Gradient *o;
@@ -467,7 +467,7 @@ evas_object_gradient_type_get(Evas_Object *obj, char **name, char **params)
 /**
    FIXME: ...
 **/
-void
+EAPI void
 evas_color_hsv_to_rgb(float h, float s, float v, int *r, int *g, int *b)
 {
    evas_common_convert_hsv_to_rgb(h, s, v, r, g, b);
@@ -476,7 +476,7 @@ evas_color_hsv_to_rgb(float h, float s, float v, int *r, int *g, int *b)
 /**
    FIXME: ...
 **/
-void
+EAPI void
 evas_color_rgb_to_hsv(int r, int g, int b, float *h, float *s, float *v)
 {
    evas_common_convert_rgb_to_hsv(r, g, b, h, s, v);

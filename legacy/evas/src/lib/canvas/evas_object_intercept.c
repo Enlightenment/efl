@@ -194,7 +194,7 @@ evas_object_intercept_call_layer_set(Evas_Object *obj, int l)
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_intercept_show_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), const void *data)
 {
    /* MEM OK */
@@ -215,7 +215,7 @@ evas_object_intercept_show_callback_add(Evas_Object *obj, void (*func) (void *da
  * FIXME: To be fixed.
  *
  */
-void *
+EAPI void *
 evas_object_intercept_show_callback_del(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj))
 {
    /* MEM OK */
@@ -239,7 +239,7 @@ evas_object_intercept_show_callback_del(Evas_Object *obj, void (*func) (void *da
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_intercept_hide_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), const void *data)
 {
    /* MEM OK */
@@ -259,7 +259,7 @@ evas_object_intercept_hide_callback_add(Evas_Object *obj, void (*func) (void *da
  * FIXME: To be fixed.
  *
  */
-void *
+EAPI void *
 evas_object_intercept_hide_callback_del(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj))
 {
    /* MEM OK */
@@ -283,7 +283,7 @@ evas_object_intercept_hide_callback_del(Evas_Object *obj, void (*func) (void *da
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_intercept_move_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y), const void *data)
 {
    /* MEM OK */
@@ -303,7 +303,7 @@ evas_object_intercept_move_callback_add(Evas_Object *obj, void (*func) (void *da
  * FIXME: To be fixed.
  *
  */
-void *
+EAPI void *
 evas_object_intercept_move_callback_del(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Coord x, Evas_Coord y))
 {
    /* MEM OK */
@@ -327,7 +327,7 @@ evas_object_intercept_move_callback_del(Evas_Object *obj, void (*func) (void *da
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_intercept_resize_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Coord w, Evas_Coord h), const void *data)
 {
    /* MEM OK */
@@ -347,7 +347,7 @@ evas_object_intercept_resize_callback_add(Evas_Object *obj, void (*func) (void *
  * FIXME: To be fixed.
  *
  */
-void *
+EAPI void *
 evas_object_intercept_resize_callback_del(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Coord w, Evas_Coord h))
 {
    /* MEM OK */
@@ -371,7 +371,7 @@ evas_object_intercept_resize_callback_del(Evas_Object *obj, void (*func) (void *
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_intercept_raise_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), const void *data)
 {
    /* MEM OK */
@@ -391,7 +391,7 @@ evas_object_intercept_raise_callback_add(Evas_Object *obj, void (*func) (void *d
  * FIXME: To be fixed.
  *
  */
-void *
+EAPI void *
 evas_object_intercept_raise_callback_del(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj))
 {
    /* MEM OK */
@@ -415,7 +415,7 @@ evas_object_intercept_raise_callback_del(Evas_Object *obj, void (*func) (void *d
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_intercept_lower_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj), const void *data)
 {
    /* MEM OK */
@@ -435,7 +435,7 @@ evas_object_intercept_lower_callback_add(Evas_Object *obj, void (*func) (void *d
  * FIXME: To be fixed.
  *
  */
-void *
+EAPI void *
 evas_object_intercept_lower_callback_del(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj))
 {
    /* MEM OK */
@@ -459,7 +459,7 @@ evas_object_intercept_lower_callback_del(Evas_Object *obj, void (*func) (void *d
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_intercept_stack_above_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *above), const void *data)
 {
    /* MEM OK */
@@ -479,7 +479,7 @@ evas_object_intercept_stack_above_callback_add(Evas_Object *obj, void (*func) (v
  * FIXME: To be fixed.
  *
  */
-void *
+EAPI void *
 evas_object_intercept_stack_above_callback_del(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *above))
 {
    /* MEM OK */
@@ -503,7 +503,7 @@ evas_object_intercept_stack_above_callback_del(Evas_Object *obj, void (*func) (v
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_intercept_stack_below_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *below), const void *data)
 {
    /* MEM OK */
@@ -523,7 +523,7 @@ evas_object_intercept_stack_below_callback_add(Evas_Object *obj, void (*func) (v
  * FIXME: To be fixed.
  *
  */
-void *
+EAPI void *
 evas_object_intercept_stack_below_callback_del(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Evas_Object *below))
 {
    /* MEM OK */
@@ -547,7 +547,7 @@ evas_object_intercept_stack_below_callback_del(Evas_Object *obj, void (*func) (v
  * FIXME: To be fixed.
  *
  */
-void
+EAPI void
 evas_object_intercept_layer_set_callback_add(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, int l), const void *data)
 {
    /* MEM OK */
@@ -567,7 +567,7 @@ evas_object_intercept_layer_set_callback_add(Evas_Object *obj, void (*func) (voi
  * FIXME: To be fixed.
  *
  */
-void *
+EAPI void *
 evas_object_intercept_layer_set_callback_del(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, int l))
 {
    /* MEM OK */
