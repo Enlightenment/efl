@@ -13,7 +13,7 @@
  * 
  * FIXME: Finish this.
  */
-char *
+EAPI char *
 ecore_txt_convert(const char *enc_from, const char *enc_to, const char *text)
 {
    iconv_t ic;

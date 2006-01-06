@@ -34,4 +34,6 @@ char                 *_ecore_config_argbstr_get(Ecore_Config_Prop *e);
 float                 _ecore_config_float_get(Ecore_Config_Prop *e);
 char                 *_ecore_config_theme_get(Ecore_Config_Prop *e);
 
+#include "ecore_private.h"
+
 #endif

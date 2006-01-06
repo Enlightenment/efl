@@ -1,8 +1,3 @@
-#include "Ecore_Config.h"
-#include "config.h"
-#include "ecore_config_private.h"
-#include "ecore_config_ipc.h"
-
 #include <string.h>
 #include <ctype.h>
 #include <stdio.h>
@@ -14,13 +9,19 @@
 #include <fcntl.h>
 #include <limits.h>
 #include <unistd.h>
+
+#include "Ecore_Config.h"
+#include "config.h"
+#include "ecore_config_private.h"
+#include "ecore_config_ipc.h"
+
 #include "ecore_config_util.h"
 
 int                  DEBUG = 0;
-Ecore_Config_Server *__ecore_config_server_global = NULL;
-Ecore_Config_Server *__ecore_config_server_local = NULL;
-Ecore_Config_Bundle *__ecore_config_bundle_local = NULL;
-char                *__ecore_config_app_name = NULL;
+EAPI Ecore_Config_Server *__ecore_config_server_global = NULL;
+EAPI Ecore_Config_Server *__ecore_config_server_local = NULL;
+EAPI Ecore_Config_Bundle *__ecore_config_bundle_local = NULL;
+EAPI char                *__ecore_config_app_name = NULL;
 int                  __ecore_config_system_init = 0;
 
 static int           _ecore_config_system_init_no_load(void);
@@ -41,7 +42,7 @@ static const char  *_ecore_config_type[] =
  * @return  @c NULL
  * @ingroup Ecore_Config_Property_Group
  */
-Ecore_Config_Prop  *
+EAPI Ecore_Config_Prop  *
 ecore_config_dst(Ecore_Config_Prop * e)
 {
    Ecore_Config_Bundle *t;
@@ -102,7 +103,7 @@ ecore_config_dst(Ecore_Config_Prop * e)
  *          key could not be found.
  * @ingroup Ecore_Config_Get_Group
  */
-Ecore_Config_Prop  *
+EAPI Ecore_Config_Prop  *
 ecore_config_get(const char *key)
 {
    Ecore_Config_Bundle *t;
@@ -128,7 +129,7 @@ ecore_config_get(const char *key)
  *          string "not found" is returned.
  * @ingroup Ecore_Config_Property_Group
  */
-const char         *
+EAPI const char         *
 ecore_config_type_get(const Ecore_Config_Prop * e)
 {
    if (e)
@@ -144,7 +145,7 @@ ecore_config_type_get(const Ecore_Config_Prop * e)
  * @return  Data pointer used by the property.
  * @ingroup Ecore_Config_Get_Group
  */
-void               *
+EAPI void               *
 ecore_config_data_get(const char *key)
 {
    Ecore_Config_Prop  *e;
@@ -161,7 +162,7 @@ ecore_config_data_get(const char *key)
  *          the property is not a string or is not set.
  * @ingroup Ecore_Config_Get_Group
  */
-char               *
+EAPI char               *
 ecore_config_string_get(const char *key)
 {
    return _ecore_config_string_get( ecore_config_get(key) );
@@ -180,7 +181,7 @@ _ecore_config_string_get(Ecore_Config_Prop *e)
  *          property is not an integer or is not set.
  * @ingroup Ecore_Config_Get_Group
  */
-int
+EAPI int
 ecore_config_boolean_get(const char *key)
 {
    return _ecore_config_boolean_get( ecore_config_get(key) );
@@ -199,13 +200,13 @@ _ecore_config_boolean_get(Ecore_Config_Prop *e)
  *          property is not an integer or is not set.
  * @ingroup Ecore_Config_Get_Group
  */
-long
+EAPI long
 ecore_config_int_get(const char *key)
 {
    return _ecore_config_int_get( ecore_config_get(key) );
 }
 
-long
+EAPI long
 _ecore_config_int_get(Ecore_Config_Prop *e)
 {
    return (e && ((e->type == ECORE_CONFIG_INT) || (e->type == ECORE_CONFIG_RGB))) ? e->val : 0L;
@@ -218,13 +219,13 @@ _ecore_config_int_get(Ecore_Config_Prop *e)
  *          property is not a float or is not set.
  * @ingroup Ecore_Config_Get_Group
  */
-float
+EAPI float
 ecore_config_float_get(const char *key)
 {
    return _ecore_config_float_get( ecore_config_get(key) );
 }
 
-float
+EAPI float
 _ecore_config_float_get(Ecore_Config_Prop *e)
 {
    return (e && (e->type == ECORE_CONFIG_FLT)) ? ((float)e->val / ECORE_CONFIG_FLOAT_PRECISION) : 0.0;
@@ -241,7 +242,7 @@ _ecore_config_float_get(Ecore_Config_Prop *e)
  * @ingroup Ecore_Config_Get_Group
  * @deprecated
  */
-int
+EAPI int
 ecore_config_rgb_get(const char *key, int *r, int *g, int *b)
 {
    return _ecore_config_argb_get( ecore_config_get(key), NULL, r, g, b);
@@ -258,13 +259,13 @@ ecore_config_rgb_get(const char *key, int *r, int *g, int *b)
  *          otherwise.
  * @ingroup Ecore_Config_Get_Group
  */
-int
+EAPI int
 ecore_config_argb_get(const char *key, int *a, int *r, int *g, int *b)
 {
    return _ecore_config_argb_get( ecore_config_get(key), a, r, g, b);
 }
 
-int
+EAPI int
 _ecore_config_argb_get(Ecore_Config_Prop *e, int *a, int *r, int *g, int *b)
 {
    if (e && ((e->type == ECORE_CONFIG_RGB)))
@@ -285,7 +286,7 @@ _ecore_config_argb_get(Ecore_Config_Prop *e, int *a, int *r, int *g, int *b)
  * @ingroup Ecore_Config_Get_Group
  * @deprecated
  */
-char               *
+EAPI char               *
 ecore_config_rgbstr_get(const char *key)
 {
    char               *argb, *rgb;
@@ -302,7 +303,7 @@ ecore_config_rgbstr_get(const char *key)
  * @return  A string of hexadecimal characters in the format #aarrggbb.
  * @ingroup Ecore_Config_Get_Group
  */
-char               *
+EAPI char               *
 ecore_config_argbstr_get(const char *key)
 {
    return _ecore_config_argbstr_get( ecore_config_get(key) );
@@ -325,7 +326,7 @@ _ecore_config_argbstr_get(Ecore_Config_Prop *e)
  *          @c NULL if the property is not a theme or is not set.
  * @ingroup Ecore_Config_Get_Group
  */
-char               *
+EAPI char               *
 ecore_config_theme_get(const char *key)
 {
    return _ecore_config_theme_get( ecore_config_get(key) );
@@ -344,7 +345,7 @@ _ecore_config_theme_get(Ecore_Config_Prop *e)
  *          is returned if the property does not exist.
  * @ingroup Ecore_Config_Get_Group
  */
-char               *
+EAPI char               *
 ecore_config_as_string_get(const char *key)
 {
    Ecore_Config_Prop  *e;
@@ -393,7 +394,7 @@ ecore_config_as_string_get(const char *key)
    return r;
 }
 
-int
+EAPI int
 ecore_config_bound(Ecore_Config_Prop * e)
 {
    int                 ret;
@@ -460,7 +461,7 @@ ecore_config_bound(Ecore_Config_Prop * e)
  * @return The type of the property determined by the function.  Note that if
  *         val is @c NULL, @c ECORE_CONFIG_NIL will be returned.
  */
-int
+EAPI int
 ecore_config_type_guess(const char *key, const char *val)
 {
    Ecore_Config_Prop  *p;
@@ -627,7 +628,7 @@ ecore_config_add(const char *key, const char *val)
  *          free @p desc once this function is called.
  * @ingroup Ecore_Config_Property_Group
  */
-int
+EAPI int
 ecore_config_describe(const char *key, char *desc)
 {
    Ecore_Config_Prop  *e;
@@ -647,7 +648,7 @@ ecore_config_describe(const char *key, char *desc)
  *          is returned if the property does not exist.
  * @ingroup Ecore_Config_Property_Group
  */
-int
+EAPI int
 ecore_config_short_opt_set(const char *key, char short_opt)
 {
    Ecore_Config_Prop  *e;
@@ -667,7 +668,7 @@ ecore_config_short_opt_set(const char *key, char short_opt)
  *          is returned if the property does not exist.
  * @ingroup Ecore_Config_Property_Group
  */
-int
+EAPI int
 ecore_config_long_opt_set(const char *key, char *long_opt)
 {
    Ecore_Config_Prop  *e;
@@ -689,7 +690,7 @@ ecore_config_long_opt_set(const char *key, char *long_opt)
  * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
  * @ingroup Ecore_Config_Property_Group
  */
-int
+EAPI int
 ecore_config_typed_set(const char *key, const void *val, int type)
 {
    Ecore_Config_Prop  *e;
@@ -737,7 +738,7 @@ ecore_config_typed_set(const char *key, const void *val, int type)
  * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
  * @ingroup Ecore_Config_Set_Group
  */
-int
+EAPI int
 ecore_config_set(const char *key, char *val)
 {
    int                 type;
@@ -766,7 +767,7 @@ ecore_config_set(const char *key, char *val)
  * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
  * @ingroup Ecore_Config_Set_Group
  */
-int
+EAPI int
 ecore_config_as_string_set(const char *key, char *val)
 {
    return ecore_config_set(key, val);
@@ -779,7 +780,7 @@ ecore_config_as_string_set(const char *key, char *val)
  * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
  * @ingroup Ecore_Config_Set_Group
  */
-int
+EAPI int
 ecore_config_boolean_set(const char *key, int val)
 {
    val = val ? 1 : 0;
@@ -793,7 +794,7 @@ ecore_config_boolean_set(const char *key, int val)
  * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
  * @ingroup Ecore_Config_Set_Group
  */
-int
+EAPI int
 ecore_config_int_set(const char *key, int val)
 {
    return ecore_config_typed_set(key, (void *)&val, ECORE_CONFIG_INT);
@@ -806,7 +807,7 @@ ecore_config_int_set(const char *key, int val)
  * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
  * @ingroup Ecore_Config_Set_Group
  */
-int
+EAPI int
 ecore_config_string_set(const char *key, char *val)
 {
    return ecore_config_typed_set(key, (void *)val, ECORE_CONFIG_STR);
@@ -819,13 +820,13 @@ ecore_config_string_set(const char *key, char *val)
  * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
  * @ingroup Ecore_Config_Set_Group
  */
-int
+EAPI int
 ecore_config_float_set(const char *key, float val)
 {
    return ecore_config_typed_set(key, (void *)&val, ECORE_CONFIG_FLT);
 }
 
-char              *
+EAPI char              *
 ecore_config_rgb_to_argb(char *rgb)
 {
    char               *argb;
@@ -844,7 +845,7 @@ ecore_config_rgb_to_argb(char *rgb)
  * @ingroup Ecore_Config_Set_Group
  * @deprecated
  */
-int
+EAPI int
 ecore_config_rgb_set(const char *key, char *val)
 {
    char               *argb;
@@ -863,7 +864,7 @@ ecore_config_rgb_set(const char *key, char *val)
  * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
  * @ingroup Ecore_Config_Set_Group
  */
-int
+EAPI int
 ecore_config_argb_set(const char *key, char *val)
 {
    return ecore_config_typed_set(key, (void *)val, ECORE_CONFIG_RGB);
@@ -876,7 +877,7 @@ ecore_config_argb_set(const char *key, char *val)
  * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
  * @ingroup Ecore_Config_Set_Group
  */
-int
+EAPI int
 ecore_config_theme_set(const char *key, char *val)
 {
    return ecore_config_typed_set(key, (void *)val, ECORE_CONFIG_THM);
@@ -889,7 +890,7 @@ ecore_config_theme_set(const char *key, char *val)
  * @return  @c ECORE_CONFIG_ERR_SUCC on success.
  * @ingroup Ecore_Config_Set_Group
  */
-int
+EAPI int
 ecore_config_theme_preview_group_set(const char *key, char *group)
 {
    int                 ret;
@@ -910,7 +911,7 @@ ecore_config_theme_preview_group_set(const char *key, char *group)
    return ret;
 }
 
-int
+EAPI int
 ecore_config_typed_default(const char *key, void *val, int type)
 {
    int                 ret;
@@ -954,7 +955,7 @@ ecore_config_typed_default(const char *key, void *val, int type)
  *          integer and float properties.
  * @ingroup Ecore_Config_Default_Group
  */
-int
+EAPI int
 ecore_config_default(const char *key, char *val, float lo, float hi, float step)
 {
    int                 ret, type;
@@ -994,7 +995,7 @@ ecore_config_default(const char *key, char *val, float lo, float hi, float step)
  * @return  @c ECORE_CONFIG_ERR_SUCC if there are no problems.
  * @ingroup Ecore_Config_Default_Group
  */
-int
+EAPI int
 ecore_config_boolean_default(const char *key, int val)
 {
    val = val ? 1 : 0;
@@ -1009,7 +1010,7 @@ ecore_config_boolean_default(const char *key, int val)
  * @return  @c ECORE_CONFIG_ERR_SUCC if there are no problems.
  * @ingroup Ecore_Config_Default_Group
  */
-int
+EAPI int
 ecore_config_int_default(const char *key, int val)
 {
    return ecore_config_typed_default(key, (void *)&val, ECORE_CONFIG_INT);
@@ -1029,7 +1030,7 @@ ecore_config_int_default(const char *key, int val)
  * @return  @c ECORE_CONFIG_ERR_SUCC if there were no problems.
  * @ingroup Ecore_Config_Default_Group
  */
-int
+EAPI int
 ecore_config_int_default_bound(const char *key, int val, int low, int high,
 			       int step)
 {
@@ -1058,7 +1059,7 @@ ecore_config_int_default_bound(const char *key, int val, int low, int high,
  * @return  @c ECORE_CONFIG_ERR_SUCC if there were no problems.
  * @ingroup Ecore_Config_Default_Group
  */
-int
+EAPI int
 ecore_config_string_default(const char *key, const char *val)
 {
    return ecore_config_typed_default(key, (void *)val, ECORE_CONFIG_STR);
@@ -1072,7 +1073,7 @@ ecore_config_string_default(const char *key, const char *val)
  * @return  @c ECORE_CONFIG_ERR_SUCC if there were no problems.
  * @ingroup Ecore_Config_Default_Group
  */
-int
+EAPI int
 ecore_config_float_default(const char *key, float val)
 {
    return ecore_config_typed_default(key, (void *)&val, ECORE_CONFIG_FLT);
@@ -1092,7 +1093,7 @@ ecore_config_float_default(const char *key, float val)
  * @return  @c ECORE_CONFIG_ERR_SUCC if there were no problems.
  * @ingroup Ecore_Config_Default_Group
  */
-int
+EAPI int
 ecore_config_float_default_bound(const char *key, float val, float low,
 				 float high, float step)
 {
@@ -1122,7 +1123,7 @@ ecore_config_float_default_bound(const char *key, float val, float low,
  * @ingroup Ecore_Config_Default_Group
  * @deprecated
  */
-int
+EAPI int
 ecore_config_rgb_default(const char *key, char *val)
 {
    char               *argb;
@@ -1142,7 +1143,7 @@ ecore_config_rgb_default(const char *key, char *val)
  * @return @c ECORE_CONFIG_ERR_SUCC if there are no problems.
  * @ingroup Ecore_Config_Default_Group
  */
-int
+EAPI int
 ecore_config_argb_default(const char *key, char *val)
 {
    return ecore_config_typed_default(key, (void *)val, ECORE_CONFIG_RGB);
@@ -1156,7 +1157,7 @@ ecore_config_argb_default(const char *key, char *val)
  * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
  * @ingroup Ecore_Config_Default_Group
  */
-int
+EAPI int
 ecore_config_theme_default(const char *key, char *val)
 {
    return ecore_config_typed_default(key, (void *)val, ECORE_CONFIG_THM);
@@ -1179,7 +1180,7 @@ ecore_config_theme_default(const char *key, char *val)
  * @return  @c ECORE_CONFIG_ERR_SUCC if successful in setting up the callback.
  * @ingroup Ecore_Config_Listeners_Group
  */
-int
+EAPI int
 ecore_config_listen(const char *name, const char *key,
 		    Ecore_Config_Listener listener, int tag, void *data)
 {
@@ -1246,7 +1247,7 @@ ecore_config_listen(const char *name, const char *key,
  *         for the key pointer, @c ECORE_CONFIG_ERR_NODATA is returned.
  * @ingroup Ecore_Config_Listeners_Group
  */
-int
+EAPI int
 ecore_config_deaf(const char *name, const char *key,
 		  Ecore_Config_Listener listener)
 {
@@ -1288,7 +1289,7 @@ ecore_config_deaf(const char *name, const char *key,
  * @param  srv The configuration server.
  * @return Pointer to the first configuration bundle.
  */
-Ecore_Config_Bundle *
+EAPI Ecore_Config_Bundle *
 ecore_config_bundle_1st_get(Ecore_Config_Server * srv)
 {				/* anchor: global, but read-only */
    return srv->bundles;
@@ -1299,7 +1300,7 @@ ecore_config_bundle_1st_get(Ecore_Config_Server * srv)
  * @param  ns  The configuration bundle.
  * @return The next configuration bundle.
  */
-Ecore_Config_Bundle *
+EAPI Ecore_Config_Bundle *
 ecore_config_bundle_next_get(Ecore_Config_Bundle * ns)
 {
    return ns ? ns->next : NULL;
@@ -1312,7 +1313,7 @@ ecore_config_bundle_next_get(Ecore_Config_Bundle * ns)
  * @param  serial Serial number.
  * @return The configuration bundle with the given serial number.
  */
-Ecore_Config_Bundle *
+EAPI Ecore_Config_Bundle *
 ecore_config_bundle_by_serial_get(Ecore_Config_Server * srv, long serial)
 {
    Ecore_Config_Bundle *eb;
@@ -1345,7 +1346,7 @@ ecore_config_bundle_by_serial_get(Ecore_Config_Server * srv, long serial)
  * @return The bundle with the given identifier string, or @c NULL if it
  *         could not be found.
  */
-Ecore_Config_Bundle *
+EAPI Ecore_Config_Bundle *
 ecore_config_bundle_by_label_get(Ecore_Config_Server * srv, const char *label)
 {
    Ecore_Config_Bundle *ns;
@@ -1366,7 +1367,7 @@ ecore_config_bundle_by_label_get(Ecore_Config_Server * srv, const char *label)
  * @param  ns The configuration bundle.
  * @return The bundle's identifier string, or -1 if ns is @c NULL.
  */
-long
+EAPI long
 ecore_config_bundle_serial_get(Ecore_Config_Bundle * ns)
 {
    return ns ? ns->serial : -1;
@@ -1377,7 +1378,7 @@ ecore_config_bundle_serial_get(Ecore_Config_Bundle * ns)
  * @param  ns The configuration bundle.
  * @return The bundle's identifer string.
  */
-char               *
+EAPI char               *
 ecore_config_bundle_label_get(Ecore_Config_Bundle * ns)
 {
    return ns ? ns->identifier : NULL;
@@ -1390,7 +1391,7 @@ ecore_config_bundle_label_get(Ecore_Config_Bundle * ns)
  * @return A pointer to a new Ecore_Config_Bundle.  @c NULL is returned if the
  *         structure couldn't be allocated.
  */
-Ecore_Config_Bundle *
+EAPI Ecore_Config_Bundle *
 ecore_config_bundle_new(Ecore_Config_Server * srv, const char *identifier)
 {
    Ecore_Config_Bundle *t;
@@ -1480,7 +1481,7 @@ ecore_config_init_global(const char *name)
  *         @c ECORE_CONFIG_ERR_FAIL otherwise.
  * @ingroup Ecore_Config_App_Lib_Group
  */
-int
+EAPI int
 ecore_config_init(const char *name)
 {
    char                *path;
@@ -1520,7 +1521,7 @@ ecore_config_init(const char *name)
  * @return @c ECORE_CONFIG_ERR_IGNORED .
  * @ingroup Ecore_Config_App_Lib_Group
  */
-int
+EAPI int
 ecore_config_shutdown(void)
 {
    return ecore_config_system_shutdown();
@@ -1547,7 +1548,7 @@ ecore_config_shutdown(void)
  *         @c ECORE_CONFIG_ERR_FAIL otherwise.
  * @ingroup Ecore_Config_Lib_Lib_Group
  */
-int
+EAPI int
 ecore_config_system_init(void)
 {
    _ecore_config_system_init_no_load();
@@ -1626,7 +1627,7 @@ _ecore_config_system_load(void)
  * @return @c ECORE_CONFIG_ERR_IGNORED
  * @ingroup Ecore_Config_Lib_Lib_Group
  */
-int
+EAPI int
 ecore_config_system_shutdown(void)
 {
    int                 ret;

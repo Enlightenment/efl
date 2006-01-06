@@ -90,12 +90,12 @@ static void _ecore_fb_event_free_key_down(void *data, void *ev);
 static void _ecore_fb_event_free_key_up(void *data, void *ev);
 static int _ecore_fb_signal_usr_handler(void *data, int type, void *ev);
 static void _ecore_fb_vt_switch(int vt);
-    
-int ECORE_FB_EVENT_KEY_DOWN = 0;
-int ECORE_FB_EVENT_KEY_UP = 0;
-int ECORE_FB_EVENT_MOUSE_BUTTON_DOWN = 0;
-int ECORE_FB_EVENT_MOUSE_BUTTON_UP = 0;
-int ECORE_FB_EVENT_MOUSE_MOVE = 0;
+
+EAPI int ECORE_FB_EVENT_KEY_DOWN = 0;
+EAPI int ECORE_FB_EVENT_KEY_UP = 0;
+EAPI int ECORE_FB_EVENT_MOUSE_BUTTON_DOWN = 0;
+EAPI int ECORE_FB_EVENT_MOUSE_BUTTON_UP = 0;
+EAPI int ECORE_FB_EVENT_MOUSE_MOVE = 0;
 
 static Ecore_Event_Handler *_ecore_fb_user_handler = NULL;
 static Ecore_Event_Filter *_ecore_fb_filter_handler = NULL;
@@ -270,7 +270,7 @@ static const char *_ecore_fb_btn_syms[128] =
  *          been initialised without being shut down.
  * @ingroup Ecore_FB_Library_Group
  */
-int
+EAPI int
 ecore_fb_init(const char *name __UNUSED__)
 {
    int prev_flags;
@@ -433,7 +433,7 @@ ecore_fb_init(const char *name __UNUSED__)
  *             being shut down.
  * @ingroup Ecore_FB_Library_Group
  */
-int
+EAPI int
 ecore_fb_shutdown(void)
 {    
    _ecore_fb_init_count--;
@@ -491,7 +491,7 @@ ecore_fb_shutdown(void)
  * @param   t The time in seconds
  * @ingroup Ecore_FB_Click_Group
  */
-void
+EAPI void
 ecore_fb_double_click_time_set(double t)
 {
    if (t < 0.0) t = 0.0;
@@ -506,7 +506,7 @@ ecore_fb_double_click_time_set(double t)
  * @return  The timeout for double clicks in seconds.
  * @ingroup Ecore_FB_Click_Group
  */
-double
+EAPI double
 ecore_fb_double_click_time_get(void)
 {
    return _ecore_fb_double_click_time;
@@ -517,7 +517,7 @@ ecore_fb_double_click_time_get(void)
  * @param w Pointer to an integer in which to store the width.
  * @param h Pointer to an interge in which to store the height.
  */
-void
+EAPI void
 ecore_fb_size_get(int *w, int *h)
 {
    if (w) *w = _ecore_fb_console_w;
@@ -539,7 +539,7 @@ ecore_fb_size_get(int *w, int *h)
  * @param   xyswap Swap X & Y flag.
  * @ingroup Ecore_FB_Calibrate_Group
  */
-void
+EAPI void
 ecore_fb_touch_screen_calibrate_set(int xscale, int xtrans, int yscale, int ytrans, int xyswap)
 {
    Ecore_Fb_Ts_Calibrate cal;
@@ -567,7 +567,7 @@ ecore_fb_touch_screen_calibrate_set(int xscale, int xtrans, int yscale, int ytra
  * @param   xyswap Pointer to an integer in which to store the Swap X & Y flag.
  * @ingroup Ecore_FB_Calibrate_Group
  */
-void
+EAPI void
 ecore_fb_touch_screen_calibrate_get(int *xscale, int *xtrans, int *yscale, int *ytrans, int *xyswap)
 {
    Ecore_Fb_Ts_Calibrate cal;
@@ -598,7 +598,7 @@ ecore_fb_touch_screen_calibrate_get(int *xscale, int *xtrans, int *yscale, int *
  * @param   on @c 1 to turn the backlight on.  @c 0 to turn it off.
  * @ingroup Ecore_FB_Backlight_Group
  */
-void
+EAPI void
 ecore_fb_backlight_set(int on)
 {
    Ecore_Fb_Ts_Backlight bl;
@@ -614,7 +614,7 @@ ecore_fb_backlight_set(int on)
  * @return  Whether the backlight is on.
  * @ingroup Ecore_FB_Backlight_Group
  */
-int
+EAPI int
 ecore_fb_backlight_get(void)
 {
    Ecore_Fb_Ts_Backlight bl;
@@ -630,7 +630,7 @@ ecore_fb_backlight_get(void)
  *             is brightest.
  * @ingroup Ecore_FB_Backlight_Group
  */
-void 
+EAPI void 
 ecore_fb_backlight_brightness_set(double br)
 {
    Ecore_Fb_Ts_Backlight bl;   
@@ -650,7 +650,7 @@ ecore_fb_backlight_brightness_set(double br)
  *          1.0 is the brightest.
  * @ingroup Ecore_FB_Backlight_Group
  */
-double
+EAPI double
 ecore_fb_backlight_brightness_get(void)
 {
    Ecore_Fb_Ts_Backlight bl;
@@ -672,7 +672,7 @@ ecore_fb_backlight_brightness_get(void)
  * @param   on @c 1 to indicate the LED should be on, @c 0 if it should be off.
  * @ingroup Ecore_FB_LED_Group
  */
-void
+EAPI void
 ecore_fb_led_set(int on)
 {
    Ecore_Fb_Ts_Led led;
@@ -689,7 +689,7 @@ ecore_fb_led_set(int on)
  * @ingroup Ecore_FB_LED_Group
  * @todo    Documentation: Work out what speed the units are in.
  */
-void
+EAPI void
 ecore_fb_led_blink_set(double speed)
 {
    Ecore_Fb_Ts_Led led;
@@ -713,7 +713,7 @@ ecore_fb_led_blink_set(double speed)
  * @param   cr Value between 0 and 1 that gives the new contrast of the screen.
  * @ingroup Ecore_FB_Contrast_Group
  */
-void 
+EAPI void 
 ecore_fb_contrast_set(double cr)
 {
    Ecore_Fb_Ts_Contrast ct;
@@ -732,7 +732,7 @@ ecore_fb_contrast_set(double cr)
  *          screen.
  * @ingroup Ecore_FB_Contrast_Group
  */
-double
+EAPI double
 ecore_fb_contrast_get(void)
 {
    Ecore_Fb_Ts_Contrast ct;
@@ -747,7 +747,7 @@ ecore_fb_contrast_get(void)
  *
  * FIXME: To be fixed.
  */
-double
+EAPI double
 ecore_fb_light_sensor_get(void)
 {
    Ecore_Fb_Ts_Flite fl;
@@ -765,7 +765,7 @@ ecore_fb_light_sensor_get(void)
  * FIXME: To be fixed.
  * @todo Documentation: Find out what this does.
  */
-void
+EAPI void
 ecore_fb_callback_gain_set(void (*func) (void *data), void *data)
 {
    _ecore_fb_func_fb_gain = func;
@@ -778,7 +778,7 @@ ecore_fb_callback_gain_set(void (*func) (void *data), void *data)
  * FIXME: To be fixed.
  * @todo Documentation: Find out what this does.
  */
-void
+EAPI void
 ecore_fb_callback_lose_set(void (*func) (void *data), void *data)
 {
    _ecore_fb_func_fb_lost = func;

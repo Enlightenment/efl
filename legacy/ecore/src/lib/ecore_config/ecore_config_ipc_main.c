@@ -1,14 +1,6 @@
 /* ############## bad */
 #define HAVE_EVAS2
 
-#include "Ecore.h"
-#include "Ecore_Config.h"
-#include "ecore_config_util.h"
-#include "ecore_config_ipc.h"
-
-#include "config.h"
-#include "ecore_config_private.h"
-
 #include <signal.h>
 #include <dlfcn.h>
 #include <stdio.h>
@@ -17,6 +9,14 @@
 #include <limits.h>
 #include <string.h>
 #include <stdlib.h>		/* malloc(), free() */
+
+#include "Ecore.h"
+#include "Ecore_Config.h"
+#include "ecore_config_util.h"
+#include "ecore_config_ipc.h"
+
+#include "config.h"
+#include "ecore_config_private.h"
 
 static Ecore_Config_Server *__ecore_config_servers;
 Ecore_Timer *ipc_timer = NULL;

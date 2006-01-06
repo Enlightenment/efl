@@ -45,9 +45,9 @@
 
 /* global variables  */
 
-int                 ECORE_DBUS_EVENT_SERVER_ADD = 0;
-int                 ECORE_DBUS_EVENT_SERVER_DEL = 0;
-int                 ECORE_DBUS_EVENT_SERVER_DATA = 0;
+EAPI int                 ECORE_DBUS_EVENT_SERVER_ADD = 0;
+EAPI int                 ECORE_DBUS_EVENT_SERVER_DEL = 0;
+EAPI int                 ECORE_DBUS_EVENT_SERVER_DATA = 0;
 
 /* private function declaration */
 
@@ -58,7 +58,7 @@ static void          _ecore_dbus_message_increase_length(unsigned char **buf, un
 static void          _ecore_dbus_message_4byte_padding(unsigned char **buf, unsigned int *old_length);
 static void          _ecore_dbus_message_8byte_padding(unsigned char **buf, unsigned int *old_length);
 static void          _ecore_dbus_message_skip_4byte_padding(unsigned int *old_length);
-static void          _ecore_dbus_message_skip_8byte_padding(unsigned int *old_length);
+/*static void          _ecore_dbus_message_skip_8byte_padding(unsigned int *old_length);*/
 /* appending/reading functions */
 static void          _ecore_dbus_message_append_nbytes(unsigned char *buf, unsigned char *data, unsigned int data_length);
 static void          _ecore_dbus_message_append_byte(unsigned char *buf, unsigned char c);
@@ -141,8 +141,8 @@ static int          _ecore_dbus_event_server_data(void *data, int ev_type, void 
 /* printing functions */
 static Ecore_DBus_Message_Field *_ecore_dbus_message_print_field(Ecore_DBus_Message_Field *f, unsigned char *buf);
 static Ecore_DBus_Message_Field *_ecore_dbus_message_print_header_field(Ecore_DBus_Message_Field *f, unsigned char *buf);
-static void                      _ecore_dbus_message_print_fields(Ecore_DBus_Message_Field *f);
-static void                      _ecore_dbus_message_print_raw(unsigned char *msg, unsigned int msg_len);
+/*static void                      _ecore_dbus_message_print_fields(Ecore_DBus_Message_Field *f);*/
+/*static void                      _ecore_dbus_message_print_raw(unsigned char *msg, unsigned int msg_len);*/
 
 /* local variables  */
 
@@ -159,7 +159,7 @@ static Ecore_List2         *servers = NULL;
 static Ecore_Event_Handler *handler[3];
 
 /* public functions */
-int
+EAPI int
 ecore_dbus_init(void)
 {
    int i = 0;
@@ -182,7 +182,7 @@ ecore_dbus_init(void)
    return init_count;
 }
 
-int
+EAPI int
 ecore_dbus_shutdown(void)
 {
    int i = 0;
@@ -197,7 +197,7 @@ ecore_dbus_shutdown(void)
    return init_count;
 }
 
-Ecore_DBus_Server *
+EAPI Ecore_DBus_Server *
 ecore_dbus_server_connect(Ecore_DBus_Type compl_type, char *name, int port,
 			  const void *data)
 {
@@ -237,7 +237,7 @@ ecore_dbus_server_connect(Ecore_DBus_Type compl_type, char *name, int port,
    return svr;
 }
 
-void
+EAPI void
 ecore_dbus_server_del(Ecore_DBus_Server *svr)
 {
    if (svr->server) ecore_con_server_del(svr->server);
@@ -245,7 +245,7 @@ ecore_dbus_server_del(Ecore_DBus_Server *svr)
    free(svr);
 }
 
-int
+EAPI int
 ecore_dbus_server_send(Ecore_DBus_Server *svr, char *command, int length)
 {
    int                 ret;
@@ -256,7 +256,7 @@ ecore_dbus_server_send(Ecore_DBus_Server *svr, char *command, int length)
    return ret;
 }
 
-unsigned int
+EAPI unsigned int
 ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr, char *service,
 				   char *path, char *interface, char *method,
 				   char *fmt, ...)
@@ -374,7 +374,7 @@ ecore_dbus_message_new_method_call(Ecore_DBus_Server *svr, char *service,
    return serial;
 }
 
-void
+EAPI void
 ecore_dbus_message_print(Ecore_DBus_Message *msg)
 {
    Ecore_DBus_Message_Field *f;
@@ -410,7 +410,7 @@ ecore_dbus_message_print(Ecore_DBus_Message *msg)
    printf("[ecore_dbus] end per field message\n");
 }
 
-void *
+EAPI void *
 ecore_dbus_get_header_field(Ecore_DBus_Message *m,
 			    Ecore_DBus_Message_Field *mf,
 			    Ecore_DBus_Message_Header_Field hft)
@@ -423,7 +423,7 @@ ecore_dbus_get_header_field(Ecore_DBus_Message *m,
    return NULL;
 }
 
-void *
+EAPI void *
 ecore_dbus_get_body_field(Ecore_DBus_Message *m, Ecore_DBus_Message_Field *mf,
 			  unsigned int pos)
 {
@@ -499,7 +499,8 @@ _ecore_dbus_message_skip_4byte_padding(unsigned int *old_length)
    return;
 }
 
-static void
+
+/*static void
 _ecore_dbus_message_skip_8byte_padding(unsigned int *old_length)
 {
    unsigned int        padding;
@@ -509,6 +510,7 @@ _ecore_dbus_message_skip_8byte_padding(unsigned int *old_length)
       *old_length += 8 - padding;
    return;
 }
+*/
 
 /* appending/reading functions */
 
@@ -1267,6 +1269,7 @@ _ecore_dbus_message_print_header_field(Ecore_DBus_Message_Field *f, unsigned cha
    return _ecore_dbus_message_print_field(f, buf);
 }
 
+/*
 static void
 _ecore_dbus_message_print_fields(Ecore_DBus_Message_Field *f)
 {
@@ -1301,4 +1304,4 @@ _ecore_dbus_message_print_raw(unsigned char *msg, unsigned int msg_len)
    printf("\n");
    printf("[ecore_dbus] end raw message\n");
 }
-
+*/

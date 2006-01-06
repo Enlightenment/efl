@@ -29,7 +29,7 @@
 #define DLT_R2     15
 
 /* byte swappers - for dealing with big vs little endian machines */
-unsigned short
+EAPI unsigned short
 _ecore_ipc_swap_16(unsigned short v)
 {
    unsigned char *s, t;
@@ -39,7 +39,7 @@ _ecore_ipc_swap_16(unsigned short v)
    return v;
 }
 
-unsigned int
+EAPI unsigned int
 _ecore_ipc_swap_32(unsigned int v)
 {
    unsigned char *s, t;
@@ -50,7 +50,7 @@ _ecore_ipc_swap_32(unsigned int v)
    return v;
 }
 
-unsigned long long
+EAPI unsigned long long
 _ecore_ipc_swap_64(unsigned long long v)
 {
    unsigned char *s, t;
@@ -220,12 +220,12 @@ static int _ecore_ipc_event_server_data(void *data, int ev_type, void *ev);
 static void _ecore_ipc_event_client_data_free(void *data, void *ev);
 static void _ecore_ipc_event_server_data_free(void *data, void *ev);
     
-int ECORE_IPC_EVENT_CLIENT_ADD = 0;
-int ECORE_IPC_EVENT_CLIENT_DEL = 0;
-int ECORE_IPC_EVENT_SERVER_ADD = 0;
-int ECORE_IPC_EVENT_SERVER_DEL = 0;
-int ECORE_IPC_EVENT_CLIENT_DATA = 0;
-int ECORE_IPC_EVENT_SERVER_DATA = 0;
+EAPI int ECORE_IPC_EVENT_CLIENT_ADD = 0;
+EAPI int ECORE_IPC_EVENT_CLIENT_DEL = 0;
+EAPI int ECORE_IPC_EVENT_SERVER_ADD = 0;
+EAPI int ECORE_IPC_EVENT_SERVER_DEL = 0;
+EAPI int ECORE_IPC_EVENT_CLIENT_DATA = 0;
+EAPI int ECORE_IPC_EVENT_SERVER_DATA = 0;
 
 static int                  init_count = 0;
 static Ecore_Ipc_Server    *servers = NULL;
@@ -243,7 +243,7 @@ static Ecore_Event_Handler *handler[6];
  *          being shut down.
  * @ingroup Ecore_IPC_Library_Group
  */
-int
+EAPI int
 ecore_ipc_init(void)
 {
    int i = 0;
@@ -280,7 +280,7 @@ ecore_ipc_init(void)
  *          shut down.
  * @ingroup Ecore_IPC_Library_Group
  */
-int
+EAPI int
 ecore_ipc_shutdown(void)
 {
    int i;
@@ -317,7 +317,7 @@ ecore_ipc_shutdown(void)
  * @ingroup Ecore_IPC_Server_Group
  * @todo    Need to add protocol type parameter to this function.
  */
-Ecore_Ipc_Server *
+EAPI Ecore_Ipc_Server *
 ecore_ipc_server_add(Ecore_Ipc_Type compl_type, const char *name, int port, const void *data)
 {
    Ecore_Ipc_Server *svr;
@@ -372,7 +372,7 @@ ecore_ipc_server_add(Ecore_Ipc_Type compl_type, const char *name, int port, cons
  * @ingroup Ecore_IPC_Server_Group
  * @todo    Need to add protocol type parameter.
  */
-Ecore_Ipc_Server *
+EAPI Ecore_Ipc_Server *
 ecore_ipc_server_connect(Ecore_Ipc_Type compl_type, char *name, int port, const void *data)
 {
    Ecore_Ipc_Server *svr;
@@ -416,7 +416,7 @@ ecore_ipc_server_connect(Ecore_Ipc_Type compl_type, char *name, int port, const 
  * @return  The data associated with the server when it was created.
  * @ingroup Ecore_IPC_Server_Group
  */
-void *
+EAPI void *
 ecore_ipc_server_del(Ecore_Ipc_Server *svr)
 {
    void *data;
@@ -443,7 +443,7 @@ ecore_ipc_server_del(Ecore_Ipc_Server *svr)
  * @return  The associated data.
  * @ingroup Ecore_IPC_Server_Group
  */
-void *
+EAPI void *
 ecore_ipc_server_data_get(Ecore_Ipc_Server *svr)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_IPC_SERVER))
@@ -461,7 +461,7 @@ ecore_ipc_server_data_get(Ecore_Ipc_Server *svr)
  * @return  @c 1 if the server is connected.  @c 0 otherwise.
  * @ingroup Ecore_IPC_Server_Group
  */
-int
+EAPI int
 ecore_ipc_server_connected_get(Ecore_Ipc_Server *svr)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_IPC_SERVER))
@@ -524,7 +524,7 @@ ecore_ipc_server_connected_get(Ecore_Ipc_Server *svr)
  * @todo    This function needs to become an IPC message.
  * @todo Fix up the documentation: Make sure what ref_to and response are.
  */
-int
+EAPI int
 ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int ref_to, int response, void *data, int size)
 {
    Ecore_Ipc_Msg_Head msg;
@@ -588,7 +588,7 @@ ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int 
  *                        lower).
  * @ingroup Ecore_Ipc_Server_Group
  */
-void
+EAPI void
 ecore_ipc_server_client_limit_set(Ecore_Ipc_Server *svr, int client_limit, char reject_excess_clients)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_IPC_SERVER))
@@ -654,7 +654,7 @@ ecore_ipc_server_client_limit_set(Ecore_Ipc_Server *svr, int client_limit, char 
  * @todo    This function needs to become an IPC message.
  * @todo    Make sure ref_to and response parameters are described correctly.
  */
-int
+EAPI int
 ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int ref_to, int response, void *data, int size)
 {
    Ecore_Ipc_Msg_Head msg;
@@ -702,7 +702,7 @@ ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int r
  * @return  The IPC server the IPC client is connected to.
  * @ingroup Ecore_IPC_Client_Group
  */
-Ecore_Ipc_Server *
+EAPI Ecore_Ipc_Server *
 ecore_ipc_client_server_get(Ecore_Ipc_Client *cl)
 {
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_IPC_CLIENT))
@@ -721,7 +721,7 @@ ecore_ipc_client_server_get(Ecore_Ipc_Client *cl)
  * @return  Data associated with the client.
  * @ingroup Ecore_IPC_Client_Group
  */
-void *
+EAPI void *
 ecore_ipc_client_del(Ecore_Ipc_Client *cl)
 {
    void *data;
@@ -749,7 +749,7 @@ ecore_ipc_client_del(Ecore_Ipc_Client *cl)
  * @param   data The data to associate with the IPC client.
  * @ingroup Ecore_IPC_Client_Group
  */
-void
+EAPI void
 ecore_ipc_client_data_set(Ecore_Ipc_Client *cl, const void *data)
 {  
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_IPC_CLIENT))
@@ -767,7 +767,7 @@ ecore_ipc_client_data_set(Ecore_Ipc_Client *cl, const void *data)
  * @return  The data associated with the IPC client.
  * @ingroup Ecore_IPC_Client_Group
  */
-void *
+EAPI void *
 ecore_ipc_client_data_get(Ecore_Ipc_Client *cl)
 {  
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_IPC_CLIENT))
@@ -784,7 +784,7 @@ ecore_ipc_client_data_get(Ecore_Ipc_Client *cl)
  * @return  1 if SSL is available, 0 if it is not.
  * @ingroup Ecore_Con_Client_Group
  */
-int
+EAPI int
 ecore_ipc_ssl_available_get(void)
 {
    return ecore_con_ssl_available_get();

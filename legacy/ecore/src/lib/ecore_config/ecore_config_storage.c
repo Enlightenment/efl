@@ -1,6 +1,3 @@
-#include "Ecore_Config.h"
-#include "ecore_config_private.h"
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -11,13 +8,16 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+#include "Ecore_Config.h"
+#include "ecore_config_private.h"
+
 /**
  * Loads the default configuration.
  * @return  @c ECORE_CONFIG_ERR_SUCC on success.  @c ECORE_CONFIG_ERR_NODATA
  *          is returned if the file cannot be loaded.
  * @ingroup Ecore_Config_File_Group
  */
-int
+EAPI int
 ecore_config_load(void)
 {
    char                file[PATH_MAX];
@@ -37,7 +37,7 @@ ecore_config_load(void)
  *          saved.
  * @ingroup Ecore_Config_File_Group
  */
-int
+EAPI int
 ecore_config_save(void)
 {
    char                file[PATH_MAX];
@@ -57,7 +57,7 @@ ecore_config_save(void)
  *          is returned if the file cannot be loaded.
  * @ingroup Ecore_Config_File_Group
  */
-int
+EAPI int
 ecore_config_file_load(const char *file)
 {
    Ecore_Config_DB_File  *db;
@@ -129,7 +129,7 @@ _ecore_config_recurse_mkdir(const char *file)
  *          saved.
  * @ingroup Ecore_Config_File_Group
  */
-int
+EAPI int
 ecore_config_file_save(const char *file)
 {
    Ecore_Config_Prop    *next;

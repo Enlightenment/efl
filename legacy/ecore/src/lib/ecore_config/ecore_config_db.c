@@ -1,8 +1,3 @@
-#include "Ecore_Config.h"
-#include "ecore_config_private.h"
-#include "ecore_config_util.h"
-#include <Eet.h>
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -13,6 +8,11 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <locale.h>
+
+#include "Ecore_Config.h"
+#include "ecore_config_private.h"
+#include "ecore_config_util.h"
+#include <Eet.h>
 
 struct _Ecore_Config_DB_File
 {

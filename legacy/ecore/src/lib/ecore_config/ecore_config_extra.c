@@ -1,14 +1,14 @@
-#include "Ecore_Config.h"
-#include "Ecore.h"
-
-#include "config.h"
-
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>
+
+#include "Ecore_Config.h"
+#include "Ecore.h"
+
+#include "config.h"
 
 typedef struct __Ecore_Config_Arg_Callback _Ecore_Config_Arg_Callback;
 struct __Ecore_Config_Arg_Callback
