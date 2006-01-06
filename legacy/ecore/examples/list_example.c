@@ -18,11 +18,14 @@ int main (int argc, char *argv[]) {
   char *last   = "last";
 
   list = ecore_list_new();
+
   ecore_list_append(list, last);    // Insert
   ecore_list_prepend(list, first);  // Add to front
-  ecore_list_goto_index(list, 2);
+  ecore_list_goto_index(list, 1);   // counted from 0
   ecore_list_insert(list, second);  // Insert before item at index 2
   print_list(list);
+
+  ecore_list_destroy(list);
 
   return 0;
 }

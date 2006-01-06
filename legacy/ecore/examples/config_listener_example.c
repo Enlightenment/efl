@@ -5,7 +5,7 @@
 #include <Ecore.h>
 #include <Ecore_Config.h>
 
-#define INT_PROPERTY_KEY  "int_val"
+#define INT_PROPERTY_KEY  "/example/integer"
 #define CALLBACK_NAME     "change listener"
 
 int change_listener (const char *key, const Ecore_Config_Type type,

@@ -12,7 +12,9 @@ CON_EXAMPLES = con_server_example con_client_example
 endif
 
 if BUILD_ECORE_CONFIG
-CONFIG_EXAMPLES = config_basic_example
+CONFIG_EXAMPLES = \
+config_basic_example \
+config_listener_example
 endif
 
 if BUILD_ECORE_X
@@ -58,6 +60,11 @@ config_basic_example_LDADD    = $(top_builddir)/src/lib/ecore/libecore.la \
                                 $(top_builddir)/src/lib/ecore_config/libecore_config.la \
                                 $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
                                 $(top_builddir)/src/lib/ecore_con/libecore_con.la
+config_listener_example_SOURCES  = config_listener_example.c
+config_listener_example_LDADD    = $(top_builddir)/src/lib/ecore/libecore.la \
+                                   $(top_builddir)/src/lib/ecore_config/libecore_config.la \
+                                   $(top_builddir)/src/lib/ecore_ipc/libecore_ipc.la \
+                                   $(top_builddir)/src/lib/ecore_con/libecore_con.la
 endif
 
 if BUILD_ECORE_X
