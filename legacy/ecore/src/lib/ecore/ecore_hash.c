@@ -48,7 +48,7 @@ static int _ecore_hash_node_destroy(Ecore_Hash_Node *node, Ecore_Free_Cb keyd,
  * @return @c NULL on error, a new hash on success.
  * @ingroup Ecore_Data_Hash_ADT_Creation_Group
  */
-Ecore_Hash *ecore_hash_new(Ecore_Hash_Cb hash_func, Ecore_Compare_Cb compare)
+EAPI Ecore_Hash *ecore_hash_new(Ecore_Hash_Cb hash_func, Ecore_Compare_Cb compare)
 {
 	Ecore_Hash *new_hash = (Ecore_Hash *)malloc(sizeof(Ecore_Hash));
 	if (!new_hash)
@@ -70,7 +70,7 @@ Ecore_Hash *ecore_hash_new(Ecore_Hash_Cb hash_func, Ecore_Compare_Cb compare)
  * @return  @c TRUE on success, @c FALSE on an error.
  * @ingroup Ecore_Data_Hash_ADT_Creation_Group
  */
-int ecore_hash_init(Ecore_Hash *hash, Ecore_Hash_Cb hash_func, Ecore_Compare_Cb compare)
+EAPI int ecore_hash_init(Ecore_Hash *hash, Ecore_Hash_Cb hash_func, Ecore_Compare_Cb compare)
 {
 	CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
 
@@ -100,7 +100,7 @@ int ecore_hash_init(Ecore_Hash *hash, Ecore_Hash_Cb hash_func, Ecore_Compare_Cb 
  * @return  @c TRUE on success, @c FALSE on error.
  * @ingroup Ecore_Data_Hash_ADT_Destruction_Group
  */
-int ecore_hash_set_free_key(Ecore_Hash *hash, Ecore_Free_Cb function)
+EAPI int ecore_hash_set_free_key(Ecore_Hash *hash, Ecore_Free_Cb function)
 {
 	CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
 	CHECK_PARAM_POINTER_RETURN("function", function, FALSE);
@@ -119,7 +119,7 @@ int ecore_hash_set_free_key(Ecore_Hash *hash, Ecore_Free_Cb function)
  * @return  @c TRUE on success, @c FALSE on error
  * @ingroup Ecore_Data_Hash_ADT_Destruction_Group
  */
-int ecore_hash_set_free_value(Ecore_Hash *hash, Ecore_Free_Cb function)
+EAPI int ecore_hash_set_free_value(Ecore_Hash *hash, Ecore_Free_Cb function)
 {
 	CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
 	CHECK_PARAM_POINTER_RETURN("function", function, FALSE);
@@ -145,7 +145,7 @@ int ecore_hash_set_free_value(Ecore_Hash *hash, Ecore_Free_Cb function)
  * @return  @c TRUE if successful, @c FALSE if not.
  * @ingroup Ecore_Data_Hash_ADT_Data_Group
  */
-int ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
+EAPI int ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
 {
 	int ret = FALSE;
 	Ecore_Hash_Node *node;
@@ -172,7 +172,7 @@ int ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
  * @return  @c TRUE on success, @c FALSE on error.
  * @ingroup Ecore_Data_Hash_ADT_Destruction_Group
  */
-void ecore_hash_destroy(Ecore_Hash *hash)
+EAPI void ecore_hash_destroy(Ecore_Hash *hash)
 {
 	unsigned int i = 0;
 
@@ -223,7 +223,7 @@ void ecore_hash_destroy(Ecore_Hash *hash)
  * @return  TRUE on success, FALSE otherwise.
  * @ingroup Ecore_Data_Hash_ADT_Traverse_Group
  */
-int ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func,
+EAPI int ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func,
 														 void *user_data)
 {
 	unsigned int i = 0;
@@ -255,7 +255,7 @@ int ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func,
  * @return  new ecore_list on success, NULL otherwise
  * @ingroup Ecore_Data_Hash_ADT_Traverse_Group
  */
-Ecore_List *ecore_hash_keys(Ecore_Hash *hash)
+EAPI Ecore_List *ecore_hash_keys(Ecore_Hash *hash)
 {
 	unsigned int i = 0;
 	Ecore_List *keys;
@@ -288,7 +288,7 @@ Ecore_List *ecore_hash_keys(Ecore_Hash *hash)
  * Prints the distribution of the given hash table for graphing.
  * @param hash The given hash table.
  */
-void
+EAPI void
 ecore_hash_dump_graph(Ecore_Hash *hash)
 {
 	unsigned int i;
@@ -360,7 +360,7 @@ _ecore_hash_add_node(Ecore_Hash *hash, Ecore_Hash_Node *node)
  * @return  The value corresponding to key on success, @c NULL otherwise.
  * @ingroup Ecore_Data_Hash_ADT_Data_Group
  */
-void *ecore_hash_get(Ecore_Hash *hash, void *key)
+EAPI void *ecore_hash_get(Ecore_Hash *hash, void *key)
 {
 	void *data;
 	Ecore_Hash_Node *node;
@@ -388,7 +388,7 @@ void *ecore_hash_get(Ecore_Hash *hash, void *key)
  *          returned if there is an error.
  * @ingroup Ecore_Data_Hash_ADT_Data_Group
  */
-void *ecore_hash_remove(Ecore_Hash *hash, void *key)
+EAPI void *ecore_hash_remove(Ecore_Hash *hash, void *key)
 {
 	Ecore_Hash_Node *node = NULL;
 	Ecore_Hash_Node *list;

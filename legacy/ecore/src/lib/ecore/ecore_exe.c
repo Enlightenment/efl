@@ -27,7 +27,7 @@ static char *shell = NULL;
 /* FIXME: This errno checking stuff should be put elsewhere for everybody to use.
  * For now it lives here though, just to make testing easier.
  */
-int _ecore_exe_check_errno(int result, char *file, int line);
+static int _ecore_exe_check_errno(int result, char *file, int line);
 #define E_IF_NO_ERRNO(result, foo, ok) \
   while (((ok) = _ecore_exe_check_errno( (result) = (foo), __FILE__, __LINE__)) == -1)   sleep(1); \
   if (ok)
@@ -38,7 +38,8 @@ int _ecore_exe_check_errno(int result, char *file, int line);
 #define E_IF_NO_ERRNO_NOLOOP(result, foo, ok) \
   if (((ok) = _ecore_exe_check_errno( (result) = (foo), __FILE__, __LINE__)))
 
-int _ecore_exe_check_errno(int result, char *file, int line)
+static int
+_ecore_exe_check_errno(int result, char *file, int line)
 {
    int saved_errno = errno;
 
@@ -187,7 +188,7 @@ int _ecore_exe_check_errno(int result, char *file, int line)
  * @return  A process handle to the spawned process.
  * @ingroup Ecore_Exe_Basic_Group
  */
-Ecore_Exe *
+EAPI Ecore_Exe *
 ecore_exe_run(const char *exe_cmd, const void *data)
 {
    Ecore_Exe *exe;
@@ -235,7 +236,7 @@ ecore_exe_run(const char *exe_cmd, const void *data)
  * @return  A process handle to the spawned process.
  * @ingroup Ecore_Exe_Basic_Group
  */
-Ecore_Exe *
+EAPI Ecore_Exe *
 ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 {
 /* FIXME: Maybe we should allow STDERR reading as well. */
@@ -424,7 +425,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
  * @return 1 if successful, 0 on failure.
  * @ingroup Ecore_Exe_Basic_Group
  */
-int
+EAPI int
 ecore_exe_send(Ecore_Exe *exe, void *data, int size)
 {
    void *buf;
@@ -448,7 +449,7 @@ ecore_exe_send(Ecore_Exe *exe, void *data, int size)
  * @param exe  The child process
  * @ingroup Ecore_Exe_Basic_Group
  */
-void
+EAPI void
 ecore_exe_close_stdin(Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
@@ -468,7 +469,7 @@ ecore_exe_close_stdin(Ecore_Exe *exe)
  * @param   tag The string tag to set on the process handle.
  * @ingroup Ecore_Exe_Basic_Group
  */
-void
+EAPI void
 ecore_exe_tag_set(Ecore_Exe *exe, const char *tag)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
@@ -491,7 +492,7 @@ ecore_exe_tag_set(Ecore_Exe *exe, const char *tag)
  * @return  The string attached to @p exe.
  * @ingroup Ecore_Exe_Basic_Group
  */
-char *
+EAPI char *
 ecore_exe_tag_get(Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
@@ -514,7 +515,7 @@ ecore_exe_tag_get(Ecore_Exe *exe)
  *          called.
  * @ingroup Ecore_Exe_Basic_Group
  */
-void *
+EAPI void *
 ecore_exe_free(Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
@@ -532,7 +533,7 @@ ecore_exe_free(Ecore_Exe *exe)
  * @return  The process ID on success.  @c -1 otherwise.
  * @ingroup Ecore_Exe_Basic_Group
  */
-pid_t
+EAPI pid_t
 ecore_exe_pid_get(Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
@@ -550,7 +551,7 @@ ecore_exe_pid_get(Ecore_Exe *exe)
  * @return  The data pointer attached to @p exe.
  * @ingroup Ecore_Exe_Basic_Group
  */
-void *
+EAPI void *
 ecore_exe_data_get(Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
@@ -573,7 +574,7 @@ ecore_exe_data_get(Ecore_Exe *exe)
  * @param   exe Process handle to the given process.
  * @ingroup Ecore_Exe_Signal_Group
  */
-void
+EAPI void
 ecore_exe_pause(Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
@@ -590,7 +591,7 @@ ecore_exe_pause(Ecore_Exe *exe)
  * @param   exe Process handle to the given process.
  * @ingroup Ecore_Exe_Signal_Group
  */
-void
+EAPI void
 ecore_exe_continue(Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
@@ -607,7 +608,7 @@ ecore_exe_continue(Ecore_Exe *exe)
  * @param   exe Process handle to the given process.
  * @ingroup Ecore_Exe_Signal_Group
  */
-void
+EAPI void
 ecore_exe_terminate(Ecore_Exe *exe)
 {
    struct _ecore_exe_dead_exe *dead;
@@ -635,7 +636,7 @@ ecore_exe_terminate(Ecore_Exe *exe)
  * @param   exe Process handle to the given process.
  * @ingroup Ecore_Exe_Signal_Group
  */
-void
+EAPI void
 ecore_exe_kill(Ecore_Exe *exe)
 {
    struct _ecore_exe_dead_exe *dead;
@@ -665,7 +666,7 @@ ecore_exe_kill(Ecore_Exe *exe)
  *              the signal will be ignored.
  * @ingroup Ecore_Exe_Signal_Group
  */
-void
+EAPI void
 ecore_exe_signal(Ecore_Exe *exe, int num)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
@@ -685,7 +686,7 @@ ecore_exe_signal(Ecore_Exe *exe, int num)
  * @param   exe Process handle to the given process.
  * @ingroup Ecore_Exe_Signal_Group
  */
-void
+EAPI void
 ecore_exe_hup(Ecore_Exe *exe)
 {
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
@@ -974,7 +975,7 @@ _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler)
 				       int last = 0;
 				       char *c;
 
-                                       c = inbuf;
+                                       c = (char *)inbuf;
 				       for (i = 0; i < inbuf_num; i++) /* Find the lines. */
 				          {
 					     if (inbuf[i] == '\n')
@@ -1002,7 +1003,7 @@ _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler)
 						   e->lines[count].line = c;
 						   e->lines[count].size = i - last;
 						   last = i + 1;
-						   c = &inbuf[last];
+						   c = (char *)&inbuf[last];
 					           count++;
 					        }
 					  }

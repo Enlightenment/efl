@@ -12,7 +12,7 @@ static char **app_argv = NULL;
  * A call to this function will store the programs command-line arguments
  * for later use by ecore_app_restart() or ecore_app_args_get().
  */
-void
+EAPI void
 ecore_app_args_set(int argc, const char **argv)
 {
    if ((argc < 1) ||
@@ -32,7 +32,7 @@ ecore_app_args_set(int argc, const char **argv)
  * also if the pointer is not NULL. The values they are filled with will be the
  * same set by ecore_app_args_set().
  */
-void
+EAPI void
 ecore_app_args_get(int *argc, char ***argv)
 {
    if (argc) *argc = app_argc;
@@ -49,7 +49,7 @@ ecore_app_args_get(int *argc, char ***argv)
  * 
  * FIXME: Currently not implimented.
  */
-void
+EAPI void
 ecore_app_restart(void)
 {
    char **args;

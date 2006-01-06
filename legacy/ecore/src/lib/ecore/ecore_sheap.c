@@ -18,7 +18,7 @@ static void _ecore_sheap_update_data(Ecore_Sheap *heap);
  * @return A pointer to the newly allocated binary heap on success, NULL on
  * failure.
  */
-Ecore_Sheap *ecore_sheap_new(Ecore_Compare_Cb compare, int size)
+EAPI Ecore_Sheap *ecore_sheap_new(Ecore_Compare_Cb compare, int size)
 {
 	Ecore_Sheap *heap = NULL;
 
@@ -42,7 +42,7 @@ Ecore_Sheap *ecore_sheap_new(Ecore_Compare_Cb compare, int size)
  * @param size    The number of elements to allow in the heap
  * @return        TRUE on success, FALSE on failure
  */
-int ecore_sheap_init(Ecore_Sheap *heap, Ecore_Compare_Cb compare, int size)
+EAPI int ecore_sheap_init(Ecore_Sheap *heap, Ecore_Compare_Cb compare, int size)
 {
 	CHECK_PARAM_POINTER_RETURN("heap", heap, FALSE);
 
@@ -69,7 +69,7 @@ int ecore_sheap_init(Ecore_Sheap *heap, Ecore_Compare_Cb compare, int size)
  *
  * @param  heap The heap to be freed
  */
-void ecore_sheap_destroy(Ecore_Sheap *heap)
+EAPI void ecore_sheap_destroy(Ecore_Sheap *heap)
 {
 	int i;
 
@@ -94,7 +94,7 @@ void ecore_sheap_destroy(Ecore_Sheap *heap)
  * @param  free_func The function that will free the key data.
  * @return @c TRUE on successful set, @c FALSE otherwise.
  */
-int ecore_sheap_set_free_cb(Ecore_Sheap *heap, Ecore_Free_Cb free_func)
+EAPI int ecore_sheap_set_free_cb(Ecore_Sheap *heap, Ecore_Free_Cb free_func)
 {
 	CHECK_PARAM_POINTER_RETURN("heap", heap, FALSE);
 
@@ -110,7 +110,7 @@ int ecore_sheap_set_free_cb(Ecore_Sheap *heap, Ecore_Free_Cb free_func)
  * @return TRUE on success, NULL on failure. Increases the size of the heap if
  *         it becomes larger than available space.
  */
-int ecore_sheap_insert(Ecore_Sheap *heap, void *data)
+EAPI int ecore_sheap_insert(Ecore_Sheap *heap, void *data)
 {
 	int i;
 	void *temp;
@@ -198,7 +198,7 @@ int ecore_sheap_insert(Ecore_Sheap *heap, void *data)
  * @note   The extract function maintains the heap properties after the
  *         extract.
  */
-void *ecore_sheap_extract(Ecore_Sheap *heap)
+EAPI void *ecore_sheap_extract(Ecore_Sheap *heap)
 {
 	void *extreme;
 
@@ -222,7 +222,7 @@ void *ecore_sheap_extract(Ecore_Sheap *heap)
  * @return The top item of the heap on success, NULL on failure.
  * @note   The function does not alter the heap.
  */
-void *ecore_sheap_extreme(Ecore_Sheap *heap)
+EAPI void *ecore_sheap_extreme(Ecore_Sheap *heap)
 {
 	if (heap->size < 1)
 		return NULL;
@@ -239,7 +239,7 @@ void *ecore_sheap_extreme(Ecore_Sheap *heap)
  * @note         The heap does not free the old data since it must be passed
  *               in, so the caller can perform the free if desired.
  */
-int ecore_sheap_change(Ecore_Sheap *heap, void *item, void *newval)
+EAPI int ecore_sheap_change(Ecore_Sheap *heap, void *item, void *newval)
 {
 	int i;
 
@@ -269,7 +269,7 @@ int ecore_sheap_change(Ecore_Sheap *heap, void *item, void *newval)
  * The comparison function is changed to @compare and the heap is heapified
  * by the new comparison.
  */
-int ecore_sheap_set_compare(Ecore_Sheap *heap, Ecore_Compare_Cb compare)
+EAPI int ecore_sheap_set_compare(Ecore_Sheap *heap, Ecore_Compare_Cb compare)
 {
 	CHECK_PARAM_POINTER_RETURN("heap", heap, FALSE);
 
@@ -291,7 +291,7 @@ int ecore_sheap_set_compare(Ecore_Sheap *heap, Ecore_Compare_Cb compare)
  * Changes the heap order of @heap and re-heapifies the data to this new
  * order. The default order is a min heap.
  */
-void ecore_sheap_set_order(Ecore_Sheap *heap, char order)
+EAPI void ecore_sheap_set_order(Ecore_Sheap *heap, char order)
 {
 	CHECK_PARAM_POINTER("heap", heap);
 
@@ -307,7 +307,7 @@ void ecore_sheap_set_order(Ecore_Sheap *heap, char order)
  * Sorts the data in the heap into the order that is used for the heap's
  * data.
  */
-void ecore_sheap_sort(Ecore_Sheap *heap)
+EAPI void ecore_sheap_sort(Ecore_Sheap *heap)
 {
 	int i = 0;
 	void **new_data;
@@ -340,7 +340,7 @@ void ecore_sheap_sort(Ecore_Sheap *heap)
  *         NULL on failure.
  * @note   The data is guaranteed to be in sorted order.
  */
-inline void *ecore_sheap_item(Ecore_Sheap *heap, int i)
+EAPI inline void *ecore_sheap_item(Ecore_Sheap *heap, int i)
 {
 	if (i >= heap->size)
 		return NULL;

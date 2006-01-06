@@ -40,7 +40,7 @@ static void                *ecore_raw_event_event =  NULL;
  * particular event, so all handler set to handle that event type that have not
  * already been called, will not be.
  */
-Ecore_Event_Handler *
+EAPI Ecore_Event_Handler *
 ecore_event_handler_add(int type, int (*func) (void *data, int type, void *event), const void *data)
 {
    Ecore_Event_Handler *eh;
@@ -90,7 +90,7 @@ ecore_event_handler_add(int type, int (*func) (void *data, int type, void *event
  * handler was added by ecore_event_handler_add(). On failure NULL will be
  * returned. Once a handler is deleted it will no longer be called.
  */
-void *
+EAPI void *
 ecore_event_handler_del(Ecore_Event_Handler *event_handler)
 {
    Ecore_List2_Data *node;
@@ -131,7 +131,7 @@ static void _ecore_event_generic_free (void *data __UNUSED__, void *event)
  * with the private structure pointer.
  * func_free is passed @p data as its data parameter.
  */
-Ecore_Event *
+EAPI Ecore_Event *
 ecore_event_add(int type, void *ev, void (*func_free) (void *data, void *ev), void *data)
 {
    if (!ev) return NULL;
@@ -152,7 +152,7 @@ ecore_event_add(int type, void *ev, void (*func_free) (void *data, void *ev), vo
  * cleanup, and so if the free function depends on the data pointer to work,
  * you should defer cleaning of this till the free function is called later.
  */
-void *
+EAPI void *
 ecore_event_del(Ecore_Event *event)
 {
    if (!ECORE_MAGIC_CHECK(event, ECORE_MAGIC_EVENT)) 
@@ -175,7 +175,7 @@ ecore_event_del(Ecore_Event *event)
  * it is calculated, except that the ID will be unique to the current instance
  * of the process.
  */
-int
+EAPI int
 ecore_event_type_new(void)
 {
    event_id_max++;
@@ -202,7 +202,7 @@ ecore_event_type_new(void)
  * processing is finished @p func_end is called and is passed the loop_data
  * and @p data pointer to clean up.
  */
-Ecore_Event_Filter *
+EAPI Ecore_Event_Filter *
 ecore_event_filter_add(void * (*func_start) (void *data), int (*func_filter) (void *data, void *loop_data, int type, void *event), void (*func_end) (void *data, void *loop_data), const void *data)
 {
    Ecore_Event_Filter *ef;
@@ -228,7 +228,7 @@ ecore_event_filter_add(void * (*func_start) (void *data), int (*func_filter) (vo
  * will return the data pointer set when this filter was added. On failure
  * NULL is returned.
  */
-void *
+EAPI void *
 ecore_event_filter_del(Ecore_Event_Filter *ef)
 {   
    if (!ECORE_MAGIC_CHECK(ef, ECORE_MAGIC_EVENT_FILTER))
@@ -256,7 +256,7 @@ ecore_event_filter_del(Ecore_Event_Filter *ef)
  * the program know if the event type being handled is one it wants to get more
  * information about.
  */
-int
+EAPI int
 ecore_event_current_type_get(void)
 {
    return ecore_raw_event_type;
@@ -276,7 +276,7 @@ ecore_event_current_type_get(void)
  * the program access the event data if the type of the event is handled by
  * the program.
  */
-void *
+EAPI void *
 ecore_event_current_event_get(void)
 {
    return ecore_raw_event_event;
@@ -476,7 +476,7 @@ _ecore_event_exe_exit_free(void *data __UNUSED__, void *ev)
 }
 #endif
 
-void *
+EAPI void *
 _ecore_event_signal_user_new(void)
 {
    Ecore_Event_Signal_User *e;

@@ -17,7 +17,7 @@ static int ecore_string_init_count = 0;
  * Initialize the ecore string internal structure.
  * @return  Zero on failure, non-zero on successful initialization.
  */
-int ecore_string_init()
+EAPI int ecore_string_init()
 {
 	/*
 	 * No strings have been loaded at this point, so create the hash
@@ -41,7 +41,7 @@ int ecore_string_init()
  *          @c NULL on failure.
  * @ingroup Ecore_String_Group
  */
-const char *ecore_string_instance(char *string)
+EAPI const char *ecore_string_instance(char *string)
 {
 	Ecore_String *str;
 
@@ -78,7 +78,7 @@ const char *ecore_string_instance(char *string)
  * @param   string The given string.
  * @ingroup Ecore_String_Group
  */
-void ecore_string_release(const char *string)
+EAPI void ecore_string_release(const char *string)
 {
 	Ecore_String *str;
 
@@ -99,7 +99,7 @@ void ecore_string_release(const char *string)
 /**
  * Shutdown the ecore string internal structures
  */
-void ecore_string_shutdown()
+EAPI void ecore_string_shutdown()
 {
 	--ecore_string_init_count;
 	if (!ecore_string_init_count) {

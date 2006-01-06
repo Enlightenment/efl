@@ -24,7 +24,7 @@ static double       last_check = 0.0;
  * @return  A timer object on success.  @c NULL on failure.
  * @ingroup Ecore_Time_Group
  */
-Ecore_Timer *
+EAPI Ecore_Timer *
 ecore_timer_add(double in, int (*func) (void *data), const void *data)
 {
    double now;
@@ -47,7 +47,7 @@ ecore_timer_add(double in, int (*func) (void *data), const void *data)
  *          called.  @c NULL is returned if the function is unsuccessful.
  * @ingroup Ecore_Time_Group
  */
-void *
+EAPI void *
 ecore_timer_del(Ecore_Timer *timer)
 {
    if (!ECORE_MAGIC_CHECK(timer, ECORE_MAGIC_TIMER))
@@ -70,7 +70,7 @@ ecore_timer_del(Ecore_Timer *timer)
  * @param   in    The interval in seconds.
  * @ingroup Ecore_Time_Group
  */
-void
+EAPI void
 ecore_timer_interval_set(Ecore_Timer *timer, double in)
 {
    if (!ECORE_MAGIC_CHECK(timer, ECORE_MAGIC_TIMER))

@@ -19,7 +19,7 @@ static Ecore_List *loaded_plugins = NULL;
  *          failure.
  * @ingroup Ecore_Plugin
  */
-Ecore_Plugin *
+EAPI Ecore_Plugin *
 ecore_plugin_load(int group_id, char *plugin_name)
 {
 	char *path;
@@ -67,7 +67,7 @@ ecore_plugin_load(int group_id, char *plugin_name)
  * @param   plugin The given plugin.
  * @ingroup Ecore_Plugin
  */
-void
+EAPI void
 ecore_plugin_unload(Ecore_Plugin * plugin)
 {
 	CHECK_PARAM_POINTER("plugin", plugin);
@@ -91,7 +91,7 @@ ecore_plugin_unload(Ecore_Plugin * plugin)
  * @return  Address of the given symbol if successful.  Otherwise, @c NULL.
  * @ingroup Ecore_Plugin
  */
-void *
+EAPI void *
 ecore_plugin_call(Ecore_Plugin * plugin, char *symbol_name)
 {
 	void *ret;

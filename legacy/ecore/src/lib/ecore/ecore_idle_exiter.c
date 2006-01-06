@@ -11,7 +11,7 @@ static int                 idle_exiters_delete_me = 0;
  * @return A handle to the idle exiter callback on success.  NULL otherwise.
  * @ingroup Idle_Group
  */
-Ecore_Idle_Exiter *
+EAPI Ecore_Idle_Exiter *
 ecore_idle_exiter_add(int (*func) (void *data), const void *data)
 {
    Ecore_Idle_Exiter *ie;
@@ -33,7 +33,7 @@ ecore_idle_exiter_add(int (*func) (void *data), const void *data)
  *         successful.  NULL otherwise.
  * @ingroup Idle_Group
  */
-void *
+EAPI void *
 ecore_idle_exiter_del(Ecore_Idle_Exiter *idle_exiter)
 {
    if (!ECORE_MAGIC_CHECK(idle_exiter, ECORE_MAGIC_IDLE_EXITER))

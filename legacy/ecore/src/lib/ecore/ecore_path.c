@@ -20,7 +20,7 @@ Ecore_Path_Group *__ecore_path_group_find_id(int id);
  * @return  @c 0 on error, the integer id of the new group on success.
  * @ingroup Ecore_Path_Group
  */
-int
+EAPI int
 ecore_path_group_new(char *group_name)
 {
 	Ecore_Path_Group *last;
@@ -54,7 +54,7 @@ ecore_path_group_new(char *group_name)
  * @param   group_id The unique identifier for the group.
  * @ingroup Ecore_Path_Group
  */
-void
+EAPI void
 ecore_path_group_del(int group_id)
 {
 	Ecore_Path_Group *group;
@@ -80,7 +80,7 @@ ecore_path_group_del(int group_id)
  * @param   path     The new path to be added to the group.
  * @ingroup Ecore_Path_Group
  */
-void
+EAPI void
 ecore_path_group_add(int group_id, char *path)
 {
 	Ecore_Path_Group *group;
@@ -104,7 +104,7 @@ ecore_path_group_add(int group_id, char *path)
  * @param   path     The path of the directory to be removed.
  * @ingroup Ecore_Path_Group
  */
-void
+EAPI void
 ecore_path_group_remove(int group_id, char *path)
 {
 	char *found;
@@ -143,7 +143,7 @@ ecore_path_group_remove(int group_id, char *path)
  *          on success.  @c NULL on failure.
  * @ingroup Ecore_Path_Group
  */
-char *
+EAPI char *
 ecore_path_group_find(int group_id, char *name)
 {
 	int r;
@@ -180,7 +180,7 @@ ecore_path_group_find(int group_id, char *name)
  *          identified by @p group_id.  @c NULL otherwise.
  * @ingroup Ecore_Path_Group
  */
-Ecore_List *
+EAPI Ecore_List *
 ecore_path_group_available(int group_id)
 {
 	Ecore_List *avail = NULL;

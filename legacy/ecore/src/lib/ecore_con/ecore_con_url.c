@@ -57,7 +57,7 @@ static fd_set _current_fd_set;
 static int init_count = 0;
 #endif
 
-int
+EAPI int
 ecore_con_url_init(void)
 {
 #ifdef HAVE_CURL
@@ -98,7 +98,7 @@ ecore_con_url_init(void)
 #endif
 }
 
-int
+EAPI int
 ecore_con_url_shutdown(void)
 {
 #ifdef HAVE_CURL
@@ -132,7 +132,7 @@ ecore_con_url_shutdown(void)
    return 1;
 }
 
-Ecore_Con_Url *
+EAPI Ecore_Con_Url *
 ecore_con_url_new(const char *url)
 {
 #ifdef HAVE_CURL
@@ -167,7 +167,7 @@ ecore_con_url_new(const char *url)
 #endif
 }
 
-void
+EAPI void
 ecore_con_url_destroy(Ecore_Con_Url *url_con)
 {
 #ifdef HAVE_CURL
@@ -187,7 +187,7 @@ ecore_con_url_destroy(Ecore_Con_Url *url_con)
 #endif
 }
 
-int
+EAPI int
 ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url)
 {
 #ifdef HAVE_CURL
@@ -203,7 +203,7 @@ ecore_con_url_url_set(Ecore_Con_Url *url_con, const char *url)
    return 1;
 }
 
-int
+EAPI int
 ecore_con_url_send(Ecore_Con_Url *url_con, void *data, size_t length, char *content_type)
 {
 #ifdef HAVE_CURL
@@ -242,7 +242,7 @@ ecore_con_url_send(Ecore_Con_Url *url_con, void *data, size_t length, char *cont
 }
 
 #ifdef HAVE_CURL
-size_t
+static size_t
 _ecore_con_url_data_cb(void *buffer, size_t size, size_t nmemb, void *userp)
 {
    Ecore_Con_Url *url_con;

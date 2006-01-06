@@ -32,7 +32,7 @@ gettimeofday(struct timeval *tv, void *unused)
  * @return  The number of seconds since 12.00AM 1st January 1970.
  * @ingroup Ecore_Time_Group
  */
-double
+EAPI double
 ecore_time_get(void)
 {
    struct timeval      timev;

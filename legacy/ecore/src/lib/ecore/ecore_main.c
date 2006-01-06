@@ -60,7 +60,7 @@ static double            t2 = 0.0;
  * queue.
  * @ingroup Ecore_Main_Loop_Group
  */
-void
+EAPI void
 ecore_main_loop_iterate(void)
 {
    _ecore_main_loop_iterate_internal(1);
@@ -73,7 +73,7 @@ ecore_main_loop_iterate(void)
  *
  * @ingroup Ecore_Main_Loop_Group
  */
-void
+EAPI void
 ecore_main_loop_begin(void)
 {
    in_main_loop++;
@@ -87,7 +87,7 @@ ecore_main_loop_begin(void)
  * been processed.
  * @ingroup Ecore_Main_Loop_Group
  */
-void
+EAPI void
 ecore_main_loop_quit(void)
 {
    do_quit = 1;
@@ -130,7 +130,7 @@ ecore_main_loop_quit(void)
  * @return  A fd handler handle if successful.  @c NULL otherwise.
  * @ingroup Ecore_FD_Handler_Group
  */
-Ecore_Fd_Handler *
+EAPI Ecore_Fd_Handler *
 ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, int (*func) (void *data, Ecore_Fd_Handler *fd_handler), const void *data, int (*buf_func) (void *buf_data, Ecore_Fd_Handler *fd_handler), const void *buf_data)
 {
    Ecore_Fd_Handler *fdh;
@@ -162,7 +162,7 @@ ecore_main_fd_handler_add(int fd, Ecore_Fd_Handler_Flags flags, int (*func) (voi
  *          for @p fd_handler on success.  @c NULL otherwise.
  * @ingroup Ecore_FD_Handler_Group
  */
-void *
+EAPI void *
 ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
 {
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
@@ -176,7 +176,7 @@ ecore_main_fd_handler_del(Ecore_Fd_Handler *fd_handler)
    return fd_handler->data;
 }
 
-void
+EAPI void
 ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler, void (*func) (void *data, Ecore_Fd_Handler *fd_handler), const void *data)
 {
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
@@ -195,7 +195,7 @@ ecore_main_fd_handler_prepare_callback_set(Ecore_Fd_Handler *fd_handler, void (*
  * @return  The file descriptor the handler is watching.
  * @ingroup Ecore_FD_Handler_Group
  */
-int
+EAPI int
 ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler)
 {
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))
@@ -216,7 +216,7 @@ ecore_main_fd_handler_fd_get(Ecore_Fd_Handler *fd_handler)
  * @return  @c 1 if any of the given flags are active. @c 0 otherwise.
  * @ingroup Ecore_FD_Handler_Group
  */
-int
+EAPI int
 ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags)
 {
    int ret;
@@ -240,7 +240,7 @@ ecore_main_fd_handler_active_get(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_
  * @param   flags      The flags to be watching.
  * @ingroup Ecore_FD_Handler_Group
  */
-void
+EAPI void
 ecore_main_fd_handler_active_set(Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags)
 {
    if (!ECORE_MAGIC_CHECK(fd_handler, ECORE_MAGIC_FD_HANDLER))

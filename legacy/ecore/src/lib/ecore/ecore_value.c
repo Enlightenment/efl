@@ -28,7 +28,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #include "Ecore_Data.h"
 #include "ecore_private.h"
 
-const unsigned int ecore_prime_table[] = { 17, 31, 61, 127, 257, 509, 1021,
+EAPI const unsigned int ecore_prime_table[] = { 17, 31, 61, 127, 257, 509, 1021,
 	2053, 4093, 8191, 16381, 32771, 65537, 131071, 262147, 524287, 1048573,
 	2097143, 4194301, 8388617, 16777213 
 };
@@ -49,7 +49,7 @@ inline void ecore_print_warning(const char *function, const char *sparam)
  * @param  key The key to return compute a hash value
  * @return The key cast to an unsigned int.
  */
-unsigned int ecore_direct_hash(void *key)
+EAPI unsigned int ecore_direct_hash(void *key)
 {
 	return ((unsigned int) key);
 }
@@ -59,7 +59,7 @@ unsigned int ecore_direct_hash(void *key)
  * @param  key A pointer to the string to compute a hash value
  * @return A computed hash value for @a key.
  */
-unsigned int ecore_str_hash(void *key)
+EAPI unsigned int ecore_str_hash(void *key)
 {
 	int i;
 	unsigned int value = 0;
@@ -82,7 +82,7 @@ unsigned int ecore_str_hash(void *key)
  * @param  key2 The second key to compare
  * @return A strcmp style value to indicate the larger key
  */
-int ecore_direct_compare(void *key1, void *key2)
+EAPI int ecore_direct_compare(void *key1, void *key2)
 {
 	unsigned int k1, k2;
 
@@ -104,7 +104,7 @@ int ecore_direct_compare(void *key1, void *key2)
  * @param  key2 The second key to compare
  * @return A strcmp style value to indicate the larger key
  */
-int ecore_str_compare(void *key1, void *key2)
+EAPI int ecore_str_compare(void *key1, void *key2)
 {
 	char *k1, *k2;
 

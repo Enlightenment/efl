@@ -11,7 +11,7 @@ static int          idlers_delete_me = 0;
  * @return A idler handle if successfully added.  NULL otherwise.
  * @ingroup Idle_Group
  */
-Ecore_Idler *
+EAPI Ecore_Idler *
 ecore_idler_add(int (*func) (void *data), const void *data)
 {
    Ecore_Idler *ie;
@@ -33,7 +33,7 @@ ecore_idler_add(int (*func) (void *data), const void *data)
  *         otherwise.
  * @ingroup Idle_Group
  */
-void *
+EAPI void *
 ecore_idler_del(Ecore_Idler *idler)
 {
    if (!ECORE_MAGIC_CHECK(idler, ECORE_MAGIC_IDLER))

@@ -2,17 +2,6 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
-#include "Ecore.h"
-#include "ecore_private.h"
-#include "ecore_con_private.h"
-#include "Ecore_Con.h"
-
-#ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#elif WIN32
-#include <winsock.h>
-#endif
-
 #include <sys/stat.h>
 #include <arpa/inet.h>
 #include <sys/socket.h>
@@ -22,6 +11,17 @@
 
 #if USE_OPENSSL
 #include <time.h>
+#endif
+
+#include "Ecore.h"
+#include "ecore_private.h"
+#include "ecore_con_private.h"
+#include "Ecore_Con.h"
+
+#ifdef HAVE_NETINET_IN_H
+#include <netinet/in.h>
+#elif WIN32
+#include <winsock.h>
 #endif
 
 static void _ecore_con_cb_dns_lookup(void *data, struct hostent *he);
@@ -35,12 +35,12 @@ static void _ecore_con_client_flush(Ecore_Con_Client *cl);
 static void _ecore_con_event_client_data_free(void *data, void *ev);
 static void _ecore_con_event_server_data_free(void *data, void *ev);
 
-int ECORE_CON_EVENT_CLIENT_ADD = 0;
-int ECORE_CON_EVENT_CLIENT_DEL = 0;
-int ECORE_CON_EVENT_SERVER_ADD = 0;
-int ECORE_CON_EVENT_SERVER_DEL = 0;
-int ECORE_CON_EVENT_CLIENT_DATA = 0;
-int ECORE_CON_EVENT_SERVER_DATA = 0;
+EAPI int ECORE_CON_EVENT_CLIENT_ADD = 0;
+EAPI int ECORE_CON_EVENT_CLIENT_DEL = 0;
+EAPI int ECORE_CON_EVENT_SERVER_ADD = 0;
+EAPI int ECORE_CON_EVENT_SERVER_DEL = 0;
+EAPI int ECORE_CON_EVENT_CLIENT_DATA = 0;
+EAPI int ECORE_CON_EVENT_SERVER_DATA = 0;
 
 static Ecore_List *servers = NULL;
 static int init_count = 0;
@@ -61,7 +61,7 @@ static int ssl_init_count = 0;
  *          shut down.
  * @ingroup Ecore_Con_Lib_Group
  */
-int
+EAPI int
 ecore_con_init(void)
 {
    if (++init_count != 1) return init_count;
@@ -87,7 +87,7 @@ ecore_con_init(void)
  *          shut down.
  * @ingroup Ecore_Con_Lib_Group
  */
-int
+EAPI int
 ecore_con_shutdown(void)
 {
    if (--init_count != 0) return init_count;
@@ -134,7 +134,7 @@ ecore_con_shutdown(void)
  * @return A new Ecore_Con_Server.
  * @ingroup Ecore_Con_Server_Group
  */
-Ecore_Con_Server *
+EAPI Ecore_Con_Server *
 ecore_con_server_add(Ecore_Con_Type compl_type,
 		     const char *name,
 		     int port,
@@ -363,7 +363,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
  * @return A new Ecore_Con_Server.
  * @ingroup Ecore_Con_Server_Group
  */
-Ecore_Con_Server *
+EAPI Ecore_Con_Server *
 ecore_con_server_connect(Ecore_Con_Type compl_type,
 			 const char *name,
 			 int port,
@@ -472,7 +472,7 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
  * @return  Data associated with the server when it was created.
  * @ingroup Ecore_Con_Server_Group
  */
-void *
+EAPI void *
 ecore_con_server_del(Ecore_Con_Server *svr)
 {
    void *data;
@@ -495,7 +495,7 @@ ecore_con_server_del(Ecore_Con_Server *svr)
  * @return  The associated data.
  * @ingroup Ecore_Con_Server_Group
  */
-void *
+EAPI void *
 ecore_con_server_data_get(Ecore_Con_Server *svr)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
@@ -514,7 +514,7 @@ ecore_con_server_data_get(Ecore_Con_Server *svr)
  * @return  @c 1 if the server is connected.  @c 0 otherwise.
  * @ingroup Ecore_Con_Server_Group
  */
-int
+EAPI int
 ecore_con_server_connected_get(Ecore_Con_Server *svr)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
@@ -536,7 +536,7 @@ ecore_con_server_connected_get(Ecore_Con_Server *svr)
  *          error.
  * @ingroup Ecore_Con_Server_Group
  */
-int
+EAPI int
 ecore_con_server_send(Ecore_Con_Server *svr, void *data, int size)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
@@ -592,7 +592,7 @@ ecore_con_server_send(Ecore_Con_Server *svr, void *data, int size)
  *                        lower).
  * @ingroup Ecore_Con_Server_Group
  */
-void
+EAPI void
 ecore_con_server_client_limit_set(Ecore_Con_Server *svr, int client_limit, char reject_excess_clients)
 {
    if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
@@ -620,7 +620,7 @@ ecore_con_server_client_limit_set(Ecore_Con_Server *svr, int client_limit, char 
  *          error.
  * @ingroup Ecore_Con_Client_Group
  */
-int
+EAPI int
 ecore_con_client_send(Ecore_Con_Client *cl, void *data, int size)
 {
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
@@ -661,7 +661,7 @@ ecore_con_client_send(Ecore_Con_Client *cl, void *data, int size)
  * @return  The server that the client connected to.
  * @ingroup Ecore_Con_Client_Group
  */
-Ecore_Con_Server *
+EAPI Ecore_Con_Server *
 ecore_con_client_server_get(Ecore_Con_Client *cl)
 {
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
@@ -679,7 +679,7 @@ ecore_con_client_server_get(Ecore_Con_Client *cl)
  * @return  Data associated with the client.
  * @ingroup Ecore_Con_Client_Group
  */
-void *
+EAPI void *
 ecore_con_client_del(Ecore_Con_Client *cl)
 {
    void *data;
@@ -703,7 +703,7 @@ ecore_con_client_del(Ecore_Con_Client *cl)
  * @param   data What to set the data to.
  * @ingroup Ecore_Con_Client_Group
  */
-void
+EAPI void
 ecore_con_client_data_set(Ecore_Con_Client *cl, const void *data)
 {
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
@@ -721,7 +721,7 @@ ecore_con_client_data_set(Ecore_Con_Client *cl, const void *data)
  * @return  The data associated with @p cl.
  * @ingroup Ecore_Con_Client_Group
  */
-void *
+EAPI void *
 ecore_con_client_data_get(Ecore_Con_Client *cl)
 {
    if (!ECORE_MAGIC_CHECK(cl, ECORE_MAGIC_CON_CLIENT))
@@ -738,7 +738,7 @@ ecore_con_client_data_get(Ecore_Con_Client *cl)
  * @return  1 if SSL is available, 0 if it is not.
  * @ingroup Ecore_Con_Client_Group
  */
-int
+EAPI int
 ecore_con_ssl_available_get(void)
 {
 #if USE_OPENSSL

@@ -12,7 +12,7 @@ static int                 idle_enterers_delete_me = 0;
  *          NULL is returned.
  * @ingroup Idle_Group
  */
-Ecore_Idle_Enterer *
+EAPI Ecore_Idle_Enterer *
 ecore_idle_enterer_add(int (*func) (void *data), const void *data)
 {
    Ecore_Idle_Enterer *ie;
@@ -34,7 +34,7 @@ ecore_idle_enterer_add(int (*func) (void *data), const void *data)
  *          NULL otherwise.
  * @ingroup Idle_Group
  */
-void *
+EAPI void *
 ecore_idle_enterer_del(Ecore_Idle_Enterer *idle_enterer)
 {
    if (!ECORE_MAGIC_CHECK(idle_enterer, ECORE_MAGIC_IDLE_ENTERER))

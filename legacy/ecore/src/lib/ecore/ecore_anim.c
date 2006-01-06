@@ -25,7 +25,7 @@ static double          animators_frametime = 1.0 / 30.0;
  * 0 it will be deleted automatically making any references/handles for it
  * invalid.
  */
-Ecore_Animator *
+EAPI Ecore_Animator *
 ecore_animator_add(int (*func) (void *data), const void *data)
 {
    Ecore_Animator *animator;
@@ -54,7 +54,7 @@ ecore_animator_add(int (*func) (void *data), const void *data)
  * call returns the specified animator object @p animator is invalid and should not
  * be used again. It will not get called again after deletion.
  */
-void *
+EAPI void *
 ecore_animator_del(Ecore_Animator *animator)
 {
    if (!ECORE_MAGIC_CHECK(animator, ECORE_MAGIC_ANIMATOR))
@@ -75,7 +75,7 @@ ecore_animator_del(Ecore_Animator *animator)
  * 
  * This function sets the time interval (in seconds) inbetween animator ticks.
  */
-void
+EAPI void
 ecore_animator_frametime_set(double frametime)
 {
    if (frametime < 0.0) frametime = 0.0;
@@ -96,7 +96,7 @@ ecore_animator_frametime_set(double frametime)
  * 
  * this function retrieves the time inbetween animator ticks, in seconds.
  */
-double
+EAPI double
 ecore_animator_frametime_get(void)
 {
    return animators_frametime;

@@ -40,7 +40,7 @@ int _ecore_fps_debug = 0;
  * }
  * @endcode
  */
-int
+EAPI int
 ecore_init(void)
 {
    if (++_ecore_init_count == 1)
@@ -70,7 +70,7 @@ ecore_init(void)
  * Do not call this function from any callback that may be called from the main
  * loop, as the main loop will then fall over and not function properly.
  */
-int
+EAPI int
 ecore_shutdown(void)
 {
    if (--_ecore_init_count)

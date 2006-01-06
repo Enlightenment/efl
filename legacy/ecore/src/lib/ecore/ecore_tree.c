@@ -7,19 +7,19 @@
 
 /* Utility functions for searching the tree and returning a node, or its
  * parent */
-Ecore_Tree_Node *tree_node_find(Ecore_Tree * tree, void *key);
-Ecore_Tree_Node *tree_node_find_parent(Ecore_Tree * tree, void *key);
+static Ecore_Tree_Node *tree_node_find(Ecore_Tree * tree, void *key);
+static Ecore_Tree_Node *tree_node_find_parent(Ecore_Tree * tree, void *key);
 
 /* Balancing functions, keep the tree balanced within a one node height
  * difference */
-int tree_node_balance(Ecore_Tree * Tree, Ecore_Tree_Node * top_node);
-int tree_node_rotate_right(Ecore_Tree * tree, Ecore_Tree_Node * top_node);
-int tree_node_rotate_left(Ecore_Tree * tree, Ecore_Tree_Node * top_node);
+static int tree_node_balance(Ecore_Tree * Tree, Ecore_Tree_Node * top_node);
+static int tree_node_rotate_right(Ecore_Tree * tree, Ecore_Tree_Node * top_node);
+static int tree_node_rotate_left(Ecore_Tree * tree, Ecore_Tree_Node * top_node);
 
 /* Fucntions for executing a specified function on each node of a tree */
-int tree_for_each_node(Ecore_Tree_Node * node, Ecore_For_Each for_each_func,
+static int tree_for_each_node(Ecore_Tree_Node * node, Ecore_For_Each for_each_func,
 			     void *user_data);
-int tree_for_each_node_value(Ecore_Tree_Node * node,
+static int tree_for_each_node_value(Ecore_Tree_Node * node,
 			     Ecore_For_Each for_each_func, void *user_data);
 
 /**
@@ -27,7 +27,7 @@ int tree_for_each_node_value(Ecore_Tree_Node * node,
  * @param compare_func: function used to compare the two values
  * @return Returns NULL if the operation fails, otherwise the new tree
  */
-Ecore_Tree *ecore_tree_new(Ecore_Compare_Cb compare_func)
+EAPI Ecore_Tree *ecore_tree_new(Ecore_Compare_Cb compare_func)
 {
 	Ecore_Tree *new_tree;
 
@@ -49,7 +49,7 @@ Ecore_Tree *ecore_tree_new(Ecore_Compare_Cb compare_func)
  * @param compare_func: the function used to compare node keys
  * @return Returns TRUE on successful initialization, FALSE on an error
  */
-int ecore_tree_init(Ecore_Tree * new_tree, Ecore_Compare_Cb compare_func)
+EAPI int ecore_tree_init(Ecore_Tree * new_tree, Ecore_Compare_Cb compare_func)
 {
 	CHECK_PARAM_POINTER_RETURN("new_tree", new_tree, FALSE);
 
@@ -71,7 +71,7 @@ int ecore_tree_init(Ecore_Tree * new_tree, Ecore_Compare_Cb compare_func)
  * @param free_func: the function that will be passed the node being freed
  * @return Returns TRUE on successful set, FALSE otherwise.
  */
-int ecore_tree_set_free_cb(Ecore_Tree * tree, Ecore_Free_Cb free_func)
+EAPI int ecore_tree_set_free_cb(Ecore_Tree * tree, Ecore_Free_Cb free_func)
 {
 	CHECK_PARAM_POINTER_RETURN("tree", tree, FALSE);
 
@@ -86,7 +86,7 @@ int ecore_tree_set_free_cb(Ecore_Tree * tree, Ecore_Free_Cb free_func)
  * @brief Initialize a new tree node
  * @return Returns FALSE if the operation fails, otherwise TRUE
  */
-int ecore_tree_node_init(Ecore_Tree_Node * new_node)
+EAPI int ecore_tree_node_init(Ecore_Tree_Node * new_node)
 {
 	CHECK_PARAM_POINTER_RETURN("new_node", new_node, FALSE);
 
@@ -108,7 +108,7 @@ int ecore_tree_node_init(Ecore_Tree_Node * new_node)
  * @brief Allocate a new tree node
  * @return Returns NULL if the operation fails, otherwise the new node.
  */
-Ecore_Tree_Node *ecore_tree_node_new()
+EAPI Ecore_Tree_Node *ecore_tree_node_new()
 {
 	Ecore_Tree_Node *new_node;
 
@@ -132,7 +132,7 @@ Ecore_Tree_Node *ecore_tree_node_new()
  *
  * If you don't want the children free'd then you need to remove the node first.
  */
-int ecore_tree_node_destroy(Ecore_Tree_Node * node, Ecore_Free_Cb data_free)
+EAPI int ecore_tree_node_destroy(Ecore_Tree_Node * node, Ecore_Free_Cb data_free)
 {
 	CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
 
@@ -154,7 +154,7 @@ int ecore_tree_node_destroy(Ecore_Tree_Node * node, Ecore_Free_Cb data_free)
  * @param value: the value to set the node to.
  * @return Returns TRUE if the node is set successfully, FALSE if not.
  */
-int ecore_tree_node_value_set(Ecore_Tree_Node * node, void *value)
+EAPI int ecore_tree_node_value_set(Ecore_Tree_Node * node, void *value)
 {
 	CHECK_PARAM_POINTER_RETURN("node", node,
 				   FALSE);
@@ -171,7 +171,7 @@ int ecore_tree_node_value_set(Ecore_Tree_Node * node, void *value)
  * @param node: the node that contains the desired value
  * @return Returns NULL if an error, otherwise the value associated with node
  */
-void *ecore_tree_node_value_get(Ecore_Tree_Node * node)
+EAPI void *ecore_tree_node_value_get(Ecore_Tree_Node * node)
 {
 	void *ret;
 
@@ -189,7 +189,7 @@ void *ecore_tree_node_value_get(Ecore_Tree_Node * node)
  * @param key: the value to set it's key to.
  * @return Returns TRUE if the node is set successfully, FALSE if not.
  */
-int ecore_tree_node_key_set(Ecore_Tree_Node * node, void *key)
+EAPI int ecore_tree_node_key_set(Ecore_Tree_Node * node, void *key)
 {
 	CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
 
@@ -206,7 +206,7 @@ int ecore_tree_node_key_set(Ecore_Tree_Node * node, void *key)
  *
  * @return Returns NULL if an error occurs, otherwise the key is returned
  */
-void *ecore_tree_node_key_get(Ecore_Tree_Node * node)
+EAPI void *ecore_tree_node_key_get(Ecore_Tree_Node * node)
 {
 	void *ret;
 
@@ -224,7 +224,7 @@ void *ecore_tree_node_key_get(Ecore_Tree_Node * node)
  *
  * @return Returns TRUE if tree destroyed successfully, FALSE if not.
  */
-int ecore_tree_destroy(Ecore_Tree * tree)
+EAPI int ecore_tree_destroy(Ecore_Tree * tree)
 {
 	Ecore_Tree_Node *node;
 
@@ -250,7 +250,7 @@ int ecore_tree_destroy(Ecore_Tree * tree)
  *
  * @return Returns the node corresponding to the key if found, otherwise NULL.
  */
-Ecore_Tree_Node *ecore_tree_get_node(Ecore_Tree * tree, void *key)
+EAPI Ecore_Tree_Node *ecore_tree_get_node(Ecore_Tree * tree, void *key)
 {
 	Ecore_Tree_Node *ret;
 
@@ -269,7 +269,7 @@ Ecore_Tree_Node *ecore_tree_get_node(Ecore_Tree * tree, void *key)
  * @param key: the key to search for in @a tree
  * @return Returns the value corresponding to the key if found, otherwise NULL.
  */
-void *ecore_tree_get(Ecore_Tree * tree, void *key)
+EAPI void *ecore_tree_get(Ecore_Tree * tree, void *key)
 {
 	void *ret;
 	Ecore_Tree_Node *node;
@@ -294,7 +294,7 @@ void *ecore_tree_get(Ecore_Tree * tree, void *key)
  * @return NULL if no valid nodes, otherwise the node greater than or
  *         equal to the key
  */
-void *ecore_tree_get_closest_larger(Ecore_Tree * tree, void *key)
+EAPI void *ecore_tree_get_closest_larger(Ecore_Tree * tree, void *key)
 {
 	Ecore_Tree_Node *node;
 
@@ -330,7 +330,7 @@ void *ecore_tree_get_closest_larger(Ecore_Tree * tree, void *key)
  * @param key  the key to search for in tree
  * @return Returns NULL if no valid nodes, otherwise the node <= key
  */
-void *ecore_tree_get_closest_smaller(Ecore_Tree * tree, void *key)
+EAPI void *ecore_tree_get_closest_smaller(Ecore_Tree * tree, void *key)
 {
 	Ecore_Tree_Node *node;
 
@@ -360,7 +360,7 @@ void *ecore_tree_get_closest_smaller(Ecore_Tree * tree, void *key)
  * @param  value Value to set the found node.
  * @return TRUE if successful, FALSE if not.
  */
-int ecore_tree_set(Ecore_Tree * tree, void *key, void *value)
+EAPI int ecore_tree_set(Ecore_Tree * tree, void *key, void *value)
 {
 	Ecore_Tree_Node *node = NULL;
 
@@ -392,7 +392,7 @@ int ecore_tree_set(Ecore_Tree * tree, void *key, void *value)
  * @param node The node to add to @a tree.
  * @return TRUE on a successful add, FALSE otherwise.
  */
-int ecore_tree_add_node(Ecore_Tree * tree, Ecore_Tree_Node * node)
+EAPI int ecore_tree_add_node(Ecore_Tree * tree, Ecore_Tree_Node * node)
 {
 	Ecore_Tree_Node *travel = NULL;
 
@@ -427,7 +427,7 @@ int ecore_tree_add_node(Ecore_Tree * tree, Ecore_Tree_Node * node)
  * @param  node The node to remove from @a tree.
  * @return TRUE on a successful remove, FALSE otherwise.
  */
-int ecore_tree_remove_node(Ecore_Tree * tree, Ecore_Tree_Node * node)
+EAPI int ecore_tree_remove_node(Ecore_Tree * tree, Ecore_Tree_Node * node)
 {
 	Ecore_Tree_Node *traverse;
 
@@ -535,7 +535,7 @@ int ecore_tree_remove_node(Ecore_Tree * tree, Ecore_Tree_Node * node)
  * @param  key  The key to remove from @a tree.
  * @return TRUE on a successful remove, FALSE otherwise.
  */
-int ecore_tree_remove(Ecore_Tree * tree, void *key)
+EAPI int ecore_tree_remove(Ecore_Tree * tree, void *key)
 {
 	Ecore_Tree_Node *node;
 
@@ -561,7 +561,7 @@ int ecore_tree_remove(Ecore_Tree * tree, void *key)
  * @param tree: the tree to check for nodes
  * @return Returns TRUE if no nodes exist, FALSE otherwise
  */
-int ecore_tree_is_empty(Ecore_Tree * tree)
+EAPI int ecore_tree_is_empty(Ecore_Tree * tree)
 {
 	CHECK_PARAM_POINTER_RETURN("tree", tree, FALSE);
 
@@ -578,7 +578,7 @@ int ecore_tree_is_empty(Ecore_Tree * tree)
  * @param user_data: data passed to each for_each_func call
  * @return Returns TRUE on success, FALSE on failure.
  */
-int ecore_tree_for_each_node_value(Ecore_Tree * tree,
+EAPI int ecore_tree_for_each_node_value(Ecore_Tree * tree,
 				 Ecore_For_Each for_each_func, void *user_data)
 {
 	CHECK_PARAM_POINTER_RETURN("tree", tree, FALSE);
@@ -597,7 +597,7 @@ int ecore_tree_for_each_node_value(Ecore_Tree * tree,
  * @param user_data: data passed to each for_each_func call
  * @return Returns TRUE on success, FALSE on failure.
  */
-int ecore_tree_for_each_node(Ecore_Tree * tree, Ecore_For_Each for_each_func,
+EAPI int ecore_tree_for_each_node(Ecore_Tree * tree, Ecore_For_Each for_each_func,
 				 void *user_data)
 {
 	CHECK_PARAM_POINTER_RETURN("tree", tree, FALSE);
@@ -610,7 +610,7 @@ int ecore_tree_for_each_node(Ecore_Tree * tree, Ecore_For_Each for_each_func,
 }
 
 /* Find the parent for the key */
-Ecore_Tree_Node *tree_node_find_parent(Ecore_Tree * tree, void *key)
+static Ecore_Tree_Node *tree_node_find_parent(Ecore_Tree * tree, void *key)
 {
 	Ecore_Tree_Node *parent, *travel;
 
@@ -642,7 +642,7 @@ Ecore_Tree_Node *tree_node_find_parent(Ecore_Tree * tree, void *key)
 }
 
 /* Search for the node with a specified key */
-Ecore_Tree_Node *tree_node_find(Ecore_Tree * tree, void *key)
+static Ecore_Tree_Node *tree_node_find(Ecore_Tree * tree, void *key)
 {
 	int compare;
 	Ecore_Tree_Node *node;
@@ -671,7 +671,7 @@ Ecore_Tree_Node *tree_node_find(Ecore_Tree * tree, void *key)
 }
 
 /* Balance the tree with respect to node */
-int tree_node_balance(Ecore_Tree * tree, Ecore_Tree_Node * top_node)
+static int tree_node_balance(Ecore_Tree * tree, Ecore_Tree_Node * top_node)
 {
 	int balance;
 
@@ -703,7 +703,7 @@ int tree_node_balance(Ecore_Tree * tree, Ecore_Tree_Node * top_node)
 }
 
 /* Tree is overbalanced to the left, so rotate nodes to the right. */
-int tree_node_rotate_right(Ecore_Tree * tree, Ecore_Tree_Node * top_node)
+static int tree_node_rotate_right(Ecore_Tree * tree, Ecore_Tree_Node * top_node)
 {
 	Ecore_Tree_Node *temp;
 
@@ -737,7 +737,7 @@ int tree_node_rotate_right(Ecore_Tree * tree, Ecore_Tree_Node * top_node)
 }
 
 /* The tree is overbalanced to the right, so we rotate nodes to the left */
-int tree_node_rotate_left(Ecore_Tree * tree, Ecore_Tree_Node * top_node)
+static int tree_node_rotate_left(Ecore_Tree * tree, Ecore_Tree_Node * top_node)
 {
 	Ecore_Tree_Node *temp;
 
@@ -778,7 +778,7 @@ int tree_node_rotate_left(Ecore_Tree * tree, Ecore_Tree_Node * top_node)
  * @param user_data: data passed to each for_each_func call
  * @return Returns FALSE if an error condition occurs, otherwise TRUE
  */
-int tree_for_each_node(Ecore_Tree_Node * node, Ecore_For_Each for_each_func,
+static int tree_for_each_node(Ecore_Tree_Node * node, Ecore_For_Each for_each_func,
 			     void *user_data)
 {
 	CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
@@ -801,7 +801,7 @@ int tree_for_each_node(Ecore_Tree_Node * node, Ecore_For_Each for_each_func,
  * @param for_each_func: the function to pass the nodes values as data
  * @return Returns FALSE if an error condition occurs, otherwise TRUE
  */
-int tree_for_each_node_value(Ecore_Tree_Node * node,
+static int tree_for_each_node_value(Ecore_Tree_Node * node,
 			     Ecore_For_Each for_each_func, void *user_data)
 {
 	CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
