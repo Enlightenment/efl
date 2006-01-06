@@ -467,7 +467,7 @@ static const Ecore_Evas_Engine_Func _ecore_fb_engine_func =
  *
  * FIXME: To be fixed.
  */
-Ecore_Evas *
+EAPI Ecore_Evas *
 ecore_evas_fb_new(char *disp_name, int rotation, int w, int h)
 {
 #ifdef BUILD_ECORE_EVAS_FB

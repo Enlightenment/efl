@@ -550,7 +550,7 @@ ecore_evas_directfb_window_get(Ecore_Evas *ee)
 }
 
 	
-Ecore_Evas *
+EAPI Ecore_Evas *
 ecore_evas_directfb_new(const char *disp_name, int windowed, int x, int y, int w, int h)
 {
 #ifdef BUILD_ECORE_EVAS_DIRECTFB
