@@ -230,7 +230,7 @@ _embryo_program_init(Embryo_Program *ep, void *code)
  * @return  A new Embryo program.
  * @ingroup Embryo_Program_Creation_Group
  */
-Embryo_Program *
+EAPI Embryo_Program *
 embryo_program_new(void *data, int size)
 {
    Embryo_Program *ep;
@@ -262,7 +262,7 @@ embryo_program_new(void *data, int size)
  * @return  A new Embryo program.
  * @ingroup Embryo_Program_Creation_Group
  */
-Embryo_Program *
+EAPI Embryo_Program *
 embryo_program_const_new(void *data, int size)
 {
    Embryo_Program *ep;
@@ -288,7 +288,7 @@ embryo_program_const_new(void *data, int size)
  * @return  A new Embryo program.
  * @ingroup Embryo_Program_Creation_Group
  */
-Embryo_Program *
+EAPI Embryo_Program *
 embryo_program_load(char *file)
 {
    Embryo_Program *ep;
@@ -340,7 +340,7 @@ embryo_program_load(char *file)
  * @param   ep The given program.
  * @ingroup Embryo_Program_Creation_Group
  */
-void
+EAPI void
 embryo_program_free(Embryo_Program *ep)
 {
    int i;
@@ -370,7 +370,7 @@ embryo_program_free(Embryo_Program *ep)
  * @param   func The function to use when the call is made.
  * @ingroup Embryo_Func_Group
  */
-void
+EAPI void
 embryo_program_native_call_add(Embryo_Program *ep, char *name, Embryo_Cell (*func) (Embryo_Program *ep, Embryo_Cell *params))
 {
    Embryo_Func_Stub *func_entry;
@@ -449,7 +449,7 @@ embryo_program_native_call_add(Embryo_Program *ep, char *name, Embryo_Cell (*fun
  * @param   ep The given program.
  * @ingroup Embryo_Program_VM_Group
  */
-void
+EAPI void
 embryo_program_vm_reset(Embryo_Program *ep)
 {
    Embryo_Header *hdr;
@@ -473,7 +473,7 @@ embryo_program_vm_reset(Embryo_Program *ep)
  * @param   ep The given program.
  * @ingroup Embryo_Program_VM_Group
  */
-void
+EAPI void
 embryo_program_vm_push(Embryo_Program *ep)
 {
    Embryo_Header *hdr;
@@ -505,7 +505,7 @@ embryo_program_vm_push(Embryo_Program *ep)
  * @param   ep The given program.
  * @ingroup Embryo_Program_VM_Group
  */
-void
+EAPI void
 embryo_program_vm_pop(Embryo_Program *ep)
 {
    if ((!ep) || (!ep->base)) return;
@@ -530,7 +530,7 @@ embryo_program_vm_pop(Embryo_Program *ep)
  * @param   v Pointer to the given integer.
  * @ingroup Embryo_Swap_Group
  */
-void
+EAPI void
 embryo_swap_16(unsigned short *v)
 {
 #ifdef WORDS_BIGENDIAN
@@ -544,7 +544,7 @@ embryo_swap_16(unsigned short *v)
  * @param   v Pointer to the given integer.
  * @ingroup Embryo_Swap_Group
  */
-void
+EAPI void
 embryo_swap_32(unsigned int *v)
 {
 #ifdef WORDS_BIGENDIAN
@@ -559,7 +559,7 @@ embryo_swap_32(unsigned int *v)
  * @return  The function if successful.  Otherwise, @c EMBRYO_FUNCTION_NONE.
  * @ingroup Embryo_Func_Group
  */
-Embryo_Function
+EAPI Embryo_Function
 embryo_program_function_find(Embryo_Program *ep, char *name)
 {
    int            first, last, mid, result;
@@ -603,7 +603,7 @@ embryo_program_function_find(Embryo_Program *ep, char *name)
  *          otherwise.
  * @ingroup Embryo_Public_Variable_Group
  */
-Embryo_Cell
+EAPI Embryo_Cell
 embryo_program_variable_find(Embryo_Program *ep, char *name)
 {
    int            first, last, mid, result;
@@ -638,7 +638,7 @@ embryo_program_variable_find(Embryo_Program *ep, char *name)
  * @return  The number of public variables.
  * @ingroup Embryo_Public_Variable_Group
  */
-int
+EAPI int
 embryo_program_variable_count_get(Embryo_Program *ep)
 {
    Embryo_Header *hdr;
@@ -658,7 +658,7 @@ embryo_program_variable_count_get(Embryo_Program *ep)
  *          @c EMBRYO_CELL_NONE otherwise.
  * @ingroup Embryo_Public_Variable_Group
  */
-Embryo_Cell
+EAPI Embryo_Cell
 embryo_program_variable_get(Embryo_Program *ep, int num)
 {
    Embryo_Header *hdr;
@@ -685,7 +685,7 @@ embryo_program_variable_get(Embryo_Program *ep, int num)
  * @param   error The given error code.
  * @ingroup Embryo_Error_Group
  */
-void
+EAPI void
 embryo_program_error_set(Embryo_Program *ep, int error)
 {
    if (!ep) return;
@@ -698,7 +698,7 @@ embryo_program_error_set(Embryo_Program *ep, int error)
  * @return  The current error code.
  * @ingroup Embryo_Error_Group
  */
-int
+EAPI int
 embryo_program_error_get(Embryo_Program *ep)
 {
    if (!ep) return EMBRYO_ERROR_NONE;
@@ -718,7 +718,7 @@ embryo_program_error_get(Embryo_Program *ep)
  * @param   data New bytecode data.
  * @ingroup Embryo_Program_Data_Group
  */
-void
+EAPI void
 embryo_program_data_set(Embryo_Program *ep, void *data)
 {
    if (!ep) return;
@@ -730,7 +730,7 @@ embryo_program_data_set(Embryo_Program *ep, void *data)
  * @param   ep The given program.
  * @ingroup Embryo_Program_Data_Group
  */
-void *
+EAPI void *
 embryo_program_data_get(Embryo_Program *ep)
 {
    if (!ep) return NULL;
@@ -744,7 +744,7 @@ embryo_program_data_get(Embryo_Program *ep)
  *          known, the string "(unknown)" is returned.
  * @ingroup Embryo_Error_Group
  */
-const char *
+EAPI const char *
 embryo_error_string_get(int error)
 {
    const char *messages[] =
@@ -794,7 +794,7 @@ embryo_error_string_get(int error)
  * @return  The length of the string.  @c 0 is returned if there is an error.
  * @ingroup Embryo_Data_String_Group
  */
-int
+EAPI int
 embryo_data_string_length_get(Embryo_Program *ep, Embryo_Cell *str_cell)
 {
    int            len;
@@ -817,7 +817,7 @@ embryo_data_string_length_get(Embryo_Program *ep, Embryo_Cell *str_cell)
  * @param   dst      The given buffer.
  * @ingroup Embryo_Data_String_Group
  */
-void
+EAPI void
 embryo_data_string_get(Embryo_Program *ep, Embryo_Cell *str_cell, char *dst)
 {
    int            i;
@@ -862,7 +862,7 @@ embryo_data_string_get(Embryo_Program *ep, Embryo_Cell *str_cell, char *dst)
  * @param str_cell Pointer to the first cell to copy the string to.
  * @ingroup Embryo_Data_String_Group
  */
-void
+EAPI void
 embryo_data_string_set(Embryo_Program *ep, char *src, Embryo_Cell *str_cell)
 {
    int            i;
@@ -911,7 +911,7 @@ embryo_data_string_set(Embryo_Program *ep, char *src, Embryo_Cell *str_cell)
  * @return  A pointer to the cell at the given address.
  * @ingroup Embryo_Data_String_Group
  */
-Embryo_Cell *
+EAPI Embryo_Cell *
 embryo_data_address_get(Embryo_Program *ep, Embryo_Cell addr)
 {
    Embryo_Header *hdr;
@@ -941,7 +941,7 @@ embryo_data_address_get(Embryo_Program *ep, Embryo_Cell addr)
  *          @c EMBRYO_CELL_NONE otherwise.
  * @ingroup Embryo_Heap_Group
  */
-Embryo_Cell
+EAPI Embryo_Cell
 embryo_data_heap_push(Embryo_Program *ep, int cells)
 {
    Embryo_Header *hdr;
@@ -965,7 +965,7 @@ embryo_data_heap_push(Embryo_Program *ep, int cells)
  * @param   down_to The given size.
  * @ingroup Embryo_Heap_Group
  */
-void
+EAPI void
 embryo_data_heap_pop(Embryo_Program *ep, Embryo_Cell down_to)
 {
    if (!ep) return;
@@ -986,7 +986,7 @@ embryo_data_heap_pop(Embryo_Program *ep, Embryo_Cell down_to)
  * @return  The number of virtual machines running.
  * @ingroup Embryo_Run_Group
  */
-int
+EAPI int
 embryo_program_recursion_get(Embryo_Program *ep)
 {
    return ep->run_count;
@@ -1029,7 +1029,7 @@ embryo_program_recursion_get(Embryo_Program *ep)
  *          it is allowed to in abstract machine instruction count.
  * @ingroup Embryo_Run_Group
  */
-int
+EAPI int
 embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
 {
    Embryo_Header    *hdr;
@@ -2145,7 +2145,7 @@ embryo_program_run(Embryo_Program *ep, Embryo_Function fn)
  *          that was last called.
  * @ingroup Embryo_Run_Group
  */
-Embryo_Cell
+EAPI Embryo_Cell
 embryo_program_return_value_get(Embryo_Program *ep)
 {
    if (!ep) return 0;
@@ -2200,7 +2200,7 @@ embryo_program_return_value_get(Embryo_Program *ep)
  * 
  * @ingroup Embryo_Run_Group
  */
-void
+EAPI void
 embryo_program_max_cycle_run_set(Embryo_Program *ep, int max)
 {
    if (!ep) return;
@@ -2220,7 +2220,7 @@ embryo_program_max_cycle_run_set(Embryo_Program *ep, int max)
  * 
  * @ingroup Embryo_Run_Group
  */
-int
+EAPI int
 embryo_program_max_cycle_run_get(Embryo_Program *ep)
 {
    if (!ep) return 0;
@@ -2241,7 +2241,7 @@ embryo_program_max_cycle_run_get(Embryo_Program *ep)
  * @return  @c 1 if successful.  @c 0 otherwise.
  * @ingroup Embryo_Parameter_Group
  */
-int
+EAPI int
 embryo_parameter_cell_push(Embryo_Program *ep, Embryo_Cell cell)
 {
    Embryo_Param *pr;
@@ -2271,7 +2271,7 @@ embryo_parameter_cell_push(Embryo_Program *ep, Embryo_Cell cell)
  * @return  @c 1 if successful.  @c 0 otherwise.
  * @ingroup Embryo_Parameter_Group
  */
-int
+EAPI int
 embryo_parameter_string_push(Embryo_Program *ep, char *str)
 {
    Embryo_Param *pr;
@@ -2311,7 +2311,7 @@ embryo_parameter_string_push(Embryo_Program *ep, char *str)
  * @return  @c 1 if successful.  @c 0 otherwise.
  * @ingroup Embryo_Parameter_Group
  */
-int
+EAPI int
 embryo_parameter_cell_array_push(Embryo_Program *ep, Embryo_Cell *cells, int num)
 {
    Embryo_Param *pr;

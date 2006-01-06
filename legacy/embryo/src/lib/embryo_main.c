@@ -17,7 +17,7 @@ static int _embryo_init_count = 0;
  *          shut down.
  * @ingroup Embryo_Library_Group
  */   
-int
+EAPI int
 embryo_init(void)
 {
    _embryo_init_count++;
@@ -34,7 +34,7 @@ embryo_init(void)
  *          shutdown.
  * @ingroup Embryo_Library_Group
  */
-int
+EAPI int
 embryo_shutdown(void)
 {
    _embryo_init_count--;
