@@ -1,8 +1,7 @@
-#include "ecore_private.h"
-#include "Ecore.h"
-
 #include <errno.h>
 #include <sys/wait.h>
+#include "ecore_private.h"
+#include "Ecore.h"
 
 #ifndef WIN32
 

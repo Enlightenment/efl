@@ -1,8 +1,7 @@
-#include "ecore_private.h"
-#include "Ecore_Data.h"
-
 #ifndef WIN32
 #include <dlfcn.h>
+#include "ecore_private.h"
+#include "Ecore_Data.h"
 
 static Ecore_List *loaded_plugins = NULL;
 

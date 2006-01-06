@@ -1,28 +1,29 @@
+#include <sys/time.h>
+#ifdef WIN32
+#include <sys/timeb.h>
+#endif
 #include "ecore_private.h"
 #include "Ecore.h"
 
-#include <sys/time.h>
-
 #ifndef HAVE_GETTIMEOFDAY
 #ifdef WIN32
-#include <sys/timeb.h>
 
-static int gettimeofday (struct timeval *tv, void *unused)
+static int
+gettimeofday(struct timeval *tv, void *unused)
 {
    struct _timeb t;
-
-   if (!tv)
-      return -1;
+   
+   if (!tv) return -1;
 
    _ftime (&t);
-
+   
    tv->tv_sec = t.time;
    tv->tv_usec = t.millitm * 1000;
-
+   
    return 0;
 }
 #else
-#error "Your platform isn't supported yet"
+# error "Your platform isn't supported yet"
 #endif
 #endif
 

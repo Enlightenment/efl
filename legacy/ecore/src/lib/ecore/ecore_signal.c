@@ -1,13 +1,11 @@
-#include "ecore_private.h"
-#include "Ecore.h"
-
 #ifndef WIN32
-
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <signal.h>
 #include <unistd.h>
 #include <assert.h>
+#include "ecore_private.h"
+#include "Ecore.h"
 
 /* make mono happy - this is evil though... */
 #undef SIGPWR

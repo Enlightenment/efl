@@ -1,9 +1,9 @@
-#include "ecore_private.h"
-#include "Ecore.h"
-
 #ifdef WIN32
 #include <winsock.h>
 #endif
+
+#include "ecore_private.h"
+#include "Ecore.h"
 
 #define FIX_HZ 1   
 

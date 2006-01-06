@@ -1,7 +1,7 @@
-#include "ecore_private.h"
-#include "Ecore.h"
 #include <locale.h>
 #include <langinfo.h>
+#include "ecore_private.h"
+#include "Ecore.h"
 
 static const char *_ecore_magic_string_get(Ecore_Magic m);
 static int _ecore_init_count = 0;
