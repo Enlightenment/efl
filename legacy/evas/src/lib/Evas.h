@@ -320,7 +320,7 @@ extern "C" {
    EAPI void              evas_hash_foreach                 (Evas_Hash *hash, Evas_Bool (*func) (Evas_Hash *hash, const char *key, void *data, void *fdata), const void *fdata);
    EAPI int               evas_hash_alloc_error             (void);
    
-   EAPI const char       *evas_stringshare_add              (const char *str);
+   EAPI char             *evas_stringshare_add              (const char *str);
    EAPI void              evas_stringshare_del              (const char *str);
        
 
