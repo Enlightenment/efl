@@ -51,7 +51,7 @@ static Evas_Stringshare share =
      }
 };
 
-EAPI char *
+EAPI const char *
 evas_stringshare_add(const char *str)
 {
    int hash_num, slen;
