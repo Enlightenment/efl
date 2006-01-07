@@ -19,7 +19,7 @@ char *_edje_fontset_append = NULL;
 /* FIXDOC: Expand */
 /** Freeze all objects in the Edje.
  */
-void
+EAPI void
 edje_freeze(void)
 {
    Evas_List *l;
@@ -31,7 +31,7 @@ edje_freeze(void)
 /* FIXDOC: Expand */
 /** Thaw all objects in Edje.
  */
-void
+EAPI void
 edje_thaw(void)
 {
    Evas_List *l;
@@ -41,7 +41,7 @@ edje_thaw(void)
 }
 
 /* FIXDOC: Expand */
-void
+EAPI void
 edje_fontset_append_set(char *fonts)
 {
    if (_edje_fontset_append)
@@ -50,7 +50,7 @@ edje_fontset_append_set(char *fonts)
 }
 
 /* FIXDOC: Expand */
-const char *
+EAPI const char *
 edje_fontset_append_get(void)
 {
    return _edje_fontset_append;
@@ -63,7 +63,7 @@ edje_fontset_append_get(void)
  * @param key The data key
  * @return The data string
  */
-const char *
+EAPI const char *
 edje_object_data_get(Evas_Object *obj, const char *key)
 {
    Edje *ed;
@@ -93,7 +93,7 @@ edje_object_data_get(Evas_Object *obj, const char *key)
  * This puts all changes on hold.  Successive freezes will nest,
  * requiring an equal number of thaws.
  */
-int
+EAPI int
 edje_object_freeze(Evas_Object *obj)
 {
    Edje *ed;
@@ -110,7 +110,7 @@ edje_object_freeze(Evas_Object *obj)
  *
  * This allows frozen changes to occur.
  */
-int
+EAPI int
 edje_object_thaw(Evas_Object *obj)
 {
    Edje *ed;
@@ -137,7 +137,7 @@ edje_object_thaw(Evas_Object *obj)
  *
  * Sets the color class for the Edje.
  */   
-void
+EAPI void
 edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
 {
    Evas_List *members;
@@ -225,7 +225,7 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
  * Applies the color class to the object, where the first color is the
  * object, the second is the outline, and the third is the shadow.
  */
-void
+EAPI void
 edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
 {
    Edje *ed;
@@ -303,7 +303,7 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
  *
  * This sets the Edje text class ?!
  */
-void
+EAPI void
 edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size size)
 {
    Evas_List *members;
@@ -371,7 +371,7 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
  *
  * Sets the text class for the Edje.
  */
-void
+EAPI void
 edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char *font, Evas_Font_Size size)
 {
    Edje *ed;
@@ -426,7 +426,7 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
  * @return 0 on Error\n
  * 1 if Edje part exists
  */
-int
+EAPI int
 edje_object_part_exists(Evas_Object *obj, const char *part)
 {
    Edje *ed;
@@ -449,7 +449,7 @@ edje_object_part_exists(Evas_Object *obj, const char *part)
  *
  * Gets the Edje part geometry
  */
-void
+EAPI void
 edje_object_part_geometry_get(Evas_Object *obj, const char *part, Evas_Coord *x, Evas_Coord *y, Evas_Coord *w, Evas_Coord *h )
 {
    Edje *ed;
@@ -480,7 +480,7 @@ edje_object_part_geometry_get(Evas_Object *obj, const char *part, Evas_Coord *x,
 }
 
 /* FIXDOC: New Function */
-void
+EAPI void
 edje_object_text_change_cb_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, const char *part), void *data)
 {
    Edje *ed;
@@ -496,7 +496,7 @@ edje_object_text_change_cb_set(Evas_Object *obj, void (*func) (void *data, Evas_
  * @param part The part name
  * @param text The text string
  */
-void
+EAPI void
 edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
 {
    Edje *ed;
@@ -526,7 +526,7 @@ edje_object_part_text_set(Evas_Object *obj, const char *part, const char *text)
  * @param part The part name
  * @return The text string
  */
-const char *
+EAPI const char *
 edje_object_part_text_get(Evas_Object *obj, const char *part)
 {
    Edje *ed;
@@ -550,7 +550,7 @@ edje_object_part_text_get(Evas_Object *obj, const char *part)
  * for the part affect the swallowed object. (e.g. resize, move, show,
  * raise/lower, etc.).
  */
-void
+EAPI void
 edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_swallow)
 {
    Edje *ed;
@@ -632,7 +632,7 @@ edje_object_part_swallow(Evas_Object *obj, const char *part, Evas_Object *obj_sw
  *
  * This sets the minimum size restriction for the object.
  */
-void
+EAPI void
 edje_extern_object_min_size_set(Evas_Object *obj, Evas_Coord minw, Evas_Coord minh)
 {
    int mw, mh;
@@ -658,7 +658,7 @@ edje_extern_object_min_size_set(Evas_Object *obj, Evas_Coord minw, Evas_Coord mi
  *
  * This sets the maximum size restriction for the object.
  */
-void
+EAPI void
 edje_extern_object_max_size_set(Evas_Object *obj, Evas_Coord maxw, Evas_Coord maxh)
 {
    int mw, mh;
@@ -681,7 +681,7 @@ edje_extern_object_max_size_set(Evas_Object *obj, Evas_Coord maxw, Evas_Coord ma
  *
  * Causes the edje to regurgitate a previously swallowed object.  :)
  */
-void
+EAPI void
 edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
 {
    Edje *ed;
@@ -718,7 +718,7 @@ edje_object_part_unswallow(Evas_Object *obj, Evas_Object *obj_swallow)
  * @param part The part name
  * @return The swallowed object
  */
-Evas_Object *
+EAPI Evas_Object *
 edje_object_part_swallow_get(Evas_Object *obj, const char *part)
 {
    Edje *ed;
@@ -739,7 +739,7 @@ edje_object_part_swallow_get(Evas_Object *obj, const char *part)
  * Gets the object's minimum size values from the Edje. These are set
  * to zero if no Edje is connected to the Evas Object.
  */
-void
+EAPI void
 edje_object_size_min_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 {
    Edje *ed;
@@ -763,7 +763,7 @@ edje_object_size_min_get(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
  * Gets the object's maximum size values from the Edje.  These are set
  * to zero if no Edje is connected to the Evas Object.
  */
-void
+EAPI void
 edje_object_size_max_get(Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh)
 {
    Edje *ed;
@@ -799,7 +799,7 @@ edje_object_size_max_get(Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh)
  * Forces the object @p obj to recalculation layout regardless of
  * freeze/thaw.
  */
-void
+EAPI void
 edje_object_calc_force(Evas_Object *obj)
 {
    Edje *ed;
@@ -821,7 +821,7 @@ edje_object_calc_force(Evas_Object *obj)
  *
  * Calculates the object's minimum size ?!
  */
-void
+EAPI void
 edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
 {
    Edje *ed;
@@ -949,7 +949,7 @@ edje_object_size_min_calc(Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh)
  * "" for other states
  */
 /* FIXME: Correctly return other states */
-const char *
+EAPI const char *
 edje_object_part_state_get(Evas_Object *obj, const char *part, double *val_ret)
 {
    Edje *ed;
@@ -997,7 +997,7 @@ edje_object_part_state_get(Evas_Object *obj, const char *part, double *val_ret)
  * 2: Dragable in Y direction\n
  * 3: Dragable in X & Y directions
  */
-int
+EAPI int
 edje_object_part_drag_dir_get(Evas_Object *obj, const char *part)
 {
    Edje *ed;
@@ -1027,7 +1027,7 @@ edje_object_part_drag_dir_get(Evas_Object *obj, const char *part)
  *
  * Places the dragable object at the given location.
  */
-void
+EAPI void
 edje_object_part_drag_value_set(Evas_Object *obj, const char *part, double dx, double dy)
 {
    Edje *ed;
@@ -1066,7 +1066,7 @@ edje_object_part_drag_value_set(Evas_Object *obj, const char *part, double dx, d
  * Gets the drag location values.
  */
 /* FIXME: Should this be x and y instead of dx/dy? */
-void
+EAPI void
 edje_object_part_drag_value_get(Evas_Object *obj, const char *part, double *dx, double *dy)
 {
    Edje *ed;
@@ -1103,7 +1103,7 @@ edje_object_part_drag_value_get(Evas_Object *obj, const char *part, double *dx, 
  *
  * Sets the size of the dragable object.
  */
-void
+EAPI void
 edje_object_part_drag_size_set(Evas_Object *obj, const char *part, double dw, double dh)
 {
    Edje *ed;
@@ -1138,7 +1138,7 @@ edje_object_part_drag_size_set(Evas_Object *obj, const char *part, double dw, do
  *
  * Gets the dragable object size.
  */
-void
+EAPI void
 edje_object_part_drag_size_get(Evas_Object *obj, const char *part, double *dw, double *dh)
 {
    Edje *ed;
@@ -1170,7 +1170,7 @@ edje_object_part_drag_size_get(Evas_Object *obj, const char *part, double *dw, d
  *
  * Sets the x,y step increments for a dragable object.
  */
-void
+EAPI void
 edje_object_part_drag_step_set(Evas_Object *obj, const char *part, double dx, double dy)
 {
    Edje *ed;
@@ -1202,7 +1202,7 @@ edje_object_part_drag_step_set(Evas_Object *obj, const char *part, double dx, do
  *
  * Gets the x and y step increments for the dragable object.
  */
-void
+EAPI void
 edje_object_part_drag_step_get(Evas_Object *obj, const char *part, double *dx, double *dy)
 {
    Edje *ed;
@@ -1234,7 +1234,7 @@ edje_object_part_drag_step_get(Evas_Object *obj, const char *part, double *dx, d
  *
  * Sets the x,y page step increment values.
  */
-void
+EAPI void
 edje_object_part_drag_page_set(Evas_Object *obj, const char *part, double dx, double dy)
 {
    Edje *ed;
@@ -1266,7 +1266,7 @@ edje_object_part_drag_page_set(Evas_Object *obj, const char *part, double dx, do
  *
  * Gets the x,y page step increments for the dragable object.
  */
-void
+EAPI void
 edje_object_part_drag_page_get(Evas_Object *obj, const char *part, double *dx, double *dy)
 {
    Edje *ed;
@@ -1299,7 +1299,7 @@ edje_object_part_drag_page_get(Evas_Object *obj, const char *part, double *dx, d
  * Steps x,y where the step increment is the amount set by
  * edje_object_part_drag_step_set.
  */
-void
+EAPI void
 edje_object_part_drag_step(Evas_Object *obj, const char *part, double dx, double dy)
 {
    Edje *ed;
@@ -1337,7 +1337,7 @@ edje_object_part_drag_step(Evas_Object *obj, const char *part, double dx, double
  * Pages x,y where the increment is defined by edje_object_part_drag_page_set.\n
  * WARNING: Paging is bugged!
  */
-void
+EAPI void
 edje_object_part_drag_page(Evas_Object *obj, const char *part, double dx, double dy)
 {
    Edje *ed;

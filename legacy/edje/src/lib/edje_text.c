@@ -18,7 +18,6 @@ _edje_text_init(void)
 void
 _edje_text_part_on_add(Edje *ed, Edje_Real_Part *ep)
 {
-   int i;
    Evas_List *tmp;
    Edje_Part *pt = ep->part;
 

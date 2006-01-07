@@ -2,9 +2,10 @@
  * vim:ts=8:sw=3:sts=8:noexpandtab:cino=>5n-3f0^-2{2
  */
 
+#include <time.h>
+
 #include "Edje.h"
 #include "edje_private.h"
-#include <time.h>
 
 static int initted = 0;
 
@@ -14,7 +15,7 @@ static int initted = 0;
  *
  * @return The new init count.
  */
-int
+EAPI int
 edje_init(void)
 {
    initted++;
@@ -33,7 +34,7 @@ edje_init(void)
  *
  * @return The new init count.
  */
-int
+EAPI int
 edje_shutdown(void)
 {
    initted--;

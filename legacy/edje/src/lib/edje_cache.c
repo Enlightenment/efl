@@ -268,7 +268,7 @@ _edje_file_cache_shutdown(void)
 
 
 
-void
+EAPI void
 edje_file_cache_set(int count)
 {
    if (count < 0) count = 0;
@@ -276,13 +276,13 @@ edje_file_cache_set(int count)
    _edje_cache_file_clean();
 }
 
-int
+EAPI int
 edje_file_cache_get(void)
 {
    return _edje_file_cache_size;
 }
 
-void
+EAPI void
 edje_file_cache_flush(void)
 {
    int ps;
@@ -293,7 +293,7 @@ edje_file_cache_flush(void)
    _edje_file_cache_size = ps;
 }
 
-void
+EAPI void
 edje_collection_cache_set(int count)
 {
    Evas_List *l;
@@ -310,13 +310,13 @@ edje_collection_cache_set(int count)
    /* FIXME: freach in file hash too! */
 }
 
-int
+EAPI int
 edje_collection_cache_get(void)
 {
    return _edje_collection_cache_size;
 }
 
-void
+EAPI void
 edje_collection_cache_flush(void)
 {
    int ps;

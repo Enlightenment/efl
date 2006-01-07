@@ -8,7 +8,7 @@ static Ecore_Timer *job_loss_timer = NULL;
 static Evas_List *msgq = NULL;
 static Evas_List *tmp_msgq = NULL;
 
-void
+EAPI void
 edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void *msg)
 {
    Edje *ed;
@@ -18,7 +18,7 @@ edje_object_message_send(Evas_Object *obj, Edje_Message_Type type, int id, void 
    _edje_message_send(ed, EDJE_QUEUE_SCRIPT, type, id, msg);
 }
 
-void
+EAPI void
 edje_object_message_handler_set(Evas_Object *obj, void (*func) (void *data, Evas_Object *obj, Edje_Message_Type type, int id, void *msg), void *data)
 {
    Edje *ed;
@@ -28,7 +28,7 @@ edje_object_message_handler_set(Evas_Object *obj, void (*func) (void *data, Evas
    _edje_message_cb_set(ed, func, data);
 }
 
-void
+EAPI void
 edje_object_message_signal_process(Evas_Object *obj)
 {
    Evas_List *l, *tmpq = NULL;
@@ -74,7 +74,7 @@ edje_object_message_signal_process(Evas_Object *obj)
      }
 }
 
-void
+EAPI void
 edje_message_signal_process(void)
 {
    _edje_message_queue_process();

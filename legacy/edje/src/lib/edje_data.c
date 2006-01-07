@@ -1,23 +1,23 @@
 #include "Edje.h"
 #include "edje_private.h"
 
-Eet_Data_Descriptor *_edje_edd_edje_file = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_style = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_style_tag = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_data = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_font_directory = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_font_directory_entry = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_image_directory = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_image_directory_entry = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_program = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_program_target = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_program_after = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_part_collection_directory = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_part_collection_directory_entry = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_part_collection = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_part = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_part_description = NULL;
-Eet_Data_Descriptor *_edje_edd_edje_part_image_id = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_file = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_style = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_style_tag = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_data = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_font_directory = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_font_directory_entry = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_image_directory = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_image_directory_entry = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_program = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_program_target = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_program_after = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_part_collection_directory = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_part_collection_directory_entry = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_part_collection = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_part = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_part_description = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_part_image_id = NULL;
 
 #define NEWD(str, typ) \
    { eddc.name = str; eddc.size = sizeof(typ); }

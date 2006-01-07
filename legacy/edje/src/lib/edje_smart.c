@@ -24,7 +24,7 @@ Evas_List *_edje_edjes = NULL;
  *
  * Creates the Edje smart object, returning the Evas_Object handle.
  */
-Evas_Object *
+EAPI Evas_Object *
 edje_object_add(Evas *evas)
 {
    if (!_edje_smart)

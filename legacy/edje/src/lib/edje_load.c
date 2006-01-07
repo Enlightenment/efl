@@ -23,7 +23,7 @@ static int  _edje_collection_free_prog_cache_matches_free_cb(Evas_Hash *hash, co
  *
  * This loads the EET file and sets up the Edje.
  */
-int
+EAPI int
 edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 {
    Edje *ed;
@@ -336,7 +336,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
  *
  * This gets the EET file location and group for the given Evas_Object.
  */
-void
+EAPI void
 edje_object_file_get(Evas_Object *obj, const char **file, const char **part)
 {
    Edje *ed;
@@ -366,7 +366,7 @@ edje_object_file_get(Evas_Object *obj, const char **file, const char **part)
  * 6: Unknown Format\n
  * 7: Incompatible File
  */
-int
+EAPI int
 edje_object_load_error_get(Evas_Object *obj)
 {
    Edje *ed;
@@ -382,7 +382,7 @@ edje_object_load_error_get(Evas_Object *obj)
  *
  * @return The Evas_List of files
  */   
-Evas_List *
+EAPI Evas_List *
 edje_file_collection_list(const char *file)
 {
    Evas_List *lst = NULL;
@@ -416,7 +416,7 @@ edje_file_collection_list(const char *file)
  *
  * Frees the file collection.
  */
-void
+EAPI void
 edje_file_collection_list_free(Evas_List *lst)
 {
    while (lst)
@@ -432,7 +432,7 @@ edje_file_collection_list_free(Evas_List *lst)
  * @param key The data key
  * @return The file data string
  */
-char *
+EAPI char *
 edje_file_data_get(const char *file, const char *key)
 {
    Edje_File *edf;

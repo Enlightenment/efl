@@ -15,7 +15,7 @@ Evas_List      *_edje_animators = NULL;
  *
  * Sets the frametime in seconds, by default this is 1/30.
  */
-void
+EAPI void
 edje_frametime_set(double t)
 {
    ecore_animator_frametime_set(t);
@@ -27,7 +27,7 @@ edje_frametime_set(double t)
  *
  * Returns the frametime in seconds, by default this is 1/30.
  */
-double
+EAPI double
 edje_frametime_get(void)
 {
    return ecore_animator_frametime_get();
@@ -43,7 +43,7 @@ edje_frametime_get(void)
  *
  * Creates a callback for the object to execute the given function.
  */
-void
+EAPI void
 edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source), void *data)
 {
    Edje *ed;
@@ -77,7 +77,7 @@ edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const ch
  *
  * Deletes an existing callback
  */
-void *
+EAPI void *
 edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const char *source, void (*func) (void *data, Evas_Object *o, const char *emission, const char *source))
 {
    Edje *ed;
@@ -126,7 +126,7 @@ edje_object_signal_callback_del(Evas_Object *obj, const char *emission, const ch
  * This sends a signal to the edje.  These are defined in the programs
  * section of an edc.
  */
-void
+EAPI void
 edje_object_signal_emit(Evas_Object *obj, const char *emission, const char *source)
 {
    Edje *ed;
@@ -146,7 +146,7 @@ edje_object_signal_emit(Evas_Object *obj, const char *emission, const char *sour
  * This sets the Edje to play or pause depending on the parameter.
  * This has no effect if the Edje is already in that state.
  */
-void
+EAPI void
 edje_object_play_set(Evas_Object *obj, int play)
 {
    Edje *ed;
@@ -183,7 +183,7 @@ edje_object_play_set(Evas_Object *obj, int play)
  * @return 0 if Edje not connected, Edje delete_me, or Edje paused\n
  * 1 if Edje set to play
  */
-int 
+EAPI int 
 edje_object_play_get(Evas_Object *obj)
 {
    Edje *ed;
@@ -202,7 +202,7 @@ edje_object_play_get(Evas_Object *obj)
  *
  * Stop or start an Edje animation.
  */
-void
+EAPI void
 edje_object_animation_set(Evas_Object *obj, int on)
 {
    Edje *ed;
@@ -254,7 +254,7 @@ edje_object_animation_set(Evas_Object *obj, int on)
  * @return 0 on Error or if not animated\n
  * 1 if animated
  */
-int
+EAPI int
 edje_object_animation_get(Evas_Object *obj)
 {
    Edje *ed;
