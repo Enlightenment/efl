@@ -88,7 +88,7 @@ evas_event_objects_event_list(Evas *e, Evas_Object *stop, int x, int y)
 
 	lay = (Evas_Layer *)l;
 	norep = 0;
-	in = _evas_event_object_list_in_get(e, in, lay->objects, stop,
+	in = _evas_event_object_list_in_get(e, in, (Evas_Object_List *)lay->objects, stop,
 					    x, y, &norep);
 	if (norep) return in;
      }
