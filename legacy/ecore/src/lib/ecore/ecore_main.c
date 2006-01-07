@@ -2,16 +2,13 @@
 #include <winsock.h>
 #endif
 
-#include "ecore_private.h"
-#include "Ecore.h"
-
-#define FIX_HZ 1   
-
 #include <math.h>
 #include <sys/time.h>
 #include <sys/types.h>
 #include <unistd.h>
 #include <errno.h>
+
+#define FIX_HZ 1   
 
 #ifdef FIX_HZ
 #include <sys/param.h>
@@ -20,6 +17,8 @@
 #endif
 #endif
 
+#include "ecore_private.h"
+#include "Ecore.h"
 
 static int  _ecore_main_select(double timeout);
 static void _ecore_main_fd_handlers_cleanup(void);
