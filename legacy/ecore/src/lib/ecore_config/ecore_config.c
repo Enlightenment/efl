@@ -27,6 +27,9 @@ int                  __ecore_config_system_init = 0;
 static int           _ecore_config_system_init_no_load(void);
 static int           _ecore_config_system_load(void);
 
+static inline void  *__ecore_argb_to_long(int a, int r, int g, int b, long *v);
+static inline void  *__ecore_argbstr_to_long(char *argb, long *v);
+
 static const char  *_ecore_config_type[] =
    { "undefined", "integer", "float", "string", "colour", "theme", "boolean" };
 
@@ -140,22 +143,6 @@ ecore_config_type_get(const Ecore_Config_Prop * e)
 }
 
 /**
- * Obtains the data pointed to by the specified property.
- * @param   key The property key.
- * @return  Data pointer used by the property.
- * @ingroup Ecore_Config_Get_Group
- */
-EAPI void               *
-ecore_config_data_get(const char *key)
-{
-   Ecore_Config_Prop  *e;
-
-   e = ecore_config_get(key);
-   return (e ? ((e->type == ECORE_CONFIG_STR) ? ((void *)&e->ptr) : ((void *)&e->val))
-	   : NULL);
-}
-
-/**
  * Returns the specified property as a string.
  * @param   key The property key.
  * @return  The string value of the property.  The function returns @c NULL if
@@ -232,23 +219,6 @@ _ecore_config_float_get(Ecore_Config_Prop *e)
 }
 
 /**
- * Finds the red, green and blue values of a color property.
- * @param   key The property key.
- * @param   r   A pointer to an integer to store the red value into.
- * @param   g   A pointer to an integer to store the green value into.
- * @param   b   A pointer to an integer to store the blue value into.
- * @return  @c ECORE_CONFIG_ERR_SUCC on success.  @c ECORE_CONFIG_ERR_FAIL
- *          otherwise.
- * @ingroup Ecore_Config_Get_Group
- * @deprecated
- */
-EAPI int
-ecore_config_rgb_get(const char *key, int *r, int *g, int *b)
-{
-   return _ecore_config_argb_get( ecore_config_get(key), NULL, r, g, b);
-}
-
-/**
  * Finds the alpha, red, green and blue values of a color property.
  * @param   key The property key.
  * @param   a   A pointer to an integer to store the alpha value into.
@@ -272,29 +242,11 @@ _ecore_config_argb_get(Ecore_Config_Prop *e, int *a, int *r, int *g, int *b)
      {
 	if(a) *a = (e->val >> 24) & 0xff;
 	if(r) *r = (e->val >> 16) & 0xff;
-	if(g) *g = (e->val >> 8) & 0xff;
-	if(b) *b = e->val & 0xff;
+	if(g) *g = (e->val >>  8) & 0xff;
+	if(b) *b =  e->val        & 0xff;
 	return ECORE_CONFIG_ERR_SUCC;
      }
    return ECORE_CONFIG_ERR_FAIL;
-}
-
-/**
- * Returns a color property as a string of hexadecimal characters.
- * @param   key The property key.
- * @return  A string of hexadecimal characters in the format #rrggbb.
- * @ingroup Ecore_Config_Get_Group
- * @deprecated
- */
-EAPI char               *
-ecore_config_rgbstr_get(const char *key)
-{
-   char               *argb, *rgb;
-
-   argb = ecore_config_argbstr_get(key);
-   rgb = argb + 2;
-   *rgb = '#';
-   return rgb;
 }
 
 /**
@@ -492,79 +444,44 @@ ecore_config_type_guess(const char *key, const char *val)
 static int
 ecore_config_typed_val(Ecore_Config_Prop * e, const void *val, int type)
 {
-   char               *l;
-   long                v;
-   int                *i;
-   float              *f;
 
-   l = NULL;
-   v = 0;
+   if (!e)
+     return ECORE_CONFIG_ERR_NODATA;
 
-   if (!(val))
+   if (!(val) && type != ECORE_CONFIG_NIL)
       e->ptr = NULL;
    else
      {
-	if (type == ECORE_CONFIG_INT)
-	  {
-	     i = (int *)val;
-	     e->val = (long)*i;
-	     e->type = ECORE_CONFIG_INT;
-	  }
-	else if (type == ECORE_CONFIG_BLN )
-	  {
-	     i = (int *)val;
-	     e->val = (long)*i;
-	     e->type = ECORE_CONFIG_BLN;
-	  }
+	if (type == ECORE_CONFIG_INT || type == ECORE_CONFIG_BLN)
+	   {
+	     e->val = (long) *((int *)val);
+	     e->type = type;
+	   }
 	else if (type == ECORE_CONFIG_STR || type == ECORE_CONFIG_THM)
-	  {
+	   {
 	     if (!(e->ptr = strdup(val)))
 		return ECORE_CONFIG_ERR_OOM;
 	     if (e->type == ECORE_CONFIG_NIL)
 		e->type = type;
-	  }
+	   }
 	else if (type == ECORE_CONFIG_RGB)
-	  {
-	     if (((char *)val)[0] == '#')
-	       {
-		  if ((v = (long) strtoul(&((char *)val)[1], &l, 16)) < 0)
-		    {
-		       v = 0;
-		       E(0,
-			 "ecore_config_val: key \"%s\" -- hexadecimal value less than zero, bound to zero...\n",
-			 (char *)val);
-		       l = (char *)val;
-		    }
-	       }
-	     else
-	       {
-		  E(0,
-		    "ecore_config_val: key \"%s\" -- value \"%s\" not a valid hexadecimal RGB value?\n",
-		    e->key, (char *)val);
-		  return ECORE_CONFIG_ERR_FAIL;
-	       }
-	     if (*l)
-		E(0,
-		  "ecore_config_val: key \"%s\" -- value \"%s\" not a valid hexadecimal RGB value?\n",
-		  e->key, (char *)val);
-	     else
-	       {
-		  e->val = v;
-		  e->type = ECORE_CONFIG_RGB;
-	       }
+	   {
+	     e->val = *((long *)val);
+	     e->type = ECORE_CONFIG_RGB;
 	  }
 	else if (type == ECORE_CONFIG_FLT)
 	  {
-	     f = (float *)val;
-	     e->val = (long)((*f) * ECORE_CONFIG_FLOAT_PRECISION);
+	     e->val = (long) ((*((float *)val)) * ECORE_CONFIG_FLOAT_PRECISION);
 	     e->type = ECORE_CONFIG_FLT;
 	  }
 	else
+{
 	   e->type = ECORE_CONFIG_NIL;
+}
 
 	ecore_config_bound(e);
 	e->flags |= ECORE_CONFIG_FLAG_MODIFIED;
-  e->flags = e->flags & ~ECORE_CONFIG_FLAG_CMDLN;
+	e->flags &= ~ECORE_CONFIG_FLAG_CMDLN;
 	return ECORE_CONFIG_ERR_SUCC;
      }
    return ECORE_CONFIG_ERR_IGNORED;
@@ -574,40 +491,39 @@ static int
 ecore_config_typed_add(const char *key, const void *val, int type)
 {
    int error = ECORE_CONFIG_ERR_SUCC;
-   Ecore_Config_Prop  *e;
+   Ecore_Config_Prop  *e = NULL;
    Ecore_Config_Bundle *t;
 
    t = __ecore_config_bundle_local;
    if (!key)
       return ECORE_CONFIG_ERR_NODATA;
 
-   if (!(e = malloc(sizeof(Ecore_Config_Prop))))
-      goto ret;
-   memset(e, 0, sizeof(Ecore_Config_Prop));
-
-   if (!(e->key = strdup(key)))
+   if (!(e = calloc(1, sizeof(Ecore_Config_Prop))))
      {
 	error = ECORE_CONFIG_ERR_OOM;
-        goto ret_free_nte;
      }
-
-   if ((error = ecore_config_typed_val(e, val, type) != ECORE_CONFIG_ERR_SUCC))
-      goto ret_free_key;
-
-   e->next = t ? t->data : NULL;
-   if (t)
+   else if (!(e->key = strdup(key)))
      {
-	t->data = e;
+	error = ECORE_CONFIG_ERR_OOM;
+     }
+   else if ((error = ecore_config_typed_val(e, val, type)) == ECORE_CONFIG_ERR_SUCC)
+     {
+	if (t)
+	   {
+	     e->next = t->data;
+	     t->data = e;
+	   }
 	return ECORE_CONFIG_ERR_SUCC;
      }
 
- ret_free_key:
-   free(e->key);
- ret_free_nte:
-   free(e);
- ret:
+   if(e->key)
+     free(e->key);
+   if(e)
+     free(e);
+
    if (error == ECORE_CONFIG_ERR_SUCC)
       error = ECORE_CONFIG_ERR_FAIL;
+
    return error;
 }
 
@@ -826,35 +742,23 @@ ecore_config_float_set(const char *key, float val)
    return ecore_config_typed_set(key, (void *)&val, ECORE_CONFIG_FLT);
 }
 
-EAPI char              *
-ecore_config_rgb_to_argb(char *rgb)
-{
-   char               *argb;
-
-   argb = malloc(strlen(rgb) + 2);
-   strncpy(argb, "#ff", 3);
-   strncat(argb, rgb+1, strlen(rgb - 1));
-   return argb;
-}
-
 /**
  * Sets the indicated property to a color value.
  * @param   key The property key
- * @param   val Color value in RGB format.
+ * @param   a integer 0..255
+ * @param   r integer 0..255
+ * @param   g integer 0..255
+ * @param   b integer 0..255
+ *   
  * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
  * @ingroup Ecore_Config_Set_Group
  * @deprecated
  */
 EAPI int
-ecore_config_rgb_set(const char *key, char *val)
+ecore_config_argb_set(const char *key, int a, int r, int g, int b)
 {
-   char               *argb;
-   int                 ret;
-
-   argb = ecore_config_rgb_to_argb(val);
-   ret = ecore_config_argb_set(key, argb);
-   free(argb);
-   return ret;
+   long v = 0;
+   return ecore_config_typed_set(key, __ecore_argb_to_long(a,r,g,b, &v), ECORE_CONFIG_RGB);
 }
 
 /**
@@ -865,9 +769,10 @@ ecore_config_rgb_set(const char *key, char *val)
  * @ingroup Ecore_Config_Set_Group
  */
 EAPI int
-ecore_config_argb_set(const char *key, char *val)
+ecore_config_argbstr_set(const char *key, char *val)
 {
-   return ecore_config_typed_set(key, (void *)val, ECORE_CONFIG_RGB);
+   long v = 0;
+   return ecore_config_typed_set(key, __ecore_argbstr_to_long(val, &v), ECORE_CONFIG_RGB);
 }
 
 /**
@@ -1118,21 +1023,19 @@ ecore_config_float_default_bound(const char *key, float val, float low,
  * Sets the indicated property to a color value if the property has not yet
  * been set.
  * @param  key The property key.
- * @param  val Color value in RGB format.
+ * @param  a integer 0..255
+ * @param  r integer 0..255
+ * @param  g integer 0..255
+ * @param  b integer 0..255
  * @return @c ECORE_CONFIG_ERR_SUCC if there are no problems.
  * @ingroup Ecore_Config_Default_Group
  * @deprecated
  */
 EAPI int
-ecore_config_rgb_default(const char *key, char *val)
+ecore_config_argb_default(const char *key, int a, int r, int g, int b)
 {
-   char               *argb;
-   int                 ret;
-
-   argb = ecore_config_rgb_to_argb(val);
-   ret = ecore_config_argb_default(key, argb);
-   free(argb);
-   return ret;
+   long v = 0;
+   return ecore_config_typed_default(key, __ecore_argb_to_long(a,r,g,b, &v), ECORE_CONFIG_RGB);
 }
 
 /**
@@ -1144,9 +1047,10 @@ ecore_config_rgb_default(const char *key, char *val)
  * @ingroup Ecore_Config_Default_Group
  */
 EAPI int
-ecore_config_argb_default(const char *key, char *val)
+ecore_config_argbstr_default(const char *key, char *val)
 {
-   return ecore_config_typed_default(key, (void *)val, ECORE_CONFIG_RGB);
+   long v = 0;
+   return ecore_config_typed_default(key, __ecore_argbstr_to_long(val, &v), ECORE_CONFIG_RGB);
 }
 
 /**
@@ -1486,7 +1390,6 @@ ecore_config_init(const char *name)
 {
    char                *path;
    Ecore_Config_Prop   *list;
-   Ecore_Config_Bundle *temp;
    _ecore_config_system_init_no_load();
 
    __ecore_config_app_name = strdup(name);
@@ -1494,12 +1397,11 @@ ecore_config_init(const char *name)
    if (!__ecore_config_server_local)
       return ECORE_CONFIG_ERR_FAIL;
 
-   temp = __ecore_config_bundle_local;
    list = __ecore_config_bundle_local->data;
+   free( __ecore_config_bundle_local );
    __ecore_config_bundle_local =
       ecore_config_bundle_new(__ecore_config_server_local, "config");
    __ecore_config_bundle_local->data = list;
-   free(temp);
 
    path = ecore_config_theme_default_path_get();
    ecore_config_string_default("/e/themes/search_path", path);
@@ -1645,5 +1547,35 @@ ecore_config_system_shutdown(void)
    free(__ecore_config_server_local);
    free(__ecore_config_server_global);
    return ret;
+}
+
+static inline void *
+__ecore_argb_to_long(int a, int r, int g, int b, long *v)
+{
+   *v = ((a << 24) & 0xff000000 )
+      | ((r << 16) &   0xff0000 )
+      | ((g <<  8) &     0xff00 )
+      | ( b        &       0xff );
+
+   return (void *)v;
+}
+
+static inline void *
+__ecore_argbstr_to_long(char *argb, long *v)
+{
+   char *l = NULL;
+
+   // convert hexadecimal string #..., #0x..., 0x..., ... to long
+   if(*argb == '#')
+     argb++;
+   *v = (long)strtoul( argb, &l, 16);
+
+   if(*l)
+     {
+	E(0, "ecore_config_val: value \"%s\" not a valid hexadecimal RGB value?\n", argb);
+	return NULL;
+     }
+
+   return (void *)v;
 }
 

@@ -167,8 +167,10 @@ _ecore_config_db_read(Ecore_Config_DB_File *db, const char *key)
 		  ecore_config_typed_set(key, (void *)&tmp, type);
 		  break;
 	       }
-	     case ECORE_CONFIG_STR:
 	     case ECORE_CONFIG_RGB:
+	       ecore_config_argbstr_set(key, value);
+	       break;
+	     case ECORE_CONFIG_STR:
 	     case ECORE_CONFIG_THM:
 	       ecore_config_typed_set(key, (void *)value, type);
 	       break;
