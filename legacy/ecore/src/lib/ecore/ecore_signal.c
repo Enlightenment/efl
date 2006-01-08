@@ -90,20 +90,23 @@ _ecore_signal_shutdown(void)
    sig_count = 0;
 
 #ifdef SIGRTMIN
-   for (i = 0; i < num; i++) {
-      _ecore_signal_callback_set(SIGRTMIN + i, (Signal_Handler) SIG_DFL);
-      sigrt_count[i] = 0;
-   }
+   for (i = 0; i < num; i++)
+     {
+	_ecore_signal_callback_set(SIGRTMIN + i, (Signal_Handler) SIG_DFL);
+	sigrt_count[i] = 0;
+     }
 
-   if (sigrt_count) {
-      free((sig_atomic_t *) sigrt_count);
-      sigrt_count = NULL;
-   }
+   if (sigrt_count)
+     {
+	free((sig_atomic_t *) sigrt_count);
+	sigrt_count = NULL;
+     }
 
-   if (sigrt_info) {
-      free((siginfo_t *) sigrt_info);
-      sigrt_info = NULL;
-   }
+   if (sigrt_info)
+     {
+	free((siginfo_t *) sigrt_info);
+	sigrt_info = NULL;
+     }
 #endif
 }
 
@@ -133,7 +136,7 @@ _ecore_signal_init(void)
 
    sigrt_info = calloc(1, sizeof(siginfo_t) * num);
    assert(sigrt_info);
-
+   
    for (i = 0; i < num; i++)
       _ecore_signal_callback_set(SIGRTMIN + i, _ecore_signal_callback_sigrt);
 #endif
@@ -229,9 +232,9 @@ _ecore_signal_call(void)
 	  {
 	     e->number = 1;
 
-         if (sigusr1_info.si_signo)
-	        e->data = sigusr1_info;	 
-
+	     if (sigusr1_info.si_signo)
+	       e->data = sigusr1_info;	 
+	     
 	     ecore_event_add(ECORE_EVENT_SIGNAL_USER, e, NULL, NULL);
 	  }
 	sigusr1_count--;
@@ -245,10 +248,10 @@ _ecore_signal_call(void)
 	if (e)
 	  {
 	     e->number = 2;
-
-         if (sigusr2_info.si_signo)
-            e->data = sigusr2_info;	 
-
+	     
+	     if (sigusr2_info.si_signo)
+	       e->data = sigusr2_info;	 
+	     
 	     ecore_event_add(ECORE_EVENT_SIGNAL_USER, e, NULL, NULL);
 	  }
 	sigusr2_count--;
@@ -261,9 +264,9 @@ _ecore_signal_call(void)
 	e = _ecore_event_signal_hup_new();
 	if (e)
 	  {
-        if (sighup_info.si_signo)
-           e->data = sighup_info;
-
+	     if (sighup_info.si_signo)
+	       e->data = sighup_info;
+	     
 	     ecore_event_add(ECORE_EVENT_SIGNAL_HUP, e, NULL, NULL);
 	  }
 	sighup_count--;
@@ -278,9 +281,9 @@ _ecore_signal_call(void)
 	  {
 	     e->quit = 1;
 
-         if (sigquit_info.si_signo)
-            e->data = sigquit_info;
-
+	     if (sigquit_info.si_signo)
+	       e->data = sigquit_info;
+	     
 	     ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e, NULL, NULL);
 	  }
 	sigquit_count--;
@@ -294,10 +297,10 @@ _ecore_signal_call(void)
 	if (e)
 	  {
 	     e->interrupt = 1;
-
-         if (sigint_info.si_signo)
-            e->data = sigint_info;
-
+	     
+	     if (sigint_info.si_signo)
+	       e->data = sigint_info;
+	     
 	     ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e, NULL, NULL);
 	  }
 	sigint_count--;
@@ -311,10 +314,10 @@ _ecore_signal_call(void)
 	if (e)
 	  {
 	     e->terminate = 1;
-
-         if (sigterm_info.si_signo)
-            e->data = sigterm_info;
-
+	     
+	     if (sigterm_info.si_signo)
+	       e->data = sigterm_info;
+	     
 	     ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e, NULL, NULL);
 	  }
 	sigterm_count--;
@@ -328,9 +331,9 @@ _ecore_signal_call(void)
 	e = _ecore_event_signal_power_new();
 	if (e)
 	  {
-         if (sigpwr_info.si_signo)
-            e->data = sigpwr_info;
-
+	     if (sigpwr_info.si_signo)
+	       e->data = sigpwr_info;
+	     
 	     ecore_event_add(ECORE_EVENT_SIGNAL_POWER, e, NULL, NULL);
 	  }
 	sigpwr_count--;
@@ -340,21 +343,25 @@ _ecore_signal_call(void)
 
 #ifdef SIGRTMIN
    for (i = 0; i < num; i++)
-      while (sigrt_count[i] > 0) {
-         Ecore_Event_Signal_Realtime *e;
-
-         if ((e = _ecore_event_signal_realtime_new())) {
-            e->num = i;
-
-            if (sigrt_info[i].si_signo)
-               e->data = sigrt_info[i];
-
-            ecore_event_add(ECORE_EVENT_SIGNAL_REALTIME, e, NULL, NULL);
-         }
-
-         sigrt_count[i]--;
-         sig_count--;
-      }
+     {
+	while (sigrt_count[i] > 0)
+	  {
+	     Ecore_Event_Signal_Realtime *e;
+	     
+	     if ((e = _ecore_event_signal_realtime_new()))
+	       {
+		  e->num = i;
+		  
+		  if (sigrt_info[i].si_signo)
+		    e->data = sigrt_info[i];
+		  
+		  ecore_event_add(ECORE_EVENT_SIGNAL_REALTIME, e, NULL, NULL);
+	       }
+	     
+	     sigrt_count[i]--;
+	     sig_count--;
+	  }
+     }
 #endif
 }
 
@@ -378,10 +385,10 @@ static void
 _ecore_signal_callback_sigchld(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    if (si)
-      sigchld_info = *si;
+     sigchld_info = *si;
    else
-      sigchld_info.si_signo = 0;
-
+     sigchld_info.si_signo = 0;
+   
    sigchld_count++;
    sig_count++;
 }
@@ -390,10 +397,10 @@ static void
 _ecore_signal_callback_sigusr1(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    if (si)
-      sigusr1_info = *si;
+     sigusr1_info = *si;
    else
-      sigusr1_info.si_signo = 0;
-
+     sigusr1_info.si_signo = 0;
+   
    sigusr1_count++;
    sig_count++;
 }
@@ -402,10 +409,10 @@ static void
 _ecore_signal_callback_sigusr2(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    if (si)
-      sigusr2_info = *si;
+     sigusr2_info = *si;
    else
-      sigusr2_info.si_signo = 0;
-
+     sigusr2_info.si_signo = 0;
+   
    sigusr2_count++;
    sig_count++;
 }
@@ -414,10 +421,10 @@ static void
 _ecore_signal_callback_sighup(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    if (si)
-      sighup_info = *si;
+     sighup_info = *si;
    else
-      sighup_info.si_signo = 0;
-
+     sighup_info.si_signo = 0;
+   
    sighup_count++;
    sig_count++;
 }
@@ -426,9 +433,9 @@ static void
 _ecore_signal_callback_sigquit(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    if (si)
-      sigquit_info = *si;
+     sigquit_info = *si;
    else
-      sigquit_info.si_signo = 0;
+     sigquit_info.si_signo = 0;
 
    sigquit_count++;
    sig_count++;
@@ -438,9 +445,9 @@ static void
 _ecore_signal_callback_sigint(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    if (si)
-      sigint_info = *si;
+     sigint_info = *si;
    else
-      sigint_info.si_signo = 0;
+     sigint_info.si_signo = 0;
 
    sigint_count++;
    sig_count++;
@@ -450,9 +457,9 @@ static void
 _ecore_signal_callback_sigterm(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    if (si)
-      sigterm_info = *si;
+     sigterm_info = *si;
    else
-      sigterm_info.si_signo = 0;
+     sigterm_info.si_signo = 0;
 
    sigterm_count++;
    sig_count++;
@@ -463,10 +470,10 @@ static void
 _ecore_signal_callback_sigpwr(int sig __UNUSED__, siginfo_t *si, void *foo __UNUSED__)
 {
    if (si)
-      sigpwr_info = *si;
+     sigpwr_info = *si;
    else
-      sigpwr_info.si_signo = 0;
-
+     sigpwr_info.si_signo = 0;
+   
    sigpwr_count++;
    sig_count++;
 }
@@ -477,10 +484,10 @@ static void
 _ecore_signal_callback_sigrt(int sig, siginfo_t *si, void *foo __UNUSED__)
 {
    if (si)
-      sigrt_info[sig - SIGRTMIN] = *si;
+     sigrt_info[sig - SIGRTMIN] = *si;
    else
-      sigrt_info[sig - SIGRTMIN].si_signo = 0;
-
+     sigrt_info[sig - SIGRTMIN].si_signo = 0;
+   
    sigrt_count[sig - SIGRTMIN]++;
    sig_count++;
 }
@@ -490,14 +497,14 @@ static int
 _ecore_signal_exe_exit_delay(void *data)
 {
    Ecore_Event_Exe_Exit *e;
-
+   
    e = data;
    if (e)
-      {
-printf("Sending delayed exit event for %s.\n", e->exe->cmd);
-      _ecore_event_add(ECORE_EVENT_EXE_EXIT, e, 
-	   _ecore_event_exe_exit_free, NULL);
-      }
+     {
+	printf("Sending delayed exit event for %s.\n", e->exe->cmd);
+	_ecore_event_add(ECORE_EVENT_EXE_EXIT, e, 
+			 _ecore_event_exe_exit_free, NULL);
+     }
    return 0;
 }
 #endif
