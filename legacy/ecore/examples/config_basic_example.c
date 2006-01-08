@@ -14,9 +14,10 @@
 
 long   int_val;
 float  flt_val;
-int      r_val;
-int      g_val;
-int      b_val;
+int    a_val;
+int    r_val;
+int    g_val;
+int    b_val;
 char  *str_val;
 char  *thm_val;
 
@@ -37,7 +38,7 @@ void get_settings (void) {
   int_val = ecore_config_int_get(INT_VAL_KEY);
   flt_val = ecore_config_float_get(FLT_VAL_KEY);
   str_val = ecore_config_string_get(STR_VAL_KEY);
-  ecore_config_argb_get(RGB_VAL_KEY, NULL, &r_val, &g_val, &b_val);
+            ecore_config_argb_get(RGB_VAL_KEY, &a_val, &r_val, &g_val, &b_val);
   thm_val = ecore_config_theme_get(THM_VAL_KEY);
 }
 
@@ -50,6 +51,7 @@ void change_settings(void) {
     str_val[4] += 1;
   }
 
+  a_val = (a_val + 1) % 256;
   r_val = (r_val + 1) % 256;
   g_val = (g_val + 1) % 256;
   b_val = (b_val + 1) % 256;
@@ -67,7 +69,7 @@ void save_settings (void) {
   ecore_config_int_set(INT_VAL_KEY, int_val);
   ecore_config_float_set(FLT_VAL_KEY, flt_val);
   ecore_config_string_set(STR_VAL_KEY, str_val);
-  ecore_config_argb_set(RGB_VAL_KEY, 255, r_val, g_val, b_val);
+  ecore_config_argb_set(RGB_VAL_KEY, a_val, r_val, g_val, b_val);
   ecore_config_theme_set(THM_VAL_KEY, thm_val);
   ecore_config_save();
 }
@@ -76,7 +78,7 @@ void dump_settings (void) {
   printf("  Int Value:    %li\n", int_val);
   printf("  Float Value:  %f\n",  flt_val);
   printf("  String Value: %s\n",  str_val);
-  printf("  RGB Value:    %i %i %i\n", r_val, g_val, b_val);
+  printf("  ARGB Value:   %i %i %i %i\n",  a_val, r_val, g_val, b_val);
   printf("  Theme Value:  %s\n",  thm_val);
 }
 

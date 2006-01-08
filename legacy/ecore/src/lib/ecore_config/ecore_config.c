@@ -155,7 +155,7 @@ ecore_config_string_get(const char *key)
    return _ecore_config_string_get( ecore_config_get(key) );
 }
 
-char               *
+EAPI char               *
 _ecore_config_string_get(Ecore_Config_Prop *e)
 {
    return (e && (e->type == ECORE_CONFIG_STR) && e->ptr) ? strdup(e->ptr) : NULL;
@@ -174,7 +174,7 @@ ecore_config_boolean_get(const char *key)
    return _ecore_config_boolean_get( ecore_config_get(key) );
 }
 
-int
+EAPI int
 _ecore_config_boolean_get(Ecore_Config_Prop *e)
 {
    return (e && ((e->type == ECORE_CONFIG_INT) || (e->type == ECORE_CONFIG_BLN))) ? (e->val != 0) : -1;
@@ -261,7 +261,7 @@ ecore_config_argbstr_get(const char *key)
    return _ecore_config_argbstr_get( ecore_config_get(key) );
 }
 
-char               *
+EAPI char               *
 _ecore_config_argbstr_get(Ecore_Config_Prop *e)
 {
    char               *r;
@@ -284,7 +284,7 @@ ecore_config_theme_get(const char *key)
    return _ecore_config_theme_get( ecore_config_get(key) );
 }
 
-char               *
+EAPI char               *
 _ecore_config_theme_get(Ecore_Config_Prop *e)
 {
    return (e && (e->type == ECORE_CONFIG_THM)) ? strdup(e->ptr) : NULL;
@@ -749,10 +749,8 @@ ecore_config_float_set(const char *key, float val)
  * @param   r integer 0..255
  * @param   g integer 0..255
  * @param   b integer 0..255
- *   
  * @return  @c ECORE_CONFIG_ERR_SUCC if the property is set successfully.
  * @ingroup Ecore_Config_Set_Group
- * @deprecated
  */
 EAPI int
 ecore_config_argb_set(const char *key, int a, int r, int g, int b)
@@ -1029,7 +1027,6 @@ ecore_config_float_default_bound(const char *key, float val, float low,
  * @param  b integer 0..255
  * @return @c ECORE_CONFIG_ERR_SUCC if there are no problems.
  * @ingroup Ecore_Config_Default_Group
- * @deprecated
  */
 EAPI int
 ecore_config_argb_default(const char *key, int a, int r, int g, int b)

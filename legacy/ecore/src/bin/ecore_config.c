@@ -11,6 +11,7 @@
 #include <Eet.h>
 #include "Ecore_Config.h"
 #include "Ecore_Data.h"
+#include "ecore_config_private.h"
 
 // strcmp for paths - for sorting folders before files
 int
@@ -57,6 +58,7 @@ int
 get(const char *key)
 {
    Ecore_Config_Prop *e;
+   char *temp = NULL;
 
    if (!(e = ecore_config_get(key)))
      {
@@ -64,32 +66,39 @@ get(const char *key)
 	return -1;
      }
      
+   printf("%-10s", ecore_config_type_get(e));
+
    switch (e->type)
      {
 	case ECORE_CONFIG_NIL:
 	   printf("\n");
 	   break;
 	case ECORE_CONFIG_INT:
-	   printf("integer %ld\n", ecore_config_int_get(key));
+	   printf("%ld\n", _ecore_config_int_get(e));
 	   break;
 	case ECORE_CONFIG_BLN:
-	   printf("bool    %d\n", ecore_config_boolean_get(key));
+	   printf("%d\n",  _ecore_config_boolean_get(e));
 	   break;
 	case ECORE_CONFIG_FLT:
-	   printf("float   %lf\n", ecore_config_float_get(key));
+	   printf("%lf\n", _ecore_config_float_get(e));
 	   break;
 	case ECORE_CONFIG_STR:
-	   printf("string  \"%s\"\n", ecore_config_string_get(key));
+	   temp = _ecore_config_string_get(e);
 	   break;
 	case ECORE_CONFIG_RGB:
-	   printf("rgb	\"%s\"\n", ecore_config_argbstr_get(key));
+	   temp = _ecore_config_argbstr_get(e);
 	   break;
 	case ECORE_CONFIG_THM:
-	   printf("theme   \"%s\"\n", ecore_config_theme_get(key));
+	   temp = _ecore_config_theme_get(e);
 	   break;
 	default:
-	   fprintf(stderr, "Property has unrecognised type");
+	   fprintf(stderr, "Property has unrecognized type");
 	   return -1;
+     }
+   if(temp)
+     {
+	printf("\"%s\"\n", temp);
+	free(temp);
      }
    return 0;
 }
@@ -148,7 +157,6 @@ usage_and_exit(const char *prog, int ret, const char *msg)
    fprintf(stderr, "  -b, --bool=VALUE   set boolean\n");
    fprintf(stderr, "  -f, --float=VALUE  set float\n");
    fprintf(stderr, "  -i, --int=VALUE    set integer\n");
-   fprintf(stderr, "  -n, --nil          set nil\n");
    fprintf(stderr, "  -r, --rgb=VALUE    set RGBA\n");
    fprintf(stderr, "  -s, --string=VALUE set string\n");
    fprintf(stderr, "  -t, --theme=VALUE  set theme\n\n");
@@ -158,12 +166,12 @@ usage_and_exit(const char *prog, int ret, const char *msg)
 int
 main(int argc, char * const argv[])
 {
-   const char *prog, *file, *key;
+   char *prog, *file, *key;
    void *value = (void *)NULL;
    char cmd = 's';
    int type = -1;
    int ret = 0;
-   int i;
+   long i;
    float f;
    
    file = key = prog = NULL;
@@ -183,7 +191,6 @@ main(int argc, char * const argv[])
 	   {"bool",   1, 0, 'b'},
 	   {"float",  1, 0, 'f'},
 	   {"int",    1, 0, 'i'},
-	   {"nil",    0, 0, 'n'},
 	   {"rgb",    1, 0, 'r'},
 	   {"string", 1, 0, 's'},
 	   {"theme",  1, 0, 't'},
@@ -191,7 +198,7 @@ main(int argc, char * const argv[])
 	   {0, 0, 0, 0}
 	};
 
-	ret = getopt_long(argc, argv, "c:agdb:f:i:nr:s:t:k:", long_options, NULL);
+	ret = getopt_long(argc, argv, "c:agdb:f:i:r:s:t:k:", long_options, NULL);
 	if(ret == -1)
 	   break;
 
@@ -201,42 +208,59 @@ main(int argc, char * const argv[])
 		key = strdup(optarg);
 		break;
 	     case 'n':
+		if(value)
+		   usage_and_exit(prog, 2, "too many commands");
 		type = ECORE_CONFIG_NIL;
 		value = NULL;
 		break;
 	     case 'b':
+		if(value)
+		   usage_and_exit(prog, 2, "too many commands");
 		type = ECORE_CONFIG_BLN;
 		i = atoi(optarg);
 		value = &i;
 		break;
 	     case 'i':
+		if(value)
+		   usage_and_exit(prog, 2, "too many commands");
 		type = ECORE_CONFIG_INT;
 		i = atoi(optarg);
 		value = &i;
 		break;
 	     case 'f':
+		if(value)
+		   usage_and_exit(prog, 2, "too many commands");
 		type = ECORE_CONFIG_FLT;
 		f = atof(optarg);
 		value = &f;
 		break;
 	     case 'r':
+		if(value)
+		   usage_and_exit(prog, 2, "too many commands");
 		type = ECORE_CONFIG_RGB;
-		value = strdup(optarg);
+		i = (long) strtoul( (*optarg == '#') ? (optarg + 1) : optarg, NULL, 16 );
+		value = &i;
 		break;
 	     case 's':
+		if(value)
+		   usage_and_exit(prog, 2, "too many commands");
 		type = ECORE_CONFIG_STR;
 		value = strdup(optarg);
 		break;
 	     case 't':
+		if(value)
+		   usage_and_exit(prog, 2, "too many commands");
 		type = ECORE_CONFIG_THM;
 		value = strdup(optarg);
 		break;
 	     case 'c':
+		if(file)
+		   free(file);
 		file = strdup(optarg);
 		break;
 	     case '?':
 	     case ':':
-		usage_and_exit(prog, 2, "Bad argument");
+		return 1;
 	     default:
 		cmd = ret;
 		break;
@@ -271,6 +295,7 @@ main(int argc, char * const argv[])
 	     } else {
 		ecore_config_file_save(file);
 	     }
+	     get(key); // display value after setting it
 	   break;
 	case 'd':
 	   if(del(key))
@@ -287,9 +312,17 @@ main(int argc, char * const argv[])
 	case 'a':
 	   if (list(file)) ret = 1;
 	   break;
+	default:
+	   printf("Unhandled command '%c'\n", cmd);
      }
 
    ecore_config_shutdown();
+
+   if(type == ECORE_CONFIG_STR || type == ECORE_CONFIG_THM)
+     free(value);
+
+   if(file)
+     free(file);
 
    return ret;
 }
