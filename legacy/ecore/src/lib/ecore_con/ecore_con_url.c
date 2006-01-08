@@ -43,7 +43,7 @@
 #ifdef HAVE_CURL
 static int _ecore_con_url_fd_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_con_url_perform(Ecore_Con_Url *url_con);
-size_t _ecore_con_url_data_cb(void *buffer, size_t size, size_t nmemb, void *userp);
+static size_t _ecore_con_url_data_cb(void *buffer, size_t size, size_t nmemb, void *userp);
 static void _ecore_con_event_url_complete_free(void *data __UNUSED__, void *ev);
 static void _ecore_con_event_url_data_free(void *data __UNUSED__, void *ev);
 static int _ecore_con_url_process_completed_jobs(Ecore_Con_Url *url_con_to_match);
