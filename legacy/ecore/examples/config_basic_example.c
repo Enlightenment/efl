@@ -38,7 +38,7 @@ void get_settings (void) {
   int_val = ecore_config_int_get(INT_VAL_KEY);
   flt_val = ecore_config_float_get(FLT_VAL_KEY);
   str_val = ecore_config_string_get(STR_VAL_KEY);
-            ecore_config_argb_get(RGB_VAL_KEY, &a_val, &r_val, &g_val, &b_val);
+  ecore_config_argb_get(RGB_VAL_KEY, &a_val, &r_val, &g_val, &b_val);
   thm_val = ecore_config_theme_get(THM_VAL_KEY);
 }
 
