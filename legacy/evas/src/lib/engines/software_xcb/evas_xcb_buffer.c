@@ -1,4 +1,8 @@
-#include "evas_common.h"
+#include <sys/ipc.h>
+#include <sys/shm.h>
+#include <X11/XCB/shm.h>
+#include <X11/XCB/xcb_image.h>
+
 #include "evas_engine.h"
 
 static int _xcb_err = 0;

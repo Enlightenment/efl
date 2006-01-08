@@ -1,11 +1,12 @@
-#include "evas_common.h"
-#include "evas_engine.h"
-#include "evas_macros.h"
 #include <X11/XCB/shm.h>
 #include <X11/XCB/xcb_image.h>
 #include <X11/XCB/xcb_atom.h>
 #include <sys/time.h>
 #include <sys/utsname.h>
+
+#include "evas_common.h"
+#include "evas_engine.h"
+#include "evas_macros.h"
 
 void
 evas_software_xcb_outbuf_init(void)
