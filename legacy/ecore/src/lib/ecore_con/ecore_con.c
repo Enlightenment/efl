@@ -606,6 +606,26 @@ ecore_con_server_client_limit_set(Ecore_Con_Server *svr, int client_limit, char 
 }
 
 /**
+ * Flag the server as not owned by this process, important to use after
+ * forking so child processes do not remove a parents socket path.
+ * Beware that if you set this in the parent, stale sockets may be left
+ * around.
+ * @param   svr           The given server.
+ * @ingroup Ecore_Con_Server_Group
+ */
+void
+ecore_con_server_disown(Ecore_Con_Server *svr)
+{
+   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
+     {
+	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER,
+			 "ecore_con_server_client_limit_set");
+	return;
+     }   
+   svr->created = 0;
+}
+
+/**
  * @defgroup Ecore_Con_Client_Group Ecore Connection Client Functions
  *
  * Functions that operate on Ecore connection client objects.
