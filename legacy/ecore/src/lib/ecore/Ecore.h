@@ -44,8 +44,10 @@
  * more details.
  */
 
+#ifndef _ECORE_PRIVATE_H
 #include <sys/types.h>
 #include <signal.h>
+#endif
 
 #ifndef TRUE
 #define TRUE 1
