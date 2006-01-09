@@ -12,6 +12,27 @@
 
 #include "evas_options.h"
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <signal.h>
+#include <setjmp.h>
+#include <sys/types.h>
+#include <ctype.h>
+
+#ifdef HAVE_ALLOCA_H
+#include <alloca.h>
+#endif
+
+#ifdef _WIN32_WCE
+#include <windows.h>
+#endif
+
+#include <ft2build.h>
+#include FT_FREETYPE_H
+#include FT_GLYPH_H
+#include FT_SIZES_H
+
 #ifdef __GNUC__
 # if __GNUC__ >= 4
 #  pragma GCC visibility push(hidden)
@@ -43,27 +64,6 @@
 #endif
 
 /*****************************************************************************/
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
-#include <setjmp.h>
-#include <sys/types.h>
-#include <ctype.h>
-
-#ifdef HAVE_ALLOCA_H
-#include <alloca.h>
-#endif
-
-#ifdef _WIN32_WCE
-#include <windows.h>
-#endif
-
-#include <ft2build.h>
-#include FT_FREETYPE_H
-#include FT_GLYPH_H
-#include FT_SIZES_H
 
 /*****************************************************************************/
 
