@@ -1,9 +1,6 @@
 #ifndef _EMBRYO_PRIVATE_H
 #define _EMBRYO_PRIVATE_H
 
-#include "Embryo.h"
-#include "config.h"
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -11,10 +8,12 @@
 #include <limits.h>
 #include <stdarg.h>
 #include <string.h>
-
 #if HAVE_ALLOCA_H
 #include <alloca.h>
 #endif
+
+#include "Embryo.h"
+#include "config.h"
 
 #ifdef __GNUC__
 # if __GNUC__ >= 4
