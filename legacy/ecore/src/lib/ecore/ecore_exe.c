@@ -42,10 +42,10 @@ static int
 _ecore_exe_check_errno(int result, char *file, int line)
 {
    int saved_errno = errno;
-
+   
    if (result == -1)
-      {
-         perror("*** errno reports ");
+     {
+	perror("*** errno reports ");
 /* What is currently supported -
  *
  *   pipe
@@ -101,67 +101,67 @@ _ecore_exe_check_errno(int result, char *file, int line)
  *        // Something failed, cleanup.
  *     }
  */
-         switch (saved_errno)
-	    {
-	       case EACCES :
-	       case EAGAIN :
-	       case EINTR :
-	          {   /* Not now, try later. */
-                     fprintf(stderr, "*** Must try again in %s @%u.\n", file, line);
-		     result = -1;
-		     break;
-		  }
-
-	       case EMFILE :
-	       case ENFILE :
-	       case ENOLCK :
-	          {   /* Low on resources. */
-                     fprintf(stderr, "*** Low on resources in %s @%u.\n", file, line);
-		     result = 0;
-		     break;
-		  }
-
-	       case EIO :
-	          {   /* I/O error. */
-                     fprintf(stderr, "*** I/O error in %s @%u.\n", file, line);
-		     result = 0;
-		     break;
-		  }
-
-	       case EFAULT :
-	       case EBADF :
-	       case EINVAL :
-	       case EROFS :
-	       case EISDIR :
-	       case EDEADLK :
-	       case EPERM :
-	       case EBUSY :
-	          {   /* Programmer fucked up. */
-                     fprintf(stderr, 
-	                "*** NAUGHTY PROGRAMMER!!!\n"
-	                "*** SPANK SPANK SPANK!!!\n"
-	                "*** Now go fix your code in %s @%u. Tut tut tut!\n"
-	                "\n", file, line);
-		     result = 0;
-		     break;
-		  }
-
-	       default :
-	          {   /* Unsupported errno code, please add this one. */
-                     fprintf(stderr, 
-	                "*** NAUGHTY PROGRAMMER!!!\n"
-	                "*** SPANK SPANK SPANK!!!\n"
-			"*** Unsupported errno code %d, please add this one.\n"
-	                "*** Now go fix your code in %s @%u, from %s @%u. Tut tut tut!\n"
-	                "\n", saved_errno, __FILE__, __LINE__, file, line);
-		     result = 0;
-		     break;
-		  }
-	    }
-      }
+	switch (saved_errno)
+	  {
+	   case EACCES :
+	   case EAGAIN :
+	   case EINTR :
+	       {   /* Not now, try later. */
+		  fprintf(stderr, "*** Must try again in %s @%u.\n", file, line);
+		  result = -1;
+		  break;
+	       }
+	     
+	   case EMFILE :
+	   case ENFILE :
+	   case ENOLCK :
+	       {   /* Low on resources. */
+		  fprintf(stderr, "*** Low on resources in %s @%u.\n", file, line);
+		  result = 0;
+		  break;
+	       }
+	     
+	   case EIO :
+	       {   /* I/O error. */
+		  fprintf(stderr, "*** I/O error in %s @%u.\n", file, line);
+		  result = 0;
+		  break;
+	       }
+	     
+	   case EFAULT :
+	   case EBADF :
+	   case EINVAL :
+	   case EROFS :
+	   case EISDIR :
+	   case EDEADLK :
+	   case EPERM :
+	   case EBUSY :
+	       {   /* Programmer fucked up. */
+		  fprintf(stderr, 
+			  "*** NAUGHTY PROGRAMMER!!!\n"
+			  "*** SPANK SPANK SPANK!!!\n"
+			  "*** Now go fix your code in %s @%u. Tut tut tut!\n"
+			  "\n", file, line);
+		  result = 0;
+		  break;
+	       }
+	     
+	   default :
+	       {   /* Unsupported errno code, please add this one. */
+		  fprintf(stderr, 
+			  "*** NAUGHTY PROGRAMMER!!!\n"
+			  "*** SPANK SPANK SPANK!!!\n"
+			  "*** Unsupported errno code %d, please add this one.\n"
+			  "*** Now go fix your code in %s @%u, from %s @%u. Tut tut tut!\n"
+			  "\n", saved_errno, __FILE__, __LINE__, file, line);
+		  result = 0;
+		  break;
+	       }
+	  }
+     }
    else   /* Everything is fine. */
-      result = 1;
-
+     result = 1;
+   
    errno = saved_errno;
    return result;
 }
@@ -193,7 +193,7 @@ ecore_exe_run(const char *exe_cmd, const void *data)
 {
    Ecore_Exe *exe;
    pid_t pid;
-
+   
    if (!exe_cmd) return NULL;
    pid = fork();
    if (pid)
@@ -252,162 +252,162 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 
    exe = calloc(1, sizeof(Ecore_Exe));
    if (exe == NULL) return NULL;
-
+   
    /*  Create some pipes. */
    E_IF_NO_ERRNO_NOLOOP(result, pipe(readPipe), ok)
-      {
-         int writePipe[2] = { -1, -1 };
-
-         E_IF_NO_ERRNO_NOLOOP(result, pipe(writePipe), ok)
-            {
-               int statusPipe[2] = { -1, -1 };
-
-               E_IF_NO_ERRNO_NOLOOP(result, pipe(statusPipe), ok)
-	          {
-                     pid_t pid = 0;
-                     volatile int vfork_exec_errno = 0;
-
-                     /* FIXME: I should double check this.  After a quick look around, this is already done, but via a more modern method. */
-                     /* signal(SIGPIPE, SIG_IGN);    We only want EPIPE on errors */
-                     pid = fork();
-
-                     if (pid == -1)
-                        {
-	                   fprintf(stderr, "Failed to fork process\n");
-	                   pid = 0;
-                        }
-                     else if (pid == 0)   /* child */
-                        {
-                           /* Close and/or dup STDIN and STDOUT. */
-                           E_IF_NO_ERRNO(result, close(STDIN_FILENO), ok);
-	                      {
-                                 if (flags & ECORE_EXE_PIPE_WRITE)
-                                    E_NO_ERRNO(result, dup2(writePipe[0], STDIN_FILENO), ok);
-	                         else
-                                    E_NO_ERRNO(result, close(writePipe[0]), ok);
-
-                                 if (ok)
-				    {
-                                       E_IF_NO_ERRNO(result, close(STDOUT_FILENO), ok)
-	                                  {
-                                             if (flags & ECORE_EXE_PIPE_READ)
-                                                E_NO_ERRNO(result, dup2(readPipe[1], STDOUT_FILENO), ok);
-	                                     else
-                                                E_NO_ERRNO(result, close(readPipe[1]), ok);
-	                                  }
-
-                                       if (ok)
-				          {
-					     /* Setup the status pipe. */
-                                             E_NO_ERRNO(result, close(statusPipe[0]), ok);
-                                             E_IF_NO_ERRNO(result, fcntl(statusPipe[1], F_SETFD, FD_CLOEXEC), ok)   /* close on exec shows sucess */
-			                        {
-						   /* Close STDERR. */
-                                                   E_NO_ERRNO(result, close(STDERR_FILENO), ok);
-						   /* Run the actual command. */
-                                                   _ecore_exe_exec_it(exe_cmd);   /* Should not return from this. */
-                                                }
-	                                  }
-			            }
-			      }
-
-                           /* Something went 'orribly wrong. */
-	                   vfork_exec_errno = errno;
-
-                           /* Close the pipes. */
-                           if (flags & ECORE_EXE_PIPE_READ)   E_NO_ERRNO(result, close(readPipe[1]), ok);
-                           if (flags & ECORE_EXE_PIPE_WRITE)  E_NO_ERRNO(result, close(writePipe[0]), ok);
-                           E_NO_ERRNO(result, close(statusPipe[1]), ok);
-
-	                   _exit(-1);
-                        }
-                     else   /* parent */
-                        {
-			   /* Close the unused pipes. */
-                           if (! (flags & ECORE_EXE_PIPE_READ))   E_NO_ERRNO(result, close(readPipe[0]), ok);
-                           if (! (flags & ECORE_EXE_PIPE_WRITE))  E_NO_ERRNO(result, close(writePipe[1]), ok);
-                           E_NO_ERRNO(result, close(statusPipe[1]), ok);
-
-/* FIXME: after having a good look at the current e fd handling, investigate fcntl(dataPipe[x], F_SETSIG, ...) */
-
-			   /* Wait for it to start executing. */
-	                   while (1)
-	                      {
-                                 char buf;
-
-                                 E_NO_ERRNO(result, read(statusPipe[0], &buf, 1), ok);
-	                         if (result == 0)
-	                            {
-	                               if (vfork_exec_errno != 0)
-		                          {
-		                             n = vfork_exec_errno;
-		                             fprintf(stderr, "Could not start \"%s\"\n", exe_cmd);
-					     pid = 0;
-		                          }
-		                       break;
-	                            }
-	                      }
-
-                           /* Close the status pipe. */
-                           E_NO_ERRNO(result, close(statusPipe[0]), ok);
-                        }
-
-                     if (pid)
-                        {
-			   /* Setup the exe structure. */
-                           ECORE_MAGIC_SET(exe, ECORE_MAGIC_EXE);
-	                   exe->pid = pid;
-	                   exe->flags = flags;
-	                   exe->data = (void *)data;
-                           if ((exe->cmd = strdup(exe_cmd)))
+     {
+	int writePipe[2] = { -1, -1 };
+	
+	E_IF_NO_ERRNO_NOLOOP(result, pipe(writePipe), ok)
+	  {
+	     int statusPipe[2] = { -1, -1 };
+	     
+	     E_IF_NO_ERRNO_NOLOOP(result, pipe(statusPipe), ok)
+	       {
+		  pid_t pid = 0;
+		  volatile int vfork_exec_errno = 0;
+		  
+		  /* FIXME: I should double check this.  After a quick look around, this is already done, but via a more modern method. */
+		  /* signal(SIGPIPE, SIG_IGN);    We only want EPIPE on errors */
+		  pid = fork();
+		  
+		  if (pid == -1)
+		    {
+		       fprintf(stderr, "Failed to fork process\n");
+		       pid = 0;
+		    }
+		  else if (pid == 0)   /* child */
+		    {
+		       /* Close and/or dup STDIN and STDOUT. */
+		       E_IF_NO_ERRNO(result, close(STDIN_FILENO), ok);
+			 {
+			    if (flags & ECORE_EXE_PIPE_WRITE)
+			      E_NO_ERRNO(result, dup2(writePipe[0], STDIN_FILENO), ok);
+			    else
+			      E_NO_ERRNO(result, close(writePipe[0]), ok);
+			    
+			    if (ok)
 			      {
-                                 if (flags & ECORE_EXE_PIPE_READ)
-	                            {   /* Setup the read stuff. */
-	                               exe->child_fd_read = readPipe[0];
-	                               E_IF_NO_ERRNO(result, fcntl(exe->child_fd_read, F_SETFL, O_NONBLOCK), ok)
-	                                  {
-	                                     exe->read_fd_handler = ecore_main_fd_handler_add(exe->child_fd_read,
-	                                        ECORE_FD_READ, _ecore_exe_data_read_handler, exe,
-	                                        NULL, NULL);
-                                             if (exe->read_fd_handler == NULL)
-		                                ok = 0;
-		                          }
-	                            }
-                                 if (ok && (flags & ECORE_EXE_PIPE_WRITE))
-	                            {   /* Setup the write stuff. */
-	                               exe->child_fd_write = writePipe[1];
-	                               E_IF_NO_ERRNO(result, fcntl(exe->child_fd_write, F_SETFL, O_NONBLOCK), ok)
-	                                  {
-	                                     exe->write_fd_handler = ecore_main_fd_handler_add(exe->child_fd_write,
-	                                        ECORE_FD_WRITE, _ecore_exe_data_write_handler, exe,
-	                                        NULL, NULL);
-                                             if (exe->write_fd_handler)
-                                                ecore_main_fd_handler_active_set(exe->write_fd_handler, 0);   /* Nothing to write to start with. */
-		                             else
-		                                ok = 0;
-		                          }
-	                            }
-
-	                         exes = _ecore_list2_append(exes, exe);
-                                 n = 0;
+				 E_IF_NO_ERRNO(result, close(STDOUT_FILENO), ok)
+				   {
+				      if (flags & ECORE_EXE_PIPE_READ)
+					E_NO_ERRNO(result, dup2(readPipe[1], STDOUT_FILENO), ok);
+				      else
+					E_NO_ERRNO(result, close(readPipe[1]), ok);
+				   }
+				 
+				 if (ok)
+				   {
+				      /* Setup the status pipe. */
+				      E_NO_ERRNO(result, close(statusPipe[0]), ok);
+				      E_IF_NO_ERRNO(result, fcntl(statusPipe[1], F_SETFD, FD_CLOEXEC), ok)   /* close on exec shows sucess */
+					{
+					   /* Close STDERR. */
+					   E_NO_ERRNO(result, close(STDERR_FILENO), ok);
+					   /* Run the actual command. */
+					   _ecore_exe_exec_it(exe_cmd);   /* Should not return from this. */
+					}
+				   }
 			      }
-			   else
-		             ok = 0;
-                        }
-		     else
-		       ok = 0;
-	          }
-            }
-      }
-
+			 }
+		       
+		       /* Something went 'orribly wrong. */
+		       vfork_exec_errno = errno;
+		       
+		       /* Close the pipes. */
+		       if (flags & ECORE_EXE_PIPE_READ)   E_NO_ERRNO(result, close(readPipe[1]), ok);
+		       if (flags & ECORE_EXE_PIPE_WRITE)  E_NO_ERRNO(result, close(writePipe[0]), ok);
+		       E_NO_ERRNO(result, close(statusPipe[1]), ok);
+		       
+		       _exit(-1);
+		    }
+		  else   /* parent */
+		    {
+		       /* Close the unused pipes. */
+		       if (! (flags & ECORE_EXE_PIPE_READ))   E_NO_ERRNO(result, close(readPipe[0]), ok);
+		       if (! (flags & ECORE_EXE_PIPE_WRITE))  E_NO_ERRNO(result, close(writePipe[1]), ok);
+		       E_NO_ERRNO(result, close(statusPipe[1]), ok);
+		       
+		       /* FIXME: after having a good look at the current e fd handling, investigate fcntl(dataPipe[x], F_SETSIG, ...) */
+		       
+		       /* Wait for it to start executing. */
+		       while (1)
+			 {
+			    char buf;
+			    
+			    E_NO_ERRNO(result, read(statusPipe[0], &buf, 1), ok);
+			    if (result == 0)
+			      {
+				 if (vfork_exec_errno != 0)
+				   {
+				      n = vfork_exec_errno;
+				      fprintf(stderr, "Could not start \"%s\"\n", exe_cmd);
+				      pid = 0;
+				   }
+				 break;
+			      }
+			 }
+		       
+		       /* Close the status pipe. */
+		       E_NO_ERRNO(result, close(statusPipe[0]), ok);
+		    }
+		  
+		  if (pid)
+		    {
+		       /* Setup the exe structure. */
+		       ECORE_MAGIC_SET(exe, ECORE_MAGIC_EXE);
+		       exe->pid = pid;
+		       exe->flags = flags;
+		       exe->data = (void *)data;
+		       if ((exe->cmd = strdup(exe_cmd)))
+			 {
+			    if (flags & ECORE_EXE_PIPE_READ)
+			      {   /* Setup the read stuff. */
+				 exe->child_fd_read = readPipe[0];
+				 E_IF_NO_ERRNO(result, fcntl(exe->child_fd_read, F_SETFL, O_NONBLOCK), ok)
+				   {
+				      exe->read_fd_handler = ecore_main_fd_handler_add(exe->child_fd_read,
+										       ECORE_FD_READ, _ecore_exe_data_read_handler, exe,
+										       NULL, NULL);
+				      if (exe->read_fd_handler == NULL)
+					ok = 0;
+				   }
+			      }
+			    if (ok && (flags & ECORE_EXE_PIPE_WRITE))
+			      {   /* Setup the write stuff. */
+				 exe->child_fd_write = writePipe[1];
+				 E_IF_NO_ERRNO(result, fcntl(exe->child_fd_write, F_SETFL, O_NONBLOCK), ok)
+				   {
+				      exe->write_fd_handler = ecore_main_fd_handler_add(exe->child_fd_write,
+											ECORE_FD_WRITE, _ecore_exe_data_write_handler, exe,
+											NULL, NULL);
+				      if (exe->write_fd_handler)
+					ecore_main_fd_handler_active_set(exe->write_fd_handler, 0);   /* Nothing to write to start with. */
+				      else
+					ok = 0;
+				   }
+			      }
+			    
+			    exes = _ecore_list2_append(exes, exe);
+			    n = 0;
+			 }
+		       else
+			 ok = 0;
+		    }
+		  else
+		    ok = 0;
+	       }
+	  }
+     }
+   
    if (!ok)
-      {   /* Something went wrong, so pull down everything. */
-	 if (exe->pid)   ecore_exe_terminate(exe);
-         IF_FN_DEL(_ecore_exe_free, exe);
-      }
+     {   /* Something went wrong, so pull down everything. */
+	if (exe->pid)   ecore_exe_terminate(exe);
+	IF_FN_DEL(_ecore_exe_free, exe);
+     }
    else
-      printf("Running as %d for %s.\n", exe->pid, exe->cmd);
-
+     printf("Running as %d for %s.\n", exe->pid, exe->cmd);
+   
    errno = n;
    return exe;
 }
@@ -811,77 +811,77 @@ _ecore_exe_exec_it(const char *exe_cmd)
    char* buf = NULL;
    char** args = NULL;
    int save_errno = 0;
-
-   if (! strpbrk(exe_cmd, "|&;<>()$`\\\"'*?#"))
-      {
-	 char* token;
-	 char pre_command = 1;
-	 int num_tokens = 0;
-
-         if (! (buf = strdup(exe_cmd)))
-	    return;
-
-	 token = strtok(buf, " \t\n\v");
-	 while(token)
-	    {
-	       if (token[0] == '~')
-	          break;
-	       if (pre_command)
-	          {
-		     if (token[0] == '[')
-		        break;
-		     if (strchr(token, '='))
-		        break;
-		     else
-		        pre_command = 0;
-	          }
-	       num_tokens ++;
-	       token = strtok(NULL, " \t\n\v");
-	    }
-	 IF_FREE(buf);
-	 if (! token && num_tokens)
-	    {
-	       int i = 0;
-	       char* token;
-
-	       if (! (buf = strdup(exe_cmd)))
-	         return;
-
-	       token = strtok(buf, " \t\n\v");
-	       use_sh = 0;
-	       if (! (args = (char**) calloc(num_tokens + 1, sizeof(char*)))) 
-	          {
-	             IF_FREE(buf);
-	             return;
-	          }
-	       for (i = 0; i < num_tokens; i ++)
-	          {
-		     if (token)
-		        args[i] = token;
-		     token = strtok(NULL, " \t\n\v");
-	          }
-	       args[num_tokens] = NULL;
-            }
-      }
-
+   
+   if (!strpbrk(exe_cmd, "|&;<>()$`\\\"'*?#"))
+     {
+	char* token;
+	char pre_command = 1;
+	int num_tokens = 0;
+	
+	if (! (buf = strdup(exe_cmd)))
+	  return;
+	
+	token = strtok(buf, " \t\n\v");
+	while(token)
+	  {
+	     if (token[0] == '~')
+	       break;
+	     if (pre_command)
+	       {
+		  if (token[0] == '[')
+		    break;
+		  if (strchr(token, '='))
+		    break;
+		  else
+		    pre_command = 0;
+	       }
+	     num_tokens ++;
+	     token = strtok(NULL, " \t\n\v");
+	  }
+	IF_FREE(buf);
+	if (! token && num_tokens)
+	  {
+	     int i = 0;
+	     char* token;
+	     
+	     if (! (buf = strdup(exe_cmd)))
+	       return;
+	     
+	     token = strtok(buf, " \t\n\v");
+	     use_sh = 0;
+	     if (! (args = (char**) calloc(num_tokens + 1, sizeof(char*)))) 
+	       {
+		  IF_FREE(buf);
+		  return;
+	       }
+	     for (i = 0; i < num_tokens; i ++)
+	       {
+		  if (token)
+		    args[i] = token;
+		  token = strtok(NULL, " \t\n\v");
+	       }
+	     args[num_tokens] = NULL;
+	  }
+     }
+   
    setsid();
    if (use_sh)
-      {   /* We have to use a shell to run this. */
-         if (shell == NULL) 
-            {   /* Find users preferred shell. */
-               shell = getenv("SHELL");
-	       if (shell == 0)
-	          shell = "/bin/sh";
-            }
-         errno = 0;
-         execl(shell, shell, "-c", exe_cmd, (char *)NULL);
-      }
+     {   /* We have to use a shell to run this. */
+	if (shell == NULL) 
+	  {   /* Find users preferred shell. */
+	     shell = getenv("SHELL");
+	     if (shell == 0)
+	       shell = "/bin/sh";
+	  }
+	errno = 0;
+	execl(shell, shell, "-c", exe_cmd, (char *)NULL);
+     }
    else
-      {   /* We can run this directly. */
-         errno = 0;
-         execvp(args[0], args);
-      }
-
+     {   /* We can run this directly. */
+	errno = 0;
+	execvp(args[0], args);
+     }
+   
    save_errno = errno;
    IF_FREE(buf);
    IF_FREE(args);
