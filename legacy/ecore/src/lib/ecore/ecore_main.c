@@ -120,7 +120,7 @@ ecore_main_loop_quit(void)
  * @param   fd       The file descriptor to watch.
  * @param   flags    To watch it for read (@c ECORE_FD_READ) and/or
  *                   (@c ECORE_FD_WRITE) write ability.  @c ECORE_FD_ERROR
- *                   
+ *
  * @param   func     The callback function.
  * @param   data     The data to pass to the callback.
  * @param   buf_func The function to call to check if any data has been

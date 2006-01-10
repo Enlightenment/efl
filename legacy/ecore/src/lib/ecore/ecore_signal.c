@@ -186,9 +186,10 @@ _ecore_signal_call(void)
 		  if (sigchld_info.si_signo)
 		    e->data = sigchld_info; /* FIXME: I'm not sure, but maybe we should clone this.  I don't know if anybody uses it. */
 		  
-                  if ((e->exe) && (e->exe->flags & ECORE_EXE_PIPE_READ))
+                  if ((e->exe) && (e->exe->flags & (ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR)))
                      {
 		        /* We want to report the Last Words of the exe, so delay this event.
+			 * This is twice as relevant for stderr.
 			 * There are three possibilities here -
 			 *  1 There are no Last Words.
 			 *  2 There are Last Words, they are not ready to be read.
@@ -210,7 +211,8 @@ _ecore_signal_call(void)
 			 * This has it's own set of problems.
 			 */
 			printf("Delaying exit event for %s.\n", e->exe->cmd);
-                        ecore_timer_add(0.1, _ecore_signal_exe_exit_delay, e);
+                        IF_FN_DEL(ecore_timer_del, e->exe->doomsday_clock);
+                        e->exe->doomsday_clock = ecore_timer_add(0.1, _ecore_signal_exe_exit_delay, e);
                      }
 		  else
 		    {

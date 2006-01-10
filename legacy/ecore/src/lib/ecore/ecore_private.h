@@ -259,6 +259,7 @@ struct _Ecore_Exe
    int          child_fd_read;	/* fd to read FROM when child has sent us (the parent) data */
    int          child_fd_error;	/* fd to read FROM when child has sent us (the parent) errors */
    int          close_stdin;
+   Ecore_Timer *doomsday_clock; /* The Timer of Death.  Muahahahaha. */
 };
 #endif
 
