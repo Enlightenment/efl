@@ -44,7 +44,8 @@
 
 #ifdef __GNUC__
 # if __GNUC__ >= 4
-#  pragma GCC visibility push(hidden)
+// BROKEN in gcc 4 on amd64
+//#  pragma GCC visibility push(hidden)
 # endif
 #endif
 
