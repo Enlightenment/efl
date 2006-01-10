@@ -69,7 +69,8 @@ extern "C" {
 #define ECORE_EVENT_SIGNAL_POWER    5 /**< Power signal event */
 #define ECORE_EVENT_SIGNAL_REALTIME 6 /**< Realtime signal event */
 #define ECORE_EVENT_EXE_DATA        7 /**< Data from a child process */
-#define ECORE_EVENT_COUNT           8
+#define ECORE_EVENT_EXE_ERRORS      8 /**< Errors from a child process */
+#define ECORE_EVENT_COUNT           9
    
 #ifndef _ECORE_PRIVATE_H   
    enum _Ecore_Fd_Handler_Flags
@@ -82,10 +83,13 @@ extern "C" {
    
    enum _Ecore_Exe_Flags /* flags for executing a child with its stdin and/or stdout piped back */
      {
-	ECORE_EXE_PIPE_READ = 1, /**< Exe Pipe Read mask */
-	ECORE_EXE_PIPE_WRITE = 2, /**< Exe Pipe Write mask */
-	ECORE_EXE_PIPE_READ_LINE_BUFFERED = 4, /**< Reads are buffered until a newline and delivered 1 event per line */
-	ECORE_EXE_RESPAWN = 8 /* FIXME: Exe is restarted if it dies */
+
+   ECORE_EXE_PIPE_READ = 1, /**< Exe Pipe Read mask */
+   ECORE_EXE_PIPE_WRITE = 2, /**< Exe Pipe Write mask */
+   ECORE_EXE_PIPE_ERROR = 4, /**< Exe Pipe error mask */
+   ECORE_EXE_PIPE_READ_LINE_BUFFERED = 8, /**< Reads are buffered until a newline and delivered 1 event per line */
+   ECORE_EXE_PIPE_ERROR_LINE_BUFFERED = 16, /**< Errors are buffered until a newline and delivered 1 event per line */
+   ECORE_EXE_RESPAWN = 32 /* FIXME: Exe is restarted if it dies */
      };
    typedef enum _Ecore_Exe_Flags Ecore_Exe_Flags;
    

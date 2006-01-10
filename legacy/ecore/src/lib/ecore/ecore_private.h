@@ -153,8 +153,10 @@ enum _Ecore_Exe_Flags
 {
    ECORE_EXE_PIPE_READ = 1,
    ECORE_EXE_PIPE_WRITE = 2,
-   ECORE_EXE_PIPE_READ_LINE_BUFFERED = 4,
-   ECORE_EXE_RESPAWN = 8
+   ECORE_EXE_PIPE_ERROR = 4,
+   ECORE_EXE_PIPE_READ_LINE_BUFFERED = 8,
+   ECORE_EXE_PIPE_ERROR_LINE_BUFFERED = 16,
+   ECORE_EXE_RESPAWN = 32
    /* FIXME: Getting respawn to work
     *
     * There is no way that we can do anything about the internal state info of
@@ -187,10 +189,12 @@ enum _Ecore_Exe_Flags
     *   pid               - it will be different
     *   child_fd_write    - it will be different
     *   child_fd_read     - it will be different
+    *   child_fd_error    - it will be different
     *   write_fd_handler  - we cannot change the fd used by a handler, this changes coz the fd changes.
     *   read_fd_handler   - we cannot change the fd used by a handler, this changes coz the fd changes.
+    *   error_fd_handler  - we cannot change the fd used by a handler, this changes coz the fd changes.
     *
-    * Hmm, the read and write buffers could be tricky.
+    * Hmm, the read, write, and error buffers could be tricky.
     * They are not atomic, and could be in a semi complete state.
     * They fall into the "state must be regenerated" mentioned above.
     * A respawn/add event should take care of it.
@@ -201,6 +205,8 @@ enum _Ecore_Exe_Flags
     *   write_data_offset - state that must be regenerated, zap it
     *   read_data_buf     - state that must be regenerated, zap it
     *   read_data_size    - state that must be regenerated, zap it
+    *   error_data_buf    - state that must be regenerated, zap it
+    *   error_data_size   - state that must be regenerated, zap it
     *   close_write       - state that must be regenerated, zap it
     *
     * There is the problem that an exe that fell over and needs respawning
@@ -239,6 +245,7 @@ struct _Ecore_Exe
    Ecore_Exe_Flags  flags;
    Ecore_Fd_Handler *write_fd_handler; /* the fd_handler to handle write to child - if this was used, or NULL if not */
    Ecore_Fd_Handler *read_fd_handler; /* the fd_handler to handle read from child - if this was used, or NULL if not */
+   Ecore_Fd_Handler *errro_fd_handler; /* the fd_handler to handle errors from child - if this was used, or NULL if not */
    void        *write_data_buf; /* a data buffer for data to write to the child - 
                                  * realloced as needed for more data and flushed when the fd handler says writes are possible 
 				 */
@@ -246,8 +253,11 @@ struct _Ecore_Exe
    int          write_data_offset; /* the offset in bytes in the data buffer */
    void        *read_data_buf; /* data read from the child awating delivery to an event */
    int          read_data_size; /* data read from child in bytes */
+   void        *error_data_buf; /* errors read from the child awating delivery to an event */
+   int          error_data_size; /* errors read from child in bytes */
    int          child_fd_write;	/* fd to write TO to send data to the child */
    int          child_fd_read;	/* fd to read FROM when child has sent us (the parent) data */
+   int          child_fd_error;	/* fd to read FROM when child has sent us (the parent) errors */
    int          close_stdin;
 };
 #endif
