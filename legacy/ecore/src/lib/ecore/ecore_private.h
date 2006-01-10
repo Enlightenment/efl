@@ -245,7 +245,7 @@ struct _Ecore_Exe
    Ecore_Exe_Flags  flags;
    Ecore_Fd_Handler *write_fd_handler; /* the fd_handler to handle write to child - if this was used, or NULL if not */
    Ecore_Fd_Handler *read_fd_handler; /* the fd_handler to handle read from child - if this was used, or NULL if not */
-   Ecore_Fd_Handler *errro_fd_handler; /* the fd_handler to handle errors from child - if this was used, or NULL if not */
+   Ecore_Fd_Handler *error_fd_handler; /* the fd_handler to handle errors from child - if this was used, or NULL if not */
    void        *write_data_buf; /* a data buffer for data to write to the child - 
                                  * realloced as needed for more data and flushed when the fd handler says writes are possible 
 				 */

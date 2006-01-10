@@ -69,7 +69,7 @@ extern "C" {
 #define ECORE_EVENT_SIGNAL_POWER    5 /**< Power signal event */
 #define ECORE_EVENT_SIGNAL_REALTIME 6 /**< Realtime signal event */
 #define ECORE_EVENT_EXE_DATA        7 /**< Data from a child process */
-#define ECORE_EVENT_EXE_ERRORS      8 /**< Errors from a child process */
+#define ECORE_EVENT_EXE_ERROR       8 /**< Error from a child process */
 #define ECORE_EVENT_COUNT           9
    
 #ifndef _ECORE_PRIVATE_H   
