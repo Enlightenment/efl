@@ -1,12 +1,6 @@
 #include "Eet.h"
 #include "Eet_private.h"
 
-#ifdef __GNUC__
-# if __GNUC__ >= 4
-#  pragma GCC visibility push(hidden)
-# endif
-#endif
-
 /*---*/
 
 typedef struct _JPEG_error_mgr             *emptr;

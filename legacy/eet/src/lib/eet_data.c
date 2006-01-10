@@ -39,12 +39,6 @@
  *
  */
 
-#ifdef __GNUC__
-# if __GNUC__ >= 4
-#  pragma GCC visibility push(hidden)
-# endif
-#endif
-
 /*---*/
 
 typedef struct _Eet_Data_Element            Eet_Data_Element;

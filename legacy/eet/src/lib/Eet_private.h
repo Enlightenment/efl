@@ -28,6 +28,13 @@
 #include <setjmp.h>
 #include <locale.h>
 
+#ifdef __GNUC__
+# if __GNUC__ >= 4
+// BROKEN in gcc 4 on amd64
+//#  pragma GCC visibility push(hidden)
+# endif
+#endif
+
 FILE *_eet_memfile_read_open(void *data, size_t size);
 void  _eet_memfile_read_close(FILE *f);
 FILE *_eet_memfile_write_open(void **data, size_t *size);

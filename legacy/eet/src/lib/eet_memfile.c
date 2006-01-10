@@ -1,12 +1,6 @@
 #include "Eet.h"
 #include "Eet_private.h"
 
-#ifdef __GNUC__
-# if __GNUC__ >= 4
-#  pragma GCC visibility push(hidden)
-# endif
-#endif
-
 FILE *
 _eet_memfile_read_open(void *data, size_t size)
 {
