@@ -12,6 +12,8 @@ struct _ecore_exe_dead_exe
 };
 
 static void _ecore_exe_exec_it(const char *exe_cmd);
+
+static int _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
 static int _ecore_exe_data_error_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_exe_data_write_handler(void *data, Ecore_Fd_Handler *fd_handler);
@@ -927,161 +929,51 @@ _ecore_exe_free(Ecore_Exe *exe)
 
 
 static int
-_ecore_exe_data_error_handler(void *data, Ecore_Fd_Handler *fd_handler)
+_ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags)
 {
-   /* FIXME: This is a shit load of code to duplicate, I should generalise it later. */
    Ecore_Exe *exe;
+   int child_fd;
+   int is_buffered = 0;
+   int event_type;
 
    exe = data;
-   if ((exe->error_fd_handler) && (ecore_main_fd_handler_active_get(exe->error_fd_handler, ECORE_FD_ERROR)))
+   if (flags & ECORE_FD_READ)
       {
-         unsigned char *inbuf;
-	 int inbuf_num;
-
-         /* Get any left over errors from last time. */
-         inbuf = exe->error_data_buf;
-         inbuf_num = exe->error_data_size;
-	 exe->error_data_buf = NULL;
-	 exe->error_data_size = 0;
-
-	 for (;;)
-	    {
-	       int num, lost_exe;
-	       char buf[READBUFSIZ];
-
-	       lost_exe = 0;
-	       errno = 0;
-	       if ((num = read(exe->child_fd_error, buf, READBUFSIZ)) < 1)  /* FIXME: SPEED/SIZE TRADE OFF - add a smaller READBUFSIZE (currently 64k) to inbuf, use that instead of buf, and save ourselves a memcpy(). */
-	          {
-		     lost_exe = ((errno == EIO) || 
-			         (errno == EBADF) ||
-				 (errno == EPIPE) || 
-				 (errno == EINVAL) ||
-				 (errno == ENOSPC));
-                     if ((errno != EAGAIN) && (errno != EINTR))
-                        perror("_ecore_exe_error_handler() read problem ");
-                  }
-	       if (num > 0)
-	          {   /* Errors got read. */
-		     inbuf = realloc(inbuf, inbuf_num + num);
-		     memcpy(inbuf + inbuf_num, buf, num);
-		     inbuf_num += num;
-	          }
-	       else
-	          {   /* No more errors to read. */
-		     if (inbuf) 
-		        {
-		           Ecore_Event_Exe_Data *e;
-		       
-		           e = calloc(1, sizeof(Ecore_Event_Exe_Data));
-		           if (e)
-			      {
-			         e->exe = exe;
-			         e->data = inbuf;
-			         e->size = inbuf_num;
-
-                                 if (exe->flags & ECORE_EXE_PIPE_ERROR_LINE_BUFFERED)
-				    {
-				       int max = 0;
-				       int count = 0;
-				       int i;
-				       int last = 0;
-				       char *c;
-
-                                       c = (char *)inbuf;
-				       for (i = 0; i < inbuf_num; i++) /* Find the lines. */
-				          {
-					     if (inbuf[i] == '\n')
-					        {
-					           if (count >= max)
-					              {
-						         max += 10;  /* FIXME: Maybe keep track of the largest number of lines ever sent, and add half that many instead of 10. */
-		                                         e->lines = realloc(e->lines, sizeof(Ecore_Event_Exe_Data_Line) * (max + 1)); /* Allow room for the NULL termination. */
-						      }
-						   /* raster said to leave the line endings as line endings, however -
-						    * This is line buffered mode, we are not dealing with binary here, but lines.
-						    * If we are not dealing with binary, we must be dealing with ASCII, unicode, or some other text format.
-						    * Thus the user is most likely gonna deal with this text as strings.
-						    * Thus the user is most likely gonna pass this data to str functions.
-						    * rasters way - the endings are always gonna be '\n';  onefangs way - they will always be '\0'
-						    * We are handing them the string length as a convenience.
-						    * Thus if they really want it in raw format, they can e->lines[i].line[e->lines[i].size - 1] = '\n'; easily enough.
-						    * In the default case, we can do this conversion quicker than the user can, as we already have the index and pointer.
-						    * Let's make it easy on them to use these as standard C strings.
-						    *
-						    * onefang is proud to announce that he has just set a new personal record for the
-						    * most over documentation of a simple assignment statement.  B-)
-						    */
-						   inbuf[i] = '\0';
-						   e->lines[count].line = c;
-						   e->lines[count].size = i - last;
-						   last = i + 1;
-						   c = (char *)&inbuf[last];
-					           count++;
-					        }
-					  }
-					  if (count == 0) /* No lines to send, cancel the event. */
-					     {
-                                                _ecore_exe_event_exe_data_free(NULL, e);
-					        e = NULL;
-					     }
-					  else /* NULL terminate the array, so that people know where the end is. */
-					     {
-						e->lines[count].line = NULL;
-						e->lines[count].size = 0;
-					     }
-					  if (i > last) /* Partial line left over, save it for next time. */
-					     {
-					        e->size = last;
-	                                        exe->error_data_size = i - last;
-	                                        exe->error_data_buf = malloc(exe->error_data_size);
-		                                memcpy(exe->error_data_buf, c, exe->error_data_size);
-					     }
-				    }
-
-				 if (e)   /* Send the event. */
-			            ecore_event_add(ECORE_EVENT_EXE_ERROR, e,
-					    _ecore_exe_event_exe_data_free, NULL);
-			      }
-		        }
-		     if (lost_exe)
-		        {
-                           if (exe->error_data_size)
-                              printf("There are %d bytes left unsent from the dead exe %s.\n", exe->error_data_size, exe->cmd);
-			   /* Thought about this a bit.  If the exe has actually 
-			    * died, this won't do any harm as it must have died 
-			    * recently and the pid has not had a chance to recycle.
-			    * It is also a paranoid catchall, coz the usual ecore_signal
-			    * mechenism should kick in.  But let's give it a good
-			    * kick anyway.
-			    */
-                           ecore_exe_terminate(exe);   
-                        }
-		     break;
-	          }
-	    }
+         flags = ECORE_FD_READ;
+	 event_type = ECORE_EVENT_EXE_DATA;
+	 child_fd = exe->child_fd_read;
+         if (exe->flags & ECORE_EXE_PIPE_READ_LINE_BUFFERED)
+            is_buffered = 1;
+      }
+   else
+      {
+         flags = ECORE_FD_ERROR;
+	 event_type = ECORE_EVENT_EXE_ERROR;
+	 child_fd = exe->child_fd_error;
+         if (exe->flags & ECORE_EXE_PIPE_ERROR_LINE_BUFFERED)
+            is_buffered = 1;
       }
 
-   return 1;
-}
-
-
-static int
-_ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler)
-{
-   Ecore_Exe *exe;
-
-   exe = data;
-   if ((exe->read_fd_handler) && (ecore_main_fd_handler_active_get(exe->read_fd_handler, ECORE_FD_READ)))
+   if ((fd_handler) && (ecore_main_fd_handler_active_get(fd_handler, flags)))
       {
          unsigned char *inbuf;
 	 int inbuf_num;
 
          /* Get any left over data from last time. */
-         inbuf = exe->read_data_buf;
-         inbuf_num = exe->read_data_size;
-	 exe->read_data_buf = NULL;
-	 exe->read_data_size = 0;
+         if (flags & ECORE_FD_READ)
+	    {
+               inbuf = exe->read_data_buf;
+               inbuf_num = exe->read_data_size;
+	       exe->read_data_buf = NULL;
+	       exe->read_data_size = 0;
+	    }
+	 else
+	    {
+               inbuf = exe->error_data_buf;
+               inbuf_num = exe->error_data_size;
+	       exe->error_data_buf = NULL;
+	       exe->error_data_size = 0;
+	    }
 
 	 for (;;)
 	    {
@@ -1090,7 +982,7 @@ _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler)
 
 	       lost_exe = 0;
 	       errno = 0;
-	       if ((num = read(exe->child_fd_read, buf, READBUFSIZ)) < 1)  /* FIXME: SPEED/SIZE TRADE OFF - add a smaller READBUFSIZE (currently 64k) to inbuf, use that instead of buf, and save ourselves a memcpy(). */
+	       if ((num = read(child_fd, buf, READBUFSIZ)) < 1)  /* FIXME: SPEED/SIZE TRADE OFF - add a smaller READBUFSIZE (currently 64k) to inbuf, use that instead of buf, and save ourselves a memcpy(). */
 	          {
 		     lost_exe = ((errno == EIO) || 
 			         (errno == EBADF) ||
@@ -1098,10 +990,10 @@ _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler)
 				 (errno == EINVAL) ||
 				 (errno == ENOSPC));
                      if ((errno != EAGAIN) && (errno != EINTR))
-                        perror("_ecore_exe_read_handler() read problem ");
+                        perror("_ecore_exe_generic_handler() read problem ");
                   }
 	       if (num > 0)
-	          {   /* Data got read. */
+	          {   /* data got read. */
 		     inbuf = realloc(inbuf, inbuf_num + num);
 		     memcpy(inbuf + inbuf_num, buf, num);
 		     inbuf_num += num;
@@ -1119,7 +1011,7 @@ _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler)
 			         e->data = inbuf;
 			         e->size = inbuf_num;
 
-                                 if (exe->flags & ECORE_EXE_PIPE_READ_LINE_BUFFERED)
+                                 if (is_buffered)
 				    {
 				       int max = 0;
 				       int count = 0;
@@ -1172,21 +1064,38 @@ _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler)
 					  if (i > last) /* Partial line left over, save it for next time. */
 					     {
 					        e->size = last;
-	                                        exe->read_data_size = i - last;
-	                                        exe->read_data_buf = malloc(exe->read_data_size);
-		                                memcpy(exe->read_data_buf, c, exe->read_data_size);
+                                                if (flags & ECORE_FD_READ)
+						   {
+	                                              exe->read_data_size = i - last;
+	                                              exe->read_data_buf = malloc(exe->read_data_size);
+		                                      memcpy(exe->read_data_buf, c, exe->read_data_size);
+						   }
+						else
+						   {
+	                                              exe->error_data_size = i - last;
+	                                              exe->error_data_buf = malloc(exe->error_data_size);
+		                                      memcpy(exe->error_data_buf, c, exe->error_data_size);
+						   }
 					     }
 				    }
 
 				 if (e)   /* Send the event. */
-			            ecore_event_add(ECORE_EVENT_EXE_DATA, e,
+			            ecore_event_add(event_type, e,
 					    _ecore_exe_event_exe_data_free, NULL);
 			      }
 		        }
 		     if (lost_exe)
 		        {
-                           if (exe->read_data_size)
-                              printf("There are %d bytes left unsent from the dead exe %s.\n", exe->read_data_size, exe->cmd);
+                           if (flags & ECORE_FD_READ)
+			      {
+                                 if (exe->read_data_size)
+                                    printf("There are %d bytes left unsent from the dead exe %s.\n", exe->read_data_size, exe->cmd);
+			      }
+			   else
+			      {
+                                 if (exe->error_data_size)
+                                    printf("There are %d bytes left unsent from the dead exe %s.\n", exe->error_data_size, exe->cmd);
+			      }
 			   /* Thought about this a bit.  If the exe has actually 
 			    * died, this won't do any harm as it must have died 
 			    * recently and the pid has not had a chance to recycle.
@@ -1202,6 +1111,18 @@ _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler)
       }
 
    return 1;
+}
+
+static int
+_ecore_exe_data_error_handler(void *data, Ecore_Fd_Handler *fd_handler)
+{
+   return _ecore_exe_data_generic_handler(data, fd_handler, ECORE_FD_ERROR);
+}
+
+static int
+_ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler)
+{
+   return _ecore_exe_data_generic_handler(data, fd_handler, ECORE_FD_READ);
 }
 
 static int
