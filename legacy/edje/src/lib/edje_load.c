@@ -312,6 +312,7 @@ edje_object_file_set(Evas_Object *obj, const char *file, const char *part)
 	if ((evas_object_clipees_get(ed->clipper)) && 
 	    (evas_object_visible_get(obj)))
 	  evas_object_show(ed->clipper);
+	
 	_edje_recalc(ed);
 	_edje_thaw(ed);
 	_edje_unblock(ed);
@@ -467,6 +468,7 @@ _edje_file_add(Edje *ed)
    ed->file = _edje_cache_file_coll_open(ed->path, ed->part, 
 					 &(ed->load_error), 
 					 &(ed->collection));
+  
    if (!ed->collection)
      {
 	if (ed->file)
@@ -638,19 +640,27 @@ _edje_file_free(Edje_File *edf)
 	  }
 	free(edf->collection_dir);
      }
-   if (edf->data)
+   while (edf->data)
      {
-	while (edf->data)
-	  {
-	     Edje_Data *edt;
-	     
-	     edt = edf->data->data;
-	     edf->data = evas_list_remove(edf->data, edt);
-	     if (edt->key) evas_stringshare_del(edt->key);
-	     if (edt->value) evas_stringshare_del(edt->value);
-	     free(edt);
-	  }
+	Edje_Data *edt;
+
+	edt = edf->data->data;
+	edf->data = evas_list_remove(edf->data, edt);
+	if (edt->key) evas_stringshare_del(edt->key);
+	if (edt->value) evas_stringshare_del(edt->value);
+	free(edt);
      }
+   
+   while(edf->color_classes)
+     {
+	Edje_Color_Class *ecc;
+
+	ecc = edf->color_classes->data;
+	edf->color_classes = evas_list_remove(edf->color_classes, ecc);
+	if (ecc->name) evas_stringshare_del(ecc->name);
+	free(ecc);
+     }
+   
    /* FIXME: free collection_hash and collection_cache */
    if (edf->collection_hash)
      {
