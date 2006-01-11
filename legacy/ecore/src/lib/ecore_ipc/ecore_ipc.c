@@ -600,26 +600,6 @@ ecore_ipc_server_client_limit_set(Ecore_Ipc_Server *svr, int client_limit, char 
    ecore_con_server_client_limit_set(svr->server, client_limit, reject_excess_clients);
 }
 
-/**
- * Flag the server as not owned by this process, important to use after
- * forking so child processes do not remove a parents socket path.
- * Beware that if you set this in the parent, stale sockets may be left
- * around.
- * @param   svr           The given server.
- * @ingroup Ecore_Ipc_Server_Group
- */
-void
-ecore_ipc_server_disown(Ecore_Ipc_Server *svr)
-{
-   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_IPC_SERVER))
-     {
-	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_IPC_SERVER,
-			 "ecore_ipc_server_client_limit_set");
-	return;
-     }
-   ecore_con_server_disown(svr->server);
-}
-
 #define CLENC(_member) \
    d = _ecore_ipc_dlt_int(msg._member, cl->prev.o._member, &md); \
    if (md >= DLT_SET) \

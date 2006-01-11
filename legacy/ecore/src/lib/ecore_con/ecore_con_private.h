@@ -67,6 +67,7 @@ struct _Ecore_Con_Server
    char              connecting : 1;
    char              reject_excess_clients : 1;
    int               client_limit;
+   pid_t             ppid;
 
 #if USE_OPENSSL
    SSL_CTX          *ssl_ctx;

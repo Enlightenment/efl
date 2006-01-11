@@ -318,6 +318,7 @@ ecore_con_server_add(Ecore_Con_Type compl_type,
    svr->reject_excess_clients = 0;
    svr->client_limit = -1;
    svr->clients = ecore_list_new();
+   svr->ppid = getpid();
    ecore_list_append(servers, svr);
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_CON_SERVER);   
    return svr;
@@ -606,26 +607,6 @@ ecore_con_server_client_limit_set(Ecore_Con_Server *svr, int client_limit, char 
 }
 
 /**
- * Flag the server as not owned by this process, important to use after
- * forking so child processes do not remove a parents socket path.
- * Beware that if you set this in the parent, stale sockets may be left
- * around.
- * @param   svr           The given server.
- * @ingroup Ecore_Con_Server_Group
- */
-void
-ecore_con_server_disown(Ecore_Con_Server *svr)
-{
-   if (!ECORE_MAGIC_CHECK(svr, ECORE_MAGIC_CON_SERVER))
-     {
-	ECORE_MAGIC_FAIL(svr, ECORE_MAGIC_CON_SERVER,
-			 "ecore_con_server_client_limit_set");
-	return;
-     }   
-   svr->created = 0;
-}
-
-/**
  * @defgroup Ecore_Con_Client_Group Ecore Connection Client Functions
  *
  * Functions that operate on Ecore connection client objects.
@@ -777,7 +758,7 @@ _ecore_con_server_free(Ecore_Con_Server *svr)
    while (!ecore_list_is_empty(svr->clients))
       _ecore_con_client_free(ecore_list_remove_first(svr->clients));
    ecore_list_destroy(svr->clients);
-   if ((svr->created) && (svr->path)) unlink(svr->path);
+   if ((svr->created) && (svr->path) && (svr->ppid == getpid())) unlink(svr->path);
    if (svr->fd >= 0) close(svr->fd);
 #if USE_OPENSSL
    if (svr->ssl)
