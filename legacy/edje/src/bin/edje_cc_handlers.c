@@ -15,6 +15,12 @@ static void st_styles_style_name(void);
 static void st_styles_style_base(void);
 static void st_styles_style_tag(void);
 
+static void ob_color_class(void);
+static void st_color_class_name(void);
+static void st_color_class_color(void);
+static void st_color_class_color2(void);
+static void st_color_class_color3(void);
+
 static void ob_collections(void);
 
 static void ob_collections_group(void);
@@ -105,6 +111,10 @@ New_Statement_Handler statement_handlers[] =
      {"styles.style.name", st_styles_style_name},
      {"styles.style.base", st_styles_style_base},
      {"styles.style.tag", st_styles_style_tag},
+     {"color_classes.color_class.name", st_color_class_name},
+     {"color_classes.color_class.color", st_color_class_color},
+     {"color_classes.color_class.color2", st_color_class_color2},
+     {"color_classes.color_class.color3", st_color_class_color3},
      {"collections.image", st_images_image}, /* dup */
      {"collections.images.image", st_images_image}, /* dup */
      {"collections.font", st_fonts_font}, /* dup */
@@ -112,6 +122,10 @@ New_Statement_Handler statement_handlers[] =
      {"collections.styles.style.name", st_styles_style_name}, /* dup */
      {"collections.styles.style.base", st_styles_style_base}, /* dup */
      {"collections.styles.style.tag", st_styles_style_tag}, /* dup */
+     {"collections.color_classes.color_class.name", st_color_class_name}, /* dup */ 
+     {"collections.color_classes.color_class.color", st_color_class_color}, /* dup */ 
+     {"collections.color_classes.color_class.color2", st_color_class_color2}, /* dup */ 
+     {"collections.color_classes.color_class.color3", st_color_class_color3}, /* dup */ 
      {"collections.group.name", st_collections_group_name},
      {"collections.group.min", st_collections_group_min},
      {"collections.group.max", st_collections_group_max},
@@ -123,6 +137,10 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.styles.style.name", st_styles_style_name}, /* dup */
      {"collections.group.styles.style.base", st_styles_style_base}, /* dup */
      {"collections.group.styles.style.tag", st_styles_style_tag}, /* dup */
+     {"collections.group.color_classes.color_class.name", st_color_class_name}, /* dup */ 
+     {"collections.group.color_classes.color_class.color", st_color_class_color}, /* dup */ 
+     {"collections.group.color_classes.color_class.color2", st_color_class_color2}, /* dup */ 
+     {"collections.group.color_classes.color_class.color3", st_color_class_color3}, /* dup */ 
      {"collections.group.parts.image", st_images_image}, /* dup */
      {"collections.group.parts.images.image", st_images_image}, /* dup */
      {"collections.group.parts.font", st_fonts_font}, /* dup */
@@ -130,6 +148,10 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.styles.style.name", st_styles_style_name}, /* dup */
      {"collections.group.parts.styles.style.base", st_styles_style_base}, /* dup */
      {"collections.group.parts.styles.style.tag", st_styles_style_tag}, /* dup */
+     {"collections.group.parts.color_classes.color_class.name", st_color_class_name}, /* dup */ 
+     {"collections.group.parts.color_classes.color_class.color", st_color_class_color}, /* dup */ 
+     {"collections.group.parts.color_classes.color_class.color2", st_color_class_color2}, /* dup */ 
+     {"collections.group.parts.color_classes.color_class.color3", st_color_class_color3}, /* dup */ 
      {"collections.group.parts.part.name", st_collections_group_parts_part_name},
      {"collections.group.parts.part.type", st_collections_group_parts_part_type},
      {"collections.group.parts.part.effect", st_collections_group_parts_part_effect},
@@ -147,6 +169,10 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.styles.style.name", st_styles_style_name}, /* dup */
      {"collections.group.parts.part.styles.style.base", st_styles_style_base}, /* dup */
      {"collections.group.parts.part.styles.style.tag", st_styles_style_tag}, /* dup */
+     {"collections.group.parts.part.color_classes.color_class.name", st_color_class_name}, /* dup */ 
+     {"collections.group.parts.part.color_classes.color_class.color", st_color_class_color}, /* dup */ 
+     {"collections.group.parts.part.color_classes.color_class.color2", st_color_class_color2}, /* dup */ 
+     {"collections.group.parts.part.color_classes.color_class.color3", st_color_class_color3}, /* dup */ 
      {"collections.group.parts.part.description.inherit", st_collections_group_parts_part_description_inherit},
      {"collections.group.parts.part.description.state", st_collections_group_parts_part_description_state},
      {"collections.group.parts.part.description.visible", st_collections_group_parts_part_description_visible},
@@ -201,6 +227,10 @@ New_Statement_Handler statement_handlers[] =
      {"collections.group.parts.part.description.styles.style.name", st_styles_style_name}, /* dup */
      {"collections.group.parts.part.description.styles.style.base", st_styles_style_base}, /* dup */
      {"collections.group.parts.part.description.styles.style.tag", st_styles_style_tag}, /* dup */
+     {"collections.group.parts.part.description.color_classes.color_class.name", st_color_class_name}, /* dup */ 
+     {"collections.group.parts.part.description.color_classes.color_class.color", st_color_class_color}, /* dup */ 
+     {"collections.group.parts.part.description.color_classes.color_class.color2", st_color_class_color2}, /* dup */ 
+     {"collections.group.parts.part.description.color_classes.color_class.color3", st_color_class_color3}, /* dup */ 
      {"collections.group.parts.part.description.programs.image", st_images_image}, /* dup */
      {"collections.group.parts.part.description.programs.images.image", st_images_image}, /* dup */
      {"collections.group.parts.part.description.programs.font", st_fonts_font}, /* dup */
@@ -290,11 +320,15 @@ New_Object_Handler object_handlers[] =
      {"data", NULL},
      {"styles", NULL},
      {"styles.style", ob_styles_style},
+     {"color_classes", NULL},
+     {"color_classes.color_class", ob_color_class},
      {"collections", ob_collections},
      {"collections.images", NULL}, /* dup */
      {"collections.fonts", NULL}, /* dup */
      {"collections.styles", NULL}, /* dup */
      {"collections.styles.style", ob_styles_style}, /* dup */
+     {"collections.color_classes", NULL}, /* dup */
+     {"collections.color_classes.color_class", ob_color_class}, /* dup */
      {"collections.group", ob_collections_group},
      {"collections.group.data", NULL},
      {"collections.group.script", ob_collections_group_script},
@@ -302,17 +336,23 @@ New_Object_Handler object_handlers[] =
      {"collections.group.fonts", NULL}, /* dup */
      {"collections.group.styles", NULL}, /* dup */
      {"collections.group.styles.style", ob_styles_style}, /* dup */
+     {"collections.group.color_classes", NULL}, /* dup */
+     {"collections.group.color_classes.color_class", ob_color_class}, /* dup */
      {"collections.group.parts", NULL},
      {"collections.group.parts.images", NULL}, /* dup */
      {"collections.group.parts.fonts", NULL}, /* dup */
      {"collections.group.parts.styles", NULL}, /* dup */
      {"collections.group.parts.styles.style", ob_styles_style}, /* dup */
+     {"collections.group.parts.color_classes", NULL}, /* dup */
+     {"collections.group.parts.color_classes.color_class", ob_color_class}, /* dup */
      {"collections.group.parts.part", ob_collections_group_parts_part},
      {"collections.group.parts.part.dragable", NULL},
      {"collections.group.parts.part.images", NULL}, /* dup */
      {"collections.group.parts.part.fonts", NULL}, /* dup */
      {"collections.group.parts.part.styles", NULL}, /* dup */
      {"collections.group.parts.part.styles.style", ob_styles_style}, /* dup */
+     {"collections.group.parts.part.color_classes", NULL}, /* dup */
+     {"collections.group.parts.part.color_classes.color_class", ob_color_class}, /* dup */
      {"collections.group.parts.part.description", ob_collections_group_parts_part_description},
      {"collections.group.parts.part.description.rel1", NULL},
      {"collections.group.parts.part.description.rel2", NULL},
@@ -327,6 +367,8 @@ New_Object_Handler object_handlers[] =
      {"collections.group.parts.part.description.fonts", NULL}, /* dup */
      {"collections.group.parts.part.description.styles", NULL}, /* dup */
      {"collections.group.parts.part.description.styles.style", ob_styles_style}, /* dup */
+     {"collections.group.parts.part.description.color_classes", NULL}, /* dup */
+     {"collections.group.parts.part.description.color_classes.color_class", ob_color_class}, /* dup */
      {"collections.group.parts.part.description.program", ob_collections_group_programs_program}, /* dup */
      {"collections.group.parts.part.description.program.script", ob_collections_group_programs_program_script}, /* dup */
      {"collections.group.parts.part.description.programs", NULL}, /* dup */
@@ -494,6 +536,92 @@ st_data_item(void)
    edje_file->data = evas_list_append(edje_file->data, di);
 }
 
+
+static void
+ob_color_class(void)
+{
+   Edje_Color_Class *cc;
+
+   cc = mem_alloc(SZ(Edje_Color_Class));
+   edje_file->color_classes = evas_list_append(edje_file->color_classes, cc);
+
+   cc->r = 0;
+   cc->g = 0;
+   cc->b = 0;
+   cc->a = 0;
+   cc->r2 = 0;
+   cc->g2 = 0;
+   cc->b2 = 0;
+   cc->a2 = 0;
+   cc->r3 = 0;
+   cc->g3 = 0;
+   cc->b3 = 0;
+   cc->a3 = 0;
+}
+
+static void
+st_color_class_name(void)
+{
+   Edje_Color_Class *cc, *tcc;
+   Evas_List *l;
+   
+   cc = evas_list_data(evas_list_last(edje_file->color_classes));
+   cc->name = parse_str(0);
+   for (l = edje_file->color_classes; l; l = l->next)
+     {
+	tcc = l->data;
+	if ((cc != tcc) && (!strcmp(cc->name, tcc->name)))
+	  {
+	     fprintf(stderr, "%s: Error. parse error %s:%i. There is already a color class named \"%s\"\n",
+		     progname, file_in, line - 1, cc->name);
+	     exit(-1);
+	  }
+     }
+}
+
+static void
+st_color_class_color(void)
+{
+   Edje_Color_Class *cc;
+   
+   check_arg_count(4);
+
+   cc = evas_list_data(evas_list_last(edje_file->color_classes));
+   cc->r = parse_int_range(0, 0, 255);
+   cc->g = parse_int_range(1, 0, 255);
+   cc->b = parse_int_range(2, 0, 255);
+   cc->a = parse_int_range(3, 0, 255);
+}
+
+static void
+st_color_class_color2(void)
+{
+   Edje_Color_Class *cc;
+   
+   check_arg_count(4);
+
+   cc = evas_list_data(evas_list_last(edje_file->color_classes));
+   cc->r2 = parse_int_range(0, 0, 255);
+   cc->g2 = parse_int_range(1, 0, 255);
+   cc->b2 = parse_int_range(2, 0, 255);
+   cc->a2 = parse_int_range(3, 0, 255);
+}
+
+
+static void
+st_color_class_color3(void)
+{
+   Edje_Color_Class *cc;
+   
+   check_arg_count(4);
+
+   cc = evas_list_data(evas_list_last(edje_file->color_classes));
+   cc->r3 = parse_int_range(0, 0, 255);
+   cc->g3 = parse_int_range(1, 0, 255);
+   cc->b3 = parse_int_range(2, 0, 255);
+   cc->a3 = parse_int_range(3, 0, 255);
+}
+
 static void
 ob_styles_style(void)
 {
@@ -522,6 +650,7 @@ st_styles_style_name(void)
 	  }
      }
 }
+
 
 static void
 st_styles_style_base(void)

@@ -193,6 +193,7 @@ struct _Edje_File
    Edje_Part_Collection_Directory *collection_dir;
    Evas_List                      *data;
    Evas_List                      *styles;
+   Evas_List                      *color_classes;
    
    int                             references;
    char                           *compiler;

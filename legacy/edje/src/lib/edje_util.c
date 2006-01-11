@@ -1389,16 +1389,29 @@ Edje_Color_Class *
 _edje_color_class_find(Edje *ed, char *color_class)
 {
    Evas_List *l;
+   Edje_Color_Class *cc = NULL;
    
    if ((!ed) || (!color_class)) return NULL;
+
+   /* first look through the object scope */ 
    for (l = ed->color_classes; l; l = l->next)
      {
-	Edje_Color_Class *cc;
-	
 	cc = l->data;
 	if ((cc->name) && (!strcmp(color_class, cc->name))) return cc;
      }
-   return evas_hash_find(_edje_color_class_hash, color_class);
+
+   /* next look through the global scope */
+   cc = evas_hash_find(_edje_color_class_hash, color_class);
+   if (cc) return cc;
+   
+   /* finally, look through the file scope */
+   for (l = ed->file->color_classes; l; l = l->next)
+     {
+	cc = l->data;
+	if ((cc->name) && (!strcmp(color_class, cc->name))) return cc;
+     }
+
+   return NULL;
 }
 
 void

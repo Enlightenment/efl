@@ -4,6 +4,7 @@
 EAPI Eet_Data_Descriptor *_edje_edd_edje_file = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_style = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_style_tag = NULL;
+EAPI Eet_Data_Descriptor *_edje_edd_edje_color_class = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_data = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_font_directory = NULL;
 EAPI Eet_Data_Descriptor *_edje_edd_edje_font_directory_entry = NULL;
@@ -133,7 +134,25 @@ _edje_edd_setup(void)
      eet_data_descriptor2_new(&eddc);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_style, Edje_Style, "name", name, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_style, Edje_Style, "tags", tags, _edje_edd_edje_style_tag);
-   
+
+   NEWD("Edje_Color_Class", 
+	Edje_Color_Class);
+   _edje_edd_edje_color_class = 
+     eet_data_descriptor2_new(&eddc);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_color_class, Edje_Color_Class, "name", name, EET_T_STRING);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_color_class, Edje_Color_Class, "r", r, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_color_class, Edje_Color_Class, "g", g, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_color_class, Edje_Color_Class, "b", b, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_color_class, Edje_Color_Class, "a", a, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_color_class, Edje_Color_Class, "r2", r2, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_color_class, Edje_Color_Class, "g2", g2, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_color_class, Edje_Color_Class, "b2", b2, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_color_class, Edje_Color_Class, "a2", a2, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_color_class, Edje_Color_Class, "r3", r3, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_color_class, Edje_Color_Class, "g3", g3, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_color_class, Edje_Color_Class, "b3", b3, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_edje_edd_edje_color_class, Edje_Color_Class, "a3", a3, EET_T_INT);
+       
    /* the main file directory */
    NEWD("Edje_File", 
 	Edje_File);
@@ -147,6 +166,7 @@ _edje_edd_setup(void)
    EET_DATA_DESCRIPTOR_ADD_SUB(_edje_edd_edje_file, Edje_File, "collection_dir", collection_dir, _edje_edd_edje_part_collection_directory);   
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "data", data, _edje_edd_edje_data);
    EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "styles", styles, _edje_edd_edje_style);
+   EET_DATA_DESCRIPTOR_ADD_LIST(_edje_edd_edje_file, Edje_File, "color_classes", color_classes, _edje_edd_edje_color_class);
 
    /* parts & programs - loaded induvidually */
    NEWD("Edje_Program_Target",
