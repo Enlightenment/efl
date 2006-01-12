@@ -60,8 +60,6 @@ EAPI int ecore_tree_init(Ecore_Tree * new_tree, Ecore_Compare_Cb compare_func)
 	else
 		new_tree->compare_func = compare_func;
 
-	ECORE_INIT_LOCKS(new_tree);
-
 	return TRUE;
 }
 
@@ -75,9 +73,7 @@ EAPI int ecore_tree_set_free_cb(Ecore_Tree * tree, Ecore_Free_Cb free_func)
 {
 	CHECK_PARAM_POINTER_RETURN("tree", tree, FALSE);
 
-	ECORE_WRITE_LOCK(tree);
 	tree->free_func = free_func;
-	ECORE_WRITE_UNLOCK(tree);
 
 	return TRUE;
 }
@@ -98,8 +94,6 @@ EAPI int ecore_tree_node_init(Ecore_Tree_Node * new_node)
 	new_node->left_child = NULL;
 
 	new_node->max_left = new_node->max_right = 0;
-
-	ECORE_INIT_LOCKS(new_node);
 
 	return TRUE;
 }
@@ -136,12 +130,8 @@ EAPI int ecore_tree_node_destroy(Ecore_Tree_Node * node, Ecore_Free_Cb data_free
 {
 	CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
 
-	ECORE_WRITE_LOCK(node);
 	if (data_free)
 		data_free(node->value);
-	ECORE_WRITE_UNLOCK(node);
-
-	ECORE_DESTROY_LOCKS(node);
 
 	FREE(node);
 
@@ -159,9 +149,7 @@ EAPI int ecore_tree_node_value_set(Ecore_Tree_Node * node, void *value)
 	CHECK_PARAM_POINTER_RETURN("node", node,
 				   FALSE);
 
-	ECORE_WRITE_LOCK(node);
 	node->value = value;
-	ECORE_WRITE_UNLOCK(node);
 
 	return TRUE;
 }
@@ -176,9 +164,7 @@ EAPI void *ecore_tree_node_value_get(Ecore_Tree_Node * node)
 	void *ret;
 
 	CHECK_PARAM_POINTER_RETURN("node", node, NULL);
-	ECORE_READ_LOCK(node);
 	ret = node->value;
-	ECORE_READ_UNLOCK(node);
 
 	return ret;
 }
@@ -193,9 +179,7 @@ EAPI int ecore_tree_node_key_set(Ecore_Tree_Node * node, void *key)
 {
 	CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
 
-	ECORE_WRITE_LOCK(node);
 	node->key = key;
-	ECORE_WRITE_UNLOCK(node);
 
 	return TRUE;
 }
@@ -211,9 +195,7 @@ EAPI void *ecore_tree_node_key_get(Ecore_Tree_Node * node)
 	void *ret;
 
 	CHECK_PARAM_POINTER_RETURN("node", node, NULL);
-	ECORE_READ_LOCK(node);
 	ret = node->key;
-	ECORE_READ_UNLOCK(node);
 
 	return ret;
 }
@@ -230,13 +212,10 @@ EAPI int ecore_tree_destroy(Ecore_Tree * tree)
 
 	CHECK_PARAM_POINTER_RETURN("tree", tree, FALSE);
 
-	ECORE_WRITE_LOCK(tree);
 	while ((node = tree->tree)) {
 		ecore_tree_remove_node(tree, node);
 		ecore_tree_node_destroy(node, tree->free_func);
 	}
-	ECORE_WRITE_UNLOCK(tree);
-	ECORE_DESTROY_LOCKS(tree);
 
 	FREE(tree);
 
@@ -256,9 +235,7 @@ EAPI Ecore_Tree_Node *ecore_tree_get_node(Ecore_Tree * tree, void *key)
 
 	CHECK_PARAM_POINTER_RETURN("tree", tree, NULL);
 
-	ECORE_READ_LOCK(tree);
 	ret = tree_node_find(tree, key);
-	ECORE_READ_UNLOCK(tree);
 
 	return ret;
 }
@@ -276,13 +253,8 @@ EAPI void *ecore_tree_get(Ecore_Tree * tree, void *key)
 
 	CHECK_PARAM_POINTER_RETURN("tree", tree, NULL);
 
-	ECORE_READ_LOCK(tree);
 	node = tree_node_find(tree, key);
-	ECORE_READ_UNLOCK(tree);
-
-	ECORE_READ_LOCK(node);
 	ret = (node ? node->value : NULL);
-	ECORE_READ_UNLOCK(node);
 
 	return ret;
 }
@@ -300,26 +272,17 @@ EAPI void *ecore_tree_get_closest_larger(Ecore_Tree * tree, void *key)
 
 	CHECK_PARAM_POINTER_RETURN("tree", tree, NULL);
 
-	ECORE_READ_LOCK(tree);
 	node = tree_node_find(tree, key);
-	ECORE_READ_UNLOCK(tree);
-
 	if (node)
 		return node;
 
-	ECORE_READ_LOCK(tree);
 	node = tree_node_find_parent(tree, key);
-
 	if (!node) {
-		ECORE_READ_UNLOCK(tree);
 		return NULL;
 	}
 
-	ECORE_READ_LOCK(node);
 	if (tree->compare_func(node->key, key) < 0)
 		return NULL;
-	ECORE_READ_UNLOCK(node);
-	ECORE_READ_UNLOCK(tree);
 
 	return node;
 }
@@ -336,17 +299,11 @@ EAPI void *ecore_tree_get_closest_smaller(Ecore_Tree * tree, void *key)
 
 	CHECK_PARAM_POINTER_RETURN("tree", tree, NULL);
 
-	ECORE_READ_LOCK(tree);
 	node = tree_node_find(tree, key);
-	ECORE_READ_UNLOCK(tree);
-
 	if (node)
 		return node;
 
-	ECORE_READ_LOCK(tree);
 	node = tree_node_find_parent(tree, key);
-	ECORE_READ_LOCK(tree);
-
 	if (node)
 		node = node->right_child;
 
@@ -366,10 +323,7 @@ EAPI int ecore_tree_set(Ecore_Tree * tree, void *key, void *value)
 
 	CHECK_PARAM_POINTER_RETURN("tree", tree, FALSE);
 
-	ECORE_READ_LOCK(tree);
 	node = tree_node_find(tree, key);
-	ECORE_READ_UNLOCK(tree);
-
 	if (!node) {
 		node = ecore_tree_node_new();
 		ecore_tree_node_key_set(node, key);
@@ -378,10 +332,8 @@ EAPI int ecore_tree_set(Ecore_Tree * tree, void *key, void *value)
 	}
 	ecore_tree_node_value_set(node, value);
 
-	ECORE_WRITE_LOCK(tree);
 	for (; node; node = node->parent)
 		tree_node_balance(tree, node);
-	ECORE_WRITE_UNLOCK(tree);
 
 	return TRUE;
 }

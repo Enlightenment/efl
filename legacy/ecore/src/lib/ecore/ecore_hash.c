@@ -82,8 +82,6 @@ EAPI int ecore_hash_init(Ecore_Hash *hash, Ecore_Hash_Cb hash_func, Ecore_Compar
 	hash->buckets = (Ecore_Hash_Node **)calloc(ecore_prime_table[0],
 			sizeof(Ecore_Hash_Node *));
 
-	ECORE_INIT_LOCKS(hash);
-
 	return TRUE;
 }
 
@@ -105,9 +103,7 @@ EAPI int ecore_hash_set_free_key(Ecore_Hash *hash, Ecore_Free_Cb function)
 	CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
 	CHECK_PARAM_POINTER_RETURN("function", function, FALSE);
 
-	ECORE_WRITE_LOCK(hash);
 	hash->free_key = function;
-	ECORE_WRITE_UNLOCK(hash);
 
 	return TRUE;
 }
@@ -124,9 +120,7 @@ EAPI int ecore_hash_set_free_value(Ecore_Hash *hash, Ecore_Free_Cb function)
 	CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
 	CHECK_PARAM_POINTER_RETURN("function", function, FALSE);
 
-	ECORE_WRITE_LOCK(hash);
 	hash->free_value = function;
-	ECORE_WRITE_UNLOCK(hash);
 
 	return TRUE;
 }
@@ -152,7 +146,6 @@ EAPI int ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
 
 	CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
 
-	ECORE_WRITE_LOCK(hash);
 	node = _ecore_hash_get_node(hash, key);
 	if (node)
 		node->value = value;
@@ -161,7 +154,6 @@ EAPI int ecore_hash_set(Ecore_Hash *hash, void *key, void *value)
 		if (node)
 			ret = _ecore_hash_add_node(hash, node);
 	}
-	ECORE_WRITE_UNLOCK(hash);
 
 	return ret;
 }
@@ -177,8 +169,6 @@ EAPI void ecore_hash_destroy(Ecore_Hash *hash)
 	unsigned int i = 0;
 
 	CHECK_PARAM_POINTER("hash", hash);
-
-	ECORE_WRITE_LOCK(hash);
 
 	if (hash->buckets) {
 		while (i < ecore_prime_table[hash->size]) {
@@ -200,10 +190,6 @@ EAPI void ecore_hash_destroy(Ecore_Hash *hash)
 
 		FREE(hash->buckets);
 	}
-
-	ECORE_WRITE_UNLOCK(hash);
-	ECORE_DESTROY_LOCKS(hash);
-
 	FREE(hash);
 
 	return;
@@ -231,8 +217,6 @@ EAPI int ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func
 	CHECK_PARAM_POINTER_RETURN("hash", hash, FALSE);
 	CHECK_PARAM_POINTER_RETURN("for_each_func", for_each_func, FALSE);
 
-	ECORE_READ_LOCK(hash);
-
 	while (i < ecore_prime_table[hash->size]) {
 		if (hash->buckets[i]) {
 			Ecore_Hash_Node *node;
@@ -243,8 +227,6 @@ EAPI int ecore_hash_for_each_node(Ecore_Hash *hash, Ecore_For_Each for_each_func
 		}
 		i++;
 	}
-
-	ECORE_READ_UNLOCK(hash);
 
 	return TRUE;
 }
@@ -262,10 +244,7 @@ EAPI Ecore_List *ecore_hash_keys(Ecore_Hash *hash)
 
 	CHECK_PARAM_POINTER_RETURN("hash", hash, NULL);
 
-	ECORE_READ_LOCK(hash);
-
 	keys = ecore_list_new();
-
 	while (i < ecore_prime_table[hash->size]) {
 		if (hash->buckets[i]) {
 			Ecore_Hash_Node *node;
@@ -276,10 +255,7 @@ EAPI Ecore_List *ecore_hash_keys(Ecore_Hash *hash)
 		}
 		i++;
 	}
-
 	ecore_list_goto_first(keys);
-
-	ECORE_READ_UNLOCK(hash);
 
 	return keys;
 }
@@ -371,9 +347,7 @@ EAPI void *ecore_hash_get(Ecore_Hash *hash, void *key)
 	if (!node)
 		return NULL;
 
-	ECORE_READ_LOCK(node);
 	data = node->value;
-	ECORE_READ_UNLOCK(node);
 
 	return data;
 }
@@ -396,8 +370,6 @@ EAPI void *ecore_hash_remove(Ecore_Hash *hash, void *key)
 	void *ret = NULL;
 
 	CHECK_PARAM_POINTER_RETURN("hash", hash, NULL);
-
-	ECORE_WRITE_LOCK(hash);
 
 	/* Compute the position in the table */
 	if (!hash->hash_func)
@@ -448,8 +420,6 @@ EAPI void *ecore_hash_remove(Ecore_Hash *hash, void *key)
 	if (ECORE_HASH_REDUCE(hash))
 		_ecore_hash_decrease(hash);
 
-	ECORE_WRITE_UNLOCK(hash);
-
 	return ret;
 }
 
@@ -467,10 +437,7 @@ _ecore_hash_get_node(Ecore_Hash *hash, void *key)
 
 	CHECK_PARAM_POINTER_RETURN("hash", hash, NULL);
 
-	ECORE_READ_LOCK(hash);
-
 	if (!hash->buckets) {
-		ECORE_READ_UNLOCK(hash);
 		return NULL;
 	}
 
@@ -493,8 +460,6 @@ _ecore_hash_get_node(Ecore_Hash *hash, void *key)
 		}
 	}
 
-	ECORE_READ_UNLOCK(hash);
-
 	return node;
 }
 
@@ -511,28 +476,22 @@ _ecore_hash_get_bucket(Ecore_Hash *hash, Ecore_Hash_Node *bucket, void *key)
 	Ecore_Hash_Node *prev = NULL;
 	Ecore_Hash_Node *node = NULL;
 
-	ECORE_READ_LOCK(hash);
-
 	/*
 	 * Traverse the list to find the desired node, if the node is in the
 	 * list, then return the node.
 	 */
 	if (hash->compare) {
 		for (node = bucket; node; node = node->next) {
-			ECORE_READ_LOCK(node);
 			if (hash->compare(node->key, key) == 0)
 				break;
 			prev = node;
-			ECORE_READ_UNLOCK(node);
 		}
 	}
 	else {
 		for (node = bucket; node; node = node->next) {
-			ECORE_READ_LOCK(node);
 			if (node->key == key)
 				break;
 			prev = node;
-			ECORE_READ_UNLOCK(node);
 		}
 	}
 
@@ -540,16 +499,9 @@ _ecore_hash_get_bucket(Ecore_Hash *hash, Ecore_Hash_Node *bucket, void *key)
 	 * Remove node from the list to replace it at the beginning.
 	 */
 	if (node && prev) {
-		ECORE_WRITE_LOCK(prev);
 		prev->next = node->next;
-		ECORE_WRITE_UNLOCK(prev);
-
-		ECORE_WRITE_LOCK(node);
 		node->next = NULL;
-		ECORE_WRITE_UNLOCK(node);
 	}
-
-	ECORE_READ_UNLOCK(hash);
 
 	return node;
 }
@@ -719,7 +671,6 @@ _ecore_hash_node_init(Ecore_Hash_Node *node, void *key, void *value)
 {
 	CHECK_PARAM_POINTER_RETURN("node", node, FALSE);
 
-	ECORE_INIT_LOCKS(node);
 	node->key = key;
 	node->value = value;
 
