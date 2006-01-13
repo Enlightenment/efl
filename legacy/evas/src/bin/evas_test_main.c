@@ -1719,7 +1719,7 @@ loop(void)
 		  char                s[1024];
 		  
 		  d = (0.6 * y) / 55;  if (d < 0) d = -d;
-		  snprintf(s, sizeof(s), "extent = %f3.3;", d);
+		  snprintf(s, sizeof(s), "extent = %3.3f;", d);
 		  evas_object_gradient_type_set(t1, "linear", s);
 		  evas_object_gradient_fill_set(t1, 90, 2, 55, 200);
 		  evas_object_gradient_spread_set(t1, EVAS_TEXTURE_RESTRICT);
@@ -1759,7 +1759,7 @@ loop(void)
 	     {
 		char                s[1024];
 		
-		snprintf(s, sizeof(s), "inner_radius = %f3.3;", 0.7 * (1.0 - (y / 55.0)));
+		snprintf(s, sizeof(s), "inner_radius = %3.3f;", 0.7 * (1.0 - (y / 55.0)));
 		evas_object_gradient_type_set(t1, "radial", s);
 	     }	    
 	}
@@ -1793,7 +1793,7 @@ loop(void)
 		  char                s[1024];
 		  
 		  evas_object_gradient_fill_set(t1, 55, 55, 55, y);
-		  snprintf(s, sizeof(s), "annulus = %f3.3; wrap = 0.25;", 0.7 * (1.0 - (y / 55.0)));
+		  snprintf(s, sizeof(s), "annulus = %3.3f; wrap = 0.25;", 0.7 * (1.0 - (y / 55.0)));
 		  evas_object_gradient_type_set(t1, "angular", s);
 	       }
 	  }
