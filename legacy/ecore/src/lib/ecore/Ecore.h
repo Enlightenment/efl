@@ -62,15 +62,17 @@ extern "C" {
 #endif
 
 #define ECORE_EVENT_NONE            0
-#define ECORE_EXE_EVENT_DEL         1 /**< Spawned Exe has exit event */
-#define ECORE_EVENT_SIGNAL_USER     2 /**< User signal event */
-#define ECORE_EVENT_SIGNAL_HUP      3 /**< Hup signal event */
-#define ECORE_EVENT_SIGNAL_EXIT     4 /**< Exit signal event */
-#define ECORE_EVENT_SIGNAL_POWER    5 /**< Power signal event */
-#define ECORE_EVENT_SIGNAL_REALTIME 6 /**< Realtime signal event */
-#define ECORE_EXE_EVENT_DATA        7 /**< Data from a child process */
-#define ECORE_EXE_EVENT_ERROR       8 /**< Error from a child process */
-#define ECORE_EVENT_COUNT           9
+#define ECORE_EVENT_SIGNAL_USER     1 /**< User signal event */
+#define ECORE_EVENT_SIGNAL_HUP      2 /**< Hup signal event */
+#define ECORE_EVENT_SIGNAL_EXIT     3 /**< Exit signal event */
+#define ECORE_EVENT_SIGNAL_POWER    4 /**< Power signal event */
+#define ECORE_EVENT_SIGNAL_REALTIME 5 /**< Realtime signal event */
+#define ECORE_EVENT_COUNT           6
+
+   EAPI extern int ECORE_EXE_EVENT_ADD; /**< A child process has been added */
+   EAPI extern int ECORE_EXE_EVENT_DEL; /**< A child process has been deleted (it exited, naming consistant with the rest of ecore). */
+   EAPI extern int ECORE_EXE_EVENT_DATA; /**< Data from a child process. */
+   EAPI extern int ECORE_EXE_EVENT_ERROR; /**< Errors from a child process. */
 
 #ifndef _ECORE_PRIVATE_H   
    enum _Ecore_Fd_Handler_Flags
@@ -106,6 +108,7 @@ extern "C" {
    typedef void Ecore_Event; /**< A handle for an event */
    typedef void Ecore_Animator; /**< A handle for animators */
 #endif
+   typedef struct _Ecore_Exe_Event_Add         Ecore_Exe_Event_Add; /**< Spawned Exe add event */
    typedef struct _Ecore_Event_Exe_Exit        Ecore_Event_Exe_Exit; /**< Spawned Exe exit event */
    typedef struct _Ecore_Event_Signal_User     Ecore_Event_Signal_User; /**< User signal event */
    typedef struct _Ecore_Event_Signal_Hup      Ecore_Event_Signal_Hup; /**< Hup signal event */
@@ -116,6 +119,12 @@ extern "C" {
    typedef struct _Ecore_Event_Exe_Data        Ecore_Event_Exe_Data; /**< Data from a child process */
 
 #ifndef WIN32
+   struct _Ecore_Exe_Event_Add /** Process add event */
+     {
+	Ecore_Exe *exe; /**< The handle to the added process */
+	void      *ext_data; /**< Extension data - not used */
+     };
+
    struct _Ecore_Event_Exe_Exit /** Process exit event */
      {
 	pid_t      pid; /**< The process ID of the process that exited */

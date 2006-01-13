@@ -5,6 +5,7 @@
 
 #ifndef WIN32
 
+
 struct _ecore_exe_dead_exe
 {
    pid_t        pid;
@@ -22,6 +23,13 @@ static void _ecore_exe_event_exe_data_free(void *data __UNUSED__, void *ev);
 static Ecore_Exe *_ecore_exe_is_it_alive(pid_t pid);
 static int _ecore_exe_make_sure_its_dead(void *data);
 static int _ecore_exe_make_sure_its_really_dead(void *data);
+static Ecore_Exe_Event_Add *_ecore_exe_event_add_new(void);
+static void _ecore_exe_event_add_free(void *data, void *ev);
+
+EAPI int ECORE_EXE_EVENT_ADD = 0;
+EAPI int ECORE_EXE_EVENT_DEL = 0;
+EAPI int ECORE_EXE_EVENT_DATA = 0;
+EAPI int ECORE_EXE_EVENT_ERROR = 0;
 
 static Ecore_Exe *exes = NULL;
 static char *shell = NULL;
@@ -406,7 +414,16 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 	IF_FN_DEL(_ecore_exe_free, exe);
      }
    else
-     printf("Running as %d for %s.\n", exe->pid, exe->cmd);
+      {
+	 Ecore_Exe_Event_Add *e;
+		       
+	 e = _ecore_exe_event_add_new();
+	 e->exe = exe;
+	 if (e)   /* Send the event. */
+	    ecore_event_add(ECORE_EXE_EVENT_ADD, e,
+		    _ecore_exe_event_add_free, NULL);
+         printf("Running as %d for %s.\n", exe->pid, exe->cmd);
+      }
    
    errno = n;
    return exe;
@@ -796,6 +813,10 @@ _ecore_exe_make_sure_its_really_dead(void *data)
 void
 _ecore_exe_init(void)
 {
+   ECORE_EXE_EVENT_ADD = ecore_event_type_new();
+   ECORE_EXE_EVENT_DEL = ecore_event_type_new();
+   ECORE_EXE_EVENT_DATA = ecore_event_type_new();
+   ECORE_EXE_EVENT_ERROR = ecore_event_type_new();
 }
 
 void
@@ -1209,6 +1230,24 @@ _ecore_exe_event_exe_data_free(void *data __UNUSED__, void *ev)
 
    IF_FREE(e->lines);
    IF_FREE(e->data);
+   free(e);
+}
+
+static Ecore_Exe_Event_Add *
+_ecore_exe_event_add_new(void)
+{
+   Ecore_Exe_Event_Add *e;
+   
+   e = calloc(1, sizeof(Ecore_Exe_Event_Add));
+   return e;
+}
+
+static void
+_ecore_exe_event_add_free(void *data __UNUSED__, void *ev)
+{
+   Ecore_Exe_Event_Add *e;
+   
+   e = ev;
    free(e);
 }
 #endif
