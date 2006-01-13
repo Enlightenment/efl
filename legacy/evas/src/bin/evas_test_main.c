@@ -1769,37 +1769,36 @@ loop(void)
    else if (t <= 439.0)
      {
 	Evas_Coord              tw, th;
-
+	
 	evas_object_text_text_set(title, "Test 34: Gradient Object Angular");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
-	{
-	   Evas_Coord              y;
-	   double              v;
-
-	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
-//	   x = cos(v * 1.7) * ((220) / 2);
-	   y = sin(v * 0.5) * ((110) / 2);
-	   if (y < 0) y = -y;
-	   evas_object_gradient_angle_set(t1, t * 60);
-	   evas_object_gradient_spread_set(t1, EVAS_TEXTURE_REFLECT);
-	   evas_object_resize(t1, 110, 110);
-	   evas_object_move(t1, (win_w - 110) / 2, (win_h - 240) + ((240 - 110) / 2));
-	   if (t <= 429.0)
-	    {
-	     evas_object_gradient_fill_set(t1, 55, 55, 55, 55);
-	     evas_object_gradient_type_set(t1, "angular", NULL);
-	    }
-	    else
-	    {
-	     char                s[32];
+	  {
+	     Evas_Coord              y;
+	     double              v;
 	     
-	     memset(s,0,32);
-	     evas_object_gradient_fill_set(t1, 55, 55, 55, y);
-	     sprintf(s, "annulus = %f3.3; wrap = 0.25;", 0.7 * (1.0 - (y / 55.0)));
-	     evas_object_gradient_type_set(t1, "angular", s);
-	    }
-	}
+	     v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
+	     //	   x = cos(v * 1.7) * ((220) / 2);
+	     y = sin(v * 0.5) * ((110) / 2);
+	     if (y < 0) y = -y;
+	     evas_object_gradient_angle_set(t1, t * 60);
+	     evas_object_gradient_spread_set(t1, EVAS_TEXTURE_REFLECT);
+	     evas_object_resize(t1, 110, 110);
+	     evas_object_move(t1, (win_w - 110) / 2, (win_h - 240) + ((240 - 110) / 2));
+	     if (t <= 429.0)
+	       {
+		  evas_object_gradient_fill_set(t1, 55, 55, 55, 55);
+		  evas_object_gradient_type_set(t1, "angular", NULL);
+	       }
+	     else
+	       {
+		  char                s[1024];
+		  
+		  evas_object_gradient_fill_set(t1, 55, 55, 55, y);
+		  snprintf(s, sizeof(s), "annulus = %f3.3; wrap = 0.25;", 0.7 * (1.0 - (y / 55.0)));
+		  evas_object_gradient_type_set(t1, "angular", s);
+	       }
+	  }
      }
    else if (t <= 454.0)
      {
@@ -1808,30 +1807,29 @@ loop(void)
 	evas_object_text_text_set(title, "Test 34: Gradient Object Sinusoidal");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
-	{
-	   Evas_Coord              y;
-	   double              v;
-
-	   evas_object_gradient_angle_set(t1, t * 60);
-	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
-//	   x = cos(v * 1.7) * ((220) / 2);
-	   y = sin(v * 0.5) * (110 / 2);
-	   evas_object_gradient_fill_set(t1, 55, 55, 55, y);
-	   evas_object_gradient_type_set(t1, "sinusoidal", NULL);
-	   if (t <= 444.0)
-	    {
-	     evas_object_gradient_spread_set(t1, EVAS_TEXTURE_REFLECT);
-	    }
-	   else if (t <= 449.0)
-	    {
-	     evas_object_gradient_spread_set(t1, EVAS_TEXTURE_REPEAT);
-	    }
-	   else
-	    {
-	     evas_object_gradient_spread_set(t1, EVAS_TEXTURE_RESTRICT);
-	    }
-
-	}
+	  {
+	     Evas_Coord              y;
+	     double              v;
+	     
+	     evas_object_gradient_angle_set(t1, t * 60);
+	     v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
+	     //	   x = cos(v * 1.7) * ((220) / 2);
+	     y = sin(v * 0.5) * (110 / 2);
+	     evas_object_gradient_fill_set(t1, 55, 55, 55, y);
+	     evas_object_gradient_type_set(t1, "sinusoidal", NULL);
+	     if (t <= 444.0)
+	       {
+		  evas_object_gradient_spread_set(t1, EVAS_TEXTURE_REFLECT);
+	       }
+	     else if (t <= 449.0)
+	       {
+		  evas_object_gradient_spread_set(t1, EVAS_TEXTURE_REPEAT);
+	       }
+	     else
+	       {
+		  evas_object_gradient_spread_set(t1, EVAS_TEXTURE_RESTRICT);
+	       }
+	  }
      }
    else if (t <= 455.0)
      {
