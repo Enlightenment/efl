@@ -54,6 +54,7 @@ ecore_init(void)
 	if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
 	if (_ecore_fps_debug) _ecore_fps_debug_init();
 	_ecore_signal_init();
+        _ecore_exe_init();
 #endif
      }
 

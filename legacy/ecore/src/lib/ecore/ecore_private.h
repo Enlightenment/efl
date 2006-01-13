@@ -408,6 +408,7 @@ int           _ecore_signal_count_get(void);
 void          _ecore_signal_call(void);
 
 #ifndef WIN32
+void          _ecore_exe_init(void);
 void          _ecore_exe_shutdown(void);
 Ecore_Exe    *_ecore_exe_find(pid_t pid);
 void         *_ecore_exe_free(Ecore_Exe *exe);

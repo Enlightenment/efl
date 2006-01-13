@@ -11,7 +11,7 @@ struct _ecore_exe_dead_exe
    char        *cmd;
 };
 
-static void _ecore_exe_exec_it(const char *exe_cmd);
+static inline void _ecore_exe_exec_it(const char *exe_cmd);
 
 static int _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
 static int _ecore_exe_data_error_handler(void *data, Ecore_Fd_Handler *fd_handler);
@@ -794,6 +794,11 @@ _ecore_exe_make_sure_its_really_dead(void *data)
 
 
 void
+_ecore_exe_init(void)
+{
+}
+
+void
 _ecore_exe_shutdown(void)
 {
    while (exes) _ecore_exe_free(exes);
@@ -814,7 +819,7 @@ _ecore_exe_find(pid_t pid)
    return NULL;
 }
 
-static void
+static inline void
 _ecore_exe_exec_it(const char *exe_cmd)
 {
    char use_sh = 1;
@@ -822,6 +827,12 @@ _ecore_exe_exec_it(const char *exe_cmd)
    char** args = NULL;
    int save_errno = 0;
    
+   /* So what is this doing?
+    *
+    * We are trying to avoid wrapping the exe call with /bin/sh -c.
+    * We conservatively search for certain shell meta characters,
+    * If we don't find them, we can call the exe directly.
+    */
    if (!strpbrk(exe_cmd, "|&;<>()$`\\\"'*?#"))
      {
 	char* token;
@@ -1012,7 +1023,7 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_
 			         e->size = inbuf_num;
 
                                  if (is_buffered)
-				    {
+				    {   /* Deal with line buffering. */
 				       int max = 0;
 				       int count = 0;
 				       int i;
@@ -1026,6 +1037,7 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_
 					        {
 					           if (count >= max)
 					              {
+						         /* In testing, the lines seem to arrive in batches of 500 to 1000 lines at most, roughly speaking. */
 						         max += 10;  /* FIXME: Maybe keep track of the largest number of lines ever sent, and add half that many instead of 10. */
 		                                         e->lines = realloc(e->lines, sizeof(Ecore_Event_Exe_Data_Line) * (max + 1)); /* Allow room for the NULL termination. */
 						      }
