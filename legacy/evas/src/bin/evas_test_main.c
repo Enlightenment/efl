@@ -1545,7 +1545,7 @@ loop(void)
 	  {
 	     Evas_Object        *ob;
 	     int                 d = (120 / 2) * sqrt(2);
-
+	     
 	     ob = evas_object_gradient_add(evas);
 	     evas_object_gradient_color_add(ob, 255, 255, 255, 255, 1);
 	     evas_object_gradient_color_add(ob, 250, 192, 64, 255, 1);
@@ -1560,16 +1560,16 @@ loop(void)
 	     evas_object_show(ob);
 	     t1 = ob;
 	  }
-	{
-	   Evas_Coord              x, y;
-	   double              v;
-
-	   evas_object_geometry_get(t1, NULL, NULL, &tw, &th);
-	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
-	   x = cos(v * 1.7) * ((240 - tw) / 2);
-	   y = sin(v * 1.9) * ((240 - th) / 2);
-	   evas_object_move(t1, 120 + x - (tw / 2), win_h - 120 + y - (th / 2));
-	}
+	  {
+	     Evas_Coord              x, y;
+	     double              v;
+	     
+	     evas_object_geometry_get(t1, NULL, NULL, &tw, &th);
+	     v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
+	     x = cos(v * 1.7) * ((240 - tw) / 2);
+	     y = sin(v * 1.9) * ((240 - th) / 2);
+	     evas_object_move(t1, 120 + x - (tw / 2), win_h - 120 + y - (th / 2));
+	  }
      }
    else if (t <= 359.0)
      {
@@ -1579,17 +1579,17 @@ loop(void)
 	evas_object_text_text_set(title, "Test 30: Resize Gradients");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
-	{
-	   Evas_Coord              x, y;
-	   double              v;
-
-	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
-	   x = cos(v * 1.7) * ((220) / 2);
-	   y = sin(v * 1.9) * ((220) / 2);
-	   evas_object_move(t1, 10, win_h - 240 + 10);
-	   evas_object_resize(t1, x + 110, y + 110);
-//	   evas_object_gradient_fill_set(t1, 0, 0, x + 110, y + 110);
-	   evas_object_gradient_fill_set(t1, 0, 0, 110, 110);
+	  {
+	     Evas_Coord              x, y;
+	     double              v;
+	     
+	     v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
+	     x = cos(v * 1.7) * ((220) / 2);
+	     y = sin(v * 1.9) * ((220) / 2);
+	     evas_object_move(t1, 10, win_h - 240 + 10);
+	     evas_object_resize(t1, x + 110, y + 110);
+	     //	evas_object_gradient_fill_set(t1, 0, 0, x + 110, y + 110);
+	     evas_object_gradient_fill_set(t1, 0, 0, 110, 110);
 	}
      }
    else if (t <= 369.0)
@@ -1601,18 +1601,18 @@ loop(void)
 	evas_object_text_text_set(title, "Test 30: Gradient angles");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
-	{
-	   Evas_Coord              x, y;
-	   double              v;
-
-	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
-	   x = cos(v * 1.7) * ((220) / 2);
-	   y = sin(v * 1.9) * ((220) / 2);
-	   evas_object_resize(t1, x + 110, y + 110);
-//	   evas_object_gradient_fill_set(t1, 0, 0, x + 110, y + 110);
-	   evas_object_gradient_fill_set(t1, 0, 0, 110, 110);
-	   evas_object_gradient_angle_set(t1, t * 60);
-	}
+	  {
+	     Evas_Coord              x, y;
+	     double              v;
+	     
+	     v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
+	     x = cos(v * 1.7) * ((220) / 2);
+	     y = sin(v * 1.9) * ((220) / 2);
+	     evas_object_resize(t1, x + 110, y + 110);
+	     //	   evas_object_gradient_fill_set(t1, 0, 0, x + 110, y + 110);
+	     evas_object_gradient_fill_set(t1, 0, 0, 110, 110);
+	     evas_object_gradient_angle_set(t1, t * 60);
+	  }
      }
    else if (t <= 379.0)
      {
@@ -1623,35 +1623,35 @@ loop(void)
 	evas_object_text_text_set(title, "Test 31: Gradient Range");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
-	{
-	   Evas_Coord              x, y;
-	   double              v;
-
-	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
-	   x = cos(v * 1.7) * ((220) / 2);
-	   y = sin(v * 1.9) * ((220) / 2);
-	   evas_object_resize(t1, x + 110, y + 110);
-	   evas_object_gradient_fill_set(t1, 0, 0, 110, 110);
-	   evas_object_gradient_angle_set(t1, t * 60);
-	   evas_object_gradient_colors_clear(t1);
-	   evas_object_gradient_color_add(t1, 255, 255, 255, 255, 1);
-	   evas_object_gradient_color_add(t1,
-					  ((int)(t * 250)) & 0xff,
-					  ((int)(t * 200)) & 0xff,
-					  ((int)(t * 150)) & 0xff,
-					  ((int)(t * 350)) & 0xff, 1);
-	   evas_object_gradient_color_add(t1,
-					  ((int)(t * 150)) & 0xff,
-					  ((int)(t * 250)) & 0xff,
-					  ((int)(t * 350)) & 0xff,
-					  ((int)(t * 100)) & 0xff, 1);
-	   evas_object_gradient_color_add(t1,
-					  ((int)(t * 120)) & 0xff,
-					  ((int)(t * 260)) & 0xff,
-					  ((int)(t * 490)) & 0xff,
-					  ((int)(t * 230)) & 0xff, 1);
-	   evas_object_gradient_color_add(t1, 0, 0, 0, 0, 0);
-	}
+	  {
+	     Evas_Coord              x, y;
+	     double              v;
+	     
+	     v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
+	     x = cos(v * 1.7) * ((220) / 2);
+	     y = sin(v * 1.9) * ((220) / 2);
+	     evas_object_resize(t1, x + 110, y + 110);
+	     evas_object_gradient_fill_set(t1, 0, 0, 110, 110);
+	     evas_object_gradient_angle_set(t1, t * 60);
+	     evas_object_gradient_colors_clear(t1);
+	     evas_object_gradient_color_add(t1, 255, 255, 255, 255, 1);
+	     evas_object_gradient_color_add(t1,
+					    ((int)(t * 250)) & 0xff,
+					    ((int)(t * 200)) & 0xff,
+					    ((int)(t * 150)) & 0xff,
+					    ((int)(t * 350)) & 0xff, 1);
+	     evas_object_gradient_color_add(t1,
+					    ((int)(t * 150)) & 0xff,
+					    ((int)(t * 250)) & 0xff,
+					    ((int)(t * 350)) & 0xff,
+					    ((int)(t * 100)) & 0xff, 1);
+	     evas_object_gradient_color_add(t1,
+					    ((int)(t * 120)) & 0xff,
+					    ((int)(t * 260)) & 0xff,
+					    ((int)(t * 490)) & 0xff,
+					    ((int)(t * 230)) & 0xff, 1);
+	     evas_object_gradient_color_add(t1, 0, 0, 0, 0, 0);
+	  }
      }
    else if (t <= 389.0)
      {
@@ -1662,25 +1662,25 @@ loop(void)
 	evas_object_text_text_set(title, "Test 32: Gradient Object Color");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
-	{
-	   Evas_Coord              x, y;
-	   double              v;
-
-	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
-	   x = cos(v * 1.7) * ((220) / 2);
-	   y = sin(v * 1.9) * ((220) / 2);
-	   evas_object_resize(t1, x + 110, y + 110);
-	   evas_object_gradient_fill_set(t1, 0, 0, 110, 110);
-	   evas_object_gradient_angle_set(t1, t * 60);
-	   evas_object_gradient_colors_clear(t1);
-	   evas_object_gradient_color_add(t1, 255, 255, 255, 255, 1);
-	   evas_object_gradient_color_add(t1, 0, 0, 0, 255, 0);
-	   evas_object_color_set(t1,
-				 ((int)(t * 120)) & 0xff,
-				 ((int)(t * 260)) & 0xff,
-				 ((int)(t * 490)) & 0xff,
-				 ((int)(t * 230)) & 0xff);
-	}
+	  {
+	     Evas_Coord              x, y;
+	     double              v;
+	     
+	     v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
+	     x = cos(v * 1.7) * ((220) / 2);
+	     y = sin(v * 1.9) * ((220) / 2);
+	     evas_object_resize(t1, x + 110, y + 110);
+	     evas_object_gradient_fill_set(t1, 0, 0, 110, 110);
+	     evas_object_gradient_angle_set(t1, t * 60);
+	     evas_object_gradient_colors_clear(t1);
+	     evas_object_gradient_color_add(t1, 255, 255, 255, 255, 1);
+	     evas_object_gradient_color_add(t1, 0, 0, 0, 255, 0);
+	     evas_object_color_set(t1,
+				   ((int)(t * 120)) & 0xff,
+				   ((int)(t * 260)) & 0xff,
+				   ((int)(t * 490)) & 0xff,
+				   ((int)(t * 230)) & 0xff);
+	  }
      }
    else if (t <= 409.0)
      {
@@ -1691,43 +1691,42 @@ loop(void)
 	evas_object_text_text_set(title, "Test 33: Gradient Object Fill and Spread");
 	evas_object_geometry_get(title, NULL, NULL, &tw, &th);
 	evas_object_move(title, (win_w - tw) / 2, win_h - th);
-	{
-	   Evas_Coord              y;
-	   double                  v, d = (160 * sqrt(2)) / 2;
-
-	   v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
-//	   x = cos(v * 1.7) * ((220) / 2);
-	   y = sin(v * 0.5) * d;
-	   evas_object_color_set(t1, 255, 255, 255, 255);
-	   evas_object_resize(t1, 160, 160);
-	   evas_object_move(t1, (win_w - 160) / 2, (win_h - 240) + ((240 - 160) / 2));
-	   evas_object_gradient_fill_set(t1, 0, 0, 55, y);
-	   evas_object_gradient_angle_set(t1, 45.0);
-	   evas_object_gradient_colors_clear(t1);
-	   evas_object_gradient_color_add(t1, 255, 255, 255, 255, 2);
-	   evas_object_gradient_color_add(t1, 250, 192, 64, 255, 1);
-	   evas_object_gradient_color_add(t1, 220, 128, 0, 255, 1);
-	   evas_object_gradient_color_add(t1, 200, 64, 0, 255, 1);
-	   if (t <= 394.0)
-	     evas_object_gradient_spread_set(t1, EVAS_TEXTURE_REFLECT);
-	   else if (t <= 399.0)
-	     evas_object_gradient_spread_set(t1, EVAS_TEXTURE_REPEAT);
-	   else if (t <= 404.0)
-	     evas_object_gradient_spread_set(t1, EVAS_TEXTURE_RESTRICT);
-	   else
-	    {
-	     char                s[32];
+	  {
+	     Evas_Coord              y;
+	     double                  v, d = (160 * sqrt(2)) / 2;
 	     
-	     d = (0.6 * y) / 55;  if (d < 0) d = -d;
-	     memset(s,0,32);
-	     sprintf(s, "extent = %f3.3;", d);
-	     evas_object_gradient_type_set(t1, "linear", s);
-	     evas_object_gradient_fill_set(t1, 90, 2, 55, 200);
-	     evas_object_gradient_spread_set(t1, EVAS_TEXTURE_RESTRICT);
-	     evas_object_gradient_angle_set(t1, 20.0);
-	     evas_object_resize(t1, 160, 220);
-	     evas_object_move(t1, (win_w - 160) / 2, (win_h - 240) + ((240 - 220) / 2));
-	    }
+	     v = (((t - 6.0) / 10.0) * EVAS_PI * 2) * 2;
+	     //	   x = cos(v * 1.7) * ((220) / 2);
+	     y = sin(v * 0.5) * d;
+	     evas_object_color_set(t1, 255, 255, 255, 255);
+	     evas_object_resize(t1, 160, 160);
+	     evas_object_move(t1, (win_w - 160) / 2, (win_h - 240) + ((240 - 160) / 2));
+	     evas_object_gradient_fill_set(t1, 0, 0, 55, y);
+	     evas_object_gradient_angle_set(t1, 45.0);
+	     evas_object_gradient_colors_clear(t1);
+	     evas_object_gradient_color_add(t1, 255, 255, 255, 255, 2);
+	     evas_object_gradient_color_add(t1, 250, 192, 64, 255, 1);
+	     evas_object_gradient_color_add(t1, 220, 128, 0, 255, 1);
+	     evas_object_gradient_color_add(t1, 200, 64, 0, 255, 1);
+	     if (t <= 394.0)
+	       evas_object_gradient_spread_set(t1, EVAS_TEXTURE_REFLECT);
+	     else if (t <= 399.0)
+	       evas_object_gradient_spread_set(t1, EVAS_TEXTURE_REPEAT);
+	     else if (t <= 404.0)
+	       evas_object_gradient_spread_set(t1, EVAS_TEXTURE_RESTRICT);
+	     else
+	       {
+		  char                s[1024];
+		  
+		  d = (0.6 * y) / 55;  if (d < 0) d = -d;
+		  snprintf(s, sizeof(s), "extent = %f3.3;", d);
+		  evas_object_gradient_type_set(t1, "linear", s);
+		  evas_object_gradient_fill_set(t1, 90, 2, 55, 200);
+		  evas_object_gradient_spread_set(t1, EVAS_TEXTURE_RESTRICT);
+		  evas_object_gradient_angle_set(t1, 20.0);
+		  evas_object_resize(t1, 160, 220);
+		  evas_object_move(t1, (win_w - 160) / 2, (win_h - 240) + ((240 - 220) / 2));
+	       }
 	}
      }
    else if (t <= 419.0)
@@ -1753,17 +1752,16 @@ loop(void)
 	   evas_object_resize(t1, 110, 110);
 	   evas_object_move(t1, (win_w - 110) / 2, (win_h - 240) + ((240 - 110) / 2));
 	   if (t <= 414.0)
-	    {
-	     evas_object_gradient_type_set(t1, "radial", NULL);
-	    }
+	     {
+		evas_object_gradient_type_set(t1, "radial", NULL);
+	     }
 	   else
-	    {
-	     char                s[32];
-	     
-	     memset(s,0,32);
-	     sprintf(s, "inner_radius = %f3.3;", 0.7 * (1.0 - (y / 55.0)));
-	     evas_object_gradient_type_set(t1, "radial", s);
-	    }	    
+	     {
+		char                s[1024];
+		
+		snprintf(s, sizeof(s), "inner_radius = %f3.3;", 0.7 * (1.0 - (y / 55.0)));
+		evas_object_gradient_type_set(t1, "radial", s);
+	     }	    
 	}
      }
    else if (t <= 439.0)
