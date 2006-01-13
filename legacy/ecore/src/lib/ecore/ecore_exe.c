@@ -232,10 +232,10 @@ ecore_exe_run(const char *exe_cmd, const void *data)
  * This function does the same thing as ecore_exe_run(), but also makes the
  * standard in and/or out as wel las stderr from the child process available
  * for reading or writing.  To write use ecore_exe_send().  To read listen to
- * ECORE_EVENT_EXE_DATA or ECORE_EVENH_EXE_ERROR events (set up handlers).  
+ * ECORE_EXE_EVENT_DATA or ECORE_EXE_EVENT_ERROR events (set up handlers).  
  * Ecore may buffer read and error data until a newline character if asked 
  * for with the @p flags.  All data will be included in the events (newlines 
- * will be replaced with NULLS if line buffered).  ECORE_EVENT_EXE_DATA events 
+ * will be replaced with NULLS if line buffered).  ECORE_EXE_EVENT_DATA events 
  * will only happen if the process is run with ECORE_EXE_PIPE_READ enabled 
  * in the flags.  The same with the error version.  Writing will only be 
  * allowed with ECORE_EXE_PIPE_WRITE enabled in the flags.
@@ -951,7 +951,7 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_
    if (flags & ECORE_FD_READ)
       {
          flags = ECORE_FD_READ;
-	 event_type = ECORE_EVENT_EXE_DATA;
+	 event_type = ECORE_EXE_EVENT_DATA;
 	 child_fd = exe->child_fd_read;
          if (exe->flags & ECORE_EXE_PIPE_READ_LINE_BUFFERED)
             is_buffered = 1;
@@ -959,7 +959,7 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_
    else
       {
          flags = ECORE_FD_ERROR;
-	 event_type = ECORE_EVENT_EXE_ERROR;
+	 event_type = ECORE_EXE_EVENT_ERROR;
 	 child_fd = exe->child_fd_error;
          if (exe->flags & ECORE_EXE_PIPE_ERROR_LINE_BUFFERED)
             is_buffered = 1;

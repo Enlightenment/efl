@@ -217,7 +217,7 @@ _ecore_signal_call(void)
 		  else
 		    {
 		       if (e->exe) printf("Sending exit event for %s.\n", e->exe->cmd);
-		       _ecore_event_add(ECORE_EVENT_EXE_EXIT, e, 
+		       _ecore_event_add(ECORE_EXE_EVENT_DEL, e, 
 				   _ecore_event_exe_exit_free, NULL);
 		    }
 	       }
@@ -504,7 +504,7 @@ _ecore_signal_exe_exit_delay(void *data)
    if (e)
      {
 	printf("Sending delayed exit event for %s.\n", e->exe->cmd);
-	_ecore_event_add(ECORE_EVENT_EXE_EXIT, e, 
+	_ecore_event_add(ECORE_EXE_EVENT_DEL, e, 
 			 _ecore_event_exe_exit_free, NULL);
      }
    return 0;

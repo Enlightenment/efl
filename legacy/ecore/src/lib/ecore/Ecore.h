@@ -62,14 +62,14 @@ extern "C" {
 #endif
 
 #define ECORE_EVENT_NONE            0
-#define ECORE_EVENT_EXE_EXIT        1 /**< Spawned Exe has exit event */
+#define ECORE_EXE_EVENT_DEL         1 /**< Spawned Exe has exit event */
 #define ECORE_EVENT_SIGNAL_USER     2 /**< User signal event */
 #define ECORE_EVENT_SIGNAL_HUP      3 /**< Hup signal event */
 #define ECORE_EVENT_SIGNAL_EXIT     4 /**< Exit signal event */
 #define ECORE_EVENT_SIGNAL_POWER    5 /**< Power signal event */
 #define ECORE_EVENT_SIGNAL_REALTIME 6 /**< Realtime signal event */
-#define ECORE_EVENT_EXE_DATA        7 /**< Data from a child process */
-#define ECORE_EVENT_EXE_ERROR       8 /**< Error from a child process */
+#define ECORE_EXE_EVENT_DATA        7 /**< Data from a child process */
+#define ECORE_EXE_EVENT_ERROR       8 /**< Error from a child process */
 #define ECORE_EVENT_COUNT           9
 
 #ifndef _ECORE_PRIVATE_H   

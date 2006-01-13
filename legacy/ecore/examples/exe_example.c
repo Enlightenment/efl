@@ -99,7 +99,7 @@ int timer_once(void *data)
    int i = 1;
 
    ecore_app_args_get(&argc, &argv);
-   ecore_event_handler_add(ECORE_EVENT_EXE_DATA, exe_data_count, NULL);
+   ecore_event_handler_add(ECORE_EXE_EVENT_DATA, exe_data_count, NULL);
    printf("FILE : %s\n", argv[i]);
    exe0 = ecore_exe_pipe_run("/bin/cat", ECORE_EXE_PIPE_WRITE | ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_READ_LINE_BUFFERED, NULL);
 
@@ -137,11 +137,11 @@ int main(int argc, char **argv)
   ecore_app_args_set(argc, (const char **) argv);
 
    ecore_init();
-   ecore_event_handler_add(ECORE_EVENT_EXE_EXIT, exe_exit, NULL);
+   ecore_event_handler_add(ECORE_EXE_EVENT_DEL, exe_exit, NULL);
 
    if (argc == 1)
       {
-         ecore_event_handler_add(ECORE_EVENT_EXE_DATA, exe_data, NULL);
+         ecore_event_handler_add(ECORE_EXE_EVENT_DATA, exe_data, NULL);
          exe0 = ecore_exe_run("/bin/uname -a", NULL);
          if (exe0)   exe_count++;
 
