@@ -51,7 +51,6 @@ evas_module_paths_init(void)
    
    char *prefix;
    char *path;
-   int i;
    Evas_List *paths = NULL;
    
    /* 1. ~/.evas/modules/ */
@@ -137,7 +136,7 @@ evas_module_init(void)
 	
 	if (!(dir = opendir(mp->path))) break;
 //	printf("[evas module] searching modules on %s\n", mp->path);
-	while (de = readdir(dir))
+	while ((de = readdir(dir)))
 	  {
 	     char *buf;
 	     
