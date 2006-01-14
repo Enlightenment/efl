@@ -60,6 +60,7 @@ main(int argc, char **argv)
    XSetWMNormalHints(disp, win, &szhints);
    XMapWindow(disp, win);
 
+   evas_init();
    evas = evas_new();
    evas_output_method_set(evas, evas_render_method_lookup("software_x11"));
    evas_output_size_set(evas, win_w, win_h);
@@ -175,5 +176,6 @@ main(int argc, char **argv)
 	  }
      }
 
+   evas_shutdown();
    return 0;
 }

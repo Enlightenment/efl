@@ -52,8 +52,8 @@ evas_file_path_exists(char *path)
 {
    struct stat st;
 
-   if (stat(path, &st) != -1) return 0;
-   return 1;
+   if (!stat(path, &st)) return 1;
+   return 0;
 }
 
 int
@@ -61,7 +61,7 @@ evas_file_path_is_file(char *path)
 {
    struct stat st;
 
-   if (stat(path, &st) != -1) return 0;
+   if (stat(path, &st) == -1) return 0;
    if (S_ISREG(st.st_mode)) return 1;
    return 0;
 }
@@ -71,7 +71,7 @@ evas_file_path_is_dir(char *path)
 {
    struct stat st;
 
-   if (stat(path, &st) != -1) return 0;
+   if (stat(path, &st) == -1) return 0;
    if (S_ISDIR(st.st_mode)) return 1;
    return 0;
 }

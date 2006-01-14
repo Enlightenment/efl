@@ -57,6 +57,7 @@ main(int argc, char *argv[])
    DFBCHECK(dfb->GetInputDevice(dfb, DIDID_MOUSE, &mouse));
    DFBCHECK (dfb->CreateInputEventBuffer (dfb, DICAPS_ALL, DFB_TRUE, &buffer));
 
+   evas_init();
    evas = evas_new();
    evas_output_method_set(evas, evas_render_method_lookup("directfb"));
    evas_output_size_set(evas, win_w, win_h);
@@ -127,5 +128,6 @@ main(int argc, char *argv[])
    primary->Release(primary);
    dfb->Release(dfb);
 
-   return 42;
+   evas_shutdown();
+   return 0;
 }

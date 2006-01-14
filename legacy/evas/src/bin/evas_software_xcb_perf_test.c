@@ -134,6 +134,7 @@ main(int argc, char **argv)
    XCBSync(c, 0);
    sleep(1);
 
+   evas_init();
    evas = evas_new();
    evas_output_method_set(evas, evas_render_method_lookup("software_xcb"));
    evas_output_size_set(evas, win_w, win_h);
@@ -230,5 +231,6 @@ main(int argc, char **argv)
 	  }
      }
 
+   evas_shutdown();
    return 0;
 }

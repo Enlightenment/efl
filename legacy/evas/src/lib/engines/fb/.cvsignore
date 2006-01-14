@@ -1,8 +1,0 @@
-Makefile.in
-Makefile
-.deps
-.libs
-libevas_engine_fb.la
-evas_engine.lo
-evas_fb_main.lo
-evas_outbuf.lo

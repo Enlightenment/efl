@@ -237,6 +237,7 @@ int main( int argc, char *argv[] )
      window1->RaiseToTop( window1 );
      upper = window1;
      {
+	evas_init();
 	evas = evas_new();
 	evas_output_method_set(evas, evas_render_method_lookup("directfb"));
 	evas_output_size_set(evas, 240, 320);
@@ -413,5 +414,6 @@ int main( int argc, char *argv[] )
      bgsurface->Release( bgsurface );
      dfb->Release( dfb );
 
-     return 42;
+   evas_shutdown();
+   return 0;
 }

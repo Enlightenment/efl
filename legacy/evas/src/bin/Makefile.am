@@ -1,7 +1,7 @@
 MAINTAINERCLEANFILES = Makefile.in moc_evas_software_qtopia_main.cpp
 
 INCLUDES = \
--I. -I$(top_srcdir)/src/lib -I$(top_srcdir) \
+-I. -I$(top_srcdir)/src/modules/engines -I$(top_srcdir)/src/lib -I$(top_srcdir) \
 @DIRECTFB_CFLAGS@ @qt_cflags@ @gl_cflags@
 
 bin_PROGRAMS = \

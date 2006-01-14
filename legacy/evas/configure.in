@@ -17,6 +17,10 @@ AM_ENABLE_SHARED
 AM_PROG_LIBTOOL
 AC_FUNC_ALLOCA
 
+MODULE_ARCH="$host_os-$host_cpu"
+AC_SUBST(MODULE_ARCH)
+AC_DEFINE_UNQUOTED(MODULE_ARCH, "$MODULE_ARCH", "Module architecture")
+
 dnl Add the languages which your application supports here.
 
 if test "x${bindir}" = 'x${exec_prefix}/bin'; then
@@ -1609,18 +1613,20 @@ src/lib/file/Makefile
 src/lib/imaging/Makefile
 src/lib/engines/Makefile
 src/lib/engines/common/Makefile
-src/lib/engines/software_x11/Makefile
-src/lib/engines/software_xcb/Makefile
-src/lib/engines/fb/Makefile
-src/lib/engines/buffer/Makefile
-src/lib/engines/software_win32_gdi/Makefile
-src/lib/engines/software_qtopia/Makefile
-src/lib/engines/directfb/Makefile
-src/lib/engines/gl_common/Makefile
-src/lib/engines/gl_x11/Makefile
-src/lib/engines/cairo_common/Makefile
-src/lib/engines/cairo_x11/Makefile
-src/lib/engines/xrender_x11/Makefile
+src/modules/Makefile
+src/modules/engines/Makefile
+src/modules/engines/software_x11/Makefile
+src/modules/engines/software_xcb/Makefile
+src/modules/engines/fb/Makefile
+src/modules/engines/buffer/Makefile
+src/modules/engines/software_win32_gdi/Makefile
+src/modules/engines/software_qtopia/Makefile
+src/modules/engines/directfb/Makefile
+src/modules/engines/gl_common/Makefile
+src/modules/engines/gl_x11/Makefile
+src/modules/engines/cairo_common/Makefile
+src/modules/engines/cairo_x11/Makefile
+src/modules/engines/xrender_x11/Makefile
 src/lib/include/Makefile
 proj/Makefile
 proj/win32_gdi/Makefile

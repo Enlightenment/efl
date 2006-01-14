@@ -95,6 +95,7 @@ EvasTestApp::EvasTestApp(QWidget *parent, const char *name, int wFlags)
 
    evas_target_widget = new EvasTargetWidget(this, "EvasTargetWidget");
 
+   evas_init();
    evas = evas_new();
    evas_output_method_set(evas, evas_render_method_lookup("software_qtopia"));
    evas_output_size_set(evas, win_w, win_h);
@@ -114,6 +115,7 @@ EvasTestApp::EvasTestApp(QWidget *parent, const char *name, int wFlags)
 
 EvasTestApp::~EvasTestApp()
 {
+   evas_shutdown();
 }
 
 QSizePolicy EvasTestApp::sizePolicy() const

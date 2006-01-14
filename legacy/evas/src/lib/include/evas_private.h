@@ -10,17 +10,6 @@
 /* complain when peole pass in wrong object types etc. */
 #define MAGIC_DEBUG
 
-#define RENDER_METHOD_SOFTWARE_X11       0x00000001
-#define RENDER_METHOD_DIRECTFB           0x00000002
-#define RENDER_METHOD_FB                 0x00000003
-#define RENDER_METHOD_BUFFER             0x00000004
-#define RENDER_METHOD_SOFTWARE_WIN32_GDI 0x00000005
-#define RENDER_METHOD_SOFTWARE_QTOPIA    0x00000006
-#define RENDER_METHOD_GL_X11             0x00000007
-#define RENDER_METHOD_CAIRO_X11          0x00000008
-#define RENDER_METHOD_SOFTWARE_XCB       0x00000009
-#define RENDER_METHOD_XRENDER_X11        0x0000000a
-
 #define RENDER_METHOD_INVALID            0x00000000
 
 typedef struct _Evas_Layer                  Evas_Layer;
@@ -646,7 +635,14 @@ struct _Evas_Mempool
 void *evas_mempool_malloc(Evas_Mempool *pool, int size);
 void  evas_mempool_free(Evas_Mempool *pool, void *ptr);
 void *evas_mempool_calloc(Evas_Mempool *pool, int size);
-   
+
+void evas_module_paths_init(void);
+void evas_module_init(void);
+Evas_Module * evas_module_find_type(Evas_Module_Type type, const char *name);
+int evas_module_load(Evas_Module *em);
+void evas_module_unload(Evas_Module *em);
+void evas_module_shutdown(void);
+     
 #ifdef __cplusplus
 }
 #endif

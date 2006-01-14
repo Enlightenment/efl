@@ -1,7 +1,0 @@
-Makefile.in
-Makefile
-.deps
-.libs
-libevas_engine_gl_x11.la
-evas_engine.lo
-evas_x_main.lo

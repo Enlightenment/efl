@@ -1,49 +1,24 @@
 #include "evas_common.h"
 #include "evas_private.h"
-#ifdef BUILD_ENGINE_SOFTWARE_X11
-#include "evas_engine_api_software_x11.h"
-#endif
-#ifdef BUILD_ENGINE_SOFTWARE_XCB
-#include "evas_engine_api_software_xcb.h"
-#endif
-#ifdef BUILD_ENGINE_DIRECTFB
-#include "evas_engine_api_directfb.h"
-#endif
-#ifdef BUILD_ENGINE_FB
-#include "evas_engine_api_fb.h"
-#endif
-#ifdef BUILD_ENGINE_BUFFER
-#include "evas_engine_api_buffer.h"
-#endif
-#ifdef BUILD_ENGINE_SOFTWARE_WIN32_GDI
-#include "evas_engine_api_software_win32_gdi.h"
-#endif
-#ifdef BUILD_ENGINE_SOFTWARE_QTOPIA
-#include "evas_engine_api_software_qtopia.h"
-#endif
-#ifdef BUILD_ENGINE_GL_X11
-#include "evas_engine_api_gl_x11.h"
-#endif
-#ifdef BUILD_ENGINE_CAIRO_X11
-#include "evas_engine_api_cairo_x11.h"
-#endif
-#ifdef BUILD_ENGINE_XRENDER_X11
-#include "evas_engine_api_xrender_x11.h"
-#endif
 
+extern Evas_List *evas_modules;
 static int initcount = 0;
 
 EAPI int
 evas_init(void)
 {
+   if (initcount == 0)
+     evas_module_init();
    return ++initcount;
 }
 
 EAPI int
 evas_shutdown(void)
 {
-   if (--initcount == 0)
+   initcount--;
+   if (initcount == 0)
      {
+	evas_module_shutdown();
 	evas_font_dir_cache_free();
 	evas_common_shutdown();
      }
@@ -216,6 +191,7 @@ evas_free(Evas *e)
 EAPI void
 evas_output_method_set(Evas *e, int render_method)
 {
+   Evas_List *l;
    MAGIC_CHECK(e, Evas, MAGIC_EVAS);
    return;
    MAGIC_CHECK_END();
@@ -224,63 +200,24 @@ evas_output_method_set(Evas *e, int render_method)
    if (render_method == RENDER_METHOD_INVALID) return;
    /* if the engine is already set up - abort */
    if (e->output.render_method != RENDER_METHOD_INVALID) return;
-   /* set the render method */
-   e->output.render_method = render_method;
-#ifdef BUILD_ENGINE_SOFTWARE_X11
-   if (e->output.render_method == RENDER_METHOD_SOFTWARE_X11)
-     e->engine.func = &evas_engine_software_x11_func;
-   else
-#endif
-#ifdef BUILD_ENGINE_XRENDER_X11
-   if (e->output.render_method == RENDER_METHOD_XRENDER_X11)
-     e->engine.func = &evas_engine_xrender_x11_func;
-   else
-#endif
-#ifdef BUILD_ENGINE_SOFTWARE_XCB
-     if (e->output.render_method == RENDER_METHOD_SOFTWARE_XCB)
-     e->engine.func = &evas_engine_software_xcb_func;
-   else
-#endif
-#ifdef BUILD_ENGINE_GL_X11
-   if (e->output.render_method == RENDER_METHOD_GL_X11)
-     e->engine.func = &evas_engine_gl_x11_func;
-   else
-#endif
-#ifdef BUILD_ENGINE_CAIRO_X11
-   if (e->output.render_method == RENDER_METHOD_CAIRO_X11)
-     e->engine.func = &evas_engine_cairo_x11_func;
-   else
-#endif
-#ifdef BUILD_ENGINE_DIRECTFB
-   if (e->output.render_method == RENDER_METHOD_DIRECTFB)
-     e->engine.func = &evas_engine_directfb_func;
-   else
-#endif
-#ifdef BUILD_ENGINE_FB
-   if (e->output.render_method == RENDER_METHOD_FB)
-     e->engine.func = &evas_engine_fb_func;
-   else
-#endif
-#ifdef BUILD_ENGINE_BUFFER
-   if (e->output.render_method == RENDER_METHOD_BUFFER)
-     e->engine.func = &evas_engine_buffer_func;
-   else
-#endif
-#ifdef BUILD_ENGINE_SOFTWARE_WIN32_GDI
-   if (e->output.render_method == RENDER_METHOD_SOFTWARE_WIN32_GDI)
-     e->engine.func = &evas_engine_software_win32_gdi_func;
-   else
-#endif
-#ifdef BUILD_ENGINE_SOFTWARE_QTOPIA
-   if (e->output.render_method == RENDER_METHOD_SOFTWARE_QTOPIA)
-     e->engine.func = &evas_engine_software_qtopia_func;
-   else
-#endif
-   return;
-   /* get the engine info struct */
-   if (e->output.render_method != RENDER_METHOD_INVALID)
+   /* iterate trough the list to find the id */
+   for (l = evas_modules; l; l = l->next)
      {
+	Evas_Module *em;
+	Evas_Module_Engine *eme;
+	
+	em = l->data;
+	if (em->type != EVAS_MODULE_TYPE_ENGINE) continue;
+	if (!em->data) continue;
+	eme = (Evas_Module_Engine *)em->data;
+	if (eme->id != render_method) continue;
+	if (!evas_module_load(em)) return;
+	/* set the correct render */
+	e->output.render_method = render_method;
+	e->engine.func = (em->functions);
+	/* get the engine info struct */
 	if (e->engine.func->info) e->engine.info = e->engine.func->info(e);
+	return;
      }
 }
 
@@ -681,39 +618,25 @@ evas_coord_world_y_to_screen(Evas *e, Evas_Coord y)
 EAPI int
 evas_render_method_lookup(const char *name)
 {
+   static int i = 1;
+   Evas_Module *em;
+   Evas_Module_Engine *eem;
+   
    if (!name) return RENDER_METHOD_INVALID;
-
-#ifdef BUILD_ENGINE_SOFTWARE_X11
-   if (!strcmp(name, "software_x11")) return RENDER_METHOD_SOFTWARE_X11;
-#endif
-#ifdef BUILD_ENGINE_XRENDER_X11
-   if (!strcmp(name, "xrender_x11")) return RENDER_METHOD_XRENDER_X11;
-#endif
-#ifdef BUILD_ENGINE_SOFTWARE_XCB
-   if (!strcmp(name, "software_xcb")) return RENDER_METHOD_SOFTWARE_XCB;
-#endif
-#ifdef BUILD_ENGINE_GL_X11
-   if (!strcmp(name, "gl_x11")) return RENDER_METHOD_GL_X11;
-#endif
-#ifdef BUILD_ENGINE_CAIRO_X11
-   if (!strcmp(name, "cairo_x11")) return RENDER_METHOD_CAIRO_X11;
-#endif
-#ifdef BUILD_ENGINE_DIRECTFB
-   if (!strcmp(name, "directfb")) return RENDER_METHOD_DIRECTFB;
-#endif
-#ifdef BUILD_ENGINE_FB
-   if (!strcmp(name, "fb")) return RENDER_METHOD_FB;
-#endif
-#ifdef BUILD_ENGINE_BUFFER
-   if (!strcmp(name, "buffer")) return RENDER_METHOD_BUFFER;
-#endif
-#ifdef BUILD_ENGINE_SOFTWARE_WIN32_GDI
-   if (!strcmp(name, "software_win32_gdi")) return RENDER_METHOD_SOFTWARE_WIN32_GDI;
-#endif
-#ifdef BUILD_ENGINE_SOFTWARE_QTOPIA
-   if (!strcmp(name, "software_qtopia")) return RENDER_METHOD_SOFTWARE_QTOPIA;
-#endif
-   return RENDER_METHOD_INVALID;
+   /* search on the engines list for the name */
+   em = evas_module_find_type(EVAS_MODULE_TYPE_ENGINE, name);
+   
+   if(!em) return RENDER_METHOD_INVALID;
+   
+   eem = (Evas_Module_Engine *)em->data;
+   if(!eem)
+     {
+	eem = malloc(sizeof(Evas_Module_Engine));
+	em->data = eem;
+	eem->id = i;
+	i++;
+     }
+   return eem->id;
 }
 
 /**
@@ -756,6 +679,7 @@ evas_render_method_list(void)
 {
    Evas_List *methods = NULL;
 
+   /* FIXME: get from modules */
 #ifdef BUILD_ENGINE_SOFTWARE_X11
    methods = evas_list_append(methods, strdup("software_x11"));
 #endif

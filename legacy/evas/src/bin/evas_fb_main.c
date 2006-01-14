@@ -13,6 +13,7 @@ main(int argc, char **argv)
 
    if ((argc >= 3) && (!strcmp(argv[1], "-rot")))
       rot = atoi(argv[2]);
+   evas_init();
    evas = evas_new();
    evas_output_method_set(evas, evas_render_method_lookup("fb"));
    evas_output_size_set(evas, win_w, win_h);
@@ -37,5 +38,6 @@ main(int argc, char **argv)
 	loop();
 	evas_render(evas);
      }
+   evas_shutdown();
    return 0;
 }

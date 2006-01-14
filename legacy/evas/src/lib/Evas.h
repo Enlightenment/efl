@@ -27,6 +27,68 @@
  * @brief These routines are used for Evas library interaction.
  */
 
+/* the evas module api */
+/***********************/
+/* the module api version */
+#define EVAS_MODULE_API_VERSION 1
+
+/* the module types */
+typedef enum _Evas_Module_Type
+{
+   EVAS_MODULE_TYPE_ENGINE,
+     EVAS_MODULE_TYPE_OBJECT
+} Evas_Module_Type;
+
+/* the module api structure, all modules should define this struct */
+typedef struct _Evas_Module_Api Evas_Module_Api;
+struct _Evas_Module_Api
+{
+   int			version;
+   Evas_Module_Type	type;
+   const char 		*name;
+   const char		*author;
+};
+
+/* the module structure */
+typedef struct _Evas_Module Evas_Module;
+struct _Evas_Module
+{
+   Evas_Module_Api 	*api;	
+   void			*handle;	/* the dlopen handle */
+   char			*path;		/* the path where this modules is */
+   char			*name;		/* the name of the dir where this module is */
+   Evas_Module_Type	type;		/* the type detected by the path */
+   struct
+     {
+	int (*open)(Evas_Module *);
+	void (*close)(Evas_Module *);
+     } func;
+   unsigned char	loaded : 1;	
+   
+   void		*functions;	/* this are the functions exported by the module */
+   void		*data;		/* some internal data for the module i.e the id for engines */
+};
+
+
+/* the internals of the module api use this struct to reference a path with a module type
+ * instead of deduce the type from the path. 
+ * */
+typedef struct _Evas_Module_Path Evas_Module_Path;
+struct _Evas_Module_Path
+{
+   Evas_Module_Type	type;
+   const char		*path;
+};
+
+typedef struct _Evas_Module_Engine Evas_Module_Engine;
+struct _Evas_Module_Engine
+{
+   int 			id;
+};
+
+/* end of evas module api */
+/**************************/
+
 typedef enum _Evas_Callback_Type
 {
    EVAS_CALLBACK_MOUSE_IN, /**< Mouse In Event */

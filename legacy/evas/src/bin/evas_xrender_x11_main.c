@@ -50,6 +50,7 @@ main(int argc, char **argv)
    XSync(disp, False);
 
    /* test evas_free....  :) */
+   evas_init();
    evas = evas_new();
    evas_output_method_set(evas, evas_render_method_lookup("xrender_x11"));
    evas_output_size_set(evas, win_w, win_h);
@@ -128,5 +129,6 @@ main(int argc, char **argv)
 	if (pause_me == 2)
 	   usleep(100000);
      }
+   evas_shutdown();
    return 0;
 }

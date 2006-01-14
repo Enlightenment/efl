@@ -12,6 +12,7 @@ INCLUDES	     = -I. \
 
 noinst_LTLIBRARIES      = libevas_file.la
 libevas_file_la_SOURCES  = \
-evas_path.c
+evas_path.c \
+evas_module.c
 
 libevas_file_la_DEPENDENCIES = $(top_builddir)/config.h
