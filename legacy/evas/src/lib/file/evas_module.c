@@ -53,7 +53,6 @@ evas_module_paths_init(void)
    char *path;
    int i;
    Evas_List *paths = NULL;
-   Dl_info evas_dl;
    
    /* 1. ~/.evas/modules/ */
    prefix = getenv("HOME");
@@ -65,23 +64,36 @@ evas_module_paths_init(void)
      paths = evas_list_append(paths,path);
    else
      free(path);
-   
+
 #ifdef HAVE_DLADDR
-   if (dladdr(evas_module_paths_init, &evas_dl))
      {
-	int length;
-	
-	length = strlen(rindex(evas_dl.dli_fname, '/'));
-	path = malloc(strlen(evas_dl.dli_fname) - length + strlen("/evas/modules") + 1);
-	strncpy(path, evas_dl.dli_fname, strlen(evas_dl.dli_fname) - length);
-	strcat(path, "/evas/modules");
-	if (evas_file_path_exists(path))
-	  paths = evas_list_append(paths, path);
-	else
-	  free(path);
+	Dl_info evas_dl;
+	/* 3. libevas.so/../evas/modules/ */
+	if (dladdr(evas_module_paths_init, &evas_dl))
+	  {
+	     int length;
+	     
+	     if (strrchr(evas_dl.dli_fname, '/'))
+	       {
+		  length = strlen(strrchr(evas_dl.dli_fname, '/'));
+		  path = malloc(strlen(evas_dl.dli_fname) - length + 
+				strlen("/evas/modules") + 1);
+		  if (path)
+		    {
+		       strncpy(path, evas_dl.dli_fname, 
+			       strlen(evas_dl.dli_fname) - length);
+		       path[strlen(evas_dl.dli_fname) - length] = 0;
+		       strcat(path, "/evas/modules");
+		       if (evas_file_path_exists(path))
+			 paths = evas_list_append(paths, path);
+		       else
+			 free(path);
+		    }
+	       }
+	  }
      }
 #else
-   /* 2. PREFIX/evas/modules/ */
+   /* 3. PREFIX/evas/modules/ */
    prefix = PACKAGE_LIB_DIR; 
    path = malloc(strlen(prefix) + 1 + strlen("/evas/modules"));
    strcpy(path, prefix);

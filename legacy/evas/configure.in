@@ -124,6 +124,21 @@ AC_PATH_GENERIC(freetype, 9.5.0,
   [ AC_MSG_ERROR(Freetype isn't installed) ]
 )
 
+dlopen_libs=""
+AC_CHECK_FUNCS(dlopen, res=yes, res=no)
+if test "x$res" = "xyes"; then
+  AC_CHECK_FUNCS(dladdr, AC_DEFINE(HAVE_DLADDR))
+else
+  AC_CHECK_LIB(dl, dlopen, res=yes, res=no)
+  if test "x$res" = "xyes"; then
+    AC_CHECK_LIB(dl, dladdr, AC_DEFINE(HAVE_DLADDR))
+    dlopen_libs=-ldl
+  else
+    AC_MSG_ERROR(Cannot find dlopen)
+  fi
+fi
+AC_SUBST(dlopen_libs)
+
 #####################################################################
 ## Engines
 
