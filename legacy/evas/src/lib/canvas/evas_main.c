@@ -626,10 +626,10 @@ evas_render_method_lookup(const char *name)
    /* search on the engines list for the name */
    em = evas_module_find_type(EVAS_MODULE_TYPE_ENGINE, name);
    
-   if(!em) return RENDER_METHOD_INVALID;
+   if (!em) return RENDER_METHOD_INVALID;
    
    eem = (Evas_Module_Engine *)em->data;
-   if(!eem)
+   if (!eem)
      {
 	eem = malloc(sizeof(Evas_Module_Engine));
 	em->data = eem;
