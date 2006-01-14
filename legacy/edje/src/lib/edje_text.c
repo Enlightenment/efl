@@ -263,12 +263,6 @@ _edje_text_fit_x(Edje *ed, Edje_Real_Part *ep,
    return buf;
 }
 
-static void
-_edje_text_finalize(Edje *ed, Edje_Real_Part *ep,
-                    Edje_Calc_Params *params, Evas_Object *o, int i)
-{
-}
-
 void
 _edje_text_recalc_apply(Edje *ed, Edje_Real_Part *ep,
 			Edje_Calc_Params *params,
