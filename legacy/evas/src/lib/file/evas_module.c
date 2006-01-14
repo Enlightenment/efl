@@ -125,7 +125,7 @@ evas_module_init(void)
    Evas_List *l;
    int new_id = 1;
    
-   printf("[init modules]\n");
+//   printf("[init modules]\n");
    evas_module_paths_init();
    for (l = evas_module_paths; l; l = l->next)
      {
@@ -136,7 +136,7 @@ evas_module_init(void)
 	mp = l->data;
 	
 	if (!(dir = opendir(mp->path))) break;
-	printf("[evas module] searching modules on %s\n", mp->path);
+//	printf("[evas module] searching modules on %s\n", mp->path);
 	while (de = readdir(dir))
 	  {
 	     char *buf;
@@ -168,7 +168,7 @@ evas_module_init(void)
 			    new_id++;
 			 }
 		    }
-		  printf("[evas module] including module path %s/%s of type %d\n",em->path, em->name, em->type);
+//		  printf("[evas module] including module path %s/%s of type %d\n",em->path, em->name, em->type);
 		  evas_modules = evas_list_append(evas_modules, em);
 	       }
 	     free(buf);
