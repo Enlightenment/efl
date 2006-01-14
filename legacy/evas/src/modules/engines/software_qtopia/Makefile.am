@@ -24,7 +24,7 @@ evas_engine.c \
 evas_outbuf.c \
 evas_qt_main.cpp
 
-module_la_LIBADD       = @@qt_libs@@ ../cairo_common/libevas_engine_cairo_common.la
+module_la_LIBADD       = @qt_libs@
 module_la_LDFLAGS      = -module -avoid-version -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
 
 module_la_DEPENDENCIES = \
