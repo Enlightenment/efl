@@ -55,15 +55,37 @@ dnl Check whether the null pointer is zero on this arch
 AC_MSG_CHECKING([value of the null pointer])
 AC_TRY_RUN([
 #include <stdlib.h>
-int main () {
-void *foo = NULL;
-int bar = (int) foo;
-
-return (int) foo;}
-], AC_MSG_RESULT([\o/]), [
-	AC_MSG_RESULT([o_O])
+int main (int argc, char **argv) {
+  void *foo = NULL;
+  int bar = (int)foo;
+  return (int)foo;
+}
+], AC_MSG_RESULT([yes]), [
+	AC_MSG_RESULT([no])
 	AC_MSG_WARN([Your system is a bit too funny, eet might not work properly])
 ], AC_MSG_WARN([Cannot check when cross-compiling -- assuming null is okay])
+)
+
+AC_MSG_CHECKING([OS libc C99 '%a' support])
+AC_TRY_RUN([
+#include <stdio.h>
+int main(int argc, char **argv) {
+  char buf[4096];
+  float ival = 0.1234, oval = 0.0;
+  snprintf(buf, sizeof(buf), "%a", (double)ival);
+  sscanf(buf, "%a", &oval);
+  if (ival != oval) return -1;
+  return 0;
+}
+], AC_MSG_RESULT([yes]), [
+	AC_MSG_RESULT([no])
+	AC_MSG_ERROR([Unsupported Operating System!
+Your OS does not support C99's '%a' string format. Eet cannot function without
+it. Please contact your OS vendor to get updates for C99 '%a' floating point
+format read/write support or change operating systems for one with support
+for an already very old standard. (Linux is known to support this, as is
+Solaris 10)])
+], AC_MSG_WARN([Cannot check when cross-compiling -- assuming C99 '%a' support is OK])
 )
 
 if test "x${bindir}" = 'x${exec_prefix}/bin'; then
