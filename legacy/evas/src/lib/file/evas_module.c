@@ -176,7 +176,6 @@ evas_module_init(void)
      }
 }
 
-/* will dlclose all the modules loaded and free all the structs */
 Evas_Module *
 evas_module_find_type(Evas_Module_Type type, const char *name)
 {
@@ -254,6 +253,7 @@ evas_module_unload(Evas_Module *em)
      }
 }
 
+/* will dlclose all the modules loaded and free all the structs */
 void
 evas_module_shutdown(void)
 {
@@ -270,6 +270,3 @@ evas_module_shutdown(void)
 	evas_modules = evas_list_remove_list(evas_modules, evas_modules);
      }
 }
-
-
-
