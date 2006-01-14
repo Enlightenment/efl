@@ -1243,18 +1243,33 @@ evas_object_text_render(Evas_Object *obj, void *output, void *context, void *sur
 				object->sub.col.a);
 
 #define COLOR_SET(object, sub, col) \
-	ENFN->context_color_set(output, context, \
+        if (obj->cur.clipper)\
+	   ENFN->context_color_set(output, context, \
 				((int)object->sub.col.r * ((int)obj->cur.clipper->cur.cache.clip.r + 1)) >> 8, \
 				((int)object->sub.col.g * ((int)obj->cur.clipper->cur.cache.clip.g + 1)) >> 8, \
 				((int)object->sub.col.b * ((int)obj->cur.clipper->cur.cache.clip.b + 1)) >> 8, \
-				((int)object->sub.col.a * ((int)obj->cur.clipper->cur.cache.clip.a + 1)) >> 8);
+				((int)object->sub.col.a * ((int)obj->cur.clipper->cur.cache.clip.a + 1)) >> 8); \
+        else\
+	   ENFN->context_color_set(output, context, \
+				object->sub.col.r, \
+				object->sub.col.g, \
+				object->sub.col.b, \
+				object->sub.col.a);
 
 #define COLOR_SET_AMUL(object, sub, col, amul) \
-	ENFN->context_color_set(output, context, \
+        if (obj->cur.clipper) \
+  	    ENFN->context_color_set(output, context, \
 				((int)object->sub.col.r * ((int)obj->cur.clipper->cur.cache.clip.r + 1)) >> 8, \
 				((int)object->sub.col.g * ((int)obj->cur.clipper->cur.cache.clip.g + 1)) >> 8, \
 				((int)object->sub.col.b * ((int)obj->cur.clipper->cur.cache.clip.b + 1)) >> 8, \
-				((((int)object->sub.col.a * ((int)obj->cur.clipper->cur.cache.clip.a + 1)) >> 8) * amul) / 255);
+				((((int)object->sub.col.a * ((int)obj->cur.clipper->cur.cache.clip.a + 1)) >> 8) * amul) / 255); \
+        else \
+  	    ENFN->context_color_set(output, context, \
+				object->sub.col.r, \
+				object->sub.col.g, \
+				object->sub.col.b, \
+				(((int)object->sub.col.a) * amul) / 255);
+          
 
 #define DRAW_TEXT(ox, oy) \
    if ((o->engine_data) && (o->cur.text)) \
