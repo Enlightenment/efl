@@ -157,6 +157,7 @@ evas_module_init(void)
 		  em->type = mp->type;
 		  em->handle = NULL;
 		  em->data = NULL;
+                  em->loaded = 0;
 		  if (em->type == EVAS_MODULE_TYPE_ENGINE)
 		    {
 		       Evas_Module_Engine *eme;
@@ -211,6 +212,8 @@ evas_module_load(Evas_Module *em)
    char buf[4096];
    void *handle;
    
+   if (em->loaded) return 1;
+
    snprintf(buf, sizeof(buf), "%s/%s/%s/module.so", 
 	    em->path, em->name, MODULE_ARCH);
    if (!evas_file_path_exists(buf))
