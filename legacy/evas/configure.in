@@ -613,6 +613,8 @@ if test "x$have_png" = "xyes"; then
   png_libs="-lpng -lz -lm"
 fi
 
+AM_CONDITIONAL(BUILD_LOADER_PNG, test x$have_png = xyes)
+
 #######################################
 ## JPEG
 have_jpeg="no";
@@ -645,6 +647,8 @@ if test "x$have_jpeg" = "xyes"; then
   jpeg_cflags=""
   jpeg_libs="-ljpeg"
 fi
+
+AM_CONDITIONAL(BUILD_LOADER_JPEG, test x$have_jpeg = xyes)
 
 #######################################
 ## EET
@@ -712,6 +716,8 @@ else
   AC_MSG_RESULT(no)
 fi
 
+AM_CONDITIONAL(BUILD_LOADER_EET, test x$have_eet = xyes)
+
 #######################################
 ## EDB
 AC_ARG_WITH(edb-config, [   --with-edb-config=EDB_CONFIG      use edb-config specified ],
@@ -759,6 +765,8 @@ if test "x$edb_ok" = "xyes"; then
 else
   AC_MSG_RESULT(no)
 fi
+
+AM_CONDITIONAL(BUILD_LOADER_EDB, test x$have_edb = xyes)
 
 #####################################################################
 ## Cpu based optimizations
@@ -1642,6 +1650,11 @@ src/modules/engines/gl_x11/Makefile
 src/modules/engines/cairo_common/Makefile
 src/modules/engines/cairo_x11/Makefile
 src/modules/engines/xrender_x11/Makefile
+src/modules/loaders/Makefile
+src/modules/loaders/edb/Makefile
+src/modules/loaders/eet/Makefile
+src/modules/loaders/jpeg/Makefile
+src/modules/loaders/png/Makefile
 src/lib/include/Makefile
 proj/Makefile
 proj/win32_gdi/Makefile

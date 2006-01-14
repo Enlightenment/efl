@@ -19,6 +19,7 @@ typedef struct _Evas_Font_Alias             Evas_Font_Alias;
 typedef struct _Evas_Data_Node              Evas_Data_Node;
 typedef struct _Evas_Func_Node              Evas_Func_Node;
 typedef struct _Evas_Func                   Evas_Func;
+typedef struct _Evas_Image_Load_Func        Evas_Image_Load_Func;
 typedef struct _Evas_Object_Func            Evas_Object_Func;
 typedef struct _Evas_Intercept_Func         Evas_Intercept_Func;
 typedef struct _Evas_Intercept_Func_Basic   Evas_Intercept_Func_Basic;
@@ -524,7 +525,15 @@ struct _Evas_Func
    void (*font_cache_set)                  (void *data, int bytes);
    int  (*font_cache_get)                  (void *data);
 
+/*    void (*image_rotation_set)              (void *data, void *image); */
+
    /* Engine functions will over time expand from here */
+};
+
+struct _Evas_Image_Load_Func
+{
+  int (*file_head) (RGBA_Image *im, const char *file, const char *key);
+  int (*file_data) (RGBA_Image *im, const char *file, const char *key);
 };
 
 #ifdef __cplusplus

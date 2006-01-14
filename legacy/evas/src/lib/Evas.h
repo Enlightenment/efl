@@ -36,6 +36,7 @@
 typedef enum _Evas_Module_Type
 {
    EVAS_MODULE_TYPE_ENGINE,
+   EVAS_MODULE_TYPE_IMAGE_LOADER,
      EVAS_MODULE_TYPE_OBJECT
 } Evas_Module_Type;
 
@@ -82,6 +83,12 @@ struct _Evas_Module_Path
 
 typedef struct _Evas_Module_Engine Evas_Module_Engine;
 struct _Evas_Module_Engine
+{
+   int 			id;
+};
+
+typedef struct _Evas_Module_Image_Loader Evas_Module_Image_Loader;
+struct _Evas_Module_Image_Loader
 {
    int 			id;
 };
