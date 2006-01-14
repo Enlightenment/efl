@@ -8,6 +8,7 @@ MAINTAINERCLEANFILES = Makefile.in
 INCLUDES	     = -I. \
 		       -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include \
+		       -I$(top_srcdir)/src/modules/engines \
 		       @FREETYPE_CFLAGS@ @DIRECTFB_CFLAGS@
 
 if BUILD_ENGINE_DIRECTFB

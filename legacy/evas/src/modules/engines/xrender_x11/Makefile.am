@@ -8,8 +8,9 @@ MAINTAINERCLEANFILES = Makefile.in
 INCLUDES	     = -I. \
 		       -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include \
+		       -I$(top_srcdir)/src/modules/engines \
 		       @FREETYPE_CFLAGS@ @x_cflags@
-		       
+
 if BUILD_ENGINE_XRENDER_X11
 
 pkgdir                               = $(libdir)/evas/modules/engines/xrender_x11/$(MODULE_ARCH)

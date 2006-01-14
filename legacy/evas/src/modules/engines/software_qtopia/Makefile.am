@@ -8,6 +8,7 @@ MAINTAINERCLEANFILES = Makefile.in
 INCLUDES	     = -I. \
 		       -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include \
+		       -I$(top_srcdir)/src/modules/engines \
 		       @FREETYPE_CFLAGS@ @qt_cflags@
 
 CXXFLAGS             = $(CFLAGS) -DQT_QWS_EBX -DQT_QWS_CUSTOM -DQWS -DNO_DEBUG 
