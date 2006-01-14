@@ -6,7 +6,7 @@ AUTOMAKE_OPTIONS     = 1.4 foreign
 MAINTAINERCLEANFILES = Makefile.in
 
 INCLUDES	     = -I. \
-		       -I$(top_srcdir)/src/lib \
+		       -I$(top_srcdir)/src/modules/engines \
 		       -I$(top_srcdir)/src/lib/include \
 		       @FREETYPE_CFLAGS@ @x_cflags@ @CAIRO_CFLAGS@
 

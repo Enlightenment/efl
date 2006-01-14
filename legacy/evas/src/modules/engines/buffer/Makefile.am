@@ -8,6 +8,7 @@ MAINTAINERCLEANFILES = Makefile.in
 INCLUDES	     = -I. \
 		       -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include \
+		       -I$(top_srcdir)/src/modules/engines \
 		       @FREETYPE_CFLAGS@
 
 if BUILD_ENGINE_BUFFER
@@ -25,7 +26,6 @@ module_la_LDFLAGS =  -module -avoid-version \
 
 module_la_DEPENDENCIES = \
 $(top_builddir)/config.h
-				
 
 endif
 
