@@ -162,7 +162,7 @@ _ecore_signal_call(void)
 	
 	while ((pid = waitpid(-1, &status, WNOHANG)) > 0)
 	  {
-	     Ecore_Event_Exe_Exit *e;
+	     Ecore_Exe_Event_Del *e;
 	     
 	     /* FIXME: If this process is set respawn, respawn with a suitable backoff
 	      * period for those that need too much respawning. 
@@ -498,7 +498,7 @@ _ecore_signal_callback_sigrt(int sig, siginfo_t *si, void *foo __UNUSED__)
 static int
 _ecore_signal_exe_exit_delay(void *data)
 {
-   Ecore_Event_Exe_Exit *e;
+   Ecore_Exe_Event_Del *e;
    
    e = data;
    if (e)

@@ -459,16 +459,16 @@ _ecore_event_call(void)
 void *
 _ecore_event_exe_exit_new(void)
 {
-   Ecore_Event_Exe_Exit *e;
+   Ecore_Exe_Event_Del *e;
    
-   e = calloc(1, sizeof(Ecore_Event_Exe_Exit));
+   e = calloc(1, sizeof(Ecore_Exe_Event_Del));
    return e;
 }
 
 void
 _ecore_event_exe_exit_free(void *data __UNUSED__, void *ev)
 {
-   Ecore_Event_Exe_Exit *e;
+   Ecore_Exe_Event_Del *e;
    
    e = ev;
    if (e->exe) _ecore_exe_free(e->exe);

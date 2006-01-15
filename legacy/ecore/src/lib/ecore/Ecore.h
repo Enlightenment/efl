@@ -108,34 +108,17 @@ extern "C" {
    typedef void Ecore_Event; /**< A handle for an event */
    typedef void Ecore_Animator; /**< A handle for animators */
 #endif
-   typedef struct _Ecore_Exe_Event_Add         Ecore_Exe_Event_Add; /**< Spawned Exe add event */
-   typedef struct _Ecore_Event_Exe_Exit        Ecore_Event_Exe_Exit; /**< Spawned Exe exit event */
    typedef struct _Ecore_Event_Signal_User     Ecore_Event_Signal_User; /**< User signal event */
    typedef struct _Ecore_Event_Signal_Hup      Ecore_Event_Signal_Hup; /**< Hup signal event */
    typedef struct _Ecore_Event_Signal_Exit     Ecore_Event_Signal_Exit; /**< Exit signal event */
    typedef struct _Ecore_Event_Signal_Power    Ecore_Event_Signal_Power; /**< Power signal event */
    typedef struct _Ecore_Event_Signal_Realtime Ecore_Event_Signal_Realtime; /**< Realtime signal event */
-   typedef struct _Ecore_Event_Exe_Data_Line   Ecore_Event_Exe_Data_Line; /**< Lines from a child process */
-   typedef struct _Ecore_Event_Exe_Data        Ecore_Event_Exe_Data; /**< Data from a child process */
+   typedef struct _Ecore_Exe_Event_Add         Ecore_Exe_Event_Add; /**< Spawned Exe add event */
+   typedef struct _Ecore_Exe_Event_Del         Ecore_Exe_Event_Del; /**< Spawned Exe exit event */
+   typedef struct _Ecore_Exe_Event_Data_Line   Ecore_Exe_Event_Data_Line; /**< Lines from a child process */
+   typedef struct _Ecore_Exe_Event_Data        Ecore_Exe_Event_Data; /**< Data from a child process */
 
 #ifndef WIN32
-   struct _Ecore_Exe_Event_Add /** Process add event */
-     {
-	Ecore_Exe *exe; /**< The handle to the added process */
-	void      *ext_data; /**< Extension data - not used */
-     };
-
-   struct _Ecore_Event_Exe_Exit /** Process exit event */
-     {
-	pid_t      pid; /**< The process ID of the process that exited */
-	int        exit_code; /**< The exit code of the process */
-	Ecore_Exe *exe; /**< The handle to the exited process, or NULL if not found */
-	int        exit_signal; /** < The signal that caused the process to exit */
-	char       exited    : 1; /** < set to 1 if the process exited of its own accord */
-	char       signalled : 1; /** < set to 1 id the process exited due to uncaught signal */
-	void      *ext_data; /**< Extension data - not used */
-	siginfo_t  data; /**< Signal info */
-     };
 #endif
 
    struct _Ecore_Event_Signal_User /** User signal event */
@@ -188,18 +171,36 @@ extern "C" {
      };
 
 #ifndef WIN32
-   struct _Ecore_Event_Exe_Data_Line /**< Lines from a child process */
+   struct _Ecore_Exe_Event_Add /** Process add event */
+     {
+	Ecore_Exe *exe; /**< The handle to the added process */
+	void      *ext_data; /**< Extension data - not used */
+     };
+
+   struct _Ecore_Exe_Event_Del /** Process exit event */
+     {
+	pid_t      pid; /**< The process ID of the process that exited */
+	int        exit_code; /**< The exit code of the process */
+	Ecore_Exe *exe; /**< The handle to the exited process, or NULL if not found */
+	int        exit_signal; /** < The signal that caused the process to exit */
+	char       exited    : 1; /** < set to 1 if the process exited of its own accord */
+	char       signalled : 1; /** < set to 1 id the process exited due to uncaught signal */
+	void      *ext_data; /**< Extension data - not used */
+	siginfo_t  data; /**< Signal info */
+     };
+
+   struct _Ecore_Exe_Event_Data_Line /**< Lines from a child process */
       {
          char *line;
 	 int   size;
       };
 
-   struct _Ecore_Event_Exe_Data /** Data from a child process event */
+   struct _Ecore_Exe_Event_Data /** Data from a child process event */
      {
 	Ecore_Exe *exe; /**< The handle to the process */
 	void *data; /**< the raw binary data from the child process that was recieved */
 	int   size; /**< the size of this data in bytes */
-	Ecore_Event_Exe_Data_Line *lines; /**< a NULL terminated array of line data if line buffered */
+	Ecore_Exe_Event_Data_Line *lines; /**< a NULL terminated array of line data if line buffered */
      };
 #endif
    

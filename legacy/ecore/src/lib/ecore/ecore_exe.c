@@ -1034,9 +1034,9 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_
 	          {   /* No more data to read. */
 		     if (inbuf) 
 		        {
-		           Ecore_Event_Exe_Data *e;
+		           Ecore_Exe_Event_Data *e;
 		       
-		           e = calloc(1, sizeof(Ecore_Event_Exe_Data));
+		           e = calloc(1, sizeof(Ecore_Exe_Event_Data));
 		           if (e)
 			      {
 			         e->exe = exe;
@@ -1060,7 +1060,7 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_
 					              {
 						         /* In testing, the lines seem to arrive in batches of 500 to 1000 lines at most, roughly speaking. */
 						         max += 10;  /* FIXME: Maybe keep track of the largest number of lines ever sent, and add half that many instead of 10. */
-		                                         e->lines = realloc(e->lines, sizeof(Ecore_Event_Exe_Data_Line) * (max + 1)); /* Allow room for the NULL termination. */
+		                                         e->lines = realloc(e->lines, sizeof(Ecore_Exe_Event_Data_Line) * (max + 1)); /* Allow room for the NULL termination. */
 						      }
 						   /* raster said to leave the line endings as line endings, however -
 						    * This is line buffered mode, we are not dealing with binary here, but lines.
@@ -1224,7 +1224,7 @@ _ecore_exe_flush(Ecore_Exe *exe)
 static void
 _ecore_exe_event_exe_data_free(void *data __UNUSED__, void *ev)
 {
-   Ecore_Event_Exe_Data *e;
+   Ecore_Exe_Event_Data *e;
 
    e = ev;
 

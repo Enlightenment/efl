@@ -24,7 +24,7 @@ Ecore_Exe *exe3 = NULL;
 static int
 exe_data(void *data, int type, void *event)
 {
-   Ecore_Event_Exe_Data *ev;
+   Ecore_Exe_Event_Data *ev;
    int i;
 
    ev = event;
@@ -51,7 +51,7 @@ exe_data(void *data, int type, void *event)
 static int
 exe_data_count(void *data, int type, void *event)
 {
-   Ecore_Event_Exe_Data *ev;
+   Ecore_Exe_Event_Data *ev;
    int i;
 
    ev = event;
@@ -82,7 +82,7 @@ exe_data_count(void *data, int type, void *event)
 static int
 exe_exit(void *data, int type, void *event)
 {
-   Ecore_Event_Exe_Exit *ev;
+   Ecore_Exe_Event_Del *ev;
 
    ev = event;
    printf("  [*] EXE EXIT: %p\n", ev->exe);
