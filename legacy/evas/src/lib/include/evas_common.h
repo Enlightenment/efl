@@ -236,14 +236,15 @@ struct _RGBA_Image
    RGBA_Image_Flags     flags;
    struct
      {
-	int             format;
+	void           *loader;
+//	int             format;
 	char           *file;
 	char           *real_file;
 	char           *key;
 	char           *comment;
      } info;
    int                  references;
-   DATA64               timestamp;
+//   DATA64               timestamp;
    void                *extended_info;
 };
 

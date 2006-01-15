@@ -99,7 +99,7 @@ _xre_image_load(Ximage_Info *xinf, char *file, char *key)
    im->h = im->im->image->h;
    im->references = 1;
    if (im->im->info.comment) im->comment = evas_stringshare_add(im->im->info.comment);
-   if (im->im->info.format == 1) im->format = evas_stringshare_add("png");
+//   if (im->im->info.format == 1) im->format = evas_stringshare_add("png");
    if (im->im->flags & RGBA_IMAGE_HAS_ALPHA) im->alpha = 1;
    _xr_image_hash = evas_hash_direct_add(_xr_image_hash, im->fkey, im);
    return im;

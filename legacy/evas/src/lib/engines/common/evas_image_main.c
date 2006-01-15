@@ -235,7 +235,7 @@ evas_common_image_free(RGBA_Image *im)
    if (im->info.file) evas_stringshare_del(im->info.file);
 //   if (im->info.real_file) evas_stringshare_del(im->info.real_file);
    if (im->info.key) evas_stringshare_del(im->info.key);
-   if (im->info.comment) evas_stringshare_del(im->info.comment);
+//   if (im->info.comment) evas_stringshare_del(im->info.comment);
    free(im);
 }
 
@@ -345,7 +345,7 @@ evas_common_image_store(RGBA_Image *im)
      if (im->info.file) l1 = strlen(im->info.file);
    l2 = 0;
    if (im->info.key) l2 = strlen(im->info.key);
-   snprintf(buf, sizeof(buf), "%llx", im->timestamp);
+//   snprintf(buf, sizeof(buf), "%llx", im->timestamp);
    l3 = strlen(buf);
    key = alloca(l1 + 5 + l2 + 5 + l3 +1);
    key[0] = 0;
@@ -375,7 +375,7 @@ evas_common_image_unstore(RGBA_Image *im)
      if (im->info.file) l1 = strlen(im->info.file);
    l2 = 0;
    if (im->info.key) l2 = strlen(im->info.key);
-   snprintf(buf, sizeof(buf), "%llx", im->timestamp);
+//   snprintf(buf, sizeof(buf), "%llx", im->timestamp);
    l3 = strlen(buf);
    key = alloca(l1 + 5 + l2 + 5 + l3 +1);
    key[0] = 0;
@@ -409,7 +409,7 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
    else if (filename) l1 = strlen(filename);
    l2 = 0;
    if (key) l2 = strlen(key);
-   snprintf(buf, sizeof(buf), "%llx", timestamp);
+//   snprintf(buf, sizeof(buf), "%llx", timestamp);
    l3 = strlen(buf);
    str = alloca(l1 + 5 + l2 + 5 + l3 +1);
    str[0] = 0;
@@ -454,9 +454,9 @@ evas_common_image_find(const char *filename, const char *key, DATA64 timestamp)
 	  ok++;
 	if ((!key) && (!im->info.key))
 	  ok++;
-	if (im->timestamp == timestamp)
-	  ok++;
-	if (ok >= 3)
+//	if (im->timestamp == timestamp)
+//	  ok++;
+	if (ok >= 2)
 	  {
 //	     if (real_filename) free(real_filename);
 	     return im;
@@ -475,7 +475,7 @@ evas_common_image_ram_usage(RGBA_Image *im)
    if (im->info.file) ram += strlen(im->info.file);
 //   if (im->info.real_file) ram += strlen(im->info.real_file);
    if (im->info.key) ram += strlen(im->info.key);
-   if (im->info.comment) ram += strlen(im->info.comment);
+//   if (im->info.comment) ram += strlen(im->info.comment);
    if ((im->image) && (im->image->data) && (!im->image->no_free))
      ram += im->image->w * im->image->h * sizeof(DATA32);
    return ram;

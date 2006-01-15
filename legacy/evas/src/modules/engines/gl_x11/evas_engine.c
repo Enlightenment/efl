@@ -940,7 +940,7 @@ evas_engine_gl_x11_image_format_get(void *data, void *image)
 
    re = (Render_Engine *)data;
    im = image;
-   if (im->im->info.format == 1) return "png";
+//   if (im->im->info.format == 1) return "png";
    return NULL;
 }
 

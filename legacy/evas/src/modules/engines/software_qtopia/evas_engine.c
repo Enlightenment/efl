@@ -952,7 +952,7 @@ evas_engine_software_qtopia_image_format_get(void *data, void *image)
 
    re = (Render_Engine *)data;
    im = image;
-   if (im->info.format == 1) return "png";
+//   if (im->info.format == 1) return "png";
    return NULL;
 }
 

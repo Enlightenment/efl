@@ -3,18 +3,16 @@
 
 extern Evas_List *evas_modules;
 
-static Evas_Image_Load_Func *evas_image_load_func = NULL;
-
 RGBA_Image *
 evas_common_load_image_from_file(const char *file, const char *key)
 {
+   Evas_Image_Load_Func *evas_image_load_func = NULL;
    Evas_List *l;
    RGBA_Image *im;
    char *p;
    char *loader = NULL;
 
-   if (file == NULL)
-        return NULL;
+   if (file == NULL) return NULL;
 
    im = evas_common_image_find(file, key, 0);
    if (im)
@@ -23,10 +21,7 @@ evas_common_load_image_from_file(const char *file, const char *key)
 	return im;
      }
    im = evas_common_image_new();
-   if (!im)
-     {
-	return NULL;
-     }
+   if (!im) return NULL;
 
    p = strrchr(file, '.');
    if (p)
@@ -81,7 +76,8 @@ evas_common_load_image_from_file(const char *file, const char *key)
    evas_common_image_free(im);
    return NULL;
    ok:
-   
+
+   im->info.loader = (void *)evas_image_load_func;
    im->info.file = (char *)evas_stringshare_add(file);
    if (key) im->info.key = (char *)evas_stringshare_add(key);
    evas_common_image_ref(im);
@@ -91,8 +87,11 @@ evas_common_load_image_from_file(const char *file, const char *key)
 void
 evas_common_load_image_data_from_file(RGBA_Image *im)
 {
+   Evas_Image_Load_Func *evas_image_load_func = NULL;
+   
    if (im->image->data) return;
 
+   evas_image_load_func = im->info.loader;
    if (!evas_image_load_func->file_data(im, im->info.file, im->info.key))
      {
 	evas_common_image_surface_alloc(im->image);
