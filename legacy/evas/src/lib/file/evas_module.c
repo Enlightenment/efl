@@ -212,12 +212,10 @@ evas_module_load(Evas_Module *em)
    
    if (em->loaded) return 1;
 
-   snprintf(buf, sizeof(buf), "%s/%s/%s/module.so", 
-	    em->path, em->name, MODULE_ARCH);
+   snprintf(buf, sizeof(buf), "%s/%s/%s/module.so", em->path, em->name, MODULE_ARCH);
    if (!evas_file_path_exists(buf))
      {
 	printf("[evas module] error loading the module %s. It doesnt exists\n", buf);
-	free(buf);
 	return 0;
      }
    
@@ -235,9 +233,8 @@ evas_module_load(Evas_Module *em)
 	if (em->api->version != EVAS_MODULE_API_VERSION)
 	  {
 	     printf("[evas module] error loading the modules %s. The version doesnt match\n", buf);
-	     free(buf);
+	     goto error_dl;
 	  }
-	
 	em->func.open(em);
 	em->loaded = 1;
 	return 1;
@@ -245,13 +242,16 @@ evas_module_load(Evas_Module *em)
    error_dl:	
      {
 	char *err;
+	
 	err = dlerror();
 	printf("[evas module] error loading the module %s. %s\n", buf, err);
 	dlclose(handle);
 	em->handle = NULL;
-	free(buf);
-	return 0;
+	em->func.open = NULL;
+	em->func.close = NULL;
+	em->api = NULL;
      }
+   return 0;
 }
 
 void
@@ -263,8 +263,12 @@ evas_module_unload(Evas_Module *em)
      {
 	em->func.close(em);
 	dlclose(em->handle);
-	em->loaded = 0;
      }
+   em->handle = NULL;
+   em->func.open = NULL;
+   em->func.close = NULL;
+   em->api = NULL;
+   em->loaded = 0;
 }
 
 /* will dlclose all the modules loaded and free all the structs */
