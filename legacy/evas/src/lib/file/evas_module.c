@@ -293,4 +293,13 @@ evas_module_shutdown(void)
 	free(evas_modules->data);
 	evas_modules = evas_list_remove_list(evas_modules, evas_modules);
      }
+   while (evas_module_paths)
+     {
+	Evas_Module_Path *mp;
+
+	mp = evas_module_paths->data;
+	evas_module_paths = evas_list_remove_list(evas_module_paths, evas_module_paths);
+	free(mp->path);
+	free(mp);
+     }
 }
