@@ -46,7 +46,9 @@ evas_common_load_image_from_file(const char *file, const char *key)
            loader = "jpeg";
 #endif
 #ifdef BUILD_LOADER_EET
-        if (!strcasecmp(p, "eet"))
+        if ((!strcasecmp(p, "eet")) ||
+            (!strcasecmp(p, "edj")) ||
+            (!strcasecmp(p, "eap")))
            loader = "eet";
 #endif
 #ifdef BUILD_LOADER_EDB
@@ -54,7 +56,9 @@ evas_common_load_image_from_file(const char *file, const char *key)
            loader = "edb";
 #endif
      }
-
+   /* FIXME: - if no oloader can be guessed - we have to start hunting for
+    * one that might work
+    */
    if (!loader)
       return NULL;
 
