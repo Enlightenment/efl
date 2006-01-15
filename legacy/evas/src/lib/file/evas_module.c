@@ -172,15 +172,6 @@ evas_module_init(void)
 		    }
                   else if (em->type == EVAS_MODULE_TYPE_IMAGE_LOADER)
 		    {
-		       Evas_Module_Image_Loader *emil;
-		       
-		       emil = malloc(sizeof(Evas_Module_Image_Loader));
-		       if (emil)
-			 {
-			    emil->id = new_id_loader;
-			    em->data = emil;
-			    new_id_loader++;
-			 }
 		    }
 		  /* printf("[evas module] including module path %s/%s of type %d\n",em->path, em->name, em->type); */
 		  evas_modules = evas_list_append(evas_modules, em);
@@ -201,7 +192,14 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
 	
 	em = (Evas_Module*)l->data;
 	if ((type == em->type) && (!strcmp(name,em->name)))
-	  return em;
+	  {
+             if (evas_modules != l)
+	       {
+		  evas_modules = evas_list_remove_list(evas_modules, l);
+		  evas_modules = evas_list_prepend(evas_modules, em);
+	       }
+	     return em;
+	  }
      }
    return NULL;
 }
@@ -281,7 +279,13 @@ evas_module_shutdown(void)
 	evas_module_unload(em);
 	if (em->name) free(em->name);
 	if (em->path) free(em->path);
-	if (em->data) free(em->data);
+	if (em->type == EVAS_MODULE_TYPE_ENGINE)
+	  {
+	     if (em->data) free(em->data);
+	  }
+	else if (em->type == EVAS_MODULE_TYPE_IMAGE_LOADER)
+	  {
+	  }
 	free(evas_modules->data);
 	evas_modules = evas_list_remove_list(evas_modules, evas_modules);
      }

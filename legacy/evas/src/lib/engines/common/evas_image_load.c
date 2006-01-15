@@ -5,8 +5,6 @@ extern Evas_List *evas_modules;
 
 static Evas_Image_Load_Func *evas_image_load_func = NULL;
 
-static int evas_common_load_image_lookup(const char *name);
-
 RGBA_Image *
 evas_common_load_image_from_file(const char *file, const char *key)
 {
@@ -34,59 +32,57 @@ evas_common_load_image_from_file(const char *file, const char *key)
    if (p)
      {
         p++;
-
-#ifdef BUILD_LOADER_PNG
         if (!strcasecmp(p, "png"))
            loader = "png";
-#endif
-#ifdef BUILD_LOADER_JPEG
-        if ((!strcasecmp(p, "jpg")) ||
-            (!strcasecmp(p, "jpeg")) ||
+        if ((!strcasecmp(p, "jpg")) || (!strcasecmp(p, "jpeg")) ||
             (!strcasecmp(p, "jfif")))
            loader = "jpeg";
-#endif
-#ifdef BUILD_LOADER_EET
-        if ((!strcasecmp(p, "eet")) ||
-            (!strcasecmp(p, "edj")) ||
+        if ((!strcasecmp(p, "eet")) || (!strcasecmp(p, "edj")) ||
             (!strcasecmp(p, "eap")))
            loader = "eet";
-#endif
-#ifdef BUILD_LOADER_EDB
         if (!strcasecmp(p, "edb"))
            loader = "edb";
-#endif
      }
-   /* FIXME: - if no oloader can be guessed - we have to start hunting for
-    * one that might work
-    */
-   if (!loader)
-      return NULL;
+   if (loader)
+     {
+        Evas_Module *em;
+	
+	em = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, loader);
+	if (em)
+	  {
+	     if (evas_module_load(em))
+	       {
+		  evas_image_load_func = em->functions;
+		  if (evas_image_load_func->file_head(im, file, key))
+		    goto ok;
+	       }
+	  }
+     }
 
    for (l = evas_modules; l; l = l->next)
      {
         Evas_Module *em;
-	Evas_Module_Image_Loader *emil;
 
 	em = l->data;
 	if (em->type != EVAS_MODULE_TYPE_IMAGE_LOADER) continue;
-	if (!em->data) continue;
-	emil = (Evas_Module_Image_Loader *)em->data;
-	if (emil->id != evas_common_load_image_lookup(loader)) continue;
-	if (!evas_module_load(em)) return NULL;
+	if (!evas_module_load(em)) continue;
         evas_image_load_func = em->functions;
-        goto beach;
-     }
-   return NULL;
-
- beach:
-   if (!evas_image_load_func->file_head(im, file, key))
-     {
-        evas_common_image_free(im);
-        return NULL;
+	if (evas_image_load_func->file_head(im, file, key))
+	  {
+	     if (evas_modules != l)
+	       {
+		  evas_modules = evas_list_remove_list(evas_modules, l);
+		  evas_modules = evas_list_prepend(evas_modules, em);
+	       }
+	     goto ok;
+	  }
      }
    
+   evas_common_image_free(im);
+   return NULL;
+   ok:
+   
    im->info.file = (char *)evas_stringshare_add(file);
-
    if (key) im->info.key = (char *)evas_stringshare_add(key);
    evas_common_image_ref(im);
    return im;
@@ -110,28 +106,4 @@ evas_common_load_image_data_from_file(RGBA_Image *im)
 	     im->image->no_free = 1;
 	  }
      }
-}
-
-static int
-evas_common_load_image_lookup(const char *name)
-{
-   static int i = 1;
-   Evas_Module *em;
-   Evas_Module_Image_Loader *emil;
-   
-   if (!name) return RENDER_METHOD_INVALID;
-   /* search on the engines list for the name */
-   em = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_LOADER, name);
-   
-   if(!em) return RENDER_METHOD_INVALID;
-   
-   emil = (Evas_Module_Image_Loader *)em->data;
-   if(!emil)
-     {
-	emil = (Evas_Module_Image_Loader *)malloc(sizeof(Evas_Module_Image_Loader));
-	em->data = emil;
-	emil->id = i;
-	i++;
-     }
-   return emil->id;
 }
