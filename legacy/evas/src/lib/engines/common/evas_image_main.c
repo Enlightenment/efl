@@ -346,7 +346,8 @@ evas_common_image_store(RGBA_Image *im)
    l2 = 0;
    if (im->info.key) l2 = strlen(im->info.key);
 //   snprintf(buf, sizeof(buf), "%llx", im->timestamp);
-   l3 = strlen(buf);
+//   l3 = strlen(buf);
+   l3 = 0;
    key = alloca(l1 + 5 + l2 + 5 + l3 +1);
    key[0] = 0;
 //   if (im->info.real_file) strcpy(key, im->info.real_file);
