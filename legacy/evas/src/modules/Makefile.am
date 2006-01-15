@@ -1,3 +1,3 @@
 MAINTAINERCLEANFILES = Makefile.in
 
-SUBDIRS = engines loaders
+SUBDIRS = engines loaders savers

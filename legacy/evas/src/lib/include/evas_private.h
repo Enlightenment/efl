@@ -17,6 +17,7 @@ typedef enum _Evas_Module_Type
 {
    EVAS_MODULE_TYPE_ENGINE,
    EVAS_MODULE_TYPE_IMAGE_LOADER,
+   EVAS_MODULE_TYPE_IMAGE_SAVER,
      EVAS_MODULE_TYPE_OBJECT
 } Evas_Module_Type;
 
@@ -83,6 +84,7 @@ typedef struct _Evas_Data_Node              Evas_Data_Node;
 typedef struct _Evas_Func_Node              Evas_Func_Node;
 typedef struct _Evas_Func                   Evas_Func;
 typedef struct _Evas_Image_Load_Func        Evas_Image_Load_Func;
+typedef struct _Evas_Image_Save_Func        Evas_Image_Save_Func;
 typedef struct _Evas_Object_Func            Evas_Object_Func;
 typedef struct _Evas_Intercept_Func         Evas_Intercept_Func;
 typedef struct _Evas_Intercept_Func_Basic   Evas_Intercept_Func_Basic;
@@ -597,6 +599,11 @@ struct _Evas_Image_Load_Func
 {
   int (*file_head) (RGBA_Image *im, const char *file, const char *key);
   int (*file_data) (RGBA_Image *im, const char *file, const char *key);
+};
+
+struct _Evas_Image_Save_Func
+{
+  int (*image_save) (RGBA_Image *im, const char *file, const char *key, int quality, int compress);
 };
 
 #ifdef __cplusplus

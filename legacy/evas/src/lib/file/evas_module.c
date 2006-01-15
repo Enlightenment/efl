@@ -111,6 +111,7 @@ evas_module_paths_init(void)
 	/* 1. engines */
 	_evas_module_path_append(EVAS_MODULE_TYPE_ENGINE, paths->data, "engines");
 	_evas_module_path_append(EVAS_MODULE_TYPE_IMAGE_LOADER, paths->data, "loaders");
+	_evas_module_path_append(EVAS_MODULE_TYPE_IMAGE_SAVER, paths->data, "savers");
 	_evas_module_path_append(EVAS_MODULE_TYPE_OBJECT, paths->data, "objects");
 	free(paths->data);
 	paths = evas_list_remove_list(paths, paths);
@@ -126,7 +127,7 @@ evas_module_init(void)
    int new_id_engine = 1;
    int new_id_loader = 1;
    
-   /* printf("[init modules]\n"); */
+/*    printf("[init modules]\n"); */
    evas_module_paths_init();
    for (l = evas_module_paths; l; l = l->next)
      {
@@ -137,7 +138,7 @@ evas_module_init(void)
 	mp = l->data;
 	
 	if (!(dir = opendir(mp->path))) break;
-	/* printf("[evas module] searching modules on %s\n", mp->path); */
+/* 	printf("[evas module] searching modules on %s\n", mp->path); */
 	while ((de = readdir(dir)))
 	  {
 	     char *buf;
@@ -173,7 +174,10 @@ evas_module_init(void)
                   else if (em->type == EVAS_MODULE_TYPE_IMAGE_LOADER)
 		    {
 		    }
-		  /* printf("[evas module] including module path %s/%s of type %d\n",em->path, em->name, em->type); */
+                  else if (em->type == EVAS_MODULE_TYPE_IMAGE_SAVER)
+		    {
+		    }
+/* 		  printf("[evas module] including module path %s/%s of type %d\n",em->path, em->name, em->type); */
 		  evas_modules = evas_list_append(evas_modules, em);
 	       }
 	     free(buf);
@@ -277,6 +281,7 @@ evas_module_shutdown(void)
 {
    Evas_Module *em;
    
+/*    printf("[shutdown modules]\n"); */
    while (evas_modules)
      {
 	em = (Evas_Module *)evas_modules->data;
@@ -288,6 +293,9 @@ evas_module_shutdown(void)
 	     if (em->data) free(em->data);
 	  }
 	else if (em->type == EVAS_MODULE_TYPE_IMAGE_LOADER)
+	  {
+	  }
+	else if (em->type == EVAS_MODULE_TYPE_IMAGE_SAVER)
 	  {
 	  }
 	free(evas_modules->data);

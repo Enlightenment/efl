@@ -1655,6 +1655,11 @@ src/modules/loaders/edb/Makefile
 src/modules/loaders/eet/Makefile
 src/modules/loaders/jpeg/Makefile
 src/modules/loaders/png/Makefile
+src/modules/savers/Makefile
+src/modules/savers/edb/Makefile
+src/modules/savers/eet/Makefile
+src/modules/savers/jpeg/Makefile
+src/modules/savers/png/Makefile
 src/lib/include/Makefile
 proj/Makefile
 proj/win32_gdi/Makefile
