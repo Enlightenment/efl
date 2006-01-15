@@ -30,7 +30,7 @@ evas_common_save_image_to_file(RGBA_Image *im, const char *file, const char *key
 	if (!strcasecmp(p, "edb"))
           saver = "edb";
      }
-   printf ("Saver %s\n", saver);
+
    if (saver)
      {
         Evas_Module *em;
@@ -38,7 +38,6 @@ evas_common_save_image_to_file(RGBA_Image *im, const char *file, const char *key
 	em = evas_module_find_type(EVAS_MODULE_TYPE_IMAGE_SAVER, saver);
 	if (em)
 	  {
-            printf ("saver found %d\n", em->loaded);
 	     if (evas_module_load(em))
 	       {
 		  evas_image_save_func = em->functions;
