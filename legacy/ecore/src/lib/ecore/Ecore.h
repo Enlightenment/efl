@@ -228,6 +228,9 @@ extern "C" {
    EAPI Ecore_Exe  *ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data);
    EAPI int         ecore_exe_send(Ecore_Exe *exe, void *data, int size);
    EAPI void        ecore_exe_close_stdin(Ecore_Exe *exe);
+   EAPI void        ecore_exe_auto_limits_set(Ecore_Exe *exe, int start_bytes, int end_bytes, int start_lines, int end_lines);
+   EAPI Ecore_Exe_Event_Data *ecore_exe_event_data_get(Ecore_Exe *exe, Ecore_Exe_Flags flags);
+   EAPI void        ecore_exe_event_data_free(Ecore_Exe_Event_Data *data);
    EAPI void       *ecore_exe_free(Ecore_Exe *exe);
    EAPI pid_t       ecore_exe_pid_get(Ecore_Exe *exe);
    EAPI void        ecore_exe_tag_set(Ecore_Exe *exe, const char *tag);

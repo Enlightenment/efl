@@ -357,6 +357,10 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
             {
                /* Setup the exe structure. */
                ECORE_MAGIC_SET(exe, ECORE_MAGIC_EXE);
+               exe->start_bytes = -1;
+               exe->end_bytes   = -1;
+               exe->start_lines = -1;
+               exe->end_lines   = -1;
                exe->pid = pid;
                exe->flags = flags;
                exe->data = (void *)data;
@@ -480,6 +484,80 @@ ecore_exe_close_stdin(Ecore_Exe *exe)
 
 
 /**
+ * Sets the auto pipe limits for the given process handle
+ *
+ * @param   exe The given process handle.
+ * @param   start_bytes limit of bytes at start of output to buffer.
+ * @param   end_bytes limit of bytes at end of output to buffer.
+ * @param   start_lines limit of lines at start of output to buffer.
+ * @param   start_lines limit of lines at end of output to buffer.
+ * @ingroup Ecore_Exe_Basic_Group
+ */
+EAPI void
+ecore_exe_auto_limits_set(Ecore_Exe *exe, int start_bytes, int end_bytes, int start_lines, int end_lines)
+{
+   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
+     {
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
+			 "ecore_exe_auto_limits_set");
+	return;
+     }
+   /* FIXME: sanitize the input. */
+   exe->start_bytes = start_bytes;
+   exe->end_bytes   = end_bytes;
+   exe->start_lines = start_lines;
+   exe->end_lines   = end_lines;
+
+   /* FIXME: get this can of worms working.
+    *
+    * capture stderr & stdout internally
+    *
+    * raster and onefang keep moving the goal posts on this one.  It started out as 
+    * "show users the error output if an exe fails" and is rapidly approaching
+    * "alternative method of getting the data, poll vs event driven".  Some serious
+    * thinking needs to be applied to this.  Do we really want to go that far?  If
+    * so, we should change the names.  The basic design will probably remain the
+    * same which ever way we go.  The constant goal post moving is probably due to
+    * generic design methods leading to feature creep as we inspired each other to
+    * more generic designs.  It does seem like the closer we get to poll driven, 
+    * the more issues and corner cases there are.
+    *
+    * start = 0,  end = 0;   clogged arteries get flushed, everything is ignored.
+    * start = -1, end = -1;  clogged arteries get transferred to internal buffers.  Actually, either == -1 means buffer everything.
+    * start = X,  end = 0;   buffer first X out of clogged arteries, flush and ignore rest.
+    * start = 0,  end = X;   circular buffer X
+    * start = X,  end = Y;   buffer first X out of clogged arteries, circular buffer Y from beginning.
+    * 
+    * bytes vs lines, which ever one reaches the limit first.
+    * 
+    * Other issues -
+    * Spank programmer for polling data if polling is not turned on.
+    * Spank programmer for freeing the event data if it came from the event system, as that autofrees.
+    * Spank the programmer if they try to set the limits bigger than what has been gathered & ignored already, coz they just lost data.
+    * Spank onefang and raster for opening this can of worms.
+    * Should we have seperate out/err limits?
+    * Should we remove from the internal buffer the data that was delivered already?
+    * If so, what to do about limits, start, and end?  They could loose their meaning.
+    */
+}
+
+
+EAPI Ecore_Exe_Event_Data *
+ecore_exe_event_data_get(Ecore_Exe *exe, Ecore_Exe_Flags flags)
+{
+   if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
+     {
+	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
+			 "ecore_exe_event_data_get");
+	return NULL;
+     }
+   /* FIXME: sanitize the input. */
+   /* FIXME: insert code here. */
+   return NULL;
+}
+
+
+/**
  * Sets the string tag for the given process handle
  *
  * @param   exe The given process handle.
@@ -566,6 +644,22 @@ ecore_exe_free(Ecore_Exe *exe)
    free(exe);
    return data;
 }
+
+
+/**
+ * Frees the given event data.
+ *
+ * @param   e The given event data.
+ * @ingroup Ecore_Exe_Basic_Group
+ */
+EAPI void
+ecore_exe_event_data_free(Ecore_Exe_Event_Data *e)
+{
+   IF_FREE(e->lines);
+   IF_FREE(e->data);
+   free(e);
+}
+
 
 /**
  * Retrieves the process ID of the given spawned process.
@@ -1221,10 +1315,7 @@ _ecore_exe_event_exe_data_free(void *data __UNUSED__, void *ev)
    Ecore_Exe_Event_Data *e;
 
    e = ev;
-
-   IF_FREE(e->lines);
-   IF_FREE(e->data);
-   free(e);
+   ecore_exe_event_data_free(e);
 }
 
 static Ecore_Exe_Event_Add *

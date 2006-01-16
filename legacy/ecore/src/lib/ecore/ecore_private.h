@@ -259,6 +259,9 @@ struct _Ecore_Exe
    int          child_fd_read;	/* fd to read FROM when child has sent us (the parent) data */
    int          child_fd_error;	/* fd to read FROM when child has sent us (the parent) errors */
    int          close_stdin;
+
+   int start_bytes, end_bytes, start_lines, end_lines; /* Number of bytes/lines to auto pipe at start/end of stdout/stderr. */
+
    Ecore_Timer *doomsday_clock; /* The Timer of Death.  Muahahahaha. */
 };
 #endif
