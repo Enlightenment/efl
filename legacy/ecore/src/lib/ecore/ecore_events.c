@@ -455,27 +455,6 @@ _ecore_event_call(void)
      }
 }
 
-#ifndef WIN32
-void *
-_ecore_event_exe_exit_new(void)
-{
-   Ecore_Exe_Event_Del *e;
-   
-   e = calloc(1, sizeof(Ecore_Exe_Event_Del));
-   return e;
-}
-
-void
-_ecore_event_exe_exit_free(void *data __UNUSED__, void *ev)
-{
-   Ecore_Exe_Event_Del *e;
-   
-   e = ev;
-   if (e->exe) _ecore_exe_free(e->exe);
-   free(e);
-}
-#endif
-
 EAPI void *
 _ecore_event_signal_user_new(void)
 {

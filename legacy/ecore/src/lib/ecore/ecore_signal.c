@@ -167,7 +167,7 @@ _ecore_signal_call(void)
 	     /* FIXME: If this process is set respawn, respawn with a suitable backoff
 	      * period for those that need too much respawning. 
 	      */
-	     e = _ecore_event_exe_exit_new();
+	     e = _ecore_exe_event_del_new();
 	     if (e)
 	       {
 		  if (WIFEXITED(status))
@@ -218,7 +218,7 @@ _ecore_signal_call(void)
 		    {
 		       if (e->exe) printf("Sending exit event for %s.\n", e->exe->cmd);
 		       _ecore_event_add(ECORE_EXE_EVENT_DEL, e, 
-				   _ecore_event_exe_exit_free, NULL);
+				   _ecore_exe_event_del_free, NULL);
 		    }
 	       }
 	  }
@@ -505,7 +505,7 @@ _ecore_signal_exe_exit_delay(void *data)
      {
 	printf("Sending delayed exit event for %s.\n", e->exe->cmd);
 	_ecore_event_add(ECORE_EXE_EVENT_DEL, e, 
-			 _ecore_event_exe_exit_free, NULL);
+			 _ecore_exe_event_del_free, NULL);
      }
    return 0;
 }

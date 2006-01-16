@@ -411,7 +411,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
    if (!ok)
      {   /* Something went wrong, so pull down everything. */
 	if (exe->pid)   ecore_exe_terminate(exe);
-	IF_FN_DEL(_ecore_exe_free, exe);
+	IF_FN_DEL(ecore_exe_free, exe);
      }
    else
       {
@@ -535,13 +535,36 @@ ecore_exe_tag_get(Ecore_Exe *exe)
 EAPI void *
 ecore_exe_free(Ecore_Exe *exe)
 {
+   void *data;
+   int ok = 0;
+   int result;
+
    if (!ECORE_MAGIC_CHECK(exe, ECORE_MAGIC_EXE))
      {
 	ECORE_MAGIC_FAIL(exe, ECORE_MAGIC_EXE,
 			 "ecore_exe_free");
 	return NULL;
      }
-   return _ecore_exe_free(exe);
+
+   data = exe->data;
+
+   IF_FN_DEL(ecore_timer_del, exe->doomsday_clock);
+   IF_FN_DEL(ecore_main_fd_handler_del, exe->write_fd_handler);
+   IF_FN_DEL(ecore_main_fd_handler_del, exe->read_fd_handler);
+   IF_FN_DEL(ecore_main_fd_handler_del, exe->error_fd_handler);
+   if (exe->child_fd_write)  E_NO_ERRNO(result, close(exe->child_fd_write), ok);
+   if (exe->child_fd_read)   E_NO_ERRNO(result, close(exe->child_fd_read), ok);
+   if (exe->child_fd_error)  E_NO_ERRNO(result, close(exe->child_fd_error), ok);
+   IF_FREE(exe->write_data_buf);
+   IF_FREE(exe->read_data_buf);
+   IF_FREE(exe->error_data_buf);
+   IF_FREE(exe->cmd);
+   
+   exes = _ecore_list2_remove(exes, exe);
+   ECORE_MAGIC_SET(exe, ECORE_MAGIC_NONE);
+   IF_FREE(exe->tag);
+   free(exe);
+   return data;
 }
 
 /**
@@ -822,7 +845,7 @@ _ecore_exe_init(void)
 void
 _ecore_exe_shutdown(void)
 {
-   while (exes) _ecore_exe_free(exes);
+   while (exes) ecore_exe_free(exes);
 }
 
 Ecore_Exe *
@@ -930,35 +953,6 @@ _ecore_exe_exec_it(const char *exe_cmd)
    errno = save_errno;
    return;
 }
-
-void *
-_ecore_exe_free(Ecore_Exe *exe)
-{
-   void *data;
-   int ok = 0;
-   int result;
-
-   data = exe->data;
-
-   IF_FN_DEL(ecore_timer_del, exe->doomsday_clock);
-   IF_FN_DEL(ecore_main_fd_handler_del, exe->write_fd_handler);
-   IF_FN_DEL(ecore_main_fd_handler_del, exe->read_fd_handler);
-   IF_FN_DEL(ecore_main_fd_handler_del, exe->error_fd_handler);
-   if (exe->child_fd_write)  E_NO_ERRNO(result, close(exe->child_fd_write), ok);
-   if (exe->child_fd_read)   E_NO_ERRNO(result, close(exe->child_fd_read), ok);
-   if (exe->child_fd_error)  E_NO_ERRNO(result, close(exe->child_fd_error), ok);
-   IF_FREE(exe->write_data_buf);
-   IF_FREE(exe->read_data_buf);
-   IF_FREE(exe->error_data_buf);
-   IF_FREE(exe->cmd);
-   
-   exes = _ecore_list2_remove(exes, exe);
-   ECORE_MAGIC_SET(exe, ECORE_MAGIC_NONE);
-   IF_FREE(exe->tag);
-   free(exe);
-   return data;
-}
-
 
 static int
 _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags)
@@ -1248,6 +1242,25 @@ _ecore_exe_event_add_free(void *data __UNUSED__, void *ev)
    Ecore_Exe_Event_Add *e;
    
    e = ev;
+   free(e);
+}
+
+void *
+_ecore_exe_event_del_new(void)
+{
+   Ecore_Exe_Event_Del *e;
+   
+   e = calloc(1, sizeof(Ecore_Exe_Event_Del));
+   return e;
+}
+
+void
+_ecore_exe_event_del_free(void *data __UNUSED__, void *ev)
+{
+   Ecore_Exe_Event_Del *e;
+   
+   e = ev;
+   if (e->exe) ecore_exe_free(e->exe);
    free(e);
 }
 #endif

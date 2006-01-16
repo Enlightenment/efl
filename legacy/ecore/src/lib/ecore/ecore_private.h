@@ -390,10 +390,6 @@ Ecore_Event  *_ecore_event_add(int type, void *ev, void (*func_free) (void *data
 void         *_ecore_event_del(Ecore_Event *event);
 void          _ecore_event_call(void);
 
-#ifndef WIN32
-void         *_ecore_event_exe_exit_new(void);
-void          _ecore_event_exe_exit_free(void *data, void *ev);
-#endif
 EAPI void         *_ecore_event_signal_user_new(void);
 void         *_ecore_event_signal_hup_new(void);
 void         *_ecore_event_signal_exit_new(void);
@@ -411,7 +407,8 @@ void          _ecore_signal_call(void);
 void          _ecore_exe_init(void);
 void          _ecore_exe_shutdown(void);
 Ecore_Exe    *_ecore_exe_find(pid_t pid);
-void         *_ecore_exe_free(Ecore_Exe *exe);
+void         *_ecore_exe_event_del_new(void);
+void          _ecore_exe_event_del_free(void *data, void *ev);
 #endif
 
 void          _ecore_animator_shutdown(void);
