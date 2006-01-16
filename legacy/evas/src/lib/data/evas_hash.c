@@ -210,22 +210,48 @@ evas_hash_del(Evas_Hash *hash, const char *key, const void *data)
    Evas_Object_List *l;
 
    if (!hash) return NULL;
-   hash_num = _evas_hash_gen(key);
-   for (l = hash->buckets[hash_num]; l; l = l->next)
+   if (!key)
      {
-	el = (Evas_Hash_El *)l;
-	if (((key) && (!strcmp(el->key, key))) ||
-	    ((!key) && (el->data == data)))
+	int hash_num;
+	
+	for (hash_num = 0; hash_num < 256; hash_num++)
 	  {
-	     hash->buckets[hash_num] = evas_object_list_remove(hash->buckets[hash_num], el);
-	     free(el);
-	     hash->population--;
-	     if (hash->population <= 0)
+	     for (l = hash->buckets[hash_num]; l; l = l->next)
 	       {
-		  free(hash);
-		  hash = NULL;
+		  el = (Evas_Hash_El *)l;
+		  if (el->data == data)
+		    {
+		       hash->buckets[hash_num] = evas_object_list_remove(hash->buckets[hash_num], el);
+		       free(el);
+		       hash->population--;
+		       if (hash->population <= 0)
+			 {
+			    free(hash);
+			    hash = NULL;
+			 }
+		       return hash;
+		    }
 	       }
-	     return hash;
+	  }
+     }
+   else
+     {
+	hash_num = _evas_hash_gen(key);
+	for (l = hash->buckets[hash_num]; l; l = l->next)
+	  {
+	     el = (Evas_Hash_El *)l;
+	     if (!strcmp(el->key, key))
+	       {
+		  hash->buckets[hash_num] = evas_object_list_remove(hash->buckets[hash_num], el);
+		  free(el);
+		  hash->population--;
+		  if (hash->population <= 0)
+		    {
+		       free(hash);
+		       hash = NULL;
+		    }
+		  return hash;
+	       }
 	  }
      }
    return hash;

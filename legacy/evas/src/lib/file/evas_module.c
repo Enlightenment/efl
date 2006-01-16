@@ -17,7 +17,6 @@
 #include <evas_private.h>
 
 Evas_List *evas_modules = NULL;
-
 static Evas_List *evas_module_paths = NULL;
 
 static void
@@ -182,6 +181,7 @@ evas_module_init(void)
 	       }
 	     free(buf);
 	  }
+	closedir(dir);
      }
 }
 

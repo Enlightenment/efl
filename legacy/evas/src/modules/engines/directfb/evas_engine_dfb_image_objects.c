@@ -1,4 +1,4 @@
-#include "evas_engine_dfb.h"
+~#include "evas_engine_dfb.h"
 #include <math.h>
 #include <string.h>
 
@@ -42,7 +42,7 @@ evas_engine_directfb_image_load(void *data, char *file, char *key, int *error)
    *error = 0;
 
    if (!file) return NULL;
-   mod_time = evas_file_modified_time(file);
+//   mod_time = evas_file_modified_time(file);
    im = _dfb_image_find(file, key, mod_time);
    if (im)
      {
@@ -84,7 +84,7 @@ evas_engine_directfb_image_load(void *data, char *file, char *key, int *error)
    if (img_desc.caps & DICAPS_ALPHACHANNEL)
       im->flags |= RGBA_IMAGE_HAS_ALPHA;
 
-   im->timestamp = mod_time;
+//   im->timestamp = mod_time;
    if (file)
      im->info.file = strdup(file);
    if (key)
@@ -705,8 +705,10 @@ _dfb_image_store(RGBA_Image *im)
    if (im->info.file) l1 = strlen(im->info.file);
    l2 = 0;
    if (im->info.key) l2 = strlen(im->info.key);
-   snprintf(buf, sizeof(buf), "%llx", im->timestamp);
-   l3 = strlen(buf);
+//   snprintf(buf, sizeof(buf), "%llx", im->timestamp);
+//   l3 = strlen(buf);
+   buf[0] = 0;
+   l3 = 0;
    key = malloc(l1 + 3 + l2 + 3 + l3 +1);
    if (!key) return;
    key[0] = 0;
@@ -733,8 +735,10 @@ _dfb_image_unstore(RGBA_Image *im)
    if (im->info.file) l1 = strlen(im->info.file);
    l2 = 0;
    if (im->info.key) l2 = strlen(im->info.key);
-   snprintf(buf, sizeof(buf), "%llx", im->timestamp);
-   l3 = strlen(buf);
+//   snprintf(buf, sizeof(buf), "%llx", im->timestamp);
+//   l3 = strlen(buf);
+   buf[0] = 0;
+   l3 = 0;
    key = malloc(l1 + 3 + l2 + 3 + l3 +1);
    if (!key) return;
    key[0] = 0;
@@ -763,8 +767,10 @@ _dfb_image_find(const char *filename, const char *key, DATA64 timestamp)
    if (filename) l1 = strlen(filename);
    l2 = 0;
    if (key) l2 = strlen(key);
-   sprintf(buf, "%llx", timestamp);
-   l3 = strlen(buf);
+//   sprintf(buf, "%llx", timestamp);
+//   l3 = strlen(buf);
+   buf[0] = 0;
+   l3 = 0;
    str = malloc(l1 + 3 + l2 + 3 + l3 +1);
    if (!str) return NULL;
    str[0] = 0;
@@ -793,9 +799,9 @@ _dfb_image_find(const char *filename, const char *key, DATA64 timestamp)
 	  ok++;
 	if ((!key) && (!im->info.key))
 	  ok++;
-	if (im->timestamp == timestamp)
-	  ok++;
-	if (ok >= 3) return im;
+//	if (im->timestamp == timestamp)
+//	  ok++;
+	if (ok >= 2) return im;
      }
    return NULL;
 }

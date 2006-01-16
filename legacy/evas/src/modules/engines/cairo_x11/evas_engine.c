@@ -1066,7 +1066,7 @@ evas_engine_cairo_x11_image_format_get(void *data, void *image)
 
    /* FIXME */
    re = (Render_Engine *)data;
-   return "";
+   return NULL;
 }
 
 static void
