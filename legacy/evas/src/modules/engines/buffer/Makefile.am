@@ -21,9 +21,9 @@ evas_engine.h \
 evas_engine.c \
 evas_outbuf.c
 
+module_la_LIBADD  =  $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS =  -module -avoid-version \
                      -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
-
 module_la_DEPENDENCIES = \
 $(top_builddir)/config.h
 

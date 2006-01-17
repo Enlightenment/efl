@@ -22,7 +22,7 @@ evas_engine.h \
 evas_engine.c \
 evas_x_main.c
 
-module_la_LIBADD       = @CAIRO_LIBS@ @x_libs@ ../cairo_common/libevas_engine_cairo_common.la
+module_la_LIBADD       = @CAIRO_LIBS@ @x_libs@ $(top_builddir)/src/modules/engines/cairo_common/libevas_engine_cairo_common.la $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS      = -module -avoid-version -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
 
 module_la_DEPENDENCIES = \

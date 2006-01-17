@@ -25,7 +25,7 @@ evas_engine.c \
 evas_outbuf.c \
 evas_qt_main.cpp
 
-module_la_LIBADD       = @qt_libs@
+module_la_LIBADD       = @qt_libs@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS      = -module -avoid-version -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
 
 module_la_DEPENDENCIES = \

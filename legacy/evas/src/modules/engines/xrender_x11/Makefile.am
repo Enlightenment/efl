@@ -26,7 +26,7 @@ evas_engine_image.c \
 evas_engine_font.c \
 evas_engine_gradient.c
 
-module_la_LIBADD       = @x_libs@
+module_la_LIBADD       = @x_libs@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS      = -module -avoid-version \
 				-L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
 

@@ -25,7 +25,7 @@ evas_gl_polygon.c \
 evas_gl_rectangle.c \
 evas_gl_texture.c
 
-libevas_engine_gl_common_la_LIBADD       = @gl_libs@
+libevas_engine_gl_common_la_LIBADD       = @gl_libs@ $(top_builddir)/src/lib/libevas.la
 
 libevas_engine_gl_common_la_DEPENDENCIES = \
 $(top_builddir)/config.h

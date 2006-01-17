@@ -22,7 +22,7 @@ evas_engine.h \
 evas_engine.c \
 evas_x_main.c
 
-module_la_LIBADD       = @gl_libs@ @x_libs@ ../gl_common/libevas_engine_gl_common.la
+module_la_LIBADD       = @gl_libs@ @x_libs@ $(top_builddir)/src/modules/engines/gl_common/libevas_engine_gl_common.la $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS      = -module -avoid-version -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
 
 module_la_DEPENDENCIES = \

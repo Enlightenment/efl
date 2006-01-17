@@ -25,7 +25,7 @@ evas_x_buffer.c \
 evas_x_color.c \
 evas_x_main.c
 
-module_la_LIBADD       = @x_libs@
+module_la_LIBADD       = @x_libs@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS      = -module -avoid-version \
 				-L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
 

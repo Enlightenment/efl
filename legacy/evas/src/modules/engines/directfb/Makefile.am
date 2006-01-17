@@ -22,7 +22,7 @@ evas_engine_dfb_image_objects.c \
 evas_engine_dfb_image_objects.h \
 evas_engine_dfb.h
 
-module_la_LIBADD       = @DIRECTFB_LIBS@
+module_la_LIBADD       = @DIRECTFB_LIBS@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS      = -module -avoid-version \
 				-L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
 

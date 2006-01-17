@@ -25,7 +25,7 @@ evas_xcb_buffer.c \
 evas_xcb_color.c \
 evas_xcb_main.c
 
-module_la_LIBADD       = @xcb_libs@
+module_la_LIBADD       = @xcb_libs@ $(top_builddir)/src/lib/libevas.la
 module_la_LDFLAGS      = -module -avoid-version -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs
 
 module_la_DEPENDENCIES = \
