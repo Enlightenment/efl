@@ -271,15 +271,21 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
    exe = calloc(1, sizeof(Ecore_Exe));
    if (exe == NULL) return NULL;
    
+   if ( (flags & ECORE_EXE_PIPE_AUTO) && (! (flags & ECORE_EXE_PIPE_ERROR)) && (! (flags & ECORE_EXE_PIPE_READ)) )
+      flags |= ECORE_EXE_PIPE_READ;   /* We need something to auto pipe. */
+
    /*  Create some pipes. */
    if (ok)   E_IF_NO_ERRNO_NOLOOP(result, pipe(statusPipe), ok)
         ;
-   if (ok && (flags & ECORE_EXE_PIPE_ERROR))   E_IF_NO_ERRNO_NOLOOP(result, pipe(errorPipe), ok)
-      exe->child_fd_error = errorPipe[0];
-   if (ok && (flags & ECORE_EXE_PIPE_READ))    E_IF_NO_ERRNO_NOLOOP(result, pipe(readPipe),  ok)
-      exe->child_fd_read = readPipe[0];
-   if (ok && (flags & ECORE_EXE_PIPE_WRITE))   E_IF_NO_ERRNO_NOLOOP(result, pipe(writePipe), ok)
-      exe->child_fd_write = writePipe[1];
+   if (ok && (flags & ECORE_EXE_PIPE_ERROR))
+      E_IF_NO_ERRNO_NOLOOP(result, pipe(errorPipe), ok)
+         exe->child_fd_error = errorPipe[0];
+   if (ok && (flags & ECORE_EXE_PIPE_READ))
+      E_IF_NO_ERRNO_NOLOOP(result, pipe(readPipe),  ok)
+         exe->child_fd_read = readPipe[0];
+   if (ok && (flags & ECORE_EXE_PIPE_WRITE))
+      E_IF_NO_ERRNO_NOLOOP(result, pipe(writePipe), ok)
+         exe->child_fd_write = writePipe[1];
 
    if (ok)
       {
@@ -522,16 +528,21 @@ ecore_exe_auto_limits_set(Ecore_Exe *exe, int start_bytes, int end_bytes, int st
     * more generic designs.  It does seem like the closer we get to poll driven, 
     * the more issues and corner cases there are.
     *
+    * Instead of doing the usual register an event handler thing, we are ecore_exe, 
+    * we can take some short cuts.  Don't send the events, just leave the exe buffers
+    * as is until the user asks for them, then return the event.
+    *
     * start = 0,  end = 0;   clogged arteries get flushed, everything is ignored.
     * start = -1, end = -1;  clogged arteries get transferred to internal buffers.  Actually, either == -1 means buffer everything.
     * start = X,  end = 0;   buffer first X out of clogged arteries, flush and ignore rest.
     * start = 0,  end = X;   circular buffer X
     * start = X,  end = Y;   buffer first X out of clogged arteries, circular buffer Y from beginning.
-    * 
+    *
     * bytes vs lines, which ever one reaches the limit first.
-    * 
+    *
     * Other issues -
     * Spank programmer for polling data if polling is not turned on.
+    * Spank programmer for setting up event callbacks if polling is turned on.
     * Spank programmer for freeing the event data if it came from the event system, as that autofrees.
     * Spank the programmer if they try to set the limits bigger than what has been gathered & ignored already, coz they just lost data.
     * Spank onefang and raster for opening this can of worms.
@@ -1048,6 +1059,124 @@ _ecore_exe_exec_it(const char *exe_cmd)
    return;
 }
 
+static Ecore_Exe_Event_Data *
+_ecore_exe_create_event_data(Ecore_Exe *exe, Ecore_Fd_Handler_Flags flags)
+{
+   Ecore_Exe_Event_Data *e = NULL;
+   int is_buffered = 0;
+   unsigned char *inbuf;
+   int inbuf_num;
+
+   /* Sort out what sort of event we are. */
+   if (flags & ECORE_FD_READ)
+      {
+         flags = ECORE_FD_READ;
+         if (exe->flags & ECORE_EXE_PIPE_READ_LINE_BUFFERED)
+            is_buffered = 1;
+      }
+   else
+      {
+         flags = ECORE_FD_ERROR;
+         if (exe->flags & ECORE_EXE_PIPE_ERROR_LINE_BUFFERED)
+            is_buffered = 1;
+      }
+
+   /* Get the data. */
+   if (flags & ECORE_FD_READ)
+      {
+         inbuf = exe->read_data_buf;
+         inbuf_num = exe->read_data_size;
+	 exe->read_data_buf = NULL;
+	 exe->read_data_size = 0;
+      }
+   else
+      {
+         inbuf = exe->error_data_buf;
+         inbuf_num = exe->error_data_size;
+	 exe->error_data_buf = NULL;
+	 exe->error_data_size = 0;
+      }
+		       
+   e = calloc(1, sizeof(Ecore_Exe_Event_Data));
+   if (e)
+      {
+         e->exe = exe;
+	 e->data = inbuf;
+	 e->size = inbuf_num;
+
+         if (is_buffered)
+	    {   /* Deal with line buffering. */
+	       int max = 0;
+	       int count = 0;
+	       int i;
+	       int last = 0;
+	       char *c;
+
+               c = (char *)inbuf;
+	       for (i = 0; i < inbuf_num; i++) /* Find the lines. */
+		  {
+		     if (inbuf[i] == '\n')
+		        {
+			   if (count >= max)
+			      {
+			         /* In testing, the lines seem to arrive in batches of 500 to 1000 lines at most, roughly speaking. */
+				 max += 10;  /* FIXME: Maybe keep track of the largest number of lines ever sent, and add half that many instead of 10. */
+		                 e->lines = realloc(e->lines, sizeof(Ecore_Exe_Event_Data_Line) * (max + 1)); /* Allow room for the NULL termination. */
+			      }
+			   /* raster said to leave the line endings as line endings, however -
+			    * This is line buffered mode, we are not dealing with binary here, but lines.
+			    * If we are not dealing with binary, we must be dealing with ASCII, unicode, or some other text format.
+			    * Thus the user is most likely gonna deal with this text as strings.
+			    * Thus the user is most likely gonna pass this data to str functions.
+			    * rasters way - the endings are always gonna be '\n';  onefangs way - they will always be '\0'
+			    * We are handing them the string length as a convenience.
+			    * Thus if they really want it in raw format, they can e->lines[i].line[e->lines[i].size - 1] = '\n'; easily enough.
+			    * In the default case, we can do this conversion quicker than the user can, as we already have the index and pointer.
+			    * Let's make it easy on them to use these as standard C strings.
+			    *
+			    * onefang is proud to announce that he has just set a new personal record for the
+			    * most over documentation of a simple assignment statement.  B-)
+			    */
+			   inbuf[i] = '\0';
+			   e->lines[count].line = c;
+			   e->lines[count].size = i - last;
+			   last = i + 1;
+			   c = (char *)&inbuf[last];
+			   count++;
+			}
+		  }
+               if (count == 0) /* No lines to send, cancel the event. */
+	          {
+                     _ecore_exe_event_exe_data_free(NULL, e);
+		     e = NULL;
+		  }
+	       else /* NULL terminate the array, so that people know where the end is. */
+	          {
+		     e->lines[count].line = NULL;
+		     e->lines[count].size = 0;
+		  }
+	       if (i > last) /* Partial line left over, save it for next time. */
+	          {
+		     e->size = last;
+                     if (flags & ECORE_FD_READ)
+		        {
+	                   exe->read_data_size = i - last;
+	                   exe->read_data_buf = malloc(exe->read_data_size);
+		           memcpy(exe->read_data_buf, c, exe->read_data_size);
+			}
+		     else
+		        {
+	                   exe->error_data_size = i - last;
+	                   exe->error_data_buf = malloc(exe->error_data_size);
+		           memcpy(exe->error_data_buf, c, exe->error_data_size);
+			}
+		  }
+            }
+      }
+
+   return e;
+}
+
 static int
 _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags)
 {
@@ -1057,6 +1186,8 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_
    int event_type;
 
    exe = data;
+
+   /* Sort out what sort of handler we are. */
    if (flags & ECORE_FD_READ)
       {
          flags = ECORE_FD_READ;
@@ -1123,86 +1254,25 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_
 		     if (inbuf) 
 		        {
 		           Ecore_Exe_Event_Data *e;
-		       
-		           e = calloc(1, sizeof(Ecore_Exe_Event_Data));
-		           if (e)
+
+                           /* Stash the data away for later. */
+                           if (flags & ECORE_FD_READ)
+	                      {
+                                 exe->read_data_buf = inbuf;
+                                 exe->read_data_size = inbuf_num;
+	                      }
+	                   else
+	                      {
+                                 exe->error_data_buf = inbuf ;
+                                 exe->error_data_size = inbuf_num;
+	                      }
+
+                           if (! (exe->flags & ECORE_EXE_PIPE_AUTO))
 			      {
-			         e->exe = exe;
-			         e->data = inbuf;
-			         e->size = inbuf_num;
-
-                                 if (is_buffered)
-				    {   /* Deal with line buffering. */
-				       int max = 0;
-				       int count = 0;
-				       int i;
-				       int last = 0;
-				       char *c;
-
-                                       c = (char *)inbuf;
-				       for (i = 0; i < inbuf_num; i++) /* Find the lines. */
-				          {
-					     if (inbuf[i] == '\n')
-					        {
-					           if (count >= max)
-					              {
-						         /* In testing, the lines seem to arrive in batches of 500 to 1000 lines at most, roughly speaking. */
-						         max += 10;  /* FIXME: Maybe keep track of the largest number of lines ever sent, and add half that many instead of 10. */
-		                                         e->lines = realloc(e->lines, sizeof(Ecore_Exe_Event_Data_Line) * (max + 1)); /* Allow room for the NULL termination. */
-						      }
-						   /* raster said to leave the line endings as line endings, however -
-						    * This is line buffered mode, we are not dealing with binary here, but lines.
-						    * If we are not dealing with binary, we must be dealing with ASCII, unicode, or some other text format.
-						    * Thus the user is most likely gonna deal with this text as strings.
-						    * Thus the user is most likely gonna pass this data to str functions.
-						    * rasters way - the endings are always gonna be '\n';  onefangs way - they will always be '\0'
-						    * We are handing them the string length as a convenience.
-						    * Thus if they really want it in raw format, they can e->lines[i].line[e->lines[i].size - 1] = '\n'; easily enough.
-						    * In the default case, we can do this conversion quicker than the user can, as we already have the index and pointer.
-						    * Let's make it easy on them to use these as standard C strings.
-						    *
-						    * onefang is proud to announce that he has just set a new personal record for the
-						    * most over documentation of a simple assignment statement.  B-)
-						    */
-						   inbuf[i] = '\0';
-						   e->lines[count].line = c;
-						   e->lines[count].size = i - last;
-						   last = i + 1;
-						   c = (char *)&inbuf[last];
-					           count++;
-					        }
-					  }
-					  if (count == 0) /* No lines to send, cancel the event. */
-					     {
-                                                _ecore_exe_event_exe_data_free(NULL, e);
-					        e = NULL;
-					     }
-					  else /* NULL terminate the array, so that people know where the end is. */
-					     {
-						e->lines[count].line = NULL;
-						e->lines[count].size = 0;
-					     }
-					  if (i > last) /* Partial line left over, save it for next time. */
-					     {
-					        e->size = last;
-                                                if (flags & ECORE_FD_READ)
-						   {
-	                                              exe->read_data_size = i - last;
-	                                              exe->read_data_buf = malloc(exe->read_data_size);
-		                                      memcpy(exe->read_data_buf, c, exe->read_data_size);
-						   }
-						else
-						   {
-	                                              exe->error_data_size = i - last;
-	                                              exe->error_data_buf = malloc(exe->error_data_size);
-		                                      memcpy(exe->error_data_buf, c, exe->error_data_size);
-						   }
-					     }
-				    }
-
-				 if (e)   /* Send the event. */
+                                 e = _ecore_exe_create_event_data(exe, flags);
+			         if (e)   /* Send the event. */
 			            ecore_event_add(event_type, e,
-					    _ecore_exe_event_exe_data_free, NULL);
+				          _ecore_exe_event_exe_data_free, NULL);
 			      }
 		        }
 		     if (lost_exe)
@@ -1222,7 +1292,7 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_
 			    * recently and the pid has not had a chance to recycle.
 			    * It is also a paranoid catchall, coz the usual ecore_signal
 			    * mechenism should kick in.  But let's give it a good
-			    * kick anyway.
+			    * kick in the head anyway.
 			    */
                            ecore_exe_terminate(exe);   
                         }
@@ -1354,4 +1424,5 @@ _ecore_exe_event_del_free(void *data __UNUSED__, void *ev)
    if (e->exe) ecore_exe_free(e->exe);
    free(e);
 }
+
 #endif

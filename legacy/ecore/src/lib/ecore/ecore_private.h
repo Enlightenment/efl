@@ -156,7 +156,8 @@ enum _Ecore_Exe_Flags
    ECORE_EXE_PIPE_ERROR = 4,
    ECORE_EXE_PIPE_READ_LINE_BUFFERED = 8,
    ECORE_EXE_PIPE_ERROR_LINE_BUFFERED = 16,
-   ECORE_EXE_RESPAWN = 32
+   ECORE_EXE_PIPE_AUTO = 32,
+   ECORE_EXE_RESPAWN = 64
    /* FIXME: Getting respawn to work
     *
     * There is no way that we can do anything about the internal state info of
