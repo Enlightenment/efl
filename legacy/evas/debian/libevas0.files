@@ -1,3 +1,2 @@
 usr/lib/lib*.so.*
-usr/share/evas/*.ttf
-usr/share/evas/fonts.*
+usr/lib/evas/modules/*
