@@ -7,7 +7,8 @@ AUTOMAKE_OPTIONS     = 1.4 foreign
 INCLUDES	     = -I. \
                        -I$(top_srcdir)/src/lib \
 		       -I$(top_srcdir)/src/lib/include \
-		       @FREETYPE_CFLAGS@ 
+		       @FREETYPE_CFLAGS@
+		       @eet_cflags@
 
 lib_LTLIBRARIES      = libevas.la
 
@@ -26,7 +27,7 @@ libevas_la_LIBADD       = \
 			  -lm \
 			  @dlopen_libs@ \
 			  @FREETYPE_LIBS@ \
-			  @png_libs@ @jpeg_libs@ @eet_libs@ @edb_libs@ 
+			  @eet_libs@
 
 libevas_la_DEPENDENCIES = \
                           $(top_builddir)/config.h \
