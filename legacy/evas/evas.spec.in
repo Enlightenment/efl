@@ -12,9 +12,9 @@ Packager: %{?_packager:%{_packager}}%{!?_packager:Michael Jennings <mej@eterm.or
 Vendor: %{?_vendorinfo:%{_vendorinfo}}%{!?_vendorinfo:The Enlightenment Project (http://www.enlightenment.org/)}
 Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
 #BuildSuggests: xorg-x11-devel freetype2-devel freetype-devel
-BuildRequires: libpng-devel eet-devel edb-devel XFree86-devel libjpeg-devel
+BuildRequires: eet-devel
 BuildRequires: /usr/bin/freetype-config
-Provides: evas evas_software_x11 evas_loader_png evas_loader_jpeg evas_loader_eet evas_loader_edb
+Provides: evas
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
@@ -26,11 +26,172 @@ images, alpha-blend objects much and more.
 Summary: Evas headers, static libraries, documentation and test programs
 Group: System Environment/Libraries
 Requires: %{name} = %{version}
-Requires: libpng-devel eet-devel edb-devel XFree86-devel libjpeg-devel
+Requires: eet-devel XFree86-devel
 Requires: /usr/bin/freetype-config
 
 %description devel
 Headers, static libraries, test programs and documentation for Evas.
+
+%if %{with module_loader_eet}
+%package module_loader_eet
+Summary: EET Image loader module for Evas
+Group: System Environment/Libraries
+BuildRequires: libeet-devel
+%description module_loader_eet
+EET Image loader module for Evas
+%endif
+
+%if %{with module_loader_edb}
+%package module_loader_edb
+Summary: EDB Image loader module for Evas
+Group: System Environment/Libraries
+BuildRequires: libedb-devel
+%description module_loader_edb
+EDB Image loader module for Evas
+%endif
+
+%if %{with module_loader_jpeg}
+%package module_loader_jpeg
+Summary: JPEG Image loader module for Evas
+Group: System Environment/Libraries
+BuildRequires: libjpeg-devel
+%description module_loader_jpeg
+JPEG Image loader module for Evas
+%endif
+
+%if %{with module_loader_png}
+%package module_loader_png
+Summary: PNG Image loader module for Evas
+Group: System Environment/Libraries
+BuildRequires: libpng-devel
+BuildRequires: zlib-devel
+%description module_loader_png
+PNG Image loader module for Evas
+%endif
+
+%if %{with module_saver_eet}
+%package module_saver_eet
+Summary: EET Image saver module for Evas
+Group: System Environment/Libraries
+BuildRequires: libeet-devel
+%description module_saver_eet
+EET Image saver module for Evas
+%endif
+
+%if %{with module_saver_edb}
+%package module_saver_edb
+Summary: EDB Image saver module for Evas
+Group: System Environment/Libraries
+BuildRequires: libedb-devel
+%description module_saver_edb
+EDB Image saver module for Evas
+%endif
+
+%if %{with module_saver_jpeg}
+%package module_saver_jpeg
+Summary: JPEG Image saver module for Evas
+Group: System Environment/Libraries
+BuildRequires: libjpeg-devel
+%description module_saver_jpeg
+JPEG Image saver module for Evas
+%endif
+
+%if %{with module_saver_png}
+%package module_saver_png
+Summary: PNG Image saver module for Evas
+Group: System Environment/Libraries
+BuildRequires: libpng-devel
+BuildRequires: zlib-devel
+%description module_saver_png
+PNG Image saver module for Evas
+%endif
+
+%if %{with module_engine_buffer}
+%package module_engine_buffer
+Summary: Buffer rendering engine module for Evas
+Group: System Environment/Libraries
+%description module_engine_buffer
+Buffer rendering engine module for Evas
+%endif
+
+%if %{with module_engine_cairo}
+%package module_engine_cairo
+Summary: Cairo under X11 rendering engine module for Evas
+Group: System Environment/Libraries
+BuildRequires: cairo-devel
+%description module_engine_cairo
+Cairo under X11 rendering engine module for Evas
+%endif
+
+%if %{with module_engine_directfb}
+%package module_engine_directfb
+Summary: Directfb rendering engine module for Evas
+Group: System Environment/Libraries
+BuildRequires: directfb-devel
+%description module_engine_directfb
+Directfb rendering engine module for Evas
+%endif
+
+%if %{with module_engine_fb}
+%package module_engine_fb
+Summary: Framebuffer rendering engine module for Evas
+Group: System Environment/Libraries
+%description module_engine_fb
+Framebuffer rendering engine module for Evas
+%endif
+
+%if %{with module_engine_gl}
+%package module_engine_gl
+Summary: OpenGL under X11 rendering engine module for Evas
+Group: System Environment/Libraries
+BuildRequires: opengl-devel
+%description module_engine_gl
+OpenGL under X11 rendering engine module for Evas
+%endif
+
+%if %{with module_engine_software_qtopia}
+%package module_engine_software_qtopia
+Summary: Qtopia rendering engine module for Evas
+Group: System Environment/Libraries
+BuildRequires: qtopia-devel
+%description module_engine_software_qtopia
+Qtopia rendering engine module for Evas
+%endif
+
+%if %{with module_engine_software_x11}
+%package module_engine_software_x11
+Summary: Software X11 rendering engine module for Evas
+Group: System Environment/Libraries
+BuildRequires: XFree86-devel
+%description module_engine_software_x11
+Software X11 rendering engine module for Evas
+%endif
+
+%if %{with module_engine_software_xcb}
+%package module_engine_software_xcb
+Summary: Software XCB X11 rendering engine module for Evas
+Group: System Environment/Libraries
+BuildRequires: xcb-devel
+%description module_engine_software_xcb
+Software XCB X11 rendering engine module for Evas
+%endif
+
+%if %{with module_engine_xrender_x11}
+%package module_engine_xrender_x11
+Summary: XRender rendering engine module for Evas
+Group: System Environment/Libraries
+BuildRequires: XFree86-devel
+BuildRequires: xrender-devel
+%description module_engine_xrender_x11
+XRender rendering engine module for Evas
+%endif
+
+
+
+
+
+
+
 
 %prep
 %setup -q -n %{name}-%{version}
@@ -67,5 +228,107 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_bindir}/evas-config
 %{_libdir}/pkgconfig/*
 %{_includedir}/*.h
+
+%if %{with module_loader_eet}
+%files module_loader_eet
+%defattr(-, root, root)
+%{_libdir}/evas/modules/loaders/eet/@MODULE_ARCH@/module.so
+%endif
+
+%if %{with module_loader_edb}
+%files module_loader_edb
+%defattr(-, root, root)
+%{_libdir}/evas/modules/loaders/edb/@MODULE_ARCH@/module.so
+%endif
+
+%if %{with module_loader_jpeg}
+%files module_loader_jpeg
+%defattr(-, root, root)
+%{_libdir}/evas/modules/loaders/jpeg/@MODULE_ARCH@/module.so
+%endif
+
+%if %{with module_loader_png}
+%files module_loader_png
+%defattr(-, root, root)
+%{_libdir}/evas/modules/loaders/png/@MODULE_ARCH@/module.so
+%endif
+
+%if %{with module_saver_eet}
+%files module_saver_eet
+%defattr(-, root, root)
+%{_libdir}/evas/modules/savers/eet/@MODULE_ARCH@/module.so
+%endif
+
+%if %{with module_saver_edb}
+%files module_saver_edb
+%defattr(-, root, root)
+%{_libdir}/evas/modules/savers/edb/@MODULE_ARCH@/module.so
+%endif
+
+%if %{with module_saver_jpeg}
+%files module_saver_jpeg
+%defattr(-, root, root)
+%{_libdir}/evas/modules/savers/jpeg/@MODULE_ARCH@/module.so
+%endif
+
+%if %{with module_saver_png}
+%files module_saver_png
+%defattr(-, root, root)
+%{_libdir}/evas/modules/savers/png/@MODULE_ARCH@/module.so
+%endif
+
+%if %{with module_engine_buffer}
+%files module_engine_buffer
+%defattr(-, root, root)
+%{_libdir}/evas/modules/engines/buffer/@MODULE_ARCH@/module.so
+%endif
+
+%if %{with module_engine_buffer}
+%files module_engine_buffer
+%defattr(-, root, root)
+%{_libdir}/evas/modules/engines/buffer/@MODULE_ARCH@/module.so
+%endif
+
+%if %{with module_engine_cairo_x11}
+%files module_engine_cairo_x11
+%defattr(-, root, root)
+%{_libdir}/evas/modules/engines/cairo_x11/@MODULE_ARCH@/module.so
+%endif
+
+%if %{with module_engine_directfb}
+%files module_engine_directfb
+%defattr(-, root, root)
+%{_libdir}/evas/modules/engines/directfb/@MODULE_ARCH@/module.so
+%endif
+
+%if %{with module_engine_fb}
+%files module_engine_fb
+%defattr(-, root, root)
+%{_libdir}/evas/modules/engines/fb/@MODULE_ARCH@/module.so
+%endif
+
+%if %{with module_engine_gl_x11}
+%files module_engine_gl_x11
+%defattr(-, root, root)
+%{_libdir}/evas/modules/engines/gl_x11/@MODULE_ARCH@/module.so
+%endif
+
+%if %{with module_engine_software_qtopia}
+%files module_engine_software_qtopia
+%defattr(-, root, root)
+%{_libdir}/evas/modules/engines/software_qtopia/@MODULE_ARCH@/module.so
+%endif
+
+%if %{with module_engine_software_x11}
+%files module_engine_software_x11
+%defattr(-, root, root)
+%{_libdir}/evas/modules/engines/software_x11/@MODULE_ARCH@/module.so
+%endif
+
+%if %{with module_engine_xrender_x11}
+%files module_engine_xrender_x11
+%defattr(-, root, root)
+%{_libdir}/evas/modules/engines/xrender_x11/@MODULE_ARCH@/module.so
+%endif
 
 %changelog
