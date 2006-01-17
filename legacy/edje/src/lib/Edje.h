@@ -170,6 +170,8 @@ extern "C" {
    
    /* edje_util.c */
    EAPI void         edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
+   EAPI void         edje_color_class_del(const char *color_class);
+   EAPI Evas_List *  edje_color_class_list(void);
    EAPI void         edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size size);
    EAPI void         edje_extern_object_min_size_set (Evas_Object *obj, Evas_Coord minw, Evas_Coord minh);
    EAPI void         edje_extern_object_max_size_set (Evas_Object *obj, Evas_Coord maxw, Evas_Coord maxh);
@@ -198,6 +200,7 @@ extern "C" {
    EAPI int          edje_object_freeze              (Evas_Object *obj);
    EAPI int          edje_object_thaw                (Evas_Object *obj);
    EAPI void         edje_object_color_class_set     (Evas_Object *obj, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3);
+   EAPI void         edje_object_color_class_del     (Evas_Object *obj, const char *color_class);
    EAPI void         edje_object_text_class_set      (Evas_Object *obj, const char *text_class, const char *font, Evas_Font_Size size);
    EAPI void         edje_object_size_min_get        (Evas_Object *obj, Evas_Coord *minw, Evas_Coord *minh);
    EAPI void         edje_object_size_max_get        (Evas_Object *obj, Evas_Coord *maxw, Evas_Coord *maxh);

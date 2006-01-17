@@ -12,6 +12,15 @@ Evas_Hash *_edje_text_class_member_hash = NULL;
 
 char *_edje_fontset_append = NULL;
 
+typedef struct _Edje_List_Foreach_Data Edje_List_Foreach_Data;
+
+struct _Edje_List_Foreach_Data
+{
+   Evas_List *list;
+};
+
+static Evas_Bool _edje_color_class_list_foreach(Evas_Hash *hash, const char *key, void *data, void *fdata);
+
 /************************** API Routines **************************/
 
 /* FIXDOC: These all need to be looked over, Verified/Expanded upon.  I just got lazy and stopped putting FIXDOC next to each function in this file. */
@@ -135,7 +144,14 @@ edje_object_thaw(Evas_Object *obj)
  * @param b3 Shadow Blue value
  * @param a3 Shadow Alpha value
  *
- * Sets the color class for the Edje.
+ * Sets the color values for a process level color class. This will cause all 
+ * edje parts in the current process that have the specified color class to
+ * have their colors multiplied by these values. (Object level color classes 
+ * set by edje_object_color_class_set() will override the values set by this 
+ * function).
+ *
+ * The first color is the object, the second is the text outline, and the
+ * third is the text shadow. (Note that the second two only apply to text parts)
  */   
 EAPI void
 edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
@@ -150,7 +166,7 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
      {
         cc = calloc(1, sizeof(Edje_Color_Class));
 	if (!cc) return;
-	cc->name = strdup(color_class);
+	cc->name = evas_stringshare_add(color_class);
 	if (!cc->name)
 	  {
 	     free(cc);
@@ -159,7 +175,7 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
 	_edje_color_class_hash = evas_hash_add(_edje_color_class_hash, color_class, cc);
 	if (evas_hash_alloc_error())
 	  {
-	     free(cc->name);
+	     evas_stringshare_del(cc->name);
 	     free(cc);
 	     return;
 	  }
@@ -206,6 +222,57 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
      }
 }
 
+/**
+ * @param color_class
+ *
+ * Deletes any values at the process level for the specified color class.
+ */
+void
+edje_color_class_del(const char *color_class)
+{
+   Edje_Color_Class *cc;
+
+   if (!color_class) return;
+
+   cc = evas_hash_find(_edje_color_class_hash, color_class);
+   if (!cc) return;
+
+   _edje_color_class_hash = evas_hash_del(_edje_color_class_hash, color_class, cc); 
+   evas_stringshare_del(cc->name);
+   free(cc);
+}
+
+/**
+ * Lists all color classes known about by the current process.
+ *
+ * @return A list of color class names (strings). These strings and the list
+ * must be free()'d by the caller.
+ */
+Evas_List *
+edje_color_class_list(void)
+{
+   Edje_List_Foreach_Data *fdata;
+   Evas_List *list;
+
+   fdata = calloc(1, sizeof(Edje_List_Foreach_Data));
+   evas_hash_foreach(_edje_color_class_member_hash, _edje_color_class_list_foreach, fdata);
+
+   list = fdata->list;
+   free(fdata);
+
+   return list;
+}
+
+static Evas_Bool
+_edje_color_class_list_foreach(Evas_Hash *hash, const char *key, void *data, void *fdata)
+{
+   Edje_List_Foreach_Data *fd;
+
+   fd = fdata;
+   fd->list = evas_list_append(fd->list, strdup(key));
+   return 1;
+}
+
 /** Sets the object color class
  * @param obj A valid Evas_Object handle
  * @param color_class
@@ -222,8 +289,12 @@ edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2
  * @param b3 Shadow Blue value
  * @param a3 Shadow Alpha value
  *
- * Applies the color class to the object, where the first color is the
- * object, the second is the outline, and the third is the shadow.
+ * Sets the color values for an object level color class. This will cause all 
+ * edje parts in the specified object that have the specified color class to
+ * have their colors multiplied by these values. 
+ *
+ * The first color is the object, the second is the text outline, and the
+ * third is the text shadow. (Note that the second two only apply to text parts)
  */
 EAPI void
 edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
@@ -273,7 +344,7 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
      }
    cc = malloc(sizeof(Edje_Color_Class));
    if (!cc) return;
-   cc->name = strdup(color_class);
+   cc->name = evas_stringshare_add(color_class);
    if (!cc->name)
      {
 	free(cc);
@@ -294,6 +365,35 @@ edje_object_color_class_set(Evas_Object *obj, const char *color_class, int r, in
    ed->color_classes = evas_list_append(ed->color_classes, cc);
    ed->dirty = 1;
    _edje_recalc(ed);
+}
+
+/**
+ * @param color_class
+ *
+ * Deletes any values at the object level for the specified object and
+ * color class.
+ */
+void
+edje_object_color_class_del(Evas_Object *obj, const char *color_class)
+{
+   Edje *ed;
+   Evas_List *l;
+   Edje_Color_Class *cc = NULL;
+
+   if (!color_class) return;
+
+   ed = _edje_fetch(obj);
+   for (l = ed->color_classes; l; l = l->next)
+     {
+	cc = l->data;
+	if (!strcmp(cc->name, color_class))
+	  {
+	     ed->color_classes = evas_list_remove(ed->color_classes, cc);
+	     evas_stringshare_del(cc->name);
+	     free(cc);
+	     return;
+	  }
+     }
 }
 
 /** Set the Edje text class
@@ -320,7 +420,7 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
      {
         tc = calloc(1, sizeof(Edje_Text_Class));
 	if (!tc) return;
-	tc->name = strdup(text_class);
+	tc->name = evas_stringshare_add(text_class);
 	if (!tc->name)
 	  {
 	     free(tc);
@@ -329,20 +429,20 @@ edje_text_class_set(const char *text_class, const char *font, Evas_Font_Size siz
 	_edje_text_class_hash = evas_hash_add(_edje_text_class_hash, text_class, tc);
 	if (evas_hash_alloc_error())
 	  {
-	     free(tc->name);
+	     evas_stringshare_del(tc->name);
 	     free(tc);
 	     return;
 	  }
 
-	tc->font = strdup(font);
+	tc->font = evas_stringshare_add(font);
 	tc->size = size;
 	return;
      }
 
    if ((tc->size == size) && (tc->font) && (!strcmp(tc->font, font)))
      return;
-   free(tc->font);
-   tc->font = strdup(font);
+   evas_stringshare_del(tc->font);
+   tc->font = evas_stringshare_add(font);
    if (!tc->font)
      {
 	_edje_text_class_hash = evas_hash_del(_edje_text_class_hash, text_class, tc);
@@ -395,8 +495,8 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
 	     if ((!tc->font) && (!font) && 
 		 (tc->size == size))
 	       return;
-	     if (tc->font) free(tc->font);
-	     if (font) tc->font = strdup(font);
+	     if (tc->font) evas_stringshare_del(tc->font);
+	     if (font) tc->font = evas_stringshare_add(font);
 	     else tc->font = NULL;
 	     tc->size = size;
 	     ed->dirty = 1;
@@ -406,13 +506,13 @@ edje_object_text_class_set(Evas_Object *obj, const char *text_class, const char 
      }
    tc = malloc(sizeof(Edje_Text_Class));
    if (!tc) return;
-   tc->name = strdup(text_class);
+   tc->name = evas_stringshare_add(text_class);
    if (!tc->name)
      {
 	free(tc);
 	return;
      }
-   if (font) tc->font = strdup(font);
+   if (font) tc->font = evas_stringshare_add(font);
    else tc->font = NULL;
    tc->size = size;
    ed->text_classes = evas_list_append(ed->text_classes, tc);
@@ -1471,7 +1571,7 @@ static Evas_Bool color_class_hash_list_free(Evas_Hash *hash,
   Edje_Color_Class *cc;
 
   cc = data;
-  if (cc->name) free(cc->name);
+  if (cc->name) evas_stringshare_del(cc->name);
   free(cc);
   
   return 1;
@@ -1568,8 +1668,8 @@ static Evas_Bool text_class_hash_list_free(Evas_Hash *hash,
   Edje_Text_Class *tc;
 
   tc = data;
-  if (tc->name) free(tc->name);
-  if (tc->font) free(tc->font);
+  if (tc->name) evas_stringshare_del(tc->name);
+  if (tc->font) evas_stringshare_del(tc->font);
   free(tc);
   
   return 1;
