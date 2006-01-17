@@ -682,7 +682,7 @@ struct _Edje_Text_Style
 
 struct _Edje_Color_Class
 {
-   char          *name;
+   const char    *name;
    unsigned char  r, g, b, a;
    unsigned char  r2, g2, b2, a2;
    unsigned char  r3, g3, b3, a3;
@@ -690,9 +690,9 @@ struct _Edje_Color_Class
 
 struct _Edje_Text_Class
 {
-   char   *name;
-   char   *font;
-   double  size;
+   const char   *name;
+   const char   *font;
+   double        size;
 };
 
 struct _Edje_Var_Int
