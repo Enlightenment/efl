@@ -13,6 +13,8 @@
 
 #include "ecore_config_private.h"
 
+#define CHUNKLEN 4096
+
 /*****************************************************************************/
 /* STRINGS */
 /***********/
@@ -47,36 +49,46 @@ estring_disown(estring * e)
 int
 estring_appendf(estring * e, const char *fmt, ...)
 {
-   va_list     ap;
-   size_t      need;
-   char       *p;
+   int                 need;
+   va_list             ap;
+   char               *p;
 
    if (!e)
       return ECORE_CONFIG_ERR_FAIL;
 
    if (!e->str)
-     e->used = e->alloc = 0;
-
-   va_start(ap, fmt);
-   need = vsnprintf(NULL, 0, fmt, ap);
-   va_end(ap);
-   if(need >= (e->alloc - e->used))
      {
-	if( !(p = (char *)realloc( e->str, need + e->used + 1 )) )
-	   {
+	e->used = e->alloc = 0;
+	if (!(e->str = (char *)malloc(e->alloc = 512)))
+	   return ECORE_CONFIG_ERR_OOM;
+     }
+
+ retry:
+   va_start(ap, fmt);
+   need = vsnprintf(e->str + e->used, e->alloc - e->used, fmt, ap);
+   va_end(ap);
+
+   if ((need >= (e->alloc - e->used)) || (need < 0))
+     {
+	if (need < 0)
+	   need = 2 * e->alloc;
+	else
+	   need++;
+	need += e->used;
+	need += (CHUNKLEN - (need % CHUNKLEN));
+
+	if (!(p = (char *)realloc(e->str, need)))
+	  {
 	     free(e->str);
 	     e->alloc = e->used = 0;
 	     return ECORE_CONFIG_ERR_OOM;
-	   }
-	e->alloc += need + 1;
+	  }
+	e->alloc = need;
 	e->str = p;
+	goto retry;
      }
 
-   va_start(ap, fmt);
-   vsnprintf(e->str + e->used, e->alloc - e->used, fmt, ap);
-   va_end(ap);
-
-   return e->used;
+   return e->used += need;
 }
 
 int
