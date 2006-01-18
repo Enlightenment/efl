@@ -339,7 +339,7 @@ ecore_config_as_string_get(const char *key)
 	   }
 	if (val)
 	   {
-	     esprintf(&r, "%s:%s=%s", key, e->type, val);
+	     esprintf(&r, "%s:%s=%s", key, _ecore_config_type[e->type], val);
 	     free(val);
 	   }
      }
@@ -660,6 +660,7 @@ ecore_config_set(const char *key, char *val)
    int                 type;
    int                 tmpi;
    float               tmpf;
+   long                tmpl;
 
    type = ecore_config_type_guess(key, val);
    if (type == ECORE_CONFIG_INT || type == ECORE_CONFIG_BLN)
@@ -671,6 +672,11 @@ ecore_config_set(const char *key, char *val)
      {
 	tmpf = atof(val);
 	return ecore_config_typed_set(key, (void *)&tmpf, type);
+     }
+   else if (type == ECORE_CONFIG_RGB)
+     {
+	__ecore_argbstr_to_long(val, &tmpl);
+	return ecore_config_typed_set(key, (void *)&tmpl, type);
      }
    else
       return ecore_config_typed_set(key, (void *)val, type);
