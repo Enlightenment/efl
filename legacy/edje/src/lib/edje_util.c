@@ -231,6 +231,7 @@ void
 edje_color_class_del(const char *color_class)
 {
    Edje_Color_Class *cc;
+   Evas_List *members;
 
    if (!color_class) return;
 
@@ -240,6 +241,17 @@ edje_color_class_del(const char *color_class)
    _edje_color_class_hash = evas_hash_del(_edje_color_class_hash, color_class, cc); 
    evas_stringshare_del(cc->name);
    free(cc);
+
+   members = evas_hash_find(_edje_color_class_member_hash, color_class);
+   while (members)
+     {
+	Edje *ed;
+
+	ed = members->data;
+	ed->dirty = 1;
+	_edje_recalc(ed);
+	members = members->next;
+     }
 }
 
 /**
@@ -394,6 +406,10 @@ edje_object_color_class_del(Evas_Object *obj, const char *color_class)
 	     return;
 	  }
      }
+
+  ed = _edje_fetch(obj);
+	ed->dirty = 1;
+	_edje_recalc(ed);
 }
 
 /** Set the Edje text class
