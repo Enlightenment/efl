@@ -407,9 +407,9 @@ edje_object_color_class_del(Evas_Object *obj, const char *color_class)
 	  }
      }
 
-  ed = _edje_fetch(obj);
-	ed->dirty = 1;
-	_edje_recalc(ed);
+   ed = _edje_fetch(obj);
+   ed->dirty = 1;
+   _edje_recalc(ed);
 }
 
 /** Set the Edje text class
