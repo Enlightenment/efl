@@ -104,6 +104,10 @@ static Ecore_Con_Dns_Cache *dns_cache = NULL;
 int
 ecore_con_dns_init(void)
 {
+#if 1   
+   dns_init++;
+   return dns_init;
+#else
    FILE *file;
    char buf[1024];
    char *p, *p2;
@@ -218,11 +222,16 @@ ecore_con_dns_init(void)
      }
 
    return dns_init;
+#endif   
 }
 
 int
 ecore_con_dns_shutdown(void)
 {
+#if 1
+   dns_init--;
+   return  dns_init;
+#else   
    Ecore_List2 *l;
    int i;
 
@@ -248,13 +257,140 @@ ecore_con_dns_shutdown(void)
    search_count = 0;
 
    return dns_init;
+#endif   
 }
+
+#if 1
+typedef struct _CB_Data CB_Data;
+
+struct _CB_Data
+{
+   void (*cb_done) (void *data, struct hostent *hostent);
+   void *data;
+   Ecore_Fd_Handler *fdh;
+   pid_t pid;
+   Ecore_Event_Handler *handler;
+};
+
+static void
+_ecore_con_dns_readdata(CB_Data *cbdata)
+{
+   struct hostent he;
+   struct in_addr addr;
+   char *addr2;
+   ssize_t size;
+   
+   size = read(ecore_main_fd_handler_fd_get(cbdata->fdh), &(addr.s_addr),
+	       sizeof(in_addr_t));
+   if (size == sizeof(in_addr_t))
+     {
+	addr2 = (char *)&addr;
+	he.h_addrtype = AF_INET;
+	he.h_length = sizeof(in_addr_t);
+	he.h_addr_list = &addr2;
+	cbdata->cb_done(cbdata->data, &he);
+     }
+   else
+     cbdata->cb_done(cbdata->data, NULL);
+   cbdata->cb_done = NULL;
+}
+
+static int
+_ecore_con_dns_data_handler(void *data, Ecore_Fd_Handler *fd_handler)
+{
+   CB_Data *cbdata;
+
+   cbdata = data;
+   if (cbdata->cb_done)
+     {
+	if (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ))
+	  _ecore_con_dns_readdata(cbdata);
+	else
+	  {
+	     cbdata->cb_done(cbdata->data, NULL);
+	     cbdata->cb_done = NULL;
+	  }
+     }
+   return 1;
+}
+
+static int
+_ecore_con_dns_exit_handler(void *data, int type, void *event)
+{
+   CB_Data *cbdata;
+   Ecore_Exe_Event_Del *ev;
+   
+   ev = event;
+   cbdata = data;
+   if (cbdata->pid != ev->pid) return 1;
+   close(ecore_main_fd_handler_fd_get(cbdata->fdh));
+   ecore_main_fd_handler_del(cbdata->fdh);
+   ecore_event_handler_del(cbdata->handler);
+   free(cbdata);
+   return 0;
+}
+#else
+#endif
 
 int
 ecore_con_dns_lookup(const char *name,
-		     void (*done_cb)(void *data, struct hostent *hostent),
+		     void (*done_cb) (void *data, struct hostent *hostent),
 		     void *data)
 {
+#if 1
+   CB_Data *cbdata;
+   int fd[2];
+   
+   /* FIXME: set up one-way pipe back to parent and fdhandler */
+   if (pipe(fd) < 0) return 0;
+   cbdata = calloc(1, sizeof(CB_Data));
+   if (!cbdata)
+     {
+	close(fd[0]);
+	close(fd[1]);
+	return 0;
+     }
+   cbdata->cb_done = done_cb;
+   cbdata->data = data;
+   if (!(cbdata->fdh = ecore_main_fd_handler_add(fd[0], ECORE_FD_READ, 
+						 _ecore_con_dns_data_handler,
+						 cbdata,
+						 NULL, NULL)))
+     {
+	free(cbdata);
+	close(fd[0]);
+	close(fd[1]);
+	return 0;
+     }
+			     
+   if ((cbdata->pid = fork()) == 0)
+     {
+	struct hostent *he;
+	
+	/* CHILD */
+	he = gethostbyname(name);
+	if (he)
+	  {
+	     struct in_addr addr;
+	     
+	     memcpy((struct in_addr *)&addr, he->h_addr,
+		    sizeof(struct in_addr));
+	     write(fd[1], &(addr.s_addr), sizeof(in_addr_t));
+	  }
+	close(fd[1]);
+	exit(0);
+     }
+   /* PARENT */
+   cbdata->handler = ecore_event_handler_add(ECORE_EXE_EVENT_DEL, _ecore_con_dns_exit_handler, cbdata);
+   if (!cbdata->handler)
+     {
+	ecore_main_fd_handler_del(cbdata->fdh);
+	free(cbdata);
+	close(fd[0]);
+	close(fd[1]);
+	return 0;
+     }
+#else
    Ecore_Con_Dns_Query *query;
    Ecore_Con_Dns_Cache *current;
    Ecore_List2 *l;
@@ -311,9 +447,12 @@ ecore_con_dns_lookup(const char *name,
    query->search = -1;
 
    _ecore_con_dns_ghbn(query, name);
+#endif   
    return 1;
 }
 
+#if 1
+#else
 static void
 _ecore_con_dns_ghbn(Ecore_Con_Dns_Query *query, const char *hostname)
 {
@@ -780,3 +919,4 @@ _ecore_con_hostname_get(unsigned char *buf, char *hostname,
      data++;
    return data;
 }
+#endif

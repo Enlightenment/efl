@@ -66,6 +66,7 @@ ecore_con_init(void)
 {
    if (++init_count != 1) return init_count;
 
+   ecore_init();
    ECORE_CON_EVENT_CLIENT_ADD = ecore_event_type_new();
    ECORE_CON_EVENT_CLIENT_DEL = ecore_event_type_new();
    ECORE_CON_EVENT_SERVER_ADD = ecore_event_type_new();
@@ -99,6 +100,8 @@ ecore_con_shutdown(void)
 
    ecore_con_dns_shutdown();
 
+   ecore_shutdown();
+   
    return init_count;
 }
 
@@ -450,7 +453,10 @@ ecore_con_server_connect(Ecore_Con_Type compl_type,
    ECORE_MAGIC_SET(svr, ECORE_MAGIC_CON_SERVER);   
 
    if (type == ECORE_CON_REMOTE_SYSTEM)
-     ecore_con_dns_lookup(svr->name, _ecore_con_cb_dns_lookup, svr);
+     {
+	if (!ecore_con_dns_lookup(svr->name, _ecore_con_cb_dns_lookup, svr))
+	  goto error;
+     }
 
    return svr;
    
