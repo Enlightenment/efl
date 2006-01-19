@@ -293,7 +293,7 @@ main(int argc, char **argv)
    
    if (argc != 3)
      {
-	printf("Usage: eddje_test edje_file.edj part_to_load\n");
+	printf("Usage: edje_test edje_file.edj part_to_load\n");
 	exit(-1);
      }
    
