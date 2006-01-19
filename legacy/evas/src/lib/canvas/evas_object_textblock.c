@@ -421,7 +421,7 @@ _line_free(Evas_Object *obj, Evas_Object_Textblock_Line *ln)
 	if (fi->item) evas_stringshare_del(fi->item);
 	free(fi);
      }
-   free(ln);
+   if (ln) free(ln);
 }
 
 static void
