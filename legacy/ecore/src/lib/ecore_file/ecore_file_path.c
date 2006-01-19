@@ -46,7 +46,8 @@ _ecore_file_path_from_env(const char *env)
 
         if (!*p)
           {
-             ecore_list_append(path, strdup(last));
+	     if (!ecore_file_path_dir_exists(last))
+	       ecore_list_append(path, strdup(last));
              last = p + 1;
           }
      }
@@ -55,6 +56,19 @@ _ecore_file_path_from_env(const char *env)
 
    free(env_path);
    return path;
+}
+
+EAPI int
+ecore_file_path_dir_exists(const char *in_dir)
+{
+   char *dir;
+   
+   ecore_list_goto_first(__ecore_file_path_bin);
+   while ((dir = ecore_list_next(__ecore_file_path_bin)) != NULL)
+     {
+	if (!strcmp(dir, in_dir)) return 1;
+     }
+   return 0;
 }
 
 EAPI int
