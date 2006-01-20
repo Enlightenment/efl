@@ -184,7 +184,7 @@ _ecore_signal_call(void)
 		  e->exe = _ecore_exe_find(pid);
 		  
 		  if (sigchld_info.si_signo)
-		    e->data = sigchld_info; /* FIXME: I'm not sure, but maybe we should clone this.  I don't know if anybody uses it. */
+		    e->data = sigchld_info; /* No need to clone this. */
 		  
                   if ((e->exe) && (e->exe->flags & (ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR)))
                      {
