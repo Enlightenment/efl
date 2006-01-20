@@ -539,6 +539,8 @@ ecore_exe_auto_limits_set(Ecore_Exe *exe, int start_bytes, int end_bytes, int st
     * start = X,  end = Y;   buffer first X out of clogged arteries, circular buffer Y from beginning.
     *
     * bytes vs lines, which ever one reaches the limit first.
+    * Before we go beyond the start+end limit, leave the end buffer empty, and store both in the start buffer, coz they overlap.
+    * After we pass the the start+end limit, insert "\n...\n" at the end of the start buffer, copy the rest to the end buffer, then store in the end buffer.
     *
     * Other issues -
     * Spank programmer for polling data if polling is not turned on.
