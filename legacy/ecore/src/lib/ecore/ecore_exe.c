@@ -556,7 +556,7 @@ ecore_exe_auto_limits_set(Ecore_Exe *exe, int start_bytes, int end_bytes, int st
  * Gets the auto pipe data for the given process handle
  *
  * @param   exe The given process handle.
- * @param   flags   The flag parameters for how to deal with inter-process I/O
+ * @param   flags   Is this a ECORE_FD_READ or ECORE_FD_ERROR? 
  * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI Ecore_Exe_Event_Data *
