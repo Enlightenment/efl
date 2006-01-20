@@ -241,7 +241,7 @@ ecore_file_get_file(const char *path)
 }
 
 EAPI char *
-ecore_file_get_dir(char *file)
+ecore_file_get_dir(const char *file)
 {
    char               *p;
    char                buf[PATH_MAX];
