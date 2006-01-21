@@ -100,12 +100,12 @@ static void         _emotion_yuy2_to_bgra32        (int width, int height, unsig
 static vo_info_t _emotion_info = 
 {
    1,                        /* priority */
-     XINE_VISUAL_TYPE_NONE   /* visual type */
+   XINE_VISUAL_TYPE_NONE   /* visual type */
 };
 
-plugin_info_t xine_plugin_info[] = 
+plugin_info_t emotion_xine_plugin_info[] =
 {
-     { PLUGIN_VIDEO_OUT, 20, "emotion", XINE_VERSION_CODE, &_emotion_info, _emotion_class_init },
+     { PLUGIN_VIDEO_OUT, 21, "emotion", XINE_VERSION_CODE, &_emotion_info, _emotion_class_init },
      { PLUGIN_NONE, 0, "", 0, NULL, NULL }
 };
 
@@ -185,6 +185,7 @@ _emotion_open(video_driver_class_t *driver_class, const void *visual)
    dv->vo_driver.dispose              = _emotion_dispose;
    dv->vo_driver.redraw_needed        = _emotion_redraw;
    dv->ev                             = (Emotion_Xine_Video *)visual;
+//   printf("driver ret %p\n", &dv->vo_driver);
    return &dv->vo_driver;
 }    
 
@@ -261,7 +262,7 @@ _emotion_property_set(vo_driver_t *vo_driver, int property, int value)
       case VO_PROP_ASPECT_RATIO:
 	if (value >= XINE_VO_ASPECT_NUM_RATIOS)
 	  value = XINE_VO_ASPECT_AUTO;
-	printf("DRIVER RATIO SET %i!\n", value);
+//	printf("DRIVER RATIO SET %i!\n", value);
 	dv->ratio = value;
 	break;
       default:
@@ -360,7 +361,7 @@ _emotion_frame_format_update(vo_driver_t *vo_driver, vo_frame_t *vo_frame, uint3
 	       {
 		  int y_size, uv_size;
 		  
-        fr->frame.format = EMOTION_YV12;
+		  fr->frame.format = EMOTION_YV12;
 		  fr->vo_frame.pitches[0] = 8 * ((width + 7) / 8);
 		  fr->vo_frame.pitches[1] = 8 * ((width + 15) / 16);
 		  fr->vo_frame.pitches[2] = 8 * ((width + 15) / 16);
@@ -384,7 +385,7 @@ _emotion_frame_format_update(vo_driver_t *vo_driver, vo_frame_t *vo_frame, uint3
 		  fr->frame.obj = dv->ev->obj;
 	       }
 	     break;
-      case XINE_IMGFMT_YUY2: 
+	   case XINE_IMGFMT_YUY2: 
 	       {
 		  fr->frame.format = EMOTION_BGRA;
 		  fr->vo_frame.pitches[0] = 8 * ((width + 3) / 4);
@@ -394,14 +395,14 @@ _emotion_frame_format_update(vo_driver_t *vo_driver, vo_frame_t *vo_frame, uint3
 		  fr->vo_frame.base[0] = malloc(fr->vo_frame.pitches[0] * height);
 		  fr->vo_frame.base[1] = NULL;
 		  fr->vo_frame.base[2] = NULL;
-        
+		  
 		  fr->frame.w = fr->width;
 		  fr->frame.h = fr->height;
 		  fr->frame.ratio = fr->vo_frame.ratio;
 		  fr->frame.y = NULL;
 		  fr->frame.u = NULL;
 		  fr->frame.v = NULL;
-        fr->frame.bgra_data = malloc(fr->width * fr->height * 4);
+		  fr->frame.bgra_data = malloc(fr->width * fr->height * 4);
 		  fr->frame.y_stride = 0;
 		  fr->frame.u_stride = 0;
 		  fr->frame.v_stride = 0;
@@ -415,9 +416,9 @@ _emotion_frame_format_update(vo_driver_t *vo_driver, vo_frame_t *vo_frame, uint3
 	     && ((fr->vo_frame.base[0] == NULL)
 		 || (fr->vo_frame.base[1] == NULL)
 		 || (fr->vo_frame.base[2] == NULL)))
-      || ((format == XINE_IMGFMT_YUY2)
-	     && ((fr->vo_frame.base[0] == NULL)
-       || (fr->frame.bgra_data == NULL))))
+	    || ((format == XINE_IMGFMT_YUY2)
+		&& ((fr->vo_frame.base[0] == NULL)
+		    || (fr->frame.bgra_data == NULL))))
 	  {
 	     _emotion_frame_data_free(fr);
 	  }
@@ -439,11 +440,11 @@ _emotion_frame_display(vo_driver_t *vo_driver, vo_frame_t *vo_frame)
      {
 	void *buf;
 	int ret;
-
-   if (fr->format == XINE_IMGFMT_YUY2)
-     {
-   _emotion_yuy2_to_bgra32(fr->width, fr->height, fr->vo_frame.base[0], fr->frame.bgra_data);
-     }
+	
+	if (fr->format == XINE_IMGFMT_YUY2)
+	  {
+	     _emotion_yuy2_to_bgra32(fr->width, fr->height, fr->vo_frame.base[0], fr->frame.bgra_data);
+	  }
 	
 	buf = &(fr->frame);
 	fr->frame.timestamp = (double)fr->vo_frame.vpts / 90000.0;
@@ -482,8 +483,8 @@ _emotion_frame_data_free(Emotion_Frame *fr)
      }
    if (fr->frame.bgra_data)
      {
-   free(fr->frame.bgra_data);
-   fr->frame.bgra_data = NULL;
+	free(fr->frame.bgra_data);
+	fr->frame.bgra_data = NULL;
      }
 }
 
@@ -538,10 +539,11 @@ _emotion_overlay_blend(vo_driver_t *vo_driver, vo_frame_t *vo_frame, vo_overlay_
 static void _emotion_overlay_mem_blend_8(uint8_t *mem, uint8_t val, uint8_t o, size_t sz)
 {
    uint8_t *limit = mem + sz;
-   while (mem < limit) {
-      *mem = BLEND_BYTE(*mem, val, o);
-      mem++;
-   }
+   while (mem < limit)
+     {
+	*mem = BLEND_BYTE(*mem, val, o);
+	mem++;
+     }
 }
 
 static void _emotion_overlay_blend_yuv(uint8_t *dst_base[3], vo_overlay_t * img_overl, int dst_width, int dst_height, int dst_pitches[3])
@@ -588,38 +590,110 @@ static void _emotion_overlay_blend_yuv(uint8_t *dst_base[3], vo_overlay_t * img_
      src_height = dst_height - 1 - y_off;
    
    rlelen=rle_remainder=0;
-   for (y = 0; y < src_height; y++) {
-      ymask = ((img_overl->hili_top > y) || (img_overl->hili_bottom < y));
-      xmask = 0;
-      
-      for (x = 0; x < src_width;) {
-	 uint16_t o;
-	 
-	 if (rlelen == 0) {
-	    rle_remainder = rlelen = rle->len;
-	    clr = rle->color;
-	    rle++;
-	 }
-	 if (rle_remainder == 0) {
-	    rle_remainder = rlelen;
-	 }
-	 if ((rle_remainder + x) > src_width) {
-	    /* Do something for long rlelengths */
-	    rle_remainder = src_width - x;
-	 } 
-	 
-	 if (ymask == 0) {
-	    if (x <= img_overl->hili_left) {
-	       /* Starts outside clip area */
-	       if ((x + rle_remainder - 1) > img_overl->hili_left ) {
-		  /* Cutting needed, starts outside, ends inside */
-		  rle_this_bite = (img_overl->hili_left - x + 1);
-		  rle_remainder -= rle_this_bite;
-		  rlelen -= rle_this_bite;
-		  my_clut = (Emotion_Lut *) img_overl->color;
-		  my_trans = img_overl->trans;
-		  xmask = 0;
-	       } else {
+   for (y = 0; y < src_height; y++)
+     {
+	ymask = ((img_overl->hili_top > y) || (img_overl->hili_bottom < y));
+	xmask = 0;
+	
+	for (x = 0; x < src_width;)
+	  {
+	     uint16_t o;
+	     
+	     if (rlelen == 0)
+	       {
+		  rle_remainder = rlelen = rle->len;
+		  clr = rle->color;
+		  rle++;
+	       }
+	     if (rle_remainder == 0)
+	       {
+		  rle_remainder = rlelen;
+	       }
+	     if ((rle_remainder + x) > src_width)
+	       {
+		  /* Do something for long rlelengths */
+		  rle_remainder = src_width - x;
+	       } 
+	     
+	     if (ymask == 0)
+	       {
+		  if (x <= img_overl->hili_left)
+		    {
+		       /* Starts outside clip area */
+		       if ((x + rle_remainder - 1) > img_overl->hili_left )
+			 {
+			    /* Cutting needed, starts outside, ends inside */
+			    rle_this_bite = (img_overl->hili_left - x + 1);
+			    rle_remainder -= rle_this_bite;
+			    rlelen -= rle_this_bite;
+			    my_clut = (Emotion_Lut *) img_overl->color;
+			    my_trans = img_overl->trans;
+			    xmask = 0;
+			 }
+		       else
+			 {
+			    /* no cutting needed, starts outside, ends outside */
+			    rle_this_bite = rle_remainder;
+			    rle_remainder = 0;
+			    rlelen -= rle_this_bite;
+			    my_clut = (Emotion_Lut *) img_overl->color;
+			    my_trans = img_overl->trans;
+			    xmask = 0;
+			 }
+		    }
+		  else if (x < hili_right)
+		    {
+		       /* Starts inside clip area */
+		       if ((x + rle_remainder) > hili_right )
+			 {
+			    /* Cutting needed, starts inside, ends outside */
+			    rle_this_bite = (hili_right - x);
+			    rle_remainder -= rle_this_bite;
+			    rlelen -= rle_this_bite;
+			    my_clut = (Emotion_Lut *) img_overl->hili_color;
+			    my_trans = img_overl->hili_trans;
+			    xmask++;
+			 }
+		       else
+			 {
+			    /* no cutting needed, starts inside, ends inside */
+			    rle_this_bite = rle_remainder;
+			    rle_remainder = 0;
+			    rlelen -= rle_this_bite;
+			    my_clut = (Emotion_Lut *) img_overl->hili_color;
+			    my_trans = img_overl->hili_trans;
+			    xmask++;
+			 }
+		    }
+		  else if (x >= hili_right)
+		    {
+		       /* Starts outside clip area, ends outsite clip area */
+		       if ((x + rle_remainder ) > src_width )
+			 {
+			    /* Cutting needed, starts outside, ends at right edge */
+			    /* It should never reach here due to the earlier test of src_width */
+			    rle_this_bite = (src_width - x );
+			    rle_remainder -= rle_this_bite;
+			    rlelen -= rle_this_bite;
+			    my_clut = (Emotion_Lut *) img_overl->color;
+			    my_trans = img_overl->trans;
+			    xmask = 0;
+			 }
+		       else
+			 {
+			    /* no cutting needed, starts outside, ends outside */
+			    rle_this_bite = rle_remainder;
+			    rle_remainder = 0;
+			    rlelen -= rle_this_bite;
+			    my_clut = (Emotion_Lut *) img_overl->color;
+			    my_trans = img_overl->trans;
+			    xmask = 0;
+			 }
+		    }
+	       }
+	     else
+	       {
+		  /* Outside clip are due to y */
 		  /* no cutting needed, starts outside, ends outside */
 		  rle_this_bite = rle_remainder;
 		  rle_remainder = 0;
@@ -628,90 +702,48 @@ static void _emotion_overlay_blend_yuv(uint8_t *dst_base[3], vo_overlay_t * img_
 		  my_trans = img_overl->trans;
 		  xmask = 0;
 	       }
-	    } else if (x < hili_right) {
-	       /* Starts inside clip area */
-	       if ((x + rle_remainder) > hili_right ) {
-		  /* Cutting needed, starts inside, ends outside */
-		  rle_this_bite = (hili_right - x);
-		  rle_remainder -= rle_this_bite;
-		  rlelen -= rle_this_bite;
-		  my_clut = (Emotion_Lut *) img_overl->hili_color;
-		  my_trans = img_overl->hili_trans;
-		  xmask++;
-	       } else {
-		  /* no cutting needed, starts inside, ends inside */
-		  rle_this_bite = rle_remainder;
-		  rle_remainder = 0;
-		  rlelen -= rle_this_bite;
-		  my_clut = (Emotion_Lut *) img_overl->hili_color;
-		  my_trans = img_overl->hili_trans;
-		  xmask++;
+	     o   = my_trans[clr];
+	     if (o)
+	       {
+		  if (o >= 15)
+		    {
+		       memset(dst_y + x, my_clut[clr].y, rle_this_bite);
+		       if (y & 1)
+			 {
+			    memset(dst_cr + (x >> 1), my_clut[clr].cr, (rle_this_bite+1) >> 1);
+			    memset(dst_cb + (x >> 1), my_clut[clr].cb, (rle_this_bite+1) >> 1);
+			 }
+		    }
+		  else
+		    {
+		       _emotion_overlay_mem_blend_8(dst_y + x, my_clut[clr].y, o, rle_this_bite);
+		       if (y & 1)
+			 {
+			    /* Blending cr and cb should use a different function, with pre -128 to each sample */
+			    _emotion_overlay_mem_blend_8(dst_cr + (x >> 1), my_clut[clr].cr, o, (rle_this_bite+1) >> 1);
+			    _emotion_overlay_mem_blend_8(dst_cb + (x >> 1), my_clut[clr].cb, o, (rle_this_bite+1) >> 1);
+			 }
+		    }
 	       }
-	    } else if (x >= hili_right) {
-	       /* Starts outside clip area, ends outsite clip area */
-	       if ((x + rle_remainder ) > src_width ) {
-		  /* Cutting needed, starts outside, ends at right edge */
-		  /* It should never reach here due to the earlier test of src_width */
-		  rle_this_bite = (src_width - x );
-		  rle_remainder -= rle_this_bite;
-		  rlelen -= rle_this_bite;
-		  my_clut = (Emotion_Lut *) img_overl->color;
-		  my_trans = img_overl->trans;
-		  xmask = 0;
-	       } else {
-		  /* no cutting needed, starts outside, ends outside */
-		  rle_this_bite = rle_remainder;
-		  rle_remainder = 0;
-		  rlelen -= rle_this_bite;
-		  my_clut = (Emotion_Lut *) img_overl->color;
-		  my_trans = img_overl->trans;
-		  xmask = 0;
+	     x += rle_this_bite;
+	     if (rle >= rle_limit)
+	       {
+		  break;
 	       }
-	    }
-	 } else {
-	    /* Outside clip are due to y */
-	    /* no cutting needed, starts outside, ends outside */
-	    rle_this_bite = rle_remainder;
-	    rle_remainder = 0;
-	    rlelen -= rle_this_bite;
-	    my_clut = (Emotion_Lut *) img_overl->color;
-	    my_trans = img_overl->trans;
-	    xmask = 0;
-	 }
-	 o   = my_trans[clr];
-	 if (o) {
-	    if(o >= 15) {
-	       memset(dst_y + x, my_clut[clr].y, rle_this_bite);
-	       if (y & 1) {
-		  memset(dst_cr + (x >> 1), my_clut[clr].cr, (rle_this_bite+1) >> 1);
-		  memset(dst_cb + (x >> 1), my_clut[clr].cb, (rle_this_bite+1) >> 1);
-	       }
-	    } else {
-	       _emotion_overlay_mem_blend_8(dst_y + x, my_clut[clr].y, o, rle_this_bite);
-	       if (y & 1) {
-		  /* Blending cr and cb should use a different function, with pre -128 to each sample */
-		  _emotion_overlay_mem_blend_8(dst_cr + (x >> 1), my_clut[clr].cr, o, (rle_this_bite+1) >> 1);
-		  _emotion_overlay_mem_blend_8(dst_cb + (x >> 1), my_clut[clr].cb, o, (rle_this_bite+1) >> 1);
-	       }
-	    }
-	    
-	 }
-	 x += rle_this_bite;
-	 if (rle >= rle_limit) {
-	    break;
-	 }
-      }
-      if (rle >= rle_limit) {
-	 break;
-      }
-      
-      dst_y += dst_pitches[0];
-      
-      if (y & 1) {
-	 dst_cr += dst_pitches[2];
-	 dst_cb += dst_pitches[1];
-      }
-   }
+	  }
+	if (rle >= rle_limit)
+	  {
+	     break;
+	  }
+	
+	dst_y += dst_pitches[0];
+	
+	if (y & 1)
+	  {
+	     dst_cr += dst_pitches[2];
+	     dst_cb += dst_pitches[1];
+	  }
+     }
 }
 
 //TODO: Really need to improve this converter! 
@@ -727,20 +759,20 @@ _emotion_yuy2_to_bgra32(int width, int height, unsigned char *src, unsigned char
    u = src + 1;
    v = src + 3;
    for (i = 0; i < width; i++)
-   {
-      for (j = 0; j < height; j++)
-      {
-         *dst++ = LIMIT(1.164 * (*y - 16) + 2.018 * (*u - 128));
-         *dst++ = LIMIT(1.164 * (*y - 16) - 0.813 * (*v - 128) - 0.391 * (*u - 128));
-         *dst++ = LIMIT(1.164 * (*y - 16) + 1.596 * (*v - 128));
-         *dst++ = 0;
-
-         y += 2;
-         if (j % 2 == 1)
-         {
-            u += 4;
-            v += 4;
-         }
-      }
-   }
+     {
+	for (j = 0; j < height; j++)
+	  {
+	     *dst++ = LIMIT(1.164 * (*y - 16) + 2.018 * (*u - 128));
+	     *dst++ = LIMIT(1.164 * (*y - 16) - 0.813 * (*v - 128) - 0.391 * (*u - 128));
+	     *dst++ = LIMIT(1.164 * (*y - 16) + 1.596 * (*v - 128));
+	     *dst++ = 0;
+	     
+	     y += 2;
+	     if (j % 2 == 1)
+	       {
+		  u += 4;
+		  v += 4;
+	       }
+	  }
+     }
 }

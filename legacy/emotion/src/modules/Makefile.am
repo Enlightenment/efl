@@ -1,7 +1,6 @@
 ## Process this file with automake to produce Makefile.in
 
 if BUILD_XINE_MODULE
-SUBDIRS = xine
 XINE_LIB_NAME=emotion_decoder_xine.la
 endif
 
@@ -25,7 +24,8 @@ pkg_LTLIBRARIES                      = $(XINE_LIB_NAME) $(GSTREAMER_LIB_NAME)
 if BUILD_XINE_MODULE
 emotion_decoder_xine_la_SOURCES      = \
 emotion_xine.c \
-emotion_xine.h
+emotion_xine.h \
+emotion_xine_vo_out.c
 emotion_decoder_xine_la_LIBADD       = @EVAS_LIBS@ @ECORE_LIBS@ @XINE_LIBS@
 emotion_decoder_xine_la_LDFLAGS      = -module -avoid-version \
 				       -L$(top_builddir)/src/lib -L$(top_builddir)/src/lib/.libs

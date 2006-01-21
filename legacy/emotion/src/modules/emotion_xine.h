@@ -2,6 +2,7 @@
 #define EMOTION_XINE_H
 
 #include <xine.h>
+#include <xine/xine_plugin.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <pthread.h>

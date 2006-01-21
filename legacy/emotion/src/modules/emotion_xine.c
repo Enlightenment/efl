@@ -60,6 +60,8 @@ static int   _em_timer       (void *data);
 static void *_em_get_pos_len_th(void *par);
 static void  _em_get_pos_len (Emotion_Xine_Video *ev);
 
+extern plugin_info_t emotion_xine_plugin_info[];
+  
 static unsigned char
 em_init(Evas_Object *obj, void **emotion_video)
 {
@@ -75,11 +77,12 @@ em_init(Evas_Object *obj, void **emotion_video)
 
    ev->decoder = xine_new();
    if (!ev->decoder)
-   {
-      free(ev);
-      return 0;
-   }
+     {
+	free(ev);
+	return 0;
+     }
    xine_init(ev->decoder);
+   xine_register_plugins(ev->decoder, emotion_xine_plugin_info);
    if (1)
      {
 	xine_cfg_entry_t cf;
@@ -228,7 +231,10 @@ em_init(Evas_Object *obj, void **emotion_video)
      }
    ev->fd = ev->fd_write;
 
-   ev->video = xine_open_video_driver(ev->decoder, "emotion", XINE_VISUAL_TYPE_NONE, ev);
+   printf("OPEN VIDEO PLUGIN...\n");
+   ev->video = xine_open_video_driver(ev->decoder, "emotion",
+				      XINE_VISUAL_TYPE_NONE, ev);
+   printf("RESULT: xine_open_video_driver() = %p\n", ev->video);
    //Let xine autodetect the best audio output driver
    ev->audio = xine_open_audio_driver(ev->decoder, NULL, ev);
 //   ev->audio = xine_open_audio_driver(ev->decoder, "oss", ev);
