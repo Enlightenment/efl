@@ -4,7 +4,7 @@
 #include "ecore_file_private.h"
 
 static int init = 0;
-static Ecore_List *__ecore_file_path_bin;
+static Ecore_List *__ecore_file_path_bin = NULL;
 
 static Ecore_List *_ecore_file_path_from_env(const char *env);
 
@@ -62,7 +62,8 @@ EAPI int
 ecore_file_path_dir_exists(const char *in_dir)
 {
    char *dir;
-   
+
+   if (!__ecore_file_path_bin) return 0;
    ecore_list_goto_first(__ecore_file_path_bin);
    while ((dir = ecore_list_next(__ecore_file_path_bin)) != NULL)
      {
