@@ -123,7 +123,7 @@ _edje_del(Edje *ed)
 	
 	cc = ed->color_classes->data;
 	ed->color_classes = evas_list_remove(ed->color_classes, cc);
-	if (cc->name) free(cc->name);
+	if (cc->name) evas_stringshare_del(cc->name);
 	free(cc);
      }
    while (ed->text_classes)
@@ -132,8 +132,8 @@ _edje_del(Edje *ed)
 	
 	tc = ed->text_classes->data;
 	ed->text_classes = evas_list_remove(ed->text_classes, tc);
-	if (tc->name) free(tc->name);
-	if (tc->font) free(tc->font);
+	if (tc->name) evas_stringshare_del(tc->name);
+	if (tc->font) evas_stringshare_del(tc->font);
 	free(tc);
      }
    free(ed);
