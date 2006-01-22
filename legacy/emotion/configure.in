@@ -205,7 +205,6 @@ emotion.spec
 src/Makefile
 src/lib/Makefile
 src/modules/Makefile
-src/modules/xine/Makefile
 src/bin/Makefile
 data/Makefile
 emotion-config
