@@ -276,7 +276,25 @@ evas_common_copy_pixels_rgba_to_rgba_mmx2(DATA32 *src, DATA32 *dst, int len)
 void
 evas_common_copy_pixels_rgba_to_rgba_sse(DATA32 *src, DATA32 *dst, int len)
 {
-   DATA32 *src_ptr, *dst_ptr, *dst_end_ptr, *dst_end_ptr_pre;
+   DATA32 *src_ptr, *dst_ptr, *dst_end_ptr;
+   
+   dst_end_ptr = dst + len;
+   dst_end_ptr -= 15;
+   src_ptr = src;
+   dst_ptr = dst;
+   while (dst_ptr < dst_end_ptr)
+     {
+	MOVE_16DWORDS_MMX2(src_ptr, dst_ptr);
+	src_ptr+=16;
+	dst_ptr+=16;
+     }
+   while (dst_ptr < dst_end_ptr)
+     {
+	*dst_ptr = *src_ptr;
+	src_ptr++;
+	dst_ptr++;
+     }
+#if 0   
 #ifdef ALIGN_FIX
    int src_align;
    int dst_align;
@@ -321,6 +339,7 @@ evas_common_copy_pixels_rgba_to_rgba_sse(DATA32 *src, DATA32 *dst, int len)
 	src_ptr++;
 	dst_ptr++;
      }
+#endif   
 }
 #endif
 
