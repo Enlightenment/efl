@@ -1,20 +1,12 @@
 # Conditional build stuff; see /usr/lib/rpm/macros.  bcond_without
 # defaults to WITH, and vice versa.  Yes, it's ass-backward.  Blame PLD.
 %bcond_without module_loader_edb
-%bcond_without module_loader_eet
-%bcond_without module_loader_jpeg
-%bcond_without module_loader_png
 %bcond_without module_saver_edb
-%bcond_without module_saver_eet
-%bcond_without module_saver_jpeg
-%bcond_without module_saver_png
-%bcond_without module_engine_buffer
 %bcond_with    module_engine_cairo_x11
 %bcond_without module_engine_directfb
 %bcond_without module_engine_fb
 %bcond_without module_engine_gl_x11
 %bcond_with    module_engine_software_qtopia
-%bcond_without module_engine_software_x11
 %bcond_with    module_engine_software_xcb
 %bcond_without module_engine_xrender_x11
 
@@ -53,18 +45,6 @@ Requires: /usr/bin/freetype-config
 %description devel
 Headers, static libraries, test programs and documentation for Evas.
 
-%if %{with module_loader_eet}
-%package module_loader_eet
-Summary: EET Image loader module for Evas
-Group: System Environment/Libraries
-BuildRequires: eet-devel
-%description module_loader_eet
-EET Image loader module for Evas
-%define ac_with_module_loader_eet --enable-image-loader-eet
-%else
-%define ac_with_module_loader_eet --disable-image-loader-eet
-%endif
-
 %if %{with module_loader_edb}
 %package module_loader_edb
 Summary: EDB Image loader module for Evas
@@ -77,40 +57,6 @@ EDB Image loader module for Evas
 %define ac_with_module_loader_edb --disable-image-loader-edb
 %endif
 
-%if %{with module_loader_jpeg}
-%package module_loader_jpeg
-Summary: JPEG Image loader module for Evas
-Group: System Environment/Libraries
-BuildRequires: libjpeg-devel
-%description module_loader_jpeg
-JPEG Image loader module for Evas
-%define ac_with_module_loader_jpeg --enable-image-loader-jpeg
-%else
-%define ac_with_module_loader_jpeg --disable-image-loader-jpeg
-%endif
-
-%if %{with module_loader_png}
-%package module_loader_png
-Summary: PNG Image loader module for Evas
-Group: System Environment/Libraries
-BuildRequires: libpng-devel
-BuildRequires: zlib-devel
-%description module_loader_png
-PNG Image loader module for Evas
-%define ac_with_module_loader_png --enable-image-loader-png
-%else
-%define ac_with_module_loader_png --disable-image-loader-png
-%endif
-
-%if %{with module_saver_eet}
-%package module_saver_eet
-Summary: EET Image saver module for Evas
-Group: System Environment/Libraries
-BuildRequires: eet-devel
-%description module_saver_eet
-EET Image saver module for Evas
-%endif
-
 %if %{with module_saver_edb}
 %package module_saver_edb
 Summary: EDB Image saver module for Evas
@@ -118,36 +64,6 @@ Group: System Environment/Libraries
 BuildRequires: edb-devel
 %description module_saver_edb
 EDB Image saver module for Evas
-%endif
-
-%if %{with module_saver_jpeg}
-%package module_saver_jpeg
-Summary: JPEG Image saver module for Evas
-Group: System Environment/Libraries
-BuildRequires: libjpeg-devel
-%description module_saver_jpeg
-JPEG Image saver module for Evas
-%endif
-
-%if %{with module_saver_png}
-%package module_saver_png
-Summary: PNG Image saver module for Evas
-Group: System Environment/Libraries
-BuildRequires: libpng-devel
-BuildRequires: zlib-devel
-%description module_saver_png
-PNG Image saver module for Evas
-%endif
-
-%if %{with module_engine_buffer}
-%package module_engine_buffer
-Summary: Buffer rendering engine module for Evas
-Group: System Environment/Libraries
-%description module_engine_buffer
-Buffer rendering engine module for Evas
-%define ac_with_module_engine_buffer --enable-buffer
-%else
-%define ac_with_module_engine_buffer --disable-buffer
 %endif
 
 %if %{with module_engine_cairo_x11}
@@ -207,19 +123,6 @@ Qtopia rendering engine module for Evas
 %define ac_with_module_engine_software_qtopia --disable-software-qtopia
 %endif
 
-%if %{with module_engine_software_x11}
-%package module_engine_software_x11
-Summary: Software X11 rendering engine module for Evas
-Group: System Environment/Libraries
-#BuildSuggests: xorg-x11-devel
-BuildRequires: XFree86-devel
-%description module_engine_software_x11
-Software X11 rendering engine module for Evas
-%define ac_with_module_engine_software_x11 --enable-software-x11
-%else
-%define ac_with_module_engine_software_x11 --disable-software-x11
-%endif
-
 %if %{with module_engine_software_xcb}
 %package module_engine_software_xcb
 Summary: Software XCB X11 rendering engine module for Evas
@@ -246,32 +149,19 @@ XRender rendering engine module for Evas
 %define ac_with_module_engine_xrender_x11 --disable-xrender-x11
 %endif
 
-
-
-
-
-
-
-
 %prep
 %setup -q -n %{name}-%{version}
 
 %build
 %{configure} --prefix=%{_prefix} --x-libraries=%{_prefix}/X11R6/%{_lib} \
+    --enable-image-loader-eet --enable-image-loader-jpeg \
+    --enable-image-loader-png --enable-buffer --enable-software-x11 \
     %{ac_with_module_loader_edb} \
-    %{ac_with_module_loader_eet} \
-    %{ac_with_module_loader_jpeg} \
-    %{ac_with_module_loader_png} \
     %{ac_with_module_saver_edb} \
-    %{ac_with_module_saver_eet} \
-    %{ac_with_module_saver_jpeg} \
-    %{ac_with_module_saver_png} \
-    %{ac_with_module_engine_buffer} \
     %{ac_with_module_engine_directfb} \
     %{ac_with_module_engine_fb} \
     %{ac_with_module_engine_gl_x11} \
     %{ac_with_module_engine_software_qtopia} \
-    %{ac_with_module_engine_software_x11} \
     %{ac_with_module_engine_software_xcb} \
     %{ac_with_module_engine_xrender_x11} \
     $RPM_CONFIGURE_OPTS
@@ -294,9 +184,17 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files
 %defattr(-, root, root)
 %doc AUTHORS COPYING COPYING-PLAIN README
+%{_bindir}/evas_*
 %{_libdir}/*.so.*
 %{_libdir}/*.la
-%{_bindir}/evas_*
+%{_libdir}/evas/modules/loaders/eet/@MODULE_ARCH@/module.so
+%{_libdir}/evas/modules/loaders/jpeg/@MODULE_ARCH@/module.so
+%{_libdir}/evas/modules/loaders/png/@MODULE_ARCH@/module.so
+%{_libdir}/evas/modules/savers/eet/@MODULE_ARCH@/module.so
+%{_libdir}/evas/modules/savers/jpeg/@MODULE_ARCH@/module.so
+%{_libdir}/evas/modules/savers/png/@MODULE_ARCH@/module.so
+%{_libdir}/evas/modules/engines/buffer/@MODULE_ARCH@/module.so
+%{_libdir}/evas/modules/engines/software_x11/@MODULE_ARCH@/module.so
 %{_datadir}/%{name}
 
 %files devel
@@ -307,58 +205,16 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_libdir}/pkgconfig/*
 %{_includedir}/*.h
 
-%if %{with module_loader_eet}
-%files module_loader_eet
-%defattr(-, root, root)
-%{_libdir}/evas/modules/loaders/eet/@MODULE_ARCH@/module.so
-%endif
-
 %if %{with module_loader_edb}
 %files module_loader_edb
 %defattr(-, root, root)
 %{_libdir}/evas/modules/loaders/edb/@MODULE_ARCH@/module.so
 %endif
 
-%if %{with module_loader_jpeg}
-%files module_loader_jpeg
-%defattr(-, root, root)
-%{_libdir}/evas/modules/loaders/jpeg/@MODULE_ARCH@/module.so
-%endif
-
-%if %{with module_loader_png}
-%files module_loader_png
-%defattr(-, root, root)
-%{_libdir}/evas/modules/loaders/png/@MODULE_ARCH@/module.so
-%endif
-
-%if %{with module_saver_eet}
-%files module_saver_eet
-%defattr(-, root, root)
-%{_libdir}/evas/modules/savers/eet/@MODULE_ARCH@/module.so
-%endif
-
 %if %{with module_saver_edb}
 %files module_saver_edb
 %defattr(-, root, root)
 %{_libdir}/evas/modules/savers/edb/@MODULE_ARCH@/module.so
-%endif
-
-%if %{with module_saver_jpeg}
-%files module_saver_jpeg
-%defattr(-, root, root)
-%{_libdir}/evas/modules/savers/jpeg/@MODULE_ARCH@/module.so
-%endif
-
-%if %{with module_saver_png}
-%files module_saver_png
-%defattr(-, root, root)
-%{_libdir}/evas/modules/savers/png/@MODULE_ARCH@/module.so
-%endif
-
-%if %{with module_engine_buffer}
-%files module_engine_buffer
-%defattr(-, root, root)
-%{_libdir}/evas/modules/engines/buffer/@MODULE_ARCH@/module.so
 %endif
 
 %if %{with module_engine_cairo_x11}
@@ -389,12 +245,6 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %files module_engine_software_qtopia
 %defattr(-, root, root)
 %{_libdir}/evas/modules/engines/software_qtopia/@MODULE_ARCH@/module.so
-%endif
-
-%if %{with module_engine_software_x11}
-%files module_engine_software_x11
-%defattr(-, root, root)
-%{_libdir}/evas/modules/engines/software_x11/@MODULE_ARCH@/module.so
 %endif
 
 %if %{with module_engine_xrender_x11}
