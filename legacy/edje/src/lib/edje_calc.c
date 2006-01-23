@@ -1096,7 +1096,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags)
 		  evas_object_image_file_set(ep->object, ed->file->path, buf);
 		  if (evas_object_image_load_error_get(ep->object) != EVAS_LOAD_ERROR_NONE)
 		    {
-		       printf("EDJE: Error loading image collection \"%s\" from file \"%s\"\n",
+		       printf("EDJE: Error loading image collection \"%s\" from file \"%s\". Missing EET Evas loader module?\n",
 			      buf, ed->file->path);
 		       if (evas_object_image_load_error_get(ep->object) == EVAS_LOAD_ERROR_GENERIC)
 			 printf("Error type: EVAS_LOAD_ERROR_GENERIC\n");
