@@ -360,7 +360,7 @@ em_file_close(void *ef)
    Emotion_Xine_Video *ev;
    
    ev = (Emotion_Xine_Video *)ef;
-
+   if (!ev) return;
    printf("EX pause end...\n");
    if (!emotion_object_play_get(ev->obj))
 //   if (xine_get_param(ev->stream, XINE_PARAM_SPEED) == XINE_SPEED_PAUSE)

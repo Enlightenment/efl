@@ -131,7 +131,7 @@ _emotion_module_close(Emotion_Video_Module *mod, void *video)
    
    handle = mod->handle;
    module_close = dlsym(handle, "module_close");
-   if (module_close) module_close(mod, video);
+   if ((module_close) && (video)) module_close(mod, video);
    dlclose(handle);
 }
 
@@ -190,6 +190,7 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
    if ((file) && (file[0] != 0))
      {
         int w, h;
+	
 	sd->file = strdup(file);
 	if (sd->module)
 	  {
@@ -210,6 +211,7 @@ emotion_object_file_set(Evas_Object *obj, const char *file)
 	  {
 	     sd->module->file_close(sd->video);
 	     sd->video = NULL;
+	     printf("VIDEO -> NULL\n");
 	     evas_object_image_size_set(sd->obj, 0, 0);
 	  }
      }
@@ -1023,7 +1025,7 @@ _pixels_get(void *data, Evas_Object *obj)
              rows, 
             &rows[ps.h], 
             &rows[ps.h + (ps.h / 2)]))
-         evas_object_image_pixels_import(obj, &ps);
+	  evas_object_image_pixels_import(obj, &ps);
        evas_object_image_pixels_dirty_set(obj, 0);
        free(ps.rows);
    }
@@ -1088,8 +1090,9 @@ _smart_del(Evas_Object * obj)
    Smart_Data *sd;
    sd = evas_object_smart_data_get(obj);
    if (!sd) return;
+   printf("DEL: sd->video = %p\n", sd->video);
    if (sd->video) sd->module->file_close(sd->video);
-   if (sd->module) _emotion_module_close(sd->module, sd->video);
+   _emotion_module_close(sd->module, sd->video);
    evas_object_del(sd->obj);
    if (sd->file) free(sd->file);
    if (sd->job) ecore_job_del(sd->job);
