@@ -5,6 +5,7 @@ event_handler_example \
 args_example \
 list_example \
 list_destroy_example \
+output_tester \
 exe_example
 
 if BUILD_ECORE_CON
@@ -43,6 +44,7 @@ list_destroy_example_SOURCES  = list_destroy_example.c
 event_handler_example_SOURCES = event_handler_example.c
 args_example_SOURCES          = args_example.c
 exe_example_SOURCES           = exe_example.c
+output_tester_SOURCES         = output_tester.c
 
 if BUILD_ECORE_CON
 con_server_example_SOURCES    = con_server_example.c

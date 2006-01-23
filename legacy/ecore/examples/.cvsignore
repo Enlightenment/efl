@@ -11,5 +11,6 @@ event_handler_example
 exe_example
 list_destroy_example
 list_example
+output_tester
 timer_example
 x_window_example
