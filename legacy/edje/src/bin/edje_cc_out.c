@@ -316,6 +316,11 @@ data_write(void)
 	ecore_init();
 	ecore_evas_init();
 	ee = ecore_evas_buffer_new(1, 1);
+	if (!ee)
+	  {
+	     fprintf(stderr, "Error. cannot create buffer engine canvas for image load.\n");
+	     ABORT_WRITE(ef, file_out);
+	  }
 	evas = ecore_evas_get(ee);
 	for (l = edje_file->image_dir->entries; l; l = l->next)
 	  {
@@ -424,7 +429,7 @@ data_write(void)
 							   0, qual, 1);
 			    if (bytes <= 0)
 			      {
-				 fprintf(stderr, "%s: Error. unable to write image part \"%s\" as \"%s\" part entry to %s \n",
+				 fprintf(stderr, "%s: Error. unable to write image part \"%s\" as \"%s\" part entry to %s\n",
 					 progname, img->entry, buf, file_out);	
 				 ABORT_WRITE(ef, file_out);
 			      }
@@ -436,7 +441,7 @@ data_write(void)
 			 }
 		       else
 			 {
-			    fprintf(stderr, "%s: Error. unable to load image for image part \"%s\" as \"%s\" part entry to %s \n",
+			    fprintf(stderr, "%s: Error. unable to load image for image part \"%s\" as \"%s\" part entry to %s\n",
 				    progname, img->entry, buf, file_out);	
 			    ABORT_WRITE(ef, file_out);
 			 }
@@ -460,7 +465,7 @@ data_write(void)
 		    }
 		  else
 		    {
-		       fprintf(stderr, "%s: Error. unable to load image for image \"%s\" part entry to %s \n",
+		       fprintf(stderr, "%s: Error. unable to load image for image \"%s\" part entry to %s. Missing PNG ot JPEG loader modules for Evas or file does not exist, or is not readable.\n",
 			       progname, img->entry, file_out);	
 		       ABORT_WRITE(ef, file_out);
 		    }

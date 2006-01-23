@@ -31,9 +31,19 @@ main(int argc, char **argv)
    args_parse();
    
    ee = ecore_evas_buffer_new(outw, outh);
+   if (!ee)
+     {
+	fprintf(stderr, "Error. cannot create buffer engine canvas for image save.\n");
+	exit(-1);
+     }
    evas = ecore_evas_get(ee);
    
    im = ecore_evas_object_image_new(ee);
+   if (!im)
+     {
+	fprintf(stderr, "Error. cannot create buffer canvas image object for scaling.\n");
+	exit(-1);
+     }
    evas_object_move(im, 0, 0);
    evas_object_resize(im, outw, outh);
    evas_object_image_fill_set(im, 0, 0, outw, outh);
@@ -43,6 +53,11 @@ main(int argc, char **argv)
    evas_im = ecore_evas_get(ee_im);
    
    im2 = ecore_evas_object_image_new(ee_im);
+   if (!im2)
+     {
+	fprintf(stderr, "Error. cannot create buffer canvas image for scaling.\n");
+	exit(-1);
+     }
    evas_object_move(im2, 0, 0);
    evas_object_resize(im2, outw, outh);
    evas_object_image_fill_set(im2, 0, 0, outw, outh);
@@ -194,7 +209,11 @@ frame_grab(void *data)
    
    snprintf(buf, sizeof(buf), outfile, frnum);
    ecore_evas_buffer_pixels_get(ee);
-   evas_object_image_save(im, buf, NULL, "quality=100 compress=9");
+   if (!evas_object_image_save(im, buf, NULL, "quality=100 compress=9"))
+     {
+	printf("Cannot load file \"%s\". Missing saver moduel for Evas or literally cannto write the file (permissions or directory doesnt exist).\n", buf);
+	exit(-1);
+     }
    frnum++;
    if (frnum == frames)
      {

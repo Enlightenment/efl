@@ -151,8 +151,18 @@ output(void)
 		  ecore_init();
 		  ecore_evas_init();
 		  ee = ecore_evas_buffer_new(1, 1);
+		  if (!ee)
+		    {
+		       fprintf(stderr, "Error. cannot create buffer engine canvas for image save.\n");
+		       exit(-1);
+		    }
 		  evas = ecore_evas_get(ee);
 		  im = evas_object_image_add(evas);
+		  if (!im)
+		    {
+		       fprintf(stderr, "Error. cannot create image object for save.\n");
+		       exit(-1);
+		    }
 		  snprintf(buf, sizeof(buf), "images/%i", ei->id);
 		  evas_object_image_file_set(im, file_in, buf);
 		  snprintf(out, sizeof(out), "%s/%s", outdir, ei->entry);
@@ -163,11 +173,15 @@ output(void)
 		  if (strstr(pp, "../"))
 		    {
 		       printf("ERROR: potential security violation. attempt to write in parent dir.\n");
-		       exit (-1);
+		       exit(-1);
 		    }
 		  e_file_mkpath(pp);
 		  free(pp);
-		  evas_object_image_save(im, out, NULL, "quality=100 compress=9");
+		  if (!evas_object_image_save(im, out, NULL, "quality=100 compress=9"))
+		    {
+		       printf("ERROR: cannot write file %s. Perhaps missing JPEG or PNG saver modules for Evas.\n", out);
+		       exit(-1);
+		    }
 		  evas_object_del(im);
 		  ecore_evas_free(ee);
 		  ecore_evas_shutdown();
