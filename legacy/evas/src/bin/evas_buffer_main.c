@@ -25,7 +25,7 @@ main(int argc, char **argv)
       einfo = (Evas_Engine_Info_Buffer *) evas_engine_info_get(evas);
 
       /* the following is specific to the engine */
-      einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_BGR24;
+      einfo->info.depth_type = EVAS_ENGINE_BUFFER_DEPTH_RGB32;
       img_buf = malloc(win_w * win_h * 3);
       einfo->info.dest_buffer = img_buf;
       einfo->info.dest_buffer_row_bytes = win_w * 3;

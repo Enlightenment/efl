@@ -144,46 +144,26 @@
      }
    else
      {
-	while (dst_clip_h--)
+#ifdef DIRECT_SCALE
+        if ((!(src->flags & RGBA_IMAGE_HAS_ALPHA)) &&
+	    (!(dst->flags & RGBA_IMAGE_HAS_ALPHA)) &&
+	    (!dc->mod.use) && (!dc->mul.use))
 	  {
-	     Cy = *yapp >> 16;
-	     yap = *yapp & 0xffff;
-
-	     while (dst_clip_w--)
+	     while (dst_clip_h--)
 	       {
-		  Cx = *xapp >> 16;
-		  xap = *xapp & 0xffff;
-
-		  sptr = *yp + *xp + pos;
-		  pix = sptr;
-		  sptr += src_w;
-
-		  rx = (R_VAL(pix) * xap) >> 9;
-		  gx = (G_VAL(pix) * xap) >> 9;
-		  bx = (B_VAL(pix) * xap) >> 9;
-		  pix++;
-		  for (i = (1 << 14) - xap; i > Cx; i -= Cx)
+		  Cy = *yapp >> 16;
+		  yap = *yapp & 0xffff;
+		  
+		  pbuf = dptr;
+		  while (dst_clip_w--)
 		    {
-		       rx += (R_VAL(pix) * Cx) >> 9;
-		       gx += (G_VAL(pix) * Cx) >> 9;
-		       bx += (B_VAL(pix) * Cx) >> 9;
-		       pix++;
-		    }
-		  if (i > 0)
-		    {
-		       rx += (R_VAL(pix) * i) >> 9;
-		       gx += (G_VAL(pix) * i) >> 9;
-		       bx += (B_VAL(pix) * i) >> 9;
-		    }
-
-		  r = (rx * yap) >> 14;
-		  g = (gx * yap) >> 14;
-		  b = (bx * yap) >> 14;
-
-		  for (j = (1 << 14) - yap; j > Cy; j -= Cy)
-		    {
+		       Cx = *xapp >> 16;
+		       xap = *xapp & 0xffff;
+		       
+		       sptr = *yp + *xp + pos;
 		       pix = sptr;
 		       sptr += src_w;
+		       
 		       rx = (R_VAL(pix) * xap) >> 9;
 		       gx = (G_VAL(pix) * xap) >> 9;
 		       bx = (B_VAL(pix) * xap) >> 9;
@@ -201,53 +181,189 @@
 			    gx += (G_VAL(pix) * i) >> 9;
 			    bx += (B_VAL(pix) * i) >> 9;
 			 }
-
-		       r += (rx * Cy) >> 14;
-		       g += (gx * Cy) >> 14;
-		       b += (bx * Cy) >> 14;
-		    }
-		  if (j > 0)
-		    {
-		       pix = sptr;
-		       sptr += src_w;
-		       rx = (R_VAL(pix) * xap) >> 9;
-		       gx = (G_VAL(pix) * xap) >> 9;
-		       bx = (B_VAL(pix) * xap) >> 9;
-		       pix++;
-		       for (i = (1 << 14) - xap; i > Cx; i -= Cx)
+		       
+		       r = (rx * yap) >> 14;
+		       g = (gx * yap) >> 14;
+		       b = (bx * yap) >> 14;
+		       
+		       for (j = (1 << 14) - yap; j > Cy; j -= Cy)
 			 {
-			    rx += (R_VAL(pix) * Cx) >> 9;
-			    gx += (G_VAL(pix) * Cx) >> 9;
-			    bx += (B_VAL(pix) * Cx) >> 9;
+			    pix = sptr;
+			    sptr += src_w;
+			    rx = (R_VAL(pix) * xap) >> 9;
+			    gx = (G_VAL(pix) * xap) >> 9;
+			    bx = (B_VAL(pix) * xap) >> 9;
 			    pix++;
+			    for (i = (1 << 14) - xap; i > Cx; i -= Cx)
+			      {
+				 rx += (R_VAL(pix) * Cx) >> 9;
+				 gx += (G_VAL(pix) * Cx) >> 9;
+				 bx += (B_VAL(pix) * Cx) >> 9;
+				 pix++;
+			      }
+			    if (i > 0)
+			      {
+				 rx += (R_VAL(pix) * i) >> 9;
+				 gx += (G_VAL(pix) * i) >> 9;
+				 bx += (B_VAL(pix) * i) >> 9;
+			      }
+			    
+			    r += (rx * Cy) >> 14;
+			    g += (gx * Cy) >> 14;
+			    b += (bx * Cy) >> 14;
 			 }
-		       if (i > 0)
+		       if (j > 0)
 			 {
-			    rx += (R_VAL(pix) * i) >> 9;
-			    gx += (G_VAL(pix) * i) >> 9;
-			    bx += (B_VAL(pix) * i) >> 9;
+			    pix = sptr;
+			    sptr += src_w;
+			    rx = (R_VAL(pix) * xap) >> 9;
+			    gx = (G_VAL(pix) * xap) >> 9;
+			    bx = (B_VAL(pix) * xap) >> 9;
+			    pix++;
+			    for (i = (1 << 14) - xap; i > Cx; i -= Cx)
+			      {
+				 rx += (R_VAL(pix) * Cx) >> 9;
+				 gx += (G_VAL(pix) * Cx) >> 9;
+				 bx += (B_VAL(pix) * Cx) >> 9;
+				 pix++;
+			      }
+			    if (i > 0)
+			      {
+				 rx += (R_VAL(pix) * i) >> 9;
+				 gx += (G_VAL(pix) * i) >> 9;
+				 bx += (B_VAL(pix) * i) >> 9;
+			      }
+			    
+			    r += (rx * j) >> 14;
+			    g += (gx * j) >> 14;
+			    b += (bx * j) >> 14;
 			 }
-
-		       r += (rx * j) >> 14;
-		       g += (gx * j) >> 14;
-		       b += (bx * j) >> 14;
+		       *pbuf++ = ARGB_JOIN(0xff, r >> 5, g >> 5, b >> 5);
+		       xp++;  xapp++;
 		    }
-		  *pbuf++ = ARGB_JOIN(0xff, r >> 5, g >> 5, b >> 5);
-		  xp++;  xapp++;
+/*
+		  if (dc->mod.use)
+		    func_cmod(buf, dptr, w, dc->mod.r, dc->mod.g, dc->mod.b, dc->mod.a);
+		  else if (dc->mul.use)
+		    func_mul(buf, dptr, w, dc->mul.col);
+		  else
+		    func(buf, dptr, w);
+		  pbuf = dptr;
+ */		  
+		  dptr += dst_w;   dst_clip_w = w;
+		  xp = xpoints + dxx;
+		  xapp = xapoints + dxx;
+		  yp++;  yapp++;
 	       }
+	  }
+	else
+#endif	  
+	  {
+	     while (dst_clip_h--)
+	       {
+		  Cy = *yapp >> 16;
+		  yap = *yapp & 0xffff;
+		  
+		  while (dst_clip_w--)
+		    {
+		       Cx = *xapp >> 16;
+		       xap = *xapp & 0xffff;
+		       
+		       sptr = *yp + *xp + pos;
+		       pix = sptr;
+		       sptr += src_w;
+		       
+		       rx = (R_VAL(pix) * xap) >> 9;
+		       gx = (G_VAL(pix) * xap) >> 9;
+		       bx = (B_VAL(pix) * xap) >> 9;
+		       pix++;
+		       for (i = (1 << 14) - xap; i > Cx; i -= Cx)
+			 {
+			    rx += (R_VAL(pix) * Cx) >> 9;
+			    gx += (G_VAL(pix) * Cx) >> 9;
+			    bx += (B_VAL(pix) * Cx) >> 9;
+			    pix++;
+			 }
+		       if (i > 0)
+			 {
+			    rx += (R_VAL(pix) * i) >> 9;
+			    gx += (G_VAL(pix) * i) >> 9;
+			    bx += (B_VAL(pix) * i) >> 9;
+			 }
+		       
+		       r = (rx * yap) >> 14;
+		       g = (gx * yap) >> 14;
+		       b = (bx * yap) >> 14;
+		       
+		       for (j = (1 << 14) - yap; j > Cy; j -= Cy)
+			 {
+			    pix = sptr;
+			    sptr += src_w;
+			    rx = (R_VAL(pix) * xap) >> 9;
+			    gx = (G_VAL(pix) * xap) >> 9;
+			    bx = (B_VAL(pix) * xap) >> 9;
+			    pix++;
+			    for (i = (1 << 14) - xap; i > Cx; i -= Cx)
+			      {
+				 rx += (R_VAL(pix) * Cx) >> 9;
+				 gx += (G_VAL(pix) * Cx) >> 9;
+				 bx += (B_VAL(pix) * Cx) >> 9;
+				 pix++;
+			      }
+			    if (i > 0)
+			      {
+				 rx += (R_VAL(pix) * i) >> 9;
+				 gx += (G_VAL(pix) * i) >> 9;
+				 bx += (B_VAL(pix) * i) >> 9;
+			      }
+			    
+			    r += (rx * Cy) >> 14;
+			    g += (gx * Cy) >> 14;
+			    b += (bx * Cy) >> 14;
+			 }
+		       if (j > 0)
+			 {
+			    pix = sptr;
+			    sptr += src_w;
+			    rx = (R_VAL(pix) * xap) >> 9;
+			    gx = (G_VAL(pix) * xap) >> 9;
+			    bx = (B_VAL(pix) * xap) >> 9;
+			    pix++;
+			    for (i = (1 << 14) - xap; i > Cx; i -= Cx)
+			      {
+				 rx += (R_VAL(pix) * Cx) >> 9;
+				 gx += (G_VAL(pix) * Cx) >> 9;
+				 bx += (B_VAL(pix) * Cx) >> 9;
+				 pix++;
+			      }
+			    if (i > 0)
+			      {
+				 rx += (R_VAL(pix) * i) >> 9;
+				 gx += (G_VAL(pix) * i) >> 9;
+				 bx += (B_VAL(pix) * i) >> 9;
+			      }
+			    
+			    r += (rx * j) >> 14;
+			    g += (gx * j) >> 14;
+			    b += (bx * j) >> 14;
+			 }
+		       *pbuf++ = ARGB_JOIN(0xff, r >> 5, g >> 5, b >> 5);
+		       xp++;  xapp++;
+		    }
 
-	     if (dc->mod.use)
-	       func_cmod(buf, dptr, w, dc->mod.r, dc->mod.g, dc->mod.b, dc->mod.a);
-	     else if (dc->mul.use)
-	       func_mul(buf, dptr, w, dc->mul.col);
-	     else
-	       func(buf, dptr, w);
-
-	     pbuf = buf;
-	     dptr += dst_w;   dst_clip_w = w;
-	     xp = xpoints + dxx;
-	     xapp = xapoints + dxx;
-	     yp++;  yapp++;
+		  if (dc->mod.use)
+		    func_cmod(buf, dptr, w, dc->mod.r, dc->mod.g, dc->mod.b, dc->mod.a);
+		  else if (dc->mul.use)
+		    func_mul(buf, dptr, w, dc->mul.col);
+		  else
+		    func(buf, dptr, w);
+		  
+		  pbuf = buf;
+		  dptr += dst_w;   dst_clip_w = w;
+		  xp = xpoints + dxx;
+		  xapp = xapoints + dxx;
+		  yp++;  yapp++;
+	       }
 	  }
      }
 #else

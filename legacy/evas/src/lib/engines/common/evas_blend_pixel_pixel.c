@@ -277,7 +277,7 @@ void
 evas_common_copy_pixels_rgba_to_rgba_sse(DATA32 *src, DATA32 *dst, int len)
 {
    DATA32 *src_ptr, *dst_ptr, *dst_end_ptr;
-   
+
    dst_end_ptr = dst + len;
    dst_end_ptr -= 15;
    src_ptr = src;

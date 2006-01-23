@@ -22,7 +22,7 @@
    /* a scanline buffer */
    line_buf = evas_common_image_line_buffer_obtain(dst_clip_w);
    if (!line_buf)
-      goto done_scale_up;
+     goto done_scale_up;
    buf = line_buf->image->data;
 	
    src_data = src->image->data;
@@ -245,58 +245,114 @@
 	DATA8   p2r = 0, p2g = 0, p2b = 0;
 	DATA32 *lptr1, *lptr2;
 
-	while (dst_clip_h--)
+#ifdef DIRECT_SCALE
+	if ((!(src->flags & RGBA_IMAGE_HAS_ALPHA)) &&
+	    (!(dst->flags & RGBA_IMAGE_HAS_ALPHA)) &&
+	    (!dc->mod.use) && (!dc->mul.use))
 	  {
-	     lptr1 = *rp;
-	     lptr2 = lptr1 + src_w;
-	     if (lptr2 > src_end) lptr2 = lptr1;
-	     k = *iy;
-	     dst_ptr = buf;
-	     
-	     lp = lin_ptr;  ix = interp_x;
-	     ptr = lptr1 + *lp;
-	     ptr2 = lptr2 + *lp;
-	     p2r = R_VAL(ptr) + ((k * (R_VAL(ptr2) - R_VAL(ptr))) >> 8);
-	     p2g = G_VAL(ptr) + ((k * (G_VAL(ptr2) - G_VAL(ptr))) >> 8);
-	     p2b = B_VAL(ptr) + ((k * (B_VAL(ptr2) - B_VAL(ptr))) >> 8);
- 	     px = -1;
-	     while (dst_clip_w--)
+	     while (dst_clip_h--)
 	       {
-		  if (px != *lp)
+		  lptr1 = *rp;
+		  lptr2 = lptr1 + src_w;
+		  if (lptr2 > src_end) lptr2 = lptr1;
+		  k = *iy;
+		  dst_ptr = dptr;
+		  
+		  lp = lin_ptr;  ix = interp_x;
+		  ptr = lptr1 + *lp;
+		  ptr2 = lptr2 + *lp;
+		  p2r = R_VAL(ptr) + ((k * (R_VAL(ptr2) - R_VAL(ptr))) >> 8);
+		  p2g = G_VAL(ptr) + ((k * (G_VAL(ptr2) - G_VAL(ptr))) >> 8);
+		  p2b = B_VAL(ptr) + ((k * (B_VAL(ptr2) - B_VAL(ptr))) >> 8);
+		  px = -1;
+		  while (dst_clip_w--)
 		    {
-		       px = *lp;
-
-		       ptr2 = lptr1 + px + 1;
-		       ptr4 = lptr2 + px + 1;
-		       if (px >= (src_w - 1))
+		       if (px != *lp)
 			 {
-			    ptr2--;
-			    ptr4--;
+			    px = *lp;
+			    
+			    ptr2 = lptr1 + px + 1;
+			    ptr4 = lptr2 + px + 1;
+			    if (px >= (src_w - 1))
+			      {
+				 ptr2--;
+				 ptr4--;
+			      }
+			    p1r = p2r;
+			    p1g = p2g;
+			    p1b = p2b;
+			    p2r = R_VAL(ptr2) + ((k * (R_VAL(ptr4) - R_VAL(ptr2))) >> 8);
+			    p2g = G_VAL(ptr2) + ((k * (G_VAL(ptr4) - G_VAL(ptr2))) >> 8);
+			    p2b = B_VAL(ptr2) + ((k * (B_VAL(ptr4) - B_VAL(ptr2))) >> 8);
 			 }
-		       p1r = p2r;
-		       p1g = p2g;
-		       p1b = p2b;
-		       p2r = R_VAL(ptr2) + ((k * (R_VAL(ptr4) - R_VAL(ptr2))) >> 8);
-		       p2g = G_VAL(ptr2) + ((k * (G_VAL(ptr4) - G_VAL(ptr2))) >> 8);
-		       p2b = B_VAL(ptr2) + ((k * (B_VAL(ptr4) - B_VAL(ptr2))) >> 8);
+		       i = *ix;
+		       R_VAL(dst_ptr) = p1r + ((i * (p2r - p1r)) >> 8);
+		       G_VAL(dst_ptr) = p1g + ((i * (p2g - p1g)) >> 8);
+		       B_VAL(dst_ptr) = p1b + ((i * (p2b - p1b)) >> 8);
+		       A_VAL(dst_ptr) = 0xff;
+		       
+		       dst_ptr++;  ix++;  lp++;
 		    }
-		  i = *ix;
-		  R_VAL(dst_ptr) = p1r + ((i * (p2r - p1r)) >> 8);
-		  G_VAL(dst_ptr) = p1g + ((i * (p2g - p1g)) >> 8);
-		  B_VAL(dst_ptr) = p1b + ((i * (p2b - p1b)) >> 8);
-		  A_VAL(dst_ptr) = 0xff;
-
-		  dst_ptr++;  ix++;  lp++;
+		  dst_clip_w = w;  ix = interp_x;  lp = lin_ptr;
+		  dptr += dst_w;  iy++;  rp++;
 	       }
-	     dst_clip_w = w;  ix = interp_x;  lp = lin_ptr;
-	     /* * blend here [clip_w *] buf -> dptr * */
-	     if (dc->mod.use)
-	       func_cmod(buf, dptr, dst_clip_w, dc->mod.r, dc->mod.g, dc->mod.b, dc->mod.a);
-	     else if (dc->mul.use)
-	       func_mul(buf, dptr, dst_clip_w, dc->mul.col);
-	     else
-	       func(buf, dptr, dst_clip_w);
-	     dptr += dst_w;  iy++;  rp++;
+	  }
+	else
+#endif	  
+	  {
+	     while (dst_clip_h--)
+	       {
+		  lptr1 = *rp;
+		  lptr2 = lptr1 + src_w;
+		  if (lptr2 > src_end) lptr2 = lptr1;
+		  k = *iy;
+		  dst_ptr = buf;
+		  
+		  lp = lin_ptr;  ix = interp_x;
+		  ptr = lptr1 + *lp;
+		  ptr2 = lptr2 + *lp;
+		  p2r = R_VAL(ptr) + ((k * (R_VAL(ptr2) - R_VAL(ptr))) >> 8);
+		  p2g = G_VAL(ptr) + ((k * (G_VAL(ptr2) - G_VAL(ptr))) >> 8);
+		  p2b = B_VAL(ptr) + ((k * (B_VAL(ptr2) - B_VAL(ptr))) >> 8);
+		  px = -1;
+		  while (dst_clip_w--)
+		    {
+		       if (px != *lp)
+			 {
+			    px = *lp;
+			    
+			    ptr2 = lptr1 + px + 1;
+			    ptr4 = lptr2 + px + 1;
+			    if (px >= (src_w - 1))
+			      {
+				 ptr2--;
+				 ptr4--;
+			      }
+			    p1r = p2r;
+			    p1g = p2g;
+			    p1b = p2b;
+			    p2r = R_VAL(ptr2) + ((k * (R_VAL(ptr4) - R_VAL(ptr2))) >> 8);
+			    p2g = G_VAL(ptr2) + ((k * (G_VAL(ptr4) - G_VAL(ptr2))) >> 8);
+			    p2b = B_VAL(ptr2) + ((k * (B_VAL(ptr4) - B_VAL(ptr2))) >> 8);
+			 }
+		       i = *ix;
+		       R_VAL(dst_ptr) = p1r + ((i * (p2r - p1r)) >> 8);
+		       G_VAL(dst_ptr) = p1g + ((i * (p2g - p1g)) >> 8);
+		       B_VAL(dst_ptr) = p1b + ((i * (p2b - p1b)) >> 8);
+		       A_VAL(dst_ptr) = 0xff;
+		       
+		       dst_ptr++;  ix++;  lp++;
+		    }
+		  dst_clip_w = w;  ix = interp_x;  lp = lin_ptr;
+		  /* * blend here [clip_w *] buf -> dptr * */
+		  if (dc->mod.use)
+		    func_cmod(buf, dptr, dst_clip_w, dc->mod.r, dc->mod.g, dc->mod.b, dc->mod.a);
+		  else if (dc->mul.use)
+		    func_mul(buf, dptr, dst_clip_w, dc->mul.col);
+		  else
+		    func(buf, dptr, dst_clip_w);
+		  dptr += dst_w;  iy++;  rp++;
+	       }
 	  }
      }
 #else
@@ -304,7 +360,7 @@
      {
 	int     k, px, a, i;
 	DATA32 *lptr1, *lptr2;
-	
+
 	while (dst_clip_h--)
 	  {
 	     
@@ -416,104 +472,206 @@
      {
 	int     k, px, i;
 	DATA32 *lptr1, *lptr2;
-	     
-	while (dst_clip_h--)
+
+#ifdef DIRECT_SCALE
+	if ((!(src->flags & RGBA_IMAGE_HAS_ALPHA)) &&
+	    (!(dst->flags & RGBA_IMAGE_HAS_ALPHA)) &&
+	    (!dc->mod.use) && (!dc->mul.use))
 	  {
-	     lptr1 = *rp;
-	     lptr2 = lptr1 + src_w;
-	     if (lptr2 > src_end) lptr2 = lptr1;
-	     k = *iy / 2;
-	     dst_ptr = buf;
-	     
-	     /* mm5 = k */
-	     movd_m2r(k, mm5);
-	     punpcklwd_r2r(mm5, mm5);
-	     punpckldq_r2r(mm5, mm5);
-	     
-	     lp = lin_ptr;  ix = interp_x;
-	     ptr = lptr1 + *lp;
-	     ptr2 = lptr2 + *lp;
-	     /* right edge */
-	     movd_m2r(*ptr, mm1);
-	     pxor_r2r(mm7, mm7);
-	     punpcklbw_r2r(mm7, mm1);
-	     
-	     movd_m2r(*ptr2, mm2);
-	     pxor_r2r(mm7, mm7);
-	     punpcklbw_r2r(mm7, mm2);
-	     
-	     psubsw_r2r(mm1, mm2);
-	     pmullw_r2r(mm5, mm2);
-	     psraw_i2r(7, mm2);
-	     
-	     paddsw_r2r(mm2, mm1);
-	     /* mm1 = right edge */
-	     
-	     px = -1;
-	     while (dst_clip_w--)
+	     while (dst_clip_h--)
 	       {
-		  /* if we have a new pair of horizontal pixels to */
-		  /* interpolate between them vertically */
-		  if (px != *lp)
+		  lptr1 = *rp;
+		  lptr2 = lptr1 + src_w;
+		  if (lptr2 > src_end) lptr2 = lptr1;
+		  k = *iy / 2;
+		  dst_ptr = dptr;
+		  
+		  /* mm5 = k */
+		  movd_m2r(k, mm5);
+		  punpcklwd_r2r(mm5, mm5);
+		  punpckldq_r2r(mm5, mm5);
+		  
+		  lp = lin_ptr;  ix = interp_x;
+		  ptr = lptr1 + *lp;
+		  ptr2 = lptr2 + *lp;
+		  /* right edge */
+		  movd_m2r(*ptr, mm1);
+		  pxor_r2r(mm7, mm7);
+		  punpcklbw_r2r(mm7, mm1);
+		  
+		  movd_m2r(*ptr2, mm2);
+		  pxor_r2r(mm7, mm7);
+		  punpcklbw_r2r(mm7, mm2);
+		  
+		  psubsw_r2r(mm1, mm2);
+		  pmullw_r2r(mm5, mm2);
+		  psraw_i2r(7, mm2);
+		  
+		  paddsw_r2r(mm2, mm1);
+		  /* mm1 = right edge */
+		  
+		  px = -1;
+		  while (dst_clip_w--)
 		    {
-		       px = *lp;
-		       
-		       ptr2 = lptr1 + px + 1;
-		       ptr4 = lptr2 + px + 1;
-		       if (px >= (src_w - 1))
+		       /* if we have a new pair of horizontal pixels to */
+		       /* interpolate between them vertically */
+		       if (px != *lp)
 			 {
-			    ptr2--;
-			    ptr4--;
+			    px = *lp;
+			    
+			    ptr2 = lptr1 + px + 1;
+			    ptr4 = lptr2 + px + 1;
+			    if (px >= (src_w - 1))
+			      {
+				 ptr2--;
+				 ptr4--;
+			      }
+			    movq_r2r(mm1, mm0);
+			    
+			    /* right edge */
+			    movd_m2r(*ptr2, mm1);
+			    pxor_r2r(mm7, mm7);
+			    punpcklbw_r2r(mm7, mm1);
+			    
+			    movd_m2r(*ptr4, mm2);
+			    pxor_r2r(mm7, mm7);
+			    punpcklbw_r2r(mm7, mm2);
+			    
+			    psubsw_r2r(mm1, mm2);
+			    pmullw_r2r(mm5, mm2);
+			    psraw_i2r(7, mm2);
+			    
+			    paddsw_r2r(mm2, mm1);
+			    /* mm1 = right edge */
 			 }
-		       movq_r2r(mm1, mm0);
 		       
-		       /* right edge */
-		       movd_m2r(*ptr2, mm1);
-		       pxor_r2r(mm7, mm7);
-		       punpcklbw_r2r(mm7, mm1);
+		       i = *ix / 2;
 		       
-		       movd_m2r(*ptr4, mm2);
-		       pxor_r2r(mm7, mm7);
-		       punpcklbw_r2r(mm7, mm2);
+		       movq_r2r(mm1, mm4);
 		       
-		       psubsw_r2r(mm1, mm2);
-		       pmullw_r2r(mm5, mm2);
-		       psraw_i2r(7, mm2);
+		       movd_m2r(i, mm2);
+		       punpcklwd_r2r(mm2, mm2);
+		       punpckldq_r2r(mm2, mm2);
 		       
-		       paddsw_r2r(mm2, mm1);
-		       /* mm1 = right edge */
+		       movq_r2r(mm0, mm3);
+		       
+		       psubsw_r2r(mm3, mm4);
+		       pmullw_r2r(mm2, mm4);
+		       psraw_i2r(7, mm4);
+		       paddsw_r2r(mm4, mm3);
+		       
+		       packuswb_r2r(mm3, mm3);
+		       /* blend mm3... */
+		       movd_r2m(mm3, *dst_ptr);
+		       
+		       dst_ptr++;  ix++;  lp++;
 		    }
-		  
-		  i = *ix / 2;
-		  
-		  movq_r2r(mm1, mm4);
-		  
-		  movd_m2r(i, mm2);
-		  punpcklwd_r2r(mm2, mm2);
-		  punpckldq_r2r(mm2, mm2);
-		  
-		  movq_r2r(mm0, mm3);
-		  
-		  psubsw_r2r(mm3, mm4);
-		  pmullw_r2r(mm2, mm4);
-		  psraw_i2r(7, mm4);
-		  paddsw_r2r(mm4, mm3);
-		  
-		  packuswb_r2r(mm3, mm3);
-		  /* blend mm3... */
-		  movd_r2m(mm3, *dst_ptr);
-		  
-		  dst_ptr++;  ix++;  lp++;
+		  /* * blend here [clip_w *] buf -> dptr * */
+		  dst_clip_w = w;  ix = interp_x;  lp = lin_ptr;
+		  dptr += dst_w;  iy++;  rp++;
 	       }
-	     /* * blend here [clip_w *] buf -> dptr * */
-	     dst_clip_w = w;  ix = interp_x;  lp = lin_ptr;
-	     if (dc->mod.use)
-	       func_cmod(buf, dptr, dst_clip_w, dc->mod.r, dc->mod.g, dc->mod.b, dc->mod.a);
-	     else if (dc->mul.use)
-	       func_mul(buf, dptr, dst_clip_w, dc->mul.col);
-	     else
-	       func(buf, dptr, dst_clip_w);
-	     dptr += dst_w;  iy++;  rp++;
+	  }
+	else
+#endif	  
+	  {
+	     while (dst_clip_h--)
+	       {
+		  lptr1 = *rp;
+		  lptr2 = lptr1 + src_w;
+		  if (lptr2 > src_end) lptr2 = lptr1;
+		  k = *iy / 2;
+		  dst_ptr = buf;
+		  
+		  /* mm5 = k */
+		  movd_m2r(k, mm5);
+		  punpcklwd_r2r(mm5, mm5);
+		  punpckldq_r2r(mm5, mm5);
+		  
+		  lp = lin_ptr;  ix = interp_x;
+		  ptr = lptr1 + *lp;
+		  ptr2 = lptr2 + *lp;
+		  /* right edge */
+		  movd_m2r(*ptr, mm1);
+		  pxor_r2r(mm7, mm7);
+		  punpcklbw_r2r(mm7, mm1);
+		  
+		  movd_m2r(*ptr2, mm2);
+		  pxor_r2r(mm7, mm7);
+		  punpcklbw_r2r(mm7, mm2);
+		  
+		  psubsw_r2r(mm1, mm2);
+		  pmullw_r2r(mm5, mm2);
+		  psraw_i2r(7, mm2);
+		  
+		  paddsw_r2r(mm2, mm1);
+		  /* mm1 = right edge */
+		  
+		  px = -1;
+		  while (dst_clip_w--)
+		    {
+		       /* if we have a new pair of horizontal pixels to */
+		       /* interpolate between them vertically */
+		       if (px != *lp)
+			 {
+			    px = *lp;
+			    
+			    ptr2 = lptr1 + px + 1;
+			    ptr4 = lptr2 + px + 1;
+			    if (px >= (src_w - 1))
+			      {
+				 ptr2--;
+				 ptr4--;
+			      }
+			    movq_r2r(mm1, mm0);
+			    
+			    /* right edge */
+			    movd_m2r(*ptr2, mm1);
+			    pxor_r2r(mm7, mm7);
+			    punpcklbw_r2r(mm7, mm1);
+			    
+			    movd_m2r(*ptr4, mm2);
+			    pxor_r2r(mm7, mm7);
+			    punpcklbw_r2r(mm7, mm2);
+			    
+			    psubsw_r2r(mm1, mm2);
+			    pmullw_r2r(mm5, mm2);
+			    psraw_i2r(7, mm2);
+			    
+			    paddsw_r2r(mm2, mm1);
+			    /* mm1 = right edge */
+			 }
+		       
+		       i = *ix / 2;
+		       
+		       movq_r2r(mm1, mm4);
+		       
+		       movd_m2r(i, mm2);
+		       punpcklwd_r2r(mm2, mm2);
+		       punpckldq_r2r(mm2, mm2);
+		       
+		       movq_r2r(mm0, mm3);
+		       
+		       psubsw_r2r(mm3, mm4);
+		       pmullw_r2r(mm2, mm4);
+		       psraw_i2r(7, mm4);
+		       paddsw_r2r(mm4, mm3);
+		       
+		       packuswb_r2r(mm3, mm3);
+		       /* blend mm3... */
+		       movd_r2m(mm3, *dst_ptr);
+		       
+		       dst_ptr++;  ix++;  lp++;
+		    }
+		  /* * blend here [clip_w *] buf -> dptr * */
+		  dst_clip_w = w;  ix = interp_x;  lp = lin_ptr;
+		  if (dc->mod.use)
+		    func_cmod(buf, dptr, dst_clip_w, dc->mod.r, dc->mod.g, dc->mod.b, dc->mod.a);
+		  else if (dc->mul.use)
+		    func_mul(buf, dptr, dst_clip_w, dc->mul.col);
+		  else
+		    func(buf, dptr, dst_clip_w);
+		  dptr += dst_w;  iy++;  rp++;
+	       }
 	  }
      }
 #endif

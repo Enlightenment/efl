@@ -351,10 +351,6 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 	  }
 	else
 	  {
-	     /* a scanline buffer */
-	     buf = malloc(dst_clip_w * sizeof(DATA32));
-	     if (!buf) goto no_buf;
-
 	     /* fill scale tables */
 	     for (x = 0; x < dst_clip_w; x++)
 	       lin_ptr[x] = (((x + dst_clip_x - dst_region_x) * src_region_w) / dst_region_w) + src_region_x;
@@ -363,20 +359,46 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
 					+ src_region_y) * src_w);
 	     /* scale to dst */
 	     dptr = dst_ptr;
-	     for (y = 0; y < dst_clip_h; y++)
+#ifdef DIRECT_SCALE	     
+	     if ((!(src->flags & RGBA_IMAGE_HAS_ALPHA)) &&
+		 (!(dst->flags & RGBA_IMAGE_HAS_ALPHA)))
 	       {
-		  dst_ptr = buf;
-		  for (x = 0; x < dst_clip_w; x++)
+		  for (y = 0; y < dst_clip_h; y++)
 		    {
-		       ptr = row_ptr[y] + lin_ptr[x];
-		       *dst_ptr = *ptr;
-		       dst_ptr++;
+		       dst_ptr = dptr;
+		       for (x = 0; x < dst_clip_w; x++)
+			 {
+			    ptr = row_ptr[y] + lin_ptr[x];
+			    *dst_ptr = *ptr;
+			    dst_ptr++;
+			 }
+		       /* * blend here [clip_w *] buf -> dptr * */
+//		       func(buf, dptr, dst_clip_w);
+		       dptr += dst_w;
 		    }
-		  /* * blend here [clip_w *] buf -> dptr * */
-		  func(buf, dptr, dst_clip_w);
-		  dptr += dst_w;
 	       }
-	     free(buf);
+	     else
+#endif	       
+	       {
+		  /* a scanline buffer */
+		  buf = malloc(dst_clip_w * sizeof(DATA32));
+		  if (!buf) goto no_buf;
+
+		  for (y = 0; y < dst_clip_h; y++)
+		    {
+		       dst_ptr = buf;
+		       for (x = 0; x < dst_clip_w; x++)
+			 {
+			    ptr = row_ptr[y] + lin_ptr[x];
+			    *dst_ptr = *ptr;
+			    dst_ptr++;
+			 }
+		       /* * blend here [clip_w *] buf -> dptr * */
+		       func(buf, dptr, dst_clip_w);
+		       dptr += dst_w;
+		    }
+		  free(buf);
+	       }
 	  }
      }
 

@@ -65,4 +65,6 @@
 # define _GNU_SOURCE
 #endif
 
+#define DIRECT_SCALE
+
 #endif

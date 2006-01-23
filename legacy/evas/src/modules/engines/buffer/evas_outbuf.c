@@ -42,7 +42,7 @@ evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, in
    buf->func.new_update_region = new_update_region;
    buf->func.free_update_region = free_update_region;
 
-   if ((buf->depth == OUTBUF_DEPTH_RGB_32BPP_888_8888) &&
+   if ((buf->depth == OUTBUF_DEPTH_ARGB_32BPP_8888_8888) &&
        (buf->dest) && (buf->dest_row_bytes == (buf->w * sizeof(DATA32))))
      {
 	buf->priv.back_buf = evas_common_image_new();
@@ -52,6 +52,16 @@ evas_buffer_outbuf_buf_setup_fb(int w, int h, Outbuf_Depth depth, void *dest, in
 	buf->priv.back_buf->image->data = buf->dest;
 	buf->priv.back_buf->image->no_free = 1;
 	buf->priv.back_buf->flags |= RGBA_IMAGE_HAS_ALPHA;
+     }
+   else if ((buf->depth == OUTBUF_DEPTH_RGB_32BPP_888_8888) &&
+       (buf->dest) && (buf->dest_row_bytes == (buf->w * sizeof(DATA32))))
+     {
+	buf->priv.back_buf = evas_common_image_new();
+	buf->priv.back_buf->image = evas_common_image_surface_new(buf->priv.back_buf);
+	buf->priv.back_buf->image->w = w;
+	buf->priv.back_buf->image->h = h;
+	buf->priv.back_buf->image->data = buf->dest;
+	buf->priv.back_buf->image->no_free = 1;
      }
 
    return buf;
@@ -85,8 +95,11 @@ evas_buffer_outbuf_buf_new_region_for_update(Outbuf *buf, int x, int y, int w, i
 	im = evas_common_image_create(w, h);
 	if (im)
 	  {
-	     im->flags |= RGBA_IMAGE_HAS_ALPHA;
-	     memset(im->image->data, 0, w * h * sizeof(DATA32));
+	     if ((buf->depth == OUTBUF_DEPTH_ARGB_32BPP_8888_8888))
+	       {
+		  im->flags |= RGBA_IMAGE_HAS_ALPHA;
+		  memset(im->image->data, 0, w * h * sizeof(DATA32));
+	       }
 	  }
      }
    return im;

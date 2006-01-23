@@ -290,6 +290,8 @@ evas_engine_buffer_output_setup(int   w,
 
 	dep = OUTBUF_DEPTH_BGR_24BPP_888_888;
 	if      (depth_type == EVAS_ENGINE_BUFFER_DEPTH_ARGB32)
+	  dep = OUTBUF_DEPTH_ARGB_32BPP_8888_8888;
+	else if (depth_type == EVAS_ENGINE_BUFFER_DEPTH_RGB32)
 	  dep = OUTBUF_DEPTH_RGB_32BPP_888_8888;
 	else if (depth_type == EVAS_ENGINE_BUFFER_DEPTH_BGRA32)
 	  dep = OUTBUF_DEPTH_BGR_32BPP_888_8888;

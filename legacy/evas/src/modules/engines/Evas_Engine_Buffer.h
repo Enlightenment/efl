@@ -5,6 +5,7 @@
 #define EVAS_ENGINE_BUFFER_DEPTH_BGRA32 1
 #define EVAS_ENGINE_BUFFER_DEPTH_RGB24  2
 #define EVAS_ENGINE_BUFFER_DEPTH_BGR24  3
+#define EVAS_ENGINE_BUFFER_DEPTH_RGB32  4
 
 typedef struct _Evas_Engine_Info_Buffer Evas_Engine_Info_Buffer;
 
