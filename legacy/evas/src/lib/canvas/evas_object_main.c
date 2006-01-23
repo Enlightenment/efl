@@ -1,6 +1,14 @@
 #include "evas_common.h"
 #include "evas_private.h"
 
+static Evas_Object_List* get_layer_objects_last( Evas_Layer* l )
+{
+   if( !l || !l->objects )
+	return NULL;
+
+   return ((Evas_Object_List *)(l->objects))->last;
+}
+
 /* evas internal stuff */
 Evas_Object *
 evas_object_new(void)
@@ -939,7 +947,7 @@ evas_object_top_at_xy_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include
 	Evas_Layer *lay;
 
 	lay = (Evas_Layer *)l;
-	for (l2 = ((Evas_Object_List *)(lay->objects))->last; l2; l2 = l2->prev)
+	for (l2 = get_layer_objects_last(lay); l2; l2 = l2->prev)
 	  {
 	     Evas_Object *obj;
 
@@ -995,7 +1003,7 @@ evas_object_top_in_rectangle_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord
 	Evas_Layer *lay;
 
 	lay = (Evas_Layer *)l;
-	for (l2 = ((Evas_Object_List *)(lay->objects))->last; l2; l2 = l2->prev)
+	for (l2 = get_layer_objects_last(lay); l2; l2 = l2->prev)
 	  {
 	     Evas_Object *obj;
 
@@ -1036,7 +1044,7 @@ evas_objects_at_xy_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Bool include_pa
 	Evas_Layer *lay;
 
 	lay = (Evas_Layer *)l;
-	for (l2 = ((Evas_Object_List *)(lay->objects))->last; l2; l2 = l2->prev)
+	for (l2 = get_layer_objects_last(lay); l2; l2 = l2->prev)
 	  {
 	     Evas_Object *obj;
 
@@ -1081,7 +1089,7 @@ evas_objects_in_rectangle_get(Evas *e, Evas_Coord x, Evas_Coord y, Evas_Coord w,
 	Evas_Layer *lay;
 
 	lay = (Evas_Layer *)l;
-	for (l2 = ((Evas_Object_List *)(lay->objects))->last; l2; l2 = l2->prev)
+	for (l2 = get_layer_objects_last(lay); l2; l2 = l2->prev)
 	  {
 	     Evas_Object *obj;
 
