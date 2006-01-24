@@ -27,7 +27,10 @@ Distribution: %{?_distribution:%{_distribution}}%{!?_distribution:%{_vendor}}
 #BuildSuggests: xorg-x11-devel freetype2-devel freetype-devel
 BuildRequires: eet-devel
 BuildRequires: /usr/bin/freetype-config
-Provides: evas
+Provides: evas, evas-module_engine_buffer, evas-module_engine_software_x11
+Provides: evas-module_loader_jpeg, evas-module_saver_jpeg
+Provides: evas-module_loader_png, evas-module_saver_png
+Provides: evas-module_loader_eet, evas-module_saver_eet
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
 %description
