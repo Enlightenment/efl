@@ -91,7 +91,7 @@ extern "C" {
    ECORE_EXE_PIPE_ERROR = 4, /**< Exe Pipe error mask */
    ECORE_EXE_PIPE_READ_LINE_BUFFERED = 8, /**< Reads are buffered until a newline and delivered 1 event per line */
    ECORE_EXE_PIPE_ERROR_LINE_BUFFERED = 16, /**< Errors are buffered until a newline and delivered 1 event per line */
-   ECORE_EXE_PIPE_AUTO = 32, /**< FIXME: stdout and stderr are buffered automatically */
+   ECORE_EXE_PIPE_AUTO = 32, /**< stdout and stderr are buffered automatically */
    ECORE_EXE_RESPAWN = 64 /**< FIXME: Exe is restarted if it dies */
      };
    typedef enum _Ecore_Exe_Flags Ecore_Exe_Flags;

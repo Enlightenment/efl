@@ -272,7 +272,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
    if (exe == NULL) return NULL;
    
    if ( (flags & ECORE_EXE_PIPE_AUTO) && (! (flags & ECORE_EXE_PIPE_ERROR)) && (! (flags & ECORE_EXE_PIPE_READ)) )
-      flags |= ECORE_EXE_PIPE_READ;   /* We need something to auto pipe. */
+      flags |= ECORE_EXE_PIPE_READ | ECORE_EXE_PIPE_ERROR;   /* We need something to auto pipe. */
 
    /*  Create some pipes. */
    if (ok)   E_IF_NO_ERRNO_NOLOOP(result, pipe(statusPipe), ok)
@@ -304,7 +304,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
          else if (pid == 0)   /* child */
             {
                /* dup2 STDERR, STDIN, and STDOUT.  dup2() allegedly closes the second pipe if it's open. */
-	       if (flags & ECORE_EXE_PIPE_ERROR)           E_NO_ERRNO(result, dup2(errorPipe[1], STDERR_FILENO), ok);
+	       if (ok && (flags & ECORE_EXE_PIPE_ERROR))   E_NO_ERRNO(result, dup2(errorPipe[1], STDERR_FILENO), ok);
                if (ok && (flags & ECORE_EXE_PIPE_READ))    E_NO_ERRNO(result, dup2(readPipe[1],  STDOUT_FILENO), ok);
                if (ok && (flags & ECORE_EXE_PIPE_WRITE))   E_NO_ERRNO(result, dup2(writePipe[0], STDIN_FILENO),  ok);
 
@@ -377,7 +377,7 @@ ecore_exe_pipe_run(const char *exe_cmd, Ecore_Exe_Flags flags, const void *data)
 		           E_IF_NO_ERRNO(result, fcntl(exe->child_fd_error, F_SETFL, O_NONBLOCK), ok)
 		              {
 		                 exe->error_fd_handler = ecore_main_fd_handler_add(exe->child_fd_error,
-					       ECORE_FD_ERROR, _ecore_exe_data_error_handler, exe,
+					       ECORE_FD_READ, _ecore_exe_data_error_handler, exe,
 					       NULL, NULL);
 		                 if (exe->error_fd_handler == NULL)
 			           ok = 0;
@@ -558,7 +558,7 @@ ecore_exe_auto_limits_set(Ecore_Exe *exe, int start_bytes, int end_bytes, int st
  * Gets the auto pipe data for the given process handle
  *
  * @param   exe The given process handle.
- * @param   flags   Is this a ECORE_FD_READ or ECORE_FD_ERROR? 
+ * @param   flags   Is this a ECORE_EXE_PIPE_READ or ECORE_EXE_PIPE_ERROR? 
  * @ingroup Ecore_Exe_Basic_Group
  */
 EAPI Ecore_Exe_Event_Data *
@@ -577,21 +577,21 @@ ecore_exe_event_data_get(Ecore_Exe *exe, Ecore_Exe_Flags flags)
      }
 
    /* Sort out what sort of event we are. */
-   if (flags & ECORE_FD_READ)
+   if (flags & ECORE_EXE_PIPE_READ)
       {
-         flags = ECORE_FD_READ;
+         flags = ECORE_EXE_PIPE_READ;
          if (exe->flags & ECORE_EXE_PIPE_READ_LINE_BUFFERED)
             is_buffered = 1;
       }
    else
       {
-         flags = ECORE_FD_ERROR;
+         flags = ECORE_EXE_PIPE_ERROR;
          if (exe->flags & ECORE_EXE_PIPE_ERROR_LINE_BUFFERED)
             is_buffered = 1;
       }
 
    /* Get the data. */
-   if (flags & ECORE_FD_READ)
+   if (flags & ECORE_EXE_PIPE_READ)
       {
          inbuf = exe->read_data_buf;
          inbuf_num = exe->read_data_size;
@@ -667,7 +667,7 @@ ecore_exe_event_data_get(Ecore_Exe *exe, Ecore_Exe_Flags flags)
 	       if (i > last) /* Partial line left over, save it for next time. */
 	          {
 		     e->size = last;
-                     if (flags & ECORE_FD_READ)
+                     if (flags & ECORE_EXE_PIPE_READ)
 		        {
 	                   exe->read_data_size = i - last;
 	                   exe->read_data_buf = malloc(exe->read_data_size);
@@ -1179,7 +1179,7 @@ _ecore_exe_exec_it(const char *exe_cmd)
 }
 
 static int
-_ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags)
+_ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_Exe_Flags flags)
 {
    Ecore_Exe *exe;
    int child_fd;
@@ -1189,9 +1189,9 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_
    exe = data;
 
    /* Sort out what sort of handler we are. */
-   if (flags & ECORE_FD_READ)
+   if (flags & ECORE_EXE_PIPE_READ)
       {
-         flags = ECORE_FD_READ;
+         flags = ECORE_EXE_PIPE_READ;
 	 event_type = ECORE_EXE_EVENT_DATA;
 	 child_fd = exe->child_fd_read;
          if (exe->flags & ECORE_EXE_PIPE_READ_LINE_BUFFERED)
@@ -1199,20 +1199,20 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_
       }
    else
       {
-         flags = ECORE_FD_ERROR;
+         flags = ECORE_EXE_PIPE_ERROR;
 	 event_type = ECORE_EXE_EVENT_ERROR;
 	 child_fd = exe->child_fd_error;
          if (exe->flags & ECORE_EXE_PIPE_ERROR_LINE_BUFFERED)
             is_buffered = 1;
       }
 
-   if ((fd_handler) && (ecore_main_fd_handler_active_get(fd_handler, flags)))
+   if ((fd_handler) && (ecore_main_fd_handler_active_get(fd_handler, ECORE_FD_READ)))
       {
          unsigned char *inbuf;
 	 int inbuf_num;
 
          /* Get any left over data from last time. */
-         if (flags & ECORE_FD_READ)
+         if (flags & ECORE_EXE_PIPE_READ)
 	    {
                inbuf = exe->read_data_buf;
                inbuf_num = exe->read_data_size;
@@ -1257,7 +1257,7 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_
 		           Ecore_Exe_Event_Data *e;
 
                            /* Stash the data away for later. */
-                           if (flags & ECORE_FD_READ)
+                           if (flags & ECORE_EXE_PIPE_READ)
 	                      {
                                  exe->read_data_buf = inbuf;
                                  exe->read_data_size = inbuf_num;
@@ -1278,7 +1278,7 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_
 		        }
 		     if (lost_exe)
 		        {
-                           if (flags & ECORE_FD_READ)
+                           if (flags & ECORE_EXE_PIPE_READ)
 			      {
                                  if (exe->read_data_size)
                                     printf("There are %d bytes left unsent from the dead exe %s.\n", exe->read_data_size, exe->cmd);
@@ -1308,13 +1308,13 @@ _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_
 static int
 _ecore_exe_data_error_handler(void *data, Ecore_Fd_Handler *fd_handler)
 {
-   return _ecore_exe_data_generic_handler(data, fd_handler, ECORE_FD_ERROR);
+   return _ecore_exe_data_generic_handler(data, fd_handler, ECORE_EXE_PIPE_ERROR);
 }
 
 static int
 _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler)
 {
-   return _ecore_exe_data_generic_handler(data, fd_handler, ECORE_FD_READ);
+   return _ecore_exe_data_generic_handler(data, fd_handler, ECORE_EXE_PIPE_READ);
 }
 
 static int
