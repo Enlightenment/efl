@@ -14,7 +14,7 @@ struct _ecore_exe_dead_exe
 
 static inline void _ecore_exe_exec_it(const char *exe_cmd);
 
-static int _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_Fd_Handler_Flags flags);
+static int _ecore_exe_data_generic_handler(void *data, Ecore_Fd_Handler *fd_handler, Ecore_Exe_Flags flags);
 static int _ecore_exe_data_error_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_exe_data_read_handler(void *data, Ecore_Fd_Handler *fd_handler);
 static int _ecore_exe_data_write_handler(void *data, Ecore_Fd_Handler *fd_handler);
