@@ -1412,12 +1412,22 @@ struct _Ecore_X_Screen_Size
    int width, height;
 };
 
+typedef struct _Ecore_X_Screen_Refresh_Rate Ecore_X_Screen_Refresh_Rate;
+struct _Ecore_X_Screen_Refresh_Rate
+{
+   int rate;
+};
+
 EAPI int                  ecore_x_randr_events_select(Ecore_X_Window win, int on);
 EAPI Ecore_X_Screen_Size *ecore_x_randr_screen_sizes_get(Ecore_X_Window root, int *num);
 EAPI Ecore_X_Screen_Size  ecore_x_randr_current_screen_size_get(Ecore_X_Window root);
 EAPI int                  ecore_x_randr_screen_size_set(Ecore_X_Window root,
 							Ecore_X_Screen_Size size);
+							
+EAPI Ecore_X_Screen_Refresh_Rate *ecore_x_randr_screen_refresh_rates_get(Ecore_X_Window root, int size_id, int *num);
+EAPI Ecore_X_Screen_Refresh_Rate ecore_x_randr_current_screen_refresh_rate_get(Ecore_X_Window root);
 
+EAPI int ecore_x_randr_screen_refresh_rate_set(Ecore_X_Window root, Ecore_X_Screen_Refresh_Rate rate);
 
 #ifdef __cplusplus
 }
