@@ -137,8 +137,6 @@ ecore_x_randr_screen_refresh_rates_get(Ecore_X_Window root, int size_id, int *nu
 #ifdef ECORE_XRANDR
    Ecore_X_Screen_Refresh_Rate *ret = NULL;
    XRRScreenConfiguration *sc;   
-   //SizeID size_index;
-   //Rotation rotation;
    short *rates;
    int i, n;
 
@@ -150,8 +148,6 @@ ecore_x_randr_screen_refresh_rates_get(Ecore_X_Window root, int size_id, int *nu
 	printf("ERROR: Couldn't get screen information for %d\n", root);
 	return ret;
      }
-
-   //size_index = XRRConfigCurrentConfiguration(sc, &rotation);
    
    rates = XRRRates(_ecore_x_disp, XRRRootToScreen(_ecore_x_disp, root), size_id, &n);
    ret = calloc(n, sizeof(Ecore_X_Screen_Refresh_Rate));
