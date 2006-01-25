@@ -190,14 +190,14 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %{_bindir}/evas_*
 %{_libdir}/*.so.*
 %{_libdir}/*.la
-%{_libdir}/evas/modules/loaders/eet/@MODULE_ARCH@/module.so
-%{_libdir}/evas/modules/loaders/jpeg/@MODULE_ARCH@/module.so
-%{_libdir}/evas/modules/loaders/png/@MODULE_ARCH@/module.so
-%{_libdir}/evas/modules/savers/eet/@MODULE_ARCH@/module.so
-%{_libdir}/evas/modules/savers/jpeg/@MODULE_ARCH@/module.so
-%{_libdir}/evas/modules/savers/png/@MODULE_ARCH@/module.so
-%{_libdir}/evas/modules/engines/buffer/@MODULE_ARCH@/module.so
-%{_libdir}/evas/modules/engines/software_x11/@MODULE_ARCH@/module.so
+%{_libdir}/evas/modules/loaders/eet/*/module.so
+%{_libdir}/evas/modules/loaders/jpeg/*/module.so
+%{_libdir}/evas/modules/loaders/png/*/module.so
+%{_libdir}/evas/modules/savers/eet/*/module.so
+%{_libdir}/evas/modules/savers/jpeg/*/module.so
+%{_libdir}/evas/modules/savers/png/*/module.so
+%{_libdir}/evas/modules/engines/buffer/*/module.so
+%{_libdir}/evas/modules/engines/software_x11/*/module.so
 %{_datadir}/%{name}
 
 %files devel
@@ -211,49 +211,49 @@ test "x$RPM_BUILD_ROOT" != "x/" && rm -rf $RPM_BUILD_ROOT
 %if %{with module_loader_edb}
 %files module_loader_edb
 %defattr(-, root, root)
-%{_libdir}/evas/modules/loaders/edb/@MODULE_ARCH@/module.so
+%{_libdir}/evas/modules/loaders/edb/*/module.so
 %endif
 
 %if %{with module_saver_edb}
 %files module_saver_edb
 %defattr(-, root, root)
-%{_libdir}/evas/modules/savers/edb/@MODULE_ARCH@/module.so
+%{_libdir}/evas/modules/savers/edb/*/module.so
 %endif
 
 %if %{with module_engine_cairo_x11}
 %files module_engine_cairo_x11
 %defattr(-, root, root)
-%{_libdir}/evas/modules/engines/cairo_x11/@MODULE_ARCH@/module.so
+%{_libdir}/evas/modules/engines/cairo_x11/*/module.so
 %endif
 
 %if %{with module_engine_directfb}
 %files module_engine_directfb
 %defattr(-, root, root)
-%{_libdir}/evas/modules/engines/directfb/@MODULE_ARCH@/module.so
+%{_libdir}/evas/modules/engines/directfb/*/module.so
 %endif
 
 %if %{with module_engine_fb}
 %files module_engine_fb
 %defattr(-, root, root)
-%{_libdir}/evas/modules/engines/fb/@MODULE_ARCH@/module.so
+%{_libdir}/evas/modules/engines/fb/*/module.so
 %endif
 
 %if %{with module_engine_gl_x11}
 %files module_engine_gl_x11
 %defattr(-, root, root)
-%{_libdir}/evas/modules/engines/gl_x11/@MODULE_ARCH@/module.so
+%{_libdir}/evas/modules/engines/gl_x11/*/module.so
 %endif
 
 %if %{with module_engine_software_qtopia}
 %files module_engine_software_qtopia
 %defattr(-, root, root)
-%{_libdir}/evas/modules/engines/software_qtopia/@MODULE_ARCH@/module.so
+%{_libdir}/evas/modules/engines/software_qtopia/*/module.so
 %endif
 
 %if %{with module_engine_xrender_x11}
 %files module_engine_xrender_x11
 %defattr(-, root, root)
-%{_libdir}/evas/modules/engines/xrender_x11/@MODULE_ARCH@/module.so
+%{_libdir}/evas/modules/engines/xrender_x11/*/module.so
 %endif
 
 %changelog
