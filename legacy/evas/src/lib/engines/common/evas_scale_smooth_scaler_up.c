@@ -289,7 +289,7 @@
 		       R_VAL(dst_ptr) = p1r + ((i * (p2r - p1r)) >> 8);
 		       G_VAL(dst_ptr) = p1g + ((i * (p2g - p1g)) >> 8);
 		       B_VAL(dst_ptr) = p1b + ((i * (p2b - p1b)) >> 8);
-		       A_VAL(dst_ptr) = 0xff;
+//		       A_VAL(dst_ptr) = 0xff;
 		       
 		       dst_ptr++;  ix++;  lp++;
 		    }

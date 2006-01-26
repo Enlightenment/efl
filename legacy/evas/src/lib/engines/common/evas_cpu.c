@@ -55,7 +55,7 @@ evas_common_cpu_sse_test(void)
 #ifdef BUILD_SSE
    int blah[2500];
 
-   prefetch(blah + 1200);
+   movntq_r2m(mm0, blah);
 #endif
 }
 
