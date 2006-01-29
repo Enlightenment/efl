@@ -82,7 +82,8 @@ Cairo under X11 rendering engine module for Evas
 %package module_engine_directfb
 Summary: Directfb rendering engine module for Evas
 Group: System Environment/Libraries
-BuildRequires: DirectFB
+#BuildSuggests: DirectFB, libdirectfb-devel, directfb-devel
+BuildRequires: /usr/include/directfb/dfb_types.h
 %description module_engine_directfb
 Directfb rendering engine module for Evas
 %define ac_with_module_engine_directfb --enable-directfb
